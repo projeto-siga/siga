@@ -26,6 +26,11 @@ import javax.jws.WebService;
 @WebService(targetNamespace = "http://impl.service.gi.siga.jfrj.gov.br/")
 public interface GiService extends Remote {
 
+	public static final String _MODO_AUTENTICACAO_BANCO = "banco";
+	public static final String _MODO_AUTENTICACAO_LDAP = "ldap";
+	// caso nao exista a propriedade no JBOSS, autenticar via banco
+	public static final String _MODO_AUTENTICACAO_DEFAULT = _MODO_AUTENTICACAO_BANCO;
+	
     @WebMethod
 	public String login(String matricula, String senha);
 
@@ -46,5 +51,8 @@ public interface GiService extends Remote {
     
     @WebMethod
 	public String criarUsuario(String orgaoUsu, String lotacao, String cargo, String funcao, String nmPessoa, String dtNascimento,String cpf, String email);
+    
+    @WebMethod
+    public String buscarModoAutenticacao(String login);
         
 }

@@ -145,6 +145,7 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 
 	public static final long TIPO_CONFIG_JUNTADA_AUTOMATICA = 43;
 	
+	
 	// SIGA-WF
 
 	public static final long TIPO_CONFIG_INSTANCIAR_PROCEDIMENTO = 100;

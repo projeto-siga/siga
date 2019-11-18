@@ -59,9 +59,10 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
+import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
+import br.gov.jfrj.siga.gi.service.GiService;
 
 public class CpBL {
-
 	CpCompetenciaBL comp;
 
 	public CpCompetenciaBL getComp() {
@@ -454,7 +455,7 @@ public class CpBL {
 			CpIdentidade idCadastrante, final String senhaDefinida,
 			String[] senhaGerada, boolean marcarParaSinc)
 			throws AplicacaoException {
-
+		
 		Long longCpf = CPFUtils.getLongValueValidaSimples(cpf);
 		final List<DpPessoa> listaPessoas = dao().listarPorCpf(longCpf);
 		if(listaPessoas.isEmpty()) {
@@ -465,6 +466,9 @@ public class CpBL {
 
 		final DpPessoa pessoa = dao().consultarPorCpfMatricula(longCpf,
 				longMatricula);
+		
+		String siglaOrgaoMatricula = MatriculaUtils.getSiglaDoOrgaoDaMatricula(matricula);
+		boolean autenticaPeloBanco = buscarModoAutenticacao(siglaOrgaoMatricula).equals(GiService._MODO_AUTENTICACAO_BANCO);
 
 		if (pessoa != null && matricula.equals(pessoa.getSigla())) {
 			CpIdentidade id;
@@ -475,20 +479,24 @@ public class CpBL {
 			}
 			if (id == null) {
 				if (pessoa.getEmailPessoaAtual() != null) {
-					String novaSenha = null;
-					if (senhaDefinida != null && senhaDefinida.length() > 0) {
-						novaSenha = senhaDefinida;
-					} else {
-						novaSenha = GeraMessageDigest.geraSenha();
-					}
-
-					if (senhaGerada[0] != null) {
-						novaSenha = senhaGerada[0];
+					String novaSenha = "";
+					if(autenticaPeloBanco) {
+						if (senhaDefinida != null && senhaDefinida.length() > 0) {
+							novaSenha = senhaDefinida;
+						} else {
+							novaSenha = GeraMessageDigest.geraSenha();
+						}
+	
+						if (senhaGerada[0] != null) {
+							novaSenha = senhaGerada[0];
+						}
 					}
 					try {
 						CpIdentidade idNova = new CpIdentidade();
-						final String hashNova = GeraMessageDigest.executaHash(
-								novaSenha.getBytes(), "MD5");
+						String hashNova = "";
+						if(autenticaPeloBanco) {
+							hashNova = GeraMessageDigest.executaHash(novaSenha.getBytes(), "MD5");
+						}
 						idNova.setDscSenhaIdentidade(hashNova);
 						idNova.setNmLoginIdentidade(matricula);
 						idNova.setDpPessoa(pessoa);
@@ -511,60 +519,12 @@ public class CpBL {
 								destinanarios,
 								"Novo Usuário",
 								"",
-								"<table>"
-								+ "<tbody>"
-								+ "<tr>"
-								+ "<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>"
-								+ "<img style='padding: 10px 0px; text-align: center;' src='http://www.documentos.spsempapel.sp.gov.br/siga/imagens/logo-sem-papel-cor.png' "
-								+ "alt='SP Sem Papel' width='108' height='50' /></td>"
-								+ "</tr>"
-								+ "<tr>"
-								+ "<td style='background-color: #bbb; padding: 0 20px;'>"
-								+ "<h3 style='height: 20px;'>Governo do Estado de S&atilde;o Paulo</h3>"
-								+ "</td>"
-								+ "</tr>"
-								+ "<tr style='height: 310px;'>"
-								+ "<td style='height: 310px; padding: 10px 20px;'>"
-								+ "<div>"
-								+ "<p><span style='color: #808080;'>Prezado Servidor(a) "
-								+ "<strong>" + idNova.getDpPessoa().getNomePessoa() + "</strong>"
-								+ " do(a) "
-								+ "<strong>" + idNova.getDpPessoa().getOrgaoUsuario().getDescricao() + "</strong>" 
-								+",</span></h4>"
-								+ "<p><span style='color: #808080;'>Voc&ecirc; est&aacute; recebendo sua matr&iacute;cula e senha para acesso "
-								+ "ao Portal SP Sem Papel, para acesso ao servi&ccedil;o Documentos Digitais.</span></p>"
-								+ "<p><span style='color: #808080;'>Ao usar o portal para cria&ccedil;&atilde;o de documentos, voc&ecirc; est&aacute; "
-								+ "produzindo documento nato-digital, confirme seus dados cadastrais, nome, cargo e unidade "
-								+ "antes de iniciar o uso e assinar documentos.</span></p>"
-								+ "<p><span style='color: #808080;'>Realize sua capacita&ccedil;&atilde;o no AVA e utilize o ambiente "
-								+ "de capacita&ccedil;&atilde;o para testes e treinamento.</span></p>"
-								+ "<p><span style='color: #808080;'>Sua matr&iacute;cula &eacute;:&nbsp;&nbsp;<strong>"
-								+ matricula
-								+ "</strong></span></p>"
-								+ "<p><span style='color: #808080;'>Sua senha &eacute;:&nbsp;&nbsp;<strong>"
-								+ novaSenha
-								+ "</strong></span></p>"
-								+ "</div>"
-								+ "</td>"
-								+ "</tr>"
-								+ "<tr>"
-								+ "<td style='height: 18px; padding: 0 20px; background-color: #eaecee;'>"
-								+ "<p><span style='color: #aaa;'><strong>Aten&ccedil;&atilde;o:</strong> esta &eacute; uma mensagem autom&aacute;tica. Por favor n&atilde;o responda&nbsp;</span></p>"
-								+ "</td>"
-								+ "</tr>"
-								+ "</tbody>"
-								+ "</table>"
-								);
+								textoEmailNovoUsuarioSP(idNova, matricula, novaSenha, autenticaPeloBanco));
 						} else {
 							Correio.enviar(
 								pessoa.getEmailPessoaAtual(),
 								"Novo Usuário",
-								"Seu login é: "
-								+ matricula
-								+ "\n e sua senha é "
-								+ novaSenha
-								+ "\n\n Atenção: esta é uma "
-								+ "mensagem automática. Por favor não responda ");
+								textoEmailNovoUsuario(matricula, novaSenha, autenticaPeloBanco));
 						}
 						dao().commitTransacao();
 						return idNova;
@@ -593,41 +553,134 @@ public class CpBL {
 		}
 
 	}
+	
+    private String textoEmailNovoUsuario(String matricula, String novaSenha, boolean autenticaPeloBanco) {
+    	StringBuffer retorno = new StringBuffer();
 
+    	retorno.append("Seu login é: ");
+		retorno.append(matricula);
+		retorno.append("\n e sua senha é ");
+		if(autenticaPeloBanco) {
+			retorno.append(novaSenha);
+		}	else {
+			retorno.append("a mesma usada para logon na rede (Windows).");
+		}
+		retorno.append("\n\n Atenção: esta é uma ");
+		retorno.append("mensagem automática. Por favor não responda ");
+		
+		return retorno.toString();
+	}
+
+	private String textoEmailNovoUsuarioSP(CpIdentidade identidade, String matricula, String novaSenha, boolean autenticaPeloBanco) {
+		StringBuffer retorno = new StringBuffer();
+
+		retorno.append("<table>");
+		retorno.append("<tbody>");
+		retorno.append("<tr>");
+		retorno.append("<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>");
+		retorno.append("<img style='padding: 10px 0px; text-align: center;' src='http://www.documentos.spsempapel.sp.gov.br/siga/imagens/logo-sem-papel-cor.png' ");
+		retorno.append("alt='SP Sem Papel' width='108' height='50' /></td>");
+		retorno.append("</tr>");
+		retorno.append("<tr>");
+		retorno.append("<td style='background-color: #bbb; padding: 0 20px;'>");
+		retorno.append("<h3 style='height: 20px;'>Governo do Estado de S&atilde;o Paulo</h3>");
+		retorno.append("</td>");
+		retorno.append("</tr>");
+		retorno.append("<tr style='height: 310px;'>");
+		retorno.append("<td style='height: 310px; padding: 10px 20px;'>");
+		retorno.append("<div>");
+		retorno.append("<p><span style='color: #808080;'>Prezado Servidor(a) ");
+		retorno.append("<strong>" + identidade.getDpPessoa().getNomePessoa() + "</strong>");
+		retorno.append(" do(a) ");
+		retorno.append("<strong>" + identidade.getDpPessoa().getOrgaoUsuario().getDescricao() + "</strong>");
+		retorno.append(",</span></h4>");
+		retorno.append("<p><span style='color: #808080;'>Voc&ecirc; est&aacute; recebendo sua matr&iacute;cula e senha para acesso ");
+		retorno.append("ao Portal SP Sem Papel, para acesso ao servi&ccedil;o Documentos Digitais.</span></p>");
+		retorno.append("<p><span style='color: #808080;'>Ao usar o portal para cria&ccedil;&atilde;o de documentos, voc&ecirc; est&aacute; ");
+		retorno.append("produzindo documento nato-digital, confirme seus dados cadastrais, nome, cargo e unidade ");
+		retorno.append("antes de iniciar o uso e assinar documentos.</span></p>");
+		retorno.append("<p><span style='color: #808080;'>Realize sua capacita&ccedil;&atilde;o no AVA e utilize o ambiente ");
+		retorno.append("de capacita&ccedil;&atilde;o para testes e treinamento.</span></p>");
+		retorno.append("<p><span style='color: #808080;'>Sua matr&iacute;cula &eacute;:&nbsp;&nbsp;<strong>");
+		retorno.append(matricula);
+		retorno.append("</strong></span></p>");
+		if(autenticaPeloBanco) {
+			retorno.append("<p><span style='color: #808080;'>Sua senha &eacute;:&nbsp;&nbsp;<strong>");
+			retorno.append(novaSenha);
+			retorno.append("</strong></span></p>");
+		} else {
+	        retorno.append("<p><span style='color: #808080;'>");
+			retorno.append("Sua senha &eacute; a mesma usada para logon na rede (Windows).");
+			retorno.append("</span></p>");
+		}
+		retorno.append("</div>");
+		retorno.append("</td>");
+		retorno.append("</tr>");
+		retorno.append("<tr>");
+		retorno.append("<td style='height: 18px; padding: 0 20px; background-color: #eaecee;'>");
+		retorno.append("<p><span style='color: #aaa;'><strong>Aten&ccedil;&atilde;o:</strong> esta &eacute; uma mensagem autom&aacute;tica. Por favor n&atilde;o responda&nbsp;</span></p>");
+		retorno.append("</td>");
+		retorno.append("</tr>");
+		retorno.append("</tbody>");
+		retorno.append("</table>");		
+		return retorno.toString();
+	}
+
+	private String buscarModoAutenticacao(String orgao) {
+    	String retorno = GiService._MODO_AUTENTICACAO_DEFAULT;
+    	CpPropriedadeBL props = new CpPropriedadeBL();
+    	try {
+			String modo = props.getModoAutenticacao(orgao);
+			if(modo != null) 
+				retorno = modo;
+		} catch (Exception e) {
+		}
+    	return retorno;
+    }
+    
 	public CpIdentidade trocarSenhaDeIdentidade(String senhaAtual,
 			String senhaNova, String senhaConfirma, String nomeUsuario,
 			CpIdentidade idCadastrante) throws NoSuchAlgorithmException,
 			AplicacaoException {
-		if (senhaAtual == null || senhaAtual.trim().length() == 0) {
-			throw new AplicacaoException("Senha atual não confere");
-		}
-		final String hashAtual = GeraMessageDigest.executaHash(
-				senhaAtual.getBytes(), "MD5");
-
-		final CpIdentidade id = dao().consultaIdentidadeCadastrante(
-				nomeUsuario, true);
-		// se o usuário não existir
+		
+		// usuario existe?
+		final CpIdentidade id = dao().consultaIdentidadeCadastrante(nomeUsuario, true);
 		if (id == null)
 			throw new AplicacaoException("O usuário não está cadastrado.");
 
-		boolean podeTrocar = id.getDscSenhaIdentidade().equals(hashAtual);
+		boolean autenticaPeloBanco = buscarModoAutenticacao(id.getCpOrgaoUsuario().getSiglaOrgaoUsu()).equals(GiService._MODO_AUTENTICACAO_BANCO);
+		if(!autenticaPeloBanco)
+			throw new AplicacaoException("O usuário deve modificar sua senha usando a interface do Windows " + 
+										"(acionando as teclas Ctrl, Alt e Del / Delete, opção 'Alterar uma senha')" +
+										", ou entrando em contato com a Central de Atendimento.");
+		
+		// preencheu senha atual?
+		if (senhaAtual == null || senhaAtual.trim().length() == 0) {
+			throw new AplicacaoException("Senha atual não confere");
+		}
+		
+		boolean podeTrocar = false;
+		boolean podeTrocarSenhaAdm = false;
+		
+		podeTrocar = autenticarViaBanco(senhaAtual, id);
 
 		if (!podeTrocar) {
-			// tenta o modo administrador...
+			// tenta o modo administrador... Podendo autenticar o ADM pelo LDAP
 			String servico = "SIGA: Sistema Integrado de Gestão Administrativa;GI: Módulo de Gestão de Identidade;DEF_SENHA: Definir Senha";
 			try {
-				if (Cp.getInstance()
-						.getConf()
-						.podeUtilizarServicoPorConfiguracao(
-								idCadastrante.getDpPessoa(),
-								idCadastrante.getDpPessoa().getLotacao(),
-								servico)) {
-
-					if (hashAtual.equals(idCadastrante.getDscSenhaIdentidade())) {
-						podeTrocar = true;
+				boolean admTrocaSenha = Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(
+																				idCadastrante.getDpPessoa(),
+																				idCadastrante.getDpPessoa().getLotacao(),
+																				servico);
+				if (admTrocaSenha) {
+					if(buscarModoAutenticacao(idCadastrante.getCpOrgaoUsuario().getSiglaOrgaoUsu()).equals(GiService._MODO_AUTENTICACAO_BANCO)) {
+						podeTrocarSenhaAdm = autenticarViaBanco(senhaAtual, idCadastrante);
 					} else {
-						throw new AplicacaoException("Senha atual não confere");
+						podeTrocarSenhaAdm = autenticarViaLdap(senhaAtual, idCadastrante);
 					}
+					
+					if(!podeTrocarSenhaAdm)
+						throw new AplicacaoException("Senha atual não confere");
 
 					try {
 						Correio.enviar(
@@ -661,7 +714,7 @@ public class CpBL {
 			}
 		}
 
-		if (podeTrocar && senhaNova.equals(senhaConfirma)) {
+		if ((podeTrocar || podeTrocarSenhaAdm) && senhaNova.equals(senhaConfirma)) {
 			try {
 				Date dt = dao().consultarDataEHoraDoServidor();
 				CpIdentidade idNova = new CpIdentidade();
@@ -801,6 +854,25 @@ public class CpBL {
 		}
 	}
 
+	private boolean autenticarViaBanco(String senhaAtual, final CpIdentidade id) throws NoSuchAlgorithmException {
+		String hashAtual = GeraMessageDigest.executaHash(senhaAtual.getBytes(), "MD5");
+		return id.getDscSenhaIdentidade().equals(hashAtual);
+	}
+	
+	private boolean autenticarViaLdap(String login, String senhaAtual) {
+		boolean podeTrocar;
+		try {
+			podeTrocar = IntegracaoLdapViaWebService.getInstancia().autenticarUsuario(login, senhaAtual);
+		} catch (Exception e) {
+			podeTrocar = false;
+		}
+		return podeTrocar;
+	}
+
+	private boolean autenticarViaLdap(String senhaAtual, final CpIdentidade id) {
+		return autenticarViaLdap(id.getNmLoginIdentidade(), senhaAtual);
+	}
+
 	public boolean podeAlterarSenha(String auxiliar1, String cpf1,
 			String senha1, String auxiliar2, String cpf2, String senha2,
 			String matricula, String cpf, String novaSenha)
@@ -847,21 +919,14 @@ public class CpBL {
 						"Problema ao localizar a identidade dos auxiliares!");
 			}
 
-			String hashSenha1 = null;
-			String hashSenha2 = null;
-			hashSenha1 = GeraMessageDigest
-					.executaHash(senha1.getBytes(), "MD5");
-			hashSenha2 = GeraMessageDigest
-					.executaHash(senha2.getBytes(), "MD5");
-
 			if (pesAux1.getIdInicial().equals(pesAux2.getIdInicial())
 					|| pesAux1.getIdInicial().equals(pessoa.getIdInicial())
 					|| pesAux2.getIdInicial().equals(pessoa.getIdInicial())) {
 				throw new AplicacaoException("As pessoas devem ser diferentes!");
 			}
 			;
-			if (!cpIdAux1.getDscSenhaIdentidade().equals(hashSenha1)
-					|| !cpIdAux2.getDscSenhaIdentidade().equals(hashSenha2)) {
+			if (!autenticarViaBanco(senha1, cpIdAux1)
+					|| !autenticarViaBanco(senha2, cpIdAux2)) {
 				throw new AplicacaoException("As senhas não conferem!");
 			}
 

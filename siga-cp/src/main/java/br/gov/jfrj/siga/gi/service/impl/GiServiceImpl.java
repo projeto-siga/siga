@@ -18,7 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.gi.service.impl;
 
-import java.security.NoSuchAlgorithmException;
+import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
+
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -37,6 +38,7 @@ import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
+import br.gov.jfrj.siga.cp.bl.CpPropriedadeBL;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -55,29 +57,71 @@ import br.gov.jfrj.siga.gi.service.GiService;
  */
 @WebService(serviceName = "GiService", endpointInterface = "br.gov.jfrj.siga.gi.service.GiService", targetNamespace = "http://impl.service.gi.siga.jfrj.gov.br/")
 public class GiServiceImpl implements GiService {
+	
+    private boolean autenticaViaBanco(CpIdentidade identidade, String senha) {
+    	// caso o campo senha esteja vazio ou nulo, retorna false. 
+    	// Não autentica usuários com senha em branco.
+    	if(identidade.getDscSenhaIdentidade() == null || identidade.getDscSenhaIdentidade().equals("")) 
+    		return false;
+    	
+    	try {
+    		final String hashAtual = GeraMessageDigest.executaHash(senha.getBytes(), "MD5");
+    		if (identidade != null && identidade.getDscSenhaIdentidade().equals(hashAtual)) return true;
+		} catch (Exception e) {
+			return false;
+		}
+    	return false;
+    }
+    
+    private boolean autenticaViaLdap(String matricula, String senha) {
+    	try {
+			return IntegracaoLdapViaWebService.getInstancia().autenticarUsuario(matricula, senha);
+		} catch (Exception e) {
+			return false;
+		}
+    }
+    
+    public String buscarModoAutenticacao(String login) {
+    	CpIdentidade id = null;
+		CpDao dao = CpDao.getInstance();
+		id = dao.consultaIdentidadeCadastrante(login, true);
+		return buscarModoAutenticacao(id);
+    }
 
+    private String buscarModoAutenticacao(CpIdentidade id) {
+    	String orgao = id.getCpOrgaoUsuario().getSiglaOrgaoUsu();
+    	String retorno = _MODO_AUTENTICACAO_DEFAULT;
+    	CpPropriedadeBL props = new CpPropriedadeBL();
+    	try {
+			String modo = props.getModoAutenticacao(orgao);
+			if(modo != null) 
+				retorno = modo;
+		} catch (Exception e) {
+		}
+    	return retorno;
+    }
+    
     @Override
-	public String login(String matricula, String senha) {
+    public String login(String matricula, String senha) {
 		String resultado = "";
+
+		CpIdentidade id = null;
+		CpDao dao = CpDao.getInstance();
+		id = dao.consultaIdentidadeCadastrante(matricula, true);
+		String modoAut = buscarModoAutenticacao(id);
+
 		try {
-			final String hashAtual = GeraMessageDigest.executaHash(
-					senha.getBytes(), "MD5");
-			CpDao dao = CpDao.getInstance();
-
-			DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
-			flt.setSigla(matricula);
-
-		//	DpPessoa p = (DpPessoa) dao.consultarPorSigla(flt);
-			CpIdentidade id = null;
-			id = dao.consultaIdentidadeCadastrante(matricula, true);
-			if (id != null && id.getDscSenhaIdentidade().equals(hashAtual)) {
-				resultado = parseLoginResult(id);
+			if(modoAut.equals(_MODO_AUTENTICACAO_BANCO)) {
+				if (autenticaViaBanco(id, senha)) {
+					resultado = parseLoginResult(id);
+				}
+			} else if(modoAut.equals(_MODO_AUTENTICACAO_LDAP)) {
+				if(autenticaViaLdap(matricula, senha)) {
+					resultado = parseLoginResult(id);
+				}
 			}
 
 		} catch (AplicacaoException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

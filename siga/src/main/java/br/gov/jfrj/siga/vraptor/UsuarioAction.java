@@ -63,6 +63,12 @@ public class UsuarioAction {
 	
 	private String ajaxMsgErro;
 
+	// recuperacao de senha
+	
+	private String emailRecuperacao;
+	
+	private String celularRecuperacao;
+
 	public String getCpf() {
 		return cpf;
 	}
@@ -206,4 +212,20 @@ public class UsuarioAction {
 	public void setAjaxMsgErro(String ajaxMsgErro) {
 		this.ajaxMsgErro = ajaxMsgErro;
 	}
+	public String getEmailRecuperacao() {
+		return emailRecuperacao;
+	}
+
+	public void setEmailRecuperacao(String emailRecuperacao) {
+		this.emailRecuperacao = emailRecuperacao;
+	}
+
+	public String getCelularRecuperacao() {
+		return celularRecuperacao;
+	}
+
+	public void setCelularRecuperacao(String celularRecuperacao) {
+		this.celularRecuperacao = celularRecuperacao;
+	}
+
 }

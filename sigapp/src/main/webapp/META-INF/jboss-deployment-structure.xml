@@ -10,7 +10,7 @@
 			<module name="org.hibernate"/>
 			<module name="org.infinispan" />
 			<module name="org.hibernate.commons-annotations" />
-			<!--   module name="sigadoc.play" export="true" slot="sigapp"/-->
+			<module name="org.javassist" />
 		</dependencies>
 
 	</deployment>

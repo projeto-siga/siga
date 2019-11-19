@@ -366,7 +366,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 			acronimos += "|" + s;
 		}
 
-		final Pattern p2 = Pattern.compile("^TMP-?([0-9]{1,7})");
+		final Pattern p2 = Pattern.compile("^TMP-?([0-9]{1,8})");
 
 		// Edson: testes unitários para esta regex:
 		// https://regex101.com/r/NJidBr/2

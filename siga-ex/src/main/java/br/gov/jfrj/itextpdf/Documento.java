@@ -114,7 +114,7 @@ public class Documento {
 
 
 	static {
-		if (true){
+		if (SigaMessages.isSigaSP()){ //Adequa marcas para SP
 			QRCODE_LEFT_MARGIN_IN_CM = 0.6f;
 			BARCODE_HEIGHT_IN_CM = 2.0f;
 			PAGE_BORDER_IN_CM = 0.5f;
@@ -248,6 +248,7 @@ public class Documento {
 			} else {
 				s = movAssinatura.getDescrMov().trim().toUpperCase();
 				s = s.replace(":", " - ");
+				s = s.replace("EM SUBSTITUIÇÃO A", "em substituição a");
 				s = s.intern();
 			}
 			if (!assinantes.contains(s)) {

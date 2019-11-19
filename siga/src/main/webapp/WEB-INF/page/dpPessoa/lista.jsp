@@ -62,7 +62,7 @@ function cpf_mask(v){
 
 	<!-- main content -->
 	<div class="container-fluid">
-	<form name="frm" action="listar" class="form100" method="GET">
+	<form name="frm" action="listar" id="listar" class="form100" method="GET">
 		<input type="hidden" name="paramoffset" value="0" />
 		<input type="hidden" name="p.offset" value="0" />
 		<div class="card bg-light mb-3" >
@@ -138,6 +138,7 @@ function cpf_mask(v){
 				<div class="row">
 					<div class="col-sm-2">
 						<button type="submit" class="btn btn-primary">Pesquisar</button>
+						<button type="button" class="btn btn-outline-success" title="Exportar para CSV"	onclick="javascript:csv('listar', '/siga/app/pessoa/exportarCsv');"><i class="fa fa-file-csv"></i> Exportar</button>
 					</div>
 				</div>				
 
@@ -208,6 +209,21 @@ function carregarRelacionados(id) {
 	frm.action = 'carregarCombos';
 	frm.submit();
 	frm.method = "GET";
+}
+
+function csv(id, action) {
+	var frm = document.getElementById(id);
+	frm.method = "POST";
+	sbmtAction(id, action);
+	frm.action = 'listar';
+	frm.method = "GET";
+}
+
+function sbmtAction(id, action) {
+	var frm = document.getElementById(id);
+	frm.action = action;
+	frm.submit();
+	return;
 }
 
 $(document).ready(function() {

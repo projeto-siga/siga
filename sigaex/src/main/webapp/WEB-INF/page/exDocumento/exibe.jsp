@@ -811,8 +811,17 @@
 								<b>Suporte:</b> ${docVO.fisicoOuEletronico}
 							</p>
 							<p>
-								<b><fmt:message key="documento.data.assinatura"/>:</b> ${docVO.dtDocDDMMYY}
-								<c:if test="${not empty docVO.originalData}">- <b>original:</b> ${docVO.originalData}</c:if>
+								<b><fmt:message key="documento.data.assinatura"/>:</b> 
+								<c:choose>
+									<c:when test="${siga_cliente=='GOVSP'}">
+										${docVO.dataPrimeiraAssinatura}
+									</c:when>
+									<c:otherwise>
+										${docVO.dtDocDDMMYY}
+										<c:if test="${not empty docVO.originalData}">- <b>original:</b> ${docVO.originalData}</c:if>
+									</c:otherwise>
+								</c:choose>
+								
 							</p>
 							<c:if test="${not empty docVO.originalNumero}">
 								<p>
@@ -914,8 +923,24 @@
 									</p>
 									<ul>
 										<c:forEach var="pessoaOuLota" items="${perfil.value}">
-											<li><c:catch var="exception">${pessoaOuLota.nomePessoa}</c:catch>
-												<c:if test="${not empty exception}">${pessoaOuLota.nomeLotacao}</c:if>
+												<c:catch var="exception">
+													${pessoaOuLota.nomePessoa}
+													<c:if test="${siga_cliente == 'GOVSP'}">
+														&nbsp;&nbsp;&nbsp;
+														<a class="btn btn-sm btn-secondary mb-2 " href="javascript:if(confirm('Tem certeza que deseja exluir marcação?')) location.href='/sigaex/app/expediente/mov/cancelarPerfil?sigla=${docVO.sigla}&idPessoa=${pessoaOuLota.id }';" >
+															Excluir marcação
+														</a><br/>
+													</c:if>
+												</c:catch>
+												<c:if test="${not empty exception}">
+													${pessoaOuLota.nomeLotacao}
+													<c:if test="${siga_cliente == 'GOVSP'}">
+														&nbsp;&nbsp;&nbsp;
+														<a class="btn btn-sm btn-secondary mb-2 " href="javascript:if(confirm('Tem certeza que deseja exluir marcação?')) location.href='/sigaex/app/expediente/mov/cancelarPerfil?sigla=${docVO.sigla}&idLotacao=${pessoaOuLota.id }';" >
+															Excluir marcação
+														</a><br/>
+													</c:if>
+												</c:if>
 											</li>
 										</c:forEach>
 									</ul>

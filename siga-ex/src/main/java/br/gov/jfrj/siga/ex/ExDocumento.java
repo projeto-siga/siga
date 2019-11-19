@@ -49,6 +49,7 @@ import org.apache.xerces.impl.dv.util.Base64;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Formula;
 import org.jboss.logging.Logger;
+import org.mockito.cglib.transform.impl.AddInitTransformer;
 
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -1786,12 +1787,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		String assinantesPorSenha = Documento
 				.getAssinantesStringComMatricula(getAssinaturasPorComSenha());
 
+
 		if (assinantesToken.length() > 0)
 			retorno = "Assinado digitalmente por " + assinantesToken + ".\n";
 		
-		if (assinantesPorSenha.length() > 0)
-			retorno = retorno + "Assinado POR com senha por " + assinantesPorSenha
-					+ ".\n";
+		if (assinantesPorSenha.length() > 0) {
+			retorno = retorno + "Assinado com senha por " + assinantesPorSenha +".\n" ;
+		}
 		
 		if (assinantesSenha.length() > 0)
 			retorno = retorno + "Assinado com senha por " + assinantesSenha

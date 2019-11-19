@@ -1248,6 +1248,50 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<DpPessoa> consultarPessoaComOrgaoFuncaoCargo(final DpPessoa pes) {
+		try {
+			final Query query;
+
+			query = getSessao().getNamedQuery(
+						"consultarPessoaComOrgaoFuncaoCargo");
+
+			query.setString("nome",
+					pes.getNomePessoa().toUpperCase().replace(' ', '%'));
+
+			if(pes.getCpfPessoa() != null && !"".equals(pes.getCpfPessoa())) {
+				query.setLong("cpf", Long.valueOf(pes.getCpfPessoa()));
+			} else {
+				query.setLong("cpf", 0);
+			}
+			
+			if (pes.getOrgaoUsuario() != null)
+				query.setLong("idOrgaoUsu", pes.getOrgaoUsuario().getId());
+			else
+				query.setLong("idOrgaoUsu", 0);
+
+			if (pes.getLotacao() != null)
+				query.setLong("lotacao", pes.getLotacao().getId());
+			else
+				query.setLong("lotacao", 0);
+
+			if (pes.getCargo() != null)
+				query.setLong("cargo", pes.getCargo().getId());
+			else
+				query.setLong("cargo", 0);
+			
+			if (pes.getFuncaoConfianca() != null)
+				query.setLong("funcao", pes.getFuncaoConfianca().getId());
+			else
+				query.setLong("funcao", 0);
+
+			final List<DpPessoa> l = query.list();
+			return l;
+		} catch (final NullPointerException e) {
+			return null;
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<DpPessoa> consultarPorOrgaoUsuDpPessoaInclusiveFechadas(

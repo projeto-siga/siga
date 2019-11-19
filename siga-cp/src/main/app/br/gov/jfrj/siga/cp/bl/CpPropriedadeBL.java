@@ -108,6 +108,6 @@ public class CpPropriedadeBL extends ModeloPropriedade {
 	}
 	
 	public String getModoAutenticacao(String orgao) throws Exception {
-		return System.getProperty("siga.cp.autenticacao." + orgao.toLowerCase() + ".modo");
+		return System.getProperty(getPrefixoModulo() + ".autenticacao." + orgao.toLowerCase() + ".modo");
 	}
 }

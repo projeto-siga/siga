@@ -60,6 +60,7 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.relarmaz.RelArmazenamento;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
@@ -71,7 +72,6 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.SigaExProperties;
-import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelArmazenamento;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelClassificacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelConsultaDocEntreDatas;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocSubordinadosCriados;
@@ -1534,7 +1534,7 @@ public class ExRelatorioController extends ExController {
 	public void relArmazenamento(final Long orgaoPesqId,
 			final DpLotacaoSelecao lotacaoSel,
 			final DpPessoaSelecao usuarioSel, final String dataInicial,
-			final String dataFinal, final boolean getAll, boolean primeiraVez)
+			final String dataFinal, boolean primeiraVez)
 			throws Exception {
 
 		List<CpOrgaoUsuario> listOrgaos = new ArrayList<CpOrgaoUsuario>();
@@ -1544,64 +1544,11 @@ public class ExRelatorioController extends ExController {
 
 			final Map<String, String> parametros = new HashMap<String, String>();
 			Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
-			if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())
-					|| "PD".equals(getTitular().getOrgaoUsuario().getSigla())) {
-				listOrgaos = dao().listarOrgaosUsuarios();
-			} else {
-				CpOrgaoUsuario ou = CpDao.getInstance().consultarPorSigla(
-						getTitular().getOrgaoUsuario());
-				listOrgaos.add(ou);
-			}
+			listOrgaos = dao().listarOrgaosUsuarios();
 
-			if (!primeiraVez) {
-				if (!("ZZ".equals(getTitular().getOrgaoUsuario().getSigla()) || "PD"
-						.equals(getTitular().getOrgaoUsuario().getSigla()))
-						&& !orgaoUsu.equals(orgaoPesqId)) {
-					throw new AplicacaoException(
-							"Não é permitido consultas de outros órgãos.");
-				}
-				consistePeriodo(dataInicial, dataFinal, false);
-				if (orgaoPesqId != 0) {
-					parametros.put("orgao", orgaoPesqId.toString());
-				}
-				if (getAll) {
-					parametros.put("getAll", "true");
-				}
-				parametros.put("lotacao",
-						getRequest().getParameter("lotacaoSel.id"));
-				parametros.put("usuario",
-						getRequest().getParameter("usuarioSel.id"));
-				parametros.put("dataInicial",
-						getRequest().getParameter("dataInicial"));
-				parametros.put("dataFinal", 
-						getRequest().getParameter("dataFinal"));
-				parametros.put("link_siga", linkHttp()
-						+ getRequest().getServerName() + ":"
-						+ getRequest().getServerPort()
-						+ getRequest().getContextPath()
-						+ "/app/expediente/doc/exibir?sigla=");
-
-				final RelArmazenamento rel = new RelArmazenamento(parametros);
-				rel.gerar();
-
-				result.include("getAll", getAll);
-				result.include("orgaoPesqId", orgaoPesqId);
-				result.include("listLinhas", rel.listLinhas);
-				result.include("listColunas", rel.listColunas);
-				result.include("totalDocumentos",
-						rel.totalDocumentos.toString());
-				result.include("totalPaginas", rel.totalPaginas.toString());
-				result.include("totalBlobsDoc", rel.totalBlobsDoc.toString());
-				result.include("totalBlobsAnexos",
-						rel.totalBlobsAnexos.toString());
-			}
 		} catch (AplicacaoException e) {
 			result.include("mensagemCabec", e.getMessage());
 			result.include("msgCabecClass", "alert-danger");
-		}
-
-		if (primeiraVez == false) {
-			result.include("primeiraVez", false);
 		}
 
 		result.include("listOrgaos", listOrgaos);
@@ -1687,114 +1634,50 @@ public class ExRelatorioController extends ExController {
 	
 	@Post
 	@Path("app/expediente/rel/exportCsv")
-	public Download exportCsv(final Long orgaoPesqId,	final DpLotacaoSelecao lotacaoSel,
-				final DpPessoaSelecao usuarioSel, final String dataInicial,
+	public void exportCsv(final Long orgaoPesqId,	final String lotacaoSel,
+				final String usuarioSel, final String dataInicial,
 				final String dataFinal, final boolean getAll, boolean primeiraVez,
 				final String emailDest) throws Exception {
 		List<CpOrgaoUsuario> listOrgaos = new ArrayList<CpOrgaoUsuario>();
 		List<String> listColunas = new ArrayList<String>();
-		List<List<String>> listLinhas = new ArrayList<List<String>>();
+		List<List<String>> listRelatorios = new ArrayList<List<String>>();
 
 		try {
 			assertAcesso(ACESSO_ARMAZ);
 
 			final Map<String, String> parametros = new HashMap<String, String>();
-			Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
-			if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())
-					|| "PD".equals(getTitular().getOrgaoUsuario().getSigla())) {
-				listOrgaos = dao().listarOrgaosUsuarios();
-			} else {
-				CpOrgaoUsuario ou = CpDao.getInstance().consultarPorSigla(
-						getTitular().getOrgaoUsuario());
-				listOrgaos.add(ou);
+
+			consistePeriodo(dataInicial, dataFinal, false);
+			if (orgaoPesqId != 0) {
+				parametros.put("orgao", orgaoPesqId.toString());
 			}
-
-//			if (!primeiraVez) {
-				if (!("ZZ".equals(getTitular().getOrgaoUsuario().getSigla()) || "PD"
-						.equals(getTitular().getOrgaoUsuario().getSigla()))
-						&& !orgaoUsu.equals(orgaoPesqId)) {
-					throw new AplicacaoException(
-							"Não é permitido consultas de outros órgãos.");
-				}
-				consistePeriodo(dataInicial, dataFinal);
-				if (orgaoPesqId != 0) {
-					parametros.put("orgao", orgaoPesqId.toString());
-				}
-				if (getAll) {
-					parametros.put("getAll", "true");
-				}
-				if (!getRequest().getParameter("lotacaoSel.id").equals("")) {
-					parametros.put("lotacao",
-							getRequest().getParameter("lotacaoSel.id"));
-				}
-				if (!getRequest().getParameter("usuarioSel.id").equals("")) {
-					parametros.put("usuario",
-						getRequest().getParameter("usuarioSel.id"));
-				}
-				parametros.put("dataInicial", dataInicial);
-				parametros.put("dataFinal", dataFinal);
-				parametros.put("link_siga", linkHttp()
-						+ getRequest().getServerName() + ":"
-						+ getRequest().getServerPort()
-						+ getRequest().getContextPath()
-						+ "/app/expediente/doc/exibir?sigla=");
-
-				final RelArmazenamento rel = new RelArmazenamento(parametros);
-				rel.gerar();
-				listColunas = rel.listColunas;
-				listLinhas = rel.listLinhas;
-				
-//				result.include("getAll", getAll);
-//				result.include("orgaoPesqId", orgaoPesqId);
-//				result.include("listLinhas", rel.listLinhas);
-//				result.include("listColunas", rel.listColunas);
-//				result.include("totalDocumentos",
-//						rel.totalDocumentos.toString());
-//				result.include("totalPaginas", rel.totalPaginas.toString());
-//				result.include("totalBlobsDoc", rel.totalBlobsDoc.toString());
-//				result.include("totalBlobsAnexos",
-//						rel.totalBlobsAnexos.toString());
-//			}
-		} catch (AplicacaoException e) {
-			result.include("mensagemCabec", e.getMessage());
-			result.include("msgCabecClass", "alert-danger");
-			result.use(Results.page()).forwardTo(
-					"/WEB-INF/page/exRelatorio/relArmazenamento.jsp");
-		}
-
-//		if (primeiraVez == false) {
-//			result.include("primeiraVez", false);
-//		}
-//
-		result.include("listOrgaos", listOrgaos);
-		result.include("lotacaoSel", lotacaoSel);
-		result.include("usuarioSel", usuarioSel);
-		result.include("dataInicial", dataInicial);
-		result.include("dataFinal", dataFinal);
-		
-		InputStream inputStream = null;
-		StringBuffer texto = new StringBuffer();
-		for (String col : listColunas) { 
-			texto.append(col);
-			texto.append(";");
-		}
-		texto.append(System.getProperty("line.separator"));
-		for (List<String> rowCols : listLinhas) { 
-			for (String rowCol : rowCols) { 
-				texto.append(rowCol);
-				texto.append(";");
+			if (lotacaoSel != null) {
+				parametros.put("lotacao", lotacaoSel);
 			}
-			texto.append(System.getProperty("line.separator"));
-		}
-		
-		Correio.enviar(
-				emailDest,
-				"Relatório Armazenamento " + dataInicial + "-" + dataFinal,
-				texto.toString()
-				);
+			if (usuarioSel != null) {
+				parametros.put("usuario", usuarioSel);
+			}
 			
-		inputStream = new ByteArrayInputStream(texto.toString().getBytes("UTF-8"));
-		return new InputStreamDownload(inputStream, "text/csv", "RelDocs" + dataInicial 
-				+ "-" + dataFinal + ".csv");	
+			parametros.put("dataInicial", dataInicial);
+			parametros.put("dataFinal", dataFinal);
+
+			final RelArmazenamento rel = new RelArmazenamento(parametros);
+			rel.gerar();
+			listRelatorios = rel.gerarCsv();
+			String texto = "";
+
+			for (List<String> listRelatorio : listRelatorios) {
+				for (String rowCol : listRelatorio) { 
+					texto += rowCol + System.getProperty("line.separator");
+				}
+				texto += System.getProperty("line.separator");
+			}
+
+			result.use(Results.http()).addHeader("Content-Type", "text/csv")
+			.body(texto.toString()).setStatusCode(200);	
+		} catch (Exception e) {
+			result.use(Results.http()).addHeader("Content-Type", "text/plain")
+				.body(e.getMessage()).setStatusCode(200);
+		}
 	}
 }

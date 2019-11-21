@@ -36,6 +36,7 @@
     	<module>siga-ldap-cli</module>
 		<module>siga-jwt</module>
 		<module>sigatp</module>
+		<module>siga-relarmaz</module>
   </modules>
 
 	<properties>

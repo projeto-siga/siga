@@ -124,5 +124,36 @@
 			return "";
 		}
 	</script>
+	<c:if test="${empty loginMensagem}">
+		<c:set var="avisoTituloCabec" value="Aviso Importante" />
+		<c:set var="avisoCabec" value="${avisoMensagem}" />	
+		<div class="${avisoCabec==null?'d-none':''}" id="avisoCabecId" >
+			<div id="avisoCabecModal" class="modal" tabindex="-1" role="dialog">
+			  <div class="modal-dialog" role="document">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <h5 class="modal-title">${avisoTituloCabec}</h5>
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+			          <span aria-hidden="true">&times;</span>
+			        </button>
+			      </div>
+			      <div class="modal-body">
+			        <p>${avisoCabec}</p>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+		</div>
+		<c:if test="${fAviso}">
+			<script type="text/javascript">
+				$(window).load(function() {
+					$('#avisoCabecModal').modal('show');
+				});
+			</script>
+		</c:if>	
+	</c:if>	
 	<script src="../../javascript/service-worker.js" async></script>
 </siga:pagina>

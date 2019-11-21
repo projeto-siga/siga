@@ -125,8 +125,7 @@
 	</script>
 	<c:if test="${empty loginMensagem}">
 		<c:set var="avisoTituloCabec" value="Aviso Importante" />
-		<c:set var="avisoCabec" value="Prezado usuário, o sistema SPSemPapel passa por instabilidade e a equipe
-			técnica está trabalhando para solucionar o mais rápido possível." />	
+		<c:set var="avisoCabec" value="${avisoMensagem}" />	
 		<div class="${avisoCabec==null?'d-none':''}" id="avisoCabecId" >
 			<div id="avisoCabecModal" class="modal" tabindex="-1" role="dialog">
 			  <div class="modal-dialog" role="document">

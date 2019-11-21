@@ -2,6 +2,7 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <siga:pagina titulo="Lista Orgão Usuário">
 <script type="text/javascript" language="Javascript1.1">
@@ -43,10 +44,11 @@ function sbmt(offset) {
 				<table border="0" class="table table-sm table-striped">
 					<thead class="${thead_color}">
 						<tr>
-							<th algin="center">ID</th>
-							<th align="left">Nome</th>
-							<th align="center">Sigla</th>
-							<th colspan="2" align="center">Op&ccedil;&otilde;es</th>					
+							<th class="text-left w-10">ID</th>
+							<th class="text-left w-60">Nome</th>
+							<th class="text-center w-10">Sigla</th>
+							<th class="text-left w-10">Data Contrato</th>
+							<th colspan="2" class="text-left w-10">Op&ccedil;&otilde;es</th>					
 						</tr>
 					</thead>
 					
@@ -55,14 +57,15 @@ function sbmt(offset) {
 							itens="${itens}" var="orgaoUsuario">
 
 							<tr>
-								<td align="left">${orgaoUsuario.id}</td>
-								<td align="left">${orgaoUsuario.descricao}</td>
-								<td align="left">${orgaoUsuario.sigla}</td>
-								<td align="left">
+								<td class="text-left w-10">${orgaoUsuario[0].id}</td>
+								<td class="text-left w-60">${orgaoUsuario[0].descricao}</td>
+								<td class="text-center w-10">${orgaoUsuario[0].sigla}</td>
+								<td class="text-left w-10"><fmt:formatDate value="${orgaoUsuario[1]}" pattern="dd/MM/yyyy" /></td>
+								<td class="text-left w-10">
 									<c:url var="url" value="/app/orgaoUsuario/editar">
-										<c:param name="id" value="${orgaoUsuario.id}"></c:param>
+										<c:param name="id" value="${orgaoUsuario[0].id}"></c:param>
 									</c:url>
-									<c:if test="${empty orgaoUsuarioSiglaLogado || orgaoUsuarioSiglaLogado eq orgaoUsuario.sigla}">
+									<c:if test="${empty orgaoUsuarioSiglaLogado || orgaoUsuarioSiglaLogado eq orgaoUsuario[0].sigla}">
 									<input type="button" value="Alterar"
 										onclick="javascript:window.location.href='${url}'"
 										class="btn btn-primary">

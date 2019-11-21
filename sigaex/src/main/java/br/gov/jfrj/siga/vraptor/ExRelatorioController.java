@@ -58,6 +58,7 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.relarmaz.RelArmazenamento;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
@@ -1133,8 +1134,9 @@ public class ExRelatorioController extends ExController {
 	@Path("app/expediente/rel/relCobranca")
 	public void relCobranca(final Long orgao,
 			final DpLotacaoSelecao lotacaoSel,
-			final DpPessoaSelecao usuarioSel, String dataInicial,
-			String dataFinal, boolean primeiraVez) throws Exception {
+			final DpPessoaSelecao usuarioSel, final String dataInicial,
+			final String dataFinal, boolean primeiraVez)
+			throws Exception {
 
 		try {
 			assertAcesso(ACESSO_IGESTAO);
@@ -1206,10 +1208,6 @@ public class ExRelatorioController extends ExController {
 		} catch (Exception e) {
 			result.include("mensagemCabec", e.getMessage());
 			result.include("msgCabecClass", "alert-danger");
-		}
-
-		if (primeiraVez == false) {
-			result.include("primeiraVez", false);
 		}
 
 		result.include("lotacaoSel", lotacaoSel);

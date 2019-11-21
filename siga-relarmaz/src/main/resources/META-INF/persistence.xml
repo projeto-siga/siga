@@ -15,6 +15,7 @@
 	        <property name="c3p0.timeout" value="300"/>
 	        <property name="c3p0.max_statements" value="50"/>
 			<property name="hibernate.cache.use_second_level_cache" value="false" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect" />
 		</properties>
 	</persistence-unit>
 </persistence>

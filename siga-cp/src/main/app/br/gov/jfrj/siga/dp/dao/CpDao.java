@@ -2064,6 +2064,7 @@ public class CpDao extends ModeloDao {
 		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpPapel.class);
 		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpUnidadeMedida.class);
 		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpComplexo.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.dp.CpContrato.class);
 
 		// <!--
 		// <mapping resource="br/gov/jfrj/siga/dp/CpTipoMarcador.hbm.xml" />
@@ -2613,5 +2614,89 @@ public class CpDao extends ModeloDao {
         }
     }
 
+	public List<CpOrgaoUsuario> consultarOrgaosMarcadosComo (final Long orgaoUsuId,
+			final Long lotacaoId, final Long usuarioId, Date dataInicial, Date dataFinal, Long idMarcador) {
+		String queryOrgao = "";
+		if (orgaoUsuId != null) {
+			queryOrgao = "and doc.orgaoUsuario.idOrgaoUsu = :orgao ";
+		}
+		String queryLotacao = "";
+		if (lotacaoId != null) {
+			queryLotacao = "and doc.lotaCadastrante.idLotacao in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :idLotacao) ";
+		}
+		String queryUsuario = "";
+		if (usuarioId != null) {
+			queryUsuario = "and mov.cadastrante.idPessoaIni in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :idUsuario) ";
+		}
+		String queryTemp = 
+				"select distinct "
+					+ "(select orgaoUsu from CpOrgaoUsuario orgaoUsu where "
+					+ "		(orgaoUsu1 is null or orgaoUsu.idOrgaoUsu = orgaoUsu1.idOrgaoUsu) "	
+					+ "		and (orgaoUsu2 is null or orgaoUsu.idOrgaoUsu = orgaoUsu2.idOrgaoUsu)) "
+					+ "from ExMarca mar " 
+					+ "inner join mar.exMobil mob " 
+					+ "inner join mob.exDocumento doc "
+					+ "inner join mar.cpMarcador as marcador "
+					+ "left join mar.dpLotacaoIni.orgaoUsuario orgaoUsu1 "
+					+ "left join mar.dpPessoaIni.orgaoUsuario orgaoUsu2 "
+					+ "where doc.dtDoc >= :dtini and doc.dtDoc < :dtfim "
+					+ "		and doc.dtFinalizacao is not null "
+					+ queryOrgao
+					+ queryLotacao
+					+ queryUsuario
+					+ "and marcador.idMarcador = :idMarcador " 
+					+ "and (dt_ini_marca is null or dt_ini_marca < sysdate) " 
+					+ "and (dt_fim_marca is null or dt_fim_marca > sysdate) " 
+				;
+		
+		Query query = getSessao().createQuery(queryTemp);
+				
+		query.setLong("idMarcador", idMarcador);
 
+		if (orgaoUsuId != null) {
+			query.setLong("orgao", orgaoUsuId);
+		}
+		if (lotacaoId != null) {
+			query.setParameter("idLotacao", lotacaoId);
+		}
+		if (usuarioId != null) {
+			query.setParameter("idUsuario", usuarioId);
+		}
+		query.setDate("dtini", dataInicial);
+		Date dtfimMaisUm = new Date(dataFinal.getTime() + 86400000L);
+		query.setDate("dtfim", dtfimMaisUm);
+
+		List<CpOrgaoUsuario> l = query.list();
+
+		if (l.size() == 0) {
+			return null;
+		}
+		return l;
+	}
+
+	public Integer quantidadeDocumentos(DpPessoa pes) {
+		try {
+			SQLQuery sql = (SQLQuery) getSessao().getNamedQuery("quantidadeDocumentos");
+
+			sql.setLong("idPessoaIni", pes.getIdPessoaIni());
+			List result = sql.list();
+			final int l = ((BigDecimal) sql.uniqueResult()).intValue();
+			return l;
+		} catch (final NullPointerException e) {
+			return null;
+		}
+	}
+
+	public Integer consultarQtdeDocCriadosPossePorDpLotacao(Long idLotacao) {
+		try {
+			SQLQuery sql = (SQLQuery) getSessao().getNamedQuery("consultarQtdeDocCriadosPossePorDpLotacao");
+
+			sql.setLong("idLotacao", idLotacao);
+			List result = sql.list();
+			final int l = ((BigDecimal) sql.uniqueResult()).intValue();
+			return l;
+		} catch (final NullPointerException e) {
+			return null;
+		}
+	}
 }

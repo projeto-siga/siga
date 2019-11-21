@@ -54,7 +54,7 @@
 			<div class="card-header"><h5>Cadastro de Órgão Usuário</h5></div>
 				<div class="card-body">
 					<div class="row">
-						<div class="col-sm-2">
+						<div class="col-md-2">
 							<div class="form-group">
 								<label>ID</label>
 								<c:choose>
@@ -70,13 +70,13 @@
 								</c:choose>
 							</div>
 						</div>
-						<div class="col-sm-6">
+						<div class="col-md-6">
 							<div class="form-group">
 								<label>Nome</label>
 								<input type="text" id="nmOrgaoUsuario" name="nmOrgaoUsuario" value="${nmOrgaoUsuario}" maxlength="80" size="80" class="form-control"/>
 							</div>
 						</div>
-						<div class="col-sm-4">
+						<div class="col-md-4">
 							<div class="form-group">
 								<label>Sigla</label>
 								<c:choose>
@@ -88,6 +88,13 @@
 										<input type="hidden" name="siglaOrgaoUsuario" value="${siglaOrgaoUsuario}"/>
 									</c:otherwise>
 								</c:choose>
+							</div>
+						</div>
+						<div class="col-md-2">
+							<div class="form-group">
+								<label>Data de Assinatura do Contrato</label>
+								<input type="text" id="dtContrato" name="dtContrato" value="${dtContrato}" 
+									 onblur="javascript:verifica_data(this,0);" class="form-control"/>
 							</div>
 						</div>
 					</div>

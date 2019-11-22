@@ -359,18 +359,11 @@
 
 		<c:if test="${not empty meusTitulares}">
 			<li class="dropdown-submenu"><a href="javascript:void(0);"
-				class="dropdown-item dropdown-toggle dropleft">Substituir</a>
-				<ul class="dropdown-menu navmenu-large">
+				class="dropdown-item dropdown-toggle">Substituir</a>
+				<div class="dropdown-menu">
 					<c:forEach var="substituicao" items="${meusTitulares}">
 						<div class="dropdown-item" href="#">
-						<li><a class="text-light"
-							style="border-left: 0px; float: right; padding-left: 0.5em; padding-right: 0.5em;"
-							href="javascript:if (confirm('Deseja excluir substituição?')) location.href='/siga/app/substituicao/exclui?id=${substituicao.idSubstituicao}&porMenu=true';">
-								<img style="display: inline;"
-								src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir"
-								onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';"
-								onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';">
-						</a> <a class=""
+						<a class=""
 							href="/siga/app/substituicao/substituirGravar?id=${substituicao.idSubstituicao}">
 								<c:choose>
 									<c:when test="${not empty substituicao.titular}">
@@ -380,11 +373,20 @@
 										${f:maiusculasEMinusculas(substituicao.lotaTitular.lotacaoAtual.nomeLotacao)}
 									</c:otherwise>
 								</c:choose>
-						</a></li>
+						</a>
+						<a class="text-light"
+							style="border-left: 0px; float: right; padding-left: 0.1em; padding-right: 0.1em;"
+							href="javascript:if (confirm('Deseja excluir substituição?')) location.href='/siga/app/substituicao/exclui?id=${substituicao.idSubstituicao}&porMenu=true';">
+								<img style="display: inline;"
+								src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir"
+								onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';"
+								onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';">
+						</a> 
 						</div>
+						
 					</c:forEach>
 
-				</ul></li>
+				</div></li>
 		</c:if>
 
 		<li><c:choose>

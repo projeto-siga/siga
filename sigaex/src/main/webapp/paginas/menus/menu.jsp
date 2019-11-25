@@ -333,11 +333,11 @@
 	</c:if>
 	<script type="text/javascript" language="Javascript1.1">
 		ulRel = document.getElementById('subMenuGestao');
-		if (ulRel.children.length == 0) {
+		if (ulRel !== null && ulRel.children.length == 0) {
 			$('#menuGestao').addClass('d-none');
 		}
 		ulRel = document.getElementById('subMenuRelatorios');
-		if (ulRel.children.length == 0) { 
+		if (ulRel !== null && ulRel.children.length == 0) { 
 			$('#menuRelatorios').addClass('d-none');
 		}
 	</script>

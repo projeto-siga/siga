@@ -245,7 +245,7 @@
 		<dependency>
 			<groupId>br.jus.trf2.xjus</groupId>
 			<artifactId>x-jus-record-api</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>1.0.0</version>
 		</dependency>
 		
 	</dependencies>

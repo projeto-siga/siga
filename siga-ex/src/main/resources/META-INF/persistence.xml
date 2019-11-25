@@ -79,17 +79,16 @@
 			<property name="hibernate.query.substitutions" value="true 1, false 0" />
 			<property name="hibernate.cache.use_second_level_cache"
 				value="true" />
-			<property name="hibernate.cache.infinispan.cachemanager"
+		    <property name="hibernate.cache.infinispan.cachemanager"
 				value="java:jboss/infinispan/container/hibernate" />
-			<property name="hibernate.transaction.manager_lookup_class"
-				value="org.hibernate.transaction.JBossTransactionManagerLookup" />
+			<property name="hibernate.transaction.jta.platform"
+				value="org.hibernate.service.jta.platform.internal.JBossAppServerJtaPlatform" />
 			<property name="hibernate.cache.use_query_cache" value="true" />
 			<property name="hibernate.cache.use_minimal_puts" value="false" />
 			<property name="hibernate.max_fetch_depth" value="3" />
 			<property name="hibernate.default_batch_fetch_size" value="1000" />
 			<property name="hibernate.cache.provider_configuration_file_resource_path"
 				value="classpath:ehcache.xml" />
-			<!-- JBAS011406: Failed to stop persistence unit service during shutdown JBoss EAP 6-->
 			<property name="hibernate.cache.region.factory_class"
 				value="org.jboss.as.jpa.hibernate4.infinispan.InfinispanRegionFactory" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.OracleDialect" />

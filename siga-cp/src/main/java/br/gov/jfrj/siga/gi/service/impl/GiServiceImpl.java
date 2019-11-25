@@ -18,32 +18,25 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.gi.service.impl;
 
-import java.io.IOException;
-import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.jws.WebService;
-import javax.servlet.ServletException;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import com.auth0.jwt.JWTVerifyException;
-
 import br.gov.jfrj.siga.acesso.ConfiguracaoAcesso;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.Texto;
-import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
-import br.gov.jfrj.siga.cp.util.SigaJwt;
+import br.gov.jfrj.siga.cp.util.SigaUtil;
 import br.gov.jfrj.siga.cp.util.TokenException;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
@@ -54,7 +47,6 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.gi.service.GiService;
-import br.gov.jfrj.siga.idp.jwt.SigaJwtProviderException;
 
 /**
  * Esta classe implementa os métodos de gestão de identidade O acesso à esta
@@ -117,8 +109,9 @@ public class GiServiceImpl implements GiService {
 		
 		String resultado = "";
 		try {
-			
-			validarToken(token);
+			if("true".equals(SigaBaseProperties.getString("siga.ws.seguranca.token.jwt")))
+				SigaUtil.getInstance().validarToken(token);
+				
 			if (Pattern.matches("\\d+", cpf) && cpf.length() == 11) {
 				List<CpIdentidade> lista = new CpDao().consultaIdentidadesCadastrante(cpf, Boolean.TRUE);
 				if (!lista.isEmpty()) {
@@ -462,51 +455,6 @@ public class GiServiceImpl implements GiService {
 	}
 
 	/**
-	 * Verifica se o TOKEN é valido JWT.
-	 * @param token
-	 * @return
-	 * @throws TokenException
-	 */
-	public String validarToken(String token) throws TokenException {
-
-		SigaJwt jwtBL;
-		try {
-			jwtBL = inicializarJwtBL(null);
-			token = jwtBL.validar(token);
-
-		} catch (IOException e) {
-			throw new TokenException(TokenException.MSG_EX_TOKEN_INVALIDO);
-		} catch (ServletException e) {
-			throw new TokenException(TokenException.MSG_EX_TOKEN_INVALIDO);
-		} catch (InvalidKeyException e) {
-			throw new TokenException(TokenException.MSG_EX_TOKEN_INVALIDO);
-		} catch (NoSuchAlgorithmException e) {
-			throw new TokenException(TokenException.MSG_EX_TOKEN_INVALIDO);
-		} catch (IllegalStateException e) {
-			throw new TokenException(TokenException.MSG_EX_TOKEN_INVALIDO);
-		} catch (SignatureException e) {
-			throw new TokenException(TokenException.MSG_EX_TOKEN_INVALIDO);
-		} catch (JWTVerifyException e) {
-			throw new TokenException(TokenException.MSG_EX_TOKEN_INVALIDO);
-		}
-
-		return token;
-	}
-
-	private SigaJwt inicializarJwtBL(String modulo) throws IOException, ServletException {
-		SigaJwt jwtBL = null;
-
-		try {
-			jwtBL = SigaJwt.getInstance(modulo);
-		} catch (SigaJwtProviderException e) {
-			throw new ServletException("Erro ao iniciar o provider", e);
-		}
-
-		return jwtBL;
-	}
-
-	// TODO GERADOR DE TOKEN
-	/**
 	 * 1 - Autenticar: logar no Sistema
 	 * 2 - Autorizar: verificar na tabela CP_Configuração se o usuário tem autorização
 	 * 3 - Gerar token
@@ -515,76 +463,20 @@ public class GiServiceImpl implements GiService {
 	public  String gerarToken(String matricula, String senha) throws Exception{
 		CpIdentidade cpIdentidade = new CpIdentidade();
 		String token = "";
-		try {			
-			cpIdentidade = autenticar(matricula, senha);
-			if(cpIdentidade == null)			
-				throw new TokenException("Senha ou matricula invalido !"); 
-			
-			Boolean permissaoWS =  verificaSePessoTemPermissaoWS(cpIdentidade.getDpPessoa());
-			if(!permissaoWS)
-				throw new TokenException("Usuário sem permissão de acesso ao Web Service.");
-			
-			SigaJwt jwtBL = inicializarJwtBL(null);
-			token = jwtBL.criarToken(matricula, null, null, null);
-			if("".equals(token))			
-				throw new TokenException("Erro ao gerar TOKEN.");
+
+		cpIdentidade = SigaUtil.getInstance().autenticar(matricula, senha);
+		if(cpIdentidade == null)			
+			throw new TokenException("Senha ou matricula invalido !"); 
+		
+		Boolean permissaoWS =  SigaUtil.getInstance().verificaSePessoTemPermissaoWS(cpIdentidade.getDpPessoa());
+		if(!permissaoWS)
+			throw new TokenException("Usuário sem permissão de acesso ao Web Service.");
+		
+		token = SigaUtil.getInstance().gerarToken(matricula);
+		if("".equals(token))			
+			throw new TokenException("Erro ao gerar TOKEN.");
 						
-		} catch (IOException e) {
-			
-		} catch (ServletException e) {
-			
-		}
 		return token;
 	}
 	
-	private CpIdentidade autenticar(String matricula, String senha){
-		CpIdentidade cpIdentidade = null;
-		try {
-			CpDao dao = CpDao.getInstance();
-			DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
-			flt.setSigla(matricula);
-			cpIdentidade = dao.consultaIdentidadeCadastrante(matricula, true);
-		} catch (AplicacaoException e) {
-			e.printStackTrace();
-		} 
-		return cpIdentidade;
-	}
-	
-	
-	/**
-	 * Retorna a true se pessoa tiver permissão de acesso ao WS.  
-	 *  
-	 */
-	private Boolean verificaSePessoTemPermissaoWS(DpPessoa dpPessoa) {
-		
-		CpConfiguracao t_cfgConfigExemplo  = new CpConfiguracao();
-		boolean retorno = false;
-		
-		t_cfgConfigExemplo.setDpPessoa(dpPessoa);
-		
-		CpServico p_cpsServico = new CpServico();
-		p_cpsServico.setSiglaServico(CpServico.ACESSO_WEBSERVICE);
-		t_cfgConfigExemplo.setCpServico(p_cpsServico);
-					
-		CpTipoConfiguracao cpT = new CpTipoConfiguracao();
-		cpT.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO);
-		t_cfgConfigExemplo.setCpTipoConfiguracao(cpT);
-		
-		try {
-			List<CpConfiguracao>  ll = CpDao.getInstance().porLotacaoPessoaServicoTipo(t_cfgConfigExemplo);
-			for (CpConfiguracao cpConfiguracao : ll) {
-				if(cpConfiguracao.getCpServico().getSiglaServico().equals(CpServico.ACESSO_WEBSERVICE)){
-					System.out.println("CP:"  + cpConfiguracao.getCpServico().getDescricao());
-					retorno = true;
-				}
-			} 
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		return retorno;
-		
-	}
-
 }

@@ -68,9 +68,9 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 				+ "cpcfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)"),
 		@NamedQuery(name = "consultarCpConfiguracoesPorLotacaoPessoaServicoTipo", query = "from CpConfiguracao cpcfg"
 				+ "	where (cpcfg.dpPessoa.idPessoa = :idPessoa) "
-				+ "	and (cpcfg.lotacao.idLotacao = :idLotacao) "
 				+ "	and (cpcfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao) "
-				+ "	and (cpcfg.cpServico.idServico = :idServico)"
+				+ "	and (cpcfg.cpServico.siglaServico = :siglaServico)"
+				+ "	and (cpcfg.cpSituacaoConfiguracao.idSitConfiguracao = :idSitConfiguracao)"
 				+ "	and hisDtFim is null"),
 		@NamedQuery(name = "consultarCpConfiguracoesPorServico", query = "from CpConfiguracao cpcfg where  (cpcfg.cpServico.idServico = :idServico) and hisDtFim is null"),
 		@NamedQuery(name = "consultarCpConfiguracoesPorPessoa", query = "from CpConfiguracao cpcfg where (cpcfg.dpPessoa.idPessoa = :idPessoa) and hisDtFim is null"),

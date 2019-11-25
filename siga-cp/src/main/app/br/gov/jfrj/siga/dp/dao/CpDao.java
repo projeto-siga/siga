@@ -1762,10 +1762,9 @@ public class CpDao extends ModeloDao {
 		Query query = getSessao().getNamedQuery(
 				"consultarCpConfiguracoesPorLotacaoPessoaServicoTipo");
 		query.setLong("idPessoa", exemplo.getDpPessoa().getIdPessoa());
-		query.setLong("idLotacao", exemplo.getLotacao().getIdLotacao());
-		query.setLong("idTpConfiguracao", exemplo.getCpTipoConfiguracao()
-				.getIdTpConfiguracao());
-		query.setLong("idServico", exemplo.getCpServico().getIdServico());
+		query.setLong("idTpConfiguracao", exemplo.getCpTipoConfiguracao().getIdTpConfiguracao());
+		query.setString("siglaServico", exemplo.getCpServico().getSiglaServico());
+		query.setLong("idSitConfiguracao", CpSituacaoConfiguracao.SITUACAO_PODE);
 		// kpf: com o cache true, as configuracoes sao exibidas de forma forma
 		// errada apos a primeira
 		query.setCacheable(false);

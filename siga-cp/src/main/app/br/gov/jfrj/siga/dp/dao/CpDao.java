@@ -1762,10 +1762,9 @@ public class CpDao extends ModeloDao {
 		Query query = getSessao().getNamedQuery(
 				"consultarCpConfiguracoesPorLotacaoPessoaServicoTipo");
 		query.setLong("idPessoa", exemplo.getDpPessoa().getIdPessoa());
-		query.setLong("idLotacao", exemplo.getLotacao().getIdLotacao());
-		query.setLong("idTpConfiguracao", exemplo.getCpTipoConfiguracao()
-				.getIdTpConfiguracao());
-		query.setLong("idServico", exemplo.getCpServico().getIdServico());
+		query.setLong("idTpConfiguracao", exemplo.getCpTipoConfiguracao().getIdTpConfiguracao());
+		query.setString("siglaServico", exemplo.getCpServico().getSiglaServico());
+		query.setLong("idSitConfiguracao", CpSituacaoConfiguracao.SITUACAO_PODE);
 		// kpf: com o cache true, as configuracoes sao exibidas de forma forma
 		// errada apos a primeira
 		query.setCacheable(false);
@@ -2117,6 +2116,7 @@ public class CpDao extends ModeloDao {
 		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpPapel.class);
 		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpUnidadeMedida.class);
 		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpComplexo.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.dp.CpContrato.class);
 
 		// <!--
 		// <mapping resource="br/gov/jfrj/siga/dp/CpTipoMarcador.hbm.xml" />
@@ -2676,8 +2676,8 @@ public class CpDao extends ModeloDao {
 					+ "inner join mar.exMobil mob " 
 					+ "inner join mob.exDocumento doc "
 					+ "inner join mar.cpMarcador as marcador "
-					+ "full join mar.dpLotacaoIni.orgaoUsuario orgaoUsu1 "
-					+ "full join mar.dpPessoaIni.orgaoUsuario orgaoUsu2 "
+					+ "left join mar.dpLotacaoIni.orgaoUsuario orgaoUsu1 "
+					+ "left join mar.dpPessoaIni.orgaoUsuario orgaoUsu2 "
 					+ "where doc.dtDoc >= :dtini and doc.dtDoc < :dtfim "
 					+ "		and doc.dtFinalizacao is not null "
 					+ queryOrgao

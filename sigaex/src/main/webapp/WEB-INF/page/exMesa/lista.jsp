@@ -144,8 +144,7 @@
 			{{acessos[1].datahora}} no endereço {{acessos[1].ip}}.</p>
 	</div>
 
-	<script type="text/javascript"
-		src="https://unpkg.com/vue@2.6.10/dist/vue.min.js"></script>
+	<script type="text/javascript" src="../javascript/vue.min.js"></script>
 
 
 	<script type="text/javascript" language="Javascript1.1">

@@ -9,7 +9,6 @@
 
 <siga:pagina titulo="Relatório">
 	<script type="text/javascript" language="Javascript1.1">
-
 		function downloadCSV(csv, filename) {
 			var link = window.document.createElement("a");
 			link.setAttribute("href", "data:text/csv;charset=utf-8,%EF%BB%BF" + encodeURI(csv));
@@ -18,32 +17,63 @@
 			link.click();
 		}	
 		function exportCsv(){
+        	var $msgCabecalho = $(".alert");
+        	$msgCabecalho.on("close.bs.alert", function () {
+        	      $msgCabecalho.hide();
+        	      return false;
+        	});
 		    var frmRel = document.getElementById("frmRelatorios");
 		    var fd = new FormData(frmRel);
 			$.ajax({
 		        url: "/sigaex/app/expediente/rel/exportCsv",
 		        type: "POST",
 		        dataType: "csv",
-		        data: fd,
-		        cache: false,
-		        processData: false,
-		        contentType: false, 
-		        success: function(result){
+		        data: { orgaoPesqId: document.getElementById("orgaoPesqId").value,
+			        lotacaoSel: document.getElementsByName("lotacaoSel.id")[0].value,
+			        usuarioSel: document.getElementsByName("usuarioSel.id")[0].value,
+			        dataInicial: document.getElementsByName("dataInicial")[0].value,
+			        dataFinal: document.getElementsByName("dataFinal")[0].value,
 		        },
 		        beforeSend: function(){
-		            $('.alert').text("Gerando arquivo CSV...");
-		            $('.alert').closest(".row").css({display:"block alert alert-warning"});
+		        	var buttonClose = $('.alert').find('button').clone();
+		            $('.alert').text("Gerando arquivo CSV...").prepend(buttonClose);
+		            $('.alert').removeClass("alert-success");
+		            $('.alert').removeClass("alert-danger");
+		            $('.alert').addClass("alert-warning");
+		            $('.alert').closest(".row").removeClass("d-none");
 		        },
-		        complete: function(data){
-				    var csv = [];
-		            csv.push(data.responseText);
-				    downloadCSV(csv.join("\n"), "DocRelatorio.csv");
-		        	
-		            $('.alert').closest(".row").css({display:"none"});
+		        complete: function(response, status, request){
+		        	var buttonClose = $('.alert').find('button').clone();
+			        cType = response.getResponseHeader('Content-Type');
+			        if (cType && cType.indexOf('text/plain') !== -1) {
+			            $('.alert').text(response.responseText).prepend(buttonClose);
+			            $('.alert').removeClass("alert-success");
+			            $('.alert').removeClass("alert-warning");
+			            $('.alert').addClass("alert-danger");
+				    } else {
+					    var csv = [];
+			            csv.push(response.responseText);
+			            orgSel = document.getElementById("orgaoPesqId");
+			            var opt;
+			            for ( var i = 0, len = orgSel.options.length; i < len; i++ ) {
+			                opt = orgSel.options[i];
+			                if ( opt.selected === true ) {
+			                    break;
+			                }
+			            }		            
+					    downloadCSV(csv.join("\n"), "Documentos Por Orgao - "   
+							    + document.getElementsByName("dataInicial")[0].value + " - " 
+							    + document.getElementsByName("dataFinal")[0].value + " - " + opt.text + ".csv");
+			            $('.alert').text("Download do arquivo CSV concluído.").prepend(buttonClose);
+			            $('.alert').removeClass("alert-warning");
+			            $('.alert').removeClass("alert-danger");
+			            $('.alert').addClass("alert-success");
+				    }
 		        },
 		        timeout: 600000
 		    });
 		}
+		
 	</script>
 
 	<!-- main content -->
@@ -55,7 +85,7 @@
 				<h5>Relatório de Cobrança - Órgão ${lotaTitular.orgaoUsuario.descricaoMaiusculas}</h5>
 			</div>
 			<div class="card-body d-flex">
-				<form name="frmRelatorios" id="frmRelatorios" action="/sigaex/app/expediente/rel/exportCsv" theme="simple" method="POST">
+				<form name="frmRelatorios" id="frmRelatorios" action="/sigaex/app/expediente/rel/relArmazenamento" theme="simple" method="POST">
 					<div class="row">
 						<div class="col-md-6">
 							<div class="form-group">
@@ -75,26 +105,14 @@
 							</div>					
 						</div>
 						<jsp:include page="relGestaoInput.jsp" />
-						<div class="col-sm-2">
-							<div class="form-group">
-								<div class="form-check form-check-inline mt-4">
-									<input type="checkbox" name="getAll" ${getAll ? 'checked=\'checked\'' : ''}	 />
-									<label class="form-check-label ml-1" for="getAll">Sem Dados de Compactação</label>
-								</div>
-							</div>
-						</div>
 					</div>
 					<div class="row">
-						<div class="form-group col-sm-6">
-							<input type="text" name="emailDest" class="form-control" />
-						</div>
-					</div>
-					<div class="row">
-						<div class="form-group col-sm-4">
-							<input type="button" value="Pesquisar" class="btn btn-primary mt-auto" onclick="javascript:exportCsv();"/>
+						<div class="form-group col-md-4">
+							<input type="button" value="Pesquisar" onclick="javascript:exportCsv();" class="btn btn-primary mt-auto" />
 							<input type="button" value="Voltar" onclick="javascript:history.back();" class="btn btn-cancel ml-2 mt-auto" />
 						</div>
 					</div>
+					<input type="hidden" name="nmOrgaoUsu" id="nmOrgaoUsu" value="${nmOrgaoUsu}">
 				</form>
 			</div>
 		</div>

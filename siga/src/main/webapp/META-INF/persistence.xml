@@ -47,6 +47,7 @@
 		<class>br.gov.jfrj.siga.cp.CpAcesso</class>
 		<class>br.gov.jfrj.siga.dp.DpVisualizacao</class>
 		<class>br.gov.jfrj.siga.dp.DpVisualizacaoAcesso</class>
+		<class>br.gov.jfrj.siga.dp.CpContrato</class>
 
 		<properties>
 			<property name="hibernate.current_session_context_class"
@@ -56,8 +57,8 @@
 				value="true" />
 			<property name="hibernate.cache.infinispan.cachemanager"
 				value="java:jboss/infinispan/container/hibernate" />
-			<property name="hibernate.transaction.manager_lookup_class"
-				value="org.hibernate.transaction.JBossTransactionManagerLookup" />
+			<property name="hibernate.transaction.jta.platform"
+				value="org.hibernate.service.jta.platform.internal.JBossAppServerJtaPlatform" />
 			<property name="hibernate.cache.use_query_cache" value="true" />
 			<property name="hibernate.cache.use_minimal_puts" value="false" />
 			<property name="hibernate.max_fetch_depth" value="3" />
@@ -67,7 +68,7 @@
 			<property name="hibernate.show_sql" value="false" />
 			<property name="hibernate.cache.region.factory_class"
 				value="org.jboss.as.jpa.hibernate4.infinispan.InfinispanRegionFactory" />
-			<property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.OracleDialect" />
 			<property name="hibernate.hbm2ddl.auto" value="none" />
 			<property name="hibernate.show_sql" value="false" />
 

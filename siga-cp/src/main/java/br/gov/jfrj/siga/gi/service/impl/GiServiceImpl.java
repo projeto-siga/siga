@@ -22,7 +22,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import javax.jws.WebMethod;
 import javax.jws.WebService;
 
 import org.codehaus.jettison.json.JSONArray;
@@ -32,10 +31,13 @@ import org.codehaus.jettison.json.JSONObject;
 import br.gov.jfrj.siga.acesso.ConfiguracaoAcesso;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.util.SigaUtil;
+import br.gov.jfrj.siga.cp.util.TokenException;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
@@ -103,12 +105,15 @@ public class GiServiceImpl implements GiService {
 	}
 
 	@Override
-	public String perfilAcessoPorCpf(String cpf) {
+	public String perfilAcessoPorCpf(String cpf, String token) {
+		
 		String resultado = "";
 		try {
+			if("true".equals(SigaBaseProperties.getString("siga.ws.seguranca.token.jwt")))
+				SigaUtil.getInstance().validarToken(token);
+				
 			if (Pattern.matches("\\d+", cpf) && cpf.length() == 11) {
-				List<CpIdentidade> lista = new CpDao()
-						.consultaIdentidadesCadastrante(cpf, Boolean.TRUE);
+				List<CpIdentidade> lista = new CpDao().consultaIdentidadesCadastrante(cpf, Boolean.TRUE);
 				if (!lista.isEmpty()) {
 					resultado = parseAcessosResult(lista);
 				} else {
@@ -120,7 +125,9 @@ public class GiServiceImpl implements GiService {
 
 		} catch (AplicacaoException e) {
 			e.printStackTrace();
-		}
+		} catch (TokenException e) {			
+			resultado = e.getMessage(); 
+		} 
 		return resultado;
 	}
 
@@ -446,4 +453,30 @@ public class GiServiceImpl implements GiService {
 				.getBL()
 				.inativarUsuario(idUsuario);
 	}
+
+	/**
+	 * 1 - Autenticar: logar no Sistema
+	 * 2 - Autorizar: verificar na tabela CP_Configuração se o usuário tem autorização
+	 * 3 - Gerar token
+	 */
+	@Override
+	public  String gerarToken(String matricula, String senha) throws Exception{
+		CpIdentidade cpIdentidade = new CpIdentidade();
+		String token = "";
+
+		cpIdentidade = SigaUtil.getInstance().autenticar(matricula, senha);
+		if(cpIdentidade == null)			
+			throw new TokenException("Senha ou matricula invalido !"); 
+		
+		Boolean permissaoWS =  SigaUtil.getInstance().verificaSePessoTemPermissaoWS(cpIdentidade.getDpPessoa());
+		if(!permissaoWS)
+			throw new TokenException("Usuário sem permissão de acesso ao Web Service.");
+		
+		token = SigaUtil.getInstance().gerarToken(matricula);
+		if("".equals(token))			
+			throw new TokenException("Erro ao gerar TOKEN.");
+						
+		return token;
+	}
+	
 }

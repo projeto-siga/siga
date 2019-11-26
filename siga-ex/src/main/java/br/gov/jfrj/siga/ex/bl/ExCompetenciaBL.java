@@ -1972,7 +1972,12 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			final DpLotacao lotaTitular, final ExMobil mob) {
 		if (!mob.isVia())
 			return false;
-		if (!mob.getExDocumento().isPendenteDeAssinatura())
+		if (!mob.getExDocumento().isPendenteDeAssinatura() && (SigaBaseProperties.getString("siga.local") == null || !"GOVSP".equals(SigaBaseProperties.getString("siga.local"))))		
+			return false;
+		if (!mob.getExDocumento().getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA).isEmpty()  && (!mob.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA).isEmpty() ||
+				!mob.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA).isEmpty() || !mob.getExDocumentoFilhoSet().isEmpty() ||
+				!mob.getJuntados(Boolean.TRUE).isEmpty()) &&
+				(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))))
 			return false;
 		final ExMovimentacao exUltMovNaoCanc = mob
 				.getUltimaMovimentacaoNaoCancelada();

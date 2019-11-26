@@ -60,9 +60,7 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
-import br.gov.jfrj.relarmaz.RelArmazenamento;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -113,7 +111,6 @@ public class ExRelatorioController extends ExController {
 	private static final String ACESSO_RELDEVPROGRAMADA = "RELDEVPROGRAMADA:Relatório de documentos devolção programada";
 	private static final String ACESSO_TRAMESP = "TRAMESP: Tempo Médio de Tramitação Por Espécie Documental";
 	private static final String ACESSO_VOLTRAMMOD = "VOLTRAMMOD: Volume de Tramitação Por Nome do Documento";
-	private static final String ACESSO_ARMAZ = "ARMAZ:Relatório de Páginas e Armazenamento Por Documento";
 	private static final String ACESSO_RELTEMPOMEDIOSITUACAO = "RELTEMPOMEDIOSITUACAO:Tempo médio por Situação";
 	private static final String APPLICATION_PDF = "application/pdf";
 	
@@ -1529,35 +1526,6 @@ public class ExRelatorioController extends ExController {
 				"relDocumentosPorVolumeDetalhes");
 	}
 
-	@Get
-	@Path("app/expediente/rel/relArmazenamento")
-	public void relArmazenamento(final Long orgaoPesqId,
-			final DpLotacaoSelecao lotacaoSel,
-			final DpPessoaSelecao usuarioSel, final String dataInicial,
-			final String dataFinal, boolean primeiraVez)
-			throws Exception {
-
-		List<CpOrgaoUsuario> listOrgaos = new ArrayList<CpOrgaoUsuario>();
-
-		try {
-			assertAcesso(ACESSO_ARMAZ);
-
-			final Map<String, String> parametros = new HashMap<String, String>();
-			Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
-			listOrgaos = dao().listarOrgaosUsuarios();
-
-		} catch (AplicacaoException e) {
-			result.include("mensagemCabec", e.getMessage());
-			result.include("msgCabecClass", "alert-danger");
-		}
-
-		result.include("listOrgaos", listOrgaos);
-		result.include("lotacaoSel", lotacaoSel);
-		result.include("usuarioSel", usuarioSel);
-		result.include("dataInicial", dataInicial);
-		result.include("dataFinal", dataFinal);
-	}
-
 	protected void assertAcesso(final String pathServico) {
 		super.assertAcesso("REL:Gerar relatórios;" + pathServico);
 	}
@@ -1630,54 +1598,5 @@ public class ExRelatorioController extends ExController {
 			orgaoSelId = orgaoUsu;
 		}
 		return orgaoSelId;
-	}
-	
-	@Post
-	@Path("app/expediente/rel/exportCsv")
-	public void exportCsv(final Long orgaoPesqId,	final String lotacaoSel,
-				final String usuarioSel, final String dataInicial,
-				final String dataFinal, final boolean getAll, boolean primeiraVez,
-				final String emailDest) throws Exception {
-		List<CpOrgaoUsuario> listOrgaos = new ArrayList<CpOrgaoUsuario>();
-		List<String> listColunas = new ArrayList<String>();
-		List<List<String>> listRelatorios = new ArrayList<List<String>>();
-
-		try {
-			assertAcesso(ACESSO_ARMAZ);
-
-			final Map<String, String> parametros = new HashMap<String, String>();
-
-			consistePeriodo(dataInicial, dataFinal, false);
-			if (orgaoPesqId != 0) {
-				parametros.put("orgao", orgaoPesqId.toString());
-			}
-			if (lotacaoSel != null) {
-				parametros.put("lotacao", lotacaoSel);
-			}
-			if (usuarioSel != null) {
-				parametros.put("usuario", usuarioSel);
-			}
-			
-			parametros.put("dataInicial", dataInicial);
-			parametros.put("dataFinal", dataFinal);
-
-			final RelArmazenamento rel = new RelArmazenamento(parametros);
-			rel.gerar();
-			listRelatorios = rel.gerarCsv();
-			String texto = "";
-
-			for (List<String> listRelatorio : listRelatorios) {
-				for (String rowCol : listRelatorio) { 
-					texto += rowCol + System.getProperty("line.separator");
-				}
-				texto += System.getProperty("line.separator");
-			}
-
-			result.use(Results.http()).addHeader("Content-Type", "text/csv")
-			.body(texto.toString()).setStatusCode(200);	
-		} catch (Exception e) {
-			result.use(Results.http()).addHeader("Content-Type", "text/plain")
-				.body(e.getMessage()).setStatusCode(200);
-		}
 	}
 }

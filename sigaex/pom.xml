@@ -218,11 +218,6 @@
 			<groupId>siga</groupId>
 			<artifactId>siga-ext</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>siga</groupId>
-			<artifactId>siga-relarmaz</artifactId>
-			<version>1.2-SNAPSHOT</version>
-		</dependency>
 
 		<dependency>
 			<groupId>siga</groupId>

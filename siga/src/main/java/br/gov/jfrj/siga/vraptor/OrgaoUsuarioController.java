@@ -39,7 +39,7 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 		}
 		CpOrgaoUsuarioDaoFiltro orgaoUsuario = new CpOrgaoUsuarioDaoFiltro();
 		orgaoUsuario.setNome(nome);
-		setItens(CpDao.getInstance().consultarPorFiltro(orgaoUsuario, paramoffset, 15));
+		setItens(CpDao.getInstance().consultarPorFiltroComContrato(orgaoUsuario, paramoffset, 15));
 		result.include("itens", getItens());
 		result.include("tamanho", dao().consultarQuantidade(orgaoUsuario));
 		result.include("nome", nome);

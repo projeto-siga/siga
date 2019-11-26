@@ -99,6 +99,7 @@ import br.gov.jfrj.siga.model.CarimboDeTempo;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.DaoFiltro;
+import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -350,6 +351,38 @@ public class CpDao extends ModeloDao {
 		try {
 			final Query query = getSessao().getNamedQuery(
 					"consultarPorFiltroCpOrgaoUsuario");
+			if (offset > 0) {
+				query.setFirstResult(offset);
+			}
+			if (itemPagina > 0) {
+				query.setMaxResults(itemPagina);
+			}
+			String s = o.getNome();
+			if (s != null)
+				s = s.replace(' ', '%');
+			query.setString("nome", s);
+
+			query.setCacheable(true);
+			query.setCacheRegion(CACHE_QUERY_HOURS);
+
+			final List<CpOrgaoUsuario> l = query.list();
+			return l;
+		} catch (final NullPointerException e) {
+			return null;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CpOrgaoUsuario> consultarPorFiltroComContrato(
+			final CpOrgaoUsuarioDaoFiltro o, final int offset,
+			final int itemPagina) {
+		try {
+			Query query = HibernateUtil
+					.getSessao()
+					.createQuery("select org, (select dtContrato from CpContrato contrato "
+							+ " where contrato.idOrgaoUsu = org.idOrgaoUsu) from CpOrgaoUsuario org "
+							+ " where (upper(org.nmOrgaoUsu) like upper('%' || :nome || '%'))"
+							+ "	order by org.nmOrgaoUsu");
 			if (offset > 0) {
 				query.setFirstResult(offset);
 			}

@@ -261,11 +261,27 @@
 				<c:if
  					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;RELDOCVOL: Relatório de documentos por volume')}">
 					<li><a class="dropdown-item"
- 						href="/sigaex/app/expediente/rel/relDocumentosPorVolume?primeiraVez=true">
- 							Documentos por Volume </a></li>
- 				</c:if>
-<!-- 				<li><a class="dropdown-item" href="#"> Documentos Fora do -->
-<!-- 						Prazo </a></li> -->
+						href="/sigaex/app/expediente/rel/relDocumentosPorVolume?primeiraVez=true">
+							Documentos por Volume </a></li>
+				</c:if>
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;RELFORAPRAZO:Relatório de documentos fora do prazo')}">
+					<li><a class="dropdown-item"
+						href="/sigaex/app/expediente/rel/relDocumentosForaPrazo?primeiraVez=true">
+							Documentos Fora do Prazo </a></li>
+				</c:if>
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;RELDEVPROGRAMADA:Relatório de documentos devolção programada')}">
+					<li><a class="dropdown-item"
+						href="/sigaex/app/expediente/rel/relDocumentosDevolucaoProgramada?primeiraVez=true">
+							Documentos por Devolução Programada </a></li>
+				</c:if>
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;RELTEMPOMEDIOSITUACAO:Tempo médio por Situação')}">
+					<li><a class="dropdown-item"
+						href="/sigaex/app/expediente/rel/relTempoMedioSituacao?primeiraVez=true">
+							Tempo médio por Situação </a></li>
+				</c:if>
 
 <!-- 				<li><a class="dropdown-item" href="#"> Documentos por -->
 <!-- 						Devolução Programada </a></li> -->

@@ -6,22 +6,24 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Cadastro de configuração">
-
-	<script type="text/javascript" language="Javascript1.1">
-		$(document).ready(function() {
-			alteraTipoDaForma();
-			setTimeout("alteraForma()", 5000);
-		});
+<siga:pagina titulo="Cadastro de configuração">	
+	<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
+	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
+	
+	<script type="text/javascript" language="Javascript1.1">	
+		$(document).ready(function() {					
+			alteraTipoDaForma();			
+			setTimeout("alteraForma()", 5000);												
+		});			
 
 		function alteraTipoDaForma() {
 			ReplaceInnerHTMLFromAjaxResponse(
 					'${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_formas?tipoForma='
 							+ document.getElementById('tipoForma').value
 							+ '&idFormaDoc=' + '${idFormaDoc}', null, document
-							.getElementById('comboFormaDiv'), function() {alteraForma()});
+							.getElementById('comboFormaDiv'), function() {alteraForma()});						
 		}
-
+		
 		function alteraForma() {
 			// console.log('altera-forma', document.getElementById('idFormaDoc').value)
 			var especie
@@ -34,17 +36,63 @@
 				modelo = inpModelo.value
 			// if (modelo === undefined)
 			// 	modelo = '';
-
+							
 			ReplaceInnerHTMLFromAjaxResponse(
 					'${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_modelos?forma='
 							+ especie + '&idMod=' + modelo, null, document
-							.getElementById('comboModeloDiv'));
+							.getElementById('comboModeloDiv'), function() {transformarComboDeModelos()});						
 		}
+					
+		function transformarComboDeModelos() {
+			var theme = "bootstrap";
+			var width = "resolve";
+			var language = "pt-BR";
+			var matcher = function(argument, selectOptionText) {
+		        if ($.trim(argument.term) === '') {
+		            return selectOptionText;
+		        }
+		        if (typeof selectOptionText === 'undefined') {
+		            return null;
+		        }
+		        var args = argument.term.toString();
+		        var texto = selectOptionText.text.toString().toLowerCase();
+		        var non_asciis = {'a': '[àáâãäå]', 'c': 'ç', 'e': '[èéêë]', 'i': '[ìíîï]', 'n': 'ñ', 'o': '[òóôõö]', 'u': '[ùúûűü]'};
+		        for (i in non_asciis) { texto = texto.toLowerCase().replace(new RegExp(non_asciis[i], 'g'), i); }
+		        
+		    	var terms = (args + "").split(" ");
+		        var strRegex = "";
+		        for (var i=0; i < terms.length; i++){
+		        	if (terms[i] != "") { 
+		            	var strRegex = strRegex + "(?=.*" + terms[i] + ")";
+		        	}
+		        }
+		        var tester = new RegExp(strRegex, "i");
+		        if (tester.test(texto) || tester.test(selectOptionText.text) ){
+		            var modifiedData = $.extend({}, selectOptionText, true);
+		            return modifiedData;
+		        } else {
+		        	return null;
+		        }
+		    };	       
+			
+		    $('#idMod').select2({
+		        matcher: matcher,
+		       	theme: theme,
+		    	width: width,
+		    	language: language
+		    });
+		    $('#idModGroup').on('keyup', function(event) {
+		        if (event.key == "Escape") {
+		       		$('#idMod').val('0');
+		       		$('#idMod').trigger('change');
+		        }	        	       
+		    });  			    			   
+		}	
 
 		function sbmt() {
 			editar_gravar = '${pageContext.request.contextPath}/app/expediente/configuracao/editar';
 			editar_gravar.submit();
-		}
+		}							
 	</script>
 
 	<body onload="aviso()">
@@ -222,13 +270,13 @@
 												<input type="hidden" name="idFormaDoc" value="${idFormaDoc}" />
 												${config.exFormaDocumento.descrFormaDoc}
 											</c:when>
-											<c:otherwise>
+											<c:otherwise>											
 												<div style="display: inline" id="comboModeloDiv"></div>
 											</c:otherwise>
 										</c:choose>
 									</div>
-								</div>
-							</div>
+								</div>																																									
+							</div>							
 							<div class="row">
 								<div class="col-sm-12">
 									<div class="form-group">
@@ -237,9 +285,7 @@
 											modulo="sigaex" urlAcao="buscar" urlSelecionar="selecionar" />
 									</div>
 								</div>
-							</div>
-							
-							
+							</div>														
 							<div class="row">
 								<div class="col-sm-6">
 									<div class="form-group">
@@ -291,6 +337,8 @@
 					</div>
 				</form>
 			</div>
-		</div>
+		</div>		
+	<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+	<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>					
 	</body>
 </siga:pagina>

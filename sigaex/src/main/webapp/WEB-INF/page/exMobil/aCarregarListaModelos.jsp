@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
-<div class="form-group">
+<div class="form-group" id="idModGroup">
 	<label><fmt:message key="documento.modelo2"/></label> 
 	<select class="form-control" id="idMod" name="idMod">
 		<c:forEach items="${modelos}" var="item">

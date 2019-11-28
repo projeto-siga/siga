@@ -56,9 +56,7 @@ function cpf_mask(v){
 
 <siga:pagina titulo="Listar Pessoas">
 	<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
-	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
-	<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
-	<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />	
 
 	<!-- main content -->
 	<div class="container-fluid">
@@ -76,7 +74,7 @@ function cpf_mask(v){
 					<div class="col-md-4">
 						<div class="form-group" id="idOrgaoUsuGroup">
 							<label for="idOrgaoUsu">Órgão</label>
-							<select class="form-control" id="idOrgaoUsu" name="idOrgaoUsu" value="${idOrgaoUsu}" onchange="carregarRelacionados(this.value)">
+							<select class="form-control siga-select2" id="idOrgaoUsu" name="idOrgaoUsu" value="${idOrgaoUsu}" onchange="carregarRelacionados(this.value)">
 								<c:forEach items="${orgaosUsu}" var="item">
 									<option value="${item.idOrgaoUsu}"
 										${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
@@ -90,7 +88,7 @@ function cpf_mask(v){
 					<div class="col-md-2">
 						<div class="form-group" id="idCargoGroup">
 							<label for="idCargoPesquisa">Cargo</label>
-							<select class="form-control" id="idCargoPesquisa" name="idCargoPesquisa" value="${idCargoPesquisa}">
+							<select class="form-control  siga-select2" id="idCargoPesquisa" name="idCargoPesquisa" value="${idCargoPesquisa}">
 								<c:forEach items="${listaCargo}" var="item">
 									<option value="${item.idCargo}"
 										${item.idCargo == idCargoPesquisa ? 'selected' : ''}>
@@ -102,7 +100,7 @@ function cpf_mask(v){
 					<div class="col-md-2">
 						<div class="form-group" id="idFuncaoGroup">
 							<label for="idFuncaoPesquisa">Fun&ccedil;&atilde;o de Confian&ccedil;a</label>
-							<select class="form-control" id="idFuncaoPesquisa" name="idFuncaoPesquisa" value="${idFuncaoPesquisa}">
+							<select class="form-control  siga-select2" id="idFuncaoPesquisa" name="idFuncaoPesquisa" value="${idFuncaoPesquisa}">
 								<c:forEach items="${listaFuncao}" var="item">
 									<option value="${item.idFuncao}"
 										${item.idFuncao == idFuncaoPesquisa ? 'selected' : ''}>
@@ -114,7 +112,7 @@ function cpf_mask(v){
 					<div class="col-md-4" >
 						<div class="form-group" id="idLotacaoGroup">
 							<label for="idLotacaoPesquisa"><fmt:message key="usuario.lotacao"/></label>
-							<select class="form-control" id="idLotacaoPesquisa" style="width: 100%"  
+							<select class="form-control  siga-select2" id="idLotacaoPesquisa" style="width: 100%"  
 									name="idLotacaoPesquisa" value="${idLotacaoPesquisa}">
 								<c:forEach items="${listaLotacao}" var="item">
 									<option value="${item.idLotacao}" ${item.idLotacao == idLotacaoPesquisa ? 'selected' : ''}>
@@ -245,120 +243,40 @@ function cpf_mask(v){
 	  </div>
 	</div>
 
+<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
 <script>
-function carregarRelacionados(id) {
-	frm.method = "POST";
-	frm.action = 'carregarCombos';
-	frm.submit();
-	frm.method = "GET";
-}
-
-function csv(id, action) {
-	var frm = document.getElementById(id);
-	frm.method = "POST";
-	sbmtAction(id, action);
-	frm.action = 'listar';
-	frm.method = "GET";
-}
-
-function sbmtAction(id, action) {
-	var frm = document.getElementById(id);
-	frm.action = action;
-	frm.submit();
-	return;
-}
-
-function atualizarUrlDeInativarPessoa(url){	
-	$('.btn-confirmacao-inativacao-cadastro').attr("href", url);		
-}
-
-$(document).ready(function() {
-	var theme = "bootstrap";
-	var width = "resolve";
-	var language = "pt-BR";
-	var matcher = function(argument, selectOptionText) {
-        if ($.trim(argument.term) === '') {
-            return selectOptionText;
-        }
-        if (typeof selectOptionText === 'undefined') {
-            return null;
-        }
-        var args = argument.term.toString();
-        var texto = selectOptionText.text.toString().toLowerCase();
-        var non_asciis = {'a': '[àáâãäå]', 'c': 'ç', 'e': '[èéêë]', 'i': '[ìíîï]', 'n': 'ñ', 'o': '[òóôõö]', 'u': '[ùúûűü]'};
-        for (i in non_asciis) { texto = texto.toLowerCase().replace(new RegExp(non_asciis[i], 'g'), i); }
-        
-    	var terms = (args + "").split(" ");
-        var strRegex = "";
-        for (var i=0; i < terms.length; i++){
-        	if (terms[i] != "") { 
-            	var strRegex = strRegex + "(?=.*" + terms[i] + ")";
-        	}
-        }
-        var tester = new RegExp(strRegex, "i");
-        if (tester.test(texto) || tester.test(selectOptionText.text) ){
-            var modifiedData = $.extend({}, selectOptionText, true);
-            return modifiedData;
-        } else {
-        	return null;
-        }
-    };	
-    
-    $('#idOrgaoUsu').select2({
-        matcher: matcher,
-       	theme: theme,
-    	width: width,
-    	language: language
-    });
-    $('#idOrgaoUsuGroup').on('keyup', function(event) {
-        if (event.key == "Escape") {
-       		$('#idOrgaoUsu').val('0');
-       		$('#idOrgaoUsu').trigger('change');
-        }
-    });
-    
-    $('#idCargoPesquisa').select2({
-        matcher: matcher,
-        theme: theme,
-    	width: width,
-    	language: language
-    });
-    $('#idCargoGroup').on('keyup', function(event) {
-        if (event.key == "Escape") {
-       		$('#idCargoPesquisa').val('0');
-       		$('#idCargoPesquisa').trigger('change');
-        }
-    });
-    
-    $('#idFuncaoPesquisa').select2({
-        matcher: matcher,
-        theme: theme,
-    	width: width,
-    	language: language
-    });
-    $('#idFuncaoGroup').on('keyup', function(event) {
-        if (event.key == "Escape") {
-       		$('#idFuncaoPesquisa').val('0');
-       		$('#idFuncaoPesquisa').trigger('change');
-        }
-    });
+	function carregarRelacionados(id) {
+		frm.method = "POST";
+		frm.action = 'carregarCombos';
+		frm.submit();
+		frm.method = "GET";
+	}
 	
-    $('#idLotacaoPesquisa').select2({
-        matcher: matcher,
-       	theme: theme,
-    	width: width,
-    	language: language
-    });
-    $('#idLotacaoGroup').on('keyup', function(event) {
-        if (event.key == "Escape") {
-       		$('#idLotacaoPesquisa').val('0');
-       		$('#idLotacaoPesquisa').trigger('change');
-        }
-    });  
-    
-    $(function () {
-		$('[data-toggle="tooltip"]').tooltip()
+	function csv(id, action) {
+		var frm = document.getElementById(id);
+		frm.method = "POST";
+		sbmtAction(id, action);
+		frm.action = 'listar';
+		frm.method = "GET";
+	}
+	
+	function sbmtAction(id, action) {
+		var frm = document.getElementById(id);
+		frm.action = action;
+		frm.submit();
+		return;
+	}
+	
+	function atualizarUrlDeInativarPessoa(url){	
+		$('.btn-confirmacao-inativacao-cadastro').attr("href", url);		
+	}
+	
+	$(document).ready(function() {				    
+	    $(function () {
+			$('[data-toggle="tooltip"]').tooltip()
+		});
 	});
-});
 </script>
 </siga:pagina>

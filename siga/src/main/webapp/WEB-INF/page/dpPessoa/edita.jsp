@@ -152,9 +152,7 @@
 
 <siga:pagina titulo="Cadastro de Pessoa">
 	<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
-	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
-	<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
-	<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />	
 
 	<!-- main content -->
 	<div class="container-fluid">
@@ -170,7 +168,7 @@
 					<div class="col-md-4">
 						<div class="form-group">
 							<label for="idOrgaoUsu">&Oacute;rg&atilde;o</label>
-							<select name="idOrgaoUsu" value="${idOrgaoUsu}"  onchange="carregarRelacionados(this.value)" class="form-control">
+							<select name="idOrgaoUsu" value="${idOrgaoUsu}"  onchange="carregarRelacionados(this.value)" class="form-control  siga-select2">
 								<c:forEach items="${orgaosUsu}" var="item">
 									<option value="${item.idOrgaoUsu}"
 										${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
@@ -182,7 +180,7 @@
 					<div class="col-md-2">
 						<div class="form-group">
 							<label for="idCargo">Cargo</label>
-							<select name="idCargo" value="${idCargo}" class="form-control">
+							<select name="idCargo" value="${idCargo}" class="form-control  siga-select2">
 								<c:forEach items="${listaCargo}" var="item">
 									<option value="${item.idCargo}"
 										${item.idCargo == idCargo ? 'selected' : ''}>
@@ -194,7 +192,7 @@
 					<div class="col-md-2">
 						<div class="form-group">
 							<label for="idFuncao">Fun&ccedil;&atilde;o de Confian&ccedil;a</label>
-							<select id="idFuncao" name="idFuncao" value="${idFuncao}" class="form-control">
+							<select id="idFuncao" name="idFuncao" value="${idFuncao}" class="form-control  siga-select2">
 								<c:forEach items="${listaFuncao}" var="item">
 									<option value="${item.idFuncao}"
 										${item.idFuncao == idFuncao ? 'selected' : ''}>
@@ -206,7 +204,7 @@
 					<div class="col-md-4">
 						<div class="form-group" id="idLotacaoGroup">
 							<label for="idLotacao"><fmt:message key="usuario.lotacao"/></label>
-							<select id="idLotacao" style="width: 100%" name="idLotacao" value="${idLotacao}" class="form-control">
+							<select id="idLotacao" style="width: 100%" name="idLotacao" value="${idLotacao}" class="form-control  siga-select2">
 								<c:forEach items="${listaLotacao}" var="item">
 									<option value="${item.idLotacao}" ${item.idLotacao == idLotacao ? 'selected' : ''}>
 										<c:if test="${item.descricao ne 'Selecione'}">${item.siglaLotacao} / </c:if>${item.descricao}
@@ -289,7 +287,9 @@
 		</div>
 	</div>
 </siga:pagina>
-
+<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
 <script>
 function voltar() {
 	frm.action = 'listar';
@@ -313,45 +313,4 @@ function carregarRelacionados(id) {
 		*/
 
 }
-
-$(document).ready(function() {
-    $('#idLotacao').select2({
-        matcher: function(argument, selectOptionText) {
-            if ($.trim(argument.term) === '') {
-                return selectOptionText;
-            }
-            if (typeof selectOptionText === 'undefined') {
-                return null;
-            }
-            var args = argument.term.toString();
-            var texto = selectOptionText.text.toString().toLowerCase();
-            var non_asciis = {'a': '[àáâãäå]', 'c': 'ç', 'e': '[èéêë]', 'i': '[ìíîï]', 'n': 'ñ', 'o': '[òóôõö]', 'u': '[ùúûűü]'};
-            for (i in non_asciis) { texto = texto.toLowerCase().replace(new RegExp(non_asciis[i], 'g'), i); }
-            
-        	var terms = (args + "").split(" ");
-            var strRegex = "";
-            for (var i=0; i < terms.length; i++){
-            	if (terms[i] != "") { 
-                	var strRegex = strRegex + "(?=.*" + terms[i] + ")";
-            	}
-            }
-            var tester = new RegExp(strRegex, "i");
-            if (tester.test(texto) || tester.test(selectOptionText.text) ){
-                var modifiedData = $.extend({}, selectOptionText, true);
-                return modifiedData;
-            } else {
-            	return null;
-            }
-        },
-        theme: "bootstrap",
-    	width: "resolve",
-    	language: "pt-BR"
-    });
-    $('#idLotacaoGroup').on('keyup', function(event) {
-        if (event.key == "Escape") {
-       		$('#idLotacao').val('0');
-       		$('#idLotacao').trigger('change');
-        }
-    });
-});	
 </script>

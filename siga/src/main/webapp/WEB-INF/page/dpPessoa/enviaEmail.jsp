@@ -75,6 +75,9 @@ function cpf_mask(v){
 </script>
 
 <siga:pagina titulo="Listar Pessoas">
+<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
+<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
+
 	<!-- main content -->
 	<div class="container-fluid">
 	<form name="frm" id="enviarEmail" action="enviarEmail" class="form100" method="GET">
@@ -90,7 +93,7 @@ function cpf_mask(v){
 					<div class="col-md-4">
 						<div class="form-group">
 							<label for="uidOrgaoUsu">Órgão</label>
-							<select name="idOrgaoUsu" value="${idOrgaoUsu}" onchange="carregarRelacionados(this.value)" class="form-control">
+							<select name="idOrgaoUsu" value="${idOrgaoUsu}" onchange="carregarRelacionados(this.value)" class="form-control  siga-select2">
 								<option value="0">Selecione</option> 
 								<c:forEach items="${orgaosUsu}" var="item">
 									<option value="${item.idOrgaoUsu}"
@@ -103,7 +106,7 @@ function cpf_mask(v){
 					<div class="col-md-3">
 						<div class="form-group">
 							<label for="idLotacaoPesquisa">Lota&ccedil;&atilde;o</label>
-							<select name="idLotacaoPesquisa" value="${idLotacaoPesquisa}" class="form-control">
+							<select name="idLotacaoPesquisa" value="${idLotacaoPesquisa}" class="form-control  siga-select2">
 								<c:forEach items="${listaLotacao}" var="item">
 									<option value="${item.idLotacao}"
 										${item.idLotacao == idLotacaoPesquisa ? 'selected' : ''}>
@@ -218,4 +221,8 @@ function carregarRelacionados(id) {
 	frm.method = "GET";
 }
 </script>
+
+<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
 </siga:pagina>

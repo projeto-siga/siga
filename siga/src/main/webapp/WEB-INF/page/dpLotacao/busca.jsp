@@ -20,6 +20,9 @@
 </script>
 
 <siga:pagina titulo="Busca de Órgão Integrado" popup="true">
+<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
+<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
+
 	<!-- main content -->
 	<div class="container-fluid">
 		<div class="card bg-light mb-3" >
@@ -45,7 +48,7 @@
 					<div class="col-sm">
 						<div class="form-group">
 							<label for="idOrgaoUsu">Órgão</label>
-							<select name="idOrgaoUsu" value="${idOrgaoUsu}" class="form-control" >
+							<select name="idOrgaoUsu" value="${idOrgaoUsu}" class="form-control  siga-select2" >
 									<option value="${item.idOrgaoUsu}" >[Todos]</option>
 									<c:forEach items="${orgaosUsu}" var="item">
 										<option value="${item.idOrgaoUsu}"
@@ -87,4 +90,8 @@
 			</siga:paginador>
 		</table>
 	</div>
+	
+<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>	
 </siga:pagina>

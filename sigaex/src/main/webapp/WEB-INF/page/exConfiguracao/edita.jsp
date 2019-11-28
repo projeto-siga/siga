@@ -7,9 +7,9 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <siga:pagina titulo="Cadastro de configuração">	
-	<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
-	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
-	
+<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
+<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
+		
 	<script type="text/javascript" language="Javascript1.1">	
 		$(document).ready(function() {					
 			alteraTipoDaForma();			
@@ -21,7 +21,7 @@
 					'${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_formas?tipoForma='
 							+ document.getElementById('tipoForma').value
 							+ '&idFormaDoc=' + '${idFormaDoc}', null, document
-							.getElementById('comboFormaDiv'), function() {alteraForma()});						
+							.getElementById('comboFormaDiv'), function() {transformarEmSelect2(null, '#idFormaDoc', '#idFormaDocGroup');alteraForma()});						
 		}
 		
 		function alteraForma() {
@@ -40,54 +40,8 @@
 			ReplaceInnerHTMLFromAjaxResponse(
 					'${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_modelos?forma='
 							+ especie + '&idMod=' + modelo, null, document
-							.getElementById('comboModeloDiv'), function() {transformarComboDeModelos()});						
-		}
-					
-		function transformarComboDeModelos() {
-			var theme = "bootstrap";
-			var width = "resolve";
-			var language = "pt-BR";
-			var matcher = function(argument, selectOptionText) {
-		        if ($.trim(argument.term) === '') {
-		            return selectOptionText;
-		        }
-		        if (typeof selectOptionText === 'undefined') {
-		            return null;
-		        }
-		        var args = argument.term.toString();
-		        var texto = selectOptionText.text.toString().toLowerCase();
-		        var non_asciis = {'a': '[àáâãäå]', 'c': 'ç', 'e': '[èéêë]', 'i': '[ìíîï]', 'n': 'ñ', 'o': '[òóôõö]', 'u': '[ùúûűü]'};
-		        for (i in non_asciis) { texto = texto.toLowerCase().replace(new RegExp(non_asciis[i], 'g'), i); }
-		        
-		    	var terms = (args + "").split(" ");
-		        var strRegex = "";
-		        for (var i=0; i < terms.length; i++){
-		        	if (terms[i] != "") { 
-		            	var strRegex = strRegex + "(?=.*" + terms[i] + ")";
-		        	}
-		        }
-		        var tester = new RegExp(strRegex, "i");
-		        if (tester.test(texto) || tester.test(selectOptionText.text) ){
-		            var modifiedData = $.extend({}, selectOptionText, true);
-		            return modifiedData;
-		        } else {
-		        	return null;
-		        }
-		    };	       
-			
-		    $('#idMod').select2({
-		        matcher: matcher,
-		       	theme: theme,
-		    	width: width,
-		    	language: language
-		    });
-		    $('#idModGroup').on('keyup', function(event) {
-		        if (event.key == "Escape") {
-		       		$('#idMod').val('0');
-		       		$('#idMod').trigger('change');
-		        }	        	       
-		    });  			    			   
-		}	
+							.getElementById('comboModeloDiv'), function() {transformarEmSelect2(null, '#idMod', '#idModGroup')});						
+		}							
 
 		function sbmt() {
 			editar_gravar = '${pageContext.request.contextPath}/app/expediente/configuracao/editar';
@@ -265,7 +219,7 @@
 													value="${config.exModelo.id}" />
 													${config.exModelo.descMod}
 											</c:when>
-											<c:when
+											<c:when												
 												test="${campoFixo && not empty config.exFormaDocumento}">
 												<input type="hidden" name="idFormaDoc" value="${idFormaDoc}" />
 												${config.exFormaDocumento.descrFormaDoc}
@@ -337,8 +291,17 @@
 					</div>
 				</form>
 			</div>
-		</div>		
+		</div>				
+	<script>
+		$(document).ready(function() {								
+			$('[name=idTpConfiguracao]').addClass('siga-select2');
+			$('[name=idOrgaoUsu]').addClass('siga-select2');
+			$('[name=idTpMov]').addClass('siga-select2');		
+			$('[name=idOrgaoObjeto]').addClass('siga-select2');			
+		});
+	</script>
 	<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
-	<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>					
+	<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+	<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>					
 	</body>
 </siga:pagina>

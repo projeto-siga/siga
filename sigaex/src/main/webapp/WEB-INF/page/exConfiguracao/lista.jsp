@@ -5,6 +5,8 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <siga:pagina titulo="Lista Configurações">
+<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
+<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
 
 <script type="text/javascript">
 	function sbmt(id, action) {
@@ -72,4 +74,13 @@
 		
 	</div>
 	
+<script>
+	$(document).ready(function() {
+		$('[name=idTpConfiguracao]').addClass('siga-select2');
+		$('[name=idOrgaoUsu]').addClass('siga-select2');
+	});	
+</script>	
+<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>	
 </siga:pagina>

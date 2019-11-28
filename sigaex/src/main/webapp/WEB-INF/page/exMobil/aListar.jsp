@@ -15,7 +15,7 @@
 				'${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_formas?tipoForma='
 						+ document.getElementById('tipoForma').value
 						+ '&idFormaDoc=' + '${idFormaDoc}', null, document
-						.getElementById('comboFormaDiv'))
+						.getElementById('comboFormaDiv'), function() {transformarEmSelect2(null, '#idFormaDoc', '#idFormaDocGroup')})
 	}
 
 	function alteraForma() {
@@ -23,8 +23,8 @@
 				'${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_modelos?forma='
 						+ document.getElementById('idFormaDoc').value
 						+ '&idMod='	+ '${idMod}', null, document
-						.getElementById('comboModeloDiv'))
-	}
+						.getElementById('comboModeloDiv'), function() {transformarEmSelect2(null, '#idMod', '#idModGroup')})
+	}		
 
 	function sbmtAction(id, action) {
 		var frm = document.getElementById(id);
@@ -333,6 +333,9 @@
 </script>
 
 <siga:pagina titulo="Lista de Expedientes" popup="${popup}">
+	<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
+	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
+	
 	<div class="container-fluid content mb-3">
 		<div class="card bg-light mb-3">
 			<div class="card-header">
@@ -374,7 +377,8 @@
 						</div>
 
 						<div class="form-group col-md-2">
-							<label for="ultMovTipoResp"><fmt:message key="usuario.pessoa"/>/<fmt:message key="usuario.lotacao"/></label> <select
+							<label for="ultMovTipoResp"><fmt:message key="usuario.pessoa"/>/<fmt:message key="usuario.lotacao"/></label> 
+							<select
 								class="form-control" id="ultMovTipoResp" name="ultMovTipoResp"
 								onchange="javascript:alteraAtendente();">
 								<c:forEach items="${listaTipoResp}" var="item">
@@ -416,8 +420,8 @@
 
 					<div class="form-row">
 						<div class="form-group col-md-3">
-							<label for="orgaoUsu">Órgão</label> <select class="form-control"
-								id="orgaoUsu" name="orgaoUsu">
+							<label for="orgaoUsu">Órgão</label> 
+							<select class="form-control  siga-select2" id="orgaoUsu" name="orgaoUsu">
 								<option value="0">[Todos]</option>
 								<c:forEach items="${orgaosUsu}" var="item">
 									<option value="${item.idOrgaoUsu}"
@@ -457,7 +461,8 @@
 					<div id="trTipo" style="display:${idTpDoc == 3 ? 'none' : ''}"
 						class="form-row">
 						<div class="form-group col-md-3 ${hide_only_GOVSP}">
-							<label for="tipoForma">Tipo da Espécie</label> <select
+							<label for="tipoForma">Tipo da Espécie</label> 
+							<select
 								class="form-control" id="tipoForma" name="idTipoFormaDoc"
 								onchange="javascript:alteraTipoDaForma();">
 								<option value="0">[Todos]</option>
@@ -472,8 +477,8 @@
 						<div class="form-group col-md-3">
 							<div style="display: inline" id="comboFormaDiv"></div>
 							<script type="text/javascript">
-									alteraTipoDaForma();
-								</script>
+								alteraTipoDaForma();
+							</script>
 						</div>
 
 						<div class="form-group col-md-6">
@@ -697,13 +702,16 @@
 			<input type="button" value="Voltar" onclick="javascript:history.back();" class="btn btn-primary" /><br>
 		</c:if>
 	</div>
+	<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+	<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+	<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
 	<script>
 		alteraOrigem();
 	</script>
 	<c:if test="${siga_cliente == 'GOVSP'}">
 		<script>
 		$(document).ready(function() {
-			alteraTipoDaForma()
+			alteraTipoDaForma()					
 		});
 		</script>
 	</c:if>

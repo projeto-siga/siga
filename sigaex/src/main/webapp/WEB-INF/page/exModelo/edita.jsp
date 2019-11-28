@@ -7,6 +7,8 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/modelostag" prefix="mod"%>
 
+<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
+<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
 <link rel="stylesheet" href="/siga/codemirror/lib/codemirror.css" />
 <link rel="stylesheet" href="/siga/codemirror/theme/default.css" />
 
@@ -95,7 +97,7 @@
 						<div class="col-sm-6">
 							<div class="form-group">
 								<label>Espécie</label>
-								<select name="forma" value="${forma}" class="custom-select">
+								<select name="forma" value="${forma}" class="custom-select  siga-select2">
 									<c:forEach var="item" items="${listaForma}">
 										<option value="${item.idFormaDoc}"
 											${item.idFormaDoc == forma ? 'selected' : ''}>${item.descrFormaDoc}</option>
@@ -221,6 +223,9 @@
 	</div>
 	</c:if>
 
+	<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+	<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+	<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
 	<script> 
 		var editor = null;
 		function sbmt() {
@@ -347,6 +352,6 @@
 			                
 			            });
 			});
-	</script>
+	</script>	
 
 </siga:pagina>

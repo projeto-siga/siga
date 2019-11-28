@@ -42,7 +42,6 @@
   <mapping class="br.gov.jfrj.siga.cp.CpComplexo"/>
   <mapping class="br.gov.jfrj.siga.dp.CpLocalidade"/>
   <mapping class="br.gov.jfrj.siga.dp.CpUF"/>
-  <mapping class="br.gov.jfrj.siga.dp.CpContrato"/>
   <mapping class="br.gov.jfrj.siga.cp.CpConfiguracao"/>
   <mapping class="br.gov.jfrj.siga.cp.CpServico"/>
   <mapping class="br.gov.jfrj.siga.cp.CpTipoConfiguracao"/>

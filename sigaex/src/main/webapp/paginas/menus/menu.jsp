@@ -293,12 +293,6 @@
 							Documentos por Devolução Programada </a></li>
 				</c:if>
 				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;ARMAZ:Relatório de Páginas e Armazenamento Por Documento')}">
-					<li><a class="dropdown-item"
-						href="/sigaex/app/expediente/rel/relArmazenamento?primeiraVez=true">Relatório
-							de Páginas e Armazenamento Por Documento </a></li>
-				</c:if>
-				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;RELTEMPOMEDIOSITUACAO:Tempo médio por Situação')}">
 					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/rel/relTempoMedioSituacao?primeiraVez=true">

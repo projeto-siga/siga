@@ -20,16 +20,12 @@ import javax.persistence.Persistence;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
-import ar.com.fdvs.dj.domain.builders.DJBuilderException;
-import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
-import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
-import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
-	public class RelArmazenamento extends RelatorioTemplate {
+	public class RelArmazenamento {
  
 		private static Logger logger = Logger.getLogger(RelArmazenamento.class);
 		
@@ -37,37 +33,29 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 		public List<List<String>> listLinhas;
 		public Long totalDocumentos;
 		public Long totalPaginas;
+		private Map<String, String> parametros;
 
-		public RelArmazenamento (Map parametros) throws DJBuilderException {
-			super(parametros);
+		public RelArmazenamento (Map parm) throws Exception {
+			parametros = parm;
 			if (parametros.get("dataInicial") == null) {
-				throw new DJBuilderException("Parâmetro dataInicial não informado!");
+				throw new AplicacaoException("Parâmetro dataInicial não informado!");
 			}
 			if (parametros.get("dataFinal") == null) {
-				throw new DJBuilderException("Parâmetro dataFinal não informado!");
+				throw new AplicacaoException("Parâmetro dataFinal não informado!");
 			}
 			listColunas = new ArrayList<String>();
 			listLinhas = new ArrayList<List<String>>();
+			configurarRelatorio();
 		}
 
-		@Override
-		public AbstractRelatorioBaseBuilder configurarRelatorio()
-				throws DJBuilderException {
+		public void configurarRelatorio() throws Exception {
 
-			this.setTitle("Relatório de Documentos Produzidos Por Órgão");
 			this.listColunas.add("Sigla Órgão");
 			this.listColunas.add("Órgão");
 			this.listColunas.add("Sigla Unidade");
 			this.listColunas.add("Unidade");
 			this.listColunas.add("Qtd. de Documentos + Anexos");
 			this.listColunas.add("Soma de Páginas");
-			this.addColuna("Sigla Órgão", 15, RelatorioRapido.ESQUERDA, false);
-			this.addColuna("Órgão", 25, RelatorioRapido.ESQUERDA, false);
-			this.addColuna("Sigla Unidade", 15, RelatorioRapido.ESQUERDA, false);
-			this.addColuna("Unidade", 25, RelatorioRapido.ESQUERDA, false);
-			this.addColuna("Qtd. de Documentos + Anexos", 10, RelatorioRapido.DIREITA, false);
-			this.addColuna("Soma de Páginas", 10, RelatorioRapido.DIREITA, false);
-			return this;
 		}
 		
 		public List<List<String>> gerarCsv() throws Exception {
@@ -115,7 +103,6 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 			return listCsv;
 		}
 		
-		@Override
 		public Collection processarDados() throws Exception {
 
 			List<String> d = new ArrayList<String>();
@@ -407,7 +394,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 			parametros.put("dataFinal", dtFim); 
 	
 			final RelArmazenamento rel = new RelArmazenamento(parametros);
-			rel.gerar();
+			rel.processarDados();
 			List<List<String>> listCsv = rel.gerarCsv();
 			for (List<String> csvContent : listCsv) {
 				try {
@@ -459,8 +446,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 					SigaBaseProperties.getString(parmServidor + ".hibernate.connection.password"));
 			addedOrOverridenProperties.put("hibernate.connection.driver_class",
 					SigaBaseProperties.getString(parmServidor + ".hibernate.connection.driver_class"));
-			addedOrOverridenProperties.put("hibernate.search.indexing_strategy", "manual");
-
+			
 			addedOrOverridenProperties.put("hibernate.connection.provider_class",
 					"org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider");			
 			addedOrOverridenProperties.put("c3p0.min_size", 

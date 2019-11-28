@@ -1893,17 +1893,19 @@ public class ExDao extends CpDao {
 	
 	public List listarDocumentosPorPessoaOuLotacao(DpPessoa titular,
 			DpLotacao lotaTitular) {
-
+		String q = "select marca, marcador, mobil from ExMarca marca"
+				+ " inner join marca.cpMarcador marcador"
+				+ " inner join marca.exMobil mobil"
+				+ " where (marca.dtIniMarca is null or marca.dtIniMarca < sysdate)"
+				+ " and (marca.dtFimMarca is null or marca.dtFimMarca > sysdate)"
+				+ (titular != null ? " and (marca.dpPessoaIni = :titular)"
+						: " and (marca.dpLotacaoIni = :lotaTitular)");
+		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+			q += " and ((mobil.exDocumento.numExpediente is null and marcador = 1) or (mobil.exDocumento.numExpediente is not null))";
+		}
 		long tempoIni = System.nanoTime();
 		Query query = getSessao()
-				.createQuery(
-						"select marca, marcador, mobil from ExMarca marca"
-								+ " inner join marca.cpMarcador marcador"
-								+ " inner join marca.exMobil mobil"
-								+ " where (marca.dtIniMarca is null or marca.dtIniMarca < sysdate)"
-								+ " and (marca.dtFimMarca is null or marca.dtFimMarca > sysdate)"
-								+ (titular != null ? " and (marca.dpPessoaIni = :titular)"
-										: " and (marca.dpLotacaoIni = :lotaTitular)"));
+				.createQuery(q);
 
 		if (titular != null)
 			query.setLong("titular", titular.getIdPessoaIni());

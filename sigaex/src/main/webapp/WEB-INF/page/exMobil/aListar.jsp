@@ -512,12 +512,10 @@
 								</c:forEach>
 							</select>
 						</div>
-						<c:if test="${siga_cliente == 'GOVSP'}">
 							<div class="form-group col-md-3">
 								<label for="numExpediente">Número</label>
 							    <input type="text" size="7" name="numExpediente" value="${numExpediente}" maxlength="6" class="form-control" />
 							</div>
-						</c:if>
 					</div>
 					<div class="form-row">
 						<div class="form-group col-md-3" id="trNumOrigDoc"

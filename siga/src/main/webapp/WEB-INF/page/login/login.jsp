@@ -110,6 +110,11 @@
 										    	    </div>
 										    </div>
 										</div>
+										<c:if test="${isChrome == 'false'}">
+										<div class="mt-3 text-left">
+											<b>*</b> Utilize o navegador Google Chrome.	
+										</div>
+										</c:if>
 									</c:if>
 								</div>
 							</div>
@@ -120,6 +125,15 @@
 		</div>
 	</div>
 	<script type="text/javascript">
+	
+		var isChrome = true;
+		try {
+			isChrome = !!window.chrome;
+		} catch (e) {
+			isChrome = false;
+		}
+		
+		
 		//$('input, textarea').placeholder();
 		$("#username").focus();
 

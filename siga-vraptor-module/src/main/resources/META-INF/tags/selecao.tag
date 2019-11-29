@@ -51,7 +51,9 @@
 <c:set var="urlBase" value="${fn:replace(req.requestURL, req.requestURI, '')}"/>
 <c:if test="${not empty f:resource('siga.base.url')}">
 	<c:if test = "${fn:startsWith(f:resource('siga.base.url'), 'https') }">
-		<c:set var="urlBase" value="${fn:replace(urlBase, 'http', 'https')}"/>
+		<c:if test = "${!fn:startsWith(f:resource('urlBase'), 'https') }">
+			<c:set var="urlBase" value="${fn:replace(urlBase, 'http', 'https')}"/>
+		</c:if>
 	</c:if>
 </c:if>
 

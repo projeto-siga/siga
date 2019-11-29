@@ -110,11 +110,9 @@
 										    	    </div>
 										    </div>
 										</div>
-										<c:if test="${isChrome == 'false'}">
-										<div class="mt-3 text-left">
-											<b>*</b> Utilize o navegador Google Chrome.	
+										<div class="mt-3 text-left" id="isChrome">
+											<p style="color:red"><b>*</b>  Utilize o navegador Google Chrome.</p>	
 										</div>
-										</c:if>
 									</c:if>
 								</div>
 							</div>
@@ -126,13 +124,12 @@
 	</div>
 	<script type="text/javascript">
 	
-		var isChrome = true;
-		try {
-			isChrome = !!window.chrome;
-		} catch (e) {
-			isChrome = false;
-		}
-		
+	    var x = document.getElementById("isChrome");
+	    if (!!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime)) {
+	       x.style.display = "none";
+	    } else {
+	       x.style.display = "block";
+	    }
 		
 		//$('input, textarea').placeholder();
 		$("#username").focus();

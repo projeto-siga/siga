@@ -157,7 +157,6 @@ $(function(){
 						</div>
 					</div>
 					<c:if test="${tipoResponsavel == 3}">
-					<c:if test="${siga_cliente == 'GOVSP'}">
 					<div class="col-sm-3">
 						<div class="form-group">
 							<div class="form-check form-check-inline mt-4">
@@ -166,7 +165,6 @@ $(function(){
 							</div>
 						</div>
 					</div>
-					</c:if>
 					<div class="col-sm-4">
 						<div class="form-group">
 							<label>Observação</label> 

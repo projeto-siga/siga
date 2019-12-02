@@ -104,9 +104,11 @@ public class ProcessadorFreemarkerSimples implements TemplateLoader {
 					} else {
 						mod = CpDao.getInstance().consultaCpModeloPorNome(source);
 					}
+					
+					String conteudoBlob = "";
 					if (mod != null)
-						return mod.getConteudoBlobString() == null ? "" : mod.getConteudoBlobString();
-					return "";
+						conteudoBlob = mod.getConteudoBlobString() == null ? "" : mod.getConteudoBlobString();
+					return conteudoBlob;
 				}
 			});
 	

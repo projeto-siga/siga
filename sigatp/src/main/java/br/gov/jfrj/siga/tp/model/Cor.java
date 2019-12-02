@@ -8,6 +8,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Immutable;
 import org.hibernate.envers.Audited;
 
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
@@ -15,6 +16,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 
 @Entity
 @Audited
+@Immutable
 @Table(schema = "SIGATP")
 public class Cor extends TpModel implements ConvertableEntity {
 

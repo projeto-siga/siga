@@ -98,6 +98,21 @@
 										<a href="/siga/public/app/usuario/esqueci_senha"
 										class="btn btn-secondary btn-block">Esqueci minha senha</a>
 									</div>
+									<c:if test="${siga_cliente ne 'GOVSP'}">
+										<div class="mt-3">
+										    <div class="d-flex justify-content-between">
+										    	   	<div>
+										    		Versão: ${versao}
+										    	    </div>
+										    	    <div>
+										    		<a class="text-top" href="http://linksiga.trf2.jus.br" target="_blank" class="btn btn-link">Sobre o SIGA</a> 
+										    	    </div>
+										    </div>
+										</div>
+										<div class="mt-3 text-left" id="isChrome">
+											<p style="color:red"><b>*</b>  Utilize o navegador Google Chrome.</p>	
+										</div>
+									</c:if>
 								</div>
 							</div>
 						</div>
@@ -107,6 +122,14 @@
 		</div>
 	</div>
 	<script type="text/javascript">
+	
+	    var x = document.getElementById("isChrome");
+	    if (!!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime)) {
+	       x.style.display = "none";
+	    } else {
+	       x.style.display = "block";
+	    }
+		
 		//$('input, textarea').placeholder();
 		$("#username").focus();
 

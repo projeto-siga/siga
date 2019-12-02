@@ -587,14 +587,16 @@ public class ExMovimentacaoController extends ExController {
 					.processarComandosEmTag(doc, "pre_assinatura");
 		}
 		
-		AtivoEFixo af = obterAtivoEFixo(doc.getExModelo(), doc.getExTipoDocumento(), CpTipoConfiguracao.TIPO_CONFIG_TRAMITE_AUTOMATICO);
+		AtivoEFixo afTramite = obterAtivoEFixo(doc.getExModelo(), doc.getExTipoDocumento(), CpTipoConfiguracao.TIPO_CONFIG_TRAMITE_AUTOMATICO);
+		
+		AtivoEFixo afJuntada = obterAtivoEFixo(doc.getExModelo(), doc.getExTipoDocumento(), CpTipoConfiguracao.TIPO_CONFIG_JUNTADA_AUTOMATICA);
 		
 		// Habilita ou desabilita o trâmite 
 		if (!Ex.getInstance()
 				.getComp()
 				.podeTramitarPosAssinatura(doc.getDestinatario(), doc.getLotaDestinatario(), getTitular(), getLotaTitular(),doc.getMobilGeral())){
-			af.ativo = false;
-			af.fixo = true;
+			afTramite.ativo = false;
+			afTramite.fixo = true;
 		}
 		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local")) && (doc.getDtFinalizacao() != null && !DateUtils.isToday(doc.getDtFinalizacao()))) {
 			Ex.getInstance().getBL().gravar(getCadastrante(), getTitular(), getLotaTitular(), doc);
@@ -605,10 +607,10 @@ public class ExMovimentacaoController extends ExController {
 		result.include("lotaTitular", this.getLotaTitular());
 		result.include("autenticando", autenticando);
 		result.include("assinando", assinando);
-		result.include("juntarAtivo", doc.getPai() != null ? true : null);
-		result.include("juntarFixo", doc.getPai() != null ? false : null);
-		result.include("tramitarAtivo", af.ativo);
-		result.include("tramitarFixo", af.fixo);
+		result.include("juntarAtivo", doc.getPai() != null && afJuntada.ativo ? true : null);
+		result.include("juntarFixo", doc.getPai() != null && afJuntada.fixo ? false : null);
+		result.include("tramitarAtivo", afTramite.ativo);
+		result.include("tramitarFixo", afTramite.fixo);
 	}
 	
 	public static class AtivoEFixo {
@@ -634,10 +636,10 @@ public class ExMovimentacaoController extends ExController {
 		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_PROIBIDO || idSit == ExSituacaoConfiguracao.SITUACAO_NAO_PODE) {
 			af.ativo = false;
 			af.fixo = true;
-		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_DEFAULT) {
+		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_DEFAULT || idSit == ExSituacaoConfiguracao.SITUACAO_PODE) {
 			af.ativo = true;
 			af.fixo = false;
-		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_NAO_DEFAULT || idSit == ExSituacaoConfiguracao.SITUACAO_PODE) {
+		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_NAO_DEFAULT) {
 			af.ativo = false;
 			af.fixo = false;
 		}

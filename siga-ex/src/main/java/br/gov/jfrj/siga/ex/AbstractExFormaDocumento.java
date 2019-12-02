@@ -33,7 +33,10 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
+
+import org.hibernate.annotations.Where;
 
 import br.gov.jfrj.siga.model.Objeto;
 
@@ -59,6 +62,8 @@ public abstract class AbstractExFormaDocumento extends Objeto implements
 
 	/** The value of the exModeloSet one-to-many association. */
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exFormaDocumento")
+	@OrderBy(value="nmMod")
+	@Where(clause="HIS_ATIVO = 1")
 	private Set<ExModelo> exModeloSet;
 
 	@ManyToMany

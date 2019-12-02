@@ -29,7 +29,7 @@
 
 		<h3>Lista de Modelos</h3>
 		<table class="table table-sm table-striped">
-			<thead class="thead-dark">
+			<thead class="${thead_color}">
 				<tr class="header">
 					<th>Forma</th>
 					<th>Modelo</th>

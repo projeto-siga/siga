@@ -36,13 +36,19 @@
 	}
 </script>
 
-<li class="nav-item dropdown">
-	<a href="javascript:void(0);" class="navbar-brand dropdown-toggle" data-toggle="dropdown"> <fmt:message key="menu.titulo"/></a>
+<li class="nav-item dropdown"><a href="javascript:void(0);"
+	class="navbar-brand dropdown-toggle" data-toggle="dropdown"> <fmt:message
+			key="menu.titulo" /></a>
 	<ul class="dropdown-menu">
 		<c:if test="${not empty f:resource('siga.pagina.inicial.url')}">
-			<li><a class="dropdown-item" href="/siga/app/principal?redirecionar=false">Quadros Quantitativos</a></li>
+			<li><a class="dropdown-item"
+				href="/siga/app/principal?redirecionar=false">Quadros
+					Quantitativos</a></li>
 		</c:if>
-	
+		<c:if test="${f:resource('siga.local') ne 'GOVSP'}">
+			<li><a class="dropdown-item" href="/siga/app/principal">Página
+					Inicial</a></li>
+		</c:if>
 		<li class="dropdown-submenu"><a href="javascript:void(0);"
 			class="dropdown-item dropdown-toggle">Módulos</a>
 			<ul class="dropdown-menu">
@@ -72,21 +78,102 @@
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TP:Módulo de Transportes')}">
 					<li><a class="dropdown-item" href="/sigatp/">Transportes</a></li>
 				</c:if>
-				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;PP:Agendamento de perícias do INSS')}">
-					<li class="dropdown-submenu"><a href="javascript:void(0);"
-						class="dropdown-item dropdown-toggle">Agendas</a>
-						<ul class="dropdown-menu">
-							<c:if
-								test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;PP')}">
-								<li><a class="dropdown-item" href="/sigapp/">Perícias
-										Médicas</a></li>
-							</c:if>
-						</ul></li>
+
+				<c:if test="${!('ZZ'.equals(titular.orgaoUsuario.sigla))}">
+
+					<c:if
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SE:Módulo de Servicos Externos')}">
+						<li><a class="dropdown-item" href="/sigade/">Dados
+								Externos</a></li>
+					</c:if>
+
+					<c:if
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GO:Gestão Orçamentária')}">
+						<li><a class="dropdown-item" href="/sigago/">Gestão
+								Orçamentária</a></li>
+					</c:if>
+					<c:if
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;AQ: Módulo de Adicional de Qualificação') or
+						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;BDP: Módulo de Banco de Permutas') or 
+						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;BNF: Módulo de Benefícios') or 
+						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CAD: Módulo de Cadastro') or 
+						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CST: Módulo de Consultas') or 
+						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DCN: Módulo de Docência de Magistrados') or 
+						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;LOT: Módulo de Lotação') or 
+						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TRN: Módulo de Treinamento') or
+						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TERC: Módulo de Terceirizados')}">
+						<li class="dropdown-submenu"><a href="javascript:void(0);"
+							class="dropdown-item dropdown-toggle">Pessoas</a>
+							<ul class="dropdown-menu">
+								<c:if
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;AQ: Módulo de Adicional de Qualificação')}">
+									<li><a class="dropdown-item"
+										href="${f:getURLSistema('siga.sgp.aq')}">AQ</a></li>
+								</c:if>
+								<c:if
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;BDP: Módulo de Banco de Permutas')}">
+									<li><a class="dropdown-item"
+										href="${f:getURLSistema('siga.sgp.bdp')}">Banco de
+											Permutas</a></li>
+								</c:if>
+								<c:if
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;BNF: Módulo de Benefícios')}">
+									<li><a class="dropdown-item"
+										href="${f:getURLSistema('siga.sgp.bnf')}">Benefícios</a></li>
+								</c:if>
+								<c:if
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CAD: Módulo de Cadastro')}">
+									<li><a class="dropdown-item"
+										href="${f:getURLSistema('siga.sgp.cad')}">Cadastro</a></li>
+								</c:if>
+								<c:if
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CST: Módulo de Consultas')}">
+									<li><a class="dropdown-item"
+										href="${f:getURLSistema('siga.sgp.cst')}">Consultas</a></li>
+								</c:if>
+								<c:if
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DCN: Módulo de Docência de Magistrados')}">
+									<li><a class="dropdown-item"
+										href="${f:getURLSistema('siga.sgp.dcn')}">Docência de
+											Magistrados</a></li>
+								</c:if>
+								<c:if
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;LOT: Módulo de Lotação')}">
+									<li><a class="dropdown-item"
+										href="${f:getURLSistema('siga.sgp.lot')}">Lotação</a></li>
+								</c:if>
+								<c:if
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TRN: Módulo de Treinamento')}">
+									<li><a class="dropdown-item"
+										href="${f:getURLSistema('siga.sgp.trn')}">Treinamento</a></li>
+								</c:if>
+								<c:if
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TERC: Módulo de Terceirizados')}">
+									<li><a class="dropdown-item"
+										href="${f:getURLSistema('siga.sgp.terc')}">Terceirizados</a></li>
+								</c:if>
+							</ul></li>
+					</c:if>
+					<c:if
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;PP:Agendamento de perícias do INSS')}">
+						<li class="dropdown-submenu"><a href="javascript:void(0);"
+							class="dropdown-item dropdown-toggle">Agendas</a>
+							<ul class="dropdown-menu">
+								<c:if
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;PP')}">
+									<li><a class="dropdown-item" href="/sigapp/">Perícias
+											Médicas</a></li>
+								</c:if>
+							</ul></li>
+					</c:if>
 				</c:if>
+
 			</ul></li>
-		<c:if test="${not empty f:resource('gsa.url')}">
-			<li><a class="dropdown-item" href="/siga/app/busca">Busca Textual</a></li>
+		<c:if test="${f:resource('siga.local') eq 'GOVSP'}">
+			<c:if test="${not empty f:resource('gsa.url')}">
+				<li><a class="dropdown-item" href="/siga/app/busca">Busca
+						Textual</a></li>
+			</c:if>
 		</c:if>
 
 		<li class="dropdown-submenu"><a href="javascript:void(0);"
@@ -126,11 +213,13 @@
 					</c:when>
 					<c:otherwise>
 						<c:catch>
-							<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;ADM:Administração')}">
-								<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;ADM;GER:Gerenciar Substitutos')}">
-								<li><a class="dropdown-item"
-									href="${serverAndPort}/siga/app/substituicao/listar">Gerenciar
-										possíveis substitutos</a></li>
+							<c:if
+								test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;ADM:Administração')}">
+								<c:if
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;ADM;GER:Gerenciar Substitutos')}">
+									<li><a class="dropdown-item"
+										href="${serverAndPort}/siga/app/substituicao/listar">Gerenciar
+											possíveis substitutos</a></li>
 								</c:if>
 							</c:if>
 						</c:catch>
@@ -177,7 +266,8 @@
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;CAD_LOTACAO:Cadastrar Lotação')}">
 						<li><a class="dropdown-item" href="/siga/app/lotacao/listar">Cadastro
-								de <fmt:message key="usuario.lotacao"/></a></li>
+								de <fmt:message key="usuario.lotacao" />
+						</a></li>
 					</c:if>
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;CAD_FUNCAO:Cadastrar Função de Confiança')}">
@@ -191,7 +281,9 @@
 					</c:if>
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;ENV:Envio de E-mail para Novos Usuários')}">
-						<li><a class="dropdown-item" href="/siga/app/pessoa/enviarEmail">Envio de E-mail para Novos Usuários</a></li>
+						<li><a class="dropdown-item"
+							href="/siga/app/pessoa/enviarEmail">Envio de E-mail para
+								Novos Usuários</a></li>
 					</c:if>
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;WF_ADMIN:Administrar SIGAWF')}">
@@ -275,16 +367,10 @@
 		<c:if test="${not empty meusTitulares}">
 			<li class="dropdown-submenu"><a href="javascript:void(0);"
 				class="dropdown-item dropdown-toggle">Substituir</a>
-				<ul class="dropdown-menu navmenu-large">
+				<div class="dropdown-menu">
 					<c:forEach var="substituicao" items="${meusTitulares}">
-						<li><a class="dropdown-item"
-							style="border-left: 0px; float: right; padding-left: 0.5em; padding-right: 0.5em;"
-							href="javascript:if (confirm('Deseja excluir substituição?')) location.href='/siga/app/substituicao/exclui?id=${substituicao.idSubstituicao}&porMenu=true';">
-								<img style="display: inline;"
-								src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir"
-								onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';"
-								onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';">
-						</a> <a class="dropdown-item"
+						<div class="dropdown-item" href="#">
+						<a class=""
 							href="/siga/app/substituicao/substituirGravar?id=${substituicao.idSubstituicao}">
 								<c:choose>
 									<c:when test="${not empty substituicao.titular}">
@@ -294,16 +380,27 @@
 										${f:maiusculasEMinusculas(substituicao.lotaTitular.lotacaoAtual.nomeLotacao)}
 									</c:otherwise>
 								</c:choose>
-						</a></li>
+						</a>
+						<a class="text-light"
+							style="border-left: 0px; float: right; padding-left: 0.1em; padding-right: 0.1em;"
+							href="javascript:if (confirm('Deseja excluir substituição?')) location.href='/siga/app/substituicao/exclui?id=${substituicao.idSubstituicao}&porMenu=true';">
+								<img style="display: inline;"
+								src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir"
+								onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';"
+								onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';">
+						</a> 
+						</div>
+						
 					</c:forEach>
-	
-				</ul></li>
+
+				</div></li>
 		</c:if>
 
 		<li><c:choose>
 				<c:when test="${f:resource('siga.local') eq 'GOVSP'}">
-				 <a class="dropdown-item" id="apostilaSiga"
-						href="/siga/arquivos/Manual-Basico-de-Operacoes-Sistema-SP-Sem-Papel-Documentos-Digitais.pdf" target="_blank">Manual</a>
+					<a class="dropdown-item" id="apostilaSiga"
+						href="/siga/arquivos/Manual-Basico-de-Operacoes-Sistema-SP-Sem-Papel-Documentos-Digitais.pdf"
+						target="_blank">Manual</a>
 				</c:when>
 				<c:otherwise>
 					<a class="dropdown-item" id="apostilaSiga"

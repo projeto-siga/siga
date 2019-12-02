@@ -36,11 +36,11 @@
 				</span> 
 			</div> 
 			<div class="col col-12 col-sm-4 col-md-auto ml-md-auto mb-3">
-				<a href="expediente/doc/editar" class="btn btn-outline-success form-control"> <i class="fas fa-plus-circle"></i>
+				<a href="expediente/doc/editar" class="btn btn-success form-control"> <i class="fas fa-plus-circle"></i>
 						<fmt:message key="documento.novo"/></a>
 			</div>
 			<div class="col col-12 col-sm-4 col-md-auto mb-3">
-				<a href="expediente/doc/listar?primeiraVez=sim" class="btn btn-outline-primary form-control">
+				<a href="expediente/doc/listar?primeiraVez=sim" class="btn btn-primary form-control">
 					<i class="fas fa-search"></i> <fmt:message key="documento.pesquisar"/> 
 				</a>
 			</div>
@@ -81,7 +81,7 @@
 				<table class="table table-sm table-borderless">
 					<tbody>
 						<template v-for="f in filtrados">
-						<tr v-if="f.grupoExibir" class="table-group alert alert-info align-middle">
+						<tr v-if="f.grupoExibir" class="table-group table-group-title alert alert-info align-middle">
 							<th colspan="6" class="pb-0 pl-0">
 								 <h5 class="mb-1 pl-2"><i :class="f.grupoIcone"></i> {{f.grupoNome}}</h5>
 							</th>
@@ -131,7 +131,7 @@
 								</div></td>
 							<td v-show="filtradosTemAlgumErro" style="color: red">{{f.errormsg}}</td>
 						</tr>
-						<tr v-if="f.grupoEspacar" class="table-group">
+						<tr v-if="f.grupoEspacar" class="table-group table-group-separator">
 							<th colspan="6" class="pb-2 pb-0 pl-0"></th>
 						</tr>
 						</template>

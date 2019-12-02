@@ -23,12 +23,6 @@
    		</param-value>
 	</context-param>
 
-	<context-param>
-    	<param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
-    	<param-value>messages_GOVSP</param-value>
-  	</context-param>
- 
-	
 	<jsp-config>
 		<taglib>
 			<taglib-uri>http://localhost/customtag</taglib-uri>

@@ -50,8 +50,21 @@
 	box-sizing: border-box; 
 }
 
-html body {
-	/* background-color: #e2eaee; */
+html body, .table-group-separator {
+	background-color: #dae9ec;
 }
 
+
+.table-group-separator, .table-group-title {
+	background-color: #dae9ec !important;
+	border: 1px solid #dae9ec !important;
+	background-color: #dae9ec !important;
+}
+table.table {
+	background-color: white;
+}
+
+p.gt-table-action-list a.link-tag {
+	margin-top: 0.4em;
+}
 

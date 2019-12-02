@@ -14,10 +14,10 @@
 		<module>siga-sinc-lib</module>
 		<module>siga-cp-sinc</module>
 		<module>siga-ldap</module>
+		<module>siga-vraptor-module-old</module>
 		<module>siga-vraptor-module</module>
 		<module>siga-dump</module>
 		<module>siga</module>
-		<module>sigaidp</module>
 		<module>sigawf</module>
 		<module>siga-wf</module>
 		<module>sigaex</module>
@@ -29,19 +29,18 @@
 		<module>sigagc</module>
 		<module>sigasr</module>
  		<module>sigapp</module>
+ 		<module>sigatp</module>
 		<!--<module>sigari</module>
  		<module>siga-cp-sinc</module> 
  		<module>siga-dump</module>
  		<module>siga-integration-test</module> -->
     	<module>siga-ldap-cli</module>
 		<module>siga-jwt</module>
-		<module>sigatp</module>
   </modules>
 
 	<properties>
  		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> 
  		<siga.version>${project.version}</siga.version>
-		<picketlink.version>2.6.0.Final</picketlink.version>
 		<hibernate.version>4.2.0.Final</hibernate.version>
 		<version.jboss.bom.eap>6.2.0-redhat-1</version.jboss.bom.eap>
 		<spring.version>4.0.6.RELEASE</spring.version>
@@ -262,6 +261,11 @@
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
+				<artifactId>siga-vraptor-module-old</artifactId>
+				<version>${siga.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>siga</groupId>
 				<artifactId>siga-jwt</artifactId>
 				<version>${siga.version}</version>
 			</dependency>
@@ -327,7 +331,7 @@
 			<dependency>
 				<groupId>commons-fileupload</groupId>
 				<artifactId>commons-fileupload</artifactId>
-				<version>1.3.1</version>
+				<version>1.3.3</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-beanutils</groupId>
@@ -372,6 +376,12 @@
 				<groupId>org.apache.axis</groupId>
 				<artifactId>axis</artifactId>
 				<version>1.4</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpclient</artifactId>
+				<version>4.3.6</version>
 			</dependency>
 
 			<dependency>
@@ -613,26 +623,6 @@
 				<version>2.2.4</version>
 			</dependency>
 
-			<!-- Picketlink -->
-			<dependency>
-				<groupId>org.picketlink</groupId>
-				<artifactId>picketlink-api</artifactId>
-				<scope>compile</scope>
-				<version>${picketlink.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.picketlink</groupId>
-				<artifactId>picketlink-impl</artifactId>
-				<scope>runtime</scope>
-				<version>${picketlink.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.picketlink</groupId>
-				<artifactId>picketlink-federation</artifactId>
-				<scope>provided</scope>
-				<version>${picketlink.version}</version>
-			</dependency>
-
 			<dependency>
 				<groupId>jstl</groupId>
 				<artifactId>jstl</artifactId>
@@ -710,12 +700,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-search</artifactId>
-			<version>4.2.0.Final</version>
-		</dependency>
-
-		<dependency>
 			<groupId>org.jboss.logging</groupId>
 			<artifactId>jboss-logging</artifactId>
 			<version>3.1.4.GA</version>
@@ -750,28 +734,6 @@
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcpkix-jdk15on</artifactId>
-		</dependency>
-
-			
-
-		<!-- Picketlink -->
-		<dependency>
-			<groupId>org.picketlink</groupId>
-			<artifactId>picketlink-api</artifactId>
-			<scope>compile</scope>
-			<version>${picketlink.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.picketlink</groupId>
-			<artifactId>picketlink-impl</artifactId>
-			<scope>runtime</scope>
-			<version>${picketlink.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.picketlink</groupId>
-			<artifactId>picketlink-federation</artifactId>
-			<version>${picketlink.version}</version>
-			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 	

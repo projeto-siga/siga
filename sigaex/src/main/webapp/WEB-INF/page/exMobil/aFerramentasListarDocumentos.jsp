@@ -145,7 +145,7 @@
 			<h2>Lista de documentos</h2>
 			<div>
 				<table class="table table-sm table-striped">
-					<thead class="thead-dark">
+					<thead class="${thead_color}">
 						<tr>
 							<th width="3%" style="text-align: center"></th>
 							<th width="13%" rowspan="2">Número</th>

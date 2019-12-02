@@ -53,7 +53,7 @@ function sbmt(offset) {
 		<h5>Cargos cadastrados</h5>
 		
 		<table border="0" class="table table-sm table-striped">
-			<thead class="thead-dark">
+			<thead class="${thead_color}">
 				<tr>
 					<th align="left">Nome</th>
 					<th colspan="2" align="center">Op&ccedil;&otilde;es</th>					

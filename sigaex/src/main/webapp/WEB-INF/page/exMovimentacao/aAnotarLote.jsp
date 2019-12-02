@@ -168,7 +168,7 @@
 						</c:choose></h5>
 					<div>
 						<table class="table table-hover table-striped">
-							<thead class="thead-dark align-middle text-center">
+							<thead class="${thead_color} align-middle text-center">
 								<tr>
 									<th rowspan="2" class="text-right"><input type="checkbox"
 										name="checkall" onclick="checkUncheckAll(this)" /></th>

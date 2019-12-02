@@ -27,7 +27,7 @@ import br.gov.jfrj.siga.vraptor.SigaObjects;
  *
  */
 @RequestScoped
-@Intercepts(before = JPATransactionInterceptor.class)
+@Intercepts(after = JPATransactionInterceptor.class)
 public class ExceptionHandlerInterceptor implements Interceptor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExceptionHandlerInterceptor.class);

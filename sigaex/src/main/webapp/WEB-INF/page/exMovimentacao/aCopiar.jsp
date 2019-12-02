@@ -8,84 +8,110 @@
 
 <siga:pagina titulo="Inclusão de Cópia">
 
-<c:if test="${not mob.doc.eletronico}">
-	<script type="text/javascript">
-		$("html").addClass("fisico");
-		$("body").addClass("fisico");
+	<c:if test="${not mob.doc.eletronico}">
+		<script type="text/javascript">
+			$("html").addClass("fisico");
+			$("body").addClass("fisico");
+		</script>
+	</c:if>
+
+	<script type="text/javascript" language="Javascript1.1">
+		function sbmt() {
+			ExMovimentacaoForm.page.value = '';
+			ExMovimentacaoForm.acao.value = '${request.contextPath}/app/expediente/mov/copiar_gravar';
+			ExMovimentacaoForm.submit();
+		}
 	</script>
-</c:if>
 
-<script type="text/javascript" language="Javascript1.1">
-function sbmt() {
-	ExMovimentacaoForm.page.value='';
-	ExMovimentacaoForm.acao.value='${request.contextPath}/app/expediente/mov/copiar_gravar';
-	ExMovimentacaoForm.submit();
-}
-
-</script>
-
-<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-			<h2>
-				Inclusão de Cópia de Documento - ${mob.siglaEDescricaoCompleta}
-			</h2>
-			<div class="gt-content-box gt-for-table">
-				<form action="${request.contextPath}/app/expediente/mov/copiar_gravar" enctype="multipart/form-data" method="post">
-					<input type="hidden" name="postback" value="1" />
-					<input type="hidden" name="sigla" value="${sigla}"/>
-					<table class="gt-form-table">
-						<tr class="header">
-							<td colspan="2">
-								Dados da Inclusão de Cópia
-							</td>
-						</tr>
-						<c:choose>
-							<c:when test="${!doc.eletronico}">
-								<tr>
-									<td>
-										Data:
-									</td>
-									<td>
-										<input type="text" name="dtMovString" value="${dtMovString}" onblur="javascript:verifica_data(this, true);" />
-									<td>
-								</tr>
-								<tr>
-								<td>
-									Responsável:
-								</td>
-								<td>
-									<siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
-									&nbsp;&nbsp;
-									<input type="checkbox" theme="simple" name="substituicao" onclick="javascript:displayTitular(this);" />
-									Substituto
-								</td>
-							</c:when>
-						</c:choose>
-						<c:choose>
-							<c:when test="${!substituicao}">
-								<tr id="tr_titular" style="display: none">
-							</c:when>
-							<c:otherwise>
-								<tr id="tr_titular" style="">
-							</c:otherwise>
-						</c:choose>
-						<td>
-							Titular:
-						</td>
-						<input type="hidden" name="campos" value="${titularSel.id}" />
-						<td colspan="3">
-							<siga:selecao propriedade="titular"tema="simple" modulo="siga"/></td>
-						</tr>
-						<siga:selecao titulo="Documento:" propriedade="documentoRef" urlAcao="expediente/buscar" urlSelecionar="expediente/selecionar" modulo="sigaex"/>
-						<tr class="button">
-							<td colspan="2">
-							<input type="submit" value="Ok" class="gt-btn-medium gt-btn-left"/>
-							<input type="button" value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left"/>
-						</tr>
-				</table>
-			</form>
+	<div class="container-fluid">
+		<div class="card bg-light mb-3">
+			<div class="card-header">
+				<h5>Inclusão de Cópia de Documento -
+					${mob.siglaEDescricaoCompleta}</h5>
+			</div>
+			<div class="card-body">
+				<form
+					action="${request.contextPath}/app/expediente/mov/copiar_gravar"
+					enctype="multipart/form-data" method="post">
+					<input type="hidden" name="postback" value="1" /> <input
+						type="hidden" name="sigla" value="${sigla}" />
+					<c:choose>
+						<c:when test="${!doc.eletronico}">
+							<input type="hidden" name="postback" value="1" />
+							<input type="hidden" name="sigla" value="${sigla}" />
+							<div class="row">
+								<div class="col-md-2 col-sm-3">
+									<div class="form-group">
+										<label for="dtMovString">Data</label> <input
+											class="form-control" type="text" name="dtMovString"
+											value="${dtMovString}"
+											onblur="javascript:verifica_data(this,0);" />
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label>Responsável</label>
+										<siga:selecao tema="simple" propriedade="subscritor"
+											modulo="siga" />
+									</div>
+								</div>
+								<div class="col-sm-2 mt-4">
+									<div class="form-check form-check-inline">
+										<input class="form-check-input" type="checkbox" theme="simple"
+											name="substituicao" value="${substituicao}"
+											onclick="javascript:displayTitular(this);" /> <label
+											class="form-check-label">Substituto</label>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<c:choose>
+											<c:when test="${!substituicao}">
+												<div id="tr_titular" style="display: none">
+											</c:when>
+											<c:otherwise>
+												<div id="tr_titular" style="">
+											</c:otherwise>
+										</c:choose>
+										<label>Titular</label> <input class="form-control"
+											type="hidden" name="campos" value="titularSel.id" />
+										<siga:selecao propriedade="titular" tema="simple"
+											modulo="siga" />
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm">
+									<div class="form-group">
+										<label>Função do Responsável</label> <input
+											class="form-control" type="hidden" name="campos"
+											value="nmFuncaoSubscritor" /> <input class="form-control"
+											type="text" name="nmFuncaoSubscritor"
+											value="${nmFuncaoSubscritor}" size="50" maxLength="128"
+											theme="simple" /> <small class="form-text text-muted">(opcional)</small>
+									</div>
+								</div>
+							</div>
+						</c:when>
+					</c:choose>
+					<div class="row">
+						<div class="col col-lg-6">
+							<siga:selecao titulo="Documento" propriedade="documentoRef"
+								urlAcao="expediente/buscar"
+								urlSelecionar="expediente/selecionar" modulo="sigaex" />
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm">
+							<input type="submit" value="Ok" class="btn btn-primary" /> <input
+								type="button" value="Cancela"
+								onclick="javascript:history.back();" class="btn btn-cancel ml-2" />
+						</div>
+					</div>
+				</form>
+			</div>
 		</div>
 	</div>
-</div>
-
 </siga:pagina>

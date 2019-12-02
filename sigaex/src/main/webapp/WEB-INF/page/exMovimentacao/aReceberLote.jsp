@@ -73,7 +73,7 @@
 						</h5>
 					
 						<table border="0" class="table table-hover">
-							<thead class="thead-dark align-middle text-center">
+							<thead class="${thead_color} align-middle text-center">
 								<th rowspan="2" align="text-center"><input type="checkbox"
 									name="checkall" onclick="checkUncheckAll(this)" /></th>
 								<th rowspan="2" align="text-right">Número</th>
@@ -81,7 +81,7 @@
 								<th colspan="2" align="text-center">Última Movimentação</th>
 								<th rowspan="2">Descrição</th>
 							</thead>
-							<thead class="thead-dark align-middle text-center">
+							<thead class="${thead_color} align-middle text-center">
 								<th></th>
 								<th></th>
 								<th align="text-center">Data</th>

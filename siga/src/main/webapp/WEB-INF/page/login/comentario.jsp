@@ -22,7 +22,8 @@
 		<p align="center"><img width="15%" src="/siga/imagens/qr-code-http-siga-jfrj-jus-br-siga-le.png"></img></p>
 	</c:if>
 	<hr/>
-	<p style="font-size: 150%">Recomendamos o navegador Google Chrome para acesso ao SIGA.</p>
+	<p style="font-size: 150%">Recomendamos o navegador Google Chrome para acesso ao SIGA.</p> </br>
+	<a href="https://github.com/projeto-siga/siga" target="_blank" >Sobre o SIGA</a>
 	<hr/>
 	
 </div>

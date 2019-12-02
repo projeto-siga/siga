@@ -35,6 +35,18 @@
 
 
 </script>
+
+<c:choose>
+	<c:when test="${param.modal != true}">
+	    <!-- parteFuncao para fechar window -->
+	    <c:set var="parteFuncao" value="opener" />
+	</c:when>
+	<c:otherwise>
+	    <!-- parteFuncao para fechar modal -->
+	    <c:set var="parteFuncao" value="parent" />
+	</c:otherwise>	
+</c:choose>	
+
 	<div class="container-fluid">
 		<div class="card bg-light mb-3">
 			<div class="card-header">
@@ -49,6 +61,7 @@
 					<input type="hidden" name="paramoffset" value="0" />
 					<input type="hidden" name="p.offset" value="0" />
 					<input type="hidden" id="nivelAlterado" name="nivelAlterado" />
+				    <input type="hidden" name="modal" value="${param['modal']}" />					
 
 					<div class="row">
 						<div class="col">
@@ -97,7 +110,7 @@
 			<div>
 
 				<table class="table table-hover pt-2">
-					<thead class="thead-dark">
+					<thead class="${thead_color}">
 						<tr>
 							<th>Codificação</th>
 							<th>Descrição</th>
@@ -125,7 +138,7 @@
 								</c:otherwise>
 							</c:choose>
 							<td ${rowSpan}><a
-								href="javascript: opener.retorna_${param.propriedade}('${classificacao.id}','${classificacao.sigla}','${classificacao.descricao}');window.close()">${classificacao.sigla}</a>
+								href="javascript: ${parteFuncao}.retorna_${param.propriedade}('${classificacao.id}','${classificacao.sigla}','${classificacao.descricao}');window.close()">${classificacao.sigla}</a>
 							</td>
 							<td align="left"${rowSpan}>${classificacao.descricao}</td>
 							<c:choose>

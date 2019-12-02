@@ -1,0 +1,1 @@
+insert into CORPORATIVO.CP_TIPO_CONFIGURACAO values(41, 'Incluir Documento', 1);

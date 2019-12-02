@@ -86,12 +86,14 @@ ${meta}
 
 <link rel="stylesheet" href="/siga/bootstrap/css/bootstrap.min.css"	type="text/css" media="screen, projection" />
 
+<!--   <link rel="stylesheet" href="/siga/css/menuhover.css" type="text/css"/> -->
+
 <!-- 
 <link rel="stylesheet" href="/siga/css/ecoblue/css/ecoblue.css"
 	type="text/css" media="screen, projection">
  -->
 
-<link rel="stylesheet" href="/siga/css/ecoblue/css/custom.css"
+<link rel="stylesheet" href="/siga/css/ecoblue/css/custom-bs4.css"
 	type="text/css" media="screen, projection">
 	
 	
@@ -107,6 +109,8 @@ ${meta}
 		<link rel="stylesheet" href="/siga/css/style_siga_govsp.css" type="text/css" media="screen, projection">
 		
 		<c:set var="body_color" value="body_color" scope="request" />
+		
+		<c:set var="thead_color" value="thead-dark" scope="request" />
 		
 		<c:if test="${desabilitarmenu == 'sim'}">
 			<c:set var="body_color" value="login_body_color" scope="request" />
@@ -127,10 +131,16 @@ ${meta}
 	</c:when>
 	<c:otherwise>
 		<meta name="theme-color" content="bg-primary">
+				<c:set var="thead_color" value="thead-light" scope="request" />
 		<c:set var="ico_siga" value="siga.ico" />
 		<c:set var="menu_class" value="bg-primary" /> 
-		<c:set var="sub_menu_class" value="bg-light" />
-		<c:set var="navbar_class" value="navbar-dark" />
+		<c:set var="sub_menu_class" value="bg-secondary text-white" />
+		
+		<c:set var="navbar_class" value="navbar-dark bg-primary" />
+		<c:if test="${f:resource('isBaseTest')}">
+			<c:set var="navbar_class" value="navbar-dark bg-secondary" />
+		</c:if>
+		
 		<c:set var="navbar_logo" value="logo-siga-novo-38px.png" />
 		<c:set var="navbar_logo_size" value="38" />
 		<c:set var="button_class_busca" value="btn-outline-light" />
@@ -158,7 +168,7 @@ ${meta}
 
 <body onload="${onLoad}" class="${body_color}">
 	<c:if test="${popup!='true'}">
-		<nav class="navbar navbar-expand-lg ${navbar_class} ${menu_class}">
+   		<nav class="navbar navbar-expand-lg ${navbar_class} ${menu_class}">
 			<a class="navbar-brand pt-0 pb-0" href="/siga"> <img
 				src="/siga/imagens/${navbar_logo}" height="${navbar_logo_size}">
 			</a>
@@ -177,14 +187,13 @@ ${meta}
 			</button>
 			<c:if test="${siga_cliente != 'GOVSP' or f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA')}">
 				<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					<ul class="navbar-nav mr-auto">
-						<!-- navigation -->
-						<siga:menuprincipal />
-						<!-- / navigation -->
-					</ul>
-	
-	
 					<c:if test="${desabilitarmenu != 'sim'}">
+						<ul class="navbar-nav mr-auto">
+							<!-- navigation -->
+							<siga:menuprincipal />
+							<!-- / navigation -->
+						</ul>
+	
 						<!-- search -->
 						<c:if test="${desabilitarbusca != 'sim'}">
 							<form class="form-inline my-2 my-lg-0">
@@ -193,37 +202,36 @@ ${meta}
 									modulo="siga/public" urlAcao="buscar" urlSelecionar="selecionar"
 									matricula="${titular.siglaCompleta}" />
 								<button class="btn ${button_class_busca} ml-2 my-2 my-sm-0" type="button" onclick="javascript:buscarDocumentoPorCodigo();">Buscar</button>
-								<button id="link" class="btn btn-outline-success ml-2 my-2 my-sm-0" type="button">Tutoriais</button>
-
-								<div id="tutorialModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="tutorialModalLabel" aria-hidden="true" >
-								    <div class="modal-dialog modal-dialog-centered modal-lg" style="max-width: 80% !important;">
-								        <div class="modal-content" >
-								            <div class="modal-header bg-success">
-								            	<h5 class="modal-title text-white" id="exampleModalLongTitle">Tutoriais SP Sem Papel</h5>
-								                <button type="button" class="close text-white" data-dismiss="modal" aria-hidden="true">×</button>
-								            </div>
-									        <div class="modal-body bg-light">
-								                <iframe width="100%" height="600" frameborder="0" allowfullscreen=""></iframe>
-								            </div>
-
-								        </div>
-								    </div>
-								</div>
-								<script>
-								    $('#link').click(function () {
-								        var src = 'https://vimeopro.com/fcav/spsempapel';
-								        $('#tutorialModal').modal('show');
-								        $('#tutorialModal iframe').attr('src', src);
-								    });
-								
-								    $('#tutorialModal button').click(function () {
-								        $('#tutorialModal iframe').removeAttr('src');
-								    });
-								</script>
-								
-
-								
-								
+								<c:if test="${siga_cliente eq 'GOVSP'}">
+									<button id="btnTutorial" class="btn btn-outline-success ml-2 my-2 my-sm-0" type="button">Tutoriais</button>
+	
+									<div id="tutorialModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="tutorialModalLabel" aria-hidden="true" >
+									    <div class="modal-dialog modal-dialog-centered modal-lg" style="max-width: 80% !important;">
+									        <div class="modal-content" >
+									            <div class="modal-header bg-success">
+									            	<h5 class="modal-title text-white" >Tutoriais SP Sem Papel</h5>
+									                <button type="button" class="close text-white" data-dismiss="modal" aria-hidden="true">×</button>
+									            </div>
+										        <div class="modal-body bg-light">
+									                <iframe width="100%" height="600" frameborder="0" allowfullscreen=""></iframe>
+									            </div>
+	
+									        </div>
+									    </div>
+									</div>
+									<script>
+									    $('#btnTutorial').click(function () {
+									        var src = 'https://vimeopro.com/fcav/spsempapel';
+									        $('#tutorialModal').modal('show');
+									        $('#tutorialModal iframe').attr('src', src);
+									    });
+									
+									    $('#tutorialModal button').click(function () {
+									        $('#tutorialModal iframe').removeAttr('src');
+									    });
+									</script>
+								</c:if>
+																
 								<script type="text/javascript">
 									if (false) {
 										var lis = document
@@ -268,7 +276,20 @@ ${meta}
 									var fld = document
 											.getElementsByName('buscar_genericoSel.sigla')[0];
 									fld.placeholder = 'Número de Documento';
-									fld.onblur = '';
+									fld.onfocus = function() {
+										if (this.value == 'Buscar') {
+											this.value = '';
+										}
+									};
+									fld.onblur = function() {
+										if (this.value == '') {
+											this.value = 'Buscar';
+											return;
+										}
+										if (this.value != 'Buscar')
+											ajax_buscar_generico();
+									};
+
 									fld.onkeypress = function(event) {
 										var fid = document
 												.getElementsByName('buscar_genericoSel.id')[0];
@@ -395,12 +416,12 @@ ${meta}
 									<c:when
 										test="${not empty titular && titular.idPessoa!=cadastrante.idPessoa}">Substituindo: <strong>${f:maiusculasEMinusculas(titular.nomePessoa)}</strong>
 										<span class="gt-util-separator">|</span>
-										<a href="/siga/app/substituicao/finalizar">finalizar</a>
+										<a href="/siga/app/substituicao/finalizar" class="text-white">Finalizar</a>
 									</c:when>
 									<c:when
 										test="${not empty lotaTitular && lotaTitular.idLotacao!=cadastrante.lotacao.idLotacao}">Substituindo: <strong>${f:maiusculasEMinusculas(lotaTitular.nomeLotacao)}</strong>
 										<span class="gt-util-separator">|</span>
-										<a href="/siga/app/substituicao/finalizar">finalizar</a>
+										<a href="/siga/app/substituicao/finalizar" class="text-white">Finalizar</a>
 									</c:when>
 									<c:otherwise></c:otherwise>
 								</c:choose>

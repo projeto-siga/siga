@@ -208,13 +208,13 @@
 							css += "TABLE.mov TR.encerramento_volume { background-color: rgb(255, 218, 218);}</style>";
 							$(css).appendTo("head");
 						</script>
-							<table class="table table-sm table-responsive-sm">
-								<thead>
+							<table class="table table-sm table-responsive-sm table-striped">
+								<thead class="${thead_color} align-middle text-center">
 									<tr>
-										<th align="center">Tempo</th>
-										<th><fmt:message key="usuario.lotacao"/></th>
-										<th>Evento</th>
-										<th>Descrição</th>
+										<th class="text-left">Tempo</th>
+										<th class="text-left"><fmt:message key="usuario.lotacao"/></th>
+										<th class="text-left">Evento</th>
+										<th class="text-left">Descrição</th>
 										<th></th>
 									</tr>
 								</thead>
@@ -224,17 +224,15 @@
 										test="${ (mov.idTpMov != 14 and mov.idTpMov != 64 and
 							          not mov.cancelada)}">
 										<tr class="${mov.classe} ${mov.disabled}">
-											<td class="align-top" title="${mov.dtRegMovDDMMYYHHMMSS}">${mov.tempoRelativo}</td>
-											<td class="align-top" title="${mov.mov.cadastrante.descricao} - ${mov.mov.lotaCadastrante.descricao}">${mov.mov.lotaCadastrante.sigla}</td>
-											<td class="align-top" >${mov.mov.exTipoMovimentacao.sigla}</td>
-											<td class="align-top" style="word-break: break-all;">
-												<span class="align-top">${mov.descricao}</span>
+											<td class="text-left" title="${mov.dtRegMovDDMMYYHHMMSS}">${mov.tempoRelativo}</td>
+											<td class="text-left" title="${mov.mov.cadastrante.descricao} - ${mov.mov.lotaCadastrante.descricao}">${mov.mov.lotaCadastrante.sigla}</td>
+											<td class="text-left" >${mov.mov.exTipoMovimentacao.sigla}</td>
+											<td class="text-left">
+												${mov.descricao}
 												<c:if test='${mov.idTpMov != 2}'> ${mov.complemento} </c:if>
 												<c:set var="assinadopor" value="${true}" />
-											</td>
-											<td class="align-top" style="word-break: break-all;">
-												<span class="align-top">
-													<siga:links
+												<siga:links
+														buttons="${false}"
 														inline="${true}"
 														separator="${not empty mov.descricao and mov.descricao != null}">
 														<c:forEach var="acao" items="${mov.acoes}">
@@ -248,8 +246,7 @@
 																<c:set var="assinadopor" value="${false}" />
 															</c:if>
 														</c:forEach>
-													</siga:links>
-												</span>
+												</siga:links>
 											</td>
 										</tr>
 										<c:choose>
@@ -427,43 +424,52 @@
 						<jsp:useBean id="now" class="java.util.Date" />
 						<div class="card-sidebar card bg-light mb-3">
 							<tags:collapse title="${docVO.outrosMobsLabel}" id="OutrosMob" collapseMode="${collapse_Expanded}">
+								<a title="Atualizar marcas"
+								style="float: right; margin-top: -3px;"
+								href="${linkTo[ExDocumentoController].aAtualizarMarcasDoc}?sigla=${sigla}"
+								${popup?'target="_blank" ':''}> <img
+								src="/siga/css/famfamfam/icons/arrow_refresh.png">
+								
+							</a>
 								<ul style="list-style-type: none; margin: 0; padding: 0;">
 									<c:forEach var="entry" items="${docVO.marcasPorMobil}">
 										<c:set var="outroMob" value="${entry.key}" />
+										<c:set var="mobNome" value="${outroMob.isGeral() ? 'Geral' : outroMob.terminacaoSigla}" />
 										<li><c:choose>
-												<c:when test="${outroMob.numSequencia == m.mob.numSequencia}">
-													<i><b>${outroMob.terminacaoSigla}</b></i>
+												<c:when test="${(not outroMob.geral) and outroMob.numSequencia == m.mob.numSequencia}">
+													<i><b>${mobNome}</b></i>
 												</c:when>
 												<c:otherwise>
 													<a
 														href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${outroMob.sigla}"
 														title="${outroMob.doc.descrDocumento}"
 														style="text-decoration: none">
-														${outroMob.terminacaoSigla} </a>
+														${mobNome} </a>
 												</c:otherwise>
-											</c:choose> &nbsp;-&nbsp; <c:forEach var="marca" items="${entry.value}"
-												varStatus="loop">
+											</c:choose> &nbsp;-&nbsp; 
+											<c:forEach var="marca" items="${entry.value}" varStatus="loop">
 												<c:if test="${marca.cpMarcador.idMarcador ne '56' && marca.cpMarcador.idMarcador ne '57' && marca.cpMarcador.idMarcador ne '58' && siga_cliente eq 'GOVSP'}">
-												
-														${marca.cpMarcador.descrMarcador}
+												    	${marca.cpMarcador.descrMarcador}
 														<c:if test="${marca.dtIniMarca gt now}">
 															a partir de ${marca.dtIniMarcaDDMMYYYY}
 														</c:if>
-																	<c:if test="${not empty marca.dtFimMarca}"> 
+														<c:if test="${not empty marca.dtFimMarca}"> 
 															até ${marca.dtFimMarcaDDMMYYYY}
 														</c:if>
-																	<c:if test="${not empty marca.dpLotacaoIni}">
+														<c:if test="${not empty marca.dpLotacaoIni}">
 															[${marca.dpLotacaoIni.lotacaoAtual.sigla}
-															<c:if test="${not empty marca.dpPessoaIni}">
-																&nbsp;${marca.dpPessoaIni.pessoaAtual.sigla}
-															</c:if>
+															    <c:if test="${not empty marca.dpPessoaIni}">
+																    &nbsp;${marca.dpPessoaIni.pessoaAtual.sigla}
+															    </c:if>
 															]
 														</c:if>
 									
 												</c:if>
-									
-									
-											</c:forEach></li>
+												<c:if test="${siga_cliente ne 'GOVSP'}">
+												    ${marca}<c:if test="${!lopp.last}">,</c:if>
+												</c:if>
+											</c:forEach>
+										</li>
 									</c:forEach>
 								</ul>
 							</tags:collapse>
@@ -1007,7 +1013,7 @@
 								<c:forEach var="mov" items="${m.movs}">
 									<c:if test="${mov.idTpMov == 64 and not mov.cancelada}">
 										<p>
-											<siga:links inline="${true}" separator="${false}">
+											<siga:links buttons="${false}" inline="${true}" separator="${false}">
 												<c:forEach var="acao" items="${mov.acoes}">
 													<c:set var="acaourl" value="${acao.url}" />
 													<c:set var="acaourl"

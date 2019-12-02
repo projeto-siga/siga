@@ -358,7 +358,7 @@ public class ExDocumentoVO extends ExVO {
 		}
 
 		for (ExMobil cadaMobil : doc.getExMobilSet()) {
-			if (!cadaMobil.isGeral())
+			// if (!cadaMobil.isGeral())
 				marcasPorMobil.put(cadaMobil, cadaMobil.getExMarcaSet());
 		}
 
@@ -371,18 +371,18 @@ public class ExDocumentoVO extends ExVO {
 				if (marcasGeralPermitidas.contains(m.getCpMarcador()
 						.getIdMarcador()))
 					mobilEspecifico.getMarcasAtivas().add(m);
-			for (ExMarca m : mobilGeral.getMob().getExMarcaSet())
-				if (marcasGeralPermitidas.contains(m.getCpMarcador()
-						.getIdMarcador()))
-					for (ExMobil cadaMobil : marcasPorMobil.keySet())
-						marcasPorMobil.get(cadaMobil).add(m);
+//			for (ExMarca m : mobilGeral.getMob().getExMarcaSet())
+//				if (marcasGeralPermitidas.contains(m.getCpMarcador()
+//						.getIdMarcador()))
+//					for (ExMobil cadaMobil : marcasPorMobil.keySet())
+//						marcasPorMobil.get(cadaMobil).add(m);
 			mobs.remove(mobilGeral);
 		}
 
 		// Edson: mostra lista de vias/volumes só se número de
 		// vias/volumes além do geral for > que 1 ou se o móbil
 		// tiver informações que não aparecem no topo da tela
-		if (doc.getExMobilSet().size() > 2 || mob.temMarcaNaoAtiva())
+		//if (doc.getExMobilSet().size() > 2 || mob.temMarcaNaoAtiva())
 			outrosMobsLabel = doc.isProcesso() ? "Volumes" : "Vias";
 
 		this.dotTramitacao = new ExGraphTramitacao(mob);

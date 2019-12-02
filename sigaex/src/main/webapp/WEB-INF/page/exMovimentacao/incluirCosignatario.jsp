@@ -65,13 +65,13 @@
 				<form action="incluir_cosignatario_gravar" namespace="/expediente/mov" cssClass="form" method="post" onsubmit="return validate();" >
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="sigla" value="${sigla}" />
+					<c:if test="${siga_cliente == 'GOVSP'}">
 					<div class="row">
 						<div class="col-sm-6">
 							<div class="form-group">
 								<siga:selecao titulo="Cossignatário" propriedade="cosignatario" modulo="siga" />
 							</div>
 						</div>
-						<c:if test="${siga_cliente == 'GOVSP'}">
 						<div class="col-sm-2">
 							<div class="form-group">
 								<div class="form-check form-check-inline mt-4">
@@ -81,9 +81,7 @@
 								</div>
 							</div>
 						</div>
-						</c:if>
 					</div>
-					<c:if test="${siga_cliente == 'GOVSP'}">
 					<div id="div_personalizacao" style="display: none" class="row">
 						<div class="col-sm-4">
 							<div class="form-group">
@@ -101,7 +99,10 @@
 					</c:if>					
 					<c:if test="${siga_cliente != 'GOVSP'}">
 					<div class="row">
-						<div class="col-sm-6">
+						<div class="col-12 col-lg-6">
+						<siga:selecao titulo="Cossignatário" propriedade="cosignatario" modulo="siga" />
+						</div>
+						<div class="col-12 col-lg-6">
 							<div class="form-group">
 								<label>Função; Lotação; Localidade</label>
 								<input class="form-control" type="text" name="funcaoCosignatario" size="50" value="${funcaoCosignatario}" maxlength="128" />
@@ -110,7 +111,7 @@
 					</div>
 					</c:if>
 					<div class="row">
-						<div class="col-sm-6">
+						<div class="col-12 col-lg-6">
 							<input type="submit" value="Ok" class="btn btn-primary" />
 							<input type="button" value="<fmt:message key="botao.cancela"/>" onclick="javascript:history.back();" class="btn btn-cancel ml-2" />
 						</div>

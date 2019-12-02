@@ -193,8 +193,6 @@ var providerAssijusPopup = {
 						cont();
 					}
 				});
-				var success = true;
-				cont({success: success});
 			},
 			
 			errorCallback: function(id, err, cont) {
@@ -613,37 +611,34 @@ var providerPassword = {
 	nome : 'Assinatura com Senha',
 	inicializar : function(cont) {
 		try {
-			this.dialog = $(
-					'<div id="dialog-form" title="Assinar/Autenticar com Senha"><fieldset><label>Matrícula</label> <br /> <input id="nomeUsuarioSubscritor" type="text" value="' + $('#siglaUsuarioCadastrante').val() + '" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)" /> <label>(modifique caso necessário)</label><br /> <br /> <label>Senha</label><br /> <input type="password" id="senhaUsuarioSubscritor" class="text ui-widget-content ui-corner-all" autocomplete="off" autofocus /></fieldset></div>')
-					.dialog({
-						title : "Identificação",
-						width : '50%',
-						height : 'auto',
-						resizable : false,
-						autoOpen : true,
-						position : {
-							my : "center top+25%",
-							at : "center top",
-							of : window
-						},
-						modal : true,
-						closeText : "hide",
-						buttons : {
-							"OK" : function() {
-								gLogin = $("#nomeUsuarioSubscritor").val();
-								gPassword = $("#senhaUsuarioSubscritor").val();
-								$(this).dialog('destroy').remove();
-								cont();
-							},
-							"Cancelar" : function() {
-								gAssinando = false;
-								$(this).dialog('destroy').remove();
-							}
-						},
-						close : function() {
-							gAssinando = false;
-						}
-					});
+			var senhaDialog = $(
+					'<div class="modal fade" tabindex="-1" role="dialog" id="senhaDialog"><div class="modal-dialog modal-dialog-centered" role="document"><div class="modal-content">'
+					+ '<div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Identificação</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+					+ '<div class="modal-body"><fieldset><label>Matrícula</label> <br /> <input id="nomeUsuarioSubscritor" type="text" value="' + $('#siglaUsuarioCadastrante').val() + '" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)" /> <label>(modifique caso necessário)</label><br /> <br /> <label>Senha</label><br /> <input type="password" id="senhaUsuarioSubscritor" class="text ui-widget-content ui-corner-all" autocomplete="off" autofocus /></fieldset></div>'
+					+ '<div class="modal-footer"><button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button><button type="button" id="senhaOk" class="btn btn-primary">OK</button></div>'
+					+ '</div></div></div>')
+					.modal();
+			
+			senhaDialog.on('shown.bs.modal', function () {
+				$(this).find('[autofocus]').focus();
+				$('#senhaOk').click(function () {
+					gLogin = $("#nomeUsuarioSubscritor").val();
+					gPassword = $("#senhaUsuarioSubscritor").val();
+					gAssinando = false;
+					cont();
+					senhaDialog.modal('hide');
+				});
+			});
+			
+			senhaDialog.on('hidden.bs.modal', function () {
+				// gAssinando = flag necessario para reabrir a janela mediante cancelamento ou fechamento da modal
+				// pelo usuário por causa da função AssinarDocumentos que é chamada pelo botão assinar
+				gAssinando = false;
+				$('#senhaDialog').remove();
+			});
+			
+			
+			
 			$(document).delegate('.ui-dialog', 'keyup', function(e) {
 				if((e.which == 13 || e.key === "Enter") && ($("#nomeUsuarioSubscritor").val() === "" || $("#senhaUsuarioSubscritor").val() === "")) {
 					return false;
@@ -741,29 +736,30 @@ var process = {
 	},
 	run : function() {
 		window.scrollTo(0, 0);
-		this.dialogo = $(
-				'<div id="dialog-ad" title="Assinatura Digital"><p id="vbslog">Iniciando...</p><div id="progressbar-ad"></div></div>')
-				.dialog(
-						{
-							title : "Assinatura Digital (" + provider.nome
-									+ ") " + gCertAlias,
-							width : '50%',
-							height : 'auto',
-							resizable : false,
-							autoOpen : true,
-							position : {
-								my : "center top+25%",
-								at : "center top",
-								of : window
-							},
-							modal : true,
-							closeText : "hide"
-						});
-		this.progressbar = $('#progressbar-ad').progressbar();
-		this.nextStep();
+		
+		var progressDialog = $(
+				'<div class="modal fade" tabindex="-1" role="dialog" id="progressDialog"><div class="modal-dialog" role="document"><div class="modal-content">'
+				+ '<div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Assinatura Digital (' + provider.nome
+				+ ')</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+				+ '<div class="modal-body"><p id="vbslog">Iniciando...</p><div id="progressbar-ad"></div></div>'
+				+ '<div class="modal-footer"><button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button><button type="button" id="senhaOk" class="btn btn-primary">OK</button></div>'
+				+ '</div></div></div>')
+				.modal();
+		
+		var runFunction = this;
+		progressDialog.on('shown.bs.modal', function () {
+			runFunction.progressbar = $('#progressbar-ad').progressbar();
+			runFunction.nextStep();
+		});
+		
+		progressDialog.on('hidden.bs.modal', function () {
+			gAssinando = false;
+			// progressDialog.modal('dispose');
+			$('#progressDialog').remove();
+		});
 	},
 	finalize : function() {
-		this.dialogo.dialog('destroy');
+		$('#progressDialog').modal('hide');
 		gAssinando = false;
 	},
 	nextStep : function() {
@@ -773,7 +769,7 @@ var process = {
 			var ret = this.steps[this.index++]();
 			if ((typeof ret == 'string') && ret != "OK") {
 				this.finalize();
-				alert(ret, 0, "Não foi possível completar a operação");
+				ModalAlert(ret, "Não foi possível completar a operação");
 				return;
 			}
 		}
@@ -791,6 +787,22 @@ var process = {
 		}
 	}
 };
+
+function ModalAlert(err, title) {
+	var alertDialog = $(
+			'<div class="modal fade" tabindex="-1" role="dialog" id="alertDialog"><div class="modal-dialog" role="document"><div class="modal-content">'
+			+ '<div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">' + title
+			+ '</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+			+ '<div class="modal-body"><p>' + err + '</p></div>'
+			+ '<div class="modal-footer"><button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button></div>'
+			+ '</div></div></div>')
+			.modal();
+	
+	alertDialog.on('hidden.bs.modal', function () {
+		// alertDialog.modal('dispose');
+		$('#alertDialog').remove();
+	});
+}
 
 function Erro(err) {
 	alert("Ocorreu um erro durante o processo de assinatura: " + err.message);

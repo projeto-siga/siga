@@ -3208,7 +3208,12 @@ Pede deferimento.</span><br/><br/><br/>
 [/#macro]
 
 [#macro extensaoBuscaTextualbs4]
-
+	<div class="form-row">
+		<div class="form-group col-md-6">
+			<label for="conteudo">Conte&uacute;do</label>
+	        <input type="text" id="fullText" value="${valFullText}" size="80" name="fullText" class="form-control" />
+		</div>
+	</div>
 [/#macro]
 
 [#macro extensaoEditor nomeExtensao="" conteudoExtensao=""]

@@ -3207,6 +3207,9 @@ Pede deferimento.</span><br/><br/><br/>
 
 [/#macro]
 
+[#macro extensaoBuscaTextualbs4]
+
+[/#macro]
 
 [#macro extensaoEditor nomeExtensao="" conteudoExtensao=""]
           [#if nomeExtensao == ""]

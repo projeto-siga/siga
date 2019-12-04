@@ -199,24 +199,33 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 				+ getLotacao().getSiglaCompleta();
 	}
 
+	static Pattern p1 = null;
+
 	public void setSigla(String sigla) {
-		if (sigla == null) {
-			sigla = "";
+		if (p1 == null) {
+			Map<String, CpOrgaoUsuario> mapAcronimo = new TreeMap<String, CpOrgaoUsuario>();
+			for (CpOrgaoUsuario ou : CpDao.getInstance().listarOrgaosUsuarios()) {
+				mapAcronimo.put(ou.getAcronimoOrgaoUsu(), ou);
+				mapAcronimo.put(ou.getSiglaOrgaoUsu(), ou);
+			}
+			String acronimos = "";
+			for (String s : mapAcronimo.keySet()) {
+				acronimos += "|" + s;
+			}
+			
+			p1 = Pattern.compile("^(?<orgao>" + acronimos + ")?(?<numero>[0-9]+)$");
 		}
+
+		sigla = sigla.trim().toUpperCase();
+
 		
-		final Pattern p1 = Pattern.compile("^([A-Za-z][A-Za-z0-9]{1,4})([0-9]+)"); /* Aumentada a mascar para aceitar até 5 caractetes no primeiro grupo para o Órgão */
 		final Matcher m = p1.matcher(sigla);
 		if (m.find()) {
-			setSesbPessoa(m.group(1).toUpperCase());
-			setMatricula(Long.parseLong(m.group(2)));
+			String orgao = m.group("orgao");
+			String numero = m.group("numero");
+			setSesbPessoa(orgao.toUpperCase());
+			setMatricula(Long.parseLong(numero));
 		}
-		
-		/** Retirado por dar erro na pesquisa por nome nas caixas de seleção de pessoas - Atenção GOVSP
-		
-		if(sigla != null && !"".equals(sigla)) {
-			setSesbPessoa(MatriculaUtils.getSiglaDoOrgaoDaMatricula(sigla.toUpperCase()).toUpperCase());
-			setMatricula(MatriculaUtils.getParteNumericaDaMatricula(sigla.toUpperCase()));
-		}  **/
 	}
 
 	public String getNomePessoaAI() {

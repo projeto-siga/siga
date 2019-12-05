@@ -1062,7 +1062,7 @@ LINHA  VARIÁVEL / CONTEÚDO
     
 	 [#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
     [#if !gerar_formulario!false]
-       <input type="text" name="${var}" value="${v}" ${jreler!""}${jrelertab!""}${jlargura!""}${jmaxcaracteres!""} ${attsHtml} onkeyup="${onkeyup}" />
+       <input type="text" name="${var}" value="${v}" ${jreler!""}${jrelertab!""}${jlargura!""}${jmaxcaracteres!""} ${attsHtml} onkeyup="${onkeyup}" class="form-control"/>
     [#else]
     <span class="valor">${v}</span>
     [/#if]
@@ -1173,7 +1173,7 @@ LINHA  VARIÁVEL / CONTEÚDO
                         [#if ( (func.podeUtilizarExtensaoEditor(lotaCadastrante, doc.exModelo.idMod?number)!false)
                            && (!((desconsiderarExtensao == 'true')!false)) )]
 [#else]
-<textarea id="${var}" name="${var}">${default!}${v?html}</textarea>
+<textarea id="${var}" name="${var}" class="form-control">${default!}${v?html}</textarea>
 [/#if]
             <table class="entrevista" width="100%">
                 <tr>
@@ -1384,7 +1384,7 @@ window.onload = function(){
 
     [#if !gerar_formulario!false]
         <input type="hidden" name="vars" value="${var}" />
-        <select name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] onclick="${onclick}" ${attsHtml}>
+        <select name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] onclick="${onclick}" class="form-control" ${attsHtml}>
                     [#list l as opcao]
                         <option[#if v == opcao] selected[/#if] value="${opcao}">${opcao}</option><br/>
             [/#list]
@@ -1467,7 +1467,7 @@ window.onload = function(){
                 [/#if]
 
                 [#if !gerar_formulario!false]
-                    <textarea cols="${colunas}" rows="${linhas}" name="${var}" ${jreler!""} style="width:100%;">${v}</textarea>
+                    <textarea cols="${colunas}" rows="${linhas}" name="${var}" ${jreler!""} style="width:100%;" class="form-control">${v}</textarea>
                 [#else]
                     <span class="valor">${v}</span>
                 [/#if]
@@ -3239,13 +3239,13 @@ Pede deferimento.</span><br/><br/><br/>
        [/#if]
 
        [#if botao == 'ambos']
-          <input type="button" name="cmdConfCopia" id="cmdConfCopia" onClick="javascript: incluiApplet(true,false)" value="Autenticar ${emLote!""}" class="gt-btn-large gt-btn-left">
-          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false,false)" value="Assinar ${emLote!""}" class="gt-btn-large gt-btn-left">       
+          <input type="button" name="cmdConfCopia" id="cmdConfCopia" onClick="javascript: incluiApplet(true,false)" value="Autenticar ${emLote!""}" class="btn btn-primary">
+          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false,false)" value="Assinar ${emLote!""}" class="btn btn-primary">       
        [#else]
-          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false)" value="Assinar ${emLote!""}" class="gt-btn-large gt-btn-left">
+          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false)" value="Assinar ${emLote!""}" class="btn btn-primary">
        [/#if]
        [#if !ext_assinatura_config_remoto]
-        <input type="button" name="cmdConfigurar" id="cmdConfigurar" onClick="javascript: incluiApplet(false,true)" value="Configurar Assinador" class="gt-btn-large gt-btn-left">
+        <input type="button" name="cmdConfigurar" id="cmdConfigurar" onClick="javascript: incluiApplet(false,true)" value="Configurar Assinador" class="btn btn-primary">
        [/#if]
 
 
@@ -3401,13 +3401,13 @@ Pede deferimento.</span><br/><br/><br/>
        [/#if]
 
        [#if botao == 'ambos']
-          <input type="button" name="cmdConfCopia" id="cmdConfCopia" onClick="javascript: incluiApplet(true,false)" value="Conferir Cópia ${emLote!""}" class="gt-btn-large gt-btn-left">
-          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false,false)" value="Assinar ${emLote!""}" class="gt-btn-large gt-btn-left">       
+          <input type="button" name="cmdConfCopia" id="cmdConfCopia" onClick="javascript: incluiApplet(true,false)" value="Conferir Cópia ${emLote!""}" class="btn btn-primary">
+          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false,false)" value="Assinar ${emLote!""}" class="btn btn-primary">       
        [#else]
-          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false)" value="Assinar ${emLote!""}" class="gt-btn-large gt-btn-left">
+          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false)" value="Assinar ${emLote!""}" class="btn btn-primary">
        [/#if]
        [#if !ext_assinatura_config_remoto]
-        <input type="button" name="cmdConfigurar" id="cmdConfigurar" onClick="javascript: incluiApplet(false,true)" value="Configurar Assinador" class="gt-btn-large gt-btn-left">
+        <input type="button" name="cmdConfigurar" id="cmdConfigurar" onClick="javascript: incluiApplet(false,true)" value="Configurar Assinador" class="btn btn-primary">
        [/#if]
 
 
@@ -3561,13 +3561,13 @@ Pede deferimento.</span><br/><br/><br/>
        [/#if]
 
        [#if botao == 'ambos']
-          <input type="button" name="cmdConfCopia" id="cmdConfCopia" onClick="javascript: incluiApplet(true,false)" value="Conferir Cópia ${emLote!""}" class="gt-btn-large gt-btn-left">
-          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false,false)" value="Assinar ${emLote!""}" class="gt-btn-large gt-btn-left">       
+          <input type="button" name="cmdConfCopia" id="cmdConfCopia" onClick="javascript: incluiApplet(true,false)" value="Conferir Cópia ${emLote!""}" class="btn btn-primary">
+          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false,false)" value="Assinar ${emLote!""}" class="btn btn-primary">       
        [#else]
-          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false)" value="Assinar ${emLote!""}" class="gt-btn-large gt-btn-left">
+          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false)" value="Assinar ${emLote!""}" class="btn btn-primary">
        [/#if]
        [#if !ext_assinatura_config_remoto]
-        <input type="button" name="cmdConfigurar" id="cmdConfigurar" onClick="javascript: incluiApplet(false,true)" value="Configurar Assinador" class="gt-btn-large gt-btn-left">
+        <input type="button" name="cmdConfigurar" id="cmdConfigurar" onClick="javascript: incluiApplet(false,true)" value="Configurar Assinador" class="btn btn-primary">
        [/#if]
 
 
@@ -3930,7 +3930,7 @@ Pede deferimento.</span><br/><br/><br/>
 
     [#if !gerar_formulario!false]
         <input type="hidden" name="vars" value="${var}" />
-		<input type="text" name="${var}" value="${v}" size="6" maxlength="5" onblur="javascript:verifica_hora(this, 'Sim');${jreler!}" />
+		<input type="text" name="${var}" value="${v}" size="6" maxlength="5" onblur="javascript:verifica_hora(this, 'Sim');${jreler!}" class="form-control" />
     [#else]
 		<span class="valor">${v}</span>
     [/#if]
@@ -4063,7 +4063,7 @@ Pede deferimento.</span><br/><br/><br/>
 
     [#if !gerar_formulario!false]
         <input type="hidden" name="vars" value="${var}" />
-        <select name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] onclick="${onclick}">
+        <select name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] onclick="${onclick}" class="form-control">
                     [#list l as opcao]
                         <option[#if v == opcao] selected[/#if] value="${opcao}">${opcao}</option><br/>
             [/#list]

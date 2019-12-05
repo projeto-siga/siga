@@ -204,19 +204,12 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 			sigla = "";
 		}
 		
-		final Pattern p1 = Pattern.compile("^([A-Za-z][A-Za-z0-9]{1,4})([0-9]+)"); /* Aumentada a mascar para aceitar até 5 caractetes no primeiro grupo para o Órgão */
+		final Pattern p1 = Pattern.compile("^([A-Za-z][A-Za-z0-9]{1,10})([0-9]+)"); /* Aumentada a mascar para aceitar até 10 caractetes no primeiro grupo para o Órgão */
 		final Matcher m = p1.matcher(sigla);
 		if (m.find()) {
 			setSesbPessoa(m.group(1).toUpperCase());
 			setMatricula(Long.parseLong(m.group(2)));
 		}
-		
-		/** Retirado por dar erro na pesquisa por nome nas caixas de seleção de pessoas - Atenção GOVSP
-		
-		if(sigla != null && !"".equals(sigla)) {
-			setSesbPessoa(MatriculaUtils.getSiglaDoOrgaoDaMatricula(sigla.toUpperCase()).toUpperCase());
-			setMatricula(MatriculaUtils.getParteNumericaDaMatricula(sigla.toUpperCase()));
-		}  **/
 	}
 
 	public String getNomePessoaAI() {

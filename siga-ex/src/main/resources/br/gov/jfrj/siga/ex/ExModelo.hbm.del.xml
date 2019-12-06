@@ -23,6 +23,7 @@
 			
 		<property name="nmDiretorio" column="NM_DIRETORIO" type="string" />
 		<property name="uuid" column="HIS_IDE" type="string" />
+		<property name="isComposto" column="IS_COMPOSTO" type="java.lang.Integer" />
 			
 		<!-- Campos padronizados para armazenar dados históricos -->
 		<property name="hisIdIni" column="HIS_ID_INI" type="java.lang.Long" />

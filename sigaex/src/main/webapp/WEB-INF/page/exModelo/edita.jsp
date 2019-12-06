@@ -125,15 +125,23 @@
 								<input type="text" name="diretorio" value="${diretorio}" size="80" class="form-control"/>
 							</div>
 						</div>
-						<div class="col-sm-6">
+						<div class="col-md-4">
 							<div class="form-group">
 								<label>Identificador para sincronismo</label>
 								<input readonly type="text" name="uuid" value="${uuid}" size="80" class="form-control"/>
 							</div>
 						</div>
+						<div class="col-md-2">
+							<div class="form-group">
+								<div class="form-check form-check-inline mt-4">
+								  <input class="form-check-input" type="checkbox" name="isComposto" id="isComposto" value="1" <c:if test="${isComposto == 1}">checked</c:if>/>
+								  <label class="form-check-label" for="isComposto">Documento Composto</label>
+								</div>
+							</div>
+						</div>
 					</div>
 					<div class="row">
-						<div class="col-sm-2">
+						<div class="col-md-2">
 							<div class="form-group">
 								<label>Tipo do Modelo</label>
 								<siga:escolha id="tipoModelo" var="tipoModelo">
@@ -160,7 +168,7 @@
 					</div>
 					<div class="row">
 						<div class="col-sm-12">
-							<div class="form-group mb-0">
+							<div class="form-group">
 								<input type="submit" value="Ok" class="btn btn-primary" />
 								<input type="submit" name="submit" value="Aplicar" class="btn btn-primary" />
 								<input type="button" value="Desativar" class="btn btn-primary" onclick="location.href='desativar?id=${id}'" />

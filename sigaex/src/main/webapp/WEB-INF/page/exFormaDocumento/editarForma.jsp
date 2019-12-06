@@ -18,20 +18,20 @@
 				<form name="frm" action="gravar" theme="simple" method="POST">
 
 					<div class="row">
-						<div class="col-sm-4">
+						<div class="col-md-4">
 							<div class="form-group">
 								<label for="descricao">Descrição</label> <input type="text"
 									value="${descricao}" name="descricao" class="form-control" />
 							</div>
 						</div>
-						<div class="col-sm-1">
+						<div class="col-md-1">
 							<div class="form-group">
 								<label for="sigla">Sigla</label> <input type="text"
 									value="${sigla}" name="sigla" id="gravar_sigla"
 									class="form-control" /> <span id="mensagem"></span>
 							</div>
 						</div>
-						<div class="col-sm-2">
+						<div class="col-md-2">
 							<div class="form-group">
 								<label for="idTipoFormaDoc">Tipo</label> <select
 									name="idTipoFormaDoc" value="${idTipoFormaDoc}"
@@ -41,6 +41,14 @@
 											${tipo.idTipoFormaDoc == idTipoFormaDoc ? 'selected' : ''}>${tipo.descTipoFormaDoc}</option>
 									</c:forEach>
 								</select>
+							</div>
+						</div>
+						<div class="col-md-2">
+							<div class="form-group">
+								<div class="form-check form-check-inline mt-4">
+								  <input class="form-check-input" type="checkbox" name="isComposto" id="isComposto" value="1" <c:if test="${isComposto == 1}">checked</c:if>/>
+								  <label class="form-check-label" for="isComposto">Documento Composto</label>
+								</div>
 							</div>
 						</div>
 					</div>

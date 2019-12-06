@@ -6127,6 +6127,7 @@ public class ExBL extends CpBL {
 			DpPessoa titular, DpLotacao lotaTitular, boolean autuando) {
 		ArrayList<ExModelo> modeloSetFinal = new ArrayList<ExModelo>();
 		ArrayList<ExModelo> provSet;
+		boolean isComposto;
 		if (forma != null)
 			modeloSetFinal = new ArrayList<ExModelo>(forma.getExModeloSet());
 		else
@@ -6142,11 +6143,21 @@ public class ExBL extends CpBL {
 		}
 		
 		if (despachando) {
+			isComposto = mobPai.doc().isComposto();
 			provSet = new ArrayList<ExModelo>();
-			for (ExModelo mod : modeloSetFinal)
+			for (ExModelo mod : modeloSetFinal) {
 				if (getConf().podePorConfiguracao(titular, lotaTitular, mod,
-						CpTipoConfiguracao.TIPO_CONFIG_DESPACHAVEL))
-					provSet.add(mod);
+						CpTipoConfiguracao.TIPO_CONFIG_DESPACHAVEL)) { 
+					if (!isComposto) { 
+						if (getConf().podePorConfiguracao(titular, lotaTitular, null, mod.getExFormaDocumento(), mod,
+							CpTipoConfiguracao.TIPO_CONFIG_INCLUIR_EM_AVULSO)) {
+							provSet.add(mod);
+						}
+					} else {
+						provSet.add(mod);
+					}
+				}
+			}
 			modeloSetFinal = provSet;
 		} else {
 			provSet = new ArrayList<ExModelo>();

@@ -4497,7 +4497,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * Retorna se é possível incluir ciencia do documento a que pertence o
 	 * móbil passado por parâmetro, conforme as seguintes condições:
 	 * <ul>
-	 * <li>Modelo do documento pode incluir documentos</li>
 	 * <li>Documento não foi tramitado</li>
 	 * <li>Documento tem de estar assinado ou autenticado</li>
 	 * <li>Documento não pode estar juntado a outro</li>
@@ -4525,17 +4524,14 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 					&& !mob.isJuntado()
 					&& !mob.isArquivado()
 					&& !mob.isVolumeEncerrado()
-					&& !getConf()
-							.podePorConfiguracao(
-									titular, 
-									lotaTitular, 
-									mob.getDoc().getExTipoDocumento(), 
-									mob.getDoc().getExFormaDocumento(), 
-									mob.getDoc().getExModelo(), CpTipoConfiguracao.TIPO_CONFIG_INCLUIR_DOCUMENTO)
 					&& getConf()
 							.podePorConfiguracao(
 									titular,
 									lotaTitular,
+									null,
+									null,
+									mob.getDoc().getExFormaDocumento(), 
+									mob.getDoc().getExModelo(), 
 									ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA,
 									CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR));
 	}

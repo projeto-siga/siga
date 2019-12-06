@@ -894,6 +894,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	}
 
 	/**
+	 * Verifica se um documento é composto
+	 */
+	public Boolean isComposto() {
+		return getExFormaDocumento().isComposto() || getExModelo().getModeloAtual().isComposto();
+	}
+
+	/**
 	 * Verifica se um documento pode ser indexado conforme as regras
 	 * <b>(informar regras)</b>
 	 */

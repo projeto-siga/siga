@@ -102,7 +102,7 @@ public class ExAutenticacaoController extends ExController {
 
 		boolean success = false;
 		if (gRecaptchaResponse != null) {
-			if (!"".equals(HTTP_PROXY_HOST) && !"".equals(HTTP_PROXY_PORT)){
+			if (HTTP_PROXY_HOST != null && HTTP_PROXY_PORT != null){
 				Unirest.setProxy(new HttpHost(HTTP_PROXY_HOST, Integer.parseInt(HTTP_PROXY_PORT)));
 			}
 

@@ -49,11 +49,11 @@ import org.apache.xerces.impl.dv.util.Base64;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Formula;
 import org.jboss.logging.Logger;
-import org.mockito.cglib.transform.impl.AddInitTransformer;
 
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -1554,7 +1554,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 */
 	public boolean isNumeracaoUnicaAutomatica() {
 		// return isEletronico() && getExFormaDocumento().isNumeracaoUnica();
-		return (getExFormaDocumento().isNumeracaoUnica())
+		return (getExFormaDocumento().isNumeracaoUnica() || (SigaMessages.isSigaSP() && isExpediente() && !getExDocumentoFilhoSet().isEmpty()))
 				&& (getExTipoDocumento().getId() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO || getExTipoDocumento()
 						.getId() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO)
 				&& isEletronico();

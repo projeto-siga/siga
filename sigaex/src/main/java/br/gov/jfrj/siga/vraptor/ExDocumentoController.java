@@ -1518,7 +1518,7 @@ public class ExDocumentoController extends ExController {
 				if (numPaginas == null || d.getArquivoComStamp() == null) {
 					throw new AplicacaoException(
 							MessageFormat
-									.format("O arquivo {0} está corrompido. Favor gera-lo novamente antes de anexar.",
+									.format("O arquivo {0} está corrompido ou protegido por senha. Favor gera-lo novamente antes de anexar.",
 											arquivo.getFileName()));
 				}
 

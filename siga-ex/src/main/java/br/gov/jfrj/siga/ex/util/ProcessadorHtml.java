@@ -22,15 +22,12 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.htmlcleaner.HtmlCleaner;
+import org.jsoup.Jsoup;
 import org.kxml2.io.KXmlParser;
 import org.kxml2.io.KXmlSerializer;
 import org.w3c.tidy.Configuration;
@@ -57,6 +54,8 @@ public class ProcessadorHtml {
 	static final String asKnownElements[] = { "html", "title", "head", "body",
 			"div", "hr", "table", "caption", "colgroup", "col", "th", "tr", "td", "ol", "ul",
 			"li", "p", "br", "hr", "blockquote" };
+	
+	private String htmlCompleto, htmlPersonalizado = "";
 
 	private class Tag {
 		String name;
@@ -145,7 +144,7 @@ public class ProcessadorHtml {
 			add(myTags, "blockquote", null, null, true);
 			add(myTags, "br", null, null, false);
 
-			String styleP = "font-family=arial,avantgarde bk bt\\, arial;font-size=6pt,7pt,8pt,9pt,10pt,11pt,12pt,13pt,14pt;font-weight=bold"
+			String styleP = "background-color;width;font-family=arial,avantgarde bk bt\\, arial;font-size=6pt,7pt,8pt,9pt,10pt,11pt,12pt,13pt,14pt;font-weight=bold"
 					+ ";margin-left;text-decoration=italic;text-align=left,right,center,justify"
 					+ ";text-indent;text-decoration;font-size-no-fix=yes;float=none;clear=both";
 			add(myTags, "div", "align;class", styleP + ";page-break-after;",
@@ -173,11 +172,11 @@ public class ProcessadorHtml {
 					+ ",61%,62%,63%,64%,65%,66%,67%,68%,69%,70%,71%,72%,73%,74%,75%,76%,77%,78%,79%,80%"
 					+ ",81%,82%,83%,84%,85%,86%,87%,88%,89%,90%,91%,92%,93%,94%,95%,96%,97%,98%,99%,100%";
 
-			String styleT = "border-style=solid;border-color;border-width;border-collapse=collapse;float=none;clear=both";
+			String styleT = "border;border-style=solid;border-color;border-width;border-collapse=collapse;float=none;clear=both;width;";
 
 			add(myTags,
 					"table",
-					"align=left,right,center,justify;bgcolor;bordercolor;border=0,1;cellpadding;cellspacing;heigth;summary;class;width;"
+					"align=left,right,center,justify;bgcolor;bordercolor;border;cellpadding;cellspacing;heigth;summary;class;width;"
 							+ sWidth, styleT, true);
 			add(myTags, "caption", null, null, true);
 			add(myTags, "colgroup", null, null, true);
@@ -189,8 +188,8 @@ public class ProcessadorHtml {
 					null, true);
 			add(myTags,
 					"th",
-					"width;class;bgcoloralign=left,right,center,justify;valign=bottom,top,middle;id;",
-					null, true);
+					"width;class;bgcoloralign=left,right,center,justify;valign=bottom,top,middle;id;scope;",
+					styleP, true);
 			add(myTags,
 					"td",
 					"width;class;align=left,right,center,justify;valign=bottom,top,middle;bgcolor;headers;colspan;rowspan;"
@@ -203,6 +202,33 @@ public class ProcessadorHtml {
 			tags = myTags;
 		}
 
+	}
+	
+	public ProcessadorHtml(String htmlCompleto) {
+		this.htmlCompleto = htmlCompleto;			
+	}	
+	
+	public static ProcessadorHtml novoHtmlPersonalizado(String html) {
+		return new ProcessadorHtml(html);
+	}
+	
+	public ProcessadorHtml comBody() {
+		htmlPersonalizado += htmlCompleto != null ? bodyOnly(htmlCompleto) : "";
+		return this;
+	}
+	
+	public ProcessadorHtml comCSSInterno() {				
+		htmlPersonalizado = htmlCompleto != null ? Jsoup.parse(htmlCompleto).getElementsByTag("style").toString() + htmlPersonalizado : "";
+		return this;
+	}
+	
+	public ProcessadorHtml comBootstrap() {
+		htmlPersonalizado =  "<link rel=\"stylesheet\" href=\"/siga/bootstrap/css/bootstrap.min.css\"/>" + htmlPersonalizado;
+		return this;
+	}
+	
+	public String obter() {
+		return htmlPersonalizado;
 	}
 
 	public String canonicalizarHtml(String s, boolean fRemoverEspacos,

@@ -18,6 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.itextpdf;
 
+import static br.gov.jfrj.siga.ex.util.ProcessadorHtml.novoHtmlPersonalizado;
+
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -978,8 +980,9 @@ public class Documento {
 				sb.append("</div>");
 			}
 			if (an.getArquivo().getHtml() != null) {
-				String sHtml = fixHtml(contextpath, an);
-				sHtml = ProcessadorHtml.bodyOnly(sHtml);
+				String sHtml = fixHtml(contextpath, an);				
+				sHtml = novoHtmlPersonalizado(sHtml).comBody().comBootstrap().comCSSInterno().obter();
+						
 				// sb
 				// .append("<div style=\"margin:3pt; padding:3pt; border: thin
 				// solid brown;\" class=\"dochtml\">");

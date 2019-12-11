@@ -1901,7 +1901,8 @@ public class ExDao extends CpDao {
 				+ (titular != null ? " and (marca.dpPessoaIni = :titular)"
 						: " and (marca.dpLotacaoIni = :lotaTitular)");
 		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
-			q += " and ((mobil.exDocumento.numExpediente is null and marcador = 1) or (mobil.exDocumento.numExpediente is not null))";
+			q += " and ((mobil.exDocumento.numExpediente is null and marcador = 1) or (mobil.exDocumento.numExpediente is not null))"
+					+ " and marcador <> 10";
 		}
 		long tempoIni = System.nanoTime();
 		Query query = getSessao()

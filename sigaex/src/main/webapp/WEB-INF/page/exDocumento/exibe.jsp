@@ -102,6 +102,15 @@
 			return '&#' + i.charCodeAt(0) + ';';
 		});
 	}
+	
+	function excluirArqAuxiliar(id, sigla) {
+		frm.elements["id"].value = id;
+		frm.elements["sigla"].value = sigla;
+		frm.action = '/sigaex/app/expediente/mov/cancelar_movimentacao_gravar';
+		frm.submit();
+		//alert(id);
+		//alert(frm.elements["sigla"].value);
+	}
 </script>
 
 <div class="container-fluid content" id="page">
@@ -114,7 +123,9 @@
 	</c:if>
 	<div class="row mt-3">
 		<div class="col">
-			<form name="frm" action="exibir" theme="simple" method="POST"></form>
+			<form name="frm" action="exibir" theme="simple" method="POST">
+				<input type="hidden" id="id" name="id"/> <input type="hidden" id="sigla" name="sigla"/>
+			</form>
 			<h2>
 				<c:if test="${empty ocultarCodigo}">${docVO.sigla}
 				</c:if>
@@ -1024,11 +1035,21 @@
 														<c:set var="acaourl"
 															value="${pageContext.request.contextPath}${acao.url}" />
 													</c:if>
-													<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}"
-														pre="${acao.pre}" pos="${acao.pos}" url="${acaourl}"
-														test="${true}" popup="${acao.popup}"
-														confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
-														idAjax="${mov.idMov}" classe="${acao.classe}" />
+													<c:choose> 
+														<c:when test="${not empty  acao.icone or siga_cliente ne 'GOVSP'}">
+															<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}"
+																pre="${acao.pre}" pos="${acao.pos}" url="${acaourl}"
+																test="${true}" popup="${acao.popup}"
+																confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
+																idAjax="${mov.idMov}" classe="${acao.classe}" />
+														</c:when>
+														<c:otherwise>
+															<input type="button" value="Cancelar"
+																class=" btn btn-sm btn-light"
+																onclick="excluirArqAuxiliar(${mov.idMov}, '${sigla}')" />
+														</c:otherwise>
+													</c:choose>
+
 												</c:forEach>
 												<div class="row ml-4 mb-3">
 													<small class="form-text text-muted mt-0">

@@ -29,12 +29,14 @@ import java.util.Set;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpComplexo;
+import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpCompetenciaBL;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -744,7 +746,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			DpFuncaoConfianca funcaoConfiancaObjeto, CpOrgaoUsuario orgaoObjeto) {
 		return podePorConfiguracao(titular, lotaTitular, 0L, tipoConfig, pessoaObjeto, lotacaoObjeto, complexoObjeto, cargoObjeto, funcaoConfiancaObjeto, orgaoObjeto);
 	}
-
 	/**
 	 * Retorna se é possível fazer arquivamento corrente de um móbil, segundo as regras a
 
@@ -871,10 +872,38 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		if(!mob.doc().isEletronico() || mob.doc().isPendenteDeAssinatura())
 			return false;
-		
-		if(mob.doc().getSubscritor() == null || !mob.doc().getSubscritor().equivale(titular))
-			return false;
-		
+
+		if (mob.doc().isCapturado()) {
+			if (mob.doc().getExMobilPai() != null)
+				return false;
+
+			if(!mob.doc().getCadastrante().equivale(titular))
+				return false;
+			
+			if (!getConf()
+				.podePorConfiguracao(null, null, null, mob.doc().getExTipoDocumento(), mob.doc().getExFormaDocumento(), 
+					mob.doc().getExModelo(), null, null, 
+					ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO,
+							ExTipoMovimentacao.class, false), 
+					null, null, null, lotaTitular, titular, null,null,
+					CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR, null, null, null, null, null, null) )
+				return false;
+
+			for (ExMobil m : mob.doc().getExMobilSet()) {
+				ExMovimentacao lastMov = m.getUltimaMovimentacaoNaoCancelada();
+				if (!(lastMov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA)
+					&& !(lastMov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO)
+					&& !(lastMov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO  
+						&& (mob.doc().getLotaCadastrante().equivale(lastMov.getLotaResp()) || mob.doc().getCadastrante().equivale(lastMov.getResp())) ) 
+					&& !(lastMov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA  
+						&& (mob.doc().getLotaCadastrante().equivale(lastMov.getLotaResp()) || mob.doc().getCadastrante().equivale(lastMov.getResp())) ) ) 
+						return false;
+			}
+		} else {
+			if(mob.doc().getSubscritor() == null || !mob.doc().getSubscritor().equivale(titular))
+				return false;
+		}
+			
 		//Verifica se o documento está com pedido de publicação no DJE ou BIE.
 		if(mob.doc().isPublicacaoSolicitada() ||  
 				mob.doc().isPublicacaoAgendada() || 	
@@ -889,8 +918,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								lotaTitular,
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO,
 								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
-	}	
-	
+	}
+
 	/**
 	 * Retorna se é possível criar subprocesso, segundo as regras abaixo:
 	 * <ul>
@@ -4468,7 +4497,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * Retorna se é possível incluir ciencia do documento a que pertence o
 	 * móbil passado por parâmetro, conforme as seguintes condições:
 	 * <ul>
-	 * <li>Modelo do documento pode incluir documentos</li>
 	 * <li>Documento não foi tramitado</li>
 	 * <li>Documento tem de estar assinado ou autenticado</li>
 	 * <li>Documento não pode estar juntado a outro</li>
@@ -4496,17 +4524,14 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 					&& !mob.isJuntado()
 					&& !mob.isArquivado()
 					&& !mob.isVolumeEncerrado()
-					&& !getConf()
-							.podePorConfiguracao(
-									titular, 
-									lotaTitular, 
-									mob.getDoc().getExTipoDocumento(), 
-									mob.getDoc().getExFormaDocumento(), 
-									mob.getDoc().getExModelo(), CpTipoConfiguracao.TIPO_CONFIG_INCLUIR_DOCUMENTO)
 					&& getConf()
 							.podePorConfiguracao(
 									titular,
 									lotaTitular,
+									null,
+									null,
+									mob.getDoc().getExFormaDocumento(), 
+									mob.getDoc().getExModelo(), 
 									ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA,
 									CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR));
 	}

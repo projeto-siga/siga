@@ -61,6 +61,7 @@
 	function telaCheia(b) {
         $('#sidebar').toggleClass('active');
         $('.wrapper').toggleClass('col-sm-3');
+        $('.wrapper').toggleClass('d-none');
         
         if ($('#TelaCheia').hasClass('btn-secondary')) {
 	 		b.classList.remove("btn-secondary");

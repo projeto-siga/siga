@@ -2,6 +2,11 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +72,11 @@ public class LoginController extends SigaController {
 			}
 		}
 		
-		result.include("fAviso", false);
+		final DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+		Calendar c = Calendar.getInstance();
+		
+		result.include("fAviso", "21-11-2019".equals(df.format(c.getTime())));
+		result.include("avisoMensagem", "Prezado usuário, o sistema SP Sem Papel passa por instabilidade e a equipe técnica está trabalhando para solucionar o mais rápido possível, assim que restabelecido essa mensagem sairá do ar.");
 		result.include("versao", manifest.get("Siga-Versao"));
 		result.include("cont", cont);
 	}

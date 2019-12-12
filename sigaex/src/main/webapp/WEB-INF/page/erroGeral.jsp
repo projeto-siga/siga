@@ -4,10 +4,20 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
 <c:catch var="selectException">
 	<%
-		pageContext.getRequest().setAttribute("thread", Thread.currentThread().getName());
+		// Servidor: ultimos dois bytes antes de / e ultimos dois bytes da porta (antes do hifen):
+		//     xxx-xxxxx-xAA/nnn.nnn.nnn.nnn:nnBB-nn ==> AABB 
+		String th = Thread.currentThread().getName();
+		String port1 = th.split(":") [1];
+		String port2 = port1.split("-") [0];
+		String serv1 = th.split("/") [0];
+		String serv2 = serv1.substring(serv1.length() - 2);
+		pageContext.getRequest().setAttribute("thread", 
+				serv1.substring(serv1.length() - 2) + (port2.substring(port2.length() - 3)) );
+
 		java.lang.Throwable t = (Throwable) pageContext.getRequest().getAttribute("exception");
 		if (t == null){
 			t = (Throwable) exception;
@@ -82,16 +92,15 @@ This is a useless buffer to fill the page to 513 bytes to avoid display of Frien
 											<fmt:formatDate var="datahora" value="${now}" pattern="yyyy-MM-dd HH:mm:ss" />
 								      		<td><c:out value="${datahora}" /></td>
 								      	</tr>
-										<c:if test="${docVO.sigla != null}">
+										<c:if test="${param.sigla != null}">
 									      	<tr>
 									      		<td>Documento:</td>
-									      		<td><c:out value="${docVO.sigla}" /></td>
+									      		<td><c:out value="${param.sigla}" /></td>
 									      	</tr>
 									    </c:if>
 								      	<tr>
 								      		<td>Servidor:</td>
-											<c:set var="threadServer" value="${fn:split(thread, '/')}" />
-								      		<td><c:out value="${threadServer[0]}" /></td>
+								      		<td><c:out value="${thread}" /> / <c:out value="${f:resource('ambiente')}" /></td>
 								      	</tr>
 									  	<tr>
 									  		<td>Usuário</td>

@@ -7,6 +7,8 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/modelostag" prefix="mod"%>
 
+<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
+<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
 <link rel="stylesheet" href="/siga/codemirror/lib/codemirror.css" />
 <link rel="stylesheet" href="/siga/codemirror/theme/default.css" />
 
@@ -95,7 +97,7 @@
 						<div class="col-sm-6">
 							<div class="form-group">
 								<label>Espécie</label>
-								<select name="forma" value="${forma}" class="custom-select">
+								<select name="forma" value="${forma}" class="custom-select  siga-select2">
 									<c:forEach var="item" items="${listaForma}">
 										<option value="${item.idFormaDoc}"
 											${item.idFormaDoc == forma ? 'selected' : ''}>${item.descrFormaDoc}</option>
@@ -123,15 +125,23 @@
 								<input type="text" name="diretorio" value="${diretorio}" size="80" class="form-control"/>
 							</div>
 						</div>
-						<div class="col-sm-6">
+						<div class="col-md-4">
 							<div class="form-group">
 								<label>Identificador para sincronismo</label>
 								<input readonly type="text" name="uuid" value="${uuid}" size="80" class="form-control"/>
 							</div>
 						</div>
+						<div class="col-md-2">
+							<div class="form-group">
+								<div class="form-check form-check-inline mt-4">
+								  <input class="form-check-input" type="checkbox" name="isComposto" id="isComposto" value="1" <c:if test="${isComposto == 1}">checked</c:if>/>
+								  <label class="form-check-label" for="isComposto">Documento Composto</label>
+								</div>
+							</div>
+						</div>
 					</div>
 					<div class="row">
-						<div class="col-sm-2">
+						<div class="col-md-2">
 							<div class="form-group">
 								<label>Tipo do Modelo</label>
 								<siga:escolha id="tipoModelo" var="tipoModelo">
@@ -158,7 +168,7 @@
 					</div>
 					<div class="row">
 						<div class="col-sm-12">
-							<div class="form-group mb-0">
+							<div class="form-group">
 								<input type="submit" value="Ok" class="btn btn-primary" />
 								<input type="submit" name="submit" value="Aplicar" class="btn btn-primary" />
 								<input type="button" value="Desativar" class="btn btn-primary" onclick="location.href='desativar?id=${id}'" />
@@ -221,6 +231,9 @@
 	</div>
 	</c:if>
 
+	<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+	<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+	<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
 	<script> 
 		var editor = null;
 		function sbmt() {
@@ -347,6 +360,6 @@
 			                
 			            });
 			});
-	</script>
+	</script>	
 
 </siga:pagina>

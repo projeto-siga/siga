@@ -8,6 +8,8 @@
 	value="${fn:replace(param.propriedade,'.','')}" />
 
 <siga:pagina titulo="Buscar Função" popup="true">
+<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
+<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
 
 <script type="text/javascript" language="Javascript1.1">
 function sbmt(offset) {
@@ -56,7 +58,7 @@ function sbmt(offset) {
 				<div class="col-sm">
 					<div class="form-group">
 						<label>Órgão</label>
-						<select name="idOrgaoUsu" value="${idOrgaoUsu}" class="form-control">
+						<select name="idOrgaoUsu" value="${idOrgaoUsu}" class="form-control  siga-select2">
 							<c:forEach items="${orgaosUsu}" var="item">
 								<option value="${item.idOrgaoUsu}" ${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
 									${item.nmOrgaoUsu}
@@ -94,5 +96,8 @@ function sbmt(offset) {
 	</siga:paginador>
 </table>
 
+<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
 </siga:pagina>
 		

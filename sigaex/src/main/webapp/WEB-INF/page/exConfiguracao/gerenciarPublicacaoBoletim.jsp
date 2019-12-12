@@ -6,6 +6,9 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <siga:pagina titulo="Ger&ecirc;ncia de Publica&ccedil;&atilde;o Boletim Interno">
+<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
+<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
+
 	<script type="text/javascript">
 		function hideShowSel(combo){
 			var sel1Span = document.getElementById('span' + combo.name.substring(4));
@@ -60,7 +63,7 @@
 						<div class="col-sm-6">
 							<div class="form-group">
 								<label>Modelo</label>
-								<select name="idMod" class="form-control">
+								<select name="idMod" class="form-control  siga-select2">
 									<option value="0">[Todos]</option>
 									<c:forEach var="modelo" items="${listaModelosPorForma}">
 										<option value="${modelo.idMod}">${modelo.nmMod}</option>
@@ -207,5 +210,8 @@
 			}
 		}
 	</script>
-	
+
+<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>	
 </siga:pagina>

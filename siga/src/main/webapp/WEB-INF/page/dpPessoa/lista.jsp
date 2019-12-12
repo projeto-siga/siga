@@ -56,9 +56,7 @@ function cpf_mask(v){
 
 <siga:pagina titulo="Listar Pessoas">
 	<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
-	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
-	<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
-	<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />	
 
 	<!-- main content -->
 	<div class="container-fluid">
@@ -71,10 +69,12 @@ function cpf_mask(v){
 			</div>
 			<div class="card-body">
 				<div class="row">
+					
+					
 					<div class="col-md-4">
-						<div class="form-group">
-							<label for="uidOrgaoUsu">Órgão</label>
-							<select name="idOrgaoUsu" value="${idOrgaoUsu}" onchange="carregarRelacionados(this.value)" class="form-control">
+						<div class="form-group" id="idOrgaoUsuGroup">
+							<label for="idOrgaoUsu">Órgão</label>
+							<select class="form-control siga-select2" id="idOrgaoUsu" name="idOrgaoUsu" value="${idOrgaoUsu}" onchange="carregarRelacionados(this.value)">
 								<c:forEach items="${orgaosUsu}" var="item">
 									<option value="${item.idOrgaoUsu}"
 										${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
@@ -82,11 +82,13 @@ function cpf_mask(v){
 								</c:forEach>
 							</select>
 						</div>					
-					</div>					
+					</div>		
+					
+									
 					<div class="col-md-2">
-						<div class="form-group">
+						<div class="form-group" id="idCargoGroup">
 							<label for="idCargoPesquisa">Cargo</label>
-							<select name="idCargoPesquisa" value="${idCargoPesquisa}" class="form-control">
+							<select class="form-control  siga-select2" id="idCargoPesquisa" name="idCargoPesquisa" value="${idCargoPesquisa}">
 								<c:forEach items="${listaCargo}" var="item">
 									<option value="${item.idCargo}"
 										${item.idCargo == idCargoPesquisa ? 'selected' : ''}>
@@ -96,9 +98,9 @@ function cpf_mask(v){
 						</div>					
 					</div>
 					<div class="col-md-2">
-						<div class="form-group">
+						<div class="form-group" id="idFuncaoGroup">
 							<label for="idFuncaoPesquisa">Fun&ccedil;&atilde;o de Confian&ccedil;a</label>
-							<select name="idFuncaoPesquisa" value="${idFuncaoPesquisa}" class="form-control">
+							<select class="form-control  siga-select2" id="idFuncaoPesquisa" name="idFuncaoPesquisa" value="${idFuncaoPesquisa}">
 								<c:forEach items="${listaFuncao}" var="item">
 									<option value="${item.idFuncao}"
 										${item.idFuncao == idFuncaoPesquisa ? 'selected' : ''}>
@@ -110,7 +112,7 @@ function cpf_mask(v){
 					<div class="col-md-4" >
 						<div class="form-group" id="idLotacaoGroup">
 							<label for="idLotacaoPesquisa"><fmt:message key="usuario.lotacao"/></label>
-							<select class="form-control" id="idLotacaoPesquisa" style="width: 100%"  
+							<select class="form-control  siga-select2" id="idLotacaoPesquisa" style="width: 100%"  
 									name="idLotacaoPesquisa" value="${idLotacaoPesquisa}">
 								<c:forEach items="${listaLotacao}" var="item">
 									<option value="${item.idLotacao}" ${item.idLotacao == idLotacaoPesquisa ? 'selected' : ''}>
@@ -147,125 +149,134 @@ function cpf_mask(v){
 		</div>
 	
 		<h3 class="gt-table-head">Pessoas cadastradas</h3>
-		<table border="0" class="table table-sm table-striped">
-			<thead class="${thead_color}">
-				<tr>
-					<th align="left">Nome</th>
-					<th align="left">CPF</th>
-					<th align="left">Data de Nascimento</th>
-					<th align="left">Matricula</th>
-					<th colspan="2" align="center">Op&ccedil;&otilde;es</th>					
-				</tr>
-			</thead>
-			<tbody>
-				<siga:paginador maxItens="15" maxIndices="10" totalItens="${tamanho}"
-					itens="${itens}" var="pessoa">
+		<div class="table-responsive">
+			<table border="0" class="table table-sm table-striped">
+				<thead class="thead-dark">
 					<tr>
-						<td align="left">${pessoa.descricao}</td>
-						<td align="left">${pessoa.cpfFormatado}</td>
-						<td align="left"><fmt:formatDate pattern = "dd/MM/yyyy" value = "${pessoa.dataNascimento}" /></td>
-						<td align="left">${pessoa.sigla}</td>
-						<td align="left">
-							<c:url var="url" value="/app/pessoa/editar">
-								<c:param name="id" value="${pessoa.id}"></c:param>
-							</c:url>
-							<c:url var="urlAtivarInativar" value="/app/pessoa/ativarInativar">
-								<c:param name="id" value="${pessoa.id}"></c:param>
-							</c:url>
-							<a href="${url}" class="btn btn-primary" role="button" aria-pressed="true" >Alterar</a>
-							<c:choose>
-								<c:when test="${empty pessoa.dataFimPessoa}">
-									<a href="${urlAtivarInativar}" class="btn btn-primary" role="button" aria-pressed="true" >Inativar</a>
-								</c:when>
-								<c:otherwise>
-									<a href="${urlAtivarInativar}" class="btn btn-primary" role="button" aria-pressed="true" >Ativar</a>
-								</c:otherwise>
-							</c:choose>
-						</td>
-					<%--	<td align="left">									
-			 					<a href="javascript:if (confirm('Deseja excluir o orgão?')) location.href='/siga/app/orgao/excluir?id=${orgao.idOrgao}';">
-								<img style="display: inline;"
-								src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir orgão"							
-								onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';" 
-								onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';"/>
-							</a>															
-						</td>
-					 --%>							
+						<th align="left">Nome</th>						
+						<th align="left">Unidade</th>
+						<th align="left">Cargo</th>
+						<th align="left">Função</th>						
+						<th align="left">CPF</th>					
+						<th align="left">Email</th>					
+						<th class="text-center">Data de Nascimento</th>
+						<th align="left">Matricula</th>
+						<th colspan="2" class="text-center">Op&ccedil;&otilde;es</th>					
 					</tr>
-				</siga:paginador>
-			</tbody>
-		</table>				
+				</thead>
+				<tbody>
+					<siga:paginador maxItens="15" maxIndices="10" totalItens="${tamanho}"
+						itens="${itens}" var="pessoa">
+						<tr>
+							<td align="left">${pessoa.descricao}</td>						
+							<td align="left"><span data-toggle="tooltip" data-placement="bottom" title="${pessoa.lotacao.siglaLotacao} / ${pessoa.lotacao.nomeLotacao}">${pessoa.lotacao.siglaLotacao}</span></td>
+							<td align="left">${pessoa.cargo.nomeCargo}</td>
+							<td align="left">${pessoa.funcaoString}</td>												
+							<td align="left">${pessoa.cpfFormatado}</td>						
+							<td align="left">${pessoa.emailPessoa}</td>						
+							<td align="center"><fmt:formatDate pattern = "dd/MM/yyyy" value = "${pessoa.dataNascimento}" /></td>
+							<td align="left">${pessoa.sigla}</td>
+							<td align="center">
+								<c:url var="url" value="/app/pessoa/editar">
+									<c:param name="id" value="${pessoa.id}"></c:param>
+								</c:url>
+								<c:url var="urlAtivarInativar" value="/app/pessoa/ativarInativar">
+									<c:param name="id" value="${pessoa.id}"></c:param>
+								</c:url>																																					
+								<div class="btn-group">								  
+								  <c:choose>
+									<c:when test="${empty pessoa.dataFimPessoa}">
+										<a href="${urlAtivarInativar}" onclick="javascript:atualizarUrlDeInativarPessoa('${urlAtivarInativar}')" class="btn btn-primary" role="button" aria-pressed="true" data-toggle="modal" data-target="#modalDeConfirmacao">Inativar</a>
+									</c:when>
+									<c:otherwise>
+										<a href="${urlAtivarInativar}" class="btn btn-primary" role="button" aria-pressed="true">Ativar</a>
+									</c:otherwise>
+								  </c:choose>								  								  
+								  <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								    <span class="sr-only"></span>
+								  </button>
+								  <div class="dropdown-menu">
+								  	<a href="${url}" class="dropdown-item" role="button" aria-pressed="true">Alterar</a>								   
+								  </div>
+								</div>								
+							</td>
+						<%--	<td align="left">									
+				 					<a href="javascript:if (confirm('Deseja excluir o orgão?')) location.href='/siga/app/orgao/excluir?id=${orgao.idOrgao}';">
+									<img style="display: inline;"
+									src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir orgão"							
+									onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';" 
+									onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';"/>
+								</a>															
+							</td>
+						 --%>							
+						</tr>
+					</siga:paginador>									
+				</tbody>
+			</table>
+		</div>		
+		
 		<div class="gt-table-buttons">
-				<c:url var="url" value="/app/pessoa/editar"></c:url>
-				<c:url var="urlAtivarInativar" value="/app/pessoa/ativarInativar"></c:url>
-				<input type="button" value="Incluir" onclick="javascript:window.location.href='${url}'" class="btn btn-primary">
+			<c:url var="url" value="/app/pessoa/editar"></c:url>
+			<c:url var="urlAtivarInativar" value="/app/pessoa/ativarInativar"></c:url>
+			<input type="button" value="Incluir" onclick="javascript:window.location.href='${url}'" class="btn btn-primary">
 		</div>				
 	</form>
 	</div>
+	
+	<div class="modal fade" id="modalDeConfirmacao" tabindex="-1" role="dialog" aria-labelledby="confirmacao" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="confirmacao">Confirma&ccedil;&atilde;o</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	        Deseja inativar o cadastro selecionado?
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-success" data-dismiss="modal">Não</button>		        
+	        <a href="#" class="btn btn-danger btn-confirmacao-inativacao-cadastro" role="button" aria-pressed="true">Sim</a>
+	      </div>
+	    </div>
+	  </div>
+	</div>
 
+<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
 <script>
-function carregarRelacionados(id) {
-	frm.method = "POST";
-	frm.action = 'carregarCombos';
-	frm.submit();
-	frm.method = "GET";
-}
-
-function csv(id, action) {
-	var frm = document.getElementById(id);
-	frm.method = "POST";
-	sbmtAction(id, action);
-	frm.action = 'listar';
-	frm.method = "GET";
-}
-
-function sbmtAction(id, action) {
-	var frm = document.getElementById(id);
-	frm.action = action;
-	frm.submit();
-	return;
-}
-
-$(document).ready(function() {
-    $('#idLotacaoPesquisa').select2({
-        matcher: function(argument, selectOptionText) {
-            if ($.trim(argument.term) === '') {
-                return selectOptionText;
-            }
-            if (typeof selectOptionText === 'undefined') {
-                return null;
-            }
-            var args = argument.term.toString();
-            var texto = selectOptionText.text.toString().toLowerCase();
-            var non_asciis = {'a': '[àáâãäå]', 'c': 'ç', 'e': '[èéêë]', 'i': '[ìíîï]', 'n': 'ñ', 'o': '[òóôõö]', 'u': '[ùúûűü]'};
-            for (i in non_asciis) { texto = texto.toLowerCase().replace(new RegExp(non_asciis[i], 'g'), i); }
-            
-        	var terms = (args + "").split(" ");
-            var strRegex = "";
-            for (var i=0; i < terms.length; i++){
-            	if (terms[i] != "") { 
-                	var strRegex = strRegex + "(?=.*" + terms[i] + ")";
-            	}
-            }
-            var tester = new RegExp(strRegex, "i");
-            if (tester.test(texto) || tester.test(selectOptionText.text) ){
-                var modifiedData = $.extend({}, selectOptionText, true);
-                return modifiedData;
-            } else {
-            	return null;
-            }
-        },
-        theme: "bootstrap",
-    	width: "resolve",
-    	language: "pt-BR"
-    });
-    $('#idLotacaoGroup').on('keyup', function(event) {
-        if (event.key == "Escape") {
-       		$('#idLotacaoPesquisa').val('0');
-       		$('#idLotacaoPesquisa').trigger('change');
-        }
-    });
-
-});	
+	function carregarRelacionados(id) {
+		frm.method = "POST";
+		frm.action = 'carregarCombos';
+		frm.submit();
+		frm.method = "GET";
+	}
+	
+	function csv(id, action) {
+		var frm = document.getElementById(id);
+		frm.method = "POST";
+		sbmtAction(id, action);
+		frm.action = 'listar';
+		frm.method = "GET";
+	}
+	
+	function sbmtAction(id, action) {
+		var frm = document.getElementById(id);
+		frm.action = action;
+		frm.submit();
+		return;
+	}
+	
+	function atualizarUrlDeInativarPessoa(url){	
+		$('.btn-confirmacao-inativacao-cadastro').attr("href", url);		
+	}
+	
+	$(document).ready(function() {				    
+	    $(function () {
+			$('[data-toggle="tooltip"]').tooltip()
+		});
+	});
 </script>
 </siga:pagina>

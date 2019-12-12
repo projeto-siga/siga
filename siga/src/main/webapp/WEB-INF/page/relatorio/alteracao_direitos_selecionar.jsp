@@ -6,6 +6,9 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <siga:pagina titulo="Relatório de Alteração de Direitos de Utilização">
+<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
+<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
+
 	<!-- main content -->
 	<div class="container-fluid">
 		<div class="card bg-light mb-3" >
@@ -31,7 +34,7 @@
 					<div class="col-sm-6">
 						<div class="form-group">
 							<label for="idOrgaoUsuario">Órgão Usuário</label>
-							<select name="idOrgaoUsuario" id="idOrgaoUsuario" tabindex="30" class="form-control">
+							<select name="idOrgaoUsuario" id="idOrgaoUsuario" tabindex="30" class="form-control  siga-select2">
 								<c:forEach var="ousu" items="${cpOrgaosUsuario}">
 									<option value="${ousu.idOrgaoUsu}">${ousu.nmOrgaoUsu}
 									</option>
@@ -74,6 +77,10 @@
 	<div id="div-tempo" style="display: none; position: absolute; text-align: center; filter: alpha(opacity =         60); opacity: 0.4; background-color: #dcdcdc; vertical-align: middle; border-width: 2px; border-color: darkblue; border-style: solid;">
 		<div style="position: absolute; font-family: sans-serif50 %; left: 40%; top: 50%; font-size: medium; large; font-weight: bolder; color: purple;">Aguarde...</div>
 	</div>
+	
+<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>	
 </siga:pagina>
 <script type="text/javascript">
 	function submeter() {

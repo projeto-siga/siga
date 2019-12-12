@@ -18,10 +18,10 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.gi.service;
 
-import br.gov.jfrj.siga.Remote;
-
 import javax.jws.WebMethod;
 import javax.jws.WebService;
+
+import br.gov.jfrj.siga.Remote;
 
 @WebService(targetNamespace = "http://impl.service.gi.siga.jfrj.gov.br/")
 public interface GiService extends Remote {
@@ -42,9 +42,15 @@ public interface GiService extends Remote {
 
     @WebMethod
 	public String acesso(String matricula, String lotacao, String servico);
-        
+    
+    /**
+     * WebMethod perfilAcessoPorCpf      
+     * @param cpf
+     * @param token
+     * @return
+     */
     @WebMethod
-	public String perfilAcessoPorCpf(String cpf);
+	public String perfilAcessoPorCpf(String cpf, String token);
     
     @WebMethod
 	public String esqueciSenha(String cpf, String email);
@@ -57,5 +63,14 @@ public interface GiService extends Remote {
 	
     @WebMethod
 	public String inativarUsuario(final Long idUsuario);
+
+    /**
+     * WebMethod que gera Token
+     * @param matricula
+     * @param senha
+     * @return String token
+     */
+    @WebMethod
+	public String gerarToken(String matricula, String senha) throws Exception;
         
 }

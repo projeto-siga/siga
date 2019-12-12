@@ -77,6 +77,9 @@ public abstract class AbstractExFormaDocumento extends Objeto implements
 	@Column(name = "SIGLA_FORMA_DOC", nullable = false, length = 3)
 	private String siglaFormaDoc;
 
+	@Column(name = "IS_COMPOSTO", length = 1)
+	private Integer isComposto;
+
 	/**
 	 * Simple constructor of AbstractExFormaDocumento instances.
 	 */
@@ -147,6 +150,10 @@ public abstract class AbstractExFormaDocumento extends Objeto implements
 		return siglaFormaDoc;
 	}
 
+	public Integer getIsComposto() {
+		return isComposto;
+	}
+
 	/**
 	 * Implementation of the hashCode method conforming to the Bloch pattern
 	 * with the exception of array properties (these are very unlikely primary
@@ -206,4 +213,9 @@ public abstract class AbstractExFormaDocumento extends Objeto implements
 	public void setExTipoFormaDoc(ExTipoFormaDoc exTipoFormaDoc) {
 		this.exTipoFormaDoc = exTipoFormaDoc;
 	}
+
+	public void setIsComposto(final java.lang.Integer isComposto) {
+		this.isComposto = isComposto;
+	}
+
 }

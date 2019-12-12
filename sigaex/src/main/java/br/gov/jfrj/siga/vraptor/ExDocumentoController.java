@@ -70,6 +70,7 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
@@ -1900,11 +1901,17 @@ public class ExDocumentoController extends ExController {
 			throw new AplicacaoException(
 					"Não é possível tornar documento sem efeito.");
 		try {
-
-			Ex.getInstance()
-					.getBL()
-					.TornarDocumentoSemEfeito(getCadastrante(),
-							getLotaTitular(), doc, descrMov);
+			if (SigaMessages.isSigaSP() && doc.isCapturado()) {
+				Ex.getInstance()
+				.getBL()
+				.cancelarDocumento(getCadastrante(),
+						getLotaTitular(), doc);
+			} else {
+				Ex.getInstance()
+						.getBL()
+						.TornarDocumentoSemEfeito(getCadastrante(),
+								getLotaTitular(), doc, descrMov);
+			}
 		} catch (final Exception e) {
 			throw e;
 		}

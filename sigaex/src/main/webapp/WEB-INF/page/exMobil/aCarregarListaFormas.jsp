@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
-<div class="form-group">
+<div class="form-group" id="idFormaDocGroup">
 	<label><fmt:message key="documento.label.especie"/></label> 
 	<select class="form-control" id="idFormaDoc" name="idFormaDoc" onchange="javascript:alteraForma();">
 		<option value="0">[Todos]</option>

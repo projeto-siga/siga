@@ -5,6 +5,10 @@
 
 
 <siga:pagina titulo="Cadastro de Fun&ccedil;&atilde;o de Confian&ccedil;a">
+<c:if test="${empty id || podeAlterarOrgao}">
+	<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
+	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
+</c:if>
 
 <script type="text/javascript">
 	function validar() {
@@ -44,7 +48,7 @@
 								<label>&Oacute;rg&atilde;o</label>
 								<c:choose>
 									<c:when test="${empty id || podeAlterarOrgao}">
-										<select name="idOrgaoUsu" value="${idOrgaoUsu}" class="form-control">
+										<select name="idOrgaoUsu" value="${idOrgaoUsu}" class="form-control  siga-select2">
 											<c:forEach items="${orgaosUsu}" var="item">
 												<option value="${item.idOrgaoUsu}"
 													${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
@@ -111,4 +115,9 @@
 
 </body>
 
+<c:if test="${empty id || podeAlterarOrgao}">
+	<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+	<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+	<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
+</c:if>
 </siga:pagina>

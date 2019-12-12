@@ -10,9 +10,6 @@
 <c:if test="${not mob.doc.eletronico}">
 	<script type="text/javascript">$("html").addClass("fisico");$("body").addClass("fisico");</script>
 </c:if>
-<script> 
-	muda_escolha(document.getElementById("idDocumentoEscolha"));
-</script>
 	<!-- main content -->
 	<div class="container-fluid">
 		<div class="card bg-light mb-3" >
@@ -78,15 +75,16 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-sm-2">
-						<div class="form-group">
-							<button type="submit" class="btn btn-primary" >Ok</button>
-							<button type="button" onclick="javascript:history.back();" class="btn btn-primary" >Cancela</button>
-						</div>
+					<div class="form-group col-md-4">
+						<button type="submit" class="btn btn-primary mt-auto" >Ok</button>
+						<button type="button" onclick="javascript:history.back();" class="btn btn-cancel mt-auto" >Cancela</button>
 					</div>
 				</div>
 			</form>
 			</div>
 		</div>
 	</div>
+<script>  
+	muda_escolha(document.getElementById("idDocumentoEscolha"));
+</script>
 </siga:pagina>

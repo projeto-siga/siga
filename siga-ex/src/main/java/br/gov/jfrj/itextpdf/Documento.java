@@ -18,6 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.itextpdf;
 
+import static br.gov.jfrj.siga.ex.util.ProcessadorHtml.novoHtmlPersonalizado;
+
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -235,16 +237,18 @@ public class Documento {
 			Set<ExMovimentacao> movsAssinatura) {
 		ArrayList<String> assinantes = new ArrayList<String>();
 		for (ExMovimentacao movAssinatura : movsAssinatura) {
-			String s;
-			if (movAssinatura.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)) {
-				s = Texto.maiusculasEMinusculas(movAssinatura.getCadastrante().getNomePessoa());
-			} else {
-				s = movAssinatura.getDescrMov().trim().toUpperCase();
-				s = s.split(":")[0];
-				s = s.intern();
-			}
-			if (!assinantes.contains(s)) {
-				assinantes.add(s);
+			if(movAssinatura.getCadastrante().getId().equals(movAssinatura.getSubscritor().getId())) {
+				String s;
+				if (movAssinatura.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)) {
+					s = Texto.maiusculasEMinusculas(movAssinatura.getCadastrante().getNomePessoa());
+				} else {
+					s = movAssinatura.getDescrMov().trim().toUpperCase();
+					s = s.split(":")[0];
+					s = s.intern();
+				}
+				if (!assinantes.contains(s)) {
+					assinantes.add(s);
+				}
 			}
 		}
 		return assinantes;
@@ -1025,8 +1029,9 @@ public class Documento {
 				sb.append("</div>");
 			}
 			if (an.getArquivo().getHtml() != null) {
-				String sHtml = fixHtml(contextpath, an);
-				sHtml = ProcessadorHtml.bodyOnly(sHtml);
+				String sHtml = fixHtml(contextpath, an);				
+				sHtml = novoHtmlPersonalizado(sHtml).comBody().comBootstrap().comCSSInterno().obter();
+						
 				// sb
 				// .append("<div style=\"margin:3pt; padding:3pt; border: thin
 				// solid brown;\" class=\"dochtml\">");

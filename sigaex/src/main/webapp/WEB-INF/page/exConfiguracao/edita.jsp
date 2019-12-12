@@ -6,22 +6,24 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Cadastro de configuração">
-
-	<script type="text/javascript" language="Javascript1.1">
-		$(document).ready(function() {
-			alteraTipoDaForma();
-			setTimeout("alteraForma()", 5000);
-		});
+<siga:pagina titulo="Cadastro de configuração">	
+<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
+<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
+		
+	<script type="text/javascript" language="Javascript1.1">	
+		$(document).ready(function() {					
+			alteraTipoDaForma();			
+			setTimeout("alteraForma()", 5000);												
+		});			
 
 		function alteraTipoDaForma() {
 			ReplaceInnerHTMLFromAjaxResponse(
 					'${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_formas?tipoForma='
 							+ document.getElementById('tipoForma').value
 							+ '&idFormaDoc=' + '${idFormaDoc}', null, document
-							.getElementById('comboFormaDiv'), function() {alteraForma()});
+							.getElementById('comboFormaDiv'), function() {transformarEmSelect2(null, '#idFormaDoc', '#idFormaDocGroup');alteraForma()});						
 		}
-
+		
 		function alteraForma() {
 			// console.log('altera-forma', document.getElementById('idFormaDoc').value)
 			var especie
@@ -34,17 +36,17 @@
 				modelo = inpModelo.value
 			// if (modelo === undefined)
 			// 	modelo = '';
-
+							
 			ReplaceInnerHTMLFromAjaxResponse(
 					'${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_modelos?forma='
 							+ especie + '&idMod=' + modelo, null, document
-							.getElementById('comboModeloDiv'));
-		}
+							.getElementById('comboModeloDiv'), function() {transformarEmSelect2(null, '#idMod', '#idModGroup')});						
+		}							
 
 		function sbmt() {
 			editar_gravar = '${pageContext.request.contextPath}/app/expediente/configuracao/editar';
 			editar_gravar.submit();
-		}
+		}							
 	</script>
 
 	<body onload="aviso()">
@@ -217,18 +219,18 @@
 													value="${config.exModelo.id}" />
 													${config.exModelo.descMod}
 											</c:when>
-											<c:when
+											<c:when												
 												test="${campoFixo && not empty config.exFormaDocumento}">
 												<input type="hidden" name="idFormaDoc" value="${idFormaDoc}" />
 												${config.exFormaDocumento.descrFormaDoc}
 											</c:when>
-											<c:otherwise>
+											<c:otherwise>											
 												<div style="display: inline" id="comboModeloDiv"></div>
 											</c:otherwise>
 										</c:choose>
 									</div>
-								</div>
-							</div>
+								</div>																																									
+							</div>							
 							<div class="row">
 								<div class="col-sm-12">
 									<div class="form-group">
@@ -237,9 +239,7 @@
 											modulo="sigaex" urlAcao="buscar" urlSelecionar="selecionar" />
 									</div>
 								</div>
-							</div>
-							
-							
+							</div>														
 							<div class="row">
 								<div class="col-sm-6">
 									<div class="form-group">
@@ -291,6 +291,17 @@
 					</div>
 				</form>
 			</div>
-		</div>
+		</div>				
+	<script>
+		$(document).ready(function() {								
+			$('[name=idTpConfiguracao]').addClass('siga-select2');
+			$('[name=idOrgaoUsu]').addClass('siga-select2');
+			$('[name=idTpMov]').addClass('siga-select2');		
+			$('[name=idOrgaoObjeto]').addClass('siga-select2');			
+		});
+	</script>
+	<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+	<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+	<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>					
 	</body>
 </siga:pagina>

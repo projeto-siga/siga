@@ -20,6 +20,8 @@ package br.gov.jfrj.siga.ex;
 
 import java.util.Date;
 
+import br.gov.jfrj.siga.base.SigaMessages;
+
 public class ExArquivoNumerado implements Comparable {
 	private ExArquivo arquivo;
 	private Integer paginaInicial;
@@ -156,6 +158,11 @@ public class ExArquivoNumerado implements Comparable {
 			ExDocumento doc = (ExDocumento) getArquivo();
 			if (doc.isProcesso())
 				return 1;
+			else if(SigaMessages.isSigaSP() && !doc.isProcesso() 
+					&& doc.getMobilDefaultParaReceberJuntada().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA).isEmpty()
+					) {
+				return 1;
+			}
 		}
 		return 0;
 	}

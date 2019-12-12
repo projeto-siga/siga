@@ -123,5 +123,12 @@ public class ExFormaDocumento extends AbstractExFormaDocumento implements
 		
 		return false;
 	}
+
+	public boolean isComposto() {
+		if (getIsComposto() != null && getIsComposto() == 1)
+			return true;
+
+		return false;
+	}
 	
 }

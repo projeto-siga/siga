@@ -40,6 +40,9 @@
 	}
 </script>
 <siga:pagina titulo="Cadastro de Lota&ccedil;&atilde;o">
+<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
+<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
+
 	<!-- main content -->
 	<div class="container-fluid">
 		<div class="card bg-light mb-3" >
@@ -56,7 +59,7 @@
 							<label for="idOrgaoUsu">&Oacute;rg&atilde;o</label>
 							<c:choose>
 								<c:when test="${empty id || podeAlterarOrgao}">
-									<select name="idOrgaoUsu" value="${idOrgaoUsu}" class="form-control">
+									<select name="idOrgaoUsu" value="${idOrgaoUsu}" class="form-control  siga-select2">
 										<c:forEach items="${orgaosUsu}" var="item">
 											<option value="${item.idOrgaoUsu}"
 												${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
@@ -92,7 +95,7 @@
 					<div class="col-sm-2">
 						<div class="form-group">
 							<label for="idLocalidade">Localidade</label>
-							<select name="idLocalidade" value="${idLocalidade}" class="form-control">
+							<select name="idLocalidade" value="${idLocalidade}" class="form-control  siga-select2">
 								<option value="0">Selecione</option>
 								<c:forEach items="${listaLocalidades}" var="item">
 									<option value="${item.id}"
@@ -144,4 +147,7 @@
 			</div>
 		</div>
 	</div>
+<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
 </siga:pagina>

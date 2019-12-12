@@ -121,6 +121,32 @@
 			</div>
 		</div>
 	</div>
+	<div class="modal fade" id="msgModal" tabindex="-1" role="dialog" aria-labelledby="msgModalLabel" aria-hidden="true">
+	  <div class="modal-dialog modal-dialog-centered" role="document">
+	    <div class="modal-content">
+	    <div class="modal-header">
+	        <h5 class="modal-title" id="msgModalLongTitle">SP Sem Papel</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	        Recomendamos o navegador Google Chrome para acesso.
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			var isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
+			if(!isChrome && ${siga_cliente eq 'GOVSP'}) {
+		    	$('#msgModal').modal('show');
+			}
+		})
+	</script>
 	<script type="text/javascript">
 	
 	    var x = document.getElementById("isChrome");
@@ -148,8 +174,7 @@
 	</script>
 	<c:if test="${empty loginMensagem}">
 		<c:set var="avisoTituloCabec" value="Aviso Importante" />
-		<c:set var="avisoCabec" value="Prezado usuário, o sistema SPSemPapel passa por instabilidade e a equipe
-			técnica está trabalhando para solucionar o mais rápido possível." />	
+		<c:set var="avisoCabec" value="${avisoMensagem}" />	
 		<div class="${avisoCabec==null?'d-none':''}" id="avisoCabecId" >
 			<div id="avisoCabecModal" class="modal" tabindex="-1" role="dialog">
 			  <div class="modal-dialog" role="document">

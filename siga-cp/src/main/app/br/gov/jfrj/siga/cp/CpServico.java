@@ -53,6 +53,10 @@ public class CpServico extends AbstractCpServico implements Selecionavel {
 	public static final long SERVICO_SIGA_EX = 2;
 	public static final long SERVICO_SIGA_WF = 3;
 	public static final long SERVICO_SIGA_SR = 4;
+	
+	
+	public static final String ACESSO_WEBSERVICE = "SPSEMPAPEL-SIGA-WS";
+	
 
 	public CpServico() {
 

@@ -225,16 +225,18 @@ public class Documento {
 			Set<ExMovimentacao> movsAssinatura) {
 		ArrayList<String> assinantes = new ArrayList<String>();
 		for (ExMovimentacao movAssinatura : movsAssinatura) {
-			String s;
-			if (movAssinatura.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)) {
-				s = Texto.maiusculasEMinusculas(movAssinatura.getCadastrante().getNomePessoa());
-			} else {
-				s = movAssinatura.getDescrMov().trim().toUpperCase();
-				s = s.split(":")[0];
-				s = s.intern();
-			}
-			if (!assinantes.contains(s)) {
-				assinantes.add(s);
+			if(movAssinatura.getCadastrante().getId().equals(movAssinatura.getSubscritor().getId())) {
+				String s;
+				if (movAssinatura.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)) {
+					s = Texto.maiusculasEMinusculas(movAssinatura.getCadastrante().getNomePessoa());
+				} else {
+					s = movAssinatura.getDescrMov().trim().toUpperCase();
+					s = s.split(":")[0];
+					s = s.intern();
+				}
+				if (!assinantes.contains(s)) {
+					assinantes.add(s);
+				}
 			}
 		}
 		return assinantes;

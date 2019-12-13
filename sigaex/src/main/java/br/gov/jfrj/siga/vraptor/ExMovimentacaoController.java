@@ -927,10 +927,10 @@ public class ExMovimentacaoController extends ExController {
 		ArrayList<Object> lista = new ArrayList<Object>();
 		final Object[] ao = { doc, mov };
 		lista.add(ao);
-		result.include("cadastrante", getCadastrante());
+		result.include("cadastrante", mov.getCadastrante());
 		result.include("mov", mov);
 		result.include("itens", lista);
-		result.include("lotaTitular", getLotaTitular());
+		result.include("lotaTitular", mov.getLotaTitular());
 		result.include("popup", popup);
 	}
 	
@@ -950,10 +950,10 @@ public class ExMovimentacaoController extends ExController {
 		ArrayList<Object> lista = new ArrayList<Object>();
 		final Object[] ao = { doc, mov };
 		lista.add(ao);
-		result.include("cadastrante", getCadastrante());
+		result.include("cadastrante", mov.getCadastrante());
 		result.include("mov", mov);
 		result.include("itens", lista);
-		result.include("lotaTitular", getLotaTitular());
+		result.include("lotaTitular", mov.getLotaTitular());
 		result.include("popup", popup);
 	}
 
@@ -1035,9 +1035,15 @@ public class ExMovimentacaoController extends ExController {
 			/*result.use(Results.page()).forwardTo(
 					"/WEB-INF/page/exMovimentacao/aGerarProtocolo.jsp");*/
 		} else
-			result.redirectTo("/app/expediente/mov/protocolo_unitario?popup="
-					+ popup + "&sigla=" + mov.getExMobil().getDoc().getSigla()
-					+ "&id=" + mov.getIdMov());
+			if(SigaMessages.isSigaSP()) {
+				result.redirectTo("/app/expediente/mov/protocolo_unitario_sp?popup="
+						+ popup + "&sigla=" + mov.getExMobil().getDoc().getSigla()
+						+ "&id=" + mov.getIdMov());
+			} else {
+				result.redirectTo("/app/expediente/mov/protocolo_unitario?popup="
+						+ popup + "&sigla=" + mov.getExMobil().getDoc().getSigla()
+						+ "&id=" + mov.getIdMov());
+			}
 	}
 
 	@Get("app/expediente/mov/juntar")

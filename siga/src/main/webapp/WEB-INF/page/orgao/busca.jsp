@@ -11,53 +11,66 @@
 
 <script type="text/javascript" language="Javascript1.1">
 function sbmt(offset) {
-	if (offset==null) {
-		offset=0;
+	if (offset == null) {
+		offset = 0;
 	}
-	frm.elements['offset'].value=offset;
+	frm.elements["paramoffset"].value = offset;
+	frm.elements["p.offset"].value = offset;
 	frm.submit();
 }
 </script>
 
+<c:choose>
+	<c:when test="${siga_cliente == 'GOVSP'}">
+	    <!-- parteFuncao para fechar window -->
+	    <c:set var="parteFuncao" value="opener" />
+	</c:when>
+	<c:otherwise>
+	    <!-- parteFuncao para fechar modal -->
+	    <c:set var="parteFuncao" value="parent" />
+	</c:otherwise>	
+</c:choose>	
+
 <form name="frm" action="${request.contextPath}/app/orgao/buscar" cssClass="form" method="POST">
 	<input type="hidden" name="propriedade" value="${param.propriedade}" />
 	<input type="hidden" name="postback" value="1" />
-	<input type="hidden" name="offset" value="0" />
+	<input type="hidden" name="paramoffset" value="0" />
+	<input type="hidden" name="p.offset" value="0" />
 
-	<table class="form" width="100%">
-		<tr class="header">
-			<td align="center" valign="top" colspan="4">Dados do Órgão Externo</td>
-		</tr>
-		<tr>
-			<td>
-				<label>Nome ou Sigla:</label>
-			</td>
-			<td>
-				<input type="text" name="sigla" value="${sigla}"/>
-			</td>
-		</tr>
-		<tr>
-			<td colspan="2">
-				<div align="right">
-					<input type="submit" value="Pesquisar" />
+	<div class="container-fluid my-1">
+		<div class="card bg-light mb-3" >
+			<div class="card-header"><h5>Dados do Órgão Externo</h5></div>
+				<div class="card-body">
+					<div class="row">
+						<div class="col-sm-4">
+							<label>Nome ou Sigla:</label>
+						</div>
+						<div class="col-sm-5">
+							<input type="text" name="sigla" value="${sigla}" class="form-control"/>
+						</div>
+						<div class="col-sm-2">
+							<input type="submit" value="Pesquisar" class="btn btn-primary"/>
+						</div>
+					</div>
+					
 				</div>
-			</td>
-		</tr>
-	</table>
+			</div>
+		</div>
+	</div>
 </form>
 
 <br>
 
-<table class="list" width="100%">
+<table border="0" class="table table-sm table-striped">
 	<tr class="header">
-		<td align="center">Sigla</td>
-		<td align="left">Nome</td>
+		<th align="center">Sigla</th>
+		<th align="left">Nome</th>
 	</tr>
 	<siga:paginador maxItens="10" maxIndices="10" totalItens="${tamanho}"
 		itens="${itens}" var="item">
 		<tr class="${evenorodd}">
 			<td width="10%" align="center"><a
-				href="javascript: opener.retorna_${propriedadeClean}('${item.id}','${item.sigla}','${item.descricao}');">${item.sigla}</a></td>
+				href="javascript: ${parteFuncao}.retorna_${propriedadeClean}('${item.id}','${item.sigla}','${item.descricao}');">${item.sigla}</a></td>
 			<td width="90%" align="left">${item.descricao}</td>
 		</tr>
 	</siga:paginador>

@@ -80,6 +80,7 @@ public class Correio {
 		}
 
 		boolean servidorDisponivel = false;
+		String causa = " ";
 		for (String servidorEmail : listaServidoresEmail) {
 			try {
 				enviarParaServidor(servidorEmail, remetente, destinatarios,
@@ -87,9 +88,10 @@ public class Correio {
 				servidorDisponivel = true;
 				break;
 			} catch (Exception e) {
-				logger.warning("Servidor de e-mail '" + servidorEmail
-						+ "' indisponível: " + e.getMessage() + ", causa: "
-						+ e.getCause().getMessage());
+				if (e.getCause() != null)
+					causa =  ", causa: " + e.getCause().getMessage();
+					logger.warning("Servidor de e-mail '" + servidorEmail
+							+ "' indisponível: " + e.getMessage() + causa);
 			}
 		}
 
@@ -108,6 +110,8 @@ public class Correio {
 		final Properties props = new Properties();
 		Set<String> destSet = new HashSet<String>();
 		
+		
+	
 		// Define propriedades da sessão.
 		props.put("mail.transport.protocol", "smtp");
 		props.put("mail.smtp.host", servidorEmail);
@@ -167,7 +171,25 @@ public class Correio {
 			msg.setRecipients(Message.RecipientType.TO, endereco);
 		}
 		msg.setFrom(new InternetAddress(remetente));
-		msg.setSubject(assunto);
+		//    Se baseTeste inserir no assunto - AMBIENTE DE TESTE FAVOR DESCONSIDERAR 
+		
+		Boolean isVersionTest;
+		try {
+			isVersionTest = Boolean.valueOf(System.getProperty("isVersionTest").trim());
+			
+		} catch (Exception ex) 
+		{
+			isVersionTest = false;
+		}
+		
+		
+		if (isVersionTest) {
+			msg.setSubject(assunto + "AMBIENTE DE TESTE FAVOR DESCONSIDERAR");
+		}
+		else {
+			msg.setSubject(assunto);
+		}
+		
 
 		if (conteudoHTML == null) {
 			// msg.setText(conteudo);

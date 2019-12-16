@@ -45,7 +45,15 @@ public class PrincipalController extends SigaController {
 	}
 
 	@Get("app/principal")
-	public void principal(Boolean exibirAcessoAnterior) {
+	public void principal(Boolean exibirAcessoAnterior, Boolean redirecionar) {
+		if (redirecionar == null || redirecionar) {
+			String paginaInicialUrl = System.getProperty("siga.pagina.inicial.url");
+			if (paginaInicialUrl != null) {
+				result.redirectTo(paginaInicialUrl + ((exibirAcessoAnterior != null && exibirAcessoAnterior) ? "?exibirAcessoAnterior=true" : ""));
+				return;
+			}
+		}
+		
 		if (exibirAcessoAnterior != null && exibirAcessoAnterior) {
 			CpAcesso a = dao.consultarAcessoAnterior(so.getCadastrante());
 			if (a != null) {

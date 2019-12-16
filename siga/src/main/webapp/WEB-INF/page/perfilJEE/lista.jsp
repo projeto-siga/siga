@@ -17,16 +17,16 @@
 
 <%-- pageContext.setAttribute("sysdate", new java.util.Date()); --%>
 <siga:pagina titulo="Busca de ${cpTipoGrupo.dscTpGrupo}">
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-			<h2>Cadastro de ${cpTipoGrupo.dscTpGrupo}</h2>
-			<div class="gt-content-box">
-				<table class="gt-table" width="100%">
-					<theader>
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >
+			<div class="card-header"><h5>Cadastro de ${cpTipoGrupo.dscTpGrupo}</h5></div>
+			<div class="card-body">
+				<table border="0" class="table table-sm table-striped">
+					<thead class="${thead_color}">
 					<th align="left">Sigla</th>
 					<th align="left">Descrição</th>
 					<th align="left">Sigla Grupo Pai</th>
-					</theader>
+					</thead>
 					<c:set var="evenorodd" value="" />
 					<c:set var="tamanho" value="0" />
 					<siga:paginador maxItens="1000" maxIndices="10"
@@ -41,11 +41,10 @@
 						</tr>
 					</siga:paginador>
 				</table>
+				<c:if test="${cpTipoGrupo.idTpGrupo != 2 or (cpTipoGrupo.idTpGrupo == 2 and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir'))}">
+					<input type="button" value="Incluir" onclick="javascript:window.location.href='editar'" class="btn btn-primary">
+				</c:if>
 			</div>
-			<br /> 
-			<c:if test="${cpTipoGrupo.idTpGrupo != 2 or (cpTipoGrupo.idTpGrupo == 2 and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir'))}">
-				<input type="button" value="Incluir" onclick="javascript:window.location.href='editar'" class="gt-btn-medium">
-			</c:if>
 		</div>
 	</div>
 </siga:pagina>

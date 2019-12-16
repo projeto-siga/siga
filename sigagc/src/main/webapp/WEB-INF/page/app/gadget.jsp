@@ -1,8 +1,8 @@
+
 <%@ include file="/WEB-INF/page/include.jsp"%>
 
 <div id="sigagc"></div>
-<div class="gt-content-box gt-for-table">
-	<table border="0" class="gt-table">
+<table class="table-hover" style="width: 100%">
 		<thead>
 			<tr>
 				<th width="50%">Situação</th>
@@ -20,7 +20,7 @@
 		</c:forEach>
 		</tbody>
 	</table>
+<div class="mt-2">
+<a title="Novo Conhecimento" class="btn btn-primary float-right btn-sm ml-2" href="${linkTo[AppController].editar}" >Novo Conhecimento</a>
+<a title="Pesquisar Conhecimentos" class="btn btn-primary float-right btn-sm ml-2" href="${linkTo[AppController].listar}">Pesquisar Conhecimentos</a>
 </div>
-<br />
-<a title="Novo Conhecimento" class="gt-btn-large gt-btn-right" href="${linkTo[AppController].editar}" >Novo Conhecimento</a>
-<a title="Pesquisar Conhecimentos" class="gt-btn-large gt-btn-right" href="${linkTo[AppController].listar}">Pesquisar Conhecimentos</a>

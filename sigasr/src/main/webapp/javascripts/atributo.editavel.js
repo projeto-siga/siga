@@ -45,10 +45,17 @@ AtributoEditavel.prototype = {
 	excluir: function() {
 		var elementoEditavel = this.getElementoComAtributoEditavel();
 		elementoEditavel.block(paramToBlock);
-		Siga.ajax(this.propriedades.urlDestino, null, "GET", function() {
+
+		$.ajax({
+            url: this.propriedades.urlDestino,
+            type: "GET"
+        }).fail(function(jqXHR, textStatus, errorThrown){
 			elementoEditavel.unblock();
 			elementoEditavel.parent().remove();
-		});
+        }).done(function(data, textStatus, jqXHR ){
+			elementoEditavel.unblock();
+			elementoEditavel.parent().remove();
+        });
 	},
 	
 	toString: function() {
@@ -119,12 +126,16 @@ FormEditavel.prototype = {
 				return;
 			}
 			self.form.block(paramToBlock);
-			Siga.ajax(self.propriedades.urlDestino, self.form.serialize(), "POST", function(response) {
+			
+            $.ajax({
+                url: self.propriedades.urlDestino, self.form.serialize(),
+                type: "POST"
+            }).done(function(data, textStatus, jqXHR ){
 				self.elementoEditavel.find('span.valor-atributo').text(response);
 				self.elementoEditavel.show();
 				self.form.unblock();
 				self.form.remove();
-			});
+            });
 		});
 	},
 	

@@ -164,10 +164,9 @@ public class ExMarcadorBL {
 				mAnterior = m;
 			}
 		}
-
-		acrescentarMarcadoresPendenciaDeAssinatura(dt);
-
-		calcularMarcadoresTransferencia(dt);
+		
+		if (!mob.isArquivado())
+			calcularMarcadoresTransferencia(dt);
 
 		// Acrescentar marcas manuais (Urgente, Idoso, etc)
 		if (m == CpMarcador.MARCADOR_EM_ANDAMENTO) {
@@ -269,6 +268,7 @@ public class ExMarcadorBL {
 		acrescentarMarcadoresPapel();
 		acrescentarMarcadoresDJe();
 		acrescentarMarcadoresPendenciaDeAnexacao();
+		acrescentarMarcadoresPendenciaDeAssinatura();
 		acrescentarMarcadoresPendenciaDeAssinaturaMovimentacao();
 		acrescentarMarcadoresDoCossignatario();
 		acrescentarMarcadoresAssinaturaComSenha();
@@ -370,14 +370,18 @@ public class ExMarcadorBL {
 		}
 	}
 
-	public void acrescentarMarcadoresPendenciaDeAssinatura(Date dt) {
-		if (mob.doc().isPendenteDeAssinatura()) {
-			acrescentarMarca(CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA, dt, ultMovNaoCanc.getResp(),
-					ultMovNaoCanc.getLotaResp());
+	public void acrescentarMarcadoresPendenciaDeAssinatura() {
+		if (mob.doc().isPendenteDeAssinatura() && !mob.doc().isCancelado()) {
+	/*		Não estava setando a amrca pendente de assinatura corretamente na susbituição.
+	 *      DpPessoa resp = ultMovNaoCanc != null ? ultMovNaoCanc.getResp() : mob.doc().getCadastrante();
+			DpLotacao lotaResp  = ultMovNaoCanc != null ? ultMovNaoCanc.getLotaResp() : mob.doc().getLotaCadastrante(); */
+			acrescentarMarca(CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA, mob.doc().getDtRegDoc(), mob.doc().getCadastrante(),
+					 mob.doc().getLotaCadastrante());
 			if (!mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha()) {
-				acrescentarMarca(CpMarcador.MARCADOR_COMO_SUBSCRITOR, dt, mob.getExDocumento().getSubscritor(), null);
-				if (mob.getDoc().isAssinaturaSolicitada()) {
-					acrescentarMarca(CpMarcador.MARCADOR_PRONTO_PARA_ASSINAR, dt, mob.getExDocumento().getSubscritor(),
+				acrescentarMarca(CpMarcador.MARCADOR_COMO_SUBSCRITOR, mob.doc().getDtRegDoc(), mob.getExDocumento().getSubscritor(), null);
+				ExMovimentacao m = mob.doc().getMovSolicitacaoDeAssinatura();
+				if (m != null) {
+					acrescentarMarca(CpMarcador.MARCADOR_PRONTO_PARA_ASSINAR, m.getDtIniMov(), mob.getExDocumento().getSubscritor(),
 							null);
 				}
 			}

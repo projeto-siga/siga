@@ -18,6 +18,7 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.tp.auth.AutorizacaoGI;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdmin;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdminFrota;
 import br.gov.jfrj.siga.tp.enums.Template;
@@ -40,9 +41,11 @@ import br.gov.jfrj.siga.vraptor.SigaObjects;
 public class ServicoVeiculoController extends TpController {
 
     private static final String SERVICO_STR = "servico";
+    private AutorizacaoGI autorizacaoGI;
 
-    public ServicoVeiculoController(HttpServletRequest request, Result result, Validator validator, SigaObjects so, EntityManager em) {
+    public ServicoVeiculoController(HttpServletRequest request, Result result, Validator validator, SigaObjects so, AutorizacaoGI autorizacaoGI, EntityManager em) {
         super(request, result, TpDao.getInstance(), validator, so, em);
+        this.autorizacaoGI = autorizacaoGI;
     }
 
     @RoleAdmin
@@ -243,7 +246,7 @@ public class ServicoVeiculoController extends TpController {
         requisicaoTransporte.setTipoFinalidade(FinalidadeRequisicao.outra());
         requisicaoTransporte.setPassageiros("Requisicao para Servico");
         requisicaoTransporte.setItinerarios("Requisicao para Servico");
-        requisicaoTransporte.setCpComplexo(recuperarComplexoPadrao());
+        requisicaoTransporte.setCpComplexo(autorizacaoGI.getComplexoPadrao());
 
         if (requisicaoTransporte.getId() == 0) {
             requisicaoTransporte.setDataHora(Calendar.getInstance());

@@ -23,7 +23,7 @@
 	</c:if>
 	<hr/>
 	<p style="font-size: 150%">Recomendamos o navegador Google Chrome para acesso ao SIGA.</p> </br>
-	<a href="https://github.com/projeto-siga/siga" target="_blank" >Sobre o siga</a>
+	<a href="https://github.com/projeto-siga/siga" target="_blank" >Sobre o SIGA</a>
 	<hr/>
 	
 </div>

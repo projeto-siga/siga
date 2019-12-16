@@ -39,8 +39,8 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.ldap.ILdapDao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapProperties;
 import br.gov.jfrj.siga.integracao.ldap.IntegracaoLdap;
-import br.gov.jfrj.siga.integracao.ldap.IntegracaoLdapProperties;
 
 @Path("/app/admin/ldap")
 @Resource

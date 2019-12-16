@@ -10,12 +10,12 @@
 <siga:pagina
 	titulo="Configuração de Pessoas a ${dscTpConfiguracao}">	
 		
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-			<h2>Configuração de Pessoas a ${dscTpConfiguracao}</h2>
-			<div class="gt-content-box gt-for-table">		
-				<table class="gt-table">
-					<theader>
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >
+			<div class="card-header"><h5>Configuração de Pessoas a ${dscTpConfiguracao}</h5></div>
+			<div class="card-body">		
+				<table border="0" class="table table-sm table-striped">
+					<thead class="${thead_color}">
 					<th>Matrícula</th>
 					<th>Nome</th>
 					<c:forEach var="servico" items="${cpServicosDisponiveis}">						
@@ -27,7 +27,7 @@
 							</c:choose>
 							</a>
 						</th>
-					</c:forEach> </theader>
+					</c:forEach> </thead>
 					<c:forEach var="pessoa" items="${dpPessoasDaLotacao}">
 						<tr class="">
 							<td>${pessoa.sesbPessoa}${pessoa.matricula}</td>
@@ -70,7 +70,9 @@
 					<c:forEach var="pessoa" items="${pessoasGrupoSegManual}">
 						<tr class="">
 							<td>	
-								${pessoa.sesbPessoa}${pessoa.matricula}<a href="excluir-pessoa-extra/${pessoa.id}">&nbsp;Excluir</a>
+								${pessoa.sesbPessoa}${pessoa.matricula}
+								<input type="button" value="Excluir"
+													class="btn btn-primary" onclick="javascript:location.href='excluir-pessoa-extra/${pessoa.id}'"/>
 							</td>												
 							<td>${pessoa.nomePessoa}</td>
 							<c:forEach var="servico" items="${cpServicosDisponiveis}">
@@ -100,28 +102,33 @@
 					</c:forEach>
 				</table>
 			</div>
-			<br />
-			<div class="gt-content-box gt-for-table">
+		</div>
+		<div class="card bg-light mb-3" >
+			
 				<form id="frmPessoaExtra"  action="inserirPessoaExtra" method="post">
-					<table class="gt-form-table">
-						<tr class="header">
-							<td>Inserir Pessoa Extra</td>
-						</tr>
-						<tr>
-							<td colspan="2">Pessoa:<siga:selecao tipo="pessoa"
-									tema="simple" propriedade="pessoaExtra" modulo="siga"/></td>
-						</tr>
-
-						<tr>
-							<td>
-							<button type="submit" class="gt-btn-medium gt-btn-left">
-								Inserir Pessoa
-							</button>
-							</td>
-						</tr>
-					</table>
+					
+					<div class="card-header"><h5>Inserir Pessoa Extra</h5></div>
+					<div class="card-body">
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label>Pessoa</label>
+									<siga:selecao tipo="pessoa"
+										tema="simple" propriedade="pessoaExtra" modulo="siga"/>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<button type="submit" class="btn btn-primary">
+										Inserir Pessoa
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
 				</form>
-			</div>
 		</div>
 	</div>
 </siga:pagina>

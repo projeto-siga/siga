@@ -25,6 +25,7 @@ import java.util.List;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.SigaCalendar;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -62,7 +63,7 @@ public class ExMobilVO extends ExVO {
 	Integer pagFinal;
 	String tamanhoDeArquivo;
 	boolean ocultar;
-
+	
 	public List<ExMovimentacaoVO> getMovs() {
 		return movs;
 	}
@@ -326,17 +327,18 @@ public class ExMobilVO extends ExVO {
 	 * @throws Exception
 	 */
 	private void addAcoes(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
+
 		if (!mob.isGeral()) {
 			addAcao("folder",
-					"_Ver Dossiê",
+					SigaMessages.getMessage("documento.ver.dossie"),
 					"/app/expediente/doc",
 					"exibirProcesso",
 					Ex.getInstance().getComp()
 							.podeVisualizarImpressao(titular, lotaTitular, mob),
 					null, null, null, null, "once");
 
-			addAcao("printer",
-					"Ver _Impressão",
+			addAcao(SigaMessages.getMessage("icon.ver.impressao"),
+					SigaMessages.getMessage("documento.ver.impressao"),
 					"/app/arquivo",
 					"exibir",
 					Ex.getInstance().getComp()
@@ -354,6 +356,13 @@ public class ExMobilVO extends ExVO {
 									mob), null,
 					"criandoAnexo=true&mobilPaiSel.sigla=" + getSigla(), null,
 					null, null);
+			
+			addAcao("overlays",
+					"Ciência",
+					"/app/expediente/mov",
+					"ciencia",
+					Ex.getInstance().getComp()
+							.podeFazerCiencia(titular, lotaTitular, mob));
 			
 			if (mob.temAnexos()) {
 				addAcao("script_key", "Assinar Anexos " + (mob.isVia() ? "da Via" : "do Volume"),
@@ -514,7 +523,9 @@ public class ExMobilVO extends ExVO {
 		if (mob.getExDocumento().isFinalizado()
 				&& mob.getUltimaMovimentacaoNaoCancelada() != null
 				&& mob.getUltimaMovimentacaoNaoCancelada()
-						.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
+					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA
+				&& mob.getUltimaMovimentacaoNaoCancelada()
+					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
 				&& mob.getUltimaMovimentacaoNaoCancelada()
 				.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO)
 			addAcao("arrow_undo",
@@ -525,7 +536,7 @@ public class ExMobilVO extends ExVO {
 					Ex.getInstance()
 							.getComp()
 							.podeCancelarMovimentacao(titular, lotaTitular, mob),
-					"Confirma o cancelamento da última movimentação("
+					SigaMessages.getMessage("documento.confirma.cancelamento") + "("
 							+ mob.getDescricaoUltimaMovimentacaoNaoCancelada()
 							+ ")?", null, null, null, "once"); // popup,
 		// exibir+completo,
@@ -545,6 +556,12 @@ public class ExMobilVO extends ExVO {
 				.getInstance().getComp().podeAutuar(titular, lotaTitular, mob),
 				null, "idMobilAutuado=" + mob.getId() + "&autuando=true", null,
 				null, null);
+
+		addAcao("arrow_undo", "Desfazer Ciência", "/app/expediente/mov",
+				"cancelar_ciencia", Ex.getInstance().getComp()
+						.podeCancelarCiencia(titular, lotaTitular, mob), null,
+				null, null, null, null);
+
 	}
 
 	public String getMarcadoresEmHtml(DpPessoa pess, DpLotacao lota) {

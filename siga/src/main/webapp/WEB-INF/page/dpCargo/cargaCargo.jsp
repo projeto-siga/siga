@@ -6,40 +6,48 @@
 
 <siga:pagina titulo="Cadastro de Lota&ccedil;&atilde;o">
 
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-			<h2>Cadastro de Cargo</h2>
-			<div class="gt-content-box gt-for-table">
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >
+			<div class="card-header"><h5>Cadastro de Cargo</h5></div>
+			<div class="card-body">
 				<form action="carga" method="POST" enctype="multipart/form-data" class="form">
-					
-					<table class="gt-form-table">
-						<tr class="header">
-							<td colspan="2">Carga de Planilha</td>
-						</tr>
-						
-						<c:if test="${not empty msg}"><script type="text/javascript">alert('Arquivo processado com sucesso!');</script></c:if>
-						<tr><td colspan="2"></td></tr>
-						<tr>
-							<td  colspan="2"><b>Observa&ccedil;&otilde;es:</b></td>
-						</tr>
-						<tr>
-							<td  colspan="2">
-								<dl>
-								  <dt>&#149;&#160;Somente esta liberada a carga de planilhas no formato Excel: "XLSX"</dt>
-								  <dt>&#149;&#160;O conte&uacute;do dos dados contidos na planilha &eacute; de responsabilidade do usu&aacute;rio;</dt>
-								  <dt>&#149;&#160;Ap&oacute;s realizar a carga, os dados ser&atilde;o inseridos automaticamente na base de dados;</dt>
-								  <dt>&#149;&#160;O sistema consistir&aacute; a exist&ecirc;ncia de duplicidade dos dados confrontando a planilha como banco de dados;</dt>
-								  <dt>&#149;&#160;A planilha deve conter os seguintes campos/formatos:</dt>
-								  <dd>- Nome: m&aacute;ximo de 100 caracteres alfanum&eacute;ricos (letras e n&uacute;meros)</dd>
-								</dl>
-							</td>
-						</tr>
-						<tr>
-							<td style="width:100px;"><label>&Oacute;rg&atilde;o:</label></td>
-							<td>
+					<c:if test="${not empty msg}"><script type="text/javascript">alert('Arquivo processado com sucesso!');</script></c:if>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label><b>Observa&ccedil;&otilde;es:</b></label>
+								<nav id="navbar-exemplo2" class="navbar navbar-light bg-light">
+									<ul class="nav nav-pills">
+								    	<li class="nav-item"><b>&#149;&#160;Somente esta liberada a carga de planilhas no formato Excel: "XLSX";</b></li>
+								    </ul>
+								    <ul class="nav nav-pills">
+								    	<li class="nav-item"><b>&#149;&#160;O conte&uacute;do dos dados contidos na planilha &eacute; de responsabilidade do usu&aacute;rio;</b></li>
+								    </ul>
+								    <ul class="nav nav-pills">
+								    	<li class="nav-item"><b>&#149;&#160;Ap&oacute;s realizar a carga, os dados ser&atilde;o inseridos automaticamente na base de dados;</b></li>
+								    </ul>
+								    <ul class="nav nav-pills">
+								    	<li class="nav-item"><b>&#149;&#160;O sistema consistir&aacute; a exist&ecirc;ncia de duplicidade dos dados confrontando a planilha como banco de dados;</b></li>
+								    </ul>
+								    <ul class="nav nav-pills">
+								    	<li class="nav-item"><b>&#149;&#160;A planilha deve conter os seguintes campos/formatos:</b></li>
+								    </ul>
+								    <nav id="navbar-exemplo2" class="navbar navbar-light bg-light">
+								    <ul class="nav nav-pills">
+								    	<li class="nav-item">- Nome: m&aacute;ximo de 100 caracteres alfanum&eacute;ricos e ponto (letras, n&uacute;meros e ".")</li>
+								    </ul>
+								    </nav>
+								</nav>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">	
+								<label>&Oacute;rg&atilde;o</label>
 								<c:choose>
 									<c:when test="${empty nmOrgaousu}">
-										<select name="idOrgaoUsu" value="${idOrgaoUsu}">
+										<select name="idOrgaoUsu" value="${idOrgaoUsu}" class="form-control">
 											<c:forEach items="${orgaosUsu}" var="item">
 												<option value="${item.idOrgaoUsu}"
 													${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
@@ -51,19 +59,25 @@
 										${nmOrgaousu}
 									</c:otherwise>
 								</c:choose>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2"><label>Selecione o arquivo contendo a planilha com dados:&nbsp;&nbsp;&nbsp;</label><input type="file" name="arquivo" accept=".xlsx" /></td>
-							
-						</tr>
-						<tr>
-							<td colspan="2">
-								<input type="submit" value="Ok"	class="gt-btn-medium gt-btn-left" onclick="javascript: return validaSelecaoAnexo( this.form );" name="sbmt"/>
-								<input type="button" value="Cancela" onclick="javascript:location.href='/siga/app/cargo/editar';" class="gt-btn-medium gt-btn-left" />
-							</td>
-						</tr>
-					</table>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">	
+								<label>Selecione o arquivo contendo a planilha com dados</label>
+								<input type="file" class="form-control-file" id="exampleFormControlFile1" name="arquivo" accept=".xlsx"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<input type="submit" value="Ok"	class="btn btn-primary" onclick="javascript: return validaSelecaoAnexo( this.form );" name="sbmt"/>
+								<input type="button" value="Cancelar" onclick="javascript:location.href='/siga/app/cargo/editar';" class="btn btn-primary" />
+							</div>
+						</div>
+					</div>
 				</form>
 			</div>
 		</div>

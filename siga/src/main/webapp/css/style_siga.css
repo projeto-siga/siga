@@ -1,0 +1,70 @@
+/*Identidade Visual do SIGA.doc para todos locais */
+
+/* Elementos para collapse de cards */  
+
+.card-header .card-toggle:after {
+	font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    float: right;
+    color: grey;
+    content: "\f0d7";
+}
+.card-header .card-toggle.collapsed:after {
+    content: "\f0da"; 
+}
+/* Bot�o circular */
+.btn-circle {
+    width: 30px;
+    height: 30px;
+    padding: 6px 0px;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.42857;
+}
+#radioBtn .notActive{
+    color: #3276b1;
+    background-color: #fff;
+}
+
+/* Sidebar */
+
+.wrapper {
+    display: flex;
+    align-items: stretch;
+}
+
+#sidebar {
+    transition: all 0.3s;    
+}
+
+#sidebar.active {
+    margin-left: -800px;
+}
+.opacity-80 {
+	opacity: 0.8;
+}
+
+.xxborderBox { 
+	width: 100%;
+	box-sizing: border-box; 
+}
+
+html body, .table-group-separator {
+	background-color: #dae9ec;
+}
+
+
+.table-group-separator, .table-group-title {
+	background-color: #dae9ec !important;
+	border: 1px solid #dae9ec !important;
+	background-color: #dae9ec !important;
+}
+table.table {
+	background-color: white;
+}
+
+p.gt-table-action-list a.link-tag {
+	margin-top: 0.4em;
+}
+

@@ -2,6 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
@@ -384,16 +385,18 @@ function limpaCampos()
 </script>
 
 <siga:pagina titulo="Lista de Expedientes" popup="${popup}">
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-			<h2>
-				Pesquisa de Documentos
-			</h2>
+	<!-- main content bootstrap -->
+	<div class="container-fluid">
+		<div class="card bg-light mb-3">
+			<div class="card-header">
+				<h5>Pesquisa de Documentos</h5>
+			</div>
+			<div class="card-body">
 			<c:if test="${((empty primeiraVez) or (primeiraVez != 'sim')) and ((empty apenasRefresh) or (apenasRefresh != 1))}">
 				<c:if test="${not empty tamanho and tamanho > 0}">
 					<div class="gt-content-box gt-for-table">
-						<table class="gt-table">
-							<thead>
+						<table class="table table-striped table-hover ">
+							<thead class="${thead_color}">
 								<tr>
 									<th rowspan="3" align="right">
 										Número
@@ -576,153 +579,155 @@ function limpaCampos()
 							<br />
 							</c:if>
 								<c:if test="${empty tamanho or tamanho == 0}">
-									<p class="gt-notice-box">
+									<p class="">
 										A pesquisa não retornou resultados.
 									</p>
 								</c:if>
 							</c:if>
-
-							<div class="gt-content-box gt-for-table">
-								<form id="buscar" name="buscar" onsubmit="javascript: return limpaCampos()"
+						</div>
+					</div>
+					<div class="card bg-light mb-3">
+						<div class="card-header">
+							<h5>Dados do Documento</h5>
+						</div>
+						<div class="card-body">
+							<form id="buscar" name="buscar" onsubmit="javascript: return limpaCampos()"
 									action="buscar" method="get" class="form100">
-									<table class="gt-form-table">
-										<colgroup>
-											<col style="width: 10em;" />
-											<col />
-										</colgroup>
-										<input type="hidden" name="popup" value="${popup}" />
-										<input type="hidden" name="propriedade" value="${propriedade}" />
-										<input type="hidden" name="postback" value="1" />
-										<input type="hidden" name="apenasRefresh" value="0" />
-										<input type="hidden" name="offset" value="0" />
+								<input type="hidden" name="popup" value="${popup}" />
+								<input type="hidden" name="propriedade" value="${propriedade}" />
+								<input type="hidden" name="postback" value="1" />
+								<input type="hidden" name="apenasRefresh" value="0" />
+								<input type="hidden" name="offset" value="0" />
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label>Situação</label> 
+											<select name="ultMovIdEstadoDoc" onchange="javascript:sbmt();" class="form-control">
+												<option value="0">
+													[Todos]
+												</option>
+												<c:forEach items="${estados}" var="item">
+													<option value="${item.idMarcador}" ${item.idMarcador == ultMovIdEstadoDoc ? 'selected' : ''}>
+														${item.descrMarcador}
+													</option>  
+												</c:forEach>
+											</select>
+										</div>
+									</div>
+									<div class="col-sm-3">
+										<div class="form-group">
+											<label>Ordenação</label> 
+											<select name="ordem" onchange="javascript:sbmt();" class="form-control" >
+												<c:forEach items="${listaOrdem}" var="item">
+													<option value="${item.key}" ${item.key == ordem ? 'selected' : ''}>
+														${item.value}
+													</option>  
+												</c:forEach>
+											</select> 
 
-										<tr class="header">
-											<td align="center" valign="top" colspan="4">
-												Dados do Documento
-											</td>
-										</tr>
-										<tr>
-											<td>
-												Situação:
-											</td>
-											<td>
-												<select name="ultMovIdEstadoDoc" onchange="javascript:sbmt();">
-													<option value="0">
-														[Todos]
-													</option>
-													<c:forEach items="${estados}" var="item">
-														<option value="${item.idMarcador}" ${item.idMarcador == ultMovIdEstadoDoc ? 'selected' : ''}>
-															${item.descrMarcador}
-														</option>  
-													</c:forEach>
-												</select>
-												<span style="float: right; padding-left: 2em;">
-													Ordenação:
-													<select name="ordem" onchange="javascript:sbmt();" >
-														<c:forEach items="${listaOrdem}" var="item">
-															<option value="${item.key}" ${item.key == ordem ? 'selected' : ''}>
-																${item.value}
-															</option>  
-														</c:forEach>
-													</select> 
-												</span> 
-												<span style="float: right; padding-left: 2em;">
-													Visualização:
-													<select name="visualizacao" onchange="javascript:sbmt();" >
-														<c:forEach items="${listaVisualizacao}" var="item">
-															<option value="${item.key}" ${item.key == visualizacao ? 'selected' : ''}>
-																${item.value}
-															</option>  
-														</c:forEach>
-													</select>
+										</div>
+									</div>
+									<div class="col-sm-3">
+										<div class="form-group">
+											<label>Visualização</label> 
+											<select name="visualizacao" onchange="javascript:sbmt();" class="form-control">
+												<c:forEach items="${listaVisualizacao}" var="item">
+													<option value="${item.key}" ${item.key == visualizacao ? 'selected' : ''}>
+														${item.value}
+													</option>  
+												</c:forEach>
+											</select>
+
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label>Pessoa/Lotação</label> 
+											<select id="ultMovTipoResp" name="ultMovTipoResp" onchange="javascript:alteraAtendente();" class="form-control">
+												<c:forEach items="${listaTipoResp}" var="item">
+													<option value="${item.key}" ${item.key == ultMovTipoResp ? 'selected' : ''}>
+														${item.value}
+													</option>  
+												</c:forEach>
+											</select>
+										</div>
+									</div>
+									<div class="col-sm-8">
+										<div class="form-group">
+											<label>&nbsp;</label> 
+											<c:if test="${ultMovTipoResp == 1}">
+												<span id="divUltMovResp" style="display: ">
+													<siga:selecao propriedade="ultMovResp" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
 												</span>
-											</td>
-										</tr>
-										<tr>
-											<td>
-												Pessoa/Lotação:
-											</td>
-											<td>
-												<select id="ultMovTipoResp" name="ultMovTipoResp" onchange="javascript:alteraAtendente();" >
-													<c:forEach items="${listaTipoResp}" var="item">
-														<option value="${item.key}" ${item.key == ultMovTipoResp ? 'selected' : ''}>
-															${item.value}
-														</option>  
-													</c:forEach>
-												</select>
-												<c:if test="${ultMovTipoResp == 1}">
-													<span id="divUltMovResp" style="display: ">
-														<siga:selecao propriedade="ultMovResp" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
-													</span>
-													<span id="divUltMovLotaResp" style="display: none">
-														<siga:selecao propriedade="ultMovLotaResp" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
-													</span>
-												</c:if>
-												<c:if test="${ultMovTipoResp == 2}">
-													<span id="divUltMovResp" style="display: none">
-														<siga:selecao propriedade="ultMovResp" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
-													</span>
-													<span id="divUltMovLotaResp" style="display: ">
-														<siga:selecao propriedade="ultMovLotaResp" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
-													</span>
-												</c:if>
-											</td>
-										</tr>
-										<tr>
-											<td>
-												Órgão:
-											</td>
-											<td>
-												<select name="orgaoUsu">
-													<option value="0">
-														[Todos]
-													</option>
-													<c:forEach items="${orgaosUsu}" var="item">
-														<option value="${item.idOrgaoUsu}" ${item.idOrgaoUsu == orgaoUsu ? 'selected' : ''}>
-															${item.nmOrgaoUsu}
-														</option>  
-													</c:forEach>
-												</select>
-											</td>
-										</tr>
-										<tr>
-											<td>
-												Origem:
-											</td>
-											<td>
-												<select name="idTpDoc" onchange="javascript:alteraOrigem();">
-													<option value="0">
-														[Todos]
-													</option>
-													<c:forEach items="${tiposDocumento}" var="item">
-														<option value="${item.idTpDoc}" ${item.idTpDoc == idTpDoc ? 'selected' : ''}>
-															${item.descrTipoDocumento}
-														</option>  
-													</c:forEach>
-												</select>
-												&nbsp;&nbsp;&nbsp;&nbsp;
-												Data Inicial: 
-												<input type="text" name="dtDocString" value="${dtDocString}" onblur="javascript:verifica_data(this,0);" />
-												&nbsp;&nbsp;
-												Data Final: 
-												<input type="text" name="dtDocFinalString" value="${dtDocString}" onblur="javascript:verifica_data(this,0);"/>
-											</td>
-										</tr>
-
-										<c:choose>
-											<c:when test="${tipoDocumento != 'externo'}">
-												<tr id="trTipo" style="display: ">
-											</c:when>
-											<c:otherwise>
-												<tr id="trTipo" style="display: none">
-											</c:otherwise>
-										</c:choose>
-
-										<td>
-											Tipo:
-										</td>
-										<td>
-											<select id="tipoForma" name="idTipoFormaDoc" onchange="javascript:alteraTipoDaForma();">
+												<span id="divUltMovLotaResp" style="display: none">
+													<siga:selecao propriedade="ultMovLotaResp" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
+												</span>
+											</c:if>
+											<c:if test="${ultMovTipoResp == 2}">
+												<span id="divUltMovResp" style="display: none">
+													<siga:selecao propriedade="ultMovResp" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
+												</span>
+												<span id="divUltMovLotaResp" style="display: ">
+													<siga:selecao propriedade="ultMovLotaResp" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
+												</span>
+											</c:if>
+										</div>
+									</div>	
+								</div>
+				<div class="form-row">
+						<div class="form-group col-md-3">
+							<label for="orgaoUsu">Órgão</label> <select class="form-control"
+								id="orgaoUsu" name="orgaoUsu">
+								<option value="0">[Todos]</option>
+								<c:forEach items="${orgaosUsu}" var="item">
+									<option value="${item.idOrgaoUsu}"
+										${item.idOrgaoUsu == orgaoUsu ? 'selected' : ''}>
+										${item.nmOrgaoUsu}</option>
+								</c:forEach>
+							</select>
+						</div>
+						<c:if test="${siga_cliente != 'GOVSP'}">
+							<div class="form-group col-md-3">
+								<label for="idTpDoc">Origem</label> <select class="form-control"
+									id="idTpDoc" name="idTpDoc"
+									onchange="javascript:alteraOrigem();">
+								<option value="0">[Todos]</option>
+								<c:forEach items="${tiposDocumento}" var="item">
+									<option value="${item.idTpDoc}"
+										${item.idTpDoc == idTpDoc ? 'selected' : ''}>
+										${item.descrTipoDocumento}</option>
+								</c:forEach>
+								</select>
+							</div>
+						</c:if>
+						<div class="form-group col-md-3">
+							<label for="dtDocString">Data Inicial</label> <input
+								class="form-control" type="text" name="dtDocString"
+								id="dtDocString" value="${dtDocString}"
+								onblur="javascript:verifica_data(this,0);" />
+						</div>
+						<div class="form-group col-md-3">
+							<label for="dtDocFinalString">Data Final</label> <input
+								class="form-control" type="text" name="dtDocFinalString"
+								id="dtDocFinalString" value="${dtDocString}"
+								onblur="javascript:verifica_data(this,0);" />
+						</div>
+					</div>
+								<c:choose>
+									<c:when test="${tipoDocumento != 'externo'}">
+										<c:set var="trTipo" value="display: " />
+									</c:when>
+									<c:otherwise>
+										<c:set var="trTipo" value="display: none" />
+									</c:otherwise>
+								</c:choose>
+								<div class="row" style="${trTipo}">
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label>Tipo</label>
+											<select id="tipoForma" name="idTipoFormaDoc" onchange="javascript:alteraTipoDaForma();" class="form-control">
 												<option value="0">
 													[Todos]
 												</option>
@@ -732,247 +737,255 @@ function limpaCampos()
 													</option>  
 												</c:forEach>
 											</select>
-											&nbsp;&nbsp;&nbsp;
-											<div style="display: inline" id="comboFormaDiv">
-												<script type="text/javascript">
-													alteraTipoDaForma();
-												</script>
-											</div>
-										</td>
-										</tr>
-
-										<tr>
-											<td>
-												Modelo:
-											</td>
-											<td>
-												<div style="display: inline" id="comboModeloDiv">
-													<script type="text/javascript">
-														setTimeout("alteraForma()",500);
-													</script>
-												</div>
-											</td>
-										</tr>
-
-										<tr>
-											<td>
-												Ano de Emissão:
-											</td>
-											<td>
-											
-												<select  name="anoEmissaoString">
-													<option value="0">
-														[Todos]
+										</div>
+									</div>
+									<div class="col-sm-4">
+										<div id="comboFormaDiv">
+											<script type="text/javascript">
+												setTimeout("alteraTipoDaForma()",500);
+											</script>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-4">		
+										<div id="comboModeloDiv">
+											<script type="text/javascript">
+												setTimeout("alteraForma()",500);
+											</script>
+										</div>										
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label>Ano de Emissão</label>
+											<select  name="anoEmissaoString" class="form-control">
+												<option value="0">
+													[Todos]
+												</option>
+												<c:forEach items="${listaAnos}" var="item">
+													<option value="${item}" ${item == anoEmissaoString ? 'selected' : ''}>
+														${item}
 													</option>
-													<c:forEach items="${listaAnos}" var="item">
-														<option value="${item}" ${item == anoEmissaoString ? 'selected' : ''}>
-															${item}
-														</option>
-													</c:forEach>
-												</select>
-												&nbsp;&nbsp;&nbsp;&nbsp;
-												Número:
-												<input type="text"size="7" name="numExpediente" value="${numExpediente}" maxlength="6"/>
-											</td>
-										</tr>
-
-										<c:choose>
-											<c:when test='${tipoDocumento == "externo" || tipoDocumento == "antigo"}'>
-												<tr id="trNumOrigDoc" style="display: ">
-											</c:when>
-											<c:otherwise>
-												<tr id="trNumOrigDoc" style="display: none">
-											</c:otherwise>
-										</c:choose>
-
-										<td class="tdLabel">
-											<label for="numExtDoc" class="label">
-												Nº Original do Documento:
-											</label>
-										</td>
-										<td>
-											<input type="text" name="numExtDoc" value="${numExtDoc}" size="16" value="" id="numExtDoc" />
-										</td>
-										</tr>
-
-										<c:choose>
-											<c:when test='${tipoDocumento == "externo"}'>
-												<tr id="trOrgExterno" style="display: ">
-											</c:when>
-											<c:otherwise>
-												<tr id="trOrgExterno" style="display: none">
-											</c:otherwise>
-										</c:choose>
-
-										<td>
-											Órgão Externo:
-										</td>
-										<td>
+												</c:forEach>
+											</select>
+										</div>
+									</div>
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label>Número</label>
+											<input type="text"size="7" name="numExpediente" value="${numExpediente}" maxlength="6" class="form-control"/>
+										</div>
+									</div>
+								</div>
+								<c:choose>
+									<c:when test='${tipoDocumento == "externo" || tipoDocumento == "antigo"}'>
+										<c:set var="trNumOrigDoc" value="display: " />
+									</c:when>
+									<c:otherwise>
+										<c:set var="trNumOrigDoc" value="display: none" />
+									</c:otherwise>
+								</c:choose>
+								<div class="row" style="${trNumOrigDoc}">
+									<div class="col-sm">
+										<div class="form-group">
+											<label for="numExtDoc" class="label">Nº Original do Documento</label>
+											<input type="text" name="numExtDoc" value="${numExtDoc}" size="16" value="" id="numExtDoc" class="form-control"/>
+										</div>
+									</div>
+								</div>
+								<c:choose>
+									<c:when test='${tipoDocumento == "externo"}'>
+										<c:set var="trOrgExterno" value="display: " />
+									</c:when>
+									<c:otherwise>
+										<c:set var="trOrgExterno" value="display: none" />
+									</c:otherwise>
+								</c:choose>
+								<div class="row" style="${trOrgExterno}">
+									<div class="col-sm">
+										<div class="form-group">
+											<label for="numExtDoc" class="label">Órgão Externo</label>
 											<siga:selecao propriedade="cpOrgao" modulo="siga" titulo="Órgão Externo" tema="simple" />
-										</td>
-										</tr>
+										</div>
+									</div>
+								</div>
+								<c:choose>
+									<c:when test='${tipoDocumento == "externo" || tipoDocumento == "antigo"}'>
+										<c:set var="trNumDocSistAntigo" value="display: " />
+									</c:when>
+									<c:otherwise>
+										<c:set var="trNumDocSistAntigo" value="display: none" />
+									</c:otherwise>
+								</c:choose>
+								<div class="row" style="${trNumDocSistAntigo}">
+									<div class="col-sm">
+										<div class="form-group">
+											<label for="numExtDoc" class="label">Nº do Documento no Sistema Antigo</label>
+											<input type="text" name="numAntigoDoc" value="${numAntigoDoc}" size="16" value="" id="numAntigoDoc" class="form-control"/>
+										</div>
+									</div>
+								</div>
 
-										<c:choose>
-											<c:when test='${tipoDocumento == "externo" || tipoDocumento == "antigo"}'>
-												<tr id="trNumDocSistAntigo" style="display: ">
-											</c:when>
-											<c:otherwise>
-												<tr id="trNumDocSistAntigo" style="display: none">
-											</c:otherwise>
-										</c:choose>
-
-										<td class="tdLabel">
-											<label for="numAntigoDoc" class="label">
-												Nº do Documento no Sistema Antigo:
-											</label>
-										</td>
-										<td>
-											<input type="text" name="numAntigoDoc" value="${numAntigoDoc}" size="16" value="" id="numAntigoDoc" />
-										</td>
-										</tr>
-
-										<c:choose>
-											<c:when test="${tipoDocumento == 'externo'}">
-												<tr>
-													<td>
-														Subscritor:
-													</td>
-													<td>
-														<input type="text" label="Subscritor" name="nmSubscritorExt" value="${nmSubscritorExt}" size="80" />												
-													</td>
-												</tr>
-											</c:when>
-											<c:otherwise>
-												<siga:selecao titulo="Subscritor:" propriedade="subscritor" paramList="buscarFechadas=true" modulo="siga"/>
-											</c:otherwise>
-										</c:choose>
-
-										<tr>
-											<td>
-												Cadastrante:
-											</td>
-											<td>
-												<div style="float: left">
-													<select id="tipoCadastrante" name="tipoCadastrante" onchange="javascript:alteraCadastranteDocumento();" >
-														<c:forEach items="${listaTipoResp}" var="item">
-															<option value="${item.key}" ${item.key == tipoCadastrante ? 'selected' : ''}>
-																${item.value}
-															</option>  
-														</c:forEach>
-													</select> 
+								<div class="row">
+									<div class="col-sm">
+										<div class="form-group">
+											<label for="numExtDoc" class="label"><fmt:message key="tela.aBuscar.subscritor" /></label>											
+											<c:choose>
+												<c:when test="${tipoDocumento == 'externo'}">
+													<input type="text" label="Subscritor" name="nmSubscritorExt" value="${nmSubscritorExt}" size="80" class="form-control"/>
+												</c:when>
+												<c:otherwise>
+													<siga:selecao titulo="Subscritor:" propriedade="subscritor" paramList="buscarFechadas=true" tema="simple" modulo="siga"/>
+												</c:otherwise>
+											</c:choose>		
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="numExtDoc" class="label">Cadastrante</label>											
+											<select id="tipoCadastrante" name="tipoCadastrante" onchange="javascript:alteraCadastranteDocumento();" class="form-control" >
+												<c:forEach items="${listaTipoResp}" var="item">
+													<option value="${item.key}" ${item.key == tipoCadastrante ? 'selected' : ''}>
+														${item.value}
+													</option>  
+												</c:forEach>
+											</select> 
+										</div>
+									</div>
+									<div class="col-sm-8">
+										<div class="form-group">
+											<label>&nbsp;</label>
+											<c:if test="${tipoCadastrante == 1}">
+												<div id="divCadastrante" style="display: ">
+													<siga:selecao propriedade="cadastrante" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
 												</div>
-												<c:if test="${tipoCadastrante == 1}">
-													<div id="divCadastrante" style="display: ">
-														<siga:selecao propriedade="cadastrante" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
-													</div>
-													<div id="divLotaCadastrante" style="display: none">
-														<siga:selecao propriedade="lotaCadastrante" tema="simple" paramList="buscarFechadas=true" modulo="siga" />
-													</div>
-												</c:if> 
-												<c:if test="${tipoCadastrante == 2}">
-													<div id="divCadastrante" style="display: none">
-														<siga:selecao propriedade="cadastrante" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
-													</div>
-													<div id="divLotaCadastrante" style="display: ">
-														<siga:selecao propriedade="lotaCadastrante" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
-													</div>
-												</c:if>
-											</td>
-										</tr>
-
-										<tr>
-											<td>
-												Destinatário:
-											</td>
-											<td>
-												<div style="float: left">
-													<select id="tipoDestinatario" name="tipoDestinatario"  onchange="javascript:alteraDestinatarioDocumento();" >
-														<c:forEach items="${listaTipoDest}" var="item">
-															<option value="${item.key}" ${item.key == tipoDestinatario ? 'selected' : ''}>
-																${item.value}
-															</option>  
-														</c:forEach>
-													</select>
+												<div id="divLotaCadastrante" style="display: none">
+													<siga:selecao propriedade="lotaCadastrante" tema="simple" paramList="buscarFechadas=true" modulo="siga" />
 												</div>
-												<c:choose>
-													<c:when test='${tipoDestinatario == 1}'>
-														<div id="divDestinatario" style="display: ">
-															<siga:selecao propriedade="destinatario" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
-														</div>
-														<div id="divLotaDestinatario" style="display: none">
-															<siga:selecao propriedade="lotacaoDestinatario" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
-														</div>
-														<div id="divOrgaoExternoDestinatario" style="display: none">
-															<siga:selecao propriedade="orgaoExternoDestinatario" tema="simple" modulo="siga"/>
-														</div>
-														<div id="divNmDestinatario" style="display: none">
-															<input type="text" name="nmDestinatario" value="${nmDestinatario}" size="80" />
-														</div>
-													</c:when>
-													<c:when test='${tipoDestinatario == 2}'>
-														<div id="divDestinatario" style="display: none">
-															<siga:selecao propriedade="destinatario" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
-														</div>
-														<div id="divLotaDestinatario" style="display: ">
-															<siga:selecao propriedade="lotacaoDestinatario" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
-														</div>
-														<div id="divOrgaoExternoDestinatario" style="display: none">
-															<siga:selecao propriedade="orgaoExternoDestinatario" tema="simple" modulo="siga"/>
-														</div>
-														<div id="divNmDestinatario" style="display: none">
-															<input type="text" name="nmDestinatario" value="${nmDestinatario}" size="80" />
-														</div>
-
-													</c:when>
-													<c:when test='${tipoDestinatario == 3}'>
-														<div id="divDestinatario" style="display: none">
-															<siga:selecao propriedade="destinatario" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
-														</div>
-														<div id="divLotaDestinatario" style="display: none">
-															<siga:selecao propriedade="lotacaoDestinatario" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
-														</div>
-														<div id="divOrgaoExternoDestinatario" style="display: ">
-															<siga:selecao propriedade="orgaoExternoDestinatario" tema="simple" modulo="siga"/>
-														</div>
-														<div id="divNmDestinatario" style="display: none">
-															<input type="text" name="nmDestinatario" value="${nmDestinatario}" size="80" />
-														</div>
-
-													</c:when>
-													<c:otherwise>
-														<div id="divDestinatario" style="display: none">
-															<siga:selecao propriedade="destinatario" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
-														</div>
-														<div id="divLotaDestinatario" style="display: none">
-															<siga:selecao propriedade="lotacaoDestinatario" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
-														</div>
-														<div id="divOrgaoExternoDestinatario" style="display: none">
-															<siga:selecao propriedade="orgaoExternoDestinatario" tema="simple" modulo="siga"/>
-														</div>
-														<div id="divNmDestinatario" style="display: ">
-															<input type="text" name="nmDestinatario" value="${nmDestinatario}" size="80" />
-														</div>
-
-													</c:otherwise>
-												</c:choose>
-											</td>
-										</tr>
-										<siga:selecao titulo="Classificação:" propriedade="classificacao" modulo="sigaex" urlAcao="buscar" urlSelecionar="selecionar"/>
-										<tr>
-											<td>
-												Descrição:
-											</td>
-											<td>
-												<input type="text" name="descrDocumento" value="${descrDocumento}" size="80" />
-											</td>
-										</tr>
-										${f:obterExtensaoBuscaTextual(lotaTitular.orgaoUsuario, fullText)}
-										<tr>
-											<td colspan="2">
-												<siga:monobotao inputType="submit" value="Buscar" cssClass="gt-btn-medium gt-btn-left" />
-											</td>
-										</tr>
-								</table>
+											</c:if> 
+											<c:if test="${tipoCadastrante == 2}">
+												<div id="divCadastrante" style="display: none">
+													<siga:selecao propriedade="cadastrante" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
+												</div>
+												<div id="divLotaCadastrante" style="display: ">
+													<siga:selecao propriedade="lotaCadastrante" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
+												</div>
+											</c:if>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label>Destinatário</label>
+											<select id="tipoDestinatario" name="tipoDestinatario"  onchange="javascript:alteraDestinatarioDocumento();" class="form-control" >
+												<c:forEach items="${listaTipoDest}" var="item">
+													<option value="${item.key}" ${item.key == tipoDestinatario ? 'selected' : ''}>
+														${item.value}
+													</option>  
+												</c:forEach>
+											</select>
+										</div>
+									</div>
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label>&nbsp;</label>
+											<c:choose>
+												<c:when test='${tipoDestinatario == 1}'>
+													<div id="divDestinatario" style="display: ">
+														<siga:selecao propriedade="destinatario" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
+													</div>
+													<div id="divLotaDestinatario" style="display: none">
+														<siga:selecao propriedade="lotacaoDestinatario" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
+													</div>
+													<div id="divOrgaoExternoDestinatario" style="display: none">
+														<siga:selecao propriedade="orgaoExternoDestinatario" tema="simple" modulo="siga"/>
+													</div>
+													<div id="divNmDestinatario" style="display: none">
+														<input type="text" name="nmDestinatario" value="${nmDestinatario}" size="80" />
+													</div>
+												</c:when>
+												<c:when test='${tipoDestinatario == 2}'>
+													<div id="divDestinatario" style="display: none">
+														<siga:selecao propriedade="destinatario" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
+													</div>
+													<div id="divLotaDestinatario" style="display: ">
+														<siga:selecao propriedade="lotacaoDestinatario" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
+													</div>
+													<div id="divOrgaoExternoDestinatario" style="display: none">
+														<siga:selecao propriedade="orgaoExternoDestinatario" tema="simple" modulo="siga"/>
+													</div>
+													<div id="divNmDestinatario" style="display: none">
+														<input type="text" name="nmDestinatario" value="${nmDestinatario}" size="80" class="form-control"/>
+													</div>
+												</c:when>
+												<c:when test='${tipoDestinatario == 3}'>
+													<div id="divDestinatario" style="display: none">
+														<siga:selecao propriedade="destinatario" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
+													</div>
+													<div id="divLotaDestinatario" style="display: none">
+														<siga:selecao propriedade="lotacaoDestinatario" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
+													</div>
+													<div id="divOrgaoExternoDestinatario" style="display: ">
+														<siga:selecao propriedade="orgaoExternoDestinatario" tema="simple" modulo="siga"/>
+													</div>
+													<div id="divNmDestinatario" style="display: none">
+														<input type="text" name="nmDestinatario" value="${nmDestinatario}" size="80" class="form-control" />
+													</div>
+												</c:when>
+												<c:otherwise>
+													<div id="divDestinatario" style="display: none">
+														<siga:selecao propriedade="destinatario" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
+													</div>
+													<div id="divLotaDestinatario" style="display: none">
+														<siga:selecao propriedade="lotacaoDestinatario" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
+													</div>
+													<div id="divOrgaoExternoDestinatario" style="display: none">
+														<siga:selecao propriedade="orgaoExternoDestinatario" tema="simple" modulo="siga"/>
+													</div>
+													<div id="divNmDestinatario" style="display: ">
+														<input type="text" name="nmDestinatario" value="${nmDestinatario}" size="80" class="form-control"/>
+													</div>
+												</c:otherwise>
+											</c:choose>
+										</div>
+									</div>	
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label>Classificação</label>	
+											<siga:selecao titulo="Classificação:" propriedade="classificacao" tema="simple" modulo="sigaex" urlAcao="buscar" urlSelecionar="selecionar"/>
+										</div>
+									</div>
+								</div>	
+								
+								<div class="row">
+									<div class="col-sm-4">
+										<div class="form-group">	
+											<label>Descrição</label>
+											<input type="text" name="descrDocumento" value="${descrDocumento}" size="80" class="form-control" />
+										</div>
+									</div>
+								</div>	
+								<div class="row">
+									<div class="col-sm-4">
+										<div class="form-group">	
+											${f:obterExtensaoBuscaTextual(lotaTitular.orgaoUsuario, fullText)}
+										</div>
+									</div>
+								</div>							
+								<div class="row">
+									<div class="col-sm-4">
+										<div class="form-group">	
+											<siga:monobotao inputType="submit" value="Buscar" cssClass="btn btn-primary" />
+										</div>
+									</div>
+								</div>	
 							</form>
 						</div>
 					</div>

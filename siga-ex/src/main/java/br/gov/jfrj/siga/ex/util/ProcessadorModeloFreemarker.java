@@ -137,9 +137,11 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 					} else {
 						mod = ExDao.getInstance().consultaCpModeloPorNome(source);
 					}
+					
+					String conteudoBlob = "";
 					if (mod != null)
-						return mod.getConteudoBlobString() == null ? "" : mod.getConteudoBlobString();
-					return null;
+						conteudoBlob = mod.getConteudoBlobString() == null ? "" : mod.getConteudoBlobString();
+					return conteudoBlob;
 				}
 			});
 	

@@ -30,9 +30,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,7 +52,9 @@ import org.hibernate.annotations.Formula;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -71,13 +76,15 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	private static final long serialVersionUID = -5743631829922578717L;
 	public static final ActiveRecord<DpPessoa> AR = new ActiveRecord<>(
 			DpPessoa.class);
-
 	@Formula(value = "REMOVE_ACENTO(NOME_PESSOA)")
 	@Desconsiderar
 	private String nomePessoaAI;
 
 	@Transient
 	private Long idSitConfiguracaoConfManual;
+
+	@Transient
+	private List <List<String>> listaLotacoes = new ArrayList <List<String>>();
 
 	public DpPessoa() {
 
@@ -194,15 +201,32 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 				+ getLotacao().getSiglaCompleta();
 	}
 
+	static Pattern p1 = null;
+
 	public void setSigla(String sigla) {
-		if (sigla == null) {
-			sigla = "";
+		if (p1 == null) {
+			Map<String, CpOrgaoUsuario> mapAcronimo = new TreeMap<String, CpOrgaoUsuario>();
+			for (CpOrgaoUsuario ou : CpDao.getInstance().listarOrgaosUsuarios()) {
+				mapAcronimo.put(ou.getAcronimoOrgaoUsu(), ou);
+				mapAcronimo.put(ou.getSiglaOrgaoUsu(), ou);
+			}
+			String acronimos = "";
+			for (String s : mapAcronimo.keySet()) {
+				acronimos += "|" + s;
+			}
+			
+			p1 = Pattern.compile("^(?<orgao>" + acronimos + ")?(?<numero>[0-9]+)$");
 		}
-		final Pattern p1 = Pattern.compile("^([A-Za-z][A-Za-z0-9])([0-9]+)");
+
+		sigla = sigla.trim().toUpperCase();
+
+		
 		final Matcher m = p1.matcher(sigla);
 		if (m.find()) {
-			setSesbPessoa(m.group(1).toUpperCase());
-			setMatricula(Long.parseLong(m.group(2)));
+			String orgao = m.group("orgao");
+			String numero = m.group("numero");
+			setSesbPessoa(orgao.toUpperCase());
+			setMatricula(Long.parseLong(numero));
 		}
 	}
 
@@ -433,6 +457,39 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		return this;
 	}
 
+	/**
+	 * Devolve as lotacoes que o cadastrante pode acessar
+	 * 
+	 * @return Retorna as lotações que o cadastrante pode acessar
+	 */
+	public List <List<String>> getLotacoes() {
+		
+		if (listaLotacoes.size() == 0) {
+			List<CpIdentidade> idsCpf = CpDao.getInstance().consultaIdentidadesCadastrante(getCpfPessoa().toString(), true);
+			for (CpIdentidade identCpf : idsCpf) {
+			//				if (!this.getPessoaInicial().equals(identCpf.getDpPessoa())) { 
+				List<String> listaUserLota = new ArrayList<String>();
+				listaUserLota.add(identCpf.getNmLoginIdentidade());
+				listaUserLota.add(identCpf.getDpPessoa().getLotacao().getSiglaLotacao());
+				listaUserLota.add(identCpf.getDpPessoa().getFuncaoConfianca().getNomeFuncao() + "/" +
+						identCpf.getDpPessoa().getCargo().getNomeCargo());
+				listaLotacoes.add(listaUserLota);
+			}
+		}
+
+		return listaLotacoes;
+	}
+	
+	/**
+	 * Seta as lotacoes que o cadastrante pode acessar
+	 * 
+	 * @param listaLota
+	 *            * lista de lotacoes que o cadastrante pode acessar
+	 */
+	public void setLotacoes(List <List<String>> listaLota) {
+		listaLotacoes = listaLota;
+	}
+	
 	/**
 	 * retorna se ativo na data
 	 * 

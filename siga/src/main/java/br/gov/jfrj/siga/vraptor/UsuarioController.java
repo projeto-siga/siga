@@ -1,6 +1,8 @@
 package br.gov.jfrj.siga.vraptor;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
@@ -13,19 +15,26 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.GeraMessageDigest;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.util.MatriculaUtils;
+import br.gov.jfrj.siga.cp.bl.CpPropriedadeBL;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
+import br.gov.jfrj.siga.gi.service.GiService;
 import br.gov.jfrj.siga.integracao.ldap.IntegracaoLdap;
-import br.gov.jfrj.siga.integracao.ldap.IntegracaoLdapViaWebService;
 
 @Resource
 public class UsuarioController extends SigaController {
 
 	private static final Logger LOG = Logger.getLogger(UsuarioAction.class);
-
+	
 	public UsuarioController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 
@@ -37,7 +46,7 @@ public class UsuarioController extends SigaController {
 	public void trocaSenha() {
 		result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
 	}
-
+	
 	@Post({"/app/usuario/trocar_senha_gravar","/public/app/usuario/trocar_senha_gravar"})
 	public void gravarTrocaSenha(UsuarioAction usuario) throws Exception {
 		String senhaAtual = usuario.getSenhaAtual();
@@ -45,18 +54,32 @@ public class UsuarioController extends SigaController {
 		String senhaConfirma = usuario.getSenhaConfirma();
 		String nomeUsuario = usuario.getNomeUsuario().toUpperCase();
 		
-		CpIdentidade idNova = Cp.getInstance().getBL().trocarSenhaDeIdentidade(
-				senhaAtual, senhaNova, senhaConfirma, nomeUsuario,
-				getIdentidadeCadastrante());
-		
-		if ("on".equals(usuario.getTrocarSenhaRede())) {
-			try{
-				//IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova,senhaNova);
-				IntegracaoLdapViaWebService.getInstancia().trocarSenha(nomeUsuario, senhaNova);
-			} catch(Exception e){
-				throw new Exception("Não foi possível alterar a senha de rede e e-mail. "
-						+ "Tente novamente em alguns instantes ou repita a operação desmarcando a caixa \"Alterar Senha de Rede\"");
+		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+			List <CpIdentidade> lista1 = new ArrayList<CpIdentidade>();
+			CpIdentidade i = null;
+			nomeUsuario = nomeUsuario.replace(".", "").replace("-", "");
+			if(!nomeUsuario.matches("[0-9]*")) {
+				i = CpDao.getInstance().consultaIdentidadeCadastrante(nomeUsuario, Boolean.TRUE);
 			}
+			lista1 = CpDao.getInstance().consultaIdentidadesPorCpf(i == null ? nomeUsuario : i.getDpPessoa().getCpfPessoa().toString());
+			
+			Cp.getInstance().getBL().trocarSenhaDeIdentidadeGovSp(
+				senhaAtual, senhaNova, senhaConfirma, nomeUsuario,
+				getIdentidadeCadastrante(),lista1);
+			
+		} else {
+			CpIdentidade idNova = Cp.getInstance().getBL().trocarSenhaDeIdentidade(
+					senhaAtual, senhaNova, senhaConfirma, nomeUsuario,
+					getIdentidadeCadastrante());
+			if ("on".equals(usuario.getTrocarSenhaRede())) {
+				try{
+					IntegracaoLdapViaWebService.getInstancia().trocarSenha(nomeUsuario, senhaNova);
+				} catch(Exception e){
+					throw new Exception("Não foi possível alterar a senha de rede e e-mail. "
+							+ "Tente novamente em alguns instantes ou repita a operação desmarcando a caixa \"Alterar Senha de Rede\"");
+				}
+			}
+			
 		}
 
 		result.include("mensagem", "A senha foi alterada com sucesso. <br/><br/><br/>OBS: A senha de rede e e-mail também foi alterada.");	
@@ -64,14 +87,19 @@ public class UsuarioController extends SigaController {
 		result.include("titulo", "Troca de Senha");
 		result.redirectTo("/app/principal");
 	}
-
+	
 	@Get({"/app/usuario/incluir_usuario","/public/app/usuario/incluir_usuario"})
 	public void incluirUsuario() {
-		result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
-		result.include("titulo", "Novo Usuário");
-		result.include("proxima_acao", "incluir_usuario_gravar");
-		result.forwardTo("/WEB-INF/page/usuario/esqueciSenha.jsp");
-		
+		if (!SigaMessages.isSigaSP()) {
+			result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
+			result.include("titulo", SigaMessages.getBundle().getString("usuario.novo"));
+			result.include("proxima_acao", "incluir_usuario_gravar");
+			result.forwardTo("/WEB-INF/page/usuario/esqueciSenha.jsp");
+		} else {
+			result.include("mensagem", "Não é possível entrar nesta tela neste ambiente.");
+			result.redirectTo("/");
+		}
+			
 	}
 	
 	@Post({"/app/usuario/incluir_usuario_gravar","/public/app/usuario/incluir_usuario_gravar"})
@@ -118,13 +146,13 @@ public class UsuarioController extends SigaController {
 		if (isIntegradoAoAD){
 				msgComplemento = "<br/> Atenção: Sua senha de rede e e-mail foi definida com sucesso.";
 		}else{
-			msgComplemento = "<br/> O seu login e senha foram enviados para seu email.";
+			msgComplemento = "<br/> " + SigaMessages.getBundle().getString("usuario.primeiroacesso.sucessocomplemento");
 		}
 
 		result.include("mensagem", "Usuário cadastrado com sucesso." + msgComplemento);
-		result.include("titulo", "Novo Usuário");
+		result.include("titulo", SigaMessages.getBundle().getString("usuario.novo"));
 		result.include("volta", "incluir");
-		result.redirectTo("/app/usuario/incluir_usuario");
+		result.use(Results.page()).forwardTo("/WEB-INF/page/usuario/esqueciSenha.jsp");
 	}
 	
 	@Get({"/app/usuario/esqueci_senha","/public/app/usuario/esqueci_senha"})
@@ -136,15 +164,30 @@ public class UsuarioController extends SigaController {
 	
 	@Post({"/app/usuario/esqueci_senha_gravar","/public/app/usuario/esqueci_senha_gravar"})
 	public void gravarEsqueciSenha(UsuarioAction usuario) throws Exception {
+		// caso LDAP, orientar troca pelo Windows / central
+		final CpIdentidade id = dao().consultaIdentidadeCadastrante(usuario.getMatricula(), true);
+		if (id == null)
+			throw new AplicacaoException("O usuário não está cadastrado.");
+		boolean autenticaPeloBanco = buscarModoAutenticacao(id.getCpOrgaoUsuario().getSiglaOrgaoUsu()).equals(GiService._MODO_AUTENTICACAO_BANCO);
+		if(!autenticaPeloBanco)
+			throw new AplicacaoException("O usuário deve modificar sua senha usando a interface do Windows " + 
+										"(acionando as teclas Ctrl, Alt e Del / Delete, opção 'Alterar uma senha')" +
+										", ou entrando em contato com a Central de Atendimento.");
+		
 		String msgAD = "";
 		boolean senhaTrocadaAD = false;
 		
 		switch (usuario.getMetodo()) {
 		case 1:
 //			verificarMetodoIntegracaoAD(usuario.getMatricula());
-			String[] senhaGerada = new String[1];
-			Cp.getInstance().getBL().alterarSenhaDeIdentidade(usuario.getMatricula(),
-					usuario.getCpf(), getIdentidadeCadastrante(),senhaGerada);
+			
+			if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+				Cp.getInstance().getBL().alterarSenha(usuario.getCpf(), null, usuario.getMatricula());
+			} else {
+				String[] senhaGerada = new String[1];
+				Cp.getInstance().getBL().alterarSenhaDeIdentidade(usuario.getMatricula(),
+						usuario.getCpf(), getIdentidadeCadastrante(),senhaGerada);
+			}
 			break;
 		case 2:
 			if (!Cp.getInstance().getBL().podeAlterarSenha(usuario.getAuxiliar1(), usuario.getCpf1(),
@@ -179,13 +222,25 @@ public class UsuarioController extends SigaController {
 			msgAD = "<br/><br/><br/>ATENÇÃO: A senha de rede e e-mail NÃO foi alterada embora o seu órgão esteja configurado para integrar as senhas do SIGA, rede e e-mail.";
 		}
 		
-		result.include("mensagem", "A Senha foi alterada com sucesso e foi enviada para seu email" + msgAD);
+		result.include("mensagem", SigaMessages.getBundle().getObject("usuario.esqueciminhasenha.sucesso") + msgAD);
 		result.include("volta", "esqueci");
 		result.include("titulo", "Esqueci Minha Senha");
-		result.redirectTo("/");
+		result.use(Results.page()).forwardTo("/WEB-INF/page/usuario/esqueciSenha.jsp");
 	}
 
 	
+    private String buscarModoAutenticacao(String orgao) {
+    	String retorno = GiService._MODO_AUTENTICACAO_DEFAULT;
+    	CpPropriedadeBL props = new CpPropriedadeBL();
+    	try {
+			String modo = props.getModoAutenticacao(orgao);
+			if(modo != null) 
+				retorno = modo;
+		} catch (Exception e) {
+		}
+    	return retorno;
+    }
+    
 	@Get({"/app/usuario/integracao_ldap","/public/app/usuario/integracao_ldap"})
 	public void isIntegradoLdap(String matricula) throws AplicacaoException {
 		try{
@@ -205,7 +260,7 @@ public class UsuarioController extends SigaController {
 			throw new AplicacaoException( "A matrícula informada é nula ou inválida." );
 		}
 		
-		orgaoFlt.setSiglaOrgaoUsu(matricula.substring(0, 2));		
+		orgaoFlt.setSiglaOrgaoUsu(MatriculaUtils.getSiglaDoOrgaoDaMatricula(matricula));		
 		CpOrgaoUsuario orgaoUsu = dao.consultarPorSigla(orgaoFlt);
 		
 		if (orgaoUsu != null) {
@@ -239,7 +294,7 @@ public class UsuarioController extends SigaController {
 			throw new AplicacaoException( "A matrícula informada é nula ou inválida." );
 		}
 		
-		orgaoFlt.setSiglaOrgaoUsu(matricula.substring(0, 2));		
+		orgaoFlt.setSiglaOrgaoUsu(MatriculaUtils.getSiglaDoOrgaoDaMatricula(matricula));		
 		CpOrgaoUsuario orgaoUsu = dao.consultarPorSigla(orgaoFlt);
 		
 		if (orgaoUsu == null){
@@ -248,13 +303,13 @@ public class UsuarioController extends SigaController {
 
 		List<DpPessoa> lstPessoa = null;
 		try{
-			lstPessoa = dao.consultarPorMatriculaEOrgao(Long.valueOf(matricula.substring(2)), orgaoUsu.getId(), false, false);
+			lstPessoa = dao.consultarPorMatriculaEOrgao(MatriculaUtils.getParteNumericaDaMatricula(matricula), orgaoUsu.getId(), false, false);
 		}catch(Exception e){
 			throw new AplicacaoException("Formato de matrícula inválida.", 9, e);
 		}
 
 		if (lstPessoa.size() == 0){
-			throw new AplicacaoException("O usuário não está cadastrado no banco de dados." );
+			throw new AplicacaoException(SigaMessages.getBundle().getString("usuario.erro.naocadastrado"));
 		}
 		
 		if (lstPessoa != null && lstPessoa.size() == 1) {
@@ -268,5 +323,7 @@ public class UsuarioController extends SigaController {
 		
 		return false;
 	}
+
+	
 	
 }

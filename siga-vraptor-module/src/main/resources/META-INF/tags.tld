@@ -88,6 +88,14 @@
 		<path>/META-INF/tags/selecao.tag</path>
 	</tag-file>
 	<tag-file>
+		<name>selecaoWindow</name>
+		<path>/META-INF/tags/selecaoWindow.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>selecaoSwitch</name>
+		<path>/META-INF/tags/selecaoSwitch.tag</path>
+	</tag-file>	
+	<tag-file>
 		<name>selecao2</name>
 		<path>/META-INF/tags/selecao2.tag</path>
 	</tag-file>

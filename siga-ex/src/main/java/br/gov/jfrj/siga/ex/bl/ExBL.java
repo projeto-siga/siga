@@ -53,7 +53,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.axis.encoding.Base64;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Criteria;
 import org.hibernate.ObjectNotFoundException;
@@ -96,6 +95,7 @@ import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.util.SetUtils;
 import br.gov.jfrj.siga.bluc.service.BlucService;
@@ -1639,7 +1639,7 @@ public class ExBL extends CpBL {
 					throw new Exception(
 							"BluC não conseguiu produzir o envelope AD-RB. "
 									+ enveloperesp.getErrormsg());
-				cms = Base64.decode(enveloperesp.getEnvelope());
+				cms = bluc.b642bytearray(enveloperesp.getEnvelope());
 			} else {
 				cms = pkcs7;
 			}
@@ -2270,20 +2270,7 @@ public class ExBL extends CpBL {
 		// dao().excluir(mov);
 		// }
 	}
-
-	/**
-	 * @param sFileName
-	 * @param data
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	private void writeB64File(String sFileName, final byte[] data)
-			throws FileNotFoundException, IOException {
-		try (FileOutputStream fout2 = new FileOutputStream(sFileName)) {
-			fout2.write(Base64.encode(data).getBytes());
-		}
-	}
-
+	
 	public void assinarMovimentacao(DpPessoa cadastrante,
 			DpLotacao lotaCadastrante, ExMovimentacao movAlvo,
 			final Date dtMov, final byte[] pkcs7, final byte[] certificado,
@@ -2332,7 +2319,7 @@ public class ExBL extends CpBL {
 					throw new Exception(
 							"BluC não conseguiu produzir o envelope AD-RB. "
 									+ enveloperesp.getErrormsg());
-				cms = Base64.decode(enveloperesp.getEnvelope());
+				cms = bluc.b642bytearray(enveloperesp.getEnvelope());
 			} else {
 				cms = pkcs7;
 			}
@@ -2571,8 +2558,8 @@ public class ExBL extends CpBL {
 
 			if (mov.getExNivelAcesso() == null)
 				mov.setExNivelAcesso(ultMov.getExNivelAcesso());
-
-			if (ultMov.getExTipoMovimentacao().getId() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO) {
+			
+			if(!mob.sofreuMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO, ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA)) {				
 				mov.setExMovimentacaoRef(mov.getExMobil()
 						.getUltimaMovimentacao(
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA));
@@ -2582,13 +2569,19 @@ public class ExBL extends CpBL {
 				if (mobPai.isArquivado())
 					throw new AplicacaoException(
 							"não é possível fazer o desentranhamento porque o documento ao qual este está juntado encontra-se arquivado.");
-
-				final ExMovimentacao ultMovPai = mobPai.getUltimaMovimentacao();
+				
+				
+				ExMovimentacao ultMovDoc = null; 
+				if (mobPai.isApensado()) {
+					ultMovDoc = (mobPai.getGrandeMestre().getUltimaMovimentacaoNaoCancelada());
+				} else {
+					ultMovDoc = mobPai.getUltimaMovimentacaoNaoCancelada();
+				}	
 
 				mov.setExMobilRef(mobPai);
 
-				mov.setLotaResp(ultMovPai.getLotaResp());
-				mov.setResp(ultMovPai.getResp());
+				mov.setLotaResp(ultMovDoc.getLotaResp());
+				mov.setResp(ultMovDoc.getResp());
 				
 				if (mobPai.getMobilPrincipal().isNumeracaoUnicaAutomatica()) {
 					List<ExArquivoNumerado> ans = mov.getExMobil()
@@ -2927,7 +2920,8 @@ public class ExBL extends CpBL {
 
 		} else if (movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM
 				&& movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_EM_EDITAL_DE_ELIMINACAO
-				&& movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA) {
+				&& movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA
+				&& movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA) {
 			if (!getComp().podeCancelar(titular, lotaTitular, mob, movCancelar))
 				throw new AplicacaoException(
 						"não é permitido cancelar esta movimentação.");
@@ -3217,9 +3211,15 @@ public class ExBL extends CpBL {
 
 			if (doc.getOrgaoUsuario() == null)
 				doc.setOrgaoUsuario(doc.getLotaCadastrante().getOrgaoUsuario());
-
-			if (doc.getNumExpediente() == null)
-				doc.setNumExpediente(obterProximoNumero(doc));
+			
+			/* Desabilita para São Paulo numeração realizada pelo Java. Numeração controlada pela table EX_DOCUMENTO_NUMERACAO*/ 
+			if (!SigaMessages.isSigaSP()) {
+				if (doc.getNumExpediente() == null)
+					doc.setNumExpediente(obterProximoNumero(doc));
+			} else{
+				//Set Ano da Emissao do Documento
+				doc.setAnoEmissao((long) c.get(Calendar.YEAR));
+			}
 
 			doc.setDtFinalizacao(dt);
 
@@ -3238,7 +3238,15 @@ public class ExBL extends CpBL {
 			}
 
 			Set<ExVia> setVias = doc.getSetVias();
-
+			
+			
+			if (SigaMessages.isSigaSP()) {
+			//Libera gravação e obtém numero gerado para processar documento
+				dao().gravar(doc);
+				ContextoPersistencia.flushTransaction();
+				doc.setNumExpediente(obterNumeroGerado(doc));
+			}	
+			
 			processar(doc, false, false);
 
 			doc.setNumPaginas(doc.getContarNumeroDePaginas());
@@ -3303,6 +3311,12 @@ public class ExBL extends CpBL {
 			}
 		}
 
+		return num;
+	}
+	
+	
+	public Long obterNumeroGerado(ExDocumento doc) throws Exception {
+		Long num = dao().obterNumeroGerado(doc);
 		return num;
 	}
 
@@ -5599,7 +5613,30 @@ public class ExBL extends CpBL {
 			mov.setAuditIP(HttpRequestUtils.getIpAudit(ri.getRequest()));
 		}
 	}
-	
+
+	public void registrarCiencia(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final ExMobil mob,
+			final Date dtMov, DpLotacao lotaResponsavel,
+			final DpPessoa responsavel, final DpPessoa subscritor,
+			final String descrMov) throws AplicacaoException {
+
+		try {
+			iniciarAlteracao();
+			final ExMovimentacao mov = criarNovaMovimentacao(
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA,
+					cadastrante, lotaCadastrante, mob, dtMov, cadastrante,
+					null, null, null, null);
+
+			mov.setDescrMov(descrMov);
+
+			gravarMovimentacao(mov);
+			concluirAlteracao(mov.getExMobil());
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro ao fazer ciência.", 0, e);
+		}
+	}
+		
 	private final int HASH_TIMEOUT_MILLISECONDS = 5000;
 	
 	private static class TimestampPostRequest implements ISwaggerRequest {
@@ -5924,6 +5961,7 @@ public class ExBL extends CpBL {
 					provSet.add(mod);
 			modeloSetFinal = provSet;
 		}
+		
 		if (despachando) {
 			provSet = new ArrayList<ExModelo>();
 			for (ExModelo mod : modeloSetFinal)
@@ -5931,7 +5969,15 @@ public class ExBL extends CpBL {
 						CpTipoConfiguracao.TIPO_CONFIG_DESPACHAVEL))
 					provSet.add(mod);
 			modeloSetFinal = provSet;
-		}
+		} else {
+			provSet = new ArrayList<ExModelo>();
+			for (ExModelo mod : modeloSetFinal)
+				if (getConf().podePorConfiguracao(titular, lotaTitular, mod,
+						CpTipoConfiguracao.TIPO_CONFIG_CRIAR_COMO_NOVO))
+					provSet.add(mod);
+			modeloSetFinal = provSet;
+		}		
+		
 		if (autuando) {
 			provSet = new ArrayList<ExModelo>();
 			for (ExModelo mod : modeloSetFinal)
@@ -6405,8 +6451,8 @@ public class ExBL extends CpBL {
 				|| modNovo.getNmMod().trim().length() == 0)
 			throw new AplicacaoException(
 					"não é possível salvar um modelo sem informar o nome.");
-		if (modNovo.getDescMod() == null
-				|| modNovo.getDescMod().trim().length() == 0)
+		if ((modNovo.getDescMod() == null
+				|| modNovo.getDescMod().trim().length() == 0) && (SigaBaseProperties.getString("siga.local") == null || !"GOVSP".equals(SigaBaseProperties.getString("siga.local"))))
 			throw new AplicacaoException(
 					"não é possível salvar um modelo sem informar a descrição.");
 		try {
@@ -6983,7 +7029,7 @@ public class ExBL extends CpBL {
 			String s = null;
 			byte ab[] = br.gov.jfrj.siga.cp.util.Blob.toByteArray(src);
 			if (ab != null)
-				s = Base64.encode(ab);
+				s = BlucService.bytearray2b64(ab);
 			return new JsonPrimitive(s);
 		}
 
@@ -6991,7 +7037,7 @@ public class ExBL extends CpBL {
 				JsonDeserializationContext context) throws JsonParseException {
 			String s = json.getAsString();
 			if (s != null) {
-				byte ab[] = Base64.decode(s);
+				byte ab[] = BlucService.b642bytearray(s);
 				return HibernateUtil.getSessao().getLobHelper().createBlob(ab);
 			}
 			return null;

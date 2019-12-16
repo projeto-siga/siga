@@ -109,7 +109,7 @@ public class MissaoController extends TpController {
 	
 	private List<Missao> carregarMissoesUltimosDiasInformadosPorEstados(StringBuilder criterio, Object[] parametrosBuscar) throws Exception {
         StringBuilder criterioBusca = new StringBuilder();
-		int totalDias = Integer.parseInt(Parametro.buscarValorEmVigor("total.dias.pesquisa", getTitular(), recuperarComplexoPadrao()));
+		int totalDias = Integer.parseInt(Parametro.buscarValorEmVigor("total.dias.pesquisa", getTitular(), autorizacaoGI.getComplexoPadrao()));
 		criterioBusca.append("((dataHoraRetorno is null and dataHoraSaida >= ?) or (dataHoraRetorno >= ?)) and cpOrgaoUsuario = ? ");
         criterioBusca.append(" and ").append(criterio);
         Calendar ultimosdias = Calendar.getInstance();
@@ -150,7 +150,7 @@ public class MissaoController extends TpController {
 				parametrosFiltrado[i] = parametros[i];
 			}
 			if (autorizacaoGI.ehAdministradorMissaoPorComplexo()) {
-				parametrosFiltrado[parametros.length] = getComplexoAdministrado();
+				parametrosFiltrado[parametros.length] = autorizacaoGI.getComplexoAdministrador();
 			}
 
 			parametrosParaBuscar = parametrosFiltrado;
@@ -502,7 +502,7 @@ public class MissaoController extends TpController {
 			RequisicaoTransporte req1 = RequisicaoTransporte.AR.findById(missao.getRequisicoesTransporte().get(0).getId());
 			missao.setCpComplexo(req1.getCpComplexo());
 		} else
-			missao.setCpComplexo(recuperarComplexoPadrao());
+			missao.setCpComplexo(autorizacaoGI.getComplexoPadrao());
 
 		return missao;
 	}
@@ -1143,9 +1143,9 @@ public class MissaoController extends TpController {
 
 	private void checarComplexo(Long idComplexo) throws Exception {
 		if (autorizacaoGI.ehAdministradorMissaoPorComplexo()) {
-			if (!getComplexoAdministrado().getIdComplexo().equals(idComplexo)) {
+			if (!autorizacaoGI.getComplexoAdministrador().getIdComplexo().equals(idComplexo)) {
 				throw new Exception(MessagesBundle.getMessage(MISSOES_STR, MISSOES_AUTORIZACAO_GI_SEM_ACESSO_EXCEPTION));
-			} else if (autorizacaoGI.ehAprovador() && !recuperarComplexoPadrao().getIdComplexo().equals(idComplexo)) {
+			} else if (autorizacaoGI.ehAprovador() && !autorizacaoGI.getComplexoPadrao().getIdComplexo().equals(idComplexo)) {
 				throw new Exception(MessagesBundle.getMessage(MISSOES_STR, MISSOES_AUTORIZACAO_GI_SEM_ACESSO_EXCEPTION));
 			}
 		}

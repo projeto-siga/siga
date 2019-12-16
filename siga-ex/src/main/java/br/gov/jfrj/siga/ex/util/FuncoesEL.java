@@ -879,6 +879,16 @@ public class FuncoesEL {
 		attrs.put("template", "[@extensaoBuscaTextual/]");
 		return p.processarModelo(orgao, attrs, null);
 	}
+	
+	public static String obterExtensaoBuscaTextualbs4(CpOrgaoUsuario orgao,
+			String valFullText) throws Exception {
+		ProcessadorModeloFreemarker p = new ProcessadorModeloFreemarker();
+		Map attrs = new HashMap();
+		attrs.put("valFullText", valFullText);
+		attrs.put("nmMod", "macro extensaoBuscaTextualbs4");
+		attrs.put("template", "[@extensaoBuscaTextualbs4/]");
+		return p.processarModelo(orgao, attrs, null);
+	}
 
 	public static String obterExtensaoEditor(CpOrgaoUsuario orgao, String nome,
 			String conteudo, String serverAndPort) throws Exception {

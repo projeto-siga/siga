@@ -27,6 +27,10 @@
 		<path>/WEB-INF/tags/assinatura_rodape.tag</path>
 	</tag-file>
 	<tag-file>
+		<name>collapse</name>
+		<path>/WEB-INF/tags/collapse.tag</path>
+	</tag-file>
+	<tag-file>
 		<name>fixdocumenthtml</name>
 		<path>/WEB-INF/tags/fixdocumenthtml.tag</path>
 	</tag-file>

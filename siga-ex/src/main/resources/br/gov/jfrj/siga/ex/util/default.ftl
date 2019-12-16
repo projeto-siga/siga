@@ -1062,7 +1062,7 @@ LINHA  VARIÁVEL / CONTEÚDO
     
 	 [#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
     [#if !gerar_formulario!false]
-       <input type="text" name="${var}" value="${v}" ${jreler!""}${jrelertab!""}${jlargura!""}${jmaxcaracteres!""} ${attsHtml} onkeyup="${onkeyup}" /> 
+       <input type="text" name="${var}" value="${v}" ${jreler!""}${jrelertab!""}${jlargura!""}${jmaxcaracteres!""} ${attsHtml} onkeyup="${onkeyup}" />
     [#else]
     <span class="valor">${v}</span>
     [/#if]
@@ -1366,7 +1366,7 @@ window.onload = function(){
 [/#macro]
 
 
-[#macro selecao var titulo opcoes reler=false idAjax="" onclick="" onchange="" pontuacao=":" atts={}]
+[#macro selecao var titulo opcoes reler=false idAjax="" onclick="" pontuacao=":" atts={}]
     [#local l=opcoes?split(";")]
     [#if .vars[var]??]
         [#local v = .vars[var]/]
@@ -1384,8 +1384,7 @@ window.onload = function(){
 
     [#if !gerar_formulario!false]
         <input type="hidden" name="vars" value="${var}" />
-
-        <select name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] onclick="${onclick}" ${attsHtml}> 
+        <select name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] onclick="${onclick}" ${attsHtml}>
                     [#list l as opcao]
                         <option[#if v == opcao] selected[/#if] value="${opcao}">${opcao}</option><br/>
             [/#list]
@@ -1904,7 +1903,7 @@ Pede deferimento.</span><br/><br/><br/>
     [@selecionavel tipo="lotacao" titulo=titulo var=var reler=reler relertab=relertab paramList=paramList obrigatorio=obrigatorio /]
 [/#macro]
 
-[#macro data titulo var reler=false idAjax="" default="" onSelect="" obrigatorio=false atts={} attsDatepicker={}]
+[#macro data titulo var reler=false idAjax="" default="" onSelect="" obrigatorio=false atts={} ]
     [#if reler == true && idAjax != ""]
             [#local jreler = " sbmt('" + idAjax + "');\""]
     [#elseif reler == true]
@@ -1941,7 +1940,6 @@ Pede deferimento.</span><br/><br/><br/>
         
  
  [#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
- [#assign attsDatepickerHtml][#list attsDatepicker?keys as k]${k}: ${attsDatepicker[k]},[/#list][/#assign]
 <input type="text" id ="${var}" name="${var}" value="${v}" size="10" maxlength="10" onblur="javascript:verifica_data(this[#if !obrigatorio], 'Sim'[/#if]);${jreler!}" class="campoData" ${attsHtml} />
     [#else]
     <span class="valor">${v}</span>
@@ -1949,7 +1947,9 @@ Pede deferimento.</span><br/><br/><br/>
     <script>
     	$('.campoData').mousedown(function() {
   			$('.campoData').datepicker({
-            	${attsDatepickerHtml}				
+            	onSelect: function(){
+                    ${onSelect}
+				}
 			});
 		});
 	</script>
@@ -2382,13 +2382,13 @@ Pede deferimento.</span><br/><br/><br/>
                        [#if !numeracaoEsquerda]
 		                	<td align="right">
 		                    	[#if !omitirCodigo]                           
-		                           <p style="font-family:Arial;font-weight:bold;font-size:11pt;">${tipo} N&ordm; ${(doc.codigo)!}</p>
+		                           <p style="font-family:Arial;font-weight:bold;font-size:11pt;">${tipo} SIGA N&ordm; ${(doc.codigo)!}</p>
 		                        [/#if]
 		                    </td>
 	                    [#else]
 	                    	<td align="left">
 		                         [#if !omitirCodigo]                           
-		                           <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br><br>${tipo} N&ordm; ${(doc.codigo)!}</p>
+		                           <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br><br>${tipo} SIGA N&ordm; ${(doc.codigo)!}</p>
 		                         [/#if]
 		                    </td>
 	                    [/#if]
@@ -2442,7 +2442,7 @@ Pede deferimento.</span><br/><br/><br/>
               <tr>
               <td align="left">
               [#if !omitirCodigo]
-                    <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br/>[@numeroDJE]${tipo}[#if tipo != ""] N&ordm; ${(doc.codigo)!} [/#if] [/@numeroDJE]</p>
+                    <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br/>[@numeroDJE]${tipo}[#if tipo != ""] SIGA N&ordm; ${(doc.codigo)!} [/#if] [/@numeroDJE]</p>
               [/#if]
               </td>
               </tr>
@@ -2457,7 +2457,7 @@ Pede deferimento.</span><br/><br/><br/>
               <tr>
               <td align="center">
                   <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br/>
-                  [@numeroDJE] [#if tipo != ""] ${tipo} N&ordm; ${(doc.codigo)!}[/#if] [/@numeroDJE]
+                  [@numeroDJE] [#if tipo != ""] ${tipo} SIGA N&ordm; ${(doc.codigo)!}[/#if] [/@numeroDJE]
                   [#if !dataAntesDaAssinatura && doc?? && doc.dtD??] de ${doc.dtD} de ${doc.dtMMMM} de ${doc.dtYYYY}[/#if]</p>
               </td>
               </tr>
@@ -2524,7 +2524,7 @@ Pede deferimento.</span><br/><br/><br/>
 <table align="center" width="60%" border="1" cellspacing="1" bgcolor="#000000">
 	<tr>
 		<td width="30%" bgcolor="#FFFFFF" align="center"><br />
-		<b>Processo N&ordm;</b><br />
+		<b>Processo SIGA N&ordm;</b><br />
 		<br /></td>
 	</tr>
 	<tr>
@@ -3784,7 +3784,7 @@ Pede deferimento.</span><br/><br/><br/>
               <tr>
               <td align="left">
               [#if !omitirCodigo]
-                <p style="font-family:Arial;align:center;font-weight:bold;font-size:11pt;"><br/>[@numeroDJE][#if tipo != ""] ${tipo} N&ordm; ${(doc.codigo)!} [/#if] [/@numeroDJE]</p>
+                <p style="font-family:Arial;align:center;font-weight:bold;font-size:11pt;"><br/>[@numeroDJE][#if tipo != ""] ${tipo} SIGA N&ordm; ${(doc.codigo)!} [/#if] [/@numeroDJE]</p>
               [/#if]
               </td>
               </tr>
@@ -3799,7 +3799,7 @@ Pede deferimento.</span><br/><br/><br/>
               <tr>
               <td align="center">
                   <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br/>
-                  [@numeroDJE] [#if tipo != ""] ${tipo} N&ordm; ${(doc.codigo)!} [/#if] [/@numeroDJE]
+                  [@numeroDJE] [#if tipo != ""] ${tipo} SIGA N&ordm; ${(doc.codigo)!} [/#if] [/@numeroDJE]
                   [#if !dataAntesDaAssinatura && doc?? && doc.dtD??] de ${doc.dtD!} de ${doc.dtMMMM!} de ${doc.dtYYYY!}[/#if]</p>
               </td>
               </tr>

@@ -51,7 +51,7 @@ public class ApplicationController extends TpController {
 
         @Override
         public boolean apply(T objeto) {
-            return applyMissao(objeto) || applyRequisicaoTransporte(objeto) || applyServico(objeto);
+            return applyMissao(objeto) || applyRequisicaoTransporte(objeto, totalDiasARecuperar) || applyServico(objeto);
         }
 
         private boolean applyServico(T obj) {
@@ -63,9 +63,8 @@ public class ApplicationController extends TpController {
             }
         }
 
-        private boolean applyRequisicaoTransporte(T obj) {
+        private boolean applyRequisicaoTransporte(T obj, int totalDias) {
             if (obj instanceof RequisicaoTransporte) {
-        		int totalDias = Integer.parseInt(Parametro.buscarValorEmVigor("total.dias.pesquisa", getTitular(), recuperarComplexoPadrao()));
                 RequisicaoTransporte requisicao = (RequisicaoTransporte) obj;
                 Calendar ultimosdias = Calendar.getInstance();
                 ultimosdias.add(Calendar.DATE, -totalDias);
@@ -79,7 +78,7 @@ public class ApplicationController extends TpController {
                 return false;
             }
         }
-
+        
         private boolean applyMissao(T obj) {
             if (obj instanceof Missao) {
                 Missao missao = (Missao) obj;
@@ -96,6 +95,7 @@ public class ApplicationController extends TpController {
     private MissaoController missaoController;
     private RequisicaoController requisicaoController;
 	private ServicoVeiculoController servicoVeiculoController;
+	protected int totalDiasARecuperar;
 
     public ApplicationController(HttpServletRequest request, Result result, Validator validator, SigaObjects so, EntityManager em, AutorizacaoGI autorizacaoGI, MissaoController missaoController,
             RequisicaoController requisicaoController, ServicoVeiculoController servicoVeiculoController) {
@@ -104,6 +104,11 @@ public class ApplicationController extends TpController {
         this.missaoController = missaoController;
         this.requisicaoController = requisicaoController;
         this.servicoVeiculoController = servicoVeiculoController;
+        this.totalDiasARecuperar = retornaDias();
+    }
+    
+    private int retornaDias() {
+    	return Integer.parseInt(Parametro.buscarValorEmVigor("total.dias.pesquisa", getTitular(), autorizacaoGI.getComplexoPadrao()));
     }
 
     @Path("/index")

@@ -2,7 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="128kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
@@ -22,7 +22,7 @@ function sbmt() {
 		list="#{'1':'Documentos Ativos', '2':'Como Gestor', '3':'Como Interessado'}" /></td>
 </tr>
 <tr>
-	<td width="15%">LotaÃ§Ã£o:</td>
+	<td width="15%"><fmt:message key="usuario.lotacao"/>:</td>
 	<td><siga:selecao propriedade="lotacaoDestinatario" tema="simple" modulo="siga"/></td>
 </tr>
 <tr>

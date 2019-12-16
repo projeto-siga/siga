@@ -30,112 +30,108 @@
 </script>
 
 <siga:pagina titulo="Atribuição de Permissões">
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-			<h2>Permissões cadastradas </h2> 
-
-			<div class="gt-content-box gt-for-table">
-				<form id="listar" name="listar" action="listar" method="get" class="form100">
-				<input type="hidden" name="servicoPai" value="${servicoPai}" />
-					<table class="gt-form-table">
-						<colgroup>
-							<col width="15%" />
-						</colgroup>
-
-						<tr class="header">
-							<td align="center" valign="top" colspan="4">Selecione a abrangência</td>
-						</tr>
-
-						<tr>
-							<td>Abrangência:</td>
-							<td>
-								<siga:escolha id='idAbrangencia' var='idAbrangencia'>
-									<siga:opcao id='4' texto="Perfil">
-										<siga:selecao tema='simple' titulo="Perfil:" propriedade="perfil" modulo="siga"/>
-									</siga:opcao>
-									
-									<siga:opcao id='1' texto="Órgão usuário">											
-										<select  name="idOrgaoUsuSel" >
-											<c:forEach items="${orgaosUsu}" var="item">
-												<option value="${item.idOrgaoUsu}" ${item.idOrgaoUsu == idOrgaoUsuSel ? 'selected' : ''}>
-													${item.nmOrgaoUsu}
-												</option>  
-											</c:forEach>
-										</select>		
-									</siga:opcao>
-									
-									<siga:opcao id='2' texto="Lotação">
-										<siga:selecao tema='simple' titulo="Lotação:" propriedade="lotacao" modulo="siga"/>
-									</siga:opcao>
-									
-									<siga:opcao id='3' texto="Matrícula">
-										<siga:selecao tema='simple' titulo="Matrícula:" propriedade="pessoa" modulo="siga" />
-									</siga:opcao>
-								</siga:escolha>
-							</td>
-						</tr>
-
-						<tr>
-							<td colspan="2">
-								<siga:monobotao inputType="submit" value="Buscar" cssClass="gt-btn-medium gt-btn-left" />
-							</td>
-						</tr>
-					</table>
-				</form>
+	<!-- main content -->
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >
+			<div class="card-header">
+				<h5>Selecione a abrangência</h5>
 			</div>
-			<br />
-
-			<c:if test="${not empty itensHTML}">
-				<h2>Permissões</h2>
-				<div class="gt-content-box gt-for-table">
-					<table class="gt-form-table">
-						<colgroup>
-							<col width="15%" />
-						</colgroup>
-						<c:if test="${idAbrangencia == 1}">
-							<tr class="header">
-								<td>Órgão usuário:</td>
-								<td>${nomeOrgaoUsuSel}</td>
-							</tr>
-						</c:if>
-						<c:if test="${idAbrangencia == 2}">
-							<tr class="header">
-								<td>Lotação:</td>
-								<td>${lotacaoSel.descricao}</td>
-							</tr>
-							<tr class="header">
-								<td>Sigla:</td>
-								<td>${lotacaoSel.sigla}</td>
-							</tr>
-						</c:if>
-						<c:if test="${idAbrangencia == 3}">
-							<tr class="header">
-								<td>Pessoa:</td>
-								<td>${pessoaSel.descricao}</td>
-							</tr>
-
-							<tr>
-								<td>Matrícula:</td>
-								<td>${pessoaSel.sigla}</td>
-							</tr>
-						</c:if>
-						<c:if test="${idAbrangencia == 4}">
-							<tr>
-								<td>Perfil:</td>
-								<td>${perfilSel.descricao}</td>
-							</tr>
-							<tr>
-								<td>Sigla:</td>
-								<td>${perfilSel.sigla}</td>
-							</tr>
-						</c:if>
-						<tr>
-							<td colspan="2">${itensHTML}</td>
-						</tr>
-					</table>
+			<div class="card-body">	
+			<form id="listar" name="listar" action="listar" method="get" class="form100">
+				<input type="hidden" name="servicoPai" value="${servicoPai}" />
+				<div class="row">
+					<div class="col-sm">
+						<div class="form-group">
+							<label for="idAbrangencia">Abrangência</label>
+							<siga:escolha id='idAbrangencia' var='idAbrangencia' classSelect="form-control">
+								<siga:opcao id='4' texto="Perfil">
+									<siga:selecao tema='simple' titulo="Perfil:" propriedade="perfil" modulo="siga"/>
+								</siga:opcao>
+								
+								<siga:opcao id='1' texto="Órgão usuário">											
+									<select  name="idOrgaoUsuSel" class="form-control">
+										<c:forEach items="${orgaosUsu}" var="item">
+											<option value="${item.idOrgaoUsu}" ${item.idOrgaoUsu == idOrgaoUsuSel ? 'selected' : ''}>
+												${item.nmOrgaoUsu}
+											</option>  
+										</c:forEach>
+									</select>		
+								</siga:opcao>
+								<siga:opcao id='2' texto="Lotação">
+									<siga:selecao tema='simple' titulo="Lotação:" propriedade="lotacao" modulo="siga" />
+								</siga:opcao>
+								
+								<siga:opcao id='3' texto="Matrícula">
+									<siga:selecao tema='simple' titulo="Matrícula:" propriedade="pessoa" modulo="siga" />
+								</siga:opcao>
+							</siga:escolha>
+						</div>
+					</div>
 				</div>
-			</c:if>
-		</div>
+				<div class="row">
+					<div class="col-sm-2">
+						<button type="submit" class="btn btn-primary">Pesquisar</button>
+					</div>
+				</div>
+			</form>
+			</div>			
+		</div>	
+	
+
+		<c:if test="${not empty itensHTML}">
+			<h3 class="gt-table-head">Permissões</h3>
+			<table class="table table-sm table-striped">
+				<colgroup>
+					<col width="15%" />
+				</colgroup>
+				<c:if test="${idAbrangencia == 1}">
+					<thead class="${thead_color}">
+						<tr>
+							<th>Órgão usuário:</th>
+							<th>${nomeOrgaoUsuSel}</th>
+						</tr>
+					</thead>
+				</c:if>
+				<c:if test="${idAbrangencia == 2}">
+					<thead class="${thead_color}">
+						<tr>
+							<td>Lotação:</td>
+							<td>${lotacaoSel.descricao}</td>
+						</tr>
+						<tr >
+							<td>Sigla:</td>
+							<td>${lotacaoSel.sigla}</td>
+						</tr>
+					</thead>
+				</c:if>
+				<c:if test="${idAbrangencia == 3}">
+					<thead class="${thead_color}">
+						<tr>
+							<td>Pessoa:</td>
+							<td>${pessoaSel.descricao}</td>
+						</tr>
+					</thead>
+	
+					<tr>
+						<td>Matrícula:</td>
+						<td>${pessoaSel.sigla}</td>
+					</tr>
+				</c:if>
+				<c:if test="${idAbrangencia == 4}">
+					<tr>
+						<td>Perfil:</td>
+						<td>${perfilSel.descricao}</td>
+					</tr>
+					<tr>
+						<td>Sigla:</td>
+						<td>${perfilSel.sigla}</td>
+					</tr>
+				</c:if>
+				<tr>
+					<td colspan="2">${itensHTML}</td>
+				</tr>
+			</table>
+		</c:if>
 	</div>
 	<script> 
 		muda_escolha(document.getElementById("idAbrangencia"));

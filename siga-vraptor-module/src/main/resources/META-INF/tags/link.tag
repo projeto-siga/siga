@@ -35,41 +35,44 @@
 <c:if test="${not empty icon}">
 	<c:set var="img">
 		<img src="/siga/css/famfamfam/icons/${icon}.png"
-			style="margin-right: 5px;" title="${titleImg}">
+			class="mr-1 mb-1" title="${titleImg}">
 	</c:set>
 </c:if>
 
 <c:if test="${empty test or test}">
-	<c:if test="${not empty linkSeparator}">
-		<span class="gt-separator"> |</span>
-	</c:if>
-	<c:if test="${empty linkSeparator}">
-		<c:if test="${empty linkInline}">
-			<p class="gt-table-action-list" style="${estilo}">
+	<c:if test="${!linkBotoes}">
+		<c:if test="${not empty linkSeparator}">
+			<span class="gt-separator"> |</span>
 		</c:if>
-		<c:set var="linkSeparator" value="${true}" scope="request" />
+		<c:if test="${empty linkSeparator}">
+			<c:if test="${empty linkInline}">
+				<p class="gt-table-action-list" style="${estilo}">
+			</c:if>
+			<c:set var="linkSeparator" value="${true}" scope="request" />
+		</c:if>
 	</c:if>
+
 	<c:if test="${empty url}">${img}${title}</c:if>
 	${pre}
 	<c:if test="${not empty url}">
 		<c:choose>
 			<c:when test="${not empty popup and popup != false}">
-				<a class="${classe}" <c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
+				<a class="${classe} ${linkBotoes ? 'btn btn-sm btn-light' : ''}" <c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
 					href="javascript:${linkConfirm}popitup('${url}');">${img}${title}</a>
 			</c:when>
 			<c:when test="${not empty ajax and ajax != false}">
-				<span id="spanAjax_${idAjax}"> <a class="${classe}" <c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
+				<span id="spanAjax_${idAjax}"> <a class="${classe} btn btn-sm btn-light" <c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
 					href="javascript: SetInnerHTMLFromAjaxResponse('${url}', 'spanAjax_${idAjax}');">${img}${title}</a>
 				</span>
 			</c:when>
 			<c:otherwise>
 				<c:choose>
 					<c:when test="${not empty linkConfirm}">
-						<a class="${classe}" <c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
+						<a class="${classe} btn btn-sm btn-light" <c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
 							href="javascript:${linkConfirm}location.href='${url}';">${img}${title}</a>
 					</c:when>
 					<c:otherwise>
-						<a class="${classe}" <c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if> href="${url}">${img}${title}</a>
+						<a class="${classe} btn btn-sm btn-light" <c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if> href="${url}">${img}${title}</a>
 					</c:otherwise>
 				</c:choose>
 			</c:otherwise>

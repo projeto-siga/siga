@@ -49,6 +49,8 @@ import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.bl.ExParte;
 import br.gov.jfrj.siga.ex.util.CronologiaComparator;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -211,6 +213,26 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	}
 
 	/**
+	 * Verifica se um usuario está ciente para este Mobil
+	 * 
+	 * @return Verdadeiro se está ciente e Falso caso contrário.
+	 * 
+	 */
+	public boolean isCiente(DpPessoa titular) {
+		Set<ExMovimentacao> setMovCiente = getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA); 
+		if (setMovCiente == null || setMovCiente.size() == 0)
+			return false;
+
+		for (ExMovimentacao mov : setMovCiente) {
+			if (mov.getCadastrante() != null &&  mov.getCadastrante().equivale(titular)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+	
+	/**
 	 * Retorna a descrição do documento relacionado ao Mobil como um link em
 	 * html.
 	 * 
@@ -249,7 +271,6 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		}
 
 		s = s + "', 'documento', " + winProp + ")\">" + descricaoCurta + "</a>";
-
 		return s;
 	}
 
@@ -345,7 +366,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 			acronimos += "|" + s;
 		}
 
-		final Pattern p2 = Pattern.compile("^TMP-?([0-9]{1,7})");
+		final Pattern p2 = Pattern.compile("^TMP-?([0-9]{1,8})");
 
 		// Edson: testes unitários para esta regex:
 		// https://regex101.com/r/NJidBr/2

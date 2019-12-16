@@ -3,6 +3,7 @@
 
 <%@ attribute name="titulo" required="false"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib uri="http://localhost/libstag" prefix="f"%>
 <%@ attribute name="propriedade"%>
 <%@ attribute name="reler" required="false"%>
 <%@ attribute name="relertab" required="false"%>
@@ -25,7 +26,7 @@
 <%@ attribute name="prefix" required="false"%>
 <%@ attribute name="matricula" required="false"%>
 
-<%@ attribute name="requiredValue" required="false" %>
+<%@ attribute name="requiredValue" required="false"%>
 
 <c:if test="${propriedade != null}">
 	<c:set var="propriedade" value="${fn:replace(propriedade,'.','')}" />
@@ -45,9 +46,22 @@
 
 <c:set var="propriedadeSel" value="${propriedade}Sel" />
 
+<c:set var="req" value="${pageContext.request}" />
+<c:set var="base" value="${f:resource('siga.base.url')}"/>
+<c:set var="urlBase" value="${fn:replace(req.requestURL, req.requestURI, '')}"/>
+<c:if test="${not empty f:resource('siga.base.url')}">
+	<c:if test = "${fn:startsWith(f:resource('siga.base.url'), 'https') }">
+		<c:if test = "${!fn:startsWith(urlBase, 'https') }">
+			<c:set var="urlBase" value="${fn:replace(urlBase, 'http', 'https')}"/>
+		</c:if>
+	</c:if>
+</c:if>
+
+
 <c:choose>
 	<c:when test="${empty tipo}">
-		<c:set var="acaoBusca" value="${requestScope[propriedadeSel].acaoBusca}" />
+		<c:set var="acaoBusca"
+			value="${requestScope[propriedadeSel].acaoBusca}" />
 		<c:set var="tipoSel" value="" scope="request" />
 	</c:when>
 	<c:otherwise>
@@ -95,15 +109,37 @@
 
 <c:set var="tam" value="${requestScope[propriedadeSel].tamanho}" />
 
-<c:set var="larguraPopup" value="600" />
-<c:set var="alturaPopup" value="400" />
+<c:set var="larguraPopup" value="800" />
+<c:set var="alturaPopup" value="600" />
 
+<style type="text/css">
+
+.modal-selecao .modal-dialog ,
+
+.modal-selecao .modal-content {
+  border-radius: 0 !important;
+  height: 100%;
+}
+
+.modal-selecao .modal-body  {
+   max-height: 97%;
+   height: 97%;
+   overflow-y: auto; /*habilita o overflow no corpo da modal*/
+}
+
+.modal-selecao .embed-responsive  {
+   max-height: 100%;
+   height: 100%;
+}
+
+
+</style>
 
 <script type="text/javascript">
 
 self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao) {
     try {
-		newwindow_${propriedade}.close();
+    	document.getElementById('btnsenhaDialog${propriedade}').click(); 
     } catch (E) {
     } finally {
     }
@@ -142,40 +178,56 @@ self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao) {
 	</c:otherwise>
 </c:choose>
 
+//
+//Provider: modal que simula window
+//
+var modalsimulawindow${propriedade} = 	function(url) {
+		try {
+			var urlInterna = url;
+			var senhaDialog${propriedade}  = $(
+					'<div class="modal modal-selecao" tabindex="-1" role="dialog" id="senhaDialog${propriedade}">'
+				+	'  <div class="modal-dialog modal-lg" role="document">'
+				+	'    <div class="modal-content">'
+				+	'    <div class="modal-header">'
+				+	'	        <button type="button" id="btnsenhaDialog${propriedade}" class="close" aria-label="Close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>'				
+				+   '    </div>'
+				+	'      <div class="modal-body">'
+				+	'	   	   <div class="embed-responsive embed-responsive-16by9">'
+				+	'	   	      <iframe id="iframe${propriedade}" class="embed-responsive-item" src="' + urlInterna + '" allowfullscreen></iframe>'
+				+	'	  	   </div>'
+				+	'	      </div>'
+				+	'	    </div>'
+				+	'	  </div>'
+				+	'	</div>').modal();
+			
+	
+			senhaDialog${propriedade}.on('shown.bs.modal', function () {
+			    $(this).find('iframe${propriedade}').attr('src', urlInterna);
+			});
+			
+			senhaDialog${propriedade}.on('hidden.bs.modal', function () {
+				$('#senhaDialog${propriedade}').remove();
+			});
+		
+			return "AGUARDE";
+		} catch (Err) {
+			return Err.description;
+		}
+	}
+
+
 self.newwindow_${propriedade} = '';
 self.popitup_${propriedade}${tipoSel} = function(sigla) {
 
-	var url = '/${urlPrefix}${urlBuscar}?propriedade=${propriedade}${tipoSel}&sigla='+encodeURI($.trim(sigla)) +'${selecaoParams}';
-		
-	if (!newwindow_${propriedade}.closed && newwindow_${propriedade}.location) {
-		newwindow_${propriedade}.location.href = url;
-	} else {
+	var url =  '${urlBase}/${urlPrefix}${urlBuscar}?propriedade=${propriedade}${tipoSel}&sigla='+encodeURI($.trim(sigla)) +'${selecaoParams}&modal=true';
 	
-		var popW;
-		var popH;
-		
-		<c:choose>
-			<c:when test="${tam eq 'grande'}">
-				 popW = screen.width*0.75;
-				 popH = screen.height*0.75;
-			</c:when>
-			<c:otherwise>
-				 popW = ${larguraPopup};
-				 popH = ${alturaPopup};	
-			</c:otherwise>
-		</c:choose>
-			var winleft = (screen.width - popW) / 2;
-			var winUp = (screen.height - popH) / 2;	
-		winProp = 'width='+popW+',height='+popH+',left='+winleft+',top='+winUp+',scrollbars=yes,resizable'
-		newwindow_${propriedade}=window.open(url,'${propriedade}${tipoSel}',winProp);
-	}
-	newwindow_${propriedade}.opener = self;
+	newwindow_${propriedade} = modalsimulawindow${propriedade};
 	
-	if (window.focus) {
-		newwindow_${propriedade}.focus()
-	}
+	modalsimulawindow${propriedade}(url);
+
 	return false;
 }
+
 
 self.resposta_ajax_${propriedade}${tipoSel} = function(response, d1, d2, d3) {
 	var sigla = document.getElementsByName('${inputNameTipoSel}.sigla')[0].value;
@@ -211,9 +263,14 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	url = url + '&matricula=${matricula}';
 	</c:if>
 	url = url + '&sigla=' + sigla;
-	Siga.ajax(url, null, "GET", function(response){		
+	/*
+	Siga.ajax(url, null, "GET", function(response){
 		resposta_ajax_${propriedade}${tipoSel}(response);
-	});	
+	});	*/
+	$.get( url, function(response){
+		resposta_ajax_${propriedade}${tipoSel}(response);
+	});
+
 	//PassAjaxResponseToFunction(url, 'resposta_ajax_${propriedade}${tipoSel}', false);
 	
 }
@@ -221,9 +278,9 @@ self.ajax_${propriedade}${tipoSel} = function() {
 </script>
 
 <c:if test="${tema != 'simple'}">
-	<tr>
-	<td>${titulo}</td>
-	<td>
+	<div class="form-group">
+		<label for="formulario_${inputNameTipoSel}_sigla"
+			class="col-sm-2x col-form-labelx">${titulo}</label>
 </c:if>
 <c:choose>
 	<c:when test="${desativar == 'sim'}">
@@ -236,34 +293,49 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	<c:set var="onblur" value="${onchange}"></c:set>
 </c:if>
 
-<input type="hidden" name="req${inputNameTipoSel}" value="" id="formulario_req${inputNameTipoSel}" />
+<input type="hidden" name="req${inputNameTipoSel}" value=""
+	id="formulario_req${inputNameTipoSel}" />
 <input type="hidden" name="alterouSel" value="" id="alterouSel" />
-<input type="hidden" name="${inputNameTipoSel}.id" value="<c:out value="${requestScope[propriedadeTipoSel].id}"/>" id="formulario_${inputNameTipoSel}_id"/>
-<input type="hidden" name="${inputNameTipoSel}.descricao" value="<c:out value="${requestScope[propriedadeTipoSel].descricao}"/>" id="formulario_${inputNameTipoSel}_descricao"/>
-<input type="hidden" name="${inputNameTipoSel}.buscar" value="<c:out value="${requestScope[propriedadeTipoSel].buscar}"/>" id="formulario_${inputNameTipoSel}_buscar"/>
-<input type="text" name="${inputNameTipoSel}.sigla" value="<c:out value="${requestScope[propriedadeTipoSel].sigla}"/>" id="formulario_${inputNameTipoSel}_sigla" 
-	onkeypress="return handleEnter(this, event)" ${requiredValue}
-	onblur="javascript: ajax_${propriedade}${tipoSel}();" <c:if test="${not empty onblur}">${onblur};</c:if> size="25"
-	onchange="<c:if test="${not empty onchange}">javascript: ${onchange};</c:if>"
-	${disabledTxt} />	
-	
-<c:if test="${buscar != 'nao'}">
-	<input type="button" id="${propriedade}${tipoSel}SelButton" value="..."
-		onclick="javascript: popitup_${propriedade}${tipoSel}('');"
-		${disabledBtn} theme="simple">
-</c:if>
+<input type="hidden" name="${inputNameTipoSel}.id"
+	value="<c:out value="${requestScope[propriedadeTipoSel].id}"/>"
+	id="formulario_${inputNameTipoSel}_id" />
+<input type="hidden" name="${inputNameTipoSel}.descricao"
+	value="<c:out value="${requestScope[propriedadeTipoSel].descricao}"/>"
+	id="formulario_${inputNameTipoSel}_descricao" />
+<input type="hidden" name="${inputNameTipoSel}.buscar"
+	value="<c:out value="${requestScope[propriedadeTipoSel].buscar}"/>"
+	id="formulario_${inputNameTipoSel}_buscar" />
+<div class="input-group">
+	<input type="search" name="${inputNameTipoSel}.sigla"
+		value="<c:out value="${requestScope[propriedadeTipoSel].sigla}"/>"
+		id="formulario_${inputNameTipoSel}_sigla"
+		onkeypress="return handleEnter(this, event)" ${requiredValue}
+		onblur="javascript: ajax_${propriedade}${tipoSel}();"
+		<c:if test="${not empty onblur}">${onblur};</c:if>
+		onchange="<c:if test="${not empty onchange}">javascript: ${onchange};</c:if>"
+		class="form-control" style="width: 1%;" ${disabledTxt} />
+	<c:if test="${buscar != 'nao'}">
+		<div class="input-group-append">
+			<input type="button" id="${propriedade}${tipoSel}SelButton"
+				value="..."
+				onclick="javascript: popitup_${propriedade}${tipoSel}('');"
+				${disabledBtn} class="btn btn-secondary"
+				style="border-bottom-right-radius: 0.25em; border-top-right-radius: 0.25em;">
+		</div>
+	</c:if>
+	<c:if test="${ocultardescricao != 'sim'}">
+		<div class="input-group-append ml-2" style="width: 60%;">
+			<span class="form-control" style="overflow: hidden; white-space:nowrap; text-overflow:ellipsis;" id="${spanName}SelSpan"><c:out value="${requestScope[propriedadeTipoSel].descricao}" escapeXml="false" /></span>
+		</div>
+	</c:if>
+</div>
 
-<c:if test="${ocultardescricao != 'sim'}">
-	<span id="${spanName}SelSpan">
-		<c:out value="${requestScope[propriedadeTipoSel].descricao}" escapeXml="false" />
-	</span>
-</c:if>
 
-
-<c:if test="${not empty tipo and (not empty idInicial or not empty siglaInicial or not empty descricaoInicial)}">
+<c:if
+	test="${not empty tipo and (not empty idInicial or not empty siglaInicial or not empty descricaoInicial)}">
 	<c:choose>
 		<c:when test="${empty idInicial}">
-		    <c:set var="idSubstTexto" value="${propriedadeTipoSel}.id" />
+			<c:set var="idSubstTexto" value="${propriedadeTipoSel}.id" />
 			<c:set var="idSubst" value="${requestScope[idSubstTexto]}" />
 		</c:when>
 		<c:otherwise>
@@ -281,8 +353,10 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	</c:choose>
 	<c:choose>
 		<c:when test="${empty descricaoInicial}">
-			<c:set var="descricaoSubstTexto" value="${propriedadeTipoSel}.descricao" />
-			<c:set var="descricaoSubst"  value="${requestScope[descricaoSubstTexto]}" />
+			<c:set var="descricaoSubstTexto"
+				value="${propriedadeTipoSel}.descricao" />
+			<c:set var="descricaoSubst"
+				value="${requestScope[descricaoSubstTexto]}" />
 		</c:when>
 		<c:otherwise>
 			<c:set var="descricaoSubst" value="${descricaoInicial}" />
@@ -299,6 +373,5 @@ self.ajax_${propriedade}${tipoSel} = function() {
 </c:if>
 
 <c:if test="${tema != 'simple'}">
-	</td>
-	</tr>
+	</div>
 </c:if>

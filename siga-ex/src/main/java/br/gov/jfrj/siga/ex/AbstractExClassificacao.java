@@ -35,11 +35,13 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.Where;
 
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
@@ -101,7 +103,7 @@ public abstract class AbstractExClassificacao extends HistoricoAuditavelSuporte
 	@Column(name = "ID_CLASSIFICACAO", unique = true, nullable = false)
 	private Long idClassificacao;
 
-	@Column(name = "CODIFICACAO", nullable = false, length = 11)
+	@Column(name = "CODIFICACAO", nullable = false, length = 13)
 	private String codificacao;
 
 	@Column(name = "DESCR_CLASSIFICACAO", nullable = false, length = 4000)
@@ -117,9 +119,13 @@ public abstract class AbstractExClassificacao extends HistoricoAuditavelSuporte
 	@Column(name = "OBS", length = 4000)
 	private String obs;
 
+	@OrderBy(value="nmMod")
+	@Where(clause="HIS_ATIVO = 1")
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exClassificacao")
 	private Set<ExModelo> exModeloSet;
 
+	@OrderBy(value="nmMod")
+	@Where(clause="HIS_ATIVO = 1")
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exClassCriacaoVia")
 	private Set<ExModelo> exModeloCriacaoViaSet;
 

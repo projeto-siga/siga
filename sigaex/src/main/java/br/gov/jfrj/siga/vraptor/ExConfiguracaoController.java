@@ -25,6 +25,7 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -56,7 +57,7 @@ public class ExConfiguracaoController extends ExController {
 	private static final String FORMA = "forma";
 	private static final String MODELO = "modelo";
 	private static final String VERIFICADOR_ACESSO = "FE:Ferramentas;CFG:Configurações";
-
+	
 	public ExConfiguracaoController(HttpServletRequest request, HttpServletResponse response, ServletContext context,
 			Result result, SigaObjects so, EntityManager em) {
 		super(request, response, context, result, ExDao.getInstance(), so, em);
@@ -407,7 +408,7 @@ public class ExConfiguracaoController extends ExController {
 
 	private Map<Integer, String> getListaTipoPublicador() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Matrícula");
+		map.put(1, SigaMessages.getMessage("usuario.matricula"));
 		map.put(2, "Órgão Integrado");
 		return map;
 	}
@@ -584,5 +585,4 @@ public class ExConfiguracaoController extends ExController {
 	private List<CpTipoLotacao> getListaTiposLotacao() throws Exception {
 		return dao().listarTiposLotacao();
 	}
-
 }

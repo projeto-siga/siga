@@ -1,0 +1,28 @@
+/*Identidade Visual do SIGA.doc para o Governo do Estado de S�o Paulo */
+
+.menusp {
+	background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);}
+
+.submenusp {
+	/* background-image: linear-gradient( 179.7deg,  rgba(3,100,172,1) 1.2%, rgba(23,125,193,0.84) 99% );
+	background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(41,180,79,1) 0%, rgba(25,147,83,1) 90.4% ); */
+	background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(227,227,227,1) 0%, rgba(187,187,187,1) 90% );
+	color: #000!important;
+}
+
+.login_body_color {
+	background-color: #dee2e6;
+}
+
+.body_color {
+	background-color: #fff;
+}
+
+.box_login {
+	background-color: rgb(190,213,206);
+	border-radius:8px;border: 1px solid #dadce0;
+}
+
+p.gt-table-action-list a.link-tag {
+	margin-top: 0.4em;
+}

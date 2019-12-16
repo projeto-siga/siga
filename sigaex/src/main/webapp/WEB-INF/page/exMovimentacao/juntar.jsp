@@ -7,100 +7,86 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <siga:pagina titulo="Juntar Documento">
-	
-	<c:if test="${not mob.doc.eletronico}">
-		<script type="text/javascript">$("html").addClass("fisico");$("body").addClass("fisico");</script>
-	</c:if>
-
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-		
-			<h2>
-				Juntada de Documento - ${mob.siglaEDescricaoCompleta}
-			</h2>
-			
-			<div class="gt-content-box gt-for-table">
-
+<c:if test="${not mob.doc.eletronico}">
+	<script type="text/javascript">$("html").addClass("fisico");$("body").addClass("fisico");</script>
+</c:if>
+<script> 
+	muda_escolha(document.getElementById("idDocumentoEscolha"));
+</script>
+	<!-- main content -->
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >
+			<div class="card-header">
+				<h5>Juntada de Documento - ${mob.siglaEDescricaoCompleta}</h5>
+			</div>
+			<div class="card-body">
             <form action="juntar_gravar" enctype="multipart/form-data" cssClass="form" method="POST">
-			<input type="hidden" name="postback" value="1" />
-			<input type="hidden" name="sigla" value="${sigla}"/>
-
-			<table class="gt-form-table">
-				<tr class="header">
-					<td colspan="2">
-						Dados da juntada
-					</td>
-				</tr>
+				<input type="hidden" name="postback" value="1" />
+				<input type="hidden" name="sigla" value="${sigla}"/>
 				<c:choose>
 					<c:when test="${!doc.eletronico}">
-						<tr>
-							<td>
-								<label>
-									Data:
-								</label>
-							</td>
-							<td>
-								<input type="text" name="dtMovString" value="${dtMovString}" onblur="javascript:verifica_data(this, true);" />
-							</td>
-						<tr>
-						<tr>
-							<td>
-								Responsável:
-							</td>
-							<td>
-								<siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
-								&nbsp;
-								<input type="checkbox" theme="simple" name="substituicao" value="${substituicao}" onclick="javascript:displayTitular(this);" />
-								Substituto
-							</td>
-						</tr>
+						<div class="row">
+							<div class="col-sm-2">
+								<div class="form-group">
+									<label>Data</label> 
+									<input type="text" name="dtMovString" value="${dtMovString}" onblur="javascript:verifica_data(this, true);" class="form-control"/>
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label>Responsável</label> 
+									<siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="form-group">
+									<div class="form-check form-check-inline mt-4">
+										<input type="checkbox" theme="simple" name="substituicao" value="${substituicao}" onclick="javascript:displayTitular(this);" />
+										<label class="form-check-label" for="substituicao">Substituto</label>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row" id="tr_titular" style="display: ${exDocumentoDTO.substituicao ? '' : 'none'};" >
+							<div class="col-sm-6" >
+							<input type="hidden" name="campos" value="titularSel.id" />
+								<div class="form-group">
+									<label>Titular</label>
+									<input type="hidden" name="campos" value="titularSel.id" />
+									<siga:selecao propriedade="titular" tema="simple" modulo="siga" />
+								</div>
+							</div>
+						</div>				
 					</c:when>
 				</c:choose>
-			</tr>
-			<c:choose>
-				<c:when test="${!substituicao}">
-					<tr id="tr_titular" style="display: none">
-				</c:when>
-				<c:otherwise>
-					<tr id="tr_titular" style="">
-				</c:otherwise>
-			</c:choose>
-
-				<td>
-					Titular:
-				</td>
-					<input type="hidden" name="campos" value="titularSel.id" />
-				
-				<td colspan="3">
-					<siga:selecao propriedade="titular" tema="simple" modulo="siga" />
-				</td>
-			</tr>
-			<tr>
-					<td>
-						Documento:
-					</td>
-					<td>
-						<siga:escolha id="idDocumentoEscolha" var="idDocumentoEscolha">
-							<siga:opcao id='1' texto="Documento Interno" >
-								<siga:selecao tema='simple'  titulo="Documento Pai:" propriedade="documentoRef" urlAcao="buscar" urlSelecionar="selecionar" modulo="sigaex"/>
-							</siga:opcao>
-							<siga:opcao id='2' texto="Documento Externo ao Siga-Doc" >
-								<input type="text" theme='simple' name="idDocumentoPaiExterno" value="${idDocumentoPaiExterno}" />
-							</siga:opcao>
-						</siga:escolha>
-					</td>
-				</tr>
-				<tr class="button">
-					<td colspan="2"><input type='submit' value="Ok"  class="gt-btn-medium gt-btn-left"/>
-						<input type="button"
-						value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left"/>
-				</tr>
-			</table>
-		</form>
-
-	</div></div></div>
-	
-	<script> 
-		muda_escolha(document.getElementById("idDocumentoEscolha"));
-	</script>
+				<div class="row">
+					<div class="col-sm-6" >
+						<div class="form-group">
+							<label>Documento</label>
+							<siga:escolha id="idDocumentoEscolha" var="idDocumentoEscolha">
+								<siga:opcao id='1' texto="Documento Interno" >
+									<p></p>
+									<siga:selecao tema='simple'  titulo="Documento Pai" propriedade="documentoRef" urlAcao="buscar" urlSelecionar="selecionar" modulo="sigaex"/>
+								</siga:opcao>
+								<c:if test="${siga_cliente!='GOVSP'}">
+									<siga:opcao id='2' texto="Documento Externo ao Siga-Doc" >
+										<input type="text" theme='simple' name="idDocumentoPaiExterno" value="${idDocumentoPaiExterno}" class="form-control mt-3"/>
+									</siga:opcao>
+								</c:if>
+							</siga:escolha>
+						</div>						
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-2">
+						<div class="form-group">
+							<button type="submit" class="btn btn-primary" >Ok</button>
+							<button type="button" onclick="javascript:history.back();" class="btn btn-primary" >Cancela</button>
+						</div>
+					</div>
+				</div>
+			</form>
+			</div>
+		</div>
+	</div>
 </siga:pagina>

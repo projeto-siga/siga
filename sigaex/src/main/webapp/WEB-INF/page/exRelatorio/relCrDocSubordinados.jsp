@@ -2,7 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="128kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
@@ -19,50 +19,37 @@ function sbmt() {
 <c:set var="secaoUsuario" scope="request">
 	"${lotaTitular.orgaoUsuario.descricaoMaiusculas}"
 </c:set>
-<tr>
-	<td>
-		Tipo de Relatório:
-	</td>
-	<td>
-		<select name="tipoRel" id="tipoRel">
+<div class="row">
+	<div class="col-sm-2">
+		<label>Tipo de Relatório</label>
+		<select name="tipoRel" id="tipoRel" class="form-control">
 			<c:forEach var="item" items="${listaTipoRel}">
 				<option value="${item.key}">
 					${item.value}
 				</option>
 			</c:forEach>			
 		</select>
-	</td>
-</tr>
-<tr>
-	<td width="15%">
-		Lotação:
-	</td>
-	<td>
+	</div>
+	<div class="col-sm-6">
+		<label><fmt:message key="usuario.lotacao"/></label>
 		<siga:selecao propriedade="lotacaoDestinatario" tema="simple" modulo="siga"/>
-	</td>
-</tr>
-<tr>
-	<td>
-		Incluir setores subordinados?
-	</td>
-	<td>
-		<input type="checkbox" name="incluirSubordinados" id="incluirSubordinados"/>
-	</td>
-<tr>
-	<td>
-		Tipo de Documento:
-	</td>
-	<td>
-		<select name="tipoFormaDoc" id="tipoFormaDoc">
+	</div>
+</div>
+<div class="row">
+	<div class="col-sm-2 mt-4 ml-4">
+		<input type="checkbox" name="incluirSubordinados" id="incluirSubordinados" class="form-check-input"/><label class="form-check-label" for="incluirSubordinados">Incluir setores subordinados?</label>
+	</div>
+	<div class="col-sm-2">
+		<label>Tipo de Documento</label>
+		<select name="tipoFormaDoc" id="tipoFormaDoc" class="form-control">
 			<c:forEach var="item" items="${listaExTipoFormaDoc}">
 				<option value="${item.descricao}">
 					${item.descricao} 
 				</option>
 			</c:forEach>
 		</select>
-	</td>
-</tr>
-
+	</div>
+</div>
 <input type="hidden" name="lotacaoTitular" value="${lotaTitular.siglaLotacao}" />
 <input type="hidden" name="orgaoUsuario" value="${lotaTitular.orgaoUsuario.idOrgaoUsu}" />
 <input type="hidden" name="idTit" value="${titular.id}" />

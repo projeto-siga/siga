@@ -17,65 +17,89 @@
 	}
 	</script>
 	
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-		
-			<h2>Avaliação - ${mob.sigla}</h2>
-
-			<div class="gt-content-box gt-for-table">
-			
+	<!-- main content bootstrap -->
+	<div class="container-fluid">
+		<div class="card bg-light mb-3">
+			<div class="card-header">
+				<h5>
+					Avaliação - ${mob.sigla}
+				</h5>
+			</div>
+			<div class="card-body">
 				<form name="frm" action="avaliar_gravar" method="POST">
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="sigla" value="${sigla}"/>
-		
-					<table class="gt-form-table">
-						<tr class="header">
-							<td colspan="2">Avaliação</td>
-						</tr>
-						<tr>
-							<td>Data:</td>
-							<td><input type="text" name="dtMovString"
-								onblur="javascript:verifica_data(this,0);" /></td>
-						</tr>
-						<tr>
-							<td>Responsável:</td>
-							<td><siga:selecao tema="simple" propriedade="subscritor" modulo="siga" />
-							&nbsp;&nbsp;<input type="checkbox" name="substituicao"
-								onclick="javascript:displayTitular(this);" />Substituto</td>
-						</tr>
-						<c:choose>
-							<c:when test="${!substituicao}">
-								<tr id="tr_titular" style="display: none">
-							</c:when>
-							<c:otherwise>
-								<tr id="tr_titular" style="">
-							</c:otherwise>
-						</c:choose>
-		
-						<td>Titular:</td>
-							<input type="hidden" name="campos" value="titularSel.id" />
-						<td colspan="3"><siga:selecao propriedade="titular"
-									tema="simple" modulo="siga" /></td>
-						</tr>
-						<siga:selecao titulo="Nova Classificação (opcional):" propriedade="classificacao" modulo="sigaex" urlAcao="buscar" urlSelecionar="selecionar"/>
-						<tr>
-							<td>Motivo da reclassificação<br/> (obrigatório se informada nova classificação):</td>
-							<td width="75%">
-								<input type="text" name="descrMov" size="50" maxLength="128" />
-							</td>
-						</tr>
+					<div class="row">
+						<div class="col-md-2 col-sm-3">
+							<div class="form-group">
+								<label>Data</label>
+								<input class="form-control" type="text" name="dtMovString"
+									onblur="javascript:verifica_data(this,0);" />
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Responsável</label>
+								<siga:selecao tema="simple" propriedade="subscritor" modulo="siga" />
+							</div>
+						</div>
+						<div class="col-sm-2 mt-4">
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="checkbox" 
+									theme="simple" name="substituicao"  value="${substituicao}" 
+									onclick="javascript:displayTitular(this);" />
+								<label class="form-check-label">Substituto</label>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+							<c:choose>
+								<c:when test="${!substituicao}">
+									<div id="tr_titular" style="display: none">
+								</c:when>
+								<c:otherwise>
+									<div id="tr_titular" style="">
+								</c:otherwise>
+							</c:choose>
+									<label>Titular</label>
+									<input class="form-control" type="hidden" name="campos" value="titularSel.id" />
+									<siga:selecao propriedade="titular" tema="simple" modulo="siga"/>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<siga:selecao titulo="Nova Classificação" propriedade="classificacao" modulo="sigaex" urlAcao="buscar" urlSelecionar="selecionar"/>
+								<small class="form-text text-muted">(opcional)</small>
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Motivo da reclassificação</label>
+								<input class="form-control" type="text" name="descrMov" size="50" maxLength="128" />
+								<small class="form-text text-muted">(obrigatório se informada nova classificação)</small>
+							</div>
+						</div>
 						<c:if test="${tipoResponsavel == 3}">
-							<tr>
-								<td>Observação</td>
-								<td><input type="text" size="30" name="obsOrgao" /></td>
-							</tr>
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label>Observação</label>
+									<input class="form-control" type="text" size="30" name="obsOrgao" />
+								</div>
+							</div>
 						</c:if>
 		
-						<tr class="button">
-							<td colspan="2"><input type="submit" value="Ok" class="gt-btn-small gt-btn-left" /> <input type="button"
-								value="Cancela" onclick="javascript:history.back();" class="gt-btn-small gt-btn-left" /></td>
-						</tr>
-					</table>
+					</div>
+					<div class="row">
+						<div class="col-sm">
+							<input type="submit" value="Ok" class="btn btn-primary" />
+							<input type="button" value="Cancela" onclick="javascript:history.back();" class="btn btn-cancel ml-2" />
+						</div>
+					</div>
 				</form>
 			</div>
 		</div>

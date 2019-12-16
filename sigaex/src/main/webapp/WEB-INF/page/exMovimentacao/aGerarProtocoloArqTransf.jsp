@@ -6,39 +6,47 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <siga:pagina titulo="Protocolo de Transferência" popup="true">
+	<style>
+	   @media print { 
+	       #btn-form { display:none; } 
+	   }
+	</style>
+	<!-- main content bootstrap -->
+	<div class="container-fluid">
+		<div class="card bg-light mb-3">
+			<div class="card-header">
+				<h5>Protocolo de Transferência</h5>
+			</div>
 
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
+			<div class="card-body">
 
-			<h2>Protocolo de Transferência</h2>
-
-			<div class="gt-content-box gt-for-table" style="margin-bottom: 25px;">
-
-				<table class="gt-table">
+				<table class="table table-bordered table-light">
 					<tr>
 						<tr>
-							<td>De:</td>
-							<td>${lotaTitular.descricao} -
-								${cadastrante.descricao}</td>
+							<td>De</td>
+							<td>${lotaTitular.descricao} - ${cadastrante.descricao}</td>
 						</tr>
 						<tr>
-							<td>Para:</td>
+							<td>Para</td>
 							<td>${mov.respString}</td>
 						</tr>
 						<tr>
-							<td>Data:</td>
+							<td>Data</td>
 							<td colspan="2">${mov.dtRegMovDDMMYYHHMMSS}</td>
 						</tr>
 				</table>
-
+			</div>
+		</div>
+		<div class="card bg-light mb-3">
+			<div class="card-header">
+				<h5>Documento(s)</h5>
 			</div>
 
-			<h3>Documento(s)</h3>
-
-			<div class="gt-content-box gt-for-table">
-				<table class="gt-table" style="word-wrap: break-word; width: 100%;">
+			<div class="card-body">
+				<table class="table table-striped" id="tbl-docs">
 					<col width="22%" />
 					<col width="5%" />
 					<col width="4%" />
@@ -49,98 +57,89 @@
 					<col width="4%" />
 					<col width="4%" />
 					<col width="44%" />
-					<tr class="header">
-						<td rowspan="2" align="right">Número</td>
-						<td colspan="3" align="center">Documento</td>
-						<td colspan="3" align="center">Última Movimentação</td>
-						<td colspan="2" align="center">Atendente</td>
-						<td rowspan="2">Descrição</td>
-					</tr>
-					<tr class="header">
-						<td align="center">Data</td>
-						<td align="center">Lotação</td>
-						<td align="center">Pessoa</td>
-						<td align="center">Data</td>
-						<td align="center">Lotação</td>
-						<td align="center">Pessoa</td>
-						<td align="center">Lotação</td>
-						<td align="center">Pessoa</td>
-					</tr>
+					<thead class="${thead_color} align-middle text-center">
+						<tr>
+							<th rowspan="2" class="text-right">Número</th>
+							<th colspan="3">Documento</th>
+							<th colspan="3">Última Movimentação</th>
+							<th colspan="2">Atendente</th>
+							<th rowspan="2" class="text-left">Descrição</th>
+						</tr>
+						<tr>
+							<th>Data</th>
+							<th><fmt:message key="usuario.lotacao"/></th>
+							<th><fmt:message key="usuario.pessoa2"/></th>
+							<th>Data</th>
+							<th><fmt:message key="usuario.lotacao"/></th>
+							<th><fmt:message key="usuario.pessoa2"/></th>
+							<th><fmt:message key="usuario.lotacao"/></th>
+							<th><fmt:message key="usuario.pessoa2"/></th>
+						</tr>
 
 					<c:forEach var="i" items="${itens}">
-						<c:choose>
-							<c:when test='${evenorodd == "even"}'>
-								<c:set var="evenorodd" value="odd" />
-							</c:when>
-							<c:otherwise>
-								<c:set var="evenorodd" value="even" />
-							</c:otherwise>
-						</c:choose>
-						<tr class="${evenorodd}">
-							<td align="right"><a
-								href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${i.mob.sigla}">${i.mob.codigo}</a>
+						<tr>
+							<td>
+								<a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${i.mob.sigla}">${i.mob.codigo}</a>
 								<c:if test="${not i.mob.geral}">
-									<td align="center">${i.doc.dtDocDDMMYY}</td>
-									<td align="center"><siga:selecionado
+								<td>${i.doc.dtDocDDMMYY}</td>
+								<td><siga:selecionado
 											sigla="${i.doc.lotaSubscritor.sigla}"
 											descricao="${i.doc.lotaSubscritor.descricao}" /></td>
-									<td align="center"><siga:selecionado
+									<td><siga:selecionado
 											sigla="${i.doc.subscritor.iniciais}"
 											descricao="${i.doc.subscritor.descricao}" /></td>
-									<td align="center">${i.dtDDMMYY}</td>
-									<td align="center"><siga:selecionado
+									<td>${i.dtDDMMYY}</td>
+									<td><siga:selecionado
 											sigla="${i.lotaSubscritor.sigla}"
 											descricao="${i.lotaSubscritor.descricao}" /></td>
-									<td align="center"><siga:selecionado
+									<td><siga:selecionado
 											sigla="${i.subscritor.iniciais}"
 											descricao="${i.subscritor.descricao}" /></td>
-									<td align="center"><siga:selecionado
+									<td><siga:selecionado
 											sigla="${i.lotaAtendente.sigla}"
 											descricao="${i.lotaAtendente.descricao}" /></td>
-									<td align="center"><siga:selecionado
+									<td><siga:selecionado
 											sigla="${i.atendente.iniciais}"
 											descricao="${i.atendente.descricao}" /></td>
 								</c:if> <c:if test="${i.mob.geral}">
-									<td align="center">${i.doc.dtDocDDMMYY}</td>
-									<td align="center"><siga:selecionado
+									<td>${i.doc.dtDocDDMMYY}</td>
+									<td><siga:selecionado
 											sigla="${i.doc.subscritor.iniciais}"
 											descricao="${i.doc.subscritor.descricao}" /></td>
-									<td align="center"><siga:selecionado
+									<td><siga:selecionado
 											sigla="${i.doc.lotaSubscritor.sigla}"
 											descricao="${i.doc.lotaSubscritor.descricao}" /></td>
-									<td align="center"></td>
-									<td align="center"></td>
-									<td align="center"></td>
-									<td align="center"></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
 								</c:if>
-								<td>${f:descricaoConfidencial(i.doc, lotaTitular)}</td>
+								<td class="text-left">${f:descricaoConfidencial(i.doc, lotaTitular)}</td>
 						</tr>
 					</c:forEach>
 
 
 				</table>
 			</div>
+		</div>
 
-			<br />
+		<br />
+		<div id="btn-form">
 			<form name="frm" action="principal" namespace="/" method="get"
 				theme="simple">
-				<input type="button" value="Imprimir"
-					class="gt-btn-medium gt-btn-left"
-					onclick="javascript: document.body.offsetHeight; window.print();" />
+				<button type="button" class="btn btn-primary" onclick="javascript: document.body.offsetHeight; window.print();" >Imprimir</button>
 				<c:if test="${popup != true}">
-					<input type="button" value="Voltar"
-						class="gt-btn-medium gt-btn-left"
-						onclick="javascript:history.back();" />
+					<button type="button" class="btn btn-primary" onclick="javascript:history.back();" >Voltar</button>
 				</c:if>
 			</form>
+		</div>
+		<br /> <br />
+		<div>
 			<br /> <br />
-			<div>
-				<br /> <br />
-				<p align="center">Recebido em: _____/_____/_____ às _____:_____</p>
-				<br /> <br /> <br />
-				<p align="center">________________________________________________</p>
-				<p align="center">Assinatura do Servidor</p>
-			</div>
+			<p align="center">Recebido em: _____/_____/_____ às _____:_____</p>
+			<br /> <br /> <br />
+			<p align="center">________________________________________________</p>
+			<p align="center">Assinatura do Servidor</p>
 		</div>
 	</div>
 </siga:pagina>

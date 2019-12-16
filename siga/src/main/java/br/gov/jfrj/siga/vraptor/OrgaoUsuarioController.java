@@ -5,9 +5,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
-import org.hibernate.ObjectNotFoundException;
-import org.hibernate.search.spi.InstanceInitializer;
-
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -36,13 +33,13 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 	}
 	
 	@Get("app/orgaoUsuario/listar")
-	public void lista(Integer offset, String nome) throws Exception {
-		if(offset == null) {
-			offset = 0;
+	public void lista(Integer paramoffset, String nome) throws Exception {
+		if(paramoffset == null) {
+			paramoffset = 0;
 		}
 		CpOrgaoUsuarioDaoFiltro orgaoUsuario = new CpOrgaoUsuarioDaoFiltro();
 		orgaoUsuario.setNome(nome);
-		setItens(CpDao.getInstance().consultarPorFiltro(orgaoUsuario, offset, 15));
+		setItens(CpDao.getInstance().consultarPorFiltro(orgaoUsuario, paramoffset, 15));
 		result.include("itens", getItens());
 		result.include("tamanho", dao().consultarQuantidade(orgaoUsuario));
 		result.include("nome", nome);
@@ -50,7 +47,7 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 			result.include("orgaoUsuarioSiglaLogado", getTitular().getOrgaoUsuario().getSigla());
 		}
 		setItemPagina(15);
-		result.include("currentPageNumber", calculaPaginaAtual(offset));
+		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));
 	}
 	
 	@Get("/app/orgaoUsuario/editar")
@@ -76,13 +73,16 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 							 final String siglaOrgaoUsuario,
 							 final String acao
 						) throws Exception{
-		assertAcesso("FE:Ferramentas;CAD_ORGAO_USUARIO: Cadastrar Orgãos Usuário");
+		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_ORGAO_USUARIO: Cadastrar Orgãos Usuário");
 		
 		if(nmOrgaoUsuario == null)
 			throw new AplicacaoException("Nome do órgão usuário não informado");
 		
 		if(siglaOrgaoUsuario == null)
 			throw new AplicacaoException("Sigla do órgão usuário não informada");
+		
+		if(!siglaOrgaoUsuario.matches("[a-zA-Z]{1,5}"))
+			throw new AplicacaoException("Sigla do órgão inválida");
 		
 		CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
 		

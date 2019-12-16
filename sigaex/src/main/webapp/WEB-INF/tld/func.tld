@@ -330,6 +330,11 @@
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
   <function-signature>java.lang.String obterExtensaoBuscaTextual(br.gov.jfrj.siga.dp.CpOrgaoUsuario, java.lang.String)</function-signature>
  </function>
+  <function>
+  <name>obterExtensaoBuscaTextualbs4</name>
+  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
+  <function-signature>java.lang.String obterExtensaoBuscaTextualbs4(br.gov.jfrj.siga.dp.CpOrgaoUsuario, java.lang.String)</function-signature>
+ </function>
  <function>
   <name>obterExtensaoEditor</name>
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>

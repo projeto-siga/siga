@@ -394,6 +394,9 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_MOB_AUTUADO")
 	private ExMobil exMobilAutuado;
+	
+	@Column(name = "CHAVE_DOC", length = 10)
+	private String chaveDoc;
 
 	/**
 	 * Simple constructor of AbstractExDocumento instances.
@@ -1062,5 +1065,13 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setDtAltDoc(java.util.Date dtAltDoc) {
 		this.dtAltDoc = dtAltDoc;
+	}
+
+	public String getChaveDoc() {
+		return chaveDoc;
+	}
+
+	public void setChaveDoc(String chaveDoc) {
+		this.chaveDoc = chaveDoc;
 	}
 }

@@ -54,7 +54,7 @@ public class GeraMessageDigest {
 		return GeraMessageDigest.byteParaString(md.digest());
 	}
 
-	public static String geraSenha() {
+	public static String geraSenha(int tamanhoSenha) {
 		final StringBuilder caracteres = new StringBuilder();
 
 		for (int i = 0; i < 26; i++) {
@@ -86,7 +86,7 @@ public class GeraMessageDigest {
 			contemMinusculas = false;
 			contemMaiusculas = false;
 			contemNumeros = false;
-			for (int i = 0; i < 8; i++) {
+			for (int i = 0; i < tamanhoSenha; i++) {
 				novaSenha.append(caracteres.charAt(random.nextInt(caracteres
 						.length())));
 			}
@@ -108,5 +108,9 @@ public class GeraMessageDigest {
 		} while (!contemMinusculas || !contemMaiusculas || !contemNumeros);
 
 		return novaSenha.toString();
+	}
+	
+	public static String geraSenha() {
+		return geraSenha(8);
 	}
 }

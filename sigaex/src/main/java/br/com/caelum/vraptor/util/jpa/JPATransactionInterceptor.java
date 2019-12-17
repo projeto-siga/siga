@@ -27,7 +27,7 @@ import br.com.caelum.vraptor.core.InterceptorStack;
 import br.com.caelum.vraptor.interceptor.Interceptor;
 import br.com.caelum.vraptor.ioc.Component;
 import br.com.caelum.vraptor.resource.ResourceMethod;
-import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.vraptor.AplicacaoExceptionInterceptor;
 
 /**
  * An interceptor that manages Entity Manager Transaction. All requests are
@@ -37,7 +37,7 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
  * @author Lucas Cavalcanti
  */
 @Component
-@Intercepts
+@Intercepts(after = AplicacaoExceptionInterceptor.class)
 public class JPATransactionInterceptor implements Interceptor {
 
 	private final EntityManager manager;

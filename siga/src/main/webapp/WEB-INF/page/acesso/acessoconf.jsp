@@ -88,7 +88,7 @@
 					<col width="15%" />
 				</colgroup>
 				<c:if test="${idAbrangencia == 1}">
-					<thead class="thead-dark">
+					<thead class="${thead_color}">
 						<tr>
 							<th>Órgão usuário:</th>
 							<th>${nomeOrgaoUsuSel}</th>
@@ -96,7 +96,7 @@
 					</thead>
 				</c:if>
 				<c:if test="${idAbrangencia == 2}">
-					<thead class="thead-dark">
+					<thead class="${thead_color}">
 						<tr>
 							<td>Lotação:</td>
 							<td>${lotacaoSel.descricao}</td>
@@ -108,7 +108,7 @@
 					</thead>
 				</c:if>
 				<c:if test="${idAbrangencia == 3}">
-					<thead class="thead-dark">
+					<thead class="${thead_color}">
 						<tr>
 							<td>Pessoa:</td>
 							<td>${pessoaSel.descricao}</td>

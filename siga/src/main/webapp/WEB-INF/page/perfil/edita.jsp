@@ -372,7 +372,7 @@
 											<div class="form-group">
 												<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir') and not empty idCpGrupo and cpTipoGrupo.idTpGrupo == 2}">
 													<table class="table table-sm table-striped">
-														<thead class="thead-dark">
+														<thead class="${thead_color}">
 															<tr>
 																<th colspan="2">Gestores do Grupo</th>
 															</tr>

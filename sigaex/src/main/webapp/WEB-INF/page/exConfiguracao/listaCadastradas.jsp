@@ -14,7 +14,7 @@
 
 
 <table class="table table-sm table-striped" width="100%">
-	<tr class="thead-dark">
+	<tr class="${thead_color}">
 		<th align="center">Nível de acesso</th>
 		<th align="center">Pessoa</th>
 		<th align="center">Lotação</th>
@@ -39,7 +39,7 @@
 		<th align="center">Função Objeto</th>
 
 		<th align="center">Situação</th>
-		<th align="center" style="width: 70px;"></th>
+		<th align="center" style="min-width: 70px;"></th>
 	</tr>
 	<c:set var="tamanho" value="0" />
 
@@ -95,7 +95,7 @@
 					<c:url var="url" value="/app/expediente/configuracao/editar">
 						<c:param name="id" value="${configuracao.idConfiguracao}" />
 					</c:url>
-				</c:if> <siga:links estilo="margin-bottom: 0; text-align: center;">
+				</c:if> <siga:links estilo="margin-bottom: 0; text-align: center;" buttons="${false}">
 					<siga:link icon="pencil" titleImg="Alterar" url="${url}"
 						estilo="margin-bottom: 0; text-align: center; padding: 2px;" />
 

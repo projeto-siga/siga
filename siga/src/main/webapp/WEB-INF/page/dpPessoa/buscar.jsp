@@ -35,6 +35,7 @@ function sbmt(offset) {
 				<input type="hidden" name="paramoffset" value="0" />
 				<input type="hidden" name="p.offset" value="0" />
 				<input type="hidden" name="buscarFechadas" value="${param['buscarFechadas']}" />
+				<input type="hidden" name="modal" value="${param['modal']}" />
 				<div class="row">
 					<div class="col-sm">
 						<div class="form-group">
@@ -52,6 +53,16 @@ function sbmt(offset) {
 								</c:when>
 								<c:otherwise>
 									<siga:selecao titulo="Lotação" urlAcao="buscar" propriedade="lotacao" modulo="siga"/>
+								</c:otherwise>	
+							</c:choose>	
+							<c:choose>
+								<c:when test="${param.modal != true}">
+								    <!-- parteFuncao para fechar window -->
+								    <c:set var="parteFuncao" value="opener" />
+								</c:when>
+								<c:otherwise>
+								    <!-- parteFuncao para fechar modal -->
+								    <c:set var="parteFuncao" value="parent" />
 								</c:otherwise>	
 							</c:choose>						
 						</div>
@@ -84,8 +95,8 @@ function sbmt(offset) {
 		</div>
 		<br>
 	
-		<table class="table table-sm table-striped">
-			<thead class="thead-dark">
+		<table class="table table-sm table-striped table-responsive">
+			<thead class="${thead_color}">
 				<tr>
 					<th align="center">Matrícula</th>
 					<th align="left">Nome</th>
@@ -98,7 +109,7 @@ function sbmt(offset) {
 				itens="${pessoas}" var="pessoa">
 				<tr class="${evenorodd}">
 					<td align="center"><a
-						href="javascript: opener.retorna_${propriedadeClean}('${pessoa.id}','${pessoa.sigla}','${fn:replace(pessoa.descricao,'\'','&#8217;')}','${pessoa.funcaoConfianca}');">${pessoa.sigla}</a></td>
+						href="javascript: ${parteFuncao}.retorna_${propriedadeClean}('${pessoa.id}','${pessoa.sigla}','${pessoa.descricao}','${pessoa.funcaoConfianca}');">${pessoa.sigla}</a></td>
 					<td align="left">${pessoa.descricao}</td>
 					<td align="center">${pessoa.lotacao.sigla}</td>
 					<td align="center">${pessoa.funcaoConfianca.nomeFuncao}${buscarFechadas}</td>

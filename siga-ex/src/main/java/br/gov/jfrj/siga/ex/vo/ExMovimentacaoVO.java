@@ -195,7 +195,7 @@ public class ExMovimentacaoVO extends ExVO {
 				token = getWebdavJwtToken(mov, cadastrante, titular, lotaTitular, pwd);
 
 				addAcao(null, "Editar no " + sNome, sApp
-						+ ":ofe|u|__scheme__://__serverName__:__serverPort____contextPath__/public/app/webdav/" + token,
+						+ ":ofe|u|__scheme__://__serverName__:__serverPort____contextPath__/webdav/" + token,
 						mov.getNmArqMov(), true, null, null, null, null, null);
 			}
 

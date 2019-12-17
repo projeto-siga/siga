@@ -10,7 +10,10 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 
 <script type="text/javascript" language="Javascript1.1">
-	function alteraTipoDaForma() {
+	function init() {
+		alteraTipoDaForma(alteraForma);
+	}
+	function alteraTipoDaForma(cont) {
 		ReplaceInnerHTMLFromAjaxResponse(
 				'${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_formas?tipoForma='
 						+ document.getElementById('tipoForma').value
@@ -18,7 +21,7 @@
 						.getElementById('comboFormaDiv'), function() {transformarEmSelect2(null, '#idFormaDoc', '#idFormaDocGroup')})
 	}
 
-	function alteraForma() {
+	function alteraForma(cont) {
 		ReplaceInnerHTMLFromAjaxResponse(
 				'${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_modelos?forma='
 						+ document.getElementById('idFormaDoc').value
@@ -70,7 +73,7 @@
 			document.getElementById('trOrgExterno').style.display = 'none';
 			document.getElementById('trTipo').style.display = '';
 
-			document.getElementById('idFormaDoc').value = '0';
+			if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
 			break;
 		case 1: // Interno Produzido
 			document.getElementById('trNumOrigDoc').style.display = 'none';
@@ -78,7 +81,7 @@
 			document.getElementById('trOrgExterno').style.display = 'none';
 			document.getElementById('trTipo').style.display = '';
 
-			document.getElementById('idFormaDoc').value = '0';
+			if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
 			break;
 		case 2: // Interno Folha de Rosto
 			document.getElementById('trNumOrigDoc').style.display = '';
@@ -86,7 +89,7 @@
 			document.getElementById('trOrgExterno').style.display = 'none';
 			document.getElementById('trTipo').style.display = '';
 
-			document.getElementById('idFormaDoc').value = '0';
+			if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
 			break;
 		case 3: // Externo Folha de Rosto
 			document.getElementById('trNumOrigDoc').style.display = '';
@@ -94,7 +97,7 @@
 			document.getElementById('trOrgExterno').style.display = '';
 			document.getElementById('trTipo').style.display = 'none';
 
-			document.getElementById('idFormaDoc').value = '5';
+			if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '5';
 			break;
 		case 4: // Externo Capturado
 			document.getElementById('trNumOrigDoc').style.display = '';
@@ -102,7 +105,7 @@
 			document.getElementById('trOrgExterno').style.display = '';
 			document.getElementById('trTipo').style.display = 'none';
 
-			document.getElementById('idFormaDoc').value = '0';
+			if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
 			break;
 		case 5: // Interno Capturado
 			document.getElementById('trNumOrigDoc').style.display = 'none';
@@ -110,7 +113,7 @@
 			document.getElementById('trOrgExterno').style.display = 'none';
 			document.getElementById('trTipo').style.display = '';
 
-			document.getElementById('idFormaDoc').value = '0';
+			if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
 			break;
 		}
 	}
@@ -337,6 +340,25 @@
 	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
 	
 	<div class="container-fluid content mb-3">
+		<c:if
+			test="${((empty primeiraVez) or (primeiraVez != 'sim')) and ((empty apenasRefresh) or (apenasRefresh != 1))}">
+			<c:if test="${not empty tamanho and tamanho > 0}">
+				<h2 class="mt-3"><fmt:message key="documento.encontrados"/></h2>
+				<c:choose>
+					<c:when test="${siga_cliente == 'GOVSP'}">
+						<jsp:include page="./listaSP.jsp"/>
+					</c:when>
+					<c:otherwise>
+						<jsp:include page="./lista.jsp"/>
+					</c:otherwise>
+				</c:choose>
+			</c:if>
+			<c:if test="${empty tamanho or tamanho == 0}">
+				<h2 class="mt-3"><fmt:message key="documento.encontrados"/></h2>
+				<p class="gt-notice-box">A pesquisa não retornou resultados.</p>
+			</c:if>
+		</c:if>		
+		
 		<div class="card bg-light mb-3">
 			<div class="card-header">
 				<h5>Pesquisar Documentos</h5>
@@ -483,9 +505,6 @@
 
 						<div class="form-group col-md-6">
 							<div style="display: inline" id="comboModeloDiv"></div>
-							<script type="text/javascript">
-							setTimeout("alteraForma()", 2000);
-								</script>
 						</div>
 					</div>
 
@@ -501,12 +520,10 @@
 								</c:forEach>
 							</select>
 						</div>
-						<c:if test="${siga_cliente == 'GOVSP'}">
 							<div class="form-group col-md-3">
 								<label for="numExpediente">Número</label>
 							    <input type="text" size="7" name="numExpediente" value="${numExpediente}" maxlength="6" class="form-control" />
 							</div>
-						</c:if>
 					</div>
 					<div class="form-row">
 						<div class="form-group col-md-3" id="trNumOrigDoc"
@@ -638,7 +655,7 @@
 						</div>
 					</c:if>
 					
-					${f:obterExtensaoBuscaTextual(lotaTitular.orgaoUsuario, fullText)} 
+					${f:obterExtensaoBuscaTextualbs4(lotaTitular.orgaoUsuario, fullText)} 
 
 					<div class="form-row">
 						<div class="form-group col-md-6">
@@ -682,25 +699,6 @@
 				</form>
 			</div>
 		</div>
-		<c:if
-			test="${((empty primeiraVez) or (primeiraVez != 'sim')) and ((empty apenasRefresh) or (apenasRefresh != 1))}">
-			<c:if test="${not empty tamanho and tamanho > 0}">
-				<h2 class="mt-3"><fmt:message key="documento.encontrados"/></h2>
-				<c:choose>
-					<c:when test="${siga_cliente == 'GOVSP'}">
-						<jsp:include page="./listaSP.jsp"/>
-					</c:when>
-					<c:otherwise>
-						<jsp:include page="./lista.jsp"/>
-					</c:otherwise>
-				</c:choose>
-			</c:if>
-			<c:if test="${empty tamanho or tamanho == 0}">
-				<h2 class="mt-3"><fmt:message key="documento.encontrados"/></h2>
-				<p class="gt-notice-box">A pesquisa não retornou resultados.</p>
-			</c:if>
-			<input type="button" value="Voltar" onclick="javascript:history.back();" class="btn btn-primary" /><br>
-		</c:if>
 	</div>
 	<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
 	<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>

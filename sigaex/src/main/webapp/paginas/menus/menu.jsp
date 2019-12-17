@@ -45,19 +45,18 @@
 					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/mov/anotar_lote">Anotar em lote</a></li>
 					<li><a class="dropdown-item"
-						href="/sigaex/app/expediente/mov/assinar_tudo">Assinar
-							Documentos, Despachos e Anexos</a></li>
+						href="/sigaex/app/expediente/mov/assinar_tudo">Assinar em lote</a></li>
 				</c:if>
 			</c:catch>
 
 
-			<c:catch>
+		<!--  Retirado pois já não funcionava desta forma	<c:catch>
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
 					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/mov/assinar_lote">Assinar em lote</a></li>
 				</c:if>
-			</c:catch>
+			</c:catch> 
 			<c:catch>
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
@@ -66,7 +65,7 @@
 							href="/sigaex/app/expediente/mov/assinar_despacho_lote">Assinar
 								Despacho em lote</a></li></span>
 				</c:if>
-			</c:catch>
+			</c:catch> -->
 			<c:catch>
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;TRAMITE:Trâmite;LOTE:Em Lote')}">

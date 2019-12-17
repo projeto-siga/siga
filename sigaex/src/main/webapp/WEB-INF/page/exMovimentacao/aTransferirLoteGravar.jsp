@@ -48,7 +48,7 @@
 					<col width="30%" />
 					<col width="16%" />
 					<col width="54%" />
-					<thead class="thead-dark align-middle text-center">
+					<thead class="${thead_color} align-middle text-center">
 						<tr>
 							<th>Documento</th>
 							<th>Lotação</th>
@@ -93,7 +93,7 @@
 						<col width="4%" />
 						<col width="4%" />
 						<col width="44%" />
-						<thead class="thead-dark align-middle text-center">
+						<thead class="${thead_color} align-middle text-center">
 							<tr>
 								<th rowspan="2" class="text-right">Número</th>
 								<th colspan="3">Documento</th>

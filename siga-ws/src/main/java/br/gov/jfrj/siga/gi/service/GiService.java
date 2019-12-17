@@ -26,6 +26,11 @@ import br.gov.jfrj.siga.Remote;
 @WebService(targetNamespace = "http://impl.service.gi.siga.jfrj.gov.br/")
 public interface GiService extends Remote {
 
+	public static final String _MODO_AUTENTICACAO_BANCO = "banco";
+	public static final String _MODO_AUTENTICACAO_LDAP = "ldap";
+	// caso nao exista a propriedade no JBOSS, autenticar via banco
+	public static final String _MODO_AUTENTICACAO_DEFAULT = _MODO_AUTENTICACAO_BANCO;
+	
     @WebMethod
 	public String login(String matricula, String senha);
 
@@ -51,8 +56,11 @@ public interface GiService extends Remote {
 	public String esqueciSenha(String cpf, String email);
     
     @WebMethod
-	public String criarUsuario(String cadastranteStr, String orgaoUsu, String lotacao, String cargo, String funcao, String nmPessoa, String dtNascimento,String cpf, String email);
+    public String criarUsuario(String cadastranteStr, String orgaoUsu, String lotacao, String cargo, String funcao, String nmPessoa, String dtNascimento,String cpf, String email);
     
+    @WebMethod
+    public String buscarModoAutenticacao(String login);
+	
     @WebMethod
 	public String inativarUsuario(final Long idUsuario);
 

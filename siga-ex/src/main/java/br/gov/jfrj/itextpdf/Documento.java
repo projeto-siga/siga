@@ -24,11 +24,10 @@ import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.security.MessageDigest;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -39,8 +38,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -63,18 +62,16 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
 import com.lowagie.text.Chunk;
+import com.lowagie.text.Annotation;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
-import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
 import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
-import com.lowagie.text.html.HtmlParser;
 import com.lowagie.text.pdf.Barcode39;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PRAcroForm;
@@ -89,9 +86,25 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfPageEventHelper;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
-import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
 import com.swetake.util.Qrcode;
+
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Contexto;
+import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.ex.ExArquivoNumerado;
+import br.gov.jfrj.siga.ex.ExDocumento;
+import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.ExMovimentacao;
+import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.SigaExProperties;
+import br.gov.jfrj.siga.ex.bl.CurrentRequest;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.RequestInfo;
+import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
+import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
+import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
 /**
  * Hello World example as a Servlet.
@@ -224,16 +237,18 @@ public class Documento {
 			Set<ExMovimentacao> movsAssinatura) {
 		ArrayList<String> assinantes = new ArrayList<String>();
 		for (ExMovimentacao movAssinatura : movsAssinatura) {
-			String s;
-			if (movAssinatura.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)) {
-				s = Texto.maiusculasEMinusculas(movAssinatura.getCadastrante().getNomePessoa());
-			} else {
-				s = movAssinatura.getDescrMov().trim().toUpperCase();
-				s = s.split(":")[0];
-				s = s.intern();
-			}
-			if (!assinantes.contains(s)) {
-				assinantes.add(s);
+			if(movAssinatura.getCadastrante().getId().equals(movAssinatura.getSubscritor().getId())) {
+				String s;
+				if (movAssinatura.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)) {
+					s = Texto.maiusculasEMinusculas(movAssinatura.getCadastrante().getNomePessoa());
+				} else {
+					s = movAssinatura.getDescrMov().trim().toUpperCase();
+					s = s.split(":")[0];
+					s = s.intern();
+				}
+				if (!assinantes.contains(s)) {
+					assinantes.add(s);
+				}
 			}
 		}
 		return assinantes;
@@ -467,6 +482,41 @@ public class Documento {
 	
 				over.setRGBColorFill(0, 0, 0);
 				over.addImage(image39);
+				
+				// Estampa o logo do Siga-Doc. Atenção, pedimos que esse logo seja preservado em 
+				// todos os órgãos que utilizarem o Siga-Doc. Não se trata aqui da marca do TRF2,
+				// mas sim da identificação do sistema Siga-Doc. É importante para a continuidade
+				// do projeto que se faça essa divulgação.
+				
+				InputStream stream = Documento.class.getClassLoader()
+						.getResourceAsStream("/br/gov/jfrj/itextpdf/logo-siga-novo-166px.png");
+				byte[] ab = IOUtils.toByteArray(stream);
+				final Image logo = Image.getInstance(ab);
+//				
+				logo.scaleToFit(image39.getHeight(), image39.getHeight());
+				logo.setAbsolutePosition(r.getWidth() - image39.getHeight()
+						+ (STAMP_BORDER_IN_CM - PAGE_BORDER_IN_CM) * CM_UNIT,
+						PAGE_BORDER_IN_CM * CM_UNIT);
+	
+				logo.setBackgroundColor(Color.green);
+				logo.setBorderColor(Color.RED);
+				logo.setBorderWidth(0.5f * CM_UNIT);
+				logo.setImageMask(mask);
+	
+				over.setRGBColorFill(255, 255, 255);
+				mask.setAbsolutePosition(r.getWidth() - image39.getHeight()
+						- (PAGE_BORDER_IN_CM) * CM_UNIT,
+						(PAGE_BORDER_IN_CM - STAMP_BORDER_IN_CM) * CM_UNIT);
+				mask.scaleAbsolute(image39.getHeight() + 2 * STAMP_BORDER_IN_CM
+						* CM_UNIT, image39.getHeight() * logo.getHeight() / logo.getWidth() + 2 * STAMP_BORDER_IN_CM
+						* CM_UNIT);
+				over.addImage(mask);
+	
+				over.setRGBColorFill(255, 255, 255);
+				logo.setAnnotation(new Annotation(0, 0, 0, 0, 
+						"https://linksiga.trf2.jus.br")); 
+				over.addImage(logo);
+				
 	
 				// over.addImage(mask, mask.getScaledWidth() * 8, 0, 0,
 				// mask.getScaledHeight() * 8, 100, 450);

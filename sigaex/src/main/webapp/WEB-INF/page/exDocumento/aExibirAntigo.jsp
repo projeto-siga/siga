@@ -92,7 +92,7 @@
 			</c:forEach>
 			<c:if test="${temmov}">
 					<table class="table table-sm table-hover table-striped mov mt-2">
-						<thead class="thead-dark align-middle text-center">
+						<thead class="${thead_color} align-middle text-center">
 							<tr>
 								<th class="text-center" rowspan="2">
 									Data
@@ -204,7 +204,7 @@
 											${mov.complemento}
 										</c:if>
 										<c:set var="assinadopor" value="${true}" />
-										<siga:links inline="${true}"
+										<siga:links buttons="${false}" inline="${true}"
 											separator="${not empty mov.descricao and mov.descricao != null}">
 											<c:forEach var="acao" items="${mov.acoes}">
 												<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}" pos="${acao.pos}" 

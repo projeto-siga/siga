@@ -187,7 +187,7 @@
 
 				<div id="divVias">
 					<table class="table table-striped table-hover pt-2">
-						<thead class="thead-dark">
+						<thead class="${thead_color}">
 							<th>Via</th>
 							<th>Destino</th>
 							<th>Arquivo Corrente</th>

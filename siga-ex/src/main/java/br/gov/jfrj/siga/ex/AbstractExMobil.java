@@ -23,6 +23,7 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.persistence.Column;
 import javax.persistence.FetchType;
@@ -132,7 +133,7 @@ public abstract class AbstractExMobil extends Objeto implements Serializable {
 	@BatchSize(size=1)
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exMobil")
 	@Sort(type = SortType.NATURAL)
-	private SortedSet<ExMovimentacao> exMovimentacaoSet;
+	private SortedSet<ExMovimentacao> exMovimentacaoSet = new TreeSet<>();
 
 	@BatchSize(size=1)
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exMobilRef")

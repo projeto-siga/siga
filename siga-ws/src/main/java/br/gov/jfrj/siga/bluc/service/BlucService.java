@@ -153,6 +153,10 @@ public class BlucService {
 		return Base64.encodeBase64String(ab);
 	}
 
+	public static byte[] b642bytearray(String s) {
+		return Base64.decodeBase64(s);
+	}
+
 	public static byte[] calcSha1(byte[] content) throws NoSuchAlgorithmException {
 		MessageDigest md = MessageDigest.getInstance("SHA1");
 		md.reset();

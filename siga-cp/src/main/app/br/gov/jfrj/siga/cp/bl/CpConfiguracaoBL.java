@@ -536,7 +536,7 @@ public class CpConfiguracaoBL {
 						&& !cfg.getCpGrupo().equivale(cfgFiltro.getCpGrupo()) || ((cfgFiltro
 						.getCpGrupo() == null) && !atributosDesconsiderados
 						.contains(GRUPO))
-						&& (perfis != null && !perfisContemGrupo(cfg, perfis))))
+						&& (perfis == null || !perfisContemGrupo(cfg, perfis))))
 			return false;
 
 		if (cfg.getCpIdentidade() != null

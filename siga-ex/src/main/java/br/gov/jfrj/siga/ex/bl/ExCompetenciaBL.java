@@ -919,6 +919,21 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO,
 								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
+	
+	public Boolean podeGerarProtocolo(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) {
+		Boolean retorno = Boolean.TRUE;
+		
+		retorno = mob.getDoc().getExMobilPai() == null && getConf()
+				.podePorConfiguracao(
+						titular,
+						lotaTitular,
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO,
+						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR) &&
+				!mob.getDoc().isCancelado() && 
+				!mob.getDoc().isArquivado();
+		return retorno;
+	}
 
 	/**
 	 * Retorna se é possível criar subprocesso, segundo as regras abaixo:
@@ -1268,9 +1283,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeSolicitarAssinatura(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExDocumento doc) {
-		
-		if (!doc.isFinalizado())
-			return false;
 		
 		if (doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha())
 			return false;
@@ -1634,11 +1646,16 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			if (mobPai == null)
 				return false;
 		}
+		
+		ExMobil mobUlt = mobPai;
+		if (mobPai.isApensado()) {			
+			mobUlt = mobPai.getGrandeMestre();			
+		}
 
 		if (mob.isEmTransito()
 				|| mob.isCancelada()
 				|| (!mob.isJuntadoExterno() && !podeMovimentar(titular,
-						lotaTitular, mobPai)) || (!mob.isJuntado()))
+						lotaTitular, mobUlt)) || (!mob.isJuntado()))
 			return false;
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
@@ -3885,6 +3902,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * <li>Móbil tem de ser via ou volume</li>
 	 * <li>A última movimentação não cancelada do móbil não pode ser
 	 * transferência externa <b>(regra falha, pois pode ser feita anotação)</b></li>
+	 * e não pode ser Recebimento <b>(corrige recebimentos duplicados)</b></li>
 	 * <li>Móbil não pode estar marcado como "Despacho pendente de assinatura",
 	 * ou seja, tendo havido despacho ou despacho com transferência, este
 	 * precisa ter sido assinado para haver transferência</li>
@@ -3914,7 +3932,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (ultMov == null)
 			return false;
 		if (ultMov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA
-				|| ultMov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA)
+				|| ultMov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA
+				|| ultMov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO )
 			return false;
 		// Verifica se o despacho já está assinado
 		for (CpMarca marca : mob.getExMarcaSet()) {

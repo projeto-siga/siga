@@ -59,7 +59,7 @@ function sbmt(offset) {
 		
 		<h3 class="gt-table-head"><fmt:message key="usuario.lotacoes"/> cadastradas</h3>
 		<table border="0" class="table table-sm table-striped">
-			<thead class="thead-dark">
+			<thead class="${thead_color}">
 				<tr>
 					<th align="left">Nome</th>
 					<th align="left">Sigla</th>

@@ -16,7 +16,7 @@
 					<div class="col-sm">
 						<h6>Substituições cadastradas</h5>
 						<table border="0" class="gt-table table table-sm table-hover">
-							<thead class="thead-dark">
+							<thead class="${thead_color}">
 								<tr>
 									<th align="left">Titular</th>
 									<th align="left">Substituto</th>
@@ -69,7 +69,7 @@
 							<div class="col-sm">
 								<h6>Substituições cadastradas para o Titular</h6>
 								<table border="0" class="gt-table table table-sm table-hover">
-									<thead class="thead-dark">
+									<thead class="${thead_color}">
 
 										<tr>
 											<th align="left">Titular</th>

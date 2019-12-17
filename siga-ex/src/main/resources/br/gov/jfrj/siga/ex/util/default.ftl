@@ -969,9 +969,10 @@ LINHA  VARIÁVEL / CONTEÚDO
   <!-- /topico -->
 [/#macro]
 
-[#macro grupo titulo="" largura=0 depende="" esconder=false]
+[#macro grupo titulo="" largura=0 depende="" esconder=false atts={}]
+    [#if !esconder]
     [#local id = (depende=="")?string("", "div" + depende)] 
-    [@div id=id depende=depende suprimirIndependente=true esconder=esconder]
+    [@div id=id depende=depende suprimirIndependente=true atts=atts]
         [#if largura != 0]
             [#if !grupoLarguraTotal??]
                 [#assign grupoLarguraTotal = 0/]
@@ -1000,17 +1001,21 @@ LINHA  VARIÁVEL / CONTEÚDO
             [/#if]
         [/#if]
     [/@div]
+	 [#else]
+        [#nested]
+    [/#if]
 [/#macro]
 
-[#macro div id="" depende="" suprimirIndependente=false esconder=false]
+[#macro div id="" depende="" suprimirIndependente=false atts={}]
+	[#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
     [#if suprimirIndependente || depende != ""]
-        <div class="entrevista-grupo"[#if esconder] style="display: none"[/#if][#if id != ""] id="${id}"[/#if][#if depende != ""] depende=";${depende};"[/#if]>[#if id != ""]<!--ajax:${id}-->[/#if][#nested][#if id != ""]<!--/ajax:${id}-->[/#if]</div>
+        <div[#if id != ""] id="${id}"[/#if][#if depende != ""] depende=";${depende};"[/#if] ${attsHtml}>[#if id != ""]<!--ajax:${id}-->[/#if][#nested][#if id != ""]<!--/ajax:${id}-->[/#if]</div>
     [#else]
     [#nested]
     [/#if]
 [/#macro]
 
-[#macro texto var titulo="" largura="" maxcaracteres="" idAjax="" reler="" relertab="" obrigatorio="nao" default=""]
+[#macro texto var titulo="" largura="" maxcaracteres="" idAjax="" reler="" relertab="" obrigatorio="nao" default="" atts={} onkeyup="" ]
     [#if reler == 'ajax']
         [#local jreler = " onchange=\"javascript: sbmt('" + idAjax + "');\""]
     [/#if]
@@ -1055,8 +1060,9 @@ LINHA  VARIÁVEL / CONTEÚDO
     <span style="${negrito!""};${vermelho!""}">${titulo}:</span>
     [/#if]
     
+	 [#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
     [#if !gerar_formulario!false]
-    <input type="text" name="${var}" value="${v}" ${jreler!""}${jrelertab!""}${jlargura!""}${jmaxcaracteres!""} class="form-control" />
+       <input type="text" name="${var}" value="${v}" ${jreler!""}${jrelertab!""}${jlargura!""}${jmaxcaracteres!""} ${attsHtml} onkeyup="${onkeyup}" class="form-control"/>
     [#else]
     <span class="valor">${v}</span>
     [/#if]
@@ -1111,7 +1117,7 @@ LINHA  VARIÁVEL / CONTEÚDO
     [/#if]
 [/#macro]
 
-[#macro radio titulo var reler=false idAjax="" default="Não" valor="Sim" onclique=""]
+[#macro radio titulo var reler=false idAjax="" default="Não" valor="Sim" onclique="" atts={}]
     [#if reler == true && idAjax != ""]
             [#local jreler = " sbmt('" + idAjax + "');"]
     [#elseif reler == true]
@@ -1122,7 +1128,7 @@ LINHA  VARIÁVEL / CONTEÚDO
 
     [#if !.vars["temRadio_"+var]??]
         <input type="hidden" name="vars" value="${var}" />
-        <input type="hidden" id="${var}" name="${var}" value="" />
+        <input type="hidden" id="${var}" name="${var}" value="${v}" />
         [#assign inlineTemplate = ["[#assign temRadio_${var} = true/]", "assignInlineTemplate"]?interpret /]
         [@inlineTemplate/]
     [/#if]
@@ -1130,11 +1136,12 @@ LINHA  VARIÁVEL / CONTEÚDO
         <script>document.getElementById('${var}').value = '${valor}';</script>
     [/#if]
 
+	[#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
     [#if !gerar_formulario!false]
     <table><tr><td>
             <input type="radio" name="${var}_chk" value="${valor}" [#if v == valor]checked[/#if]
         onclick="javascript: if (this.checked) document.getElementById('${var}').value = '${valor}'; 
-                ${onclique}; ${jreler!};" /> 
+                ${onclique}; ${jreler!};" ${attsHtml} /> 
     </td><td>${titulo}</td></tr></table>
     [#else]
     <span class="valor">${v}</span>
@@ -1359,25 +1366,74 @@ window.onload = function(){
 [/#macro]
 
 
-[#macro selecao var titulo opcoes reler=false idAjax="" onclick="" pontuacao=":"]
+[#macro selecao var titulo opcoes reler=false idAjax="" onclick="" pontuacao=":" atts={}]
     [#local l=opcoes?split(";")]
     [#if .vars[var]??]
         [#local v = .vars[var]/]
     [#else]
         [#local v = l?first/]
-                [#assign inlineTemplate = ["[#assign ${var} = v/]", "assignInlineTemplate"]?interpret /]
-                [@inlineTemplate/]
+        [#--assign .vars[var] = v / --]
+        		[#--Edson: voltei a comentar este trecho, pois não identifiquei pra que serve, e está dando erro com o Angular --]
+               	 [#assign inlineTemplate = ["[#assign ${var} = v/]", "assignInlineTemplate"]?interpret /]
+              	[@inlineTemplate/] 
         [/#if]
     
         ${titulo!""}[#if titulo != ""]${pontuacao!""}[/#if]
 
+	[#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
+
     [#if !gerar_formulario!false]
         <input type="hidden" name="vars" value="${var}" />
-        <select name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] onclick="${onclick}" class="form-control">
+        <select name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] onclick="${onclick}" class="form-control" ${attsHtml}>
                     [#list l as opcao]
                         <option[#if v == opcao] selected[/#if] value="${opcao}">${opcao}</option><br/>
             [/#list]
         </select>
+    [#else]
+        <span class="valor">${v}</span>
+    [/#if]
+[/#macro]
+
+
+[#macro selecaocomposta var titulo opcoes reler=false idAjax="" onclick="" pontuacao=":" mostrarSelecione=false multiplo=false tamanho="1" disabled=false default=""]
+    [#local l=opcoes?split(";")]
+    [#if .vars[var]??]
+    	[#assign estamosRelendo = true /]
+        [#local v = .vars[var]/]
+    [#else]
+    	[#assign estamosRelendo = false /]
+        [#local v = l?first/]
+		[#assign inlineTemplate = ["[#assign ${var} = v/]", "assignInlineTemplate"]?interpret /]
+		[@inlineTemplate/]
+	[/#if]
+    
+	${titulo!""}[#if titulo != ""]${pontuacao!""}[/#if]
+
+    [#if !gerar_formulario!false]
+        <input type="hidden" name="vars" value="${var}" />
+        [#assign hiddens = "" /]
+        <select name="${var}" [#if reler] dados="${v}" onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] onclick="${onclick}"[#if multiplo] multiple size="${tamanho}"[/#if][#if disabled] disabled[/#if]>
+        [#if mostrarSelecione && !estamosRelendo]<option>Selecione...</option>[/#if]
+			[#list l as opcao]
+            	[#local tupla=opcao?split("*") /]
+				[#local opcaoValue = tupla?first /]
+				[#local opcaoOption = tupla?last /]
+				
+                [#assign selecionado = false /]
+                [#if !(v?contains(",")) && (opcaoValue == v || opcaoValue == default)]
+                	[#assign selecionado = true /]
+                [/#if]
+				[#if v?contains(",") && (v?contains(",${opcaoValue},") || v?starts_with("${opcaoValue},") || v?ends_with(",${opcaoValue}"))]
+                	[#assign selecionado = true /]
+                [/#if]
+                <option[#if selecionado] selected[/#if] value="${opcaoValue}">${opcaoOption}</option><br/>
+                [#assign hiddens = hiddens + "<input type=\"hidden\" name=\"vars\" value=\"${var}_${opcaoValue}\" /><input type=\"hidden\" name=\"${var}_${opcaoValue}\" value=\"${opcaoOption}\" />" /]
+            [/#list]
+        </select>
+        [#if disabled]
+        	<input type="hidden" name="${var}" value="${v}" />
+        [/#if]
+        ${hiddens}
     [#else]
         <span class="valor">${v}</span>
     [/#if]
@@ -1418,6 +1474,44 @@ window.onload = function(){
         </div>
 [/#macro]
 
+[#macro memocomposto var titulo colunas linhas reler=false obrigatorio=false default="" forceDefault=false disabled=false]
+        [#if reler == true]
+                [#local jreler = " onchange=\"javascript: sbmt();\""]
+        [/#if]
+
+        [#if forceDefault == true]
+        	[#local v = default! ]
+        [#else]
+        	[#local v = .vars[var]!default]
+    	[/#if]
+
+        <input type="hidden" name="vars" value="${var}" />
+
+        [#if (alerta!"Não") = 'Sim' && v = ""]
+    		[#list obrigatorios?split(",") as campo]
+                [#if campo == var]
+                	[#local vermelho = "color:red"]
+                [/#if]
+             [/#list]
+        [/#if]
+
+        [#if obrigatorio]
+            [#local negrito = "font-weight:bold"]
+            <input type="hidden" name="obrigatorios" value="${var}" />
+        [/#if]
+
+        <div style="padding-top:5px;">
+                [#if titulo != ""] 
+                        <span style="${negrito!""};${vermelho!""}">${titulo}:<br/></span>
+                [/#if]
+
+                [#if !gerar_formulario!false]
+                    <textarea cols="${colunas}" rows="${linhas}" name="${var}" ${jreler!""} style="width:100%;"[#if disabled == true] readonly[/#if]>${v}</textarea>
+                [#else]
+                    <span class="valor">${v}</span>
+                [/#if]
+        </div>
+[/#macro]
 [#macro XStandard nome="" conteudo=""]
         <script type="text/javascript" language="Javascript1.1">
 
@@ -1809,7 +1903,7 @@ Pede deferimento.</span><br/><br/><br/>
     [@selecionavel tipo="lotacao" titulo=titulo var=var reler=reler relertab=relertab paramList=paramList obrigatorio=obrigatorio /]
 [/#macro]
 
-[#macro data titulo var reler=false idAjax="" default="" obrigatorio=false]
+[#macro data titulo var reler=false idAjax="" default="" onSelect="" obrigatorio=false atts={} ]
     [#if reler == true && idAjax != ""]
             [#local jreler = " sbmt('" + idAjax + "');\""]
     [#elseif reler == true]
@@ -1843,10 +1937,22 @@ Pede deferimento.</span><br/><br/><br/>
     [#if titulo?? && titulo != ""]<span style="${negrito!};${vermelho!}">${titulo}</span>[/#if]
     [#if !gerar_formulario!false]
         <input type="hidden" name="vars" value="${var}" />
-<input type="text" name="${var}" value="${v}" size="10" maxlength="10" onmousedown="$('.campoData').datepicker($.datepicker.regional['pt-BR']);" onchange="javascript:verifica_data(this, true);${jreler!}" class="campoData" />
+        
+ 
+ [#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
+<input type="text" id ="${var}" name="${var}" value="${v}" size="10" maxlength="10" onblur="javascript:verifica_data(this[#if !obrigatorio], 'Sim'[/#if]);${jreler!}" class="campoData" ${attsHtml} />
     [#else]
     <span class="valor">${v}</span>
     [/#if]
+    <script>
+    	$('.campoData').mousedown(function() {
+  			$('.campoData').datepicker({
+            	onSelect: function(){
+                    ${onSelect}
+				}
+			});
+		});
+	</script>
 [/#macro]
 
 [#macro letra tamanho]
@@ -1943,7 +2049,7 @@ Pede deferimento.</span><br/><br/><br/>
     <!-- FIM SUBSCRITOR [#nested/] -->
 [/#macro]
 
-[#macro cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho=true]
+[#macro cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho=""]
 <table style="float:none; clear:both;" width="100%" align="left" border="0" cellpadding="0"
     cellspacing="0" bgcolor="#FFFFFF">
     <tr bgcolor="#FFFFFF">
@@ -1964,7 +2070,7 @@ Pede deferimento.</span><br/><br/><br/>
                 </td>
             </tr>
             [/#if]
-            [#if orgaoCabecalho]
+            [#if orgaoCabecalho??]
 	            <tr>
 	                <td width="100%" align="center">
 	                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 8pt;">
@@ -2282,13 +2388,13 @@ Pede deferimento.</span><br/><br/><br/>
                        [#if !numeracaoEsquerda]
 		                	<td align="right">
 		                    	[#if !omitirCodigo]                           
-		                           <p style="font-family:Arial;font-weight:bold;font-size:11pt;">${tipo} N&ordm; ${(doc.codigo)!}</p>
+		                           <p style="font-family:Arial;font-weight:bold;font-size:11pt;">${tipo} SIGA N&ordm; ${(doc.codigo)!}</p>
 		                        [/#if]
 		                    </td>
 	                    [#else]
 	                    	<td align="left">
 		                         [#if !omitirCodigo]                           
-		                           <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br><br>${tipo} N&ordm; ${(doc.codigo)!}</p>
+		                           <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br><br>${tipo} SIGA N&ordm; ${(doc.codigo)!}</p>
 		                         [/#if]
 		                    </td>
 	                    [/#if]
@@ -2342,7 +2448,7 @@ Pede deferimento.</span><br/><br/><br/>
               <tr>
               <td align="left">
               [#if !omitirCodigo]
-                    <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br/>[@numeroDJE]${tipo}[#if tipo != ""] N&ordm; ${(doc.codigo)!} [/#if] [/@numeroDJE]</p>
+                    <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br/>[@numeroDJE]${tipo}[#if tipo != ""] SIGA N&ordm; ${(doc.codigo)!} [/#if] [/@numeroDJE]</p>
               [/#if]
               </td>
               </tr>
@@ -2357,7 +2463,7 @@ Pede deferimento.</span><br/><br/><br/>
               <tr>
               <td align="center">
                   <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br/>
-                  [@numeroDJE] [#if tipo != ""] ${tipo} N&ordm; ${(doc.codigo)!}[/#if] [/@numeroDJE]
+                  [@numeroDJE] [#if tipo != ""] ${tipo} SIGA N&ordm; ${(doc.codigo)!}[/#if] [/@numeroDJE]
                   [#if !dataAntesDaAssinatura && doc?? && doc.dtD??] de ${doc.dtD} de ${doc.dtMMMM} de ${doc.dtYYYY}[/#if]</p>
               </td>
               </tr>
@@ -2437,7 +2543,7 @@ Pede deferimento.</span><br/><br/><br/>
 <table align="center" width="60%" border="1" cellspacing="1" bgcolor="#000000">
 	<tr>
 		<td width="30%" bgcolor="#FFFFFF" align="center"><br />
-		<b>Processo N&ordm;</b><br />
+		<b>Processo SIGA N&ordm;</b><br />
 		<br /></td>
 	</tr>
 	<tr>
@@ -3101,6 +3207,14 @@ Pede deferimento.</span><br/><br/><br/>
 
 [/#macro]
 
+[#macro extensaoBuscaTextualbs4]
+	<div class="form-row">
+		<div class="form-group col-md-6">
+			<label for="conteudo">Conte&uacute;do</label>
+	        <input type="text" id="fullText" value="${valFullText}" size="80" name="fullText" class="form-control" />
+		</div>
+	</div>
+[/#macro]
 
 [#macro extensaoEditor nomeExtensao="" conteudoExtensao=""]
           [#if nomeExtensao == ""]
@@ -3697,7 +3811,7 @@ Pede deferimento.</span><br/><br/><br/>
               <tr>
               <td align="left">
               [#if !omitirCodigo]
-                <p style="font-family:Arial;align:center;font-weight:bold;font-size:11pt;"><br/>[@numeroDJE][#if tipo != ""] ${tipo} N&ordm; ${(doc.codigo)!} [/#if] [/@numeroDJE]</p>
+                <p style="font-family:Arial;align:center;font-weight:bold;font-size:11pt;"><br/>[@numeroDJE][#if tipo != ""] ${tipo} SIGA N&ordm; ${(doc.codigo)!} [/#if] [/@numeroDJE]</p>
               [/#if]
               </td>
               </tr>
@@ -3712,7 +3826,7 @@ Pede deferimento.</span><br/><br/><br/>
               <tr>
               <td align="center">
                   <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br/>
-                  [@numeroDJE] [#if tipo != ""] ${tipo} N&ordm; ${(doc.codigo)!} [/#if] [/@numeroDJE]
+                  [@numeroDJE] [#if tipo != ""] ${tipo} SIGA N&ordm; ${(doc.codigo)!} [/#if] [/@numeroDJE]
                   [#if !dataAntesDaAssinatura && doc?? && doc.dtD??] de ${doc.dtD!} de ${doc.dtMMMM!} de ${doc.dtYYYY!}[/#if]</p>
               </td>
               </tr>
@@ -3816,7 +3930,7 @@ Pede deferimento.</span><br/><br/><br/>
 
     [#if !gerar_formulario!false]
         <input type="hidden" name="vars" value="${var}" />
-		<input type="text" name="${var}" value="${v}" size="6" maxlength="5" onblur="javascript:verifica_hora(this, 'Sim');${jreler!}" class="form-control"/>
+		<input type="text" name="${var}" value="${v}" size="6" maxlength="5" onblur="javascript:verifica_hora(this, 'Sim');${jreler!}" class="form-control" />
     [#else]
 		<span class="valor">${v}</span>
     [/#if]

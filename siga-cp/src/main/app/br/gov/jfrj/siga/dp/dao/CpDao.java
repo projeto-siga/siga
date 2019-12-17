@@ -1527,7 +1527,7 @@ public class CpDao extends ModeloDao {
 			// Cache was disabled because it would interfere with the
 			// "change password" action.
 			qry.setCacheable(true);
-			qry.setCacheRegion(CACHE_QUERY_SECONDS);
+			qry.setCacheRegion(CACHE_QUERY_SUBSTITUICAO);
 			final List<CpIdentidade> lista = (List<CpIdentidade>) qry.list();
 			if (lista.size() == 0) {
 				throw new AplicacaoException(
@@ -2022,6 +2022,10 @@ public class CpDao extends ModeloDao {
 			sfCpDao.evict(DpVisualizacao.class);
 			sfCpDao.evictQueries(CACHE_QUERY_SUBSTITUICAO);
 			
+		}
+		if (entidade instanceof CpIdentidade) {
+			sfCpDao.evict(CpIdentidade.class);
+			sfCpDao.evictQueries(CACHE_QUERY_SUBSTITUICAO);
 		}
 	}
 
@@ -2637,6 +2641,21 @@ public class CpDao extends ModeloDao {
 			qry.setCacheRegion(CACHE_CORPORATIVO);
 			final DpPessoa pes = (DpPessoa) qry.uniqueResult();
 			return pes;
+		} catch (final IllegalArgumentException e) {
+			throw e;
+
+		} catch (final Exception e) {
+			return null;
+		}
+	}
+	
+	public CpIdentidade obterIdentidadeAtual(final CpIdentidade u) {
+		try {
+			final Query qry = getSessao().getNamedQuery(
+					"consultarIdentidadeAtualPelaInicial");
+			qry.setLong("idIni", u.getHisIdIni());
+			final CpIdentidade id = (CpIdentidade) qry.uniqueResult();
+			return id;
 		} catch (final IllegalArgumentException e) {
 			throw e;
 

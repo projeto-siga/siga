@@ -35,7 +35,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -1651,7 +1650,7 @@ public class ExDocumentoController extends ExController {
 				if (numPaginas == null || d.getArquivoComStamp() == null) {
 					throw new AplicacaoException(
 							MessageFormat
-									.format("O arquivo {0} está corrompido. Favor gera-lo novamente antes de anexar.",
+									.format("O arquivo {0} está corrompido ou protegido por senha. Favor gera-lo novamente antes de anexar.",
 											arquivo.getFileName()));
 				}
 
@@ -1874,6 +1873,30 @@ public class ExDocumentoController extends ExController {
 		result.include("mob", exDocumentoDto.getMob());
 		result.include("titularSel", new DpPessoaSelecao());
 		result.include("descrMov", exDocumentoDto.getDescrMov());
+		result.include("doc", exDocumentoDto.getDoc());
+	}
+	
+	@Get("/app/expediente/doc/gerarProtocolo")
+	public void gerarProtocolo(final String sigla) {
+		assertAcesso("");
+
+		final ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
+		exDocumentoDto.setSigla(sigla);
+		buscarDocumento(false, exDocumentoDto);
+		
+		final Ex ex = Ex.getInstance();
+		final ExBL exBL = ex.getBL();
+		
+		if(exDocumentoDto.getDoc().getChaveDoc() == null) {
+			try {
+				exBL.gerarProtocolo(exDocumentoDto.getDoc(), getCadastrante(), getLotaCadastrante());
+			} catch (Exception e) {
+				throw new AplicacaoException(
+						"Ocorreu um erro ao gerar protocolo.");
+			}
+		}
+		
+		result.include("sigla", sigla);
 		result.include("doc", exDocumentoDto.getDoc());
 	}
 

@@ -15,7 +15,7 @@
 			<div class="card-header"><h5>Configuração de Pessoas a ${dscTpConfiguracao}</h5></div>
 			<div class="card-body">		
 				<table border="0" class="table table-sm table-striped">
-					<thead class="thead-dark">
+					<thead class="${thead_color}">
 					<th>Matrícula</th>
 					<th>Nome</th>
 					<c:forEach var="servico" items="${cpServicosDisponiveis}">						

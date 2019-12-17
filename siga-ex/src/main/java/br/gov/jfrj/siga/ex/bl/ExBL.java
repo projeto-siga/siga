@@ -19,8 +19,6 @@
 package br.gov.jfrj.siga.ex.bl;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
@@ -53,7 +51,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.axis.encoding.Base64;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Criteria;
 import org.hibernate.ObjectNotFoundException;
@@ -123,7 +120,6 @@ import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.ExDocumentoNumeracao;
 import br.gov.jfrj.siga.ex.ExEditalEliminacao;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExMarca;
@@ -1571,6 +1567,21 @@ public class ExBL extends CpBL {
 			return true;
 		return false;
 	}
+	
+	public boolean deveJuntarAutomaticamente(DpPessoa titular, DpLotacao lotaTitular, ExDocumento doc) {
+		final Long idSit = Ex
+				.getInstance()
+				.getConf()
+				.buscaSituacao(doc.getExModelo(),
+						doc.getExTipoDocumento(),
+						titular, lotaTitular,
+						CpTipoConfiguracao.TIPO_CONFIG_JUNTADA_AUTOMATICA)
+				.getIdSitConfiguracao();
+
+		if (idSit == ExSituacaoConfiguracao.SITUACAO_OBRIGATORIO || idSit == ExSituacaoConfiguracao.SITUACAO_DEFAULT)
+			return true;
+		return false;
+	}
 
 	public String assinarDocumento(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
@@ -1588,7 +1599,8 @@ public class ExBL extends CpBL {
 					"Não é possível assinar o documento pois a descrição está vazia. Edite-o e informe uma descrição.");
 
 		if (!doc.isFinalizado())
-			finalizar(cadastrante, lotaCadastrante, doc);
+			finalizar(cadastrante, lotaCadastrante, doc);	
+		
 		
 		boolean fPreviamenteAssinado = !doc.isPendenteDeAssinatura();
 
@@ -1627,7 +1639,7 @@ public class ExBL extends CpBL {
 					throw new Exception(
 							"BluC não conseguiu produzir o envelope AD-RB. "
 									+ enveloperesp.getErrormsg());
-				cms = Base64.decode(enveloperesp.getEnvelope());
+				cms = bluc.b642bytearray(enveloperesp.getEnvelope());
 			} else {
 				cms = pkcs7;
 			}
@@ -1757,6 +1769,13 @@ public class ExBL extends CpBL {
 					"Só é permitida a assinatura digital do subscritor e dos cossignatários do documento",
 					0, e);
 		}
+		
+		if (usuarioDoToken != null) {
+			if(doc.isAssinadoPelaPessoaComTokenOuSenha(usuarioDoToken))
+				throw new AplicacaoException(
+						"Documento já assinado pelo(a) subscritor(a) ou cossignatário(a).");
+		}
+		
 
 		String s = null;
 		final ExMovimentacao mov;
@@ -1792,7 +1811,10 @@ public class ExBL extends CpBL {
 			// verifica se o volume está encerrado, se estiver procura o último
 			// volume para juntar.
 
-			if (doc.getExMobilPai() != null && (juntar == null || juntar)) {
+			if (juntar == null)
+				juntar = deveJuntarAutomaticamente(cadastrante, lotaCadastrante, doc);
+			
+			if (doc.getExMobilPai() != null && juntar) {
 				if (doc.getExMobilPai().getDoc().isProcesso()
 						&& doc.getExMobilPai().isVolumeEncerrado()) {
 					doc.setExMobilPai(doc.getExMobilPai().doc()
@@ -1876,6 +1898,14 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("O usuário não está cadastrado.");
 
 		subscritor = id.getDpPessoa().getPessoaAtual();
+		
+		if (subscritor != null) {
+			if(doc.isAssinadoPelaPessoaComTokenOuSenha(subscritor))
+				throw new AplicacaoException(
+						"Documento já assinado pelo(a) subscritor(a) ou cossignatário(a).");
+		}
+		
+
 
 		if (validarSenha) {
 			if (senhaSubscritor == null || senhaSubscritor.isEmpty())
@@ -2006,7 +2036,10 @@ public class ExBL extends CpBL {
 
 			// Verifica se o documento possui documento pai e faz a juntada
 			// automática.
-			if (doc.getExMobilPai() != null && (juntar == null || juntar)) {
+			if (juntar == null)
+				juntar = deveJuntarAutomaticamente(cadastrante, lotaCadastrante, doc);
+			
+			if (doc.getExMobilPai() != null && juntar) {
 				juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc, dtMov,
 						subscritor, titular, mov);
 			}
@@ -2276,20 +2309,7 @@ public class ExBL extends CpBL {
 		// dao().excluir(mov);
 		// }
 	}
-
-	/**
-	 * @param sFileName
-	 * @param data
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	private void writeB64File(String sFileName, final byte[] data)
-			throws FileNotFoundException, IOException {
-		try (FileOutputStream fout2 = new FileOutputStream(sFileName)) {
-			fout2.write(Base64.encode(data).getBytes());
-		}
-	}
-
+	
 	public void assinarMovimentacao(DpPessoa cadastrante,
 			DpLotacao lotaCadastrante, ExMovimentacao movAlvo,
 			final Date dtMov, final byte[] pkcs7, final byte[] certificado,
@@ -2338,7 +2358,7 @@ public class ExBL extends CpBL {
 					throw new Exception(
 							"BluC não conseguiu produzir o envelope AD-RB. "
 									+ enveloperesp.getErrormsg());
-				cms = Base64.decode(enveloperesp.getEnvelope());
+				cms = bluc.b642bytearray(enveloperesp.getEnvelope());
 			} else {
 				cms = pkcs7;
 			}
@@ -2577,8 +2597,8 @@ public class ExBL extends CpBL {
 
 			if (mov.getExNivelAcesso() == null)
 				mov.setExNivelAcesso(ultMov.getExNivelAcesso());
-
-			if (ultMov.getExTipoMovimentacao().getId() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO) {
+			
+			if(!mob.sofreuMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO, ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA)) {				
 				mov.setExMovimentacaoRef(mov.getExMobil()
 						.getUltimaMovimentacao(
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA));
@@ -2588,13 +2608,19 @@ public class ExBL extends CpBL {
 				if (mobPai.isArquivado())
 					throw new AplicacaoException(
 							"não é possível fazer o desentranhamento porque o documento ao qual este está juntado encontra-se arquivado.");
-
-				final ExMovimentacao ultMovPai = mobPai.getUltimaMovimentacao();
+				
+				
+				ExMovimentacao ultMovDoc = null; 
+				if (mobPai.isApensado()) {
+					ultMovDoc = (mobPai.getGrandeMestre().getUltimaMovimentacaoNaoCancelada());
+				} else {
+					ultMovDoc = mobPai.getUltimaMovimentacaoNaoCancelada();
+				}	
 
 				mov.setExMobilRef(mobPai);
 
-				mov.setLotaResp(ultMovPai.getLotaResp());
-				mov.setResp(ultMovPai.getResp());
+				mov.setLotaResp(ultMovDoc.getLotaResp());
+				mov.setResp(ultMovDoc.getResp());
 				
 				if (mobPai.getMobilPrincipal().isNumeracaoUnicaAutomatica()) {
 					List<ExArquivoNumerado> ans = mov.getExMobil()
@@ -3257,6 +3283,8 @@ public class ExBL extends CpBL {
 
 			doc.setNumPaginas(doc.getContarNumeroDePaginas());
 			dao().gravar(doc);
+			
+			ContextoPersistencia.flush();
 
 			if (doc.getExFormaDocumento().getExTipoFormaDoc().isExpediente()) {
 				for (final ExVia via : setVias) {
@@ -7223,7 +7251,7 @@ public class ExBL extends CpBL {
 			String s = null;
 			byte ab[] = br.gov.jfrj.siga.cp.util.Blob.toByteArray(src);
 			if (ab != null)
-				s = Base64.encode(ab);
+				s = BlucService.bytearray2b64(ab);
 			return new JsonPrimitive(s);
 		}
 
@@ -7231,7 +7259,7 @@ public class ExBL extends CpBL {
 				JsonDeserializationContext context) throws JsonParseException {
 			String s = json.getAsString();
 			if (s != null) {
-				byte ab[] = Base64.decode(s);
+				byte ab[] = BlucService.b642bytearray(s);
 				return HibernateUtil.getSessao().getLobHelper().createBlob(ab);
 			}
 			return null;
@@ -7512,5 +7540,26 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao revisar documento.", 0, e);
 		}
+	}
+	
+	public void gerarProtocolo(ExDocumento doc, DpPessoa cadastrante, DpLotacao lotacao) {
+		try {
+			iniciarAlteracao();
+			doc.setChaveDoc(GeraMessageDigest.geraSenha(10));
+			dao().gravar(doc);
+			ContextoPersistencia.flushTransaction();
+			final ExMovimentacao mov = criarNovaMovimentacao(
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO,
+					cadastrante, lotacao, doc.getMobilGeral(), null, cadastrante,
+					null, null, null, null);
+
+			gravarMovimentacao(mov);
+			concluirAlteracao(doc.getMobilGeral());
+
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Ocorreu um erro ao gerar protocolo.", 0, e);
+		}
+
 	}
 }

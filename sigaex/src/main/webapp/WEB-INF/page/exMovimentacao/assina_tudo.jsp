@@ -102,7 +102,7 @@
 			<h5>Assinaveis</h5>
 
 			<table class="table table-hover table-striped">
-				<thead class="thead-dark align-middle text-center">
+				<thead class="${thead_color} align-middle text-center">
 					<tr>
 						<th class="text-left"><fmt:message key="documento.assinar"/></th>
 						<th class="text-center">Auten&shy;ticar</th>

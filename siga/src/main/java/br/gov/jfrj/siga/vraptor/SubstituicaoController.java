@@ -4,10 +4,14 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
@@ -16,8 +20,8 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -124,7 +128,8 @@ public class SubstituicaoController extends SigaController {
 	
 	@Get("/app/substituicao/editar")
 	public void edita(Long id) throws Exception {
-		String buscarFechadas = "buscarFechadas="+podeCadastrarQualquerSubstituicao();
+		//String buscarFechadas = "buscarFechadas="+podeCadastrarQualquerSubstituicao();
+		String buscarFechadas = "buscarFechadas=true";
 		result.include("strBuscarFechadas", buscarFechadas);
 		
 		if (id != null) {
@@ -191,7 +196,7 @@ public class SubstituicaoController extends SigaController {
 					  ) throws Exception {
 		
 		
-		Long lotacaoPai;
+		Long lotacaoPai, lotacaoAvo = null, lotacaoIniPai, lotacaoIniAvo = null;	
 
 		DpSubstituicao subst = new DpSubstituicao();
 		
@@ -222,12 +227,20 @@ public class SubstituicaoController extends SigaController {
 					throw new AplicacaoException("A lotação titular não foi informada");
 				
 				subst.setLotaTitular(dao().consultar(this.lotaTitularSel.getId(), DpLotacao.class, false));
+				lotacaoIniPai = subst.getLotaTitular().getIdLotacaoIniPai();
 				lotacaoPai = subst.getLotaTitular().getIdLotacaoPai();
+				if(lotacaoPai != null)
+					lotacaoAvo = subst.getLotaTitular().getLotacaoPai().getIdLotacaoPai();
+				if(lotacaoIniPai != null)
+					lotacaoIniAvo = subst.getLotaTitular().getLotacaoPai().getIdLotacaoIniPai();
 				
 				if (!subst.getLotaTitular().getIdLotacao().equals(getCadastrante().getIdLotacao()) 
 						&& !podeCadastrarQualquerSubstituicao()) 
-					if ((lotacaoPai == null) || !(lotacaoPai.equals(getCadastrante().getIdLotacao())))
-						throw new AplicacaoException("Lotação titular não permitida. Apenas um usuário da própria lotação ou da lotação imediatamente superior pode defini-la como titular.");
+					if (!(!(lotacaoIniPai == null) && (lotacaoIniPai.equals(getCadastrante().getIdLotacaoIni())) ||
+						  !(lotacaoIniAvo == null) && (lotacaoIniAvo.equals(getCadastrante().getIdLotacaoIni())) || 
+						  !(lotacaoPai == null) && (lotacaoPai.equals(getCadastrante().getIdLotacao())) ||
+						  !(lotacaoAvo == null) && (lotacaoAvo.equals(getCadastrante().getIdLotacao()))))
+						throw new AplicacaoException("Lotação titular não permitida. Apenas usuários da própria lotação ou lotados até 2 lotações superiores na hierarquia podem defini-la como titular.");
 				
 			}
 			if (tipoSubstituto == 1) {
@@ -265,9 +278,23 @@ public class SubstituicaoController extends SigaController {
 				if (!Data.dataDentroSeculo21(subst.getDtIniSubst()))
 					throw new AplicacaoException("Data inicial inválida, deve estar entre o ano 2000 e ano 2100");
 			}
+			
+			if (subst.getDtFimSubst() == null) {
+				throw new AplicacaoException("Não é possível informar uma data final nula.");
 				
-			if(subst.getDtFimSubst() != null && !Data.dataDentroSeculo21(subst.getDtFimSubst()))
-				throw new AplicacaoException("Data final inválida, deve estar entre o ano 2000 e ano 2100");	
+			} else if (getIntervaloDeDiasEntreDatas(subst.getDtIniSubst(), subst.getDtFimSubst()) < 0) {
+				throw new AplicacaoException("Não é possível informar uma data final anterior a data inicial.");
+			} else {
+				Calendar c = Calendar.getInstance();
+				c.setTime(subst.getDtIniSubst());
+				c.add(Calendar.YEAR, 2);  
+				
+				if (c.getTime().compareTo(subst.getDtFimSubst()) < 0)  {
+					throw new AplicacaoException("Não é possível cadastrar período de substituição maior que 2 anos.");
+			} else if (subst.getDtFimSubst() != null && !Data.dataDentroSeculo21(subst.getDtFimSubst()))
+					throw new AplicacaoException("Data final inválida, deve estar entre o ano 2000 e ano 2100");
+			}				 
+	
 
 			subst.setDtIniRegistro(new Date());
 
@@ -279,11 +306,52 @@ public class SubstituicaoController extends SigaController {
 			}
 
 			subst = dao().gravar(subst);
-
+			
 			if (subst.getIdRegistroInicial() == null)
 				subst.setIdRegistroInicial(subst.getIdSubstituicao());
 
 			subst = dao().gravar(subst);
+			
+			Set<DpPessoa> pessoasParaEnviarEmail = new HashSet<DpPessoa>();
+			
+			String textoEmail = "Informamos que a matrícula: "  + getCadastrante().getSesbPessoa() + getCadastrante().getMatricula()
+			        + " - " + getCadastrante().getNomePessoa()  
+					+ " cadastrou uma substituição da ";
+					
+						
+					if (tipoSubstituto == 1) {
+						textoEmail = textoEmail + " matrícula: " + subst.getSubstituto().getSesbPessoa() + subst.getSubstituto().getMatricula() + " - " + subst.getSubstituto().getNomePessoa();
+						pessoasParaEnviarEmail.add(subst.getSubstituto());
+						
+					} else {
+						textoEmail = textoEmail + " lotação: " + subst.getLotaSubstituto().getSigla() + " - " + subst.getLotaSubstituto().getNomeLotacao();
+						pessoasParaEnviarEmail.addAll(subst.getLotaSubstituto().getDpPessoaLotadosSet());
+					}
+					
+					textoEmail = textoEmail + " para";
+					
+					if (tipoTitular ==1) {
+						textoEmail = textoEmail + " matricula: " + subst.getTitular().getSesbPessoa() + subst.getTitular().getMatricula() + " - " + subst.getTitular().getNomePessoa();;
+						pessoasParaEnviarEmail.add(subst.getTitular());
+					} else {
+						textoEmail = textoEmail + " lotação: " + subst.getLotaTitular().getSigla() + " - " + subst.getLotaTitular().getNomeLotacao();
+						pessoasParaEnviarEmail.addAll(subst.getLotaTitular().getDpPessoaLotadosSet());
+					}
+			
+					textoEmail = textoEmail + " com inicio em " + subst.getDtIniSubstDDMMYY().toString() + " e término em " + subst.getDtFimSubstDDMMYY().toString() + "."
+					+ "\n\n Atenção: esta é uma "
+					+ "mensagem automática. Por favor, não responda.";
+					
+			String assunto = "Cadastro de Substituição";
+					
+			List<String> listaDeEmails= new ArrayList<String>();
+			listaDeEmails.add(getCadastrante().getEmailPessoa());
+			for (DpPessoa pessoa : pessoasParaEnviarEmail)	{
+				listaDeEmails.add(pessoa.getEmailPessoa()); 
+			}
+			
+			Correio.enviar(listaDeEmails.toArray(new String[listaDeEmails.size()]),assunto, textoEmail);
+			
 			result.redirectTo(this).lista();
 
 			dao().commitTransacao();
@@ -308,7 +376,7 @@ public class SubstituicaoController extends SigaController {
 		if (referer != null)
 			result.redirectTo(referer);
 		else
-			result.redirectTo(PrincipalController.class).principal(false, null);
+			result.redirectTo(PrincipalController.class).principal(false, false);
 	}	
 	
 	private void gravarFinalizar() {
@@ -361,7 +429,7 @@ public class SubstituicaoController extends SigaController {
 		if (referer != null)
 			result.redirectTo(referer);
 		else
-			result.redirectTo(PrincipalController.class).principal(false, null);
+			result.redirectTo(PrincipalController.class).principal(false,false);
 	}	
 	
 	public void exclui(Long id) throws Exception {
@@ -384,7 +452,7 @@ public class SubstituicaoController extends SigaController {
 				if (referer != null)
 					result.redirectTo(referer);
 				else
-					result.redirectTo(PrincipalController.class).principal(false, null);
+					result.redirectTo(PrincipalController.class).principal(false,false);
 			} else
 				throw new AplicacaoException("Usuário não tem permissão para excluir esta substituição");	
 		} else
@@ -396,5 +464,12 @@ public class SubstituicaoController extends SigaController {
 		}
 		
 	}	
+	
+	private long getIntervaloDeDiasEntreDatas(Date firstDate, Date secondDate) {
+	 
+	    long diffInMillies = Math.abs(secondDate.getTime() - firstDate.getTime());
+	    long diff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+		return diff;
+	}
 
 }

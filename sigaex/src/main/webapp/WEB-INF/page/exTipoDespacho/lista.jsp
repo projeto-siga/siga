@@ -20,7 +20,7 @@
 
 			<div class="card-body">
 				<table border="0" class="table table-sm table-striped">
-					<thead class="thead-dark">
+					<thead class="${thead_color}">
 						<th align="right">N&uacute;mero</th>
 						<th colspan="3">Descri&ccedil;&atilde;o</th>
 					</thead>

@@ -396,7 +396,7 @@ function limpaCampos()
 				<c:if test="${not empty tamanho and tamanho > 0}">
 					<div class="gt-content-box gt-for-table">
 						<table class="table table-striped table-hover ">
-							<thead class="thead-dark">
+							<thead class="${thead_color}">
 								<tr>
 									<th rowspan="3" align="right">
 										Número
@@ -676,36 +676,45 @@ function limpaCampos()
 										</div>
 									</div>	
 								</div>
-								<div class="row">
-									<div class="col-sm-4">
-										<div class="form-group">
-											<label>Órgão</label>
-											<select name="idTpDoc" onchange="javascript:alteraOrigem();" class="form-control">
-												<option value="0">
-													[Todos]
-												</option>
-												<c:forEach items="${tiposDocumento}" var="item">
-													<option value="${item.idTpDoc}" ${item.idTpDoc == idTpDoc ? 'selected' : ''}>
-														${item.descrTipoDocumento}
-													</option>  
-												</c:forEach>
-											</select>
-
-										</div>
-									</div>
-									<div class="col-sm-4">
-										<div class="form-group">
-											<label>Data Inicial</label>
-											<input type="text" name="dtDocString" value="${dtDocString}" onblur="javascript:verifica_data(this,0);" class="form-control" />
-										</div>
-									</div>
-									<div class="col-sm-4">
-										<div class="form-group">
-											<label>Data Final</label>
-											<input type="text" name="dtDocFinalString" value="${dtDocString}" onblur="javascript:verifica_data(this,0);" class="form-control"/>
-										</div>
-									</div>
-								</div>
+				<div class="form-row">
+						<div class="form-group col-md-3">
+							<label for="orgaoUsu">Órgão</label> <select class="form-control"
+								id="orgaoUsu" name="orgaoUsu">
+								<option value="0">[Todos]</option>
+								<c:forEach items="${orgaosUsu}" var="item">
+									<option value="${item.idOrgaoUsu}"
+										${item.idOrgaoUsu == orgaoUsu ? 'selected' : ''}>
+										${item.nmOrgaoUsu}</option>
+								</c:forEach>
+							</select>
+						</div>
+						<c:if test="${siga_cliente != 'GOVSP'}">
+							<div class="form-group col-md-3">
+								<label for="idTpDoc">Origem</label> <select class="form-control"
+									id="idTpDoc" name="idTpDoc"
+									onchange="javascript:alteraOrigem();">
+								<option value="0">[Todos]</option>
+								<c:forEach items="${tiposDocumento}" var="item">
+									<option value="${item.idTpDoc}"
+										${item.idTpDoc == idTpDoc ? 'selected' : ''}>
+										${item.descrTipoDocumento}</option>
+								</c:forEach>
+								</select>
+							</div>
+						</c:if>
+						<div class="form-group col-md-3">
+							<label for="dtDocString">Data Inicial</label> <input
+								class="form-control" type="text" name="dtDocString"
+								id="dtDocString" value="${dtDocString}"
+								onblur="javascript:verifica_data(this,0);" />
+						</div>
+						<div class="form-group col-md-3">
+							<label for="dtDocFinalString">Data Final</label> <input
+								class="form-control" type="text" name="dtDocFinalString"
+								id="dtDocFinalString" value="${dtDocString}"
+								onblur="javascript:verifica_data(this,0);" />
+						</div>
+					</div>
 								<c:choose>
 									<c:when test="${tipoDocumento != 'externo'}">
 										<c:set var="trTipo" value="display: " />

@@ -76,11 +76,7 @@ public class WfUtil {
 		if (mapDescricao.containsKey(sigla)) {
 			return mapDescricao.get(sigla);
 		}
-		DpPessoa pes = so.daoPes(sigla);
-		if (pes != null) {
-			mapDescricao.put(sigla, pes.getDescricao());
-			return pes.getDescricao();
-		}
+
 		DpLotacao lot = so.daoLot(so.getLotaTitular().getOrgaoUsuario()
 				.getSigla()
 				+ sigla);
@@ -88,6 +84,13 @@ public class WfUtil {
 			mapDescricao.put(sigla, lot.getDescricao());
 			return lot.getDescricao();
 		}
+
+		DpPessoa pes = so.daoPes(sigla);
+		if (pes != null) {
+			mapDescricao.put(sigla, pes.getDescricao());
+			return pes.getDescricao();
+		}
+		
 		return "";
 	}
 

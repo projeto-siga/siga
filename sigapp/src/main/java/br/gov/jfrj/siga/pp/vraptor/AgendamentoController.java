@@ -50,7 +50,7 @@ public class AgendamentoController extends PpController {
 					criterioSalas = criterioSalas + ",";
 				}
 			}
-			System.out.println(selFiltraSala);
+			// System.out.println(selFiltraSala);
 			if(selFiltraSala!=null && (!selFiltraSala.equals("")) ){
 				criterioSalas = "'"+selFiltraSala+"'";
 			}
@@ -128,7 +128,7 @@ public class AgendamentoController extends PpController {
     }
     
     @Path("/amanha")
-    public void amanha(){
+    public void amanha(String selFiltraSala){
     	String matriculaSessao = getCadastrante().getMatricula().toString();
 		String sesb_pessoaSessao = getCadastrante().getSesbPessoa().toString();
 		UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao, sesb_pessoaSessao);
@@ -148,6 +148,9 @@ public class AgendamentoController extends PpController {
             if (criterioSalas.equals("")) {
                 criterioSalas = "''";
             }
+            if(selFiltraSala!=null && (!selFiltraSala.equals("")) ){
+				criterioSalas = "'"+selFiltraSala+"'";
+			}
 			SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
 			// pega a data de hoje
 			Date hoje = new Date();
@@ -198,6 +201,7 @@ public class AgendamentoController extends PpController {
             }
 			result.include("dataAmanha", dtt);
 			result.include("diaSemana", dia_sem);
+			result.include("listLocais", listaDeSalas);
 			} else {
 			redirecionaPaginaErro("Usu&aacute;rio sem permiss&atilde;o." , null);
 		}

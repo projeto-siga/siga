@@ -11,6 +11,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Immutable;
 import org.hibernate.envers.Audited;
 
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
@@ -19,6 +20,7 @@ import br.gov.jfrj.siga.tp.validation.annotation.UpperCase;
 
 @Entity
 @Audited
+@Immutable
 @Table(name = "GRUPOVEICULO", schema = "SIGATP")
 public class Grupo extends TpModel implements ConvertableEntity, Comparable<Grupo> {
 

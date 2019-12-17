@@ -21,6 +21,7 @@ import br.com.caelum.vraptor.validator.Message;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.tp.auth.AutorizacaoGI;
 import br.gov.jfrj.siga.tp.exceptions.RestControllerException;
 import br.gov.jfrj.siga.tp.model.Andamento;
 import br.gov.jfrj.siga.tp.model.EstadoRequisicao;
@@ -37,9 +38,11 @@ public class RequisicaoRestController extends TpController {
 
     private static final String REQUISICOES_REST_REQ_NULL_EXCEPTION = "requisicoesRest.reqNull.exception";
     private static final String REQUISICAO_REST = "requisicaoRest";
+    private AutorizacaoGI autorizacaoGI;
 
-    public RequisicaoRestController(HttpServletRequest request, Result result, CpDao dao, Validator validator, SigaObjects so, EntityManager em) {
+    public RequisicaoRestController(HttpServletRequest request, Result result, CpDao dao, Validator validator, SigaObjects so, AutorizacaoGI autorizacaoGI,EntityManager em) {
         super(request, result, TpDao.getInstance(), validator, so, em);
+        this.autorizacaoGI = autorizacaoGI;
     }
 
     @Path("/ver/{id}")
@@ -135,7 +138,7 @@ public class RequisicaoRestController extends TpController {
 
             req.setSolicitante(dpPessoa);
             req.setCpOrgaoUsuario(dpPessoa.getOrgaoUsuario());
-            req.setCpComplexo(recuperarComplexoPadrao(dpPessoa));
+            req.setCpComplexo(autorizacaoGI.recuperarComplexoPadrao(dpPessoa));
 
             checarSolicitante(req, dpPessoa, true);
 

@@ -19,6 +19,18 @@
 	}
 </script>
 
+<c:choose>
+	<c:when test="${param.modal != true}">
+	    <!-- parteFuncao para fechar window -->
+	    <c:set var="parteFuncao" value="opener" />
+	</c:when>
+	<c:otherwise>
+	    <!-- parteFuncao para fechar modal -->
+	    <c:set var="parteFuncao" value="parent" />
+	</c:otherwise>	
+</c:choose>	
+
+
 <siga:pagina titulo="Busca de Órgão Integrado" popup="true">
 <link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
 <link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
@@ -36,6 +48,7 @@
 				<input type="hidden" name="postback" value="1" /> 
 				<input type="hidden" name="paramoffset" value="0" />
 				<input type="hidden" name="p.offset" value="0" />
+				<input type="hidden" name="modal" value="${param['modal']}" />				
 				<div class="row">
 					<div class="col-sm">
 						<div class="form-group">
@@ -73,7 +86,7 @@
 		<br />
 
 		<table class="table table-sm table-striped">
-			<thead class="thead-dark">
+			<thead class="${thead_color}">
 				<tr>
 					<th align="center">Sigla</th>
 					<th align="left">Nome</th>
@@ -83,7 +96,7 @@
 			<siga:paginador maxItens="10" maxIndices="10" totalItens="${tamanho}" itens="${itens}" var="item">
 				<tr class="${evenorodd}">
 					<td width="10%" align="center"><a
-						href="javascript: opener.retorna_${propriedadeClean}('${item.id}','${item.sigla}','${item.descricao}');">${item.sigla}</a></td>
+						href="javascript: ${parteFuncao}.retorna_${propriedadeClean}('${item.id}','${item.sigla}','${item.descricao}');">${item.sigla}</a></td>
 					<td width="70%" align="left">${item.descricao}</td>
 					<td align="left" width="20%">${item.dataFimLotacao}</td>
 				</tr>

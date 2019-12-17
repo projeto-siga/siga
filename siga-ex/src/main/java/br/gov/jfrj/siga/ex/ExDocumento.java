@@ -907,6 +907,11 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public Boolean isIndexavel() {
 		return !isPendenteDeAssinatura() && !isCancelado();
 	}
+	
+	public String getMarcaDeAgua() {
+		String marcaDeAgua = getExModelo().getModeloAtual().getMarcaDeAgua();				
+		return marcaDeAgua == null ? "" : marcaDeAgua.trim();
+	}
 
 	/**
 	 * Retorna o valor digitado para o <b>nome do subscritor</b> no campo

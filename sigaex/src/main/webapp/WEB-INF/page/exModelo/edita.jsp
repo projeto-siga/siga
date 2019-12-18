@@ -144,7 +144,7 @@
 						<div class="col-md-2">
 							<div class="form-group">
 								<label>Marca d'água no documento</label>
-								<input type="text" name="marcaDeAgua" value="${marcaDeAgua}" maxlength="13" class="form-control" />
+								<input type="text" name="marcaDagua" value="${marcaDagua}" maxlength="13" class="form-control" />
 							</div>
 						</div>
 					</div>

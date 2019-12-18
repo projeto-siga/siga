@@ -101,8 +101,8 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	@Column(name = "IS_COMPOSTO", length = 1)
 	private java.lang.Integer isComposto;
 	
-	@Column(name = "MARCA_DE_AGUA", length = 13)
-	private java.lang.String marcaDeAgua;
+	@Column(name = "MARCA_DAGUA", length = 13)
+	private java.lang.String marcaDagua;
 
 	// private Set classificacaoSet;
 
@@ -315,12 +315,12 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 		this.isComposto = isComposto;
 	}
 	
-	public java.lang.String getMarcaDeAgua() {
-		return marcaDeAgua;
+	public java.lang.String getMarcaDagua() {
+		return marcaDagua;
 	}
 	
-	public void setMarcaDeAgua(java.lang.String marcaDeAgua) {
-		this.marcaDeAgua = marcaDeAgua;
+	public void setMarcaDagua(java.lang.String marcaDagua) {
+		this.marcaDagua = marcaDagua;
 	}
 
 	public ExNivelAcesso getExNivelAcesso() {

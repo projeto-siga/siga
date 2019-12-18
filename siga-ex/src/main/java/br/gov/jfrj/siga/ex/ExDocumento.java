@@ -908,9 +908,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return !isPendenteDeAssinatura() && !isCancelado();
 	}
 	
-	public String getMarcaDeAgua() {
-		String marcaDeAgua = getExModelo().getModeloAtual().getMarcaDeAgua();				
-		return marcaDeAgua == null ? "" : marcaDeAgua.trim();
+	public String getMarcaDagua() {
+		String marcaDagua = getExModelo().getModeloAtual().getMarcaDagua();				
+		return marcaDagua == null ? "" : marcaDagua.trim();
 	}
 
 	/**

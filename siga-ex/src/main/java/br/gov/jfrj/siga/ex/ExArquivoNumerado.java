@@ -158,7 +158,7 @@ public class ExArquivoNumerado implements Comparable {
 			ExDocumento doc = (ExDocumento) getArquivo();
 			if (doc.isProcesso())
 				return 1;
-			else if(SigaMessages.isSigaSP() && !doc.isProcesso() 
+			else if(SigaMessages.isSigaSP() && !doc.isProcesso() && doc.isFinalizado() 
 					&& doc.getMobilDefaultParaReceberJuntada().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA).isEmpty()
 					) {
 				return 1;

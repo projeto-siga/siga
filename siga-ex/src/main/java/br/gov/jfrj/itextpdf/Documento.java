@@ -316,7 +316,7 @@ public class Documento {
 			boolean cancelado, boolean semEfeito, boolean internoProduzido,
 			String qrCode, String mensagem, Integer paginaInicial,
 			Integer paginaFinal, Integer cOmitirNumeracao, String instancia,
-			String orgaoUsu) throws DocumentException, IOException {
+			String orgaoUsu, String marcaDaguaDoModelo) throws DocumentException, IOException {
 
 		PdfReader pdfIn = new PdfReader(abPdf);
 		Document doc = new Document(PageSize.A4, 0, 0, 0, 0);
@@ -352,7 +352,7 @@ public class Documento {
 	
 				doc.setPageSize((rot != 0 && rot != 180) ^ (w > h) ? PageSize.A4.rotate()
 						: PageSize.A4);
-				doc.newPage();
+				doc.newPage();							
 	
 				cb.saveState();
 	
@@ -589,10 +589,11 @@ public class Documento {
 					tarjar("CAPACITAÇÃO", over, helv, r);
 				} else if (SigaMessages.isSigaSP() && ("homolog".equals(SigaExProperties.getAmbiente())) ) {
 					tarjar("HOMOLOGAÇÃO", over, helv, r);
-				}
-				else if (!SigaMessages.isSigaSP() && !SigaExProperties.isAmbienteProducao()) {
+				} else if (!marcaDaguaDoModelo.isEmpty()) {
+					tarjar(marcaDaguaDoModelo, over, helv, r);
+				} else if (!SigaMessages.isSigaSP() && !SigaExProperties.isAmbienteProducao()) {
 					tarjar("INVÁLIDO", over, helv, r);
-				}
+				}				
 	
 				// Imprime um circulo com o numero da pagina dentro.
 
@@ -893,7 +894,7 @@ public class Documento {
 						an.getPaginaFinal(), an.getOmitirNumeracao(),
 						SigaExProperties.getTextoSuperiorCarimbo(), mob
 								.getExDocumento().getOrgaoUsuario()
-								.getDescricao());
+								.getDescricao(), mob.getExDocumento().getMarcaDagua());							
 
 				// we create a reader for a certain document
 

@@ -919,6 +919,21 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO,
 								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
+	
+	public Boolean podeGerarProtocolo(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) {
+		Boolean retorno = Boolean.TRUE;
+		
+		retorno = mob.getDoc().getExMobilPai() == null && getConf()
+				.podePorConfiguracao(
+						titular,
+						lotaTitular,
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO,
+						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR) &&
+				!mob.getDoc().isCancelado() && 
+				!mob.getDoc().isArquivado();
+		return retorno;
+	}
 
 	/**
 	 * Retorna se é possível criar subprocesso, segundo as regras abaixo:

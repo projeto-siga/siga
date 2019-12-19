@@ -463,7 +463,16 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 * @return Nome do responsável pela movimentação sem a descricao.
 	 */
 	public String getRespSemDescrString() {
+		if (getOrgaoExterno() != null) {
 			return getOrgaoExterno().getNmOrgao();
+		} else {
+			String strReturn = "";
+			if (getLotaResp() != null)
+				strReturn = getLotaResp().getDescricao();
+			if (getResp() != null)
+				strReturn = strReturn + " - " + getResp().getDescricao();
+			return strReturn;
+		}
 	}
 
 	/**

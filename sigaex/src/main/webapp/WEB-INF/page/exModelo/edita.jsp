@@ -130,13 +130,21 @@
 								<label>Identificador para sincronismo</label>
 								<input readonly type="text" name="uuid" value="${uuid}" size="80" class="form-control"/>
 							</div>
-						</div>
+						</div>		
 						<div class="col-md-2">
 							<div class="form-group">
 								<div class="form-check form-check-inline mt-4">
 								  <input class="form-check-input" type="checkbox" name="isComposto" id="isComposto" value="1" <c:if test="${isComposto == 1}">checked</c:if>/>
 								  <label class="form-check-label" for="isComposto">Documento Composto</label>
 								</div>
+							</div>
+						</div>				
+					</div>
+					<div class="row">						
+						<div class="col-md-2">
+							<div class="form-group">
+								<label>Marca d'água no documento</label>
+								<input type="text" name="marcaDagua" value="${marcaDagua}" maxlength="13" class="form-control" />
 							</div>
 						</div>
 					</div>

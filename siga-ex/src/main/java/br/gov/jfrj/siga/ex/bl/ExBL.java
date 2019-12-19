@@ -19,8 +19,6 @@
 package br.gov.jfrj.siga.ex.bl;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
@@ -122,7 +120,6 @@ import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.ExDocumentoNumeracao;
 import br.gov.jfrj.siga.ex.ExEditalEliminacao;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExMarca;
@@ -7543,5 +7540,26 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao revisar documento.", 0, e);
 		}
+	}
+	
+	public void gerarProtocolo(ExDocumento doc, DpPessoa cadastrante, DpLotacao lotacao) {
+		try {
+			iniciarAlteracao();
+			doc.setChaveDoc(GeraMessageDigest.geraSenha(10));
+			dao().gravar(doc);
+			ContextoPersistencia.flushTransaction();
+			final ExMovimentacao mov = criarNovaMovimentacao(
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO,
+					cadastrante, lotacao, doc.getMobilGeral(), null, cadastrante,
+					null, null, null, null);
+
+			gravarMovimentacao(mov);
+			concluirAlteracao(doc.getMobilGeral());
+
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Ocorreu um erro ao gerar protocolo.", 0, e);
+		}
+
 	}
 }

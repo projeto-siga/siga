@@ -100,6 +100,9 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 
 	@Column(name = "IS_COMPOSTO", length = 1)
 	private java.lang.Integer isComposto;
+	
+	@Column(name = "MARCA_DAGUA", length = 13)
+	private java.lang.String marcaDagua;
 
 	// private Set classificacaoSet;
 
@@ -311,6 +314,14 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	public void setIsComposto(final java.lang.Integer isComposto) {
 		this.isComposto = isComposto;
 	}
+	
+	public java.lang.String getMarcaDagua() {
+		return marcaDagua;
+	}
+	
+	public void setMarcaDagua(java.lang.String marcaDagua) {
+		this.marcaDagua = marcaDagua;
+	}
 
 	public ExNivelAcesso getExNivelAcesso() {
 		return exNivelAcesso;
@@ -334,7 +345,7 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 
 	public void setUuid(java.lang.String uuid) {
 		this.uuid = uuid;
-	}
+	}	
 
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		if (this == obj)

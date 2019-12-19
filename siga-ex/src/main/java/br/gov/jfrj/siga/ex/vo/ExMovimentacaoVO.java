@@ -52,6 +52,7 @@ import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFERENCI
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.hasDespacho;
 
 import java.util.HashMap;
@@ -424,6 +425,14 @@ public class ExMovimentacaoVO extends ExVO {
 			} else {
 				descricao = mov.getExMobil().getSigla();
 			}
+		}
+		
+		if(idTpMov == TIPO_MOVIMENTACAO_GERAR_PROTOCOLO) {
+			if (!mov.isCancelada())
+				addAcao(null, "Gerar Protocolo", "/app/expediente/doc", "gerarProtocolo", true,
+						null,  "sigla=" + mov.getExMobil().getSigla()
+							+ "&popup=true",
+						null, null, null);
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE

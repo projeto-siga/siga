@@ -753,6 +753,17 @@ public class ExDocumentoVO extends ExVO {
 						.podeTornarDocumentoSemEfeito(titular, lotaTitular, mob),
 				"Esta operação tornará esse documento sem efeito. Prosseguir?",
 				null, null, null, "once");
+		
+		vo.addAcao(
+				"printer",
+				"Gerar Protocolo",
+				"/app/expediente/doc",
+				"gerarProtocolo",
+				Ex.getInstance()
+						.getComp()
+						.podeGerarProtocolo(titular, lotaTitular, mob),
+				null,
+				"&popup=true", null, null, null);
 	}
 
 	public void addDadosComplementares() {

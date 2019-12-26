@@ -138,8 +138,9 @@ public class LoginController extends SigaController {
 	public void authSwap(String username, String cont) throws IOException {
 		
 		try {
-			if (!SigaMessages.isSigaSP()) 
-				throw new ServletException("Funcionalidade não disponível neste ambiente.");
+		//  Incluida na versão comum a todos
+		//	if (!SigaMessages.isSigaSP()) 
+		//		throw new ServletException("Funcionalidade não disponível neste ambiente.");
 
 			CpIdentidade usuarioSwap = CpDao.getInstance().consultaIdentidadeCadastrante(username, true);
 			

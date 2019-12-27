@@ -78,7 +78,7 @@ begin
 					          FROM siga.ex_movimentacao m,
 					               siga.ex_mobil mb 
 					         WHERE mb.id_doc = :old.id_doc
-					           AND (m.id_tp_mov = 11 OR m.id_tp_mov = 58)
+					           AND (m.id_tp_mov = 11 /*OR m.id_tp_mov = 58*/)
 					           AND m.id_mov_canceladora IS NULL
 					           AND m.id_mobil = mb.id_mobil;
 

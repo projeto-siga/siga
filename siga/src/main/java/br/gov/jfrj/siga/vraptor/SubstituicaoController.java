@@ -14,6 +14,7 @@ import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 import javax.persistence.EntityManager;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Get;
@@ -56,7 +57,7 @@ public class SubstituicaoController extends SigaController {
 	public SubstituicaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
+		result.on(ServletException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
 
 		titularSel = new DpPessoaSelecao();	
@@ -76,7 +77,7 @@ public class SubstituicaoController extends SigaController {
 	}
 	
 	private List<DpSubstituicao> buscarSubstitutos(String substituicao, DpPessoa pessoa, DpLotacao lotacao) 
-			throws SQLException, AplicacaoException {
+			throws SQLException, ServletException {
 		
 		Boolean isSubstLotacao = false;
 		List<DpSubstituicao> todasSubst = new ArrayList<DpSubstituicao>();
@@ -212,19 +213,19 @@ public class SubstituicaoController extends SigaController {
 			dao().iniciarTransacao();
 			if (tipoTitular == 1) {
 				if (this.titularSel.getId() == null)
-					throw new AplicacaoException("Titular não informado");
+					throw new ServletException("Titular não informado");
 				
 				subst.setTitular(dao().consultar(this.titularSel.getId(),DpPessoa.class, false));
 				
 				if (!subst.getTitular().getIdPessoa().equals(getCadastrante().getIdPessoa())  
 						&& !podeCadastrarQualquerSubstituicao())
-					throw new AplicacaoException("Titular não permitido. Apenas o próprio usuário pode se definir como titular.");
+					throw new ServletException("Titular não permitido. Apenas o próprio usuário pode se definir como titular.");
 				
 				subst.setLotaTitular(subst.getTitular().getLotacao());
 			} else {
 				subst.setTitular(null);
 				if (this.lotaTitularSel.getId() == null)
-					throw new AplicacaoException("A lotação titular não foi informada");
+					throw new ServletException("A lotação titular não foi informada");
 				
 				subst.setLotaTitular(dao().consultar(this.lotaTitularSel.getId(), DpLotacao.class, false));
 				lotacaoIniPai = subst.getLotaTitular().getIdLotacaoIniPai();
@@ -240,19 +241,19 @@ public class SubstituicaoController extends SigaController {
 						  !(lotacaoIniAvo == null) && (lotacaoIniAvo.equals(getCadastrante().getIdLotacaoIni())) || 
 						  !(lotacaoPai == null) && (lotacaoPai.equals(getCadastrante().getIdLotacao())) ||
 						  !(lotacaoAvo == null) && (lotacaoAvo.equals(getCadastrante().getIdLotacao()))))
-						throw new AplicacaoException("Lotação titular não permitida. Apenas usuários da própria lotação ou lotados até 2 lotações superiores na hierarquia podem defini-la como titular.");
+						throw new ServletException("Lotação titular não permitida. Apenas usuários da própria lotação ou lotados até 2 lotações superiores na hierarquia podem defini-la como titular.");
 				
 			}
 			if (tipoSubstituto == 1) {
 				if (this.substitutoSel.getId() == null)
-					throw new AplicacaoException("Substituto não informado"); 
+					throw new ServletException("Substituto não informado"); 
 				
 				subst.setSubstituto(daoPes(this.substitutoSel.getId()));
 				subst.setLotaSubstituto(subst.getSubstituto().getLotacao());
 			} else {
 				subst.setSubstituto(null);
 				if (this.lotaSubstitutoSel.getId() == null)
-					throw new AplicacaoException("A lotação do substituto não foi informada");
+					throw new ServletException("A lotação do substituto não foi informada");
 				
 				subst.setLotaSubstituto(daoLot(this.lotaSubstitutoSel.getId()));
 			}
@@ -276,23 +277,23 @@ public class SubstituicaoController extends SigaController {
 				subst.setDtIniSubst(new Date());
 			else {
 				if (!Data.dataDentroSeculo21(subst.getDtIniSubst()))
-					throw new AplicacaoException("Data inicial inválida, deve estar entre o ano 2000 e ano 2100");
+					throw new ServletException("Data inicial inválida, deve estar entre o ano 2000 e ano 2100");
 			}
 			
 			if (subst.getDtFimSubst() == null) {
-				throw new AplicacaoException("Não é possível informar uma data final nula.");
+				throw new ServletException("Não é possível informar uma data final nula.");
 				
 			} else if (getIntervaloDeDiasEntreDatas(subst.getDtIniSubst(), subst.getDtFimSubst()) < 0) {
-				throw new AplicacaoException("Não é possível informar uma data final anterior a data inicial.");
+				throw new ServletException("Não é possível informar uma data final anterior a data inicial.");
 			} else {
 				Calendar c = Calendar.getInstance();
 				c.setTime(subst.getDtIniSubst());
 				c.add(Calendar.YEAR, 2);  
 				
 				if (c.getTime().compareTo(subst.getDtFimSubst()) < 0)  {
-					throw new AplicacaoException("Não é possível cadastrar período de substituição maior que 2 anos.");
+					throw new ServletException("Não é possível cadastrar período de substituição maior que 2 anos.");
 			} else if (subst.getDtFimSubst() != null && !Data.dataDentroSeculo21(subst.getDtFimSubst()))
-					throw new AplicacaoException("Data final inválida, deve estar entre o ano 2000 e ano 2100");
+					throw new ServletException("Data final inválida, deve estar entre o ano 2000 e ano 2100");
 			}				 
 	
 
@@ -355,6 +356,10 @@ public class SubstituicaoController extends SigaController {
 			result.redirectTo(this).lista();
 
 			dao().commitTransacao();
+		} catch (final ServletException e) {
+			result.include("mensagemCabec", e.getMessage());
+			result.include("msgCabecClass", "alert-warning alert-dismissible");		
+			result.forwardTo(this).edita((substituicao != null && substituicao.getIdSubstituicao() != null ? substituicao.getIdSubstituicao() : null ));
 		} catch (final Exception e) {
 			dao().rollbackTransacao();
 			result.include("exceptionStack", e);
@@ -399,13 +404,13 @@ public class SubstituicaoController extends SigaController {
 			gravarFinalizar();
 			
 			if (id == null)
-				throw new AplicacaoException("Dados não informados");
+				throw new ServletException("Dados não informados");
 			
 			DpSubstituicao dpSub = dao().consultar(id, DpSubstituicao.class, false);
 			
 			if ((dpSub.getSubstituto() == null && !dpSub.getLotaSubstituto().equivale(getLotaCadastrante()) 
 				|| (dpSub.getSubstituto() != null && !dpSub.getSubstituto().equivale(getCadastrante()))))
-				throw new AplicacaoException("Substituição não permitida");
+				throw new ServletException("Substituição não permitida");
 			
 			setLotaTitular(dpSub.getLotaTitular());
 			setTitular(dpSub.getTitular());
@@ -454,10 +459,14 @@ public class SubstituicaoController extends SigaController {
 				else
 					result.redirectTo(PrincipalController.class).principal(false,false);
 			} else
-				throw new AplicacaoException("Usuário não tem permissão para excluir esta substituição");	
+				throw new ServletException("Usuário não tem permissão para excluir esta substituição");	
 		} else
-			throw new AplicacaoException("Não foi informado id");
+			throw new ServletException("Não foi informado id");
 		
+		} catch (final ServletException e) {
+			result.include("mensagemCabec", e.getMessage());
+			result.include("msgCabecClass", "alert-warning alert-dismissible");		
+			result.forwardTo(this).lista();
 		}catch (Exception e) {
 			result.include("exceptionStack", e);
 			throw new AplicacaoException("Não foi possível Excluir", 0, e);

@@ -162,32 +162,8 @@ function mensagemAlerta(mensagem) {
 		}
 	}
  </script>
-<script type="text/javascript">
-  	/*
- 	* Impede o uso do F5
- 	*/
- 	f5Hold = function getcode(ev) {
- 		var oEvent = (window.event) ? window.event : ev;
- 		if (oEvent.keyCode == 116) {
- 			//alert("F5 Pressionado !"); 
- 			if(document.all) {
- 				oEvent.keyCode = 0;
- 				oEvent.cancelBubble = true;
- 			} else {
- 				oEvent.preventDefault();
- 				oEvent.stopPropagation();
- 			}
- 			return false;
- 		}
- 	};
- 	if(document.all) {
- 		document.onkeydown =  f5Hold;
- 	} else {
- 		document.onkeypress = f5Hold;
- 	}
- 	/*
- 	*
- 	*/
+<script type="text/javascript" src="/siga/javascript/siga.bloqueiaF5.js"></script> 
+<script type="text/javascript">  	 	
  	/*
  	* Inicialização
  	*/

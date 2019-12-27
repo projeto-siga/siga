@@ -2478,12 +2478,16 @@ public class ExDocumentoController extends ExController {
 		ExMobil mobPai = null;
 		if (exDocumentoDTO.getMobilPaiSel().buscarPorSigla())
 			mobPai = exDocumentoDTO.getMobilPaiSel().buscarObjeto();
-
+		
 		boolean isEditandoAnexo = false;
 		if (exDocumentoDTO.getMob().getExDocumento().getExMobilPai() != null 
-				|| exDocumentoDTO.isCriandoAnexo())
-			isEditandoAnexo = true;		
-		
+				|| exDocumentoDTO.isCriandoAnexo()) {
+			isEditandoAnexo = true;
+			if(mobPai == null) {
+	            mobPai = exDocumentoDTO.getDoc().getExMobilPai();   
+	        }
+		}
+        
 		exDocumentoDTO.setModelos(Ex
 				.getInstance()
 				.getBL()

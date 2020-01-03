@@ -8,6 +8,7 @@
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <script type="text/javascript" language="Javascript1.1">
 	function csv(id, action) {
@@ -211,7 +212,7 @@
 									pessoaParam="${documento[2].dpPessoaIni.sigla}" /></td>
 							<td width="10.5%" align="center">${documento[2].dtIniMarcaDDMMYYYY}</td>
 							<td width="10.5%" align="center">
-								${documento[2].cpMarcador.descrMarcador}</td>
+								${fn:substring(documento[2],0,fn:indexOf(documento[2],'['))}</td>
 						</c:if>
 						<c:if test="${documento[1].numSequencia == 0}">
 							<td width="4%" align="center"><siga:selecionado

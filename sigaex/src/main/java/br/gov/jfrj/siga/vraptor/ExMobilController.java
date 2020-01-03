@@ -335,8 +335,8 @@ public class ExMobilController extends
 			}
 			texto.append(";");
 			
-			if(ma.getCpMarcador() != null && ma.getCpMarcador().getDescrMarcador() != null) {
-				texto.append(ma.getCpMarcador().getDescrMarcador().replaceAll(";",","));
+			if(ma != null && ma.getCpMarcador() != null && ma.getCpMarcador().getDescrMarcador() != null) {
+				texto.append(ma.toString().substring(0, ma.toString().indexOf("[")).replaceAll(";",","));
 			}
 			texto.append(";");
 			

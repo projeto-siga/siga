@@ -118,13 +118,6 @@ public class ExModelo extends AbstractExModelo implements Sincronizavel {
 		return false;
 	}
 
-	public boolean isComposto() {
-		if (getIsComposto() != null && getIsComposto() == 1)
-			return true;
-
-		return false;
-	}
-
 	@Override
 	public String getIdExterna() {
 		return getUuid();

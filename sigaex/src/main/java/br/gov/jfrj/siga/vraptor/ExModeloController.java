@@ -114,7 +114,6 @@ public class ExModeloController extends ExSelecionavelController {
 			result.include("arquivo", modelo.getNmArqMod());
 			result.include("uuid", modelo.getUuid());
 			result.include("diretorio", modelo.getNmDiretorio());
-			result.include("isComposto", modelo.getIsComposto());
 			result.include("marcaDagua", modelo.getMarcaDagua());
 		}
 	}
@@ -126,8 +125,7 @@ public class ExModeloController extends ExSelecionavelController {
 			final ExClassificacaoSelecao classificacaoCriacaoViasSel,
 			final String descricao, final Long forma, final Long nivel,
 			final String arquivo, final String diretorio, final String uuid, 
-			final Integer isComposto, final String marcaDagua,
-			final Integer postback) throws Exception {
+			final String marcaDagua, final Integer postback) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 		ExModelo modelo = buscarModelo(id);
 		if (postback != null) {
@@ -140,7 +138,6 @@ public class ExModeloController extends ExSelecionavelController {
 			modelo.setNmArqMod(arquivo);
 			modelo.setNmDiretorio(diretorio);
 			modelo.setUuid(uuid);
-			modelo.setIsComposto(isComposto);
 			modelo.setMarcaDagua(marcaDagua);
 			if (conteudo != null && conteudo.trim().length() > 0) {
 				modelo.setConteudoBlobMod2(conteudo.getBytes(UTF8));

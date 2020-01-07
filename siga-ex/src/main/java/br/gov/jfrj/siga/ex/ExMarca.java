@@ -75,7 +75,7 @@ public class ExMarca extends AbstractExMarca implements Comparable {
 		sb.append(this.getCpMarcador().getDescrMarcador());
 
 		if (getDtIniMarca() != null && getDtIniMarca().after(new Date())) {
-			sb.append("a partir de ");
+			sb.append(" a partir de ");
 			sb.append(getDtIniMarcaDDMMYYYY());
 		}
 

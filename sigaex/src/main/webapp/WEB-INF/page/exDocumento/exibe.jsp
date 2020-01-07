@@ -1041,19 +1041,27 @@
 														<c:set var="acaourl"
 															value="${pageContext.request.contextPath}${acao.url}" />
 													</c:if>
+											
 													<c:choose> 
-														<c:when test="${not empty  acao.icone or siga_cliente ne 'GOVSP'}">
+														<c:when test="${siga_cliente ne 'GOVSP'}">
+															<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}"
+																	pre="${acao.pre}" pos="${acao.pos}" url="${acaourl}"
+																	test="${true}" popup="${acao.popup}"
+																	confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
+																	idAjax="${mov.idMov}" classe="${acao.classe}" />
+														</c:when>
+														<c:when test="${not empty acao.icone and acao.nomeNbsp ne 'Cancelar' and siga_cliente eq 'GOVSP'}">
 															<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}"
 																pre="${acao.pre}" pos="${acao.pos}" url="${acaourl}"
 																test="${true}" popup="${acao.popup}"
 																confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
 																idAjax="${mov.idMov}" classe="${acao.classe}" />
 														</c:when>
-														<c:otherwise>
+														<c:when test="${acao.nomeNbsp eq 'Cancelar' and siga_cliente eq 'GOVSP'}">
 															<input type="button" value="Cancelar"
 																class=" btn btn-sm btn-light"
 																onclick="excluirArqAuxiliar(${mov.idMov}, '${sigla}')" />
-														</c:otherwise>
+														</c:when>		
 													</c:choose>
 
 												</c:forEach>

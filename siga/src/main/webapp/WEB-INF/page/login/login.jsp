@@ -141,7 +141,9 @@
 	</div>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			var isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
+			var isOpera = !!navigator.userAgent.match(/OPR/);
+			var isEdge = !!navigator.userAgent.match(/Edge/);
+			var isChrome = !!navigator.userAgent.match(/Chrome/) && !isOpera && !isEdge
 			if(!isChrome && ${siga_cliente eq 'GOVSP'}) {
 		    	$('#msgModal').modal('show');
 			}

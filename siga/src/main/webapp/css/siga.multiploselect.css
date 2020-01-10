@@ -1,0 +1,38 @@
+.btn.dropdown-toggle {
+	border: 1px solid #CCC;
+	border-radius: 4px;
+	color: #55555;
+	font-size: 1rem;
+}
+
+.filter-option-inner-inner {
+	color: #000;
+}
+
+.spinner {
+	width: 30px;
+	height: 30px;
+	border: 5px solid rgba(0, 0, 0, .1);
+	border-left-color: #337AB7;
+	border-radius: 50%;
+	position: absolute;
+	margin: 5px 0 0 6px;
+	display: none;	
+	animation: spinner .6s linear infinite;	
+}
+
+@keyframes spinner {
+	to { transform: rotate(360deg); }
+}
+
+.check-mark {
+	color: #337AB7;	
+}
+
+.dropdown-item.active, .dropdown-item:active {
+	background-color: #337AB7;
+}
+
+.dropdown-item.active .check-mark, .dropdown-item:active .check-mark {
+	color: #fff;
+}

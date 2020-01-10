@@ -94,6 +94,7 @@ import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.DpPessoaUsuarioDTO;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.dp.DpVisualizacao;
 import br.gov.jfrj.siga.model.CarimboDeTempo;
@@ -1153,9 +1154,15 @@ public class CpDao extends ModeloDao {
 			final int offset, final int itemPagina) {
 		try {
 			final Query query;
-
-			query = getSessao().getNamedQuery("consultarPorFiltroDpPessoaSemIdentidade");
+			boolean isFiltrarPorListaDeLotacao = (flt.getIdLotacaoSelecao() != null && flt.getIdLotacaoSelecao().length > 0);
+			boolean isFiltrarPorListaDeUsuario = (flt.getIdPessoaSelecao() != null && flt.getIdPessoaSelecao().length > 0);		
 			
+			if (isFiltrarPorListaDeLotacao || isFiltrarPorListaDeUsuario) {				
+				query = getSessao().getNamedQuery("consultarPorFiltroDpPessoaSemIdentidadeComListaDeLotacaoOuListaDeUsuario");							
+			} else {
+				query = getSessao().getNamedQuery("consultarPorFiltroDpPessoaSemIdentidade");
+			}
+
 			if (offset > 0) {
 				query.setFirstResult(offset);
 			}
@@ -1176,22 +1183,70 @@ public class CpDao extends ModeloDao {
 			else
 				query.setLong("idOrgaoUsu", 0);
 
-			if (flt.getLotacao() != null)
-				query.setLong("lotacao", flt.getLotacao().getId());
-			else
+			if (isFiltrarPorListaDeLotacao) {																				
+				if (isFiltrarPorListaDeUsuario) {
+					query.setParameterList("idPessoaLista", flt.getIdPessoaSelecao());
+					query.setLong("idLotacaoLista", 0);
+				} else {
+					query.setParameterList("idLotacaoLista", flt.getIdLotacaoSelecao());
+					query.setLong("idPessoaLista", 0);
+				}				
+			} else if (flt.getLotacao() != null) {
+				if (isFiltrarPorListaDeUsuario) {
+					query.setParameterList("idPessoaLista", flt.getIdPessoaSelecao());
+					query.setLong("idLotacaoLista", 0);
+				} else {
+					query.setLong("lotacao", flt.getLotacao().getId());
+				}				
+			} else {
 				query.setLong("lotacao", 0);
+			}
 
 			final List<DpPessoa> l = query.list();
 			return l;
-		} catch (final NullPointerException e) {
+ 		} catch (final NullPointerException e) {
+			return null;
+		}
+	}	
+		
+	@SuppressWarnings("unchecked")
+	public List<DpPessoaUsuarioDTO> consultarUsuariosComEnvioDeEmailPendenteFiltrandoPorLotacao(final DpPessoaDaoFiltro flt) {
+		try {
+			final Query query;
+			boolean isFiltrarPorListaDeLotacao = (flt.getIdLotacaoSelecao() != null && flt.getIdLotacaoSelecao().length > 0);
+						
+			query = getSessao().getNamedQuery("consultarUsuariosComEnvioDeEmailPendenteFiltrandoPorLotacao");
+			
+			if (flt.getIdOrgaoUsu() != null) 
+				query.setLong("idOrgaoUsu", flt.getIdOrgaoUsu());
+			else
+				query.setLong("idOrgaoUsu", 0);
+
+			if (isFiltrarPorListaDeLotacao) {								
+				query.setParameterList("idLotacaoLista", flt.getIdLotacaoSelecao());								
+			} else if (flt.getLotacao() != null) {
+				query.setLong("idLotacaoLista", flt.getLotacao().getId());
+			} else {
+				query.setLong("idLotacaoLista", 0);
+			}
+						
+			return (List<DpPessoaUsuarioDTO>) query.list();
+ 		} catch (Exception e) {
 			return null;
 		}
 	}
 	
 	public int consultarQuantidadeDpPessoaSemIdentidade(final DpPessoaDaoFiltro flt) {
 		try {
-			final Query query;
-			query = getSessao().getNamedQuery("consultarQuantidadeDpPessoaSemIdentidade");
+			final Query query;			
+			boolean isFiltrarPorListaDeLotacao = (flt.getIdLotacaoSelecao() != null && flt.getIdLotacaoSelecao().length > 0);
+			boolean isFiltrarPorListaDeUsuario = (flt.getIdPessoaSelecao() != null && flt.getIdPessoaSelecao().length > 0);		
+			
+			if (isFiltrarPorListaDeLotacao || isFiltrarPorListaDeUsuario) {				
+				query = getSessao().getNamedQuery("consultarQuantidadeDpPessoaSemIdentidadeComListaDeLotacaoOuListaDeUsuario");							
+			} else {
+				query = getSessao().getNamedQuery("consultarQuantidadeDpPessoaSemIdentidade");
+			}
 			
 			query.setString("nome",
 					flt.getNome().toUpperCase().replace(' ', '%'));
@@ -1207,10 +1262,24 @@ public class CpDao extends ModeloDao {
 			else
 				query.setLong("idOrgaoUsu", 0);
 
-			if (flt.getLotacao() != null)
-				query.setLong("lotacao", flt.getLotacao().getId());
-			else
+			if (isFiltrarPorListaDeLotacao) {																				
+				if (isFiltrarPorListaDeUsuario) {
+					query.setParameterList("idPessoaLista", flt.getIdPessoaSelecao());
+					query.setLong("idLotacaoLista", 0);
+				} else {
+					query.setParameterList("idLotacaoLista", flt.getIdLotacaoSelecao());
+					query.setLong("idPessoaLista", 0);
+				}				
+			} else if (flt.getLotacao() != null) {
+				if (isFiltrarPorListaDeUsuario) {
+					query.setParameterList("idPessoaLista", flt.getIdPessoaSelecao());
+					query.setLong("idLotacaoLista", 0);
+				} else {
+					query.setLong("lotacao", flt.getLotacao().getId());
+				}				
+			} else {
 				query.setLong("lotacao", 0);
+			}
 
 			final int l = ((Long) query.uniqueResult()).intValue();
 			return l;

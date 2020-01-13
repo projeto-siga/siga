@@ -1597,19 +1597,18 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		ExMobil mobPai = null;
 		if (!mob.isJuntadoExterno()) {
 			mobPai = mob.getExMobilPai();
-			if (mobPai == null)
+			if (mobPai == null) {
 				return false;
-		}
-		
-		ExMobil mobUlt = mobPai;
-		if (mobPai.isApensado()) {			
-			mobUlt = mobPai.getGrandeMestre();			
-		}
+			} else {
+				if (mobPai.isApensado()) 			
+				mobPai = mobPai.getGrandeMestre();	
+			}	
+		}	  
 
 		if (mob.isEmTransito()
 				|| mob.isCancelada()
 				|| (!mob.isJuntadoExterno() && !podeMovimentar(titular,
-						lotaTitular, mobUlt)) || (!mob.isJuntado()))
+						lotaTitular, mobPai)) || (!mob.isJuntado()))
 			return false;
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,

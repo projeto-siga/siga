@@ -20,7 +20,9 @@ package br.gov.jfrj.siga.cp;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.FetchType;
@@ -128,6 +130,25 @@ public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
 	@Column(name = "LOGIN_IDENTIDADE", length = 20)
 	private String nmLoginIdentidade;
 
+	/* recuperacao */
+	
+	@Column(name = "TELEFONE_RECUPERACAO", length = 15)
+	private String telefoneRecuperacao;
+	
+	@Column(name = "EMAIL_RECUPERACAO", length = 100)
+	private String emailRecuperacao;
+	
+	@Column(name = "TOKEN_RECUPERACAO", length = 255)
+	private String tokenRecuperacao;
+	
+	@Column(name = "DATA_CONFIRMA_EMAIL_RECUPERA")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dtConfirmacaoEmailRecuperacao;
+	
+	@Column(name = "DATA_EXPIRA_TOKEN_RECUPERA")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dtExpiracaoTokenRecuperacao;
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -392,6 +413,167 @@ public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
 	 */
 	public void setNmLoginIdentidade(String nmLoginIdentidade) {
 		this.nmLoginIdentidade = nmLoginIdentidade;
+	}
+
+	// RECUPERACAO
+
+	/**
+	 * @return the telefoneRecuperacao
+	 */
+	public String getTelefoneRecuperacao() {
+		return telefoneRecuperacao;
+	}
+
+	/**
+	 * @param telefoneRecuperacao the telefoneRecuperacao to set
+	 */
+	public void setTelefoneRecuperacao(String telefoneRecuperacao) {
+		this.telefoneRecuperacao = telefoneRecuperacao;
+	}
+
+	/**
+	 * @return the emailRecuperacao
+	 */
+	public String getEmailRecuperacao() {
+		return emailRecuperacao;
+	}
+	
+	/**
+	 * Salva / substitui o e-mail pessoal a ser usado para recuperacao automatica de senha, 
+	 * e CASO O NOVO E-MAIL DE RECUPERACAO NAO SEJA NULO, 
+	 * prepara o registro para a validacao deste e-mail e retorna o token de validacao a ser 
+	 * enviado para a confirmacao do endereco.
+	 * CASO O NOVO E-MAIL DE RECUPERACAO SEJA NULO, 
+	 * retorna nulo. 
+	 * @param emailRecuperacao O endereco de e-mail a usar para Recuperacao automatica da senha
+	 * @return O token de validacao do e-mail salvo, a ser enviado para esse mesmo endereco.
+	 */
+	public String trocarEmailRecuperacao(String emailRecuperacao) {
+		if("".equals(emailRecuperacao))
+			emailRecuperacao = null;
+		this.emailRecuperacao = emailRecuperacao;
+		
+		if(emailRecuperacao != null) {
+			return this.generateTokenRecuperacao(null);
+		} else {
+			this.resetDtExpiracaoTokenRecuperacao(null);
+			return null;
+		}
+	}
+
+	/**
+	 * @return the tokenRecuperacao
+	 */
+	public String generateTokenRecuperacao(Date dataEHoraDoServidor) {
+		this.setTokenRecuperacao(UUID.randomUUID().toString());
+		this.resetDtExpiracaoTokenRecuperacao(dataEHoraDoServidor);
+		return tokenRecuperacao;
+	}
+
+	/**
+	 * Compara um token com o token salvo para confirmacao do e-mail. 
+	 * @param token o token a validar
+	 * @return true if given token is identical to 
+	 */
+	public boolean validarEmailRecuperacao(String token) {
+		if(this.getEmailRecuperacao() == null || this.getEmailRecuperacao().equals("")) return false;
+		return tokenRecuperacao.equals(token);
+	}
+
+	/**
+	 * @param tokenRecuperacao the tokenRecuperacao to evaluate
+	 * @return true if given token is identical to 
+	 */
+	public boolean validarTokenRecuperacao(String token, Date data) {
+		boolean tokenIgual = this.tokenRecuperacao.equals(token);
+		
+		boolean dataValida = this.dtExpiracaoTokenRecuperacao.compareTo(data) >= 0;
+		
+		return tokenIgual && dataValida;
+	}
+
+	/**
+	 * @return the dtExpiracaoRecuperacao
+	 */
+	public Date getDtExpiracaoTokenRecuperacao() {
+		return dtExpiracaoTokenRecuperacao;
+	}
+
+	/**
+	 * @param dataEHoraDoServidor data e hora atuais OU nulo para apagar
+	 * @param horas Quantidade de horas para expirar token, ignorado caso dataEHoraDoServidor seja nulo
+	 * @return data e hora de expiracao do token OU nulo
+	 */
+	public Date resetDtExpiracaoTokenRecuperacao(Date dataEHoraDoServidor, int horas) {
+		if(dataEHoraDoServidor != null) {
+			Calendar calendar = Calendar.getInstance();
+		    calendar.setTime(dataEHoraDoServidor);
+		    calendar.add(Calendar.HOUR_OF_DAY, horas);
+			
+			this.dtExpiracaoTokenRecuperacao = calendar.getTime();
+		} else {
+			this.dtExpiracaoTokenRecuperacao = null;
+		}
+		
+		return this.dtExpiracaoTokenRecuperacao;
+	}
+
+	/**
+	 * Configura a expiracao do token em 1 hora 
+	 * Caso o parametro seja nulo, apaga o valor do campo
+	 * @param dataEHoraDoServidor data e hora atuais OU nulo para apagar
+	 * @return data e hora de expiracao do token OU null
+	 */
+	public Date resetDtExpiracaoTokenRecuperacao(Date dataEHoraDoServidor) {
+		return resetDtExpiracaoTokenRecuperacao(dataEHoraDoServidor, 1);
+	}
+
+	/**
+	 * @return se o e-mail de recuperacao foi confirmado
+	 */
+	public boolean emailRecuperacaoFoiConfirmado() {
+		return dtConfirmacaoEmailRecuperacao != null;
+	}
+
+	/**
+	 * @param dtConfirmacaoEmailRecuperacao the dtConfirmacaoEmailRecuperacao to set
+	 */
+	public void setDtConfirmacaoEmailRecuperacao(Date dtConfirmacaoEmailRecuperacao) {
+		this.dtConfirmacaoEmailRecuperacao = dtConfirmacaoEmailRecuperacao;
+	}
+
+	public Date getDtConfirmacaoEmailRecuperacao() {
+		return this.dtConfirmacaoEmailRecuperacao;
+	}
+
+	/**
+	 * ATENCAO - evitar usar essa funcao. Use validateTokenRecuperacao 
+	 * @return the tokenRecuperacao
+	 */
+	public String getTokenRecuperacao() {
+		return tokenRecuperacao;
+	}
+
+	/**
+	 * ATENCAO - nao use essa funcao! Use generateTokenRecuperacao
+	 * @param tokenRecuperacao the tokenRecuperacao to set
+	 */
+	public void setTokenRecuperacao(String tokenRecuperacao) {
+		this.tokenRecuperacao = tokenRecuperacao;
+	}
+
+	/**
+	 * @param emailRecuperacao the emailRecuperacao to set
+	 */
+	public void setEmailRecuperacao(String emailRecuperacao) {
+		this.emailRecuperacao = emailRecuperacao;
+	}
+
+	/**
+	 * @param dtExpiracaoTokenRecuperacao the dtExpiracaoTokenRecuperacao to set
+	 */
+	public void setDtExpiracaoTokenRecuperacao(Date dtExpiracaoTokenRecuperacao) {
+		this.dtExpiracaoTokenRecuperacao = dtExpiracaoTokenRecuperacao;
 	}
 
 }

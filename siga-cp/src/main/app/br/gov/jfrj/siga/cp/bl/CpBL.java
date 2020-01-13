@@ -467,6 +467,14 @@ public class CpBL {
 		}
 	}
 
+    public static boolean temPermissaoServicoDefinirSenha(CpIdentidade possivelAdm) {
+    	String servico = "SIGA: Sistema Integrado de Gestão Administrativa;GI: Módulo de Gestão de Identidade;DEF_SENHA: Definir Senha";
+    	return Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(
+				    			possivelAdm.getDpPessoa(),
+				    			possivelAdm.getDpPessoa().getLotacao(),
+								servico);
+    }
+    
 	public CpIdentidade criarIdentidade(String matricula, String cpf,
 			CpIdentidade idCadastrante, final String senhaDefinida,
 			String[] senhaGerada, boolean marcarParaSinc)
@@ -871,6 +879,16 @@ public class CpBL {
 			throw new AplicacaoException(
 					"Senha Atual não confere e/ou Senha nova diferente de confirmação");
 		}
+	}
+
+	public boolean validarSenhaUsuario(CpIdentidade usuario, String senha) throws NoSuchAlgorithmException {
+		String matricula = usuario.getNmLoginIdentidade();
+		String siglaOrgaoMatricula = MatriculaUtils.getSigla(matricula);
+		boolean autenticaPeloBanco = buscarModoAutenticacao(siglaOrgaoMatricula).equals(GiService._MODO_AUTENTICACAO_BANCO);
+		if(autenticaPeloBanco)
+			return autenticarViaBanco(senha, usuario);
+		else
+			return autenticarViaLdap(senha, usuario);
 	}
 
 	private boolean autenticarViaBanco(String senhaAtual, final CpIdentidade id) throws NoSuchAlgorithmException {

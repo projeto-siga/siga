@@ -136,5 +136,33 @@ public abstract class MatriculaUtils {
 							+ matricula);
 		}
 	}
+	
+	/**
+	 * 
+	 * @param matricula
+	 * @return a parte numérica da matrícula
+	 * @throws AplicacaoException
+	 */
+	public static Long getParteNumerica(String matricula) throws AplicacaoException {
+		
+		validaPreenchimentoMatricula( matricula );
+		String strParteNumerica = matricula.substring( 2, matricula.length() );
+		if ( !StringUtils.isNumeric( strParteNumerica ) ) {
+			throw new AplicacaoException( "A parte numérica da matrícula é inválida. Matrícula: " + matricula + ". Parte Numérica: " + strParteNumerica );
+		}
+		
+		return Long.parseLong( strParteNumerica );
+	}
+
+	public static String getSigla(String matricula) throws AplicacaoException {
+		validaPreenchimentoMatricula( matricula );
+		String sigla = matricula.substring( 0, 2 );
+		if ( StringUtils.isNumeric( sigla ) ) {
+			throw new AplicacaoException( "A sigla da matrícula é inválida. Matrícula: " + matricula + ". Sigla: " + sigla );
+		}
+		
+		return sigla;
+	}
+
 
 }

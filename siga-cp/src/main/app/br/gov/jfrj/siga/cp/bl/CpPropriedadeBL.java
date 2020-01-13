@@ -110,4 +110,13 @@ public class CpPropriedadeBL extends ModeloPropriedade {
 	public String getModoAutenticacao(String orgao) throws Exception {
 		return System.getProperty(getPrefixoModulo() + ".autenticacao." + orgao.toLowerCase() + ".modo");
 	}
+	
+	public boolean getRecuperaSenhaUsandoDadosPessoais(String orgao) throws Exception {
+		return Boolean.valueOf(this.obterPropriedade("autenticacao." + orgao.toLowerCase() + ".trocaSenha.usaDadosPessoais"));
+	}
+	
+	public boolean getRecuperaSenhaUsandoCelularPessoal(String orgao) throws Exception {
+		return Boolean.valueOf(this.obterPropriedade("autenticacao." + orgao.toLowerCase() + ".trocaSenha.usaCelularPessoal"));
+	}
+
 }

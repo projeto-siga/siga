@@ -1,12 +1,15 @@
 package br.gov.jfrj.siga.vraptor;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.jboss.logging.Logger;
 
 import br.com.caelum.vraptor.Get;
@@ -21,6 +24,7 @@ import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.cp.bl.CpPropriedadeBL;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -42,53 +46,68 @@ public class UsuarioController extends SigaController {
 		result.on(Exception.class).forwardTo(this).exception();
 	}
 	
-	@Get({"/app/usuario/dados_recuperacao", "/public/app/usuario/dados_recuperacao"})
-	public void dadosRecuperacao() {
-		
-		//TODO verificar se a tabela de dados de recuperacao existe; caso negativo monstrar erro e nao mostrar o formulario
-		result.include("mensagem", "1");
+	@Get({"/app/usuario/trocar_senha", "/public/app/usuario/trocar_senha"})
+	public void trocarSenha() {
+		result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
 	}
+	
+	@Get({"/app/usuario/troca_senha_p1", "/public/app/usuario/troca_senha_p1"})
+	public void trocaSenha_p1() {
+		result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
+		
+		// se nao estiver logado pedir nome do usuario
+		CpIdentidade usuarioAtual = getIdentidadeCadastrante();
+		if(usuarioAtual == null) return;
 
-	@Post({"/app/usuario/dados_recuperacao_gravar","/public/app/usuario/dados_recuperacao_gravar"})
-	public void gravarDadosRecuperacao(UsuarioAction usuario) throws Exception {
-		
-		String senhaAtual = usuario.getSenhaAtual();
-		String email = usuario.getEmailRecuperacao();
-		String celular = usuario.getCelularRecuperacao();
-		
-		boolean erroDadosIncompletos = false;
-		
-		if(email.isEmpty() && celular.isEmpty())
-			erroDadosIncompletos = true;
-		
-		if(erroDadosIncompletos) {
-			result.include("mensagem", "Erro! Forneça ao menos um dos dados de recuperação.");
-			result.forwardTo("/WEB-INF/page/usuario/dadosRecuperacao.jsp");
-			return;
+		// se property "trocaSenha.usaDadosPessoais" for false, direcionar pra troca antiga
+		if(!recuperaUsandoDadosPessoais(usuarioAtual)) {
+			result.redirectTo("/app/usuario/trocar_senha");
 		}
 		
-		String senhaNova = usuario.getSenhaNova();
-		String senhaConfirma = usuario.getSenhaConfirma();
-		String nomeUsuario = usuario.getNomeUsuario().toUpperCase();
+		// ver parametro ADM para aceitar trocar senha de outro usuario 
+		boolean admTrocaSenha = CpBL.temPermissaoServicoDefinirSenha(usuarioAtual);
+
+		// se nao ADM, passar para tela 2 mandando nome do usuario logado
+		if(!admTrocaSenha) {
+			result.include("nomeUsuario", usuarioAtual.getNmLoginIdentidade());
+			result.redirectTo("/app/usuario/troca_senha_p2");
+		}
 		
-		CpIdentidade idNova = Cp.getInstance().getBL().trocarSenhaDeIdentidade(
-				senhaAtual, senhaNova, senhaConfirma, nomeUsuario,
-				getIdentidadeCadastrante());
+		result.include("nomeUsuario", usuarioAtual.getNmLoginIdentidade());
+		return;
 		
-		if ("on".equals(usuario.getTrocarSenhaRede())) {
-			try{
-				//IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova,senhaNova);
-				IntegracaoLdapViaWebService.getInstancia().trocarSenha(nomeUsuario, senhaNova);
-			} catch(Exception e){
-				throw new Exception("Não foi possível alterar a senha de rede e e-mail. "
-						+ "Tente novamente em alguns instantes ou repita a operação desmarcando a caixa \"Alterar Senha de Rede\"");
-			}
+	}
+	
+	@Get({"/app/usuario/troca_senha_p2", "/public/app/usuario/troca_senha_p2"})
+	public void trocaSenha_p2(UsuarioAction usuario) {
+		result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
+		
+		// se estiver logado, nao for adm e nomeUsuario nao for o proprio, erro
+		CpIdentidade usuarioAtual = getIdentidadeCadastrante();
+		if(usuarioAtual != null) {
+			if(!usuario.getNomeUsuario().equals(usuarioAtual.getNmLoginIdentidade())) {
+				result.include("erro", "naoAdmin");
+				return;
+			}	
 		}
 
-		result.include("mensagem", "A senha foi alterada com sucesso. <br/><br/><br/>OBS: A senha de rede e e-mail também foi alterada.");	
-		result.include("volta", "troca");
-		result.include("titulo", "Troca de Senha");
-		result.redirectTo("/app/principal");
+		// se property "trocaSenha.usaDadosPessoais" for false, direcionar pra troca antiga
+		if(!recuperaUsandoDadosPessoais(usuarioAtual)) {
+			result.redirectTo("/app/usuario/trocar_senha");
+		}
+		
+		// ver parametro ADM para aceitar trocar senha de outro usuario 
+		boolean admTrocaSenha = CpBL.temPermissaoServicoDefinirSenha(usuarioAtual);
+
+		// se nao ADM, passar para tela 2 mandando nome do usuario logado
+		if(!admTrocaSenha) {
+			result.include("nomeUsuario", usuarioAtual.getNmLoginIdentidade());
+			result.redirectTo("/app/usuario/troca_senha_p2");
+		}
+		
+		result.include("nomeUsuario", usuarioAtual.getNmLoginIdentidade());
+		return;
+		
 	}
 	
 	@Post({"/app/usuario/trocar_senha_gravar","/public/app/usuario/trocar_senha_gravar"})
@@ -132,6 +151,193 @@ public class UsuarioController extends SigaController {
 		result.redirectTo("/app/principal");
 	}
 	
+	@Get({"/app/usuario/dados_recuperacao", "/public/app/usuario/dados_recuperacao"})
+	public void dadosRecuperacao() {
+		
+		CpIdentidade usuarioAtual = getIdentidadeCadastrante();
+		
+		if(!recuperaUsandoDadosPessoais(usuarioAtual)) {
+			result.include("mensagem_erro", "O Órgão a que o usuário está vinculado não utiliza recuperação automática de senha.");
+			return;
+		}
+
+		result.include("emailRecup", usuarioAtual.getEmailRecuperacao());
+		result.include("celularRecup", usuarioAtual.getTelefoneRecuperacao());
+	}
+
+	private boolean recuperaUsandoDadosPessoais(CpIdentidade usuarioAtual) {
+		CpPropriedadeBL props = new CpPropriedadeBL();
+		try {
+			String orgao = usuarioAtual.getCpOrgaoUsuario().getSiglaOrgaoUsu();
+			return props.getRecuperaSenhaUsandoDadosPessoais(orgao);
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	@Post({"/app/usuario/dados_recuperacao_gravar","/public/app/usuario/dados_recuperacao_gravar"})
+	public void gravarDadosRecuperacao(UsuarioAction usuario) throws Exception {
+		
+		String senhaAtual = usuario.getSenhaAtual();
+		String email = usuario.getEmailRecuperacao();
+		String celular = usuario.getCelularRecuperacao();
+		
+		CpIdentidade usuarioAtual = getIdentidadeCadastrante();
+		
+		boolean precisaValidarEmail = !(usuarioAtual.getEmailRecuperacao().equals(email)) || !(usuarioAtual.emailRecuperacaoFoiConfirmado());
+		
+		boolean senhaConfere = Cp.getInstance().getBL().validarSenhaUsuario(usuarioAtual, senhaAtual);
+		if(!senhaConfere) {
+			result.include("mensagem", "Erro! A senha informada não confere com a sua senha atual.");
+			result.include("emailRecup", email);
+			result.include("celularRecup", celular);
+			result.forwardTo("/WEB-INF/page/usuario/dadosRecuperacao.jsp");
+			return;
+		}
+		
+		boolean erroDadosIncompletos = false;
+		
+		boolean nulos = (email == null && celular == null);
+		boolean informouEmailRecuperacao = !(email == null || email.isEmpty());
+		boolean ambosVazios = !informouEmailRecuperacao  && (celular != null && celular.isEmpty());
+		
+		// verificar se orgao usa recuperacao via celular; caso negativo, e-mail obrigatorio
+		if(!recuperaUsandoCelular(usuarioAtual) && !informouEmailRecuperacao) {
+			result.include("mensagem", "Erro! E-mail obrigatório.");
+			result.include("emailRecup", email);
+			result.include("celularRecup", celular);
+			result.forwardTo("/WEB-INF/page/usuario/dadosRecuperacao.jsp");
+			return;
+		}
+		
+		if(nulos || ambosVazios)
+			erroDadosIncompletos = true;
+		
+		if(erroDadosIncompletos) {
+			result.include("mensagem", "Erro! Forneça ao menos um dos dados de recuperação.");
+			result.forwardTo("/WEB-INF/page/usuario/dadosRecuperacao.jsp");
+			return;
+		}
+		
+		// salvar os dados 
+		Date dt = dao().consultarDataEHoraDoServidor();
+		CpIdentidade idNova = new CpIdentidade();
+		PropertyUtils.copyProperties(idNova, usuarioAtual);
+		idNova.setIdIdentidade(null);
+		idNova.setDtCriacaoIdentidade(dt);
+		
+		idNova.setTelefoneRecuperacao(celular);
+		
+		// caso o email tenha mudado ou nao tenha sido validado ainda, gerar novo token
+		String tokenRecuperacao = "";
+		if (precisaValidarEmail) 
+			tokenRecuperacao = idNova.trocarEmailRecuperacao(email);
+		
+		dao().iniciarTransacao();
+		dao().gravarComHistorico(idNova, usuarioAtual, dt, usuarioAtual);
+		dao().commitTransacao();
+		
+		result.include("mensagem", "Dados salvos com sucesso.");
+		if(informouEmailRecuperacao && precisaValidarEmail) {
+			StringBuffer textoEmail = new StringBuffer();
+			textoEmail.append(definirSaudacao(idNova) + " " + idNova.getPessoaAtual().getNomePessoa());
+			textoEmail.append(", <br/> Para confirmar seu endereço de e-mail de recuperação no SIGA, ");
+			textoEmail.append("clique no link a seguir: ");
+			String enderecoConfirmar = link("app/usuario/dados_recuperacao_confirmar?conf=" + tokenRecuperacao);
+			textoEmail.append("<br/><a href='" + enderecoConfirmar + "'>" + enderecoConfirmar + "</a>");
+			textoEmail.append("<br/><br/>Atenção: esta é uma mensagem automática. Por favor, não responda.");
+			//Correio.enviar(email,"Confirmação de endereço de recuperação", textoEmail.toString());
+			result.include("mensagemEmail", "Acesse o e-mail enviado ao endereço informado e clique no link para confirmar os dados.");
+		}
+		result.include("emailRecup", email);
+		result.include("celularRecup", celular);
+		result.forwardTo("/WEB-INF/page/usuario/dadosRecuperacao.jsp");
+		return;
+	}
+	
+	@Get({"/app/usuario/dados_recuperacao_confirmar","/public/app/usuario/dados_recuperacao_confirmar"})
+	public void confirmarDadosRecuperacao(String conf) throws Exception {
+		
+		CpIdentidade usuarioAtual = getIdentidadeCadastrante();
+		
+		boolean precisaValidarEmail = !(usuarioAtual.emailRecuperacaoFoiConfirmado());
+		
+		if(!precisaValidarEmail) {
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy', às 'HH:mm:ss");
+			result.include("mensagem", "O endereço de e-mail já foi confirmado em " + df.format(usuarioAtual.getDtConfirmacaoEmailRecuperacao()) + ".");
+			result.forwardTo("/WEB-INF/page/usuario/confirmarDadosRecuperacao.jsp");
+			return;
+		}
+		
+		//TODO confirmar se precisa informar senha novamente - eu acho que nao...
+		
+		
+		if(!usuarioAtual.validarEmailRecuperacao(conf)) {
+			result.include("mensagem", "Ocorreu um erro ao validar seu e-mail. Por favor, tente salvar seus dados de recuperação novamente e clique no link enviado ao seu e-mail.");
+			result.forwardTo("/WEB-INF/page/usuario/confirmarDadosRecuperacao.jsp");
+			return;
+		}
+		
+		// salvar os dados 
+		Date dt = dao().consultarDataEHoraDoServidor();
+		CpIdentidade idNova = new CpIdentidade();
+		PropertyUtils.copyProperties(idNova, usuarioAtual);
+		idNova.setIdIdentidade(null);
+		idNova.setDtCriacaoIdentidade(dt);
+		
+		idNova.setDtConfirmacaoEmailRecuperacao(dt);
+		idNova.setTokenRecuperacao(null);
+		
+		dao().iniciarTransacao();
+		dao().gravarComHistorico(idNova, usuarioAtual, dt, usuarioAtual);
+		dao().commitTransacao();
+		
+		result.include("mensagem", "E-mail de recuperação confirmado com sucesso.");
+		
+		// enviar email para os emails de contato do usuario dizendo que os dados de recuperacao foram alterados
+		List<String> emailsDoUsuario = new ArrayList<String>();
+		emailsDoUsuario.add(idNova.getEmailRecuperacao());
+		emailsDoUsuario.add(idNova.getPessoaAtual().getEmailPessoa());
+		
+		StringBuffer textoEmail = new StringBuffer();
+		textoEmail.append(definirSaudacao(idNova) + " " + idNova.getPessoaAtual().getNomePessoa());
+		textoEmail.append(", <br/> Informamos que seu endereço de e-mail de recuperação foi atualizado. ");
+		textoEmail.append("Caso queira, você pode rever suas informações de recuperação acessando o SIGA.");
+		textoEmail.append("<br/><br/>Atenção: esta é uma mensagem automática. Por favor, não responda.");
+		//Correio.enviar(emailsDoUsuario.toArray(new String[emailsDoUsuario.size()]),"Troca de e-mail de recuperação", textoEmail.toString());
+
+		result.forwardTo("/WEB-INF/page/usuario/confirmarDadosRecuperacao.jsp");
+		return;
+	}
+	
+	private String definirSaudacao(CpIdentidade idNova) {
+		if(idNova.getPessoaAtual().getSexo().equals("F"))
+			return "Prezada";
+		else if(idNova.getPessoaAtual().getSexo().equals("M"))
+			return "Prezado";
+		else
+			return "Prezadx";
+	}
+
+	private String link(String caminhoDepoisDaUrl) {
+		String url = SigaBaseProperties.getString("url");
+		if (url != null)
+			return url + (url.endsWith("/") ? "" : "/") + caminhoDepoisDaUrl;
+		else {
+			throw new RuntimeException("Ocorreu um erro ao enviar o e-mail de confirmação. Tente salvar seu e-mail de recuperação novamente mais tarde.", new RuntimeException("Não foi encontrada a property siga.base.url para a montagem do link de confirmação."));
+		}
+	}
+	
+	private boolean recuperaUsandoCelular(CpIdentidade usuarioAtual) {
+		CpPropriedadeBL props = new CpPropriedadeBL();
+		try {
+			String orgao = usuarioAtual.getCpOrgaoUsuario().getSiglaOrgaoUsu(); // ou seria getSigla()
+			return props.getRecuperaSenhaUsandoCelularPessoal(orgao);
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 	@Get({"/app/usuario/incluir_usuario","/public/app/usuario/incluir_usuario"})
 	public void incluirUsuario() {
 		if (!SigaMessages.isSigaSP()) {
@@ -204,6 +410,13 @@ public class UsuarioController extends SigaController {
 		result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
 		result.include("titulo", "Esqueci Minha Senha");
 		result.include("proxima_acao", "esqueci_senha_gravar");
+	}
+	
+	@Get({"/app/usuario/esqueci_senha_novo","/public/app/usuario/esqueci_senha_novo"})
+	public void esqueciSenhaNovo() {
+		result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
+		result.include("titulo", "Esqueci Minha Senha");
+		result.include("proxima_acao", "esqueci_senha_dados");
 	}
 	
 	@Post({"/app/usuario/esqueci_senha_gravar","/public/app/usuario/esqueci_senha_gravar"})

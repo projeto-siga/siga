@@ -184,6 +184,8 @@
 						href="/siga/app/usuario/trocar_senha">Trocar senha</a></li>
 				</c:if>
 				
+				<li><a href="/siga/app/usuario/dados_recuperacao" >Dados de recuperação de senha</a>
+				</li>
 				<%--
 					<li><a href="/siga/substituicao/substituir.action">Entrar
 							como substituto</a>

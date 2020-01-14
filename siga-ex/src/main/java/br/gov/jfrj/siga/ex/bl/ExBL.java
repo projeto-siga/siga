@@ -19,8 +19,6 @@
 package br.gov.jfrj.siga.ex.bl;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
@@ -130,6 +128,8 @@ import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
+import br.gov.jfrj.siga.ex.ExProtocolo;
+import br.gov.jfrj.siga.ex.ExSequencia.ExSequenciaEnum;
 import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTemporalidade;
 import br.gov.jfrj.siga.ex.ExTermoEliminacao;
@@ -3027,9 +3027,19 @@ public class ExBL extends CpBL {
 
 		return Long.parseLong(numeroDocumento);
 	}
-
-	public void criarVolume(DpPessoa cadastrante, DpLotacao lotaCadastrante, ExDocumento doc)
-			throws AplicacaoException {
+	
+	public Long obterSequencia(Long ano, Integer tipo, String zerarInicioAno) throws Exception {
+		ExService exService = Service.getExService();
+		String sequencia = null;
+		
+		sequencia = exService.obterSequencia(tipo, ano, zerarInicioAno);
+		 
+		return Long.parseLong(sequencia);
+	}
+	
+	
+	public void criarVolume(DpPessoa cadastrante, DpLotacao lotaCadastrante,
+			ExDocumento doc) throws AplicacaoException {
 		try {
 			iniciarAlteracao();
 
@@ -6823,23 +6833,39 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro ao revisar documento.", 0, e);
 		}
 	}
-
-	public void gerarProtocolo(ExDocumento doc, DpPessoa cadastrante, DpLotacao lotacao) {
+	
+	public ExProtocolo gerarProtocolo(ExDocumento doc, DpPessoa cadastrante, DpLotacao lotacao) {
 		try {
 			iniciarAlteracao();
-			doc.setChaveDoc(GeraMessageDigest.geraSenha(10));
-			dao().gravar(doc);
+			
+			Date dt = dao().dt();
+			Calendar c = Calendar.getInstance();
+			c.setTime(dt);
+			
+			ExProtocolo prot = new ExProtocolo();
+			prot.setNumero(obterSequencia(Long.valueOf(c.get(Calendar.YEAR)), ExSequenciaEnum.PROTOCOLO.getValor(), "1"));
+			prot.setExDocumento(doc);
+			prot.setData(c.getTime());
+			
+			dao().gravar(prot);
 			ContextoPersistencia.flushTransaction();
 			final ExMovimentacao mov = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO,
 					cadastrante, lotacao, doc.getMobilGeral(), null, cadastrante, null, null, null, null);
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(doc.getMobilGeral());
-
+			return prot;
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Ocorreu um erro ao gerar protocolo.", 0, e);
 		}
-
+	}
+	
+	public ExProtocolo obterProtocolo(ExDocumento doc) {
+		try {
+			return dao().obterProtocoloPorDocumento(doc.getIdDoc());
+		} catch (Exception e) {
+			throw new AplicacaoException("Ocorreu um erro ao obter protocolo.", 0, e);
+		}
 	}
 }

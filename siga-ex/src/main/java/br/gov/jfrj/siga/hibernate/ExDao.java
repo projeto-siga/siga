@@ -38,9 +38,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.config.CacheConfiguration;
 
 import org.hibernate.Criteria;
 import org.hibernate.LockMode;
@@ -78,6 +75,8 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExPreenchimento;
+import br.gov.jfrj.siga.ex.ExProtocolo;
+import br.gov.jfrj.siga.ex.ExSequencia;
 import br.gov.jfrj.siga.ex.ExTipoDespacho;
 import br.gov.jfrj.siga.ex.ExTipoDestinacao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
@@ -96,6 +95,9 @@ import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.persistencia.ExClassificacaoDaoFiltro;
 import br.gov.jfrj.siga.persistencia.ExDocumentoDaoFiltro;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.config.CacheConfiguration;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class ExDao extends CpDao {
@@ -265,6 +267,79 @@ public class ExDao extends CpDao {
 	
 	/*****************************/
 
+	public ExSequencia obterSequencia(Integer tipoSequencia, Long anoEmissao, Boolean lock )
+			throws SQLException {
+	    
+		final Query query = getSessao().getNamedQuery("ExSequencia.obterSequencia");
+		query.setParameter("tipoSequencia", tipoSequencia);
+		query.setParameter("anoEmissao", anoEmissao);
+		query.setLong("flAtivo", 1);
+		
+		if (lock) {
+			query.setLockMode("this", LockMode.PESSIMISTIC_WRITE);
+		}
+		
+		return (ExSequencia) query.uniqueResult();		
+	}
+	
+	public Long obterNumeroGerado(Integer tipoSequencia, Long anoEmissao)
+			throws SQLException {
+	    
+		final Query query = getSessao().getNamedQuery("ExSequencia.obterNumeroGerado");
+		query.setParameter("tipoSequencia", tipoSequencia);
+		query.setParameter("anoEmissao", anoEmissao);
+		query.setLong("flAtivo", 1);
+		
+		return (Long) query.uniqueResult();		
+	}
+	
+	public void incrementNumero(Long idSeq)
+			throws SQLException {
+		
+		final Query query = getSessao().getNamedQuery("ExSequencia.incrementaSequencia");
+		query.setLong("increment", 1L);
+		query.setLong("id", idSeq);
+		
+		query.executeUpdate();
+		
+	}
+	
+	public ExSequencia existeRangeSequencia(Integer tipoSequencia)
+			throws SQLException {
+	    
+		final Query query = getSessao().getNamedQuery("ExSequencia.existeRangeSequencia");
+		query.setParameter("tipoSequencia", tipoSequencia);
+		query.setParameter("rownum", 1L);
+		
+		return (ExSequencia) query.uniqueResult();
+
+	}
+	
+	public void updateMantemRangeSequencia(Long idSeq)
+			throws SQLException {
+		
+		final Query query = getSessao().getNamedQuery("ExDocumentoNumeracao.mantemRangeSequencia");
+		
+		Calendar c = Calendar.getInstance();
+		
+		query.setLong("anoEmissao", c.get(Calendar.YEAR));
+		query.setLong("flAtivo", 1);
+		query.setLong("increment", 1L);
+		query.setLong("id", idSeq);
+		
+		query.executeUpdate();
+		
+	}
+	
+	public ExProtocolo obterProtocoloPorDocumento(Long idDoc)
+			throws SQLException {
+	    
+		final Query query = getSessao().getNamedQuery("ExProtocolo.obterProtocoloPorDocumento");
+		query.setParameter("idDoc", idDoc);
+		query.setParameter("rownum", 1L);
+		
+		return (ExProtocolo) query.uniqueResult();		
+	}
 
 	public List consultarPorFiltro(final ExMobilDaoFiltro flt) {
 		return consultarPorFiltro(flt, 0, 0);

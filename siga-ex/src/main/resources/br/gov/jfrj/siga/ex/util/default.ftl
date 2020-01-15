@@ -1978,7 +1978,7 @@ Pede deferimento.</span><br/><br/><br/>
     FIM CABECALHO -->
 [/#macro]
 
-[#macro primeiroRodape]
+[#macro primeiroRodape exibeClassificacaoDocumental=true]
     <!-- INICIO PRIMEIRO RODAPE
         [#nested/]
     FIM PRIMEIRO RODAPE -->
@@ -2435,7 +2435,7 @@ Pede deferimento.</span><br/><br/><br/>
 [/#macro]
 
 
-[#macro estiloBrasaoCentralizado tipo tamanhoLetra="11pt" formatarOrgao=true orgaoCabecalho=true numeracaoCentralizada=false dataAntesDaAssinatura=false incluirMioloDJE=false omitirCodigo=false omitirData=false topoPrimeiraPagina='' incluirAssinaturaBIE=true]
+[#macro estiloBrasaoCentralizado tipo tamanhoLetra="11pt" formatarOrgao=true orgaoCabecalho=true numeracaoCentralizada=false dataAntesDaAssinatura=false incluirMioloDJE=false omitirCodigo=false omitirData=false topoPrimeiraPagina='' incluirAssinaturaBIE=true exibeClassificacaoDocumental=true]
     [@primeiroCabecalho]${topoPrimeiraPagina!}
     [@cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho/]
     [/@primeiroCabecalho]
@@ -2508,8 +2508,10 @@ Pede deferimento.</span><br/><br/><br/>
         [/#if]  
    [/@letra]
 
-   [@primeiroRodape]
-   [@rodapeClassificacaoDocumental/]
+   [@primeiroRodape exibeClassificacaoDocumental=exibeClassificacaoDocumental]
+	   [#if exibeClassificacaoDocumental]
+	   		[@rodapeClassificacaoDocumental/]
+	   [/#if]
    [/@primeiroRodape]
    [@rodape]
    [@rodapeNumeracaoADireita/]

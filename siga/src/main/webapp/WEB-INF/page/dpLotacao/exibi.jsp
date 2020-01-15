@@ -160,9 +160,9 @@
 		<h3 class="gt-table-head ${hide_only_GOVSP}">Organograma</h3>
 		<div id="organograma"></div>
 	</div>
-<c:if test='${siga_cliente == "GOVSP"}'>
+
 	<script>
 		buildSvg('organograma', '${graph}');
 	</script>
-</c:if>
+
 </siga:pagina>

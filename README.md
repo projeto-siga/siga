@@ -12,7 +12,7 @@ O Siga é composto de diversos módulos:
 
 O módulo mas popular, o Siga-Doc, é capaz de controlar o trâmite de documentos digitais ou físico, processos administrativos ou expedientes, usando assinatura com certificado digital ou simplesmente assinatura com login e senha. Este módulo foi desenvolvido seguindo os requisitos do e-Arq, portanto, tem um elevado grau de aderência.
 
-Para saber mais sobre o Siga-Doc, clique [aqui](https://github.com/projeto-siga/siga/wiki/Sobre-o-Siga-Doc).
+Para saber mais sobre o Siga-Doc, clique [aqui](https://www10.trf2.jus.br/ti/produtos-open-source/o-que-e-o-siga-doc).
 
 Não deixe de conferir o novo [Manual do Usuário](https://sway.com/6tcLGC0jYE7zUSBX), uma contribuição do Governo do Estado de São Paulo!
 

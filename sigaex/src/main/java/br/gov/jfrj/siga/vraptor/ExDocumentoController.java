@@ -35,6 +35,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -87,6 +88,7 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExPreenchimento;
+import br.gov.jfrj.siga.ex.ExProtocolo;
 import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
@@ -458,6 +460,7 @@ public class ExDocumentoController extends ExController {
 
 		final boolean isDocNovo = (exDocumentoDTO == null || exDocumentoDTO
 				.getSigla() == null);
+		
 		boolean postback = param("postback") != null;
 		if (isDocNovo) {
 			if (!postback)
@@ -1663,6 +1666,41 @@ public class ExDocumentoController extends ExController {
 
 			exBL.gravar(getCadastrante(), getTitular(), getLotaTitular(),
 					exDocumentoDTO.getDoc());
+			
+			
+			/*
+			 * alteracao para adicionar a movimentacao de insercao de substituto
+			 */
+			/*
+			if(exDocumentoDTO.getDoc().getTitular() != temp.getDoc().getTitular() && !isNovo) {
+				
+				final ExMovimentacao mov = new ExMovimentacao();
+				mov.setCadastrante(exDocumentoDTO.getDoc().getCadastrante());
+				mov.setLotaCadastrante(exDocumentoDTO.getDoc().getLotaCadastrante());
+				mov.setDtMov(dao().dt());
+				mov.setDtIniMov(dao().dt());
+				mov.setExMobil(exDocumentoDTO.getDoc().getMobilGeral());
+				mov.setExTipoMovimentacao(dao().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SUBSTITUICAO_RESPONSAVEL,ExTipoMovimentacao.class, false));
+				mov.setLotaTitular(exDocumentoDTO.getDoc().getLotaTitular());
+						
+						
+				String principal = ContextoPersistencia.getUserPrincipal();
+				if (principal != null) {
+					CpIdentidade identidade = dao().consultaIdentidadeCadastrante(principal, true);
+					mov.setAuditIdentidade(identidade);
+				}
+				RequestInfo ri = CurrentRequest.get();
+				if (ri != null) {
+					mov.setAuditIP(HttpRequestUtils.getIpAudit(ri.getRequest()));
+				}
+				
+				dao.gravar(mov);
+			}
+			*/
+			/*
+			 * fim da alteracao
+			 */
+			
 
 			if(exDocumentoDTO.getDoc().getExMobilPai() != null && Ex.getInstance().getComp().podeRestrigirAcesso(getCadastrante(), getLotaCadastrante(), exDocumentoDTO.getDoc().getExMobilPai())) {
 				exBL.copiarRestringir(exDocumentoDTO.getDoc().getMobilGeral(), exDocumentoDTO.getDoc().getExMobilPai().getDoc().getMobilGeral(), getCadastrante(), getTitular(), exDocumentoDTO.getDoc().getData());
@@ -1887,15 +1925,29 @@ public class ExDocumentoController extends ExController {
 		final Ex ex = Ex.getInstance();
 		final ExBL exBL = ex.getBL();
 		
-		if(exDocumentoDto.getDoc().getChaveDoc() == null) {
+		ExProtocolo prot = new ExProtocolo();
+		prot = exBL.obterProtocolo(exDocumentoDto.getDoc());
+		
+		if(prot == null) {
 			try {
-				exBL.gerarProtocolo(exDocumentoDto.getDoc(), getCadastrante(), getLotaCadastrante());
+				prot = exBL.gerarProtocolo(exDocumentoDto.getDoc(), getCadastrante(), getLotaCadastrante());
 			} catch (Exception e) {
 				throw new AplicacaoException(
 						"Ocorreu um erro ao gerar protocolo.");
 			}
 		}
 		
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		Calendar c = Calendar.getInstance();
+		c.setTime(prot.getData());
+		
+		String url = SigaBaseProperties.getString("siga.ex."
+				+ SigaBaseProperties.getString("siga.ambiente") + ".url") + "/protocolo";
+		
+		result.include("url", url);
+		result.include("ano", c.get(Calendar.YEAR));
+		result.include("dataHora", df.format(c.getTime()));
+		result.include("protocolo", prot);
 		result.include("sigla", sigla);
 		result.include("doc", exDocumentoDto.getDoc());
 	}

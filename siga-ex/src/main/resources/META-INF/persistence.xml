@@ -73,6 +73,8 @@
 		<class>br.gov.jfrj.siga.ex.ExMarca</class>
 		<class>br.gov.jfrj.siga.ex.ExConfiguracao</class>
 		<class>br.gov.jfrj.siga.ex.ExDocumentoNumeracao</class>
+		<class>br.gov.jfrj.siga.ex.ExSequencia</class>
+		<class>br.gov.jfrj.siga.ex.ExProtocolo</class>
 
 		<properties>
 			<property name="hibernate.current_session_context_class"

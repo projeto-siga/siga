@@ -85,5 +85,8 @@ public interface ExService extends Remote {
 	
     @WebMethod
 	public String obterNumeracaoExpediente(Long idOrgaoUsu, Long idFormaDoc, Long anoEmissao) throws Exception;
+    
+    @WebMethod
+	public String obterSequencia(Integer tipoSequencia, Long anoEmissao, String zerarInicioAnno) throws Exception;
 
 }

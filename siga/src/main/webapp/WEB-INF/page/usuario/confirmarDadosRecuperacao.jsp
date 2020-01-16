@@ -19,14 +19,22 @@ conform<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://ww
 
 <siga:pagina popup="false" titulo="Alteração de dados de recuperação">
 	<!-- main content -->
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-			<h1 class="gt-form-head">${param.titulo}</h1>
-			<h2 class="gt-form-head">Dados de recuperação</h2>
-			
-			<br/>
-			<div class="gt-form gt-content-box tabela-senha">
-					<h1>${mensagem } </h1>
+	<div class="card bg-light mb-3" >
+
+		<div class="card-header">
+			<h5>${param.titulo}</h5>
+			<h2 class="gt-form-head">Alteração de dados de recuperação</h2>
+		</div>
+
+		<div class="card-body">
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="form-group">
+						<div class="gt-form gt-content-box tabela-senha">
+							<h5>${mensagem } </h5>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

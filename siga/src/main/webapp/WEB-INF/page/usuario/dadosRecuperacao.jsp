@@ -30,72 +30,92 @@
 
 <c:choose>
 	<c:when test="${empty mensagem_erro}">
-		<div class="gt-bd clearfix">
-			<div class="gt-content clearfix">
-				<h1 class="gt-form-head">${param.titulo}</h1>
+		<div class="container-fluid">
+		<div class="card bg-light mb-3" >
+
+			<div class="card-header">
+				<h5>${param.titulo}</h5>
 				<h2 class="gt-form-head">Alteração de dados de recuperação</h2>
-				<div id="msgInfo" style="font-size: 10pt; color: red;">
-					As informações abaixo poderão ser utilizadas APENAS na recuperação de sua senha do sistema, em caso de esquecimento ou perda.
-					<br/>Por razões de segurança, lembre-se de manter estes dados sempre atualizados! 
-				</div>
-				<br/>
-				<div class="gt-form gt-content-box tabela-senha">
-					<form action="dados_recuperacao_gravar" method="post">
-						<input type="hidden" name="page" value="1" />
-						<h1>${mensagem } ${mensagemEmail }</h1>
-	
-						<table>
-						<tr>
-								<td><label>Senha atual<a href="#"
-										title="Para alterar seus dados pessoais, é necessário informar sua senha."><img
-											class="botaoDica" src="/siga/css/famfamfam/icons/information.png" /> </a>
-								</label></td>
-							</tr>
-	
-							<tr>
-								<td><input type="password" name="usuario.senhaAtual" class="gt-form-text" /></td>
-							</tr>
-							<tr>
-								<td></td>
-							</tr>
-							<tr>
-								<td><label>E-mail de recuperação<a href="#"
-										title="Informe um e-mail pessoal. NÃO cadastre seu próprio e-mail institucional!"><img
-											class="botaoDica" src="/siga/css/famfamfam/icons/information.png" /> </a>
-								</label></td>
-							</tr>
-	
-							<tr>
-								<td><input type="text" name="usuario.emailRecuperacao" value="${emailRecup}" class="gt-form-text" /></td>
-								
-							</tr>
-							<tr>
-								<td></td>
-							</tr>
-	
-							<tr>
-								<td><label>Celular de recuperação<a href="#"
-										title="Digite o código DDD e os 9 dígitos de seu celular pessoal; apenas números."><img
-											class="botaoDica" src="/siga/css/famfamfam/icons/information.png" /> </a>
-								</label></td>
-							</tr>
-							
-							<tr>
-								<td><input type="text" name="usuario.celularRecuperacao" value="${celularRecup}" class="gt-form-text celular" /></td>
-							</tr>
-							
-							<tr>
-								<td></td>
-							</tr>
-	
-							<tr>
-								<td><button type="submit" class="gt-btn-medium gt-btn-left">OK</button></td>
-							</tr>
-						</table>
-					</form>
-				</div>
 			</div>
-		</div>
+
+			<div class="card-body">
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="form-group">
+							<div id="msgInfo" style="font-size: 10pt; color: red;">
+								As informações abaixo poderão ser utilizadas APENAS na recuperação de sua senha do sistema, em caso de esquecimento ou perda.
+								<br/>Por razões de segurança, lembre-se de manter estes dados sempre atualizados! 
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<form action="dados_recuperacao_gravar" method="post">
+				
+				<input type="hidden" name="page" value="1" />
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="form-group">
+							<h5>${mensagem } ${mensagemEmail }</h5>
+						</div>
+					</div>
+				</div>
+				
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="form-group">
+							<label for="usuario.senhaAtual" class="col-sm-2x col-form-labelx">
+								Senha atual
+								<a href="#"title="Para alterar seus dados pessoais, é necessário informar sua senha.">
+									<img class="botaoDica" src="/siga/css/famfamfam/icons/information.png" /> 
+								</a>
+							</label>
+							<br />
+							<input type="password" name="usuario.senhaAtual" class="gt-form-text" />
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="form-group">
+							<label for="usuario.emailRecuperacao" class="col-sm-2x col-form-labelx">
+								E-mail de recuperação
+								<a href="#" title="Informe um e-mail pessoal. NÃO cadastre seu próprio e-mail institucional!">
+									<img class="botaoDica" src="/siga/css/famfamfam/icons/information.png" /> 
+								</a>
+							</label>
+							<br />
+							<input type="text" name="usuario.emailRecuperacao" value="${emailRecup}" class="gt-form-text" />
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="form-group">
+							<label for="usuario.celularRecuperacao" class="col-sm-2x col-form-labelx">
+								Celular de recuperação
+								<a href="#" title="Digite o código DDD e os 9 dígitos de seu celular pessoal; apenas números.">
+									<img class="botaoDica" src="/siga/css/famfamfam/icons/information.png" /> 
+								</a>
+							</label>
+							<br />
+							<input type="text" name="usuario.celularRecuperacao" value="${celularRecup}" class="gt-form-text celular" />
+						</div>
+					</div>
+				</div>
+
+
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="form-group">
+							<siga:monobotao inputType="submit" value="Ok" cssClass="btn btn-primary" />
+						</div>
+					</div>
+				</div>
+				</form>
+			</div>
 	</c:when>
 	<c:otherwise>
 				<br/>

@@ -452,6 +452,7 @@ public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
 		if("".equals(emailRecuperacao))
 			emailRecuperacao = null;
 		this.emailRecuperacao = emailRecuperacao;
+		this.setDtConfirmacaoEmailRecuperacao(null);
 		
 		if(emailRecuperacao != null) {
 			return this.generateTokenRecuperacao(null);

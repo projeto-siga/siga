@@ -199,6 +199,12 @@ public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements Se
 	final static public long TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA = 72;
 	
 	final static public long TIPO_MOVIMENTACAO_GERAR_PROTOCOLO = 73;
+	
+	/*
+	 * alteracao para insercao do historico do substituto de assinatura
+	 */
+	
+	final static public long TIPO_MOVIMENTACAO_SUBSTITUICAO_RESPONSAVEL = 74;
 
 	public static boolean hasDespacho(long id) {
 		return id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO

@@ -1978,7 +1978,7 @@ Pede deferimento.</span><br/><br/><br/>
     FIM CABECALHO -->
 [/#macro]
 
-[#macro primeiroRodape]
+[#macro primeiroRodape exibeClassificacaoDocumental=true]
     <!-- INICIO PRIMEIRO RODAPE
         [#nested/]
     FIM PRIMEIRO RODAPE -->
@@ -2194,13 +2194,65 @@ Pede deferimento.</span><br/><br/><br/>
 </table>
 [/#macro]
 
-[#macro rodapeClassificacaoDocumental somenteTR=false texto=""]
+[#macro cabecalhoDireitaGenerico width="65" height="65" exibirOrgao=false]
+<table width="100%" border="0" bgcolor="#FFFFFF">
+    <tr bgcolor="#FFFFFF">
+        <td width="100%">
+        <table width="100%">
+            <tr>
+	        <td align="right" valign="bottom"><img src="${_pathBrasaoSecundario}" width="200"/></td>
+	        <td width="1%">
+	        <table align="right" width="100%">
+	        </table>
+	        </td>
+   			</tr>
+        </table>
+        </td>
+    </tr>
+</table>
+[/#macro]
+
+[#macro cabecalhoDireita]
+<table width="100%" border="0" bgcolor="#FFFFFF">
+    <tr bgcolor="#FFFFFF">
+        <td width="100%">
+        <table width="100%">
+            <tr>
+                <td width="100%" align="left">
+                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">${_tituloGeral}</p>
+                </td>
+            </tr>
+            [#if _subtituloGeral?has_content]
+            <tr>
+                <td width="100%" align="center">
+                <p style="font-family: Arial; font-size: 10pt; font-weight: bold;">${_subtituloGeral}</p>
+                </td>
+            </tr>
+            [/#if]
+            <tr>
+                <td width="100%" align="left">
+                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 8pt;">
+                [#if mov??]
+                    ${(mov.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
+                [#else]
+                    ${(doc.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
+                [/#if]<br />
+                 </p>
+                </td>
+            </tr>
+        </table>
+        </td>
+    </tr>
+</table>
+[/#macro]
+
+[#macro rodapeClassificacaoDocumental align="left" somenteTR=false texto=""]
 [#if !somenteTR]
 <table align="left" width="100%" bgcolor="#FFFFFF">
 [/#if]
 [#if texto?? && texto!=""]
 	<tr>
-		<td colspan="2" align="left" style="border-collapse: collapse; border-color: black; font-family:Arial; font-size:8pt;">
+		<td colspan="2" align="${align}" style="border-collapse: collapse; border-color: black; font-family:Arial; font-size:8pt;">
 			${texto} 
 		</td>
 	</tr>
@@ -2434,8 +2486,52 @@ Pede deferimento.</span><br/><br/><br/>
     [/@rodape]
 [/#macro]
 
+ [#macro estiloBrasaoADireita tipo exibeData=true formatarOrgao=false numeracaoEsquerda=false tamanhoLetra="11pt" obs="" omitirCodigo=false width=65 height=65 exibirOrgao=false texto=""]
+    [@primeiroCabecalho]
+    <table width="100%" border="0" bgcolor="#FFFFFF"><tr><td>
+    [@cabecalhoDireitaGenerico width=65 height=65 exibirOrgao=true/]
+    </td></tr>
+        <tr bgcolor="#FFFFFF">
+            <td width="100%">
+                <table width="100%">                  
+                    [#if exibeData]
+                    <tr>
+                        <td align="right">[@letra tamanho="10pt"]<p>${(doc.dtExtenso)!}</p>[/@letra]</td>
+                    </tr>                    
+                    [/#if]
+                </table>
+            </td>
+        </tr>
+    </table>
+    [/@primeiroCabecalho]
 
-[#macro estiloBrasaoCentralizado tipo tamanhoLetra="11pt" formatarOrgao=true orgaoCabecalho=true numeracaoCentralizada=false dataAntesDaAssinatura=false incluirMioloDJE=false omitirCodigo=false omitirData=false topoPrimeiraPagina='' incluirAssinaturaBIE=true]
+    [@cabecalho]
+    [@cabecalhoDireitaGenerico/]
+    [/@cabecalho]
+
+    [@letra tamanho=tamanhoLetra]
+        <p>&nbsp;</p>
+                [#nested]
+        <p>&nbsp;</p>
+        [@assinaturaCentro formatarOrgao=formatarOrgao/]
+    [/@letra]
+        [#if obs != ""]
+                <p>&nbsp;</p>
+                ${obs}
+        [/#if]
+ 
+ 	[@primeiroRodape]
+    [@rodapeClassificacaoDocumental align="right" texto=texto/]
+    [/@primeiroRodape]
+    
+    [@rodape]
+   	[@rodapeClassificacaoDocumental align="right" texto=texto/]
+    [@rodapeNumeracaoADireita texto="" /]
+    [/@rodape]
+[/#macro]
+
+
+[#macro estiloBrasaoCentralizado tipo tamanhoLetra="11pt" formatarOrgao=true orgaoCabecalho=true numeracaoCentralizada=false dataAntesDaAssinatura=false incluirMioloDJE=false omitirCodigo=false omitirData=false topoPrimeiraPagina='' incluirAssinaturaBIE=true exibeClassificacaoDocumental=true]
     [@primeiroCabecalho]${topoPrimeiraPagina!}
     [@cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho/]
     [/@primeiroCabecalho]
@@ -2508,8 +2604,10 @@ Pede deferimento.</span><br/><br/><br/>
         [/#if]  
    [/@letra]
 
-   [@primeiroRodape]
-   [@rodapeClassificacaoDocumental/]
+   [@primeiroRodape exibeClassificacaoDocumental=exibeClassificacaoDocumental]
+	   [#if exibeClassificacaoDocumental]
+	   		[@rodapeClassificacaoDocumental/]
+	   [/#if]
    [/@primeiroRodape]
    [@rodape]
    [@rodapeNumeracaoADireita/]
@@ -4353,5 +4451,6 @@ ${texto}
 [/#macro]
 
 [#assign _pathBrasao = "contextpath/imagens/brasaoColoridoTRF2.png" /]
+[#assign _pathBrasaoSecundario = "contextpath/imagens/brasao_prodesp_governo.png" /]
 [#assign _tituloGeral = "PODER JUDICIÁRIO" /]
 [#assign _subtituloGeral = "JUSTIÇA FEDERAL" /]

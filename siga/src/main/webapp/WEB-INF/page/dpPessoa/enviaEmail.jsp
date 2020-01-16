@@ -77,6 +77,8 @@ function cpf_mask(v){
 <siga:pagina titulo="Listar Pessoas">
 <link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
 <link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
+<link rel="stylesheet" href="/siga/css/selectpicker/bootstrap-select.min.css" type="text/css" media="screen, projection" />
+<link rel="stylesheet" href="/siga/css/siga.multiploselect.css" type="text/css" media="screen, projection" />
 
 	<!-- main content -->
 	<div class="container-fluid">
@@ -87,13 +89,13 @@ function cpf_mask(v){
 		<div class="card bg-light mb-3" >
 			<div class="card-header">
 				<h5>Envio de E-mail para Novos Usuários</h5>
-			</div>
+			</div>			
 			<div class="card-body">
 				<div class="row">
-					<div class="col-md-4">
+					<div class="col-md-3">
 						<div class="form-group">
 							<label for="uidOrgaoUsu">Órgão</label>
-							<select name="idOrgaoUsu" value="${idOrgaoUsu}" onchange="carregarRelacionados(this.value)" class="form-control  siga-select2">
+							<select name="idOrgaoUsu" id="idOrgaoUsu" value="${idOrgaoUsu}" onchange="carregarRelacionados(this.value)" class="form-control  siga-select2">
 								<option value="0">Selecione</option> 
 								<c:forEach items="${orgaosUsu}" var="item">
 									<option value="${item.idOrgaoUsu}"
@@ -103,21 +105,39 @@ function cpf_mask(v){
 							</select>
 						</div>					
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-5">
 						<div class="form-group">
-							<label for="idLotacaoPesquisa">Lota&ccedil;&atilde;o</label>
-							<select name="idLotacaoPesquisa" value="${idLotacaoPesquisa}" class="form-control  siga-select2">
+							<label for="lotacao">Lota&ccedil;&atilde;o</label>
+							<input type="hidden" name="idLotacaoPesquisa" value="${idLotacaoPesquisa}" id="inputHiddenLotacoesSelecionadas" />
+							<select id="lotacao" class="form-control  siga-multiploselect  js-siga-multiploselect--lotacao">
 								<c:forEach items="${listaLotacao}" var="item">
-									<option value="${item.idLotacao}"
-										${item.idLotacao == idLotacaoPesquisa ? 'selected' : ''}>
-										${item.descricao}</option>
+									<option value="${item.idLotacao}">${item.descricao}</option>
 								</c:forEach>
 							</select>
 						</div>					
 					</div>
+					<div class="col-md-4">
+						<div class="form-group">  																													
+							<label for="usuario">Usuário</label>
+								<div style="display: flex; width: 100%">
+									<input type="hidden" name="idUsuarioPesquisa" value="${idUsuarioPesquisa}" id="inputHiddenUsuariosSelecionados" />																			
+				                    <select id="usuario" class="form-control  siga-multiploselect  js-siga-multiploselect--usuario">
+				                        <optgroup label="Secretaria de Governo">
+				                            <option>User 1</option>                  
+				                            <option>User 2</option>
+				                            <option>User 3</option>
+				                            <option>User 4</option>
+				                        </optgroup>				                        
+				                    </select>	
+			                    <div>
+			                    	<span class="spinner"></span>
+			                    </div>
+			            	</div>		                    
+	                    </div>					
+					</div>					
 				</div>
 				<div class="row">
-					<div class="col-md-4">
+					<div class="col-md-3">
 						<div class="form-group">
 							<label for="nome">Nome</label>
 							<input type="text" id="nome" name="nome" value="${nome}" maxlength="100" class="form-control"/>
@@ -225,4 +245,7 @@ function carregarRelacionados(id) {
 <script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
 <script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
 <script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
+<script type="text/javascript" src="/siga/javascript/selectpicker/bootstrap-select.min.js"></script>
+<script type="text/javascript" src="/siga/javascript/siga.multiploselect.js"></script>
+<script type="text/javascript" src="/siga/javascript/pessoa.combo-usuario-lotacao.js"></script>
 </siga:pagina>

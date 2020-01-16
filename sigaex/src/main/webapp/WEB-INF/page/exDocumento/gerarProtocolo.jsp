@@ -38,7 +38,14 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<div class="form-group text-center">
-					<label>N&uacute;mero do Protocolo: ${doc.chaveDoc}</label>
+					<label>N&uacute;mero do Protocolo: <b>${protocolo.numero} / ${ano}</b></label>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="form-group text-center">
+					<label>Data/Hora: ${dataHora}</label>
 				</div>
 			</div>
 		</div>
@@ -47,7 +54,7 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<div class="form-group text-center">
-					<label><b>Aten&ccedil;&atilde;o:</b> Para consultar o andamento do seu documento acesse XXXXXXXXXXXXXXXXXXXX</label>
+					<label><b>Aten&ccedil;&atilde;o: </b>Para consultar o andamento do seu documento acesse ${url} </label>
 				</div>
 			</div>
 		</div>
@@ -56,7 +63,7 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<div class="form-group text-center">
-					<label>http://www.xxx.xxx.xxx/xxx/xxx - ${doc.cadastrante.nomePessoa} - ${doc.cadastrante.cargo.descricao } - ${doc.cadastrante.lotacao.descricao } - ${doc.dtRegDocDDMMYYHHMMSS}</label>
+					<label>${url} - ${doc.cadastrante.nomePessoa} - ${doc.cadastrante.cargo.descricao } - ${doc.cadastrante.lotacao.descricao } - ${doc.dtRegDocDDMMYYHHMMSS}</label>
 				</div>
 			</div>
 		</div>

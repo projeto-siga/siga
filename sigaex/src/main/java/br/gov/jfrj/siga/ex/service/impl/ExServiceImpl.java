@@ -49,6 +49,7 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
+import br.gov.jfrj.siga.ex.ExSequencia;
 import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
@@ -751,6 +752,63 @@ public class ExServiceImpl implements ExService {
 		}	
 	}
 	
+	public String obterSequencia(Integer tipoSequencia, Long anoEmissao, String zerarInicioAno) throws Exception {
+		try {
+			Long idSeq = null;
+			Long numero = 0L;
+			ContextoPersistencia.flushTransaction();
+			
+			//Verifica se Range atual existe
+			ExSequencia sequencia = dao().obterSequencia(tipoSequencia, anoEmissao, true);
+
+			if (sequencia == null) {
+
+				sequencia = dao().existeRangeSequencia(tipoSequencia);
+				
+				if (sequencia != null && "0".equals(sequencia.getZerarInicioAno())) { //Existe Range Anterior e Não pode Resetar numeracao
+					dao().updateMantemRangeNumeroDocumento(sequencia.getIdSequencia());
+		
+				} else { //Não existe ou deve resetar numeração
+					ExSequencia exSequencia = new ExSequencia();
+					
+					exSequencia.setTipoSequencia(tipoSequencia);
+					exSequencia.setFlAtivo("1");
+					exSequencia.setAnoEmissao(anoEmissao);
+					if(zerarInicioAno != null && !"".equals(zerarInicioAno)) {
+						exSequencia.setZerarInicioAno(zerarInicioAno);
+					} else {
+						exSequencia.setZerarInicioAno("1");
+					}
+
+					numero = 1L;
+					exSequencia.setNumero(numero);
+					exSequencia.setNrInicial(numero);
+					
+					dao().gravar(exSequencia);
+
+					exSequencia = null;
+				}
+
+			} else { //Range vigente. Só incrementa
+				idSeq = sequencia.getIdSequencia();
+				dao().incrementNumero(idSeq);
+			}
+
 	
+			if (numero != 1L) { //Obtém Número Gerado antes de liberar registro
+				numero = dao().obterNumeroGerado(tipoSequencia, anoEmissao);
+			}
+
+			ContextoPersistencia.flushTransaction();
+			
+			//Retorno em String para WS
+			return numero.toString();			
+			
+		} catch (Exception e) {
+			//ExDao.rollbackTransacao();
+			throw new AplicacaoException("Ocorreu um problema na obtenção do número: "
+					+ e.getMessage(), 0, e);
+		}	
+	}
 
 }

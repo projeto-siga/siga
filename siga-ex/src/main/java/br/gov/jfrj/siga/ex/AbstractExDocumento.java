@@ -34,6 +34,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -395,9 +396,10 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@JoinColumn(name = "ID_MOB_AUTUADO")
 	private ExMobil exMobilAutuado;
 	
-	@Column(name = "CHAVE_DOC", length = 10)
-	private String chaveDoc;
-
+	@OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_PROTOCOLO")
+    private ExProtocolo exProtocolo;
+	
 	/**
 	 * Simple constructor of AbstractExDocumento instances.
 	 */
@@ -1067,11 +1069,11 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		this.dtAltDoc = dtAltDoc;
 	}
 
-	public String getChaveDoc() {
-		return chaveDoc;
+	public ExProtocolo getExProtocolo() {
+		return exProtocolo;
 	}
 
-	public void setChaveDoc(String chaveDoc) {
-		this.chaveDoc = chaveDoc;
+	public void setExProtocolo(ExProtocolo exProtocolo) {
+		this.exProtocolo = exProtocolo;
 	}
 }

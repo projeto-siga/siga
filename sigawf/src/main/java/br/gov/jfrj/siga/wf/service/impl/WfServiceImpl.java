@@ -19,29 +19,21 @@
 package br.gov.jfrj.siga.wf.service.impl;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.SortedSet;
 
 import javax.jws.WebService;
-
-import org.hibernate.Query;
-import org.jbpm.JbpmContext;
-import org.jbpm.context.def.VariableAccess;
-import org.jbpm.context.exe.VariableInstance;
-import org.jbpm.db.GraphSession;
-import org.jbpm.graph.def.ProcessDefinition;
-import org.jbpm.graph.exe.ExecutionContext;
-import org.jbpm.graph.exe.ProcessInstance;
-import org.jbpm.taskmgmt.exe.TaskInstance;
 
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
+import br.gov.jfrj.siga.wf.WfDefinicaoDeProcedimento;
+import br.gov.jfrj.siga.wf.WfInstanciaDeProcedimento;
 import br.gov.jfrj.siga.wf.bl.Wf;
-import br.gov.jfrj.siga.wf.bl.WfBL;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.service.WfService;
-import br.gov.jfrj.siga.wf.util.WfContextBuilder;
-import br.gov.jfrj.siga.wf.vraptor.WfUtil;
+import br.gov.jfrj.siga.wf.util.WfInstanciaDeTarefa;
+import br.gov.jfrj.siga.wf.util.WfUtil;
+import br.gov.jfrj.siga.wf.util.WfUtils;
 
 /**
  * Classe que representa o webservice do workflow. O SIGA-DOC faz a chamada
@@ -51,7 +43,7 @@ import br.gov.jfrj.siga.wf.vraptor.WfUtil;
  * @author kpf
  * 
  */
-@WebService(serviceName ="WfService", endpointInterface = "br.gov.jfrj.siga.wf.service.WfService", targetNamespace = "http://impl.service.wf.siga.jfrj.gov.br/")
+@WebService(serviceName = "WfService", endpointInterface = "br.gov.jfrj.siga.wf.service.WfService", targetNamespace = "http://impl.service.wf.siga.jfrj.gov.br/")
 public class WfServiceImpl implements WfService {
 
 	private boolean hideStackTrace = false;
@@ -65,180 +57,55 @@ public class WfServiceImpl implements WfService {
 	}
 
 	/**
-	 * Atualiza o workflow de um documento. Este método pesquisa todas as
-	 * variáveis que começam com "doc_" em todas as instâncias de tarefas.
-	 * Quando encontra a variável, passa a sigla do documento para o execution
-	 * execution context e executa a ação da tarefa.
+	 * Atualiza o workflow de um documento. Este método pesquisa todas as variáveis
+	 * que começam com "doc_" em todas as instâncias de tarefas. Quando encontra a
+	 * variável, passa a sigla do documento para o execution execution context e
+	 * executa a ação da tarefa.
 	 */
-	public Boolean atualizarWorkflowsDeDocumento(String codigoDocumento)
-			throws Exception {
-		try {
-			Boolean b = false;
-			GraphSession graph = WfContextBuilder.getJbpmContext()
-					.getGraphSession();
-			JbpmContext ctx = WfContextBuilder.getJbpmContext()
-					.getJbpmContext();
-			// List<TaskInstance> tis = ctx.getTaskList();
-
-			Query q = WfDao
-					.getInstance()
-					.getSessao()
-					.createQuery(
-							"select ti from org.jbpm.taskmgmt.exe.TaskInstance as ti"
-									+ " where ti.isSuspended != true and ti.isOpen = true");
-			List<TaskInstance> tis = q.list();
-
-			for (TaskInstance ti : tis) {
-				if (ti.getTask().getTaskController() != null) {
-					List<VariableAccess> variableAccesses = (List<VariableAccess>) ti
-							.getTask().getTaskController()
-							.getVariableAccesses();
-					for (VariableAccess variable : variableAccesses) {
-						if (variable.getMappedName() != null
-								&& variable.getMappedName().startsWith("doc_")
-								&& variable.isReadable()
-								&& !variable.isWritable()) {
-							String mapping = variable.getMappedName();
-							String value = (String) ti.getContextInstance()
-									.getVariable(mapping);
-							if (value != null
-									&& value.startsWith(codigoDocumento)) {
-								ExecutionContext ec = new ExecutionContext(
-										ti.getToken());
-								ec.setTaskInstance(ti);
-								ec.setTask(ti.getTask());
-								ti.getTask().fireEvent("context-change", ec);
-
-								executarAcoes(codigoDocumento, ti);
-
-								b = true;
-							}
-						}
-					}
-				}
-			}
-			return b;
-		} catch (Exception e) {
-			if (!isHideStackTrace())
-				e.printStackTrace(System.out);
-			throw e;
-		}
-	}
-
-	/**
-	 * Executa ações na tarefa baseando-se nos serviços externos associados à
-	 * tarefa.
-	 * 
-	 * @param codigoDocumento
-	 * @param ti
-	 * @throws Exception
-	 */
-	private void executarAcoes(String codigoDocumento, TaskInstance ti)
-			throws Exception {
+	public Boolean atualizarWorkflowsDeDocumento(String siglaDoc) throws Exception {
+		SortedSet<WfInstanciaDeTarefa> tis = WfDao.getInstance().consultarTarefasAtivasPorDocumento(siglaDoc);
+		boolean f = false;
 		ExService exSvc = Service.getExService();
-		WfBL bl = Wf.getInstance().getBL();
-		WfDao dao = WfDao.getInstance();
-
-		if (exSvc.isSemEfeito(codigoDocumento)) {
-			bl.encerrarProcessInstance(ti.getProcessInstance().getId(),
-					dao.consultarDataEHoraDoServidor());
+		Boolean semEfeito = exSvc.isSemEfeito(siglaDoc);
+		for (WfInstanciaDeTarefa ti : tis) {
+			if (semEfeito)
+				Wf.getInstance().getBL().encerrarProcessInstance(ti.getInstanciaDeProcesso().getId(),
+						WfDao.getInstance().consultarDataEHoraDoServidor());
+			else {
+				WfInstanciaDeProcedimento pi = ti.getInstanciaDeProcesso();
+				WfUtils.buildEngine(pi).resume(siglaDoc, null, null);
+			}
+			f = true;
 		}
+		return f;
 	}
 
 	/**
 	 * Inicia um novo procedimento.
 	 */
-	public Boolean criarInstanciaDeProcesso(String nomeProcesso,
-			String siglaCadastrante, String siglaTitular,
+	public Boolean criarInstanciaDeProcesso(String nomeProcedimento, String siglaCadastrante, String siglaTitular,
 			ArrayList<String> keys, ArrayList<String> values) throws Exception {
 
-		try {
-			if (nomeProcesso == null)
-				throw new RuntimeException();
-			GraphSession graph = WfContextBuilder.getJbpmContext()
-					.getGraphSession();
-			ProcessDefinition pd = graph
-					.findLatestProcessDefinition(nomeProcesso);
-			if (pd == null)
-				throw new RuntimeException(
-						"Não foi encontrado um ProcessDefinition com o nome '"
-								+ nomeProcesso + "'");
-			PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(
-					siglaCadastrante);
-			PessoaLotacaoParser titularParser = new PessoaLotacaoParser(
-					siglaTitular);
+		if (nomeProcedimento == null)
+			throw new RuntimeException("Nome do procedimento precisa ser informado.");
+		WfDefinicaoDeProcedimento pd = WfDao.getInstance().consultarWfDefinicaoDeProcedimentoPorNome(nomeProcedimento);
+		if (pd == null)
+			throw new RuntimeException("Não foi encontrado um procedimento com o nome '" + nomeProcedimento + "'");
+		PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaCadastrante);
+		PessoaLotacaoParser titularParser = new PessoaLotacaoParser(siglaTitular);
 
-			ProcessInstance pi = Wf
-					.getInstance()
-					.getBL()
-					.createProcessInstance(pd.getId(),
-							cadastranteParser.getPessoa(),
-							cadastranteParser.getLotacao(),
-							titularParser.getPessoa(),
-							titularParser.getLotacao(), keys, values, false);
+		WfInstanciaDeProcedimento pi = Wf.getInstance().getBL().createProcessInstance(pd.getId(),
+				cadastranteParser.getPessoa(), cadastranteParser.getLotacao(), titularParser.getPessoa(),
+				titularParser.getLotacao(), keys, values, false);
 
-			WfUtil.transferirDocumentosVinculados(pi, siglaTitular);
-			return true;
-		} catch (Exception e) {
-			if (!isHideStackTrace())
-				e.printStackTrace(System.out);
-			throw e;
-		}
+		WfUtil.transferirDocumentosVinculados(pi, siglaTitular);
+		return true;
 	}
 
 	@Override
-	public Object variavelPorDocumento(String codigoDocumento,
-			String nomeDaVariavel) throws Exception {
-		try {
-			// TODO Auto-generated method stub
-			Boolean b = false;
-			GraphSession graph = WfContextBuilder.getJbpmContext()
-					.getGraphSession();
-			JbpmContext ctx = WfContextBuilder.getJbpmContext()
-					.getJbpmContext();
-			// List<TaskInstance> tis = ctx.getTaskList();
-
-			// Get latest processInstance that references a certain document
-			// Query qpi = WfDao
-			// .getInstance()
-			// .getSessao()
-			// .createQuery(
-			// "select max(vi.processInstance) from org.jbpm.context.exe.variableinstance.StringInstance as vi, vi.processInstance pi"
-			// +
-			// " where pi.end is null and vi.name like 'doc_%' and vi.value = :codigoDocumento");
-			Query qpi = WfDao
-					.getInstance()
-					.getSessao()
-					.createQuery(
-							"select max(vi.processInstance.id) from org.jbpm.context.exe.variableinstance.StringInstance as vi inner join vi.processInstance as pi"
-									+ " where pi.end is null and vi.name like 'doc_%' and vi.value = :codigoDocumento");
-			qpi.setParameter("codigoDocumento", codigoDocumento);
-
-			Long pid = (Long) qpi.uniqueResult();
-
-			if (pid == null)
-				return null;
-
-			Query qvi = WfDao
-					.getInstance()
-					.getSessao()
-					.createQuery(
-							"select vi from org.jbpm.context.exe.variableinstance.StringInstance as vi"
-									+ " where vi.processInstance.id = :pid and vi.name = :nomeDaVariavel");
-			qvi.setParameter("pid", pid);
-			qvi.setParameter("nomeDaVariavel", nomeDaVariavel);
-			List<VariableInstance> vis = qvi.list();
-
-			for (VariableInstance vi : vis) {
-				if (vi.getValue() != null)
-					return vi.getValue();
-			}
-			return null;
-		} catch (Exception e) {
-			if (!isHideStackTrace())
-				e.printStackTrace(System.out);
-			throw e;
-		}
+	public Object variavelPorDocumento(String codigoDocumento, String nomeDaVariavel) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

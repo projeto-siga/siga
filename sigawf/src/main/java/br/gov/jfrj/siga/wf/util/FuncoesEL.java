@@ -18,19 +18,15 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.util;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import org.jbpm.graph.def.Transition;
-import org.jbpm.graph.exe.Comment;
-import org.jbpm.taskmgmt.exe.TaskInstance;
-
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.wf.bl.TaskInstanceComparator;
+import br.gov.jfrj.siga.wf.WfDefinicaoDeDesvio;
 import br.gov.jfrj.siga.wf.bl.Wf;
+import br.gov.jfrj.siga.wf.bl.WfInstanciaDeTarefaComparator;
 
 /**
  * Classe que contém diversas funcões úteis que podem ser utilizadas nos
@@ -41,7 +37,7 @@ import br.gov.jfrj.siga.wf.bl.Wf;
  */
 public class FuncoesEL {
 
-	static TaskInstanceComparator tic = new TaskInstanceComparator();
+	static WfInstanciaDeTarefaComparator tic = new WfInstanciaDeTarefaComparator();
 
 	/**
 	 * Retorna as transições disponíveis em ordem alfabética.
@@ -49,23 +45,22 @@ public class FuncoesEL {
 	 * @param taskInstance
 	 * @return
 	 */
-	public static List<Transition> ordenarTransicoes(TaskInstance taskInstance) {
+	public static List<WfDefinicaoDeDesvio> ordenarTransicoes(WfInstanciaDeTarefa taskInstance) {
 
-		Transition[] lista = new Transition[taskInstance
-				.getAvailableTransitions().size()];
-		taskInstance.getAvailableTransitions().toArray(lista);
+		WfDefinicaoDeDesvio[] lista = new WfDefinicaoDeDesvio[taskInstance.getDefinicaoDeTarefa().getDesvios().size()];
+		taskInstance.getDefinicaoDeTarefa().getDesvios().toArray(lista);
 
-		Arrays.sort(lista, new Comparator<Transition>() {
+		Arrays.sort(lista, new Comparator<WfDefinicaoDeDesvio>() {
 
-			public int compare(Transition o1, Transition o2) {
-				if (o1.getName() == null) {
+			public int compare(WfDefinicaoDeDesvio o1, WfDefinicaoDeDesvio o2) {
+				if (o1.getNome() == null) {
 					return 1;
 				}
-				if (o2.getName() == null) {
+				if (o2.getNome() == null) {
 					return -1;
 				}
 
-				return o1.getName().compareToIgnoreCase(o2.getName());
+				return o1.getNome().compareToIgnoreCase(o2.getNome());
 			}
 
 		});
@@ -78,66 +73,62 @@ public class FuncoesEL {
 	 * 
 	 * @return
 	 */
-	public static List<TaskInstance> ordenarTarefas(TaskInstance taskInstance) {
-		TaskInstance[] lista = new TaskInstance[taskInstance
-				.getTaskMgmtInstance().getTaskInstances().size()];
-		taskInstance.getTaskMgmtInstance().getTaskInstances().toArray(lista);
-
-		Arrays.sort(lista, new Comparator<TaskInstance>() {
-
-			public int compare(TaskInstance o1, TaskInstance o2) {
-				if (o1.getCreate().getTime() < o2.getCreate().getTime()) {
-					return 1;
-				}
-				if (o1.getCreate().getTime() > o2.getCreate().getTime()) {
-					return -1;
-				}
-				return 0;
-			}
-
-		});
-
-		return Arrays.asList(lista);
-	}
+//	public static List<TaskInstance> ordenarTarefas(TaskInstance taskInstance) {
+//		TaskInstance[] lista = new TaskInstance[taskInstance.getTaskMgmtInstance().getTaskInstances().size()];
+//		taskInstance.getTaskMgmtInstance().getTaskInstances().toArray(lista);
+//
+//		Arrays.sort(lista, new Comparator<TaskInstance>() {
+//
+//			public int compare(TaskInstance o1, TaskInstance o2) {
+//				if (o1.getCreate().getTime() < o2.getCreate().getTime()) {
+//					return 1;
+//				}
+//				if (o1.getCreate().getTime() > o2.getCreate().getTime()) {
+//					return -1;
+//				}
+//				return 0;
+//			}
+//
+//		});
+//
+//		return Arrays.asList(lista);
+//	}
 
 	/**
 	 * Retorna a lista de tarefas em ordem decrescente de criação.
 	 * 
 	 * @return
 	 */
-	public static List<Comment> ordenarComentarios(TaskInstance taskInstance) {
-		if (taskInstance.getComments() == null)
-			return new ArrayList(0);
-		Comment[] lista = new Comment[taskInstance.getComments().size()];
-		taskInstance.getComments().toArray(lista);
-
-		Arrays.sort(lista, new Comparator<Comment>() {
-
-			public int compare(Comment o1, Comment o2) {
-				if (o1.getTime().getTime() < o2.getTime().getTime()) {
-					return 1;
-				}
-				if (o1.getTime().getTime() > o2.getTime().getTime()) {
-					return -1;
-				}
-				return 0;
-			}
-
-		});
-
-		return Arrays.asList(lista);
-	}
+//	public static List<Comment> ordenarComentarios(TaskInstance taskInstance) {
+//		if (taskInstance.getComments() == null)
+//			return new ArrayList(0);
+//		Comment[] lista = new Comment[taskInstance.getComments().size()];
+//		taskInstance.getComments().toArray(lista);
+//
+//		Arrays.sort(lista, new Comparator<Comment>() {
+//
+//			public int compare(Comment o1, Comment o2) {
+//				if (o1.getTime().getTime() < o2.getTime().getTime()) {
+//					return 1;
+//				}
+//				if (o1.getTime().getTime() > o2.getTime().getTime()) {
+//					return -1;
+//				}
+//				return 0;
+//			}
+//
+//		});
+//
+//		return Arrays.asList(lista);
+//	}
 
 	public static List<String> listarOpcoes(String nomeVariavel) {
-		String op = nomeVariavel.substring(nomeVariavel.indexOf("(") + 1,
-				nomeVariavel.length() - 1);
+		String op = nomeVariavel.substring(nomeVariavel.indexOf("(") + 1, nomeVariavel.length() - 1);
 		return Arrays.asList(op.split(";"));
 	}
 
-	public static Boolean podePegarTarefa(DpPessoa cadastrante,
-			DpPessoa titular, DpLotacao lotaCadastrante, DpLotacao lotaTitular,
-			TaskInstance ti) {
-		return Wf.getInstance().getBL().podePegarTarefa(cadastrante, titular,
-				lotaCadastrante, lotaTitular, ti);
+	public static Boolean podePegarTarefa(DpPessoa cadastrante, DpPessoa titular, DpLotacao lotaCadastrante,
+			DpLotacao lotaTitular, WfInstanciaDeTarefa ti) {
+		return Wf.getInstance().getBL().podePegarTarefa(cadastrante, titular, lotaCadastrante, lotaTitular, ti);
 	}
 }

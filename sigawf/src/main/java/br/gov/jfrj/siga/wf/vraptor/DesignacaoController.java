@@ -51,6 +51,7 @@ import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.util.WfContextBuilder;
 import br.gov.jfrj.siga.wf.util.WfTipoResponsavel;
+import br.gov.jfrj.siga.wf.util.WfUtil;
 
 @Resource
 public class DesignacaoController extends WfController {

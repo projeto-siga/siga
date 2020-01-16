@@ -21,12 +21,13 @@ package br.gov.jfrj.siga.wf.bl;
 import br.gov.jfrj.siga.cp.bl.CpPropriedadeBL;
 
 public class WfPropriedadeBL extends CpPropriedadeBL {
+	private static WfPropriedadeBL instance = new WfPropriedadeBL();
 
 	@Override
 	public String getPrefixoModulo() {
 		return "siga.wf";
 	}
-	
+
 	public String getMailLinkTarefa() {
 		String result = "indefinido";
 		try {
@@ -36,7 +37,7 @@ public class WfPropriedadeBL extends CpPropriedadeBL {
 		}
 		return result;
 	}
-	
+
 	public String getMailLinkDocumento() {
 		String result = "indefinido";
 		try {
@@ -45,6 +46,23 @@ public class WfPropriedadeBL extends CpPropriedadeBL {
 			e.printStackTrace();
 		}
 		return result;
+	}
+
+	public Double getRelEstatGeraisMinMediaTrunc() {
+		return Double.valueOf(getString("rel.estatisticas.gerais.media.truncada.min").replace(",", "."));
+	}
+
+	public Double getRelEstatGeraisMaxMediaTrunc() {
+		return Double.valueOf(getString("rel.estatisticas.gerais.media.truncada.max").replace(",", "."));
+	}
+
+	public static String getString(final String key) {
+		try {
+			return instance.obterPropriedade(key);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
 	}
 
 }

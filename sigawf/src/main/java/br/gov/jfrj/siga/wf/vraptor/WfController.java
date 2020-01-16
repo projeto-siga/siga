@@ -19,6 +19,7 @@ import br.gov.jfrj.siga.vraptor.SigaController;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.util.WfContextBuilder;
+import br.gov.jfrj.siga.wf.util.WfUtil;
 
 public class WfController extends SigaController {
 

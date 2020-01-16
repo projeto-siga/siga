@@ -37,6 +37,7 @@ import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.util.WfContextBuilder;
 import br.gov.jfrj.siga.wf.util.WfTaskVO;
+import br.gov.jfrj.siga.wf.util.WfUtil;
 
 @Resource
 @SuppressWarnings("unchecked")

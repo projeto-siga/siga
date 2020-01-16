@@ -16,13 +16,25 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package br.gov.jfrj.siga.dp;
+package br.gov.jfrj.siga.wf.bl;
 
-import br.gov.jfrj.siga.model.Objeto;
+import java.util.Comparator;
 
-@SuppressWarnings("serial")
-public abstract class DpResponsavel extends Objeto {
-	abstract public String getSigla();
+import br.gov.jfrj.siga.wf.util.WfInstanciaDeTarefa;
 
-	abstract public String getSiglaCompleta();
+public class WfInstanciaDeTarefaComparator implements Comparator<WfInstanciaDeTarefa> {
+
+	/**
+	 * Compara dois objetos TaskInstance. Retorna zero (0) se os objetos são
+	 * "iguais", retorna (1) se a PRIORIDADE ou ID do primeiro objeto (o1) for maior
+	 * doque o segundo objeto (o2). Retorna (-1), caso contrário. ESTE CÓDIGO ESTÁ
+	 * DUPLICADO EM WfDocumentoAction.java.
+	 */
+	public int compare(WfInstanciaDeTarefa o1, WfInstanciaDeTarefa o2) {
+//		if (o1.getId() > o2.getId())
+//			return 1;
+//		if (o1.getId() < o2.getId())
+//			return -1;
+		return 0;
+	}
 }

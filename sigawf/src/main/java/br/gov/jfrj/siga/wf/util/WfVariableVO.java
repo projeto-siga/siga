@@ -16,13 +16,45 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package br.gov.jfrj.siga.dp;
+package br.gov.jfrj.siga.wf.util;
 
-import br.gov.jfrj.siga.model.Objeto;
+import java.lang.reflect.InvocationTargetException;
 
-@SuppressWarnings("serial")
-public abstract class DpResponsavel extends Objeto {
-	abstract public String getSigla();
+import br.gov.jfrj.siga.wf.WfDefinicaoDeVariavel;
 
-	abstract public String getSiglaCompleta();
+public class WfVariableVO {
+	private String access;
+	private String mappedName;
+	private String variableName;
+
+	public WfVariableVO(WfDefinicaoDeVariavel vd) throws IllegalAccessException, InvocationTargetException {
+		this.access = vd.getAcesso().name();
+		this.mappedName = vd.getIdentifier();
+		this.variableName = vd.getIdentifier();
+	}
+
+	public String getAccess() {
+		return access;
+	}
+
+	public void setAccess(String access) {
+		this.access = access;
+	}
+
+	public String getMappedName() {
+		return mappedName;
+	}
+
+	public void setMappedName(String mappedName) {
+		this.mappedName = mappedName;
+	}
+
+	public String getVariableName() {
+		return variableName;
+	}
+
+	public void setVariableName(String variableName) {
+		this.variableName = variableName;
+	}
+
 }

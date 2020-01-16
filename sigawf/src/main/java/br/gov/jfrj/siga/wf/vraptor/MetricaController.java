@@ -17,11 +17,12 @@ import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.gov.jfrj.siga.vraptor.SigaIdDescr;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
-import br.gov.jfrj.siga.wf.SigaWfProperties;
+import br.gov.jfrj.siga.wf.dao.SigaWfProperties;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.relatorio.RelEstatisticaProcedimento;
 import br.gov.jfrj.siga.wf.relatorio.RelTempoDoc;
 import br.gov.jfrj.siga.wf.relatorio.RelTempoDocDetalhado;
+import br.gov.jfrj.siga.wf.util.WfUtil;
 
 @Resource
 public class MetricaController extends WfController {

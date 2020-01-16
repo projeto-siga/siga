@@ -1,69 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>siga-doc</artifactId>
-        <groupId>siga</groupId>
-        <version>1.2-SNAPSHOT</version>
-    </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<artifactId>siga-doc</artifactId>
+		<groupId>siga</groupId>
+		<version>1.2-SNAPSHOT</version>
+	</parent>
 
-    <modelVersion>4.0.0</modelVersion>
+	<modelVersion>4.0.0</modelVersion>
 
-    <artifactId>siga-wf</artifactId>
+	<artifactId>siga-wf</artifactId>
 
-    <dependencies>
-        <dependency>
-            <groupId>info.bliki.wiki</groupId>
-            <artifactId>bliki-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-analyzers</artifactId>
-        </dependency>
-
-        <!-- JBPM -->
-        <dependency>
-            <groupId>org.jbpm.jbpm3</groupId>
-            <artifactId>jbpm-identity</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm.jbpm3</groupId>
-            <artifactId>jbpm-jpdl</artifactId>
-        </dependency>
-        
-       	<dependency>
-			<groupId>javax.jcr</groupId>
-			<artifactId>jcr</artifactId>
-			<version>1.0.1</version>
+	<dependencies>
+		<dependency>
+			<groupId>siga</groupId>
+			<artifactId>siga-cp</artifactId>
 		</dependency>
 
-        <dependency>
-            <groupId>org.jboss.spec.javax.servlet</groupId>
-            <artifactId>jboss-servlet-api_2.5_spec</artifactId>
-            <scope>provided</scope>
-        </dependency>
+		<dependency>
+			<groupId>com.crivano</groupId>
+			<artifactId>jflow</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 
-        <dependency>
-            <groupId>net.sf.kxml</groupId>
-            <artifactId>kxml2</artifactId>
-        </dependency>
+		<!-- https://mvnrepository.com/artifact/info.bliki.wiki/bliki-core -->
+		<dependency>
+			<groupId>info.bliki.wiki</groupId>
+			<artifactId>bliki-core</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+	</dependencies>
 
-        <dependency>
-            <groupId>backport-util-concurrent</groupId>
-            <artifactId>backport-util-concurrent</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>siga</groupId>
-            <artifactId>siga-cp</artifactId>
-        </dependency>
-    </dependencies>
-    
 	<profiles>
 		<profile>
 			<id>flyway</id>
-			
+
 			<properties>
 				<maven.test.skip>true</maven.test.skip>
 				<maven.main.skip>true</maven.main.skip>
@@ -108,5 +80,5 @@
 				</plugins>
 			</build>
 		</profile>
-	</profiles>    
+	</profiles>
 </project>

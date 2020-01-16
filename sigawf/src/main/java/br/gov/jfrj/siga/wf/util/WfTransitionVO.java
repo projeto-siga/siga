@@ -19,11 +19,9 @@
 package br.gov.jfrj.siga.wf.util;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Set;
 
-import org.jbpm.graph.def.Transition;
+import br.gov.jfrj.siga.wf.WfDefinicaoDeDesvio;
 
 /**
  * Classe que repesenta um View Object (Objeto Visão, ou seja, objeto que será
@@ -41,9 +39,8 @@ public class WfTransitionVO implements Comparable {
 	private boolean no;
 	private boolean next;
 
-	public WfTransitionVO(Transition t, Set<String> lResp)
-			throws IllegalAccessException, InvocationTargetException {
-		this.name = t.getName();
+	public WfTransitionVO(WfDefinicaoDeDesvio t, Set<String> lResp) throws IllegalAccessException, InvocationTargetException {
+		this.name = t.getTitle();
 		if (name != null) {
 			if (name.equalsIgnoreCase("sim"))
 				yes = true;

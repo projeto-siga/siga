@@ -27,6 +27,7 @@ import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.util.WfContextBuilder;
 import br.gov.jfrj.siga.wf.util.WfTipoResponsavel;
+import br.gov.jfrj.siga.wf.util.WfUtil;
 
 @Resource
 public class ConfiguracaoController extends WfController {
@@ -175,7 +176,7 @@ public class ConfiguracaoController extends WfController {
 		for (WfConfiguracao c : cfgExistente) {
 			if ((c.getDpPessoa() != null || c.getLotacao() != null)
 					&& c.getHisDtFim() == null
-					&& c.getIdConfiguracao().equals(perm.getId())) {
+					&& c.getIdConfiguracao().equals(perm.getIdentifier())) {
 				resultado.add(c);
 			}
 		}
@@ -335,8 +336,8 @@ public class ConfiguracaoController extends WfController {
 		DpLotacao lotacao = null;
 		DpPessoa pessoa = null;
 
-		lotacao = extrairLotaAtor(permissao.getId());
-		pessoa = extrairAtor(permissao.getId());
+		lotacao = extrairLotaAtor(permissao.getIdentifier());
+		pessoa = extrairAtor(permissao.getIdentifier());
 
 		if (pessoa != null || lotacao != null) {// se
 			// configuração

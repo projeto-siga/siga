@@ -539,7 +539,7 @@ public class ExMobilVO extends ExVO {
 					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO 
 				&& ((SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local")) && 
 					mob.getUltimaMovimentacaoNaoCancelada().getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA &&
-					mob.getDoc().getCadastrante().equals(titular)) || (mob.getUltimaMovimentacaoNaoCancelada().getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA || 
+					mob.getUltimaMovimentacaoNaoCancelada().getCadastrante().equals(titular)) || (mob.getUltimaMovimentacaoNaoCancelada().getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA || 
 						((SigaBaseProperties.getString("siga.local") != null && !"GOVSP".equals(SigaBaseProperties.getString("siga.local"))))))
 			)
 			addAcao("arrow_undo",

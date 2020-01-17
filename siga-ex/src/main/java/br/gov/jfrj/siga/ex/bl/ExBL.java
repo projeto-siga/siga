@@ -1695,8 +1695,11 @@ public class ExBL extends CpBL {
 			Boolean tramitar) throws Exception {
 
 		DpPessoa subscritor = null;
+		DpPessoa cosignatario = null;
 		boolean fValido = false;
-		boolean fSubstituindo = false;
+		boolean fSubstituindoSubscritor = false;
+		boolean fSubstituindoCosignatario = false;
+		
 
 		if (matriculaSubscritor == null || matriculaSubscritor.isEmpty())
 			throw new AplicacaoException("Matrícula do Subscritor não foi informada.");
@@ -1760,27 +1763,26 @@ public class ExBL extends CpBL {
 									&& subscritor.equivale(m.getSubscritor())) {
 								fValido = true;
 								continue;
-							}
-						}
-
-					// Verificar se é substituto
-					if (!fValido) {
-						if (subscritor.getId() != doc.getSubscritor().getId()) {
-							if (Ex.getInstance().getComp().podeAssinarPorComSenha(cadastrante, lotaCadastrante)) {
-								DpSubstituicao dpSubstituicao = new DpSubstituicao();
-								dpSubstituicao.setSubstituto(subscritor);
-								dpSubstituicao.setLotaSubstituto(subscritor.getLotacao());
-								List<DpSubstituicao> itens = dao().consultarSubstituicoesPermitidas(dpSubstituicao);
-
-								// Comparar Titular com doc subscritor
-								for (DpSubstituicao tit : itens) {
-									if (tit.getTitular().equivale(doc.getSubscritor())) {
-										fValido = true;
-										fSubstituindo = true;
-									}
+							} else if (m.getExTipoMovimentacao()
+									.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
+									&& m.getExMovimentacaoCanceladora() == null) {
+								// Verificar se é substituto do cosignatario do documento
+								fSubstituindoCosignatario = estaSubstituindoSubscritorOuCosignatario(cadastrante, lotaCadastrante, m.getSubscritor(),
+										subscritor);
+								if (fSubstituindoCosignatario) {
+									cosignatario = m.getSubscritor();
+									fValido = true;
+									break;
+									
 								}
 							}
 						}
+
+					// Verificar se é substituto do subscritor do documento
+					if (!fValido) {
+						fSubstituindoSubscritor = estaSubstituindoSubscritorOuCosignatario(cadastrante, lotaCadastrante, doc.getSubscritor(),
+								subscritor);
+						fValido = fSubstituindoSubscritor;
 					}
 				}
 
@@ -1803,20 +1805,19 @@ public class ExBL extends CpBL {
 			byte[] sha256 = BlucService.calcSha256(pdf);
 			DpPessoa assinante;
 
-			if (!fSubstituindo) {
+			if (!fSubstituindoSubscritor && !fSubstituindoCosignatario ) {
 				assinante = subscritor;
 			} else {
-
+				if (fSubstituindoSubscritor) { 
+	
+					assinante = doc.getSubscritor(); 
+				} else {
+					assinante = cosignatario;	
+				}
 				// Cria movimentação de Assinatura POR
-				final ExMovimentacao movsub;
-				assinante = doc.getSubscritor();
-
-				movsub = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA,
-						cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov, subscritor, null, null, null, null);
-				movsub.setDescrMov(subscritor.getNomePessoa() + ":" + subscritor.getSigla() + " em substituição a "
-						+ assinante.getNomePessoa() + ":" + assinante.getSigla());
-				gravarMovimentacao(movsub);
+				criarMovimentacaoAssinadorPor(cadastrante, lotaCadastrante, doc, dtMov, subscritor, assinante);
 			}
+
 
 			mov = criarNovaMovimentacao(
 					autenticando ? ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA
@@ -1865,6 +1866,38 @@ public class ExBL extends CpBL {
 		}
 
 		return s;
+	}
+
+	private void criarMovimentacaoAssinadorPor(final DpPessoa cadastrante, final DpLotacao lotaCadastrante,
+			final ExDocumento doc, final Date dtMov, DpPessoa subscritor, DpPessoa assinante) throws SQLException {
+		final ExMovimentacao movsub;
+		movsub = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA,
+				cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov, subscritor, null, null, null, null);
+		movsub.setDescrMov(subscritor.getNomePessoa() + ":" + subscritor.getSigla() + " em substituição a "
+				+ assinante.getNomePessoa() + ":" + assinante.getSigla());
+		gravarMovimentacao(movsub);
+	}
+
+	private boolean estaSubstituindoSubscritorOuCosignatario(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final DpPessoa subscritorOuCosignatarioDoDocumento, DpPessoa subscritor)
+			throws SQLException {
+		Boolean fSubstituindo = false;
+		if (subscritor.getId() != subscritorOuCosignatarioDoDocumento.getId()) {
+			if (Ex.getInstance().getComp().podeAssinarPorComSenha(cadastrante, lotaCadastrante)) {
+				DpSubstituicao dpSubstituicao = new DpSubstituicao();
+				dpSubstituicao.setSubstituto(subscritor);
+				dpSubstituicao.setLotaSubstituto(subscritor.getLotacao());
+				List<DpSubstituicao> itens = dao().consultarSubstituicoesPermitidas(dpSubstituicao);
+
+				// Comparar Titular com doc subscritor
+				for (DpSubstituicao tit : itens) {
+					if (tit.getTitular() != null && tit.getTitular().equivale(subscritorOuCosignatarioDoDocumento)) {
+						fSubstituindo = true;
+					}
+				}
+			}
+		}
+		return fSubstituindo;
 	}
 
 	public void assinarMovimentacaoComSenha(DpPessoa cadastrante, DpLotacao lotaCadastrante, ExMovimentacao movAlvo,

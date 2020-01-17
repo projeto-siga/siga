@@ -172,19 +172,19 @@ public class RelTempoDoc extends RelatorioTemplate {
 			Date dataInicialAte, Date dataFinalDe, Date dataFinalAte,
 			Boolean incluirAbertos) {
 		SQLQuery query = null;
-		if (incluirAbertos) {
-			query = (SQLQuery) WfDao
-					.getInstance()
-					.getSessao()
-					.createSQLQuery(
-							getSQLConsultarDocumentosFinalizadosEAbertosNoPeriodo());
-		} else {
-			query = (SQLQuery) WfDao
-					.getInstance()
-					.getSessao()
-					.createSQLQuery(
-							getSQLConsultarDocumentosFinalizadosNoPeriodo());
-		}
+//		if (incluirAbertos) {
+//			query = (SQLQuery) WfDao
+//					.getInstance()
+//					.getSessao()
+//					.createSQLQuery(
+//							getSQLConsultarDocumentosFinalizadosEAbertosNoPeriodo());
+//		} else {
+//			query = (SQLQuery) WfDao
+//					.getInstance()
+//					.getSessao()
+//					.createSQLQuery(
+//							getSQLConsultarDocumentosFinalizadosNoPeriodo());
+//		}
 
 		query.addScalar("START_", new CalendarType());
 		query.addScalar("END_", new CalendarType());

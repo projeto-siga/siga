@@ -18,7 +18,8 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
-import br.gov.jfrj.siga.wf.WfInstanciaDeProcedimento;
+import br.gov.jfrj.siga.wf.WfProcedimento;
+import br.gov.jfrj.siga.wf.WfTarefa;
 import br.gov.jfrj.siga.wf.WfTipoDePrincipal;
 
 @RequestScoped
@@ -49,7 +50,7 @@ public class WfUtil {
 	 * @param ti
 	 * @return
 	 */
-	public String getAtendente(WfInstanciaDeTarefa ti) {
+	public String getAtendente(WfTarefa ti) {
 		if (ti.getInstanciaDeProcesso().getPessoa() != null) {
 			if (ti.getInstanciaDeProcesso().getPessoa().getPessoaAtual().equals(so.getTitular()))
 				return "(minha)";
@@ -108,7 +109,7 @@ public class WfUtil {
 	 * @throws Exception
 	 * @throws AplicacaoException
 	 */
-	public WfTaskVO inicializarTaskVO(WfInstanciaDeTarefa taskInstance)
+	public WfTaskVO inicializarTaskVO(WfTarefa taskInstance)
 			throws IllegalAccessException, InvocationTargetException, Exception, AplicacaoException {
 		WfTaskVO task = new WfTaskVO(taskInstance, so.getTitular(), so.getLotaTitular());
 		task.setConhecimentoEditavel(
@@ -135,12 +136,12 @@ public class WfUtil {
 //		return actorId + " - " + pa;
 //	}
 
-	public String getDot(WfInstanciaDeTarefa taskInstance) throws UnsupportedEncodingException, Exception {
-		WfInstanciaDeProcedimento pi = taskInstance.getInstanciaDeProcesso();
+	public String getDot(WfTarefa taskInstance) throws UnsupportedEncodingException, Exception {
+		WfProcedimento pi = taskInstance.getInstanciaDeProcesso();
 		return GraphViz.getDot(pi, "Início", "Fim");
 	}
 
-	public static void transferirDocumentosVinculados(WfInstanciaDeProcedimento pi, String siglaTitular)
+	public static void transferirDocumentosVinculados(WfProcedimento pi, String siglaTitular)
 			throws Exception {
 		String principal = pi.getPrincipal();
 		WfTipoDePrincipal tipo = pi.getTipoDePrincipal();
@@ -170,7 +171,7 @@ public class WfUtil {
 //		}
 //	}
 
-	public void assertPodeTransferirDocumentosVinculados(WfInstanciaDeTarefa ti, String siglaTitular) throws Exception {
+	public void assertPodeTransferirDocumentosVinculados(WfTarefa ti, String siglaTitular) throws Exception {
 		String principal = ti.getInstanciaDeProcesso().getPrincipal();
 		WfTipoDePrincipal tipo = ti.getInstanciaDeProcesso().getTipoDePrincipal();
 		if (principal == null || tipo == null)
@@ -224,7 +225,7 @@ public class WfUtil {
 	 * @param siglaDoc
 	 * @throws Exception
 	 */
-	public void addTask(Map<String, List<WfTaskVO>> mobilMap, WfInstanciaDeTarefa taskInstance, String siglaDoc,
+	public void addTask(Map<String, List<WfTaskVO>> mobilMap, WfTarefa taskInstance, String siglaDoc,
 			String sigla) throws Exception {
 		WfTaskVO task = new WfTaskVO(taskInstance, sigla, so.getTitular(), so.getLotaTitular());
 		if (!mobilMap.containsKey(siglaDoc)) {

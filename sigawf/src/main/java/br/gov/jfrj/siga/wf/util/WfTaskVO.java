@@ -36,6 +36,7 @@ import br.gov.jfrj.siga.wf.WfDefinicaoDeDesvio;
 import br.gov.jfrj.siga.wf.WfDefinicaoDeTarefa;
 import br.gov.jfrj.siga.wf.WfDefinicaoDeVariavel;
 import br.gov.jfrj.siga.wf.WfResponsavel;
+import br.gov.jfrj.siga.wf.WfTarefa;
 import br.gov.jfrj.siga.wf.WfTipoDeTarefa;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 
@@ -47,7 +48,7 @@ import br.gov.jfrj.siga.wf.dao.WfDao;
 public class WfTaskVO {
 	public static final String DISABLE_DOC_FORWARD = "disable_doc_forward";
 
-	protected WfInstanciaDeTarefa ti;
+	protected WfTarefa ti;
 
 	protected List<WfVariableVO> variableList = new ArrayList<WfVariableVO>();
 
@@ -76,16 +77,16 @@ public class WfTaskVO {
 	 * 
 	 * @param ti
 	 */
-	public WfTaskVO(WfInstanciaDeTarefa ti) {
+	public WfTaskVO(WfTarefa ti) {
 		this.ti = ti;
 	}
 
-	public WfTaskVO(WfInstanciaDeTarefa ti, DpPessoa titular, DpLotacao lotaTitular)
+	public WfTaskVO(WfTarefa ti, DpPessoa titular, DpLotacao lotaTitular)
 			throws IllegalAccessException, InvocationTargetException, Exception, AplicacaoException {
 		this(ti, null, titular, lotaTitular);
 	}
 
-	public WfTaskVO(WfInstanciaDeTarefa ti, String siglaDoc, DpPessoa titular, DpLotacao lotaTitular)
+	public WfTaskVO(WfTarefa ti, String siglaDoc, DpPessoa titular, DpLotacao lotaTitular)
 			throws IllegalAccessException, InvocationTargetException, Exception, AplicacaoException {
 		this.ti = ti;
 
@@ -250,7 +251,7 @@ public class WfTaskVO {
 	 * 
 	 * @return
 	 */
-	public WfInstanciaDeTarefa getWfInstanciaDeTarefa() {
+	public WfTarefa getWfInstanciaDeTarefa() {
 		return ti;
 	}
 
@@ -259,7 +260,7 @@ public class WfTaskVO {
 	 * 
 	 * @param ti
 	 */
-	public void setWfInstanciaDeTarefa(WfInstanciaDeTarefa ti) {
+	public void setWfInstanciaDeTarefa(WfTarefa ti) {
 		this.ti = ti;
 	}
 

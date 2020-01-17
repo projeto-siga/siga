@@ -9,31 +9,31 @@ import org.mvel2.templates.TemplateRuntime;
 
 import com.crivano.jflow.Handler;
 import com.crivano.jflow.TaskResult;
-import com.crivano.jflow.model.ProcessInstance;
-import com.crivano.jflow.model.Responsible;
 
 import br.gov.jfrj.siga.base.Correio;
-import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.wf.WfProcedimento;
+import br.gov.jfrj.siga.wf.WfResponsavel;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 
-public class WfHandler implements Handler {
+public class WfHandler implements Handler<WfProcedimento, WfResponsavel> {
 
 	@Override
-	public void afterPause(ProcessInstance pi, TaskResult result) {
+	public void afterPause(WfProcedimento pi, TaskResult result) {
+		// transferirDocumentosVinculados(pi, cadastrante);
 	}
 
-	public static Object eval(ProcessInstance pi, String expression) {
+	public static Object eval(WfProcedimento pi, String expression) {
 		return MVEL.eval(expression, pi.getVariable());
 	}
 
 	@Override
-	public boolean evalCondition(ProcessInstance pi, String expression) {
+	public boolean evalCondition(WfProcedimento pi, String expression) {
 		return MVEL.eval(expression, pi.getVariable(), Boolean.class);
 	}
 
 	@Override
-	public TaskResult evalTask(ProcessInstance pi, String expression) {
+	public TaskResult evalTask(WfProcedimento pi, String expression) {
 		HashMap<String, Object> m = new HashMap<>();
 		m.putAll(pi.getVariable());
 		m.put("context", new WfContext(pi));
@@ -41,7 +41,7 @@ public class WfHandler implements Handler {
 	}
 
 	@Override
-	public String evalTemplate(ProcessInstance pi, String template) {
+	public String evalTemplate(WfProcedimento pi, String template) {
 		HashMap<String, Object> m = new HashMap<>();
 		m.putAll(pi.getVariable());
 		m.put("context", new WfContext(pi));
@@ -51,14 +51,13 @@ public class WfHandler implements Handler {
 	}
 
 	@Override
-	public void sendEmail(Responsible responsible, String subject, String text) {
+	public void sendEmail(WfResponsavel responsible, String subject, String text) {
 		List<String> destinatarios = new ArrayList<>();
-		if (responsible instanceof DpPessoa) {
-			destinatarios.add(((DpPessoa) responsible).getEmailPessoaAtual());
-		} else if (responsible instanceof DpLotacao) {
-			DpLotacao lota = (DpLotacao) responsible;
+		if (responsible.getPessoa() != null) {
+			destinatarios.add(responsible.getPessoa().getEmailPessoaAtual());
+		} else if (responsible.getLotacao() != null) {
 			List<DpPessoa> l = null;
-			l = WfDao.getInstance().pessoasPorLotacao(lota.getId(), false, true);
+			l = WfDao.getInstance().pessoasPorLotacao(responsible.getLotacao().getId(), false, true);
 			for (DpPessoa pessoa : l) {
 				destinatarios.add(pessoa.getEmailPessoaAtual());
 			}

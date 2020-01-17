@@ -16,13 +16,11 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package br.gov.jfrj.siga.wf.bl;
+package br.gov.jfrj.siga.wf;
 
 import java.util.Comparator;
 
-import br.gov.jfrj.siga.wf.util.WfInstanciaDeTarefa;
-
-public class WfInstanciaDeTarefaComparator implements Comparator<WfInstanciaDeTarefa> {
+public class WfTarefaComparator implements Comparator<WfTarefa> {
 
 	/**
 	 * Compara dois objetos TaskInstance. Retorna zero (0) se os objetos são
@@ -30,7 +28,7 @@ public class WfInstanciaDeTarefaComparator implements Comparator<WfInstanciaDeTa
 	 * doque o segundo objeto (o2). Retorna (-1), caso contrário. ESTE CÓDIGO ESTÁ
 	 * DUPLICADO EM WfDocumentoAction.java.
 	 */
-	public int compare(WfInstanciaDeTarefa o1, WfInstanciaDeTarefa o2) {
+	public int compare(WfTarefa o1, WfTarefa o2) {
 //		if (o1.getId() > o2.getId())
 //			return 1;
 //		if (o1.getId() < o2.getId())

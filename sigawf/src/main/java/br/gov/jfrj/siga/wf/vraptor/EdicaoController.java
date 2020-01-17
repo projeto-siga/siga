@@ -1,116 +1,124 @@
 package br.gov.jfrj.siga.wf.vraptor;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
 
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
-import org.jbpm.graph.def.ProcessDefinition;
-import org.jbpm.instantiation.Delegation;
-import org.jbpm.taskmgmt.def.Swimlane;
-import org.jbpm.taskmgmt.def.Task;
+import org.jboss.logging.Logger;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
-import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
+import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
-import br.gov.jfrj.siga.wf.dao.WfDao;
-import br.gov.jfrj.siga.wf.util.WfContextBuilder;
-import br.gov.jfrj.siga.wf.util.WfUtil;
+import br.gov.jfrj.siga.vraptor.SigaSelecionavelControllerSupport;
+import br.gov.jfrj.siga.vraptor.Transacional;
+import br.gov.jfrj.siga.wf.WfDefinicaoDeProcedimento;
+import br.gov.jfrj.siga.wf.WfDefinicaoDeTarefa;
+import br.gov.jfrj.siga.wf.bl.Wf;
 
-@Resource
-public class EdicaoController extends WfController {
+@Controller
+public class EdicaoController
+		extends SigaSelecionavelControllerSupport<WfDefinicaoDeProcedimento, DaoFiltroSelecionavel> {
 
-	public EdicaoController(HttpServletRequest request, Result result,
-			WfDao dao, SigaObjects so, WfUtil util) {
-		super(request, result, dao, so, util);
+	private static final String SUBDIRETORIO = "-subdiretorio-";
+	private static final String VERIFICADOR_ACESSO = "MOD:Gerenciar modelos";
+	private static final String UTF8 = "utf-8";
+	private static final Logger LOGGER = Logger.getLogger(EdicaoController.class);
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public EdicaoController() {
+		super();
 	}
 
-	@Get
-	@Path("/app/edicao/form/{procedimento}")
-	public void form(String procedimento) {
-		result.include("procedimento", procedimento);
+	@Inject
+	public EdicaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
+		super(request, result, dao, so, em);
 	}
 
-	@Get
-	@Path("/app/edicao/processdefinition/{procedimento}")
-	public void ler(String procedimento) throws Exception {
-		ProcessDefinition pd = WfContextBuilder.getJbpmContext()
-				.getJbpmContext().getGraphSession()
-				.findLatestProcessDefinition(procedimento);
-		byte ab[] = pd.getFileDefinition().getBytes("processdefinition.xml");
-		String sXML = new String(ab, "UTF-8");
-		result.use(Results.http()).body(sXML);
-	}
-
-	@Post
-	@Path("/app/edicao/processdefinition/{procedimento}")
-	public void gravar(String procedimento, String xml) throws Exception {
-		String res = "OK";
-		doDeployment(xml);
-		result.use(Results.http()).body(res);
-	}
-
-	@Post
-	@Path("/app/edicao/xml_gravar")
-	public void xmlGravar(String xml) throws Exception {
-		String res = doDeployment(xml);
-		result.use(Results.http()).body(res);
-	}
-
-	@SuppressWarnings("unchecked")
-	private String doDeployment(String xml) throws IOException {
-		final StringBuilder sb = new StringBuilder();
-		sb.append("Test String");
-
-		try (ByteArrayOutputStream ba = new ByteArrayOutputStream();
-				ZipOutputStream out = new ZipOutputStream(ba)) {
-			ZipEntry e = new ZipEntry("processdefinition.xml");
-			out.putNextEntry(e);
-
-			byte[] data = xml.getBytes();
-			out.write(data, 0, data.length);
-			out.closeEntry();
-
-			ProcessDefinition processDefinition = ProcessDefinition
-					.parseParZipInputStream(new ZipInputStream(
-							new ByteArrayInputStream(ba.toByteArray())));
-			WfContextBuilder.getJbpmContext().getJbpmContext()
-					.deployProcessDefinition(processDefinition);
-			long id = processDefinition.getId();
-
-			String sReturn = "Deployed archive " + processDefinition.getName()
-					+ " successfully";
-
-			Delegation d = new Delegation(
-					"br.gov.jfrj.siga.wf.util.WfAssignmentHandler");
-
-			for (Swimlane s : ((Collection<Swimlane>) processDefinition
-					.getTaskMgmtDefinition().getSwimlanes().values())) {
-				if (s.getTasks() != null)
-					for (Object t : s.getTasks()) {
-						System.out.println(((Task) t).toString());
-					}
-				if (s.getAssignmentDelegation() == null)
-					s.setAssignmentDelegation(d);
-			}
-
-			for (Task t : ((Collection<Task>) processDefinition
-					.getTaskMgmtDefinition().getTasks().values())) {
-				if (t.getSwimlane() == null
-						&& t.getAssignmentDelegation() == null)
-					t.setAssignmentDelegation(d);
-			}
-
-			return sReturn;
+	@Get("app/definicao-de-procedimento/listar")
+	public void lista() throws Exception {
+		try {
+			assertAcesso(VERIFICADOR_ACESSO);
+			List<WfDefinicaoDeProcedimento> modelos = dao().listarTodos(WfDefinicaoDeProcedimento.class, null);
+			result.include("itens", modelos);
+		} catch (AplicacaoException e) {
+			throw new AplicacaoException(e.getMessage(), 0, e);
+		} catch (Exception ex) {
+			LOGGER.error(ex.getMessage(), ex);
+			throw new AplicacaoException(ex.getMessage(), 0, ex);
 		}
 	}
+
+	@Get("app/pd/editar")
+	public void edita(final Long id, final Integer postback) throws UnsupportedEncodingException {
+		assertAcesso(VERIFICADOR_ACESSO);
+		if (postback == null) {
+			WfDefinicaoDeProcedimento pd = buscar(id);
+			result.include("id", id);
+			result.include("nome", pd.getNome());
+			result.include("tarefas", pd.getTarefa());
+		}
+	}
+
+	@Transacional
+	@Post("app/pd/gravar")
+	public void editarGravar(final Long id, final String nome, final List<WfDefinicaoDeTarefa> tarefa)
+			throws Exception {
+		assertAcesso(VERIFICADOR_ACESSO);
+		WfDefinicaoDeProcedimento pd = buscar(id);
+		pd.setNome(nome);
+		// TODO alterar também as tarefas e usar siga-sinc-lib para fazer a gravação
+		final WfDefinicaoDeProcedimento pdAntiga = buscarAntiga(pd.getIdInicial());
+		Wf.getInstance().getBL().gravar(pd, pdAntiga, null, getIdentidadeCadastrante());
+		if ("Aplicar".equals(param("submit"))) {
+			result.redirectTo("editar?id=" + pd.getId());
+			return;
+		}
+		result.redirectTo(EdicaoController.class).lista();
+	}
+
+	@Transacional
+	@Get("app/pd/desativar")
+	public void desativar(final Long id) throws Exception {
+		ModeloDao.iniciarTransacao();
+		assertAcesso(VERIFICADOR_ACESSO);
+		if (id == null) {
+			throw new AplicacaoException("ID não informada");
+		}
+		final WfDefinicaoDeProcedimento pd = dao().consultar(id, WfDefinicaoDeProcedimento.class, false);
+		dao().excluirComHistorico(pd, dao().consultarDataEHoraDoServidor(), getIdentidadeCadastrante());
+		ModeloDao.commitTransacao();
+
+		result.redirectTo(EdicaoController.class).lista();
+	}
+
+	private WfDefinicaoDeProcedimento buscar(final Long id) {
+		if (id != null) {
+			return Wf.getInstance().getBL().getCopia(dao().consultar(id, WfDefinicaoDeProcedimento.class, false));
+		}
+		return new WfDefinicaoDeProcedimento();
+	}
+
+	private WfDefinicaoDeProcedimento buscarAntiga(final Long idInicial) {
+		if (idInicial != null) {
+			return dao().consultarAtivoPorIdInicial(WfDefinicaoDeProcedimento.class, idInicial);
+		}
+		return null;
+	}
+
+	@Override
+	protected DaoFiltroSelecionavel createDaoFiltro() {
+		return null;
+	}
+
 }

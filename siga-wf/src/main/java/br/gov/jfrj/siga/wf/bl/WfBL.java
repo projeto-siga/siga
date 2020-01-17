@@ -21,21 +21,27 @@ package br.gov.jfrj.siga.wf.bl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
-import com.crivano.jflow.Engine;
+import org.apache.commons.beanutils.PropertyUtils;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.wf.WfDefinicaoDeProcedimento;
 import br.gov.jfrj.siga.wf.WfDefinicaoDeTarefa;
-import br.gov.jfrj.siga.wf.WfInstanciaDeProcedimento;
+import br.gov.jfrj.siga.wf.WfProcedimento;
 import br.gov.jfrj.siga.wf.WfResponsavel;
+import br.gov.jfrj.siga.wf.WfTarefa;
+import br.gov.jfrj.siga.wf.WfTarefaComparator;
 import br.gov.jfrj.siga.wf.dao.WfDao;
-import br.gov.jfrj.siga.wf.util.WfInstanciaDeTarefa;
-import br.gov.jfrj.siga.wf.util.WfUtils;
+import br.gov.jfrj.siga.wf.util.WfEngine;
+import br.gov.jfrj.siga.wf.util.WfHandler;
 
 /**
  * Classe que representa a lógica do negócio do sistema de workflow.
@@ -48,7 +54,7 @@ public class WfBL extends CpBL {
 	public static final String WF_LOTA_CADASTRANTE = "wf_lota_cadastrante";
 	public static final String WF_TITULAR = "wf_titular";
 	public static final String WF_LOTA_TITULAR = "wf_lota_titular";
-	private static WfInstanciaDeTarefaComparator tic = new WfInstanciaDeTarefaComparator();
+	private static WfTarefaComparator tic = new WfTarefaComparator();
 
 	/**
 	 * Cria uma instância de processo. Ao final da criação, define as seguintes
@@ -73,7 +79,7 @@ public class WfBL extends CpBL {
 	 * @return
 	 * @throws Exception
 	 */
-	public WfInstanciaDeProcedimento createProcessInstance(long pdId, DpPessoa cadastrante, DpLotacao lotaCadastrante,
+	public WfProcedimento createProcessInstance(long pdId, DpPessoa cadastrante, DpLotacao lotaCadastrante,
 			DpPessoa titular, DpLotacao lotaTitular, ArrayList<String> keys, ArrayList<String> values,
 			boolean fCreateStartTask) throws Exception {
 
@@ -93,20 +99,26 @@ public class WfBL extends CpBL {
 			}
 		}
 
-		WfInstanciaDeProcedimento pi = new WfInstanciaDeProcedimento(pd, variable) {
+		WfProcedimento pi = new WfProcedimento(pd, variable) {
 			@Override
 			public WfResponsavel calcResponsible(WfDefinicaoDeTarefa tarefa) {
 				return null;
 			}
 		};
 
-		Engine engine = WfUtils.buildEngine(pi);
+		WfEngine engine = new WfEngine(dao(), new WfHandler());
 
 		// Start the process instance
 		engine.start(pi);
 
-		WfDao.getInstance().gravarInstanciaDeProcedimento(pi);
 		return pi;
+	}
+
+	public void prosseguir(String event, Integer detourIndex, Map<String, Object> param) throws Exception {
+
+		WfEngine engine = new WfEngine(dao(), new WfHandler());
+
+		engine.resume(event, detourIndex, param);
 	}
 
 	/**
@@ -114,19 +126,23 @@ public class WfBL extends CpBL {
 	 * 
 	 * @throws AplicacaoException
 	 */
-	public SortedSet<WfInstanciaDeTarefa> getTaskList(DpPessoa cadastrante, DpPessoa titular, DpLotacao lotaTitular)
+	public SortedSet<WfTarefa> getTaskList(DpPessoa cadastrante, DpPessoa titular, DpLotacao lotaTitular)
 			throws AplicacaoException {
-		SortedSet<WfInstanciaDeTarefa> tasks = WfDao.getInstance().consultarTarefasDeLotacao(lotaTitular);
+		SortedSet<WfTarefa> tasks = WfDao.getInstance().consultarTarefasDeLotacao(lotaTitular);
 		return tasks;
 	}
 
-	public SortedSet<WfInstanciaDeTarefa> getTaskList(String siglaDoc) {
-		SortedSet<WfInstanciaDeTarefa> tasks = WfDao.getInstance().consultarTarefasAtivasPorDocumento(siglaDoc);
+	public SortedSet<WfTarefa> getTaskList(String siglaDoc) {
+		List<WfProcedimento> pis = WfDao.getInstance().consultarProcedimentosAtivosPorDocumento(siglaDoc);
+		SortedSet<WfTarefa> tasks = new TreeSet<>();
+		for (WfProcedimento pi : pis) {
+			tasks.add(new WfTarefa(pi));
+		}
 		return tasks;
 	}
 
 	public static Boolean podePegarTarefa(DpPessoa cadastrante, DpPessoa titular, DpLotacao lotaCadastrante,
-			DpLotacao lotaTitular, WfInstanciaDeTarefa ti) {
+			DpLotacao lotaTitular, WfTarefa ti) {
 		return false;
 	}
 
@@ -136,6 +152,32 @@ public class WfBL extends CpBL {
 
 	public void encerrarProcessInstance(Long id, Date consultarDataEHoraDoServidor) {
 		// TODO Auto-generated method stub
+	}
+
+	public WfDefinicaoDeProcedimento getCopia(WfDefinicaoDeProcedimento original) {
+		WfDefinicaoDeProcedimento copia = new WfDefinicaoDeProcedimento();
+		try {
+
+			PropertyUtils.copyProperties(copia, original);
+
+			// novo id
+			copia.setId(null);
+			copia.setHisDtFim(null);
+			copia.setHisDtIni(null);
+			copia.updateAtivo();
+
+		} catch (Exception e) {
+			throw new AplicacaoException("Erro ao copiar as propriedades anteriores.");
+		}
+
+		return copia;
+	}
+
+	public void gravar(WfDefinicaoDeProcedimento novo, WfDefinicaoDeProcedimento antigo, Date dt,
+			CpIdentidade identidadeCadastrante) throws AplicacaoException {
+		if (novo.getNome() == null || novo.getNome().trim().length() == 0)
+			throw new AplicacaoException("não é possível salvar sem informar o nome.");
+		dao().gravarComHistorico(novo, antigo, dt, identidadeCadastrante);
 	}
 
 }

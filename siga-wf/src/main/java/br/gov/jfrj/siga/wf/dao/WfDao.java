@@ -32,15 +32,14 @@ import javax.persistence.criteria.Root;
 
 import org.jboss.logging.Logger;
 
-import com.crivano.jflow.model.ProcessInstance;
-
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.wf.WfConhecimento;
 import br.gov.jfrj.siga.wf.WfDefinicaoDeProcedimento;
-import br.gov.jfrj.siga.wf.WfInstanciaDeProcedimento;
-import br.gov.jfrj.siga.wf.util.WfInstanciaDeTarefa;
+import br.gov.jfrj.siga.wf.WfProcedimento;
+import br.gov.jfrj.siga.wf.WfTarefa;
 
 /**
  * Classe que representa o DAO do sistema de workflow.
@@ -48,7 +47,7 @@ import br.gov.jfrj.siga.wf.util.WfInstanciaDeTarefa;
  */
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class WfDao extends CpDao implements com.crivano.jflow.Dao {
+public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento> {
 
 	public static final String CACHE_EX = "ex";
 
@@ -69,33 +68,30 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao {
 		return em().createQuery(q).getSingleResult();
 	}
 
-	public SortedSet<WfInstanciaDeTarefa> consultarTarefasDeLotacao(DpLotacao lotaTitular) {
+	public SortedSet<WfTarefa> consultarTarefasDeLotacao(DpLotacao lotaTitular) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public SortedSet<WfInstanciaDeTarefa> consultarTarefasAtivasPorDocumento(String siglaDoc) {
+	public List<WfProcedimento> consultarProcedimentosAtivosPorDocumento(String siglaDoc) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public void gravarInstanciaDeProcedimento(WfInstanciaDeProcedimento pi) {
+	public void gravarInstanciaDeProcedimento(WfProcedimento pi) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void persist(ProcessInstance pi) {
-		gravarInstanciaDeProcedimento((WfInstanciaDeProcedimento) pi);
+	public void persist(WfProcedimento pi) {
+		gravarInstanciaDeProcedimento((WfProcedimento) pi);
 	}
 
 	@Override
-	public List<ProcessInstance> listByEvent(String event) {
-		SortedSet<WfInstanciaDeTarefa> s = consultarTarefasAtivasPorDocumento(event);
-		List<ProcessInstance> l = new ArrayList<>();
-		for (WfInstanciaDeTarefa t : s) {
-			l.add(t.getInstanciaDeProcesso());
-		}
+	public List<WfProcedimento> listByEvent(String event) {
+		List<WfProcedimento> l = new ArrayList<>();
+		l.addAll(consultarProcedimentosAtivosPorDocumento(event));
 		return l;
 	}
 
@@ -113,4 +109,16 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao {
 //		query.setParameter("idDoc", doc.getIdDoc());
 //		return query.getResultList();
 //	}
+
+	public List<WfProcedimento> consultarProcedimentosPorLotacao(DpLotacao lotaTitular) {
+		String sql = "from WfProcedimento p where p.lotacao.idLotacaoIni = :idLotacaoIni";
+		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
+		query.setParameter("idLotacaoIni", lotaTitular.getIdLotacaoIni());
+		query.setFirstResult(0);
+		query.setMaxResults(5);
+		List<WfProcedimento> result = query.getResultList();
+		if (result == null || result.size() == 0)
+			return null;
+		return result;
+	}
 }

@@ -23,7 +23,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 @Entity
 @BatchSize(size = 500)
 @Table(name = "WF_PROCEDIMENTO", catalog = "WF")
-public abstract class WfInstanciaDeProcedimento
+public abstract class WfProcedimento
 		implements ProcessInstance<WfDefinicaoDeProcedimento, WfDefinicaoDeTarefa, WfResponsavel> {
 	@Id
 	@Column(name = "PROC_ID", unique = true, nullable = false)
@@ -51,7 +51,9 @@ public abstract class WfInstanciaDeProcedimento
 
 	private DpLotacao lotacao;
 
-	public WfInstanciaDeProcedimento(WfDefinicaoDeProcedimento definicao, Map<String, Object> variavel) {
+	private WfPrioridade prioridade;
+
+	public WfProcedimento(WfDefinicaoDeProcedimento definicao, Map<String, Object> variavel) {
 		this.definicao = definicao;
 		if (variavel != null)
 			this.variavel.putAll(variavel);
@@ -286,5 +288,13 @@ public abstract class WfInstanciaDeProcedimento
 
 	public void setStatus(ProcessInstanceStatus status) {
 		this.status = status;
+	}
+
+	public WfPrioridade getPrioridade() {
+		return prioridade;
+	}
+
+	public void setPrioridade(WfPrioridade prioridade) {
+		this.prioridade = prioridade;
 	}
 }

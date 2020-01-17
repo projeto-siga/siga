@@ -83,4 +83,9 @@ public class WfDefinicaoDeVariavel implements TaskDefinitionVariable {
 	public void setTipo(VariableKind tipo) {
 		this.tipo = tipo;
 	}
+
+	public boolean isRequired() {
+		// TODO Esse método deve ser implementado
+		return false;
+	}
 }

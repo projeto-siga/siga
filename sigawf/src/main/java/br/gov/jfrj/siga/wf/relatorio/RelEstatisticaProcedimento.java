@@ -26,13 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.view.JasperViewer;
-
-import org.jbpm.graph.def.ProcessDefinition;
-import org.jbpm.graph.exe.ProcessInstance;
-import org.jbpm.taskmgmt.exe.TaskInstance;
-
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
@@ -40,9 +33,8 @@ import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.wf.bl.Wf;
-import br.gov.jfrj.siga.wf.bl.WfPropriedadeBL;
-import br.gov.jfrj.siga.wf.dao.SigaWfProperties;
-import br.gov.jfrj.siga.wf.util.WfContextBuilder;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  * Classe que representa o relatório estatístico de procedimento.
@@ -160,74 +152,74 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 		Long maxPI = 0L;
 
 		Map<Long, Long> mapaAmostraPI = new HashMap<Long, Long>();
-
-		List<ProcessDefinition> listaPD = getProcessDefinitions(procedimento);
-
-		for (ProcessDefinition pd : listaPD) {
-
-			List<ProcessInstance> instanciasProcesso = getProcessInstances(pd);
-
-			for (ProcessInstance pi : instanciasProcesso) {
-				Collection<TaskInstance> instanciasTarefas = pi.getTaskMgmtInstance().getTaskInstances();
-
-				// se processo encerrado e dentro das datas informadas
-				if (pi.hasEnded() && iniciadoEntre(pi, dataInicialDe, dataInicialAte)
-						&& finalizadoEntre(pi, dataFinalDe, dataFinalAte)) {
-
-					Long duracaoPI = getDuracaoProcesso(pi);
-
-					// minPI
-					if (minPI == 0 || duracaoPI < minPI) {
-						minPI = duracaoPI;
-					}
-
-					// maxPI
-					if (maxPI == 0 || duracaoPI > maxPI) {
-						maxPI = duracaoPI;
-					}
-
-					// amostrasPI
-					mapaAmostraPI.put(pi.getId(), duracaoPI);
-
-					for (TaskInstance ti : instanciasTarefas) {
-
-						Long duracaoTarefa = getDuracaoTarefa(ti);
-
-						// min Tarefa
-						Long min = mapaMin.get(ti.getName());
-						if (min != null) {
-							if (duracaoTarefa < min) {
-								mapaMin.put(ti.getName(), duracaoTarefa);
-							}
-						} else {
-							mapaMin.put(ti.getName(), duracaoTarefa);
-						}
-
-						// max Tarefa
-						Long max = mapaMax.get(ti.getName());
-						if (max != null) {
-							if (duracaoTarefa > max) {
-								mapaMax.put(ti.getName(), duracaoTarefa);
-							}
-						} else {
-							mapaMax.put(ti.getName(), duracaoTarefa);
-						}
-
-						// amostras Tarefas
-						ArrayList<Long> listaAmostral = mapaAmostra.get(ti.getName());
-						if (listaAmostral != null) {
-							listaAmostral.add(duracaoTarefa);
-						} else {
-							listaAmostral = new ArrayList<Long>();
-							listaAmostral.add(duracaoTarefa);
-							mapaAmostra.put(ti.getName(), listaAmostral);
-						}
-					}
-				}
-
-			}
-
-		}
+//
+//		List<ProcessDefinition> listaPD = getProcessDefinitions(procedimento);
+//
+//		for (ProcessDefinition pd : listaPD) {
+//
+//			List<ProcessInstance> instanciasProcesso = getProcessInstances(pd);
+//
+//			for (ProcessInstance pi : instanciasProcesso) {
+//				Collection<TaskInstance> instanciasTarefas = pi.getTaskMgmtInstance().getTaskInstances();
+//
+//				// se processo encerrado e dentro das datas informadas
+//				if (pi.hasEnded() && iniciadoEntre(pi, dataInicialDe, dataInicialAte)
+//						&& finalizadoEntre(pi, dataFinalDe, dataFinalAte)) {
+//
+//					Long duracaoPI = getDuracaoProcesso(pi);
+//
+//					// minPI
+//					if (minPI == 0 || duracaoPI < minPI) {
+//						minPI = duracaoPI;
+//					}
+//
+//					// maxPI
+//					if (maxPI == 0 || duracaoPI > maxPI) {
+//						maxPI = duracaoPI;
+//					}
+//
+//					// amostrasPI
+//					mapaAmostraPI.put(pi.getId(), duracaoPI);
+//
+//					for (TaskInstance ti : instanciasTarefas) {
+//
+//						Long duracaoTarefa = getDuracaoTarefa(ti);
+//
+//						// min Tarefa
+//						Long min = mapaMin.get(ti.getName());
+//						if (min != null) {
+//							if (duracaoTarefa < min) {
+//								mapaMin.put(ti.getName(), duracaoTarefa);
+//							}
+//						} else {
+//							mapaMin.put(ti.getName(), duracaoTarefa);
+//						}
+//
+//						// max Tarefa
+//						Long max = mapaMax.get(ti.getName());
+//						if (max != null) {
+//							if (duracaoTarefa > max) {
+//								mapaMax.put(ti.getName(), duracaoTarefa);
+//							}
+//						} else {
+//							mapaMax.put(ti.getName(), duracaoTarefa);
+//						}
+//
+//						// amostras Tarefas
+//						ArrayList<Long> listaAmostral = mapaAmostra.get(ti.getName());
+//						if (listaAmostral != null) {
+//							listaAmostral.add(duracaoTarefa);
+//						} else {
+//							listaAmostral = new ArrayList<Long>();
+//							listaAmostral.add(duracaoTarefa);
+//							mapaAmostra.put(ti.getName(), listaAmostral);
+//						}
+//					}
+//				}
+//
+//			}
+//
+//		}
 
 		// Estatísticas Processos
 		Estatistica e = new Estatistica();
@@ -280,22 +272,22 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 
 	}
 
-	private boolean iniciadoEntre(ProcessInstance pi, Date dataInicialDe, Date dataInicialAte) {
-		return pi.getStart().after(dataInicialDe) && pi.getStart().before(dataInicialAte);
-	}
-
-	private boolean finalizadoEntre(ProcessInstance pi, Date dataFinalDe, Date dataFinalAte) {
-		return pi.getEnd().after(dataFinalDe) && pi.getEnd().before(dataFinalAte);
-	}
-
-	private List getProcessInstances(ProcessDefinition pd) {
-		return WfContextBuilder.getJbpmContext().getGraphSession().findProcessInstances(pd.getId());
-	}
-
-	private List getProcessDefinitions(String procedimento) {
-		return WfContextBuilder.getJbpmContext().getJbpmContext().getGraphSession()
-				.findAllProcessDefinitionVersions(procedimento);
-	}
+//	private boolean iniciadoEntre(ProcessInstance pi, Date dataInicialDe, Date dataInicialAte) {
+//		return pi.getStart().after(dataInicialDe) && pi.getStart().before(dataInicialAte);
+//	}
+//
+//	private boolean finalizadoEntre(ProcessInstance pi, Date dataFinalDe, Date dataFinalAte) {
+//		return pi.getEnd().after(dataFinalDe) && pi.getEnd().before(dataFinalAte);
+//	}
+//
+//	private List getProcessInstances(ProcessDefinition pd) {
+//		return WfContextBuilder.getJbpmContext().getGraphSession().findProcessInstances(pd.getId());
+//	}
+//
+//	private List getProcessDefinitions(String procedimento) {
+//		return WfContextBuilder.getJbpmContext().getJbpmContext().getGraphSession()
+//				.findAllProcessDefinitionVersions(procedimento);
+//	}
 
 	/**
 	 * Retorna a lista de tarefas por ordem de média.
@@ -380,19 +372,19 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 	 * @param ti
 	 * @return
 	 */
-	private long getDuracaoTarefa(TaskInstance ti) {
-
-		SigaCalendar inicio = new SigaCalendar();
-		SigaCalendar fim = new SigaCalendar();
-
-		inicio.setTime(ti.getCreate());
-		fim.setTime(ti.getEnd());
-
-		long tInicio = inicio.getTimeInMillis();
-		long tFim = fim.getTimeInMillis();
-
-		return tFim - tInicio;
-	}
+//	private long getDuracaoTarefa(TaskInstance ti) {
+//
+//		SigaCalendar inicio = new SigaCalendar();
+//		SigaCalendar fim = new SigaCalendar();
+//
+//		inicio.setTime(ti.getCreate());
+//		fim.setTime(ti.getEnd());
+//
+//		long tInicio = inicio.getTimeInMillis();
+//		long tFim = fim.getTimeInMillis();
+//
+//		return tFim - tInicio;
+//	}
 
 	/**
 	 * Retorna quanto tempo um processo demorou para ser concluído. O resultado é em
@@ -401,19 +393,19 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 	 * @param pi
 	 * @return
 	 */
-	private long getDuracaoProcesso(ProcessInstance pi) {
-
-		SigaCalendar inicio = new SigaCalendar();
-		SigaCalendar fim = new SigaCalendar();
-
-		inicio.setTime(pi.getStart());
-		fim.setTime(pi.getEnd());
-
-		long tInicio = inicio.getTimeInMillis();
-		long tFim = fim.getTimeInMillis();
-
-		return tFim - tInicio;
-	}
+//	private long getDuracaoProcesso(ProcessInstance pi) {
+//
+//		SigaCalendar inicio = new SigaCalendar();
+//		SigaCalendar fim = new SigaCalendar();
+//
+//		inicio.setTime(pi.getStart());
+//		fim.setTime(pi.getEnd());
+//
+//		long tInicio = inicio.getTimeInMillis();
+//		long tFim = fim.getTimeInMillis();
+//
+//		return tFim - tInicio;
+//	}
 
 	/**
 	 * Utilizado para realizar testes no relatório. ATENÇÃO; Uma classe de teste

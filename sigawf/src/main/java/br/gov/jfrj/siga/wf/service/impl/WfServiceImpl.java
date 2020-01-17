@@ -19,7 +19,7 @@
 package br.gov.jfrj.siga.wf.service.impl;
 
 import java.util.ArrayList;
-import java.util.SortedSet;
+import java.util.List;
 
 import javax.jws.WebService;
 
@@ -27,13 +27,14 @@ import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 import br.gov.jfrj.siga.wf.WfDefinicaoDeProcedimento;
-import br.gov.jfrj.siga.wf.WfInstanciaDeProcedimento;
+import br.gov.jfrj.siga.wf.WfProcedimento;
+import br.gov.jfrj.siga.wf.WfTarefa;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.service.WfService;
-import br.gov.jfrj.siga.wf.util.WfInstanciaDeTarefa;
+import br.gov.jfrj.siga.wf.util.WfEngine;
+import br.gov.jfrj.siga.wf.util.WfHandler;
 import br.gov.jfrj.siga.wf.util.WfUtil;
-import br.gov.jfrj.siga.wf.util.WfUtils;
 
 /**
  * Classe que representa o webservice do workflow. O SIGA-DOC faz a chamada
@@ -63,17 +64,16 @@ public class WfServiceImpl implements WfService {
 	 * executa a ação da tarefa.
 	 */
 	public Boolean atualizarWorkflowsDeDocumento(String siglaDoc) throws Exception {
-		SortedSet<WfInstanciaDeTarefa> tis = WfDao.getInstance().consultarTarefasAtivasPorDocumento(siglaDoc);
+		List<WfProcedimento> pis = WfDao.getInstance().consultarProcedimentosAtivosPorDocumento(siglaDoc);
 		boolean f = false;
 		ExService exSvc = Service.getExService();
 		Boolean semEfeito = exSvc.isSemEfeito(siglaDoc);
-		for (WfInstanciaDeTarefa ti : tis) {
+		for (WfProcedimento pi : pis) {
 			if (semEfeito)
-				Wf.getInstance().getBL().encerrarProcessInstance(ti.getInstanciaDeProcesso().getId(),
+				Wf.getInstance().getBL().encerrarProcessInstance(pi.getId(),
 						WfDao.getInstance().consultarDataEHoraDoServidor());
 			else {
-				WfInstanciaDeProcedimento pi = ti.getInstanciaDeProcesso();
-				WfUtils.buildEngine(pi).resume(siglaDoc, null, null);
+				new WfEngine(WfDao.getInstance(), new WfHandler()).resume(siglaDoc, null, null);
 			}
 			f = true;
 		}
@@ -94,9 +94,9 @@ public class WfServiceImpl implements WfService {
 		PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaCadastrante);
 		PessoaLotacaoParser titularParser = new PessoaLotacaoParser(siglaTitular);
 
-		WfInstanciaDeProcedimento pi = Wf.getInstance().getBL().createProcessInstance(pd.getId(),
-				cadastranteParser.getPessoa(), cadastranteParser.getLotacao(), titularParser.getPessoa(),
-				titularParser.getLotacao(), keys, values, false);
+		WfProcedimento pi = Wf.getInstance().getBL().createProcessInstance(pd.getId(), cadastranteParser.getPessoa(),
+				cadastranteParser.getLotacao(), titularParser.getPessoa(), titularParser.getLotacao(), keys, values,
+				false);
 
 		WfUtil.transferirDocumentosVinculados(pi, siglaTitular);
 		return true;

@@ -25,8 +25,9 @@ import java.util.List;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.wf.WfDefinicaoDeDesvio;
+import br.gov.jfrj.siga.wf.WfTarefa;
+import br.gov.jfrj.siga.wf.WfTarefaComparator;
 import br.gov.jfrj.siga.wf.bl.Wf;
-import br.gov.jfrj.siga.wf.bl.WfInstanciaDeTarefaComparator;
 
 /**
  * Classe que contém diversas funcões úteis que podem ser utilizadas nos
@@ -37,7 +38,7 @@ import br.gov.jfrj.siga.wf.bl.WfInstanciaDeTarefaComparator;
  */
 public class FuncoesEL {
 
-	static WfInstanciaDeTarefaComparator tic = new WfInstanciaDeTarefaComparator();
+	static WfTarefaComparator tic = new WfTarefaComparator();
 
 	/**
 	 * Retorna as transições disponíveis em ordem alfabética.
@@ -45,7 +46,7 @@ public class FuncoesEL {
 	 * @param taskInstance
 	 * @return
 	 */
-	public static List<WfDefinicaoDeDesvio> ordenarTransicoes(WfInstanciaDeTarefa taskInstance) {
+	public static List<WfDefinicaoDeDesvio> ordenarTransicoes(WfTarefa taskInstance) {
 
 		WfDefinicaoDeDesvio[] lista = new WfDefinicaoDeDesvio[taskInstance.getDefinicaoDeTarefa().getDesvios().size()];
 		taskInstance.getDefinicaoDeTarefa().getDesvios().toArray(lista);
@@ -128,7 +129,7 @@ public class FuncoesEL {
 	}
 
 	public static Boolean podePegarTarefa(DpPessoa cadastrante, DpPessoa titular, DpLotacao lotaCadastrante,
-			DpLotacao lotaTitular, WfInstanciaDeTarefa ti) {
+			DpLotacao lotaTitular, WfTarefa ti) {
 		return Wf.getInstance().getBL().podePegarTarefa(cadastrante, titular, lotaCadastrante, lotaTitular, ti);
 	}
 }

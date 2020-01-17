@@ -259,11 +259,11 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 		// "SELECT PI.START_,PI.END_,VI.STRINGVALUE_,PI.ID_ FROM JBPM_PROCESSINSTANCE PI, (SELECT DISTINCT PROCESSINSTANCE_, STRINGVALUE_ FROM JBPM_VARIABLEINSTANCE WHERE NAME_ LIKE 'doc_%' AND STRINGVALUE_ LIKE '%-_' AND STRINGVALUE_ IS NOT NULL) VI, (SELECT ID_ FROM JBPM_PROCESSDEFINITION WHERE NAME_ = :nomeProcedimento) PD WHERE PI.PROCESSDEFINITION_=PD.ID_ AND PI.END_ IS NOT NULL AND PI.ID_ = VI.PROCESSINSTANCE_ AND  (PI.START_ >= :dataInicialDe and PI.START_ <= :dataInicialAte) AND (PI.END_ >= :dataFinalDe and PI.END_ <= :dataFinalAte)";
 
 		SQLQuery query = null;
-		if (incluirAbertos){
-			query = (SQLQuery) WfDao.getInstance().getSessao().createSQLQuery(getSQLConsultarDocumentosFinalizadosEAbertosNoPeriodo());
-		}else{
-			query = (SQLQuery) WfDao.getInstance().getSessao().createSQLQuery(getSQLConsultarDocumentosFinalizadosNoPeriodo());
-		}
+//		if (incluirAbertos){
+//			query = (SQLQuery) WfDao.getInstance().getSessao().createSQLQuery(getSQLConsultarDocumentosFinalizadosEAbertosNoPeriodo());
+//		}else{
+//			query = (SQLQuery) WfDao.getInstance().getSessao().createSQLQuery(getSQLConsultarDocumentosFinalizadosNoPeriodo());
+//		}
 
 		query.addScalar("stringvalue_", new StringType());
 		query.addScalar("pd_name", new StringType());

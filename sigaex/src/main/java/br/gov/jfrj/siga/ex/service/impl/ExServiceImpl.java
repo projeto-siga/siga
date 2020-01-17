@@ -51,6 +51,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -1792,6 +1793,262 @@ public class ExServiceImpl implements ExService {
 			throw e;
 		}
 
+	}
+
+	@Override
+	public String consultarQuantitativo(Long forma, Long idClassificacao,
+			Long idOrgao, String destinatario, String lotacao,
+			String dataInicial, String dataFinal) throws Exception {
+		
+		
+
+		ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
+		flt.setClassificacaoSelId(idClassificacao);
+		flt.setIdOrgaoUsu(idOrgao);
+		
+		flt.setIdFormaDoc(forma);
+		
+		if(destinatario != null && !destinatario.isEmpty()){
+			DpPessoa dest = dao().getPessoaFromSigla(destinatario);
+			flt.setDestinatarioSelId(dest.getIdInicial());
+		}
+		
+		if(lotacao != null && !lotacao.isEmpty()){
+			DpLotacao lot = dao().getLotacaoFromSigla(lotacao);
+			flt.setLotacaoDestinatarioSelId(lot != null ? lot.getIdInicial() : null);
+		}
+		
+		
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		
+
+		if (dataInicial != null && !dataInicial.equals("")) {
+			dataInicial = dataInicial + " 00:00:00";
+			flt.setDtDoc(df.parse(dataInicial));
+		}
+
+		if (dataFinal != null && !dataFinal.equals("")) {
+			dataFinal = dataFinal + " 23:59:59";
+			flt.setDtDocFinal(df.parse(dataFinal));
+		}else{
+			flt.setDtDocFinal(new Date()); //PARA PESQUISAR SOMENTE OS DOCUMENTOS COM DATA DE FINALIZACAO
+		}
+
+		List<Object[]> mobs = dao().consultarPorFiltroOtimizado(flt);
+		Integer qts = dao().consultarQuantidadePorFiltroOtimizado(flt, null, null);
+		
+		JSONObject retorno = new JSONObject();
+		retorno.put("total", qts);
+	
+		JSONArray lArray = new JSONArray();
+		
+		for(Object[] obj : mobs){
+			ExDocumento mobil = (ExDocumento)obj[0];
+			
+			JSONObject l = new JSONObject();
+			l.put("sigla", mobil.getSigla());
+			l.put("dataDocumento", mobil.getDtDoc());
+			l.put("especie", mobil.getExFormaDocumento().getDescricao());
+			l.put("classificacao", mobil.getExClassificacao().getDescricao());
+			
+			lArray.put(l);
+		}
+		
+		retorno.put("documentos", lArray);
+
+		return retorno.toString();
+	}
+
+	@Override
+	public String detalharDocumento(String sigla) throws Exception {
+
+		ExMobil mob = buscarMobil(sigla);
+		JSONObject d = new JSONObject();
+
+		d.put("sigla", mob.getExDocumento().getSigla());
+		d.put("lotacao", mob.getExDocumento().getLotacao().getSigla());
+		d.put("nomeCompleto", mob.getNomeCompleto());
+		d.put("dataFinalizacao", mob.getExDocumento().getDtFinalizacaoDDMMYY());
+		d.put("dataAssinatura", mob.getExDocumento().getDtAssinatura());
+		d.put("especie", mob.getExDocumento().getExFormaDocumento()
+				.getDescricao());
+		d.put("modelo", mob.getExDocumento().getExModelo().getDescMod());
+		d.put("cadastrante", mob.getExDocumento().getCadastrante()
+				.getNomePessoa());
+		d.put("destinatario",
+				mob.getExDocumento().getDestinatario() != null ? mob
+						.getExDocumento().getDestinatario().getNomePessoa()
+						: "");
+		d.put("classificacao", mob.getExDocumento().getExClassificacao()
+				.getDescricaoCompleta());
+		d.put("dataDocumento", mob.getExDocumento().getDtDocDDMMYYYY());
+		d.put("lotacaoDestinatario",
+				mob.getExDocumento().getLotaDestinatario() != null ? mob
+						.getExDocumento().getLotaDestinatario().getDescricao()
+						: "");
+		
+		return d.toString();
+	}
+	
+	@Override
+	public Boolean vincularPerfil(String sigla, String titular, String data, String responsavel, String lotacaoResponsavel, int tipoResponsavel, Long idPapel) throws Exception{
+
+		DpPessoaSelecao responsavelSel = new DpPessoaSelecao();
+		DpLotacaoSelecao lotaResponsavelSel =  new DpLotacaoSelecao();
+		PessoaLotacaoParser titularParser = new PessoaLotacaoParser(titular);
+
+		ExMobil mob = buscarMobil(sigla);
+
+		ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
+				.novaInstancia();
+		movimentacaoBuilder.setDtMovString(data)
+				.setResponsavelSel(responsavelSel)
+				.setLotaResponsavelSel(lotaResponsavelSel).setIdPapel(idPapel);
+
+		if (responsavelSel == null || tipoResponsavel == 2) {
+			movimentacaoBuilder.setResponsavelSel(new DpPessoaSelecao());
+		}
+
+		if (lotaResponsavelSel == null || tipoResponsavel == 1) {
+			movimentacaoBuilder.setLotaResponsavelSel(new DpLotacaoSelecao());
+		}
+
+		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
+		
+		if(responsavel != null && !responsavel.isEmpty()){
+			DpPessoa resp = dao().getPessoaFromSigla(responsavel);
+			mov.setResp(resp);
+		}
+		if(lotacaoResponsavel != null && !lotacaoResponsavel.isEmpty()){
+			DpLotacao lot = dao().getLotacaoFromSigla(lotacaoResponsavel);
+			mov.setLotaResp(lot);
+		}
+
+
+		if (mov.getResp() == null && mov.getLotaResp() == null) {
+			throw new AplicacaoException(
+					"Não foi informado o responsável ou lotação responsável para a vinculação de papel ");
+		}
+
+		if (mov.getResp() != null) {
+			mov.setDescrMov(mov.getExPapel().getDescPapel() + ":"
+					+ mov.getResp().getDescricaoIniciaisMaiusculas());
+		} else {
+			if (mov.getLotaResp() != null) {
+				mov.setDescrMov(mov.getExPapel().getDescPapel() + ":"
+						+ mov.getLotaResp().getDescricaoIniciaisMaiusculas());
+			}
+		}
+
+		if (titularParser.getLotacao() == null)
+			titularParser
+					.setLotacao(titularParser.getPessoa().getLotacao());
+
+		if (!Ex.getInstance()
+				.getComp()
+				.podeFazerVinculacaoPapel(titularParser.getPessoa(), titularParser.getLotacao(),
+						mob)) {
+			throw new AplicacaoException(
+					"Não é possível fazer vinculação de papel");
+		}
+
+		Ex.getInstance()
+				.getBL()
+				.vincularPapel(titularParser.getPessoa(), titularParser.getLotacao(),
+						mob, mov.getDtMov(), mov.getLotaResp(),
+						mov.getResp(), mov.getSubscritor(), mov.getTitular(),
+						mov.getDescrMov(), mov.getNmFuncaoSubscritor(),
+						mov.getExPapel());
+		
+		
+		return true;
+	}
+	
+	@Override
+	public Boolean cancelarMov(String cadastrante, String sigla, Long idMov, String dataMov, String motivo) throws Exception{
+				
+		PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(cadastrante);
+		ExMovimentacao mov = dao().consultar(idMov, ExMovimentacao.class, false);
+		BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia()
+				.setSigla(sigla);
+
+		ExMobil mob = buscarMobil(sigla);
+
+		try {
+			Ex.getInstance()
+					.getBL()
+					.cancelar(cadastranteParser.getPessoa(), cadastranteParser.getLotacao(), mob, mov,
+							null, mov.getSubscritor(),
+							cadastranteParser.getPessoa(), motivo);
+		} catch (final Exception e) {
+			throw e;
+		}
+
+		return true;
+
+	}
+	
+	@Override
+	public String listarPerfilVinculado(String sigla, String titular) throws Exception{
+		try{
+
+			PessoaLotacaoParser titularParser = new PessoaLotacaoParser(
+					titular);
+			
+			if (titularParser.getLotacao() == null)
+				titularParser
+						.setLotacao(titularParser.getPessoa().getLotacao());
+			
+			JSONArray perfis = new JSONArray();
+
+			ExMobil mob = buscarMobil(sigla);
+			ExDocumento doc = mob.getDoc();
+			
+			List<ExMovimentacao> movs = listaMovimentacaoPorTipo(mob, ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL);
+			
+			
+			for (ExMovimentacao mov : movs){
+				JSONObject movJson = new JSONObject();
+				movJson.put("idMov", mov.getIdMov());
+				movJson.put("nomePessoa", mov.getSubscritor().getNomePessoa());
+				movJson.put("siglaPessoa", mov.getSubscritor().getSigla());
+				movJson.put("papel", mov.getExPapel().getDescPapel());
+				
+				boolean podeCancelar = Ex.getInstance()
+				.getComp()
+				.podeCancelarVinculacaoPapel(titularParser.getPessoa(), titularParser.getLotacao(),
+						doc.getMobilGeral(), mov);
+				
+				movJson.put("podeCancelar", podeCancelar);
+				
+				perfis.put(movJson);
+				
+			}
+			
+			return perfis.toString();
+
+
+		}catch(Exception e){
+			throw e;
+		}
+	}
+	
+	
+	private List<ExMovimentacao> listaMovimentacaoPorTipo(ExMobil mob, long idTipo){
+		
+		List<ExMovimentacao> movs = new ArrayList<ExMovimentacao>();
+
+		if (mob != null
+				&& mob.getExMovimentacaoSet() != null) {
+			for (ExMovimentacao m : mob.getExMovimentacaoSet()) {
+				if (m.getExTipoMovimentacao().getIdTpMov() == idTipo
+						&& m.getExMovimentacaoCanceladora() == null) {
+					movs.add(m);
+				}
+			}
+		}
+
+		return movs;
 	}
 
 

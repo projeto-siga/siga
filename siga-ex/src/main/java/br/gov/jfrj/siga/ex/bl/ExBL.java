@@ -3696,9 +3696,11 @@ public class ExBL extends CpBL {
 		// ExDao.getInstance().gravar(ultMov);
 		// }
 		
-		if (mov.getExTipoMovimentacao().getIdTpMov()
-				.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR))
+		if (!SigaMessages.isSigaSP() && !mov.getExTipoMovimentacao().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR)) {
 			mov.setNumPaginas(mov.getContarNumeroDePaginas());
+		} else {
+			mov.setNumPaginas(mov.getContarNumeroDePaginas()); //Sempre conta a página para SP
+		}
 		dao().gravar(mov);
 
 		/*
@@ -5150,7 +5152,12 @@ public class ExBL extends CpBL {
 			attrs.put("mob", mov.getExMobil());
 			if (mov.getExTipoMovimentacao() != null && mov.getExTipoMovimentacao()
 					.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENCERRAMENTO_DE_VOLUME) {
-				attrs.put("nmArqMod", "certidaoEncerramentoVolume.jsp");
+				if (SigaMessages.isSigaSP()) {
+					attrs.put("nmArqMod", "certidaoEncerramentoVolumeGOVSP.jsp");
+				} else {
+					attrs.put("nmArqMod", "certidaoEncerramentoVolume.jsp");
+				}
+				
 			} else if (mov.getExTipoMovimentacao() != null
 					&& (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
 							|| (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO)

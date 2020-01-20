@@ -830,11 +830,11 @@
 							<p>
 								<b><fmt:message key="documento.data.assinatura"/>:</b> 
 								<c:choose>
-									<c:when test="${siga_cliente=='GOVSP'}">
+									<c:when test="${not empty docVO.dataPrimeiraAssinatura}">
 										${docVO.dataPrimeiraAssinatura}
 									</c:when>
 									<c:otherwise>
-										${docVO.dtDocDDMMYY}
+										${docVO.dtFinalizacao}
 										<c:if test="${not empty docVO.originalData}">- <b>original:</b> ${docVO.originalData}</c:if>
 									</c:otherwise>
 								</c:choose>

@@ -2781,10 +2781,14 @@ public class ExBL extends CpBL {
 			
 			/*
 			 * Alteracao para historico da substituicao do assinante
+			 * Corrigido questão do subscritor. Documento capturado não gera o mesmo
 			 */
-			if (mov.getExMobil().getDoc().getCadastrante() != mov.getExMobil().getDoc().getSubscritor() && mov.getExMobil().getDoc().getDtAssinatura() == null) {	
+			if (mov.getExMobil().getDoc().getSubscritor() != null
+					&& mov.getExMobil().getDoc().getSubscritor() != mov.getExMobil().getDoc().getCadastrante() 
+					&& mov.getExMobil().getDoc().getDtAssinatura() == null) {	
 				getExTipoMovSubstituicaoAssinante(mov);
 			}
+
 			
 		} catch (final Exception e) {
 			cancelarAlteracao();

@@ -313,7 +313,31 @@
 								<b>
 									<fmt:message key="documento.data.assinatura"/>:
 								</b>
-								 ${docVO.dtDocDDMMYY}
+								
+								<c:choose>
+									<c:when test="${not empty docVO.dataPrimeiraAssinatura}">
+										${docVO.dataPrimeiraAssinatura}
+									</c:when>
+									<c:otherwise>
+										${docVO.dtFinalizacao}
+										<c:if test="${not empty docVO.originalData}">- <b>original:</b> ${docVO.originalData}</c:if>
+									</c:otherwise>
+								</c:choose>
+								
+								
+								<!-- 
+								<c:choose>
+									<c:when test="${siga_cliente=='GOVSP'}">
+										${docVO.dataPrimeiraAssinatura}
+									</c:when>
+									<c:otherwise>
+										${docVO.dtDocDDMMYY}
+										<c:if test="${not empty docVO.originalData}">- <b>original:</b> ${docVO.originalData}</c:if>
+									</c:otherwise>
+								</c:choose>
+								 -->
+								<!-- ${docVO.dataPrimeiraAssinatura} -->
+								<!--  ${docVO.dtDocDDMMYY} -->
 							</p>
 							<p>
 								<b>

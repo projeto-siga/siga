@@ -616,6 +616,19 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		}
 		return "";
 	}
+	
+	
+	/**
+	 * Retorna a data do documento no formato dd/mm/aa, por exemplo, 01/02/10.
+	 */
+	public String getDtPrimeiraAssinaturaDDMMYY() {
+		if (getDtPrimeiraAssinatura()!= null) {
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy");
+			return df.format(getDtPrimeiraAssinatura());
+		}
+		return "";
+	}
+	
 
 	/**
 	 * Retorna a data original do documento externo no formato dd/mm/aa, por
@@ -666,6 +679,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return "";
 	}
 
+	
+	
+	
 	/**
 	 * Retorna o nome da localidade (município) onde se encontra a lotação em
 	 * que o documento foi produzido, caso não tenha sido digitado valor para a

@@ -581,6 +581,12 @@ public class ExMovimentacaoController extends ExController {
 			autenticando = false;
 		boolean previamenteAssinado = !doc.isPendenteDeAssinatura();
 		boolean assinando = !autenticando;
+		
+		/*
+		 * 16/01/2020 - recebendo a data da assinatura
+		 */
+		if(doc.getDtPrimeiraAssinatura() == null)
+			doc.setDtPrimeiraAssinatura(dao.dt());
 
 		if (devePreAssinar(doc, previamenteAssinado)) {
 			Ex.getInstance().getBL()

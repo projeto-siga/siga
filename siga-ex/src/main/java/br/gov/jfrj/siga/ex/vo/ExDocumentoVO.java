@@ -102,7 +102,14 @@ public class ExDocumentoVO extends ExVO {
 
 		this.nomeCompleto = doc.getNomeCompleto();
 		this.dtDocDDMMYY = doc.getDtDocDDMMYY();
-		this.dataPrimeiraAssinatura = this.obterDataPrimeiraAssinatura(doc);
+		
+		/*
+		 * 16/01/2020 - Data da ultima assinatura
+		 */
+		this.dataPrimeiraAssinatura = doc.getDtPrimeiraAssinaturaDDMMYY();
+		
+		
+		/*this.dataPrimeiraAssinatura = this.obterDataPrimeiraAssinatura(doc);*/
 		this.subscritorString = doc.getSubscritorString();
 		this.cadastranteString = doc.getCadastranteString();
 		if (doc.getLotaCadastrante() != null)
@@ -147,7 +154,7 @@ public class ExDocumentoVO extends ExVO {
 				this.tipoFormaDocumento = "processo_administrativo";
 				break;
 			}
-
+		
 		this.dtFinalizacao = doc.getDtFinalizacaoDDMMYY();
 		if (doc.getExModelo() != null)
 			this.nmArqMod = doc.getExModelo().getNmArqMod();

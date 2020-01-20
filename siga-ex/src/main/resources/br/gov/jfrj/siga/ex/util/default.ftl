@@ -2536,7 +2536,7 @@ Pede deferimento.</span><br/><br/><br/>
     [@cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho/]
     [/@primeiroCabecalho]
     [@cabecalho]
-    [@cabecalhoCentralizado orgaoCabecalho/]
+    [@cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho/]
     [/@cabecalho]
     [@letra tamanhoLetra]
         [#if !numeracaoCentralizada]

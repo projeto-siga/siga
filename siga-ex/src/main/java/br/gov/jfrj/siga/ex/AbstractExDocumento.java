@@ -261,6 +261,16 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DT_FINALIZACAO", length = 19)
 	private Date dtFinalizacao;
+	
+	
+	/*
+	 * 16/01/2020 - Data da primeira assinatura
+	 */
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DT_PRIMEIRAASSINATURA", length = 19)
+	private Date dtPrimeiraAssinatura;
+	
+	
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DT_REG_DOC", nullable = false, length = 19)
@@ -1076,4 +1086,18 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	public void setExProtocolo(ExProtocolo exProtocolo) {
 		this.exProtocolo = exProtocolo;
 	}
+
+	public Date getDtPrimeiraAssinatura() {
+		return dtPrimeiraAssinatura;
+	}
+
+	public void setDtPrimeiraAssinatura(Date dtPrimeiraAssinatura) {
+		this.dtPrimeiraAssinatura = dtPrimeiraAssinatura;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+	
+	
 }

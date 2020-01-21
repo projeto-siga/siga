@@ -135,7 +135,13 @@ function cpf_mask(v){
 							<label for="nome">CPF</label>
 							<input type="text" id="cpfPesquisa" name="cpfPesquisa" value="${cpfPesquisa}" maxlength="14" onkeyup="this.value = cpf_mask(this.value)" class="form-control"/>
 						</div>					
-					</div>					
+					</div>
+					<div class="col-md-4">
+					<div class="form-group">
+							<label for="nome">E-mail</label>
+							<input type="text" id="emailPesquisa" name="emailPesquisa" value="${emailPesquisa}" maxlength="100" class="form-control">
+						</div>					
+					</div>								
 				</div>
 				<div class="row">
 					<div class="col-sm-2">

@@ -130,6 +130,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "	select max(pes.idPessoa)"
 				+ "	from DpPessoa pes"
 				+ "	where ((upper(pes.nomePessoaAI) like upper('%' || :nome || '%')) or ((pes.sesbPessoa || pes.matricula) like upper('%' || :nome || '%')))"
+				+ "	and upper(pes.emailPessoa) like upper('%' || :email || '%')"  
 				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ " and (:cpf = null or :cpf = 0 or pes.cpfPessoa like '%' || :cpf || '%') "
 				+ "  	and (:lotacao = null or :lotacao = 0 or pes.lotacao.idLotacao = :lotacao)"

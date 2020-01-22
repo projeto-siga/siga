@@ -135,7 +135,7 @@ public interface ExService extends Remote {
 			String senhaUsuarioSubscritor, String siglaCadastrante) throws Exception;
 	
 	@WebMethod
-	public String criarDocumentoCapturado(String cadastranteStr, String subscritorStr, String destinatarioStr, String destinatarioCampoExtraStr, String descricaoTipoDeDocumento, String nomeForma ,String nomeModelo, String classificacaoStr, 
+	public String criarDocumentoCapturado(String cadastranteStr, String destinatarioStr, String destinatarioCampoExtraStr, String descricaoTipoDeDocumento, String nomeForma ,String nomeModelo, String classificacaoStr, 
 			String descricaoStr, Boolean eletronico, String nomeNivelDeAcesso, String conteudo, String siglaMobilPai, Boolean finalizar, byte[] arquivo) throws Exception;
 	
 	@WebMethod

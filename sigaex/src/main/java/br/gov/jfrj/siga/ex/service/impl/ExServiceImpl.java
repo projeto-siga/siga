@@ -739,11 +739,10 @@ public class ExServiceImpl implements ExService {
 
 	}
 	
-	public String criarDocumentoCapturado(String cadastranteStr, String subscritorStr, String destinatarioStr, String destinatarioCampoExtraStr, String descricaoTipoDeDocumento, String nomeForma ,String nomeModelo, String classificacaoStr, 
+	public String criarDocumentoCapturado(String cadastranteStr, String destinatarioStr, String destinatarioCampoExtraStr, String descricaoTipoDeDocumento, String nomeForma ,String nomeModelo, String classificacaoStr, 
 			String descricaoStr, Boolean eletronico, String nomeNivelDeAcesso, String conteudo, String siglaMobilPai, Boolean finalizar, byte[] arquivo) throws Exception {
     	try {
     		DpPessoa cadastrante = null;
-    		DpPessoa subscritor = null;
     		ExModelo modelo = null;
     		ExFormaDocumento forma = null;
     		ExTipoDocumento tipoDocumento = null;
@@ -757,9 +756,6 @@ public class ExServiceImpl implements ExService {
     		
     		if(cadastranteStr == null || cadastranteStr.isEmpty())
     			throw new AplicacaoException("A matrícula do cadastrante não foi informada.");
-    		
-    		if(subscritorStr == null || subscritorStr.isEmpty())
-    			throw new AplicacaoException("A matrícula do subscritor não foi informada.");
 
     		cadastrante = dao().getPessoaFromSigla(cadastranteStr);
     		
@@ -768,14 +764,7 @@ public class ExServiceImpl implements ExService {
     		
     		if(cadastrante.isFechada())
     			throw new AplicacaoException("O cadastrante não está mais ativo.");
-    		
-    		subscritor = dao().getPessoaFromSigla(subscritorStr);
-    		
-    		if(subscritor == null)
-    			throw new AplicacaoException("Não foi possível encontrar um subscritor com a matrícula informada.");
- 
-    		if(subscritor.isFechada())
-    			throw new AplicacaoException("O subscritor não está mais ativo.");
+    	
     		
     		if(descricaoTipoDeDocumento == null)
     			tipoDocumento = (dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_INTERNO, ExTipoDocumento.class,
@@ -980,9 +969,7 @@ public class ExServiceImpl implements ExService {
     			doc.setNmDestinatario(destinatarioStr);
     		}
     		
-    		doc.setSubscritor(subscritor);
-    		doc.setLotaSubscritor(subscritor.getLotacao());
-    		doc.setOrgaoUsuario(subscritor.getOrgaoUsuario());
+    		doc.setOrgaoUsuario(cadastrante.getOrgaoUsuario());
     		doc.setExTipoDocumento(tipoDocumento);
     		doc.setExFormaDocumento(forma);
     		doc.setExModelo(modelo);

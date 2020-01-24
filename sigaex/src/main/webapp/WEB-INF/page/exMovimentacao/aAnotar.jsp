@@ -27,7 +27,7 @@
 				}
 				;
 				document.getElementById("Qtd").innerText = 'Restam ' + i
-						+ ' Caracteres';
+						+ ' caracteres';
 			}
 
 			function tamanho2() {
@@ -148,7 +148,7 @@
 								<textarea class="form-control" name="descrMov" value="${descrMov}" cols="60"
 									rows="5" onkeydown="corrige();tamanho();" maxlength="500"
 									onblur="tamanho();" onclick="tamanho();"></textarea>
-								<small class="form-text text-muted" id="Qtd">Restam&nbsp;500&nbsp;Caracteres</small>
+								<small class="form-text text-muted" id="Qtd">Restam&nbsp;500&nbsp;caracteres</small>
 							</div>
 						</div>
 					</div>

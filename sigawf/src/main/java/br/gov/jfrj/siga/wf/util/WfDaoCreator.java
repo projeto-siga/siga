@@ -8,6 +8,7 @@ import br.gov.jfrj.siga.wf.dao.WfDao;
 @RequestScoped
 public class WfDaoCreator {
 	@Produces
+	@RequestScoped
 	public WfDao getInstance() {
 		return WfDao.getInstance();
 	}

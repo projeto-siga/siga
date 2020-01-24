@@ -33,15 +33,15 @@ import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.wf.WfDefinicaoDeProcedimento;
-import br.gov.jfrj.siga.wf.WfDefinicaoDeTarefa;
-import br.gov.jfrj.siga.wf.WfProcedimento;
-import br.gov.jfrj.siga.wf.WfResponsavel;
-import br.gov.jfrj.siga.wf.WfTarefa;
-import br.gov.jfrj.siga.wf.WfTarefaComparator;
 import br.gov.jfrj.siga.wf.dao.WfDao;
+import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
+import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
+import br.gov.jfrj.siga.wf.model.WfProcedimento;
+import br.gov.jfrj.siga.wf.model.WfTarefa;
 import br.gov.jfrj.siga.wf.util.WfEngine;
 import br.gov.jfrj.siga.wf.util.WfHandler;
+import br.gov.jfrj.siga.wf.util.WfResp;
+import br.gov.jfrj.siga.wf.util.WfTarefaComparator;
 
 /**
  * Classe que representa a lógica do negócio do sistema de workflow.
@@ -101,7 +101,7 @@ public class WfBL extends CpBL {
 
 		WfProcedimento pi = new WfProcedimento(pd, variable) {
 			@Override
-			public WfResponsavel calcResponsible(WfDefinicaoDeTarefa tarefa) {
+			public WfResp calcResponsible(WfDefinicaoDeTarefa tarefa) {
 				return null;
 			}
 		};

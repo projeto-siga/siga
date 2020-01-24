@@ -24,10 +24,9 @@ import java.util.List;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.wf.WfDefinicaoDeDesvio;
-import br.gov.jfrj.siga.wf.WfTarefa;
-import br.gov.jfrj.siga.wf.WfTarefaComparator;
 import br.gov.jfrj.siga.wf.bl.Wf;
+import br.gov.jfrj.siga.wf.model.WfDefinicaoDeDesvio;
+import br.gov.jfrj.siga.wf.model.WfTarefa;
 
 /**
  * Classe que contém diversas funcões úteis que podem ser utilizadas nos
@@ -48,8 +47,9 @@ public class FuncoesEL {
 	 */
 	public static List<WfDefinicaoDeDesvio> ordenarTransicoes(WfTarefa taskInstance) {
 
-		WfDefinicaoDeDesvio[] lista = new WfDefinicaoDeDesvio[taskInstance.getDefinicaoDeTarefa().getDesvios().size()];
-		taskInstance.getDefinicaoDeTarefa().getDesvios().toArray(lista);
+		WfDefinicaoDeDesvio[] lista = new WfDefinicaoDeDesvio[taskInstance.getDefinicaoDeTarefa().getDefinicaoDeDesvio()
+				.size()];
+		taskInstance.getDefinicaoDeTarefa().getDefinicaoDeDesvio().toArray(lista);
 
 		Arrays.sort(lista, new Comparator<WfDefinicaoDeDesvio>() {
 

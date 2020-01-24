@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<deployment>
 
-		<module-alias name="sigawf" />
+		<module-alias name="deployment.sigawf" />
 
 		<dependencies>
 			<module name="org.picketlink" />

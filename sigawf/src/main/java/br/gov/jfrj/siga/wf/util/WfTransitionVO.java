@@ -21,7 +21,7 @@ package br.gov.jfrj.siga.wf.util;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 
-import br.gov.jfrj.siga.wf.WfDefinicaoDeDesvio;
+import br.gov.jfrj.siga.wf.model.WfDefinicaoDeDesvio;
 
 /**
  * Classe que repesenta um View Object (Objeto Visão, ou seja, objeto que será

@@ -31,14 +31,13 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
-import br.gov.jfrj.siga.wf.WfConhecimento;
-import br.gov.jfrj.siga.wf.WfDefinicaoDeDesvio;
-import br.gov.jfrj.siga.wf.WfDefinicaoDeTarefa;
-import br.gov.jfrj.siga.wf.WfDefinicaoDeVariavel;
-import br.gov.jfrj.siga.wf.WfResponsavel;
-import br.gov.jfrj.siga.wf.WfTarefa;
-import br.gov.jfrj.siga.wf.WfTipoDeTarefa;
 import br.gov.jfrj.siga.wf.dao.WfDao;
+import br.gov.jfrj.siga.wf.model.WfConhecimento;
+import br.gov.jfrj.siga.wf.model.WfDefinicaoDeDesvio;
+import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
+import br.gov.jfrj.siga.wf.model.WfDefinicaoDeVariavel;
+import br.gov.jfrj.siga.wf.model.WfTarefa;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
 
 /**
  * Classe que repesenta um View Object (Objeto Visão, ou seja, objeto que será
@@ -188,11 +187,11 @@ public class WfTaskVO {
 				boolean ultimo = false;
 				WfDefinicaoDeDesvio desvio = null;
 				while (tdProxima != null) {
-					if (tdProxima.getTipoTarefa() == WfTipoDeTarefa.FORMULARIO)
+					if (tdProxima.getTipoDeTarefa() == WfTipoDeTarefa.FORMULARIO)
 						break;
 					desvio = null;
-					if (tdProxima.getDesvios() != null && tdProxima.getDesvios().size() == 1)
-						desvio = tdProxima.getDesvios().get(0);
+					if (tdProxima.getDefinicaoDeDesvio() != null && tdProxima.getDefinicaoDeDesvio().size() == 1)
+						desvio = tdProxima.getDefinicaoDeDesvio().get(0);
 
 					// A proxima tarefa está indicada
 					if (tdProxima.getSeguinte() != null)
@@ -201,7 +200,7 @@ public class WfTaskVO {
 						tdProxima = desvio.getSeguinte();
 
 					// Depois dessa tarefa vai terminar
-					else if (tdProxima.getUltimo() || (desvio != null && desvio.getUltimo())
+					else if (tdProxima.isUltimo() || (desvio != null && desvio.getUltimo())
 							|| ti.getInstanciaDeProcesso().getCurrentIndex() == ti.getInstanciaDeProcesso()
 									.getProcessDefinition().getTaskDefinition().size() - 1) {
 						ultimo = true;
@@ -218,7 +217,7 @@ public class WfTaskVO {
 				if (ultimo)
 					set.add("FIM");
 				else {
-					WfResponsavel r = (WfResponsavel) ti.getInstanciaDeProcesso().calcResponsible(tdProxima);
+					WfResp r = (WfResp) ti.getInstanciaDeProcesso().calcResponsible(tdProxima);
 					if (r != null)
 						set.add(r.getInitials());
 				}

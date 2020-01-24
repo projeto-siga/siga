@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 	<display-name>sigawf</display-name>
-	
+
 	<!-- habilita replicacao dos dados da sessao do usuario no cluster -->
 	<!--distributable/ -->
 
@@ -42,7 +42,7 @@
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
-	
+
 	<filter>
 		<filter-name>RequestLoggerFilter</filter-name>
 		<filter-class>br.gov.jfrj.siga.base.log.RequestLoggerFilter</filter-class>
@@ -54,14 +54,13 @@
 
 	<filter>
 		<filter-name>WfFilter</filter-name>
-		<filter-class>br.gov.jfrj.siga.wf.util.WfThreadFilter</filter-class>
+		<filter-class>br.gov.jfrj.siga.wf.dao.WfThreadFilter</filter-class>
 	</filter>
 	<filter-mapping>
 		<filter-name>WfFilter</filter-name>
 		<url-pattern>/servicos/*</url-pattern>
-		<url-pattern>/upload</url-pattern>
 	</filter-mapping>
-	
+
 	<filter>
 		<filter-name>vraptor</filter-name>
 		<filter-class>br.com.caelum.vraptor.VRaptor</filter-class>
@@ -109,16 +108,6 @@
 	<servlet-mapping>
 		<servlet-name>WfService</servlet-name>
 		<url-pattern>/servicos/*</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>UploadServlet</servlet-name>
-		<servlet-class>br.gov.jfrj.siga.wf.servlet.UploadServlet</servlet-class>
-	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>UploadServlet</servlet-name>
-		<url-pattern>/upload</url-pattern>
 	</servlet-mapping>
 
 	<!-- Inicio de WebServer -->

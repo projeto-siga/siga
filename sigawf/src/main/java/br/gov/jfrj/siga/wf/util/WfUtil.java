@@ -18,9 +18,9 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
-import br.gov.jfrj.siga.wf.WfProcedimento;
-import br.gov.jfrj.siga.wf.WfTarefa;
-import br.gov.jfrj.siga.wf.WfTipoDePrincipal;
+import br.gov.jfrj.siga.wf.model.WfProcedimento;
+import br.gov.jfrj.siga.wf.model.WfTarefa;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
 
 @RequestScoped
 public class WfUtil {

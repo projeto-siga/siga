@@ -12,11 +12,10 @@ import com.crivano.jflow.TaskResult;
 
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.wf.WfProcedimento;
-import br.gov.jfrj.siga.wf.WfResponsavel;
 import br.gov.jfrj.siga.wf.dao.WfDao;
+import br.gov.jfrj.siga.wf.model.WfProcedimento;
 
-public class WfHandler implements Handler<WfProcedimento, WfResponsavel> {
+public class WfHandler implements Handler<WfProcedimento, WfResp> {
 
 	@Override
 	public void afterPause(WfProcedimento pi, TaskResult result) {
@@ -51,7 +50,7 @@ public class WfHandler implements Handler<WfProcedimento, WfResponsavel> {
 	}
 
 	@Override
-	public void sendEmail(WfResponsavel responsible, String subject, String text) {
+	public void sendEmail(WfResp responsible, String subject, String text) {
 		List<String> destinatarios = new ArrayList<>();
 		if (responsible.getPessoa() != null) {
 			destinatarios.add(responsible.getPessoa().getEmailPessoaAtual());

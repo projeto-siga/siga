@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 
+import javax.enterprise.inject.Specializes;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
@@ -36,20 +37,20 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
-import br.gov.jfrj.siga.wf.WfConhecimento;
-import br.gov.jfrj.siga.wf.WfDefinicaoDeProcedimento;
-import br.gov.jfrj.siga.wf.WfProcedimento;
-import br.gov.jfrj.siga.wf.WfTarefa;
+import br.gov.jfrj.siga.wf.model.WfConhecimento;
+import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
+import br.gov.jfrj.siga.wf.model.WfProcedimento;
+import br.gov.jfrj.siga.wf.model.WfTarefa;
 
 /**
  * Classe que representa o DAO do sistema de workflow.
  * 
  */
-
+@Specializes
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento> {
 
-	public static final String CACHE_EX = "ex";
+	public static final String CACHE_WF = "wf";
 
 	private static final Logger log = Logger.getLogger(WfDao.class);
 

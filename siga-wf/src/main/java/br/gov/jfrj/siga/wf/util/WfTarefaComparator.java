@@ -18,43 +18,23 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.util;
 
-import java.lang.reflect.InvocationTargetException;
+import java.util.Comparator;
 
-import br.gov.jfrj.siga.wf.model.WfDefinicaoDeVariavel;
+import br.gov.jfrj.siga.wf.model.WfTarefa;
 
-public class WfVariableVO {
-	private String access;
-	private String mappedName;
-	private String variableName;
+public class WfTarefaComparator implements Comparator<WfTarefa> {
 
-	public WfVariableVO(WfDefinicaoDeVariavel vd) throws IllegalAccessException, InvocationTargetException {
-		this.access = vd.getAcesso().name();
-		this.mappedName = vd.getIdentifier();
-		this.variableName = vd.getIdentifier();
+	/**
+	 * Compara dois objetos TaskInstance. Retorna zero (0) se os objetos são
+	 * "iguais", retorna (1) se a PRIORIDADE ou ID do primeiro objeto (o1) for maior
+	 * doque o segundo objeto (o2). Retorna (-1), caso contrário. ESTE CÓDIGO ESTÁ
+	 * DUPLICADO EM WfDocumentoAction.java.
+	 */
+	public int compare(WfTarefa o1, WfTarefa o2) {
+//		if (o1.getId() > o2.getId())
+//			return 1;
+//		if (o1.getId() < o2.getId())
+//			return -1;
+		return 0;
 	}
-
-	public String getAccess() {
-		return access;
-	}
-
-	public void setAccess(String access) {
-		this.access = access;
-	}
-
-	public String getMappedName() {
-		return mappedName;
-	}
-
-	public void setMappedName(String mappedName) {
-		this.mappedName = mappedName;
-	}
-
-	public String getVariableName() {
-		return variableName;
-	}
-
-	public void setVariableName(String variableName) {
-		this.variableName = variableName;
-	}
-
 }

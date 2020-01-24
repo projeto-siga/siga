@@ -32,7 +32,7 @@ import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.wf.WfConfiguracao;
+import br.gov.jfrj.siga.wf.model.WfConfiguracao;
 
 /**
  * Classe que representa a configuração do sistema de workflow.

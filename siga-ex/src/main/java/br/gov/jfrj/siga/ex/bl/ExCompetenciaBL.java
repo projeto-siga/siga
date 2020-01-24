@@ -891,7 +891,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 			for (ExMobil m : mob.doc().getExMobilSet()) {
 				ExMovimentacao lastMov = m.getUltimaMovimentacaoNaoCancelada();
-				if (!(lastMov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA)
+				if (lastMov != null &&  !(lastMov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA)
 					&& !(lastMov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO)
 					&& !(lastMov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO  
 						&& (mob.doc().getLotaCadastrante().equivale(lastMov.getLotaResp()) || mob.doc().getCadastrante().equivale(lastMov.getResp())) ) 

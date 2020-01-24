@@ -1312,8 +1312,9 @@ public class CpDao extends ModeloDao {
 				query.setMaxResults(itemPagina);
 			}
 			query.setString("nome",
-					flt.getNome().toUpperCase().replace(' ', '%'));
-
+					flt.getNome().toUpperCase().replace(' ', '%'));			
+			query.setString("email",
+				    flt.getEmail().toUpperCase().replace(' ', '%'));
 			if (!flt.isBuscarFechadas())
 				query.setString("situacaoFuncionalPessoa",
 						flt.getSituacaoFuncionalPessoa());

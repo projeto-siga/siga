@@ -182,9 +182,8 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	}
 
 	@Get("app/pessoa/listar")
-	public void lista(Integer paramoffset, Long idOrgaoUsu, String nome, String cpfPesquisa, Long idCargoPesquisa,
-			Long idFuncaoPesquisa, Long idLotacaoPesquisa) throws Exception {
-		result.include("request", getRequest());
+	public void lista(Integer paramoffset, Long idOrgaoUsu, String nome, String cpfPesquisa, Long idCargoPesquisa, Long idFuncaoPesquisa, Long idLotacaoPesquisa, String emailPesquisa) throws Exception {
+		result.include("request",getRequest());
 		List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
 		CpOrgaoUsuario ou = new CpOrgaoUsuario();
 		if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
@@ -210,7 +209,8 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			}
 			dpPessoa.setIdOrgaoUsu(idOrgaoUsu);
 			dpPessoa.setNome(Texto.removeAcento(nome != null ? nome : ""));
-			if (idCargoPesquisa != null) {
+			dpPessoa.setEmail(Texto.removeAcento(emailPesquisa != null ? emailPesquisa : ""));
+			if(idCargoPesquisa != null) {
 				DpCargo cargo = new DpCargo();
 				cargo.setId(idCargoPesquisa);
 				dpPessoa.setCargo(cargo);
@@ -237,6 +237,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 
 			result.include("idOrgaoUsu", idOrgaoUsu);
 			result.include("nome", nome);
+			result.include("emailPesquisa", emailPesquisa);
 			result.include("cpfPesquisa", cpfPesquisa);
 			result.include("idCargoPesquisa", idCargoPesquisa);
 			result.include("idFuncaoPesquisa", idFuncaoPesquisa);
@@ -248,8 +249,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	}
 
 	@Get("/app/pessoa/ativarInativar")
-	public void ativarInativar(final Long id, Integer offset, Long idOrgaoUsu, String nome, String cpfPesquisa,
-			Long idCargoPesquisa, Long idFuncaoPesquisa, Long idLotacaoPesquisa) throws Exception {
+	public void ativarInativar(final Long id, Integer offset, Long idOrgaoUsu, String nome, String cpfPesquisa, Long idCargoPesquisa, Long idFuncaoPesquisa, Long idLotacaoPesquisa, String emailPesquisa) throws Exception{
 		CpOrgaoUsuario ou = new CpOrgaoUsuario();
 		DpPessoa pessoa = dao().consultar(id, DpPessoa.class, false);
 		ou.setIdOrgaoUsu(pessoa.getOrgaoUsuario().getId());
@@ -297,8 +297,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				dao().rollbackTransacao();
 				throw new AplicacaoException("Erro na gravação", 0, e);
 			}
-			this.result.redirectTo(this).lista(offset, idOrgaoUsu, nome, cpfPesquisa, idCargoPesquisa, idFuncaoPesquisa,
-					idLotacaoPesquisa);
+			this.result.redirectTo(this).lista(offset, idOrgaoUsu, nome, cpfPesquisa, idCargoPesquisa, idFuncaoPesquisa, idLotacaoPesquisa, emailPesquisa);
 		}
 	}
 
@@ -614,7 +613,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			dao().rollbackTransacao();
 			throw new AplicacaoException("Erro na gravação", 0, e);
 		}
-		lista(0, null, "", "", null, null, null);
+		lista(0, null, "", "", null, null, null, "");
 	}
 
 	@Get("/app/pessoa/carregarExcel")

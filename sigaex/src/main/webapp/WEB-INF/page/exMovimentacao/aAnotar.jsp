@@ -27,22 +27,22 @@
 				}
 				;
 				document.getElementById("Qtd").innerText = 'Restam ' + i
-						+ ' Caracteres';
+						+ ' caracteres';
 			}
 
 			function tamanho2() {
 				nota = new String();
 				nota = this.frm.descrMov.value;
-				var i = 255 - nota.length;
+				var i = 500 - nota.length;
 				return i;
 			}
 			function corrige() {
 				if (tamanho2() < 0) {
-					alert('Descrição com mais de 255 caracteres');
+					alert('Descrição com mais de 500 caracteres');
 					nota = new String();
 					nota = document.getElementById("descrMov").value;
 					document.getElementById("descrMov").value = nota.substring(
-							0, 255);
+							0, 500);
 				}
 			}
 			var newwindow = '';
@@ -146,9 +146,9 @@
 							<div class="form-group">
 								<label for="descrMov">Nota</label>
 								<textarea class="form-control" name="descrMov" value="${descrMov}" cols="60"
-									rows="5" onkeydown="corrige();tamanho();" maxlength="255"
+									rows="5" onkeydown="corrige();tamanho();" maxlength="500"
 									onblur="tamanho();" onclick="tamanho();"></textarea>
-								<small class="form-text text-muted" id="Qtd">Restam&nbsp;255&nbsp;Caracteres</small>
+								<small class="form-text text-muted" id="Qtd">Restam&nbsp;500&nbsp;caracteres</small>
 							</div>
 						</div>
 					</div>

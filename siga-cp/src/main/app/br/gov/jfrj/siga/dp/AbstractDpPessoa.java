@@ -135,7 +135,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "  	and (:lotacao = null or :lotacao = 0 or pes.lotacao.idLotacao = :lotacao)"
 				+ " and (:cargo = null or :cargo = 0 or pes.cargo.idCargo = :cargo) "
 				+ " and (:funcao = null or :funcao = 0 or pes.funcaoConfianca.idFuncao = :funcao) "
-				+ " and (:email = null or :email = 0 or (upper(pes.emailPessoa) like upper('%' || :email || '%')) ) " 
+				+ " and (:email = null or (upper(pes.emailPessoa) like upper('%' || :email || '%')) ) " 
 				+ "	group by pes.idPessoaIni) order by upper(pes.nomePessoaAI)"),
 		@NamedQuery(name = "consultarPessoaComOrgaoFuncaoCargo", query = "from DpPessoa pes"
 				+ " left join fetch pes.cargo car "

@@ -183,7 +183,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exMovimentacaoRef")
 	private java.util.Set<ExMovimentacao> exMovimentacaoReferenciadoraSet;
 
-	@Column(name = "descr_mov", length = 400)
+	@Column(name = "descr_mov", length = 500)
 	private String descrMov;
 
 	@ManyToOne(fetch = FetchType.LAZY)

@@ -70,6 +70,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ " and (pes.id <> :id or :id = 0)"
 				+ " and (:cargo = null or :cargo = 0 or pes.cargo.idCargo = :cargo) "
 		      	+ " and (:funcao = null or :funcao = 0 or pes.funcaoConfianca.idFuncao = :funcao) "
+		      	+ " and (:email = null or (upper(pes.emailPessoa) like upper('%' || :email || '%')) ) " 
 				+ "	and (:situacaoFuncionalPessoa = null or pes.situacaoFuncionalPessoa = :situacaoFuncionalPessoa)"
 				+ "   	and pes.dataFimPessoa = null"
 				+ "   	order by pes.nomePessoa"),

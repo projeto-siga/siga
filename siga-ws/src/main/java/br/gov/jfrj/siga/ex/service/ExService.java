@@ -18,8 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.service;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedHashMap;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
@@ -152,6 +151,11 @@ public interface ExService extends Remote {
 	
 	@WebMethod
 	public String listarPerfilVinculado(String sigla, String titular) throws Exception;
+	
+	@WebMethod
+	public String criarDocumentoV2(String cadastranteStr, String subscritorStr, String destinatarioStr, String destinatarioCampoExtraStr, String descricaoTipoDeDocumento, String nomeForma ,String nomeModelo, String classificacaoStr, 
+			String descricaoStr, Boolean eletronico, String nomeNivelDeAcesso, LinkedHashMap<String, String> campos, String siglaMobilPai, Boolean finalizar) throws Exception;
+	
 	
 	
 }

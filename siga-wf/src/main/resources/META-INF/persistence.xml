@@ -62,7 +62,6 @@
 		<class>br.gov.jfrj.siga.wf.model.WfMovTransicao</class>
 		<class>br.gov.jfrj.siga.wf.model.WfProcedimento</class>
 		<class>br.gov.jfrj.siga.wf.model.WfResponsavel</class>
-		<class>br.gov.jfrj.siga.wf.model.WfTarefa</class>
 		<class>br.gov.jfrj.siga.wf.model.WfVariavel</class>
 
 		<properties>

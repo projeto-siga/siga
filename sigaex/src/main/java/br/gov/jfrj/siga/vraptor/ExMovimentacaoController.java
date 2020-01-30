@@ -565,7 +565,7 @@ public class ExMovimentacaoController extends ExController {
 						mov.getSubscritor());
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
-
+		
 	@Get("app/expediente/mov/assinar")
 	public void aAssinar(String sigla, Boolean autenticando) throws Exception {
 		BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia()
@@ -582,6 +582,14 @@ public class ExMovimentacaoController extends ExController {
 		boolean previamenteAssinado = !doc.isPendenteDeAssinatura();
 		boolean assinando = !autenticando;
 		
+		if (autenticando && !permiteAutenticar(doc)) {				
+			throw new AplicacaoException(
+					"Não é permitido autenticar o documento, favor rever as configurações para o modelo: "
+					+ doc.getExModelo().getDescMod() + ". "
+					+ "Tipo de Configuração: Movimentar. "
+					+ "Tipo de Movimentação: Autenticação de Documento.");			
+		}
+					
 		/*
 		 * 16/01/2020 - recebendo a data da assinatura
 		 */
@@ -617,6 +625,10 @@ public class ExMovimentacaoController extends ExController {
 		result.include("juntarFixo", doc.getPai() != null && afJuntada.fixo ? false : null);
 		result.include("tramitarAtivo", afTramite.ativo);
 		result.include("tramitarFixo", afTramite.fixo);
+	}
+	
+	public boolean permiteAutenticar(ExDocumento doc) {
+		return Ex.getInstance().getComp().podeAutenticarDocumento(getTitular(), getLotaTitular(), doc);
 	}
 	
 	public static class AtivoEFixo {

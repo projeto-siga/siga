@@ -87,6 +87,7 @@ import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
 import br.gov.jfrj.siga.hibernate.ext.IMontadorQuery;
@@ -2021,6 +2022,116 @@ public class ExDao extends CpDao {
 		return l;
 	}
 
+	public List consultarTotaisPorMarcador(DpPessoa pes, DpLotacao lot, List<GrupoItem> grupos) {
+		try {
+			String query = "";
+			for (GrupoItem grupoItem : grupos) {
+				if (grupoItem.grupoMarcadores.size() > 0) {
+					query += "SELECT "
+						+ grupoItem.grupoOrdem + ", "
+						+ " SUM(CASE WHEN cont_pessoa > 0 THEN 1 ELSE 0 END), " 
+						+ " SUM(CASE WHEN cont_lota > 0 THEN 1 ELSE 0 END) "
+						+ "			FROM (SELECT distinct id_ref, "
+						+ " 			SUM(CASE WHEN id_pessoa_ini = :idPessoaIni THEN 1 ELSE 0 END) cont_pessoa,"
+						+ " 			SUM(CASE WHEN id_lotacao_ini = :idLotacaoIni THEN 1 ELSE 0 END) cont_lota"
+						+ "	   			FROM corporativo.cp_marca marca"	
+						+ "	   			WHERE (dt_ini_marca IS NULL OR dt_ini_marca < sysdate)"
+						+ "	   				AND (dt_fim_marca IS NULL OR dt_fim_marca > sysdate)"
+						+ "	   				AND ((id_pessoa_ini = :idPessoaIni) OR(id_lotacao_ini = :idLotacaoIni))"
+						+ "	   				AND id_tp_marca = 1"
+						+ "					AND id_marcador in (" 
+						+ grupoItem.grupoMarcadores.toString().replaceAll("\\[|\\]", "") + ") "
+						+ "				GROUP BY ID_REF )"
+						+ " UNION ALL ";
+				}
+			}
+			query = query.substring(0, query.length() - 10);
+			Query sql = getSessao()
+					.createSQLQuery(query);
+			sql.setLong("idPessoaIni", pes.getIdPessoaIni());
+			sql.setLong("idLotacaoIni", lot.getIdLotacaoIni());
 
+			List result = sql.list();
+
+			return result;
+
+		} catch (final NullPointerException e) {
+			return null;
+		}
+	}
+
+	public List listarMobilsPorMarcas(DpPessoa titular,
+			DpLotacao lotaTitular, List<Long> listMarcas, boolean exibeLotacao) {
+		String queryString;
+		List<List<String>> l = new ArrayList<List<String>> ();
+//		long tempoIni = System.nanoTime();
+		
+		queryString = 
+					"select "
+					+ " marca, marcador, mobil, doc.dtAltDoc "
+					+ " from ExMarca marca "
+					+ " inner join marca.exMobil mobil"
+					+ " inner join marca.cpMarcador marcador"
+					+ " inner join mobil.exDocumento doc"
+					+ " where (marca.dtIniMarca is null or marca.dtIniMarca < sysdate)"
+					+ " and (marca.dtFimMarca is null or marca.dtFimMarca > sysdate)"
+					+ (listMarcas != null ? " and marca.cpMarcador.idMarcador in ( :marcadores )" : "")
+					+ (!exibeLotacao && titular != null ? " and (marca.dpPessoaIni = :titular)" : "") 
+					+ (exibeLotacao && lotaTitular != null ? " and (marca.dpLotacaoIni = :lotaTitular)" : "")
+					+ " order by  doc.dtAltDoc desc, marca ";
+			
+		Query query = getSessao()
+				.createQuery(queryString);
+		if (!exibeLotacao && titular != null)
+			query.setLong("titular", titular.getIdPessoaIni());
+		
+		if (exibeLotacao && lotaTitular != null)
+			query.setLong("lotaTitular", lotaTitular.getIdLotacaoIni());
+
+		query.setParameterList("marcadores", listMarcas);
+
+		l = query.list();
+// 		long tempoTotal = System.nanoTime() - tempoIni;
+		// System.out.println("consultarPorFiltroOtimizado: " + tempoTotal
+		// / 1000000 + " ms -> " + query + ", resultado: " + l);
+		return l;
+	}
+	public List listarMovimentacoesMesa(List<Long> listIdMobil, boolean trazerAnotacoes) {
+		String queryAnota =
+				"(select movAnotacao from ExMovimentacao movAnotacao"
+				+ " where movAnotacao.idMov in ("
+				+ " 	select max(movAnotacao1.idMov) from ExMovimentacao movAnotacao1"
+				+ " 		where movAnotacao1.exTipoMovimentacao.idTpMov = 28 "
+				+ "			and movAnotacao1.exMobil.idMobil = mob.idMobil " 
+				+ " 		and movAnotacao1.exMovimentacaoCanceladora.idMov = null ) ), ";
+				
+		Query query = getSessao()
+				.createQuery(
+						"select "
+						+ "mob, "
+						+ "frm.isComposto, "
+						+ "(select movUltima from ExMovimentacao movUltima "
+						+ " where movUltima.idMov in ("
+						+ " 	select max(movUltima1.idMov) from ExMovimentacao movUltima1"
+						+ " 		where movUltima1.exMobil.idMobil = mob.idMobil " 
+						+ " 		and movUltima1.exMovimentacaoCanceladora.idMov = null ) ), "
+						+ "(select movTramite from ExMovimentacao movTramite"
+						+ " where movTramite.idMov in ("
+						+ " 	select max(movTramite1.idMov) from ExMovimentacao movTramite1"
+						+ " 		where movTramite1.exTipoMovimentacao.idTpMov = 3 "
+						+ "			and movTramite1.exMobil.idMobil = mob.idMobil " 
+						+ " 		and movTramite1.exMovimentacaoCanceladora.idMov = null ) ), "
+						+ (trazerAnotacoes ? queryAnota: "")
+						+ "doc "
+						+ "from ExMobil mob "
+						+ "inner join mob.exDocumento doc "
+						+ "inner join doc.exFormaDocumento frm "
+						+ "where mob.idMobil in (:listIdMobil) "
+				);
+		if (listIdMobil != null) {
+			query.setParameterList("listIdMobil", listIdMobil);
+		}
+		return query.list();
+	}
 
 }

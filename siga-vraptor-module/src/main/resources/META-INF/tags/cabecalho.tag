@@ -382,7 +382,7 @@ ${meta}
 						<div class="dropdown d-inline">
 							<span class="align-middle">Olá, <i class="fa fa-user"></i> 
 								<c:catch>
-									<strong data-toggle="tooltip" data-placement="top" title="${cadastrante.sigla}">									
+									<strong id="cadastrante" data-toggle="tooltip" data-placement="top" title="${cadastrante.sigla}">																		
 											<c:out default="Convidado" value="${f:maiusculasEMinusculas(cadastrante.nomePessoa)}" />
 									</strong>
 									<c:if test="${not empty cadastrante.lotacao}">
@@ -409,7 +409,7 @@ ${meta}
 								</c:catch> 
 							</span>
 						</div>
-						<button class="btn btn-danger btn-sm ml-3 mt-1 align-bottom" type="button" onclick="javascript:location.href='/siga/public/app/logout'"><i class="fas fa-sign-out-alt"></i> Sair</button>
+						<button class="btn btn-danger btn-sm ml-3 mt-1 align-bottom" type="button" onclick="delSession();javascript:location.href='/siga/public/app/logout'"><i class="fas fa-sign-out-alt"></i> Sair</button>
 						<div class="d-inline">
 							<c:catch>
 								<c:choose>
@@ -449,3 +449,9 @@ ${meta}
 
 	<div id="carregando"
 		style="position: absolute; top: 0px; right: 0px; background-color: red; font-weight: bold; padding: 4px; color: white; display: none">Carregando...</div>
+<script type="text/javascript" language="Javascript1.1">
+function delSession() {
+	sessionStorage.removeItem('timeout' + document.getElementById('cadastrante').title);
+	sessionStorage.removeItem('mesa' + document.getElementById('cadastrante').title);
+}
+</script>		

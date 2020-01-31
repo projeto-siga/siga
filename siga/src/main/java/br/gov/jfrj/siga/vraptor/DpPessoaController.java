@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 
+import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -708,7 +709,22 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 
 	}
 	
-	@Get("app/pessoa/enviarEmail")
+	@Consumes("application/json")
+	@Post("/app/pessoa/usuarios/envioDeEmailPendente")
+	public void buscarUsuariosComEnvioDeEmailPendente(DpPessoaUsuarioDTO dados) {								
+		DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();
+		
+		dpPessoa.setIdOrgaoUsu(dados.getIdOrgaoUsu());		
+		dpPessoa.prepararLotacao(dados.getIdLotacaoSelecao());
+		
+		List<DpPessoaUsuarioDTO> usuarios = dao().consultarUsuariosComEnvioDeEmailPendenteFiltrandoPorLotacao(dpPessoa);
+		
+		result.use(Results.json()).from(usuarios).serialize();
+	}
+	
+	@Get
+	@Post
+	@Path({"app/pessoa/enviarEmail", "/pessoa/enviarEmail.action"})
 	public void enviaEmail(Integer paramoffset, Long idOrgaoUsu, String nome, String cpfPesquisa, Long idLotacaoPesquisa) throws Exception {
 		result.include("request",getRequest());
 		List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();

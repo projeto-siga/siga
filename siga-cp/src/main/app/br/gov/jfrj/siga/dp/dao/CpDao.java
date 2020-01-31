@@ -32,6 +32,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -1208,7 +1209,7 @@ public class CpDao extends ModeloDao {
 						quantidadeDeLotacaoOuUsuario, true);
 			} else {
 				query = getSessao().getNamedQuery("consultarQuantidadeDpPessoaSemIdentidade");
-			}
+			}					
 
 			query.setString("nome", flt.getNome().toUpperCase().replace(' ', '%'));
 
@@ -1237,6 +1238,67 @@ public class CpDao extends ModeloDao {
 		} catch (final NullPointerException e) {
 			return 0;
 		}
+	}
+	
+	public void enviarParametrosLotacaoOuUsuario(Query query, boolean isFiltrarPorListaDeUsuario, Long[] itens) {		
+		List<Long> parametros = Arrays.asList(itens);				
+		int indiceInicial = 0, indiceFinal = 1000, indiceMaximo = itens.length, tamanho = 1000;
+		double quantidadeDeClausulaIN = Math.ceil(Double.valueOf(indiceMaximo) / 1000);				
+		
+		for (int i = 1; i <= quantidadeDeClausulaIN; i++) {	
+			
+			if (quantidadeDeClausulaIN == 1) {
+				indiceFinal = indiceMaximo;
+				tamanho = indiceMaximo;
+			}
+			
+			Long[] parametro = parametros.subList(indiceInicial, indiceFinal).toArray(new Long[tamanho]);
+			
+			indiceInicial = indiceFinal;
+			if ((indiceMaximo - indiceFinal) >= 1000) {
+				indiceFinal += 1000; 
+			} else {				
+				tamanho = indiceMaximo - indiceFinal;
+				indiceFinal = indiceMaximo;
+			}							
+			
+			if (isFiltrarPorListaDeUsuario) {
+				query.setParameterList("idPessoaLista" + i, parametro);										
+				query.setLong("idLotacaoLista" + i, 0);
+			} else {
+				query.setParameterList("idLotacaoLista" + i, parametro);										
+				query.setLong("idPessoaLista" + i, 0);
+			}						
+		}				
+	}
+	
+	public Query queryConsultarPorFiltroDpPessoaSemIdentidadeComListaDeLotacaoOuListaDeUsuario(double quantidadeDeLotacaoOuUsuario, boolean apenasContarItens) {
+		Query query;	
+		String queryTemp = "";		
+		double quantidadeDeClausulaIN = Math.ceil(Double.valueOf(quantidadeDeLotacaoOuUsuario) / 1000);
+		if (quantidadeDeClausulaIN <= 0) quantidadeDeClausulaIN = 1;
+		
+		if (apenasContarItens)
+			queryTemp =	 "select count(pes) from DpPessoa pes";
+		else		
+			queryTemp = "from DpPessoa pes ";
+						
+		queryTemp += "  where (upper(pes.nomePessoaAI) like upper('%' || :nome || '%'))"
+				+ " and (pes.cpfPessoa = :cpf or :cpf = 0)"
+				+ " and pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"	
+				+ "  and (";
+		for (int i = 1; i <= quantidadeDeClausulaIN; i++) {					
+			if (i > 1) queryTemp += " or ";
+			queryTemp += " pes.lotacao.idLotacao in (:idLotacaoLista" + i + ") or pes.idPessoa in (:idPessoaLista" + i + ")";				
+		}
+		queryTemp += ")"
+					+ " and pes.dataFimPessoa = null"
+					+ " and not exists (select ident.dpPessoa.idPessoa from CpIdentidade ident where pes.idPessoa = ident.dpPessoa.idPessoa)"
+					+ "  order by pes.cpfPessoa";			
+		
+		query = getSessao().createQuery(queryTemp);
+							
+		return query;
 	}
 
 	public void enviarParametrosLotacaoOuUsuario(Query query, boolean isFiltrarPorListaDeUsuario, Long[] itens) {

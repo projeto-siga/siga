@@ -1,4 +1,4 @@
-var app = angular.module('app', []);
+var app = angular.module('app', [ 'angucomplete-alt' ]);
 
 // Create an AngularJS service called debounce
 app.factory('debounce', [ '$timeout', '$q', function($timeout, $q) {
@@ -38,18 +38,18 @@ app
 				function($scope, $http, debounce) {
 					$scope.data = {};
 
-					$scope.gravar = function() {
-						var d = $scope.data.workflow;
+					$scope.encode = function(d) {
 						var pd = {
+							hisIde : undefined,
 							nome : d.nome,
-							descr : d.descr,
+							descr : d.descricao,
 							definicaoDeTarefa : []
 						};
 						if (d.tarefa) {
 							for (var i = 0; i < d.tarefa.length; i++) {
 								var t = d.tarefa[i];
 								var td = {};
-								//td.id = t.id;
+								td.hisIde = t.id;
 								td.nome = t.titulo;
 								td.assunto = t.assunto;
 								td.conteudo = t.conteudo;
@@ -57,16 +57,59 @@ app
 								td.tipoDeResponsavel = t.tipoResponsavel;
 								// td.definicaoDeResponsavel =
 								// t.definicaoDeResponsavel;
-								td.seguinte = t.seguinte;
+								td.seguinteIde = t.depois;
 								td.ultimo = t.ultimo;
 								td.ordem = i;
 								td.definicaoDeVariavel = [];
 								td.definicaoDeDesvio = [];
+
+								if (t.refUnidadeResponsavel
+										&& t.refUnidadeResponsavel.originalObject
+										&& t.refUnidadeResponsavel.originalObject.key)
+									td.lotacaoId = t.refUnidadeResponsavel.originalObject.key;
+								
+								if (t.refPessoaResponsavel
+										&& t.refPessoaResponsavel.originalObject
+										&& t.refPessoaResponsavel.originalObject.key)
+									td.pessoaId = t.refPessoaResponsavel.originalObject.key;
+								
 								pd.definicaoDeTarefa.push(td);
+
+								if (d.tarefa[i].variavel) {
+									for (var j = 0; j < d.tarefa[i].variavel.length; j++) {
+										var variavel = d.tarefa[i].variavel[j];
+										var dv = {};
+										dv.nome = variavel.titulo;
+										dv.identificador = variavel.identificador;
+										dv.tipo = variavel.tipo;
+										dv.acesso = variavel.tipoDeEdicao;
+										dv.ordem = j;
+										td.definicaoDeVariavel.push(dv);
+									}
+								}
+
+								if (d.tarefa[i].desvio) {
+									for (var j = 0; j < d.tarefa[i].desvio.length; j++) {
+										var desvio = d.tarefa[i].desvio[j];
+										var dd = {};
+										dd.nome = desvio.titulo;
+										dd.seguinteIde = desvio.tarefa === "fim" ? undefined
+												: desvio.tarefa;
+										dd.ultimo = desvio.tarefa === "fim";
+										dd.condicao = desvio.condicao;
+										dd.ordem = j;
+										td.definicaoDeDesvio.push(dd);
+									}
+								}
 							}
 						}
+						return pd;
+					}
+
+					$scope.gravar = function() {
 						var fd = formdata({
-							pd : pd
+							id : $scope.id,
+							pd : $scope.encode($scope.data.workflow)
 						});
 						$http(
 								{
@@ -81,6 +124,89 @@ app
 						}, function(response) {
 						});
 
+					}
+
+					$scope.decode = function(d) {
+						var pd = {
+							hisIde : undefined,
+							nome : d.nome,
+							descricao : d.descr,
+							tarefa : []
+						};
+						if (d.definicaoDeTarefa) {
+							for (var i = 0; i < d.definicaoDeTarefa.length; i++) {
+								var t = d.definicaoDeTarefa[i];
+								var td = {};
+								td.id = t.hisIde;
+								td.titulo = t.nome;
+								td.assunto = t.assunto;
+								td.conteudo = t.conteudo;
+								td.tipo = t.tipoDeTarefa;
+								td.tipoResponsavel = t.tipoDeResponsavel;
+								// td.definicaoDeResponsavel =
+								// t.definicaoDeResponsavel;
+								td.depois = t.seguinteIde;
+								td.ultimo = t.ultimo;
+								td.ordem = i;
+								td.variavel = [];
+								td.desvio = [];
+								
+								if (t.lotacao)
+									td.refUnidadeResponsavel = {originalObject: t.lotacao}
+								if (t.pessoa)
+									td.refPessoaResponsavel = {originalObject: t.pessoa}
+								
+								pd.tarefa.push(td);
+
+								if (d.definicaoDeTarefa[i].definicaoDeVariavel) {
+									for (var j = 0; j < d.definicaoDeTarefa[i].definicaoDeVariavel.length; j++) {
+										var variavel = d.definicaoDeTarefa[i].definicaoDeVariavel[j];
+										var dv = {};
+										dv.titulo = variavel.nome;
+										dv.identificador = variavel.identificador;
+										dv.tipo = variavel.tipo;
+										dv.tipoDeEdicao = variavel.acesso;
+										dv.ordem = j;
+										td.variavel.push(dv);
+									}
+								}
+
+								if (d.definicaoDeTarefa[i].definicaoDeDesvio) {
+									for (var j = 0; j < d.definicaoDeTarefa[i].definicaoDeDesvio.length; j++) {
+										var desvio = d.definicaoDeTarefa[i].definicaoDeDesvio[j];
+										var dd = {};
+										dd.titulo = desvio.nome;
+										dd.tarefa = desvio.ultimo ? "fim"
+												: desvio.seguinteIde;
+										dd.condicao = desvio.condicao;
+										dd.ordem = j;
+										td.desvio.push(dd);
+									}
+								}
+							}
+						}
+						return pd;
+					}
+
+					$scope.carregar = function(id) {
+						$http({
+							url : '/sigawf/app/diagrama/' + id + '/carregar',
+							method : "GET"
+						}).then(
+								function(response) {
+									$scope.data.workflow = $scope
+											.decode(response.data);
+								}, function(response) {
+								});
+
+					}
+
+					$scope.selectedObject = function(p1, p2) {
+						p2.context[p2.variable] = p1;
+						if (p2.full)
+							$scope
+									.loadRef(p2.variable,
+											p2.context[p2.variable]);
 					}
 
 					$scope.insert = function() {
@@ -212,6 +338,26 @@ app
 						}
 						s += '}';
 						return s;
+					}
+
+					$scope.getParameterByName = function(name, url) {
+						if (!url)
+							url = window.location.href;
+						name = name.replace(/[\[\]]/g, '\\$&');
+						var regex = new RegExp('[?&]' + name
+								+ '(=([^&#]*)|&|#|$)'), results = regex
+								.exec(url);
+						if (!results)
+							return;
+						if (!results[2])
+							return;
+						return decodeURIComponent(results[2]
+								.replace(/\+/g, ' '));
+					}
+
+					$scope.id = $scope.getParameterByName('id');
+					if ($scope.id) {
+						$scope.carregar($scope.id);
 					}
 
 				});

@@ -8,7 +8,10 @@ import java.util.TreeMap;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -34,6 +37,7 @@ import br.gov.jfrj.siga.wf.util.WfResp;
 public abstract class WfProcedimento
 		implements ProcessInstance<WfDefinicaoDeProcedimento, WfDefinicaoDeTarefa, WfResp> {
 	@Id
+	@GeneratedValue
 	@Column(name = "PROC_ID", unique = true, nullable = false)
 	private Long id;
 
@@ -44,6 +48,7 @@ public abstract class WfProcedimento
 	@Column(name = "PROC_CD_PRINCIPAL")
 	private String principal;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "PROC_TP_PRINCIPAL")
 	private WfTipoDePrincipal tipoDePrincipal;
 
@@ -57,6 +62,7 @@ public abstract class WfProcedimento
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "procedimento")
 	private List<WfVariavel> variaveis = new ArrayList<>();
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "PROC_ST_CORRENTE")
 	private ProcessInstanceStatus status = ProcessInstanceStatus.INACTIVE;
 
@@ -72,6 +78,7 @@ public abstract class WfProcedimento
 	@Column(name = "LOTA_ID_EVENTO")
 	private DpLotacao lotacao;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "PROC_TP_PRIORIDADE")
 	private WfPrioridade prioridade;
 

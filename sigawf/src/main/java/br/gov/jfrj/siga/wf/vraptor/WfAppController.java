@@ -31,8 +31,8 @@ import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeVariavel;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
-import br.gov.jfrj.siga.wf.model.WfTarefa;
 import br.gov.jfrj.siga.wf.model.enm.WfPrioridade;
+import br.gov.jfrj.siga.wf.util.WfTarefa;
 import br.gov.jfrj.siga.wf.util.WfTaskVO;
 import br.gov.jfrj.siga.wf.util.WfUtil;
 

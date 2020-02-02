@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -19,6 +20,7 @@ import com.crivano.jflow.support.ProcessInstanceVariable;
 @Table(name = "WF_VARIAVEL", catalog = "WF")
 public class WfVariavel implements ProcessInstanceVariable {
 	@Id
+	@GeneratedValue
 	@Column(name = "VARI_ID", unique = true, nullable = false)
 	private Long id;
 

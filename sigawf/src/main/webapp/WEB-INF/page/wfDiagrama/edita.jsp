@@ -15,6 +15,8 @@
 
 	<!-- CSS Customization -->
 	<link rel="stylesheet" href="/sigawf/css/diagrama.css"></link>
+	<link rel="stylesheet"
+		href="/sigawf/js/angucomplete-alt/angucomplete-alt.css"></link>
 
 	<!-- JS Global Compulsory -->
 	<!-- Optional JavaScript -->
@@ -34,6 +36,8 @@
 
 	<script
 		src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular.min.js"></script>
+
+	<script src="/sigawf/js/angucomplete-alt/angucomplete-alt.js"></script>
 
 	<div class="container-fluid content" ng-app="app" ng-controller="ctrl">
 		<h5>Edição de Diagrama</h5>
@@ -141,23 +145,24 @@
 									class="label-clue fa fa-asterisk"></i><select
 									ng-model="tarefaItem.tipoResponsavel" ng-required="true"
 									class="form-control"><option value="CADASTRANTE">Cadastrante</option>
-										<option value="CADASTRANTE_UNIDADE">Unidade do
+										<option value="LOTA_CADASTRANTE">Lotação do
 											Cadastrante</option>
+										<option value="TITULAR">Titular</option>
+										<option value="LOTA_TITULAR">Lotação do Titular</option>
 										<option value="SUBSCRITOR">Subscritor</option>
-										<option value="SUBSCRITOR_UNIDADE">Unidade do
-											Subscritor</option>
+										<option value="LOTA_SUBSCRITOR">Lotação do Subscritor</option>
 										<option value="DESTINATARIO">Destinatário</option>
-										<option value="DESTINATARIO_UNIDADE">Unidade do
+										<option value="LOTA_DESTINATARIO">Lotação do
 											Destinatário</option>
-										<option value="UNIDADE">Unidade</option>
-										<option value="PAPEL">Papel</option>
+										<option value="TABELADO">Tabelado</option>
+										<option value="LOTACAO">Lotação</option>
 										<option value="PESSOA">Pessoa</option></select>
 								</label> <i></i> </section>
 								<section
-									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'ENVIAR_PRINCIPAL') && tarefaItem.tipoResponsavel == 'UNIDADE'"
+									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'ENVIAR_PRINCIPAL') && tarefaItem.tipoResponsavel == 'LOTACAO'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
-									for="refUnidadeResponsavel" title="" class="label">Unidade
-									Responsável
+									for="refUnidadeResponsavel" title="" class="label">Lotação
+									Resp.
 									<div minlength="1" selected-object="selectedObject"
 										focus-first="true" text-searching="Pesquisando Unidades..."
 										initial-value="tarefaItem.refUnidadeResponsavel.originalObject"
@@ -167,30 +172,10 @@
 										text-no-results="Não encontrei nenhuma Unidade."
 										match-class="highlight"
 										selected-object-data="{context:tarefaItem, variable: 'refUnidadeResponsavel', full:false}"
-										remote-url="app/iam-unidade/buscar/" angucomplete-alt
+										remote-url="/siga/app/lotacao/buscar-json/" angucomplete-alt
 										name="refUnidadeResponsavel" placeholder="Pesquisar Unidade"
-										id="refUnidadeResponsavel"
-										class="form-control angucomplete-ctrl"
-										template-url="/my-custom-template.html"></div>
-								</label> </section>
-								<section
-									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'ENVIAR_PRINCIPAL') && tarefaItem.tipoResponsavel == 'PAPEL'"
-									class="col col-12 col-md-3 col-lg-3 form-group"> <label
-									for="refPapelResponsavel" title="" class="label">Responsável
-									<div minlength="1" selected-object="selectedObject"
-										focus-first="true" text-searching="Pesquisando Papéis..."
-										initial-value="tarefaItem.refPapelResponsavel.originalObject"
-										title-field="firstLine" description-field="secondLine"
-										input-class="form-control form-control-small"
-										remote-url-data-field="list" pause="200"
-										text-no-results="Não encontrei nenhum Papel."
-										match-class="highlight"
-										selected-object-data="{context:tarefaItem, variable: 'refPapelResponsavel', full:false}"
-										remote-url="app/iam-papel/buscar/" angucomplete-alt
-										name="refPapelResponsavel" placeholder="Pesquisar Papel"
-										id="refPapelResponsavel"
-										class="form-control angucomplete-ctrl"
-										template-url="/my-custom-template.html"></div>
+										id="refUnidadeResponsavel" class="angucomplete-ctrl p-0"
+										template-url="/sigawf/js/angucomplete-alt/custom-template.html"></div>
 								</label> </section>
 								<section
 									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'ENVIAR_PRINCIPAL') && tarefaItem.tipoResponsavel == 'PESSOA'"
@@ -205,11 +190,10 @@
 										text-no-results="Não encontrei nenhuma Pessoa."
 										match-class="highlight"
 										selected-object-data="{context:tarefaItem, variable: 'refPessoaResponsavel', full:false}"
-										remote-url="app/iam-pessoa/buscar/" angucomplete-alt
+										remote-url="/siga/app/pessoa/buscar-json/" angucomplete-alt
 										name="refPessoaResponsavel" placeholder="Pesquisar Pessoa"
-										id="refPessoaResponsavel"
-										class="form-control angucomplete-ctrl"
-										template-url="/my-custom-template.html"></div>
+										id="refPessoaResponsavel" class="angucomplete-ctrl p-0"
+										template-url="/sigawf/js/angucomplete-alt/custom-template.html"></div>
 								</label> </section>
 								<section ng-show="tarefaItem.tipo == 'INCLUIR_DOCUMENTO'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
@@ -228,7 +212,7 @@
 										name="refTipologia"
 										placeholder="Pesquisar Tipologia Documental" id="refTipologia"
 										class="form-control angucomplete-ctrl"
-										template-url="/my-custom-template.html"></div>
+										template-url="/sigawf/js/angucomplete-alt/custom-template.html"></div>
 								</label> </section>
 								<fieldset ng-show="tarefaItem.tipo == 'FORMULARIO'"
 									title="Variáveis" class="col col-12">
@@ -305,9 +289,9 @@
 													title="Preenchimento obrigatório"
 													class="label-clue fa fa-asterisk"></i><select
 													ng-model="variavelItem.tipoDeEdicao" ng-required="true"
-													class="form-control"><option
-															value="LEITURA_E_ESCRITA">Leitura e Escrita</option>
-														<option value="APENAS_LEITURA">Apenas Leitura</option></select></label> <i></i>
+													class="form-control"><option value="READ_WRITE">Leitura
+															e Escrita</option>
+														<option value="READ_ONLY">Apenas Leitura</option></select></label> <i></i>
 												</section>
 											</div>
 										</div>
@@ -426,16 +410,6 @@
 				</div>
 			</div>
 		</div>
-
-		{{data.workflow}}
-
 	</div>
 
-	<script>
-		var editor = null;
-		function sbmt() {
-			frm.action = 'editar';
-			frm.submit();
-		}
-	</script>
 </siga:pagina>

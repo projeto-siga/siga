@@ -62,6 +62,11 @@
   <function-signature>java.lang.String maiusculasEMinusculas(java.lang.String)</function-signature>
  </function>
  <function>
+  <name>slugify</name>
+  <function-class>br.gov.jfrj.siga.jee.SigaLibsEL</function-class>
+  <function-signature>java.lang.String slugify(java.lang.String,java.lang.Boolean,java.lang.Boolean)</function-signature>
+ </function>
+ <function>
   <name>resource</name>
   <function-class>br.gov.jfrj.siga.jee.SigaLibsEL</function-class>
   <function-signature>java.lang.Object resource(java.lang.String)</function-signature>

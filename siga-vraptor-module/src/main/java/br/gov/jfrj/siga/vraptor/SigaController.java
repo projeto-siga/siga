@@ -5,7 +5,10 @@ import static br.com.caelum.vraptor.view.Results.http;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,10 +17,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.axis.encoding.Base64;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.google.common.collect.Lists;
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
@@ -49,6 +71,9 @@ public class SigaController {
 	
 	
 	private String mensagemAguarde = null;
+	
+	private HttpServletResponse response;
+	private ServletContext context;
 	
 	//Todo: verificar se após a migração do vraptor se ainda necessita deste atributo "par"
 	private Map<String, String[]> par;
@@ -360,6 +385,103 @@ public class SigaController {
 	protected boolean podeUtilizarServico(String servico)
 			throws Exception {
 		return Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), servico);
+	}
+	
+	// Recursos para possibilitar o retorno de JSON
+	//
+	public static String ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
+	public static final SimpleDateFormat isoFormatter = new SimpleDateFormat(ISO_FORMAT);
+
+	public static final Gson gson = new GsonBuilder().setExclusionStrategies(new ExclusionStrategy() {
+
+		@Override
+		public boolean shouldSkipClass(Class<?> clazz) {
+			return false;
+		}
+
+		@Override
+		public boolean shouldSkipField(FieldAttributes f) {
+			return false;
+		}
+
+	}).registerTypeHierarchyAdapter(byte[].class, new ByteArrayToBase64TypeAdapter())
+			.registerTypeHierarchyAdapter(Date.class, new DateToStringTypeAdapter()).setPrettyPrinting().create();
+
+	private static class ByteArrayToBase64TypeAdapter implements JsonSerializer<byte[]>, JsonDeserializer<byte[]> {
+		public byte[] deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
+			return Base64.decode(json.getAsString());
+		}
+
+		public JsonElement serialize(byte[] src, Type typeOfSrc, JsonSerializationContext context) {
+			return new JsonPrimitive(Base64.encode(src));
+		}
+	}
+
+	private static class DateToStringTypeAdapter implements JsonSerializer<Date>, JsonDeserializer<Date> {
+		public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
+			return parse(json.getAsString());
+		}
+
+		public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
+			return new JsonPrimitive(format(src));
+		}
+	}
+
+	public static String format(Date date) {
+		return isoFormatter.format(date);
+	}
+
+	public static Date parse(String date) {
+		try {
+			return isoFormatter.parse(date);
+		} catch (ParseException e) {
+			return null;
+		}
+	}
+	
+
+	protected void jsonSuccess(final Object resp) {
+		String s = gson.toJson(resp);
+		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(200);
+	}
+
+	protected void jsonError(final Exception e) throws Exception {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		e.printStackTrace(pw);
+		String errstack = sw.toString(); // stack trace as a string
+
+		JSONObject json = new JSONObject();
+		try {
+			json.put("errormsg", e.getMessage());
+
+			// Error Details
+			JSONArray arr = new JSONArray();
+			JSONObject detail = new JSONObject();
+			detail.put("context", context);
+			detail.put("service", "sigadocsigner");
+			detail.put("stacktrace", errstack);
+			json.put("errordetails", arr);
+		} catch (JSONException e1) {
+			throw new RuntimeException(e1);
+		}
+
+		String s = json.toString();
+		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(500);
+		response.flushBuffer();
+		throw e;
+	}
+	
+	@Inject
+	public void setResponse(HttpServletResponse response) {
+		this.response = response;
+	}
+
+	@Inject
+	public void setContext(ServletContext context) {
+		this.context = context;
 	}
 
 }

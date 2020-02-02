@@ -26,7 +26,6 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeDesvio;
-import br.gov.jfrj.siga.wf.model.WfTarefa;
 
 /**
  * Classe que contém diversas funcões úteis que podem ser utilizadas nos

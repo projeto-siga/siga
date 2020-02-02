@@ -36,7 +36,6 @@ import br.gov.jfrj.siga.wf.model.WfConhecimento;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeDesvio;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeVariavel;
-import br.gov.jfrj.siga.wf.model.WfTarefa;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
 
 /**

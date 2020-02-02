@@ -18,21 +18,10 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.util;
 
-import java.util.Comparator;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-public class WfTarefaComparator implements Comparator<WfTarefa> {
+@Retention(RetentionPolicy.RUNTIME)
+public @interface NaoSerializar {
 
-	/**
-	 * Compara dois objetos TaskInstance. Retorna zero (0) se os objetos são
-	 * "iguais", retorna (1) se a PRIORIDADE ou ID do primeiro objeto (o1) for maior
-	 * doque o segundo objeto (o2). Retorna (-1), caso contrário. ESTE CÓDIGO ESTÁ
-	 * DUPLICADO EM WfDocumentoAction.java.
-	 */
-	public int compare(WfTarefa o1, WfTarefa o2) {
-//		if (o1.getId() > o2.getId())
-//			return 1;
-//		if (o1.getId() < o2.getId())
-//			return -1;
-		return 0;
-	}
 }

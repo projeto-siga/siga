@@ -207,7 +207,7 @@ public class Texto {
 		string.replaceAll("-+$", "").replaceAll("^-+", "");
 
 		if (underscore)
-			string.replaceAll("-", "_");
+			string = string.replaceAll("-", "_");
 
 		return (lowercase ? string.toLowerCase() : string);
 	}

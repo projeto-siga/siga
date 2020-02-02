@@ -8,7 +8,7 @@
 
 <siga:pagina titulo="Lista de Diagramas">
 	<div class="container-fluid content mb-3">
-		<h3>Lista de Diagramas</h3>
+		<h3>Lista de Responsáveis</h3>
 		<table class="table table-sm table-striped">
 			<thead class="thead-dark">
 				<tr class="header">
@@ -29,8 +29,8 @@
 		</table>
 		<form>
 			<div class="gt-table-buttons">
-				<a href="editar" class="btn btn-primary" style="cursor: pointer;"
-					accesskey="n"><u>N</u>ovo Diagrama</a>
+				<a href="novo" class="btn btn-primary" style="cursor: pointer;"
+					accesskey="n"><u>N</u>ovo Responsável</a>
 			</div>
 		</form>
 	</div>

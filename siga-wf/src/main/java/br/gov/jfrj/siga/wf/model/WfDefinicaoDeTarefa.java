@@ -6,31 +6,45 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.PostLoad;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.BatchSize;
 
 import com.crivano.jflow.model.TaskDefinition;
 
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
+import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
+import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeResponsavel;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
+import br.gov.jfrj.siga.wf.util.NaoSerializar;
 
 @Entity
 @BatchSize(size = 500)
 @Table(name = "WF_DEF_TAREFA", catalog = "WF")
-public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte implements
-		TaskDefinition<WfTipoDeTarefa, WfTipoDeResponsavel, WfDefinicaoDeVariavel, WfDefinicaoDeDesvio>, Sincronizavel {
+public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
+		implements TaskDefinition<WfTipoDeTarefa, WfTipoDeResponsavel, WfDefinicaoDeVariavel, WfDefinicaoDeDesvio>,
+		Sincronizavel, Comparable<Sincronizavel> {
 	@Id
+	@GeneratedValue
 	@Column(name = "DEFT_ID", unique = true, nullable = false)
+	@Desconsiderar
 	private java.lang.Long id;
 
 	@Column(name = "DEFT_NM", length = 256)
@@ -42,13 +56,16 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte implements
 	@Column(name = "DEFT_TX_CONTEUDO", length = 2048)
 	private java.lang.String conteudo;
 
+	@NaoSerializar
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DEFP_ID")
 	private WfDefinicaoDeProcedimento definicaoDeProcedimento;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "DEFT_TP_TAREFA")
 	private WfTipoDeTarefa tipoDeTarefa;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "DEFT_TP_RESPONSAVEL")
 	private WfTipoDeResponsavel tipoDeResponsavel;
 
@@ -57,8 +74,26 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte implements
 	private WfDefinicaoDeResponsavel definicaoDeResponsavel;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "PESS_ID")
+	private DpPessoa pessoa;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "LOTA_ID")
+	private DpLotacao lotacao;
+
+	@NaoSerializar
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DEFT_ID_SEGUINTE")
 	private WfDefinicaoDeTarefa seguinte;
+
+	@Transient
+	private String seguinteIde;
+
+	@Transient
+	private Long pessoaId;
+
+	@Transient
+	private Long lotacaoId;
 
 	@Column(name = "DEFT_FG_ULTIMO")
 	private boolean ultimo;
@@ -67,14 +102,16 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte implements
 	private int ordem;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "definicaoDeTarefa")
+	@OrderBy("ordem ASC")
 	@Desconsiderar
 	private List<WfDefinicaoDeVariavel> definicaoDeVariavel = new ArrayList<>();
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "definicaoDeTarefa")
+	@OrderBy("ordem ASC")
 	@Desconsiderar
 	private List<WfDefinicaoDeDesvio> definicaoDeDesvio = new ArrayList<>();
 
-	@Column(name = "HIS_IDE", length = 128)
+	@Transient
 	private java.lang.String hisIde;
 
 	//
@@ -241,26 +278,27 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte implements
 		return getConteudo();
 	}
 
-	@Override
-	public boolean semelhante(Assemelhavel obj, int profundidade) {
-		// TODO Auto-generated method stub
-		return false;
+	public String getSeguinteIde() {
+		return seguinteIde;
+	}
+
+	public void setSeguinteIde(String seguinteIde) {
+		this.seguinteIde = seguinteIde;
 	}
 
 	@Override
 	public String getIdExterna() {
-		return this.hisIde;
+		return this.getHisIde();
 	}
 
 	@Override
 	public void setIdExterna(String idExterna) {
-		this.hisIde = idExterna;
+		this.setHisIde(idExterna);
 	}
 
 	@Override
 	public void setIdInicial(Long idInicial) {
-		setHisIdIni(idInicial);
-
+		this.setHisIdIni(idInicial);
 	}
 
 	@Override
@@ -293,12 +331,80 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte implements
 	}
 
 	@Override
-	public int getNivelDeDependencia() {
-		return 0;
-	}
-
-	@Override
 	public String getDescricaoExterna() {
 		return getNome();
 	}
+
+	@Override
+	public int getNivelDeDependencia() {
+		return SincronizavelSuporte.getNivelDeDependencia(this);
+	}
+
+	@Override
+	public boolean semelhante(Assemelhavel obj, int profundidade) {
+		return SincronizavelSuporte.semelhante(this, obj, profundidade);
+	}
+
+	public java.lang.String getHisIde() {
+		return hisIde;
+	}
+
+	public void setHisIde(java.lang.String hisIde) {
+		this.hisIde = hisIde;
+	}
+
+	@Override
+	public int compareTo(Sincronizavel o) {
+		if (!this.getClass().equals(o.getClass()))
+			return this.getClass().getName().compareTo(o.getClass().getName());
+		return this.getIdExterna().compareTo(o.getIdExterna());
+	}
+
+	@PostLoad
+	public void postLoad() {
+		this.setHisIde(Long.toString(this.getIdInicial()));
+		if (this.getSeguinte() != null)
+			this.setSeguinteIde(Long.toString(this.getSeguinte().getIdInicial()));
+	}
+
+	public WfDefinicaoDeResponsavel getDefinicaoDeResponsavel() {
+		return definicaoDeResponsavel;
+	}
+
+	public void setDefinicaoDeResponsavel(WfDefinicaoDeResponsavel definicaoDeResponsavel) {
+		this.definicaoDeResponsavel = definicaoDeResponsavel;
+	}
+
+	public DpPessoa getPessoa() {
+		return pessoa;
+	}
+
+	public void setPessoa(DpPessoa pessoa) {
+		this.pessoa = pessoa;
+	}
+
+	public DpLotacao getLotacao() {
+		return lotacao;
+	}
+
+	public void setLotacao(DpLotacao lotacao) {
+		this.lotacao = lotacao;
+	}
+
+	public Long getPessoaId() {
+		return pessoaId;
+	}
+
+	public void setPessoaId(Long pessoaId) {
+		this.pessoaId = pessoaId;
+	}
+
+	public Long getLotacaoId() {
+		return lotacaoId;
+	}
+
+	public void setLotacaoId(Long lotacaoId) {
+		this.lotacaoId = lotacaoId;
+	}
+
 }

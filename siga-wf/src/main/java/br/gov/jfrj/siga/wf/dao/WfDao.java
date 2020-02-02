@@ -39,8 +39,10 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.wf.model.WfConhecimento;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
+import br.gov.jfrj.siga.wf.model.WfDefinicaoDeResponsavel;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
-import br.gov.jfrj.siga.wf.model.WfTarefa;
+import br.gov.jfrj.siga.wf.model.WfResponsavel;
+import br.gov.jfrj.siga.wf.util.WfTarefa;
 
 /**
  * Classe que representa o DAO do sistema de workflow.
@@ -118,6 +120,16 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 		query.setFirstResult(0);
 		query.setMaxResults(5);
 		List<WfProcedimento> result = query.getResultList();
+		if (result == null || result.size() == 0)
+			return null;
+		return result;
+	}
+
+	public List<WfResponsavel> consultarResponsaveisPorDefinicaoDeResponsavel(WfDefinicaoDeResponsavel dr) {
+		String sql = "from WfResponsavel o where o.definicaoDeResponsavel.id = :id";
+		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
+		query.setParameter("id", dr.getId());
+		List<WfResponsavel> result = query.getResultList();
 		if (result == null || result.size() == 0)
 			return null;
 		return result;

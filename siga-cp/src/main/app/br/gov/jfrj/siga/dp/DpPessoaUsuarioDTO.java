@@ -6,6 +6,11 @@ public class DpPessoaUsuarioDTO {
 	private String nome;
 	private String nomeLotacao;
 	
+	private Long idOrgaoUsu;
+	private String idLotacaoSelecao;
+	
+	public DpPessoaUsuarioDTO() {}
+	
 	public DpPessoaUsuarioDTO(Long id, String nome, String nomeLotacao) {
 		this.id = id;
 		this.nome = nome;
@@ -34,6 +39,22 @@ public class DpPessoaUsuarioDTO {
 	
 	public void setNomeLotacao(String nomeLotacao) {
 		this.nomeLotacao = nomeLotacao;
+	}
+	
+	public Long getIdOrgaoUsu() {
+		return idOrgaoUsu;
+	}
+
+	public void setIdOrgaoUsu(Long idOrgaoUsu) {
+		this.idOrgaoUsu = idOrgaoUsu;
+	}
+
+	public String getIdLotacaoSelecao() {
+		return idLotacaoSelecao;
+	}
+
+	public void setIdLotacaoSelecao(String idLotacaoSelecao) {
+		this.idLotacaoSelecao = idLotacaoSelecao;
 	}
 
 }

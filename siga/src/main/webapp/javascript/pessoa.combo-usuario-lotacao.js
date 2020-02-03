@@ -21,9 +21,9 @@ MultiploSelect.ComboLotacao = (function() {
 			var idLotacoes = idLotacaoSelecionada.split(',');
 			this.combo.selectpicker('val', idLotacoes);
 			this.combo.selectpicker('render');			
-		} else {
-			this.combo.selectpicker('selectAll');
-		}
+		} /* else {
+			// this.combo.selectpicker('selectAll');
+		}*/
 	}
 	
 	function onLotacaoAlterada() {						
@@ -95,15 +95,14 @@ MultiploSelect.ComboUsuario = (function() {
 	}
 	
 	function inicializarUsuarios(idLotacaoSelecao) {		
-		if (idLotacaoSelecao) {					
+		if (idLotacaoSelecao) {		
+			var dados = {'dados': {'idOrgaoUsu':this.comboOrgao.val(), 'idLotacaoSelecao': idLotacaoSelecao.toString() }};
 			var resposta = $.ajax({
 				url: '/siga/app/pessoa/usuarios/envioDeEmailPendente',
-				method: 'GET',
+				method: 'POST',
 				contentType: 'application/json',
-				data: { 
-					'idOrgaoUsu': this.comboOrgao.val(),
-					'idLotacaoSelecao': idLotacaoSelecao.toString()					
-				},				
+				dataType: 'json',
+				data: JSON.stringify(dados), 											
 				beforeSend: iniciarRequisicao.bind(this),
 				complete: finalizarRequisicao.bind(this)
 			});			
@@ -162,7 +161,7 @@ MultiploSelect.ComboUsuario = (function() {
 		this.spinner.hide();				
 		this.combo.selectpicker('refresh');			
 		if (!this.inputHiddenUsuariosSelecionados.val()) {
-			this.combo.selectpicker('selectAll');
+			// this.combo.selectpicker('selectAll');
 			atualizarUsuario.call(this);
 		}		
 	}

@@ -19,7 +19,10 @@ function sbmt(offset) {
 	}
 	frm.elements["paramoffset"].value = offset;
 	frm.elements["p.offset"].value = offset;
-	frm.submit();
+	
+	frm.method = "POST";
+	frm.submit();	
+	frm.method = "GET";
 }
 
 function enviar() {

@@ -2694,4 +2694,15 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			}
 		return null;
 	}
+	
+	public boolean isDocFilhoJuntadoAoPai() {
+		if (getExMobilPai() != null) {			
+			for (ExMobil mob : getExMobilPai().getJuntados()) {					
+				if (getIdDoc() == mob.doc().getIdDoc()) {
+					return true;
+				}									
+			}			
+		}	
+		return false;
+	}
 }

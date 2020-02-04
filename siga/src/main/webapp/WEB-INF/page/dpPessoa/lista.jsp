@@ -5,15 +5,16 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <script type="text/javascript" language="Javascript1.1">
-function sbmt(offset) {
-	if (offset == null) {
-		offset = 0;
+	function sbmt(offset) {
+		if (offset == null) {
+			offset = 0;
+		}
+		frm.elements["paramoffset"].value = offset;
+		frm.elements["p.offset"].value = offset;
+		frm.submit();
 	}
-	frm.elements["paramoffset"].value = offset;
-	frm.elements["p.offset"].value = offset;
-	frm.submit();
-}
-function validarCPF(Objcpf){
+	
+	function validarCPF(Objcpf){
 	var strCPF = Objcpf.replace(".","").replace(".","").replace("-","").replace("/","");
     var Soma;
     var Resto;
@@ -40,18 +41,19 @@ function validarCPF(Objcpf){
     }
     return true;
          
-}
-function cpf_mask(v){
-	v=v.replace(/\D/g,"");
-	v=v.replace(/(\d{3})(\d)/,"$1.$2");
-	v=v.replace(/(\d{3})(\d)/,"$1.$2");
-	v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2");
-
-	if(v.length == 14) {
-    	validarCPF(v);
-    }
-	return v;
-}
+	}
+	
+	function cpf_mask(v){
+		v=v.replace(/\D/g,"");
+		v=v.replace(/(\d{3})(\d)/,"$1.$2");
+		v=v.replace(/(\d{3})(\d)/,"$1.$2");
+		v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2");
+	
+		if(v.length == 14) {
+	    	validarCPF(v);
+	    }
+		return v;
+	}
 </script>
 
 <siga:pagina titulo="Listar Pessoas">
@@ -69,8 +71,16 @@ function cpf_mask(v){
 			</div>
 			<div class="card-body">
 				<div class="row">
-					
-					
+					<div class="col-sm">
+						<div class="alert alert-info  mensagem-pesquisa" role="alert" style="display: none;">
+    						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    							<span aria-hidden="true">×</span>
+  							</button>
+  							<i class="fas fa-info-circle"></i> ${mensagemPesquisa}
+						</div>
+					</div>
+				</div>
+				<div class="row">									
 					<div class="col-md-4">
 						<div class="form-group" id="idOrgaoUsuGroup">
 							<label for="idOrgaoUsu">Órgão</label>
@@ -82,9 +92,7 @@ function cpf_mask(v){
 								</c:forEach>
 							</select>
 						</div>					
-					</div>		
-					
-									
+					</div>															
 					<div class="col-md-2">
 						<div class="form-group" id="idCargoGroup">
 							<label for="idCargoPesquisa">Cargo</label>
@@ -146,7 +154,7 @@ function cpf_mask(v){
 				<div class="row">
 					<div class="col-sm-2">
 						<button type="submit" class="btn btn-primary">Pesquisar</button>
-						<button type="button" class="btn btn-outline-success" title="Exportar para CSV"	onclick="javascript:csv('listar', '/siga/app/pessoa/exportarCsv');"><i class="fa fa-file-csv"></i> Exportar</button>
+						<button type="button" class="btn btn-outline-success" title="Exportar para CSV" id="exportarCsv" onclick="javascript:csv('listar', '/siga/app/pessoa/exportarCsv');"><i class="fa fa-file-csv"></i> Exportar</button>
 					</div>
 				</div>				
 
@@ -252,7 +260,10 @@ function cpf_mask(v){
 <script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
 <script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
 <script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
-<script>
+<script>	
+	temPermissaoParaExportarDados = '${temPermissaoParaExportarDados}' == 'true';		
+	if (!temPermissaoParaExportarDados) $('#exportarCsv').attr('disabled', 'disabled').attr('title', 'Exportar para CSV - usuário sem permissão');
+
 	function carregarRelacionados(id) {
 		frm.method = "POST";
 		frm.action = 'carregarCombos';
@@ -260,10 +271,21 @@ function cpf_mask(v){
 		frm.method = "GET";
 	}
 	
+	$(document).ready(function() {									
+		 $(function () {
+				$('[data-toggle="tooltip"]').tooltip()
+		 });
+		 
+		 if ('${mensagemPesquisa}'.length > 0) $('.mensagem-pesquisa').css({'display':'block'});
+	});
+	
 	function csv(id, action) {
 		var frm = document.getElementById(id);
 		frm.method = "POST";
 		sbmtAction(id, action);
+		
+		$('.mensagem-pesquisa').alert('close');
+		
 		frm.action = 'listar';
 		frm.method = "GET";
 	}
@@ -279,10 +301,5 @@ function cpf_mask(v){
 		$('.btn-confirmacao-inativacao-cadastro').attr("href", url);		
 	}
 	
-	$(document).ready(function() {				    
-	    $(function () {
-			$('[data-toggle="tooltip"]').tooltip()
-		});
-	});
 </script>
 </siga:pagina>

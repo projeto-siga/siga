@@ -68,3 +68,7 @@ p.gt-table-action-list a.link-tag {
 	margin-top: 0.4em;
 }
 
+.btn-outline-success:disabled {
+	cursor: not-allowed;
+}
+

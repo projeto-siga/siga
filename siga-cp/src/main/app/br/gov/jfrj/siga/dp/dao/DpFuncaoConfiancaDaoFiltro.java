@@ -21,9 +21,15 @@ package br.gov.jfrj.siga.dp.dao;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 
 public class DpFuncaoConfiancaDaoFiltro extends DaoFiltroSelecionavel {
-	private String nome;
-	
+	private String nome;	
 	private Long idOrgaoUsu;
+	
+	public DpFuncaoConfiancaDaoFiltro() {}
+	
+	public DpFuncaoConfiancaDaoFiltro(String nome, Long idOrgaoUsu) {
+		this.nome = nome;
+		this.idOrgaoUsu = idOrgaoUsu;
+	}
 
 	public String getNome() {
 		return nome;

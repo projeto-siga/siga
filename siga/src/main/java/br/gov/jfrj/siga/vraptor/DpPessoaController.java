@@ -167,6 +167,10 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				return (DpPessoa) pessoas.get(0);
 		return null;
 	}
+	
+	public boolean temPermissaoParaExportarDados() {
+		return Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getTitular().getLotacao(),"SIGA;GI;CAD_PESSOA;EXP_DADOS");
+	}
 
 	@Get
 	@Post
@@ -184,9 +188,13 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 
 	@Get("app/pessoa/listar")
 	public void lista(Integer paramoffset, Long idOrgaoUsu, String nome, String cpfPesquisa, Long idCargoPesquisa, Long idFuncaoPesquisa, Long idLotacaoPesquisa, String emailPesquisa) throws Exception {
+		
 		result.include("request",getRequest());
 		List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
 		CpOrgaoUsuario ou = new CpOrgaoUsuario();
+				
+		result.include("temPermissaoParaExportarDados", temPermissaoParaExportarDados());
+		
 		if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
 			list = dao().listarOrgaosUsuarios();
 			list.remove(0);
@@ -243,10 +251,10 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			result.include("idCargoPesquisa", idCargoPesquisa);
 			result.include("idFuncaoPesquisa", idFuncaoPesquisa);
 			result.include("idLotacaoPesquisa", idLotacaoPesquisa);
+			if (getItens().size() == 0) result.include("mensagemPesquisa", "Nenhum resultado encontrado.");			
 
 			carregarCombos(null, idOrgaoUsu, null, null, null, null, cpfPesquisa, paramoffset, Boolean.FALSE);
-
-		}
+		}		
 	}
 
 	@Get("/app/pessoa/ativarInativar")
@@ -764,9 +772,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	@Post
 	@Path("app/pessoa/exportarCsv")
 	public Download exportarCsv(Long idOrgaoUsu, String nome, String cpfPesquisa, Long idCargoPesquisa,
-			Long idFuncaoPesquisa, Long idLotacaoPesquisa) throws UnsupportedEncodingException {
-
-		result.include("request", getRequest());
+			Long idFuncaoPesquisa, Long idLotacaoPesquisa, String emailPesquisa) throws UnsupportedEncodingException {
 
 		CpOrgaoUsuario ou = new CpOrgaoUsuario();
 
@@ -780,6 +786,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			}
 			dpPessoa.setOrgaoUsuario(ou);
 			dpPessoa.setNomePessoa(Texto.removeAcento(nome != null ? nome : ""));
+			dpPessoa.setEmailPessoa(Texto.removeAcento(emailPesquisa != null ? emailPesquisa : ""));			
 			if (idCargoPesquisa != null) {
 				DpCargo cargo = new DpCargo();
 				cargo.setId(idCargoPesquisa);
@@ -800,29 +807,49 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			}
 			dpPessoa.setId(Long.valueOf(0));
 			List<DpPessoa> lista = CpDao.getInstance().consultarPessoaComOrgaoFuncaoCargo(dpPessoa);
+			
+			if (lista.size() > 0) {
+				InputStream inputStream = null;
+				StringBuffer texto = new StringBuffer();
+				texto.append(
+						"Sigla do Órgão;Cargo;Função de Confiança;Sigla da Unidade;Nome;Data de Nascimento;CPF;E-mail;Matrícula"
+								+ System.getProperty("line.separator"));
 
-			InputStream inputStream = null;
-			StringBuffer texto = new StringBuffer();
-			texto.append(
-					"Sigla do Órgão;Cargo;Função de Confiança;Sigla da Unidade;Nome;Data de Nascimento;CPF;E-mail;Matrícula"
-							+ System.getProperty("line.separator"));
+				for (DpPessoa p : lista) {
+					texto.append(p.getOrgaoUsuario().getSiglaOrgaoUsu() + ";");
+					texto.append(p.getCargo().getNomeCargo() + ";");
+					texto.append(p.getFuncaoConfianca() != null ? p.getFuncaoConfianca().getNomeFuncao() + ";" : ";");
+					texto.append(p.getLotacao().getSiglaLotacao() + ";");
+					texto.append(p.getNomePessoa() + ";");
+					texto.append(p.getDataNascimento() == null ? ";" : p.getDataNascimento() + ";");
+					texto.append(p.getCpfFormatado() + ";");
+					texto.append(p.getEmailPessoa() + ";");
+					texto.append(p + ";");
+					texto.append(System.getProperty("line.separator"));
+				}
 
-			for (DpPessoa p : lista) {
-				texto.append(p.getOrgaoUsuario().getSiglaOrgaoUsu() + ";");
-				texto.append(p.getCargo().getNomeCargo() + ";");
-				texto.append(p.getFuncaoConfianca() != null ? p.getFuncaoConfianca().getNomeFuncao() + ";" : ";");
-				texto.append(p.getLotacao().getSiglaLotacao() + ";");
-				texto.append(p.getNomePessoa() + ";");
-				texto.append(p.getDataNascimento() == null ? ";" : p.getDataNascimento() + ";");
-				texto.append(p.getCpfFormatado() + ";");
-				texto.append(p.getEmailPessoa() + ";");
-				texto.append(p + ";");
-				texto.append(System.getProperty("line.separator"));
-			}
+				inputStream = new ByteArrayInputStream(texto.toString().getBytes("ISO-8859-1"));
 
-			inputStream = new ByteArrayInputStream(texto.toString().getBytes("ISO-8859-1"));
+				return new InputStreamDownload(inputStream, "text/csv", "pessoas.csv");
+			} else {
+				if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {					
+					result.include("orgaosUsu", dao().listarOrgaosUsuarios());					
+				} else {					
+					List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();					
+					result.include("orgaosUsu", list.add(CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario())));					
+				}														
+					result.include("idOrgaoUsu", idOrgaoUsu);
+					result.include("nome", nome);
+					result.include("cpfPesquisa", cpfPesquisa);
+					result.include("idCargoPesquisa", idCargoPesquisa);
+					result.include("idFuncaoPesquisa", idFuncaoPesquisa);
+					result.include("idLotacaoPesquisa", idLotacaoPesquisa);					
+					result.include("emailPesquisa", emailPesquisa);																		
+					result.include("mensagemPesquisa", "Nenhum resultado encontrado.");
+					result.include("temPermissaoParaExportarDados", temPermissaoParaExportarDados());
 
-			return new InputStreamDownload(inputStream, "text/csv", "pessoas.csv");
+					carregarCombos(null, idOrgaoUsu, null, null, null, null, cpfPesquisa, 0, Boolean.FALSE);																						
+			}					
 		}
 
 		return null;

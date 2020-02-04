@@ -24,38 +24,39 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.Data;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpVisualizacao;
-import br.gov.jfrj.siga.ex.bl.Mesa;
+import br.gov.jfrj.siga.ex.bl.Mesa2;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 @Resource
-public class ExMesaController extends ExController {
+public class ExMesa2Controller extends ExController {
 
-	public ExMesaController(HttpServletRequest request, HttpServletResponse response, ServletContext context,
+	public ExMesa2Controller(HttpServletRequest request, HttpServletResponse response, ServletContext context,
 			Result result, SigaObjects so, EntityManager em) {
 		super(request, response, context, result, ExDao.getInstance(), so, em);
 	}
 
-	@Get("app/mesa")
+	@Get("app/mesa2")
 	public void lista(Boolean exibirAcessoAnterior, Long idVisualizacao) {
-		if (SigaBaseProperties.getString("siga.mesa.versao") != null) 
-			result.redirectTo("/app/mesa" + SigaBaseProperties.getString("siga.mesa.versao"));
-		
 		if (exibirAcessoAnterior != null && exibirAcessoAnterior) {
 			CpAcesso a = dao.consultarAcessoAnterior(so.getCadastrante());
 			if (a == null)
@@ -78,17 +79,44 @@ public class ExMesaController extends ExController {
 		}
 	}
 
-	@Get("app/mesa.json")
-	public void json(Long idVisualizacao) throws Exception {
-		List<br.gov.jfrj.siga.ex.bl.Mesa.MesaItem> l = new ArrayList<br.gov.jfrj.siga.ex.bl.Mesa.MesaItem>();
-		if(idVisualizacao != null && !idVisualizacao.equals(Long.valueOf(0)) && Cp.getInstance().getConf().podePorConfiguracao(getCadastrante(), getCadastrante().getLotacao(), CpTipoConfiguracao.TIPO_CONFIG_DELEGAR_VISUALIZACAO)) {
-			DpVisualizacao vis = dao().consultar(idVisualizacao, DpVisualizacao.class, false);
-			l = Mesa.getMesa(dao(), vis.getTitular(), vis.getTitular().getLotacao());
-		} else {
-			l = Mesa.getMesa(dao(), getTitular(), getLotaTitular());
-		}
+	@Get("app/mesa2.json")
+	public void json(Long idVisualizacao, boolean exibeLotacao, boolean trazerAnotacoes, boolean trazerCancelados, 
+			String parms) throws Exception {
+		List<br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem> g = new ArrayList<br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem>();
+		Map<String, Mesa2.SelGrupo> selGrupos = null;
+		List<Mesa2.GrupoItem> gruposMesa = new ArrayList<Mesa2.GrupoItem>();
 
-		String s = ExAssinadorExternoController.gson.toJson(l);
-		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(200);
+		try {
+			if (parms != null) {
+				ObjectMapper mapper = new ObjectMapper();
+				selGrupos = mapper.readValue(parms, new TypeReference<Map<String, Mesa2.SelGrupo>>() {});
+			}
+	
+			DpLotacao lotaTitular = null;
+			if(idVisualizacao != null && !idVisualizacao.equals(Long.valueOf(0)) 
+					&& Cp.getInstance().getConf().podePorConfiguracao
+						(getCadastrante(), 
+						 getCadastrante().getLotacao(), 
+						 CpTipoConfiguracao.TIPO_CONFIG_DELEGAR_VISUALIZACAO)) {
+				DpVisualizacao vis = dao().consultar(idVisualizacao, DpVisualizacao.class, false);
+				lotaTitular = vis.getTitular().getLotacao();
+				gruposMesa = Mesa2.getContadores(dao(), vis.getTitular(), lotaTitular, selGrupos, 
+						exibeLotacao, trazerCancelados );
+				g = Mesa2.getMesa(dao(), vis.getTitular(), lotaTitular, selGrupos, 
+						gruposMesa, exibeLotacao, trazerAnotacoes, trazerCancelados);
+			} else {
+				lotaTitular = getTitular().getLotacao();
+				gruposMesa = Mesa2.getContadores(dao(), getTitular(), lotaTitular, selGrupos, 
+						exibeLotacao, trazerCancelados );
+				g = Mesa2.getMesa(dao(), getTitular(), lotaTitular, selGrupos, 
+						gruposMesa, exibeLotacao, trazerAnotacoes, trazerCancelados);
+			}
+	
+			String s = ExAssinadorExternoController.gson.toJson(g);
+			
+			result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(200);
+		} catch (Exception e) {
+			throw e;
+		} 
 	}
 }

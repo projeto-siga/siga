@@ -19,6 +19,7 @@ import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpVisualizacao;
@@ -196,7 +197,8 @@ public class VisualizacaoController extends SigaController {
 		if (idVisualizacao == null)
 			throw new AplicacaoException("Dados não informados");
 			
-		result.redirectTo(Contexto.urlBase(request) + "/sigaex/app/mesa?idVisualizacao="+idVisualizacao);
+		result.redirectTo(Contexto.urlBase(request) + "/sigaex/app/mesa" 
+				+ SigaBaseProperties.getString("siga.mesa.versao") + "?idVisualizacao="+idVisualizacao);
 	}	
 	
 	public void exclui(Long id) throws Exception {

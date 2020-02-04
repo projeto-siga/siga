@@ -235,7 +235,7 @@
 		        }
 		      }
 		      var self = this
-		      httpGet('mesa.json?idVisualizacao='+${idVisualizacao}, function(text) {
+		      httpGet('mesa.json?idVisualizacao=' + ${idVisualizacao}, function(text) {
 		          self.carregando = false;
 		          self.lista.length = 0;
 		          var list = JSON.parse(text);

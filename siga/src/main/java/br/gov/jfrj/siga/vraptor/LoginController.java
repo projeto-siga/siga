@@ -25,6 +25,8 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.Service;
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.AbstractCpAcesso;
@@ -114,6 +116,7 @@ public class LoginController extends SigaController {
 
 	@Get("public/app/logout")
 	public void logout() {
+		this.request.getSession().invalidate();
 		this.response.addCookie(AuthJwtFormFilter.buildEraseCookie());
 		result.redirectTo("/");
 	}
@@ -226,5 +229,49 @@ public class LoginController extends SigaController {
 			return new JSONObject(opcoes).optString("perm");
 		}
 		return null;
+	}
+	
+	/**
+	 * 1- Verifica se o CPF esta na session.
+	 *  
+	 * Redireciona o fluxo para o SERVLET openIdServlet
+	 * ou
+	 * continua com a autenticação
+	 * 
+	 */
+	@Get("public/app/login_sp")
+	public void loginSP(String cont) throws AplicacaoException, IOException {
+		try {
+			String cpf = (String) request.getSession().getAttribute("cpfAutenticado");
+
+			if(cpf == null){
+				result.redirectTo(Contexto.urlBase(request) + "/siga/openIdServlet");	
+			}else{
+				
+				List<CpIdentidade> idsCpf = CpDao.getInstance().consultaIdentidadesCadastrante(cpf, true);
+				
+				boolean usuarioPermitido = false;
+				for (CpIdentidade identCpf : idsCpf) {
+					
+					usuarioPermitido = true;
+					if (identCpf.isBloqueada() || !identCpf.isAtivo()) {
+						usuarioPermitido = false;
+						break;
+					}
+				}
+				if (!usuarioPermitido)
+					throw new ServletException("Usuário não cadastrado ou sem permissão de acesso: " + cpf + ".");
+					
+				this.response.addCookie(AuthJwtFormFilter.buildEraseCookie());
+				gravaCookieComToken(cpf, cont);
+				
+			}
+				
+			} catch(AplicacaoException a){
+				result.include("loginMensagem", a.getMessage());		
+				result.forwardTo(this).login(Contexto.urlBase(request) + "/siga/public/app/login");
+			}catch(Exception e){
+				throw new AplicacaoException("Não foi possivel acessar o Login SP." );
+		}
 	}
 }

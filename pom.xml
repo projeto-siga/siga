@@ -37,7 +37,9 @@
     	<module>siga-ldap-cli</module>
 		<module>siga-jwt</module>
 		<module>siga-relarmaz</module>
-  </modules>
+		
+		
+	</modules>
 
 	<properties>
  		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> 
@@ -293,6 +295,11 @@
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>sigawf</artifactId>
+				<version>${siga.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>siga</groupId>
+				<artifactId>siga-oidc</artifactId>
 				<version>${siga.version}</version>
 			</dependency>
 			<dependency>

@@ -14,16 +14,9 @@ public final class PendingAuthenticationRequest {
 	
 	
 	private final OIDCProviderMetadata opMetadata;
-	
-	
 	private final OIDCClientInformation clientInfo;
-	
-	
 	private final AuthenticationRequest authRequest;
-	
-	
 	private final CodeVerifier codeVerifier;
-	
 	
 	public PendingAuthenticationRequest(final OIDCProviderMetadata opMetadata,
 					    final OIDCClientInformation clientInfo,
@@ -42,27 +35,19 @@ public final class PendingAuthenticationRequest {
 		this.codeVerifier = codeVerifier;
 	}
 	
-	
 	public OIDCProviderMetadata getProviderMetadata() {
-		
 		return opMetadata;
 	}
 	
-	
 	public OIDCClientInformation getClientInfo() {
-		
 		return clientInfo;
 	}
 	
-	
 	public AuthenticationRequest getAuthenticationRequest() {
-		
 		return authRequest;
 	}
 	
-	
 	public CodeVerifier getCodeVerifier() {
-		
 		return codeVerifier;
 	}
 }

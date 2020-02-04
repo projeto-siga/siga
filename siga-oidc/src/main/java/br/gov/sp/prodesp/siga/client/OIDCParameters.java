@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 /**
  * OpenID Connect OP, RP and request parameters.
+ * 
  */
 public class OIDCParameters {
 	

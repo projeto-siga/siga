@@ -12,40 +12,29 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * Extends the default Vaadin servlet to pass HTTP GET and HTTP form POST
- * parameters to the UI page. See https://vaadin.com/forum#!/thread/4210576
- */
+public class HTTPRequestParametersInterceptorServlet extends HttpServlet {
 
-public class HTTPRequestParametersInterceptorServlet  extends HttpServlet {
+	private static final String HTTP_REQUEST_PARAMETERS = "http-request-parameters";
+	private static final long serialVersionUID = 1L;
 
 	@Override
 	public void init(ServletConfig servletConfig) throws ServletException {
-		
 		super.init(servletConfig);
 	}
-	
-	
+
 	@Override
-	protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+	protected void service(final HttpServletRequest request, final HttpServletResponse response)
+			throws ServletException, IOException {
 
-		super.service(request, response);
-
-		// Copy the HTTP request (GET, POST) parameters, else Vaadin will overwrite them
 		Map<String, List<String>> paramsCopy = new HashMap<>();
-
-		for (String key: request.getParameterMap().keySet()) {
-
+		for (String key : request.getParameterMap().keySet()) {
 			List<String> values = Arrays.asList(request.getParameterMap().get(key));
-
 			if (values == null || values.isEmpty())
 				continue;
 
 			paramsCopy.put(key, values);
 		}
-
-		//log.info("HTTP request parameters: " + paramsCopy);
-
-		request.getSession().setAttribute("http-request-parameters", paramsCopy);
+		request.getSession().setAttribute(HTTP_REQUEST_PARAMETERS, paramsCopy);
+		doGet(request, response);
 	}
 }

@@ -9,6 +9,7 @@ import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.oauth2.sdk.http.HTTPRequest;
 import com.nimbusds.oauth2.sdk.http.HTTPResponse;
 import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
+
 import net.minidev.json.JSONObject;
 
 
@@ -17,24 +18,21 @@ import net.minidev.json.JSONObject;
  */
 public class OIDCProviderMetadataRetriever {
 	
-	
+	private static final String WELL_KNOWN_OPENID_CONFIGURATION = ".well-known/openid-configuration";
+
+
 	/**
-	 * Returns the OpenID provider metadata URL from the specified issuer
+	 * Retorna o OpenID provider metadata URL from especificado por issuer
 	 * URL.
-	 *
-	 * @param issuerURL The issuer URL. Must not be {@code null}.
-	 *
-	 * @return The OpenID provider metadata URL.
 	 */
 	static URL composeMetadataURL(final URL issuerURL) {
 		
 		String urlString = issuerURL.toString();
 		
-		// Append the well known metadata
 		if (! urlString.endsWith("/"))
 			urlString += "/";
 		
-		urlString += ".well-known/openid-configuration";
+		urlString += WELL_KNOWN_OPENID_CONFIGURATION;
 		
 		try {
 			return new URL(urlString);
@@ -44,15 +42,6 @@ public class OIDCProviderMetadataRetriever {
 		}
 	}
 	
-	
-	/**
-	 * Retrieves the OpenID provider metadata for the specified URL.
-	 *
-	 * @param opMetadataURL The OpenID provider metadata URL. Must not be
-	 *                      {@code null}.
-	 *
-	 * @return The OpenID provider metadata.
-	 */
 	static OIDCProviderMetadata retrieve(final URL opMetadataURL)
 		throws IOException, ParseException {
 		

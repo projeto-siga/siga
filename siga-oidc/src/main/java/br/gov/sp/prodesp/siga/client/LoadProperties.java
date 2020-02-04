@@ -1,19 +1,17 @@
 package br.gov.sp.prodesp.siga.client;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+
+import javax.servlet.ServletContext;
 
 /**
  * 
  * @author 03648469681
  * 
- *         Carregador de parametros, Utilizar o Objeto parametersOIDC
+ * Carregador de parametros, Utilizar o Objeto parametersOIDC
  * 
  */
 public class LoadProperties {
@@ -52,106 +50,58 @@ public class LoadProperties {
 	static final String loginHint = "login_hint";
 	static final String responseMode = "response_mode";
 
-	public static void main(String arg[]) {
-		new LoadProperties();
-		log.info(parametersOIDC.toString());
-	}
-
-	protected LoadProperties() {
+	public LoadProperties(ServletContext servletContext) {
 		if (null == adaptorProperties) {
-			InputStream propStream = null;
 			try {
-
-				propStream = new FileInputStream(new File(DEFAULT_CONFIG_FILE));
 				this.adaptorProperties = new Properties();
-				this.adaptorProperties.load(propStream);
+				adaptorProperties.load(servletContext.getResourceAsStream("/WEB-INF/properties/" + DEFAULT_CONFIG_FILE));
 			} catch (FileNotFoundException e) {
 				log.warning("Arquivo de propriedades: " + DEFAULT_CONFIG_FILE + " não encontrado!");
 				log.warning("Propriedades do adaptor do Siga não serão carregadas.");
 			} catch (IOException e) {
 				log.warning("Não foi possível carregar as propriedades do arquivo " + DEFAULT_CONFIG_FILE);
 				log.warning("Propriedades do adaptor do Siga não serão carregadas.");
-			} finally {
-				if (propStream != null) {
-					try {
-						propStream.close();
-					} catch (IOException e) {
-						log.severe("Erro ao finalizar Stream!");
-					}
-				}
-			}
+			} 
 		}
 
-		log.info("Initial client configuration properties:");
+		log.info("# Propriedades de configuração inicial do cliente.");
+		
 		parametersOIDC = new OIDCParameters();
 
-		mockParametes();
-		//loadArquivo();
-
-	}
-
-	public void mockParametes() {
-		parametersOIDC.setIss("https://homolog.login.sp.gov.br/sts");
-		parametersOIDC.setJwksUri("https://homolog.login.sp.gov.br/sts/.well-known/openid-configuration/jwks");
-		parametersOIDC.setAuthzUri("https://homolog.login.sp.gov.br/sts/connect/authorize");
-		parametersOIDC.setTokenUri("https://homolog.login.sp.gov.br/sts/connect/token");
-		parametersOIDC.setUserInfoUri("https://homolog.login.sp.gov.br/sts/connect/userinfo");
-
-		parametersOIDC.setClientId("sempapel.documentos");
-		parametersOIDC.setClientSecret("352f2ef3-db68-43ae-beb0-ee675980e367");
-		parametersOIDC.setRedirectUri("http://10.2.100.202:8080/oidc-client/callBack");
-		parametersOIDC.setTokenEndpointAuthMethod("client_secret_basic");
-		parametersOIDC.setTokenEndpointAuthSigningAlg("");
-
-		parametersOIDC.setResponseType("code");
-		parametersOIDC.setScopeOpenId(true);
-		parametersOIDC.setScopeEmail(true);
-		parametersOIDC.setScopeProfile(false);
-		parametersOIDC.setScopeProfile(false);
-		parametersOIDC.setScopeAddress(false);
-		parametersOIDC.setScopeOfflineAccess(false);
-		parametersOIDC.setPrompt("default");
-		parametersOIDC.setCodeChallengeMethod("null");
-
-		parametersOIDC.setMaxAge("-1");
-		parametersOIDC.setMaxAgeTimeUnit("s");
-		parametersOIDC.setIdTokenHint("null");
-		parametersOIDC.setLoginHint("null");
-		parametersOIDC.setResponseMode("null");
+		loadArquivo();
 	}
 
 	public void loadArquivo() {
-		parametersOIDC.setIss(adaptorProperties.getProperty(iss));
-		parametersOIDC.setJwksUri(adaptorProperties.getProperty(jwksUri));
-		parametersOIDC.setAuthzUri(adaptorProperties.getProperty(authzUri));
-		parametersOIDC.setTokenUri(adaptorProperties.getProperty(tokenUri));
-		parametersOIDC.setUserInfoUri(adaptorProperties.getProperty(userInfoUri));
+		parametersOIDC.setIss(adaptorProperties.getProperty(iss).trim());
+		parametersOIDC.setJwksUri(adaptorProperties.getProperty(jwksUri).trim());
+		parametersOIDC.setAuthzUri(adaptorProperties.getProperty(authzUri).trim());
+		parametersOIDC.setTokenUri(adaptorProperties.getProperty(tokenUri).trim());
+		parametersOIDC.setUserInfoUri(adaptorProperties.getProperty(userInfoUri).trim());
 
-		parametersOIDC.setClientId(adaptorProperties.getProperty(clientId));
-		parametersOIDC.setClientSecret(adaptorProperties.getProperty(clientSecret));
-		parametersOIDC.setRedirectUri(adaptorProperties.getProperty(redirectUri));
-		parametersOIDC.setTokenEndpointAuthMethod(adaptorProperties.getProperty(tokenEndpointAuthMethod));
-		parametersOIDC.setTokenEndpointAuthSigningAlg(adaptorProperties.getProperty(tokenEndpointAuthSigningAlg));
+		parametersOIDC.setClientId(adaptorProperties.getProperty(clientId).trim());
+		parametersOIDC.setClientSecret(adaptorProperties.getProperty(clientSecret).trim());
+		parametersOIDC.setRedirectUri(adaptorProperties.getProperty(redirectUri).trim());
+		parametersOIDC.setTokenEndpointAuthMethod(adaptorProperties.getProperty(tokenEndpointAuthMethod).trim());
+		parametersOIDC.setTokenEndpointAuthSigningAlg(adaptorProperties.getProperty(tokenEndpointAuthSigningAlg).trim());
 
-		parametersOIDC.setResponseType(adaptorProperties.getProperty(responseType));
-		parametersOIDC.setScopeOpenId(new Boolean(adaptorProperties.getProperty(scopeOpenId)));
-		parametersOIDC.setScopeEmail(new Boolean(adaptorProperties.getProperty(scopeEmail)));
-		parametersOIDC.setScopeProfile(new Boolean(adaptorProperties.getProperty(scopeProfile)));
-		parametersOIDC.setScopeProfile(new Boolean(adaptorProperties.getProperty(scopePhone)));
-		parametersOIDC.setScopeAddress(new Boolean(adaptorProperties.getProperty(scopeAddress)));
-		parametersOIDC.setScopeOfflineAccess(new Boolean(adaptorProperties.getProperty(scopeOfflineAccess)));
-		parametersOIDC.setPrompt(adaptorProperties.getProperty(prompt));
-		parametersOIDC.setCodeChallengeMethod(adaptorProperties.getProperty(codeChallengeMethod));
+		parametersOIDC.setResponseType(adaptorProperties.getProperty(responseType).trim());
+		parametersOIDC.setScopeOpenId(new Boolean(adaptorProperties.getProperty(scopeOpenId).trim()));
+		parametersOIDC.setScopeEmail(new Boolean(adaptorProperties.getProperty(scopeEmail).trim()));
+		parametersOIDC.setScopeProfile(new Boolean(adaptorProperties.getProperty(scopeProfile).trim()));
+		parametersOIDC.setScopeProfile(new Boolean(adaptorProperties.getProperty(scopePhone).trim()));
+		parametersOIDC.setScopeAddress(new Boolean(adaptorProperties.getProperty(scopeAddress).trim()));
+		parametersOIDC.setScopeOfflineAccess(new Boolean(adaptorProperties.getProperty(scopeOfflineAccess).trim()));
+		parametersOIDC.setPrompt(adaptorProperties.getProperty(prompt).trim());
+		parametersOIDC.setCodeChallengeMethod(adaptorProperties.getProperty(codeChallengeMethod).trim());
 
-		parametersOIDC.setMaxAge(adaptorProperties.getProperty(maxAge));
-		parametersOIDC.setMaxAgeTimeUnit(adaptorProperties.getProperty(maxAgeTimeUnit));
-		parametersOIDC.setIdTokenHint(adaptorProperties.getProperty(idTokenHint));
-		parametersOIDC.setLoginHint(adaptorProperties.getProperty(loginHint));
-		parametersOIDC.setResponseMode(adaptorProperties.getProperty(responseMode));
+		parametersOIDC.setMaxAge(adaptorProperties.getProperty(maxAge).trim());
+		parametersOIDC.setMaxAgeTimeUnit(adaptorProperties.getProperty(maxAgeTimeUnit).trim());
+		parametersOIDC.setIdTokenHint(adaptorProperties.getProperty(idTokenHint).trim());
+		parametersOIDC.setLoginHint(adaptorProperties.getProperty(loginHint).trim());
+		parametersOIDC.setResponseMode(adaptorProperties.getProperty(responseMode).trim());
 	}
 
 	public OIDCParameters getParametersOIDC() {
 		return parametersOIDC;
 	}
-
 }

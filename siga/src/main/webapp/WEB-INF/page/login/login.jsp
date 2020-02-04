@@ -89,6 +89,8 @@
 								<div class="text-center">
 									<button type="submit" class="btn btn-lg btn-primary btn-block"><i class="fas fa-sign-in-alt"></i> Entrar</button>
 									
+									<a href="/siga/public/app/login_sp"class="btn btn-secondary btn-block">LoginSP</a>
+									
 									<hr class="my-4">
 									<div class="mt-4">
 										<c:if test="${siga_cliente != 'GOVSP'}">

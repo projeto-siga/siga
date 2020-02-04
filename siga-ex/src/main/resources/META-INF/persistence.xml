@@ -190,9 +190,6 @@
 			<property
 				name="hibernate.cache.infinispan.ex.expiration.max_idle"
 				value="300000" />
-<property name="hibernate.show_sql" value="true" />
-<property name="hibernate.format_sql" value="true" />
-<property name="hibernate.use_sql_comments" value="true" />					
 		</properties>
 	</persistence-unit>
 </persistence>

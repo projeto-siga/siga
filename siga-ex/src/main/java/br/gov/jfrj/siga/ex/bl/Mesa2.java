@@ -1,7 +1,6 @@
 package br.gov.jfrj.siga.ex.bl;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -517,10 +516,10 @@ public class Mesa2 {
 			r.grupoOrdem = grupoOrdem;
 			
 			if (references.get(mobil).movAnotacaoDescrMov != null) { 
-				r.anotacao = references.get(mobil).movAnotacaoDescrMov 
-						+ "<br/><a href=/sigaex/app/expediente/mov/excluir?id=" 
-						+ references.get(mobil).movAnotacaoIdMov
-						+ ">Excluir Bloco de Notas</a>";
+				r.anotacao = references.get(mobil).movAnotacaoDescrMov; 
+//						+ "<br/><a href=/sigaex/app/expediente/mov/excluir?id=" 
+//						+ references.get(mobil).movAnotacaoIdMov
+//						+ ">Excluir Bloco de Notas</a>";
 			}
 
 			r.list = new ArrayList<Marca>();
@@ -575,11 +574,7 @@ public class Mesa2 {
 		Collections.sort(l, new Comparator<MesaItem>() {
 			@Override
 			public int compare(MesaItem o1, MesaItem o2) {
-				int i = Integer.compare(Integer.parseInt(o1.grupoOrdem),
-						Integer.parseInt(o2.grupoOrdem));
-				if (i != 0)
-					return i;
-				i = o2.datahora.compareTo(o1.datahora);
+				int i = o2.datahora.compareTo(o1.datahora);
 				if (i != 0)
 					return i;
 				return 0;
@@ -588,12 +583,12 @@ public class Mesa2 {
 		return l;
 	}
 
-	public static List<GrupoItem> getContadores(ExDao dao, DpPessoa titular,
-			DpLotacao lotaTitular, Map<String, SelGrupo> selGrupos, boolean exibeLotacao) throws Exception {
-		List<String> listOrdemGrupos = new ArrayList<String>();
+	public static List<GrupoItem> getContadores(ExDao dao, DpPessoa titular, DpLotacao lotaTitular, 
+			Map<String, SelGrupo> selGrupos, boolean exibeLotacao, boolean trazerCancelados) throws Exception {
 		List<GrupoItem> gruposMesa = new ArrayList<GrupoItem>();
-		gruposMesa = montaGruposUsuario(selGrupos);
-		List<Object[]> l = dao.consultarTotaisPorMarcador(titular, lotaTitular, gruposMesa);
+		gruposMesa = montaGruposUsuario(selGrupos, trazerCancelados);
+		List<Object[]> l = dao.consultarTotaisPorMarcador(titular, lotaTitular, gruposMesa, 
+				exibeLotacao, trazerCancelados);
 
 		for (GrupoItem gItem : gruposMesa) {
 			gItem.grupoCounterUser = 0L;
@@ -617,36 +612,18 @@ public class Mesa2 {
 
 	public static List<GrupoItem> getMesa(ExDao dao, DpPessoa titular,
 			DpLotacao lotaTitular, Map<String, SelGrupo> selGrupos, List<Mesa2.GrupoItem> gruposMesa, 
-			boolean exibeLotacao, boolean trazerAnotacoes) throws Exception {
-		List<Long> listMarcas = new ArrayList<Long>();
-		List<List<String>> grpParms = new ArrayList<List<String>>();
+			boolean exibeLotacao, boolean trazerAnotacoes, boolean trazerCancelados) throws Exception {
 		Date dtNow = dao.consultarDataEHoraDoServidor();
-		if (selGrupos == null || selGrupos.size() < 1) {
-			for (GrupoDeMarcadorEnum grupoEnum : GrupoDeMarcadorEnum.values()) 
-				if (!grupoEnum.collapsed) { 
-					for (Integer idMar : MarcadorEnum.getListIdByGrupo(grupoEnum.nome)) 
-						listMarcas.add(idMar.longValue());
-				}
-		} else {
-			for (Map.Entry<String, SelGrupo> selGrupoItem : selGrupos.entrySet()) {
-				if (!selGrupoItem.getValue().grupoCollapsed) 
-					for (Integer idMar : MarcadorEnum.getListIdByGrupo(selGrupoItem.getKey())) 
-						listMarcas.add(idMar.longValue());
-			}
-		}
 
-		if (listMarcas.size() == 0) {
-			return gruposMesa;
-		}
 		List<Object[]> l = dao.listarMobilsPorMarcas(titular,
-				lotaTitular, listMarcas, exibeLotacao);
+				lotaTitular, exibeLotacao, trazerCancelados);
 
 		Map<ExMobil, DocDados> map = new HashMap<>();
 		List<Long> listIdMobil = new ArrayList<Long>();
-		SimpleDateFormat sdfFull = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 		Long idMob = 0L;
 
 		if (l.size() > 0) {
+			// Para cada grupo da mesa, pesquisa no resultado da query
 			for (GrupoItem gItem : gruposMesa) {
 				Object[] reference = l.get(0);
 				ExMarca marca = (ExMarca) reference[0];
@@ -687,39 +664,18 @@ public class Mesa2 {
 					}
 				}
 				if (!map.isEmpty()) {
-					List<Object[]> refs = dao.listarMovimentacoesMesa(listIdMobil, trazerAnotacoes);
-		
-					for (Object[] ref : refs) {
-						ExMobil mob = (ExMobil) ref[0];
-						ExMovimentacao movUltima = null;
-						ExMovimentacao movTramite = null;
-						ExMovimentacao movAnotacao = null;
-						if (ref[2] != null)
-							movUltima = (ExMovimentacao) ref[2];
-						if (ref[3] != null)
-							movTramite = (ExMovimentacao) ref[3];
-						if (ref[4] != null && ref[4].getClass().equals(ExMovimentacao.class))
-								movAnotacao = (ExMovimentacao) ref[4];
-						if (map.containsKey(mob)) {
-							DocDados docDados = map.get(mob); 
-							if (ref[1] != null) {
-								docDados.isComposto = (((Integer) ref[1]) == 1);
-							}
-							if (movUltima != null) {
-								docDados.movUltimaDtIniMov = movUltima.getDtIniMov();
-								docDados.movUltimaDtFimMov = movUltima.getDtFimMov();
-								docDados.movUltimaSiglaLotacao = movUltima.getLotacao().getSigla();
-								docDados.movUltimaSiglaOrgao = movUltima.getLotacao().getOrgaoUsuario().getSigla();
-							}
-							if (movTramite != null) {
-								docDados.movTramiteSiglaLotacao = movTramite.getLotacao().getSigla();
-								docDados.movTramiteSiglaOrgao = movTramite.getLotacao().getOrgaoUsuario().getSigla();
-							}
-							if (movAnotacao != null) {
-								docDados.movAnotacaoDescrMov = movAnotacao.getDescrMov();
-								docDados.movAnotacaoIdMov = movAnotacao.getIdMov().toString();
-							}
+					Integer iMobs = 0;
+					while (iMobs < listIdMobil.size()) {
+						Integer iMobsFim = listIdMobil.size();
+						if ( iMobs + 1000 < iMobsFim )
+							iMobsFim = iMobs + 1000;
+						List<Object[]> refs = dao.listarMovimentacoesMesa(
+								listIdMobil.subList(iMobs, iMobsFim), trazerAnotacoes);
+			
+						for (Object[] ref : refs) {
+							incluiMovimentacoesMesa(map, ref);
 						}
+						iMobs = iMobsFim;
 					}
 					gItem.grupoDocs = Mesa2.listarReferencias(TipoDePainelEnum.UNIDADE, map, titular,
 							titular.getLotacao(), dtNow, gItem.grupoOrdem);
@@ -729,6 +685,39 @@ public class Mesa2 {
 			}
 		}
 		return gruposMesa;
+	}
+
+	private static void incluiMovimentacoesMesa(Map<ExMobil, DocDados> map, Object[] ref) {
+		ExMobil mob = (ExMobil) ref[0];
+		ExMovimentacao movUltima = null;
+		ExMovimentacao movTramite = null;
+		ExMovimentacao movAnotacao = null;
+		if (ref[2] != null)
+			movUltima = (ExMovimentacao) ref[2];
+		if (ref[3] != null)
+			movTramite = (ExMovimentacao) ref[3];
+		if (ref.length > 4 && ref[4] != null && ref[4].getClass().equals(ExMovimentacao.class))
+				movAnotacao = (ExMovimentacao) ref[4];
+		if (map.containsKey(mob)) {
+			DocDados docDados = map.get(mob); 
+			if (ref[1] != null) {
+				docDados.isComposto = (((Integer) ref[1]) == 1);
+			}
+			if (movUltima != null) {
+				docDados.movUltimaDtIniMov = movUltima.getDtIniMov();
+				docDados.movUltimaDtFimMov = movUltima.getDtFimMov();
+				docDados.movUltimaSiglaLotacao = movUltima.getLotacao().getSigla();
+				docDados.movUltimaSiglaOrgao = movUltima.getLotacao().getOrgaoUsuario().getSigla();
+			}
+			if (movTramite != null) {
+				docDados.movTramiteSiglaLotacao = movTramite.getLotacao().getSigla();
+				docDados.movTramiteSiglaOrgao = movTramite.getLotacao().getOrgaoUsuario().getSigla();
+			}
+			if (movAnotacao != null) {
+				docDados.movAnotacaoDescrMov = movAnotacao.getDescrMov();
+				docDados.movAnotacaoIdMov = movAnotacao.getIdMov().toString();
+			}
+		}
 	}
 
 	private static boolean temMarcador(Integer listStart, List<Object[]> l, Long idMobil, GrupoItem gItem) {
@@ -774,7 +763,7 @@ public class Mesa2 {
 		}
 	}
 	
-	public static List<GrupoItem> montaGruposUsuario(Map<String, SelGrupo> selGrupos ) {
+	public static List<GrupoItem> montaGruposUsuario(Map<String, SelGrupo> selGrupos, boolean trazerCancelados ) {
 		carregaGruposBase();
 		List<String> ordemGrupos = new ArrayList<String>(); 
 		List<GrupoItem> lGrupo = new ArrayList<GrupoItem>();
@@ -807,24 +796,5 @@ public class Mesa2 {
 			}
 		}
 		return lGrupo;
-	}
-	
-	private static List<String> criaItemGrupo(String grupoNome, String grupoQtd) {
-		List<String> itemGrp = new ArrayList<String>();
-		GrupoDeMarcadorEnum gEnum = GrupoDeMarcadorEnum.getByNome(grupoNome);
-		Integer idGrupo = gEnum.id;
-		if (idGrupo != null) {
-			itemGrp.add(gEnum.id.toString());
-			itemGrp.add(grupoQtd);
-			Integer i = 2;
-			if (Long.valueOf(grupoQtd) > 0) { 
-				List<Integer> listIdGrupo = MarcadorEnum.getListIdByGrupo(grupoNome);
-				for (Integer idMar : listIdGrupo) {
-					itemGrp.add(idMar.toString());
-					i++;
-				}
-			}
-		}
-		return itemGrp;
 	}
 }

@@ -51,6 +51,7 @@ import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
@@ -87,7 +88,9 @@ import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.Mesa2;
 import br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem;
+import br.gov.jfrj.siga.ex.bl.Mesa2.MarcadorEnum;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
 import br.gov.jfrj.siga.hibernate.ext.IMontadorQuery;
@@ -2022,7 +2025,17 @@ public class ExDao extends CpDao {
 		return l;
 	}
 
-	public List consultarTotaisPorMarcador(DpPessoa pes, DpLotacao lot, List<GrupoItem> grupos) {
+	public List consultarTotaisPorMarcador(DpPessoa pes, DpLotacao lot, List<GrupoItem> grupos, 
+			boolean exibeLotacao, boolean trazerCancelados) {
+		String queryTMPCosignatario;
+		if (SigaMessages.isSigaSP()) {
+			queryTMPCosignatario = " LEFT JOIN corporativo.cp_marca marca2 ON (marca2.id_ref = marca.id_ref"
+					+ " AND marca2.id_marcador = " + String.valueOf(CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA) + " AND marca2.id_pessoa_ini <> :idPessoaIni ) "; 
+		} else {
+			queryTMPCosignatario = "";
+		}
+		String queryCancelados =  " LEFT JOIN corporativo.cp_marca marca3 ON (marca3.id_ref = marca.id_ref"
+				+ " AND marca3.id_marcador = " + String.valueOf(CpMarcador.MARCADOR_CANCELADO) + ") ";
 		try {
 			String query = "";
 			for (GrupoItem grupoItem : grupos) {
@@ -2031,21 +2044,28 @@ public class ExDao extends CpDao {
 						+ grupoItem.grupoOrdem + ", "
 						+ " SUM(CASE WHEN cont_pessoa > 0 THEN 1 ELSE 0 END), " 
 						+ " SUM(CASE WHEN cont_lota > 0 THEN 1 ELSE 0 END) "
-						+ "			FROM (SELECT distinct id_ref, "
-						+ " 			SUM(CASE WHEN id_pessoa_ini = :idPessoaIni THEN 1 ELSE 0 END) cont_pessoa,"
-						+ " 			SUM(CASE WHEN id_lotacao_ini = :idLotacaoIni THEN 1 ELSE 0 END) cont_lota"
-						+ "	   			FROM corporativo.cp_marca marca"	
-						+ "	   			WHERE (dt_ini_marca IS NULL OR dt_ini_marca < sysdate)"
-						+ "	   				AND (dt_fim_marca IS NULL OR dt_fim_marca > sysdate)"
-						+ "	   				AND ((id_pessoa_ini = :idPessoaIni) OR(id_lotacao_ini = :idLotacaoIni))"
-						+ "	   				AND id_tp_marca = 1"
-						+ "					AND id_marcador in (" 
+						+ "			FROM (SELECT distinct marca.id_ref, "
+						+ " 			SUM(CASE WHEN marca.id_pessoa_ini = :idPessoaIni THEN 1 ELSE 0 END) cont_pessoa,"
+						+ " 			SUM(CASE WHEN marca.id_lotacao_ini = :idLotacaoIni THEN 1 ELSE 0 END) cont_lota"
+						+ "	   			FROM corporativo.cp_marca marca"
+						+ (!exibeLotacao ? queryTMPCosignatario : "" )
+						+ (trazerCancelados ? "" : queryCancelados )
+						+ "				LEFT JOIN corporativo.cp_marca marca2 ON (marca2.id_ref = marca.id_ref"
+						+ "					AND marca2.id_marcador = 15 AND marca2.id_pessoa_ini <> :idPessoaIni ) " 
+						+ "	   			WHERE (marca.dt_ini_marca IS NULL OR marca.dt_ini_marca < sysdate)"
+						+ "	   				AND (marca.dt_fim_marca IS NULL OR marca.dt_fim_marca > sysdate)"
+						+ "	   				AND ((marca.id_pessoa_ini = :idPessoaIni) OR (marca.id_lotacao_ini = :idLotacaoIni))"
+						+ "	   				AND marca.id_tp_marca = 1"
+						+ "					AND marca.id_marcador in (" 
 						+ grupoItem.grupoMarcadores.toString().replaceAll("\\[|\\]", "") + ") "
-						+ "				GROUP BY ID_REF )"
+						+ (!exibeLotacao && SigaMessages.isSigaSP() ? " AND marca2.id_marca is null " : "" )
+						+ (trazerCancelados ? "" : " AND marca3.id_marca is null " )
+						+ "				GROUP BY marca.id_ref )"
 						+ " UNION ALL ";
 				}
 			}
-			query = query.substring(0, query.length() - 10);
+			if (query.length() > 0) 
+				query = query.substring(0, query.length() - 10);
 			Query sql = getSessao()
 					.createSQLQuery(query);
 			sql.setLong("idPessoaIni", pes.getIdPessoaIni());
@@ -2061,12 +2081,24 @@ public class ExDao extends CpDao {
 	}
 
 	public List listarMobilsPorMarcas(DpPessoa titular,
-			DpLotacao lotaTitular, List<Long> listMarcas, boolean exibeLotacao) {
+			DpLotacao lotaTitular, boolean exibeLotacao, boolean trazerCancelados) {
 		String queryString;
+		String queryTMPCosignatario;
 		List<List<String>> l = new ArrayList<List<String>> ();
 //		long tempoIni = System.nanoTime();
-		
-		queryString = 
+		if (SigaMessages.isSigaSP()) {
+			queryTMPCosignatario = " and (select marca2 from ExMarca marca2 "		
+					+ "		where marca2.cpMarcador.idMarcador = " + String.valueOf(CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA)  
+					+ " 	and marca2.exMobil = marca.exMobil "
+					+ "		and marca2.dpPessoaIni <> :titular ) is null ";
+		} else {
+			queryTMPCosignatario = "";
+		}
+		String queryCancelados = " and (select marca3 from ExMarca marca3 "		
+				+ "		where marca3.cpMarcador.idMarcador = "  + String.valueOf(CpMarcador.MARCADOR_CANCELADO) 
+				+ "		and marca3.exMobil = marca.exMobil) is null ";
+
+		queryString =
 					"select "
 					+ " marca, marcador, mobil, doc.dtAltDoc "
 					+ " from ExMarca marca "
@@ -2075,9 +2107,10 @@ public class ExDao extends CpDao {
 					+ " inner join mobil.exDocumento doc"
 					+ " where (marca.dtIniMarca is null or marca.dtIniMarca < sysdate)"
 					+ " and (marca.dtFimMarca is null or marca.dtFimMarca > sysdate)"
-					+ (listMarcas != null ? " and marca.cpMarcador.idMarcador in ( :marcadores )" : "")
 					+ (!exibeLotacao && titular != null ? " and (marca.dpPessoaIni = :titular)" : "") 
 					+ (exibeLotacao && lotaTitular != null ? " and (marca.dpLotacaoIni = :lotaTitular)" : "")
+					+ (!exibeLotacao && titular != null ? queryTMPCosignatario : "")
+					+ (trazerCancelados ? "" : queryCancelados)
 					+ " order by  doc.dtAltDoc desc, marca ";
 			
 		Query query = getSessao()
@@ -2087,8 +2120,6 @@ public class ExDao extends CpDao {
 		
 		if (exibeLotacao && lotaTitular != null)
 			query.setLong("lotaTitular", lotaTitular.getIdLotacaoIni());
-
-		query.setParameterList("marcadores", listMarcas);
 
 		l = query.list();
 // 		long tempoTotal = System.nanoTime() - tempoIni;

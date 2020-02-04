@@ -8,8 +8,6 @@
 
 <siga:pagina titulo="Mesa Virtual">
 <script type="text/javascript" src="../javascript/vue.min.js"></script>
-<!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
-<!-- <script src="/siga/bootstrap/js/bootstrap-vue.min.js"></script> -->
 <script language="JavaScript" src="/siga/bootstrap/js/bootstrap.bundle.min.js" type="text/javascript"></script>
 	
 	<div id="app" class="container-fluid content" style="overflow: hidden">
@@ -26,7 +24,7 @@
 			<div class="col col-12 col-md-auto mb-2">
 				<h2><i class="fa fa-file-alt"></i> Mesa Virtual</h2>
 			</div>
-			<div class="col col-md-2 my-1 mb-2" style="vertical-align: text-bottom;"> 
+			<div class="col col-md-4 my-1 mb-2" style="vertical-align: text-bottom;"> 
 				<span class="h-100 d-inline-block my-2" style="vertical-align: text-bottom;">
 					<c:if test="${not empty visualizacao}"><b>(Delegante: ${visualizacao.titular.nomePessoa})</b></c:if> 
 				</span> 
@@ -81,6 +79,12 @@
 							<label class="form-check-label" for="trazerAnotacoes"><small>Trazer anotações nos documentos</small></label>
 						</div>            
 		            </div>
+		            <div class="form-group py-2 mt-2 border-top border-bottom">
+						<div class="form-check">
+							<input type="checkbox" class="form-check-input" id="trazerCancelados" v-model="trazerCancelados">
+							<label class="form-check-label" for="trazerCancelados"><small>Mostrar cancelados</small></label>
+						</div>            
+		            </div>
 					<div class="form-group pb-2 mb-1 border-bottom">
 						<label for="selQtdPagId"><small>Qtd. de documentos a trazer (botão Mais)</small></label>
 						<select class="form-control form-control-sm" v-model="selQtdPag">
@@ -89,7 +93,7 @@
 							  <option value="15">15</option>
 							  <option value="50">50</option>
 							  <option value="100">100</option>
-							  <option value="200">200</option>
+							  <option value="500">500</option>
 						</select>
 					</div>
 					<div class="form-group pt-2">
@@ -111,7 +115,7 @@
 		<div class="row d-print-none"
 			v-if="!carregando &amp;&amp; grupos.length > 0"></div>
 
-		<div class="row mt-3" v-if="carregando &amp;&amp; primeiraCarga">
+		<div class="row mt-3" v-if="carregando">
 			<div class="col col-12">
 				<p class="alert alert-warning">
 					<span class="spinner-border" role="status"></span>
@@ -154,9 +158,6 @@
 							</h5>
 						</div>
 						<div :id="['collapsetab-' + g.grupoOrdem]" class="collapse" :key="g.grupoOrdem" v-bind:class="{show: !g.grupoCollapsed }">
-							<div class="text-center" v-if="carregando && (g.grupoDocs == undefined || g.grupoDocs.length == 0)">
-								<div class="spinner-grow text-info text-center" role="status"></div>
-							</div>
 							<div class="row" v-if="!carregando && (g.grupoDocs == undefined || g.grupoDocs.length == 0)">
 								<div class="col col-12">
 									<p class="alert alert-warning alert-dismissible fade show">Não há documentos a exibir para est{{exibeLota? 'a lotação.' : 'e usuário.'}}</p>
@@ -227,7 +228,11 @@
 								</tbody>
 							</table>
 							<div v-if="g.grupoDocs != undefined && g.grupoCounterAtivo > g.grupoDocs.length" class="row">
-								<div class="col-md-10 mb-2"></div>
+								<div class="col-md-10 mb-2">
+									<div class="text-center" v-if="carregando">
+										<div class="spinner-grow text-info text-center" role="status"></div>
+									</div>
+								</div>
 								<div class="col-12 col-md-2 mb-2">
 									<button type="button" class="btn btn-primary btn-sm w-100 float-right" 
 											:class="{disabled: carregando}" @click="carregaGrupo(g.grupoNome);">
@@ -275,8 +280,7 @@
 	$(document).ready(carregaDocs(""));
 	
 function carregaDocs() {
-	var idVisualizacao = document.getElementById("idVisualizacao");
-	var demo = new Vue({
+	var appMesa = new Vue({
 		  el: "#app",
 
 		  mounted: function() {
@@ -284,6 +288,7 @@ function carregaDocs() {
 	      	var self = this
 			self.exibeLota = (getParmUser('exibeLota') === 'true');
 	      	setParmUser('trazerAnotacoes', self.trazerAnotacoes);
+	      	setParmUser('trazerCancelados', self.trazerCancelados);
 		    setTimeout(function() {
 		      self.carregarMesa();
 		    });
@@ -304,7 +309,8 @@ function carregaDocs() {
 		      toggleConfig: '',
 		      selQtd: undefined,
 		      selQtdPag: 15,
-		      trazerAnotacoes: true
+		      trazerAnotacoes: true,
+		      trazerCancelados: false
 		    };
 		  },
 
@@ -349,7 +355,7 @@ function carregaDocs() {
 		  },
 		  watch: {
 			selQtdPag: function(qtdPag) {
-				var parms = JSON.parse(window.localStorage.getItem('gruposMesa' + document.getElementById('cadastrante').title));
+				var parms = JSON.parse(getParmUser('gruposMesa'));
 				if (parms != null) {
 					for (var g in parms) {
 			        	setValueGrupo(g, 'qtdPag', qtdPag);
@@ -358,6 +364,9 @@ function carregaDocs() {
 			},
 			trazerAnotacoes: function() {
 				setParmUser('trazerAnotacoes', this.trazerAnotacoes);
+			},
+			trazerCancelados: function() {
+				setParmUser('trazerCancelados', this.trazerCancelados);
 			}
 		  },		  
 			  
@@ -365,11 +374,12 @@ function carregaDocs() {
 		    carregarMesa: function(grpNome, qtdPagina) {
 		      var self = this
 		      var timeout = Math.abs(new Date() - 
-		    		  new Date(sessionStorage.getItem('timeout' + document.getElementById('cadastrante').title)));
+		    		  new Date(sessionStorage.getItem('timeout' + getUser())));
 		      if (this.carregando && timeout < 120000) 
 		    	  return;
 		      if (timeout < 120000 && grpNome == null) {
-				carregaFromJson(sessionStorage.getItem('mesa' + document.getElementById('cadastrante').title), self);
+				carregaFromJson(sessionStorage.getItem('mesa' + getUser()), self);
+				
 				return;
 		      }
 		      this.carregando = true;
@@ -379,7 +389,7 @@ function carregaDocs() {
 		          erros[this.grupos[i].codigo] = this.grupos[i].errormsg;
 		        }
 		      }
-		  	  var parmGrupos = JSON.parse(window.localStorage.getItem('gruposMesa' + document.getElementById('cadastrante').title));
+		  	  var parmGrupos = JSON.parse(getParmUser('gruposMesa'));
 		  	  var parms = {};
 		  	  if (grpNome != null) {
 		    	  parms[grpNome] = {'grupoOrdem' : parmGrupos[grpNome].ordem, 
@@ -398,7 +408,8 @@ function carregaDocs() {
 			          data: {parms: JSON.stringify(parms),
 		        	  	 exibeLotacao: getParmUser('exibeLota'),
 		        	  	 trazerAnotacoes: getParmUser('trazerAnotacoes'),
-		        	  	 idVisualizacao: idVisualizacao
+		        	  	 trazerCancelados: getParmUser('trazerCancelados'),
+		        	  	 idVisualizacao: ${idVisualizacao}
 		        	  }, 
 		          complete: function (response, status, request) {   
 		        	  var buttonClose = $('.alert').find('button').clone();
@@ -408,7 +419,7 @@ function carregaDocs() {
 					  } else {		  	
 						  carregaFromJson(response.responseText, self);
 						  sessionStorage.setItem(
-								  'timeout' + document.getElementById('cadastrante').title, new Date());
+								  'timeout' + getUser(), new Date());
 					  }
 		          }, 
 		          failure: function (response, status) {           
@@ -419,14 +430,19 @@ function carregaDocs() {
 		      }) 
 		    },
 		    resetaStorage: function() {
-		    	sessionStorage.removeItem('timeout' + document.getElementById('cadastrante').title);
-		    	sessionStorage.removeItem('mesa' + document.getElementById('cadastrante').title);
-		    	localStorage.removeItem('gruposMesa' + document.getElementById('cadastrante').title);
-		    	localStorage.removeItem('trazerAnotacoes' + document.getElementById('cadastrante').title);
-		    	localStorage.removeItem('exibeLota' + document.getElementById('cadastrante').title);
+		    	sessionStorage.removeItem('timeout' + getUser());
+		    	sessionStorage.removeItem('mesa' + getUser());
+		    	localStorage.removeItem('gruposMesa' + getUser());
+		    	localStorage.removeItem('trazerAnotacoes' + getUser());
+		    	localStorage.removeItem('trazerCancelados' + getUser());
+		    	localStorage.removeItem('exibeLota' + getUser());
+		    	this.carregarMesa();
+    			this.selQtdPag = 15;
 		    },
 		    recarregarMesa: function() {
-		    	sessionStorage.removeItem('timeout' + document.getElementById('cadastrante').title);
+		    	this.carregando = true;
+		    	this.grupos = [];
+		    	sessionStorage.removeItem('timeout' + getUser());
 		    	this.carregarMesa();
 		    },
 		    carregarMesaUser: function() {
@@ -440,11 +456,11 @@ function carregaDocs() {
 		    	this.recarregarMesa();
 		    },
 		    setQtdPag: function(grupoNome, event) {
-		  	    var parmGrupos = JSON.parse(window.localStorage.getItem('gruposMesa' + document.getElementById('cadastrante').title));
+		  	    var parmGrupos = JSON.parse(getParmUser('gruposMesa'));
 	    		setValueGrupo(grupoNome, 'qtdPag', parseInt(event.target.value));
 		    },
 		    carregaGrupo: function(grupoNome) {
-		  	    var parmGrupos = JSON.parse(window.localStorage.getItem('gruposMesa' + document.getElementById('cadastrante').title));
+		  	    var parmGrupos = JSON.parse(getParmUser('gruposMesa'));
 	    		if (parmGrupos[grupoNome].qtd === 0) {
 	    			setValueGrupo(grupoNome, 'qtd', parmGrupos[grupoNome].qtdPag)
 	    		} else {
@@ -453,7 +469,7 @@ function carregaDocs() {
 	    		this.carregarMesa(grupoNome, parseInt(parmGrupos[grupoNome].qtdPag));
 		    },
 		    collapseGrupo: function(grupoOrdem, grupoNome) {
-		  	    var parmGrupos = JSON.parse(window.localStorage.getItem('gruposMesa' + document.getElementById('cadastrante').title));
+		  	    var parmGrupos = JSON.parse(getParmUser('gruposMesa'));
 		    	var collapsibleElemHeader = document.getElementById('collapse-header-' + grupoOrdem);
 		  	    if (collapsibleElemHeader.classList.contains('collapsed')) {
 		    		setValueGrupo(grupoNome, 'collapsed', false);
@@ -580,7 +596,7 @@ function carregaDocs() {
 		});
 }
 function atualizaGrupos (grupos) {
-	var parms = JSON.parse(window.localStorage.getItem('gruposMesa' + document.getElementById('cadastrante').title));
+	var parms = JSON.parse(getParmUser('gruposMesa'));
 	if (parms == null) {
 		for (var g in grupos) {
 			setGrupo(grupos[g].grupoNome, grupos[g].grupoOrdem, grupos[g].grupoQtd, grupos[g].grupoQtdPag, grupos[g].grupoCollapsed)
@@ -608,7 +624,7 @@ function cloneArray(arr) {
 function setGrupo(grupoNome, ordem, qtd, qtdPag, collapsed) {
 	// Seta um parametro com dados de selecao do grupo no JSON de parametros e armazena na local storage. 
 	// Se a quantidade for "" ou false, deleta o parametro
-	var parms = JSON.parse(window.localStorage.getItem('gruposMesa' + document.getElementById('cadastrante').title));
+	var parms = JSON.parse(getParmUser('gruposMesa'));
 	if (parms == null) { 
 		parms = {"key" : ""};
 		parms[grupoNome] = {'ordem' : ordem, 'qtd' : qtd, 'qtdPag' : qtdPag, 'collapsed' : collapsed };
@@ -624,43 +640,46 @@ function setGrupo(grupoNome, ordem, qtd, qtdPag, collapsed) {
 }
 function setValueGrupo(grupoNome, key, qtd) {
 	// Seta quantidade de documentos a mostrar de um grupo no JSON de parametros e armazena na local storage. 
-	var parms = JSON.parse(window.localStorage.getItem('gruposMesa' + document.getElementById('cadastrante').title));
+	var parms = JSON.parse(getParmUser('gruposMesa'));
 	parms[grupoNome] [key] = qtd;
 	setParmUser('gruposMesa', JSON.stringify(parms));
 }
 function setParmUser(nomeParm, value) {
-	window.localStorage.setItem(nomeParm + document.getElementById('cadastrante').title, value)	
+	window.localStorage.setItem(nomeParm + getUser(), value)	
 }
 function getParmUser(nomeParm) {
-	return window.localStorage.getItem(nomeParm + document.getElementById('cadastrante').title)	
+	return window.localStorage.getItem(nomeParm + getUser())	
 }
 function slideDown (id) { 
 	setInterval(function(){
     	document.getElementById("#" + id).slideDown();
 	}, 20);
 }
-function carregaFromJson (json, demo) {
-	  var grp = JSON.parse(json);
-	  if (grp.length > 1) {
-		demo.grupos = grp;  
+function carregaFromJson (json, appMesa) {
+	var grp = JSON.parse(json);
+	if (grp.length > 1) {
+	  appMesa.grupos = grp;  
     } else {
-      for (var g in demo.grupos) {
-         if (demo.grupos[g].grupoOrdem === grp[0].grupoOrdem) {
-      		Vue.set(demo.grupos, g, grp[0]);
-      		if (demo.grupos[g].grupoDocs == undefined)
-      			demo.grupos[g].grupoDocs = [];
-	        var q = Math.round((demo.grupos[g].grupoDocs.length / demo.grupos[g].grupoQtdPag) - 0.51)  
-						* demo.grupos[g].grupoQtdPag + demo.grupos[g].grupoQtdPag;
+      for (var g in appMesa.grupos) {
+         if (appMesa.grupos[g].grupoOrdem === grp[0].grupoOrdem) {
+      		Vue.set(appMesa.grupos, g, grp[0]);
+      		if (appMesa.grupos[g].grupoDocs == undefined)
+      			appMesa.grupos[g].grupoDocs = [];
+	        var q = Math.round((appMesa.grupos[g].grupoDocs.length / appMesa.grupos[g].grupoQtdPag) - 0.51)  
+						* appMesa.grupos[g].grupoQtdPag + appMesa.grupos[g].grupoQtdPag;
 			if (q > 0)
-	        	setValueGrupo(demo.grupos[g].grupoNome, 'qtd', q);
+	        	setValueGrupo(appMesa.grupos[g].grupoNome, 'qtd', q);
       	}
       }
     }
     sessionStorage.setItem(
-			  'mesa' + document.getElementById('cadastrante').title, JSON.stringify(demo.grupos));
-    atualizaGrupos(demo.grupos);
-    demo.primeiraCarga = false;
-	demo.carregando = false;	
+			  'mesa' + getUser(), JSON.stringify(appMesa.grupos));
+    atualizaGrupos(appMesa.grupos);
+    appMesa.primeiraCarga = false;
+	appMesa.carregando = false;
+}
+function getUser () {
+	return document.getElementById('cadastrante').title + ${idVisualizacao == 0 ? '""' : idVisualizacao };
 }
 
 </script>

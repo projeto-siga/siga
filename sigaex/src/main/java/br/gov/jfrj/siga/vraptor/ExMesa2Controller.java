@@ -80,7 +80,8 @@ public class ExMesa2Controller extends ExController {
 	}
 
 	@Get("app/mesa2.json")
-	public void json(Long idVisualizacao, boolean exibeLotacao, boolean trazerAnotacoes, String parms) throws Exception {
+	public void json(Long idVisualizacao, boolean exibeLotacao, boolean trazerAnotacoes, boolean trazerCancelados, 
+			String parms) throws Exception {
 		List<br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem> g = new ArrayList<br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem>();
 		Map<String, Mesa2.SelGrupo> selGrupos = null;
 		List<Mesa2.GrupoItem> gruposMesa = new ArrayList<Mesa2.GrupoItem>();
@@ -99,14 +100,16 @@ public class ExMesa2Controller extends ExController {
 						 CpTipoConfiguracao.TIPO_CONFIG_DELEGAR_VISUALIZACAO)) {
 				DpVisualizacao vis = dao().consultar(idVisualizacao, DpVisualizacao.class, false);
 				lotaTitular = vis.getTitular().getLotacao();
-				gruposMesa = Mesa2.getContadores(dao(), vis.getTitular(), lotaTitular, selGrupos, exibeLotacao);
+				gruposMesa = Mesa2.getContadores(dao(), vis.getTitular(), lotaTitular, selGrupos, 
+						exibeLotacao, trazerCancelados );
 				g = Mesa2.getMesa(dao(), vis.getTitular(), lotaTitular, selGrupos, 
-						gruposMesa, exibeLotacao, trazerAnotacoes);
+						gruposMesa, exibeLotacao, trazerAnotacoes, trazerCancelados);
 			} else {
 				lotaTitular = getTitular().getLotacao();
-				gruposMesa = Mesa2.getContadores(dao(), getTitular(), lotaTitular, selGrupos, exibeLotacao);
+				gruposMesa = Mesa2.getContadores(dao(), getTitular(), lotaTitular, selGrupos, 
+						exibeLotacao, trazerCancelados );
 				g = Mesa2.getMesa(dao(), getTitular(), lotaTitular, selGrupos, 
-						gruposMesa, exibeLotacao, trazerAnotacoes);
+						gruposMesa, exibeLotacao, trazerAnotacoes, trazerCancelados);
 			}
 	
 			String s = ExAssinadorExternoController.gson.toJson(g);

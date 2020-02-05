@@ -190,7 +190,6 @@
 			<property
 				name="hibernate.cache.infinispan.ex.expiration.max_idle"
 				value="300000" />
-				
 		</properties>
 	</persistence-unit>
 </persistence>

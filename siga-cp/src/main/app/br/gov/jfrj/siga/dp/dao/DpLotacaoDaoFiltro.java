@@ -28,6 +28,13 @@ public class DpLotacaoDaoFiltro extends DaoFiltroSelecionavel {
 	private Long idOrgaoUsu;
 
 	private boolean buscarFechadas;
+	
+	public DpLotacaoDaoFiltro() {}
+	
+	public DpLotacaoDaoFiltro(String nome, Long idOrgaoUsu) {
+		this.nome = nome;
+		this.idOrgaoUsu = idOrgaoUsu;
+	}
 
 	public boolean isBuscarFechadas() {
 		return buscarFechadas;

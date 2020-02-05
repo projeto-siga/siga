@@ -205,6 +205,11 @@
 		</dependency>
 
 		<dependency>
+			<groupId>siga</groupId>
+			<artifactId>siga-oidc</artifactId>
+		</dependency>
+		
+		<dependency>
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
 		</dependency>

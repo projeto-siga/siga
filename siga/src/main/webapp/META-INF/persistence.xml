@@ -148,7 +148,6 @@
 			<property
 				name="hibernate.cache.infinispan.corporativo.expiration.max_idle"
 				value="300000" />
-
 		</properties>
 	</persistence-unit>
 </persistence>

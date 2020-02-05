@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.vraptor;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
@@ -38,6 +40,10 @@ public class DpCargoController extends
 
 	public DpCargoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);
+	}
+	
+	public boolean temPermissaoParaExportarDados() {
+		return Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getTitular().getLotacao(),"SIGA;GI;CAD_CARGO;EXP_DADOS");
 	}
 	
 	@Get
@@ -111,7 +117,7 @@ public class DpCargoController extends
 	}
 	
 	@Get("app/cargo/listar")
-	public void lista(Integer paramoffset, Long idOrgaoUsu, String nome) throws Exception {
+	public void lista(Integer paramoffset, Long idOrgaoUsu, String nome) throws Exception {		
 		
 		if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
 			result.include("orgaosUsu", dao().listarOrgaosUsuarios());
@@ -134,9 +140,56 @@ public class DpCargoController extends
 			
 			result.include("idOrgaoUsu", idOrgaoUsu);
 			result.include("nome", nome);
+			
+			if (getItens().size() == 0) result.include("mensagemPesquisa", "Nenhum resultado encontrado.");
 		}
 		setItemPagina(15);
-		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));
+		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));		
+		result.include("temPermissaoParaExportarDados", temPermissaoParaExportarDados());
+	}	
+		
+	@Post
+	@Path("app/cargo/exportarCsv")
+	public Download exportarCsv(Long idOrgaoUsu, String nome) throws Exception {				
+			
+ 		if(idOrgaoUsu != null) {
+			DpCargoDaoFiltro dpCargo = new DpCargoDaoFiltro(nome, idOrgaoUsu);																
+															
+			List <DpCargo> lista = CpDao.getInstance().consultarPorFiltro(dpCargo, 0, 0);
+			
+			if (lista.size() > 0) {				
+				InputStream inputStream = null;
+				StringBuffer texto = new StringBuffer();
+				texto.append("Cargo" + System.getProperty("line.separator"));
+				
+				for (DpCargo cargo : lista) {
+					texto.append(cargo.getNomeCargo() + ";");										
+					texto.append(System.getProperty("line.separator"));
+				}
+				
+				inputStream = new ByteArrayInputStream(texto.toString().getBytes("ISO-8859-1"));									
+				
+				return new InputStreamDownload(inputStream, "text/csv", "cargos.csv");
+				
+			} else {
+				
+				if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+					result.include("orgaosUsu", dao().listarOrgaosUsuarios());
+				} else {
+					CpOrgaoUsuario ou = CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario());
+					List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
+					list.add(ou);
+					result.include("orgaosUsu", list);
+				}
+					result.include("idOrgaoUsu", idOrgaoUsu);			
+					result.include("nome", nome);					
+					result.include("mensagemPesquisa", "Nenhum resultado encontrado.");		
+					result.include("temPermissaoParaExportarDados", temPermissaoParaExportarDados());
+					result.use(Results.page()).forwardTo("/WEB-INF/page/dpCargo/lista.jsp");
+			}							
+		}					
+
+		return null;
 	}
 	
 	@Get("/app/cargo/editar")

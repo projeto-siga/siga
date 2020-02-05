@@ -16,13 +16,23 @@ function sbmt(offset) {
 	frm.submit();
 }
 </script>
-<form name="frm" action="listar" class="form" method="GET">
+<form name="frm" action="listar" id="listar" class="form" method="GET">
 	<input type="hidden" name="paramoffset" value="0" />
 	<input type="hidden" name="p.offset" value="0" />
 	<div class="container-fluid">
 		<div class="card bg-light mb-3" >		
 			<div class="card-header"><h5>Cadastro de Cargo</h5></div>
 			<div class="card-body">
+				<div class="row">
+					<div class="col-sm">
+						<div class="alert alert-info  mensagem-pesquisa" role="alert" style="display: none;">
+    						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    							<span aria-hidden="true">×</span>
+  							</button>
+  							<i class="fas fa-info-circle"></i> ${mensagemPesquisa}
+						</div>
+					</div>
+				</div>
 				<div class="row">
 					<div class="col-sm-6">
 						<div class="form-group">
@@ -47,9 +57,10 @@ function sbmt(offset) {
 					<div class="col-sm">
 						<div class="form-group">
 							<input value="Pesquisar" class="btn btn-primary" onclick="javascript: sbmt(0);"/>
+							<button type="button" class="btn btn-outline-success" id="exportarCsv" title="Exportar para CSV"	onclick="javascript:csv('listar', '/siga/app/cargo/exportarCsv');"><i class="fa fa-file-csv"></i> Exportar</button>
 						</div>
 					</div>
-				</div>
+				</div>				
 			</div>
 		</div>
 		<h5>Cargos cadastrados</h5>
@@ -97,4 +108,30 @@ function sbmt(offset) {
 <script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
 <script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
 <script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
+<script type="text/javascript">
+	temPermissaoParaExportarDados = '${temPermissaoParaExportarDados}' == 'true';		
+	if (!temPermissaoParaExportarDados) $('#exportarCsv').attr('disabled', 'disabled').attr('title', 'Exportar para CSV - usuário sem permissão');
+	
+	$(document).ready(function() {	
+		if ('${mensagemPesquisa}'.length > 0) $('.mensagem-pesquisa').css({'display':'block'});
+	});
+	
+	function csv(id, action) {
+		var frm = document.getElementById(id);
+		frm.method = "POST";
+		sbmtAction(id, action);
+		
+		$('.mensagem-pesquisa').alert('close');
+		
+		frm.action = 'listar';
+		frm.method = "GET";
+	}
+	
+	function sbmtAction(id, action) {
+		var frm = document.getElementById(id);
+		frm.action = action;
+		frm.submit();
+		return;
+	}
+</script>
 </siga:pagina>

@@ -1413,7 +1413,13 @@ public class CpDao extends ModeloDao {
 
 			query.setString("nome",
 					pes.getNomePessoa().toUpperCase().replace(' ', '%'));
-
+			
+			if(pes.getEmailPessoa() != null) {
+				query.setString("email",pes.getEmailPessoa().toUpperCase().replace(' ', '%'));
+			} else {
+				query.setString("email",null);
+			}
+			
 			if(pes.getCpfPessoa() != null && !"".equals(pes.getCpfPessoa())) {
 				query.setLong("cpf", Long.valueOf(pes.getCpfPessoa()));
 			} else {

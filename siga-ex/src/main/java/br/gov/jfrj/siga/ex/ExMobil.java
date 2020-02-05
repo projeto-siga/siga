@@ -47,6 +47,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.BatchSize;
 import org.jboss.logging.Logger;
 
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -695,7 +696,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	public ExMovimentacao getUltimaMovimentacaoNaoCancelada() {
 		return getUltimaMovimentacaoNaoCancelada(0L);
 	}
-
+	
 	/**
 	 * Retorna a última movimentação não cancelada de um tipo específico que o
 	 * móbil recebeu.
@@ -730,7 +731,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	public ExMovimentacao getUltimaMovimentacaoNaoCancelada(ExMovimentacao movParam) {
 		return getUltimaMovimentacao(new long[] { movParam.getExTipoMovimentacao().getIdTpMov() }, new long[] { 0L },
 				this, false, movParam.getDtMov());
-	}
+	}	
 
 	/**
 	 * Retorna A última movimentação de um Mobil.
@@ -779,6 +780,9 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		for (ExMovimentacao mov : movSet) {
 			if (!permitirCancelada && (mov.isCancelada() || mov.isCanceladora()))
 				continue;
+				
+			if (isIgnorarMovimentacaoDeDesentranhamento(mov))
+				continue;			
 
 			if (tpMovs.length == 0 || tpMovs[0] == 0L)
 				movReturn = mov;
@@ -798,6 +802,10 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 				}
 		}
 		return movReturn;
+	}
+	
+	public boolean isIgnorarMovimentacaoDeDesentranhamento(ExMovimentacao mov) {
+		return SigaMessages.isSigaSP() && mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA;
 	}
 
 	/**

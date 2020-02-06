@@ -84,25 +84,27 @@
 	</div>
 <script>
 	$('[name=dtMovString]').focus();
-	
-	(function() {
-		'use strict';
-		window.addEventListener('load', function() {		 
-		 var forms = document.getElementsByClassName('js-formulario-cancelar-juntada');		 
-		 var validation = Array.prototype.filter.call(forms, function(form) {
-		   form.addEventListener('submit', function(event) {
-			 var motivo = $('#motivo');
-		     if (motivo.val().length == 0) {
-		       	motivo.addClass('is-invalid');	 		    	
-		     	event.preventDefault();
-		       	event.stopPropagation();		       
-		     } else {
-		    	motivo.removeClass('is-invalid');
-		     }		     
-		   }, false);
-		 });
-		}, false);
-	})();
-</script>
 </script>	
+<c:if test="${validarCamposObrigatoriosForm}">
+	<script>		
+		(function() {
+			'use strict';
+			window.addEventListener('load', function() {		 
+			 var forms = document.getElementsByClassName('js-formulario-cancelar-juntada');		 
+			 var validation = Array.prototype.filter.call(forms, function(form) {
+			   form.addEventListener('submit', function(event) {
+				 var motivo = $('#motivo');
+			     if (motivo.val().length == 0) {
+			       	motivo.addClass('is-invalid');	 		    	
+			     	event.preventDefault();
+			       	event.stopPropagation();		       
+			     } else {
+			    	motivo.removeClass('is-invalid');
+			     }		     
+			   }, false);
+			 });
+			}, false);
+		})();
+	</script>		
+</c:if>	
 </siga:pagina>

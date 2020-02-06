@@ -3140,6 +3140,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("substituicao", Boolean.FALSE);
 		result.include("subscritorSel", new DpPessoaSelecao());
 		result.include("titularSel", new DpPessoaSelecao());
+		result.include("validarCamposObrigatoriosForm", SigaMessages.isSigaSP());
 	}
 
 	@Get("/app/expediente/mov/cancelar_ciencia")

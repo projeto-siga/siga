@@ -64,6 +64,7 @@ import com.auth0.jwt.JWTVerifier;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -347,7 +348,8 @@ public class ExMovimentacaoVO extends ExVO {
 							.equals(mov.getExMobil().getExDocumento().getDescrDocumento())) {
 						
 						String motivo = "";
-						if (mov.getDescrMov() != null && mov.getDescrMov().length() > 0) motivo = ". Motivo: " + mov.getDescrMov();
+						if (SigaMessages.isSigaSP() && mov.getDescrMov() != null && mov.getDescrMov().length() > 0) 
+							motivo = ". Motivo: " + mov.getDescrMov();
 																	
 						mensagemPos = " Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento() + motivo;
 					}

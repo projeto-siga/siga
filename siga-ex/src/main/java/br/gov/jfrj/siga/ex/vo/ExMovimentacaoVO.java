@@ -64,6 +64,7 @@ import com.auth0.jwt.JWTVerifier;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -344,9 +345,15 @@ public class ExMovimentacaoVO extends ExVO {
 					String mensagemPos = null;
 
 					if (!mov.getExMobilRef().getExDocumento().getDescrDocumento()
-							.equals(mov.getExMobil().getExDocumento().getDescrDocumento()))
-						mensagemPos = " Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento();
-
+							.equals(mov.getExMobil().getExDocumento().getDescrDocumento())) {
+						
+						String motivo = "";
+						if (SigaMessages.isSigaSP() && mov.getDescrMov() != null && mov.getDescrMov().length() > 0) 
+							motivo = ". Motivo: " + mov.getDescrMov();
+																	
+						mensagemPos = " Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento() + motivo;
+					}
+						
 					addAcao(null, mov.getExMobilRef().getSigla(), "/app/expediente/doc", "exibir", true, null,
 							"sigla=" + mov.getExMobilRef().getSigla(), "Desentranhado do documento: ", mensagemPos,
 							null);

@@ -92,9 +92,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 
 	@Transient
 	private byte[] cacheConteudoBlobDoc;
-	
-	@Transient
-	private List<ExMovimentacao> listaMovimentacaoPorRestricaoAcesso;
 
 	@Formula("REMOVE_ACENTO(DESCR_DOCUMENTO)")
 	private String descrDocumentoAI;
@@ -103,7 +100,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * Simple constructor of ExDocumento instances.
 	 */
 	public ExDocumento() {
-	}	
+	}
 
 	@Override
 	public Long getIdDoc() {
@@ -2707,13 +2704,5 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			}			
 		}	
 		return false;
-	}
-	
-	public void setListaMovimentacaoPorRestricaoAcesso(List<ExMovimentacao> listaMovs) {
-		this.listaMovimentacaoPorRestricaoAcesso = listaMovs;
-	}
-	
-	public List<ExMovimentacao> getListaMovimentacaoPorRestricaoAcesso() {
-		return this.listaMovimentacaoPorRestricaoAcesso;
 	}
 }

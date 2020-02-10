@@ -12,6 +12,7 @@ import org.hibernate.annotations.BatchSize;
 
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeResponsavel;
 
@@ -22,6 +23,7 @@ public class WfDefinicaoDeResponsavel extends HistoricoAuditavelSuporte {
 	@Id
 	@GeneratedValue
 	@Column(name = "DEFR_ID", unique = true, nullable = false)
+	@Desconsiderar
 	private Long id;
 
 	@Column(name = "DEFR_NM", length = 256)
@@ -37,6 +39,7 @@ public class WfDefinicaoDeResponsavel extends HistoricoAuditavelSuporte {
 	// Solução para não precisar criar HIS_ATIVO em todas as tabelas que herdam
 	// de HistoricoSuporte.
 	//
+	@Desconsiderar
 	@Column(name = "HIS_ATIVO")
 	private Integer hisAtivo;
 
@@ -44,6 +47,11 @@ public class WfDefinicaoDeResponsavel extends HistoricoAuditavelSuporte {
 	public Integer getHisAtivo() {
 		this.hisAtivo = super.getHisAtivo();
 		return this.hisAtivo;
+	}
+
+	@Override
+	public void setHisAtivo(Integer hisAtivo) {
+		this.hisAtivo = hisAtivo;
 	}
 
 	public Long getId() {

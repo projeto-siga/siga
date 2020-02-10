@@ -153,8 +153,8 @@
 										<option value="LOTA_SUBSCRITOR">Lotação do Subscritor</option>
 										<option value="DESTINATARIO">Destinatário</option>
 										<option value="LOTA_DESTINATARIO">Lotação do
-											Destinatário</option>
-										<option value="TABELADO">Tabelado</option>
+											Destinatário</option> 
+										<option value="RESPONSAVEL">Cadastrado</option>
 										<option value="LOTACAO">Lotação</option>
 										<option value="PESSOA">Pessoa</option></select>
 								</label> <i></i> </section>
@@ -162,7 +162,7 @@
 									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'ENVIAR_PRINCIPAL') && tarefaItem.tipoResponsavel == 'LOTACAO'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
 									for="refUnidadeResponsavel" title="" class="label">Lotação
-									Resp.
+									Resp. Resp.
 									<div minlength="1" selected-object="selectedObject"
 										focus-first="true" text-searching="Pesquisando Unidades..."
 										initial-value="tarefaItem.refUnidadeResponsavel.originalObject"
@@ -180,7 +180,8 @@
 								<section
 									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'ENVIAR_PRINCIPAL') && tarefaItem.tipoResponsavel == 'PESSOA'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
-									for="refPessoaResponsavel" title="" class="label">Responsável
+									for="refPessoaResponsavel" title="" class="label">Pessoa
+									Resp.
 									<div minlength="1" selected-object="selectedObject"
 										focus-first="true" text-searching="Pesquisando Pessoas..."
 										initial-value="tarefaItem.refPessoaResponsavel.originalObject"
@@ -194,6 +195,14 @@
 										name="refPessoaResponsavel" placeholder="Pesquisar Pessoa"
 										id="refPessoaResponsavel" class="angucomplete-ctrl p-0"
 										template-url="/sigawf/js/angucomplete-alt/custom-template.html"></div>
+								</label> </section>
+								<section
+									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'ENVIAR_PRINCIPAL') && tarefaItem.tipoResponsavel == 'RESPONSAVEL'"
+									class="col col-12 col-md-3 col-lg-3 form-group"> <label
+									for="refResponsavel" title="" class="label">Responsável
+									<select ng-model="tarefaItem.refResponsavel"
+									ng-options="item.hisIdIni as item.nome for item in responsaveis"
+									class="form-control"></select>
 								</label> </section>
 								<section ng-show="tarefaItem.tipo == 'INCLUIR_DOCUMENTO'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label

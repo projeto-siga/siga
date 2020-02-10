@@ -10,7 +10,8 @@
 	<div class="container-fluid content" ng-app="app" ng-controller="ctrl">
 		<h5>Edição de Responsável</h5>
 
-		<form name="frm" method="post" action="../gravar" class="form">
+		<form name="frm" method="post" action="/sigawf/app/responsavel/gravar"
+			class="form">
 			<input type="hidden" name="id" value="${dr.id}" />
 			<fieldset title="Dados Básicos">
 				<div class="row">
@@ -41,9 +42,8 @@
 							<tr>
 								<td>${r.orgaoSigla}</td>
 								<td><input type="hidden"
-									name="itens[${loop.index}].orgaoId" value="${r.orgaoId}" /> <input
-									type="hidden" name="itens[${loop.index}].responsavelIde"
-									value="${r.responsavelIde}" /> <siga:pessoaLotaSelecao2
+									name="itens[${loop.index}].orgaoId" value="${r.orgaoId}" />
+								<siga:pessoaLotaSelecao2
 										propriedadeLotacao="itens[${loop.index}].lotacao"
 										propriedadePessoa="itens[${loop.index}].pessoa" /></td>
 							</tr>

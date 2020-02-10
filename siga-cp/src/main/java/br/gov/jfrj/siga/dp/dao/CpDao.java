@@ -80,6 +80,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.model.CarimboDeTempo;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.DaoFiltro;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
@@ -2118,6 +2119,13 @@ public class CpDao extends ModeloDao {
 				"consultarCpConfiguracoesPorTipoLotacao");
 		qry.setParameter("idTpLotacao", idTpLotacao);
 		return qry.getResultList();
+	}
+	
+	public <T extends Selecionavel> T carregarPorId(T o) {
+		Long id = o.getId();
+		if (id == null)
+			return null;
+		return (T) consultar(id, o.getClass(), false);
 	}
 
 }

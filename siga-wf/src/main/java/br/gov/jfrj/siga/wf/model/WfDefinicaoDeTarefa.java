@@ -95,6 +95,9 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 	@Transient
 	private Long lotacaoId;
 
+	@Transient
+	private Long definicaoDeResponsavelId;
+
 	@Column(name = "DEFT_FG_ULTIMO")
 	private boolean ultimo;
 
@@ -231,26 +234,22 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 
 	@Override
 	public String getIdentifier() {
-		// TODO Auto-generated method stub
-		return null;
+		return Long.toString(getId());
 	}
 
 	@Override
 	public WfTipoDeTarefa getKind() {
-		// TODO Auto-generated method stub
-		return null;
+		return getTipoDeTarefa();
 	}
 
 	@Override
 	public String getTitle() {
-		// TODO Auto-generated method stub
-		return null;
+		return getNome();
 	}
 
 	@Override
 	public String getAfter() {
-		// TODO Auto-generated method stub
-		return null;
+		return getSeguinte() != null ? getSeguinte().getIdentifier() : null;
 	}
 
 	@Override
@@ -405,6 +404,14 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 
 	public void setLotacaoId(Long lotacaoId) {
 		this.lotacaoId = lotacaoId;
+	}
+
+	public Long getDefinicaoDeResponsavelId() {
+		return definicaoDeResponsavelId;
+	}
+
+	public void setDefinicaoDeResponsavelId(Long definicaoDeResponsavelId) {
+		this.definicaoDeResponsavelId = definicaoDeResponsavelId;
 	}
 
 }

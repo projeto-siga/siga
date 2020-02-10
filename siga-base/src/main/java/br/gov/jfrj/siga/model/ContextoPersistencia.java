@@ -14,6 +14,11 @@ public class ContextoPersistencia {
 		emByThread.set(em);
 	}
 
+	static public EntityManager getEntityManager() {
+		EntityManager em = emByThread.get();
+		return em;
+	}
+
 	static public EntityManager em() {
 		EntityManager em = emByThread.get();
 		if (em == null)

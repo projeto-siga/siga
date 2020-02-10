@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.axis.encoding.Base64;
-import org.jboss.logging.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,6 +56,7 @@ import br.gov.jfrj.siga.vraptor.Transacional;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeDesvio;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
+import br.gov.jfrj.siga.wf.model.WfDefinicaoDeResponsavel;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeVariavel;
 import br.gov.jfrj.siga.wf.util.NaoSerializar;
@@ -68,7 +68,6 @@ public class WfDiagramaController
 
 	private static final String VERIFICADOR_ACESSO = "DEFP:Gerenciar Diagramas";
 	private static final String UTF8 = "utf-8";
-	private static final Logger LOGGER = Logger.getLogger(WfDiagramaController.class);
 
 	public static String ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
 	public static final SimpleDateFormat isoFormatter = new SimpleDateFormat(ISO_FORMAT);
@@ -90,6 +89,7 @@ public class WfDiagramaController
 
 	}).registerTypeHierarchyAdapter(byte[].class, new ByteArrayToBase64TypeAdapter())
 			.registerTypeHierarchyAdapter(Date.class, new DateToStringTypeAdapter())
+			.registerTypeHierarchyAdapter(WfDefinicaoDeResponsavel.class, new WfDefinicaoDeResponsavelTypeAdapter())
 			.registerTypeHierarchyAdapter(DpLotacao.class, new DpLotacaoTypeAdapter())
 			.registerTypeHierarchyAdapter(DpPessoa.class, new DpPessoaTypeAdapter()).setPrettyPrinting().create();
 
@@ -114,6 +114,12 @@ public class WfDiagramaController
 			oo.addProperty("firstLine", src.getSigla());
 			oo.addProperty("secondLine", src.getDescricao());
 			return oo;
+		}
+	}
+
+	private static class WfDefinicaoDeResponsavelTypeAdapter implements JsonSerializer<WfDefinicaoDeResponsavel> {
+		public JsonElement serialize(WfDefinicaoDeResponsavel src, Type typeOfSrc, JsonSerializationContext context) {
+			return new JsonPrimitive(src.getIdInicial());
 		}
 	}
 
@@ -173,12 +179,11 @@ public class WfDiagramaController
 	public void lista() throws Exception {
 		try {
 			assertAcesso(VERIFICADOR_ACESSO);
-			List<WfDefinicaoDeProcedimento> modelos = dao().listarTodos(WfDefinicaoDeProcedimento.class, null);
+			List<WfDefinicaoDeProcedimento> modelos = dao().listarAtivos(WfDefinicaoDeProcedimento.class, "nome");
 			result.include("itens", modelos);
 		} catch (AplicacaoException e) {
 			throw new AplicacaoException(e.getMessage(), 0, e);
 		} catch (Exception ex) {
-			LOGGER.error(ex.getMessage(), ex);
 			throw new AplicacaoException(ex.getMessage(), 0, ex);
 		}
 	}
@@ -226,6 +231,9 @@ public class WfDiagramaController
 					td.setPessoa(dao().consultar(td.getPessoaId(), DpPessoa.class, false));
 				if (td.getLotacaoId() != null)
 					td.setLotacao(dao().consultar(td.getLotacaoId(), DpLotacao.class, false));
+				if (td.getDefinicaoDeResponsavelId() != null)
+					td.setDefinicaoDeResponsavel(
+							dao().consultar(td.getDefinicaoDeResponsavelId(), WfDefinicaoDeResponsavel.class, false));
 
 				if (td.getDefinicaoDeVariavel() != null) {
 					for (WfDefinicaoDeVariavel vd : td.getDefinicaoDeVariavel()) {
@@ -296,7 +304,7 @@ public class WfDiagramaController
 			result.redirectTo("editar?id=" + pd.getId());
 			return;
 		}
-		result.redirectTo(WfDiagramaController.class).lista();
+		result.use(Results.json()).from("OK");
 	}
 
 	@Transacional

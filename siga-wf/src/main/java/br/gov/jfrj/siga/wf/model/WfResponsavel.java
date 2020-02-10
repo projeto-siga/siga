@@ -25,6 +25,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
+import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
@@ -37,6 +38,7 @@ public class WfResponsavel extends HistoricoAuditavelSuporte
 	@Id
 	@GeneratedValue
 	@Column(name = "RESP_ID", unique = true, nullable = false)
+	@Desconsiderar
 	private java.lang.Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -62,12 +64,22 @@ public class WfResponsavel extends HistoricoAuditavelSuporte
 	// de HistoricoSuporte.
 	//
 	@Column(name = "HIS_ATIVO")
+	@Desconsiderar
 	private Integer hisAtivo;
 
 	@Override
 	public Integer getHisAtivo() {
 		this.hisAtivo = super.getHisAtivo();
 		return this.hisAtivo;
+	}
+
+	@Override
+	public void setHisAtivo(Integer hisAtivo) {
+		this.hisAtivo = hisAtivo;
+	}
+
+	public WfResponsavel() {
+		super();
 	}
 
 	public WfResponsavel(DpPessoa pessoa, DpLotacao lotacao) {
@@ -209,7 +221,12 @@ public class WfResponsavel extends HistoricoAuditavelSuporte
 
 	@PostLoad
 	public void postLoad() {
-		this.setHisIde(Long.toString(this.getIdInicial()));
+		this.setHisIde(criarIdExterna());
+	}
+
+	public String criarIdExterna() {
+		return Long.toString(this.getDefinicaoDeResponsavel().getIdInicial()) + "-"
+				+ Long.toString(this.getOrgaoUsuario().getId());
 	}
 
 }

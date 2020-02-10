@@ -63,16 +63,19 @@ app
 								td.definicaoDeVariavel = [];
 								td.definicaoDeDesvio = [];
 
-								if (t.refUnidadeResponsavel
+								if (t.tipoResponsavel == 'LOTACAO' && t.refUnidadeResponsavel
 										&& t.refUnidadeResponsavel.originalObject
 										&& t.refUnidadeResponsavel.originalObject.key)
 									td.lotacaoId = t.refUnidadeResponsavel.originalObject.key;
-								
-								if (t.refPessoaResponsavel
+
+								if (t.tipoResponsavel == 'PESSOA' && t.refPessoaResponsavel
 										&& t.refPessoaResponsavel.originalObject
 										&& t.refPessoaResponsavel.originalObject.key)
 									td.pessoaId = t.refPessoaResponsavel.originalObject.key;
-								
+
+								if (t.tipoResponsavel == 'RESPONSAVEL')
+									td.definicaoDeResponsavelId = t.refResponsavel;
+
 								pd.definicaoDeTarefa.push(td);
 
 								if (d.tarefa[i].variavel) {
@@ -150,12 +153,19 @@ app
 								td.ordem = i;
 								td.variavel = [];
 								td.desvio = [];
-								
+
 								if (t.lotacao)
-									td.refUnidadeResponsavel = {originalObject: t.lotacao}
+									td.refUnidadeResponsavel = {
+										originalObject : t.lotacao
+									}
 								if (t.pessoa)
-									td.refPessoaResponsavel = {originalObject: t.pessoa}
-								
+									td.refPessoaResponsavel = {
+										originalObject : t.pessoa
+									}
+
+								if (t.definicaoDeResponsavel)
+									td.refResponsavel = t.definicaoDeResponsavel;
+
 								pd.tarefa.push(td);
 
 								if (d.definicaoDeTarefa[i].definicaoDeVariavel) {
@@ -199,6 +209,18 @@ app
 								}, function(response) {
 								});
 
+					}
+
+					$scope.carregarResponsaveis = function(cont) {
+						$http({
+							url : '/sigawf/app/responsavel/carregar',
+							method : "GET"
+						}).then(function(response) {
+							$scope.responsaveis = response.data.list;
+							if (cont)
+								cont();
+						}, function(response) {
+						});
 					}
 
 					$scope.selectedObject = function(p1, p2) {
@@ -355,11 +377,12 @@ app
 								.replace(/\+/g, ' '));
 					}
 
-					$scope.id = $scope.getParameterByName('id');
-					if ($scope.id) {
-						$scope.carregar($scope.id);
-					}
-
+					$scope.carregarResponsaveis(function() {
+						$scope.id = $scope.getParameterByName('id');
+						if ($scope.id) {
+							$scope.carregar($scope.id);
+						}
+					})
 				});
 
 var uuidv4 = function() {

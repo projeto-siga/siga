@@ -34,8 +34,7 @@ import br.gov.jfrj.siga.wf.util.WfResp;
 @Entity
 @BatchSize(size = 500)
 @Table(name = "WF_PROCEDIMENTO", catalog = "WF")
-public abstract class WfProcedimento
-		implements ProcessInstance<WfDefinicaoDeProcedimento, WfDefinicaoDeTarefa, WfResp> {
+public class WfProcedimento implements ProcessInstance<WfDefinicaoDeProcedimento, WfDefinicaoDeTarefa, WfResp> {
 	@Id
 	@GeneratedValue
 	@Column(name = "PROC_ID", unique = true, nullable = false)
@@ -175,7 +174,14 @@ public abstract class WfProcedimento
 	}
 
 	@Override
-	public abstract WfResp calcResponsible(WfDefinicaoDeTarefa tarefa);
+	public WfResp calcResponsible(WfDefinicaoDeTarefa tarefa) {
+		switch (tarefa.getTipoDeResponsavel()) {
+		case PESSOA:
+		case LOTACAO:
+			return new WfResp(tarefa.getPessoa(), tarefa.getLotacao());
+		}
+		return null;
+	};
 
 	@Override
 	public WfDefinicaoDeProcedimento getProcessDefinition() {

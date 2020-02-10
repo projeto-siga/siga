@@ -8,7 +8,7 @@
 
 <siga:pagina titulo="Lista de Diagramas">
 	<div class="container-fluid content mb-3">
-		<h3>Lista de Responsáveis</h3>
+		<h3>Inicialização de Procedimento</h3>
 		<table class="table table-sm table-striped">
 			<thead class="thead-dark">
 				<tr class="header">
@@ -19,8 +19,10 @@
 			<tbody class="table-bordered">
 				<c:forEach var="item" items="${itens}">
 					<tr>
-						<td><a
-							href="${linkTo[WfResponsavelController].edita(item.id)}">${item.nome}</a></td>
+						<td><form name="frm${item.id}"
+								action="${linkTo[WfAppController].iniciar(item.id)}" method="post"
+								style="display: none;"></form> <a
+							href="javascript: document.forms['frm${item.id}'].submit();">${item.nome}</a></td>
 						<td>${item.descr}</td>
 					</tr>
 				</c:forEach>
@@ -28,8 +30,8 @@
 		</table>
 		<form>
 			<div class="gt-table-buttons">
-				<a href="novo" class="btn btn-primary" style="cursor: pointer;"
-					accesskey="n"><u>N</u>ovo Responsável</a>
+				<a href="editar" class="btn btn-primary" style="cursor: pointer;"
+					accesskey="n"><u>N</u>ovo Diagrama</a>
 			</div>
 		</form>
 	</div>

@@ -126,9 +126,9 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 	}
 
 	public List<WfResponsavel> consultarResponsaveisPorDefinicaoDeResponsavel(WfDefinicaoDeResponsavel dr) {
-		String sql = "from WfResponsavel o where o.definicaoDeResponsavel.id = :id";
+		String sql = "from WfResponsavel o where o.definicaoDeResponsavel.hisIdIni = :idIni and o.hisDtFim is null";
 		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
-		query.setParameter("id", dr.getId());
+		query.setParameter("idIni", dr.getHisIdIni());
 		List<WfResponsavel> result = query.getResultList();
 		if (result == null || result.size() == 0)
 			return null;

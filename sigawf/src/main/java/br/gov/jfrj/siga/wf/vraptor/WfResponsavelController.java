@@ -37,6 +37,7 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -58,19 +59,10 @@ public class WfResponsavelController extends WfController {
 	private static final Logger LOGGER = Logger.getLogger(WfResponsavelController.class);
 
 	public static class Item {
-		private String responsavelIde;
 		private Long orgaoId;
 		private String orgaoSigla;
 		private DpLotacao lotacao;
 		private DpPessoa pessoa;
-
-		public String getResponsavelIde() {
-			return responsavelIde;
-		}
-
-		public void setResponsavelIde(String responsavelIde) {
-			this.responsavelIde = responsavelIde;
-		}
 
 		public Long getOrgaoId() {
 			return orgaoId;
@@ -125,8 +117,22 @@ public class WfResponsavelController extends WfController {
 	public void lista() throws Exception {
 		try {
 			assertAcesso(VERIFICADOR_ACESSO);
-			List<WfDefinicaoDeResponsavel> modelos = dao().listarTodos(WfDefinicaoDeResponsavel.class, null);
+			List<WfDefinicaoDeResponsavel> modelos = dao().listarAtivos(WfDefinicaoDeResponsavel.class, "nome");
 			result.include("itens", modelos);
+		} catch (AplicacaoException e) {
+			throw new AplicacaoException(e.getMessage(), 0, e);
+		} catch (Exception ex) {
+			LOGGER.error(ex.getMessage(), ex);
+			throw new AplicacaoException(ex.getMessage(), 0, ex);
+		}
+	}
+
+	@Get("carregar")
+	public void carregar() throws Exception {
+		try {
+			assertAcesso(VERIFICADOR_ACESSO);
+			List<WfDefinicaoDeResponsavel> list = dao().listarAtivos(WfDefinicaoDeResponsavel.class, "nome");
+			result.use(Results.json()).from(list, "list").serialize();
 		} catch (AplicacaoException e) {
 			throw new AplicacaoException(e.getMessage(), 0, e);
 		} catch (Exception ex) {
@@ -159,7 +165,6 @@ public class WfResponsavelController extends WfController {
 			i.orgaoSigla = o.getSigla();
 			if (map.containsKey(o.getId())) {
 				WfResponsavel r = map.get(o.getId());
-				i.responsavelIde = r.getIdExterna();
 				i.pessoa = r.getPessoa();
 				i.lotacao = r.getLotacao();
 			}
@@ -188,21 +193,25 @@ public class WfResponsavelController extends WfController {
 	public void gravar(final Long id, final String nome, final String descr, List<Item> itens)
 			throws UnsupportedEncodingException {
 		assertAcesso(VERIFICADOR_ACESSO);
+		Date dt = dao().consultarDataEHoraDoServidor();
 
 		if (id == null) {
 			WfDefinicaoDeResponsavel dr = new WfDefinicaoDeResponsavel();
 			dr.setNome(nome);
 			dr.setDescr(descr);
-			dao().gravar(dr);
+			dr.setHisDtIni(dt);
+			dao().gravarComHistorico(dr, getIdentidadeCadastrante());
 			result.redirectTo(this).edita(dr.getId());
 			return;
 		}
-
 		WfDefinicaoDeResponsavel dr = dao().consultar(id, WfDefinicaoDeResponsavel.class, false);
+		dr = dao().consultarAtivoPorIdInicial(WfDefinicaoDeResponsavel.class, dr.getHisIdIni());
 
-		dr.setNome(nome);
-		dr.setDescr(descr);
-		dao().gravar(dr); // com histórico
+		WfDefinicaoDeResponsavel drNovo = new WfDefinicaoDeResponsavel();
+		drNovo.setNome(nome);
+		drNovo.setDescr(descr);
+		drNovo.setHisIdIni(dr.getHisIdIni());
+		dr = (WfDefinicaoDeResponsavel) dao().gravarComHistorico(drNovo, dr, dt, getIdentidadeCadastrante());
 
 		// Utilizaremos o sincronizador para perceber apenas as diferenças entre a
 		// definição que está guardada no banco de dados e a nova versão submetida..
@@ -215,11 +224,20 @@ public class WfResponsavelController extends WfController {
 			setAntes.addAll(resps);
 		if (itens != null) {
 			for (Item i : itens) {
-				if ((i.pessoa == null || i.pessoa.getId() == null) && (i.lotacao == null || i.lotacao.getId() == null))
+				if (i.pessoa != null && i.pessoa.getId() == null)
+					i.pessoa = null;
+				else
+					i.pessoa = dao().carregarPorId(i.pessoa);
+				if (i.lotacao != null && i.lotacao.getId() == null)
+					i.lotacao = null;
+				else
+					i.lotacao = dao().carregarPorId(i.lotacao);
+				if (i.pessoa == null && i.lotacao == null)
 					continue;
 				WfResponsavel r = new WfResponsavel(i.pessoa, i.lotacao);
-				r.setIdExterna(i.responsavelIde);
 				r.setOrgaoUsuario(dao().consultar(i.orgaoId, CpOrgaoUsuario.class, false));
+				r.setDefinicaoDeResponsavel(dao().consultar(dr.getIdInicial(), dr.getClass(), false));
+				r.setIdExterna(r.criarIdExterna());
 				setDepois.add(r);
 			}
 		}
@@ -229,13 +247,14 @@ public class WfResponsavelController extends WfController {
 		List<br.gov.jfrj.siga.sinc.lib.Item> list = sinc.getEncaixe();
 
 		for (br.gov.jfrj.siga.sinc.lib.Item i : list) {
-			Date dt = new Date();
 			switch (i.getOperacao()) {
 			case alterar:
+				i.getNovo().setIdInicial(i.getAntigo().getIdInicial());
 				dao().gravarComHistorico((HistoricoAuditavel) i.getNovo(), (HistoricoAuditavel) i.getAntigo(), dt,
 						getIdentidadeCadastrante());
 				break;
 			case incluir:
+				i.getNovo().setDataInicio(dt);
 				dao().gravarComHistorico((HistoricoAuditavel) i.getNovo(), getIdentidadeCadastrante());
 				break;
 			case excluir:
@@ -245,6 +264,6 @@ public class WfResponsavelController extends WfController {
 			}
 		}
 
-		result.redirectTo(this).edita(id);
+		result.redirectTo(this).edita(dr.getId());
 	}
 }

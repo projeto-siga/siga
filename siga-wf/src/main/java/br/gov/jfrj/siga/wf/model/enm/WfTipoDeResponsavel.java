@@ -19,7 +19,7 @@ public enum WfTipoDeResponsavel implements ResponsibleKind {
 	//
 	LOTA_DESTINATARIO("Lotação do Destinatário"),
 	//
-	TABELADO("Tabelado"),
+	RESPONSAVEL("Cadastrado"),
 	//
 	PESSOA("Pessoa"),
 	//

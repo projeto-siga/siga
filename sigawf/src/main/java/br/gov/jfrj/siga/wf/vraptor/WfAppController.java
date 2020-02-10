@@ -16,6 +16,7 @@ import com.crivano.jflow.model.enm.VariableEditingKind;
 
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaCalendar;
@@ -28,6 +29,7 @@ import br.gov.jfrj.siga.vraptor.SigaObjects;
 import br.gov.jfrj.siga.vraptor.StringQualquer;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
+import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeVariavel;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
@@ -39,8 +41,7 @@ import br.gov.jfrj.siga.wf.util.WfUtil;
 @Controller
 @SuppressWarnings("unchecked")
 public class WfAppController extends WfController {
-
-	private static final String WF_REDIRECT_TO = "wf_redirect_to";
+	private static final String VERIFICADOR_ACESSO = "INI:Iniciar";
 
 	/**
 	 * @deprecated CDI eyes only
@@ -87,8 +88,29 @@ public class WfAppController extends WfController {
 	 * @return
 	 * @throws Exception
 	 */
-	@Path("/app/initializeProcess/{pdId}")
-	public void initializeProcess(Long pdId) throws Exception {
+	@Path("/app/iniciar")
+	public void iniciar() throws Exception {
+		try {
+			assertAcesso(VERIFICADOR_ACESSO);
+			List<WfDefinicaoDeProcedimento> modelos = dao().listarAtivos(WfDefinicaoDeProcedimento.class, "nome");
+			result.include("itens", modelos);
+		} catch (AplicacaoException e) {
+			throw new AplicacaoException(e.getMessage(), 0, e);
+		} catch (Exception ex) {
+			throw new AplicacaoException(ex.getMessage(), 0, ex);
+		}
+	}
+
+	/**
+	 * Cria uma instância de processo baseando-se na definição de processo escolhida
+	 * pelo usuário.
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	@Post
+	@Path("/app/iniciar/{pdId}")
+	public void iniciar(Long pdId) throws Exception {
 		if (pdId == null)
 			throw new RuntimeException();
 		WfProcedimento pi = Wf.getInstance().getBL().createProcessInstance(pdId, getCadastrante(),

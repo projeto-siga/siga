@@ -1,5 +1,7 @@
 package br.gov.jfrj.siga.ex.bl;
 
+import static br.gov.jfrj.siga.ex.ExMobil.isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -244,7 +246,11 @@ public class ExAcesso {
 			return acessos;
 
 		List<ExMovimentacao> listaMov = new ArrayList<ExMovimentacao>();
-		listaMov.addAll(doc.getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO));
+		
+		if (isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso()) 									
+			listaMov = doc.getListaMovimentacaoPorRestricaoAcesso();
+		else
+			listaMov.addAll(doc.getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO));
 		
 		if(listaMov.isEmpty()) {
 			// Aberto
@@ -374,33 +380,37 @@ public class ExAcesso {
 			if(doc.getPai() != null) {
 				for (ExMobil exMobil : doc.getPai().getExMobilSet()) {
 					listaAcomp.addAll(exMobil.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA));
-				}
-				
+				}				
 			}
 			
 			for (ExMovimentacao exMovimentacao : listaMov) {
 				add(exMovimentacao.getCadastrante());
-				if(exMovimentacao.getSubscritor().equals(doc.getCadastrante())) {
-					add(doc.getCadastrante());
-				}
-				if(exMovimentacao.getSubscritor().equals(doc.getDestinatario())) {
-					add(doc.getDestinatario());
-				}
-				if(exMovimentacao.getSubscritor().equals(doc.getSubscritor())) {
-					add(doc.getSubscritor());
-				}
-				if(exMovimentacao.getSubscritor().equals(doc.getTitular())) {
-					add(doc.getTitular());
-				}
-				
-				for (ExMovimentacao exMovimentacaoAcomp : listaAcomp) {
-					if(exMovimentacao.getSubscritor().equals(exMovimentacaoAcomp.getSubscritor())) {
-						add(exMovimentacao.getSubscritor());
+								
+				if (isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso()) {
+					add(exMovimentacao.getSubscritor());					
+				} else {					
+					if(exMovimentacao.getSubscritor().equals(doc.getCadastrante())) {
+						add(doc.getCadastrante());
 					}
-					if(exMovimentacao.getSubscritor().equals(exMovimentacaoAcomp.getResp())) {
-						add(exMovimentacao.getSubscritor());
+					if(exMovimentacao.getSubscritor().equals(doc.getDestinatario())) {
+						add(doc.getDestinatario());
 					}
-				}
+					if(exMovimentacao.getSubscritor().equals(doc.getSubscritor())) {
+						add(doc.getSubscritor());
+					}
+					if(exMovimentacao.getSubscritor().equals(doc.getTitular())) {
+						add(doc.getTitular());
+					}
+					
+					for (ExMovimentacao exMovimentacaoAcomp : listaAcomp) {
+						if(exMovimentacao.getSubscritor().equals(exMovimentacaoAcomp.getSubscritor())) {
+							add(exMovimentacao.getSubscritor());
+						}
+						if(exMovimentacao.getSubscritor().equals(exMovimentacaoAcomp.getResp())) {
+							add(exMovimentacao.getSubscritor());
+						}
+					}
+				}				
 				
 			}
 			

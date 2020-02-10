@@ -18,6 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.bl;
 
+import static br.gov.jfrj.siga.ex.ExMobil.isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -4889,10 +4891,12 @@ public class ExBL extends CpBL {
 			iniciarAlteracao();
 
 			List<ExDocumento> documentos = new ArrayList<>();
+			List<ExMovimentacao> listaMov = new ArrayList<ExMovimentacao>();
 			documentos.add(doc);
 			documentos.addAll(doc.getExDocumentoFilhoSet());
 			for (ExDocumento exDocumento : documentos) {
-				for (DpPessoa subscritor : listaSubscritor) {
+				for (DpPessoa subscritor : listaSubscritor) {					
+					
 					final ExMovimentacao mov = criarNovaMovimentacao(
 							ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO, cadastrante, lotaCadastrante,
 							exDocumento.getMobilGeral(), dtMov, subscritor, null, titular, null, dtMov);
@@ -4905,7 +4909,12 @@ public class ExBL extends CpBL {
 
 					mov.setExNivelAcesso(nivelAcesso);
 					exDocumento.setExNivelAcesso(nivelAcesso);
-
+					
+					if (isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso()) {
+						listaMov.add(mov);
+						mov.getExMobil().doc().setListaMovimentacaoPorRestricaoAcesso(listaMov);
+					}
+						
 					gravarMovimentacao(mov);
 					concluirAlteracaoComRecalculoAcesso(mov.getExMobil());
 				}

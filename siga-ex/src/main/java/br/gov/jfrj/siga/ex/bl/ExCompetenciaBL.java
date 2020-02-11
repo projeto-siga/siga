@@ -4599,8 +4599,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		if (documento.isEletronico()
 				&& documento.isCancelado()
-				&& (documento.getLotaCadastrante().equivale(lotaTitular) || documento
-						.getSubscritor().equivale(titular)))
+				&& (documento.getLotaCadastrante().equivale(lotaTitular) ||(!documento.isExternoCapturado() &&
+						documento.getSubscritor().equivale(titular))))
 			return true;
 
 

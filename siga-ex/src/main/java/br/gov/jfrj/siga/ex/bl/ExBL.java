@@ -18,6 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.bl;
 
+import static br.gov.jfrj.siga.ex.ExMobil.isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -4889,10 +4891,12 @@ public class ExBL extends CpBL {
 			iniciarAlteracao();
 
 			List<ExDocumento> documentos = new ArrayList<>();
+			List<ExMovimentacao> listaMov = new ArrayList<ExMovimentacao>();
 			documentos.add(doc);
 			documentos.addAll(doc.getExDocumentoFilhoSet());
 			for (ExDocumento exDocumento : documentos) {
-				for (DpPessoa subscritor : listaSubscritor) {
+				for (DpPessoa subscritor : listaSubscritor) {					
+					
 					final ExMovimentacao mov = criarNovaMovimentacao(
 							ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO, cadastrante, lotaCadastrante,
 							exDocumento.getMobilGeral(), dtMov, subscritor, null, titular, null, dtMov);
@@ -4905,7 +4909,12 @@ public class ExBL extends CpBL {
 
 					mov.setExNivelAcesso(nivelAcesso);
 					exDocumento.setExNivelAcesso(nivelAcesso);
-
+					
+					if (isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso()) {
+						listaMov.add(mov);
+						mov.getExMobil().doc().setListaMovimentacaoPorRestricaoAcesso(listaMov);
+					}
+						
 					gravarMovimentacao(mov);
 					concluirAlteracaoComRecalculoAcesso(mov.getExMobil());
 				}
@@ -6191,7 +6200,7 @@ public class ExBL extends CpBL {
 			// documento
 
 			for (ExMobil m : doc.getExMobilSet()) {
-				if (!m.isGeral()) {
+				if(!m.isGeral() && !m.isCancelada()) { //Retirada as vias que foram canceladas
 					if (!getComp().podeMovimentar(cadastrante, lotaCadastrante, m) || m.isJuntado() || m.isApensado()
 							|| m.temApensos() || m.temDocumentosJuntados())
 						throw new AplicacaoException("Cancelamento não permitido");

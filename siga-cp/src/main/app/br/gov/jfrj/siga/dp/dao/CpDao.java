@@ -1495,6 +1495,12 @@ public class CpDao extends ModeloDao {
 				query.setLong("cpf", flt.getCpf());
 			else
 				query.setLong("cpf", 0);
+
+			if (flt.getEmail() != null)
+				query.setString("email", flt.getEmail());
+			else
+				query.setString("email", null);
+			
 			
 			if (flt.getIdOrgaoUsu() != null)
 				query.setLong("idOrgaoUsu", flt.getIdOrgaoUsu());

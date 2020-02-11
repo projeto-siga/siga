@@ -1,5 +1,8 @@
 package br.gov.jfrj.siga.vraptor;
 
+import static br.gov.jfrj.siga.ex.ExMobil.adicionarIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso;
+import static br.gov.jfrj.siga.ex.ExMobil.removerIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -761,15 +764,17 @@ public class ExMovimentacaoController extends ExController {
 			throw new AplicacaoException(
 					"Não é possível restringir acesso");
 		}
+					
+		adicionarIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso();			
 		
-		
-
 		Ex.getInstance()
 				.getBL()
 				.restringirAcesso(getCadastrante(), getLotaTitular(), doc,
 						null, mov.getLotaResp(), mov.getResp(),
 						listaSubscritor, mov.getTitular(),
 						mov.getNmFuncaoSubscritor(), exTipoSig);
+		
+		removerIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso();
 
 		result.include("msgCabecClass", "alert-warning");
 		result.include("mensagemCabec", "Somente os usuários definidos, terão acesso aos documentos. Os usuários que já tiveram acesso ao documento, por tramitações anteriores ou por definição de acompanhamento deixam de ter acesso/visualização ao documento. Inclusive o cadastrante dos documentos, responsáveis pela assinatura e cossignatário");

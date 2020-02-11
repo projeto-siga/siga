@@ -134,7 +134,7 @@
 
 		<repository>
 			<id>JBoss Thirdparty Releases</id>
-			<url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+			<url>https://repository.jboss.org/nexus/content/groups/public-jboss/</url>
 		</repository>
 		<repository>
 			<id>jboss-releases</id>
@@ -148,19 +148,19 @@
 		<!-- repositorio adicionado para a swetake -->
 		<repository>
 			<id>swetake</id>
-			<url>http://itrc.jju.edu.cn/nexus-2.0.6/content/repositories/thirdparty/</url>
+			<url>https://itrc.jju.edu.cn/nexus-2.0.6/content/repositories/thirdparty/</url>
 		</repository>
 
 		<!-- repositorio adicionado para a simplecaptcha -->
 		<!-- Edson: removendo pois está quebrado -->
 		<!--<repository>
 			<id>simplecaptcha</id>
-			<url>http://maven.nfms4redd.org/</url>
+			<url>https://maven.nfms4redd.org/</url>
 		</repository>-->
 		<!-- repositorio adicionado para o dynamic jasper -->
 		<repository>
 	    	<id>fdvsolution.public</id>
-	    	<url>http://nexus.fdvs.com.ar/content/groups/public/</url>
+	    	<url>https://nexus.fdvs.com.ar/content/groups/public/</url>
 	    </repository>
 	</repositories>
 

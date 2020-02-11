@@ -6200,7 +6200,7 @@ public class ExBL extends CpBL {
 			// documento
 
 			for (ExMobil m : doc.getExMobilSet()) {
-				if (!m.isGeral()) {
+				if(!m.isGeral() && !m.isCancelada()) { //Retirada as vias que foram canceladas
 					if (!getComp().podeMovimentar(cadastrante, lotaCadastrante, m) || m.isJuntado() || m.isApensado()
 							|| m.temApensos() || m.temDocumentosJuntados())
 						throw new AplicacaoException("Cancelamento não permitido");

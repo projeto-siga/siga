@@ -784,10 +784,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		for (ExMovimentacao mov : movSet) {
 			if (!permitirCancelada && (mov.isCancelada() || mov.isCanceladora()))
 				continue;
-				
-			if (isIgnorarMovimentacaoDeDesentranhamento(mov))
-				continue;			
-
+		
 			if (tpMovs.length == 0 || tpMovs[0] == 0L)
 				movReturn = mov;
 			else
@@ -806,10 +803,6 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 				}
 		}
 		return movReturn;
-	}
-	
-	public boolean isIgnorarMovimentacaoDeDesentranhamento(ExMovimentacao mov) {
-		return SigaMessages.isSigaSP() && mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA;
 	}
 
 	/**

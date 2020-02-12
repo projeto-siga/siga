@@ -44,7 +44,7 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
-@Table(name = "CP_CONFIGURACAO", schema = "CORPORATIVO")
+@Table(name = "cp_configuracao", catalog = "corporativo")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class CpConfiguracao extends AbstractCpConfiguracao implements CpConvertableEntity {
 

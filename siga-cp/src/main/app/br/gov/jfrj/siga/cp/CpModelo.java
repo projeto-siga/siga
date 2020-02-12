@@ -33,7 +33,7 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
-@Table(name = "CP_MODELO", schema = "CORPORATIVO")
+@Table(name = "cp_modelo", catalog = "corporativo")
 @NamedQueries({
 	@NamedQuery(name = "consultarCpModelos", query = "select u from CpModelo u where u.hisDtFim is null"),
 	@NamedQuery(name = "consultarCpModeloGeral", query = "select u from CpModelo u where u.cpOrgaoUsuario is null and u.hisDtFim is null"),

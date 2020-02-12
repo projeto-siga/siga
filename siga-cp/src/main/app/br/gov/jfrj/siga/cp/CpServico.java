@@ -33,7 +33,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
-@Table(name = "CP_SERVICO", schema = "CORPORATIVO")
+@Table(name = "cp_servico", catalog = "corporativo")
 @Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)

@@ -16,7 +16,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 @Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
-@Table(name = "CP_UNIDADE_MEDIDA", schema = "CORPORATIVO")
+@Table(name = "cp_unidade_medida", catalog = "corporativo")
 public class CpUnidadeMedida extends AbstractCpUnidadeMedida {
 
 	final static public int ANO = 1;

@@ -42,7 +42,7 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 @Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
-@Table(name = "EX_TIPO_DESTINACAO", catalog = "SIGA")
+@Table(name = "ex_tipo_destinacao", catalog = "siga")
 public class ExTipoDestinacao extends AbstractExTipoDestinacao implements
 		Serializable {
 	/**

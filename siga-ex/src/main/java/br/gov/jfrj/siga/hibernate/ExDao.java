@@ -618,7 +618,7 @@ public class ExDao extends CpDao {
 		StringBuffer sbf = new StringBuffer();
 
 		sbf.append("select * from siga.ex_configuracao ex inner join "
-				+ "CORPORATIVO"
+				+ "corporativo"
 				+ ".cp_configuracao cp on ex.id_configuracao_ex = cp.id_configuracao ");
 
 		sbf.append("" + "where 1 = 1");
@@ -666,21 +666,21 @@ public class ExDao extends CpDao {
 			sbf.append(" and (cp.id_orgao_usu = ");
 			sbf.append(orgao.getId());
 			sbf.append(" or cp.id_lotacao in (select id_lotacao from "
-					+ "CORPORATIVO"
+					+ "corporativo"
 					+ ".dp_lotacao lot where lot.id_orgao_usu= ");
 			sbf.append(orgao.getId());
 			sbf.append(")");
 			sbf.append(" or cp.id_pessoa in (select id_pessoa from "
-					+ "CORPORATIVO"
+					+ "corporativo"
 					+ ".dp_pessoa pes where pes.id_orgao_usu = ");
 			sbf.append(orgao.getId());
 			sbf.append(")");
 			sbf.append(" or cp.id_cargo in (select id_cargo from "
-					+ "CORPORATIVO" + ".dp_cargo cr where cr.id_orgao_usu = ");
+					+ "corporativo" + ".dp_cargo cr where cr.id_orgao_usu = ");
 			sbf.append(orgao.getId());
 			sbf.append(")");
 			sbf.append(" or cp.id_funcao_confianca in (select id_funcao_confianca from "
-					+ "CORPORATIVO"
+					+ "corporativo"
 					+ ".dp_funcao_confianca fc where fc.id_orgao_usu = ");
 			sbf.append(orgao.getId());
 			sbf.append(")");
@@ -1308,8 +1308,8 @@ public class ExDao extends CpDao {
 						"select marca, marcador, mobil from ExMarca marca"
 								+ " inner join marca.cpMarcador marcador"
 								+ " inner join marca.exMobil mobil"
-								+ " where (marca.dtIniMarca is null or marca.dtIniMarca < sysdate)"
-								+ " and (marca.dtFimMarca is null or marca.dtFimMarca > sysdate)"
+								+ " where (marca.dtIniMarca is null or marca.dtIniMarca < CURRENT_TIMESTAMP)"
+								+ " and (marca.dtFimMarca is null or marca.dtFimMarca > CURRENT_TIMESTAMP)"
 								+ (titular != null ? " and (marca.dpPessoaIni.idPessoa = :titular)"
 										: " and (marca.dpLotacaoIni.idLotacao = :lotaTitular)"));
 

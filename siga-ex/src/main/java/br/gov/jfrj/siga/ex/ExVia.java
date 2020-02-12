@@ -36,7 +36,7 @@ import br.gov.jfrj.siga.model.Assemelhavel;
  * customized as it is never re-generated after being created.
  */
 @Entity
-@Table(name = "EX_VIA", catalog = "SIGA")
+@Table(name = "ex_via", catalog = "siga")
 @Cache(region = ExDao.CACHE_EX, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class ExVia extends AbstractExVia {
 	/**

@@ -44,7 +44,7 @@ import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
-@Table(name = "CP_ORGAO", schema = "CORPORATIVO")
+@Table(name = "cp_orgao", catalog = "corporativo")
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class CpOrgao extends AbstractCpOrgao implements Serializable,
 		Selecionavel, Historico, Sincronizavel {

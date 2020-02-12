@@ -35,7 +35,7 @@ import org.hibernate.annotations.BatchSize;
  */
 @Entity
 @BatchSize(size = 500)
-@Table(name = "CP_MARCA", schema = "CORPORATIVO")
+@Table(name = "cp_marca", catalog = "corporativo")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "ID_TP_MARCA", discriminatorType = DiscriminatorType.INTEGER)
 public abstract class CpMarca extends AbstractCPMarca {

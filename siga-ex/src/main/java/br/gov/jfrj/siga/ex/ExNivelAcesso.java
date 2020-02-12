@@ -43,7 +43,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 @Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
-@Table(name = "EX_NIVEL_ACESSO", catalog = "SIGA")
+@Table(name = "ex_nivel_acesso", catalog = "siga")
 public class ExNivelAcesso extends AbstractExNivelAcesso implements
 		Serializable {
 

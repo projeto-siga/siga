@@ -40,7 +40,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
 @Entity
-@Table(name = "DP_SUBSTITUICAO", schema = "CORPORATIVO")
+@Table(name = "dp_substituicao", catalog = "corporativo")
 @Cache(region = CpDao.CACHE_SECONDS, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpSubstituicao extends AbstractDpSubstituicao implements
 		Serializable {

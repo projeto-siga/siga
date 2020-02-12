@@ -44,7 +44,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
 @Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
-@Table(name = "EX_ESTADO_DOC", catalog = "SIGA")
+@Table(name = "ex_estado_doc", catalog = "siga")
 public class ExEstadoDoc extends AbstractExEstadoDoc implements Serializable,
 		Selecionavel {
 

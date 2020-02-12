@@ -29,7 +29,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 
 
 @Entity
-@Table(schema = "CORPORATIVO", name="CP_TIPO_LOTACAO")
+@Table(catalog = "corporativo", name="cp_tipo_lotacao")
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class CpTipoLotacao extends AbstractCpTipoLotacao {
 

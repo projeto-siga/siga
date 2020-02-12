@@ -81,42 +81,42 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 		@NamedQuery(name = "consultarParaArquivarIntermediarioEmLote", query = "select mob, mar from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where mar.cpMarcador.idMarcador=51              "
 				+ "                and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
-				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)"
-				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)"
+				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < CURRENT_TIMESTAMP)"
+				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > CURRENT_TIMESTAMP)"
 				+ "                order by mob.exDocumento.dtDoc asc"),
 
 		@NamedQuery(name = "consultarQuantidadeParaArquivarIntermediarioEmLote", query = "select count(*) from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where mar.cpMarcador.idMarcador=51              "
 				+ "                and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
-				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)"
-				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)"),
+				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < CURRENT_TIMESTAMP)"
+				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > CURRENT_TIMESTAMP)"),
 		// Somente os "a recolher para arquivo permanente"
 		@NamedQuery(name = "consultarParaArquivarPermanenteEmLote", query = "select mob, mar from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where mar.cpMarcador.idMarcador=50      "
 				+ "                and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
-				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)"
-				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)"
+				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < CURRENT_TIMESTAMP)"
+				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > CURRENT_TIMESTAMP)"
 				+ "                order by mob.exDocumento.dtDoc asc"),
 		@NamedQuery(name = "consultarQuantidadeParaArquivarPermanenteEmLote", query = "select count(*) from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where mar.cpMarcador.idMarcador=50              "
 				+ "                and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
-				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)"
-				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)"),
+				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < CURRENT_TIMESTAMP)"
+				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > CURRENT_TIMESTAMP)"),
 		// Somente os "a eliminar"
 		@NamedQuery(name = "consultarAEliminar", query = "select mob, mar from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where (mar.cpMarcador.idMarcador=7)"
 				+ "                and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
 				+ "                and (:dtIni is null or mob.exDocumento.dtDoc >= :dtIni)"
 				+ "                and (:dtFim is null or mob.exDocumento.dtDoc <= :dtFim)"
-				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)"
-				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)"),
+				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < CURRENT_TIMESTAMP)"
+				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > CURRENT_TIMESTAMP)"),
 		@NamedQuery(name = "consultarQuantidadeAEliminar", query = "select count(*) from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where mar.cpMarcador.idMarcador=7              "
 				+ "                and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
 				+ "                and (:dtIni is null or mob.exDocumento.dtDoc >= :dtIni)"
 				+ "                and (:dtFim is null or mob.exDocumento.dtDoc <= :dtFim)"
-				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)"
-				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)"),
+				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < CURRENT_TIMESTAMP)"
+				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > CURRENT_TIMESTAMP)"),
 		// Somente os "em edital de eliminação"
 		@NamedQuery(name = "consultarEmEditalEliminacao", query = "select mob, mar" + "                from ExMobil mob"
 				+ "                join mob.exMarcaSet mar" + "                join mob.exDocumento doc"

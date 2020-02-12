@@ -30,7 +30,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 
 @Entity
-@Table(name = "CP_TIPO_CONFIGURACAO", schema = "CORPORATIVO")
+@Table(name = "cp_tipo_configuracao", catalog = "corporativo")
 @Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)

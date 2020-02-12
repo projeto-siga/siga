@@ -1975,18 +1975,11 @@ public class ExDocumentoController extends ExController {
 						mob))
 			throw new AplicacaoException(
 					"Não é possível tornar documento sem efeito.");
-		try {
-			if (SigaMessages.isSigaSP() && doc.isCapturado()) {
-				Ex.getInstance()
-				.getBL()
-				.cancelarDocumento(getCadastrante(),
-						getLotaTitular(), doc);
-			} else {
-				Ex.getInstance()
-						.getBL()
-						.TornarDocumentoSemEfeito(getCadastrante(),
-								getLotaTitular(), doc, descrMov);
-			}
+		try {			
+			Ex.getInstance()
+					.getBL()
+					.TornarDocumentoSemEfeito(getCadastrante(),
+							getLotaTitular(), doc, descrMov);
 		} catch (final Exception e) {
 			throw e;
 		}

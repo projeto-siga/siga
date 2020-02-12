@@ -6221,7 +6221,10 @@ public class ExBL extends CpBL {
 				obterMetodoPorString(funcao, doc);
 			}
 
-			concluirAlteracaoDocComRecalculoAcesso(doc);
+			if (SigaMessages.isSigaSP() && doc.isCapturado()) 
+				concluirAlteracaoDoc(doc);
+			else 
+				concluirAlteracaoDocComRecalculoAcesso(doc);						
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao tornar o documento sem efeito.", 0, e);

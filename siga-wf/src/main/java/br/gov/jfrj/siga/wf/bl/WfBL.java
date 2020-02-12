@@ -99,12 +99,7 @@ public class WfBL extends CpBL {
 			}
 		}
 
-		WfProcedimento pi = new WfProcedimento(pd, variable) {
-			@Override
-			public WfResp calcResponsible(WfDefinicaoDeTarefa tarefa) {
-				return null;
-			}
-		};
+		WfProcedimento pi = new WfProcedimento(pd, variable);
 
 		WfEngine engine = new WfEngine(dao(), new WfHandler());
 

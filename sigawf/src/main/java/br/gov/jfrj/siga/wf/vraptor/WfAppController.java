@@ -27,6 +27,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.vraptor.SigaIdDescr;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 import br.gov.jfrj.siga.vraptor.StringQualquer;
+import br.gov.jfrj.siga.vraptor.Transacional;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
@@ -90,15 +91,9 @@ public class WfAppController extends WfController {
 	 */
 	@Path("/app/iniciar")
 	public void iniciar() throws Exception {
-		try {
-			assertAcesso(VERIFICADOR_ACESSO);
-			List<WfDefinicaoDeProcedimento> modelos = dao().listarAtivos(WfDefinicaoDeProcedimento.class, "nome");
-			result.include("itens", modelos);
-		} catch (AplicacaoException e) {
-			throw new AplicacaoException(e.getMessage(), 0, e);
-		} catch (Exception ex) {
-			throw new AplicacaoException(ex.getMessage(), 0, ex);
-		}
+		assertAcesso(VERIFICADOR_ACESSO);
+		List<WfDefinicaoDeProcedimento> modelos = dao().listarAtivos(WfDefinicaoDeProcedimento.class, "nome");
+		result.include("itens", modelos);
 	}
 
 	/**
@@ -108,6 +103,7 @@ public class WfAppController extends WfController {
 	 * @return
 	 * @throws Exception
 	 */
+	@Transacional
 	@Post
 	@Path("/app/iniciar/{pdId}")
 	public void iniciar(Long pdId) throws Exception {
@@ -117,7 +113,8 @@ public class WfAppController extends WfController {
 				getCadastrante().getLotacao(), getTitular(), getLotaTitular(), null, null, true);
 		if (pi.getStatus() == ProcessInstanceStatus.PAUSED)
 			result.redirectTo(this).task(pi.getId());
-		redirectToHome();
+		else
+			redirectToHome();
 	}
 
 	/**
@@ -169,6 +166,7 @@ public class WfAppController extends WfController {
 	 * @return
 	 * @throws CsisException
 	 */
+	@Transacional
 	public void executeTask(Long piId, String[] fieldNames, StringQualquer[] fieldValues, String transitionName,
 			String sigla) throws Exception {
 		String cadastrante = getTitular().getSigla() + "@" + getLotaTitular().getSiglaCompleta();
@@ -310,6 +308,7 @@ public class WfAppController extends WfController {
 	 * @return
 	 * @throws CsisException
 	 */
+	@Transacional
 	public void assignTask(Long piId, DpPessoaSelecao ator_pessoaSel, DpLotacaoSelecao lotaAtor_lotacaoSel,
 			WfPrioridade prioridade, String justificativa) throws Exception {
 		WfProcedimento pi = dao().consultar(piId, WfProcedimento.class, false);
@@ -354,6 +353,7 @@ public class WfAppController extends WfController {
 	 * @return
 	 * @throws CsisException
 	 */
+	@Transacional
 	public void commentTask(Long tiId, String comentario) throws Exception {
 		// TODO Acrescentar uma movimentação de comentário aqui!
 		result.redirectTo(this).task(tiId);

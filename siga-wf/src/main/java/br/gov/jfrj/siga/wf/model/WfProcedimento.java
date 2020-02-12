@@ -71,10 +71,12 @@ public class WfProcedimento implements ProcessInstance<WfDefinicaoDeProcedimento
 	@Column(name = "PROC_NM_EVENTO")
 	private String evento;
 
-	@Column(name = "PESS_ID_EVENTO")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "PESS_ID_EVENTO")
 	private DpPessoa pessoa;
 
-	@Column(name = "LOTA_ID_EVENTO")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "LOTA_ID_EVENTO")
 	private DpLotacao lotacao;
 
 	@Enumerated(EnumType.STRING)
@@ -179,8 +181,9 @@ public class WfProcedimento implements ProcessInstance<WfDefinicaoDeProcedimento
 		case PESSOA:
 		case LOTACAO:
 			return new WfResp(tarefa.getPessoa(), tarefa.getLotacao());
+		default:
+			return null;
 		}
-		return null;
 	};
 
 	@Override

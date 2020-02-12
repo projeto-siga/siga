@@ -82,8 +82,7 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 	}
 
 	public void gravarInstanciaDeProcedimento(WfProcedimento pi) {
-		// TODO Auto-generated method stub
-
+		gravar(pi);
 	}
 
 	@Override

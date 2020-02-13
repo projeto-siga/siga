@@ -43,7 +43,7 @@ import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
-@Table(name = "dp_cargo", catalog = "corporativo")
+@Table(name = "corporativo.dp_cargo")
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpCargo extends AbstractDpCargo implements Serializable,
 		Selecionavel, Sincronizavel, DpConvertableEntity {

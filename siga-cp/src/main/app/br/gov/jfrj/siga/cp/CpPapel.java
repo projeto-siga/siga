@@ -32,7 +32,7 @@ import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
-@Table(name = "cp_papel", catalog = "corporativo")
+@Table(name = "corporativo.cp_papel")
 public class CpPapel extends AbstractCpPapel implements Serializable,
 		Selecionavel, Historico, Sincronizavel {
 

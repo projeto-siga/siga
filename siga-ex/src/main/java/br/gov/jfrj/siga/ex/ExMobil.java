@@ -57,7 +57,7 @@ import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
 @Entity
 @BatchSize(size = 500)
-@Table(name = "ex_mobil", catalog = "siga")
+@Table(name = "siga.ex_mobil")
 public class ExMobil extends AbstractExMobil implements Serializable, Selecionavel, Comparable {
 
 	/**

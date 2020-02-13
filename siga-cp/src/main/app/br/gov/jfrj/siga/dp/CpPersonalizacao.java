@@ -22,7 +22,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "cp_personalizacao", catalog = "corporativo")
+@Table(name = "corporativo.cp_personalizacao")
 public class CpPersonalizacao extends AbstractCpPersonalizacao {
 
 }

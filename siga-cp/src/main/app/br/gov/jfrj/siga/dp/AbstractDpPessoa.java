@@ -48,8 +48,8 @@ import javax.persistence.TemporalType;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
 @MappedSuperclass
-@NamedNativeQuery(name = "consultarDataEHoraDoServidor", query = "SELECT CURRENT_TIMESTAMP dt FROM dual", resultSetMapping = "scalar")
 @NamedQueries({
+		@NamedQuery(name = "consultarDataEHoraDoServidor", query = "select CURRENT_TIMESTAMP from CpOrgaoUsuario"),
 		@NamedQuery(name = "consultarPorIdDpPessoa", query = "select pes from DpPessoa pes where pes.idPessoaIni = :idPessoa"),
 		@NamedQuery(name = "consultarPorIdInicialDpPessoa", query = "select pes from DpPessoa pes where pes.idPessoaIni = :idPessoaIni and pes.dataFimPessoa = null"),
 		@NamedQuery(name = "consultarPorSiglaDpPessoa", query = "select pes from DpPessoa pes where pes.matricula = :matricula and pes.sesbPessoa = :sesb and pes.dataFimPessoa = null"),

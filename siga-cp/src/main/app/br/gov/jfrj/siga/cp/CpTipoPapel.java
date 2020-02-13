@@ -34,7 +34,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 @Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
-@Table(catalog = "corporativo", name="cp_tipo_papel")
+@Table(name="corporativo.cp_tipo_papel")
 public class CpTipoPapel extends AbstractCpTipoPapel {
 
 }

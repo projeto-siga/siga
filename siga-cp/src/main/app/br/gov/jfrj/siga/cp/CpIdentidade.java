@@ -39,7 +39,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @Entity
 @Cacheable
 @Cache(region = CpDao.CACHE_QUERY_SUBSTITUICAO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "cp_identidade", catalog = "corporativo")
+@Table(name = "corporativo.cp_identidade")
 public class CpIdentidade extends AbstractCpIdentidade {
 
 	public DpPessoa getPessoaAtual() {

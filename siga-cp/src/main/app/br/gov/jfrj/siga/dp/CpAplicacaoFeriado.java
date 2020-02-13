@@ -33,7 +33,7 @@ import javax.persistence.Table;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
-@Table(catalog = "corporativo", name="cp_aplicacao_feriado")
+@Table(name="corporativo.cp_aplicacao_feriado")
 public class CpAplicacaoFeriado extends AbstractCpAplicacaoFeriado implements Serializable,
 		Selecionavel {
 

@@ -35,7 +35,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 @Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
-@Table(name = "ex_papel", catalog = "siga")
+@Table(name = "siga.ex_papel")
 public class ExPapel extends AbstractExPapel {
 	
 	private static final long serialVersionUID = 2096492527289909346L;

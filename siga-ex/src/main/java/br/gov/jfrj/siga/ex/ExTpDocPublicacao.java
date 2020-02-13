@@ -41,7 +41,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 @Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
-@Table(name = "ex_tp_doc_publicacao", catalog = "siga")
+@Table(name = "siga.ex_tp_doc_publicacao")
 public class ExTpDocPublicacao extends AbstractExTpDocPublicacao implements
 		Serializable {
 

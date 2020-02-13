@@ -22,7 +22,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "cp_acesso", catalog = "corporativo")
+@Table(name = "corporativo.cp_acesso")
 public class CpAcesso extends AbstractCpAcesso {
 	private static final long serialVersionUID = 1L;
 

@@ -25,7 +25,7 @@ import org.hibernate.annotations.BatchSize;
 
 @Entity
 @BatchSize(size = 500)
-@Table(name = "ex_email_notificacao", catalog = "siga")
+@Table(name = "siga.ex_email_notificacao")
 public class ExEmailNotificacao extends AbstractExEmailNotificacao {
 
 	public ExEmailNotificacao() {

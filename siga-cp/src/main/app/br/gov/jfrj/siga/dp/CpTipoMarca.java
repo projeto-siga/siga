@@ -30,7 +30,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 
 @Entity
 @Cacheable
-@Table(catalog = "corporativo", name="cp_tipo_marca")
+@Table(name="corporativo.cp_tipo_marca")
 public class CpTipoMarca extends AbstractCpTipoMarca {
 	public static final long TIPO_MARCA_SIGA_EX = 1;
 	public static final long TIPO_MARCA_SIGA_SR = 2;

@@ -36,7 +36,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 @Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
-@Table(name = "ex_tipo_mobil", catalog = "siga")
+@Table(name = "siga.ex_tipo_mobil")
 public class ExTipoMobil extends AbstractExTipoMobil implements Serializable {
 
 	final static public long TIPO_MOBIL_GERAL = 1;

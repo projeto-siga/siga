@@ -32,7 +32,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
-@Table(name = "cp_grupo", catalog = "corporativo")
+@Table(name = "corporativo.cp_grupo")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "ID_TP_GRUPO", discriminatorType = DiscriminatorType.INTEGER)
 public abstract class CpGrupo extends AbstractCpGrupo implements Selecionavel,

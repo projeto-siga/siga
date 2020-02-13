@@ -41,7 +41,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
-@Table(name = "cp_feriado", catalog = "corporativo")
+@Table(name = "corporativo.cp_feriado")
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class CpFeriado extends AbstractCpFeriado implements Serializable,
 		Selecionavel {

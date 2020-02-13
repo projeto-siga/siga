@@ -1446,16 +1446,13 @@ public class CpDao extends ModeloDao {
 		return pes;
 	}
 
-	public Date consultarDataEHoraDoServidor() throws AplicacaoException {
-		Query sql = em().createNamedQuery(
-				"consultarDataEHoraDoServidor");
-
-		List result = sql.getResultList();
-		if (result.size() != 1)
-			throw new AplicacaoException(
-					"Nao foi possivel obter a data e a hora atuais do servidor.");
-
-		return (Date) ((result.get(0)));
+	public Date consultarDataEHoraDoServidor() {
+		String sql = "SELECT sysdate from dual";
+		String dialect = System.getProperty("siga.hibernate.dialect");
+		if (dialect != null && dialect.contains("MySQL"))
+			sql = "SELECT CURRENT_TIMESTAMP";
+	    Query query = em().createNativeQuery(sql);
+	    return (Date) query.getSingleResult();
 	}
 
 	public List<CpConfiguracao> consultarConfiguracoesDesde(Date desde) {

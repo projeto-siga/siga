@@ -48,7 +48,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
 @Entity
 @BatchSize(size = 500)
 //@AttributeOverride(name = "hisAtivo", column = @Column(name = "HIS_ATIVO"))
-@Table(name = "ex_classificacao", catalog = "siga")
+@Table(name = "siga.ex_classificacao")
 @Cache(region = ExDao.CACHE_EX, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class ExClassificacao extends AbstractExClassificacao implements
 		Serializable, Selecionavel {

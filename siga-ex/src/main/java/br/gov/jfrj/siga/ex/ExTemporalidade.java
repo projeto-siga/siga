@@ -39,7 +39,7 @@ import br.gov.jfrj.siga.model.Assemelhavel;
  * be customized as it is never re-generated after being created.
  */
 @Entity
-@Table(name = "ex_temporalidade", catalog = "siga")
+@Table(name = "siga.ex_temporalidade")
 public class ExTemporalidade extends AbstractExTemporalidade implements
 		Comparable {
 	/**

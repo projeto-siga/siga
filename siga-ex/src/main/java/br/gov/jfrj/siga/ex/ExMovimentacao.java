@@ -56,7 +56,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 @Entity
 @BatchSize(size = 500)
-@Table(name = "ex_movimentacao", catalog = "siga")
+@Table(name = "siga.ex_movimentacao")
 public class ExMovimentacao extends AbstractExMovimentacao implements
 		Serializable, Comparable<ExMovimentacao> {
 	/**

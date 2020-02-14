@@ -12,6 +12,7 @@
 .collapse-header .collapse-toggle.collapsed:after, .card-header .card-toggle.collapsed:after {
     content: "\f0da"; 
 }
+
 /* Bot�o circular */
 .btn-circle {
     width: 30px;
@@ -135,11 +136,12 @@ p.gt-table-action-list a.link-tag {
   opacity: 0;
   animation: spinner-grow .75s linear infinite;
 }
-
 .mesa-config {
-    position: absolute;
+    position: fixed;
     right: -220px;
     width: 250px;
+    top: 180px;
+    z-index: 100;	
 }
 .btn-mesa-config {
 	width: 30px;
@@ -165,6 +167,25 @@ p.gt-table-action-list a.link-tag {
 .hide-config {
     transition: 1s;
     right: -220px;
+}
+.badge-mesa {
+	font-size: 0.8em;
+    padding: 0px 5px;
+}
+.hover-mesa {
+  opacity: 0.8;
+  transition: 0.3s;
+}
+.hover-mesa:hover {
+	opacity: 1;
+}	
+.scroll-arrows {
+	position: fixed;
+	bottom: 5px;
+	right: 5px;
+	z-index: 99;
+	cursor: pointer;
+	opacity: 0.8;	
 }
 .bd-carregando-modal-lg .modal-dialog{
     display: table;

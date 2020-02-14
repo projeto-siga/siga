@@ -430,7 +430,7 @@ ${meta}
 					</div>
 				</c:if>
 			</div>
-			<div class="row ${mensagemCabec==null?'d-none':''}" id=mensagemCabecId" >
+			<div class="row ${mensagemCabec==null?'d-none':''}" id="mensagemCabecId" >
 				<div class="col" >
 					<div class="alert ${msgCabecClass} fade show" id="mensagemCabec" role="alert">
 						${mensagemCabec}
@@ -450,6 +450,12 @@ ${meta}
 	<div id="carregando"
 		style="position: absolute; top: 0px; right: 0px; background-color: red; font-weight: bold; padding: 4px; color: white; display: none">Carregando...</div>
 <script type="text/javascript" language="Javascript1.1">
+setTimeout(function() {
+	$('#mensagemCabec.fade-close').fadeTo(1000, 0, function() {
+		$('#mensagemCabec.fade-close').slideUp(1000);
+	});
+}, 5000);
+
 function delSession() {
 	sessionStorage.removeItem('timeout' + document.getElementById('cadastrante').title);
 	sessionStorage.removeItem('mesa' + document.getElementById('cadastrante').title);

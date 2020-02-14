@@ -53,9 +53,16 @@ public class ExMesaController extends ExController {
 
 	@Get("app/mesa")
 	public void lista(Boolean exibirAcessoAnterior, Long idVisualizacao) {
-		if (SigaBaseProperties.getString("siga.mesa.versao") != null) 
-			result.redirectTo("/app/mesa" + SigaBaseProperties.getString("siga.mesa.versao"));
-		
+		if (SigaBaseProperties.getString("siga.mesa.versao") != null) { 
+			if (exibirAcessoAnterior != null) {
+				result.redirectTo("/app/mesa" + SigaBaseProperties.getString("siga.mesa.versao") 
+				+ "?exibirAcessoAnterior=" + exibirAcessoAnterior.toString());
+				return;
+			} else {
+				result.redirectTo("/app/mesa" + SigaBaseProperties.getString("siga.mesa.versao")); 
+				return;
+			}
+		}
 		if (exibirAcessoAnterior != null && exibirAcessoAnterior) {
 			CpAcesso a = dao.consultarAcessoAnterior(so.getCadastrante());
 			if (a == null)

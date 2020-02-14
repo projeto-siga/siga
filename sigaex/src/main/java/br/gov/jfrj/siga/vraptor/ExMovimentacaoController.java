@@ -857,7 +857,7 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Get("app/expediente/mov/excluir")
-	public void excluir(final Long id, boolean continuarTela) {
+	public void excluir(final Long id, boolean continuarTela, String redirectURL) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setId(id);
 		buscarDocumento(builder);
@@ -872,8 +872,12 @@ public class ExMovimentacaoController extends ExController {
 			result.redirectTo(MessageFormat.format("anexar?sigla={0}",
 					mob.getSigla()));
 		} else {
-			ExDocumentoController
-					.redirecionarParaExibir(result, mob.getSigla());
+			if (redirectURL != null) {
+				result.redirectTo(redirectURL);
+			} else {
+				ExDocumentoController
+				.redirecionarParaExibir(result, mob.getSigla());
+			}
 		}
 	}
 

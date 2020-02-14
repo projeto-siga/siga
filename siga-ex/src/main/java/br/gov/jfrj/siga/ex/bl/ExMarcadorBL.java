@@ -7,6 +7,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -289,7 +291,10 @@ public class ExMarcadorBL {
 		if (!mob.doc().isFinalizado()) {
 			acrescentarMarca(CpMarcador.MARCADOR_EM_ELABORACAO, mob.doc().getDtRegDoc(), mob.doc().getCadastrante(),
 					mob.doc().getLotaCadastrante());
-			if (mob.getExDocumento().getSubscritor() != null)
+			if (mob.getExDocumento().getSubscritor() != null
+					&& !(Boolean.valueOf(SigaBaseProperties.getString("siga.mesa.naoRevisarTemporarios")) 
+							&& mob.doc().getCadastrante() != mob.doc().getSubscritor() 
+							&& !mob.doc().isFinalizado()))
 				acrescentarMarca(CpMarcador.MARCADOR_REVISAR, mob.doc().getDtRegDoc(),
 						mob.getExDocumento().getSubscritor(), null);
 
@@ -377,7 +382,10 @@ public class ExMarcadorBL {
 			DpLotacao lotaResp  = ultMovNaoCanc != null ? ultMovNaoCanc.getLotaResp() : mob.doc().getLotaCadastrante(); */
 			acrescentarMarca(CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA, mob.doc().getDtRegDoc(), mob.doc().getCadastrante(),
 					 mob.doc().getLotaCadastrante());
-			if (!mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha()) {
+			if (!mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha()
+					&& !(Boolean.valueOf(SigaBaseProperties.getString("siga.mesa.naoRevisarTemporarios"))
+						&& mob.doc().getCadastrante() != mob.doc().getSubscritor() 
+						&& !mob.doc().isFinalizado())) {
 				acrescentarMarca(CpMarcador.MARCADOR_COMO_SUBSCRITOR, mob.doc().getDtRegDoc(), mob.getExDocumento().getSubscritor(), null);
 				ExMovimentacao m = mob.doc().getMovSolicitacaoDeAssinatura();
 				if (m != null) {
@@ -429,7 +437,9 @@ public class ExMarcadorBL {
 				else if (mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha())
 					acrescentarMarca(CpMarcador.MARCADOR_COMO_SUBSCRITOR, mov.getDtIniMov(), mov.getSubscritor(), null);
 				else
-					acrescentarMarca(CpMarcador.MARCADOR_REVISAR, mov.getDtIniMov(), mov.getSubscritor(), null);
+					if (!(Boolean.valueOf(SigaBaseProperties.getString("siga.mesa.naoRevisarTemporarios")) 
+								&& !mob.getDoc().isFinalizado())) 
+						acrescentarMarca(CpMarcador.MARCADOR_REVISAR, mov.getDtIniMov(), mov.getSubscritor(), null);
 
 			}
 		}

@@ -2027,13 +2027,6 @@ public class ExDao extends CpDao {
 
 	public List consultarTotaisPorMarcador(DpPessoa pes, DpLotacao lot, List<GrupoItem> grupos, 
 			boolean exibeLotacao, boolean trazerCancelados) {
-		String queryTMPCosignatario;
-		if (SigaMessages.isSigaSP()) {
-			queryTMPCosignatario = " LEFT JOIN corporativo.cp_marca marca2 ON (marca2.id_ref = marca.id_ref"
-					+ " AND marca2.id_marcador = " + String.valueOf(CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA) + " AND marca2.id_pessoa_ini <> :idPessoaIni ) "; 
-		} else {
-			queryTMPCosignatario = "";
-		}
 		String queryCancelados =  " LEFT JOIN corporativo.cp_marca marca3 ON (marca3.id_ref = marca.id_ref"
 				+ " AND marca3.id_marcador = " + String.valueOf(CpMarcador.MARCADOR_CANCELADO) + ") ";
 		try {
@@ -2048,17 +2041,13 @@ public class ExDao extends CpDao {
 						+ " 			SUM(CASE WHEN marca.id_pessoa_ini = :idPessoaIni THEN 1 ELSE 0 END) cont_pessoa,"
 						+ " 			SUM(CASE WHEN marca.id_lotacao_ini = :idLotacaoIni THEN 1 ELSE 0 END) cont_lota"
 						+ "	   			FROM corporativo.cp_marca marca"
-						+ (!exibeLotacao ? queryTMPCosignatario : "" )
 						+ (trazerCancelados ? "" : queryCancelados )
-						+ "				LEFT JOIN corporativo.cp_marca marca2 ON (marca2.id_ref = marca.id_ref"
-						+ "					AND marca2.id_marcador = 15 AND marca2.id_pessoa_ini <> :idPessoaIni ) " 
 						+ "	   			WHERE (marca.dt_ini_marca IS NULL OR marca.dt_ini_marca < sysdate)"
 						+ "	   				AND (marca.dt_fim_marca IS NULL OR marca.dt_fim_marca > sysdate)"
 						+ "	   				AND ((marca.id_pessoa_ini = :idPessoaIni) OR (marca.id_lotacao_ini = :idLotacaoIni))"
 						+ "	   				AND marca.id_tp_marca = 1"
 						+ "					AND marca.id_marcador in (" 
 						+ grupoItem.grupoMarcadores.toString().replaceAll("\\[|\\]", "") + ") "
-						+ (!exibeLotacao && SigaMessages.isSigaSP() ? " AND marca2.id_marca is null " : "" )
 						+ (trazerCancelados ? "" : " AND marca3.id_marca is null " )
 						+ "				GROUP BY marca.id_ref )"
 						+ " UNION ALL ";
@@ -2083,17 +2072,8 @@ public class ExDao extends CpDao {
 	public List listarMobilsPorMarcas(DpPessoa titular,
 			DpLotacao lotaTitular, boolean exibeLotacao, boolean trazerCancelados) {
 		String queryString;
-		String queryTMPCosignatario;
 		List<List<String>> l = new ArrayList<List<String>> ();
 //		long tempoIni = System.nanoTime();
-		if (SigaMessages.isSigaSP()) {
-			queryTMPCosignatario = " and (select marca2 from ExMarca marca2 "		
-					+ "		where marca2.cpMarcador.idMarcador = " + String.valueOf(CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA)  
-					+ " 	and marca2.exMobil = marca.exMobil "
-					+ "		and marca2.dpPessoaIni <> :titular ) is null ";
-		} else {
-			queryTMPCosignatario = "";
-		}
 		String queryCancelados = " and (select marca3 from ExMarca marca3 "		
 				+ "		where marca3.cpMarcador.idMarcador = "  + String.valueOf(CpMarcador.MARCADOR_CANCELADO) 
 				+ "		and marca3.exMobil = marca.exMobil) is null ";
@@ -2109,7 +2089,6 @@ public class ExDao extends CpDao {
 					+ " and (marca.dtFimMarca is null or marca.dtFimMarca > sysdate)"
 					+ (!exibeLotacao && titular != null ? " and (marca.dpPessoaIni = :titular)" : "") 
 					+ (exibeLotacao && lotaTitular != null ? " and (marca.dpLotacaoIni = :lotaTitular)" : "")
-					+ (!exibeLotacao && titular != null ? queryTMPCosignatario : "")
 					+ (trazerCancelados ? "" : queryCancelados)
 					+ " order by  doc.dtAltDoc desc, marca ";
 			

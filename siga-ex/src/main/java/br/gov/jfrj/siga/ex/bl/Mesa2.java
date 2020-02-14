@@ -516,10 +516,10 @@ public class Mesa2 {
 			r.grupoOrdem = grupoOrdem;
 			
 			if (references.get(mobil).movAnotacaoDescrMov != null) { 
-				r.anotacao = references.get(mobil).movAnotacaoDescrMov; 
-//						+ "<br/><a href=/sigaex/app/expediente/mov/excluir?id=" 
-//						+ references.get(mobil).movAnotacaoIdMov
-//						+ ">Excluir Bloco de Notas</a>";
+				r.anotacao = references.get(mobil).movAnotacaoDescrMov 
+						+ "<br/><a href='/sigaex/app/expediente/mov/excluir?id=" 
+						+ references.get(mobil).movAnotacaoIdMov
+						+ "&redirectURL=../../mesa2?excluiuAnotacao=true'>Excluir Anotação</a>";
 			}
 
 			r.list = new ArrayList<Marca>();

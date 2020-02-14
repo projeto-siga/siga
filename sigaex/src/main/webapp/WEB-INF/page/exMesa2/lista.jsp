@@ -8,9 +8,50 @@
 
 <siga:pagina titulo="Mesa Virtual">
 <script type="text/javascript" src="../javascript/vue.min.js"></script>
-<script language="JavaScript" src="/siga/bootstrap/js/bootstrap.bundle.min.js" type="text/javascript"></script>
 	
-	<div id="app" class="container-fluid content" style="overflow: hidden">
+	<div id="app" class="container-fluid content" >
+		<div id="configMenu" class="mesa-config ml-auto" :class="toggleConfig">
+			<button type="button" class="btn-mesa-config btn btn-secondary btn-sm h-100" @click="toggleMenuConfig();">
+				<i class="fas fa-cog"></i>
+			</button>
+			<div class="form-config border-bottom p-3">
+				<h6>Configurações da Mesa Virtual</h6>
+	            <i><small>Quanto menos informações forem solicitadas, mais rapidamente a mesa carregará.</small></i>
+<!-- 		            <div class="form-group py-2 mt-2 border-top border-bottom"> -->
+<!-- 						<div class="form-check"> -->
+<!-- 							<input type="checkbox" class="form-check-input" v-model="versaoMesa"> -->
+<!-- 							<label class="form-check-label" for="versaoMesa"><small>Utilizar versão antiga da Mesa</small></label> -->
+<!-- 						</div>             -->
+<!-- 		            </div> -->
+	            <div class="form-group py-2 mt-2 border-top border-bottom">
+					<div class="form-check">
+						<input type="checkbox" class="form-check-input" id="trazerAnotacoes" v-model="trazerAnotacoes">
+						<label class="form-check-label" for="trazerAnotacoes"><small>Trazer anotações nos documentos</small></label>
+					</div>            
+	            </div>
+	            <div class="form-group py-2 mt-2 border-top border-bottom">
+					<div class="form-check">
+						<input type="checkbox" class="form-check-input" id="trazerCancelados" v-model="trazerCancelados">
+						<label class="form-check-label" for="trazerCancelados"><small>Mostrar cancelados</small></label>
+					</div>            
+	            </div>
+				<div class="form-group pb-2 mb-1 border-bottom">
+					<label for="selQtdPagId"><small>Qtd. de documentos a trazer (botão Mais)</small></label>
+					<select class="form-control form-control-sm" v-model="selQtdPag">
+						  <option value="5">5</option>
+						  <option value="10">10</option>
+						  <option value="15">15</option>
+						  <option value="50">50</option>
+						  <option value="100">100</option>
+						  <option value="500">500</option>
+					</select>
+				</div>
+				<div class="form-group pt-2">
+			    	<button class="btn btn-secondary btn-sm h-60" @click="resetaStorage();">Resetar Mesa</button>
+			    	<p><small>Retorna as configurações iniciais da mesa.</small></p>
+			    </div>
+        	</div>
+        </div>	
 		<c:if test="${not empty acessoAnteriorData}">
 			<div class="row" id="row-bem-vindo">
 				<div class="col">
@@ -55,53 +96,13 @@
 				</a>
 			</div>
 			<div class="mr-1 mb-1">
-				<input type="text" class="form-control p-1 input-sm" placeholder="Filtrar entre os exibidos" v-model="filtro" ng-model-options="{ debounce: 200 }">
+				<input id="filtroExibidos" type="text" class="form-control p-1 input-sm" placeholder="Filtrar entre os exibidos" v-model="filtro" ng-model-options="{ debounce: 200 }">
 			</div>
 			<button type="button" class="btn btn-secondary btn-sm mb-1" @click="recarregarMesa();">
 				<i class="fas fa-sync-alt"></i><span class="d-none d-sm-inline ml-2">Recarregar</span>
 			</button>
-			<div id="configMenu" class="mesa-config ml-auto" :class="toggleConfig">
-				<button type="button" class="btn-mesa-config btn btn-secondary btn-sm h-100" @click="toggleMenuConfig();">
-					<i class="fas fa-cog"></i>
-				</button>
-				<div class="form-config border-bottom p-3">
-					<h6>Configurações da Mesa Virtual</h6>
-		            <i><small>Quanto menos informações forem solicitadas, mais rapidamente a mesa carregará.</small></i>
-<!-- 		            <div class="form-group py-2 mt-2 border-top border-bottom"> -->
-<!-- 						<div class="form-check"> -->
-<!-- 							<input type="checkbox" class="form-check-input" v-model="versaoMesa"> -->
-<!-- 							<label class="form-check-label" for="versaoMesa"><small>Utilizar versão antiga da Mesa</small></label> -->
-<!-- 						</div>             -->
-<!-- 		            </div> -->
-		            <div class="form-group py-2 mt-2 border-top border-bottom">
-						<div class="form-check">
-							<input type="checkbox" class="form-check-input" id="trazerAnotacoes" v-model="trazerAnotacoes">
-							<label class="form-check-label" for="trazerAnotacoes"><small>Trazer anotações nos documentos</small></label>
-						</div>            
-		            </div>
-		            <div class="form-group py-2 mt-2 border-top border-bottom">
-						<div class="form-check">
-							<input type="checkbox" class="form-check-input" id="trazerCancelados" v-model="trazerCancelados">
-							<label class="form-check-label" for="trazerCancelados"><small>Mostrar cancelados</small></label>
-						</div>            
-		            </div>
-					<div class="form-group pb-2 mb-1 border-bottom">
-						<label for="selQtdPagId"><small>Qtd. de documentos a trazer (botão Mais)</small></label>
-						<select class="form-control form-control-sm" v-model="selQtdPag">
-							  <option value="5">5</option>
-							  <option value="10">10</option>
-							  <option value="15">15</option>
-							  <option value="50">50</option>
-							  <option value="100">100</option>
-							  <option value="500">500</option>
-						</select>
-					</div>
-					<div class="form-group pt-2">
-				    	<button class="btn btn-secondary btn-sm h-60" @click="resetaStorage();">Resetar Mesa</button>
-				    	<p><small>Retorna as configurações iniciais da mesa.</small></p>
-				    </div>
-	        	</div>
-	        </div>	
+			<p id="ultima-atualizacao" class="ml-2 my-auto fadein text-danger">
+				Última atualização: {{getLastRefreshTime()}}</p>
 		</div>
 		
 		<div class="row" v-if="errormsg">
@@ -191,8 +192,8 @@
 											</td>
 											<td class="col-3 d-none d-md-block">
 												<c:if test="${siga_cliente == 'GOVSP'}">
-													<span v-if="f.tipoDoc == 'Avulso'"><i class="far fa-file"></i></span>
-													<span v-else><i class="far fa-copy"></i></span>
+													<span v-if="f.tipoDoc == 'Avulso'"><i class="far fa-file" title="Documento Avulso"></i></span>
+													<span v-else><i class="far fa-copy" title="Documento Composto"></i></span>
 												</c:if>
 												{{f.descr}}
 											</td>
@@ -207,7 +208,7 @@
 											<td class="col-3 d-none d-md-block" style="padding: 0;">
 												<span v-if="f.anotacao != null">
 													<a tabindex="0" class="anotacao fas fa-sticky-note text-warning popover-dismiss" role="button" 
-															data-toggle="popover" data-trigger="focus" title="Anotação" :data-content="f.anotacao"></a>
+															data-toggle="popover" data-trigger="hover focus" title="Anotação" :data-content="f.anotacao"></a>
 												</span>
 												<span class="xrp-label-container">
 													<span v-for="m in f.list" :title="m.titulo">
@@ -227,18 +228,24 @@
 									</template>
 								</tbody>
 							</table>
-							<div v-if="g.grupoDocs != undefined && g.grupoCounterAtivo > g.grupoDocs.length" class="row">
-								<div class="col-md-10 mb-2">
+							<div class="row">
+								<div class="col-md-9 mb-2">
 									<div class="text-center" v-if="carregando">
 										<div class="spinner-grow text-info text-center" role="status"></div>
 									</div>
 								</div>
-								<div class="col-12 col-md-2 mb-2">
-									<button type="button" class="btn btn-primary btn-sm w-100 float-right" 
-											:class="{disabled: carregando}" @click="carregaGrupo(g.grupoNome);">
-										Mais<i v-if="!carregando" class="ml-2 fas fa-chevron-circle-down"></i>
-										<div v-if="carregando" class="spinner-border" role="status"></div>
-									</button>
+								<div class="col-6 col-md-3 mb-2">
+									<div class="float-right d-flex">
+										<button v-if="g.grupoDocs != undefined && g.grupoCounterAtivo > g.grupoDocs.length" 
+												type="button" class="btn btn-primary btn-sm" 
+												:class="{disabled: carregando}" @click="pageDownGrupo(g.grupoNome);">
+											Mais<i v-if="!carregando" class="ml-2 fas fa-chevron-circle-down"></i>
+											<div v-if="carregando" class="spinner-border" role="status"></div>
+										</button>
+										<button type="button" class="ml-2 btn btn-light btn-sm" @click="fecharGrupo(g.grupoOrdem, g.grupoNome);">
+											<i class="fas fa-chevron-circle-up text-secondary"></i>
+										</button>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -249,23 +256,17 @@
 		<p class="alert alert-success"
 			v-if="acessos &amp;&amp; acessos.length >= 1">Último acesso em
 			{{acessos[1].datahora}} no endereço {{acessos[1].ip}}.</p>
-		<div class="row">
-			<div class="col">
-				<div class="d-inline position-fixed fixed-bottom">
-					<div class="float-right mr-1 opacity-80">
-						<p>
-							<a class="btn btn-light btn-circle shadow-sm" href="#inicio"> 
-								<i class="fas fa-chevron-up h6"></i>
-							</a>
-						</p>
-						<p>
-							<a class="btn btn-light btn-circle shadow-sm" href="#final"> 
-								<i class="fas fa-chevron-down h6"></i>
-							</a>
-						</p>
-					</div>
-				</div>
-			</div>
+		<div class="scroll-arrows">
+			<p>
+				<a class="btn btn-light btn-circle shadow-sm" href="#inicio"> 
+					<i class="fas fa-chevron-up h6"></i>
+				</a>
+			</p>
+			<p>
+				<a class="btn btn-light btn-circle shadow-sm" href="#final"> 
+					<i class="fas fa-chevron-down h6"></i>
+				</a>
+			</p>
 		</div>
 		<div id="final"></div>		
 	</div>
@@ -276,10 +277,19 @@
 		$('#bem-vindo').fadeTo(1000, 0, function() {
 			$('#row-bem-vindo').slideUp(1000);
 		});
+		$("#ultima-atualizacao").removeClass("text-danger");
+		$("#ultima-atualizacao").addClass("text-secondary");
 	}, 5000);
-	$(document).ready(carregaDocs(""));
-	
-function carregaDocs() {
+	 
+	 
+	if ((location.href).indexOf('excluiuAnotacao') !== -1 ) {
+		$('#mensagemCabecId').toggleClass('d-none');
+		$('#mensagemCabec').prepend("Anotação excluída com sucesso.");
+		$('#mensagemCabec').addClass("alert-success fade-close");
+    	this.carregando = true;
+    	this.grupos = [];
+    	sessionStorage.removeItem('timeout' + getUser());
+	}
 	var appMesa = new Vue({
 		  el: "#app",
 
@@ -339,7 +349,8 @@ function carregaDocs() {
 	        	$('.popover-dismiss').popover({
 	        		container: 'body',
 	        		html: true,
-	        		trigger: 'focus'
+	        		delay: { "show": 100, "hide": 600 },
+	        		trigger: 'hover focus'
 	        	});
 		      });
 		      return grps;
@@ -459,7 +470,7 @@ function carregaDocs() {
 		  	    var parmGrupos = JSON.parse(getParmUser('gruposMesa'));
 	    		setValueGrupo(grupoNome, 'qtdPag', parseInt(event.target.value));
 		    },
-		    carregaGrupo: function(grupoNome) {
+		    pageDownGrupo: function(grupoNome) {
 		  	    var parmGrupos = JSON.parse(getParmUser('gruposMesa'));
 	    		if (parmGrupos[grupoNome].qtd === 0) {
 	    			setValueGrupo(grupoNome, 'qtd', parmGrupos[grupoNome].qtdPag)
@@ -467,6 +478,18 @@ function carregaDocs() {
 		  	    	setValueGrupo(grupoNome, 'qtd', parseInt(parmGrupos[grupoNome].qtd));
 	    		}
 	    		this.carregarMesa(grupoNome, parseInt(parmGrupos[grupoNome].qtdPag));
+		    },
+		    pageUpGrupo: function(grupoNome) {
+		  	    var parmGrupos = JSON.parse(getParmUser('gruposMesa'));
+	    		if (parmGrupos[grupoNome].qtd <= parmGrupos[grupoNome].qtdPag) {
+	    			setValueGrupo(grupoNome, 'qtd', parseInt(parmGrupos[grupoNome].qtdPag));
+	    			this.collapseGrupo(parmGrupos[grupoNome].ordem, grupoNome);
+	    		} else {
+		  	    	setValueGrupo(grupoNome, 'qtd', parseInt(parmGrupos[grupoNome].qtd) - parseInt(parmGrupos[grupoNome].qtdPag));
+	    		}
+	    		this.carregarMesa(grupoNome, 0);
+	    		setValueGrupoVue(grupoNome,'grupoCollapsed', true);
+	    		setValueGrupoVue(grupoNome,'grupoQtd', parmGrupos[grupoNome].qtd);
 		    },
 		    collapseGrupo: function(grupoOrdem, grupoNome) {
 		  	    var parmGrupos = JSON.parse(getParmUser('gruposMesa'));
@@ -484,6 +507,16 @@ function carregaDocs() {
 		    	} else {
 		    		setValueGrupo(grupoNome, 'collapsed', true);
 		    	}
+		    },
+		    fecharGrupo: function(grupoOrdem, grupoNome) {
+		    	$('#collapsetab-' + grupoOrdem).collapse('hide');
+	    		setValueGrupo(grupoNome, 'collapsed', true);
+    			setValueGrupoVue(grupoNome,'grupoCollapsed', true);
+		    },
+		    getLastRefreshTime: function() {
+		    	var dt = new Date(sessionStorage.getItem('timeout' + getUser()));
+		    	return ("0" + dt.getDate()).slice (-2) + "/" + ("0" + (dt.getMonth() + 1)).slice (-2) + " " 
+		    		+ ("0" + dt.getHours()).slice (-2) + ":" + ("0" + dt.getMinutes()).slice (-2);
 		    },
 		    toggleMenuConfig: function() {
 		    	if (this.toggleConfig === 'show-config') {
@@ -594,7 +627,7 @@ function carregaDocs() {
 
 		  }
 		});
-}
+
 function atualizaGrupos (grupos) {
 	var parms = JSON.parse(getParmUser('gruposMesa'));
 	if (parms == null) {
@@ -638,11 +671,16 @@ function setGrupo(grupoNome, ordem, qtd, qtdPag, collapsed) {
 	}
 	setParmUser('gruposMesa', JSON.stringify(parms));
 }
-function setValueGrupo(grupoNome, key, qtd) {
-	// Seta quantidade de documentos a mostrar de um grupo no JSON de parametros e armazena na local storage. 
+function setValueGrupo(grupoNome, key, value) {
 	var parms = JSON.parse(getParmUser('gruposMesa'));
-	parms[grupoNome] [key] = qtd;
+	parms[grupoNome] [key] = value;
 	setParmUser('gruposMesa', JSON.stringify(parms));
+}
+function setValueGrupoVue(grupoNome, key, qtd) {
+    for (var g in appMesa.grupos) {
+        if (appMesa.grupos[g].grupoNome == grupoNome) 
+        	Vue.set(appMesa.grupos[g], key, qtd);
+    }
 }
 function setParmUser(nomeParm, value) {
 	window.localStorage.setItem(nomeParm + getUser(), value)	

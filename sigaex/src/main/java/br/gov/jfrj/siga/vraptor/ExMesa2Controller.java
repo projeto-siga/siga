@@ -56,7 +56,7 @@ public class ExMesa2Controller extends ExController {
 	}
 
 	@Get("app/mesa2")
-	public void lista(Boolean exibirAcessoAnterior, Long idVisualizacao) {
+	public void lista(Boolean exibirAcessoAnterior, Long idVisualizacao, String msg) {
 		if (exibirAcessoAnterior != null && exibirAcessoAnterior) {
 			CpAcesso a = dao.consultarAcessoAnterior(so.getCadastrante());
 			if (a == null)
@@ -76,6 +76,10 @@ public class ExMesa2Controller extends ExController {
 			}
 		} else {
 			result.include("idVisualizacao", 0);
+		}
+		if (msg != null) {
+			result.include("mensagemCabec", msg);
+			result.include("msgCabecClass", "alert-info fade-close");
 		}
 	}
 

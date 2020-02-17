@@ -1942,7 +1942,7 @@ public class ExDocumentoController extends ExController {
 		c.setTime(prot.getData());
 		
 		String url = SigaBaseProperties.getString("siga.ex."
-				+ SigaBaseProperties.getString("siga.ambiente") + ".url") + "/protocolo";
+				+ SigaBaseProperties.getString("siga.ambiente") + ".url") + "/processoautenticar?n=" + prot.getCodigo();
 		
 		result.include("url", url);
 		result.include("ano", c.get(Calendar.YEAR));

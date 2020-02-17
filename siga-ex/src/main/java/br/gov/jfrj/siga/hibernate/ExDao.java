@@ -335,15 +335,67 @@ public class ExDao extends CpDao {
 		
 	}
 	
-	public ExProtocolo obterProtocoloPorDocumento(Long idDoc)
-			throws SQLException {
-	    
-		final Query query = getSessao().getNamedQuery("ExProtocolo.obterProtocoloPorDocumento");
-		query.setParameter("idDoc", idDoc);
-		query.setParameter("rownum", 1L);
+	 /*
+		 * Adicionado dia 23/01/2020
+		 */
+
+		public ExProtocolo obterProtocoloPorNumero(Long numero, Integer ano) {
+			final Query query = getSessao().getNamedQuery("ExProtocolo.obterProtocoloPorNumeroAno");
+			query.setParameter("numero", numero);
+			query.setParameter("ano", ano);
+			return (ExProtocolo) query.uniqueResult();
+		}
+
+		public ExProtocolo obterProtocoloPorCodigo(String codigo) {
+			return (ExProtocolo) getSessao().createCriteria(ExProtocolo.class).add(Restrictions.eq("codigo", codigo)).uniqueResult();
+		}
+
+		public List<ExMobil> consultarMobilPorDocumento(ExDocumento doc){
+			return (List<ExMobil>) getSessao().createCriteria(ExMobil.class).add(Restrictions.eq("exDocumento", doc)).list();
+		}
 		
-		return (ExProtocolo) query.uniqueResult();		
-	}
+		public List<ExMovimentacao> consultarMovimentoPorMobil(ExMobil mob){
+			return (List<ExMovimentacao>) getSessao().createCriteria(ExMovimentacao.class).add(Restrictions.eq("exMobil", mob)).list();
+		}
+		
+		public String gerarCodigoProtocolo() {
+			boolean existe = true;		
+			String codigo = "";
+			while(existe) {
+				codigo = randomAlfanumerico(10);
+				if(obterProtocoloPorCodigo(codigo) == null)
+					existe = false;
+			}			
+			return codigo;
+		}
+		
+		/*
+		 * Funcao para geracao de codigos alfanumericos randomicos
+		 * recebendo apenas a quantidade de caracteres que o codigo deve conter
+		 */
+		public static String randomAlfanumerico(int contador) {
+			final String STRING_ALFANUMERICA = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+			StringBuilder sb = new StringBuilder();
+			while (contador-- != 0) {	
+				int caracteres = (int)(Math.random()*STRING_ALFANUMERICA.length());	
+				sb.append(STRING_ALFANUMERICA.charAt(caracteres));	
+			}	
+			return sb.toString();
+		}
+		
+		
+		/*
+		 * Fim da adicao
+		 */
+
+		public ExProtocolo obterProtocoloPorDocumento(Long idDoc) throws SQLException {
+
+			final Query query = getSessao().getNamedQuery("ExProtocolo.obterProtocoloPorDocumento");
+			query.setParameter("idDoc", idDoc);
+			query.setParameter("rownum", 1L);
+
+			return (ExProtocolo) query.uniqueResult();
+		}
 
 	public List consultarPorFiltro(final ExMobilDaoFiltro flt) {
 		return consultarPorFiltro(flt, 0, 0);

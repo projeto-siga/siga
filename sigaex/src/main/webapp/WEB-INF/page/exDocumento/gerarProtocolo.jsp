@@ -30,7 +30,7 @@
 		<br>
 		<div class="row">
 			<div class="col-sm-12">
-				<div class="p-3 mb-2 bg-dark text-white text-center" id="bg"><h4><b>Protocolo de Recebimento de Documento</b><h4></div>
+				<div class="p-3 mb-2 bg-dark text-white text-center" id="bg"><h4><b>Protocolo de Acompanhamento de Documento</b><h4></div>
 			</div>
 		</div>
 		<br>
@@ -38,7 +38,8 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<div class="form-group text-center">
-					<label>N&uacute;mero do Protocolo: <b>${protocolo.numero} / ${ano}</b></label>
+					<!-- <label>N&uacute;mero do Protocolo: <b>${protocolo.numero} / ${ano}</b></label> -->
+					<label>N&uacute;mero do Protocolo: <b>${protocolo.codigo}</b></label>
 				</div>
 			</div>
 		</div>

@@ -6893,16 +6893,20 @@ public class ExBL extends CpBL {
 	public ExProtocolo gerarProtocolo(ExDocumento doc, DpPessoa cadastrante, DpLotacao lotacao) {
 		try {
 			iniciarAlteracao();
-			
+
 			Date dt = dao().dt();
 			Calendar c = Calendar.getInstance();
 			c.setTime(dt);
-			
+
 			ExProtocolo prot = new ExProtocolo();
-			prot.setNumero(obterSequencia(Long.valueOf(c.get(Calendar.YEAR)), ExSequenciaEnum.PROTOCOLO.getValor(), "1"));
+			/*
+			 *prot.setNumero(
+			 *     obterSequencia(Long.valueOf(c.get(Calendar.YEAR)), ExSequenciaEnum.PROTOCOLO.getValor(), "1"));
+			*/
+			prot.setCodigo(dao().gerarCodigoProtocolo());
 			prot.setExDocumento(doc);
 			prot.setData(c.getTime());
-			
+
 			dao().gravar(prot);
 			ContextoPersistencia.flushTransaction();
 			final ExMovimentacao mov = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO,
@@ -6924,4 +6928,104 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Ocorreu um erro ao obter protocolo.", 0, e);
 		}
 	}
+	
+	
+	
+	
+	/*
+	 * Adicionado 23/01/2020
+	 */
+
+	public ExArquivo buscarPorProtocolo(String num) throws Exception {
+		/*
+		 * Busca por numero e ano
+		 * 
+		 * String temp[] = num.split("/");
+		 * Long numero = Long.parseLong(temp[0]);
+		 * Integer ano = Integer.parseInt(temp[1]);
+		 * ExProtocolo protocolo = (ExProtocolo) dao().obterProtocoloPorCodigo(numero,ano);
+		 */
+		
+		ExProtocolo protocolo = dao().obterProtocoloPorCodigo(num);		
+		
+		if (protocolo.getExDocumento() == null)
+			throw new AplicacaoException("Protocolo não encontrado");
+
+		try {
+			protocolo.getExDocumento().getDescrCurta();
+		} catch (ObjectNotFoundException e) {
+			throw new AplicacaoException("Protocolo não encontrado", 0, e);
+		}
+
+		int hash = protocolo.getExDocumento().getDescrCurta().hashCode() % 10000;
+		ExMovimentacao move = null;
+
+		if (Math.abs(protocolo.getExDocumento().getDescrCurta().hashCode() % 10000) == hash) {
+			return protocolo.getExDocumento();
+		} else {
+			for (ExMovimentacao mov : protocolo.getExDocumento().getExMovimentacaoSet())
+				if (Math.abs((protocolo.getExDocumento().getDescrCurta() + mov.getIdMov()).hashCode() % 10000) == hash
+						|| Math.abs((protocolo.getExDocumento().getDescrCurta() + mov.getIdMov() + "AssinaturaExterna")
+								.hashCode() % 10000) == hash)
+					move = mov;
+			if (move == null)
+				throw new AplicacaoException("Protocolo inválido");
+
+			return move;
+		}
+	}
+
+	public byte[] obterPdfPorProtocolo(String num) throws Exception {
+		ExDocumento doc = dao().obterProtocoloPorCodigo(num).getExDocumento();
+		Pattern p = Pattern.compile("([0-9]{1,10})(.[0-9]{1,10})?-([0-9]{1,4})");
+		Matcher m = p.matcher(doc.getSiglaAssinatura());
+		
+		if (doc == null)
+			throw new AplicacaoException("Documento não encontrado");
+
+		// Testa se o documento existe na base
+		try {
+			doc.getDescrCurta();
+		} catch (ObjectNotFoundException e) {
+			throw new AplicacaoException("Documento não encontrado", 0, e);
+		}
+
+		/*
+		 * if (doc.getExNivelAcesso().getGrauNivelAcesso() > 20) throw new
+		 * Exception("Documento sigiloso");
+		 */
+
+		String temp[] = doc.getSiglaAssinatura().split("-");
+		int hash = Integer.parseInt(temp[1]);
+		ExArquivo arq;
+		ExMovimentacao move = null;
+
+		if (Math.abs(doc.getDescrCurta().hashCode() % 10000) == hash) {
+			arq = doc;
+		} else {
+			for (ExMovimentacao mov : doc.getExMovimentacaoSet())
+				if (Math.abs((doc.getDescrCurta() + mov.getIdMov()).hashCode() % 10000) == hash || Math
+						.abs((doc.getDescrCurta() + mov.getIdMov() + "AssinaturaExterna").hashCode() % 10000) == hash)
+					move = mov;
+			if (move == null)
+				throw new AplicacaoException("Número inválido");
+
+			arq = move;
+		}
+
+		Documento documento = new Documento();
+		
+		if (arq instanceof ExDocumento)
+			return documento.getDocumento(((ExDocumento) arq).getMobilGeral(), null);
+		if (arq instanceof ExMovimentacao) {
+			ExMovimentacao mov = (ExMovimentacao) arq;
+			return documento.getDocumento(mov.getExMobil(), mov);
+		}
+		return null;
+
+	}
+
+	/*
+	 * Fim da adicao
+	 */
 }

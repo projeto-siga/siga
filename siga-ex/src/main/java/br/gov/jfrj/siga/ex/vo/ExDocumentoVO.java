@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 
-import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -42,6 +41,7 @@ import br.gov.jfrj.siga.ex.util.ExGraphColaboracao;
 import br.gov.jfrj.siga.ex.util.ExGraphRelacaoDocs;
 import br.gov.jfrj.siga.ex.util.ExGraphTramitacao;
 import br.gov.jfrj.siga.ex.util.ProcessadorModeloFreemarker;
+import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class ExDocumentoVO extends ExVO {
 	DpPessoa titular;
@@ -240,6 +240,14 @@ public class ExDocumentoVO extends ExVO {
 		this.originalOrgao = doc.getOrgaoExterno() != null ? doc.getOrgaoExterno().getDescricao() : null;
 		
 		this.podeAnexarArquivoAuxiliar = Ex.getInstance().getComp().podeAnexarArquivoAuxiliar(titular, lotaTitular, mob);
+	}
+	
+	/*
+	 * Adicionado 14/02/2020
+	 */
+	
+	protected  ExDao dao() {
+		return ExDao.getInstance();
 	}
 
 	public List<Object> getListaDeAcessos() {
@@ -455,6 +463,29 @@ public class ExDocumentoVO extends ExVO {
 			}
 		}
 		return retorno;
+	}
+	
+	/*
+	 * Adicionado 14/02/2020
+	 */
+	private boolean mostrarGerarProtocolo(ExDocumento doc) {				
+		if(doc.getDtAssinatura() == null)
+			return false;
+		
+		List<ExMobil>mobs = dao().consultarMobilPorDocumento(doc);
+		List<ExMovimentacao>movs = new ArrayList<ExMovimentacao>();
+		
+		for(ExMobil mob:mobs)
+			movs.addAll(dao().consultarMovimentoPorMobil(mob));
+		
+		for(ExMovimentacao mov:movs)
+			if(mov.getDescrTipoMovimentacao().equalsIgnoreCase("Juntada")||
+					mov.getDescrTipoMovimentacao().equalsIgnoreCase("Cancelamento")||
+					mov.getDescrTipoMovimentacao().equalsIgnoreCase("Arquivamento Intermediário")||
+					mov.getDescrTipoMovimentacao().equalsIgnoreCase("Arquivamento Corrente"))
+				return false;
+
+		return true;
 	}
 	
 	/**
@@ -761,16 +792,18 @@ public class ExDocumentoVO extends ExVO {
 				"Esta operação tornará esse documento sem efeito. Prosseguir?",
 				null, null, null, "once");
 		
-		vo.addAcao(
-				"printer",
-				"Gerar Protocolo",
-				"/app/expediente/doc",
-				"gerarProtocolo",
-				Ex.getInstance()
-						.getComp()
-						.podeGerarProtocolo(titular, lotaTitular, mob),
-				null,
-				"&popup=true", null, null, null);
+		if(mostrarGerarProtocolo(doc)) {
+			vo.addAcao(
+					"printer",
+					"Gerar Protocolo",
+					"/app/expediente/doc",
+					"gerarProtocolo",
+					Ex.getInstance()
+							.getComp()
+							.podeGerarProtocolo(titular, lotaTitular, mob),
+					null,
+					"&popup=true", null, null, null);
+		}
 	}
 
 	public void addDadosComplementares() {

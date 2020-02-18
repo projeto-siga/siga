@@ -4061,8 +4061,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 					|| podeGerenciarPublicacaoBoletimPorConfiguracao(titular, lotaTitular, mob));
 	}
 	
-	public boolean podeRestrigirAcesso(final DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, final ExMobil mob) {
+	public boolean podeRestrigirAcesso(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		
 		List<ExMovimentacao> listMovJuntada = new ArrayList<ExMovimentacao>();
         if(mob.getDoc().getMobilDefaultParaReceberJuntada() != null) {
@@ -4071,19 +4071,19 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		return (getConf()
 				.podePorConfiguracao(
-						cadastrante,
-						lotaCadastrante,
+						titular,
+						lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO,
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR)) &&
 				(!getConf().podePorConfiguracao(
-							cadastrante,
-							lotaCadastrante,
+							titular,
+							lotaTitular,
 							mob.doc().getExModelo(),
 							CpTipoConfiguracao.TIPO_CONFIG_INCLUIR_DOCUMENTO) || mob.getDoc().getPai()==null) && listMovJuntada.size() == 0;
 	}
 	
-	public boolean podeDesfazerRestricaoAcesso(final DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, final ExMobil mob) {
+	public boolean podeDesfazerRestricaoAcesso(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		List<ExMovimentacao> listMovJuntada = new ArrayList<ExMovimentacao>();
         if(mob.getDoc().getMobilDefaultParaReceberJuntada() != null) {
             listMovJuntada.addAll(mob.getDoc().getMobilDefaultParaReceberJuntada().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA));
@@ -4093,13 +4093,13 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return (!lista.isEmpty() &&
 				getConf()
 				.podePorConfiguracao(
-						cadastrante,
-						lotaCadastrante,
+						titular,
+						lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO,
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR)) &&
 				(!getConf().podePorConfiguracao(
-							cadastrante,
-							lotaCadastrante,
+							titular,
+							lotaTitular,
 							mob.doc().getExModelo(),
 							CpTipoConfiguracao.TIPO_CONFIG_INCLUIR_DOCUMENTO) || mob.getDoc().getPai()==null) && listMovJuntada.size() == 0;
 	}

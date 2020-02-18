@@ -715,7 +715,7 @@ public class ExMovimentacaoController extends ExController {
 
 		if (!Ex.getInstance()
 				.getComp()
-				.podeDesfazerRestricaoAcesso(getCadastrante(), getLotaCadastrante(),
+				.podeDesfazerRestricaoAcesso(getTitular(), getLotaTitular(),
 						builder.getMob())) {
 			throw new AplicacaoException(
 					"Não é possível restringir acesso");
@@ -723,7 +723,7 @@ public class ExMovimentacaoController extends ExController {
 		
 		Ex.getInstance()
 			.getBL()
-			.desfazerRestringirAcesso(getCadastrante(), getLotaCadastrante(), doc, null,  exTipoSig);
+			.desfazerRestringirAcesso(getCadastrante(), getLotaTitular(), doc, null,  exTipoSig);
 		
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
@@ -756,7 +756,7 @@ public class ExMovimentacaoController extends ExController {
 		
 		if (!Ex.getInstance()
 				.getComp()
-				.podeRestrigirAcesso(getCadastrante(), getLotaCadastrante(),
+				.podeRestrigirAcesso(getTitular(), getLotaTitular(),
 						builder.getMob())) {
 			throw new AplicacaoException(
 					"Não é possível restringir acesso");

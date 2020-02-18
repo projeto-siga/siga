@@ -1702,7 +1702,7 @@ public class ExDocumentoController extends ExController {
 			 */
 			
 
-			if(exDocumentoDTO.getDoc().getExMobilPai() != null && Ex.getInstance().getComp().podeRestrigirAcesso(getCadastrante(), getLotaCadastrante(), exDocumentoDTO.getDoc().getExMobilPai())) {
+			if(exDocumentoDTO.getDoc().getExMobilPai() != null && Ex.getInstance().getComp().podeRestrigirAcesso(getTitular(), getLotaTitular(), exDocumentoDTO.getDoc().getExMobilPai())) {
 				exBL.copiarRestringir(exDocumentoDTO.getDoc().getMobilGeral(), exDocumentoDTO.getDoc().getExMobilPai().getDoc().getMobilGeral(), getCadastrante(), getTitular(), exDocumentoDTO.getDoc().getData());
 			}
 			

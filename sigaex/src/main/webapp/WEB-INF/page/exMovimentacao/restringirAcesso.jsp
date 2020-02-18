@@ -65,7 +65,7 @@
 					<div class="row">
 						<div class="col-sm">
 							<input type="button" value="Ok" id="ok" class="btn btn-primary"/> 
-							<input type="button" value="Voltar" onclick="javascript:history.back();" class="btn btn-cancel ml-2"/> 
+							<input type="button" value="Cancela" onclick="javascript:history.back();" class="btn btn-cancel ml-2"/> 
 						</div>
 					</div>
 				</form>
@@ -95,7 +95,10 @@
 	$("#ok").click(function(){
 		var usuarios = document.getElementById("usu").value;
 		if(usuarios.length > 1) {
-			frm.submit();
+			var resp = confirm("Somente os usuários definidos terão acesso aos documentos, os usuários das tramitações anteriores deixarão de visualizar/ter acesso. Deseja continuar?");
+			if(resp) {
+				frm.submit();
+			}
 		} else {
 			alert("Selecione pelo menos uma pessoa.");
 		}

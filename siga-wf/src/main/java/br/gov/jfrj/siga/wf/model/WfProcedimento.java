@@ -83,6 +83,9 @@ public class WfProcedimento implements ProcessInstance<WfDefinicaoDeProcedimento
 	@Column(name = "PROC_TP_PRIORIDADE")
 	private WfPrioridade prioridade;
 
+	public WfProcedimento() {
+	}
+
 	public WfProcedimento(WfDefinicaoDeProcedimento definicao, Map<String, Object> variavel) {
 		this.definicaoDeProcedimento = definicao;
 		if (variavel != null)

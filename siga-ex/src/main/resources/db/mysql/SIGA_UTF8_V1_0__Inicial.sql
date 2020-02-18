@@ -449,15 +449,6 @@ DELIMITER ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
--- Dumping data for table `ex_documento_numeracao`
---
-
-LOCK TABLES `ex_documento_numeracao` WRITE;
-/*!40000 ALTER TABLE `ex_documento_numeracao` DISABLE KEYS */;
-/*!40000 ALTER TABLE `ex_documento_numeracao` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `ex_email_notificacao`
 --
 

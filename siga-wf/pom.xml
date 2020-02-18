@@ -21,7 +21,7 @@
 		<dependency>
 			<groupId>com.crivano</groupId>
 			<artifactId>jflow</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>1.0.0</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/info.bliki.wiki/bliki-core

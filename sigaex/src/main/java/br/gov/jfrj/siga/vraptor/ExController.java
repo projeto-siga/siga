@@ -137,6 +137,8 @@ public class ExController extends SigaController {
 					niveisFinal.add(nivelAcesso);
 				}
 			}
+		} else {
+			niveisFinal.addAll(listaNiveis);
 		}
 
 		return niveisFinal;

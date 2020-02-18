@@ -11,14 +11,6 @@
 
 	<artifactId>siga-ex</artifactId>
 
-	<build>
-      <resources>
-        <resource>
-          <directory>src/main/nheengatu</directory>
-        </resource>
-      </resources>
-    </build>
-    
 	<dependencies>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>

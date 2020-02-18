@@ -43,7 +43,7 @@ import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
-@Table(name = "DP_FUNCAO_CONFIANCA", schema = "CORPORATIVO")
+@Table(name = "corporativo.dp_funcao_confianca")
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpFuncaoConfianca extends AbstractDpFuncaoConfianca implements
 		Serializable, Selecionavel, Sincronizavel, DpConvertableEntity {

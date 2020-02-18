@@ -79,7 +79,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
  */
 @Entity
 @BatchSize(size = 500)
-@Table(name = "EX_DOCUMENTO", catalog = "SIGA")
+@Table(name = "siga.ex_documento")
 public class ExDocumento extends AbstractExDocumento implements Serializable,
 		CarimboDeTempo {
 

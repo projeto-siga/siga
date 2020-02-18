@@ -80,7 +80,6 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.model.CarimboDeTempo;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.DaoFiltro;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
@@ -1447,20 +1446,14 @@ public class CpDao extends ModeloDao {
 		return pes;
 	}
 
-	public Date consultarDataEHoraDoServidor() throws AplicacaoException {
-		if (ContextoPersistencia.dt() != null)
-			return ContextoPersistencia.dt();
-		
-		Query sql = em().createNamedQuery(
-				"consultarDataEHoraDoServidor");
-
-		List result = sql.getResultList();
-		if (result.size() != 1)
-			throw new AplicacaoException(
-					"Nao foi possivel obter a data e a hora atuais do servidor.");
-
-		Date dt = (Date) ((result.get(0)));
-		ContextoPersistencia.setDt(dt);
+	public Date consultarDataEHoraDoServidor() {
+		String sql = "SELECT sysdate from dual";
+		String dialect = System.getProperty("siga.hibernate.dialect");
+		if (dialect != null && dialect.contains("MySQL"))
+			sql = "SELECT CURRENT_TIMESTAMP";
+	    Query query = em().createNativeQuery(sql);
+	    Date dt = (Date) query.getSingleResult();
+	    ContextoPersistencia.setDt(dt);
 		return dt;
 	}
 

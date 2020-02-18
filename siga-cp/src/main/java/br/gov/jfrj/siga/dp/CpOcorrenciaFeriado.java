@@ -34,7 +34,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
-@Table(schema = "CORPORATIVO", name = "CP_OCORRENCIA_FERIADO")
+@Table(name = "corporativo.cp_ocorrencia_feriado")
 public class CpOcorrenciaFeriado extends AbstractCpOcorrenciaFeriado implements Serializable, Selecionavel {
 
     public static ActiveRecord<CpOcorrenciaFeriado> AR = new ActiveRecord<>(CpOcorrenciaFeriado.class);

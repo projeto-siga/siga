@@ -34,7 +34,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 @Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
-@Table(schema = "CORPORATIVO", name="CP_TIPO_IDENTIDADE")
+@Table(name="corporativo.cp_tipo_identidade")
 public class CpTipoIdentidade extends AbstractCpTipoIdentidade {
 	public static final Integer FORMULARIO = new Integer(1);
 	public static final Integer CERTIFICADO = new Integer(2);

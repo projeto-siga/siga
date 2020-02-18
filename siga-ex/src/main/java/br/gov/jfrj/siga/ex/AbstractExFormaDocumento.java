@@ -62,7 +62,7 @@ public abstract class AbstractExFormaDocumento extends Objeto implements
 	private Set<ExModelo> exModeloSet;
 
 	@ManyToMany
-	@JoinTable(name = "EX_TP_FORMA_DOC", joinColumns = { @JoinColumn(name = "ID_FORMA_DOC") }, inverseJoinColumns = { @JoinColumn(name = "ID_TP_DOC") })
+	@JoinTable(name = "siga.ex_tp_forma_doc", joinColumns = { @JoinColumn(name = "ID_FORMA_DOC") }, inverseJoinColumns = { @JoinColumn(name = "ID_TP_DOC") })
 	private Set<ExTipoDocumento> exTipoDocumentoSet;
 
 	@ManyToOne(fetch = FetchType.LAZY)

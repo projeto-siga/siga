@@ -40,8 +40,8 @@ public class MontadorQuery implements IMontadorQuery {
 		if (flt.getUltMovIdEstadoDoc() != null
 				&& flt.getUltMovIdEstadoDoc() != 0) {
 			sbf.append(" and label.cpMarcador.idMarcador = :ultMovIdEstadoDoc");
-			sbf.append(" and (dt_ini_marca is null or dt_ini_marca < sysdate)");
-			sbf.append(" and (dt_fim_marca is null or dt_fim_marca > sysdate)");
+			sbf.append(" and (dt_ini_marca is null or dt_ini_marca < CURRENT_TIMESTAMP)");
+			sbf.append(" and (dt_fim_marca is null or dt_fim_marca > CURRENT_TIMESTAMP)");
 		} else {
 			sbf.append(" and not (label.cpMarcador.idMarcador in (3, 14, 25))");
 		}

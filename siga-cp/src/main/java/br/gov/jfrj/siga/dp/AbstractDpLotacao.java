@@ -93,8 +93,8 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 @NamedNativeQueries({
 		@NamedNativeQuery(name = "consultarQuantidadeDocumentosPorDpLotacao", query = "SELECT count(1) FROM corporativo.dp_lotacao lotacao"
 			+ " left join corporativo.cp_marca marca on lotacao.ID_LOTACAO = marca.ID_LOTACAO_INI"
-			+ " WHERE(dt_ini_marca IS NULL OR dt_ini_marca < sysdate)"
-			+ " AND(dt_fim_marca IS NULL OR dt_fim_marca > sysdate)"
+			+ " WHERE(dt_ini_marca IS NULL OR dt_ini_marca < CURRENT_TIMESTAMP)"
+			+ " AND(dt_fim_marca IS NULL OR dt_fim_marca > CURRENT_TIMESTAMP)"
 			+ " AND id_marcador not in (1,10,32)"
 			+ " AND lotacao.id_lotacao_ini = :idLotacao"
 			+ " AND id_tp_marca = :idTipoMarca ")	})

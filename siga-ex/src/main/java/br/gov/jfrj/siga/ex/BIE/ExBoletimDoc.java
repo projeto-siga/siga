@@ -27,7 +27,7 @@ import org.hibernate.annotations.BatchSize;
 
 @Entity
 @BatchSize(size = 500)
-@Table(name = "EX_BOLETIM_DOC", catalog = "SIGA")
+@Table(name = "siga.ex_boletim_doc")
 public class ExBoletimDoc extends AbstractExBoletimDoc implements Serializable {
 
 	public ExBoletimDoc() {

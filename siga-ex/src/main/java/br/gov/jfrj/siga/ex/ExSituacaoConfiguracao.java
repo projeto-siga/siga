@@ -34,7 +34,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 @Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
-@Table(name = "EX_SITUACAO_CONFIGURACAO", catalog = "SIGA")
+@Table(name = "siga.ex_situacao_configuracao")
 public class ExSituacaoConfiguracao extends AbstractExSituacaoConfiguracao {
 
 	/**

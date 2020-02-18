@@ -51,10 +51,6 @@
 
 	
 
-	<listener>
-		<listener-class>br.gov.jfrj.siga.jee.BouncyCastleServletContextListener</listener-class>
-	</listener>
-
 	<!-- The Usual Welcome File List -->
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>

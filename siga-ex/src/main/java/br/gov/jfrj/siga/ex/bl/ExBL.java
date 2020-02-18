@@ -4942,8 +4942,6 @@ public class ExBL extends CpBL {
 					gravarMovimentacao(exMov);
 
 				}
-				exDocumento.setExNivelAcesso(nivelAcesso);
-				concluirAlteracaoComRecalculoAcesso(exDocumento.getMobilGeral());
 			}
 		} catch (final Exception e) {
 			cancelarAlteracao();

@@ -24,12 +24,13 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/info.bliki.wiki/bliki-core -->
+		<!-- https://mvnrepository.com/artifact/info.bliki.wiki/bliki-core
 		<dependency>
 			<groupId>info.bliki.wiki</groupId>
 			<artifactId>bliki-core</artifactId>
 			<version>3.1.0</version>
 		</dependency>
+		 -->
 
 		<dependency>
 			<groupId>javax.enterprise</groupId>

@@ -4063,12 +4063,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	
 	public boolean podeRestrigirAcesso(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
-		
-		List<ExMovimentacao> listMovJuntada = new ArrayList<ExMovimentacao>();
-        if(mob.getDoc().getMobilDefaultParaReceberJuntada() != null) {
-            listMovJuntada.addAll(mob.getDoc().getMobilDefaultParaReceberJuntada().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA));
-        }
-		
 		return (getConf()
 				.podePorConfiguracao(
 						titular,
@@ -4079,15 +4073,11 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 							titular,
 							lotaTitular,
 							mob.doc().getExModelo(),
-							CpTipoConfiguracao.TIPO_CONFIG_INCLUIR_DOCUMENTO) || mob.getDoc().getPai()==null) && listMovJuntada.size() == 0;
+							CpTipoConfiguracao.TIPO_CONFIG_INCLUIR_DOCUMENTO) || mob.getDoc().getPai()==null) ;
 	}
 	
 	public boolean podeDesfazerRestricaoAcesso(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
-		List<ExMovimentacao> listMovJuntada = new ArrayList<ExMovimentacao>();
-        if(mob.getDoc().getMobilDefaultParaReceberJuntada() != null) {
-            listMovJuntada.addAll(mob.getDoc().getMobilDefaultParaReceberJuntada().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA));
-        }
 		List<ExMovimentacao> lista = new ArrayList<ExMovimentacao>();
 		lista.addAll(mob.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO));
 		return (!lista.isEmpty() &&
@@ -4101,7 +4091,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 							titular,
 							lotaTitular,
 							mob.doc().getExModelo(),
-							CpTipoConfiguracao.TIPO_CONFIG_INCLUIR_DOCUMENTO) || mob.getDoc().getPai()==null) && listMovJuntada.size() == 0;
+							CpTipoConfiguracao.TIPO_CONFIG_INCLUIR_DOCUMENTO) || mob.getDoc().getPai()==null) ;
 	}
 
 	/**

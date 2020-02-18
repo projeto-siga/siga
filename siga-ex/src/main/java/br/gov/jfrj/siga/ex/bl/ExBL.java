@@ -3965,11 +3965,6 @@ public class ExBL extends CpBL {
 
 		final ExMovimentacao mov;
 
-		Boolean podeRestringir = Boolean.FALSE;
-		if (Ex.getInstance().getComp().podeRestrigirAcesso(cadastrante, lotaCadastrante, mob)) {
-			podeRestringir = Boolean.TRUE;
-		}
-
 		try {
 			iniciarAlteracao();
 
@@ -4008,10 +4003,10 @@ public class ExBL extends CpBL {
 			Set<ExMovimentacao> movs = mob.getTransferenciasPendentesDeDevolucao(mob);
 			if (!movs.isEmpty())
 				removerPendenciaDeDevolucao(movs, mob);
-
-			if (podeRestringir) {
+				
+			if(Ex.getInstance().getComp().podeRestrigirAcesso(titular, titular.getLotacao(), mob)) {
 				this.copiarRestringir(mob, mobPai, cadastrante, titular, dtMov);
-			}
+			}		
 			concluirAlteracaoComRecalculoAcesso(mov.getExMobil());
 
 		} catch (final Exception e) {
@@ -4948,7 +4943,6 @@ public class ExBL extends CpBL {
 
 				}
 				exDocumento.setExNivelAcesso(nivelAcesso);
-				dao().gravar(exDocumento);
 				concluirAlteracaoComRecalculoAcesso(exDocumento.getMobilGeral());
 			}
 		} catch (final Exception e) {

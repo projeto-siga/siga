@@ -925,11 +925,9 @@ public class ExDocumentoController extends ExController {
 							p.setMatricula(Long.valueOf(parteNumerica));  
 							p.setSesbPessoa(a[i].replaceAll("[^a-zA-Z]", ""));
 							p = cpdao.consultarPorSigla(p);
-							if(p != null)
-								s += p.getNomePessoa() + "("+a[i].trim()+"/"+ p.getLotacao().getSiglaLotacao()+")";
+							s += p.getNomePessoa() + "("+a[i]+")";
 						} else {
 							l = new DpLotacao();
-							l.setOrgaoUsuario(exDocumentoDTO.getDoc().getOrgaoUsuario());
 							l.setSigla(a[i].replace(exDocumentoDTO.getDoc().getOrgaoUsuario().getSigla(), ""));
 							l = cpdao.consultarPorSigla(l);
 							if(l !=null)

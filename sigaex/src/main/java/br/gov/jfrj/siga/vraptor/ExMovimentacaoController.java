@@ -772,8 +772,8 @@ public class ExMovimentacaoController extends ExController {
 						mov.getNmFuncaoSubscritor(), exTipoSig);
 
 		result.include("msgCabecClass", "alert-warning");
-		result.include("mensagemCabec", "Somente os usuários definidos, terão acesso aos documentos. Os usuários que já tiveram acesso ao documento, por tramitações anteriores ou por definição de acompanhamento deixam de ter acesso/visualização ao documento. Inclusive o cadastrante dos documentos, responsáveis pela assinatura e cossignatário");
-		result.forwardTo(ExDocumentoController.class).exibe(false, sigla, null, null, null);
+		result.include("mensagemCabec", "Somente os usuários definidos terão acesso aos documentos, os usuários das tramitações anteriores deixarão de visualizar/ter acesso.");
+		result.forwardTo(ExDocumentoController.class).exibe(false, sigla, null, null);
 	}
 
 	@Post("app/expediente/mov/redefinir_nivel_acesso_gravar")

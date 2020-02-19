@@ -1809,13 +1809,14 @@ public class ExBL extends CpBL {
 
 				// Cria movimentação de Assinatura POR
 				final ExMovimentacao movsub;
-				assinante = doc.getSubscritor();
-
 				movsub = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA,
-						cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov, subscritor, null, null, null, null);
-				movsub.setDescrMov(subscritor.getNomePessoa() + ":" + subscritor.getSigla() + " em substituição a "
-						+ assinante.getNomePessoa() + ":" + assinante.getSigla());
+					cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
+					subscritor, null, null, null, null);
+				movsub.setDescrMov(subscritor.getNomePessoa() + ":" + subscritor.getSigla());
 				gravarMovimentacao(movsub);
+				
+				
+				assinante = doc.getSubscritor();
 			}
 
 			mov = criarNovaMovimentacao(

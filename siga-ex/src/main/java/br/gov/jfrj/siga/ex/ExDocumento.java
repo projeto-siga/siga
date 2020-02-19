@@ -1815,13 +1815,12 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		String assinantesPorSenha = Documento
 				.getAssinantesStringComMatricula(getAssinaturasPorComSenha());
 
-
 		if (assinantesToken.length() > 0)
 			retorno = "Assinado digitalmente por " + assinantesToken + ".\n";
 		
-		if (assinantesPorSenha.length() > 0) {
-			retorno = retorno + "Assinado com senha por " + assinantesPorSenha +".\n" ;
-		}
+		if (assinantesPorSenha.length() > 0)
+			retorno = retorno + "Assinado POR com senha por " + assinantesPorSenha
+					+ ".\n";
 		
 		if (assinantesSenha.length() > 0)
 			retorno = retorno + "Assinado com senha por " + assinantesSenha

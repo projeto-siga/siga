@@ -75,6 +75,13 @@ This is a useless buffer to fill the page to 513 bytes to avoid display of Frien
 										</c:if>
 									</c:if>
 								</c:catch>
+								
+								<!-- Inclui mensagens de validação -->
+								<c:if test="${not empty errors}">
+									<c:forEach var="error" items="${errors}">
+	    								${error.category} - ${error.message}<br />
+									</c:forEach>
+								</c:if>
 							</div>
 						</div>
 					</div>

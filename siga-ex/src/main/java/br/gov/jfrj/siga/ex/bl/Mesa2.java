@@ -517,7 +517,7 @@ public class Mesa2 {
 			
 			if (references.get(mobil).movAnotacaoDescrMov != null) { 
 				r.anotacao = references.get(mobil).movAnotacaoDescrMov 
-						+ "<br/><a href='/sigaex/app/expediente/mov/excluir?id=" 
+						+ "<br/><a href='/sigaex/app/expediente/mov/cancelar_anotacao?id="						
 						+ references.get(mobil).movAnotacaoIdMov
 						+ "&redirectURL=../../mesa2?excluiuAnotacao=true'>Excluir Anotação</a>";
 			}

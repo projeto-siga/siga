@@ -8,7 +8,6 @@
 
 <siga:pagina titulo="Mesa Virtual">
 <script type="text/javascript" src="../javascript/vue.min.js"></script>
-	
 	<div id="app" class="container-fluid content" >
 		<div id="configMenu" class="mesa-config ml-auto" :class="toggleConfig">
 			<button type="button" class="btn-mesa-config btn btn-secondary btn-sm h-100" @click="toggleMenuConfig();">
@@ -81,7 +80,7 @@
 			</div>
 		</div>
 		<div id="rowTopMesa" style="z-index: 1" class="row sticky-top px-3 pt-1 bg-white shadow-sm" 
-				v-if="carregando || (!errormsg &amp;&amp; grupos.length >= 0)">
+				v-if="!carregando || (!errormsg &amp;&amp; grupos.length >= 0)">
 			<div id="radioBtn" class="btn-group mr-1 mb-1" 
 					title="Visualiza somente os documentos do usuário ou da lotação">
 				<a class="btn btn-primary btn-sm" v-bind:class="exibeLota ? 'notActive' : 'active'" id="btnUser"  
@@ -105,7 +104,7 @@
 				Última atualização: {{getLastRefreshTime()}}</p>
 		</div>
 		
-		<div class="row" v-if="errormsg">
+		<div class="row" v-if="!carregando && errormsg">
 			<div class="col col-12">
 				<p class="alert alert-danger">
 					<strong>Erro!</strong> {{errormsg}}
@@ -126,7 +125,7 @@
 		</div>
 
 		<div class="row mt-3"
-			v-if="!errormsg && !carregando &amp;&amp; grupos.length == 0">
+			v-if="!carregando &amp;&amp; !errormsg &amp;&amp; grupos.length == 0">
 			<div class="col col-12">
 				<p class="alert alert-warning">
 					<strong>Atenção!</strong> Nenhum documento na mesa.
@@ -229,7 +228,7 @@
 								</tbody>
 							</table>
 							<div class="row">
-								<div class="col-md-9 mb-2">
+								<div class="col col-md-9 mb-2">
 									<div class="text-center" v-if="carregando">
 										<div class="spinner-grow text-info text-center" role="status"></div>
 									</div>
@@ -286,7 +285,6 @@
 		$('#mensagemCabecId').toggleClass('d-none');
 		$('#mensagemCabec').prepend("Anotação excluída com sucesso.");
 		$('#mensagemCabec').addClass("alert-success fade-close");
-    	this.carregando = true;
     	this.grupos = [];
     	sessionStorage.removeItem('timeout' + getUser());
 	}
@@ -347,11 +345,25 @@
 		      } 
 		      this.$nextTick(function () {		      
 	        	$('.popover-dismiss').popover({
-	        		container: 'body',
+// 	        		container: 'body',
 	        		html: true,
-	        		delay: { "show": 100, "hide": 600 },
-	        		trigger: 'hover focus'
-	        	});
+	        		animation: false,
+// 	        		delay: { "show": 100, "hide": 300 },
+	        		trigger: 'manual'
+	        	}).on("mouseenter", function () {
+	                var _this = this;
+	                $(this).popover("show");
+	                $(".popover").on("mouseleave", function () {
+	                    $(_this).popover('hide');
+	                });
+	            }).on("mouseleave", function () {
+	                var _this = this;
+	                setTimeout(function () {
+	                    if (!$(".popover:hover").length) {
+	                        $(_this).popover("hide");
+	                    }
+	                }, 300);
+		      	})
 		      });
 		      return grps;
 		    },

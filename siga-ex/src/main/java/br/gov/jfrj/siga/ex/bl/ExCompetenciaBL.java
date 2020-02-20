@@ -4640,15 +4640,5 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_AUTUAR,
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR));
 	}
-	
-	public boolean podeAssinarPorComSenha(final DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante) {
-		return (getConf()
-				.podePorConfiguracao(
-						cadastrante,
-						lotaCadastrante,
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR)) ;
-	}
 
 }

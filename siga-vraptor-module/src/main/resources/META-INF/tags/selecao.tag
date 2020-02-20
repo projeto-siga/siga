@@ -47,16 +47,6 @@
 <c:set var="propriedadeSel" value="${propriedade}Sel" />
 
 <c:set var="req" value="${pageContext.request}" />
-<c:set var="base" value="${f:resource('siga.base.url')}"/>
-<c:set var="urlBase" value="${fn:replace(req.requestURL, req.requestURI, '')}"/>
-<c:if test="${not empty f:resource('siga.base.url')}">
-	<c:if test = "${fn:startsWith(f:resource('siga.base.url'), 'https') }">
-		<c:if test = "${!fn:startsWith(urlBase, 'https') }">
-			<c:set var="urlBase" value="${fn:replace(urlBase, 'http', 'https')}"/>
-		</c:if>
-	</c:if>
-</c:if>
-
 
 <c:choose>
 	<c:when test="${empty tipo}">
@@ -219,7 +209,7 @@ var modalsimulawindow${propriedade} = 	function(url) {
 self.newwindow_${propriedade} = '';
 self.popitup_${propriedade}${tipoSel} = function(sigla) {
 
-	var url =  '${urlBase}/${urlPrefix}${urlBuscar}?propriedade=${propriedade}${tipoSel}&sigla='+encodeURI($.trim(sigla)) +'${selecaoParams}&modal=true';
+	var url =  '/${urlPrefix}${urlBuscar}?propriedade=${propriedade}${tipoSel}&sigla='+encodeURI($.trim(sigla)) +'${selecaoParams}&modal=true';
 	
 	newwindow_${propriedade} = modalsimulawindow${propriedade};
 	

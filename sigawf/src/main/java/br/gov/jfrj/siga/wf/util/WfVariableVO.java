@@ -26,6 +26,7 @@ public class WfVariableVO {
 	private String access;
 	private String mappedName;
 	private String variableName;
+	private String variableValue;
 
 	public WfVariableVO(WfDefinicaoDeVariavel vd) throws IllegalAccessException, InvocationTargetException {
 		this.access = vd.getAcesso().name();
@@ -55,6 +56,14 @@ public class WfVariableVO {
 
 	public void setVariableName(String variableName) {
 		this.variableName = variableName;
+	}
+
+	public String getVariableValue() {
+		return variableValue;
+	}
+
+	public void setVariableValue(String variableValue) {
+		this.variableValue = variableValue;
 	}
 
 }

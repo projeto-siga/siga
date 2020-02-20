@@ -57,7 +57,7 @@
 					</div>
 					<div class="gt-form-row gt-width-100">
 						<table class="gt-form-table">
-							<input type="hidden" value="${task.taskInstance.id}" name="tiId" />
+							<input type="hidden" value="${task.id}" name="tiId" />
 
 							<c:set var="fieldIndex" value="0" />
 							<c:forEach var="variable" items="${task.variableList}">
@@ -73,7 +73,7 @@
 										</c:choose>
 
 										<td width=""><c:set var="editable"
-												value="${variable.writable and (variable.readable or empty taskInstance.token.processInstance.contextInstance.variables[variable.mappedName])}" />
+												value="${variable.writable}" />
 											<c:if test="${editable}">
 												<input name="fieldNames[${fieldIndex}]" type="hidden"
 													value="${variable.mappedName}" />
@@ -84,11 +84,11 @@
 															<siga:selecao propriedade="${variable.mappedName}"
 																modulo="sigaex" tipo="expediente" tema="simple"
 																ocultardescricao="sim"
-																siglaInicial="${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}" />
+																siglaInicial="${variable.variableValue}" />
 														</c:when>
 														<c:otherwise>
 															<a
-																href="/sigaex/app/expediente/doc/exibir?sigla=${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}">${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}</a>
+																href="/sigaex/app/expediente/doc/exibir?sigla=${variable.variableValue}">${variable.variableValue}</a>
 														</c:otherwise>
 													</c:choose>
 												</c:when>
@@ -98,10 +98,10 @@
 															<siga:selecao propriedade="${variable.mappedName}"
 																modulo="siga" tipo="pessoa" tema="simple"
 																ocultardescricao="sim"
-																siglaInicial="${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}" />
+																siglaInicial="${variable.variableValue}" />
 														</c:when>
 														<c:otherwise>
-									${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}
+									${variable.variableValue}
 								</c:otherwise>
 													</c:choose>
 												</c:when>
@@ -111,10 +111,10 @@
 															<siga:selecao propriedade="${variable.mappedName}"
 																modulo="siga" tipo="lotacao" tema="simple"
 																ocultardescricao="sim"
-																siglaInicial="${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}" />
+																siglaInicial="${variable.variableValue}" />
 														</c:when>
 														<c:otherwise>
-									${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}
+									${variable.variableValue}
 								</c:otherwise>
 													</c:choose>
 												</c:when>
@@ -122,12 +122,12 @@
 													<c:choose>
 														<c:when test="${editable}">
 															<input name="fieldValues[${fieldIndex}]" type="text"
-																value="<fmt:formatDate pattern="dd/MM/yyyy"	value="${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}" />"
+																value="<fmt:formatDate pattern="dd/MM/yyyy"	value="${variable.variableValue}" />"
 																onblur="javascript:verifica_data(this, true);" />
 														</c:when>
 														<c:otherwise>
 															<fmt:formatDate pattern="dd/MM/yyyy"
-																value="${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}" />
+																value="${variable.variableValue}" />
 														</c:otherwise>
 													</c:choose>
 												</c:when>
@@ -142,7 +142,7 @@
 															</select>
 														</c:when>
 														<c:otherwise>
-										${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}
+										${variable.variableValue}
 									</c:otherwise>
 													</c:choose>
 												</c:when>
@@ -150,10 +150,10 @@
 													<c:choose>
 														<c:when test="${editable}">
 															<input name="fieldValues[${fieldIndex}]" type="text"
-																value="${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}" />
+																value="${variable.variableValue}" />
 														</c:when>
 														<c:otherwise>
-									${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}
+									${variable.variableValue}
 									</c:otherwise>
 													</c:choose>
 												</c:otherwise>
@@ -167,7 +167,7 @@
 						</table>
 					</div>
 					<c:if
-						test="${(titular.sigla eq taskInstance.actorId) or (wf:podePegarTarefa(cadastrante, titular,lotaCadastrante,lotaTitular,taskInstance) == true)}">
+						test="${task.podePegarTarefa}">
 						<div class="gt-form-row gt-width-100">
 							<c:forEach var="transition" items="${task.transitions}">
 								<button type="submit" name="transitionName"
@@ -187,11 +187,11 @@
 				</div>
 			</form>
 			<c:if
-				test="${(titular.sigla eq taskInstance.actorId) or (wf:podePegarTarefa(cadastrante, titular,lotaCadastrante,lotaTitular,taskInstance))}">
+				test="${task.podePegarTarefa}">
 				<h3 class="gt-form-head">Designaçao da Tarefa</h3>
 				<div class="gt-form gt-content-box">
 					<form method="POST" action="${linkTo[AppController].assignTask}">
-						<input name="tiId" type="hidden" value="${taskInstance.id}" />
+						<input name="tiId" type="hidden" value="${task.id}" />
 						<div class="gt-form-row gt-width-100">
 							<label>Pessoa</label>
 							<siga:selecao modulo="siga" tipo="pessoa" tema="simple"
@@ -220,9 +220,9 @@
 						<div class="gt-form-row gt-width-100" style="clear: both">
 							<input name="designar" type="submit" value="Designar"
 								class="gt-btn-medium gt-btn-left" />
-							<c:if test="${empty taskInstance.actorId}">
+							<c:if test="${task.podePegarTarefa}">
 								<input type="button" value="Pegar tarefa para mim"
-									onclick="javascript:window.location.href='${linkTo[AppController].pegar}?tiId=${taskInstance.id}'"
+									onclick="javascript:window.location.href='${linkTo[AppController].pegar}?tiId=${task.id}'"
 									class="gt-btn-large gt-btn-left">
 							</c:if>
 						</div>
@@ -238,6 +238,7 @@
 						<th>Atendente</th>
 						<th>Descrição</th>
 					</thead>
+<%--					
 					<c:forEach var="ti" items="${wf:ordenarTarefas(taskInstance)}">
 						<c:forEach var="c" items="${wf:ordenarComentarios(ti)}">
 							<tr>
@@ -252,14 +253,15 @@
 							<td><b>${ti.name}</b></td>
 						</tr>
 					</c:forEach>
+ --%>
 				</table>
 			</div>
 
 			<c:if
-				test="${(titular.sigla eq taskInstance.actorId) or (wf:podePegarTarefa(cadastrante, titular,lotaCadastrante,lotaTitular,taskInstance))}">
+				test="${task.podePegarTarefa}">
 				<div class="gt-form gt-content-box">
 					<form method="POST" action="${linkTo[AppController].commentTask}">
-						<input name="tiId" type="hidden" value="${taskInstance.id}" /> <label>Comentário</label>
+						<input name="tiId" type="hidden" value="${task.id}" /> <label>Comentário</label>
 						<div class="gt-form-row gt-width-100">
 							<input type="text" size="80" name="comentario"
 								class="gt-form-text" />
@@ -278,20 +280,13 @@
 			<div class="gt-sidebar-content">
 				<h3>Dados da Tarefa</h3>
 				<p>
-					<b>Procedimento:</b> ${taskInstance.task.processDefinition.name}
+					<b>Procedimento:</b> ${task.nomeDoProcedimento}
 				</p>
 				<p>
-					<b>Tarefa:</b> ${taskInstance.task.name}
+					<b>Tarefa:</b> ${task.nomeDaTarefa}
 				</p>
 				<p>
-					<b>Prioridade:</b>
-					<c:choose>
-						<c:when test="${taskInstance.priority == 1}">Muito Alta</c:when>
-						<c:when test="${taskInstance.priority == 2}">Alta</c:when>
-						<c:when test="${taskInstance.priority == 3}">Média</c:when>
-						<c:when test="${taskInstance.priority == 4}">Baixa</c:when>
-						<c:when test="${taskInstance.priority == 51}">Muito Baixa</c:when>
-					</c:choose>
+					<b>Prioridade:</b> ${task.prioridade.descr}
 				</p>
 				<p>
 					<b>Cadastrante:</b> ${task.cadastrante} (${task.lotaCadastrante})
@@ -300,7 +295,7 @@
 					<b>Titular:</b> ${task.titular} (${task.lotaTitular})
 				</p>
 				<p>
-					<b>Início:</b> ${f:espera(taskInstance.create)}
+					<b>Início:</b> ${f:espera(task.inicio)}
 				</p>
 			</div>
 			<!-- /Sidebar Content -->
@@ -363,11 +358,11 @@
 			<div id="desc_editar">
 				<h3>Mapa do Procedimento</h3>
 				<div class="gt-form gt-content-box" style="padding-bottom: 15px;">
-					<img style="width: 100%" src="loadPhoto?tId=${taskInstance.id}" />
+					<img style="width: 100%" src="loadPhoto?tId=${task.id}" />
 				</div>
 			</div>
 		</div>
-		<a href="task.action?tiId=${taskInstance.id}"
+		<a href="task.action?tiId=${task.id}"
 			class="gt-btn-large gt-btn-left">Voltar</a>
 
 	</div>
@@ -394,7 +389,7 @@
 			<c:param name="tags">${task.ancora}</c:param>
 			<c:param name="msgvazio">Ainda não existe uma descrição de como esta tarefa deve ser executada. Por favor, clique <a
 					href="$1">aqui</a> para contribuir.</c:param>
-			<c:param name="titulo">${taskInstance.task.processDefinition.name} - ${taskInstance.task.name}</c:param>
+			<c:param name="titulo">${task.nomeDoProcedimento} - ${task.nomeDaTarefa}</c:param>
 			<c:param name="ts">${currentTimeMillis}</c:param>
 		</c:url>
 		<script type="text/javascript">

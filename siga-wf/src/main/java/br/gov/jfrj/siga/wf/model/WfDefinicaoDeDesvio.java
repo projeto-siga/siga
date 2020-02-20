@@ -88,6 +88,8 @@ public class WfDefinicaoDeDesvio extends HistoricoAuditavelSuporte
 
 	@Override
 	public String getTaskIdentifier() {
+		if (seguinte == null)
+			return null;
 		return seguinte.getIdentifier();
 	}
 
@@ -144,7 +146,7 @@ public class WfDefinicaoDeDesvio extends HistoricoAuditavelSuporte
 		this.seguinte = seguinte;
 	}
 
-	public boolean getUltimo() {
+	public boolean isUltimo() {
 		return ultimo;
 	}
 

@@ -20,6 +20,7 @@ package br.gov.jfrj.siga.wf.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -36,6 +37,7 @@ import br.gov.jfrj.siga.wf.model.WfConhecimento;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeDesvio;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeVariavel;
+import br.gov.jfrj.siga.wf.model.enm.WfPrioridade;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
 
 /**
@@ -183,7 +185,7 @@ public class WfTaskVO {
 			for (WfDefinicaoDeDesvio dd : ti.getDefinicaoDeTarefa().getDetour()) {
 				set.clear();
 				WfDefinicaoDeTarefa tdProxima = dd.getSeguinte();
-				boolean ultimo = false;
+				boolean ultimo = dd.isUltimo();
 				WfDefinicaoDeDesvio desvio = null;
 				while (tdProxima != null) {
 					if (tdProxima.getTipoDeTarefa() == WfTipoDeTarefa.FORMULARIO)
@@ -199,7 +201,7 @@ public class WfTaskVO {
 						tdProxima = desvio.getSeguinte();
 
 					// Depois dessa tarefa vai terminar
-					else if (tdProxima.isUltimo() || (desvio != null && desvio.getUltimo())
+					else if (tdProxima.isUltimo() || (desvio != null && desvio.isUltimo())
 							|| ti.getInstanciaDeProcesso().getCurrentIndex() == ti.getInstanciaDeProcesso()
 									.getProcessDefinition().getTaskDefinition().size() - 1) {
 						ultimo = true;
@@ -242,24 +244,6 @@ public class WfTaskVO {
 			ancora = "^wf:" + Texto.slugify(ti.getInstanciaDeProcesso().getProcessDefinition().getNome() + "-"
 					+ ti.getDefinicaoDeTarefa().getNome(), true, true);
 
-	}
-
-	/**
-	 * Retorna o objeto WfInstanciaDeTarefa.
-	 * 
-	 * @return
-	 */
-	public WfTarefa getWfInstanciaDeTarefa() {
-		return ti;
-	}
-
-	/**
-	 * Define o objeto WfInstanciaDeTarefa.
-	 * 
-	 * @param ti
-	 */
-	public void setWfInstanciaDeTarefa(WfTarefa ti) {
-		this.ti = ti;
 	}
 
 	/**
@@ -352,18 +336,45 @@ public class WfTaskVO {
 	}
 
 	public String getCadastrante() {
-		return (String) getWfInstanciaDeTarefa().getInstanciaDeProcesso().getVariable().get("wf_cadastrante");
+		return (String) this.ti.getInstanciaDeProcesso().getVariable().get("wf_cadastrante");
 	}
 
 	public String getLotaCadastrante() {
-		return (String) getWfInstanciaDeTarefa().getInstanciaDeProcesso().getVariable().get("wf_lota_cadastrante");
+		return (String) this.ti.getInstanciaDeProcesso().getVariable().get("wf_lota_cadastrante");
 	}
 
 	public String getTitular() {
-		return (String) getWfInstanciaDeTarefa().getInstanciaDeProcesso().getVariable().get("wf_titular");
+		return (String) this.ti.getInstanciaDeProcesso().getVariable().get("wf_titular");
 	}
 
 	public String getLotaTitular() {
-		return (String) getWfInstanciaDeTarefa().getInstanciaDeProcesso().getVariable().get("wf_lota_titular");
+		return (String) this.ti.getInstanciaDeProcesso().getVariable().get("wf_lota_titular");
 	}
+
+	public Long getId() {
+		return this.ti.getInstanciaDeProcesso().getId();
+	}
+
+	public String getNomeDoProcedimento() {
+		return this.ti.getInstanciaDeProcesso().getDefinicaoDeProcedimento().getNome();
+	}
+
+	public String getNomeDaTarefa() {
+		return this.ti.getDefinicaoDeTarefa().getNome();
+	}
+
+	public boolean isPodePegarTarefa() {
+		// (titular.sigla eq taskInstance.actorId) or (wf:podePegarTarefa(cadastrante,
+		// titular,lotaCadastrante,lotaTitular,taskInstance))
+		return false;
+	}
+
+	public WfPrioridade getPrioridade() {
+		return this.ti.getInstanciaDeProcesso().getPrioridade();
+	}
+
+	public Date getInicio() {
+		return this.ti.getInstanciaDeProcesso().getDtEvento();
+	}
+
 }

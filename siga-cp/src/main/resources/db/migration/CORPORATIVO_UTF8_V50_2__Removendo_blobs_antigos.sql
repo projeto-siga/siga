@@ -1,0 +1,1 @@
+-- alter table cp_modelo drop (conteudo_blob_mod);

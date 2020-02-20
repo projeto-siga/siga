@@ -57,11 +57,11 @@ public class ModeloController extends SigaController {
 		super(request, result, CpDao.getInstance(), so, em);
 	}
 
-	public CpModelo daoMod(long id) {
+	private CpModelo daoMod(long id) {
 		return dao().consultar(id, CpModelo.class, false);
 	}
 
-	public CpModelo daoModAtual(long id) {
+	private CpModelo daoModAtual(long id) {
 		return dao().consultarPorIdInicialCpModelo(daoMod(id).getIdInicial());
 	}
 
@@ -71,6 +71,7 @@ public class ModeloController extends SigaController {
 		result.include("itens", dao().consultaCpModelos());
 	}
 
+	@Transacional
 	@Post("/app/modelo/gravar")
 	public void gravar(Integer id, String conteudo) throws Exception {
 		assertAcesso("FE:Ferramentas;MODEDITAR:Editar modelos");

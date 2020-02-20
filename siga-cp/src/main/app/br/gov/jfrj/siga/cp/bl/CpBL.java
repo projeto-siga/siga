@@ -229,6 +229,8 @@ public class CpBL {
 					new int[] { 0 }, null);
 			if (confOld != null && !confOld.isEspecifica(confFiltro))
 				confOld = null;
+			if (confOld != null) 
+				confOld = dao().consultar(confOld.getIdConfiguracao(), CpConfiguracao.class, false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -94,6 +94,7 @@ public class PerfilController extends GrupoController {
 		result.include("idConfiguracaoNova", getIdConfiguracaoNova());
 	}
 
+	@Transacional
 	@SuppressWarnings("unchecked")
 	@Post("/app/gi/perfil/gravar")
 	public void gravar(Long idCpGrupo, String siglaGrupo, String dscGrupo,
@@ -121,6 +122,7 @@ public class PerfilController extends GrupoController {
 		result.redirectTo(MessageFormat.format("/app/gi/perfil/editar?idCpGrupo={0}", novoIdCpGrupo.toString()));
 	}
 
+	@Transacional
 	@Post("/app/gi/perfil/excluir")
 	public void excluir(Long idCpGrupo) throws Exception {
 		assertAcesso("PERFIL:Gerenciar grupos de email");

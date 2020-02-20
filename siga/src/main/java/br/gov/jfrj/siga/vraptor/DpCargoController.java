@@ -78,7 +78,7 @@ public class DpCargoController extends
 	}
 
 	@Override
-	public DpCargoDaoFiltro createDaoFiltro() {
+	protected DpCargoDaoFiltro createDaoFiltro() {
 		final DpCargoDaoFiltro flt = new DpCargoDaoFiltro();
 		flt.setNome(Texto.removeAcentoMaiusculas(getNome()));
 		flt.setIdOrgaoUsu(orgaoUsu);
@@ -93,7 +93,7 @@ public class DpCargoController extends
 	}
 	
 	@Override
-	public Selecionavel selecionarPorNome(final DpCargoDaoFiltro flt)
+	protected Selecionavel selecionarPorNome(final DpCargoDaoFiltro flt)
 			throws AplicacaoException {
 		// Procura por nome
 		flt.setNome(Texto.removeAcentoMaiusculas(flt.getSigla()));
@@ -176,6 +176,7 @@ public class DpCargoController extends
 		result.include("id",id);
 	}
 	
+	@Transacional
 	@Post("/app/cargo/gravar")
 	public void editarGravar(final Long id, 
 							 final String nmCargo, 
@@ -248,6 +249,7 @@ public class DpCargoController extends
 		result.use(Results.page()).forwardTo("/WEB-INF/page/dpCargo/cargaCargo.jsp");
 	}
 	
+	@Transacional
 	@Post("/app/cargo/carga")
 	public Download carga( final UploadedFile arquivo, Long idOrgaoUsu) throws Exception {
 		InputStream inputStream = null;

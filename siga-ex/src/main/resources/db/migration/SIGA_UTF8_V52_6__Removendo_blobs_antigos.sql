@@ -1,0 +1,4 @@
+-- alter table ex_modelo drop (conteudo_blob_mod, conteudo_tp_blob);
+-- alter table ex_movimentacao drop (conteudo_blob_mov, conteudo_tp_mov);
+-- alter table ex_documento drop (conteudo_blob_doc, conteudo_tp_doc);
+-- alter table ex_preenchimento drop (preenchimento_blob);

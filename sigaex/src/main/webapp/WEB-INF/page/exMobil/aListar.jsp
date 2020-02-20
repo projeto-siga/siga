@@ -10,20 +10,23 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 
 <script type="text/javascript" language="Javascript1.1">
-	function alteraTipoDaForma() {
+	function init() {
+		alteraTipoDaForma(alteraForma);
+	}
+	function alteraTipoDaForma(cont) {
 		ReplaceInnerHTMLFromAjaxResponse(
 				'${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_formas?tipoForma='
 						+ document.getElementById('tipoForma').value
 						+ '&idFormaDoc=' + '${idFormaDoc}', null, document
-						.getElementById('comboFormaDiv'))
+						.getElementById('comboFormaDiv'), cont)
 	}
 
-	function alteraForma() {
+	function alteraForma(cont) {
 		ReplaceInnerHTMLFromAjaxResponse(
 				'${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_modelos?forma='
 						+ document.getElementById('idFormaDoc').value
 						+ '&idMod='	+ '${idMod}', null, document
-						.getElementById('comboModeloDiv'))
+						.getElementById('comboModeloDiv'), cont)
 	}
 
 	function sbmtAction(id, action) {
@@ -70,7 +73,7 @@
 			document.getElementById('trOrgExterno').style.display = 'none';
 			document.getElementById('trTipo').style.display = '';
 
-			document.getElementById('idFormaDoc').value = '0';
+			if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
 			break;
 		case 1: // Interno Produzido
 			document.getElementById('trNumOrigDoc').style.display = 'none';
@@ -78,7 +81,7 @@
 			document.getElementById('trOrgExterno').style.display = 'none';
 			document.getElementById('trTipo').style.display = '';
 
-			document.getElementById('idFormaDoc').value = '0';
+			if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
 			break;
 		case 2: // Interno Folha de Rosto
 			document.getElementById('trNumOrigDoc').style.display = '';
@@ -86,7 +89,7 @@
 			document.getElementById('trOrgExterno').style.display = 'none';
 			document.getElementById('trTipo').style.display = '';
 
-			document.getElementById('idFormaDoc').value = '0';
+			if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
 			break;
 		case 3: // Externo Folha de Rosto
 			document.getElementById('trNumOrigDoc').style.display = '';
@@ -94,7 +97,7 @@
 			document.getElementById('trOrgExterno').style.display = '';
 			document.getElementById('trTipo').style.display = 'none';
 
-			document.getElementById('idFormaDoc').value = '5';
+			if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '5';
 			break;
 		case 4: // Externo Capturado
 			document.getElementById('trNumOrigDoc').style.display = '';
@@ -102,7 +105,7 @@
 			document.getElementById('trOrgExterno').style.display = '';
 			document.getElementById('trTipo').style.display = 'none';
 
-			document.getElementById('idFormaDoc').value = '0';
+			if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
 			break;
 		case 5: // Interno Capturado
 			document.getElementById('trNumOrigDoc').style.display = 'none';
@@ -110,7 +113,7 @@
 			document.getElementById('trOrgExterno').style.display = 'none';
 			document.getElementById('trTipo').style.display = '';
 
-			document.getElementById('idFormaDoc').value = '0';
+			if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
 			break;
 		}
 	}
@@ -332,7 +335,7 @@
 	}
 </script>
 
-<siga:pagina titulo="Lista de Expedientes" popup="${popup}">
+<siga:pagina titulo="Lista de Expedientes" popup="${popup}" onLoad="init()">
 	<div class="container-fluid content mb-3">
 		<c:if
 			test="${((empty primeiraVez) or (primeiraVez != 'sim')) and ((empty apenasRefresh) or (apenasRefresh != 1))}">
@@ -490,16 +493,10 @@
 
 						<div class="form-group col-md-3">
 							<div style="display: inline" id="comboFormaDiv"></div>
-							<script type="text/javascript">
-									alteraTipoDaForma();
-								</script>
 						</div>
 
 						<div class="form-group col-md-6">
 							<div style="display: inline" id="comboModeloDiv"></div>
-							<script type="text/javascript">
-							setTimeout("alteraForma()", 2000);
-								</script>
 						</div>
 					</div>
 

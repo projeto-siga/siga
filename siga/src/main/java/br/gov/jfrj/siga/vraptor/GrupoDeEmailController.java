@@ -98,6 +98,7 @@ public class GrupoDeEmailController extends GrupoController {
 		}
 	}
 
+	@Transacional
 	@Post("app/gi/grupoDeEmail/excluir")
 	public void excluir(Long idCpGrupo) throws Exception {
 		assertAcesso("GDISTR:Gerenciar grupos de distribuição;EXC:Excluir");
@@ -105,6 +106,7 @@ public class GrupoDeEmailController extends GrupoController {
 		result.redirectTo(this).lista();
 	}
 
+	@Transacional
 	@SuppressWarnings("unchecked")
 	@Post("app/gi/grupoDeEmail/gravar")
 	public void gravar(Long idCpGrupo, String siglaGrupo, String dscGrupo,
@@ -167,6 +169,7 @@ public class GrupoDeEmailController extends GrupoController {
 
 	}
 
+	@Transacional
 	@Get("app/gi/grupoDeEmail/excluirGestorGrupo")
 	public void excluirGestorGrupo(Long idCpGrupo, Long idConfGestor)
 			throws Exception {
@@ -187,6 +190,7 @@ public class GrupoDeEmailController extends GrupoController {
 		result.redirectTo("editar?idCpGrupo=" + idCpGrupo);
 	}
 
+	@Transacional
 	@Post("app/gi/grupoDeEmail/gravarGestorGrupo")
 	public void gravarGestorGrupo(Long idCpGrupo,
 			DpLotacaoSelecao lotacaoGestoraSel) throws Exception {

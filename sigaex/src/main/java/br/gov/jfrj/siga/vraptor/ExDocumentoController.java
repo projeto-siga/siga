@@ -133,6 +133,7 @@ public class ExDocumentoController extends ExController {
 		return doc;
 	}
 
+	@Transacional
 	@Get("app/expediente/doc/atualizar_marcas")
 	public void aAtualizarMarcasDoc(final String sigla) {
 		assertAcesso("");
@@ -146,6 +147,7 @@ public class ExDocumentoController extends ExController {
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
 
+	@Transacional
 	@Get("/app/expediente/doc/recalcular_acesso")
 	public void aRecalcularAcesso(final String sigla) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -161,6 +163,7 @@ public class ExDocumentoController extends ExController {
 				.setStatusCode(200);
 	}
 
+	@Transacional
 	@Get("app/expediente/doc/cancelar_movimentacoes_replicadas")
 	public void aCancelarMovimentacoesReplicadasDoc(final String sigla)
 			throws Exception {
@@ -187,6 +190,7 @@ public class ExDocumentoController extends ExController {
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
 
+	@Transacional
 	@Get("app/expediente/doc/corrigirPDF")
 	public void aCorrigirPDF(final String sigla) {
 		assertAcesso("");
@@ -200,6 +204,7 @@ public class ExDocumentoController extends ExController {
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
 
+	@Transacional
 	@Get("app/expediente/doc/desfazerCancelamentoDocumento")
 	public void aDesfazerCancelamentoDocumento(final String sigla) {
 		assertAcesso("");
@@ -223,13 +228,13 @@ public class ExDocumentoController extends ExController {
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
 
+	@Transacional
 	@Post("app/expediente/doc/alterarpreench")
 	public void aAlterarPreenchimento(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars, final String[] campos) throws IOException,
 			IllegalAccessException, InvocationTargetException {
 		assertAcesso("");
 
-		ModeloDao.iniciarTransacao();
 		final ExPreenchimento exPreenchimento = dao()
 				.consultar(exDocumentoDTO.getPreenchimento(),
 						ExPreenchimento.class, false);
@@ -237,7 +242,7 @@ public class ExDocumentoController extends ExController {
 		exPreenchimento.setPreenchimentoBA(getByteArrayFormPreenchimento(vars,
 				campos));
 		dao().gravar(exPreenchimento);
-		ModeloDao.commitTransacao();
+		SigaTransacionalInterceptor.downgradeParaNaoTransacional();
 
 		exDocumentoDTO.setPreenchimento(exPreenchimento.getIdPreenchimento());
 
@@ -284,7 +289,7 @@ public class ExDocumentoController extends ExController {
 		final ExPreenchimento exPreenchimento = dao()
 				.consultar(exDocumentoDTO.getPreenchimento(),
 						ExPreenchimento.class, false);
-		final String strBanco = new String(exPreenchimento.getPreenchimentoBlob());
+		final String strBanco = new String(exPreenchimento.getConteudo());
 		final String arrStrBanco[] = strBanco.split("&");
 		String strBancoLimpa = new String();
 
@@ -378,6 +383,7 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.getCriandoSubprocesso(), null);
 	}
 
+	@Transacional
 	@Get("app/expediente/doc/criar_via")
 	public void criarVia(final String sigla) {
 		assertAcesso("");
@@ -400,6 +406,7 @@ public class ExDocumentoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
+	@Transacional
 	@Get("app/expediente/doc/criar_volume")
 	public void criarVolume(final String sigla) {
 		assertAcesso("");
@@ -783,6 +790,7 @@ public class ExDocumentoController extends ExController {
 
 		// Desabilita a proteção contra injeção maldosa de html e js
 		this.response.addHeader("X-XSS-Protection", "0");
+		
 		return exDocumentoDTO;
 	}
 
@@ -823,6 +831,7 @@ public class ExDocumentoController extends ExController {
 		}
 	}
 
+	@Transacional
 	@Get("/app/expediente/doc/excluir")
 	public void aExcluirDocMovimentacoes(final String sigla) throws Exception {
 		assertAcesso("");
@@ -838,18 +847,19 @@ public class ExDocumentoController extends ExController {
 		result.redirectTo("/");
 	}
 
+	@Transacional
 	@Post("app/expediente/doc/excluirpreench")
 	public void aExcluirPreenchimento(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars) throws IllegalAccessException,
 			InvocationTargetException, IOException {
 		assertAcesso("");
 
-		ModeloDao.iniciarTransacao();
 		final ExPreenchimento exemplo = dao()
 				.consultar(exDocumentoDTO.getPreenchimento(),
 						ExPreenchimento.class, false);
 		dao().excluir(exemplo);
-		ModeloDao.commitTransacao();
+		SigaTransacionalInterceptor.downgradeParaNaoTransacional();
+
 		exDocumentoDTO.setPreenchimento(0L);
 		result.forwardTo(this).edita(exDocumentoDTO, null, vars,
 				exDocumentoDTO.getMobilPaiSel(),
@@ -910,6 +920,7 @@ public class ExDocumentoController extends ExController {
 		}
 	}
 
+	@Transacional
 	private String arquivamentoAutomatico(ExMobil mob) throws Exception {
 
 		String msgDestinoDoc = "";
@@ -1060,6 +1071,7 @@ public class ExDocumentoController extends ExController {
 				.getComp()
 				.podeReceberEletronico(getTitular(), getLotaTitular(),
 						exDocumentoDTO.getMob())) {
+			SigaTransacionalInterceptor.upgradeParaTransacional();
 			Ex.getInstance()
 					.getBL()
 					.receber(getCadastrante(), getLotaTitular(),
@@ -1113,6 +1125,7 @@ public class ExDocumentoController extends ExController {
 				.getComp()
 				.podeReceberEletronico(getTitular(), getLotaTitular(),
 						exDocumentoDto.getMob())) {
+			SigaTransacionalInterceptor.upgradeParaTransacional();
 			Ex.getInstance()
 					.getBL()
 					.receber(getCadastrante(), getLotaTitular(),
@@ -1262,7 +1275,7 @@ public class ExDocumentoController extends ExController {
 		if (exDocumentoDto.getDoc() != null && exDocumentoDto.getMob() == null) {
 			exDocumentoDto.setMob(exDocumentoDto.getDoc().getMobilGeral());
 		}
-
+		
 		if (!fPodeNaoExistir && exDocumentoDto.getDoc() == null) {
 			throw new AplicacaoException("Documento não informado");
 		}
@@ -1272,6 +1285,7 @@ public class ExDocumentoController extends ExController {
 		}
 	}
 
+	@Transacional
 	@Get("/app/expediente/doc/finalizar")
 	public void aFinalizar(final String sigla) {
 		final ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
@@ -1313,10 +1327,11 @@ public class ExDocumentoController extends ExController {
 		result.redirectTo("exibir?sigla=" + exDocumentoDto.getDoc().getCodigo());
 	}
 
+	@Transacional
 	@Post("/app/expediente/doc/gravar")
 	public void gravar(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars, final String[] campos,
-			final UploadedFile arquivo, String jsonHierarquiaDeModelos) {
+			final UploadedFile arquivo, String jsonHierarquiaDeModelos) throws Exception {
 		final Ex ex = Ex.getInstance();
 		final ExBL exBL = ex.getBL();
 
@@ -1511,7 +1526,7 @@ public class ExDocumentoController extends ExController {
 			}
 
 		} catch (final Exception e) {
-			throw new AplicacaoException("Erro na gravação", 0, e);
+			throw new Exception("Erro na gravação", e);
 		}
 
 		if (param("ajax") != null && param("ajax").equals("true")) {
@@ -1529,13 +1544,13 @@ public class ExDocumentoController extends ExController {
 		}
 	}
 
+	@Transacional
 	@Post("app/expediente/doc/gravarpreench")
 	public void aGravarPreenchimento(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars, final String[] campos) throws IOException,
 			IllegalAccessException, InvocationTargetException {
 		assertAcesso("");
 
-		ModeloDao.iniciarTransacao();
 		final ExPreenchimento exPreenchimento = new ExPreenchimento();
 
 		final DpLotacao provLota = getLotaTitular();
@@ -1550,7 +1565,7 @@ public class ExDocumentoController extends ExController {
 		exPreenchimento.setPreenchimentoBA(getByteArrayFormPreenchimento(vars,
 				campos));
 		dao().gravar(exPreenchimento);
-		ModeloDao.commitTransacao();
+		SigaTransacionalInterceptor.downgradeParaNaoTransacional();
 
 		exDocumentoDTO.setPreenchimento(exPreenchimento.getIdPreenchimento());
 
@@ -1636,8 +1651,9 @@ public class ExDocumentoController extends ExController {
 				"application/pdf", "document.pdf");
 	}
 
+	@Transacional
 	@Get("app/expediente/doc/refazer")
-	public void refazer(final String sigla) {
+	public void refazer(final String sigla) throws Exception {
 		assertAcesso("");
 
 		final ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO();
@@ -1659,8 +1675,9 @@ public class ExDocumentoController extends ExController {
 				.getDoc().getSigla());
 	}
 
+	@Transacional
 	@Get("app/expediente/doc/duplicar")
-	public void aDuplicar(final boolean conviteEletronico, final String sigla) {
+	public void aDuplicar(final boolean conviteEletronico, final String sigla) throws Exception {
 		assertAcesso("");
 
 		final ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
@@ -1696,6 +1713,7 @@ public class ExDocumentoController extends ExController {
 		result.include("doc", exDocumentoDto.getDoc());
 	}
 
+	@Transacional
 	@Post("/app/expediente/doc/tornarDocumentoSemEfeitoGravar")
 	public void tornarDocumentoSemEfeitoGravar(final String sigla,
 			final Integer id, final DpPessoaSelecao titularSel,
@@ -2393,6 +2411,7 @@ public class ExDocumentoController extends ExController {
 				dto.getMob().getCodigoCompacto()).concat(".pdf"));
 	}
 
+	@Transacional
 	@Get("/app/expediente/doc/corrigir_arquivamentos_volume")
 	public void aCorrigirArquivamentosVolume(Integer de, Integer ate,
 			Boolean efetivar) throws Exception {

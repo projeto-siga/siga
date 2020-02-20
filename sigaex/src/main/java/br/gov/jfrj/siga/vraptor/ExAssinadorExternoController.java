@@ -253,6 +253,7 @@ public class ExAssinadorExternoController extends ExController {
 		}
 	}
 	
+	@Transacional
 	@Put("/public/app/assinador-externo/doc/{id}/sign")
 	public void assinadorExternoSave(String id) throws Exception {
 		try {
@@ -265,6 +266,7 @@ public class ExAssinadorExternoController extends ExController {
 		assinadorPopupSave(id);
 	}
 
+	@Transacional
 	@Put("/app/assinador-popup/doc/{id}/sign")
 	public void assinadorPopupSave(String id) throws Exception {
 		try {

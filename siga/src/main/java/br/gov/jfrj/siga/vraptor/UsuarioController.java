@@ -49,6 +49,7 @@ public class UsuarioController extends SigaController {
 		result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
 	}
 
+	@Transacional
 	@Post({"/app/usuario/trocar_senha_gravar","/public/app/usuario/trocar_senha_gravar"})
 	public void gravarTrocaSenha(UsuarioAction usuario) throws Exception {
 		String senhaAtual = usuario.getSenhaAtual();
@@ -85,6 +86,7 @@ public class UsuarioController extends SigaController {
 		
 	}
 	
+	@Transacional
 	@Post({"/app/usuario/incluir_usuario_gravar","/public/app/usuario/incluir_usuario_gravar"})
 	public void gravarIncluirUsuario(UsuarioAction usuario) throws Exception {
 		String msgComplemento = "";
@@ -145,6 +147,7 @@ public class UsuarioController extends SigaController {
 		result.include("proxima_acao", "esqueci_senha_gravar");
 	}
 	
+	@Transacional
 	@Post({"/app/usuario/esqueci_senha_gravar","/public/app/usuario/esqueci_senha_gravar"})
 	public void gravarEsqueciSenha(UsuarioAction usuario) throws Exception {
 		String msgAD = "";

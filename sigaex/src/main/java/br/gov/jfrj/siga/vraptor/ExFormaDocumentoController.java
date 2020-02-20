@@ -124,6 +124,7 @@ public class ExFormaDocumentoController extends ExController {
 		result.use(Results.page()).forwardTo("/WEB-INF/page/mensagemAjax.jsp");
 	}
 
+	@Transacional
 	@Post("app/forma/gravar")
 	public void gravar(final Integer postback, final Long id, final String descricao, final String sigla, final Long idTipoFormaDoc, final boolean origemExterno,
 			final boolean origemInternoImportado, final boolean origemInternoProduzido, final boolean origemInternoCapturado, final boolean origemExternoCapturado) {

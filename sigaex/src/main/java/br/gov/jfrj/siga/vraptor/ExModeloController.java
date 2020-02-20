@@ -124,6 +124,7 @@ public class ExModeloController extends ExSelecionavelController {
 		}
 	}
 
+	@Transacional
 	@Post("app/modelo/gravar")
 	public void editarGravar(final Long id, final String nome,
 			final String tipoModelo, final String conteudo,
@@ -169,6 +170,7 @@ public class ExModeloController extends ExSelecionavelController {
 		result.redirectTo(ExModeloController.class).lista(null);
 	}
 
+	@Transacional
 	@Get("app/modelo/desativar")
 	public void desativar(final Long id) throws Exception {
 		ModeloDao.iniciarTransacao();
@@ -232,6 +234,7 @@ public class ExModeloController extends ExSelecionavelController {
 					}
 					if (m.getUuid() == null) {
 						m.setUuid(UUID.randomUUID().toString());
+						SigaTransacionalInterceptor.upgradeParaTransacional();
 						dao().gravar(m);
 					}
 					if (m.getUuid() != null) {
@@ -365,6 +368,7 @@ public class ExModeloController extends ExSelecionavelController {
 				}
 				if (m.getUuid() == null) {
 			        m.setUuid(UUID.randomUUID().toString());
+			        SigaTransacionalInterceptor.upgradeParaTransacional();
 			        dao().gravar(m);
 				}
 				if (m.getUuid() != null) {
@@ -422,7 +426,7 @@ public class ExModeloController extends ExSelecionavelController {
 	}
 
 	@Override
-	public DaoFiltroSelecionavel createDaoFiltro() {
+	protected DaoFiltroSelecionavel createDaoFiltro() {
 		return null;
 	}
 

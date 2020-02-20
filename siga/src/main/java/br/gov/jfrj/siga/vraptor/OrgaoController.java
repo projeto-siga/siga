@@ -54,10 +54,11 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 		result.include("currentPageNumber", calculaPaginaAtual(offset));
 	}
 	
-	public void selecionarPorNome(){
+	protected void selecionarPorNome(){
 		
 	}
 	
+	@Transacional
 	public void excluir(final Long id) throws Exception{
 		assertAcesso("FE:Ferramentas;CAD_ORGAO: Cadastrar Orgãos");
 		if (id != null) {
@@ -89,6 +90,7 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 		result.include("orgaosUsu",this.getOrgaosUsu());
 	}
 	
+	@Transacional
 	@Post("/app/orgao/gravar")
 	public void editarGravar(final Long id, 
 							 final String nmOrgao,
@@ -131,7 +133,7 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 		this.result.redirectTo(this).lista(0);
 	}
 	
-	public CpOrgao daoOrgao(long id) {
+	protected CpOrgao daoOrgao(long id) {
 		return dao().consultar(id, CpOrgao.class, false);
 	}
 	

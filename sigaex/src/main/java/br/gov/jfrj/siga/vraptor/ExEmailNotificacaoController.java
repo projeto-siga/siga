@@ -80,6 +80,7 @@ public class ExEmailNotificacaoController extends SigaController{
 		}
 	}
 	
+	@Transacional
 	@Get("app/expediente/emailNotificacao/excluir")
 	public void excluir(Long id){
 		try {
@@ -126,6 +127,7 @@ public class ExEmailNotificacaoController extends SigaController{
 		result.include("pessEmailSel", new DpPessoaSelecao());
 	}
 	
+	@Transacional
 	@Get("app/expediente/emailNotificacao/editar_gravar")
 	public void editarGravar(final DpLotacaoSelecao lotaSel, final DpLotacaoSelecao lotaEmailSel, final DpPessoaSelecao pessSel,
 			final DpPessoaSelecao pessEmailSel, final Integer tipoDest, final Integer tipoEmail, final String emailTela){

@@ -46,7 +46,7 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
  */
 @Entity
 @Immutable
-@Table(name = "CP_ARQUIVO", schema = "CORPORATIVO")
+@Table(name = "corporativo.cp_arquivo")
 public class CpArquivo implements Serializable {
 
 	private static final long serialVersionUID = 1L;

@@ -29,7 +29,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
 @BatchSize(size = 500)
-@Table(name = "WF_DEF_PROCEDIMENTO", catalog = "WF")
+@Table(name = "sigawf.wf_def_procedimento")
 public class WfDefinicaoDeProcedimento extends HistoricoAuditavelSuporte implements Serializable,
 		ProcessDefinition<WfDefinicaoDeTarefa>, Selecionavel, Sincronizavel, Comparable<Sincronizavel> {
 	@Id

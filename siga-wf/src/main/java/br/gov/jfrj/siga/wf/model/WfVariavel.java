@@ -17,7 +17,7 @@ import com.crivano.jflow.support.ProcessInstanceVariable;
 
 @Entity
 @BatchSize(size = 500)
-@Table(name = "WF_VARIAVEL", catalog = "WF")
+@Table(name = "sigawf.wf_variavel")
 public class WfVariavel implements ProcessInstanceVariable {
 	@Id
 	@GeneratedValue

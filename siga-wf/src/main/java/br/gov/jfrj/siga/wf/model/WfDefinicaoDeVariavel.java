@@ -28,7 +28,7 @@ import br.gov.jfrj.siga.wf.util.NaoSerializar;
 
 @Entity
 @BatchSize(size = 500)
-@Table(name = "WF_DEF_VARIAVEL", catalog = "WF")
+@Table(name = "sigawf.wf_def_variavel")
 public class WfDefinicaoDeVariavel extends HistoricoAuditavelSuporte
 		implements TaskDefinitionVariable, Sincronizavel, Comparable<Sincronizavel> {
 	@Id

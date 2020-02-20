@@ -1506,7 +1506,7 @@ LOCK TABLES `dp_substituicao` WRITE;
 UNLOCK TABLES;
 
 drop function if exists remove_acento;
-delimiter |
+delimiter //
 create function remove_acento( textvalue varchar(20000) )
 returns varchar(20000) DETERMINISTIC
 begin
@@ -1533,7 +1533,8 @@ end while;
 
 return @textvalue;
 
-end;
+end;//
+DELIMITER ;
 
 
 --

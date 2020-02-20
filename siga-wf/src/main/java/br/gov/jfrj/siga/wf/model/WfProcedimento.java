@@ -33,7 +33,7 @@ import br.gov.jfrj.siga.wf.util.WfResp;
 
 @Entity
 @BatchSize(size = 500)
-@Table(name = "WF_PROCEDIMENTO", catalog = "WF")
+@Table(name = "sigawf.wf_procedimento")
 public class WfProcedimento implements ProcessInstance<WfDefinicaoDeProcedimento, WfDefinicaoDeTarefa, WfResp> {
 	@Id
 	@GeneratedValue

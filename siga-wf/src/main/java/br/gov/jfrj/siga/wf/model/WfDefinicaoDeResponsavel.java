@@ -18,7 +18,7 @@ import br.gov.jfrj.siga.wf.model.enm.WfTipoDeResponsavel;
 
 @Entity
 @BatchSize(size = 500)
-@Table(name = "WF_DEF_RESPONSAVEL", catalog = "WF")
+@Table(name = "sigawf.wf_def_responsavel")
 public class WfDefinicaoDeResponsavel extends HistoricoAuditavelSuporte {
 	@Id
 	@GeneratedValue

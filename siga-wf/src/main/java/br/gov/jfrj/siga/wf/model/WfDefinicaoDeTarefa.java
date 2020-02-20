@@ -37,7 +37,7 @@ import br.gov.jfrj.siga.wf.util.NaoSerializar;
 
 @Entity
 @BatchSize(size = 500)
-@Table(name = "WF_DEF_TAREFA", catalog = "WF")
+@Table(name = "sigawf.wf_def_tarefa")
 public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 		implements TaskDefinition<WfTipoDeTarefa, WfTipoDeResponsavel, WfDefinicaoDeVariavel, WfDefinicaoDeDesvio>,
 		Sincronizavel, Comparable<Sincronizavel> {

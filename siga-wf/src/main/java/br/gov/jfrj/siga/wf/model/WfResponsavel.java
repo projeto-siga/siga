@@ -31,7 +31,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
 @BatchSize(size = 500)
-@Table(name = "WF_RESPONSAVEL", catalog = "WF")
+@Table(name = "sigawf.wf_responsavel")
 public class WfResponsavel extends HistoricoAuditavelSuporte
 		implements Responsible, Serializable, Sincronizavel, Comparable<Sincronizavel> {
 

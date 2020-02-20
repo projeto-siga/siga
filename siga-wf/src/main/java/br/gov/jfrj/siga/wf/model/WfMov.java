@@ -44,7 +44,7 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Entity
 @DiscriminatorColumn(name = "MOVI_TP")
-@Table(name = "WF_MOVIMENTACAO", catalog = "WF")
+@Table(name = "sigawf.wf_movimentacao")
 public abstract class WfMov extends HistoricoAuditavelSuporte implements Serializable {
 	@Id
 	@GeneratedValue

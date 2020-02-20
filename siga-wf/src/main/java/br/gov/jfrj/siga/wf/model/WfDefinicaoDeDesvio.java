@@ -27,7 +27,7 @@ import br.gov.jfrj.siga.wf.util.NaoSerializar;
 
 @Entity
 @BatchSize(size = 500)
-@Table(name = "WF_DEF_DESVIO", catalog = "WF")
+@Table(name = "sigawf.wf_def_desvio")
 public class WfDefinicaoDeDesvio extends HistoricoAuditavelSuporte
 		implements TaskDefinitionDetour, Sincronizavel, Comparable<Sincronizavel> {
 	@Id

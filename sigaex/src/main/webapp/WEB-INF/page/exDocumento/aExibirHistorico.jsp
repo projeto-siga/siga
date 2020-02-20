@@ -111,7 +111,7 @@
 							</tr>
 						</thead>
 						<c:forEach var="mov" items="${m.movs}">
-							<c:if test="${(mov.idTpMov != 14 and not mov.cancelada) or siga_cliente=='GOVSP'}">
+							<c:if test="${mov.idTpMov != 14 and not mov.cancelada}">
 								<tr class="${mov.classe} ${mov.disabled}">
 									<c:set var="dt" value="${mov.dtRegMovDDMMYYHHMMSS}" />
 									<c:set var="dt" value="${mov.dtRegMovDDMMYY}" />

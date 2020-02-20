@@ -43,7 +43,6 @@ import java.util.regex.Pattern;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.BatchSize;
 import org.jboss.logging.Logger;
@@ -70,9 +69,6 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger log = Logger.getLogger(ExMobil.class);
-	
-	@Transient
-	private static boolean isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso = false;
 
 	/**
 	 * Retorna A penúltima movimentação não cancelada de um Mobil.
@@ -236,7 +232,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 
 		return false;
 	}
-		
+	
 	/**
 	 * Retorna a descrição do documento relacionado ao Mobil como um link em
 	 * html.
@@ -2169,7 +2165,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		}
 		return transferenciasComData;
 	}
-	
+
 	public Set<ExMovimentacao> getMovsNaoCanceladas(long idTpMov) {
 		return getMovsNaoCanceladas(idTpMov, false);
 	}
@@ -2181,7 +2177,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
 
 		if (getExMovimentacaoSet() == null)
-			return set;			
+			return set;
 
 		for (ExMovimentacao m : getExMovimentacaoSet()) {
 			if (m.getExMovimentacaoCanceladora() != null)
@@ -2194,17 +2190,4 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		}
 		return set;
 	}
-	
-	public static void adicionarIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso() {
-		isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso = true;
-	}
-	
-	public static void removerIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso() {
-		isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso = false;
-	}
-	
-	public static boolean isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso() {
-		return isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso;
-	}
-	
 }

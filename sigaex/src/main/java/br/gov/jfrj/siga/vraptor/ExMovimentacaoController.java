@@ -1,8 +1,5 @@
 package br.gov.jfrj.siga.vraptor;
 
-import static br.gov.jfrj.siga.ex.ExMobil.adicionarIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso;
-import static br.gov.jfrj.siga.ex.ExMobil.removerIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -689,97 +686,6 @@ public class ExMovimentacaoController extends ExController {
 		result.include("subscritorSel", subscritorSel);
 		result.include("titularSel", titularSel);
 	}
-	
-	@Get("app/expediente/mov/restringir_acesso")
-	public void restringirAcesso(final String sigla) {
-		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
-				.novaInstancia().setSigla(sigla);
-
-		final ExDocumento doc = buscarDocumento(builder);
-		final DpPessoaSelecao subscritorSel = new DpPessoaSelecao();
-		final DpPessoaSelecao titularSel = new DpPessoaSelecao();
-
-		result.include("sigla", sigla);
-		result.include("mob", builder.getMob());
-		result.include("listaNivelAcesso", getListaNivelAcesso(doc));
-		result.include("nivelAcesso", doc.getExNivelAcessoAtual().getIdNivelAcesso());
-		result.include("subscritorSel", subscritorSel);
-		result.include("titularSel", titularSel);
-	}
-	
-	@Get("app/expediente/mov/desfazer_restricao_acesso")
-	public void desfazerRestringirAcesso(final String sigla) {
-		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
-				.novaInstancia().setSigla(sigla);
-
-		final ExDocumento doc = buscarDocumento(builder);
-	
-		ExNivelAcesso exTipoSig = dao().consultar(ExNivelAcesso.ID_LIMITADO_ENTRE_LOTACOES, ExNivelAcesso.class, false);
-
-		if (!Ex.getInstance()
-				.getComp()
-				.podeDesfazerRestricaoAcesso(getCadastrante(), getLotaCadastrante(),
-						builder.getMob())) {
-			throw new AplicacaoException(
-					"Não é possível restringir acesso");
-		}
-		
-		Ex.getInstance()
-			.getBL()
-			.desfazerRestringirAcesso(getCadastrante(), getLotaCadastrante(), doc, null,  exTipoSig);
-		
-		ExDocumentoController.redirecionarParaExibir(result, sigla);
-	}
-	
-	@Post("app/expediente/mov/restringir_acesso_gravar")
-	public void restringirAcessoGravar(final String sigla, final String usu, final Long nivelAcesso) throws Exception {
-		String usuarios[] = usu.split(";");
-		
-		List<DpPessoa> listaSubscritor = new ArrayList<DpPessoa>();
-		for (int i = 1; i < usuarios.length; i++) {
-			listaSubscritor.add(dao().consultar(Long.valueOf(usuarios[i]), DpPessoa.class, false));
-		}
-		
-		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
-				.novaInstancia().setSigla(sigla);
-		
-		final ExDocumento doc = buscarDocumento(builder);
-		
-		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
-				.novaInstancia();
-
-		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
-
-		ExNivelAcesso exTipoSig = null;
-
-		if (nivelAcesso != null) {
-			exTipoSig = dao()
-					.consultar(nivelAcesso, ExNivelAcesso.class, false);
-		}
-		
-		if (!Ex.getInstance()
-				.getComp()
-				.podeRestrigirAcesso(getCadastrante(), getLotaCadastrante(),
-						builder.getMob())) {
-			throw new AplicacaoException(
-					"Não é possível restringir acesso");
-		}
-					
-		adicionarIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso();			
-		
-		Ex.getInstance()
-				.getBL()
-				.restringirAcesso(getCadastrante(), getLotaTitular(), doc,
-						null, mov.getLotaResp(), mov.getResp(),
-						listaSubscritor, mov.getTitular(),
-						mov.getNmFuncaoSubscritor(), exTipoSig);
-		
-		removerIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso();
-
-		result.include("msgCabecClass", "alert-warning");
-		result.include("mensagemCabec", "Somente os usuários definidos, terão acesso aos documentos. Os usuários que já tiveram acesso ao documento, por tramitações anteriores ou por definição de acompanhamento deixam de ter acesso/visualização ao documento. Inclusive o cadastrante dos documentos, responsáveis pela assinatura e cossignatário");
-		result.forwardTo(ExDocumentoController.class).exibe(false, sigla, null, null, null);
-	}
 
 	@Post("app/expediente/mov/redefinir_nivel_acesso_gravar")
 	public void redefinirNivelAcessoGravar(final String sigla,
@@ -1171,9 +1077,6 @@ public class ExMovimentacaoController extends ExController {
 						movimentacaoBuilder.getMob(), mov.getExMobilRef(),
 						mov.getDtMov(), mov.getSubscritor(), mov.getTitular(),
 						idDocumentoEscolha);
-		
-		
-		
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
@@ -1891,27 +1794,9 @@ public class ExMovimentacaoController extends ExController {
 	        	}
 	        }
 		}
-			
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 		buscarDocumento(builder);
-		
-		if(responsavelSel != null) {
-			Boolean podeTramitar = Boolean.FALSE;
-			List<ExMovimentacao> listaMov = new ArrayList<ExMovimentacao>();
-			listaMov.addAll(builder.getMob().getDoc().getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO));
-		
-			for (ExMovimentacao exMovimentacao : listaMov) {
-				if(exMovimentacao.getSubscritor().equals(responsavelSel.getObjeto())) {
-					podeTramitar = Boolean.TRUE;
-					break;
-				}
-			}
-			if(!listaMov.isEmpty() && !podeTramitar) {
-				throw new AplicacaoException(
-						"Documento não pode ser tramitado para esta pessoa/lotação.");
-			}
-		}
 
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
 				.novaInstancia();
@@ -2254,23 +2139,6 @@ public class ExMovimentacaoController extends ExController {
 						builder.getMob())) {
 			throw new AplicacaoException(
 					"Não é possível fazer vinculação de papel");
-		}
-		
-		if(responsavelSel != null) {
-			Boolean podeVincular = Boolean.FALSE;
-			List<ExMovimentacao> listaMov = new ArrayList<ExMovimentacao>();
-			listaMov.addAll(builder.getMob().getDoc().getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO));
-		
-			for (ExMovimentacao exMovimentacao : listaMov) {
-				if(exMovimentacao.getSubscritor().equals(responsavelSel.getObjeto())) {
-					podeVincular = Boolean.TRUE;
-					break;
-				}
-			}
-			if(!listaMov.isEmpty() && !podeVincular) {
-				throw new AplicacaoException(
-						"Acompanhamento do documento não pode ser cadastrado para o usuário selecionado.");
-			}
 		}
 
 		Ex.getInstance()

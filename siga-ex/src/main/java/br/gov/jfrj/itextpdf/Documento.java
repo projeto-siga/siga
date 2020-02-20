@@ -112,37 +112,29 @@ import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
  * @author blowagie
  */
 public class Documento {
-	
-	private static float QRCODE_LEFT_MARGIN_IN_CM = 3.0f;
-	private static float QRCODE_SIZE_IN_CM = 1.5f;
-	private static float BARCODE_HEIGHT_IN_CM = 2.0f;
-	private static int TEXT_TO_CIRCLE_INTERSPACE = 2;
-	private static int TEXT_HEIGHT = 5;
-	private static float SAFETY_MARGIN = 0.1f;
-	private static float CM_UNIT = 72.0f / 2.54f;
-	private static float PAGE_BORDER_IN_CM = 0.8f;
-	private static float STAMP_BORDER_IN_CM = 0.2f;
-	
 
-	
+	private static final float QRCODE_LEFT_MARGIN_IN_CM = 3.0f;
 
+	private static final float QRCODE_SIZE_IN_CM = 1.5f;
 
-	static {
-		if (SigaMessages.isSigaSP()){ //Adequa marcas para SP
-			QRCODE_LEFT_MARGIN_IN_CM = 0.6f;
-			BARCODE_HEIGHT_IN_CM = 2.0f;
-			PAGE_BORDER_IN_CM = 0.5f;
-			STAMP_BORDER_IN_CM = 0.2f;
-		}
+	private static final float BARCODE_HEIGHT_IN_CM = 2.0f;
 
-	}
+	private static final int TEXT_TO_CIRCLE_INTERSPACE = 2;
+
+	private static final int TEXT_HEIGHT = 5;
+
+	private static final float SAFETY_MARGIN = 0.1f;
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -6008800739543368811L;
 
+	private static final float CM_UNIT = 72.0f / 2.54f;
 
+	private static final float PAGE_BORDER_IN_CM = 0.8f;
+
+	private static final float STAMP_BORDER_IN_CM = 0.2f;
 
 	private static final Pattern pattern = Pattern
 		.compile("^([0-9A-Z\\-\\/]+(?:\\.[0-9]+)?(?:V[0-9]+)?)(:[0-9]+)?(?:\\.pdf|\\.html|\\.zip|\\.rtf)?$");
@@ -237,34 +229,12 @@ public class Documento {
 			Set<ExMovimentacao> movsAssinatura) {
 		ArrayList<String> assinantes = new ArrayList<String>();
 		for (ExMovimentacao movAssinatura : movsAssinatura) {
-			if(movAssinatura.getCadastrante().getId().equals(movAssinatura.getSubscritor().getId())) {
-				String s;
-				if (movAssinatura.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)) {
-					s = Texto.maiusculasEMinusculas(movAssinatura.getCadastrante().getNomePessoa());
-				} else {
-					s = movAssinatura.getDescrMov().trim().toUpperCase();
-					s = s.split(":")[0];
-					s = s.intern();
-				}
-				if (!assinantes.contains(s)) {
-					assinantes.add(s);
-				}
-			}
-		}
-		return assinantes;
-	}
-	
-	public static ArrayList<String> getAssinantesStringListaComMatricula(
-			Set<ExMovimentacao> movsAssinatura) {
-		ArrayList<String> assinantes = new ArrayList<String>();
-		for (ExMovimentacao movAssinatura : movsAssinatura) {
 			String s;
 			if (movAssinatura.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)) {
 				s = Texto.maiusculasEMinusculas(movAssinatura.getCadastrante().getNomePessoa());
 			} else {
 				s = movAssinatura.getDescrMov().trim().toUpperCase();
-				s = s.replace(":", " - ");
-				s = s.replace("EM SUBSTITUIÇÃO A", "em substituição a");
+				s = s.split(":")[0];
 				s = s.intern();
 			}
 			if (!assinantes.contains(s)) {
@@ -276,25 +246,6 @@ public class Documento {
 
 	public static String getAssinantesString(Set<ExMovimentacao> movsAssinatura) {
 		ArrayList<String> als = getAssinantesStringLista(movsAssinatura);
-		String retorno = "";
-		if (als.size() > 0) {
-			for (int i = 0; i < als.size(); i++) {
-				String nome = als.get(i);
-				if (i > 0) {
-					if (i == als.size() - 1) {
-						retorno += " e ";
-					} else {
-						retorno += ", ";
-					}
-				}
-				retorno += nome;
-			}
-		}
-		return retorno;
-	}
-	
-	public static String getAssinantesStringComMatricula(Set<ExMovimentacao> movsAssinatura) {
-		ArrayList<String> als = getAssinantesStringListaComMatricula(movsAssinatura);
 		String retorno = "";
 		if (als.size() > 0) {
 			for (int i = 0; i < als.size(); i++) {
@@ -596,7 +547,7 @@ public class Documento {
 				}				
 	
 				// Imprime um circulo com o numero da pagina dentro.
-
+	
 				if (paginaInicial != null) {
 					String sFl = String.valueOf(paginaInicial + i - 1);
 					// Se for a ultima pagina e o numero nao casar, acrescenta "-" e
@@ -607,20 +558,10 @@ public class Documento {
 						}
 					}
 					if (i > cOmitirNumeracao) {
-						//tamanho fonte número
-						int textHeight = 23;
+	
 						// Raio do circulo interno
-						float radius = 18f;
-						
-						if (SigaMessages.isSigaSP()) {
-							//tamanho fonte número
-							textHeight = 12;
-							// Raio do circulo interno
-							radius = 12f;
-							//não exibe órgão
-							orgaoUsu = "";
-						} 
-						
+						final float radius = 18f;
+	
 						// Distancia entre o circulo interno e o externo
 						final float circleInterspace = Math.max(
 								helv.getAscentPoint(instancia, TEXT_HEIGHT),
@@ -636,7 +577,7 @@ public class Documento {
 								* (radius + circleInterspace);
 						float yCenter = r.getHeight() - 1.8f
 								* (radius + circleInterspace);
-						
+	
 						over.saveState();
 						final PdfGState gs = new PdfGState();
 						gs.setFillOpacity(1f);
@@ -682,7 +623,8 @@ public class Documento {
 						}
 	
 						over.beginText();
-							
+						int textHeight = 23;
+	
 						// Diminui o tamanho do font ate que o texto caiba dentro do
 						// circulo interno
 						while (helv.getWidthPoint(sFl, textHeight) > (2 * (radius - TEXT_TO_CIRCLE_INTERSPACE)))

@@ -667,25 +667,7 @@ public class ExDocumentoVO extends ExVO {
 				"redefinir_nivel_acesso",
 				Ex.getInstance().getComp()
 						.podeRedefinirNivelAcesso(titular, lotaTitular, mob));
-		
-		vo.addAcao(
-				"group_link",
-				"Restrição de Acesso",
-				"/app/expediente/mov",
-				"restringir_acesso",
-				Ex.getInstance().getComp().podeRestrigirAcesso(doc.getCadastrante(), doc.getCadastrante().getLotacao(), mob));
-		
-		vo.addAcao(
-				"arrow_undo",
-				"Redefinir Acesso Padrão",
-				"/app/expediente/mov",
-				"desfazer_restricao_acesso",
-				Ex.getInstance()
-						.getComp()
-						.podeDesfazerRestricaoAcesso(doc.getCadastrante(), doc.getCadastrante().getLotacao(), mob),
-				"Esta operação anulará as Restrições de Acesso. Prosseguir?",
-				null, null, null, "once");
-		
+
 		vo.addAcao(
 				"book_add",
 				"Solicitar Publicação no Boletim",

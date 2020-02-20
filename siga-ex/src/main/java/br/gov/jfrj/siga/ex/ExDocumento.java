@@ -1708,13 +1708,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return getMobilGeral().getMovsNaoCanceladas(
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA);
 	}
-	
-	public Set<ExMovimentacao> getAssinaturasPorComSenha() {
-		if (getMobilGeral() == null)
-			return new TreeSet<ExMovimentacao>();
-		return getMobilGeral().getMovsNaoCanceladas(
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA);
-	}
 
 	public Set<ExMovimentacao> getAutenticacoesComSenha() {
 		if (getMobilGeral() == null)
@@ -1812,16 +1805,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 				.getAssinantesString(getAssinaturasComToken());
 		String assinantesSenha = Documento
 				.getAssinantesString(getAssinaturasComSenha());
-		String assinantesPorSenha = Documento
-				.getAssinantesStringComMatricula(getAssinaturasPorComSenha());
 
 		if (assinantesToken.length() > 0)
 			retorno = "Assinado digitalmente por " + assinantesToken + ".\n";
-		
-		if (assinantesPorSenha.length() > 0)
-			retorno = retorno + "Assinado POR com senha por " + assinantesPorSenha
-					+ ".\n";
-		
+
 		if (assinantesSenha.length() > 0)
 			retorno = retorno + "Assinado com senha por " + assinantesSenha
 					+ ".\n";

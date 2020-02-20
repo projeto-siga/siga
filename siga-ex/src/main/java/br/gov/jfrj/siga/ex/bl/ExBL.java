@@ -1726,14 +1726,6 @@ public class ExBL extends CpBL {
 			}
 		}
 
-		if (!doc.isFinalizado())
-			finalizar(cadastrante, lotaCadastrante, doc);
-
-		boolean fPreviamenteAssinado = doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha();
-
-		if (!doc.isFinalizado())
-			throw new AplicacaoException("não é possível registrar assinatura de um documento não finalizado");
-
 		if (doc.isCancelado())
 			throw new AplicacaoException("não é possível assinar um documento cancelado.");
 
@@ -1762,8 +1754,7 @@ public class ExBL extends CpBL {
 								continue;
 							}
 						}
-
-					// Verificar se é substituto
+					//Verificar se é substituto
 					if (!fValido) {
 						if (subscritor.getId() != doc.getSubscritor().getId()) {
 							if (Ex.getInstance().getComp().podeAssinarPorComSenha(cadastrante, lotaCadastrante)) {
@@ -1777,6 +1768,13 @@ public class ExBL extends CpBL {
 									if (tit.getTitular().equivale(doc.getSubscritor())) {
 										fValido = true;
 										fSubstituindo = true;
+										
+										final ExMovimentacao movsub;
+										movsub = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA,
+											cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
+											subscritor, null, null, null, null);
+										movsub.setDescrMov(subscritor.getNomePessoa() + ":" + subscritor.getSigla());
+										gravarMovimentacao(movsub);
 									}
 								}
 							}
@@ -1791,6 +1789,16 @@ public class ExBL extends CpBL {
 						"Só é permitida a assinatura digital do subscritor e dos cossignatários do documento", 0, e);
 			}
 		}
+		
+		if (!doc.isFinalizado())
+			finalizar(cadastrante, lotaCadastrante, doc);
+		
+		boolean fPreviamenteAssinado = doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha();
+
+		if (!doc.isFinalizado())
+			throw new AplicacaoException(
+					"não é possível registrar assinatura de um documento não finalizado");
+
 
 		String s = null;
 		try {
@@ -1806,16 +1814,6 @@ public class ExBL extends CpBL {
 			if (!fSubstituindo) {
 				assinante = subscritor;
 			} else {
-
-				// Cria movimentação de Assinatura POR
-				final ExMovimentacao movsub;
-				movsub = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA,
-					cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
-					subscritor, null, null, null, null);
-				movsub.setDescrMov(subscritor.getNomePessoa() + ":" + subscritor.getSigla());
-				gravarMovimentacao(movsub);
-				
-				
 				assinante = doc.getSubscritor();
 			}
 

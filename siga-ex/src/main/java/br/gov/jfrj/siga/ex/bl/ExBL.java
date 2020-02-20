@@ -1727,8 +1727,6 @@ public class ExBL extends CpBL {
 		if (!doc.isFinalizado())
 			finalizar(cadastrante, lotaCadastrante, doc);
 		
-		boolean fPreviamenteAssinado = doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha();
-
 		if (!doc.isFinalizado())
 			throw new AplicacaoException(
 					"não é possível registrar assinatura de um documento não finalizado");

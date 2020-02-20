@@ -43,11 +43,11 @@
 </c:if>
 
 <c:set var="ambiente">
-	<c:if test="${f:resource('isVersionTest') or f:resource('isBaseTest')}">
+	<c:if test="${f:resource('isVersionTest') eq 'true' or f:resource('isBaseTest') eq 'true'}">
 		<c:if test="${f:resource('isVersionTest')}">SISTEMA</c:if>
 		<c:if
-			test="${f:resource('isVersionTest') and f:resource('isBaseTest')}"> E </c:if>
-		<c:if test="${f:resource('isBaseTest')}">BASE</c:if> DE TESTES
+			test="${f:resource('isVersionTest') eq 'true' and f:resource('isBaseTest') eq 'true'}"> E </c:if>
+		<c:if test="${f:resource('isBaseTest') eq 'true'}">BASE</c:if> DE TESTES
 	</c:if>
 </c:set>
 <c:if test="${not empty ambiente}">

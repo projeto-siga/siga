@@ -25,9 +25,9 @@ DROP TABLE IF EXISTS `cad_sit_funcional`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cad_sit_funcional` (
-  `ID_CAD_SIT_FUNCIONAL` double NOT NULL AUTO_INCREMENT,
+  `ID_CAD_SIT_FUNCIONAL` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DSC_SIT_FUNCIONAL` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ID_MUMPS` double DEFAULT NULL,
+  `ID_MUMPS` INT UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`ID_CAD_SIT_FUNCIONAL`),
   UNIQUE KEY `CAD_SIT_FUNCIONAL_PK` (`ID_CAD_SIT_FUNCIONAL`)
 ) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -51,8 +51,8 @@ DROP TABLE IF EXISTS `cp_acesso`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_acesso` (
-  `ID_ACESSO` double NOT NULL AUTO_INCREMENT,
-  `ID_IDENTIDADE` double NOT NULL,
+  `ID_ACESSO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ID_IDENTIDADE` INT UNSIGNED NOT NULL,
   `DT_INI` datetime NOT NULL,
   `DT_FIM` datetime DEFAULT NULL,
   `TP_ACESSO` tinyint(4) NOT NULL,
@@ -80,11 +80,11 @@ DROP TABLE IF EXISTS `cp_aplicacao_feriado`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_aplicacao_feriado` (
-  `ID_APLICACAO` double NOT NULL AUTO_INCREMENT,
-  `ID_ORGAO_USU` bigint(20) DEFAULT NULL,
-  `ID_LOTACAO` int(11) DEFAULT NULL,
-  `ID_LOCALIDADE` double DEFAULT NULL,
-  `ID_OCORRENCIA_FERIADO` double DEFAULT NULL,
+  `ID_APLICACAO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ID_ORGAO_USU` INT UNSIGNED DEFAULT NULL,
+  `ID_LOTACAO` INT UNSIGNED DEFAULT NULL,
+  `ID_LOCALIDADE` INT UNSIGNED DEFAULT NULL,
+  `ID_OCORRENCIA_FERIADO` INT UNSIGNED DEFAULT NULL,
   `FERIADO` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`ID_APLICACAO`),
   KEY `ID_ORGAO_USU` (`ID_ORGAO_USU`),
@@ -115,10 +115,10 @@ DROP TABLE IF EXISTS `cp_complexo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_complexo` (
-  `ID_COMPLEXO` int(11) NOT NULL,
+  `ID_COMPLEXO` INT UNSIGNED NOT NULL,
   `NOME_COMPLEXO` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ID_LOCALIDADE` double DEFAULT NULL,
-  `ID_ORGAO_USU` bigint(20) DEFAULT NULL,
+  `ID_LOCALIDADE` INT UNSIGNED DEFAULT NULL,
+  `ID_ORGAO_USU` INT UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`ID_COMPLEXO`),
   KEY `ID_LOCALIDADE` (`ID_LOCALIDADE`),
   CONSTRAINT `cp_complexo_ibfk_1` FOREIGN KEY (`ID_LOCALIDADE`) REFERENCES `cp_localidade` (`ID_LOCALIDADE`)
@@ -131,7 +131,7 @@ CREATE TABLE `cp_complexo` (
 
 LOCK TABLES `cp_complexo` WRITE;
 /*!40000 ALTER TABLE `cp_complexo` DISABLE KEYS */;
-INSERT INTO `cp_complexo` VALUES (1,'Almirante Barroso',15,9999999999),(2,'Angra',1,9999999999),(3,'Barra do Piraí',2,9999999999),(4,'Campos',4,9999999999),(5,'Duque de Caxias',5,9999999999),(6,'Equador',5,9999999999),(7,'Friburgo',11,9999999999),(8,'Itaboraí',6,9999999999),(9,'Itaperuna',7,9999999999),(10,'Macaé',8,9999999999),(11,'Mage',9,9999999999),(12,'Niteroi',10,9999999999),(13,'Nova Iguaçu',12,9999999999),(14,'Petrópolis',13,9999999999),(15,'Resende',14,9999999999),(16,'Rio Branco',15,9999999999),(17,'Sao Gonçalo',16,9999999999),(18,'Sao Joao de Meriti',17,9999999999),(19,'Sao Pedro da Aldeia',19,9999999999),(20,'São Cristovão',15,9999999999),(21,'Teresópolis',20,9999999999),(22,'Tres Rios',21,9999999999),(23,'Venezuela',15,9999999999),(24,'Volta Redonda',23,9999999999),(25,'Visconde de Inhaúma',15,3),(27,'Campo Grande',671,1);
+INSERT INTO `cp_complexo` VALUES (1,'Almirante Barroso',15,999999999),(2,'Angra',1,999999999),(3,'Barra do Piraí',2,999999999),(4,'Campos',4,999999999),(5,'Duque de Caxias',5,999999999),(6,'Equador',5,999999999),(7,'Friburgo',11,999999999),(8,'Itaboraí',6,999999999),(9,'Itaperuna',7,999999999),(10,'Macaé',8,999999999),(11,'Mage',9,999999999),(12,'Niteroi',10,999999999),(13,'Nova Iguaçu',12,999999999),(14,'Petrópolis',13,999999999),(15,'Resende',14,999999999),(16,'Rio Branco',15,999999999),(17,'Sao Gonçalo',16,999999999),(18,'Sao Joao de Meriti',17,999999999),(19,'Sao Pedro da Aldeia',19,999999999),(20,'São Cristovão',15,999999999),(21,'Teresópolis',20,999999999),(22,'Tres Rios',21,999999999),(23,'Venezuela',15,999999999),(24,'Volta Redonda',23,999999999),(25,'Visconde de Inhaúma',15,3),(27,'Campo Grande',671,1);
 /*!40000 ALTER TABLE `cp_complexo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -143,35 +143,35 @@ DROP TABLE IF EXISTS `cp_configuracao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_configuracao` (
-  `ID_CONFIGURACAO` double NOT NULL AUTO_INCREMENT,
+  `ID_CONFIGURACAO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DT_INI_VIG_CONFIGURACAO` datetime DEFAULT NULL,
   `DT_FIM_VIG_CONFIGURACAO` datetime DEFAULT NULL,
   `his_dt_ini` datetime DEFAULT NULL,
-  `ID_ORGAO_USU` bigint(20) DEFAULT NULL,
-  `ID_LOTACAO` int(11) DEFAULT NULL,
-  `ID_CARGO` bigint(20) DEFAULT NULL,
-  `ID_FUNCAO_CONFIANCA` double DEFAULT NULL,
-  `ID_PESSOA` double DEFAULT NULL,
-  `ID_SIT_CONFIGURACAO` double DEFAULT NULL,
-  `ID_TP_CONFIGURACAO` double DEFAULT NULL,
-  `ID_SERVICO` double DEFAULT NULL,
-  `ID_GRUPO` double DEFAULT NULL,
+  `ID_ORGAO_USU` INT UNSIGNED DEFAULT NULL,
+  `ID_LOTACAO` INT UNSIGNED DEFAULT NULL,
+  `ID_CARGO` INT UNSIGNED DEFAULT NULL,
+  `ID_FUNCAO_CONFIANCA` INT UNSIGNED DEFAULT NULL,
+  `ID_PESSOA` INT UNSIGNED DEFAULT NULL,
+  `ID_SIT_CONFIGURACAO` INT UNSIGNED DEFAULT NULL,
+  `ID_TP_CONFIGURACAO` INT UNSIGNED DEFAULT NULL,
+  `ID_SERVICO` INT UNSIGNED DEFAULT NULL,
+  `ID_GRUPO` INT UNSIGNED DEFAULT NULL,
   `NM_EMAIL` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `DESC_FORMULA` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ID_TP_LOTACAO` double DEFAULT NULL,
-  `ID_IDENTIDADE` double DEFAULT NULL,
-  `HIS_IDC_INI` double DEFAULT NULL,
-  `HIS_IDC_FIM` double DEFAULT NULL,
+  `ID_TP_LOTACAO` INT UNSIGNED DEFAULT NULL,
+  `ID_IDENTIDADE` INT UNSIGNED DEFAULT NULL,
+  `HIS_IDC_INI` INT UNSIGNED DEFAULT NULL,
+  `HIS_IDC_FIM` INT UNSIGNED DEFAULT NULL,
   `HIS_DT_FIM` datetime DEFAULT NULL,
-  `HIS_ID_INI` bigint(20) DEFAULT NULL,
-  `ID_COMPLEXO` int(11) DEFAULT NULL,
-  `ID_ORGAO_OBJETO` bigint(20) DEFAULT NULL,
+  `HIS_ID_INI` INT UNSIGNED DEFAULT NULL,
+  `ID_COMPLEXO` INT UNSIGNED DEFAULT NULL,
+  `ID_ORGAO_OBJETO` INT UNSIGNED DEFAULT NULL,
   `DESCR_CONFIGURACAO` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ID_LOTACAO_OBJETO` double DEFAULT NULL,
-  `ID_COMPLEXO_OBJETO` double DEFAULT NULL,
-  `ID_CARGO_OBJETO` double DEFAULT NULL,
-  `ID_FUNCAO_CONFIANCA_OBJETO` double DEFAULT NULL,
-  `ID_PESSOA_OBJETO` double DEFAULT NULL,
+  `ID_LOTACAO_OBJETO` INT UNSIGNED DEFAULT NULL,
+  `ID_COMPLEXO_OBJETO` INT UNSIGNED DEFAULT NULL,
+  `ID_CARGO_OBJETO` INT UNSIGNED DEFAULT NULL,
+  `ID_FUNCAO_CONFIANCA_OBJETO` INT UNSIGNED DEFAULT NULL,
+  `ID_PESSOA_OBJETO` INT UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`ID_CONFIGURACAO`),
   UNIQUE KEY `CP_CONF_ID_CONFIGURACAO_PK` (`ID_CONFIGURACAO`),
   KEY `CP_CONF_CP_GRUP_ID_GRP_FK` (`ID_GRUPO`),
@@ -223,7 +223,7 @@ DROP TABLE IF EXISTS `cp_feriado`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_feriado` (
-  `ID_FERIADO` double NOT NULL AUTO_INCREMENT,
+  `ID_FERIADO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DSC_FERIADO` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`ID_FERIADO`),
   UNIQUE KEY `FERIADO_PK` (`ID_FERIADO`)
@@ -247,17 +247,17 @@ DROP TABLE IF EXISTS `cp_grupo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_grupo` (
-  `ID_GRUPO` double NOT NULL AUTO_INCREMENT,
-  `ID_TP_GRUPO` double NOT NULL,
-  `ID_ORGAO_USU` bigint(20) NOT NULL,
-  `ID_GRUPO_PAI` double DEFAULT NULL,
+  `ID_GRUPO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ID_TP_GRUPO` INT UNSIGNED NOT NULL,
+  `ID_ORGAO_USU` INT UNSIGNED NOT NULL,
+  `ID_GRUPO_PAI` INT UNSIGNED DEFAULT NULL,
   `SIGLA_GRUPO` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `DESC_GRUPO` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `HIS_ID_INI` double DEFAULT NULL,
+  `HIS_ID_INI` INT UNSIGNED DEFAULT NULL,
   `HIS_DT_INI` datetime NOT NULL,
-  `HIS_IDC_INI` double DEFAULT NULL,
+  `HIS_IDC_INI` INT UNSIGNED DEFAULT NULL,
   `HIS_DT_FIM` datetime DEFAULT NULL,
-  `HIS_IDC_FIM` double DEFAULT NULL,
+  `HIS_IDC_FIM` INT UNSIGNED DEFAULT NULL,
   `HIS_ATIVO` tinyint(4) NOT NULL,
   PRIMARY KEY (`ID_GRUPO`),
   UNIQUE KEY `CP_GRUPO_PK` (`ID_GRUPO`),
@@ -291,22 +291,22 @@ DROP TABLE IF EXISTS `cp_identidade`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_identidade` (
-  `ID_IDENTIDADE` double NOT NULL AUTO_INCREMENT,
-  `ID_TP_IDENTIDADE` double DEFAULT NULL,
-  `ID_PESSOA` double DEFAULT NULL,
+  `ID_IDENTIDADE` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ID_TP_IDENTIDADE` INT UNSIGNED DEFAULT NULL,
+  `ID_PESSOA` INT UNSIGNED DEFAULT NULL,
   `DATA_CRIACAO_IDENTIDADE` datetime DEFAULT NULL,
   `DATA_EXPIRACAO_IDENTIDADE` datetime DEFAULT NULL,
   `DATA_CANCELAMENTO_IDENTIDADE` datetime DEFAULT NULL,
-  `ID_ORGAO_USU` bigint(20) DEFAULT NULL,
+  `ID_ORGAO_USU` INT UNSIGNED DEFAULT NULL,
   `LOGIN_IDENTIDADE` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `SENHA_IDENTIDADE` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `SENHA_IDENTIDADE_CRIPTO` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `SENHA_IDENTIDADE_CRIPTO_SINC` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `HIS_ID_INI` double DEFAULT NULL,
+  `HIS_ID_INI` INT UNSIGNED DEFAULT NULL,
   `HIS_DT_INI` datetime NOT NULL,
-  `HIS_IDC_INI` double DEFAULT NULL,
+  `HIS_IDC_INI` INT UNSIGNED DEFAULT NULL,
   `HIS_DT_FIM` datetime DEFAULT NULL,
-  `HIS_IDC_FIM` double DEFAULT NULL,
+  `HIS_IDC_FIM` INT UNSIGNED DEFAULT NULL,
   `HIS_ATIVO` tinyint(4) NOT NULL,
   PRIMARY KEY (`ID_IDENTIDADE`),
   UNIQUE KEY `CP_IDENTIDADE_PK` (`ID_IDENTIDADE`),
@@ -332,7 +332,7 @@ CREATE TABLE `cp_identidade` (
 
 LOCK TABLES `cp_identidade` WRITE;
 /*!40000 ALTER TABLE `cp_identidade` DISABLE KEYS */;
-INSERT INTO `cp_identidade` VALUES (1,1,1,'2011-10-26 00:00:00',NULL,NULL,9999999999,'ZZ99999','2ac9cb7dc02b3c0083eb70898e549b63','I20BhBeI7KavVeWdbIa8+g==','I20BhBeI7KavVeWdbIa8+g==',1,'2011-10-26 00:00:00',1,NULL,NULL,1);
+INSERT INTO `cp_identidade` VALUES (1,1,1,'2011-10-26 00:00:00',NULL,NULL,999999999,'ZZ99999','2ac9cb7dc02b3c0083eb70898e549b63','I20BhBeI7KavVeWdbIa8+g==','I20BhBeI7KavVeWdbIa8+g==',1,'2011-10-26 00:00:00',1,NULL,NULL,1);
 /*!40000 ALTER TABLE `cp_identidade` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -344,9 +344,9 @@ DROP TABLE IF EXISTS `cp_localidade`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_localidade` (
-  `ID_LOCALIDADE` double NOT NULL AUTO_INCREMENT,
+  `ID_LOCALIDADE` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `NM_LOCALIDADE` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ID_UF` double NOT NULL,
+  `ID_UF` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`ID_LOCALIDADE`),
   UNIQUE KEY `LOCALIDADE_FK` (`ID_LOCALIDADE`),
   KEY `UF_LOCALIDADE_FK` (`ID_UF`),
@@ -372,15 +372,15 @@ DROP TABLE IF EXISTS `cp_marca`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_marca` (
-  `ID_MARCA` double NOT NULL AUTO_INCREMENT,
+  `ID_MARCA` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DT_INI_MARCA` datetime DEFAULT NULL,
   `DT_FIM_MARCA` datetime DEFAULT NULL,
-  `ID_MARCADOR` double DEFAULT NULL,
-  `ID_PESSOA_INI` double DEFAULT NULL,
-  `ID_LOTACAO_INI` int(11) DEFAULT NULL,
-  `ID_MOBIL` double DEFAULT NULL,
-  `ID_TP_MARCA` double DEFAULT NULL,
-  `ID_REF` double DEFAULT NULL,
+  `ID_MARCADOR` INT UNSIGNED DEFAULT NULL,
+  `ID_PESSOA_INI` INT UNSIGNED DEFAULT NULL,
+  `ID_LOTACAO_INI` INT UNSIGNED DEFAULT NULL,
+  `ID_MOBIL` INT UNSIGNED DEFAULT NULL,
+  `ID_TP_MARCA` INT UNSIGNED DEFAULT NULL,
+  `ID_REF` INT UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`ID_MARCA`),
   KEY `LOTACAO` (`ID_LOTACAO_INI`),
   KEY `PESSOA` (`ID_PESSOA_INI`),
@@ -413,9 +413,9 @@ DROP TABLE IF EXISTS `cp_marcador`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_marcador` (
-  `ID_MARCADOR` double NOT NULL AUTO_INCREMENT,
+  `ID_MARCADOR` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DESCR_MARCADOR` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ID_TP_MARCADOR` double DEFAULT NULL,
+  `ID_TP_MARCADOR` INT UNSIGNED DEFAULT NULL,
   `ORD_MARCADOR` int(11) DEFAULT NULL,
   PRIMARY KEY (`ID_MARCADOR`),
   KEY `ID_TP_MARCADOR` (`ID_TP_MARCADOR`),
@@ -434,6 +434,57 @@ INSERT INTO `cp_marcador` VALUES (1,'Em Elaboração',1,10),(2,'Aguardando Andam
 UNLOCK TABLES;
 
 --
+-- Table structure for table `cp_arquivo`
+--
+
+DROP TABLE IF EXISTS `cp_arquivo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `cp_arquivo` (
+  `ID_ARQ` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ID_ORGAO_USU` INT UNSIGNED DEFAULT NULL,
+  `CONTEUDO_TP_ARQ` VARCHAR(256),
+  PRIMARY KEY (`ID_ARQ`),
+  KEY `ID_ORGAO_USU` (`ID_ORGAO_USU`),
+  CONSTRAINT `cp_arq_ibfk_1` FOREIGN KEY (`ID_ORGAO_USU`) REFERENCES `cp_orgao_usuario` (`ID_ORGAO_USU`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cp_arquivo`
+--
+
+LOCK TABLES `cp_arquivo` WRITE;
+/*!40000 ALTER TABLE `cp_arquivo` DISABLE KEYS */;
+INSERT INTO `cp_arquivo` VALUES (1,null,'template/freemarker'),(2,null,'template/freemarker'),(3,null,'template/freemarker'),(4,NULL,'template/freemarker'),(5,NULL,'template/freemarker'),(519,NULL,'template/freemarker'),(7,NULL,'template/freemarker'),(8,NULL,'template/freemarker'),(9,NULL,'template/freemarker'),(10,NULL,'template/freemarker');
+/*!40000 ALTER TABLE `cp_arquivo` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cp_arquivo_blob`
+--
+
+DROP TABLE IF EXISTS `cp_arquivo_blob`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `cp_arquivo_blob` (
+  `ID_ARQ_BLOB` BIGINT UNSIGNED NOT NULL,
+  `CONTEUDO_ARQ_BLOB` BLOB DEFAULT NULL,
+  PRIMARY KEY (`ID_ARQ_BLOB`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cp_arquivo_blob`
+--
+
+LOCK TABLES `cp_arquivo_blob` WRITE;
+/*!40000 ALTER TABLE `cp_arquivo_blob` DISABLE KEYS */;
+INSERT INTO `cp_arquivo_blob` VALUES (1,' \n[@oficio/]\n'),(2,'\n[@entrevista]\n	[@grupo titulo=\"Texto a ser inserido no corpo do memorando\"]\n		[@grupo]\n			[@editor titulo=\"\" var=\"texto_memorando\" /]\n		[/@grupo]\n	[/@grupo]\n	[@grupo]\n	        [@selecao titulo=\"Tamanho da letra\" var=\"tamanhoLetra\" opcoes=\"Normal;Pequeno;Grande\" /]\n	[/@grupo]\n	[@grupo]\n       		[@selecao titulo=\"Fecho\" var=\"fecho\" opcoes=\"Atenciosamente;Cordialmente;Respeitosamente\" /]\n	[/@grupo]\n[/@entrevista]\n\n[@documento]\n        [@memorando texto=texto_memorando! fecho=(fecho!)+\",\" tamanhoLetra=tamanhoLetra! /]\n[/@documento]\n'),(3,'\n[@entrevista]\n    [@grupo titulo=\"Dados do Documento de Origem\"]\n        [@grupo]\n            [@texto titulo=\"Tipo de documento\" var=\"tipoDeDocumentoOrigem\" largura=20 default=tipoDeDocumentoValue /]\n            [@texto titulo=\"Número\" var=\"numeroOrigem\" largura=20 default=numeroValue /]\n        [/@grupo]\n        [@grupo]\n            [@data titulo=\"Data\" var=\"dataOrigem\" default=dataValue /]\n            [@texto titulo=\"Nome do Órgão\" var=\"orgaoOrigem\" largura=30 default=orgaoValue /]\n        [/@grupo]\n    [/@grupo]\n    [@grupo]\n        [@texto titulo=\"Vocativo\" var=\"vocativo\" largura=\"100\" /]\n    [/@grupo]\n    [@grupo titulo=\"Texto da informação\"]\n        [@editor titulo=\"\" var=\"texto_informacao\" /]\n    [/@grupo]\n    [@grupo]\n        [@selecao titulo=\"Tamanho da letra\" var=\"tamanhoLetra\" opcoes=\"Normal;Pequeno;Grande\" /]\n    [/@grupo]\n[/@entrevista]\n\n[@documento margemDireita=\"3cm\"]\n    [#if tamanhoLetra! == \"Normal\"]\n        [#assign tl = \"11pt\" /]\n    [#elseif tamanhoLetra! == \"Pequeno\"]\n        [#assign tl = \"9pt\" /]\n    [#elseif tamanhoLetra! == \"Grande\"]\n        [#assign tl = \"13pt\" /]\n    [#else]     \n        [#assign tl = \"11pt\"]\n    [/#if]\n\n    [@estiloBrasaoCentralizado tipo=\"INFORMAÇÃO\" tamanhoLetra=tl formatarOrgao=true numeracaoCentralizada=false dataAntesDaAssinatura =true]\n        <div style=\"font-family: Arial; font-size: ${tl};\">\n            [#if tipoDeDocumentoOrigem?? && tipoDeDocumentoOrigem != \"\"]\n                Referência: ${tipoDeDocumentoOrigem!} N&ordm; ${numeroOrigem!}, ${dataOrigem!} - ${orgaoOrigem!}.<br/>\n            [/#if]\n            Assunto: ${(doc.exClassificacao.descrClassificacao)!}\n\n            <p style=\"TEXT-INDENT: 2cm\"><span style=\"font-size: ${tl}\">${vocativo!}</span></p>\n                <p style=\"TEXT-INDENT: 2cm\"><span style=\"font-size: ${tl}\">${texto_informacao}</span></p>\n        </div>\n    [/@estiloBrasaoCentralizado]\n[/@documento]\n'),(4,'\n[#-- Se existir uma variável chamada \'texto\' copiar seu valor para \'texto_depacho\', pois a macro vai destruir o conteúdo da variável --]\n[@entrevista]\n  [@grupo titulo=\"Órgão de destino\"]\n    [#assign orgao_dest_atual = (doc.lotaDestinatario.nomeLotacao)!/]\n    [#if orgao_dest_ult! != orgao_dest_atual]\n      [#assign orgao_dest = orgao_dest_atual/]\n      [#assign orgao_dest_ult = orgao_dest_atual/]\n    [/#if]\n    [@oculto var=\"orgao_dest_ult\"/]\n    [@grupo]\n      [@selecao titulo=\"\" var=\"combinacao\" opcoes=\"A(o);À;Ao\" /]\n      [@texto titulo=\"Nome (opcional)\" var=\"orgao_dest\" largura=30 /]\n    [/@grupo]\n  [/@grupo]\n  [@grupo titulo=\"Texto do despacho\"]\n    [@grupo]\n      [#if !texto_padrao??]\n        [#assign texto_padrao = \"Para as providências cabíveis.\"/]\n      [/#if]\n      [@selecao titulo=\"Texto\" opcoes=\"A pedido.;Arquive-se.;Autorizo.;Ciente. Arquive-se.;De acordo.;Expeça-se memorando.;Expeça-se memorando-circular.;Expeça-se ofício-circular.;Intime-se.;Junte-se ao dossiê.;Junte-se ao processo.;Oficie-se.;Para as providências cabíveis.;Para atendimento.;Para atendimento e encaminhamento direto.;Para ciência.;Para publicação.;Para verificar a possibilidade de atendimento.;[Outro]\" var=\"texto_padrao\" reler=true /]\n    [/@grupo]\n  [/@grupo]\n  [@grupo depende=\"textopadrao\" esconder=((texto_padrao!\"\") != \"[Outro]\")]\n    [@editor titulo=\"\" var=\"texto_despacho\" /]\n  [/@grupo]\n  [@grupo]\n    [@selecao titulo=\"Tamanho da letra\" var=\"tamanhoLetra\" opcoes=\"Normal;Pequeno;Grande\" /]\n  [/@grupo]\n  [@grupo titulo=\"Dados do Documento de Origem\" esconder=doc.pai??]\n    [#if postback?? && !doc.idDoc?? && doc.pai??]\n      [#assign tipoDeDocumentoValue = doc.pai.descrFormaDoc /]\n      [#assign numeroValue = doc.pai.sigla /]\n      [#assign dataValue = doc.pai.dtDocDDMMYY /]\n      [#assign orgaoValue = doc.pai.orgaoUsuario.acronimoOrgaoUsu /]\n    [#else]\n      [#assign tipoDeDocumentoValue = tipoDeDocumentoOrigem! /]\n      [#assign numeroValue = numeroOrigem! /]\n      [#assign dataValue = dataOrigem! /]\n      [#assign orgaoValue = orgaoOrigem! /]\n    [/#if]\n    [@grupo]\n      [@texto titulo=\"Tipo de documento\" var=\"tipoDeDocumentoOrigem\" largura=20 default=tipoDeDocumentoValue /]\n      [@texto titulo=\"Número\" var=\"numeroOrigem\" largura=20 default=numeroValue /]\n    [/@grupo]\n    [@grupo]\n      [@data titulo=\"Data\" var=\"dataOrigem\" default=dataValue /]\n      [@texto titulo=\"Nome do Órgão\" var=\"orgaoOrigem\" largura=30 default=orgaoValue /]\n    [/@grupo]\n  [/@grupo]\n[/@entrevista]\n[@documento margemDireita=\"3cm\"]\n  [#if param.tamanhoLetra! == \"Normal\"]\n    [#assign tl = \"11pt\" /]\n  [#elseif param.tamanhoLetra! == \"Pequeno\"]\n    [#assign tl = \"9pt\" /]\n  [#elseif param.tamanhoLetra! == \"Grande\"]\n    [#assign tl = \"13pt\" /]\n  [#else]\n    [#assign tl = \"11pt\"/]\n  [/#if]\n  [@estiloBrasaoCentralizado tipo=\"DESPACHO\" tamanhoLetra=tl formatarOrgao=true numeracaoCentralizada=false dataAntesDaAssinatura =true]\n    <div style=\"font-family: Arial; font-size: ${tl};\">\n      [#if tipoDeDocumentoOrigem?? && tipoDeDocumentoOrigem != \"\"]\n        Referência: ${tipoDeDocumentoOrigem!} Nº ${numeroOrigem!}\n        [#if dataOrigem?? && dataOrigem != \"\"]\n          , ${dataOrigem!}\n        [/#if]\n        [#if orgaoOrigem?? && orgaoOrigem != \"\"]\n          - ${orgaoOrigem!}.\n        [/#if]\n        <br />\n      [/#if]\n      Assunto: ${(doc.exClassificacao.descrClassificacao)!}\n    </div>\n    <div style=\"font-family: Arial; font-size: ${tl};\">\n      [#if orgao_dest?? && orgao_dest != \"\"]\n        <p style=\"TEXT-INDENT: 2cm\">\n          <span style=\"font-size: ${tl}\">${combinacao} ${orgao_dest!},</span>\n        </p>\n      [#elseif (doc.lotaDestinatario.nomeLotacao)?? && (doc.lotaDestinatario.nomeLotacao) != \"\"]\n        <p style=\"TEXT-INDENT: 2cm\">\n          <span style=\"font-size: ${tl}\">${combinacao} ${(doc.lotaDestinatario.nomeLotacao)!},</span>\n        </p>\n      [/#if]\n      [#if (texto_padrao!\"\") != \"[Outro]\"]\n        <p style=\"TEXT-INDENT: 2cm\">\n          <span style=\"font-size: ${tl!}\">${texto_padrao!}</span>\n        </p>\n      [#else]\n        <p style=\"TEXT-INDENT: 2cm\">\n          <span style=\"font-size: ${tl!}\">${texto_despacho!}</span>\n        </p>\n      [/#if]\n    </div>\n  [/@estiloBrasaoCentralizado]\n[/@documento]\n'),(5,'ELABORE SEU MODELO DE BOLETIM INTERNO NO MENU FERRAMENTAS/CADASTRO DE MODELOS'),(6,'\n[@entrevista]\n    [@grupo titulo=\"Dados do Documento de Origem\"]\n        [@grupo]\n            [@texto titulo=\"Tipo de documento\" var=\"tipoDeDocumentoOrigem\" largura=20 default=tipoDeDocumentoValue /]\n            [@texto titulo=\"Número\" var=\"numeroOrigem\" largura=20 default=numeroValue /]\n        [/@grupo]\n        [@grupo]\n            [@data titulo=\"Data\" var=\"dataOrigem\" default=dataValue /]\n            [@texto titulo=\"Nome do Órgão\" var=\"orgaoOrigem\" largura=30 default=orgaoValue /]\n        [/@grupo]\n    [/@grupo]\n    [@grupo]\n        [@texto titulo=\"Vocativo\" var=\"vocativo\" largura=\"100\" /]\n    [/@grupo]\n    [@grupo titulo=\"Texto do Parecer\"]\n        [@editor titulo=\"\" var=\"texto_parecer\" /]\n    [/@grupo]\n    [@grupo]\n        [@selecao titulo=\"Tamanho da letra\" var=\"tamanhoLetra\" opcoes=\"Normal;Pequeno;Grande\" /]\n    [/@grupo]\n[/@entrevista]\n\n[@documento margemDireita=\"3cm\"]\n    [#if param.tamanhoLetra! == \"Normal\"]\n        [#assign tl = \"11pt\" /]\n    [#elseif param.tamanhoLetra! == \"Pequeno\"]\n        [#assign tl = \"9pt\" /]\n    [#elseif param.tamanhoLetra! == \"Grande\"]\n        [#assign tl = \"13pt\" /]\n    [#else]     \n        [#assign tl = \"11pt\"]\n    [/#if]\n\n    [@estiloBrasaoCentralizado tipo=\"PARECER\" tamanhoLetra=tl formatarOrgao=true numeracaoCentralizada=false dataAntesDaAssinatura =true]\n        [#if tipoDeDocumentoOrigem?? && tipoDeDocumentoOrigem != \"\"]\n            Referência: ${tipoDeDocumentoOrigem!} N&ordm; ${numeroOrigem!}, ${dataOrigem!} - ${orgaoOrigem!}.<br/>\n        [/#if]\n        Assunto: ${(doc.exClassificacao.descrClassificacao)!}\n\n        <div style=\"font-family: Arial; font-size: 10pt;\">\n            <p style=\"TEXT-INDENT: 2cm\"><span style=\"font-size: ${tl}\">${vocativo!}</span></p>\n            <p style=\"TEXT-INDENT: 2cm\"><span style=\"font-size: ${tl}\">${texto_parecer}</span></p>\n            <p style=\"TEXT-INDENT: 2cm\"><span style=\"font-size: ${tl}\">É o Parecer.</span></p>\n        </div>\n    [/@estiloBrasaoCentralizado]\n[/@documento]\n\n'),(7,' Certidão de desentranhamento'),(8,'\n[@entrevista]\n [@grupo titulo=\"Informações Gerais\"]\n  [@grupo]\n   [@texto titulo=\"Objetivo da reunião\" var=\"objReuniao\" largura=\"84\" maxcaracteres=\"84\"/]\n  [/@grupo]\n  [@texto titulo=\"Horário\" var=\"horReuniao\" obrigatorio=\"Sim\" largura=\"4\" maxcaracteres=\"5\"/]\n  [@texto titulo=\"Local\" var=\"locReuniao\" obrigatorio=\"Sim\" largura=\"60\" maxcaracteres=\"60\"/]\n[#--\n  [@grupo]\n   [@memo titulo=\"Pendências (reuniões anteriores)\" var=\"pendencias\" colunas=\"78\" linhas=\"2\"/]\n  [/@grupo]\n--]\n  [@separador /]\n  [@selecao titulo=\"Participantes\" var=\"numParticipantes\" reler=true idAjax=\"numParticipantesAjax\" opcoes=\"0;1;2;3;4;5;6;7;8;9;10;11;12;13;14;15\"/]\n  [@grupo depende=\"numParticipantesAjax\"]\n   [#if numParticipantes! != \'0\']\n    [#list 1..(numParticipantes)?number as i]\n     [@grupo]\n      [@pessoa titulo=\"\" var=\"participantes\"+i/]\n     [/@grupo]\n    [/#list]\n   [/#if]\n  [/@grupo]\n  [@separador /]\n  [@grupo]\n   [@selecao titulo=\"Participantes (extra)\" var=\"numParticipantesExtra\" reler=true idAjax=\"numPartExtraAjax\" opcoes=\"0;1;2;3;4;5;6;7;8;9;10;11;12;13;14;15\"/]\n  [/@grupo]\n  [@grupo depende=\"numPartExtraAjax\"]\n   [#if numParticipantesExtra! != \'0\']\n    [#list 1..(numParticipantesExtra)?number as i]\n     [@grupo]\n      [@texto titulo=\"Nome\" var=\"participantesExtra\"+i largura=\"50\" maxcaracteres=\"101\"/]\n      [@texto titulo=\"Email\" var=\"participantesExtraEmail\"+i largura=\"51\" maxcaracteres=\"101\"/]\n     [/@grupo]\n     [@grupo]\n      [@texto titulo=\"Função\" var=\"participantesExtraFuncao\"+i largura=\"50\" maxcaracteres=\"101\"/]\n      [@texto titulo=\"Unidade\" var=\"participantesExtraUnidade\"+i largura=\"51\" maxcaracteres=\"101\"/]\n     [/@grupo]\n    [/#list]\n   [/#if]\n  [/@grupo]\n [/@grupo]\n [@separador /]\n [@grupo]\n  [@selecao titulo=\"Quantidade de itens da pauta\" var=\"qtdItePauta\" reler=true idAjax=\"qtdItePautaAjax\" opcoes=\"1;2;3;4;5;6;7;8;9;10;11;12;13;14;15\"/]\n [/@grupo]\n [@grupo depende=\"qtdItePautaAjax\"]\n  [#list 1..(qtdItePauta)?number as i]\n   [@grupo]\n    [@texto titulo=\"<b>Item ${i}</b>\" var=\"itePauta\"+i largura=\"96\" maxcaracteres=\"101\"/]\n   [/@grupo]\n   [@memo titulo=\"Comentários\" var=\"comentario\"+i colunas=\"78\" linhas=\"2\"/]\n   [@grupo]\n    [@selecao titulo=\"Quantidade de ações\" var=\"qtdAcoes\"+i reler=true idAjax=\"qtdAcoesAjax\"+i opcoes=\"0;1;2;3;4;5;6;7;8;9;10;11;12;13;14;15\"/]\n   [/@grupo]\n   [@grupo depende=\"qtdAcoesAjax\"+i]\n    [#if (.vars[\'qtdAcoes\'+i])! != \'0\']\n     [#list 1..(.vars[\'qtdAcoes\'+i])?number as j]\n      [@grupo]      \n       [@texto titulo=\"Ação ${j}\" var=\"acoes\"+i+j largura=\"95\" maxcaracteres=\"75\"/]\n      [/@grupo]\n      [@grupo]\n       [@texto titulo=\"Responsável\" var=\"responsavel\"+i+j largura=\"61\" maxcaracteres=\"55\"/]\n       [@data titulo=\"Data prevista\" var=\"datPrevista\"+i+j/] \n      [/@grupo]\n     [/#list]\n    [/#if]\n   [/@grupo]\n   [@separador /]  \n  [/#list] \n [/@grupo]\n[/@entrevista]\n\n[@documento]\n [#if tamanhoLetra! == \"Normal\"]\n		[#assign tl = \"11pt\" /]\n [#elseif tamanhoLetra! == \"Pequeno\"]\n		[#assign tl = \"9pt\" /]\n [#elseif tamanhoLetra! == \"Grande\"]\n		[#assign tl = \"13pt\" /]\n [#else]		\n		[#assign tl = \"11pt\"]\n [/#if]\n [@estiloBrasaoCentralizado tipo=\"MEMÓRIA DE REUNIÃO\" tamanhoLetra=tl formatarOrgao=true]\n   <p align=\"left\">\n    <b>Objetivo da reunião:</b>&nbsp;${objReuniao!}<br/>\n    Horário e local: ${horReuniao!} - ${locReuniao!}<br/>\n     Assunto: ${(doc.exClassificacao.descrClassificacao)!}</p><br/>\n[#--\n   [#if pendencias! != \"\"]\n    <p><b>Pendências (reuniões anteriores):</b>&nbsp;${pendencias!}</p><br/>\n   [/#if]\n--]\n   <table width=\"100%\" border=\"1\" cellpadding=\"5\">\n    <tr>\n     <td width=\"50%\"><b>Participantes</b></td>\n     <td width=\"25%\"><b>Função</b></td>\n     <td width=\"25%\"><b>Unidade</b></td>\n    </tr>\n    [#list 1..(numParticipantes)?number as i]\n     [#if .vars[\'participantes\' + i + \'_pessoaSel.id\']?? && .vars[\'participantes\' + i + \'_pessoaSel.id\'] != \"\"]\n      [#assign participante = func.pessoa(.vars[\'participantes\' + i + \'_pessoaSel.id\']?number) /]\n      <tr>\n       <td>${func.maiusculasEMinusculas(participante.descricao)}</td>\n       <td>${(participante.funcaoConfianca.descricao)!}</td>\n       <td>${participante.lotacao.sigla}</td>\n      </tr>\n     [/#if]\n    [/#list]\n\n    [#list 1..(numParticipantesExtra)?number as i] \n     [#if numParticipantesExtra! != \'0\']\n      <tr>\n       <td>${.vars[\'participantesExtra\'+i]!}\n        [#if .vars[\'participantesExtraEmail\'+i]??] (${.vars[\'participantesExtraEmail\'+i]!})[/#if]</td>\n       <td>${.vars[\'participantesExtraFuncao\'+i]!}</td>\n       <td>${.vars[\'participantesExtraUnidade\'+i]!}</td>\n      </tr>\n     [/#if]    \n    [/#list]\n   </table> \n   <br/>\n\n\n  \n   <p><b>Pauta</b></p>\n     [#list 1..(qtdItePauta)?number as i] \n        <p>\n          <b>${i}. ${.vars[\'itePauta\'+i]!}:</b> ${.vars[\'comentario\'+i]!}\n        </p>       \n     [/#list]  \n\n\n  <br/> \n\n  [#assign fAcoes = false/]\n  [#list 1..(qtdItePauta)?number as i]\n   [#if .vars[\'qtdAcoes\'+i] != \'0\']\n    [#assign fAcoes = true/]\n   [/#if] \n  [/#list]\n\n  [#if fAcoes]\n   <table width=\"100%\" border=\"1\" cellpadding=\"5\">\n     <tr>\n      <td width=\"10%\"><b>Ref.</b></td>\n      <td width=\"50%\"><b>Próximas Ações</b></td>\n      <td width=\"20%\"><b>Responsável</b></td>\n      <td width=\"20%\" align=\"center\"><b>Data Prevista</b></td>\n     </tr>\n     [#list 1..(qtdItePauta)?number as i]\n      [#if .vars[\'qtdAcoes\'+i] != \'0\']\n       [#list 1..(.vars[\'qtdAcoes\'+i])?number as j]\n        <tr>\n         <td>${i}.${j}</td>\n         <td>${.vars[\'acoes\'+i+j]!}</td>\n         <td>${.vars[\'responsavel\'+i+j]!}</td>\n         <td align=\"center\">${.vars[\'datPrevista\'+i+j]!}</td>\n        </tr>\n       [/#list]\n      [/#if]\n     [/#list]\n   </table>   \n  [/#if]\n [/@estiloBrasaoCentralizado]\n[/@documento]\n\n'),(9,'\n[@documento margemDireita=\"3cm\"]\n    [#assign tl=\"11pt\"/]\n    [@estiloBrasaoCentralizado tipo=\"DESPACHO\" tamanhoLetra=tl formatarOrgao=true numeracaoCentralizada=false dataAntesDaAssinatura =true]\n        <div style=\"font-family: Arial; font-size: ${tl};\">\n          Referência: ${doc.codigo} de ${doc.dtD} de ${doc.dtMMMM} de ${doc.dtYYYY}[#if doc.lotaTitular??] - ${(doc.lotaTitular.descricao)!}[/#if].<br/>\n            Assunto: ${(doc.exClassificacao.descrClassificacao)!}\n        </div>\n\n        <div style=\"font-family: Arial; font-size: ${tl};\">\n            [#if mov.lotaResp?? && (mov.lotaResp.idLotacaoIni != mov.lotaCadastrante.idLotacaoIni)]\n                <p style=\"TEXT-INDENT: 0cm\">\n                  <span style=\"font-size: ${tl}\">À ${(mov.lotaResp.descricao)!},</span>\n                </p>\n            [/#if]\n            [#if despachoTexto??]\n                <p style=\"TEXT-INDENT: 2cm\"><span style=\"font-size: ${tl}\">${despachoTexto}</span></p>\n            [/#if]\n            ${despachoHtml!}\n        </div>\n    [/@estiloBrasaoCentralizado]\n[/@documento]\n\n'),(10,' ');
+/*!40000 ALTER TABLE `cp_arquivo_blob` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `cp_modelo`
 --
 
@@ -441,24 +492,27 @@ DROP TABLE IF EXISTS `cp_modelo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_modelo` (
-  `ID_MODELO` double NOT NULL AUTO_INCREMENT,
-  `ID_ORGAO_USU` bigint(20) DEFAULT NULL,
+  `ID_MODELO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ID_ORGAO_USU` INT UNSIGNED DEFAULT NULL,
+  `ID_ARQ` BIGINT UNSIGNED DEFAULT NULL,
   `CONTEUDO_BLOB_MOD` blob,
-  `HIS_ID_INI` double DEFAULT NULL,
+  `HIS_ID_INI` INT UNSIGNED DEFAULT NULL,
   `HIS_DT_INI` datetime NOT NULL,
-  `HIS_IDC_INI` double DEFAULT NULL,
+  `HIS_IDC_INI` INT UNSIGNED DEFAULT NULL,
   `HIS_DT_FIM` datetime DEFAULT NULL,
-  `HIS_IDC_FIM` double DEFAULT NULL,
+  `HIS_IDC_FIM` INT UNSIGNED DEFAULT NULL,
   `HIS_ATIVO` tinyint(4) NOT NULL,
   PRIMARY KEY (`ID_MODELO`),
   KEY `ID_ORGAO_USU` (`ID_ORGAO_USU`),
   KEY `HIS_IDC_INI` (`HIS_IDC_INI`),
   KEY `HIS_IDC_FIM` (`HIS_IDC_FIM`),
   KEY `HIS_ID_INI` (`HIS_ID_INI`),
+  KEY `ID_ARQ` (`ID_ARQ`),
   CONSTRAINT `cp_modelo_ibfk_1` FOREIGN KEY (`ID_ORGAO_USU`) REFERENCES `cp_orgao_usuario` (`ID_ORGAO_USU`),
   CONSTRAINT `cp_modelo_ibfk_2` FOREIGN KEY (`HIS_IDC_INI`) REFERENCES `cp_identidade` (`ID_IDENTIDADE`),
   CONSTRAINT `cp_modelo_ibfk_3` FOREIGN KEY (`HIS_IDC_FIM`) REFERENCES `cp_identidade` (`ID_IDENTIDADE`),
-  CONSTRAINT `cp_modelo_ibfk_4` FOREIGN KEY (`HIS_ID_INI`) REFERENCES `cp_modelo` (`ID_MODELO`)
+  CONSTRAINT `cp_modelo_ibfk_4` FOREIGN KEY (`HIS_ID_INI`) REFERENCES `cp_modelo` (`ID_MODELO`),
+  CONSTRAINT `cp_modelo_ibfk_5` FOREIGN KEY (`ID_ARQ`) REFERENCES `cp_arquivo` (`ID_ARQ`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -479,10 +533,10 @@ DROP TABLE IF EXISTS `cp_ocorrencia_feriado`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_ocorrencia_feriado` (
-  `ID_OCORRENCIA` double NOT NULL AUTO_INCREMENT,
+  `ID_OCORRENCIA` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DT_INI_FERIADO` datetime DEFAULT NULL,
   `DT_FIM_FERIADO` datetime DEFAULT NULL,
-  `ID_FERIADO` double DEFAULT NULL,
+  `ID_FERIADO` INT UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`ID_OCORRENCIA`),
   KEY `ID_FERIADO` (`ID_FERIADO`),
   CONSTRAINT `cp_ocorrencia_feriado_ibfk_1` FOREIGN KEY (`ID_FERIADO`) REFERENCES `cp_feriado` (`ID_FERIADO`)
@@ -506,9 +560,9 @@ DROP TABLE IF EXISTS `cp_orgao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_orgao` (
-  `ID_ORGAO` bigint(20) NOT NULL AUTO_INCREMENT,
+  `ID_ORGAO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `NM_ORGAO` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `CGC_ORGAO` bigint(20) DEFAULT NULL,
+  `CGC_ORGAO` INT UNSIGNED DEFAULT NULL,
   `RAZAO_SOCIAL_ORGAO` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `END_ORGAO` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `BAIRRO_ORGAO` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -522,13 +576,13 @@ CREATE TABLE `cp_orgao` (
   `TEL_CONTATO_ORGAO` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `SIGLA_ORGAO` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `UF_ORGAO` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ID_ORGAO_USU` bigint(20) NOT NULL,
+  `ID_ORGAO_USU` INT UNSIGNED NOT NULL,
   `FG_ATIVO` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `HIS_ID_INI` double DEFAULT NULL,
+  `HIS_ID_INI` INT UNSIGNED DEFAULT NULL,
   `HIS_IDE` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `HIS_DT_INI` datetime DEFAULT NULL,
   `HIS_DT_FIM` datetime DEFAULT NULL,
-  `HIS_ATIVO` double DEFAULT NULL,
+  `HIS_ATIVO` INT UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`ID_ORGAO`),
   UNIQUE KEY `ORGAO_PK` (`ID_ORGAO`),
   KEY `ORGAO_ORGAO_USU_FK` (`ID_ORGAO_USU`),
@@ -542,7 +596,7 @@ CREATE TABLE `cp_orgao` (
 
 LOCK TABLES `cp_orgao` WRITE;
 /*!40000 ALTER TABLE `cp_orgao` DISABLE KEYS */;
-INSERT INTO `cp_orgao` VALUES (1,'PRESIDENCIA DA REPUBLICA',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Pres. Rep.',NULL,9999999999,'S',1,'1','2011-08-03 00:00:00',NULL,1);
+INSERT INTO `cp_orgao` VALUES (1,'PRESIDENCIA DA REPUBLICA',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Pres. Rep.',NULL,999999999,'S',1,'1','2011-08-03 00:00:00',NULL,1);
 /*!40000 ALTER TABLE `cp_orgao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -554,7 +608,7 @@ DROP TABLE IF EXISTS `cp_orgao_usuario`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_orgao_usuario` (
-  `ID_ORGAO_USU` bigint(20) NOT NULL AUTO_INCREMENT,
+  `ID_ORGAO_USU` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `NM_ORGAO_USU` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `CGC_ORGAO_USU` bigint(20) DEFAULT NULL,
   `RAZAO_SOCIAL_ORGAO_USU` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -566,11 +620,11 @@ CREATE TABLE `cp_orgao_usuario` (
   `TEL_ORGAO_USU` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `SIGLA_ORGAO_USU` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `UF_ORGAO_USU` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `COD_ORGAO_USU` double DEFAULT NULL,
+  `COD_ORGAO_USU` INT UNSIGNED DEFAULT NULL,
   `ACRONIMO_ORGAO_USU` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`ID_ORGAO_USU`),
   UNIQUE KEY `ORGAO_USU_PK` (`ID_ORGAO_USU`)
-) ENGINE=InnoDB AUTO_INCREMENT=10000000000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -579,7 +633,7 @@ CREATE TABLE `cp_orgao_usuario` (
 
 LOCK TABLES `cp_orgao_usuario` WRITE;
 /*!40000 ALTER TABLE `cp_orgao_usuario` DISABLE KEYS */;
-INSERT INTO `cp_orgao_usuario` VALUES (9999999999,'ORGAO TESTE ZZ',NULL,NULL,NULL,NULL,'Rio de Janeiro',NULL,NULL,NULL,'ZZ',NULL,NULL,'OTZZ');
+INSERT INTO `cp_orgao_usuario` VALUES (999999999,'ORGAO TESTE ZZ',NULL,NULL,NULL,NULL,'Rio de Janeiro',NULL,NULL,NULL,'ZZ',NULL,NULL,'OTZZ');
 /*!40000 ALTER TABLE `cp_orgao_usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -591,14 +645,14 @@ DROP TABLE IF EXISTS `cp_papel`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_papel` (
-  `ID_PAPEL` double NOT NULL AUTO_INCREMENT,
-  `ID_TP_PAPEL` double NOT NULL,
-  `ID_PESSOA` double NOT NULL,
-  `ID_LOTACAO` int(11) NOT NULL,
-  `ID_FUNCAO_CONFIANCA` double DEFAULT NULL,
-  `ID_CARGO` bigint(20) NOT NULL,
-  `ID_ORGAO_USU` bigint(20) NOT NULL,
-  `HIS_ID_INI` double DEFAULT NULL,
+  `ID_PAPEL` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ID_TP_PAPEL` INT UNSIGNED NOT NULL,
+  `ID_PESSOA` INT UNSIGNED NOT NULL,
+  `ID_LOTACAO` INT UNSIGNED NOT NULL,
+  `ID_FUNCAO_CONFIANCA` INT UNSIGNED DEFAULT NULL,
+  `ID_CARGO` INT UNSIGNED NOT NULL,
+  `ID_ORGAO_USU` INT UNSIGNED NOT NULL,
+  `HIS_ID_INI` INT UNSIGNED DEFAULT NULL,
   `HIS_IDE` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `HIS_DT_INI` datetime NOT NULL,
   `HIS_DT_FIM` datetime DEFAULT NULL,
@@ -639,13 +693,13 @@ DROP TABLE IF EXISTS `cp_personalizacao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_personalizacao` (
-  `ID_PESSOA` double NOT NULL,
-  `ID_PAPEL_ATIVO` double DEFAULT NULL,
-  `ID_SUBSTITUINDO_PESSOA` double DEFAULT NULL,
-  `ID_SUBSTITUINDO_LOTACAO` int(11) DEFAULT NULL,
-  `ID_SUBSTITUINDO_PAPEL` double DEFAULT NULL,
+  `ID_PESSOA` INT UNSIGNED NOT NULL,
+  `ID_PAPEL_ATIVO` INT UNSIGNED DEFAULT NULL,
+  `ID_SUBSTITUINDO_PESSOA` INT UNSIGNED DEFAULT NULL,
+  `ID_SUBSTITUINDO_LOTACAO` INT UNSIGNED DEFAULT NULL,
+  `ID_SUBSTITUINDO_PAPEL` INT UNSIGNED DEFAULT NULL,
   `NM_SIMULANDO_USUARIO` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ID_PERSONALIZACAO` double NOT NULL AUTO_INCREMENT,
+  `ID_PERSONALIZACAO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`ID_PERSONALIZACAO`),
   KEY `CP_PERSON_CP_PAP_ID_ATIVO_FK` (`ID_PAPEL_ATIVO`),
   KEY `CP_PERSON_CP_PAP_ID_SUBST_FK` (`ID_SUBSTITUINDO_PAPEL`),
@@ -677,10 +731,10 @@ DROP TABLE IF EXISTS `cp_sede`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_sede` (
-  `ID_SEDE` bigint(20) NOT NULL AUTO_INCREMENT,
+  `ID_SEDE` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `NM_SEDE` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `DSC_SEDE` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ID_ORGAO_USU` bigint(20) NOT NULL,
+  `ID_ORGAO_USU` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`ID_SEDE`),
   KEY `ID_ORGAO_USU` (`ID_ORGAO_USU`),
   CONSTRAINT `cp_sede_ibfk_1` FOREIGN KEY (`ID_ORGAO_USU`) REFERENCES `cp_orgao_usuario` (`ID_ORGAO_USU`)
@@ -704,11 +758,11 @@ DROP TABLE IF EXISTS `cp_servico`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_servico` (
-  `ID_SERVICO` double NOT NULL AUTO_INCREMENT,
+  `ID_SERVICO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `SIGLA_SERVICO` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `DESC_SERVICO` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ID_SERVICO_PAI` double DEFAULT NULL,
-  `ID_TP_SERVICO` double NOT NULL,
+  `ID_SERVICO_PAI` INT UNSIGNED DEFAULT NULL,
+  `ID_TP_SERVICO` INT UNSIGNED NOT NULL,
   `LABEL_SERVICO` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`ID_SERVICO`),
   UNIQUE KEY `CP_SERVICO_ID_SERVICO_PK` (`ID_SERVICO`),
@@ -736,7 +790,7 @@ DROP TABLE IF EXISTS `cp_situacao_configuracao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_situacao_configuracao` (
-  `ID_SIT_CONFIGURACAO` double NOT NULL AUTO_INCREMENT,
+  `ID_SIT_CONFIGURACAO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DSC_SIT_CONFIGURACAO` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `RESTRITIVIDADE_SIT_CONF` double NOT NULL,
   PRIMARY KEY (`ID_SIT_CONFIGURACAO`),
@@ -762,9 +816,9 @@ DROP TABLE IF EXISTS `cp_tipo_configuracao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_tipo_configuracao` (
-  `ID_TP_CONFIGURACAO` double NOT NULL AUTO_INCREMENT,
+  `ID_TP_CONFIGURACAO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DSC_TP_CONFIGURACAO` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ID_SIT_CONFIGURACAO` double DEFAULT NULL,
+  `ID_SIT_CONFIGURACAO` INT UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`ID_TP_CONFIGURACAO`),
   UNIQUE KEY `CP_TP_CONF_ID_TP_CONF_PK` (`ID_TP_CONFIGURACAO`),
   KEY `CP_TP_CONF_CP_SIT_CONF_ID_FK` (`ID_SIT_CONFIGURACAO`),
@@ -790,7 +844,7 @@ DROP TABLE IF EXISTS `cp_tipo_grupo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_tipo_grupo` (
-  `ID_TP_GRUPO` double NOT NULL AUTO_INCREMENT,
+  `ID_TP_GRUPO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DESC_TP_GRUPO` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`ID_TP_GRUPO`),
   UNIQUE KEY `CP_TIPO_GRUPO_PK` (`ID_TP_GRUPO`)
@@ -815,7 +869,7 @@ DROP TABLE IF EXISTS `cp_tipo_identidade`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_tipo_identidade` (
-  `ID_TP_IDENTIDADE` double NOT NULL AUTO_INCREMENT,
+  `ID_TP_IDENTIDADE` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DESC_TP_IDENTIDADE` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`ID_TP_IDENTIDADE`),
   UNIQUE KEY `CP_TIPO_IDENTIDADE_PK` (`ID_TP_IDENTIDADE`)
@@ -840,10 +894,10 @@ DROP TABLE IF EXISTS `cp_tipo_lotacao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_tipo_lotacao` (
-  `ID_TP_LOTACAO` double NOT NULL AUTO_INCREMENT,
+  `ID_TP_LOTACAO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `SIGLA_TP_LOTACAO` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `DESC_TP_LOTACAO` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ID_TP_LOTACAO_PAI` double DEFAULT NULL,
+  `ID_TP_LOTACAO_PAI` INT UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`ID_TP_LOTACAO`),
   UNIQUE KEY `CP_TIPO_LOTACAO_PK` (`ID_TP_LOTACAO`)
 ) ENGINE=InnoDB AUTO_INCREMENT=204 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -867,7 +921,7 @@ DROP TABLE IF EXISTS `cp_tipo_marca`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_tipo_marca` (
-  `ID_TP_MARCA` double NOT NULL AUTO_INCREMENT,
+  `ID_TP_MARCA` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DESCR_TP_MARCA` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`ID_TP_MARCA`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -891,7 +945,7 @@ DROP TABLE IF EXISTS `cp_tipo_marcador`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_tipo_marcador` (
-  `ID_TP_MARCADOR` double NOT NULL AUTO_INCREMENT,
+  `ID_TP_MARCADOR` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DESCR_TIPO_MARCADOR` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`ID_TP_MARCADOR`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -915,7 +969,7 @@ DROP TABLE IF EXISTS `cp_tipo_papel`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_tipo_papel` (
-  `ID_TP_PAPEL` double NOT NULL AUTO_INCREMENT,
+  `ID_TP_PAPEL` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DESC_TP_PAPEL` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`ID_TP_PAPEL`),
   UNIQUE KEY `CP_TIPO_PAPEL_PK` (`ID_TP_PAPEL`)
@@ -940,7 +994,7 @@ DROP TABLE IF EXISTS `cp_tipo_pessoa`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_tipo_pessoa` (
-  `ID_TP_PESSOA` double NOT NULL AUTO_INCREMENT,
+  `ID_TP_PESSOA` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DESC_TP_PESSOA` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`ID_TP_PESSOA`),
   UNIQUE KEY `CP_TIPO_PESSOA_PK` (`ID_TP_PESSOA`)
@@ -965,9 +1019,9 @@ DROP TABLE IF EXISTS `cp_tipo_servico`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_tipo_servico` (
-  `ID_TP_SERVICO` double NOT NULL AUTO_INCREMENT,
+  `ID_TP_SERVICO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DESC_TP_SERVICO` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ID_SIT_CONFIGURACAO` double DEFAULT NULL,
+  `ID_SIT_CONFIGURACAO` INT UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`ID_TP_SERVICO`),
   UNIQUE KEY `CP_TIPO_SERVICO_PK` (`ID_TP_SERVICO`),
   KEY `CP_TP_SERV_ID_SIT_CONF_FK` (`ID_SIT_CONFIGURACAO`),
@@ -993,8 +1047,8 @@ DROP TABLE IF EXISTS `cp_tipo_servico_situacao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_tipo_servico_situacao` (
-  `ID_TP_SERVICO` double NOT NULL DEFAULT '0',
-  `ID_SIT_CONFIGURACAO` double NOT NULL DEFAULT '0',
+  `ID_TP_SERVICO` INT UNSIGNED NOT NULL DEFAULT '0',
+  `ID_SIT_CONFIGURACAO` INT UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID_TP_SERVICO`,`ID_SIT_CONFIGURACAO`),
   KEY `CP_TPSERVSIT_ID_SITCONF_FK` (`ID_SIT_CONFIGURACAO`),
   CONSTRAINT `CP_TPSERVSIT_ID_SITCONF_FK` FOREIGN KEY (`ID_SIT_CONFIGURACAO`) REFERENCES `cp_situacao_configuracao` (`ID_SIT_CONFIGURACAO`),
@@ -1020,7 +1074,7 @@ DROP TABLE IF EXISTS `cp_uf`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_uf` (
-  `ID_UF` double NOT NULL AUTO_INCREMENT,
+  `ID_UF` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `NM_UF` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`ID_UF`),
   UNIQUE KEY `UF_PK` (`ID_UF`)
@@ -1045,7 +1099,7 @@ DROP TABLE IF EXISTS `cp_unidade_medida`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cp_unidade_medida` (
-  `ID_UNIDADE_MEDIDA` double NOT NULL AUTO_INCREMENT,
+  `ID_UNIDADE_MEDIDA` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DESCR_UNIDADE_MEDIDA` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`ID_UNIDADE_MEDIDA`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1069,12 +1123,12 @@ DROP TABLE IF EXISTS `dp_cargo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `dp_cargo` (
-  `ID_CARGO` bigint(20) NOT NULL AUTO_INCREMENT,
+  `ID_CARGO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `NOME_CARGO` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ID_ORGAO_USU` bigint(20) NOT NULL,
+  `ID_ORGAO_USU` INT UNSIGNED NOT NULL,
   `DT_FIM_CARGO` datetime DEFAULT NULL,
   `DT_INI_CARGO` datetime DEFAULT NULL,
-  `ID_CARGO_INICIAL` bigint(20) DEFAULT NULL,
+  `ID_CARGO_INICIAL` INT UNSIGNED DEFAULT NULL,
   `IDE_CARGO` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `SIGLA_CARGO` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`ID_CARGO`),
@@ -1091,7 +1145,7 @@ CREATE TABLE `dp_cargo` (
 
 LOCK TABLES `dp_cargo` WRITE;
 /*!40000 ALTER TABLE `dp_cargo` DISABLE KEYS */;
-INSERT INTO `dp_cargo` VALUES (1,'FUNCIONÁRIO',9999999999,NULL,'2011-08-03 00:00:00',1,'203','500300');
+INSERT INTO `dp_cargo` VALUES (1,'FUNCIONÁRIO',999999999,NULL,'2011-08-03 00:00:00',1,'203','500300');
 /*!40000 ALTER TABLE `dp_cargo` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -1122,7 +1176,7 @@ DROP TABLE IF EXISTS `dp_estado_civil`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `dp_estado_civil` (
-  `ID_ESTADO_CIVIL` double NOT NULL AUTO_INCREMENT,
+  `ID_ESTADO_CIVIL` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `NM_ESTADO_CIVIL` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`ID_ESTADO_CIVIL`),
   UNIQUE KEY `ESTADO_CIVIL_PK` (`ID_ESTADO_CIVIL`)
@@ -1147,17 +1201,17 @@ DROP TABLE IF EXISTS `dp_funcao_confianca`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `dp_funcao_confianca` (
-  `ID_FUNCAO_CONFIANCA` double NOT NULL AUTO_INCREMENT,
+  `ID_FUNCAO_CONFIANCA` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `NOME_FUNCAO_CONFIANCA` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `NIVEL_FUNCAO_CONFIANCA` tinyint(4) DEFAULT NULL,
   `COD_FOLHA_FUNCAO_CONFIANCA` tinyint(4) DEFAULT NULL,
   `DT_INI_FUNCAO_CONFIANCA` datetime DEFAULT NULL,
   `DT_FIM_FUNCAO_CONFIANCA` datetime DEFAULT NULL,
-  `ID_FUNCAO_CONFIANCA_PAI` double DEFAULT NULL,
+  `ID_FUNCAO_CONFIANCA_PAI` INT UNSIGNED DEFAULT NULL,
   `CATEGORIA_FUNCAO_CONFIANCA` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ID_ORGAO_USU` bigint(20) NOT NULL,
+  `ID_ORGAO_USU` INT UNSIGNED NOT NULL,
   `IDE_FUNCAO_CONFIANCA` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ID_FUN_CONF_INI` double DEFAULT NULL,
+  `ID_FUN_CONF_INI` INT UNSIGNED DEFAULT NULL,
   `SIGLA_FUNCAO_CONFIANCA` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`ID_FUNCAO_CONFIANCA`),
   KEY `DP_FUNCAO_CONFIANCA_IDX_010` (`ID_FUNCAO_CONFIANCA_PAI`),
@@ -1205,17 +1259,17 @@ DROP TABLE IF EXISTS `dp_lotacao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `dp_lotacao` (
-  `ID_LOTACAO` int(11) NOT NULL AUTO_INCREMENT,
+  `ID_LOTACAO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DATA_INI_LOT` datetime NOT NULL,
   `DATA_FIM_LOT` datetime DEFAULT NULL,
   `NOME_LOTACAO` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ID_LOTACAO_PAI` int(11) DEFAULT NULL,
+  `ID_LOTACAO_PAI` INT UNSIGNED DEFAULT NULL,
   `SIGLA_LOTACAO` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ID_ORGAO_USU` bigint(20) NOT NULL,
+  `ID_ORGAO_USU` INT UNSIGNED NOT NULL,
   `IDE_LOTACAO` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ID_LOTACAO_INI` int(11) DEFAULT NULL,
-  `ID_TP_LOTACAO` double DEFAULT NULL,
-  `ID_LOCALIDADE` double DEFAULT NULL,
+  `ID_LOTACAO_INI` INT UNSIGNED DEFAULT NULL,
+  `ID_TP_LOTACAO` INT UNSIGNED DEFAULT NULL,
+  `ID_LOCALIDADE` INT UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`ID_LOTACAO`),
   UNIQUE KEY `SIGLA_LOTACAO_DP_LOTACAO_UK` (`SIGLA_LOTACAO`,`ID_ORGAO_USU`,`DATA_FIM_LOT`),
   KEY `DP_LOTACAO_IDX_007` (`ID_LOTACAO_PAI`),
@@ -1236,7 +1290,7 @@ CREATE TABLE `dp_lotacao` (
 
 LOCK TABLES `dp_lotacao` WRITE;
 /*!40000 ALTER TABLE `dp_lotacao` DISABLE KEYS */;
-INSERT INTO `dp_lotacao` VALUES (1,'2011-08-08 00:00:00',NULL,'LOTACAO TESTE',NULL,'LTEST',9999999999,'1076',1,100,NULL);
+INSERT INTO `dp_lotacao` VALUES (1,'2011-08-08 00:00:00',NULL,'LOTACAO TESTE',NULL,'LTEST',999999999,'1076',1,100,NULL);
 /*!40000 ALTER TABLE `dp_lotacao` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -1273,7 +1327,7 @@ CREATE TABLE `dp_padrao_referencia` (
   `DSC_CLASSE` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `DSC_NIVEL` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `PADRAO_REFERENCIA_DT_FIM` datetime DEFAULT NULL,
-  `ID_ORGAO_USU` bigint(20) NOT NULL DEFAULT '1',
+  `ID_ORGAO_USU` INT UNSIGNED NOT NULL DEFAULT '1',
   PRIMARY KEY (`ID_PADRAO_REFERENCIA`),
   UNIQUE KEY `PADRAO_REFERENCIA_PK` (`ID_PADRAO_REFERENCIA`),
   KEY `PADRAO_REF_ORGAO_USU_FK` (`ID_ORGAO_USU`),
@@ -1298,16 +1352,16 @@ DROP TABLE IF EXISTS `dp_pessoa`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `dp_pessoa` (
-  `ID_PESSOA` double NOT NULL AUTO_INCREMENT,
+  `ID_PESSOA` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DATA_INI_PESSOA` datetime NOT NULL,
   `DATA_FIM_PESSOA` datetime DEFAULT NULL,
   `CPF_PESSOA` bigint(20) NOT NULL,
   `NOME_PESSOA` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `DATA_NASC_PESSOA` datetime DEFAULT NULL,
-  `MATRICULA` int(11) NOT NULL,
-  `ID_LOTACAO` int(11) NOT NULL,
-  `ID_CARGO` bigint(20) DEFAULT NULL,
-  `ID_FUNCAO_CONFIANCA` double DEFAULT NULL,
+  `MATRICULA` INT UNSIGNED NOT NULL,
+  `ID_LOTACAO` INT UNSIGNED NOT NULL,
+  `ID_CARGO` INT UNSIGNED DEFAULT NULL,
+  `ID_FUNCAO_CONFIANCA` INT UNSIGNED DEFAULT NULL,
   `SESB_PESSOA` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `EMAIL_PESSOA` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `TP_SERVIDOR_PESSOA` tinyint(4) DEFAULT NULL,
@@ -1326,9 +1380,9 @@ CREATE TABLE `dp_pessoa` (
   `NATURALIDADE_PESSOA` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `FG_IMPRIME_END` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `DSC_PADRAO_REFERENCIA_PESSOA` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ID_ORGAO_USU` bigint(20) NOT NULL,
+  `ID_ORGAO_USU` INT UNSIGNED NOT NULL,
   `IDE_PESSOA` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ID_PESSOA_INICIAL` double DEFAULT NULL,
+  `ID_PESSOA_INICIAL` INT UNSIGNED DEFAULT NULL,
   `ENDERECO_PESSOA` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `BAIRRO_PESSOA` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `CIDADE_PESSOA` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -1338,8 +1392,8 @@ CREATE TABLE `dp_pessoa` (
   `RG_ORGAO_PESSOA` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `RG_DATA_EXPEDICAO_PESSOA` datetime DEFAULT NULL,
   `RG_UF_PESSOA` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ID_ESTADO_CIVIL` double DEFAULT NULL,
-  `ID_TP_PESSOA` double DEFAULT NULL,
+  `ID_ESTADO_CIVIL` INT UNSIGNED DEFAULT NULL,
+  `ID_TP_PESSOA` INT UNSIGNED DEFAULT NULL,
   `NOME_EXIBICAO` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`ID_PESSOA`),
   KEY `PES_ID_INI` (`ID_PESSOA_INICIAL`,`DATA_FIM_PESSOA`),
@@ -1370,7 +1424,7 @@ CREATE TABLE `dp_pessoa` (
 
 LOCK TABLES `dp_pessoa` WRITE;
 /*!40000 ALTER TABLE `dp_pessoa` DISABLE KEYS */;
-INSERT INTO `dp_pessoa` VALUES (1,'2001-01-01 00:00:00',NULL,11111111111,'USUARIO TESTE','2001-01-01 00:00:00',99999,1,1,NULL,'ZZ','usuarioteste@jfrj.jus.br',NULL,'TST','M','ESPEC','A+','BRASILEIRO','2001-01-01 00:00:00','2001-01-01 00:00:00','2001-01-01 00:00:00','2001-01-01 00:00:00','0000/2001','1',NULL,NULL,NULL,'PAD-REF',9999999999,'99999',1,'AV ALMTE BARROSO 78','CENTRO','RIO DE JANEIRO','20000000','9700','987654321','TESTE','2001-01-01 00:00:00','RJ',2,2,NULL);
+INSERT INTO `dp_pessoa` VALUES (1,'2001-01-01 00:00:00',NULL,11111111111,'USUARIO TESTE','2001-01-01 00:00:00',99999,1,1,NULL,'ZZ','usuarioteste@jfrj.jus.br',NULL,'TST','M','ESPEC','A+','BRASILEIRO','2001-01-01 00:00:00','2001-01-01 00:00:00','2001-01-01 00:00:00','2001-01-01 00:00:00','0000/2001','1',NULL,NULL,NULL,'PAD-REF',999999999,'99999',1,'AV ALMTE BARROSO 78','CENTRO','RIO DE JANEIRO','20000000','9700','987654321','TESTE','2001-01-01 00:00:00','RJ',2,2,NULL);
 /*!40000 ALTER TABLE `dp_pessoa` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -1424,16 +1478,16 @@ DROP TABLE IF EXISTS `dp_substituicao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `dp_substituicao` (
-  `ID_SUBSTITUICAO` bigint(20) NOT NULL AUTO_INCREMENT,
-  `ID_TITULAR` double DEFAULT NULL,
-  `ID_LOTA_TITULAR` bigint(20) NOT NULL,
-  `ID_SUBSTITUTO` double DEFAULT NULL,
-  `ID_LOTA_SUBSTITUTO` bigint(20) NOT NULL,
+  `ID_SUBSTITUICAO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ID_TITULAR` INT UNSIGNED DEFAULT NULL,
+  `ID_LOTA_TITULAR` INT UNSIGNED NOT NULL,
+  `ID_SUBSTITUTO` INT UNSIGNED DEFAULT NULL,
+  `ID_LOTA_SUBSTITUTO` INT UNSIGNED NOT NULL,
   `DT_INI_SUBST` datetime NOT NULL,
   `DT_FIM_SUBST` datetime DEFAULT NULL,
   `DT_INI_REG` datetime DEFAULT NULL,
   `DT_FIM_REG` datetime DEFAULT NULL,
-  `ID_REG_INI` bigint(20) DEFAULT NULL,
+  `ID_REG_INI` INT UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`ID_SUBSTITUICAO`),
   KEY `SUBSTITUICAO_PESOA_SUBST_FK` (`ID_SUBSTITUTO`),
   KEY `SUBSTITUICAO_PESOA_TITULAR_FK` (`ID_TITULAR`),

@@ -25,9 +25,9 @@ DROP TABLE IF EXISTS `ex_boletim_doc`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_boletim_doc` (
-  `ID_BOLETIM_DOC` double NOT NULL AUTO_INCREMENT,
-  `ID_DOC` double DEFAULT NULL,
-  `ID_BOLETIM` double DEFAULT NULL,
+  `ID_BOLETIM_DOC` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ID_DOC` INT UNSIGNED DEFAULT NULL,
+  `ID_BOLETIM` INT UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`ID_BOLETIM_DOC`),
   UNIQUE KEY `BOL_DOC_UK` (`ID_DOC`),
   KEY `BOL_BOLETIM_FK` (`ID_BOLETIM`),
@@ -53,14 +53,14 @@ DROP TABLE IF EXISTS `ex_classificacao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_classificacao` (
-  `ID_CLASSIFICACAO` bigint(20) NOT NULL AUTO_INCREMENT,
+  `ID_CLASSIFICACAO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `codificacao` varchar(13) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `DESCR_CLASSIFICACAO` varchar(4000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `OBS` varchar(4000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `HIS_IDC_INI` double DEFAULT NULL,
-  `HIS_IDC_FIM` double DEFAULT NULL,
-  `HIS_ATIVO` double NOT NULL,
-  `HIS_ID_INI` bigint(20) DEFAULT NULL,
+  `HIS_IDC_INI` INT UNSIGNED DEFAULT NULL,
+  `HIS_IDC_FIM` INT UNSIGNED DEFAULT NULL,
+  `HIS_ATIVO` INT UNSIGNED NOT NULL,
+  `HIS_ID_INI` INT UNSIGNED DEFAULT NULL,
   `HIS_DT_INI` datetime DEFAULT NULL,
   `HIS_DT_FIM` datetime DEFAULT NULL,
   PRIMARY KEY (`ID_CLASSIFICACAO`),
@@ -92,14 +92,14 @@ DROP TABLE IF EXISTS `ex_competencia`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_competencia` (
   `FG_COMPETENCIA` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ID_PESSOA` double DEFAULT NULL,
-  `ID_CARGO` bigint(20) DEFAULT NULL,
-  `ID_LOTACAO` int(11) DEFAULT NULL,
+  `ID_PESSOA` INT UNSIGNED DEFAULT NULL,
+  `ID_CARGO` INT UNSIGNED DEFAULT NULL,
+  `ID_LOTACAO` INT UNSIGNED DEFAULT NULL,
   `DT_INI_VIG_COMPETENCIA` datetime NOT NULL,
   `DT_FIM_VIG_COMPETENCIA` datetime DEFAULT NULL,
-  `ID_COMPETENCIA` bigint(20) DEFAULT NULL,
-  `ID_FUNCAO_CONFIANCA` double DEFAULT NULL,
-  `ID_FORMA_DOC` bigint(20) NOT NULL,
+  `ID_COMPETENCIA` INT UNSIGNED DEFAULT NULL,
+  `ID_FUNCAO_CONFIANCA` INT UNSIGNED DEFAULT NULL,
+  `ID_FORMA_DOC` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`FG_COMPETENCIA`),
   KEY `COMPETENCIA_CARGO_FK` (`ID_CARGO`),
   KEY `COMPETENCIA_FUNC_CONF_FK` (`ID_FUNCAO_CONFIANCA`),
@@ -129,16 +129,16 @@ DROP TABLE IF EXISTS `ex_configuracao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_configuracao` (
-  `ID_CONFIGURACAO_EX` bigint(20) NOT NULL AUTO_INCREMENT,
-  `ID_TP_MOV` bigint(20) DEFAULT NULL,
-  `ID_TP_DOC` bigint(20) DEFAULT NULL,
-  `ID_TP_FORMA_DOC` double DEFAULT NULL,
-  `ID_FORMA_DOC` bigint(20) DEFAULT NULL,
-  `ID_MOD` bigint(20) DEFAULT NULL,
-  `ID_CLASSIFICACAO` bigint(20) DEFAULT NULL,
-  `ID_VIA` bigint(20) DEFAULT NULL,
-  `ID_NIVEL_ACESSO` bigint(20) DEFAULT NULL,
-  `ID_PAPEL` double DEFAULT NULL,
+  `ID_CONFIGURACAO_EX` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ID_TP_MOV` INT UNSIGNED DEFAULT NULL,
+  `ID_TP_DOC` INT UNSIGNED DEFAULT NULL,
+  `ID_TP_FORMA_DOC` INT UNSIGNED DEFAULT NULL,
+  `ID_FORMA_DOC` INT UNSIGNED DEFAULT NULL,
+  `ID_MOD` INT UNSIGNED DEFAULT NULL,
+  `ID_CLASSIFICACAO` INT UNSIGNED DEFAULT NULL,
+  `ID_VIA` INT UNSIGNED DEFAULT NULL,
+  `ID_NIVEL_ACESSO` INT UNSIGNED DEFAULT NULL,
+  `ID_PAPEL` INT UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`ID_CONFIGURACAO_EX`),
   KEY `FK_CLASSIFICACAO` (`ID_CLASSIFICACAO`),
   KEY `FK_FORMA_DOC` (`ID_FORMA_DOC`),
@@ -179,56 +179,57 @@ DROP TABLE IF EXISTS `ex_documento`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_documento` (
-  `ID_DOC` double NOT NULL AUTO_INCREMENT,
-  `NUM_EXPEDIENTE` bigint(20) DEFAULT NULL,
-  `ANO_EMISSAO` bigint(20) DEFAULT NULL,
-  `ID_TP_DOC` bigint(20) NOT NULL,
-  `ID_CADASTRANTE` double NOT NULL,
-  `ID_LOTA_CADASTRANTE` int(11) NOT NULL,
-  `ID_SUBSCRITOR` double DEFAULT NULL,
-  `ID_LOTA_SUBSCRITOR` int(11) DEFAULT NULL,
+  `ID_DOC` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `NUM_EXPEDIENTE` INT UNSIGNED DEFAULT NULL,
+  `ANO_EMISSAO` INT UNSIGNED DEFAULT NULL,
+  `ID_TP_DOC` INT UNSIGNED NOT NULL,
+  `ID_CADASTRANTE` INT UNSIGNED NOT NULL,
+  `ID_LOTA_CADASTRANTE` INT UNSIGNED NOT NULL,
+  `ID_SUBSCRITOR` INT UNSIGNED DEFAULT NULL,
+  `ID_LOTA_SUBSCRITOR` INT UNSIGNED DEFAULT NULL,
   `DESCR_DOCUMENTO` varchar(4000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `DT_DOC` datetime DEFAULT NULL,
   `DT_REG_DOC` datetime NOT NULL,
   `NM_SUBSCRITOR_EXT` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `NUM_EXT_DOC` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ID_ARQ` BIGINT UNSIGNED DEFAULT NULL,
   `CONTEUDO_BLOB_DOC` blob,
   `NM_ARQ_DOC` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `CONTEUDO_TP_DOC` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ID_DESTINATARIO` bigint(20) DEFAULT NULL,
-  `ID_LOTA_DESTINATARIO` int(11) DEFAULT NULL,
+  `ID_DESTINATARIO` INT UNSIGNED DEFAULT NULL,
+  `ID_LOTA_DESTINATARIO` INT UNSIGNED DEFAULT NULL,
   `NM_DESTINATARIO` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `DT_FINALIZACAO` datetime DEFAULT NULL,
   `ASSINATURA_BLOB_DOC` blob,
-  `ID_MOD` bigint(20) DEFAULT NULL,
-  `ID_ORGAO_USU` bigint(20) DEFAULT NULL,
-  `ID_CLASSIFICACAO` bigint(20) DEFAULT NULL,
-  `ID_FORMA_DOC` bigint(20) DEFAULT NULL,
+  `ID_MOD` INT UNSIGNED DEFAULT NULL,
+  `ID_ORGAO_USU` INT UNSIGNED DEFAULT NULL,
+  `ID_CLASSIFICACAO` INT UNSIGNED DEFAULT NULL,
+  `ID_FORMA_DOC` INT UNSIGNED DEFAULT NULL,
   `FG_PESSOAL` enum('S','N') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'N',
-  `ID_ORGAO_DESTINATARIO` bigint(20) DEFAULT NULL,
-  `ID_ORGAO` bigint(20) DEFAULT NULL,
+  `ID_ORGAO_DESTINATARIO` INT UNSIGNED DEFAULT NULL,
+  `ID_ORGAO` INT UNSIGNED DEFAULT NULL,
   `OBS_ORGAO_DOC` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `NM_ORGAO_DESTINATARIO` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `FG_SIGILOSO` enum('S','N') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'N',
   `NM_FUNCAO_SUBSCRITOR` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `FG_ELETRONICO` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'N',
   `NUM_ANTIGO_DOC` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ID_LOTA_TITULAR` int(11) DEFAULT NULL,
-  `ID_TITULAR` double DEFAULT NULL,
+  `ID_LOTA_TITULAR` INT UNSIGNED DEFAULT NULL,
+  `ID_TITULAR` INT UNSIGNED DEFAULT NULL,
   `NUM_AUX_DOC` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `DSC_CLASS_DOC` varchar(4000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ID_NIVEL_ACESSO` bigint(20) DEFAULT NULL,
-  `ID_DOC_PAI` double DEFAULT NULL,
-  `NUM_VIA_DOC_PAI` double DEFAULT NULL,
-  `ID_DOC_ANTERIOR` double DEFAULT NULL,
-  `ID_MOB_PAI` double DEFAULT NULL,
+  `ID_NIVEL_ACESSO` INT UNSIGNED DEFAULT NULL,
+  `ID_DOC_PAI` INT UNSIGNED DEFAULT NULL,
+  `NUM_VIA_DOC_PAI` INT UNSIGNED DEFAULT NULL,
+  `ID_DOC_ANTERIOR` INT UNSIGNED DEFAULT NULL,
+  `ID_MOB_PAI` INT UNSIGNED DEFAULT NULL,
   `NUM_SEQUENCIA` smallint(6) DEFAULT NULL,
   `NUM_PAGINAS` smallint(6) DEFAULT NULL,
   `DT_DOC_ORIGINAL` datetime DEFAULT NULL,
-  `ID_MOB_AUTUADO` double DEFAULT NULL,
+  `ID_MOB_AUTUADO` INT UNSIGNED DEFAULT NULL,
   `DNM_DT_ACESSO` datetime DEFAULT NULL,
   `DNM_ACESSO` varchar(4000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `DNM_ID_NIVEL_ACESSO` bigint(20) DEFAULT NULL,
+  `DNM_ID_NIVEL_ACESSO` INT UNSIGNED DEFAULT NULL,
   `HIS_DT_ALT` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`ID_DOC`),
   UNIQUE KEY `DOCUMENTO_PK` (`ID_DOC`),
@@ -247,6 +248,7 @@ CREATE TABLE `ex_documento` (
   KEY `IXCF_DOC_LOTA_TIT_LOTACAO_FK` (`ID_LOTA_TITULAR`),
   KEY `IXCF_DOCUMENTO_MODELO_FK` (`ID_MOD`),
   KEY `SIGA_EXDOC_MOB_AUTUADO_ID_IX` (`ID_MOB_AUTUADO`),
+  KEY `ID_ARQ` (`ID_ARQ`),
   CONSTRAINT `DOCUMENTO_MODELO_FK` FOREIGN KEY (`ID_MOD`) REFERENCES `ex_modelo` (`ID_MOD`),
   CONSTRAINT `DOC_CADASTRANTE_PESSOA_FK` FOREIGN KEY (`ID_CADASTRANTE`) REFERENCES `corporativo`.`dp_pessoa` (`ID_PESSOA`),
   CONSTRAINT `DOC_CLASSIFICACAO_FK` FOREIGN KEY (`ID_CLASSIFICACAO`) REFERENCES `ex_classificacao` (`ID_CLASSIFICACAO`),
@@ -260,7 +262,8 @@ CREATE TABLE `ex_documento` (
   CONSTRAINT `DOC_TITULAR_PESSOA_FK` FOREIGN KEY (`ID_TITULAR`) REFERENCES `corporativo`.`dp_pessoa` (`ID_PESSOA`),
   CONSTRAINT `DOC_TP_DOC_FK` FOREIGN KEY (`ID_TP_DOC`) REFERENCES `ex_tipo_documento` (`ID_TP_DOC`),
   CONSTRAINT `SIGA_EXDOC_MOB_AUTUADO_ID_IX` FOREIGN KEY (`ID_MOB_AUTUADO`) REFERENCES `ex_mobil` (`ID_MOBIL`),
-  CONSTRAINT `ex_documento_ibfk_1` FOREIGN KEY (`ID_MOB_PAI`) REFERENCES `ex_mobil` (`ID_MOBIL`)
+  CONSTRAINT `ex_documento_ibfk_1` FOREIGN KEY (`ID_MOB_PAI`) REFERENCES `ex_mobil` (`ID_MOBIL`),
+  CONSTRAINT `ex_documento_ibfk_2` FOREIGN KEY (`ID_ARQ`) REFERENCES `corporativo`.`cp_arquivo` (`ID_ARQ`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -448,7 +451,6 @@ DELIMITER ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 
---
 -- Table structure for table `ex_email_notificacao`
 --
 
@@ -456,11 +458,11 @@ DROP TABLE IF EXISTS `ex_email_notificacao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_email_notificacao` (
-  `ID_EMAIL_NOTIFICACAO` double NOT NULL AUTO_INCREMENT,
-  `ID_LOTACAO` int(11) DEFAULT NULL,
-  `ID_PESSOA` double DEFAULT NULL,
-  `ID_LOTA_EMAIL` int(11) DEFAULT NULL,
-  `ID_PESSOA_EMAIL` double DEFAULT NULL,
+  `ID_EMAIL_NOTIFICACAO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ID_LOTACAO` INT UNSIGNED DEFAULT NULL,
+  `ID_PESSOA` INT UNSIGNED DEFAULT NULL,
+  `ID_LOTA_EMAIL` INT UNSIGNED DEFAULT NULL,
+  `ID_PESSOA_EMAIL` INT UNSIGNED DEFAULT NULL,
   `EMAIL` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`ID_EMAIL_NOTIFICACAO`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -483,7 +485,7 @@ DROP TABLE IF EXISTS `ex_estado_doc`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_estado_doc` (
-  `ID_ESTADO_DOC` bigint(20) NOT NULL AUTO_INCREMENT,
+  `ID_ESTADO_DOC` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DESC_ESTADO_DOC` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `ORDEM_ESTADO_DOC` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`ID_ESTADO_DOC`)
@@ -507,8 +509,8 @@ DROP TABLE IF EXISTS `ex_estado_tp_mov`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_estado_tp_mov` (
-  `ID_ESTADO_DOC` bigint(20) NOT NULL,
-  `ID_TP_MOV` bigint(20) NOT NULL,
+  `ID_ESTADO_DOC` INT UNSIGNED NOT NULL,
+  `ID_TP_MOV` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`ID_ESTADO_DOC`,`ID_TP_MOV`),
   KEY `TP_MOV_ESTADO_TPMOV_FK` (`ID_TP_MOV`),
   CONSTRAINT `ESTADO_TPMOV_ESTADO_FK` FOREIGN KEY (`ID_ESTADO_DOC`) REFERENCES `ex_estado_doc` (`ID_ESTADO_DOC`),
@@ -533,10 +535,10 @@ DROP TABLE IF EXISTS `ex_forma_documento`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_forma_documento` (
-  `ID_FORMA_DOC` bigint(20) NOT NULL AUTO_INCREMENT,
+  `ID_FORMA_DOC` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DESCR_FORMA_DOC` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `SIGLA_FORMA_DOC` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ID_TIPO_FORMA_DOC` double NOT NULL,
+  `ID_TIPO_FORMA_DOC` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`ID_FORMA_DOC`),
   KEY `EX_FORMA_DOCUMENTO_IDX_021` (`SIGLA_FORMA_DOC`,`ID_FORMA_DOC`,`DESCR_FORMA_DOC`),
   KEY `ID_TIPO_FORMA_DOC` (`ID_TIPO_FORMA_DOC`),
@@ -562,12 +564,12 @@ DROP TABLE IF EXISTS `ex_mobil`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_mobil` (
-  `ID_MOBIL` double NOT NULL AUTO_INCREMENT,
-  `ID_DOC` double NOT NULL,
-  `ID_TIPO_MOBIL` double NOT NULL,
+  `ID_MOBIL` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ID_DOC` INT UNSIGNED NOT NULL,
+  `ID_TIPO_MOBIL` INT UNSIGNED NOT NULL,
   `NUM_SEQUENCIA` tinyint(4) NOT NULL,
   `DNM_ULTIMA_ANOTACAO` varchar(400) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `DNM_NUM_PRIMEIRA_PAGINA` int(11) DEFAULT NULL,
+  `DNM_NUM_PRIMEIRA_PAGINA` INT UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`ID_MOBIL`),
   UNIQUE KEY `IDX_MOBIL_UNIQUE` (`ID_DOC`,`ID_TIPO_MOBIL`,`NUM_SEQUENCIA`),
   KEY `ID_TIPO_MOBIL` (`ID_TIPO_MOBIL`),
@@ -593,22 +595,23 @@ DROP TABLE IF EXISTS `ex_modelo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_modelo` (
-  `ID_MOD` bigint(20) NOT NULL AUTO_INCREMENT,
+  `ID_MOD` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `NM_MOD` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `DESC_MOD` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ID_ARQ` BIGINT UNSIGNED DEFAULT NULL,
   `CONTEUDO_BLOB_MOD` blob,
   `CONTEUDO_TP_BLOB` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `NM_ARQ_MOD` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ID_CLASSIFICACAO` bigint(20) DEFAULT NULL,
-  `ID_FORMA_DOC` bigint(20) DEFAULT NULL,
-  `ID_CLASS_CRIACAO_VIA` bigint(20) DEFAULT NULL,
-  `ID_NIVEL_ACESSO` bigint(20) DEFAULT NULL,
-  `HIS_ID_INI` bigint(20) DEFAULT NULL,
+  `ID_CLASSIFICACAO` INT UNSIGNED DEFAULT NULL,
+  `ID_FORMA_DOC` INT UNSIGNED DEFAULT NULL,
+  `ID_CLASS_CRIACAO_VIA` INT UNSIGNED DEFAULT NULL,
+  `ID_NIVEL_ACESSO` INT UNSIGNED DEFAULT NULL,
+  `HIS_ID_INI` INT UNSIGNED DEFAULT NULL,
   `HIS_DT_INI` datetime DEFAULT NULL,
   `HIS_DT_FIM` datetime DEFAULT NULL,
-  `HIS_IDC_INI` double DEFAULT NULL,
-  `HIS_IDC_FIM` double DEFAULT NULL,
-  `HIS_ATIVO` double NOT NULL,
+  `HIS_IDC_INI` INT UNSIGNED DEFAULT NULL,
+  `HIS_IDC_FIM` INT UNSIGNED DEFAULT NULL,
+  `HIS_ATIVO` INT UNSIGNED NOT NULL,
   `NM_DIRETORIO` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `HIS_IDE` varchar(48) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`ID_MOD`),
@@ -618,12 +621,14 @@ CREATE TABLE `ex_modelo` (
   KEY `EX_MODELO_IDX_015` (`ID_CLASS_CRIACAO_VIA`),
   KEY `HIS_IDC_INI` (`HIS_IDC_INI`),
   KEY `HIS_IDC_FIM` (`HIS_IDC_FIM`),
+  KEY `ID_ARQ` (`ID_ARQ`),
   CONSTRAINT `MOD_CLASSIFICACAO_FK` FOREIGN KEY (`ID_CLASSIFICACAO`) REFERENCES `ex_classificacao` (`ID_CLASSIFICACAO`),
   CONSTRAINT `MOD_CLASS_VIA_FK` FOREIGN KEY (`ID_CLASS_CRIACAO_VIA`) REFERENCES `ex_classificacao` (`ID_CLASSIFICACAO`),
   CONSTRAINT `MOD_FORMA_DOC_FK` FOREIGN KEY (`ID_FORMA_DOC`) REFERENCES `ex_forma_documento` (`ID_FORMA_DOC`),
   CONSTRAINT `MOD_NIVEL_ACESSO_FK` FOREIGN KEY (`ID_NIVEL_ACESSO`) REFERENCES `ex_nivel_acesso` (`ID_NIVEL_ACESSO`),
   CONSTRAINT `ex_modelo_ibfk_1` FOREIGN KEY (`HIS_IDC_INI`) REFERENCES `corporativo`.`cp_identidade` (`ID_IDENTIDADE`),
-  CONSTRAINT `ex_modelo_ibfk_2` FOREIGN KEY (`HIS_IDC_FIM`) REFERENCES `corporativo`.`cp_identidade` (`ID_IDENTIDADE`)
+  CONSTRAINT `ex_modelo_ibfk_2` FOREIGN KEY (`HIS_IDC_FIM`) REFERENCES `corporativo`.`cp_identidade` (`ID_IDENTIDADE`),
+  CONSTRAINT `ex_modelo_ibfk_3` FOREIGN KEY (`ID_ARQ`) REFERENCES `corporativo`.`cp_arquivo` (`ID_ARQ`)
 ) ENGINE=InnoDB AUTO_INCREMENT=667 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -633,7 +638,7 @@ CREATE TABLE `ex_modelo` (
 
 LOCK TABLES `ex_modelo` WRITE;
 /*!40000 ALTER TABLE `ex_modelo` DISABLE KEYS */;
-INSERT INTO `ex_modelo` VALUES (2,'Ofício','Ofício',' \n[@oficio/]\n','template/freemarker','oficio.jsp',NULL,1,NULL,NULL,2,NULL,NULL,NULL,NULL,1,NULL,NULL),(26,'Memorando','Memorando','\n[@entrevista]\n	[@grupo titulo=\"Texto a ser inserido no corpo do memorando\"]\n		[@grupo]\n			[@editor titulo=\"\" var=\"texto_memorando\" /]\n		[/@grupo]\n	[/@grupo]\n	[@grupo]\n	        [@selecao titulo=\"Tamanho da letra\" var=\"tamanhoLetra\" opcoes=\"Normal;Pequeno;Grande\" /]\n	[/@grupo]\n	[@grupo]\n       		[@selecao titulo=\"Fecho\" var=\"fecho\" opcoes=\"Atenciosamente;Cordialmente;Respeitosamente\" /]\n	[/@grupo]\n[/@entrevista]\n\n[@documento]\n        [@memorando texto=texto_memorando! fecho=(fecho!)+\",\" tamanhoLetra=tamanhoLetra! /]\n[/@documento]\n','template/freemarker','memorando.jsp',NULL,2,NULL,NULL,26,NULL,NULL,NULL,NULL,1,NULL,NULL),(27,'Informação','Informação','\n[@entrevista]\n    [@grupo titulo=\"Dados do Documento de Origem\"]\n        [@grupo]\n            [@texto titulo=\"Tipo de documento\" var=\"tipoDeDocumentoOrigem\" largura=20 default=tipoDeDocumentoValue /]\n            [@texto titulo=\"Número\" var=\"numeroOrigem\" largura=20 default=numeroValue /]\n        [/@grupo]\n        [@grupo]\n            [@data titulo=\"Data\" var=\"dataOrigem\" default=dataValue /]\n            [@texto titulo=\"Nome do Órgão\" var=\"orgaoOrigem\" largura=30 default=orgaoValue /]\n        [/@grupo]\n    [/@grupo]\n    [@grupo]\n        [@texto titulo=\"Vocativo\" var=\"vocativo\" largura=\"100\" /]\n    [/@grupo]\n    [@grupo titulo=\"Texto da informação\"]\n        [@editor titulo=\"\" var=\"texto_informacao\" /]\n    [/@grupo]\n    [@grupo]\n        [@selecao titulo=\"Tamanho da letra\" var=\"tamanhoLetra\" opcoes=\"Normal;Pequeno;Grande\" /]\n    [/@grupo]\n[/@entrevista]\n\n[@documento margemDireita=\"3cm\"]\n    [#if tamanhoLetra! == \"Normal\"]\n        [#assign tl = \"11pt\" /]\n    [#elseif tamanhoLetra! == \"Pequeno\"]\n        [#assign tl = \"9pt\" /]\n    [#elseif tamanhoLetra! == \"Grande\"]\n        [#assign tl = \"13pt\" /]\n    [#else]     \n        [#assign tl = \"11pt\"]\n    [/#if]\n\n    [@estiloBrasaoCentralizado tipo=\"INFORMAÇÃO\" tamanhoLetra=tl formatarOrgao=true numeracaoCentralizada=false dataAntesDaAssinatura =true]\n        <div style=\"font-family: Arial; font-size: ${tl};\">\n            [#if tipoDeDocumentoOrigem?? && tipoDeDocumentoOrigem != \"\"]\n                Referência: ${tipoDeDocumentoOrigem!} N&ordm; ${numeroOrigem!}, ${dataOrigem!} - ${orgaoOrigem!}.<br/>\n            [/#if]\n            Assunto: ${(doc.exClassificacao.descrClassificacao)!}\n\n            <p style=\"TEXT-INDENT: 2cm\"><span style=\"font-size: ${tl}\">${vocativo!}</span></p>\n                <p style=\"TEXT-INDENT: 2cm\"><span style=\"font-size: ${tl}\">${texto_informacao}</span></p>\n        </div>\n    [/@estiloBrasaoCentralizado]\n[/@documento]\n','template/freemarker',NULL,NULL,4,NULL,NULL,27,NULL,NULL,NULL,NULL,1,NULL,NULL),(28,'Documento Externo',NULL,NULL,NULL,'externo.jsp',NULL,5,NULL,NULL,28,NULL,NULL,NULL,NULL,1,NULL,NULL),(29,'Interno Importado',NULL,NULL,NULL,'interno_antigo.jsp',NULL,NULL,NULL,NULL,29,NULL,NULL,NULL,NULL,1,NULL,NULL),(78,'Despacho','Despacho','\n[#-- Se existir uma variável chamada \'texto\' copiar seu valor para \'texto_depacho\', pois a macro vai destruir o conteúdo da variável --]\n[@entrevista]\n  [@grupo titulo=\"Órgão de destino\"]\n    [#assign orgao_dest_atual = (doc.lotaDestinatario.nomeLotacao)!/]\n    [#if orgao_dest_ult! != orgao_dest_atual]\n      [#assign orgao_dest = orgao_dest_atual/]\n      [#assign orgao_dest_ult = orgao_dest_atual/]\n    [/#if]\n    [@oculto var=\"orgao_dest_ult\"/]\n    [@grupo]\n      [@selecao titulo=\"\" var=\"combinacao\" opcoes=\"A(o);À;Ao\" /]\n      [@texto titulo=\"Nome (opcional)\" var=\"orgao_dest\" largura=30 /]\n    [/@grupo]\n  [/@grupo]\n  [@grupo titulo=\"Texto do despacho\"]\n    [@grupo]\n      [#if !texto_padrao??]\n        [#assign texto_padrao = \"Para as providências cabíveis.\"/]\n      [/#if]\n      [@selecao titulo=\"Texto\" opcoes=\"A pedido.;Arquive-se.;Autorizo.;Ciente. Arquive-se.;De acordo.;Expeça-se memorando.;Expeça-se memorando-circular.;Expeça-se ofício-circular.;Intime-se.;Junte-se ao dossiê.;Junte-se ao processo.;Oficie-se.;Para as providências cabíveis.;Para atendimento.;Para atendimento e encaminhamento direto.;Para ciência.;Para publicação.;Para verificar a possibilidade de atendimento.;[Outro]\" var=\"texto_padrao\" reler=true /]\n    [/@grupo]\n  [/@grupo]\n  [@grupo depende=\"textopadrao\" esconder=((texto_padrao!\"\") != \"[Outro]\")]\n    [@editor titulo=\"\" var=\"texto_despacho\" /]\n  [/@grupo]\n  [@grupo]\n    [@selecao titulo=\"Tamanho da letra\" var=\"tamanhoLetra\" opcoes=\"Normal;Pequeno;Grande\" /]\n  [/@grupo]\n  [@grupo titulo=\"Dados do Documento de Origem\" esconder=doc.pai??]\n    [#if postback?? && !doc.idDoc?? && doc.pai??]\n      [#assign tipoDeDocumentoValue = doc.pai.descrFormaDoc /]\n      [#assign numeroValue = doc.pai.sigla /]\n      [#assign dataValue = doc.pai.dtDocDDMMYY /]\n      [#assign orgaoValue = doc.pai.orgaoUsuario.acronimoOrgaoUsu /]\n    [#else]\n      [#assign tipoDeDocumentoValue = tipoDeDocumentoOrigem! /]\n      [#assign numeroValue = numeroOrigem! /]\n      [#assign dataValue = dataOrigem! /]\n      [#assign orgaoValue = orgaoOrigem! /]\n    [/#if]\n    [@grupo]\n      [@texto titulo=\"Tipo de documento\" var=\"tipoDeDocumentoOrigem\" largura=20 default=tipoDeDocumentoValue /]\n      [@texto titulo=\"Número\" var=\"numeroOrigem\" largura=20 default=numeroValue /]\n    [/@grupo]\n    [@grupo]\n      [@data titulo=\"Data\" var=\"dataOrigem\" default=dataValue /]\n      [@texto titulo=\"Nome do Órgão\" var=\"orgaoOrigem\" largura=30 default=orgaoValue /]\n    [/@grupo]\n  [/@grupo]\n[/@entrevista]\n[@documento margemDireita=\"3cm\"]\n  [#if param.tamanhoLetra! == \"Normal\"]\n    [#assign tl = \"11pt\" /]\n  [#elseif param.tamanhoLetra! == \"Pequeno\"]\n    [#assign tl = \"9pt\" /]\n  [#elseif param.tamanhoLetra! == \"Grande\"]\n    [#assign tl = \"13pt\" /]\n  [#else]\n    [#assign tl = \"11pt\"/]\n  [/#if]\n  [@estiloBrasaoCentralizado tipo=\"DESPACHO\" tamanhoLetra=tl formatarOrgao=true numeracaoCentralizada=false dataAntesDaAssinatura =true]\n    <div style=\"font-family: Arial; font-size: ${tl};\">\n      [#if tipoDeDocumentoOrigem?? && tipoDeDocumentoOrigem != \"\"]\n        Referência: ${tipoDeDocumentoOrigem!} Nº ${numeroOrigem!}\n        [#if dataOrigem?? && dataOrigem != \"\"]\n          , ${dataOrigem!}\n        [/#if]\n        [#if orgaoOrigem?? && orgaoOrigem != \"\"]\n          - ${orgaoOrigem!}.\n        [/#if]\n        <br />\n      [/#if]\n      Assunto: ${(doc.exClassificacao.descrClassificacao)!}\n    </div>\n    <div style=\"font-family: Arial; font-size: ${tl};\">\n      [#if orgao_dest?? && orgao_dest != \"\"]\n        <p style=\"TEXT-INDENT: 2cm\">\n          <span style=\"font-size: ${tl}\">${combinacao} ${orgao_dest!},</span>\n        </p>\n      [#elseif (doc.lotaDestinatario.nomeLotacao)?? && (doc.lotaDestinatario.nomeLotacao) != \"\"]\n        <p style=\"TEXT-INDENT: 2cm\">\n          <span style=\"font-size: ${tl}\">${combinacao} ${(doc.lotaDestinatario.nomeLotacao)!},</span>\n        </p>\n      [/#if]\n      [#if (texto_padrao!\"\") != \"[Outro]\"]\n        <p style=\"TEXT-INDENT: 2cm\">\n          <span style=\"font-size: ${tl!}\">${texto_padrao!}</span>\n        </p>\n      [#else]\n        <p style=\"TEXT-INDENT: 2cm\">\n          <span style=\"font-size: ${tl!}\">${texto_despacho!}</span>\n        </p>\n      [/#if]\n    </div>\n  [/@estiloBrasaoCentralizado]\n[/@documento]\n','template/freemarker',NULL,NULL,8,NULL,NULL,78,NULL,NULL,NULL,NULL,1,NULL,NULL),(181,'Contrato','Contrato',NULL,'template-file/jsp','contrato.jsp',NULL,9,NULL,NULL,181,NULL,'2020-02-12 14:52:59',NULL,NULL,0,NULL,NULL),(241,'Boletim Interno',NULL,'ELABORE SEU MODELO DE BOLETIM INTERNO NO MENU FERRAMENTAS/CADASTRO DE MODELOS','template/freemarker','boletimInterno.jsp',NULL,54,NULL,NULL,241,NULL,NULL,NULL,NULL,1,NULL,NULL),(519,'Parecer','Parecer','\n[@entrevista]\n    [@grupo titulo=\"Dados do Documento de Origem\"]\n        [@grupo]\n            [@texto titulo=\"Tipo de documento\" var=\"tipoDeDocumentoOrigem\" largura=20 default=tipoDeDocumentoValue /]\n            [@texto titulo=\"Número\" var=\"numeroOrigem\" largura=20 default=numeroValue /]\n        [/@grupo]\n        [@grupo]\n            [@data titulo=\"Data\" var=\"dataOrigem\" default=dataValue /]\n            [@texto titulo=\"Nome do Órgão\" var=\"orgaoOrigem\" largura=30 default=orgaoValue /]\n        [/@grupo]\n    [/@grupo]\n    [@grupo]\n        [@texto titulo=\"Vocativo\" var=\"vocativo\" largura=\"100\" /]\n    [/@grupo]\n    [@grupo titulo=\"Texto do Parecer\"]\n        [@editor titulo=\"\" var=\"texto_parecer\" /]\n    [/@grupo]\n    [@grupo]\n        [@selecao titulo=\"Tamanho da letra\" var=\"tamanhoLetra\" opcoes=\"Normal;Pequeno;Grande\" /]\n    [/@grupo]\n[/@entrevista]\n\n[@documento margemDireita=\"3cm\"]\n    [#if param.tamanhoLetra! == \"Normal\"]\n        [#assign tl = \"11pt\" /]\n    [#elseif param.tamanhoLetra! == \"Pequeno\"]\n        [#assign tl = \"9pt\" /]\n    [#elseif param.tamanhoLetra! == \"Grande\"]\n        [#assign tl = \"13pt\" /]\n    [#else]     \n        [#assign tl = \"11pt\"]\n    [/#if]\n\n    [@estiloBrasaoCentralizado tipo=\"PARECER\" tamanhoLetra=tl formatarOrgao=true numeracaoCentralizada=false dataAntesDaAssinatura =true]\n        [#if tipoDeDocumentoOrigem?? && tipoDeDocumentoOrigem != \"\"]\n            Referência: ${tipoDeDocumentoOrigem!} N&ordm; ${numeroOrigem!}, ${dataOrigem!} - ${orgaoOrigem!}.<br/>\n        [/#if]\n        Assunto: ${(doc.exClassificacao.descrClassificacao)!}\n\n        <div style=\"font-family: Arial; font-size: 10pt;\">\n            <p style=\"TEXT-INDENT: 2cm\"><span style=\"font-size: ${tl}\">${vocativo!}</span></p>\n            <p style=\"TEXT-INDENT: 2cm\"><span style=\"font-size: ${tl}\">${texto_parecer}</span></p>\n            <p style=\"TEXT-INDENT: 2cm\"><span style=\"font-size: ${tl}\">É o Parecer.</span></p>\n        </div>\n    [/@estiloBrasaoCentralizado]\n[/@documento]\n\n','template/freemarker',NULL,NULL,14,NULL,NULL,519,NULL,NULL,NULL,NULL,1,NULL,NULL),(529,'Certidão de desentranhamento',NULL,' Certidão de desentranhamento','template/freemarker','certidaoDesentranhamento.jsp',NULL,15,NULL,NULL,529,NULL,NULL,NULL,NULL,1,NULL,NULL),(533,'Processo de Pessoal',NULL,NULL,NULL,'processoAdministrativo.jsp',NULL,56,NULL,NULL,533,NULL,NULL,NULL,NULL,1,NULL,NULL),(534,'Processo de Execução Orçamentária e Financeira','Processo de Execução Orçamentária e Financeira',NULL,'template-file/jsp','processoAdministrativo.jsp',NULL,57,NULL,NULL,534,NULL,NULL,NULL,NULL,1,NULL,NULL),(545,'Certidão de encerramendo de volume',NULL,NULL,NULL,'certidaoEncerramentoVolume.jsp',NULL,15,NULL,NULL,545,NULL,NULL,NULL,NULL,1,NULL,NULL),(546,'Folha inicial de volume - EOF',NULL,NULL,NULL,'folhaInicialVolume.jsp',NULL,3,NULL,NULL,546,NULL,'2020-02-12 14:52:59',NULL,NULL,0,NULL,NULL),(663,'Memória de Reunião','Memória de Reunião','\n[@entrevista]\n [@grupo titulo=\"Informações Gerais\"]\n  [@grupo]\n   [@texto titulo=\"Objetivo da reunião\" var=\"objReuniao\" largura=\"84\" maxcaracteres=\"84\"/]\n  [/@grupo]\n  [@texto titulo=\"Horário\" var=\"horReuniao\" obrigatorio=\"Sim\" largura=\"4\" maxcaracteres=\"5\"/]\n  [@texto titulo=\"Local\" var=\"locReuniao\" obrigatorio=\"Sim\" largura=\"60\" maxcaracteres=\"60\"/]\n[#--\n  [@grupo]\n   [@memo titulo=\"Pendências (reuniões anteriores)\" var=\"pendencias\" colunas=\"78\" linhas=\"2\"/]\n  [/@grupo]\n--]\n  [@separador /]\n  [@selecao titulo=\"Participantes\" var=\"numParticipantes\" reler=true idAjax=\"numParticipantesAjax\" opcoes=\"0;1;2;3;4;5;6;7;8;9;10;11;12;13;14;15\"/]\n  [@grupo depende=\"numParticipantesAjax\"]\n   [#if numParticipantes! != \'0\']\n    [#list 1..(numParticipantes)?number as i]\n     [@grupo]\n      [@pessoa titulo=\"\" var=\"participantes\"+i/]\n     [/@grupo]\n    [/#list]\n   [/#if]\n  [/@grupo]\n  [@separador /]\n  [@grupo]\n   [@selecao titulo=\"Participantes (extra)\" var=\"numParticipantesExtra\" reler=true idAjax=\"numPartExtraAjax\" opcoes=\"0;1;2;3;4;5;6;7;8;9;10;11;12;13;14;15\"/]\n  [/@grupo]\n  [@grupo depende=\"numPartExtraAjax\"]\n   [#if numParticipantesExtra! != \'0\']\n    [#list 1..(numParticipantesExtra)?number as i]\n     [@grupo]\n      [@texto titulo=\"Nome\" var=\"participantesExtra\"+i largura=\"50\" maxcaracteres=\"101\"/]\n      [@texto titulo=\"Email\" var=\"participantesExtraEmail\"+i largura=\"51\" maxcaracteres=\"101\"/]\n     [/@grupo]\n     [@grupo]\n      [@texto titulo=\"Função\" var=\"participantesExtraFuncao\"+i largura=\"50\" maxcaracteres=\"101\"/]\n      [@texto titulo=\"Unidade\" var=\"participantesExtraUnidade\"+i largura=\"51\" maxcaracteres=\"101\"/]\n     [/@grupo]\n    [/#list]\n   [/#if]\n  [/@grupo]\n [/@grupo]\n [@separador /]\n [@grupo]\n  [@selecao titulo=\"Quantidade de itens da pauta\" var=\"qtdItePauta\" reler=true idAjax=\"qtdItePautaAjax\" opcoes=\"1;2;3;4;5;6;7;8;9;10;11;12;13;14;15\"/]\n [/@grupo]\n [@grupo depende=\"qtdItePautaAjax\"]\n  [#list 1..(qtdItePauta)?number as i]\n   [@grupo]\n    [@texto titulo=\"<b>Item ${i}</b>\" var=\"itePauta\"+i largura=\"96\" maxcaracteres=\"101\"/]\n   [/@grupo]\n   [@memo titulo=\"Comentários\" var=\"comentario\"+i colunas=\"78\" linhas=\"2\"/]\n   [@grupo]\n    [@selecao titulo=\"Quantidade de ações\" var=\"qtdAcoes\"+i reler=true idAjax=\"qtdAcoesAjax\"+i opcoes=\"0;1;2;3;4;5;6;7;8;9;10;11;12;13;14;15\"/]\n   [/@grupo]\n   [@grupo depende=\"qtdAcoesAjax\"+i]\n    [#if (.vars[\'qtdAcoes\'+i])! != \'0\']\n     [#list 1..(.vars[\'qtdAcoes\'+i])?number as j]\n      [@grupo]      \n       [@texto titulo=\"Ação ${j}\" var=\"acoes\"+i+j largura=\"95\" maxcaracteres=\"75\"/]\n      [/@grupo]\n      [@grupo]\n       [@texto titulo=\"Responsável\" var=\"responsavel\"+i+j largura=\"61\" maxcaracteres=\"55\"/]\n       [@data titulo=\"Data prevista\" var=\"datPrevista\"+i+j/] \n      [/@grupo]\n     [/#list]\n    [/#if]\n   [/@grupo]\n   [@separador /]  \n  [/#list] \n [/@grupo]\n[/@entrevista]\n\n[@documento]\n [#if tamanhoLetra! == \"Normal\"]\n		[#assign tl = \"11pt\" /]\n [#elseif tamanhoLetra! == \"Pequeno\"]\n		[#assign tl = \"9pt\" /]\n [#elseif tamanhoLetra! == \"Grande\"]\n		[#assign tl = \"13pt\" /]\n [#else]		\n		[#assign tl = \"11pt\"]\n [/#if]\n [@estiloBrasaoCentralizado tipo=\"MEMÓRIA DE REUNIÃO\" tamanhoLetra=tl formatarOrgao=true]\n   <p align=\"left\">\n    <b>Objetivo da reunião:</b>&nbsp;${objReuniao!}<br/>\n    Horário e local: ${horReuniao!} - ${locReuniao!}<br/>\n     Assunto: ${(doc.exClassificacao.descrClassificacao)!}</p><br/>\n[#--\n   [#if pendencias! != \"\"]\n    <p><b>Pendências (reuniões anteriores):</b>&nbsp;${pendencias!}</p><br/>\n   [/#if]\n--]\n   <table width=\"100%\" border=\"1\" cellpadding=\"5\">\n    <tr>\n     <td width=\"50%\"><b>Participantes</b></td>\n     <td width=\"25%\"><b>Função</b></td>\n     <td width=\"25%\"><b>Unidade</b></td>\n    </tr>\n    [#list 1..(numParticipantes)?number as i]\n     [#if .vars[\'participantes\' + i + \'_pessoaSel.id\']?? && .vars[\'participantes\' + i + \'_pessoaSel.id\'] != \"\"]\n      [#assign participante = func.pessoa(.vars[\'participantes\' + i + \'_pessoaSel.id\']?number) /]\n      <tr>\n       <td>${func.maiusculasEMinusculas(participante.descricao)}</td>\n       <td>${(participante.funcaoConfianca.descricao)!}</td>\n       <td>${participante.lotacao.sigla}</td>\n      </tr>\n     [/#if]\n    [/#list]\n\n    [#list 1..(numParticipantesExtra)?number as i] \n     [#if numParticipantesExtra! != \'0\']\n      <tr>\n       <td>${.vars[\'participantesExtra\'+i]!}\n        [#if .vars[\'participantesExtraEmail\'+i]??] (${.vars[\'participantesExtraEmail\'+i]!})[/#if]</td>\n       <td>${.vars[\'participantesExtraFuncao\'+i]!}</td>\n       <td>${.vars[\'participantesExtraUnidade\'+i]!}</td>\n      </tr>\n     [/#if]    \n    [/#list]\n   </table> \n   <br/>\n\n\n  \n   <p><b>Pauta</b></p>\n     [#list 1..(qtdItePauta)?number as i] \n        <p>\n          <b>${i}. ${.vars[\'itePauta\'+i]!}:</b> ${.vars[\'comentario\'+i]!}\n        </p>       \n     [/#list]  \n\n\n  <br/> \n\n  [#assign fAcoes = false/]\n  [#list 1..(qtdItePauta)?number as i]\n   [#if .vars[\'qtdAcoes\'+i] != \'0\']\n    [#assign fAcoes = true/]\n   [/#if] \n  [/#list]\n\n  [#if fAcoes]\n   <table width=\"100%\" border=\"1\" cellpadding=\"5\">\n     <tr>\n      <td width=\"10%\"><b>Ref.</b></td>\n      <td width=\"50%\"><b>Próximas Ações</b></td>\n      <td width=\"20%\"><b>Responsável</b></td>\n      <td width=\"20%\" align=\"center\"><b>Data Prevista</b></td>\n     </tr>\n     [#list 1..(qtdItePauta)?number as i]\n      [#if .vars[\'qtdAcoes\'+i] != \'0\']\n       [#list 1..(.vars[\'qtdAcoes\'+i])?number as j]\n        <tr>\n         <td>${i}.${j}</td>\n         <td>${.vars[\'acoes\'+i+j]!}</td>\n         <td>${.vars[\'responsavel\'+i+j]!}</td>\n         <td align=\"center\">${.vars[\'datPrevista\'+i+j]!}</td>\n        </tr>\n       [/#list]\n      [/#if]\n     [/#list]\n   </table>   \n  [/#if]\n [/@estiloBrasaoCentralizado]\n[/@documento]\n\n','template/freemarker',NULL,NULL,97,NULL,NULL,663,NULL,'2020-02-12 14:52:59',NULL,NULL,0,NULL,NULL),(665,'Despacho Automático','Despacho gerado automaticamente pela transferência','\n[@documento margemDireita=\"3cm\"]\n    [#assign tl=\"11pt\"/]\n    [@estiloBrasaoCentralizado tipo=\"DESPACHO\" tamanhoLetra=tl formatarOrgao=true numeracaoCentralizada=false dataAntesDaAssinatura =true]\n        <div style=\"font-family: Arial; font-size: ${tl};\">\n          Referência: ${doc.codigo} de ${doc.dtD} de ${doc.dtMMMM} de ${doc.dtYYYY}[#if doc.lotaTitular??] - ${(doc.lotaTitular.descricao)!}[/#if].<br/>\n            Assunto: ${(doc.exClassificacao.descrClassificacao)!}\n        </div>\n\n        <div style=\"font-family: Arial; font-size: ${tl};\">\n            [#if mov.lotaResp?? && (mov.lotaResp.idLotacaoIni != mov.lotaCadastrante.idLotacaoIni)]\n                <p style=\"TEXT-INDENT: 0cm\">\n                  <span style=\"font-size: ${tl}\">À ${(mov.lotaResp.descricao)!},</span>\n                </p>\n            [/#if]\n            [#if despachoTexto??]\n                <p style=\"TEXT-INDENT: 2cm\"><span style=\"font-size: ${tl}\">${despachoTexto}</span></p>\n            [/#if]\n            ${despachoHtml!}\n        </div>\n    [/@estiloBrasaoCentralizado]\n[/@documento]\n\n','template/freemarker',NULL,NULL,8,NULL,NULL,665,NULL,NULL,NULL,NULL,1,NULL,NULL),(666,'Planta','Planta',' ','template/freemarker',NULL,NULL,99,NULL,NULL,0,NULL,NULL,NULL,NULL,1,NULL,NULL);
+INSERT INTO `ex_modelo` VALUES (2,'Ofício','Ofício',1,NULL,'template/freemarker','oficio.jsp',NULL,1,NULL,NULL,2,NULL,NULL,NULL,NULL,1,NULL,NULL),(26,'Memorando','Memorando',2,NULL,'template/freemarker','memorando.jsp',NULL,2,NULL,NULL,26,NULL,NULL,NULL,NULL,1,NULL,NULL),(27,'Informação','Informação',3,NULL,'template/freemarker',NULL,NULL,4,NULL,NULL,27,NULL,NULL,NULL,NULL,1,NULL,NULL),(28,'Documento Externo',NULL,NULL,NULL,NULL,'externo.jsp',NULL,5,NULL,NULL,28,NULL,NULL,NULL,NULL,1,NULL,NULL),(29,'Interno Importado',NULL,NULL,NULL,NULL,'interno_antigo.jsp',NULL,NULL,NULL,NULL,29,NULL,NULL,NULL,NULL,1,NULL,NULL),(78,'Despacho','Despacho',4,NULL,'template/freemarker',NULL,NULL,8,NULL,NULL,78,NULL,NULL,NULL,NULL,1,NULL,NULL),(181,'Contrato','Contrato',NULL,NULL,'template-file/jsp','contrato.jsp',NULL,9,NULL,NULL,181,NULL,'2020-02-12 14:52:59',NULL,NULL,0,NULL,NULL),(241,'Boletim Interno',NULL,5,NULL,'template/freemarker','boletimInterno.jsp',NULL,54,NULL,NULL,241,NULL,NULL,NULL,NULL,1,NULL,NULL),(519,'Parecer','Parecer',6,NULL,'template/freemarker',NULL,NULL,14,NULL,NULL,519,NULL,NULL,NULL,NULL,1,NULL,NULL),(529,'Certidão de desentranhamento',NULL,7,NULL,'template/freemarker','certidaoDesentranhamento.jsp',NULL,15,NULL,NULL,529,NULL,NULL,NULL,NULL,1,NULL,NULL),(533,'Processo de Pessoal',NULL,NULL,NULL,NULL,'processoAdministrativo.jsp',NULL,56,NULL,NULL,533,NULL,NULL,NULL,NULL,1,NULL,NULL),(534,'Processo de Execução Orçamentária e Financeira','Processo de Execução Orçamentária e Financeira',NULL,NULL,'template-file/jsp','processoAdministrativo.jsp',NULL,57,NULL,NULL,534,NULL,NULL,NULL,NULL,1,NULL,NULL),(545,'Certidão de encerramendo de volume',NULL,NULL,NULL,NULL,'certidaoEncerramentoVolume.jsp',NULL,15,NULL,NULL,545,NULL,NULL,NULL,NULL,1,NULL,NULL),(546,'Folha inicial de volume - EOF',NULL,NULL,NULL,NULL,'folhaInicialVolume.jsp',NULL,3,NULL,NULL,546,NULL,'2020-02-12 14:52:59',NULL,NULL,0,NULL,NULL),(663,'Memória de Reunião','Memória de Reunião',8,NULL,'template/freemarker',NULL,NULL,97,NULL,NULL,663,NULL,'2020-02-12 14:52:59',NULL,NULL,0,NULL,NULL),(665,'Despacho Automático','Despacho gerado automaticamente pela transferência',9,NULL,'template/freemarker',NULL,NULL,8,NULL,NULL,665,NULL,NULL,NULL,NULL,1,NULL,NULL),(666,'Planta','Planta',10,' ','template/freemarker',NULL,NULL,99,NULL,NULL,0,NULL,NULL,NULL,NULL,1,NULL,NULL);
 /*!40000 ALTER TABLE `ex_modelo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -645,8 +650,8 @@ DROP TABLE IF EXISTS `ex_modelo_tp_doc_publicacao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_modelo_tp_doc_publicacao` (
-  `ID_MOD` bigint(20) NOT NULL,
-  `ID_DOC_PUBLICACAO` double NOT NULL,
+  `ID_MOD` INT UNSIGNED NOT NULL,
+  `ID_DOC_PUBLICACAO` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`ID_MOD`,`ID_DOC_PUBLICACAO`),
   KEY `MOD_PUBL_ID_DOC_PUBLICACAO_FK` (`ID_DOC_PUBLICACAO`),
   CONSTRAINT `MOD_PUBL_ID_DOC_PUBLICACAO_FK` FOREIGN KEY (`ID_DOC_PUBLICACAO`) REFERENCES `ex_tp_doc_publicacao` (`ID_DOC_PUBLICACAO`),
@@ -671,55 +676,56 @@ DROP TABLE IF EXISTS `ex_movimentacao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_movimentacao` (
-  `ID_MOV` bigint(20) NOT NULL AUTO_INCREMENT,
-  `ID_DOC` double DEFAULT NULL,
-  `ID_DOC_PAI` double DEFAULT NULL,
-  `ID_TP_MOV` bigint(20) NOT NULL,
-  `ID_ESTADO_DOC` bigint(20) DEFAULT NULL,
-  `ID_TP_DESPACHO` bigint(20) DEFAULT NULL,
-  `ID_CADASTRANTE` double DEFAULT NULL,
-  `ID_LOTA_CADASTRANTE` int(11) DEFAULT NULL,
-  `ID_SUBSCRITOR` double DEFAULT NULL,
-  `ID_LOTA_SUBSCRITOR` int(11) DEFAULT NULL,
+  `ID_MOV` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ID_DOC` INT UNSIGNED DEFAULT NULL,
+  `ID_DOC_PAI` INT UNSIGNED DEFAULT NULL,
+  `ID_TP_MOV` INT UNSIGNED NOT NULL,
+  `ID_ESTADO_DOC` INT UNSIGNED DEFAULT NULL,
+  `ID_TP_DESPACHO` INT UNSIGNED DEFAULT NULL,
+  `ID_CADASTRANTE` INT UNSIGNED DEFAULT NULL,
+  `ID_LOTA_CADASTRANTE` INT UNSIGNED DEFAULT NULL,
+  `ID_SUBSCRITOR` INT UNSIGNED DEFAULT NULL,
+  `ID_LOTA_SUBSCRITOR` INT UNSIGNED DEFAULT NULL,
   `DT_MOV` datetime NOT NULL,
   `DT_INI_MOV` datetime NOT NULL,
   `NUM_VIA` tinyint(4) DEFAULT NULL,
+  `ID_ARQ` BIGINT UNSIGNED DEFAULT NULL,
   `CONTEUDO_BLOB_MOV` blob,
-  `ID_MOV_CANCELADORA` bigint(20) DEFAULT NULL,
+  `ID_MOV_CANCELADORA` INT UNSIGNED DEFAULT NULL,
   `NM_ARQ_MOV` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `CONTEUDO_TP_MOV` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `DT_FIM_MOV` datetime DEFAULT NULL,
-  `ID_LOTA_RESP` int(11) DEFAULT NULL,
-  `ID_RESP` double DEFAULT NULL,
+  `ID_LOTA_RESP` INT UNSIGNED DEFAULT NULL,
+  `ID_RESP` INT UNSIGNED DEFAULT NULL,
   `DESCR_MOV` varchar(400) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `ASSINATURA_BLOB_MOV` blob,
-  `ID_DESTINO_FINAL` double DEFAULT NULL,
-  `ID_LOTA_DESTINO_FINAL` int(11) DEFAULT NULL,
+  `ID_DESTINO_FINAL` INT UNSIGNED DEFAULT NULL,
+  `ID_LOTA_DESTINO_FINAL` INT UNSIGNED DEFAULT NULL,
   `NUM_VIA_DOC_PAI` tinyint(4) DEFAULT NULL,
-  `ID_DOC_REF` double DEFAULT NULL,
+  `ID_DOC_REF` INT UNSIGNED DEFAULT NULL,
   `NUM_VIA_DOC_REF` tinyint(4) DEFAULT NULL,
   `OBS_ORGAO_MOV` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ID_ORGAO` bigint(20) DEFAULT NULL,
-  `ID_MOV_REF` bigint(20) DEFAULT NULL,
-  `ID_LOTA_TITULAR` int(11) DEFAULT NULL,
-  `ID_TITULAR` double DEFAULT NULL,
+  `ID_ORGAO` INT UNSIGNED DEFAULT NULL,
+  `ID_MOV_REF` INT UNSIGNED DEFAULT NULL,
+  `ID_LOTA_TITULAR` INT UNSIGNED DEFAULT NULL,
+  `ID_TITULAR` INT UNSIGNED DEFAULT NULL,
   `NM_FUNCAO_SUBSCRITOR` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `NUM_PROC_ADM` double DEFAULT NULL,
-  `ID_NIVEL_ACESSO` bigint(20) DEFAULT NULL,
+  `NUM_PROC_ADM` INT UNSIGNED DEFAULT NULL,
+  `ID_NIVEL_ACESSO` INT UNSIGNED DEFAULT NULL,
   `DT_DISP_PUBLICACAO` datetime DEFAULT NULL,
   `DT_EFETIVA_PUBLICACAO` datetime DEFAULT NULL,
   `DT_EFETIVA_DISP_PUBLICACAO` datetime DEFAULT NULL,
   `PAG_PUBLICACAO` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `NUM_TRF_PUBLICACAO` bigint(20) DEFAULT NULL,
+  `NUM_TRF_PUBLICACAO` INT UNSIGNED DEFAULT NULL,
   `CADERNO_PUBLICACAO_DJE` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ID_MOBIL` double DEFAULT NULL,
-  `ID_MOB_REF` double DEFAULT NULL,
+  `ID_MOBIL` INT UNSIGNED DEFAULT NULL,
+  `ID_MOB_REF` INT UNSIGNED DEFAULT NULL,
   `NUM_PAGINAS` smallint(6) DEFAULT NULL,
   `NUM_PAGINAS_ORI` smallint(6) DEFAULT NULL,
-  `ID_PAPEL` double DEFAULT NULL,
-  `ID_CLASSIFICACAO` bigint(20) DEFAULT NULL,
-  `ID_MARCADOR` double DEFAULT NULL,
-  `ID_IDENTIDADE_AUDIT` double DEFAULT NULL,
+  `ID_PAPEL` INT UNSIGNED DEFAULT NULL,
+  `ID_CLASSIFICACAO` INT UNSIGNED DEFAULT NULL,
+  `ID_MARCADOR` INT UNSIGNED DEFAULT NULL,
+  `ID_IDENTIDADE_AUDIT` INT UNSIGNED DEFAULT NULL,
   `IP_AUDIT` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `HASH_AUDIT` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`ID_MOV`),
@@ -749,6 +755,7 @@ CREATE TABLE `ex_movimentacao` (
   KEY `IXCF_SYS_C009983` (`ID_PAPEL`),
   KEY `MOV_EX_CLASSIFICACAO_FK` (`ID_CLASSIFICACAO`),
   KEY `MOV_CP_IDENTIDADE_FK` (`ID_IDENTIDADE_AUDIT`),
+  KEY `ID_ARQ` (`ID_ARQ`),
   CONSTRAINT `MOVIMENTACAO_ESTADO_DOC_FK` FOREIGN KEY (`ID_ESTADO_DOC`) REFERENCES `ex_estado_doc` (`ID_ESTADO_DOC`),
   CONSTRAINT `MOV_CP_IDENTIDADE_FK` FOREIGN KEY (`ID_IDENTIDADE_AUDIT`) REFERENCES `corporativo`.`cp_identidade` (`ID_IDENTIDADE`),
   CONSTRAINT `MOV_DEST_FIM_LOTA_FK` FOREIGN KEY (`ID_LOTA_DESTINO_FINAL`) REFERENCES `corporativo`.`dp_lotacao` (`ID_LOTACAO`),
@@ -773,7 +780,8 @@ CREATE TABLE `ex_movimentacao` (
   CONSTRAINT `MOV_TP_MOV_FK` FOREIGN KEY (`ID_TP_MOV`) REFERENCES `ex_tipo_movimentacao` (`ID_TP_MOV`),
   CONSTRAINT `ex_movimentacao_ibfk_1` FOREIGN KEY (`ID_MOBIL`) REFERENCES `ex_mobil` (`ID_MOBIL`),
   CONSTRAINT `ex_movimentacao_ibfk_2` FOREIGN KEY (`ID_MOB_REF`) REFERENCES `ex_mobil` (`ID_MOBIL`),
-  CONSTRAINT `ex_movimentacao_ibfk_3` FOREIGN KEY (`ID_PAPEL`) REFERENCES `ex_papel` (`ID_PAPEL`)
+  CONSTRAINT `ex_movimentacao_ibfk_3` FOREIGN KEY (`ID_PAPEL`) REFERENCES `ex_papel` (`ID_PAPEL`),
+  CONSTRAINT `ex_movimentacao_ibfk_4` FOREIGN KEY (`ID_ARQ`) REFERENCES `corporativo`.`cp_arquivo` (`ID_ARQ`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -794,10 +802,10 @@ DROP TABLE IF EXISTS `ex_nivel_acesso`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_nivel_acesso` (
-  `ID_NIVEL_ACESSO` bigint(20) NOT NULL AUTO_INCREMENT,
+  `ID_NIVEL_ACESSO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `NM_NIVEL_ACESSO` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `DSC_NIVEL_ACESSO` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `GRAU_NIVEL_ACESSO` bigint(20) DEFAULT NULL,
+  `GRAU_NIVEL_ACESSO` INT UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`ID_NIVEL_ACESSO`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -820,9 +828,9 @@ DROP TABLE IF EXISTS `ex_numeracao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_numeracao` (
-  `ID_ORGAO_USU` bigint(20) NOT NULL,
-  `ID_FORMA_DOC` bigint(20) NOT NULL,
-  `ANO_EMISSAO` bigint(20) NOT NULL,
+  `ID_ORGAO_USU` INT UNSIGNED NOT NULL,
+  `ID_FORMA_DOC` INT UNSIGNED NOT NULL,
+  `ANO_EMISSAO` INT UNSIGNED NOT NULL,
   `NUM_EXPEDIENTE` bigint(20) NOT NULL,
   PRIMARY KEY (`ID_ORGAO_USU`,`ID_FORMA_DOC`,`ANO_EMISSAO`),
   KEY `NUMERACAO_FORMA_DOC_FK` (`ID_FORMA_DOC`),
@@ -848,7 +856,7 @@ DROP TABLE IF EXISTS `ex_papel`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_papel` (
-  `ID_PAPEL` double NOT NULL AUTO_INCREMENT,
+  `ID_PAPEL` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DESC_PAPEL` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`ID_PAPEL`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -872,16 +880,19 @@ DROP TABLE IF EXISTS `ex_preenchimento`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_preenchimento` (
-  `ID_PREENCHIMENTO` bigint(20) NOT NULL AUTO_INCREMENT,
-  `ID_LOTACAO` int(11) NOT NULL,
-  `ID_MOD` bigint(20) NOT NULL,
+  `ID_PREENCHIMENTO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ID_LOTACAO` INT UNSIGNED NOT NULL,
+  `ID_MOD` INT UNSIGNED NOT NULL,
   `EX_NOME_PREENCHIMENTO` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ID_ARQ` BIGINT UNSIGNED DEFAULT NULL,
   `PREENCHIMENTO_BLOB` blob,
   PRIMARY KEY (`ID_PREENCHIMENTO`),
   KEY `EX_PREENCHIMENTO_IDX_013` (`ID_MOD`),
   KEY `EX_PREENCHIMENTO_IDX_012` (`ID_LOTACAO`),
+  KEY `ID_ARQ` (`ID_ARQ`),
   CONSTRAINT `PREENCHIMENTO_LOTACAO_FK` FOREIGN KEY (`ID_LOTACAO`) REFERENCES `corporativo`.`dp_lotacao` (`ID_LOTACAO`),
-  CONSTRAINT `PREENCHIMENTO_MODELO_FK` FOREIGN KEY (`ID_MOD`) REFERENCES `ex_modelo` (`ID_MOD`)
+  CONSTRAINT `PREENCHIMENTO_MODELO_FK` FOREIGN KEY (`ID_MOD`) REFERENCES `ex_modelo` (`ID_MOD`),
+  CONSTRAINT `PREENCHIMENTO_ARQ_FK` FOREIGN KEY (`ID_ARQ`) REFERENCES `corporativo`.`cp_arquivo` (`ID_ARQ`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -902,7 +913,7 @@ DROP TABLE IF EXISTS `ex_situacao_configuracao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_situacao_configuracao` (
-  `ID_SIT_CONFIGURACAO` double NOT NULL AUTO_INCREMENT,
+  `ID_SIT_CONFIGURACAO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DSC_SIT_CONFIGURACAO` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`ID_SIT_CONFIGURACAO`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -929,13 +940,13 @@ CREATE TABLE `ex_temporalidade` (
   `ID_TEMPORALIDADE` smallint(6) NOT NULL AUTO_INCREMENT,
   `DESC_TEMPORALIDADE` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `VALOR_TEMPORALIDADE` double DEFAULT NULL,
-  `ID_UNIDADE_MEDIDA` double DEFAULT NULL,
-  `HIS_ID_INI` bigint(20) DEFAULT NULL,
+  `ID_UNIDADE_MEDIDA` INT UNSIGNED DEFAULT NULL,
+  `HIS_ID_INI` INT UNSIGNED DEFAULT NULL,
   `HIS_DT_INI` datetime DEFAULT NULL,
   `HIS_DT_FIM` datetime DEFAULT NULL,
-  `HIS_IDC_INI` double DEFAULT NULL,
-  `HIS_IDC_FIM` double DEFAULT NULL,
-  `HIS_ATIVO` double NOT NULL,
+  `HIS_IDC_INI` INT UNSIGNED DEFAULT NULL,
+  `HIS_IDC_FIM` INT UNSIGNED DEFAULT NULL,
+  `HIS_ATIVO` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`ID_TEMPORALIDADE`),
   KEY `ID_UNIDADE_MEDIDA` (`ID_UNIDADE_MEDIDA`),
   KEY `HIS_IDC_INI` (`HIS_IDC_INI`),
@@ -964,7 +975,7 @@ DROP TABLE IF EXISTS `ex_tipo_despacho`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_tipo_despacho` (
-  `ID_TP_DESPACHO` bigint(20) NOT NULL AUTO_INCREMENT,
+  `ID_TP_DESPACHO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DESC_TP_DESPACHO` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `FG_ATIVO_TP_DESPACHO` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`ID_TP_DESPACHO`)
@@ -989,7 +1000,7 @@ DROP TABLE IF EXISTS `ex_tipo_destinacao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_tipo_destinacao` (
-  `ID_TP_DESTINACAO` bigint(20) NOT NULL AUTO_INCREMENT,
+  `ID_TP_DESTINACAO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DESCR_TIPO_DESTINACAO` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `FACILITADOR_DEST` varchar(4000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`ID_TP_DESTINACAO`)
@@ -1014,7 +1025,7 @@ DROP TABLE IF EXISTS `ex_tipo_documento`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_tipo_documento` (
-  `ID_TP_DOC` bigint(20) NOT NULL AUTO_INCREMENT,
+  `ID_TP_DOC` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DESCR_TIPO_DOCUMENTO` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`ID_TP_DOC`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1038,7 +1049,7 @@ DROP TABLE IF EXISTS `ex_tipo_forma_documento`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_tipo_forma_documento` (
-  `ID_TIPO_FORMA_DOC` double NOT NULL AUTO_INCREMENT,
+  `ID_TIPO_FORMA_DOC` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DESC_TIPO_FORMA_DOC` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `NUMERACAO_UNICA` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`ID_TIPO_FORMA_DOC`)
@@ -1063,7 +1074,7 @@ DROP TABLE IF EXISTS `ex_tipo_mobil`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_tipo_mobil` (
-  `ID_TIPO_MOBIL` double NOT NULL AUTO_INCREMENT,
+  `ID_TIPO_MOBIL` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DESC_TIPO_MOBIL` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`ID_TIPO_MOBIL`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1087,7 +1098,7 @@ DROP TABLE IF EXISTS `ex_tipo_movimentacao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_tipo_movimentacao` (
-  `ID_TP_MOV` bigint(20) NOT NULL AUTO_INCREMENT,
+  `ID_TP_MOV` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DESCR_TIPO_MOVIMENTACAO` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`ID_TP_MOV`)
 ) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1111,7 +1122,7 @@ DROP TABLE IF EXISTS `ex_tp_doc_publicacao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_tp_doc_publicacao` (
-  `ID_DOC_PUBLICACAO` double NOT NULL AUTO_INCREMENT,
+  `ID_DOC_PUBLICACAO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `NM_DOC_PUBLICACAO` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `CARATER` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`ID_DOC_PUBLICACAO`)
@@ -1136,8 +1147,8 @@ DROP TABLE IF EXISTS `ex_tp_forma_doc`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_tp_forma_doc` (
-  `ID_FORMA_DOC` bigint(20) NOT NULL,
-  `ID_TP_DOC` bigint(20) NOT NULL,
+  `ID_FORMA_DOC` INT UNSIGNED NOT NULL,
+  `ID_TP_DOC` INT UNSIGNED NOT NULL,
   KEY `TP_FORMA_DOC_FORMA_DOC_FK` (`ID_FORMA_DOC`),
   KEY `TP_FORMA_DOC_TP_DOC_FK` (`ID_TP_DOC`),
   CONSTRAINT `TP_FORMA_DOC_FORMA_DOC_FK` FOREIGN KEY (`ID_FORMA_DOC`) REFERENCES `ex_forma_documento` (`ID_FORMA_DOC`),
@@ -1163,8 +1174,8 @@ DROP TABLE IF EXISTS `ex_tp_mov_estado`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_tp_mov_estado` (
-  `ID_TP_MOV` bigint(20) NOT NULL,
-  `ID_ESTADO_DOC` bigint(20) NOT NULL,
+  `ID_TP_MOV` INT UNSIGNED NOT NULL,
+  `ID_ESTADO_DOC` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`ID_TP_MOV`,`ID_ESTADO_DOC`),
   UNIQUE KEY `TP_MOV_ESTADO_PK` (`ID_ESTADO_DOC`,`ID_TP_MOV`),
   CONSTRAINT `TP_MOV_TPMOV_ESTADO_FK` FOREIGN KEY (`ID_TP_MOV`) REFERENCES `ex_tipo_movimentacao` (`ID_TP_MOV`)
@@ -1189,20 +1200,20 @@ DROP TABLE IF EXISTS `ex_via`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ex_via` (
-  `ID_VIA` bigint(20) NOT NULL AUTO_INCREMENT,
-  `ID_CLASSIFICACAO` bigint(20) NOT NULL,
-  `ID_DESTINACAO` bigint(20) DEFAULT NULL,
+  `ID_VIA` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ID_CLASSIFICACAO` INT UNSIGNED NOT NULL,
+  `ID_DESTINACAO` INT UNSIGNED DEFAULT NULL,
   `COD_VIA` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `ID_TEMPORAL_ARQ_COR` smallint(6) DEFAULT NULL,
   `ID_TEMPORAL_ARQ_INT` smallint(6) DEFAULT NULL,
   `OBS` varchar(4000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `ID_DESTINACAO_FINAL` tinyint(4) DEFAULT NULL,
-  `HIS_ID_INI` bigint(20) DEFAULT NULL,
+  `HIS_ID_INI` INT UNSIGNED DEFAULT NULL,
   `HIS_DT_INI` datetime DEFAULT NULL,
   `HIS_DT_FIM` datetime DEFAULT NULL,
-  `HIS_IDC_INI` double DEFAULT NULL,
-  `HIS_IDC_FIM` double DEFAULT NULL,
-  `HIS_ATIVO` double NOT NULL,
+  `HIS_IDC_INI` INT UNSIGNED DEFAULT NULL,
+  `HIS_IDC_FIM` INT UNSIGNED DEFAULT NULL,
+  `HIS_ATIVO` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`ID_VIA`),
   KEY `HIS_IDC_INI` (`HIS_IDC_INI`),
   KEY `HIS_IDC_FIM` (`HIS_IDC_FIM`),

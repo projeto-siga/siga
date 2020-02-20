@@ -47,10 +47,8 @@ import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
-import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
-import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.util.ExProcessadorModelo;
 
@@ -76,6 +74,7 @@ public class ExController extends SigaController {
 		super(request, result, dao, so, em);
 		this.response = response;
 		this.context = context;
+		result.on(Exception.class).forwardTo("WEB-INF/page/erroGeral.jsp");
 	}
 
 	protected void verificaNivelAcesso(ExMobil mob) {

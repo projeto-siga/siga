@@ -1454,7 +1454,7 @@ public class CpDao extends ModeloDao {
 	    Query query = em().createNativeQuery(sql);
 	    Date dt = (Date) query.getSingleResult();
 	    ContextoPersistencia.setDt(dt);
-		return dt;
+		return dt; 
 	}
 
 	public List<CpConfiguracao> consultarConfiguracoesDesde(Date desde) {

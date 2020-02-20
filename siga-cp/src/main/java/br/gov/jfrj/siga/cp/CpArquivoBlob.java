@@ -37,7 +37,7 @@ import org.hibernate.annotations.Immutable;
  */
 @Entity
 @Immutable
-@Table(name = "CP_ARQUIVO_BLOB", schema = "CORPORATIVO")
+@Table(name = "corporativo.cp_arquivo_blob")
 public class CpArquivoBlob implements Serializable {
 
 	private static final long serialVersionUID = 1L;

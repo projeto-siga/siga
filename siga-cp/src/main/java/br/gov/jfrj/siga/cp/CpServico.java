@@ -61,6 +61,9 @@ public class CpServico extends AbstractCpServico implements Selecionavel {
 	public boolean equivale(Object other) {
 		if (other == null)
 			return false;
+		if (this.getIdServico() == null || ((CpServico) other)
+				.getIdServico() == null)
+			return false;
 		return this.getIdServico().longValue() == ((CpServico) other)
 				.getIdServico().longValue();
 	}

@@ -1,4 +1,4 @@
-CREATE DATABASE  IF NOT EXISTS `corporativo` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+CREATE DATABASE  IF NOT EXISTS `corporativo` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `corporativo`;
 -- MySQL dump 10.13  Distrib 8.0.18, for Win64 (x86_64)
 --
@@ -23,14 +23,14 @@ USE `corporativo`;
 
 DROP TABLE IF EXISTS `cad_sit_funcional`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cad_sit_funcional` (
   `ID_CAD_SIT_FUNCIONAL` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `DSC_SIT_FUNCIONAL` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `DSC_SIT_FUNCIONAL` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `ID_MUMPS` INT UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`ID_CAD_SIT_FUNCIONAL`),
   UNIQUE KEY `CAD_SIT_FUNCIONAL_PK` (`ID_CAD_SIT_FUNCIONAL`)
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -49,18 +49,18 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_acesso`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_acesso` (
   `ID_ACESSO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `ID_IDENTIDADE` INT UNSIGNED NOT NULL,
   `DT_INI` datetime NOT NULL,
   `DT_FIM` datetime DEFAULT NULL,
   `TP_ACESSO` tinyint(4) NOT NULL,
-  `IP_AUDIT` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `IP_AUDIT` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   PRIMARY KEY (`ID_ACESSO`),
   KEY `CP_ACESSO_IDENTIDADE_FK` (`ID_IDENTIDADE`),
   CONSTRAINT `CP_ACESSO_IDENTIDADE_FK` FOREIGN KEY (`ID_IDENTIDADE`) REFERENCES `cp_identidade` (`ID_IDENTIDADE`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -78,14 +78,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_aplicacao_feriado`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_aplicacao_feriado` (
   `ID_APLICACAO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `ID_ORGAO_USU` INT UNSIGNED DEFAULT NULL,
   `ID_LOTACAO` INT UNSIGNED DEFAULT NULL,
   `ID_LOCALIDADE` INT UNSIGNED DEFAULT NULL,
   `ID_OCORRENCIA_FERIADO` INT UNSIGNED DEFAULT NULL,
-  `FERIADO` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `FERIADO` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   PRIMARY KEY (`ID_APLICACAO`),
   KEY `ID_ORGAO_USU` (`ID_ORGAO_USU`),
   KEY `ID_LOTACAO` (`ID_LOTACAO`),
@@ -95,7 +95,7 @@ CREATE TABLE `cp_aplicacao_feriado` (
   CONSTRAINT `cp_aplicacao_feriado_ibfk_2` FOREIGN KEY (`ID_LOTACAO`) REFERENCES `dp_lotacao` (`ID_LOTACAO`),
   CONSTRAINT `cp_aplicacao_feriado_ibfk_3` FOREIGN KEY (`ID_LOCALIDADE`) REFERENCES `cp_localidade` (`ID_LOCALIDADE`),
   CONSTRAINT `cp_aplicacao_feriado_ibfk_4` FOREIGN KEY (`ID_OCORRENCIA_FERIADO`) REFERENCES `cp_ocorrencia_feriado` (`ID_OCORRENCIA`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -113,16 +113,16 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_complexo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_complexo` (
   `ID_COMPLEXO` INT UNSIGNED NOT NULL,
-  `NOME_COMPLEXO` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `NOME_COMPLEXO` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `ID_LOCALIDADE` INT UNSIGNED DEFAULT NULL,
   `ID_ORGAO_USU` INT UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`ID_COMPLEXO`),
   KEY `ID_LOCALIDADE` (`ID_LOCALIDADE`),
   CONSTRAINT `cp_complexo_ibfk_1` FOREIGN KEY (`ID_LOCALIDADE`) REFERENCES `cp_localidade` (`ID_LOCALIDADE`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -141,7 +141,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_configuracao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_configuracao` (
   `ID_CONFIGURACAO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DT_INI_VIG_CONFIGURACAO` datetime DEFAULT NULL,
@@ -156,8 +156,8 @@ CREATE TABLE `cp_configuracao` (
   `ID_TP_CONFIGURACAO` INT UNSIGNED DEFAULT NULL,
   `ID_SERVICO` INT UNSIGNED DEFAULT NULL,
   `ID_GRUPO` INT UNSIGNED DEFAULT NULL,
-  `NM_EMAIL` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `DESC_FORMULA` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `NM_EMAIL` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `DESC_FORMULA` varchar(1024) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `ID_TP_LOTACAO` INT UNSIGNED DEFAULT NULL,
   `ID_IDENTIDADE` INT UNSIGNED DEFAULT NULL,
   `HIS_IDC_INI` INT UNSIGNED DEFAULT NULL,
@@ -166,7 +166,7 @@ CREATE TABLE `cp_configuracao` (
   `HIS_ID_INI` INT UNSIGNED DEFAULT NULL,
   `ID_COMPLEXO` INT UNSIGNED DEFAULT NULL,
   `ID_ORGAO_OBJETO` INT UNSIGNED DEFAULT NULL,
-  `DESCR_CONFIGURACAO` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `DESCR_CONFIGURACAO` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `ID_LOTACAO_OBJETO` INT UNSIGNED DEFAULT NULL,
   `ID_COMPLEXO_OBJETO` INT UNSIGNED DEFAULT NULL,
   `ID_CARGO_OBJETO` INT UNSIGNED DEFAULT NULL,
@@ -202,7 +202,7 @@ CREATE TABLE `cp_configuracao` (
   CONSTRAINT `CP_CONF_DP_F_CONFIANCA_ID_FK` FOREIGN KEY (`ID_FUNCAO_CONFIANCA`) REFERENCES `dp_funcao_confianca` (`ID_FUNCAO_CONFIANCA`),
   CONSTRAINT `CP_CONF_DP_LOT_ID_LOTACAO_FK` FOREIGN KEY (`ID_LOTACAO`) REFERENCES `dp_lotacao` (`ID_LOTACAO`),
   CONSTRAINT `CP_CONF_DP_PES_ID_PESSOA_FK` FOREIGN KEY (`ID_PESSOA`) REFERENCES `dp_pessoa` (`ID_PESSOA`)
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -221,13 +221,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_feriado`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_feriado` (
   `ID_FERIADO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `DSC_FERIADO` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `DSC_FERIADO` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   PRIMARY KEY (`ID_FERIADO`),
   UNIQUE KEY `FERIADO_PK` (`ID_FERIADO`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -245,14 +245,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_grupo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_grupo` (
   `ID_GRUPO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `ID_TP_GRUPO` INT UNSIGNED NOT NULL,
   `ID_ORGAO_USU` INT UNSIGNED NOT NULL,
   `ID_GRUPO_PAI` INT UNSIGNED DEFAULT NULL,
-  `SIGLA_GRUPO` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `DESC_GRUPO` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `SIGLA_GRUPO` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `DESC_GRUPO` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `HIS_ID_INI` INT UNSIGNED DEFAULT NULL,
   `HIS_DT_INI` datetime NOT NULL,
   `HIS_IDC_INI` INT UNSIGNED DEFAULT NULL,
@@ -271,7 +271,7 @@ CREATE TABLE `cp_grupo` (
   CONSTRAINT `CP_GRP_CP_IDENT_IDC_FIM_FK` FOREIGN KEY (`HIS_IDC_FIM`) REFERENCES `cp_identidade` (`ID_IDENTIDADE`),
   CONSTRAINT `CP_GRP_CP_IDENT_IDC_INI_FK` FOREIGN KEY (`HIS_IDC_INI`) REFERENCES `cp_identidade` (`ID_IDENTIDADE`),
   CONSTRAINT `CP_GRP_CP_TP_GRP_ID_TP_GRP_FK` FOREIGN KEY (`ID_TP_GRUPO`) REFERENCES `cp_tipo_grupo` (`ID_TP_GRUPO`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -289,7 +289,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_identidade`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_identidade` (
   `ID_IDENTIDADE` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `ID_TP_IDENTIDADE` INT UNSIGNED DEFAULT NULL,
@@ -298,10 +298,10 @@ CREATE TABLE `cp_identidade` (
   `DATA_EXPIRACAO_IDENTIDADE` datetime DEFAULT NULL,
   `DATA_CANCELAMENTO_IDENTIDADE` datetime DEFAULT NULL,
   `ID_ORGAO_USU` INT UNSIGNED DEFAULT NULL,
-  `LOGIN_IDENTIDADE` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `SENHA_IDENTIDADE` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `SENHA_IDENTIDADE_CRIPTO` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `SENHA_IDENTIDADE_CRIPTO_SINC` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `LOGIN_IDENTIDADE` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `SENHA_IDENTIDADE` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `SENHA_IDENTIDADE_CRIPTO` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `SENHA_IDENTIDADE_CRIPTO_SINC` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `HIS_ID_INI` INT UNSIGNED DEFAULT NULL,
   `HIS_DT_INI` datetime NOT NULL,
   `HIS_IDC_INI` INT UNSIGNED DEFAULT NULL,
@@ -323,7 +323,7 @@ CREATE TABLE `cp_identidade` (
   CONSTRAINT `CP_IDENT_CP_IDENT_ID_INI_FK` FOREIGN KEY (`HIS_ID_INI`) REFERENCES `cp_identidade` (`ID_IDENTIDADE`),
   CONSTRAINT `CP_IDENT_CP_TPIDT_ID_TP_IDT_FK` FOREIGN KEY (`ID_TP_IDENTIDADE`) REFERENCES `cp_tipo_identidade` (`ID_TP_IDENTIDADE`),
   CONSTRAINT `CP_IDENT_DP_PESS_ID_PESS_FK` FOREIGN KEY (`ID_PESSOA`) REFERENCES `dp_pessoa` (`ID_PESSOA`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -342,16 +342,16 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_localidade`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_localidade` (
   `ID_LOCALIDADE` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `NM_LOCALIDADE` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `NM_LOCALIDADE` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `ID_UF` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`ID_LOCALIDADE`),
   UNIQUE KEY `LOCALIDADE_FK` (`ID_LOCALIDADE`),
   KEY `UF_LOCALIDADE_FK` (`ID_UF`),
   CONSTRAINT `UF_LOCALIDADE_FK` FOREIGN KEY (`ID_UF`) REFERENCES `cp_uf` (`ID_UF`)
-) ENGINE=InnoDB AUTO_INCREMENT=672 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=672 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -370,7 +370,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_marca`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_marca` (
   `ID_MARCA` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DT_INI_MARCA` datetime DEFAULT NULL,
@@ -393,7 +393,7 @@ CREATE TABLE `cp_marca` (
   CONSTRAINT `cp_marca_ibfk_3` FOREIGN KEY (`ID_LOTACAO_INI`) REFERENCES `dp_lotacao` (`ID_LOTACAO`),
   CONSTRAINT `cp_marca_ibfk_4` FOREIGN KEY (`ID_TP_MARCA`) REFERENCES `cp_tipo_marca` (`ID_TP_MARCA`),
   CONSTRAINT `cp_marca_ibfk_5` FOREIGN KEY (`ID_MOBIL`) REFERENCES `siga`.`ex_mobil` (`ID_MOBIL`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -411,16 +411,16 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_marcador`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_marcador` (
   `ID_MARCADOR` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `DESCR_MARCADOR` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `DESCR_MARCADOR` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `ID_TP_MARCADOR` INT UNSIGNED DEFAULT NULL,
   `ORD_MARCADOR` int(11) DEFAULT NULL,
   PRIMARY KEY (`ID_MARCADOR`),
   KEY `ID_TP_MARCADOR` (`ID_TP_MARCADOR`),
   CONSTRAINT `cp_marcador_ibfk_1` FOREIGN KEY (`ID_TP_MARCADOR`) REFERENCES `cp_tipo_marcador` (`ID_TP_MARCADOR`)
-) ENGINE=InnoDB AUTO_INCREMENT=1003 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1003 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -439,7 +439,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_arquivo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_arquivo` (
   `ID_ARQ` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `ID_ORGAO_USU` INT UNSIGNED DEFAULT NULL,
@@ -447,7 +447,7 @@ CREATE TABLE `cp_arquivo` (
   PRIMARY KEY (`ID_ARQ`),
   KEY `ID_ORGAO_USU` (`ID_ORGAO_USU`),
   CONSTRAINT `cp_arq_ibfk_1` FOREIGN KEY (`ID_ORGAO_USU`) REFERENCES `cp_orgao_usuario` (`ID_ORGAO_USU`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -466,12 +466,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_arquivo_blob`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_arquivo_blob` (
   `ID_ARQ_BLOB` BIGINT UNSIGNED NOT NULL,
   `CONTEUDO_ARQ_BLOB` BLOB DEFAULT NULL,
   PRIMARY KEY (`ID_ARQ_BLOB`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -490,7 +490,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_modelo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_modelo` (
   `ID_MODELO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `ID_ORGAO_USU` INT UNSIGNED DEFAULT NULL,
@@ -513,7 +513,7 @@ CREATE TABLE `cp_modelo` (
   CONSTRAINT `cp_modelo_ibfk_3` FOREIGN KEY (`HIS_IDC_FIM`) REFERENCES `cp_identidade` (`ID_IDENTIDADE`),
   CONSTRAINT `cp_modelo_ibfk_4` FOREIGN KEY (`HIS_ID_INI`) REFERENCES `cp_modelo` (`ID_MODELO`),
   CONSTRAINT `cp_modelo_ibfk_5` FOREIGN KEY (`ID_ARQ`) REFERENCES `cp_arquivo` (`ID_ARQ`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -531,7 +531,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_ocorrencia_feriado`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_ocorrencia_feriado` (
   `ID_OCORRENCIA` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DT_INI_FERIADO` datetime DEFAULT NULL,
@@ -540,7 +540,7 @@ CREATE TABLE `cp_ocorrencia_feriado` (
   PRIMARY KEY (`ID_OCORRENCIA`),
   KEY `ID_FERIADO` (`ID_FERIADO`),
   CONSTRAINT `cp_ocorrencia_feriado_ibfk_1` FOREIGN KEY (`ID_FERIADO`) REFERENCES `cp_feriado` (`ID_FERIADO`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -558,28 +558,28 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_orgao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_orgao` (
   `ID_ORGAO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `NM_ORGAO` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `NM_ORGAO` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `CGC_ORGAO` INT UNSIGNED DEFAULT NULL,
-  `RAZAO_SOCIAL_ORGAO` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `END_ORGAO` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `BAIRRO_ORGAO` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `MUNICIPIO_ORGAO` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `CEP_ORGAO` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `DSC_TIPO_ORGAO` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `NOME_RESPONSAVEL_ORGAO` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `EMAIL_RESPONSAVEL_ORGAO` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `NOME_CONTATO_ORGAO` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `EMAIL_CONTATO_ORGAO` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `TEL_CONTATO_ORGAO` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `SIGLA_ORGAO` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `UF_ORGAO` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `RAZAO_SOCIAL_ORGAO` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `END_ORGAO` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `BAIRRO_ORGAO` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `MUNICIPIO_ORGAO` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `CEP_ORGAO` varchar(8) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `DSC_TIPO_ORGAO` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `NOME_RESPONSAVEL_ORGAO` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `EMAIL_RESPONSAVEL_ORGAO` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `NOME_CONTATO_ORGAO` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `EMAIL_CONTATO_ORGAO` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `TEL_CONTATO_ORGAO` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `SIGLA_ORGAO` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `UF_ORGAO` varchar(2) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `ID_ORGAO_USU` INT UNSIGNED NOT NULL,
-  `FG_ATIVO` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `FG_ATIVO` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `HIS_ID_INI` INT UNSIGNED DEFAULT NULL,
-  `HIS_IDE` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `HIS_IDE` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `HIS_DT_INI` datetime DEFAULT NULL,
   `HIS_DT_FIM` datetime DEFAULT NULL,
   `HIS_ATIVO` INT UNSIGNED DEFAULT NULL,
@@ -587,7 +587,7 @@ CREATE TABLE `cp_orgao` (
   UNIQUE KEY `ORGAO_PK` (`ID_ORGAO`),
   KEY `ORGAO_ORGAO_USU_FK` (`ID_ORGAO_USU`),
   CONSTRAINT `ORGAO_ORGAO_USU_FK` FOREIGN KEY (`ID_ORGAO_USU`) REFERENCES `cp_orgao_usuario` (`ID_ORGAO_USU`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -606,25 +606,25 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_orgao_usuario`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_orgao_usuario` (
   `ID_ORGAO_USU` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `NM_ORGAO_USU` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `NM_ORGAO_USU` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `CGC_ORGAO_USU` bigint(20) DEFAULT NULL,
-  `RAZAO_SOCIAL_ORGAO_USU` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `END_ORGAO_USU` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `BAIRRO_ORGAO_USU` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `MUNICIPIO_ORGAO_USU` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `CEP_ORGAO_USU` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `NM_RESP_ORGAO_USU` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `TEL_ORGAO_USU` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `SIGLA_ORGAO_USU` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `UF_ORGAO_USU` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `RAZAO_SOCIAL_ORGAO_USU` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `END_ORGAO_USU` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `BAIRRO_ORGAO_USU` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `MUNICIPIO_ORGAO_USU` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `CEP_ORGAO_USU` varchar(8) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `NM_RESP_ORGAO_USU` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `TEL_ORGAO_USU` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `SIGLA_ORGAO_USU` varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `UF_ORGAO_USU` varchar(2) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `COD_ORGAO_USU` INT UNSIGNED DEFAULT NULL,
-  `ACRONIMO_ORGAO_USU` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ACRONIMO_ORGAO_USU` varchar(12) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   PRIMARY KEY (`ID_ORGAO_USU`),
   UNIQUE KEY `ORGAO_USU_PK` (`ID_ORGAO_USU`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -643,7 +643,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_papel`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_papel` (
   `ID_PAPEL` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `ID_TP_PAPEL` INT UNSIGNED NOT NULL,
@@ -653,7 +653,7 @@ CREATE TABLE `cp_papel` (
   `ID_CARGO` INT UNSIGNED NOT NULL,
   `ID_ORGAO_USU` INT UNSIGNED NOT NULL,
   `HIS_ID_INI` INT UNSIGNED DEFAULT NULL,
-  `HIS_IDE` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `HIS_IDE` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `HIS_DT_INI` datetime NOT NULL,
   `HIS_DT_FIM` datetime DEFAULT NULL,
   `HIS_ATIVO` tinyint(4) NOT NULL,
@@ -673,7 +673,7 @@ CREATE TABLE `cp_papel` (
   CONSTRAINT `CP_PAPEL_DP_FC_ID_FC_FK` FOREIGN KEY (`ID_FUNCAO_CONFIANCA`) REFERENCES `dp_funcao_confianca` (`ID_FUNCAO_CONFIANCA`),
   CONSTRAINT `CP_PAPEL_DP_LOT_ID_LOT_FK` FOREIGN KEY (`ID_LOTACAO`) REFERENCES `dp_lotacao` (`ID_LOTACAO`),
   CONSTRAINT `CP_PAPEL_DP_PESS_ID_PESS_FK` FOREIGN KEY (`ID_PESSOA`) REFERENCES `dp_pessoa` (`ID_PESSOA`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -691,14 +691,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_personalizacao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_personalizacao` (
   `ID_PESSOA` INT UNSIGNED NOT NULL,
   `ID_PAPEL_ATIVO` INT UNSIGNED DEFAULT NULL,
   `ID_SUBSTITUINDO_PESSOA` INT UNSIGNED DEFAULT NULL,
   `ID_SUBSTITUINDO_LOTACAO` INT UNSIGNED DEFAULT NULL,
   `ID_SUBSTITUINDO_PAPEL` INT UNSIGNED DEFAULT NULL,
-  `NM_SIMULANDO_USUARIO` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `NM_SIMULANDO_USUARIO` varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `ID_PERSONALIZACAO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`ID_PERSONALIZACAO`),
   KEY `CP_PERSON_CP_PAP_ID_ATIVO_FK` (`ID_PAPEL_ATIVO`),
@@ -711,7 +711,7 @@ CREATE TABLE `cp_personalizacao` (
   CONSTRAINT `CP_PERSON_DP_LOT_ID_SUBST_FK` FOREIGN KEY (`ID_SUBSTITUINDO_LOTACAO`) REFERENCES `dp_lotacao` (`ID_LOTACAO`),
   CONSTRAINT `CP_PERSON_DP_PESS_ID_PESS_FK` FOREIGN KEY (`ID_PESSOA`) REFERENCES `dp_pessoa` (`ID_PESSOA`),
   CONSTRAINT `CP_PERSON_DP_PESS_ID_SUBST_FK` FOREIGN KEY (`ID_SUBSTITUINDO_PESSOA`) REFERENCES `dp_pessoa` (`ID_PESSOA`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -729,16 +729,16 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_sede`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_sede` (
   `ID_SEDE` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `NM_SEDE` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `DSC_SEDE` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `NM_SEDE` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `DSC_SEDE` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `ID_ORGAO_USU` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`ID_SEDE`),
   KEY `ID_ORGAO_USU` (`ID_ORGAO_USU`),
   CONSTRAINT `cp_sede_ibfk_1` FOREIGN KEY (`ID_ORGAO_USU`) REFERENCES `cp_orgao_usuario` (`ID_ORGAO_USU`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -756,20 +756,20 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_servico`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_servico` (
   `ID_SERVICO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `SIGLA_SERVICO` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `DESC_SERVICO` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `SIGLA_SERVICO` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `DESC_SERVICO` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `ID_SERVICO_PAI` INT UNSIGNED DEFAULT NULL,
   `ID_TP_SERVICO` INT UNSIGNED NOT NULL,
-  `LABEL_SERVICO` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `LABEL_SERVICO` varchar(35) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   PRIMARY KEY (`ID_SERVICO`),
   UNIQUE KEY `CP_SERVICO_ID_SERVICO_PK` (`ID_SERVICO`),
   UNIQUE KEY `SIGLA_SERVICO_IDX` (`SIGLA_SERVICO`),
   KEY `CP_SERV_CPTPSERV_ID_TPSERV_FK` (`ID_TP_SERVICO`),
   CONSTRAINT `CP_SERV_CPTPSERV_ID_TPSERV_FK` FOREIGN KEY (`ID_TP_SERVICO`) REFERENCES `cp_tipo_servico` (`ID_TP_SERVICO`)
-) ENGINE=InnoDB AUTO_INCREMENT=316 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=316 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -788,14 +788,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_situacao_configuracao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_situacao_configuracao` (
   `ID_SIT_CONFIGURACAO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `DSC_SIT_CONFIGURACAO` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `DSC_SIT_CONFIGURACAO` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `RESTRITIVIDADE_SIT_CONF` double NOT NULL,
   PRIMARY KEY (`ID_SIT_CONFIGURACAO`),
   UNIQUE KEY `CP_SIT_CONF_ID_SIT_CONF_PK` (`ID_SIT_CONFIGURACAO`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -814,16 +814,16 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_tipo_configuracao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_tipo_configuracao` (
   `ID_TP_CONFIGURACAO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `DSC_TP_CONFIGURACAO` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `DSC_TP_CONFIGURACAO` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `ID_SIT_CONFIGURACAO` INT UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`ID_TP_CONFIGURACAO`),
   UNIQUE KEY `CP_TP_CONF_ID_TP_CONF_PK` (`ID_TP_CONFIGURACAO`),
   KEY `CP_TP_CONF_CP_SIT_CONF_ID_FK` (`ID_SIT_CONFIGURACAO`),
   CONSTRAINT `CP_TP_CONF_CP_SIT_CONF_ID_FK` FOREIGN KEY (`ID_SIT_CONFIGURACAO`) REFERENCES `cp_situacao_configuracao` (`ID_SIT_CONFIGURACAO`)
-) ENGINE=InnoDB AUTO_INCREMENT=308 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=308 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -842,13 +842,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_tipo_grupo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_tipo_grupo` (
   `ID_TP_GRUPO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `DESC_TP_GRUPO` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `DESC_TP_GRUPO` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   PRIMARY KEY (`ID_TP_GRUPO`),
   UNIQUE KEY `CP_TIPO_GRUPO_PK` (`ID_TP_GRUPO`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -867,13 +867,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_tipo_identidade`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_tipo_identidade` (
   `ID_TP_IDENTIDADE` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `DESC_TP_IDENTIDADE` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `DESC_TP_IDENTIDADE` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   PRIMARY KEY (`ID_TP_IDENTIDADE`),
   UNIQUE KEY `CP_TIPO_IDENTIDADE_PK` (`ID_TP_IDENTIDADE`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -892,15 +892,15 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_tipo_lotacao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_tipo_lotacao` (
   `ID_TP_LOTACAO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `SIGLA_TP_LOTACAO` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `DESC_TP_LOTACAO` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `SIGLA_TP_LOTACAO` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `DESC_TP_LOTACAO` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `ID_TP_LOTACAO_PAI` INT UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`ID_TP_LOTACAO`),
   UNIQUE KEY `CP_TIPO_LOTACAO_PK` (`ID_TP_LOTACAO`)
-) ENGINE=InnoDB AUTO_INCREMENT=204 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=204 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -919,12 +919,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_tipo_marca`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_tipo_marca` (
   `ID_TP_MARCA` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `DESCR_TP_MARCA` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `DESCR_TP_MARCA` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   PRIMARY KEY (`ID_TP_MARCA`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -943,12 +943,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_tipo_marcador`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_tipo_marcador` (
   `ID_TP_MARCADOR` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `DESCR_TIPO_MARCADOR` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `DESCR_TIPO_MARCADOR` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   PRIMARY KEY (`ID_TP_MARCADOR`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -967,13 +967,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_tipo_papel`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_tipo_papel` (
   `ID_TP_PAPEL` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `DESC_TP_PAPEL` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `DESC_TP_PAPEL` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   PRIMARY KEY (`ID_TP_PAPEL`),
   UNIQUE KEY `CP_TIPO_PAPEL_PK` (`ID_TP_PAPEL`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -992,13 +992,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_tipo_pessoa`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_tipo_pessoa` (
   `ID_TP_PESSOA` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `DESC_TP_PESSOA` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `DESC_TP_PESSOA` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   PRIMARY KEY (`ID_TP_PESSOA`),
   UNIQUE KEY `CP_TIPO_PESSOA_PK` (`ID_TP_PESSOA`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1017,16 +1017,16 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_tipo_servico`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_tipo_servico` (
   `ID_TP_SERVICO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `DESC_TP_SERVICO` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `DESC_TP_SERVICO` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `ID_SIT_CONFIGURACAO` INT UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`ID_TP_SERVICO`),
   UNIQUE KEY `CP_TIPO_SERVICO_PK` (`ID_TP_SERVICO`),
   KEY `CP_TP_SERV_ID_SIT_CONF_FK` (`ID_SIT_CONFIGURACAO`),
   CONSTRAINT `CP_TP_SERV_ID_SIT_CONF_FK` FOREIGN KEY (`ID_SIT_CONFIGURACAO`) REFERENCES `cp_tipo_configuracao` (`ID_TP_CONFIGURACAO`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1045,7 +1045,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_tipo_servico_situacao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_tipo_servico_situacao` (
   `ID_TP_SERVICO` INT UNSIGNED NOT NULL DEFAULT '0',
   `ID_SIT_CONFIGURACAO` INT UNSIGNED NOT NULL DEFAULT '0',
@@ -1053,7 +1053,7 @@ CREATE TABLE `cp_tipo_servico_situacao` (
   KEY `CP_TPSERVSIT_ID_SITCONF_FK` (`ID_SIT_CONFIGURACAO`),
   CONSTRAINT `CP_TPSERVSIT_ID_SITCONF_FK` FOREIGN KEY (`ID_SIT_CONFIGURACAO`) REFERENCES `cp_situacao_configuracao` (`ID_SIT_CONFIGURACAO`),
   CONSTRAINT `CP_TPSRVSIT_IDTPSRV_FK` FOREIGN KEY (`ID_TP_SERVICO`) REFERENCES `cp_tipo_servico` (`ID_TP_SERVICO`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1072,13 +1072,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_uf`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_uf` (
   `ID_UF` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `NM_UF` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `NM_UF` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   PRIMARY KEY (`ID_UF`),
   UNIQUE KEY `UF_PK` (`ID_UF`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1097,12 +1097,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `cp_unidade_medida`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_unidade_medida` (
   `ID_UNIDADE_MEDIDA` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `DESCR_UNIDADE_MEDIDA` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `DESCR_UNIDADE_MEDIDA` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   PRIMARY KEY (`ID_UNIDADE_MEDIDA`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1121,22 +1121,22 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `dp_cargo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `dp_cargo` (
   `ID_CARGO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `NOME_CARGO` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `NOME_CARGO` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `ID_ORGAO_USU` INT UNSIGNED NOT NULL,
   `DT_FIM_CARGO` datetime DEFAULT NULL,
   `DT_INI_CARGO` datetime DEFAULT NULL,
   `ID_CARGO_INICIAL` INT UNSIGNED DEFAULT NULL,
-  `IDE_CARGO` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `SIGLA_CARGO` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `IDE_CARGO` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `SIGLA_CARGO` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   PRIMARY KEY (`ID_CARGO`),
   KEY `DP_CARGO_IDX_012` (`ID_ORGAO_USU`),
   KEY `DP_CARGO_IDX_011` (`ID_CARGO_INICIAL`),
   CONSTRAINT `CARGO_INICIAL_CARGO_FK` FOREIGN KEY (`ID_CARGO_INICIAL`) REFERENCES `dp_cargo` (`ID_CARGO`),
   CONSTRAINT `CARGO_ORGAO_USU_FK` FOREIGN KEY (`ID_ORGAO_USU`) REFERENCES `cp_orgao_usuario` (`ID_ORGAO_USU`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1174,13 +1174,13 @@ DELIMITER ;
 
 DROP TABLE IF EXISTS `dp_estado_civil`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `dp_estado_civil` (
   `ID_ESTADO_CIVIL` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `NM_ESTADO_CIVIL` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `NM_ESTADO_CIVIL` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   PRIMARY KEY (`ID_ESTADO_CIVIL`),
   UNIQUE KEY `ESTADO_CIVIL_PK` (`ID_ESTADO_CIVIL`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1199,20 +1199,20 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `dp_funcao_confianca`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `dp_funcao_confianca` (
   `ID_FUNCAO_CONFIANCA` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `NOME_FUNCAO_CONFIANCA` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `NOME_FUNCAO_CONFIANCA` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `NIVEL_FUNCAO_CONFIANCA` tinyint(4) DEFAULT NULL,
   `COD_FOLHA_FUNCAO_CONFIANCA` tinyint(4) DEFAULT NULL,
   `DT_INI_FUNCAO_CONFIANCA` datetime DEFAULT NULL,
   `DT_FIM_FUNCAO_CONFIANCA` datetime DEFAULT NULL,
   `ID_FUNCAO_CONFIANCA_PAI` INT UNSIGNED DEFAULT NULL,
-  `CATEGORIA_FUNCAO_CONFIANCA` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `CATEGORIA_FUNCAO_CONFIANCA` varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `ID_ORGAO_USU` INT UNSIGNED NOT NULL,
-  `IDE_FUNCAO_CONFIANCA` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `IDE_FUNCAO_CONFIANCA` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `ID_FUN_CONF_INI` INT UNSIGNED DEFAULT NULL,
-  `SIGLA_FUNCAO_CONFIANCA` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `SIGLA_FUNCAO_CONFIANCA` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   PRIMARY KEY (`ID_FUNCAO_CONFIANCA`),
   KEY `DP_FUNCAO_CONFIANCA_IDX_010` (`ID_FUNCAO_CONFIANCA_PAI`),
   KEY `DP_FUNCAO_CONFIANCA_IDX_009` (`ID_ORGAO_USU`),
@@ -1220,7 +1220,7 @@ CREATE TABLE `dp_funcao_confianca` (
   CONSTRAINT `FUN_CONF_INI_FUN_CONF_PK` FOREIGN KEY (`ID_FUN_CONF_INI`) REFERENCES `dp_funcao_confianca` (`ID_FUNCAO_CONFIANCA`),
   CONSTRAINT `FUN_CONF_ORGAO_USU_FK` FOREIGN KEY (`ID_ORGAO_USU`) REFERENCES `cp_orgao_usuario` (`ID_ORGAO_USU`),
   CONSTRAINT `dp_funcao_confianca_ibfk_1` FOREIGN KEY (`ID_FUNCAO_CONFIANCA_PAI`) REFERENCES `dp_funcao_confianca` (`ID_FUNCAO_CONFIANCA`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1257,16 +1257,16 @@ DELIMITER ;
 
 DROP TABLE IF EXISTS `dp_lotacao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `dp_lotacao` (
   `ID_LOTACAO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DATA_INI_LOT` datetime NOT NULL,
   `DATA_FIM_LOT` datetime DEFAULT NULL,
-  `NOME_LOTACAO` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `NOME_LOTACAO` varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `ID_LOTACAO_PAI` INT UNSIGNED DEFAULT NULL,
-  `SIGLA_LOTACAO` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `SIGLA_LOTACAO` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `ID_ORGAO_USU` INT UNSIGNED NOT NULL,
-  `IDE_LOTACAO` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `IDE_LOTACAO` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `ID_LOTACAO_INI` INT UNSIGNED DEFAULT NULL,
   `ID_TP_LOTACAO` INT UNSIGNED DEFAULT NULL,
   `ID_LOCALIDADE` INT UNSIGNED DEFAULT NULL,
@@ -1281,7 +1281,7 @@ CREATE TABLE `dp_lotacao` (
   CONSTRAINT `LOTACAO_ORGAO_USU_FK` FOREIGN KEY (`ID_ORGAO_USU`) REFERENCES `cp_orgao_usuario` (`ID_ORGAO_USU`),
   CONSTRAINT `dp_lotacao_ibfk_1` FOREIGN KEY (`ID_LOTACAO_PAI`) REFERENCES `dp_lotacao` (`ID_LOTACAO`),
   CONSTRAINT `dp_lotacao_ibfk_2` FOREIGN KEY (`ID_LOCALIDADE`) REFERENCES `cp_localidade` (`ID_LOCALIDADE`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1319,20 +1319,20 @@ DELIMITER ;
 
 DROP TABLE IF EXISTS `dp_padrao_referencia`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `dp_padrao_referencia` (
   `ID_PADRAO_REFERENCIA` tinyint(4) NOT NULL AUTO_INCREMENT,
   `ID_PADRAO_REFERENCIA_PAI` tinyint(4) DEFAULT NULL,
-  `DSC_PADRAO` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `DSC_CLASSE` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `DSC_NIVEL` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `DSC_PADRAO` varchar(3) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `DSC_CLASSE` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `DSC_NIVEL` varchar(2) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `PADRAO_REFERENCIA_DT_FIM` datetime DEFAULT NULL,
   `ID_ORGAO_USU` INT UNSIGNED NOT NULL DEFAULT '1',
   PRIMARY KEY (`ID_PADRAO_REFERENCIA`),
   UNIQUE KEY `PADRAO_REFERENCIA_PK` (`ID_PADRAO_REFERENCIA`),
   KEY `PADRAO_REF_ORGAO_USU_FK` (`ID_ORGAO_USU`),
   CONSTRAINT `PADRAO_REF_ORGAO_USU_FK` FOREIGN KEY (`ID_ORGAO_USU`) REFERENCES `cp_orgao_usuario` (`ID_ORGAO_USU`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1350,51 +1350,51 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `dp_pessoa`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `dp_pessoa` (
   `ID_PESSOA` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `DATA_INI_PESSOA` datetime NOT NULL,
   `DATA_FIM_PESSOA` datetime DEFAULT NULL,
   `CPF_PESSOA` bigint(20) NOT NULL,
-  `NOME_PESSOA` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `NOME_PESSOA` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `DATA_NASC_PESSOA` datetime DEFAULT NULL,
   `MATRICULA` INT UNSIGNED NOT NULL,
   `ID_LOTACAO` INT UNSIGNED NOT NULL,
   `ID_CARGO` INT UNSIGNED DEFAULT NULL,
   `ID_FUNCAO_CONFIANCA` INT UNSIGNED DEFAULT NULL,
-  `SESB_PESSOA` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `EMAIL_PESSOA` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `SESB_PESSOA` varchar(5) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `EMAIL_PESSOA` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `TP_SERVIDOR_PESSOA` tinyint(4) DEFAULT NULL,
-  `SIGLA_PESSOA` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `SEXO_PESSOA` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `GRAU_INSTRUCAO_PESSOA` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `TP_SANGUINEO_PESSOA` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `NACIONALIDADE_PESSOA` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `SIGLA_PESSOA` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `SEXO_PESSOA` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `GRAU_INSTRUCAO_PESSOA` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `TP_SANGUINEO_PESSOA` varchar(3) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `NACIONALIDADE_PESSOA` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `DATA_POSSE_PESSOA` datetime DEFAULT NULL,
   `DATA_NOMEACAO_PESSOA` datetime DEFAULT NULL,
   `DATA_PUBLICACAO_PESSOA` datetime DEFAULT NULL,
   `DATA_INICIO_EXERCICIO_PESSOA` datetime DEFAULT NULL,
-  `ATO_NOMEACAO_PESSOA` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `SITUACAO_FUNCIONAL_PESSOA` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ATO_NOMEACAO_PESSOA` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `SITUACAO_FUNCIONAL_PESSOA` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `ID_PROVIMENTO` tinyint(4) DEFAULT NULL,
-  `NATURALIDADE_PESSOA` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `FG_IMPRIME_END` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `DSC_PADRAO_REFERENCIA_PESSOA` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `NATURALIDADE_PESSOA` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `FG_IMPRIME_END` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `DSC_PADRAO_REFERENCIA_PESSOA` varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `ID_ORGAO_USU` INT UNSIGNED NOT NULL,
-  `IDE_PESSOA` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `IDE_PESSOA` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `ID_PESSOA_INICIAL` INT UNSIGNED DEFAULT NULL,
-  `ENDERECO_PESSOA` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `BAIRRO_PESSOA` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `CIDADE_PESSOA` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `CEP_PESSOA` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `TELEFONE_PESSOA` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `RG_PESSOA` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `RG_ORGAO_PESSOA` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ENDERECO_PESSOA` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `BAIRRO_PESSOA` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `CIDADE_PESSOA` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `CEP_PESSOA` varchar(8) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `TELEFONE_PESSOA` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `RG_PESSOA` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `RG_ORGAO_PESSOA` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `RG_DATA_EXPEDICAO_PESSOA` datetime DEFAULT NULL,
-  `RG_UF_PESSOA` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `RG_UF_PESSOA` varchar(2) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `ID_ESTADO_CIVIL` INT UNSIGNED DEFAULT NULL,
   `ID_TP_PESSOA` INT UNSIGNED DEFAULT NULL,
-  `NOME_EXIBICAO` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `NOME_EXIBICAO` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   PRIMARY KEY (`ID_PESSOA`),
   KEY `PES_ID_INI` (`ID_PESSOA_INICIAL`,`DATA_FIM_PESSOA`),
   KEY `DP_PESSOA_IDX_003` (`ID_FUNCAO_CONFIANCA`),
@@ -1415,7 +1415,7 @@ CREATE TABLE `dp_pessoa` (
   CONSTRAINT `dp_pessoa_ibfk_2` FOREIGN KEY (`ID_FUNCAO_CONFIANCA`) REFERENCES `dp_funcao_confianca` (`ID_FUNCAO_CONFIANCA`),
   CONSTRAINT `dp_pessoa_ibfk_3` FOREIGN KEY (`ID_LOTACAO`) REFERENCES `dp_lotacao` (`ID_LOTACAO`),
   CONSTRAINT `dp_pessoa_ibfk_4` FOREIGN KEY (`ID_PROVIMENTO`) REFERENCES `dp_provimento` (`ID_PROVIMENTO`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1453,12 +1453,12 @@ DELIMITER ;
 
 DROP TABLE IF EXISTS `dp_provimento`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `dp_provimento` (
   `ID_PROVIMENTO` tinyint(4) NOT NULL AUTO_INCREMENT,
-  `DSC_PROVIMENTO` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `DSC_PROVIMENTO` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   PRIMARY KEY (`ID_PROVIMENTO`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1476,7 +1476,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `dp_substituicao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `dp_substituicao` (
   `ID_SUBSTITUICAO` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `ID_TITULAR` INT UNSIGNED DEFAULT NULL,
@@ -1493,7 +1493,7 @@ CREATE TABLE `dp_substituicao` (
   KEY `SUBSTITUICAO_PESOA_TITULAR_FK` (`ID_TITULAR`),
   CONSTRAINT `SUBSTITUICAO_PESOA_SUBST_FK` FOREIGN KEY (`ID_SUBSTITUTO`) REFERENCES `dp_pessoa` (`ID_PESSOA`),
   CONSTRAINT `SUBSTITUICAO_PESOA_TITULAR_FK` FOREIGN KEY (`ID_TITULAR`) REFERENCES `dp_pessoa` (`ID_PESSOA`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

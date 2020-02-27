@@ -89,7 +89,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	}
 
 	@Get
-	@Path({"/app/pessoa/buscar-json/{texto}"})
+	@Path({"/app/pessoa/buscar-json/{sigla}"})
 	public void busca(String sigla) throws Exception{
 		aBuscarJson(sigla);
 	}

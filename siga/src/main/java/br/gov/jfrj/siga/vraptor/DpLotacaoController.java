@@ -60,7 +60,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	}
 	
 	@Get
-	@Path({"/app/lotacao/buscar-json/{texto}"})
+	@Path({"/app/lotacao/buscar-json/{sigla}"})
 	public void busca(String sigla) throws Exception{
 		aBuscarJson(sigla);
 	}

@@ -26,13 +26,12 @@ import br.gov.jfrj.siga.cp.bl.Cp;
  * @author kpf
  * 
  */
-public class Wf extends
-		Cp<WfConfiguracaoBL, WfCompetenciaBL, WfBL, WfPropriedadeBL> {
+public class Wf extends Cp<WfConfiguracaoBL, WfCompetenciaBL, WfBL, WfPropriedadeBL> {
 
 	/**
 	 * Retorna uma instância do sistema de workflow. Através dessa instância é
-	 * possível acessar a lógica de negócio, competências e configurações do
-	 * sistema de workflow.
+	 * possível acessar a lógica de negócio, competências e configurações do sistema
+	 * de workflow.
 	 * 
 	 * @return Instância de workflow
 	 */
@@ -43,8 +42,7 @@ public class Wf extends
 					Wf instance = new Wf();
 					setInstance(instance);
 					instance.setConf(new WfConfiguracaoBL());
-					instance.getConf().setComparator(
-							new WfConfiguracaoComparator());
+					instance.getConf().setComparator(new WfConfiguracaoComparator());
 					instance.setComp(new WfCompetenciaBL());
 					instance.getComp().setConfiguracaoBL(instance.getConf());
 					instance.setBL(new WfBL());
@@ -53,6 +51,11 @@ public class Wf extends
 				}
 			}
 		}
-		return (Wf) Cp.getInstance();
+		Cp wf = Cp.getInstance();
+		if (wf instanceof Wf) {
+			return (Wf) Cp.getInstance();
+		}
+		setInstance(null);
+		return getInstance();
 	}
 }

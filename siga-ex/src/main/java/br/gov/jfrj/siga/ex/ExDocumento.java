@@ -94,7 +94,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	private byte[] cacheConteudoBlobDoc;
 	
 	@Transient
-	private List<ExMovimentacao> listaMovimentacaoPorRestricaoAcesso;
+	private List<ExMovimentacao> listaMovimentacaoPorRestricaoAcesso;	
+	
+	@Transient
+	private Boolean podeReordenar;
+	
+	@Transient
+	private boolean podeExibirReordenacao;
 
 	@Formula("REMOVE_ACENTO(DESCR_DOCUMENTO)")
 	private String descrDocumentoAI;
@@ -1493,16 +1499,45 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 */
 	private List<ExArquivoNumerado> getArquivosNumerados(ExMobil mob,
 			List<ExArquivoNumerado> list, int nivel) {
+		
+		List<ExArquivoNumerado> listaInicial = list, listaFinal = new ArrayList<>();		
+		boolean podeAtualizarPaginas = true;
 
 		// Incluir o documento principal
 		ExArquivoNumerado anDoc = new ExArquivoNumerado();
 		anDoc.setArquivo(this);
 		anDoc.setMobil(mob);
-		anDoc.setNivel(nivel);
-		list.add(anDoc);
-
-		getAnexosNumerados(mob, list, nivel + 1, false);
-
+		anDoc.setNivel(nivel);			
+		listaInicial.add(anDoc);					
+				
+		getAnexosNumerados(mob, listaInicial, nivel + 1, false);						
+		
+		if (podeReordenar() && podeExibirReordenacao() && temOrdenacao()) {
+			boolean houveAlteracaoNaOrdenacao = false;
+			podeAtualizarPaginas = false;
+			String referenciaHtmlCompletoDocPrincipal = anDoc.getReferenciaHtmlCompleto();	
+			String referenciaPDFCompletoDocPrincipal = anDoc.getReferenciaPDFCompleto();
+			String ordenacaoDoc[] = this.getOrdenacaoDoc().split(";");			
+					
+			ordenarDocumentos(ordenacaoDoc, listaInicial, listaFinal, referenciaHtmlCompletoDocPrincipal, referenciaPDFCompletoDocPrincipal);
+			
+			if (listaInicial.size() > listaFinal.size()) {
+				adicionarDocumentosNovosNaOrdenacao(listaInicial, listaFinal);
+				houveAlteracaoNaOrdenacao = true;
+			}
+			
+			if (ordenacaoDoc.length > listaFinal.size())
+				houveAlteracaoNaOrdenacao = true;		
+			
+			if (estaNaOrdemOriginal(listaInicial, listaFinal)) 
+				limparOrdenacaoDosDocumentos();
+			else if (houveAlteracaoNaOrdenacao)
+				enviarNovaOrdenacaoDosDocumentos(listaFinal);								
+		
+		} else {					
+			listaFinal = listaInicial;			
+		}										
+					
 		// Numerar as paginas
 		if (isNumeracaoUnicaAutomatica()) {
 
@@ -1524,17 +1559,62 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 
 			// removerDesentranhamentosQueNaoFazemParteDoDossie(list);
 
-			for (ExArquivoNumerado an : list) {
-				an.setPaginaInicial(j);
-				j += an.getNumeroDePaginasParaInsercaoEmDossie() - 1;
-				an.setPaginaFinal(j);
-				j++;
-			}
+			montarPaginas(podeAtualizarPaginas ? listaFinal : listaInicial, j);			
 		}
 
-		return list;
+		return listaFinal;
 	}
-
+	
+	private boolean estaNaOrdemOriginal(List<ExArquivoNumerado> listaInicial, List<ExArquivoNumerado> listaFinal) {
+		return listaInicial.equals(listaFinal);
+	}
+	
+	private void montarPaginas(List<ExArquivoNumerado> arquivos, int j) {
+		for (ExArquivoNumerado an : arquivos) {
+			an.setPaginaInicial(j);
+			j += an.getNumeroDePaginasParaInsercaoEmDossie() - 1;
+			an.setPaginaFinal(j);
+			j++;
+		}
+	}
+	
+	private void ordenarDocumentos(String[] ordenacaoDoc, List<ExArquivoNumerado> listaInicial, List<ExArquivoNumerado> listaFinal, String referenciaHtmlCompletoDocPrincipal, String referenciaPDFCompletoDocPrincipal) {
+		for(String id : ordenacaoDoc) {
+			encontrarArquivoNumerado(Long.valueOf(id), listaInicial, listaFinal, referenciaHtmlCompletoDocPrincipal, referenciaPDFCompletoDocPrincipal);				
+		}				
+	}
+	
+	private void encontrarArquivoNumerado(Long id, List<ExArquivoNumerado> listaInicial, List<ExArquivoNumerado> listaFinal, String referenciaHtmlCompletoDocPrincipal, String referenciaPDFCompletoDocPrincipal) {
+		for (ExArquivoNumerado arquivo : listaInicial) {					
+			if (id.equals(arquivo.getArquivo().getIdDoc())) {
+				arquivo.setReferenciaHtmlCompletoDocPrincipal(referenciaHtmlCompletoDocPrincipal);
+				arquivo.setReferenciaPDFCompletoDocPrincipal(referenciaPDFCompletoDocPrincipal);
+				listaFinal.add(arquivo);					
+				break;
+			}					
+		}			
+	}
+	
+	private void adicionarDocumentosNovosNaOrdenacao(List<ExArquivoNumerado> listaInicial, List<ExArquivoNumerado> listaFinal) {
+		for (ExArquivoNumerado arquivo : listaInicial) {
+			if (!listaFinal.contains(arquivo)) 
+				listaFinal.add(arquivo);			
+		}
+	}
+	
+	private void enviarNovaOrdenacaoDosDocumentos(List<ExArquivoNumerado> listaArquivoNumerado) {
+		String ordenacao = "";
+		for (ExArquivoNumerado arquivoNumerado : listaArquivoNumerado) {				
+			if (ordenacao.length() > 0) ordenacao += ";";
+			ordenacao += arquivoNumerado.getArquivo().getIdDoc();				
+		}
+		this.setOrdenacaoDoc(ordenacao);
+	}
+	
+	private void limparOrdenacaoDosDocumentos() {
+		this.setOrdenacaoDoc(null);
+	}
+	
 	public void removerDesentranhamentosQueNaoFazemParteDoDossie(
 			List<ExArquivoNumerado> list) {
 		// Verifica se tem movimentação de desentranhamento que não pertence ao
@@ -2715,5 +2795,21 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	
 	public List<ExMovimentacao> getListaMovimentacaoPorRestricaoAcesso() {
 		return this.listaMovimentacaoPorRestricaoAcesso;
+	}			
+		
+	public boolean podeReordenar() {		
+		if (podeReordenar == null) 
+			podeReordenar = Boolean.valueOf(System.getProperty("siga.ex.documento.permitirUsuarioOrdenar"));				
+			
+		return podeReordenar;
 	}
+	
+	public void setPodeExibirReordenacao(boolean podeExibirReordenacao) {
+		this.podeExibirReordenacao = podeExibirReordenacao;
+	}
+	
+	public boolean podeExibirReordenacao() {
+		return this.podeExibirReordenacao;
+	}
+
 }

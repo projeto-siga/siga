@@ -53,6 +53,8 @@ import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERE
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_REORDENACAO_DOCUMENTO;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ORDENACAO_ORIGINAL_DOCUMENTO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.hasDespacho;
 
 import java.util.HashMap;
@@ -472,7 +474,20 @@ public class ExMovimentacaoVO extends ExVO {
 			addAcao(null, mov.getNmArqMov(), "/app/arquivo", "download", mov.getNmArqMov() != null, null,
 					"arquivo=" + mov.getReferenciaZIP(), null, null, null);
 		}
-
+		
+		if (idTpMov == TIPO_MOVIMENTACAO_REORDENACAO_DOCUMENTO) {
+			String detalhe = mov.getExMobil().getDoc().temOrdenacao() ? "Ver última reordenação" : "Ver documento completo";
+			String complementoParam = mov.getExMobil().getDoc().temOrdenacao() ? "&exibirReordenacao=true" : "";
+			
+			addAcao(null, detalhe, "/app/expediente/doc", "exibirProcesso", true, null,
+					"sigla=" + mov.getExMobil().getSigla() + complementoParam, "Documento completo reordenado manualmente:", "", null);
+		}
+		
+		if (idTpMov == TIPO_MOVIMENTACAO_ORDENACAO_ORIGINAL_DOCUMENTO) {								
+			addAcao(null, "Ver documento completo", "/app/expediente/doc", "exibirProcesso", true, null,
+					"sigla=" + mov.getExMobil().getSigla(), "Documento completo reordenado para sua ordem original:", "", null);
+		}
+		
 		if (descricao != null && descricao.equals(mov.getObs())) {
 			descricao = ProcessadorReferencias.marcarReferenciasParaDocumentos(descricao, null);
 		}

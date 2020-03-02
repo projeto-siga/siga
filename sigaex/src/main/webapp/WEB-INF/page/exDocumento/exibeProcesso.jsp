@@ -21,6 +21,56 @@
 	</script>
 </c:if>
 
+<c:if test="${mob.doc.podeReordenar()}"> 
+	<style>
+		.tabela-ordenavel tbody {
+			cursor: move;
+		}
+		
+		.tabela-ordenavel tbody tr {
+			border: 2px dashed #A9A9A9;				
+		}
+		
+		.tabela-ordenavel tbody tr:hover,
+		.tabela-ordenavel tbody tr:focus {
+			border-left: 3px dashed #007BFF;	
+			border-right: 3px dashed #007BFF;		
+			background-color: #CED4DA;	
+		}
+		
+		.tabela-ordenavel tbody a {
+			pointer-events: none;
+		}	
+			
+		.menu-ordenacao {
+			text-align: center;
+			height: auto;
+			max-height: 0;		
+			opacity: 0;		
+			position: relative;		
+			left: -999px;
+			transition: left .3s, opacity .3s, max-height .5s;		
+		}		
+		
+		.form {
+			text-align: center;
+		}		
+		
+		.checkbox-oculto {
+			display: none;
+		}
+		
+		#btnOrdenarDocumentos {
+			background-color: transparent;
+		}		
+		
+		#btnOrdenarDocumentos:disabled,
+		#btnSalvarOrdenacao:disabled {
+			cursor: not-allowed;
+		}
+	</style>
+</c:if>
+
 <script type="text/javascript">
 	var iframeids = [ "maincntnt" ]
 	var iframehide = "no"
@@ -77,7 +127,7 @@
 	 		divDocRight.setAttribute("class", "col-sm-9");
 		}
 		resize();
-	}
+	}				
 </script>
 
 <!-- main content bootstrap -->
@@ -130,7 +180,7 @@
 							</a>
 						</p>
 					</div>
-				</div>
+				</div>				
 				<c:if test="${siga_cliente != 'GOVSP'}">
 					<div>
 						<siga:link icon="application_view_list" classe="mt-3 once" title="Visualizar&nbsp;_Movimentações"
@@ -139,7 +189,7 @@
 						<button type="button" class="mt-3 ml-2 btn btn-secondary btn-sm align-center" id="TelaCheia" data-toggle="button" aria-pressed="false" autocomplete="off"
 							accesskey="t" onclick="javascript: telaCheia(this);">
 							<u>T</u>ela Cheia
-						</button>
+						</button>						
 						<div class="d-inline-block col-sm-6 align-bottom pb-1 mt-3 mr-2">
 							<siga:link icon="wrench" title="Preferência:" test="${true}" url="" />
 							<input type="radio" id="radioHTML" name="formato" value="html" accesskey="h" checked="checked" onclick="exibir(htmlAtual,pdfAtual,'');">
@@ -165,13 +215,41 @@
 			<nav id="sidebar">
 				<div class="card-sidebar card bg-light mb-3" id="documentosDossie">
 					<div class="card-header">
-						<fmt:message key='documento.dossie'/>  /  <fmt:message key='usuario.lotacao'/>
+						<span class="titulo-docs">
+							<fmt:message key='documento.dossie'/>  /  <fmt:message key='usuario.lotacao'/>
+							<c:if test="${mob.doc.podeReordenar()}">													
+								<button type="button" class="btn" id="btnOrdenarDocumentos" data-toggle="tooltip" data-placement="top" title="Reordenar itens" ${arqsNum.size() == 1 ? 'disabled' : ''}>
+									<i class="fas fa-sort"></i>
+								</button>									
+								<c:if test="${mob.doc.podeReordenar() && podeExibirReordenacao && mob.doc.temOrdenacao()}">								
+									<br />*reordenados temporariamente
+								</c:if>
+							</c:if>
+						</span>		
+						<c:if test="${mob.doc.podeReordenar()}">				
+							<div class="menu-ordenacao"">
+								Clique e arraste os itens tracejados para reordená-los<br />							
+								<form action="${pageContext.request.contextPath}/app/expediente/doc/reordenar" id="formReordenarDocs" class="form" method="POST">									
+									<input type="hidden" name="idDocumentos" id="inputHiddenIdDocs" />													
+									<input type="hidden" name="sigla" value="${sigla}" />
+									<button type="submit" class="mt-3 ml-2 btn btn-success btn-sm align-center" id="btnSalvarOrdenacao" disabled>
+										<i class="fas fa-check"></i> Salvar
+									</button>
+									<button type="button" class="mt-3 ml-2 btn btn-danger btn-sm align-center" id="btnCancelarOrdenacao">
+											<i class="fas fa-times"></i> Cancelar
+									</button>																					
+								</form>
+							</div>	
+						</c:if>							
 					</div>
 					<div class="card-body p-1">
-						<table class="table table-hover table-striped mov">
-							<tbody>
+						<table class="table table-hover table-striped mov tabela-documentos">
+							<tbody id="${mob.doc.podeReordenar() ? 'sortable' : ''}">
 								<c:forEach var="arqNumerado" items="${arqsNum}">
-									<tr>
+									<tr>										
+										<td style="display: none;">
+											${arqNumerado.arquivo.idDoc}	
+										</td>
 										<td>
 											<a target="_blank" title="${fn:substring(tooltipResumo,0,fn:length(tooltipResumo)-4)}" href="/sigaex/app/arquivo/exibir?arquivo=${arqNumerado.referenciaPDF}">
 												<img src="/siga/css/famfamfam/icons/page_white_acrobat.png">
@@ -202,14 +280,16 @@
 									</c:if>
 				
 								</c:forEach>
+							</tbody>
+							<tfoot>
 								<tr>
 									<td>
-										<a target="_blank" href="/sigaex/app/arquivo/exibir?arquivo=${arqsNum[0].referenciaPDFCompleto}">
+										<a target="_blank" href="/sigaex/app/arquivo/exibir?arquivo=${arqsNum[0].referenciaPDFCompletoDocPrincipal}">
 											<img src="/siga/css/famfamfam/icons/page_white_acrobat.png">
 										</a>
 									</td>
 									<td style="padding-left: 5pt;">
-										<a href="javascript:exibir('${arqsNum[0].referenciaHtmlCompleto}','${arqsNum[0].referenciaPDFCompleto}','')">COMPLETO</a>
+										<a href="javascript:exibir('${arqsNum[0].referenciaHtmlCompletoDocPrincipal}','${arqsNum[0].referenciaPDFCompletoDocPrincipal}','')">COMPLETO</a>
 									</td>
 									<td align="center" style="padding-left: 5pt;"></td>
 									<c:if test="${paginacao}">
@@ -217,8 +297,7 @@
 											${arqsNum[fn:length(arqsNum)-1].paginaFinal}
 										</td>
 									</c:if>
-								</tr>
-				
+								</tr>							
 								<c:if test="${!empty possuiResumo}">
 									<tr>
 										<td></td>
@@ -230,8 +309,20 @@
 										</c:if>
 									</tr>
 								</c:if>
-							</tbody>
+							</tfoot>
 						</table>
+						<c:if test="${mob.doc.podeReordenar() && podeExibirReordenacao && mob.doc.temOrdenacao()}">						
+							<div class="menu-retornar-para-original">
+								<hr>
+								<form action="${pageContext.request.contextPath}/app/expediente/doc/reordenar" id="formVoltarDocsParaOrdemOriginal" class="form" method="POST">
+									<input type="hidden" name="sigla" value="${sigla}" />																
+									<input type="checkbox" name="isVoltarParaOrdemOriginal" id="isVoltarParaOrdemOriginal" class="checkbox-oculto" checked disbled />																										
+									<button type="submit" class="btn btn-warning" id="btnResetarOrdemOriginal">
+										<i class="fas fa-undo-alt"></i> Retornar para ordem original									
+									</button>																						
+								</form>
+							</div>	
+						</c:if>					
 					</div>
 				</div>
 			</nav>
@@ -256,7 +347,7 @@
 					<button type="button" class="btn btn-secondary btn-sm" id="TelaCheia" data-toggle="button" aria-pressed="false" autocomplete="off"
 						onclick="javascript: telaCheia(this);">
 						<u>T</u>ela Cheia
-					</button>
+					</button>								
 				</div>
 			</c:if>
 			<div id="paipainel" style="margin: 0px; padding: 0px; border: 0px; clear: both;">
@@ -267,11 +358,29 @@
 	<div id="final"></div>
 </div>
 </siga:pagina>
+<script src="/siga/javascript/jquery-ui-1.12.1/custom/sortable/jquery-ui-1.12.1.min.js"></script>
+<script src="/siga/javascript/jqueryui-touch-punch-0.2.3/jquery.ui.touch-punch-0.2.3.min.js"></script>
 <script src="/siga/bootstrap/js/bootstrap.min.js"></script>
+<c:if test="${mob.doc.podeReordenar() && podeExibirReordenacao && mob.doc.temOrdenacao()}">
+	<script>	
+		$(document).ready(function() {
+			//se exibindo documentos reordenados, não permite visualização PDF						
+			$('#radioPDF').attr('data-toggle', 'tooltip').attr('data-placement', 'top').attr('title', 'Indisponível enquanto documento estiver reordenado').removeAttr('onclick').css({'cursor':'not-allowed', 'color':'rgba(0, 0, 0, 0.3)', 'border':'1px solid rgba(0, 0, 0, 0.3)'});		
+		});
+	</script>
+</c:if>
 <script>
-	var path = '/sigaex/app/arquivo/exibir?idVisualizacao=${idVisualizacao}&arquivo=';
-	var htmlAtual = '${arqsNum[0].referenciaHtmlCompleto}';
-	var pdfAtual = '${arqsNum[0].referenciaPDFCompleto}';
+	$(function () {
+	  $('[data-toggle="tooltip"]').tooltip()
+	})
+</script>
+<script>
+	var htmlAtual = '${arqsNum[0].referenciaHtmlCompletoDocPrincipal}';
+	var pdfAtual = '${arqsNum[0].referenciaPDFCompletoDocPrincipal}';
+	var path = '/sigaex/app/arquivo/exibir?idVisualizacao=${idVisualizacao}';
+	
+	if ('${mob.doc.podeReordenar()}' === 'true' && '${podeExibirReordenacao}' === 'true') path += '&exibirReordenacao=true';			
+	path += '&arquivo=';			
 
 	function fixlinks(refHTML, refPDF) {
 		document.getElementById('pdflink').href = path + refPDF;
@@ -367,7 +476,7 @@
 		ifr.src = url;
 	}
 	
-	function toggleBotaoHtmlPdf(btn) {
+	function toggleBotaoHtmlPdf(btn) {		
 	    var sel = btn.data('title');
 	    var tog = btn.data('toggle');
 	    $('#'+tog).prop('value', sel);
@@ -387,3 +496,4 @@
 	    $('a[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
 	})
 </script>
+<script src="/siga/javascript/documento.reordenar-doc.js"></script>

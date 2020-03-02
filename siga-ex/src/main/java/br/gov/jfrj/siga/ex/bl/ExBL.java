@@ -7028,4 +7028,22 @@ public class ExBL extends CpBL {
 	/*
 	 * Fim da adicao
 	 */
+	
+	public void reordenarDocumentos(ExDocumento doc, DpPessoa cadastrante, DpLotacao lotacao, boolean isOrdemOriginal) {				
+		try {
+			iniciarAlteracao();
+			
+			long idTpMov = isOrdemOriginal ? 
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_ORDENACAO_ORIGINAL_DOCUMENTO : 
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_REORDENACAO_DOCUMENTO;
+					
+			ExMovimentacao mov = criarNovaMovimentacao(idTpMov, cadastrante, lotacao, doc.getMobilGeral(), null, cadastrante, null, null, null, null);						
+
+			gravarMovimentacao(mov);
+			concluirAlteracao(doc.getMobilGeral());			
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Ocorreu um erro ao reordenar documentos.", 0, e);
+		}
+	}
 }

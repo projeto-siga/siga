@@ -320,6 +320,9 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	@Column(name = "DNM_ACESSO", length = 4000)
 	private String dnmAcesso;
+	
+	@Column(name = "ORDENACAO_DOC", length = 200)
+	private String ordenacaoDoc;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_SUBSCRITOR")
@@ -1061,6 +1064,18 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setDnmAcesso(String dnmAcesso) {
 		this.dnmAcesso = dnmAcesso;
+	}
+	
+	public String getOrdenacaoDoc() {
+		return ordenacaoDoc;
+	}
+
+	public void setOrdenacaoDoc(String ordenacaoDoc) {
+		this.ordenacaoDoc = ordenacaoDoc;
+	}
+
+	public boolean temOrdenacao() {
+		return ordenacaoDoc != null;
 	}
 
 	public ExNivelAcesso getDnmExNivelAcesso() {

@@ -358,8 +358,10 @@
 	<div id="final"></div>
 </div>
 </siga:pagina>
-<script src="/siga/javascript/jquery-ui-1.12.1/custom/sortable/jquery-ui-1.12.1.min.js"></script>
-<script src="/siga/javascript/jqueryui-touch-punch-0.2.3/jquery.ui.touch-punch-0.2.3.min.js"></script>
+<c:if test="${mob.doc.podeReordenar()}">
+	<script src="/siga/javascript/jquery-ui-1.12.1/custom/sortable/jquery-ui-1.12.1.min.js"></script>
+	<script src="/siga/javascript/jqueryui-touch-punch-0.2.3/jquery.ui.touch-punch-0.2.3.min.js"></script>
+</c:if>
 <script src="/siga/bootstrap/js/bootstrap.min.js"></script>
 <c:if test="${mob.doc.podeReordenar() && podeExibirReordenacao && mob.doc.temOrdenacao()}">
 	<script>	
@@ -496,4 +498,6 @@
 	    $('a[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
 	})
 </script>
-<script src="/siga/javascript/documento.reordenar-doc.js"></script>
+<c:if test="${mob.doc.podeReordenar()}"> 
+	<script src="/siga/javascript/documento.reordenar-doc.js"></script>
+</c:if>

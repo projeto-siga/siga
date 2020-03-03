@@ -80,6 +80,9 @@ public class CpPropriedadeBL extends ModeloPropriedade {
 	public String xjusPassword  ( ) throws Exception {
 		return this.obterPropriedade("xjus.password");
 	}
+	public String sincPassword  ( ) throws Exception {
+		return this.obterPropriedade("siga.sinc.password");
+	}
 	public String timestampUrl  ( ) throws Exception {
 		return this.obterPropriedade("timestamp.url");
 	}

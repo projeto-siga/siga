@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.axis.encoding.Base64;
+import org.jboss.logging.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,6 +48,7 @@ import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.HttpResult;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.log.RequestExceptionLogger;
 import br.gov.jfrj.siga.base.util.Paginador;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -67,32 +69,31 @@ public class SigaController {
 	protected CpDao dao;
 
 	private Paginador p = new Paginador();
-		
+
 	private Integer postback;
-	
-	
+
 	private String mensagemAguarde = null;
-	
+
 	private HttpServletResponse response;
 	private ServletContext context;
-	
-	//Todo: verificar se após a migração do vraptor se ainda necessita deste atributo "par"
+
+	// Todo: verificar se após a migração do vraptor se ainda necessita deste
+	// atributo "par"
 	private Map<String, String[]> par;
 
 	private Validator validator;
-	
+
 	protected Map<String, String[]> getPar() {
 		return par;
 	}
-	
+
 	protected void setParam(final String parameterName, final String parameterValue) {
 		final String as[] = { parameterValue };
 		getPar().put(parameterName, as);
 		return;
-	}	
-	
-	protected String getUrlEncodedParameters()
-			throws UnsupportedEncodingException, IOException {
+	}
+
+	protected String getUrlEncodedParameters() throws UnsupportedEncodingException, IOException {
 		if (getPar() != null) {
 			try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 				for (final String key : getPar().keySet()) {
@@ -110,7 +111,7 @@ public class SigaController {
 		}
 		return null;
 	}
-	
+
 	protected CpDao dao() {
 		return CpDao.getInstance();
 	}
@@ -118,36 +119,35 @@ public class SigaController {
 	protected Integer getPostback() {
 		return postback;
 	}
-	
+
 	/**
 	 * @deprecated CDI eyes only
 	 */
 	public SigaController() {
 		super();
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public SigaController(HttpServletRequest request, Result result, CpDao dao,
-			SigaObjects so, EntityManager em) {
+	public SigaController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
 		super();
 		this.setRequest(request);
 		this.dao = dao;
-		this.setPar(new HashMap<>( getRequest().getParameterMap()));
+		this.setPar(new HashMap<>(getRequest().getParameterMap()));
 		this.result = result;
 		this.so = so;
 		this.em = em;
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
-		
+
 		result.include("cadastrante", getCadastrante());
 		result.include("lotaCadastrante", getLotaCadastrante());
 		result.include("titular", getTitular());
 		result.include("lotaTitular", getLotaTitular());
 		result.include("meusTitulares", getMeusTitulares());
-		result.include("identidadeCadastrante",getIdentidadeCadastrante());
+		result.include("identidadeCadastrante", getIdentidadeCadastrante());
 	}
-	
+
 	@Inject
 	private void setValidator(Validator validator) {
 		this.validator = validator;
@@ -166,92 +166,94 @@ public class SigaController {
 			throw new AplicacaoException("Erro", 500, e);
 		}
 	}
-	
+
 	protected byte[] toByteArray(final UploadedFile upload) throws IOException {
 		try (InputStream is = upload.getFile()) {
 			// Get the size of the file
 			final long tamanho = upload.getSize();
-	
+
 			// Não podemos criar um array usando o tipo long.
 			// é necessário usar o tipo int.
 			if (tamanho > Integer.MAX_VALUE)
 				throw new IOException("Arquivo muito grande");
-	
+
 			// Create the byte array to hold the data
 			final byte[] meuByteArray = new byte[(int) tamanho];
-	
+
 			// Read in the bytes
 			int offset = 0;
 			int numRead = 0;
-			while (offset < meuByteArray.length && (numRead = is.read(meuByteArray, offset, meuByteArray.length - offset)) >= 0) {
+			while (offset < meuByteArray.length
+					&& (numRead = is.read(meuByteArray, offset, meuByteArray.length - offset)) >= 0) {
 				offset += numRead;
 			}
-	
+
 			// Ensure all the bytes have been read in
 			if (offset < meuByteArray.length)
 				throw new IOException("Não foi possível ler o arquivo completamente " + upload.getFileName());
-	
+
 			return meuByteArray;
 		}
 	}
-
-
 
 	private void resolveLazy(List<DpSubstituicao> substituicoes) {
 		for (DpSubstituicao dpSubstituicao : substituicoes) {
 			if (dpSubstituicao.getTitular() != null) {
 				dpSubstituicao.getTitular().getId();
 			}
-			
+
 			if (dpSubstituicao.getLotaTitular() != null) {
 				dpSubstituicao.getLotaTitular().getId();
 			}
 		}
 	}
-	
+
 	public void appexception() {
 		configurarHttpResult(400);
 	}
 
 	public void exception() {
 		configurarHttpResult(500);
+		new RequestExceptionLogger(request, (Exception) result.included().get("exception"), 0L, this.getClass().getName()).logar();
 	}
-	
+
 	private void configurarHttpResult(int statusCode) {
 		HttpResult res = this.result.use(http());
 		res.setStatusCode(statusCode);
 		definirPaginaDeErro();
 	}
-    
+
 	private void definirPaginaDeErro() {
-		if (requisicaoEhAjax())
-		    result.forwardTo("/WEB-INF/page/erroGeralAjax.jsp");
-		else 
-		    result.forwardTo("/WEB-INF/page/erroGeral.jsp");
-    }
-	
-    private boolean requisicaoEhAjax() {
-        return request.getHeader("X-Requested-With") != null;
-    }
-    
+		if (!response.isCommitted()) {
+			if (requisicaoEhAjax())
+				result.forwardTo("/WEB-INF/page/erroGeralAjax.jsp");
+			else
+				result.forwardTo("/WEB-INF/page/erroGeral.jsp");
+		}
+	}
+
+	private boolean requisicaoEhAjax() {
+		return request.getHeader("X-Requested-With") != null;
+	}
+
 	protected DpLotacao getLotaTitular() {
 		return so.getLotaTitular();
 	}
-	
+
 	protected void setLotaTitular(DpLotacao lotaTitular) {
 		so.setLotaTitular(lotaTitular);
-	}	
+	}
 
 	protected DpPessoa getTitular() {
 		return so.getTitular();
 	}
-	
+
 	protected void setTitular(DpPessoa titular) {
 		so.setTitular(titular);
 	}
-	
-	protected DpLotacao getLotaCadastrante(){
-		if(null != so.getCadastrante()) {
+
+	protected DpLotacao getLotaCadastrante() {
+		if (null != so.getCadastrante()) {
 			return so.getCadastrante().getLotacao();
 		} else {
 			return null;
@@ -261,9 +263,9 @@ public class SigaController {
 	protected DpPessoa getCadastrante() {
 		return so.getCadastrante();
 	}
-	
+
 	protected void setCadastrante(DpPessoa cadastrante) {
-		so.setCadastrante(cadastrante);		
+		so.setCadastrante(cadastrante);
 	}
 
 	protected CpIdentidade getIdentidadeCadastrante() {
@@ -357,15 +359,15 @@ public class SigaController {
 	protected void setRequest(HttpServletRequest request) {
 		this.request = request;
 	}
-	
+
 	protected void assertAcesso(final String pathServico) {
 		so.assertAcesso(pathServico);
-	}	
-	
+	}
+
 	protected void setP(Paginador p) {
 		this.p = p;
 	}
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected void setPar(final Map par) {
 		this.par = par;
@@ -374,11 +376,11 @@ public class SigaController {
 	protected void setPostback(final Integer postback) {
 		this.postback = postback;
 	}
-	
+
 	protected String getMensagemAguarde() {
 		return mensagemAguarde;
 	}
-	
+
 	protected void setMensagemAguarde(String mensagemAguarde) {
 		this.mensagemAguarde = mensagemAguarde;
 	}
@@ -386,16 +388,15 @@ public class SigaController {
 	protected List<CpOrgaoUsuario> getOrgaosUsu() throws AplicacaoException {
 		return dao().listarOrgaosUsuarios();
 	}
-	
+
 	protected Paginador getP() {
 		return p;
 	}
-	
-	protected boolean podeUtilizarServico(String servico)
-			throws Exception {
+
+	protected boolean podeUtilizarServico(String servico) throws Exception {
 		return Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), servico);
 	}
-	
+
 	// Recursos para possibilitar o retorno de JSON
 	//
 	public static String ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
@@ -449,7 +450,6 @@ public class SigaController {
 			return null;
 		}
 	}
-	
 
 	protected void jsonSuccess(final Object resp) {
 		String s = gson.toJson(resp);
@@ -457,10 +457,7 @@ public class SigaController {
 	}
 
 	protected void jsonError(final Exception e) throws Exception {
-		StringWriter sw = new StringWriter();
-		PrintWriter pw = new PrintWriter(sw);
-		e.printStackTrace(pw);
-		String errstack = sw.toString(); // stack trace as a string
+		String errstack = RequestExceptionLogger.simplificarStackTrace(e);
 
 		JSONObject json = new JSONObject();
 		try {
@@ -469,23 +466,28 @@ public class SigaController {
 			// Error Details
 			JSONArray arr = new JSONArray();
 			JSONObject detail = new JSONObject();
-			detail.put("context", context);
+			detail.put("context", context.getContextPath());
 			detail.put("service", "sigadocsigner");
 			detail.put("stacktrace", errstack);
+			arr.put(detail);
 			json.put("errordetails", arr);
 		} catch (JSONException e1) {
 			throw new RuntimeException(e1);
 		}
 
-		String s = json.toString();
+		String s = json.toString(4);
 		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(500);
 		response.flushBuffer();
 		throw e;
 	}
-	
+
 	@Inject
 	public void setResponse(HttpServletResponse response) {
 		this.response = response;
+	}
+
+	public HttpServletResponse getResponse() {
+		return this.response;
 	}
 
 	@Inject

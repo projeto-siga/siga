@@ -13,7 +13,6 @@
 		<module>siga-rel</module>
 		<module>siga-cp</module>
 		<module>siga-sinc-lib</module>
-		<module>siga-cp-sinc</module>
 		<module>siga-ldap</module>
 		<module>siga-vraptor-module-old</module>
 		<module>siga-vraptor-module</module>

@@ -260,7 +260,7 @@ public class ExController extends SigaController {
 		super.assertAcesso("DOC:Módulo de Documentos;" + pathServico);
 	}
 
-	protected  HttpServletResponse getResponse() {
+	public  HttpServletResponse getResponse() {
 		return response;
 	}
 

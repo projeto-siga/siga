@@ -89,6 +89,8 @@ public class RequestExceptionLogger {
 			Enumeration<String> attrs = httpReq.getAttributeNames();
 			while (attrs.hasMoreElements()) {
 				String name = attrs.nextElement();
+				if (name.startsWith("org.jboss.weld"))
+					continue;
 				requestInfo.append("\t");
 				requestInfo.append(name);
 				requestInfo.append(" : ");

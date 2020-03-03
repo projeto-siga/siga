@@ -1122,9 +1122,13 @@ public class CpDao extends ModeloDao {
 			query.setParameter("nome",
 					flt.getNome().toUpperCase().replace(' ', '%'));
 
-			if (!flt.isBuscarFechadas())
+			if (!flt.isBuscarFechadas()) {
+				String situacaoFuncionalPessoa = flt.getSituacaoFuncionalPessoa();
+				if (situacaoFuncionalPessoa != null && situacaoFuncionalPessoa.length() == 0)
+					situacaoFuncionalPessoa = null;
 				query.setParameter("situacaoFuncionalPessoa",
-						flt.getSituacaoFuncionalPessoa());
+						situacaoFuncionalPessoa);
+			}
 
 			if(flt.getCpf() != null && !"".equals(flt.getCpf())) {
 				query.setParameter("cpf", Long.valueOf(flt.getCpf()));
@@ -1530,13 +1534,15 @@ public class CpDao extends ModeloDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> List<T> listarAtivos(Class<T> clazz, String dtFim,
+	public <T> List<T> listarAtivos(Class<T> clazz, String campoDtFim,
 			long idOrgaoUsu) {
 		final CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
-		CriteriaQuery<T> crit = criteriaBuilder.createQuery(clazz);
-		Root<T> root = crit.from(clazz);
-		crit.where(cb().isNull(root.get("hisDtFim")), cb().equal(root.get("orgaoUsuario.idOrgaoUsu"), idOrgaoUsu));
-		return em().createQuery(crit).getResultList();
+		CriteriaQuery<T> q = criteriaBuilder.createQuery(clazz);
+		Root<T> c = q.from(clazz);
+		Join<T, CpOrgaoUsuario> joinOrgao = c.join("orgaoUsuario", JoinType.INNER);
+		q.where(cb().isNull(c.get(campoDtFim)));
+		q.where(cb().equal(joinOrgao.get("idOrgaoUsu"), idOrgaoUsu));
+		return em().createQuery(q).getResultList();
 	}
 
 	public <T> List<T> listarAtivos(Class<T> clazz, String orderBy) {
@@ -1949,12 +1955,12 @@ public class CpDao extends ModeloDao {
 		CriteriaQuery<DpPessoa> q = cb().createQuery(DpPessoa.class);
 		Root<DpPessoa> c = q.from(DpPessoa.class);
 		q.select(c);
+		Join<DpPessoa, CpOrgaoUsuario> joinOrgao = c.join("orgaoUsuario", JoinType.INNER);
+		q.where(cb().equal(joinOrgao.get("idOrgaoUsu"), idOrgaoUsu));
 
 		if(matricula != null) {
 			q.where(cb().equal(c.get("matricula"), matricula));
 		}
-		q.where(cb().equal(c.get("orgaoUsuario.idOrgaoUsu"), idOrgaoUsu));
-
 		if (pessoasFinalizadas) {
 			q.where(cb().isNotNull(c.get("dataFimPessoa")));
 		} else {
@@ -1975,8 +1981,9 @@ public class CpDao extends ModeloDao {
 			CriteriaQuery<DpLotacao> q = cb().createQuery(DpLotacao.class);
 			Root<DpLotacao> c = q.from(DpLotacao.class);
 			q.select(c);
+			Join<DpLotacao, CpOrgaoUsuario> joinOrgao = c.join("orgaoUsuario", JoinType.INNER);
+			q.where(cb().equal(joinOrgao.get("idOrgaoUsu"), idOrgaoUsu));
 			q.where(cb().equal(c.get("ideLotacao"), idExterna));
-			q.where(cb().equal(c.get("orgaoUsuario.idOrgaoUsu"), idOrgaoUsu));
 			q.where(cb().isNotNull(c.get("dataFimLotacao")));
 			q.orderBy(cb().desc(c.get("dataInicioLotacao")));
 			return em().createQuery(q).getResultList();
@@ -1986,8 +1993,9 @@ public class CpDao extends ModeloDao {
 			CriteriaQuery<DpCargo> q = cb().createQuery(DpCargo.class);
 			Root<DpCargo> c = q.from(DpCargo.class);
 			q.select(c);
+			Join<DpCargo, CpOrgaoUsuario> joinOrgao = c.join("orgaoUsuario", JoinType.INNER);
+			q.where(cb().equal(joinOrgao.get("idOrgaoUsu"), idOrgaoUsu));
 			q.where(cb().equal(c.get("ideCargo"), idExterna));
-			q.where(cb().equal(c.get("orgaoUsuario.idOrgaoUsu"), idOrgaoUsu));
 			q.where(cb().isNotNull(c.get("dataFimCargo")));
 			q.orderBy(cb().desc(c.get("dataInicioCargo")));
 			return em().createQuery(q).getResultList();
@@ -1997,8 +2005,9 @@ public class CpDao extends ModeloDao {
 			CriteriaQuery<DpFuncaoConfianca> q = cb().createQuery(DpFuncaoConfianca.class);
 			Root<DpFuncaoConfianca> c = q.from(DpFuncaoConfianca.class);
 			q.select(c);
+			Join<DpFuncaoConfianca, CpOrgaoUsuario> joinOrgao = c.join("orgaoUsuario", JoinType.INNER);
+			q.where(cb().equal(joinOrgao.get("idOrgaoUsu"), idOrgaoUsu));
 			q.where(cb().equal(c.get("ideFuncao"), idExterna));
-			q.where(cb().equal(c.get("orgaoUsuario.idOrgaoUsu"), idOrgaoUsu));
 			q.where(cb().isNotNull(c.get("dataFimFuncao")));
 			q.orderBy(cb().desc(c.get("dataInicioFuncao")));
 			return em().createQuery(q).getResultList();

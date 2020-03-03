@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<artifactId>siga-doc</artifactId>
@@ -39,39 +40,44 @@
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
 		</dependency>
-		
+
 		<dependency>
-		    <groupId>org.apache.commons</groupId>
-		    <artifactId>commons-collections4</artifactId>
-		    <version>4.1</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
+			<version>4.1</version>
 		</dependency>
-	
+
 		<dependency>
-		    <groupId>org.apache.poi</groupId>
-		    <artifactId>poi</artifactId>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
 		</dependency>
-		
+
 		<dependency>
-		    <groupId>org.apache.poi</groupId>
-		    <artifactId>poi-ooxml-schemas</artifactId>
-		    <version>3.12</version>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml-schemas</artifactId>
+			<version>3.12</version>
 		</dependency>
-		
+
 		<dependency>
-		    <groupId>org.apache.poi</groupId>
-		    <artifactId>poi-ooxml</artifactId>
-		    <version>3.12</version>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.12</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 		</dependency>
-		
+
 		<dependency>
-		    <groupId>org.apache.xmlbeans</groupId>
-		    <artifactId>xmlbeans</artifactId>
-		    <version>3.0.2</version>
+			<groupId>org.apache.xmlbeans</groupId>
+			<artifactId>xmlbeans</artifactId>
+			<version>3.0.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.kxml</groupId>
+			<artifactId>kxml2</artifactId>
 		</dependency>
 
 		<!-- Siga -->
@@ -91,14 +97,14 @@
 			<groupId>siga</groupId>
 			<artifactId>siga-rel</artifactId>
 		</dependency>
-		
+
 		<dependency>
-            <groupId>org.mvel</groupId>
-            <artifactId>mvel2</artifactId>
-        </dependency>
+			<groupId>org.mvel</groupId>
+			<artifactId>mvel2</artifactId>
+		</dependency>
 	</dependencies>
-	
-	
+
+
 	<profiles>
 
 		<profile>
@@ -146,20 +152,20 @@
 					</plugin>
 
 					<plugin>
-						<!-- Para usar com boot2docker (1.3+) desative o TLS ou use certificados	-->
-						
-						<!-- A. Desative o TLS														-->
-						
-						<!-- 1. Edite o arquivo de profile: sudo vi /var/lib/boot2docker/profile 	-->
-						<!-- 2. Inclua a seguinte variavel no arquivo de profile: DOCKER_TLS=no 	-->
-						<!-- 3. Salve o arquivo e digit sudo reboot 								-->
-						
-						<!-- B. Utilize certificados												-->
-						
-						<!-- 1. docker.certPath=c:\Users\[usuario]\.boot2docker\certs\boot2docker-vm-->
-						<!-- ou																	 	-->
-						<!-- 2. Coloque <certPath></certPath no pom.xml>							-->
-						
+						<!-- Para usar com boot2docker (1.3+) desative o TLS ou use certificados -->
+
+						<!-- A. Desative o TLS -->
+
+						<!-- 1. Edite o arquivo de profile: sudo vi /var/lib/boot2docker/profile -->
+						<!-- 2. Inclua a seguinte variavel no arquivo de profile: DOCKER_TLS=no -->
+						<!-- 3. Salve o arquivo e digit sudo reboot -->
+
+						<!-- B. Utilize certificados -->
+
+						<!-- 1. docker.certPath=c:\Users\[usuario]\.boot2docker\certs\boot2docker-vm -->
+						<!-- ou -->
+						<!-- 2. Coloque <certPath></certPath no pom.xml> -->
+
 						<groupId>org.jolokia</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
 						<version>0.10.5</version>

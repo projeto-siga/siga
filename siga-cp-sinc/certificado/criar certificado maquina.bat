@@ -1,1 +1,0 @@
-makecert -pe -n "CN=csis-11.corp.jfrj.gov.br" -ss my -sr LocalMachine -a sha1 -sky exchange -eku 1.3.6.1.5.5.7.3.1 -in "Autoridade Raiz de Desenvolvimento e Teste da SJRJ" -is MY -ir LocalMachine -sp "Microsoft RSA SChannel Cryptographic Provider" -sy 12 "Servidor de Desenvolvimento e Teste CSIS-11.cer"

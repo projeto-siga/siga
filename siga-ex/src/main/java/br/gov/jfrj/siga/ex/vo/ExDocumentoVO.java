@@ -774,6 +774,17 @@ public class ExDocumentoVO extends ExVO {
 				"Esta operação tornará esse documento sem efeito. Prosseguir?",
 				null, null, null, "once");
 		
+		vo.addAcao(
+				"cancel",
+				"Cancelar",
+				"/app/expediente/doc",
+				"cancelarDocumento",
+				Ex.getInstance()
+						.getComp()
+						.podeCancelarDocumento(titular, lotaTitular, mob),
+				"Esta operação cancelará o documento pendente de assinatura. Prosseguir?",
+				null, null, null, "once");
+		
 		if(mostrarGerarProtocolo(doc)) {
 			vo.addAcao(
 					"printer",

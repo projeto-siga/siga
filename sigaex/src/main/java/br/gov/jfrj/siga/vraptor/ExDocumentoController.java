@@ -1869,6 +1869,28 @@ public class ExDocumentoController extends ExController {
 		result.include("doc", exDocumentoDto.getDoc());
 	}
 	
+	@Get("/app/expediente/doc/cancelarDocumento")
+	public void cancelarDocumento(final String sigla) throws Exception {
+		assertAcesso("");
+
+		final ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
+		exDocumentoDto.setSigla(sigla);
+		buscarDocumento(false, exDocumentoDto);
+		
+		Ex.getInstance()
+		.getBL()
+		.cancelarDocumento(exDocumentoDto.getMob().doc().getTitular(),
+				exDocumentoDto.getMob().doc().getLotaTitular(), exDocumentoDto.getMob().doc());		
+		
+		result.include("sigla", sigla);
+		result.include("id", exDocumentoDto.getId());
+		result.include("mob", exDocumentoDto.getMob());
+		result.include("titularSel", new DpPessoaSelecao());
+		result.include("descrMov", exDocumentoDto.getDescrMov());
+		result.include("doc", exDocumentoDto.getDoc());
+	
+	}
+	
 	@Get("/app/expediente/doc/gerarProtocolo")
 	public void gerarProtocolo(final String sigla) {
 		assertAcesso("");

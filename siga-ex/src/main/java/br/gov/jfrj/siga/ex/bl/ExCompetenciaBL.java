@@ -905,6 +905,52 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
 	
+	
+	/**
+	 * Retorna se é possível cancelar documento pendente de assinatura, segundo as
+	 * regras a seguir:
+
+
+	 * <ul>
+	 * <li>Documento tem de estar pendente de assinatura</li>
+	 * <li>Móbil tem de ser via ou volume (não pode ser geral)</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usuário / móbil</li>	 * 
+	 * <li>Não pode haver configuração impeditiva</li>
+	 * </ul>
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeCancelarDocumento(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) {		
+		
+		if (mob.doc().isCancelado() || !mob.doc().isFinalizado() 
+				|| (mob.doc().isEletronico() && !mob.doc().isPendenteDeAssinatura()) )
+			return false;
+			
+		if (mob.doc().isCapturado()) {				
+			
+			if (mob.doc().isDocFilhoJuntadoAoPai()) 
+				return false;		
+			
+			if (mob.doc().getSubscritor() == null || !mob.doc().getSubscritor().equivale(titular)) {
+				if (!mob.doc().getCadastrante().equivale(titular)) 
+					return false;
+			}			
+						
+		} else {
+			if(mob.doc().getSubscritor() == null || !mob.doc().getSubscritor().equivale(titular))
+				return false;
+		}
+			
+		return  true;
+	}
+	
+	
+	
 	public Boolean podeGerarProtocolo(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
 		Boolean retorno = Boolean.TRUE;

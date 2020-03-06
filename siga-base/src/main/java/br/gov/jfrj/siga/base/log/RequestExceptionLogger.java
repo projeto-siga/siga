@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.util.StackSimplier;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 public class RequestExceptionLogger {
@@ -116,7 +117,7 @@ public class RequestExceptionLogger {
 
 			requestInfo.append("Stack Trace:  \n\t");
 			requestInfo.append(simplificarStackTrace(exception));
-			
+
 			requestInfo.append("\n ------ Fim dos detalhes do erro -----\n\n");
 
 			Logger.getLogger(loggerName).error(requestInfo);
@@ -132,15 +133,17 @@ public class RequestExceptionLogger {
 				break;
 			t = t.getCause();
 		}
-		java.io.StringWriter sw = new java.io.StringWriter();
-		java.io.PrintWriter pw = new java.io.PrintWriter(sw);
-		t.printStackTrace(pw);
-		String s = sw.toString();
-		String[] lines = s.split(System.getProperty("line.separator"));
-		for (int i = 0; i < lines.length; i++) {
-			if (lines[i].contains("br.com.caelum.vraptor.core.DefaultReflectionProvider.invoke")) {
-				for (int j = i - 1; j > 0; j--) {
-					if (lines[j].trim().startsWith("at br.") && !lines[j].contains("$Proxy$_$$_WeldClientProxy")) {
+		StackSimplier ss = new StackSimplier();
+		String s = ss.simplify(t);
+//		java.io.StringWriter sw = new java.io.StringWriter();
+//		java.io.PrintWriter pw = new java.io.PrintWriter(sw);
+//		t.printStackTrace(pw);
+//		String s = sw.toString();
+		if (true) {
+			String[] lines = s.split(System.getProperty("line.separator"));
+			for (int i = 0; i < lines.length; i++) {
+				if (lines[i].contains("org.apache.jasper.runtime.HttpJspBase.service")) {
+					for (int j = i - 1; j > 0; j--) {
 						StringBuilder sb = new StringBuilder();
 						for (int k = 0; k <= j; k++) {
 							sb.append(lines[k]);
@@ -149,8 +152,23 @@ public class RequestExceptionLogger {
 						s = sb.toString();
 						break;
 					}
+					break;
 				}
-				break;
+
+				if (lines[i].contains("br.com.caelum.vraptor.core.DefaultReflectionProvider.invoke")) {
+					for (int j = i - 1; j > 0; j--) {
+						if (lines[j].trim().startsWith("at br.") && !lines[j].contains("$Proxy$_$$_WeldClientProxy")) {
+							StringBuilder sb = new StringBuilder();
+							for (int k = 0; k <= j; k++) {
+								sb.append(lines[k]);
+								sb.append(System.getProperty("line.separator"));
+							}
+							s = sb.toString();
+							break;
+						}
+					}
+					break;
+				}
 			}
 		}
 		return s;

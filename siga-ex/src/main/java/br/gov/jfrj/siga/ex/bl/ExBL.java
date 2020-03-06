@@ -27,7 +27,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -88,6 +87,7 @@ import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.util.SetUtils;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.bluc.service.EnvelopeRequest;
 import br.gov.jfrj.siga.bluc.service.EnvelopeResponse;
@@ -2477,26 +2477,6 @@ public class ExBL extends CpBL {
 			}
 			byte[] baForm = baos.toByteArray();
 			return baForm;
-		}
-	}
-
-	/**
-	 * @param map
-	 * @param form
-	 */
-	public static void mapFromUrlEncodedForm(Map map, final byte[] form) {
-		if (form != null) {
-			final String as[] = new String(form).split("&");
-			for (final String s : as) {
-				final String param[] = s.split("=");
-				try {
-					if (param.length == 2) {
-						map.put(param[0],
-								URLDecoder.decode(param[1], "iso-8859-1"));
-					}
-				} catch (final UnsupportedEncodingException e) {
-				}
-			}
 		}
 	}
 
@@ -5157,7 +5137,7 @@ public class ExBL extends CpBL {
 					form = doc.getConteudoBlob("doc.form");
 				else
 					form = mov.getConteudoBlob("doc.form");
-				mapFromUrlEncodedForm(attrs, form);
+				Utils.mapFromUrlEncodedForm(attrs, form);
 			}
 		}
 		if (acao != null)

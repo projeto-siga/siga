@@ -1527,3 +1527,19 @@ function RespostaAjax() {
 			errorCallback(responseText);
 	}
 }
+
+function postToUrl(url) {
+	var f = document.createElement('form');
+	f.action=url;
+	f.method='POST';
+	//f.target='_blank';
+
+//	var i=document.createElement('input');
+//	i.type='hidden';
+//	i.name='fragment';
+//	i.value='<!DOCTYPE html>'+document.documentElement.outerHTML;
+//	f.appendChild(i);
+
+	document.body.appendChild(f);
+	f.submit();
+}

@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -16,6 +20,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PostLoad;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -27,6 +34,9 @@ import com.crivano.jflow.model.enm.ProcessInstanceStatus;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.sinc.lib.Item;
+import br.gov.jfrj.siga.sinc.lib.Sincronizador;
+import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.wf.model.enm.WfPrioridade;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
 import br.gov.jfrj.siga.wf.util.WfResp;
@@ -60,6 +70,10 @@ public class WfProcedimento implements ProcessInstance<WfDefinicaoDeProcedimento
 	@BatchSize(size = 1)
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "procedimento")
 	private List<WfVariavel> variaveis = new ArrayList<>();
+
+	@BatchSize(size = 1)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "procedimento")
+	private Set<WfMov> movimentacoes = new TreeSet<>();
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "PROC_ST_CORRENTE")
@@ -124,6 +138,8 @@ public class WfProcedimento implements ProcessInstance<WfDefinicaoDeProcedimento
 
 	@Override
 	public WfDefinicaoDeTarefa getCurrentTaskDefinition() {
+		if (indiceCorrente == null)
+			return null;
 		return getTaskDefinitionByIndex(indiceCorrente);
 	}
 
@@ -146,6 +162,7 @@ public class WfProcedimento implements ProcessInstance<WfDefinicaoDeProcedimento
 		return i;
 	}
 
+	@PostLoad
 	public void onLoad() {
 		variavelMap.clear();
 		for (WfVariavel v : variaveis) {
@@ -160,22 +177,9 @@ public class WfProcedimento implements ProcessInstance<WfDefinicaoDeProcedimento
 		}
 	}
 
+	@PrePersist
+	@PreUpdate
 	public void onSave() throws Exception {
-		variaveis.clear();
-		for (String k : variavelMap.keySet()) {
-			WfVariavel v = new WfVariavel();
-			v.setIdentifier(k);
-			Object o = variavelMap.get(k);
-			if (o instanceof Boolean)
-				v.bool = (Boolean) o;
-			else if (o instanceof Double)
-				v.number = (Double) o;
-			else if (o instanceof Date)
-				v.date = (Date) o;
-			else
-				v.string = o.toString();
-			variaveis.add(v);
-		}
 	}
 
 	@Override
@@ -337,5 +341,13 @@ public class WfProcedimento implements ProcessInstance<WfDefinicaoDeProcedimento
 
 	public void setPrioridade(WfPrioridade prioridade) {
 		this.prioridade = prioridade;
+	}
+
+	public Set<WfMov> getMovimentacoes() {
+		return movimentacoes;
+	}
+
+	public void setMovimentacoes(Set<WfMov> movimentacoes) {
+		this.movimentacoes = movimentacoes;
 	}
 }

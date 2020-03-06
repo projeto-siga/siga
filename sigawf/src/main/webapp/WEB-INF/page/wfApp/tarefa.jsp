@@ -9,7 +9,7 @@
 						style="font-weight: normal;">${taskInstance.task.processDefinition.name}</span><span
 						style="text-align: right;">&nbsp(${f:espera(taskInstance.create)})</span><br />
 						Tarefa: <a
-						href="${linkTo[AppController].task[task.taskInstance.id]}"><span
+						href="${linkTo[WfAppController].task[task.taskInstance.id]}"><span
 							style="font-weight: normal;">${task.taskInstance.task.name}</span>
 					</a> <c:if test="${not empty taskInstance.actorId}">
 						sendo atendida por <span style="font-weight: normal;">${taskInstance.actorId}</span>

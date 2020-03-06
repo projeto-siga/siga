@@ -18,6 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.bl;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,11 +36,12 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
-import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
+import br.gov.jfrj.siga.wf.model.WfMov;
+import br.gov.jfrj.siga.wf.model.WfMovAnotacao;
+import br.gov.jfrj.siga.wf.model.WfMovTransicao;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
 import br.gov.jfrj.siga.wf.util.WfEngine;
 import br.gov.jfrj.siga.wf.util.WfHandler;
-import br.gov.jfrj.siga.wf.util.WfResp;
 import br.gov.jfrj.siga.wf.util.WfTarefa;
 import br.gov.jfrj.siga.wf.util.WfTarefaComparator;
 
@@ -79,19 +81,19 @@ public class WfBL extends CpBL {
 	 * @return
 	 * @throws Exception
 	 */
-	public WfProcedimento createProcessInstance(long pdId, DpPessoa cadastrante, DpLotacao lotaCadastrante,
-			DpPessoa titular, DpLotacao lotaTitular, ArrayList<String> keys, ArrayList<String> values,
-			boolean fCreateStartTask) throws Exception {
+	public WfProcedimento createProcessInstance(long pdId, DpPessoa titular, DpLotacao lotaTitular,
+			CpIdentidade identidade, ArrayList<String> keys, ArrayList<String> values, boolean fCreateStartTask)
+			throws Exception {
 
 		// Create the process definition,
 		WfDefinicaoDeProcedimento pd = WfDao.getInstance().consultar(pdId, WfDefinicaoDeProcedimento.class, false);
 
 		// Create the process instance without responsible support
 		HashMap<String, Object> variable = new HashMap<>();
-		variable.put(WF_CADASTRANTE, cadastrante.getSigla());
-		variable.put(WF_LOTA_CADASTRANTE, lotaCadastrante.getSiglaCompleta());
-		variable.put(WF_TITULAR, titular.getSigla());
-		variable.put(WF_LOTA_TITULAR, lotaTitular.getSiglaCompleta());
+//		variable.put(WF_CADASTRANTE, cadastrante.getSigla());
+//		variable.put(WF_LOTA_CADASTRANTE, lotaCadastrante.getSiglaCompleta());
+//		variable.put(WF_TITULAR, titular.getSigla());
+//		variable.put(WF_LOTA_TITULAR, lotaTitular.getSiglaCompleta());
 
 		if (keys != null && values != null) {
 			for (int n = 0; n < keys.size(); n++) {
@@ -101,7 +103,7 @@ public class WfBL extends CpBL {
 
 		WfProcedimento pi = new WfProcedimento(pd, variable);
 
-		WfEngine engine = new WfEngine(dao(), new WfHandler());
+		WfEngine engine = new WfEngine(dao(), new WfHandler(titular, lotaTitular, identidade));
 
 		// Start the process instance
 		engine.start(pi);
@@ -109,10 +111,9 @@ public class WfBL extends CpBL {
 		return pi;
 	}
 
-	public void prosseguir(String event, Integer detourIndex, Map<String, Object> param) throws Exception {
-
-		WfEngine engine = new WfEngine(dao(), new WfHandler());
-
+	public void prosseguir(String event, Integer detourIndex, Map<String, Object> param, DpPessoa titular,
+			DpLotacao lotaTitular, CpIdentidade identidade) throws Exception {
+		WfEngine engine = new WfEngine(dao(), new WfHandler(titular, lotaTitular, identidade));
 		engine.resume(event, detourIndex, param);
 	}
 
@@ -128,7 +129,7 @@ public class WfBL extends CpBL {
 	}
 
 	public SortedSet<WfTarefa> getTaskList(String siglaDoc) {
-		List<WfProcedimento> pis = WfDao.getInstance().consultarProcedimentosAtivosPorDocumento(siglaDoc);
+		List<WfProcedimento> pis = WfDao.getInstance().consultarProcedimentosAtivosPorEvento(siglaDoc);
 		SortedSet<WfTarefa> tasks = new TreeSet<>();
 		for (WfProcedimento pi : pis) {
 			tasks.add(new WfTarefa(pi));
@@ -173,6 +174,37 @@ public class WfBL extends CpBL {
 		if (novo.getNome() == null || novo.getNome().trim().length() == 0)
 			throw new AplicacaoException("não é possível salvar sem informar o nome.");
 		dao().gravarComHistorico(novo, antigo, dt, identidadeCadastrante);
+	}
+
+	private void gravarMovimentacao(final WfMov mov) throws AplicacaoException {
+		dao().gravar(mov);
+		if (mov.getProcedimento().getMovimentacoes() == null)
+			mov.getProcedimento().setMovimentacoes(new TreeSet<WfMov>());
+		mov.getProcedimento().getMovimentacoes().add(mov);
+	}
+
+	public void anotar(WfProcedimento pi, String descrMov, DpPessoa titular, DpLotacao lotaTitular,
+			CpIdentidade identidade) {
+		try {
+
+			WfMovAnotacao mov = new WfMovAnotacao(pi, descrMov, dao().consultarDataEHoraDoServidor(), titular,
+					lotaTitular, identidade);
+			gravarMovimentacao(mov);
+		} catch (final Exception e) {
+			throw new AplicacaoException("Erro ao fazer anotação.", 0, e);
+		}
+	}
+
+	public void excluirAnotacao(WfProcedimento pi, WfMovAnotacao mov) {
+		pi.getMovimentacoes().remove(mov);
+		mov.delete();
+	}
+
+	public void registrarTransicao(WfProcedimento pi, Integer de, Integer para, DpPessoa titular, DpLotacao lotaTitular,
+			CpIdentidade identidade) {
+		WfMovTransicao mov = new WfMovTransicao(pi, dao().consultarDataEHoraDoServidor(), titular, lotaTitular,
+				identidade, de, para);
+		gravarMovimentacao(mov);
 	}
 
 }

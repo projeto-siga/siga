@@ -15,6 +15,9 @@
 <%@ attribute name="classe"%>
 <%@ attribute name="estilo"%>
 <%@ attribute name="atalho"%>
+<%@ attribute name="modal"%>
+<%@ attribute name="explicacao"%>
+<%@ attribute name="post"%>
 
 <c:if test="${(atalho == true) and fn:contains(title, '_')}">
 	<c:set var="ious" value="${fn:indexOf(title, '_')}" />
@@ -56,23 +59,27 @@
 	${pre}
 	<c:if test="${not empty url}">
 		<c:choose>
+			<c:when test="${not empty modal}">
+				<a class="${classe} ${linkBotoes ? 'btn btn-sm btn-info link-tag' : ''}" <c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
+					data-toggle="modal" data-target="#${modal}" title="${explicacao}">${img}${title}</a>
+			</c:when>
 			<c:when test="${not empty popup and popup != false}">
 				<a class="${classe} ${linkBotoes ? 'btn btn-sm btn-info link-tag' : ''}" <c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
-					href="javascript:${linkConfirm}popitup('${url}');">${img}${title}</a>
+					href="javascript:${linkConfirm}popitup('${url}');" title="${explicacao}">${img}${title}</a>
 			</c:when>
 			<c:when test="${not empty ajax and ajax != false}">
 				<span id="spanAjax_${idAjax}"> <a class="${classe} ${linkBotoes ? 'btn btn-sm btn-info link-tag' : ''} link-tag" <c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
-					href="javascript: SetInnerHTMLFromAjaxResponse('${url}', 'spanAjax_${idAjax}');">${img}${title}</a>
+					href="javascript: SetInnerHTMLFromAjaxResponse('${url}', 'spanAjax_${idAjax}');" title="${explicacao}">${img}${title}</a>
 				</span>
 			</c:when>
 			<c:otherwise>
 				<c:choose>
 					<c:when test="${not empty linkConfirm}">
 						<a class="${classe} ${linkBotoes ? 'btn btn-sm btn-info link-tag' : ''} link-tag" <c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
-							href="javascript:${linkConfirm}location.href='${url}';">${img}${title}</a>
+							href="javascript:${linkConfirm}${post ? 'postToUrl(\'' + url + '\')' : 'location.href=\'' + url + '\''};" title="${explicacao}">${img}${title}</a>
 					</c:when>
 					<c:otherwise>
-						<a class="${classe} ${linkBotoes ? 'btn btn-sm btn-info link-tag' : ''} link-tag" <c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if> href="${url}">${img}${title}</a>
+						<a class="${classe} ${linkBotoes ? 'btn btn-sm btn-info link-tag' : ''} link-tag" <c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if> href="${post ? 'javascript:postToUrl(\''.concat(url).concat('\')') : url};" title="${explicacao}">${img}${title}</a>
 					</c:otherwise>
 				</c:choose>
 			</c:otherwise>

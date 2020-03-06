@@ -30,9 +30,12 @@ import br.gov.jfrj.siga.vraptor.StringQualquer;
 import br.gov.jfrj.siga.vraptor.Transacional;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
+import br.gov.jfrj.siga.wf.model.WfDefinicaoDeDesvio;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeVariavel;
+import br.gov.jfrj.siga.wf.model.WfMov;
+import br.gov.jfrj.siga.wf.model.WfMovAnotacao;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
 import br.gov.jfrj.siga.wf.model.enm.WfPrioridade;
 import br.gov.jfrj.siga.wf.util.WfTarefa;
@@ -109,10 +112,10 @@ public class WfAppController extends WfController {
 	public void iniciar(Long pdId) throws Exception {
 		if (pdId == null)
 			throw new RuntimeException();
-		WfProcedimento pi = Wf.getInstance().getBL().createProcessInstance(pdId, getCadastrante(),
-				getCadastrante().getLotacao(), getTitular(), getLotaTitular(), null, null, true);
+		WfProcedimento pi = Wf.getInstance().getBL().createProcessInstance(pdId, getTitular(), getLotaTitular(),
+				getIdentidadeCadastrante(), null, null, true);
 		if (pi.getStatus() == ProcessInstanceStatus.PAUSED)
-			result.redirectTo(this).task(pi.getId());
+			result.redirectTo(this).procedimento(pi.getId());
 		else
 			redirectToHome();
 	}
@@ -137,8 +140,8 @@ public class WfAppController extends WfController {
 	 * 
 	 * @return Action.SUCCESS
 	 */
-	@Path("/app/task/{piId}")
-	public void task(Long piId) throws Exception {
+	@Path("/app/procedimento/{piId}")
+	public void procedimento(Long piId) throws Exception {
 		WfProcedimento pi = loadTaskInstance(piId);
 		List<SigaIdDescr> prioridades = new ArrayList<SigaIdDescr>();
 
@@ -155,6 +158,8 @@ public class WfAppController extends WfController {
 		result.include("prioridades", prioridades);
 		result.include("task", util.inicializarTaskVO(new WfTarefa(pi)));
 		result.include("dot", util.getDot(new WfTarefa(pi)));
+		result.include("movs", pi.getMovimentacoes());
+		result.include("piId", pi.getId());
 	}
 
 	/**
@@ -167,7 +172,9 @@ public class WfAppController extends WfController {
 	 * @throws CsisException
 	 */
 	@Transacional
-	public void executeTask(Long piId, String[] fieldNames, StringQualquer[] fieldValues, String transitionName,
+	@Post
+	@Path("/app/procedimento/{piId}/continuar")
+	public void continuar(Long piId, String[] fieldNames, StringQualquer[] fieldValues, String transitionName,
 			String sigla) throws Exception {
 		String cadastrante = getTitular().getSigla() + "@" + getLotaTitular().getSiglaCompleta();
 
@@ -223,6 +230,21 @@ public class WfAppController extends WfController {
 			}
 		}
 
+		Integer desvio = null;
+		if (transitionName != null && td.getDetour() != null) {
+			int i = 0;
+			for (WfDefinicaoDeDesvio detour : td.getDetour()) {
+				if (transitionName.equals(detour.getNome())) {
+					desvio = i;
+					break;
+				}
+				i++;
+			}
+		}
+
+		Wf.getInstance().getBL().prosseguir(pi.getEvent(), desvio, param, getTitular(), getLotaTitular(),
+				getIdentidadeCadastrante());
+
 		// Redireciona para a pagina escolhida quando o procedimento criar uma
 		// variavel pre-definida
 		//
@@ -248,12 +270,13 @@ public class WfAppController extends WfController {
 		// task existir e for designado para o mesmo ator, então a próxima
 		// página a ser exibida será a página de apresentação do task, e não a
 		// página inicial.
-		if (pi.getStatus() == ProcessInstanceStatus.PAUSED && pi.getLotacao().equivale(getLotaTitular())) {
-			result.redirectTo(this).task(pi.getId());
+		if (pi.getStatus() == ProcessInstanceStatus.PAUSED && pi.getLotacao() != null
+				&& pi.getLotacao().equivale(getLotaTitular())) {
+			result.redirectTo(this).procedimento(pi.getId());
 			return;
 		}
 
-		redirectToHome();
+		result.redirectTo(this).procedimento(pi.getId());
 	}
 
 	// TODO: Implementar o "pegar"
@@ -344,7 +367,7 @@ public class WfAppController extends WfController {
 
 		// TODO Acrescentar uma movimentação de atribuição aqui!
 
-		result.redirectTo(this).task(pi.getId());
+		result.redirectTo(this).procedimento(pi.getId());
 	}
 
 	/**
@@ -354,9 +377,32 @@ public class WfAppController extends WfController {
 	 * @throws CsisException
 	 */
 	@Transacional
-	public void commentTask(Long tiId, String comentario) throws Exception {
-		// TODO Acrescentar uma movimentação de comentário aqui!
-		result.redirectTo(this).task(tiId);
+	@Post
+	@Path("/app/anotar")
+	public void anotar(Long id, String descrMov) throws Exception {
+		WfProcedimento pi = dao().consultar(id, WfProcedimento.class, false);
+		Wf.getInstance().getBL().anotar(pi, descrMov, getTitular(), getLotaTitular(), getIdentidadeCadastrante());
+		result.redirectTo(this).procedimento(id);
+	}
+
+	/**
+	 * Insere um comentário à tarefa.
+	 * 
+	 * @return
+	 * @throws CsisException
+	 */
+	@Transacional
+	@Post
+	@Path("/app/procedimento/{id}/anotacao/{idMov}/excluir")
+	public void anotacaoExcluir(Long id, Long idMov) throws Exception {
+		WfProcedimento pi = dao().consultar(id, WfProcedimento.class, false);
+		for (WfMov mov : pi.getMovimentacoes()) {
+			if (mov.getId().equals(idMov) && mov instanceof WfMovAnotacao) {
+				Wf.getInstance().getBL().excluirAnotacao(pi, (WfMovAnotacao) mov);
+				result.redirectTo(this).procedimento(id);
+			}
+		}
+		throw new Exception("Movimentação não encontrada.");
 	}
 
 	/**

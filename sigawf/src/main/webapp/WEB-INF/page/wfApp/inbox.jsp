@@ -16,7 +16,7 @@
 			<c:forEach var="taskInstance" items="${taskInstances}">
 				<tr class="count">
 					<td>
-						<a href="${linkTo[AppController].task[taskInstance.id]}">${taskInstance.task.name}</a></td>
+						<a href="${linkTo[WfAppController].procedimento[taskInstance.id]}">${taskInstance.task.name}</a></td>
 
 					<!-- <td>${taskInstance.task.processDefinition.name}</td> -->
 					<td align="center"><c:set var="atendente">${pooledActors[taskInstance]}</c:set>

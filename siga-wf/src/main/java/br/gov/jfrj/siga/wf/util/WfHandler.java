@@ -11,11 +11,24 @@ import com.crivano.jflow.Handler;
 import com.crivano.jflow.TaskResult;
 
 import br.gov.jfrj.siga.base.Correio;
+import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
 
 public class WfHandler implements Handler<WfProcedimento, WfResp> {
+
+	DpPessoa titular;
+	DpLotacao lotaTitular;
+	CpIdentidade identidade;
+
+	public WfHandler(DpPessoa titular, DpLotacao lotaTitular, CpIdentidade identidade) {
+		this.titular = titular;
+		this.lotaTitular = lotaTitular;
+		this.identidade = identidade;
+	}
 
 	@Override
 	public void afterPause(WfProcedimento pi, TaskResult result) {
@@ -66,6 +79,11 @@ public class WfHandler implements Handler<WfProcedimento, WfResp> {
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
+	}
+
+	@Override
+	public void afterTransition(WfProcedimento pi, Integer de, Integer para) {
+		Wf.getInstance().getBL().registrarTransicao(pi, de, para, titular, lotaTitular, identidade);
 	}
 
 }

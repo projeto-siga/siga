@@ -214,7 +214,7 @@ public class SigaController {
 
 	public void exception() {
 		configurarHttpResult(500);
-		new RequestExceptionLogger(request, (Exception) result.included().get("exception"), 0L, this.getClass().getName()).logar();
+		// new RequestExceptionLogger(request, (Exception) result.included().get("exception"), 0L, this.getClass().getName()).logar();
 	}
 
 	private void configurarHttpResult(int statusCode) {

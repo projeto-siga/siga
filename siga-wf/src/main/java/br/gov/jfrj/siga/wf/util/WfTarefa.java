@@ -1,10 +1,5 @@
 package br.gov.jfrj.siga.wf.util;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.BatchSize;
-
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
 

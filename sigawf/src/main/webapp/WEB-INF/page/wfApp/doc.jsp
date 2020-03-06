@@ -16,7 +16,7 @@
 			scope="request" />
 		<c:set var="ajax" value="sim" scope="request" />
 
-		<form method="POST" action="${linkTo[AppController].executeTask}"
+		<form method="POST" action="${linkTo[WfAppController].continuar}"
 			style="margin: 0px; padding: 0px; border: 0px;" id="form${tiId}">
 			<input name="result" type="hidden" value="doc" /> <input
 				name="sigla" type="hidden" value="${item.key}" /> <input

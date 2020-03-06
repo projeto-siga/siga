@@ -16,31 +16,45 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package br.gov.jfrj.siga.ex.vo;
+package br.gov.jfrj.siga.base;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.TreeMap;
 
-import br.gov.jfrj.siga.base.AcaoVO;
-import br.gov.jfrj.siga.base.VO;
 import br.gov.jfrj.siga.base.util.Utils;
 
-public class ExVO extends VO {
+public class VO {
+	List<AcaoVO> acoes = new ArrayList<AcaoVO>();
+
+	private class NomeAcaoVOComparator implements Comparator<AcaoVO> {
+
+		public int compare(AcaoVO o1, AcaoVO o2) {
+			return o1.getNome().replace("_", "").compareTo(o2.getNome().replace("_", ""));
+		}
+	}
+
+	public List<AcaoVO> getAcoes() {
+		return acoes;
+	}
+
+	public List<AcaoVO> getAcoesOrdenadasPorNome() {
+		return AcaoVO.ordena(getAcoes(), new NomeAcaoVOComparator());
+	}
+
+	public void setAcoes(List<AcaoVO> acoes) {
+		this.acoes = acoes;
+	}
+
+	public void addAcao(String icone, String nome, String nameSpace, String action, boolean pode) {
+		addAcao(icone, nome, nameSpace, action, pode, null, null, null, null, null, null);
+	}
 
 	public void addAcao(String icone, String nome, String nameSpace, String action, boolean pode,
-			String msgConfirmacao, String parametros, String pre, String pos, String classe) {
+			String msgConfirmacao, String parametros, String pre, String pos, String classe, String modal) {
 		TreeMap<String, String> params = new TreeMap<String, String>();
-
-		if (this instanceof ExMovimentacaoVO) {
-			params.put("id", Long.toString(((ExMovimentacaoVO) this).getIdMov()));
-			// params.put("sigla", ((ExMovimentacaoVO)
-			// this).getMobilVO().getSigla());
-		} else if (this instanceof ExMobilVO) {
-			params.put("sigla", ((ExMobilVO) this).getSigla());
-		} else if (this instanceof ExDocumentoVO) {
-			params.put("sigla", ((ExDocumentoVO) this).getSigla());
-		}
-
 		if (parametros != null) {
 			if (parametros.startsWith("&"))
 				parametros = parametros.substring(1);
@@ -53,8 +67,8 @@ public class ExVO extends VO {
 		}
 
 		if (pode) {
-			AcaoVO acao = new AcaoVO(icone, nome, nameSpace, action, pode, msgConfirmacao, params, pre, pos, classe, null);
-			getAcoes().add(acao);
+			AcaoVO acao = new AcaoVO(icone, nome, nameSpace, action, pode, msgConfirmacao, params, pre, pos, classe, modal);
+			acoes.add(acao);
 		}
 	}
 }

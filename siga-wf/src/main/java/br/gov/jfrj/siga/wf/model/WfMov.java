@@ -21,6 +21,10 @@
 package br.gov.jfrj.siga.wf.model;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -34,7 +38,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.base.AcaoVO;
+import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 /**
@@ -45,7 +54,7 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 @Entity
 @DiscriminatorColumn(name = "MOVI_TP")
 @Table(name = "sigawf.wf_movimentacao")
-public abstract class WfMov extends HistoricoAuditavelSuporte implements Serializable {
+public abstract class WfMov extends HistoricoAuditavelSuporte implements Serializable, Comparable<WfMov> {
 	@Id
 	@GeneratedValue
 	@Column(name = "MOVI_ID", unique = true, nullable = false)
@@ -57,6 +66,14 @@ public abstract class WfMov extends HistoricoAuditavelSuporte implements Seriali
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "PROC_ID")
 	private WfProcedimento procedimento;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "PESS_ID_TITULAR")
+	private DpPessoa titular;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "LOTA_ID_TITULAR")
+	private DpLotacao lotaTitular;
 
 //	@ManyToOne(fetch = FetchType.LAZY)
 //	@JoinColumn(name = "MOVI_ID_CANCELADORA")
@@ -75,6 +92,22 @@ public abstract class WfMov extends HistoricoAuditavelSuporte implements Seriali
 	//
 	@Column(name = "HIS_ATIVO")
 	private Integer hisAtivo;
+
+	public WfMov() {
+		super();
+	}
+
+	public WfMov(WfProcedimento procedimento, String descr, Date dtIni, DpPessoa titular, DpLotacao lotaTitular,
+			CpIdentidade idcIni) {
+		super();
+		this.setProcedimento(procedimento);
+		this.setDescr(descr);
+		this.titular = titular;
+		this.lotaTitular = lotaTitular;
+		this.setHisIdcIni(idcIni);
+		this.setHisDtIni(dtIni);
+		this.hisAtivo = 1;
+	}
 
 	@Override
 	public Integer getHisAtivo() {
@@ -103,4 +136,68 @@ public abstract class WfMov extends HistoricoAuditavelSuporte implements Seriali
 		return obj == this;
 	}
 
+	public DpPessoa getTitular() {
+		return titular;
+	}
+
+	public void setTitular(DpPessoa titular) {
+		this.titular = titular;
+	}
+
+	public DpLotacao getLotaTitular() {
+		return lotaTitular;
+	}
+
+	public void setLotaTitular(DpLotacao lotaTitular) {
+		this.lotaTitular = lotaTitular;
+	}
+
+	public WfProcedimento getProcedimento() {
+		return procedimento;
+	}
+
+	public void setProcedimento(WfProcedimento procedimento) {
+		this.procedimento = procedimento;
+	}
+
+	public String getClasseVO() {
+		return this.getClass().getSimpleName() + " " + (this.getHisAtivo() == 1 ? "" : "disabled");
+	}
+
+	public String getDtIniVO() {
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+		if (getHisDtIni() != null) {
+			return df.format(getHisDtIni());
+		}
+		return "";
+	}
+
+	public String getTempoRelativoVO() {
+		if (getHisDtIni() != null) {
+			return Data.calcularTempoRelativo(getHisDtIni());
+		}
+		return "";
+	}
+
+	public abstract String getEvento();
+
+	public abstract String getDescricaoEvento();
+
+	public List<AcaoVO> getAcoes() {
+		List<AcaoVO> set = new ArrayList<>();
+		return set;
+	}
+
+	public String getDescr() {
+		return descr;
+	}
+
+	public void setDescr(String descr) {
+		this.descr = descr;
+	}
+
+	@Override
+	public int compareTo(WfMov o) {
+		return this.getHisDtIni().compareTo(o.getHisDtIni());
+	}
 }

@@ -24,6 +24,8 @@ import java.util.List;
 import javax.jws.WebService;
 
 import br.gov.jfrj.siga.Service;
+import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 import br.gov.jfrj.siga.wf.bl.Wf;
@@ -33,7 +35,6 @@ import br.gov.jfrj.siga.wf.model.WfProcedimento;
 import br.gov.jfrj.siga.wf.service.WfService;
 import br.gov.jfrj.siga.wf.util.WfEngine;
 import br.gov.jfrj.siga.wf.util.WfHandler;
-import br.gov.jfrj.siga.wf.util.WfTarefa;
 import br.gov.jfrj.siga.wf.util.WfUtil;
 
 /**
@@ -64,7 +65,7 @@ public class WfServiceImpl implements WfService {
 	 * executa a ação da tarefa.
 	 */
 	public Boolean atualizarWorkflowsDeDocumento(String siglaDoc) throws Exception {
-		List<WfProcedimento> pis = WfDao.getInstance().consultarProcedimentosAtivosPorDocumento(siglaDoc);
+		List<WfProcedimento> pis = WfDao.getInstance().consultarProcedimentosAtivosPorEvento(siglaDoc);
 		boolean f = false;
 		ExService exSvc = Service.getExService();
 		Boolean semEfeito = exSvc.isSemEfeito(siglaDoc);
@@ -73,7 +74,7 @@ public class WfServiceImpl implements WfService {
 				Wf.getInstance().getBL().encerrarProcessInstance(pi.getId(),
 						WfDao.getInstance().consultarDataEHoraDoServidor());
 			else {
-				new WfEngine(WfDao.getInstance(), new WfHandler()).resume(siglaDoc, null, null);
+				new WfEngine(WfDao.getInstance(), new WfHandler(null, null, null)).resume(siglaDoc, null, null);
 			}
 			f = true;
 		}
@@ -94,12 +95,20 @@ public class WfServiceImpl implements WfService {
 		PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaCadastrante);
 		PessoaLotacaoParser titularParser = new PessoaLotacaoParser(siglaTitular);
 
-		WfProcedimento pi = Wf.getInstance().getBL().createProcessInstance(pd.getId(), cadastranteParser.getPessoa(),
-				cadastranteParser.getLotacao(), titularParser.getPessoa(), titularParser.getLotacao(), keys, values,
-				false);
+		CpIdentidade identidade = null;
+		List<CpIdentidade> l = WfDao.getInstance().consultaIdentidades(cadastranteParser.getPessoa());
+		if (l.size() > 0)
+			identidade = l.get(0);
+		WfProcedimento pi = Wf.getInstance().getBL().createProcessInstance(pd.getId(), titularParser.getPessoa(),
+				titularParser.getLotacao(), identidade, keys, values, false);
 
 		WfUtil.transferirDocumentosVinculados(pi, siglaTitular);
 		return true;
+	}
+
+	private Object consultaIdentidades(DpPessoa pessoa) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override

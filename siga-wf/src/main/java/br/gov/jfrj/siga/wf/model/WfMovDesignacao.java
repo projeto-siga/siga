@@ -35,4 +35,15 @@ public class WfMovDesignacao extends WfMov {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "MOVI_TP_DESIGNACAO")
 	private WfTipoDeDesignacao tipo;
+
+	@Override
+	public String getEvento() {
+		return "Designação";
+	}
+
+	@Override
+	public String getDescricaoEvento() {
+		return null;
+	}
+
 }

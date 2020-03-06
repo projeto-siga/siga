@@ -28,6 +28,7 @@ import java.util.TreeSet;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.VO;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.service.ExService;
@@ -45,7 +46,7 @@ import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
  * usado na exibição da interface do usuário) de uma tarefa.
  * 
  */
-public class WfTaskVO {
+public class WfTaskVO extends VO {
 	public static final String DISABLE_DOC_FORWARD = "disable_doc_forward";
 
 	protected WfTarefa ti;
@@ -90,28 +91,27 @@ public class WfTaskVO {
 			throws IllegalAccessException, InvocationTargetException, Exception, AplicacaoException {
 		this.ti = ti;
 
-		WfConhecimento c = WfDao.getInstance().consultarConhecimento(ti.getDefinicaoDeTarefa().getId());
-		if (c != null) {
-			this.setDescricao(WfWikiParser.renderXHTML(c.getDescricao()));
-			this.setConhecimento(c.getDescricao());
-		}
+		if (ti.getDefinicaoDeTarefa() != null) {
+			WfConhecimento c = WfDao.getInstance().consultarConhecimento(ti.getDefinicaoDeTarefa().getId());
+			if (c != null) {
+				this.setDescricao(WfWikiParser.renderXHTML(c.getDescricao()));
+				this.setConhecimento(c.getDescricao());
+			}
 
-		ExService service = Service.getExService();
+			String siglaTitular = titular.getSigla() + "@" + lotaTitular.getSiglaCompleta();
 
-		String siglaTitular = titular.getSigla() + "@" + lotaTitular.getSiglaCompleta();
+			String respWF = null;
+			if (ti.getInstanciaDeProcesso().getPessoa() != null)
+				respWF = ti.getInstanciaDeProcesso().getPessoa().getSigla();
+			if (respWF == null && ti.getInstanciaDeProcesso().getLotacao() != null)
+				respWF = "@" + ti.getInstanciaDeProcesso().getLotacao().getSiglaCompleta();
 
-		String respWF = null;
-		if (ti.getInstanciaDeProcesso().getPessoa() != null)
-			respWF = ti.getInstanciaDeProcesso().getPessoa().getSigla();
-		if (respWF == null && ti.getInstanciaDeProcesso().getLotacao() != null)
-			respWF = "@" + ti.getInstanciaDeProcesso().getLotacao().getSiglaCompleta();
+			// O ideal é que seja desconsiderada apenas a variavel cujo valor seja
+			// igual a siglaDoc, e não todas que começam com doc_
+			if (ti.getDefinicaoDeTarefa().getVariable() != null && ti.getDefinicaoDeTarefa().getVariable().size() > 0) {
+				List<WfVariableVO> variableAccesses = new ArrayList<>();
 
-		// O ideal é que seja desconsiderada apenas a variavel cujo valor seja
-		// igual a siglaDoc, e não todas que começam com doc_
-		if (ti.getDefinicaoDeTarefa().getVariable() != null && ti.getDefinicaoDeTarefa().getVariable().size() > 0) {
-			List<WfVariableVO> variableAccesses = new ArrayList<>();
-
-			for (WfDefinicaoDeVariavel vd : ti.getDefinicaoDeTarefa().getVariable()) {
+				for (WfDefinicaoDeVariavel vd : ti.getDefinicaoDeTarefa().getVariable()) {
 //				if (va.getAccess() != null) {
 //					String access = va.getAccess().toString();
 //					if (access.contains("value=")) {
@@ -125,125 +125,136 @@ public class WfTaskVO {
 //						}
 //					}
 
-				WfVariableVO wfva = new WfVariableVO(vd);
-				if (wfva.getMappedName().startsWith("doc_")) {
-					String documento = (String) ti.getInstanciaDeProcesso().getVariable().get(wfva.getMappedName());
-					if (documento != null) {
-						if (siglaDoc == null || !documento.startsWith(siglaDoc)) {
-							this.variableList.add(wfva);
-						} else {
-							if (wfva != null)
+					WfVariableVO wfva = new WfVariableVO(vd);
+					this.variableList.add(wfva);
+					wfva.setValor((String) ti.getInstanciaDeProcesso().getVariavelMap().get(wfva.getIdentificador()));
+
+					if (wfva.getIdentificador().startsWith("doc_")) {
+						String documento = (String) ti.getInstanciaDeProcesso().getVariable()
+								.get(wfva.getIdentificador());
+						if (documento != null) {
+							if (siglaDoc == null || !documento.startsWith(siglaDoc)) {
 								this.variableList.add(wfva);
-							setMsgAviso("");
-							// if (!service.isAtendente(value, siglaTitular)) {
-							String respEX = service.getAtendente(documento, siglaTitular);
-							DpLotacao lotEX = new PessoaLotacaoParser(respEX).getLotacaoOuLotacaoPrincipalDaPessoa();
-							// if (lotEX != null &&
-							// !lotaTitular.equivale(lotEX))
-							// wfva.setRespEX(lotEX.getSigla());
+							} else {
+								ExService service = Service.getExService();
+								if (wfva != null)
+									this.variableList.add(wfva);
+								setMsgAviso("");
+								// if (!service.isAtendente(value, siglaTitular)) {
+								String respEX = service.getAtendente(documento, siglaTitular);
+								DpLotacao lotEX = new PessoaLotacaoParser(respEX)
+										.getLotacaoOuLotacaoPrincipalDaPessoa();
+								// if (lotEX != null &&
+								// !lotaTitular.equivale(lotEX))
+								// wfva.setRespEX(lotEX.getSigla());
 
-							DpLotacao lotWF = new PessoaLotacaoParser(respWF).getLotacaoOuLotacaoPrincipalDaPessoa();
-							// if (lotWF != null &&
-							// !lotaTitular.equivale(lotWF))
-							// wfva.setRespWF(lotWF.getSigla());
+								DpLotacao lotWF = new PessoaLotacaoParser(respWF)
+										.getLotacaoOuLotacaoPrincipalDaPessoa();
+								// if (lotWF != null &&
+								// !lotaTitular.equivale(lotWF))
+								// wfva.setRespWF(lotWF.getSigla());
 
-							// if (wfva.isAviso())
-							// }
+								// if (wfva.isAviso())
+								// }
 
-							boolean podeMovimentar = service.podeMovimentar(documento, siglaTitular);
-							boolean estaComTarefa = titular.equivale(new PessoaLotacaoParser(respWF).getPessoa());
-							respEX = service.getAtendente(documento, siglaTitular);
-							lotEX = new PessoaLotacaoParser(respEX).getLotacaoOuLotacaoPrincipalDaPessoa();
+								boolean podeMovimentar = service.podeMovimentar(documento, siglaTitular);
+								boolean estaComTarefa = titular.equivale(new PessoaLotacaoParser(respWF).getPessoa());
+								respEX = service.getAtendente(documento, siglaTitular);
+								lotEX = new PessoaLotacaoParser(respEX).getLotacaoOuLotacaoPrincipalDaPessoa();
 
-							if (podeMovimentar && !estaComTarefa) {
-								if (lotWF == null || !lotWF.equivale(lotEX)) {
-									setMsgAviso("Esta tarefa só poderá prosseguir quando o documento " + documento
-											+ " for transferido para " + (lotWF == null ? "Nula" : lotWF.getSigla())
-											+ ".");
+								if (podeMovimentar && !estaComTarefa) {
+									if (lotWF == null || !lotWF.equivale(lotEX)) {
+										setMsgAviso("Esta tarefa só poderá prosseguir quando o documento " + documento
+												+ " for transferido para " + (lotWF == null ? "Nula" : lotWF.getSigla())
+												+ ".");
+									}
 								}
-							}
-							if (!podeMovimentar && estaComTarefa) {
-								setMsgAviso("Esta tarefa só poderá prosseguir quando o documento " + documento
-										+ ", que está com " + lotEX.getSigla() + ", for devolvido.");
-							}
-							if (!podeMovimentar && !estaComTarefa) {
-								if (lotWF != null && !lotWF.equivale(lotEX)) {
+								if (!podeMovimentar && estaComTarefa) {
 									setMsgAviso("Esta tarefa só poderá prosseguir quando o documento " + documento
-											+ ", que está com " + lotEX.getSigla() + ", for transferido para "
-											+ lotWF.getSigla() + ".");
+											+ ", que está com " + lotEX.getSigla() + ", for devolvido.");
 								}
-							}
+								if (!podeMovimentar && !estaComTarefa) {
+									if (lotWF != null && !lotWF.equivale(lotEX)) {
+										setMsgAviso("Esta tarefa só poderá prosseguir quando o documento " + documento
+												+ ", que está com " + lotEX.getSigla() + ", for transferido para "
+												+ lotWF.getSigla() + ".");
+									}
+								}
 
+							}
 						}
 					}
 				}
 			}
-		}
-		if (ti.getDefinicaoDeTarefa().getDetour() != null && ti.getDefinicaoDeTarefa().getDetour().size() > 0) {
-			Set<String> set = new TreeSet<String>();
+			if (ti.getDefinicaoDeTarefa().getDetour() != null && ti.getDefinicaoDeTarefa().getDetour().size() > 0) {
+				Set<String> set = new TreeSet<String>();
 
-			for (WfDefinicaoDeDesvio dd : ti.getDefinicaoDeTarefa().getDetour()) {
-				set.clear();
-				WfDefinicaoDeTarefa tdProxima = dd.getSeguinte();
-				boolean ultimo = dd.isUltimo();
-				WfDefinicaoDeDesvio desvio = null;
-				while (tdProxima != null) {
-					if (tdProxima.getTipoDeTarefa() == WfTipoDeTarefa.FORMULARIO)
-						break;
-					desvio = null;
-					if (tdProxima.getDefinicaoDeDesvio() != null && tdProxima.getDefinicaoDeDesvio().size() == 1)
-						desvio = tdProxima.getDefinicaoDeDesvio().get(0);
+				for (WfDefinicaoDeDesvio dd : ti.getDefinicaoDeTarefa().getDetour()) {
+					set.clear();
+					WfDefinicaoDeTarefa tdProxima = dd.getSeguinte();
+					boolean ultimo = dd.isUltimo();
+					WfDefinicaoDeDesvio desvio = null;
+					while (tdProxima != null) {
+						if (tdProxima.getTipoDeTarefa() == WfTipoDeTarefa.FORMULARIO)
+							break;
+						desvio = null;
+						if (tdProxima.getDefinicaoDeDesvio() != null && tdProxima.getDefinicaoDeDesvio().size() == 1)
+							desvio = tdProxima.getDefinicaoDeDesvio().get(0);
 
-					// A proxima tarefa está indicada
-					if (tdProxima.getSeguinte() != null)
-						tdProxima = tdProxima.getSeguinte();
-					else if (desvio != null && desvio.getSeguinte() != null)
-						tdProxima = desvio.getSeguinte();
+						// A proxima tarefa está indicada
+						if (tdProxima.getSeguinte() != null)
+							tdProxima = tdProxima.getSeguinte();
+						else if (desvio != null && desvio.getSeguinte() != null)
+							tdProxima = desvio.getSeguinte();
 
-					// Depois dessa tarefa vai terminar
-					else if (tdProxima.isUltimo() || (desvio != null && desvio.isUltimo())
-							|| ti.getInstanciaDeProcesso().getCurrentIndex() == ti.getInstanciaDeProcesso()
-									.getProcessDefinition().getTaskDefinition().size() - 1) {
-						ultimo = true;
-						tdProxima = null;
-						break;
+						// Depois dessa tarefa vai terminar
+						else if (tdProxima.isUltimo() || (desvio != null && desvio.isUltimo())
+								|| ti.getInstanciaDeProcesso().getCurrentIndex() == ti.getInstanciaDeProcesso()
+										.getProcessDefinition().getTaskDefinition().size() - 1) {
+							ultimo = true;
+							tdProxima = null;
+							break;
+						}
+
+						// Ou vai para a tarefa seguinte
+						else
+							tdProxima = (WfDefinicaoDeTarefa) ti.getInstanciaDeProcesso().getProcessDefinition()
+									.getTaskDefinition().get(ti.getInstanciaDeProcesso().getCurrentIndex() + 1);
 					}
 
-					// Ou vai para a tarefa seguinte
-					else
-						tdProxima = (WfDefinicaoDeTarefa) ti.getInstanciaDeProcesso().getProcessDefinition()
-								.getTaskDefinition().get(ti.getInstanciaDeProcesso().getCurrentIndex() + 1);
+					if (ultimo)
+						set.add("FIM");
+					else {
+						if (tdProxima != null) {
+							WfResp r = (WfResp) ti.getInstanciaDeProcesso().calcResponsible(tdProxima);
+							if (r != null)
+								set.add(r.getInitials());
+						}
+					}
+
+					// Será que já temos em "set" uma lista das pessoas responsáveis
+					// pelo próximo passo?
+					// nextNode deve pular para o próximo se não for um tasknode e
+					// se só tiver uma saida
+
+					this.transitions.add(new WfTransitionVO(dd, set));
 				}
 
-				if (ultimo)
-					set.add("FIM");
-				else {
-					WfResp r = (WfResp) ti.getInstanciaDeProcesso().calcResponsible(tdProxima);
-					if (r != null)
-						set.add(r.getInitials());
-				}
-
-				// Será que já temos em "set" uma lista das pessoas responsáveis
-				// pelo próximo passo?
-				// nextNode deve pular para o próximo se não for um tasknode e
-				// se só tiver uma saida
-
-				this.transitions.add(new WfTransitionVO(dd, set));
 			}
-
 		}
 
 		tags = new ArrayList<String>();
 		if (ti.getInstanciaDeProcesso().getProcessDefinition() != null)
 			tags.add("@" + Texto.slugify(ti.getInstanciaDeProcesso().getProcessDefinition().getNome(), true, true));
-		if (ti.getDefinicaoDeTarefa().getNome() != null)
+		if (ti.getDefinicaoDeTarefa() != null && ti.getDefinicaoDeTarefa().getNome() != null)
 			tags.add("@" + Texto.slugify(ti.getDefinicaoDeTarefa().getNome(), true, true));
 
-		if (ti.getInstanciaDeProcesso().getProcessDefinition().getNome() != null
+		if (ti.getInstanciaDeProcesso().getProcessDefinition().getNome() != null && ti.getDefinicaoDeTarefa() != null
 				&& ti.getDefinicaoDeTarefa().getNome() != null)
 			ancora = "^wf:" + Texto.slugify(ti.getInstanciaDeProcesso().getProcessDefinition().getNome() + "-"
 					+ ti.getDefinicaoDeTarefa().getNome(), true, true);
 
+		addAcoes(ti, titular, lotaTitular);
 	}
 
 	/**
@@ -360,6 +371,8 @@ public class WfTaskVO {
 	}
 
 	public String getNomeDaTarefa() {
+		if (this.ti.getDefinicaoDeTarefa() == null)
+			return null;
 		return this.ti.getDefinicaoDeTarefa().getNome();
 	}
 
@@ -376,5 +389,24 @@ public class WfTaskVO {
 	public Date getInicio() {
 		return this.ti.getInstanciaDeProcesso().getDtEvento();
 	}
+	
+	public WfDefinicaoDeTarefa getDefinicaoDeTarefa() {
+		return this.ti.getDefinicaoDeTarefa();
+	}
 
+	@Override
+	public void addAcao(String icone, String nome, String nameSpace, String action, boolean pode, String msgConfirmacao,
+			String parametros, String pre, String pos, String classe, String modal) {
+		if (parametros == null)
+			parametros = "id=" + this.ti.getInstanciaDeProcesso().getId();
+		else
+			parametros += "&id=" + this.ti.getInstanciaDeProcesso().getId();
+		super.addAcao(icone, nome, nameSpace, action, pode, msgConfirmacao, parametros, pre, pos, classe, modal);
+	}
+
+	private void addAcoes(WfTarefa ti, DpPessoa titular, DpLotacao lotaTitular) {
+		addAcao("note_add", "_Anotar", "/app", "anotar",
+				// Ex.getInstance().getComp().podeFazerAnotacao(titular, lotaTitular, ti)
+				true, null, null, null, null, null, "anotarModal");
+	}
 }

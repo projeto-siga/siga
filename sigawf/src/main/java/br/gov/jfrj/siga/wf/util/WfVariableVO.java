@@ -24,14 +24,14 @@ import br.gov.jfrj.siga.wf.model.WfDefinicaoDeVariavel;
 
 public class WfVariableVO {
 	private String access;
-	private String mappedName;
-	private String variableName;
-	private String variableValue;
+	private String identificador;
+	private String nome;
+	private String valor;
 
 	public WfVariableVO(WfDefinicaoDeVariavel vd) throws IllegalAccessException, InvocationTargetException {
 		this.access = vd.getAcesso().name();
-		this.mappedName = vd.getIdentifier();
-		this.variableName = vd.getIdentifier();
+		this.identificador = vd.getIdentifier();
+		this.nome = vd.getTitle();
 	}
 
 	public String getAccess() {
@@ -42,28 +42,28 @@ public class WfVariableVO {
 		this.access = access;
 	}
 
-	public String getMappedName() {
-		return mappedName;
+	public String getIdentificador() {
+		return identificador;
 	}
 
-	public void setMappedName(String mappedName) {
-		this.mappedName = mappedName;
+	public void setIdentificador(String identificador) {
+		this.identificador = identificador;
 	}
 
-	public String getVariableName() {
-		return variableName;
+	public String getNome() {
+		return nome;
 	}
 
-	public void setVariableName(String variableName) {
-		this.variableName = variableName;
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 
-	public String getVariableValue() {
-		return variableValue;
+	public String getValor() {
+		return valor;
 	}
 
-	public void setVariableValue(String variableValue) {
-		this.variableValue = variableValue;
+	public void setValor(String valor) {
+		this.valor = valor;
 	}
 
 }

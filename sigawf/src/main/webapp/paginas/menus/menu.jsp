@@ -7,7 +7,7 @@
 		<li><a class="dropdown-item"
 			href="${linkTo[WfAppController].iniciar}">Iniciar</a></li>
 		<li><a class="dropdown-item"
-			href="${linkTo[AppController].resumo}">Ativos</a></li>
+			href="${linkTo[WfAppController].resumo}">Ativos</a></li>
 	</ul> <c:if
 		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF;FE:Ferramentas')}">
 		<li class="nav-item dropdown"><a href="javascript:void(0);"

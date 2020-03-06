@@ -24,8 +24,10 @@
 package br.gov.jfrj.siga.wf.dao;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.enterprise.inject.Specializes;
 import javax.persistence.criteria.CriteriaQuery;
@@ -33,15 +35,20 @@ import javax.persistence.criteria.Root;
 
 import org.jboss.logging.Logger;
 
+import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
+import br.gov.jfrj.siga.sinc.lib.Item;
+import br.gov.jfrj.siga.sinc.lib.Sincronizador;
+import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.wf.model.WfConhecimento;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeResponsavel;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
 import br.gov.jfrj.siga.wf.model.WfResponsavel;
+import br.gov.jfrj.siga.wf.model.WfVariavel;
 import br.gov.jfrj.siga.wf.util.WfTarefa;
 
 /**
@@ -76,12 +83,73 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 		return null;
 	}
 
-	public List<WfProcedimento> consultarProcedimentosAtivosPorDocumento(String siglaDoc) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<WfProcedimento> consultarProcedimentosAtivosPorEvento(String evento) {
+		String sql = "from WfProcedimento p where p.evento like :evento";
+		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
+		query.setParameter("evento", evento + "%");
+		List<WfProcedimento> result = query.getResultList();
+		if (result == null || result.size() == 0)
+			return null;
+		return result;
 	}
 
 	public void gravarInstanciaDeProcedimento(WfProcedimento pi) {
+
+		SortedSet<Sincronizavel> setDepois = new TreeSet<>();
+		SortedSet<Sincronizavel> setAntes = new TreeSet<>();
+
+		setAntes.addAll(pi.getVariaveis());
+
+		if (pi.getVariavelMap() != null) {
+			for (String k : pi.getVariavelMap().keySet()) {
+				WfVariavel v = new WfVariavel();
+				v.setProcedimento(pi);
+				v.setNome(k);
+
+				Object o = pi.getVariavelMap().get(k);
+				if (o != null) {
+					if (o instanceof Date)
+						v.setDate((Date) o);
+					else if (o instanceof Double)
+						v.setNumber((Double) o);
+					else if (o instanceof Boolean)
+						v.setBool((Boolean) o);
+					else
+						v.setString((String) o);
+				}
+				setDepois.add(v);
+			}
+		}
+
+		// Utilizaremos o sincronizador para perceber apenas as diferenças entre a
+		// as variáveis que estão no banco e as variáveis no mapa..
+		Sincronizador sinc = new Sincronizador();
+		sinc.setSetNovo(setDepois);
+		sinc.setSetAntigo(setAntes);
+		List<Item> list = sinc.getEncaixe();
+		sinc.ordenarOperacoes();
+
+		for (Item i : list) {
+			switch (i.getOperacao()) {
+			case alterar:
+				WfVariavel antigo = (WfVariavel) i.getAntigo();
+				WfVariavel novo = (WfVariavel) i.getNovo();
+				antigo.setBool(novo.getBool());
+				antigo.setDate(novo.getDate());
+				antigo.setNumber(novo.getNumber());
+				antigo.setString(novo.getString());
+				gravar(antigo);
+				break;
+			case incluir:
+				pi.getVariaveis().add((WfVariavel) i.getNovo());
+				gravar(i.getNovo());
+				break;
+			case excluir:
+				pi.getVariaveis().remove((WfVariavel) i.getAntigo());
+				excluir(i.getAntigo());
+				break;
+			}
+		}
 		gravar(pi);
 	}
 
@@ -93,7 +161,7 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 	@Override
 	public List<WfProcedimento> listByEvent(String event) {
 		List<WfProcedimento> l = new ArrayList<>();
-		l.addAll(consultarProcedimentosAtivosPorDocumento(event));
+		l.addAll(consultarProcedimentosAtivosPorEvento(event));
 		return l;
 	}
 

@@ -66,6 +66,7 @@ function checkIntegradoAD(){
 }
 
 function exibirDadosIntegracaoAD(response,param){
+	
 	if (response != "0"){
 		document.getElementById('dadosIntegracaoAD').style.display = 'block';
 		document.getElementById('msgExplicacao').innerHTML = 'Seu órgão está integrado ao AD. Sua senha de rede email serão alteradas.';
@@ -299,8 +300,7 @@ function refreshWindow(){
 										</div>
 										<div class="col-sm-4">
 											<label for="usuario.senhaConfirma">Repetição da nova senha</label>
-											<input type="password" name="usuario.senhaConfirma" id="pass2Met1"
-												onblur="javascript:converteUsuario(this)" 
+											<input type="password" name="usuario.senhaConfirma" id="pass2Met1"												
 												class="form-control"/>
 										</div>
 										<div class="col-sm-4">
@@ -358,7 +358,7 @@ function refreshWindow(){
 									<div class="col-sm-4">
 										<div class="form-group">
 											<label for="usuario.senha1">Senha</label>
-											<input type="password" name="usuario.senha1" onblur="javascript:converteUsuario(this)" 
+											<input type="password" name="usuario.senha1"  
 												class="form-control" />
 										</div>
 									</div>
@@ -388,7 +388,7 @@ function refreshWindow(){
 									<div class="col-sm-4">
 										<div class="form-group">
 											<label for="usuario.senha2">Senha</label>
-											<input type="password" name="usuario.senha2" onblur="javascript:converteUsuario(this)" 
+											<input type="password" name="usuario.senha2"  
 												class="form-control" />
 										</div>
 									</div>
@@ -427,6 +427,7 @@ function refreshWindow(){
 										<div class="form-group">
 											<label for="senhaConfirma">Repetição da nova senha</label>
 											<input type="password" name="senhaConfirma" id="pass2Met2" class="form-control" />
+
 										</div>
 									</div>
 									<div class="col-sm-4">

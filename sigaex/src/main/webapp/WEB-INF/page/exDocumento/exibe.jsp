@@ -14,6 +14,95 @@
 <%@page import="br.gov.jfrj.siga.ex.ExMobil"%>
 <siga:pagina titulo="${docVO.sigla}" popup="${param.popup}" >
 
+<c:if test="${siga_cliente eq 'GOVSP'}">
+	<style>									
+		.container-files {
+			opacity: 1;
+			transition: opacity 1s ease-in;										
+		}
+																				
+		.files {
+			margin-top: 15px;
+		}															
+	
+		.files .btn.btn-sm.btn-light {
+			width: 84%;
+			padding: 0;			
+			background-color: transparent;
+			border: none;
+			text-align: justify;
+			white-space: normal;  									
+			transition: padding .5s;																									
+		}
+		
+		.files .btn.btn-sm.btn-light:hover {
+			padding: 5px;
+			background-color: rgba(0, 123, 255, 0.18);
+			border: none;			
+			border-radius: 10px;
+		}	
+		
+		.files .btn.btn-sm.btn-light img {
+			float: left;
+		}																																
+		
+		.files .btn.btn-sm.btn-outline-danger.btn-cancel {
+			padding: 1px 3px;
+			margin-left: 10px;
+			right: 20px; 
+			position: absolute;
+			float: right;					
+			font-size: .9em; 																										
+		}
+		
+		.container-confirmacao-cancelar-arquivo {
+			width: 100%;
+		    height: 77%;
+		    margin: 0;    		
+		    position: absolute;
+		    left: 0;
+			bottom: 0;
+			background-color: white;
+			text-align: center;
+			visibility: hidden;																	
+			opacity: 0;
+			transition: opacity 1s ease-out;	    								
+		}	
+		
+		.confirmacao-cancelar-arquivo {
+			width: 100%;			
+			position: absolute;
+			top: 50%;			
+			transform: translate(0, -50%);			
+		}		
+		
+		.confirmacao-cancelar-arquivo h1 {
+			font-size: 1.3em;
+		}
+		
+		.confirmacao-cancelar-arquivo p {
+			max-width: 80%;
+			margin: 0 auto;
+		}															
+		
+		.confirmacao-cancelar-arquivo button {
+			margin: 10px 2px 0 2px;
+		}			
+		
+		@media (min-width: 768px) and (max-width: 1019px) {
+			.files .btn.btn-sm.btn-light {
+				width: 65%;											
+			}					
+		}	
+		
+		@media (min-width: 1020px) and (max-width: 1416px) {
+			.files .btn.btn-sm.btn-light {
+				width: 75%;											
+			}
+		}											
+	</style>
+</c:if>								
+
 <script>
 	if (${not empty f:resource('graphviz.url')}) {
 	} else if (window.Worker) {
@@ -1009,8 +1098,21 @@
 						</tags:collapse>
 					</div>
 
-						<div class="card-sidebar card bg-light mb-3">
-							<tags:collapse title="Arquivos Auxiliares" id="ArqAuxiliares" collapseMode="${collapse_ArqAuxiliares}">
+					<div class="card-sidebar card bg-light mb-3">										
+						<tags:collapse title="Arquivos Auxiliares" id="ArqAuxiliares" collapseMode="${collapse_ArqAuxiliares}">
+							<div class="container-confirmacao-cancelar-arquivo">
+								<div class="confirmacao-cancelar-arquivo">
+									<h1>Confirma cancelamento do arquivo?</h1>
+									<p class="descricao-arquivo-confirmacao">descrição do arquivo</p>															
+									<button type="button" class="btn btn-sm btn-success btn-cancelar-arquivo-nao">																
+										Não
+									</button>
+									<button type="button" class="btn btn-sm btn-danger btn-cancelar-arquivo-sim">																
+										Sim
+									</button>
+								</div>
+							</div>		
+							<div class="container-files">
 								<c:if test="${docVO.podeAnexarArquivoAuxiliar}">
 									<p>
 										<a title="Anexar um novo arquivo auxiliar" class="btn btn-sm btn-secondary"
@@ -1020,10 +1122,10 @@
 											Incluir Arquivo
 										</a>
 									</p>
-								</c:if>
+								</c:if>								
 								<c:forEach var="mov" items="${m.movs}">
-									<c:if test="${mov.idTpMov == 64 and not mov.cancelada}">
-										<p>
+									<c:if test="${mov.idTpMov == 64 and not mov.cancelada}">										
+										<div class="files">
 											<siga:links buttons="${false}" inline="${true}" separator="${false}">
 												<c:forEach var="acao" items="${mov.acoes}">
 													<c:set var="acaourl" value="${acao.url}" />
@@ -1040,42 +1142,42 @@
 													<c:if test="${acao.url == acaourl}">
 														<c:set var="acaourl"
 															value="${pageContext.request.contextPath}${acao.url}" />
-													</c:if>
-											
+													</c:if>	
 													<c:choose> 
-														<c:when test="${siga_cliente ne 'GOVSP'}">
-															<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}"
+															<c:when test="${siga_cliente ne 'GOVSP'}">
+																<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}"
+																		pre="${acao.pre}" pos="${acao.pos}" url="${acaourl}"
+																		test="${true}" popup="${acao.popup}"
+																		confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
+																		idAjax="${mov.idMov}" classe="${acao.classe}" />
+															</c:when>
+															<c:when test="${not empty acao.icone and acao.nomeNbsp ne 'Cancelar' and siga_cliente eq 'GOVSP'}">
+																<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}"
 																	pre="${acao.pre}" pos="${acao.pos}" url="${acaourl}"
 																	test="${true}" popup="${acao.popup}"
 																	confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
-																	idAjax="${mov.idMov}" classe="${acao.classe}" />
-														</c:when>
-														<c:when test="${not empty acao.icone and acao.nomeNbsp ne 'Cancelar' and siga_cliente eq 'GOVSP'}">
-															<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}"
-																pre="${acao.pre}" pos="${acao.pos}" url="${acaourl}"
-																test="${true}" popup="${acao.popup}"
-																confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
-																idAjax="${mov.idMov}" classe="${acao.classe}" />
-														</c:when>
-														<c:when test="${acao.nomeNbsp eq 'Cancelar' and siga_cliente eq 'GOVSP'}">
-															<input type="button" value="Cancelar"
-																class=" btn btn-sm btn-light"
-																onclick="excluirArqAuxiliar(${mov.idMov}, '${sigla}')" />
-														</c:when>		
-													</c:choose>
-
+																	idAjax="${mov.idMov}" classe="${acao.classe}" />																	
+															</c:when>
+															<c:when test="${acao.nomeNbsp eq 'Cancelar' and siga_cliente eq 'GOVSP'}">
+																<button type="button" class="btn btn-sm btn-outline-danger btn-cancel"																	
+																	onclick="confirmarExclusaoArquivoAuxiliar(${mov.idMov}, '${sigla}', this)">																
+																	Cancelar
+																</button>																													
+															</c:when>															
+														</c:choose>																							
 												</c:forEach>
 												<div class="row ml-4 mb-3">
 													<small class="form-text text-muted mt-0">
-														<siga:link title="${mov.mov.cadastrante.sigla}/${mov.mov.lotaCadastrante.sigla} - ${mov.tempoRelativo}" test="${true}" classe="${acao.classe}" />
+														<siga:link title="${mov.mov.cadastrante.sigla}/${mov.mov.lotaCadastrante.sigla} - ${mov.tempoRelativo}" test="${true}" classe="${acao.classe}" />																										
 													</small>
 												</div>
 											</siga:links>
-										</p>
+										</div>
 									</c:if>
 								</c:forEach>
-							</tags:collapse>
-						</div>
+							</div>
+						</tags:collapse>
+					</div>
 	
 						<div class="gt-sidebar-content">
 							<div id="gc"></div>
@@ -1191,7 +1293,7 @@
 </div>
 </div>
 	
-<c:if test="${siga_cliente == 'GOVSP'}">
+<c:if test="${siga_cliente eq 'GOVSP'}">
 	<script>
 		$(document).ready(function() {
 			var btnArqCorrente = $('.arq-corrente-requer-confirmacao');
@@ -1227,5 +1329,50 @@
 	    </div>
 	  </div>
 	</div>
+	
+	<script>
+		var containerArquivosAuxiliares = $('.container-files');
+		var containerConfimarcaoArquivoAuxiliarACancelar = $('.container-confirmacao-cancelar-arquivo');
+		var descricaoArquivoAuxiliarACancelar = $('.descricao-arquivo-confirmacao');
+		
+		$(document).ready(function() {																				
+			atualizarDescricaoArquivosAuxiliares();																												
+		});
+		
+		function atualizarDescricaoArquivosAuxiliares() {
+			$('.files').find('.btn.btn-sm.btn-light').each(function(index) {
+				var arquivo = $(this);
+				var btnCancelar = arquivo.parent().find('.btn.btn-sm.btn-outline-danger.btn-cancel');																					
+															
+				arquivo.attr('title', 'Clique para baixar o arquivo: ' + this.text);
+														
+				if (arquivo.text().length > 150) {
+					arquivo.text(this.text.substring(0, 150) + '...');
+				}																					
+				
+				if (btnCancelar) {
+					btnCancelar.attr('title', 'Cancelar arquivo: ' + this.text).attr('data-description', this.text);
+				}																							
+			});		
+		}
+		
+		function confirmarExclusaoArquivoAuxiliar(idMov, sigla, botao) {										
+			var btnCancela = $('.btn-cancelar-arquivo-nao');
+			var btnConfirma = $('.btn-cancelar-arquivo-sim');			
+			
+			containerConfimarcaoArquivoAuxiliarACancelar.css({'visibility':'visible', 'opacity':'1'});																				
+			containerArquivosAuxiliares.css({'visibility':'hidden', 'opacity':'0'});												
+			
+			btnCancela.attr('onclick', 'cancelarExclusaoArquivoAuxiliar()');										
+			btnConfirma.attr('onclick', 'excluirArqAuxiliar(' + idMov + ', \'' + sigla + '\')');
+						
+			descricaoArquivoAuxiliarACancelar.text($(botao).attr('data-description'));										
+		}
+		
+		function cancelarExclusaoArquivoAuxiliar() {
+			containerConfimarcaoArquivoAuxiliarACancelar.css({'visibility':'hidden', 'opacity':'0'});
+			containerArquivosAuxiliares.css({'visibility':'visible', 'opacity':'1'});				
+		}																	
+	</script>
 </c:if>	
 </siga:pagina>

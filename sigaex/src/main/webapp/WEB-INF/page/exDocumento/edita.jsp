@@ -443,6 +443,7 @@
 							<br>
 							  <div class="form-group">
 							    <input type="file" class="form-control-file" id="arquivo" name="arquivo" accept="application/pdf" onchange="testpdf(this.form)">
+							    <small class="form-text text-muted">Tamanho máximo do arquivo é de 10MB</small> 
 							  </div>
 						</div>
 					</div>

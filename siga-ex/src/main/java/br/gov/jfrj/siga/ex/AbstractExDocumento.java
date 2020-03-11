@@ -43,6 +43,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -246,6 +247,9 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	@Column(name = "DESCR_DOCUMENTO", length = 4000)
 	private java.lang.String descrDocumento;
+	
+	@Column(name = "DESCR_DOCUMENTO_AI", length = 4000)
+	private java.lang.String descrDocumentoAI;
 
 	@Column(name = "DSC_CLASS_DOC", length = 4000)
 	private java.lang.String descrClassifNovo;
@@ -836,6 +840,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 */
 	public void setDescrDocumento(final java.lang.String descrDocumento) {
 		this.descrDocumento = descrDocumento;
+		this.descrDocumentoAI = Texto.removeAcentoMaiusculas(this.descrDocumento);
 	}
 
 	/**
@@ -1113,6 +1118,12 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-	
-	
+
+	public java.lang.String getDescrDocumentoAI() {
+		return descrDocumentoAI;
+	}
+
+	public void setDescrDocumentoAI(java.lang.String descrDocumentoAI) {
+		this.descrDocumentoAI = descrDocumentoAI;
+	}
 }

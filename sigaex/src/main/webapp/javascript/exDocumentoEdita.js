@@ -70,6 +70,17 @@ function sbmt(id) {
 
 // <c:set var="url" value="gravar" />
 function gravarDoc() {
+	
+	var arquivo = document.getElementById("arquivo");
+	
+	if(arquivo !== null) {
+		var tamanhoArquivo = parseInt(document.getElementById("arquivo").files[0].size);
+		if(tamanhoArquivo > 10485760){
+	        alert("TAMANHO DO ARQUIVO EXCEDE O PERMITIDO (10MB)!");
+	        return false;
+	    }
+	}
+	
 	clearTimeout(saveTimer);
 	if (!validar(false)) {
 		triggerAutoSave();

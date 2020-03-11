@@ -5940,6 +5940,10 @@ public class ExBL extends CpBL {
 				List<ExMovimentacao> movsCanceladas = mob.getMovimentacoesCanceladas();
 
 				for (ExMovimentacao movARecuperar : movsCanceladas) {
+					
+					if (movARecuperar.isCanceladora())
+						continue;
+					
 					ExMovimentacao movCanceladora = movARecuperar.getExMovimentacaoCanceladora();
 
 					movARecuperar.setExMovimentacaoCanceladora(null);

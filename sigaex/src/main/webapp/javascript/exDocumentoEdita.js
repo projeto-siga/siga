@@ -295,8 +295,12 @@ function checkBoxMsg() {
 
 var saveTimer;
 function triggerAutoSave() {
+	var minutos = 2;
+	if(document.getElementById('cliente') != undefined && document.getElementById('cliente').value == 'GOVSP') {
+		minutos = 30;
+	}
 	clearTimeout(saveTimer);
-	saveTimer = setTimeout('autoSave()', 60000 * 2);
+	saveTimer = setTimeout('autoSave()', 60000 * minutos);
 }
 
 triggerAutoSave();

@@ -79,8 +79,8 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "	 where pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
 				+ " and pes.lotacao.idLotacao in (:idLotacaoLista)"
 				+ " and pes.dataFimPessoa is null"
-				+ " and not exists (select ident.dpPessoa.idPessoa from CpIdentidade ident where pes.idPessoa = ident.dpPessoa.idPessoa)"
-				+ "   	order by pes.lotacao.nomeLotacao"),
+				+ " and not exists (select ident.dpPessoa.idPessoaIni from CpIdentidade ident where pes.idPessoaIni = ident.dpPessoa.idPessoaIni)"
+				+ "   	order by pes.lotacao.nomeLotacao, pes.nomePessoaAI"),
 		@NamedQuery(name = "consultarPorFiltroDpPessoaSemIdentidade", query = "from DpPessoa pes "
 				 	+ " where (upper(pes.nomePessoaAI) like upper('%' || :nome || '%'))"
 					+ " and (pes.cpfPessoa = :cpf or :cpf = 0)"
@@ -93,6 +93,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 										+ " and (pes.cpfPessoa = :cpf or :cpf = 0)" 
 										+ " and pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu" 
 										+ "	and (pes.lotacao.idLotacao = :lotacao or :lotacao = 0))"
+					+ " order by pes.lotacao.nomeLotacao, pes.nomePessoaAI, pes.cpfPessoa"
 				),		
 		@NamedQuery(name = "consultarQuantidadeDpPessoaSemIdentidade", query = "select count(pes) from DpPessoa pes "
 				+ "  where (upper(pes.nomePessoaAI) like upper('%' || :nome || '%'))"

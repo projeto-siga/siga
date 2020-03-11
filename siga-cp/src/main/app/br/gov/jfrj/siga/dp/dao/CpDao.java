@@ -1334,8 +1334,8 @@ public class CpDao extends ModeloDao {
 		}
 		queryTemp += ")"
 					+ " and pes.dataFimPessoa = null"
-					+ " and not exists (select ident.dpPessoa.idPessoa from CpIdentidade ident where pes.idPessoa = ident.dpPessoa.idPessoa)"
-					+ "  order by pes.cpfPessoa";			
+					+ " and not exists (select ident.dpPessoa.idPessoaIni from CpIdentidade ident where pes.idPessoaIni = ident.dpPessoa.idPessoaIni)"
+					+ "  order by pes.lotacao.nomeLotacao, pes.nomePessoaAI, pes.cpfPessoa";			
 		
 		query = getSessao().createQuery(queryTemp);
 							

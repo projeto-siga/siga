@@ -47,7 +47,7 @@ import javax.persistence.Transient;
 
 import org.apache.xerces.impl.dv.util.Base64;
 import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.DynamicUpdate;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.itextpdf.Documento;
@@ -80,6 +80,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 @Entity
 @BatchSize(size = 500)
 @Table(name = "EX_DOCUMENTO", catalog = "SIGA")
+@DynamicUpdate
 public class ExDocumento extends AbstractExDocumento implements Serializable,
 		CarimboDeTempo {
 

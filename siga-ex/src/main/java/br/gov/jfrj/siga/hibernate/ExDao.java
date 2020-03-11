@@ -455,6 +455,10 @@ public class ExDao extends CpDao {
 
 			query.setLong("ultMovIdEstadoDoc", flt.getUltMovIdEstadoDoc());
 
+		} else {
+			query.setLong("id1", 3);
+			query.setLong("id2", 14);
+			query.setLong("id3", 25);
 		}
 
 		if (flt.getUltMovRespSelId() != null && flt.getUltMovRespSelId() != 0) {

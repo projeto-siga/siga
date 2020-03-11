@@ -102,9 +102,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	@Transient
 	private boolean podeExibirReordenacao;
 
-	@Formula("REMOVE_ACENTO(DESCR_DOCUMENTO)")
-	private String descrDocumentoAI;
-
 	/**
 	 * Simple constructor of ExDocumento instances.
 	 */
@@ -538,14 +535,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	@Override
 	public String getDescrDocumento() {
 		return super.getDescrDocumento();
-	}
-
-	/**
-	 * Retorna a descrição completa do documento de modo indiferente à
-	 * acentuação.
-	 */
-	public String getDescrDocumentoAI() {
-		return descrDocumentoAI;
 	}
 
 	/**
@@ -2500,10 +2489,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			throw new AplicacaoException(
 					"O conteúdo não pode ser alterado pois o documento já está assinado");
 		setConteudoBlob("doc.pdf", conteudo);
-	}
-
-	public void setDescrDocumentoAI(String descrDocumentoAI) {
-		this.descrDocumentoAI = descrDocumentoAI;
 	}
 
 	public void setEletronico(boolean eletronico) {

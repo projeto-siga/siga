@@ -507,7 +507,7 @@ function limpaCampos()
 												</c:choose>
 											</c:when>
 											<c:otherwise>
-												<a href="javascript:opener.retorna_${propriedade}('${documento[1].id}','${documento[1].sigla}','${f:selDescricaoConfidencial(documento[1], lotaTitular, titular)}');">
+												<a href="javascript:parent.retorna_${propriedade}('${documento[1].id}','${documento[1].sigla}','${f:selDescricaoConfidencial(documento[1], lotaTitular, titular)}');">
 													${documento[1].codigo}
 												</a>
 											</c:otherwise>

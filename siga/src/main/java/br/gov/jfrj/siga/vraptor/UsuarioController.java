@@ -2,9 +2,9 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -486,14 +486,9 @@ public class UsuarioController extends SigaController {
 	 * Validador de endereço de email Referente ao cartão 859
 	 */
 	public static boolean validarEmail(String email) {
-		boolean result = true;
-		try {
-			InternetAddress emailAddr = new InternetAddress(email);
-			emailAddr.validate();
-		} catch (AddressException ex) {
-			result = false;
-		}
-		return result;
+		Pattern pattern = Pattern.compile("^[\\w-]+(\\.[\\w-]+)*@([\\w-]+\\.)+[a-zA-Z]{2,7}$");   
+	    Matcher matcher = pattern.matcher(email);   
+	    return matcher.find();   
 	}
 
 }

@@ -257,7 +257,16 @@
 					<div class="col-md-4">
 						<div class="form-group">
 							<label for="nmPessoa">E-mail</label>
-							<input type="text" id="email" name="email" value="${email}" maxlength="60" onchange="validarEmail(this)" onkeyup="this.value = this.value.toLowerCase().trim()" class="form-control" />
+							
+							<!-- Alteracao realizada de acordo com o cartao 859 -->
+							<c:choose>
+								<c:when test="${empty id || sigla == 'ZZ'}">
+									<input type="text" id="email" name="email" value="${email}" maxlength="60" onchange="validarEmail(this)" onkeyup="this.value = this.value.toLowerCase().trim()" class="form-control" />
+								</c:when>
+	  							<c:otherwise>
+	  								<input type="text" id="email" name="email" value="${email}" maxlength="60" disabled="true" onchange="validarEmail(this)" onkeyup="this.value = this.value.toLowerCase().trim()" class="form-control" />
+	  							</c:otherwise>
+							</c:choose>
 						</div>
 					</div>
 				</div>

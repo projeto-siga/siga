@@ -78,13 +78,14 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 
 	private Long orgaoUsu;
 	private DpLotacaoSelecao lotacaoSel;
-
+	private String cpf;
+	public SigaObjects so;
+	
 	public DpPessoaController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);
-
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
-
+		this.so = so;
 		setSel(new DpPessoa());
 		setItemPagina(10);
 	}
@@ -337,6 +338,12 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			ou = CpDao.getInstance().consultarPorId(ou);
 			if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla()) || CpDao.getInstance()
 					.consultarPorSigla(getTitular().getOrgaoUsuario()).getId().equals(ou.getId())) {
+				
+				/*
+				 * Envio da sigla do usuário para validação no front
+				 * Referente ao cartão 859
+				 */
+				result.include("sigla", getUsuario().getOrgaoUsuario().getSigla());
 				result.include("nmPessoa", pessoa.getNomePessoa());
 				result.include("cpf", pessoa.getCpfFormatado());
 				result.include("email", pessoa.getEmailPessoa());
@@ -943,5 +950,13 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		}
 
 		return null;
+	}
+	
+	/*
+	 * Pega informações do usuário logado
+	 * Referente ao cartão 859
+	 */
+	protected DpPessoa getUsuario() {
+		return so.getCadastrante();
 	}
 }

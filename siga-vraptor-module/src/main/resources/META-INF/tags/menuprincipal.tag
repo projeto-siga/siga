@@ -183,6 +183,10 @@
 					<li><a class="dropdown-item"
 						href="/siga/app/usuario/trocar_senha">Trocar senha</a></li>
 				</c:if>
+				<c:if test="${(!f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;ADM;DEMAIL:Definir Email do Usuário') || titular.orgaoUsuario.sigla == 'ZZ')}">
+					<li><a class="dropdown-item"
+						href="/siga/app/usuario/trocar_email">Trocar Email do Usuário</a></li>
+				</c:if>
 				
 				<%--
 					<li><a href="/siga/substituicao/substituir.action">Entrar

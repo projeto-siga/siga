@@ -110,11 +110,14 @@ public class ExDocumentoController extends ExController {
 
 	private static final String URL_EXIBIR = "/app/expediente/doc/exibir?sigla={0}";
 	private static final String URL_EDITAR = "/app/expediente/doc/editar?sigla={0}";
+	private String url = null;
 
 	public ExDocumentoController(HttpServletRequest request,
 			HttpServletResponse response, ServletContext context,
 			Result result, SigaObjects so, EntityManager em) {
 		super(request, response, context, result, CpDao.getInstance(), so, em);
+		
+		url = getBaseUrl(request);
 	}
 
 	private ExDocumento buscarDocumento(final BuscaDocumentoBuilder builder,
@@ -1972,16 +1975,23 @@ public class ExDocumentoController extends ExController {
 		Calendar c = Calendar.getInstance();
 		c.setTime(prot.getData());
 		
-		String url = SigaBaseProperties.getString("siga.ex."
-				+ SigaBaseProperties.getString("siga.ambiente") + ".url") + "/processoautenticar?n=" + prot.getCodigo();
+		String caminho = url + "/public/app/processoautenticar?n=" + prot.getCodigo();
 		
-		result.include("url", url);
+		result.include("url", caminho);
 		result.include("ano", c.get(Calendar.YEAR));
 		result.include("dataHora", df.format(c.getTime()));
 		result.include("protocolo", prot);
 		result.include("sigla", sigla);
 		result.include("doc", exDocumentoDto.getDoc());
 	}
+	
+	public static String getBaseUrl(HttpServletRequest request) {
+	    String scheme = request.getScheme() + "://";
+	    String serverName = request.getServerName();
+	    String serverPort = (request.getServerPort() == 80) ? "" : ":" + request.getServerPort();
+	    String contextPath = request.getContextPath();
+	    return scheme + serverName + serverPort + contextPath;
+	  }
 
 	@Post("/app/expediente/doc/tornarDocumentoSemEfeitoGravar")
 	public void tornarDocumentoSemEfeitoGravar(final String sigla,

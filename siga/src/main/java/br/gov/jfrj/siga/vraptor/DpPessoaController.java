@@ -74,14 +74,14 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	
 	private Long orgaoUsu;
 	private DpLotacaoSelecao lotacaoSel;
+	private String cpf;
+	public SigaObjects so;
 	
-	public DpPessoaController(HttpServletRequest request, Result result, CpDao dao,
-			SigaObjects so, EntityManager em) {
+	public DpPessoaController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);
-		
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
-		
+		this.so = so;
 		setSel(new DpPessoa());
 		setItemPagina(10);
 	}
@@ -307,8 +307,15 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			DpPessoa pessoa = dao().consultar(id, DpPessoa.class, false);
 			ou.setIdOrgaoUsu(pessoa.getOrgaoUsuario().getId());
 			ou = CpDao.getInstance().consultarPorId(ou);
-			if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla()) || CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario()).getId().equals(ou.getId())) {
-				result.include("nmPessoa",pessoa.getNomePessoa());
+			if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla()) || CpDao.getInstance()
+					.consultarPorSigla(getTitular().getOrgaoUsuario()).getId().equals(ou.getId())) {
+				
+				/*
+				 * Envio da sigla do usuário para validação no front
+				 * Referente ao cartão 859
+				 */
+				result.include("sigla", getUsuario().getOrgaoUsuario().getSigla());
+				result.include("nmPessoa", pessoa.getNomePessoa());
 				result.include("cpf", pessoa.getCpfFormatado());
 				result.include("email", pessoa.getEmailPessoa());
 				result.include("idOrgaoUsu", pessoa.getOrgaoUsuario().getId());
@@ -784,5 +791,99 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			cpfAnterior = dpPessoa2.getCpfPessoa().toString();
 		}
 		this.result.redirectTo(this).enviaEmail(0, idOrgaoUsu, nome, cpfPesquisa, idLotacaoPesquisa);
+	}
+
+	@Post
+	@Path("app/pessoa/exportarCsv")
+	public Download exportarCsv(Long idOrgaoUsu, String nome, String cpfPesquisa, Long idCargoPesquisa,
+			Long idFuncaoPesquisa, Long idLotacaoPesquisa, String emailPesquisa) throws UnsupportedEncodingException {
+
+		CpOrgaoUsuario ou = new CpOrgaoUsuario();
+
+		if (idOrgaoUsu != null && ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())
+				|| CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario()).getId().equals(idOrgaoUsu))) {
+			DpPessoa dpPessoa = new DpPessoa();
+
+			if (ou.getId() == null) {
+				ou.setIdOrgaoUsu(idOrgaoUsu);
+				ou = CpDao.getInstance().consultarPorId(ou);
+			}
+			dpPessoa.setOrgaoUsuario(ou);
+			dpPessoa.setNomePessoa(Texto.removeAcento(nome != null ? nome : ""));
+			dpPessoa.setEmailPessoa(Texto.removeAcento(emailPesquisa != null ? emailPesquisa : ""));			
+			if (idCargoPesquisa != null) {
+				DpCargo cargo = new DpCargo();
+				cargo.setId(idCargoPesquisa);
+				dpPessoa.setCargo(cargo);
+			}
+			if (idLotacaoPesquisa != null) {
+				DpLotacao lotacao = new DpLotacao();
+				lotacao.setId(idLotacaoPesquisa);
+				dpPessoa.setLotacao(lotacao);
+			}
+			if (idFuncaoPesquisa != null) {
+				DpFuncaoConfianca funcao = new DpFuncaoConfianca();
+				funcao.setIdFuncao(idFuncaoPesquisa);
+				dpPessoa.setFuncaoConfianca(funcao);
+			}
+			if (cpfPesquisa != null && !"".equals(cpfPesquisa)) {
+				dpPessoa.setCpfPessoa(Long.valueOf(cpfPesquisa.replace(".", "").replace("-", "")));
+			}
+			dpPessoa.setId(Long.valueOf(0));
+			List<DpPessoa> lista = CpDao.getInstance().consultarPessoaComOrgaoFuncaoCargo(dpPessoa);
+			
+			if (lista.size() > 0) {
+				InputStream inputStream = null;
+				StringBuffer texto = new StringBuffer();
+				texto.append(
+						"Sigla do Órgão;Cargo;Função de Confiança;Sigla da Unidade;Nome;Data de Nascimento;CPF;E-mail;Matrícula"
+								+ System.getProperty("line.separator"));
+
+				for (DpPessoa p : lista) {
+					texto.append(p.getOrgaoUsuario().getSiglaOrgaoUsu() + ";");
+					texto.append(p.getCargo().getNomeCargo() + ";");
+					texto.append(p.getFuncaoConfianca() != null ? p.getFuncaoConfianca().getNomeFuncao() + ";" : ";");
+					texto.append(p.getLotacao().getSiglaLotacao() + ";");
+					texto.append(p.getNomePessoa() + ";");
+					texto.append(p.getDataNascimento() == null ? ";" : p.getDataNascimento() + ";");
+					texto.append(p.getCpfFormatado() + ";");
+					texto.append(p.getEmailPessoa() + ";");
+					texto.append(p + ";");
+					texto.append(System.getProperty("line.separator"));
+				}
+
+				inputStream = new ByteArrayInputStream(texto.toString().getBytes("ISO-8859-1"));
+
+				return new InputStreamDownload(inputStream, "text/csv", "pessoas.csv");
+			} else {
+				if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {					
+					result.include("orgaosUsu", dao().listarOrgaosUsuarios());					
+				} else {					
+					List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();					
+					result.include("orgaosUsu", list.add(CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario())));					
+				}														
+					result.include("idOrgaoUsu", idOrgaoUsu);
+					result.include("nome", nome);
+					result.include("cpfPesquisa", cpfPesquisa);
+					result.include("idCargoPesquisa", idCargoPesquisa);
+					result.include("idFuncaoPesquisa", idFuncaoPesquisa);
+					result.include("idLotacaoPesquisa", idLotacaoPesquisa);					
+					result.include("emailPesquisa", emailPesquisa);																		
+					result.include("mensagemPesquisa", "Nenhum resultado encontrado.");
+					result.include("temPermissaoParaExportarDados", temPermissaoParaExportarDados());
+
+					carregarCombos(null, idOrgaoUsu, null, null, null, null, cpfPesquisa, 0, Boolean.FALSE);																						
+			}					
+		}
+
+		return null;
+	}
+	
+	/*
+	 * Pega informações do usuário logado
+	 * Referente ao cartão 859
+	 */
+	protected DpPessoa getUsuario() {
+		return so.getCadastrante();
 	}
 }

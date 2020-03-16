@@ -5177,6 +5177,10 @@ public class ExBL extends CpBL {
 					attrs.put("nmArqMod", "certidaoDesentranhamento.jsp");
 				}
 
+			} else if (mov.getExTipoMovimentacao() != null
+					&& (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA)) {
+				System.out.println("Teste");
+				attrs.put("nmArqMod", "ciencia.jsp");
 			} else {
 				if (mov.getExTipoDespacho() != null) {
 					attrs.put("despachoTexto", mov.getExTipoDespacho().getDescTpDespacho());
@@ -5358,7 +5362,50 @@ public class ExBL extends CpBL {
 			mov.setDescrMov(descrMov);
 
 			gravarMovimentacao(mov);
+			
+			
+//			List<ExArquivoNumerado> ans = mov.getExMobil().filtrarArquivosNumerados(null, true);
+//			armazenarCertidaoDeDesentranhamento(mov, mob.getMobilPrincipal(), ans, descrMov);
+			
+//			if (ans == null || ans.size() == 0)
+//				throw new AplicacaoException(
+//						"não foi possível obter a numeração única automática das páginas da movimentação a ser cancelada.");
+
+//			Integer paginaInicial = ans.get(0).getPaginaInicial();
+//			Integer paginaFinal = ans.get(ans.size() - 1).getPaginaFinal();
+
+//			mov.setNumPaginasOri(paginaFinal - paginaInicial + 1);
+//			criarCertidaoDeDesentranhamento(mov, mob, paginaInicial, paginaFinal, descrMov);
+			
+			mov.setNumPaginas(1);
+			
+			Map<String, String> form = new TreeMap<String, String>();
+//			form.put("folhaInicial", Integer.toString(paginaInicial));
+//			form.put("folhaFinal", Integer.toString(paginaFinal));
+			form.put("textoMotivo", descrMov);
+			mov.setConteudoBlobForm(urlEncodedFormFromMap(form));
+
+			// Gravar o Html //Nato
+			final String strHtml = processarModelo(mov, "processar_modelo", null, null);
+			mov.setConteudoBlobHtmlString(strHtml);
+
+			// Gravar o Pdf
+			final byte pdf[] = Documento.generatePdf(strHtml);
+			mov.setConteudoBlobPdf(pdf);
+			mov.setConteudoTpMov("application/zip");
+			
+			
+			final ExMovimentacao movAssMov = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA, cadastrante, lotaCadastrante,
+					mov.getExMobil(), null, null, null, null, null, null);
+
+			movAssMov.setDescrMov(cadastrante.getDescricao());
+
+			movAssMov.setExMovimentacaoRef(mov);
+			
+			gravarMovimentacao(movAssMov);
+			
 			concluirAlteracao(mov.getExMobil());
+			
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao fazer ciência.", 0, e);

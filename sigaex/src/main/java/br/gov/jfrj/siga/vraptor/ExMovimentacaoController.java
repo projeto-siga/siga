@@ -3205,6 +3205,7 @@ public class ExMovimentacaoController extends ExController {
 					"Usuário não tem permissão de cancelar ciência.");
 
 		Set <ExMovimentacao> setMovCiente = mob.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA);
+		ExMovimentacao movAss = mob.getUltimaMovimentacaoNaoCancelada(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA);
 
 		if (setMovCiente != null) {
 			for (ExMovimentacao mov : setMovCiente) {
@@ -3223,6 +3224,11 @@ public class ExMovimentacaoController extends ExController {
 						.cancelar(getTitular(), getLotaTitular(), builder.getMob(),
 								movCiencia, null, null, null,
 								"Ciência: " + movCiencia.getDescrMov());
+				Ex.getInstance()
+					.getBL()
+					.cancelar(getTitular(), getLotaTitular(), builder.getMob(),
+							movAss, null, null, null,
+							movAss.getDescrTipoMovimentacao() + ": " + movAss.getDescrMov());
 			} catch (final Exception e) {
 				throw e;
 			}

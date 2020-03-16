@@ -72,7 +72,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 	}
 	
 	public boolean temPermissaoParaExportarDados() {
-		return Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getTitular().getLotacao(),"SIGA;GI;CAD_FUNCAO;EXP_DADOS");
+		return Boolean.valueOf(Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getTitular().getLotacao(),"SIGA;GI;CAD_FUNCAO;EXP_DADOS"));
 	}
 	
 	@Get

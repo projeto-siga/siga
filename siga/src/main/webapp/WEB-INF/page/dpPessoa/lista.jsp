@@ -154,7 +154,9 @@
 				<div class="row">
 					<div class="col-sm-2">
 						<button type="submit" class="btn btn-primary">Pesquisar</button>
-						<button type="button" class="btn btn-outline-success" title="Exportar para CSV" id="exportarCsv" onclick="javascript:csv('listar', '/siga/app/pessoa/exportarCsv');"><i class="fa fa-file-csv"></i> Exportar</button>
+						<c:if test="${temPermissaoParaExportarDados}">
+							<button type="button" class="btn btn-outline-success" title="Exportar para CSV" id="exportarCsv" onclick="javascript:csv('listar', '/siga/app/pessoa/exportarCsv');"><i class="fa fa-file-csv"></i> Exportar</button>
+						</c:if>						
 					</div>
 				</div>				
 
@@ -261,9 +263,6 @@
 <script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
 <script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
 <script>	
-	temPermissaoParaExportarDados = '${temPermissaoParaExportarDados}' == 'true';		
-	if (!temPermissaoParaExportarDados) $('#exportarCsv').attr('disabled', 'disabled').attr('title', 'Exportar para CSV - usuário sem permissão');
-
 	function carregarRelacionados(id) {
 		frm.method = "POST";
 		frm.action = 'carregarCombos';

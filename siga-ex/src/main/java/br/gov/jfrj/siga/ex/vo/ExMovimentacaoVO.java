@@ -254,16 +254,18 @@ public class ExMovimentacaoVO extends ExVO {
 							|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO
 							|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA
 							|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
-							|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA)
+							|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA
+							|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA)
 							&& mov.isAssinada()) {
 
 						addAcao("printer", "Ver", "/app/arquivo", "exibir",
 								Ex.getInstance().getComp().podeVisualizarImpressao(titular, lotaTitular, mov.mob()),
 								null, "&popup=true&arquivo=" + mov.getReferenciaPDF(), null, null, null);
 
-						addAcao("script_key", "Autenticar", "/app/expediente/mov", "autenticar_mov",
-								Ex.getInstance().getComp().podeAutenticarMovimentacao(titular, lotaTitular, mov), null,
-								"&popup=true&autenticando=true", null, null, null);
+						if (idTpMov != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA)
+							addAcao("script_key", "Autenticar", "/app/expediente/mov", "autenticar_mov",
+									Ex.getInstance().getComp().podeAutenticarMovimentacao(titular, lotaTitular, mov), null,
+									"&popup=true&autenticando=true", null, null, null);
 
 					} else if (!(mov.isAssinada() && mov.mob().isEmTransito())) {
 						addAcao(null, "Ver/Assinar", "/app/expediente/mov", "exibir", true, null, "&popup=true", null,

@@ -8,7 +8,7 @@
 	<mod:entrevista>
 
 		<mod:grupo>
-			<mod:texto titulo="Ciência" var="folhaInicial"
+			<mod:texto titulo="Ciï¿½ncia" var="folhaInicial"
 				largura="8" />
 			<mod:texto titulo="fim" var="folhaFinal" largura="8" />
 		</mod:grupo>
@@ -87,7 +87,7 @@
 		<br />
 
 		
-		<p align="left">${textoMotivo}</p>
+		<p align="left"><siga:fixcrlf>${textoMotivo}</siga:fixcrlf></p>
 		
 		<br />
 		<br />

@@ -41,6 +41,12 @@
 					document.getElementById("descrMov").value = nota.substring(
 							0, 255);
 				}
+			}	
+			function veDescrMov() {
+				if (tamanho2() == 255) {
+					event.preventDefault();
+					alert('Incluir o texto de ciência.');
+				}
 			}
 		</script>
 
@@ -59,7 +65,7 @@
 					<div class="row">
 						<div class="col-sm">
 							<div class="form-group">
-								<textarea class="form-control" name="descrMov" value="${descrMov}" cols="60"
+								<textarea id="descrMov" class="form-control" name="descrMov" value="${descrMov}" cols="60"
 									rows="5" onkeydown="corrige();tamanho();" maxlength="255"
 									onblur="tamanho();" onclick="tamanho();"></textarea>
 								<small class="form-text text-muted" id="Qtd">Restam&nbsp;255&nbsp;Caracteres</small>
@@ -68,7 +74,7 @@
 					</div>
 					<div class="row">
 						<div class="col-sm">
-							<input type="submit" value="Ok" class="btn btn-primary" />
+							<input type="submit" value="Ok" class="btn btn-primary" onclick="veDescrMov();" />
 							<input type="button" value="Cancela" onclick="javascript:history.back();" class="btn btn-cancel ml-2" />
 
 						</div>

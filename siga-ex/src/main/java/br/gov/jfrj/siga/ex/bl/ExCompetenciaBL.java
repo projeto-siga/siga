@@ -1952,16 +1952,16 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				|| mob.isCancelada())
 				return false;
 
-		final ExMovimentacao ultMovNaoCancelada = mob
-				.getUltimaMovimentacaoNaoCancelada();
+		final ExMovimentacao penultMovNaoCancelada = mob
+				.getPenultimaMovimentacaoNaoCancelada();
 		final ExMovimentacao ultMov = mob.getUltimaMovimentacao();
 		
-		if (ultMov == null || ultMovNaoCancelada == null)
+		if (ultMov == null || penultMovNaoCancelada == null)
 			return false;
 
-		if (ultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA &&
-				ultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO &&
-				ultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL)
+		if (penultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA &&
+				penultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO &&
+						penultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL)
 			return false;
 		
 		Set <ExMovimentacao> setMovCiente = mob.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA);

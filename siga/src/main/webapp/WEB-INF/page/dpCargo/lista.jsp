@@ -56,8 +56,10 @@ function sbmt(offset) {
 				<div class="row">
 					<div class="col-sm">
 						<div class="form-group">
-							<input value="Pesquisar" class="btn btn-primary" onclick="javascript: sbmt(0);"/>
-							<button type="button" class="btn btn-outline-success" id="exportarCsv" title="Exportar para CSV"	onclick="javascript:csv('listar', '/siga/app/cargo/exportarCsv');"><i class="fa fa-file-csv"></i> Exportar</button>
+							<input value="Pesquisar" class="btn btn-primary" onclick="javascript: sbmt(0);"/>	
+							<c:if test="${temPermissaoParaExportarDados}">
+								<button type="button" class="btn btn-outline-success" id="exportarCsv" title="Exportar para CSV" onclick="javascript:csv('listar', '/siga/app/cargo/exportarCsv');"><i class="fa fa-file-csv"></i> Exportar</button>
+							</c:if>
 						</div>
 					</div>
 				</div>				
@@ -109,9 +111,6 @@ function sbmt(offset) {
 <script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
 <script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
 <script type="text/javascript">
-	temPermissaoParaExportarDados = '${temPermissaoParaExportarDados}' == 'true';		
-	if (!temPermissaoParaExportarDados) $('#exportarCsv').attr('disabled', 'disabled').attr('title', 'Exportar para CSV - usuário sem permissão');
-	
 	$(document).ready(function() {	
 		if ('${mensagemPesquisa}'.length > 0) $('.mensagem-pesquisa').css({'display':'block'});
 	});

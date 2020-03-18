@@ -428,7 +428,6 @@ public class Mesa2 {
 		String movTramiteSiglaOrgao;
 		String movTramiteSiglaLotacao;
 		String movAnotacaoDescrMov;
-		String movAnotacaoIdMov;
 		boolean isComposto;
 	}
 
@@ -439,7 +438,7 @@ public class Mesa2 {
 
 	private static List<MesaItem> listarReferencias(TipoDePainelEnum tipo,
 			Map<ExMobil, DocDados> references, DpPessoa pessoa,
-			DpLotacao unidade, Date currentDate, String grupoOrdem) {
+			DpLotacao unidade, Date currentDate, String grupoOrdem, boolean trazerAnotacoes) {
 		List<MesaItem> l = new ArrayList<>();
 
 		for (ExMobil mobil : references.keySet()) {
@@ -456,7 +455,7 @@ public class Mesa2 {
 
 			r.codigo = mobil.getCodigoCompacto();
 			r.sigla = mobil.getSigla();
-			r.descr = mobil.doc().getDescrCurta(80);
+			r.descr = mobil.doc().getDescrCurta(255).replace("\r", " ").replace("\f", " ").replace("\n", " ");
 			if (references.get(mobil).isComposto) {
 				r.tipoDoc = "Composto";
 			} else {
@@ -515,11 +514,8 @@ public class Mesa2 {
 
 			r.grupoOrdem = grupoOrdem;
 			
-			if (references.get(mobil).movAnotacaoDescrMov != null) { 
-				r.anotacao = references.get(mobil).movAnotacaoDescrMov 
-						+ "<br/><a href='/sigaex/app/expediente/mov/cancelar_anotacao?id="						
-						+ references.get(mobil).movAnotacaoIdMov
-						+ "&redirectURL=../../mesa2?excluiuAnotacao=true'>Excluir Anotação</a>";
+			if (trazerAnotacoes && mobil.getDnmUltimaAnotacao() != null && !mobil.getDnmUltimaAnotacao().replace(" ", "").equals("")) { 
+				r.anotacao = mobil.getDnmUltimaAnotacao().replace("\r\f", "<br/>").replace("\n", "<br/>");
 			}
 
 			r.list = new ArrayList<Marca>();
@@ -612,7 +608,7 @@ public class Mesa2 {
 
 	public static List<GrupoItem> getMesa(ExDao dao, DpPessoa titular,
 			DpLotacao lotaTitular, Map<String, SelGrupo> selGrupos, List<Mesa2.GrupoItem> gruposMesa, 
-			boolean exibeLotacao, boolean trazerAnotacoes, boolean trazerCancelados) throws Exception {
+			boolean exibeLotacao, boolean trazerAnotacoes, boolean trazerCancelados, boolean trazerComposto) throws Exception {
 		Date dtNow = dao.consultarDataEHoraDoServidor();
 
 		List<Object[]> l = dao.listarMobilsPorMarcas(titular,
@@ -670,7 +666,7 @@ public class Mesa2 {
 						if ( iMobs + 1000 < iMobsFim )
 							iMobsFim = iMobs + 1000;
 						List<Object[]> refs = dao.listarMovimentacoesMesa(
-								listIdMobil.subList(iMobs, iMobsFim), trazerAnotacoes);
+								listIdMobil.subList(iMobs, iMobsFim), trazerComposto);
 			
 						for (Object[] ref : refs) {
 							incluiMovimentacoesMesa(map, ref);
@@ -678,7 +674,7 @@ public class Mesa2 {
 						iMobs = iMobsFim;
 					}
 					gItem.grupoDocs = Mesa2.listarReferencias(TipoDePainelEnum.UNIDADE, map, titular,
-							titular.getLotacao(), dtNow, gItem.grupoOrdem);
+							titular.getLotacao(), dtNow, gItem.grupoOrdem, trazerAnotacoes);
 					map = new HashMap<>();
 					listIdMobil = new ArrayList<Long>();
 				}
@@ -691,13 +687,10 @@ public class Mesa2 {
 		ExMobil mob = (ExMobil) ref[0];
 		ExMovimentacao movUltima = null;
 		ExMovimentacao movTramite = null;
-		ExMovimentacao movAnotacao = null;
 		if (ref[2] != null)
 			movUltima = (ExMovimentacao) ref[2];
 		if (ref[3] != null)
 			movTramite = (ExMovimentacao) ref[3];
-		if (ref.length > 4 && ref[4] != null && ref[4].getClass().equals(ExMovimentacao.class))
-				movAnotacao = (ExMovimentacao) ref[4];
 		if (map.containsKey(mob)) {
 			DocDados docDados = map.get(mob); 
 			if (ref[1] != null) {
@@ -712,10 +705,6 @@ public class Mesa2 {
 			if (movTramite != null) {
 				docDados.movTramiteSiglaLotacao = movTramite.getLotacao().getSigla();
 				docDados.movTramiteSiglaOrgao = movTramite.getLotacao().getOrgaoUsuario().getSigla();
-			}
-			if (movAnotacao != null) {
-				docDados.movAnotacaoDescrMov = movAnotacao.getDescrMov();
-				docDados.movAnotacaoIdMov = movAnotacao.getIdMov().toString();
 			}
 		}
 	}

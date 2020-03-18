@@ -29,17 +29,20 @@ import java.util.TreeSet;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
+import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 import br.gov.jfrj.siga.wf.model.WfMov;
 import br.gov.jfrj.siga.wf.model.WfMovAnotacao;
 import br.gov.jfrj.siga.wf.model.WfMovTransicao;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
 import br.gov.jfrj.siga.wf.util.WfEngine;
 import br.gov.jfrj.siga.wf.util.WfHandler;
 import br.gov.jfrj.siga.wf.util.WfTarefa;
@@ -82,8 +85,8 @@ public class WfBL extends CpBL {
 	 * @throws Exception
 	 */
 	public WfProcedimento createProcessInstance(long pdId, DpPessoa titular, DpLotacao lotaTitular,
-			CpIdentidade identidade, ArrayList<String> keys, ArrayList<String> values, boolean fCreateStartTask)
-			throws Exception {
+			CpIdentidade identidade, String principal, ArrayList<String> keys, ArrayList<String> values,
+			boolean fCreateStartTask) throws Exception {
 
 		// Create the process definition,
 		WfDefinicaoDeProcedimento pd = WfDao.getInstance().consultar(pdId, WfDefinicaoDeProcedimento.class, false);
@@ -102,6 +105,9 @@ public class WfBL extends CpBL {
 		}
 
 		WfProcedimento pi = new WfProcedimento(pd, variable);
+		pi.setTipoDePrincipal(WfTipoDePrincipal.DOC);
+		pi.setPrincipal(principal);
+		pi.setOrgaoUsuario(titular.getOrgaoUsuario());
 
 		WfEngine engine = new WfEngine(dao(), new WfHandler(titular, lotaTitular, identidade));
 
@@ -135,6 +141,65 @@ public class WfBL extends CpBL {
 			tasks.add(new WfTarefa(pi));
 		}
 		return tasks;
+	}
+
+	public static void transferirDocumentosVinculados(WfProcedimento pi, String siglaTitular) throws Exception {
+		String principal = pi.getPrincipal();
+		WfTipoDePrincipal tipo = pi.getTipoDePrincipal();
+		if (principal == null || tipo == null)
+			return;
+
+		if (tipo != WfTipoDePrincipal.DOC)
+			return;
+
+		if (pi.getResponsible() == null)
+			return;
+
+		String destino = pi.getResponsible().getCodigo();
+
+		ExService service = Service.getExService();
+		service.transferir(principal, destino, siglaTitular, true);
+	}
+
+	public static void assertPodeTransferirDocumentosVinculados(WfTarefa ti, String siglaTitular) throws Exception {
+		String principal = ti.getInstanciaDeProcedimento().getPrincipal();
+		WfTipoDePrincipal tipo = ti.getInstanciaDeProcedimento().getTipoDePrincipal();
+		if (principal == null || tipo == null)
+			return;
+
+		if (tipo != WfTipoDePrincipal.DOC)
+			return;
+
+		ExService service = Service.getExService();
+		if (!service.podeTransferir(principal, siglaTitular, true)) {
+			throw new AplicacaoException("A tarefa não pode prosseguir porque o documento '" + principal
+					+ "' não pode ser transferido. Por favor, verifique se o documento está em sua lotação e se está 'Aguardando andamento'.");
+		}
+	}
+
+	public static boolean assertLotacaoAscendenteOuDescendente(DpLotacao lotAtual, DpLotacao lotFutura)
+			throws AplicacaoException {
+		if (lotAtual.getIdInicial().equals(lotFutura.getIdInicial()))
+			return true;
+
+		// Linha ascendente
+		DpLotacao lot = lotAtual;
+		while (lot.getLotacaoPai() != null) {
+			lot = lot.getLotacaoPai();
+			if (lot.getIdInicial().equals(lotFutura.getIdInicial()))
+				return true;
+		}
+
+		// Descendente direta
+		lot = lotFutura;
+		while (lot.getLotacaoPai() != null) {
+			lot = lot.getLotacaoPai();
+			if (lot.getIdInicial().equals(lotAtual.getIdInicial()))
+				return true;
+		}
+
+		throw new AplicacaoException("A designaï¿½ï¿½o de '" + lotAtual.getSigla() + "' para '" + lotFutura.getSigla()
+				+ "' nï¿½o ï¿½ permitida pois sï¿½ sï¿½o aceitas lotaï¿½ï¿½es ascendentes seguindo a linha do organograma ou descendentes diretas.");
 	}
 
 	public static Boolean podePegarTarefa(DpPessoa cadastrante, DpPessoa titular, DpLotacao lotaCadastrante,

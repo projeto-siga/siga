@@ -30,13 +30,14 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.enterprise.inject.Specializes;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import org.jboss.logging.Logger;
 
-import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
@@ -88,13 +89,10 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
 		query.setParameter("evento", evento + "%");
 		List<WfProcedimento> result = query.getResultList();
-		if (result == null || result.size() == 0)
-			return null;
 		return result;
 	}
 
 	public void gravarInstanciaDeProcedimento(WfProcedimento pi) {
-
 		SortedSet<Sincronizavel> setDepois = new TreeSet<>();
 		SortedSet<Sincronizavel> setAntes = new TreeSet<>();
 
@@ -180,15 +178,12 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 //		return query.getResultList();
 //	}
 
-	public List<WfProcedimento> consultarProcedimentosPorLotacao(DpLotacao lotaTitular) {
-		String sql = "from WfProcedimento p where p.lotacao.idLotacaoIni = :idLotacaoIni";
+	public List<WfProcedimento> consultarProcedimentosPorPessoaOuLotacao(DpPessoa titular, DpLotacao lotaTitular) {
+		String sql = "select p from WfProcedimento p left join p.pessoa pes left join p.lotacao lot where pes.idPessoaIni = :idPessoaIni or lot.idLotacaoIni = :idLotacaoIni";
 		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
+		query.setParameter("idPessoaIni", titular.getIdPessoaIni());
 		query.setParameter("idLotacaoIni", lotaTitular.getIdLotacaoIni());
-		query.setFirstResult(0);
-		query.setMaxResults(5);
 		List<WfProcedimento> result = query.getResultList();
-		if (result == null || result.size() == 0)
-			return null;
 		return result;
 	}
 

@@ -40,7 +40,7 @@
 	<script src="/sigawf/js/angucomplete-alt/angucomplete-alt.js"></script>
 
 	<div class="container-fluid content" ng-app="app" ng-controller="ctrl">
-		<h5>Edição de Diagrama</h5>
+		<h2>Diagrama ${pd.sigla}</h2>
 
 		<input type="hidden" name="postback" value="1" />
 		<fieldset title="Dados Básicos">

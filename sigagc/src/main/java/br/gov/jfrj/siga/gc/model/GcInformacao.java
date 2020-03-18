@@ -37,6 +37,7 @@ import org.hibernate.annotations.SortType;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaCalendar;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -203,17 +204,10 @@ public class GcInformacao extends Objeto {
 		return getSigla() + " - " + getMarcadoresEmHtml(pess, lota);
 	}
 
-	private String completarComZeros(int valor, int casas) {
-		String s = String.valueOf(valor);
-		while (s.length() < casas)
-			s = "0" + s;
-		return s;
-	}
-
 	public String getSigla() {
 		if (this.elaboracaoFim != null) {
 			return ou.getAcronimoOrgaoUsu() + "-GC-" + ano + "/"
-					+ completarComZeros(numero, 5);
+					+ Utils.completarComZeros(numero, 5);
 		}
 		return "TMPGC-" + id;
 	}

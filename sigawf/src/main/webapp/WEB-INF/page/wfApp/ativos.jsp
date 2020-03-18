@@ -1,15 +1,12 @@
-<%@ include file="/WEB-INF/page/include.jsp"%><!--  -->
+<%@ include file="/WEB-INF/page/include.jsp"%>
 
-<!-- Tabela com a lista de Tarefas -->
-<div id="sigawf"></div>
-<c:if test="${empty taskInstances}">
-	Nenhuma tarefa ativa
-</c:if>
-<c:if test="${not empty taskInstances}">
-	<div class="gt-content-box gt-for-table">
-		<table border="0" class="gt-table">
-			<thead>
+<siga:pagina titulo="Tarefa">
+	<div class="container-fluid content">
+		<h3>Procedimentos Ativos</h3>
+		<table class="table table-sm table-striped">
+			<thead class="thead-dark">
 				<tr>
+					<th>Diagrama</th>
 					<th>Tarefa</th>
 					<th style="text-align: center">Atendente</th>
 					<th style="text-align: center">Prioridade</th>
@@ -19,6 +16,7 @@
 			<tbody>
 				<c:forEach var="taskInstance" items="${taskInstances}">
 					<tr class="count">
+						<td>${taskInstance.instanciaDeProcedimento.definicaoDeProcedimento.nome}</td>
 						<td><a
 							href="${linkTo[WfAppController].procedimento(taskInstance.instanciaDeProcedimento.id)}">${taskInstance.definicaoDeTarefa.nome}</a></td>
 
@@ -41,4 +39,4 @@
 			</tbody>
 		</table>
 	</div>
-</c:if>
+</siga:pagina>

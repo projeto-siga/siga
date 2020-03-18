@@ -5,12 +5,14 @@ import com.crivano.jflow.model.TaskKind;
 import com.crivano.jflow.task.TaskDecision;
 import com.crivano.jflow.task.TaskEmail;
 import com.crivano.jflow.task.TaskEval;
-import com.crivano.jflow.task.TaskForm;
+
+import br.gov.jfrj.siga.wf.model.task.WfTarefaAguardarAssinatura;
+import br.gov.jfrj.siga.wf.model.task.WfTarefaFormulario;
 
 public enum WfTipoDeTarefa implements TaskKind {
 
 	//
-	AGUARDAR_ASSINATURA_PRINCIPAL("Aguardar Assinatura", "rectangle", null),
+	AGUARDAR_ASSINATURA_PRINCIPAL("Aguardar Assinatura", "rectangle", WfTarefaAguardarAssinatura.class),
 	//
 	ENVIAR_PRINCIPAL("Enviar", "rectangle", null),
 	//
@@ -18,7 +20,7 @@ public enum WfTipoDeTarefa implements TaskKind {
 	//
 	INCLUIR_DOCUMENTO("Incluir Documento", "rectangle", null),
 	//
-	FORMULARIO("Formulário", "rectangle", TaskForm.class),
+	FORMULARIO("Formulário", "rectangle", WfTarefaFormulario.class),
 	//
 	DECISAO("Decisão", "diamond", TaskDecision.class),
 	//

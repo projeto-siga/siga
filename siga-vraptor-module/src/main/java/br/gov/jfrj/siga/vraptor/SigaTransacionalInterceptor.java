@@ -80,8 +80,9 @@ public class SigaTransacionalInterceptor extends br.com.caelum.vraptor.jpa.JPATr
 			} else {
 				disableAutoFlush();
 			}
-			
-			System.out.println("*** " + this.method.toString() + " - " + (transaction == null ? "NÃO" : "") + " Transacional");
+
+			// System.out.println("*** " + this.method.toString() + " - " + (transaction ==
+			// null ? "NÃO" : "") + " Transacional");
 
 			stack.next();
 
@@ -125,7 +126,8 @@ public class SigaTransacionalInterceptor extends br.com.caelum.vraptor.jpa.JPATr
 	public static void upgradeParaTransacional() {
 		SigaTransacionalInterceptor thiz = current.get();
 		if (thiz != null && thiz.transaction == null) {
-			System.out.println("*** UPGRADE para Transacional - " + thiz.method.toString());
+			// System.out.println("*** UPGRADE para Transacional - " +
+			// thiz.method.toString());
 			enableAutoFlush();
 			thiz.transaction = thiz.manager.getTransaction();
 			thiz.transaction.begin();
@@ -136,7 +138,8 @@ public class SigaTransacionalInterceptor extends br.com.caelum.vraptor.jpa.JPATr
 		SigaTransacionalInterceptor thiz = current.get();
 		if (thiz != null && thiz.transaction != null) {
 			thiz.commit(thiz.transaction);
-			System.out.println("*** DOWNGRADE para NÃO Transacional - " + thiz.method.toString());
+			// System.out.println("*** DOWNGRADE para NÃO Transacional - " +
+			// thiz.method.toString());
 			disableAutoFlush();
 			thiz.transaction = thiz.manager.getTransaction();
 			thiz.transaction.begin();

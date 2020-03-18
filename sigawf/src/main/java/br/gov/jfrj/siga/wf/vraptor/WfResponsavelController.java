@@ -191,7 +191,7 @@ public class WfResponsavelController extends WfController {
 	@Transacional
 	@Post("gravar")
 	public void gravar(final Long id, final String nome, final String descr, List<Item> itens)
-			throws UnsupportedEncodingException {
+			throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 		Date dt = dao().consultarDataEHoraDoServidor();
 
@@ -264,6 +264,6 @@ public class WfResponsavelController extends WfController {
 			}
 		}
 
-		result.redirectTo(this).edita(dr.getId());
+		result.redirectTo(this).lista();
 	}
 }

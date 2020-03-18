@@ -23,19 +23,21 @@ import java.util.List;
 
 import javax.jws.WebService;
 
+import org.jboss.logging.Logger;
+
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 import br.gov.jfrj.siga.wf.bl.Wf;
+import br.gov.jfrj.siga.wf.bl.WfBL;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
 import br.gov.jfrj.siga.wf.service.WfService;
 import br.gov.jfrj.siga.wf.util.WfEngine;
 import br.gov.jfrj.siga.wf.util.WfHandler;
-import br.gov.jfrj.siga.wf.util.WfUtil;
 
 /**
  * Classe que representa o webservice do workflow. O SIGA-DOC faz a chamada
@@ -47,16 +49,7 @@ import br.gov.jfrj.siga.wf.util.WfUtil;
  */
 @WebService(serviceName = "WfService", endpointInterface = "br.gov.jfrj.siga.wf.service.WfService", targetNamespace = "http://impl.service.wf.siga.jfrj.gov.br/")
 public class WfServiceImpl implements WfService {
-
-	private boolean hideStackTrace = false;
-
-	public boolean isHideStackTrace() {
-		return hideStackTrace;
-	}
-
-	public void setHideStackTrace(boolean hideStackTrace) {
-		this.hideStackTrace = hideStackTrace;
-	}
+	private final static Logger log = Logger.getLogger(WfService.class);
 
 	/**
 	 * Atualiza o workflow de um documento. Este método pesquisa todas as variáveis
@@ -100,9 +93,9 @@ public class WfServiceImpl implements WfService {
 		if (l.size() > 0)
 			identidade = l.get(0);
 		WfProcedimento pi = Wf.getInstance().getBL().createProcessInstance(pd.getId(), titularParser.getPessoa(),
-				titularParser.getLotacao(), identidade, keys, values, false);
+				titularParser.getLotacao(), identidade, null, keys, values, false);
 
-		WfUtil.transferirDocumentosVinculados(pi, siglaTitular);
+		WfBL.transferirDocumentosVinculados(pi, siglaTitular);
 		return true;
 	}
 

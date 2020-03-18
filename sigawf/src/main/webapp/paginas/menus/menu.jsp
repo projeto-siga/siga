@@ -5,9 +5,9 @@
 	class="nav-link dropdown-toggle" data-toggle="dropdown">Procedimentos</a>
 	<ul class="dropdown-menu">
 		<li><a class="dropdown-item"
-			href="${linkTo[WfAppController].iniciar}">Iniciar</a></li>
+			href="${linkTo[WfAppController].listarParaIniciar}">Iniciar</a></li>
 		<li><a class="dropdown-item"
-			href="${linkTo[WfAppController].resumo}">Ativos</a></li>
+			href="${linkTo[WfAppController].ativos}">Ativos</a></li>
 	</ul> <c:if
 		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF;FE:Ferramentas')}">
 		<li class="nav-item dropdown"><a href="javascript:void(0);"

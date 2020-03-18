@@ -8,7 +8,7 @@
 
 <siga:pagina titulo="Lista de Diagramas">
 	<div class="container-fluid content mb-3">
-		<h3>Lista de Diagramas</h3>
+		<h3>Inicialização de Procedimento</h3>
 		<table class="table table-sm table-striped">
 			<thead class="thead-dark">
 				<tr class="header">
@@ -20,20 +20,12 @@
 			<tbody class="table-bordered">
 				<c:forEach var="item" items="${itens}">
 					<tr>
-						<td><c:url var="url" value="editar">
-								<c:param name="id" value="${item.id}" />
-							</c:url> <a href="${url}">${item.sigla}</a></td>
+						<td><a href="${linkTo[WfAppController].iniciar(item.id)}">${item.sigla}</a></td>
 						<td>${item.nome}</td>
 						<td>${item.descr}</td>
 					</tr>
 				</c:forEach>
 			</tbody>
 		</table>
-		<form>
-			<div class="gt-table-buttons">
-				<a href="editar" class="btn btn-primary" style="cursor: pointer;"
-					accesskey="n"><u>N</u>ovo Diagrama</a>
-			</div>
-		</form>
 	</div>
 </siga:pagina>

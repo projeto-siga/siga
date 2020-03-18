@@ -21,7 +21,8 @@
 
 <c:if test="${(atalho == true) and fn:contains(title, '_')}">
 	<c:set var="ious" value="${fn:indexOf(title, '_')}" />
-	<c:set var="accesskey" value="${fn:toLowerCase(fn:substring(title, ious+1, ious+2))}" />
+	<c:set var="accesskey"
+		value="${fn:toLowerCase(fn:substring(title, ious+1, ious+2))}" />
 	<c:set var="title">${fn:substring(title, 0, ious)}<u>${fn:substring(title, ious+1, ious+2)}</u>${fn:substring(title, ious+2, -1)}</c:set>
 </c:if>
 
@@ -37,8 +38,8 @@
 <c:set var="img" value="" />
 <c:if test="${not empty icon}">
 	<c:set var="img">
-		<img src="/siga/css/famfamfam/icons/${icon}.png"
-			class="mr-1 mb-1" title="${titleImg}">
+		<img src="/siga/css/famfamfam/icons/${icon}.png" class="mr-1 mb-1"
+			title="${titleImg}">
 	</c:set>
 </c:if>
 
@@ -60,26 +61,41 @@
 	<c:if test="${not empty url}">
 		<c:choose>
 			<c:when test="${not empty modal}">
-				<a class="${classe} ${linkBotoes ? 'btn btn-sm btn-info link-tag' : ''}" <c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
+				<a
+					class="${classe} ${linkBotoes ? 'btn btn-sm btn-info link-tag' : ''}"
+					<c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
 					data-toggle="modal" data-target="#${modal}" title="${explicacao}">${img}${title}</a>
 			</c:when>
 			<c:when test="${not empty popup and popup != false}">
-				<a class="${classe} ${linkBotoes ? 'btn btn-sm btn-info link-tag' : ''}" <c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
-					href="javascript:${linkConfirm}popitup('${url}');" title="${explicacao}">${img}${title}</a>
+				<a
+					class="${classe} ${linkBotoes ? 'btn btn-sm btn-info link-tag' : ''}"
+					<c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
+					href="javascript:${linkConfirm}popitup('${url}');"
+					title="${explicacao}">${img}${title}</a>
 			</c:when>
 			<c:when test="${not empty ajax and ajax != false}">
-				<span id="spanAjax_${idAjax}"> <a class="${classe} ${linkBotoes ? 'btn btn-sm btn-info link-tag' : ''} link-tag" <c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
-					href="javascript: SetInnerHTMLFromAjaxResponse('${url}', 'spanAjax_${idAjax}');" title="${explicacao}">${img}${title}</a>
+				<span id="spanAjax_${idAjax}"> <a
+					class="${classe} ${linkBotoes ? 'btn btn-sm btn-info link-tag' : ''} link-tag"
+					<c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
+					href="javascript: SetInnerHTMLFromAjaxResponse('${url}', 'spanAjax_${idAjax}');"
+					title="${explicacao}">${img}${title}</a>
 				</span>
 			</c:when>
 			<c:otherwise>
 				<c:choose>
 					<c:when test="${not empty linkConfirm}">
-						<a class="${classe} ${linkBotoes ? 'btn btn-sm btn-info link-tag' : ''} link-tag" <c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
-							href="javascript:${linkConfirm}${post ? 'postToUrl(\'' + url + '\')' : 'location.href=\'' + url + '\''};" title="${explicacao}">${img}${title}</a>
+						<a
+							class="${classe} ${linkBotoes ? 'btn btn-sm btn-info link-tag' : ''} link-tag"
+							<c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
+							href="javascript:${linkConfirm}${post ? 'postToUrl(\''.concat(url).concat('\')') : 'location.href=\''.concat(url).concat('\';')}"
+							title="${explicacao}">${img}${title}</a>
 					</c:when>
 					<c:otherwise>
-						<a class="${classe} ${linkBotoes ? 'btn btn-sm btn-info link-tag' : ''} link-tag" <c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if> href="${post ? 'javascript:postToUrl(\''.concat(url).concat('\')') : url};" title="${explicacao}">${img}${title}</a>
+						<a
+							class="${classe} ${linkBotoes ? 'btn btn-sm btn-info link-tag' : ''} link-tag"
+							<c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
+							href="${post ? 'javascript:postToUrl(\''.concat(url).concat('\')') : url};"
+							title="${explicacao}">${img}${title}</a>
 					</c:otherwise>
 				</c:choose>
 			</c:otherwise>

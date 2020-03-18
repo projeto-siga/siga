@@ -191,6 +191,8 @@ public class WfDiagramaController
 	@Get("editar")
 	public void edita(final Long id) throws UnsupportedEncodingException {
 		assertAcesso(VERIFICADOR_ACESSO);
+		if (id != null)
+			result.include("pd", WfDefinicaoDeProcedimento.AR.findById(id));
 	}
 
 	@Get("{id}/carregar")
@@ -208,6 +210,9 @@ public class WfDiagramaController
 	@Post("gravar")
 	public void editarGravar(Long id, WfDefinicaoDeProcedimento pd) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
+
+		if (pd.getOrgaoUsuario() == null)
+			pd.setOrgaoUsuario(getTitular().getOrgaoUsuario());
 
 		SortedSet<Sincronizavel> setDepois = new TreeSet<>();
 		SortedSet<Sincronizavel> setAntes = new TreeSet<>();

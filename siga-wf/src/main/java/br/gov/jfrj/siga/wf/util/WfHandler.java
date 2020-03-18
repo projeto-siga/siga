@@ -15,6 +15,7 @@ import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.wf.bl.Wf;
+import br.gov.jfrj.siga.wf.bl.WfBL;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
 
@@ -32,7 +33,12 @@ public class WfHandler implements Handler<WfProcedimento, WfResp> {
 
 	@Override
 	public void afterPause(WfProcedimento pi, TaskResult result) {
-		// transferirDocumentosVinculados(pi, cadastrante);
+		String siglaTitular = titular.getSigla() + "@" + lotaTitular.getSiglaCompleta();
+		try {
+			WfBL.transferirDocumentosVinculados(pi, siglaTitular);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public static Object eval(WfProcedimento pi, String expression) {

@@ -101,10 +101,10 @@ public class WfTaskVO extends VO {
 			String siglaTitular = titular.getSigla() + "@" + lotaTitular.getSiglaCompleta();
 
 			String respWF = null;
-			if (ti.getInstanciaDeProcesso().getPessoa() != null)
-				respWF = ti.getInstanciaDeProcesso().getPessoa().getSigla();
-			if (respWF == null && ti.getInstanciaDeProcesso().getLotacao() != null)
-				respWF = "@" + ti.getInstanciaDeProcesso().getLotacao().getSiglaCompleta();
+			if (ti.getInstanciaDeProcedimento().getPessoa() != null)
+				respWF = ti.getInstanciaDeProcedimento().getPessoa().getSigla();
+			if (respWF == null && ti.getInstanciaDeProcedimento().getLotacao() != null)
+				respWF = "@" + ti.getInstanciaDeProcedimento().getLotacao().getSiglaCompleta();
 
 			// O ideal é que seja desconsiderada apenas a variavel cujo valor seja
 			// igual a siglaDoc, e não todas que começam com doc_
@@ -127,10 +127,11 @@ public class WfTaskVO extends VO {
 
 					WfVariableVO wfva = new WfVariableVO(vd);
 					this.variableList.add(wfva);
-					wfva.setValor((String) ti.getInstanciaDeProcesso().getVariavelMap().get(wfva.getIdentificador()));
+					wfva.setValor(
+							(String) ti.getInstanciaDeProcedimento().getVariavelMap().get(wfva.getIdentificador()));
 
 					if (wfva.getIdentificador().startsWith("doc_")) {
-						String documento = (String) ti.getInstanciaDeProcesso().getVariable()
+						String documento = (String) ti.getInstanciaDeProcedimento().getVariable()
 								.get(wfva.getIdentificador());
 						if (documento != null) {
 							if (siglaDoc == null || !documento.startsWith(siglaDoc)) {
@@ -209,7 +210,7 @@ public class WfTaskVO extends VO {
 
 						// Depois dessa tarefa vai terminar
 						else if (tdProxima.isUltimo() || (desvio != null && desvio.isUltimo())
-								|| ti.getInstanciaDeProcesso().getCurrentIndex() == ti.getInstanciaDeProcesso()
+								|| ti.getInstanciaDeProcedimento().getCurrentIndex() == ti.getInstanciaDeProcedimento()
 										.getProcessDefinition().getTaskDefinition().size() - 1) {
 							ultimo = true;
 							tdProxima = null;
@@ -218,15 +219,15 @@ public class WfTaskVO extends VO {
 
 						// Ou vai para a tarefa seguinte
 						else
-							tdProxima = (WfDefinicaoDeTarefa) ti.getInstanciaDeProcesso().getProcessDefinition()
-									.getTaskDefinition().get(ti.getInstanciaDeProcesso().getCurrentIndex() + 1);
+							tdProxima = (WfDefinicaoDeTarefa) ti.getInstanciaDeProcedimento().getProcessDefinition()
+									.getTaskDefinition().get(ti.getInstanciaDeProcedimento().getCurrentIndex() + 1);
 					}
 
 					if (ultimo)
 						set.add("FIM");
 					else {
 						if (tdProxima != null) {
-							WfResp r = (WfResp) ti.getInstanciaDeProcesso().calcResponsible(tdProxima);
+							WfResp r = (WfResp) ti.getInstanciaDeProcedimento().calcResponsible(tdProxima);
 							if (r != null)
 								set.add(r.getInitials());
 						}
@@ -244,14 +245,14 @@ public class WfTaskVO extends VO {
 		}
 
 		tags = new ArrayList<String>();
-		if (ti.getInstanciaDeProcesso().getProcessDefinition() != null)
-			tags.add("@" + Texto.slugify(ti.getInstanciaDeProcesso().getProcessDefinition().getNome(), true, true));
+		if (ti.getInstanciaDeProcedimento().getProcessDefinition() != null)
+			tags.add("@" + Texto.slugify(ti.getInstanciaDeProcedimento().getProcessDefinition().getNome(), true, true));
 		if (ti.getDefinicaoDeTarefa() != null && ti.getDefinicaoDeTarefa().getNome() != null)
 			tags.add("@" + Texto.slugify(ti.getDefinicaoDeTarefa().getNome(), true, true));
 
-		if (ti.getInstanciaDeProcesso().getProcessDefinition().getNome() != null && ti.getDefinicaoDeTarefa() != null
-				&& ti.getDefinicaoDeTarefa().getNome() != null)
-			ancora = "^wf:" + Texto.slugify(ti.getInstanciaDeProcesso().getProcessDefinition().getNome() + "-"
+		if (ti.getInstanciaDeProcedimento().getProcessDefinition().getNome() != null
+				&& ti.getDefinicaoDeTarefa() != null && ti.getDefinicaoDeTarefa().getNome() != null)
+			ancora = "^wf:" + Texto.slugify(ti.getInstanciaDeProcedimento().getProcessDefinition().getNome() + "-"
 					+ ti.getDefinicaoDeTarefa().getNome(), true, true);
 
 		addAcoes(ti, titular, lotaTitular);
@@ -347,27 +348,31 @@ public class WfTaskVO extends VO {
 	}
 
 	public String getCadastrante() {
-		return (String) this.ti.getInstanciaDeProcesso().getVariable().get("wf_cadastrante");
+		return (String) this.ti.getInstanciaDeProcedimento().getVariable().get("wf_cadastrante");
 	}
 
 	public String getLotaCadastrante() {
-		return (String) this.ti.getInstanciaDeProcesso().getVariable().get("wf_lota_cadastrante");
+		return (String) this.ti.getInstanciaDeProcedimento().getVariable().get("wf_lota_cadastrante");
 	}
 
 	public String getTitular() {
-		return (String) this.ti.getInstanciaDeProcesso().getVariable().get("wf_titular");
+		return (String) this.ti.getInstanciaDeProcedimento().getVariable().get("wf_titular");
 	}
 
 	public String getLotaTitular() {
-		return (String) this.ti.getInstanciaDeProcesso().getVariable().get("wf_lota_titular");
+		return (String) this.ti.getInstanciaDeProcedimento().getVariable().get("wf_lota_titular");
 	}
 
 	public Long getId() {
-		return this.ti.getInstanciaDeProcesso().getId();
+		return this.ti.getInstanciaDeProcedimento().getId();
+	}
+
+	public String getSigla() {
+		return this.ti.getInstanciaDeProcedimento().getSigla();
 	}
 
 	public String getNomeDoProcedimento() {
-		return this.ti.getInstanciaDeProcesso().getDefinicaoDeProcedimento().getNome();
+		return this.ti.getInstanciaDeProcedimento().getDefinicaoDeProcedimento().getNome();
 	}
 
 	public String getNomeDaTarefa() {
@@ -383,13 +388,13 @@ public class WfTaskVO extends VO {
 	}
 
 	public WfPrioridade getPrioridade() {
-		return this.ti.getInstanciaDeProcesso().getPrioridade();
+		return this.ti.getInstanciaDeProcedimento().getPrioridade();
 	}
 
 	public Date getInicio() {
-		return this.ti.getInstanciaDeProcesso().getDtEvento();
+		return this.ti.getInstanciaDeProcedimento().getDtEvento();
 	}
-	
+
 	public WfDefinicaoDeTarefa getDefinicaoDeTarefa() {
 		return this.ti.getDefinicaoDeTarefa();
 	}
@@ -398,9 +403,9 @@ public class WfTaskVO extends VO {
 	public void addAcao(String icone, String nome, String nameSpace, String action, boolean pode, String msgConfirmacao,
 			String parametros, String pre, String pos, String classe, String modal) {
 		if (parametros == null)
-			parametros = "id=" + this.ti.getInstanciaDeProcesso().getId();
+			parametros = "id=" + this.ti.getInstanciaDeProcedimento().getId();
 		else
-			parametros += "&id=" + this.ti.getInstanciaDeProcesso().getId();
+			parametros += "&id=" + this.ti.getInstanciaDeProcedimento().getId();
 		super.addAcao(icone, nome, nameSpace, action, pode, msgConfirmacao, parametros, pre, pos, classe, modal);
 	}
 

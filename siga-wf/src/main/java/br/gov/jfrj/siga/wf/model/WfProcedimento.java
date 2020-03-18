@@ -1,15 +1,16 @@
 package br.gov.jfrj.siga.wf.model;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -23,6 +24,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -32,19 +34,28 @@ import com.crivano.jflow.model.ProcessInstance;
 import com.crivano.jflow.model.TaskDefinition;
 import com.crivano.jflow.model.enm.ProcessInstanceStatus;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.util.Utils;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.sinc.lib.Item;
-import br.gov.jfrj.siga.sinc.lib.Sincronizador;
-import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
+import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.model.Objeto;
+import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.model.enm.WfPrioridade;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
+import br.gov.jfrj.siga.wf.util.SiglaUtils;
 import br.gov.jfrj.siga.wf.util.WfResp;
+import br.gov.jfrj.siga.wf.util.SiglaUtils.SiglaDecodificada;
 
 @Entity
 @BatchSize(size = 500)
 @Table(name = "sigawf.wf_procedimento")
-public class WfProcedimento implements ProcessInstance<WfDefinicaoDeProcedimento, WfDefinicaoDeTarefa, WfResp> {
+public class WfProcedimento extends Objeto
+		implements ProcessInstance<WfDefinicaoDeProcedimento, WfDefinicaoDeTarefa, WfResp> {
+	public static ActiveRecord<WfProcedimento> AR = new ActiveRecord<>(WfProcedimento.class);
+
 	@Id
 	@GeneratedValue
 	@Column(name = "PROC_ID", unique = true, nullable = false)
@@ -95,7 +106,17 @@ public class WfProcedimento implements ProcessInstance<WfDefinicaoDeProcedimento
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "PROC_TP_PRIORIDADE")
-	private WfPrioridade prioridade;
+	private WfPrioridade prioridade = WfPrioridade.MEDIA;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ORGU_ID")
+	private CpOrgaoUsuario orgaoUsuario;
+
+	@Column(name = "PROC_ANO")
+	private Integer ano;
+
+	@Column(name = "PROC_NR")
+	private Integer numero;
 
 	public WfProcedimento() {
 	}
@@ -178,6 +199,18 @@ public class WfProcedimento implements ProcessInstance<WfDefinicaoDeProcedimento
 	}
 
 	@PrePersist
+	private void onPersist() {
+		if (getAno() != null)
+			return;
+		setAno(WfDao.getInstance().dt().getYear() + 1900);
+		Query qry = em()
+				.createQuery("select max(numero) from WfProcedimento pi where ano = :ano and orgaoUsuario.idOrgaoUsu = :ouid");
+		qry.setParameter("ano", getAno());
+		qry.setParameter("ouid", getOrgaoUsuario().getId());
+		Integer i = (Integer) qry.getSingleResult();
+		setNumero((i == null ? 0 : i) + 1);
+	}
+
 	@PreUpdate
 	public void onSave() throws Exception {
 	}
@@ -350,4 +383,76 @@ public class WfProcedimento implements ProcessInstance<WfDefinicaoDeProcedimento
 	public void setMovimentacoes(Set<WfMov> movimentacoes) {
 		this.movimentacoes = movimentacoes;
 	}
+
+	public String getAtendente() {
+		if (getPessoa() != null)
+			return getPessoa().getSigla();
+		if (getLotacao() != null)
+			return getLotacao().getSigla();
+		return "";
+	}
+
+	public CpOrgaoUsuario getOrgaoUsuario() {
+		return orgaoUsuario;
+	}
+
+	public void setOrgaoUsuario(CpOrgaoUsuario orgaoUsuario) {
+		this.orgaoUsuario = orgaoUsuario;
+	}
+
+	public Integer getAno() {
+		return ano;
+	}
+
+	public void setAno(Integer ano) {
+		this.ano = ano;
+	}
+
+	public Integer getNumero() {
+		return numero;
+	}
+
+	public void setNumero(Integer numero) {
+		this.numero = numero;
+	}
+
+	public String getSigla() {
+		return orgaoUsuario.getAcronimoOrgaoUsu() + "-WF-" + ano + "/" + Utils.completarComZeros(numero, 5);
+	}
+
+	public String getSiglaCompacta() {
+		return getSigla().replace("-", "").replace("/", "");
+	}
+
+	public void setSigla(String sigla) {
+		SiglaDecodificada d = SiglaUtils.parse(sigla, "WF", null);
+		this.ano = d.ano;
+		this.numero = d.numero;
+		this.orgaoUsuario = d.orgaoUsuario;
+	}
+
+	public static WfProcedimento findBySigla(String sigla) throws NumberFormatException, Exception {
+		return findBySigla(sigla, null);
+	}
+
+	public static WfProcedimento findBySigla(String sigla, CpOrgaoUsuario ouDefault)
+			throws NumberFormatException, Exception {
+		SiglaDecodificada d = SiglaUtils.parse(sigla, "WF", null);
+
+		WfProcedimento info = null;
+
+		if (d.id != null) {
+			info = AR.findById(d.id);
+		} else if (d.numero != null) {
+			info = AR.find("ano = ?1 and numero = ?2 and ou.idOrgaoUsu = ?3", d.ano, d.numero, d.orgaoUsuario.getId())
+					.first();
+		}
+
+		if (info == null) {
+			throw new AplicacaoException("Não foi possível encontrar uma instância de procedimento com o código "
+					+ sigla + ". Favor verificá-lo.");
+		} else
+			return info;
+	}
+
 }

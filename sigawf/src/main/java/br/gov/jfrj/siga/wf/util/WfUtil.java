@@ -50,14 +50,14 @@ public class WfUtil {
 	 * @return
 	 */
 	public String getAtendente(WfTarefa ti) {
-		if (ti.getInstanciaDeProcesso().getPessoa() != null) {
-			if (ti.getInstanciaDeProcesso().getPessoa().getPessoaAtual().equals(so.getTitular()))
+		if (ti.getInstanciaDeProcedimento().getPessoa() != null) {
+			if (ti.getInstanciaDeProcedimento().getPessoa().getPessoaAtual().equals(so.getTitular()))
 				return "(minha)";
 			else
-				return ti.getInstanciaDeProcesso().getPessoa().getPessoaAtual().getSiglaCompleta();
+				return ti.getInstanciaDeProcedimento().getPessoa().getPessoaAtual().getSiglaCompleta();
 		}
-		if (ti.getInstanciaDeProcesso().getLotacao() != null)
-			return ti.getInstanciaDeProcesso().getLotacao().getSiglaCompleta();
+		if (ti.getInstanciaDeProcedimento().getLotacao() != null)
+			return ti.getInstanciaDeProcedimento().getLotacao().getSiglaCompleta();
 		return "";
 	}
 
@@ -112,7 +112,7 @@ public class WfUtil {
 			throws IllegalAccessException, InvocationTargetException, Exception, AplicacaoException {
 		WfTaskVO task = new WfTaskVO(taskInstance, so.getTitular(), so.getLotaTitular());
 		task.setConhecimentoEditavel(
-				so.getTitular().getPessoaAtual().equals(taskInstance.getInstanciaDeProcesso().getPessoa()));
+				so.getTitular().getPessoaAtual().equals(taskInstance.getInstanciaDeProcedimento().getPessoa()));
 		return task;
 	}
 
@@ -136,27 +136,8 @@ public class WfUtil {
 //	}
 
 	public String getDot(WfTarefa taskInstance) throws UnsupportedEncodingException, Exception {
-		WfProcedimento pi = taskInstance.getInstanciaDeProcesso();
+		WfProcedimento pi = taskInstance.getInstanciaDeProcedimento();
 		return GraphViz.getDot(pi, "Início", "Fim");
-	}
-
-	public static void transferirDocumentosVinculados(WfProcedimento pi, String siglaTitular)
-			throws Exception {
-		String principal = pi.getPrincipal();
-		WfTipoDePrincipal tipo = pi.getTipoDePrincipal();
-		if (principal == null || tipo == null)
-			return;
-
-		if (tipo != WfTipoDePrincipal.DOC)
-			return;
-
-		if (pi.getResponsible() == null)
-			return;
-
-		String destino = pi.getResponsible().getCodigo();
-
-		ExService service = Service.getExService();
-		service.transferir(principal, destino, siglaTitular, true);
 	}
 
 //	private static boolean atorDeveReexecutarTarefa(DpPessoa ator, WfInstanciaDeTarefa ti) {
@@ -170,68 +151,8 @@ public class WfUtil {
 //		}
 //	}
 
-	public void assertPodeTransferirDocumentosVinculados(WfTarefa ti, String siglaTitular) throws Exception {
-		String principal = ti.getInstanciaDeProcesso().getPrincipal();
-		WfTipoDePrincipal tipo = ti.getInstanciaDeProcesso().getTipoDePrincipal();
-		if (principal == null || tipo == null)
-			return;
-
-		if (tipo != WfTipoDePrincipal.DOC)
-			return;
-
-		ExService service = Service.getExService();
-		if (!service.podeTransferir(principal, siglaTitular, false)) {
-			throw new AplicacaoException("A tarefa não pode prosseguir porque o documento '" + principal
-					+ "' não pode ser transferido. Por favor, verifique se o documento está em sua lotação e se está 'Aguardando andamento'.");
-		}
-	}
-
-	public boolean assertLotacaoAscendenteOuDescendente(DpLotacao lotAtual, DpLotacao lotFutura)
-			throws AplicacaoException {
-		if (lotAtual.getIdInicial().equals(lotFutura.getIdInicial()))
-			return true;
-
-		// Linha ascendente
-		DpLotacao lot = lotAtual;
-		while (lot.getLotacaoPai() != null) {
-			lot = lot.getLotacaoPai();
-			if (lot.getIdInicial().equals(lotFutura.getIdInicial()))
-				return true;
-		}
-
-		// Descendente direta
-		lot = lotFutura;
-		while (lot.getLotacaoPai() != null) {
-			lot = lot.getLotacaoPai();
-			if (lot.getIdInicial().equals(lotAtual.getIdInicial()))
-				return true;
-		}
-
-		throw new AplicacaoException("A designaï¿½ï¿½o de '" + lotAtual.getSigla() + "' para '" + lotFutura.getSigla()
-				+ "' nï¿½o ï¿½ permitida pois sï¿½ sï¿½o aceitas lotaï¿½ï¿½es ascendentes seguindo a linha do organograma ou descendentes diretas.");
-	}
-
 	public String getSiglaTitular() {
 		return so.getTitular().getSigla() + "@" + so.getLotaTitular().getSiglaCompleta();
-	}
-
-	/**
-	 * Monta o objeto WfTaskVO (view object, que serï¿½ usado na interface do
-	 * usuï¿½rio).
-	 * 
-	 * @param taskInstance
-	 * @param variableAccesses
-	 * @param siglaDoc
-	 * @throws Exception
-	 */
-	public void addTask(Map<String, List<WfTaskVO>> mobilMap, WfTarefa taskInstance, String siglaDoc,
-			String sigla) throws Exception {
-		WfTaskVO task = new WfTaskVO(taskInstance, sigla, so.getTitular(), so.getLotaTitular());
-		if (!mobilMap.containsKey(siglaDoc)) {
-			mobilMap.put(siglaDoc, new ArrayList<WfTaskVO>());
-		}
-		List<WfTaskVO> tasks = mobilMap.get(siglaDoc);
-		tasks.add(task);
 	}
 
 }

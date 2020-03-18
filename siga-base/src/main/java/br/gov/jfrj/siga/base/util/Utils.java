@@ -24,4 +24,15 @@ public class Utils {
 		}
 	}
 
+	public static String completarComZeros(int valor, int casas) {
+		String s = String.valueOf(valor);
+		while (s.length() < casas)
+			s = "0" + s;
+		return s;
+	}
+
+	public static boolean empty(String s) {
+		return s == null || s.trim().length() == 0;
+	}
+
 }

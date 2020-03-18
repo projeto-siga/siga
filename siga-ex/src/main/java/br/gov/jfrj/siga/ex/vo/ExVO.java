@@ -27,14 +27,19 @@ import br.gov.jfrj.siga.base.util.Utils;
 
 public class ExVO extends VO {
 
-	public void addAcao(String icone, String nome, String nameSpace, String action, boolean pode,
-			String msgConfirmacao, String parametros, String pre, String pos, String classe) {
+	public void addAcao(String icone, String nome, String nameSpace, String action, boolean pode, String msgConfirmacao,
+			String parametros, String pre, String pos, String classe) {
+		addAcao(icone, nome, nameSpace, action, pode, msgConfirmacao, parametros, pre, pos, classe, null);
+	}
+
+	@Override
+	public void addAcao(String icone, String nome, String nameSpace, String action, boolean pode, String msgConfirmacao,
+			String parametros, String pre, String pos, String classe, String modal) {
 		TreeMap<String, String> params = new TreeMap<String, String>();
 
 		if (this instanceof ExMovimentacaoVO) {
 			params.put("id", Long.toString(((ExMovimentacaoVO) this).getIdMov()));
-			// params.put("sigla", ((ExMovimentacaoVO)
-			// this).getMobilVO().getSigla());
+			params.put("sigla", ((ExMovimentacaoVO) this).getMobilVO().getSigla());
 		} else if (this instanceof ExMobilVO) {
 			params.put("sigla", ((ExMobilVO) this).getSigla());
 		} else if (this instanceof ExDocumentoVO) {
@@ -53,7 +58,8 @@ public class ExVO extends VO {
 		}
 
 		if (pode) {
-			AcaoVO acao = new AcaoVO(icone, nome, nameSpace, action, pode, msgConfirmacao, params, pre, pos, classe, null);
+			AcaoVO acao = new AcaoVO(icone, nome, nameSpace, action, pode, msgConfirmacao, params, pre, pos, classe,
+					modal);
 			getAcoes().add(acao);
 		}
 	}

@@ -15,6 +15,7 @@ import com.crivano.jflow.model.enm.ProcessInstanceStatus;
 import com.crivano.jflow.model.enm.VariableEditingKind;
 
 import br.com.caelum.vraptor.Controller;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
@@ -29,6 +30,7 @@ import br.gov.jfrj.siga.vraptor.SigaObjects;
 import br.gov.jfrj.siga.vraptor.StringQualquer;
 import br.gov.jfrj.siga.vraptor.Transacional;
 import br.gov.jfrj.siga.wf.bl.Wf;
+import br.gov.jfrj.siga.wf.bl.WfBL;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeDesvio;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
@@ -59,7 +61,9 @@ public class WfAppController extends WfController {
 		super(request, result, dao, so, util);
 	}
 
-	public void resumo() throws Exception {
+	@Get
+	@Path("/app/ativos")
+	public void ativos() throws Exception {
 		inbox();
 	}
 
@@ -76,9 +80,11 @@ public class WfAppController extends WfController {
 	 * @return
 	 * @throws Exception
 	 */
+	@Get
+	@Path("/app/inbox")
 	public void inbox() throws Exception {
 		SortedSet<WfTarefa> tis = new TreeSet<>();
-		List<WfProcedimento> pis = dao().consultarProcedimentosPorLotacao(getLotaTitular());
+		List<WfProcedimento> pis = dao().consultarProcedimentosPorPessoaOuLotacao(getTitular(), getLotaTitular());
 		for (WfProcedimento pi : pis) {
 			tis.add(new WfTarefa(pi));
 		}
@@ -92,8 +98,9 @@ public class WfAppController extends WfController {
 	 * @return
 	 * @throws Exception
 	 */
-	@Path("/app/iniciar")
-	public void iniciar() throws Exception {
+	@Get
+	@Path("/app/listar-para-iniciar")
+	public void listarParaIniciar() throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 		List<WfDefinicaoDeProcedimento> modelos = dao().listarAtivos(WfDefinicaoDeProcedimento.class, "nome");
 		result.include("itens", modelos);
@@ -106,18 +113,31 @@ public class WfAppController extends WfController {
 	 * @return
 	 * @throws Exception
 	 */
-	@Transacional
-	@Post
+	@Get
 	@Path("/app/iniciar/{pdId}")
 	public void iniciar(Long pdId) throws Exception {
 		if (pdId == null)
 			throw new RuntimeException();
+		WfDefinicaoDeProcedimento pd = dao().consultar(pdId, WfDefinicaoDeProcedimento.class, false);
+		result.include("pd", pd);
+	}
+
+	/**
+	 * Cria uma instância de processo baseando-se na definição de processo escolhida
+	 * pelo usuário.
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	@Transacional
+	@Post
+	@Path("/app/iniciar/{pdId}")
+	public void iniciar(Long pdId, String principal) throws Exception {
+		if (pdId == null)
+			throw new RuntimeException();
 		WfProcedimento pi = Wf.getInstance().getBL().createProcessInstance(pdId, getTitular(), getLotaTitular(),
-				getIdentidadeCadastrante(), null, null, true);
-		if (pi.getStatus() == ProcessInstanceStatus.PAUSED)
-			result.redirectTo(this).procedimento(pi.getId());
-		else
-			redirectToHome();
+				getIdentidadeCadastrante(), principal, null, null, true);
+		result.redirectTo(this).procedimento(pi.getId());
 	}
 
 	/**
@@ -160,12 +180,47 @@ public class WfAppController extends WfController {
 		result.include("dot", util.getDot(new WfTarefa(pi)));
 		result.include("movs", pi.getMovimentacoes());
 		result.include("piId", pi.getId());
+		result.include("pi", pi);
 	}
 
 	/**
-	 * Action que finaliza uma tarefa com as variaveis atribuidas. Os valores são
-	 * atribuídos às variáveis da tarefa e depois a tarefa é transferida ao próximo
-	 * passo. Se a próxima tarefa for para o mesmo ator, esta é exibida
+	 * Verifica se as tarefas que estão designadas para o usuário estão associadas a
+	 * documentos do SIGA-DOC (por intermédio da variável iniciada com o prefixo
+	 * "doc_". Se estiver, chama o método addTask(). Este método executado quando a
+	 * action "doc.action" for chamada.
+	 */
+	@Get
+	@Path("/app/doc")
+	public void doc(String sigla) throws Exception {
+		Map<String, List<WfTaskVO>> mobilMap = new TreeMap<String, List<WfTaskVO>>();
+
+		SortedSet<WfTarefa> taskInstances = Wf.getInstance().getBL().getTaskList(sigla);
+		for (WfTarefa ti : taskInstances) {
+			if (ti.getInstanciaDeProcedimento().getStatus() != ProcessInstanceStatus.PAUSED)
+				continue;
+			if (!getTitular().equivale(ti.getInstanciaDeProcedimento().getPessoa())
+					&& !getLotaTitular().equivale(ti.getInstanciaDeProcedimento().getLotacao()))
+				continue;
+			String principal = ti.getInstanciaDeProcedimento().getPrincipal();
+			if (principal == null)
+				continue;
+
+			WfTaskVO task = new WfTaskVO(ti, sigla, so.getTitular(), so.getLotaTitular());
+			if (!mobilMap.containsKey(principal)) {
+				mobilMap.put(principal, new ArrayList<WfTaskVO>());
+			}
+			List<WfTaskVO> tasks = mobilMap.get(principal);
+			tasks.add(task);
+		}
+		result.include("mobilMap", mobilMap);
+	}
+
+	/**
+	 * 
+	 * 
+	 * /** Action que finaliza uma tarefa com as variaveis atribuidas. Os valores
+	 * são atribuídos às variáveis da tarefa e depois a tarefa é transferida ao
+	 * próximo passo. Se a próxima tarefa for para o mesmo ator, esta é exibida
 	 * imediatamente.
 	 * 
 	 * @return
@@ -184,7 +239,7 @@ public class WfAppController extends WfController {
 
 		// TODO Pegar automaticamente
 
-		util.assertPodeTransferirDocumentosVinculados(new WfTarefa(pi), cadastrante);
+		// WfBL.assertPodeTransferirDocumentosVinculados(new WfTarefa(pi), cadastrante);
 
 		Map<String, Object> param = new HashMap<>();
 
@@ -359,8 +414,8 @@ public class WfAppController extends WfController {
 		}
 
 		if (alterado) {
-			util.assertPodeTransferirDocumentosVinculados(new WfTarefa(pi), util.getSiglaTitular());
-			util.transferirDocumentosVinculados(pi, util.getSiglaTitular());
+			WfBL.assertPodeTransferirDocumentosVinculados(new WfTarefa(pi), util.getSiglaTitular());
+			WfBL.transferirDocumentosVinculados(pi, util.getSiglaTitular());
 		}
 
 		pi.setPrioridade(prioridade);
@@ -403,28 +458,6 @@ public class WfAppController extends WfController {
 			}
 		}
 		throw new Exception("Movimentação não encontrada.");
-	}
-
-	/**
-	 * Verifica se as tarefas que estão designadas para o usuário estão associadas a
-	 * documentos do SIGA-DOC (por intermédio da variável iniciada com o prefixo
-	 * "doc_". Se estiver, chama o método addTask(). Este método executado quando a
-	 * action "doc.action" for chamada.
-	 */
-	public void doc(String sigla) throws Exception {
-		Map<String, List<WfTaskVO>> mobilMap = new TreeMap<String, List<WfTaskVO>>();
-
-		SortedSet<WfTarefa> taskInstances = Wf.getInstance().getBL().getTaskList(sigla);
-		for (WfTarefa ti : taskInstances) {
-			if (ti.getInstanciaDeProcesso().getStatus() != ProcessInstanceStatus.PAUSED)
-				continue;
-			if (!getTitular().equivale(ti.getInstanciaDeProcesso().getPessoa())
-					&& !getLotaTitular().equivale(ti.getInstanciaDeProcesso().getLotacao()))
-				continue;
-			util.addTask(mobilMap, ti, ti.getInstanciaDeProcesso().getPrincipal(), sigla);
-		}
-		result.include("mobilMap", mobilMap);
-
 	}
 
 	/**

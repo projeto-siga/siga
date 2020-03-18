@@ -3,7 +3,7 @@ package br.gov.jfrj.siga.wf.util;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
 
-public class WfTarefa {
+public class WfTarefa implements Comparable<WfTarefa> {
 	WfDefinicaoDeTarefa td;
 
 	public WfTarefa(WfDefinicaoDeTarefa td, WfProcedimento pi) {
@@ -28,11 +28,34 @@ public class WfTarefa {
 		this.td = td;
 	}
 
-	public WfProcedimento getInstanciaDeProcesso() {
+	public WfProcedimento getInstanciaDeProcedimento() {
 		return pi;
 	}
 
 	public void setInstanciaDeProcesso(WfProcedimento pi) {
 		this.pi = pi;
+	}
+
+	@Override
+	public int compareTo(WfTarefa o) {
+		int i = 0;
+		if (o == null)
+			return 1;
+		if (getInstanciaDeProcedimento().getDtEvento() != null && o.getInstanciaDeProcedimento().getDtEvento() == null)
+			return 1;
+		if (getInstanciaDeProcedimento().getDtEvento() != null
+				&& o.getInstanciaDeProcedimento().getDtEvento() != null) {
+			i = getInstanciaDeProcedimento().getDtEvento().compareTo(o.getInstanciaDeProcedimento().getDtEvento());
+			if (i != 0)
+				return i;
+		}
+		if (getInstanciaDeProcedimento().getId() != null && o.getInstanciaDeProcedimento().getId() == null)
+			return 1;
+		if (getInstanciaDeProcedimento().getId() != null && o.getInstanciaDeProcedimento().getId() != null) {
+			i = getInstanciaDeProcedimento().getId().compareTo(o.getInstanciaDeProcedimento().getId());
+			if (i != 0)
+				return i;
+		}
+		return 0;
 	}
 }

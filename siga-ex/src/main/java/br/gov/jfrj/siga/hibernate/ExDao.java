@@ -2162,20 +2162,12 @@ public class ExDao extends CpDao {
 		// / 1000000 + " ms -> " + query + ", resultado: " + l);
 		return l;
 	}
-	public List listarMovimentacoesMesa(List<Long> listIdMobil, boolean trazerAnotacoes) {
-		String queryAnota =
-				"(select movAnotacao from ExMovimentacao movAnotacao"
-				+ " where movAnotacao.idMov in ("
-				+ " 	select max(movAnotacao1.idMov) from ExMovimentacao movAnotacao1"
-				+ " 		where movAnotacao1.exTipoMovimentacao.idTpMov = 28 "
-				+ "			and movAnotacao1.exMobil.idMobil = mob.idMobil " 
-				+ " 		and movAnotacao1.exMovimentacaoCanceladora.idMov = null ) ), ";
-				
+	public List listarMovimentacoesMesa(List<Long> listIdMobil, boolean trazerComposto) {
 		Query query = getSessao()
 				.createQuery(
 						"select "
 						+ "mob, "
-						+ "frm.isComposto, "
+						+ (trazerComposto ? " frm.isComposto, " : "0, ")
 						+ "(select movUltima from ExMovimentacao movUltima "
 						+ " where movUltima.idMov in ("
 						+ " 	select max(movUltima1.idMov) from ExMovimentacao movUltima1"
@@ -2187,11 +2179,10 @@ public class ExDao extends CpDao {
 						+ " 		where movTramite1.exTipoMovimentacao.idTpMov = 3 "
 						+ "			and movTramite1.exMobil.idMobil = mob.idMobil " 
 						+ " 		and movTramite1.exMovimentacaoCanceladora.idMov = null ) ), "
-						+ (trazerAnotacoes ? queryAnota: "")
 						+ "doc "
 						+ "from ExMobil mob "
 						+ "inner join mob.exDocumento doc "
-						+ "inner join doc.exFormaDocumento frm "
+						+ (trazerComposto ? "inner join doc.exFormaDocumento frm " : "")
 						+ "where mob.idMobil in (:listIdMobil) "
 				);
 		if (listIdMobil != null) {

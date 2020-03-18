@@ -3224,11 +3224,13 @@ public class ExMovimentacaoController extends ExController {
 						.cancelar(getTitular(), getLotaTitular(), builder.getMob(),
 								movCiencia, null, null, null,
 								"Ciência: " + movCiencia.getDescrMov());
-				Ex.getInstance()
+				if (movAss != null) {
+					Ex.getInstance()
 					.getBL()
 					.cancelar(getTitular(), getLotaTitular(), builder.getMob(),
 							movAss, null, null, null,
 							movAss.getDescrTipoMovimentacao() + ": " + movAss.getDescrMov());
+				}
 			} catch (final Exception e) {
 				throw e;
 			}

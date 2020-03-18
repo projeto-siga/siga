@@ -6946,7 +6946,10 @@ public class ExBL extends CpBL {
 		 * ExProtocolo protocolo = (ExProtocolo) dao().obterProtocoloPorCodigo(numero,ano);
 		 */
 		
-		ExProtocolo protocolo = dao().obterProtocoloPorCodigo(num);		
+		ExProtocolo protocolo = dao().obterProtocoloPorCodigo(num);
+		
+		if(protocolo == null)
+			throw new AplicacaoException("Protocolo não encontrado");
 		
 		if (protocolo.getExDocumento() == null)
 			throw new AplicacaoException("Protocolo não encontrado");

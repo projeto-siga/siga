@@ -82,7 +82,7 @@ public class ExProcessoAutenticacaoController extends ExController {
 			return;
 		}
 
-		String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
+		String gRecaptchaResponse = request.getParameter("g-recaptcha-response");		
 		boolean success = false;
 		if (gRecaptchaResponse != null) {
 			JsonNode body = null;

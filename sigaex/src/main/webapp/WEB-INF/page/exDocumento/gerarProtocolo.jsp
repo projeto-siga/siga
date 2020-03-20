@@ -55,7 +55,8 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<div class="form-group text-center">
-					<label><b>Aten&ccedil;&atilde;o: </b>Para consultar o andamento do seu documento acesse ${url} </label>
+					<label><b>Aten&ccedil;&atilde;o: </b>Para consultar o andamento do seu documento acesse  </label>
+					<a href="${url}" target="_blank">${url}</a>
 				</div>
 			</div>
 		</div>

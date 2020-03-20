@@ -914,6 +914,15 @@ public class CpDao extends ModeloDao {
 		final List<DpPessoa> l = qry.list();
 		return l;
 	}
+	
+	public List<DpPessoa> listarCpfAtivoInativoNomeDiferente(final long cpf, final String nome) {
+
+		final Query qry = getSessao().getNamedQuery("consultarPorCpfAtivoInativoNomeDiferente");
+		qry.setLong("cpfPessoa", cpf);
+		qry.setString("nomePessoa", nome);
+		final List<DpPessoa> l = qry.list();
+		return l;
+	}
 
 	public List<DpPessoa> consultarPessoasAtivasPorCpf(final long cpf) {
 

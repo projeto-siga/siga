@@ -5,8 +5,8 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 
-import br.com.caelum.vraptor.interceptor.download.Download;
-import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
+import br.com.caelum.vraptor.observer.download.Download;
+import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 
 public abstract class ExInputStreamDownload implements Download {
 

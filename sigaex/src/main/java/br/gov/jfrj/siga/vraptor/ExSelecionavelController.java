@@ -20,6 +20,7 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.TreeMap;
 
 import javax.persistence.EntityManager;
@@ -37,6 +38,15 @@ import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 
 public abstract class ExSelecionavelController<T extends Selecionavel, DaoFiltroT extends DaoFiltroSelecionavel> extends
 		SigaSelecionavelControllerSupport<T, DaoFiltroT> {
+
+	private static ResourceBundle bundle;
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ExSelecionavelController() {
+		super();
+	}
 
 	public ExSelecionavelController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);

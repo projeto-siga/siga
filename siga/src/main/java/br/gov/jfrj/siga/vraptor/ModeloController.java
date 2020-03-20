@@ -23,12 +23,13 @@
  */
 package br.gov.jfrj.siga.vraptor;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -39,15 +40,21 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.util.FreemarkerIndent;
 
-@Resource
+@Controller
 public class ModeloController extends SigaController {
 
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ModeloController() {
+		super();
+	}
+
+	@Inject
 	public ModeloController(HttpServletRequest request, Result result,
 			SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
-
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
 	}
 
 	public CpModelo daoMod(long id) {

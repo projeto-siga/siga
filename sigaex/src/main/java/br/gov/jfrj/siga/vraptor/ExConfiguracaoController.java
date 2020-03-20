@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -19,9 +20,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.base.Optional;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -50,7 +51,7 @@ import br.gov.jfrj.siga.ex.bl.ExConfiguracaoComparator;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.builder.ExConfiguracaoBuilder;
 
-@Resource
+@Controller
 public class ExConfiguracaoController extends ExController {
 
 	private static final String AJAX = "ajax";
@@ -58,6 +59,14 @@ public class ExConfiguracaoController extends ExController {
 	private static final String MODELO = "modelo";
 	private static final String VERIFICADOR_ACESSO = "FE:Ferramentas;CFG:Configurações";
 	
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ExConfiguracaoController() {
+		super();
+	}
+
+	@Inject
 	public ExConfiguracaoController(HttpServletRequest request, HttpServletResponse response, ServletContext context,
 			Result result, SigaObjects so, EntityManager em) {
 		super(request, response, context, result, ExDao.getInstance(), so, em);

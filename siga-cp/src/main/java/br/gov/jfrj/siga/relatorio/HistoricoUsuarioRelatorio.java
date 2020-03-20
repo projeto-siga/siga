@@ -31,8 +31,6 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.hibernate.Query;
-
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
@@ -114,7 +112,7 @@ public class HistoricoUsuarioRelatorio extends RelatorioTemplate {
 		} catch (Exception e) {
 			throw new DJBuilderException("Parâmetro idPessoa inválido!");
 		}
-		setPessoasDoUsuario(obterPessoasDoUsuario());
+		setPessoasDoUsuario(dao().obterPessoasDoUsuario(getDpPessoa()));
 		@SuppressWarnings("unused")
 		int conta = 0;
 	}
@@ -252,15 +250,6 @@ public class HistoricoUsuarioRelatorio extends RelatorioTemplate {
 			}
 		}
 		return arlDatas;
-	}
-
-	@SuppressWarnings("unchecked")
-	private List<DpPessoa> obterPessoasDoUsuario() {
-		final Query queryPessoas = dao().getSessao().getNamedQuery(
-				"consultarPorIdInicialDpPessoaInclusiveFechadas");
-		Long t_lngIdPessoaInicial = getDpPessoa().getIdInicial();
-		queryPessoas.setLong("idPessoaIni", t_lngIdPessoaInicial);
-		return (List<DpPessoa>) queryPessoas.list();
 	}
 
 	/**

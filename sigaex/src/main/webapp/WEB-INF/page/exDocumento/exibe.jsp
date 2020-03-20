@@ -174,7 +174,7 @@
 				<div>
 					<c:if test="${f:resource('isWorkflowEnabled')}">
 						<c:if
-							test="${ (primeiroMobil) and (docVO.tipoFormaDocumento == 'processo_administrativo')}">
+							test="${ (primeiroMobil == true) and (docVO.tipoFormaDocumento == 'processo_administrativo')}">
 							<div id="${docVO.sigla}" depende=";wf;" class="wf_div"></div>
 							<!--ajax:${doc.codigo}-${i}-->
 							<!--/ajax:${doc.codigo}-${i}-->
@@ -437,7 +437,7 @@
 							<tags:collapse title="${docVO.outrosMobsLabel}" id="OutrosMob" collapseMode="${collapse_Expanded}">
 								<a title="Atualizar marcas"
 								style="float: right; margin-top: -3px;"
-								href="${linkTo[ExDocumentoController].aAtualizarMarcasDoc}?sigla=${sigla}"
+								href="${linkTo[ExDocumentoController].aAtualizarMarcasDoc(sigla)}?sigla=${sigla}"
 								${popup?'target="_blank" ':''}> <img
 								src="/siga/css/famfamfam/icons/arrow_refresh.png">
 								

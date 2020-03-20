@@ -23,14 +23,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.Query;
+import javax.persistence.Query;
 
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.ex.ExModelo;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 public class RelatorioModelos extends RelatorioTemplate {
 
@@ -52,10 +52,10 @@ public class RelatorioModelos extends RelatorioTemplate {
 	public Collection processarDados() {
 
 		List<String> d = new LinkedList<String>();
-		Query q = HibernateUtil.getSessao().createQuery(
+		Query q = ContextoPersistencia.em().createQuery(
 				"from ExModelo order by exFormaDocumento.descrFormaDoc");
 
-		for (ExModelo modelo : (List<ExModelo>) q.list()) {
+		for (ExModelo modelo : (List<ExModelo>) q.getResultList()) {
 			if (modelo.getExFormaDocumento() != null) {
 				d.add(modelo.getExFormaDocumento().getDescrFormaDoc());
 			} else {

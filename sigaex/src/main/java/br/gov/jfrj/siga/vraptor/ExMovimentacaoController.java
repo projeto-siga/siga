@@ -7,9 +7,7 @@ import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,6 +21,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -32,26 +31,28 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
-import org.json.JSONObject;
 
-import br.com.caelum.vraptor.Consumes;
+import com.google.common.base.Optional;
+import com.google.common.base.Strings;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.PdfWriter;
+
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
-import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+import br.com.caelum.vraptor.observer.upload.UploadedFile;
+import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
-import br.gov.jfrj.itextpdf.ConversorHtml;
-import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaMessages;
-import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
@@ -77,29 +78,16 @@ import br.gov.jfrj.siga.ex.ExTopicoDestinacao;
 import br.gov.jfrj.siga.ex.ItemDeProtocolo;
 import br.gov.jfrj.siga.ex.ItemDeProtocoloComparator;
 import br.gov.jfrj.siga.ex.SigaExProperties;
-import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoHash;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoListItem;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
-import br.gov.jfrj.siga.ex.bl.ExAssinavelMov;
-import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
-import br.gov.jfrj.siga.vraptor.ExUtilController.Html2PdfResp;
 import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 import br.gov.jfrj.siga.vraptor.builder.ExMovimentacaoBuilder;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Strings;
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.pdf.PdfWriter;
-
-@Resource
+@Controller
 public class ExMovimentacaoController extends ExController {
 
 	private static final String OPCAO_MOSTRAR = "mostrar";
@@ -108,6 +96,14 @@ public class ExMovimentacaoController extends ExController {
 	private static final Logger LOGGER = Logger
 			.getLogger(ExMovimentacaoController.class);
 	
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ExMovimentacaoController() {
+		super();
+	}
+
+	@Inject
 	public ExMovimentacaoController(HttpServletRequest request,
 			HttpServletResponse response, ServletContext context,
 			Result result, SigaObjects so, EntityManager em, Validator validator) {
@@ -198,7 +194,7 @@ public class ExMovimentacaoController extends ExController {
 			final DpPessoaSelecao subscritorSel,
 			final DpPessoaSelecao titularSel, final boolean substituicao,
 			final UploadedFile arquivo, final String dtMovString,
-			final String descrMov) {
+			final String descrMov) throws IOException {
 
 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
@@ -351,7 +347,7 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Post("app/expediente/mov/anexar_arquivo_auxiliar_gravar")
-	public void anexarArquivoAuxiliarGravar(final String sigla, final UploadedFile arquivo) {
+	public void anexarArquivoAuxiliarGravar(final String sigla, final UploadedFile arquivo) throws IOException {
 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 
@@ -2231,13 +2227,13 @@ public class ExMovimentacaoController extends ExController {
 
 	@Get("app/expediente/mov/transferir_lote")
 	public void aTransferirLote() {
-		final Iterator<ExMobil> provItens = dao()
+		final List<ExMobil> provItens = dao()
 				.consultarParaTransferirEmLote(getLotaTitular());
 
 		final List<ExMobil> itens = new ArrayList<ExMobil>();
 
-		while (provItens.hasNext()) {
-			itens.add(provItens.next());
+		for (ExMobil i : provItens) {
+			itens.add(i);
 		}
 
 		final DpPessoaSelecao titularSel = new DpPessoaSelecao();
@@ -3997,8 +3993,7 @@ public class ExMovimentacaoController extends ExController {
 
 	@SuppressWarnings("unchecked")
 	private List<ExPapel> getListaExPapel() {
-		return (List<ExPapel>) HibernateUtil.getSessao()
-				.createQuery("from ExPapel").list();
+		return (List<ExPapel>) dao.listarTodos(ExPapel.class, null);
 	}
 
 	private ExModelo getModeloDespachoAutomatico() {

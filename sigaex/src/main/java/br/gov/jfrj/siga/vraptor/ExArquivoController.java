@@ -26,16 +26,19 @@ import java.io.ByteArrayInputStream;
 import java.security.MessageDigest;
 import java.util.Date;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.lowagie.text.pdf.codec.Base64;
+
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.interceptor.download.Download;
-import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
+import br.com.caelum.vraptor.observer.download.Download;
+import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -52,9 +55,7 @@ import br.gov.jfrj.siga.vraptor.builder.ExDownloadRTF;
 import br.gov.jfrj.siga.vraptor.builder.ExDownloadZip;
 import br.gov.jfrj.siga.vraptor.builder.ExInputStreamDownload;
 
-import com.lowagie.text.pdf.codec.Base64;
-
-@Resource
+@Controller
 public class ExArquivoController extends ExController {
 
 	private static final String TEXT_HTML = "text/html";
@@ -64,6 +65,14 @@ public class ExArquivoController extends ExController {
 	private static byte[] idPattern = "/ModDate(D:20".getBytes();
 	private static int[] failure = computeFailure();
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ExArquivoController() {
+		super();
+	}
+
+	@Inject
 	public ExArquivoController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so, EntityManager em) {
 		super(request, response, context, result, ExDao.getInstance(), so, em);
 	}

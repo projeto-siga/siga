@@ -96,25 +96,29 @@ CodeMirror.defineMode("freemarker", function(config, parserConfig) {
 					<form id="editar_${i}" name="editar_${i}"
 						action="/siga/modelo/gravar" method="post">
 						<div class="row mb-2">
-							<input type="hidden" name="id" value="${modelo.id}" /> <input
-								type="hidden" name="idOrgUsu"
-								value="${modelo.cpOrgaoUsuario.id}" />
-
-							<textarea id="conteudo${i}" style="width: 100%;" cols="1"
-								rows="1" name="conteudo" class="form-control"><c:out value="${modelo.conteudoBlobString}" escapeXml="true"
-										default="" /></textarea>
-							<c:if test="${empty modelo.cpOrgaoUsuario}">
-								<p align="right">Ctrl-I: Indentar, Crtl-S: Salvar</p>
-							</c:if>
-							<script>
-							var editor${i} = CodeMirror.fromTextArea(document.getElementById("conteudo${i}"), {mode: "freemarker", tabMode: "indent", lineNumbers: true, electricChars: false, smartIndent: false, viewportMargin: Infinity});
-						</script>
+							<div class="col">
+								<input type="hidden" name="id" value="${modelo.id}" /> <input
+									type="hidden" name="idOrgUsu"
+									value="${modelo.cpOrgaoUsuario.id}" />
+	
+								<textarea id="conteudo${i}" style="width: 100%;" cols="1"
+									rows="1" name="conteudo" class="form-control"><c:out value="${modelo.conteudoBlobString}" escapeXml="true"
+											default="" /></textarea>
+								<c:if test="${empty modelo.cpOrgaoUsuario}">
+									<p align="right">Ctrl-I: Indentar, Crtl-S: Salvar</p>
+								</c:if>
+								<script>
+									var editor${i} = CodeMirror.fromTextArea(document.getElementById("conteudo${i}"), {mode: "freemarker", tabMode: "indent", lineNumbers: true, electricChars: false, smartIndent: false, viewportMargin: Infinity});
+								</script>
+							</div>
 						</div>
 						<div class="row">
-							<input name="salvar_conteudo" type="submit" id="but_gravar${i}"
-								value="Salvar"
-								onclick="javascript: this.form.action='/siga/app/modelo/gravar'; "
-								class="btn btn-primary" />
+							<div class="col">
+								<input name="salvar_conteudo" type="submit" id="but_gravar${i}"
+									value="Salvar"
+									onclick="javascript: this.form.action='/siga/app/modelo/gravar'; "
+									class="btn btn-primary" />
+							</div>
 						</div>
 					</form>
 				</div>

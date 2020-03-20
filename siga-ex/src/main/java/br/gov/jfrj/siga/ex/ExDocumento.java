@@ -384,8 +384,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public byte[] getConteudoBlobDoc2() {
 
 		if (cacheConteudoBlobDoc == null)
-			cacheConteudoBlobDoc = br.gov.jfrj.siga.cp.util.Blob
-					.toByteArray(getConteudoBlobDoc());
+			cacheConteudoBlobDoc = getConteudoBlobDoc();
 		return cacheConteudoBlobDoc;
 
 	}
@@ -2369,8 +2368,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 
 	public void setConteudoBlobDoc2(byte[] blob) {
 		if (blob != null)
-			setConteudoBlobDoc(HibernateUtil.getSessao().getLobHelper()
-					.createBlob(blob));
+			setConteudoBlobDoc(blob);
 		cacheConteudoBlobDoc = blob;
 	}
 

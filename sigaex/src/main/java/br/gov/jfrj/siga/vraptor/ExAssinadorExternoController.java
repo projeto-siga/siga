@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -37,11 +38,11 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Put;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
+import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.bluc.service.BlucService;
@@ -62,12 +63,20 @@ import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelMov;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
-@Resource
+@Controller
 public class ExAssinadorExternoController extends ExController {
 
 	private static final Logger LOGGER = Logger.getLogger(ExAssinadorExternoController.class);
 
-	public ExAssinadorExternoController(HttpServletRequest request, HttpServletResponse response,
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ExAssinadorExternoController() {
+		super();
+	}
+
+	@Inject	public ExAssinadorExternoController(HttpServletRequest request, HttpServletResponse response,
 			ServletContext context, Result result, SigaObjects so, EntityManager em, Validator validator) {
 
 		super(request, response, context, result, ExDao.getInstance(), so, em);

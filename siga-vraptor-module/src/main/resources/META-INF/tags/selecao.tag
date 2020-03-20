@@ -139,7 +139,7 @@ self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao) {
 	<c:if test="${ocultardescricao != 'sim'}">
 		try {
 			document.getElementsByName('${inputNameTipoSel}.descricao')[0].value = descricao;
-			document.getElementById('${spanName}SelSpan').innerHTML = descricao;
+			document.getElementById('${spanName}SelSpan').value = descricao;
 		} catch (E) {
 		}
 	</c:if>
@@ -270,7 +270,8 @@ self.ajax_${propriedade}${tipoSel} = function() {
 <c:if test="${tema != 'simple'}">
 	<div class="form-group">
 		<label for="formulario_${inputNameTipoSel}_sigla"
-			class="col-sm-2x col-form-labelx">${titulo}</label>
+			class="col-sm-2x col-form-label">${titulo}</label>
+		<div class="col-sm-10x">
 </c:if>
 <c:choose>
 	<c:when test="${desativar == 'sim'}">
@@ -283,20 +284,20 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	<c:set var="onblur" value="${onchange}"></c:set>
 </c:if>
 
-<input type="hidden" name="req${inputNameTipoSel}" value=""
-	id="formulario_req${inputNameTipoSel}" />
-<input type="hidden" name="alterouSel" value="" id="alterouSel" />
-<input type="hidden" name="${inputNameTipoSel}.id"
-	value="<c:out value="${requestScope[propriedadeTipoSel].id}"/>"
-	id="formulario_${inputNameTipoSel}_id" />
-<input type="hidden" name="${inputNameTipoSel}.descricao"
-	value="<c:out value="${requestScope[propriedadeTipoSel].descricao}"/>"
-	id="formulario_${inputNameTipoSel}_descricao" />
-<input type="hidden" name="${inputNameTipoSel}.buscar"
-	value="<c:out value="${requestScope[propriedadeTipoSel].buscar}"/>"
-	id="formulario_${inputNameTipoSel}_buscar" />
-<div class="input-group">
-	<input type="search" name="${inputNameTipoSel}.sigla"
+	<input type="hidden" name="req${inputNameTipoSel}" value=""
+		id="formulario_req${inputNameTipoSel}" /> <input type="hidden"
+		name="alterouSel" value="" id="alterouSel" /> <input type="hidden"
+		name="${inputNameTipoSel}.id"
+		value="<c:out value="${requestScope[propriedadeTipoSel].id}"/>"
+		id="formulario_${inputNameTipoSel}_id" /> <input type="hidden"
+		name="${inputNameTipoSel}.descricao"
+		value="<c:out value="${requestScope[propriedadeTipoSel].descricao}"/>"
+		id="formulario_${inputNameTipoSel}_descricao" /> <input type="hidden"
+		name="${inputNameTipoSel}.buscar"
+		value="<c:out value="${requestScope[propriedadeTipoSel].buscar}"/>"
+		id="formulario_${inputNameTipoSel}_buscar" /> 
+<div class="input-group"><input type="search"
+		name="${inputNameTipoSel}.sigla"
 		value="<c:out value="${requestScope[propriedadeTipoSel].sigla}"/>"
 		id="formulario_${inputNameTipoSel}_sigla"
 		onkeypress="return handleEnter(this, event)" ${requiredValue}
@@ -309,13 +310,14 @@ self.ajax_${propriedade}${tipoSel} = function() {
 			<input type="button" id="${propriedade}${tipoSel}SelButton"
 				value="..."
 				onclick="javascript: popitup_${propriedade}${tipoSel}('');"
-				${disabledBtn} class="btn btn-secondary"
-				style="border-bottom-right-radius: 0.25em; border-top-right-radius: 0.25em;">
+				${disabledBtn} class="btn btn-secondary" style="border-bottom-right-radius: 0.25em;border-top-right-radius: 0.25em;">
 		</div>
 	</c:if>
 	<c:if test="${ocultardescricao != 'sim'}">
 		<div class="input-group-append ml-2" style="width: 60%;">
-			<span class="form-control" style="overflow: hidden; white-space:nowrap; text-overflow:ellipsis;" id="${spanName}SelSpan"><c:out value="${requestScope[propriedadeTipoSel].descricao}" escapeXml="false" /></span>
+			<input class="form-control" id="${spanName}SelSpan"
+				value="<c:out value="${requestScope[propriedadeTipoSel].descricao}" escapeXml="false" />"
+				readonly />
 		</div>
 	</c:if>
 </div>
@@ -357,11 +359,13 @@ self.ajax_${propriedade}${tipoSel} = function() {
 		document.getElementsByName('${inputNameTipoSel}.sigla')[0].value = '${siglaSubst}';
 		document.getElementsByName('${inputNameTipoSel}.descricao')[0].value = "${descricaoSubst}";
 		<c:if test="${ocultardescricao != 'sim'}">
-			document.getElementById('${spanName}SelSpan').innerHTML = "${descricaoSubst}";
+			document.getElementById('${spanName}SelSpan')[0].value = "${descricaoSubst}";
 		</c:if>
 	</script>
 </c:if>
 
 <c:if test="${tema != 'simple'}">
 	</div>
+	</div>
+
 </c:if>

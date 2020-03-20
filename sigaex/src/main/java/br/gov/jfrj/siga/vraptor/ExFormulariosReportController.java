@@ -8,34 +8,42 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.com.caelum.vraptor.Controller;
+import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.observer.download.Download;
+import br.com.caelum.vraptor.observer.download.InputStreamDownload;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.ex.ExModelo;
+import br.gov.jfrj.siga.ex.bl.Ex;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import br.com.caelum.vraptor.Get;
-import br.com.caelum.vraptor.Resource;
-import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.interceptor.download.Download;
-import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
-import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.ex.ExModelo;
-import br.gov.jfrj.siga.ex.bl.Ex;
 
-@Resource
+@Controller
 public class ExFormulariosReportController extends ExController {
 	
 	private static final String APPLICATION_PDF = "application/pdf";
 	private static final String REPORT_NAME = "formularios";
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ExFormulariosReportController() {
+		super();
+	}
+
+	@Inject
 	public ExFormulariosReportController(HttpServletRequest request,
 			HttpServletResponse response, ServletContext context,
 			Result result, CpDao dao, SigaObjects so, EntityManager em) {

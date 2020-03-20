@@ -4,14 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.logging.Logger;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -30,16 +31,22 @@ import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
 import br.gov.jfrj.siga.gi.service.GiService;
 import br.gov.jfrj.siga.integracao.ldap.IntegracaoLdap;
 
-@Resource
+@Controller
 public class UsuarioController extends SigaController {
 
 	private static final Logger LOG = Logger.getLogger(UsuarioAction.class);
 	
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public UsuarioController() {
+		super();
+	}
+
+	@Inject
 	public UsuarioController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
-
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
 	}
 	
 	@Get({"/app/usuario/trocar_senha", "/public/app/usuario/trocar_senha"})

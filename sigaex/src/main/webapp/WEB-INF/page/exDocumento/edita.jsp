@@ -155,11 +155,11 @@
 										</c:if>
 									</c:when>
 									<c:otherwise>
-										<input type="radio" name="exDocumentoDTO.eletronico" id="eletronicoCheck1" value="1" onchange="javascript:setFisico();"
+										<input type="radio" class="mt-4" name="exDocumentoDTO.eletronico" id="eletronicoCheck1" value="1" onchange="javascript:setFisico();"
 											<c:if test="${exDocumentoDTO.eletronicoFixo}">disabled</c:if>
 											<c:if test="${exDocumentoDTO.eletronico == 1}">checked</c:if> />
 										<label for="eletronicoCheck1">Digital</label>
-										<input type="radio" name="exDocumentoDTO.eletronico" id="eletronicoCheck2" value="2" onchange="javascript:setFisico();"
+										<input type="radio" class="mt-4 ml-2" name="exDocumentoDTO.eletronico" id="eletronicoCheck2" value="2" onchange="javascript:setFisico();"
 											<c:if test="${exDocumentoDTO.eletronicoFixo}">disabled</c:if>
 											<c:if test="${exDocumentoDTO.eletronico == 2}">checked</c:if> />
 										<label for="eletronicoCheck2">Físico</label>

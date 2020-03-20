@@ -45,9 +45,6 @@ public class ExPreenchimento extends AbstractExPreenchimento implements
 
 	private static final long serialVersionUID = 3256722875116761397L;
 
-	@Transient
-	private byte[] cachePreenchimentoBA;
-
 	/**
 	 * Simple constructor of ExTipoDespacho instances.
 	 */
@@ -64,19 +61,9 @@ public class ExPreenchimento extends AbstractExPreenchimento implements
 	 * Simple constructor of ExTipoDespacho instances.
 	 */
 
-	public byte[] getPreenchimentoBA() throws AplicacaoException {
-		if (this.cachePreenchimentoBA == null)
-			if (getPreenchimentoBlob() != null)
-				this.cachePreenchimentoBA = br.gov.jfrj.siga.cp.util.Blob
-						.toByteArray(getPreenchimentoBlob());
-		return this.cachePreenchimentoBA;
-
-	}
-
 	public void setPreenchimentoBA(byte[] blob) {
 		if (blob != null)
-			setPreenchimentoBlob(HibernateUtil.getSessao().getLobHelper()
-					.createBlob(blob));
+			setPreenchimentoBlob(blob);
 	}
 
 	public ExPreenchimento() {

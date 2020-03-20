@@ -136,7 +136,7 @@
 				</div>
 			</div>
 		</div>
-	</siga:pagina>
+</siga:pagina>
 </c:catch>
 
 <c:if test="${catchException!=null}">

@@ -29,6 +29,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
@@ -168,7 +169,7 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "				and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "				and (:anoEmissao = null or :anoEmissao = 0L or doc.anoEmissao = :anoEmissao)"
 				+ "				and (:numExpediente = null or :numExpediente = 0L or doc.numExpediente = :numExpediente)"
-				+ "				and (:idTpDoc = null or :idTpDoc = 0 or doc.exTipoDocumento.idTpDoc = :idTpDoc)"
+				+ "				and (:idTpDoc = null or :idTpDoc = 0L or doc.exTipoDocumento.idTpDoc = :idTpDoc)"
 				+ "				and (:idTipoFormaDoc = null or :idTipoFormaDoc = 0L or doc.exFormaDocumento.exTipoFormaDoc.idTipoFormaDoc = :idTipoFormaDoc)"
 				+ "				and (:idFormaDoc = null or :idFormaDoc = 0L or doc.exFormaDocumento.idFormaDoc = :idFormaDoc)"
 				+ "				and (:classificacaoSelId = null or :classificacaoSelId = 0L or doc.exClassificacao.idClassificacao = :classificacaoSelId)"
@@ -307,9 +308,10 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@Column(name = "FG_ELETRONICO", nullable = false, length = 1)
 	private String fgEletronico;
 
+	@Lob
 	@Column(name = "CONTEUDO_BLOB_DOC")
 	@Basic(fetch = FetchType.LAZY)
-	private Blob conteudoBlobDoc;
+	private byte[] conteudoBlobDoc;
 
 	@Column(name = "NUM_SEQUENCIA")
 	private Integer numSequencia;
@@ -458,7 +460,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	/**
 	 * COMPLETAR
 	 */
-	public Blob getConteudoBlobDoc() {
+	public byte[] getConteudoBlobDoc() {
 		return this.conteudoBlobDoc;
 	}
 
@@ -804,7 +806,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 * 
 	 * @param conteudoBlobDoc
 	 */
-	public void setConteudoBlobDoc(Blob conteudoBlobDoc) {
+	public void setConteudoBlobDoc(byte[] conteudoBlobDoc) {
 		this.conteudoBlobDoc = conteudoBlobDoc;
 	}
 

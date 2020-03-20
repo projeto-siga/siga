@@ -947,6 +947,43 @@ public class CpDao extends ModeloDao {
 		return l;
 	}
 
+	/*
+	 * Alteracao alteracao email Cartao 859
+	 */
+
+	public List<DpPessoaTrocaEmailDTO> listarTrocaEmailCPF(final long cpf) {
+		List<DpPessoa> lst = listarPorCpf(cpf);
+		List<DpPessoaTrocaEmailDTO> lstDto = new ArrayList<DpPessoaTrocaEmailDTO>();
+		if (!lst.isEmpty())
+			for (DpPessoa p : lst) {
+				lstDto.add(new DpPessoaTrocaEmailDTO(p.getNomePessoa(),
+						p.getOrgaoUsuario().getNmOrgaoUsu(), p.getCpfFormatado(), p.getEmailPessoaAtual(),
+						p.getSigla(), p.getLotacao().getNomeLotacao()));
+			}
+		return lstDto;
+	}
+	
+	public int countPorCpf(final long cpf) {
+		return listarTrocaEmailCPF(cpf).size();
+	}	
+
+	public List<DpPessoa> listarCpfAtivoInativo(final long cpf) {
+
+		final Query qry = getSessao().getNamedQuery("consultarPorCpfAtivoInativo");
+		qry.setLong("cpfPessoa", cpf);
+		final List<DpPessoa> l = qry.list();
+		return l;
+	}
+	
+	public List<DpPessoa> listarCpfAtivoInativoNomeDiferente(final long cpf, final String nome) {
+
+		final Query qry = getSessao().getNamedQuery("consultarPorCpfAtivoInativoNomeDiferente");
+		qry.setLong("cpfPessoa", cpf);
+		qry.setString("nomePessoa", nome);
+		final List<DpPessoa> l = qry.list();
+		return l;
+	}
+
 	public List<DpPessoa> consultarPessoasAtivasPorCpf(final long cpf) {
 
 		final Query qry = getSessao().getNamedQuery("consultarPorCpf");

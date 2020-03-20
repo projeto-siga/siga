@@ -2,6 +2,7 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <script type="text/javascript">
 	function validar() {
@@ -37,7 +38,8 @@
 		}
 
 		if(idLotacao==null || idLotacao == 0) {
-			mensagemAlerta("Preencha a lotação da pessoa.");
+			var msg="<fmt:message key='usuario.lotacao'/>";
+			mensagemAlerta("Preencha a "+msg.toLowerCase()+" da pessoa.");
 			document.getElementById('idLotacao').focus();
 			return;	
 		}
@@ -71,9 +73,12 @@
 			document.getElementById("btnOk").disabled = false;
 			return;
 		}
+			
+		document.getElementById("email").disabled = false
 		frm.submit();
 	}
 
+			
 	function mensagemAlerta(mensagem) {
 		$('#alertaModal').find('.mensagem-Modal').text(mensagem);
 		$('#alertaModal').modal();
@@ -156,11 +161,35 @@
    	}
 
 	function validarNome(campo) {
-		campo.value = campo.value.replace(/[^a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ'' ]/g,'');
+		campo.value = campo.value.replace(/[^a-zA-ZáâãäéêëíïóôõöúüçñÁÂÃÄÉÊËÍÏÓÔÕÖÚÜÇÑ'' ]/g,'');
+	}
+	
+	function validarNomeCpf(){
+		var cpf = document.getElementById('cpf').value;
+		var nome = document.getElementById('nmPessoa').value;
+		var id = document.getElementById('id').value;
+		$.ajax({
+			method:'GET',
+			url: 'check_nome_por_cpf?cpf=' + cpf + '&nome='+nome + '&id='+id,
+			success: function(data){retornoValidaNome(data)},
+			error: function(data){retornoValidaNome(data)} 
+		});
+	}
+
+	function retornoValidaNome(response,param){
+		if(response == 0) {
+			validar();
+		} else {
+			$('#msgP').html(response);	
+			$('#pessoasModal').modal();
+		}
 	}
 </script>
 
 <siga:pagina titulo="Cadastro de Pessoa">
+	<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
+	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />	
+
 	<!-- main content -->
 	<div class="container-fluid">
 		<div class="card bg-light mb-3" >
@@ -170,12 +199,12 @@
 			<div class="card-body">
 			<form name="frm" action="${request.contextPath}/app/pessoa/gravar" method="POST">
 				<input type="hidden" name="postback" value="1" />
-				<input type="hidden" name="id" value="${id}" />
+				<input type="hidden" name="id" id="id" value="${id}" />
 				<div class="row">
-					<div class="col-sm-4">
+					<div class="col-md-4">
 						<div class="form-group">
 							<label for="idOrgaoUsu">&Oacute;rg&atilde;o</label>
-							<select name="idOrgaoUsu" value="${idOrgaoUsu}"  onchange="carregarRelacionados(this.value)" class="form-control">
+							<select name="idOrgaoUsu" value="${idOrgaoUsu}"  onchange="carregarRelacionados(this.value)" class="form-control  siga-select2">
 								<c:forEach items="${orgaosUsu}" var="item">
 									<option value="${item.idOrgaoUsu}"
 										${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
@@ -184,10 +213,10 @@
 							</select>
 						</div>
 					</div>
-					<div class="col-sm-2">
+					<div class="col-md-2">
 						<div class="form-group">
 							<label for="idCargo">Cargo</label>
-							<select name="idCargo" value="${idCargo}" class="form-control">
+							<select name="idCargo" value="${idCargo}" class="form-control  siga-select2">
 								<c:forEach items="${listaCargo}" var="item">
 									<option value="${item.idCargo}"
 										${item.idCargo == idCargo ? 'selected' : ''}>
@@ -196,10 +225,10 @@
 							</select>
 						</div>
 					</div>
-					<div class="col-sm-2">
+					<div class="col-md-2">
 						<div class="form-group">
 							<label for="idFuncao">Fun&ccedil;&atilde;o de Confian&ccedil;a</label>
-							<select name="idFuncao" value="${idFuncao}" class="form-control">
+							<select id="idFuncao" name="idFuncao" value="${idFuncao}" class="form-control  siga-select2">
 								<c:forEach items="${listaFuncao}" var="item">
 									<option value="${item.idFuncao}"
 										${item.idFuncao == idFuncao ? 'selected' : ''}>
@@ -208,10 +237,10 @@
 							</select>
 						</div>
 					</div>
-					<div class="col-sm-4">
-						<div class="form-group">
-							<label for="idLotacao">Lota&ccedil;&atilde;o</label>
-							<select name="idLotacao" value="${idLotacao}" class="form-control">
+					<div class="col-md-4">
+						<div class="form-group" id="idLotacaoGroup">
+							<label for="idLotacao"><fmt:message key="usuario.lotacao"/></label>
+							<select id="idLotacao" style="width: 100%" name="idLotacao" value="${idLotacao}" class="form-control  siga-select2">
 								<c:forEach items="${listaLotacao}" var="item">
 									<option value="${item.idLotacao}" ${item.idLotacao == idLotacao ? 'selected' : ''}>
 										<c:if test="${item.descricao ne 'Selecione'}">${item.siglaLotacao} / </c:if>${item.descricao}
@@ -237,16 +266,25 @@
 							<input type="text" id="nmPessoa" name="nmPessoa" value="${nmPessoa}" maxlength="60" class="form-control" onkeyup="validarNome(this)"/>
 						</div>
 					</div>
-					<div class="col-sm-2">
+					<div class="col-md-2">
 						<div class="form-group">
 							<label for="nmPessoa">Data de Nascimento</label>
 							<input type="text" id="dtNascimento" name="dtNascimento" value="${dtNascimento}" maxlength="10" onkeyup="this.value = mascaraData( this.value )" class="form-control" />
 						</div>
 					</div>
-					<div class="col-sm-4">
+					<div class="col-md-4">
 						<div class="form-group">
 							<label for="nmPessoa">E-mail</label>
-							<input type="text" id="email" name="email" value="${email}" maxlength="60" onchange="validarEmail(this)" onkeyup="this.value = this.value.toLowerCase().trim()" class="form-control" />
+							
+							<!-- Alteracao realizada de acordo com o cartao 859 -->
+							<c:choose>
+								<c:when test="${empty id || sigla == 'ZZ'}">
+									<input type="text" id="email" name="email" value="${email}" maxlength="60" onchange="validarEmail(this)" onkeyup="this.value = this.value.toLowerCase().trim()" class="form-control" />
+								</c:when>
+	  							<c:otherwise>
+	  								<input type="text" id="email" name="email" value="${email}" maxlength="60" disabled="true" onchange="validarEmail(this)" onkeyup="this.value = this.value.toLowerCase().trim()" class="form-control" />
+	  							</c:otherwise>
+							</c:choose>
 						</div>
 					</div>
 				</div>
@@ -292,12 +330,12 @@
 				<!-- Fim da alteracao cartao 1057 -->
 				
 				<div class="row">
-					<div class="col-sm-2">
+					<div class="col-sm-12">
 						<div class="form-group">
 							<button type="button" id="btnOk" onclick="javascript: validarNomeCpf();" class="btn btn-primary" >Ok</button> 
 							<button type="button" onclick="javascript:history.back();" class="btn btn-primary" >Cancelar</button>
 						</div>
-					</div>
+					</div>	
 				</div>
 
 				<c:if test="${empty id}">
@@ -340,11 +378,34 @@
 			  	</div>
 			</div>				
 			<!--Fim Modal -->
+			<!-- Modal -->
+			<div class="modal fade" id="pessoasModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-lg" role="document">
+			    	<div class="modal-content">
+			      		<div class="modal-header">
+					        <h6 class="modal-title" id="alertaModalLabel" align="center">Foram localizados os seguintes cadastros com o mesmo CPF e nome diferente, deseja atualizar o nome de todos os registros?</h6>
+					        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+					          <span aria-hidden="true">&times;</span>
+					    	</button>
+					    </div>
+				      	<div class="modal-body">
+				      		<div id="msgP" class="alert" ></div>
+				      	</div>
+						<div class="modal-footer">
+						  <button type="button" id="btnOk" class="btn btn-primary" data-dismiss="modal" onclick="validar();">Confirmar</button>
+						  <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
+						</div>
+			    	</div>
+			  	</div>
+			</div>				
+			<!--Fim Modal -->
 			</div>
 		</div>
 	</div>
 </siga:pagina>
-
+<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
 <script>
 function voltar() {
 	frm.action = 'listar';

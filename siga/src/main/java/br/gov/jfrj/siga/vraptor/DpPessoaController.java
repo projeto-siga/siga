@@ -610,6 +610,11 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			throw new AplicacaoException("Usuário já cadastrado com estes dados: Órgão, Cargo, Função, Unidade e CPF");
 		}
 		
+		List<DpPessoa> listaPessoasMesmoCPF = new ArrayList<DpPessoa>();
+		DpPessoa pessoa2 = new DpPessoa();
+		
+		listaPessoasMesmoCPF.addAll(dao().listarCpfAtivoInativoNomeDiferente(pessoa.getCpfPessoa(), pessoa.getNomePessoa()));
+		
 		try {
 			dao().iniciarTransacao();
 			dao().gravar(pessoa);

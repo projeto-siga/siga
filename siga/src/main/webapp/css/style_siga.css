@@ -204,3 +204,6 @@ p.gt-table-action-list a.link-tag {
 	cursor: not-allowed;
 }
 
+.link-btn {
+	margin-bottom: 0.3em;
+}

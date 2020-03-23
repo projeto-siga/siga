@@ -457,7 +457,7 @@ public class CpBL {
 		} else {
 			if (pessoa == null) {
 				throw new AplicacaoException(
-						SigaMessages.getBundle().getString("usuario.erro.cpfmatriculanaocadastrado"));
+						SigaMessages.getMessage("usuario.erro.cpfmatriculanaocadastrado"));
 			} else if (pessoa.getEmailPessoaAtual() == null) {
 				throw new AplicacaoException(
 						"Este usuário não possui e-mail cadastrado");
@@ -565,7 +565,7 @@ public class CpBL {
 
 		} else {
 			if (pessoa == null) {
-				throw new AplicacaoException(SigaMessages.getBundle().getString("usuario.erro.cpfmatriculanaocadastrado"));
+				throw new AplicacaoException(SigaMessages.getMessage("usuario.erro.cpfmatriculanaocadastrado"));
 			} else {
 				throw new AplicacaoException("Dados Incorretos!");
 			}

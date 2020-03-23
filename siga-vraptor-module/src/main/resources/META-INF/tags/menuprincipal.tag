@@ -179,7 +179,7 @@
 		<li class="dropdown-submenu"><a href="javascript:void(0);"
 			class="dropdown-item dropdown-toggle">Administração</a>
 			<ul class="dropdown-menu">
-				<c:if test="${(!f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;ADM;TSEN:Ocultar Trocar Senha') || titular.orgaoUsuario.sigla == 'ZZ')}">
+				<c:if test="${(!f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;ADM:Administração;TSEN:Ocultar Trocar Senha') || titular.orgaoUsuario.sigla == 'ZZ')}">
 					<li><a class="dropdown-item"
 						href="/siga/app/usuario/trocar_senha">Trocar senha</a></li>
 				</c:if>

@@ -99,7 +99,7 @@ public class UsuarioController extends SigaController {
 	public void incluirUsuario() {
 		if (!SigaMessages.isSigaSP()) {
 			result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
-			result.include("titulo", SigaMessages.getBundle().getString("usuario.novo"));
+			result.include("titulo", SigaMessages.getMessage("usuario.novo"));
 			result.include("proxima_acao", "incluir_usuario_gravar");
 			result.forwardTo("/WEB-INF/page/usuario/esqueciSenha.jsp");
 		} else {
@@ -153,11 +153,11 @@ public class UsuarioController extends SigaController {
 		if (isIntegradoAoAD){
 				msgComplemento = "<br/> Atenção: Sua senha de rede e e-mail foi definida com sucesso.";
 		}else{
-			msgComplemento = "<br/> " + SigaMessages.getBundle().getString("usuario.primeiroacesso.sucessocomplemento");
+			msgComplemento = "<br/> " + SigaMessages.getMessage("usuario.primeiroacesso.sucessocomplemento");
 		}
 
 		result.include("mensagem", "Usuário cadastrado com sucesso." + msgComplemento);
-		result.include("titulo", SigaMessages.getBundle().getString("usuario.novo"));
+		result.include("titulo", SigaMessages.getMessage("usuario.novo"));
 		result.include("volta", "incluir");
 		result.use(Results.page()).forwardTo("/WEB-INF/page/usuario/esqueciSenha.jsp");
 	}
@@ -251,7 +251,7 @@ public class UsuarioController extends SigaController {
 			msgAD = "<br/><br/><br/>ATENÇÃO: A senha de rede e e-mail NÃO foi alterada embora o seu órgão esteja configurado para integrar as senhas do SIGA, rede e e-mail.";
 		}
 		
-		result.include("mensagem", SigaMessages.getBundle().getObject("usuario.esqueciminhasenha.sucesso") + msgAD);
+		result.include("mensagem", SigaMessages.getMessage("usuario.esqueciminhasenha.sucesso") + msgAD);
 		result.include("volta", "esqueci");
 		result.include("titulo", "Esqueci Minha Senha");
 		result.use(Results.page()).forwardTo("/WEB-INF/page/usuario/esqueciSenha.jsp");
@@ -338,7 +338,7 @@ public class UsuarioController extends SigaController {
 		}
 
 		if (lstPessoa.size() == 0){
-			throw new AplicacaoException(SigaMessages.getBundle().getString("usuario.erro.naocadastrado"));
+			throw new AplicacaoException(SigaMessages.getMessage("usuario.erro.naocadastrado"));
 		}
 		
 		if (lstPessoa != null && lstPessoa.size() == 1) {

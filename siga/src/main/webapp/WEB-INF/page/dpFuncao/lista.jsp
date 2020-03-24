@@ -55,7 +55,7 @@ function sbmt(offset) {
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-sm-6">
+						<div class="col-sm-12">
 							<input type="submit" value="Pesquisar" class="btn btn-primary"/>
 							<c:if test="${temPermissaoParaExportarDados}">
 								<button type="button" class="btn btn-outline-success" id="exportarCsv" title="Exportar para CSV" onclick="javascript:csv('listar', '/siga/app/funcao/exportarCsv');"><i class="fa fa-file-csv"></i> Exportar</button>

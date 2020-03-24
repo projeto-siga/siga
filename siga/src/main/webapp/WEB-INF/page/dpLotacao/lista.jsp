@@ -58,7 +58,7 @@ function sbmt(offset) {
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-md-4">
+					<div class="col-sm-12">
 						<div class="form-group">
 							<input value="Pesquisar" class="btn btn-primary" onclick="javascript: sbmt(0);"/>
 							<c:if test="${temPermissaoParaExportarDados}">

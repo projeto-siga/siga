@@ -760,7 +760,7 @@ public class ExDao extends CpDao {
 		CriteriaQuery<ExFormaDocumento> q = cb().createQuery(ExFormaDocumento.class);
 		Root<ExFormaDocumento> c = q.from(ExFormaDocumento.class);
 		q.select(c);
-		q.orderBy(cb().asc(cb().parameter(String.class, "descrFormaDoc")));
+		q.orderBy(cb().asc(c.get("descrFormaDoc")));
 		return em().createQuery(q).getResultList();
 	}
 
@@ -768,7 +768,7 @@ public class ExDao extends CpDao {
 		CriteriaQuery<ExFormaDocumento> q = cb().createQuery(ExFormaDocumento.class);
 		Root<ExFormaDocumento> c = q.from(ExFormaDocumento.class);
 		q.select(c);
-		q.orderBy(cb().asc(cb().parameter(String.class, "siglaFormaDoc")));
+		q.orderBy(cb().asc(c.get("siglaFormaDoc")));
 		return em().createQuery(q).getResultList();
 	}
 
@@ -1353,7 +1353,7 @@ public class ExDao extends CpDao {
 		CriteriaQuery<ExFormaDocumento> q = cb().createQuery(ExFormaDocumento.class);
 		Root<ExFormaDocumento> c = q.from(ExFormaDocumento.class);
 		q.select(c);
-		q.where(cb().equal(cb().parameter(String.class, "descrFormaDoc"), sForma));
+		q.where(cb().equal(c.get("descrFormaDoc"), sForma));
 		return em().createQuery(q).getSingleResult();
 	}
 
@@ -1361,7 +1361,7 @@ public class ExDao extends CpDao {
 		CriteriaQuery<ExTipoDocumento> q = cb().createQuery(ExTipoDocumento.class);
 		Root<ExTipoDocumento> c = q.from(ExTipoDocumento.class);
 		q.select(c);
-		q.where(cb().equal(cb().parameter(String.class, "descrTipoDocumento"), descricao));
+		q.where(cb().equal(c.get("descrTipoDocumento"), descricao));
 		return em().createQuery(q).getSingleResult();
 	}
 
@@ -1369,7 +1369,7 @@ public class ExDao extends CpDao {
 		CriteriaQuery<ExNivelAcesso> q = cb().createQuery(ExNivelAcesso.class);
 		Root<ExNivelAcesso> c = q.from(ExNivelAcesso.class);
 		q.select(c);
-		q.where(cb().equal(cb().parameter(String.class, "nmNivelAcesso"), nome));
+		q.where(cb().equal(c.get("nmNivelAcesso"), nome));
 		return em().createQuery(q).getSingleResult();
 	}
 
@@ -1565,8 +1565,8 @@ public class ExDao extends CpDao {
 		CriteriaQuery<ExDocumento> q = cb().createQuery(ExDocumento.class);
 		Root<ExDocumento> c = q.from(ExDocumento.class);
 		q.select(c);
-		q.where(cb().equal(cb().parameter(String.class, "exClassificacao"), cl));
-		q.orderBy(cb().asc(cb().parameter(Long.class, "idDoc")));
+		q.where(cb().equal(c.get("exClassificacao"), cl));
+		q.orderBy(cb().asc(c.get("idDoc")));
 		return em().createQuery(q).getResultList();
 	}
 

@@ -5177,6 +5177,9 @@ public class ExBL extends CpBL {
 					attrs.put("nmArqMod", "certidaoDesentranhamento.jsp");
 				}
 
+			} else if (mov.getExTipoMovimentacao() != null
+					&& (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA)) {
+				attrs.put("nmArqMod", "ciencia.jsp");
 			} else {
 				if (mov.getExTipoDespacho() != null) {
 					attrs.put("despachoTexto", mov.getExTipoDespacho().getDescTpDespacho());
@@ -5358,7 +5361,33 @@ public class ExBL extends CpBL {
 			mov.setDescrMov(descrMov);
 
 			gravarMovimentacao(mov);
+			
+			mov.setNumPaginas(1);
+			
+			Map<String, String> form = new TreeMap<String, String>();
+			form.put("textoMotivo", descrMov);
+			mov.setConteudoBlobForm(urlEncodedFormFromMap(form));
+
+			// Gravar o Html
+			final String strHtml = processarModelo(mov, "processar_modelo", null, null);
+			mov.setConteudoBlobHtmlString(strHtml);
+
+			// Gravar o Pdf
+			final byte pdf[] = Documento.generatePdf(strHtml);
+			mov.setConteudoBlobPdf(pdf);
+			mov.setConteudoTpMov("application/zip");
+			
+			final ExMovimentacao movAssMov = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA, cadastrante, lotaCadastrante,
+					mov.getExMobil(), null, null, null, null, null, null);
+
+			movAssMov.setDescrMov(cadastrante.getDescricao());
+
+			movAssMov.setExMovimentacaoRef(mov);
+			
+			gravarMovimentacao(movAssMov);
+			
 			concluirAlteracao(mov.getExMobil());
+			
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao fazer ciência.", 0, e);
@@ -6946,7 +6975,10 @@ public class ExBL extends CpBL {
 		 * ExProtocolo protocolo = (ExProtocolo) dao().obterProtocoloPorCodigo(numero,ano);
 		 */
 		
-		ExProtocolo protocolo = dao().obterProtocoloPorCodigo(num);		
+		ExProtocolo protocolo = dao().obterProtocoloPorCodigo(num);
+		
+		if(protocolo == null)
+			throw new AplicacaoException("Protocolo não encontrado");
 		
 		if (protocolo.getExDocumento() == null)
 			throw new AplicacaoException("Protocolo não encontrado");

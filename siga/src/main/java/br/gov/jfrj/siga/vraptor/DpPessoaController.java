@@ -621,9 +621,8 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		
 		List<DpPessoa> listaPessoasMesmoCPF = new ArrayList<DpPessoa>();
 		DpPessoa pessoa2 = new DpPessoa();
-		if(pessoaAnt == null || pessoaAnt.getNomePessoa() == null || !pessoaAnt.getNomePessoa().equalsIgnoreCase(nmPessoa.trim())) {
-			listaPessoasMesmoCPF.addAll(dao().listarCpfAtivoInativo(pessoa.getCpfPessoa()));
-		}
+		
+		listaPessoasMesmoCPF.addAll(dao().listarCpfAtivoInativoNomeDiferente(pessoa.getCpfPessoa(), pessoa.getNomePessoa()));
 		
 		try {
 			dao().iniciarTransacao();

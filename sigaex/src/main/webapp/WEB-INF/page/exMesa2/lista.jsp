@@ -16,26 +16,32 @@
 			<div class="form-config border-bottom p-3">
 				<h6>Configurações da Mesa Virtual</h6>
 	            <i><small>Quanto menos informações forem solicitadas, mais rapidamente a mesa carregará.</small></i>
-<!-- 		            <div class="form-group py-2 mt-2 border-top border-bottom"> -->
+<!-- 		            <div class="form-group my-2 border-bottom"> -->
 <!-- 						<div class="form-check"> -->
 <!-- 							<input type="checkbox" class="form-check-input" v-model="versaoMesa"> -->
 <!-- 							<label class="form-check-label" for="versaoMesa"><small>Utilizar versão antiga da Mesa</small></label> -->
 <!-- 						</div>             -->
 <!-- 		            </div> -->
-	            <div class="form-group py-2 mt-2 border-top border-bottom">
+	            <div class="form-group my-2 border-bottom">
 					<div class="form-check">
 						<input type="checkbox" class="form-check-input" id="trazerAnotacoes" v-model="trazerAnotacoes">
 						<label class="form-check-label" for="trazerAnotacoes"><small>Trazer anotações nos documentos</small></label>
 					</div>            
 	            </div>
-	            <div class="form-group py-2 mt-2 border-top border-bottom">
+	            <div class="form-group my-2 border-bottom">
+					<div class="form-check">
+						<input type="checkbox" class="form-check-input" id="trazerComposto" v-model="trazerComposto">
+						<label class="form-check-label" for="trazerComposto"><small>Mostrar indicador de docto. composto</small></label>
+					</div>            
+	            </div>
+	            <div class="form-group my-2 border-bottom">
 					<div class="form-check">
 						<input type="checkbox" class="form-check-input" id="trazerCancelados" v-model="trazerCancelados">
 						<label class="form-check-label" for="trazerCancelados"><small>Mostrar cancelados</small></label>
 					</div>            
 	            </div>
 				<div class="form-group pb-2 mb-1 border-bottom">
-					<label for="selQtdPagId"><small>Qtd. de documentos a trazer (botão Mais)</small></label>
+					<label for="selQtdPagId"><small>Qtd. de documentos a trazer</small></label>
 					<select class="form-control form-control-sm" v-model="selQtdPag">
 						  <option value="5">5</option>
 						  <option value="10">10</option>
@@ -62,14 +68,14 @@
 		</c:if>
 		<div id="inicio" class="row">
 			<div class="col col-12 col-md-auto mb-2">
-				<h2><i class="fa fa-file-alt"></i> Mesa Virtual</h2>
+				<h3><i class="fa fa-file-alt"></i> Mesa Virtual</h3>
 			</div>
 			<div class="col col-md-4 my-1 mb-2" style="vertical-align: text-bottom;"> 
 				<span class="h-100 d-inline-block my-2" style="vertical-align: text-bottom;">
 					<c:if test="${not empty visualizacao}"><b>(Delegante: ${visualizacao.titular.nomePessoa})</b></c:if> 
 				</span> 
 			</div> 
-			<div class="col col-12 col-sm-4 col-md-auto ml-md-auto mb-2">
+			<div class="col col-12 col-sm-4 col-md-auto ml-md-auto p-0 mb-2">
 				<a href="expediente/doc/editar" class="btn btn-success form-control"> <i class="fas fa-plus-circle mr-1"></i>
 					<fmt:message key="documento.novo"/></a>
 			</div>
@@ -81,7 +87,7 @@
 		</div>
 		<div id="rowTopMesa" style="z-index: 1" class="row sticky-top px-3 pt-1 bg-white shadow-sm" 
 				v-if="!carregando || (!errormsg &amp;&amp; grupos.length >= 0)">
-			<div id="radioBtn" class="btn-group mr-1 mb-1" 
+			<div id="radioBtn" class="btn-group mr-2 mb-1" 
 					title="Visualiza somente os documentos do usuário ou da lotação">
 				<a class="btn btn-primary btn-sm" v-bind:class="exibeLota ? 'notActive' : 'active'" id="btnUser"  
 					accesskey="u" @click="carregarMesaUser('#btnUser');">
@@ -94,14 +100,14 @@
 					<span class="d-none d-sm-inline"><fmt:message key='usuario.lotacao'/></span>
 				</a>
 			</div>
-			<div class="mr-1 mb-1">
+			<div class="mr-2 mb-1">
 				<input id="filtroExibidos" type="text" class="form-control p-1 input-sm" placeholder="Filtrar entre os exibidos" v-model="filtro" ng-model-options="{ debounce: 200 }">
 			</div>
-			<button type="button" class="btn btn-secondary btn-sm mb-1" @click="recarregarMesa();">
-				<i class="fas fa-sync-alt"></i><span class="d-none d-sm-inline ml-2">Recarregar</span>
+			<button type="button" class="btn btn-secondary btn-sm mb-1 mr-2" title="Recarregar Mesa" :class="{disabled: carregando}" @click="recarregarMesa();">
+				<i class="fas fa-sync-alt"></i>
 			</button>
-			<p id="ultima-atualizacao" class="ml-2 my-auto fadein text-danger">
-				Última atualização: {{getLastRefreshTime()}}</p>
+			<small id="ultima-atualizacao" class="my-auto fadein text-danger">
+				Última atualização: {{getLastRefreshTime()}}</small>
 		</div>
 		
 		<div class="row" v-if="!carregando && errormsg">
@@ -136,23 +142,19 @@
 			<div class="col-sm-12">
 				<template v-for="g in filtrados">	
 					<div v-if="g.grupoCounterUser > 0 || g.grupoCounterLota > 0" :key="g.grupoOrdem">
-						<div class="collapse-header">
+						<div class="collapse-header d-inline">
 							<h5 :id="['collapse-header-' + g.grupoOrdem]" data-toggle="collapse" :data-target="['#collapsetab-' + g.grupoOrdem]" 
-									class="collapse-toggle p-1 mb-2 table-group table-group-title align-middle"
+									class="collapse-toggle pt-1 px-2 mb-2 table-group table-group-title"
 									v-bind:class="{ collapsed: g.grupoCollapsed}" v-bind:aria-expanded="{false: g.grupoCollapsed}"
 									@click="collapseGrupo(g.grupoOrdem, g.grupoNome)">
-								<i :class="g.grupoIcone"></i>
-								<span class="mr-2">{{g.grupoNome}}</span>
-								<small class="align-top"> 
-									<span class="badge badge-pill badge-info btn-sm" :class="{disabled: exibeLota}">
-										<i class="fas fa-user"></i>
-										<span class="d-none d-sm-inline">Usuário</span>
-										<span class="badge badge-light">{{exibeLota || g.grupoDocs == undefined || g.grupoDocs.length == 0 ? '' : g.grupoDocs.length + ' / '}} {{g.grupoCounterUser}}</span>
+								<i class="h5" :class="g.grupoIcone"></i>
+								<span class="mr-3">{{g.grupoNome}}</span>
+								<small class="align-middle">
+									<span v-if="!exibeLota" class="badge badge-light disabled btn-sm" >
+										<i class="fas fa-user"></i> {{exibeLota || g.grupoDocs == undefined || g.grupoDocs.length == 0 ? '' : g.grupoDocs.length + ' / '}} {{g.grupoCounterUser}}
 									</span>
-									<span class="badge badge-pill badge-info btn-sm" :class="{disabled: !exibeLota}">
-										<i class="fas fa-users"></i>
-										<span class="d-none d-sm-inline"><fmt:message key='usuario.lotacao'/></span>
-										<span class="badge badge-light">{{!exibeLota || g.grupoDocs == undefined || g.grupoDocs.length == 0 ? '' : g.grupoDocs.length + ' / '}} {{g.grupoCounterLota}}</span>
+									<span v-if="exibeLota" class="badge badge-light disabled btn-sm">
+										<i class="fas fa-users"></i> {{!exibeLota || g.grupoDocs == undefined || g.grupoDocs.length == 0 ? '' : g.grupoDocs.length + ' / '}} {{g.grupoCounterLota}}
 									</span>
 								</small>
 							</h5>
@@ -163,12 +165,12 @@
 									<p class="alert alert-warning alert-dismissible fade show">Não há documentos a exibir para est{{exibeLota? 'a lotação.' : 'e usuário.'}}</p>
 								</div>
 							</div>
-							<table v-else class="table table-sm table-striped table-hover table-borderless">
+							<table v-else class="text-size-6 text-muted table table-sm table-striped table-hover table-borderless">
 								<thead v-if="!carregando">
-									<tr class="table-head thead-light d-flex">
+									<tr class="table-head d-flex">
 										<th scope="col" class="col-1 d-none d-md-block">Tempo</th>
-										<th scope="col" class="col-9 col-md-3"><fmt:message key = "usuario.mesavirtual.codigo"/></th>
-										<th scope="col" class="col-3 d-none d-md-block">Descrição</th>
+										<th scope="col" class="col-9 col-md-2"><fmt:message key = "usuario.mesavirtual.codigo"/></th>
+										<th scope="col" class="col-4 d-none d-md-block">Descrição</th>
 										<th scope="col" class="col-3 col-md-2">Origem</th>
 										<th scope="col" class="col-3 d-none d-md-block"><fmt:message key = "usuario.mesavirtual.etiquetas"/></th>
 <!-- 											<th v-show="gruposTemAlgumErro">Atenção</th> -->
@@ -178,7 +180,13 @@
 									<template v-for="f in g.grupoDocs">
 										<tr class="d-flex">
 											<td class="col-1 d-none d-md-block" :title="f.datahora">{{f.tempoRelativo}}</td>
-											<td class="col-9 col-md-3">
+											<td class="col-9 col-md-2">
+												<c:if test="${siga_cliente == 'GOVSP'}">
+													<span v-if="trazerComposto">
+														<span v-if="f.tipoDoc == 'Avulso'"><i class="far fa-file text-secondary" title="Documento Avulso"></i></span>
+														<span v-else><i class="far fa-copy" title="Documento Composto"></i></span>
+													</span>
+												</c:if>
 												<c:choose>
 													<c:when test="${not empty idVisualizacao && idVisualizacao != 0}">
 														<a :href="'expediente/doc/visualizar?sigla=' + f.codigo + '&idVisualizacao='+${idVisualizacao}">{{f.sigla}}</a>
@@ -189,12 +197,9 @@
 												</c:choose>
 												<span class="d-inline d-md-none"> - {{f.descr}}</span>
 											</td>
-											<td class="col-3 d-none d-md-block">
-												<c:if test="${siga_cliente == 'GOVSP'}">
-													<span v-if="f.tipoDoc == 'Avulso'"><i class="far fa-file" title="Documento Avulso"></i></span>
-													<span v-else><i class="far fa-copy" title="Documento Composto"></i></span>
-												</c:if>
-												{{f.descr}}
+											<td class="col-4 d-none d-md-block">
+												<span :title='f.descr' v-if="f.descr.length<60">{{f.descr}}</span>
+												<span :title='f.descr' v-else>{{ f.descr.substring(0,60)+"..." }}</span>												
 											</td>
 											<td class="col-3 col-md-2">
 												<c:if test="${siga_cliente == 'GOVSP'}">
@@ -206,12 +211,12 @@
 											</td>
 											<td class="col-3 d-none d-md-block" style="padding: 0;">
 												<span v-if="f.anotacao != null">
-													<a tabindex="0" class="anotacao fas fa-sticky-note text-warning popover-dismiss" role="button" 
-															data-toggle="popover" data-trigger="hover focus" title="Anotação" :data-content="f.anotacao"></a>
+													<a tabindex="0" class="anotacao fas fa-sticky-note text-warning popover-dismiss ml-1" role="button" 
+															data-toggle="popover" data-trigger="hover focus" :data-content="f.anotacao"></a>
 												</span>
 												<span class="xrp-label-container">
 													<span v-for="m in f.list" :title="m.titulo">
-														<span class="badge badge-pill badge-secondary tagmesa m-1 btn-xs">												
+														<span class="text-size-8 badge badge-pill badge-secondary tagmesa m-1 btn-xs">												
 <!-- 														<button	class="btn btn-default btn-sm xrp-label"> -->
 															<i :class="m.icone"></i> {{m.nome}}<span
 																v-if="m.pessoa &amp;&amp; !m.daPessoa"> -
@@ -235,13 +240,15 @@
 								</div>
 								<div class="col-6 col-md-3 mb-2">
 									<div class="float-right d-flex">
-										<button v-if="g.grupoDocs != undefined && g.grupoCounterAtivo > g.grupoDocs.length" 
-												type="button" class="btn btn-primary btn-sm" 
+										<button	type="button" class="btn btn-primary btn-sm"
+												v-if="g.grupoDocs != undefined && g.grupoCounterAtivo > g.grupoDocs.length" 
 												:class="{disabled: carregando}" @click="pageDownGrupo(g.grupoNome);">
 											Mais<i v-if="!carregando" class="ml-2 fas fa-chevron-circle-down"></i>
 											<div v-if="carregando" class="spinner-border" role="status"></div>
 										</button>
-										<button type="button" class="ml-2 btn btn-light btn-sm" @click="fecharGrupo(g.grupoOrdem, g.grupoNome);">
+										<button type="button" class="ml-2 btn btn-light btn-sm"
+											v-if="g.grupoDocs != undefined && g.grupoCounterAtivo > 0" 
+											@click="fecharGrupo(g.grupoOrdem, g.grupoNome);">
 											<i class="fas fa-chevron-circle-up text-secondary"></i>
 										</button>
 									</div>
@@ -296,6 +303,7 @@
 	      	var self = this
 			self.exibeLota = (getParmUser('exibeLota') === 'true');
 	      	setParmUser('trazerAnotacoes', self.trazerAnotacoes);
+	      	setParmUser('trazerComposto', self.trazerComposto);
 	      	setParmUser('trazerCancelados', self.trazerCancelados);
 		    setTimeout(function() {
 		      self.carregarMesa();
@@ -318,6 +326,7 @@
 		      selQtd: undefined,
 		      selQtdPag: 15,
 		      trazerAnotacoes: true,
+		      trazerComposto: false,
 		      trazerCancelados: false
 		    };
 		  },
@@ -382,14 +391,24 @@
 				if (parms != null) {
 					for (var g in parms) {
 			        	setValueGrupo(g, 'qtdPag', qtdPag);
+			        	if (parms[g].collapsed == false) {
+			        		setValueGrupo(g, 'qtd', qtdPag);
+			        	}
 					}
 				}
+				this.recarregarMesa();
 			},
 			trazerAnotacoes: function() {
 				setParmUser('trazerAnotacoes', this.trazerAnotacoes);
+				this.recarregarMesa();
+			},
+			trazerComposto: function() {
+				setParmUser('trazerComposto', this.trazerComposto);
+				this.recarregarMesa();
 			},
 			trazerCancelados: function() {
 				setParmUser('trazerCancelados', this.trazerCancelados);
+				this.recarregarMesa();
 			}
 		  },		  
 			  
@@ -398,13 +417,13 @@
 		      var self = this
 		      var timeout = Math.abs(new Date() - 
 		    		  new Date(sessionStorage.getItem('timeout' + getUser())));
-		      if (this.carregando && timeout < 120000) 
-		    	  return;
 		      if (timeout < 120000 && grpNome == null) {
 				carregaFromJson(sessionStorage.getItem('mesa' + getUser()), self);
 				
 				return;
 		      }
+		      if (this.carregando || timeout < 120000) 
+		    	  return;
 		      this.carregando = true;
 		      var erros = {};
 		      if (this.grupos && this.grupos.length > 0) {
@@ -418,6 +437,7 @@
 		    	  parms[grpNome] = {'grupoOrdem' : parmGrupos[grpNome].ordem, 
 		    			'grupoQtd' : parseInt(parmGrupos[grpNome].qtd) + qtdPagina, 
 		    			'grupoQtdPag' : parmGrupos[grpNome].qtdPag, 'grupoCollapsed' : parmGrupos[grpNome].collapsed }; 
+		          setValueGrupo(grpNome, 'qtd', parseInt(parmGrupos[grpNome].qtd) + qtdPagina);
 		      } else {
 		    	  var i=0;
 				  for (p in parmGrupos) {
@@ -431,6 +451,7 @@
 			          data: {parms: JSON.stringify(parms),
 		        	  	 exibeLotacao: getParmUser('exibeLota'),
 		        	  	 trazerAnotacoes: getParmUser('trazerAnotacoes'),
+		        	  	 trazerComposto: getParmUser('trazerComposto'),
 		        	  	 trazerCancelados: getParmUser('trazerCancelados'),
 		        	  	 idVisualizacao: ${idVisualizacao}
 		        	  }, 
@@ -456,14 +477,17 @@
 		    	sessionStorage.removeItem('timeout' + getUser());
 		    	sessionStorage.removeItem('mesa' + getUser());
 		    	localStorage.removeItem('gruposMesa' + getUser());
-		    	localStorage.removeItem('trazerAnotacoes' + getUser());
-		    	localStorage.removeItem('trazerCancelados' + getUser());
+		    	setParmUser('trazerAnotacoes', true);
+		    	this.trazerAnotacoes=true;
+		    	setParmUser('trazerComposto', true);
+		    	this.trazerComposto=false;
+		    	setParmUser('trazerCancelados', false);
+		    	this.trazerCancelados=false;
 		    	localStorage.removeItem('exibeLota' + getUser());
 		    	this.carregarMesa();
     			this.selQtdPag = 15;
 		    },
 		    recarregarMesa: function() {
-		    	this.carregando = true;
 		    	this.grupos = [];
 		    	sessionStorage.removeItem('timeout' + getUser());
 		    	this.carregarMesa();
@@ -489,6 +513,7 @@
 	    		} else {
 		  	    	setValueGrupo(grupoNome, 'qtd', parseInt(parmGrupos[grupoNome].qtd));
 	    		}
+		    	sessionStorage.removeItem('timeout' + getUser());
 	    		this.carregarMesa(grupoNome, parseInt(parmGrupos[grupoNome].qtdPag));
 		    },
 		    pageUpGrupo: function(grupoNome) {
@@ -499,6 +524,7 @@
 	    		} else {
 		  	    	setValueGrupo(grupoNome, 'qtd', parseInt(parmGrupos[grupoNome].qtd) - parseInt(parmGrupos[grupoNome].qtdPag));
 	    		}
+		    	sessionStorage.removeItem('timeout' + getUser());
 	    		this.carregarMesa(grupoNome, 0);
 	    		setValueGrupoVue(grupoNome,'grupoCollapsed', true);
 	    		setValueGrupoVue(grupoNome,'grupoQtd', parmGrupos[grupoNome].qtd);
@@ -514,6 +540,7 @@
 			  	    	setValueGrupo(grupoNome, 'qtd', parseInt(parmGrupos[grupoNome].qtd));
 		    		}
 		    		if ($('#collapsetab-' + grupoOrdem + ' tr').length < 2) {
+		    	    	sessionStorage.removeItem('timeout' + getUser());
 			    		this.carregarMesa(grupoNome, 0);
 		    		}
 		    	} else {

@@ -152,7 +152,7 @@
 					</div>								
 				</div>
 				<div class="row">
-					<div class="col-sm-2">
+					<div class="col-sm-12">
 						<button type="submit" class="btn btn-primary">Pesquisar</button>
 						<c:if test="${temPermissaoParaExportarDados}">
 							<button type="button" class="btn btn-outline-success" title="Exportar para CSV" id="exportarCsv" onclick="javascript:csv('listar', '/siga/app/pessoa/exportarCsv');"><i class="fa fa-file-csv"></i> Exportar</button>
@@ -202,15 +202,18 @@
 								<div class="btn-group">								  
 								  <c:choose>
 									<c:when test="${empty pessoa.dataFimPessoa}">
-										<a href="${urlAtivarInativar}" onclick="javascript:atualizarUrlDeInativarPessoa('${urlAtivarInativar}')" class="btn btn-primary" role="button" aria-pressed="true" data-toggle="modal" data-target="#modalDeConfirmacao">Inativar</a>
+										<a href="${urlAtivarInativar}" onclick="javascript:atualizarUrlDeInativarPessoa('${urlAtivarInativar}')" class="btn btn-primary" role="button" aria-pressed="true" data-toggle="modal" data-target="#modalDeConfirmacao" style="min-width: 80px;">Inativar</a>
+										<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										    <span class="sr-only"></span>
+									    </button>
 									</c:when>
 									<c:otherwise>
-										<a href="${urlAtivarInativar}" class="btn btn-primary" role="button" aria-pressed="true">Ativar</a>
+										<a href="${urlAtivarInativar}" class="btn btn-danger" role="button" aria-pressed="true" style="min-width: 80px;">Ativar</a>
+										<button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										    <span class="sr-only"></span>
+									    </button>
 									</c:otherwise>
-								  </c:choose>								  								  
-								  <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								    <span class="sr-only"></span>
-								  </button>
+								  </c:choose>								  								  								  
 								  <div class="dropdown-menu">
 								  	<a href="${url}" class="dropdown-item" role="button" aria-pressed="true">Alterar</a>								   
 								  </div>

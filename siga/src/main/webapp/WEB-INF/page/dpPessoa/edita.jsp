@@ -63,6 +63,7 @@
 		if(!validarCPF(cpf)) {
 			return;
 		}
+		document.getElementById("email").disabled = false;
 		frm.submit();
 	}
 

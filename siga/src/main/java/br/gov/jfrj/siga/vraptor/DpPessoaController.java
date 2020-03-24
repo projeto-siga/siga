@@ -908,7 +908,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				InputStream inputStream = null;
 				StringBuffer texto = new StringBuffer();
 				texto.append(
-						"Sigla do Órgão;Cargo;Função de Confiança;Sigla da Unidade;Nome;Data de Nascimento;CPF;E-mail;Matrícula"
+						"Sigla do Órgão;Cargo;Função de Confiança;Sigla da Unidade;Nome;Data de Nascimento;CPF;E-mail;Matrícula;Status"
 								+ System.getProperty("line.separator"));
 
 				for (DpPessoa p : lista) {
@@ -921,6 +921,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 					texto.append(p.getCpfFormatado() + ";");
 					texto.append(p.getEmailPessoa() + ";");
 					texto.append(p + ";");
+					texto.append((p.getDataFimPessoa() == null ? "Ativo" : "Inativo") + ";");
 					texto.append(System.getProperty("line.separator"));
 				}
 

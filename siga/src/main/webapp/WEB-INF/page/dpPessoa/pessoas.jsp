@@ -7,6 +7,7 @@
 	<thead class="thead-dark" width="100%">
 		<tr>
 			<th align="center">Nome</th>
+			<th align="center">Órgão</th>
 			<th align="center"><fmt:message key="usuario.lotacao"/></th>
 			<th align="center">Função</th>
 			<th align="center">Cargo</th>
@@ -15,6 +16,7 @@
 	<c:forEach items="${pessoas}" var="item">
 		<tr class="${evenorodd}">
 			<td align="left">${item.nomePessoa}</td>
+			<td algin="left">${item.orgaoUsuario.descricao }</td>
 			<td align="left">${item.lotacao.siglaLotacao}</td>
 			<td align="left">${item.funcaoConfianca.nomeFuncao}</td>
 			<td align="left">${item.cargo.nomeCargo}</td>

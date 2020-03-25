@@ -1974,8 +1974,11 @@ public class ExDocumentoController extends ExController {
 		DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		Calendar c = Calendar.getInstance();
 		c.setTime(prot.getData());
+
+		String servidor = SigaBaseProperties.getString("siga.ex."
+                + SigaBaseProperties.getString("siga.ambiente") + ".url");
 		
-		String caminho = url + "/public/app/processoautenticar?n=" + prot.getCodigo();
+		String caminho = servidor.substring(0, servidor.lastIndexOf("/")) + "/public/app/processoautenticar?n=" + prot.getCodigo();
 		
 		result.include("url", caminho);
 		result.include("ano", c.get(Calendar.YEAR));

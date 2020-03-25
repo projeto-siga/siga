@@ -6989,22 +6989,7 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Protocolo não encontrado", 0, e);
 		}
 
-		int hash = protocolo.getExDocumento().getDescrCurta().hashCode() % 10000;
-		ExMovimentacao move = null;
-
-		if (Math.abs(protocolo.getExDocumento().getDescrCurta().hashCode() % 10000) == hash) {
-			return protocolo.getExDocumento();
-		} else {
-			for (ExMovimentacao mov : protocolo.getExDocumento().getExMovimentacaoSet())
-				if (Math.abs((protocolo.getExDocumento().getDescrCurta() + mov.getIdMov()).hashCode() % 10000) == hash
-						|| Math.abs((protocolo.getExDocumento().getDescrCurta() + mov.getIdMov() + "AssinaturaExterna")
-								.hashCode() % 10000) == hash)
-					move = mov;
-			if (move == null)
-				throw new AplicacaoException("Protocolo inválido");
-
-			return move;
-		}
+		return protocolo.getExDocumento();
 	}
 
 	public byte[] obterPdfPorProtocolo(String num) throws Exception {

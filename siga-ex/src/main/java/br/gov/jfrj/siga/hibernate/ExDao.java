@@ -1658,9 +1658,7 @@ public class ExDao extends CpDao {
 	}
 
 	public List consultarTotaisPorMarcador(DpPessoa pes, DpLotacao lot, List<GrupoItem> grupos, 
-			boolean exibeLotacao, boolean trazerCancelados) {
-		String queryCancelados =  " LEFT JOIN corporativo.cp_marca marca3 ON (marca3.id_ref = marca.id_ref"
-				+ " AND marca3.id_marcador = " + String.valueOf(CpMarcador.MARCADOR_CANCELADO) + ") ";
+			boolean exibeLotacao) {
 		try {
 			String query = "";
 			for (GrupoItem grupoItem : grupos) {
@@ -1673,14 +1671,12 @@ public class ExDao extends CpDao {
 						+ " 			SUM(CASE WHEN marca.id_pessoa_ini = :idPessoaIni THEN 1 ELSE 0 END) cont_pessoa,"
 						+ " 			SUM(CASE WHEN marca.id_lotacao_ini = :idLotacaoIni THEN 1 ELSE 0 END) cont_lota"
 						+ "	   			FROM corporativo.cp_marca marca"
-						+ (trazerCancelados ? "" : queryCancelados )
 						+ "	   			WHERE (marca.dt_ini_marca IS NULL OR marca.dt_ini_marca < sysdate)"
 						+ "	   				AND (marca.dt_fim_marca IS NULL OR marca.dt_fim_marca > sysdate)"
 						+ "	   				AND ((marca.id_pessoa_ini = :idPessoaIni) OR (marca.id_lotacao_ini = :idLotacaoIni))"
 						+ "	   				AND marca.id_tp_marca = 1"
 						+ "					AND marca.id_marcador in (" 
 						+ grupoItem.grupoMarcadores.toString().replaceAll("\\[|\\]", "") + ") "
-						+ (trazerCancelados ? "" : " AND marca3.id_marca is null " )
 						+ "				GROUP BY marca.id_ref )"
 						+ " UNION ALL ";
 				}
@@ -1701,14 +1697,10 @@ public class ExDao extends CpDao {
 	}
 
 	public List listarMobilsPorMarcas(DpPessoa titular,
-			DpLotacao lotaTitular, boolean exibeLotacao, boolean trazerCancelados) {
+			DpLotacao lotaTitular, boolean exibeLotacao) {
 		String queryString;
 		List<List<String>> l = new ArrayList<List<String>> ();
 //		long tempoIni = System.nanoTime();
-		String queryCancelados = " and (select marca3 from ExMarca marca3 "		
-				+ "		where marca3.cpMarcador.idMarcador = "  + String.valueOf(CpMarcador.MARCADOR_CANCELADO) 
-				+ "		and marca3.exMobil = marca.exMobil) is null ";
-
 		queryString =
 					"select "
 					+ " marca, marcador, mobil, doc.dtAltDoc "
@@ -1720,7 +1712,6 @@ public class ExDao extends CpDao {
 					+ " and (marca.dtFimMarca is null or marca.dtFimMarca > sysdate)"
 					+ (!exibeLotacao && titular != null ? " and (marca.dpPessoaIni = :titular)" : "") 
 					+ (exibeLotacao && lotaTitular != null ? " and (marca.dpLotacaoIni = :lotaTitular)" : "")
-					+ (trazerCancelados ? "" : queryCancelados)
 					+ " order by  doc.dtAltDoc desc, marca ";
 			
 		Query query = em()

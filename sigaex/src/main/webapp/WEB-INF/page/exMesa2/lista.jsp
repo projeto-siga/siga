@@ -31,13 +31,9 @@
 	            <div class="form-group my-2 border-bottom">
 					<div class="form-check">
 						<input type="checkbox" class="form-check-input" id="trazerComposto" v-model="trazerComposto">
-						<label class="form-check-label" for="trazerComposto"><small>Mostrar indicador de docto. composto</small></label>
-					</div>            
-	            </div>
-	            <div class="form-group my-2 border-bottom">
-					<div class="form-check">
-						<input type="checkbox" class="form-check-input" id="trazerCancelados" v-model="trazerCancelados">
-						<label class="form-check-label" for="trazerCancelados"><small>Mostrar cancelados</small></label>
+						<label class="form-check-label" for="trazerComposto">
+							<small>Exibir indicador de docto. avulso <i class="far fa-file"></i> ou composto <i class="far fa-copy"></i></small>
+						</label>
 					</div>            
 	            </div>
 				<div class="form-group pb-2 mb-1 border-bottom">
@@ -75,7 +71,7 @@
 					<c:if test="${not empty visualizacao}"><b>(Delegante: ${visualizacao.titular.nomePessoa})</b></c:if> 
 				</span> 
 			</div> 
-			<div class="col col-12 col-sm-4 col-md-auto ml-md-auto p-0 mb-2">
+			<div class="col col-12 col-sm-4 col-md-auto ml-md-auto mb-2">
 				<a href="expediente/doc/editar" class="btn btn-success form-control"> <i class="fas fa-plus-circle mr-1"></i>
 					<fmt:message key="documento.novo"/></a>
 			</div>
@@ -101,7 +97,7 @@
 				</a>
 			</div>
 			<div class="mr-2 mb-1">
-				<input id="filtroExibidos" type="text" class="form-control p-1 input-sm" placeholder="Filtrar entre os exibidos" v-model="filtro" ng-model-options="{ debounce: 200 }">
+				<input id="filtroExibidos" type="text" class="form-control p-1 input-sm" placeholder="Filtrar documentos da mesa" v-model="filtro" ng-model-options="{ debounce: 200 }">
 			</div>
 			<button type="button" class="btn btn-secondary btn-sm mb-1 mr-2" title="Recarregar Mesa" :class="{disabled: carregando}" @click="recarregarMesa();">
 				<i class="fas fa-sync-alt"></i>
@@ -149,12 +145,15 @@
 									@click="collapseGrupo(g.grupoOrdem, g.grupoNome)">
 								<i class="h5" :class="g.grupoIcone"></i>
 								<span class="mr-3">{{g.grupoNome}}</span>
-								<small class="align-middle">
-									<span v-if="!exibeLota" class="badge badge-light disabled btn-sm" >
-										<i class="fas fa-user"></i> {{exibeLota || g.grupoDocs == undefined || g.grupoDocs.length == 0 ? '' : g.grupoDocs.length + ' / '}} {{g.grupoCounterUser}}
+
+								<small class="align-middle"> 
+									<span class="badge badge-light btn-sm" :class="{disabled: exibeLota}">
+										<i class="fas fa-user"></i>
+										<span class="badge badge-light">{{g.grupoCounterUser}}</span>
 									</span>
-									<span v-if="exibeLota" class="badge badge-light disabled btn-sm">
-										<i class="fas fa-users"></i> {{!exibeLota || g.grupoDocs == undefined || g.grupoDocs.length == 0 ? '' : g.grupoDocs.length + ' / '}} {{g.grupoCounterLota}}
+									<span class="badge badge-light btn-sm" :class="{disabled: !exibeLota}">
+										<i class="fas fa-users"></i>
+										<span class="badge badge-light">{{g.grupoCounterLota}}</span>
 									</span>
 								</small>
 							</h5>
@@ -179,7 +178,8 @@
 								<tbody>
 									<template v-for="f in g.grupoDocs">
 										<tr class="d-flex">
-											<td class="col-1 d-none d-md-block" :title="f.datahora">{{f.tempoRelativo}}</td>
+											<td class="col-1 d-none d-md-block" 
+												:title="f.datahora.split('T')[0]+' '+f.datahora.split('T')[1].split('.')[0]">{{f.tempoRelativo}}</td>
 											<td class="col-9 col-md-2">
 												<c:if test="${siga_cliente == 'GOVSP'}">
 													<span v-if="trazerComposto">
@@ -198,8 +198,8 @@
 												<span class="d-inline d-md-none"> - {{f.descr}}</span>
 											</td>
 											<td class="col-4 d-none d-md-block">
-												<span :title='f.descr' v-if="f.descr.length<60">{{f.descr}}</span>
-												<span :title='f.descr' v-else>{{ f.descr.substring(0,60)+"..." }}</span>												
+												<span class="text-break" :title='f.descr' v-if="f.descr.length<60">{{f.descr}}</span>
+												<span class="text-break" :title='f.descr' v-else>{{ f.descr.substring(0,60)+"..." }}</span>												
 											</td>
 											<td class="col-3 col-md-2">
 												<c:if test="${siga_cliente == 'GOVSP'}">
@@ -304,7 +304,6 @@
 			self.exibeLota = (getParmUser('exibeLota') === 'true');
 	      	setParmUser('trazerAnotacoes', self.trazerAnotacoes);
 	      	setParmUser('trazerComposto', self.trazerComposto);
-	      	setParmUser('trazerCancelados', self.trazerCancelados);
 		    setTimeout(function() {
 		      self.carregarMesa();
 		    });
@@ -327,7 +326,6 @@
 		      selQtdPag: 15,
 		      trazerAnotacoes: true,
 		      trazerComposto: false,
-		      trazerCancelados: false
 		    };
 		  },
 
@@ -406,10 +404,6 @@
 				setParmUser('trazerComposto', this.trazerComposto);
 				this.recarregarMesa();
 			},
-			trazerCancelados: function() {
-				setParmUser('trazerCancelados', this.trazerCancelados);
-				this.recarregarMesa();
-			}
 		  },		  
 			  
 		  methods: {
@@ -452,7 +446,6 @@
 		        	  	 exibeLotacao: getParmUser('exibeLota'),
 		        	  	 trazerAnotacoes: getParmUser('trazerAnotacoes'),
 		        	  	 trazerComposto: getParmUser('trazerComposto'),
-		        	  	 trazerCancelados: getParmUser('trazerCancelados'),
 		        	  	 idVisualizacao: ${idVisualizacao}
 		        	  }, 
 		          complete: function (response, status, request) {   
@@ -481,8 +474,6 @@
 		    	this.trazerAnotacoes=true;
 		    	setParmUser('trazerComposto', true);
 		    	this.trazerComposto=false;
-		    	setParmUser('trazerCancelados', false);
-		    	this.trazerCancelados=false;
 		    	localStorage.removeItem('exibeLota' + getUser());
 		    	this.carregarMesa();
     			this.selQtdPag = 15;

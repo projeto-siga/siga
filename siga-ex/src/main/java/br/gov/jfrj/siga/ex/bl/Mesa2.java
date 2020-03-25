@@ -393,7 +393,12 @@ public class Mesa2 {
 			List<Integer> listMar = new ArrayList<Integer>();
 			for(MarcadorEnum mar : MarcadorEnum.values()) {
 				if (mar.grupo.nome.equals(nomegrupo)) {
-					listMar.add(mar.id);
+					if(!(SigaMessages.isSigaSP() 
+						&& (mar.equals(MarcadorEnum.CANCELADO)
+							|| mar.equals(MarcadorEnum.ARQUIVADO_CORRENTE)
+							|| mar.equals(MarcadorEnum.ARQUIVADO_INTERMEDIARIO)
+							|| mar.equals(MarcadorEnum.ARQUIVADO_PERMANENTE))))
+						listMar.add(mar.id);
 				}
 			}
 			return listMar;
@@ -580,11 +585,11 @@ public class Mesa2 {
 	}
 
 	public static List<GrupoItem> getContadores(ExDao dao, DpPessoa titular, DpLotacao lotaTitular, 
-			Map<String, SelGrupo> selGrupos, boolean exibeLotacao, boolean trazerCancelados) throws Exception {
+			Map<String, SelGrupo> selGrupos, boolean exibeLotacao) throws Exception {
 		List<GrupoItem> gruposMesa = new ArrayList<GrupoItem>();
-		gruposMesa = montaGruposUsuario(selGrupos, trazerCancelados);
+		gruposMesa = montaGruposUsuario(selGrupos);
 		List<Object[]> l = dao.consultarTotaisPorMarcador(titular, lotaTitular, gruposMesa, 
-				exibeLotacao, trazerCancelados);
+				exibeLotacao);
 
 		for (GrupoItem gItem : gruposMesa) {
 			gItem.grupoCounterUser = 0L;
@@ -608,11 +613,11 @@ public class Mesa2 {
 
 	public static List<GrupoItem> getMesa(ExDao dao, DpPessoa titular,
 			DpLotacao lotaTitular, Map<String, SelGrupo> selGrupos, List<Mesa2.GrupoItem> gruposMesa, 
-			boolean exibeLotacao, boolean trazerAnotacoes, boolean trazerCancelados, boolean trazerComposto) throws Exception {
+			boolean exibeLotacao, boolean trazerAnotacoes, boolean trazerComposto) throws Exception {
 		Date dtNow = dao.consultarDataEHoraDoServidor();
 
 		List<Object[]> l = dao.listarMobilsPorMarcas(titular,
-				lotaTitular, exibeLotacao, trazerCancelados);
+				lotaTitular, exibeLotacao);
 
 		Map<ExMobil, DocDados> map = new HashMap<>();
 		List<Long> listIdMobil = new ArrayList<Long>();
@@ -752,7 +757,7 @@ public class Mesa2 {
 		}
 	}
 	
-	public static List<GrupoItem> montaGruposUsuario(Map<String, SelGrupo> selGrupos, boolean trazerCancelados ) {
+	public static List<GrupoItem> montaGruposUsuario(Map<String, SelGrupo> selGrupos) {
 		carregaGruposBase();
 		List<String> ordemGrupos = new ArrayList<String>(); 
 		List<GrupoItem> lGrupo = new ArrayList<GrupoItem>();

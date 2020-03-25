@@ -236,6 +236,13 @@ public class ExMarcadorBL {
 			if (m != CpMarcador.MARCADOR_EM_ANDAMENTO
 					|| !(mob.isArquivado() || mob.doc().getMobilGeral().isArquivado()))
 				acrescentarMarca(m, dt, ultMovNaoCanc.getResp(), ultMovNaoCanc.getLotaResp());
+			
+ 			if (SigaMessages.isSigaSP() && 
+					m == CpMarcador.MARCADOR_CAIXA_DE_ENTRADA && 
+					ultMovNaoCanc.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA) {
+				acrescentarMarcadoresManuaisPorOcorrenciaDeTransferencia(dt);
+			}
+		
 		}
 
 		return;
@@ -445,6 +452,28 @@ public class ExMarcadorBL {
 		}
 	}
 
+	public void acrescentarMarcadoresManuaisPorOcorrenciaDeTransferencia(Date dt) {	
+		ExMobil geral = mob.doc().getMobilGeral();
+		if (geral.getExMovimentacaoSet() != null) {
+			for (ExMovimentacao mov : geral.getExMovimentacaoSet()) {
+				if (mov.isCancelada() || mov.getMarcador() == null)
+					continue;
+				
+				Long tpMov = mov.getIdTpMov();
+				Long idMarcador = mov.getMarcador().getIdMarcador();
+				boolean temMarcaManual = (tpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO &&
+						(idMarcador == CpMarcador.MARCADOR_URGENTE ||
+						idMarcador == CpMarcador.MARCADOR_IDOSO  ||
+						idMarcador == CpMarcador.MARCADOR_PRIORITARIO  ||
+						idMarcador == CpMarcador.MARCADOR_RESTRICAO_ACESSO));
+								
+				if (temMarcaManual)	{
+					acrescentarMarca(mov.getMarcador().getIdMarcador(), dt, ultMovNaoCanc.getResp(), ultMovNaoCanc.getLotaResp());
+				}																								
+			}
+		}	
+	}
+	
 	public void acrescentarMarcadoresAssinaturaComSenha() {
 		for (ExMovimentacao mov : movs(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA)) {
 			Long t = mov.getIdTpMov();

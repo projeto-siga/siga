@@ -43,7 +43,7 @@ public class MontadorQuery implements IMontadorQuery {
 			sbf.append(" and (dt_ini_marca is null or dt_ini_marca < sysdate)");
 			sbf.append(" and (dt_fim_marca is null or dt_fim_marca > sysdate)");
 		} else {
-			sbf.append(" and not (label.cpMarcador.idMarcador in (3, 14, 25))");
+			sbf.append(" and not (label.cpMarcador.idMarcador = :id1 or label.cpMarcador.idMarcador = :id2 or label.cpMarcador.idMarcador = :id3)");
 		}
 
 		if (flt.getUltMovRespSelId() != null && flt.getUltMovRespSelId() != 0) {
@@ -94,7 +94,7 @@ public class MontadorQuery implements IMontadorQuery {
 
 		if (flt.getDescrDocumento() != null
 				&& !flt.getDescrDocumento().trim().equals("")) {
-			sbf.append(" and upper(doc.descrDocumentoAI) like :descrDocumento");
+			sbf.append(" and doc.descrDocumentoAI like :descrDocumento");
 		}
 
 		// if (flt.getFullText() != null &&

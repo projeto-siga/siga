@@ -125,26 +125,10 @@
 											</c:choose>
 											<td align="center">${dt}</td>
 											<td>${mov.descrTipoMovimentacao}</td>
-											<td align="left"><siga:selecionado isVraptor="true"
-													sigla="${mov.lotaCadastrante.sigla}"
-													descricao="${mov.lotaCadastrante.descricaoAmpliada}"
-													lotacaoParam="${mov.lotaCadastrante.siglaLotacao}${mov.lotaCadastrante.sigla}" />
-											</td>
-											<td align="left"><siga:selecionado isVraptor="true"
-													sigla="${mov.cadastrante.nomeAbreviado}"
-													descricao="${mov.cadastrante.descricao} - ${mov.cadastrante.sigla}"
-													pessoaParam="${mov.cadastrante.sigla}" />
-											</td>
-											<td align="left"><siga:selecionado isVraptor="true"
-													sigla="${mov.lotaResp.sigla}"
-													descricao="${mov.lotaResp.descricaoAmpliada}"
-													lotacaoParam="${mov.lotaResp.siglaLotacao}${mov.lotaResp.sigla}" />
-											</td>
-											<td align="left"><siga:selecionado isVraptor="true"
-													sigla="${mov.resp.nomeAbreviado}"
-													descricao="${mov.resp.descricao} - ${mov.resp.sigla}"
-													pessoaParam="${mov.resp.sigla}" />
-											</td>
+											<td align="left">${mov.lotaCadastrante.sigla} </td>
+											<td align="left">${mov.cadastrante.nomeAbreviado}</td>
+											<td align="left">${mov.lotaResp.sigla}</td>
+											<td align="left">${mov.resp.nomeAbreviado}</td>
 										</tr>
 										<c:choose>
 											<c:when test='${evenorodd == "even"}'>

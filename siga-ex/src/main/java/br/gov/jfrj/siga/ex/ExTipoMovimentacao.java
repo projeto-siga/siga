@@ -202,6 +202,9 @@ public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements Se
 	 */
 	final static public long TIPO_MOVIMENTACAO_SUBSTITUICAO_RESPONSAVEL = 74;
 	
+	final static public long TIPO_MOVIMENTACAO_REORDENACAO_DOCUMENTO = 75;
+	
+	final static public long TIPO_MOVIMENTACAO_ORDENACAO_ORIGINAL_DOCUMENTO = 76;
 
 	public static boolean hasDespacho(long id) {
 		return id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO

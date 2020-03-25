@@ -111,6 +111,7 @@ public class ExDocumentoController extends ExController {
 
 	private static final String URL_EXIBIR = "/app/expediente/doc/exibir?sigla={0}";
 	private static final String URL_EDITAR = "/app/expediente/doc/editar?sigla={0}";
+	private String url = null;
 
 	/**
 	 * @deprecated CDI eyes only
@@ -124,6 +125,8 @@ public class ExDocumentoController extends ExController {
 			HttpServletResponse response, ServletContext context,
 			Result result, SigaObjects so, EntityManager em) {
 		super(request, response, context, result, CpDao.getInstance(), so, em);
+		
+		url = getBaseUrl(request);
 	}
 
 	private ExDocumento buscarDocumento(final BuscaDocumentoBuilder builder,
@@ -1232,10 +1235,33 @@ public class ExDocumentoController extends ExController {
 		result.include("lota", this.getLotaTitular());
 		result.include("param", exDocumentoDto.getParamsEntrevista());
 	}
+	
+	@Post("/app/expediente/doc/reordenar")
+	public void reordenar(String idDocumentos, String sigla, boolean isVoltarParaOrdemOriginal) throws Exception {				
+		ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO();						
+		
+		exDocumentoDTO.setSigla(sigla);
+		buscarDocumento(false, exDocumentoDTO);	
+		
+		if (!exDocumentoDTO.getDoc().podeReordenar() && exDocumentoDTO.getDoc().temOrdenacao()) {
+			throw new AplicacaoException(
+					"Não é permitido reordenação de documentos.");
+		}
+		
+		idDocumentos = isVoltarParaOrdemOriginal ? null : idDocumentos.length() <= 200 ? idDocumentos : idDocumentos.substring(0, 200);
+		exDocumentoDTO.getMob().getDoc().setOrdenacaoDoc(idDocumentos);						
+		
+		new ExBL().reordenarDocumentos(exDocumentoDTO.getDoc(), exDocumentoDTO.getDoc().getCadastrante(), exDocumentoDTO.getDoc().getLotacao(), isVoltarParaOrdemOriginal);
+								
+		if (isVoltarParaOrdemOriginal)
+			result.redirectTo("/app/expediente/doc/exibirProcesso?sigla=" + sigla);
+		else											
+			result.redirectTo("/app/expediente/doc/exibirProcesso?sigla=" + sigla + "&exibirReordenacao=true");
+	}
 
 	@Get({ "/app/expediente/doc/exibir", "/expediente/doc/exibir.action" })
 	public void exibe(final boolean conviteEletronico, final String sigla,
-			final ExDocumentoDTO exDocumentoDTO, final Long idmob, final Long idVisualizacao)
+			final ExDocumentoDTO exDocumentoDTO, final Long idmob, final Long idVisualizacao, boolean exibirReordenacao)
 			throws Exception {
 		assertAcesso("");
 
@@ -1250,6 +1276,11 @@ public class ExDocumentoController extends ExController {
 
 		exDocumentoDto.setSigla(sigla);
 		buscarDocumento(false, exDocumentoDto);
+		
+		if (exibirReordenacao && !exDocumentoDto.getDoc().podeReordenar() && exDocumentoDto.getDoc().temOrdenacao()) {
+			throw new AplicacaoException(
+					"Não é permitido exibir reordenação de documentos.");
+		}
 
 		if(!podeVisualizarDocumento(exDocumentoDto.getMob(), getTitular(), idVisualizacao)) {
 			assertAcesso(exDocumentoDto);
@@ -1276,7 +1307,7 @@ public class ExDocumentoController extends ExController {
 							.getPrimeiraVia());
 				}
 			}
-		}
+		}		
 
 		final ExDocumentoVO docVO = new ExDocumentoVO(exDocumentoDto.getDoc(),
 				exDocumentoDto.getMob(), getCadastrante(), getTitular(),
@@ -1288,6 +1319,8 @@ public class ExDocumentoController extends ExController {
 		if (exDocumentoDto.getSigla() != null) {
 			Sigla = exDocumentoDto.getSigla().replace("/", "");
 		}
+		
+		exDocumentoDto.getMob().getDoc().setPodeExibirReordenacao(exibirReordenacao);
 
 		result.include("docVO", docVO);
 		result.include("sigla", Sigla);
@@ -1296,18 +1329,20 @@ public class ExDocumentoController extends ExController {
 		result.include("lota", this.getLotaTitular());
 		result.include("param", exDocumentoDto.getParamsEntrevista());
 		result.include("idVisualizacao", idVisualizacao);
+		result.include("podeExibirReordenacao", exibirReordenacao);
+		
 	}
 
 	@Get("app/expediente/doc/exibirProcesso")
-	public void exibeProcesso(final String sigla, final boolean podeExibir, Long idVisualizacao)
+	public void exibeProcesso(final String sigla, final boolean podeExibir, Long idVisualizacao, boolean exibirReordenacao)
 			throws Exception {
-		exibe(false, sigla, null, null, idVisualizacao);
+		exibe(false, sigla, null, null, idVisualizacao, exibirReordenacao);					
 	}
 
 	@Get("/app/expediente/doc/exibirResumoProcesso")
 	public void exibeResumoProcesso(final String sigla, final boolean podeExibir)
 			throws Exception {
-		exibe(false, sigla, null, null, null);
+		exibe(false, sigla, null, null, null, false);
 	}
 
 	private void verificaDocumento(final ExDocumento doc) {
@@ -1926,17 +1961,27 @@ public class ExDocumentoController extends ExController {
 		DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		Calendar c = Calendar.getInstance();
 		c.setTime(prot.getData());
+
+		String servidor = SigaBaseProperties.getString("siga.ex."
+                + SigaBaseProperties.getString("siga.ambiente") + ".url");
 		
-		String url = SigaBaseProperties.getString("siga.ex."
-				+ SigaBaseProperties.getString("siga.ambiente") + ".url") + "/processoautenticar?n=" + prot.getCodigo();
+		String caminho = servidor.substring(0, servidor.lastIndexOf("/")) + "/public/app/processoautenticar?n=" + prot.getCodigo();
 		
-		result.include("url", url);
+		result.include("url", caminho);
 		result.include("ano", c.get(Calendar.YEAR));
 		result.include("dataHora", df.format(c.getTime()));
 		result.include("protocolo", prot);
 		result.include("sigla", sigla);
 		result.include("doc", exDocumentoDto.getDoc());
 	}
+	
+	public static String getBaseUrl(HttpServletRequest request) {
+	    String scheme = request.getScheme() + "://";
+	    String serverName = request.getServerName();
+	    String serverPort = (request.getServerPort() == 80) ? "" : ":" + request.getServerPort();
+	    String contextPath = request.getContextPath();
+	    return scheme + serverName + serverPort + contextPath;
+	  }
 
 	@Post("/app/expediente/doc/tornarDocumentoSemEfeitoGravar")
 	public void tornarDocumentoSemEfeitoGravar(final String sigla,

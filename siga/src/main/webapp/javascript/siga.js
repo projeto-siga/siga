@@ -1,6 +1,13 @@
 var newwindow = '';
 
 function testpdf(x) {
+	
+	var tamanhoArquivo = parseInt(document.getElementById("arquivo").files[0].size);
+    if(tamanhoArquivo > 10485760){
+        alert("TAMANHO DO ARQUIVO EXCEDE O PERMITIDO (10MB)!");
+        return false;
+    }
+	
 	padrao = /\.pdf/;
 	a = x.arquivo.value;
 	if(a.length > 3) {

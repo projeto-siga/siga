@@ -44,7 +44,7 @@ public class Excel {
 		InputStream retorno = null;
 		if(".txt".equalsIgnoreCase(extensao) || ".csv".equalsIgnoreCase(extensao)) {
 			retorno = uploadCVS(file, orgaoUsuario);
-		} else if(".xlsx".equals(extensao)){
+		} else if(".xlsx".equalsIgnoreCase(extensao)){
 			retorno = uploadExcelLotacao(file, orgaoUsuario);
 		}
 		return retorno;
@@ -697,14 +697,6 @@ public class Excel {
 					problemas.append("Linha " + linha +": LOTAÇÃO em branco" + System.getProperty("line.separator"));
 				}
 				
-				//NOME DA PESSOA
-				celula = retornaConteudo(row.getCell(4, Row.CREATE_NULL_AS_BLANK));
-				problemas.append(validarNomePessoa(celula.trim(), linha, 60));
-				
-				if(problemas == null || "".equals(problemas.toString())) {
-					pe.setNomePessoa(celula.trim());
-				}
-				
 				//DATA DE NASCIMENTO
 				if(retornaConteudo(row.getCell(5, Row.CREATE_NULL_AS_BLANK)) != "") {
 					if(row.getCell(5).getCellType() == HSSFCell.CELL_TYPE_NUMERIC && HSSFDateUtil.isCellDateFormatted(row.getCell(5, Row.CREATE_NULL_AS_BLANK))){
@@ -749,6 +741,25 @@ public class Excel {
 					}
 				} else {
 					problemas.append("Linha " + linha +": CPF em branco" + System.getProperty("line.separator"));
+				}
+				
+				//NOME DA PESSOA
+				celula = retornaConteudo(row.getCell(4, Row.CREATE_NULL_AS_BLANK));
+				problemas.append(validarNomePessoa(celula.trim(), linha, 60));
+				
+				
+				if(problemas == null || "".equals(problemas.toString())) {
+					pe.setNomePessoa(celula.trim());
+				}
+				
+				List<DpPessoa> listaP = new ArrayList<DpPessoa>();
+				listaP.addAll(CpDao.getInstance().listarCpfAtivoInativo(Long.valueOf(cpf.replace("-", "").replace(".", ""))));
+				
+				for (DpPessoa dpPessoa : listaP) {
+					if(!dpPessoa.getNomePessoa().equalsIgnoreCase(celula.trim())) {
+						problemas.append("Linha " + linha +": Nome diferente para o mesmo CPF já cadastrado.");
+						break;
+					}
 				}
 				
 				//EMAIL
@@ -800,6 +811,11 @@ public class Excel {
 						}
 						if(email != null && email.equals(p.getEmailPessoa()) && cpf != null && !Long.valueOf(cpf).equals(p.getCpfPessoa())) {
 							problemas.append("Linha " + linha +": E-MAIL informado está cadastrado para outro CPF no arquivo" + System.getProperty("line.separator"));
+						}
+						if(!"".equals(cpf.trim()) && p.getCpfPessoa().equals(Long.valueOf(cpf.replace("-", "").replace(".", ""))) &&
+								!p.getNomePessoa().equalsIgnoreCase(pe.getNomePessoa())) {
+							problemas.append("Linha " + linha +": Nome diferente para o mesmo CPF em outra linha do arquivo." + System.getProperty("line.separator"));
+							break;
 						}
 					}
 				}

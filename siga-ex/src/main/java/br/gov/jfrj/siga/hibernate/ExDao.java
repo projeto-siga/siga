@@ -466,6 +466,10 @@ public class ExDao extends CpDao {
 
 			query.setParameter("ultMovIdEstadoDoc", flt.getUltMovIdEstadoDoc());
 
+		} else {
+			query.setLong("id1", 3);
+			query.setLong("id2", 14);
+			query.setLong("id3", 25);
 		}
 
 		if (flt.getUltMovRespSelId() != null && flt.getUltMovRespSelId() != 0) {
@@ -1746,7 +1750,7 @@ public class ExDao extends CpDao {
 				.createQuery(
 						"select "
 						+ "mob, "
-						+ "frm.isComposto, "
+						+ (trazerComposto ? " frm.isComposto, " : "0, ")
 						+ "(select movUltima from ExMovimentacao movUltima "
 						+ " where movUltima.idMov in ("
 						+ " 	select max(movUltima1.idMov) from ExMovimentacao movUltima1"
@@ -1758,11 +1762,10 @@ public class ExDao extends CpDao {
 						+ " 		where movTramite1.exTipoMovimentacao.idTpMov = 3 "
 						+ "			and movTramite1.exMobil.idMobil = mob.idMobil " 
 						+ " 		and movTramite1.exMovimentacaoCanceladora.idMov = null ) ), "
-						+ (trazerAnotacoes ? queryAnota: "")
 						+ "doc "
 						+ "from ExMobil mob "
 						+ "inner join mob.exDocumento doc "
-						+ "inner join doc.exFormaDocumento frm "
+						+ (trazerComposto ? "inner join doc.exFormaDocumento frm " : "")
 						+ "where mob.idMobil in (:listIdMobil) "
 				);
 		if (listIdMobil != null) {

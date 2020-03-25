@@ -26,7 +26,7 @@
 								<div class="col">
 									<div class="form-group">
 										<label>Código do Protocolo</label> 
-										<input type="text" id="id_number" name="n" class="form-control" value="${n}"/>
+										<input type="text" id="id_number" name="n" placeholder="Informe o código do Protocolo" class="form-control" value="${n}"/>
 									</div>
 								</div>
 							</div>
@@ -64,6 +64,10 @@
 						(Maiúsculas e Minúsculas).</li>
 						<li>Exemplo de preenchimento: eF4Gf5gM5F</li>
 					</ul>
+					<br />
+					<p>
+						<u>Ao preencher o código do protocolo, favor clicar na caixa em "Verificação"</u>
+					</p>
 				  </div>
 				</div>
 			</div>

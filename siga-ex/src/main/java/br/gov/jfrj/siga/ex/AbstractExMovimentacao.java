@@ -160,7 +160,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 		// protocolos.
 		@NamedQuery(name = "consultarMovimentacoes", query = "from ExMovimentacao mov"
 				+ "                where mov.cadastrante.idPessoaIni=:pessoaIni and mov.dtIniMov=to_date(:data, 'DD/MM/YYYY HH24:MI:SS')          "
-				+ "                order by mov.idMov"), })
+				+ "                ) order by mov.dtTimestamp"), })
 public abstract class AbstractExMovimentacao extends ExArquivo implements Serializable {
 	@Id
 	@SequenceGenerator(sequenceName = "EX_MOVIMENTACAO_SEQ", name = "EX_MOVIMENTACAO_SEQ")
@@ -333,6 +333,10 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 
 	@Column(name = "hash_audit", length = 1024)
 	private String auditHash;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "dt_timestamp", insertable=false, updatable=false)
+	private Date dtTimestamp;
 
 	public void setNumPaginasOri(Integer numPaginasOri) {
 		this.numPaginasOri = numPaginasOri;
@@ -679,5 +683,13 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 
 	public void setAuditHash(String auditHash) {
 		this.auditHash = auditHash;
+	}
+
+	public Date getDtTimestamp() {
+		return dtTimestamp;
+	}
+
+	public void setDtTimestamp(Date dtTimestamp) {
+		this.dtTimestamp = dtTimestamp;
 	}
 }

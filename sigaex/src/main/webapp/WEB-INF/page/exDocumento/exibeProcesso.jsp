@@ -115,13 +115,13 @@
         
         if ($('#TelaCheia').hasClass('btn-secondary')) {
 	 		b.classList.remove("btn-secondary");
-	 		b.setAttribute("class", "mt-3 ml-2 btn btn-primary btn-sm align-center");
+	 		b.setAttribute("class", "ml-2 btn btn-primary btn-sm align-center");
 	 		b.textContent = "Abrir Índice";
 	 		var divDocRight = document.getElementById('right-col');
 	 		divDocRight.setAttribute("class", "col-sm-12");
 		} else {
 	 		b.classList.remove("btn-primary");
-	 		b.setAttribute("class", "mt-3 ml-2 btn btn-secondary btn-sm align-center");
+	 		b.setAttribute("class", "ml-2 btn btn-secondary btn-sm align-center");
 	 		b.textContent = "Tela cheia";
 	 		var divDocRight = document.getElementById('right-col');
 	 		divDocRight.setAttribute("class", "col-sm-9");
@@ -186,7 +186,7 @@
 						<siga:link icon="application_view_list" classe="mt-3 once" title="Visualizar&nbsp;_Movimentações"
 							url="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}" atalho="${true}"
 							test="${true}" />
-						<button type="button" class="mt-3 ml-2 btn btn-secondary btn-sm align-center" id="TelaCheia" data-toggle="button" aria-pressed="false" autocomplete="off"
+						<button type="button" class="ml-2 btn btn-secondary btn-sm align-center" id="TelaCheia" data-toggle="button" aria-pressed="false" autocomplete="off"
 							accesskey="t" onclick="javascript: telaCheia(this);">
 							<u>T</u>ela Cheia
 						</button>						
@@ -214,7 +214,7 @@
 		<div class="wrapper col-sm-3 float-left" >
 			<nav id="sidebar">
 				<div class="card-sidebar card bg-light mb-3" id="documentosDossie">
-					<div class="card-header">
+					<div class="text-size-6 card-header">
 						<span class="titulo-docs">
 							<fmt:message key='documento.dossie'/>  /  <fmt:message key='usuario.lotacao'/>
 							<c:if test="${mob.doc.podeReordenar()}">													
@@ -243,7 +243,7 @@
 						</c:if>							
 					</div>
 					<div class="card-body p-1">
-						<table class="table table-hover table-striped mov tabela-documentos">
+						<table class="text-size-6 table table-hover table-striped mov tabela-documentos">
 							<tbody id="${mob.doc.podeReordenar() ? 'sortable' : ''}">
 								<c:forEach var="arqNumerado" items="${arqsNum}">
 									<tr>										
@@ -261,7 +261,17 @@
 													<c:set var="tooltipResumo" value="${tooltipResumo}${itemResumo.key}:${itemResumo.value}&#13" />
 												</c:forEach>
 											</c:if> 
-											<a title="${fn:substring(tooltipResumo,0,fn:length(tooltipResumo)-4)}" href="javascript:exibir('${arqNumerado.referenciaHtml}','${arqNumerado.referenciaPDF}','')">${arqNumerado.nomeOuDescricao}</a>
+											<a title="${fn:substring(tooltipResumo,0,fn:length(tooltipResumo)-4)}" 
+												href="javascript:exibir('${arqNumerado.referenciaHtml}','${arqNumerado.referenciaPDF}','')">
+												<c:choose>
+													<c:when test="${siga_cliente == 'GOVSP'}">
+														${arqNumerado.nomeOuDescricaoComMovimentacao}
+													</c:when>
+													<c:otherwise>
+														${arqNumerado.nomeOuDescricao}
+													</c:otherwise>
+												</c:choose>
+											</a>
 											<c:set var="tooltipResumo" value="" />
 										</td>
 										<td align="center">${arqNumerado.arquivo.lotacao.sigla}</td>

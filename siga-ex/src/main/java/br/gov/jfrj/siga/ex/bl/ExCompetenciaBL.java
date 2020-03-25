@@ -1914,10 +1914,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mob.isCancelada())
 			return false;
 
-		if (!(SigaMessages.isSigaSP() && mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO))
-					&& (!mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR))
-					&& !mov.getLotaCadastrante().equivale(lotaTitular))
-				return false;
+		if ((!mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR)) 
+				&& !mov.getLotaCadastrante().equivale(lotaTitular))
+			return false;
 		
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				mov.getIdTpMov(),

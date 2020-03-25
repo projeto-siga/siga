@@ -107,6 +107,16 @@ public class ExArquivoNumerado implements Comparable {
 		}
 		return getNome();
 	};
+		
+	public String getNomeOuDescricaoComMovimentacao() {
+		if (getArquivo() instanceof ExMovimentacao) {
+			ExMovimentacao mov = (ExMovimentacao) getArquivo();
+			if (mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA))
+				return "Ciência (" + getNomeOuDescricao() + ")";
+		}
+		return getNomeOuDescricao();
+	}
+
 
 
 	public String getReferencia() {

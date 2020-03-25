@@ -300,11 +300,11 @@ public class ExMarcadorBL {
 					mob.doc().getLotaCadastrante());
 			if (mob.getExDocumento().getSubscritor() != null
 					&& !(Boolean.valueOf(SigaBaseProperties.getString("siga.mesa.naoRevisarTemporarios")) 
-							&& mob.doc().getCadastrante() != mob.doc().getSubscritor() 
-							&& !mob.doc().isFinalizado()))
+							&& !mob.doc().getCadastrante().equals(mob.doc().getSubscritor()) 
+							&& !mob.doc().isFinalizado())) {
 				acrescentarMarca(CpMarcador.MARCADOR_REVISAR, mob.doc().getDtRegDoc(),
 						mob.getExDocumento().getSubscritor(), null);
-
+			}
 		}
 	}
 
@@ -391,7 +391,7 @@ public class ExMarcadorBL {
 					 mob.doc().getLotaCadastrante());
 			if (!mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha()
 					&& !(Boolean.valueOf(SigaBaseProperties.getString("siga.mesa.naoRevisarTemporarios"))
-						&& mob.doc().getCadastrante() != mob.doc().getSubscritor() 
+						&& !mob.doc().getCadastrante().equals(mob.doc().getSubscritor()) 
 						&& !mob.doc().isFinalizado())) {
 				acrescentarMarca(CpMarcador.MARCADOR_COMO_SUBSCRITOR, mob.doc().getDtRegDoc(), mob.getExDocumento().getSubscritor(), null);
 				ExMovimentacao m = mob.doc().getMovSolicitacaoDeAssinatura();

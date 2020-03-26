@@ -104,6 +104,9 @@ public class WfBL extends CpBL {
 			}
 		}
 
+		if (variable.containsKey("doc_document"))
+			principal = (String) variable.get("doc_document");
+
 		WfProcedimento pi = new WfProcedimento(pd, variable);
 		pi.setTipoDePrincipal(WfTipoDePrincipal.DOC);
 		pi.setPrincipal(principal);

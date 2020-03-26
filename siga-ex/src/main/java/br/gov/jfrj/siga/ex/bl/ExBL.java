@@ -1289,6 +1289,7 @@ public class ExBL extends CpBL {
 			}
 
 			if (!fPreviamenteAssinado && !doc.isPendenteDeAssinatura()) {
+				ContextoPersistencia.flushTransaction();
 				processarComandosEmTag(doc, "assinatura");
 			}
 
@@ -1636,6 +1637,7 @@ public class ExBL extends CpBL {
 
 		try {
 			if (!fPreviamenteAssinado && !doc.isPendenteDeAssinatura()) {
+				ContextoPersistencia.flushTransaction();
 				processarComandosEmTag(doc, "assinatura");
 			}
 		} catch (final Exception e) {
@@ -1801,8 +1803,10 @@ public class ExBL extends CpBL {
 						dtMov, cadastrante, cadastrante, mov);
 			}
 
-			if (!fPreviamenteAssinado && doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha())
+			if (!fPreviamenteAssinado && doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha()) {
+				ContextoPersistencia.flushTransaction();
 				s = processarComandosEmTag(doc, "assinatura");
+			}
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new Exception("Erro ao registrar assinatura.", e);
@@ -3148,7 +3152,7 @@ public class ExBL extends CpBL {
 						values);
 			}
 		}
-		atualizarWorkFlow(doc);
+		// atualizarWorkFlow(doc);
 	}
 
 	public static String descricaoSePuderAcessar(ExDocumento doc,
@@ -4469,8 +4473,10 @@ public class ExBL extends CpBL {
 						subscritor, titular, mov);
 			}
 
-			if (!fPreviamenteAssinado && !doc.isPendenteDeAssinatura())
+			if (!fPreviamenteAssinado && !doc.isPendenteDeAssinatura()) {
+				ContextoPersistencia.flushTransaction();
 				s = processarComandosEmTag(doc, "assinatura");
+			}
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new Exception("Erro ao registrar assinatura.", e);
@@ -5596,8 +5602,10 @@ public class ExBL extends CpBL {
 
 	public void atualizarWorkFlow(ExDocumento doc) throws AplicacaoException {
 		try {
-			Service.getWfService().atualizarWorkflowsDeDocumento(
-					doc.getCodigo());
+			if (doc.getIdDoc() != null) {
+				Service.getWfService().atualizarWorkflowsDeDocumento(
+						doc.getCodigo());
+			}
 		} catch (Exception ex) {
 			throw new AplicacaoException(
 					"Erro ao tentar atualizar estado do workflow", 0, ex);
@@ -5606,8 +5614,10 @@ public class ExBL extends CpBL {
 
 	public void atualizarWorkFlow(ExMovimentacao mov) throws AplicacaoException {
 		try {
-			Service.getWfService().atualizarWorkflowsDeDocumento(
-					mov.getExMobil().getSigla());
+			if (mov.mob() != null && mov.getIdMov() != null && mov.mob().getIdMobil() != null && mov.mob().doc() != null && mov.mob().doc().getIdDoc() != null) {
+				Service.getWfService().atualizarWorkflowsDeDocumento(
+						mov.getExMobil().getSigla());
+			}
 		} catch (Exception e) {
 			throw new AplicacaoException(
 					"Erro ao tentar atualizar estado do workflow", 0, e);

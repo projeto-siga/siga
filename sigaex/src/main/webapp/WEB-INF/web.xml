@@ -86,7 +86,6 @@
 
 	<filter-mapping>
 		<filter-name>ExFilter</filter-name>
-		<url-pattern>/servicos/*</url-pattern>
 		<url-pattern>/apis/*</url-pattern>
 	</filter-mapping>
 

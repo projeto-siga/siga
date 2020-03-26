@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,6 +43,7 @@ import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import freemarker.template.TemplateExceptionHandler;
 
 public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 		TemplateLoader {
@@ -62,6 +62,8 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 		cfg.setTagSyntax(Configuration.SQUARE_BRACKET_TAG_SYNTAX);
 		cfg.setNumberFormat("0.######");
 		cfg.setLocalizedLookup(false);
+		cfg.setLogTemplateExceptions(false);
+		cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
 	}
 
 	public String processarModelo(CpOrgaoUsuario ou, Map<String, Object> attrs,
@@ -116,8 +118,9 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 			if (e.getCauseException() != null
 					&& e.getCauseException() instanceof AplicacaoException)
 				throw (AplicacaoException) e.getCauseException();
-			return ("Erro executando template FreeMarker\n\n" + e.getMessage() + "\n" + e.getFTLInstructionStack())
-					.replace("\n", "<br/>").replace("\r", "");
+			throw new RuntimeException("Erro executanto template Freemarker", e);
+//			return ("Erro executando template FreeMarker\n\n" + e.getMessage() + "\n" + e.getFTLInstructionStack())
+//					.replace("\n", "<br/>").replace("\r", "");
 		} catch (IOException e) {
 			return "Erro executando template FreeMarker\n\n" + e.getMessage();
 		}

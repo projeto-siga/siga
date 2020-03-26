@@ -383,7 +383,10 @@ public class ExMarcadorBL {
 	}
 
 	public void acrescentarMarcadoresPendenciaDeAssinatura() {
-		if (mob.doc().isPendenteDeAssinatura() && !mob.doc().isCancelado()) {
+		if (!(SigaMessages.isSigaSP() && !mob.doc().isFinalizado()) 
+		                && mob.doc().isPendenteDeAssinatura() && !mob.doc().isCancelado()) {
+
+
 	/*		Não estava setando a amrca pendente de assinatura corretamente na susbituição.
 	 *      DpPessoa resp = ultMovNaoCanc != null ? ultMovNaoCanc.getResp() : mob.doc().getCadastrante();
 			DpLotacao lotaResp  = ultMovNaoCanc != null ? ultMovNaoCanc.getLotaResp() : mob.doc().getLotaCadastrante(); */

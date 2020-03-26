@@ -130,18 +130,9 @@
 							</div>
 						</div>
 					</div>
-					<div class="row">
-						<div class="col-sm-2">
 							<div class="form-group">
 								<label>Tipo do Modelo</label>
 								<siga:escolha id="tipoModelo" var="tipoModelo">
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-sm-12">
-							<div class="form-group">
-								
 									<siga:opcao id="template/freemarker" texto="Freemarker">
 										<textarea id="conteudo" style="width: 100%;" cols="1" rows="1"
 											name="conteudo" class="form-control"><c:out value="${conteudo}"
@@ -149,7 +140,7 @@
 										<p align="right">Ctrl-I: Indentar, Crtl-S: Salvar</p>
 									</siga:opcao>
 									<siga:opcao id="template-file/jsp" texto="JSP">
-									&nbsp;&nbsp;&nbsp;&nbsp;Nome do arquivo:
+									Nome do arquivo:
 									<input type="text" name="arquivo" size="80" value="${arquivo}" />
 									</siga:opcao>
 								</siga:escolha>

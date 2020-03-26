@@ -14,7 +14,7 @@
 		<div class="card mb-3 border-info">
 			<div class="card-header bg-info text-white">
 				<a href="${linkTo[WfAppController].procedimento(piId)}"
-					style="color: white; text-decoration: underline;">${t.nomeDoProcedimento}</a>
+					style="color: white; text-decoration: underline;">${t.sigla}</a> - ${t.nomeDoProcedimento}
 				- ${t.nomeDaTarefa}
 			</div>
 			<div class="card-body">

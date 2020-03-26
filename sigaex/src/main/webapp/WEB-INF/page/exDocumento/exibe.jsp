@@ -1096,7 +1096,7 @@
         }).fail(function(jqXHR, textStatus, errorThrown){
 			$("#gc").html(errorThrown);
         }).done(function(data, textStatus, jqXHR ){
-			$("#gc").html(response);
+			$("#gc").html(data);
         });
 	</script>
 </c:if>

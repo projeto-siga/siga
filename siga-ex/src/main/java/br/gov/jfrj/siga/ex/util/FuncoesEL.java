@@ -671,15 +671,6 @@ public class FuncoesEL {
 	public static Boolean criarWorkflow(String nomeProcesso, ExDocumento d,
 			DpPessoa cadastrante, DpPessoa titular, DpLotacao lotaCadastrante,
 			DpLotacao lotaTitular) throws Exception {
-
-		// Nato: Nesse caso, o titular ï¿½ considerado o subscritor do
-		// documento.
-		// Nï¿½o sei se isso ï¿½ 100% correto, mas acho que ï¿½ uma abordagem
-		// bastante
-		// razoï¿½vel.
-		// Markenson: Conversando com o Renato, alteramos o titular para o
-		// titular do sistema
-		// e nï¿½o do documento.
 		Ex.getInstance()
 				.getBL()
 				.criarWorkflow(cadastrante,

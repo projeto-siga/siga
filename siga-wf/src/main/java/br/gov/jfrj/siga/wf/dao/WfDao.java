@@ -75,8 +75,13 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 		CriteriaQuery<WfDefinicaoDeProcedimento> q = cb().createQuery(WfDefinicaoDeProcedimento.class);
 		Root<WfDefinicaoDeProcedimento> c = q.from(WfDefinicaoDeProcedimento.class);
 		q.select(c);
-		q.where(cb().equal(cb().parameter(String.class, "nome"), nome));
-		return em().createQuery(q).getSingleResult();
+		q.where(cb().equal(c.get("nome"), nome));
+		try {
+			return em().createQuery(q).getSingleResult();
+		} catch (Exception ex) {
+			throw new RuntimeException("Não foi possível localizar definição de procedimento com nome '" + nome + "'",
+					ex);
+		}
 	}
 
 	public SortedSet<WfTarefa> consultarTarefasDeLotacao(DpLotacao lotaTitular) {
@@ -127,6 +132,7 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 		List<Item> list = sinc.getEncaixe();
 		sinc.ordenarOperacoes();
 
+		gravar(pi);
 		for (Item i : list) {
 			switch (i.getOperacao()) {
 			case alterar:

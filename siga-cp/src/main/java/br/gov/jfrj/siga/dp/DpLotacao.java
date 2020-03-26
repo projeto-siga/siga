@@ -50,6 +50,7 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Selecionavel;
+import br.gov.jfrj.siga.parser.SiglaParser;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
@@ -441,5 +442,9 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	public String toString() {
 		return getSiglaCompleta();
 	}
-
+	
+	@Override
+	public String getSiglaDePessoaEOuLotacao() {
+		return SiglaParser.makeSigla(null, this);
+	}
 }

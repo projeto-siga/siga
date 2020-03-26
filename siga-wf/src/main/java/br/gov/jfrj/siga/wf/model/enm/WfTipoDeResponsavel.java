@@ -3,21 +3,37 @@ package br.gov.jfrj.siga.wf.model.enm;
 import com.crivano.jflow.model.ResponsibleKind;
 
 public enum WfTipoDeResponsavel implements ResponsibleKind {
-	CADASTRANTE("Cadastrante"),
+	PRINCIPAL_CADASTRANTE("Principal: Cadastrante"),
 	//
-	LOTA_CADASTRANTE("Lotação do Cadastrante"),
+	PRINCIPAL_LOTA_CADASTRANTE("Principal: Lotação do Cadastrante"),
 	//
-	TITULAR("Titular"),
+	PRINCIPAL_TITULAR("Principal: Titular"),
 	//
-	LOTA_TITULAR("Lotação do Titular"),
+	PRINCIPAL_LOTA_TITULAR("Principal: Lotação do Titular"),
 	//
-	SUBSCRITOR("Subscritor"),
+	PRINCIPAL_SUBSCRITOR("Principal: Subscritor"),
 	//
-	LOTA_SUBSCRITOR("Lotação do Subscritor"),
+	PRINCIPAL_LOTA_SUBSCRITOR("Principal: Lotação do Subscritor"),
 	//
-	DESTINATARIO("Destinatário"),
+	PRINCIPAL_DESTINATARIO("Principal: Destinatário"),
 	//
-	LOTA_DESTINATARIO("Lotação do Destinatário"),
+	PRINCIPAL_LOTA_DESTINATARIO("Principal: Lotação do Destinatário"),
+	//
+	PRINCIPAL_GESTOR("Principal: Gestor"),
+	//
+	PRINCIPAL_LOTA_GESTOR("Principal: Lotação do Gestor"),
+	//
+	PRINCIPAL_FISCAL_TECNICO("Principal: Fiscal Técnico"),
+	//
+	PRINCIPAL_LOTA_FISCAL_TECNICO("Principal: Lotação do Fiscal Técnico"),
+	//
+	PRINCIPAL_FISCAL_ADMINISTRATIVO("Principal: Fiscal Administrativo"),
+	//
+	PRINCIPAL_LOTA_FISCAL_ADMINISTRATIVO("Principal: Lotação do Fiscal Administrativo"),
+	//
+	PRINCIPAL_INTERESSADO("Principal: Interessado"),
+	//
+	PRINCIPAL_LOTA_INTERESSADO("Principal: Lotação do Interessado"),
 	//
 	RESPONSAVEL("Cadastrado"),
 	//

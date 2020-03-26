@@ -26,6 +26,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 
 import javax.annotation.Resource;
@@ -53,6 +54,7 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
+import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
@@ -65,6 +67,7 @@ import br.gov.jfrj.siga.hibernate.ExStarter;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
+import br.gov.jfrj.siga.parser.SiglaParser;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.ExMobilSelecao;
 
@@ -687,6 +690,74 @@ public class ExServiceImpl implements ExService {
 				ctx.rollback(ex);
 				throw ex;
 			}
+		}
+	}
+
+	public String cadastrante(String codigoDocumentoVia) throws Exception {
+		try (SoapContext ctx = new SoapContext(false)) {
+			ExMobil mob = buscarMobil(codigoDocumentoVia);
+			return SiglaParser.makeSigla(mob.doc().getCadastrante(), mob.doc().getLotaCadastrante());
+		}
+	}
+
+	public String titular(String codigoDocumentoVia) throws Exception {
+		try (SoapContext ctx = new SoapContext(false)) {
+			ExMobil mob = buscarMobil(codigoDocumentoVia);
+			return SiglaParser.makeSigla(mob.doc().getTitular(), mob.doc().getLotaTitular());
+		}
+	}
+
+	public String subscritor(String codigoDocumentoVia) throws Exception {
+		try (SoapContext ctx = new SoapContext(false)) {
+			ExMobil mob = buscarMobil(codigoDocumentoVia);
+			return SiglaParser.makeSigla(mob.doc().getSubscritor(), mob.doc().getLotaSubscritor());
+		}
+	}
+
+	public String destinatario(String codigoDocumentoVia) throws Exception {
+		try (SoapContext ctx = new SoapContext(false)) {
+			ExMobil mob = buscarMobil(codigoDocumentoVia);
+			return SiglaParser.makeSigla(mob.doc().getDestinatario(), mob.doc().getLotaDestinatario());
+		}
+	}
+
+	public String gestor(String codigoDocumentoVia) throws Exception {
+		return obterPrimeiroResponsavelPorIdPapel(codigoDocumentoVia, ExPapel.PAPEL_GESTOR);
+	}
+
+	public String fiscalTecnico(String codigoDocumentoVia) throws Exception {
+		return obterPrimeiroResponsavelPorIdPapel(codigoDocumentoVia, ExPapel.PAPEL_FISCAL_TECNICO);
+	}
+
+	public String fiscalAdministrativo(String codigoDocumentoVia) throws Exception {
+		return obterPrimeiroResponsavelPorIdPapel(codigoDocumentoVia, ExPapel.PAPEL_FISCAL_ADMINISTRATIVO);
+	}
+
+	public String interessado(String codigoDocumentoVia) throws Exception {
+		return obterPrimeiroResponsavelPorIdPapel(codigoDocumentoVia, ExPapel.PAPEL_INTERESSADO);
+	}
+
+	public String autorizador(String codigoDocumentoVia) throws Exception {
+		return obterPrimeiroResponsavelPorIdPapel(codigoDocumentoVia, ExPapel.PAPEL_AUTORIZADOR);
+	}
+
+	public String revisor(String codigoDocumentoVia) throws Exception {
+		return obterPrimeiroResponsavelPorIdPapel(codigoDocumentoVia, ExPapel.PAPEL_REVISOR);
+	}
+
+	public String liquidante(String codigoDocumentoVia) throws Exception {
+		return obterPrimeiroResponsavelPorIdPapel(codigoDocumentoVia, ExPapel.PAPEL_LIQUIDANTE);
+	}
+
+	private String obterPrimeiroResponsavelPorIdPapel(String codigoDocumentoVia, long papel)
+			throws Exception, IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException {
+		try (SoapContext ctx = new SoapContext(false)) {
+			ExMobil mob = buscarMobil(codigoDocumentoVia);
+			List<DpResponsavel> l = mob.doc().getResponsaveisPorPapel(dao().consultar(papel, ExPapel.class, false));
+			if (l == null || l.size() == 0)
+				return null;
+			DpResponsavel r = l.get(0);
+			return r.getSiglaDePessoaEOuLotacao();
 		}
 	}
 

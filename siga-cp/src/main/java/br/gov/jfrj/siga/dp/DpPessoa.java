@@ -56,6 +56,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Selecionavel;
+import br.gov.jfrj.siga.parser.SiglaParser;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
@@ -668,6 +669,11 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 
 	public void setIdSitConfiguracaoConfManual(Long idSitConfiguracaoConfManual) {
 		this.idSitConfiguracaoConfManual = idSitConfiguracaoConfManual;
+	}
+
+	@Override
+	public String getSiglaDePessoaEOuLotacao() {
+		return SiglaParser.makeSigla(this, this.getLotacao());
 	}
 
 }

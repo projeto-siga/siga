@@ -1289,7 +1289,6 @@ public class ExBL extends CpBL {
 			}
 
 			if (!fPreviamenteAssinado && !doc.isPendenteDeAssinatura()) {
-				ContextoPersistencia.flushTransaction();
 				processarComandosEmTag(doc, "assinatura");
 			}
 
@@ -1637,7 +1636,6 @@ public class ExBL extends CpBL {
 
 		try {
 			if (!fPreviamenteAssinado && !doc.isPendenteDeAssinatura()) {
-				ContextoPersistencia.flushTransaction();
 				processarComandosEmTag(doc, "assinatura");
 			}
 		} catch (final Exception e) {
@@ -1804,7 +1802,6 @@ public class ExBL extends CpBL {
 			}
 
 			if (!fPreviamenteAssinado && doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha()) {
-				ContextoPersistencia.flushTransaction();
 				s = processarComandosEmTag(doc, "assinatura");
 			}
 		} catch (final Exception e) {
@@ -3144,6 +3141,8 @@ public class ExBL extends CpBL {
 				}
 			}
 			{
+				// Nato: Esse flush é necessário porque o workflow precisará dos dados atualizados do documento para prosseguir
+				ContextoPersistencia.flushTransaction();
 				client.criarInstanciaDeProcesso(
 						nomeProcesso,
 						SiglaParser.makeSigla(cadastrante,
@@ -4474,7 +4473,6 @@ public class ExBL extends CpBL {
 			}
 
 			if (!fPreviamenteAssinado && !doc.isPendenteDeAssinatura()) {
-				ContextoPersistencia.flushTransaction();
 				s = processarComandosEmTag(doc, "assinatura");
 			}
 		} catch (final Exception e) {

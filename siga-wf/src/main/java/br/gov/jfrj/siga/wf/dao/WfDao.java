@@ -30,12 +30,12 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.enterprise.inject.Specializes;
-import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import org.jboss.logging.Logger;
 
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -200,6 +200,16 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 		List<WfResponsavel> result = query.getResultList();
 		if (result == null || result.size() == 0)
 			return null;
+		return result;
+	}
+
+	public WfResponsavel consultarResponsavelPorOrgaoEDefinicaoDeResponsavel(CpOrgaoUsuario ou,
+			WfDefinicaoDeResponsavel dr) {
+		String sql = "from WfResponsavel o where o.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu and o.definicaoDeResponsavel.hisIdIni = :idIni and o.hisDtFim is null";
+		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
+		query.setParameter("idOrgaoUsu", ou.getIdOrgaoUsu());
+		query.setParameter("idIni", dr.getHisIdIni());
+		WfResponsavel result = (WfResponsavel) query.getSingleResult();
 		return result;
 	}
 }

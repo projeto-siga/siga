@@ -18,12 +18,10 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.service;
 
-import br.gov.jfrj.siga.Remote;
-
 import javax.jws.WebMethod;
-import java.util.Date;
-
 import javax.jws.WebService;
+
+import br.gov.jfrj.siga.Remote;
 
 @WebService(targetNamespace = "http://impl.service.ex.siga.jfrj.gov.br/")
 public interface ExService extends Remote {
@@ -80,7 +78,40 @@ public interface ExService extends Remote {
 	public Boolean exigirAnexo(String codigoDocumentoVia, String siglaCadastrante,
 			String descricaoDoAnexo) throws Exception;
 	
+    @WebMethod
 	public String criarDocumento(String cadastranteStr, String subscritorStr, String destinatarioStr, String destinatarioCampoExtraStr, String descricaoTipoDeDocumento, String nomeForma ,String nomeModelo, String classificacaoStr, 
 			String descricaoStr, Boolean eletronico, String nomeNivelDeAcesso, String conteudo, String siglaMobilPai, Boolean finalizar) throws Exception;
+	
+    @WebMethod
+	public String cadastrante(String codigoDocumentoVia) throws Exception;
 
+    @WebMethod
+	public String titular(String codigoDocumentoVia) throws Exception;
+
+    @WebMethod
+	public String subscritor(String codigoDocumentoVia) throws Exception;
+
+    @WebMethod
+	public String destinatario(String codigoDocumentoVia) throws Exception;
+
+    @WebMethod
+	public String gestor(String codigoDocumentoVia) throws Exception;
+
+    @WebMethod
+	public String fiscalTecnico(String codigoDocumentoVia) throws Exception;
+
+    @WebMethod
+	public String fiscalAdministrativo(String codigoDocumentoVia) throws Exception;
+
+    @WebMethod
+	public String interessado(String codigoDocumentoVia) throws Exception;
+
+    @WebMethod
+	public String autorizador(String codigoDocumentoVia) throws Exception;
+
+    @WebMethod
+	public String revisor(String codigoDocumentoVia) throws Exception;
+
+    @WebMethod
+	public String liquidante(String codigoDocumentoVia) throws Exception;
 }

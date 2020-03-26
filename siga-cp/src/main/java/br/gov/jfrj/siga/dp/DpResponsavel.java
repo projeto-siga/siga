@@ -25,4 +25,6 @@ public abstract class DpResponsavel extends Objeto {
 	abstract public String getSigla();
 
 	abstract public String getSiglaCompleta();
+
+	abstract public String getSiglaDePessoaEOuLotacao();
 }

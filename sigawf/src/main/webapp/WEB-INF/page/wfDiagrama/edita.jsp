@@ -144,17 +144,38 @@
 									title="Preenchimento obrigatório"
 									class="label-clue fa fa-asterisk"></i><select
 									ng-model="tarefaItem.tipoResponsavel" ng-required="true"
-									class="form-control"><option value="CADASTRANTE">Cadastrante</option>
-										<option value="LOTA_CADASTRANTE">Lotação do
-											Cadastrante</option>
-										<option value="TITULAR">Titular</option>
-										<option value="LOTA_TITULAR">Lotação do Titular</option>
-										<option value="SUBSCRITOR">Subscritor</option>
-										<option value="LOTA_SUBSCRITOR">Lotação do Subscritor</option>
-										<option value="DESTINATARIO">Destinatário</option>
-										<option value="LOTA_DESTINATARIO">Lotação do
+									class="form-control"><option value="CADASTRANTE">Cadastrante do Principal</option>
+										<option value="PRINCIPAL_LOTA_CADASTRANTE">Lotação do
+											Cadastrante do Principal</option>
+										<option value="PRINCIPAL_TITULAR">Principal: Titular</option>
+										<option value="PRINCIPAL_LOTA_TITULAR">Principal: Lotação do Titular</option>
+										<option value="PRINCIPAL_SUBSCRITOR">Principal: Subscritor</option>
+										<option value="PRINCIPAL_LOTA_SUBSCRITOR">Principal: Lotação do Subscritor</option>
+										<option value="PRINCIPAL_DESTINATARIO">Principal: Destinatário</option>
+										<option value="PRINCIPAL_LOTA_DESTINATARIO">Principal: Lotação do
 											Destinatário</option> 
-										<option value="RESPONSAVEL">Cadastrado</option>
+										<option value="PRINCIPAL_GESTOR">Principal: Gestor</option>
+										<option value="PRINCIPAL_LOTA_GESTOR">Principal: Lotação do
+											Gestor</option> 
+										<option value="PRINCIPAL_FISCAL_TECNICO">Principal: Fiscal Técnico</option>
+										<option value="PRINCIPAL_LOTA_FISCAL_TECNICO">Principal: Lotação do
+											Fiscal Técnico</option> 
+										<option value="PRINCIPAL_FISCAL_ADMINISTRATIVO">Principal: Fiscal Administrativo</option>
+										<option value="PRINCIPAL_LOTA_FISCAL_ADMINISTRATIVO">Principal: Lotação do
+											Fiscal Administrativo</option> 
+										<option value="PRINCIPAL_INTERESSADO">Principal: Interessado</option>
+										<option value="PRINCIPAL_LOTA_INTERESSADO">Principal: Lotação do
+											Interessado</option> 
+										<option value="PRINCIPAL_AUTORIZADOR">Principal: Interessado</option>
+										<option value="PRINCIPAL_LOTA_AUTORIZADOR">Principal: Lotação do
+											Autorizador</option> 
+										<option value="PRINCIPAL_REVISOR">Principal: Interessado</option>
+										<option value="PRINCIPAL_LOTA_REVISOR">Principal: Lotação do
+											Revisor</option> 
+										<option value="PRINCIPAL_LIQUIDANTE">Principal: Interessado</option>
+										<option value="PRINCIPAL_LOTA_LIQUIDANTE">Principal: Lotação do
+											Liquidante</option> 
+										<option value="RESPONSAVEL">Tabelado</option>
 										<option value="LOTACAO">Lotação</option>
 										<option value="PESSOA">Pessoa</option></select>
 								</label> <i></i> </section>

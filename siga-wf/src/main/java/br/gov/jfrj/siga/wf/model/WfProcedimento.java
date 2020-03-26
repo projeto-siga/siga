@@ -203,8 +203,8 @@ public class WfProcedimento extends Objeto
 		if (getAno() != null)
 			return;
 		setAno(WfDao.getInstance().dt().getYear() + 1900);
-		Query qry = em()
-				.createQuery("select max(numero) from WfProcedimento pi where ano = :ano and orgaoUsuario.idOrgaoUsu = :ouid");
+		Query qry = em().createQuery(
+				"select max(numero) from WfProcedimento pi where ano = :ano and orgaoUsuario.idOrgaoUsu = :ouid");
 		qry.setParameter("ano", getAno());
 		qry.setParameter("ouid", getOrgaoUsuario().getId());
 		Integer i = (Integer) qry.getSingleResult();
@@ -218,6 +218,26 @@ public class WfProcedimento extends Objeto
 	@Override
 	public WfResp calcResponsible(WfDefinicaoDeTarefa tarefa) {
 		switch (tarefa.getTipoDeResponsavel()) {
+		case PRINCIPAL_CADASTRANTE:
+		case PRINCIPAL_LOTA_CADASTRANTE:
+		case PRINCIPAL_TITULAR:
+		case PRINCIPAL_LOTA_TITULAR:
+		case PRINCIPAL_SUBSCRITOR:
+		case PRINCIPAL_LOTA_SUBSCRITOR:
+		case PRINCIPAL_DESTINATARIO:
+		case PRINCIPAL_LOTA_DESTINATARIO:
+		case PRINCIPAL_GESTOR:
+		case PRINCIPAL_LOTA_GESTOR:
+		case PRINCIPAL_FISCAL_TECNICO:
+		case PRINCIPAL_LOTA_FISCAL_TECNICO:
+		case PRINCIPAL_FISCAL_ADMINISTRATIVO:
+		case PRINCIPAL_LOTA_FISCAL_ADMINISTRATIVO:
+		case PRINCIPAL_INTERESSADO:
+		case PRINCIPAL_LOTA_INTERESSADO:
+		case RESPONSAVEL:
+			WfResponsavel r = WfDao.getInstance().consultarResponsavelPorOrgaoEDefinicaoDeResponsavel(getOrgaoUsuario(),
+					tarefa.getDefinicaoDeResponsavel());
+			return new WfResp(r.getPessoa(), r.getLotacao());
 		case PESSOA:
 		case LOTACAO:
 			return new WfResp(tarefa.getPessoa(), tarefa.getLotacao());

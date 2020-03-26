@@ -777,8 +777,11 @@ var process = {
 		
 	},
 	finalize : function() {
-		progressDialog.modal('dispose');
 		gAssinando = false;
+		try {
+			progressDialog.modal('dispose');
+		} catch (e) {
+		}
 	},
 	nextStep : function() {
 		if (typeof this.steps[this.index] == 'string')

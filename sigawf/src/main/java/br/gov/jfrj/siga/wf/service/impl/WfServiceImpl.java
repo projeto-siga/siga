@@ -18,21 +18,28 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.service.impl;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.jws.WebService;
+import javax.persistence.EntityManager;
 
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.Service;
+import br.gov.jfrj.siga.base.log.RequestLoggerFilter;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.service.ExService;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.bl.WfBL;
 import br.gov.jfrj.siga.wf.dao.WfDao;
+import br.gov.jfrj.siga.wf.dao.WfStarter;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
 import br.gov.jfrj.siga.wf.service.WfService;
@@ -51,6 +58,51 @@ import br.gov.jfrj.siga.wf.util.WfHandler;
 public class WfServiceImpl implements WfService {
 	private final static Logger log = Logger.getLogger(WfService.class);
 
+	private static class SoapContext implements Closeable {
+		EntityManager em;
+		boolean transacional;
+		long inicio = System.currentTimeMillis();
+
+		public SoapContext(boolean transacional) {
+			this.transacional = transacional;
+			em = WfStarter.emf.createEntityManager();
+			ContextoPersistencia.setEntityManager(em);
+
+			ModeloDao.freeInstance();
+			WfDao.getInstance();
+			try {
+				Wf.getInstance().getConf().limparCacheSeNecessario();
+			} catch (Exception e1) {
+				throw new RuntimeException("Não foi possível atualizar o cache de configurações", e1);
+			}
+			if (this.transacional)
+				em.getTransaction().begin();
+		}
+
+		public void rollback(Exception e) {
+			if (em.getTransaction().isActive())
+				em.getTransaction().rollback();
+			if (!RequestLoggerFilter.isAplicacaoException(e)) {
+				RequestLoggerFilter.logException(null, inicio, e);
+			}
+		}
+
+		@Override
+		public void close() throws IOException {
+			try {
+				if (this.transacional)
+					em.getTransaction().commit();
+			} catch (Exception e) {
+				if (em.getTransaction().isActive())
+					em.getTransaction().rollback();
+				throw new RuntimeException(e);
+			} finally {
+				em.close();
+				ContextoPersistencia.setEntityManager(null);
+			}
+		}
+	}
+
 	/**
 	 * Atualiza o workflow de um documento. Este método pesquisa todas as variáveis
 	 * que começam com "doc_" em todas as instâncias de tarefas. Quando encontra a
@@ -58,20 +110,29 @@ public class WfServiceImpl implements WfService {
 	 * executa a ação da tarefa.
 	 */
 	public Boolean atualizarWorkflowsDeDocumento(String siglaDoc) throws Exception {
-		List<WfProcedimento> pis = WfDao.getInstance().consultarProcedimentosAtivosPorEvento(siglaDoc);
-		boolean f = false;
-		ExService exSvc = Service.getExService();
-		Boolean semEfeito = exSvc.isSemEfeito(siglaDoc);
-		for (WfProcedimento pi : pis) {
-			if (semEfeito)
-				Wf.getInstance().getBL().encerrarProcessInstance(pi.getId(),
-						WfDao.getInstance().consultarDataEHoraDoServidor());
-			else {
-				new WfEngine(WfDao.getInstance(), new WfHandler(null, null, null)).resume(siglaDoc, null, null);
+		try (SoapContext ctx = new SoapContext(true)) {
+			try {
+				List<WfProcedimento> pis = WfDao.getInstance().consultarProcedimentosAtivosPorEvento(siglaDoc);
+				boolean f = false;
+				ExService exSvc = Service.getExService();
+				Boolean semEfeito = exSvc.isSemEfeito(siglaDoc);
+				if (semEfeito == null)
+					return false;
+				for (WfProcedimento pi : pis) {
+					if (semEfeito)
+						Wf.getInstance().getBL().encerrarProcessInstance(pi.getId(),
+								WfDao.getInstance().consultarDataEHoraDoServidor());
+					else {
+						new WfEngine(WfDao.getInstance(), new WfHandler(null, null, null)).resume(siglaDoc, null, null);
+					}
+					f = true;
+				}
+				return f;
+			} catch (Exception ex) {
+				ctx.rollback(ex);
+				throw ex;
 			}
-			f = true;
 		}
-		return f;
 	}
 
 	/**
@@ -79,24 +140,33 @@ public class WfServiceImpl implements WfService {
 	 */
 	public Boolean criarInstanciaDeProcesso(String nomeProcedimento, String siglaCadastrante, String siglaTitular,
 			ArrayList<String> keys, ArrayList<String> values) throws Exception {
+		try (SoapContext ctx = new SoapContext(true)) {
+			try {
 
-		if (nomeProcedimento == null)
-			throw new RuntimeException("Nome do procedimento precisa ser informado.");
-		WfDefinicaoDeProcedimento pd = WfDao.getInstance().consultarWfDefinicaoDeProcedimentoPorNome(nomeProcedimento);
-		if (pd == null)
-			throw new RuntimeException("Não foi encontrado um procedimento com o nome '" + nomeProcedimento + "'");
-		PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaCadastrante);
-		PessoaLotacaoParser titularParser = new PessoaLotacaoParser(siglaTitular);
+				if (nomeProcedimento == null)
+					throw new RuntimeException("Nome do procedimento precisa ser informado.");
+				WfDefinicaoDeProcedimento pd = WfDao.getInstance()
+						.consultarWfDefinicaoDeProcedimentoPorNome(nomeProcedimento);
+				if (pd == null)
+					throw new RuntimeException(
+							"Não foi encontrado um procedimento com o nome '" + nomeProcedimento + "'");
+				PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaCadastrante);
+				PessoaLotacaoParser titularParser = new PessoaLotacaoParser(siglaTitular);
 
-		CpIdentidade identidade = null;
-		List<CpIdentidade> l = WfDao.getInstance().consultaIdentidades(cadastranteParser.getPessoa());
-		if (l.size() > 0)
-			identidade = l.get(0);
-		WfProcedimento pi = Wf.getInstance().getBL().createProcessInstance(pd.getId(), titularParser.getPessoa(),
-				titularParser.getLotacao(), identidade, null, keys, values, false);
+				CpIdentidade identidade = null;
+				List<CpIdentidade> l = WfDao.getInstance().consultaIdentidades(cadastranteParser.getPessoa());
+				if (l.size() > 0)
+					identidade = l.get(0);
+				WfProcedimento pi = Wf.getInstance().getBL().createProcessInstance(pd.getId(),
+						titularParser.getPessoa(), titularParser.getLotacao(), identidade, null, keys, values, false);
 
-		WfBL.transferirDocumentosVinculados(pi, siglaTitular);
-		return true;
+				WfBL.transferirDocumentosVinculados(pi, siglaTitular);
+				return true;
+			} catch (Exception ex) {
+				ctx.rollback(ex);
+				throw ex;
+			}
+		}
 	}
 
 	private Object consultaIdentidades(DpPessoa pessoa) {

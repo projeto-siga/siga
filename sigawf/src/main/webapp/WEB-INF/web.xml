@@ -53,15 +53,6 @@
 	</filter-mapping>
 
 	<filter>
-		<filter-name>WfFilter</filter-name>
-		<filter-class>br.gov.jfrj.siga.wf.dao.WfThreadFilter</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>WfFilter</filter-name>
-		<url-pattern>/servicos/*</url-pattern>
-	</filter-mapping>
-
-	<filter>
 		<filter-name>vraptor</filter-name>
 		<filter-class>br.com.caelum.vraptor.VRaptor</filter-class>
 	</filter>

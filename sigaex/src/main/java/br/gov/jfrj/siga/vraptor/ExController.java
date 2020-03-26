@@ -74,7 +74,6 @@ public class ExController extends SigaController {
 		super(request, result, dao, so, em);
 		this.response = response;
 		this.context = context;
-		result.on(Exception.class).forwardTo("WEB-INF/page/erroGeral.jsp");
 	}
 
 	protected void verificaNivelAcesso(ExMobil mob) {

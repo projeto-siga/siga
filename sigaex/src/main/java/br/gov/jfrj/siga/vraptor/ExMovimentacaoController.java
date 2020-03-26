@@ -83,7 +83,6 @@ import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 import br.gov.jfrj.siga.vraptor.builder.ExMovimentacaoBuilder;
 
@@ -2614,8 +2613,7 @@ public class ExMovimentacaoController extends ExController {
 	@Post("/app/expediente/mov/assinar_gravar")
 	public void aAssinarGravar(final String sigla, final Boolean copia,
 			final String atributoAssinavelDataHora, String assinaturaB64,
-			final String certificadoB64, final Boolean juntar, final Boolean tramitar) throws AplicacaoException,
-			ServletException {
+			final String certificadoB64, final Boolean juntar, final Boolean tramitar) throws Exception {
 		try {
 
 			final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -2666,7 +2664,6 @@ public class ExMovimentacaoController extends ExController {
 
 		} catch (final Exception e) {
 			httpError(e);
-			return;
 		}
 
 		httpOK();
@@ -2693,7 +2690,6 @@ public class ExMovimentacaoController extends ExController {
 							mov.getTitular(), copia, juntar, tramitar);
 		} catch (final Exception e) {
 			httpError(e);
-			return;
 		}
 
 		result.use(Results.page()).forwardTo("/WEB-INF/page/ok.jsp");
@@ -2730,7 +2726,6 @@ public class ExMovimentacaoController extends ExController {
 						tpMovAssinatura);
 		} catch (final Exception e) {
 			httpError(e);
-			return;
 		}
 
 		result.use(Results.page()).forwardTo("/WEB-INF/page/ok.jsp");
@@ -4267,7 +4262,6 @@ public class ExMovimentacaoController extends ExController {
 							mov, dt, assinatura, certificado, tpMovAssinatura);
 		} catch (final Exception e) {
 			httpError(e);
-			return;
 		}
 
 		httpOK();
@@ -4277,9 +4271,15 @@ public class ExMovimentacaoController extends ExController {
 		result.use(Results.http()).body("OK").setStatusCode(200);
 	}
 
-	protected void httpError(final Exception e) {
+	protected void httpError(final Exception e) throws Exception {
 		result.use(Results.http()).body("ERRO - " + e.getMessage())
 				.setStatusCode(500);
+		try {
+			response.flushBuffer();
+		} catch (IOException e1) {
+			throw new RuntimeException(e1);
+		}
+		throw e;
 	}
 
 	@Get("/app/expediente/mov/assinado")

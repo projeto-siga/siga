@@ -5,8 +5,6 @@ import static br.com.caelum.vraptor.view.Results.http;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.URLEncoder;
@@ -24,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.axis.encoding.Base64;
-import org.jboss.logging.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -137,8 +134,11 @@ public class SigaController {
 		this.so = so;
 		this.em = em;
 
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
+		try {
+			result.on(AplicacaoException.class).forwardTo(this).appexception();
+			result.on(Exception.class).forwardTo(this).exception();
+		} catch (Exception ex) {
+		}
 
 		result.include("cadastrante", getCadastrante());
 		result.include("lotaCadastrante", getLotaCadastrante());
@@ -151,7 +151,10 @@ public class SigaController {
 	@Inject
 	private void setValidator(Validator validator) {
 		this.validator = validator;
-		this.validator.onErrorUse(Results.page()).of(SigaController.class).exception();
+		try {
+			this.validator.onErrorUse(Results.page()).of(SigaController.class).exception();
+		} catch (Exception ex) {
+		}
 	}
 
 	protected List<DpSubstituicao> getMeusTitulares() {
@@ -208,12 +211,14 @@ public class SigaController {
 		}
 	}
 
-	public void appexception() {
+	public void appexception() throws Exception {
 		configurarHttpResult(400);
+		throw (Exception) result.included().get("exception");
 	}
 
-	public void exception() {
+	public void exception() throws Exception {
 		configurarHttpResult(500);
+		throw (Exception) result.included().get("exception");
 		// new RequestExceptionLogger(request, (Exception) result.included().get("exception"), 0L, this.getClass().getName()).logar();
 	}
 

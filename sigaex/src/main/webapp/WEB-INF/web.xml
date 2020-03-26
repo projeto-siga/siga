@@ -21,7 +21,6 @@
     	<param-value>messages_TRF2</param-value>
   	</context-param>
  
-
 	<jsp-config>
 		<jsp-property-group>
 			<url-pattern>*.jsp</url-pattern>
@@ -113,6 +112,18 @@
 		<filter-name>ResponseHeaderFilter</filter-name>
 		<url-pattern>/recursos/*</url-pattern>
 	</filter-mapping>
+	
+	<servlet>
+		<servlet-name>ExServlet</servlet-name>
+		<servlet-class>br.gov.jfrj.siga.ex.servlet.ExServlet</servlet-class>
+		<load-on-startup>1</load-on-startup> 
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>ExServlet</servlet-name>
+		<url-pattern>/api/v1/*</url-pattern>
+	</servlet-mapping>
+	
 
 	<servlet>
 		<servlet-name>AudioCaptcha</servlet-name>
@@ -234,13 +245,7 @@
 		<url-pattern>/apis/x-jus/v1/*</url-pattern>
 	</servlet-mapping>
 
-
-
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
-
-	<error-page>
-		<location>/WEB-INF/page/erroGeral.jsp</location>
-	</error-page>
 </web-app>

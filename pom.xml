@@ -405,7 +405,7 @@
 			<dependency>
 				<groupId>org.freemarker</groupId>
 				<artifactId>freemarker</artifactId>
-				<version>2.3.20</version>
+				<version>2.3.30</version>
 			</dependency>
 			<dependency>
 				<groupId>com.opensymphony</groupId>
@@ -639,6 +639,24 @@
 				<groupId>org.beanshell</groupId>
 				<artifactId>bsh</artifactId>
 				<version>2.0b5</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>br.jus.trf2.xjus</groupId>
+				<artifactId>x-jus-record-api</artifactId>
+				<version>1.0.0</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.crivano</groupId>
+						<artifactId>swaggerservlet</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			
+			<dependency>
+				<groupId>com.crivano</groupId>
+				<artifactId>swaggerservlet</artifactId>
+				<version>1.29.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

@@ -16,22 +16,22 @@
 			</div>
 			<div class="card-body">
 				<form name="frm" action="gravar" theme="simple" method="POST">
-
+					<input type="hidden" name="id" value="${id}"></input>
 					<div class="row">
-						<div class="col-sm-4">
+						<div class="col-6">
 							<div class="form-group">
 								<label for="descricao">Descrição</label> <input type="text"
 									value="${descricao}" name="descricao" class="form-control" />
 							</div>
 						</div>
-						<div class="col-sm-1">
+						<div class="col-2">
 							<div class="form-group">
 								<label for="sigla">Sigla</label> <input type="text"
 									value="${sigla}" name="sigla" id="gravar_sigla"
 									class="form-control" /> <span id="mensagem"></span>
 							</div>
 						</div>
-						<div class="col-sm-2">
+						<div class="col-4">
 							<div class="form-group">
 								<label for="idTipoFormaDoc">Tipo</label> <select
 									name="idTipoFormaDoc" value="${idTipoFormaDoc}"
@@ -45,7 +45,7 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-sm-6">
+						<div class="col-12">
 							<div class="form-group">
 								<label for="idTipoFormaDoc">Origem</label><br />
 								<div class="form-check form-check-inline">

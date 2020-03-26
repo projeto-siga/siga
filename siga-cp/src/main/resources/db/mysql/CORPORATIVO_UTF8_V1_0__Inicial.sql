@@ -456,7 +456,7 @@ CREATE TABLE `cp_arquivo` (
 
 LOCK TABLES `cp_arquivo` WRITE;
 /*!40000 ALTER TABLE `cp_arquivo` DISABLE KEYS */;
-INSERT INTO `cp_arquivo` VALUES (1,null,'template/freemarker'),(2,null,'template/freemarker'),(3,null,'template/freemarker'),(4,NULL,'template/freemarker'),(5,NULL,'template/freemarker'),(519,NULL,'template/freemarker'),(7,NULL,'template/freemarker'),(8,NULL,'template/freemarker'),(9,NULL,'template/freemarker'),(10,NULL,'template/freemarker');
+INSERT INTO `cp_arquivo` VALUES (1,null,'template/freemarker'),(2,null,'template/freemarker'),(3,null,'template/freemarker'),(4,NULL,'template/freemarker'),(5,NULL,'template/freemarker'),(6,NULL,'template/freemarker'),(519,NULL,'template/freemarker'),(7,NULL,'template/freemarker'),(8,NULL,'template/freemarker'),(9,NULL,'template/freemarker'),(10,NULL,'template/freemarker');
 /*!40000 ALTER TABLE `cp_arquivo` ENABLE KEYS */;
 UNLOCK TABLES;
 

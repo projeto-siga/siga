@@ -1600,8 +1600,6 @@ public class ExBL extends CpBL {
 
 			gravarMovimentacao(mov);
 			concluirAlteracaoDocComRecalculoAcesso(mov.getExMobil().getDoc());
-
-			ContextoPersistencia.flushTransaction();
 		} catch (final Exception e) {
 			throw new AplicacaoException("Erro ao assinar documento.", 0, e);
 		}
@@ -1630,8 +1628,6 @@ public class ExBL extends CpBL {
 				juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc,
 						dtMov, cadastrante, cadastrante, mov);
 			}
-			
-			ContextoPersistencia.flushTransaction();
 		} catch (final Exception e) {
 			throw new AplicacaoException(
 					"Não foi possível juntar este documento ao documento pai. O erro da juntada foi - "
@@ -1809,7 +1805,7 @@ public class ExBL extends CpBL {
 				s = processarComandosEmTag(doc, "assinatura");
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao registrar assinatura.", 0, e);
+			throw new Exception("Erro ao registrar assinatura.", e);
 		}
 
 		if (tramitar == null)
@@ -1821,7 +1817,7 @@ public class ExBL extends CpBL {
 			if (doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha())
 				removerPapel(doc, ExPapel.PAPEL_REVISOR);
 		} catch (final Exception e) {
-			throw new AplicacaoException("Erro ao remover revisores.", 0, e);
+			throw new Exception("Erro ao remover revisores.", e);
 		}
 
 		return s;
@@ -3018,17 +3014,12 @@ public class ExBL extends CpBL {
 				criarVolume(cadastrante, lotaCadastrante, doc);
 			}
 
-			ContextoPersistencia.flushTransaction();
-
 			concluirAlteracaoDocComRecalculoAcesso(doc);			
-
-			ContextoPersistencia.flushTransaction();
 
 			if (setVias == null || setVias.size() == 0)
 				criarVia(cadastrante, lotaCadastrante, doc, null);
 
 			String s = processarComandosEmTag(doc, "finalizacao");
-			ContextoPersistencia.flushTransaction();
 			return s;
 		} catch (final Exception e) {
 			throw new AplicacaoException("Erro ao finalizar o documento: "

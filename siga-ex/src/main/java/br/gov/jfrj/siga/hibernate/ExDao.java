@@ -506,7 +506,7 @@ public class ExDao extends CpDao {
 		CriteriaQuery<ExFormaDocumento> q = cb().createQuery(ExFormaDocumento.class);
 		Root<ExFormaDocumento> c = q.from(ExFormaDocumento.class);
 		q.select(c);
-		q.orderBy(cb().asc(cb().parameter(String.class, "descrFormaDoc")));
+		q.orderBy(cb().asc(c.get("descrFormaDoc")));
 		return em().createQuery(q).getResultList();
 	}
 

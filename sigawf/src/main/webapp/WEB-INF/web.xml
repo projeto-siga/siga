@@ -124,7 +124,24 @@
 		<url-pattern>/servicos/WfService</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>ErrorHandler</servlet-name>
+		<servlet-class>br.gov.jfrj.siga.jee.SigaErrorHandlerServlet</servlet-class>
+	</servlet>
+
+	<!-- servlet mappings -->
+	<servlet-mapping>
+		<servlet-name>ErrorHandler</servlet-name>
+		<url-pattern>/ErrorHandler</url-pattern>
+	</servlet-mapping>
+
 	<error-page>
-		<location>/WEB-INF/page/erroGeral.jsp</location>
+		<error-code>404</error-code>
+		<location>/ErrorHandler</location>
+	</error-page>
+
+	<error-page>
+		<exception-type>java.lang.Throwable</exception-type>
+		<location>/ErrorHandler</location>
 	</error-page>
 </web-app>

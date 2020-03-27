@@ -17,10 +17,10 @@
 		<param-value>br.gov.jfrj.siga.vraptor</param-value>
 	</context-param>
 	<context-param>
-    	<param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
-    	<param-value>messages_TRF2</param-value>
-  	</context-param>
- 
+		<param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
+		<param-value>messages_TRF2</param-value>
+	</context-param>
+
 	<jsp-config>
 		<jsp-property-group>
 			<url-pattern>*.jsp</url-pattern>
@@ -111,18 +111,18 @@
 		<filter-name>ResponseHeaderFilter</filter-name>
 		<url-pattern>/recursos/*</url-pattern>
 	</filter-mapping>
-	
+
 	<servlet>
 		<servlet-name>ExServlet</servlet-name>
 		<servlet-class>br.gov.jfrj.siga.ex.servlet.ExServlet</servlet-class>
-		<load-on-startup>1</load-on-startup> 
+		<load-on-startup>1</load-on-startup>
 	</servlet>
 
 	<servlet-mapping>
 		<servlet-name>ExServlet</servlet-name>
 		<url-pattern>/api/v1/*</url-pattern>
 	</servlet-mapping>
-	
+
 
 	<servlet>
 		<servlet-name>AudioCaptcha</servlet-name>
@@ -247,4 +247,25 @@
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
+
+	<servlet>
+		<servlet-name>ErrorHandler</servlet-name>
+		<servlet-class>br.gov.jfrj.siga.jee.SigaErrorHandlerServlet</servlet-class>
+	</servlet>
+
+	<!-- servlet mappings -->
+	<servlet-mapping>
+		<servlet-name>ErrorHandler</servlet-name>
+		<url-pattern>/ErrorHandler</url-pattern>
+	</servlet-mapping>
+
+	<error-page>
+		<error-code>404</error-code>
+		<location>/ErrorHandler</location>
+	</error-page>
+
+	<error-page>
+		<exception-type>java.lang.Throwable</exception-type>
+		<location>/ErrorHandler</location>
+	</error-page>
 </web-app>

@@ -40,7 +40,7 @@ This is a useless buffer to fill the page to 513 bytes to avoid display of Frien
 					</div>
 
 					<div align="left" id="stack">
-						<pre style="font-size: 8pt;">${exceptionStackGeral}</pre>
+						<pre style="font-size: 8pt;"><c:out value="${exceptionStackGeral}"/></pre>
 					</div>
 				</div>
 			</div>

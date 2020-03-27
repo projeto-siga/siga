@@ -88,10 +88,10 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 		@NamedQuery(name = "consultarDescricaoExClassificacao", query = "select descrClassificacao from ExClassificacao cla"
 				+ "		where cla.codificacao in :listaCodificacao"
 				+ "		and cla.hisAtivo = 1 order by codificacao"),
-		@NamedQuery(name = "consultarExClassificacaoPorMascara", query = "select distinct(cla) from ExClassificacao cla left join fetch cla.exViaSet"
+		@NamedQuery(name = "consultarExClassificacaoPorMascara", query = "select distinct(cla) from ExClassificacao cla left join fetch cla.exViaSet via"
 				+ "		where cla.codificacao like :mascara"
 				+ "			and (upper(cla.descrClassificacao) like upper('%' || :descrClassificacao || '%'))"
-				+ "	    	and cla.hisAtivo = 1" + "	    	order by codificacao") })
+				+ "	    	and cla.hisAtivo = 1 order by codificacao, via.codVia") })
 public abstract class AbstractExClassificacao extends HistoricoAuditavelSuporte
 		implements Serializable {
 

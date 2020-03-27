@@ -34,7 +34,7 @@
 			</div>
 		</div>
 
-		<table class="table table-hover ">
+		<table class="table table-hover table-sm">
 			<thead class="thead-dark align-middle text-center">
 				<tr>
 					<th>Codificação</th>
@@ -52,7 +52,7 @@
 					<c:set var="numVias" value="${fn:length(cla.exViaSet)}" />
 					<c:remove var="viasDefault" />
 					<c:choose>
-						<c:when test="${numVias == ''}">
+						<c:when test="${numVias == 0}">
 							<c:set var="viasDefault" value="1" />
 						</c:when>
 						<c:otherwise>
@@ -70,37 +70,28 @@
 							<c:when test="${numVias > 0}">
 								<c:forEach items="${cla.exViaSet}" var="via" varStatus="loop">
 									<c:if test="${loop.index>0}">
+										<tr>
+									</c:if>
+									<td>${via.codVia}</td>
+									<td>${via.exTipoDestinacao.descrTipoDestinacao}</td>
+									<td>${via.temporalidadeCorrente.descTemporalidade}</td>
+									<td>${via.temporalidadeIntermediario.descTemporalidade}</td>
+									<td>${via.exDestinacaoFinal.descrTipoDestinacao}</td>
+									<c:if test="${loop.index<numVias0}">
 					</tr>
-					<tr>
-						</c:if>
-						<td>${via.codVia}</td>
-						<td>${via.exTipoDestinacao.descrTipoDestinacao}</td>
-						<td>${via.temporalidadeCorrente.descTemporalidade}</td>
-						<td>${via.temporalidadeIntermediario.descTemporalidade}</td>
-						<td>${via.exDestinacaoFinal.descrTipoDestinacao}</td>
-					</tr>
+					</c:if>
 				</c:forEach>
 				</c:when>
 				<c:otherwise>
-					<td />
-					<td />
-					<td />
-					<td />
-					<td />
-				</c:otherwise>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					</c:otherwise>
 				</c:choose>
 				</tr>
 				</c:forEach>
-
-
-
-
-
-
-
-
-
-
 			</tbody>
 		</table>
 

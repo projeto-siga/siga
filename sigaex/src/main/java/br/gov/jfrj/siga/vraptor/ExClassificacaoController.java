@@ -154,15 +154,10 @@ public class ExClassificacaoController
 	}
 
 	@Get("app/expediente/classificacao/editar")
-	public ExClassificacao edita(ExClassificacao exClassificacao,
+	public ExClassificacao edita(
 			String codificacao, String acao) throws Exception {
 		assertAcesso(ACESSO_SIGA_DOC_FE_PC);
-		ExClassificacao exClass = null;
-		if (codificacao != null && exClassificacao == null) {
-			exClass = buscarExClassificacao(codificacao);
-		} else {
-			exClass = exClassificacao;
-		}
+		ExClassificacao exClass = buscarExClassificacao(codificacao);
 
 		if (exClass == null && !acao.equals("nova_classificacao")) {
 			throw new AplicacaoException(
@@ -170,6 +165,7 @@ public class ExClassificacaoController
 							+ codificacao);
 		}
 
+		result.include("exClassificacao", exClass);
 		result.include("listaExTipoDestinacao", getListaExTipoDestinacao());
 		result.include("listaExTemporalidade", getListaExTemporalidade());
 		result.include("idTpDestinacao", -1);
@@ -209,15 +205,13 @@ public class ExClassificacaoController
 			}
 		}
 
-		dao().iniciarTransacao();
-		try {
-
 			if (exClassificacao.getCodificacao().length() == 0
 					|| exClassificacao.getDescrClassificacao().length() == 0) {
 				throw new AplicacaoException(
 						"Preencha o código da classificação e a descrição!");
 			}
 
+			try {
 			if (acao.equals("nova_classificacao")) {
 				Ex.getInstance()
 						.getBL()
@@ -257,14 +251,12 @@ public class ExClassificacaoController
 
 			}
 
-			dao().commitTransacao();
 			setMensagem("Classificação salva!");
 			result.redirectTo("editar?codificacao="
 					+ exClassificacao.getCodificacao()
 					+ "&acao=editar_classificacao");
 		} catch (Exception e) {
-			dao().rollbackTransacao();
-			throw new AplicacaoException(
+			throw new Exception(
 					"Não foi possível gravar classificação no banco de dados."
 							+ e.getMessage());
 		}
@@ -274,18 +266,15 @@ public class ExClassificacaoController
 	@Get("app/expediente/classificacao/excluir")
 	public void excluir(String codificacao) throws Exception {
 		assertAcesso(ACESSO_SIGA_DOC_FE_PC);
-		dao().iniciarTransacao();
 		try {
 			ExClassificacao exClass;
 			exClass = buscarExClassificacao(codificacao);
 			Ex.getInstance()
 					.getBL()
 					.excluirExClassificacao(exClass, getIdentidadeCadastrante());
-			dao().commitTransacao();
 			result.redirectTo(this).lista();
 		} catch (Exception e) {
-			dao().rollbackTransacao();
-			throw new AplicacaoException(
+			throw new Exception(
 					"Não foi possível excluir classificação do banco de dados."
 							+ e.getMessage());
 		}

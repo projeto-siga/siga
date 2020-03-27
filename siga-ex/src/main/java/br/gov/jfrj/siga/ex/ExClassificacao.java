@@ -150,6 +150,8 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	}
 
 	public Integer getNumVias() {
+		if (getExViaSet() == null)
+			return 0;
 		return getExViaSet().size();
 	}
 

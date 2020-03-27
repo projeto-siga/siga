@@ -15,7 +15,7 @@
 				<h5>Dados da Espécie Documental</h5>
 			</div>
 			<div class="card-body">
-				<form name="frm" action="gravar" theme="simple" method="POST">
+				<form name="frm" action="gravar" theme="simple" method="post">
 					<input type="hidden" name="id" value="${id}"></input>
 					<div class="row">
 						<div class="col-6">
@@ -70,10 +70,9 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-sm-3">
+						<div class="col-12">
 							<div class="form-group">
 								<button type="submit" class="btn btn-primary">Ok</button>
-								<button type="submit" name="submit" class="btn btn-primary">Aplicar</button>
 								<button type="button" onclick="javascript:history.back();"
 									class="btn btn-primary">Cancela</button>
 							</div>

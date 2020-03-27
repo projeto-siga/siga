@@ -6,7 +6,7 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Lista de Espécies Documentais">
+<siga:pagina titulo="Lista de Espï¿½cies Documentais">
 	<!-- main content -->
 	<div class="container-fluid">
 		<div class="card bg-light mb-3">
@@ -22,7 +22,7 @@
 					</div>
 				</div>
 				<div class="row">
-					<form id="listar" name="listar" method="GET" class="form100">
+					<form id="listar" name="listar" method="get" class="form100">
 						<div class="col-sm-4">
 							<div class="form-group">
 								<div class="form-check form-check-inline">
@@ -40,7 +40,7 @@
 				</div>
 				<div class="row">
 					<div class="col-sm-2">
-						<form name="frm" action="editar" theme="simple" method="GET">
+						<form name="frm" action="editar" theme="simple" method="get">
 							<button type="submit" class="btn btn-primary">Novo</button>
 						</form>
 					</div>

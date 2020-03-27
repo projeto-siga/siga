@@ -172,7 +172,7 @@ public class ExFormaDocumentoController extends ExController {
 		result.include("origemInternoCapturado", origemInternoCapturado);
 		result.include("origemExternoCapturado", origemExternoCapturado);
 		
-		result.redirectTo("/app/forma/editar?id=" + forma.getIdFormaDoc());
+		result.redirectTo(this).listarFormas(null);
 	}
 
 	private ExFormaDocumento recuperarForma(final Long id) {

@@ -276,6 +276,7 @@ public class ExProcessoAutenticacaoController extends ExController {
 			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getCadastrante(), p, l, true, true);
 			docVO.exibe();
 			result.include("movs", lista);
+			result.include("sigla",exDocumentoDTO.getDoc().getSigla());
 			result.include("msg", exDocumentoDTO.getMsg());
 			result.include("docVO", docVO);
 			result.include("mob", exDocumentoDTO.getMob());

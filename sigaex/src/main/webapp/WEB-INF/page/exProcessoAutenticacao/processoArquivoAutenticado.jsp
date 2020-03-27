@@ -19,6 +19,7 @@
 							Acompanhamento e Autenticação de Protocolo
 						</h5>
 					</div>
+					<!--
 					<div class="card-body">
 						<div>
 							<c:url var='pdfAssinado'
@@ -28,8 +29,10 @@
 							<iframe src="${pdfAssinado}" width="100%" height="600" align="center" style="margin-top: 10px;"> </iframe>
 						</div>
 					</div>
+					-->
 				</div>
 			</div>
+			<!--
 			<div class="col">
 				<div class="row">
 					<div class="col">
@@ -46,6 +49,7 @@
 					</div>
 				</div>				
 			</div>
+			-->
 		</div>
 		<div class="row">
 			<div class="col-12">

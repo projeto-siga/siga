@@ -38,6 +38,13 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<div class="form-group text-center">
+					<label>C&oacute;digo do Documento: <b>${sigla}</b></label>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="form-group text-center">
 					<!-- <label>N&uacute;mero do Protocolo: <b>${protocolo.numero} / ${ano}</b></label> -->
 					<label>N&uacute;mero do Protocolo: <b>${protocolo.codigo}</b></label>
 				</div>
@@ -56,6 +63,7 @@
 			<div class="col-sm-12">
 				<div class="form-group text-center">
 					<label><b>Aten&ccedil;&atilde;o: </b>Para consultar o andamento do seu documento acesse  </label>
+					<br />
 					<a href="${url}" target="_blank">${url}</a>
 				</div>
 			</div>

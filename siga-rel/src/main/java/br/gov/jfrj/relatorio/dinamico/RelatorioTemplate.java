@@ -25,16 +25,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.export.JRHtmlExporter;
-import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
-import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
-import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
 import ar.com.fdvs.dj.domain.builders.ColumnBuilderException;
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import ar.com.fdvs.dj.domain.constants.VerticalAlign;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
+import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
+import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
 
 /**
  * USE ESTA CLASSE para a criação de relatórios rápidos.<br>
@@ -274,24 +273,24 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 		// JasperViewer.viewReport(relatorio.getRelatorio());
 	}
 
-	public StringBuffer getRelatorioHTML() throws JRException {
-		JRHtmlExporter htmlExp = new JRHtmlExporter();
-
-		htmlExp.setParameter(JRExporterParameter.JASPER_PRINT,
-				relatorio.getRelatorioJasperPrint());
-		StringBuffer sb = new StringBuffer();
-		htmlExp.setParameter(JRHtmlExporterParameter.IMAGES_DIR, new File(
-				RelatorioTemplate.class.getResource("/").getFile()));
-		htmlExp.setParameter(JRHtmlExporterParameter.IMAGES_MAP,
-				new HashMap<String, Object>());
-		htmlExp.setParameter(JRHtmlExporterParameter.IMAGES_URI, "");
-		htmlExp.setParameter(JRHtmlExporterParameter.IS_OUTPUT_IMAGES_TO_DIR,
-				true);
-		htmlExp.setParameter(JRExporterParameter.OUTPUT_STRING_BUFFER, sb);
-
-		htmlExp.exportReport();
-		return sb;
-	}
+//	public StringBuffer getRelatorioHTML() throws JRException {
+//		JRHtmlExporter htmlExp = new JRHtmlExporter();
+//
+//		htmlExp.setParameter(JRExporterParameter.JASPER_PRINT,
+//				relatorio.getRelatorioJasperPrint());
+//		StringBuffer sb = new StringBuffer();
+//		htmlExp.setParameter(JRHtmlExporterParameter.IMAGES_DIR, new File(
+//				RelatorioTemplate.class.getResource("/").getFile()));
+//		htmlExp.setParameter(JRHtmlExporterParameter.IMAGES_MAP,
+//				new HashMap<String, Object>());
+//		htmlExp.setParameter(JRHtmlExporterParameter.IMAGES_URI, "");
+//		htmlExp.setParameter(JRHtmlExporterParameter.IS_OUTPUT_IMAGES_TO_DIR,
+//				true);
+//		htmlExp.setParameter(JRExporterParameter.OUTPUT_STRING_BUFFER, sb);
+//
+//		htmlExp.exportReport();
+//		return sb;
+//	}
 
 	public byte[]  getRelatorioExcel() throws JRException, IOException {
 		try (ByteArrayOutputStream xlsReport = new ByteArrayOutputStream()) {

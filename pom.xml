@@ -363,23 +363,11 @@
 			<dependency>
 				<groupId>net.sf.jasperreports</groupId>
 				<artifactId>jasperreports</artifactId>
-				<version>5.2.0</version>
+				<version>6.12.2</version>
 				<exclusions>
-					<exclusion>
-						<groupId>org.bouncycastle</groupId>
-						<artifactId>bcmail-jdk14</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.bouncycastle</groupId>
-						<artifactId>bcprov-jdk14</artifactId>
-					</exclusion>	
-	              	<exclusion>
-		              	<groupId>eclipse</groupId>
-		               	<artifactId>*</artifactId>
-		            </exclusion>
             		<exclusion>
-						<groupId>commons-collections</groupId>
-						<artifactId>commons-collections</artifactId>
+						<groupId>com.lowagie</groupId>
+						<artifactId>itext</artifactId>
 					</exclusion>					
 				</exclusions>
 			</dependency>
@@ -387,7 +375,7 @@
 			<dependency>
 				<groupId>ar.com.fdvs</groupId>
 				<artifactId>DynamicJasper</artifactId>
-				<version>5.0.0</version>
+				<version>5.3.0</version>
 			</dependency>
 			
 			<dependency>

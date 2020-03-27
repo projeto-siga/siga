@@ -76,7 +76,7 @@
 		<br />
 		<br />
 		<br />
-		<p align="left">${doc.sigla}</p>
+		<p align="left">N&uacute;mero de refer&ecirc;ncia: ${doc.sigla}</p>
 		
 		<br />
 		<br />

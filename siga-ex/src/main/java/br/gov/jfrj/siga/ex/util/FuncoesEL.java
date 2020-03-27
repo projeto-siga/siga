@@ -976,6 +976,9 @@ public class FuncoesEL {
 		try {
 			HashMap<String, String> headers = new HashMap<String, String>();
 			headers.put("Content-Type", "text/xml;charset=UTF-8");
+			String auth = (String) resource("siga.freemarker.webservice.password");
+			if (auth != null)
+				headers.put("Authorization", auth);
 			// String s = ConexaoHTTP.get(url, headers, timeout, corpo);
 			// //Reescrito para utilizar o SigaTTP
 			SigaHTTP sigaHTTP = new SigaHTTP();

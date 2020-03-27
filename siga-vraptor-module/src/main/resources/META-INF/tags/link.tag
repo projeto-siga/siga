@@ -94,7 +94,7 @@
 						<a
 							class="${classe} ${linkBotoes ? 'btn btn-sm btn-info link-tag' : ''} link-tag"
 							<c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
-							href="${post ? 'javascript:postToUrl(\''.concat(url).concat('\')') : url};"
+							href="${post ? 'javascript:postToUrl(\''.concat(url).concat('\')') : url}"
 							title="${explicacao}">${img}${title}</a>
 					</c:otherwise>
 				</c:choose>

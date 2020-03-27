@@ -12,6 +12,7 @@
 	       #btn-form { display:none; } 
 	       #bg {-webkit-print-color-adjust: exact;}
 	       
+	       
 	   }
 	</style>
 	<!-- main content bootstrap -->
@@ -28,9 +29,11 @@
 			</div>
 		</div>
 		<br>
+		
+		<div  style="font-size: 26px">
 		<div class="row">
 			<div class="col-sm-12">
-				<div class="p-3 mb-2 bg-dark text-white text-center" id="bg"><h4><b>Protocolo de Acompanhamento de Documento</b><h4></div>
+				<div class="p-3 mb-2 bg-dark text-white text-center"  id="bg"><h4><b>Protocolo de Acompanhamento de Documento</b><h4></div>
 			</div>
 		</div>
 		<br>
@@ -68,15 +71,10 @@
 				</div>
 			</div>
 		</div>
-		<br>
-		<br>
-		<div class="row">
-			<div class="col-sm-12">
-				<div class="form-group text-center">
-					<label>${url} - ${doc.cadastrante.nomePessoa} - ${doc.cadastrante.cargo.descricao } - ${doc.cadastrante.lotacao.descricao } - ${doc.dtRegDocDDMMYYHHMMSS}</label>
-				</div>
-			</div>
+		
 		</div>
+		<br>
+		<br>
 		<br />
 		<div id="btn-form">
 			<form name="frm" action="principal" namespace="/" method="get"

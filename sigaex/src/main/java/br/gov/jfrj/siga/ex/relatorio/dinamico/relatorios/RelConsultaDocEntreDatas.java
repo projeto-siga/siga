@@ -37,6 +37,7 @@ import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -60,19 +61,19 @@ public class RelConsultaDocEntreDatas extends RelatorioTemplate {
 	public RelConsultaDocEntreDatas(Map<String, String> parametros) throws Exception {
 		super(parametros);
 		
-		if (!isPreenchido(parametros.get("secaoUsuario"))) {
+		if (Utils.empty(parametros.get("secaoUsuario"))) {
 			throw new AplicacaoException("Parâmetro secaoUsuario não informado!");
 		}
-		if (!isPreenchido(parametros.get("lotacao"))) {
+		if (Utils.empty(parametros.get("lotacao"))) {
 			throw new AplicacaoException("Parâmetro lotação não informado!");
 		}
-		if (!isPreenchido(parametros.get("dataInicial"))) {
+		if (Utils.empty(parametros.get("dataInicial"))) {
 			throw new AplicacaoException("Parâmetro data inicial não informado!");
 		}
-		if (!isPreenchido(parametros.get("dataFinal"))) {
+		if (Utils.empty(parametros.get("dataFinal"))) {
 			throw new AplicacaoException("Parâmetro data final não informado!");
 		}
-		if (!isPreenchido(parametros.get("link_siga"))) {
+		if (Utils.empty(parametros.get("link_siga"))) {
 			throw new AplicacaoException("Parâmetro link_siga não informado!");
 		}
 		
@@ -88,10 +89,6 @@ public class RelConsultaDocEntreDatas extends RelatorioTemplate {
 		this.dataInicial = stringToDate(parametros.get("dataInicial") + " 00:00:00");
 		this.dataFinal = stringToDate(parametros.get("dataFinal") + " 23:59:59");	
 		this.link = parametros.get("link_siga"); 
-	}
-	
-	private boolean isPreenchido(String texto) {
-		return texto != null && !"".equals(texto);
 	}
 	
 	private DpLotacao buscarLotacaoPor(Long id) {

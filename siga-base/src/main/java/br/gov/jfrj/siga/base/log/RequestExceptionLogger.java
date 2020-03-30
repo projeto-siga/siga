@@ -81,7 +81,8 @@ public class RequestExceptionLogger {
 				requestInfo.append("\t");
 				requestInfo.append(name);
 				requestInfo.append(" : ");
-				if (name.toLowerCase().contains("senha") || name.toLowerCase().contains("password") || name.toLowerCase().contains("pwd"))
+				if (name.toLowerCase().contains("senha") || name.toLowerCase().contains("password")
+						|| name.toLowerCase().contains("pwd"))
 					requestInfo.append("[parâmetro suprimido]");
 				else
 					requestInfo.append(httpReq.getParameter(name));
@@ -126,14 +127,14 @@ public class RequestExceptionLogger {
 		}
 
 	}
-	
-	private static String[] packages = {"br.gov.jfrj.siga"};
+
+	private static String[] packages = { "br.gov.jfrj.siga" };
 
 	public static String simplificarStackTrace(Throwable t) {
 		if (t == null)
 			return null;
 
-		while ((t.getClass().getSimpleName().equals("InterceptionException") || t.getClass().getSimpleName().equals("InvocationTargetException") || t.getClass().getSimpleName().equals("ProxyInvocationException")) && t.getCause() != null && t != t.getCause()) {
+		while ((t.getClass().getSimpleName().equals("ServletException") || t.getClass().getSimpleName().equals("InterceptionException") || t.getClass().getSimpleName().equals("InvocationTargetException") || t.getClass().getSimpleName().equals("ProxyInvocationException")) && t.getCause() != null && t != t.getCause()) {
 			t = t.getCause();
 		}
 
@@ -154,7 +155,7 @@ public class RequestExceptionLogger {
 		String s = simplifyStackTrace(t, packages);
 		return s;
 	}
-	
+
 	public static String simplifyStackTrace(Throwable t, String[] pkgs) {
 		if (t == null)
 			return null;
@@ -173,7 +174,8 @@ public class RequestExceptionLogger {
 						isInPackages |= l.contains(pkg);
 					}
 				}
-				if (!l.startsWith("\t") || (isInPackages && !l.contains("$$_Weld") && !l.contains(".invoke(") && !l.contains(".doFilter("))) {
+				if (!l.startsWith("\t") || (isInPackages && !l.contains("$$_Weld") && !l.contains(".invoke(")
+						&& !l.contains(".doFilter("))) {
 					sb.append(l);
 					sb.append(System.getProperty("line.separator"));
 				}
@@ -182,6 +184,5 @@ public class RequestExceptionLogger {
 		}
 		return s;
 	}
-
 
 }

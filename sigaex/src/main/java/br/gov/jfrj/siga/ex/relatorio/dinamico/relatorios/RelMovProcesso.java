@@ -16,6 +16,8 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -23,45 +25,42 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import net.sf.jasperreports.engine.JRException;
 
+// Nato: Este relatório não tem um código completo, portanto será temporariamente removido.
 public class RelMovProcesso extends RelatorioTemplate {
 
-	public RelMovProcesso(Map parametros) throws DJBuilderException {
+	public RelMovProcesso(Map<String, String> parametros) throws AplicacaoException {
 		super(parametros);
-		if (parametros.get("secaoUsuario") == null) {
-			throw new DJBuilderException(
-					"Parâmetro secaoUsuario não informado!");
+		if (Utils.empty(parametros.get("secaoUsuario"))) {
+			throw new AplicacaoException("Parâmetro secaoUsuario não informado!");
 		}
-		if (parametros.get("lotacao") == null) {
-			throw new DJBuilderException("Parâmetro lotação não informado!");
+		if (Utils.empty(parametros.get("lotacao"))) {
+			throw new AplicacaoException("Parâmetro lotação não informado!");
 		}
-		//if (parametros.get("orgao") == null) {
-		//	throw new DJBuilderException("Parâmetro órgão não informado!");
-		//}
-		if (parametros.get("processo") == null) {
-			throw new DJBuilderException("Parâmetro número do processo não informado!");
+		// if (parametros.get("orgao"))) {
+		// throw new AplicacaoException("Parâmetro órgão não informado!");
+		// }
+		if (Utils.empty(parametros.get("processo"))) {
+			throw new AplicacaoException("Parâmetro número do processo não informado!");
 		}
-		if (parametros.get("dataInicial") == null) {
-			throw new DJBuilderException("Parâmetro dataInicial não informado!");
+		if (Utils.empty(parametros.get("dataInicial"))) {
+			throw new AplicacaoException("Parâmetro dataInicial não informado!");
 		}
-		if (parametros.get("dataFinal") == null) {
-			throw new DJBuilderException("Parâmetro dataFinal não informado!");
+		if (Utils.empty(parametros.get("dataFinal"))) {
+			throw new AplicacaoException("Parâmetro dataFinal não informado!");
 		}
-		if (parametros.get("link_siga") == null) {
-			throw new DJBuilderException("Parâmetro link_siga não informado!");
+		if (Utils.empty(parametros.get("link_siga"))) {
+			throw new AplicacaoException("Parâmetro link_siga não informado!");
 		}
 	}
 
 	@Override
-	public AbstractRelatorioBaseBuilder configurarRelatorio()
-			throws DJBuilderException, JRException {
-		
+	public AbstractRelatorioBaseBuilder configurarRelatorio() throws DJBuilderException, JRException {
+
 		this.setTitle("Relatório de Movimentações de Processos");
 		this.addColuna("Lotação", 10, RelatorioRapido.CENTRO, false);
-		this.addColuna("Processo", 40, RelatorioRapido.CENTRO,
-				false);
-		this.addColuna("Movimentações", 50,
-				RelatorioRapido.CENTRO, false);
-			return this;
+		this.addColuna("Processo", 40, RelatorioRapido.CENTRO, false);
+		this.addColuna("Movimentações", 50, RelatorioRapido.CENTRO, false);
+		return this;
 	}
 
 	@Override
@@ -70,9 +69,9 @@ public class RelMovProcesso extends RelatorioTemplate {
 		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
 		List<String> d = new ArrayList<String>();
-		
+
 		String processo = (String) parametros.get("processo");
-				
+
 		Map<String, CpOrgaoUsuario> mapAcronimo = new TreeMap<String, CpOrgaoUsuario>();
 		for (CpOrgaoUsuario ou : ExDao.getInstance().listarOrgaosUsuarios()) {
 			mapAcronimo.put(ou.getAcronimoOrgaoUsu(), ou);
@@ -83,13 +82,11 @@ public class RelMovProcesso extends RelatorioTemplate {
 		}
 
 		final Pattern p2 = Pattern.compile("^TMP-?([0-9]{1,7})");
-		final Pattern p1 = Pattern
-				.compile("^("
-						+ acronimos
-						+ ")?-?([A-Za-z]{3})?-?(?:([0-9]{4})/?)??([0-9]{1,5})(\\.?[0-9]{1,3})?(?:((?:-?[a-zA-Z]{1})|(?:-[0-9]{1,2}))|((?:-?V[0-9]{1,2})))?$");
+		final Pattern p1 = Pattern.compile("^(" + acronimos
+				+ ")?-?([A-Za-z]{3})?-?(?:([0-9]{4})/?)??([0-9]{1,5})(\\.?[0-9]{1,3})?(?:((?:-?[a-zA-Z]{1})|(?:-[0-9]{1,2}))|((?:-?V[0-9]{1,2})))?$");
 		final Matcher m2 = p2.matcher(processo.trim().toUpperCase());
 		final Matcher m1 = p1.matcher(processo.trim().toUpperCase());
-		
+
 		TreeSet<ExMovimentacao> listaCompleta = new TreeSet<ExMovimentacao>();
 
 		ExMovimentacao mov = null;
@@ -100,14 +97,13 @@ public class RelMovProcesso extends RelatorioTemplate {
 				listaCompleta.add(movAux);
 		}
 
-		
 		Iterator it = listaCompleta.iterator();
 		while (it.hasNext()) {
 			Object[] obj = (Object[]) it.next();
 			ExMovimentacao movim = (ExMovimentacao) obj[0];
 			ExMobil mobile = (ExMobil) obj[1];
 			ExDocumento doc = (ExDocumento) obj[2];
-			if (mov.getExMobil().getSigla()  != null) {
+			if (mov.getExMobil().getSigla() != null) {
 				d.add(mov.getExMobil().getSigla());
 			} else {
 				d.add("");
@@ -138,5 +134,6 @@ public class RelMovProcesso extends RelatorioTemplate {
 				d.add("");
 			}
 		}
-		return d;	}
+		return d;
+	}
 }

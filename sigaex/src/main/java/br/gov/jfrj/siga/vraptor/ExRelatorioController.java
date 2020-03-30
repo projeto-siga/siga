@@ -47,6 +47,7 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -565,6 +566,13 @@ public class ExRelatorioController extends ExController {
 	@Get("app/expediente/rel/emiteRelMovProcesso")
 	public Download aRelMovProcesso() throws Exception {
 		assertAcesso(ACESSO_RELMVP);
+
+		if (Utils.empty(getRequest().getParameter("dataInicial"))) {
+			throw new AplicacaoException("Parâmetro dataInicial não informado!");
+		}
+		if (Utils.empty(getRequest().getParameter("dataFinal"))) {
+			throw new AplicacaoException("Parâmetro dataFinal não informado!");
+		}
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));

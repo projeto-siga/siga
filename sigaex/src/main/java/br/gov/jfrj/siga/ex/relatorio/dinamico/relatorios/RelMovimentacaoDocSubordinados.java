@@ -33,6 +33,8 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -43,20 +45,23 @@ import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import net.sf.jasperreports.engine.JRException;
 
 public class RelMovimentacaoDocSubordinados extends RelatorioTemplate {
 
-	public RelMovimentacaoDocSubordinados(Map parametros)
-			throws DJBuilderException {
+	public RelMovimentacaoDocSubordinados(Map<String, String> parametros)
+			throws Exception {
 		super(parametros);
-		if (parametros.get("secaoUsuario") == null) {
-			throw new DJBuilderException(
+		if (Utils.empty(parametros.get("secaoUsuario"))) {
+			throw new AplicacaoException(
 					"Parâmetro secaoUsuario não informado!");
 		}
-		if (parametros.get("link_siga") == null) {
-			throw new DJBuilderException("Parâmetro link_siga não informado!");
+		if (Utils.empty(parametros.get("lotacao"))) {
+			throw new AplicacaoException(
+					"Parâmetro lotacao não informado!");
+		}
+		if (Utils.empty(parametros.get("link_siga"))) {
+			throw new AplicacaoException("Parâmetro link_siga não informado!");
 		}
 
 	}

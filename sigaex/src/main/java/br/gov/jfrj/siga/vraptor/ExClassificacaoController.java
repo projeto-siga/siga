@@ -41,6 +41,7 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExTemporalidade;
 import br.gov.jfrj.siga.ex.ExTipoDestinacao;
@@ -189,8 +190,8 @@ public class ExClassificacaoController
 			String codificacaoAntiga, String acao) throws Exception {
 		assertAcesso(ACESSO_SIGA_DOC_FE_PC);
 
-		if (exClassificacao.getCodificacao().length() == 0
-				|| exClassificacao.getDescrClassificacao().length() == 0) {
+		if (Utils.empty(exClassificacao.getCodificacao())
+				|| Utils.empty(exClassificacao.getDescrClassificacao())) {
 			throw new AplicacaoException(
 					"Preencha o código da classificação e a descrição!");
 		}
@@ -205,13 +206,7 @@ public class ExClassificacaoController
 			}
 		}
 
-			if (exClassificacao.getCodificacao().length() == 0
-					|| exClassificacao.getDescrClassificacao().length() == 0) {
-				throw new AplicacaoException(
-						"Preencha o código da classificação e a descrição!");
-			}
-
-			try {
+		try {
 			if (acao.equals("nova_classificacao")) {
 				Ex.getInstance()
 						.getBL()
@@ -257,8 +252,7 @@ public class ExClassificacaoController
 					+ "&acao=editar_classificacao");
 		} catch (Exception e) {
 			throw new Exception(
-					"Não foi possível gravar classificação no banco de dados."
-							+ e.getMessage());
+					"Não foi possível gravar classificação no banco de dados.", e);
 		}
 	}
 

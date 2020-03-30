@@ -11,6 +11,17 @@
 						t = (Throwable) exception;
 					}
 					if (t != null) {
+						while ((t.getClass().getSimpleName().equals("ServletException")
+								|| t.getClass().getSimpleName().equals("InterceptionException")
+								|| t.getClass().getSimpleName().equals("InvocationTargetException")
+								|| t.getClass().getSimpleName().equals("ProxyInvocationException"))
+								&& t.getCause() != null && t != t.getCause()) {
+							t = t.getCause();
+						}
+
+						pageContext.getRequest().setAttribute("exceptionApp",
+								t instanceof br.gov.jfrj.siga.base.AplicacaoException);
+						pageContext.getRequest().setAttribute("exceptionMsg", t.getMessage());
 						pageContext.getRequest().setAttribute("exceptionGeral", t);
 						pageContext.getRequest().setAttribute("exceptionStackGeral",
 								br.gov.jfrj.siga.base.log.RequestExceptionLogger.simplificarStackTrace(t));
@@ -34,14 +45,32 @@ This is a useless buffer to fill the page to 513 bytes to avoid display of Frien
 			<div class="gt-bd clearfix">
 				<div class="gt-content clearfix">
 
-					<div id="caption">
-						<h2>Não Foi Possível Completar a Operação
-							(${pageContext.request.serverName})</h2>
+					<c:choose>
+						<c:when test="${exceptionApp}">
+							<p class="mb-2 mt-5">Operação Inválida:</p>
+							<h2 class="mt-0">${exceptionMsg}</h2>
+						</c:when>
+						<c:otherwise>
+							<div id="caption">
+								${t.exceptionStackGeral }
+								<h2>Não Foi Possível Completar a Operação
+									(${pageContext.request.serverName})</h2>
+							</div>
+							<div align="left" id="stack">
+								<pre style="font-size: 8pt;"><c:out value="${exceptionStackGeral}" /></pre>
+							</div>
+						</c:otherwise>
+					</c:choose>
+
+					<div class="row mt-3">
+						<div class="col">
+							<div class="form-group">
+								<input type="button" value="Voltar"
+									onclick="javascript:history.back();" class="btn btn-secondary btn-sm" />
+							</div>
+						</div>
 					</div>
 
-					<div align="left" id="stack">
-						<pre style="font-size: 8pt;"><c:out value="${exceptionStackGeral}"/></pre>
-					</div>
 				</div>
 			</div>
 

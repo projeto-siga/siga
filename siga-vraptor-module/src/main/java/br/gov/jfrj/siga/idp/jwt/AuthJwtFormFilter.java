@@ -121,7 +121,7 @@ public class AuthJwtFormFilter implements Filter {
 			if ("jwt expired".equals(e.getMessage()))
 				redirecionarParaFormDeLogin(req, resp, e);
 			else
-				throw new RuntimeException(e);
+				throw new ServletException(e);
 		} catch (SigaJwtInvalidException e) {
 			redirecionarParaFormDeLogin(req, resp, e);
 			return;
@@ -130,7 +130,7 @@ public class AuthJwtFormFilter implements Filter {
 				informarAutenticacaoProibida(resp, e);
 				return;
 			} else {
-				throw new RuntimeException(e);
+				throw new ServletException(e);
 			}
 		} finally {
 			ContextoPersistencia.removeUserPrincipal();

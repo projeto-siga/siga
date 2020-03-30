@@ -19,19 +19,17 @@
 package br.gov.jfrj.relatorio.dinamico;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import ar.com.fdvs.dj.domain.builders.ColumnBuilderException;
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import ar.com.fdvs.dj.domain.constants.VerticalAlign;
+import br.gov.jfrj.siga.base.AplicacaoException;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
 
@@ -201,7 +199,7 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 		if (dados != null && dados.size() > 0) {
 			relatorio.setDados(dados);
 		} else {
-			throw new Exception("Não há dados para gerar o relatório!");
+			throw new AplicacaoException("Não há dados para gerar o relatório!");
 		}
 
 	}

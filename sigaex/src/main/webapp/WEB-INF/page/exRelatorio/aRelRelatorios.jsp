@@ -15,6 +15,11 @@ function sbmt() {
 
 var newwindow = '';
 function visualizarRelatorio(rel) {
+	frmRelatorios.action=rel;
+	frmRelatorios.submit();
+	return;
+	
+	// Alterado para gerar o relatório na própria página, pois assim os erros podem ser tratados com o botão de "Voltar".
 	if (!newwindow.closed && newwindow.location) {
 	} else {
 		var popW = 600;

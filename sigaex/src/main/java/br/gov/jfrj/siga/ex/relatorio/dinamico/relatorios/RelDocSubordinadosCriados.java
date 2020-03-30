@@ -53,6 +53,9 @@ public class RelDocSubordinadosCriados extends RelatorioTemplate {
 		if (Utils.empty(parametros.get("secaoUsuario"))) {
 			throw new AplicacaoException("Parâmetro secaoUsuario não informado!");
 		}
+		if (Utils.empty(parametros.get("lotacao"))) {
+			throw new AplicacaoException("Parâmetro lotacao não informado!");
+		}
 		if (Utils.empty(parametros.get("link_siga"))) {
 			throw new AplicacaoException("Parâmetro link_siga não informado!");
 		}

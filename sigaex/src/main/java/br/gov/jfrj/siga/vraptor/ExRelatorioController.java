@@ -66,7 +66,6 @@ import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelTipoDoc;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioDocumentosSubordinados;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioModelos;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -443,8 +442,8 @@ public class ExRelatorioController extends ExController {
 		assertAcesso(ACESSO_DATAS);
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
-		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
+		final Date dtIni = parseDate("dataInicial");
+		final Date dtFim = parseDate("dataFinal");
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
 			throw new Exception("O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
 		}
@@ -474,8 +473,8 @@ public class ExRelatorioController extends ExController {
 		assertAcesso(ACESSO_MOVCAD);
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
-		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
+		final Date dtIni = parseDate("dataInicial");
+		final Date dtFim = parseDate("dataFinal");
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
 			throw new Exception("O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
 		}
@@ -505,8 +504,8 @@ public class ExRelatorioController extends ExController {
 		assertAcesso(ACESSO_DATAS);
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
-		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
+		final Date dtIni = parseDate("dataInicial");
+		final Date dtFim = parseDate("dataFinal");
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
 			throw new Exception("O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
 		}
@@ -538,8 +537,8 @@ public class ExRelatorioController extends ExController {
 		assertAcesso(ACESSO_DATAS);
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
-		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
+		final Date dtIni = parseDate("dataInicial");
+		final Date dtFim = parseDate("dataFinal");
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
 			throw new Exception("O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
 		}
@@ -574,9 +573,9 @@ public class ExRelatorioController extends ExController {
 			throw new AplicacaoException("Parâmetro dataFinal não informado!");
 		}
 
-		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
-		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
+		
+		final Date dtIni = parseDate("dataInicial");
+		final Date dtFim = parseDate("dataFinal");
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
 			throw new Exception("O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
 		}
@@ -597,7 +596,7 @@ public class ExRelatorioController extends ExController {
 		final InputStream inputStream = new ByteArrayInputStream(rel.getRelatorioPDF());
 		return new InputStreamDownload(inputStream, APPLICATION_PDF, "emiteRelMovProcesso");
 	}
-
+	
 	@Get("app/expediente/rel/aRelClassificacao")
 	public Download aRelClassificacao() throws Exception {
 		assertAcesso(ACESSO_CLSD);
@@ -653,6 +652,17 @@ public class ExRelatorioController extends ExController {
 
 	private String getMascaraJavascript() {
 		return SigaExProperties.getExClassificacaoMascaraJavascript();
+	}
+
+	private Date parseDate(String parameter) throws AplicacaoException {
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		if (Utils.empty(getRequest().getParameter(parameter)))
+			throw new AplicacaoException("Campo " + parameter + " deve ser preenchido!");
+		try {
+			return df.parse(getRequest().getParameter(parameter));
+		} catch (Exception ex) {
+			throw new AplicacaoException("Campo  \" + parameter + \" inválido!", 0, ex);
+		}
 	}
 
 }

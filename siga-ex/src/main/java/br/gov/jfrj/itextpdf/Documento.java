@@ -42,9 +42,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.poi.ss.usermodel.DataFormat;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
+import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.ex.ExArquivoNumerado;
@@ -245,6 +248,9 @@ public class Documento {
 					s = movAssinatura.getDescrMov().trim().toUpperCase();
 					s = s.split(":")[0];
 					s = s.intern();
+					if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+						s +=" - " + Data.formatDDMMYY_AS_HHMMSS(movAssinatura.getData());
+					}
 				}
 				if (!assinantes.contains(s)) {
 					assinantes.add(s);
@@ -266,6 +272,9 @@ public class Documento {
 				s = s.replace(":", " - ");
 				s = s.replace("EM SUBSTITUIÇÃO A", "em substituição a");
 				s = s.intern();
+				if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+					s +=" - " + Data.formatDDMMYY_AS_HHMMSS(movAssinatura.getData());
+				}
 			}
 			if (!assinantes.contains(s)) {
 				assinantes.add(s);

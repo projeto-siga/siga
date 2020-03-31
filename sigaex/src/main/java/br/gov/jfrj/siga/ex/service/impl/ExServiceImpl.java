@@ -26,13 +26,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeSet;
 
 import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
@@ -58,9 +59,11 @@ import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
+import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
+import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.hibernate.ExStarter;
@@ -75,7 +78,7 @@ import br.gov.jfrj.siga.vraptor.ExMobilSelecao;
 public class ExServiceImpl implements ExService {
 	private final static Logger log = Logger.getLogger(ExService.class);
 
-	private static class SoapContext implements Closeable {
+	private class SoapContext implements Closeable {
 		EntityManager em;
 		boolean transacional;
 		long inicio = System.currentTimeMillis();
@@ -84,6 +87,12 @@ public class ExServiceImpl implements ExService {
 			this.transacional = transacional;
 			em = ExStarter.emf.createEntityManager();
 			ContextoPersistencia.setEntityManager(em);
+			
+			ServletContext ctx = (ServletContext) context.getMessageContext().get(MessageContext.SERVLET_CONTEXT); 
+			HttpServletRequest request = (HttpServletRequest) context.getMessageContext().get(MessageContext.SERVLET_REQUEST); 
+			HttpServletResponse response = (HttpServletResponse) context.getMessageContext().get(MessageContext.SERVLET_RESPONSE); 
+			CurrentRequest.set(new RequestInfo(ctx, request,
+					response));
 
 			ModeloDao.freeInstance();
 			ExDao.getInstance();

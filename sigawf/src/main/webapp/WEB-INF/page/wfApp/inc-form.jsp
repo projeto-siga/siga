@@ -24,6 +24,7 @@
 			</span>
 		</c:if>
 	</div>
+	<c:if test="${task.desabilitarForm eq false}">
 	<div class="gt-form-row gt-width-100">
 		<input type="hidden" value="${task.id}" name="tiId" />
 
@@ -141,9 +142,6 @@
 			class="btn btn-info mr-3">Prosseguir${transition.resp}</button>
 	</c:if>
 	<%--</c:if> --%>
-	<c:forEach var="variable" items="${task.variableList}">
-		<c:if test="${fn:startsWith(variable.identificador,'doc_')}">
-			<span style="color: red; font-weight: bold;"> ${task.msgAviso}</span>
-		</c:if>
-	</c:forEach>
+	</c:if>
+	<span style="color: red; font-weight: bold;"> ${task.msgAviso}</span>
 </div>

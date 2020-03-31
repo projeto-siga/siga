@@ -198,9 +198,6 @@ public class WfAppController extends WfController {
 		for (WfTarefa ti : taskInstances) {
 			if (ti.getInstanciaDeProcedimento().getStatus() != ProcessInstanceStatus.PAUSED)
 				continue;
-			if (!getTitular().equivale(ti.getInstanciaDeProcedimento().getPessoa())
-					&& !getLotaTitular().equivale(ti.getInstanciaDeProcedimento().getLotacao()))
-				continue;
 			String principal = ti.getInstanciaDeProcedimento().getPrincipal();
 			if (principal == null)
 				continue;

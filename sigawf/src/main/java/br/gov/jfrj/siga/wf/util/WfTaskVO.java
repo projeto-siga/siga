@@ -61,7 +61,9 @@ public class WfTaskVO extends VO {
 
 	private String conhecimento = null;
 
-	private String msgAviso = "";
+	private String msgAviso = null;
+	
+	private boolean desabilitarForm;
 
 	private List<String> tags;
 
@@ -140,7 +142,6 @@ public class WfTaskVO extends VO {
 								ExService service = Service.getExService();
 								if (wfva != null)
 									this.variableList.add(wfva);
-								setMsgAviso("");
 								// if (!service.isAtendente(value, siglaTitular)) {
 								String respEX = service.getAtendente(documento, siglaTitular);
 								DpLotacao lotEX = new PessoaLotacaoParser(respEX)
@@ -242,6 +243,21 @@ public class WfTaskVO extends VO {
 				}
 
 			}
+		}
+
+		if (!titular.equivale(ti.getInstanciaDeProcedimento().getPessoa())
+				&& !lotaTitular.equivale(ti.getInstanciaDeProcedimento().getLotacao())) {
+			setDesabilitarForm(true);
+			if (ti.getInstanciaDeProcedimento().getPessoa() != null
+					&& ti.getInstanciaDeProcedimento().getLotacao() != null)
+				setMsgAviso("Esta tarefa será desempenhada por " + titular.getSigla() + " na lotação "
+						+ ti.getInstanciaDeProcedimento().getLotacao().getSigla());
+			if (ti.getInstanciaDeProcedimento().getPessoa() != null)
+				setMsgAviso(
+						"Esta tarefa será desempenhada por " + ti.getInstanciaDeProcedimento().getPessoa().getSigla());
+			if (ti.getInstanciaDeProcedimento().getLotacao() != null)
+				setMsgAviso("Esta tarefa será desempenhada pela lotação "
+						+ ti.getInstanciaDeProcedimento().getLotacao().getSigla());
 		}
 
 		tags = new ArrayList<String>();
@@ -413,5 +429,13 @@ public class WfTaskVO extends VO {
 		addAcao("note_add", "_Anotar", "/app", "anotar",
 				// Ex.getInstance().getComp().podeFazerAnotacao(titular, lotaTitular, ti)
 				true, null, null, null, null, null, "anotarModal");
+	}
+
+	public boolean isDesabilitarForm() {
+		return desabilitarForm;
+	}
+
+	public void setDesabilitarForm(boolean desabilitarForm) {
+		this.desabilitarForm = desabilitarForm;
 	}
 }

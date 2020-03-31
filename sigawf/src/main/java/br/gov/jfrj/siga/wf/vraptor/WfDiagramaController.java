@@ -267,6 +267,10 @@ public class WfDiagramaController
 			WfDefinicaoDeProcedimento opd = dao().consultar(id, WfDefinicaoDeProcedimento.class, false);
 			opd = dao().consultarAtivoPorIdInicial(WfDefinicaoDeProcedimento.class, opd.getHisIdIni());
 			setAntes.add(opd);
+			pd.setAno(opd.getAno());
+			pd.setNumero(opd.getNumero());
+			pd.setHisIdIni(opd.getHisIdIni());
+			pd.setOrgaoUsuario(opd.getOrgaoUsuario());
 			if (opd.getDefinicaoDeTarefa() != null) {
 				for (WfDefinicaoDeTarefa otd : opd.getDefinicaoDeTarefa()) {
 					setAntes.add(otd);

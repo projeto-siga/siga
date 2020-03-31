@@ -1,15 +1,12 @@
 package br.gov.jfrj.siga.wf.model;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,20 +31,23 @@ import com.crivano.jflow.model.ProcessInstance;
 import com.crivano.jflow.model.TaskDefinition;
 import com.crivano.jflow.model.enm.ProcessInstanceStatus;
 
+import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
+import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
+import br.gov.jfrj.siga.parser.SiglaParser;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.model.enm.WfPrioridade;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
 import br.gov.jfrj.siga.wf.util.SiglaUtils;
-import br.gov.jfrj.siga.wf.util.WfResp;
 import br.gov.jfrj.siga.wf.util.SiglaUtils.SiglaDecodificada;
+import br.gov.jfrj.siga.wf.util.WfResp;
 
 @Entity
 @BatchSize(size = 500)
@@ -215,34 +215,75 @@ public class WfProcedimento extends Objeto
 	public void onSave() throws Exception {
 	}
 
+	private void assertPrincipal() throws RuntimeException {
+		if (this.getPrincipal() == null)
+			throw new RuntimeException("Não é possível identificar o responsável porque não há \'principal'");
+	}
+
+	private WfResp assertPrincipalPessoa(String s) {
+		assertPrincipal();
+		PessoaLotacaoParser lpp = new PessoaLotacaoParser(s);
+		return new WfResp(lpp.getPessoa(), lpp.getLotacao());
+	}
+
+	private WfResp assertPrincipalLotacao(String s) {
+		assertPrincipal();
+		PessoaLotacaoParser lpp = new PessoaLotacaoParser(s);
+		return new WfResp(null, lpp.getLotacao());
+	}
+
 	@Override
 	public WfResp calcResponsible(WfDefinicaoDeTarefa tarefa) {
-		switch (tarefa.getTipoDeResponsavel()) {
-		case PRINCIPAL_CADASTRANTE:
-		case PRINCIPAL_LOTA_CADASTRANTE:
-		case PRINCIPAL_TITULAR:
-		case PRINCIPAL_LOTA_TITULAR:
-		case PRINCIPAL_SUBSCRITOR:
-		case PRINCIPAL_LOTA_SUBSCRITOR:
-		case PRINCIPAL_DESTINATARIO:
-		case PRINCIPAL_LOTA_DESTINATARIO:
-		case PRINCIPAL_GESTOR:
-		case PRINCIPAL_LOTA_GESTOR:
-		case PRINCIPAL_FISCAL_TECNICO:
-		case PRINCIPAL_LOTA_FISCAL_TECNICO:
-		case PRINCIPAL_FISCAL_ADMINISTRATIVO:
-		case PRINCIPAL_LOTA_FISCAL_ADMINISTRATIVO:
-		case PRINCIPAL_INTERESSADO:
-		case PRINCIPAL_LOTA_INTERESSADO:
-		case RESPONSAVEL:
-			WfResponsavel r = WfDao.getInstance().consultarResponsavelPorOrgaoEDefinicaoDeResponsavel(getOrgaoUsuario(),
-					tarefa.getDefinicaoDeResponsavel());
-			return new WfResp(r.getPessoa(), r.getLotacao());
-		case PESSOA:
-		case LOTACAO:
-			return new WfResp(tarefa.getPessoa(), tarefa.getLotacao());
-		default:
-			return null;
+		ExService service = null;
+		if (this.getPrincipal() != null && this.getTipoDePrincipal() == WfTipoDePrincipal.DOC)
+			service = Service.getExService();
+		try {
+			switch (tarefa.getTipoDeResponsavel()) {
+			case PRINCIPAL_CADASTRANTE:
+				return assertPrincipalPessoa(service.cadastrante(getPrincipal()));
+			case PRINCIPAL_LOTA_CADASTRANTE:
+				return assertPrincipalLotacao(service.cadastrante(getPrincipal()));
+			case PRINCIPAL_TITULAR:
+				return assertPrincipalPessoa(service.titular(getPrincipal()));
+			case PRINCIPAL_LOTA_TITULAR:
+				return assertPrincipalLotacao(service.titular(getPrincipal()));
+			case PRINCIPAL_SUBSCRITOR:
+				return assertPrincipalPessoa(service.subscritor(getPrincipal()));
+			case PRINCIPAL_LOTA_SUBSCRITOR:
+				return assertPrincipalLotacao(service.subscritor(getPrincipal()));
+			case PRINCIPAL_DESTINATARIO:
+				return assertPrincipalPessoa(service.destinatario(getPrincipal()));
+			case PRINCIPAL_LOTA_DESTINATARIO:
+				return assertPrincipalLotacao(service.destinatario(getPrincipal()));
+			case PRINCIPAL_GESTOR:
+				return assertPrincipalPessoa(service.gestor(getPrincipal()));
+			case PRINCIPAL_LOTA_GESTOR:
+				return assertPrincipalLotacao(service.gestor(getPrincipal()));
+			case PRINCIPAL_FISCAL_TECNICO:
+				return assertPrincipalPessoa(service.fiscalTecnico(getPrincipal()));
+			case PRINCIPAL_LOTA_FISCAL_TECNICO:
+				return assertPrincipalLotacao(service.fiscalTecnico(getPrincipal()));
+			case PRINCIPAL_FISCAL_ADMINISTRATIVO:
+				return assertPrincipalPessoa(service.fiscalAdministrativo(getPrincipal()));
+			case PRINCIPAL_LOTA_FISCAL_ADMINISTRATIVO:
+				return assertPrincipalLotacao(service.fiscalAdministrativo(getPrincipal()));
+			case PRINCIPAL_INTERESSADO:
+				return assertPrincipalPessoa(service.interessado(getPrincipal()));
+			case PRINCIPAL_LOTA_INTERESSADO:
+				return assertPrincipalLotacao(service.interessado(getPrincipal()));
+			case RESPONSAVEL:
+				WfResponsavel r = WfDao.getInstance().consultarResponsavelPorOrgaoEDefinicaoDeResponsavel(
+						getOrgaoUsuario(), tarefa.getDefinicaoDeResponsavel());
+				return new WfResp(r.getPessoa(), r.getLotacao());
+			case PESSOA:
+			case LOTACAO:
+				return new WfResp(tarefa.getPessoa(), tarefa.getLotacao());
+			default:
+				return null;
+			}
+		} catch (Exception e) {
+			throw new RuntimeException("Não foi possível calcular o responsável pela tarefa " + tarefa.getNome()
+					+ " do procedimento " + this.getSigla(), e);
 		}
 	};
 

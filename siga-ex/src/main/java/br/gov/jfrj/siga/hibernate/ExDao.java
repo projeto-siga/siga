@@ -30,12 +30,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.jboss.logging.Logger;
@@ -1078,11 +1080,16 @@ public class ExDao extends CpDao {
 		Root<ExModelo> c = q.from(ExModelo.class);
 		q.select(c);
 		Join<ExModelo, ExFormaDocumento> joinForma = c.join("exFormaDocumento");
-		q.where(cb().equal(c.get("nmMod"), sModelo), cb().equal(c.get("hisAtivo"), 1));
+		
+		List<Predicate> whereList = new LinkedList<Predicate>();
+		whereList.add(cb().equal(c.get("nmMod"), sModelo));
+		whereList.add(cb().equal(c.get("hisAtivo"), 1));
 		if (sForma != null) {
 			c.join("exFormaDocumento", JoinType.INNER);
-			q.where(cb().equal(joinForma.get("descrFormaDoc"), sForma));
+			whereList.add(cb().equal(joinForma.get("descrFormaDoc"), sForma));
 		}
+		q.where((Predicate[])whereList.toArray());
+		
 		return em().createQuery(q).getSingleResult();
 	}
 

@@ -223,12 +223,16 @@ public class WfProcedimento extends Objeto
 	private WfResp assertPrincipalPessoa(String s) {
 		assertPrincipal();
 		PessoaLotacaoParser lpp = new PessoaLotacaoParser(s);
+		if (lpp.getLotacao() == null)
+			return null;
 		return new WfResp(lpp.getPessoa(), lpp.getLotacao());
 	}
 
 	private WfResp assertPrincipalLotacao(String s) {
 		assertPrincipal();
 		PessoaLotacaoParser lpp = new PessoaLotacaoParser(s);
+		if (lpp.getLotacao() == null)
+			return null;
 		return new WfResp(null, lpp.getLotacao());
 	}
 

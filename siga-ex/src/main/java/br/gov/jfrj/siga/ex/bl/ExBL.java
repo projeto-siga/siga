@@ -155,6 +155,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 import br.gov.jfrj.siga.wf.service.WfService;
 
 public class ExBL extends CpBL {
+	private static final String MODELO_DESPACHO_AUTOMATICO = "Despacho Automático";
 	private static final String MODELO_FOLHA_DE_ROSTO_EXPEDIENTE_INTERNO = "Folha de Rosto - Expediente Interno";
 	private static final String MODELO_FOLHA_DE_ROSTO_PROCESSO_ADMINISTRATIVO_INTERNO = "Folha de Rosto - Processo Administrativo Interno";
 	private static final String SHA1 = "1.3.14.3.2.26";
@@ -5178,7 +5179,7 @@ public class ExBL extends CpBL {
 				}
 				// attrs.put("nmArqMod", "despacho_mov.jsp");
 				ExModelo m = dao().consultarExModelo(null,
-						"Despacho Automático");
+						MODELO_DESPACHO_AUTOMATICO);
 				attrs.put("nmMod", m.getNmMod());
 				attrs.put("template", new String(m.getConteudoBlobMod2(),
 						"utf-8"));

@@ -190,8 +190,8 @@ public class Notificador {
 						}
 					}
 				} catch (Exception e) {
-					throw new AplicacaoException(
-							"Erro ao enviar email de notificação de movimentação.", 0,
+					throw new RuntimeException(
+							"Erro ao enviar email de notificação de movimentação.", 
 							e);
 				}	
 				

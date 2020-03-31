@@ -478,8 +478,8 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExMobil());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException(
-					"Erro ao agendar publicação no boletim.", 0, e);
+			throw new RuntimeException(
+					"Erro ao agendar publicação no boletim.", e);
 		}
 	}
 
@@ -505,8 +505,8 @@ public class ExBL extends CpBL {
 						mov.getDtMov(), doc);
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException(
-					"Erro ao atestar publicação no boletim.", 0, e);
+			throw new RuntimeException(
+					"Erro ao atestar publicação no boletim.", e);
 		}
 	}
 
@@ -574,7 +574,7 @@ public class ExBL extends CpBL {
 			}
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao notificar publicação.", 0, e);
+			throw new RuntimeException("Erro ao notificar publicação.", e);
 		}
 	}
 	
@@ -710,7 +710,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExMobil());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao agendar publicação.", 0, e);
+			throw new RuntimeException("Erro ao agendar publicação.", e);
 		}
 	}
 
@@ -783,8 +783,8 @@ public class ExBL extends CpBL {
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao registrar disponibilização.",
-					0, e);
+			throw new RuntimeException("Erro ao registrar disponibilização.",
+					e);
 		}
 	}
 
@@ -896,7 +896,7 @@ public class ExBL extends CpBL {
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao anexar documento.", 0, e);
+			throw new RuntimeException("Erro ao anexar documento.", e);
 		}
 	}
 
@@ -942,7 +942,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExMobil());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao anexar arquivo auxiliar.", 0, e);
+			throw new RuntimeException("Erro ao anexar arquivo auxiliar.", e);
 		}
 	}
 
@@ -1027,8 +1027,8 @@ public class ExBL extends CpBL {
 			throw e;
 		} catch (final Exception e) {
 			ExDao.rollbackTransacao();
-			throw new AplicacaoException("Ocorreu um Erro durante a Operação",
-					0, e);
+			throw new RuntimeException("Ocorreu um Erro durante a Operação",
+					e);
 		}
 
 	}
@@ -1065,7 +1065,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExMobil());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao arquivar documento.", 0, e);
+			throw new RuntimeException("Erro ao arquivar documento.", e);
 		}
 	}
 
@@ -1089,7 +1089,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExMobil());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao arquivar um documento.", 0, e);
+			throw new RuntimeException("Erro ao arquivar um documento.", e);
 		}
 	}
 
@@ -1111,8 +1111,8 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExMobil());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException(
-					"Erro ao arquivar permanentemente um documento.", 0, e);
+			throw new RuntimeException(
+					"Erro ao arquivar permanentemente um documento.", e);
 		}
 	}
 
@@ -1136,7 +1136,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(null);
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao eliminar o documento.", 0, e);
+			throw new RuntimeException("Erro ao eliminar o documento.", e);
 		}
 	}
 
@@ -1166,7 +1166,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(null);
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao sobrestar documento.", 0, e);
+			throw new RuntimeException("Erro ao sobrestar documento.", e);
 		}
 	}
 
@@ -1231,7 +1231,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExMobil());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao reclassificar.", 0, e);
+			throw new RuntimeException("Erro ao reclassificar.", e);
 		}
 
 	}
@@ -1297,11 +1297,11 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 
 			if (e.getMessage().contains("junta"))
-				throw new AplicacaoException(
+				throw new RuntimeException(
 						"Não foi possível juntar este documento ao documento pai. O erro da juntada foi - "
-								+ e.getMessage(), 0, e);
+								+ e.getMessage(), e);
 
-			throw new AplicacaoException("Erro ao assinar documento.", 0, e);
+			throw new RuntimeException("Erro ao assinar documento.", e);
 		}
 
 	}
@@ -1340,7 +1340,7 @@ public class ExBL extends CpBL {
 		} catch (final Exception e) {
 			log.error("Erro ao assinar movimentação.", e);
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao assinar movimentação.", 0, e);
+			throw new RuntimeException("Erro ao assinar movimentação.", e);
 		}
 
 	}
@@ -1476,8 +1476,8 @@ public class ExBL extends CpBL {
 
 			lCPF = Long.valueOf(sCPF);
 		} catch (final Exception e) {
-			throw new AplicacaoException("Erro na assinatura de um documento: "
-					+ e.getMessage() == null ? "" : e.getMessage(), 0, e);
+			throw new RuntimeException("Erro na assinatura de um documento: "
+					+ e.getMessage() == null ? "" : e.getMessage(), e);
 		}
 
 		boolean fValido = false;
@@ -1494,7 +1494,7 @@ public class ExBL extends CpBL {
 			lMatricula = Long.valueOf(sMatricula);
 		} catch (final Exception e) {
 			// throw new AplicacaoException(
-			// "não foi possível obter a matrícula do assinante", 0, e);
+			// "não foi possível obter a matrícula do assinante", e);
 		}
 
 		// Verifica se a matrícula confere com o subscritor titular ou com um
@@ -1574,9 +1574,9 @@ public class ExBL extends CpBL {
 				throw new AplicacaoException(
 						"Assinante não é subscritor nem cossignatario");
 		} catch (final Exception e) {
-			throw new AplicacaoException(
+			throw new RuntimeException(
 					"Só é permitida a assinatura digital do subscritor e dos cossignatários do documento",
-					0, e);
+					e);
 		}
 
 		String s = null;
@@ -1602,7 +1602,7 @@ public class ExBL extends CpBL {
 			gravarMovimentacao(mov);
 			concluirAlteracaoDocComRecalculoAcesso(mov.getExMobil().getDoc());
 		} catch (final Exception e) {
-			throw new AplicacaoException("Erro ao assinar documento.", 0, e);
+			throw new RuntimeException("Erro ao assinar documento.", e);
 		}
 
 		try {
@@ -1630,9 +1630,9 @@ public class ExBL extends CpBL {
 						dtMov, cadastrante, cadastrante, mov);
 			}
 		} catch (final Exception e) {
-			throw new AplicacaoException(
+			throw new RuntimeException(
 					"Não foi possível juntar este documento ao documento pai. O erro da juntada foi - "
-							+ e.getMessage(), 0, e);
+							+ e.getMessage(), e);
 		}
 
 		try {
@@ -1640,7 +1640,7 @@ public class ExBL extends CpBL {
 				processarComandosEmTag(doc, "assinatura");
 			}
 		} catch (final Exception e) {
-			throw new AplicacaoException("Erro ao executar procedimento pós-assinatura.", 0, e);
+			throw new RuntimeException("Erro ao executar procedimento pós-assinatura.", e);
 		}
 
 		try {
@@ -1649,14 +1649,14 @@ public class ExBL extends CpBL {
 			if (tramitar)
 				trasferirAutomaticamente(cadastrante, lotaCadastrante, usuarioDoToken, doc, fPreviamenteAssinado);
 		} catch (final Exception e) {
-			throw new AplicacaoException("Erro ao tramitar automaticamente.", 0, e);
+			throw new RuntimeException("Erro ao tramitar automaticamente.", e);
 		}
 
 		try {
 			if (doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha())
 				removerPapel(doc, ExPapel.PAPEL_REVISOR);
 		} catch (final Exception e) {
-			throw new AplicacaoException("Erro ao remover revisores.", 0, e);
+			throw new RuntimeException("Erro ao remover revisores.", e);
 		}
 
 		return s;
@@ -1758,9 +1758,9 @@ public class ExBL extends CpBL {
 					throw new AplicacaoException(
 							"Assinante não é subscritor nem cossignatario");
 			} catch (final Exception e) {
-				throw new AplicacaoException(
+				throw new RuntimeException(
 						"Só é permitida a assinatura digital do subscritor e dos cossignatários do documento",
-						0, e);
+						e);
 			}
 		}
 
@@ -1950,7 +1950,7 @@ public class ExBL extends CpBL {
 		} catch (final Exception e) {
 			log.error("Erro ao assinar movimentação.", e);
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao assinar movimentação.", 0, e);
+			throw new RuntimeException("Erro ao assinar movimentação.", e);
 		}
 	}
 
@@ -2155,7 +2155,7 @@ public class ExBL extends CpBL {
 				lMatricula = Long.valueOf(sMatricula.replace("-", ""));
 			} catch (final Exception e) {
 				// throw new AplicacaoException(
-				// "não foi possível obter a matrícula do assinante", 0, e);
+				// "não foi possível obter a matrícula do assinante", e);
 			}
 
 			// Verifica se a matrícula confere com o subscritor do Despacho ou
@@ -2203,14 +2203,14 @@ public class ExBL extends CpBL {
 					if (fValido == false
 							&& movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
 						log.warn("Só é permitida a assinatura digital do subscritor do desentranhamento");
-						throw new AplicacaoException(
+						throw new RuntimeException(
 								"Só é permitida a assinatura digital do subscritor do desentranhamento",
-								0, e);
+								e);
 					}
 					log.warn("Só é permitida a assinatura digital do subscritor do despacho");
-					throw new AplicacaoException(
+					throw new RuntimeException(
 							"Só é permitida a assinatura digital do subscritor do despacho",
-							0, e);
+							e);
 				}
 			}
 
@@ -2245,8 +2245,8 @@ public class ExBL extends CpBL {
 		} catch (final Exception e) {
 			log.error("Erro ao assinar movimentação.", e);
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao assinar movimentação. "
-					+ e.getMessage(), 0, e);
+			throw new RuntimeException("Erro ao assinar movimentação. "
+					+ e.getMessage(), e);
 		}
 
 	}
@@ -2275,7 +2275,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExMobil());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao cancelar juntada.", 0, e);
+			throw new RuntimeException("Erro ao cancelar juntada.", e);
 		}
 
 	}
@@ -2290,7 +2290,7 @@ public class ExBL extends CpBL {
 			concluirAlteracaoDocComRecalculoAcesso(doc);
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao cancelar o documento.", 0, e);
+			throw new RuntimeException("Erro ao cancelar o documento.", e);
 		}
 	}
 
@@ -2387,7 +2387,7 @@ public class ExBL extends CpBL {
 			concluirAlteracaoComRecalculoAcesso(mov.getExMobil());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao cancelar juntada.", 0, e);
+			throw new RuntimeException("Erro ao cancelar juntada.", e);
 		}
 	}
 
@@ -2613,7 +2613,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(null);
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao cancelar movimentação.", 0, e);
+			throw new RuntimeException("Erro ao cancelar movimentação.", e);
 			// throw e;
 		}
 	}
@@ -2635,7 +2635,7 @@ public class ExBL extends CpBL {
 				
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao remover data de devolução.", 0, e);
+			throw new RuntimeException("Erro ao remover data de devolução.", e);
 			// throw e;
 		}
 	}	
@@ -2728,7 +2728,7 @@ public class ExBL extends CpBL {
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao cancelar movimentação.", 0, e);
+			throw new RuntimeException("Erro ao cancelar movimentação.", e);
 			// throw e;
 		}
 	}
@@ -2743,7 +2743,7 @@ public class ExBL extends CpBL {
 						
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao cancelar movimentaçôes replicadas.", 0, e);
+			throw new RuntimeException("Erro ao cancelar movimentaçôes replicadas.", e);
 		}
 	}
 	
@@ -2781,7 +2781,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExMobil());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao criar nova via.", 0, e);
+			throw new RuntimeException("Erro ao criar nova via.", e);
 			// throw e;
 		}
 	}
@@ -2810,7 +2810,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mob);
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao reabrir.", 0, e);
+			throw new RuntimeException("Erro ao reabrir.", e);
 		}
 	}
 
@@ -2836,8 +2836,8 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mob);
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao desarquivar intermediário.",
-					0, e);
+			throw new RuntimeException("Erro ao desarquivar intermediário.",
+					e);
 		}
 	}
 
@@ -2867,7 +2867,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(null);
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao desobrestar.", 0, e);
+			throw new RuntimeException("Erro ao desobrestar.", e);
 		}
 	}
 
@@ -2890,7 +2890,7 @@ public class ExBL extends CpBL {
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao excluir movimentação.", 0, e);
+			throw new RuntimeException("Erro ao excluir movimentação.", e);
 		}
 	}
 
@@ -3024,8 +3024,8 @@ public class ExBL extends CpBL {
 			String s = processarComandosEmTag(doc, "finalizacao");
 			return s;
 		} catch (final Exception e) {
-			throw new AplicacaoException("Erro ao finalizar o documento: "
-					+ e.getMessage(), 0, e);
+			throw new RuntimeException("Erro ao finalizar o documento: "
+					+ e.getMessage(), e);
 		}
 	}
 
@@ -3093,7 +3093,7 @@ public class ExBL extends CpBL {
 			}
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao criar novo volume.", 0, e);
+			throw new RuntimeException("Erro ao criar novo volume.", e);
 			// throw e;
 		}
 	}
@@ -4301,7 +4301,7 @@ public class ExBL extends CpBL {
 		// concluirAlteracao(mov.getExMobil());
 		// } catch (final Exception e) {
 		// cancelarAlteracao();
-		// throw new AplicacaoException("Erro ao receber documento.", 0, e);
+		// throw new AplicacaoException("Erro ao receber documento.", e);
 		//
 		// }
 
@@ -4750,7 +4750,7 @@ public class ExBL extends CpBL {
 			throw e;
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao transferir documento.", 0, e);
+			throw new RuntimeException("Erro ao transferir documento.", e);
 		}
 	}
 
@@ -4772,8 +4772,8 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExMobil());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao registrar acesso reservado.",
-					0, e);
+			throw new RuntimeException("Erro ao registrar acesso reservado.",
+					e);
 		}
 	}
 
@@ -4810,7 +4810,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExMobil());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao fazer anotação.", 0, e);
+			throw new RuntimeException("Erro ao fazer anotação.", e);
 		}
 	}
 
@@ -4849,8 +4849,8 @@ public class ExBL extends CpBL {
 			concluirAlteracaoComRecalculoAcesso(mov.getExMobil());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao fazer vinculação de papel.",
-					0, e);
+			throw new RuntimeException("Erro ao fazer vinculação de papel.",
+					e);
 		}
 
 	}
@@ -4885,7 +4885,7 @@ public class ExBL extends CpBL {
 				concluirAlteracao(mov.getExMobil());
 			} catch (final Exception e) {
 				cancelarAlteracao();
-				throw new AplicacaoException("Erro ao fazer marcação.", 0, e);
+				throw new RuntimeException("Erro ao fazer marcação.", e);
 			}
 		} else {
 			Set<CpMarcador> set = new HashSet<CpMarcador>();
@@ -4940,8 +4940,8 @@ public class ExBL extends CpBL {
 			concluirAlteracaoComRecalculoAcesso(mov.getExMobil());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException(
-					"Erro ao tentar redefinir nível de acesso", 0, e);
+			throw new RuntimeException(
+					"Erro ao tentar redefinir nível de acesso", e);
 		}
 	}
 
@@ -4981,7 +4981,7 @@ public class ExBL extends CpBL {
 		} catch (final Exception e) {
 			if (fGravarMov)
 				cancelarAlteracao();
-			throw new AplicacaoException("Erro ao exigir anexação.", 0, e);
+			throw new RuntimeException("Erro ao exigir anexação.", e);
 		}
 	}
 
@@ -5045,8 +5045,8 @@ public class ExBL extends CpBL {
 					strHtml = processarModelo(doc, null, "processar_modelo",
 							null, null);
 				} catch (Exception e) {
-					throw new AplicacaoException(
-							"Erro no processamento do modelo HTML.", 0, e);
+					throw new RuntimeException(
+							"Erro no processamento do modelo HTML.", e);
 				}
 
 				// Restaurar o modelo do "Interno Antigo"
@@ -5071,9 +5071,9 @@ public class ExBL extends CpBL {
 					try {
 						pdf = Documento.generatePdf(strHtml, conversor);
 					} catch (Exception e) {
-						throw new AplicacaoException(
+						throw new RuntimeException(
 								"Erro na geração do PDF. Por favor, verifique se existem recursos de formatação não suportados. Para eliminar toda a formatação do texto clique em voltar e depois, no editor, clique no botõo de 'Selecionar Tudo' e depois no botão de 'Remover Formatação'.",
-								0, e);
+								e);
 					}
 					doc.setConteudoBlobPdf(pdf);
 				}
@@ -5095,7 +5095,7 @@ public class ExBL extends CpBL {
 			if (gravar && transacao) {
 				cancelarAlteracao();
 			}
-			throw new AplicacaoException("Erro na gravação", 0, e);
+			throw new RuntimeException("Erro na gravação", e);
 		}
 	}
 
@@ -5606,8 +5606,8 @@ public class ExBL extends CpBL {
 						doc.getCodigo());
 			}
 		} catch (Exception ex) {
-			throw new AplicacaoException(
-					"Erro ao tentar atualizar estado do workflow", 0, ex);
+			throw new RuntimeException(
+					"Erro ao tentar atualizar estado do workflow", ex);
 		}
 	}
 
@@ -5618,8 +5618,8 @@ public class ExBL extends CpBL {
 						mov.getExMobil().getSigla());
 			}
 		} catch (Exception e) {
-			throw new AplicacaoException(
-					"Erro ao tentar atualizar estado do workflow", 0, e);
+			throw new RuntimeException(
+					"Erro ao tentar atualizar estado do workflow", e);
 		}
 	}
 
@@ -5760,8 +5760,8 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExMobil());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException(
-					"Erro ao incluir em edital de eliminação.", 0, e);
+			throw new RuntimeException(
+					"Erro ao incluir em edital de eliminação.", e);
 		}
 
 	}
@@ -5787,8 +5787,8 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExMobil());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException(
-					"Erro ao retirar do edital de eliminação.", 0, e);
+			throw new RuntimeException(
+					"Erro ao retirar do edital de eliminação.", e);
 		}
 
 	}
@@ -5842,7 +5842,7 @@ public class ExBL extends CpBL {
 		try {
 			doc.getDescrCurta();
 		} catch (ObjectNotFoundException e) {
-			throw new AplicacaoException("Documento não encontrado", 0, e);
+			throw new RuntimeException("Documento não encontrado na base", e);
 		}
 
 		/*
@@ -5967,7 +5967,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExMobil());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao apensar documento.", 0, e);
+			throw new RuntimeException("Erro ao apensar documento.", e);
 		}
 	}
 
@@ -6022,7 +6022,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExMobil());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao desapensar.", 0, e);
+			throw new RuntimeException("Erro ao desapensar.", e);
 		}
 
 	}
@@ -6106,7 +6106,7 @@ public class ExBL extends CpBL {
 			throw e;
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao encerrar volume.", 0, e);
+			throw new RuntimeException("Erro ao encerrar volume.", e);
 		}
 	}
 
@@ -6174,7 +6174,7 @@ public class ExBL extends CpBL {
 			ExDao.commitTransacao();
 		} catch (Exception e) {
 			ExDao.rollbackTransacao();
-			throw new AplicacaoException("Erro ao salvar um modelo.", 0, e);
+			throw new RuntimeException("Erro ao salvar um modelo.", e);
 		}
 	}
 
@@ -6202,7 +6202,7 @@ public class ExBL extends CpBL {
 			ExDao.commitTransacao();
 		} catch (Exception e) {
 			ExDao.rollbackTransacao();
-			throw new AplicacaoException("Erro ao salvar um tipo.", 0, e);
+			throw new RuntimeException("Erro ao salvar um tipo.", e);
 		}
 	}
 
@@ -6243,8 +6243,8 @@ public class ExBL extends CpBL {
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException(
-					"Erro ao anular cancelamento do documento.", 0, e);
+			throw new RuntimeException(
+					"Erro ao anular cancelamento do documento.", e);
 		}
 	}
 
@@ -6289,8 +6289,8 @@ public class ExBL extends CpBL {
 			concluirAlteracaoDocComRecalculoAcesso(doc);
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException(
-					"Erro ao tornar o documento sem efeito.", 0, e);
+			throw new RuntimeException(
+					"Erro ao tornar o documento sem efeito.", e);
 		}
 	}
 
@@ -6305,9 +6305,8 @@ public class ExBL extends CpBL {
 					identidadeCadastrante);
 
 		} catch (Exception e) {
-			throw new AplicacaoException(
-					"Erro ao copiar as propriedades do modelo anterior. "
-							+ e.getMessage());
+			throw new RuntimeException(
+					"Erro ao copiar as propriedades do modelo anterior.", e);
 		}
 
 	}
@@ -6359,8 +6358,8 @@ public class ExBL extends CpBL {
 			}
 
 		} catch (Exception e) {
-			throw new AplicacaoException(
-					"não foi possível fazer cópia dos modelos!");
+			throw new RuntimeException(
+					"não foi possível fazer cópia dos modelos!", e);
 		}
 	}
 
@@ -6386,8 +6385,8 @@ public class ExBL extends CpBL {
 
 			}
 		} catch (Exception e) {
-			throw new AplicacaoException(
-					"não foi possível fazer cópia das vias!");
+			throw new RuntimeException(
+					"não foi possível fazer cópia das vias!", e);
 		}
 	}
 
@@ -6459,8 +6458,8 @@ public class ExBL extends CpBL {
 			Set<ExModelo> setExModeloCriacaoVia = new HashSet<ExModelo>();
 			exClassCopia.setExModeloCriacaoViaSet(setExModeloCriacaoVia);
 		} catch (Exception e) {
-			throw new AplicacaoException(
-					"Erro ao copiar as propriedades do modelo anterior.");
+			throw new RuntimeException(
+					"Erro ao copiar as propriedades do modelo anterior.", e);
 		}
 
 		return exClassCopia;
@@ -6533,8 +6532,8 @@ public class ExBL extends CpBL {
 			exTempCopia.setExViaArqIntermediarioSet(setExViaArqInterm);
 
 		} catch (Exception e) {
-			throw new AplicacaoException(
-					"Erro ao copiar as propriedades do objeto ExTemporalidade.");
+			throw new RuntimeException(
+					"Erro ao copiar as propriedades do objeto ExTemporalidade.", e);
 		}
 
 		return exTempCopia;
@@ -6566,8 +6565,8 @@ public class ExBL extends CpBL {
 
 			}
 		} catch (Exception e) {
-			throw new AplicacaoException(
-					"não foi possível fazer cópia das vias em arquivo corrente!");
+			throw new RuntimeException(
+					"não foi possível fazer cópia das vias em arquivo corrente!", e);
 		}
 
 		// copiar Referências arq intermediário
@@ -6589,8 +6588,8 @@ public class ExBL extends CpBL {
 
 			}
 		} catch (Exception e) {
-			throw new AplicacaoException(
-					"não foi possível fazer cópia das vias em arquivo intermediário!");
+			throw new RuntimeException(
+					"não foi possível fazer cópia das vias em arquivo intermediário!", e);
 		}
 
 	}
@@ -6608,8 +6607,8 @@ public class ExBL extends CpBL {
 			exModCopia.updateAtivo();
 
 		} catch (Exception e) {
-			throw new AplicacaoException(
-					"Erro ao copiar as propriedades do modelo anterior.");
+			throw new RuntimeException(
+					"Erro ao copiar as propriedades do modelo anterior.", e);
 		}
 
 		return exModCopia;
@@ -7027,7 +7026,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(doc.getMobilGeral());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao revisar documento.", 0, e);
+			throw new RuntimeException("Erro ao revisar documento.", e);
 		}
 	}
 }

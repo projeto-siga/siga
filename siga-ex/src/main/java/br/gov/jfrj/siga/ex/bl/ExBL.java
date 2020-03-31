@@ -5024,7 +5024,7 @@ public class ExBL extends CpBL {
 
 				// Internos antigos devem usar sempre o modelo 778L
 				Long backupID = null;
-				if (doc.getExTipoDocumento().getIdTpDoc() == 2) {
+				if (doc.getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO) {
 					if (doc.getExModelo() != null)
 						backupID = doc.getExModelo().getIdMod();
 					
@@ -5050,7 +5050,7 @@ public class ExBL extends CpBL {
 				}
 
 				// Restaurar o modelo do "Interno Antigo"
-				if (doc.getExTipoDocumento().getIdTpDoc() == 2) {
+				if (doc.getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO) {
 					if (backupID != null) {
 						doc.setExModelo(dao().consultar(backupID,
 								ExModelo.class, false));

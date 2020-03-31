@@ -31,7 +31,7 @@ public class RelMovCad extends RelatorioTemplate {
 		if (Utils.empty(parametros.get("secaoUsuario"))) {
 			throw new AplicacaoException("Parâmetro secaoUsuario não informado!");
 		}
-		if (Utils.empty(parametros.get("lotacaoTitular"))) {
+		if (Utils.empty(parametros.get("lotacao"))) {
 			throw new AplicacaoException("Parâmetro lotação não informado!");
 		}
 		if (Utils.empty(parametros.get("dataInicial"))) {

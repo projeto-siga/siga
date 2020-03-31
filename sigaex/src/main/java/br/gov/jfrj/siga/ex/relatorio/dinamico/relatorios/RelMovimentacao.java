@@ -30,7 +30,7 @@ public class RelMovimentacao extends RelatorioTemplate {
 			throw new AplicacaoException(
 					"Parâmetro secaoUsuario não informado!");
 		}
-		if (Utils.empty(parametros.get("lotacaoTitular"))) {
+		if (Utils.empty(parametros.get("lotacao"))) {
 			throw new AplicacaoException("Parâmetro lotação não informado!");
 		}
 		if (Utils.empty(parametros.get("dataInicial"))) {

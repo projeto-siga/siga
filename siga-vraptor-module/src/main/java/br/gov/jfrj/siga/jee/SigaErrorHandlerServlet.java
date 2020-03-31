@@ -15,6 +15,9 @@ public class SigaErrorHandlerServlet extends HttpServlet {
 		Throwable throwable = (Throwable) request.getAttribute("javax.servlet.error.exception");
 		Integer statusCode = (Integer) request.getAttribute("javax.servlet.error.status_code");
 		String servletName = (String) request.getAttribute("javax.servlet.error.servlet_name");
+		String newWindow = (String) request.getParameter("newWindow");
+		if ("1".equals(newWindow))
+			request.setAttribute("newWindow", newWindow);
 
 		if (servletName == null) {
 			servletName = "Unknown";

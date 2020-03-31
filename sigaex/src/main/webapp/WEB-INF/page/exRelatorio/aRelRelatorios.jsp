@@ -15,10 +15,6 @@ function sbmt() {
 
 var newwindow = '';
 function visualizarRelatorio(rel) {
-	frmRelatorios.action=rel;
-	frmRelatorios.submit();
-	return;
-	
 	// Alterado para gerar o relatório na própria página, pois assim os erros podem ser tratados com o botão de "Voltar".
 	if (!newwindow.closed && newwindow.location) {
 	} else {
@@ -129,6 +125,7 @@ function visualizarRelatorio(rel) {
 		</div>
 		<div class="card-body">
 		<form name="frmRelatorios" action="${actionName}" theme="simple" method="get" enctype="multipart/form-data">
+			<input type="hidden" name="newWindow" value="1" />
 			<input type="hidden" name="postback" value="1" />
 			<input type="hidden" name="secaoUsuario" value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
 			<input type="hidden" name="tipoRelatorio" value="${tipoRelatorio}" />		

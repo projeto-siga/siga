@@ -65,8 +65,14 @@ This is a useless buffer to fill the page to 513 bytes to avoid display of Frien
 					<div class="row mt-3">
 						<div class="col">
 							<div class="form-group">
+							<c:if test="${newWindow != 1}">
 								<input type="button" value="Voltar"
 									onclick="javascript:history.back();" class="btn btn-secondary btn-sm" />
+							</c:if>
+							<c:if test="${newWindow eq 1}">
+								<input type="button" value="Fechar"
+									onclick="javascript:window.close();" class="btn btn-secondary btn-sm" />
+							</c:if>
 							</div>
 						</div>
 					</div>

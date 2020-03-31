@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `sigawf` /*!40100 DEFAULT CHARACTER SET utf8 */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `sigawf`;
 -- MySQL dump 10.13  Distrib 8.0.19, for macos10.15 (x86_64)
 --
 -- Host: 127.0.0.1    Database: sigawf
@@ -43,7 +41,7 @@ CREATE TABLE `wf_def_desvio` (
   KEY `FKra1qiio7tqe6pi8oi26ohpr6o` (`DEFT_ID_SEGUINTE`),
   CONSTRAINT `FK813vkemf782rmlocu7vvc7dqr` FOREIGN KEY (`DEFT_ID`) REFERENCES `wf_def_tarefa` (`DEFT_ID`),
   CONSTRAINT `FKra1qiio7tqe6pi8oi26ohpr6o` FOREIGN KEY (`DEFT_ID_SEGUINTE`) REFERENCES `wf_def_tarefa` (`DEFT_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67,7 +65,7 @@ CREATE TABLE `wf_def_procedimento` (
   `HIS_IDC_INI` bigint(20) DEFAULT NULL,
   `ORGU_ID` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`DEFP_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -89,7 +87,7 @@ CREATE TABLE `wf_def_responsavel` (
   `HIS_IDC_FIM` bigint(20) DEFAULT NULL,
   `HIS_IDC_INI` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`DEFR_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -126,7 +124,7 @@ CREATE TABLE `wf_def_tarefa` (
   CONSTRAINT `FK3q8wg6gcbprluvelqdvhr97n5` FOREIGN KEY (`DEFT_ID_SEGUINTE`) REFERENCES `wf_def_tarefa` (`DEFT_ID`),
   CONSTRAINT `FK78imh70w24xwrsxtm1i1l3kgq` FOREIGN KEY (`DEFP_ID`) REFERENCES `wf_def_procedimento` (`DEFP_ID`),
   CONSTRAINT `FKqel8oog2x3uh24xtigwcapkes` FOREIGN KEY (`DEFR_ID`) REFERENCES `wf_def_responsavel` (`DEFR_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -153,7 +151,7 @@ CREATE TABLE `wf_def_variavel` (
   PRIMARY KEY (`DEFV_ID`),
   KEY `FK8g9ym68b7nhtn6js08hi238kq` (`DEFT_ID`),
   CONSTRAINT `FK8g9ym68b7nhtn6js08hi238kq` FOREIGN KEY (`DEFT_ID`) REFERENCES `wf_def_tarefa` (`DEFT_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -190,7 +188,7 @@ CREATE TABLE `wf_movimentacao` (
   CONSTRAINT `FK3wba9weje1vrg6f1k5lmi1135` FOREIGN KEY (`DEFT_ID_DE`) REFERENCES `wf_def_tarefa` (`DEFT_ID`),
   CONSTRAINT `FK71qoltrijfornvk1so8okwepc` FOREIGN KEY (`DEFT_ID_PARA`) REFERENCES `wf_def_tarefa` (`DEFT_ID`),
   CONSTRAINT `FK8lotmruole2bkagssr0l8k0xy` FOREIGN KEY (`PROC_ID`) REFERENCES `wf_procedimento` (`PROC_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=98 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -218,7 +216,7 @@ CREATE TABLE `wf_procedimento` (
   PRIMARY KEY (`PROC_ID`),
   KEY `FK5kmlrwsmko0wlon3x48rfexbe` (`DEFP_ID`),
   CONSTRAINT `FK5kmlrwsmko0wlon3x48rfexbe` FOREIGN KEY (`DEFP_ID`) REFERENCES `wf_def_procedimento` (`DEFP_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -243,7 +241,7 @@ CREATE TABLE `wf_responsavel` (
   PRIMARY KEY (`RESP_ID`),
   KEY `FKq7hquvl1qalkhp43j8qa8x96f` (`DEFR_ID`),
   CONSTRAINT `FKq7hquvl1qalkhp43j8qa8x96f` FOREIGN KEY (`DEFR_ID`) REFERENCES `wf_def_responsavel` (`DEFR_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -264,7 +262,7 @@ CREATE TABLE `wf_variavel` (
   PRIMARY KEY (`VARI_ID`),
   KEY `FK9it3v7ops0efd7b5g02pxjc3l` (`PROC_ID`),
   CONSTRAINT `FK9it3v7ops0efd7b5g02pxjc3l` FOREIGN KEY (`PROC_ID`) REFERENCES `wf_procedimento` (`PROC_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=89 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -326,4 +324,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-03-13 10:40:04
+-- Dump completed on 2020-03-31 17:03:46

@@ -21,7 +21,7 @@
 		<dependency>
 			<groupId>com.crivano</groupId>
 			<artifactId>jflow</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2</version>
 		</dependency>
 
 		<dependency>

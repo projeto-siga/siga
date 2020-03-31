@@ -1431,7 +1431,9 @@ public class CpDao extends ModeloDao {
 			}
 			whereList.add(c.get("situacaoFuncionalPessoa").in(situacoesFuncionais.getValor()));
 			whereList.add(cb().isNull(c.get("dataFimPessoa")));
-			q.where((Predicate[])whereList.toArray());
+			Predicate[] whereArray = new Predicate[whereList.size()];
+			whereList.toArray(whereArray);
+			q.where(whereArray);
 
 			q.orderBy(cb().asc(c.get("nomePessoa")));
 			lstCompleta.addAll((List<DpPessoa>) em().createQuery(q).getResultList());
@@ -1973,7 +1975,9 @@ public class CpDao extends ModeloDao {
 		} else {
 			whereList.add(cb().isNull(c.get("dataFimPessoa")));
 		}
-		q.where((Predicate[])whereList.toArray());
+		Predicate[] whereArray = new Predicate[whereList.size()];
+		whereList.toArray(whereArray);
+		q.where(whereArray);
 		if (ordemDesc) {
 			q.orderBy(cb().desc(c.get("dataInicioPessoa")));
 		} else {

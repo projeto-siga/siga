@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `sigawf` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `sigawf`;
 -- MySQL dump 10.13  Distrib 8.0.19, for macos10.15 (x86_64)
 --
 -- Host: 127.0.0.1    Database: sigawf

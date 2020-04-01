@@ -781,7 +781,7 @@ public class Excel {
 					problemas.append("Linha " + linha +": E-MAIL em branco" + System.getProperty("line.separator"));
 				}
 				
-				i = CpDao.getInstance().consultarQtdePorEmailIgualCpfDiferente(Texto.removerEspacosExtra(celula).trim().replace(" ",""), Long.valueOf(cpf));
+				i = CpDao.getInstance().consultarQtdePorEmailIgualCpfDiferente(Texto.removerEspacosExtra(celula).trim().replace(" ",""), Long.valueOf(cpf), Long.valueOf(0));
 				
 				if(i > 0) {
 					problemas.append("Linha " + linha +": E-MAIL informado está cadastrado para outro CPF" + System.getProperty("line.separator"));

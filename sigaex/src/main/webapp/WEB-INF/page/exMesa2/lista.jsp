@@ -140,19 +140,18 @@
 					<div v-if="g.grupoCounterUser > 0 || g.grupoCounterLota > 0" :key="g.grupoOrdem">
 						<div class="collapse-header d-inline">
 							<h5 :id="['collapse-header-' + g.grupoOrdem]" data-toggle="collapse" :data-target="['#collapsetab-' + g.grupoOrdem]" 
-									class="collapse-toggle pt-1 px-2 mb-2 table-group table-group-title"
+									class="collapse-toggle p-1 table-group table-group-title"
 									v-bind:class="{ collapsed: g.grupoCollapsed}" v-bind:aria-expanded="{false: g.grupoCollapsed}"
 									@click="collapseGrupo(g.grupoOrdem, g.grupoNome)">
-								<i class="h5" :class="g.grupoIcone"></i>
+								<i class="h5 mb-0" :class="g.grupoIcone"></i>
 								<span class="mr-3">{{g.grupoNome}}</span>
-
-								<small class="align-middle"> 
-									<span class="badge badge-light btn-sm" :class="{disabled: exibeLota}">
-										<i class="fas fa-user"></i>
+								<small> 
+									<span class="badge badge-light btn-sm align-middle" :class="{disabled: exibeLota}">
+										<small class="fas fa-user"></small>
 										<span class="badge badge-light">{{g.grupoCounterUser}}</span>
 									</span>
-									<span class="badge badge-light btn-sm" :class="{disabled: !exibeLota}">
-										<i class="fas fa-users"></i>
+									<span class="badge badge-light btn-sm align-middle" :class="{disabled: !exibeLota}">
+										<small class="fas fa-users"></small>
 										<span class="badge badge-light">{{g.grupoCounterLota}}</span>
 									</span>
 								</small>
@@ -179,7 +178,7 @@
 									<template v-for="f in g.grupoDocs">
 										<tr class="d-flex">
 											<td class="col-1 d-none d-md-block" 
-												:title="f.datahora.split('T')[0]+' '+f.datahora.split('T')[1].split('.')[0]">{{f.tempoRelativo}}</td>
+												:title="f.datahoraDDMMYYYHHMM">{{f.tempoRelativo}}</td>
 											<td class="col-9 col-md-2">
 												<c:if test="${siga_cliente == 'GOVSP'}">
 													<span v-if="trazerComposto">
@@ -287,14 +286,6 @@
 		$("#ultima-atualizacao").addClass("text-secondary");
 	}, 5000);
 	 
-	 
-	if ((location.href).indexOf('excluiuAnotacao') !== -1 ) {
-		$('#mensagemCabecId').toggleClass('d-none');
-		$('#mensagemCabec').prepend("Anotação excluída com sucesso.");
-		$('#mensagemCabec').addClass("alert-success fade-close");
-    	this.grupos = [];
-    	sessionStorage.removeItem('timeout' + getUser());
-	}
 	var appMesa = new Vue({
 		  el: "#app",
 
@@ -304,11 +295,8 @@
 			self.exibeLota = (getParmUser('exibeLota') === 'true');
 	      	setParmUser('trazerAnotacoes', self.trazerAnotacoes);
 	      	setParmUser('trazerComposto', self.trazerComposto);
-		    setTimeout(function() {
-		      self.carregarMesa();
-		    });
+  	        self.carregarMesa();
 		  },
-
 		  data: function() {
 		    return {
 		      mesa: undefined,
@@ -352,10 +340,8 @@
 		      } 
 		      this.$nextTick(function () {		      
 	        	$('.popover-dismiss').popover({
-// 	        		container: 'body',
 	        		html: true,
 	        		animation: false,
-// 	        		delay: { "show": 100, "hide": 300 },
 	        		trigger: 'manual'
 	        	}).on("mouseenter", function () {
 	                var _this = this;
@@ -507,23 +493,12 @@
 		    	sessionStorage.removeItem('timeout' + getUser());
 	    		this.carregarMesa(grupoNome, parseInt(parmGrupos[grupoNome].qtdPag));
 		    },
-		    pageUpGrupo: function(grupoNome) {
-		  	    var parmGrupos = JSON.parse(getParmUser('gruposMesa'));
-	    		if (parmGrupos[grupoNome].qtd <= parmGrupos[grupoNome].qtdPag) {
-	    			setValueGrupo(grupoNome, 'qtd', parseInt(parmGrupos[grupoNome].qtdPag));
-	    			this.collapseGrupo(parmGrupos[grupoNome].ordem, grupoNome);
-	    		} else {
-		  	    	setValueGrupo(grupoNome, 'qtd', parseInt(parmGrupos[grupoNome].qtd) - parseInt(parmGrupos[grupoNome].qtdPag));
-	    		}
-		    	sessionStorage.removeItem('timeout' + getUser());
-	    		this.carregarMesa(grupoNome, 0);
-	    		setValueGrupoVue(grupoNome,'grupoCollapsed', true);
-	    		setValueGrupoVue(grupoNome,'grupoQtd', parmGrupos[grupoNome].qtd);
-		    },
 		    collapseGrupo: function(grupoOrdem, grupoNome) {
+		    	// Abre ou fecha o grupo, salvando info no local/session storage e refletindo no vue
 		  	    var parmGrupos = JSON.parse(getParmUser('gruposMesa'));
 		    	var collapsibleElemHeader = document.getElementById('collapse-header-' + grupoOrdem);
 		  	    if (collapsibleElemHeader.classList.contains('collapsed')) {
+		    		setValueGrupoSessionStorage(grupoNome,'grupoCollapsed', false);
 		    		setValueGrupo(grupoNome, 'collapsed', false);
 		    		if (parmGrupos[grupoNome].qtd === 0) {
 		    			setValueGrupo(grupoNome, 'qtd', parmGrupos[grupoNome].qtdPag)
@@ -535,6 +510,7 @@
 			    		this.carregarMesa(grupoNome, 0);
 		    		}
 		    	} else {
+		    		setValueGrupoSessionStorage(grupoNome,'grupoCollapsed', true);
 		    		setValueGrupo(grupoNome, 'collapsed', true);
 		    	}
 		    },
@@ -706,11 +682,21 @@ function setValueGrupo(grupoNome, key, value) {
 	parms[grupoNome] [key] = value;
 	setParmUser('gruposMesa', JSON.stringify(parms));
 }
-function setValueGrupoVue(grupoNome, key, qtd) {
+function setValueGrupoVue(grupoNome, key, value) {
     for (var g in appMesa.grupos) {
         if (appMesa.grupos[g].grupoNome == grupoNome) 
-        	Vue.set(appMesa.grupos[g], key, qtd);
+        	Vue.set(appMesa.grupos[g], key, value);
     }
+}
+function setValueGrupoSessionStorage(grupoNome, key, value) {
+	var grp = JSON.parse(sessionStorage.getItem('mesa' + getUser()));
+    for (var g in grp) {
+      if (grp[g].grupoNome == grupoNome) {
+    	grp [g] [key] = value;  
+      }
+    }
+    sessionStorage.setItem(
+			  'mesa' + getUser(), JSON.stringify(grp));
 }
 function setParmUser(nomeParm, value) {
 	window.localStorage.setItem(nomeParm + getUser(), value)	
@@ -729,7 +715,7 @@ function carregaFromJson (json, appMesa) {
 	  appMesa.grupos = grp;  
     } else {
       for (var g in appMesa.grupos) {
-         if (appMesa.grupos[g].grupoOrdem === grp[0].grupoOrdem) {
+        if (appMesa.grupos[g].grupoOrdem === grp[0].grupoOrdem) {
       		Vue.set(appMesa.grupos, g, grp[0]);
       		if (appMesa.grupos[g].grupoDocs == undefined)
       			appMesa.grupos[g].grupoDocs = [];

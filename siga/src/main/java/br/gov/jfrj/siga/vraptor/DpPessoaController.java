@@ -532,12 +532,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		if (nmPessoa != null && !nmPessoa.matches("[a-zA-ZáâãäéêëíïóôõöúüçñÁÂÃÄÉÊËÍÏÓÔÕÖÚÜÇÑ'' ]+"))
 			throw new AplicacaoException("Nome com caracteres não permitidos");
 
-		int i = dao().consultarQtdePorEmailIgualCpfDiferente(Texto.removerEspacosExtra(email).trim().replace(" ", ""),
-				Long.valueOf(cpf.replace("-", "").replace(".", "").trim()));
-		if (i > 0) {
-			throw new AplicacaoException("E-mail informado está cadastrado para outro CPF");
-		}
-
+		
 		DpPessoa pessoa = new DpPessoa();
 		DpPessoa pessoaAnt = new DpPessoa();
 		
@@ -555,6 +550,13 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				
 			}
 		}
+		
+		int i = dao().consultarQtdePorEmailIgualCpfDiferente(Texto.removerEspacosExtra(email).trim().replace(" ", ""),
+				Long.valueOf(cpf.replace("-", "").replace(".", "").trim()), pessoaAnt.getIdPessoaIni() != null ? pessoaAnt.getIdPessoaIni() : 0);
+		if (i > 0) {
+			throw new AplicacaoException("E-mail informado está cadastrado para outro CPF");
+		}
+
 		
 		Date data = new Date(System.currentTimeMillis());
 		pessoa.setDataInicio(data);

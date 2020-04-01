@@ -1965,7 +1965,7 @@ public class ExDocumentoController extends ExController {
 		String servidor = SigaBaseProperties.getString("siga.ex."
                 + SigaBaseProperties.getString("siga.ambiente") + ".url");
 		
-		String caminho = servidor.substring(0, servidor.lastIndexOf("/")) + "/public/app/processoautenticar?n=" + prot.getCodigo();
+		String caminho = url + "/public/app/processoautenticar?n=" + prot.getCodigo();
 		
 		result.include("url", caminho);
 		result.include("ano", c.get(Calendar.YEAR));

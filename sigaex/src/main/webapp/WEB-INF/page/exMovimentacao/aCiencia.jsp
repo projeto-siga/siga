@@ -42,12 +42,16 @@
 							0, 255);
 				}
 			}	
-			function veDescrMov() {
-				if (tamanho2() == 255) {
-					event.preventDefault();
-					alert('Incluir o texto de ciência.');
-				}
-			}
+			function sbmt() {
+		        $("#spinnerModal").modal('show');
+		        document.getElementById('btnSubmit').disabled = true;
+	            if ($('#descrMov').val() == null || $('#descrMov').val() == '') {
+	            	frm.action = 'ciencia_gravar?sigla=${sigla}&postback=1';
+	            } else {
+	                frm.action = 'ciencia_gravar?sigla=${sigla}&postback=1&descrMov=' + $('#descrMov').val();
+	            }
+	            frm.submit();
+	        }
 		</script>
 
 	<!-- main content bootstrap -->
@@ -74,7 +78,7 @@
 					</div>
 					<div class="row">
 						<div class="col-sm">
-							<input type="submit" value="Ok" class="btn btn-primary" onclick="veDescrMov();" />
+							<input id="btnSubmit" type="button" value="Ok" class="btn btn-primary" onclick="sbmt();" />
 							<input type="button" value="Cancela" onclick="javascript:history.back();" class="btn btn-cancel ml-2" />
 
 						</div>

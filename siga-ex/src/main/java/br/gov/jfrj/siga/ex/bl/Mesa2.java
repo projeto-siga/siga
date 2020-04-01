@@ -49,6 +49,7 @@ public class Mesa2 {
 		public String grupoOrdem;
 		public String tipo;
 		public Date datahora;
+		public String datahoraDDMMYYYHHMM;
 		public String tempoRelativo;
 		public String codigo;
 		public String sigla;
@@ -456,6 +457,7 @@ public class Mesa2 {
 			else
 				datahora = mobil.getDoc().getDtAltDoc();
 			r.datahora = datahora;
+			r.datahoraDDMMYYYHHMM = datahora.toLocaleString();
 			r.tempoRelativo = Data.calcularTempoRelativo(datahora);
 
 			r.codigo = mobil.getCodigoCompacto();

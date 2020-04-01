@@ -80,7 +80,7 @@
 			</div>
 
 			<div class="card-body">
-				<form action="trocar_email_gravar" method="post">
+				<form action="trocar_email_gravar" method="post" >
 					<input type="hidden" name="page" value="1" />
 					<h1>${mensagem }</h1>
 					<div class="row">
@@ -94,16 +94,22 @@
 					<div class="row">
 						<div class="col-sm">
 							<div class="form-group">
-								<label>Novo endereço de email</label> <input type="text"
+								<label>Novo endereço de email</label>
+								<input type="text"
 									name="usuario.emailNovo" id="pass"
 									onkeyup="passwordStrength(this.value)" theme="simple"
-									class="form-control" />
+									class="form-control"
+									oncopy="return false" onpaste="return false"/>
 							</div>
 						</div>
 						<div class="col-sm">
 							<div class="form-group">
-								<label>Repetição do novo email</label> <input type="text"
-									name="usuario.emailConfirma" id="pass2" class="form-control" />
+								<label>Repetição do novo email</label>
+								<input type="text"
+									name="usuario.emailConfirma"
+									id="pass2"
+									class="form-control"
+									oncopy="return false" onpaste="return false"/>
 							</div>
 						</div>
 					</div>

@@ -42,9 +42,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.poi.ss.usermodel.DataFormat;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
+import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.ex.ExArquivoNumerado;
@@ -229,6 +232,30 @@ public class Documento {
 			Set<ExMovimentacao> movsAssinatura) {
 		ArrayList<String> assinantes = new ArrayList<String>();
 		for (ExMovimentacao movAssinatura : movsAssinatura) {
+			if(movAssinatura.getCadastrante().getId().equals(movAssinatura.getSubscritor().getId())) {
+				String s;
+				if (movAssinatura.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)) {
+					s = Texto.maiusculasEMinusculas(movAssinatura.getCadastrante().getNomePessoa());
+				} else {
+					s = movAssinatura.getDescrMov().trim().toUpperCase();
+					s = s.split(":")[0];
+					s = s.intern();
+					if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+						s +=" - " + Data.formatDDMMYY_AS_HHMMSS(movAssinatura.getData());
+					}
+				}
+				if (!assinantes.contains(s)) {
+					assinantes.add(s);
+				}
+			}
+		}
+		return assinantes;
+	}
+	
+	public static ArrayList<String> getAssinantesStringListaComMatricula(
+			Set<ExMovimentacao> movsAssinatura) {
+		ArrayList<String> assinantes = new ArrayList<String>();
+		for (ExMovimentacao movAssinatura : movsAssinatura) {
 			String s;
 			if (movAssinatura.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)) {
 				s = Texto.maiusculasEMinusculas(movAssinatura.getCadastrante().getNomePessoa());
@@ -236,6 +263,9 @@ public class Documento {
 				s = movAssinatura.getDescrMov().trim().toUpperCase();
 				s = s.split(":")[0];
 				s = s.intern();
+				if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+					s +=" - " + Data.formatDDMMYY_AS_HHMMSS(movAssinatura.getData());
+				}
 			}
 			if (!assinantes.contains(s)) {
 				assinantes.add(s);

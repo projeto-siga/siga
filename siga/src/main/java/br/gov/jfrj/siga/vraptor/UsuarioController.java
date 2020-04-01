@@ -139,7 +139,7 @@ public class UsuarioController extends SigaController {
 		if (!validarEmail(emailNovo) || !validarEmail(emailConfirma))
 			throw new AplicacaoException("Favor, inserir um email válido");
 		
-		if(dao().consultarQtdePorEmailIgualCpfDiferente(emailNovo, so.getCadastrante().getCpfPessoa())>0)
+		if(dao().consultarQtdePorEmailIgualCpfDiferente(emailNovo, so.getCadastrante().getCpfPessoa(), so.getCadastrante().getIdPessoaIni())>0)
 			throw new AplicacaoException("Existem outros usuários utilizando esse endereço de email. Favor, inserir um email diferente");
 		
 		if (emailNovo.equals(emailConfirma)) {

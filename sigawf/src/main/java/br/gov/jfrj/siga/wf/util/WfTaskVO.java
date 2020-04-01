@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.crivano.jlogic.Expression;
+
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
@@ -34,6 +36,8 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 import br.gov.jfrj.siga.wf.dao.WfDao;
+import br.gov.jfrj.siga.wf.logic.PodeSim;
+import br.gov.jfrj.siga.wf.logic.WfPodePegar;
 import br.gov.jfrj.siga.wf.model.WfConhecimento;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeDesvio;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
@@ -62,7 +66,7 @@ public class WfTaskVO extends VO {
 	private String conhecimento = null;
 
 	private String msgAviso = null;
-	
+
 	private boolean desabilitarForm;
 
 	private List<String> tags;
@@ -416,19 +420,35 @@ public class WfTaskVO extends VO {
 	}
 
 	@Override
-	public void addAcao(String icone, String nome, String nameSpace, String action, boolean pode, String msgConfirmacao,
-			String parametros, String pre, String pos, String classe, String modal) {
+	public void addAcao(String icone, String nome, String nameSpace, String action, boolean pode, String tooltip,
+			String msgConfirmacao, String parametros, String pre, String pos, String classe, String modal) {
 		if (parametros == null)
 			parametros = "id=" + this.ti.getInstanciaDeProcedimento().getId();
 		else
 			parametros += "&id=" + this.ti.getInstanciaDeProcedimento().getId();
-		super.addAcao(icone, nome, nameSpace, action, pode, msgConfirmacao, parametros, pre, pos, classe, modal);
+		super.addAcao(icone, nome, nameSpace, action, pode, tooltip, msgConfirmacao, parametros, pre, pos, classe,
+				modal);
+	}
+
+	public void addAcao(String icone, String nome, String nameSpace, String action, Expression pode,
+			String msgConfirmacao, String parametros, String pre, String pos, String classe, String modal) {
+		if (parametros == null)
+			parametros = "id=" + this.ti.getInstanciaDeProcedimento().getId();
+		else
+			parametros += "&id=" + this.ti.getInstanciaDeProcedimento().getId();
+		boolean f = pode.eval();
+
+		super.addAcao(icone, nome, nameSpace, action, f, pode.explain(f), msgConfirmacao, parametros, pre, pos, classe,
+				modal);
 	}
 
 	private void addAcoes(WfTarefa ti, DpPessoa titular, DpLotacao lotaTitular) {
-		addAcao("note_add", "_Anotar", "/app", "anotar",
-				// Ex.getInstance().getComp().podeFazerAnotacao(titular, lotaTitular, ti)
-				true, null, null, null, null, null, "anotarModal");
+		addAcao(WfAcaoVO.builder().nome("_Anotar").icone("note_add").acao("/app/anotar").modal("anotarModal")
+				.exp(new PodeSim()).build());
+
+		addAcao(WfAcaoVO.builder().nome("_Pegar").icone("add")
+				.acao("/app/procedimento/" + ti.getInstanciaDeProcedimento().getSiglaCompacta() + "/pegar")
+				.exp(new WfPodePegar(ti.getInstanciaDeProcedimento(), titular, lotaTitular)).post(true).build());
 	}
 
 	public boolean isDesabilitarForm() {

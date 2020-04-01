@@ -29,11 +29,11 @@ public class ExVO extends VO {
 
 	public void addAcao(String icone, String nome, String nameSpace, String action, boolean pode, String msgConfirmacao,
 			String parametros, String pre, String pos, String classe) {
-		addAcao(icone, nome, nameSpace, action, pode, msgConfirmacao, parametros, pre, pos, classe, null);
+		addAcao(icone, nome, nameSpace, action, pode, null, msgConfirmacao, parametros, pre, pos, classe, null);
 	}
 
 	@Override
-	public void addAcao(String icone, String nome, String nameSpace, String action, boolean pode, String msgConfirmacao,
+	public void addAcao(String icone, String nome, String nameSpace, String action, boolean pode, String tooltip, String msgConfirmacao,
 			String parametros, String pre, String pos, String classe, String modal) {
 		TreeMap<String, String> params = new TreeMap<String, String>();
 

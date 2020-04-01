@@ -47,12 +47,16 @@ public class VO {
 	public void setAcoes(List<AcaoVO> acoes) {
 		this.acoes = acoes;
 	}
-
-	public void addAcao(String icone, String nome, String nameSpace, String action, boolean pode) {
-		addAcao(icone, nome, nameSpace, action, pode, null, null, null, null, null, null);
+	
+	public void addAcao(AcaoVO acao) {
+		acoes.add(acao);
 	}
 
-	public void addAcao(String icone, String nome, String nameSpace, String action, boolean pode,
+	public void addAcao(String icone, String nome, String nameSpace, String action, boolean pode) {
+		addAcao(icone, nome, nameSpace, action, pode, null, null, null, null, null, null, null);
+	}
+
+	public void addAcao(String icone, String nome, String nameSpace, String action, boolean pode, String tooltip, 
 			String msgConfirmacao, String parametros, String pre, String pos, String classe, String modal) {
 		TreeMap<String, String> params = new TreeMap<String, String>();
 		if (parametros != null) {

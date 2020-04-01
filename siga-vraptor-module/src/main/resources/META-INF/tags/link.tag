@@ -62,20 +62,20 @@
 		<c:choose>
 			<c:when test="${not empty modal}">
 				<a
-					class="${classe} ${linkBotoes ? 'btn btn-sm btn-info link-tag' : ''}"
+					class="${classe} ${linkBotoes ? 'btn btn-sm btn-info text-white link-tag' : ''}"
 					<c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
 					data-toggle="modal" data-target="#${modal}" title="${explicacao}">${img}${title}</a>
 			</c:when>
 			<c:when test="${not empty popup and popup != false}">
 				<a
-					class="${classe} ${linkBotoes ? 'btn btn-sm btn-info link-tag' : ''}"
+					class="${classe} ${linkBotoes ? 'btn btn-sm btn-info text-white link-tag' : ''}"
 					<c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
 					href="javascript:${linkConfirm}popitup('${url}');"
 					title="${explicacao}">${img}${title}</a>
 			</c:when>
 			<c:when test="${not empty ajax and ajax != false}">
 				<span id="spanAjax_${idAjax}"> <a
-					class="${classe} ${linkBotoes ? 'btn btn-sm btn-info link-tag' : ''} link-tag"
+					class="${classe} ${linkBotoes ? 'btn btn-sm btn-info text-white link-tag' : ''} link-tag"
 					<c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
 					href="javascript: SetInnerHTMLFromAjaxResponse('${url}', 'spanAjax_${idAjax}');"
 					title="${explicacao}">${img}${title}</a>
@@ -85,14 +85,14 @@
 				<c:choose>
 					<c:when test="${not empty linkConfirm}">
 						<a
-							class="${classe} ${linkBotoes ? 'btn btn-sm btn-info link-tag' : ''} link-tag"
+							class="${classe} ${linkBotoes ? 'btn btn-sm btn-info text-white link-tag' : ''} link-tag"
 							<c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
 							href="javascript:${linkConfirm}${post ? 'postToUrl(\''.concat(url).concat('\')') : 'location.href=\''.concat(url).concat('\';')}"
 							title="${explicacao}">${img}${title}</a>
 					</c:when>
 					<c:otherwise>
 						<a
-							class="${classe} ${linkBotoes ? 'btn btn-sm btn-info link-tag' : ''} link-tag"
+							class="${classe} ${linkBotoes ? 'btn btn-sm btn-info text-white link-tag' : ''} link-tag"
 							<c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
 							href="${post ? 'javascript:postToUrl(\''.concat(url).concat('\')') : url}"
 							title="${explicacao}">${img}${title}</a>

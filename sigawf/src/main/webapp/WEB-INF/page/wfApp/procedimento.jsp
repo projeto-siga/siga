@@ -37,17 +37,18 @@
 						<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}"
 							pre="${acao.pre}" pos="${acao.pos}"
 							url="${pageContext.request.contextPath}${acao.url}"
-							test="${true}" popup="${acao.popup}"
-							confirm="${acao.msgConfirmacao}" classe="${acao.classe}"
-							estilo="line-height: 160% !important" atalho="${true}"
-							modal="${acao.modal}" />
+							popup="${acao.popup}" confirm="${acao.msgConfirmacao}"
+							classe="${acao.classe}" estilo="line-height: 160% !important"
+							atalho="${true}" modal="${acao.modal}"
+							explicacao="${acao.explicacao}" post="${acao.post}"
+							test="${acao.pode}" />
 					</c:forEach>
 				</siga:links>
 
 				<c:if test="${not empty task.definicaoDeTarefa}">
 					<div class="card bg-info mb-3 mt-3">
 						<div class="card-header text-white">
-							<c:if test="${pi.tipoDePrincipal eq 'DOC'}">
+							<c:if test="${pi.tipoDePrincipal eq 'DOC' and not empty pi.principal}">
 								<a style="color: white; text-decoration: underline;"
 									href="/sigaex/app/expediente/doc/exibir?sigla=${pi.principal}">${pi.principal}</a>
 									- 

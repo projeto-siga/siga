@@ -30,7 +30,10 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.enterprise.inject.Specializes;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 
 import org.jboss.logging.Logger;
@@ -50,6 +53,8 @@ import br.gov.jfrj.siga.wf.model.WfDefinicaoDeResponsavel;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
 import br.gov.jfrj.siga.wf.model.WfResponsavel;
 import br.gov.jfrj.siga.wf.model.WfVariavel;
+import br.gov.jfrj.siga.wf.util.SiglaUtils;
+import br.gov.jfrj.siga.wf.util.SiglaUtils.SiglaDecodificada;
 import br.gov.jfrj.siga.wf.util.WfTarefa;
 
 /**
@@ -212,4 +217,28 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 		WfResponsavel result = (WfResponsavel) query.getSingleResult();
 		return result;
 	}
+
+	public <T> T consultarPorSigla(String sigla, Class<T> clazz) {
+		String acronimo = null;
+		if (clazz.isAssignableFrom(WfProcedimento.class)) {
+			acronimo = "WF";
+		} else if (clazz.isAssignableFrom(WfDefinicaoDeProcedimento.class)) {
+			acronimo = "DP";
+		} else {
+			throw new RuntimeException("Não é permitido consultar por sigla registros da classe " + clazz.getName());
+		}
+		SiglaDecodificada d = SiglaUtils.parse(sigla, acronimo, null);
+		Integer ano = d.ano;
+		Integer numero = d.numero;
+		CpOrgaoUsuario orgaoUsuario = d.orgaoUsuario;
+
+		final CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
+		CriteriaQuery<T> q = criteriaBuilder.createQuery(clazz);
+		Root<T> c = q.from(clazz);
+		Join<T, CpOrgaoUsuario> joinOrgao = c.join("orgaoUsuario", JoinType.INNER);
+		q.where(cb().equal(c.get("numero"), numero), cb().equal(c.get("ano"), ano),
+				cb().equal(joinOrgao.get("idOrgaoUsu"), orgaoUsuario.getId()));
+		return em().createQuery(q).getSingleResult();
+	}
+
 }

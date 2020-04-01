@@ -18,7 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.bl;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,6 +28,8 @@ import java.util.TreeSet;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
+import com.crivano.jlogic.Expression;
+
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpIdentidade;
@@ -37,14 +38,17 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.wf.dao.WfDao;
+import br.gov.jfrj.siga.wf.logic.WfPodePegar;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 import br.gov.jfrj.siga.wf.model.WfMov;
 import br.gov.jfrj.siga.wf.model.WfMovAnotacao;
+import br.gov.jfrj.siga.wf.model.WfMovDesignacao;
 import br.gov.jfrj.siga.wf.model.WfMovTransicao;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
 import br.gov.jfrj.siga.wf.util.WfEngine;
 import br.gov.jfrj.siga.wf.util.WfHandler;
+import br.gov.jfrj.siga.wf.util.WfResp;
 import br.gov.jfrj.siga.wf.util.WfTarefa;
 import br.gov.jfrj.siga.wf.util.WfTarefaComparator;
 
@@ -273,6 +277,25 @@ public class WfBL extends CpBL {
 		WfMovTransicao mov = new WfMovTransicao(pi, dao().consultarDataEHoraDoServidor(), titular, lotaTitular,
 				identidade, de, para);
 		gravarMovimentacao(mov);
+	}
+
+	public void pegar(WfProcedimento pi, DpPessoa titular, DpLotacao lotaTitular, CpIdentidade identidade) {
+		assertLogic(new WfPodePegar(pi, titular, lotaTitular), "pegar");
+		WfMovDesignacao mov = new WfMovDesignacao(pi, dao().consultarDataEHoraDoServidor(), titular, lotaTitular,
+				identidade, pi.getPessoa(), pi.getLotacao(), titular, lotaTitular);
+		gravarMovimentacao(mov);
+
+		if (pi.getPessoa() != null || pi.getLotacao() != null) {
+			WfResp resp = pi.calcResponsible(pi.getCurrentTaskDefinition());
+			pi.setPessoa(resp.getPessoa());
+			pi.setLotacao(resp.getLotacao());
+			dao().gravarInstanciaDeProcedimento(pi);
+		}
+	}
+
+	private static void assertLogic(Expression expr, String descr) {
+		if (!expr.eval())
+			throw new AplicacaoException("Não pode " + descr + " porque " + expr.explain(false));
 	}
 
 }

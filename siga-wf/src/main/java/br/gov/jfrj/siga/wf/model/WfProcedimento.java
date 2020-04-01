@@ -238,6 +238,28 @@ public class WfProcedimento extends Objeto
 
 	@Override
 	public WfResp calcResponsible(WfDefinicaoDeTarefa tarefa) {
+		return localizarResponsavelAtual(tarefa);
+	}
+
+	private WfResp localizarResponsavelAtual(WfDefinicaoDeTarefa tarefa) {
+		WfResp resp = localizarResponsavelOriginal(tarefa);
+
+		for (WfMov mov : getMovimentacoes()) {
+			if (!mov.isAtivo())
+				continue;
+			if (mov instanceof WfMovDesignacao) {
+				WfMovDesignacao m = (WfMovDesignacao) mov;
+				if ((m.getPessoaDe() != null && m.getPessoaDe().equivale(resp.getPessoa()))
+						|| (m.getPessoaDe() == null && m.getLotaDe().equivale(resp.getLotacao()))) {
+					resp = new WfResp(m.getPessoaPara(), m.getLotaPara());
+				}
+			}
+		}
+
+		return resp;
+	};
+
+	public WfResp localizarResponsavelOriginal(WfDefinicaoDeTarefa tarefa) {
 		ExService service = null;
 		if (this.getPrincipal() != null && this.getTipoDePrincipal() == WfTipoDePrincipal.DOC)
 			service = Service.getExService();

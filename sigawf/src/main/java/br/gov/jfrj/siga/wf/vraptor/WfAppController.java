@@ -331,22 +331,20 @@ public class WfAppController extends WfController {
 		result.redirectTo(this).procedimento(pi.getId());
 	}
 
-	// TODO: Implementar o "pegar"
-//	public void pegar(Long tiId, String sigla) throws Exception {
-//		TaskInstance taskInstance = loadTaskInstance(tiId);
-//
-//		// Pegar
-//		if (taskInstance.getActorId() == null) {
-//			taskInstance.setActorId(getTitular().getSiglaCompleta(), false);
-//			carregarAtorEGrupo(taskInstance);
-//		}
-//
-//		if (sigla != null) {
-//			result.redirectTo("/../sigaex/app/expediente/doc/exibir?sigla=" + sigla);
-//			return;
-//		}
-//		result.redirectTo(this).task(tiId);
-//	}
+	@Transacional
+	@Post
+	@Path("/app/procedimento/{sigla}/pegar")
+	public void pegar(String sigla, String siglaPrincipal) throws Exception {
+		WfProcedimento pi = dao().consultarPorSigla(sigla, WfProcedimento.class);
+
+		Wf.getInstance().getBL().pegar(pi, getTitular(), getLotaTitular(), getIdentidadeCadastrante());
+
+		if (siglaPrincipal != null) {
+			result.redirectTo("/../sigaex/app/expediente/doc/exibir?sigla=" + siglaPrincipal);
+			return;
+		}
+		result.redirectTo(this).procedimento(pi.getId());
+	}
 
 	// TODO Pensar se queremos ter o conceito de conhecimento dentro do WF mesmo ou
 	// se é melhor usar sempre o GC
@@ -465,18 +463,6 @@ public class WfAppController extends WfController {
 	 */
 	private WfProcedimento loadTaskInstance(Long piId) throws Exception {
 		WfProcedimento pi = dao().consultar(piId, WfProcedimento.class, false);
-
-		// List<ProcessLog> logs = (List<ProcessLog>)
-		// WfContextBuilder.getJbpmContext().getJbpmContext()
-		// .getLoggingSession().findLogsByToken(taskInstance.getToken().getId());
-
-		// int prioridade = taskInstance.getPriority();
-		// carregarAtorEGrupo(taskInstance);
-
-		// result.include("taskInstance", taskInstance);
-		// result.include("logs", logs);
-		// result.include("prioridade", prioridade);
-
 		return pi;
 	}
 }

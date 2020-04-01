@@ -24,6 +24,7 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -108,12 +109,15 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 			sTemplate += "\n" + (String) attrs.get("template");
 		sTemplate += "\n[/#compress]";
 
-		try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); Writer out = new OutputStreamWriter(baos)) {
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); Writer out = new OutputStreamWriter(baos, StandardCharsets.UTF_8)) {
+			System.out.println(sTemplate);
 			Template temp = new Template((String) attrs.get("nmMod"),
 					new StringReader(sTemplate), cfg);
 			temp.process(root, out);
 			out.flush();
-			return baos.toString();
+			String processed = baos.toString(StandardCharsets.UTF_8.name());
+			System.out.println(processed);
+			return processed;
 		} catch (TemplateException e) {
 			if (e.getCauseException() != null
 					&& e.getCauseException() instanceof AplicacaoException)

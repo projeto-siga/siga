@@ -284,7 +284,7 @@ CREATE TABLE `wf_variavel` (
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`%` FUNCTION `remove_acento`( textvalue varchar(20000) ) RETURNS varchar(20000) CHARSET utf8
+CREATE FUNCTION `remove_acento`( textvalue varchar(20000) ) RETURNS varchar(20000) CHARSET utf8
     DETERMINISTIC
 begin
 

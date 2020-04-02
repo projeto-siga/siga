@@ -875,6 +875,23 @@ public class ExDocumentoController extends ExController {
 			s = " "
 					+ exDocumentoDTO.getMob().doc().getExNivelAcessoAtual()
 							.getNmNivelAcesso() + " " + s;
+			
+			String ERRO_INACESSIVEL_USUARIO;
+			if (Ex.getInstance()
+			.getComp().ehPublicoExterno(getTitular())) {
+				ERRO_INACESSIVEL_USUARIO = "Documento "
+						+ exDocumentoDTO.getMob().getSigla()
+						+ " inacessível ao usuário " + getTitular().getSigla()
+						+ "/" + getLotaTitular().getSiglaCompleta() + "." + s
+						+ " " + msgDestinoDoc;
+			} else {
+				ERRO_INACESSIVEL_USUARIO = "Documento "
+						+ exDocumentoDTO.getMob().getSigla()
+						+ " inacessível ao usuário " + getTitular().getSigla()
+						+ "/" + getLotaTitular().getSiglaCompleta() + ", Publico externo exceto se for subscritor" 
+						+ " , cosignatário ou tiver algum perfil associado ao documento ou ainda se documento estiver "
+						+ " passado por sua lotação. ";
+			}
 
 			Map<ExPapel, List<Object>> mapa = exDocumentoDTO.getMob().doc()
 					.getPerfis();
@@ -902,11 +919,7 @@ public class ExDocumentoController extends ExController {
 								+ " cancelado ");
 				}
 			} else  {
-				throw new AplicacaoException("Documento "
-						+ exDocumentoDTO.getMob().getSigla()
-						+ " inacessível ao usuário " + getTitular().getSigla()
-						+ "/" + getLotaTitular().getSiglaCompleta() + "." + s
-						+ " " + msgDestinoDoc);
+				throw new AplicacaoException(ERRO_INACESSIVEL_USUARIO);
 			}
 		}
 	}

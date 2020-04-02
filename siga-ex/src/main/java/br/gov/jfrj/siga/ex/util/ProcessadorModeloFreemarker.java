@@ -110,13 +110,11 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 		sTemplate += "\n[/#compress]";
 
 		try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); Writer out = new OutputStreamWriter(baos, StandardCharsets.UTF_8)) {
-			System.out.println(sTemplate);
 			Template temp = new Template((String) attrs.get("nmMod"),
 					new StringReader(sTemplate), cfg);
 			temp.process(root, out);
 			out.flush();
 			String processed = baos.toString(StandardCharsets.UTF_8.name());
-			System.out.println(processed);
 			return processed;
 		} catch (TemplateException e) {
 			if (e.getCauseException() != null

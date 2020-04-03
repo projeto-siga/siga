@@ -57,13 +57,20 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "		(select max(p.dataInicioPessoa) from DpPessoa p where p.idPessoaIni = :idPessoaIni)"
 				+ "		 and pes.idPessoaIni = :idPessoaIni"),
 		@NamedQuery(name = "consultarPorIdInicialDpPessoaInclusiveFechadas", query = "select pes from DpPessoa pes where pes.idPessoaIni = :idPessoaIni"),
-		@NamedQuery(name = "consultarPorCpf", query = "from DpPessoa pes where pes.cpfPessoa = :cpfPessoa and pes.dataFimPessoa is null"),
-		@NamedQuery(name = "consultarPorCpfAtivoInativo", query = "from DpPessoa pes where pes.idPessoa in"
-				+ " (select max(p.idPessoa) from DpPessoa p where p.cpfPessoa = :cpfPessoa group by p.idPessoaIni)"),
+		@NamedQuery(name = "consultarPorCpf", query = "from DpPessoa pes where pes.cpfPessoa = :cpfPessoa and pes.dataFimPessoa is null"),	
+		@NamedQuery(name = "consultarPorCpfAtivoInativo", query = "from DpPessoa pes where pes.cpfPessoa = :cpfPessoa and pes.idPessoa in"
+				+ " (select max(p.idPessoa) from DpPessoa p group by p.idPessoaIni)"),
 		@NamedQuery(name = "consultarPorCpfAtivoInativoNomeDiferente", query = "from DpPessoa pes where pes.idPessoa in"
 				+ " (select max(p.idPessoa) from DpPessoa p where p.cpfPessoa = :cpfPessoa and upper(pes.nomePessoa) <> upper(:nomePessoa) group by p.idPessoaIni)"),
 		@NamedQuery(name = "consultarPorEmail", query = "from DpPessoa pes where pes.emailPessoa = :emailPessoa and pes.dataFimPessoa is null"),
-		@NamedQuery(name = "consultarPorEmailIgualCpfDiferente", query = "select count(pes) from DpPessoa pes where lower(pes.emailPessoa) = lower(:emailPessoa) and pes.cpfPessoa <> :cpf"),
+		@NamedQuery(name = "consultarPorEmailIgualCpfDiferente", query = "select count(idPessoa) " 
+				+ " from DpPessoa a " 
+				+ " where     a.emailPessoa          = :emailPessoa     and " 
+				+ "        a.cpfPessoa         <> :cpf        and "  
+				+ "        a.idPessoaIni <> :idPessoaIni"
+				+ " and idPessoa in (select max(idPessoa) " 
+				+ "  from DpPessoa dpp  "  
+				+ " group by idPessoaIni)"),	
 		@NamedQuery(name = "consultarPorOrgaoUsuDpPessoaInclusiveFechadas", query = "from DpPessoa pes where pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"),
 		@NamedQuery(name = "consultarPorFiltroDpPessoa", query = "from DpPessoa pes "
 				+ "  where ((upper(pes.nomePessoaAI) like upper('%' || :nome || '%')) or ((pes.sesbPessoa || pes.matricula) like upper('%' || :nome || '%')))"

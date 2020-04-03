@@ -58,14 +58,13 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 		@NamedQuery(name = "consultarPorSiglaDpLotacao", query = "select lot from DpLotacao lot where"
 				+ "      upper(lot.siglaLotacao) = upper(:siglaLotacao)"
 				+ "      and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ "	     and lot.dataFimLotacao = null"),
+				+ "	     and lot.dataFimLotacao is null"),
 		@NamedQuery(name = "consultarPorSiglaDpLotacaoComLike", query = "select lot from DpLotacao lot where"
 				+ "        upper(lot.siglaLotacao) like upper('%' || :siglaLotacao || '%') "
 				+ "        and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "        and lot.dataFimLotacao = null"),
 		@NamedQuery(name = "consultarPorIdInicialDpLotacao", query = "select lot from DpLotacao lot where lot.idLotacaoIni = :idLotacaoIni and lot.dataFimLotacao = null"),
 		@NamedQuery(name = "consultarPorIdInicialDpLotacaoInclusiveFechada", query = "select lot from DpLotacao lot where lot.idLotacao = (select max(idLotacao) from DpLotacao where idLotacaoIni = :idLotacaoIni)"),
-		@NamedQuery(name = "listarPorIdInicialDpLotacao", query = "select lot from DpLotacao lot where lot.idLotacaoIni = :idLotacaoIni"),
 		@NamedQuery(name = "consultarPorFiltroDpLotacao", query = "from DpLotacao lot "
 				+ "  where "
 				+ "     ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) "
@@ -84,7 +83,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "  where ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) or (upper(lot.siglaLotacao) like upper('%' "
 				+ "  || :nome || '%')))"
 				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ "  group by lot.idLotacaoIni)"),
+				+ "  group by lot.idLotacaoIni) order by upper(nomeLotacaoAI)"),
 		@NamedQuery(name = "consultarQuantidadeDpLotacaoInclusiveFechadas", query = "select count(distinct lot.idLotacaoIni)"
 				+ "	from DpLotacao lot"
 				+ "	where ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) or (upper(lot.siglaLotacao) like upper('%' || :nome || '%')))"

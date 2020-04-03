@@ -2,10 +2,10 @@
 
 <!-- Tabela com a lista de Tarefas -->
 <div id="sigawf"></div>
-<c:if test="${empty taskInstances}">
+<c:if test="${empty tarefas}">
 	Nenhuma tarefa ativa
 </c:if>
-<c:if test="${not empty taskInstances}">
+<c:if test="${not empty tarefas}">
 	<div class="gt-content-box gt-for-table">
 		<table border="0" class="gt-table">
 			<thead>
@@ -17,7 +17,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<c:forEach var="taskInstance" items="${taskInstances}">
+				<c:forEach var="taskInstance" items="${tarefas}">
 					<tr class="count">
 						<td><a
 							href="${linkTo[WfAppController].procedimento(taskInstance.instanciaDeProcedimento.id)}">${taskInstance.definicaoDeTarefa.nome}</a></td>

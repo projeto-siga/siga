@@ -14,7 +14,7 @@
 				<a href="${linkTo[WfAppController].procedimento(pi.id)}"
 					style="color: white; text-decoration: underline;">${pi.sigla}</a> -
 				${pi.definicaoDeProcedimento.nome} -
-				${pi.currentTaskDefinition.nome}
+				${pi.definicaoDeTarefaCorrente.nome}
 			</div>
 			<div class="card-body">
 				<form method="POST"

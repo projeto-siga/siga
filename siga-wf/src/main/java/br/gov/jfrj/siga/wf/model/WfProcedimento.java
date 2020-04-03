@@ -410,6 +410,10 @@ public class WfProcedimento extends Objeto
 		this.id = id;
 	}
 
+	public WfDefinicaoDeTarefa getDefinicaoDeTarefaCorrente() {
+		return getCurrentTaskDefinition();
+	}
+
 	public WfDefinicaoDeProcedimento getDefinicaoDeProcedimento() {
 		return definicaoDeProcedimento;
 	}

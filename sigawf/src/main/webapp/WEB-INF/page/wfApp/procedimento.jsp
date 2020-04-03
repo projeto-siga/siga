@@ -55,7 +55,7 @@
 									href="/sigaex/app/expediente/doc/exibir?sigla=${pi.principal}">${pi.principal}</a>
 									- 
 							</c:if>${pi.definicaoDeProcedimento.nome}
-							- ${pi.currentTaskDefinition.nome}
+							- ${pi.definicaoDeTarefaCorrente.nome}
 						</div>
 						<div class="card-body bg-light text-black">
 
@@ -148,7 +148,7 @@
 							<b>Titular:</b> ${falta.pi.titular} (${falta.pi.lotaTitular})
 						</p>
 						<p>
-							<b>Tarefa:</b> ${pi.currentTaskDefinition.nome}
+							<b>Tarefa:</b> ${pi.definicaoDeTarefaCorrente.nome}
 						</p>
 						<p>
 							<b>Início da tarefa:</b> ${f:espera(pi.dtEvento)}

@@ -86,7 +86,7 @@ public class WfAppController extends WfController {
 		for (WfProcedimento pi : pis) {
 			tis.add(new WfTarefa(pi));
 		}
-		result.include("taskInstances", tis);
+		result.include("tarefas", tis);
 	}
 
 	/**
@@ -163,18 +163,12 @@ public class WfAppController extends WfController {
 		WfProcedimento pi = loadTaskInstance(piId);
 		List<SigaIdDescr> prioridades = new ArrayList<SigaIdDescr>();
 
-//		final DpPessoaSelecao pessoaSel = new DpPessoaSelecao();
-//		final DpLotacaoSelecao lotacaoSel = new DpLotacaoSelecao();
-//
-//		pessoaSel.buscarPorObjeto(pd.getPessoa());
-
 		prioridades.add(new SigaIdDescr(WfPrioridade.MUITO_ALTA, "Muito Alta"));
 		prioridades.add(new SigaIdDescr(WfPrioridade.ALTA, "Alta"));
 		prioridades.add(new SigaIdDescr(WfPrioridade.MEDIA, "Média"));
 		prioridades.add(new SigaIdDescr(WfPrioridade.BAIXA, "Baixa"));
 		prioridades.add(new SigaIdDescr(WfPrioridade.MUITO_BAIXA, "Muito Baixa"));
 		result.include("prioridades", prioridades);
-		// result.include("task", util.inicializarTaskVO(new WfTarefa(pi)));
 		result.include("dot", util.getDot(new WfTarefa(pi)));
 		result.include("movs", pi.getMovimentacoes());
 		result.include("piId", pi.getId());
@@ -223,7 +217,7 @@ public class WfAppController extends WfController {
 	@Transacional
 	@Post
 	@Path("/app/procedimento/{piId}/continuar")
-	public void continuar(Long piId, String[] fieldNames, StringQualquer[] fieldValues, Integer detourIndex,
+	public void continuar(Long piId, String[] campoIdentificador, StringQualquer[] campoValor, Integer indiceDoDesvio,
 			String sigla) throws Exception {
 		String cadastrante = getTitular().getSigla() + "@" + getLotaTitular().getSiglaCompleta();
 
@@ -238,12 +232,12 @@ public class WfAppController extends WfController {
 		Map<String, Object> param = new HashMap<>();
 
 		if (td.getVariable() != null) {
-			for (int n = 0, c = 0; n < fieldNames.length; n++) {
+			for (int n = 0, c = 0; n < campoIdentificador.length; n++) {
 				// Associa cada variavel com seu valore especifico
 				for (WfDefinicaoDeVariavel variable : td.getVariable()) {
-					if (fieldNames[n] == null)
+					if (campoIdentificador[n] == null)
 						continue;
-					if (variable.getIdentifier().equals(fieldNames[n])
+					if (variable.getIdentifier().equals(campoIdentificador[n])
 							&& variable.getEditingKind() == VariableEditingKind.READ_WRITE) {
 						Object value;
 						if (variable.getIdentifier().startsWith("doc_")) {
@@ -253,13 +247,13 @@ public class WfAppController extends WfController {
 						} else if (variable.getIdentifier().startsWith("lot_")) {
 							value = param(variable.getIdentifier() + "_lotacaoSel.sigla");
 						} else if (variable.getIdentifier().startsWith("dt_")) {
-							value = SigaCalendar.converteStringEmData(fieldValues[c].toString());
+							value = SigaCalendar.converteStringEmData(campoValor[c].toString());
 							c++;
 						} else if (variable.getIdentifier().startsWith("sel_")) {
-							value = fieldValues[c];
+							value = campoValor[c];
 							c++;
 						} else {
-							value = fieldValues[c];
+							value = campoValor[c];
 							c++;
 						}
 
@@ -272,15 +266,15 @@ public class WfAppController extends WfController {
 							throw new AplicacaoException("O campo " + variable.getTitle() + " deve ser preenchido");
 						}
 
-						param.put(fieldNames[n], value);
+						param.put(campoIdentificador[n], value);
 					}
 				}
 			}
 		}
 
 		Integer desvio = null;
-		if (detourIndex != null && td.getDetour() != null && td.getDetour().size() > detourIndex) {
-			desvio = detourIndex;
+		if (indiceDoDesvio != null && td.getDetour() != null && td.getDetour().size() > indiceDoDesvio) {
+			desvio = indiceDoDesvio;
 		}
 
 		Wf.getInstance().getBL().prosseguir(pi.getEvent(), desvio, param, getTitular(), getLotaTitular(),

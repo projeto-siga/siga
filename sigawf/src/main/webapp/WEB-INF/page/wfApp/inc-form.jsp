@@ -24,33 +24,35 @@
 			</span>
 		</c:if>
 	</div>
-	<c:if test="${pi.isDesabilitarFormulario(titular, lotaTitular) eq false}">
+	<c:if
+		test="${pi.isDesabilitarFormulario(titular, lotaTitular) eq false}">
 		<div class="gt-form-row gt-width-100">
 			<input type="hidden" value="${pi.id}" name="tiId" />
 
 			<c:set var="fieldIndex" value="0" />
-			<c:forEach var="variable" items="${pi.currentTaskDefinition.definicaoDeVariavel}">
-				<c:set var="valor" value="${pi.obterValorDeVariavel(variable)}" />
+			<c:forEach var="variavel"
+				items="${pi.definicaoDeTarefaCorrente.definicaoDeVariavel}">
+				<c:set var="valor" value="${pi.obterValorDeVariavel(variavel)}" />
 				<div class="form-group">
 					<c:choose>
-						<c:when test="${fn:startsWith(variable.identificador,'sel_')}">
-							<label>${fn:substring(variable.nome,0,fn:indexOf(variable.nome,'('))}</label>
+						<c:when test="${fn:startsWith(variavel.identificador,'sel_')}">
+							<label>${fn:substring(variavel.nome,0,fn:indexOf(variavel.nome,'('))}</label>
 						</c:when>
 						<c:otherwise>
-							<label>${variable.nome}</label>
+							<label>${variavel.nome}</label>
 						</c:otherwise>
 					</c:choose>
 
-					<c:set var="editable" value="${variable.acesso eq 'READ_WRITE'}" />
+					<c:set var="editable" value="${variavel.acesso eq 'READ_WRITE'}" />
 					<c:if test="${editable}">
-						<input name="fieldNames[${fieldIndex}]" type="hidden"
-							value="${variable.identificador}" />
+						<input name="campoIdentificador[${fieldIndex}]" type="hidden"
+							value="${variavel.identificador}" />
 					</c:if>
 					<c:choose>
-						<c:when test="${fn:startsWith(variable.identificador,'doc_')}">
+						<c:when test="${fn:startsWith(variavel.identificador,'doc_')}">
 							<c:choose>
 								<c:when test="${editable}">
-									<siga:selecao propriedade="${variable.identificador}"
+									<siga:selecao propriedade="${variavel.identificador}"
 										modulo="sigaex" tipo="expediente" tema="simple"
 										ocultardescricao="sim" siglaInicial="${valor}" />
 								</c:when>
@@ -59,10 +61,10 @@
 								</c:otherwise>
 							</c:choose>
 						</c:when>
-						<c:when test="${fn:startsWith(variable.identificador,'pes_')}">
+						<c:when test="${fn:startsWith(variavel.identificador,'pes_')}">
 							<c:choose>
 								<c:when test="${editable}">
-									<siga:selecao propriedade="${variable.identificador}"
+									<siga:selecao propriedade="${variavel.identificador}"
 										modulo="siga" tipo="pessoa" tema="simple"
 										ocultardescricao="sim" siglaInicial="${valor}" />
 								</c:when>
@@ -71,10 +73,10 @@
 								</c:otherwise>
 							</c:choose>
 						</c:when>
-						<c:when test="${fn:startsWith(variable.identificador,'lot_')}">
+						<c:when test="${fn:startsWith(variavel.identificador,'lot_')}">
 							<c:choose>
 								<c:when test="${editable}">
-									<siga:selecao propriedade="${variable.identificador}"
+									<siga:selecao propriedade="${variavel.identificador}"
 										modulo="siga" tipo="lotacao" tema="simple"
 										ocultardescricao="sim" siglaInicial="${valor}" />
 								</c:when>
@@ -83,10 +85,10 @@
 								</c:otherwise>
 							</c:choose>
 						</c:when>
-						<c:when test="${fn:startsWith(variable.identificador,'dt_')}">
+						<c:when test="${fn:startsWith(variavel.identificador,'dt_')}">
 							<c:choose>
 								<c:when test="${editable}">
-									<input name="fieldValues[${fieldIndex}]" type="text"
+									<input name="campoValor[${fieldIndex}]" type="text"
 										value="<fmt:formatDate pattern="dd/MM/yyyy"	value="${valor}" />"
 										onblur="javascript:verifica_data(this, true);"
 										class="form-control" />
@@ -96,12 +98,12 @@
 								</c:otherwise>
 							</c:choose>
 						</c:when>
-						<c:when test="${fn:startsWith(variable.identificador,'sel_')}">
+						<c:when test="${fn:startsWith(variavel.identificador,'sel_')}">
 							<c:choose>
 								<c:when test="${editable}">
-									<select name="fieldValues[${fieldIndex}]" class="form-control">
+									<select name="campoValor[${fieldIndex}]" class="form-control">
 										<c:forEach var="opcao"
-											items="${wf:listarOpcoes(variable.nome)}">
+											items="${wf:listarOpcoes(variavel.nome)}">
 											<option value="${opcao}">${opcao}</option>
 										</c:forEach>
 									</select>
@@ -114,7 +116,7 @@
 						<c:otherwise>
 							<c:choose>
 								<c:when test="${editable}">
-									<input name="fieldValues[${fieldIndex}]" type="text"
+									<input name="campoValor[${fieldIndex}]" type="text"
 										value="${valor}" class="form-control" />
 								</c:when>
 								<c:otherwise>
@@ -131,22 +133,23 @@
 		</div>
 		<%--<c:if test="${task.podePegarTarefa}"> --%>
 		<div class="gt-form-row gt-width-100">
-			<c:forEach var="transition" items="${pi.currentTaskDefinition.definicaoDeDesvio}"
+			<c:forEach var="desvio"
+				items="${pi.definicaoDeTarefaCorrente.definicaoDeDesvio}"
 				varStatus="loop">
-				<c:set var="resp"
-					value="${transition.obterProximoResponsavel(pi)}" />
+				<c:set var="resp" value="${desvio.obterProximoResponsavel(pi)}" />
 				<c:if test="${not empty resp}">
 					<c:set var="resp" value=" &raquo; ${resp}" />
 				</c:if>
-				<button type="submit" name="detourIndex" value="${loop.index}"
-					class="btn btn-info mr-3">${empty transition.nome ? 'Prosseguir' : transition.nome}${resp}</button>
+				<button type="submit" name="indiceDoDesvio" value="${loop.index}"
+					class="btn btn-info mr-3">${empty desvio.nome ? 'Prosseguir' : desvio.nome}${resp}</button>
 			</c:forEach>
 		</div>
-		<c:if test="${empty pi.currentTaskDefinition.definicaoDeDesvio}">
-			<button type="submit" name="detourIndex" value=""
+		<c:if test="${empty pi.definicaoDeTarefaCorrente.definicaoDeDesvio}">
+			<button type="submit" name="indiceDoDesvio" value=""
 				class="btn btn-info mr-3">Prosseguir${resp}</button>
 		</c:if>
 		<%--</c:if> --%>
 	</c:if>
-	<span style="color: red; font-weight: bold;"> ${pi.getMsgAviso(titular, lotaTitular)}</span>
+	<span style="color: red; font-weight: bold;">
+		${pi.getMsgAviso(titular, lotaTitular)}</span>
 </div>

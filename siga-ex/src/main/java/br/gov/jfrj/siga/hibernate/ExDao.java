@@ -467,9 +467,9 @@ public class ExDao extends CpDao {
 			query.setParameter("ultMovIdEstadoDoc", flt.getUltMovIdEstadoDoc());
 
 		} else {
-			query.setLong("id1", 3);
-			query.setLong("id2", 14);
-			query.setLong("id3", 25);
+			query.setParameter("id1", 3);
+			query.setParameter("id2", 14);
+			query.setParameter("id3", 25);
 		}
 
 		if (flt.getUltMovRespSelId() != null && flt.getUltMovRespSelId() != 0) {
@@ -1728,15 +1728,8 @@ public class ExDao extends CpDao {
 		// / 1000000 + " ms -> " + query + ", resultado: " + l);
 		return l;
 	}
-	public List listarMovimentacoesMesa(List<Long> listIdMobil, boolean trazerAnotacoes) {
-		String queryAnota =
-				"(select movAnotacao from ExMovimentacao movAnotacao"
-				+ " where movAnotacao.idMov in ("
-				+ " 	select max(movAnotacao1.idMov) from ExMovimentacao movAnotacao1"
-				+ " 		where movAnotacao1.exTipoMovimentacao.idTpMov = 28 "
-				+ "			and movAnotacao1.exMobil.idMobil = mob.idMobil " 
-				+ " 		and movAnotacao1.exMovimentacaoCanceladora.idMov = null ) ), ";
-				
+	
+	public List listarMovimentacoesMesa(List<Long> listIdMobil, boolean trazerComposto) {
 		Query query = em()
 				.createQuery(
 						"select "

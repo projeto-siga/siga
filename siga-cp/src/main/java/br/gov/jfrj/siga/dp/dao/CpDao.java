@@ -78,6 +78,7 @@ import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.DpPessoaTrocaEmailDTO;
 import br.gov.jfrj.siga.dp.DpPessoaUsuarioDTO;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.dp.DpVisualizacao;
@@ -941,6 +942,43 @@ public class CpDao extends ModeloDao {
 		final List<DpPessoa> l = qry.getResultList();
 		return l;
 	}
+	
+	/*
+	 * Alteracao alteracao email Cartao 859
+	 */
+
+	public List<DpPessoaTrocaEmailDTO> listarTrocaEmailCPF(final long cpf) {
+		List<DpPessoa> lst = listarPorCpf(cpf);
+		List<DpPessoaTrocaEmailDTO> lstDto = new ArrayList<DpPessoaTrocaEmailDTO>();
+		if (!lst.isEmpty())
+			for (DpPessoa p : lst) {
+				lstDto.add(new DpPessoaTrocaEmailDTO(p.getNomePessoa(),
+						p.getOrgaoUsuario().getNmOrgaoUsu(), p.getCpfFormatado(), p.getEmailPessoaAtual(),
+						p.getSigla(), p.getLotacao().getNomeLotacao()));
+			}
+		return lstDto;
+	}
+	
+	public int countPorCpf(final long cpf) {
+		return listarTrocaEmailCPF(cpf).size();
+	}	
+
+	public List<DpPessoa> listarCpfAtivoInativo(final long cpf) {
+
+		final Query qry = em().createNamedQuery("consultarPorCpfAtivoInativo");
+		qry.setParameter("cpfPessoa", cpf);
+		final List<DpPessoa> l = qry.getResultList();
+		return l;
+	}
+	
+	public List<DpPessoa> listarCpfAtivoInativoNomeDiferente(final long cpf, final String nome) {
+
+		final Query qry = em().createNamedQuery("consultarPorCpfAtivoInativoNomeDiferente");
+		qry.setParameter("cpfPessoa", cpf);
+		qry.setParameter("nomePessoa", nome);
+		final List<DpPessoa> l = qry.getResultList();
+		return l;
+	}
 
 	public List<DpPessoa> consultarPessoasAtivasPorCpf(final long cpf) {
 
@@ -958,10 +996,11 @@ public class CpDao extends ModeloDao {
 		return pes;
 	}
 	
-	public int consultarQtdePorEmailIgualCpfDiferente(final String email, final long cpf) {
+	public int consultarQtdePorEmailIgualCpfDiferente(final String email, final long cpf, final Long idPessoaIni) {
 		final Query qry = em().createNamedQuery("consultarPorEmailIgualCpfDiferente");
 		qry.setParameter("emailPessoa", email);
 		qry.setParameter("cpf", cpf);
+		qry.setParameter("idPessoaIni", idPessoaIni);
 		final int l = ((Long) qry.getSingleResult()).intValue();
 		return l;
 	}

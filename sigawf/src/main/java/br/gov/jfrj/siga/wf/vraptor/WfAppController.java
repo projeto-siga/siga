@@ -226,7 +226,7 @@ public class WfAppController extends WfController {
 	@Transacional
 	@Post
 	@Path("/app/procedimento/{piId}/continuar")
-	public void continuar(Long piId, String[] fieldNames, StringQualquer[] fieldValues, String transitionName,
+	public void continuar(Long piId, String[] fieldNames, StringQualquer[] fieldValues, Integer detourIndex,
 			String sigla) throws Exception {
 		String cadastrante = getTitular().getSigla() + "@" + getLotaTitular().getSiglaCompleta();
 
@@ -283,15 +283,8 @@ public class WfAppController extends WfController {
 		}
 
 		Integer desvio = null;
-		if (transitionName != null && td.getDetour() != null) {
-			int i = 0;
-			for (WfDefinicaoDeDesvio detour : td.getDetour()) {
-				if (transitionName.equals(detour.getNome())) {
-					desvio = i;
-					break;
-				}
-				i++;
-			}
+		if (detourIndex != null && td.getDetour() != null && td.getDetour().size() > detourIndex) {
+			desvio = detourIndex;
 		}
 
 		Wf.getInstance().getBL().prosseguir(pi.getEvent(), desvio, param, getTitular(), getLotaTitular(),

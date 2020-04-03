@@ -22,8 +22,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import com.crivano.jlogic.Expression;
 
@@ -31,6 +29,7 @@ import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.VO;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.service.ExService;
@@ -42,8 +41,9 @@ import br.gov.jfrj.siga.wf.model.WfConhecimento;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeDesvio;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeVariavel;
+import br.gov.jfrj.siga.wf.model.WfProcedimento;
 import br.gov.jfrj.siga.wf.model.enm.WfPrioridade;
-import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
 
 /**
  * Classe que repesenta um View Object (Objeto Visão, ou seja, objeto que será
@@ -54,10 +54,6 @@ public class WfTaskVO extends VO {
 	public static final String DISABLE_DOC_FORWARD = "disable_doc_forward";
 
 	protected WfTarefa ti;
-
-	protected List<WfVariableVO> variableList = new ArrayList<WfVariableVO>();
-
-	protected Set<WfTransitionVO> transitions = new TreeSet<WfTransitionVO>();
 
 	private String descricao = null;
 
@@ -112,141 +108,50 @@ public class WfTaskVO extends VO {
 			if (respWF == null && ti.getInstanciaDeProcedimento().getLotacao() != null)
 				respWF = "@" + ti.getInstanciaDeProcedimento().getLotacao().getSiglaCompleta();
 
-			// O ideal é que seja desconsiderada apenas a variavel cujo valor seja
-			// igual a siglaDoc, e não todas que começam com doc_
-			if (ti.getDefinicaoDeTarefa().getVariable() != null && ti.getDefinicaoDeTarefa().getVariable().size() > 0) {
-				List<WfVariableVO> variableAccesses = new ArrayList<>();
+			if (!Utils.empty(ti.getInstanciaDeProcedimento().getPrincipal())
+					&& ti.getInstanciaDeProcedimento().getTipoDePrincipal() == WfTipoDePrincipal.DOC) {
+				ExService service = Service.getExService();
+				// if (!service.isAtendente(value, siglaTitular)) {
+				String respEX = service.getAtendente(ti.getInstanciaDeProcedimento().getPrincipal(), siglaTitular);
+				DpLotacao lotEX = new PessoaLotacaoParser(respEX).getLotacaoOuLotacaoPrincipalDaPessoa();
+				// if (lotEX != null &&
+				// !lotaTitular.equivale(lotEX))
+				// wfva.setRespEX(lotEX.getSigla());
 
-				for (WfDefinicaoDeVariavel vd : ti.getDefinicaoDeTarefa().getVariable()) {
-//				if (va.getAccess() != null) {
-//					String access = va.getAccess().toString();
-//					if (access.contains("value=")) {
-//						Pattern pattern = Pattern.compile("value\\=(\\{[^}]+\\})");
-//						Matcher matcher = pattern.matcher(access);
-//						if (matcher.find()) {
-//							String expression = matcher.group(1);
-//							Object resultado = WfHandler.eval(ti.getInstanciaDeProcesso(), expression);
-//							ti.getInstanciaDeProcesso().getVariable().put(va.getMappedName(), resultado);
-//							// TODO: Salvar o PI?
-//						}
-//					}
+				DpLotacao lotWF = new PessoaLotacaoParser(respWF).getLotacaoOuLotacaoPrincipalDaPessoa();
+				// if (lotWF != null &&
+				// !lotaTitular.equivale(lotWF))
+				// wfva.setRespWF(lotWF.getSigla());
 
-					WfVariableVO wfva = new WfVariableVO(vd);
-					this.variableList.add(wfva);
-					wfva.setValor(
-							(String) ti.getInstanciaDeProcedimento().getVariavelMap().get(wfva.getIdentificador()));
+				// if (wfva.isAviso())
+				// }
+				boolean podeMovimentar = service.podeMovimentar(ti.getInstanciaDeProcedimento().getPrincipal(),
+						siglaTitular);
+				boolean estaComTarefa = titular.equivale(new PessoaLotacaoParser(respWF).getPessoa());
+				respEX = service.getAtendente(ti.getInstanciaDeProcedimento().getPrincipal(), siglaTitular);
+				lotEX = new PessoaLotacaoParser(respEX).getLotacaoOuLotacaoPrincipalDaPessoa();
 
-					if (wfva.getIdentificador().startsWith("doc_")) {
-						String documento = (String) ti.getInstanciaDeProcedimento().getVariable()
-								.get(wfva.getIdentificador());
-						if (documento != null) {
-							if (siglaDoc == null || !documento.startsWith(siglaDoc)) {
-								this.variableList.add(wfva);
-							} else {
-								ExService service = Service.getExService();
-								if (wfva != null)
-									this.variableList.add(wfva);
-								// if (!service.isAtendente(value, siglaTitular)) {
-								String respEX = service.getAtendente(documento, siglaTitular);
-								DpLotacao lotEX = new PessoaLotacaoParser(respEX)
-										.getLotacaoOuLotacaoPrincipalDaPessoa();
-								// if (lotEX != null &&
-								// !lotaTitular.equivale(lotEX))
-								// wfva.setRespEX(lotEX.getSigla());
-
-								DpLotacao lotWF = new PessoaLotacaoParser(respWF)
-										.getLotacaoOuLotacaoPrincipalDaPessoa();
-								// if (lotWF != null &&
-								// !lotaTitular.equivale(lotWF))
-								// wfva.setRespWF(lotWF.getSigla());
-
-								// if (wfva.isAviso())
-								// }
-
-								boolean podeMovimentar = service.podeMovimentar(documento, siglaTitular);
-								boolean estaComTarefa = titular.equivale(new PessoaLotacaoParser(respWF).getPessoa());
-								respEX = service.getAtendente(documento, siglaTitular);
-								lotEX = new PessoaLotacaoParser(respEX).getLotacaoOuLotacaoPrincipalDaPessoa();
-
-								if (podeMovimentar && !estaComTarefa) {
-									if (lotWF == null || !lotWF.equivale(lotEX)) {
-										setMsgAviso("Esta tarefa só poderá prosseguir quando o documento " + documento
-												+ " for transferido para " + (lotWF == null ? "Nula" : lotWF.getSigla())
-												+ ".");
-									}
-								}
-								if (!podeMovimentar && estaComTarefa) {
-									setMsgAviso("Esta tarefa só poderá prosseguir quando o documento " + documento
-											+ ", que está com " + lotEX.getSigla() + ", for devolvido.");
-								}
-								if (!podeMovimentar && !estaComTarefa) {
-									if (lotWF != null && !lotWF.equivale(lotEX)) {
-										setMsgAviso("Esta tarefa só poderá prosseguir quando o documento " + documento
-												+ ", que está com " + lotEX.getSigla() + ", for transferido para "
-												+ lotWF.getSigla() + ".");
-									}
-								}
-
-							}
-						}
+				if (podeMovimentar && !estaComTarefa) {
+					if (lotWF == null || !lotWF.equivale(lotEX)) {
+						setMsgAviso("Esta tarefa só poderá prosseguir quando o documento "
+								+ ti.getInstanciaDeProcedimento().getPrincipal() + " for transferido para "
+								+ (lotWF == null ? "Nula" : lotWF.getSigla()) + ".");
+					}
+				}
+				if (!podeMovimentar && estaComTarefa) {
+					setMsgAviso("Esta tarefa só poderá prosseguir quando o documento "
+							+ ti.getInstanciaDeProcedimento().getPrincipal() + ", que está com " + lotEX.getSigla()
+							+ ", for devolvido.");
+				}
+				if (!podeMovimentar && !estaComTarefa) {
+					if (lotWF != null && !lotWF.equivale(lotEX)) {
+						setMsgAviso("Esta tarefa só poderá prosseguir quando o documento "
+								+ ti.getInstanciaDeProcedimento().getPrincipal() + ", que está com " + lotEX.getSigla()
+								+ ", for transferido para " + lotWF.getSigla() + ".");
 					}
 				}
 			}
-			if (ti.getDefinicaoDeTarefa().getDetour() != null && ti.getDefinicaoDeTarefa().getDetour().size() > 0) {
-				Set<String> set = new TreeSet<String>();
 
-				for (WfDefinicaoDeDesvio dd : ti.getDefinicaoDeTarefa().getDetour()) {
-					set.clear();
-					WfDefinicaoDeTarefa tdProxima = dd.getSeguinte();
-					boolean ultimo = dd.isUltimo();
-					WfDefinicaoDeDesvio desvio = null;
-					while (tdProxima != null) {
-						if (tdProxima.getTipoDeTarefa() == WfTipoDeTarefa.FORMULARIO)
-							break;
-						desvio = null;
-						if (tdProxima.getDefinicaoDeDesvio() != null && tdProxima.getDefinicaoDeDesvio().size() == 1)
-							desvio = tdProxima.getDefinicaoDeDesvio().get(0);
-
-						// A proxima tarefa está indicada
-						if (tdProxima.getSeguinte() != null)
-							tdProxima = tdProxima.getSeguinte();
-						else if (desvio != null && desvio.getSeguinte() != null)
-							tdProxima = desvio.getSeguinte();
-
-						// Depois dessa tarefa vai terminar
-						else if (tdProxima.isUltimo() || (desvio != null && desvio.isUltimo())
-								|| ti.getInstanciaDeProcedimento().getCurrentIndex() == ti.getInstanciaDeProcedimento()
-										.getProcessDefinition().getTaskDefinition().size() - 1) {
-							ultimo = true;
-							tdProxima = null;
-							break;
-						}
-
-						// Ou vai para a tarefa seguinte
-						else
-							tdProxima = (WfDefinicaoDeTarefa) ti.getInstanciaDeProcedimento().getProcessDefinition()
-									.getTaskDefinition().get(ti.getInstanciaDeProcedimento().getCurrentIndex() + 1);
-					}
-
-					if (ultimo)
-						set.add("FIM");
-					else {
-						if (tdProxima != null) {
-							WfResp r = (WfResp) ti.getInstanciaDeProcedimento().calcResponsible(tdProxima);
-							if (r != null)
-								set.add(r.getInitials());
-						}
-					}
-
-					// Será que já temos em "set" uma lista das pessoas responsáveis
-					// pelo próximo passo?
-					// nextNode deve pular para o próximo se não for um tasknode e
-					// se só tiver uma saida
-
-					this.transitions.add(new WfTransitionVO(dd, set));
-				}
-
-			}
 		}
 
 		if (!titular.equivale(ti.getInstanciaDeProcedimento().getPessoa())
@@ -276,42 +181,6 @@ public class WfTaskVO extends VO {
 					+ ti.getDefinicaoDeTarefa().getNome(), true, true);
 
 		addAcoes(ti, titular, lotaTitular);
-	}
-
-	/**
-	 * Retorna a lista de variáveis.
-	 * 
-	 * @return
-	 */
-	public List<WfVariableVO> getVariableList() {
-		return variableList;
-	}
-
-	/**
-	 * Define a lista de variáveis.
-	 * 
-	 * @param variables
-	 */
-	public void setVariableList(List<WfVariableVO> variables) {
-		this.variableList = variables;
-	}
-
-	/**
-	 * Retorna as transições.
-	 * 
-	 * @return
-	 */
-	public Set<WfTransitionVO> getTransitions() {
-		return transitions;
-	}
-
-	/**
-	 * Define as transições.
-	 * 
-	 * @param transitions
-	 */
-	public void setTransitions(Set<WfTransitionVO> transitions) {
-		this.transitions = transitions;
 	}
 
 	/**
@@ -457,5 +326,27 @@ public class WfTaskVO extends VO {
 
 	public void setDesabilitarForm(boolean desabilitarForm) {
 		this.desabilitarForm = desabilitarForm;
+	}
+
+	public List<WfDefinicaoDeVariavel> getDefinicaoDeVariavel() {
+		return ti.getDefinicaoDeTarefa().getDefinicaoDeVariavel();
+	}
+
+	public Object obterValorDeVariavel(WfDefinicaoDeVariavel vd) {
+		return ti.getInstanciaDeProcedimento().getVariavelMap().get(vd.getIdentificador());
+	}
+
+	public List<WfDefinicaoDeDesvio> getDefinicaoDeDesvio() {
+		return ti.getDefinicaoDeTarefa().getDefinicaoDeDesvio();
+	}
+
+	public String obterResponsavelDeDesvio(WfDefinicaoDeDesvio dd) {
+		WfResp resp = ti.getInstanciaDeProcedimento()
+				.localizarResponsavelAtual(ti.getInstanciaDeProcedimento().getCurrentTaskDefinition());
+		return resp.getInitials();
+	}
+
+	public WfProcedimento getInstanciaDeProcedimento() {
+		return ti.getInstanciaDeProcedimento();
 	}
 }

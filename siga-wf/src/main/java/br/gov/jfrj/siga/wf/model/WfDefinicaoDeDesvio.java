@@ -1,6 +1,8 @@
 package br.gov.jfrj.siga.wf.model;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,6 +17,7 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.BatchSize;
 
+import com.crivano.jflow.PausableTask;
 import com.crivano.jflow.model.TaskDefinitionDetour;
 
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
@@ -24,6 +27,7 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 import br.gov.jfrj.siga.wf.util.NaoSerializar;
+import br.gov.jfrj.siga.wf.util.WfResp;
 
 @Entity
 @BatchSize(size = 500)
@@ -88,6 +92,8 @@ public class WfDefinicaoDeDesvio extends HistoricoAuditavelSuporte
 
 	@Override
 	public String getTaskIdentifier() {
+		if (isUltimo())
+			return "finish";
 		if (seguinte == null)
 			return null;
 		return seguinte.getIdentifier();
@@ -231,6 +237,92 @@ public class WfDefinicaoDeDesvio extends HistoricoAuditavelSuporte
 	public void postLoad() {
 		if (this.getSeguinte() != null)
 			this.setSeguinteIde(Long.toString(this.getSeguinte().getIdInicial()));
+	}
+
+	public String getIcon() {
+		if (ultimo)
+			return "stop";
+		if (isYes())
+			return "accept";
+		if (isNo())
+			return "cancel";
+		return "bullet_go";
+	}
+
+	public boolean isYes() {
+		return nome.equalsIgnoreCase("sim");
+	}
+
+	public boolean isNo() {
+		return nome.equalsIgnoreCase("não") || nome.equalsIgnoreCase("nao");
+	}
+
+	private static class ProximaTarefa {
+		public WfDefinicaoDeTarefa tdProxima;
+		public boolean ultimo;
+	}
+
+	public ProximaTarefa localizarProximaTarefaPausavel() {
+		WfDefinicaoDeTarefa tdProxima = getSeguinte();
+		boolean ultimo = isUltimo();
+		if (tdProxima == null && !ultimo)
+			tdProxima = getDefinicaoDeTarefa().getDefinicaoDeProcedimento().getDefinicaoDeTarefa().get(getOrdem() + 1);
+		Set<WfDefinicaoDeTarefa> set = new HashSet<>();
+
+		while (tdProxima != null) {
+			if (PausableTask.class.isAssignableFrom(tdProxima.getTipoDeTarefa().getClazz()))
+				break;
+			WfDefinicaoDeDesvio desvio = null;
+			if (tdProxima.getDefinicaoDeDesvio() != null && tdProxima.getDefinicaoDeDesvio().size() == 1)
+				desvio = tdProxima.getDefinicaoDeDesvio().get(0);
+
+			// A proxima tarefa está indicada
+			if (tdProxima.getSeguinte() != null)
+				tdProxima = tdProxima.getSeguinte();
+
+			// Existe um único desvio e ele aponta para uma próxima tarefa
+			else if (desvio != null && desvio.getSeguinte() != null)
+				tdProxima = desvio.getSeguinte();
+
+			// Existe mais de um desvio e não poderemos inferir a próxima tarefa pausável
+			else if (tdProxima.getDefinicaoDeDesvio() != null && tdProxima.getDefinicaoDeDesvio().size() > 1) {
+				tdProxima = null;
+				break;
+			}
+
+			// Depois dessa tarefa vai terminar
+			else if (tdProxima.isUltimo() || (desvio != null && desvio.isUltimo())) {
+				ultimo = true;
+				tdProxima = null;
+				break;
+			}
+
+			// Ou vai para a tarefa seguinte
+			else
+				tdProxima = getDefinicaoDeTarefa().getDefinicaoDeProcedimento().getDefinicaoDeTarefa()
+						.get(getOrdem() + 1);
+
+			if (set.contains(tdProxima))
+				throw new RuntimeException("Caminho circular encontrado ao calcular próxima tarefa pausável");
+			else
+				set.add(tdProxima);
+		}
+		ProximaTarefa p = new ProximaTarefa();
+		p.tdProxima = tdProxima;
+		p.ultimo = ultimo;
+		return p;
+	}
+
+	public String obterProximoResponsavel(WfProcedimento pi) {
+		ProximaTarefa pt = localizarProximaTarefaPausavel();
+		if (pt.ultimo)
+			return "FIM";
+		else if (pt.tdProxima != null) {
+			WfResp r = (WfResp) pi.calcResponsible(pt.tdProxima);
+			if (r != null)
+				return r.getInitials();
+		}
+		return null;
 	}
 
 }

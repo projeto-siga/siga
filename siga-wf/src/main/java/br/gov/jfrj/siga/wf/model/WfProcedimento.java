@@ -174,6 +174,8 @@ public class WfProcedimento extends Objeto
 	// Se for "fim" retorna length + 1
 	@Override
 	public int getIndexById(String id) {
+		if ("finish".equals(id))
+			return definicaoDeProcedimento.getTaskDefinition().size();
 		int i = 0;
 		for (TaskDefinition td : definicaoDeProcedimento.getTaskDefinition()) {
 			if (td.getIdentifier().equals(id))
@@ -241,7 +243,7 @@ public class WfProcedimento extends Objeto
 		return localizarResponsavelAtual(tarefa);
 	}
 
-	private WfResp localizarResponsavelAtual(WfDefinicaoDeTarefa tarefa) {
+	public WfResp localizarResponsavelAtual(WfDefinicaoDeTarefa tarefa) {
 		WfResp resp = localizarResponsavelOriginal(tarefa);
 
 		for (WfMov mov : getMovimentacoes()) {

@@ -22,7 +22,7 @@
  * To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-package br.gov.jfrj.siga.vraptor;
+package br.gov.jfrj.siga.vraptor; 
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -80,7 +80,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	private Long orgaoUsu;
 	private DpLotacaoSelecao lotacaoSel;
 	private String cpf;
-	public SigaObjects so;
+	//public SigaObjects so;
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -95,7 +95,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
-		this.so = so;
+		//this.so = so;
 		setSel(new DpPessoa());
 		setItemPagina(10);
 	}

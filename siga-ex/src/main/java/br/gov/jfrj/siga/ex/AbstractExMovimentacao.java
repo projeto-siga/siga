@@ -157,10 +157,10 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 				+ "                and (lot.idLotacaoIni=:lotaTitular or 0 = :lotaTitular)" + "                )"),
 		// Voltar todas as movimentacoes realizadas por uma determinada pessoa
 		// em um exato momento. Usado principalmente para gerar segunda-via de
-		// protocolos.
+		// protocolos. 
 		@NamedQuery(name = "consultarMovimentacoes", query = "from ExMovimentacao mov"
 				+ "                where mov.cadastrante.idPessoaIni=:pessoaIni and mov.dtIniMov=to_date(:data, 'DD/MM/YYYY HH24:MI:SS')          "
-				+ "                ) order by mov.dtTimestamp"), })
+				+ "                order by mov.dtTimestamp"), })
 public abstract class AbstractExMovimentacao extends ExArquivo implements Serializable {
 	@Id
 	@SequenceGenerator(sequenceName = "EX_MOVIMENTACAO_SEQ", name = "EX_MOVIMENTACAO_SEQ")

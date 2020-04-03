@@ -7,7 +7,7 @@
 		<div class="row mt-2">
 			<div class="col col-sm-12 col-md-8">
 				<c:if
-					test="${not f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
+					test="${false and not f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
 					<div id="desc_editar" style="display: none;">
 						<h3>Descrição da Tarefa</h3>
 						<div class="gt-form gt-content-box">
@@ -30,10 +30,11 @@
 					</div>
 				</c:if>
 
-				<!-- Adicionando a lista de Tarefas -->
 				<h2 class="mt-3">Procedimento ${pi.sigla}</h2>
+
+				<!-- lista de Ações -->
 				<siga:links>
-					<c:forEach var="acao" items="${task.acoes}">
+					<c:forEach var="acao" items="${pi.getAcoes(titular, lotaTitular)}">
 						<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}"
 							pre="${acao.pre}" pos="${acao.pos}"
 							url="${pageContext.request.contextPath}${acao.url}"
@@ -45,15 +46,16 @@
 					</c:forEach>
 				</siga:links>
 
-				<c:if test="${not empty task.definicaoDeTarefa}">
+				<c:if test="${pi.formulario}">
 					<div class="card bg-info mb-3 mt-3">
 						<div class="card-header text-white">
-							<c:if test="${pi.tipoDePrincipal eq 'DOC' and not empty pi.principal}">
+							<c:if
+								test="${pi.tipoDePrincipal eq 'DOC' and not empty pi.principal}">
 								<a style="color: white; text-decoration: underline;"
 									href="/sigaex/app/expediente/doc/exibir?sigla=${pi.principal}">${pi.principal}</a>
 									- 
-							</c:if>${task.nomeDoProcedimento}
-							- ${task.nomeDaTarefa}
+							</c:if>${pi.definicaoDeProcedimento.nome}
+							- ${pi.currentTaskDefinition.nome}
 						</div>
 						<div class="card-body bg-light text-black">
 
@@ -134,22 +136,22 @@
 					<div class="card-header">Dados da Tarefa</div>
 					<div class="card-body">
 						<p>
-							<b>Procedimento:</b> ${task.nomeDoProcedimento}
+							<b>Procedimento:</b> ${pi.definicaoDeProcedimento.nome}
 						</p>
 						<p>
-							<b>Tarefa:</b> ${task.nomeDaTarefa}
+							<b>Prioridade:</b> ${pi.prioridade.descr}
 						</p>
 						<p>
-							<b>Prioridade:</b> ${task.prioridade.descr}
+							<b>Cadastrante:</b> ${falta.pi.cadastrante} (${falta.pi.lotaCadastrante})
 						</p>
 						<p>
-							<b>Cadastrante:</b> ${task.cadastrante} (${task.lotaCadastrante})
+							<b>Titular:</b> ${falta.pi.titular} (${falta.pi.lotaTitular})
 						</p>
 						<p>
-							<b>Titular:</b> ${task.titular} (${task.lotaTitular})
+							<b>Tarefa:</b> ${pi.currentTaskDefinition.nome}
 						</p>
 						<p>
-							<b>Início:</b> ${f:espera(task.inicio)}
+							<b>Início da tarefa:</b> ${f:espera(pi.dtEvento)}
 						</p>
 					</div>
 					<div class="gt-sidebar"></div>
@@ -172,7 +174,7 @@
 			</div>
 
 			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
+				test="${false and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
 
 				<c:url var="url" value="/../sigagc/app/knowledgeInplace">
 					<c:param name="tags">${task.ancora}</c:param>

@@ -6,21 +6,20 @@
 </c:if>
 <c:forEach var="item" items="${mobilMap}">
 	<!--ajax:${item.key}-->
-	<c:forEach var="t" items="${item.value}">
-		<c:set var="task" value="${t}" scope="request" />
-		<c:set var="piId" value="${t.id}" scope="request" />
+	<c:forEach var="pi" items="${item.value}">
 		<c:set var="ajax" value="sim" scope="request" />
 
 		<div class="card mb-3 border-info">
 			<div class="card-header bg-info text-white">
-				<a href="${linkTo[WfAppController].procedimento(piId)}"
-					style="color: white; text-decoration: underline;">${t.sigla}</a> - ${t.nomeDoProcedimento}
-				- ${t.nomeDaTarefa}
+				<a href="${linkTo[WfAppController].procedimento(pi.id)}"
+					style="color: white; text-decoration: underline;">${pi.sigla}</a> -
+				${pi.definicaoDeProcedimento.nome} -
+				${pi.currentTaskDefinition.nome}
 			</div>
 			<div class="card-body">
 				<form method="POST"
-					action="${linkTo[WfAppController].continuar(piId)}?sigla=${param.sigla}"
-					style="margin: 0px; padding: 0px; border: 0px;" id="form${piId}">
+					action="${linkTo[WfAppController].continuar(pi.id)}?sigla=${param.sigla}"
+					style="margin: 0px; padding: 0px; border: 0px;" id="form${pi.id}">
 					<%@ include file="inc-form.jsp"%>
 				</form>
 			</div>

@@ -141,13 +141,9 @@ public class WfBL extends CpBL {
 		return tasks;
 	}
 
-	public SortedSet<WfTarefa> getTaskList(String siglaDoc) {
+	public List<WfProcedimento> getTaskList(String siglaDoc) {
 		List<WfProcedimento> pis = WfDao.getInstance().consultarProcedimentosAtivosPorEvento(siglaDoc);
-		SortedSet<WfTarefa> tasks = new TreeSet<>();
-		for (WfProcedimento pi : pis) {
-			tasks.add(new WfTarefa(pi));
-		}
-		return tasks;
+		return pis;
 	}
 
 	public static void transferirDocumentosVinculados(WfProcedimento pi, String siglaTitular) throws Exception {

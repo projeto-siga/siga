@@ -32,7 +32,9 @@ import com.crivano.jflow.model.TaskDefinition;
 import com.crivano.jflow.model.enm.ProcessInstanceStatus;
 
 import br.gov.jfrj.siga.Service;
+import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -41,12 +43,15 @@ import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
-import br.gov.jfrj.siga.parser.SiglaParser;
 import br.gov.jfrj.siga.wf.dao.WfDao;
+import br.gov.jfrj.siga.wf.logic.PodeSim;
+import br.gov.jfrj.siga.wf.logic.WfPodePegar;
 import br.gov.jfrj.siga.wf.model.enm.WfPrioridade;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
 import br.gov.jfrj.siga.wf.util.SiglaUtils;
 import br.gov.jfrj.siga.wf.util.SiglaUtils.SiglaDecodificada;
+import br.gov.jfrj.siga.wf.util.WfAcaoVO;
 import br.gov.jfrj.siga.wf.util.WfResp;
 
 @Entity
@@ -542,6 +547,100 @@ public class WfProcedimento extends Objeto
 					+ sigla + ". Favor verificá-lo.");
 		} else
 			return info;
+	}
+
+	public List<AcaoVO> getAcoes(DpPessoa titular, DpLotacao lotaTitular) {
+		List<AcaoVO> set = new ArrayList<>();
+
+		set.add(WfAcaoVO.builder().nome("_Anotar").icone("note_add").acao("/app/anotar").modal("anotarModal")
+				.exp(new PodeSim()).build());
+
+		set.add(WfAcaoVO.builder().nome("_Pegar").icone("add")
+				.acao("/app/procedimento/" + getSiglaCompacta() + "/pegar")
+				.exp(new WfPodePegar(this, titular, lotaTitular)).post(true).build());
+
+		return set;
+	}
+
+	public boolean isFormulario() {
+		return status == ProcessInstanceStatus.PAUSED
+				&& getCurrentTaskDefinition().getTipoDeTarefa() == WfTipoDeTarefa.FORMULARIO;
+	}
+
+	public boolean isDesabilitarFormulario(DpPessoa titular, DpLotacao lotaTitular) {
+		return !titular.equivale(getPessoa()) && !lotaTitular.equivale(getLotacao());
+	}
+
+	public Object obterValorDeVariavel(WfDefinicaoDeVariavel vd) {
+		return getVariavelMap().get(vd.getIdentificador());
+	}
+
+	public String getMsgAviso(DpPessoa titular, DpLotacao lotaTitular) throws Exception {
+//		WfConhecimento c = WfDao.getInstance().consultarConhecimento(ti.getDefinicaoDeTarefa().getId());
+//		if (c != null) {
+//			this.setDescricao(WfWikiParser.renderXHTML(c.getDescricao()));
+//			this.setConhecimento(c.getDescricao());
+//		}
+
+		if (!titular.equivale(getPessoa()) && !lotaTitular.equivale(getLotacao())) {
+			if (getPessoa() != null && getLotacao() != null)
+				return "Esta tarefa será desempenhada por " + titular.getSigla() + " na lotação "
+						+ getLotacao().getSigla();
+			if (getPessoa() != null)
+				return "Esta tarefa será desempenhada por " + getPessoa().getSigla();
+			if (getLotacao() != null)
+				return "Esta tarefa será desempenhada pela lotação " + getLotacao().getSigla();
+		}
+
+		String siglaTitular = titular.getSigla() + "@" + lotaTitular.getSiglaCompleta();
+		String respWF = null;
+		if (getPessoa() != null)
+			respWF = getPessoa().getSigla();
+		if (respWF == null && getLotacao() != null)
+			respWF = "@" + getLotacao().getSiglaCompleta();
+
+		if (!Utils.empty(getPrincipal()) && getTipoDePrincipal() == WfTipoDePrincipal.DOC) {
+			ExService service = Service.getExService();
+			String respEX = service.getAtendente(getPrincipal(), siglaTitular);
+			DpLotacao lotEX = new PessoaLotacaoParser(respEX).getLotacaoOuLotacaoPrincipalDaPessoa();
+			DpLotacao lotWF = new PessoaLotacaoParser(respWF).getLotacaoOuLotacaoPrincipalDaPessoa();
+			boolean podeMovimentar = service.podeMovimentar(getPrincipal(), siglaTitular);
+			boolean estaComTarefa = titular.equivale(new PessoaLotacaoParser(respWF).getPessoa());
+			respEX = service.getAtendente(getPrincipal(), siglaTitular);
+			lotEX = new PessoaLotacaoParser(respEX).getLotacaoOuLotacaoPrincipalDaPessoa();
+
+			if (podeMovimentar && !estaComTarefa) {
+				if (lotWF == null || !lotWF.equivale(lotEX)) {
+					return "Esta tarefa só poderá prosseguir quando o documento " + getPrincipal()
+							+ " for transferido para " + (lotWF == null ? "Nula" : lotWF.getSigla()) + ".";
+				}
+			}
+			if (!podeMovimentar && estaComTarefa) {
+				return "Esta tarefa só poderá prosseguir quando o documento " + getPrincipal() + ", que está com "
+						+ lotEX.getSigla() + ", for devolvido.";
+			}
+			if (!podeMovimentar && !estaComTarefa) {
+				if (lotWF != null && !lotWF.equivale(lotEX)) {
+					return "Esta tarefa só poderá prosseguir quando o documento " + getPrincipal() + ", que está com "
+							+ lotEX.getSigla() + ", for transferido para " + lotWF.getSigla() + ".";
+				}
+			}
+		}
+		return null;
+	}
+
+	public List<String> getTags() {
+		ArrayList<String> tags = new ArrayList<String>();
+		if (getProcessDefinition() != null)
+			tags.add("@" + Texto.slugify(getProcessDefinition().getNome(), true, true));
+		if (getCurrentTaskDefinition() != null && getCurrentTaskDefinition().getNome() != null)
+			tags.add("@" + Texto.slugify(getCurrentTaskDefinition().getNome(), true, true));
+
+		if (getProcessDefinition().getNome() != null && getCurrentTaskDefinition() != null
+				&& getCurrentTaskDefinition().getNome() != null)
+			tags.add("^wf:" + Texto.slugify(
+					getProcessDefinition().getNome() + "-" + getCurrentTaskDefinition().getNome(), true, true));
+		return tags;
 	}
 
 }

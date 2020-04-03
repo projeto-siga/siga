@@ -99,24 +99,7 @@ public class WfUtil {
 //		return s;
 //	}
 
-	/**
-	 * Inicializa a variï¿½vel "task" para que seus atributos possam ser
-	 * visualizados pelas actions.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 * @throws Exception
-	 * @throws AplicacaoException
-	 */
-	public WfTaskVO inicializarTaskVO(WfTarefa taskInstance)
-			throws IllegalAccessException, InvocationTargetException, Exception, AplicacaoException {
-		WfTaskVO task = new WfTaskVO(taskInstance, so.getTitular(), so.getLotaTitular());
-		task.setConhecimentoEditavel(
-				so.getTitular().getPessoaAtual().equals(taskInstance.getInstanciaDeProcedimento().getPessoa()));
-		return task;
-	}
-
-//	private String designacao(String actorId, Set pooledActors) {
+	// private String designacao(String actorId, Set pooledActors) {
 //		if (actorId == null && pooledActors == null)
 //			return null;
 //		if (pooledActors == null || pooledActors.size() == 0)

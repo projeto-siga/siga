@@ -32,7 +32,6 @@ import br.gov.jfrj.siga.vraptor.Transacional;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.bl.WfBL;
 import br.gov.jfrj.siga.wf.dao.WfDao;
-import br.gov.jfrj.siga.wf.model.WfDefinicaoDeDesvio;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeVariavel;
@@ -41,7 +40,6 @@ import br.gov.jfrj.siga.wf.model.WfMovAnotacao;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
 import br.gov.jfrj.siga.wf.model.enm.WfPrioridade;
 import br.gov.jfrj.siga.wf.util.WfTarefa;
-import br.gov.jfrj.siga.wf.util.WfTaskVO;
 import br.gov.jfrj.siga.wf.util.WfUtil;
 
 @Controller
@@ -176,7 +174,7 @@ public class WfAppController extends WfController {
 		prioridades.add(new SigaIdDescr(WfPrioridade.BAIXA, "Baixa"));
 		prioridades.add(new SigaIdDescr(WfPrioridade.MUITO_BAIXA, "Muito Baixa"));
 		result.include("prioridades", prioridades);
-		result.include("task", util.inicializarTaskVO(new WfTarefa(pi)));
+		// result.include("task", util.inicializarTaskVO(new WfTarefa(pi)));
 		result.include("dot", util.getDot(new WfTarefa(pi)));
 		result.include("movs", pi.getMovimentacoes());
 		result.include("piId", pi.getId());
@@ -192,22 +190,21 @@ public class WfAppController extends WfController {
 	@Get
 	@Path("/app/doc")
 	public void doc(String sigla) throws Exception {
-		Map<String, List<WfTaskVO>> mobilMap = new TreeMap<String, List<WfTaskVO>>();
+		Map<String, List<WfProcedimento>> mobilMap = new TreeMap<String, List<WfProcedimento>>();
 
-		SortedSet<WfTarefa> taskInstances = Wf.getInstance().getBL().getTaskList(sigla);
-		for (WfTarefa ti : taskInstances) {
-			if (ti.getInstanciaDeProcedimento().getStatus() != ProcessInstanceStatus.PAUSED)
+		List<WfProcedimento> taskInstances = Wf.getInstance().getBL().getTaskList(sigla);
+		for (WfProcedimento pi : taskInstances) {
+			if (pi.getStatus() != ProcessInstanceStatus.PAUSED)
 				continue;
-			String principal = ti.getInstanciaDeProcedimento().getPrincipal();
+			String principal = pi.getPrincipal();
 			if (principal == null)
 				continue;
 
-			WfTaskVO task = new WfTaskVO(ti, sigla, so.getTitular(), so.getLotaTitular());
 			if (!mobilMap.containsKey(principal)) {
-				mobilMap.put(principal, new ArrayList<WfTaskVO>());
+				mobilMap.put(principal, new ArrayList<WfProcedimento>());
 			}
-			List<WfTaskVO> tasks = mobilMap.get(principal);
-			tasks.add(task);
+			List<WfProcedimento> tasks = mobilMap.get(principal);
+			tasks.add(pi);
 		}
 		result.include("mobilMap", mobilMap);
 	}
@@ -264,7 +261,6 @@ public class WfAppController extends WfController {
 						} else {
 							value = fieldValues[c];
 							c++;
-
 						}
 
 						if (value instanceof StringQualquer)

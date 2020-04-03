@@ -9,7 +9,7 @@
 
 
 		<c:if
-			test="${not f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
+			test="${false and not f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
 			<span id="desc_ver"> <c:choose>
 					<c:when test="${not empty task.descricao}">
 						<c:if test="${task.conhecimentoEditavel}">
@@ -24,13 +24,13 @@
 			</span>
 		</c:if>
 	</div>
-	<c:if test="${task.desabilitarForm eq false}">
+	<c:if test="${pi.isDesabilitarFormulario(titular, lotaTitular) eq false}">
 		<div class="gt-form-row gt-width-100">
-			<input type="hidden" value="${task.id}" name="tiId" />
+			<input type="hidden" value="${pi.id}" name="tiId" />
 
 			<c:set var="fieldIndex" value="0" />
-			<c:forEach var="variable" items="${task.definicaoDeVariavel}">
-				<c:set var="valor" value="${task.obterValorDeVariavel(variable)}" />
+			<c:forEach var="variable" items="${pi.currentTaskDefinition.definicaoDeVariavel}">
+				<c:set var="valor" value="${pi.obterValorDeVariavel(variable)}" />
 				<div class="form-group">
 					<c:choose>
 						<c:when test="${fn:startsWith(variable.identificador,'sel_')}">
@@ -131,10 +131,10 @@
 		</div>
 		<%--<c:if test="${task.podePegarTarefa}"> --%>
 		<div class="gt-form-row gt-width-100">
-			<c:forEach var="transition" items="${task.definicaoDeDesvio}"
+			<c:forEach var="transition" items="${pi.currentTaskDefinition.definicaoDeDesvio}"
 				varStatus="loop">
 				<c:set var="resp"
-					value="${transition.obterProximoResponsavel(task.instanciaDeProcedimento)}" />
+					value="${transition.obterProximoResponsavel(pi)}" />
 				<c:if test="${not empty resp}">
 					<c:set var="resp" value=" &raquo; ${resp}" />
 				</c:if>
@@ -142,11 +142,11 @@
 					class="btn btn-info mr-3">${empty transition.nome ? 'Prosseguir' : transition.nome}${resp}</button>
 			</c:forEach>
 		</div>
-		<c:if test="${empty task.definicaoDeDesvio}">
+		<c:if test="${empty pi.currentTaskDefinition.definicaoDeDesvio}">
 			<button type="submit" name="detourIndex" value=""
 				class="btn btn-info mr-3">Prosseguir${resp}</button>
 		</c:if>
 		<%--</c:if> --%>
 	</c:if>
-	<span style="color: red; font-weight: bold;"> ${task.msgAviso}</span>
+	<span style="color: red; font-weight: bold;"> ${pi.getMsgAviso(titular, lotaTitular)}</span>
 </div>

@@ -34,6 +34,7 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.CpAcesso;
@@ -45,6 +46,7 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 
 @Resource
 public class ExMesaController extends ExController {
+	private static final String ACESSO_MESA2 = "MESA2:Mesa Versão 2";
 
 	public ExMesaController(HttpServletRequest request, HttpServletResponse response, ServletContext context,
 			Result result, SigaObjects so, EntityManager em) {
@@ -63,6 +65,21 @@ public class ExMesaController extends ExController {
 				return;
 			}
 		}
+
+		try {
+			super.assertAcesso(ACESSO_MESA2);
+			if (exibirAcessoAnterior != null) {
+				result.redirectTo("/app/mesa2" 
+				+ "?exibirAcessoAnterior=" + exibirAcessoAnterior.toString());
+				return;
+			} else {
+				result.redirectTo("/app/mesa2"); 
+				return;
+			}
+		} catch (AplicacaoException e) {
+			
+		}
+		
 		if (exibirAcessoAnterior != null && exibirAcessoAnterior) {
 			CpAcesso a = dao.consultarAcessoAnterior(so.getCadastrante());
 			if (a == null)

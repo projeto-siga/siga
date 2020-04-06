@@ -469,7 +469,7 @@ DROP TABLE IF EXISTS `cp_arquivo_blob`;
 /*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `cp_arquivo_blob` (
   `ID_ARQ_BLOB` BIGINT UNSIGNED NOT NULL,
-  `CONTEUDO_ARQ_BLOB` BLOB DEFAULT NULL,
+  `CONTEUDO_ARQ_BLOB` LONGBLOB DEFAULT NULL,
   PRIMARY KEY (`ID_ARQ_BLOB`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;

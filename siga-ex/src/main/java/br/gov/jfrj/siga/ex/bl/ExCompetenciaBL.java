@@ -19,9 +19,11 @@
 package br.gov.jfrj.siga.ex.bl;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Set;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -4105,6 +4107,50 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& (agora.get(Calendar.HOUR_OF_DAY) < 17 
 					|| podeGerenciarPublicacaoBoletimPorConfiguracao(titular, lotaTitular, mob));
 	}
+	
+	public boolean podeRestrigirAcesso(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final ExMobil mob) {
+		
+		List<ExMovimentacao> listMovJuntada = new ArrayList<ExMovimentacao>();
+        if(mob.getDoc().getMobilDefaultParaReceberJuntada() != null) {
+            listMovJuntada.addAll(mob.getDoc().getMobilDefaultParaReceberJuntada().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA));
+        }
+		
+		return (getConf()
+				.podePorConfiguracao(
+						cadastrante,
+						lotaCadastrante,
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO,
+						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR)) &&
+				(!getConf().podePorConfiguracao(
+							cadastrante,
+							lotaCadastrante,
+							mob.doc().getExModelo(),
+							CpTipoConfiguracao.TIPO_CONFIG_INCLUIR_DOCUMENTO) || mob.getDoc().getPai()==null) && listMovJuntada.size() == 0;
+	}
+	
+	public boolean podeDesfazerRestricaoAcesso(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final ExMobil mob) {
+		List<ExMovimentacao> listMovJuntada = new ArrayList<ExMovimentacao>();
+        if(mob.getDoc().getMobilDefaultParaReceberJuntada() != null) {
+            listMovJuntada.addAll(mob.getDoc().getMobilDefaultParaReceberJuntada().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA));
+        }
+		List<ExMovimentacao> lista = new ArrayList<ExMovimentacao>();
+		lista.addAll(mob.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO));
+		return (!lista.isEmpty() &&
+				getConf()
+				.podePorConfiguracao(
+						cadastrante,
+						lotaCadastrante,
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO,
+						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR)) &&
+				(!getConf().podePorConfiguracao(
+							cadastrante,
+							lotaCadastrante,
+							mob.doc().getExModelo(),
+							CpTipoConfiguracao.TIPO_CONFIG_INCLUIR_DOCUMENTO) || mob.getDoc().getPai()==null) && listMovJuntada.size() == 0;
+	}
+
 
 	/**
 	 * Retorna se é possível exibir a opção para agendar publicação no Boletim.
@@ -4685,6 +4731,16 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.doc().isPendenteDeAssinatura() && !mob.isEmTransito() && podeMovimentar && getConf().podePorConfiguracao(titular, lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_AUTUAR,
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR));
+	}
+	
+	public boolean podeAssinarPorComSenha(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante) {
+		return (getConf()
+				.podePorConfiguracao(
+						cadastrante,
+						lotaCadastrante,
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA,
+						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR)) ;
 	}
 
 }

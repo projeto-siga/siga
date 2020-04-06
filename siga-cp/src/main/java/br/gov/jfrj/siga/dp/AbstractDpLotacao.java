@@ -58,7 +58,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 		@NamedQuery(name = "consultarPorSiglaDpLotacao", query = "select lot from DpLotacao lot where"
 				+ "      upper(lot.siglaLotacao) = upper(:siglaLotacao)"
 				+ "      and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ "	     and lot.dataFimLotacao is null"),
+				+ "	     and lot.dataFimLotacao = null"),
 		@NamedQuery(name = "consultarPorSiglaDpLotacaoComLike", query = "select lot from DpLotacao lot where"
 				+ "        upper(lot.siglaLotacao) like upper('%' || :siglaLotacao || '%') "
 				+ "        and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
@@ -89,19 +89,19 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "	where ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) or (upper(lot.siglaLotacao) like upper('%' || :nome || '%')))"
 				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"),
 		@NamedQuery(name = "consultarPorNomeOrgaoDpLotacao", query = "select lot from DpLotacao lot where upper(REMOVE_ACENTO(lot.nomeLotacao)) = upper(REMOVE_ACENTO(:nome)) and lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu")})
-@NamedNativeQueries({
-		@NamedNativeQuery(name = "consultarQuantidadeDocumentosPorDpLotacao", query = "SELECT count(1) FROM corporativo.dp_lotacao lotacao"
-			+ " left join corporativo.cp_marca marca on lotacao.ID_LOTACAO = marca.ID_LOTACAO_INI"
-			+ " WHERE(dt_ini_marca IS NULL OR dt_ini_marca < sysdate)"
-			+ " AND(dt_fim_marca IS NULL OR dt_fim_marca > sysdate)"
-			+ " AND id_marcador not in (1,10,32)"
-			+ " AND lotacao.id_lotacao_ini = :idLotacao"
-			+ " AND id_tp_marca = :idTipoMarca "),
-		@NamedNativeQuery(name = "consultarQtdeDocCriadosPossePorDpLotacao", query = "SELECT count(1) FROM siga.ex_documento doc "
-			+ " left join corporativo.dp_lotacao lot on doc.id_lota_cadastrante = lot.id_lotacao "
-			+ " left join siga.ex_mobil mob on mob.id_doc = doc.id_doc "
-			+ " left join corporativo.cp_marca marca on marca.id_ref = mob.ID_MOBIL"
-			+ " where lot.id_lotacao_ini = :idLotacao or marca.ID_LOTACAO_INI = :idLotacao")})
+		@NamedNativeQueries({
+			@NamedNativeQuery(name = "consultarQuantidadeDocumentosPorDpLotacao", query = "SELECT count(1) FROM corporativo.dp_lotacao lotacao"
+				+ " left join corporativo.cp_marca marca on lotacao.ID_LOTACAO = marca.ID_LOTACAO_INI"
+				+ " WHERE(dt_ini_marca IS NULL OR dt_ini_marca < sysdate)"
+				+ " AND(dt_fim_marca IS NULL OR dt_fim_marca > sysdate)"
+				+ " AND id_marcador not in (1,10,32)"
+				+ " AND lotacao.id_lotacao_ini = :idLotacao"
+				+ " AND id_tp_marca = :idTipoMarca "),
+			@NamedNativeQuery(name = "consultarQtdeDocCriadosPossePorDpLotacao", query = "SELECT count(1) FROM siga.ex_documento doc "
+				+ " left join corporativo.dp_lotacao lot on doc.id_lota_cadastrante = lot.id_lotacao "
+				+ " left join siga.ex_mobil mob on mob.id_doc = doc.id_doc "
+				+ " left join corporativo.cp_marca marca on marca.id_ref = mob.ID_MOBIL"
+				+ " where lot.id_lotacao_ini = :idLotacao or marca.ID_LOTACAO_INI = :idLotacao")})
 
 public abstract class AbstractDpLotacao extends DpResponsavel implements
 		Serializable {

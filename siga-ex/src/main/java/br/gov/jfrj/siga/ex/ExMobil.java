@@ -43,6 +43,7 @@ import java.util.regex.Pattern;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.BatchSize;
 import org.jboss.logging.Logger;
@@ -69,6 +70,9 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger log = Logger.getLogger(ExMobil.class);
+	
+	@Transient
+	private static boolean isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso = false;
 
 	/**
 	 * Retorna A penúltima movimentação não cancelada de um Mobil.
@@ -2209,5 +2213,17 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 			set.add(m);
 		}
 		return set;
+	}
+	
+	public static void adicionarIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso() {
+		isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso = true;
+	}
+	
+	public static void removerIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso() {
+		isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso = false;
+	}
+	
+	public static boolean isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso() {
+		return isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso;
 	}
 }

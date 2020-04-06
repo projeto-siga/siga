@@ -29,7 +29,9 @@ public class ExArquivoNumerado implements Comparable {
 	private ExMobil mobil;
 	private Date data;
 	private int nivel;
-	private boolean copia;
+	private boolean copia;	
+	private String referenciaHtmlCompletoDocPrincipal;
+	private String referenciaPDFCompletoDocPrincipal;
 
 	public ExArquivo getArquivo() {
 		return arquivo;
@@ -105,6 +107,16 @@ public class ExArquivoNumerado implements Comparable {
 		}
 		return getNome();
 	};
+		
+	public String getNomeOuDescricaoComMovimentacao() {
+		if (getArquivo() instanceof ExMovimentacao) {
+			ExMovimentacao mov = (ExMovimentacao) getArquivo();
+			if (mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA))
+				return "Ciência (" + getNomeOuDescricao() + ")";
+		}
+		return getNomeOuDescricao();
+	}
+
 
 
 	public String getReferencia() {
@@ -174,5 +186,22 @@ public class ExArquivoNumerado implements Comparable {
 	public void setCopia(boolean copia) {
 		this.copia = copia;
 	}
+	
+	public String getReferenciaHtmlCompletoDocPrincipal() {
+		return referenciaHtmlCompletoDocPrincipal != null ? referenciaHtmlCompletoDocPrincipal : getReferenciaHtmlCompleto();
+	}
+	
+	public void setReferenciaHtmlCompletoDocPrincipal(String referenciaHtmlCompletoDocPrincipal) {
+		this.referenciaHtmlCompletoDocPrincipal = referenciaHtmlCompletoDocPrincipal;
+	}
+	
+	public String getReferenciaPDFCompletoDocPrincipal() {
+		return referenciaPDFCompletoDocPrincipal != null ? referenciaPDFCompletoDocPrincipal : getReferenciaPDFCompleto();
+	}
+	
+	public void setReferenciaPDFCompletoDocPrincipal(String referenciaPDFCompletoDocPrincipal) {
+		this.referenciaPDFCompletoDocPrincipal = referenciaPDFCompletoDocPrincipal;
+	}
+
 
 }

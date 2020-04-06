@@ -16,9 +16,10 @@
 				<div class="card bg-light mb-3" >
 					<div class="card-header">
 						<h5>
-							Acompanhamento e Autenticação de Protocolo
+							Acompanhamento e Autenticação de Protocolo - Documento <b>${sigla}</b> 
 						</h5>
 					</div>
+					<!--
 					<div class="card-body">
 						<div>
 							<c:url var='pdfAssinado'
@@ -28,8 +29,10 @@
 							<iframe src="${pdfAssinado}" width="100%" height="600" align="center" style="margin-top: 10px;"> </iframe>
 						</div>
 					</div>
+					-->
 				</div>
 			</div>
+			<!--
 			<div class="col">
 				<div class="row">
 					<div class="col">
@@ -46,6 +49,7 @@
 					</div>
 				</div>				
 			</div>
+			-->
 		</div>
 		<div class="row">
 			<div class="col-12">
@@ -125,26 +129,10 @@
 											</c:choose>
 											<td align="center">${dt}</td>
 											<td>${mov.descrTipoMovimentacao}</td>
-											<td align="left"><siga:selecionado isVraptor="true"
-													sigla="${mov.lotaCadastrante.sigla}"
-													descricao="${mov.lotaCadastrante.descricaoAmpliada}"
-													lotacaoParam="${mov.lotaCadastrante.siglaLotacao}${mov.lotaCadastrante.sigla}" />
-											</td>
-											<td align="left"><siga:selecionado isVraptor="true"
-													sigla="${mov.cadastrante.nomeAbreviado}"
-													descricao="${mov.cadastrante.descricao} - ${mov.cadastrante.sigla}"
-													pessoaParam="${mov.cadastrante.sigla}" />
-											</td>
-											<td align="left"><siga:selecionado isVraptor="true"
-													sigla="${mov.lotaResp.sigla}"
-													descricao="${mov.lotaResp.descricaoAmpliada}"
-													lotacaoParam="${mov.lotaResp.siglaLotacao}${mov.lotaResp.sigla}" />
-											</td>
-											<td align="left"><siga:selecionado isVraptor="true"
-													sigla="${mov.resp.nomeAbreviado}"
-													descricao="${mov.resp.descricao} - ${mov.resp.sigla}"
-													pessoaParam="${mov.resp.sigla}" />
-											</td>
+											<td align="left">${mov.lotaCadastrante.sigla} </td>
+											<td align="left">${mov.cadastrante.nomeAbreviado}</td>
+											<td align="left">${mov.lotaResp.sigla}</td>
+											<td align="left">${mov.resp.nomeAbreviado}</td>
 										</tr>
 										<c:choose>
 											<c:when test='${evenorodd == "even"}'>

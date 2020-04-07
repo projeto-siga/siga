@@ -249,7 +249,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		}
 
 		s = s + "', 'documento', " + winProp + ")\">" + descricaoCurta + "</a>";
-		return s;
+		return descricaoCurta;
 	}
 
 	/**

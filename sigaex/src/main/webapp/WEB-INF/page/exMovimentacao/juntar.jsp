@@ -26,19 +26,19 @@
 				<c:choose>
 					<c:when test="${!doc.eletronico}">
 						<div class="row">
-							<div class="col-sm-2">
+							<div class="col-2">
 								<div class="form-group">
 									<label>Data</label> 
 									<input type="text" name="dtMovString" value="${dtMovString}" onblur="javascript:verifica_data(this, true);" class="form-control"/>
 								</div>
 							</div>
-							<div class="col-sm-6">
+							<div class="col-8">
 								<div class="form-group">
 									<label>Responsável</label> 
 									<siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
 								</div>
 							</div>
-							<div class="col-sm-2">
+							<div class="col-2">
 								<div class="form-group">
 									<div class="form-check form-check-inline mt-4">
 										<input type="checkbox" theme="simple" name="substituicao" value="${substituicao}" onclick="javascript:displayTitular(this);" />
@@ -48,7 +48,7 @@
 							</div>
 						</div>
 						<div class="row" id="tr_titular" style="display: ${exDocumentoDTO.substituicao ? '' : 'none'};" >
-							<div class="col-sm-6" >
+							<div class="col-12" >
 							<input type="hidden" name="campos" value="titularSel.id" />
 								<div class="form-group">
 									<label>Titular</label>
@@ -60,13 +60,12 @@
 					</c:when>
 				</c:choose>
 				<div class="row">
-					<div class="col-sm-6" >
+					<div class="col-12" >
 						<div class="form-group">
 							<label>Documento</label>
 							<siga:escolha id="idDocumentoEscolha" var="idDocumentoEscolha">
 								<siga:opcao id='1' texto="Documento Interno" >
-									<p></p>
-									<siga:selecao tema='simple'  titulo="Documento Pai" propriedade="documentoRef" urlAcao="buscar" urlSelecionar="selecionar" modulo="sigaex"/>
+									<siga:selecao tema='simple' titulo="Documento Pai" propriedade="documentoRef" urlAcao="buscar" urlSelecionar="selecionar" modulo="sigaex"/>
 								</siga:opcao>
 								<siga:opcao id='2' texto="Documento Externo ao Siga-Doc" >
 									<input type="text" theme='simple' name="idDocumentoPaiExterno" value="${idDocumentoPaiExterno}" class="form-control mt-3"/>
@@ -76,7 +75,7 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-sm-2">
+					<div class="col-12">
 						<div class="form-group">
 							<button type="submit" class="btn btn-primary" >Ok</button>
 							<button type="button" onclick="javascript:history.back();" class="btn btn-primary" >Cancela</button>

@@ -63,7 +63,7 @@
 			
 			<property name="hibernate.max_fetch_depth" value="3" />
 			<property name="hibernate.default_batch_fetch_size" value="1000" />
-			<property name="hibernate.dialect" value="org.hibernate.dialect.OracleDialect" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.Oracle12cDialect" />
 			<property name="hibernate.hbm2ddl.auto" value="none" />
 			<property name="hibernate.show_sql" value="false" />
 

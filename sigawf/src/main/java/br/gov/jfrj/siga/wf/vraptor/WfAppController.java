@@ -25,6 +25,7 @@ import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.model.SelecaoGenerica;
 import br.gov.jfrj.siga.vraptor.SigaIdDescr;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 import br.gov.jfrj.siga.vraptor.StringQualquer;
@@ -39,6 +40,7 @@ import br.gov.jfrj.siga.wf.model.WfMov;
 import br.gov.jfrj.siga.wf.model.WfMovAnotacao;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
 import br.gov.jfrj.siga.wf.model.enm.WfPrioridade;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
 import br.gov.jfrj.siga.wf.util.WfTarefa;
 import br.gov.jfrj.siga.wf.util.WfUtil;
 
@@ -130,11 +132,15 @@ public class WfAppController extends WfController {
 	@Transacional
 	@Post
 	@Path("/app/iniciar/{pdId}")
-	public void iniciar(Long pdId, String principal) throws Exception {
+	public void iniciar(Long pdId, WfTipoDePrincipal tipoDePrincipal, String principal, SelecaoGenerica documentoRefSel)
+			throws Exception {
+		if (documentoRefSel != null && documentoRefSel.getSigla() != null) {
+			principal = documentoRefSel.getSigla();
+		}
 		if (pdId == null)
 			throw new RuntimeException();
 		WfProcedimento pi = Wf.getInstance().getBL().createProcessInstance(pdId, getTitular(), getLotaTitular(),
-				getIdentidadeCadastrante(), principal, null, null, true);
+				getIdentidadeCadastrante(), tipoDePrincipal, principal, null, null, true);
 		result.redirectTo(this).procedimento(pi.getId());
 	}
 

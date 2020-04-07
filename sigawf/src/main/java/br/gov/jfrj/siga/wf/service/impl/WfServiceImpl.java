@@ -158,7 +158,8 @@ public class WfServiceImpl implements WfService {
 				if (l.size() > 0)
 					identidade = l.get(0);
 				WfProcedimento pi = Wf.getInstance().getBL().createProcessInstance(pd.getId(),
-						titularParser.getPessoa(), titularParser.getLotacao(), identidade, null, keys, values, false);
+						titularParser.getPessoa(), titularParser.getLotacao(), identidade, null, null, keys, values,
+						false);
 
 				WfBL.transferirDocumentosVinculados(pi, siglaTitular);
 				return true;

@@ -89,8 +89,8 @@ public class WfBL extends CpBL {
 	 * @throws Exception
 	 */
 	public WfProcedimento createProcessInstance(long pdId, DpPessoa titular, DpLotacao lotaTitular,
-			CpIdentidade identidade, String principal, ArrayList<String> keys, ArrayList<String> values,
-			boolean fCreateStartTask) throws Exception {
+			CpIdentidade identidade, WfTipoDePrincipal tipoDePrincipal, String principal, ArrayList<String> keys,
+			ArrayList<String> values, boolean fCreateStartTask) throws Exception {
 
 		// Create the process definition,
 		WfDefinicaoDeProcedimento pd = WfDao.getInstance().consultar(pdId, WfDefinicaoDeProcedimento.class, false);
@@ -114,7 +114,11 @@ public class WfBL extends CpBL {
 		WfProcedimento pi = new WfProcedimento(pd, variable);
 		pi.setTipoDePrincipal(WfTipoDePrincipal.DOC);
 		pi.setPrincipal(principal);
+		pi.setTitular(titular);
+		pi.setLotaTitular(lotaTitular);
+		pi.setHisIdcIni(identidade);
 		pi.setOrgaoUsuario(titular.getOrgaoUsuario());
+		pi.setHisDtIni(dao().consultarDataEHoraDoServidor());
 
 		WfEngine engine = new WfEngine(dao(), new WfHandler(titular, lotaTitular, identidade));
 

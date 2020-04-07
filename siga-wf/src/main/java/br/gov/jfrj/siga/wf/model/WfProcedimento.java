@@ -163,6 +163,7 @@ public class WfProcedimento extends Objeto
 	public void start() {
 		indiceCorrente = -1;
 		status = ProcessInstanceStatus.STARTED;
+		this.setHisDtIni(WfDao.getInstance().consultarDataEHoraDoServidor());
 	}
 
 	@Override
@@ -187,6 +188,7 @@ public class WfProcedimento extends Objeto
 	public void end() {
 		indiceCorrente = null;
 		status = ProcessInstanceStatus.FINISHED;
+		this.setHisDtFim(WfDao.getInstance().consultarDataEHoraDoServidor());
 	}
 
 	@Override

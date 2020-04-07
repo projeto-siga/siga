@@ -31,18 +31,6 @@ public class WfHandler implements Handler<WfProcedimento, WfResp> {
 		this.identidade = identidade;
 	}
 
-	@Override
-	public void afterPause(WfProcedimento pi, TaskResult result) {
-		String siglaTitular = null;
-		if (titular != null && lotaTitular != null)
-			siglaTitular = titular.getSigla() + "@" + lotaTitular.getSiglaCompleta();
-		try {
-			WfBL.transferirDocumentosVinculados(pi, siglaTitular);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	public static Object eval(WfProcedimento pi, String expression) {
 		return MVEL.eval(expression, pi.getVariable());
 	}
@@ -90,8 +78,19 @@ public class WfHandler implements Handler<WfProcedimento, WfResp> {
 	}
 
 	@Override
+	public void afterPause(WfProcedimento pi, TaskResult result) {
+		String siglaTitular = null;
+		if (titular != null && lotaTitular != null)
+			siglaTitular = titular.getSigla() + "@" + lotaTitular.getSiglaCompleta();
+		try {
+			WfBL.transferirDocumentosVinculados(pi, siglaTitular);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
 	public void afterTransition(WfProcedimento pi, Integer de, Integer para) {
 		Wf.getInstance().getBL().registrarTransicao(pi, de, para, titular, lotaTitular, identidade);
 	}
-
 }

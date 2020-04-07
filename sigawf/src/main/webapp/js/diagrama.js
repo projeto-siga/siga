@@ -63,18 +63,27 @@ app
 								td.definicaoDeVariavel = [];
 								td.definicaoDeDesvio = [];
 
-								if (t.tipoResponsavel == 'LOTACAO' && t.refUnidadeResponsavel
+								if (t.tipoResponsavel == 'LOTACAO'
+										&& t.refUnidadeResponsavel
 										&& t.refUnidadeResponsavel.originalObject
 										&& t.refUnidadeResponsavel.originalObject.key)
 									td.lotacaoId = t.refUnidadeResponsavel.originalObject.key;
 
-								if (t.tipoResponsavel == 'PESSOA' && t.refPessoaResponsavel
+								if (t.tipoResponsavel == 'PESSOA'
+										&& t.refPessoaResponsavel
 										&& t.refPessoaResponsavel.originalObject
 										&& t.refPessoaResponsavel.originalObject.key)
 									td.pessoaId = t.refPessoaResponsavel.originalObject.key;
 
 								if (t.tipoResponsavel == 'RESPONSAVEL')
 									td.definicaoDeResponsavelId = t.refResponsavel;
+
+								if (t.tipo == 'INCLUIR_DOCUMENTO' && t.ref
+										&& t.ref.originalObject
+										&& t.ref.originalObject.key) {
+									td.refId = t.ref.originalObject.key;
+									td.refSigla = t.ref.originalObject.firstLine;
+								}
 
 								pd.definicaoDeTarefa.push(td);
 
@@ -165,6 +174,17 @@ app
 
 								if (t.definicaoDeResponsavel)
 									td.refResponsavel = t.definicaoDeResponsavel;
+
+								if (t.refId) {
+									td.ref = {
+										originalObject : {
+											key : t.refId,
+											firstLine : t.refSigla
+										}
+									}
+								}
+
+								console.log("TESTE!@#", td);
 
 								pd.tarefa.push(td);
 

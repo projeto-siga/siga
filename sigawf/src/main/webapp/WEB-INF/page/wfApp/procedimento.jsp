@@ -30,7 +30,15 @@
 					</div>
 				</c:if>
 
-				<h2 class="mt-3">Procedimento ${pi.sigla}</h2>
+				<h2 class="mt-3">
+					Procedimento ${pi.sigla}
+					<c:if
+						test="${pi.tipoDePrincipal eq 'DOC' and not empty pi.principal}">
+						<span style="font-size: 70%"> - <a
+							href="/sigaex/app/expediente/doc/exibir?sigla=${pi.principal}">${pi.principal}</a>
+						</span>
+					</c:if>
+				</h2>
 
 				<!-- lista de Ações -->
 				<siga:links>
@@ -49,14 +57,8 @@
 				<c:if test="${pi.formulario}">
 					<div class="card bg-info mb-3 mt-3">
 						<div class="card-header text-white">
-							<c:if
-								test="${pi.tipoDePrincipal eq 'DOC' and not empty pi.principal}">
-								<a style="color: white; text-decoration: underline;"
-									href="/sigaex/app/expediente/doc/exibir?sigla=${pi.principal}">${pi.principal}</a>
-									- 
-							</c:if>${pi.definicaoDeProcedimento.nome}
-							- ${pi.definicaoDeTarefaCorrente.nome}
-						</div>
+							${pi.definicaoDeProcedimento.nome} -
+							${pi.definicaoDeTarefaCorrente.nome}</div>
 						<div class="card-body bg-light text-black">
 
 							<form method="POST"
@@ -142,7 +144,8 @@
 							<b>Prioridade:</b> ${pi.prioridade.descr}
 						</p>
 						<p>
-							<b>Cadastrante:</b> ${falta.pi.cadastrante} (${falta.pi.lotaCadastrante})
+							<b>Cadastrante:</b> ${falta.pi.cadastrante}
+							(${falta.pi.lotaCadastrante})
 						</p>
 						<p>
 							<b>Titular:</b> ${falta.pi.titular} (${falta.pi.lotaTitular})
@@ -151,7 +154,7 @@
 							<b>Tarefa:</b> ${pi.definicaoDeTarefaCorrente.nome}
 						</p>
 						<p>
-							<b>Início da tarefa:</b> ${f:espera(pi.dtEvento)}
+							<b>Início da tarefa:</b> ${f:espera(pi.eventoData)}
 						</p>
 					</div>
 					<div class="gt-sidebar"></div>

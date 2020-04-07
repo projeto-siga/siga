@@ -95,9 +95,9 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 	}
 
 	public List<WfProcedimento> consultarProcedimentosAtivosPorEvento(String evento) {
-		String sql = "from WfProcedimento p where p.evento like :evento";
+		String sql = "from WfProcedimento p where p.eventoNome like :eventoNome";
 		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
-		query.setParameter("evento", evento + "%");
+		query.setParameter("eventoNome", evento + "%");
 		List<WfProcedimento> result = query.getResultList();
 		return result;
 	}
@@ -190,7 +190,7 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 //	}
 
 	public List<WfProcedimento> consultarProcedimentosPorPessoaOuLotacao(DpPessoa titular, DpLotacao lotaTitular) {
-		String sql = "select p from WfProcedimento p left join p.pessoa pes left join p.lotacao lot where pes.idPessoaIni = :idPessoaIni or lot.idLotacaoIni = :idLotacaoIni";
+		String sql = "select p from WfProcedimento p left join p.eventoPessoa pes left join p.eventoLotacao lot where pes.idPessoaIni = :idPessoaIni or lot.idLotacaoIni = :idLotacaoIni";
 		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
 		query.setParameter("idPessoaIni", titular.getIdPessoaIni());
 		query.setParameter("idLotacaoIni", lotaTitular.getIdLotacaoIni());

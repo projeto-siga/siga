@@ -24,7 +24,6 @@ package br.gov.jfrj.siga.ex;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -33,7 +32,7 @@ import org.hibernate.annotations.BatchSize;
 
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 
 /**
@@ -43,7 +42,7 @@ import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 @Entity
 @BatchSize(size = 500)
 @Table(name = "siga.ex_modelo")
-public class ExModelo extends AbstractExModelo implements Sincronizavel {
+public class ExModelo extends AbstractExModelo implements Sincronizavel, Selecionavel {
 	@Transient
 	private byte[] cacheConteudoBlobMod;
 
@@ -189,6 +188,21 @@ public class ExModelo extends AbstractExModelo implements Sincronizavel {
 		String filename = getSubdiretorioENome();
 		if (filename.contains("/"))
 			return filename.substring(0, filename.lastIndexOf("/"));
+		return null;
+	}
+
+	@Override
+	public String getSigla() {
+		return getNmMod();
+	}
+
+	@Override
+	public void setSigla(String sigla) {
+		setNmMod(sigla);
+	}
+
+	@Override
+	public String getDescricao() {
 		return null;
 	}
 }

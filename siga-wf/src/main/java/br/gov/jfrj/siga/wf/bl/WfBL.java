@@ -278,13 +278,13 @@ public class WfBL extends CpBL {
 	public void pegar(WfProcedimento pi, DpPessoa titular, DpLotacao lotaTitular, CpIdentidade identidade) {
 		assertLogic(new WfPodePegar(pi, titular, lotaTitular), "pegar");
 		WfMovDesignacao mov = new WfMovDesignacao(pi, dao().consultarDataEHoraDoServidor(), titular, lotaTitular,
-				identidade, pi.getPessoa(), pi.getLotacao(), titular, lotaTitular);
+				identidade, pi.getEventoPessoa(), pi.getEventoLotacao(), titular, lotaTitular);
 		gravarMovimentacao(mov);
 
-		if (pi.getPessoa() != null || pi.getLotacao() != null) {
+		if (pi.getEventoPessoa() != null || pi.getEventoLotacao() != null) {
 			WfResp resp = pi.calcResponsible(pi.getCurrentTaskDefinition());
-			pi.setPessoa(resp.getPessoa());
-			pi.setLotacao(resp.getLotacao());
+			pi.setEventoPessoa(resp.getPessoa());
+			pi.setEventoLotacao(resp.getLotacao());
 			dao().gravarInstanciaDeProcedimento(pi);
 		}
 	}

@@ -50,14 +50,14 @@ public class WfUtil {
 	 * @return
 	 */
 	public String getAtendente(WfTarefa ti) {
-		if (ti.getInstanciaDeProcedimento().getPessoa() != null) {
-			if (ti.getInstanciaDeProcedimento().getPessoa().getPessoaAtual().equals(so.getTitular()))
+		if (ti.getInstanciaDeProcedimento().getEventoPessoa() != null) {
+			if (ti.getInstanciaDeProcedimento().getEventoPessoa().getPessoaAtual().equals(so.getTitular()))
 				return "(minha)";
 			else
-				return ti.getInstanciaDeProcedimento().getPessoa().getPessoaAtual().getSiglaCompleta();
+				return ti.getInstanciaDeProcedimento().getEventoPessoa().getPessoaAtual().getSiglaCompleta();
 		}
-		if (ti.getInstanciaDeProcedimento().getLotacao() != null)
-			return ti.getInstanciaDeProcedimento().getLotacao().getSiglaCompleta();
+		if (ti.getInstanciaDeProcedimento().getEventoLotacao() != null)
+			return ti.getInstanciaDeProcedimento().getEventoLotacao().getSiglaCompleta();
 		return "";
 	}
 

@@ -21,11 +21,11 @@ public class WfEstaResponsavel implements Expression {
 
 	@Override
 	public boolean eval() {
-		if (titular != null && titular.equivale(pi.getPessoa()))
+		if (titular != null && titular.equivale(pi.getEventoPessoa()))
 			return true;
-		if (titular != null && titular.getLotacao().equivale(pi.getLotacao()))
+		if (titular != null && titular.getLotacao().equivale(pi.getEventoLotacao()))
 			return true;
-		if (lotaTitular != null && lotaTitular.equivale(pi.getLotacao()))
+		if (lotaTitular != null && lotaTitular.equivale(pi.getEventoLotacao()))
 			return true;
 		return false;
 	}

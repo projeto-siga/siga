@@ -114,6 +114,15 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 	@Desconsiderar
 	private List<WfDefinicaoDeDesvio> definicaoDeDesvio = new ArrayList<>();
 
+	@Column(name = "DEFT_ID_REF")
+	private java.lang.Long refId;
+
+	@Column(name = "DEFT_SG_REF", length = 32)
+	private java.lang.String refSigla;
+
+	@Column(name = "DEFT_DS_REF", length = 256)
+	private java.lang.String refDescr;
+
 	@Transient
 	private java.lang.String hisIde;
 
@@ -412,6 +421,30 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 
 	public void setDefinicaoDeResponsavelId(Long definicaoDeResponsavelId) {
 		this.definicaoDeResponsavelId = definicaoDeResponsavelId;
+	}
+
+	public java.lang.Long getRefId() {
+		return refId;
+	}
+
+	public void setRefId(java.lang.Long refId) {
+		this.refId = refId;
+	}
+
+	public java.lang.String getRefSigla() {
+		return refSigla;
+	}
+
+	public void setRefSigla(java.lang.String refSigla) {
+		this.refSigla = refSigla;
+	}
+
+	public java.lang.String getRefDescr() {
+		return refDescr;
+	}
+
+	public void setRefDescr(java.lang.String refDescr) {
+		this.refDescr = refDescr;
 	}
 
 }

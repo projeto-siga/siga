@@ -59,6 +59,7 @@ import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
+import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
@@ -87,12 +88,13 @@ public class ExServiceImpl implements ExService {
 			this.transacional = transacional;
 			em = ExStarter.emf.createEntityManager();
 			ContextoPersistencia.setEntityManager(em);
-			
-			ServletContext ctx = (ServletContext) context.getMessageContext().get(MessageContext.SERVLET_CONTEXT); 
-			HttpServletRequest request = (HttpServletRequest) context.getMessageContext().get(MessageContext.SERVLET_REQUEST); 
-			HttpServletResponse response = (HttpServletResponse) context.getMessageContext().get(MessageContext.SERVLET_RESPONSE); 
-			CurrentRequest.set(new RequestInfo(ctx, request,
-					response));
+
+			ServletContext ctx = (ServletContext) context.getMessageContext().get(MessageContext.SERVLET_CONTEXT);
+			HttpServletRequest request = (HttpServletRequest) context.getMessageContext()
+					.get(MessageContext.SERVLET_REQUEST);
+			HttpServletResponse response = (HttpServletResponse) context.getMessageContext()
+					.get(MessageContext.SERVLET_RESPONSE);
+			CurrentRequest.set(new RequestInfo(ctx, request, response));
 
 			ModeloDao.freeInstance();
 			ExDao.getInstance();
@@ -770,4 +772,17 @@ public class ExServiceImpl implements ExService {
 		}
 	}
 
+	public Boolean isModeloIncluso(String codigoDocumento, Long idModelo) throws Exception {
+		try (SoapContext ctx = new SoapContext(true)) {
+			try {
+				ExMobil mob = buscarMobil(codigoDocumento);
+				if (mob.isGeral())
+					mob = mob.getDoc().getPrimeiroMobil();
+				return mob.isModeloIncluso(idModelo);
+			} catch (Exception ex) {
+				ctx.rollback(ex);
+				throw ex;
+			}
+		}
+	}
 }

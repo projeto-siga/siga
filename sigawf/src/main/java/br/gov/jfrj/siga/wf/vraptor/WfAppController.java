@@ -305,8 +305,8 @@ public class WfAppController extends WfController {
 		// task existir e for designado para o mesmo ator, então a próxima
 		// página a ser exibida será a página de apresentação do task, e não a
 		// página inicial.
-		if (pi.getStatus() == ProcessInstanceStatus.PAUSED && pi.getLotacao() != null
-				&& pi.getLotacao().equivale(getLotaTitular())) {
+		if (pi.getStatus() == ProcessInstanceStatus.PAUSED && pi.getEventoLotacao() != null
+				&& pi.getEventoLotacao().equivale(getLotaTitular())) {
 			result.redirectTo(this).procedimento(pi.getId());
 			return;
 		}
@@ -379,15 +379,15 @@ public class WfAppController extends WfController {
 			throw new AplicacaoException("Não é permitido designar a tarefa quando o procedimento não está pausado.");
 
 		boolean alterado = false;
-		if ((pi.getPessoa() == null && actor != null)
-				|| (pi.getPessoa() != null && (actor == null || !pi.getPessoa().equivale(actor)))) {
-			pi.setPessoa(actor);
+		if ((pi.getEventoPessoa() == null && actor != null)
+				|| (pi.getEventoPessoa() != null && (actor == null || !pi.getEventoPessoa().equivale(actor)))) {
+			pi.setEventoPessoa(actor);
 			alterado = true;
 		}
 
-		if ((pi.getLotacao() == null && lotaActor != null)
-				|| (pi.getLotacao() != null && (lotaActor == null || !pi.getLotacao().equivale(lotaActor)))) {
-			pi.setLotacao(lotaActor);
+		if ((pi.getEventoLotacao() == null && lotaActor != null) || (pi.getEventoLotacao() != null
+				&& (lotaActor == null || !pi.getEventoLotacao().equivale(lotaActor)))) {
+			pi.setEventoLotacao(lotaActor);
 			alterado = true;
 		}
 

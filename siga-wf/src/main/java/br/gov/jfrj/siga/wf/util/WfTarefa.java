@@ -41,11 +41,12 @@ public class WfTarefa implements Comparable<WfTarefa> {
 		int i = 0;
 		if (o == null)
 			return 1;
-		if (getInstanciaDeProcedimento().getDtEvento() != null && o.getInstanciaDeProcedimento().getDtEvento() == null)
+		if (getInstanciaDeProcedimento().getEventoData() != null
+				&& o.getInstanciaDeProcedimento().getEventoData() == null)
 			return 1;
-		if (getInstanciaDeProcedimento().getDtEvento() != null
-				&& o.getInstanciaDeProcedimento().getDtEvento() != null) {
-			i = getInstanciaDeProcedimento().getDtEvento().compareTo(o.getInstanciaDeProcedimento().getDtEvento());
+		if (getInstanciaDeProcedimento().getEventoData() != null
+				&& o.getInstanciaDeProcedimento().getEventoData() != null) {
+			i = getInstanciaDeProcedimento().getEventoData().compareTo(o.getInstanciaDeProcedimento().getEventoData());
 			if (i != 0)
 				return i;
 		}

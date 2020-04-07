@@ -23,6 +23,8 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Query;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.BatchSize;
@@ -36,6 +38,7 @@ import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
+import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -43,6 +46,7 @@ import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
+import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.logic.PodeSim;
 import br.gov.jfrj.siga.wf.logic.WfPodePegar;
@@ -96,18 +100,18 @@ public class WfProcedimento extends Objeto
 	private ProcessInstanceStatus status = ProcessInstanceStatus.INACTIVE;
 
 	@Column(name = "PROC_TS_EVENTO")
-	private Date dtEvento;
+	private Date eventoData;
 
 	@Column(name = "PROC_NM_EVENTO")
-	private String evento;
+	private String eventoNome;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "PESS_ID_EVENTO")
-	private DpPessoa pessoa;
+	private DpPessoa eventoPessoa;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "LOTA_ID_EVENTO")
-	private DpLotacao lotacao;
+	private DpLotacao eventoLotacao;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "PROC_TP_PRIORIDADE")
@@ -122,6 +126,29 @@ public class WfProcedimento extends Objeto
 
 	@Column(name = "PROC_NR")
 	private Integer numero;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "PESS_ID_TITULAR")
+	private DpPessoa titular;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "LOTA_ID_TITULAR")
+	private DpLotacao lotaTitular;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "HIS_DT_INI")
+	@Desconsiderar
+	private Date hisDtIni;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "HIS_DT_FIM")
+	@Desconsiderar
+	private Date hisDtFim;
+
+	@Desconsiderar
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "HIS_IDC_INI")
+	private CpIdentidade hisIdcIni;
 
 	public WfProcedimento() {
 	}
@@ -139,20 +166,20 @@ public class WfProcedimento extends Objeto
 	}
 
 	@Override
-	public void pause(String evento, WfResp responsavel) {
-		this.evento = evento;
-		this.pessoa = ((WfResp) responsavel).getPessoa();
-		this.lotacao = ((WfResp) responsavel).getLotacao();
-		this.dtEvento = new Date();
+	public void pause(String eventoNome, WfResp responsavel) {
+		this.eventoNome = eventoNome;
+		this.eventoPessoa = ((WfResp) responsavel).getPessoa();
+		this.eventoLotacao = ((WfResp) responsavel).getLotacao();
+		this.eventoData = new Date();
 		status = ProcessInstanceStatus.PAUSED;
 	}
 
 	@Override
 	public void resume() {
-		this.evento = null;
-		this.pessoa = null;
-		this.lotacao = null;
-		this.dtEvento = null;
+		this.eventoNome = null;
+		this.eventoPessoa = null;
+		this.eventoLotacao = null;
+		this.eventoData = null;
 		status = ProcessInstanceStatus.RESUMING;
 	}
 
@@ -341,18 +368,8 @@ public class WfProcedimento extends Objeto
 	}
 
 	@Override
-	public Date getDtEvent() {
-		return dtEvento;
-	}
-
-	@Override
-	public String getEvent() {
-		return evento;
-	}
-
-	@Override
 	public WfResp getResponsible() {
-		return new WfResp(pessoa, lotacao);
+		return new WfResp(eventoPessoa, eventoLotacao);
 	}
 
 	@Override
@@ -368,22 +385,6 @@ public class WfProcedimento extends Objeto
 	@Override
 	public void setVariable(Map<String, Object> variavel) {
 		this.variavelMap = variavel;
-	}
-
-	public DpPessoa getPessoa() {
-		return pessoa;
-	}
-
-	public void setPessoa(DpPessoa pessoa) {
-		this.pessoa = pessoa;
-	}
-
-	public DpLotacao getLotacao() {
-		return lotacao;
-	}
-
-	public void setLotacao(DpLotacao lotacao) {
-		this.lotacao = lotacao;
 	}
 
 	public WfTipoDePrincipal getTipoDePrincipal() {
@@ -446,22 +447,6 @@ public class WfProcedimento extends Objeto
 		this.variaveis = listaDeVariaveis;
 	}
 
-	public Date getDtEvento() {
-		return dtEvento;
-	}
-
-	public void setDtEvento(Date dtEvento) {
-		this.dtEvento = dtEvento;
-	}
-
-	public String getEvento() {
-		return evento;
-	}
-
-	public void setEvento(String evento) {
-		this.evento = evento;
-	}
-
 	public void setStatus(ProcessInstanceStatus status) {
 		this.status = status;
 	}
@@ -483,10 +468,10 @@ public class WfProcedimento extends Objeto
 	}
 
 	public String getAtendente() {
-		if (getPessoa() != null)
-			return getPessoa().getSigla();
-		if (getLotacao() != null)
-			return getLotacao().getSigla();
+		if (getEventoPessoa() != null)
+			return getEventoPessoa().getSigla();
+		if (getEventoLotacao() != null)
+			return getEventoLotacao().getSigla();
 		return "";
 	}
 
@@ -572,7 +557,10 @@ public class WfProcedimento extends Objeto
 	}
 
 	public boolean isDesabilitarFormulario(DpPessoa titular, DpLotacao lotaTitular) {
-		return !titular.equivale(getPessoa()) && !lotaTitular.equivale(getLotacao());
+		if (getDefinicaoDeTarefaCorrente() == null
+				|| getDefinicaoDeTarefaCorrente().getTipoDeTarefa() != WfTipoDeTarefa.FORMULARIO)
+			return true;
+		return !titular.equivale(getEventoPessoa()) && !lotaTitular.equivale(getEventoLotacao());
 	}
 
 	public Object obterValorDeVariavel(WfDefinicaoDeVariavel vd) {
@@ -586,22 +574,22 @@ public class WfProcedimento extends Objeto
 //			this.setConhecimento(c.getDescricao());
 //		}
 
-		if (!titular.equivale(getPessoa()) && !lotaTitular.equivale(getLotacao())) {
-			if (getPessoa() != null && getLotacao() != null)
+		if (!titular.equivale(getEventoPessoa()) && !lotaTitular.equivale(getEventoLotacao())) {
+			if (getEventoPessoa() != null && getEventoLotacao() != null)
 				return "Esta tarefa será desempenhada por " + titular.getSigla() + " na lotação "
-						+ getLotacao().getSigla();
-			if (getPessoa() != null)
-				return "Esta tarefa será desempenhada por " + getPessoa().getSigla();
-			if (getLotacao() != null)
-				return "Esta tarefa será desempenhada pela lotação " + getLotacao().getSigla();
+						+ getEventoLotacao().getSigla();
+			if (getEventoPessoa() != null)
+				return "Esta tarefa será desempenhada por " + getEventoPessoa().getSigla();
+			if (getEventoLotacao() != null)
+				return "Esta tarefa será desempenhada pela lotação " + getEventoLotacao().getSigla();
 		}
 
 		String siglaTitular = titular.getSigla() + "@" + lotaTitular.getSiglaCompleta();
 		String respWF = null;
-		if (getPessoa() != null)
-			respWF = getPessoa().getSigla();
-		if (respWF == null && getLotacao() != null)
-			respWF = "@" + getLotacao().getSiglaCompleta();
+		if (getEventoPessoa() != null)
+			respWF = getEventoPessoa().getSigla();
+		if (respWF == null && getEventoLotacao() != null)
+			respWF = "@" + getEventoLotacao().getSiglaCompleta();
 
 		if (!Utils.empty(getPrincipal()) && getTipoDePrincipal() == WfTipoDePrincipal.DOC) {
 			ExService service = Service.getExService();
@@ -630,6 +618,15 @@ public class WfProcedimento extends Objeto
 				}
 			}
 		}
+
+		if (getDefinicaoDeTarefaCorrente() != null
+				&& getDefinicaoDeTarefaCorrente().getTipoDeTarefa() == WfTipoDeTarefa.INCLUIR_DOCUMENTO) {
+			return "Esta tarefa só poderá prosseguir quando for juntado ou incluído um documento do modelo '"
+					+ getDefinicaoDeTarefaCorrente().getRefSigla() + "' ao documento " + getPrincipal()
+					+ ". Clique <a href=\"http://localhost:8080/sigaex/app/expediente/doc/editar?mobilPaiSel.sigla="
+					+ getDefinicaoDeTarefaCorrente().getRefSigla() + "&criandoAnexo=true&modelo="
+					+ getDefinicaoDeTarefaCorrente().getRefId() + "\">aqui</a> para incluir.";
+		}
 		return null;
 	}
 
@@ -645,6 +642,88 @@ public class WfProcedimento extends Objeto
 			tags.add("^wf:" + Texto.slugify(
 					getProcessDefinition().getNome() + "-" + getCurrentTaskDefinition().getNome(), true, true));
 		return tags;
+	}
+
+	public Date getEventoData() {
+		return eventoData;
+	}
+
+	public void setEventoData(Date eventoData) {
+		this.eventoData = eventoData;
+	}
+
+	public String getEventoNome() {
+		return eventoNome;
+	}
+
+	public void setEventoNome(String eventoNome) {
+		this.eventoNome = eventoNome;
+	}
+
+	public DpPessoa getEventoPessoa() {
+		return eventoPessoa;
+	}
+
+	public void setEventoPessoa(DpPessoa eventoPessoa) {
+		this.eventoPessoa = eventoPessoa;
+	}
+
+	public DpLotacao getEventoLotacao() {
+		return eventoLotacao;
+	}
+
+	public void setEventoLotacao(DpLotacao eventoLotacao) {
+		this.eventoLotacao = eventoLotacao;
+	}
+
+	public DpPessoa getTitular() {
+		return titular;
+	}
+
+	public void setTitular(DpPessoa titular) {
+		this.titular = titular;
+	}
+
+	public DpLotacao getLotaTitular() {
+		return lotaTitular;
+	}
+
+	public void setLotaTitular(DpLotacao lotaTitular) {
+		this.lotaTitular = lotaTitular;
+	}
+
+	public Date getHisDtIni() {
+		return hisDtIni;
+	}
+
+	public void setHisDtIni(Date hisDtIni) {
+		this.hisDtIni = hisDtIni;
+	}
+
+	public Date getHisDtFim() {
+		return hisDtFim;
+	}
+
+	public void setHisDtFim(Date hisDtFim) {
+		this.hisDtFim = hisDtFim;
+	}
+
+	public CpIdentidade getHisIdcIni() {
+		return hisIdcIni;
+	}
+
+	public void setHisIdcIni(CpIdentidade hisIdcIni) {
+		this.hisIdcIni = hisIdcIni;
+	}
+
+	@Override
+	public Date getDtEvent() {
+		return getEventoData();
+	}
+
+	@Override
+	public String getEvent() {
+		return getEventoNome();
 	}
 
 }

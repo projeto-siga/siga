@@ -19,7 +19,7 @@ public class WfEstaPessoalmenteResponsavel implements Expression {
 
 	@Override
 	public boolean eval() {
-		if (titular != null && titular.equivale(pi.getPessoa()))
+		if (titular != null && titular.equivale(pi.getEventoPessoa()))
 			return true;
 		return false;
 	}

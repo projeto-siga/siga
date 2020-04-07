@@ -128,7 +128,7 @@ public class RequestExceptionLogger {
 
 	}
 
-	private static String[] packages = { "br.gov.jfrj.siga" };
+	private static String[] packages = { "br.gov.jfrj.siga", "com.crivano" };
 
 	public static String simplificarStackTrace(Throwable t) {
 		if (t == null)

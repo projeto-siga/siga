@@ -24,6 +24,7 @@
  */
 package br.gov.jfrj.siga.hibernate;
 
+import java.awt.geom.FlatteningPathIterator;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -43,6 +44,8 @@ import javax.persistence.criteria.Root;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Utils;
+import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -80,6 +83,7 @@ import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.persistencia.ExClassificacaoDaoFiltro;
 import br.gov.jfrj.siga.persistencia.ExDocumentoDaoFiltro;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
+import br.gov.jfrj.siga.persistencia.ExModeloDaoFiltro;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class ExDao extends CpDao {
@@ -1348,5 +1352,30 @@ public class ExDao extends CpDao {
 	}
 
 
+	public List<ExModelo> consultarPorFiltro(
+			final ExModeloDaoFiltro flt) {
+		return consultarPorFiltro(flt, 0, 0);
+	}
+	
+	public List<ExModelo> consultarPorFiltro(
+			final ExModeloDaoFiltro flt, final int offset,
+			final int itemPagina) {
+		CriteriaQuery<ExModelo> q = cb().createQuery(ExModelo.class);
+		Root<ExModelo> c = q.from(ExModelo.class);
+		q.select(c);
+		List<Predicate> whereList = new LinkedList<Predicate>();
+		if(flt.getSigla() != null) {
+			whereList.add(cb().like(c.get("nmMod").as(String.class), "%" + flt.getSigla() + "%"));
+		}
+		Predicate[] whereArray = new Predicate[whereList.size()];
+		whereList.toArray(whereArray);
+		q.where(whereArray);
+			q.orderBy(cb().desc(c.get("nmMod")));
+		return em().createQuery(q).getResultList();
+	}
+
+	public int consultarQuantidade(final ExModeloDaoFiltro flt) {
+		return consultarPorFiltro(flt).size();
+	}
 
 }

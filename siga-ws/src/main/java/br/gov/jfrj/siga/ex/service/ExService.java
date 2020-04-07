@@ -114,4 +114,7 @@ public interface ExService extends Remote {
 
     @WebMethod
 	public String liquidante(String codigoDocumentoVia) throws Exception;
+
+    @WebMethod
+	public Boolean isModeloIncluso(String codigoDocumentoVia, Long idModelo) throws Exception;
 }

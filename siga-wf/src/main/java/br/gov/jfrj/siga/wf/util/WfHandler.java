@@ -33,7 +33,9 @@ public class WfHandler implements Handler<WfProcedimento, WfResp> {
 
 	@Override
 	public void afterPause(WfProcedimento pi, TaskResult result) {
-		String siglaTitular = titular.getSigla() + "@" + lotaTitular.getSiglaCompleta();
+		String siglaTitular = null;
+		if (titular != null && lotaTitular != null)
+			siglaTitular = titular.getSigla() + "@" + lotaTitular.getSiglaCompleta();
 		try {
 			WfBL.transferirDocumentosVinculados(pi, siglaTitular);
 		} catch (Exception e) {

@@ -69,6 +69,7 @@ import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -94,7 +95,6 @@ import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Selecao;
-import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.util.ListaHierarquica;
 import br.gov.jfrj.siga.util.ListaHierarquicaItem;
@@ -380,7 +380,7 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.getMobilPaiSel(),
 				exDocumentoDTO.isCriandoAnexo(), exDocumentoDTO.getAutuando(),
 				exDocumentoDTO.getIdMobilAutuado(),
-				exDocumentoDTO.getCriandoSubprocesso(), null);
+				exDocumentoDTO.getCriandoSubprocesso(), null, null);
 	}
 
 	@Transacional
@@ -443,6 +443,7 @@ public class ExDocumentoController extends ExController {
 						exDocumentoDTO.getAutuando(),
 						exDocumentoDTO.getIdMobilAutuado(),
 						exDocumentoDTO.getCriandoSubprocesso(),
+						null,
 						jsonHierarquiaDeModelos);
 		return exDocumentoDTO;
 	}
@@ -453,7 +454,7 @@ public class ExDocumentoController extends ExController {
 			final String sigla, String[] vars,
 			final ExMobilSelecao mobilPaiSel, final Boolean criandoAnexo,
 			final Boolean autuando, final Long idMobilAutuado,
-			final Boolean criandoSubprocesso, String jsonHierarquiaDeModelos)
+			final Boolean criandoSubprocesso, String modelo, String jsonHierarquiaDeModelos)
 			throws IOException, IllegalAccessException,
 			InvocationTargetException {
 		assertAcesso("");
@@ -496,12 +497,30 @@ public class ExDocumentoController extends ExController {
 
 			if (exDocumentoDTO.getIdMod() == null) {
 				final List<ExModelo> modelos = getModelos(exDocumentoDTO);
-
+				
 				ExModelo modeloDefault = null;
-				for (ExModelo mod : exDocumentoDTO.getModelos()) {
-					if ("Memorando".equals(mod.getNmMod())) {
-						modeloDefault = mod;
-						break;
+				
+				if (modelo != null) {
+					if (modelo.matches("\\d+")) {
+						ExModelo mod = dao().consultar(Long.parseLong(modelo), ExModelo.class, false);
+						mod = mod.getModeloAtual();
+						modelo = mod.getNmMod();
+					}
+						
+					for (ExModelo mod : exDocumentoDTO.getModelos()) {
+						if (modelo.equals(mod.getNmMod())) {
+							modeloDefault = mod;
+							break;
+						}
+					}
+				}
+
+				if (modeloDefault == null) {
+					for (ExModelo mod : exDocumentoDTO.getModelos()) {
+						if ("Memorando".equals(mod.getNmMod())) {
+							modeloDefault = mod;
+							break;
+						}
 					}
 				}
 
@@ -542,7 +561,7 @@ public class ExDocumentoController extends ExController {
 		}
 
 		if (exDocumentoDTO.isCriandoAnexo() && exDocumentoDTO.getId() == null
-				&& isDocNovo && !postback) {
+				&& isDocNovo && !postback && modelo == null) {
 			ExModelo despacho = dao().consultarExModelo(null, "Despacho");
 			if (despacho == null)
 				throw new RuntimeException(
@@ -865,7 +884,7 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.getMobilPaiSel(),
 				exDocumentoDTO.isCriandoAnexo(), exDocumentoDTO.getAutuando(),
 				exDocumentoDTO.getIdMobilAutuado(),
-				exDocumentoDTO.getCriandoSubprocesso(), null);
+				exDocumentoDTO.getCriandoSubprocesso(), null, null);
 	}
 
 	@SuppressWarnings("static-access")
@@ -1353,6 +1372,7 @@ public class ExDocumentoController extends ExController {
 						exDocumentoDTO.getAutuando(),
 						exDocumentoDTO.getIdMobilAutuado(),
 						exDocumentoDTO.getCriandoSubprocesso(),
+						null,
 						jsonHierarquiaDeModelos);
 				return;
 			}

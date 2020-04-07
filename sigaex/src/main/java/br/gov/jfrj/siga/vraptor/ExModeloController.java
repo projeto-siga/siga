@@ -19,6 +19,7 @@ import org.kxml2.io.KXmlSerializer;
 
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.download.ByteArrayDownload;
@@ -37,6 +38,7 @@ import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
+import br.gov.jfrj.siga.persistencia.ExModeloDaoFiltro;
 
 @Controller
 public class ExModeloController extends ExSelecionavelController {
@@ -184,6 +186,14 @@ public class ExModeloController extends ExSelecionavelController {
 		ModeloDao.commitTransacao();
 
 		result.redirectTo(ExModeloController.class).lista(null);
+	}
+	
+	
+	
+	@Get
+	@Path({"/app/modelo/buscar-json/{sigla}"})
+	public void busca(String sigla) throws Exception{
+		aBuscarJson(sigla);
 	}
 
 	@Get("app/modelo/exportar")
@@ -427,7 +437,9 @@ public class ExModeloController extends ExSelecionavelController {
 
 	@Override
 	protected DaoFiltroSelecionavel createDaoFiltro() {
-		return null;
+		ExModeloDaoFiltro flt = new ExModeloDaoFiltro();
+		flt.setSigla(getNome());
+		return flt;
 	}
 
 }

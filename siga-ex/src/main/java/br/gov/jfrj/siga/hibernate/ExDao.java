@@ -179,7 +179,7 @@ public class ExDao extends CpDao {
 		query.setParameter("idOrgaoUsu", idOrgaoUsu);
 		query.setParameter("idFormaDoc", idFormaDoc);
 		query.setParameter("anoEmissao", anoEmissao);
-		query.setParameter("flAtivo", 1L);
+		query.setParameter("flAtivo", "1");
 		
 		if (lock) {
 			query.setLockMode(LockModeType.PESSIMISTIC_WRITE);
@@ -190,11 +190,11 @@ public class ExDao extends CpDao {
 	
 	public Long obterNumeroGerado(Long idOrgaoUsu, Long idFormaDoc, Long anoEmissao)
 			throws SQLException {
-		Query query = em().createNamedQuery("obterNumeroGerado");
+		Query query = em().createNamedQuery("ExDocumentoNumeracao.obterNumeroGerado");
 		query.setParameter("idOrgaoUsu", idOrgaoUsu);
 		query.setParameter("idFormaDoc", idFormaDoc);
 		query.setParameter("anoEmissao", anoEmissao);
-		query.setParameter("flAtivo", 1L);
+		query.setParameter("flAtivo", "1");
 		return (Long) query.getSingleResult();
 	}
 	

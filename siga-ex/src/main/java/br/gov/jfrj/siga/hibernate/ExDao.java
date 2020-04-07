@@ -1630,13 +1630,13 @@ public class ExDao extends CpDao {
 								+ " where (marca.dtIniMarca is null or marca.dtIniMarca < sysdate)"
 								+ " and (marca.dtFimMarca is null or marca.dtFimMarca > sysdate)"
 								+ " and (marca.cpMarcador.idMarcador = 14L)"
-								+ (titular != null ? " and (marca.dpPessoaIni = :titular)"
-										: " and (marca.dpLotacaoIni = :lotaTitular)"));
+								+ (titular != null ? " and (marca.dpPessoaIni.idPessoaIni = :titular)"
+										: " and (marca.dpLotacaoIni.idLotacaoIni = :lotaTitular)"));
 		if (titular != null)
 			query.setParameter("titular", titular.getIdPessoaIni());
 		else if (lotaTitular != null)
 			query.setParameter("lotaTitular", lotaTitular.getIdLotacaoIni());
-
+        
 		List l = query.getResultList();
  		long tempoTotal = System.nanoTime() - tempoIni;
 		// System.out.println("consultarPorFiltroOtimizado: " + tempoTotal

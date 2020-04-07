@@ -30,15 +30,7 @@
 					</div>
 				</c:if>
 
-				<h2 class="mt-3">
-					Procedimento ${pi.sigla}
-					<c:if
-						test="${pi.tipoDePrincipal eq 'DOC' and not empty pi.principal}">
-						<span style="font-size: 70%"> - <a
-							href="/sigaex/app/expediente/doc/exibir?sigla=${pi.principal}">${pi.principal}</a>
-						</span>
-					</c:if>
-				</h2>
+				<h2 class="mt-3">Procedimento ${pi.sigla}</h2>
 
 				<!-- lista de Ações -->
 				<siga:links>
@@ -57,8 +49,15 @@
 				<c:if test="${pi.formulario}">
 					<div class="card bg-info mb-3 mt-3">
 						<div class="card-header text-white">
+							<c:if
+								test="${pi.tipoDePrincipal eq 'DOC' and not empty pi.principal}">
+								<a
+									href="/sigaex/app/expediente/doc/exibir?sigla=${pi.principal}">${pi.principal}</a> -
+							</c:if>
+
 							${pi.definicaoDeProcedimento.nome} -
-							${pi.definicaoDeTarefaCorrente.nome}</div>
+							${pi.definicaoDeTarefaCorrente.nome}
+						</div>
 						<div class="card-body bg-light text-black">
 
 							<form method="POST"
@@ -135,8 +134,23 @@
 				</c:if>
 
 				<div class="card-sidebar card bg-light mb-3">
-					<div class="card-header">Dados da Tarefa</div>
+					<div class="card-header">Dados do Procedimento</div>
 					<div class="card-body">
+						<c:if test="${not empty pi.principal}">
+							<p>
+								<b>Principal:</b>
+								<c:if test="${pi.tipoDePrincipal eq 'DOC'}">
+									<a
+										href="/sigaex/app/expediente/doc/exibir?sigla=${pi.principal}">${pi.principal}</a>
+								</c:if>
+								<c:if test="${pi.tipoDePrincipal != 'DOC'}">
+								${pi.principal}
+								</c:if>
+							</p>
+							<p>
+								<b>Tipo do principal:</b> ${pi.tipoDePrincipal.descr}
+							</p>
+						</c:if>
 						<p>
 							<b>Procedimento:</b> ${pi.definicaoDeProcedimento.nome}
 						</p>
@@ -144,69 +158,89 @@
 							<b>Prioridade:</b> ${pi.prioridade.descr}
 						</p>
 						<p>
-							<b>Cadastrante:</b> ${falta.pi.cadastrante}
-							(${falta.pi.lotaCadastrante})
+							<b>Cadastrante:</b> ${pi.hisIdcIni.dpPessoa.sigla}
+							(${pi.hisIdcIni.dpPessoa.lotacao.sigla})
 						</p>
 						<p>
-							<b>Titular:</b> ${falta.pi.titular} (${falta.pi.lotaTitular})
+							<b>Titular:</b> ${pi.titular} (${pi.lotaTitular})
+						</p>
+						<c:if test="${not empty pi.eventoData}">
+							<p>
+								<b>Tarefa:</b> ${pi.definicaoDeTarefaCorrente.nome}
+							</p>
+							<p>
+								<b>Início da tarefa:</b> ${f:espera(pi.eventoData)}
+							</p>
+						</c:if>
+						<p>
+							<b>Início do procedimento:</b> ${f:espera(pi.hisDtIni)}
 						</p>
 						<p>
-							<b>Tarefa:</b> ${pi.definicaoDeTarefaCorrente.nome}
-						</p>
-						<p>
-							<b>Início da tarefa:</b> ${f:espera(pi.eventoData)}
+							<b>Término do procedimento:</b> ${f:espera(pi.hisDtFim)}
 						</p>
 					</div>
-					<div class="gt-sidebar"></div>
 				</div>
-			</div>
 
-			<div class="gt-bd clearfix" style="display: none" id="svg">
-				<div class="gt-content clearfix">
-					<div id="desc_editar">
-						<h3>Mapa do Procedimento</h3>
-						<div style="display: none" id="input2">digraph G {
-							graph[size="100,100", rankdir="LR"]; ${dot} }</div>
-
-						<div class="gt-form gt-content-box" style="padding-bottom: 15px;"
-							id="output2"></div>
+				<c:if test="${not empty pi.eventoData}">
+					<div class="card-sidebar card bg-light mb-3">
+						<div class="card-header">Dados da Tarefa</div>
+						<div class="card-body">
+							<p>
+								<b>Tarefa:</b> ${pi.definicaoDeTarefaCorrente.nome}
+							</p>
+							<p>
+								<b>Início da tarefa:</b> ${f:espera(pi.eventoData)}
+							</p>
+						</div>
 					</div>
+				</c:if>
+
+				<div class="gt-bd clearfix" style="display: none" id="svg">
+					<div class="gt-content clearfix">
+						<div id="desc_editar">
+							<h3>Mapa do Procedimento</h3>
+							<div style="display: none" id="input2">digraph G {
+								graph[size="100,100", rankdir="LR"]; ${dot} }</div>
+
+							<div class="gt-form gt-content-box" style="padding-bottom: 15px;"
+								id="output2"></div>
+						</div>
+					</div>
+					<a href="javascript: hideBig();" class="gt-btn-large gt-btn-left">Voltar</a>
+
 				</div>
-				<a href="javascript: hideBig();" class="gt-btn-large gt-btn-left">Voltar</a>
 
-			</div>
+				<c:if
+					test="${false and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
 
-			<c:if
-				test="${false and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
-
-				<c:url var="url" value="/../sigagc/app/knowledgeInplace">
-					<c:param name="tags">${task.ancora}</c:param>
-					<c:param name="msgvazio">Ainda não existe uma descrição de como esta tarefa deve ser executada. Por favor, clique <a
-							href="$1">aqui</a> para contribuir.</c:param>
-					<c:param name="titulo">${task.nomeDoProcedimento} - ${task.nomeDaTarefa}</c:param>
-					<c:param name="ts">${currentTimeMillis}</c:param>
-				</c:url>
-				<script type="text/javascript">
+					<c:url var="url" value="/../sigagc/app/knowledgeInplace">
+						<c:param name="tags">${task.ancora}</c:param>
+						<c:param name="msgvazio">Ainda não existe uma descrição de como esta tarefa deve ser executada. Por favor, clique <a
+								href="$1">aqui</a> para contribuir.</c:param>
+						<c:param name="titulo">${task.nomeDoProcedimento} - ${task.nomeDaTarefa}</c:param>
+						<c:param name="ts">${currentTimeMillis}</c:param>
+					</c:url>
+					<script type="text/javascript">
 			SetInnerHTMLFromAjaxResponse("${url}", document
 					.getElementById('gc-ancora'));
 		</script>
 
-				<c:url var="url" value="/../sigagc/app/knowledgeSidebar">
-					<c:param name="tags">@workflow</c:param>
-					<c:forEach var="tag" items="${task.tags}">
-						<c:param name="tags">${tag}</c:param>
-					</c:forEach>
-					<c:param name="ts">${currentTimeMillis}</c:param>
-				</c:url>
-				<script type="text/javascript">
+					<c:url var="url" value="/../sigagc/app/knowledgeSidebar">
+						<c:param name="tags">@workflow</c:param>
+						<c:forEach var="tag" items="${task.tags}">
+							<c:param name="tags">${tag}</c:param>
+						</c:forEach>
+						<c:param name="ts">${currentTimeMillis}</c:param>
+					</c:url>
+					<script type="text/javascript">
 			SetInnerHTMLFromAjaxResponse("${url}", document
 					.getElementById('gc'));
 		</script>
-			</c:if>
+				</c:if>
 
-			<%@ include file="anotar.jsp"%>
+				<%@ include file="anotar.jsp"%>
 
-			<script>
+				<script>
 		if (${not empty f:resource('graphviz.url')}) {
 		} else if (window.Worker) {
 			window.VizWorker = new Worker("/siga/javascript/viz.js");
@@ -222,7 +256,7 @@
 							+ "<"+"/script>");
 		}
 	</script>
-			<script>
+				<script>
 		function buildSvg(id, input, cont) {
 			if (${not empty f:resource('graphviz.url')}) {
 			    input = input.replace(/fontsize=\d+/gm, "");

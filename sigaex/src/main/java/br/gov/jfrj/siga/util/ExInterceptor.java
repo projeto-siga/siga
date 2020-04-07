@@ -91,7 +91,7 @@ public class ExInterceptor implements Interceptor {
 		try {
 			stack.next(method, instance);
 		} catch (Exception e) {
-			throw new InterceptionException(e);
+			throw e;
 		} finally {
 			ContextoPersistencia.setEntityManager(null);
 		}

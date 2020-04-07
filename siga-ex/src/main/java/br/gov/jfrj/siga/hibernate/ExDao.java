@@ -1711,8 +1711,8 @@ public class ExDao extends CpDao {
 					+ " inner join mobil.exDocumento doc"
 					+ " where (marca.dtIniMarca is null or marca.dtIniMarca < sysdate)"
 					+ " and (marca.dtFimMarca is null or marca.dtFimMarca > sysdate)"
-					+ (!exibeLotacao && titular != null ? " and (marca.dpPessoaIni = :titular)" : "") 
-					+ (exibeLotacao && lotaTitular != null ? " and (marca.dpLotacaoIni = :lotaTitular)" : "")
+					+ (!exibeLotacao && titular != null ? " and (marca.dpPessoaIni.idPessoaIni = :titular)" : "") 
+					+ (exibeLotacao && lotaTitular != null ? " and (marca.dpLotacaoIni.idLotacaoIni = :lotaTitular)" : "")
 					+ " order by  doc.dtAltDoc desc, marca ";
 			
 		Query query = em()

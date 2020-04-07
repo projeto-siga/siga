@@ -65,6 +65,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "        and lot.dataFimLotacao = null"),
 		@NamedQuery(name = "consultarPorIdInicialDpLotacao", query = "select lot from DpLotacao lot where lot.idLotacaoIni = :idLotacaoIni and lot.dataFimLotacao = null"),
 		@NamedQuery(name = "consultarPorIdInicialDpLotacaoInclusiveFechada", query = "select lot from DpLotacao lot where lot.idLotacao = (select max(idLotacao) from DpLotacao where idLotacaoIni = :idLotacaoIni)"),
+		@NamedQuery(name = "listarPorIdInicialDpLotacao", query = "select lot from DpLotacao lot where lot.idLotacaoIni = :idLotacaoIni"),
 		@NamedQuery(name = "consultarPorFiltroDpLotacao", query = "from DpLotacao lot "
 				+ "  where "
 				+ "     ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) "

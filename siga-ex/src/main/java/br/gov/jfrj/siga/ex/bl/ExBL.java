@@ -1835,7 +1835,8 @@ public class ExBL extends CpBL {
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			log.error(e);
+			log.error(e.getMessage(), e);
+			e.printStackTrace();
 			throw new AplicacaoException("Erro ao registrar assinatura.", 0, e);
 		}
 
@@ -4388,7 +4389,8 @@ public class ExBL extends CpBL {
 				s = processarComandosEmTag(doc, "assinatura");
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			log.error(e);
+			log.error(e.getMessage(), e);
+			e.printStackTrace();
 			throw new AplicacaoException("Erro ao registrar assinatura.", 0, e);
 		}
 		return s;

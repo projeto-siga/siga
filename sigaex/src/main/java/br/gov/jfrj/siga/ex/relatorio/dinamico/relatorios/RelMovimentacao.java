@@ -5,15 +5,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
 
-import net.sf.jasperreports.engine.JRException;
-
-import org.hibernate.Query;
+import javax.persistence.Query;
 
 import ar.com.fdvs.dj.domain.AutoText;
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
@@ -21,11 +17,10 @@ import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import net.sf.jasperreports.engine.JRException;
 
 public class RelMovimentacao extends RelatorioTemplate {
 
@@ -71,7 +66,7 @@ public class RelMovimentacao extends RelatorioTemplate {
 
 		List<String> d = new ArrayList<String>(); // new LinkedList<String>();
 
-		Query query = HibernateUtil .getSessao() .createQuery ( "select  mov, mob, doc " +
+		Query query = ContextoPersistencia.em().createQuery ( "select  mov, mob, doc " +
 		 "from ExMovimentacao mov " + "inner join mov.exMobil mob " +
 		 "inner join mob.exDocumento doc " +
 		 "where mob.idMobil=mov.exMobil.idMobil " +
@@ -94,7 +89,7 @@ public class RelMovimentacao extends RelatorioTemplate {
 			throw new AplicacaoException("Data Final inválida.", 0, e);
 		}
 
-		Iterator it = query.list().iterator();
+		Iterator it = query.getResultList().iterator();
 		while (it.hasNext()) {
 			Object[] obj = (Object[]) it.next();
 			ExMovimentacao mov = (ExMovimentacao) obj[0];

@@ -43,7 +43,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
 @BatchSize(size = 500)
 @Immutable
 @Cacheable
-@Cache(region = CpDao.CACHE_QUERY_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
+@Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
 @Table(name = "EX_TIPO_MOVIMENTACAO", catalog = "SIGA")
 public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements Serializable, Selecionavel {
 	/**

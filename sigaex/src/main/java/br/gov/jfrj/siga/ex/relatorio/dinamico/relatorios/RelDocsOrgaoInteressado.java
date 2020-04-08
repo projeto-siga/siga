@@ -16,9 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.sf.jasperreports.engine.JRException;
+import javax.persistence.Query;
 
-import org.hibernate.Query;
+import net.sf.jasperreports.engine.JRException;
 
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
@@ -30,6 +30,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 	public class RelDocsOrgaoInteressado extends RelatorioTemplate {
@@ -103,9 +104,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 				queryUsuario = "and mov.cadastrante.idPessoaIni in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :usuario) ";
 			}
 			
-			Query query = HibernateUtil
-					.getSessao()
-					.createQuery(
+			Query query = ContextoPersistencia.em().createQuery(
 						"select "
 						+ "doc.idDoc, "
 						+ "doc.orgaoUsuario.siglaOrgaoUsu, "
@@ -147,40 +146,40 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 						+ "mod.nmMod "
 						);
 
-			query.setLong("idMarcador", CpMarcador.MARCADOR_COMO_INTERESSADO);
-			query.setLong("orgaoPesqId", Long.valueOf((String) parametros.get("orgaoPesqId")));
+			query.setParameter("idMarcador", CpMarcador.MARCADOR_COMO_INTERESSADO);
+			query.setParameter("orgaoPesqId", Long.valueOf((String) parametros.get("orgaoPesqId")));
 			
 			if (parametros.get("orgao") != null && parametros.get("orgao") != "") {
-				query.setLong("orgao", Long.valueOf((String) parametros.get("orgao")));
+				query.setParameter("orgao", Long.valueOf((String) parametros.get("orgao")));
 			}
 			
 			if (parametros.get("lotacao") != null && parametros.get("lotacao") != "") {
-				Query qryLota = HibernateUtil.getSessao().createQuery(
+				Query qryLota = ContextoPersistencia.em().createQuery(
 						"from DpLotacao lot where lot.idLotacao = " + parametros.get("lotacao"));
 				Set<DpLotacao> lotacaoSet = new HashSet<DpLotacao>();
-				DpLotacao lotacao = (DpLotacao)qryLota.list().get(0);
+				DpLotacao lotacao = (DpLotacao)qryLota.getResultList().get(0);
 				lotacaoSet.add(lotacao);
 				query.setParameter("idLotacao",	lotacao.getIdInicial());
 			}
 
 			if (parametros.get("usuario") != null
 					&& parametros.get("usuario") != "") {
-				Query qryPes = HibernateUtil.getSessao().createQuery(
+				Query qryPes = ContextoPersistencia.em().createQuery(
 						"from DpPessoa pes where pes.idPessoa = "
 								+ parametros.get("usuario"));
 				Set<DpPessoa> pessoaSet = new HashSet<DpPessoa>();
-				DpPessoa pessoa = (DpPessoa) qryPes.list().get(0);
+				DpPessoa pessoa = (DpPessoa) qryPes.getResultList().get(0);
 				pessoaSet.add(pessoa);
 				query.setParameter("idUsuario", pessoa.getIdPessoaIni());
 			}
 
 			Date dtini = formatter.parse((String) parametros.get("dataInicial"));
-			query.setDate("dtini", dtini);
+			query.setParameter("dtini", dtini);
 			Date dtfim = formatter.parse((String) parametros.get("dataFinal"));
 			Date dtfimMaisUm = new Date( dtfim.getTime() + 86400000L );
-			query.setDate("dtfim", dtfimMaisUm);
+			query.setParameter("dtfim", dtfimMaisUm);
 			
-			Iterator it = query.list().iterator();
+			Iterator it = query.getResultList().iterator();
 
 			totalDocumentos = 0L;
 			Long lastMobilId = 0L;

@@ -27,15 +27,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.Query;
-
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -55,7 +54,7 @@ import br.gov.jfrj.siga.vraptor.suporte.ConfiguracaoConfManual;
 
 //MIGRAÇÃO VRAPTOR DA CLASSE WEB-WORK "package br.gov.jfrj.webwork.action.SelfConfigAction"
 
-@Resource
+@Controller
 public class ServicoController 	extends SigaController {
 	
 	
@@ -87,14 +86,23 @@ public class ServicoController 	extends SigaController {
 	//
 	
 	
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ServicoController() {
+		super();
+	}
+
+	@Inject
 	public ServicoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
-		
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();		
+//		result.on(AplicacaoException.class).forwardTo(this).appexception();
+//		result.on(Exception.class).forwardTo(this).exception();
+//		
+//		result.on(AplicacaoException.class).forwardTo(this).appexception();
+//		result.on(Exception.class).forwardTo(this).exception();		
 	}
 
 	
@@ -273,9 +281,7 @@ public class ServicoController 	extends SigaController {
 		CpTipoLotacao t_ctlTipoLotacao = obterTipoDeLotacaoEfetiva();
 		if (t_ctlTipoLotacao == null)
 			return t_arlServicos;
-		final Query query = dao.getSessao().getNamedQuery("consultarCpConfiguracoesPorTipoLotacao");
-		query.setLong("idTpLotacao", t_ctlTipoLotacao.getIdTpLotacao());
-		ArrayList<CpConfiguracao> t_arlConfigServicos = (ArrayList<CpConfiguracao>) query.list();
+		List<CpConfiguracao> t_arlConfigServicos = dao.consultarCpConfiguracoesPorTipoLotacao(t_ctlTipoLotacao.getIdTpLotacao());
 		for (CpConfiguracao t_cfgConfiguracao : t_arlConfigServicos) {
 			t_arlServicos.add(t_cfgConfiguracao.getCpServico());
 		}

@@ -278,7 +278,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 			DpLotacao lotacaoObjeto, CpComplexo complexoObjeto, DpCargo cargoObjeto, 
 			DpFuncaoConfianca funcaoConfiancaObjeto, CpOrgaoUsuario orgaoObjeto) {
 
-		if (isUsuarioRoot(dpPessoa)){
+		if (isUsuarioRoot(dpPessoa) && idTpConf != CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_EXTENSAO_CONVERSOR_HTML){
 			return true;
 		}
 

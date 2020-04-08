@@ -4,14 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.logging.Logger;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -30,16 +31,22 @@ import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
 import br.gov.jfrj.siga.gi.service.GiService;
 import br.gov.jfrj.siga.integracao.ldap.IntegracaoLdap;
 
-@Resource
+@Controller
 public class UsuarioController extends SigaController {
 
 	private static final Logger LOG = Logger.getLogger(UsuarioAction.class);
 	
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public UsuarioController() {
+		super();
+	}
+
+	@Inject
 	public UsuarioController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
-
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
 	}
 	
 	@Get({"/app/usuario/trocar_senha", "/public/app/usuario/trocar_senha"})
@@ -92,7 +99,7 @@ public class UsuarioController extends SigaController {
 	public void incluirUsuario() {
 		if (!SigaMessages.isSigaSP()) {
 			result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
-			result.include("titulo", SigaMessages.getBundle().getString("usuario.novo"));
+			result.include("titulo", SigaMessages.getMessage("usuario.novo"));
 			result.include("proxima_acao", "incluir_usuario_gravar");
 			result.forwardTo("/WEB-INF/page/usuario/esqueciSenha.jsp");
 		} else {
@@ -146,11 +153,11 @@ public class UsuarioController extends SigaController {
 		if (isIntegradoAoAD){
 				msgComplemento = "<br/> Atenção: Sua senha de rede e e-mail foi definida com sucesso.";
 		}else{
-			msgComplemento = "<br/> " + SigaMessages.getBundle().getString("usuario.primeiroacesso.sucessocomplemento");
+			msgComplemento = "<br/> " + SigaMessages.getMessage("usuario.primeiroacesso.sucessocomplemento");
 		}
 
 		result.include("mensagem", "Usuário cadastrado com sucesso." + msgComplemento);
-		result.include("titulo", SigaMessages.getBundle().getString("usuario.novo"));
+		result.include("titulo", SigaMessages.getMessage("usuario.novo"));
 		result.include("volta", "incluir");
 		result.use(Results.page()).forwardTo("/WEB-INF/page/usuario/esqueciSenha.jsp");
 	}
@@ -244,7 +251,7 @@ public class UsuarioController extends SigaController {
 			msgAD = "<br/><br/><br/>ATENÇÃO: A senha de rede e e-mail NÃO foi alterada embora o seu órgão esteja configurado para integrar as senhas do SIGA, rede e e-mail.";
 		}
 		
-		result.include("mensagem", SigaMessages.getBundle().getObject("usuario.esqueciminhasenha.sucesso") + msgAD);
+		result.include("mensagem", SigaMessages.getMessage("usuario.esqueciminhasenha.sucesso") + msgAD);
 		result.include("volta", "esqueci");
 		result.include("titulo", "Esqueci Minha Senha");
 		result.use(Results.page()).forwardTo("/WEB-INF/page/usuario/esqueciSenha.jsp");
@@ -331,7 +338,7 @@ public class UsuarioController extends SigaController {
 		}
 
 		if (lstPessoa.size() == 0){
-			throw new AplicacaoException(SigaMessages.getBundle().getString("usuario.erro.naocadastrado"));
+			throw new AplicacaoException(SigaMessages.getMessage("usuario.erro.naocadastrado"));
 		}
 		
 		if (lstPessoa != null && lstPessoa.size() == 1) {

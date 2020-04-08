@@ -3,28 +3,36 @@ package br.gov.jfrj.siga.vraptor;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
-@Resource
+@Controller
 public class ExFormaDocumentoController extends ExController {
 
 	private static final String ACESSO_SIGA_DOC_MOD = "MOD:Gerenciar modelos";
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ExFormaDocumentoController() {
+		super();
+	}
+
+	@Inject
 	public ExFormaDocumentoController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so,
 			EntityManager em) {
 		super(request, response, context, result, ExDao.getInstance(), so, em);

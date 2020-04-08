@@ -19,8 +19,11 @@ package br.com.caelum.vraptor.http.iogi;
 
 import java.util.List;
 
+import javax.enterprise.inject.Specializes;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+
+import com.google.common.collect.ImmutableList;
 
 import br.com.caelum.iogi.Instantiator;
 import br.com.caelum.iogi.MultiInstantiator;
@@ -29,44 +32,34 @@ import br.com.caelum.iogi.collections.ArrayInstantiator;
 import br.com.caelum.iogi.collections.ListInstantiator;
 import br.com.caelum.iogi.conversion.FallbackConverter;
 import br.com.caelum.iogi.conversion.StringConverter;
+import br.com.caelum.iogi.exceptions.ConversionException;
 import br.com.caelum.iogi.parameters.Parameter;
 import br.com.caelum.iogi.parameters.Parameters;
 import br.com.caelum.iogi.reflection.NewObject;
 import br.com.caelum.iogi.reflection.Target;
 import br.com.caelum.iogi.spi.DependencyProvider;
 import br.com.caelum.iogi.spi.ParameterNamesProvider;
-import br.com.caelum.vraptor.Converter;
-import br.com.caelum.vraptor.converter.ConversionError;
+import br.com.caelum.vraptor.converter.Converter;
 import br.com.caelum.vraptor.core.Converters;
-import br.com.caelum.vraptor.core.Localization;
 import br.com.caelum.vraptor.http.InvalidParameterException;
-import br.com.caelum.vraptor.http.iogi.InstantiatorWithErrors;
-import br.com.caelum.vraptor.http.iogi.SetInstantiator;
-import br.com.caelum.vraptor.ioc.Component;
-import br.com.caelum.vraptor.ioc.RequestScoped;
 import br.com.caelum.vraptor.validator.Message;
-import br.com.caelum.vraptor.validator.ValidationMessage;
-import br.com.caelum.vraptor.validator.annotation.ValidationException;
+import br.com.caelum.vraptor.validator.SimpleMessage;
+import br.com.caelum.vraptor.validator.ValidationException;
 
-import com.google.common.collect.ImmutableList;
-
-@Component
-@RequestScoped
+@Specializes
 public class ObjetoInstantiator implements InstantiatorWithErrors,
 		Instantiator<Object> {
-	private final Localization localization;
 	private final MultiInstantiator multiInstantiator;
 	private List<Message> errors;
 	private final DependencyProvider provider;
 
 	@Inject
 	public ObjetoInstantiator(Converters converters,
-			DependencyProvider provider, Localization localization,
+			DependencyProvider provider, 
 			ParameterNamesProvider parameterNameProvider,
 			HttpServletRequest request) {
 		this.provider = provider;
-		this.localization = localization;
-
+		
 		ObjetoObjectInstantiator objectInstantiator = new ObjetoObjectInstantiator(
 				this, provider, parameterNameProvider);
 		List<Instantiator<?>> instantiatorList = ImmutableList.of(
@@ -110,8 +103,8 @@ public class ObjetoInstantiator implements InstantiatorWithErrors,
 	}
 
 	private void handleException(Target<?> target, Throwable e) {
-		if (e.getClass().isAnnotationPresent(ValidationException.class)) {
-			errors.add(new ValidationMessage(e.getLocalizedMessage(), target
+		if (e instanceof ValidationException) {
+			errors.add(new SimpleMessage("validation", e.getLocalizedMessage(), target
 					.getName()));
 		} else if (e.getCause() == null) {
 			throw new InvalidParameterException(
@@ -154,9 +147,9 @@ public class ObjetoInstantiator implements InstantiatorWithErrors,
 			try {
 				Parameter parameter = parameters.namedAfter(target);
 				return converterForTarget(target).convert(parameter.getValue(),
-						target.getClassType(), localization.getBundle());
-			} catch (ConversionError ex) {
-				errors.add(new ValidationMessage(ex.getMessage(), target
+						target.getClassType());
+			} catch (ConversionException ex) {
+				errors.add(new SimpleMessage("conversion", ex.getMessage(), target
 						.getName()));
 			} catch (IllegalStateException e) {
 				return setPropertiesAfterConversions(target, parameters);
@@ -170,8 +163,7 @@ public class ObjetoInstantiator implements InstantiatorWithErrors,
 			Parameter parameter = findParamFor(params, target);
 
 			Object converted = converterForTarget(target).convert(
-					parameter.getValue(), target.getClassType(),
-					localization.getBundle());
+					parameter.getValue(), target.getClassType());
 
 			return new NewObject(this, parameters.focusedOn(target), converted)
 					.valueWithPropertiesSet();

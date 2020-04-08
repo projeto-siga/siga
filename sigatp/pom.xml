@@ -229,11 +229,6 @@
 						<version>3.18.1-GA</version>
 					</dependency>
 					<dependency>
-						<groupId>br.com.caelum</groupId>
-						<artifactId>vraptor</artifactId>
-						<version>3.5.4</version>
-					</dependency>
-					<dependency>
 						<groupId>siga</groupId>
 						<artifactId>siga-vraptor-module</artifactId>
 						<version>1.2-SNAPSHOT</version>

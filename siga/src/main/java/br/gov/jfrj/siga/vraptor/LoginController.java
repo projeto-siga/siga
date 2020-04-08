@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -20,9 +21,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -38,26 +39,26 @@ import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
 import br.gov.jfrj.siga.idp.jwt.SigaJwtProviderException;
 import br.gov.jfrj.siga.util.SigaJwtBL;
 
-@Resource
+@Controller
 public class LoginController extends SigaController {
 	HttpServletResponse response;
 	private ServletContext context;
 
-	private static String convertStreamToString(java.io.InputStream is) {
-		if (is == null)
-			return null;
-		try (java.util.Scanner s = new java.util.Scanner(is, "UTF-8")) {
-			return s.useDelimiter("\\A").hasNext() ? s.next() : "";
-		}
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public LoginController() {
+		super();
 	}
 
+	@Inject
 	public LoginController(HttpServletRequest request, HttpServletResponse response, ServletContext context,
 			Result result, CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);
 		this.response = response;
 		this.context = context;
 	}
-	
+
 	@Get("public/app/login")
 	public void login(String cont) throws IOException {
 		Map<String, String> manifest = new HashMap<>();
@@ -88,10 +89,10 @@ public class LoginController extends SigaController {
 		try {
 			GiService giService = Service.getGiService();
 			String usuarioLogado = giService.login(username, password);
-			
-			if( Pattern.matches( "\\d+", username) && username.length() == 11) {
+
+			if (Pattern.matches("\\d+", username) && username.length() == 11) {
 				List<CpIdentidade> lista = new CpDao().consultaIdentidadesCadastrante(username, Boolean.TRUE);
-				if(lista.size() > 1) {
+				if (lista.size() > 1) {
 					throw new RuntimeException("Pessoa com mais de um usuário, favor efetuar login com a matrícula!");
 				}
 			}
@@ -119,6 +120,14 @@ public class LoginController extends SigaController {
 		this.request.getSession().invalidate();
 		this.response.addCookie(AuthJwtFormFilter.buildEraseCookie());
 		result.redirectTo("/");
+	}
+
+	private static String convertStreamToString(java.io.InputStream is) {
+		if (is == null)
+			return null;
+		try (java.util.Scanner s = new java.util.Scanner(is, "UTF-8")) {
+			return s.useDelimiter("\\A").hasNext() ? s.next() : "";
+		}
 	}
 
 	private String extrairAuthorization(HttpServletRequest request) {

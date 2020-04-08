@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -22,19 +23,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import br.com.caelum.vraptor.Get;
-import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
-import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
-import br.com.caelum.vraptor.view.Results;
-import br.gov.jfrj.itextpdf.ConversorHtml;
-import br.gov.jfrj.itextpdf.Documento;
-import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.ex.SigaExProperties;
-import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
-import br.gov.jfrj.siga.hibernate.ExDao;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -45,11 +33,32 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-@Resource
+import br.com.caelum.vraptor.Controller;
+import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Post;
+import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.validator.Validator;
+import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.itextpdf.ConversorHtml;
+import br.gov.jfrj.itextpdf.Documento;
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.ex.SigaExProperties;
+import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
+import br.gov.jfrj.siga.hibernate.ExDao;
+
+@Controller
 public class ExUtilController extends ExController {
 
 	private static final Logger LOGGER = Logger.getLogger(ExUtilController.class);
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ExUtilController() {
+		super();
+	}
+
+	@Inject
 	public ExUtilController(HttpServletRequest request, HttpServletResponse response, ServletContext context,
 			Result result, SigaObjects so, EntityManager em, Validator validator) {
 

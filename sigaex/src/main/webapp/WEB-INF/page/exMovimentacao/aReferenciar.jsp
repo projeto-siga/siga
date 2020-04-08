@@ -74,7 +74,7 @@ function sbmt() {
 								<div class="col-sm-6">
 									<div class="form-group">
 										<label>Titular</label>
-										<siga:selecao propriedade="titular"tema="simple" modulo="siga"/>
+										<siga:selecao propriedade="titular" tema="simple" modulo="siga"/>
 									</div>
 								</div>
 							</div>

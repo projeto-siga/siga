@@ -14,11 +14,7 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import javax.persistence.TemporalType;
-
-import net.sf.jasperreports.engine.JRException;
-
-import org.hibernate.Query;
+import javax.persistence.Query;
 
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import ar.com.fdvs.dj.domain.constants.Font;
@@ -26,7 +22,9 @@ import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import net.sf.jasperreports.engine.JRException;
 
 public class RelOrgao extends RelatorioTemplate {
 
@@ -91,8 +89,7 @@ public class RelOrgao extends RelatorioTemplate {
 		List<String> d = new ArrayList<String>();
 
 		if (parametros.get("lotacao").equals("")) {
-			Query query = HibernateUtil
-			.getSessao()
+			Query query = ContextoPersistencia.em()
 			.createQuery( "select mov.lotaCadastrante.siglaLotacao, mob.idMobil.exDocumento.exFormaDocumento.exTipoFormaDoc.descTipoFormaDoc, "
 							+ "mov.exTipoMovimentacao.descrTipoMovimentacao, count(distinct mob.idMobil.exDocumento.idDoc) "
 							+ "from ExMovimentacao mov inner join mov.exMobil mob "
@@ -107,16 +104,16 @@ public class RelOrgao extends RelatorioTemplate {
 							+ "mov.exTipoMovimentacao.descrTipoMovimentacao");
 			
 			Long orgaoUsu = Long.valueOf((String) parametros.get("orgao"));
-			query.setLong("orgaoUsu", orgaoUsu);
+			query.setParameter("orgaoUsu", orgaoUsu);
 			Date dtini = formatter.parse((String) (parametros.get("dataInicial") + " 00:00:00"));
-			query.setTimestamp("dtini", dtini);
+			query.setParameter("dtini", dtini);
 			Date dtfim = formatter.parse((String) (parametros.get("dataFinal") + " 23:59:59"));
-			query.setTimestamp("dtfim", dtfim);
+			query.setParameter("dtfim", dtfim);
 
 			SortedSet<String> set = new TreeSet<String>();
 			TreeMap<String, Long> map = new TreeMap<String, Long>();
 
-			Iterator it = query.list().iterator();
+			Iterator it = query.getResultList().iterator();
 			while (it.hasNext()) {
 				Object[] obj = (Object[]) it.next();
 				String lotacao = (String) obj[0];
@@ -140,8 +137,7 @@ public class RelOrgao extends RelatorioTemplate {
 				acrescentarColuna(d, map, s, "Processo Administrativo", "Desarquivamento");
 			}
 		} else {
-			Query query = HibernateUtil
-					.getSessao()
+			Query query = ContextoPersistencia.em()
 					.createQuery( "select mov.lotaCadastrante.siglaLotacao, mob.idMobil.exDocumento.exFormaDocumento.exTipoFormaDoc.descTipoFormaDoc, "
 							+ "mov.exTipoMovimentacao.descrTipoMovimentacao, count(distinct mob.idMobil.exDocumento.idDoc) "
 							+ "from ExMovimentacao mov inner join mov.exMobil mob "
@@ -157,27 +153,27 @@ public class RelOrgao extends RelatorioTemplate {
 							+ "mov.exTipoMovimentacao.descrTipoMovimentacao");
 			
 			Long orgaoUsu = Long.valueOf((String) parametros.get("orgao"));
-			query.setLong("orgaoUsu", orgaoUsu);
+			query.setParameter("orgaoUsu", orgaoUsu);
 			
 			// Obtém a lotação com o id passado...
-			Query qrySetor = HibernateUtil.getSessao().createQuery(
+			Query qrySetor = ContextoPersistencia.em().createQuery(
 					"from DpLotacao lot where lot.idLotacao = " + parametros.get("lotacao"));
 						
 			Set<DpLotacao> lotacaoSet = new HashSet<DpLotacao>();
-			DpLotacao lotacaodest = (DpLotacao)qrySetor.list().get(0);
+			DpLotacao lotacaodest = (DpLotacao)qrySetor.getResultList().get(0);
 			lotacaoSet.add(lotacaodest);		
 			
-			query.setLong("lotacaodest", lotacaodest.getIdInicial());
+			query.setParameter("lotacaodest", lotacaodest.getIdInicial());
 			
 			Date dtini = formatter.parse((String) (parametros.get("dataInicial") + " 00:00:00"));
-			query.setTimestamp("dtini", dtini);
+			query.setParameter("dtini", dtini);
 			Date dtfim = formatter.parse((String) (parametros.get("dataFinal") + " 23:59:59"));
-			query.setTimestamp("dtfim", dtfim);
+			query.setParameter("dtfim", dtfim);
 	
 			SortedSet<String> set = new TreeSet<String>();
 			TreeMap<String, Long> map = new TreeMap<String, Long>();
 
-			Iterator it = query.list().iterator();
+			Iterator it = query.getResultList().iterator();
 			while (it.hasNext()) {
 				Object[] obj = (Object[]) it.next();
 				String lotacao = (String) obj[0];

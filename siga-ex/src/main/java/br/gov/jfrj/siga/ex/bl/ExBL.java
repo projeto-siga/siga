@@ -3273,6 +3273,7 @@ public class ExBL extends CpBL {
 		return s;
 	}
 
+	
 	public ExDocumento gravar(final DpPessoa cadastrante, final DpPessoa titular, final DpLotacao lotaTitular,
 			ExDocumento doc) throws Exception {
 
@@ -3419,7 +3420,8 @@ public class ExBL extends CpBL {
 			/*
 			 * alteracao para adicionar a movimentacao de insercao de substituto
 			 */
-			if (doc.getCadastrante() != cadastrante && doc.getTitular() == cadastrante && doc.getDtAssinatura() == null) {
+			/*
+			if(exDocumentoDTO.isSubstituicao() && exDocumentoDTO.getDoc().getTitular() != exDocumentoDTO.getDoc().getSubscritor()) {
 				final ExMovimentacao mov_substituto = criarNovaMovimentacao(
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_SUBSTITUICAO_RESPONSAVEL, cadastrante,
 						cadastrante.getLotacao(), doc.getMobilGeral(), null, cadastrante, null, null, null, null);
@@ -3428,6 +3430,7 @@ public class ExBL extends CpBL {
 						+ " - " + cadastrante.getMatricula());
 				gravarMovimentacao(mov_substituto);
 			}
+			*/
 			/*
 			 * fim da alteracao
 			 */
@@ -3454,6 +3457,16 @@ public class ExBL extends CpBL {
 		}
 		// System.out.println(System.currentTimeMillis() + " - FIM gravar");
 		return doc;
+	}
+	
+	public void geraMovimentacaoSubstituicao(ExDocumento doc) throws AplicacaoException, SQLException {
+		final ExMovimentacao mov_substituto = criarNovaMovimentacao(
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_SUBSTITUICAO_RESPONSAVEL, doc.getCadastrante(),
+				doc.getCadastrante().getLotacao(), doc.getMobilGeral(), null, doc.getCadastrante(), null, null, null, null);
+		mov_substituto.setDescrMov("Responsável pela assinatura: " + doc.getSubscritor().getNomePessoa() + " - "
+				+ doc.getSubscritor().getMatricula() + " em substituição de " + doc.getTitular().getNomePessoa()
+				+ " - " + doc.getTitular().getMatricula());
+		gravarMovimentacao(mov_substituto);
 	}
 
 	private class MovimentacaoSincronizavel extends SincronizavelSuporte

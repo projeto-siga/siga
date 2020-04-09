@@ -69,7 +69,9 @@ import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
@@ -92,8 +94,10 @@ import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
+import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -1531,8 +1535,7 @@ public class ExDocumentoController extends ExController {
 			final String[] vars, final String[] campos,
 			final UploadedFile arquivo, String jsonHierarquiaDeModelos) {
 		final Ex ex = Ex.getInstance();
-		final ExBL exBL = ex.getBL();
-
+		final ExBL exBL = ex.getBL();		
 		try {
 			buscarDocumentoOuNovo(true, exDocumentoDTO);
 			if (exDocumentoDTO.getDoc() == null) {
@@ -1701,36 +1704,14 @@ public class ExDocumentoController extends ExController {
 			exBL.gravar(getCadastrante(), getTitular(), getLotaTitular(),
 					exDocumentoDTO.getDoc());
 			
-			
 			/*
 			 * alteracao para adicionar a movimentacao de insercao de substituto
 			 */
-			/*
-			if(exDocumentoDTO.getDoc().getTitular() != temp.getDoc().getTitular() && !isNovo) {
-				
-				final ExMovimentacao mov = new ExMovimentacao();
-				mov.setCadastrante(exDocumentoDTO.getDoc().getCadastrante());
-				mov.setLotaCadastrante(exDocumentoDTO.getDoc().getLotaCadastrante());
-				mov.setDtMov(dao().dt());
-				mov.setDtIniMov(dao().dt());
-				mov.setExMobil(exDocumentoDTO.getDoc().getMobilGeral());
-				mov.setExTipoMovimentacao(dao().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SUBSTITUICAO_RESPONSAVEL,ExTipoMovimentacao.class, false));
-				mov.setLotaTitular(exDocumentoDTO.getDoc().getLotaTitular());
-						
-						
-				String principal = ContextoPersistencia.getUserPrincipal();
-				if (principal != null) {
-					CpIdentidade identidade = dao().consultaIdentidadeCadastrante(principal, true);
-					mov.setAuditIdentidade(identidade);
-				}
-				RequestInfo ri = CurrentRequest.get();
-				if (ri != null) {
-					mov.setAuditIP(HttpRequestUtils.getIpAudit(ri.getRequest()));
-				}
-				
-				dao.gravar(mov);
+
+			if(exDocumentoDTO.isSubstituicao() && exDocumentoDTO.getDoc().getTitular() != exDocumentoDTO.getDoc().getSubscritor()) {
+				exBL.geraMovimentacaoSubstituicao(exDocumentoDTO.getDoc());
 			}
-			*/
+
 			/*
 			 * fim da alteracao
 			 */

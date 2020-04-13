@@ -69,8 +69,9 @@ import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
-import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
@@ -93,8 +94,10 @@ import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
+import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -111,11 +114,14 @@ public class ExDocumentoController extends ExController {
 
 	private static final String URL_EXIBIR = "/app/expediente/doc/exibir?sigla={0}";
 	private static final String URL_EDITAR = "/app/expediente/doc/editar?sigla={0}";
+	private String url = null;
 
 	public ExDocumentoController(HttpServletRequest request,
 			HttpServletResponse response, ServletContext context,
 			Result result, SigaObjects so, EntityManager em) {
 		super(request, response, context, result, CpDao.getInstance(), so, em);
+		
+		url = getBaseUrl(request);
 	}
 
 	private ExDocumento buscarDocumento(final BuscaDocumentoBuilder builder,
@@ -883,6 +889,23 @@ public class ExDocumentoController extends ExController {
 			s = " "
 					+ exDocumentoDTO.getMob().doc().getExNivelAcessoAtual()
 							.getNmNivelAcesso() + " " + s;
+			
+			String ERRO_INACESSIVEL_USUARIO;
+			if (Ex.getInstance()
+			.getComp().ehPublicoExterno(getTitular())) {
+				ERRO_INACESSIVEL_USUARIO = "Documento "
+						+ exDocumentoDTO.getMob().getSigla()
+						+ " inacessível ao usuário " + getTitular().getSigla()
+						+ "/" + getLotaTitular().getSiglaCompleta() + "." + s
+						+ " " + msgDestinoDoc;
+			} else {
+				ERRO_INACESSIVEL_USUARIO = "Documento "
+						+ exDocumentoDTO.getMob().getSigla()
+						+ " inacessível ao usuário " + getTitular().getSigla()
+						+ "/" + getLotaTitular().getSiglaCompleta() + ", Publico externo exceto se for subscritor" 
+						+ " , cosignatário ou tiver algum perfil associado ao documento ou ainda se documento estiver "
+						+ " passado por sua lotação. ";
+			}
 
 			Map<ExPapel, List<Object>> mapa = exDocumentoDTO.getMob().doc()
 					.getPerfis();
@@ -910,51 +933,7 @@ public class ExDocumentoController extends ExController {
 								+ " cancelado ");
 				}
 			} else  {
-				if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
-					String a[] = exDocumentoDTO.getMob().doc().getListaDeAcessosString().split(",");
-					CpDao cpdao = CpDao.getInstance();
-					DpPessoa p = null;
-					DpLotacao l = null;
-					String parteNumerica = null;
-					s = "(";
-					for (int i = 0; i < a.length; i++) {
-						
-						parteNumerica = a[i].replaceAll("[^0123456789]", "");
-						if(parteNumerica != null && !"".equals(parteNumerica)) {
-							p = new DpPessoa();
-							p.setMatricula(Long.valueOf(parteNumerica));  
-							p.setSesbPessoa(a[i].replaceAll("[^a-zA-Z]", ""));
-							p = cpdao.consultarPorSigla(p);
-							if(p != null)
-								s += p.getNomePessoa() + "("+a[i].trim()+"/"+ p.getLotacao().getSiglaLotacao()+")";
-						} else {
-							l = new DpLotacao();
-							l.setOrgaoUsuario(exDocumentoDTO.getDoc().getOrgaoUsuario());
-							l.setSigla(a[i].replace(exDocumentoDTO.getDoc().getOrgaoUsuario().getSigla(), ""));
-							l = cpdao.consultarPorSigla(l);
-							if(l !=null)
-								s += "("+l.getNomeLotacao()+")";
-						}
-						s += (i+1 == a.length) ? "" : ",";
-					}
-					s += ")";
-					
-					
-					s = " "
-							+ exDocumentoDTO.getMob().doc().getExNivelAcessoAtual()
-									.getNmNivelAcesso() + " " + s;
-					throw new AplicacaoException("Documento "
-							+ exDocumentoDTO.getMob().getSigla()
-							+ " inacessível ao usuário " + getTitular().getNomePessoa() + "(" +getTitular().getSigla()
-							+ "/" + getLotaTitular().getSiglaCompleta() + ")." + s
-							+ " " + msgDestinoDoc);
-				} else {
-					throw new AplicacaoException("Documento "
-							+ exDocumentoDTO.getMob().getSigla()
-							+ " inacessível ao usuário " + getTitular().getSigla()
-							+ "/" + getLotaTitular().getSiglaCompleta() + "." + s
-							+ " " + msgDestinoDoc);
-				}
+				throw new AplicacaoException(ERRO_INACESSIVEL_USUARIO);
 			}
 		}
 	}
@@ -1264,10 +1243,33 @@ public class ExDocumentoController extends ExController {
 		result.include("lota", this.getLotaTitular());
 		result.include("param", exDocumentoDto.getParamsEntrevista());
 	}
+	
+	@Post("/app/expediente/doc/reordenar")
+	public void reordenar(String idDocumentos, String sigla, boolean isVoltarParaOrdemOriginal) throws Exception {				
+		ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO();						
+		
+		exDocumentoDTO.setSigla(sigla);
+		buscarDocumento(false, exDocumentoDTO);	
+		
+		if (!exDocumentoDTO.getDoc().podeReordenar() && exDocumentoDTO.getDoc().temOrdenacao()) {
+			throw new AplicacaoException(
+					"Não é permitido reordenação de documentos.");
+		}
+		
+		idDocumentos = isVoltarParaOrdemOriginal ? null : idDocumentos.length() <= 200 ? idDocumentos : idDocumentos.substring(0, 200);
+		exDocumentoDTO.getMob().getDoc().setOrdenacaoDoc(idDocumentos);						
+		
+		new ExBL().reordenarDocumentos(exDocumentoDTO.getDoc(), exDocumentoDTO.getDoc().getCadastrante(), exDocumentoDTO.getDoc().getLotacao(), isVoltarParaOrdemOriginal);
+								
+		if (isVoltarParaOrdemOriginal)
+			result.redirectTo("/app/expediente/doc/exibirProcesso?sigla=" + sigla);
+		else											
+			result.redirectTo("/app/expediente/doc/exibirProcesso?sigla=" + sigla + "&exibirReordenacao=true");
+	}
 
 	@Get({ "/app/expediente/doc/exibir", "/expediente/doc/exibir.action" })
 	public void exibe(final boolean conviteEletronico, final String sigla,
-			final ExDocumentoDTO exDocumentoDTO, final Long idmob, final Long idVisualizacao)
+			final ExDocumentoDTO exDocumentoDTO, final Long idmob, final Long idVisualizacao, boolean exibirReordenacao)
 			throws Exception {
 		assertAcesso("");
 
@@ -1282,6 +1284,11 @@ public class ExDocumentoController extends ExController {
 
 		exDocumentoDto.setSigla(sigla);
 		buscarDocumento(false, exDocumentoDto);
+		
+		if (exibirReordenacao && !exDocumentoDto.getDoc().podeReordenar() && exDocumentoDto.getDoc().temOrdenacao()) {
+			throw new AplicacaoException(
+					"Não é permitido exibir reordenação de documentos.");
+		}
 
 		if(!podeVisualizarDocumento(exDocumentoDto.getMob(), getTitular(), idVisualizacao)) {
 			assertAcesso(exDocumentoDto);
@@ -1308,7 +1315,7 @@ public class ExDocumentoController extends ExController {
 							.getPrimeiraVia());
 				}
 			}
-		}
+		}		
 
 		final ExDocumentoVO docVO = new ExDocumentoVO(exDocumentoDto.getDoc(),
 				exDocumentoDto.getMob(), getCadastrante(), getTitular(),
@@ -1320,6 +1327,8 @@ public class ExDocumentoController extends ExController {
 		if (exDocumentoDto.getSigla() != null) {
 			Sigla = exDocumentoDto.getSigla().replace("/", "");
 		}
+		
+		exDocumentoDto.getMob().getDoc().setPodeExibirReordenacao(exibirReordenacao);
 
 		result.include("docVO", docVO);
 		result.include("sigla", Sigla);
@@ -1328,18 +1337,20 @@ public class ExDocumentoController extends ExController {
 		result.include("lota", this.getLotaTitular());
 		result.include("param", exDocumentoDto.getParamsEntrevista());
 		result.include("idVisualizacao", idVisualizacao);
+		result.include("podeExibirReordenacao", exibirReordenacao);
+		
 	}
 
 	@Get("app/expediente/doc/exibirProcesso")
-	public void exibeProcesso(final String sigla, final boolean podeExibir, Long idVisualizacao)
+	public void exibeProcesso(final String sigla, final boolean podeExibir, Long idVisualizacao, boolean exibirReordenacao)
 			throws Exception {
-		exibe(false, sigla, null, null, idVisualizacao);
+		exibe(false, sigla, null, null, idVisualizacao, exibirReordenacao);					
 	}
 
 	@Get("/app/expediente/doc/exibirResumoProcesso")
 	public void exibeResumoProcesso(final String sigla, final boolean podeExibir)
 			throws Exception {
-		exibe(false, sigla, null, null, null);
+		exibe(false, sigla, null, null, null, false);
 	}
 
 	private void verificaDocumento(final ExDocumento doc) {
@@ -1497,8 +1508,7 @@ public class ExDocumentoController extends ExController {
 			final String[] vars, final String[] campos,
 			final UploadedFile arquivo, String jsonHierarquiaDeModelos) {
 		final Ex ex = Ex.getInstance();
-		final ExBL exBL = ex.getBL();
-
+		final ExBL exBL = ex.getBL();		
 		try {
 			buscarDocumentoOuNovo(true, exDocumentoDTO);
 			if (exDocumentoDTO.getDoc() == null) {
@@ -1667,36 +1677,14 @@ public class ExDocumentoController extends ExController {
 			exBL.gravar(getCadastrante(), getTitular(), getLotaTitular(),
 					exDocumentoDTO.getDoc());
 			
-			
 			/*
 			 * alteracao para adicionar a movimentacao de insercao de substituto
 			 */
-			/*
-			if(exDocumentoDTO.getDoc().getTitular() != temp.getDoc().getTitular() && !isNovo) {
-				
-				final ExMovimentacao mov = new ExMovimentacao();
-				mov.setCadastrante(exDocumentoDTO.getDoc().getCadastrante());
-				mov.setLotaCadastrante(exDocumentoDTO.getDoc().getLotaCadastrante());
-				mov.setDtMov(dao().dt());
-				mov.setDtIniMov(dao().dt());
-				mov.setExMobil(exDocumentoDTO.getDoc().getMobilGeral());
-				mov.setExTipoMovimentacao(dao().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SUBSTITUICAO_RESPONSAVEL,ExTipoMovimentacao.class, false));
-				mov.setLotaTitular(exDocumentoDTO.getDoc().getLotaTitular());
-						
-						
-				String principal = ContextoPersistencia.getUserPrincipal();
-				if (principal != null) {
-					CpIdentidade identidade = dao().consultaIdentidadeCadastrante(principal, true);
-					mov.setAuditIdentidade(identidade);
-				}
-				RequestInfo ri = CurrentRequest.get();
-				if (ri != null) {
-					mov.setAuditIP(HttpRequestUtils.getIpAudit(ri.getRequest()));
-				}
-				
-				dao.gravar(mov);
+
+			if(exDocumentoDTO.isSubstituicao() && exDocumentoDTO.getDoc().getTitular() != exDocumentoDTO.getDoc().getSubscritor()) {
+				exBL.geraMovimentacaoSubstituicao(exDocumentoDTO.getDoc());
 			}
-			*/
+
 			/*
 			 * fim da alteracao
 			 */
@@ -1940,17 +1928,27 @@ public class ExDocumentoController extends ExController {
 		DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		Calendar c = Calendar.getInstance();
 		c.setTime(prot.getData());
+
+		String servidor = SigaBaseProperties.getString("siga.ex."
+                + SigaBaseProperties.getString("siga.ambiente") + ".url");
 		
-		String url = SigaBaseProperties.getString("siga.ex."
-				+ SigaBaseProperties.getString("siga.ambiente") + ".url") + "/protocolo";
+		String caminho = url + "/public/app/processoautenticar?n=" + prot.getCodigo();
 		
-		result.include("url", url);
+		result.include("url", caminho);
 		result.include("ano", c.get(Calendar.YEAR));
 		result.include("dataHora", df.format(c.getTime()));
 		result.include("protocolo", prot);
 		result.include("sigla", sigla);
 		result.include("doc", exDocumentoDto.getDoc());
 	}
+	
+	public static String getBaseUrl(HttpServletRequest request) {
+	    String scheme = request.getScheme() + "://";
+	    String serverName = request.getServerName();
+	    String serverPort = (request.getServerPort() == 80) ? "" : ":" + request.getServerPort();
+	    String contextPath = request.getContextPath();
+	    return scheme + serverName + serverPort + contextPath;
+	  }
 
 	@Post("/app/expediente/doc/tornarDocumentoSemEfeitoGravar")
 	public void tornarDocumentoSemEfeitoGravar(final String sigla,

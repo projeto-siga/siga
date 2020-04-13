@@ -4451,6 +4451,6 @@ ${texto}
 [/#macro]
 
 [#assign _pathBrasao = "contextpath/imagens/brasaoColoridoTRF2.png" /]
-[#assign _pathBrasaoSecundario = "contextpath/imagens/brasao_prodesp_governo.png" /]
+[#assign _pathBrasaoSecundario = "contextpath/imagens/Logotipo_Prodesp_Governo_SP.png" /]
 [#assign _tituloGeral = "PODER JUDICIÁRIO" /]
 [#assign _subtituloGeral = "JUSTIÇA FEDERAL" /]

@@ -89,7 +89,7 @@
 								<div class="text-center">
 									<button type="submit" class="btn btn-lg btn-primary btn-block"><i class="fas fa-sign-in-alt"></i> Entrar</button>
 									
-									<a href="/siga/public/app/login_sp"class="btn btn-secondary btn-block">LoginSP</a>
+									<!-- <a href="/siga/public/app/login_sp"class="btn btn-secondary btn-block">LoginSP</a> -->
 									
 									<hr class="my-4">
 									<div class="mt-4">
@@ -110,9 +110,6 @@
 										    		<a class="text-top" href="http://linksiga.trf2.jus.br" target="_blank" class="btn btn-link">Sobre o SIGA</a> 
 										    	    </div>
 										    </div>
-										</div>
-										<div class="mt-3 text-left" id="isChrome">
-											<p style="color:red"><b>*</b>  Utilize o navegador Google Chrome.</p>	
 										</div>
 									</c:if>
 								</div>
@@ -146,19 +143,12 @@
 			var isOpera = !!navigator.userAgent.match(/OPR/);
 			var isEdge = !!navigator.userAgent.match(/Edge/);
 			var isChrome = !!navigator.userAgent.match(/Chrome/) && !isOpera && !isEdge
-			if(!isChrome && ${siga_cliente eq 'GOVSP'}) {
+			if(!isChrome) {
 		    	$('#msgModal').modal('show');
 			}
 		})
 	</script>
 	<script type="text/javascript">
-	
-	    var x = document.getElementById("isChrome");
-	    if (!!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime)) {
-	       x.style.display = "none";
-	    } else {
-	       x.style.display = "block";
-	    }
 		
 		//$('input, textarea').placeholder();
 		$("#username").focus();

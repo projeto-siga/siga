@@ -44,6 +44,28 @@
 		listar["p.offset"].value = offset;
 		listar.submit();
 	}
+	
+	function submitBusca(cliente) {
+		if(cliente == 'GOVSP') {
+			var descricao = document.getElementById('descrDocumento').value.trim();
+			if(descricao.length != 0 && descricao.length < 5) {
+				mensagemAlerta("Preencha no mínimo 5 caracteres no campo descrição");
+			} else {
+				$('#buscandoSpinner').removeClass('d-none');
+				document.getElementById("btnBuscar").disabled = true;
+				listar.submit();
+			}
+		} else {
+			$('#buscandoSpinner').removeClass('d-none');
+			document.getElementById("btnBuscar").disabled = true;
+			listar.submit();
+		}
+	}
+	
+	function mensagemAlerta(mensagem) {
+		$('#alertaModal').find('.mensagem-Modal').text(mensagem);
+		$('#alertaModal').modal();
+	}
 
 	function montaDescricao(id, via, descrDoc) {
 		var popW = 700;
@@ -331,6 +353,9 @@
 			break;
 		}
 
+		document.getElementById("btnBuscar").disabled = false;
+		$('#buscandoSpinner').addClass('d-none');
+		
 		return true;
 	}
 </script>
@@ -378,7 +403,7 @@
 						<div class="form-row">
 							<div class="form-group col-md-6">
 								<label for="classificacao"><fmt:message key="documento.descricao"/></label> <input
-									class="form-control" type="text" name="descrDocumento"
+									class="form-control" type="text" name="descrDocumento" id="descrDocumento"
 									value="${descrDocumento}" size="80" />
 							</div>
 						</div>
@@ -444,7 +469,9 @@
 						<div class="form-group col-md-3">
 							<label for="orgaoUsu">Órgão</label> 
 							<select class="form-control  siga-select2" id="orgaoUsu" name="orgaoUsu">
-								<option value="0">[Todos]</option>
+								<c:if test="${siga_cliente != 'GOVSP' || orgaoUsu == '0'}">
+									<option value="0">[Todos]</option>
+								</c:if>
 								<c:forEach items="${orgaosUsu}" var="item">
 									<option value="${item.idOrgaoUsu}"
 										${item.idOrgaoUsu == orgaoUsu ? 'selected' : ''}>
@@ -688,7 +715,9 @@
 							</select>
 						</div>
 					</div>
-					<input type="submit" value="Buscar" class="btn btn-primary"/>
+					<button id="btnBuscar" type="button" value="Buscar" class="btn btn-primary" onclick="submitBusca('${siga_cliente}')">
+						<span id="buscandoSpinner" class="spinner-border d-none" role="status"></span> Buscar
+					</button>
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;FE:Ferramentas;LD:Listar Documentos')}">
 						<siga:monobotao inputType="button"
@@ -696,6 +725,24 @@
 							value="Administrar Documentos" cssClass="btn btn-primary" />
 					</c:if>
 					<input type="button" value="Voltar" onclick="javascript:history.back();" class="btn btn-primary" />
+					<div class="modal fade" id="alertaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+						<div class="modal-dialog" role="document">
+					    	<div class="modal-content">
+					      		<div class="modal-header">
+							        <h5 class="modal-title" id="alertaModalLabel">Alerta</h5>
+							        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+							          <span aria-hidden="true">&times;</span>
+							    	</button>
+							    </div>
+						      	<div class="modal-body">
+						        	<p class="mensagem-Modal"></p>
+						      	</div>
+								<div class="modal-footer">
+								  <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
+								</div>
+					    	</div>
+					  	</div>
+					</div>
 				</form>
 			</div>
 		</div>

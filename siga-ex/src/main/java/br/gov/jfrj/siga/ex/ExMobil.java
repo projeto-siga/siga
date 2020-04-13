@@ -1758,7 +1758,12 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 
 		List<ExArquivoNumerado> arquivosNumerados = null;
 
-		arquivosNumerados = mobPrincipal.getExDocumento().getArquivosNumerados(mobPrincipal);
+		arquivosNumerados = mobPrincipal.getExDocumento().getArquivosNumerados(mobPrincipal);		
+		
+		boolean teveReordenacao = (mobPrincipal.getDoc() != null && 
+				mobPrincipal.getDoc().podeReordenar() &&
+				mobPrincipal.getDoc().podeExibirReordenacao() &&
+				mobPrincipal.getDoc().temOrdenacao());
 
 		List<ExArquivoNumerado> ans = new ArrayList<ExArquivoNumerado>();
 		int i = 0;
@@ -1788,9 +1793,24 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 				}
 			}
 		} else {
-			ans.add(arquivosNumerados.get(0));
+			if (mobPrincipal == this && teveReordenacao) {
+				for (ExArquivoNumerado arquivo : arquivosNumerados) {
+					if (mobPrincipal.getDoc().getIdDoc().equals(arquivo.getArquivo().getIdDoc())) {						
+						ans.add(arquivo);
+						break;
+					}
+				}
+			} else {
+				ans.add(arquivosNumerados.get(0));
+			}			
 		}
-		if (bCompleto && i != -1) {
+		
+		if (bCompleto && teveReordenacao) {
+			ans.clear();
+			for (ExArquivoNumerado arquivo : arquivosNumerados) {				
+				ans.add(arquivo);
+			}
+		} else if (bCompleto && i != -1) {
 			for (int j = i + 1; j < arquivosNumerados.size(); j++) {
 				ExArquivoNumerado anSub = arquivosNumerados.get(j);
 				if (anSub.getNivel() <= arquivosNumerados.get(i).getNivel())

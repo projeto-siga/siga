@@ -3273,6 +3273,7 @@ public class ExBL extends CpBL {
 		return s;
 	}
 
+	
 	public ExDocumento gravar(final DpPessoa cadastrante, final DpPessoa titular, final DpLotacao lotaTitular,
 			ExDocumento doc) throws Exception {
 
@@ -3419,7 +3420,8 @@ public class ExBL extends CpBL {
 			/*
 			 * alteracao para adicionar a movimentacao de insercao de substituto
 			 */
-			if (doc.getCadastrante() != cadastrante && doc.getTitular() == cadastrante && doc.getDtAssinatura() == null) {
+			/*
+			if(exDocumentoDTO.isSubstituicao() && exDocumentoDTO.getDoc().getTitular() != exDocumentoDTO.getDoc().getSubscritor()) {
 				final ExMovimentacao mov_substituto = criarNovaMovimentacao(
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_SUBSTITUICAO_RESPONSAVEL, cadastrante,
 						cadastrante.getLotacao(), doc.getMobilGeral(), null, cadastrante, null, null, null, null);
@@ -3428,6 +3430,7 @@ public class ExBL extends CpBL {
 						+ " - " + cadastrante.getMatricula());
 				gravarMovimentacao(mov_substituto);
 			}
+			*/
 			/*
 			 * fim da alteracao
 			 */
@@ -3454,6 +3457,16 @@ public class ExBL extends CpBL {
 		}
 		// System.out.println(System.currentTimeMillis() + " - FIM gravar");
 		return doc;
+	}
+	
+	public void geraMovimentacaoSubstituicao(ExDocumento doc) throws AplicacaoException, SQLException {
+		final ExMovimentacao mov_substituto = criarNovaMovimentacao(
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_SUBSTITUICAO_RESPONSAVEL, doc.getCadastrante(),
+				doc.getCadastrante().getLotacao(), doc.getMobilGeral(), null, doc.getCadastrante(), null, null, null, null);
+		mov_substituto.setDescrMov("Responsável pela assinatura: " + doc.getSubscritor().getNomePessoa() + " - "
+				+ doc.getSubscritor().getMatricula() + " em substituição de " + doc.getTitular().getNomePessoa()
+				+ " - " + doc.getTitular().getMatricula());
+		gravarMovimentacao(mov_substituto);
 	}
 
 	private class MovimentacaoSincronizavel extends SincronizavelSuporte
@@ -5177,6 +5190,9 @@ public class ExBL extends CpBL {
 					attrs.put("nmArqMod", "certidaoDesentranhamento.jsp");
 				}
 
+			} else if (mov.getExTipoMovimentacao() != null
+					&& (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA)) {
+				attrs.put("nmArqMod", "ciencia.jsp");
 			} else {
 				if (mov.getExTipoDespacho() != null) {
 					attrs.put("despachoTexto", mov.getExTipoDespacho().getDescTpDespacho());
@@ -5358,7 +5374,33 @@ public class ExBL extends CpBL {
 			mov.setDescrMov(descrMov);
 
 			gravarMovimentacao(mov);
+			
+			mov.setNumPaginas(1);
+			
+			Map<String, String> form = new TreeMap<String, String>();
+			form.put("textoMotivo", descrMov);
+			mov.setConteudoBlobForm(urlEncodedFormFromMap(form));
+
+			// Gravar o Html
+			final String strHtml = processarModelo(mov, "processar_modelo", null, null);
+			mov.setConteudoBlobHtmlString(strHtml);
+
+			// Gravar o Pdf
+			final byte pdf[] = Documento.generatePdf(strHtml);
+			mov.setConteudoBlobPdf(pdf);
+			mov.setConteudoTpMov("application/zip");
+			
+			final ExMovimentacao movAssMov = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA, cadastrante, lotaCadastrante,
+					mov.getExMobil(), null, null, null, null, null, null);
+
+			movAssMov.setDescrMov(cadastrante.getDescricao());
+
+			movAssMov.setExMovimentacaoRef(mov);
+			
+			gravarMovimentacao(movAssMov);
+			
 			concluirAlteracao(mov.getExMobil());
+			
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao fazer ciência.", 0, e);
@@ -6893,16 +6935,20 @@ public class ExBL extends CpBL {
 	public ExProtocolo gerarProtocolo(ExDocumento doc, DpPessoa cadastrante, DpLotacao lotacao) {
 		try {
 			iniciarAlteracao();
-			
+
 			Date dt = dao().dt();
 			Calendar c = Calendar.getInstance();
 			c.setTime(dt);
-			
+
 			ExProtocolo prot = new ExProtocolo();
-			prot.setNumero(obterSequencia(Long.valueOf(c.get(Calendar.YEAR)), ExSequenciaEnum.PROTOCOLO.getValor(), "1"));
+			/*
+			 *prot.setNumero(
+			 *     obterSequencia(Long.valueOf(c.get(Calendar.YEAR)), ExSequenciaEnum.PROTOCOLO.getValor(), "1"));
+			*/
+			prot.setCodigo(dao().gerarCodigoProtocolo());
 			prot.setExDocumento(doc);
 			prot.setData(c.getTime());
-			
+
 			dao().gravar(prot);
 			ContextoPersistencia.flushTransaction();
 			final ExMovimentacao mov = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO,
@@ -6922,6 +6968,112 @@ public class ExBL extends CpBL {
 			return dao().obterProtocoloPorDocumento(doc.getIdDoc());
 		} catch (Exception e) {
 			throw new AplicacaoException("Ocorreu um erro ao obter protocolo.", 0, e);
+		}
+	}
+	
+	
+	
+	
+	/*
+	 * Adicionado 23/01/2020
+	 */
+
+	public ExArquivo buscarPorProtocolo(String num) throws Exception {
+		/*
+		 * Busca por numero e ano
+		 * 
+		 * String temp[] = num.split("/");
+		 * Long numero = Long.parseLong(temp[0]);
+		 * Integer ano = Integer.parseInt(temp[1]);
+		 * ExProtocolo protocolo = (ExProtocolo) dao().obterProtocoloPorCodigo(numero,ano);
+		 */
+		
+		ExProtocolo protocolo = dao().obterProtocoloPorCodigo(num);
+		
+		if(protocolo == null)
+			throw new AplicacaoException("Protocolo não encontrado");
+		
+		if (protocolo.getExDocumento() == null)
+			throw new AplicacaoException("Protocolo não encontrado");
+
+		try {
+			protocolo.getExDocumento().getDescrCurta();
+		} catch (ObjectNotFoundException e) {
+			throw new AplicacaoException("Protocolo não encontrado", 0, e);
+		}
+
+		return protocolo.getExDocumento();
+	}
+
+	public byte[] obterPdfPorProtocolo(String num) throws Exception {
+		ExDocumento doc = dao().obterProtocoloPorCodigo(num).getExDocumento();
+		Pattern p = Pattern.compile("([0-9]{1,10})(.[0-9]{1,10})?-([0-9]{1,4})");
+		Matcher m = p.matcher(doc.getSiglaAssinatura());
+		
+		if (doc == null)
+			throw new AplicacaoException("Documento não encontrado");
+
+		// Testa se o documento existe na base
+		try {
+			doc.getDescrCurta();
+		} catch (ObjectNotFoundException e) {
+			throw new AplicacaoException("Documento não encontrado", 0, e);
+		}
+
+		/*
+		 * if (doc.getExNivelAcesso().getGrauNivelAcesso() > 20) throw new
+		 * Exception("Documento sigiloso");
+		 */
+
+		String temp[] = doc.getSiglaAssinatura().split("-");
+		int hash = Integer.parseInt(temp[1]);
+		ExArquivo arq;
+		ExMovimentacao move = null;
+
+		if (Math.abs(doc.getDescrCurta().hashCode() % 10000) == hash) {
+			arq = doc;
+		} else {
+			for (ExMovimentacao mov : doc.getExMovimentacaoSet())
+				if (Math.abs((doc.getDescrCurta() + mov.getIdMov()).hashCode() % 10000) == hash || Math
+						.abs((doc.getDescrCurta() + mov.getIdMov() + "AssinaturaExterna").hashCode() % 10000) == hash)
+					move = mov;
+			if (move == null)
+				throw new AplicacaoException("Número inválido");
+
+			arq = move;
+		}
+
+		Documento documento = new Documento();
+		
+		if (arq instanceof ExDocumento)
+			return documento.getDocumento(((ExDocumento) arq).getMobilGeral(), null);
+		if (arq instanceof ExMovimentacao) {
+			ExMovimentacao mov = (ExMovimentacao) arq;
+			return documento.getDocumento(mov.getExMobil(), mov);
+		}
+		return null;
+
+	}
+
+	/*
+	 * Fim da adicao
+	 */
+	
+	public void reordenarDocumentos(ExDocumento doc, DpPessoa cadastrante, DpLotacao lotacao, boolean isOrdemOriginal) {				
+		try {
+			iniciarAlteracao();
+			
+			long idTpMov = isOrdemOriginal ? 
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_ORDENACAO_ORIGINAL_DOCUMENTO : 
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_REORDENACAO_DOCUMENTO;
+					
+			ExMovimentacao mov = criarNovaMovimentacao(idTpMov, cadastrante, lotacao, doc.getMobilGeral(), null, cadastrante, null, null, null, null);						
+
+			gravarMovimentacao(mov);
+			concluirAlteracao(doc.getMobilGeral());			
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Ocorreu um erro ao reordenar documentos.", 0, e);
 		}
 	}
 }

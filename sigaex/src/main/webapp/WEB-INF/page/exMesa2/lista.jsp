@@ -8,7 +8,6 @@
 
 <siga:pagina titulo="Mesa Virtual">
 <script type="text/javascript" src="../javascript/vue.min.js"></script>
-	
 	<div id="app" class="container-fluid content" >
 		<div id="configMenu" class="mesa-config ml-auto" :class="toggleConfig">
 			<button type="button" class="btn-mesa-config btn btn-secondary btn-sm h-100" @click="toggleMenuConfig();">
@@ -17,26 +16,28 @@
 			<div class="form-config border-bottom p-3">
 				<h6>Configurações da Mesa Virtual</h6>
 	            <i><small>Quanto menos informações forem solicitadas, mais rapidamente a mesa carregará.</small></i>
-<!-- 		            <div class="form-group py-2 mt-2 border-top border-bottom"> -->
+<!-- 		            <div class="form-group my-2 border-bottom"> -->
 <!-- 						<div class="form-check"> -->
 <!-- 							<input type="checkbox" class="form-check-input" v-model="versaoMesa"> -->
 <!-- 							<label class="form-check-label" for="versaoMesa"><small>Utilizar versão antiga da Mesa</small></label> -->
 <!-- 						</div>             -->
 <!-- 		            </div> -->
-	            <div class="form-group py-2 mt-2 border-top border-bottom">
+	            <div class="form-group my-2 border-bottom">
 					<div class="form-check">
 						<input type="checkbox" class="form-check-input" id="trazerAnotacoes" v-model="trazerAnotacoes">
 						<label class="form-check-label" for="trazerAnotacoes"><small>Trazer anotações nos documentos</small></label>
 					</div>            
 	            </div>
-	            <div class="form-group py-2 mt-2 border-top border-bottom">
+	            <div class="form-group my-2 border-bottom">
 					<div class="form-check">
-						<input type="checkbox" class="form-check-input" id="trazerCancelados" v-model="trazerCancelados">
-						<label class="form-check-label" for="trazerCancelados"><small>Mostrar cancelados</small></label>
+						<input type="checkbox" class="form-check-input" id="trazerComposto" v-model="trazerComposto">
+						<label class="form-check-label" for="trazerComposto">
+							<small>Exibir indicador de docto. avulso <i class="far fa-file"></i> ou composto <i class="far fa-copy"></i></small>
+						</label>
 					</div>            
 	            </div>
 				<div class="form-group pb-2 mb-1 border-bottom">
-					<label for="selQtdPagId"><small>Qtd. de documentos a trazer (botão Mais)</small></label>
+					<label for="selQtdPagId"><small>Qtd. de documentos a trazer</small></label>
 					<select class="form-control form-control-sm" v-model="selQtdPag">
 						  <option value="5">5</option>
 						  <option value="10">10</option>
@@ -63,7 +64,7 @@
 		</c:if>
 		<div id="inicio" class="row">
 			<div class="col col-12 col-md-auto mb-2">
-				<h2><i class="fa fa-file-alt"></i> Mesa Virtual</h2>
+				<h3><i class="fa fa-file-alt"></i> Mesa Virtual</h3>
 			</div>
 			<div class="col col-md-4 my-1 mb-2" style="vertical-align: text-bottom;"> 
 				<span class="h-100 d-inline-block my-2" style="vertical-align: text-bottom;">
@@ -81,8 +82,8 @@
 			</div>
 		</div>
 		<div id="rowTopMesa" style="z-index: 1" class="row sticky-top px-3 pt-1 bg-white shadow-sm" 
-				v-if="carregando || (!errormsg &amp;&amp; grupos.length >= 0)">
-			<div id="radioBtn" class="btn-group mr-1 mb-1" 
+				v-if="!carregando || (!errormsg &amp;&amp; grupos.length >= 0)">
+			<div id="radioBtn" class="btn-group mr-2 mb-1" 
 					title="Visualiza somente os documentos do usuário ou da lotação">
 				<a class="btn btn-primary btn-sm" v-bind:class="exibeLota ? 'notActive' : 'active'" id="btnUser"  
 					accesskey="u" @click="carregarMesaUser('#btnUser');">
@@ -95,17 +96,17 @@
 					<span class="d-none d-sm-inline"><fmt:message key='usuario.lotacao'/></span>
 				</a>
 			</div>
-			<div class="mr-1 mb-1">
-				<input id="filtroExibidos" type="text" class="form-control p-1 input-sm" placeholder="Filtrar entre os exibidos" v-model="filtro" ng-model-options="{ debounce: 200 }">
+			<div class="mr-2 mb-1">
+				<input id="filtroExibidos" type="text" class="form-control p-1 input-sm" placeholder="Filtrar documentos da mesa" v-model="filtro" ng-model-options="{ debounce: 200 }">
 			</div>
-			<button type="button" class="btn btn-secondary btn-sm mb-1" @click="recarregarMesa();">
-				<i class="fas fa-sync-alt"></i><span class="d-none d-sm-inline ml-2">Recarregar</span>
+			<button type="button" class="btn btn-secondary btn-sm mb-1 mr-2" title="Recarregar Mesa" :class="{disabled: carregando}" @click="recarregarMesa();">
+				<i class="fas fa-sync-alt"></i>
 			</button>
-			<p id="ultima-atualizacao" class="ml-2 my-auto fadein text-danger">
-				Última atualização: {{getLastRefreshTime()}}</p>
+			<small id="ultima-atualizacao" class="my-auto fadein text-danger">
+				Última atualização: {{getLastRefreshTime()}}</small>
 		</div>
 		
-		<div class="row" v-if="errormsg">
+		<div class="row" v-if="!carregando && errormsg">
 			<div class="col col-12">
 				<p class="alert alert-danger">
 					<strong>Erro!</strong> {{errormsg}}
@@ -126,7 +127,7 @@
 		</div>
 
 		<div class="row mt-3"
-			v-if="!errormsg && !carregando &amp;&amp; grupos.length == 0">
+			v-if="!carregando &amp;&amp; !errormsg &amp;&amp; grupos.length == 0">
 			<div class="col col-12">
 				<p class="alert alert-warning">
 					<strong>Atenção!</strong> Nenhum documento na mesa.
@@ -137,23 +138,21 @@
 			<div class="col-sm-12">
 				<template v-for="g in filtrados">	
 					<div v-if="g.grupoCounterUser > 0 || g.grupoCounterLota > 0" :key="g.grupoOrdem">
-						<div class="collapse-header">
+						<div class="collapse-header d-inline">
 							<h5 :id="['collapse-header-' + g.grupoOrdem]" data-toggle="collapse" :data-target="['#collapsetab-' + g.grupoOrdem]" 
-									class="collapse-toggle p-1 mb-2 table-group table-group-title align-middle"
+									class="collapse-toggle p-1 table-group table-group-title"
 									v-bind:class="{ collapsed: g.grupoCollapsed}" v-bind:aria-expanded="{false: g.grupoCollapsed}"
 									@click="collapseGrupo(g.grupoOrdem, g.grupoNome)">
-								<i :class="g.grupoIcone"></i>
-								<span class="mr-2">{{g.grupoNome}}</span>
-								<small class="align-top"> 
-									<span class="badge badge-pill badge-info btn-sm" :class="{disabled: exibeLota}">
-										<i class="fas fa-user"></i>
-										<span class="d-none d-sm-inline">Usuário</span>
-										<span class="badge badge-light">{{exibeLota || g.grupoDocs == undefined || g.grupoDocs.length == 0 ? '' : g.grupoDocs.length + ' / '}} {{g.grupoCounterUser}}</span>
+								<i class="h5 mb-0" :class="g.grupoIcone"></i>
+								<span class="mr-3">{{g.grupoNome}}</span>
+								<small> 
+									<span class="badge badge-light btn-sm align-middle" :class="{disabled: exibeLota}">
+										<small class="fas fa-user"></small>
+										<span class="badge badge-light">{{g.grupoCounterUser}}</span>
 									</span>
-									<span class="badge badge-pill badge-info btn-sm" :class="{disabled: !exibeLota}">
-										<i class="fas fa-users"></i>
-										<span class="d-none d-sm-inline"><fmt:message key='usuario.lotacao'/></span>
-										<span class="badge badge-light">{{!exibeLota || g.grupoDocs == undefined || g.grupoDocs.length == 0 ? '' : g.grupoDocs.length + ' / '}} {{g.grupoCounterLota}}</span>
+									<span class="badge badge-light btn-sm align-middle" :class="{disabled: !exibeLota}">
+										<small class="fas fa-users"></small>
+										<span class="badge badge-light">{{g.grupoCounterLota}}</span>
 									</span>
 								</small>
 							</h5>
@@ -164,12 +163,12 @@
 									<p class="alert alert-warning alert-dismissible fade show">Não há documentos a exibir para est{{exibeLota? 'a lotação.' : 'e usuário.'}}</p>
 								</div>
 							</div>
-							<table v-else class="table table-sm table-striped table-hover table-borderless">
+							<table v-else class="text-size-6 text-muted table table-sm table-striped table-hover table-borderless">
 								<thead v-if="!carregando">
-									<tr class="table-head thead-light d-flex">
+									<tr class="table-head d-flex">
 										<th scope="col" class="col-1 d-none d-md-block">Tempo</th>
-										<th scope="col" class="col-9 col-md-3"><fmt:message key = "usuario.mesavirtual.codigo"/></th>
-										<th scope="col" class="col-3 d-none d-md-block">Descrição</th>
+										<th scope="col" class="col-9 col-md-2"><fmt:message key = "usuario.mesavirtual.codigo"/></th>
+										<th scope="col" class="col-4 d-none d-md-block">Descrição</th>
 										<th scope="col" class="col-3 col-md-2">Origem</th>
 										<th scope="col" class="col-3 d-none d-md-block"><fmt:message key = "usuario.mesavirtual.etiquetas"/></th>
 <!-- 											<th v-show="gruposTemAlgumErro">Atenção</th> -->
@@ -178,8 +177,15 @@
 								<tbody>
 									<template v-for="f in g.grupoDocs">
 										<tr class="d-flex">
-											<td class="col-1 d-none d-md-block" :title="f.datahora">{{f.tempoRelativo}}</td>
-											<td class="col-9 col-md-3">
+											<td class="col-1 d-none d-md-block" 
+												:title="f.datahoraDDMMYYYHHMM">{{f.tempoRelativo}}</td>
+											<td class="col-9 col-md-2">
+												<c:if test="${siga_cliente == 'GOVSP'}">
+													<span v-if="trazerComposto">
+														<span v-if="f.tipoDoc == 'Avulso'"><i class="far fa-file text-secondary" title="Documento Avulso"></i></span>
+														<span v-else><i class="far fa-copy" title="Documento Composto"></i></span>
+													</span>
+												</c:if>
 												<c:choose>
 													<c:when test="${not empty idVisualizacao && idVisualizacao != 0}">
 														<a :href="'expediente/doc/visualizar?sigla=' + f.codigo + '&idVisualizacao='+${idVisualizacao}">{{f.sigla}}</a>
@@ -190,12 +196,9 @@
 												</c:choose>
 												<span class="d-inline d-md-none"> - {{f.descr}}</span>
 											</td>
-											<td class="col-3 d-none d-md-block">
-												<c:if test="${siga_cliente == 'GOVSP'}">
-													<span v-if="f.tipoDoc == 'Avulso'"><i class="far fa-file" title="Documento Avulso"></i></span>
-													<span v-else><i class="far fa-copy" title="Documento Composto"></i></span>
-												</c:if>
-												{{f.descr}}
+											<td class="col-4 d-none d-md-block">
+												<span class="text-break" :title='f.descr' v-if="f.descr.length<60">{{f.descr}}</span>
+												<span class="text-break" :title='f.descr' v-else>{{ f.descr.substring(0,60)+"..." }}</span>												
 											</td>
 											<td class="col-3 col-md-2">
 												<c:if test="${siga_cliente == 'GOVSP'}">
@@ -207,12 +210,12 @@
 											</td>
 											<td class="col-3 d-none d-md-block" style="padding: 0;">
 												<span v-if="f.anotacao != null">
-													<a tabindex="0" class="anotacao fas fa-sticky-note text-warning popover-dismiss" role="button" 
-															data-toggle="popover" data-trigger="hover focus" title="Anotação" :data-content="f.anotacao"></a>
+													<a tabindex="0" class="anotacao fas fa-sticky-note text-warning popover-dismiss ml-1" role="button" 
+															data-toggle="popover" data-trigger="hover focus" :data-content="f.anotacao"></a>
 												</span>
 												<span class="xrp-label-container">
 													<span v-for="m in f.list" :title="m.titulo">
-														<span class="badge badge-pill badge-secondary tagmesa m-1 btn-xs">												
+														<span class="text-size-8 badge badge-pill badge-secondary tagmesa m-1 btn-xs">												
 <!-- 														<button	class="btn btn-default btn-sm xrp-label"> -->
 															<i :class="m.icone"></i> {{m.nome}}<span
 																v-if="m.pessoa &amp;&amp; !m.daPessoa"> -
@@ -229,20 +232,22 @@
 								</tbody>
 							</table>
 							<div class="row">
-								<div class="col-md-9 mb-2">
+								<div class="col col-md-9 mb-2">
 									<div class="text-center" v-if="carregando">
 										<div class="spinner-grow text-info text-center" role="status"></div>
 									</div>
 								</div>
 								<div class="col-6 col-md-3 mb-2">
 									<div class="float-right d-flex">
-										<button v-if="g.grupoDocs != undefined && g.grupoCounterAtivo > g.grupoDocs.length" 
-												type="button" class="btn btn-primary btn-sm" 
+										<button	type="button" class="btn btn-primary btn-sm"
+												v-if="g.grupoDocs != undefined && g.grupoCounterAtivo > g.grupoDocs.length" 
 												:class="{disabled: carregando}" @click="pageDownGrupo(g.grupoNome);">
 											Mais<i v-if="!carregando" class="ml-2 fas fa-chevron-circle-down"></i>
 											<div v-if="carregando" class="spinner-border" role="status"></div>
 										</button>
-										<button type="button" class="ml-2 btn btn-light btn-sm" @click="fecharGrupo(g.grupoOrdem, g.grupoNome);">
+										<button type="button" class="ml-2 btn btn-light btn-sm"
+											v-if="g.grupoDocs != undefined && g.grupoCounterAtivo > 0" 
+											@click="fecharGrupo(g.grupoOrdem, g.grupoNome);">
 											<i class="fas fa-chevron-circle-up text-secondary"></i>
 										</button>
 									</div>
@@ -281,15 +286,6 @@
 		$("#ultima-atualizacao").addClass("text-secondary");
 	}, 5000);
 	 
-	 
-	if ((location.href).indexOf('excluiuAnotacao') !== -1 ) {
-		$('#mensagemCabecId').toggleClass('d-none');
-		$('#mensagemCabec').prepend("Anotação excluída com sucesso.");
-		$('#mensagemCabec').addClass("alert-success fade-close");
-    	this.carregando = true;
-    	this.grupos = [];
-    	sessionStorage.removeItem('timeout' + getUser());
-	}
 	var appMesa = new Vue({
 		  el: "#app",
 
@@ -298,12 +294,9 @@
 	      	var self = this
 			self.exibeLota = (getParmUser('exibeLota') === 'true');
 	      	setParmUser('trazerAnotacoes', self.trazerAnotacoes);
-	      	setParmUser('trazerCancelados', self.trazerCancelados);
-		    setTimeout(function() {
-		      self.carregarMesa();
-		    });
+	      	setParmUser('trazerComposto', self.trazerComposto);
+  	        self.carregarMesa();
 		  },
-
 		  data: function() {
 		    return {
 		      mesa: undefined,
@@ -320,7 +313,7 @@
 		      selQtd: undefined,
 		      selQtdPag: 15,
 		      trazerAnotacoes: true,
-		      trazerCancelados: false
+		      trazerComposto: false,
 		    };
 		  },
 
@@ -347,11 +340,23 @@
 		      } 
 		      this.$nextTick(function () {		      
 	        	$('.popover-dismiss').popover({
-	        		container: 'body',
 	        		html: true,
-	        		delay: { "show": 100, "hide": 600 },
-	        		trigger: 'hover focus'
-	        	});
+	        		animation: false,
+	        		trigger: 'manual'
+	        	}).on("mouseenter", function () {
+	                var _this = this;
+	                $(this).popover("show");
+	                $(".popover").on("mouseleave", function () {
+	                    $(_this).popover('hide');
+	                });
+	            }).on("mouseleave", function () {
+	                var _this = this;
+	                setTimeout(function () {
+	                    if (!$(".popover:hover").length) {
+	                        $(_this).popover("hide");
+	                    }
+	                }, 300);
+		      	})
 		      });
 		      return grps;
 		    },
@@ -370,15 +375,21 @@
 				if (parms != null) {
 					for (var g in parms) {
 			        	setValueGrupo(g, 'qtdPag', qtdPag);
+			        	if (parms[g].collapsed == false) {
+			        		setValueGrupo(g, 'qtd', qtdPag);
+			        	}
 					}
 				}
+				this.recarregarMesa();
 			},
 			trazerAnotacoes: function() {
 				setParmUser('trazerAnotacoes', this.trazerAnotacoes);
+				this.recarregarMesa();
 			},
-			trazerCancelados: function() {
-				setParmUser('trazerCancelados', this.trazerCancelados);
-			}
+			trazerComposto: function() {
+				setParmUser('trazerComposto', this.trazerComposto);
+				this.recarregarMesa();
+			},
 		  },		  
 			  
 		  methods: {
@@ -386,13 +397,13 @@
 		      var self = this
 		      var timeout = Math.abs(new Date() - 
 		    		  new Date(sessionStorage.getItem('timeout' + getUser())));
-		      if (this.carregando && timeout < 120000) 
-		    	  return;
 		      if (timeout < 120000 && grpNome == null) {
 				carregaFromJson(sessionStorage.getItem('mesa' + getUser()), self);
 				
 				return;
 		      }
+		      if (this.carregando || timeout < 120000) 
+		    	  return;
 		      this.carregando = true;
 		      var erros = {};
 		      if (this.grupos && this.grupos.length > 0) {
@@ -406,6 +417,7 @@
 		    	  parms[grpNome] = {'grupoOrdem' : parmGrupos[grpNome].ordem, 
 		    			'grupoQtd' : parseInt(parmGrupos[grpNome].qtd) + qtdPagina, 
 		    			'grupoQtdPag' : parmGrupos[grpNome].qtdPag, 'grupoCollapsed' : parmGrupos[grpNome].collapsed }; 
+		          setValueGrupo(grpNome, 'qtd', parseInt(parmGrupos[grpNome].qtd) + qtdPagina);
 		      } else {
 		    	  var i=0;
 				  for (p in parmGrupos) {
@@ -419,7 +431,7 @@
 			          data: {parms: JSON.stringify(parms),
 		        	  	 exibeLotacao: getParmUser('exibeLota'),
 		        	  	 trazerAnotacoes: getParmUser('trazerAnotacoes'),
-		        	  	 trazerCancelados: getParmUser('trazerCancelados'),
+		        	  	 trazerComposto: getParmUser('trazerComposto'),
 		        	  	 idVisualizacao: ${idVisualizacao}
 		        	  }, 
 		          complete: function (response, status, request) {   
@@ -444,14 +456,15 @@
 		    	sessionStorage.removeItem('timeout' + getUser());
 		    	sessionStorage.removeItem('mesa' + getUser());
 		    	localStorage.removeItem('gruposMesa' + getUser());
-		    	localStorage.removeItem('trazerAnotacoes' + getUser());
-		    	localStorage.removeItem('trazerCancelados' + getUser());
+		    	setParmUser('trazerAnotacoes', true);
+		    	this.trazerAnotacoes=true;
+		    	setParmUser('trazerComposto', true);
+		    	this.trazerComposto=false;
 		    	localStorage.removeItem('exibeLota' + getUser());
 		    	this.carregarMesa();
     			this.selQtdPag = 15;
 		    },
 		    recarregarMesa: function() {
-		    	this.carregando = true;
 		    	this.grupos = [];
 		    	sessionStorage.removeItem('timeout' + getUser());
 		    	this.carregarMesa();
@@ -477,24 +490,15 @@
 	    		} else {
 		  	    	setValueGrupo(grupoNome, 'qtd', parseInt(parmGrupos[grupoNome].qtd));
 	    		}
+		    	sessionStorage.removeItem('timeout' + getUser());
 	    		this.carregarMesa(grupoNome, parseInt(parmGrupos[grupoNome].qtdPag));
 		    },
-		    pageUpGrupo: function(grupoNome) {
-		  	    var parmGrupos = JSON.parse(getParmUser('gruposMesa'));
-	    		if (parmGrupos[grupoNome].qtd <= parmGrupos[grupoNome].qtdPag) {
-	    			setValueGrupo(grupoNome, 'qtd', parseInt(parmGrupos[grupoNome].qtdPag));
-	    			this.collapseGrupo(parmGrupos[grupoNome].ordem, grupoNome);
-	    		} else {
-		  	    	setValueGrupo(grupoNome, 'qtd', parseInt(parmGrupos[grupoNome].qtd) - parseInt(parmGrupos[grupoNome].qtdPag));
-	    		}
-	    		this.carregarMesa(grupoNome, 0);
-	    		setValueGrupoVue(grupoNome,'grupoCollapsed', true);
-	    		setValueGrupoVue(grupoNome,'grupoQtd', parmGrupos[grupoNome].qtd);
-		    },
 		    collapseGrupo: function(grupoOrdem, grupoNome) {
+		    	// Abre ou fecha o grupo, salvando info no local/session storage e refletindo no vue
 		  	    var parmGrupos = JSON.parse(getParmUser('gruposMesa'));
 		    	var collapsibleElemHeader = document.getElementById('collapse-header-' + grupoOrdem);
 		  	    if (collapsibleElemHeader.classList.contains('collapsed')) {
+		    		setValueGrupoSessionStorage(grupoNome,'grupoCollapsed', false);
 		    		setValueGrupo(grupoNome, 'collapsed', false);
 		    		if (parmGrupos[grupoNome].qtd === 0) {
 		    			setValueGrupo(grupoNome, 'qtd', parmGrupos[grupoNome].qtdPag)
@@ -502,9 +506,11 @@
 			  	    	setValueGrupo(grupoNome, 'qtd', parseInt(parmGrupos[grupoNome].qtd));
 		    		}
 		    		if ($('#collapsetab-' + grupoOrdem + ' tr').length < 2) {
+		    	    	sessionStorage.removeItem('timeout' + getUser());
 			    		this.carregarMesa(grupoNome, 0);
 		    		}
 		    	} else {
+		    		setValueGrupoSessionStorage(grupoNome,'grupoCollapsed', true);
 		    		setValueGrupo(grupoNome, 'collapsed', true);
 		    	}
 		    },
@@ -676,11 +682,21 @@ function setValueGrupo(grupoNome, key, value) {
 	parms[grupoNome] [key] = value;
 	setParmUser('gruposMesa', JSON.stringify(parms));
 }
-function setValueGrupoVue(grupoNome, key, qtd) {
+function setValueGrupoVue(grupoNome, key, value) {
     for (var g in appMesa.grupos) {
         if (appMesa.grupos[g].grupoNome == grupoNome) 
-        	Vue.set(appMesa.grupos[g], key, qtd);
+        	Vue.set(appMesa.grupos[g], key, value);
     }
+}
+function setValueGrupoSessionStorage(grupoNome, key, value) {
+	var grp = JSON.parse(sessionStorage.getItem('mesa' + getUser()));
+    for (var g in grp) {
+      if (grp[g].grupoNome == grupoNome) {
+    	grp [g] [key] = value;  
+      }
+    }
+    sessionStorage.setItem(
+			  'mesa' + getUser(), JSON.stringify(grp));
 }
 function setParmUser(nomeParm, value) {
 	window.localStorage.setItem(nomeParm + getUser(), value)	
@@ -699,7 +715,7 @@ function carregaFromJson (json, appMesa) {
 	  appMesa.grupos = grp;  
     } else {
       for (var g in appMesa.grupos) {
-         if (appMesa.grupos[g].grupoOrdem === grp[0].grupoOrdem) {
+        if (appMesa.grupos[g].grupoOrdem === grp[0].grupoOrdem) {
       		Vue.set(appMesa.grupos, g, grp[0]);
       		if (appMesa.grupos[g].grupoDocs == undefined)
       			appMesa.grupos[g].grupoDocs = [];

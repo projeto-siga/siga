@@ -43,7 +43,7 @@ public class DpCargoController extends
 	}
 	
 	public boolean temPermissaoParaExportarDados() {
-		return Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getTitular().getLotacao(),"SIGA;GI;CAD_CARGO;EXP_DADOS");
+		return Boolean.valueOf(Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getTitular().getLotacao(),"SIGA;GI;CAD_CARGO;EXP_DADOS"));
 	}
 	
 	@Get
@@ -230,7 +230,7 @@ public class DpCargoController extends
 		if(idOrgaoUsu == null)
 			throw new AplicacaoException("Órgão não informada");
 		
-		if(nmCargo != null && !nmCargo.matches("[a-zA-ZàáâãéêíóôõúçÀÁÂÃÉÊÍÓÔÕÚÇ 0-9.]+")) 
+		if(nmCargo != null && !nmCargo.matches("[a-zA-ZàáâãéêíóôõúçÀÁÂÃÉÊÍÓÔÕÚÇ 0-9-/.]+")) 			                              
 			throw new AplicacaoException("Nome com caracteres não permitidos");
 				
 		List<DpPessoa> listPessoa = null;

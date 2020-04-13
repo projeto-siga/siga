@@ -778,7 +778,7 @@ public class ExMovimentacaoController extends ExController {
 
 		result.include("msgCabecClass", "alert-warning");
 		result.include("mensagemCabec", "Somente os usuários definidos, terão acesso aos documentos. Os usuários que já tiveram acesso ao documento, por tramitações anteriores ou por definição de acompanhamento deixam de ter acesso/visualização ao documento. Inclusive o cadastrante dos documentos, responsáveis pela assinatura e cossignatário");
-		result.forwardTo(ExDocumentoController.class).exibe(false, sigla, null, null, null);
+		result.forwardTo(ExDocumentoController.class).exibe(false, sigla, null, null, null, false);
 	}
 
 	@Post("app/expediente/mov/redefinir_nivel_acesso_gravar")
@@ -3152,6 +3152,41 @@ public class ExMovimentacaoController extends ExController {
 		result.include("validarCamposObrigatoriosForm", SigaMessages.isSigaSP());
 	}
 
+	@Get("/app/expediente/mov/cancelar_anotacao")
+	public void aCancelarAnotacao(final Long id, String redirectURL)
+			throws Exception {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+				.novaInstancia().setId(id);
+		buscarDocumento(builder);
+		final ExMobil mob = builder.getMob();
+
+		final ExMovimentacao mov = dao().consultar(id, ExMovimentacao.class,
+				false);
+
+		if (mov == null 
+				|| !mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO) 
+				|| mov.isCancelada()) {
+			throw new AplicacaoException("Não existe a anotação a ser cancelada.");
+		}
+		
+		try {
+			Ex.getInstance()
+			.getBL()
+			.cancelar(getTitular(), getLotaTitular(), builder.getMob(),
+					mov, null, null, null,
+					"Anotação: " + mov.getDescrMov());
+		} catch (final Exception e) {
+			throw e;
+		}
+
+		if (redirectURL != null) {
+			result.redirectTo(redirectURL);
+		} else {
+			ExDocumentoController
+			.redirecionarParaExibir(result, mob.getSigla());
+		}
+	}
+	
 	@Get("/app/expediente/mov/cancelar_ciencia")
 	public void aCancelarCiencia(String sigla)
 			throws Exception {
@@ -3170,6 +3205,7 @@ public class ExMovimentacaoController extends ExController {
 					"Usuário não tem permissão de cancelar ciência.");
 
 		Set <ExMovimentacao> setMovCiente = mob.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA);
+		ExMovimentacao movAss = mob.getUltimaMovimentacaoNaoCancelada(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA);
 
 		if (setMovCiente != null) {
 			for (ExMovimentacao mov : setMovCiente) {
@@ -3188,6 +3224,13 @@ public class ExMovimentacaoController extends ExController {
 						.cancelar(getTitular(), getLotaTitular(), builder.getMob(),
 								movCiencia, null, null, null,
 								"Ciência: " + movCiencia.getDescrMov());
+				if (movAss != null) {
+					Ex.getInstance()
+					.getBL()
+					.cancelar(getTitular(), getLotaTitular(), builder.getMob(),
+							movAss, null, null, null,
+							movAss.getDescrTipoMovimentacao() + ": " + movAss.getDescrMov());
+				}
 			} catch (final Exception e) {
 				throw e;
 			}

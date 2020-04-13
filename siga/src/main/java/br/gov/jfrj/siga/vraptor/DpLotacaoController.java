@@ -56,7 +56,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	}
 	
 	public boolean temPermissaoParaExportarDados() {
-		return Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getTitular().getLotacao(),"SIGA;GI;CAD_LOTACAO;EXP_DADOS");
+		return Boolean.valueOf(Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getTitular().getLotacao(),"SIGA;GI;CAD_LOTACAO;EXP_DADOS"));
 	}
 	
 	@Get

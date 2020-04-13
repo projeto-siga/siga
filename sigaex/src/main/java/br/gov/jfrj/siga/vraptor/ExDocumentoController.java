@@ -889,6 +889,23 @@ public class ExDocumentoController extends ExController {
 			s = " "
 					+ exDocumentoDTO.getMob().doc().getExNivelAcessoAtual()
 							.getNmNivelAcesso() + " " + s;
+			
+			String ERRO_INACESSIVEL_USUARIO;
+			if (Ex.getInstance()
+			.getComp().ehPublicoExterno(getTitular())) {
+				ERRO_INACESSIVEL_USUARIO = "Documento "
+						+ exDocumentoDTO.getMob().getSigla()
+						+ " inacessível ao usuário " + getTitular().getSigla()
+						+ "/" + getLotaTitular().getSiglaCompleta() + "." + s
+						+ " " + msgDestinoDoc;
+			} else {
+				ERRO_INACESSIVEL_USUARIO = "Documento "
+						+ exDocumentoDTO.getMob().getSigla()
+						+ " inacessível ao usuário " + getTitular().getSigla()
+						+ "/" + getLotaTitular().getSiglaCompleta() + ", Publico externo exceto se for subscritor" 
+						+ " , cosignatário ou tiver algum perfil associado ao documento ou ainda se documento estiver "
+						+ " passado por sua lotação. ";
+			}
 
 			Map<ExPapel, List<Object>> mapa = exDocumentoDTO.getMob().doc()
 					.getPerfis();
@@ -916,51 +933,7 @@ public class ExDocumentoController extends ExController {
 								+ " cancelado ");
 				}
 			} else  {
-				if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
-					String a[] = exDocumentoDTO.getMob().doc().getListaDeAcessosString().split(",");
-					CpDao cpdao = CpDao.getInstance();
-					DpPessoa p = null;
-					DpLotacao l = null;
-					String parteNumerica = null;
-					s = "(";
-					for (int i = 0; i < a.length; i++) {
-						
-						parteNumerica = a[i].replaceAll("[^0123456789]", "");
-						if(parteNumerica != null && !"".equals(parteNumerica)) {
-							p = new DpPessoa();
-							p.setMatricula(Long.valueOf(parteNumerica));  
-							p.setSesbPessoa(a[i].replaceAll("[^a-zA-Z]", ""));
-							p = cpdao.consultarPorSigla(p);
-							if(p != null)
-								s += p.getNomePessoa() + "("+a[i].trim()+"/"+ p.getLotacao().getSiglaLotacao()+")";
-						} else {
-							l = new DpLotacao();
-							l.setOrgaoUsuario(exDocumentoDTO.getDoc().getOrgaoUsuario());
-							l.setSigla(a[i].replace(exDocumentoDTO.getDoc().getOrgaoUsuario().getSigla(), ""));
-							l = cpdao.consultarPorSigla(l);
-							if(l !=null)
-								s += "("+l.getNomeLotacao()+")";
-						}
-						s += (i+1 == a.length) ? "" : ",";
-					}
-					s += ")";
-					
-					
-					s = " "
-							+ exDocumentoDTO.getMob().doc().getExNivelAcessoAtual()
-									.getNmNivelAcesso() + " " + s;
-					throw new AplicacaoException("Documento "
-							+ exDocumentoDTO.getMob().getSigla()
-							+ " inacessível ao usuário " + getTitular().getNomePessoa() + "(" +getTitular().getSigla()
-							+ "/" + getLotaTitular().getSiglaCompleta() + ")." + s
-							+ " " + msgDestinoDoc);
-				} else {
-					throw new AplicacaoException("Documento "
-							+ exDocumentoDTO.getMob().getSigla()
-							+ " inacessível ao usuário " + getTitular().getSigla()
-							+ "/" + getLotaTitular().getSiglaCompleta() + "." + s
-							+ " " + msgDestinoDoc);
-				}
+				throw new AplicacaoException(ERRO_INACESSIVEL_USUARIO);
 			}
 		}
 	}

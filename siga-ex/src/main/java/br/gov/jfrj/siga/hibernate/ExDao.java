@@ -550,7 +550,7 @@ public class ExDao extends CpDao {
 
 		if (pess != null) {
 			query = em().createNamedQuery("consultarEmailporPessoa");
-			query.setParameter("idPessoaIni", pess.getPessoaInicial());
+			query.setParameter("idPessoaIni", pess.getIdInicial());
 		} else {
 			query = em().createNamedQuery("consultarEmailporLotacao");
 

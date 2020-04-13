@@ -106,12 +106,6 @@ public class WfConfiguracaoBL extends CpConfiguracaoBL {
 			DpFuncaoConfianca dpFuncaoConfianca, DpPessoa dpPessoa,
 			long idTpConf, String procedimento, String raia, String tarefa)
 			throws Exception {
-
-		
-		if (isUsuarioRoot(dpPessoa)){
-			return true;
-		}
-
 		WfConfiguracao cfgFiltro = createNewConfiguracao();
 
 		cfgFiltro.setCargo(cargo);

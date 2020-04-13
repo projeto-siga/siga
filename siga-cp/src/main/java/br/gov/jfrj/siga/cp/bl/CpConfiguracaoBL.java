@@ -696,14 +696,6 @@ public class CpConfiguracaoBL {
 			CpServico cpServico, CpIdentidade cpIdentidade, CpGrupo cpGrupo,
 			CpTipoLotacao cpTpLotacao, long idTpConf) throws Exception {
 		try {
-			if (isUsuarioRoot(dpPessoa)){
-				return true;
-			}
-			
-			if (cpIdentidade !=null && isUsuarioRoot(cpIdentidade.getDpPessoa())){
-				return true;
-			}
-			
 			CpConfiguracao cfgFiltro = createNewConfiguracao();
 	
 			cfgFiltro.setCargo(cargo);
@@ -746,17 +738,6 @@ public class CpConfiguracaoBL {
 	}
 
 	
-	protected boolean isUsuarioRoot(DpPessoa dpPessoa) {
-		// if (true) return false;
-		return dpPessoa != null
-				&& dpPessoa.getIdInicial().equals(ID_USUARIO_ROOT)
-				&& dpPessoa.getMatricula().equals(MATRICULA_USUARIO_ROOT)
-				&& dpPessoa.getCpfPessoa().equals(CPF_ROOT)
-				&& dpPessoa.getDataFim() == null
-				&& dpPessoa.getOrgaoUsuario().getSigla().equals(SIGLA_ORGAO_ROOT)
-				&& dpPessoa.getOrgaoUsuario().getId().equals(ID_ORGAO_ROOT);
-	}
-
 	/**
 	 * 
 	 * Usado para se verificar se uma pessoa pode realizar uma determinada

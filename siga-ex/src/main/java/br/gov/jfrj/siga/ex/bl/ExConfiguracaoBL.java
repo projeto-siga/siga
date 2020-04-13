@@ -277,11 +277,6 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 			long idTpConf, DpPessoa pessoaObjeto, 
 			DpLotacao lotacaoObjeto, CpComplexo complexoObjeto, DpCargo cargoObjeto, 
 			DpFuncaoConfianca funcaoConfiancaObjeto, CpOrgaoUsuario orgaoObjeto) {
-
-		if (isUsuarioRoot(dpPessoa) && idTpConf != CpTipoConfiguracao.TIPO_CONFIG_CRIAR && idTpConf != CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_EXTENSAO_CONVERSOR_HTML){
-			return true;
-		}
-
 		try {
 			ExConfiguracao config = new ExConfiguracao();
 			config.setCargo(cargo);
@@ -321,7 +316,9 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 				situacao = config.getCpTipoConfiguracao().getSituacaoDefault();
 
 			if (situacao != null
-					&& situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_PODE)
+					&& (situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_PODE ||
+							situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_DEFAULT ||
+							situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_OBRIGATORIO))
 				return true;
 		} catch (Exception e) {
 			return false;

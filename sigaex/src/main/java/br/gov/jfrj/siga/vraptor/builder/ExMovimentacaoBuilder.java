@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
@@ -172,6 +173,8 @@ public final class ExMovimentacaoBuilder {
 			mov.setDtMov(df.parse(dtMovString));
 		} catch (final Exception e) {
 		}
+		if (mov.getDtMov() != null && !Data.dataDentroSeculo21(mov.getDtMov()))
+			throw new AplicacaoException("Data inválida, deve estar entre o ano 2000 e ano 2100");
 
 		try {
 			mov.setDtFimMov(df.parse(dtDevolucaoMovString));

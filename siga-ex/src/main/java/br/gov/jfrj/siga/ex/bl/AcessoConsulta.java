@@ -33,7 +33,11 @@ public class AcessoConsulta {
 	}
 
 	public boolean podeAcessar(ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular) {
-		return this.pattern.matcher(doc.getDnmAcesso()).find();
+		if (ehPublicoExterno(titular)) {
+			return podeAcessarPublicoExterno(doc, titular, lotaTitular);
+		} else {
+			return this.pattern.matcher(doc.getDnmAcesso()).find();
+		}
 	}
 	
 	public boolean podeAcessarPublicoExterno(ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular) {
@@ -103,7 +107,8 @@ public class AcessoConsulta {
 	}
 	
 	public static boolean ehPublicoExterno(DpPessoa titular) {
-		return (titular.getOrgaoUsuario().getIsExternoOrgaoUsu());
+		return ((titular.getOrgaoUsuario().getIsExternoOrgaoUsu() != null && titular.getOrgaoUsuario().getIsExternoOrgaoUsu() == 1)
+				|| titular.getLotacao() != null && titular.getLotacao().getIsExternaLotacao() == 1);
 	}
 
 }

@@ -15,6 +15,11 @@
 		var cpf = document.getElementsByName('cpf')[0].value;
 		var email = document.getElementsByName('email')[0].value;
 		var id = document.getElementsByName('id')[0].value;	
+		
+		$("#spinnerModal").modal('show');
+		 document.getElementById("btnOk").disabled = true;
+		
+		
 		if (nmPessoa==null || nmPessoa=="") {			
 			mensagemAlerta("Preencha o nome da pessoa.");
 			document.getElementById('nmPessoa').focus();
@@ -64,9 +69,7 @@
 			return;
 		}
 			
-		document.getElementById("email").disabled = false;
-		 $("#spinnerModal").modal('show');
-		 document.getElementById("btnOk").disabled = true;
+		document.getElementById("email").disabled = false
 		frm.submit();
 	}
 
@@ -295,7 +298,7 @@
 							<button type="button" onclick="javascript: validarNomeCpf();" class="btn btn-primary" >Ok</button> 
 							<button type="button" onclick="javascript:history.back();" class="btn btn-primary" >Cancelar</button>
 						</div>
-					</div>
+					</div>	
 				</div>
 			</form>
 			<!-- Modal -->

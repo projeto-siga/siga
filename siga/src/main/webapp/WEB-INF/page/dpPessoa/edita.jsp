@@ -63,10 +63,14 @@
 		if(!validarCPF(cpf)) {
 			return;
 		}
+			
 		document.getElementById("email").disabled = false;
+		 $("#spinnerModal").modal('show');
+		 document.getElementById("btnOk").disabled = true;
 		frm.submit();
 	}
 
+			
 	function mensagemAlerta(mensagem) {
 		$('#alertaModal').find('.mensagem-Modal').text(mensagem);
 		$('#alertaModal').modal();
@@ -328,7 +332,7 @@
 				      		<div id="msgP" class="alert" ></div>
 				      	</div>
 						<div class="modal-footer">
-						  <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="validar();">Confirmar</button>
+						  <button type="button" id="btnOk" class="btn btn-primary" data-dismiss="modal" onclick="validar();">Confirmar</button>
 						  <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
 						</div>
 			    	</div>

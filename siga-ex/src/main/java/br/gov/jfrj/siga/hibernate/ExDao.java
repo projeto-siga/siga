@@ -24,7 +24,6 @@
  */
 package br.gov.jfrj.siga.hibernate;
 
-import java.awt.geom.FlatteningPathIterator;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -34,6 +33,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -44,8 +44,6 @@ import javax.persistence.criteria.Root;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.Texto;
-import br.gov.jfrj.siga.base.util.Utils;
-import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -1096,7 +1094,11 @@ public class ExDao extends CpDao {
 		whereList.toArray(whereArray);
 		q.where(whereArray);
 		
-		return em().createQuery(q).getSingleResult();
+		try {
+			return em().createQuery(q).getSingleResult();
+		} catch (NoResultException ex) {
+			return null;
+		}
 	}
 
 	public ExFormaDocumento consultarExForma(String sForma) {

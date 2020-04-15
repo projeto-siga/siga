@@ -14,13 +14,13 @@
 			class="nav-link dropdown-toggle" data-toggle="dropdown">Ferramentas</a>
 			<ul class="dropdown-menu navmenu-large">
 				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF;DIAG;Cadastrar Diagramas')}">
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF;FE;DEFP:Cadastrar Diagramas')}">
 					<li><a class="dropdown-item"
 						href="${linkTo[WfDiagramaController].lista()}">Cadastro de
 							Diagramas</a></li>
 				</c:if>
 				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF;RESP;Cadastrar Responsáveis')}">
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF;FE;DEFR:Cadastrar Responsáveis')}">
 					<li><a class="dropdown-item"
 						href="${linkTo[WfResponsavelController].lista()}">Cadastro de
 							Responsáveis</a></li>
@@ -28,19 +28,12 @@
 			</ul></li>
 	</c:if></li>
 <c:if
-	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF;MEDIR: Analisar métricas')}">
+	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF;REL:Relatórios')}">
 	<li class="nav-item dropdown"><a href="javascript:void(0);"
 		class="nav-link dropdown-toggle" data-toggle="dropdown">Relatórios
 	</a>
 		<ul class="dropdown-menu navmenu-large">
-			<li class="dropdown-submenu"><a href="#"
-				class="dropdown-item dropdown-toggle">Apresentar Métricas</a>
-				<ul class="dropdown-menu">
-					<c:forEach var="pd" items="${processDefinitions}">
-						<li><a class="dropdown-item"
-							href="${linkTo[MetricaController].medir}?orgao=${lotaTitular.orgaoUsuario.id}&procedimento=${pd.name}&pdId=${pd.id}">${pd.name}</a>
-						</li>
-					</c:forEach>
-				</ul></li>
+			<li><a class="dropdown-item"
+				href="${linkTo[WfRelatorioController].listarParaGerarRelatorios()}">Medições</a></li>
 		</ul></li>
 </c:if>

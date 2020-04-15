@@ -49,19 +49,21 @@ public class WfPropriedadeBL extends CpPropriedadeBL {
 	}
 
 	public Double getRelEstatGeraisMinMediaTrunc() {
-		return Double.valueOf(getString("rel.estatisticas.gerais.media.truncada.min").replace(",", "."));
+		return Double.valueOf(getString("rel.estatisticas.gerais.media.truncada.min", "5").replace(",", "."));
 	}
 
 	public Double getRelEstatGeraisMaxMediaTrunc() {
-		return Double.valueOf(getString("rel.estatisticas.gerais.media.truncada.max").replace(",", "."));
+		return Double.valueOf(getString("rel.estatisticas.gerais.media.truncada.max", "25").replace(",", "."));
 	}
 
-	public static String getString(final String key) {
+	public static String getString(final String key, final String def) {
 		try {
-			return instance.obterPropriedade(key);
+			String obterPropriedade = instance.obterPropriedade(key);
+			if (obterPropriedade == null)
+				return def;
+			return obterPropriedade;
 		} catch (Exception e) {
-			e.printStackTrace();
-			return "";
+			return def;
 		}
 	}
 

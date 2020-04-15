@@ -55,7 +55,7 @@ import br.gov.jfrj.siga.wf.util.WfUtil;
 @Controller
 @Path("app/responsavel")
 public class WfResponsavelController extends WfController {
-	private static final String VERIFICADOR_ACESSO = "DEFR:Gerenciar Responsáveis";
+	private static final String VERIFICADOR_ACESSO = "FE;DEFR:Gerenciar Responsáveis";
 	private static final Logger LOGGER = Logger.getLogger(WfResponsavelController.class);
 
 	public static class Item {

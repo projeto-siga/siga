@@ -854,7 +854,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov);
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new Exception(e.getMessage());
+			throw e;
 		}
 	}
 

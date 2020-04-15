@@ -66,7 +66,7 @@ import br.gov.jfrj.siga.wf.util.NaoSerializar;
 public class WfDiagramaController
 		extends SigaSelecionavelControllerSupport<WfDefinicaoDeProcedimento, DaoFiltroSelecionavel> {
 
-	private static final String VERIFICADOR_ACESSO = "DEFP:Gerenciar Diagramas";
+	private static final String VERIFICADOR_ACESSO = "WF;FE;DEFP:Gerenciar Diagramas";
 	private static final String UTF8 = "utf-8";
 
 	public static String ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";

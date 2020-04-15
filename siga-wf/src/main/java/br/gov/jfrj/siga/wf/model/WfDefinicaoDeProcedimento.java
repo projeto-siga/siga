@@ -240,7 +240,7 @@ public class WfDefinicaoDeProcedimento extends HistoricoAuditavelSuporte impleme
 	}
 
 	public String getSigla() {
-		return orgaoUsuario.getAcronimoOrgaoUsu() + "-WF-" + ano + "/" + Utils.completarComZeros(numero, 5);
+		return orgaoUsuario.getAcronimoOrgaoUsu() + "-DP-" + ano + "/" + Utils.completarComZeros(numero, 5);
 	}
 
 	public String getSiglaCompacta() {

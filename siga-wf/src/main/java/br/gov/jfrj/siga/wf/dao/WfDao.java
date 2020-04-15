@@ -218,6 +218,21 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 		return result;
 	}
 
+	public List<WfProcedimento> consultarProcedimentosParaEstatisticas(WfDefinicaoDeProcedimento pd, Date dataInicialDe,
+			Date dataInicialAte, Date dataFinalDe, Date dataFinalAte) {
+		String sql = "select p from WfProcedimento p inner join p.definicaoDeProcedimento pd where pd.hisIdIni = :hisIdIni and p.hisDtFim is not null "
+				+ " and p.hisDtIni >= :dataInicialDe and p.hisDtIni <= :dataInicialAte "
+				+ " and p.hisDtFim >= :dataFinalDe and p.hisDtFim <= :dataFinalAte";
+		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
+		query.setParameter("hisIdIni", pd.getHisIdIni());
+		query.setParameter("dataInicialDe", dataInicialDe);
+		query.setParameter("dataInicialAte", dataInicialAte);
+		query.setParameter("dataFinalDe", dataFinalDe);
+		query.setParameter("dataFinalAte", dataFinalAte);
+		List<WfProcedimento> result = query.getResultList();
+		return result;
+	}
+
 	public <T> T consultarPorSigla(String sigla, Class<T> clazz) {
 		String acronimo = null;
 		if (clazz.isAssignableFrom(WfProcedimento.class)) {

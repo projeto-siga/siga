@@ -47,4 +47,12 @@ public class WfMovTransicao extends WfMov {
 				+ (definicaoDeTarefaPara == null ? "fim" : definicaoDeTarefaPara.getNome());
 	}
 
+	public WfDefinicaoDeTarefa getDefinicaoDeTarefaDe() {
+		return definicaoDeTarefaDe;
+	}
+
+	public WfDefinicaoDeTarefa getDefinicaoDeTarefaPara() {
+		return definicaoDeTarefaPara;
+	}
+
 }

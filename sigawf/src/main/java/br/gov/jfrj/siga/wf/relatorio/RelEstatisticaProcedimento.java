@@ -33,6 +33,11 @@ import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.wf.bl.Wf;
+import br.gov.jfrj.siga.wf.dao.WfDao;
+import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
+import br.gov.jfrj.siga.wf.model.WfMov;
+import br.gov.jfrj.siga.wf.model.WfMovTransicao;
+import br.gov.jfrj.siga.wf.model.WfProcedimento;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.view.JasperViewer;
 
@@ -133,6 +138,7 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 		// inicialização das variáveis
 		String procedimento = (String) parametros.get("nomeProcedimento");
 
+		Long pdId = Long.parseLong((String) parametros.get("pdId"));
 		Date dataInicialDe = getDataDe("dataInicialDe");
 		Date dataInicialAte = getDataAte("dataInicialAte");
 		Date dataFinalDe = getDataDe("dataFinalDe");
@@ -152,74 +158,71 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 		Long maxPI = 0L;
 
 		Map<Long, Long> mapaAmostraPI = new HashMap<Long, Long>();
-//
-//		List<ProcessDefinition> listaPD = getProcessDefinitions(procedimento);
-//
-//		for (ProcessDefinition pd : listaPD) {
-//
-//			List<ProcessInstance> instanciasProcesso = getProcessInstances(pd);
-//
-//			for (ProcessInstance pi : instanciasProcesso) {
-//				Collection<TaskInstance> instanciasTarefas = pi.getTaskMgmtInstance().getTaskInstances();
-//
-//				// se processo encerrado e dentro das datas informadas
-//				if (pi.hasEnded() && iniciadoEntre(pi, dataInicialDe, dataInicialAte)
-//						&& finalizadoEntre(pi, dataFinalDe, dataFinalAte)) {
-//
-//					Long duracaoPI = getDuracaoProcesso(pi);
-//
-//					// minPI
-//					if (minPI == 0 || duracaoPI < minPI) {
-//						minPI = duracaoPI;
-//					}
-//
-//					// maxPI
-//					if (maxPI == 0 || duracaoPI > maxPI) {
-//						maxPI = duracaoPI;
-//					}
-//
-//					// amostrasPI
-//					mapaAmostraPI.put(pi.getId(), duracaoPI);
-//
-//					for (TaskInstance ti : instanciasTarefas) {
-//
-//						Long duracaoTarefa = getDuracaoTarefa(ti);
-//
-//						// min Tarefa
-//						Long min = mapaMin.get(ti.getName());
-//						if (min != null) {
-//							if (duracaoTarefa < min) {
-//								mapaMin.put(ti.getName(), duracaoTarefa);
-//							}
-//						} else {
-//							mapaMin.put(ti.getName(), duracaoTarefa);
-//						}
-//
-//						// max Tarefa
-//						Long max = mapaMax.get(ti.getName());
-//						if (max != null) {
-//							if (duracaoTarefa > max) {
-//								mapaMax.put(ti.getName(), duracaoTarefa);
-//							}
-//						} else {
-//							mapaMax.put(ti.getName(), duracaoTarefa);
-//						}
-//
-//						// amostras Tarefas
-//						ArrayList<Long> listaAmostral = mapaAmostra.get(ti.getName());
-//						if (listaAmostral != null) {
-//							listaAmostral.add(duracaoTarefa);
-//						} else {
-//							listaAmostral = new ArrayList<Long>();
-//							listaAmostral.add(duracaoTarefa);
-//							mapaAmostra.put(ti.getName(), listaAmostral);
-//						}
-//					}
-//				}
-//
-//			}
-//
-//		}
+
+		WfDefinicaoDeProcedimento pd = WfDefinicaoDeProcedimento.AR.findById(pdId);
+		List<WfProcedimento> listaPD = WfDao.getInstance().consultarProcedimentosParaEstatisticas(pd, dataInicialDe,
+				dataInicialAte, dataFinalDe, dataFinalAte);
+
+		for (WfProcedimento pi : listaPD) {
+			Long duracaoPI = pi.getHisDtFim().getTime() - pi.getHisDtFim().getTime();
+
+			// minPI
+			if (minPI == 0 || duracaoPI < minPI) {
+				minPI = duracaoPI;
+			}
+
+			// maxPI
+			if (maxPI == 0 || duracaoPI > maxPI) {
+				maxPI = duracaoPI;
+			}
+
+			// amostrasPI
+			mapaAmostraPI.put(pi.getId(), duracaoPI);
+
+			Date dtLast = null;
+			for (WfMov mov : pi.getMovimentacoes()) {
+				if (!(mov instanceof WfMovTransicao))
+					continue;
+				WfMovTransicao t = (WfMovTransicao) mov;
+				if (dtLast == null)
+					dtLast = t.getHisDtIni();
+				if (t.getDefinicaoDeTarefaDe() == null)
+					continue;
+
+				Long duracaoTarefa = t.getHisDtIni().getTime() - dtLast.getTime();
+				String nomeTarefa = t.getDefinicaoDeTarefaDe().getNome();
+
+				// min Tarefa
+				Long min = mapaMin.get(nomeTarefa);
+				if (min != null) {
+					if (duracaoTarefa < min) {
+						mapaMin.put(nomeTarefa, duracaoTarefa);
+					}
+				} else {
+					mapaMin.put(nomeTarefa, duracaoTarefa);
+				}
+
+				// max Tarefa
+				Long max = mapaMax.get(nomeTarefa);
+				if (max != null) {
+					if (duracaoTarefa > max) {
+						mapaMax.put(nomeTarefa, duracaoTarefa);
+					}
+				} else {
+					mapaMax.put(nomeTarefa, duracaoTarefa);
+				}
+
+				// amostras Tarefas
+				ArrayList<Long> listaAmostral = mapaAmostra.get(nomeTarefa);
+				if (listaAmostral != null) {
+					listaAmostral.add(duracaoTarefa);
+				} else {
+					listaAmostral = new ArrayList<Long>();
+					listaAmostral.add(duracaoTarefa);
+					mapaAmostra.put(nomeTarefa, listaAmostral);
+				}
+			}
+		}
 
 		// Estatísticas Processos
 		Estatistica e = new Estatistica();
@@ -364,48 +367,6 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 		return dt.getTime();
 
 	}
-
-	/**
-	 * Retorna quanto tempo uma tarefa demou para ser concluída. O resultado é em
-	 * milissegundos.
-	 * 
-	 * @param ti
-	 * @return
-	 */
-//	private long getDuracaoTarefa(TaskInstance ti) {
-//
-//		SigaCalendar inicio = new SigaCalendar();
-//		SigaCalendar fim = new SigaCalendar();
-//
-//		inicio.setTime(ti.getCreate());
-//		fim.setTime(ti.getEnd());
-//
-//		long tInicio = inicio.getTimeInMillis();
-//		long tFim = fim.getTimeInMillis();
-//
-//		return tFim - tInicio;
-//	}
-
-	/**
-	 * Retorna quanto tempo um processo demorou para ser concluído. O resultado é em
-	 * milissegundos.
-	 * 
-	 * @param pi
-	 * @return
-	 */
-//	private long getDuracaoProcesso(ProcessInstance pi) {
-//
-//		SigaCalendar inicio = new SigaCalendar();
-//		SigaCalendar fim = new SigaCalendar();
-//
-//		inicio.setTime(pi.getStart());
-//		fim.setTime(pi.getEnd());
-//
-//		long tInicio = inicio.getTimeInMillis();
-//		long tFim = fim.getTimeInMillis();
-//
-//		return tFim - tInicio;
-//	}
 
 	/**
 	 * Utilizado para realizar testes no relatório. ATENÇÃO; Uma classe de teste

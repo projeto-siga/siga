@@ -1162,7 +1162,7 @@ CREATE TABLE `ex_tp_forma_doc` (
 
 LOCK TABLES `ex_tp_forma_doc` WRITE;
 /*!40000 ALTER TABLE `ex_tp_forma_doc` DISABLE KEYS */;
-INSERT INTO `ex_tp_forma_doc` VALUES (1,1),(2,1),(3,1),(4,1),(5,3),(8,2),(8,1),(9,1),(9,2),(12,1),(12,2),(13,1),(13,2),(14,1),(14,2),(54,1),(55,1),(56,1),(57,1),(97,1),(97,2),(98,1),(98,2),(99,4);
+INSERT INTO `ex_tp_forma_doc` VALUES (1,1),(2,1),(3,1),(4,1),(5,3),(8,1),(9,1),(12,1),(13,1),(14,1),(54,1),(55,1),(56,1),(57,1),(97,1),(98,1),(99,4);
 /*!40000 ALTER TABLE `ex_tp_forma_doc` ENABLE KEYS */;
 UNLOCK TABLES;
 

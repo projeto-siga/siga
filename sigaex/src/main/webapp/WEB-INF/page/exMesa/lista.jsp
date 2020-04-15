@@ -5,6 +5,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
 
 <siga:pagina titulo="Mesa Virtual">
 
@@ -35,15 +36,17 @@
 					<c:if test="${not empty visualizacao}"><b>(Delegante: ${visualizacao.titular.nomePessoa})</b></c:if> 
 				</span> 
 			</div> 
-			<div class="col col-12 col-sm-4 col-md-auto ml-md-auto mb-3">
-				<a href="expediente/doc/editar" class="btn btn-success form-control"> <i class="fas fa-plus-circle"></i>
+			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos') && cadastrante.orgaoUsuario.isExternoOrgaoUsu eq 0}">
+				<div class="col col-12 col-sm-4 col-md-auto ml-md-auto mb-2">
+					<a href="expediente/doc/editar" class="btn btn-success form-control"> <i class="fas fa-plus-circle mr-1"></i>
 						<fmt:message key="documento.novo"/></a>
-			</div>
-			<div class="col col-12 col-sm-4 col-md-auto mb-3">
-				<a href="expediente/doc/listar?primeiraVez=sim" class="btn btn-primary form-control">
-					<i class="fas fa-search"></i> <fmt:message key="documento.pesquisar"/> 
-				</a>
-			</div>
+				</div>
+				<div class="col col-12 col-sm-4 col-md-auto mb-2">
+					<a href="expediente/doc/listar?primeiraVez=sim" class="btn btn-primary form-control">
+						<i class="fas fa-search mr-1"></i><fmt:message key="documento.pesquisar"/> 
+					</a>
+				</div>
+			</c:if>
 			<div class="col col-12 col-sm-4 col-md-auto" v-if="carregando || (!errormsg &amp;&amp; filtrados.length >= 0)">
 				<div class="input-group mb-3">
 					<input type="text" class="form-control" placeholder="Filtrar" v-model="filtro" ng-model-options="{ debounce: 200 }">

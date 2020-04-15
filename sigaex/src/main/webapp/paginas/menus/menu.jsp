@@ -6,7 +6,7 @@
 <%@ taglib uri="http://localhost/libstag" prefix="fx"%>
 
 <c:if
-	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos')}">
+	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos') && cadastrante.orgaoUsuario.isExternoOrgaoUsu eq 0}">
 	<li class="nav-item dropdown"><a href="javascript:void(0);"
 		class="nav-link dropdown-toggle" data-toggle="dropdown">
 			Documentos </a>

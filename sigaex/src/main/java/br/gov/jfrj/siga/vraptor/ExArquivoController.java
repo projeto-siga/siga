@@ -97,9 +97,17 @@ public class ExArquivoController extends ExController {
 				completo = false;
 				estampar = false;
 			}
-			final ExMobil mob = Documento.getMobil(arquivo);
+			final ExMobil mob = Documento.getMobil(arquivo);			
 			if (mob != null) {				
 				mob.getMobilPrincipal().getDoc().setPodeExibirReordenacao(exibirReordenacao);
+				
+				if (sigla != null && !sigla.isEmpty()) {
+					ExMobil mobilDoDocumentoPrincipal = Documento.getMobil(sigla);
+					if (mobilDoDocumentoPrincipal != null) {
+						mob.getMobilPrincipal().getDoc().setIdDocPrincipal(mobilDoDocumentoPrincipal.getDoc().getIdDoc());
+					}
+				}
+												
 			} else {
 				throw new AplicacaoException("A sigla informada não corresponde a um documento da base de dados.");
 			}

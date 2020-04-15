@@ -2393,7 +2393,7 @@ public class ExBL extends CpBL {
 
 				if (mobPai.getMobilPrincipal().isNumeracaoUnicaAutomatica()) {
 					List<ExArquivoNumerado> ans = mov.getExMobil().filtrarArquivosNumerados(null, true);
-					armazenarCertidaoDeDesentranhamento(mov, mobPai.getMobilPrincipal(), ans, textoMotivo);
+					armazenarCertidaoDeDesentranhamento(mov, mobPai.getMobilPrincipal(), ans, mov.obterDescrMovComPontoFinal());
 				}
 			} else {
 				mov.setExMovimentacaoRef(
@@ -3166,9 +3166,11 @@ public class ExBL extends CpBL {
 		atualizarWorkFlow(doc);
 	}
 
-	public static String descricaoSePuderAcessar(ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular) {
-		if (mostraDescricaoConfidencial(doc, titular, lotaTitular))
-			return "CONFIDENCIAL";
+	public static String descricaoSePuderAcessar(ExDocumento doc,
+			DpPessoa titular, DpLotacao lotaTitular) {
+	//	if (mostraDescricaoConfidencial(doc, titular, lotaTitular) || (getComp().ehPublicoExterno(titular) && !(getComp().podeAcessarPublicoExterno()))  
+				if (mostraDescricaoConfidencial(doc, titular, lotaTitular))
+				return "CONFIDENCIAL";
 		else
 			return doc.getDescrDocumento();
 	}
@@ -3219,8 +3221,10 @@ public class ExBL extends CpBL {
 		if (doc.getExNivelAcessoAtual() == null)
 			return false;
 		if (doc.getExNivelAcessoAtual().getGrauNivelAcesso() > ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS
-				|| (doc.getExNivelAcessoAtual().getGrauNivelAcesso() == ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS
-						&& doc.getOrgaoUsuario().getIdOrgaoUsu() != lotaTitular.getOrgaoUsuario().getIdOrgaoUsu()))
+				|| (doc.getExNivelAcessoAtual().getGrauNivelAcesso() == ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS && doc
+						.getOrgaoUsuario().getIdOrgaoUsu() != lotaTitular
+						.getOrgaoUsuario().getIdOrgaoUsu()))
+			
 			return true;
 		return false;
 	}

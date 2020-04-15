@@ -155,6 +155,12 @@
 						href="/sigaex/app/expediente/temporalidade/listar">Temporalidade
 							Documental</a></li>
 				</c:if>
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;PAINEL:Painel Administrativo')}">
+					<li><a class="dropdown-item"
+						href="/sigaex/app/expediente/painel/exibir">Painel 
+							Administrativo</a></li>
+				</c:if>
 
 			</ul></li>
 	</c:if>

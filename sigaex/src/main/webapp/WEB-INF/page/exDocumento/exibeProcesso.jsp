@@ -388,14 +388,20 @@
 </script>
 <script>
 	var htmlAtual = '${arqsNum[0].referenciaHtmlCompletoDocPrincipal}';
-	var pdfAtual = '${arqsNum[0].referenciaPDFCompletoDocPrincipal}';
+	var pdfAtual = '${arqsNum[0].referenciaPDFCompletoDocPrincipal}';	
 	var path = '/sigaex/app/arquivo/exibir?idVisualizacao=${idVisualizacao}';
 	
 	if ('${mob.doc.podeReordenar()}' === 'true' && '${podeExibirReordenacao}' === 'true') path += '&exibirReordenacao=true';			
 	path += '&arquivo=';			
 
 	function fixlinks(refHTML, refPDF) {
-		document.getElementById('pdflink').href = path + refPDF;
+		
+		if ('${siga_cliente}' == 'GOVSP') {
+			document.getElementById('pdflink').href = path + refPDF + '&sigla=${sigla}';
+		} else {
+			document.getElementById('pdflink').href = path + refPDF;
+		}
+		
 		if (document.getElementById('radioPDFSemMarcas') != null) {
 			document.getElementById('pdfsemmarcaslink').href = path + refPDF
 					+ "&semmarcas=1";
@@ -415,9 +421,11 @@
 		if (document.getElementById('radioPDFSemMarcas') == null) {
 			// Para GOVSP com link buttons
 
+			var refSiglaDocPrincipal = '&sigla=${sigla}';
+			
 			if ($('#radioHTML').hasClass('active') && refHTML != '') {
 				$('#pdflink').addClass('d-none');
-				ifr.src = path + refHTML;
+				ifr.src = path + refHTML + refSiglaDocPrincipal;
 				ifrp.style.border = "0px solid black";
 				ifrp.style.borderBottom = "0px solid black";
 				if (ifr.addEventListener)
@@ -426,7 +434,7 @@
 					ifr.attachEvent("onload", resize);
 			} else {
 				$('#pdflink').removeClass('d-none');
-				ifr.src = path + refPDF;
+				ifr.src = path + refPDF + refSiglaDocPrincipal;
 				ifrp.style.border = "1px solid black";
 				ifr.height = pageHeight() - 300;
 			}

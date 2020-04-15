@@ -891,7 +891,7 @@ public class ExDocumentoController extends ExController {
 							.getNmNivelAcesso() + " " + s;
 			
 			String ERRO_INACESSIVEL_USUARIO;
-			if (Ex.getInstance()
+			if (!Ex.getInstance()
 			.getComp().ehPublicoExterno(getTitular())) {
 				ERRO_INACESSIVEL_USUARIO = "Documento "
 						+ exDocumentoDTO.getMob().getSigla()

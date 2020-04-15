@@ -19,6 +19,8 @@
 package br.gov.jfrj.siga.ex.vo;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -478,13 +480,24 @@ public class ExDocumentoVO extends ExVO {
 		for(ExMobil mob:mobs)
 			movs.addAll(dao().consultarMovimentoPorMobil(mob));
 		
-		for(ExMovimentacao mov:movs)
+		Collections.sort(movs, new Comparator<ExMovimentacao>() {
+			public int compare(ExMovimentacao m1, ExMovimentacao m2) {
+				return m2.getData().compareTo(m1.getData());
+			}
+		});
+		
+		for(ExMovimentacao mov:movs) {
+			if(mov.getDescrTipoMovimentacao().equalsIgnoreCase("Desarquivamento")||
+					mov.getDescrTipoMovimentacao().equalsIgnoreCase("Desentranhamento"))
+				return true;
+			
+			
 			if(mov.getDescrTipoMovimentacao().equalsIgnoreCase("Juntada")||
 					mov.getDescrTipoMovimentacao().equalsIgnoreCase("Cancelamento")||
 					mov.getDescrTipoMovimentacao().equalsIgnoreCase("Arquivamento Intermediário")||
 					mov.getDescrTipoMovimentacao().equalsIgnoreCase("Arquivamento Corrente"))
 				return false;
-
+		}
 		return true;
 	}
 	

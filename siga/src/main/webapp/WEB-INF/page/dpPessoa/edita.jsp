@@ -15,6 +15,11 @@
 		var cpf = document.getElementsByName('cpf')[0].value;
 		var email = document.getElementsByName('email')[0].value;
 		var id = document.getElementsByName('id')[0].value;	
+		
+		$("#spinnerModal").modal('show');
+		 document.getElementById("btnOk").disabled = true;
+		
+		
 		if (nmPessoa==null || nmPessoa=="") {			
 			mensagemAlerta("Preencha o nome da pessoa.");
 			document.getElementById('nmPessoa').focus();
@@ -63,10 +68,12 @@
 		if(!validarCPF(cpf)) {
 			return;
 		}
-		document.getElementById("email").disabled = false;
+			
+		document.getElementById("email").disabled = false
 		frm.submit();
 	}
 
+			
 	function mensagemAlerta(mensagem) {
 		$('#alertaModal').find('.mensagem-Modal').text(mensagem);
 		$('#alertaModal').modal();
@@ -291,7 +298,7 @@
 							<button type="button" onclick="javascript: validarNomeCpf();" class="btn btn-primary" >Ok</button> 
 							<button type="button" onclick="javascript:history.back();" class="btn btn-primary" >Cancelar</button>
 						</div>
-					</div>
+					</div>	
 				</div>
 			</form>
 			<!-- Modal -->
@@ -328,7 +335,7 @@
 				      		<div id="msgP" class="alert" ></div>
 				      	</div>
 						<div class="modal-footer">
-						  <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="validar();">Confirmar</button>
+						  <button type="button" id="btnOk" class="btn btn-primary" data-dismiss="modal" onclick="validar();">Confirmar</button>
 						  <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
 						</div>
 			    	</div>

@@ -138,7 +138,7 @@ public class ExDocumentoController extends ExController {
 	}
 
 	@Get("app/expediente/doc/atualizar_marcas")
-	public void aAtualizarMarcasDoc(final String sigla) {
+	public void aAtualizarMarcasDoc(final String sigla, final String redir) {
 		assertAcesso("");
 
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -147,6 +147,10 @@ public class ExDocumentoController extends ExController {
 
 		Ex.getInstance().getBL().atualizarMarcas(doc);
 
+		if (redir != null) {
+			result.redirectTo(redir);
+			return;
+		}
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
 

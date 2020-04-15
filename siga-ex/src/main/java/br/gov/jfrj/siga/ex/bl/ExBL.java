@@ -2393,7 +2393,7 @@ public class ExBL extends CpBL {
 
 				if (mobPai.getMobilPrincipal().isNumeracaoUnicaAutomatica()) {
 					List<ExArquivoNumerado> ans = mov.getExMobil().filtrarArquivosNumerados(null, true);
-					armazenarCertidaoDeDesentranhamento(mov, mobPai.getMobilPrincipal(), ans, textoMotivo);
+					armazenarCertidaoDeDesentranhamento(mov, mobPai.getMobilPrincipal(), ans, mov.obterDescrMovComPontoFinal());
 				}
 			} else {
 				mov.setExMovimentacaoRef(
@@ -3166,9 +3166,11 @@ public class ExBL extends CpBL {
 		atualizarWorkFlow(doc);
 	}
 
-	public static String descricaoSePuderAcessar(ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular) {
-		if (mostraDescricaoConfidencial(doc, titular, lotaTitular))
-			return "CONFIDENCIAL";
+	public static String descricaoSePuderAcessar(ExDocumento doc,
+			DpPessoa titular, DpLotacao lotaTitular) {
+	//	if (mostraDescricaoConfidencial(doc, titular, lotaTitular) || (getComp().ehPublicoExterno(titular) && !(getComp().podeAcessarPublicoExterno()))  
+				if (mostraDescricaoConfidencial(doc, titular, lotaTitular))
+				return "CONFIDENCIAL";
 		else
 			return doc.getDescrDocumento();
 	}
@@ -3219,8 +3221,10 @@ public class ExBL extends CpBL {
 		if (doc.getExNivelAcessoAtual() == null)
 			return false;
 		if (doc.getExNivelAcessoAtual().getGrauNivelAcesso() > ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS
-				|| (doc.getExNivelAcessoAtual().getGrauNivelAcesso() == ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS
-						&& doc.getOrgaoUsuario().getIdOrgaoUsu() != lotaTitular.getOrgaoUsuario().getIdOrgaoUsu()))
+				|| (doc.getExNivelAcessoAtual().getGrauNivelAcesso() == ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS && doc
+						.getOrgaoUsuario().getIdOrgaoUsu() != lotaTitular
+						.getOrgaoUsuario().getIdOrgaoUsu()))
+			
 			return true;
 		return false;
 	}
@@ -3273,6 +3277,7 @@ public class ExBL extends CpBL {
 		return s;
 	}
 
+	
 	public ExDocumento gravar(final DpPessoa cadastrante, final DpPessoa titular, final DpLotacao lotaTitular,
 			ExDocumento doc) throws Exception {
 
@@ -3419,7 +3424,8 @@ public class ExBL extends CpBL {
 			/*
 			 * alteracao para adicionar a movimentacao de insercao de substituto
 			 */
-			if (doc.getCadastrante() != cadastrante && doc.getTitular() == cadastrante && doc.getDtAssinatura() == null) {
+			/*
+			if(exDocumentoDTO.isSubstituicao() && exDocumentoDTO.getDoc().getTitular() != exDocumentoDTO.getDoc().getSubscritor()) {
 				final ExMovimentacao mov_substituto = criarNovaMovimentacao(
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_SUBSTITUICAO_RESPONSAVEL, cadastrante,
 						cadastrante.getLotacao(), doc.getMobilGeral(), null, cadastrante, null, null, null, null);
@@ -3428,6 +3434,7 @@ public class ExBL extends CpBL {
 						+ " - " + cadastrante.getMatricula());
 				gravarMovimentacao(mov_substituto);
 			}
+			*/
 			/*
 			 * fim da alteracao
 			 */
@@ -3454,6 +3461,16 @@ public class ExBL extends CpBL {
 		}
 		// System.out.println(System.currentTimeMillis() + " - FIM gravar");
 		return doc;
+	}
+	
+	public void geraMovimentacaoSubstituicao(ExDocumento doc) throws AplicacaoException, SQLException {
+		final ExMovimentacao mov_substituto = criarNovaMovimentacao(
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_SUBSTITUICAO_RESPONSAVEL, doc.getCadastrante(),
+				doc.getCadastrante().getLotacao(), doc.getMobilGeral(), null, doc.getCadastrante(), null, null, null, null);
+		mov_substituto.setDescrMov("Responsável pela assinatura: " + doc.getSubscritor().getNomePessoa() + " - "
+				+ doc.getSubscritor().getMatricula() + " em substituição de " + doc.getTitular().getNomePessoa()
+				+ " - " + doc.getTitular().getMatricula());
+		gravarMovimentacao(mov_substituto);
 	}
 
 	private class MovimentacaoSincronizavel extends SincronizavelSuporte

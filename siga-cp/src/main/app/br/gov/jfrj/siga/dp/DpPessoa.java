@@ -76,10 +76,7 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	private static final long serialVersionUID = -5743631829922578717L;
 	public static final ActiveRecord<DpPessoa> AR = new ActiveRecord<>(
 			DpPessoa.class);
-	@Formula(value = "REMOVE_ACENTO(NOME_PESSOA)")
-	@Desconsiderar
-	private String nomePessoaAI;
-
+	
 	@Transient
 	private Long idSitConfiguracaoConfManual;
 
@@ -228,14 +225,6 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 			setSesbPessoa(orgao.toUpperCase());
 			setMatricula(Long.parseLong(numero));
 		}
-	}
-
-	public String getNomePessoaAI() {
-		return nomePessoaAI;
-	}
-
-	public void setNomePessoaAI(String nomePessoaAI) {
-		this.nomePessoaAI = nomePessoaAI;
 	}
 
 	public boolean equivale(Object other) {
@@ -469,10 +458,10 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 			for (CpIdentidade identCpf : idsCpf) {
 				List<String> listaUserLota = new ArrayList<String>();
 				listaUserLota.add(identCpf.getNmLoginIdentidade());
-				listaUserLota.add(identCpf.getDpPessoa().getLotacao().getSiglaLotacao());
-				if (identCpf.getDpPessoa().getFuncaoConfianca() != null) {
-					listaUserLota.add(identCpf.getDpPessoa().getFuncaoConfianca().getNomeFuncao() + "/" +
-							identCpf.getDpPessoa().getCargo().getNomeCargo());
+				listaUserLota.add(identCpf.getDpPessoa().getLotacao().getLotacaoAtual().getSiglaLotacao());
+				if (identCpf.getDpPessoa().getPessoaAtual().getFuncaoConfianca() != null) {
+					listaUserLota.add(identCpf.getDpPessoa().getPessoaAtual().getFuncaoConfianca().getNomeFuncao() + "/" +
+							identCpf.getDpPessoa().getPessoaAtual().getCargo().getNomeCargo());
 				} else {
 					listaUserLota.add("");
 				}

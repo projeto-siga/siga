@@ -27,11 +27,13 @@ package br.gov.jfrj.siga.hibernate;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -70,6 +72,7 @@ import br.gov.jfrj.siga.ex.ExEmailNotificacao;
 import br.gov.jfrj.siga.ex.ExEstadoDoc;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExItemDestinacao;
+import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
@@ -2181,6 +2184,79 @@ public class ExDao extends CpDao {
 			query.setParameterList("listIdMobil", listIdMobil);
 		}
 		return query.list();
+	}
+
+	public Long marcasSemMobil(Date dtIni, Date dtFim, DpPessoa pes, DpLotacao lot) {
+		Query sql = getSessao()
+				.createSQLQuery("SELECT count(1) from corporativo.cp_marca marca " 
+						+ "LEFT JOIN siga.ex_mobil mob ON mob.id_mobil = marca.id_ref "  
+						+ "WHERE ( marca.dt_ini_marca IS NULL OR marca.dt_ini_marca < :dtIni ) " 
+						+ " AND ( marca.dt_fim_marca IS NULL OR marca.dt_fim_marca > :dtFim ) "
+						+ (pes != null ? " and (marca.dpPessoaIni = :pes)" : "") 
+						+ (lot != null ? " and (marca.dpLotacaoIni = :lot)" : "")
+						+ "	AND mob.id_mobil is null"
+				);
+		sql.setDate("dtIni", dtIni);
+		sql.setDate("dtFim", dtFim);
+		sql.setMaxResults(500);
+		
+		if (pes != null) {
+			sql.setLong("idPessoaIni", pes.getIdPessoaIni());
+		}
+		if (lot != null) {
+			sql.setLong("idLotacaoIni", lot.getIdLotacaoIni());
+		}
+		return Long.valueOf(sql.uniqueResult().toString());
+	}
+	
+	public List listarMarcasSemMobil(Date dtIni, Date dtFim, DpPessoa pes, DpLotacao lot) {
+		List<List<String>> l = new ArrayList<List<String>> ();
+			
+		Query query = getSessao()
+				.createSQLQuery("SELECT marca.id_marca, "
+						+ " marca.dt_ini_marca, "
+						+ " marca.id_marcador, "
+						+ " marcador.descr_marcador, marca.id_ref "
+						+ "FROM corporativo.cp_marca marca "
+						+ "LEFT JOIN corporativo.cp_marcador marcador "
+						+ "     ON marcador.id_marcador = marca.id_marcador "  
+						+ "LEFT JOIN siga.ex_mobil mob ON mob.id_mobil = marca.id_ref "  
+						+ "WHERE ( marca.dt_ini_marca is null OR marca.dt_ini_marca < :dtIni ) " 
+						+ "   AND ( marca.dt_fim_marca is null OR marca.dt_fim_marca > :dtFim ) "
+						+ (pes != null ? " and (marca.dp_pessoa_ini = :pes)" : "") 
+						+ (lot != null ? " and (marca.dp_lotacao_ini = :lot)" : "")
+						+ "	  AND mob.id_mobil is null "
+						+ "ORDER BY marca.dt_ini_marca desc "
+						);
+		query.setDate("dtIni", dtIni);
+		query.setDate("dtFim", dtFim);
+		query.setMaxResults(500);
+		
+		if (pes != null) {
+			query.setLong("idPessoaIni", pes.getIdPessoaIni());
+		}
+		if (lot != null) {
+			query.setLong("idLotacaoIni", lot.getIdLotacaoIni());
+		}
+		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy HH:MM:SS");
+		
+		Iterator it = query.list().iterator();
+		while (it.hasNext()) {
+			Object[] obj = (Object[]) it.next();
+			List<String> listDados = new ArrayList();
+			listDados.add(new BigDecimal(obj[0].toString()).toString());
+			if (obj[1] != null) {
+				listDados.add(formato.format(obj[1]));
+			} else {
+				listDados.add("");
+			}
+			listDados.add(new BigDecimal(obj[2].toString()).toString());
+			listDados.add(obj[3].toString());
+			listDados.add(new BigDecimal(obj[4].toString()).toString());
+			l.add(listDados);
+		}
+		
+		return l;
 	}
 
 }

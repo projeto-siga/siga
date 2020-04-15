@@ -5,6 +5,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
 
 <siga:pagina titulo="Mesa Virtual">
 <script type="text/javascript" src="../javascript/vue.min.js"></script>
@@ -71,15 +72,17 @@
 					<c:if test="${not empty visualizacao}"><b>(Delegante: ${visualizacao.titular.nomePessoa})</b></c:if> 
 				</span> 
 			</div> 
-			<div class="col col-12 col-sm-4 col-md-auto ml-md-auto mb-2">
-				<a href="expediente/doc/editar" class="btn btn-success form-control"> <i class="fas fa-plus-circle mr-1"></i>
-					<fmt:message key="documento.novo"/></a>
-			</div>
-			<div class="col col-12 col-sm-4 col-md-auto mb-2">
-				<a href="expediente/doc/listar?primeiraVez=sim" class="btn btn-primary form-control">
-					<i class="fas fa-search mr-1"></i><fmt:message key="documento.pesquisar"/> 
-				</a>
-			</div>
+			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos') && cadastrante.orgaoUsuario.isExternoOrgaoUsu eq 0}">
+				<div class="col col-12 col-sm-4 col-md-auto ml-md-auto mb-2">
+					<a href="expediente/doc/editar" class="btn btn-success form-control"> <i class="fas fa-plus-circle mr-1"></i>
+						<fmt:message key="documento.novo"/></a>
+				</div>
+				<div class="col col-12 col-sm-4 col-md-auto mb-2">
+					<a href="expediente/doc/listar?primeiraVez=sim" class="btn btn-primary form-control">
+						<i class="fas fa-search mr-1"></i><fmt:message key="documento.pesquisar"/> 
+					</a>
+				</div>
+			</c:if>
 		</div>
 		<div id="rowTopMesa" style="z-index: 1" class="row sticky-top px-3 pt-1 bg-white shadow-sm" 
 				v-if="!carregando || (!errormsg &amp;&amp; grupos.length >= 0)">

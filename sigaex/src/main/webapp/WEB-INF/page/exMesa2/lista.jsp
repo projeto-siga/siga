@@ -72,7 +72,7 @@
 					<c:if test="${not empty visualizacao}"><b>(Delegante: ${visualizacao.titular.nomePessoa})</b></c:if> 
 				</span> 
 			</div> 
-			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos') && cadastrante.orgaoUsuario.isExternoOrgaoUsu eq 0}">
+			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos') && (cadastrante.orgaoUsuario.isExternoOrgaoUsu eq 0 && lotaTitular.isExternaLotacao eq 0)}">
 				<div class="col col-12 col-sm-4 col-md-auto ml-md-auto mb-2">
 					<a href="expediente/doc/editar" class="btn btn-success form-control"> <i class="fas fa-plus-circle mr-1"></i>
 						<fmt:message key="documento.novo"/></a>

@@ -40,7 +40,6 @@ public class SigaTransacionalInterceptor extends br.com.caelum.vraptor.jpa.JPATr
 	private final MutableResponse response;
 	private HttpServletRequest request;
 	private ControllerMethod method;
-	EntityTransaction transaction = null;
 
 	private final static ThreadLocal<SigaTransacionalInterceptor> current = new ThreadLocal<SigaTransacionalInterceptor>();
 
@@ -75,7 +74,7 @@ public class SigaTransacionalInterceptor extends br.com.caelum.vraptor.jpa.JPATr
 		try {
 			if (this.method.containsAnnotation(Transacional.class)
 					&& !(this.request.getRequestURI().startsWith("app/sigawf"))) {
-				transaction = manager.getTransaction();
+				EntityTransaction transaction = manager.getTransaction();
 				transaction.begin();
 			} else {
 				disableAutoFlush();
@@ -86,10 +85,11 @@ public class SigaTransacionalInterceptor extends br.com.caelum.vraptor.jpa.JPATr
 
 			stack.next();
 
-			commit(transaction);
+			commit(manager.getTransaction());
 
 		} finally {
 			ContextoPersistencia.setDt(null);
+			EntityTransaction transaction = manager.getTransaction();
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 				beanManager.fireEvent(new AfterRollback());
@@ -125,24 +125,26 @@ public class SigaTransacionalInterceptor extends br.com.caelum.vraptor.jpa.JPATr
 
 	public static void upgradeParaTransacional() {
 		SigaTransacionalInterceptor thiz = current.get();
-		if (thiz != null && thiz.transaction == null) {
+		EntityTransaction transaction = thiz.manager.getTransaction();
+		if (transaction != null && transaction == null) {
 			// System.out.println("*** UPGRADE para Transacional - " +
 			// thiz.method.toString());
 			enableAutoFlush();
-			thiz.transaction = thiz.manager.getTransaction();
-			thiz.transaction.begin();
+			transaction = thiz.manager.getTransaction();
+			transaction.begin();
 		}
 	}
 
 	public static void downgradeParaNaoTransacional() {
 		SigaTransacionalInterceptor thiz = current.get();
-		if (thiz != null && thiz.transaction != null) {
-			thiz.commit(thiz.transaction);
+		EntityTransaction transaction = thiz.manager.getTransaction();
+		if (thiz != null && transaction != null) {
+			thiz.commit(transaction);
 			// System.out.println("*** DOWNGRADE para NÃO Transacional - " +
 			// thiz.method.toString());
 			disableAutoFlush();
-			thiz.transaction = thiz.manager.getTransaction();
-			thiz.transaction.begin();
+			transaction = thiz.manager.getTransaction();
+			transaction.begin();
 		}
 	}
 

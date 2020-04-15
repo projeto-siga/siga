@@ -89,14 +89,14 @@ public abstract class AbstractCpOrgaoUsuario extends Objeto implements
 	@Column(name = "ACRONIMO_ORGAO_USU", length = 12)
 	private String acronimoOrgaoUsu;
 	
-	@Column(name = "IS_EXTERNO_ORGAO_USU")
-	private Boolean isExternoOrgaoUsu;
+	@Column(name = "IS_EXTERNO_ORGAO_USU", length = 1)
+	private Integer isExternoOrgaoUsu;
 
-	public Boolean getIsExternoOrgaoUsu() {
+	public Integer getIsExternoOrgaoUsu() {
 		return isExternoOrgaoUsu;
 	}
 
-	public void setIsExternoOrgaoUsu(Boolean isExternoOrgaoUsu) {
+	public void setIsExternoOrgaoUsu(Integer isExternoOrgaoUsu) {
 		this.isExternoOrgaoUsu = isExternoOrgaoUsu;
 	}
 

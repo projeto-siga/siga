@@ -449,9 +449,17 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	}
 
 	public void setDescrMov(final String descrMov) {
-		this.descrMov = descrMov;
+		String descricaoMovimentacao = descrMov != null ? descrMov.trim() : "";
+		this.descrMov = descricaoMovimentacao;		
+	}	
+	
+	public String obterDescrMovComPontoFinal() {				
+		if (this.descrMov != null && !this.descrMov.isEmpty() && !".".equals(this.descrMov.substring(this.descrMov.length() - 1))) {
+			return this.descrMov + ".";
+		} else {
+			return this.descrMov;
+		}
 	}
-
 	public void setDestinoFinal(final DpPessoa destinoFinal) {
 		this.destinoFinal = destinoFinal;
 	}

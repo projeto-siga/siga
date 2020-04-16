@@ -93,9 +93,9 @@ public class WfRelatorioController extends WfController {
 		parametrosRelatorio.put("nomeProcedimento", pd.getNome());
 		parametrosRelatorio.put("incluirAbertos", incluirAbertos == null ? false : incluirAbertos);
 		parametrosRelatorio.put("inicioGrupo",
-				(grpIni == null || grpIni < 0) ? null : pd.getDefinicaoDeTarefa().get(grpIni));
+				(grpIni == null || grpIni < 0) ? null : pd.getDefinicaoDeTarefa().get(grpIni).getNome());
 		parametrosRelatorio.put("fimGrupo",
-				(grpFim == null || grpFim < 0) ? null : pd.getDefinicaoDeTarefa().get(grpFim));
+				(grpFim == null || grpFim < 0) ? null : pd.getDefinicaoDeTarefa().get(grpFim).getNome());
 
 		byte[] buff = null;
 		if (getRelatorioEscolhido().equals(REL_ESTATISTICAS_GERAIS)) {

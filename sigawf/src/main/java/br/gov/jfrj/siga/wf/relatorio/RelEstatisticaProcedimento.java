@@ -164,7 +164,7 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 				dataInicialAte, dataFinalDe, dataFinalAte);
 
 		for (WfProcedimento pi : listaPD) {
-			Long duracaoPI = pi.getHisDtFim().getTime() - pi.getHisDtFim().getTime();
+			Long duracaoPI = pi.getHisDtFim().getTime() - pi.getHisDtIni().getTime();
 
 			// minPI
 			if (minPI == 0 || duracaoPI < minPI) {

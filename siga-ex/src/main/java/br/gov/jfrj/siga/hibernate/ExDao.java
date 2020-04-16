@@ -1325,13 +1325,17 @@ public class ExDao extends CpDao {
 								+ " inner join marca.exMobil mobil"
 								+ " where (marca.dtIniMarca is null or marca.dtIniMarca < CURRENT_TIMESTAMP)"
 								+ " and (marca.dtFimMarca is null or marca.dtFimMarca > CURRENT_TIMESTAMP)"
-								+ (titular != null ? " and (marca.dpPessoaIni.idPessoa = :titular)"
-										: " and (marca.dpLotacaoIni.idLotacao = :lotaTitular)"));
+								+ " and (marca.dpPessoaIni.idPessoa = :titular or "
+								+ " (marca.dpPessoaIni.idPessoa = null and marca.dpLotacaoIni.idLotacao = :lotaTitular))");
 
 		if (titular != null)
 			query.setParameter("titular", titular.getIdPessoaIni());
-		else if (lotaTitular != null)
+		else
+			query.setParameter("titular", null);
+		if (lotaTitular != null)
 			query.setParameter("lotaTitular", lotaTitular.getIdLotacaoIni());
+		else
+			query.setParameter("lotaTitular", null);
 
 		List l = query.getResultList();
  		long tempoTotal = System.nanoTime() - tempoIni;

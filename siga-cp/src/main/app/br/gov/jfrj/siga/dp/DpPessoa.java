@@ -643,6 +643,15 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
         }
         return "";
     }
+    
+    public String getDataExpedicaoIdentidadeDDMMYYYY() {
+        if (getDataExpedicaoIdentidade() != null) {
+                final SimpleDateFormat df = new SimpleDateFormat(
+                                "dd/MM/yyyy");
+                return df.format(getDataExpedicaoIdentidade());
+        }
+        return "";
+    }
 
 
 	public int compareTo(Object o) {

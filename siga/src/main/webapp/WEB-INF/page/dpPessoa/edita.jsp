@@ -278,6 +278,65 @@
 						</div>
 					</div>
 				</div>
+				
+				<!-- Alteracao cartao 1057 -->
+				
+				<div class="row">
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="nmPessoa">RG</label>
+							<input type="text" id="identidade" name="identidade" value="${identidade}" maxlength="60" class="form-control"/>
+						</div>
+					</div>
+					<div class="col-md-2">
+						<div class="form-group">
+							<label for="nmPessoa">Órgão Expeditor</label>
+							<input type="text" id="orgaoIdentidade" name="orgaoIdentidade" value="${orgaoIdentidade}" maxlength="14" class="form-control" />
+						</div>
+					</div>
+										
+					<div class="form-group">
+						<label for="ufIdentidade">UF do RG</label>
+						<select name="ufIdentidade" value="${ufIdentidade}" class="form-control  siga-select2">
+							<option value="AC">Acre</option>
+							<option value="AL">Alagoas</option>
+							<option value="AP">Amapá</option>
+							<option value="AM">Amazonas</option>
+							<option value="BA">Bahia</option>
+							<option value="CE">Ceará</option>
+							<option value="DF">Distrito Federal</option>
+							<option value="ES">Espírito Santo</option>
+							<option value="GO">Goiás</option>
+							<option value="MA">Maranhão</option>
+							<option value="MT">Mato Grosso</option>
+							<option value="MS">Mato Grosso do Sul</option>
+							<option value="MG">Minas Gerais</option>
+							<option value="PA">Pará</option>
+							<option value="PB">Paraíba</option>
+							<option value="PR">Paraná</option>
+							<option value="PE">Pernambuco</option>
+							<option value="PI">Piauí</option>
+							<option value="RJ">Rio de Janeiro</option>
+							<option value="RN">Rio Grande do Norte</option>
+							<option value="RS">Rio Grande do Sul</option>
+							<option value="RO">Rondônia</option>
+							<option value="RR">Roraima</option>
+							<option value="SC">Santa Catarina</option>
+							<option value="SP">São Paulo</option>
+							<option value="SE">Sergipe</option>
+							<option value="TO">Tocantins</option>
+						</select>
+					</div>
+					
+					<div class="col-md-2">
+						<div class="form-group">
+							<label for="nmPessoa">RG Data da Expedição</label>
+							<input type="text" id="dataExpedicaoIdentidade" name="dataExpedicaoIdentidade" value="${dataExpedicaoIdentidade}" maxlength="10" onkeyup="this.value = mascaraData( this.value )" class="form-control" />
+						</div>
+					</div>
+				</div>
+				
+				<!-- Fim da alteracao cartao 1057 -->
 				<c:if test="${empty id}">
 					<div class="row">
 						<div class="col-md-4 col-sm-6">

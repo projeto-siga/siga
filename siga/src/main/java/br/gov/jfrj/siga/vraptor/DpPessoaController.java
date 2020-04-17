@@ -349,6 +349,20 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				result.include("email", pessoa.getEmailPessoa());
 				result.include("idOrgaoUsu", pessoa.getOrgaoUsuario().getId());
 				result.include("nmOrgaousu", pessoa.getOrgaoUsuario().getNmOrgaoUsu());
+				
+				/*
+				 * Adicao de campos RG
+				 * Cartao 1057
+				 */
+				
+				result.include("identidade",pessoa.getIdentidade());
+				result.include("orgaoIdentidade",pessoa.getOrgaoIdentidade());
+				result.include("ufIdentidade",pessoa.getUfIdentidade());
+				
+				if(pessoa.getDataExpedicaoIdentidade() != null) {
+					result.include("dataExpedicaoIdentidade",pessoa.getDataExpedicaoIdentidadeDDMMYYYY());
+				}			
+				
 				if (pessoa.getDataNascimento() != null) {
 					result.include("dtNascimento", pessoa.getDtNascimentoDDMMYYYY());
 				}
@@ -508,7 +522,9 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	@Post("/app/pessoa/gravar")
 	public void editarGravar(final Long id, final Long idOrgaoUsu, final Long idCargo, final Long idFuncao,
 			final Long idLotacao, final String nmPessoa, final String dtNascimento, final String cpf,
-			final String email) throws Exception {
+			final String email, final String identidade, final String orgaoIdentidade, final String ufIdentidade,
+			final String dataExpedicaoIdentidade) throws Exception {
+		
 		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_PESSOA:Cadastrar Pessoa");
 
 		if (idOrgaoUsu == null || idOrgaoUsu == 0)
@@ -578,6 +594,28 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		} else {
 			pessoa.setDataNascimento(null);
 		}
+		
+		if (dataExpedicaoIdentidade != null && !"".equals(dataExpedicaoIdentidade)) {
+			Date dtExp = new Date();
+			dtExp = SigaCalendar.converteStringEmData(dataExpedicaoIdentidade);
+
+			Calendar hj = Calendar.getInstance();
+			Calendar dtExpId = new GregorianCalendar();
+			dtExpId.setTime(dtExp);
+
+			if (hj.before(dtExpId)) {
+				throw new AplicacaoException("Data de expedição inválida");
+			}
+			pessoa.setDataExpedicaoIdentidade(dtExp);
+		} else {
+			pessoa.setDataExpedicaoIdentidade(null);
+		}
+		
+		
+		pessoa.setIdentidade(identidade);
+		pessoa.setOrgaoIdentidade(orgaoIdentidade);
+		pessoa.setUfIdentidade(ufIdentidade);		
+		
 
 		pessoa.setNomePessoa(Texto.removerEspacosExtra(nmPessoa).trim());
 		pessoa.setCpfPessoa(Long.valueOf(cpf.replace("-", "").replace(".", "")));

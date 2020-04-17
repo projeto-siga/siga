@@ -97,6 +97,13 @@
 									 onblur="javascript:verifica_data(this,0);" class="form-control"/>
 							</div>
 						</div>
+						<div class="col-md-2">
+						  <label>Tipo de Órgão</label>
+						  <div class="form-check">
+						    <input type="checkbox" class="form-check-input" id="isExternoOrgaoUsu" name="isExternoOrgaoUsu" value="1" <c:if test="${isExternoOrgaoUsu == 1}">checked</c:if> />
+						    <label class="form-check-label" for="isExternoOrgaoUsu">Órgão com Acesso Externo</label>
+						  </div>
+						</div>
 					</div>
 					
 					<div class="row">

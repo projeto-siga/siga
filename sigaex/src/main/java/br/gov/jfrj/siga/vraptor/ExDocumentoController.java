@@ -1686,7 +1686,7 @@ public class ExDocumentoController extends ExController {
 			 */
 
 			if(exDocumentoDTO.isSubstituicao() && exDocumentoDTO.getDoc().getTitular() != exDocumentoDTO.getDoc().getSubscritor()) {
-				exBL.geraMovimentacaoSubstituicao(exDocumentoDTO.getDoc());
+				exBL.geraMovimentacaoSubstituicao(exDocumentoDTO.getDoc(), so.getCadastrante());
 			}
 
 			/*

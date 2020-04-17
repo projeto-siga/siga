@@ -2531,7 +2531,7 @@ Pede deferimento.</span><br/><br/><br/>
 [/#macro]
 
 
-[#macro estiloBrasaoCentralizado tipo tamanhoLetra="11pt" formatarOrgao=true orgaoCabecalho=true numeracaoCentralizada=false dataAntesDaAssinatura=false incluirMioloDJE=false omitirCodigo=false omitirData=false topoPrimeiraPagina='' incluirAssinaturaBIE=true exibeClassificacaoDocumental=true]
+[#macro estiloBrasaoCentralizado tipo tamanhoLetra="11pt"  exibeAssinatura=true formatarOrgao=true orgaoCabecalho=true numeracaoCentralizada=false dataAntesDaAssinatura=false incluirMioloDJE=false omitirCodigo=false omitirData=false topoPrimeiraPagina='' incluirAssinaturaBIE=true exibeClassificacaoDocumental=true]
     [@primeiroCabecalho]${topoPrimeiraPagina!}
     [@cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho/]
     [/@primeiroCabecalho]
@@ -2573,10 +2573,12 @@ Pede deferimento.</span><br/><br/><br/>
             [#nested]
             [#if dataAntesDaAssinatura]<p style="text-align:center">[#if mov??]${mov.dtExtenso!}[#else]${doc.dtExtenso!}[/#if]</p>[/#if]
             <p>&nbsp;</p>
+            [#if exibeAssinatura]
             [#if mov??]
                 [@assinaturaMovCentro formatarOrgao=formatarOrgao/]
             [#else]
                 [@assinaturaCentro formatarOrgao=formatarOrgao incluirAssinaturaBIE=incluirAssinaturaBIE/]
+            [/#if]
             [/#if]
             [/@mioloDJE]
         [#else]
@@ -2596,14 +2598,15 @@ Pede deferimento.</span><br/><br/><br/>
             	</p>
             [/#if]
             <p>&nbsp;</p>
+            [#if exibeAssinatura]
             [#if mov??]
                 [@assinaturaMovCentro formatarOrgao=formatarOrgao/]
             [#else]
                 [@assinaturaCentro formatarOrgao=formatarOrgao incluirAssinaturaBIE=incluirAssinaturaBIE/]
             [/#if]
-        [/#if]  
+        [/#if]
+        [/#if]      
    [/@letra]
-
    [@primeiroRodape exibeClassificacaoDocumental=exibeClassificacaoDocumental]
 	   [#if exibeClassificacaoDocumental]
 	   		[@rodapeClassificacaoDocumental/]

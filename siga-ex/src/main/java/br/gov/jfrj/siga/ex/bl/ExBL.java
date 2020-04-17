@@ -2781,16 +2781,6 @@ public class ExBL extends CpBL {
 
 			concluirAlteracao(mov.getExMobil());
 			
-			/*
-			 * Alteracao para historico da substituicao do assinante
-			 * Corrigido questão do subscritor. Documento capturado não gera o mesmo
-			 */
-			if (mov.getExMobil().getDoc().getSubscritor() != null
-					&& mov.getExMobil().getDoc().getSubscritor() != mov.getExMobil().getDoc().getCadastrante() 
-					&& mov.getExMobil().getDoc().getDtAssinatura() == null) {	
-				getExTipoMovSubstituicaoAssinante(mov);
-			}
-
 			
 		} catch (final Exception e) {
 			cancelarAlteracao();
@@ -3420,25 +3410,7 @@ public class ExBL extends CpBL {
 			if (!primeiraGravacao && doc.isColaborativo() && !doc.isFisico() && !doc.isFinalizado()) {
 				finalizar(cadastrante, lotaTitular, doc);
 			}
-
-			/*
-			 * alteracao para adicionar a movimentacao de insercao de substituto
-			 */
-			/*
-			if(exDocumentoDTO.isSubstituicao() && exDocumentoDTO.getDoc().getTitular() != exDocumentoDTO.getDoc().getSubscritor()) {
-				final ExMovimentacao mov_substituto = criarNovaMovimentacao(
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_SUBSTITUICAO_RESPONSAVEL, cadastrante,
-						cadastrante.getLotacao(), doc.getMobilGeral(), null, cadastrante, null, null, null, null);
-				mov_substituto.setDescrMov("Responsável pela assinatura: " + doc.getSubscritor().getNomePessoa() + " - "
-						+ doc.getSubscritor().getMatricula() + " em substituição de " + cadastrante.getNomePessoa()
-						+ " - " + cadastrante.getMatricula());
-				gravarMovimentacao(mov_substituto);
-			}
-			*/
-			/*
-			 * fim da alteracao
-			 */
-
+			
 			// System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
 			// + ", PESSOA " + doc.getCadastrante().getIdPessoa()
 			// + ". Terminou commit gravacao: "
@@ -3463,10 +3435,10 @@ public class ExBL extends CpBL {
 		return doc;
 	}
 	
-	public void geraMovimentacaoSubstituicao(ExDocumento doc) throws AplicacaoException, SQLException {
+	public void geraMovimentacaoSubstituicao(ExDocumento doc, DpPessoa cadastrante) throws AplicacaoException, SQLException {
 		final ExMovimentacao mov_substituto = criarNovaMovimentacao(
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_SUBSTITUICAO_RESPONSAVEL, doc.getCadastrante(),
-				doc.getCadastrante().getLotacao(), doc.getMobilGeral(), null, doc.getCadastrante(), null, null, null, null);
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_SUBSTITUICAO_RESPONSAVEL, cadastrante,
+				cadastrante.getLotacao(), doc.getMobilGeral(), null, cadastrante, null, null, null, null);
 		mov_substituto.setDescrMov("Responsável pela assinatura: " + doc.getSubscritor().getNomePessoa() + " - "
 				+ doc.getSubscritor().getMatricula() + " em substituição de " + doc.getTitular().getNomePessoa()
 				+ " - " + doc.getTitular().getMatricula());

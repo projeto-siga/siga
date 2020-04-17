@@ -214,6 +214,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			result.include("idOrgaoUsu", lotacao.getOrgaoUsuario().getId());
 			result.include("nmOrgaousu", lotacao.getOrgaoUsuario().getNmOrgaoUsu());
 			result.include("dtFimLotacao", lotacao.getDataFimLotacao());
+			result.include("isExternaLotacao", lotacao.getIsExternaLotacao());
 			result.include("idLocalidade", lotacao.getLocalidade() != null ? lotacao.getLocalidade().getIdLocalidade() : Long.valueOf(0));
 			
 			List<DpPessoa> list = dao().getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE);
@@ -249,6 +250,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 							 final Long idOrgaoUsu,
 							 final String siglaLotacao,
 							 final String situacao,
+							 final Boolean isExternaLotacao,
 							 final Long idLocalidade) throws Exception{
 		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_LOTACAO: Cadastrar Lotação");
 		
@@ -328,6 +330,12 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
 			orgaoUsuario = dao().consultar(idOrgaoUsu, CpOrgaoUsuario.class, false);	
 			lotacao.setOrgaoUsuario(orgaoUsuario);
+		}
+		
+		if (isExternaLotacao != null) {
+			lotacao.setIsExternaLotacao(1);
+		} else {
+			lotacao.setIsExternaLotacao(0);	
 		}
 		
 		try {

@@ -105,6 +105,13 @@
 							</select>
 						</div>
 					</div>
+					<div class="col-sm-2">
+					  <label>Tipo de <fmt:message key="usuario.lotacao"/></label>
+					  <div class="form-check">
+					    <input type="checkbox" class="form-check-input" id="isExternaLotacao" name="isExternaLotacao" value="1" <c:if test="${isExternaLotacao == 1}">checked</c:if> />
+					    <label class="form-check-label" for="isExternaLotacao">Órgão com Acesso Externo</label>
+					  </div>
+					</div>
 					<div class="col-sm-3">
 						<div class="form-group">
 							<label for="siglaLotacao">Situa&ccedil;&atilde;o</label><br/>

@@ -3440,8 +3440,8 @@ public class ExBL extends CpBL {
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_SUBSTITUICAO_RESPONSAVEL, cadastrante,
 				cadastrante.getLotacao(), doc.getMobilGeral(), null, cadastrante, null, null, null, null);
 		mov_substituto.setDescrMov("Responsável pela assinatura: " + doc.getSubscritor().getNomePessoa() + " - "
-				+ doc.getSubscritor().getMatricula() + " em substituição de " + doc.getTitular().getNomePessoa()
-				+ " - " + doc.getTitular().getMatricula());
+				+ doc.getSubscritor().getSiglaCompleta() + " em substituição de " + doc.getTitular().getNomePessoa()
+				+ " - " + doc.getTitular().getSiglaCompleta());
 		gravarMovimentacao(mov_substituto);
 	}
 

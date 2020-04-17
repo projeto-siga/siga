@@ -42,7 +42,7 @@ public class AcessoConsulta {
 	
 	public boolean podeAcessarPublicoExterno(ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular) {
 		
-		if (doc.getSubscritor().equals(titular)) return true;
+		if (doc.getSubscritor() != null && doc.getSubscritor().equals(titular)) return true;
 		
 		if (doc.getCadastrante().equals(titular)) return true;
 		

@@ -37,7 +37,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.io.FileUtils;
 
 import br.com.caelum.vraptor.Consumes;
@@ -66,6 +65,8 @@ import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpPessoaUsuarioDTO;
+import br.gov.jfrj.siga.dp.DpUF;
+import br.gov.jfrj.siga.dp.DpUFDTO;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpCargoDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpFuncaoConfiancaDaoFiltro;
@@ -354,10 +355,20 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				 * Adicao de campos RG
 				 * Cartao 1057
 				 */
-				
+				List<DpUFDTO>ufList = new ArrayList<DpUFDTO>();
+				for(DpUF uf:DpUF.values()) {
+					DpUFDTO du = new DpUFDTO();
+					du.setEstado(uf.getEstado());
+					du.setUf(uf.toString());
+					ufList.add(du);
+				}
+				result.include("ufList",ufList);
 				result.include("identidade",pessoa.getIdentidade());
 				result.include("orgaoIdentidade",pessoa.getOrgaoIdentidade());
-				result.include("ufIdentidade",pessoa.getUfIdentidade());
+				
+				if(pessoa.getUfIdentidade() != null) {
+					result.include("ufIdentidade",pessoa.getUfIdentidade());
+				}
 				
 				if(pessoa.getDataExpedicaoIdentidade() != null) {
 					result.include("dataExpedicaoIdentidade",pessoa.getDataExpedicaoIdentidadeDDMMYYYY());

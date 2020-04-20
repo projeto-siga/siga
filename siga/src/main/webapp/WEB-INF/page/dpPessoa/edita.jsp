@@ -6,6 +6,8 @@
 
 <script type="text/javascript">
 	function validar() {
+		$("#spinnerModal").modal('show');
+		document.getElementById("btnOk").disabled = true;
 		var idOrgaoUsu = document.getElementsByName('idOrgaoUsu')[0].value;
 		var nmPessoa = document.getElementsByName('nmPessoa')[0].value;	
 		var idCargo = document.getElementsByName('idCargo')[0].value;
@@ -16,10 +18,7 @@
 		var email = document.getElementsByName('email')[0].value;
 		var id = document.getElementsByName('id')[0].value;	
 		
-		$("#spinnerModal").modal('show');
-		 document.getElementById("btnOk").disabled = true;
-		
-		
+				
 		if (nmPessoa==null || nmPessoa=="") {			
 			mensagemAlerta("Preencha o nome da pessoa.");
 			document.getElementById('nmPessoa').focus();
@@ -58,14 +57,20 @@
 		}
 
 		if(!validarEmail(document.getElementsByName('email')[0])) {
+			$("#spinnerModal").modal('hide');
+			document.getElementById("btnOk").disabled = false;
 			return;
 		}
 
 		if(dtNascimento != null && dtNascimento != "" && !data(dtNascimento)) {
+			$("#spinnerModal").modal('hide');
+			document.getElementById("btnOk").disabled = false;
 			return;
 		}
 
 		if(!validarCPF(cpf)) {
+			$("#spinnerModal").modal('hide');
+			document.getElementById("btnOk").disabled = false;
 			return;
 		}
 			
@@ -77,6 +82,8 @@
 	function mensagemAlerta(mensagem) {
 		$('#alertaModal').find('.mensagem-Modal').text(mensagem);
 		$('#alertaModal').modal();
+		$("#spinnerModal").modal('hide');
+		document.getElementById("btnOk").disabled = false;
 	}
 	
 	function mascaraData( v)
@@ -325,7 +332,7 @@
 				<div class="row">
 					<div class="col-sm-12">
 						<div class="form-group">
-							<button type="button" onclick="javascript: validarNomeCpf();" class="btn btn-primary" >Ok</button> 
+							<button type="button" id="btnOk" onclick="javascript: validarNomeCpf();" class="btn btn-primary" >Ok</button> 
 							<button type="button" onclick="javascript:history.back();" class="btn btn-primary" >Cancelar</button>
 						</div>
 					</div>	

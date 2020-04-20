@@ -39,6 +39,10 @@
 								<dd>- Data de nascimento (8 n&uacute;meros dd/mm/aaaa);</dd>
 								<dd>- CPF: m&aacute;ximo de 11 caracteres num&eacute;ricos;</dd>
 								<dd>- E-mail: m&aacute;ximo de 60 caracteres</dd>
+								<dd>- RG: Incluindo Dígito</dd>
+                                <dd>- Órgão Expedidor RG: m&aacute;ximo de 50 caracteres</dd>
+                                <dd>- Sigla UF RG: m&aacute;ximo de 2 caracteres</dd>
+                                <dd>- Data de Expedição: (8 n&uacute;meros dd/mm/aaaa)</dd>
 							</dl>
 						</div>
 					</div>

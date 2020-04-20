@@ -259,7 +259,7 @@
 							<div class="form-group">
 								<label for="ufIdentidade">UF</label>
 								<select name="ufIdentidade" id="ufIdentidade" value="${ufIdentidade}" class="form-control  siga-select2">
-									<option value="" selected disabled hidden>Selecione um estado</option>
+									<option value="" selected disabled hidden>Selecione uma UF</option>
 									
 									<c:forEach items="${ufList}" var="item">
 										<option value="${item.sigla}" ${item.sigla== ufIdentidade ? 'selected' : ''}>

@@ -62,8 +62,6 @@ import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.dp.DpUF;
-import br.gov.jfrj.siga.dp.DpUFDTO;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpCargoDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpFuncaoConfiancaDaoFiltro;

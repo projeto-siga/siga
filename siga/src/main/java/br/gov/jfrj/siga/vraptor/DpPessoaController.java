@@ -60,6 +60,7 @@ import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.CpUF;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -333,6 +334,11 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	@Get("/app/pessoa/editar")
 	public void edita(final Long id) {
 		CpOrgaoUsuario ou = new CpOrgaoUsuario();
+		
+		/*Carrega lista UF*/
+		List<CpUF> ufList = dao().consultarUF();
+		result.include("ufList",ufList);
+
 		if (id != null) {
 			DpPessoa pessoa = dao().consultar(id, DpPessoa.class, false);
 			ou.setIdOrgaoUsu(pessoa.getOrgaoUsuario().getId());
@@ -355,24 +361,11 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				 * Adicao de campos RG
 				 * Cartao 1057
 				 */
-				List<DpUFDTO>ufList = new ArrayList<DpUFDTO>();
-				for(DpUF uf:DpUF.values()) {
-					DpUFDTO du = new DpUFDTO();
-					du.setEstado(uf.getEstado());
-					du.setUf(uf.toString());
-					ufList.add(du);
-				}
-				result.include("ufList",ufList);
+
+
 				result.include("identidade",pessoa.getIdentidade());
 				result.include("orgaoIdentidade",pessoa.getOrgaoIdentidade());
-				
-				if(pessoa.getUfIdentidade() != null) {
-					result.include("ufIdentidade",pessoa.getUfIdentidade());
-				}
-				
-				if(pessoa.getDataExpedicaoIdentidade() != null) {
-					result.include("dataExpedicaoIdentidade",pessoa.getDataExpedicaoIdentidadeDDMMYYYY());
-				}			
+						
 				
 				if (pessoa.getDataNascimento() != null) {
 					result.include("dtNascimento", pessoa.getDtNascimentoDDMMYYYY());
@@ -386,6 +379,14 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				if (pessoa.getLotacao() != null) {
 					result.include("idLotacao", pessoa.getLotacao().getId());
 				}
+				
+				if(pessoa.getUfIdentidade() != null) {
+					result.include("ufIdentidade",pessoa.getUfIdentidade());
+				}
+				
+				if(pessoa.getDataExpedicaoIdentidade() != null) {
+					result.include("dataExpedicaoIdentidade",pessoa.getDataExpedicaoIdentidadeDDMMYYYY());
+				}	
 			}
 		}
 		if (id == null || (ou.getId() != null && ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())
@@ -520,6 +521,11 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		listaFuncao.add(f);
 		listaFuncao.addAll(dao().getInstance().consultarPorFiltro(funcao));
 		result.include("listaFuncao", listaFuncao);
+		
+		
+		/*Carrega lista UF*/
+		List<CpUF> ufList = dao().consultarUF();
+		result.include("ufList",ufList);
 
 		if (paramoffset == null) {
 			result.use(Results.page()).forwardTo("/WEB-INF/page/dpPessoa/edita.jsp");

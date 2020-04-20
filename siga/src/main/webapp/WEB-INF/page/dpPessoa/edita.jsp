@@ -6,6 +6,8 @@
 
 <script type="text/javascript">
 	function validar() {
+		$("#spinnerModal").modal('show');
+		document.getElementById("btnOk").disabled = true;
 		var idOrgaoUsu = document.getElementsByName('idOrgaoUsu')[0].value;
 		var nmPessoa = document.getElementsByName('nmPessoa')[0].value;	
 		var idCargo = document.getElementsByName('idCargo')[0].value;
@@ -16,10 +18,7 @@
 		var email = document.getElementsByName('email')[0].value;
 		var id = document.getElementsByName('id')[0].value;	
 		
-		$("#spinnerModal").modal('show');
-		 document.getElementById("btnOk").disabled = true;
-		
-		
+				
 		if (nmPessoa==null || nmPessoa=="") {			
 			mensagemAlerta("Preencha o nome da pessoa.");
 			document.getElementById('nmPessoa').focus();
@@ -58,14 +57,20 @@
 		}
 
 		if(!validarEmail(document.getElementsByName('email')[0])) {
+			$("#spinnerModal").modal('hide');
+			document.getElementById("btnOk").disabled = false;
 			return;
 		}
 
 		if(dtNascimento != null && dtNascimento != "" && !data(dtNascimento)) {
+			$("#spinnerModal").modal('hide');
+			document.getElementById("btnOk").disabled = false;
 			return;
 		}
 
 		if(!validarCPF(cpf)) {
+			$("#spinnerModal").modal('hide');
+			document.getElementById("btnOk").disabled = false;
 			return;
 		}
 			
@@ -77,6 +82,8 @@
 	function mensagemAlerta(mensagem) {
 		$('#alertaModal').find('.mensagem-Modal').text(mensagem);
 		$('#alertaModal').modal();
+		$("#spinnerModal").modal('hide');
+		document.getElementById("btnOk").disabled = false;
 	}
 	
 	function mascaraData( v)
@@ -243,6 +250,9 @@
 						</div>
 					</div>
 				</div>
+				
+				<hr>
+				
 				<div class="row">
 					<div class="col-md-4">
 						<div class="form-group">
@@ -278,28 +288,75 @@
 						</div>
 					</div>
 				</div>
-				<c:if test="${empty id}">
-					<div class="row">
-						<div class="col-md-4 col-sm-6">
+				<hr>
+				<!-- Alteracao cartao 1057 -->
+				<fieldset class="form-group">					
+					<div class="row bg-">
+						<div class="col-md-4">
 							<div class="form-group">
-								<span>Carregar planilha para inserir múltiplos registros:</span>
+								<label for="nmPessoa">RG (Incluindo dígito)</label>
+								<input type="text" id="identidade" name="identidade" value="${identidade}" maxlength="60" class="form-control"/>
 							</div>
 						</div>
-						<div class="col-md-2 col-sm-2">
+						<div class="col-md-2">
 							<div class="form-group">
-								<input type="button" value="Carregar planilha" onclick="javascript:location.href='/siga/app/pessoa/carregarExcel';" class="btn btn-primary" />
+								<label for="nmPessoa">Órgão Expedidor</label>
+								<input type="text" id="orgaoIdentidade" name="orgaoIdentidade" value="${orgaoIdentidade}" maxlength="50" class="form-control" />
+							</div>
+						</div>
+						
+						<div class="col-md-2">					
+							<div class="form-group">
+								<label for="ufIdentidade">UF</label>
+								<select name="ufIdentidade" id="ufIdentidade" value="${ufIdentidade}" class="form-control  siga-select2">
+									<option value="" selected disabled hidden>Selecione uma UF</option>
+									
+									<c:forEach items="${ufList}" var="item">
+										<option value="${item.sigla}" ${item.sigla== ufIdentidade ? 'selected' : ''}>
+											${item.descricao}
+										</option>
+									</c:forEach>							
+								</select>
+							</div>
+						</div>
+						<div class="col-md-2">
+							<div class="form-group">
+								<label for="nmPessoa">Data de Expedição</label>
+								<input type="text" id="dataExpedicaoIdentidade" name="dataExpedicaoIdentidade" value="${dataExpedicaoIdentidade}" maxlength="10" onkeyup="this.value = mascaraData( this.value )" class="form-control" />
 							</div>
 						</div>
 					</div>
-				</c:if>
+				</fieldset>
+				<!-- Fim da alteracao cartao 1057 -->
+				
 				<div class="row">
 					<div class="col-sm-12">
 						<div class="form-group">
-							<button type="button" onclick="javascript: validarNomeCpf();" class="btn btn-primary" >Ok</button> 
+							<button type="button" id="btnOk" onclick="javascript: validarNomeCpf();" class="btn btn-primary" >Ok</button> 
 							<button type="button" onclick="javascript:history.back();" class="btn btn-primary" >Cancelar</button>
 						</div>
 					</div>	
 				</div>
+
+				<c:if test="${empty id}">
+					<div class="card mt-2 mb-2">
+						<div class="card-body">
+							<h5 class="card-title">Importação por Planilha</h5>
+							<div class="row">
+								<div class="col-md-4 col-sm-6">
+									<div class="form-group">
+										<span>Carregar planilha para inserir múltiplos registros</span>
+									</div>
+
+									<div class="form-group">
+										<button type="button" onclick="javascript:location.href='/siga/app/pessoa/carregarExcel';" class="btn btn-success btn-lg">
+										<i class="far fa-file-excel"></i> Carregar planilha
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</c:if>
 			</form>
 			<!-- Modal -->
 			<div class="modal fade" id="alertaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

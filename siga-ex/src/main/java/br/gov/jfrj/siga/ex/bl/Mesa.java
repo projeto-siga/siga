@@ -537,7 +537,8 @@ public class Mesa {
 			map.get(mobil).add(mm);
 		}
 
-		if (SigaBaseProperties.getBooleanValue("siga.mesa.carrega.lotacao")) {
+		if (SigaBaseProperties.getBooleanValue("siga.mesa.carrega.lotacao")
+				&& !Ex.getInstance().getComp().ehPublicoExterno(titular)) {
 			List<Object[]> lLota = dao.listarDocumentosCxEntradaPorPessoaOuLotacao(null,
 					lotaTitular);
 	

@@ -39,11 +39,16 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpVisualizacao;
+import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
+import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.Mesa2;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
@@ -57,6 +62,7 @@ public class ExMesa2Controller extends ExController {
 
 	@Get("app/mesa2")
 	public void lista(Boolean exibirAcessoAnterior, Long idVisualizacao, String msg) {
+		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
 		if (exibirAcessoAnterior != null && exibirAcessoAnterior) {
 			CpAcesso a = dao.consultarAcessoAnterior(so.getCadastrante());
 			if (a == null)
@@ -89,13 +95,23 @@ public class ExMesa2Controller extends ExController {
 		List<br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem> g = new ArrayList<br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem>();
 		Map<String, Mesa2.SelGrupo> selGrupos = null;
 		List<Mesa2.GrupoItem> gruposMesa = new ArrayList<Mesa2.GrupoItem>();
+		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
 
 		try {
 			if (parms != null) {
 				ObjectMapper mapper = new ObjectMapper();
 				selGrupos = mapper.readValue(parms, new TypeReference<Map<String, Mesa2.SelGrupo>>() {});
 			}
-	
+			if (exibeLotacao 
+					&& (Ex.getInstance().getComp().ehPublicoExterno(
+							getTitular()) 
+					|| !SigaBaseProperties.getBooleanValue("siga.mesa.carrega.lotacao"))) {
+				result.use(Results.http()).addHeader("Content-Type", "text/plain")
+					.body("Não é permitido exibir dados da sua " 
+							+ SigaMessages.getMessage("usuario.lotacao"))
+					.setStatusCode(200);				
+				return;
+			}
 			DpLotacao lotaTitular = null;
 			if(idVisualizacao != null && !idVisualizacao.equals(Long.valueOf(0)) 
 					&& Cp.getInstance().getConf().podePorConfiguracao

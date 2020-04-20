@@ -9,6 +9,7 @@
 
 <siga:pagina titulo="Mesa Virtual">
 <script type="text/javascript" src="../javascript/vue.min.js"></script>
+	<c:set var="siga_mesaCarregaLotacao" scope="session" value="${f:resource('siga.mesa.carrega.lotacao')}" />
 	<div id="app" class="container-fluid content" >
 		<div id="configMenu" class="mesa-config ml-auto" :class="toggleConfig">
 			<button type="button" class="btn-mesa-config btn btn-secondary btn-sm h-100" @click="toggleMenuConfig();">
@@ -86,19 +87,21 @@
 		</div>
 		<div id="rowTopMesa" style="z-index: 1" class="row sticky-top px-3 pt-1 bg-white shadow-sm" 
 				v-if="!carregando || (!errormsg &amp;&amp; grupos.length >= 0)">
-			<div id="radioBtn" class="btn-group mr-2 mb-1" 
-					title="Visualiza somente os documentos do usuário ou da lotação">
-				<a class="btn btn-primary btn-sm" v-bind:class="exibeLota ? 'notActive' : 'active'" id="btnUser"  
-					accesskey="u" @click="carregarMesaUser('#btnUser');">
-					<i class="fas fa-user my-1"></i>
-					<span class="d-none d-sm-inline">Usuário</span>
-				</a>
-				<a class="btn btn-primary btn-sm" v-bind:class="exibeLota ? 'active' : 'notActive'" id="btnLota"  
-					accesskey="l" @click="carregarMesaLota('#btnLota');">
-					<i class="fas fa-users my-1"></i>
-					<span class="d-none d-sm-inline"><fmt:message key='usuario.lotacao'/></span>
-				</a>
-			</div>
+			<c:if test="${siga_mesaCarregaLotacao && !ehPublicoExterno}">
+				<div id="radioBtn" class="btn-group mr-2 mb-1" 
+						title="Visualiza somente os documentos do usuário ou da lotação">
+					<a class="btn btn-primary btn-sm" v-bind:class="exibeLota ? 'notActive' : 'active'" id="btnUser"  
+						accesskey="u" @click="carregarMesaUser('#btnUser');">
+						<i class="fas fa-user my-1"></i>
+						<span class="d-none d-sm-inline">Usuário</span>
+					</a>
+					<a class="btn btn-primary btn-sm" v-bind:class="exibeLota ? 'active' : 'notActive'" id="btnLota"  
+						accesskey="l" @click="carregarMesaLota('#btnLota');">
+						<i class="fas fa-users my-1"></i>
+						<span class="d-none d-sm-inline"><fmt:message key='usuario.lotacao'/></span>
+					</a>
+				</div>
+			</c:if>
 			<div class="mr-2 mb-1">
 				<input id="filtroExibidos" type="text" class="form-control p-1 input-sm" placeholder="Filtrar documentos da mesa" v-model="filtro" ng-model-options="{ debounce: 200 }">
 			</div>
@@ -109,10 +112,10 @@
 				Última atualização: {{getLastRefreshTime()}}</small>
 		</div>
 		
-		<div class="row" v-if="!carregando && errormsg">
+		<div class="row mt-2" v-if="!carregando && errormsg">
 			<div class="col col-12">
 				<p class="alert alert-danger">
-					<strong>Erro!</strong> {{errormsg}}
+					<strong>{{errormsg}}</strong> 
 				</p>
 			</div>
 		</div>
@@ -153,10 +156,12 @@
 										<small class="fas fa-user"></small>
 										<span class="badge badge-light">{{g.grupoCounterUser}}</span>
 									</span>
-									<span class="badge badge-light btn-sm align-middle" :class="{disabled: !exibeLota}">
-										<small class="fas fa-users"></small>
-										<span class="badge badge-light">{{g.grupoCounterLota}}</span>
-									</span>
+									<c:if test="${siga_mesaCarregaLotacao && !ehPublicoExterno}">
+										<span class="badge badge-light btn-sm align-middle" :class="{disabled: !exibeLota}">
+											<small class="fas fa-users"></small>
+											<span class="badge badge-light">{{g.grupoCounterLota}}</span>
+										</span>
+									</c:if>
 								</small>
 							</h5>
 						</div>
@@ -438,15 +443,20 @@
 		        	  	 idVisualizacao: ${idVisualizacao}
 		        	  }, 
 		          complete: function (response, status, request) {   
-		        	  var buttonClose = $('.alert').find('button').clone();
 		        	  cType = response.getResponseHeader('Content-Type');
-		        	  if (response.status > 300 && cType.indexOf('text/html') !== -1) {
-		                  window.location.href = response.redirect;
-					  } else {		  	
-						  carregaFromJson(response.responseText, self);
-						  sessionStorage.setItem(
-								  'timeout' + getUser(), new Date());
-					  }
+		        	  self.errormsg = undefined;
+			          if (cType && cType.indexOf('text/plain') !== -1 && response.status == 200) {
+			        	  self.errormsg = response.responseText;
+				          self.carregando = false;
+				      } else {
+			        	  if (response.status > 300 && cType.indexOf('text/html') !== -1) {
+			                  window.location.href = response.redirect;
+						  } else {		  	
+							  carregaFromJson(response.responseText, self);
+							  sessionStorage.setItem(
+									  'timeout' + getUser(), new Date());
+						  }
+				      }
 		          }, 
 		          failure: function (response, status) {           
 		  	          self.carregando = false; 

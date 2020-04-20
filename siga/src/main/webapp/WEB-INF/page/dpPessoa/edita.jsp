@@ -254,6 +254,12 @@
 				<hr>
 				
 				<div class="row">
+					<div class="col-md-2">
+						<div class="form-group">
+							<label for="nmPessoa">CPF</label>
+							<input type="text" id="cpf" name="cpf" value="${cpf}" maxlength="14" onkeyup="this.value = cpf_mask(this.value)" class="form-control" />
+						</div>
+					</div>
 					<div class="col-md-4">
 						<div class="form-group">
 							<label for="nmPessoa">Nome</label>
@@ -264,12 +270,6 @@
 						<div class="form-group">
 							<label for="nmPessoa">Data de Nascimento</label>
 							<input type="text" id="dtNascimento" name="dtNascimento" value="${dtNascimento}" maxlength="10" onkeyup="this.value = mascaraData( this.value )" class="form-control" />
-						</div>
-					</div>
-					<div class="col-md-2">
-						<div class="form-group">
-							<label for="nmPessoa">CPF</label>
-							<input type="text" id="cpf" name="cpf" value="${cpf}" maxlength="14" onkeyup="this.value = cpf_mask(this.value)" class="form-control" />
 						</div>
 					</div>
 					<div class="col-md-4">

@@ -277,8 +277,21 @@
 									</td>
 								</c:if>
 								<td class="fa-fw" style="min-width: 200px;">
-								<!--   -->
-									<button class="fa fa-search btn btn-default btn-sm xrp-label" ${empty documento[1].getMovimentacoesPorTipo(3)? 'disabled': ''}></button>
+									<c:set var="temTramitacoes" value="${not empty documento[1].getMovimentacoesPorTipo(3)}" />
+									<a class="fa fa-search btn btn-default btn-sm xrp-label ${temTramitacoes? '': 'disabled'}" 
+										href="${temTramitacoes? f:concat(f:concat(pageContext.request.contextPath, '/app/expediente/doc/exibirTramitacao?idMovimentacao='), documento[1].idMobil): ''}">
+										<!-- 
+										href="${temTramitacoes? f:concat(pageContext.request.contextPath, '/app/expediente/doc/exibirTramitacao'): ''}"
+										${documento[1].idMobil}
+										 -->
+										 
+									</a>
+									
+									<ul>
+									<c:forEach var="movimentacao" items="${documento[1].getMovimentacoesPorTipo(3)}">
+										<li>${movimentacao.cadastrante} (${movimentacao.cadastrante.nomePessoa }) - ${movimentacao.resp} (${movimentacao.resp.nomePessoa })</li>
+									</c:forEach>
+									</ul>
 								</td>
 
 							</c:when>

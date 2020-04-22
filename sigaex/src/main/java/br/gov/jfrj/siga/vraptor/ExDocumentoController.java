@@ -60,6 +60,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -2692,6 +2693,16 @@ public class ExDocumentoController extends ExController {
 				.getBL()
 				.corrigirArquivamentosEmVolume(idPrimeiroDoc, idUltimoDoc,
 						efetivarDoc);
+	}
+
+	@Get("app/expediente/doc/exibirTramitacao")
+	public void buscarTramitacoes(Long idMovimentacao) { // 
+		System.out.println("ExDocumentoController.buscarTramitacoes(): ID    " + idMovimentacao);
+		List<ExMovimentacao> tramitacoes = dao().cosultarTramitacoesPorMovimentacao(idMovimentacao);
+		result.include("mobil", tramitacoes.get(0).getExMobil());
+		System.out.println("ExDocumentoController.buscarTramitacoes(): MOBIL " + tramitacoes.get(0).getExMobil());
+		result.include("tramitacoes", tramitacoes);
+		System.out.println("ExDocumentoController.buscarTramitacoes(): TRAMI " + tramitacoes);
 	}
 
 }

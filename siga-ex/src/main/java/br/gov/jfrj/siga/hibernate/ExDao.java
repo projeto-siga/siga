@@ -2259,4 +2259,10 @@ public class ExDao extends CpDao {
 		return l;
 	}
 
+	public List<ExMovimentacao> cosultarTramitacoesPorMovimentacao(Long idMobil) {
+		return getSessao() //
+				.getNamedQuery(ExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_NAMED_QUERY)
+				.setParameter("idMobil", idMobil).list();
+	}
+
 }

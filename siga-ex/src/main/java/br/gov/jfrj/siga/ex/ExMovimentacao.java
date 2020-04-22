@@ -34,6 +34,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -59,8 +61,17 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 @Entity
 @BatchSize(size = 500)
 @Table(name = "EX_MOVIMENTACAO", catalog = "SIGA")
+@NamedQuery(name = ExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_NAMED_QUERY, query = ExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_QUERY)
 public class ExMovimentacao extends AbstractExMovimentacao implements
 		Serializable, Comparable<ExMovimentacao> {
+
+	public static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_NAMED_QUERY = "ExMovimentacao.cosultarTramitacoesPorMovimentacao";
+
+	static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_QUERY = //
+			"SELECT mov FROM ExMovimentacao mov "
+					+ "WHERE mov.exMobil.idMobil = :idMobil AND mov.exTipoMovimentacao.idTpMov = "
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA;
+	
 	/**
 	 * 
 	 */

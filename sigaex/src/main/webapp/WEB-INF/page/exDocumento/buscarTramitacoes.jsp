@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	buffer="64kb"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib uri="http://localhost/customtag" prefix="tags"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://localhost/libstag" prefix="libs"%>
+
+<siga:pagina titulo="Histórico de tramitação">
+	<div class="container-fluid content" id="page">
+		<h2 class="mt-3">Histórico de tramitação: ${mobil.sigla}
+			${mobil.exDocumento.descrDocumento}</h2>
+		<div id="origensTramitacao">
+			<table id="tblTramitacoes"
+				class="gt-table table table-sm table-hover">
+				<thead class="${thead_color}">
+					<tr>
+						<th colspan="3">De</th>
+						<th colspan="3">Para</th>
+						<th colspan="2" rowspan="2">Evento</th>
+					</tr>
+					<tr>
+						<th>Data</th>
+						<th>Órgão / Unidade</th>
+						<th>Usuário</th>
+						<th>Data</th>
+						<th>Órgão / Unidade</th>
+						<th>Usuário</th>
+					</tr>
+				</thead>
+				<tbody>
+					<c:forEach var="tramitacao" items="${tramitacoes}">
+						<tr id="tramitacao_${tramitacao.idMov}">
+							<td class="de_data"     > ${tramitacao.dtIniMov} </td>
+							<td class="de_unidade"  >  </td>
+							<td class="de_usuario"  > ${tramitacao.cadastrante} ${tramitacao.cadastrante.nomePessoa}</td> 
+							<td class="para_data"   > ${tramitacao.dtTimestamp} </td>
+							<td class="para_unidade">  </td>
+							<td class="para_usuario"> ${tramitacao.resp} ${tramitacao.resp.nomePessoa} </td>
+							<td class="evento"      >  </td>
+							<td class="juntado"     >  </td>
+						</tr>
+					</c:forEach>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</siga:pagina>

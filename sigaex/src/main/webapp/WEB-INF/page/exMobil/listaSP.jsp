@@ -142,6 +142,7 @@
 								<th rowspan="2" align="left">${campos.get(campo)}</th>
 							</c:forEach>
 						</c:if>
+						<th id="colHistTramitacao" rowspan="2">Histórico de tramitação</th>
 					</tr>
 					<tr>
 						<th rowspan="1" align="center">Unidade</th>
@@ -169,61 +170,76 @@
 						<c:set var="podeAcessar"
 							value="${f:testaCompetencia('acessarDocumento',titular,lotaTitular, documento[1])}" />
 						<c:set var="podeAcessar" value="true" />
-						<td width="11.5%" align="right"><c:choose>
+						<td width="11.5%" align="right">
+							<c:choose>
 								<c:when test='${popup!="true"}'>
 									<c:choose>
 										<c:when test="${podeAcessar eq true}">
-											<a
-												href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${documento[1].sigla}&linkVolta=history.back();">
-												${documento[1].codigo} </a>
+											<a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${documento[1].sigla}&linkVolta=history.back();">
+												${documento[1].codigo} 
+											</a>
 										</c:when>
 										<c:otherwise> 
-										${documento[1].codigo}
-									</c:otherwise>
+											${documento[1].codigo}
+										</c:otherwise>
 									</c:choose>
 								</c:when>
 								<c:otherwise>
-									<a
-										href="javascript:opener.retorna_${propriedade}('${documento[1].id}','${documento[1].sigla}','${f:selDescricaoConfidencial(documento[1], lotaTitular, titular)}');">
-										${documento[1].codigo} </a>
+									<a href="javascript:opener.retorna_${propriedade}('${documento[1].id}','${documento[1].sigla}','${f:selDescricaoConfidencial(documento[1], lotaTitular, titular)}');">
+										${documento[1].codigo} 
+									</a>
 								</c:otherwise>
-							</c:choose></td>
+							</c:choose>
+						</td>
 						<c:if test="${documento[1].numSequencia != 0}">
 							<!-- resposavel assinatura -->
-							<td width="4%" align="center"><siga:selecionado
+							<td width="4%" align="center">
+								<siga:selecionado
 									sigla="${documento[0].lotaSubscritor.sigla}"
 									descricao="${documento[0].lotaSubscritor.descricao}"
 									lotacaoParam="${documento[0].lotaSubscritor.orgaoUsuario.siglaOrgaoUsu}${documento[0].lotaSubscritor.sigla}" />
 							</td>
-							<td width="4%" align="center"><siga:selecionado
+							<td width="4%" align="center">
+								<siga:selecionado
 									sigla="${documento[0].subscritor.iniciais}"
 									descricao="${documento[0].subscritor.descricao}"
-									pessoaParam="${documento[0].subscritor.sigla}" /></td>
+									pessoaParam="${documento[0].subscritor.sigla}" />
+							</td>
 							<td width="5%" align="center">
-								${documento[0].dtDocDDMMYY}</td>
-							<td width="4%" align="center"><siga:selecionado
+								${documento[0].dtDocDDMMYY}
+							</td>
+							<td width="4%" align="center">
+								<siga:selecionado
 									sigla="${documento[2].dpLotacaoIni.lotacaoAtual.sigla}"
 									descricao="${documento[2].dpLotacaoIni.lotacaoAtual.descricao}"
 									lotacaoParam="${documento[2].dpLotacaoIni.orgaoUsuario.siglaOrgaoUsu}${documento[2].dpLotacaoIni.sigla}" />
 							</td>
-							<td width="4%" align="center"><siga:selecionado
+							<td width="4%" align="center">
+								<siga:selecionado
 									sigla="${documento[2].dpPessoaIni.iniciais}"
 									descricao="${documento[2].dpPessoaIni.descricao}"
-									pessoaParam="${documento[2].dpPessoaIni.sigla}" /></td>
-							<td width="10.5%" align="center">${documento[2].dtIniMarcaDDMMYYYY}</td>
+									pessoaParam="${documento[2].dpPessoaIni.sigla}" />
+							</td>
 							<td width="10.5%" align="center">
-								${fn:substring(documento[2],0,fn:indexOf(documento[2],'['))}</td>
+								${documento[2].dtIniMarcaDDMMYYYY}
+							</td>
+							<td width="10.5%" align="center">
+								${fn:substring(documento[2],0,fn:indexOf(documento[2],'['))}
+							</td>
 						</c:if>
 						<c:if test="${documento[1].numSequencia == 0}">
-							<td width="4%" align="center"><siga:selecionado
+							<td width="4%" align="center">
+								<siga:selecionado
 									sigla="${documento[0].lotaSubscritor.sigla}"
 									descricao="${documento[0].lotaSubscritor.descricao}"
 									lotacaoParam="${documento[0].lotaSubscritor.orgaoUsuario.siglaOrgao}${documento[0].lotaSubscritor.sigla}" />
 							</td>
-							<td width="4%" align="center"><siga:selecionado
+							<td width="4%" align="center">
+								<siga:selecionado
 									sigla="${documento[0].subscritor.iniciais}"
 									descricao="${documento[0].subscritor.descricao}"
-									pessoaParam="${documento[0].subscritor.sigla}" /></td>
+									pessoaParam="${documento[0].subscritor.sigla}" />
+							</td>
 							<td width="5%" align="center">tag1</td>
 							<td width="4%" align="center"></td>
 							<td width="4%" align="center"></td>
@@ -260,6 +276,10 @@
 										${f:anotacaoConfidencial(documento[1], titular,lotaTitular)}
 									</td>
 								</c:if>
+								<td class="fa-fw" style="min-width: 200px;">
+								<!--   -->
+									<button class="fa fa-search btn btn-default btn-sm xrp-label" ${empty documento[1].getMovimentacoesPorTipo(3)? 'disabled': ''}></button>
+								</td>
 
 							</c:when>
 							<c:otherwise>

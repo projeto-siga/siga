@@ -191,7 +191,7 @@
 							<label for="exDocumentoDTO.numAntigoDoc">Nº antigo</label>
 							<input type="text" name="exDocumentoDTO.numAntigoDoc" size="16" maxLength="32" value="${exDocumentoDTO.numAntigoDoc}" class="form-control" />
 							<small class="form-text text-muted">(informar o número do documento no antigo sistema de controle de expedientes ou de
-											processos administrativos [SISAPA] ou [PROT]).</small>
+											processos administrativos).</small>
 						</div>
 					</div>
 				</div>

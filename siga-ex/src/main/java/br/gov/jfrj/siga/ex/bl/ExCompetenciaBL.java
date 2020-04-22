@@ -613,6 +613,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA,
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR, null, null, null, null, null, null);
 	
+	    Boolean podePorConfModelo = getConf().podePorConfiguracao(titular, lotaTitular, titular.getCargo(), titular.getFuncaoConfianca(), mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA, CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+		
 		return mob.doc().isFinalizado() && !mob.isEmTransito()
 				&& (!mob.isGeral() || mob.doc().isExterno())
 				&& !mob.isJuntado()
@@ -621,7 +623,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isSobrestado()
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& !mob.doc().isSemEfeito()
-				&& podePorConf;
+				&& podePorConf
+				&& podePorConfModelo;
 	}
 
 	/**
@@ -2553,7 +2556,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		return (mob.getExDocumento().isFinalizado())								
 				&& !mob.isEmTransito()
-				&& podeMovimentar(titular, lotaTitular, mob);
+				&& podeMovimentar(titular, lotaTitular, mob)
+				&& getConf().podePorConfiguracao(titular, lotaTitular, mob.doc().getExModelo(), CpTipoConfiguracao.TIPO_CONFIG_JUNTADA_AUTOMATICA);
 
 	}
 	
@@ -4465,8 +4469,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		final boolean podeMovimentar = podeMovimentar(titular, lotaTitular, mob);
 
 		return (!mob.isGeral() && mob.doc().isExpediente()
-				&& !mob.doc().isPendenteDeAssinatura() && !mob.isEmTransito() && podeMovimentar);
-
+				&& !mob.doc().isPendenteDeAssinatura() && !mob.isEmTransito() && podeMovimentar && getConf().podePorConfiguracao(titular, lotaTitular, ExTipoMovimentacao.TIPO_MOVIMENTACAO_AUTUAR, CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR) && getConf().podePorConfiguracao(titular, lotaTitular, titular.getCargo(), titular.getFuncaoConfianca(), mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), ExTipoMovimentacao.TIPO_MOVIMENTACAO_AUTUAR, CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR));
 	}
 
 }

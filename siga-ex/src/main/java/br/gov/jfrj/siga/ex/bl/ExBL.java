@@ -3444,7 +3444,6 @@ public class ExBL extends CpBL {
 				finalizar(cadastrante, lotaTitular, doc);
 			}
 			
-<<<<<<< HEAD
 			if (!doc.getCadastrante().equivale(doc.getSubscritor()) &&  usuarioExternoTemQueAssinar(doc, doc.getSubscritor())) {
 				enviarEmailParaUsuarioExternoAssinarDocumento(doc, doc.getSubscritor());
 			}
@@ -3467,8 +3466,6 @@ public class ExBL extends CpBL {
 			 * fim da alteracao
 			 */
 
-=======
->>>>>>> develop_GOVSP
 			// System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
 			// + ", PESSOA " + doc.getCadastrante().getIdPessoa()
 			// + ". Terminou commit gravacao: "

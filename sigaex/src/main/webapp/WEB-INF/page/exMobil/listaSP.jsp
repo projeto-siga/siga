@@ -142,7 +142,7 @@
 								<th rowspan="2" align="left">${campos.get(campo)}</th>
 							</c:forEach>
 						</c:if>
-						<th id="colHistTramitacao" rowspan="2">Histórico de tramitação</th>
+						<th id="colHistTramitacao" rowspan="2"></th>
 					</tr>
 					<tr>
 						<th rowspan="1" align="center">Unidade</th>
@@ -276,22 +276,12 @@
 										${f:anotacaoConfidencial(documento[1], titular,lotaTitular)}
 									</td>
 								</c:if>
-								<td class="fa-fw" style="min-width: 200px;">
+								<td class="fa-fw" style="min-width: 120px;">
 									<c:set var="temTramitacoes" value="${not empty documento[1].getMovimentacoesPorTipo(3)}" />
-									<a class="fa fa-search btn btn-default btn-sm xrp-label ${temTramitacoes? '': 'disabled'}" 
+									<a class="fa fa-search btn btn-default btn-sm xrp-label ${temTramitacoes? '': 'disabled'}"
+										title="${temTramitacoes? 'Ver': 'Não tem'} Histórico de Tramitação" 
 										href="${temTramitacoes? f:concat(f:concat(pageContext.request.contextPath, '/app/expediente/doc/exibirTramitacao?idMovimentacao='), documento[1].idMobil): ''}">
-										<!-- 
-										href="${temTramitacoes? f:concat(pageContext.request.contextPath, '/app/expediente/doc/exibirTramitacao'): ''}"
-										${documento[1].idMobil}
-										 -->
-										 
 									</a>
-									
-									<ul>
-									<c:forEach var="movimentacao" items="${documento[1].getMovimentacoesPorTipo(3)}">
-										<li>${movimentacao.cadastrante} (${movimentacao.cadastrante.nomePessoa }) - ${movimentacao.resp} (${movimentacao.resp.nomePessoa })</li>
-									</c:forEach>
-									</ul>
 								</td>
 
 							</c:when>

@@ -12,8 +12,14 @@
 
 <siga:pagina titulo="Histórico de tramitação">
 	<div class="container-fluid content" id="page">
-		<h2 class="mt-3">Histórico de tramitação: ${mobil.sigla}
-			${mobil.exDocumento.descrDocumento}</h2>
+		<h2 class="mt-3">
+			Histórico de tramitação: ${mobil.sigla}
+			${mobil.exDocumento.descrDocumento}
+			<button type="button" name="voltar" onclick="window.history.back()"
+				class="btn btn-secondary float-right" accesskey="r">
+				Volta<u>r</u>
+			</button>
+		</h2>
 		<div id="origensTramitacao">
 			<table id="tblTramitacoes"
 				class="gt-table table table-sm table-hover">
@@ -35,14 +41,30 @@
 				<tbody>
 					<c:forEach var="tramitacao" items="${tramitacoes}">
 						<tr id="tramitacao_${tramitacao.idMov}">
-							<td class="de_data"     > ${tramitacao.dtIniMov} </td>
-							<td class="de_unidade"  >  </td>
-							<td class="de_usuario"  > ${tramitacao.cadastrante} ${tramitacao.cadastrante.nomePessoa}</td> 
-							<td class="para_data"   > ${tramitacao.dtTimestamp} </td>
-							<td class="para_unidade">  </td>
-							<td class="para_usuario"> ${tramitacao.resp} ${tramitacao.resp.nomePessoa} </td>
-							<td class="evento"      >  </td>
-							<td class="juntado"     >  </td>
+							<td class="de_data"><fmt:formatDate
+									value="${tramitacao.dtIniMov}" pattern="dd/MM/yyyy HH:mm:ss" />
+							</td>
+							<td class="de_unidade">
+								${tramitacao.cadastrante.orgaoUsuario.nmOrgaoUsu} / ${tramitacao.cadastrante.lotacao.nomeLotacao}
+							</td>
+							<td class="de_usuario">${tramitacao.cadastrante}
+								${tramitacao.cadastrante.nomePessoa}</td>
+							<td class="para_data"><c:if
+									test="${tramitacao.exTipoMovimentacao.id == 3}">
+									<fmt:formatDate value="${tramitacao.dtFimMov}"
+										pattern="dd/MM/yyyy HH:mm:ss" />
+								</c:if></td>
+							<td class="para_unidade"><c:if
+									test="${tramitacao.exTipoMovimentacao.id == 3}">
+								${tramitacao.resp.orgaoUsuario.nmOrgaoUsu}  / ${tramitacao.resp.lotacao.nomeLotacao}
+								</c:if></td>
+							<td class="para_usuario"><c:if
+									test="${tramitacao.exTipoMovimentacao.id == 3}">
+									${tramitacao.resp} ${tramitacao.resp.nomePessoa}
+								</c:if></td>
+							<td class="evento">
+								${tramitacao.exTipoMovimentacao.descrTipoMovimentacao}</td>
+							<td class="juntado"></td>
 						</tr>
 					</c:forEach>
 				</tbody>

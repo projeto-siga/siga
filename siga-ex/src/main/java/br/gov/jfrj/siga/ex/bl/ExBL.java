@@ -53,6 +53,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Criteria;
 import org.hibernate.ObjectNotFoundException;
@@ -3266,7 +3268,38 @@ public class ExBL extends CpBL {
 		ExDao.getInstance().gravar(mob);
 		return s;
 	}
-
+	
+	public void enviarEmailParaUsuarioExternoAssinarDocumento(ExDocumento documento, DpPessoa pessoaSubscritorOuCossignatario) {
+		if (usuarioExternoTemQueAssinar(documento, pessoaSubscritorOuCossignatario)) {
+			
+			String uri = obterURIDoDocumento(documento.getSigla());
+			String conteudoHTML = Correio.obterHTMLEmailParaUsuarioExternoAssinarDocumento(uri, documento.getSigla(), pessoaSubscritorOuCossignatario.getSigla());			
+			String destinatario[] = { pessoaSubscritorOuCossignatario.getEmailPessoa() };						
+			String remetente = SigaBaseProperties.getString("servidor.smtp.usuario.remetente");
+			String assunto = "Acesso ao documento nº " + documento;
+			
+			try {
+				Correio.enviar(remetente, destinatario, assunto, assunto, conteudoHTML);
+			} catch (Exception e) {
+				System.out.println("Problemas ao enviar e-mail para usuário externo assinar documento. Erro: " + e.getMessage());
+			}
+		}				
+	}
+	
+	public boolean usuarioExternoTemQueAssinar(ExDocumento documento, DpPessoa pessoaSubscritorOuCossignatario) {
+		return SigaMessages.isSigaSP() && 
+				documento.isPendenteDeAssinatura() && 
+				Ex.getInstance().getComp().ehPublicoExterno(pessoaSubscritorOuCossignatario);
+	}
+	
+	public String obterURIDoDocumento(String siglaDocumento) {
+		HttpServletRequest request = CurrentRequest.get().getRequest();
+		
+		String uri = request.getRequestURL().toString().replace(request.getRequestURI(), "");
+		uri +=  request.getContextPath() + "/app/expediente/doc/exibir?sigla=" + siglaDocumento;
+		
+		return uri;
+	}
 	
 	public ExDocumento gravar(final DpPessoa cadastrante, final DpPessoa titular, final DpLotacao lotaTitular,
 			ExDocumento doc) throws Exception {
@@ -3284,7 +3317,7 @@ public class ExBL extends CpBL {
 		 * doc.getExMobilPai())) throw new AplicacaoException(
 		 * "não é permitido criar documento filho do documento pai selecionado, pois este está inacessível ao usuário."
 		 * ); }
-		 */
+		 */					
 
 		if (doc.isAssinaturaSolicitada()) {
 			ExMovimentacao m = doc.getMovSolicitacaoDeAssinatura();
@@ -3411,6 +3444,28 @@ public class ExBL extends CpBL {
 				finalizar(cadastrante, lotaTitular, doc);
 			}
 			
+			if (!doc.getCadastrante().equivale(doc.getSubscritor()) &&  usuarioExternoTemQueAssinar(doc, doc.getSubscritor())) {
+				enviarEmailParaUsuarioExternoAssinarDocumento(doc, doc.getSubscritor());
+			}
+
+			/*
+			 * alteracao para adicionar a movimentacao de insercao de substituto
+			 */
+			/*
+			if(exDocumentoDTO.isSubstituicao() && exDocumentoDTO.getDoc().getTitular() != exDocumentoDTO.getDoc().getSubscritor()) {
+				final ExMovimentacao mov_substituto = criarNovaMovimentacao(
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_SUBSTITUICAO_RESPONSAVEL, cadastrante,
+						cadastrante.getLotacao(), doc.getMobilGeral(), null, cadastrante, null, null, null, null);
+				mov_substituto.setDescrMov("Responsável pela assinatura: " + doc.getSubscritor().getNomePessoa() + " - "
+						+ doc.getSubscritor().getMatricula() + " em substituição de " + cadastrante.getNomePessoa()
+						+ " - " + cadastrante.getMatricula());
+				gravarMovimentacao(mov_substituto);
+			}
+			*/
+			/*
+			 * fim da alteracao
+			 */
+
 			// System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
 			// + ", PESSOA " + doc.getCadastrante().getIdPessoa()
 			// + ". Terminou commit gravacao: "
@@ -3707,6 +3762,28 @@ public class ExBL extends CpBL {
 				.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO)) {
 			Notificador.notificarDestinariosEmail(mov, Notificador.TIPO_NOTIFICACAO_GRAVACAO);
 		}
+		
+		if (SigaMessages.isSigaSP()) {
+			if (mov.getExTipoMovimentacao().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA) &&
+					usuarioExternoTemQueAssinar(mov.getExDocumento(), mov.getSubscritor())) {
+				enviarEmailParaUsuarioExternoAssinarDocumento(mov.getExDocumento(), mov.getSubscritor());
+				
+			} else if (mov.getExTipoMovimentacao().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA) ||
+					mov.getExTipoMovimentacao().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO) ||
+					mov.getExTipoMovimentacao().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA) ||
+					mov.getExTipoMovimentacao().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)) {	
+				
+				if (!mov.getExDocumento().getCosignatarios().isEmpty() && 
+						!mov.getExDocumento().isCossignatario(mov.getSubscritor())) {
+					for (DpPessoa cossignatario : mov.getExDocumento().getCosignatarios()) {
+						if (usuarioExternoTemQueAssinar(mov.getExDocumento(), cossignatario)) {
+							enviarEmailParaUsuarioExternoAssinarDocumento(mov.getExDocumento(), cossignatario);
+						}
+					}
+				}
+				
+			}
+		}		
 	}
 	
 	public void getExTipoMovSubstituicaoAssinante(final ExMovimentacao mov) {
@@ -3859,7 +3936,7 @@ public class ExBL extends CpBL {
 
 	public void incluirCosignatario(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExDocumento doc,
 			final Date dtMov, final DpPessoa subscritor, final String funcaoCosignatario) throws AplicacaoException {
-
+				
 		try {
 			if (subscritor == null) {
 				throw new AplicacaoException("Cossignatário não foi informado");
@@ -6898,7 +6975,7 @@ public class ExBL extends CpBL {
 			iniciarAlteracao();
 			final ExMovimentacao mov = criarNovaMovimentacao(
 					ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA, cadastrante, lotaTitular,
-					doc.getMobilGeral(), null, cadastrante, null, null, null, null);
+					doc.getMobilGeral(), null, cadastrante, null, null, null, null);					
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(doc.getMobilGeral());

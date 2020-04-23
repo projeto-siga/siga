@@ -1035,6 +1035,12 @@ public class CpDao extends ModeloDao {
 		List l = query.list();
 		return l;
 	}
+	
+
+	public CpUF consultaSiglaUF(String uf) {
+		return (CpUF) getSessao().createCriteria(CpUF.class).add(Restrictions.eq("nmUF", uf)).uniqueResult();
+	}
+
 
 	@SuppressWarnings("unchecked")
 	public List<CpLocalidade> consultarLocalidadesPorUF(final CpUF cpuf) {

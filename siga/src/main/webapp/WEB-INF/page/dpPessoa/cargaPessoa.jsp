@@ -6,6 +6,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <siga:pagina titulo="Cadastro de Pessoa">
+	<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
+	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
+	<style type="text/css" media="screen">
+		.custom-file-label::after{content: 'Escolher arquivo' !important;}
+	</style>
+
 	<!-- main content -->
 	<div class="container-fluid">
 		<div class="card bg-light mb-3" >
@@ -24,36 +30,42 @@
 				<c:if test="${not empty msg}"><script type="text/javascript">mensagemAlerta('Arquivo processado com sucesso!');</script></c:if>
 				<div class="row">
 					<div class="col-sm">
+						<ul class="list-group">
+							<dt>&#149;&#160;Somente esta liberada a carga de planilhas no formato Excel: "XLSX"</dt>
+							<dt>&#149;&#160;O conte&uacute;do dos dados contidos na planilha &eacute; de responsabilidade do usu&aacute;rio;</dt>
+							<dt>&#149;&#160;Ap&oacute;s realizar a carga, os dados ser&atilde;o inseridos automaticamente na base de dados;</dt>
+							<dt>&#149;&#160;O sistema consistir&aacute; a exist&ecirc;ncia de duplicidade dos dados confrontando a planilha como banco de dados;</dt>
+							<dt>&#149;&#160;A planilha deve conter os seguintes campos/formatos: (itens destacados são obrigatórios)</dt>
+						</ul>
+					</div>
+				</div>
+				<div class="row mt-3">
+					<div class="col-5">
 						<div class="form-group">
-							<dl>
-								<dt>&#149;&#160;Somente esta liberada a carga de planilhas no formato Excel: "XLSX"</dt>
-								<dt>&#149;&#160;O conte&uacute;do dos dados contidos na planilha &eacute; de responsabilidade do usu&aacute;rio;</dt>
-								<dt>&#149;&#160;Ap&oacute;s realizar a carga, os dados ser&atilde;o inseridos automaticamente na base de dados;</dt>
-								<dt>&#149;&#160;O sistema consistir&aacute; a exist&ecirc;ncia de duplicidade dos dados confrontando a planilha como banco de dados;</dt>
-								<dt>&#149;&#160;A planilha deve conter os seguintes campos/formatos:</dt>
-								<dd>- Sigla do &Oacute;rgão;</dd>
-								<dd>- Nome do Cargo;</dd>
-								<dd>- Nome da Fun&ccedil;&atilde;o de Confian&ccedil;a;</dd>
-								<dd>- Nome da <fmt:message key="usuario.lotacao"/>;</dd>
-								<dd>- Nome: m&aacute;ximo de 60 caracteres;</dd>
-								<dd>- Data de nascimento (8 n&uacute;meros dd/mm/aaaa);</dd>
-								<dd>- CPF: m&aacute;ximo de 11 caracteres num&eacute;ricos;</dd>
-								<dd>- E-mail: m&aacute;ximo de 60 caracteres</dd>
-								<dd>- RG: Incluindo Dígito</dd>
-                                <dd>- Órgão Expedidor RG: m&aacute;ximo de 50 caracteres</dd>
-                                <dd>- Sigla UF RG: m&aacute;ximo de 2 caracteres</dd>
-                                <dd>- Data de Expedição: (8 n&uacute;meros dd/mm/aaaa)</dd>
-							</dl>
+							<ul class="list-group font-weight-bold">
+								<li class="list-group-item list-group-item-success"> Sigla do &Oacute;rgão</li>
+								<li class="list-group-item list-group-item-success"> Nome do Cargo</li>
+								<li class="list-group-item"> Nome da Fun&ccedil;&atilde;o de Confian&ccedil;a</li>
+								<li class="list-group-item list-group-item-success"> Sigla da <fmt:message key="usuario.lotacao"/></li>
+								<li class="list-group-item list-group-item-success">Nome: m&aacute;ximo de 60 caracteres</li>
+								<li class="list-group-item"> Data de nascimento (8 n&uacute;meros dd/mm/aaaa)</li>
+								<li class="list-group-item list-group-item-success"> CPF: m&aacute;ximo de 11 caracteres num&eacute;ricos</li>
+								<li class="list-group-item list-group-item-success"> E-mail: m&aacute;ximo de 60 caracteres</li>
+								<li class="list-group-item"> RG: Incluindo Dígito</li>
+                                <li class="list-group-item"> Órgão Expedidor RG: m&aacute;ximo de 50 caracteres</li>
+                                <li class="list-group-item"> Sigla UF RG: m&aacute;ximo de 2 caracteres</li>
+                                <li class="list-group-item"> Data de Expedição: (8 n&uacute;meros dd/mm/aaaa)</li>
+							</ul>
 						</div>
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-sm-4">
+					<div class="col-sm-5">
 						<div class="form-group">
-							<label>&Oacute;rg&atilde;o</label>
+							<label>Órgão</label>
 							<c:choose>
 								<c:when test="${empty nmOrgaousu}">
-									<select name="idOrgaoUsu" value="${idOrgaoUsu}">
+									<select name="idOrgaoUsu" value="${idOrgaoUsu}" class="form-control  siga-select2">
 										<c:forEach items="${orgaosUsu}" var="item">
 											<option value="${item.idOrgaoUsu}"
 												${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
@@ -69,14 +81,13 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-sm-3">
+					<div class="col-sm-5">
 						<div class="form-group">
-							<b>Selecione o arquivo contendo a planilha com dados:&nbsp;&nbsp;&nbsp;</b>
-						</div>
-					</div>
-					<div class="col-sm-2">
-						<div class="form-group">
-							<input type="file" name="arquivo" accept=".xlsx" class="form-control-file"/>				
+						  <label>Planilha para carga</label>	
+						  <div class="custom-file">
+						    <input type="file" name="arquivo" accept=".xlsx" class="custom-file-input" id="arquivo">
+						    <label  class="custom-file-label text-truncate" for="arquivo" data-browse="Escolha o Arquivo"><i class="far fa-file-excel"></i>  Selecione o arquivo contendo a planilha com dados</label>			
+						  </div>
 						</div>
 					</div>
 				</div>								
@@ -114,6 +125,9 @@
 			</div>
 		</div>
 	</div>
+<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
 <script>
 /**
  * Valida se o anexo foi selecionado ao clicar em OK
@@ -132,5 +146,11 @@ function mensagemAlerta(mensagem) {
 	$('#alertaModal').modal();
 }
 	
+</script>
+<script>
+	$('.custom-file-input').on('change', function() { 
+	   let fileName = $(this).val().split('\\').pop(); 
+	   $(this).next('.custom-file-label').addClass("selected").html('<i class="far fa-file-excel"></i>  ' + fileName); 
+	});
 </script>
 </siga:pagina>

@@ -10,6 +10,16 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
+	<style type="text/css">
+/* Quando se usa a classe 'disabled' TODOS os eventos de mouse são 
+desabilitados, inclusive a exibição do title. Por isso fez-se necessário 
+sobrescrever esse comportamento para poder mostrar o title.
+ */
+td.tramitacoes.fa-fw>a.disabled {
+	cursor: auto; /* mantém o cursor do mouse como o padrão. */
+	pointer-events: inherit;
+}
+</style>
 <script type="text/javascript" language="Javascript1.1">
 	function csv(id, action) {
 		var frm = document.getElementById(id);
@@ -276,11 +286,21 @@
 										${f:anotacaoConfidencial(documento[1], titular,lotaTitular)}
 									</td>
 								</c:if>
-								<td class="fa-fw" style="min-width: 120px;">
-									<c:set var="temTramitacoes" value="${not empty documento[1].getMovimentacoesPorTipo(3)}" />
-									<a class="fa fa-search btn btn-default btn-sm xrp-label ${temTramitacoes? '': 'disabled'}"
-										title="${temTramitacoes? 'Ver': 'Não tem'} Histórico de Tramitação" 
-										href="${temTramitacoes? f:concat(f:concat(pageContext.request.contextPath, '/app/expediente/doc/exibirTramitacao?idMovimentacao='), documento[1].idMobil): ''}">
+								<td class="tramitacoes fa-fw" style="min-width: 120px;">
+									<c:choose>
+										<c:when test="${empty documento[1].getMovimentacoesPorTipo(3)}">
+											<c:set var="link" value="javascript:void(0)" />
+											<c:set var="title" value="Não tem Histórico de Tramitação"/>
+											<c:set var="classDisabled" value="disabled"/>
+										</c:when>
+										<c:otherwise>
+											<c:set var="link" value="${f:concat(f:concat(pageContext.request.contextPath, '/app/expediente/doc/exibirTramitacao?idMovimentacao='), documento[1].idMobil)}" />
+											<c:set var="title" value="Ver Histórico de Tramitação"/>
+											<c:set var="classDisabled" value=""/>
+										</c:otherwise>
+									</c:choose>
+									<a class="fa fa-search btn btn-default btn-sm xrp-label ${classDisabled}"
+										title="${title}" href="${link}">
 									</a>
 								</td>
 

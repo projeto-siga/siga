@@ -646,6 +646,14 @@ public class ExDocumentoController extends ExController {
 			}
 		}
 
+		if(exDocumentoDTO.getPreenchimento() != null) {
+			DpPessoa p = (DpPessoa) CpDao.getInstance().consultar(exDocumentoDTO.getSubscritorSel().getId(), DpPessoa.class, false).getPessoaAtual();
+			if(p.getDataFim() != null) {
+				result.include("mensagem", "documento.subscritor.inativo");
+				exDocumentoDTO.getSubscritorSel().apagar();
+			}
+		}
+		
 		exDocumentoDTO.getSubscritorSel().buscar();
 		exDocumentoDTO.getDestinatarioSel().buscar();
 		exDocumentoDTO.getLotacaoDestinatarioSel().buscar();

@@ -310,7 +310,7 @@ DELIMITER ;;
 	if OLD.dt_finalizacao is not null and OLD.dt_finalizacao <> NEW.dt_finalizacao THEN
 		   signal sqlstate value '20101' set message_text = 'Não é permitido alterar uma DATA de Finalização já existente';
 	end if; 
-	if OLD.fg_eletronico = 'N' then
+	if OLD.dt_finalizacao is not null and OLD.fg_eletronico = 'N' then
 		if  NEW.conteudo_blob_doc <> OLD.conteudo_blob_doc then
 			signal sqlstate value '20101' set message_text = 'Não é permitido alterar: não eletrônico com data de fechamento e com conteúdo.';
 		end if;

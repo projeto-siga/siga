@@ -2257,7 +2257,7 @@ public class ExDao extends CpDao {
 	/**
 	 * Realiza a consulta das {@link ExMovimentacao Movimentações} para o histórico
 	 * de tramitações de uma {@link ExMobil} relacionada a um determinado
-	 * {@link ExDocumento Documento} em ordem cronológica (
+	 * {@link ExDocumento Documento} em ordem cronológica decrescente (
 	 * {@link ExMovimentacao#getDtTimestamp()}) . As movimentações retornadas devm
 	 * ser dos seguintes {@link ExMovimentacao#getExTipoMovimentacao() Tipos}:
 	 * <ul>

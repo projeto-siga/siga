@@ -2693,7 +2693,7 @@ public class ExDocumentoController extends ExController {
 	/**
 	 * Realiza a consulta das {@link ExMovimentacao Movimentações} para o histórico
 	 * de tramitações de uma {@link ExMobil} relacionada a um determinado
-	 * {@link ExDocumento Documento} em ordem cronológica (
+	 * {@link ExDocumento Documento} em ordem cronológica decrescente (
 	 * {@link ExMovimentacao#getDtTimestamp()}) . As movimentações retornadas devm
 	 * ser dos seguintes {@link ExMovimentacao#getExTipoMovimentacao() Tipos}:
 	 * <ul>
@@ -2725,7 +2725,7 @@ public class ExDocumentoController extends ExController {
 	 * @param idMobil ID da Mobilização
 	 */
 	@Get("app/expediente/doc/exibirMovimentacoesTramitacao")
-	public void buscarMovimentacoesTramitacao(Long idMobil) { // 
+	public void buscarMovimentacoesTramitacao(Long idMobil) { //
 		List<ExMovimentacao> tramitacoes = dao().cosultarTramitacoesPorMovimentacao(idMobil);
 
 		result.include("mobil", tramitacoes.get(0).getExMobil());

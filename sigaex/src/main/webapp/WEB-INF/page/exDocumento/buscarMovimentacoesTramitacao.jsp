@@ -65,14 +65,14 @@ td.juntado.fa-fw>a.disabled {
 								<td class="de_usuario">${movimentacao.cadastrante}
 									${movimentacao.cadastrante.nomePessoa}</td>
 								<td class="para_data"><c:if
-										test="${isTramitacao  && !status.last && tramitacoes[status.index + 1].exTipoMovimentacao.id == 4}">
+										test="${isTramitacao  && !status.first && tramitacoes[status.index - 1].exTipoMovimentacao.id == 4}">
 										<%-- 
 										Se a movimentação é de Tramitação, 
 										verifica se a movimentação seguinte é de recebimento. 
 										Em caso positivo, usa sua hora como recebimento da tramitação. 
 										--%>
 										<c:set var="movRecebimento"
-											value="${tramitacoes[status.index + 1]}" />
+											value="${tramitacoes[status.index - 1]}" />
 										<fmt:formatDate value="${movRecebimento.dtIniMov}"
 											pattern="dd/MM/yyyy HH:mm:ss" />
 									</c:if></td>

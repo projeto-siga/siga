@@ -115,7 +115,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA + ", "
 					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO + //
 					") "
-					+ "ORDER BY mov.dtTimestamp";
+					+ "ORDER BY mov.dtTimestamp DESC";
 
 	/**
 	 * 

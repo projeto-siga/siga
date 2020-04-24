@@ -160,8 +160,66 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 		// protocolos.
 		@NamedQuery(name = "consultarMovimentacoes", query = "from ExMovimentacao mov"
 				+ "                where mov.cadastrante.idPessoaIni=:pessoaIni and mov.dtIniMov=to_date(:data, 'DD/MM/YYYY HH24:MI:SS')          "
-				+ "                ) order by mov.dtTimestamp"), })
+				+ "                ) order by mov.dtTimestamp"), 
+		@NamedQuery(name = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_NAMED_QUERY, query = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_QUERY)		
+})
 public abstract class AbstractExMovimentacao extends ExArquivo implements Serializable {
+
+	private static final long serialVersionUID = -1521008574855565618L;
+
+	/**
+	 * Nome da {@link NamedQuery} usada para a consulta das {@link ExMovimentacao
+	 * Movimentações} para o histórico de tramitações de uma {@link ExMobil}
+	 * relacionada a um determinado {@link ExDocumento Documento} em ordem
+	 * cronológica decrescente( {@link ExMovimentacao#getDtTimestamp()}) . As movimentações
+	 * retornadas devm ser dos seguintes
+	 * {@link ExMovimentacao#getExTipoMovimentacao() Tipos}:
+	 * <ul>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA }</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_RECEBIMENTO }</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_JUNTADA }</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_JUNTADA_EXTERNO }</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_JUNTADA_A_DOCUMENTO_EXTERNO }
+	 * </li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE }</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE }
+	 * </li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO }
+	 * </li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE }
+	 * </li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO }
+	 * </li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA }</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO }
+	 * </li>
+	 * </ul>
+	 * As movimentações do tipo
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_RECEBIMENTO } não serão exibidas.
+	 * Elas são apenas usadas para indicar a hora de recebimento da Movimentação de
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA } imediatamente
+	 * anterior.
+	 */
+	public static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_NAMED_QUERY = "ExMovimentacao.cosultarTramitacoesPorMovimentacao";
+
+	static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_QUERY = //
+			"SELECT mov FROM ExMovimentacao mov " + "WHERE mov.exMobil.idMobil = :idMobil "
+					+ "AND mov.exTipoMovimentacao.idTpMov IN (" //
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA + ", "
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO + ", "
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA + ", "
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO + ", "
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_A_DOCUMENTO_EXTERNO + ", "
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE + ", "
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE + ", "
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO + ", "
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE + ", "
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO + ", "
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA + ", "
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO + //
+					") "
+					+ "ORDER BY mov.dtTimestamp DESC";
+
 	@Id
 	@SequenceGenerator(sequenceName = "EX_MOVIMENTACAO_SEQ", name = "EX_MOVIMENTACAO_SEQ")
 	@GeneratedValue(generator = "EX_MOVIMENTACAO_SEQ")

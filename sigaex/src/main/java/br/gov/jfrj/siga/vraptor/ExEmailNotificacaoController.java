@@ -199,7 +199,7 @@ public class ExEmailNotificacaoController extends SigaController{
 	private Map<Integer, String> getListaTipoDest() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(1, "Matrícula");
-		map.put(2, "Órgão Integrado");
+		map.put(2, "Lotação");
 		return map;
 	}
 	
@@ -207,7 +207,7 @@ public class ExEmailNotificacaoController extends SigaController{
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(1, "Default");
 		map.put(2, "Matrícula");
-		map.put(3, "Órgão Integrado");		
+		map.put(3, "Lotação");		
 		map.put(4, "Email");
 		return map;
 	}

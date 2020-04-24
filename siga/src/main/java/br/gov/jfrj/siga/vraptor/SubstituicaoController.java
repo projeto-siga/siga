@@ -47,7 +47,7 @@ public class SubstituicaoController extends SigaController {
 	private Map<Integer, String> getListaTipo() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(1, "Matrícula");
-		map.put(2, "Órgão Integrado");
+		map.put(2, "Lotação");
 		return map;
 	}	
 		

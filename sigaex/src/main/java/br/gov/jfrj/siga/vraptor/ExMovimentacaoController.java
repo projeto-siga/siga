@@ -3804,7 +3804,7 @@ public class ExMovimentacaoController extends ExController {
 
 	protected Map<Integer, String> getListaTipoResp() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Órgão Integrado");
+		map.put(1, "Lotação");
 		map.put(2, SigaMessages.getMessage("usuario.matricula"));
 		map.put(3, "Externo");
 		return map;
@@ -3813,7 +3813,7 @@ public class ExMovimentacaoController extends ExController {
 	private Map<Integer, String> getListaTipoRespPerfil() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(1, SigaMessages.getMessage("usuario.matricula"));
-		map.put(2, "Órgão Integrado");
+		map.put(2, "Lotação");
 		return map;
 	}
 

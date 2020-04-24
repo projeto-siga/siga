@@ -5571,6 +5571,10 @@ public class ExBL extends CpBL {
 				atualizarVariaveisDenormalizadas(doc);
 		}
 		
+		
+		// Nato: meio confuso esse código de commitar a transação e depois atualizar o workflow, mas
+		// quis manter assim mesmo para não correr o risco de mudar alguma lógica e provocar algum erro
+		// inesperado.
 		boolean commited = false;
 		
 		if (mov != null && mov.getExMobilRef() != null) {

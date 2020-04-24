@@ -72,16 +72,15 @@ public class SigaTransacionalInterceptor extends br.com.caelum.vraptor.jpa.JPATr
 		addRedirectListener();
 
 		try {
-			if (this.method.containsAnnotation(Transacional.class)
-					&& !(this.request.getRequestURI().startsWith("app/sigawf"))) {
+			if (this.method.containsAnnotation(Transacional.class)) {
 				EntityTransaction transaction = manager.getTransaction();
 				transaction.begin();
 			} else {
 				disableAutoFlush();
 			}
 
-			// System.out.println("*** " + this.method.toString() + " - " + (transaction ==
-			// null ? "NÃO" : "") + " Transacional");
+//			 System.out.println("*** " + (manager.getTransaction() ==
+//					 null || !manager.getTransaction().isActive() ? "NÃO" : "") + " TRANSACIONAL" + this.method.toString() + " - ");
 
 			stack.next();
 
@@ -126,11 +125,9 @@ public class SigaTransacionalInterceptor extends br.com.caelum.vraptor.jpa.JPATr
 	public static void upgradeParaTransacional() {
 		SigaTransacionalInterceptor thiz = current.get();
 		EntityTransaction transaction = thiz.manager.getTransaction();
-		if (transaction != null && transaction == null) {
-			// System.out.println("*** UPGRADE para Transacional - " +
-			// thiz.method.toString());
+		if (!transaction.isActive()) {
+			// System.out.println("*** UPGRADE para Transacional - " + thiz.method.toString());
 			enableAutoFlush();
-			transaction = thiz.manager.getTransaction();
 			transaction.begin();
 		}
 	}
@@ -149,14 +146,14 @@ public class SigaTransacionalInterceptor extends br.com.caelum.vraptor.jpa.JPATr
 	}
 
 	public static void disableAutoFlush() {
-		SigaTransacionalInterceptor thiz = current.get();
-		Session session = CDIProxies.unproxifyIfPossible(thiz.manager).unwrap(org.hibernate.Session.class);
-		session.setFlushMode(FlushMode.MANUAL);
+//		SigaTransacionalInterceptor thiz = current.get();
+//		Session session = CDIProxies.unproxifyIfPossible(thiz.manager).unwrap(org.hibernate.Session.class);
+//		session.setFlushMode(FlushMode.MANUAL);
 	}
 
 	public static void enableAutoFlush() {
-		SigaTransacionalInterceptor thiz = current.get();
-		Session session = CDIProxies.unproxifyIfPossible(thiz.manager).unwrap(org.hibernate.Session.class);
-		session.setFlushMode(FlushMode.AUTO);
+//		SigaTransacionalInterceptor thiz = current.get();
+//		Session session = CDIProxies.unproxifyIfPossible(thiz.manager).unwrap(org.hibernate.Session.class);
+//		session.setFlushMode(FlushMode.AUTO);
 	}
 }

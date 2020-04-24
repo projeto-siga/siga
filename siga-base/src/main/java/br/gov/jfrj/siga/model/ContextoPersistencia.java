@@ -28,9 +28,11 @@ public class ContextoPersistencia {
 	}
 
 	static public void flushTransaction() {
-		em().flush();
-		em().getTransaction().commit();
-		em().getTransaction().begin();
+		if (em().getTransaction() != null && em().getTransaction().isActive()) {
+			em().flush();
+			em().getTransaction().commit();
+			em().getTransaction().begin();
+		}
 	}
 	
 	public static void begin() {

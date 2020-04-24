@@ -301,8 +301,8 @@
 			this.errormsg = undefined;
 	      	var self = this
 			self.exibeLota = (getParmUser('exibeLota') === 'true');
-	      	self.trazerAnotacoes = getParmUser('trazerAnotacoes');
-	      	self.trazerComposto = getParmUser('trazerComposto');
+	      	self.trazerAnotacoes = (getParmUser('trazerAnotacoes') == null ? self.trazerAnotacoes : getParmUser('trazerAnotacoes'));
+	      	self.trazerComposto = (getParmUser('trazerComposto') == null ? self.trazerComposto : getParmUser('trazerComposto'));
   	        self.carregarMesa();
 		  },
 		  data: function() {

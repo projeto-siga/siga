@@ -727,5 +727,10 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	public void setIdSitConfiguracaoConfManual(Long idSitConfiguracaoConfManual) {
 		this.idSitConfiguracaoConfManual = idSitConfiguracaoConfManual;
 	}
+	
+	public boolean isUsuarioExterno() {
+		return ((this.getOrgaoUsuario().getIsExternoOrgaoUsu() != null && this.getOrgaoUsuario().getIsExternoOrgaoUsu() == 1)
+				|| this.getLotacao() != null && this.getLotacao().getIsExternaLotacao() == 1);
+	}
 
 }

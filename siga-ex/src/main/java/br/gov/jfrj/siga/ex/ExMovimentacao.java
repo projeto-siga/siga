@@ -34,7 +34,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -102,8 +101,9 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 
 	static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_QUERY = //
 			"SELECT mov FROM ExMovimentacao mov " + "WHERE mov.exMobil.idMobil = :idMobil "
-					+ "AND mov.exTipoMovimentacao.idTpMov IN (" + ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
-					+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO + ", "
+					+ "AND mov.exTipoMovimentacao.idTpMov IN (" //
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA + ", "
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO + ", "
 					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA + ", "
 					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO + ", "
 					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_A_DOCUMENTO_EXTERNO + ", "
@@ -113,25 +113,10 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE + ", "
 					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO + ", "
 					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA + ", "
-					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO + ") "
-//					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO + //
+					") "
 					+ "ORDER BY mov.dtTimestamp";
-	
-	/*
- tramitação, 					TIPO_MOVIMENTACAO_TRANSFERENCIA
- juntada (se houver), 			TIPO_MOVIMENTACAO_JUNTADA
- 								TIPO_MOVIMENTACAO_JUNTADA_EXTERNO
- 								TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
- 								TIPO_MOVIMENTACAO_JUNTADA_A_DOCUMENTO_EXTERNO
- arquivamento (se houver) ,		TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE
- 								TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE
- 								TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO
- desarquivamento (se houver)	TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE
- 								TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO
- cancelamento (se houver)		TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
- 								TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO
-	 */
-	
+
 	/**
 	 * 
 	 */

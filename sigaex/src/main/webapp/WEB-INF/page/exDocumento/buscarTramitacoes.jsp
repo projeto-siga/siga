@@ -49,63 +49,65 @@ td.juntado.fa-fw>a.disabled {
 					</tr>
 				</thead>
 				<tbody>
-					<c:forEach var="movimentacao" items="${tramitacoes}">
-						<tr id="movimentacao_${movimentacao.idMov}">
-							<td class="de_data">
-								<fmt:formatDate
-									value="${movimentacao.dtIniMov}" 
-									pattern="dd/MM/yyyy HH:mm:ss" />
-							</td>
-							<td class="de_unidade">
-								${movimentacao.cadastrante.orgaoUsuario.nmOrgaoUsu} /
-								${movimentacao.cadastrante.lotacao.nomeLotacao}
-							</td>
-							<td class="de_usuario">
-								${movimentacao.cadastrante}
-								${movimentacao.cadastrante.nomePessoa}
-							</td>
-							<td class="para_data">
-								<c:if test="${movimentacao.exTipoMovimentacao.id == 3}">
-									<fmt:formatDate value="${movimentacao.dtFimMov}"
-										pattern="dd/MM/yyyy HH:mm:ss" />
-								</c:if>
-							</td>
-							<td class="para_unidade">
-								<c:if test="${movimentacao.exTipoMovimentacao.id == 3}">
-									${movimentacao.resp.orgaoUsuario.nmOrgaoUsu} / 
-									${movimentacao.resp.lotacao.nomeLotacao}
-								</c:if>
-							</td>
-							<td class="para_usuario">
-								<c:if test="${movimentacao.exTipoMovimentacao.id == 3}">
-									${movimentacao.resp} ${movimentacao.resp.nomePessoa}
-								</c:if>
-							</td>
-							<td class="evento">
-								${movimentacao.exTipoMovimentacao.descrTipoMovimentacao}
-							</td>
-							<td class="juntado fa-fw">
-								<c:if test="${not empty movimentacao.exMobilRef}">
-									<div class="text-nowrap">${movimentacao.exMobilRef.sigla}</div>
-									<c:set var="temTramitacoes"
-										value="${not empty movimentacao.exMobilRef.getMovimentacoesPorTipo(3)}" />
-									<c:choose>
-										<c:when test="${empty movimentacao.exMobilRef.getMovimentacoesPorTipo(3)}">
-											<c:set var="link" value="javascript:void(0)" />
-											<c:set var="title" value="Não tem Histórico de Tramitação"/>
-											<c:set var="classDisabled" value="disabled"/>
-										</c:when>
-										<c:otherwise>
-											<c:set var="link" value="${f:concat(f:concat(pageContext.request.contextPath, '/app/expediente/doc/exibirTramitacao?idMovimentacao='), movimentacao.exMobilRef.idMobil)}" />
-											<c:set var="title" value="Ver Histórico de Tramitação"/>
-											<c:set var="classDisabled" value=""/>
-										</c:otherwise>
-									</c:choose>
-									<a class="fa fa-search btn btn-default btn-sm xrp-label ${classDisabled}"
-										title="${title}" href="${link}"></a>
-								</c:if>
-							</td>
-						</tr>
+					<c:forEach var="movimentacao" items="${tramitacoes}"
+						varStatus="status">
+						<%-- Não exibe Movimentações de recebimento --%>
+						<c:if test="${movimentacao.exTipoMovimentacao.id != 4}">
+							<c:set var="isTramitacao"
+								value="${movimentacao.exTipoMovimentacao.id == 3}" />
+							<tr id="movimentacao_${movimentacao.idMov}">
+								<td class="de_data"><fmt:formatDate
+										value="${movimentacao.dtIniMov}" pattern="dd/MM/yyyy HH:mm:ss" />
+								</td>
+								<td class="de_unidade">
+									${movimentacao.cadastrante.orgaoUsuario.nmOrgaoUsu} /
+									${movimentacao.cadastrante.lotacao.nomeLotacao}</td>
+								<td class="de_usuario">${movimentacao.cadastrante}
+									${movimentacao.cadastrante.nomePessoa}</td>
+								<td class="para_data"><c:if
+										test="${isTramitacao  && !status.last && tramitacoes[status.index + 1].exTipoMovimentacao.id == 4}">
+										<%-- 
+										Se a movimentação é de Tramitação, 
+										verifica se a movimentação seguinte é de recebimento. 
+										Em caso positivo, usa sua hora como recebimento da tramitação. 
+										--%>
+										<c:set var="movRecebimento"
+											value="${tramitacoes[status.index + 1]}" />
+										<fmt:formatDate value="${movRecebimento.dtIniMov}"
+											pattern="dd/MM/yyyy HH:mm:ss" />
+									</c:if></td>
+								<td class="para_unidade"><c:if test="${isTramitacao}">
+										${movimentacao.resp.orgaoUsuario.nmOrgaoUsu} / 
+										${movimentacao.resp.lotacao.nomeLotacao}
+									</c:if></td>
+								<td class="para_usuario"><c:if test="${isTramitacao}">
+										${movimentacao.resp} ${movimentacao.resp.nomePessoa}
+									</c:if></td>
+								<td class="evento">
+									${movimentacao.exTipoMovimentacao.descrTipoMovimentacao}</td>
+								<td class="juntado fa-fw"><c:if
+										test="${not empty movimentacao.exMobilRef}">
+										<div class="text-nowrap">${movimentacao.exMobilRef.sigla}</div>
+										<c:choose>
+											<c:when
+												test="${empty movimentacao.exMobilRef.getMovimentacoesPorTipo(3)}">
+												<c:set var="link" value="javascript:void(0)" />
+												<c:set var="title" value="Não tem Histórico de Tramitação" />
+												<c:set var="classDisabled" value="disabled" />
+											</c:when>
+											<c:otherwise>
+												<c:set var="link"
+													value="${f:concat(f:concat(pageContext.request.contextPath, '/app/expediente/doc/exibirTramitacao?idMovimentacao='), movimentacao.exMobilRef.idMobil)}" />
+												<c:set var="title" value="Ver Histórico de Tramitação" />
+												<c:set var="classDisabled" value="" />
+											</c:otherwise>
+										</c:choose>
+										<a
+											class="fa fa-search btn btn-default btn-sm xrp-label ${classDisabled}"
+											title="${title}" href="${link}"></a>
+									</c:if></td>
+							</tr>
+						</c:if>
 					</c:forEach>
 				</tbody>
 			</table>

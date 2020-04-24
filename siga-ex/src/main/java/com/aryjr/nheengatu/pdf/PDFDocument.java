@@ -240,7 +240,7 @@ public class PDFDocument extends com.aryjr.nheengatu.document.Document {
 		PDFTable table;
 		final TagsManager tm = TagsManager.getInstance();
 
-		PDFDocument.log.info("extractVisibleComponents");
+		// PDFDocument.log.info("extractVisibleComponents");
 		// PDFDocument.log.info(tm.states.size());
 		// PDFDocument.log.info(tm.getTextIndent());
 		// if (paragraph != null)
@@ -256,7 +256,7 @@ public class PDFDocument extends com.aryjr.nheengatu.document.Document {
 					s = s.replace("\\\"", "\"");
 					((Text) component).setText(s);
 				}
-				PDFDocument.log.info("text: " + ((Text) component).getText());
+				// PDFDocument.log.info("text: " + ((Text) component).getText());
 				// PDFDocument.log.info(tm.states.size());
 				// PDFDocument.log.info(tm.getTextIndent());
 				// PDFDocument.log.info(tm.getSpacingBefore());
@@ -293,9 +293,9 @@ public class PDFDocument extends com.aryjr.nheengatu.document.Document {
 				tm.checkTag((Tag) component);
 				final Paragraph p = PDFText.createParagraph(null, tm);
 
-				PDFDocument.log.info("p");
-				PDFDocument.log.info(tm.getFont().getSize());
-				PDFDocument.log.info(p.getLeading());
+//				PDFDocument.log.info("p");
+//				PDFDocument.log.info(tm.getFont().getSize());
+//				PDFDocument.log.info(p.getLeading());
 				// PDFDocument.log.info(tm.states.size());
 				// PDFDocument.log.info(tm.getTextIndent());
 				// PDFDocument.log.info("align:");
@@ -363,9 +363,9 @@ public class PDFDocument extends com.aryjr.nheengatu.document.Document {
 				final ListItem li = new ListItem(tm.getFont().getSize() * 1.25f);
 				li.setSpacingAfter(tm.getFont().getSize() * 0.5f);
 
-				PDFDocument.log.info("li");
-				PDFDocument.log.info(tm.getFont().getSize());
-				PDFDocument.log.info(li.getLeading());
+//				PDFDocument.log.info("li");
+//				PDFDocument.log.info(tm.getFont().getSize());
+//				PDFDocument.log.info(li.getLeading());
 
 				tm.checkTag((Tag) component);
 				if (list == null)

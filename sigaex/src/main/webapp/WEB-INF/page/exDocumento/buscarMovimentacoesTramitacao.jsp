@@ -97,7 +97,7 @@ td.juntado.fa-fw>a.disabled {
 											</c:when>
 											<c:otherwise>
 												<c:set var="link"
-													value="${f:concat(f:concat(pageContext.request.contextPath, '/app/expediente/doc/exibirTramitacao?idMovimentacao='), movimentacao.exMobilRef.idMobil)}" />
+													value="${f:concat(f:concat(pageContext.request.contextPath, '/app/expediente/doc/exibirMovimentacoesTramitacao?idMobil='), movimentacao.exMobilRef.idMobil)}" />
 												<c:set var="title" value="Ver Histórico de Tramitação" />
 												<c:set var="classDisabled" value="" />
 											</c:otherwise>

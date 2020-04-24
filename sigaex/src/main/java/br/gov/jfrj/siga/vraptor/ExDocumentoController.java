@@ -2724,9 +2724,9 @@ public class ExDocumentoController extends ExController {
 	 * 
 	 * @param idMobil ID da Mobilização
 	 */
-	@Get("app/expediente/doc/exibirTramitacao")
-	public void buscarTramitacoes(Long idMovimentacao) { // 
-		List<ExMovimentacao> tramitacoes = dao().cosultarTramitacoesPorMovimentacao(idMovimentacao);
+	@Get("app/expediente/doc/exibirMovimentacoesTramitacao")
+	public void buscarMovimentacoesTramitacao(Long idMobil) { // 
+		List<ExMovimentacao> tramitacoes = dao().cosultarTramitacoesPorMovimentacao(idMobil);
 
 		result.include("mobil", tramitacoes.get(0).getExMobil());
 		result.include("tramitacoes", tramitacoes);

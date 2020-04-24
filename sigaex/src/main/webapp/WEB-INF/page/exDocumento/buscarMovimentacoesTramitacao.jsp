@@ -85,8 +85,9 @@ td.juntado.fa-fw>a.disabled {
 									</c:if></td>
 								<td class="evento">
 									${movimentacao.exTipoMovimentacao.descrTipoMovimentacao}</td>
-								<td class="juntado fa-fw"><c:if
-										test="${not empty movimentacao.exMobilRef}">
+								<td class="juntado fa-fw">
+									<c:if test="${(movimentacao.exTipoMovimentacao.id == 12) and (not empty movimentacao.exMobilRef)}">
+										<%-- É Juntada? Tem documento Pai? --%>
 										<div class="text-nowrap">${movimentacao.exMobilRef.sigla}</div>
 										<c:choose>
 											<c:when
@@ -97,7 +98,7 @@ td.juntado.fa-fw>a.disabled {
 											</c:when>
 											<c:otherwise>
 												<c:set var="link"
-													value="${f:concat(f:concat(pageContext.request.contextPath, '/app/expediente/doc/exibirMovimentacoesTramitacao?idMobil='), movimentacao.exMobilRef.idMobil)}" />
+													value="${pageContext.request.contextPath}/app/expediente/doc/exibirMovimentacoesTramitacao?idMobil=${movimentacao.exMobilRef.idMobil}" />
 												<c:set var="title" value="Ver Histórico de Tramitação" />
 												<c:set var="classDisabled" value="" />
 											</c:otherwise>
@@ -105,7 +106,8 @@ td.juntado.fa-fw>a.disabled {
 										<a
 											class="fa fa-search btn btn-default btn-sm xrp-label ${classDisabled}"
 											title="${title}" href="${link}"></a>
-									</c:if></td>
+									</c:if>
+								</td>
 							</tr>
 						</c:if>
 					</c:forEach>

@@ -294,9 +294,10 @@ td.tramitacoes.fa-fw>a.disabled {
 											<c:set var="classDisabled" value="disabled"/>
 										</c:when>
 										<c:otherwise>
-											<c:set var="link" value="${f:concat(f:concat(pageContext.request.contextPath, '/app/expediente/doc/exibirMovimentacoesTramitacao?idMobil='), documento[1].idMobil)}" />
-											<c:set var="title" value="Ver Histórico de Tramitação"/>
-											<c:set var="classDisabled" value=""/>
+											<c:set var="link"
+												value="${pageContext.request.contextPath}/app/expediente/doc/exibirMovimentacoesTramitacao?idMobil=${documento[1].idMobil}" />
+											<c:set var="title" value="Ver Histórico de Tramitação" />
+											<c:set var="classDisabled" value="" />
 										</c:otherwise>
 									</c:choose>
 									<a class="fa fa-search btn btn-default btn-sm xrp-label ${classDisabled}"

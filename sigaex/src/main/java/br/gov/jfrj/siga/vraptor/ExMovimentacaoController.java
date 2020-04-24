@@ -3283,7 +3283,9 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Transacional
-	@Post("/app/expediente/mov/desapensar_gravar")
+	@Get
+	@Post
+	@Path("/app/expediente/mov/desapensar_gravar")
 	public void aDesapensarGravar(Integer postback, String sigla,
 			String dtMovString, boolean substituicao,
 			DpPessoaSelecao titularSel, DpPessoaSelecao subscritorSel)

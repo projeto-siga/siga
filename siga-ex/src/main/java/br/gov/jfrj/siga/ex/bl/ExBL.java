@@ -3274,7 +3274,7 @@ public class ExBL extends CpBL {
 			
 			String uri = obterURIDoDocumento(documento.getSigla());
 			String conteudoHTML = Correio.obterHTMLEmailParaUsuarioExternoAssinarDocumento(uri, documento.getSigla(), pessoaSubscritorOuCossignatario.getSigla());			
-			String destinatario[] = { pessoaSubscritorOuCossignatario.getEmailPessoa() };						
+			String destinatario[] = { pessoaSubscritorOuCossignatario.getEmailPessoaAtual() };						
 			String remetente = SigaBaseProperties.getString("servidor.smtp.usuario.remetente");
 			String assunto = "Acesso ao documento nº " + documento;
 			
@@ -3289,7 +3289,7 @@ public class ExBL extends CpBL {
 	public boolean usuarioExternoTemQueAssinar(ExDocumento documento, DpPessoa pessoaSubscritorOuCossignatario) {
 		return SigaMessages.isSigaSP() && 
 				documento.isPendenteDeAssinatura() && 
-				Ex.getInstance().getComp().ehPublicoExterno(pessoaSubscritorOuCossignatario);
+				pessoaSubscritorOuCossignatario.isUsuarioExterno();
 	}
 	
 	public String obterURIDoDocumento(String siglaDocumento) {

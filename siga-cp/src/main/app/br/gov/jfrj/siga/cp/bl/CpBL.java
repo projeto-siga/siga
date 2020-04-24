@@ -18,8 +18,11 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp.bl;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -453,11 +456,12 @@ public class CpBL {
 						dao().commitTransacao();
 
 						if (SigaMessages.isSigaSP()) {
-							String[] destinanarios = { pessoa.getEmailPessoaAtual() };
-
+							String[] destinanarios = { pessoa.getEmailPessoaAtual() };							
+							String conteudoHTML = pessoa.isUsuarioExterno() ? textoEmailNovoUsuarioExternoSP(idNova, matricula, novaSenha) : 
+								textoEmailNovoUsuarioSP(idNova, matricula, novaSenha, autenticaPeloBanco);
+							
 							Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
-									destinanarios, "Novo Usuário", "",
-									textoEmailNovoUsuarioSP(idNova, matricula, novaSenha, autenticaPeloBanco));
+									destinanarios, "Novo Usuário", "", conteudoHTML);
 						} else {
 							Correio.enviar(pessoa.getEmailPessoaAtual(), "Novo Usuário",
 									textoEmailNovoUsuario(matricula, novaSenha, autenticaPeloBanco));
@@ -564,6 +568,27 @@ public class CpBL {
 		retorno.append("</tbody>");
 		retorno.append("</table>");
 		return retorno.toString();
+	}
+	
+	private String textoEmailNovoUsuarioExternoSP(CpIdentidade identidade, String matricula, String novaSenha) {		
+		String conteudo = "";
+		
+		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/templates/email/novo-usuario-externo.html")))) {			
+			String str;
+			
+			while((str = bfr.readLine()) != null) {
+				conteudo += str;
+			}
+			
+		} catch (IOException e) {
+			throw new AplicacaoException("Erro ao montar e-mail para enviar ao usuário externo " + identidade.getDpPessoa().getNomePessoa());
+		}
+
+		conteudo = conteudo.replace("${nomeUsuario}", identidade.getDpPessoa().getNomePessoa())
+			.replace("${cpfUsuario}", matricula)
+			.replace("${senhaUsuario}", novaSenha);
+		
+		return conteudo;
 	}
 
 	private String buscarModoAutenticacao(String orgao) {

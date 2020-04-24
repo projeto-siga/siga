@@ -26,13 +26,13 @@
 <!-- 		            </div> -->
 	            <div class="form-group my-2 border-bottom">
 					<div class="form-check">
-						<input type="checkbox" class="form-check-input" id="trazerAnotacoes" v-model="trazerAnotacoes">
+						<input type="checkbox" class="form-check-input" id="trazerAnotacoes" v-model="trazerAnotacoes" @click="recarregarMesa();">
 						<label class="form-check-label" for="trazerAnotacoes"><small>Trazer anotações nos documentos</small></label>
 					</div>            
 	            </div>
 	            <div class="form-group my-2 border-bottom">
 					<div class="form-check">
-						<input type="checkbox" class="form-check-input" id="trazerComposto" v-model="trazerComposto">
+						<input type="checkbox" class="form-check-input" id="trazerComposto" v-model="trazerComposto" @click="recarregarMesa();">
 						<label class="form-check-label" for="trazerComposto">
 							<small>Exibir indicador de docto. avulso <i class="far fa-file"></i> ou composto <i class="far fa-copy"></i></small>
 						</label>
@@ -74,7 +74,7 @@
 				</span> 
 			</div> 
 			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos') && (cadastrante.orgaoUsuario.isExternoOrgaoUsu eq 0 && lotaTitular.isExternaLotacao eq 0)}">
-				<div class="col col-12 col-sm-4 col-md-auto ml-md-auto mb-2">
+				<div class="col col-12 col-sm-4 col-md-auto pr-md-0 ml-md-auto mb-2">
 					<a href="expediente/doc/editar" class="btn btn-success form-control"> <i class="fas fa-plus-circle mr-1"></i>
 						<fmt:message key="documento.novo"/></a>
 				</div>
@@ -301,8 +301,8 @@
 			this.errormsg = undefined;
 	      	var self = this
 			self.exibeLota = (getParmUser('exibeLota') === 'true');
-	      	setParmUser('trazerAnotacoes', self.trazerAnotacoes);
-	      	setParmUser('trazerComposto', self.trazerComposto);
+	      	self.trazerAnotacoes = (getParmUser('trazerAnotacoes') == null ? self.trazerAnotacoes : getParmUser('trazerAnotacoes'));
+	      	self.trazerComposto = (getParmUser('trazerComposto') == null ? self.trazerComposto : getParmUser('trazerComposto'));
   	        self.carregarMesa();
 		  },
 		  data: function() {
@@ -392,11 +392,9 @@
 			},
 			trazerAnotacoes: function() {
 				setParmUser('trazerAnotacoes', this.trazerAnotacoes);
-				this.recarregarMesa();
 			},
 			trazerComposto: function() {
 				setParmUser('trazerComposto', this.trazerComposto);
-				this.recarregarMesa();
 			},
 		  },		  
 			  

@@ -62,6 +62,7 @@ import br.gov.jfrj.siga.dp.CpTipoMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.ex.AbstractExMovimentacao;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -2291,7 +2292,7 @@ public class ExDao extends CpDao {
 	 */
 	public List<ExMovimentacao> cosultarTramitacoesPorMovimentacao(Long idMobil) {
 		return getSessao() //
-				.getNamedQuery(ExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_NAMED_QUERY)
+				.getNamedQuery(AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_NAMED_QUERY)
 				.setParameter("idMobil", idMobil).list();
 	}
 

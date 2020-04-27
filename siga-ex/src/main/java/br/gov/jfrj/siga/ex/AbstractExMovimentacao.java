@@ -171,28 +171,27 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	 * Nome da {@link NamedQuery} usada para a consulta das {@link ExMovimentacao
 	 * Movimentações} para o histórico de tramitações de uma {@link ExMobil}
 	 * relacionada a um determinado {@link ExDocumento Documento} em ordem
-	 * cronológica decrescente( {@link ExMovimentacao#getDtTimestamp()}) . As movimentações
-	 * retornadas devm ser dos seguintes
+	 * cronológica decrescente( {@link ExMovimentacao#getDtTimestamp()}) . As
+	 * movimentações retornadas devm ser dos seguintes
 	 * {@link ExMovimentacao#getExTipoMovimentacao() Tipos}:
 	 * <ul>
-	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA }</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA }
+	 * (Tramitação)</li>
 	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_RECEBIMENTO }</li>
-	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_JUNTADA }</li>
-	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_JUNTADA_EXTERNO }</li>
-	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_JUNTADA_A_DOCUMENTO_EXTERNO }
-	 * </li>
-	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE }</li>
-	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE }
-	 * </li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_JUNTADA } (Juntada)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE }
+	 * (Arquivamento Corrente)</li>
 	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO }
-	 * </li>
+	 * (Arquivamento Intermediário)</li>
 	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE }
-	 * </li>
+	 * (Desarquivamento)</li>
 	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO }
-	 * </li>
+	 * (Desarquivamento Intermediário)</li>
 	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA }</li>
 	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO }
-	 * </li>
+	 * (Cancelamento de Movimentação)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO }
+	 * (Cancelamento)</li>
 	 * </ul>
 	 * As movimentações do tipo
 	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_RECEBIMENTO } não serão exibidas.
@@ -204,21 +203,20 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 
 	static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_QUERY = //
 			"SELECT mov FROM ExMovimentacao mov " + "WHERE mov.exMobil.idMobil = :idMobil "
-					+ "AND mov.exTipoMovimentacao.idTpMov IN (" //
-					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA + ", "
-					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO + ", "
-					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA + ", "
-					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO + ", "
-					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_A_DOCUMENTO_EXTERNO + ", "
-					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE + ", "
-					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE + ", "
-					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO + ", "
-					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE + ", "
-					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO + ", "
-					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA + ", "
-					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO + //
-					") "
-					+ "ORDER BY mov.dtTimestamp DESC";
+					+ "AND mov.exTipoMovimentacao.idTpMov IN" //
+					+ " (" + ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA //
+					+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO // Não exibido! apenas para indicar o
+																				// instante de recebimento da
+																				// tramitação.
+					+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA //
+					+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE //
+					+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO //
+					+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE //
+					+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO //
+					+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA //
+					+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO //
+					+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO //
+					+ ") " + "ORDER BY mov.dtTimestamp DESC";
 
 	@Id
 	@SequenceGenerator(sequenceName = "EX_MOVIMENTACAO_SEQ", name = "EX_MOVIMENTACAO_SEQ")

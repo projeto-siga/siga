@@ -50,7 +50,7 @@
 					</select>
 				</div>
 				<div class="form-group pt-2">
-			    	<button class="btn btn-secondary btn-sm h-60" @click="resetaStorage();">Resetar Mesa</button>
+			    	<button class="btn btn-secondary btn-sm h-60" @click="resetaStorage();">Limpar configurações</button>
 			    	<p><small>Retorna as configurações iniciais da mesa.</small></p>
 			    </div>
         	</div>

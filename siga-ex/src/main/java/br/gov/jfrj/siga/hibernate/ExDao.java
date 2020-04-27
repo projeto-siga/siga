@@ -2262,24 +2262,23 @@ public class ExDao extends CpDao {
 	 * {@link ExMovimentacao#getDtTimestamp()}) . As movimentações retornadas devm
 	 * ser dos seguintes {@link ExMovimentacao#getExTipoMovimentacao() Tipos}:
 	 * <ul>
-	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA }</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA }
+	 * (Tramitação)</li>
 	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_RECEBIMENTO }</li>
-	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_JUNTADA }</li>
-	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_JUNTADA_EXTERNO }</li>
-	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_JUNTADA_A_DOCUMENTO_EXTERNO }
-	 * </li>
-	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE }</li>
-	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE }
-	 * </li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_JUNTADA } (Juntada)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE }
+	 * (Arquivamento Corrente)</li>
 	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO }
-	 * </li>
+	 * (Arquivamento Intermediário)</li>
 	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE }
-	 * </li>
+	 * (Desarquivamento)</li>
 	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO }
-	 * </li>
+	 * (Desarquivamento Intermediário)</li>
 	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA }</li>
 	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO }
-	 * </li>
+	 * (Cancelamento de Movimentação)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO }
+	 * (Cancelamento)</li>
 	 * </ul>
 	 * As movimentações do tipo
 	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_RECEBIMENTO } não serão exibidas.

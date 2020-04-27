@@ -24,7 +24,7 @@ td.juntado.fa-fw>a.disabled {
 	<div class="container-fluid content" id="page">
 		<h2 class="mt-3">
 			Histórico de tramitação: ${mobil.sigla}
-			${mobil.exDocumento.descrDocumento}
+			${mobil.exDocumento.exModelo.nmMod} - ${mobil.exDocumento.descrDocumento}
 			<button type="button" name="voltar" onclick="window.history.back()"
 				class="btn btn-secondary float-right" accesskey="r">
 				Volta<u>r</u>

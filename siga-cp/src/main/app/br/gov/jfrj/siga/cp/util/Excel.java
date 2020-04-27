@@ -269,6 +269,24 @@ public class Excel {
 				loc.setNmLocalidade(celula);
 				problemas += validarLocalidadeLotacao(localidades, linha, loc);
 				
+				/*
+				 * Alteracao 24/04/2020
+				 */
+				//Lotacao Pai
+				//celula = retornaConteudo(row.getCell(3, Row.CREATE_NULL_AS_BLANK));
+				//String lotacaopaidescricao = celula;
+				celula = retornaConteudo(row.getCell(3, Row.CREATE_NULL_AS_BLANK));
+				String lotacaopaisigla = celula;
+				if(!celula.equals("")) {
+					DpLotacao lo = CpDao.getInstance().consultarLotacaoPorOrgaoEId(orgaoUsuario, lotacaopaisigla);
+					if(lo!=null) {
+						lot.setLotacaoPai(lo);
+					} else {
+						problemas += "Linha " + linha +": SIGLA de LOTAÇÃO PAI inválida" + System.getProperty("line.separator");
+					}
+				}
+					
+				
 				if(problemas == null || "".equals(problemas.toString())) {
 					for (CpLocalidade lo : localidades) {
 						if(lo.getNmLocalidade().equalsIgnoreCase(loc.getNmLocalidade())) {

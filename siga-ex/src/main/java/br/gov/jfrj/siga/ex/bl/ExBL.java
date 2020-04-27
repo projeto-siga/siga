@@ -4166,6 +4166,7 @@ public class ExBL extends CpBL {
 
 			concluirAlteracaoDocComRecalculoAcesso(novoDoc);
 			// atualizarWorkflow(doc, null);
+			atualizarMarcas(doc);
 			return novoDoc;
 		} catch (final Exception e) {
 			cancelarAlteracao();

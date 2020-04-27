@@ -260,6 +260,15 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	
 	@Get("/app/lotacao/editar")
 	public void edita(final Long id){
+		
+		if(id!=null) {
+			DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
+			List<DpLotacao>lista = carregaLotacao(lotacao.getOrgaoUsuario());
+			result.include("listaLotacao", lista);
+		} else {
+			List<DpLotacao>lista = carregaLotacao(getTitular().getOrgaoUsuario());
+			result.include("listaLotacao", lista);
+		}
 		if (id != null) {
 			DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
 			result.include("nmLotacao",lotacao.getDescricao());
@@ -268,13 +277,14 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			result.include("nmOrgaousu", lotacao.getOrgaoUsuario().getNmOrgaoUsu());
 			result.include("dtFimLotacao", lotacao.getDataFimLotacao());
 			result.include("isExternaLotacao", lotacao.getIsExternaLotacao());
+			result.include("lotacaoPai", lotacao.getLotacaoPai().getIdLotacao());
 			result.include("idLocalidade", lotacao.getLocalidade() != null ? lotacao.getLocalidade().getIdLocalidade() : Long.valueOf(0));
 			
 			List<DpPessoa> list = dao().getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE);
 			if(list.size() == 0) {
 				result.include("podeAlterarOrgao", Boolean.TRUE);
 			}
-		}
+		}		
 		
 		if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
 			result.include("orgaosUsu", dao().listarOrgaosUsuarios());
@@ -283,7 +293,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
 			list.add(ou);
 			result.include("orgaosUsu", list);
-		}
+		}		
 		
 		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
 			CpUF uf = new CpUF();
@@ -304,7 +314,9 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 							 final String siglaLotacao,
 							 final String situacao,
 							 final Boolean isExternaLotacao,
+							 final Long lotacaoPai,
 							 final Long idLocalidade) throws Exception{
+		
 		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_LOTACAO: Cadastrar Lotação");
 		
 		if(nmLotacao == null)
@@ -374,7 +386,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			lotacao.setDataFimLotacao(null);
 		}
 		
-        	
+		lotacao.setLotacaoPai(CpDao.getInstance().consultarLotacaoPorId(lotacaoPai));
 		lotacao.setNomeLotacao(Texto.removerEspacosExtra(nmLotacao).trim());
 		lotacao.setSiglaLotacao(siglaLotacao.toUpperCase());
 		
@@ -490,6 +502,42 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		}
 		return null;
 
+	}
+	
+	@Post("/app/lotacao/carregarCombos")
+	public void carregarCombos(final Long idOrgaoUsu, String nmLotacao, String siglaLotacao, Long idLocalidade) {
+		result.include("request", getRequest());
+		result.include("nmLotacao", nmLotacao);
+		result.include("siglaLotacao", siglaLotacao);
+		
+		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+			CpUF uf = new CpUF();
+			uf.setIdUF(Long.valueOf(26));
+			result.include("listaLocalidades", dao().consultarLocalidadesPorUF(uf));
+		} else {
+			result.include("listaLocalidades", dao().consultarLocalidades());
+		}
+		result.include("idLocalidade", idLocalidade);
+		
+		if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+			result.include("orgaosUsu", dao().listarOrgaosUsuarios());
+		} else {
+			CpOrgaoUsuario ou = CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario());
+			List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
+			list.add(ou);
+			result.include("orgaosUsu", list);
+		}
+		result.include("idOrgaoUsu", idOrgaoUsu);
+		
+		CpOrgaoUsuario u = CpDao.getInstance().consultarOrgaoUsuarioPorId(idOrgaoUsu);
+		List<DpLotacao>lista = new ArrayList<DpLotacao>(CpDao.getInstance().consultarLotacaoPorOrgao(u));
+		result.include("listaLotacao", lista);
+		result.use(Results.page()).forwardTo("/WEB-INF/page/dpLotacao/edita.jsp");
+	}
+	
+	public List<DpLotacao> carregaLotacao(CpOrgaoUsuario orgaoUsuario){
+		CpOrgaoUsuario u = CpDao.getInstance().consultarOrgaoUsuarioPorId(orgaoUsuario.getIdOrgaoUsu());
+		return (List<DpLotacao>)CpDao.getInstance().consultarLotacaoPorOrgao(u);
 	}
 
 }

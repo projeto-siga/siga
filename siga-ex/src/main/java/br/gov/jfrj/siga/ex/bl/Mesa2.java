@@ -371,8 +371,11 @@ public class Mesa2 {
 		//
 		PRIORITARIO(1003, "Prioritário", "fas fa-star", "", GrupoDeMarcadorEnum.ALERTA),
 		//		
-		RESTRICAO_ACESSO(1004, "Restrição de Acesso", "fas fa-user-secret", "", GrupoDeMarcadorEnum.ALERTA);
-		//		
+		RESTRICAO_ACESSO(1004, "Restrição de Acesso", "fas fa-user-secret", "", GrupoDeMarcadorEnum.ALERTA),
+		//
+		DOCUMENTO_ANALISADO(1005, "Documento Analisado", "fas fa-book-reader", "",
+				GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO);
+		//
 
 		private MarcadorEnum(int id, String nome, String icone,
 				String descricao, GrupoDeMarcadorEnum grupo) {

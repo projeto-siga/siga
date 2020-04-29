@@ -22,6 +22,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.bl.Mesa2.GrupoDeMarcadorEnum;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class Mesa {
@@ -325,8 +326,11 @@ public class Mesa {
 		//
 		PRIORITARIO(1003, "Prioritário", "fas fa-star", "", GrupoDeMarcadorEnum.ALERTA),
 		//		
-		RESTRICAO_ACESSO(1004, "Restrição de Acesso", "fas fa-user-secret", "", GrupoDeMarcadorEnum.ALERTA);
-		//		
+		RESTRICAO_ACESSO(1004, "Restrição de Acesso", "fas fa-user-secret", "", GrupoDeMarcadorEnum.ALERTA),
+		//	
+		DOCUMENTO_ANALISADO(1005, "Documento Analisado", "fas fa-book-reader", "",
+				GrupoDeMarcadorEnum.ALERTA);
+		//
 
 		private MarcadorEnum(int id, String nome, String icone,
 				String descricao, GrupoDeMarcadorEnum grupo) {

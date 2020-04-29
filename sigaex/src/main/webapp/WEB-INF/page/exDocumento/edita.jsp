@@ -217,7 +217,7 @@
 					<c:when test='${exDocumentoDTO.tipoDocumento == "externo" or exDocumentoDTO.tipoDocumento == "externo_capturado"}'>
 					</c:when>
 					<c:otherwise>
-						<div class="row">
+						<div class="row  js-siga-sp-documento-analisa-alteracao">
 							<div class="col-sm-8">
 								<div class="form-group">
 									<input type="hidden" name="campos" value="subscritorSel.id" />
@@ -247,7 +247,7 @@
 				</c:choose>
 				<input type="hidden" name="campos" value="titularSel.id" />
 				<div id="tr_titular" style="display: ${exDocumentoDTO.substituicao ? '' : 'none'};">
-					<div class="row">
+					<div class="row  js-siga-sp-documento-analisa-alteracao">
 						<div class="col-sm-8">
 							<div class="form-group">
 								<label><fmt:message key="documento.titular"/></label>
@@ -262,7 +262,7 @@
 					<div class="row ml-1">
 						<h6>Personalização</h6>
 					</div>
-					<div class="row">
+					<div class="row  js-siga-sp-documento-analisa-alteracao">
 						<div class="col-sm-2">
 							<div class="form-group">
 								<label>Função</label>
@@ -424,7 +424,7 @@
 					<input type="hidden" id="descricaoAutomatica" value="sim" />
 				</c:if>
 				<div class="${displayDescricao}">
-					<div class="row">
+					<div class="row  js-siga-sp-documento-analisa-alteracao">
 						<div class="col-sm-8">
 							<div class="form-group">
 								<label>Descrição</label>
@@ -436,7 +436,7 @@
 					</div>
 				</div>
 				<c:if test='${(not exDocumentoDTO.doc.finalizado) and (exDocumentoDTO.tipoDocumento == "interno_capturado" or  exDocumentoDTO.tipoDocumento == "externo_capturado")}'>
-				<div class="row">
+				<div class="row  js-siga-sp-documento-analisa-alteracao">
 					<div class="col-sm-8">
 						<div class="form-group">
 							<input type="hidden" name="campos" value="descrDocumento" />
@@ -454,7 +454,7 @@
 				<div class="row">
 					<h6>Dados do Documento Original</h6>
 				</div>
-				<div class="row">
+				<div class="row  js-siga-sp-documento-analisa-alteracao">
 					<input type="hidden" name="campos" value="dtDocOriginalString" />
 					<input type="hidden" name="campos" value="numExtDoc" />
 					<div class="col-sm-2">
@@ -479,7 +479,7 @@
 						</div>
 					</c:if>
 				</div>
-				<div class="row">
+				<div class="row  js-siga-sp-documento-analisa-alteracao">
 					<input type="hidden" name="campos" value="dtDocOriginalString" />
 					<input type="hidden" name="campos" value="numExtDoc" />
 					<div class="col-sm-2">

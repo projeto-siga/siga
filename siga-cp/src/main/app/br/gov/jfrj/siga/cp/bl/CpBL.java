@@ -274,7 +274,7 @@ public class CpBL {
 					senhaGerada[0] = GeraMessageDigest.geraSenha();
 					for (CpIdentidade cpIdentidade : lista) {
 						Cp.getInstance().getBL().alterarSenhaDeIdentidade(cpIdentidade.getNmLoginIdentidade(),
-								StringUtils.leftPad(cpIdentidade.getDpPessoa().getCpfPessoa().toString(), 11, "0"),
+								StringUtils.leftPad(cpIdentidade.getDpPessoa().getPessoaAtual().getCpfPessoa().toString(), 11, "0"),
 								null, senhaGerada);
 					}
 					resultado = "OK";
@@ -583,9 +583,11 @@ public class CpBL {
 		} catch (IOException e) {
 			throw new AplicacaoException("Erro ao montar e-mail para enviar ao usuário externo " + identidade.getDpPessoa().getNomePessoa());
 		}
-
+		
+		
 		conteudo = conteudo.replace("${nomeUsuario}", identidade.getDpPessoa().getNomePessoa())
 			.replace("${cpfUsuario}", matricula)
+			.replace("${url}", SigaBaseProperties.getString("siga.ex." + SigaBaseProperties.getString("siga.ambiente") + ".url").replace("/sigaex/app", ""))
 			.replace("${senhaUsuario}", novaSenha);
 		
 		return conteudo;

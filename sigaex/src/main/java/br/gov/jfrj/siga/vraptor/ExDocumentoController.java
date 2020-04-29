@@ -69,9 +69,7 @@ import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
-import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
-import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
@@ -94,10 +92,8 @@ import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
-import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
-import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -646,6 +642,14 @@ public class ExDocumentoController extends ExController {
 			}
 		}
 
+		if(exDocumentoDTO.getPreenchimento() != null) {
+			DpPessoa p = (DpPessoa) CpDao.getInstance().consultar(exDocumentoDTO.getSubscritorSel().getId(), DpPessoa.class, false).getPessoaAtual();
+			if(p.getDataFim() != null) {
+				result.include("mensagem", "documento.subscritor.inativo");
+				exDocumentoDTO.getSubscritorSel().apagar();
+			}
+		}
+		
 		exDocumentoDTO.getSubscritorSel().buscar();
 		exDocumentoDTO.getDestinatarioSel().buscar();
 		exDocumentoDTO.getLotacaoDestinatarioSel().buscar();
@@ -2692,6 +2696,47 @@ public class ExDocumentoController extends ExController {
 				.getBL()
 				.corrigirArquivamentosEmVolume(idPrimeiroDoc, idUltimoDoc,
 						efetivarDoc);
+	}
+
+	/**
+	 * Realiza a consulta das {@link ExMovimentacao Movimentações} para o histórico
+	 * de tramitações de uma {@link ExMobil} relacionada a um determinado
+	 * {@link ExDocumento Documento} em ordem cronológica decrescente (
+	 * {@link ExMovimentacao#getDtTimestamp()}) . As movimentações retornadas devm
+	 * ser dos seguintes {@link ExMovimentacao#getExTipoMovimentacao() Tipos}:
+	 * <ul>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA }
+	 * (Tramitação)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_RECEBIMENTO }</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_JUNTADA } (Juntada)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE }
+	 * (Arquivamento Corrente)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO }
+	 * (Arquivamento Intermediário)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE }
+	 * (Desarquivamento)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO }
+	 * (Desarquivamento Intermediário)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA }</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO }
+	 * (Cancelamento de Movimentação)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO }
+	 * (Cancelamento)</li>
+	 * </ul>
+	 * As movimentações do tipo
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_RECEBIMENTO } não serão exibidas.
+	 * Elas são apenas usadas para indicar a hora de recebimento da Movimentação de
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA } imediatamente
+	 * anterior.
+	 * 
+	 * @param idMobil ID da Mobilização
+	 */
+	@Get("app/expediente/doc/exibirMovimentacoesTramitacao")
+	public void buscarMovimentacoesTramitacao(Long idMobil) { //
+		List<ExMovimentacao> tramitacoes = dao().cosultarTramitacoesPorMovimentacao(idMobil);
+
+		result.include("mobil", tramitacoes.get(0).getExMobil());
+		result.include("tramitacoes", tramitacoes);
 	}
 
 }

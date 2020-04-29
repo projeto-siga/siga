@@ -33,7 +33,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -53,7 +52,6 @@ import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
-import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
@@ -64,6 +62,7 @@ import br.gov.jfrj.siga.dp.CpTipoMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.ex.AbstractExMovimentacao;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -72,7 +71,6 @@ import br.gov.jfrj.siga.ex.ExEmailNotificacao;
 import br.gov.jfrj.siga.ex.ExEstadoDoc;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExItemDestinacao;
-import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
@@ -91,9 +89,7 @@ import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.bl.Mesa2;
 import br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem;
-import br.gov.jfrj.siga.ex.bl.Mesa2.MarcadorEnum;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
 import br.gov.jfrj.siga.hibernate.ext.IMontadorQuery;
@@ -2257,6 +2253,46 @@ public class ExDao extends CpDao {
 		}
 		
 		return l;
+	}
+
+	/**
+	 * Realiza a consulta das {@link ExMovimentacao Movimentações} para o histórico
+	 * de tramitações de uma {@link ExMobil} relacionada a um determinado
+	 * {@link ExDocumento Documento} em ordem cronológica decrescente (
+	 * {@link ExMovimentacao#getDtTimestamp()}) . As movimentações retornadas devm
+	 * ser dos seguintes {@link ExMovimentacao#getExTipoMovimentacao() Tipos}:
+	 * <ul>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA }
+	 * (Tramitação)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_RECEBIMENTO }</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_JUNTADA } (Juntada)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE }
+	 * (Arquivamento Corrente)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO }
+	 * (Arquivamento Intermediário)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE }
+	 * (Desarquivamento)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO }
+	 * (Desarquivamento Intermediário)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA }</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO }
+	 * (Cancelamento de Movimentação)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO }
+	 * (Cancelamento)</li>
+	 * </ul>
+	 * As movimentações do tipo
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_RECEBIMENTO } não serão exibidas.
+	 * Elas são apenas usadas para indicar a hora de recebimento da Movimentação de
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA } imediatamente
+	 * anterior.
+	 * 
+	 * @param idMobil ID da Mobilização
+	 * @return As Movimentações dos tipos relacionados acima.
+	 */
+	public List<ExMovimentacao> cosultarTramitacoesPorMovimentacao(Long idMobil) {
+		return getSessao() //
+				.getNamedQuery(AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_NAMED_QUERY)
+				.setParameter("idMobil", idMobil).list();
 	}
 
 }

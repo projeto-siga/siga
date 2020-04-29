@@ -14,6 +14,20 @@
 	<script type="text/javascript" src="/siga/javascript/hierarchy-select/hierarchy-select.js"></script>
 
 	<div class="container-fluid">
+	<c:if test="${not empty mensagem}">
+			<div class="row">
+				<div class="col-sm-12">
+					<p id="mensagem" class="alert alert-warning"><fmt:message key="${mensagem}"/></p>
+					<script>
+						setTimeout(function() {
+							$('#mensagem').fadeTo(1000, 0, function() {
+								$('#mensagem').slideUp(1000);
+							});
+						}, 5000);
+					</script>
+				</div>
+			</div>
+		</c:if>
 		<div class="card bg-light mb-3" >
 			<div class="card-header">
 				<h5>

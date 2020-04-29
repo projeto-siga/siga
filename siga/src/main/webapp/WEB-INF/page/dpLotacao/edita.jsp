@@ -95,7 +95,7 @@
 					
 					<div class="col-sm-4">
 						<div class="form-group">
-							<label for="lotacaoPai">Lotação Pai</label>
+							<label for="lotacaoPai"><fmt:message key="usuario.lotacao" /> Pai</label>
 							<select name="lotacaoPai" id="lotacaoPai" value="${lotacaoPai}" class="form-control  siga-select2">
 								<option value="" selected disabled hidden>Selecione uma lotação</option>
 								<c:forEach items="${listaLotacao}" var="item">

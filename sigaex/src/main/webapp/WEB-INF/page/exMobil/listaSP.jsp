@@ -288,18 +288,45 @@ td.tramitacoes.fa-fw>a.disabled {
 								</c:if>
 								<td class="tramitacoes fa-fw" style="min-width: 120px;">
 									<c:choose>
-										<c:when test="${empty documento[1].getMovimentacoesPorTipo(3)}">
+										<c:when test="${not empty documento[1].getMovimentacoesPorTipo(3)}">
+											<%-- Tem Tramitação? --%>
+											<c:set var="link"
+												value="${pageContext.request.contextPath}/app/expediente/doc/exibirMovimentacoesTramitacao?idMobil=${documento[1].idMobil}&docCancelado=false" />
+											<c:set var="title" value="Ver Histórico de Tramitação" />
+											<c:set var="classDisabled" value="" />
+										</c:when>
+										<c:when test="${(documento[1].exTipoMobil.idTipoMobil == 1) and (documento[2].cpMarcador.idMarcador == 32)}">
+											<%-- É a via principal? Ela foi cancelada (sem efeito)? --%>
+											<c:set var="docTemTramitacoes" value="${false }" />
+											<%-- Verifica se algumas das movimentações do documento tem movimentação. --%>
+											<c:forEach var="mobil" items="${documento[0].exMobilSet}">
+												<c:if test="${not empty mobil.getMovimentacoesPorTipo(3) }">
+													<c:set var="docTemTramitacoes" value="${true}" />
+												</c:if>
+											</c:forEach>
+	
+											<c:choose>
+												<c:when test="${docTemTramitacoes}">
+													<c:set var="link"
+														value="${pageContext.request.contextPath}/app/expediente/doc/exibirMovimentacoesTramitacao?idMobil=${documento[1].idMobil}&docCancelado=true" />
+													<c:set var="title" value="Ver Histórico de Tramitação" />
+													<c:set var="classDisabled" value="" />
+												</c:when>
+												<c:otherwise>
+													<c:set var="link" value="javascript:void(0)" />
+													<c:set var="title" value="Não tem Histórico de Tramitação"/>
+													<c:set var="classDisabled" value="disabled"/>
+												</c:otherwise>
+											</c:choose>
+
+										</c:when>
+										<c:otherwise>
 											<c:set var="link" value="javascript:void(0)" />
 											<c:set var="title" value="Não tem Histórico de Tramitação"/>
 											<c:set var="classDisabled" value="disabled"/>
-										</c:when>
-										<c:otherwise>
-											<c:set var="link"
-												value="${pageContext.request.contextPath}/app/expediente/doc/exibirMovimentacoesTramitacao?idMobil=${documento[1].idMobil}" />
-											<c:set var="title" value="Ver Histórico de Tramitação" />
-											<c:set var="classDisabled" value="" />
 										</c:otherwise>
 									</c:choose>
+
 									<a class="fa fa-search btn btn-default btn-sm xrp-label ${classDisabled}"
 										title="${title}" href="${link}">
 									</a>

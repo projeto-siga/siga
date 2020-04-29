@@ -2727,16 +2727,27 @@ public class ExDocumentoController extends ExController {
 	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_RECEBIMENTO } não serão exibidas.
 	 * Elas são apenas usadas para indicar a hora de recebimento da Movimentação de
 	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA } imediatamente
-	 * anterior.
+	 * anterior. <br>
+	 * Se a flag <code>docCancelado</code> for <code>true</code> serão retornadas
+	 * todas as movimentações das vias de documento.
 	 * 
-	 * @param idMobil ID da Mobilização
+	 * @param idMobil      ID da Mobilização
+	 * @param docCancelado Indica se é para buscar as tramitações de um documento
+	 *                     cancelado.
 	 */
 	@Get("app/expediente/doc/exibirMovimentacoesTramitacao")
-	public void buscarMovimentacoesTramitacao(Long idMobil) { //
-		List<ExMovimentacao> tramitacoes = dao().cosultarTramitacoesPorMovimentacao(idMobil);
-
-		result.include("mobil", tramitacoes.get(0).getExMobil());
-		result.include("tramitacoes", tramitacoes);
+	public void buscarMovimentacoesTramitacao(Long idMobil, boolean docCancelado) { //
+		if(docCancelado) {
+			List<ExMovimentacao> tramitacoes = dao().consultarTramitacoesPorMovimentacaoDocumentoCancelado(idMobil);
+			result.include("tramitacoes", tramitacoes);
+			result.include("mobil", dao().consultar(idMobil, ExMobil.class, false));
+		} else {
+			List<ExMovimentacao> tramitacoes = dao().cosultarTramitacoesPorMovimentacao(idMobil);
+			result.include("tramitacoes", tramitacoes);
+			result.include("mobil", tramitacoes.get(0).getExMobil());
+		}
+		
+		result.include("docCancelado", docCancelado);
 	}
 
 }

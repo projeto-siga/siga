@@ -35,6 +35,9 @@ td.juntado.fa-fw>a.disabled {
 				class="gt-table table table-sm table-hover">
 				<thead class="${thead_color}">
 					<tr>
+						<c:if test="${docCancelado}">
+							<th rowspan="2">Via Doc</th>
+						</c:if>
 						<th colspan="3">De</th>
 						<th colspan="3">Para</th>
 						<th colspan="2" rowspan="2">Evento</th>
@@ -56,6 +59,9 @@ td.juntado.fa-fw>a.disabled {
 							<c:set var="isTramitacao"
 								value="${movimentacao.exTipoMovimentacao.id == 3}" />
 							<tr id="movimentacao_${movimentacao.idMov}">
+								<c:if test="${docCancelado}">
+									<td class="via fa-fw" >${movimentacao.exMobil.terminacaoSigla}</td>
+								</c:if>
 								<td class="de_data"><fmt:formatDate
 										value="${movimentacao.dtIniMov}" pattern="dd/MM/yyyy HH:mm:ss" />
 								</td>

@@ -161,11 +161,29 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 		@NamedQuery(name = "consultarMovimentacoes", query = "from ExMovimentacao mov"
 				+ "                where mov.cadastrante.idPessoaIni=:pessoaIni and mov.dtIniMov=to_date(:data, 'DD/MM/YYYY HH24:MI:SS')          "
 				+ "                ) order by mov.dtTimestamp"), 
-		@NamedQuery(name = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_NAMED_QUERY, query = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_QUERY)		
+		@NamedQuery(name = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_NAMED_QUERY, query = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_QUERY),
+		@NamedQuery(name = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_NAMED_QUERY, query = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_QUERY),
 })
 public abstract class AbstractExMovimentacao extends ExArquivo implements Serializable {
 
 	private static final long serialVersionUID = -1521008574855565618L;
+
+	private static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_BEGIN = "SELECT mov FROM ExMovimentacao mov WHERE ";
+
+	private static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_END = "AND mov.exTipoMovimentacao.idTpMov IN" //
+			+ " (" + ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA //
+			+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO // Não exibido! apenas para indicar o
+																		// instante de recebimento da
+																		// tramitação.
+			+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA //
+			+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE //
+			+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO //
+			+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE //
+			+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO //
+			+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA //
+			+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO //
+			+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO //
+			+ ") " + "ORDER BY mov.dtTimestamp DESC";
 
 	/**
 	 * Nome da {@link NamedQuery} usada para a consulta das {@link ExMovimentacao
@@ -199,24 +217,22 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA } imediatamente
 	 * anterior.
 	 */
-	public static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_NAMED_QUERY = "ExMovimentacao.cosultarTramitacoesPorMovimentacao";
+	public static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_NAMED_QUERY = //
+			"ExMovimentacao.consultarTramitacoesPorMovimentacao";
 
 	static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_QUERY = //
-			"SELECT mov FROM ExMovimentacao mov " + "WHERE mov.exMobil.idMobil = :idMobil "
-					+ "AND mov.exTipoMovimentacao.idTpMov IN" //
-					+ " (" + ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA //
-					+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO // Não exibido! apenas para indicar o
-																				// instante de recebimento da
-																				// tramitação.
-					+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA //
-					+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE //
-					+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO //
-					+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE //
-					+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO //
-					+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA //
-					+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO //
-					+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO //
-					+ ") " + "ORDER BY mov.dtTimestamp DESC";
+			CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_BEGIN //
+					+ "mov.exMobil.idMobil = :idMobil " //
+					+ CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_END;
+
+	public static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_NAMED_QUERY = //
+			"ExMovimentacao.consultarTramitacoesPorMovimentacaoDocumentoCancelado";
+
+	static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_QUERY = //
+			CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_BEGIN //
+					+ "mov.exMobil.exDocumento = (SELECT mobBase.exDocumento FROM ExMobil mobBase WHERE mobBase.idMobil = :idMobil) "
+					+ "AND mov.exMobil.idMobil <> :idMobil " //
+					+ CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_END;
 
 	@Id
 	@SequenceGenerator(sequenceName = "EX_MOVIMENTACAO_SEQ", name = "EX_MOVIMENTACAO_SEQ")

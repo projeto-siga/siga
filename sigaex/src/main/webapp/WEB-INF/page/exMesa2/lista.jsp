@@ -26,13 +26,13 @@
 <!-- 		            </div> -->
 	            <div class="form-group my-2 border-bottom">
 					<div class="form-check">
-						<input type="checkbox" class="form-check-input" id="trazerAnotacoes" v-model="trazerAnotacoes" :class="{disabled: carregando}">
+						<input type="checkbox" class="form-check-input" id="trazerAnotacoes" v-model="trazerAnotacoes" :disabled="carregando">
 						<label class="form-check-label" for="trazerAnotacoes"><small>Trazer anotações nos documentos</small></label>
 					</div>            
 	            </div>
 	            <div class="form-group my-2 border-bottom">
 					<div class="form-check">
-						<input type="checkbox" class="form-check-input" id="trazerComposto" v-model="trazerComposto" :class="{disabled: carregando}">
+						<input type="checkbox" class="form-check-input" id="trazerComposto" v-model="trazerComposto" :disabled="carregando">
 						<label class="form-check-label" for="trazerComposto">
 							<small>Exibir indicador de docto. avulso <i class="far fa-file"></i> ou composto <i class="far fa-copy"></i></small>
 						</label>

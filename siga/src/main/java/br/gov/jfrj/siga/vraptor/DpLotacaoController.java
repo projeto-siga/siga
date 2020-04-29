@@ -277,7 +277,8 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			result.include("nmOrgaousu", lotacao.getOrgaoUsuario().getNmOrgaoUsu());
 			result.include("dtFimLotacao", lotacao.getDataFimLotacao());
 			result.include("isExternaLotacao", lotacao.getIsExternaLotacao());
-			result.include("lotacaoPai", lotacao.getLotacaoPai().getIdLotacao());
+			if(lotacao.getLotacaoPai() != null)
+				result.include("lotacaoPai", lotacao.getLotacaoPai().getIdLotacao());
 			result.include("idLocalidade", lotacao.getLocalidade() != null ? lotacao.getLocalidade().getIdLocalidade() : Long.valueOf(0));
 			
 			List<DpPessoa> list = dao().getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE);

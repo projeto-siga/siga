@@ -3289,6 +3289,7 @@ public class ExBL extends CpBL {
 	public boolean usuarioExternoTemQueAssinar(ExDocumento documento, DpPessoa pessoaSubscritorOuCossignatario) {
 		return SigaMessages.isSigaSP() && 
 				documento.isPendenteDeAssinatura() && 
+				pessoaSubscritorOuCossignatario != null &&
 				pessoaSubscritorOuCossignatario.isUsuarioExterno();
 	}
 	
@@ -3444,9 +3445,11 @@ public class ExBL extends CpBL {
 				finalizar(cadastrante, lotaTitular, doc);
 			}
 			
-			if (!doc.getCadastrante().equivale(doc.getSubscritor()) &&  usuarioExternoTemQueAssinar(doc, doc.getSubscritor())) {
-				enviarEmailParaUsuarioExternoAssinarDocumento(doc, doc.getSubscritor());
-			}
+			if (doc.getSubscritor() != null) {
+				if (!doc.getCadastrante().equivale(doc.getSubscritor()) && usuarioExternoTemQueAssinar(doc, doc.getSubscritor())) {
+					enviarEmailParaUsuarioExternoAssinarDocumento(doc, doc.getSubscritor());
+				}
+			}			
 
 			/*
 			 * alteracao para adicionar a movimentacao de insercao de substituto

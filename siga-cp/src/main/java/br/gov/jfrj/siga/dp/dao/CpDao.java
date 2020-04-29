@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -1854,16 +1855,16 @@ public class CpDao extends ModeloDao {
 			Root<DpPessoa> c = q.from(DpPessoa.class);
 			q.select(c);
 			Join<DpPessoa, DpLotacao> joinLotacao = c.join("lotacao", JoinType.LEFT);
-			q.where(cb().equal(joinLotacao.get("idLotacao"), lot.getId()));
+			
+			List<Predicate> whereList = new LinkedList<Predicate>();
+			whereList.add(cb().equal(joinLotacao.get("idLotacao"), lot.getId()));
 			if (somenteServidor) { 
 				Join<DpPessoa, DpCargo> joinCargo = c.join("cargo", JoinType.LEFT);
-				q.where(joinCargo.get("nomeCargo").in(values));
+				whereList.add(joinCargo.get("nomeCargo").in(values));
 			}
 			whereList.add(c.get("situacaoFuncionalPessoa").in(situacoesFuncionais.getValor()));
 			whereList.add(cb().isNull(c.get("dataFimPessoa")));
-			Predicate[] whereArray = new Predicate[whereList.size()];
-			whereList.toArray(whereArray);
-			q.where(whereArray);
+			q.where((Predicate[])whereList.toArray());
 
 			q.orderBy(cb().asc(c.get("nomePessoa")));
 			lstCompleta.addAll((List<DpPessoa>) em().createQuery(q).getResultList());
@@ -1977,10 +1978,11 @@ public class CpDao extends ModeloDao {
 	public <T> List<T> listarAtivos(Class<T> clazz, String dtFim,
 			long idOrgaoUsu) {
 		final CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
-		CriteriaQuery<T> crit = criteriaBuilder.createQuery(clazz);
-		Root<T> root = crit.from(clazz);
-		crit.where(cb().isNull(root.get("hisDtFim")), cb().equal(root.get("orgaoUsuario.idOrgaoUsu"), idOrgaoUsu));
-		return em().createQuery(crit).getResultList();
+		CriteriaQuery<T> q = criteriaBuilder.createQuery(clazz);
+		Root<T> c = q.from(clazz);
+		Join<T, CpOrgaoUsuario> joinOrgao = c.join("orgaoUsuario", JoinType.INNER);
+		q.where(cb().isNull(c.get(campoDtFim)), cb().equal(joinOrgao.get("idOrgaoUsu"), idOrgaoUsu));
+		return em().createQuery(q).getResultList();
 	}
 
 	public <T> List<T> listarAtivos(Class<T> clazz, String orderBy) {
@@ -2008,8 +2010,10 @@ public class CpDao extends ModeloDao {
 		CriteriaQuery<T> q = cb().createQuery(clazz);
 		Root<T> c = q.from(clazz);
 		q.select(c);
-		q.where(cb().equal(c.get("hisIdIni"), hisIdIni));
-		q.where(cb().equal(c.get("hisAtivo"), 1));
+		q.where(
+			cb().equal(c.get("hisIdIni"), hisIdIni),
+			cb().equal(c.get("hisAtivo"), 1)
+		);
 
 		T obj = null;
 		try {
@@ -2388,20 +2392,21 @@ public class CpDao extends ModeloDao {
 		CriteriaQuery<DpPessoa> q = cb().createQuery(DpPessoa.class);
 		Root<DpPessoa> c = q.from(DpPessoa.class);
 		q.select(c);
-
+		Join<DpPessoa, CpOrgaoUsuario> joinOrgao = c.join("orgaoUsuario", JoinType.INNER);
+		
+		List<Predicate> whereList = new LinkedList<Predicate>();
+		whereList.add(cb().equal(joinOrgao.get("idOrgaoUsu"), idOrgaoUsu));
 		if(matricula != null) {
-			q.where(cb().equal(c.get("matricula"), matricula));
+			whereList.add(cb().equal(c.get("matricula"), matricula));
 		}
 		q.where(cb().equal(c.get("orgaoUsuario.idOrgaoUsu"), idOrgaoUsu));
 
 		if (pessoasFinalizadas) {
-			q.where(cb().isNotNull(c.get("dataFimPessoa")));
+			whereList.add(cb().isNotNull(c.get("dataFimPessoa")));
 		} else {
-			q.where(cb().isNull(c.get("dataFimPessoa")));
+			whereList.add(cb().isNull(c.get("dataFimPessoa")));
 		}
-		Predicate[] whereArray = new Predicate[whereList.size()];
-		whereList.toArray(whereArray);
-		q.where(whereArray);
+		q.where((Predicate[])whereList.toArray());
 		if (ordemDesc) {
 			q.orderBy(cb().desc(c.get("dataInicioPessoa")));
 		} else {
@@ -2417,9 +2422,12 @@ public class CpDao extends ModeloDao {
 			CriteriaQuery<DpLotacao> q = cb().createQuery(DpLotacao.class);
 			Root<DpLotacao> c = q.from(DpLotacao.class);
 			q.select(c);
-			q.where(cb().equal(c.get("ideLotacao"), idExterna));
-			q.where(cb().equal(c.get("orgaoUsuario.idOrgaoUsu"), idOrgaoUsu));
-			q.where(cb().isNotNull(c.get("dataFimLotacao")));
+			Join<DpLotacao, CpOrgaoUsuario> joinOrgao = c.join("orgaoUsuario", JoinType.INNER);
+			q.where(
+				cb().equal(joinOrgao.get("idOrgaoUsu"), idOrgaoUsu),
+				cb().equal(c.get("ideLotacao"), idExterna),
+				cb().isNotNull(c.get("dataFimLotacao"))
+			);
 			q.orderBy(cb().desc(c.get("dataInicioLotacao")));
 			return em().createQuery(q).getResultList();
 		}
@@ -2428,9 +2436,12 @@ public class CpDao extends ModeloDao {
 			CriteriaQuery<DpCargo> q = cb().createQuery(DpCargo.class);
 			Root<DpCargo> c = q.from(DpCargo.class);
 			q.select(c);
-			q.where(cb().equal(c.get("ideCargo"), idExterna));
-			q.where(cb().equal(c.get("orgaoUsuario.idOrgaoUsu"), idOrgaoUsu));
-			q.where(cb().isNotNull(c.get("dataFimCargo")));
+			Join<DpCargo, CpOrgaoUsuario> joinOrgao = c.join("orgaoUsuario", JoinType.INNER);
+			q.where(
+				cb().equal(joinOrgao.get("idOrgaoUsu"), idOrgaoUsu),
+			    cb().equal(c.get("ideCargo"), idExterna),
+			    cb().isNotNull(c.get("dataFimCargo"))
+			);
 			q.orderBy(cb().desc(c.get("dataInicioCargo")));
 			return em().createQuery(q).getResultList();
 		}
@@ -2439,9 +2450,12 @@ public class CpDao extends ModeloDao {
 			CriteriaQuery<DpFuncaoConfianca> q = cb().createQuery(DpFuncaoConfianca.class);
 			Root<DpFuncaoConfianca> c = q.from(DpFuncaoConfianca.class);
 			q.select(c);
-			q.where(cb().equal(c.get("ideFuncao"), idExterna));
-			q.where(cb().equal(c.get("orgaoUsuario.idOrgaoUsu"), idOrgaoUsu));
-			q.where(cb().isNotNull(c.get("dataFimFuncao")));
+			Join<DpFuncaoConfianca, CpOrgaoUsuario> joinOrgao = c.join("orgaoUsuario", JoinType.INNER);
+			q.where(
+				cb().equal(joinOrgao.get("idOrgaoUsu"), idOrgaoUsu),
+				cb().equal(c.get("ideFuncao"), idExterna),
+				cb().isNotNull(c.get("dataFimFuncao"))
+			);
 			q.orderBy(cb().desc(c.get("dataInicioFuncao")));
 			return em().createQuery(q).getResultList();
 		}

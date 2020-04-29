@@ -1859,8 +1859,12 @@ public class CpDao extends ModeloDao {
 				Join<DpPessoa, DpCargo> joinCargo = c.join("cargo", JoinType.LEFT);
 				q.where(joinCargo.get("nomeCargo").in(values));
 			}
-			q.where(c.get("situacaoFuncionalPessoa").in(situacoesFuncionais.getValor()));
-			q.where(cb().isNull(c.get("dataFimPessoa")));
+			whereList.add(c.get("situacaoFuncionalPessoa").in(situacoesFuncionais.getValor()));
+			whereList.add(cb().isNull(c.get("dataFimPessoa")));
+			Predicate[] whereArray = new Predicate[whereList.size()];
+			whereList.toArray(whereArray);
+			q.where(whereArray);
+
 			q.orderBy(cb().asc(c.get("nomePessoa")));
 			lstCompleta.addAll((List<DpPessoa>) em().createQuery(q).getResultList());
 		}
@@ -2395,6 +2399,9 @@ public class CpDao extends ModeloDao {
 		} else {
 			q.where(cb().isNull(c.get("dataFimPessoa")));
 		}
+		Predicate[] whereArray = new Predicate[whereList.size()];
+		whereList.toArray(whereArray);
+		q.where(whereArray);
 		if (ordemDesc) {
 			q.orderBy(cb().desc(c.get("dataInicioPessoa")));
 		} else {

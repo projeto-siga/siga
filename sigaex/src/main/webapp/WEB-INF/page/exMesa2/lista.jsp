@@ -5,9 +5,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
 
 <siga:pagina titulo="Mesa Virtual">
 <script type="text/javascript" src="../javascript/vue.min.js"></script>
+	<c:set var="siga_mesaCarregaLotacao" scope="session" value="${f:resource('siga.mesa.carrega.lotacao')}" />
 	<div id="app" class="container-fluid content" >
 		<div id="configMenu" class="mesa-config ml-auto" :class="toggleConfig">
 			<button type="button" class="btn-mesa-config btn btn-secondary btn-sm h-100" @click="toggleMenuConfig();">
@@ -24,13 +26,13 @@
 <!-- 		            </div> -->
 	            <div class="form-group my-2 border-bottom">
 					<div class="form-check">
-						<input type="checkbox" class="form-check-input" id="trazerAnotacoes" v-model="trazerAnotacoes">
+						<input type="checkbox" class="form-check-input" id="trazerAnotacoes" v-model="trazerAnotacoes" :disabled="carregando">
 						<label class="form-check-label" for="trazerAnotacoes"><small>Trazer anotações nos documentos</small></label>
 					</div>            
 	            </div>
 	            <div class="form-group my-2 border-bottom">
 					<div class="form-check">
-						<input type="checkbox" class="form-check-input" id="trazerComposto" v-model="trazerComposto">
+						<input type="checkbox" class="form-check-input" id="trazerComposto" v-model="trazerComposto" :disabled="carregando">
 						<label class="form-check-label" for="trazerComposto">
 							<small>Exibir indicador de docto. avulso <i class="far fa-file"></i> ou composto <i class="far fa-copy"></i></small>
 						</label>
@@ -38,7 +40,7 @@
 	            </div>
 				<div class="form-group pb-2 mb-1 border-bottom">
 					<label for="selQtdPagId"><small>Qtd. de documentos a trazer</small></label>
-					<select class="form-control form-control-sm" v-model="selQtdPag">
+					<select class="form-control form-control-sm" v-model="selQtdPag" :class="{disabled: carregando}">
 						  <option value="5">5</option>
 						  <option value="10">10</option>
 						  <option value="15">15</option>
@@ -48,7 +50,7 @@
 					</select>
 				</div>
 				<div class="form-group pt-2">
-			    	<button class="btn btn-secondary btn-sm h-60" @click="resetaStorage();">Resetar Mesa</button>
+			    	<button class="btn btn-secondary btn-sm h-60" @click="resetaStorage();" :class="{disabled: carregando}">Limpar configurações</button>
 			    	<p><small>Retorna as configurações iniciais da mesa.</small></p>
 			    </div>
         	</div>
@@ -71,33 +73,39 @@
 					<c:if test="${not empty visualizacao}"><b>(Delegante: ${visualizacao.titular.nomePessoa})</b></c:if> 
 				</span> 
 			</div> 
-			<div class="col col-12 col-sm-4 col-md-auto ml-md-auto mb-2">
-				<a href="expediente/doc/editar" class="btn btn-success form-control"> <i class="fas fa-plus-circle mr-1"></i>
-					<fmt:message key="documento.novo"/></a>
-			</div>
-			<div class="col col-12 col-sm-4 col-md-auto mb-2">
-				<a href="expediente/doc/listar?primeiraVez=sim" class="btn btn-primary form-control">
-					<i class="fas fa-search mr-1"></i><fmt:message key="documento.pesquisar"/> 
-				</a>
-			</div>
+			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos') && (cadastrante.orgaoUsuario.isExternoOrgaoUsu eq 0 && lotaTitular.isExternaLotacao eq 0)}">
+				<div class="col col-12 col-sm-4 col-md-auto pr-md-0 ml-md-auto mb-2">
+					<a href="expediente/doc/editar" class="btn btn-success form-control"> <i class="fas fa-plus-circle mr-1"></i>
+						<fmt:message key="documento.novo"/></a>
+				</div>
+				<div class="col col-12 col-sm-4 col-md-auto mb-2">
+					<a href="expediente/doc/listar?primeiraVez=sim" class="btn btn-primary form-control">
+						<i class="fas fa-search mr-1"></i><fmt:message key="documento.pesquisar"/> 
+					</a>
+				</div>
+			</c:if>
 		</div>
 		<div id="rowTopMesa" style="z-index: 1" class="row sticky-top px-3 pt-1 bg-white shadow-sm" 
 				v-if="!carregando || (!errormsg &amp;&amp; grupos.length >= 0)">
-			<div id="radioBtn" class="btn-group mr-2 mb-1" 
-					title="Visualiza somente os documentos do usuário ou da lotação">
-				<a class="btn btn-primary btn-sm" v-bind:class="exibeLota ? 'notActive' : 'active'" id="btnUser"  
-					accesskey="u" @click="carregarMesaUser('#btnUser');">
-					<i class="fas fa-user my-1"></i>
-					<span class="d-none d-sm-inline">Usuário</span>
-				</a>
-				<a class="btn btn-primary btn-sm" v-bind:class="exibeLota ? 'active' : 'notActive'" id="btnLota"  
-					accesskey="l" @click="carregarMesaLota('#btnLota');">
-					<i class="fas fa-users my-1"></i>
-					<span class="d-none d-sm-inline"><fmt:message key='usuario.lotacao'/></span>
-				</a>
-			</div>
+			<c:if test="${siga_mesaCarregaLotacao && !ehPublicoExterno}">
+				<c:set var="varLotacaoUnidade"><fmt:message key='usuario.lotacao'/></c:set>
+				<div id="radioBtn" class="btn-group mr-2 mb-1">
+					<a class="btn btn-primary btn-sm" v-bind:class="exibeLota ? 'notActive' : 'active'" id="btnUser"  
+						accesskey="u" @click="carregarMesaUser('#btnUser');" 
+						title="Visualiza somente os documentos do Usuário">
+						<i class="fas fa-user my-1"></i>
+						<span class="d-none d-sm-inline">Usuário</span>
+					</a>
+					<a class="btn btn-primary btn-sm" v-bind:class="exibeLota ? 'active' : 'notActive'" id="btnLota"  
+						accesskey="l" @click="carregarMesaLota('#btnLota');"
+						title="Visualiza somente os documentos da ${varLotacaoUnidade}">
+						<i class="fas fa-users my-1"></i>
+						<span class="d-none d-sm-inline"><fmt:message key='usuario.lotacao'/></span>
+					</a>
+				</div>
+			</c:if>
 			<div class="mr-2 mb-1">
-				<input id="filtroExibidos" type="text" class="form-control p-1 input-sm" placeholder="Filtrar documentos da mesa" v-model="filtro" ng-model-options="{ debounce: 200 }">
+				<input id="filtroExibidos" type="text" class="form-control p-1 input-sm" placeholder="Filtrar doctos. da mesa" v-model="filtro" ng-model-options="{ debounce: 200 }">
 			</div>
 			<button type="button" class="btn btn-secondary btn-sm mb-1 mr-2" title="Recarregar Mesa" :class="{disabled: carregando}" @click="recarregarMesa();">
 				<i class="fas fa-sync-alt"></i>
@@ -106,10 +114,10 @@
 				Última atualização: {{getLastRefreshTime()}}</small>
 		</div>
 		
-		<div class="row" v-if="!carregando && errormsg">
+		<div class="row mt-2" v-if="!carregando && errormsg">
 			<div class="col col-12">
 				<p class="alert alert-danger">
-					<strong>Erro!</strong> {{errormsg}}
+					<strong>{{errormsg}}</strong> 
 				</p>
 			</div>
 		</div>
@@ -150,10 +158,12 @@
 										<small class="fas fa-user"></small>
 										<span class="badge badge-light">{{g.grupoCounterUser}}</span>
 									</span>
-									<span class="badge badge-light btn-sm align-middle" :class="{disabled: !exibeLota}">
-										<small class="fas fa-users"></small>
-										<span class="badge badge-light">{{g.grupoCounterLota}}</span>
-									</span>
+									<c:if test="${siga_mesaCarregaLotacao && !ehPublicoExterno}">
+										<span class="badge badge-light btn-sm align-middle" :class="{disabled: !exibeLota}">
+											<small class="fas fa-users"></small>
+											<span class="badge badge-light">{{g.grupoCounterLota}}</span>
+										</span>
+									</c:if>
 								</small>
 							</h5>
 						</div>
@@ -293,9 +303,9 @@
 			this.errormsg = undefined;
 	      	var self = this
 			self.exibeLota = (getParmUser('exibeLota') === 'true');
-	      	setParmUser('trazerAnotacoes', self.trazerAnotacoes);
-	      	setParmUser('trazerComposto', self.trazerComposto);
-  	        self.carregarMesa();
+	      	self.trazerAnotacoes = (getParmUser('trazerAnotacoes') == null ? true : getParmUser('trazerAnotacoes'));
+	      	self.trazerComposto = (getParmUser('trazerComposto') == null ? false : getParmUser('trazerComposto'));
+	      	self.carregarMesa();
 		  },
 		  data: function() {
 		    return {
@@ -384,14 +394,13 @@
 			},
 			trazerAnotacoes: function() {
 				setParmUser('trazerAnotacoes', this.trazerAnotacoes);
-				this.recarregarMesa();
+				this.recarregarMesa();				
 			},
 			trazerComposto: function() {
 				setParmUser('trazerComposto', this.trazerComposto);
 				this.recarregarMesa();
-			},
-		  },		  
-			  
+			}
+		  },
 		  methods: {
 		    carregarMesa: function(grpNome, qtdPagina) {
 		      var self = this
@@ -429,21 +438,26 @@
 		          type: 'GET', 
 		          url: 'mesa2.json', 
 			          data: {parms: JSON.stringify(parms),
-		        	  	 exibeLotacao: getParmUser('exibeLota'),
-		        	  	 trazerAnotacoes: getParmUser('trazerAnotacoes'),
-		        	  	 trazerComposto: getParmUser('trazerComposto'),
+		        	  	 exibeLotacao: this.exibeLota,
+		        	  	 trazerAnotacoes: this.trazerAnotacoes,
+		        	  	 trazerComposto: this.trazerComposto,
 		        	  	 idVisualizacao: ${idVisualizacao}
 		        	  }, 
 		          complete: function (response, status, request) {   
-		        	  var buttonClose = $('.alert').find('button').clone();
 		        	  cType = response.getResponseHeader('Content-Type');
-		        	  if (response.status > 300 && cType.indexOf('text/html') !== -1) {
-		                  window.location.href = response.redirect;
-					  } else {		  	
-						  carregaFromJson(response.responseText, self);
-						  sessionStorage.setItem(
-								  'timeout' + getUser(), new Date());
-					  }
+		        	  self.errormsg = undefined;
+			          if (cType && cType.indexOf('text/plain') !== -1 && response.status == 200) {
+			        	  self.errormsg = response.responseText;
+				          self.carregando = false;
+				      } else {
+			        	  if (response.status > 300 && cType.indexOf('text/html') !== -1) {
+			                  window.location.href = response.redirect;
+						  } else {		  	
+							  carregaFromJson(response.responseText, self);
+							  sessionStorage.setItem(
+									  'timeout' + getUser(), new Date());
+						  }
+				      }
 		          }, 
 		          failure: function (response, status) {           
 		  	          self.carregando = false; 
@@ -458,7 +472,7 @@
 		    	localStorage.removeItem('gruposMesa' + getUser());
 		    	setParmUser('trazerAnotacoes', true);
 		    	this.trazerAnotacoes=true;
-		    	setParmUser('trazerComposto', true);
+		    	setParmUser('trazerComposto', false);
 		    	this.trazerComposto=false;
 		    	localStorage.removeItem('exibeLota' + getUser());
 		    	this.carregarMesa();
@@ -630,7 +644,6 @@
 		        r = r.replace('&nbsp;', ' às ')
 		        return r
 		      },
-
 		  }
 		});
 

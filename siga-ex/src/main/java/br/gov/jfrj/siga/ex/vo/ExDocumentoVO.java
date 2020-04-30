@@ -19,6 +19,8 @@
 package br.gov.jfrj.siga.ex.vo;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -478,13 +480,24 @@ public class ExDocumentoVO extends ExVO {
 		for(ExMobil mob:mobs)
 			movs.addAll(dao().consultarMovimentoPorMobil(mob));
 		
-		for(ExMovimentacao mov:movs)
+		Collections.sort(movs, new Comparator<ExMovimentacao>() {
+			public int compare(ExMovimentacao m1, ExMovimentacao m2) {
+				return m2.getData().compareTo(m1.getData());
+			}
+		});
+		
+		for(ExMovimentacao mov:movs) {
+			if(mov.getDescrTipoMovimentacao().equalsIgnoreCase("Desarquivamento")||
+					mov.getDescrTipoMovimentacao().equalsIgnoreCase("Desentranhamento"))
+				return true;
+			
+			
 			if(mov.getDescrTipoMovimentacao().equalsIgnoreCase("Juntada")||
 					mov.getDescrTipoMovimentacao().equalsIgnoreCase("Cancelamento")||
 					mov.getDescrTipoMovimentacao().equalsIgnoreCase("Arquivamento Intermediário")||
 					mov.getDescrTipoMovimentacao().equalsIgnoreCase("Arquivamento Corrente"))
 				return false;
-
+		}
 		return true;
 	}
 	
@@ -673,7 +686,7 @@ public class ExDocumentoVO extends ExVO {
 				"Restrição de Acesso",
 				"/app/expediente/mov",
 				"restringir_acesso",
-				Ex.getInstance().getComp().podeRestrigirAcesso(doc.getCadastrante(), doc.getCadastrante().getLotacao(), mob));
+				Ex.getInstance().getComp().podeRestrigirAcesso(titular, lotaTitular, mob));
 		
 		vo.addAcao(
 				"arrow_undo",
@@ -682,7 +695,7 @@ public class ExDocumentoVO extends ExVO {
 				"desfazer_restricao_acesso",
 				Ex.getInstance()
 						.getComp()
-						.podeDesfazerRestricaoAcesso(doc.getCadastrante(), doc.getCadastrante().getLotacao(), mob),
+						.podeDesfazerRestricaoAcesso(titular, lotaTitular, mob),
 				"Esta operação anulará as Restrições de Acesso. Prosseguir?",
 				null, null, null, "once");
 		

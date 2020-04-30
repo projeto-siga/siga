@@ -53,6 +53,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Criteria;
 import org.hibernate.ObjectNotFoundException;
@@ -2393,7 +2395,7 @@ public class ExBL extends CpBL {
 
 				if (mobPai.getMobilPrincipal().isNumeracaoUnicaAutomatica()) {
 					List<ExArquivoNumerado> ans = mov.getExMobil().filtrarArquivosNumerados(null, true);
-					armazenarCertidaoDeDesentranhamento(mov, mobPai.getMobilPrincipal(), ans, textoMotivo);
+					armazenarCertidaoDeDesentranhamento(mov, mobPai.getMobilPrincipal(), ans, mov.obterDescrMovComPontoFinal());
 				}
 			} else {
 				mov.setExMovimentacaoRef(
@@ -2781,16 +2783,6 @@ public class ExBL extends CpBL {
 
 			concluirAlteracao(mov.getExMobil());
 			
-			/*
-			 * Alteracao para historico da substituicao do assinante
-			 * Corrigido questão do subscritor. Documento capturado não gera o mesmo
-			 */
-			if (mov.getExMobil().getDoc().getSubscritor() != null
-					&& mov.getExMobil().getDoc().getSubscritor() != mov.getExMobil().getDoc().getCadastrante() 
-					&& mov.getExMobil().getDoc().getDtAssinatura() == null) {	
-				getExTipoMovSubstituicaoAssinante(mov);
-			}
-
 			
 		} catch (final Exception e) {
 			cancelarAlteracao();
@@ -3166,9 +3158,11 @@ public class ExBL extends CpBL {
 		atualizarWorkFlow(doc);
 	}
 
-	public static String descricaoSePuderAcessar(ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular) {
-		if (mostraDescricaoConfidencial(doc, titular, lotaTitular))
-			return "CONFIDENCIAL";
+	public static String descricaoSePuderAcessar(ExDocumento doc,
+			DpPessoa titular, DpLotacao lotaTitular) {
+	//	if (mostraDescricaoConfidencial(doc, titular, lotaTitular) || (getComp().ehPublicoExterno(titular) && !(getComp().podeAcessarPublicoExterno()))  
+				if (mostraDescricaoConfidencial(doc, titular, lotaTitular))
+				return "CONFIDENCIAL";
 		else
 			return doc.getDescrDocumento();
 	}
@@ -3219,8 +3213,10 @@ public class ExBL extends CpBL {
 		if (doc.getExNivelAcessoAtual() == null)
 			return false;
 		if (doc.getExNivelAcessoAtual().getGrauNivelAcesso() > ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS
-				|| (doc.getExNivelAcessoAtual().getGrauNivelAcesso() == ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS
-						&& doc.getOrgaoUsuario().getIdOrgaoUsu() != lotaTitular.getOrgaoUsuario().getIdOrgaoUsu()))
+				|| (doc.getExNivelAcessoAtual().getGrauNivelAcesso() == ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS && doc
+						.getOrgaoUsuario().getIdOrgaoUsu() != lotaTitular
+						.getOrgaoUsuario().getIdOrgaoUsu()))
+			
 			return true;
 		return false;
 	}
@@ -3272,7 +3268,40 @@ public class ExBL extends CpBL {
 		ExDao.getInstance().gravar(mob);
 		return s;
 	}
-
+	
+	public void enviarEmailParaUsuarioExternoAssinarDocumento(ExDocumento documento, DpPessoa pessoaSubscritorOuCossignatario) {
+		if (usuarioExternoTemQueAssinar(documento, pessoaSubscritorOuCossignatario)) {
+			
+			String uri = obterURIDoDocumento(documento.getSigla());
+			String conteudoHTML = Correio.obterHTMLEmailParaUsuarioExternoAssinarDocumento(uri, documento.getSigla(), pessoaSubscritorOuCossignatario.getSigla());			
+			String destinatario[] = { pessoaSubscritorOuCossignatario.getEmailPessoaAtual() };						
+			String remetente = SigaBaseProperties.getString("servidor.smtp.usuario.remetente");
+			String assunto = "Acesso ao documento nº " + documento;
+			
+			try {
+				Correio.enviar(remetente, destinatario, assunto, assunto, conteudoHTML);
+			} catch (Exception e) {
+				System.out.println("Problemas ao enviar e-mail para usuário externo assinar documento. Erro: " + e.getMessage());
+			}
+		}				
+	}
+	
+	public boolean usuarioExternoTemQueAssinar(ExDocumento documento, DpPessoa pessoaSubscritorOuCossignatario) {
+		return SigaMessages.isSigaSP() && 
+				documento.isPendenteDeAssinatura() && 
+				pessoaSubscritorOuCossignatario != null &&
+				pessoaSubscritorOuCossignatario.isUsuarioExterno();
+	}
+	
+	public String obterURIDoDocumento(String siglaDocumento) {
+		HttpServletRequest request = CurrentRequest.get().getRequest();
+		
+		String uri = request.getRequestURL().toString().replace(request.getRequestURI(), "");
+		uri +=  request.getContextPath() + "/app/expediente/doc/exibir?sigla=" + siglaDocumento;
+		
+		return uri;
+	}
+	
 	public ExDocumento gravar(final DpPessoa cadastrante, final DpPessoa titular, final DpLotacao lotaTitular,
 			ExDocumento doc) throws Exception {
 
@@ -3289,7 +3318,7 @@ public class ExBL extends CpBL {
 		 * doc.getExMobilPai())) throw new AplicacaoException(
 		 * "não é permitido criar documento filho do documento pai selecionado, pois este está inacessível ao usuário."
 		 * ); }
-		 */
+		 */					
 
 		if (doc.isAssinaturaSolicitada()) {
 			ExMovimentacao m = doc.getMovSolicitacaoDeAssinatura();
@@ -3415,11 +3444,18 @@ public class ExBL extends CpBL {
 			if (!primeiraGravacao && doc.isColaborativo() && !doc.isFisico() && !doc.isFinalizado()) {
 				finalizar(cadastrante, lotaTitular, doc);
 			}
+			
+			if (doc.getSubscritor() != null) {
+				if (!doc.getCadastrante().equivale(doc.getSubscritor()) && usuarioExternoTemQueAssinar(doc, doc.getSubscritor())) {
+					enviarEmailParaUsuarioExternoAssinarDocumento(doc, doc.getSubscritor());
+				}
+			}			
 
 			/*
 			 * alteracao para adicionar a movimentacao de insercao de substituto
 			 */
-			if (doc.getCadastrante() != cadastrante && doc.getTitular() == cadastrante && doc.getDtAssinatura() == null) {
+			/*
+			if(exDocumentoDTO.isSubstituicao() && exDocumentoDTO.getDoc().getTitular() != exDocumentoDTO.getDoc().getSubscritor()) {
 				final ExMovimentacao mov_substituto = criarNovaMovimentacao(
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_SUBSTITUICAO_RESPONSAVEL, cadastrante,
 						cadastrante.getLotacao(), doc.getMobilGeral(), null, cadastrante, null, null, null, null);
@@ -3428,6 +3464,7 @@ public class ExBL extends CpBL {
 						+ " - " + cadastrante.getMatricula());
 				gravarMovimentacao(mov_substituto);
 			}
+			*/
 			/*
 			 * fim da alteracao
 			 */
@@ -3454,6 +3491,16 @@ public class ExBL extends CpBL {
 		}
 		// System.out.println(System.currentTimeMillis() + " - FIM gravar");
 		return doc;
+	}
+	
+	public void geraMovimentacaoSubstituicao(ExDocumento doc, DpPessoa cadastrante) throws AplicacaoException, SQLException {
+		final ExMovimentacao mov_substituto = criarNovaMovimentacao(
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_SUBSTITUICAO_RESPONSAVEL, cadastrante,
+				cadastrante.getLotacao(), doc.getMobilGeral(), null, cadastrante, null, null, null, null);
+		mov_substituto.setDescrMov("Responsável pela assinatura: " + doc.getSubscritor().getNomePessoa() + " - "
+				+ doc.getSubscritor().getSiglaCompleta() + " em substituição de " + doc.getTitular().getNomePessoa()
+				+ " - " + doc.getTitular().getSiglaCompleta());
+		gravarMovimentacao(mov_substituto);
 	}
 
 	private class MovimentacaoSincronizavel extends SincronizavelSuporte
@@ -3718,6 +3765,28 @@ public class ExBL extends CpBL {
 				.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO)) {
 			Notificador.notificarDestinariosEmail(mov, Notificador.TIPO_NOTIFICACAO_GRAVACAO);
 		}
+		
+		if (SigaMessages.isSigaSP()) {
+			if (mov.getExTipoMovimentacao().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA) &&
+					usuarioExternoTemQueAssinar(mov.getExDocumento(), mov.getSubscritor())) {
+				enviarEmailParaUsuarioExternoAssinarDocumento(mov.getExDocumento(), mov.getSubscritor());
+				
+			} else if (mov.getExTipoMovimentacao().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA) ||
+					mov.getExTipoMovimentacao().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO) ||
+					mov.getExTipoMovimentacao().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA) ||
+					mov.getExTipoMovimentacao().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)) {	
+				
+				if (!mov.getExDocumento().getCosignatarios().isEmpty() && 
+						!mov.getExDocumento().isCossignatario(mov.getSubscritor())) {
+					for (DpPessoa cossignatario : mov.getExDocumento().getCosignatarios()) {
+						if (usuarioExternoTemQueAssinar(mov.getExDocumento(), cossignatario)) {
+							enviarEmailParaUsuarioExternoAssinarDocumento(mov.getExDocumento(), cossignatario);
+						}
+					}
+				}
+				
+			}
+		}		
 	}
 	
 	public void getExTipoMovSubstituicaoAssinante(final ExMovimentacao mov) {
@@ -3870,7 +3939,7 @@ public class ExBL extends CpBL {
 
 	public void incluirCosignatario(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExDocumento doc,
 			final Date dtMov, final DpPessoa subscritor, final String funcaoCosignatario) throws AplicacaoException {
-
+				
 		try {
 			if (subscritor == null) {
 				throw new AplicacaoException("Cossignatário não foi informado");
@@ -4100,6 +4169,7 @@ public class ExBL extends CpBL {
 
 			concluirAlteracaoDocComRecalculoAcesso(novoDoc);
 			// atualizarWorkflow(doc, null);
+			atualizarMarcas(doc);
 			return novoDoc;
 		} catch (final Exception e) {
 			cancelarAlteracao();
@@ -6909,7 +6979,7 @@ public class ExBL extends CpBL {
 			iniciarAlteracao();
 			final ExMovimentacao mov = criarNovaMovimentacao(
 					ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA, cadastrante, lotaTitular,
-					doc.getMobilGeral(), null, cadastrante, null, null, null, null);
+					doc.getMobilGeral(), null, cadastrante, null, null, null, null);					
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(doc.getMobilGeral());

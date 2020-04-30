@@ -1,6 +1,7 @@
 package br.gov.jfrj.siga.ex.bl;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -371,8 +372,11 @@ public class Mesa2 {
 		//
 		PRIORITARIO(1003, "Prioritário", "fas fa-star", "", GrupoDeMarcadorEnum.ALERTA),
 		//		
-		RESTRICAO_ACESSO(1004, "Restrição de Acesso", "fas fa-user-secret", "", GrupoDeMarcadorEnum.ALERTA);
-		//		
+		RESTRICAO_ACESSO(1004, "Restrição de Acesso", "fas fa-user-secret", "", GrupoDeMarcadorEnum.ALERTA),
+		//
+		DOCUMENTO_ANALISADO(1005, "Documento Analisado", "fas fa-book-reader", "",
+				GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO);
+		//
 
 		private MarcadorEnum(int id, String nome, String icone,
 				String descricao, GrupoDeMarcadorEnum grupo) {
@@ -446,6 +450,7 @@ public class Mesa2 {
 			Map<ExMobil, DocDados> references, DpPessoa pessoa,
 			DpLotacao unidade, Date currentDate, String grupoOrdem, boolean trazerAnotacoes) {
 		List<MesaItem> l = new ArrayList<>();
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
 		for (ExMobil mobil : references.keySet()) {
 			MesaItem r = new MesaItem();
@@ -457,7 +462,7 @@ public class Mesa2 {
 			else
 				datahora = mobil.getDoc().getDtAltDoc();
 			r.datahora = datahora;
-			r.datahoraDDMMYYYHHMM = datahora.toLocaleString();
+			r.datahoraDDMMYYYHHMM = df.format(datahora);
 			r.tempoRelativo = Data.calcularTempoRelativo(datahora);
 
 			r.codigo = mobil.getCodigoCompacto();

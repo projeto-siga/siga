@@ -42,6 +42,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
@@ -219,7 +220,16 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 
 	@Column(name = "NOME_PESSOA", nullable = false, length = 60)
 	private String nomePessoa;
-
+	
+	/*
+	 * Alteracao cartao 1041
+	 */
+	@Column(name = "NOME_PESSOA_AI", length = 60)
+	private java.lang.String nomePessoaAI;
+	/*
+	 * Final Alteracao 1041 
+	 */
+	
 	@Column(name = "CPF_PESSOA", nullable = false)
 	private Long cpfPessoa;
 
@@ -667,6 +677,7 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 	 */
 	public void setNomePessoa(final String nomePessoa) {
 		this.nomePessoa = nomePessoa;
+		this.nomePessoaAI = Texto.removeAcentoMaiusculas(this.nomePessoa);
 	}
 
 	public void setOrgaoUsuario(CpOrgaoUsuario orgaoUsuario) {
@@ -843,6 +854,22 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 	public void setPessoasPosteriores(Set<DpPessoa> pessoasPosteriores) {
 		this.pessoasPosteriores = pessoasPosteriores;
 	}
+	
+	/*
+	 * Alteracao Cartao 1041
+	 */
+
+	public java.lang.String getNomePessoaAI() {
+		return nomePessoaAI;
+	}
+
+	public void setNomePessoaAI(java.lang.String nomePessoaAI) {
+		this.nomePessoaAI = nomePessoaAI;
+	}
+	
+	/*
+	 * Fim da alteracao Cartao 1041
+	 */
 
 	/**
 	 * Define o nome de exibição (apelido ou nome com pronome de tratamento, por

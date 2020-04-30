@@ -2700,8 +2700,8 @@ public class ExDocumentoController extends ExController {
 
 	/**
 	 * Realiza a consulta das {@link ExMovimentacao Movimentações} para o histórico
-	 * de tramitações de uma {@link ExMobil} relacionada a um determinado
-	 * {@link ExDocumento Documento} em ordem cronológica decrescente (
+	 * de tramitações de uma {@link ExMobil} ou de um {@link ExDocumento Documento}
+	 * Cancelado em ordem cronológica decrescente (
 	 * {@link ExMovimentacao#getDtTimestamp()}) . As movimentações retornadas devm
 	 * ser dos seguintes {@link ExMovimentacao#getExTipoMovimentacao() Tipos}:
 	 * <ul>
@@ -2732,21 +2732,23 @@ public class ExDocumentoController extends ExController {
 	 * todas as movimentações das vias de documento.
 	 * 
 	 * @param idMobil      ID da Mobilização
-	 * @param docCancelado Indica se é para buscar as tramitações de um documento
-	 *                     cancelado.
+	 * @param docCancelado Se a Mobilização é referente a um documento cancelado.
+	 *                     Nesse caso serão pesquisadas <i>todas</i> as
+	 *                     movimentações do Documento (excluindo a do ID solicitado)
+	 *                     dos tipos relacionados acima.
 	 */
 	@Get("app/expediente/doc/exibirMovimentacoesTramitacao")
 	public void buscarMovimentacoesTramitacao(Long idMobil, boolean docCancelado) { //
-		if(docCancelado) {
-			List<ExMovimentacao> tramitacoes = dao().consultarTramitacoesPorMovimentacaoDocumentoCancelado(idMobil);
-			result.include("tramitacoes", tramitacoes);
+		if (docCancelado) {
+			List<ExMovimentacao> movimentacoes = dao().consultarTramitacoesPorMovimentacaoDocumentoCancelado(idMobil);
+			result.include("movimentacoes", movimentacoes);
 			result.include("mobil", dao().consultar(idMobil, ExMobil.class, false));
 		} else {
-			List<ExMovimentacao> tramitacoes = dao().cosultarTramitacoesPorMovimentacao(idMobil);
-			result.include("tramitacoes", tramitacoes);
-			result.include("mobil", tramitacoes.get(0).getExMobil());
+			List<ExMovimentacao> movimentacoes = dao().cosultarTramitacoesPorMovimentacao(idMobil);
+			result.include("movimentacoes", movimentacoes);
+			result.include("mobil", movimentacoes.get(0).getExMobil());
 		}
-		
+
 		result.include("docCancelado", docCancelado);
 	}
 

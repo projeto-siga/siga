@@ -2070,7 +2070,7 @@ Pede deferimento.</span><br/><br/><br/>
                 </td>
             </tr>
             [/#if]
-            [#if orgaoCabecalho??]
+            [#if orgaoCabecalho?? && orgaoCabecalho]
 	            <tr>
 	                <td width="100%" align="center">
 	                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 8pt;">

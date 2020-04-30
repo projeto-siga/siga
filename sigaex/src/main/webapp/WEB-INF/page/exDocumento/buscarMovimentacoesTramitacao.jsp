@@ -52,7 +52,7 @@ td.juntado.fa-fw>a.disabled {
 					</tr>
 				</thead>
 				<tbody>
-					<c:forEach var="movimentacao" items="${tramitacoes}"
+					<c:forEach var="movimentacao" items="${movimentacoes}"
 						varStatus="status">
 						<%-- Não exibe Movimentações de recebimento --%>
 						<c:if test="${movimentacao.exTipoMovimentacao.id != 4}">

@@ -450,7 +450,7 @@ ${meta}
 	<div id="carregando"
 		style="position: absolute; top: 0px; right: 0px; background-color: red; font-weight: bold; padding: 4px; color: white; display: none">Carregando...</div>
 	
-	<div class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" id="spinnerModal">
+	<div class="modal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" id="spinnerModal">
         <div class="modal-dialog modal-dialog-centered text-center" role="document">
             <span class="fa fa-spinner fa-spin fa-3x w-100 text-white"></span>
         </div>

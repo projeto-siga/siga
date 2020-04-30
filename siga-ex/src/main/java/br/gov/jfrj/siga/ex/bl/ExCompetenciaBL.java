@@ -215,7 +215,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				: lotaTitular.getIdInicial(), titular == null ? 0L : titular
 				.getOrgaoUsuario().getId(), lotaTitular == null ? 0L
 				: lotaTitular.getOrgaoUsuario().getId());
-		return ac.podeAcessar(doc.getDnmAcesso());
+		return ac.podeAcessar(doc,titular,lotaTitular);
 	}
 
 
@@ -4694,6 +4694,11 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						lotaCadastrante,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA,
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR)) ;
+	}
+
+	public boolean ehPublicoExterno(DpPessoa titular) {
+		// TODO Auto-generated method stub
+		return AcessoConsulta.ehPublicoExterno(titular);
 	}
 
 }

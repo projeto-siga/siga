@@ -1,3 +1,4 @@
+/*
 ---------------------------------------------------------------------------    
 --  Coluna com Timestamp para permitir ordenar movimentacoes sem o ID_MOV
 ---------------------------------------------------------------------------
@@ -14,3 +15,4 @@ UPDATE SIGA.EX_MOVIMENTACAO MOV SET DT_TIMESTAMP =
 	TO_TIMESTAMP(TO_TIMESTAMP(DT_INI_MOV, 'dd-mm-yyyy hh24:mi:ss')  
     			|| '.' || LPAD ( TO_CHAR (MOV.ID_MOV), 9, '0')
     	,  'dd-mm-yyyy hh24:mi:ss:ff9');
+*/

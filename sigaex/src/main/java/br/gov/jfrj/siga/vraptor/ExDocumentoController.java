@@ -642,7 +642,8 @@ public class ExDocumentoController extends ExController {
 			}
 		}
 
-		if(exDocumentoDTO.getPreenchimento() != null) {
+		if(exDocumentoDTO.getPreenchimento() != null 
+				&& exDocumentoDTO.getSubscritorSel() != null && exDocumentoDTO.getSubscritorSel().getId() != null) {
 			DpPessoa p = (DpPessoa) CpDao.getInstance().consultar(exDocumentoDTO.getSubscritorSel().getId(), DpPessoa.class, false).getPessoaAtual();
 			if(p.getDataFim() != null) {
 				result.include("mensagem", "documento.subscritor.inativo");

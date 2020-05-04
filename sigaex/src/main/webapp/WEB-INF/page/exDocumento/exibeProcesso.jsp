@@ -299,14 +299,14 @@
 										</a>
 									</td>
 									<td style="padding-left: 5pt;">
-										<a href="javascript:exibir('${arqsNum[0].referenciaHtmlCompletoDocPrincipal}','${arqsNum[0].referenciaPDFCompletoDocPrincipal}','')">COMPLETO</a>
+										<a class="js-siga-info-doc-completo" href="javascript:exibir('${arqsNum[0].referenciaHtmlCompletoDocPrincipal}','${arqsNum[0].referenciaPDFCompletoDocPrincipal}','')">COMPLETO</a>
 									</td>
-									<td align="center" style="padding-left: 5pt;"></td>
-									<c:if test="${paginacao}">
+									<c:if test="${siga_cliente != 'GOVSP' && paginacao}">
+										<td align="center" style="padding-left: 5pt;"></td>										
 										<td align="center" style="padding-left: 5pt;">
 											${arqsNum[fn:length(arqsNum)-1].paginaFinal}
-										</td>
-									</c:if>
+										</td>										
+									</c:if>	
 								</tr>							
 								<c:if test="${!empty possuiResumo}">
 									<tr>
@@ -386,6 +386,22 @@
 	  $('[data-toggle="tooltip"]').tooltip()
 	})
 </script>
+<c:if test="${siga_cliente == 'GOVSP' && paginacao}">
+	<script>
+		$(function() {			
+			var quantidadePaginas = '${arqsNum[fn:length(arqsNum)-1].paginaFinal}';
+			
+			if (quantidadePaginas && quantidadePaginas > 0) {
+				var linkDocCompleto = $('.js-siga-info-doc-completo');
+				var title = quantidadePaginas + ' página' + (quantidadePaginas > 1 ? 's' : '');
+				
+				linkDocCompleto.attr('data-toggle', 'tooltip').attr('data-placement', 'right').attr('title', title);
+				linkDocCompleto.tooltip();
+				linkDocCompleto.css({'padding': '5px 5px 5px 0'});														
+			}
+		});
+	</script>
+</c:if>	
 <script>
 	var htmlAtual = '${arqsNum[0].referenciaHtmlCompletoDocPrincipal}';
 	var pdfAtual = '${arqsNum[0].referenciaPDFCompletoDocPrincipal}';	

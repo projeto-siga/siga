@@ -97,7 +97,7 @@
 						<div class="form-group">
 							<label for="lotacaoPai"><fmt:message key="usuario.lotacao" /> Pai</label>
 							<select name="lotacaoPai" id="lotacaoPai" value="${lotacaoPai}" class="form-control  siga-select2">
-								<option value="" selected disabled hidden>Selecione uma lotação</option>
+								<option value="" selected disabled hidden>Selecione uma <fmt:message key="usuario.lotacao" /></option>
 								<c:forEach items="${listaLotacao}" var="item">
 									<option value="${item.idLotacao}" ${item.idLotacao== lotacaoPai ? 'selected' : ''}>
 										${item.nomeLotacao}
@@ -124,7 +124,7 @@
 					  <label>Tipo de <fmt:message key="usuario.lotacao"/></label>
 					  <div class="form-check">
 					    <input type="checkbox" class="form-check-input" id="isExternaLotacao" name="isExternaLotacao" value="1" <c:if test="${isExternaLotacao == 1}">checked</c:if> />
-					    <label class="form-check-label" for="isExternaLotacao">Lotação com Acesso Externo</label>
+					    <label class="form-check-label" for="isExternaLotacao"><fmt:message key="usuario.lotacao" /> com Acesso Externo</label>
 					  </div>
 					</div>
 					<div class="col-sm-3">

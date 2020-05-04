@@ -91,7 +91,7 @@
 			
 			<hr class="p-0 m-0 mb-1">			
 			<div class="text-right text-white">
-				<b>SIGA.doc </b>8.0.2.4
+				<b>SIGA.doc </b>8.0.2.5
 			</div>
 		</div>
 	</footer>

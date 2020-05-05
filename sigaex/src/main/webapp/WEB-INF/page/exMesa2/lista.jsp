@@ -34,11 +34,18 @@
 					<div class="form-check">
 						<input type="checkbox" class="form-check-input" id="trazerComposto" v-model="trazerComposto" :disabled="carregando">
 						<label class="form-check-label" for="trazerComposto">
-							<small>Exibir indicador de docto. avulso <i class="far fa-file"></i> ou composto <i class="far fa-copy"></i></small>
+							<small>Exibir indicador de doc. avulso <i class="far fa-file"></i> ou composto <i class="far fa-copy"></i></small>
 						</label>
 					</div>            
 	            </div>
-				<div class="form-group pb-2 mb-1 border-bottom">
+	            <div class="form-group my-2 border-bottom">
+					<div class="form-check">
+						<input type="checkbox" class="form-check-input" id="trazerArquivados" v-model="trazerArquivados" :disabled="carregando">
+						<label class="form-check-label" for="trazerArquivados">
+							<small>Exibir pasta Aguardando Ação de Temporalidade</small>
+						</label>
+					</div>            
+	            </div>				<div class="form-group pb-2 mb-1 border-bottom">
 					<label for="selQtdPagId"><small>Qtd. de documentos a trazer</small></label>
 					<select class="form-control form-control-sm" v-model="selQtdPag" :class="{disabled: carregando}">
 						  <option value="5">5</option>
@@ -105,7 +112,7 @@
 				</div>
 			</c:if>
 			<div class="mr-2 mb-1">
-				<input id="filtroExibidos" type="text" class="form-control p-1 input-sm" placeholder="Filtrar doctos. da mesa" v-model="filtro" ng-model-options="{ debounce: 200 }">
+				<input id="filtroExibidos" type="text" class="form-control p-1 input-sm" placeholder="Filtrar docs. da mesa" v-model="filtro" ng-model-options="{ debounce: 200 }">
 			</div>
 			<button type="button" class="btn btn-secondary btn-sm mb-1 mr-2" title="Recarregar Mesa" :class="{disabled: carregando}" @click="recarregarMesa();">
 				<i class="fas fa-sync-alt"></i>
@@ -144,8 +151,8 @@
 		</div>
 		<div class="row mt-2" style="min-height: 50vh;">
 			<div class="col-sm-12">
-				<template v-for="g in filtrados">	
-					<div v-if="g.grupoCounterUser > 0 || g.grupoCounterLota > 0" :key="g.grupoOrdem">
+				<template v-for="g in filtrados">
+					<div v-if="!g.hide && (g.grupoCounterUser > 0 || g.grupoCounterLota > 0)" :key="g.grupoOrdem">	
 						<div class="collapse-header d-inline">
 							<h5 :id="['collapse-header-' + g.grupoOrdem]" data-toggle="collapse" :data-target="['#collapsetab-' + g.grupoOrdem]" 
 									class="collapse-toggle p-1 table-group table-group-title"
@@ -303,8 +310,6 @@
 			this.errormsg = undefined;
 	      	var self = this
 			self.exibeLota = (getParmUser('exibeLota') === 'true');
-	      	self.trazerAnotacoes = (getParmUser('trazerAnotacoes') == null ? true : getParmUser('trazerAnotacoes'));
-	      	self.trazerComposto = (getParmUser('trazerComposto') == null ? false : getParmUser('trazerComposto'));
 	      	self.carregarMesa();
 		  },
 		  data: function() {
@@ -324,6 +329,7 @@
 		      selQtdPag: 15,
 		      trazerAnotacoes: true,
 		      trazerComposto: false,
+		      trazerArquivados: false,
 		    };
 		  },
 
@@ -399,17 +405,28 @@
 			trazerComposto: function() {
 				setParmUser('trazerComposto', this.trazerComposto);
 				this.recarregarMesa();
-			}
+			},
+			trazerArquivados: function() {
+				setParmUser('trazerArquivados', this.trazerArquivados);
+				setValueGrupo('Aguardando Ação de Temporalidade', 'hide', !this.trazerArquivados);
+				this.recarregarMesa();
+			}			
 		  },
 		  methods: {
 		    carregarMesa: function(grpNome, qtdPagina) {
 		      var self = this
-		      var timeout = Math.abs(new Date() - 
+	      	  this.trazerAnotacoes = (getParmUser('trazerAnotacoes') == null ? true : getParmUser('trazerAnotacoes'));
+	      	  this.trazerComposto = (getParmUser('trazerComposto') == null ? false : getParmUser('trazerComposto'));
+	      	  this.trazerArquivados = (getParmUser('trazerArquivados') == null ? false : getParmUser('trazerArquivados'));
+			  setValueGrupo('Aguardando Ação de Temporalidade', 'hide', !this.trazerArquivados);
+
+	      	  var timeout = Math.abs(new Date() - 
 		    		  new Date(sessionStorage.getItem('timeout' + getUser())));
 		      if (timeout < 120000 && grpNome == null) {
-				carregaFromJson(sessionStorage.getItem('mesa' + getUser()), self);
-				
-				return;
+		    	if (sessionStorage.getItem('mesa' + getUser()) != undefined) {
+		    	  carregaFromJson(sessionStorage.getItem('mesa' + getUser()), self);	
+				  return;
+		    	}  
 		      }
 		      if (this.carregando || timeout < 120000) 
 		    	  return;
@@ -425,17 +442,19 @@
 		  	  if (grpNome != null) {
 		    	  parms[grpNome] = {'grupoOrdem' : parmGrupos[grpNome].ordem, 
 		    			'grupoQtd' : parseInt(parmGrupos[grpNome].qtd) + qtdPagina, 
-		    			'grupoQtdPag' : parmGrupos[grpNome].qtdPag, 'grupoCollapsed' : parmGrupos[grpNome].collapsed }; 
+		    			'grupoQtdPag' : parmGrupos[grpNome].qtdPag, 'grupoCollapsed' : parmGrupos[grpNome].collapsed,
+		    			'grupoHide' : parmGrupos[grpNome].hide }; 
 		          setValueGrupo(grpNome, 'qtd', parseInt(parmGrupos[grpNome].qtd) + qtdPagina);
 		      } else {
 		    	  var i=0;
 				  for (p in parmGrupos) {
 		    	    parms[p] = {'grupoOrdem' : parmGrupos[p].ordem,	'grupoQtd' : parseInt(parmGrupos[p].qtd), 
-			    		'grupoQtdPag' : parmGrupos[p].qtdPag, 'grupoCollapsed' : parmGrupos[p].collapsed }; 
+			    		'grupoQtdPag' : parmGrupos[p].qtdPag, 'grupoCollapsed' : parmGrupos[p].collapsed,
+			    		'grupoHide' : parmGrupos[p].hide}; 
 				  }
 		      }
 		      $.ajax({ 
-		          type: 'GET', 
+		          type: 'POST', 
 		          url: 'mesa2.json', 
 			          data: {parms: JSON.stringify(parms),
 		        	  	 exibeLotacao: this.exibeLota,
@@ -451,7 +470,11 @@
 				          self.carregando = false;
 				      } else {
 			        	  if (response.status > 300 && cType.indexOf('text/html') !== -1) {
-			                  window.location.href = response.redirect;
+				        	  if (response.status > 400 ) {
+				        		  self.errormsg = response.responseText & " - " & response.status;
+				        	  } else {
+				                  window.location.href = response.redirect;
+				        	  }
 						  } else {		  	
 							  carregaFromJson(response.responseText, self);
 							  sessionStorage.setItem(
@@ -467,15 +490,15 @@
 		      }) 
 		    },
 		    resetaStorage: function() {
-		    	sessionStorage.removeItem('timeout' + getUser());
 		    	sessionStorage.removeItem('mesa' + getUser());
 		    	localStorage.removeItem('gruposMesa' + getUser());
-		    	setParmUser('trazerAnotacoes', true);
 		    	this.trazerAnotacoes=true;
-		    	setParmUser('trazerComposto', false);
 		    	this.trazerComposto=false;
-		    	localStorage.removeItem('exibeLota' + getUser());
-		    	this.carregarMesa();
+		    	this.trazerArquivados=false;
+		    	localStorage.removeItem('trazerAnotacoes' + getUser());
+		    	localStorage.removeItem('trazerComposto' + getUser());
+		    	localStorage.removeItem('trazerArquivados' + getUser());
+		    	this.recarregarMesa();
     			this.selQtdPag = 15;
 		    },
 		    recarregarMesa: function() {
@@ -651,7 +674,8 @@ function atualizaGrupos (grupos) {
 	var parms = JSON.parse(getParmUser('gruposMesa'));
 	if (parms == null) {
 		for (var g in grupos) {
-			setGrupo(grupos[g].grupoNome, grupos[g].grupoOrdem, grupos[g].grupoQtd, grupos[g].grupoQtdPag, grupos[g].grupoCollapsed)
+			setGrupo(grupos[g].grupoNome, grupos[g].grupoOrdem, grupos[g].grupoQtd, grupos[g].grupoQtdPag, 
+					grupos[g].grupoCollapsed, grupos[g].hide);
 		}
 	}
 	for (var i in parms) {
@@ -673,27 +697,29 @@ function cloneArray(arr) {
 	}
 	return newArray;
 }
-function setGrupo(grupoNome, ordem, qtd, qtdPag, collapsed) {
+function setGrupo(grupoNome, ordem, qtd, qtdPag, collapsed, hide) {
 	// Seta um parametro com dados de selecao do grupo no JSON de parametros e armazena na local storage. 
 	// Se a quantidade for "" ou false, deleta o parametro
 	var parms = JSON.parse(getParmUser('gruposMesa'));
 	if (parms == null) { 
 		parms = {"key" : ""};
-		parms[grupoNome] = {'ordem' : ordem, 'qtd' : qtd, 'qtdPag' : qtdPag, 'collapsed' : collapsed };
+		parms[grupoNome] = {'ordem' : ordem, 'qtd' : qtd, 'qtdPag' : qtdPag, 'collapsed' : collapsed, 'hide' : hide };
 		delete parms["key"];
 	} else {
 		if (qtd === "" || qtd === false) {
 			delete parms [grupoNome];
 		} else {
-			parms[grupoNome] = {'ordem' : ordem, 'qtd' : qtd, 'qtdPag' : qtdPag, 'collapsed' : collapsed };
+			parms[grupoNome] = {'ordem' : ordem, 'qtd' : qtd, 'qtdPag' : qtdPag, 'collapsed' : collapsed, 'hide' : hide };
 		}
 	}
 	setParmUser('gruposMesa', JSON.stringify(parms));
 }
 function setValueGrupo(grupoNome, key, value) {
 	var parms = JSON.parse(getParmUser('gruposMesa'));
-	parms[grupoNome] [key] = value;
-	setParmUser('gruposMesa', JSON.stringify(parms));
+    if (parms != null) {
+  	  parms[grupoNome] [key] = value;
+  	  setParmUser('gruposMesa', JSON.stringify(parms));
+    } 
 }
 function setValueGrupoVue(grupoNome, key, value) {
     for (var g in appMesa.grupos) {
@@ -715,7 +741,12 @@ function setParmUser(nomeParm, value) {
 	window.localStorage.setItem(nomeParm + getUser(), value)	
 }
 function getParmUser(nomeParm) {
-	return window.localStorage.getItem(nomeParm + getUser())	
+	val = window.localStorage.getItem(nomeParm + getUser())
+	if (val === 'true')
+		val = true;
+	if (val === 'false')
+		val = false;
+	return val
 }
 function slideDown (id) { 
 	setInterval(function(){

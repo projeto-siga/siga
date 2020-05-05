@@ -35,6 +35,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -89,9 +90,10 @@ public class ExMesa2Controller extends ExController {
 		}
 	}
 
-	@Get("app/mesa2.json")
+	@Post("app/mesa2.json")
 	public void json(Long idVisualizacao, boolean exibeLotacao, boolean trazerAnotacoes, 
 			boolean trazerComposto, String parms) throws Exception {
+		
 		List<br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem> g = new ArrayList<br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem>();
 		Map<String, Mesa2.SelGrupo> selGrupos = null;
 		List<Mesa2.GrupoItem> gruposMesa = new ArrayList<Mesa2.GrupoItem>();

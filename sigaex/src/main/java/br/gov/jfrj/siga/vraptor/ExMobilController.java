@@ -151,7 +151,7 @@ public class ExMobilController extends
 
 		builder.processar(getLotaTitular());
 
-		if (primeiraVez == null || !primeiraVez.equals("sim")) {
+		if ((SigaMessages.isSigaSP() && offset != null) || (!SigaMessages.isSigaSP() && (primeiraVez == null || !primeiraVez.equals("sim")))) {
 			final ExMobilDaoFiltro flt = createDaoFiltro();
 			final long tempoIni = System.currentTimeMillis();
 			setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,

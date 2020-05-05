@@ -53,7 +53,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 		@NamedQuery(name = "consultarPorFiltroDpCargo", query = "from DpCargo o "
 				+ "  where upper(o.nomeCargoAI) like upper('%' || :nome || '%')"
 				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or o.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ "   	and o.dataFimCargo = null" + "   	order by o.nomeCargo"),
+				+ "   	and o.dataFimCargo = null" + "   	order by upper(o.nomeCargo)"),
 		@NamedQuery(name = "consultarQuantidadeDpCargo", query = "select count(o) from DpCargo o "
 				+ "  where upper(o.nomeCargoAI) like upper('%' || :nome || '%')"
 				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or o.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"

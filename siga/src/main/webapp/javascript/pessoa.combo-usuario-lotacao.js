@@ -145,8 +145,8 @@ MultiploSelect.ComboUsuario = (function() {
 	function reset() {		
 		this.combo.html('');				
 		this.combo.attr('disabled', 'disabled');				
-		this.combo.parent().addClass('disabled');
-		this.combo.parent().children().addClass('disabled');
+		this.combo.parent().children().addClass('disabled');	
+		this.spinner.parent().removeClass('disabled');
 				
 		this.combo.selectpicker('refresh');			
 	}

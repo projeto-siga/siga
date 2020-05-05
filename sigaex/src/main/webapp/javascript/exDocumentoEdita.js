@@ -70,6 +70,17 @@ function sbmt(id) {
 
 // <c:set var="url" value="gravar" />
 function gravarDoc() {
+	
+	var arquivo = document.getElementById("arquivo");
+	
+	if(arquivo !== null) {
+		var tamanhoArquivo = parseInt(document.getElementById("arquivo").files[0].size);
+		if(tamanhoArquivo > 10485760){
+	        alert("TAMANHO DO ARQUIVO EXCEDE O PERMITIDO (10MB)!");
+	        return false;
+	    }
+	}
+	
 	clearTimeout(saveTimer);
 	if (!validar(false)) {
 		triggerAutoSave();
@@ -284,8 +295,12 @@ function checkBoxMsg() {
 
 var saveTimer;
 function triggerAutoSave() {
+	var minutos = 2;
+	if(document.getElementById('cliente') != undefined && document.getElementById('cliente').value == 'GOVSP') {
+		minutos = 30;
+	}
 	clearTimeout(saveTimer);
-	saveTimer = setTimeout('autoSave()', 60000 * 2);
+	saveTimer = setTimeout('autoSave()', 60000 * minutos);
 }
 
 triggerAutoSave();

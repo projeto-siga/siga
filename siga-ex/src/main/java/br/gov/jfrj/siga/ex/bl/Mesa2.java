@@ -49,6 +49,7 @@ public class Mesa2 {
 		public String grupoOrdem;
 		public String tipo;
 		public Date datahora;
+		public String datahoraDDMMYYYHHMM;
 		public String tempoRelativo;
 		public String codigo;
 		public String sigla;
@@ -393,7 +394,12 @@ public class Mesa2 {
 			List<Integer> listMar = new ArrayList<Integer>();
 			for(MarcadorEnum mar : MarcadorEnum.values()) {
 				if (mar.grupo.nome.equals(nomegrupo)) {
-					listMar.add(mar.id);
+					if(!(SigaMessages.isSigaSP() 
+						&& (mar.equals(MarcadorEnum.CANCELADO)
+							|| mar.equals(MarcadorEnum.ARQUIVADO_CORRENTE)
+							|| mar.equals(MarcadorEnum.ARQUIVADO_INTERMEDIARIO)
+							|| mar.equals(MarcadorEnum.ARQUIVADO_PERMANENTE))))
+						listMar.add(mar.id);
 				}
 			}
 			return listMar;
@@ -428,7 +434,6 @@ public class Mesa2 {
 		String movTramiteSiglaOrgao;
 		String movTramiteSiglaLotacao;
 		String movAnotacaoDescrMov;
-		String movAnotacaoIdMov;
 		boolean isComposto;
 	}
 
@@ -439,7 +444,7 @@ public class Mesa2 {
 
 	private static List<MesaItem> listarReferencias(TipoDePainelEnum tipo,
 			Map<ExMobil, DocDados> references, DpPessoa pessoa,
-			DpLotacao unidade, Date currentDate, String grupoOrdem) {
+			DpLotacao unidade, Date currentDate, String grupoOrdem, boolean trazerAnotacoes) {
 		List<MesaItem> l = new ArrayList<>();
 
 		for (ExMobil mobil : references.keySet()) {
@@ -452,11 +457,12 @@ public class Mesa2 {
 			else
 				datahora = mobil.getDoc().getDtAltDoc();
 			r.datahora = datahora;
+			r.datahoraDDMMYYYHHMM = datahora.toLocaleString();
 			r.tempoRelativo = Data.calcularTempoRelativo(datahora);
 
 			r.codigo = mobil.getCodigoCompacto();
 			r.sigla = mobil.getSigla();
-			r.descr = mobil.doc().getDescrCurta(80);
+			r.descr = mobil.doc().getDescrCurta(255).replace("\r", " ").replace("\f", " ").replace("\n", " ");
 			if (references.get(mobil).isComposto) {
 				r.tipoDoc = "Composto";
 			} else {
@@ -515,11 +521,8 @@ public class Mesa2 {
 
 			r.grupoOrdem = grupoOrdem;
 			
-			if (references.get(mobil).movAnotacaoDescrMov != null) { 
-				r.anotacao = references.get(mobil).movAnotacaoDescrMov 
-						+ "<br/><a href='/sigaex/app/expediente/mov/excluir?id=" 
-						+ references.get(mobil).movAnotacaoIdMov
-						+ "&redirectURL=../../mesa2?excluiuAnotacao=true'>Excluir Anotação</a>";
+			if (trazerAnotacoes && mobil.getDnmUltimaAnotacao() != null && !mobil.getDnmUltimaAnotacao().replace(" ", "").equals("")) { 
+				r.anotacao = mobil.getDnmUltimaAnotacao().replace("\r\f", "<br/>").replace("\n", "<br/>");
 			}
 
 			r.list = new ArrayList<Marca>();
@@ -584,11 +587,11 @@ public class Mesa2 {
 	}
 
 	public static List<GrupoItem> getContadores(ExDao dao, DpPessoa titular, DpLotacao lotaTitular, 
-			Map<String, SelGrupo> selGrupos, boolean exibeLotacao, boolean trazerCancelados) throws Exception {
+			Map<String, SelGrupo> selGrupos, boolean exibeLotacao) throws Exception {
 		List<GrupoItem> gruposMesa = new ArrayList<GrupoItem>();
-		gruposMesa = montaGruposUsuario(selGrupos, trazerCancelados);
+		gruposMesa = montaGruposUsuario(selGrupos);
 		List<Object[]> l = dao.consultarTotaisPorMarcador(titular, lotaTitular, gruposMesa, 
-				exibeLotacao, trazerCancelados);
+				exibeLotacao);
 
 		for (GrupoItem gItem : gruposMesa) {
 			gItem.grupoCounterUser = 0L;
@@ -612,11 +615,11 @@ public class Mesa2 {
 
 	public static List<GrupoItem> getMesa(ExDao dao, DpPessoa titular,
 			DpLotacao lotaTitular, Map<String, SelGrupo> selGrupos, List<Mesa2.GrupoItem> gruposMesa, 
-			boolean exibeLotacao, boolean trazerAnotacoes, boolean trazerCancelados) throws Exception {
+			boolean exibeLotacao, boolean trazerAnotacoes, boolean trazerComposto) throws Exception {
 		Date dtNow = dao.consultarDataEHoraDoServidor();
 
 		List<Object[]> l = dao.listarMobilsPorMarcas(titular,
-				lotaTitular, exibeLotacao, trazerCancelados);
+				lotaTitular, exibeLotacao);
 
 		Map<ExMobil, DocDados> map = new HashMap<>();
 		List<Long> listIdMobil = new ArrayList<Long>();
@@ -670,7 +673,7 @@ public class Mesa2 {
 						if ( iMobs + 1000 < iMobsFim )
 							iMobsFim = iMobs + 1000;
 						List<Object[]> refs = dao.listarMovimentacoesMesa(
-								listIdMobil.subList(iMobs, iMobsFim), trazerAnotacoes);
+								listIdMobil.subList(iMobs, iMobsFim), trazerComposto);
 			
 						for (Object[] ref : refs) {
 							incluiMovimentacoesMesa(map, ref);
@@ -678,7 +681,7 @@ public class Mesa2 {
 						iMobs = iMobsFim;
 					}
 					gItem.grupoDocs = Mesa2.listarReferencias(TipoDePainelEnum.UNIDADE, map, titular,
-							titular.getLotacao(), dtNow, gItem.grupoOrdem);
+							titular.getLotacao(), dtNow, gItem.grupoOrdem, trazerAnotacoes);
 					map = new HashMap<>();
 					listIdMobil = new ArrayList<Long>();
 				}
@@ -691,13 +694,10 @@ public class Mesa2 {
 		ExMobil mob = (ExMobil) ref[0];
 		ExMovimentacao movUltima = null;
 		ExMovimentacao movTramite = null;
-		ExMovimentacao movAnotacao = null;
 		if (ref[2] != null)
 			movUltima = (ExMovimentacao) ref[2];
 		if (ref[3] != null)
 			movTramite = (ExMovimentacao) ref[3];
-		if (ref.length > 4 && ref[4] != null && ref[4].getClass().equals(ExMovimentacao.class))
-				movAnotacao = (ExMovimentacao) ref[4];
 		if (map.containsKey(mob)) {
 			DocDados docDados = map.get(mob); 
 			if (ref[1] != null) {
@@ -712,10 +712,6 @@ public class Mesa2 {
 			if (movTramite != null) {
 				docDados.movTramiteSiglaLotacao = movTramite.getLotacao().getSigla();
 				docDados.movTramiteSiglaOrgao = movTramite.getLotacao().getOrgaoUsuario().getSigla();
-			}
-			if (movAnotacao != null) {
-				docDados.movAnotacaoDescrMov = movAnotacao.getDescrMov();
-				docDados.movAnotacaoIdMov = movAnotacao.getIdMov().toString();
 			}
 		}
 	}
@@ -763,7 +759,7 @@ public class Mesa2 {
 		}
 	}
 	
-	public static List<GrupoItem> montaGruposUsuario(Map<String, SelGrupo> selGrupos, boolean trazerCancelados ) {
+	public static List<GrupoItem> montaGruposUsuario(Map<String, SelGrupo> selGrupos) {
 		carregaGruposBase();
 		List<String> ordemGrupos = new ArrayList<String>(); 
 		List<GrupoItem> lGrupo = new ArrayList<GrupoItem>();

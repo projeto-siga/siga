@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.LockModeType;
@@ -179,7 +180,7 @@ public class ExDao extends CpDao {
 		query.setParameter("idOrgaoUsu", idOrgaoUsu);
 		query.setParameter("idFormaDoc", idFormaDoc);
 		query.setParameter("anoEmissao", anoEmissao);
-		query.setParameter("flAtivo", 1L);
+		query.setParameter("flAtivo", "1");
 		
 		if (lock) {
 			query.setLockMode(LockModeType.PESSIMISTIC_WRITE);
@@ -190,11 +191,11 @@ public class ExDao extends CpDao {
 	
 	public Long obterNumeroGerado(Long idOrgaoUsu, Long idFormaDoc, Long anoEmissao)
 			throws SQLException {
-		Query query = em().createNamedQuery("obterNumeroGerado");
+		Query query = em().createNamedQuery("ExDocumentoNumeracao.obterNumeroGerado");
 		query.setParameter("idOrgaoUsu", idOrgaoUsu);
 		query.setParameter("idFormaDoc", idFormaDoc);
 		query.setParameter("anoEmissao", anoEmissao);
-		query.setParameter("flAtivo", 1L);
+		query.setParameter("flAtivo", "1");
 		return (Long) query.getSingleResult();
 	}
 	
@@ -466,6 +467,10 @@ public class ExDao extends CpDao {
 
 			query.setParameter("ultMovIdEstadoDoc", flt.getUltMovIdEstadoDoc());
 
+		} else {
+			query.setParameter("id1", 3);
+			query.setParameter("id2", 14);
+			query.setParameter("id3", 25);
 		}
 
 		if (flt.getUltMovRespSelId() != null && flt.getUltMovRespSelId() != 0) {
@@ -1332,11 +1337,16 @@ public class ExDao extends CpDao {
 		Root<ExModelo> c = q.from(ExModelo.class);
 		q.select(c);
 		Join<ExModelo, ExFormaDocumento> joinForma = c.join("exFormaDocumento");
-		q.where(cb().equal(c.get("nmMod"), sModelo), cb().equal(c.get("hisAtivo"), 1));
+		
+		List<Predicate> whereList = new LinkedList<Predicate>();
+		whereList.add(cb().equal(c.get("nmMod"), sModelo));
+		whereList.add(cb().equal(c.get("hisAtivo"), 1));
 		if (sForma != null) {
 			c.join("exFormaDocumento", JoinType.INNER);
-			q.where(cb().equal(joinForma.get("descrFormaDoc"), sForma));
+			whereList.add(cb().equal(joinForma.get("descrFormaDoc"), sForma));
 		}
+		q.where((Predicate[])whereList.toArray());
+		
 		return em().createQuery(q).getSingleResult();
 	}
 
@@ -1626,13 +1636,13 @@ public class ExDao extends CpDao {
 								+ " where (marca.dtIniMarca is null or marca.dtIniMarca < sysdate)"
 								+ " and (marca.dtFimMarca is null or marca.dtFimMarca > sysdate)"
 								+ " and (marca.cpMarcador.idMarcador = 14L)"
-								+ (titular != null ? " and (marca.dpPessoaIni = :titular)"
-										: " and (marca.dpLotacaoIni = :lotaTitular)"));
+								+ (titular != null ? " and (marca.dpPessoaIni.idPessoaIni = :titular)"
+										: " and (marca.dpLotacaoIni.idLotacaoIni = :lotaTitular)"));
 		if (titular != null)
 			query.setParameter("titular", titular.getIdPessoaIni());
 		else if (lotaTitular != null)
 			query.setParameter("lotaTitular", lotaTitular.getIdLotacaoIni());
-
+        
 		List l = query.getResultList();
  		long tempoTotal = System.nanoTime() - tempoIni;
 		// System.out.println("consultarPorFiltroOtimizado: " + tempoTotal
@@ -1654,9 +1664,7 @@ public class ExDao extends CpDao {
 	}
 
 	public List consultarTotaisPorMarcador(DpPessoa pes, DpLotacao lot, List<GrupoItem> grupos, 
-			boolean exibeLotacao, boolean trazerCancelados) {
-		String queryCancelados =  " LEFT JOIN corporativo.cp_marca marca3 ON (marca3.id_ref = marca.id_ref"
-				+ " AND marca3.id_marcador = " + String.valueOf(CpMarcador.MARCADOR_CANCELADO) + ") ";
+			boolean exibeLotacao) {
 		try {
 			String query = "";
 			for (GrupoItem grupoItem : grupos) {
@@ -1669,14 +1677,13 @@ public class ExDao extends CpDao {
 						+ " 			SUM(CASE WHEN marca.id_pessoa_ini = :idPessoaIni THEN 1 ELSE 0 END) cont_pessoa,"
 						+ " 			SUM(CASE WHEN marca.id_lotacao_ini = :idLotacaoIni THEN 1 ELSE 0 END) cont_lota"
 						+ "	   			FROM corporativo.cp_marca marca"
-						+ (trazerCancelados ? "" : queryCancelados )
+						+ " 			INNER JOIN siga.ex_mobil mob on marca.id_ref = mob.id_mobil"
 						+ "	   			WHERE (marca.dt_ini_marca IS NULL OR marca.dt_ini_marca < sysdate)"
 						+ "	   				AND (marca.dt_fim_marca IS NULL OR marca.dt_fim_marca > sysdate)"
 						+ "	   				AND ((marca.id_pessoa_ini = :idPessoaIni) OR (marca.id_lotacao_ini = :idLotacaoIni))"
 						+ "	   				AND marca.id_tp_marca = 1"
 						+ "					AND marca.id_marcador in (" 
 						+ grupoItem.grupoMarcadores.toString().replaceAll("\\[|\\]", "") + ") "
-						+ (trazerCancelados ? "" : " AND marca3.id_marca is null " )
 						+ "				GROUP BY marca.id_ref )"
 						+ " UNION ALL ";
 				}
@@ -1697,14 +1704,10 @@ public class ExDao extends CpDao {
 	}
 
 	public List listarMobilsPorMarcas(DpPessoa titular,
-			DpLotacao lotaTitular, boolean exibeLotacao, boolean trazerCancelados) {
+			DpLotacao lotaTitular, boolean exibeLotacao) {
 		String queryString;
 		List<List<String>> l = new ArrayList<List<String>> ();
 //		long tempoIni = System.nanoTime();
-		String queryCancelados = " and (select marca3 from ExMarca marca3 "		
-				+ "		where marca3.cpMarcador.idMarcador = "  + String.valueOf(CpMarcador.MARCADOR_CANCELADO) 
-				+ "		and marca3.exMobil = marca.exMobil) is null ";
-
 		queryString =
 					"select "
 					+ " marca, marcador, mobil, doc.dtAltDoc "
@@ -1714,9 +1717,8 @@ public class ExDao extends CpDao {
 					+ " inner join mobil.exDocumento doc"
 					+ " where (marca.dtIniMarca is null or marca.dtIniMarca < sysdate)"
 					+ " and (marca.dtFimMarca is null or marca.dtFimMarca > sysdate)"
-					+ (!exibeLotacao && titular != null ? " and (marca.dpPessoaIni = :titular)" : "") 
-					+ (exibeLotacao && lotaTitular != null ? " and (marca.dpLotacaoIni = :lotaTitular)" : "")
-					+ (trazerCancelados ? "" : queryCancelados)
+					+ (!exibeLotacao && titular != null ? " and (marca.dpPessoaIni.idPessoaIni = :titular)" : "") 
+					+ (exibeLotacao && lotaTitular != null ? " and (marca.dpLotacaoIni.idLotacaoIni = :lotaTitular)" : "")
 					+ " order by  doc.dtAltDoc desc, marca ";
 			
 		Query query = em()
@@ -1733,20 +1735,13 @@ public class ExDao extends CpDao {
 		// / 1000000 + " ms -> " + query + ", resultado: " + l);
 		return l;
 	}
-	public List listarMovimentacoesMesa(List<Long> listIdMobil, boolean trazerAnotacoes) {
-		String queryAnota =
-				"(select movAnotacao from ExMovimentacao movAnotacao"
-				+ " where movAnotacao.idMov in ("
-				+ " 	select max(movAnotacao1.idMov) from ExMovimentacao movAnotacao1"
-				+ " 		where movAnotacao1.exTipoMovimentacao.idTpMov = 28 "
-				+ "			and movAnotacao1.exMobil.idMobil = mob.idMobil " 
-				+ " 		and movAnotacao1.exMovimentacaoCanceladora.idMov = null ) ), ";
-				
+	
+	public List listarMovimentacoesMesa(List<Long> listIdMobil, boolean trazerComposto) {
 		Query query = em()
 				.createQuery(
 						"select "
 						+ "mob, "
-						+ "frm.isComposto, "
+						+ (trazerComposto ? " frm.isComposto, " : "0, ")
 						+ "(select movUltima from ExMovimentacao movUltima "
 						+ " where movUltima.idMov in ("
 						+ " 	select max(movUltima1.idMov) from ExMovimentacao movUltima1"
@@ -1758,11 +1753,10 @@ public class ExDao extends CpDao {
 						+ " 		where movTramite1.exTipoMovimentacao.idTpMov = 3 "
 						+ "			and movTramite1.exMobil.idMobil = mob.idMobil " 
 						+ " 		and movTramite1.exMovimentacaoCanceladora.idMov = null ) ), "
-						+ (trazerAnotacoes ? queryAnota: "")
 						+ "doc "
 						+ "from ExMobil mob "
 						+ "inner join mob.exDocumento doc "
-						+ "inner join doc.exFormaDocumento frm "
+						+ (trazerComposto ? "inner join doc.exFormaDocumento frm " : "")
 						+ "where mob.idMobil in (:listIdMobil) "
 				);
 		if (listIdMobil != null) {

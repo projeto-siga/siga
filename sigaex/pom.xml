@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<parent>
@@ -37,7 +38,9 @@
 									<fileset
 										dir="${project.build.directory}/${project.build.finalName}/WEB-INF/lib"
 										includes="*.jar" />
-									<fileset dir="${project.build.directory}/../../lib/static_scan_vraptor/" includes="*.jar" />
+									<fileset
+										dir="${project.build.directory}/../../lib/static_scan_vraptor/"
+										includes="*.jar" />
 								</path>
 								<java classpathref="build.classpath"
 									classname="br.com.caelum.vraptor.scan.VRaptorStaticScanning"
@@ -48,7 +51,8 @@
 									<classpath
 										path="${project.build.directory}/${project.build.finalName}/WEB-INF/classes" />
 								</java>
-								<war destfile="${project.build.directory}/${project.build.finalName}.war"
+								<war
+									destfile="${project.build.directory}/${project.build.finalName}.war"
 									webxml="${project.build.directory}/${project.build.finalName}/WEB-INF/web.xml">
 									<fileset
 										dir="${project.build.directory}/${project.build.finalName}" />
@@ -128,7 +132,7 @@
 			<groupId>org.directwebremoting</groupId>
 			<artifactId>dwr</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>siga</groupId>
 			<artifactId>siga-cp</artifactId>
@@ -151,7 +155,7 @@
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.jboss.spec.javax.servlet</groupId>
 			<artifactId>jboss-servlet-api_2.5_spec</artifactId>
@@ -194,13 +198,13 @@
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 		</dependency>
-		
+
 		<dependency>
-	<groupId>com.googlecode.log4jdbc</groupId>
-	<artifactId>log4jdbc</artifactId>
-	<version>1.2</version>
-	</dependency>
-	
+			<groupId>com.googlecode.log4jdbc</groupId>
+			<artifactId>log4jdbc</artifactId>
+			<version>1.2</version>
+		</dependency>
+
 		<!-- SIGA -->
 		<dependency>
 			<groupId>siga</groupId>

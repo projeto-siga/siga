@@ -18,6 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.bl;
 
+import static br.gov.jfrj.siga.ex.ExMobil.isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -115,6 +117,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpResponsavel;
+import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExArquivo;
 import br.gov.jfrj.siga.ex.ExArquivoNumerado;
@@ -1677,7 +1680,11 @@ public class ExBL extends CpBL {
 			Boolean tramitar) throws Exception {
 
 		DpPessoa subscritor = null;
+		DpPessoa cosignatario = null;
 		boolean fValido = false;
+		boolean fSubstituindoSubscritor = false;
+		boolean fSubstituindoCosignatario = false;
+		
 
 		if (matriculaSubscritor == null || matriculaSubscritor.isEmpty())
 			throw new AplicacaoException("Matrícula do Subscritor não foi informada.");
@@ -1709,10 +1716,11 @@ public class ExBL extends CpBL {
 
 		if (!doc.isFinalizado())
 			finalizar(cadastrante, lotaCadastrante, doc);
-		
+
+		boolean fPreviamenteAssinado = doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha();
+
 		if (!doc.isFinalizado())
-			throw new AplicacaoException(
-					"não é possível registrar assinatura de um documento não finalizado");
+			throw new AplicacaoException("não é possível registrar assinatura de um documento não finalizado");
 
 		if (doc.isCancelado())
 			throw new AplicacaoException("não é possível assinar um documento cancelado.");
@@ -1740,8 +1748,27 @@ public class ExBL extends CpBL {
 									&& subscritor.equivale(m.getSubscritor())) {
 								fValido = true;
 								continue;
+							} else if (m.getExTipoMovimentacao()
+									.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
+									&& m.getExMovimentacaoCanceladora() == null) {
+								// Verificar se é substituto do cosignatario do documento
+								fSubstituindoCosignatario = estaSubstituindoSubscritorOuCosignatario(cadastrante, lotaCadastrante, m.getSubscritor(),
+										subscritor);
+								if (fSubstituindoCosignatario) {
+									cosignatario = m.getSubscritor();
+									fValido = true;
+									break;
+									
+								}
 							}
 						}
+
+					// Verificar se é substituto do subscritor do documento
+					if (!fValido) {
+						fSubstituindoSubscritor = estaSubstituindoSubscritorOuCosignatario(cadastrante, lotaCadastrante, doc.getSubscritor(),
+								subscritor);
+						fValido = fSubstituindoSubscritor;
+					}
 				}
 
 				if (fValido == false)
@@ -1751,38 +1778,42 @@ public class ExBL extends CpBL {
 						"Só é permitida a assinatura digital do subscritor e dos cossignatários do documento", 0, e);
 			}
 		}
-		
-		if (!doc.isFinalizado())
-			finalizar(cadastrante, lotaCadastrante, doc);
-		
-		boolean fPreviamenteAssinado = doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha();
-
-		if (!doc.isFinalizado())
-			throw new AplicacaoException(
-					"não é possível registrar assinatura de um documento não finalizado");
-
 
 		String s = null;
 		try {
 			iniciarAlteracao();
+			final ExMovimentacao mov;
 
-			final ExMovimentacao mov = criarNovaMovimentacao(autenticando ? ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA :
-					ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA,
-					cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
-					subscritor, null, null, null, null);
-
-			mov.setDescrMov(subscritor.getNomePessoa() + ":"
-					+ subscritor.getSigla());
-			
 			// Hash de auditoria
 			//
 			final byte[] pdf = doc.getConteudoBlobPdf();
 			byte[] sha256 = BlucService.calcSha256(pdf);
-			String cpf = Long.toString(subscritor.getCpfPessoa());
-			acrescentarHashDeAuditoria(mov, sha256,
-					autenticando, subscritor.getNomePessoa(), cpf, null);
+			DpPessoa assinante;
+
+			if (!fSubstituindoSubscritor && !fSubstituindoCosignatario ) {
+				assinante = subscritor;
+			} else {
+				if (fSubstituindoSubscritor) { 
+	
+					assinante = doc.getSubscritor(); 
+				} else {
+					assinante = cosignatario;	
+				}
+				// Cria movimentação de Assinatura POR
+				criarMovimentacaoAssinadorPor(cadastrante, lotaCadastrante, doc, dtMov, subscritor, assinante);
+			}
+
+
+			mov = criarNovaMovimentacao(
+					autenticando ? ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA
+							: ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA,
+					cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov, assinante, null, null, null, null);
+			mov.setDescrMov(assinante.getNomePessoa() + ":" + assinante.getSigla());
+			String cpf = Long.toString(assinante.getCpfPessoa());
+			acrescentarHashDeAuditoria(mov, sha256, autenticando, assinante.getNomePessoa(), cpf, null);
 
 			gravarMovimentacao(mov);
+
 			concluirAlteracaoDocComRecalculoAcesso(doc);
 
 			// Verifica se o documento possui documento pai e faz a juntada
@@ -1798,8 +1829,10 @@ public class ExBL extends CpBL {
 				juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc, dtMov, cadastrante, cadastrante, mov);
 			}
 
-			if (!fPreviamenteAssinado && doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha())
+			if (!fPreviamenteAssinado && doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha()) {
 				s = processarComandosEmTag(doc, "assinatura");
+			}
+
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao registrar assinatura.", 0, e);
@@ -1818,6 +1851,38 @@ public class ExBL extends CpBL {
 		}
 
 		return s;
+	}
+
+	private void criarMovimentacaoAssinadorPor(final DpPessoa cadastrante, final DpLotacao lotaCadastrante,
+			final ExDocumento doc, final Date dtMov, DpPessoa subscritor, DpPessoa assinante) throws SQLException {
+		final ExMovimentacao movsub;
+		movsub = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA,
+				cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov, subscritor, null, null, null, null);
+		movsub.setDescrMov(subscritor.getNomePessoa() + ":" + subscritor.getSigla() + " em substituição a "
+				+ assinante.getNomePessoa() + ":" + assinante.getSigla());
+		gravarMovimentacao(movsub);
+	}
+
+	private boolean estaSubstituindoSubscritorOuCosignatario(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final DpPessoa subscritorOuCosignatarioDoDocumento, DpPessoa subscritor)
+			throws SQLException {
+		Boolean fSubstituindo = false;
+		if (subscritor.getId() != subscritorOuCosignatarioDoDocumento.getId()) {
+			if (Ex.getInstance().getComp().podeAssinarPorComSenha(cadastrante, lotaCadastrante)) {
+				DpSubstituicao dpSubstituicao = new DpSubstituicao();
+				dpSubstituicao.setSubstituto(subscritor);
+				dpSubstituicao.setLotaSubstituto(subscritor.getLotacao());
+				List<DpSubstituicao> itens = dao().consultarSubstituicoesPermitidas(dpSubstituicao);
+
+				// Comparar Titular com doc subscritor
+				for (DpSubstituicao tit : itens) {
+					if (tit.getTitular() != null && tit.getTitular().equivale(subscritorOuCosignatarioDoDocumento)) {
+						fSubstituindo = true;
+					}
+				}
+			}
+		}
+		return fSubstituindo;
 	}
 
 	public void assinarMovimentacaoComSenha(DpPessoa cadastrante, DpLotacao lotaCadastrante, ExMovimentacao movAlvo,
@@ -4726,7 +4791,94 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro ao tentar redefinir nível de acesso", 0, e);
 		}
 	}
+	
+	public void restringirAcesso(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExDocumento doc,
+			final Date dtMov, DpLotacao lotaResponsavel, final DpPessoa responsavel,
+			final List<DpPessoa> listaSubscritor, final DpPessoa titular, String nmFuncaoSubscritor,
+			ExNivelAcesso nivelAcesso) throws AplicacaoException {
 
+		if (nivelAcesso == null) {
+			throw new AplicacaoException("não foram informados dados para a redefinição do nível de acesso");
+		}
+
+		try {
+			iniciarAlteracao();
+
+			List<ExDocumento> documentos = new ArrayList<>();
+			List<ExMovimentacao> listaMov = new ArrayList<ExMovimentacao>();
+			documentos.add(doc);
+			documentos.addAll(doc.getExDocumentoFilhoSet());
+			for (ExDocumento exDocumento : documentos) {
+				for (DpPessoa subscritor : listaSubscritor) {					
+					
+					final ExMovimentacao mov = criarNovaMovimentacao(
+							ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO, cadastrante, lotaCadastrante,
+							exDocumento.getMobilGeral(), dtMov, subscritor, null, titular, null, dtMov);
+
+					mov.setNmFuncaoSubscritor(nmFuncaoSubscritor);
+					mov.setDescrMov("Nível de acesso do documento alterado de "
+							+ exDocumento.getExNivelAcessoAtual().getNmNivelAcesso() + " para "
+							+ nivelAcesso.getNmNivelAcesso() + ". Restrição de acesso adicionada para "
+							+ subscritor.getDescricaoIniciaisMaiusculas());
+
+					mov.setExNivelAcesso(nivelAcesso);
+					exDocumento.setExNivelAcesso(nivelAcesso);
+					
+					if (isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso()) {
+						listaMov.add(mov);
+						mov.getExMobil().doc().setListaMovimentacaoPorRestricaoAcesso(listaMov);
+					}
+						
+					gravarMovimentacao(mov);
+					concluirAlteracaoComRecalculoAcesso(mov.getExMobil());
+				}
+			}
+
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro ao tentar redefinir nível de acesso", 0, e);
+		}
+	}
+
+	public void desfazerRestringirAcesso(final DpPessoa cadastrante, final DpLotacao lotaCadastrante,
+			final ExDocumento doc, final Date dtMov, ExNivelAcesso nivelAcesso) throws AplicacaoException {
+		try {
+			iniciarAlteracao();
+			List<ExMovimentacao> listaMov = new ArrayList<ExMovimentacao>();
+			List<ExDocumento> documentos = new ArrayList<>();
+			documentos.add(doc);
+			documentos.addAll(doc.getExDocumentoFilhoSet());
+			for (ExDocumento exDocumento : documentos) {
+				listaMov = new ArrayList<>();
+				listaMov.addAll(exDocumento.getMobilGeral()
+						.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO));
+				for (ExMovimentacao exMov : listaMov) {
+					final ExMovimentacao mov = criarNovaMovimentacao(
+							ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO, cadastrante,
+							lotaCadastrante, exDocumento.getMobilGeral(), dtMov, exMov.getSubscritor(), null, null,
+							null, dtMov);
+
+					mov.setDescrMov("Nível de acesso do documento alterado de "
+							+ exDocumento.getExNivelAcessoAtual().getNmNivelAcesso() + " para "
+							+ nivelAcesso.getNmNivelAcesso() + ". Restrição de acesso retirada para "
+							+ exMov.getSubscritor().getDescricaoIniciaisMaiusculas());
+
+					exMov.setExMovimentacaoCanceladora(mov);
+					mov.setExNivelAcesso(nivelAcesso);
+
+					gravarMovimentacao(mov);
+					gravarMovimentacao(exMov);
+
+				}
+				exDocumento.setExNivelAcesso(nivelAcesso);
+				dao().gravar(exDocumento);
+				concluirAlteracaoComRecalculoAcesso(exDocumento.getMobilGeral());
+			}
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro ao tentar desfazer restrigir acesso", 0, e);
+		}
+	}
 	public void exigirAnexo(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExMobil mob,
 			final String descrMov) throws AplicacaoException {
@@ -4939,6 +5091,9 @@ public class ExBL extends CpBL {
 					attrs.put("nmArqMod", "certidaoDesentranhamento.jsp");
 				}
 
+			} else if (mov.getExTipoMovimentacao() != null
+					&& (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA)) {
+				attrs.put("nmArqMod", "ciencia.jsp");
 			} else {
 				if (mov.getExTipoDespacho() != null) {
 					attrs.put("despachoTexto", mov.getExTipoDespacho().getDescTpDespacho());
@@ -5120,7 +5275,33 @@ public class ExBL extends CpBL {
 			mov.setDescrMov(descrMov);
 
 			gravarMovimentacao(mov);
+			
+			mov.setNumPaginas(1);
+			
+			Map<String, String> form = new TreeMap<String, String>();
+			form.put("textoMotivo", descrMov);
+			mov.setConteudoBlobForm(urlEncodedFormFromMap(form));
+
+			// Gravar o Html
+			final String strHtml = processarModelo(mov, "processar_modelo", null, null);
+			mov.setConteudoBlobHtmlString(strHtml);
+
+			// Gravar o Pdf
+			final byte pdf[] = Documento.generatePdf(strHtml);
+			mov.setConteudoBlobPdf(pdf);
+			mov.setConteudoTpMov("application/zip");
+			
+			final ExMovimentacao movAssMov = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA, cadastrante, lotaCadastrante,
+					mov.getExMobil(), null, null, null, null, null, null);
+
+			movAssMov.setDescrMov(cadastrante.getDescricao());
+
+			movAssMov.setExMovimentacaoRef(mov);
+			
+			gravarMovimentacao(movAssMov);
+			
 			concluirAlteracao(mov.getExMobil());
+			
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao fazer ciência.", 0, e);
@@ -6714,7 +6895,10 @@ public class ExBL extends CpBL {
 		 * ExProtocolo protocolo = (ExProtocolo) dao().obterProtocoloPorCodigo(numero,ano);
 		 */
 		
-		ExProtocolo protocolo = dao().obterProtocoloPorCodigo(num);		
+		ExProtocolo protocolo = dao().obterProtocoloPorCodigo(num);
+		
+		if(protocolo == null)
+			throw new AplicacaoException("Protocolo não encontrado");
 		
 		if (protocolo.getExDocumento() == null)
 			throw new AplicacaoException("Protocolo não encontrado");
@@ -6725,22 +6909,7 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Protocolo não encontrado", 0, e);
 		}
 
-		int hash = protocolo.getExDocumento().getDescrCurta().hashCode() % 10000;
-		ExMovimentacao move = null;
-
-		if (Math.abs(protocolo.getExDocumento().getDescrCurta().hashCode() % 10000) == hash) {
-			return protocolo.getExDocumento();
-		} else {
-			for (ExMovimentacao mov : protocolo.getExDocumento().getExMovimentacaoSet())
-				if (Math.abs((protocolo.getExDocumento().getDescrCurta() + mov.getIdMov()).hashCode() % 10000) == hash
-						|| Math.abs((protocolo.getExDocumento().getDescrCurta() + mov.getIdMov() + "AssinaturaExterna")
-								.hashCode() % 10000) == hash)
-					move = mov;
-			if (move == null)
-				throw new AplicacaoException("Protocolo inválido");
-
-			return move;
-		}
+		return protocolo.getExDocumento();
 	}
 
 	public byte[] obterPdfPorProtocolo(String num) throws Exception {
@@ -6796,4 +6965,22 @@ public class ExBL extends CpBL {
 	/*
 	 * Fim da adicao
 	 */
+	
+	public void reordenarDocumentos(ExDocumento doc, DpPessoa cadastrante, DpLotacao lotacao, boolean isOrdemOriginal) {				
+		try {
+			iniciarAlteracao();
+			
+			long idTpMov = isOrdemOriginal ? 
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_ORDENACAO_ORIGINAL_DOCUMENTO : 
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_REORDENACAO_DOCUMENTO;
+					
+			ExMovimentacao mov = criarNovaMovimentacao(idTpMov, cadastrante, lotacao, doc.getMobilGeral(), null, cadastrante, null, null, null, null);						
+
+			gravarMovimentacao(mov);
+			concluirAlteracao(doc.getMobilGeral());			
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Ocorreu um erro ao reordenar documentos.", 0, e);
+		}
+	}
 }

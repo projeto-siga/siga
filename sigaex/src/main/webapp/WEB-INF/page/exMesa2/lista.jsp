@@ -214,8 +214,7 @@
 												<span class="d-inline d-md-none"> - {{f.descr}}</span>
 											</td>
 											<td class="col-4 d-none d-md-block">
-												<span class="text-break" :title='f.descr' v-if="f.descr.length<60">{{f.descr}}</span>
-												<span class="text-break" :title='f.descr' v-else>{{ f.descr.substring(0,60)+"..." }}</span>												
+												<span class="text-break" :title='processDescription(f.descr)' >{{ processDescription(f.descr, 60) }}</span>
 											</td>
 											<td class="col-3 col-md-2">
 												<c:if test="${siga_cliente == 'GOVSP'}">
@@ -778,6 +777,24 @@ function carregaFromJson (json, appMesa) {
 }
 function getUser () {
 	return document.getElementById('cadastrante').title + ${idVisualizacao == 0 ? '""' : idVisualizacao };
+}
+
+/**
+ * Substitui as ocorrencias de &quot; na descrição por aspas duplas (") e ainda 
+ * corta a string se for necessário. Na base de dados as aspas duplas são 
+ * armazenadas como &quot; e é isso que o Vue vai exibir. Por isso se faz 
+ * necessário esse tratamento. 
+ *
+ * @param descr A String original
+ * @param limit O tamanho da string a ser retornada. Se não for passado valor, 
+ * será usado Number.MAX_SAFE_INTEGER
+ * @return A String original com as aspas duplas no lugar de &quot; e com o 
+ * tamanho máximo solicitado.
+ */
+function processDescription(descr, limit) {
+	limit = limit? (limit + 1): Number.MAX_SAFE_INTEGER;
+
+	return descr.replace(/&quot;/g, '"').substring(0, limit);
 }
 
 </script>

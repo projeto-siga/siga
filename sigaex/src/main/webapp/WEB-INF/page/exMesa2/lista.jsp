@@ -789,12 +789,14 @@ function getUser () {
  * @param limit O tamanho da string a ser retornada. Se não for passado valor, 
  * será usado Number.MAX_SAFE_INTEGER
  * @return A String original com as aspas duplas no lugar de &quot; e com o 
- * tamanho máximo solicitado.
+ * tamanho máximo solicitado. Se a string original for maior que o limite 
+ * solicitado, serão adicionadas '...''
  */
 function processDescription(descr, limit) {
-	limit = limit? (limit + 1): Number.MAX_SAFE_INTEGER;
+	limit = limit? (limit + 1): Number.MAX_SAFE_INTEGER; 
+	let result = descr.replace(/&quot;/g, '"');
 
-	return descr.replace(/&quot;/g, '"').substring(0, limit);
+	return (result.length > limit)? result.substring(0, limit).concat('...'): result;
 }
 
 </script>

@@ -75,7 +75,7 @@ public class IdentidadeController extends GiControllerSupport {
 		result.forwardTo(this).lista(pessoaSel);
 	}
 
-	@Get("/app/gi/identidade/desbloquear")
+	@Get("/app/gi/identidade/bloquear")
 	public void aBloquear(Long id, DpPessoaSelecao pessoaSel) throws Exception {
 		assertAcesso("ID:Gerenciar identidades");
 		if (id != null) {
@@ -86,7 +86,7 @@ public class IdentidadeController extends GiControllerSupport {
 			throw new AplicacaoException("Não foi informada id");
 	}
 
-	@Get("/app/gi/identidade/bloquear")
+	@Get("/app/gi/identidade/desbloquear")
 	public void aDesbloquear(Long id, DpPessoaSelecao pessoaSel) throws Exception {
 		assertAcesso("ID:Gerenciar identidades");
 		if (id != null) {

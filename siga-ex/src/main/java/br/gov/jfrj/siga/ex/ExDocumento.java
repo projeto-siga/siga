@@ -928,8 +928,11 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	
 	public String getMarcaDagua() {
 		String marcaDagua = null;
-		if( getExModelo() != null &&  getExModelo().getModeloAtual() != null)
-			getExModelo().getModeloAtual().getMarcaDagua();
+		
+		if( getExModelo() != null &&  getExModelo().getModeloAtual() != null) {
+			marcaDagua = getExModelo().getModeloAtual().getMarcaDagua();
+		}
+			
 		return marcaDagua == null ? "" : marcaDagua.trim();
 	}
 

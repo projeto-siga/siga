@@ -2017,7 +2017,7 @@ public class CpDao extends ModeloDao {
 			return gravarComHistorico(oNovo, identidadeCadastrante);
 		}
 
-		if (oNovo.semelhante(oAntigo, 0)) {
+		if (!(oNovo instanceof CpIdentidade) && (oNovo.semelhante(oAntigo, 0))) {
 			return oAntigo;
 		}
 

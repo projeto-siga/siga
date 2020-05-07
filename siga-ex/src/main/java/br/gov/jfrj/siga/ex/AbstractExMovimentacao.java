@@ -170,7 +170,8 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 
 	private static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_BEGIN = "SELECT mov FROM ExMovimentacao mov WHERE ";
 
-	private static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_END = "AND mov.exTipoMovimentacao.idTpMov IN" //
+	private static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_END = //
+			"AND mov.exTipoMovimentacao.idTpMov IN" //
 			+ " (" + ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA //
 			+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO // Não exibido! apenas para indicar o
 																		// instante de recebimento da
@@ -183,15 +184,17 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 			+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA //
 			+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO //
 			+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO //
-			+ ") " + "ORDER BY mov.dtTimestamp DESC";
+			+ ") " //
+			+ "ORDER BY mov.dtTimestamp DESC";
 
 	/**
 	 * Nome da {@link NamedQuery} usada para a consulta das {@link ExMovimentacao
 	 * Movimentações} para o histórico de tramitações de uma {@link ExMobil}
 	 * relacionada a um determinado {@link ExDocumento Documento} em ordem
-	 * cronológica decrescente( {@link ExMovimentacao#getDtTimestamp()}) . As
-	 * movimentações retornadas devm ser dos seguintes
-	 * {@link ExMovimentacao#getExTipoMovimentacao() Tipos}:
+	 * cronológica decrescente ({@link ExMovimentacao#getDtTimestamp()}) a partir da
+	 * primeira {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA
+	 * tramitação} dessa {@link ExMobil} . As movimentações retornadas devm ser dos
+	 * seguintes {@link ExMovimentacao#getExTipoMovimentacao() Tipos}:
 	 * <ul>
 	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA }
 	 * (Tramitação)</li>
@@ -223,15 +226,20 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_QUERY = //
 			CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_BEGIN //
 					+ "mov.exMobil.idMobil = :idMobil " //
+					+ "AND mov.dtTimestamp >= (SELECT MIN(tramitacao.dtTimestamp) " //
+					+ "FROM ExMovimentacao tramitacao "
+					+ "WHERE tramitacao.exMobil.idMobil = :idMobil AND tramitacao.exTipoMovimentacao.idTpMov = "
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA + ") " //
 					+ CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_END;
 
 	/**
 	 * Nome da {@link NamedQuery} usada para a consulta das {@link ExMovimentacao
 	 * Movimentações} para o histórico de tramitações do {@link ExDocumento
 	 * Documento} Cancelado de uma {@link ExMobil} relacionada a um determinado em
-	 * ordem cronológica decrescente ( {@link ExMovimentacao#getDtTimestamp()}) . As
-	 * movimentações retornadas devm ser dos seguintes
-	 * {@link ExMovimentacao#getExTipoMovimentacao() Tipos}:
+	 * ordem cronológica decrescente ( {@link ExMovimentacao#getDtTimestamp()}) a
+	 * partir da primeira {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA
+	 * tramitação} das {@link ExMobil}s do Documento. As movimentações retornadas
+	 * devm ser dos seguintes {@link ExMovimentacao#getExTipoMovimentacao() Tipos}:
 	 * <ul>
 	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA }
 	 * (Tramitação)</li>
@@ -264,6 +272,10 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 			CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_BEGIN //
 					+ "mov.exMobil.exDocumento = (SELECT mobBase.exDocumento FROM ExMobil mobBase WHERE mobBase.idMobil = :idMobil) "
 					+ "AND mov.exMobil.idMobil <> :idMobil " //
+					+ "AND mov.dtTimestamp >= (SELECT MIN(tramitacao.dtTimestamp) " //
+					+ "FROM ExMovimentacao tramitacao "
+					+ "WHERE tramitacao.exMobil.exDocumento = mov.exMobil.exDocumento AND tramitacao.exTipoMovimentacao.idTpMov = "
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA + ") " //
 					+ CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_END;
 
 	@Id

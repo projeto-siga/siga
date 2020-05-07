@@ -2259,8 +2259,10 @@ public class ExDao extends CpDao {
 	 * Realiza a consulta das {@link ExMovimentacao Movimentações} para o histórico
 	 * de tramitações de uma {@link ExMobil} relacionada a um determinado
 	 * {@link ExDocumento Documento} em ordem cronológica decrescente (
-	 * {@link ExMovimentacao#getDtTimestamp()}) . As movimentações retornadas devm
-	 * ser dos seguintes {@link ExMovimentacao#getExTipoMovimentacao() Tipos}:
+	 * {@link ExMovimentacao#getDtTimestamp()}) a partir da primeira
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA tramitação} das
+	 * {@link ExMobil}s do Documento. As movimentações retornadas devm ser dos
+	 * seguintes {@link ExMovimentacao#getExTipoMovimentacao() Tipos}:
 	 * <ul>
 	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA }
 	 * (Tramitação)</li>
@@ -2297,10 +2299,12 @@ public class ExDao extends CpDao {
 
 	/**
 	 * Realiza a consulta das {@link ExMovimentacao Movimentações} para o histórico
-	 * de tramitações do {@link ExDocumento Documento} Cancelado de uma {@link ExMobil} 
-	 * relacionada a um determinado em ordem cronológica decrescente (
-	 * {@link ExMovimentacao#getDtTimestamp()}) . As movimentações retornadas devm
-	 * ser dos seguintes {@link ExMovimentacao#getExTipoMovimentacao() Tipos}:
+	 * de tramitações do {@link ExDocumento Documento} Cancelado de uma
+	 * {@link ExMobil} relacionada a um determinado em ordem cronológica decrescente
+	 * ( {@link ExMovimentacao#getDtTimestamp()}) a partir da primeira
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA tramitação} das
+	 * {@link ExMobil}s do Documento. As movimentações retornadas devm ser dos
+	 * seguintes {@link ExMovimentacao#getExTipoMovimentacao() Tipos}:
 	 * <ul>
 	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA }
 	 * (Tramitação)</li>

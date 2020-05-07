@@ -55,8 +55,12 @@ td.juntado.fa-fw>a.disabled {
 				<tbody>
 					<c:forEach var="movimentacao" items="${movimentacoes}">
 						<c:choose>
+							<%-- É recebimento? --%>
 							<c:when test="${movimentacao.exTipoMovimentacao.id == 4}">
-								<%-- Não exibe Movimentação de recebimento, mas a armazena para ser usado na tramitação que deve aparecer depois. --%>
+								<%-- 
+Não exibe Movimentação de recebimento, mas a armazena para ser usado 
+na tramitação que deve aparecer depois. 
+--%>
 								<c:set var="movimentacaoRecebimento" value="${movimentacao}" />
 							</c:when>
 							<c:otherwise>
@@ -77,20 +81,34 @@ td.juntado.fa-fw>a.disabled {
 									<td class="para_data"><c:if
 											test="${isTramitacao && (not empty movimentacaoRecebimento)}">
 											<%-- 
-										Se a movimentação é de Tramitação, 
-										verifica se a movimentação anterior (que na verdade aconteceu depois)
-										é de recebimento. Em caso positivo, usa sua hora como recebimento da tramitação. 
+Se a movimentação é de Tramitação, verifica se a movimentação anterior 
+(que na verdade aconteceu depois) é de recebimento. Em caso positivo, 
+usa sua hora como recebimento da tramitação. 
 										--%>
 											<fmt:formatDate value="${movimentacaoRecebimento.dtIniMov}"
 												pattern="dd/MM/yyyy HH:mm:ss" />
 										</c:if></td>
 									<td class="para_unidade"><c:if test="${isTramitacao}">
-										${movimentacao.resp.orgaoUsuario.nmOrgaoUsu} / 
-										${movimentacao.resp.lotacao.nomeLotacao}
+										${movimentacao.lotaResp.orgaoUsuario.nmOrgaoUsu} / 
+										${movimentacao.lotaResp.nomeLotacao}
 									</c:if></td>
 									<td class="para_usuario"><c:if test="${isTramitacao}">
-										${movimentacao.resp} ${movimentacao.resp.nomePessoa}
-									</c:if></td>
+											<c:choose>
+												<c:when test="${not empty movimentacao.resp}">
+													<%-- 
+Quando na tramitação indico o usuário destinatário 
+													--%>
+													${movimentacao.resp} ${movimentacao.resp.nomePessoa}
+												</c:when>
+												<c:when test="${not empty movimentacaoRecebimento}">
+													<%-- 
+Quando na tramitação não aponto o usuário destinatário mas sim a unidade. 
+Então só saberei quem foi o usuário que recebeu depois que alguém da unidade de destino abri-lo. 
+													--%>
+												${movimentacaoRecebimento.resp} ${movimentacaoRecebimento.resp.nomePessoa}
+											</c:when>
+											</c:choose>
+										</c:if></td>
 									<td class="evento">
 										${movimentacao.exTipoMovimentacao.descrTipoMovimentacao}</td>
 									<td class="juntado fa-fw"><c:if

@@ -33,6 +33,8 @@ será acidentalmente atribuída a ninguém.
 Atender Pedido de Publicação  
 ----------------------------
 
+Indica se é possível utilizar a rotina de atendimento de pedidos indiretos de publicação no Diário Eletrônico. Esta
+configuração deve ser aplicada apenas aos gestores do diário.
 
 Autuável  
 --------
@@ -62,23 +64,12 @@ Cancelar Via
 
 Indica situações nas quais uma via pode ser cancelada.
 
-Configurar  
-----------
-
-
-Corrigir Erro  
--------------
-
-
 Criar  
 -----
 
 Normalmente todos os modelos de documentos podem ser criados por qualquer usuário, mas restrições podem ser impostas
 através dessa configuração. Modelos ou espécies específicas podem ser restritas de modo que apenas algumas pessoas
 ou lotações tenham permissão para criá-las.
-
-Criar como Novo
----------------
 
 Criar Via  
 ---------
@@ -88,10 +79,20 @@ Utilize essa configuração para desabilitar o botão "Criar Via" em alguns ou t
 Definir Publicadores  
 --------------------
 
+Serve para dar permissão de utilizar rotina para redefinição de permissões de publicação no Diário Eletrônico. Esta
+configuração deve ser aplicada apenas aos gestores do diário.
 
 Definição Automática de Perfil
 ------------------------------
 
+Esta configuração permite que sejam definidos perfis automaticamente quando um documento é criado para determinado 
+subscritor. Normalmente ela é utilizada para que seja atribuído o perfil de revisor para documentos que serão assinados
+por presidentes e diretores. 
+
+Para realizar a configuração, informe a matrícula do diretor em "Pessoa" e a matrícula do revisor em "Pessoa Objeto". 
+Além disso, escolha no "Perfil" a opção "Revisor".
+
+Esta configuração costuma ser utilizada juntamente com a configuração de "Pode Assinar sem Solicitação"
 
 Destinatário
 ------------

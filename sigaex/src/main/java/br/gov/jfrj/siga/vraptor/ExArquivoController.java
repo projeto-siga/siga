@@ -127,7 +127,7 @@ public class ExArquivoController extends ExController {
 			byte ab[] = null;
 			if (isArquivoAuxiliar) {
 				ab = mov.getConteudoBlobMov2();
-				return new InputStreamDownload(makeByteArrayInputStream(ab, fB64), APPLICATION_OCTET_STREAM, URLEncoder.encode(mov.getNmArqMov(), "UTF-8"));
+				return new InputStreamDownload(makeByteArrayInputStream(ab, fB64), APPLICATION_OCTET_STREAM, mov.getNmArqMov().replaceAll(",", "").replaceAll(";", ""));
 			}
 			if (isPdf) {
 				if (mov != null && !completo && !estampar && hash == null) {

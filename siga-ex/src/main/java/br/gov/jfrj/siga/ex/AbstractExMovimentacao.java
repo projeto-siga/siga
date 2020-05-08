@@ -171,21 +171,28 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	private static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_BEGIN = "SELECT mov FROM ExMovimentacao mov WHERE ";
 
 	private static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_END = //
-			"AND mov.exTipoMovimentacao.idTpMov IN" //
-			+ " (" + ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA //
-			+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO // Não exibido! apenas para indicar o
-																		// instante de recebimento da
-																		// tramitação.
-			+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA //
-			+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE //
-			+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO //
-			+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE //
-			+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO //
-			+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA //
-			+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO //
-			+ ", " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO //
-			+ ") " //
-			+ "ORDER BY mov.dtTimestamp DESC";
+			"AND (" //
+					+ " (mov.exTipoMovimentacao.idTpMov = " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
+					+ ") OR"//
+							// Recebimento não exibido! apenas para indicar o instante de recebimento da tramitação.
+					+ " (mov.exTipoMovimentacao.idTpMov = " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO + ") OR"//
+					+ " (mov.exTipoMovimentacao.idTpMov = " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA + ") OR"//
+					+ " (mov.exTipoMovimentacao.idTpMov = " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE
+					+ ") OR"//
+					+ " (mov.exTipoMovimentacao.idTpMov = "
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO + ") OR"//
+					+ " (mov.exTipoMovimentacao.idTpMov = "
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE + ") OR"//
+					+ " (mov.exTipoMovimentacao.idTpMov = "
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO + ") OR"//
+					+ " (mov.exTipoMovimentacao.idTpMov = " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
+					+ ") OR"//
+					+ " (mov.exTipoMovimentacao.idTpMov = "
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO + ") OR"//
+					+ " (mov.exTipoMovimentacao.idTpMov = " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO
+					+ ")"//
+					+ ") " //
+					+ "ORDER BY mov.dtTimestamp DESC";
 
 	/**
 	 * Nome da {@link NamedQuery} usada para a consulta das {@link ExMovimentacao

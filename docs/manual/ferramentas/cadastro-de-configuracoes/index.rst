@@ -15,6 +15,14 @@ A página de edição/criação de configuração possui diversos campos que dev
 
 As configurações alteram o comportamento normal do sistema em diversas áreas diferentes.
 
+O Siga sempre vai aplicar a configuração mais específica para determinada situação. Por exemplo, se houver uma 
+configuração dizendo que todas as pessoas de uma lotação tem permissão para realizar determinada operação,
+por outro lado houver uma configuração dizendo que determinada pessoa não tem essa permissão, será escolhida
+a configuração específica da pessoa e a permissão não será concedida. O mesmo se aplica no caso de configurações
+para espécies ou para modelos específicos, as configurações de modelos prevalecem. Também é possível criar configurações
+gerais, sem que seja especificada pessoa, lotação, modelo ou espécie. Estas últimas serão utilizadas sempre que
+não for encontrada uma configuração mais específica.
+
 A lista completa de configurações e detalhes de como cada uma delas funciona podem ser vistos a seguir.
 
 Configurações do Módulo de Gestão de Documentos
@@ -178,15 +186,12 @@ num Expediente.
 Incluir Documento
 -----------------
 
-Esta configuração está incorretamente associada a funcionalidade de Juntada Automática. Será necessário fazer uma
-correção no banco de dados para substituir a descrição "Incluir Documento", registro 41 da tabela CP_TP_CONFIGURACAO, por "Juntada Automática".
-
-Esta configuração indica se haverá a opção de "Juntar" automaticamente no momento da assinatura do documento.
+Esta configuração indica se o usuário poderá executar a ação de "Incluir Documento".
 
 Juntada Automática
 ------------------
 
-Este tipo de configuração, registro 43 da tabela CP_TP_CONFIGURACAO, deve ser excluído do banco de dados.
+Esta configuração indica se haverá a opção de "Juntar" automaticamente no momento da assinatura do documento.
 
 Movimentar
 ----------
@@ -248,40 +253,47 @@ O primeiro passo é resolvido pela configuração "Definição Automática de Pe
 Pode criar documento filho  
 --------------------------
 
+É utilizada para indicar se é permitida a criação de subprocesso.
 
 Pode receber documento sem assinatura
 -------------------------------------
 
+Normalmente é impedido o trâmite de documentos que não foram assinados. Utilizando essa configuração é possível indicar
+que determinada lotação pode receber documentos que ainda não estão assinados.
 
 Refazer
 -------
 
+Indica se é permitido refazer um documento. Também têm de ser satisfeitas as seguintes condições:o documento tem
+de estar finalizado, o usuário tem de ser o subscritor ou o titular do documento ou ser da lotação cadastrante do 
+documento, o documento não pode estar assinado, a não ser que seja dos tipos externo ou interno importado, que
+são naturalmente considerados assinados. Porém, se for documento de um desses tipos, não pode haver pdf anexado.
+O documento tem de possuir via não cancelada ou volume não cancelado.
 
 Reiniciar Numeração Todo Ano  
 ----------------------------
 
+Configuração utilizada para configurar modelos ou espécies que não têm sua contagem reiniciada todo ano.
 	    
-Simular Usuário
----------------
-
-
 Trâmite Automático  
 ------------------
 
-	    
-Usar Lista  
-----------
-
+Esta configuração indica se haverá a opção de "Tramitar" automaticamente no momento da assinatura do documento. Também 
+configura o trâmite automático no caso da assinatura em lote.
 	    
 Utilizar Extensão de Conversor HTML  
 -----------------------------------
 
+Certa feita foi acrescentada ao Siga-Doc a possibilidade de utilizar um conversor chamado PD4ML para transformar HTML em
+PDF. Esta configuração servia para configurar quais os modelos que utilizariam o PD4ML. Seu uso não é mais recomendado
+pois esse componente está desatualizado.
 	    
 Utilizar Extensão de Editor  
 ---------------------------
 
+Não é mais utilizada.
 
 Visualizar Impressão
 --------------------
 
-
+Não é mais utilizada.

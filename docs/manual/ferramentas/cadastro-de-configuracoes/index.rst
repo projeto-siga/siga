@@ -87,7 +87,7 @@ Definição Automática de Perfil
 
 Esta configuração permite que sejam definidos perfis automaticamente quando um documento é criado para determinado 
 subscritor. Normalmente ela é utilizada para que seja atribuído o perfil de revisor para documentos que serão assinados
-por presidentes e diretores. 
+por presidentes e diretores. Veja maiores explicações na configuração "Pode Assinar Sem Solicitação".
 
 Para realizar a configuração, informe a matrícula do diretor em "Pessoa" e a matrícula do revisor em "Pessoa Objeto". 
 Além disso, escolha no "Perfil" a opção "Revisor".
@@ -97,10 +97,8 @@ Esta configuração costuma ser utilizada juntamente com a configuração de "Po
 Destinatário
 ------------
 
-
-Diretor do Foro  
----------------
-
+Indica se determinada espécie ou modelo requerem a especificação de um destinatário, ou não. Para fazer com que o
+destinatário seja exigido, preencher o campo situação com o valor "Obrigatório".
 
 Duplicar  
 --------
@@ -138,58 +136,114 @@ forçar um modelo de documento a ser digital, utilize a situação "Obrigatório
 Excluir  
 -------
 
+Indica se é possível excluir o documento. Além dessa configuração, as regras para a exclusão de documento incluem: 
+não pode estar finalizado e lotação do usuário tem de ser a do cadastrante do documento.
+	 
+Também é utilizado para verificar se pode ser realizada a exclusão de um cossignatário.
 
 Excluir Anexo  
 -------------
 
+Indica se é permitido excluir uma movimentação de anexação. Além dessa configuração, as regras para a exclusão de 
+anexo incluem: a anexação não pode estar cancelada, o anexo não pode estar assinado, se o documento for físico, 
+não pode estar finalizado, se o documento for eletrônico, não pode estar assinado, a lotação do usuário tem de ser
+a lotação cadastrante da movimentação.
+
+Atualmente não é recomendado o uso de movimentações de anexação. Em substituição, sugerimos a utilização de
+documentos capturados.
 
 Excluir Anotação  
 ----------------
 
+Indica se é permitido excluir anotação.
 
 Finalizar  
 ---------
 
+Indica se é permitido finalizar um documento.
 
 Gerenciar Publicação Boletim  
 ----------------------------
 
+Indica se determinado usuário pode, utilizar rotina para redefinição de permissões de publicação do Boletim Interno.
 
 Incluir como Filho  
 ------------------
 
+Quando é utilizada a ação "Incluir Documento", essa propriedade configura quais os modelos que devem ser
+apresentados na lista para que o usuário faça a seleção. Normalmente, serão permitidos apenas modelos de despachos,
+pareceres, capturados, etc. Não faz sentido, por exemplo, se seja permitido "Incluir" um Processo Administrativo
+num Expediente.
 
 Incluir Documento
 -----------------
 
+Esta configuração está incorretamente associada a funcionalidade de Juntada Automática. Será necessário fazer uma
+correção no banco de dados para substituir a descrição "Incluir Documento", registro 41 da tabela CP_TP_CONFIGURACAO, por "Juntada Automática".
+
+Esta configuração indica se haverá a opção de "Juntar" automaticamente no momento da assinatura do documento.
 
 Juntada Automática
 ------------------
 
+Este tipo de configuração, registro 43 da tabela CP_TP_CONFIGURACAO, deve ser excluído do banco de dados.
 
 Movimentar
 ----------
 
+Muitas das operações realizadas pelo Siga-Doc se enquadram na categoria "Movimentação". As movimentações são ações que
+são registradas em relação à determinado documento. Trâmites, juntadas, arquivamentos, e definições de perfil são exemplos
+de movimentações.
+
+Esta configuração indica se é permitido a determinado usuário ou lotação realizar certo tipo de movimentação em algum
+modelo ou espécie.
+
+Ao introduzir configurações desse tipo, é sempre necessário informar o campo "Tipo da Movimentação".
 
 Nível de Acesso  
 ---------------
 
+Utilize essa configuração para indicar o nível de acesso default de modelos ou espécies.
 
 Nível de Acesso Máximo  
 ----------------------
 
+Utilize essa configuração para indicar o nível de acesso mais restritivo de modelos ou espécies.
+
+Por exemplo, pode ser utilizado para indicar que determinado modelo pode ir até "Limitado entre Pessoas".
 
 Nível de Acesso Mínimo  
 ----------------------
 
+Utilize essa configuração para indicar o nível de acesso menos restritivo de modelos ou espécies.
+
+Por exemplo, pode ser utilizado para indicar que determinado modelo pode ir até "Público".
+
+Se desejar, por exemplo, que determinado modelo seja apenas "Público" ou "Limitado entre Órgãos", configure
+o nível mínimo com "Público" e o máximo com "Limitado entre Órgãos".
 
 Notificar Por E-mail  
 --------------------
 
+Configuração utilizada para desativar o envio de notificações por e-mail que o Siga-Doc faz, por exemplo, quando um
+documento é tramitado para determinada pessoa.
+
+Normalmente a notificação é desabilitada para determinado usuário ou lotação.
 
 Pode Assinar sem Solicitação
 ----------------------------
 
+Esta configuração é utilizada para obter um efeito muito interessante no Siga-Doc. Algumas pessoas, geralmente de alto
+escalão, assinam grande quantidade de documentos por dia. Diremos que uma dessas pessoas é uma "autoridade". Devido a dificuldade de validar todos esses documentos, a autoridade pode precisar identificar pessoas de confiança para
+realizarem a revisão dos documentos antes que estes apareçam na lista para assinatura em lote.
+
+Ou seja, para que o Siga produza o comportamento esperado, é necessário fazer 3 configurações simultâneas:
+1. Definir automaticamente revisores para documentos que serão assinados por determinada autoridade;
+2. Indicar que a autoridade não verá na lista de assinatura em lote documentos cuja assinatura não tenha sido solicitada
+por um revisor;
+3. Garantir que apenas os revisores de confiança da autoridade terão a permissão de "Solicitar a Assinatura".
+
+O primeiro passo é resolvido pela configuração "Definição Automática de Perfil", descrita acima. O segundo passo é realizado através desta configuração. E, o terceiro passo pode ser resolvido com uma configuração de "Movimentar", especificando quem pode "Solicitar Assinatura" para a autoridade. Nesse caso, a autoridade será informada no campo "Pessoa" e o revisor no campo "Pessoa Objeto".
 
 Pode criar documento filho  
 --------------------------

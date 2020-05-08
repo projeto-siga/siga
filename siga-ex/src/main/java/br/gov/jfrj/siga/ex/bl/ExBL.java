@@ -4018,12 +4018,13 @@ public class ExBL extends CpBL {
 			//Gerar movimentação REFAZER para Mobil Pai
 			final ExMovimentacao mov = criarNovaMovimentacao(
 					ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFAZER,
-					cadastrante, lotaCadastrante, doc.getExMobilPai(), null, null, null,
+					cadastrante, lotaCadastrante, doc.getMobilGeral(), null, null, null,
 					null, null, null);
 			mov.setDescrMov("Documento refeito. <br /> Documento Cancelado: " + doc.getSigla() + ".<br /> Novo Documento:  " + novoDoc);
 			
 			gravarMovimentacao(mov);
 
+			concluirAlteracaoDocComRecalculoAcesso(doc);
 			concluirAlteracaoDocComRecalculoAcesso(novoDoc);
 			// atualizarWorkflow(doc, null);
 			return novoDoc;

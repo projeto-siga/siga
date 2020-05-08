@@ -65,7 +65,7 @@ public class RelDocSubordinadosCriados extends RelatorioTemplate {
 	@Override
 	public AbstractRelatorioBaseBuilder configurarRelatorio() throws DJBuilderException, JRException {
 
-		this.setTitle("Relatório de Movimentação de Documentos em Setores Subordinados");
+		this.setTitle("Relatório de Criação de Documentos em Setores Subordinados");
 		this.addColuna("Setor", 0, RelatorioRapido.ESQUERDA, true);
 		this.addColuna("Documento", 25, RelatorioRapido.CENTRO, false);
 		this.addColuna("Criação", 15, RelatorioRapido.CENTRO, false);

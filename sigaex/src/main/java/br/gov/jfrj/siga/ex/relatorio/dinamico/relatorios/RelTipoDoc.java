@@ -21,11 +21,14 @@ import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import net.sf.jasperreports.engine.JRException;
 
 public class RelTipoDoc extends RelatorioTemplate {
 
+	private DpLotacao lotacao;
+	
 	public RelTipoDoc(Map<String, String> parametros) throws Exception {
 		super(parametros);
 		if (Utils.empty(parametros.get("secaoUsuario"))) {
@@ -48,13 +51,25 @@ public class RelTipoDoc extends RelatorioTemplate {
 		if (Utils.empty(parametros.get("link_siga"))) {
 			throw new AplicacaoException("Parâmetro link_siga não informado!");
 		}
+		this.lotacao = buscarLotacaoPor(Long.valueOf(parametros.get("lotacao")));
 	}
 
+	private DpLotacao buscarLotacaoPor(Long id) {
+		CpDao dao = CpDao.getInstance();
+		DpLotacao lotacao = dao.consultar(id, DpLotacao.class, false);
+		return lotacao;
+	}
+	
 	@Override
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
 
-		this.setTitle("Relação de Documentos Criados");
+		String titulo = "Relação de Documentos Criados de " + parametros.get("dataInicial").toString() + " a " + parametros.get("dataFinal").toString();
+		String subtitulo = "Do(a) " + lotacao.getNomeLotacao();
+		
+		this.setTitle(titulo);
+		this.setSubtitle(subtitulo);
+		
 		this.addColuna("Tipo de Documento", 35, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Forma do Documento", 40, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Total", 25, RelatorioRapido.CENTRO, false);

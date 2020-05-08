@@ -111,10 +111,30 @@ public class RelConsultaDocEntreDatas extends RelatorioTemplate {
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
 
-		String titulo = "Relação de Documentos do(a) " + lotacao.getSiglaCompleta() 
-				+ " de " + dateToString(dataInicial) + " a " + dateToString(dataFinal);
+		String origemtext = "";
 		
+		switch (tipoDoDocumento.intValue()) {
+		case 1:
+			origemtext = "Interno Produzido ";
+			break;
+		case 2:
+			origemtext = "Interno Folha de Rosto ";
+			break;
+		case 3:
+			origemtext = "Externo Folha de Rosto ";
+			break;
+		case 4:
+			origemtext = "Externo Capturado ";
+			break;
+		case 5:
+			origemtext = "Interno Capturado ";
+			break;
+		}
+		String titulo = "Relação de Documento(s) " + origemtext + " de " + dateToString(dataInicial) + " a " + dateToString(dataFinal);
+		String subtitulo = "Do(a) " + lotacao.getNomeLotacao();
+
 		this.setTitle(titulo);
+		this.setSubtitle(subtitulo);
 		this.addColuna("Código do Documento", 140, RelatorioRapido.ESQUERDA, true, true);
 		this.addColuna("Descrição do documento", 140, RelatorioRapido.ESQUERDA, false);
 

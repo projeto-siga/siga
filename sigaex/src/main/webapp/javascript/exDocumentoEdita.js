@@ -93,6 +93,8 @@ function validar(silencioso) {
 	var eletroHidden = document.getElementById('eletronicoHidden');
 	var eletro1 = document.getElementById('eletronicoCheck1');
 	var eletro2 = document.getElementById('eletronicoCheck2');
+	var hasPai = document.getElementById('hasPai');
+	var isPaiEletronico = document.getElementById('isPaiEletronico');
 	var subscritor = document.getElementById('formulario_exDocumentoDTO.subscritorSel_id');
 	var temCossignatarios = document.getElementById('temCossignatarios');
 	var descricaoAutomatica = document.getElementById('descricaoAutomatica');
@@ -111,6 +113,23 @@ function validar(silencioso) {
 				silencioso);
 		return false;
 	}
+
+    if ( eletroHidden == null ) {
+		if ( hasPai.value === 'true' ) {
+			if ( isPaiEletronico.value == 'true' && eletro2.checked) {
+				aviso(
+				"O documento deve ser digital, não pode ser de outro tipo.",
+				silencioso);
+				return false;
+			} 
+			if ( isPaiEletronico.value == 'false' && eletro1.checked) {
+				aviso(
+				"O documento deve ser físico, não pode ser de outro tipo.",
+				silencioso);
+				return false;
+			} 
+		}
+    }
 
 	var limite = document
 			.getElementsByName('exDocumentoDTO.tamanhoMaximoDescricao')[0].value;

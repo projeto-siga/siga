@@ -462,6 +462,10 @@ public class ExDocumentoController extends ExController {
 		final boolean isDocNovo = (exDocumentoDTO == null || exDocumentoDTO
 				.getSigla() == null);
 		boolean postback = param("postback") != null;
+		
+		boolean isPaiEletronico = false;
+		boolean hasPai = false;
+		
 		if (isDocNovo) {
 			if (!postback)
 				exDocumentoDTO = new ExDocumentoDTO();
@@ -555,9 +559,14 @@ public class ExDocumentoController extends ExController {
 					exDocumentoDTO.setNivelAcesso(nivelDefault
 							.getIdNivelAcesso());
 				} else {
-					exDocumentoDTO.setNivelAcesso(ExNivelAcesso.ID_PUBLICO);
+					if ( Boolean.valueOf(System.getProperty("siga.doc.acesso.limitado"))) {
+						exDocumentoDTO.setNivelAcesso(ExNivelAcesso.ID_LIMITADO_AO_ORGAO);
+					} else {
+						exDocumentoDTO.setNivelAcesso(ExNivelAcesso.ID_PUBLICO);
+					}
 				}
 			}
+
 		}
 
 		if (exDocumentoDTO.isCriandoAnexo() && exDocumentoDTO.getId() == null
@@ -568,6 +577,7 @@ public class ExDocumentoController extends ExController {
 						"Não foi possível carregar um modelo chamado 'Despacho'");
 			exDocumentoDTO.setIdMod(despacho.getId());
 		}
+
 
 		if (exDocumentoDTO.getId() == null && exDocumentoDTO.getDoc() != null)
 			exDocumentoDTO.setId(exDocumentoDTO.getDoc().getIdDoc());
@@ -608,6 +618,11 @@ public class ExDocumentoController extends ExController {
 					.getIdMod());
 		}
 		carregarBeans(exDocumentoDTO, mobilPaiSel);
+
+		if (exDocumentoDTO.getMobilPaiSel().getId() != null) {
+			hasPai = true;
+			isPaiEletronico = exDocumentoDTO.getMobilPaiSel().buscarObjeto().doc().isEletronico();
+		}
 
 		final Long idSit = Ex
 				.getInstance()
@@ -738,7 +753,7 @@ public class ExDocumentoController extends ExController {
 				.getComp()
 				.podeEditarDescricao(getTitular(), getLotaTitular(),
 						exDocumentoDTO.getModelo());
-
+						
 		List<String> l = new ArrayList<String>();
 		for (String p : exDocumentoDTO.getParamsEntrevista().keySet()) {
 			result.include(p, exDocumentoDTO.getParamsEntrevista().get(p));
@@ -789,6 +804,8 @@ public class ExDocumentoController extends ExController {
 
 		result.include("possuiMaisQueUmModelo", cModelos > 1);
 		result.include("par", parFreeMarker);
+		result.include("hasPai", hasPai);
+		result.include("isPaiEletronico", isPaiEletronico);
 		result.include("cpOrgaoSel", exDocumentoDTO.getCpOrgaoSel());
 		result.include("mobilPaiSel", exDocumentoDTO.getMobilPaiSel());
 		result.include("subscritorSel", exDocumentoDTO.getSubscritorSel());

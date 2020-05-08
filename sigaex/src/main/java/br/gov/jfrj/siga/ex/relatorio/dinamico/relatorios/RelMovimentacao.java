@@ -18,12 +18,16 @@ import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.util.Utils;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import net.sf.jasperreports.engine.JRException;
 
 public class RelMovimentacao extends RelatorioTemplate {
 
+	private DpLotacao lotacao;
+	
 	public RelMovimentacao(Map<String, String> parametros) throws AplicacaoException {
 		super(parametros);
 		if (Utils.empty(parametros.get("secaoUsuario"))) {
@@ -42,13 +46,27 @@ public class RelMovimentacao extends RelatorioTemplate {
 		if (Utils.empty(parametros.get("link_siga"))) {
 			throw new AplicacaoException("Parâmetro link_siga não informado!");
 		}
+		this.lotacao = buscarLotacaoPor(Long.valueOf(parametros.get("lotacao")));
+	}
+
+	private DpLotacao buscarLotacaoPor(Long id) {
+		CpDao dao = CpDao.getInstance();
+		DpLotacao lotacao = dao.consultar(id, DpLotacao.class, false);
+		return lotacao;
 	}
 
 	@Override
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
-		this.addAutoText("Período: " + parametros.get("dataInicial").toString() + " a " + parametros.get("dataFinal").toString(), AutoText.POSITION_HEADER,(byte) RelatorioRapido.ESQUERDA,200);
-		this.setTitle("Relatório de Movimentações");
+				
+		//this.addAutoText("Período: " + parametros.get("dataInicial").toString() + " a " + parametros.get("dataFinal").toString(), AutoText.POSITION_HEADER,(byte) RelatorioRapido.ESQUERDA,200);
+		//this.setTitle("Relatório de Movimentações");
+		String titulo = "Relatório de Movimentações de " + parametros.get("dataInicial").toString() + " a " + parametros.get("dataFinal").toString();
+		String subtitulo = "Do(a) " + lotacao.getNomeLotacao();
+
+		this.setTitle(titulo);
+		this.setSubtitle(subtitulo);
+
 		this.addColuna("Documento", 25, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Data de Movimento", 15, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Descrição", 15, RelatorioRapido.ESQUERDA, false);

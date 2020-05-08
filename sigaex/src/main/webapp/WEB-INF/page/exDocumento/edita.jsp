@@ -32,7 +32,9 @@
 			<form id="frm" name="frm" theme="simple" method="post" enctype="multipart/form-data" class="mb-0">
 				<input type="hidden" id="idTamanhoMaximoDescricao" name="exDocumentoDTO.tamanhoMaximoDescricao" value="${exDocumentoDTO.tamanhoMaximoDescricao}" /> 
 				<input type="hidden" id="alterouModelo" name="exDocumentoDTO.alterouModelo" /> 
-				<input type="hidden" id="clickSelect" name="clickSelect" /> 
+				<input type="hidden" id="clickSelect" name="clickSelect" />
+				<input type="hidden" id="hasPai" name="hasPai" value="${hasPai}" />
+				<input type="hidden" id="isPaiEletronico" name="isPaiEletronico" value="${isPaiEletronico}" />
 				<input type="hidden" name="postback" value="1" /> 
 				<input type="hidden" id="sigla" name="exDocumentoDTO.sigla" value="${exDocumentoDTO.sigla}" /> 
 				<input type="hidden" name="exDocumentoDTO.nomePreenchimento" value="" /> 

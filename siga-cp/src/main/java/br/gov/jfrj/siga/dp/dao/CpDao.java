@@ -2148,4 +2148,9 @@ public class CpDao extends ModeloDao {
 		return (T) consultar(id, o.getClass(), false);
 	}
 
+	public <T> T carregar(T objetoDetachado) {
+		return (T) em().find(objetoDetachado.getClass(), 
+				em().getEntityManagerFactory().getPersistenceUnitUtil().getIdentifier(objetoDetachado));
+	}
+
 }

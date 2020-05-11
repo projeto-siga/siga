@@ -218,6 +218,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 				CpConfiguracao t_cpcConfiguracao = t_cfgConfiguracaoGrupo
 						.getCpConfiguracao();
 				t_cpcConfiguracao.setHisDtFim(dt);
+				t_cpcConfiguracao = dao().carregar(t_cpcConfiguracao);
 				dao().gravarComHistorico(t_cpcConfiguracao,
 						getIdentidadeCadastrante());
 			}

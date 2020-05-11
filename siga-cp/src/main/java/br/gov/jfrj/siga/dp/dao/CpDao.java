@@ -1104,8 +1104,8 @@ public class CpDao extends ModeloDao {
 	@SuppressWarnings("unchecked")
 	public List<CpLocalidade> consultarLocalidadesPorUF(final CpUF cpuf) {
 		Query query = em().createQuery(
-				"from CpLocalidade l where l.UF.idUF = :idUf order by remove_acento(upper(l.nmLocalidade)");
-		query.setParameter("idUf", cpuf.getIdUF().intValue());
+				"from CpLocalidade l where l.UF.idUF = :idUf order by UPPER(REMOVE_ACENTO(l.nmLocalidade))");
+		query.setParameter("idUf", cpuf.getIdUF());
 		List l = query.getResultList();
 		return l;
 	}
@@ -1864,7 +1864,7 @@ public class CpDao extends ModeloDao {
 			}
 			whereList.add(c.get("situacaoFuncionalPessoa").in(situacoesFuncionais.getValor()));
 			whereList.add(cb().isNull(c.get("dataFimPessoa")));
-			q.where((Predicate[])whereList.toArray());
+			q.where(whereList.toArray(new Predicate[0]));
 
 			q.orderBy(cb().asc(c.get("nomePessoa")));
 			lstCompleta.addAll((List<DpPessoa>) em().createQuery(q).getResultList());
@@ -2398,14 +2398,13 @@ public class CpDao extends ModeloDao {
 		if(matricula != null) {
 			whereList.add(cb().equal(c.get("matricula"), matricula));
 		}
-		q.where(cb().equal(c.get("orgaoUsuario.idOrgaoUsu"), idOrgaoUsu));
 
 		if (pessoasFinalizadas) {
 			whereList.add(cb().isNotNull(c.get("dataFimPessoa")));
 		} else {
 			whereList.add(cb().isNull(c.get("dataFimPessoa")));
 		}
-		q.where((Predicate[])whereList.toArray());
+		q.where(whereList.toArray(new Predicate[0]));
 		if (ordemDesc) {
 			q.orderBy(cb().desc(c.get("dataInicioPessoa")));
 		} else {

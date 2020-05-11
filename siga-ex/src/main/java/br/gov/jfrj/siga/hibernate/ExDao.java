@@ -1344,8 +1344,8 @@ public class ExDao extends CpDao {
 		if (sForma != null) {
 			c.join("exFormaDocumento", JoinType.INNER);
 			whereList.add(cb().equal(joinForma.get("descrFormaDoc"), sForma));
-		}
-		q.where((Predicate[])whereList.toArray());
+		}		
+		q.where(whereList.toArray(new Predicate[0]));
 		
 		return em().createQuery(q).getSingleResult();
 	}

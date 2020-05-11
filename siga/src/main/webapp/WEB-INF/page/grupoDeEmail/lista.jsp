@@ -25,7 +25,7 @@
 						<thead class="thead-dark">
 							<th align="left">Sigla</th>
 							<th align="left">Descrição</th>
-							<th align="left">Sigla Grupo Pai aaaaaa</th>
+							<th align="left">Sigla Grupo Pai</th>
 						</thead>
 						<c:set var="evenorodd" value="" />
 						<c:set var="tamanho" value="0" />

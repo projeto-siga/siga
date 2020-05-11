@@ -194,6 +194,7 @@ public class CpBL {
 
 			if (confOld != null) {
 				confOld.setHisDtFim(dt);
+				confOld = dao().carregar(confOld);
 				dao().gravarComHistorico(confOld, identidadeCadastrante);
 			}
 			dao().gravarComHistorico(conf, identidadeCadastrante);

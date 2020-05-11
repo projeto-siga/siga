@@ -43,7 +43,7 @@
 	function aviso() {
 		var dataFim = document.getElementById("dtFimSubst").value;
 		var dataInicio = document.getElementById("dtIniSubst").value;
-		var mensagem = "Caso a 'Data de Início' não seja informada, será assumida a data atual.<br/>Caso a 'Data de Fim' não seja informada, a substituição ficará valendo até que seja manualmente cancelada.";
+		var mensagem = "Caso a 'Data de Início' não seja informada, será assumida a data atual.";
 		var atencao = "Importante";
 		document.getElementById("dataFim").innerHTML = mensagem;
 		document.getElementById("dataFim").value = mensagem;
@@ -151,13 +151,12 @@
 								<label for="tipoTitular">Data de Fim</label>
 								<input type="text" id="dtFimSubst" name="dtFimSubst" label="Data de Fim" value="${dtFimSubst}"
 									onblur="javascript:verifica_data(this, true);" theme="simple" class="form-control" />
-									<small id="emailHelp" class="form-text text-muted">(opcional)</small>
 							</div>
 						</div>
 					</div>
 					<c:if test="${ empty dataFim }">
 					<div class="row">
-						<div class="col-sm-1">
+						<div class="col-sm-2">
 							<div class="form-group">
 								<b><span id="atencao" ></span></b>
 							</div>

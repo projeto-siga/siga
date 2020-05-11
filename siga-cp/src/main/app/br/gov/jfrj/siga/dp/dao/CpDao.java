@@ -1130,12 +1130,8 @@ public class CpDao extends ModeloDao {
 			double quantidadeDeLotacaoOuUsuario = isFiltrarPorListaDeUsuario ? flt.getIdPessoaSelecao().length
 					: isFiltrarPorListaDeLotacao ? flt.getIdLotacaoSelecao().length : 0;
 
-			if (isFiltrarPorListaDeLotacao || isFiltrarPorListaDeUsuario) {
-				query = queryConsultarPorFiltroDpPessoaSemIdentidadeComListaDeLotacaoOuListaDeUsuario(
-						quantidadeDeLotacaoOuUsuario, false);
-			} else {
-				query = getSessao().getNamedQuery("consultarPorFiltroDpPessoaSemIdentidade");
-			}
+			query = queryConsultarPorFiltroDpPessoaSemIdentidadeComListaDeLotacaoOuListaDeUsuario(
+					quantidadeDeLotacaoOuUsuario, flt, false);
 
 			if (offset > 0) {
 				query.setFirstResult(offset);
@@ -1143,28 +1139,26 @@ public class CpDao extends ModeloDao {
 			if (itemPagina > 0) {
 				query.setMaxResults(itemPagina);
 			}
-			query.setString("nome", flt.getNome().toUpperCase().replace(' ', '%'));
-
-			if (flt.getCpf() != null && !"".equals(flt.getCpf())) {
-				query.setLong("cpf", Long.valueOf(flt.getCpf()));
-			} else {
-				query.setLong("cpf", 0);
-			}
-
-			if (flt.getIdOrgaoUsu() != null)
-				query.setLong("idOrgaoUsu", flt.getIdOrgaoUsu());
-			else
-				query.setLong("idOrgaoUsu", 0);
+			
+			query.setLong("idOrgaoUsu", flt.getIdOrgaoUsu());
 
 			if (isFiltrarPorListaDeUsuario) {
 				enviarParametrosLotacaoOuUsuario(query, true, flt.getIdPessoaSelecao());
 			} else if (isFiltrarPorListaDeLotacao) {
 				enviarParametrosLotacaoOuUsuario(query, false, flt.getIdLotacaoSelecao());
-			} else if (flt.getLotacao() != null) {
-				query.setLong("lotacao", flt.getLotacao().getId());
-			} else {
-				query.setLong("lotacao", 0);
 			}
+			
+			if (flt.getLotacao() != null) {
+				query.setLong("idLotacao", flt.getLotacao().getId());
+			} 
+			
+			if(flt.getNome() != null && !"".equals(flt.getNome().trim())) {
+				query.setString("nome", flt.getNome().toUpperCase().replace(' ', '%'));
+			}
+
+			if (flt.getCpf() != null && flt.getCpf() != 0) {
+				query.setLong("cpf", Long.valueOf(flt.getCpf()));
+			} 
 
 			final List<DpPessoa> l = query.list();
 			return l;
@@ -1212,36 +1206,30 @@ public class CpDao extends ModeloDao {
 			double quantidadeDeLotacaoOuUsuario = isFiltrarPorListaDeUsuario ? flt.getIdPessoaSelecao().length
 					: isFiltrarPorListaDeLotacao ? flt.getIdLotacaoSelecao().length : 0;
 
-			if (isFiltrarPorListaDeLotacao || isFiltrarPorListaDeUsuario) {
-				query = queryConsultarPorFiltroDpPessoaSemIdentidadeComListaDeLotacaoOuListaDeUsuario(
-						quantidadeDeLotacaoOuUsuario, true);
-			} else {
-				query = getSessao().getNamedQuery("consultarQuantidadeDpPessoaSemIdentidade");
-			}
-
-			query.setString("nome", flt.getNome().toUpperCase().replace(' ', '%'));
-
-			if (flt.getCpf() != null && !"".equals(flt.getCpf())) {
-				query.setLong("cpf", Long.valueOf(flt.getCpf()));
-			} else {
-				query.setLong("cpf", 0);
-			}
-
+			query = queryConsultarPorFiltroDpPessoaSemIdentidadeComListaDeLotacaoOuListaDeUsuario(
+						quantidadeDeLotacaoOuUsuario, flt, true);
+			
 			if (flt.getIdOrgaoUsu() != null)
 				query.setLong("idOrgaoUsu", flt.getIdOrgaoUsu());
-			else
-				query.setLong("idOrgaoUsu", 0);
+
 
 			if (isFiltrarPorListaDeUsuario) {
 				enviarParametrosLotacaoOuUsuario(query, true, flt.getIdPessoaSelecao());
 			} else if (isFiltrarPorListaDeLotacao) {
 				enviarParametrosLotacaoOuUsuario(query, false, flt.getIdLotacaoSelecao());
-			} else if (flt.getLotacao() != null) {
-				query.setLong("lotacao", flt.getLotacao().getId());
-			} else {
-				query.setLong("lotacao", 0);
+			} 
+			
+			if (flt.getLotacao() != null) {
+				query.setLong("idLotacao", flt.getLotacao().getId());
 			}
+			
+			if(flt.getNome() != null && !"".equals(flt.getNome().trim()))
+			query.setString("nome", flt.getNome().toUpperCase().replace(' ', '%'));
 
+			if (flt.getCpf() != null && flt.getCpf() != 0) {
+				query.setLong("cpf", Long.valueOf(flt.getCpf()));
+			}
+			
 			final int l = ((Long) query.uniqueResult()).intValue();
 			return l;
 		} catch (final NullPointerException e) {
@@ -1273,41 +1261,68 @@ public class CpDao extends ModeloDao {
 
 			if (isFiltrarPorListaDeUsuario) {
 				query.setParameterList("idPessoaLista" + i, parametro);
-				query.setLong("idLotacaoLista" + i, 0);
 			} else {
 				query.setParameterList("idLotacaoLista" + i, parametro);
-				query.setLong("idPessoaLista" + i, 0);
 			}
 		}
 	}
 
 	public Query queryConsultarPorFiltroDpPessoaSemIdentidadeComListaDeLotacaoOuListaDeUsuario(
-			double quantidadeDeLotacaoOuUsuario, boolean apenasContarItens) {
+			double quantidadeDeLotacaoOuUsuario, DpPessoaDaoFiltro flt, boolean apenasContarItens) {
 		Query query;
 		String queryTemp = "";
-		double quantidadeDeClausulaIN = Math.ceil(Double.valueOf(quantidadeDeLotacaoOuUsuario) / 1000);
-		if (quantidadeDeClausulaIN <= 0)
-			quantidadeDeClausulaIN = 1;
-
+		
 		if (apenasContarItens)
 			queryTemp = "select count(pes) from DpPessoa pes";
 		else
 			queryTemp = "from DpPessoa pes ";
+		
+		
+		queryTemp += " where pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu and pes.dataFimPessoa = null ";
 
-		queryTemp += "  where (upper(pes.nomePessoaAI) like upper('%' || :nome || '%'))"
-				+ " and (pes.cpfPessoa = :cpf or :cpf = 0)" + " and pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
-				+ "  and (";
-		for (int i = 1; i <= quantidadeDeClausulaIN; i++) {
-			if (i > 1)
-				queryTemp += " or ";
-			queryTemp += " pes.lotacao.idLotacao in (:idLotacaoLista" + i + ") or pes.idPessoa in (:idPessoaLista" + i
-					+ ")";
+		if(flt.getIdLotacaoSelecao() != null && flt.getIdLotacaoSelecao().length > 0 && (flt.getIdPessoaSelecao() == null || flt.getIdPessoaSelecao().length == 0)) {
+			double quantidadeDeClausulaIN = Math.ceil(Double.valueOf(quantidadeDeLotacaoOuUsuario) / 1000);
+			if (quantidadeDeClausulaIN <= 0)
+				quantidadeDeClausulaIN = 1;
+			queryTemp += " and (";
+			for (int i = 1; i <= quantidadeDeClausulaIN; i++) {
+				
+				if (i > 1)
+					queryTemp += " or ";
+					queryTemp += " pes.lotacao.idLotacao in (:idLotacaoLista" + i + ") ";
+			}
+			queryTemp += " ) ";
 		}
-		queryTemp += ")" + " and pes.dataFimPessoa = null"
-				+ " and not exists (select ident.dpPessoa.idPessoaIni from CpIdentidade ident where pes.idPessoaIni = ident.dpPessoa.idPessoaIni)"
-				+ "  order by pes.lotacao.nomeLotacao, pes.nomePessoaAI, pes.cpfPessoa";
+		
+		if(flt.getIdPessoaSelecao() != null && flt.getIdPessoaSelecao().length > 0) {
+			double quantidadeDeClausulaIN = Math.ceil(Double.valueOf(quantidadeDeLotacaoOuUsuario) / 1000);
+			if (quantidadeDeClausulaIN <= 0)
+				quantidadeDeClausulaIN = 1;
+			queryTemp += " and (";
+			for (int i = 1; i <= quantidadeDeClausulaIN; i++) {
+				if (i > 1)
+					queryTemp += " or ";
+					queryTemp += " pes.idPessoa in (:idPessoaLista" + i + ")";
+			}
+			queryTemp += " ) ";
+		}
+		
+		if(flt.getLotacao() != null && flt.getLotacao().getId() != null) {
+			queryTemp += " and pes.lotacao.idLotacao = :idLotacao ";
+		}
+		
+		if(flt.getCpf() != null && flt.getCpf() != 0) {
+			queryTemp += " and pes.cpfPessoa = :cpf ";
+		}
+		
+		if(flt.getNome() != null && !"".equals(flt.getNome().trim())) {
+			queryTemp += " and pes.nomePessoaAI like '%' || :nome || '%'";
+		}
+		
+		queryTemp += " and not exists (select ident.dpPessoa.idPessoaIni from CpIdentidade ident where pes.idPessoaIni = ident.dpPessoa.idPessoaIni)"
+				+ " order by pes.lotacao.nomeLotacao, pes.nomePessoaAI, pes.cpfPessoa";
 
-		query = getSessao().createQuery(queryTemp);
+		query = getSessao().createQuery(queryTemp);		
 
 		return query;
 	}

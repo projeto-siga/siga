@@ -73,6 +73,7 @@ import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -2700,6 +2701,87 @@ public class ExDocumentoController extends ExController {
 	}
 
 	/**
+	 * Prepara os dados das Movimentações de uma {@link ExMobil Via} de um
+	 * {@link ExDocumento Documento} ativo. Primeiro
+	 * {@link ExDao#consultarTramitacoesPorMovimentacao(Long) pesquisa pelas
+	 * Movimentações da Via} e depois separa os
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_RECEBIMENTO Recebimentos} e os
+	 * associa com as {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA
+	 * Tramitações} de origem.
+	 * 
+	 * @param idMobil {@link ExMobil#getIdMobil() ID} da {@link ExMobil Via}
+	 */
+	private void tratarMovimentacoesDocumentoAtivo(Long idMobil) {
+		List<ExMovimentacao> movimentacoesMobil = dao().consultarTramitacoesPorMovimentacao(idMobil);
+
+		List<ExMovimentacao> movimentacoes = new ArrayList<ExMovimentacao>();
+		Map<Long, ExMovimentacao> recebimentos = new HashMap<Long, ExMovimentacao>();
+		ExMovimentacao recebimento = null;
+		for (ExMovimentacao exMovimentacao : movimentacoesMobil) {
+			if (exMovimentacao.getExTipoMovimentacao()
+					.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO) {
+				recebimento = exMovimentacao;
+			} else {
+				if ((exMovimentacao.getExTipoMovimentacao()
+						.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA) && (recebimento != null)) {
+					recebimentos.put(exMovimentacao.getIdMov(), recebimento);
+					recebimento = null;
+				}
+				movimentacoes.add(exMovimentacao);
+			}
+		}
+		ExMobil mobil = movimentacoes.get(0).getExMobil();
+
+		result.include("mobil", mobil);
+		result.include("movimentacoes", movimentacoes);
+		result.include("recebimentos", recebimentos);
+	}
+
+	/**
+	 * Prepara os dados das Movimentações de um {@link ExDocumento Documento}
+	 * {@link CpMarcador#MARCADOR_SEM_EFEITO Cancelado} associado a cancelado
+	 * associado a uma {@link ExMobil Via} que foi
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO Cancelada}.
+	 * Primeiro
+	 * {@link ExDao#consultarTramitacoesPorMovimentacaoDocumentoCancelado(Long)
+	 * pesquisa pelas Movimentações das Vias} do Documento Cancelado e depois separa
+	 * os {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_RECEBIMENTO Recebimentos} e os
+	 * associa com as {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA
+	 * Tramitações} de origem.
+	 * 
+	 * @param idMobil {@link ExMobil#getIdMobil() ID} da {@link ExMobil Via}
+	 *                {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO
+	 *                Cancelada}.
+	 */
+	private void tratarMovimentacoesDocumentoCancelado(Long idMobil) {
+		List<ExMovimentacao> movimentacoesDocumento = dao()
+				.consultarTramitacoesPorMovimentacaoDocumentoCancelado(idMobil);
+
+		List<ExMovimentacao> movimentacoes = new ArrayList<ExMovimentacao>();
+		Map<Long, ExMovimentacao> recebimentos = new HashMap<Long, ExMovimentacao>();
+		Map<ExMobil, ExMovimentacao> recebimentoPorVia = new HashMap<ExMobil, ExMovimentacao>();
+		for (ExMovimentacao exMovimentacao : movimentacoesDocumento) {
+			if (exMovimentacao.getExTipoMovimentacao()
+					.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO) {
+				recebimentoPorVia.put(exMovimentacao.getExMobil(), exMovimentacao);
+			} else {
+				if ((exMovimentacao.getExTipoMovimentacao()
+						.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA)
+						&& (recebimentoPorVia.containsKey(exMovimentacao.getExMobil()))) {
+					recebimentos.put(exMovimentacao.getIdMov(), recebimentoPorVia.get(exMovimentacao.getExMobil()));
+					recebimentoPorVia.remove(exMovimentacao.getExMobil());
+				}
+				movimentacoes.add(exMovimentacao);
+			}
+		}
+		ExMobil mobil = dao().consultar(idMobil, ExMobil.class, false);
+
+		result.include("mobil", mobil);
+		result.include("movimentacoes", movimentacoes);
+		result.include("recebimentos", recebimentos);
+	}
+
+	/**
 	 * Realiza a consulta das {@link ExMovimentacao Movimentações} para o histórico
 	 * de tramitações de uma {@link ExMobil} ou de um {@link ExDocumento Documento}
 	 * Cancelado em ordem cronológica decrescente (
@@ -2740,14 +2822,13 @@ public class ExDocumentoController extends ExController {
 	 */
 	@Get("app/expediente/doc/exibirMovimentacoesTramitacao")
 	public void buscarMovimentacoesTramitacao(Long idMobil, boolean docCancelado) { //
+		SigaObjects.getLog().debug("idMobil  = " + idMobil);
+		SigaObjects.getLog().debug("Cancelado? " + docCancelado);
+
 		if (docCancelado) {
-			List<ExMovimentacao> movimentacoes = dao().consultarTramitacoesPorMovimentacaoDocumentoCancelado(idMobil);
-			result.include("movimentacoes", movimentacoes);
-			result.include("mobil", dao().consultar(idMobil, ExMobil.class, false));
+			tratarMovimentacoesDocumentoCancelado(idMobil);
 		} else {
-			List<ExMovimentacao> movimentacoes = dao().cosultarTramitacoesPorMovimentacao(idMobil);
-			result.include("movimentacoes", movimentacoes);
-			result.include("mobil", movimentacoes.get(0).getExMobil());
+			tratarMovimentacoesDocumentoAtivo(idMobil);
 		}
 
 		result.include("docCancelado", docCancelado);

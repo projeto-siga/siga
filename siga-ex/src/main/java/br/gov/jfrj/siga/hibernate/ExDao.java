@@ -2291,7 +2291,7 @@ public class ExDao extends CpDao {
 	 * @param idMobil ID da Mobilização
 	 * @return As Movimentações dos tipos relacionados acima.
 	 */
-	public List<ExMovimentacao> cosultarTramitacoesPorMovimentacao(Long idMobil) {
+	public List<ExMovimentacao> consultarTramitacoesPorMovimentacao(Long idMobil) {
 		return getSessao() //
 				.getNamedQuery(AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_NAMED_QUERY)
 				.setParameter("idMobil", idMobil).list();

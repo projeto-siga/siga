@@ -137,7 +137,7 @@ public class SigaController {
 		try {
 			result.on(AplicacaoException.class).forwardTo(this).appexception();
 			result.on(Exception.class).forwardTo(this).exception();
-		} catch (Exception ex) {
+		} catch (Throwable ex) {
 		}
 
 		result.include("cadastrante", getCadastrante());
@@ -153,7 +153,7 @@ public class SigaController {
 		this.validator = validator;
 		try {
 			this.validator.onErrorUse(Results.page()).of(SigaController.class).exception();
-		} catch (Exception ex) {
+		} catch (Throwable ex) {
 		}
 	}
 
@@ -211,14 +211,14 @@ public class SigaController {
 		}
 	}
 
-	public void appexception() throws Exception {
+	public void appexception() throws Throwable {
 		configurarHttpResult(400);
-		throw (Exception) result.included().get("exception");
+		throw (Throwable) result.included().get("exception");
 	}
 
-	public void exception() throws Exception {
+	public void exception() throws Throwable {
 		configurarHttpResult(500);
-		throw (Exception) result.included().get("exception");
+		throw (Throwable) result.included().get("exception");
 		// new RequestExceptionLogger(request, (Exception) result.included().get("exception"), 0L, this.getClass().getName()).logar();
 	}
 

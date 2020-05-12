@@ -5602,6 +5602,12 @@ public class ExBL extends CpBL {
 					commited = true;
 				}
 				atualizarWorkflow(mob.doc(), null);
+			} else if (doc != null) {
+				if (!commited) {
+					ContextoPersistencia.flushTransaction();
+					commited = true;
+				}
+				atualizarWorkflow(doc, null);
 			}
 		}
 	}

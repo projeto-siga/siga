@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.wf.model;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -266,7 +267,7 @@ public class WfDefinicaoDeDesvio extends HistoricoAuditavelSuporte
 		WfDefinicaoDeTarefa tdProxima = getSeguinte();
 		boolean ultimo = isUltimo();
 		if (tdProxima == null && !ultimo)
-			tdProxima = getDefinicaoDeTarefa().getDefinicaoDeProcedimento().getDefinicaoDeTarefa().get(getOrdem() + 1);
+			tdProxima = obterSeguinte(getDefinicaoDeTarefa());
 		Set<WfDefinicaoDeTarefa> set = new HashSet<>();
 
 		while (tdProxima != null) {
@@ -298,9 +299,9 @@ public class WfDefinicaoDeDesvio extends HistoricoAuditavelSuporte
 			}
 
 			// Ou vai para a tarefa seguinte
-			else
-				tdProxima = getDefinicaoDeTarefa().getDefinicaoDeProcedimento().getDefinicaoDeTarefa()
-						.get(getOrdem() + 1);
+			else {
+				tdProxima = obterSeguinte(tdProxima);
+			}
 
 			if (set.contains(tdProxima))
 				throw new RuntimeException("Caminho circular encontrado ao calcular próxima tarefa pausável");
@@ -311,6 +312,15 @@ public class WfDefinicaoDeDesvio extends HistoricoAuditavelSuporte
 		p.tdProxima = tdProxima;
 		p.ultimo = ultimo;
 		return p;
+	}
+
+	private WfDefinicaoDeTarefa obterSeguinte(WfDefinicaoDeTarefa tdProxima) {
+		List<WfDefinicaoDeTarefa> definicoesDeTarefas = getDefinicaoDeTarefa().getDefinicaoDeProcedimento()
+				.getDefinicaoDeTarefa();
+		int indice = tdProxima.getOrdem();
+		if (definicoesDeTarefas.size() > indice + 1)
+			return definicoesDeTarefas.get(indice + 1);
+		return null;
 	}
 
 	public String obterProximoResponsavel(WfProcedimento pi) {

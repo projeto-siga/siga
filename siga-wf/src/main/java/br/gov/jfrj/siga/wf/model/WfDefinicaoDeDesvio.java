@@ -271,19 +271,29 @@ public class WfDefinicaoDeDesvio extends HistoricoAuditavelSuporte
 		Set<WfDefinicaoDeTarefa> set = new HashSet<>();
 
 		while (tdProxima != null) {
+			if (set.contains(tdProxima))
+				throw new RuntimeException("Caminho circular encontrado ao calcular próxima tarefa pausável");
+			else
+				set.add(tdProxima);
+
 			if (PausableTask.class.isAssignableFrom(tdProxima.getTipoDeTarefa().getClazz()))
 				break;
+
 			WfDefinicaoDeDesvio desvio = null;
 			if (tdProxima.getDefinicaoDeDesvio() != null && tdProxima.getDefinicaoDeDesvio().size() == 1)
 				desvio = tdProxima.getDefinicaoDeDesvio().get(0);
 
 			// A proxima tarefa está indicada
-			if (tdProxima.getSeguinte() != null)
+			if (tdProxima.getSeguinte() != null) {
 				tdProxima = tdProxima.getSeguinte();
+				continue;
+			}
 
 			// Existe um único desvio e ele aponta para uma próxima tarefa
-			else if (desvio != null && desvio.getSeguinte() != null)
+			else if (desvio != null && desvio.getSeguinte() != null) {
 				tdProxima = desvio.getSeguinte();
+				continue;
+			}
 
 			// Existe mais de um desvio e não poderemos inferir a próxima tarefa pausável
 			else if (tdProxima.getDefinicaoDeDesvio() != null && tdProxima.getDefinicaoDeDesvio().size() > 1) {
@@ -292,7 +302,9 @@ public class WfDefinicaoDeDesvio extends HistoricoAuditavelSuporte
 			}
 
 			// Depois dessa tarefa vai terminar
-			else if (tdProxima.isUltimo() || (desvio != null && desvio.isUltimo())) {
+			else if (tdProxima.isUltimo()
+					|| tdProxima.getDefinicaoDeProcedimento().getDefinicaoDeTarefa().size() == tdProxima.getOrdem() + 1
+					|| (desvio != null && desvio.isUltimo())) {
 				ultimo = true;
 				tdProxima = null;
 				break;
@@ -302,11 +314,6 @@ public class WfDefinicaoDeDesvio extends HistoricoAuditavelSuporte
 			else {
 				tdProxima = obterSeguinte(tdProxima);
 			}
-
-			if (set.contains(tdProxima))
-				throw new RuntimeException("Caminho circular encontrado ao calcular próxima tarefa pausável");
-			else
-				set.add(tdProxima);
 		}
 		ProximaTarefa p = new ProximaTarefa();
 		p.tdProxima = tdProxima;

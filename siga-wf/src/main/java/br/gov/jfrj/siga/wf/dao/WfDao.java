@@ -284,7 +284,7 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 		CriteriaQuery<T> q = criteriaBuilder.createQuery(clazz);
 		Root<T> c = q.from(clazz);
 		Join<T, CpOrgaoUsuario> joinOrgao = c.join("orgaoUsuario", JoinType.INNER);
-		q.where(cb().equal(c.get("numero"), numero), cb().equal(c.get("ano"), ano),
+		q.where(cb().equal(c.get("numero"), numero), cb().equal(c.get("ano"), ano), cb().equal(c.get("hisAtivo"), 1),
 				cb().equal(joinOrgao.get("idOrgaoUsu"), orgaoUsuario.getId()));
 		return em().createQuery(q).getSingleResult();
 	}

@@ -70,6 +70,17 @@ function sbmt(id) {
 
 // <c:set var="url" value="gravar" />
 function gravarDoc() {
+	
+	var arquivo = document.getElementById("arquivo");
+	
+	if(arquivo !== null) {
+		var tamanhoArquivo = parseInt(document.getElementById("arquivo").files[0].size);
+		if(tamanhoArquivo > 10485760){
+	        alert("TAMANHO DO ARQUIVO EXCEDE O PERMITIDO (10MB)!");
+	        return false;
+	    }
+	}
+	
 	clearTimeout(saveTimer);
 	if (!validar(false)) {
 		triggerAutoSave();
@@ -86,6 +97,7 @@ function gravarDoc() {
 	if (typeof (onSave) == "function")
 		onSave();
 
+	document.getElementById("btnGravar").disabled = true;
 	frm.submit();
 }
 
@@ -168,6 +180,8 @@ function validar(silencioso) {
 }
 
 function aviso(msg, silencioso) {
+	document.getElementById("btnGravar").disabled = false;
+	
 	if (silencioso)
 		avisoVermelho('O documento não pôde ser salvo: ' + msg);
 	else
@@ -281,8 +295,12 @@ function checkBoxMsg() {
 
 var saveTimer;
 function triggerAutoSave() {
+	var minutos = 2;
+	if(document.getElementById('cliente') != undefined && document.getElementById('cliente').value == 'GOVSP') {
+		minutos = 30;
+	}
 	clearTimeout(saveTimer);
-	saveTimer = setTimeout('autoSave()', 60000 * 2);
+	saveTimer = setTimeout('autoSave()', 60000 * minutos);
 }
 
 triggerAutoSave();
@@ -292,7 +310,7 @@ var stillSaving = false;
 function autoSave() {
 	if (stillSaving)
 		return;
-	if (!validar(true))
+	if (SigaSP.Documento.estaAlterado() === false || !validar(true))
 		return tryAgainAutoSave();
 	for (instance in CKEDITOR.instances)
 		CKEDITOR.instances[instance].updateElement();
@@ -315,6 +333,7 @@ function doneAutoSave(response) {
 		avisoVerde('Documento ' + data[1] + ' salvo');
 		document.getElementById('codigoDoc').innerHTML = data[1];
 		document.getElementById('sigla').value = data[1];
+		SigaSP.Documento.alteracoesGravadas();
 		stillSaving = false;
 		triggerAutoSave();
 	} else
@@ -328,8 +347,7 @@ function failAutoSave(response) {
 }
 
 function tryAgainAutoSave() {
-	clearTimeout(saveTimer);
-	saveTimer = setTimeout('autoSave()', 60000 * 2);
+	triggerAutoSave();
 }
 
 function parte_bloquear(partes, p, blocked) {
@@ -487,3 +505,94 @@ function parte_solicitar_alteracao(id, titular, lotaTitular) {
 						}
 					});
 }
+
+
+var SigaSP = SigaSP || {};
+
+SigaSP.Documento = (function() {	
+	var camposQueSeraoObservados = 'select, textarea, input[type=checkbox], input[type=color], input[type=date], input[type=datetime-local], input[type=email], input[type=file], input[type=month], input[type=number], input[type=password], input[type=radio], input[type=range], input[type=search], input[type=tel], input[type=text], input[type=time], input[type=url], input[type=week]';
+	var foiAlterado = false;
+	var subscritor, substituto;	
+	
+	function Documento() {}	
+	
+	Documento.prototype.observar = function() {		
+		observarAlteracoesEmcamposPersonalizados();
+		observarAlteracoesNosCamposDeEntrevista();				
+		observarAlteracoesNoEditorDeTexto();								
+	}
+	
+	function observarAlteracoesNosCamposDeEntrevista() {		
+		$('#spanEntrevista').on('change', camposQueSeraoObservados, function() { 				
+			setFoiAlterado(true);								
+		});	
+	}		
+			
+	function observarAlteracoesEmcamposPersonalizados() {
+		iniciarSubscritor();
+		iniciarSubstituto();
+		
+		// que estão na classe js-siga-sp-documento-analisa-alteracao
+		$('.js-siga-sp-documento-analisa-alteracao').on('change', camposQueSeraoObservados, function() {
+			setFoiAlterado(true); 										
+		});
+		
+		// que são jQuery Datepicker
+		$('#spanEntrevista').find('.campoData').each(function() { 
+			$(this).datepicker({
+			    onSelect: function() {
+			    	$(this).change();
+				}
+			});																					
+		});	
+	}
+	
+	function observarAlteracoesNoEditorDeTexto() { 
+		editor = $('textarea[class=editor]').attr('id');
+		if(editor) {					
+			for (instance in CKEDITOR.instances) {
+				CKEDITOR.instances[instance].on('change', function() {
+					 setFoiAlterado(true);
+				});
+			}				
+		}	
+	}
+	
+	function iniciarSubscritor() {
+		var inputSubscritor = document.getElementById('formulario_exDocumentoDTO.subscritorSel_sigla');
+		if(inputSubscritor) {
+			subscritor = inputSubscritor.value;
+		}
+	}
+	
+	function iniciarSubstituto() {
+		var inputSubstituto = document.getElementById('formulario_exDocumentoDTO.titularSel_sigla');
+		if(inputSubstituto) {
+			substituto = inputSubstituto.value;
+		}
+	}
+	
+	function setFoiAlterado(valor) {	
+		foiAlterado = valor;
+	}	
+	
+	Documento.alteracoesGravadas = function() {
+		foiAlterado = false;
+		iniciarSubscritor();
+		iniciarSubstituto();
+	}
+	
+	Documento.estaAlterado = function() {	
+		return foiAlterado || 
+			(subscritor != null && subscritor !== document.getElementById('formulario_exDocumentoDTO.subscritorSel_sigla').value) || 
+			(substituto != null && substituto !== document.getElementById('formulario_exDocumentoDTO.titularSel_sigla').value);	
+	}
+	
+	return Documento;
+	
+}());
+	
+$(window).load(function() {
+	var observadorDeAlteracoesNoDocumento = new SigaSP.Documento();
+	observadorDeAlteracoesNoDocumento.observar();	
+});

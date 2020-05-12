@@ -630,7 +630,7 @@ public class WfProcedimento extends Objeto
 			return "Esta tarefa só poderá prosseguir quando for juntado ou incluído um documento do modelo '"
 					+ getDefinicaoDeTarefaCorrente().getRefSigla() + "' ao documento " + getPrincipal()
 					+ ". Clique <a href=\"http://localhost:8080/sigaex/app/expediente/doc/editar?mobilPaiSel.sigla="
-					+ getDefinicaoDeTarefaCorrente().getRefSigla() + "&criandoAnexo=true&modelo="
+					+ getPrincipal() + "&criandoAnexo=true&modelo="
 					+ getDefinicaoDeTarefaCorrente().getRefId() + "\">aqui</a> para incluir.";
 		}
 		return null;

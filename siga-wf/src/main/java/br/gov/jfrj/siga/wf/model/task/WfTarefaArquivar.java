@@ -15,10 +15,8 @@ public class WfTarefaArquivar implements Task<WfDefinicaoDeTarefa, WfProcediment
 
 	@Override
 	public TaskResult execute(WfDefinicaoDeTarefa td, WfProcedimento pi, Engine engine) throws Exception {
-		if (Utils.empty(pi.getPrincipal()))
-			Service.getExService().arquivarCorrente(pi.getPrincipal(),
-					SiglaParser.makeSigla(pi.getEventoPessoa(), pi.getEventoLotacao()),
-					SiglaParser.makeSigla(pi.getEventoPessoa(), pi.getEventoLotacao()));
+		if (!Utils.empty(pi.getPrincipal()))
+			Service.getExService().arquivarCorrente(pi.getPrincipal(), null, null);
 		return new TaskResult(TaskResultKind.DONE, null, null, null, null);
 	}
 

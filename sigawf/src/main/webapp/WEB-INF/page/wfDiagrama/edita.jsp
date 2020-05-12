@@ -115,13 +115,16 @@
 									class="form-control"><option value="FORMULARIO">Formulário</option>
 										<option value="DECISAO">Decisão</option>
 										<option value="EMAIL">E-mail</option>
-										<option value="EXECUTAR">Executar</option></select></label> <i></i> </section>
-								<option value="AGUARDAR_ASSINATURA_PRINCIPAL">Principal:
-									Aguardar Assinatura</option>
-								<option value="TRAMITAR_PRINCIPAL">Principal: Tramitar</option>
-								<option value="ARQUIVAR_PRINCIPAL">Principal: Arquivar</option>
-								<option value="INCLUIR_DOCUMENTO">Principal: Incluir
-									Documento</option>
+										<option value="EXECUTAR">Executar</option>
+										<option value="AGUARDAR_ASSINATURA_PRINCIPAL">Principal:
+											Aguardar Assinatura</option>
+										<option value="TRAMITAR_PRINCIPAL">Principal:
+											Tramitar</option>
+										<option value="ARQUIVAR_PRINCIPAL">Principal:
+											Arquivar</option>
+										<option value="INCLUIR_DOCUMENTO">Principal: Incluir
+											Documento</option>
+								</select></label> <i></i> </section>
 								<section class="col col-12 col-md-2 col-lg-2 form-group">
 								<label for="titulo" title="" class="label">Título<i
 									title="Preenchimento obrigatório"

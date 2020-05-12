@@ -44,6 +44,8 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.hibernate.criterion.Restrictions;
+
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.cp.CpAcesso;
@@ -87,7 +89,6 @@ import br.gov.jfrj.siga.model.CarimboDeTempo;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.DaoFiltro;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 public class CpDao extends ModeloDao {
@@ -2239,26 +2240,38 @@ public class CpDao extends ModeloDao {
 	}
 
 	public List<DpLotacao> consultarLotacaoPorOrgao(CpOrgaoUsuario orgaoUsuario){
-//		return (List<DpLotacao>) getSessao().createCriteria(DpLotacao.class).add(Restrictions.eq("orgaoUsuario", orgaoUsuario)).list();
-		return null;
+		CriteriaQuery<DpLotacao> q = cb().createQuery(DpLotacao.class);
+		Root<DpLotacao> c = q.from(DpLotacao.class);
+		q.where(cb().equal(c.get("orgaoUsuario"), orgaoUsuario));
+		q.select(c);
+		return em().createQuery(q).getResultList();
 	}
 	
 	public DpLotacao consultarLotacaoPorId(Long idLotacao) {
-//		return (DpLotacao) getSessao().createCriteria(DpLotacao.class).add(Restrictions.eq("idLotacao", idLotacao)).uniqueResult();
-		return null;
+		CriteriaQuery<DpLotacao> q = cb().createQuery(DpLotacao.class);
+		Root<DpLotacao> c = q.from(DpLotacao.class);
+		q.where(cb().equal(c.get("idLotacao"), idLotacao));
+		q.select(c);
+		return em().createQuery(q).getSingleResult();
 	}
 	
-	public DpLotacao consultarLotacaoPorOrgaoEId(CpOrgaoUsuario orgaoUsuario, String siglaLotacao) {		
-//		return (DpLotacao) getSessao().createCriteria(DpLotacao.class)
-//				.add(Restrictions.eq("orgaoUsuario", orgaoUsuario))
-//				.add(Restrictions.eq("siglaLotacao",siglaLotacao))
-//				.uniqueResult();
-		return null;
+	public DpLotacao consultarLotacaoPorOrgaoEId(CpOrgaoUsuario orgaoUsuario, String siglaLotacao) {
+		CriteriaQuery<DpLotacao> q = cb().createQuery(DpLotacao.class);
+		Root<DpLotacao> c = q.from(DpLotacao.class);
+		List<Predicate> whereList = new LinkedList<Predicate>();
+		whereList.add(cb().equal(c.get("orgaoUsuario"), orgaoUsuario));
+		whereList.add(cb().equal(c.get("siglaLotacao"), siglaLotacao));
+		q.where(whereList.toArray(new Predicate[2]));
+		q.select(c);
+		return em().createQuery(q).getSingleResult();
 	}
 	
 	public CpOrgaoUsuario consultarOrgaoUsuarioPorId(Long idOrgaoUsu) {
-//		return (CpOrgaoUsuario) getSessao().createCriteria(CpOrgaoUsuario.class).add(Restrictions.like("idOrgaoUsu", idOrgaoUsu)).uniqueResult();
-		return null;
+		CriteriaQuery<CpOrgaoUsuario> q = cb().createQuery(CpOrgaoUsuario.class);
+		Root<CpOrgaoUsuario> c = q.from(CpOrgaoUsuario.class);
+		q.where(cb().equal(c.get("idOrgaoUsu"), idOrgaoUsu));
+		q.select(c);
+		return em().createQuery(q).getSingleResult();
 	}
 	
 	@SuppressWarnings("unchecked")

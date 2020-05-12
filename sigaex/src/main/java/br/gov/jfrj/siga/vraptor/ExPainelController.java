@@ -22,6 +22,7 @@
  */
 package br.gov.jfrj.siga.vraptor;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -42,6 +43,7 @@ import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 public class ExPainelController extends ExController {
 	private static final String ACESSO_PAINEL = "PAINEL:Painel Administrativo";
 
+	@Inject
 	public ExPainelController(HttpServletRequest request,
 			HttpServletResponse response, ServletContext context,
 			Result result, SigaObjects so, EntityManager em) {

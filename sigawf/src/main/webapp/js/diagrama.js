@@ -57,8 +57,9 @@ app
 								td.tipoDeResponsavel = t.tipoResponsavel;
 								// td.definicaoDeResponsavel =
 								// t.definicaoDeResponsavel;
-								td.seguinteIde = t.depois;
-								td.ultimo = t.ultimo;
+								td.seguinteIde = t.depois === "fim" ? undefined
+										: t.depois;
+								td.ultimo = t.depois === "fim";
 								td.ordem = i;
 								td.definicaoDeVariavel = [];
 								td.definicaoDeDesvio = [];
@@ -157,8 +158,9 @@ app
 								td.tipoResponsavel = t.tipoDeResponsavel;
 								// td.definicaoDeResponsavel =
 								// t.definicaoDeResponsavel;
-								td.depois = t.seguinteIde;
-								td.ultimo = t.ultimo;
+								//td.depois = t.seguinteIde;
+								//td.ultimo = t.ultimo;
+								td.depois = t.ultimo ? "fim" : t.seguinteIde;
 								td.ordem = i;
 								td.variavel = [];
 								td.desvio = [];

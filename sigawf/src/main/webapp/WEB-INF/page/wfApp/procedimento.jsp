@@ -52,7 +52,7 @@
 							<c:if
 								test="${pi.tipoDePrincipal eq 'DOC' and not empty pi.principal}">
 								<a
-									href="/sigaex/app/expediente/doc/exibir?sigla=${pi.principal}">${pi.principal}</a> -
+									href="/sigaex/app/expediente/doc/exibir?sigla=${pi.principal}" style="color: white; text-decoration: underline;">${pi.principal}</a> -
 							</c:if>
 
 							${pi.definicaoDeProcedimento.nome} -

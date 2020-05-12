@@ -299,6 +299,8 @@ public class WfProcedimento extends Objeto
 		ExService service = null;
 		if (this.getPrincipal() != null && this.getTipoDePrincipal() == WfTipoDePrincipal.DOC)
 			service = Service.getExService();
+		if (tarefa.getTipoDeResponsavel() == null)
+			return null;
 		try {
 			switch (tarefa.getTipoDeResponsavel()) {
 			case PRINCIPAL_CADASTRANTE:

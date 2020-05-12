@@ -1877,10 +1877,11 @@ public class ExDao extends CpDao {
 	 * @return As Movimentações dos tipos relacionados acima.
 	 */
 	public List<ExMovimentacao> consultarTramitacoesPorMovimentacao(Long idMobil) {
-//		return getSessao() //
-//				.getNamedQuery(AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_NAMED_QUERY)
-//				.setParameter("idMobil", idMobil).list();
-		return null;
+		return em() //
+				.createNamedQuery(AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_NAMED_QUERY,
+						ExMovimentacao.class)
+				.setParameter("idMobil", idMobil) //
+				.getResultList();
 	}
 
 	/**
@@ -1920,10 +1921,12 @@ public class ExDao extends CpDao {
 	 * @return As Movimentações dos tipos relacionados acima.
 	 */
 	public List<ExMovimentacao> consultarTramitacoesPorMovimentacaoDocumentoCancelado(Long idMobil) {
-//		return getSessao() //
-//				.getNamedQuery(AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_NAMED_QUERY)
-//				.setParameter("idMobil", idMobil).list();
-		return null;
+		return em() //
+				.createNamedQuery(
+						AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_NAMED_QUERY,
+						ExMovimentacao.class)
+				.setParameter("idMobil", idMobil) //
+				.getResultList();
 	}
 
 }

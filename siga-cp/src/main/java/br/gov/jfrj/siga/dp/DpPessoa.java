@@ -76,6 +76,9 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	private static final long serialVersionUID = -5743631829922578717L;
 	public static final ActiveRecord<DpPessoa> AR = new ActiveRecord<>(
 			DpPessoa.class);
+	@Formula(value = "REMOVE_ACENTO(NOME_PESSOA)")
+	@Desconsiderar
+	private String nomePessoaAI;
 	
 	@Transient
 	private Long idSitConfiguracaoConfManual;
@@ -226,7 +229,15 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 			setMatricula(Long.parseLong(numero));
 		}
 	}
+	
+	public String getNomePessoaAI() {
+		return nomePessoaAI;
+	}
 
+	public void setNomePessoaAI(String nomePessoaAI) {
+		this.nomePessoaAI = nomePessoaAI;
+	}
+	
 	public boolean equivale(Object other) {
 		if (other == null || ((DpPessoa) other).getId() == null
 				|| this.getId() == null)

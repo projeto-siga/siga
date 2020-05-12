@@ -1100,12 +1100,17 @@ public class CpDao extends ModeloDao {
 		List l = query.getResultList();
 		return l;
 	}
+	
+	public CpUF consultaSiglaUF(String uf) {
+//		return (CpUF) getSessao().createCriteria(CpUF.class).add(Restrictions.eq("nmUF", uf)).uniqueResult();
+		return null;
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<CpLocalidade> consultarLocalidadesPorUF(final CpUF cpuf) {
 		Query query = em().createQuery(
-				"from CpLocalidade l where l.UF.idUF = :idUf order by remove_acento(upper(l.nmLocalidade)");
-		query.setParameter("idUf", cpuf.getIdUF().intValue());
+				"from CpLocalidade l where l.UF.idUF = :idUf order by UPPER(REMOVE_ACENTO(l.nmLocalidade))");
+		query.setParameter("idUf", cpuf.getIdUF());
 		List l = query.getResultList();
 		return l;
 	}
@@ -1864,7 +1869,7 @@ public class CpDao extends ModeloDao {
 			}
 			whereList.add(c.get("situacaoFuncionalPessoa").in(situacoesFuncionais.getValor()));
 			whereList.add(cb().isNull(c.get("dataFimPessoa")));
-			q.where((Predicate[])whereList.toArray());
+			q.where(whereList.toArray(new Predicate[0]));
 
 			q.orderBy(cb().asc(c.get("nomePessoa")));
 			lstCompleta.addAll((List<DpPessoa>) em().createQuery(q).getResultList());
@@ -2233,6 +2238,29 @@ public class CpDao extends ModeloDao {
 		return l.get(0);
 	}
 
+	public List<DpLotacao> consultarLotacaoPorOrgao(CpOrgaoUsuario orgaoUsuario){
+//		return (List<DpLotacao>) getSessao().createCriteria(DpLotacao.class).add(Restrictions.eq("orgaoUsuario", orgaoUsuario)).list();
+		return null;
+	}
+	
+	public DpLotacao consultarLotacaoPorId(Long idLotacao) {
+//		return (DpLotacao) getSessao().createCriteria(DpLotacao.class).add(Restrictions.eq("idLotacao", idLotacao)).uniqueResult();
+		return null;
+	}
+	
+	public DpLotacao consultarLotacaoPorOrgaoEId(CpOrgaoUsuario orgaoUsuario, String siglaLotacao) {		
+//		return (DpLotacao) getSessao().createCriteria(DpLotacao.class)
+//				.add(Restrictions.eq("orgaoUsuario", orgaoUsuario))
+//				.add(Restrictions.eq("siglaLotacao",siglaLotacao))
+//				.uniqueResult();
+		return null;
+	}
+	
+	public CpOrgaoUsuario consultarOrgaoUsuarioPorId(Long idOrgaoUsu) {
+//		return (CpOrgaoUsuario) getSessao().createCriteria(CpOrgaoUsuario.class).add(Restrictions.like("idOrgaoUsu", idOrgaoUsu)).uniqueResult();
+		return null;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<CpOrgaoUsuario> listarOrgaosUsuarios() {
 		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpOrgaoUsuario.class);
@@ -2398,14 +2426,13 @@ public class CpDao extends ModeloDao {
 		if(matricula != null) {
 			whereList.add(cb().equal(c.get("matricula"), matricula));
 		}
-		q.where(cb().equal(c.get("orgaoUsuario.idOrgaoUsu"), idOrgaoUsu));
 
 		if (pessoasFinalizadas) {
 			whereList.add(cb().isNotNull(c.get("dataFimPessoa")));
 		} else {
 			whereList.add(cb().isNull(c.get("dataFimPessoa")));
 		}
-		q.where((Predicate[])whereList.toArray());
+		q.where(whereList.toArray(new Predicate[0]));
 		if (ordemDesc) {
 			q.orderBy(cb().desc(c.get("dataInicioPessoa")));
 		} else {

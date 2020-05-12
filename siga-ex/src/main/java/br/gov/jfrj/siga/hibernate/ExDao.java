@@ -55,6 +55,7 @@ import br.gov.jfrj.siga.dp.CpTipoMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.ex.AbstractExMovimentacao;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -1344,8 +1345,8 @@ public class ExDao extends CpDao {
 		if (sForma != null) {
 			c.join("exFormaDocumento", JoinType.INNER);
 			whereList.add(cb().equal(joinForma.get("descrFormaDoc"), sForma));
-		}
-		q.where((Predicate[])whereList.toArray());
+		}		
+		q.where(whereList.toArray(new Predicate[0]));
 		
 		return em().createQuery(q).getSingleResult();
 	}
@@ -1763,6 +1764,166 @@ public class ExDao extends CpDao {
 			query.setParameter("listIdMobil", listIdMobil);
 		}
 		return query.getResultList();
+	}
+
+	public Long marcasSemMobil(Date dtIni, Date dtFim, DpPessoa pes, DpLotacao lot) {
+//		Query sql = getSessao()
+//				.createSQLQuery("SELECT count(1) from corporativo.cp_marca marca " 
+//						+ "LEFT JOIN siga.ex_mobil mob ON mob.id_mobil = marca.id_ref "  
+//						+ "WHERE ( marca.dt_ini_marca IS NULL OR marca.dt_ini_marca < :dtIni ) " 
+//						+ " AND ( marca.dt_fim_marca IS NULL OR marca.dt_fim_marca > :dtFim ) "
+//						+ (pes != null ? " and (marca.dpPessoaIni = :pes)" : "") 
+//						+ (lot != null ? " and (marca.dpLotacaoIni = :lot)" : "")
+//						+ "	AND mob.id_mobil is null"
+//				);
+//		sql.setDate("dtIni", dtIni);
+//		sql.setDate("dtFim", dtFim);
+//		sql.setMaxResults(500);
+//		
+//		if (pes != null) {
+//			sql.setLong("idPessoaIni", pes.getIdPessoaIni());
+//		}
+//		if (lot != null) {
+//			sql.setLong("idLotacaoIni", lot.getIdLotacaoIni());
+//		}
+//		return Long.valueOf(sql.uniqueResult().toString());
+		return null;
+	}
+	
+	public List listarMarcasSemMobil(Date dtIni, Date dtFim, DpPessoa pes, DpLotacao lot) {
+		List<List<String>> l = new ArrayList<List<String>> ();
+			
+//		Query query = getSessao()
+//				.createSQLQuery("SELECT marca.id_marca, "
+//						+ " marca.dt_ini_marca, "
+//						+ " marca.id_marcador, "
+//						+ " marcador.descr_marcador, marca.id_ref "
+//						+ "FROM corporativo.cp_marca marca "
+//						+ "LEFT JOIN corporativo.cp_marcador marcador "
+//						+ "     ON marcador.id_marcador = marca.id_marcador "  
+//						+ "LEFT JOIN siga.ex_mobil mob ON mob.id_mobil = marca.id_ref "  
+//						+ "WHERE ( marca.dt_ini_marca is null OR marca.dt_ini_marca < :dtIni ) " 
+//						+ "   AND ( marca.dt_fim_marca is null OR marca.dt_fim_marca > :dtFim ) "
+//						+ (pes != null ? " and (marca.dp_pessoa_ini = :pes)" : "") 
+//						+ (lot != null ? " and (marca.dp_lotacao_ini = :lot)" : "")
+//						+ "	  AND mob.id_mobil is null "
+//						+ "ORDER BY marca.dt_ini_marca desc "
+//						);
+//		query.setDate("dtIni", dtIni);
+//		query.setDate("dtFim", dtFim);
+//		query.setMaxResults(500);
+//		
+//		if (pes != null) {
+//			query.setLong("idPessoaIni", pes.getIdPessoaIni());
+//		}
+//		if (lot != null) {
+//			query.setLong("idLotacaoIni", lot.getIdLotacaoIni());
+//		}
+//		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy HH:MM:SS");
+//		
+//		Iterator it = query.list().iterator();
+//		while (it.hasNext()) {
+//			Object[] obj = (Object[]) it.next();
+//			List<String> listDados = new ArrayList();
+//			listDados.add(new BigDecimal(obj[0].toString()).toString());
+//			if (obj[1] != null) {
+//				listDados.add(formato.format(obj[1]));
+//			} else {
+//				listDados.add("");
+//			}
+//			listDados.add(new BigDecimal(obj[2].toString()).toString());
+//			listDados.add(obj[3].toString());
+//			listDados.add(new BigDecimal(obj[4].toString()).toString());
+//			l.add(listDados);
+//		}
+		
+		return l;
+	}
+
+	/**
+	 * Realiza a consulta das {@link ExMovimentacao Movimentações} para o histórico
+	 * de tramitações de uma {@link ExMobil} relacionada a um determinado
+	 * {@link ExDocumento Documento} em ordem cronológica decrescente (
+	 * {@link ExMovimentacao#getDtTimestamp()}) a partir da primeira
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA tramitação} das
+	 * {@link ExMobil}s do Documento. As movimentações retornadas devm ser dos
+	 * seguintes {@link ExMovimentacao#getExTipoMovimentacao() Tipos}:
+	 * <ul>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA }
+	 * (Tramitação)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_RECEBIMENTO }</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_JUNTADA } (Juntada)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE }
+	 * (Arquivamento Corrente)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO }
+	 * (Arquivamento Intermediário)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE }
+	 * (Desarquivamento)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO }
+	 * (Desarquivamento Intermediário)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA }</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO }
+	 * (Cancelamento de Movimentação)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO }
+	 * (Cancelamento)</li>
+	 * </ul>
+	 * As movimentações do tipo
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_RECEBIMENTO } não serão exibidas.
+	 * Elas são apenas usadas para indicar a hora de recebimento da Movimentação de
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA } imediatamente
+	 * anterior.
+	 * 
+	 * @param idMobil ID da Mobilização
+	 * @return As Movimentações dos tipos relacionados acima.
+	 */
+	public List<ExMovimentacao> consultarTramitacoesPorMovimentacao(Long idMobil) {
+//		return getSessao() //
+//				.getNamedQuery(AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_NAMED_QUERY)
+//				.setParameter("idMobil", idMobil).list();
+		return null;
+	}
+
+	/**
+	 * Realiza a consulta das {@link ExMovimentacao Movimentações} para o histórico
+	 * de tramitações do {@link ExDocumento Documento} Cancelado de uma
+	 * {@link ExMobil} relacionada a um determinado em ordem cronológica decrescente
+	 * ( {@link ExMovimentacao#getDtTimestamp()}) a partir da primeira
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA tramitação} das
+	 * {@link ExMobil}s do Documento. As movimentações retornadas devm ser dos
+	 * seguintes {@link ExMovimentacao#getExTipoMovimentacao() Tipos}:
+	 * <ul>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA }
+	 * (Tramitação)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_RECEBIMENTO }</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_JUNTADA } (Juntada)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE }
+	 * (Arquivamento Corrente)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO }
+	 * (Arquivamento Intermediário)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE }
+	 * (Desarquivamento)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO }
+	 * (Desarquivamento Intermediário)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA }</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO }
+	 * (Cancelamento de Movimentação)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO }
+	 * (Cancelamento)</li>
+	 * </ul>
+	 * As movimentações do tipo
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_RECEBIMENTO } não serão exibidas.
+	 * Elas são apenas usadas para indicar a hora de recebimento da Movimentação de
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA } imediatamente
+	 * anterior.
+	 * 
+	 * @param idMobil ID da Mobilização
+	 * @return As Movimentações dos tipos relacionados acima.
+	 */
+	public List<ExMovimentacao> consultarTramitacoesPorMovimentacaoDocumentoCancelado(Long idMobil) {
+//		return getSessao() //
+//				.getNamedQuery(AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_NAMED_QUERY)
+//				.setParameter("idMobil", idMobil).list();
+		return null;
 	}
 
 }

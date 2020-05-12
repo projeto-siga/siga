@@ -426,8 +426,7 @@ function refreshWindow(){
 									<div class="col-sm-4">
 										<div class="form-group">
 											<label for="senhaConfirma">Repetição da nova senha</label>
-											<input type="password" name="senhaConfirma" id="pass2Met2" class="form-control" />
-
+											<input type="password" name="senhaConfirma" id="pass2Met2"  class="form-control" />
 										</div>
 									</div>
 									<div class="col-sm-4">

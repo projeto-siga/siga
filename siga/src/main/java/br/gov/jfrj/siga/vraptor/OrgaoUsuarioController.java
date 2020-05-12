@@ -71,6 +71,7 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 			CpOrgaoUsuario orgaoUsuario = daoOrgaoUsuario(id);
 			result.include("nmOrgaoUsuario",orgaoUsuario.getDescricao());
 			result.include("siglaOrgaoUsuario",orgaoUsuario.getSigla());
+			result.include("isExternoOrgaoUsu",orgaoUsuario.getIsExternoOrgaoUsu());
 			try {
 				result.include("dtContrato",contrato.getDtContratoDDMMYYYY());
 			} catch (final Exception e) {
@@ -92,7 +93,8 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 							 final String nmOrgaoUsuario,
 							 final String siglaOrgaoUsuario,
 							 final String dtContrato,
-							 final String acao
+							 final String acao,
+							 final Boolean isExternoOrgaoUsu
 						) throws Exception{
 		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_ORGAO_USUARIO: Cadastrar Orgãos Usuário");
 		
@@ -165,6 +167,13 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 			orgaoUsuario.setSigla(Texto.removerEspacosExtra(siglaOrgaoUsuario.toUpperCase()).trim());
 			orgaoUsuario.setAcronimoOrgaoUsu(Texto.removerEspacosExtra(siglaOrgaoUsuario.toUpperCase()).trim());
 		}
+		
+		if (isExternoOrgaoUsu != null) {
+			orgaoUsuario.setIsExternoOrgaoUsu(1);
+		} else {
+			orgaoUsuario.setIsExternoOrgaoUsu(0);	
+		}
+		
 		
 		contrato.setIdOrgaoUsu(id);
 		contrato.setDtContrato(dataContrato);

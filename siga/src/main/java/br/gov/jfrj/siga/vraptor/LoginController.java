@@ -202,7 +202,8 @@ public class LoginController extends SigaController {
 				cont += "&";
 			else
 				cont += "?";
-			cont += "exibirAcessoAnterior=true";
+			if (!SigaMessages.isSigaSP())
+				cont += "exibirAcessoAnterior=true";
 			result.redirectTo(cont);
 		} else
 			result.redirectTo("/");

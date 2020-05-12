@@ -172,6 +172,17 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_LOCALIDADE")
 	private CpLocalidade localidade;
+	
+	@Column(name = "IS_EXTERNA_LOTACAO")
+	private Integer isExternaLotacao;
+
+	public Integer getIsExternaLotacao() {
+		return isExternaLotacao;
+	}
+
+	public void setIsExternaLotacao(Integer isExternaLotacao) {
+		this.isExternaLotacao = isExternaLotacao;
+	}
 
 	/**
 	 * @return the cpTipoLotacao

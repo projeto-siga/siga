@@ -1103,8 +1103,11 @@ public class CpDao extends ModeloDao {
 	}
 	
 	public CpUF consultaSiglaUF(String uf) {
-//		return (CpUF) getSessao().createCriteria(CpUF.class).add(Restrictions.eq("nmUF", uf)).uniqueResult();
-		return null;
+		CriteriaQuery<CpUF> q = cb().createQuery(CpUF.class);
+		Root<CpUF> c = q.from(CpUF.class);
+		q.where(cb().equal(c.get("nmUF"), uf));
+		q.select(c);
+		return em().createQuery(q).getSingleResult();
 	}
 
 	@SuppressWarnings("unchecked")

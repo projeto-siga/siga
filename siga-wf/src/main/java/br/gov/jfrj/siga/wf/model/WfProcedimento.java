@@ -299,9 +299,11 @@ public class WfProcedimento extends Objeto
 		ExService service = null;
 		if (this.getPrincipal() != null && this.getTipoDePrincipal() == WfTipoDePrincipal.DOC)
 			service = Service.getExService();
-		if (tarefa.getTipoDeResponsavel() == null)
-			return null;
 		try {
+			if (tarefa.getTipoDeTarefa() == WfTipoDeTarefa.AGUARDAR_ASSINATURA_PRINCIPAL)
+				return assertPrincipalPessoa(service.subscritor(getPrincipal()));
+			if (tarefa.getTipoDeResponsavel() == null)
+				return null;
 			switch (tarefa.getTipoDeResponsavel()) {
 			case PRINCIPAL_CADASTRANTE:
 				return assertPrincipalPessoa(service.cadastrante(getPrincipal()));

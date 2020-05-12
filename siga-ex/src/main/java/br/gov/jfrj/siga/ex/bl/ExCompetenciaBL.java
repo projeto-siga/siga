@@ -1787,7 +1787,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REGISTRO_ASSINATURA_DOCUMENTO
 				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
 				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA) {
-			return exUltMovNaoCanc.getLotaTitular().equivale(lotaTitular);
+			return exUltMovNaoCanc.getLotaTitular() != null && exUltMovNaoCanc.getLotaTitular().equivale(lotaTitular);
 		} else {
 			if (exUltMovNaoCanc.getLotaResp() != null) {
 				if (!exUltMovNaoCanc.getLotaResp().equivale(lotaTitular))

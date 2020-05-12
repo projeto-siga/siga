@@ -187,7 +187,11 @@ public class ExServiceImpl implements ExService {
 		try (SoapContext ctx = new SoapContext(true)) {
 			try {
 				ExMobil mob = buscarMobil(codigoDocumentoVia);
-
+				if (mob.doc().isProcesso()) {
+					mob = mob.doc().getUltimoVolume();
+				} else if (contemApenasUmaVia(mob)) {
+					mob = mob.doc().getPrimeiraVia();
+				}
 				PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaCadastrante);
 				PessoaLotacaoParser destinoParser = new PessoaLotacaoParser(siglaDestino);
 				Ex.getInstance().getBL().arquivarCorrente(cadastranteParser.getPessoa(), cadastranteParser.getLotacao(),

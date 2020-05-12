@@ -47,6 +47,7 @@ function sbmt(offset) {
 							<th class="text-left w-10">ID</th>
 							<th class="text-left w-60">Nome</th>
 							<th class="text-center w-10">Sigla</th>
+							<th class="text-center w-10">Externo</th>
 							<th class="text-left w-10">Data Contrato</th>
 							<th colspan="2" class="text-left w-10">Op&ccedil;&otilde;es</th>					
 						</tr>
@@ -60,6 +61,7 @@ function sbmt(offset) {
 								<td class="text-left w-10">${orgaoUsuario[0].id}</td>
 								<td class="text-left w-60">${orgaoUsuario[0].descricao}</td>
 								<td class="text-center w-10">${orgaoUsuario[0].sigla}</td>
+								<td class="text-center w-10">${orgaoUsuario[0].isExternoOrgaoUsu  == 1 ? 'SIM' : 'NÃO'}</td>
 								<td class="text-left w-10"><fmt:formatDate value="${orgaoUsuario[1]}" pattern="dd/MM/yyyy" /></td>
 								<td class="text-left w-10">
 									<c:url var="url" value="/app/orgaoUsuario/editar">

@@ -1,6 +1,7 @@
 package br.gov.jfrj.siga.ex.bl;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -28,6 +29,7 @@ public class Mesa2 {
 		public Long grupoQtd;
 		public Long grupoQtdPag;
 		public boolean grupoCollapsed;
+		public boolean grupoHide;
 	}
 	
 	public static class GrupoItem implements ISwaggerModel {
@@ -41,6 +43,7 @@ public class Mesa2 {
 		public Long grupoQtdPag;
 		public String grupoOrdem;
 		public boolean grupoCollapsed;
+		public boolean grupoHide;
 		public List<MesaItem> grupoDocs;
 		public List<Integer> grupoMarcadores;
 	}
@@ -79,47 +82,49 @@ public class Mesa2 {
 	}
 
 	public enum GrupoDeMarcadorEnum {
-		PRONTO_PARA_ASSINAR(1, "Pronto para Assinar", "fas fa-inbox", true, true),
+		PRONTO_PARA_ASSINAR(1, "Pronto para Assinar", "fas fa-inbox", true, true, false),
 		//
-		ALERTA(2, "Alertas", "fas fa-hourglass-end", true, false),
+		ALERTA(2, "Alertas", "fas fa-hourglass-end", true, false, false),
 		//
-		A_REVISAR(3, "Pendente de Revisão", "fas fa-glasses", true, true),
+		A_REVISAR(3, "Pendente de Revisão", "fas fa-glasses", true, true, false),
 		//
-		A_ASSINAR(4, "Pendente de Assinatura", "fas fa-key", true, false),
+		A_ASSINAR(4, "Pendente de Assinatura", "fas fa-key", true, false, false),
 		//
-		CAIXA_DE_ENTRADA(5, "Caixa de Entrada", "fas fa-inbox", true, false),
+		CAIXA_DE_ENTRADA(5, "Caixa de Entrada", "fas fa-inbox", true, false, false),
 		//
-		EM_ELABORACAO(6, "Em Elaboração", "fas fa-lightbulb", true, false),
+		EM_ELABORACAO(6, "Em Elaboração", "fas fa-lightbulb", true, false, false),
 		//
-		AGUARDANDO_ANDAMENTO(7, "Aguardando Andamento", "fas fa-clock", true, true),
+		AGUARDANDO_ANDAMENTO(7, "Aguardando Andamento", "fas fa-clock", true, true, false),
 		//
-		CAIXA_DE_SAIDA(8, "Caixa de Saída", "fas fa-inbox", false, true),
+		CAIXA_DE_SAIDA(8, "Caixa de Saída", "fas fa-inbox", false, true, true),
 		//
-		ACOMPANHANDO(9, "Acompanhando", "fas fa-tags", true, true),
+		ACOMPANHANDO(9, "Acompanhando", "fas fa-tags", true, true, false),
 		//
-		MONITORANDO(10, "Monitorando", "fas fa-hourglass-half", true, true),
+		MONITORANDO(10, "Monitorando", "fas fa-hourglass-half", true, true, false),
 		//
 		AGUARDANDO_ACAO_DE_TEMPORALIDADE(11, "Aguardando Ação de Temporalidade",
-				"fas fa-hourglass-half", true, true),
+				"fas fa-hourglass-half", true, true, true),
 		//
-		OUTROS(12, "Outros", "fas fa-inbox", true, true),
+		OUTROS(12, "Outros", "fas fa-inbox", true, true, false),
 		//
-		QUALQUER(13, "Qualquer", "fas fa-inbox", false, true),
+		QUALQUER(13, "Qualquer", "fas fa-inbox", false, true, true),
 		//
-		NENHUM(14, "Nenhum", "fas fa-inbox", false, true);
+		NENHUM(14, "Nenhum", "fas fa-inbox", false, true, true);
 
 		private final Integer id;
 		private final String nome;
 		private final String icone;
 		private final boolean visible;
 		private final boolean collapsed;
+		private final boolean hide;
 
-		private GrupoDeMarcadorEnum(Integer id, String nome, String icone, boolean visible, boolean collapsed) {
+		private GrupoDeMarcadorEnum(Integer id, String nome, String icone, boolean visible, boolean collapsed, boolean hide) {
 			this.id = id;
 			this.nome = nome;
 			this.icone = icone;
 			this.visible = visible;
 			this.collapsed = collapsed;
+			this.hide = hide;
 		}
 		public static GrupoDeMarcadorEnum getByNome(String nome) {
 			for (GrupoDeMarcadorEnum i : GrupoDeMarcadorEnum.values()) {
@@ -371,8 +376,11 @@ public class Mesa2 {
 		//
 		PRIORITARIO(1003, "Prioritário", "fas fa-star", "", GrupoDeMarcadorEnum.ALERTA),
 		//		
-		RESTRICAO_ACESSO(1004, "Restrição de Acesso", "fas fa-user-secret", "", GrupoDeMarcadorEnum.ALERTA);
-		//		
+		RESTRICAO_ACESSO(1004, "Restrição de Acesso", "fas fa-user-secret", "", GrupoDeMarcadorEnum.ALERTA),
+		//
+		DOCUMENTO_ANALISADO(1005, "Documento Analisado", "fas fa-book-reader", "",
+				GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO);
+		//
 
 		private MarcadorEnum(int id, String nome, String icone,
 				String descricao, GrupoDeMarcadorEnum grupo) {
@@ -446,6 +454,7 @@ public class Mesa2 {
 			Map<ExMobil, DocDados> references, DpPessoa pessoa,
 			DpLotacao unidade, Date currentDate, String grupoOrdem, boolean trazerAnotacoes) {
 		List<MesaItem> l = new ArrayList<>();
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
 		for (ExMobil mobil : references.keySet()) {
 			MesaItem r = new MesaItem();
@@ -457,7 +466,7 @@ public class Mesa2 {
 			else
 				datahora = mobil.getDoc().getDtAltDoc();
 			r.datahora = datahora;
-			r.datahoraDDMMYYYHHMM = datahora.toLocaleString();
+			r.datahoraDDMMYYYHHMM = df.format(datahora);
 			r.tempoRelativo = Data.calcularTempoRelativo(datahora);
 
 			r.codigo = mobil.getCodigoCompacto();
@@ -752,6 +761,7 @@ public class Mesa2 {
 						grpItem.grupoQtd = 15L;
 					}
 					grpItem.grupoQtdPag = 15L;
+					grpItem.grupoHide = gEnum.hide;
 					grpItem.grupoMarcadores = MarcadorEnum.getListIdByGrupo(gEnum.nome);
 					gruposBase.add(grpItem);
 				}
@@ -779,10 +789,12 @@ public class Mesa2 {
 					grpItem.grupoIcone = grp.grupoIcone;
 					if (selGrupos != null && selGrupos.size() > 0) {
 						grpItem.grupoCollapsed = selGrupos.get(grp.grupoNome).grupoCollapsed;
+						grpItem.grupoHide = selGrupos.get(grp.grupoNome).grupoHide;
 						grpItem.grupoQtdPag = selGrupos.get(grp.grupoNome).grupoQtdPag;
 						grpItem.grupoQtd = selGrupos.get(grp.grupoNome).grupoQtd;
 					} else {
 						grpItem.grupoCollapsed = grp.grupoCollapsed;
+						grpItem.grupoHide = grp.grupoHide;
 						grpItem.grupoQtdPag = grp.grupoQtdPag;
 						grpItem.grupoQtd = grp.grupoQtd;
 					}

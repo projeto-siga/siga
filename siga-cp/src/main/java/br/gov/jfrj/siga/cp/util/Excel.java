@@ -269,6 +269,24 @@ public class Excel {
 				loc.setNmLocalidade(celula);
 				problemas += validarLocalidadeLotacao(localidades, linha, loc);
 				
+				/*
+				 * Alteracao 24/04/2020
+				 */
+				//Lotacao Pai
+				//celula = retornaConteudo(row.getCell(3, Row.CREATE_NULL_AS_BLANK));
+				//String lotacaopaidescricao = celula;
+				celula = retornaConteudo(row.getCell(3, Row.CREATE_NULL_AS_BLANK));
+				String lotacaopaisigla = celula;
+				if(!celula.equals("")) {
+					DpLotacao lo = CpDao.getInstance().consultarLotacaoPorOrgaoEId(orgaoUsuario, lotacaopaisigla);
+					if(lo!=null) {
+						lot.setLotacaoPai(lo);
+					} else {
+						problemas += "Linha " + linha +": SIGLA de LOTAÇÃO PAI inválida" + System.getProperty("line.separator");
+					}
+				}
+					
+				
 				if(problemas == null || "".equals(problemas.toString())) {
 					for (CpLocalidade lo : localidades) {
 						if(lo.getNmLocalidade().equalsIgnoreCase(loc.getNmLocalidade())) {
@@ -576,8 +594,12 @@ public class Excel {
 			DpLotacao lotacao = new DpLotacao();
 			String cpf = "";
 			String dataString;
+			String rg = "";
+			String orgexp = "";
+			String ufexp = "";
 			SimpleDateFormat formato = new SimpleDateFormat("ddMMyyyy");
 			Date date = null;
+			Date dateExp = null;
 			int i = 0;
 			String email = "";
 			
@@ -593,6 +615,7 @@ public class Excel {
 				lotacao = new DpLotacao();
 				Row row = rowIterator.next(); //linha
 				date = null;
+				dateExp = null;
 				i = 0;
 				email = "";
 				
@@ -787,6 +810,66 @@ public class Excel {
 					problemas.append("Linha " + linha +": E-MAIL informado está cadastrado para outro CPF" + System.getProperty("line.separator"));
 				}
 				
+				/*
+				 * Alteracao 20/04/2020
+				 * Insercao dos campos RG, Orcao Expeditor, UF, Data Expedicao
+				 */
+				
+				//RG
+				celula = retornaConteudo(row.getCell(8, Row.CREATE_NULL_AS_BLANK));
+				rg = celula;
+				
+				//RG Orgao Expeditor
+				celula = retornaConteudo(row.getCell(9, Row.CREATE_NULL_AS_BLANK));
+				orgexp = celula;
+				
+				//UF RG
+				celula = retornaConteudo(row.getCell(10, Row.CREATE_NULL_AS_BLANK));
+				ufexp = celula;
+				if(!"".equals(ufexp.trim())) {
+					if(CpDao.getInstance().consultaSiglaUF(ufexp)==null)
+						problemas.append( "Linha " + linha + ": UF DO RG inválido" + System.getProperty("line.separator"));
+				}
+				
+				//RG Data Expedicao
+				if(retornaConteudo(row.getCell(11, Row.CREATE_NULL_AS_BLANK)) != "") {
+					if(row.getCell(11).getCellType() == HSSFCell.CELL_TYPE_NUMERIC && HSSFDateUtil.isCellDateFormatted(row.getCell(11, Row.CREATE_NULL_AS_BLANK))){
+						dateExp = row.getCell(11).getDateCellValue();
+						
+						if(dateExp.compareTo(new Date()) > 0) {
+			    			problemas.append( "Linha " + linha + ": DATA DE EXPEDIÇÃO DO RG inválida" + System.getProperty("line.separator"));
+			    		}
+					} else if(row.getCell(11).getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
+						problemas.append(validarData(String.valueOf(((Double)row.getCell(11, Row.CREATE_NULL_AS_BLANK).getNumericCellValue()).longValue()), linha));
+						if(problemas != null && problemas.toString().equals("")) {
+							dataString = String.valueOf(((Double)row.getCell(11).getNumericCellValue()).longValue()).replaceAll("[^0-11]", "");
+							dateExp = formato.parse(dataString);	
+							
+							if(dateExp.compareTo(new Date()) > 0) {
+				    			problemas.append( "Linha " + linha + ": DATA DE EXPEDIÇÃO DO RG inválida" + System.getProperty("line.separator"));
+				    		}
+						}
+						
+					} else if(row.getCell(11).getCellType() == HSSFCell.CELL_TYPE_STRING) {
+						problemas.append(validarData(row.getCell(11, Row.CREATE_NULL_AS_BLANK).getStringCellValue(), linha));
+						if(problemas != null && problemas.toString().equals("")) {
+							dataString = row.getCell(11, Row.CREATE_NULL_AS_BLANK).getStringCellValue();
+							dateExp = formato.parse(dataString.replace("-", "").replace("/", "").trim());	
+							
+							if(dateExp.compareTo(new Date()) > 0) {
+				    			problemas.append( "Linha " + linha + ": DATA DE EXPEDIÇÃO DO RG inválida" + System.getProperty("line.separator"));
+				    		}
+						}
+						
+					} else {
+						problemas.append("Linha " + linha + ": DATA DE EXPEDIÇÃO DO RG inválida" + System.getProperty("line.separator"));
+					}
+				}
+				
+				/*
+				 * Fim da Alteracao 20/04/2020
+				 */
+				
 				if(cargo != null && lotacao != null && cpf != null && !"".equals(cpf) && !Long.valueOf(0).equals(Long.valueOf(cpf))) {
 					dpPessoaFiltro = new DpPessoaDaoFiltro();
 					dpPessoaFiltro.setIdOrgaoUsu(orgaoUsuario.getId());
@@ -830,7 +913,13 @@ public class Excel {
 					pe.setFuncaoConfianca(funcao);
 					pe.setEmailPessoa(celula);
 					pe.setDataInicio(data);
-					pe.setSesbPessoa(orgaoUsuario.getSigla());
+					pe.setSesbPessoa(orgaoUsuario.getSigla());					
+					
+					pe.setIdentidade(rg);
+					pe.setOrgaoIdentidade(orgexp);
+					pe.setUfIdentidade(ufexp);
+					pe.setDataExpedicaoIdentidade(dateExp);
+					
 					pe.setMatricula(Long.valueOf(0));
 					pe.setSituacaoFuncionalPessoa(SituacaoFuncionalEnum.APENAS_ATIVOS.getValor()[0]);
 					lista.add(pe);

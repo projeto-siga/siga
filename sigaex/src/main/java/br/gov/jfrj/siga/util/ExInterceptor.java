@@ -75,7 +75,7 @@ public class ExInterceptor {
 		try {
 			stack.next();
 		} catch (Exception e) {
-			throw new InterceptionException(e);
+			throw e;
 		} finally {
 			// Renato Crivano: precisei desabilitar a linha abaixo porque parece que o vRaptor4
 			// retorna do stack.next() antes de processar o JSP.

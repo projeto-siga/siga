@@ -299,14 +299,14 @@
 										</a>
 									</td>
 									<td style="padding-left: 5pt;">
-										<a href="javascript:exibir('${arqsNum[0].referenciaHtmlCompletoDocPrincipal}','${arqsNum[0].referenciaPDFCompletoDocPrincipal}','')">COMPLETO</a>
+										<a class="js-siga-info-doc-completo" href="javascript:exibir('${arqsNum[0].referenciaHtmlCompletoDocPrincipal}','${arqsNum[0].referenciaPDFCompletoDocPrincipal}','')">COMPLETO</a>
 									</td>
-									<td align="center" style="padding-left: 5pt;"></td>
-									<c:if test="${paginacao}">
+									<c:if test="${siga_cliente != 'GOVSP' && paginacao}">
+										<td align="center" style="padding-left: 5pt;"></td>										
 										<td align="center" style="padding-left: 5pt;">
 											${arqsNum[fn:length(arqsNum)-1].paginaFinal}
-										</td>
-									</c:if>
+										</td>										
+									</c:if>	
 								</tr>							
 								<c:if test="${!empty possuiResumo}">
 									<tr>
@@ -386,16 +386,38 @@
 	  $('[data-toggle="tooltip"]').tooltip()
 	})
 </script>
+<c:if test="${siga_cliente == 'GOVSP' && paginacao}">
+	<script>
+		$(function() {			
+			var quantidadePaginas = '${arqsNum[fn:length(arqsNum)-1].paginaFinal}';
+			
+			if (quantidadePaginas && quantidadePaginas > 0) {
+				var linkDocCompleto = $('.js-siga-info-doc-completo');
+				var title = quantidadePaginas + ' página' + (quantidadePaginas > 1 ? 's' : '');
+				
+				linkDocCompleto.attr('data-toggle', 'tooltip').attr('data-placement', 'right').attr('title', title);
+				linkDocCompleto.tooltip();
+				linkDocCompleto.css({'padding': '5px 5px 5px 0'});														
+			}
+		});
+	</script>
+</c:if>	
 <script>
 	var htmlAtual = '${arqsNum[0].referenciaHtmlCompletoDocPrincipal}';
-	var pdfAtual = '${arqsNum[0].referenciaPDFCompletoDocPrincipal}';
+	var pdfAtual = '${arqsNum[0].referenciaPDFCompletoDocPrincipal}';	
 	var path = '/sigaex/app/arquivo/exibir?idVisualizacao=${idVisualizacao}';
 	
 	if ('${mob.doc.podeReordenar()}' === 'true' && '${podeExibirReordenacao}' === 'true') path += '&exibirReordenacao=true';			
 	path += '&arquivo=';			
 
 	function fixlinks(refHTML, refPDF) {
-		document.getElementById('pdflink').href = path + refPDF;
+		
+		if ('${siga_cliente}' == 'GOVSP') {
+			document.getElementById('pdflink').href = path + refPDF + '&sigla=${sigla}';
+		} else {
+			document.getElementById('pdflink').href = path + refPDF;
+		}
+		
 		if (document.getElementById('radioPDFSemMarcas') != null) {
 			document.getElementById('pdfsemmarcaslink').href = path + refPDF
 					+ "&semmarcas=1";
@@ -415,9 +437,11 @@
 		if (document.getElementById('radioPDFSemMarcas') == null) {
 			// Para GOVSP com link buttons
 
+			var refSiglaDocPrincipal = '&sigla=${sigla}';
+			
 			if ($('#radioHTML').hasClass('active') && refHTML != '') {
 				$('#pdflink').addClass('d-none');
-				ifr.src = path + refHTML;
+				ifr.src = path + refHTML + refSiglaDocPrincipal;
 				ifrp.style.border = "0px solid black";
 				ifrp.style.borderBottom = "0px solid black";
 				if (ifr.addEventListener)
@@ -426,7 +450,7 @@
 					ifr.attachEvent("onload", resize);
 			} else {
 				$('#pdflink').removeClass('d-none');
-				ifr.src = path + refPDF;
+				ifr.src = path + refPDF + refSiglaDocPrincipal;
 				ifrp.style.border = "1px solid black";
 				ifr.height = pageHeight() - 300;
 			}

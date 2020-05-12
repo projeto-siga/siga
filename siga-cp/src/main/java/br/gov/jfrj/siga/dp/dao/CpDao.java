@@ -1100,6 +1100,11 @@ public class CpDao extends ModeloDao {
 		List l = query.getResultList();
 		return l;
 	}
+	
+	public CpUF consultaSiglaUF(String uf) {
+//		return (CpUF) getSessao().createCriteria(CpUF.class).add(Restrictions.eq("nmUF", uf)).uniqueResult();
+		return null;
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<CpLocalidade> consultarLocalidadesPorUF(final CpUF cpuf) {
@@ -2233,6 +2238,29 @@ public class CpDao extends ModeloDao {
 		return l.get(0);
 	}
 
+	public List<DpLotacao> consultarLotacaoPorOrgao(CpOrgaoUsuario orgaoUsuario){
+//		return (List<DpLotacao>) getSessao().createCriteria(DpLotacao.class).add(Restrictions.eq("orgaoUsuario", orgaoUsuario)).list();
+		return null;
+	}
+	
+	public DpLotacao consultarLotacaoPorId(Long idLotacao) {
+//		return (DpLotacao) getSessao().createCriteria(DpLotacao.class).add(Restrictions.eq("idLotacao", idLotacao)).uniqueResult();
+		return null;
+	}
+	
+	public DpLotacao consultarLotacaoPorOrgaoEId(CpOrgaoUsuario orgaoUsuario, String siglaLotacao) {		
+//		return (DpLotacao) getSessao().createCriteria(DpLotacao.class)
+//				.add(Restrictions.eq("orgaoUsuario", orgaoUsuario))
+//				.add(Restrictions.eq("siglaLotacao",siglaLotacao))
+//				.uniqueResult();
+		return null;
+	}
+	
+	public CpOrgaoUsuario consultarOrgaoUsuarioPorId(Long idOrgaoUsu) {
+//		return (CpOrgaoUsuario) getSessao().createCriteria(CpOrgaoUsuario.class).add(Restrictions.like("idOrgaoUsu", idOrgaoUsu)).uniqueResult();
+		return null;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<CpOrgaoUsuario> listarOrgaosUsuarios() {
 		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpOrgaoUsuario.class);

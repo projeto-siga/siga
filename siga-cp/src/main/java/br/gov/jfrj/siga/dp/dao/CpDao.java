@@ -553,8 +553,7 @@ public class CpDao extends ModeloDao {
 			final CpAplicacaoFeriado apl) {
 		final Query query = em()
 				.createNamedQuery("listarAplicacoesFeriado");
-		query.setParameter("cpOcorrenciaFeriado", apl.getCpOcorrenciaFeriado()
-				.getId());
+		query.setParameter("cpOcorrenciaFeriado", apl.getCpOcorrenciaFeriado());
 
 		query.setHint("org.hibernate.cacheable", true);
 		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);

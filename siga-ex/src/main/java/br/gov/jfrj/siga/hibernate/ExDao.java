@@ -1135,7 +1135,7 @@ public class ExDao extends CpDao {
 	public List<ExDocumento> listarDocPendenteAssinatura(DpPessoa pessoa, boolean apenasComSolicitacaoDeAssinatura) {
 		final Query query = em().createNamedQuery(
 				"listarDocPendenteAssinatura" + (apenasComSolicitacaoDeAssinatura ? "ERevisado" : ""));
-		query.setParameter("idPessoaIni", pessoa.getIdPessoaIni());
+		query.setParameter("idPessoaIni", pessoa);
 		return query.getResultList();
 	}
 

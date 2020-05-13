@@ -42,6 +42,13 @@ import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 @Controller
 public class ExPainelController extends ExController {
 	private static final String ACESSO_PAINEL = "PAINEL:Painel Administrativo";
+	
+	/**
+     * @deprecated CDI eyes only
+     */
+	public ExPainelController() {
+		super();
+	}
 
 	@Inject
 	public ExPainelController(HttpServletRequest request,

@@ -23,7 +23,7 @@ public class WfController extends SigaController {
 	protected static final String ACESSO_MOVER_TOKEN = "MOVER_TOKEN:Mover token";
 	protected static final String ACESSO_CONFIGURAR_INICIADORES = "CONFIGURAR:Configurar iniciadores";
 	protected static final String ACESSO_DESIGNAR_TAREFAS = "DESIGNAR:Designar tarefas";
-	protected static final String ACESSO_ANALISAR_METRICAS = "MEDIR:Analisar métricas";
+	protected static final String ACESSO_RELATORIOS = "REL:Relatórios";
 
 	protected WfUtil util;
 

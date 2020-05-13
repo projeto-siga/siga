@@ -58,9 +58,9 @@ import br.gov.jfrj.siga.model.Objeto;
 public abstract class AbstractDpSubstituicao extends Objeto implements
 		Serializable {
 
-	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.DP_SUBSTITUICAO_SEQ")
 	@Id
-	@GeneratedValue(generator = "generator")
+	@SequenceGenerator(name = "DP_SUBSTITUICAO_SEQ", sequenceName = "CORPORATIVO.DP_SUBSTITUICAO_SEQ")
+	@GeneratedValue(generator = "DP_SUBSTITUICAO_SEQ")
 	@Column(name = "ID_SUBSTITUICAO", unique = true, nullable = false)
 	private Long idSubstituicao;
 

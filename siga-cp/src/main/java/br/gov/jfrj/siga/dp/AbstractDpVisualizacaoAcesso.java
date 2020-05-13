@@ -44,9 +44,9 @@ import br.gov.jfrj.siga.model.Objeto;
 public abstract class AbstractDpVisualizacaoAcesso extends Objeto implements
 		Serializable {
 
-	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.DP_VISUALIZACAO_ACESSO_SEQ")
 	@Id
-	@GeneratedValue(generator = "generator")
+	@SequenceGenerator(name = "DP_VISUALIZACAO_ACESSO_SEQ", sequenceName = "CORPORATIVO.DP_VISUALIZACAO_ACESSO_SEQ")
+	@GeneratedValue(generator = "DP_VISUALIZACAO_ACESSO_SEQ")
 	@Column(name = "ID_VISUALIZACAO_ACESSO", unique = true, nullable = false)
 	private Long idVisualizacaoAcesso;
 

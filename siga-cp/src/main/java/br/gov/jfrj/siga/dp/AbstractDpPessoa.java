@@ -190,9 +190,9 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 public abstract class AbstractDpPessoa extends DpResponsavel implements
 		Serializable, HistoricoAuditavel {
 
-	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.DP_PESSOA_SEQ")
 	@Id
-	@GeneratedValue(generator = "generator")
+	@SequenceGenerator(name = "DP_PESSOA_SEQ", sequenceName = "CORPORATIVO.DP_PESSOA_SEQ")
+	@GeneratedValue(generator = "DP_PESSOA_SEQ")
 	@Column(name = "ID_PESSOA", unique = true, nullable = false)
 	@Desconsiderar
 	private Long idPessoa;

@@ -179,9 +179,9 @@
 								</div>
 							</div>
 							<div class="row">
-								<div class="col-sm-6">
+								<div class="col-sm-12">
 									<div class="form-group">
-										<label>Espécie</label>
+										<label>Tipo da Espécie</label>
 									
 										<c:choose>
 												<c:when test="${campoFixo && not empty config.exModelo}">
@@ -208,9 +208,8 @@
       		 precisa ser executado o request ajax referente Ã  FormaDocumento, da qual a lista 
 		     de modelos depende. Talvez seria bom tornar síncronos esses dois requests ajax    -->
 							<div class="row">
-								<div class="col-sm-6">
+								<div class="col-sm-12">
 									<div class="form-group">
-										<label>Modelo</label>
 										<c:choose>
 											<c:when test="${campoFixo && not empty config.exModelo}">
 												<input type="hidden" name="idMod"

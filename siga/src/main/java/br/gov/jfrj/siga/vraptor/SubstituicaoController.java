@@ -203,7 +203,7 @@ public class SubstituicaoController extends SigaController {
 		
 		
 		Long lotacaoIniPai;
-		Long lotacaoIniAvo;
+		Long lotacaoIniAvo = null;
 
 		DpSubstituicao subst = new DpSubstituicao();
 		
@@ -235,7 +235,8 @@ public class SubstituicaoController extends SigaController {
 				
 				subst.setLotaTitular(dao().consultar(this.lotaTitularSel.getId(), DpLotacao.class, false));
 				lotacaoIniPai = subst.getLotaTitular().getIdLotacaoIniPai();
-				lotacaoIniAvo = subst.getLotaTitular().getLotacaoPai().getIdLotacaoIniPai();
+				if (lotacaoIniPai != null)
+					lotacaoIniAvo = subst.getLotaTitular().getLotacaoPai().getIdLotacaoIniPai();
 				
 				
 				if (!subst.getLotaTitular().getIdLotacao().equals(getCadastrante().getIdLotacao()) 

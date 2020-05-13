@@ -66,7 +66,7 @@ function sbmtDoc() {
 			<div class="row mb-2">
 				<div class="col-12">
 					<a class="btn btn-sm btn-primary" title="Atualiza a situação do documento (marcas)"
-					  href="${linkTo[ExDocumentoController].aAtualizarMarcasDoc}?sigla=${docVO.sigla}&redir=/app/expediente/painel/exibir?documentoRefSel.sigla=${docVO.sigla}"
+					  href="${linkTo[ExDocumentoController].aAtualizarMarcasDoc()}?sigla=${docVO.sigla}&redir=/app/expediente/painel/exibir?documentoRefSel.sigla=${docVO.sigla}"
 					  ${popup?'target="_blank" ':''}><i class="fas fa-pen-square"></i> Atualizar Marcas</a>
 	    		</div>
 	    	</div>

@@ -44,8 +44,6 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.hibernate.criterion.Restrictions;
-
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.cp.CpAcesso;
@@ -117,8 +115,7 @@ public class CpDao extends ModeloDao {
 	public List<CpOrgao> consultarPorFiltro(final CpOrgaoDaoFiltro o,
 			final int offset, final int itemPagina) {
 		try {
-			final Query query = em().createNamedQuery(
-					"consultarPorFiltroCpOrgao");
+			final Query query = em().createNamedQuery("consultarPorFiltroCpOrgao");
 			if (offset > 0) {
 				query.setFirstResult(offset);
 			}
@@ -140,8 +137,7 @@ public class CpDao extends ModeloDao {
 	@SuppressWarnings("unchecked")
 	public List<CpOrgao> consultarCpOrgaoOrdenadoPorNome(Integer offset, Integer itemPagina) {
 		try {
-			final Query query = em().createNamedQuery(
-					"consultarCpOrgaoOrdenadoPorNome");
+			final Query query = em().createNamedQuery("consultarCpOrgaoOrdenadoPorNome");
 			if (offset > 0) {
 				query.setFirstResult(offset);
 			}
@@ -154,12 +150,11 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
-	
+
 	public int consultarQuantidadeOrgao() {
 		try {
-			final Query query = em().createNamedQuery(
-					"consultarQuantidadeCpOrgaoTodos");
-			
+			final Query query = em().createNamedQuery("consultarQuantidadeCpOrgaoTodos");
+
 			final int l = ((Long) query.getSingleResult()).intValue();
 			return l;
 		} catch (final NullPointerException e) {
@@ -170,8 +165,7 @@ public class CpDao extends ModeloDao {
 	@SuppressWarnings("unchecked")
 	public List<CpFeriado> listarCpFeriadoPorDescricao() {
 		try {
-			final Query query = em().createNamedQuery(
-					"listarCpFeriadoOrdenadoPorDescricao");
+			final Query query = em().createNamedQuery("listarCpFeriadoOrdenadoPorDescricao");
 			final List<CpFeriado> l = query.getResultList();
 			return l;
 		} catch (final NullPointerException e) {
@@ -181,8 +175,7 @@ public class CpDao extends ModeloDao {
 
 	@SuppressWarnings("unchecked")
 	public CpOrgao consultarPorSigla(final CpOrgao o) {
-		final Query query = em().createNamedQuery(
-				"consultarPorSiglaCpOrgao");
+		final Query query = em().createNamedQuery("consultarPorSiglaCpOrgao");
 		query.setParameter("siglaOrgao", o.getSiglaOrgao());
 
 		final List<CpOrgao> l = query.getResultList();
@@ -190,7 +183,7 @@ public class CpDao extends ModeloDao {
 			return null;
 		return l.get(0);
 	}
-	
+
 	public void inicializarCacheDeServicos() {
 		synchronized (CpDao.class) {
 			cacheServicos = new TreeMap<>();
@@ -213,15 +206,14 @@ public class CpDao extends ModeloDao {
 
 	@SuppressWarnings("unchecked")
 	public CpServico consultarPorSigla(final CpServico o) {
-		final Query query = em().createNamedQuery(
-				"consultarPorSiglaCpServico");
+		final Query query = em().createNamedQuery("consultarPorSiglaCpServico");
 		query.setParameter("siglaServico", o.getSiglaServico());
-		query.setParameter("idServicoPai", o.getCpServicoPai() == null ? 0L : o
-				.getCpServicoPai().getIdServico());
+		query.setParameter("idServicoPai", o.getCpServicoPai() == null ? 0L : o.getCpServicoPai().getIdServico());
 
 		// Renato: Comentei a linha abaixo pois nao entendi porque foi feito
 		// dessa forma.
 		// query.setFlushMode(FlushMode.MANUAL);
+
 		query.setHint("org.hibernate.cacheable", true);
 		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
 
@@ -257,7 +249,7 @@ public class CpDao extends ModeloDao {
 		}
 		String sigla = sb.toString();
 
-		if (cacheServicos == null) 
+		if (cacheServicos == null)
 			inicializarCacheDeServicos();
 		return cacheServicos.get(sigla);
 	}
@@ -284,26 +276,21 @@ public class CpDao extends ModeloDao {
 	// return 0;
 	// }
 
-	public int consultarQuantidade(final DaoFiltro o) throws Exception,
-			SecurityException, IllegalAccessException,
+	public int consultarQuantidade(final DaoFiltro o) throws Exception, SecurityException, IllegalAccessException,
 			InvocationTargetException, NoSuchMethodException {
 		Class[] argType = { o.getClass() };
-		return (Integer) this.getClass()
-				.getMethod("consultarQuantidade", argType).invoke(this, o);
+		return (Integer) this.getClass().getMethod("consultarQuantidade", argType).invoke(this, o);
 	}
 
-	public Selecionavel consultarPorSigla(final DaoFiltro o) throws Exception,
-			SecurityException, IllegalAccessException,
-			InvocationTargetException, NoSuchMethodException {
+	public Selecionavel consultarPorSigla(final DaoFiltro o) throws Exception, SecurityException,
+			IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		Class[] argType = { o.getClass() };
-		return (Selecionavel) this.getClass()
-				.getMethod("consultarPorSigla", argType).invoke(this, o);
+		return (Selecionavel) this.getClass().getMethod("consultarPorSigla", argType).invoke(this, o);
 	}
 
 	public int consultarQuantidade(final CpOrgaoDaoFiltro o) {
 		try {
-			final Query query = em().createNamedQuery(
-					"consultarQuantidadeCpOrgao");
+			final Query query = em().createNamedQuery("consultarQuantidadeCpOrgao");
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
@@ -320,26 +307,21 @@ public class CpDao extends ModeloDao {
 		return consultarPorFiltro(o, 0, 0);
 	}
 
-	public List consultarPorFiltro(final DaoFiltro o, final int offset,
-			final int itemPagina) throws Exception {
+	public List consultarPorFiltro(final DaoFiltro o, final int offset, final int itemPagina) throws Exception {
 		Class[] argType = { o.getClass(), Integer.TYPE, Integer.TYPE };
-		return (List) this.getClass().getMethod("consultarPorFiltro", argType)
-				.invoke(this, o, offset, itemPagina);
+		return (List) this.getClass().getMethod("consultarPorFiltro", argType).invoke(this, o, offset, itemPagina);
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<CpOrgaoUsuario> consultarPorFiltro(
-			final CpOrgaoUsuarioDaoFiltro o) {
+	public List<CpOrgaoUsuario> consultarPorFiltro(final CpOrgaoUsuarioDaoFiltro o) {
 		return consultarPorFiltro(o, 0, 0);
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<CpOrgaoUsuario> consultarPorFiltro(
-			final CpOrgaoUsuarioDaoFiltro o, final int offset,
+	public List<CpOrgaoUsuario> consultarPorFiltro(final CpOrgaoUsuarioDaoFiltro o, final int offset,
 			final int itemPagina) {
 		try {
-			final Query query = em().createNamedQuery(
-					"consultarPorFiltroCpOrgaoUsuario");
+			final Query query = em().createNamedQuery("consultarPorFiltroCpOrgaoUsuario");
 			if (offset > 0) {
 				query.setFirstResult(offset);
 			}
@@ -360,10 +342,9 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public List<CpOrgaoUsuario> consultarPorFiltroComContrato(
-			final CpOrgaoUsuarioDaoFiltro o, final int offset,
+	public List<CpOrgaoUsuario> consultarPorFiltroComContrato(final CpOrgaoUsuarioDaoFiltro o, final int offset,
 			final int itemPagina) {
 		try {
 			Query query = em()
@@ -382,34 +363,33 @@ public class CpDao extends ModeloDao {
 				s = s.replace(' ', '%');
 			query.setParameter("nome", s);
 
-            query.setHint("org.hibernate.cacheable", true);
-            query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
-            final List<CpOrgaoUsuario> l = query.getResultList();
+			query.setHint("org.hibernate.cacheable", true);
+			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
+
+			final List<CpOrgaoUsuario> l = query.getResultList();
 			return l;
 		} catch (final NullPointerException e) {
 			return null;
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
-    public CpOrgaoUsuario consultarPorId(final CpOrgaoUsuario o) {
-        final Query query = em().createNamedQuery(
-                "consultarIdOrgaoUsuario");
-        query.setParameter("idOrgaoUsu", o.getIdOrgaoUsu());
+	public CpOrgaoUsuario consultarPorId(final CpOrgaoUsuario o) {
+		final Query query = em().createNamedQuery("consultarIdOrgaoUsuario");
+		query.setParameter("idOrgaoUsu", o.getIdOrgaoUsu());
 
-        query.setHint("org.hibernate.cacheable", true);
-        query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
+		query.setHint("org.hibernate.cacheable", true);
+		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
 
-        final List<CpOrgaoUsuario> l = query.getResultList();
-        if (l.size() != 1)
-            return null;
-        return l.get(0);
-    }
+		final List<CpOrgaoUsuario> l = query.getResultList();
+		if (l.size() != 1)
+			return null;
+		return l.get(0);
+	}
 
 	@SuppressWarnings("unchecked")
 	public CpOrgaoUsuario consultarPorSigla(final CpOrgaoUsuario o) {
-		final Query query = em().createNamedQuery(
-				"consultarSiglaOrgaoUsuario");
+		final Query query = em().createNamedQuery("consultarSiglaOrgaoUsuario");
 		query.setParameter("sigla", o.getSiglaOrgaoUsu());
 
 		query.setHint("org.hibernate.cacheable", true);
@@ -420,11 +400,10 @@ public class CpDao extends ModeloDao {
 			return null;
 		return l.get(0);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public CpOrgaoUsuario consultarPorNome(final CpOrgaoUsuario o) {
-		final Query query = em().createNamedQuery(
-				"consultarNomeOrgaoUsuario");
+		final Query query = em().createNamedQuery("consultarNomeOrgaoUsuario");
 		query.setParameter("nome", o.getNmOrgaoUsu());
 
 		query.setHint("org.hibernate.cacheable", true);
@@ -444,8 +423,7 @@ public class CpDao extends ModeloDao {
 
 	public int consultarQuantidade(final CpOrgaoUsuarioDaoFiltro o) {
 		try {
-			final Query query = em().createNamedQuery(
-					"consultarQuantidadeCpOrgaoUsuario");
+			final Query query = em().createNamedQuery("consultarQuantidadeCpOrgaoUsuario");
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
@@ -467,11 +445,9 @@ public class CpDao extends ModeloDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<DpCargo> consultarPorFiltro(final DpCargoDaoFiltro o,
-			final int offset, final int itemPagina) {
+	public List<DpCargo> consultarPorFiltro(final DpCargoDaoFiltro o, final int offset, final int itemPagina) {
 		try {
-			final Query query = em().createNamedQuery(
-					"consultarPorFiltroDpCargo");
+			final Query query = em().createNamedQuery("consultarPorFiltroDpCargo");
 			if (offset > 0) {
 				query.setFirstResult(offset);
 			}
@@ -497,8 +473,7 @@ public class CpDao extends ModeloDao {
 
 	@SuppressWarnings("unchecked")
 	public DpCargo consultarPorSigla(final DpCargo o) {
-		final Query query = em().createNamedQuery(
-				"consultarPorSiglaDpCargo");
+		final Query query = em().createNamedQuery("consultarPorSiglaDpCargo");
 		query.setParameter("siglaCargo", o.getSiglaCargo());
 
 		final List<DpCargo> l = query.getResultList();
@@ -506,11 +481,10 @@ public class CpDao extends ModeloDao {
 			return null;
 		return l.get(0);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public DpCargo consultarPorNomeOrgao(final DpCargo o) {
-		final Query query = em().createNamedQuery(
-				"consultarPorNomeDpCargoOrgao");
+		final Query query = em().createNamedQuery("consultarPorNomeDpCargoOrgao");
 		query.setParameter("nome", o.getNomeCargo());
 		query.setParameter("idOrgaoUsuario", o.getOrgaoUsuario().getIdOrgaoUsu());
 
@@ -529,8 +503,7 @@ public class CpDao extends ModeloDao {
 
 	public int consultarQuantidade(final DpCargoDaoFiltro o) {
 		try {
-			final Query query = em().createNamedQuery(
-					"consultarQuantidadeDpCargo");
+			final Query query = em().createNamedQuery("consultarQuantidadeDpCargo");
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
@@ -549,18 +522,15 @@ public class CpDao extends ModeloDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<DpFuncaoConfianca> consultarPorFiltro(
-			final DpFuncaoConfiancaDaoFiltro o) {
+	public List<DpFuncaoConfianca> consultarPorFiltro(final DpFuncaoConfiancaDaoFiltro o) {
 		return consultarPorFiltro(o, 0, 0);
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<DpFuncaoConfianca> consultarPorFiltro(
-			final DpFuncaoConfiancaDaoFiltro o, final int offset,
+	public List<DpFuncaoConfianca> consultarPorFiltro(final DpFuncaoConfiancaDaoFiltro o, final int offset,
 			final int itemPagina) {
 		try {
-			final Query query = em().createNamedQuery(
-					"consultarPorFiltroDpFuncaoConfianca");
+			final Query query = em().createNamedQuery("consultarPorFiltroDpFuncaoConfianca");
 			if (offset > 0) {
 				query.setFirstResult(offset);
 			}
@@ -585,12 +555,9 @@ public class CpDao extends ModeloDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<CpAplicacaoFeriado> listarAplicacoesFeriado(
-			final CpAplicacaoFeriado apl) {
-		final Query query = em()
-				.createNamedQuery("listarAplicacoesFeriado");
-		query.setParameter("cpOcorrenciaFeriado", apl.getCpOcorrenciaFeriado()
-				.getId());
+	public List<CpAplicacaoFeriado> listarAplicacoesFeriado(final CpAplicacaoFeriado apl) {
+		final Query query = em().createNamedQuery("listarAplicacoesFeriado");
+		query.setParameter("cpOcorrenciaFeriado", apl.getCpOcorrenciaFeriado().getId());
 
 		query.setHint("org.hibernate.cacheable", true);
 		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
@@ -601,8 +568,7 @@ public class CpDao extends ModeloDao {
 
 	@SuppressWarnings("unchecked")
 	public DpFuncaoConfianca consultarPorSigla(final DpFuncaoConfianca o) {
-		final Query query = em().createNamedQuery(
-				"consultarPorSiglaDpFuncaoConfianca");
+		final Query query = em().createNamedQuery("consultarPorSiglaDpFuncaoConfianca");
 		query.setParameter("idFuncao", o.getIdFuncao());
 		if (o.getOrgaoUsuario() != null)
 			query.setParameter("idOrgaoUsu", o.getOrgaoUsuario().getIdOrgaoUsu());
@@ -614,14 +580,13 @@ public class CpDao extends ModeloDao {
 			return null;
 		return l.get(0);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public DpFuncaoConfianca consultarPorNomeOrgao(final DpFuncaoConfianca o) {
-		final Query query = em().createNamedQuery(
-				"consultarPorNomeOrgaoDpFuncaoConfianca");
+		final Query query = em().createNamedQuery("consultarPorNomeOrgaoDpFuncaoConfianca");
 		query.setParameter("nome", o.getNomeFuncao());
 		query.setParameter("idOrgaoUsuario", o.getOrgaoUsuario().getIdOrgaoUsu());
-		
+
 		final List<DpFuncaoConfianca> l = query.getResultList();
 		if (l.size() != 1)
 			return null;
@@ -639,8 +604,7 @@ public class CpDao extends ModeloDao {
 
 	public int consultarQuantidade(final DpFuncaoConfiancaDaoFiltro o) {
 		try {
-			final Query query = em().createNamedQuery(
-					"consultarQuantidadeDpFuncaoConfianca");
+			final Query query = em().createNamedQuery("consultarQuantidadeDpFuncaoConfianca");
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
@@ -658,16 +622,14 @@ public class CpDao extends ModeloDao {
 	}
 
 	public List<DpPessoa> consultarPessoasComFuncaoConfianca(Long idFuncao) {
-		final Query query = em().createNamedQuery(
-				"consultarPessoasComFuncaoConfianca");
+		final Query query = em().createNamedQuery("consultarPessoasComFuncaoConfianca");
 		query.setParameter("idFuncaoConfianca", idFuncao);
 		return query.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<DpPessoa> consultarPessoasComCargo(Long idCargo) {
-		final Query query = em().createNamedQuery(
-				"consultarPessoasComCargo");
+		final Query query = em().createNamedQuery("consultarPessoasComCargo");
 		query.setParameter("idCargo", idCargo);
 		return query.getResultList();
 	}
@@ -677,25 +639,21 @@ public class CpDao extends ModeloDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<DpLotacao> consultarPorFiltro(final DpLotacaoDaoFiltro o,
-			final int offset, final int itemPagina) {
+	public List<DpLotacao> consultarPorFiltro(final DpLotacaoDaoFiltro o, final int offset, final int itemPagina) {
 		try {
 			final Query query;
 
 			if (!o.isBuscarFechadas())
-				query = em()
-						.createNamedQuery("consultarPorFiltroDpLotacao");
+				query = em().createNamedQuery("consultarPorFiltroDpLotacao");
 			else
-				query = em().createNamedQuery(
-						"consultarPorFiltroDpLotacaoInclusiveFechadas");
+				query = em().createNamedQuery("consultarPorFiltroDpLotacaoInclusiveFechadas");
 			if (offset > 0) {
 				query.setFirstResult(offset);
 			}
 			if (itemPagina > 0) {
 				query.setMaxResults(itemPagina);
 			}
-			query.setParameter("nome", o.getNome() == null ? "" : o.getNome()
-					.replace(' ', '%'));
+			query.setParameter("nome", o.getNome() == null ? "" : o.getNome().replace(' ', '%'));
 
 			if (o.getIdOrgaoUsu() != null)
 				query.setParameter("idOrgaoUsu", o.getIdOrgaoUsu());
@@ -713,15 +671,13 @@ public class CpDao extends ModeloDao {
 
 	@SuppressWarnings("unchecked")
 	public DpLotacao consultarPorSigla(final DpLotacao o) {
-		final Query query = em().createNamedQuery(
-				"consultarPorSiglaDpLotacao");
+		final Query query = em().createNamedQuery("consultarPorSiglaDpLotacao");
 		query.setParameter("siglaLotacao", o.getSiglaLotacao());
 		if (o.getOrgaoUsuario() != null)
 			if (o.getOrgaoUsuario().getIdOrgaoUsu() != null)
 				query.setParameter("idOrgaoUsu", o.getOrgaoUsuario().getIdOrgaoUsu());
 			else
-				query.setParameter("idOrgaoUsu",
-						consultarPorSigla(o.getOrgaoUsuario()).getId());
+				query.setParameter("idOrgaoUsu", consultarPorSigla(o.getOrgaoUsuario()).getId());
 		else
 			query.setParameter("idOrgaoUsu", 0);
 
@@ -732,11 +688,10 @@ public class CpDao extends ModeloDao {
 			return null;
 		return l.get(0);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public DpLotacao consultarPorNomeOrgao(final DpLotacao o) {
-		final Query query = em().createNamedQuery(
-				"consultarPorNomeOrgaoDpLotacao");
+		final Query query = em().createNamedQuery("consultarPorNomeOrgaoDpLotacao");
 		query.setParameter("nome", o.getNomeLotacao());
 		query.setParameter("idOrgaoUsu", o.getOrgaoUsuario().getIdOrgaoUsu());
 
@@ -749,10 +704,8 @@ public class CpDao extends ModeloDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public DpLotacao consultarPorIdInicial(Class<DpLotacao> clazz,
-			final Long idInicial) {
-		final Query query = em().createNamedQuery(
-				"consultarPorIdInicialDpLotacao");
+	public DpLotacao consultarPorIdInicial(Class<DpLotacao> clazz, final Long idInicial) {
+		final Query query = em().createNamedQuery("consultarPorIdInicialDpLotacao");
 		query.setParameter("idLotacaoIni", idInicial);
 
 		query.setHint("org.hibernate.cacheable", true);
@@ -764,10 +717,8 @@ public class CpDao extends ModeloDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public DpLotacao consultarPorIdInicialInclusiveLotacaoFechada(
-			Class<DpLotacao> clazz, final Long idInicial) {
-		final Query query = em().createNamedQuery(
-				"consultarPorIdInicialDpLotacaoInclusiveFechada");
+	public DpLotacao consultarPorIdInicialInclusiveLotacaoFechada(Class<DpLotacao> clazz, final Long idInicial) {
+		final Query query = em().createNamedQuery("consultarPorIdInicialDpLotacaoInclusiveFechada");
 		query.setParameter("idLotacaoIni", idInicial);
 
 		query.setHint("org.hibernate.cacheable", true);
@@ -793,8 +744,7 @@ public class CpDao extends ModeloDao {
 		final DpLotacao o = new DpLotacao();
 		o.setSigla(flt.getSigla());
 		if (o.getOrgaoUsuario() == null && flt.getIdOrgaoUsu() != null) {
-			CpOrgaoUsuario cpOrgaoUsu = consultar(flt.getIdOrgaoUsu(),
-					CpOrgaoUsuario.class, false);
+			CpOrgaoUsuario cpOrgaoUsu = consultar(flt.getIdOrgaoUsu(), CpOrgaoUsuario.class, false);
 			o.setOrgaoUsuario(cpOrgaoUsu);
 		}
 		DpLotacao lotacao = consultarPorSigla(o);
@@ -811,11 +761,9 @@ public class CpDao extends ModeloDao {
 			final Query query;
 
 			if (!o.isBuscarFechadas())
-				query = em().createNamedQuery(
-						"consultarQuantidadeDpLotacao");
+				query = em().createNamedQuery("consultarQuantidadeDpLotacao");
 			else
-				query = em().createNamedQuery(
-						"consultarQuantidadeDpLotacaoInclusiveFechadas");
+				query = em().createNamedQuery("consultarQuantidadeDpLotacaoInclusiveFechadas");
 
 			query.setParameter("nome", o.getNome() != null ? o.getNome().replace(' ', '%') : "%");
 
@@ -833,8 +781,7 @@ public class CpDao extends ModeloDao {
 		}
 	}
 
-	public Selecionavel consultarPorSigla(final CpGrupoDaoFiltro flt)
-			throws AplicacaoException {
+	public Selecionavel consultarPorSigla(final CpGrupoDaoFiltro flt) throws AplicacaoException {
 		final CpGrupo o = CpGrupo.getInstance(flt.getIdTpGrupo());
 		o.setSigla(flt.getSigla());
 		return consultarPorSigla(o);
@@ -842,8 +789,7 @@ public class CpDao extends ModeloDao {
 
 	@SuppressWarnings("unchecked")
 	public CpGrupo consultarPorSigla(final CpGrupo o) {
-		final Query query = em().createNamedQuery(
-				"consultarPorSiglaCpGrupo");
+		final Query query = em().createNamedQuery("consultarPorSiglaCpGrupo");
 		query.setParameter("siglaGrupo", o.getSigla());
 		if (o.getOrgaoUsuario() != null)
 			query.setParameter("idOrgaoUsu", o.getOrgaoUsuario().getIdOrgaoUsu());
@@ -859,8 +805,7 @@ public class CpDao extends ModeloDao {
 
 	@SuppressWarnings("unchecked")
 	public CpPerfil consultarPorSigla(final CpPerfil o) {
-		final Query query = em().createNamedQuery(
-				"consultarPorSiglaCpGrupo");
+		final Query query = em().createNamedQuery("consultarPorSiglaCpGrupo");
 		query.setParameter("siglaGrupo", o.getSigla());
 		if (o.getOrgaoUsuario() != null)
 			query.setParameter("idOrgaoUsu", o.getOrgaoUsuario().getIdOrgaoUsu());
@@ -878,12 +823,10 @@ public class CpDao extends ModeloDao {
 		try {
 			final Query query;
 			if (o.getNome() != null) {
-				query = em().createNamedQuery(
-						"consultarQuantidadeCpGrupoPorCpTipoGrupoIdENome");
+				query = em().createNamedQuery("consultarQuantidadeCpGrupoPorCpTipoGrupoIdENome");
 				query.setParameter("siglaGrupo", o.getNome());
 			} else {
-				query = em().createNamedQuery(
-						"consultarQuantidadeCpGrupoPorCpTipoGrupoId");
+				query = em().createNamedQuery("consultarQuantidadeCpGrupoPorCpTipoGrupoId");
 			}
 
 			if (o.getIdTpGrupo() != null) {
@@ -899,17 +842,14 @@ public class CpDao extends ModeloDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<CpGrupo> consultarPorFiltro(final CpGrupoDaoFiltro o,
-			final int offset, final int itemPagina) {
+	public List<CpGrupo> consultarPorFiltro(final CpGrupoDaoFiltro o, final int offset, final int itemPagina) {
 		try {
 			final Query query;
 			if (o.getNome() != null) {
-				query = em().createNamedQuery(
-						"consultarCpGrupoPorCpTipoGrupoIdENome");
+				query = em().createNamedQuery("consultarCpGrupoPorCpTipoGrupoIdENome");
 				query.setParameter("siglaGrupo", o.getNome());
 			} else {
-				query = em().createNamedQuery(
-						"consultarCpGrupoPorCpTipoGrupoId");
+				query = em().createNamedQuery("consultarCpGrupoPorCpTipoGrupoId");
 			}
 			if (offset > 0) {
 				query.setFirstResult(offset);
@@ -944,7 +884,7 @@ public class CpDao extends ModeloDao {
 		final List<DpPessoa> l = qry.getResultList();
 		return l;
 	}
-	
+
 	/*
 	 * Alteracao alteracao email Cartao 859
 	 */
@@ -997,7 +937,7 @@ public class CpDao extends ModeloDao {
 		final DpPessoa pes = (DpPessoa) qry.getSingleResult();
 		return pes;
 	}
-	
+
 	public int consultarQtdePorEmailIgualCpfDiferente(final String email, final long cpf, final Long idPessoaIni) {
 		final Query qry = em().createNamedQuery("consultarPorEmailIgualCpfDiferente");
 		qry.setParameter("emailPessoa", email);
@@ -1010,14 +950,12 @@ public class CpDao extends ModeloDao {
 	@SuppressWarnings("unchecked")
 	public DpPessoa consultarPorSigla(final DpPessoa o) {
 		try {
-			final Query query = em().createNamedQuery(
-					"consultarPorSiglaDpPessoa");
+			final Query query = em().createNamedQuery("consultarPorSiglaDpPessoa");
 			query.setParameter("sesb", o.getSesbPessoa());
 			query.setParameter("matricula", o.getMatricula());
 			/*
-			 * if (o.getOrgaoUsuario().getIdOrgaoUsu() != null)
-			 * query.setParameter("idOrgaoUsu", o.getOrgaoUsuario().getIdOrgaoUsu());
-			 * else query.setParameter("idOrgaoUsu", 0);
+			 * if (o.getOrgaoUsuario().getIdOrgaoUsu() != null) query.setParameter("idOrgaoUsu",
+			 * o.getOrgaoUsuario().getIdOrgaoUsu()); else query.setParameter("idOrgaoUsu", 0);
 			 */
 
 			final List<DpPessoa> l = query.getResultList();
@@ -1039,16 +977,14 @@ public class CpDao extends ModeloDao {
 		DpPessoa pessoaTemplate = new DpPessoa();
 		pessoaTemplate.setSesbPessoa(MatriculaUtils.getSiglaDoOrgaoDaMatricula(principal));
 		pessoaTemplate.setMatricula(MatriculaUtils.getParteNumericaDaMatricula(principal));
-		DpPessoa pessoaNova = CpDao.getInstance().consultarPorSigla(
-				pessoaTemplate);
+		DpPessoa pessoaNova = CpDao.getInstance().consultarPorSigla(pessoaTemplate);
 		return pessoaNova;
 	}
 
 	@SuppressWarnings("unchecked")
 	public DpPessoa consultarPorIdInicial(final Long idInicial) {
 		try {
-			final Query query = em().createNamedQuery(
-					"consultarPorIdInicialDpPessoa");
+			final Query query = em().createNamedQuery("consultarPorIdInicialDpPessoa");
 			query.setParameter("idPessoaIni", idInicial);
 
 //			query.setHint("org.hibernate.cacheable", true);
@@ -1064,11 +1000,9 @@ public class CpDao extends ModeloDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<DpPessoa> consultarPorIdInicialInclusiveFechadas(
-			final Long idInicial) {
+	public List<DpPessoa> consultarPorIdInicialInclusiveFechadas(final Long idInicial) {
 		try {
-			final Query query = em().createNamedQuery(
-					"consultarPorIdInicialDpPessoaInclusiveFechadas");
+			final Query query = em().createNamedQuery("consultarPorIdInicialDpPessoaInclusiveFechadas");
 			query.setParameter("idPessoaIni", idInicial);
 
 			return query.getResultList();
@@ -1078,11 +1012,9 @@ public class CpDao extends ModeloDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public DpPessoa consultarPorIdInicialInclusiveLotacaoFechada(
-			final Long idInicial) {
+	public DpPessoa consultarPorIdInicialInclusiveLotacaoFechada(final Long idInicial) {
 		try {
-			final Query query = em().createNamedQuery(
-					"consultarPorIdInicialDpLotacaoInclusiveFechada");
+			final Query query = em().createNamedQuery("consultarPorIdInicialDpLotacaoInclusiveFechada");
 			query.setParameter("idPessoaIni", idInicial);
 
 			final List<DpPessoa> l = query.getResultList();
@@ -1130,25 +1062,23 @@ public class CpDao extends ModeloDao {
 	}
 
 	public CpLocalidade consultarLocalidadesPorNomeUF(final CpLocalidade localidade) {
-		Query query = em().createQuery(
-				"from CpLocalidade lot where "
+		Query query = em().createQuery("from CpLocalidade lot where "
 				+ "      upper(TRANSLATE(lot.nmLocalidade,'âàãáÁÂÀÃéêÉÊíÍóôõÓÔÕüúÜÚçÇ''','AAAAAAAAEEEEIIOOOOOOUUUUCC ')) = upper(:nome) and lot.UF.id = :idUf");
 		query.setParameter("idUf", localidade.getUF().getId());
 		query.setParameter("nome", localidade.getNmLocalidade());
-		
+
 		List l = query.getResultList();
-		
+
 		if(l.size() != 1) {
 			return null;
 		}
 		return (CpLocalidade)l.get(0);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<CpLocalidade> consultarLocalidades() {
 
-		Query query = em().createQuery(
-				"from CpLocalidade l order by l.nmLocalidade");
+		Query query = em().createQuery("from CpLocalidade l order by l.nmLocalidade");
 		List l = query.getResultList();
 		return l;
 	}
@@ -1156,17 +1086,15 @@ public class CpDao extends ModeloDao {
 	@SuppressWarnings("unchecked")
 	public CpLocalidade consultarLocalidade(CpLocalidade localidade) {
 
-		Query query = em().createQuery(
-				"from CpLocalidade l where l.idLocalidade = :idLocalidade");
+		Query query = em().createQuery("from CpLocalidade l where l.idLocalidade = :idLocalidade");
 		query.setParameter("idLocalidade", localidade.getId());
 		List l = query.getResultList();
 		return (CpLocalidade) l.get(0);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public CpPersonalizacao consultarPersonalizacao(DpPessoa pes) {
-		final Query query = em()
-				.createNamedQuery("consultarPersonalizacao");
+		final Query query = em().createNamedQuery("consultarPersonalizacao");
 		query.setParameter("idPessoaIni", pes.getIdPessoaIni());
 
 		// query.setHint("org.hibernate.cacheable", true);
@@ -1182,25 +1110,24 @@ public class CpDao extends ModeloDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<DpPessoa> consultarAtivasNaDataOrgao(final Date dt,
-			final CpOrgaoUsuario org) {
+	public List<DpPessoa> consultarAtivasNaDataOrgao(final Date dt, final CpOrgaoUsuario org) {
 		final Query query;
 		query = em().createNamedQuery("consultarAtivasNaDataOrgao");
 		query.setParameter("idOrgaoUsu", org.getIdOrgaoUsu());
 		query.setParameter("dt", dt);
 		return query.getResultList();
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public List<DpPessoa> consultarPorFiltroSemIdentidade(final DpPessoaDaoFiltro flt,
-			final int offset, final int itemPagina) {
+	public List<DpPessoa> consultarPorFiltroSemIdentidade(final DpPessoaDaoFiltro flt, final int offset,
+			final int itemPagina) {
 		try {
 			final Query query;
 			boolean isFiltrarPorListaDeUsuario = (flt.getIdPessoaSelecao() != null && flt.getIdPessoaSelecao().length > 0);
 			boolean isFiltrarPorListaDeLotacao = (flt.getIdLotacaoSelecao() != null && flt.getIdLotacaoSelecao().length > 0 && !isFiltrarPorListaDeUsuario);
 			double quantidadeDeLotacaoOuUsuario = isFiltrarPorListaDeUsuario ? flt.getIdPessoaSelecao().length : isFiltrarPorListaDeLotacao ? flt.getIdLotacaoSelecao().length : 0;
-			
-			if (isFiltrarPorListaDeLotacao || isFiltrarPorListaDeUsuario) {	
+
+			if (isFiltrarPorListaDeLotacao || isFiltrarPorListaDeUsuario) {
 				query = queryConsultarPorFiltroDpPessoaSemIdentidadeComListaDeLotacaoOuListaDeUsuario(quantidadeDeLotacaoOuUsuario, false);
 			} else {
 				query = em().createNamedQuery("consultarPorFiltroDpPessoaSemIdentidade");
@@ -1212,97 +1139,95 @@ public class CpDao extends ModeloDao {
 			if (itemPagina > 0) {
 				query.setMaxResults(itemPagina);
 			}
-			query.setParameter("nome",
-					flt.getNome().toUpperCase().replace(' ', '%'));
+			query.setParameter("nome", flt.getNome().toUpperCase().replace(' ', '%'));
 
 			if(flt.getCpf() != null && !"".equals(flt.getCpf())) {
 				query.setParameter("cpf", Long.valueOf(flt.getCpf()));
 			} else {
 				query.setParameter("cpf", 0L);
 			}
-			
+
 			if (flt.getIdOrgaoUsu() != null)
 				query.setParameter("idOrgaoUsu", flt.getIdOrgaoUsu());
 			else
 				query.setParameter("idOrgaoUsu", 0L);
-																							
+
 			if (isFiltrarPorListaDeUsuario) {
-				enviarParametrosLotacaoOuUsuario(query, true, flt.getIdPessoaSelecao());							
+				enviarParametrosLotacaoOuUsuario(query, true, flt.getIdPessoaSelecao());
 			} else if (isFiltrarPorListaDeLotacao) {
-				enviarParametrosLotacaoOuUsuario(query, false, flt.getIdLotacaoSelecao());										
+				enviarParametrosLotacaoOuUsuario(query, false, flt.getIdLotacaoSelecao());
 			} else if (flt.getLotacao() != null) {
-				query.setParameter("lotacao", flt.getLotacao().getId());				
+				query.setParameter("lotacao", flt.getLotacao().getId());
 			} else {
 				query.setParameter("lotacao", 0L);
 			}
 
 			final List<DpPessoa> l = query.getResultList();
 			return l;
- 		} catch (final NullPointerException e) {
+		} catch (final NullPointerException e) {
 			return null;
 		}
-	}	
-		
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<DpPessoaUsuarioDTO> consultarUsuariosComEnvioDeEmailPendenteFiltrandoPorLotacao(final DpPessoaDaoFiltro flt) {
 		try {
 			final Query query;
 			boolean isFiltrarPorListaDeLotacao = (flt.getIdLotacaoSelecao() != null && flt.getIdLotacaoSelecao().length > 0);
-						
+
 			query = em().createNamedQuery("consultarUsuariosComEnvioDeEmailPendenteFiltrandoPorLotacao");
-			
-			if (flt.getIdOrgaoUsu() != null) 
+
+			if (flt.getIdOrgaoUsu() != null)
 				query.setParameter("idOrgaoUsu", flt.getIdOrgaoUsu());
 			else
 				query.setParameter("idOrgaoUsu", 0L);
 
-			if (isFiltrarPorListaDeLotacao) {								
-				query.setParameter("idLotacaoLista", flt.getIdLotacaoSelecao());								
+			if (isFiltrarPorListaDeLotacao) {
+				query.setParameter("idLotacaoLista", flt.getIdLotacaoSelecao());
 			} else if (flt.getLotacao() != null) {
 				query.setParameter("idLotacaoLista", flt.getLotacao().getId());
 			} else {
 				query.setParameter("idLotacaoLista", 0L);
 			}
-						
+
 			return (List<DpPessoaUsuarioDTO>) query.getResultList();
- 		} catch (Exception e) {
+		} catch (Exception e) {
 			return null;
 		}
 	}
-	
+
 	public int consultarQuantidadeDpPessoaSemIdentidade(final DpPessoaDaoFiltro flt) {
 		try {
-			final Query query;			
+			final Query query;
 			boolean isFiltrarPorListaDeUsuario = (flt.getIdPessoaSelecao() != null && flt.getIdPessoaSelecao().length > 0);
 			boolean isFiltrarPorListaDeLotacao = (flt.getIdLotacaoSelecao() != null && flt.getIdLotacaoSelecao().length > 0 && !isFiltrarPorListaDeUsuario);
 			double quantidadeDeLotacaoOuUsuario = isFiltrarPorListaDeUsuario ? flt.getIdPessoaSelecao().length : isFiltrarPorListaDeLotacao ? flt.getIdLotacaoSelecao().length : 0;
-			
-			if (isFiltrarPorListaDeLotacao || isFiltrarPorListaDeUsuario) {	
-				query = queryConsultarPorFiltroDpPessoaSemIdentidadeComListaDeLotacaoOuListaDeUsuario(quantidadeDeLotacaoOuUsuario, true);						
+
+			if (isFiltrarPorListaDeLotacao || isFiltrarPorListaDeUsuario) {
+				query = queryConsultarPorFiltroDpPessoaSemIdentidadeComListaDeLotacaoOuListaDeUsuario(quantidadeDeLotacaoOuUsuario, true);
 			} else {
 				query = em().createNamedQuery("consultarQuantidadeDpPessoaSemIdentidade");
-			}					
-			
-			query.setParameter("nome",
-					flt.getNome().toUpperCase().replace(' ', '%'));
+			}
+
+			query.setParameter("nome", flt.getNome().toUpperCase().replace(' ', '%'));
 
 			if(flt.getCpf() != null && !"".equals(flt.getCpf())) {
 				query.setParameter("cpf", Long.valueOf(flt.getCpf()));
 			} else {
 				query.setParameter("cpf", 0L);
 			}
-			
+
 			if (flt.getIdOrgaoUsu() != null)
 				query.setParameter("idOrgaoUsu", flt.getIdOrgaoUsu());
 			else
 				query.setParameter("idOrgaoUsu", 0L);
 
 			if (isFiltrarPorListaDeUsuario) {
-				enviarParametrosLotacaoOuUsuario(query, true, flt.getIdPessoaSelecao());							
+				enviarParametrosLotacaoOuUsuario(query, true, flt.getIdPessoaSelecao());
 			} else if (isFiltrarPorListaDeLotacao) {
-				enviarParametrosLotacaoOuUsuario(query, false, flt.getIdLotacaoSelecao());									
+				enviarParametrosLotacaoOuUsuario(query, false, flt.getIdLotacaoSelecao());
 			} else if (flt.getLotacao() != null) {
-				query.setParameter("lotacao", flt.getLotacao().getId());				
+				query.setParameter("lotacao", flt.getLotacao().getId());
 			} else {
 				query.setParameter("lotacao", 0L);
 			}
@@ -1313,71 +1238,71 @@ public class CpDao extends ModeloDao {
 			return 0;
 		}
 	}
-	
-	public void enviarParametrosLotacaoOuUsuario(Query query, boolean isFiltrarPorListaDeUsuario, Long[] itens) {		
-		List<Long> parametros = Arrays.asList(itens);				
+
+	public void enviarParametrosLotacaoOuUsuario(Query query, boolean isFiltrarPorListaDeUsuario, Long[] itens) {
+		List<Long> parametros = Arrays.asList(itens);
 		int indiceInicial = 0, indiceFinal = 1000, indiceMaximo = itens.length, tamanho = 1000;
-		double quantidadeDeClausulaIN = Math.ceil(Double.valueOf(indiceMaximo) / 1000);				
-		
-		for (int i = 1; i <= quantidadeDeClausulaIN; i++) {	
-			
+		double quantidadeDeClausulaIN = Math.ceil(Double.valueOf(indiceMaximo) / 1000);
+
+		for (int i = 1; i <= quantidadeDeClausulaIN; i++) {
+
 			if (quantidadeDeClausulaIN == 1) {
 				indiceFinal = indiceMaximo;
 				tamanho = indiceMaximo;
 			}
-			
+
 			Long[] parametro = parametros.subList(indiceInicial, indiceFinal).toArray(new Long[tamanho]);
-			
+
 			indiceInicial = indiceFinal;
 			if ((indiceMaximo - indiceFinal) >= 1000) {
-				indiceFinal += 1000; 
-			} else {				
+				indiceFinal += 1000;
+			} else {
 				tamanho = indiceMaximo - indiceFinal;
 				indiceFinal = indiceMaximo;
-			}							
-			
+			}
+
 			if (isFiltrarPorListaDeUsuario) {
-				query.setParameter("idPessoaLista" + i, parametro);										
+				query.setParameter("idPessoaLista" + i, parametro);
 				query.setParameter("idLotacaoLista" + i, 0L);
 			} else {
-				query.setParameter("idLotacaoLista" + i, parametro);										
+				query.setParameter("idLotacaoLista" + i, parametro);
 				query.setParameter("idPessoaLista" + i, 0L);
-			}						
-		}				
+			}
+		}
 	}
-	
+
 	public Query queryConsultarPorFiltroDpPessoaSemIdentidadeComListaDeLotacaoOuListaDeUsuario(double quantidadeDeLotacaoOuUsuario, boolean apenasContarItens) {
-		Query query;	
-		String queryTemp = "";		
+		Query query;
+		String queryTemp = "";
 		double quantidadeDeClausulaIN = Math.ceil(Double.valueOf(quantidadeDeLotacaoOuUsuario) / 1000);
-		if (quantidadeDeClausulaIN <= 0) quantidadeDeClausulaIN = 1;
-		
+		if (quantidadeDeClausulaIN <= 0)
+			quantidadeDeClausulaIN = 1;
+
 		if (apenasContarItens)
-			queryTemp =	 "select count(pes) from DpPessoa pes";
-		else		
+			queryTemp = "select count(pes) from DpPessoa pes";
+		else
 			queryTemp = "from DpPessoa pes ";
-						
+
 		queryTemp += "  where (upper(pes.nomePessoaAI) like upper('%' || :nome || '%'))"
-				+ " and (pes.cpfPessoa = :cpf or :cpf = 0)"
-				+ " and pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"	
+				+ " and (pes.cpfPessoa = :cpf or :cpf = 0)" + " and pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
 				+ "  and (";
-		for (int i = 1; i <= quantidadeDeClausulaIN; i++) {					
-			if (i > 1) queryTemp += " or ";
-			queryTemp += " pes.lotacao.idLotacao in (:idLotacaoLista" + i + ") or pes.idPessoa in (:idPessoaLista" + i + ")";				
+		for (int i = 1; i <= quantidadeDeClausulaIN; i++) {
+			if (i > 1)
+				queryTemp += " or ";
+			queryTemp += " pes.lotacao.idLotacao in (:idLotacaoLista" + i + ") or pes.idPessoa in (:idPessoaLista" + i + ")";
 		}
 		queryTemp += ")"
 					+ " and pes.dataFimPessoa = null"
-					+ " and not exists (select ident.dpPessoa.idPessoa from CpIdentidade ident where pes.idPessoa = ident.dpPessoa.idPessoa)"
-					+ "  order by pes.cpfPessoa";			
-		
+					+ " and not exists (select ident.dpPessoa.idPessoaIni from CpIdentidade ident where pes.idPessoaIni = ident.dpPessoa.idPessoaIni)"
+					+ "  order by pes.lotacao.nomeLotacao, pes.nomePessoaAI, pes.cpfPessoa";
+
 		query = em().createQuery(queryTemp);
-							
+
 		return query;
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<DpPessoa> consultarPorFiltro(final DpPessoaDaoFiltro flt,
-			final int offset, final int itemPagina) {
+	public List<DpPessoa> consultarPorFiltro(final DpPessoaDaoFiltro flt, final int offset, final int itemPagina) {
 		try {
 			final Query query;
 
@@ -1389,8 +1314,7 @@ public class CpDao extends ModeloDao {
 					query.setParameter("id", 0L);
 				}
 			} else
-				query = em().createNamedQuery(
-						"consultarPorFiltroDpPessoaInclusiveFechadas");
+				query = em().createNamedQuery("consultarPorFiltroDpPessoaInclusiveFechadas");
 
 			if (offset > 0) {
 				query.setFirstResult(offset);
@@ -1398,26 +1322,24 @@ public class CpDao extends ModeloDao {
 			if (itemPagina > 0) {
 				query.setMaxResults(itemPagina);
 			}
-			
-			query.setParameter("nome",
-					flt.getNome().toUpperCase().replace(' ', '%'));
-			
+
+			query.setParameter("nome", flt.getNome().toUpperCase().replace(' ', '%'));
+
 			if(flt.getEmail() != null) {
-				query.setParameter("email",flt.getEmail().toUpperCase().replace(' ', '%'));
+				query.setParameter("email", flt.getEmail().toUpperCase().replace(' ', '%'));
 			} else {
 				query.setParameter("email", null);
 			}
 
 			if (!flt.isBuscarFechadas())
-				query.setParameter("situacaoFuncionalPessoa",
-						flt.getSituacaoFuncionalPessoa());
+				query.setParameter("situacaoFuncionalPessoa", flt.getSituacaoFuncionalPessoa());
 
-			if(flt.getCpf() != null && !"".equals(flt.getCpf())) {
+			if (flt.getCpf() != null && !"".equals(flt.getCpf())) {
 				query.setParameter("cpf", Long.valueOf(flt.getCpf()));
 			} else {
 				query.setParameter("cpf", 0L);
 			}
-			
+
 			if (flt.getIdOrgaoUsu() != null)
 				query.setParameter("idOrgaoUsu", flt.getIdOrgaoUsu());
 			else
@@ -1432,7 +1354,7 @@ public class CpDao extends ModeloDao {
 				query.setParameter("cargo", flt.getCargo().getId());
 			else
 				query.setParameter("cargo", 0L);
-			
+
 			if (flt.getFuncaoConfianca() != null)
 				query.setParameter("funcao", flt.getFuncaoConfianca().getId());
 			else
@@ -1444,30 +1366,28 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<DpPessoa> consultarPessoaComOrgaoFuncaoCargo(final DpPessoa pes) {
 		try {
 			final Query query;
 
-			query = em().createNamedQuery(
-						"consultarPessoaComOrgaoFuncaoCargo");
+			query = em().createNamedQuery("consultarPessoaComOrgaoFuncaoCargo");
 
-			query.setParameter("nome",
-					pes.getNomePessoa().toUpperCase().replace(' ', '%'));
-			
-			if(pes.getEmailPessoa() != null) {
-				query.setParameter("email",pes.getEmailPessoa().toUpperCase().replace(' ', '%'));
+			query.setParameter("nome", pes.getNomePessoa().toUpperCase().replace(' ', '%'));
+
+			if (pes.getEmailPessoa() != null) {
+				query.setParameter("email", pes.getEmailPessoa().toUpperCase().replace(' ', '%'));
 			} else {
-				query.setParameter("email",null);
+				query.setParameter("email", null);
 			}
-			
-			if(pes.getCpfPessoa() != null && !"".equals(pes.getCpfPessoa())) {
+
+			if (pes.getCpfPessoa() != null && !"".equals(pes.getCpfPessoa())) {
 				query.setParameter("cpf", Long.valueOf(pes.getCpfPessoa()));
 			} else {
 				query.setParameter("cpf", 0L);
 			}
-			
+
 			if (pes.getOrgaoUsuario() != null)
 				query.setParameter("idOrgaoUsu", pes.getOrgaoUsuario().getId());
 			else
@@ -1482,7 +1402,7 @@ public class CpDao extends ModeloDao {
 				query.setParameter("cargo", pes.getCargo().getId());
 			else
 				query.setParameter("cargo", 0L);
-			
+
 			if (pes.getFuncaoConfianca() != null)
 				query.setParameter("funcao", pes.getFuncaoConfianca().getId());
 			else
@@ -1496,11 +1416,9 @@ public class CpDao extends ModeloDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<DpPessoa> consultarPorOrgaoUsuDpPessoaInclusiveFechadas(
-			final long idOrgaoUsu) {
+	public List<DpPessoa> consultarPorOrgaoUsuDpPessoaInclusiveFechadas(final long idOrgaoUsu) {
 		try {
-			final Query query = em().createNamedQuery(
-					"consultarPorOrgaoUsuDpPessoaInclusiveFechadas");
+			final Query query = em().createNamedQuery("consultarPorOrgaoUsuDpPessoaInclusiveFechadas");
 
 			query.setParameter("idOrgaoUsu", idOrgaoUsu);
 
@@ -1516,33 +1434,29 @@ public class CpDao extends ModeloDao {
 			final Query query;
 
 			if (!flt.isBuscarFechadas()) {
-				query = em()
-						.createNamedQuery("consultarQuantidadeDpPessoa");
+				query = em().createNamedQuery("consultarQuantidadeDpPessoa");
 				if (flt.getId() != null)
 					query.setParameter("id", flt.getId());
 				else
 					query.setParameter("id", 0L);
 			} else
-				query = em().createNamedQuery(
-						"consultarQuantidadeDpPessoaInclusiveFechadas");
+				query = em().createNamedQuery("consultarQuantidadeDpPessoaInclusiveFechadas");
 
-			query.setParameter("nome",
-					flt.getNome().toUpperCase().replace(' ', '%'));
+			query.setParameter("nome", flt.getNome().toUpperCase().replace(' ', '%'));
 
 			if (!flt.isBuscarFechadas())
-				query.setParameter("situacaoFuncionalPessoa",
-						flt.getSituacaoFuncionalPessoa());
+				query.setParameter("situacaoFuncionalPessoa", flt.getSituacaoFuncionalPessoa());
 
 			if (flt.getCpf() != null)
 				query.setParameter("cpf", flt.getCpf());
 			else
 				query.setParameter("cpf", 0L);
-			
+
 			if (flt.getEmail() != null)
 				query.setParameter("email", flt.getEmail());
 			else
 				query.setParameter("email", null);
-			
+
 			if (flt.getIdOrgaoUsu() != null)
 				query.setParameter("idOrgaoUsu", flt.getIdOrgaoUsu());
 			else
@@ -1551,12 +1465,12 @@ public class CpDao extends ModeloDao {
 				query.setParameter("lotacao", flt.getLotacao().getId());
 			else
 				query.setParameter("lotacao", 0L);
-			
+
 			if (flt.getCargo() != null)
 				query.setParameter("cargo", flt.getCargo().getId());
 			else
 				query.setParameter("cargo", 0L);
-			
+
 			if (flt.getFuncaoConfianca() != null)
 				query.setParameter("funcao", flt.getFuncaoConfianca().getId());
 			else
@@ -1574,23 +1488,18 @@ public class CpDao extends ModeloDao {
 		o.setSigla(flt.getSigla());
 		/*
 		 * CpOrgaoUsuario cpOrgao = new CpOrgaoUsuario();
-		 * cpOrgao.setIdOrgaoUsu(flt.getIdOrgaoUsu());
-		 * o.setOrgaoUsuario(cpOrgao);
+		 * cpOrgao.setIdOrgaoUsu(flt.getIdOrgaoUsu()); o.setOrgaoUsuario(cpOrgao);
 		 */
 		return consultarPorSigla(o);
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<DpSubstituicao> consultarSubstituicoesPermitidas(
-			final DpSubstituicao exemplo) throws SQLException {
+	public List<DpSubstituicao> consultarSubstituicoesPermitidas(final DpSubstituicao exemplo) throws SQLException {
 		try {
 			Query query = null;
-			query = em().createNamedQuery(
-					"consultarSubstituicoesPermitidas");
-			query.setParameter("idSubstitutoIni", exemplo.getSubstituto()
-					.getIdPessoaIni());
-			query.setParameter("idLotaSubstitutoIni", exemplo.getLotaSubstituto()
-					.getIdLotacaoIni());
+			query = em().createNamedQuery("consultarSubstituicoesPermitidas");
+			query.setParameter("idSubstitutoIni", exemplo.getSubstituto().getIdPessoaIni());
+			query.setParameter("idLotaSubstitutoIni", exemplo.getLotaSubstituto().getIdLotacaoIni());
 			// Reativado pois esse query é executado a cada chamada, inclusive
 			// as ajax.
 			query.setHint("org.hibernate.cacheable", true);
@@ -1604,14 +1513,12 @@ public class CpDao extends ModeloDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<DpSubstituicao> consultarOrdemData(final DpSubstituicao exemplo)
-			throws SQLException {
+	public List<DpSubstituicao> consultarOrdemData(final DpSubstituicao exemplo) throws SQLException {
 		try {
 			Query query = null;
 			query = em().createNamedQuery("consultarOrdemData");
 			query.setParameter("idTitularIni", exemplo.getTitular().getIdPessoaIni());
-			query.setParameter("idLotaTitularIni", exemplo.getLotaTitular()
-					.getIdLotacaoIni());
+			query.setParameter("idLotaTitularIni", exemplo.getLotaTitular().getIdLotacaoIni());
 			// query.setHint("org.hibernate.cacheable", true);
 			// query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SUBSTITUICAO);
 			return query.getResultList();
@@ -1621,16 +1528,13 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public List<DpVisualizacao> consultarVisualizacoesPermitidas(
-			final DpVisualizacao exemplo) throws SQLException {
+	public List<DpVisualizacao> consultarVisualizacoesPermitidas(final DpVisualizacao exemplo) throws SQLException {
 		try {
 			Query query = null;
-			query = em().createNamedQuery(
-					"consultarVisualizacoesPermitidas");
-			query.setParameter("idDelegadoIni", exemplo.getDelegado()
-					.getIdPessoaIni());
+			query = em().createNamedQuery("consultarVisualizacoesPermitidas");
+			query.setParameter("idDelegadoIni", exemplo.getDelegado().getIdPessoaIni());
 			query.setHint("org.hibernate.cacheable", true);
 			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SUBSTITUICAO);
 			return query.getResultList();
@@ -1640,10 +1544,9 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public List<DpVisualizacao> consultarOrdemData(final DpVisualizacao exemplo)
-			throws SQLException {
+	public List<DpVisualizacao> consultarOrdemData(final DpVisualizacao exemplo) throws SQLException {
 		try {
 			Query query = null;
 			query = em().createNamedQuery("consultarOrdem");
@@ -1656,10 +1559,9 @@ public class CpDao extends ModeloDao {
 		}
 	}
 
-	public CpIdentidade consultaIdentidadeCadastrante(final String nmUsuario,
-			boolean fAtiva) throws AplicacaoException {
-		List<CpIdentidade> lista = consultaIdentidadesCadastrante(nmUsuario,
-				fAtiva);
+	public CpIdentidade consultaIdentidadeCadastrante(final String nmUsuario, boolean fAtiva)
+			throws AplicacaoException {
+		List<CpIdentidade> lista = consultaIdentidadesCadastrante(nmUsuario, fAtiva);
 		// obtem preferencialmente identidade de formulario - unico formato que
 		// existia anteriormente
 		for (CpIdentidade idLista : lista) {
@@ -1673,13 +1575,12 @@ public class CpDao extends ModeloDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<CpIdentidade> consultaIdentidadesCadastrante(
-			final String nmUsuario, boolean fAtiva) throws AplicacaoException {
+	public List<CpIdentidade> consultaIdentidadesCadastrante(final String nmUsuario, boolean fAtiva)
+			throws AplicacaoException {
 		try {
-			final Query qry = em().createNamedQuery(
-					fAtiva ? "consultarIdentidadeCadastranteAtiva"
-							: "consultarIdentidadeCadastrante");
-			if(Pattern.matches( "\\d+", nmUsuario )) {
+			final Query qry = em()
+					.createNamedQuery(fAtiva ? "consultarIdentidadeCadastranteAtiva" : "consultarIdentidadeCadastrante");
+			if (Pattern.matches("\\d+", nmUsuario)) {
 				qry.setParameter("cpf", Long.valueOf(nmUsuario));
 				qry.setParameter("nmUsuario", null);
 				qry.setParameter("sesbPessoa", null);
@@ -1688,90 +1589,83 @@ public class CpDao extends ModeloDao {
 				qry.setParameter("sesbPessoa", MatriculaUtils.getSiglaDoOrgaoDaMatricula(nmUsuario));
 				qry.setParameter("cpf", null);
 			}
-			
+
 			/* Constantes para Evitar Parse Oracle */
 			qry.setParameter("cpfZero", 0L);
-			qry.setParameter("sfp1","1");
-			qry.setParameter("sfp2","2");
-			qry.setParameter("sfp12","12");
-			qry.setParameter("sfp22","22");
-			qry.setParameter("sfp31","31");
+			qry.setParameter("sfp1", "1");
+			qry.setParameter("sfp2", "2");
+			qry.setParameter("sfp12", "12");
+			qry.setParameter("sfp22", "22");
+			qry.setParameter("sfp31", "31");
 
-			
 			// Cache was disabled because it would interfere with the
 			// "change password" action.
-//			qry.setHint("org.hibernate.cacheable", true); 
+//			qry.setHint("org.hibernate.cacheable", true);
 //			qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SECONDS);
 			final List<CpIdentidade> lista = (List<CpIdentidade>) qry.getResultList();
 			if (lista.size() == 0) {
-				throw new AplicacaoException(
-						"Nao foi possivel localizar a identidade do usuario '"
-								+ nmUsuario + "'.");
+				throw new AplicacaoException("Nao foi possivel localizar a identidade do usuario '" + nmUsuario + "'.");
 			}
 			return lista;
 		} catch (Throwable e) {
 			throw new AplicacaoException(
-					"Ocorreu um erro tentando localizar a identidade do usuario '"
-							+ nmUsuario + "'.", 0, e);
+					"Ocorreu um erro tentando localizar a identidade do usuario '" + nmUsuario + "'.", 0, e);
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public List<CpIdentidade> consultaIdentidadesPorCpf(
-			final String nmUsuario) throws AplicacaoException {
+	public List<CpIdentidade> consultaIdentidadesPorCpf(final String nmUsuario) throws AplicacaoException {
 		try {
 			final Query qry = em().createNamedQuery("consultarIdentidadeCadastranteAtiva");
-			
+
 			qry.setParameter("cpf", Long.valueOf(nmUsuario));
 			qry.setParameter("nmUsuario", null);
 			qry.setParameter("sesbPessoa", null);
-			
+
 			/* Constantes para Evitar Parse Oracle */
-			qry.setParameter("cpfZero","0");
-			qry.setParameter("sfp1","1");
-			qry.setParameter("sfp2","2");
-			qry.setParameter("sfp12","12");
-			qry.setParameter("sfp22","22");
-			qry.setParameter("sfp31","31");
-			
+			qry.setParameter("cpfZero", "0");
+			qry.setParameter("sfp1", "1");
+			qry.setParameter("sfp2", "2");
+			qry.setParameter("sfp12", "12");
+			qry.setParameter("sfp22", "22");
+			qry.setParameter("sfp31", "31");
+
 			qry.setHint("org.hibernate.cacheable", true);
 			qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SECONDS);
 			final List<CpIdentidade> lista = (List<CpIdentidade>) qry.getResultList();
-			
+
 			return lista;
 		} catch (Throwable e) {
 			throw new AplicacaoException(
-					"Ocorreu um erro tentando localizar a identidade do usuario '"
-							+ nmUsuario + "'.", 0, e);
+					"Ocorreu um erro tentando localizar a identidade do usuario '" + nmUsuario + "'.", 0, e);
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public List<CpIdentidade> consultaIdentidadesPorCpfEmail(
-			final String nmUsuario, String email) throws AplicacaoException {
+	public List<CpIdentidade> consultaIdentidadesPorCpfEmail(final String nmUsuario, String email)
+			throws AplicacaoException {
 		try {
 			final Query qry = em().createNamedQuery("consultarIdentidadeCpfEmail");
-			
+
 			qry.setParameter("cpf", Long.valueOf(nmUsuario));
 			qry.setParameter("email", email);
-			
+
 			/* Constantes para Evitar Parse Oracle */
-			qry.setParameter("cpfZero","0");
-			qry.setParameter("sfp1","1");
-			qry.setParameter("sfp2","2");
-			qry.setParameter("sfp12","12");
-			qry.setParameter("sfp22","22");
-			qry.setParameter("sfp31","31");
-			
+			qry.setParameter("cpfZero", "0");
+			qry.setParameter("sfp1", "1");
+			qry.setParameter("sfp2", "2");
+			qry.setParameter("sfp12", "12");
+			qry.setParameter("sfp22", "22");
+			qry.setParameter("sfp31", "31");
+
 			qry.setHint("org.hibernate.cacheable", true);
 			qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SECONDS);
 			final List<CpIdentidade> lista = (List<CpIdentidade>) qry.getResultList();
-			
+
 			return lista;
 		} catch (Throwable e) {
 			throw new AplicacaoException(
-					"Ocorreu um erro tentando localizar a identidade do usuario '"
-							+ nmUsuario + "'.", 0, e);
+					"Ocorreu um erro tentando localizar a identidade do usuario '" + nmUsuario + "'.", 0, e);
 		}
 	}
 
@@ -1822,10 +1716,8 @@ public class CpDao extends ModeloDao {
 	 * lancadas aqui. // } catch (Throwable e) { // block //
 	 * e.printStackTrace(); // return null; // } }
 	 */
-	public List<DpPessoa> pessoasPorLotacao(Long id,
-			Boolean incluirSublotacoes, Boolean somenteServidor,
-			SituacaoFuncionalEnum situacoesFuncionais)
-			throws AplicacaoException {
+	public List<DpPessoa> pessoasPorLotacao(Long id, Boolean incluirSublotacoes, Boolean somenteServidor,
+			SituacaoFuncionalEnum situacoesFuncionais) throws AplicacaoException {
 		if (id == null || id == 0)
 			return null;
 
@@ -1881,11 +1773,9 @@ public class CpDao extends ModeloDao {
 		return lstCompleta;
 	}
 
-	public List<DpPessoa> pessoasPorLotacao(Long id,
-			Boolean incluirSublotacoes, Boolean somenteServidor)
+	public List<DpPessoa> pessoasPorLotacao(Long id, Boolean incluirSublotacoes, Boolean somenteServidor)
 			throws AplicacaoException {
-		return pessoasPorLotacao(id, incluirSublotacoes, somenteServidor,
-				SituacaoFuncionalEnum.APENAS_ATIVOS);
+		return pessoasPorLotacao(id, incluirSublotacoes, somenteServidor, SituacaoFuncionalEnum.APENAS_ATIVOS);
 	}
 
 	public DpPessoa consultarPorCpfMatricula(final long cpf, long matricula) {
@@ -1898,13 +1788,11 @@ public class CpDao extends ModeloDao {
 	}
 
 	public Date consultarDataEHoraDoServidor() throws AplicacaoException {
-		Query sql = em().createNamedQuery(
-				"consultarDataEHoraDoServidor");
+		Query sql = em().createNamedQuery("consultarDataEHoraDoServidor");
 
 		List result = sql.getResultList();
 		if (result.size() != 1)
-			throw new AplicacaoException(
-					"Nao foi possivel obter a data e a hora atuais do servidor.");
+			throw new AplicacaoException("Nao foi possivel obter a data e a hora atuais do servidor.");
 
 		return (Date) ((result.get(0)));
 	}
@@ -1922,9 +1810,8 @@ public class CpDao extends ModeloDao {
 	}
 
 	public Date consultarDataUltimaAtualizacao() throws AplicacaoException {
-		Query sql = (Query) em().createNamedQuery(
-				"consultarDataUltimaAtualizacao");
-		
+		Query sql = (Query) em().createNamedQuery("consultarDataUltimaAtualizacao");
+
 		List result = sql.getResultList();
 		Date dtIni = (Date) ((Object[]) (result.get(0)))[0];
 		Date dtFim = (Date) ((Object[]) (result.get(0)))[1];
@@ -1938,47 +1825,39 @@ public class CpDao extends ModeloDao {
 	public List<CpConfiguracao> consultar(final CpConfiguracao exemplo) {
 		Query query = em().createNamedQuery("consultarCpConfiguracoes");
 
-		query.setParameter("idTpConfiguracao", exemplo.getCpTipoConfiguracao()
-				.getIdTpConfiguracao());
+		query.setParameter("idTpConfiguracao", exemplo.getCpTipoConfiguracao().getIdTpConfiguracao());
 
-		
+
 		// query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
 		return query.getResultList();
 	}
 
-	public List<CpConfiguracao> consultarConfiguracoesPorTipo(
-			final Long idTipoConfig) {
-		Query query = em().createNamedQuery(
-				"consultarCpConfiguracoesPorTipo");
+	public List<CpConfiguracao> consultarConfiguracoesPorTipo(final Long idTipoConfig) {
+		Query query = em().createNamedQuery("consultarCpConfiguracoesPorTipo");
 
 		query.setParameter("idTpConfiguracao", idTipoConfig);
 
-		
 
 		return query.getResultList();
 	}
 
 	public List<CpConfiguracao> consultarConfiguracoesAtivas() {
-		Query query = em().createNamedQuery(
-				"consultarCpConfiguracoesAtivas");
-		
+		Query query = em().createNamedQuery("consultarCpConfiguracoesAtivas");
+
 		return query.getResultList();
 	}
 
-	public List<CpConfiguracao> porLotacaoPessoaServicoTipo(
-			final CpConfiguracao exemplo) {
-		Query query = em().createNamedQuery(
-				"consultarCpConfiguracoesPorLotacaoPessoaServicoTipo");
+	public List<CpConfiguracao> porLotacaoPessoaServicoTipo(final CpConfiguracao exemplo) {
+		Query query = em().createNamedQuery("consultarCpConfiguracoesPorLotacaoPessoaServicoTipo");
 		query.setParameter("idPessoa", exemplo.getDpPessoa().getIdPessoa());
 		//removido eap72: query.setParameter("idLotacao", exemplo.getLotacao().getIdLotacao());
-		query.setParameter("idTpConfiguracao", exemplo.getCpTipoConfiguracao()
-				.getIdTpConfiguracao());
+		query.setParameter("idTpConfiguracao", exemplo.getCpTipoConfiguracao().getIdTpConfiguracao());
 		//removido eap72: query.setParameter("idServico", exemplo.getCpServico().getIdServico());
 		query.setParameter("siglaServico", exemplo.getCpServico().getSiglaServico());
 		query.setParameter("idSitConfiguracao", CpSituacaoConfiguracao.SITUACAO_PODE);
 		// kpf: com o cache true, as configuracoes sao exibidas de forma forma
 		// errada apos a primeira
-		
+
 		// query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
 		return query.getResultList();
 	}
@@ -2033,8 +1912,7 @@ public class CpDao extends ModeloDao {
 		return obj;
 	}
 
-	public HistoricoAuditavel gravarComHistorico(HistoricoAuditavel oNovo,
-			HistoricoAuditavel oAntigo, Date dt,
+	public HistoricoAuditavel gravarComHistorico(HistoricoAuditavel oNovo, HistoricoAuditavel oAntigo, Date dt,
 			CpIdentidade identidadeCadastrante) throws AplicacaoException {
 		if (dt == null)
 			dt = CpDao.getInstance().consultarDataEHoraDoServidor();
@@ -2052,9 +1930,8 @@ public class CpDao extends ModeloDao {
 		return gravarComHistorico(oNovo, identidadeCadastrante);
 	}
 
-	public HistoricoAuditavel gravarComHistorico(
-			final HistoricoAuditavel entidade,
-			CpIdentidade identidadeCadastrante) throws AplicacaoException {
+	public HistoricoAuditavel gravarComHistorico(final HistoricoAuditavel entidade, CpIdentidade identidadeCadastrante)
+			throws AplicacaoException {
 		if (entidade.getHisDtIni() != null && entidade.getHisIdcIni() == null)
 			entidade.setHisIdcIni(identidadeCadastrante);
 		if (entidade.getHisDtFim() != null && entidade.getHisIdcFim() == null)
@@ -2075,8 +1952,7 @@ public class CpDao extends ModeloDao {
 			// o erro #972 (ver comentários)
 			// Cp.getInstance().getConf().limparCacheSeNecessario();
 		} catch (Exception e) {
-			throw new AplicacaoException("Nao foi possivel limpar o cache.", 0,
-					e);
+			throw new AplicacaoException("Nao foi possivel limpar o cache.", 0, e);
 		}
 		return entidade;
 	}
@@ -2118,8 +1994,7 @@ public class CpDao extends ModeloDao {
 		CpOrgao o = new CpOrgao();
 		o.setSigla(sigla);
 
-		final Query query = em().createNamedQuery(
-				"consultarPorSiglaExataCpOrgao");
+		final Query query = em().createNamedQuery("consultarPorSiglaExataCpOrgao");
 		query.setParameter("siglaOrgao", o.getSiglaOrgao());
 
 		final List<CpOrgao> l = query.getResultList();
@@ -2134,7 +2009,7 @@ public class CpDao extends ModeloDao {
 
 		// Renato: Alterei para fazer cache. Nao vejo porque nao possamos fazer
 		// cache dessa consulta.
-		qry.setHint("org.hibernate.cacheable", true); 
+		qry.setHint("org.hibernate.cacheable", true);
 		qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
 
 		final List<CpOrgaoUsuario> lista = qry.getResultList();
@@ -2146,7 +2021,7 @@ public class CpDao extends ModeloDao {
 		listaOrgUsu.add(0, null);
 		final Query qry = em().createNamedQuery("consultarCpModelos");
 
-		qry.setHint("org.hibernate.cacheable", true); 
+		qry.setHint("org.hibernate.cacheable", true);
 		qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SECONDS);
 
 		final List<CpModelo> lista = qry.getResultList();
@@ -2155,10 +2030,8 @@ public class CpDao extends ModeloDao {
 		for (CpOrgaoUsuario orgUsu : listaOrgUsu) {
 			boolean fFound = false;
 			for (CpModelo mod : lista) {
-				if ((mod.getCpOrgaoUsuario() == null && orgUsu == null)
-						|| (mod.getCpOrgaoUsuario() != null && orgUsu != null && mod
-								.getCpOrgaoUsuario().getId()
-								.equals(orgUsu.getId()))) {
+				if ((mod.getCpOrgaoUsuario() == null && orgUsu == null) || (mod.getCpOrgaoUsuario() != null
+						&& orgUsu != null && mod.getCpOrgaoUsuario().getId().equals(orgUsu.getId()))) {
 					listaFinal.add(mod);
 					fFound = true;
 				}
@@ -2171,32 +2044,33 @@ public class CpDao extends ModeloDao {
 		}
 		return listaFinal;
 	}
-	
+
 	public CpModelo consultaCpModeloGeral() {
 		final Query qry = em().createNamedQuery("consultarCpModeloGeral");
-		qry.setHint("org.hibernate.cacheable", true); 
+		qry.setHint("org.hibernate.cacheable", true);
 		qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SECONDS);
 
 		final List<CpModelo> lista = qry.getResultList();
 		if (lista.size() > 0)
 			return lista.get(0);
-		else return null;
+		else
+			return null;
 	}
 
 	public CpModelo consultaCpModeloPorNome(String nome) {
 		final Query qry = em().createNamedQuery("consultarCpModeloPorNome");
-		qry.setHint("org.hibernate.cacheable", true); 
+		qry.setHint("org.hibernate.cacheable", true);
 		qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SECONDS);
 		qry.setParameter("nome", nome);
 
 		final List<CpModelo> lista = qry.getResultList();
 		if (lista.size() > 0)
 			return lista.get(0);
-		else return null;
+		else
+			return null;
 	}
 
-	public List<CpModelo> listarModelosOrdenarPorNome(String script)
-			throws Exception {
+	public List<CpModelo> listarModelosOrdenarPorNome(String script) throws Exception {
 		CriteriaQuery<CpModelo> q = cb().createQuery(CpModelo.class);
 		Root<CpModelo> c = q.from(CpModelo.class);
 		Join<CpModelo, CpOrgaoUsuario> joinOrgao = c.join("cpOrgaoUsuario", JoinType.LEFT);
@@ -2208,8 +2082,7 @@ public class CpDao extends ModeloDao {
 		List<CpModelo> l = new ArrayList<CpModelo>();
 		for (CpModelo mod : (List<CpModelo>) em().createQuery(q).getResultList())
 			if (script != null && script.trim().length() != 0) {
-				if (mod.getConteudoBlobString() != null
-						&& mod.getConteudoBlobString().contains(script))
+				if (mod.getConteudoBlobString() != null && mod.getConteudoBlobString().contains(script))
 					l.add(mod);
 			} else
 				l.add(mod);
@@ -2218,11 +2091,9 @@ public class CpDao extends ModeloDao {
 
 	@SuppressWarnings("unchecked")
 	public CpModelo consultarPorIdInicialCpModelo(final Long idInicial) {
-		final Query query = em().createNamedQuery(
-				"consultarPorIdInicialCpModelo");
+		final Query query = em().createNamedQuery("consultarPorIdInicialCpModelo");
 		query.setParameter("idIni", idInicial);
 
-		
 		final List<CpModelo> l = query.getResultList();
 		if (l.size() != 1)
 			return null;
@@ -2230,8 +2101,7 @@ public class CpDao extends ModeloDao {
 	}
 
 	public CpServico consultarPorSiglaCpServico(String siglaServico) {
-		final Query query = em().createNamedQuery(
-				"consultarPorSiglaStringCpServico");
+		final Query query = em().createNamedQuery("consultarPorSiglaStringCpServico");
 		query.setParameter("siglaServico", siglaServico);
 		// query.setFlushMode(FlushMode.MANUAL);
 		final List<CpServico> l = query.getResultList();
@@ -2241,7 +2111,7 @@ public class CpDao extends ModeloDao {
 
 		return l.get(0);
 	}
-
+	
 	public List<DpLotacao> consultarLotacaoPorOrgao(CpOrgaoUsuario orgaoUsuario){
 		CriteriaQuery<DpLotacao> q = cb().createQuery(DpLotacao.class);
 		Root<DpLotacao> c = q.from(DpLotacao.class);
@@ -2276,7 +2146,7 @@ public class CpDao extends ModeloDao {
 		q.select(c);
 		return em().createQuery(q).getSingleResult();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<CpOrgaoUsuario> listarOrgaosUsuarios() {
 		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpOrgaoUsuario.class);
@@ -2338,13 +2208,11 @@ public class CpDao extends ModeloDao {
 
 	@SuppressWarnings("unchecked")
 	public List<CpSituacaoConfiguracao> listarSituacoesConfiguracao() {
-		return findAndCacheByCriteria(CACHE_QUERY_HOURS,
-				CpSituacaoConfiguracao.class);
+		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpSituacaoConfiguracao.class);
 	}
 
 	public List<CpTipoConfiguracao> listarTiposConfiguracao() {
-		return findAndCacheByCriteria(CACHE_QUERY_HOURS,
-				CpTipoConfiguracao.class);
+		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpTipoConfiguracao.class);
 	}
 
 	public List<CpUnidadeMedida> listarUnidadesMedida() {
@@ -2368,8 +2236,8 @@ public class CpDao extends ModeloDao {
 		return findByCriteria(CpGrupoDeEmail.class);
 	}
 
-	public void excluirComHistorico(HistoricoAuditavel entidade, Date dt,
-			CpIdentidade identidadeCadastrante) throws AplicacaoException {
+	public void excluirComHistorico(HistoricoAuditavel entidade, Date dt, CpIdentidade identidadeCadastrante)
+			throws AplicacaoException {
 
 		if (dt == null) {
 			dt = consultarDataEHoraDoServidor();
@@ -2382,8 +2250,8 @@ public class CpDao extends ModeloDao {
 
 	}
 
-	public List<CpGrupo> getGruposGeridos(DpPessoa titular,
-			DpLotacao lotaTitular, Long idCpTipoGrupo) throws Exception {
+	public List<CpGrupo> getGruposGeridos(DpPessoa titular, DpLotacao lotaTitular, Long idCpTipoGrupo)
+			throws Exception {
 		CpGrupoDaoFiltro flt = new CpGrupoDaoFiltro();
 		flt.setIdTpGrupo(idCpTipoGrupo.intValue());
 		List<CpGrupo> itgGrupos = consultarPorFiltro(flt, 0, 0);
@@ -2393,8 +2261,7 @@ public class CpDao extends ModeloDao {
 		while (it.hasNext()) {
 			CpGrupo cpGrp = it.next();
 			CpConfiguracaoBL bl = Cp.getInstance().getConf();
-			if (!bl.podePorConfiguracao(titular, lotaTitular, cpGrp,
-					CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_GRUPO)) {
+			if (!bl.podePorConfiguracao(titular, lotaTitular, cpGrp, CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_GRUPO)) {
 				it.remove();
 			}
 
@@ -2403,11 +2270,9 @@ public class CpDao extends ModeloDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Object consultaDadosBasicos(final String nmUsuario)
-			throws AplicacaoException {
+	public Object consultaDadosBasicos(final String nmUsuario) throws AplicacaoException {
 		try {
-			final Query qry = em()
-					.createNamedQuery("consultarDadosBasicos");
+			final Query qry = em().createNamedQuery("consultarDadosBasicos");
 			qry.setParameter("nmUsuario", nmUsuario);
 			// Verifica se existe numeros no login do usuario
 			if (nmUsuario.substring(2).matches("^[0-9]*$"))
@@ -2418,20 +2283,19 @@ public class CpDao extends ModeloDao {
 
 			// Cache was disabled because it would interfere with the
 			// "change password" action.
-			// qry.setHint("org.hibernate.cacheable", true); 
+			// qry.setHint("org.hibernate.cacheable", true);
 			// qry.setHint("org.hibernate.cacheRegion", "query.IdentidadeCadastrante");
 
 			final Object obj = qry.getResultList();
 			return obj;
 		} catch (Throwable e) {
 			throw new AplicacaoException(
-					"Ocorreu um erro tentando carregar os dados basicos para o usuario '"
-							+ nmUsuario + "'.", 0, e);
+					"Ocorreu um erro tentando carregar os dados basicos para o usuario '" + nmUsuario + "'.", 0, e);
 		}
 	}
 
-	public List<DpPessoa> consultarPorMatriculaEOrgao(Long matricula,
-			Long idOrgaoUsu, boolean pessoasFinalizadas, boolean ordemDesc) {
+	public List<DpPessoa> consultarPorMatriculaEOrgao(Long matricula, Long idOrgaoUsu, boolean pessoasFinalizadas,
+			boolean ordemDesc) {
 		CriteriaQuery<DpPessoa> q = cb().createQuery(DpPessoa.class);
 		Root<DpPessoa> c = q.from(DpPessoa.class);
 		q.select(c);
@@ -2458,8 +2322,7 @@ public class CpDao extends ModeloDao {
 		return em().createQuery(q).getResultList();
 	}
 
-	public List<?> consultarFechadosPorIdExterna(Class<?> clazz,
-			String idExterna, Long idOrgaoUsu) {
+	public List<?> consultarFechadosPorIdExterna(Class<?> clazz, String idExterna, Long idOrgaoUsu) {
 		if (clazz == DpLotacao.class) {
 			CriteriaQuery<DpLotacao> q = cb().createQuery(DpLotacao.class);
 			Root<DpLotacao> c = q.from(DpLotacao.class);
@@ -2508,8 +2371,7 @@ public class CpDao extends ModeloDao {
 	public DpLotacao obterLotacaoAtual(final DpLotacao lotacao) {
 		try {
 
-			final Query qry = em().createNamedQuery(
-					"consultarLotacaoAtualPelaLotacaoInicial");
+			final Query qry = em().createNamedQuery("consultarLotacaoAtualPelaLotacaoInicial");
 			qry.setParameter("idLotacaoIni", lotacao.getIdLotacaoIni());
 			qry.setHint("org.hibernate.cacheable", true); 
 			qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
@@ -2525,8 +2387,8 @@ public class CpDao extends ModeloDao {
 
 	public DpPessoa obterPessoaAtual(final DpPessoa pessoa) {
 		try {
-			final Query qry = em().createNamedQuery(
-					"consultarPessoaAtualPelaInicial");
+
+			final Query qry = em().createNamedQuery("consultarPessoaAtualPelaInicial");
 			qry.setParameter("idPessoaIni", pessoa.getIdPessoaIni());
 			qry.setHint("org.hibernate.cacheable", true); 
 			qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
@@ -2539,11 +2401,10 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
-	
+
 	public CpIdentidade obterIdentidadeAtual(final CpIdentidade u) {
 		try {
-			final Query qry = em().createNamedQuery(
-					"consultarIdentidadeAtualPelaInicial");
+			final Query qry = em().createNamedQuery("consultarIdentidadeAtualPelaInicial");
 			qry.setParameter("idIni", u.getHisIdIni());
 			final CpIdentidade id = (CpIdentidade) qry.getSingleResult();
 			return id;
@@ -2554,7 +2415,7 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public CpAcesso consultarAcessoAnterior(final DpPessoa pessoa) {
 		String sql = "from CpAcesso a where a.cpIdentidade.dpPessoa.idPessoaIni = :idPessoaIni order by a.dtInicio desc";
@@ -2582,9 +2443,8 @@ public class CpDao extends ModeloDao {
 	}
 
 	public int consultarQuantidadeDocumentosPorDpLotacao(final DpLotacao o) {
-        try {
-			Query sql = em().createNativeQuery(
-					"consultarQuantidadeDocumentosPorDpLotacao");
+		try {
+			Query sql = em().createNativeQuery("consultarQuantidadeDocumentosPorDpLotacao");
 
 			sql.setParameter("idLotacao", o.getId());
             sql.setParameter("idTipoMarca", CpTipoMarca.TIPO_MARCA_SIGA_EX);
@@ -2595,9 +2455,9 @@ public class CpDao extends ModeloDao {
             return 0;
         }
     }
-	
-	public List<CpOrgaoUsuario> consultarOrgaosMarcadosComo (final Long orgaoUsuId,
-			final Long lotacaoId, final Long usuarioId, Date dataInicial, Date dataFinal, Long idMarcador) {
+
+	public List<CpOrgaoUsuario> consultarOrgaosMarcadosComo(final Long orgaoUsuId, final Long lotacaoId,
+			final Long usuarioId, Date dataInicial, Date dataFinal, Long idMarcador) {
 		String queryOrgao = "";
 		if (orgaoUsuId != null) {
 			queryOrgao = "and doc.orgaoUsuario.idOrgaoUsu = :orgao ";
@@ -2630,11 +2490,11 @@ public class CpDao extends ModeloDao {
 					+ "and (dt_ini_marca is null or dt_ini_marca < sysdate) " 
 					+ "and (dt_fim_marca is null or dt_fim_marca > sysdate) " 
 				;
-		
+
 		Query query = em().createQuery(queryTemp);
-				
+
 		query.setParameter("idMarcador", idMarcador);
-		
+
 		if (orgaoUsuId != null) {
 			query.setParameter("orgao", orgaoUsuId);
 		}
@@ -2645,12 +2505,12 @@ public class CpDao extends ModeloDao {
 			query.setParameter("idUsuario", usuarioId);
 		}
 		query.setParameter("dtini", dataInicial);
-		Date dtfimMaisUm = new Date( dataFinal.getTime() + 86400000L );
+		Date dtfimMaisUm = new Date(dataFinal.getTime() + 86400000L);
 		query.setParameter("dtfim", dtfimMaisUm);
-		
+
 		List<CpOrgaoUsuario> l = query.getResultList();
-		
-		if(l.size() == 0) {
+
+		if (l.size() == 0) {
 			return null;
 		}
 		return l;
@@ -2675,27 +2535,25 @@ public class CpDao extends ModeloDao {
 
 	public Integer quantidadeDocumentos(DpPessoa pes) {
 		try {
-			Query sql = (Query) em().createNamedQuery(
-					"quantidadeDocumentos");
+			Query sql = (Query) em().createNamedQuery("quantidadeDocumentos");
 
 			sql.setParameter("idPessoaIni", pes.getIdPessoaIni());
 			List result = sql.getResultList();
 			final int l = ((BigDecimal) sql.getSingleResult()).intValue();
-            return l;
+			return l;
 		} catch (final NullPointerException e) {
 			return null;
 		}
 	}
-	
+
 	public Integer consultarQtdeDocCriadosPossePorDpLotacao(Long idLotacao) {
 		try {
-			Query sql = (Query) em().createNamedQuery(
-					"consultarQtdeDocCriadosPossePorDpLotacao");
+			Query sql = (Query) em().createNamedQuery("consultarQtdeDocCriadosPossePorDpLotacao");
 
 			sql.setParameter("idLotacao", idLotacao);
 			List result = sql.getResultList();
 			final int l = ((BigDecimal) sql.getSingleResult()).intValue();
-            return l;
+			return l;
 		} catch (final NullPointerException e) {
 			return null;
 		}

@@ -58,7 +58,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 		@NamedQuery(name = "consultarPorSiglaDpLotacao", query = "select lot from DpLotacao lot where"
 				+ "      upper(lot.siglaLotacao) = upper(:siglaLotacao)"
 				+ "      and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ "	     and lot.dataFimLotacao = null"),
+				+ "	     and lot.dataFimLotacao is null"),
 		@NamedQuery(name = "consultarPorSiglaDpLotacaoComLike", query = "select lot from DpLotacao lot where"
 				+ "        upper(lot.siglaLotacao) like upper('%' || :siglaLotacao || '%') "
 				+ "        and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"

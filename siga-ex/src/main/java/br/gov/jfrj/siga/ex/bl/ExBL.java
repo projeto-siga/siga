@@ -6934,7 +6934,7 @@ public class ExBL extends CpBL {
 	
 	public ExProtocolo obterProtocolo(ExDocumento doc) {
 		try {
-			return dao().obterProtocoloPorDocumento(doc.getIdDoc());
+			return dao().obterProtocoloPorDocumento(doc);
 		} catch (Exception e) {
 			throw new AplicacaoException("Ocorreu um erro ao obter protocolo.", 0, e);
 		}

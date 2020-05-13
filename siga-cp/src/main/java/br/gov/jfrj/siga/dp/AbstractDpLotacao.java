@@ -107,9 +107,9 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 public abstract class AbstractDpLotacao extends DpResponsavel implements
 		Serializable {
 
-	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.DP_LOTACAO_SEQ")
 	@Id
-	@GeneratedValue(generator = "generator")
+	@SequenceGenerator(name = "DP_LOTACAO_SEQ", sequenceName = "CORPORATIVO.DP_LOTACAO_SEQ")
+	@GeneratedValue(generator = "DP_LOTACAO_SEQ")
 	@Column(name = "ID_LOTACAO", unique = true, nullable = false)
 	@Desconsiderar
 	private Long idLotacao;
@@ -172,6 +172,17 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_LOCALIDADE")
 	private CpLocalidade localidade;
+	
+	@Column(name = "IS_EXTERNA_LOTACAO")
+	private Integer isExternaLotacao;
+
+	public Integer getIsExternaLotacao() {
+		return isExternaLotacao;
+	}
+
+	public void setIsExternaLotacao(Integer isExternaLotacao) {
+		this.isExternaLotacao = isExternaLotacao;
+	}
 
 	/**
 	 * @return the cpTipoLotacao

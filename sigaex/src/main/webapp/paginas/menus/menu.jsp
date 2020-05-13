@@ -6,7 +6,7 @@
 <%@ taglib uri="http://localhost/libstag" prefix="fx"%>
 
 <c:if
-	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos')}">
+	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos') && cadastrante.orgaoUsuario.isExternoOrgaoUsu eq 0}">
 	<li class="nav-item dropdown"><a href="javascript:void(0);"
 		class="nav-link dropdown-toggle" data-toggle="dropdown">
 			Documentos </a>
@@ -154,6 +154,12 @@
 					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/temporalidade/listar">Temporalidade
 							Documental</a></li>
+				</c:if>
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;PAINEL:Painel Administrativo')}">
+					<li><a class="dropdown-item"
+						href="/sigaex/app/expediente/painel/exibir">Painel 
+							Administrativo</a></li>
 				</c:if>
 
 			</ul></li>

@@ -111,9 +111,6 @@
 										    	    </div>
 										    </div>
 										</div>
-										<div class="mt-3 text-left" id="isChrome">
-											<p style="color:red"><b>*</b>  Utilize o navegador Google Chrome.</p>	
-										</div>
 									</c:if>
 								</div>
 							</div>
@@ -146,19 +143,12 @@
 			var isOpera = !!navigator.userAgent.match(/OPR/);
 			var isEdge = !!navigator.userAgent.match(/Edge/);
 			var isChrome = !!navigator.userAgent.match(/Chrome/) && !isOpera && !isEdge
-			if(!isChrome && ${siga_cliente eq 'GOVSP'}) {
+			if(!isChrome) {
 		    	$('#msgModal').modal('show');
 			}
 		})
 	</script>
 	<script type="text/javascript">
-	
-	    var x = document.getElementById("isChrome");
-	    if (!!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime)) {
-	       x.style.display = "none";
-	    } else {
-	       x.style.display = "block";
-	    }
 		
 		//$('input, textarea').placeholder();
 		$("#username").focus();

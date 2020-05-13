@@ -24,7 +24,9 @@
 .collapse-header .collapse-toggle.collapsed:after, .card-header .card-toggle.collapsed:after {
     content: "\f0da"; 
 }
-
+.card-header a {
+    text-decoration: none;
+}
 /* Bot�o circular */
 .btn-circle {
     width: 30px;
@@ -81,17 +83,17 @@ p.gt-table-action-list a.link-tag {
 	margin-top: 0.4em;
 }
 .disabled {
-  opacity: 0.6;
-  filter: alpha(opacity=60); /* For IE8 and earlier */
+	opacity: 0.6;
+	filter: alpha(opacity=60); /* For IE8 and earlier */
 }
 .grey-light {
 	background-color: #adb5bd  !important;
 }
 .badge.tagmesa {
-  background-color: transparent;
-  border: solid 1px;
-  border-color: #959faa!important;
-  color: #959faa  !important;
+	background-color: transparent;
+	border: solid 1px;
+	border-color: #959faa!important;
+	color: #959faa  !important;
 }
 .anotacao.tooltip-inner {
   background-color: #ffc107 ;
@@ -139,14 +141,14 @@ p.gt-table-action-list a.link-tag {
 }
 
 .spinner-grow {
-  display: inline-block;
-  width: 2rem;
-  height: 2rem;
-  vertical-align: text-bottom;
-  background-color: currentColor;
-  border-radius: 50%;
-  opacity: 0;
-  animation: spinner-grow .75s linear infinite;
+	display: inline-block;
+	width: 2rem;
+	height: 2rem;
+	vertical-align: text-bottom;
+	background-color: currentColor;
+	border-radius: 50%;
+	opacity: 0;
+	animation: spinner-grow .75s linear infinite;
 }
 .mesa-config {
     position: fixed;
@@ -185,8 +187,8 @@ p.gt-table-action-list a.link-tag {
     padding: 0px 5px;
 }
 .hover-mesa {
-  opacity: 0.8;
-  transition: 0.3s;
+	opacity: 0.8;
+	transition: 0.3s;
 }
 .hover-mesa:hover {
 	opacity: 1;
@@ -211,7 +213,6 @@ p.gt-table-action-list a.link-tag {
     border: none;
 }
 
-
 .btn-outline-success:disabled {
 	cursor: not-allowed;
 }
@@ -219,3 +220,47 @@ p.gt-table-action-list a.link-tag {
 .link-btn {
 	margin-bottom: 0.3em;
 }
+/* box de dashboard com titulo e bordas */
+.d-box {
+	clear: both;
+	margin-bottom: 15px;
+	margin-top: 5px;
+	padding: 0;
+	border: 1px solid #d2d3d4;
+}
+
+.d-box-title {
+	font-size: 1em;
+	background-color: #f0f1f2;
+	/*   color: inherit; */
+	margin-bottom: 0;
+	padding: 10px;
+	min-height: 50px;
+	position: relative;
+	clear: both;
+	border-bottom: 1px solid #d2d3d4;
+	/*   -webkit-border-radius: 3px 3px 0 0; */
+	/*   -moz-border-radius: 3px 3px 0 0; */
+	/*   border-radius: 2px 2px 0 0; */
+}
+.d-box-content {
+	font-size: 0.8em;
+	background-color: #ffffff;
+	padding: 5px;
+}
+.d-box-content .row {
+	margin: 0;
+    padding: 5px 0 5px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+.d-box-col {
+	padding: 0 5px 0 5px !important;
+}
+.d-box-footer {
+	color: inherit;
+	font-size: 90%;
+	background: #ffffff;
+	padding: 10px;
+	border-top: 1px solid #d2d3d4;
+}
+

@@ -341,8 +341,13 @@ public class ExDao extends CpDao {
 			
 			predicateAnd = criteriaBuilder.and(predicateEqualTipoMarcador);
 			criteriaQuery.where(predicateAnd);
-			return em().createQuery(criteriaQuery).getSingleResult();	
 			
+			List<ExProtocolo> l = em().createQuery(criteriaQuery).getResultList(); 
+			if(l.size() > 0) {
+				return l.get(0);
+			} else {
+				return null;
+			}			
 		}
 
 		public List<ExMobil> consultarMobilPorDocumento(ExDocumento doc){
@@ -401,13 +406,23 @@ public class ExDao extends CpDao {
 		 * Fim da adicao
 		 */
 
-		public ExProtocolo obterProtocoloPorDocumento(Long idDoc) throws SQLException {
+		public ExProtocolo obterProtocoloPorDocumento(ExDocumento doc) throws SQLException {
 
-			final Query query = em().createNamedQuery("ExProtocolo.obterProtocoloPorDocumento");
-			query.setParameter("idDoc", idDoc);
-			query.setParameter("rownum", 1L);
+//			final Query query = em().createNamedQuery("ExProtocolo.obterProtocoloPorDocumento");
+//			query.setParameter("idDoc", idDoc);
+//			query.setParameter("rownum", 1L);
 
-			return (ExProtocolo) query.getSingleResult();
+			CriteriaQuery<ExProtocolo> q = cb().createQuery(ExProtocolo.class);
+			Root<ExProtocolo> c = q.from(ExProtocolo.class);
+			q.where(cb().equal(c.get("exDocumento"), doc));
+			q.select(c);
+			List<ExProtocolo> l = em().createQuery(q).getResultList();
+			if(l.size() > 0)
+				return l.get(0);
+			else 
+				return null;
+			
+//			return (ExProtocolo) query.getSingleResult();
 		}
 
 	public List consultarPorFiltro(final ExMobilDaoFiltro flt) {

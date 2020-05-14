@@ -103,7 +103,7 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "					or (:titular!=null and :titular!=0 and doc.destinatario in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
 				+ "					or (:lotaTitular!=null and :lotaTitular!=0 and doc.destinatario = null and doc.lotaDestinatario in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
 				+ "					or (:lotaTitular!=null and :lotaTitular!=0 and label.dpLotacaoIni in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
-				+ "					or (:titular!=null and :titular!=0 and label.dpPessoaIni in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
+				+ "					or (:titular!=null and :titular!=0 and label.dpPessoaIni.idPessoa in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
 				+ "				)"
 				+ "			)"
 				+ "			"
@@ -154,7 +154,7 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "						or (:titular!=null and :titular!=0 and doc.destinatario in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
 				+ "						or (:lotaTitular!=null and :lotaTitular!=0 and doc.destinatario = null and doc.lotaDestinatario in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
 				+ "						or (:lotaTitular!=null and :lotaTitular!=0 and label.dpLotacaoIni in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
-				+ "						or (:titular!=null and :titular!=0 and label.dpPessoaIni in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
+				+ "						or (:titular!=null and :titular!=0 and label.dpPessoaIni.idPessoa in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
 				+ "					)"
 				+ "				)"
 				+ "				"
@@ -203,10 +203,10 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"),
 		@NamedQuery(name = "listarDocPendenteAssinatura", query = "select doc "
 				+ "			from ExDocumento doc where doc.idDoc in (select distinct(exDocumento.idDoc) from ExMobil mob where mob.idMobil in "
-				+ "			(select exMobil.idMobil from ExMarca label where label.cpMarcador.idMarcador = 25 and label.dpPessoaIni=:idPessoaIni)) order by doc.dtDoc desc"),
+				+ "			(select exMobil.idMobil from ExMarca label where label.cpMarcador.idMarcador = 25 and label.dpPessoaIni.idPessoa = :idPessoaIni)) order by doc.dtDoc desc"),
 		@NamedQuery(name = "listarDocPendenteAssinaturaERevisado", query = "select doc "
 				+ "			from ExDocumento doc where doc.idDoc in (select distinct(exDocumento.idDoc) from ExMobil mob where mob.idMobil in "
-				+ "			(select exMobil.idMobil from ExMarca label where label.cpMarcador.idMarcador = 71 and label.dpPessoaIni=:idPessoaIni)) order by doc.dtDoc desc"),
+				+ "			(select exMobil.idMobil from ExMarca label where label.cpMarcador.idMarcador = 71 and label.dpPessoaIni.idPessoa = :idPessoaIni)) order by doc.dtDoc desc"),
 		@NamedQuery(name = "consultarExDocumentoClassificados", query = "select doc from ExDocumento doc left join fetch doc.exClassificacao"
 				+ "		where doc.exClassificacao.codificacao like :mascara"
 				+ "		and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario"

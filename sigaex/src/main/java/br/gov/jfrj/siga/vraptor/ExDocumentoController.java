@@ -1940,7 +1940,7 @@ public class ExDocumentoController extends ExController {
 		result.include("titularSel", new DpPessoaSelecao());
 		result.include("descrMov", exDocumentoDto.getDescrMov());
 		result.include("doc", exDocumentoDto.getDoc());
-	
+		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
 	
 	@Get("/app/expediente/doc/gerarProtocolo")

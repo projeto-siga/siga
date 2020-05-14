@@ -22,7 +22,7 @@
  * To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-package br.gov.jfrj.siga.vraptor;
+package br.gov.jfrj.siga.vraptor; 
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -34,20 +34,21 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 
 import br.com.caelum.vraptor.Consumes;
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.interceptor.download.Download;
-import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
-import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+import br.com.caelum.vraptor.observer.download.Download;
+import br.com.caelum.vraptor.observer.download.InputStreamDownload;
+import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
@@ -73,19 +74,28 @@ import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.model.Selecionavel;
 
-@Resource
+@Controller
 public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPessoa, DpPessoaDaoFiltro> {
 
 	private Long orgaoUsu;
 	private DpLotacaoSelecao lotacaoSel;
 	private String cpf;
-	public SigaObjects so;
-	
-	public DpPessoaController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
+	//public SigaObjects so;
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public DpPessoaController() {
+		super();
+	}
+
+	@Inject
+	public DpPessoaController(HttpServletRequest request, Result result, CpDao dao,
+			SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);
+
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
-		this.so = so;
+		//this.so = so;
 		setSel(new DpPessoa());
 		setItemPagina(10);
 	}
@@ -109,9 +119,12 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		if (sigla == null) {
 			sigla = "";
 		}
-
+		
+		try {
 		super.aBuscar(sigla, postback);
-
+		} catch (Exception ex) {
+			throw ex;
+		}
 		result.include("param", getRequest().getParameterMap());
 		result.include("request", getRequest());
 		result.include("itens", getItens());

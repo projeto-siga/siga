@@ -517,7 +517,7 @@
 								<div class="form-group">
 									<div style="display: none;" id="matricula_${idConfiguracaoNova}">
 											<siga:selecao tipo="pessoa" tema="simple"
-												propriedade="matricula_${idConfiguracaoNova}"modulo="siga"/>
+												propriedade="matricula_${idConfiguracaoNova}" modulo="siga"/>
 									</div>
 									<div style="display: none;" id="lotacao_${idConfiguracaoNova}">
 										<siga:selecao tipo="lotacao" tema="simple"

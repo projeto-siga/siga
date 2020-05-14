@@ -39,13 +39,13 @@ public class SigaMessages {
 			if (SigaBaseProperties.getString("siga.local") != null) {
 	    		messages += "_" + SigaBaseProperties.getString("siga.local");
 	    	} else {
-	    		messages += "_TRF2";
+	    		messages += "_SIGA";
 	    	}
 		}
 		return messages;
 	}
 	
-	public static ResourceBundle getBundle() {
+	private static ResourceBundle getBundle() {
 		return ResourceBundle.getBundle(getLocalizationContext());
     }
 

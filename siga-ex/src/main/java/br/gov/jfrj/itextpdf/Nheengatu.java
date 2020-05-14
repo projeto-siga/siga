@@ -23,10 +23,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
-import br.gov.jfrj.siga.base.Texto;
-
 import com.aryjr.nheengatu.pdf.HTML2PDFParser;
 import com.aryjr.nheengatu.pdf.PDFDocument;
+
+import br.gov.jfrj.siga.base.Texto;
 
 public class Nheengatu implements ConversorHtml {
 

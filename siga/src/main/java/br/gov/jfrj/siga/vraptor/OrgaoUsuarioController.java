@@ -5,12 +5,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
@@ -21,9 +22,18 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.CpOrgaoUsuarioDaoFiltro;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 
-@Resource
+@Controller
 public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<CpOrgaoUsuario, DaoFiltroSelecionavel>{
 
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public OrgaoUsuarioController() {
+		super();
+	}
+
+	@Inject
 	public OrgaoUsuarioController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 		// TODO Auto-generated constructor stub
@@ -173,7 +183,6 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 			dao().gravar(orgaoUsuario);
 			dao().gravar(contrato);
 			dao().commitTransacao();
-			dao().getSessao().flush();
 		} catch (final Exception e) {
 			dao().rollbackTransacao();
 			throw new AplicacaoException("Erro na gravação", 0, e);

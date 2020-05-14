@@ -21,7 +21,7 @@
 					</div>
 					<div class="card-body">
 		
-						<form action="${request.contextPath}/public/app/autenticar"	method="GET" class="form">
+						<form action="${request.contextPath}/public/app/autenticar"	method="get" class="form">
 							<div class="row">
 								<div class="col">
 									<div class="form-group">

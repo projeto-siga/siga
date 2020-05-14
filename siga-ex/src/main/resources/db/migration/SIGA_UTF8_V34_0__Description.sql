@@ -16,7 +16,7 @@ insert into siga.ex_classificacao (
   his_ativo, 
   codificacao 
 ) select 
-  (ex_classificacao_seq.nextval) id_classificacao,
+  (siga.ex_classificacao_seq.nextval) id_classificacao,
   c.descr_classificacao, 
   c.obs, 
   c.his_id_ini, 
@@ -26,7 +26,7 @@ insert into siga.ex_classificacao (
   null, 
   1, 
   c.codificacao 
-from siga.ex_classificacao c inner join ex_via v on c.id_classificacao = v.id_classificacao
+from siga.ex_classificacao c inner join siga.ex_via v on c.id_classificacao = v.id_classificacao
 where c.id_classificacao in (
   select distinct(c2.id_classificacao)
   from siga.ex_classificacao c2 inner join siga.ex_via v2 on c2.id_classificacao = v2.id_classificacao

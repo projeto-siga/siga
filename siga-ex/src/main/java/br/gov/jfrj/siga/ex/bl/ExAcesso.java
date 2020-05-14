@@ -1,7 +1,5 @@
 package br.gov.jfrj.siga.ex.bl;
 
-import static br.gov.jfrj.siga.ex.ExMobil.isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -245,175 +243,121 @@ public class ExAcesso {
 		if (doc == null)
 			return acessos;
 
-		List<ExMovimentacao> listaMov = new ArrayList<ExMovimentacao>();
-		
-		if (isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso()) 									
-			listaMov = doc.getListaMovimentacaoPorRestricaoAcesso();
-		else
-			listaMov.addAll(doc.getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO));
-		
-		if(listaMov.isEmpty()) {
-			// Aberto
-			if (doc.isPendenteDeAssinatura()) {
-				switch (doc.getExNivelAcesso().getGrauNivelAcesso()) {
-				case (int) ExNivelAcesso.NIVEL_ACESSO_PESSOAL:
-				case (int) ExNivelAcesso.NIVEL_ACESSO_PESSOA_SUB:
-					add(doc.getCadastrante());
-					break;
-				default:
-					add(doc.getLotaCadastrante());
-				}
-				add(doc.getSubscritor());
-				add(doc.getTitular());
-				// podeMovimentar(titular, lotaTitular, mob)
-				incluirPerfis(doc);
-				incluirCossignatarios(doc);
-				incluirColaboradores(doc);
-			}
-	
-			// TODO: devemos buscar a data de cancelamento
-	
-			// Cancelado
-			else if (doc.isCancelado()) {
+		// Aberto
+		if (doc.isPendenteDeAssinatura()) {
+			switch (doc.getExNivelAcesso().getGrauNivelAcesso()) {
+			case (int) ExNivelAcesso.NIVEL_ACESSO_PESSOAL:
+			case (int) ExNivelAcesso.NIVEL_ACESSO_PESSOA_SUB:
+				add(doc.getCadastrante());
+				break;
+			default:
 				add(doc.getLotaCadastrante());
-				add(doc.getSubscritor());
-				add(doc.getTitular());
 			}
-	
-			// TODO: devemos buscar a data que ficou sem efeito
-	
-			// Sem Efeito
-			else if (doc.isSemEfeito()) {			
-				add(doc.getSubscritor());			
-			}
-	
-			// Por nivel de acesso
-			else {
-				Set<ExDocumento> documentoESeusPais = doc.getDocumentoETodosOsPaisDasVias();
-	
-				// Calcula os acessos de cada documento individualmente e armazena
-				// no cache
-				for (ExDocumento d : documentoESeusPais) {
-					if (cache.containsKey(d))
-						continue;
-	
-					acessos = new HashSet<Object>();
-	
+			add(doc.getSubscritor());
+			add(doc.getTitular());
+			// podeMovimentar(titular, lotaTitular, mob)
+			incluirPerfis(doc);
+			incluirCossignatarios(doc);
+			incluirColaboradores(doc);
+		}
+
+		// TODO: devemos buscar a data de cancelamento
+
+		// Cancelado
+		else if (doc.isCancelado()) {
+			add(doc.getLotaCadastrante());
+			add(doc.getSubscritor());
+			add(doc.getTitular());
+		}
+
+		// TODO: devemos buscar a data que ficou sem efeito
+
+		// Sem Efeito
+		else if (doc.isSemEfeito()) {			
+			add(doc.getSubscritor());			
+		}
+
+		// Por nivel de acesso
+		else {
+			Set<ExDocumento> documentoESeusPais = doc.getDocumentoETodosOsPaisDasVias();
+
+			// Calcula os acessos de cada documento individualmente e armazena
+			// no cache
+			for (ExDocumento d : documentoESeusPais) {
+				if (cache.containsKey(d))
+					continue;
+
+				acessos = new HashSet<Object>();
+
+				add(d.getSubscritor());
+				add(d.getTitular());
+				incluirPerfis(d);
+				incluirCossignatarios(d);
+
+				// Verifica se o titular é subscritor de algum despacho do
+				// dumento
+				addSubscritorDespacho(d);
+
+				// TODO: buscar a data que foi feita a última movimentação de
+				// mudança de nivel de acesso
+				
+				Date dtDeRedefinicaoDoNivelDeAcesso = d.getDataDeRedefinicaoDoNivelDeAcesso();
+
+				switch (d.getExNivelAcessoAtual().getGrauNivelAcesso().intValue()) {
+				case (int) ExNivelAcesso.NIVEL_ACESSO_PUBLICO:
+					add(ACESSO_PUBLICO);
+					break;
+				case (int) ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS:
+					add(d.getLotaCadastrante().getOrgaoUsuario());
 					add(d.getSubscritor());
 					add(d.getTitular());
-					incluirPerfis(d);
-					incluirCossignatarios(d);
-	
-					// Verifica se o titular é subscritor de algum despacho do
-					// dumento
-					addSubscritorDespacho(d);
-	
-					// TODO: buscar a data que foi feita a última movimentação de
-					// mudança de nivel de acesso
-					
-					Date dtDeRedefinicaoDoNivelDeAcesso = d.getDataDeRedefinicaoDoNivelDeAcesso();
-	
-					switch (d.getExNivelAcessoAtual().getGrauNivelAcesso().intValue()) {
-					case (int) ExNivelAcesso.NIVEL_ACESSO_PUBLICO:
-						add(ACESSO_PUBLICO);
-						break;
-					case (int) ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS:
-						add(d.getLotaCadastrante().getOrgaoUsuario());
-						add(d.getSubscritor());
-						add(d.getTitular());
-						add(d.getDestinatario());
+					add(d.getDestinatario());
+					add(d.getLotaDestinatario());
+					incluirOrgaos(d, dtDeRedefinicaoDoNivelDeAcesso);
+					break;
+				case (int) ExNivelAcesso.NIVEL_ACESSO_PESSOA_SUB:
+					add(d.getSubscritor());
+					add(d.getTitular());
+					add(d.getDestinatario());
+					if (d.getDestinatario() == null)
 						add(d.getLotaDestinatario());
-						incluirOrgaos(d, dtDeRedefinicaoDoNivelDeAcesso);
-						break;
-					case (int) ExNivelAcesso.NIVEL_ACESSO_PESSOA_SUB:
-						add(d.getSubscritor());
-						add(d.getTitular());
-						add(d.getDestinatario());
-						if (d.getDestinatario() == null)
-							add(d.getLotaDestinatario());
-						incluirSubsecretaria(d.getLotaDestinatario());
-						incluirPessoas(d, dtDeRedefinicaoDoNivelDeAcesso);
-						break;
-					case (int) ExNivelAcesso.NIVEL_ACESSO_SUB_PESSOA:
-						add(d.getSubscritor());
-						add(d.getTitular());
-						add(d.getDestinatario());
-						if (d.getDestinatario() == null)
-							add(d.getLotaDestinatario());
-						incluirSubsecretaria(d.getLotaCadastrante());
-						incluirPessoas(d, dtDeRedefinicaoDoNivelDeAcesso);
-						break;
-					case (int) ExNivelAcesso.NIVEL_ACESSO_ENTRE_LOTACOES:
-						add(d.getLotaCadastrante());
-						add(d.getSubscritor());
-						add(d.getTitular());
+					incluirSubsecretaria(d.getLotaDestinatario());
+					incluirPessoas(d, dtDeRedefinicaoDoNivelDeAcesso);
+					break;
+				case (int) ExNivelAcesso.NIVEL_ACESSO_SUB_PESSOA:
+					add(d.getSubscritor());
+					add(d.getTitular());
+					add(d.getDestinatario());
+					if (d.getDestinatario() == null)
 						add(d.getLotaDestinatario());
-						incluirLotacoes(d, dtDeRedefinicaoDoNivelDeAcesso);
-						break;
-					case (int) ExNivelAcesso.NIVEL_ACESSO_PESSOAL:
-						add(d.getCadastrante());
-						add(d.getSubscritor());
-						add(d.getTitular());
-						add(d.getDestinatario());
-						incluirPessoas(d, dtDeRedefinicaoDoNivelDeAcesso);
-						break;
-					}
-					cache.put(d, acessos);
+					incluirSubsecretaria(d.getLotaCadastrante());
+					incluirPessoas(d, dtDeRedefinicaoDoNivelDeAcesso);
+					break;
+				case (int) ExNivelAcesso.NIVEL_ACESSO_ENTRE_LOTACOES:
+					add(d.getLotaCadastrante());
+					add(d.getSubscritor());
+					add(d.getTitular());
+					add(d.getLotaDestinatario());
+					incluirLotacoes(d, dtDeRedefinicaoDoNivelDeAcesso);
+					break;
+				case (int) ExNivelAcesso.NIVEL_ACESSO_PESSOAL:
+					add(d.getCadastrante());
+					add(d.getSubscritor());
+					add(d.getTitular());
+					add(d.getDestinatario());
+					incluirPessoas(d, dtDeRedefinicaoDoNivelDeAcesso);
+					break;
 				}
-	
-				// Combina os acessos de todos os documentos para gerar o resultado
-				acessos = new HashSet<Object>();
-				for (ExDocumento d : documentoESeusPais) {
-	
-					for (Object o : cache.get(d))
-						add(o);
-				}
+				cache.put(d, acessos);
 			}
-		} else {
-			List<ExMovimentacao> listaAcomp =  new ArrayList<ExMovimentacao>();
-			listaAcomp.addAll(doc.getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL));
-			
-			for(ExMobil exMobil : doc.getExMobilSet()) {
-				listaAcomp.addAll(exMobil.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA));
+
+			// Combina os acessos de todos os documentos para gerar o resultado
+			acessos = new HashSet<Object>();
+			for (ExDocumento d : documentoESeusPais) {
+
+				for (Object o : cache.get(d))
+					add(o);
 			}
-			
-			if(doc.getPai() != null) {
-				for (ExMobil exMobil : doc.getPai().getExMobilSet()) {
-					listaAcomp.addAll(exMobil.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA));
-				}				
-			}
-			
-			for (ExMovimentacao exMovimentacao : listaMov) {
-				add(exMovimentacao.getCadastrante());
-								
-				if (isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso()) {
-					add(exMovimentacao.getSubscritor());					
-				} else {					
-					if(exMovimentacao.getSubscritor().equals(doc.getCadastrante())) {
-						add(doc.getCadastrante());
-					}
-					if(exMovimentacao.getSubscritor().equals(doc.getDestinatario())) {
-						add(doc.getDestinatario());
-					}
-					if(exMovimentacao.getSubscritor().equals(doc.getSubscritor())) {
-						add(doc.getSubscritor());
-					}
-					if(exMovimentacao.getSubscritor().equals(doc.getTitular())) {
-						add(doc.getTitular());
-					}
-					
-					for (ExMovimentacao exMovimentacaoAcomp : listaAcomp) {
-						if(exMovimentacao.getSubscritor().equals(exMovimentacaoAcomp.getSubscritor())) {
-							add(exMovimentacao.getSubscritor());
-						}
-						if(exMovimentacao.getSubscritor().equals(exMovimentacaoAcomp.getResp())) {
-							add(exMovimentacao.getSubscritor());
-						}
-					}
-				}				
-				
-			}
-			
 		}
 		return acessos;
 	}

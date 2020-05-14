@@ -4,7 +4,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,9 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.sf.jasperreports.engine.JRException;
-
-import org.hibernate.Query;
+import javax.persistence.Query;
 
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
@@ -30,7 +27,8 @@ import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
+import net.sf.jasperreports.engine.JRException;
 
 	public class RelTempoTramitacaoPorEspecie extends RelatorioTemplate {
  
@@ -103,9 +101,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 				queryUsuario = "and doc.cadastrante.idPessoa in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :usuario) ";
 			}
 			
-			Query query = HibernateUtil
-					.getSessao()
-					.createQuery(
+			Query query = ContextoPersistencia.em().createQuery(
 						"select "
 						+ "mob, "
 						+ "mov, "
@@ -148,49 +144,49 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 						+ "mov.idMov "
 						);
 
-			query.setLong("idTpMov1", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);
-			query.setLong("idTpMov2", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA);
-			query.setLong("idTpMov3", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA);
-			query.setLong("idTpMov4", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA);
-			query.setLong("idTpMov5", ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE);
-			query.setLong("idTpMov6", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE);
-			query.setLong("idTpMov7", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO);			
+			query.setParameter("idTpMov1", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);
+			query.setParameter("idTpMov2", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA);
+			query.setParameter("idTpMov3", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA);
+			query.setParameter("idTpMov4", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA);
+			query.setParameter("idTpMov5", ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE);
+			query.setParameter("idTpMov6", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE);
+			query.setParameter("idTpMov7", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO);			
 			
 			if (parametros.get("especie") != null && parametros.get("especie") != "") {
-				query.setLong("especie", Long.valueOf((String) parametros.get("especie")));
+				query.setParameter("especie", Long.valueOf((String) parametros.get("especie")));
 			}
 			
 			if (parametros.get("orgao") != null && parametros.get("orgao") != "") {
-				query.setLong("orgao", Long.valueOf((String) parametros.get("orgao")));
+				query.setParameter("orgao", Long.valueOf((String) parametros.get("orgao")));
 			}
 			
 			if (parametros.get("lotacao") != null && parametros.get("lotacao") != "") {
-				Query qryLota = HibernateUtil.getSessao().createQuery(
+				Query qryLota = ContextoPersistencia.em().createQuery(
 						"from DpLotacao lot where lot.idLotacao = " + parametros.get("lotacao"));
 				Set<DpLotacao> lotacaoSet = new HashSet<DpLotacao>();
-				DpLotacao lotacao = (DpLotacao)qryLota.list().get(0);
+				DpLotacao lotacao = (DpLotacao)qryLota.getResultList().get(0);
 				lotacaoSet.add(lotacao);
 				query.setParameter("idLotacao",	lotacao.getIdInicial());
 			}
 
 			if (parametros.get("usuario") != null
 					&& parametros.get("usuario") != "") {
-				Query qryPes = HibernateUtil.getSessao().createQuery(
+				Query qryPes = ContextoPersistencia.em().createQuery(
 						"from DpPessoa pes where pes.idPessoa = "
 								+ parametros.get("usuario"));
 				Set<DpPessoa> pessoaSet = new HashSet<DpPessoa>();
-				DpPessoa pessoa = (DpPessoa) qryPes.list().get(0);
+				DpPessoa pessoa = (DpPessoa) qryPes.getResultList().get(0);
 				pessoaSet.add(pessoa);
 				query.setParameter("usuario", pessoa.getIdPessoaIni());
 			}
 
 			Date dtini = formatter.parse((String) parametros.get("dataInicial"));
-			query.setDate("dtini", dtini);
+			query.setParameter("dtini", dtini);
 			Date dtfim = formatter.parse((String) parametros.get("dataFinal"));
 			Date dtfimMaisUm = new Date( dtfim.getTime() + 86400000L );
-			query.setDate("dtfim", dtfimMaisUm);
+			query.setParameter("dtfim", dtfimMaisUm);
 			
-			Iterator it = query.list().iterator();
+			Iterator it = query.getResultList().iterator();
 
 			String idFormaDoc = "";
 			String especie = "";

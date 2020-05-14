@@ -1,8 +1,6 @@
 package br.gov.jfrj.siga.vraptor;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +9,7 @@ import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,12 +17,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.jboss.logging.Logger;
 import org.kxml2.io.KXmlSerializer;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
-import br.com.caelum.vraptor.interceptor.download.Download;
+import br.com.caelum.vraptor.observer.download.ByteArrayDownload;
+import br.com.caelum.vraptor.observer.download.Download;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpModelo;
@@ -39,7 +38,7 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
-@Resource
+@Controller
 public class ExModeloController extends ExSelecionavelController {
 
 	private static final String SUBDIRETORIO = "-subdiretorio-";
@@ -48,6 +47,14 @@ public class ExModeloController extends ExSelecionavelController {
 	private static final Logger LOGGER = Logger
 			.getLogger(ExModeloController.class);
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ExModeloController() {
+		super();
+	}
+
+	@Inject
 	public ExModeloController(HttpServletRequest request, Result result,
 			CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);

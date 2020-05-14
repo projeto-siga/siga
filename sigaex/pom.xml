@@ -227,7 +227,7 @@
 		<dependency>
 			<groupId>br.com.caelum.vraptor</groupId>
 			<artifactId>vraptor-jpa</artifactId>
-			<version>1.0.2</version>
+			<version>4.0.5</version>
 			<exclusions>
 				<exclusion>  <!-- declare the exclusion here -->
 					<groupId>org.eclipse.persistence</groupId>
@@ -241,6 +241,12 @@
 			<artifactId>webdav-servlet</artifactId>
 			<version>2.1.0-SNAPSHOT</version>
 		</dependency>
-
+		
+		<dependency>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
 	</dependencies>
 </project>

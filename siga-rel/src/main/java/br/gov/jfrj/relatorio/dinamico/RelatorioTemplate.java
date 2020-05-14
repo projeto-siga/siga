@@ -19,22 +19,21 @@
 package br.gov.jfrj.relatorio.dinamico;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.export.JRHtmlExporter;
-import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
-import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
-import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
 import ar.com.fdvs.dj.domain.builders.ColumnBuilderException;
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import ar.com.fdvs.dj.domain.constants.VerticalAlign;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.export.JRPdfExporter;
+import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
+import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimplePdfExporterConfiguration;
 
 /**
  * USE ESTA CLASSE para a criação de relatórios rápidos.<br>
@@ -275,22 +274,18 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 	}
 
 	public StringBuffer getRelatorioHTML() throws JRException {
-		JRHtmlExporter htmlExp = new JRHtmlExporter();
-
-		htmlExp.setParameter(JRExporterParameter.JASPER_PRINT,
-				relatorio.getRelatorioJasperPrint());
-		StringBuffer sb = new StringBuffer();
-		htmlExp.setParameter(JRHtmlExporterParameter.IMAGES_DIR, new File(
-				RelatorioTemplate.class.getResource("/").getFile()));
-		htmlExp.setParameter(JRHtmlExporterParameter.IMAGES_MAP,
-				new HashMap<String, Object>());
-		htmlExp.setParameter(JRHtmlExporterParameter.IMAGES_URI, "");
-		htmlExp.setParameter(JRHtmlExporterParameter.IS_OUTPUT_IMAGES_TO_DIR,
-				true);
-		htmlExp.setParameter(JRExporterParameter.OUTPUT_STRING_BUFFER, sb);
-
-		htmlExp.exportReport();
-		return sb;
+		
+		JRPdfExporter exporter = new JRPdfExporter();
+		exporter.setExporterInput(new SimpleExporterInput(relatorio.getRelatorioJasperPrint()));
+		
+		/*
+		 * Este metodo foi ajusta com causa de PROBLEMA DE COMPATIBILIDADE COM O JASPER 6.0
+		 */
+		SimplePdfExporterConfiguration configuration = new SimplePdfExporterConfiguration();
+		exporter.setConfiguration(configuration);
+		exporter.exportReport();
+		
+		return new StringBuffer();
 	}
 
 	public byte[]  getRelatorioExcel() throws JRException, IOException {

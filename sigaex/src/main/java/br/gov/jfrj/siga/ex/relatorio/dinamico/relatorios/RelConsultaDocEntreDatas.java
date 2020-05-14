@@ -30,10 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.view.JasperViewer;
-
-import org.hibernate.Query;
+import javax.persistence.Query;
 
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
@@ -47,7 +44,10 @@ import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.view.JasperViewer;
 
 public class RelConsultaDocEntreDatas extends RelatorioTemplate {
 
@@ -130,14 +130,14 @@ public class RelConsultaDocEntreDatas extends RelatorioTemplate {
 		
 		try {
 			ExDao dao = ExDao.getInstance();
-			Query query = dao.getSessao().getNamedQuery("consultarDocumentosFinalizadosEntreDatas");
+			Query query = ContextoPersistencia.em().createNamedQuery("consultarDocumentosFinalizadosEntreDatas");
 			
 			query.setParameter("idTipoDocumento", tipoDoDocumento);
 			query.setParameter("idLotacaoInicial", lotacao.getIdInicial());
 			query.setParameter("dataInicial", dataInicial);
 			query.setParameter("dataFinal", dataFinal);
 			
-			List<ExDocumento> listaDocumentos = query.list();
+			List<ExDocumento> listaDocumentos = query.getResultList();
 
 			for (ExDocumento documento : listaDocumentos) {
 				dados.add(documento.getCodigo());
@@ -156,24 +156,24 @@ public class RelConsultaDocEntreDatas extends RelatorioTemplate {
 		// HibernateUtil.configurarHibernate("/br/gov/jfrj/siga/hibernate/hibernate.cfg.xml");
 
 		ExDao dao = ExDao.getInstance();
-		final Query query = dao.getSessao().getNamedQuery(
+		final Query query = ContextoPersistencia.em().createNamedQuery(
 				"consultarMobilNoPeriodo");
 
 		DpLotacao lot = new DpLotacao();
 		lot.setSigla((String) parametros.get("lotacao"));
-		List<DpLotacao> listaLotacao = dao.consultar(lot, null);
-		query.setLong("idLotacao", new Long(listaLotacao.get(0).getId()));
-		query.setString("dataInicial", (String) parametros.get("dataInicial"));
-		query.setString("dataFinal", (String) parametros.get("dataFinal"));
+		DpLotacao otacao = dao.consultarPorSigla(lot);
+		query.setParameter("idLotacao", new Long(lotacao.getId()));
+		query.setParameter("dataInicial", (String) parametros.get("dataInicial"));
+		query.setParameter("dataFinal", (String) parametros.get("dataFinal"));
 
-		Query qryLotacaoTitular = HibernateUtil.getSessao().createQuery(
+		Query qryLotacaoTitular = ContextoPersistencia.em().createQuery(
 				"from DpLotacao lot " + "where lot.dataFimLotacao is null "
 						+ "and lot.orgaoUsuario = "
 						+ parametros.get("orgaoUsuario")
 						+ " and lot.siglaLotacao = '"
 						+ parametros.get("lotacaoTitular") + "'");
 
-		DpLotacao lotaTitular = (DpLotacao) qryLotacaoTitular.uniqueResult();
+		DpLotacao lotaTitular = (DpLotacao) qryLotacaoTitular.getSingleResult();
 
 		DpPessoa titular = ExDao.getInstance().consultar(
 				new Long((String) parametros.get("idTit")), DpPessoa.class,
@@ -181,7 +181,7 @@ public class RelConsultaDocEntreDatas extends RelatorioTemplate {
 
 		ExMobil mob = null;
 
-		List provResultList = query.list();
+		List provResultList = query.getResultList();
 
 		for (Iterator iterator = provResultList.iterator(); iterator.hasNext();) {
 			BigDecimal idMobil = (BigDecimal) iterator.next();

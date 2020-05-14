@@ -32,7 +32,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.sql.Blob;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -53,15 +52,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.hibernate.Criteria;
 import org.hibernate.ObjectNotFoundException;
-import org.hibernate.Query;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.proxy.HibernateProxy;
 import org.jboss.logging.Logger;
 import org.jdom.Attribute;
@@ -133,7 +128,6 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExProtocolo;
-import br.gov.jfrj.siga.ex.ExSequencia.ExSequenciaEnum;
 import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTemporalidade;
 import br.gov.jfrj.siga.ex.ExTermoEliminacao;
@@ -162,7 +156,6 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.ObjetoBase;
 import br.gov.jfrj.siga.model.Selecionavel;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.parser.SiglaParser;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.Item;
@@ -367,7 +360,7 @@ public class ExBL extends CpBL {
 		Long ini = System.currentTimeMillis();
 		List<ExDocumento> list = new ArrayList<ExDocumento>();
 
-		Query query = dao().getSessao()
+		Query query = dao().em()
 				.createQuery("select distinct(doc.idDoc) from ExMarca mar " + "inner join mar.exMobil mob "
 						+ "inner join mob.exDocumento doc " + "where mar.cpMarcador.idMarcador = 6"
 						+ "and mob.exTipoMobil.idTipoMobil = 4 " + (primeiro > 0 ? "and doc.idDoc > " + primeiro : "")
@@ -375,7 +368,8 @@ public class ExBL extends CpBL {
 
 		int index = 0;
 
-		List<Long> ids = query.list();
+		List<Long> ids = dao().arquivamentosEmVolumes(primeiro, ultimo);
+
 
 		for (Long id : ids) {
 			index++;
@@ -393,10 +387,7 @@ public class ExBL extends CpBL {
 				else if (efetivar)
 					Ex.getInstance().getBL().arquivarCorrente(pess, lota, doc.getMobilGeral(), mov.getDtIniMov(), null,
 							pess, false);
-				// if (index % 10 == 0){
-				dao().getSessao().clear();
-				// System.gc();
-				// }
+				dao().em().clear();
 			} catch (Throwable e) {
 				e.printStackTrace();
 			}
@@ -463,27 +454,19 @@ public class ExBL extends CpBL {
 		return numeroDePaginas;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void numerarTudo(int aPartirDe) {
 		List<ExDocumento> list = new ArrayList<ExDocumento>();
-
-		final Criteria countCrit = dao().getSessao().createCriteria(ExDocumento.class)
-				.add(Restrictions.gt("idDoc", new Long(aPartirDe)));
-		countCrit.setProjection(Projections.rowCount());
-		Integer totalDocs = ((Long) countCrit.uniqueResult()).intValue();
-
-		final Criteria crit = dao().getSessao().createCriteria(ExDocumento.class)
-				.add(Restrictions.gt("idDoc", new Long(aPartirDe)));
-		crit.setMaxResults(60);
-		crit.addOrder(Order.asc("idDoc"));
-
 		int index = 0;
 
 		do {
 			long inicio = System.currentTimeMillis();
 			// System.gc();
-			iniciarAlteracao();
-			crit.setFirstResult(index);
-			list = crit.list();
+			// iniciarAlteracao();
+			Query q = dao().em().createQuery("select d from ExDocumento d where d.idDoc : idDoc order by d.idDoc asc");
+			dao().em().getTransaction().begin();
+			list =  q.setFirstResult(index).setMaxResults(60).getResultList();
+			q.setParameter("idDoc", new Long(aPartirDe));
 			for (ExDocumento doc : list) {
 				index++;
 				try {
@@ -500,12 +483,12 @@ public class ExBL extends CpBL {
 				}
 				System.out.print(doc.getIdDoc() + " ok - ");
 			}
-			ExDao.commitTransacao();
-			dao().getSessao().clear();
+			dao().em().getTransaction().commit();
+			dao().em().clear();
 			long duracao = System.currentTimeMillis() - inicio;
 			System.out.println();
 			System.out.println(new SimpleDateFormat("HH:mm:ss").format(new Date()) + " " + String.valueOf(index)
-					+ " numerados de " + totalDocs);
+					+ " numerados");
 		} while (list.size() > 0);
 
 		// System.gc();
@@ -519,22 +502,13 @@ public class ExBL extends CpBL {
 		marcarTudo(aPartirDe, 0, true, true, new PrintWriter(System.out));
 	}
 
+	@SuppressWarnings("unchecked")
 	public void marcarTudo(int primeiro, int ultimo, boolean efetivar, boolean apenasTemporalidade, PrintWriter out) {
-
-		List<ExDocumento> list = new ArrayList<ExDocumento>();
-
-		final Criteria countCrit = dao().getSessao().createCriteria(ExDocumento.class)
-				.add(Restrictions.ge("idDoc", new Long(primeiro)));
-		if (ultimo != 0)
-			countCrit.add(Restrictions.le("idDoc", new Long(ultimo)));
-		countCrit.setProjection(Projections.rowCount());
-
-		final Criteria crit = dao().getSessao().createCriteria(ExDocumento.class)
-				.add(Restrictions.ge("idDoc", new Long(primeiro)));
-		if (ultimo != 0)
-			crit.add(Restrictions.le("idDoc", new Long(ultimo)));
-		crit.setMaxResults(5);
-		crit.addOrder(Order.asc("idDoc"));
+		Query query = dao().em()
+				.createQuery("select d from ExDocumento d "
+						+ "where d.idDoc >= :primeiro and  d.idDoc <= :ultimo  order by d.idDoc asc");
+		query.setParameter("primeiro", new Long(primeiro));
+		query.setParameter("ultimo", new Long(ultimo));
 
 		out.println("-----------------------------------------------");
 		out.print(new SimpleDateFormat("HH:mm:ss").format(new Date()));
@@ -551,12 +525,13 @@ public class ExBL extends CpBL {
 
 		int index = 0;
 
+		List<ExDocumento> list;
 		do {
 			long inicio = System.currentTimeMillis();
 			if (efetivar)
-				iniciarAlteracao();
-			crit.setFirstResult(index);
-			list = crit.list();
+				dao().em().getTransaction().begin();
+
+			list = query.setFirstResult(index).setMaxResults(5).getResultList();
 			for (ExDocumento doc : list) {
 				index++;
 				StringBuilder msg = new StringBuilder();
@@ -601,10 +576,10 @@ public class ExBL extends CpBL {
 
 			}
 			if (efetivar) {
-				ExDao.commitTransacao();
+				dao().em().getTransaction().commit();
 				// System.gc();
 			}
-			dao().getSessao().clear();
+			dao().em().clear();
 		} while (list.size() > 0);
 
 		out.println("\n-----------------------------------------------");
@@ -1854,6 +1829,8 @@ public class ExBL extends CpBL {
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
+			log.error(e.getMessage(), e);
+			e.printStackTrace();
 			throw new AplicacaoException("Erro ao registrar assinatura.", 0, e);
 		}
 
@@ -2986,8 +2963,6 @@ public class ExBL extends CpBL {
 			doc.setNumPaginas(doc.getContarNumeroDePaginas());
 			dao().gravar(doc);
 
-			ContextoPersistencia.flush();
-
 			if (doc.getExFormaDocumento().getExTipoFormaDoc().isExpediente()) {
 				for (final ExVia via : setVias) {
 					Integer numVia = null;
@@ -3395,13 +3370,14 @@ public class ExBL extends CpBL {
 
 			// a estrutura try catch abaixo foi colocada de modo a impedir que
 			// os erros na formatação impeçam a gravação do documento
-			try {
+			//try {
 				processar(doc, false, false);
-			} catch (Throwable t) {
-				System.out.println("gravação doc " + doc.getCodigo() + ", " + new Date().toString()
-						+ " - erro na formatação - " + t.getMessage());
-				t.printStackTrace();
-			}
+			//} catch (Throwable t) {
+			//	System.out.println("gravação doc " + doc.getCodigo() + ", "
+			//			+ new Date().toString() + " - erro na formatação - "
+			//			+ t.getMessage());
+			//	t.printStackTrace();
+			//}
 
 			// System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
 			// + ", PESSOA " + doc.getCadastrante().getIdPessoa()
@@ -4036,11 +4012,6 @@ public class ExBL extends CpBL {
 
 		final ExMovimentacao mov;
 
-		Boolean podeRestringir = Boolean.FALSE;
-		if (Ex.getInstance().getComp().podeRestrigirAcesso(cadastrante, lotaCadastrante, mob)) {
-			podeRestringir = Boolean.TRUE;
-		}
-
 		try {
 			iniciarAlteracao();
 
@@ -4079,10 +4050,7 @@ public class ExBL extends CpBL {
 			Set<ExMovimentacao> movs = mob.getTransferenciasPendentesDeDevolucao(mob);
 			if (!movs.isEmpty())
 				removerPendenciaDeDevolucao(movs, mob);
-
-			if (podeRestringir) {
-				this.copiarRestringir(mob, mobPai, cadastrante, titular, dtMov);
-			}
+						
 			concluirAlteracaoComRecalculoAcesso(mov.getExMobil());
 
 		} catch (final Exception e) {
@@ -4090,58 +4058,10 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro ao juntar documento.", 0, e);
 		}
 
-	}
+}
 
-	public void copiarRestringir(ExMobil mobFilho, ExMobil mobPai, DpPessoa cadastrante, DpPessoa titular, Date dtMov)
-			throws AplicacaoException, SQLException {
-		List<ExMovimentacao> listFilho = new ArrayList<ExMovimentacao>();
-		listFilho.addAll(mobFilho.getDoc().getMobilGeral()
-				.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO));
-		List<ExMovimentacao> listPai = new ArrayList<ExMovimentacao>();
-		listPai.addAll(mobPai.getDoc().getMobilGeral()
-				.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO));
-		if (!listFilho.isEmpty() || !listPai.isEmpty()) {
-
-			if (listPai.isEmpty()) {
-				ExNivelAcesso exTipoSig = dao().consultar(ExNivelAcesso.ID_LIMITADO_ENTRE_LOTACOES, ExNivelAcesso.class,
-						false);
-				desfazerRestringirAcesso(cadastrante, cadastrante.getLotacao(), mobFilho.getDoc(), null, exTipoSig);
-			} else {
-				ExNivelAcesso exTipoSig = dao().consultar(ExNivelAcesso.ID_LIMITADO_ENTRE_PESSOAS, ExNivelAcesso.class,
-						false);
-				if (!listFilho.isEmpty()) {
-					for (ExMovimentacao exMov : listFilho) {
-						final ExMovimentacao mov1 = criarNovaMovimentacao(
-								ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO, cadastrante,
-								cadastrante.getLotacao(), mobFilho.getDoc().getMobilGeral(), dtMov,
-								exMov.getSubscritor(), null, null, null, dtMov);
-
-						mov1.setDescrMov("Nível de acesso do documento alterado de "
-								+ mobFilho.getDoc().getMobilGeral().getDoc().getExNivelAcessoAtual().getNmNivelAcesso()
-								+ " para " + exTipoSig.getNmNivelAcesso() + ". Restrição de acesso retirada para "
-								+ exMov.getSubscritor().getDescricaoIniciaisMaiusculas());
-
-						exMov.setExMovimentacaoCanceladora(mov1);
-						mov1.setExNivelAcesso(exTipoSig);
-
-						gravarMovimentacao(mov1);
-						gravarMovimentacao(exMov);
-					}
-				}
-				List<DpPessoa> listaSubscritor = new ArrayList<DpPessoa>();
-				for (ExMovimentacao exMovimentacao : listPai) {
-					listaSubscritor.add(exMovimentacao.getSubscritor());
-				}
-
-				restringirAcesso(cadastrante, titular.getLotacao(), mobFilho.getDoc(), null, null, null,
-						listaSubscritor, titular, null, exTipoSig);
-
-			}
-
-		}
-	}
-
-	public ExDocumento refazer(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExDocumento doc) {
+	public ExDocumento refazer(DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, ExDocumento doc) {
 
 		// As alterações devem ser feitas em cancelardocumento.
 		try {
@@ -4157,15 +4077,15 @@ public class ExBL extends CpBL {
 			if (funcao != null) {
 				obterMetodoPorString(funcao, doc);
 			}
-
-			// Gerar movimentação REFAZER para Mobil Pai se existir
-			if (doc.getExMobilPai() != null) {
-				final ExMovimentacao mov = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFAZER,
-						cadastrante, lotaCadastrante, doc.getExMobilPai(), null, null, null, null, null, null);
-				mov.setDescrMov("Documento refeito. <br /> Documento Cancelado: " + doc.getSigla()
-						+ ".<br /> Novo Documento:  " + novoDoc);
-				gravarMovimentacao(mov);
-			}
+			
+			//Gerar movimentação REFAZER para Mobil Pai
+			final ExMovimentacao mov = criarNovaMovimentacao(
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFAZER,
+					cadastrante, lotaCadastrante, doc.getExMobilPai(), null, null, null,
+					null, null, null);
+			mov.setDescrMov("Documento refeito. <br /> Documento Cancelado: " + doc.getSigla() + ".<br /> Novo Documento:  " + novoDoc);
+			
+			gravarMovimentacao(mov);
 
 			concluirAlteracaoDocComRecalculoAcesso(novoDoc);
 			// atualizarWorkflow(doc, null);
@@ -4531,6 +4451,8 @@ public class ExBL extends CpBL {
 				s = processarComandosEmTag(doc, "assinatura");
 		} catch (final Exception e) {
 			cancelarAlteracao();
+			log.error(e.getMessage(), e);
+			e.printStackTrace();
 			throw new AplicacaoException("Erro ao registrar assinatura.", 0, e);
 		}
 		return s;
@@ -4759,18 +4681,6 @@ public class ExBL extends CpBL {
 
 					gravarMovimentacao(mov);
 					concluirAlteracaoParcialComRecalculoAcesso(m);
-
-					List<ExMovimentacao> listaMovimentacao = new ArrayList<ExMovimentacao>();
-					listaMovimentacao.addAll(m.doc().getMobilGeral()
-							.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO));
-					if (!listaMovimentacao.isEmpty()) {
-						List<ExDocumento> listaDocumentos = new ArrayList<ExDocumento>();
-						listaDocumentos.addAll(mob.getDoc().getExDocumentoFilhoSet());
-
-						for (ExDocumento exDocumento : listaDocumentos) {
-							concluirAlteracaoParcialComRecalculoAcesso(exDocumento.getMobilGeral());
-						}
-					}
 				}
 			}
 
@@ -4947,7 +4857,7 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro ao tentar redefinir nível de acesso", 0, e);
 		}
 	}
-
+	
 	public void restringirAcesso(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExDocumento doc,
 			final Date dtMov, DpLotacao lotaResponsavel, final DpPessoa responsavel,
 			final List<DpPessoa> listaSubscritor, final DpPessoa titular, String nmFuncaoSubscritor,
@@ -5035,8 +4945,8 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro ao tentar desfazer restrigir acesso", 0, e);
 		}
 	}
-
-	public void exigirAnexo(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
+	public void exigirAnexo(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final ExMobil mob,
 			final String descrMov) throws AplicacaoException {
 
 		if (mob.doc().getIdDoc() == null)
@@ -5096,8 +5006,10 @@ public class ExBL extends CpBL {
 			if (doc != null && (!doc.isPendenteDeAssinatura() || doc.isAssinadoDigitalmente()))
 				throw new AplicacaoException("O documento não pode ser reprocessado, pois já está assinado");
 
-			if ((doc.getExModelo() != null && ("template/freemarker".equals(doc.getExModelo().getConteudoTpBlob())
-					|| doc.getExModelo().getNmArqMod() != null)) || doc.getExTipoDocumento().getIdTpDoc() == 2) {
+			if ((doc.getExModelo() != null && ("template/freemarker".equals(doc
+					.getExModelo().getConteudoTpBlob()) || doc.getExModelo()
+					.getNmArqMod() != null))
+					|| doc.getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO) {
 				if (doc.getConteudoBlobForm() != null) {
 				}
 				if (gravar && transacao) {
@@ -5209,11 +5121,9 @@ public class ExBL extends CpBL {
 				mapFromUrlEncodedForm(attrs, form);
 			}
 		}
-
 		if (acao != null)
 			attrs.put(acao, "1");
 		attrs.put("doc", doc);
-
 		// rw.setAttribute("modelo", doc.getExModelo());
 		if (mov == null) {
 			if (doc.getExModelo() != null) {
@@ -5487,6 +5397,7 @@ public class ExBL extends CpBL {
 			String cpf, String json) {
 		try {
 			String timestampUrl = Cp.getInstance().getProp().timestampUrl();
+			log.warn("URL_TIMESTAMP " + timestampUrl);
 			if (timestampUrl == null)
 				return;
 			TimestampPostRequest req = new TimestampPostRequest();
@@ -5506,6 +5417,7 @@ public class ExBL extends CpBL {
 				throw new RuntimeException("Carimbo de tempo para a assinatura com senha indisponível");
 			mov.setAuditHash(resp.getResp().jwt);
 		} catch (Exception e) {
+			log.error(e.getMessage(), e);
 			throw new RuntimeException("Erro obtendo o carimbo de tempo para a assinatura com senha", e);
 		}
 	}
@@ -6089,7 +6001,7 @@ public class ExBL extends CpBL {
 			final Date dtMov) throws AplicacaoException, Exception {
 
 		if (mob.doc().isEletronico()) {
-			dao().getSessao().refresh(mob);
+			dao().em().refresh(mob);
 			// Verifica se é Processo e conta o número de páginas para verificar
 			// se tem que encerrar o volume
 			if (mob.doc().isProcesso()) {
@@ -6261,6 +6173,10 @@ public class ExBL extends CpBL {
 				List<ExMovimentacao> movsCanceladas = mob.getMovimentacoesCanceladas();
 
 				for (ExMovimentacao movARecuperar : movsCanceladas) {
+					
+					if (movARecuperar.isCanceladora())
+						continue;
+					
 					ExMovimentacao movCanceladora = movARecuperar.getExMovimentacaoCanceladora();
 
 					movARecuperar.setExMovimentacaoCanceladora(null);
@@ -6715,21 +6631,22 @@ public class ExBL extends CpBL {
 		return list;
 	}
 
-	private static class BlobSerializer implements JsonSerializer<java.sql.Blob>, JsonDeserializer<java.sql.Blob> {
-		public JsonElement serialize(java.sql.Blob src, Type srcType, JsonSerializationContext context) {
+	private static class ByteArraySerializer implements
+			JsonSerializer<byte[]>, JsonDeserializer<byte[]> {
+		public JsonElement serialize(byte[] src, Type srcType,
+				JsonSerializationContext context) {
 			String s = null;
-			byte ab[] = br.gov.jfrj.siga.cp.util.Blob.toByteArray(src);
-			if (ab != null)
-				s = BlucService.bytearray2b64(ab);
+			if (src != null)
+				s = BlucService.bytearray2b64(src);
 			return new JsonPrimitive(s);
 		}
 
-		public Blob deserialize(JsonElement json, Type type, JsonDeserializationContext context)
-				throws JsonParseException {
+		public byte[] deserialize(JsonElement json, Type type,
+				JsonDeserializationContext context) throws JsonParseException {
 			String s = json.getAsString();
 			if (s != null) {
 				byte ab[] = BlucService.b642bytearray(s);
-				return HibernateUtil.getSessao().getLobHelper().createBlob(ab);
+				return ab;
 			}
 			return null;
 		}
@@ -6882,7 +6799,8 @@ public class ExBL extends CpBL {
 
 		ObjetoBaseSerializer hps = new ObjetoBaseSerializer();
 
-		Gson gson = new GsonBuilder().registerTypeAdapter(java.sql.Blob.class, new BlobSerializer())
+		Gson gson = new GsonBuilder()
+				.registerTypeAdapter(java.sql.Blob.class, new ByteArraySerializer())
 				// .registerTypeAdapter(ObjetoBase.class, hps)
 				.setPrettyPrinting().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
 		hps.setGson(gson);
@@ -6890,7 +6808,7 @@ public class ExBL extends CpBL {
 		String jsonOutput = gson.toJson(mob);
 
 		// Importante para que as alterações do "prune" não sejam salvas no BD.
-		dao().getSessao().clear();
+		dao().em().clear();
 
 		return jsonOutput;
 	}
@@ -7022,7 +6940,7 @@ public class ExBL extends CpBL {
 	
 	public ExProtocolo obterProtocolo(ExDocumento doc) {
 		try {
-			return dao().obterProtocoloPorDocumento(doc.getIdDoc());
+			return dao().obterProtocoloPorDocumento(doc);
 		} catch (Exception e) {
 			throw new AplicacaoException("Ocorreu um erro ao obter protocolo.", 0, e);
 		}

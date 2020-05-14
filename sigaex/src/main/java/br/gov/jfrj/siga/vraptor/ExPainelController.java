@@ -22,30 +22,35 @@
  */
 package br.gov.jfrj.siga.vraptor;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
-import br.gov.jfrj.siga.ex.vo.ExAcaoVO;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
-import br.gov.jfrj.siga.ex.vo.ExMobilVO;
-import br.gov.jfrj.siga.ex.vo.ExMovimentacaoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
-@Resource
+@Controller
 public class ExPainelController extends ExController {
 	private static final String ACESSO_PAINEL = "PAINEL:Painel Administrativo";
+	
+	/**
+     * @deprecated CDI eyes only
+     */
+	public ExPainelController() {
+		super();
+	}
 
+	@Inject
 	public ExPainelController(HttpServletRequest request,
 			HttpServletResponse response, ServletContext context,
 			Result result, SigaObjects so, EntityManager em) {

@@ -116,8 +116,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	public byte[] getConteudoBlobMov2() {
 
 		if (cacheConteudoBlobMov == null)
-			cacheConteudoBlobMov = br.gov.jfrj.siga.cp.util.Blob
-					.toByteArray(getConteudoBlobMov());
+			cacheConteudoBlobMov = getConteudoBlobMov();
 		return cacheConteudoBlobMov;
 
 	}
@@ -160,8 +159,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 
 	public void setConteudoBlobMov2(byte[] blob) {
 		if (blob != null)
-			setConteudoBlobMov(HibernateUtil.getSessao().getLobHelper()
-					.createBlob(blob));
+			setConteudoBlobMov(blob);
 		cacheConteudoBlobMov = blob;
 	}
 

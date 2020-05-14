@@ -1,7 +1,6 @@
 	package br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios;
 
 	import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,18 +11,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.sf.jasperreports.engine.JRException;
+import javax.persistence.Query;
 
-	import org.hibernate.Query;
-
-	import ar.com.fdvs.dj.domain.builders.DJBuilderException;
+import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import net.sf.jasperreports.engine.JRException;
 
 	public class RelVolumeTramitacao extends RelatorioTemplate {
 
@@ -78,9 +77,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 				queryUsuario = "and mov.cadastrante.idPessoaIni in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :usuario) ";
 			}
 			
-			Query query = HibernateUtil
-					.getSessao()
-					.createQuery(
+			Query query = ContextoPersistencia.em().createQuery(
 							"select "
 									+ "doc.exModelo.nmMod, "
 									+ "count(doc.idDoc) "
@@ -96,17 +93,17 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 									+ "order by count(doc.idDoc) desc "
 									);
 
-			query.setLong("idTpMov", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);
+			query.setParameter("idTpMov", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);
 			if (parametros.get("orgao") != null && parametros.get("orgao") != "") {
-				query.setLong("orgao", Long.valueOf((String) parametros.get("orgao")));
+				query.setParameter("orgao", Long.valueOf((String) parametros.get("orgao")));
 			}
 			
 			if (parametros.get("lotacao") != null && parametros.get("lotacao") != "") {
-				Query qryLota = HibernateUtil.getSessao().createQuery(
+				Query qryLota = ContextoPersistencia.em().createQuery(
 						"from DpLotacao lot where lot.idLotacao = " + parametros.get("lotacao"));
 							
 				Set<DpLotacao> lotacaoSet = new HashSet<DpLotacao>();
-				DpLotacao lotacao = (DpLotacao)qryLota.list().get(0);
+				DpLotacao lotacao = (DpLotacao)qryLota.getResultList().get(0);
 				lotacaoSet.add(lotacao);
 				
 				query.setParameter("lotacao",
@@ -114,11 +111,11 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 			}
 
 			if (parametros.get("usuario") != null && parametros.get("usuario") != "") {
-				Query qryPes = HibernateUtil.getSessao().createQuery(
+				Query qryPes = ContextoPersistencia.em().createQuery(
 						"from DpPessoa pes where pes.idPessoa = " + parametros.get("usuario"));
 							
 				Set<DpPessoa> pessoaSet = new HashSet<DpPessoa>();
-				DpPessoa pessoa = (DpPessoa)qryPes.list().get(0);
+				DpPessoa pessoa = (DpPessoa)qryPes.getResultList().get(0);
 				pessoaSet.add(pessoa);
 				
 				query.setParameter("usuario",
@@ -126,12 +123,12 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 			}
 
 			Date dtini = formatter.parse((String) parametros.get("dataInicial"));
-			query.setDate("dtini", dtini);
+			query.setParameter("dtini", dtini);
 			Date dtfim = formatter.parse((String) parametros.get("dataFinal"));
-			query.setDate("dtfim", dtfim);
+			query.setParameter("dtfim", dtfim);
 			query.setMaxResults(5);
 
-			Iterator it = query.list().iterator();
+			Iterator it = query.getResultList().iterator();
 			while (it.hasNext()) {
 				Object[] obj = (Object[]) it.next();
 				String modeloDoc = (String) obj[0];

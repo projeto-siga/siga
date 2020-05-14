@@ -14,8 +14,8 @@
 	<artifactId>siga</artifactId>
 
 	<properties>
-		<maven.compiler.source>1.7</maven.compiler.source>
-		<maven.compiler.target>1.7</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.build.timestamp.format>dd/MM/yyyy HH:mm</maven.build.timestamp.format>
 	</properties>
@@ -178,6 +178,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-client</artifactId>
+			<version>1.9.1</version>
+		</dependency>
+
+		<dependency>
 			<groupId>siga</groupId>
 			<artifactId>siga-cp</artifactId>
 			<exclusions>
@@ -224,7 +230,7 @@
 		<dependency>
 			<groupId>br.com.caelum.vraptor</groupId>
 			<artifactId>vraptor-jpa</artifactId>
-			<version>1.0.2</version>
+			<version>4.0.5</version>
 			<exclusions>
 				<exclusion>  <!-- declare the exclusion here -->
 					<groupId>org.eclipse.persistence</groupId>
@@ -237,12 +243,12 @@
 			<groupId>org.eclipse.birt.runtime.3_7_1</groupId>
 			<artifactId>Tidy</artifactId>
 		</dependency>
-		
+
+		<!-- https://mvnrepository.com/artifact/javax.enterprise/cdi-api -->
 		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-			<version>4.2.0.Final</version>
-			<scope>test</scope>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>

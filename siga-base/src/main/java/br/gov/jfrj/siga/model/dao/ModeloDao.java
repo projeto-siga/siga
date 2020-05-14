@@ -27,16 +27,18 @@ package br.gov.jfrj.siga.model.dao;
 import java.io.Serializable;
 import java.util.List;
 
-import org.hibernate.Criteria;
-import org.hibernate.LockMode;
-import org.hibernate.Session;
-import org.hibernate.StatelessSession;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Example;
-import org.hibernate.criterion.Order;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 public abstract class ModeloDao {
 
@@ -50,14 +52,7 @@ public abstract class ModeloDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected static <T extends ModeloDao> T getInstance(Class<T> clazz,
-			Session sessao) {
-		return getInstance(clazz, sessao, null);
-	}
-
-	@SuppressWarnings("unchecked")
-	protected static <T extends ModeloDao> T getInstance(Class<T> clazz,
-			Session sessao, StatelessSession sessaoStateless) {
+	protected static <T extends ModeloDao> T getInstance(Class<T> clazz) {
 		T dao = null;
 
 		try {
@@ -79,10 +74,6 @@ public abstract class ModeloDao {
 		return dao;
 	}
 
-	protected static <T extends ModeloDao> T getInstance(Class<T> clazz) {
-		return getInstance(clazz, null);
-	}
-
 	public synchronized static void freeInstance() {
 		final ModeloDao dao = ModeloDao.threadDao.get();
 
@@ -93,71 +84,35 @@ public abstract class ModeloDao {
 	}
 
 	@SuppressWarnings({ "unchecked", "deprecation" })
-	public <T> T consultar(final Serializable id, Class<T> clazz,
-			final boolean lock) {
+	public <T> T consultar(final Serializable id, Class<T> clazz, final boolean lock) {
 
 		if (id == null) {
-			log.warn("[aConsultar] - O ID recebido para efetuar a consulta é nulo. ID: "
-					+ id);
-			throw new IllegalArgumentException(
-					"O identificador do objeto é nulo ou inválido.");
+			log.warn("[aConsultar] - O ID recebido para efetuar a consulta é nulo. ID: " + id);
+			throw new IllegalArgumentException("O identificador do objeto é nulo ou inválido.");
 		}
 		T entidade;
-		if (lock)
-			entidade = (T) getSessao().load(clazz, id, LockMode.UPGRADE);
-		else
-			entidade = (T) getSessao().load(clazz, id);
-
+		entidade = (T) em().find(clazz, id);
 		return entidade;
 
 	}
 
-	@SuppressWarnings("unchecked")
-	public <T> List<T> consultar(final T exemplo, final String[] excluir) {
-		final Criteria crit = getSessao().createCriteria(exemplo.getClass());
-		final Example example = Example.create(exemplo);
-		if (excluir != null) {
-			for (final String exclude : excluir) {
-				example.excludeProperty(exclude);
-			}
-		}
-		crit.add(example);
-		if (getCacheRegion() != null) {
-			crit.setCacheable(true);
-			crit.setCacheRegion(getCacheRegion());
-		}
-		return crit.list();
+	public void excluir(final Object entidade) {
+		if (em() != null)
+			em().remove(entidade);
 	}
 
-	public void excluir(final Object entidade) {
-//		EntityManager em = ContextoPersistencia.em();
-//		if (em != null)
-//			em.remove(entidade);
-//		else
-		getSessao().delete(entidade);
+	public EntityManager em() {
+		return ContextoPersistencia.em();
 	}
 
 	public void descarregar() {
-//		EntityManager em = ContextoPersistencia.em();
-//		if (em != null)
-//			em.flush();
-//		else
-		getSessao().flush();
-	}
-
-	/**
-	 * @return Retorna o atributo sessao.
-	 */
-	public Session getSessao() {
-		return HibernateUtil.getSessao();
+		if (em() != null)
+			em().flush();
 	}
 
 	public <T> T gravar(final T entidade) {
-//		EntityManager em = ContextoPersistencia.em();
-//		if (em != null)
-//			em.persist(entidade);
-//		else
-		getSessao().saveOrUpdate(entidade);
+		if (em() != null)
+			em().persist(entidade);
 		return entidade;
 	}
 
@@ -174,49 +129,46 @@ public abstract class ModeloDao {
 	 */
 
 	@SuppressWarnings("unchecked")
-	protected <T> List<T> findByCriteria(Class<T> clazz, Criterion... criterion) {
-		return findByCriteria(clazz, criterion, null);
+	protected <T> List<T> findByCriteria(Class<T> clazz) {
+		return findAndCacheByCriteria(null, clazz);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <T> List<T> findByCriteria(Class<T> clazz,
-			final Criterion[] criterion, Order[] order) {
-		final Criteria crit = getSessao().createCriteria(clazz);
-		if (criterion != null)
-			for (final Criterion c : criterion) {
-				crit.add(c);
-			}
-		if (order != null)
-			for (final Order o : order) {
-				crit.addOrder(o);
-			}
-		return crit.list();
-	}
+	protected <T> List<T> findAndCacheByCriteria(String cacheRegion, Class<T> clazz) {
+		final CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
+		CriteriaQuery<T> crit = criteriaBuilder.createQuery(clazz);
 
-	@SuppressWarnings("unchecked")
-	protected <T> List<T> findAndCacheByCriteria(String cacheRegion,
-			Class<T> clazz, Criterion... criterion) {
-		return findAndCacheByCriteria(cacheRegion, clazz, criterion, null);
-	}
-
-	@SuppressWarnings("unchecked")
-	protected <T> List<T> findAndCacheByCriteria(String cacheRegion,
-			Class<T> clazz, final Criterion[] criterion, Order[] order) {
-		final Criteria crit = getSessao().createCriteria(clazz);
-		if (criterion != null)
-			for (final Criterion c : criterion) {
-				crit.add(c);
-			}
-		if (order != null)
-			for (final Order o : order) {
-				crit.addOrder(o);
-			}
+		Root<T> root = crit.from(clazz);
+		TypedQuery<T> query = em().createQuery(crit);
 		if (cacheRegion != null) {
-			crit.setCacheable(true);
-			crit.setCacheRegion(cacheRegion);
+			query.setHint("org.hibernate.cacheable", true); 
+			query.setHint("org.hibernate.cacheRegion", cacheRegion);
 		}
-		return crit.list();
+		return query.getResultList();
 	}
+
+//	@SuppressWarnings("unchecked")
+//	protected <T> List<T> findAndCacheByCriteria1(String cacheRegion, Class<T> clazz, final Predicate[] criterion,
+//			Order[] order) {
+//		final CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
+//		CriteriaQuery<T> crit = criteriaBuilder.createQuery(clazz);
+//
+//		Root<T> root = crit.from(clazz);
+////		if (criterion != null)
+////			for (final Predicate c : criterion) {
+////				crit.where(criterion);
+////			}
+////		if (order != null)
+////			for (final Order o : order) {
+////				crit.orderBy(o);
+////			}
+//		TypedQuery<T> query = em().createQuery(crit);
+//		if (cacheRegion != null) {
+//			query.setHint("org.hibernate.cacheable", true); 
+//			query.setHint("org.hibernate.cacheRegion", cacheRegion);
+//		}
+//		return query.getResultList();
+//	}
 
 	public <T> T consultarPorSigla(final T exemplo) {
 		return null;
@@ -243,15 +195,15 @@ public abstract class ModeloDao {
 	 * @return true se a sessão do Hibernate não for nula e estiver aberta.
 	 */
 	public boolean sessaoEstahAberta() {
-		return this.getSessao() != null && this.getSessao().isOpen();
+		EntityManager em = em();
+		return em != null && em.isOpen();
 	}
 
 	/**
 	 * @return true se a transacao da sessão do Hibernate estiver ativa
 	 */
 	public boolean transacaoEstaAtiva() {
-		return this.getSessao() != null && this.getSessao().isOpen()
-				&& this.getSessao().getTransaction() != null
-				&& this.getSessao().getTransaction().isActive();
+		EntityManager em = em();
+		return em != null && em.isOpen() && em.getTransaction() != null && em.getTransaction().isActive();
 	}
 }

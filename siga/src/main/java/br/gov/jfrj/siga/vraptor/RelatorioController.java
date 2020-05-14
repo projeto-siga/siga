@@ -25,16 +25,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
-import net.sf.jasperreports.engine.JRException;
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.interceptor.download.Download;
-import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
+import br.com.caelum.vraptor.observer.download.Download;
+import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpServico;
@@ -47,14 +47,21 @@ import br.gov.jfrj.siga.relatorio.AcessoServicoRelatorio;
 import br.gov.jfrj.siga.relatorio.AlteracaoDireitosRelatorio;
 import br.gov.jfrj.siga.relatorio.HistoricoUsuarioRelatorio;
 import br.gov.jfrj.siga.relatorio.PermissaoUsuarioRelatorio;
+import net.sf.jasperreports.engine.JRException;
 
-@Resource
+@Controller
 public class RelatorioController extends SigaController {
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public RelatorioController() {
+		super();
+	}
+
+	@Inject
 	public RelatorioController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
-		
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
 		
 		setCpServicos(obterServicos());
 		setCpOrgaosUsuario(obterOrgaosUsuario());		

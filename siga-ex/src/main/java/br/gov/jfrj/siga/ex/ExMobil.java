@@ -236,7 +236,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 
 		return false;
 	}
-		
+	
 	/**
 	 * Retorna a descrição do documento relacionado ao Mobil como um link em
 	 * html.
@@ -2189,7 +2189,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		}
 		return transferenciasComData;
 	}
-	
+
 	public Set<ExMovimentacao> getMovsNaoCanceladas(long idTpMov) {
 		return getMovsNaoCanceladas(idTpMov, false);
 	}
@@ -2201,7 +2201,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
 
 		if (getExMovimentacaoSet() == null)
-			return set;			
+			return set;
 
 		for (ExMovimentacao m : getExMovimentacaoSet()) {
 			if (m.getExMovimentacaoCanceladora() != null)
@@ -2226,5 +2226,4 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	public static boolean isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso() {
 		return isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso;
 	}
-	
 }

@@ -22,7 +22,6 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
-import java.sql.Blob;
 import java.util.Date;
 
 import javax.persistence.Basic;
@@ -31,6 +30,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
@@ -89,7 +89,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 				+ "                where mar.cpMarcador.idMarcador=51              "
 				+ "                and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
 				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)"
-				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)" + "                )"),
+				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)"),
 		// Somente os "a recolher para arquivo permanente"
 		@NamedQuery(name = "consultarParaArquivarPermanenteEmLote", query = "select mob, mar from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where mar.cpMarcador.idMarcador=50      "
@@ -101,7 +101,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 				+ "                where mar.cpMarcador.idMarcador=50              "
 				+ "                and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
 				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)"
-				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)" + "                )"),
+				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)"),
 		// Somente os "a eliminar"
 		@NamedQuery(name = "consultarAEliminar", query = "select mob, mar from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where (mar.cpMarcador.idMarcador=7)"
@@ -116,7 +116,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 				+ "                and (:dtIni is null or mob.exDocumento.dtDoc >= :dtIni)"
 				+ "                and (:dtFim is null or mob.exDocumento.dtDoc <= :dtFim)"
 				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)"
-				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)" + "                )"),
+				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)"),
 		// Somente os "em edital de eliminação"
 		@NamedQuery(name = "consultarEmEditalEliminacao", query = "select mob, mar" + "                from ExMobil mob"
 				+ "                join mob.exMarcaSet mar" + "                join mob.exDocumento doc"
@@ -157,10 +157,10 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 				+ "                and (lot.idLotacaoIni=:lotaTitular or 0 = :lotaTitular)" + "                )"),
 		// Voltar todas as movimentacoes realizadas por uma determinada pessoa
 		// em um exato momento. Usado principalmente para gerar segunda-via de
-		// protocolos.
+		// protocolos. 
 		@NamedQuery(name = "consultarMovimentacoes", query = "from ExMovimentacao mov"
 				+ "                where mov.cadastrante.idPessoaIni=:pessoaIni and mov.dtIniMov=to_date(:data, 'DD/MM/YYYY HH24:MI:SS')          "
-				+ "                ) order by mov.dtTimestamp"), 
+				+ "                order by mov.dtTimestamp"), 
 		@NamedQuery(name = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_NAMED_QUERY, query = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_QUERY),
 		@NamedQuery(name = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_NAMED_QUERY, query = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_QUERY),
 })
@@ -295,9 +295,10 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	@JoinColumn(name = "id_cadastrante")
 	private DpPessoa cadastrante;
 
+	@Lob
 	@Column(name = "conteudo_blob_mov")
 	@Basic(fetch = FetchType.LAZY)
-	private Blob conteudoBlobMov;
+	private byte[] conteudoBlobMov;
 
 	@Column(name = "conteudo_tp_mov", length = 128)
 	private String conteudoTpMov;
@@ -487,7 +488,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 		return cadastrante;
 	}
 
-	public Blob getConteudoBlobMov() {
+	public byte[] getConteudoBlobMov() {
 		return conteudoBlobMov;
 	}
 
@@ -563,7 +564,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 		this.cadastrante = cadastrante;
 	}
 
-	public void setConteudoBlobMov(Blob conteudoBlobMov) {
+	public void setConteudoBlobMov(byte[] conteudoBlobMov) {
 		this.conteudoBlobMov = conteudoBlobMov;
 	}
 

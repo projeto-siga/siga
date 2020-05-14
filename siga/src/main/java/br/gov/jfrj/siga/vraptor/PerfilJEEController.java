@@ -21,13 +21,14 @@ package br.gov.jfrj.siga.vraptor;
 import java.text.MessageFormat;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -35,14 +36,20 @@ import br.gov.jfrj.siga.cp.CpTipoGrupo;
 import br.gov.jfrj.siga.cp.model.CpGrupoDeEmailSelecao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
-@Resource
+@Controller
 public class PerfilJEEController extends GrupoController {
 
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public PerfilJEEController() {
+		super();
+	}
+
+	@Inject
 	public PerfilJEEController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
-		
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
 		
 		prepare();
 	}

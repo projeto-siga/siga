@@ -146,10 +146,10 @@ public class ExDocumentoController extends ExController {
 		Ex.getInstance().getBL().atualizarDnmAcesso(builder.getMob().getDoc());
 
 		result.use(Results.http())
-				.body("Acesso: " + builder.getMob().doc().getDnmAcesso()
-						+ "\n Alterado: "
-						+ builder.getMob().doc().getDnmDtAcesso())
-				.setStatusCode(200);
+		.body("Acesso: " + builder.getMob().doc().getDnmAcesso()
+				+ "\n Alterado: "
+				+ builder.getMob().doc().getDnmDtAcesso())
+		.setStatusCode(200);
 	}
 
 	@Get("app/expediente/doc/cancelar_movimentacoes_replicadas")
@@ -171,7 +171,7 @@ public class ExDocumentoController extends ExController {
 
 		if (!movsReplicadas.isEmpty()) {
 			Ex.getInstance().getBL()
-					.cancelarMovimentacoesReplicadas(movsReplicadas);
+			.cancelarMovimentacoesReplicadas(movsReplicadas);
 			Ex.getInstance().getBL().atualizarMarcas(doc);
 		}
 
@@ -207,9 +207,9 @@ public class ExDocumentoController extends ExController {
 		}
 
 		Ex.getInstance()
-				.getBL()
-				.DesfazerCancelamentoDocumento(getCadastrante(),
-						getLotaTitular(), dto.getDoc());
+		.getBL()
+		.DesfazerCancelamentoDocumento(getCadastrante(),
+				getLotaTitular(), dto.getDoc());
 
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
@@ -217,7 +217,7 @@ public class ExDocumentoController extends ExController {
 	@Post("app/expediente/doc/alterarpreench")
 	public void aAlterarPreenchimento(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars, final String[] campos) throws IOException,
-			IllegalAccessException, InvocationTargetException {
+	IllegalAccessException, InvocationTargetException {
 		assertAcesso("");
 
 		ModeloDao.iniciarTransacao();
@@ -266,7 +266,7 @@ public class ExDocumentoController extends ExController {
 	@Post("app/expediente/doc/carregarpreench")
 	public void aCarregarPreenchimento(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars) throws IOException, IllegalAccessException,
-			InvocationTargetException {
+	InvocationTargetException {
 		assertAcesso("");
 
 		setPar(getRequest().getParameterMap());
@@ -366,7 +366,7 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.getMobilPaiSel(),
 				exDocumentoDTO.isCriandoAnexo(), exDocumentoDTO.getAutuando(),
 				exDocumentoDTO.getIdMobilAutuado(),
-				exDocumentoDTO.getCriandoSubprocesso(), null);
+				exDocumentoDTO.getCriandoSubprocesso(), null,0L);
 	}
 
 	@Get("app/expediente/doc/criar_via")
@@ -385,9 +385,9 @@ public class ExDocumentoController extends ExController {
 					"Não é possível criar vias neste documento");
 		}
 		Ex.getInstance()
-				.getBL()
-				.criarVia(getCadastrante(), getLotaTitular(),
-						exDocumentoDTO.getDoc());
+		.getBL()
+		.criarVia(getCadastrante(), getLotaTitular(),
+				exDocumentoDTO.getDoc());
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
@@ -408,9 +408,9 @@ public class ExDocumentoController extends ExController {
 		}
 
 		Ex.getInstance()
-				.getBL()
-				.criarVolume(getCadastrante(), getLotaTitular(),
-						exDocumentoDTO.getDoc());
+		.getBL()
+		.criarVolume(getCadastrante(), getLotaTitular(),
+				exDocumentoDTO.getDoc());
 		ExDocumentoController.redirecionarParaExibir(result,
 				exDocumentoDTO.getSigla());
 	}
@@ -418,9 +418,9 @@ public class ExDocumentoController extends ExController {
 	@Post("app/expediente/doc/recarregar")
 	public ExDocumentoDTO recarregar(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars, String jsonHierarquiaDeModelos)
-			throws IllegalAccessException, InvocationTargetException,
-			IOException {
-		
+					throws IllegalAccessException, InvocationTargetException,
+					IOException {
+
 		if(exDocumentoDTO != null && exDocumentoDTO
 				.getSigla() != null) {
 			buscarDocumento(false, exDocumentoDTO);
@@ -430,14 +430,28 @@ public class ExDocumentoController extends ExController {
 			}
 		}
 		result.forwardTo(this)
-				.edita(exDocumentoDTO, null, vars,
-						exDocumentoDTO.getMobilPaiSel(),
-						exDocumentoDTO.isCriandoAnexo(),
-						exDocumentoDTO.getAutuando(),
-						exDocumentoDTO.getIdMobilAutuado(),
-						exDocumentoDTO.getCriandoSubprocesso(),
-						jsonHierarquiaDeModelos);
+		.edita(exDocumentoDTO, null, vars,
+				exDocumentoDTO.getMobilPaiSel(),
+				exDocumentoDTO.isCriandoAnexo(),
+				exDocumentoDTO.getAutuando(),
+				exDocumentoDTO.getIdMobilAutuado(),
+				exDocumentoDTO.getCriandoSubprocesso(),
+				jsonHierarquiaDeModelos,0L);
 		return exDocumentoDTO;
+	}
+
+	@Get("app/expediente/doc/criarNoModelo")
+	public void criarNoModelo(Long idMod) throws IOException, IllegalAccessException,
+	InvocationTargetException {
+		result.forwardTo(this)
+		.edita(null, null, null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				idMod);
 	}
 
 	@Post("app/expediente/doc/editar")
@@ -446,9 +460,9 @@ public class ExDocumentoController extends ExController {
 			final String sigla, String[] vars,
 			final ExMobilSelecao mobilPaiSel, final Boolean criandoAnexo,
 			final Boolean autuando, final Long idMobilAutuado,
-			final Boolean criandoSubprocesso, String jsonHierarquiaDeModelos)
-			throws IOException, IllegalAccessException,
-			InvocationTargetException {
+			final Boolean criandoSubprocesso, String jsonHierarquiaDeModelos, Long idMod)
+					throws IOException, IllegalAccessException,
+					InvocationTargetException {
 		assertAcesso("");
 
 		final boolean isDocNovo = (exDocumentoDTO == null || exDocumentoDTO
@@ -465,8 +479,8 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.setIdMobilAutuado(idMobilAutuado);
 
 			exDocumentoDTO
-					.setCriandoSubprocesso(criandoSubprocesso == null ? false
-							: criandoSubprocesso);
+			.setCriandoSubprocesso(criandoSubprocesso == null ? false
+					: criandoSubprocesso);
 
 			if (mobilPaiSel != null) {
 				exDocumentoDTO.setMobilPaiSel(mobilPaiSel);
@@ -487,16 +501,31 @@ public class ExDocumentoController extends ExController {
 			if (exDocumentoDTO.getTipoEmitente() == null)
 				exDocumentoDTO.setTipoEmitente(1);
 
+			ExModelo modpassadoNaUrl = null;
+			if (idMod != null && idMod != 0) {
+				modpassadoNaUrl = ExDao.getInstance().consultarModeloAtualPorId(idMod);
+			}
+
 			if (exDocumentoDTO.getIdMod() == null) {
 				final List<ExModelo> modelos = getModelos(exDocumentoDTO);
 
 				ExModelo modeloDefault = null;
 				for (ExModelo mod : exDocumentoDTO.getModelos()) {
-					if ("Memorando".equals(mod.getNmMod())) {
-						modeloDefault = mod;
-						break;
+					if (modpassadoNaUrl !=null) {
+						if (modpassadoNaUrl.getId() == mod.getId()) {
+							modeloDefault = mod; 
+							break;
+						}
+					}
+
+					else {
+						if ("Memorando".equals(mod.getNmMod())) {
+							modeloDefault = mod;
+							break;
+						}
 					}
 				}
+
 
 				if (modeloDefault == null && modelos.size() > 0)
 					modeloDefault = modelos.get(0);
@@ -553,8 +582,8 @@ public class ExDocumentoController extends ExController {
 								+ getLotaTitular().getSiglaLotacao()
 								+ " foi extinta em "
 								+ new SimpleDateFormat("dd/MM/yyyy")
-										.format(getLotaTitular()
-												.getDataFimLotacao())
+								.format(getLotaTitular()
+										.getDataFimLotacao())
 								+ ". Não é possível gerar expedientes em lotação extinta.");
 			exDocumentoDTO.setDoc(new ExDocumento());
 			exDocumentoDTO.getDoc().setOrgaoUsuario(
@@ -834,7 +863,7 @@ public class ExDocumentoController extends ExController {
 		final ExDocumento doc = exDocumentoDTO.getDoc();
 
 		Ex.getInstance().getBL()
-				.excluirDocumento(doc, getTitular(), getLotaTitular(), false);
+		.excluirDocumento(doc, getTitular(), getLotaTitular(), false);
 
 		result.redirectTo("/");
 	}
@@ -842,7 +871,7 @@ public class ExDocumentoController extends ExController {
 	@Post("app/expediente/doc/excluirpreench")
 	public void aExcluirPreenchimento(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars) throws IllegalAccessException,
-			InvocationTargetException, IOException {
+	InvocationTargetException, IOException {
 		assertAcesso("");
 
 		ModeloDao.iniciarTransacao();
@@ -856,7 +885,7 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.getMobilPaiSel(),
 				exDocumentoDTO.isCriandoAnexo(), exDocumentoDTO.getAutuando(),
 				exDocumentoDTO.getIdMobilAutuado(),
-				exDocumentoDTO.getCriandoSubprocesso(), null);
+				exDocumentoDTO.getCriandoSubprocesso(), null,0L);
 	}
 
 	@SuppressWarnings("static-access")
@@ -874,7 +903,7 @@ public class ExDocumentoController extends ExController {
 			s = "(" + s + ")";
 			s = " "
 					+ exDocumentoDTO.getMob().doc().getExNivelAcessoAtual()
-							.getNmNivelAcesso() + " " + s;
+					.getNmNivelAcesso() + " " + s;
 			
 			String ERRO_INACESSIVEL_USUARIO;
 			if (!Ex.getInstance()
@@ -910,13 +939,13 @@ public class ExDocumentoController extends ExController {
 				}
 
 			} 
-			
+
 			if (exDocumentoDTO.getMob().doc().isSemEfeito() ) {
 				if (!exDocumentoDTO.getMob().doc().getCadastrante().equals(getTitular()) &&
-				    !exDocumentoDTO.getMob().doc().getSubscritor().equals(getTitular()) && !isInteressado) {
-						throw new AplicacaoException("Documento "
-								+ exDocumentoDTO.getMob().getSigla()
-								+ " cancelado ");
+						!exDocumentoDTO.getMob().doc().getSubscritor().equals(getTitular()) && !isInteressado) {
+					throw new AplicacaoException("Documento "
+							+ exDocumentoDTO.getMob().getSigla()
+							+ " cancelado ");
 				}
 			} else  {
 				throw new AplicacaoException(ERRO_INACESSIVEL_USUARIO);
@@ -936,9 +965,9 @@ public class ExDocumentoController extends ExController {
 			dest = mob.doc().getCadastrante().getPessoaAtual();
 			lotaDest = mob.doc().getLotaCadastrante().getLotacaoAtual();
 			mobArq = mob; /*
-						 * mobil a ser arquivado (excluido) sempre vai ser o
-						 * geral
-						 */
+			 * mobil a ser arquivado (excluido) sempre vai ser o
+			 * geral
+			 */
 		} else {
 			if (mob.doc().isProcesso()) {
 				mobUlt = mob.doc().getUltimoVolume();
@@ -972,25 +1001,25 @@ public class ExDocumentoController extends ExController {
 		if (!jaArquivado && !mob.doc().isCancelado()) {
 			if (!dest.ativaNaData(new Date())) {
 				if (getLotaTitular().equivale(lotaDest) /*
-														 * a pessoa que está
-														 * tentando acessar está
-														 * na mesma lotação onde
-														 * se encontra o doc
-														 */
+				 * a pessoa que está
+				 * tentando acessar está
+				 * na mesma lotação onde
+				 * se encontra o doc
+				 */
 						&& (mob.doc().getExNivelAcessoAtual()
 								.getGrauNivelAcesso().intValue() == ExNivelAcesso.NIVEL_ACESSO_SUB_PESSOA
 								|| mob.doc().getExNivelAcessoAtual()
-										.getGrauNivelAcesso().intValue() == ExNivelAcesso.NIVEL_ACESSO_PESSOAL || mob
+								.getGrauNivelAcesso().intValue() == ExNivelAcesso.NIVEL_ACESSO_PESSOAL || mob
 								.doc().getExNivelAcessoAtual()
 								.getGrauNivelAcesso().intValue() == ExNivelAcesso.NIVEL_ACESSO_PESSOA_SUB)) {
 
 					Boolean alguemPodeAcessar = false;
 					Set<DpPessoa> pessoas = lotaDest.getDpPessoaLotadosSet();
 					for (DpPessoa pes : pessoas) { /*
-													 * verificar se alguem da
-													 * lotação pode acessar o
-													 * documento
-													 */
+					 * verificar se alguem da
+					 * lotação pode acessar o
+					 * documento
+					 */
 						if (Ex.getInstance().getComp()
 								.podeAcessarDocumento(pes, lotaDest, mob))
 							if (pes.getPessoaAtual().ativaNaData(new Date())) {
@@ -999,9 +1028,9 @@ public class ExDocumentoController extends ExController {
 							}
 					}
 					if (!alguemPodeAcessar) { /*
-											 * ninguem pode acessar este
-											 * documento
-											 */
+					 * ninguem pode acessar este
+					 * documento
+					 */
 						if (mob.doc().isFinalizado()) {							
 							if (!mob.doc().isPendenteDeAssinatura()) { 
 								if(mobUlt.isEmTransito()) { /*  em transito */
@@ -1020,21 +1049,21 @@ public class ExDocumentoController extends ExController {
 										.getComp()
 										.podeArquivarCorrente(getTitular(),
 												getLotaTitular(), mobArq)) {
-									
-										Ex.getInstance()
-										.getBL()
-										.arquivarCorrenteAutomatico(dest, getLotaTitular(), mobArq);
-										msgDestinoDoc = "documento sendo arquivado automaticamente";
+
+									Ex.getInstance()
+									.getBL()
+									.arquivarCorrenteAutomatico(dest, getLotaTitular(), mobArq);
+									msgDestinoDoc = "documento sendo arquivado automaticamente";
 								} else { /* não pode arquivar */	
-									
-										msgDestinoDoc = "documento não pode ser arquivado automaticamente";																		
+
+									msgDestinoDoc = "documento não pode ser arquivado automaticamente";																		
 								}								
 							} else { /* pendente de assinatura */								
 
 								Ex.getInstance()
-										.getBL()
-										.cancelarDocumento(getTitular(),
-												getLotaTitular(), mob.doc());
+								.getBL()
+								.cancelarDocumento(getTitular(),
+										getLotaTitular(), mob.doc());
 
 								msgDestinoDoc = "documento sendo cancelado automaticamente";
 
@@ -1042,16 +1071,16 @@ public class ExDocumentoController extends ExController {
 
 						} else { /* doc temporário */
 							Ex.getInstance()
-									.getBL()
-									.excluirDocumentoAutomatico(mob.doc(),
-											dest, getLotaTitular());
+							.getBL()
+							.excluirDocumentoAutomatico(mob.doc(),
+									dest, getLotaTitular());
 							msgDestinoDoc = "documento sendo excluído automaticamente";
 						}
 					}
 				}
 			}
 		}
-		
+
 		ContextoPersistencia.flushTransaction();
 
 		return msgDestinoDoc;
@@ -1075,9 +1104,9 @@ public class ExDocumentoController extends ExController {
 				.podeReceberEletronico(getTitular(), getLotaTitular(),
 						exDocumentoDTO.getMob())) {
 			Ex.getInstance()
-					.getBL()
-					.receber(getCadastrante(), getLotaTitular(),
-							exDocumentoDTO.getMob(), new Date());
+			.getBL()
+			.receber(getCadastrante(), getLotaTitular(),
+					exDocumentoDTO.getMob(), new Date());
 		}
 
 		final ExDocumentoVO docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
@@ -1090,10 +1119,10 @@ public class ExDocumentoController extends ExController {
 							+ exDocumentoDTO.getMob().getSigla()
 							+ " eliminado, conforme o termo "
 							+ exDocumentoDTO
-									.getMob()
-									.getUltimaMovimentacaoNaoCancelada(
-											ExTipoMovimentacao.TIPO_MOVIMENTACAO_ELIMINACAO)
-									.getExMobilRef());
+							.getMob()
+							.getUltimaMovimentacaoNaoCancelada(
+									ExTipoMovimentacao.TIPO_MOVIMENTACAO_ELIMINACAO)
+							.getExMobilRef());
 		}
 		result.include("msg", exDocumentoDTO.getMsg());
 		result.include("docVO", docVO);
@@ -1119,9 +1148,9 @@ public class ExDocumentoController extends ExController {
 				.podeReceberEletronico(getTitular(), getLotaTitular(),
 						exDocumentoDTO.getMob())) {
 			Ex.getInstance()
-					.getBL()
-					.receber(getCadastrante(), getLotaTitular(),
-							exDocumentoDTO.getMob(), new Date());
+			.getBL()
+			.receber(getCadastrante(), getLotaTitular(),
+					exDocumentoDTO.getMob(), new Date());
 		}
 
 		final ExDocumentoVO docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
@@ -1134,10 +1163,10 @@ public class ExDocumentoController extends ExController {
 							+ exDocumentoDTO.getMob().getSigla()
 							+ " eliminado, conforme o termo "
 							+ exDocumentoDTO
-									.getMob()
-									.getUltimaMovimentacaoNaoCancelada(
-											ExTipoMovimentacao.TIPO_MOVIMENTACAO_ELIMINACAO)
-									.getExMobilRef());
+							.getMob()
+							.getUltimaMovimentacaoNaoCancelada(
+									ExTipoMovimentacao.TIPO_MOVIMENTACAO_ELIMINACAO)
+							.getExMobilRef());
 		}
 		result.include("msg", exDocumentoDTO.getMsg());
 		result.include("docVO", docVO);
@@ -1149,7 +1178,7 @@ public class ExDocumentoController extends ExController {
 	@Get({ "/app/expediente/doc/exibir", "/expediente/doc/exibir.action" })
 	public void exibe(final boolean conviteEletronico, final String sigla,
 			final ExDocumentoDTO exDocumentoDTO, final Long idmob)
-			throws Exception {
+					throws Exception {
 		assertAcesso("");
 
 		ExDocumentoDTO exDocumentoDto;
@@ -1171,9 +1200,9 @@ public class ExDocumentoController extends ExController {
 				.podeReceberEletronico(getTitular(), getLotaTitular(),
 						exDocumentoDto.getMob())) {
 			Ex.getInstance()
-					.getBL()
-					.receber(getCadastrante(), getLotaTitular(),
-							exDocumentoDto.getMob(), new Date());
+			.getBL()
+			.receber(getCadastrante(), getLotaTitular(),
+					exDocumentoDto.getMob(), new Date());
 		}
 
 		if (exDocumentoDto.getMob() == null
@@ -1233,10 +1262,10 @@ public class ExDocumentoController extends ExController {
 		if (doc.getDestinatario() == null
 				&& doc.getLotaDestinatario() == null
 				&& (doc.getNmDestinatario() == null || doc.getNmDestinatario()
-						.trim().equals(""))
+				.trim().equals(""))
 				&& doc.getOrgaoExternoDestinatario() == null
 				&& (doc.getNmOrgaoExterno() == null || doc.getNmOrgaoExterno()
-						.trim().equals(""))) {
+				.trim().equals(""))) {
 			final Long idSit = Ex
 					.getInstance()
 					.getConf()
@@ -1275,7 +1304,7 @@ public class ExDocumentoController extends ExController {
 
 			exDocumentoDTO.getDoc().setExMobilSet(new TreeSet<ExMobil>());
 			exDocumentoDTO.getDoc().getExMobilSet()
-					.add(exDocumentoDTO.getMob());
+			.add(exDocumentoDTO.getMob());
 		}
 	}
 
@@ -1298,7 +1327,7 @@ public class ExDocumentoController extends ExController {
 		} else if (exDocumentoDto.getMob() == null
 				&& exDocumentoDto.getDocumentoViaSel().getId() != null) {
 			exDocumentoDto
-					.setIdMob(exDocumentoDto.getDocumentoViaSel().getId());
+			.setIdMob(exDocumentoDto.getDocumentoViaSel().getId());
 			exDocumentoDto.setMob(dao().consultar(exDocumentoDto.getIdMob(),
 					ExMobil.class, false));
 		} else if (exDocumentoDto.getMob() == null
@@ -1355,10 +1384,10 @@ public class ExDocumentoController extends ExController {
 			if (exDocumentoDto.getDoc().getForm() != null) {
 				if (exDocumentoDto.getDoc().getForm().get("acaoFinalizar") != null
 						&& exDocumentoDto.getDoc().getForm()
-								.get("acaoFinalizar").trim().length() > 0) {
+						.get("acaoFinalizar").trim().length() > 0) {
 					obterMetodoPorString(
 							exDocumentoDto.getDoc().getForm()
-									.get("acaoFinalizar"),
+							.get("acaoFinalizar"),
 							exDocumentoDto.getDoc());
 				}
 			}
@@ -1395,7 +1424,7 @@ public class ExDocumentoController extends ExController {
 						exDocumentoDTO.getAutuando(),
 						exDocumentoDTO.getIdMobilAutuado(),
 						exDocumentoDTO.getCriandoSubprocesso(),
-						jsonHierarquiaDeModelos);
+						jsonHierarquiaDeModelos,0L);
 				return;
 			}
 
@@ -1424,8 +1453,8 @@ public class ExDocumentoController extends ExController {
 					throw new AplicacaoException(
 							"Usuário não possui permissão de criar documento da classificação "
 									+ exDocumentoDTO.getDoc()
-											.getExClassificacao()
-											.getCodificacao());
+									.getExClassificacao()
+									.getCodificacao());
 				}
 
 				throw new AplicacaoException("Operação não permitida");
@@ -1446,7 +1475,7 @@ public class ExDocumentoController extends ExController {
 
 			if (exDocumentoDTO.isClassificacaoIntermediaria()
 					&& (exDocumentoDTO.getDescrClassifNovo() == null || exDocumentoDTO
-							.getDescrClassifNovo().trim().length() == 0)) {
+					.getDescrClassifNovo().trim().length() == 0)) {
 				throw new AplicacaoException(
 						"Quando a classificação selecionada não traz informação para criação de vias, o "
 								+ "sistema exige que, antes de gravar o documento, seja informada uma sugestão de "
@@ -1455,7 +1484,7 @@ public class ExDocumentoController extends ExController {
 
 			if (exDocumentoDTO.getDoc().getDescrDocumento() != null
 					&& exDocumentoDTO.getDoc().getDescrDocumento().length() > exDocumentoDTO
-							.getTamanhoMaximoDescricao()) {
+					.getTamanhoMaximoDescricao()) {
 				throw new AplicacaoException(
 						"O campo descrição possui mais do que "
 								+ exDocumentoDTO.getTamanhoMaximoDescricao()
@@ -1481,7 +1510,7 @@ public class ExDocumentoController extends ExController {
 					throw new Exception(
 							"Não é permitido criar documento com data futura");
 				}
-				
+
 				// Verifica se a data está entre o ano 2000 e o ano 2100
 				if (!Data.dataDentroSeculo21(exDocumentoDTO.getDoc().getDtDoc())) {
 					throw new AplicacaoException("Data inválida, deve estar entre o ano 2000 e ano 2100");
@@ -1531,8 +1560,8 @@ public class ExDocumentoController extends ExController {
 				if (numPaginas == null || d.getArquivoComStamp() == null) {
 					throw new AplicacaoException(
 							MessageFormat
-									.format("O arquivo {0} está corrompido ou protegido por senha. Favor gera-lo novamente antes de anexar.",
-											arquivo.getFileName()));
+							.format("O arquivo {0} está corrompido ou protegido por senha. Favor gera-lo novamente antes de anexar.",
+									arquivo.getFileName()));
 				}
 
 				// if (numPaginas != null && numBytes != null &&
@@ -1547,7 +1576,7 @@ public class ExDocumentoController extends ExController {
 
 			if (!exDocumentoDTO.getDoc().isFinalizado()
 					&& (exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO || exDocumentoDTO
-							.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO))
+					.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO))
 				exBL.finalizar(getCadastrante(), getLotaTitular(),
 						exDocumentoDTO.getDoc());
 
@@ -1555,7 +1584,7 @@ public class ExDocumentoController extends ExController {
 
 			if ("sim".equals(exDocumentoDTO.getDesativarDocPai())) {
 				exDocumentoDTO
-						.setDesativ("&exDocumentoDTO.desativarDocPai=sim");
+				.setDesativ("&exDocumentoDTO.desativarDocPai=sim");
 			}
 
 			try {
@@ -1574,7 +1603,7 @@ public class ExDocumentoController extends ExController {
 		if (param("ajax") != null && param("ajax").equals("true")) {
 			final String body = MessageFormat.format("OK_{0}_{1}",
 					exDocumentoDTO.getDoc().getSigla(), exDocumentoDTO.getDoc()
-							.getDtRegDocDDMMYY());
+					.getDtRegDocDDMMYY());
 			result.use(Results.http()).body(body);
 		} else {
 			final String url = MessageFormat.format(
@@ -1589,7 +1618,7 @@ public class ExDocumentoController extends ExController {
 	@Post("app/expediente/doc/gravarpreench")
 	public void aGravarPreenchimento(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars, final String[] campos) throws IOException,
-			IllegalAccessException, InvocationTargetException {
+	IllegalAccessException, InvocationTargetException {
 		assertAcesso("");
 
 		ModeloDao.iniciarTransacao();
@@ -1660,7 +1689,7 @@ public class ExDocumentoController extends ExController {
 	@Post("app/expediente/doc/preverPdf")
 	public Download aPreverPdf(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars) throws IOException, IllegalAccessException,
-			InvocationTargetException {
+	InvocationTargetException {
 		assertAcesso("");
 
 		final boolean isDocNovo = (exDocumentoDTO == null);
@@ -1684,7 +1713,7 @@ public class ExDocumentoController extends ExController {
 		}
 
 		Ex.getInstance().getBL()
-				.processar(exDocumentoDTO.getDoc(), false, false);
+		.processar(exDocumentoDTO.getDoc(), false, false);
 
 		exDocumentoDTO.setPdfStreamResult(new ByteArrayInputStream(
 				exDocumentoDTO.getDoc().getConteudoBlobPdf()));
@@ -1779,9 +1808,9 @@ public class ExDocumentoController extends ExController {
 		try {
 
 			Ex.getInstance()
-					.getBL()
-					.TornarDocumentoSemEfeito(getCadastrante(),
-							getLotaTitular(), doc, descrMov);
+			.getBL()
+			.TornarDocumentoSemEfeito(getCadastrante(),
+					getLotaTitular(), doc, descrMov);
 		} catch (final Exception e) {
 			throw e;
 		}
@@ -1807,7 +1836,7 @@ public class ExDocumentoController extends ExController {
 
 			if ((mobilPaiSel != null) && (mobilPaiSel.getSigla() != null)) {
 				exDocumentoDTO.getMobilPaiSel()
-						.setSigla(mobilPaiSel.getSigla());
+				.setSigla(mobilPaiSel.getSigla());
 			}
 
 			exDocumentoDTO.getMobilPaiSel().buscar();
@@ -1898,20 +1927,20 @@ public class ExDocumentoController extends ExController {
 				}
 				if (!naLista) {
 					exDocumentoDTO
-							.setPreenchimento(((ExPreenchimento) (preenchimentos
-									.toArray())[0]).getIdPreenchimento());
+					.setPreenchimento(((ExPreenchimento) (preenchimentos
+							.toArray())[0]).getIdPreenchimento());
 				}
 			}
 
 			exDocumentoDTO.setIdMod(mod.getIdMod());
 			if ((exDocumentoDTO.getIdMod() != 0)
 					&& (exDocumentoDTO.getMobilPaiSel() == null || exDocumentoDTO
-							.getMobilPaiSel().getId() == null)
+					.getMobilPaiSel().getId() == null)
 					&& (exDocumentoDTO.getIdMobilAutuado() == null)) {
 				if (exDocumentoDTO.getClassificacaoSel() != null)
 					exDocumentoDTO.getClassificacaoSel().apagar();
 			}
-			
+
 			if(exDocumentoDTO.getSubscritorSel() != null && exDocumentoDTO.getSubscritorSel().getId() == null) {
 				exDocumentoDTO.getSubscritorSel().buscarPorObjeto(getCadastrante());
 			}
@@ -1978,13 +2007,13 @@ public class ExDocumentoController extends ExController {
 
 		if (doc.getExMobilPai() != null) {
 			exDocumentoDTO.getMobilPaiSel()
-					.buscarPorObjeto(doc.getExMobilPai());
+			.buscarPorObjeto(doc.getExMobilPai());
 		}
 
 		if (doc.getTitular() != null
 				&& doc.getSubscritor() != null
 				&& !doc.getTitular().getIdPessoa()
-						.equals(doc.getSubscritor().getIdPessoa())) {
+				.equals(doc.getSubscritor().getIdPessoa())) {
 			exDocumentoDTO.getTitularSel().buscarPorObjeto(doc.getTitular());
 			exDocumentoDTO.setSubstituicao(true);
 		}
@@ -2222,7 +2251,7 @@ public class ExDocumentoController extends ExController {
 				if (exDocumentoDTO.getOrgaoExternoDestinatarioSel().getId() != null) {
 					doc.setOrgaoExternoDestinatario(dao().consultar(
 							exDocumentoDTO.getOrgaoExternoDestinatarioSel()
-									.getId(), CpOrgao.class, false));
+							.getId(), CpOrgao.class, false));
 
 				} else {
 					doc.setOrgaoExternoDestinatario(null);
@@ -2398,7 +2427,7 @@ public class ExDocumentoController extends ExController {
 
 		return getListaNivelAcesso(exTipo,
 				exMod != null ? exMod.getExFormaDocumento() : null, exMod,
-				exClassif);
+						exClassif);
 	}
 
 	private ExNivelAcesso getNivelAcessoDefault(
@@ -2425,7 +2454,7 @@ public class ExDocumentoController extends ExController {
 
 		return getNivelAcessoDefault(exTipo,
 				exMod != null ? exMod.getExFormaDocumento() : null, exMod,
-				exClassif);
+						exClassif);
 	}
 
 	protected static void redirecionarParaExibir(final Result result,
@@ -2479,9 +2508,9 @@ public class ExDocumentoController extends ExController {
 			efetivarDoc = false;
 		}
 		Ex.getInstance()
-				.getBL()
-				.corrigirArquivamentosEmVolume(idPrimeiroDoc, idUltimoDoc,
-						efetivarDoc);
+		.getBL()
+		.corrigirArquivamentosEmVolume(idPrimeiroDoc, idUltimoDoc,
+				efetivarDoc);
 	}
 
 }

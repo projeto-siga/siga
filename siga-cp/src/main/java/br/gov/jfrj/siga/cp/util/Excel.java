@@ -911,7 +911,7 @@ public class Excel {
 					pe.setLotacao(lotacao);
 					pe.setCargo(cargo);
 					pe.setFuncaoConfianca(funcao);
-					pe.setEmailPessoa(celula);
+					pe.setEmailPessoa(email);
 					pe.setDataInicio(data);
 					pe.setSesbPessoa(orgaoUsuario.getSigla());					
 					

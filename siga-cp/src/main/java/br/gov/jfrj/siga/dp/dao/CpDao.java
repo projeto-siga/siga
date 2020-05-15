@@ -1537,7 +1537,8 @@ public class CpDao extends ModeloDao {
 			query = em().createNamedQuery("consultarVisualizacoesPermitidas");
 			query.setParameter("idDelegadoIni", exemplo.getDelegado().getIdPessoaIni());
 			query.setHint("org.hibernate.cacheable", true);
-			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SUBSTITUICAO);
+//			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SUBSTITUICAO);
+			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
 			return query.getResultList();
 		} catch (final IllegalArgumentException e) {
 			throw e;

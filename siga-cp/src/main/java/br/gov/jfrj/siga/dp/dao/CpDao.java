@@ -679,7 +679,7 @@ public class CpDao extends ModeloDao {
 			else
 				query.setParameter("idOrgaoUsu", consultarPorSigla(o.getOrgaoUsuario()).getId());
 		else
-			query.setParameter("idOrgaoUsu", 0);
+			query.setParameter("idOrgaoUsu", 0L);
 
 		query.setHint("org.hibernate.cacheable", true);
 		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
@@ -1651,7 +1651,7 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("email", email);
 
 			/* Constantes para Evitar Parse Oracle */
-			qry.setParameter("cpfZero", "0");
+			qry.setParameter("cpfZero", Long.valueOf(0));
 			qry.setParameter("sfp1", "1");
 			qry.setParameter("sfp2", "2");
 			qry.setParameter("sfp12", "12");

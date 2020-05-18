@@ -89,18 +89,16 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
 			String queryOrgao = "";
-			if (parametros.get("orgao") != null && parametros.get("orgao") != "") {
+			if (parametros.get("orgao") != null && !"".equals(parametros.get("orgao"))) {
 				queryOrgao = "and doc.orgaoUsuario.idOrgaoUsu = :orgao ";
 			}
 
 			String queryLotacao = "";
-			if (parametros.get("lotacao") != null
-					&& parametros.get("lotacao") != "") {
+			if (parametros.get("lotacao") != null && !"".equals(parametros.get("lotacao"))) {
 				queryLotacao = " and doc.lotaCadastrante.idLotacao in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :idLotacao) ";
 			}
 			String queryUsuario = "";
-			if (parametros.get("usuario") != null
-					&& parametros.get("usuario") != "") {
+			if (parametros.get("usuario") != null && !"".equals(parametros.get("usuario"))) {
 				queryUsuario = "and mov.cadastrante.idPessoaIni in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :usuario) ";
 			}
 			
@@ -149,11 +147,11 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 			query.setParameter("idMarcador", CpMarcador.MARCADOR_COMO_INTERESSADO);
 			query.setParameter("orgaoPesqId", Long.valueOf((String) parametros.get("orgaoPesqId")));
 			
-			if (parametros.get("orgao") != null && parametros.get("orgao") != "") {
+			if (parametros.get("orgao") != null && !"".equals(parametros.get("orgao"))) {
 				query.setParameter("orgao", Long.valueOf((String) parametros.get("orgao")));
 			}
 			
-			if (parametros.get("lotacao") != null && parametros.get("lotacao") != "") {
+			if (parametros.get("lotacao") != null &&  !"".equals(parametros.get("lotacao"))) {
 				Query qryLota = ContextoPersistencia.em().createQuery(
 						"from DpLotacao lot where lot.idLotacao = " + parametros.get("lotacao"));
 				Set<DpLotacao> lotacaoSet = new HashSet<DpLotacao>();
@@ -162,8 +160,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 				query.setParameter("idLotacao",	lotacao.getIdInicial());
 			}
 
-			if (parametros.get("usuario") != null
-					&& parametros.get("usuario") != "") {
+			if (parametros.get("usuario") != null && !"".equals(parametros.get("usuario"))) {
 				Query qryPes = ContextoPersistencia.em().createQuery(
 						"from DpPessoa pes where pes.idPessoa = "
 								+ parametros.get("usuario"));

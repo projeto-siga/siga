@@ -26,7 +26,7 @@
 								<div class="col">
 									<div class="form-group">
 										<label>Número de referência</label> 
-										<input type="text" id="id_number" name="n" class="form-control" />
+										<input type="text" id="id_number" name="n" class="form-control" value="${param.n}" />
 									</div>
 								</div>
 							</div>

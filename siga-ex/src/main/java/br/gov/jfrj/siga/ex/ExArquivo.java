@@ -148,8 +148,7 @@ public abstract class ExArquivo extends Objeto {
 		if (isAssinadoDigitalmente()) {
 			sMensagem += getAssinantesCompleto();
 			sMensagem += "Documento Nº: " + getSiglaAssinatura()
-					+ " - consulta à autenticidade em "
-					+ SigaExProperties.getEnderecoAutenticidadeDocs();
+					+ " - consulta à autenticidade em " + getQRCode();
 		}
 		return sMensagem;
 	}

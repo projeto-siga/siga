@@ -400,7 +400,7 @@ public class CpBL {
 	}
 
 	public CpIdentidade criarIdentidade(String matricula, String cpf, CpIdentidade idCadastrante,
-			final String senhaDefinida, String[] senhaGerada, boolean marcarParaSinc) throws AplicacaoException {
+			final String senhaDefinida, String[] senhaGerada, boolean marcarParaSinc, Long idLotacao) throws AplicacaoException {
 
 		Long longCpf = CPFUtils.getLongValueValidaSimples(cpf);
 		final List<DpPessoa> listaPessoas = dao().listarPorCpf(longCpf);
@@ -456,9 +456,10 @@ public class CpBL {
 						dao().commitTransacao();
 
 						if (SigaMessages.isSigaSP()) {
-							String[] destinanarios = { pessoa.getEmailPessoaAtual() };							
-							String conteudoHTML = pessoa.isUsuarioExterno() ? textoEmailNovoUsuarioExternoSP(idNova, matricula, novaSenha) : 
-								textoEmailNovoUsuarioSP(idNova, matricula, novaSenha, autenticaPeloBanco);
+							String[] destinanarios = { pessoa.getEmailPessoaAtual() };
+							String conteudoHTML = pessoaIsUsuarioExterno(pessoa, idLotacao)
+									? textoEmailNovoUsuarioExternoSP(idNova, matricula, novaSenha)
+									: textoEmailNovoUsuarioSP(idNova, matricula, novaSenha, autenticaPeloBanco);
 							
 							Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
 									destinanarios, "Novo Usuário", "", conteudoHTML);
@@ -490,6 +491,45 @@ public class CpBL {
 			}
 		}
 
+	}
+
+	/**
+	 * Verifica se a {@link DpPessoa Pessoa} é um usuário externo. <br>
+	 * <b>NOTA DE IMPLEMENTAÇÃO:</b> A implementação original consistia simplesmente
+	 * em chamar {@link DpPessoa#isUsuarioExterno()}. Entretanto durante a migração
+	 * para o EAP 7.2, quando o método
+	 * {@link #criarIdentidade(String, String, CpIdentidade, String, String[], boolean, Long)}
+	 * era chamado a partir de
+	 * {@link #criarUsuario(String, Long, Long, Long, Long, Long, String, String, String, String)}
+	 * ao se chamar {@link DpPessoa#isUsuarioExterno()} acontecia um
+	 * {@link NullPointerException} ao pegar a {@link DpPessoa#getLotacao() lotação}
+	 * da Pessoa, mesmo que ela tivesse acabado de ter sido carregada pelo
+	 * Hibernate. A "solução" foi usar o ID da lotação diretamente e consultar a
+	 * base de dados pela Lotação com esse ID.
+	 * 
+	 * @param pessoa    Pessoa a ser avaliada.
+	 * @param idLotacao {@link DpLotacao#getId() ID} da {@link DpLotacao Lotação}.
+	 *                  ao qual a pessoa está vinculada. Se for <code>null</code>,
+	 *                  será simplesmente retornado
+	 *                  {@link DpPessoa#isUsuarioExterno()}.
+	 * @return se a Pessoa é um usuário externo.
+	 */
+	private boolean pessoaIsUsuarioExterno(DpPessoa pessoa, Long idLotacao) {
+		if (idLotacao == null) {
+			return pessoa.isUsuarioExterno();
+		}
+
+		/*
+		 * Emula DpPessoa#isUsuarioExterno(). Durante a migração para o EAP 7.2
+		 */
+		CpOrgaoUsuario orgaoUsuario = pessoa.getOrgaoUsuario();
+		Integer isExternoOrgaoUsu = orgaoUsuario.getIsExternoOrgaoUsu();
+		if ((isExternoOrgaoUsu != null) && (isExternoOrgaoUsu == 1)) {
+			return true;
+		}
+
+		DpLotacao lotacao = dao().consultar(idLotacao, DpLotacao.class, false);
+		return (lotacao != null) && (lotacao.getIsExternaLotacao() == 1);
 	}
 
 	private String textoEmailNovoUsuario(String matricula, String novaSenha, boolean autenticaPeloBanco) {
@@ -1176,7 +1216,7 @@ public class CpBL {
 
 		senhaGerada[0] = GeraMessageDigest.geraSenha();
 		Cp.getInstance().getBL().criarIdentidade(pessoa.getSesbPessoa() + pessoa.getMatricula(),
-				pessoa.getCpfFormatado(), idIdentidade, null, senhaGerada, Boolean.FALSE);
+				pessoa.getCpfFormatado(), idIdentidade, null, senhaGerada, Boolean.FALSE, idLotacao);
 
 		return "Usuário cadastrado com sucesso: " + pessoa.getSesbPessoa() + pessoa.getMatricula();
 

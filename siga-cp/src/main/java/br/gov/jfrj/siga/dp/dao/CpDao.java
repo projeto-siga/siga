@@ -28,6 +28,7 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -545,7 +546,7 @@ public class CpDao extends ModeloDao {
 			if (o.getIdOrgaoUsu() != null)
 				query.setParameter("idOrgaoUsu", o.getIdOrgaoUsu());
 			else
-				query.setParameter("idOrgaoUsu", 0);
+				query.setParameter("idOrgaoUsu", 0L);
 
 			final List<DpFuncaoConfianca> l = query.getResultList();
 			return l;
@@ -1262,11 +1263,11 @@ public class CpDao extends ModeloDao {
 			}
 
 			if (isFiltrarPorListaDeUsuario) {
-				query.setParameter("idPessoaLista" + i, parametro);
-				query.setParameter("idLotacaoLista" + i, 0L);
+				query.setParameter("idPessoaLista" + i, Arrays.asList(parametro));
+				query.setParameter("idLotacaoLista" + i, Collections.singletonList(0L));
 			} else {
-				query.setParameter("idLotacaoLista" + i, parametro);
-				query.setParameter("idPessoaLista" + i, 0L);
+				query.setParameter("idLotacaoLista" + i, Arrays.asList(parametro));
+				query.setParameter("idPessoaLista" + i, Collections.singletonList(0L));
 			}
 		}
 	}

@@ -1,6 +1,7 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -179,17 +180,32 @@ public class ExAutenticacaoController extends ExController {
 
 		ExArquivo arq = Ex.getInstance().getBL().buscarPorNumeroAssinatura(n);
 
-		byte[] bytes;
-		String fileName;
-		String contentType;
+		byte[] bytes = null;
+		String fileName = null;
+		String contentType = null;
 		if (idMov != null && idMov != 0) {
 			ExMovimentacao mov = dao().consultar(idMov, ExMovimentacao.class,
 					false);
+			
+			switch ( mov.getExTipoMovimentacao().getId().intValue()) {
+			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA:
+			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA:
+				fileName = arq.getReferencia() + "_" + mov.getIdMov() + ".jwt";
+				contentType = "application/jwt";
+				if (mov.getAuditHash() == null)
+					throw new AplicacaoException(
+							"Esta é uma assinatura digital como login e senha e não há nenhum artefato comprobatório disponível para download.");
+				bytes = mov.getAuditHash().getBytes(StandardCharsets.UTF_8);
+				break;
+				
+			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO:
+			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO:
+				fileName = arq.getReferencia() + "_" + mov.getIdMov() + ".p7s";
+				contentType = mov.getConteudoTpMov();
+				bytes = mov.getConteudoBlobMov2();
+				break;
+			}
 
-			fileName = arq.getReferencia() + "_" + mov.getIdMov() + ".p7s";
-			contentType = mov.getConteudoTpMov();
-
-			bytes = mov.getConteudoBlobMov2();
 
 		} else {
 			fileName = arq.getReferenciaPDF();
@@ -200,6 +216,7 @@ public class ExAutenticacaoController extends ExController {
 			else
 				bytes = arq.getPdf();
 		}
+		
 		if (bytes == null) {
 			throw new AplicacaoException(
 					"Arquivo não encontrado para Download.");

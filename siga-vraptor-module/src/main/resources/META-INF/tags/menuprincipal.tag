@@ -375,7 +375,7 @@
 					<c:forEach var="substituicao" items="${meusTitulares}">
 						<div class="dropdown-item" href="#">
 						<a class=""
-							href="/siga/app/substituicao/substituirGravar?id=${substituicao.idSubstituicao}">
+							href="javascript:delSession();location.href='/siga/app/substituicao/substituirGravar?id=${substituicao.idSubstituicao}'">
 								<c:choose>
 									<c:when test="${not empty substituicao.titular}">
 										${f:maiusculasEMinusculas(substituicao.titular.pessoaAtual.nomePessoa)}

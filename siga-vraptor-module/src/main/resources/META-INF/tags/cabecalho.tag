@@ -344,7 +344,7 @@ ${meta}
 		<div class="container-fluid content">
 			<div class="row pt-2 pb-2 mb-3 ${sub_menu_class}" >
 				<!-- usuário -->
-				<div class="col col-12 col-sm-4">
+				<div class="col col-12 col-md-4">
 					<div class="gt-company d-inline align-middle">
 						<span class="h-100">
 							<strong><span>${f:resource('siga.cabecalho.titulo')}</span> </strong>
@@ -362,11 +362,14 @@ ${meta}
 					</div>
 					 -->
 				</div>
-				<div class="col col-12 col-sm-4 text-center">
-					<span class="h3 text-success align-middle ${hide_only_TRF2}">
+				<div class="col col-12 col-md-3 text-center">
+					<span class="h4 text-success align-middle ${hide_only_TRF2}">
 						<c:choose>
 							<c:when test="${f:resource('ambiente') eq 'prod'}">
 								Ambiente Oficial
+							</c:when>
+							<c:when test="${f:resource('ambiente') eq 'desenv'}">
+								Ambiente de Desenvolvimento
 							</c:when>
 							<c:when test="${f:resource('ambiente') eq 'treinamento'}">
 								Ambiente de Simulação
@@ -378,7 +381,7 @@ ${meta}
 					</span>
 				</div>
 				<c:if test="${not empty cadastrante}">
-					<div class="col col-12 col-sm-4 text-right">
+					<div class="col col-12 col-md-5 text-right">
 						<div class="dropdown d-inline">
 							<span class="align-middle">Olá, <i class="fa fa-user"></i> 
 								<c:catch>
@@ -410,18 +413,16 @@ ${meta}
 							</span>
 						</div>
 						<button class="btn btn-danger btn-sm ml-3 mt-1 align-bottom" type="button" onclick="delSession();javascript:location.href='/siga/public/app/logout'"><i class="fas fa-sign-out-alt"></i> Sair</button>
-						<div class="d-inline">
+						<div class="pt-1">
 							<c:catch>
 								<c:choose>
 									<c:when
 										test="${not empty titular && titular.idPessoa!=cadastrante.idPessoa}">Substituindo: <strong>${f:maiusculasEMinusculas(titular.nomePessoa)}</strong>
-										<span class="gt-util-separator">|</span>
-										<a href="/siga/app/substituicao/finalizar" class="text-white">Finalizar</a>
+										<button class="btn btn-secondary btn-sm" type="button" onclick="delSession();javascript:location.href='/siga/app/substituicao/finalizar'">Finalizar</button>
 									</c:when>
 									<c:when
 										test="${not empty lotaTitular && lotaTitular.idLotacao!=cadastrante.lotacao.idLotacao}">Substituindo: <strong>${f:maiusculasEMinusculas(lotaTitular.nomeLotacao)}</strong>
-										<span class="gt-util-separator">|</span>
-										<a href="/siga/app/substituicao/finalizar" class="text-white">Finalizar</a>
+										<button class="btn btn-secondary btn-sm" type="button" onclick="delSession();javascript:location.href='/siga/app/substituicao/finalizar'">Finalizar</button>
 									</c:when>
 									<c:otherwise></c:otherwise>
 								</c:choose>

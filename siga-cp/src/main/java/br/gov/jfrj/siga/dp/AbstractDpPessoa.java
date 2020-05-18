@@ -58,12 +58,12 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "		(select max(p.dataInicioPessoa) from DpPessoa p where p.idPessoaIni = :idPessoaIni)"
 				+ "		 and pes.idPessoaIni = :idPessoaIni"),
 		@NamedQuery(name = "consultarPorIdInicialDpPessoaInclusiveFechadas", query = "select pes from DpPessoa pes where pes.idPessoaIni = :idPessoaIni"),
-		@NamedQuery(name = "consultarPorCpf", query = "from DpPessoa pes where pes.cpfPessoa = :cpfPessoa and pes.dataFimPessoa is null"),	
+		@NamedQuery(name = "consultarPorCpf", query = "from DpPessoa pes where pes.cpfPessoa = :cpfPessoa and pes.dataFimPessoa = null"),	
 		@NamedQuery(name = "consultarPorCpfAtivoInativo", query = "from DpPessoa pes where pes.cpfPessoa = :cpfPessoa and pes.idPessoa in"
 				+ " (select max(p.idPessoa) from DpPessoa p group by p.idPessoaIni)"),
 		@NamedQuery(name = "consultarPorCpfAtivoInativoNomeDiferente", query = "from DpPessoa pes where pes.idPessoa in"
 				+ " (select max(p.idPessoa) from DpPessoa p where p.cpfPessoa = :cpfPessoa and upper(pes.nomePessoa) <> upper(:nomePessoa) group by p.idPessoaIni)"),
-		@NamedQuery(name = "consultarPorEmail", query = "from DpPessoa pes where pes.emailPessoa = :emailPessoa and pes.dataFimPessoa is null"),
+		@NamedQuery(name = "consultarPorEmail", query = "from DpPessoa pes where pes.emailPessoa = :emailPessoa and pes.dataFimPessoa = null"),
 		@NamedQuery(name = "consultarPorEmailIgualCpfDiferente", query = "select count(idPessoa) " 
 				+ " from DpPessoa a " 
 				+ " where     a.emailPessoa          = :emailPessoa     and " 
@@ -88,7 +88,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 		@NamedQuery(name = "consultarUsuariosComEnvioDeEmailPendenteFiltrandoPorLotacao", query = "select new br.gov.jfrj.siga.dp.DpPessoaUsuarioDTO(pes.idPessoa, pes.nomePessoa, pes.lotacao.nomeLotacao) from DpPessoa pes "
 				+ "	 where pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
 				+ " and pes.lotacao.idLotacao in (:idLotacaoLista)"
-				+ " and pes.dataFimPessoa is null"
+				+ " and pes.dataFimPessoa = null"
 				+ " and not exists (select ident.dpPessoa.idPessoaIni from CpIdentidade ident where pes.idPessoaIni = ident.dpPessoa.idPessoaIni)"
 				+ "   	order by pes.lotacao.nomeLotacao, pes.nomePessoaAI"),
 		@NamedQuery(name = "consultarPorFiltroDpPessoaSemIdentidade", query = "from DpPessoa pes "
@@ -170,21 +170,21 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 		@NamedQuery(name = "consultarPorCpfMatricula", query = "from DpPessoa pes "
 				+ "  where pes.cpfPessoa = :cpfPessoa"
 				+ "    and pes.matricula = :matricula"
-				+ "    and pes.dataFimPessoa is null"),
+				+ "    and pes.dataFimPessoa = null"),
 		@NamedQuery(name = "consultarAtivasNaDataOrgao", query = "from DpPessoa pes "
 				+ "  where (:idOrgaoUsu = null or :idOrgaoUsu = 0L or pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "  and  ((pes.dataInicioPessoa < :dt and pes.dataFimPessoa >= :dt )"
-				+ "  or (pes.dataInicioPessoa < :dt and pes.dataFimPessoa is null ))"),
-		@NamedQuery(name = "consultarPessoasComFuncaoConfianca", query = "from DpPessoa p where p.funcaoConfianca.idFuncao = :idFuncaoConfianca and p.dataFimPessoa is null"),
-		@NamedQuery(name = "consultarPessoasComCargo", query = "from DpPessoa p where p.cargo.id = :idCargo and p.dataFimPessoa is null"),
+				+ "  or (pes.dataInicioPessoa < :dt and pes.dataFimPessoa = null ))"),
+		@NamedQuery(name = "consultarPessoasComFuncaoConfianca", query = "from DpPessoa p where p.funcaoConfianca.idFuncao = :idFuncaoConfianca and p.dataFimPessoa = null"),
+		@NamedQuery(name = "consultarPessoasComCargo", query = "from DpPessoa p where p.cargo.id = :idCargo and p.dataFimPessoa = null"),
 		@NamedQuery(name = "consultarDadosBasicos", query = "select u,  pes from CpIdentidade as u join u.dpPessoa.pessoaInicial pes"
 				+ "  where u.nmLoginIdentidade = :nmUsuario"
 				+ "   and pes.sesbPessoa = :sesbPessoa"
 				+ "   and u.dpPessoa.cpfPessoa = pes.cpfPessoa"
-				+ "   and (u.hisDtFim is null)"
-				+ "   and (u.dtCancelamentoIdentidade is null)"
-				+ "   and (u.dtExpiracaoIdentidade is null or u.dtExpiracaoIdentidade > current_date())"
-				+ "   and (pes.dataFimPessoa is null)"
+				+ "   and (u.hisDtFim = null)"
+				+ "   and (u.dtCancelamentoIdentidade = null)"
+				+ "   and (u.dtExpiracaoIdentidade = null or u.dtExpiracaoIdentidade > current_date())"
+				+ "   and (pes.dataFimPessoa = null)"
 				+ "   and (pes.situacaoFuncionalPessoa in ('1', '2', '31'))")
 })
 public abstract class AbstractDpPessoa extends DpResponsavel implements

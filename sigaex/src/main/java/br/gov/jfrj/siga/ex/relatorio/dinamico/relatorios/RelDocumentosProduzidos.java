@@ -234,13 +234,13 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 
 		String queryLotacao = "";
 		if (parametros.get("lotacao") != null
-				&& parametros.get("lotacao") != "") {
+				&& !parametros.get("lotacao").equals("")) {
 			queryLotacao = "and doc.lotaCadastrante.idLotacao in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotacao) ";
 		}
 
 		String queryUsuario = "";
 		if (parametros.get("usuario") != null
-				&& parametros.get("usuario") != "") {
+				&& !parametros.get("usuario").equals("")) {
 			queryUsuario = "and doc.cadastrante.idPessoa in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :usuario) ";
 		}
 
@@ -251,13 +251,13 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 						+ "where doc.dtRegDoc >= :dtini and doc.dtRegDoc < :dtfim "
 						+ queryOrgao + queryLotacao + queryUsuario + addWhere);
 
-		if (parametros.get("orgao") != null && parametros.get("orgao") != "") {
+		if (parametros.get("orgao") != null && !parametros.get("orgao").equals("")) {
 			query.setParameter("orgao",
 					Long.valueOf((String) parametros.get("orgao")));
 		}
 
 		if (parametros.get("lotacao") != null
-				&& parametros.get("lotacao") != "") {
+				&& !parametros.get("lotacao").equals("")) {
 			Query qryLota = ContextoPersistencia.em().createQuery(
 					"from DpLotacao lot where lot.idLotacao = "
 							+ parametros.get("lotacao"));
@@ -270,7 +270,7 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 		}
 
 		if (parametros.get("usuario") != null
-				&& parametros.get("usuario") != "") {
+				&& !parametros.get("usuario").equals("")) {
 			Query qryPes = ContextoPersistencia.em().createQuery(
 					"from DpPessoa pes where pes.idPessoa = "
 							+ parametros.get("usuario"));

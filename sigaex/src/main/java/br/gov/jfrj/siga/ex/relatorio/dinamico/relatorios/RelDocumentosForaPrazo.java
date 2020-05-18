@@ -184,21 +184,18 @@ public class RelDocumentosForaPrazo extends RelatorioTemplate {
 
 		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		String queryLotacao = "";
-		if (parametros.get("lotacao") != null
-				&& parametros.get("lotacao") != "") {
+		if (parametros.get("lotacao") != null && !"".equals(parametros.get("lotacao"))) {
 			queryLotacao = " AND DOC.ID_LOTA_CADASTRANTE IN ( SELECT LOTA.ID_LOTACAO FROM CORPORATIVO.DP_LOTACAO LOTA WHERE LOTA.ID_LOTACAO_INI = :lotacao ) ";
 		}
 
 		String queryUsuario = "";
-		if (parametros.get("usuario") != null
-				&& parametros.get("usuario") != "") {
+		if (parametros.get("usuario") != null && !"".equals(parametros.get("usuario"))) {
 			queryUsuario = " AND DOC.ID_CADASTRANTE IN ( SELECT PES.ID_PESSOA FROM CORPORATIVO.DP_PESSOA PES WHERE PES.ID_PESSOA_INICIAL = :usuario ) ";
 		}
 
 		String queryModelo = "";
 		String queryJoin = "";
-		if (parametros.get("idMod") != null
-				&& parametros.get("idMod") != "") {
+		if (parametros.get("idMod") != null && !"".equals(parametros.get("idMod"))) {
 			queryModelo = " AND DOC.ID_MOD = :idMod "
 					+ " AND DOC.ID_LOTA_CADASTRANTE = :idLotaResp ";
 			queryJoin = " LEFT OUTER JOIN SIGA.EX_FORMA_DOCUMENTO FRM "

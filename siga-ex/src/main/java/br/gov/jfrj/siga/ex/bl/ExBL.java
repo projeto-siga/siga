@@ -2536,7 +2536,15 @@ public class ExBL extends CpBL {
 				gravarMovimentacao(mov);
 
 				mov.setExMovimentacaoRef(ultMovNaoCancelada);
-				mov.setExNivelAcesso(ultMovNaoCancelada.getExNivelAcesso());
+				if (ultMovNaoCancelada.getExTipoMovimentacao()
+						.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REDEFINICAO_NIVEL_ACESSO) {
+					if (penultMovNaoCancelada != null)
+						mov.setExNivelAcesso(penultMovNaoCancelada.getExNivelAcesso());
+					else
+						mov.setExNivelAcesso(m.doc().getExNivelAcesso());
+				} else {
+					mov.setExNivelAcesso(ultMovNaoCancelada.getExNivelAcesso());
+				}
 
 				if (ultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO)
 					PublicacaoDJEBL.cancelarRemessaPublicacao(mov);
@@ -4934,7 +4942,11 @@ public class ExBL extends CpBL {
 					+ nivelAcesso.getNmNivelAcesso());
 
 			mov.setExNivelAcesso(nivelAcesso);
-			doc.setExNivelAcesso(nivelAcesso);
+			// A variável doc.exNivelAcesso deve conter o acesso
+			// da criação do documento e não pode ser alterada
+			// mais a frente. Para isso existe a dnmNivelAcesso.
+			//
+			// doc.setExNivelAcesso(nivelAcesso);
 
 			gravarMovimentacao(mov);
 			concluirAlteracaoComRecalculoAcesso(mov);

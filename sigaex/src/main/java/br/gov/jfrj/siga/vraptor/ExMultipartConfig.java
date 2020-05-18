@@ -16,5 +16,13 @@ public class ExMultipartConfig extends DefaultMultipartConfig {
 		} catch (Exception e) {		
 		}
 		return 0;
-    }  
+    }
+    
+    public long getFileSizeLimit() {
+    	try {
+			return SigaExProperties.getTamanhoMaxPDF();
+		} catch (Exception e) {		
+		}
+		return 0;
+    }
 }  

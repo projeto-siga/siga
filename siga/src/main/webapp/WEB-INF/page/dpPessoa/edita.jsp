@@ -187,8 +187,6 @@
 </script>
 
 <siga:pagina titulo="Cadastro de Pessoa">
-	<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
-	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />	
 
 	<!-- main content -->
 	<div class="container-fluid">

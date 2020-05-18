@@ -407,8 +407,6 @@ public class CpBL {
 		
 		final long longMatricula = MatriculaUtils.getParteNumericaDaMatricula(matricula);
 
-		final long longMatricula = MatriculaUtils.getParteNumericaDaMatricula(matricula);
-
 		final DpPessoa pessoa = dao().consultarPorCpfMatricula(longCpf, longMatricula);
 
 		String siglaOrgaoMatricula = MatriculaUtils.getSiglaDoOrgaoDaMatricula(matricula);

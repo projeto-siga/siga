@@ -376,84 +376,95 @@ public class GiServiceImpl implements GiService {
 	}
 
 	@Override
-	public String criarUsuario(String orgaoUsu,String lotacao, String cargo, String funcao,String nmPessoa, String dtNascimento, String cpf, String email) {
-		
+	public String criarUsuario(String cadastranteStr, String orgaoUsu,
+			String lotacao, String cargo, String funcao, String nmPessoa,
+			String dtNascimento, String cpf, String email) {
+
 		String resultado = "";
 		try {
-			
-			if(orgaoUsu == null || "".equals(orgaoUsu.trim()))
+
+			if (orgaoUsu == null || "".equals(orgaoUsu.trim()))
 				throw new AplicacaoException("Órgão não informado");
-			
-			if(cargo == null || "".equals(cargo.trim()))
+
+			if (cargo == null || "".equals(cargo.trim()))
 				throw new AplicacaoException("Cargo não informado");
-			
-			if(lotacao == null || "".equals(lotacao.trim()))
+
+			if (lotacao == null || "".equals(lotacao.trim()))
 				throw new AplicacaoException("Unidade não informada");
-			
-			if(nmPessoa == null || "".equals(nmPessoa.trim()))
+
+			if (nmPessoa == null || "".equals(nmPessoa.trim()))
 				throw new AplicacaoException("Nome não informado");
-			
-			if(cpf == null || "".equals(cpf.trim())) 
+
+			if (cpf == null || "".equals(cpf.trim()))
 				throw new AplicacaoException("CPF não informado");
-			
-			if(email == null || "".equals(email.trim())) 
+
+			if (email == null || "".equals(email.trim()))
 				throw new AplicacaoException("E-mail não informado");
-			
-			if(nmPessoa != null && !nmPessoa.matches("[a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ'' ]+")) 
-				throw new AplicacaoException("Nome com caracteres não permitidos");
-			
+
+			if (nmPessoa != null
+					&& !nmPessoa.matches("[a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ'' ]+"))
+				throw new AplicacaoException(
+						"Nome com caracteres não permitidos");
+
 			Long idOrgaoUsu = null;
 			Long idCargoUsu = null;
 			Long idLotacaoUsu = null;
 			Long idFuncaoUsu = null;
 
-			//Obtém Id Órgão
+			// Obtém Id Órgão
 			CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
 			orgaoUsuario.setNmOrgaoUsu(Texto.removeAcento(orgaoUsu));
 			orgaoUsuario = CpDao.getInstance().consultarPorNome(orgaoUsuario);
-			if (orgaoUsuario == null){
+			if (orgaoUsuario == null) {
 				throw new AplicacaoException("Órgão não localizado");
 			} else {
 				idOrgaoUsu = orgaoUsuario.getIdOrgaoUsu();
-			}		
-			
-			//Obtém Cargo
+			}
+
+			// Obtém Cargo
 			DpCargo cargoUsuario = new DpCargo();
 			cargoUsuario.setNomeCargo(Texto.removeAcento(cargo));
 			cargoUsuario.setOrgaoUsuario(orgaoUsuario);
-			cargoUsuario = CpDao.getInstance().consultarPorNomeOrgao(cargoUsuario);
-			if (cargoUsuario == null){
+			cargoUsuario = CpDao.getInstance().consultarPorNomeOrgao(
+					cargoUsuario);
+			if (cargoUsuario == null) {
 				throw new AplicacaoException("Cargo não localizado");
 			} else {
 				idCargoUsu = cargoUsuario.getId();
 			}
-			
-			//Obtém Unidade
+
+			// Obtém Unidade
 			DpLotacao lotacaoUsuario = new DpLotacao();
 			lotacaoUsuario.setNomeLotacao(Texto.removeAcento(lotacao));
 			lotacaoUsuario.setOrgaoUsuario(orgaoUsuario);
-			lotacaoUsuario = CpDao.getInstance().consultarPorNomeOrgao(lotacaoUsuario);	
-			if (lotacaoUsuario == null){
+			lotacaoUsuario = CpDao.getInstance().consultarPorNomeOrgao(
+					lotacaoUsuario);
+			if (lotacaoUsuario == null) {
 				throw new AplicacaoException("Unidade não localizada");
 			} else {
 				idLotacaoUsu = lotacaoUsuario.getId();
 			}
-			
-			
-			//Obtém Função
-			if(funcao != null && !"".equals(funcao.trim())) {
+
+			// Obtém Função
+			if (funcao != null && !"".equals(funcao.trim())) {
 				DpFuncaoConfianca funcaoConfianca = new DpFuncaoConfianca();
 				funcaoConfianca.setNomeFuncao(Texto.removeAcento(funcao));
 				funcaoConfianca.setOrgaoUsuario(orgaoUsuario);
-				funcaoConfianca = CpDao.getInstance().consultarPorNomeOrgao(funcaoConfianca);
-				if (funcaoConfianca == null){
+				funcaoConfianca = CpDao.getInstance().consultarPorNomeOrgao(
+						funcaoConfianca);
+				if (funcaoConfianca == null) {
 					throw new AplicacaoException("Função não localizada");
 				} else {
 					idFuncaoUsu = funcaoConfianca.getId();
-				}	
+				}
 			}
-		
-			resultado = Cp.getInstance().getBL().criarUsuario(null, idOrgaoUsu, idCargoUsu, idFuncaoUsu, idLotacaoUsu, nmPessoa, dtNascimento, cpf, email);
+
+			resultado = Cp
+					.getInstance()
+					.getBL()
+					.criarUsuario(cadastranteStr, null, idOrgaoUsu, idCargoUsu,
+							idFuncaoUsu, idLotacaoUsu, nmPessoa, dtNascimento,
+							cpf, email);
 
 		} catch (Exception e) {
 			return e.getMessage();

@@ -2,9 +2,9 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -128,7 +128,7 @@ public class UsuarioController extends SigaController {
 		if (!validarEmail(emailNovo) || !validarEmail(emailConfirma))
 			throw new AplicacaoException("Favor, inserir um email válido");
 		
-		if(dao().consultarQtdePorEmailIgualCpfDiferente(emailNovo, so.getCadastrante().getCpfPessoa())>0)
+		if(dao().consultarQtdePorEmailIgualCpfDiferente(emailNovo, so.getCadastrante().getCpfPessoa(), so.getCadastrante().getIdPessoaIni())>0)
 			throw new AplicacaoException("Existem outros usuários utilizando esse endereço de email. Favor, inserir um email diferente");
 		
 		if (emailNovo.equals(emailConfirma)) {
@@ -310,7 +310,19 @@ public class UsuarioController extends SigaController {
 					+ ", ou entrando em contato com a Central de Atendimento.");
 
 		String msgAD = "";
+		String cpfNumerico = null;
+		String cpfNumerico1 = null;
+		String cpfNumerico2 = null;
 		boolean senhaTrocadaAD = false;
+		if (usuario.getCpf() != null && !"".equals(usuario.getCpf())) {
+			cpfNumerico = usuario.getCpf().replace(".", "").replace("-", "");
+		}
+		if (usuario.getCpf1() != null && !"".equals(usuario.getCpf())) {
+			cpfNumerico1 = usuario.getCpf1().replace(".", "").replace("-", "");
+		}
+		if (usuario.getCpf2() != null && !"".equals(usuario.getCpf())) {
+			cpfNumerico2 = usuario.getCpf2().replace(".", "").replace("-", "");
+		}
 
 		switch (usuario.getMetodo()) {
 		case 1:
@@ -318,7 +330,15 @@ public class UsuarioController extends SigaController {
 
 			if (SigaBaseProperties.getString("siga.local") != null
 					&& "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
-				Cp.getInstance().getBL().alterarSenha(usuario.getCpf(), null, usuario.getMatricula());
+				String msg = Cp.getInstance().getBL().alterarSenha(cpfNumerico, null, usuario.getMatricula());
+				if (msg != "OK") {
+					result.include("mensagemCabec", msg);
+					result.include("msgCabecClass", "alert-danger");
+					result.include("valCpf", usuario.getCpf());
+					result.include("titulo", "Esqueci Minha Senha");
+					result.use(Results.page()).forwardTo("/WEB-INF/page/usuario/esqueciSenha.jsp");
+					return;
+				}
 			} else {
 				String[] senhaGerada = new String[1];
 				Cp.getInstance().getBL().alterarSenhaDeIdentidade(usuario.getMatricula(), cpfNumerico,
@@ -333,7 +353,8 @@ public class UsuarioController extends SigaController {
 						+ "1) As pessoas informadas não podem ser as mesmas;<br/>"
 						+ "2) Verifique se as matrículas e senhas foram informadas corretamente;<br/>"
 						+ "3) Verifique se as pessoas são da mesma lotação ou da lotação imediatamente superior em relação à matrícula que terá a senha alterada;<br/>";
-				result.include("mensagem", mensagem);
+				result.include("mensagemCabec", mensagem);
+				result.include("msgCabecClass", "alert-danger");
 				result.redirectTo("/app/usuario/esqueci_senha");
 				return;
 			}
@@ -345,7 +366,8 @@ public class UsuarioController extends SigaController {
 			break;
 
 		default:
-			result.include("mensagem", "Método inválido!");
+			result.include("mensagemCabec", "Método inválido!");
+			result.include("msgCabecClass", "alert-danger");
 			result.redirectTo("/app/usuario/esqueci_senha");
 			return;
 		}
@@ -464,14 +486,9 @@ public class UsuarioController extends SigaController {
 	 * Validador de endereço de email Referente ao cartão 859
 	 */
 	public static boolean validarEmail(String email) {
-		boolean result = true;
-		try {
-			InternetAddress emailAddr = new InternetAddress(email);
-			emailAddr.validate();
-		} catch (AddressException ex) {
-			result = false;
-		}
-		return result;
+		Pattern pattern = Pattern.compile("^[\\w-]+(\\.[\\w-]+)*@([\\w-]+\\.)+[a-zA-Z]{2,7}$");   
+	    Matcher matcher = pattern.matcher(email);   
+	    return matcher.find();   
 	}
 
 }

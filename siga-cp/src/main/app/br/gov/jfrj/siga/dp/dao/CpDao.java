@@ -940,10 +940,11 @@ public class CpDao extends ModeloDao {
 		return pes;
 	}
 
-	public int consultarQtdePorEmailIgualCpfDiferente(final String email, final long cpf) {
+	public int consultarQtdePorEmailIgualCpfDiferente(final String email, final long cpf, final Long idPessoaIni) {
 		final Query qry = getSessao().getNamedQuery("consultarPorEmailIgualCpfDiferente");
 		qry.setString("emailPessoa", email);
 		qry.setLong("cpf", cpf);
+		qry.setLong("idPessoaIni", idPessoaIni);
 		final int l = ((Long) qry.uniqueResult()).intValue();
 		return l;
 	}
@@ -1157,6 +1158,7 @@ public class CpDao extends ModeloDao {
 				query.setLong("lotacao", flt.getLotacao().getId());
 			} else {
 				query.setLong("lotacao", 0);
+			}
 
 			final List<DpPessoa> l = query.list();
 			return l;
@@ -1164,6 +1166,7 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
+
 
 	@SuppressWarnings("unchecked")
 	public List<DpPessoaUsuarioDTO> consultarUsuariosComEnvioDeEmailPendenteFiltrandoPorLotacao(
@@ -1209,7 +1212,7 @@ public class CpDao extends ModeloDao {
 						quantidadeDeLotacaoOuUsuario, true);
 			} else {
 				query = getSessao().getNamedQuery("consultarQuantidadeDpPessoaSemIdentidade");
-			}					
+			}
 
 			query.setString("nome", flt.getNome().toUpperCase().replace(' ', '%'));
 
@@ -1232,6 +1235,7 @@ public class CpDao extends ModeloDao {
 				query.setLong("lotacao", flt.getLotacao().getId());
 			} else {
 				query.setLong("lotacao", 0);
+			}
 
 			final int l = ((Long) query.uniqueResult()).intValue();
 			return l;
@@ -1240,66 +1244,6 @@ public class CpDao extends ModeloDao {
 		}
 	}
 	
-	public void enviarParametrosLotacaoOuUsuario(Query query, boolean isFiltrarPorListaDeUsuario, Long[] itens) {		
-		List<Long> parametros = Arrays.asList(itens);				
-		int indiceInicial = 0, indiceFinal = 1000, indiceMaximo = itens.length, tamanho = 1000;
-		double quantidadeDeClausulaIN = Math.ceil(Double.valueOf(indiceMaximo) / 1000);				
-		
-		for (int i = 1; i <= quantidadeDeClausulaIN; i++) {	
-			
-			if (quantidadeDeClausulaIN == 1) {
-				indiceFinal = indiceMaximo;
-				tamanho = indiceMaximo;
-			}
-			
-			Long[] parametro = parametros.subList(indiceInicial, indiceFinal).toArray(new Long[tamanho]);
-			
-			indiceInicial = indiceFinal;
-			if ((indiceMaximo - indiceFinal) >= 1000) {
-				indiceFinal += 1000; 
-			} else {				
-				tamanho = indiceMaximo - indiceFinal;
-				indiceFinal = indiceMaximo;
-			}							
-			
-			if (isFiltrarPorListaDeUsuario) {
-				query.setParameterList("idPessoaLista" + i, parametro);										
-				query.setLong("idLotacaoLista" + i, 0);
-			} else {
-				query.setParameterList("idLotacaoLista" + i, parametro);										
-				query.setLong("idPessoaLista" + i, 0);
-			}						
-		}				
-	}
-	
-	public Query queryConsultarPorFiltroDpPessoaSemIdentidadeComListaDeLotacaoOuListaDeUsuario(double quantidadeDeLotacaoOuUsuario, boolean apenasContarItens) {
-		Query query;	
-		String queryTemp = "";		
-		double quantidadeDeClausulaIN = Math.ceil(Double.valueOf(quantidadeDeLotacaoOuUsuario) / 1000);
-		if (quantidadeDeClausulaIN <= 0) quantidadeDeClausulaIN = 1;
-		
-		if (apenasContarItens)
-			queryTemp =	 "select count(pes) from DpPessoa pes";
-		else		
-			queryTemp = "from DpPessoa pes ";
-						
-		queryTemp += "  where (upper(pes.nomePessoaAI) like upper('%' || :nome || '%'))"
-				+ " and (pes.cpfPessoa = :cpf or :cpf = 0)"
-				+ " and pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"	
-				+ "  and (";
-		for (int i = 1; i <= quantidadeDeClausulaIN; i++) {					
-			if (i > 1) queryTemp += " or ";
-			queryTemp += " pes.lotacao.idLotacao in (:idLotacaoLista" + i + ") or pes.idPessoa in (:idPessoaLista" + i + ")";				
-		}
-		queryTemp += ")"
-					+ " and pes.dataFimPessoa = null"
-					+ " and not exists (select ident.dpPessoa.idPessoa from CpIdentidade ident where pes.idPessoa = ident.dpPessoa.idPessoa)"
-					+ "  order by pes.cpfPessoa";			
-		
-		query = getSessao().createQuery(queryTemp);
-							
-		return query;
-	}
 
 	public void enviarParametrosLotacaoOuUsuario(Query query, boolean isFiltrarPorListaDeUsuario, Long[] itens) {
 		List<Long> parametros = Arrays.asList(itens);
@@ -1514,6 +1458,11 @@ public class CpDao extends ModeloDao {
 				query.setLong("cpf", flt.getCpf());
 			else
 				query.setLong("cpf", 0);
+			
+			if (flt.getEmail() != null)
+				query.setString("email", flt.getEmail());
+			else
+				query.setString("email", null);
 
 			if (flt.getIdOrgaoUsu() != null)
 				query.setLong("idOrgaoUsu", flt.getIdOrgaoUsu());
@@ -1587,36 +1536,7 @@ public class CpDao extends ModeloDao {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<DpVisualizacao> consultarVisualizacoesPermitidas(final DpVisualizacao exemplo) throws SQLException {
-		try {
-			Query query = null;
-			query = getSessao().getNamedQuery("consultarVisualizacoesPermitidas");
-			query.setLong("idDelegadoIni", exemplo.getDelegado().getIdPessoaIni());
-			query.setCacheable(true);
-			query.setCacheRegion(CACHE_QUERY_SUBSTITUICAO);
-			return query.list();
-		} catch (final IllegalArgumentException e) {
-			throw e;
-		} catch (final Exception e) {
-			return null;
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<DpVisualizacao> consultarOrdemData(final DpVisualizacao exemplo) throws SQLException {
-		try {
-			Query query = null;
-			query = getSessao().getNamedQuery("consultarOrdem");
-			query.setLong("idTitularIni", exemplo.getTitular().getIdPessoaIni());
-			return query.list();
-		} catch (final IllegalArgumentException e) {
-			throw e;
-		} catch (final Exception e) {
-			return null;
-		}
-	}
-
+	
 	public CpIdentidade consultaIdentidadeCadastrante(final String nmUsuario, boolean fAtiva)
 			throws AplicacaoException {
 		List<CpIdentidade> lista = consultaIdentidadesCadastrante(nmUsuario, fAtiva);
@@ -2056,7 +1976,8 @@ public class CpDao extends ModeloDao {
 
 	}
 
-	public HistoricoAuditavel gravarComHistorico(HistoricoAuditavel oNovo, HistoricoAuditavel oAntigo, Date dt,
+	public HistoricoAuditavel gravarComHistorico(HistoricoAuditavel oNovo,
+			HistoricoAuditavel oAntigo, Date dt,
 			CpIdentidade identidadeCadastrante) throws AplicacaoException {
 		if (dt == null)
 			dt = CpDao.getInstance().consultarDataEHoraDoServidor();
@@ -2065,7 +1986,7 @@ public class CpDao extends ModeloDao {
 			return gravarComHistorico(oNovo, identidadeCadastrante);
 		}
 
-		if (oNovo.semelhante(oAntigo, 0)) {
+		if (!(oNovo instanceof CpIdentidade) && oNovo.semelhante(oAntigo, 0)) {
 			return oAntigo;
 		}
 
@@ -2074,29 +1995,29 @@ public class CpDao extends ModeloDao {
 		return gravarComHistorico(oNovo, identidadeCadastrante);
 	}
 
-	public HistoricoAuditavel gravarComHistorico(final HistoricoAuditavel entidade, CpIdentidade identidadeCadastrante)
-			throws AplicacaoException {
+	public HistoricoAuditavel gravarComHistorico(
+			final HistoricoAuditavel entidade,
+			CpIdentidade identidadeCadastrante) throws AplicacaoException {
 		if (entidade.getHisDtIni() != null && entidade.getHisIdcIni() == null)
 			entidade.setHisIdcIni(identidadeCadastrante);
 		if (entidade.getHisDtFim() != null && entidade.getHisIdcFim() == null)
 			entidade.setHisIdcFim(identidadeCadastrante);
 		entidade.setHisAtivo(entidade.getHisDtFim() == null ? 1 : 0);
-		gravar(entidade);
+		getSessao().saveOrUpdate(entidade);
 		if (entidade.getHisIdIni() == null && entidade.getId() != null) {
 			entidade.setHisIdIni(entidade.getId());
-			gravar(entidade);
+			getSessao().update(entidade);
 		}
-		descarregar();
+		getSessao().flush();
 		try {
 			invalidarCache(entidade);
-			// Edson: não há necessidade de limpar o cache de configs no próprio
-			// request
-			// pois, no request seguinte, a limpeza será feita. Além disso,
-			// estava gerando
-			// o erro #972 (ver comentários)
-			// Cp.getInstance().getConf().limparCacheSeNecessario();
+			//Edson: não há necessidade de limpar o cache de configs no próprio request
+			//pois, no request seguinte, a limpeza será feita. Além disso, estava gerando
+			//o erro #972 (ver comentários)
+			//Cp.getInstance().getConf().limparCacheSeNecessario();
 		} catch (Exception e) {
-			throw new AplicacaoException("Nao foi possivel limpar o cache.", 0, e);
+			throw new AplicacaoException("Nao foi possivel limpar o cache.", 0,
+					e);
 		}
 		return entidade;
 	}
@@ -2116,10 +2037,6 @@ public class CpDao extends ModeloDao {
 		if (entidade instanceof DpSubstituicao) {
 			sfCpDao.evict(DpSubstituicao.class);
 			sfCpDao.evictQueries(CACHE_QUERY_SUBSTITUICAO);
-		} else if (entidade instanceof DpVisualizacao) {
-			sfCpDao.evict(DpVisualizacao.class);
-			sfCpDao.evictQueries(CACHE_QUERY_SUBSTITUICAO);
-
 		}
 		if (entidade instanceof CpIdentidade) {
 			sfCpDao.evict(CpIdentidade.class);

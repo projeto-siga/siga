@@ -158,7 +158,10 @@ public class SigaExProperties extends ModeloPropriedade {
 	}
 
 	public static String getEnderecoAutenticidadeDocs() {
-		return getString("siga.ex.enderecoAutenticidadeDocs");
+		String url = getString("siga.ex.enderecoAutenticidadeDocs");
+		if (url != null)
+		return url;
+		return "http://localhost:8080/sigaex/public/app/autenticar";
 	}
 	
 	public static Long getIdModInternoImportado() throws Exception{

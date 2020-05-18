@@ -76,7 +76,7 @@
 									<div class="col-sm-2">
 										<select name="tipoDest" id="tipoDest"
 											onchange="javascript:hideShowSel(this);" class="form-control">
-											<c:forEach items="#{listaTipoDest}" var="item">
+											<c:forEach items="${listaTipoDest}" var="item">
 												<option value="${item.key}"
 													${item.key == tipoDest ? 'selected' : ''}>
 													${item.value}</option>

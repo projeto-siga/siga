@@ -1503,7 +1503,8 @@ public class CpDao extends ModeloDao {
 			// Reativado pois esse query é executado a cada chamada, inclusive
 			// as ajax.
 			query.setHint("org.hibernate.cacheable", true);
-			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SUBSTITUICAO);
+			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
+//			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SUBSTITUICAO);
 			return query.getResultList();
 		} catch (final IllegalArgumentException e) {
 			throw e;
@@ -1536,7 +1537,8 @@ public class CpDao extends ModeloDao {
 			query = em().createNamedQuery("consultarVisualizacoesPermitidas");
 			query.setParameter("idDelegadoIni", exemplo.getDelegado().getIdPessoaIni());
 			query.setHint("org.hibernate.cacheable", true);
-			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SUBSTITUICAO);
+//			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SUBSTITUICAO);
+			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
 			return query.getResultList();
 		} catch (final IllegalArgumentException e) {
 			throw e;

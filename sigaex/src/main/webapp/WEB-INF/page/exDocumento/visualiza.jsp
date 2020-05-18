@@ -161,22 +161,6 @@
 		<div class="row mt-2">
 			<div class="col col-sm-12 col-md-8">
 				<div>
-					<c:if test="${f:resource('isWorkflowEnabled')}">
-						<c:if
-							test="${ (primeiroMobil) and (docVO.tipoFormaDocumento == 'processo_administrativo')}">
-							<div id="${docVO.sigla}" depende=";wf;" class="wf_div"></div>
-							<!--ajax:${doc.codigo}-${i}-->
-							<!--/ajax:${doc.codigo}-${i}-->
-							<c:set var="primeiroMobil" value="${false}" />
-						</c:if>
-						<c:if
-							test="${(not m.mob.geral) or (docVO.tipoFormaDocumento != 'processo_administrativo')}">
-							<div id="${m.sigla}" depende=";wf;" class="wf_div"></div>
-							<!--ajax:${doc.codigo}-${i}-->
-							<!--/ajax:${doc.codigo}-${i}-->
-						</c:if>
-					</c:if>
-
 					<c:choose>
 						<c:when test="${docVO.conteudoBlobHtmlString != null}">
 							<div class="card-sidebar card border-alert bg-white mb-3">

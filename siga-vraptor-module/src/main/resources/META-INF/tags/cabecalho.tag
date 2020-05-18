@@ -102,7 +102,9 @@ ${meta}
 <link rel="stylesheet" href="/siga/fontawesome/css/all.css"	type="text/css" />
 
 <c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
-	
+
+<c:set var="siga_version"  scope="request" value="9.0.0.1" />
+
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
 		<meta name="theme-color" content="#35b44">
@@ -119,6 +121,7 @@ ${meta}
 		<c:set var="ico_siga" value="siga-doc.ico" />
 		<c:set var="menu_class" value="menusp" />
 		<c:set var="sub_menu_class" value="submenusp" />
+		<c:set var="ambiente_class" value="ambiente_class" />
 		<c:set var="navbar_class" value="navbar-light" />
 		<c:set var="navbar_logo" value="logo-sem-papel-cor.png" />
 		<c:set var="navbar_logo_size" value="50" />
@@ -344,41 +347,45 @@ ${meta}
 		<div class="container-fluid content">
 			<div class="row pt-2 pb-2 mb-3 ${sub_menu_class}" >
 				<!-- usuário -->
-				<div class="col col-12 col-sm-4">
-					<div class="gt-company d-inline align-middle">
-						<span class="h-100">
-							<strong><span>${f:resource('siga.cabecalho.titulo')}</span> </strong>
-							 <c:catch>
-									<c:if test="${not empty titular.orgaoUsuario.descricao}"><span style="white-space: nowrap;"> <i class="fa fa-angle-right"></i> ${titular.orgaoUsuario.descricao}</span></h6></c:if>
-							 </c:catch>
-						</span>
+				<div class="col col-12 col-md-6">
+					<div class="row">
+						<div class="col gt-company d-inline align-middle">
+							<span class="h-100">
+								<strong><span>${f:resource('siga.cabecalho.titulo')}</span> </strong>
+								 <c:catch>
+										<c:if test="${not empty titular.orgaoUsuario.descricao}"><span style="white-space: nowrap;"> <i class="fa fa-angle-right"></i> ${titular.orgaoUsuario.descricao}</span></h6></c:if>
+								 </c:catch>
+							</span>
+						</div>
 					</div>
+					<div class="row ${hide_only_TRF2}  ${ambiente_class}">
+						<div class="col">
+							<span>
+								<c:choose>
+									<c:when test="${f:resource('ambiente') eq 'desenv'}">
+										Ambiente de Desenvolvimento
+									</c:when>
+									<c:when test="${f:resource('ambiente') eq 'prod'}">
+										Ambiente Oficial
+									</c:when>
+									<c:when test="${f:resource('ambiente') eq 'treinamento'}">
+										Ambiente de Simulação
+									</c:when>
+									<c:when test="${f:resource('ambiente') eq 'homolog'}">
+										Ambiente de Homologação
+									</c:when>
+								</c:choose>
+							</span>
+							<span >- v.${siga_version}</span>
+						</div>
+					</div>
+
 					
-					<!-- 
-					<div class="gt-version">
-						Sistema Integrado de Gest&atilde;o Administrativa
-						<c:if test="${not empty env}"> - <span style="color: red">${env}</span>
-						</c:if>
-					</div>
-					 -->
+
 				</div>
-				<div class="col col-12 col-sm-4 text-center">
-					<span class="h3 text-success align-middle ${hide_only_TRF2}">
-						<c:choose>
-							<c:when test="${f:resource('ambiente') eq 'prod'}">
-								Ambiente Oficial
-							</c:when>
-							<c:when test="${f:resource('ambiente') eq 'treinamento'}">
-								Ambiente de Simulação
-							</c:when>
-							<c:when test="${f:resource('ambiente') eq 'homolog'}">
-								Ambiente de Homologação
-							</c:when>
-						</c:choose>
-					</span>
-				</div>
+				
 				<c:if test="${not empty cadastrante}">
-					<div class="col col-12 col-sm-4 text-right">
+					<div class="col col-12 col-md-6 text-right">
 						<div class="dropdown d-inline">
 							<span class="align-middle">Olá, <i class="fa fa-user"></i> 
 								<c:catch>
@@ -410,18 +417,16 @@ ${meta}
 							</span>
 						</div>
 						<button class="btn btn-danger btn-sm ml-3 mt-1 align-bottom" type="button" onclick="delSession();javascript:location.href='/siga/public/app/logout'"><i class="fas fa-sign-out-alt"></i> Sair</button>
-						<div class="d-inline">
+						<div class="pt-1">
 							<c:catch>
 								<c:choose>
 									<c:when
 										test="${not empty titular && titular.idPessoa!=cadastrante.idPessoa}">Substituindo: <strong>${f:maiusculasEMinusculas(titular.nomePessoa)}</strong>
-										<span class="gt-util-separator">|</span>
-										<a href="/siga/app/substituicao/finalizar" class="text-white">Finalizar</a>
+										<button class="btn btn-secondary btn-sm" type="button" onclick="delSession();javascript:location.href='/siga/app/substituicao/finalizar'">Finalizar</button>
 									</c:when>
 									<c:when
 										test="${not empty lotaTitular && lotaTitular.idLotacao!=cadastrante.lotacao.idLotacao}">Substituindo: <strong>${f:maiusculasEMinusculas(lotaTitular.nomeLotacao)}</strong>
-										<span class="gt-util-separator">|</span>
-										<a href="/siga/app/substituicao/finalizar" class="text-white">Finalizar</a>
+										<button class="btn btn-secondary btn-sm" type="button" onclick="delSession();javascript:location.href='/siga/app/substituicao/finalizar'">Finalizar</button>
 									</c:when>
 									<c:otherwise></c:otherwise>
 								</c:choose>

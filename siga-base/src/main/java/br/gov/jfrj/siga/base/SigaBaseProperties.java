@@ -89,7 +89,7 @@ public class SigaBaseProperties extends ModeloPropriedade {
 		return instance.obterTodas("");
 	}
 	
-	public static List<String> getListaServidoresEmail() throws AplicacaoException{
+	public static List<String> getListaServidoresEmail() throws AplicacaoException { 
 		try {
 			return instance.obterPropriedadeLista("servidor.smtp");
 		} catch (Exception e) {

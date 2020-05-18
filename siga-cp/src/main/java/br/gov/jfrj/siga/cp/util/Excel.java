@@ -904,14 +904,13 @@ public class Excel {
 				}
 				
 				if(problemas == null || "".equals(problemas.toString())) {
-					pe.setEmailPessoa(celula);
 					pe.setDataNascimento(date);
 					pe.setCpfPessoa(Long.valueOf(cpf));
 					pe.setOrgaoUsuario(orgaoUsuario);
 					pe.setLotacao(lotacao);
 					pe.setCargo(cargo);
 					pe.setFuncaoConfianca(funcao);
-					pe.setEmailPessoa(celula);
+					pe.setEmailPessoa(email);
 					pe.setDataInicio(data);
 					pe.setSesbPessoa(orgaoUsuario.getSigla());					
 					

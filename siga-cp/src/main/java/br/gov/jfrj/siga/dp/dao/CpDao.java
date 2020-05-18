@@ -28,6 +28,7 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -462,7 +463,7 @@ public class CpDao extends ModeloDao {
 			if (o.getIdOrgaoUsu() != null)
 				query.setParameter("idOrgaoUsu", o.getIdOrgaoUsu());
 			else
-				query.setParameter("idOrgaoUsu", 0);
+				query.setParameter("idOrgaoUsu", 0L);
 
 			final List<DpCargo> l = query.getResultList();
 			return l;
@@ -545,7 +546,7 @@ public class CpDao extends ModeloDao {
 			if (o.getIdOrgaoUsu() != null)
 				query.setParameter("idOrgaoUsu", o.getIdOrgaoUsu());
 			else
-				query.setParameter("idOrgaoUsu", 0);
+				query.setParameter("idOrgaoUsu", 0L);
 
 			final List<DpFuncaoConfianca> l = query.getResultList();
 			return l;
@@ -679,7 +680,7 @@ public class CpDao extends ModeloDao {
 			else
 				query.setParameter("idOrgaoUsu", consultarPorSigla(o.getOrgaoUsuario()).getId());
 		else
-			query.setParameter("idOrgaoUsu", 0);
+			query.setParameter("idOrgaoUsu", 0L);
 
 		query.setHint("org.hibernate.cacheable", true);
 		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
@@ -1262,11 +1263,11 @@ public class CpDao extends ModeloDao {
 			}
 
 			if (isFiltrarPorListaDeUsuario) {
-				query.setParameter("idPessoaLista" + i, parametro);
-				query.setParameter("idLotacaoLista" + i, 0L);
+				query.setParameter("idPessoaLista" + i, Arrays.asList(parametro));
+				query.setParameter("idLotacaoLista" + i, Collections.singletonList(0L));
 			} else {
-				query.setParameter("idLotacaoLista" + i, parametro);
-				query.setParameter("idPessoaLista" + i, 0L);
+				query.setParameter("idLotacaoLista" + i, Arrays.asList(parametro));
+				query.setParameter("idPessoaLista" + i, Collections.singletonList(0L));
 			}
 		}
 	}
@@ -1503,7 +1504,8 @@ public class CpDao extends ModeloDao {
 			// Reativado pois esse query é executado a cada chamada, inclusive
 			// as ajax.
 			query.setHint("org.hibernate.cacheable", true);
-			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SUBSTITUICAO);
+			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
+//			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SUBSTITUICAO);
 			return query.getResultList();
 		} catch (final IllegalArgumentException e) {
 			throw e;
@@ -1536,7 +1538,8 @@ public class CpDao extends ModeloDao {
 			query = em().createNamedQuery("consultarVisualizacoesPermitidas");
 			query.setParameter("idDelegadoIni", exemplo.getDelegado().getIdPessoaIni());
 			query.setHint("org.hibernate.cacheable", true);
-			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SUBSTITUICAO);
+//			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SUBSTITUICAO);
+			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
 			return query.getResultList();
 		} catch (final IllegalArgumentException e) {
 			throw e;
@@ -1623,7 +1626,7 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("sesbPessoa", null);
 
 			/* Constantes para Evitar Parse Oracle */
-			qry.setParameter("cpfZero", "0");
+			qry.setParameter("cpfZero", Long.valueOf(0));
 			qry.setParameter("sfp1", "1");
 			qry.setParameter("sfp2", "2");
 			qry.setParameter("sfp12", "12");
@@ -1651,7 +1654,7 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("email", email);
 
 			/* Constantes para Evitar Parse Oracle */
-			qry.setParameter("cpfZero", "0");
+			qry.setParameter("cpfZero", Long.valueOf(0));
 			qry.setParameter("sfp1", "1");
 			qry.setParameter("sfp2", "2");
 			qry.setParameter("sfp12", "12");
@@ -2444,12 +2447,18 @@ public class CpDao extends ModeloDao {
 
 	public int consultarQuantidadeDocumentosPorDpLotacao(final DpLotacao o) {
 		try {
-			Query sql = em().createNativeQuery("consultarQuantidadeDocumentosPorDpLotacao");
-
-			sql.setParameter("idLotacao", o.getId());
-            sql.setParameter("idTipoMarca", CpTipoMarca.TIPO_MARCA_SIGA_EX);
-        	
-            final int l = ((BigDecimal) sql.getSingleResult()).intValue();
+			String consultarQuantidadeDocumentosPorDpLotacao = "SELECT count(1) FROM DpLotacao lotacao"
+					+ " left join CpMarca marca on lotacao.idLotacao = marca.dpLotacaoIni"
+					+ " WHERE(marca.dtIniMarca IS NULL OR marca.dtIniMarca < sysdate)"
+					+ " AND(marca.dtFimMarca IS NULL OR marca.dtFimMarca > sysdate)"
+					+ " AND marca.cpMarcador.idMarcador not in (1,10,32)"
+					+ " AND lotacao.idLotacaoIni = :idLotacao"
+					+ " AND marca.cpTipoMarca.idTpMarca = :idTipoMarca ";
+			Query query = em().createQuery(consultarQuantidadeDocumentosPorDpLotacao);
+	
+			query.setParameter("idLotacao", o.getId());
+			query.setParameter("idTipoMarca", CpTipoMarca.TIPO_MARCA_SIGA_EX);
+            final int l = ((Long) query.getSingleResult()).intValue();
             return l;
         } catch (final NullPointerException e) {
             return 0;

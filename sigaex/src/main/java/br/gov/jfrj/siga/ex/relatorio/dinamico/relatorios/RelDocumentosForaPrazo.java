@@ -184,12 +184,14 @@ public class RelDocumentosForaPrazo extends RelatorioTemplate {
 
 		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		String queryLotacao = "";
-		if (parametros.get("lotacao") != null && !"".equals(parametros.get("lotacao"))) {
+		if (parametros.get("lotacao") != null
+				&& !"".equals(parametros.get("lotacao"))) {
 			queryLotacao = " AND DOC.ID_LOTA_CADASTRANTE IN ( SELECT LOTA.ID_LOTACAO FROM CORPORATIVO.DP_LOTACAO LOTA WHERE LOTA.ID_LOTACAO_INI = :lotacao ) ";
 		}
 
 		String queryUsuario = "";
-		if (parametros.get("usuario") != null && !"".equals(parametros.get("usuario"))) {
+		if (parametros.get("usuario") != null
+				&& !"".equals(parametros.get("usuario"))) {
 			queryUsuario = " AND DOC.ID_CADASTRANTE IN ( SELECT PES.ID_PESSOA FROM CORPORATIVO.DP_PESSOA PES WHERE PES.ID_PESSOA_INICIAL = :usuario ) ";
 		}
 
@@ -206,7 +208,7 @@ public class RelDocumentosForaPrazo extends RelatorioTemplate {
 					+ " ON ORG.ID_ORGAO_USU = DOC.ID_ORGAO_USU ";
 		}
 
-		Query query = ContextoPersistencia.em().createQuery(
+		Query query = ContextoPersistencia.em().createNativeQuery(
 						"SELECT "
 								+ querySelect
 								+ " FROM ( SELECT MOV.ID_MOBIL,"

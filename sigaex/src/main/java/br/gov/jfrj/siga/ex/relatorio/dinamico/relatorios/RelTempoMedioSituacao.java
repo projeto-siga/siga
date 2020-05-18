@@ -108,17 +108,17 @@ public class RelTempoMedioSituacao extends RelatorioTemplate {
 
 		String queryLotacao = "";
 		if (parametros.get("lotacao") != null
-				&& parametros.get("lotacao") != "") {
+				&& !"".equals(parametros.get("lotacao"))) {
 			queryLotacao = " AND DOCA.ID_LOTA_CADASTRANTE IN ( SELECT LOTA.ID_LOTACAO FROM CORPORATIVO.DP_LOTACAO LOTA WHERE LOTA.ID_LOTACAO_INI = :lotacao ) ";
 		}
 
 		String queryUsuario = "";
 		if (parametros.get("usuario") != null
-				&& parametros.get("usuario") != "") {
+				&& !"".equals(parametros.get("usuario"))) {
 			queryUsuario = " AND DOCA.ID_CADASTRANTE IN ( SELECT PES.ID_PESSOA FROM CORPORATIVO.DP_PESSOA PES WHERE PES.ID_PESSOA_INICIAL = :usuario ) ";
 		}
 
-		Query query = ContextoPersistencia.em().createQuery(
+		Query query = ContextoPersistencia.em().createNativeQuery(
 						"SELECT "
 					    + "(LOTA.SIGLA_LOTACAO || ' - ' || LOTA.NOME_LOTACAO) LOTADESCR, "
 					    + "MOD.NM_MOD, "
@@ -236,7 +236,7 @@ public class RelTempoMedioSituacao extends RelatorioTemplate {
 		query.setParameter("idTpMovCancelar", ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO);			
 		
 		if (parametros.get("lotacao") != null
-				&& parametros.get("lotacao") != "") {
+				&& !"".equals(parametros.get("lotacao"))) {
 			Query qryLota = ContextoPersistencia.em().createQuery(
 					"from DpLotacao lot where lot.idLotacao = "
 							+ parametros.get("lotacao"));
@@ -249,7 +249,7 @@ public class RelTempoMedioSituacao extends RelatorioTemplate {
 		}
 
 		if (parametros.get("usuario") != null
-				&& parametros.get("usuario") != "") {
+				&& !"".equals(parametros.get("usuario"))) {
 			Query qryPes = ContextoPersistencia.em().createQuery(
 					"from DpPessoa pes where pes.idPessoa = "
 							+ parametros.get("usuario"));

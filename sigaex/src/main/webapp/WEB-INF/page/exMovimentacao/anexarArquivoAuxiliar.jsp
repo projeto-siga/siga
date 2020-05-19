@@ -36,7 +36,7 @@
 					<div class="row">
 						<div class="col-sm-6">
 							<div class="form-control custom-file">
-								<input class="custom-file-input" id="idSelecaoArquivo" type="file" name="arquivo" accept="*.*"/>
+								<input class="custom-file-input" id="idSelecaoArquivo" type="file" name="arquivo" accept="*.*" onchange="testTamanho()"/>
 								<label class="custom-file-label text-truncate" for="idSelecaoArquivo" data-browse="Escolha o Arquivo">Clique para selecionar o arquivo a anexar</label>
 							</div>
 						</div>
@@ -72,7 +72,20 @@
  				alert("Extensão " + fileExtension + " inválida para inclusão do arquivo.");
  				result = false;
  			}
+ 			
+ 			if(result) {
+ 				result = testTamanho();
+ 			}
+ 			
 			return result;
+		}
+		
+		function testTamanho() {
+			var tamanhoArquivo = parseInt(document.getElementById("idSelecaoArquivo").files[0].size);
+		    if(tamanhoArquivo > 10485760){
+		        alert("TAMANHO DO ARQUIVO EXCEDE O PERMITIDO (10MB)!");
+		        return false;
+		    }
 		}
 	</script>
 

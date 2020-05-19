@@ -927,7 +927,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				senhaGerada[0] = GeraMessageDigest.geraSenha();
 			}
 			Cp.getInstance().getBL().criarIdentidade(dpPessoa2.getSesbPessoa() + dpPessoa2.getMatricula(),
-					dpPessoa2.getCpfFormatado(), getIdentidadeCadastrante(), null, senhaGerada, Boolean.FALSE, null);
+					dpPessoa2.getCpfFormatado(), getIdentidadeCadastrante(), null, senhaGerada, Boolean.FALSE);
 			cpfAnterior = dpPessoa2.getCpfPessoa().toString();
 		}
 		this.result.redirectTo(this).enviaEmail(0, idOrgaoUsu, nome, cpfPesquisa, idLotacaoPesquisa, idUsuarioPesquisa);

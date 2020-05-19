@@ -258,7 +258,7 @@ public class UsuarioController extends SigaController {
 		case 1:
 
 			idNova = Cp.getInstance().getBL().criarIdentidade(usuario.getMatricula(), usuario.getCpf(),
-					getIdentidadeCadastrante(), usuario.getSenhaNova(), senhaGerada, isIntegradoAoAD, null);
+					getIdentidadeCadastrante(), usuario.getSenhaNova(), senhaGerada, isIntegradoAoAD);
 			if (isIntegradoAoAD) {
 				try {
 					IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova, usuario.getSenhaNova());
@@ -280,7 +280,7 @@ public class UsuarioController extends SigaController {
 				result.redirectTo("/app/usuario/incluir_usuario");
 			} else {
 				idNova = Cp.getInstance().getBL().criarIdentidade(usuario.getMatricula(), usuario.getCpf(),
-						getIdentidadeCadastrante(), usuario.getSenhaNova(), senhaGerada, isIntegradoAoAD, null);
+						getIdentidadeCadastrante(), usuario.getSenhaNova(), senhaGerada, isIntegradoAoAD);
 			}
 			break;
 		default:

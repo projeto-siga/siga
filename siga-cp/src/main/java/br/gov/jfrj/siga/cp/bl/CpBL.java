@@ -64,6 +64,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
 import br.gov.jfrj.siga.gi.service.GiService;
+import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 public class CpBL {
 	CpCompetenciaBL comp;
@@ -400,7 +401,7 @@ public class CpBL {
 	}
 
 	public CpIdentidade criarIdentidade(String matricula, String cpf, CpIdentidade idCadastrante,
-			final String senhaDefinida, String[] senhaGerada, boolean marcarParaSinc, Long idLotacao) throws AplicacaoException {
+			final String senhaDefinida, String[] senhaGerada, boolean marcarParaSinc) throws AplicacaoException {
 
 		Long longCpf = CPFUtils.getLongValueValidaSimples(cpf);
 		final List<DpPessoa> listaPessoas = dao().listarPorCpf(longCpf);
@@ -457,7 +458,7 @@ public class CpBL {
 
 						if (SigaMessages.isSigaSP()) {
 							String[] destinanarios = { pessoa.getEmailPessoaAtual() };
-							String conteudoHTML = pessoaIsUsuarioExterno(pessoa, idLotacao)
+							String conteudoHTML = pessoaIsUsuarioExterno(pessoa)
 									? textoEmailNovoUsuarioExternoSP(idNova, matricula, novaSenha)
 									: textoEmailNovoUsuarioSP(idNova, matricula, novaSenha, autenticaPeloBanco);
 							
@@ -495,37 +496,37 @@ public class CpBL {
 
 	/**
 	 * Verifica se a {@link DpPessoa Pessoa} é um usuário externo. <br>
-	 * <b>NOTA DE IMPLEMENTAÇÃO:</b> A implementação original consistia simplesmente
-	 * em chamar {@link DpPessoa#isUsuarioExterno()}. Entretanto durante a migração
-	 * para o EAP 7.2, quando o método
-	 * {@link #criarIdentidade(String, String, CpIdentidade, String, String[], boolean, Long)}
-	 * era chamado a partir de
-	 * {@link #criarUsuario(String, Long, Long, Long, Long, Long, String, String, String, String)}
-	 * ao se chamar {@link DpPessoa#isUsuarioExterno()} acontecia um
-	 * {@link NullPointerException} ao pegar a {@link DpPessoa#getLotacao() lotação}
-	 * da Pessoa, mesmo que ela tivesse acabado de ter sido carregada pelo
-	 * Hibernate. A "solução" foi usar o ID da lotação diretamente e consultar a
-	 * base de dados pela Lotação com esse ID.
+	 * <b>NOTA DE IMPLEMENTAÇÃO:</b> Originalmente dentro de
+	 * {@link #criarIdentidade(String, String, CpIdentidade, String, String[], boolean)}
+	 * era chamado {@link DpPessoa#isUsuarioExterno()}, que faz uso de
+	 * {@link DpPessoa#getLotacao() lotação}. Entretanto durante a migração para o
+	 * EAP 7.2, verificou-se que quando o método <code>criarIdentidade</code> era
+	 * chamado a partir de
+	 * {@link #criarUsuario(String, Long, Long, Long, Long, Long, String, String, String, String)},
+	 * ao se chamar {@link DpPessoa#getLotacao()} dentro de
+	 * {@link DpPessoa#isUsuarioExterno()} acontecia um
+	 * {@link NullPointerException}, mesmo que essa pessoa tivesse acabado de ter
+	 * sido carregada pelo Hibernate. Entretanto, se for chamado
+	 * <code>pessoa.getLotacao().getId()</code> não houve problema. <br/>
+	 * A solução foi emular a implmentação de {@link DpPessoa#isUsuarioExterno()},
+	 * usar essa <code>pessoa.getLotacao().getId()</code>, para consultar a Lotação
+	 * na base de dados através de
+	 * {@link ModeloDao#consultar(java.io.Serializable, Class, boolean)} e chamar
+	 * {@link DpLotacao#getIsExternaLotacao()}.
 	 * 
-	 * @param pessoa    Pessoa a ser avaliada.
-	 * @param idLotacao {@link DpLotacao#getId() ID} da {@link DpLotacao Lotação}.
-	 *                  ao qual a pessoa está vinculada. Se for <code>null</code>,
-	 *                  será simplesmente retornado
-	 *                  {@link DpPessoa#isUsuarioExterno()}.
+	 * @param pessoa Pessoa a ser avaliada.
 	 * @return se a Pessoa é um usuário externo.
 	 */
-	private boolean pessoaIsUsuarioExterno(DpPessoa pessoa, Long idLotacao) {
-		if (idLotacao == null) {
-			return pessoa.isUsuarioExterno();
-		}
-
-		/*
-		 * Emula DpPessoa#isUsuarioExterno(). Durante a migração para o EAP 7.2
-		 */
+	private boolean pessoaIsUsuarioExterno(DpPessoa pessoa) {
 		CpOrgaoUsuario orgaoUsuario = pessoa.getOrgaoUsuario();
 		Integer isExternoOrgaoUsu = orgaoUsuario.getIsExternoOrgaoUsu();
 		if ((isExternoOrgaoUsu != null) && (isExternoOrgaoUsu == 1)) {
 			return true;
+		}
+
+		Long idLotacao = pessoa.getLotacao().getId();
+		if (idLotacao == null) {
+			return false;
 		}
 
 		DpLotacao lotacao = dao().consultar(idLotacao, DpLotacao.class, false);
@@ -1216,7 +1217,7 @@ public class CpBL {
 
 		senhaGerada[0] = GeraMessageDigest.geraSenha();
 		Cp.getInstance().getBL().criarIdentidade(pessoa.getSesbPessoa() + pessoa.getMatricula(),
-				pessoa.getCpfFormatado(), idIdentidade, null, senhaGerada, Boolean.FALSE, idLotacao);
+				pessoa.getCpfFormatado(), idIdentidade, null, senhaGerada, Boolean.FALSE);
 
 		return "Usuário cadastrado com sucesso: " + pessoa.getSesbPessoa() + pessoa.getMatricula();
 

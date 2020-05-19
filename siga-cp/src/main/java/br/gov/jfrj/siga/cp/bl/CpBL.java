@@ -81,6 +81,34 @@ public class CpBL {
 		return comp.getConfiguracaoBL().dao();
 	}
 
+	/**
+	 * Marca uma {@link CpConfiguracao} como Fechada. Para isso preenche a
+	 * {@link CpConfiguracao#setHisDtFim(Date) data de fim}. <br/>
+	 * <b>NOTA DE IMPLMENTAÇÃO:</b> Originalmente simplesmente chamava-se
+	 * {@link CpDao#gravarComHistorico(br.gov.jfrj.siga.cp.model.HistoricoAuditavel, CpIdentidade)}
+	 * com <code>confoOld</code> que é carregado da base de dados. Entretanto na
+	 * migração para o EAP 7.2 e o JPA (ao invés do Hibernate) ao se executar
+	 * <code>gravarComHistorico</code> era disparada uma exceção com a mensagem de
+	 * erro <cite>detached entity passed to persist</cite>. A solução encontrada foi
+	 * carregar uma outra {@link CpConfiguracao} da base de dados com o ID de
+	 * <code>confoOld</code>, preecher a {@link CpConfiguracao#setHisDtFim(Date)
+	 * data de fim} deste e passá-lo para <code>gravarComHistorico</code>.
+	 * 
+	 * @param confOld               Configuração a ser fechada.
+	 * @param identidadeCadastrante Usuário responsável pela atualização
+	 * @param dt                    Data de fechamenbto.
+	 * @see CpDao#gravarComHistorico(br.gov.jfrj.siga.cp.model.HistoricoAuditavel,
+	 *      CpIdentidade)
+	 */
+	private void fecharAntigaConfiguracao(CpConfiguracao confOld, CpIdentidade identidadeCadastrante, Date dt) {
+		if (confOld != null) {
+			Long idConfiguracaoOld = confOld.getIdConfiguracao();
+			CpConfiguracao confOldToSave = dao().consultar(idConfiguracaoOld, CpConfiguracao.class, false);
+			confOldToSave.setHisDtFim(dt);
+			dao().gravarComHistorico(confOldToSave, identidadeCadastrante);
+		}
+	}
+
 	public CpIdentidade alterarIdentidade(CpIdentidade ident, Date dtExpiracao, CpIdentidade identidadeCadastrante)
 			throws AplicacaoException {
 		try {
@@ -153,10 +181,7 @@ public class CpBL {
 		conf.setHisDtIni(dt);
 
 		dao().iniciarTransacao();
-		if (confOld != null) {
-			confOld.setHisDtFim(dt);
-			dao().gravarComHistorico(confOld, identidadeCadastrante);
-		}
+		fecharAntigaConfiguracao(confOld, identidadeCadastrante, dt);
 		dao().gravarComHistorico(conf, identidadeCadastrante);
 		dao().commitTransacao();
 		comp.getConfiguracaoBL().limparCacheSeNecessario();
@@ -190,10 +215,7 @@ public class CpBL {
 			conf.setCpTipoConfiguracao(tpConf);
 			conf.setHisDtIni(dt);
 
-			if (confOld != null) {
-				confOld.setHisDtFim(dt);
-				dao().gravarComHistorico(confOld, identidadeCadastrante);
-			}
+			fecharAntigaConfiguracao(confOld, identidadeCadastrante, dt);
 			dao().gravarComHistorico(conf, identidadeCadastrante);
 
 			for (CpIdentidade ident : dao().consultaIdentidades(pes)) {
@@ -239,10 +261,7 @@ public class CpBL {
 		conf.setCpTipoConfiguracao(tpConf);
 		conf.setHisDtIni(dt);
 
-		if (confOld != null) {
-			confOld.setHisDtFim(dt);
-			dao().gravarComHistorico(confOld, identidadeCadastrante);
-		}
+		fecharAntigaConfiguracao(confOld, identidadeCadastrante, dt);
 		dao().gravarComHistorico(conf, identidadeCadastrante);
 
 		comp.getConfiguracaoBL().limparCacheSeNecessario();

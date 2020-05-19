@@ -91,7 +91,7 @@
 			
 			<hr class="p-0 m-0 mb-1">			
 			<div class="text-right text-white">
-				<b>SIGA.doc </b>9.0.0.1
+				<b>SIGA.doc </b>${siga_version}
 			</div>
 		</div>
 	</footer>

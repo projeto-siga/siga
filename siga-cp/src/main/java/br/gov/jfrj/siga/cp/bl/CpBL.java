@@ -64,6 +64,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
 import br.gov.jfrj.siga.gi.service.GiService;
+import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 public class CpBL {
 	CpCompetenciaBL comp;
@@ -78,6 +79,34 @@ public class CpBL {
 
 	private CpDao dao() {
 		return comp.getConfiguracaoBL().dao();
+	}
+
+	/**
+	 * Marca uma {@link CpConfiguracao} como Fechada. Para isso preenche a
+	 * {@link CpConfiguracao#setHisDtFim(Date) data de fim}. <br/>
+	 * <b>NOTA DE IMPLMENTAÇÃO:</b> Originalmente simplesmente chamava-se
+	 * {@link CpDao#gravarComHistorico(br.gov.jfrj.siga.cp.model.HistoricoAuditavel, CpIdentidade)}
+	 * com <code>confoOld</code> que é carregado da base de dados. Entretanto na
+	 * migração para o EAP 7.2 e o JPA (ao invés do Hibernate) ao se executar
+	 * <code>gravarComHistorico</code> era disparada uma exceção com a mensagem de
+	 * erro <cite>detached entity passed to persist</cite>. A solução encontrada foi
+	 * carregar uma outra {@link CpConfiguracao} da base de dados com o ID de
+	 * <code>confoOld</code>, preecher a {@link CpConfiguracao#setHisDtFim(Date)
+	 * data de fim} deste e passá-lo para <code>gravarComHistorico</code>.
+	 * 
+	 * @param confOld               Configuração a ser fechada.
+	 * @param identidadeCadastrante Usuário responsável pela atualização
+	 * @param dt                    Data de fechamenbto.
+	 * @see CpDao#gravarComHistorico(br.gov.jfrj.siga.cp.model.HistoricoAuditavel,
+	 *      CpIdentidade)
+	 */
+	private void fecharAntigaConfiguracao(CpConfiguracao confOld, CpIdentidade identidadeCadastrante, Date dt) {
+		if (confOld != null) {
+			Long idConfiguracaoOld = confOld.getIdConfiguracao();
+			CpConfiguracao confOldToSave = dao().consultar(idConfiguracaoOld, CpConfiguracao.class, false);
+			confOldToSave.setHisDtFim(dt);
+			dao().gravarComHistorico(confOldToSave, identidadeCadastrante);
+		}
 	}
 
 	public CpIdentidade alterarIdentidade(CpIdentidade ident, Date dtExpiracao, CpIdentidade identidadeCadastrante)
@@ -152,10 +181,7 @@ public class CpBL {
 		conf.setHisDtIni(dt);
 
 		dao().iniciarTransacao();
-		if (confOld != null) {
-			confOld.setHisDtFim(dt);
-			dao().gravarComHistorico(confOld, identidadeCadastrante);
-		}
+		fecharAntigaConfiguracao(confOld, identidadeCadastrante, dt);
 		dao().gravarComHistorico(conf, identidadeCadastrante);
 		dao().commitTransacao();
 		comp.getConfiguracaoBL().limparCacheSeNecessario();
@@ -189,10 +215,7 @@ public class CpBL {
 			conf.setCpTipoConfiguracao(tpConf);
 			conf.setHisDtIni(dt);
 
-			if (confOld != null) {
-				confOld.setHisDtFim(dt);
-				dao().gravarComHistorico(confOld, identidadeCadastrante);
-			}
+			fecharAntigaConfiguracao(confOld, identidadeCadastrante, dt);
 			dao().gravarComHistorico(conf, identidadeCadastrante);
 
 			for (CpIdentidade ident : dao().consultaIdentidades(pes)) {
@@ -238,10 +261,7 @@ public class CpBL {
 		conf.setCpTipoConfiguracao(tpConf);
 		conf.setHisDtIni(dt);
 
-		if (confOld != null) {
-			confOld.setHisDtFim(dt);
-			dao().gravarComHistorico(confOld, identidadeCadastrante);
-		}
+		fecharAntigaConfiguracao(confOld, identidadeCadastrante, dt);
 		dao().gravarComHistorico(conf, identidadeCadastrante);
 
 		comp.getConfiguracaoBL().limparCacheSeNecessario();
@@ -456,9 +476,10 @@ public class CpBL {
 						dao().commitTransacao();
 
 						if (SigaMessages.isSigaSP()) {
-							String[] destinanarios = { pessoa.getEmailPessoaAtual() };							
-							String conteudoHTML = pessoa.isUsuarioExterno() ? textoEmailNovoUsuarioExternoSP(idNova, matricula, novaSenha) : 
-								textoEmailNovoUsuarioSP(idNova, matricula, novaSenha, autenticaPeloBanco);
+							String[] destinanarios = { pessoa.getEmailPessoaAtual() };
+							String conteudoHTML = pessoaIsUsuarioExterno(pessoa)
+									? textoEmailNovoUsuarioExternoSP(idNova, matricula, novaSenha)
+									: textoEmailNovoUsuarioSP(idNova, matricula, novaSenha, autenticaPeloBanco);
 							
 							Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
 									destinanarios, "Novo Usuário", "", conteudoHTML);
@@ -490,6 +511,45 @@ public class CpBL {
 			}
 		}
 
+	}
+
+	/**
+	 * Verifica se a {@link DpPessoa Pessoa} é um usuário externo. <br>
+	 * <b>NOTA DE IMPLEMENTAÇÃO:</b> Originalmente dentro de
+	 * {@link #criarIdentidade(String, String, CpIdentidade, String, String[], boolean)}
+	 * era chamado {@link DpPessoa#isUsuarioExterno()}, que faz uso de
+	 * {@link DpPessoa#getLotacao() lotação}. Entretanto durante a migração para o
+	 * EAP 7.2, verificou-se que quando o método <code>criarIdentidade</code> era
+	 * chamado a partir de
+	 * {@link #criarUsuario(String, Long, Long, Long, Long, Long, String, String, String, String)},
+	 * ao se chamar {@link DpPessoa#getLotacao()} dentro de
+	 * {@link DpPessoa#isUsuarioExterno()} acontecia um
+	 * {@link NullPointerException}, mesmo que essa pessoa tivesse acabado de ter
+	 * sido carregada pelo Hibernate. Entretanto, se for chamado
+	 * <code>pessoa.getLotacao().getId()</code> não houve problema. <br/>
+	 * A solução foi emular a implmentação de {@link DpPessoa#isUsuarioExterno()},
+	 * usar essa <code>pessoa.getLotacao().getId()</code>, para consultar a Lotação
+	 * na base de dados através de
+	 * {@link ModeloDao#consultar(java.io.Serializable, Class, boolean)} e chamar
+	 * {@link DpLotacao#getIsExternaLotacao()}.
+	 * 
+	 * @param pessoa Pessoa a ser avaliada.
+	 * @return se a Pessoa é um usuário externo.
+	 */
+	private boolean pessoaIsUsuarioExterno(DpPessoa pessoa) {
+		CpOrgaoUsuario orgaoUsuario = pessoa.getOrgaoUsuario();
+		Integer isExternoOrgaoUsu = orgaoUsuario.getIsExternoOrgaoUsu();
+		if ((isExternoOrgaoUsu != null) && (isExternoOrgaoUsu == 1)) {
+			return true;
+		}
+
+		Long idLotacao = pessoa.getLotacao().getId();
+		if (idLotacao == null) {
+			return false;
+		}
+
+		DpLotacao lotacao = dao().consultar(idLotacao, DpLotacao.class, false);
+		return (lotacao != null) && (lotacao.getIsExternaLotacao() == 1);
 	}
 
 	private String textoEmailNovoUsuario(String matricula, String novaSenha, boolean autenticaPeloBanco) {

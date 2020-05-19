@@ -694,7 +694,7 @@ public class ExServiceImpl implements ExService {
 			ContextoPersistencia.flushTransaction();
 			
 			//Verifica se Range atual existe
-			ExDocumentoNumeracao docNumeracao = dao().obterNumeroDocumento(idOrgaoUsu, idFormaDoc, anoEmissao, true);
+			ExDocumentoNumeracao docNumeracao = dao().obterNumeroDocumento(idOrgaoUsu, idFormaDoc, anoEmissao, false);
 
 			if (docNumeracao == null) {
 				CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();

@@ -88,6 +88,26 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 		result.include("id",id);
 	}
 	
+	private void atualizarContrato(Long id, Date dataContrato) {
+		CpContrato contrato = daoContrato(id);
+
+		if ((contrato == null) && (dataContrato == null)) {
+			// Faz nada
+		} else if ((contrato == null) && (dataContrato != null)) {
+			// Insere
+			contrato = new CpContrato();
+			contrato.setIdOrgaoUsu(id);
+			contrato.setDtContrato(dataContrato);
+			dao().gravar(contrato);
+		} else if ((contrato != null) && (dataContrato == null)) {
+			dao.excluir(contrato);
+		} else if (contrato.getDtContrato().compareTo(dataContrato) != 0) {
+			// Atualiza se a data foi alterada.
+			contrato.setDtContrato(dataContrato);
+			dao().gravar(contrato);
+		}
+	}
+
 	@Post("/app/orgaoUsuario/gravar")
 	public void editarGravar(final Long id, 
 							 final String nmOrgaoUsuario,
@@ -118,7 +138,7 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 		
 		CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
 		
-		CpContrato contrato = new CpContrato();
+//		CpContrato contrato = new CpContrato();
 		
 		orgaoUsuario.setSiglaOrgaoUsu(Texto.removerEspacosExtra(siglaOrgaoUsuario.toUpperCase().trim()));
 		try {
@@ -175,13 +195,13 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 		}
 		
 		
-		contrato.setIdOrgaoUsu(id);
-		contrato.setDtContrato(dataContrato);
+//		contrato.setIdOrgaoUsu(id);
+//		contrato.setDtContrato(dataContrato);
 
 		try {
 			dao().iniciarTransacao();
 			dao().gravar(orgaoUsuario);
-			dao().gravar(contrato);
+			atualizarContrato(id, dataContrato);
 			dao().commitTransacao();
 		} catch (final Exception e) {
 			dao().rollbackTransacao();

@@ -2185,6 +2185,15 @@ public class ExMovimentacaoController extends ExController {
 
 		final List<ExPapel> papeis = this.getListaExPapel();
 		
+		if (builder.getMob().getDoc().isAssinadoPorTodosOsSignatariosComTokenOuSenha()) {			
+			for (Iterator<ExPapel> iter = papeis.listIterator(); iter.hasNext(); ) {
+			    ExPapel p = iter.next();
+			    if (p.getIdPapel() == ExPapel.PAPEL_REVISOR) {
+			        iter.remove();
+			    }
+			}			
+		}
+		
 		if (SigaMessages.isSigaSP()) {
 			for (Iterator<ExPapel> iter = papeis.listIterator(); iter.hasNext(); ) {
 			    ExPapel p = iter.next();

@@ -394,7 +394,9 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			lotacao.setDataFimLotacao(null);
 		}
 		
-		lotacao.setLotacaoPai(CpDao.getInstance().consultarLotacaoPorId(lotacaoPai));
+		if(lotacaoPai != null) {
+			lotacao.setLotacaoPai(CpDao.getInstance().consultarLotacaoPorId(lotacaoPai));
+		}
 		lotacao.setNomeLotacao(Texto.removerEspacosExtra(nmLotacao).trim());
 		lotacao.setSiglaLotacao(siglaLotacao.toUpperCase());
 		

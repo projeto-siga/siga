@@ -1684,7 +1684,7 @@ public class ExDao extends CpDao {
 		try {
 			String query = "";
 			for (GrupoItem grupoItem : grupos) {
-				if (grupoItem.grupoMarcadores.size() > 0) {
+				if (!grupoItem.grupoHide && grupoItem.grupoMarcadores.size() > 0) {
 					query += "SELECT "
 						+ grupoItem.grupoOrdem + ", "
 						+ " SUM(CASE WHEN cont_pessoa > 0 THEN 1 ELSE 0 END), " 

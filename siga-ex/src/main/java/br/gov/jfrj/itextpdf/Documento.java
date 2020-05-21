@@ -519,9 +519,13 @@ public class Documento {
 				over.setRGBColorFill(255, 255, 255);
 				logo.setAnnotation(new Annotation(0, 0, 0, 0, 
 						"https://linksiga.trf2.jus.br")); 
-				over.addImage(logo);
-				
-	
+
+				if (SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+					if (i == 1)
+						over.addImage(logo);
+				} else {
+					over.addImage(logo);
+				}
 				// over.addImage(mask, mask.getScaledWidth() * 8, 0, 0,
 				// mask.getScaledHeight() * 8, 100, 450);
 	

@@ -1440,7 +1440,7 @@ public class SigaCpSinc {
 		} else {
 			try {
 				int parseIntSituacao = Integer.parseInt(situacaoFuncPessoa);
-				if (parseIntSituacao > 31) {
+				if (parseIntSituacao > 36) {
 					throw new Exception(
 							"Tag pessoa id "
 									+ idPessoa // parseStr(parser, "id")

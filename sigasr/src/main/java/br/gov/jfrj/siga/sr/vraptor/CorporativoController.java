@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -70,11 +71,16 @@ public class CorporativoController extends SrController {
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
 		List<DadosRH> l = DadosRH.AR.all().fetch();
+		String situacoesParaImportar = (String) Contexto.resource("siga.sr.corporativo.dadosrh.situacoesParaImportar");
+		if(situacoesParaImportar == null)
+			throw new RuntimeException(
+					"Erro: parametro 'siga.sr.corporativo.dadosrh.situacoesParaImportar' não configurado.");
+		
+		List<String> situacoes = Arrays.asList(situacoesParaImportar.split(","));
 		for (DadosRH d : l) {
 			Pessoa p = d.getPessoa();
 			if (p != null && (!mp.containsKey(p.getPessoa_id()) || p.getLotacao_tipo_papel().equals("Principal"))
-					&& (p.getPessoa_situacao().equals(1) || p.getPessoa_situacao().equals(2)
-							|| p.getPessoa_situacao().equals(31) || p.getPessoa_situacao().equals(12)))
+					&& (situacoes.contains(p.getPessoa_situacao().toString())))
 				mp.put(p.getPessoa_id(), p);
 
 			Lotacao x = d.getLotacao();

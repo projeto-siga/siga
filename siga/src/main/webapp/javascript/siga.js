@@ -205,6 +205,11 @@ function verifica_data(data, naoObriga) {
 			msg = msg + "Mês inválido\n";
 		}
 
+		// verifica se o ano é maior que 9999
+		if (ano.length > 4 || ano.length == 3) {
+			msg = msg + "Ano deve ser no máximo 9999\n";
+		}
+
 		if (msg.length > 0) {
 			data.style.color = "red";
 			alert(msg);

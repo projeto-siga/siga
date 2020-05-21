@@ -467,12 +467,15 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		if (listaLotacoes.size() == 0) {
 			List<CpIdentidade> idsCpf = CpDao.getInstance().consultaIdentidadesCadastrante(getCpfPessoa().toString(), true);
 			for (CpIdentidade identCpf : idsCpf) {
-			//				if (!this.getPessoaInicial().equals(identCpf.getDpPessoa())) { 
 				List<String> listaUserLota = new ArrayList<String>();
 				listaUserLota.add(identCpf.getNmLoginIdentidade());
-				listaUserLota.add(identCpf.getDpPessoa().getLotacao().getSiglaLotacao());
-				listaUserLota.add(identCpf.getDpPessoa().getFuncaoConfianca().getNomeFuncao() + "/" +
-						identCpf.getDpPessoa().getCargo().getNomeCargo());
+				listaUserLota.add(identCpf.getDpPessoa().getLotacao().getLotacaoAtual().getSiglaLotacao());
+				if (identCpf.getDpPessoa().getPessoaAtual().getFuncaoConfianca() != null) {
+					listaUserLota.add(identCpf.getDpPessoa().getPessoaAtual().getFuncaoConfianca().getNomeFuncao() + "/" +
+							identCpf.getDpPessoa().getPessoaAtual().getCargo().getNomeCargo());
+				} else {
+					listaUserLota.add("");
+				}
 				listaLotacoes.add(listaUserLota);
 			}
 		}
@@ -637,6 +640,15 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
                 final SimpleDateFormat df = new SimpleDateFormat(
                                 "dd/MM/yyyy");
                 return df.format(getDataNascimento());
+        }
+        return "";
+    }
+    
+    public String getDataExpedicaoIdentidadeDDMMYYYY() {
+        if (getDataExpedicaoIdentidade() != null) {
+                final SimpleDateFormat df = new SimpleDateFormat(
+                                "dd/MM/yyyy");
+                return df.format(getDataExpedicaoIdentidade());
         }
         return "";
     }

@@ -3418,8 +3418,9 @@ public class ExBL extends CpBL {
 
 	public static String descricaoSePuderAcessar(ExDocumento doc,
 			DpPessoa titular, DpLotacao lotaTitular) {
-		if (mostraDescricaoConfidencial(doc, titular, lotaTitular))
-			return "CONFIDENCIAL";
+	//	if (mostraDescricaoConfidencial(doc, titular, lotaTitular) || (getComp().ehPublicoExterno(titular) && !(getComp().podeAcessarPublicoExterno()))  
+				if (mostraDescricaoConfidencial(doc, titular, lotaTitular))
+				return "CONFIDENCIAL";
 		else
 			return doc.getDescrDocumento();
 	}
@@ -3477,6 +3478,7 @@ public class ExBL extends CpBL {
 				|| (doc.getExNivelAcessoAtual().getGrauNivelAcesso() == ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS && doc
 						.getOrgaoUsuario().getIdOrgaoUsu() != lotaTitular
 						.getOrgaoUsuario().getIdOrgaoUsu()))
+			
 			return true;
 		return false;
 	}

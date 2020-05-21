@@ -61,6 +61,7 @@ function sbmt(offset) {
 				<tr>
 					<th align="left">Nome</th>
 					<th align="left">Sigla</th>
+					<th align="left">Externa</th>
 					<th colspan="2" align="center">Op&ccedil;&otilde;es</th>					
 				</tr>
 			</thead>
@@ -71,6 +72,7 @@ function sbmt(offset) {
 					<tr>
 						<td align="left">${lotacao.descricao}</td>
 						<td align="left">${lotacao.sigla}</td>
+						<td align="left">${lotacao.isExternaLotacao == 1 ? 'SIM' : 'NÃO'}</td>
 						<td align="left">
 							<c:url var="url" value="/app/lotacao/editar">
 								<c:param name="id" value="${lotacao.id}"></c:param>

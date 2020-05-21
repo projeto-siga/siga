@@ -54,7 +54,7 @@
 			<div class="card-header"><h5>Cadastro de Órgão Usuário</h5></div>
 				<div class="card-body">
 					<div class="row">
-						<div class="col-sm-2">
+						<div class="col-md-2">
 							<div class="form-group">
 								<label>ID</label>
 								<c:choose>
@@ -70,13 +70,13 @@
 								</c:choose>
 							</div>
 						</div>
-						<div class="col-sm-6">
+						<div class="col-md-6">
 							<div class="form-group">
 								<label>Nome</label>
 								<input type="text" id="nmOrgaoUsuario" name="nmOrgaoUsuario" value="${nmOrgaoUsuario}" maxlength="80" size="80" class="form-control"/>
 							</div>
 						</div>
-						<div class="col-sm-4">
+						<div class="col-md-4">
 							<div class="form-group">
 								<label>Sigla</label>
 								<c:choose>
@@ -89,6 +89,20 @@
 									</c:otherwise>
 								</c:choose>
 							</div>
+						</div>
+						<div class="col-md-2">
+							<div class="form-group">
+								<label>Data de Assinatura do Contrato</label>
+								<input type="text" id="dtContrato" name="dtContrato" value="${dtContrato}" 
+									 onblur="javascript:verifica_data(this,0);" class="form-control"/>
+							</div>
+						</div>
+						<div class="col-md-2">
+						  <label>Tipo de Órgão</label>
+						  <div class="form-check">
+						    <input type="checkbox" class="form-check-input" id="isExternoOrgaoUsu" name="isExternoOrgaoUsu" value="1" <c:if test="${isExternoOrgaoUsu == 1}">checked</c:if> />
+						    <label class="form-check-label" for="isExternoOrgaoUsu">Órgão com Acesso Externo</label>
+						  </div>
 						</div>
 					</div>
 					

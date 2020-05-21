@@ -52,7 +52,6 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Put;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.download.Download;
@@ -97,6 +96,12 @@ public class ExRelatorioController extends ExController {
 	private static final String ACESSO_FORMS = "FORMS:Relação de formulários";
 	private static final String ACESSO_IGESTAO = "IGESTAO:Relatório de Indicadores de Gestão";
 	private static final String ACESSO_RELDOCVOL = "RELDOCVOL:Relatório de documentos por volume";
+	private static final String ACESSO_ORGAOINT = "ORGAOINT:Relatório de Documentos Por Órgão Interessado";
+	private static final String ACESSO_RELFORAPRAZO = "RELFORAPRAZO:Relatório de documentos fora do prazo";
+	private static final String ACESSO_RELDEVPROGRAMADA = "RELDEVPROGRAMADA:Relatório de documentos devolção programada";
+	private static final String ACESSO_TRAMESP = "TRAMESP: Tempo Médio de Tramitação Por Espécie Documental";
+	private static final String ACESSO_VOLTRAMMOD = "VOLTRAMMOD: Volume de Tramitação Por Nome do Documento";
+	private static final String ACESSO_RELTEMPOMEDIOSITUACAO = "RELTEMPOMEDIOSITUACAO:Tempo médio por Situação";
 	private static final String APPLICATION_PDF = "application/pdf";
 
 	public ExRelatorioController(HttpServletRequest request,
@@ -1126,8 +1131,9 @@ public class ExRelatorioController extends ExController {
 	@Path("app/expediente/rel/relCobranca")
 	public void relCobranca(final Long orgao,
 			final DpLotacaoSelecao lotacaoSel,
-			final DpPessoaSelecao usuarioSel, String dataInicial,
-			String dataFinal, boolean primeiraVez) throws Exception {
+			final DpPessoaSelecao usuarioSel, final String dataInicial,
+			final String dataFinal, boolean primeiraVez)
+			throws Exception {
 
 		try {
 			assertAcesso(ACESSO_IGESTAO);
@@ -1201,10 +1207,6 @@ public class ExRelatorioController extends ExController {
 			result.include("msgCabecClass", "alert-danger");
 		}
 
-		if (primeiraVez == false) {
-			result.include("primeiraVez", false);
-		}
-
 		result.include("lotacaoSel", lotacaoSel);
 		result.include("usuarioSel", usuarioSel);
 		result.include("dataInicial", dataInicial);
@@ -1227,4 +1229,61 @@ public class ExRelatorioController extends ExController {
 		return SigaExProperties.getExClassificacaoMascaraJavascript();
 	}
 
+	private void consistePeriodo(String dataInicial, String dataFinal) throws Exception {
+		consistePeriodo(dataInicial, dataFinal, true);
+	}
+	
+	private void consistePeriodo(String dataInicial, String dataFinal, boolean mesmoMes)
+			throws Exception {
+		if (dataInicial == null || dataFinal == null) {
+			throw new AplicacaoException(
+					"Data inicial ou data final não informada.");
+		}
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		
+		final Date dtIni = df.parse(dataInicial);
+		final Date dtFim = df.parse(dataFinal);
+		
+		if (dtFim.getTime() - dtIni.getTime() < 0L) {
+			throw new AplicacaoException(
+					"Data inicial maior que a data final.");
+		}		
+		if (mesmoMes && !dataInicial.substring(2,9).equals(dataFinal.substring(2,9))) {
+			throw new AplicacaoException(
+					"Período informado deve ser dentro do mesmo mês/ano.");
+		}
+		if (!mesmoMes && (dtFim.getTime() - dtIni.getTime() > 31536000000L)) {
+			throw new AplicacaoException(
+					"O intervalo máximo entre as datas deve ser de um ano.");
+		}
+	}
+
+	private String linkHttp() {
+		String url = request.getRequestURL().toString();		
+        String pattern = "^(https)://.*$";
+        if (url.matches(pattern)){
+            return "https://";
+        }else{
+            return "http://";
+	    }
+	}
+
+	private Long getIdOrgaoSel(final DpLotacaoSelecao lotacaoSel,
+			final DpPessoaSelecao usuarioSel, Long orgaoUsu) {
+		Long orgaoSelId = 0L;
+		if (lotacaoSel.getId() != null) {
+			DpLotacao lota = dao().consultar(lotacaoSel.getId(),
+					DpLotacao.class, false);
+			orgaoSelId = lota.getIdOrgaoUsuario();
+		}
+		if (usuarioSel.getId() != null) {
+			DpPessoa usu = dao().consultar(usuarioSel.getId(), DpPessoa.class,
+					false);
+			orgaoSelId = usu.getOrgaoUsuario().getIdOrgaoUsu();
+		}
+		if (lotacaoSel.getId() == null && usuarioSel.getId() == null) {
+			orgaoSelId = orgaoUsu;
+		}
+		return orgaoSelId;
+	}
 }

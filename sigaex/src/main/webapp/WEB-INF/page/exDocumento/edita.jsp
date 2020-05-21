@@ -531,7 +531,7 @@
 				</c:if>	
 				<div class="row mt-4">
 					<div class="col-sm-8">
-						<button type="button" onclick="javascript: gravarDoc(); return false;" name="gravar" class="btn btn-primary" accesskey="o"><u>O</u>K</button> 
+						<button id="btnGravar" type="button" onclick="javascript: gravarDoc(); return false;" name="gravar" class="btn btn-primary" accesskey="o"><u>O</u>K</button> 
 						<c:if test='${exDocumentoDTO.tipoDocumento == "interno"}'>
 							<c:if test="${not empty exDocumentoDTO.modelo.nmArqMod or exDocumentoDTO.modelo.conteudoTpBlob == 'template/freemarker'}">
 								<button type="button" name="ver_doc" onclick="javascript: popitup_documento(false); return false;" class="btn btn-info ${hide_only_GOVSP}" accesskey="v"><u>V</u>er Documento</button>

@@ -25,6 +25,8 @@ import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 
 public class DpPessoaDaoFiltro extends DaoFiltroSelecionavel {
 	private DpLotacao lotacao;
+	private Long[] idLotacaoSelecao;
+	private Long[] idPessoaSelecao;
 	private DpCargo cargo;
 	private DpFuncaoConfianca funcaoConfianca;
 
@@ -32,6 +34,8 @@ public class DpPessoaDaoFiltro extends DaoFiltroSelecionavel {
 	private Long idOrgaoUsu;
 	private Long cpf;
 	private Long id;
+	private String email;
+	
 	
 	private boolean buscarFechadas;
 	private String situacaoFuncionalPessoa;
@@ -67,13 +71,35 @@ public class DpPessoaDaoFiltro extends DaoFiltroSelecionavel {
 	public void setNome(final String nome) {
 		this.nome = nome;
 	}
+	public String getEmail() {
+		return email;
+	}
 
+	public void setEmail(final String email) {
+		this.email = email;
+	}
 	public DpLotacao getLotacao() {
 		return lotacao;
-	}
+	}	
 
 	public void setLotacao(final DpLotacao lotacao) {
 		this.lotacao = lotacao;
+	}
+	
+	public Long[] getIdLotacaoSelecao() {
+		return this.idLotacaoSelecao;
+	}
+	
+	public void setIdLotacaoSelecao(Long[] idLotacaoSelecao) {
+		this.idLotacaoSelecao = idLotacaoSelecao;
+	}
+	
+	public Long[] getIdPessoaSelecao() {
+		return this.idPessoaSelecao;
+	}
+	
+	public void setIdPessoaSelecao(Long[] idPessoaSelecao) {
+		this.idPessoaSelecao = idPessoaSelecao;
 	}
 	
 	public Long getCpf() {
@@ -106,5 +132,36 @@ public class DpPessoaDaoFiltro extends DaoFiltroSelecionavel {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	public void prepararLotacao(String idLotacaoSelecao) {
+		if(idLotacaoSelecao != null) {			
+			if (idLotacaoSelecao.contains(",")) {									
+				String idLotacoes[] = idLotacaoSelecao.split(",");				
+				this.idLotacaoSelecao = new Long[idLotacoes.length];
+				for (int i = 0; i <= idLotacoes.length -1; i++) {
+					this.idLotacaoSelecao[i] = Long.valueOf(idLotacoes[i]);
+				}				
+			} else {
+				DpLotacao lotacao = new DpLotacao();
+				lotacao.setId(Long.valueOf(idLotacaoSelecao));
+				this.lotacao = lotacao;
+			}
+		}				
+	}
+	
+	public void prepararPessoa(String idPessoaSelecao) {
+		if(idPessoaSelecao != null) {			
+			if (idPessoaSelecao.contains(",")) {									
+				String idPessoas[] = idPessoaSelecao.split(",");				
+				this.idPessoaSelecao = new Long[idPessoas.length];
+				for (int i = 0; i <= idPessoas.length -1; i++) {
+					this.idPessoaSelecao[i] = Long.valueOf(idPessoas[i]);
+				}				
+			} else if(idPessoaSelecao.length() > 0) {
+				this.idPessoaSelecao = new Long[1];
+				this.idPessoaSelecao[0] = Long.valueOf(idPessoaSelecao); 
+			}
+		}
 	}
 }

@@ -39,7 +39,7 @@ import br.gov.jfrj.siga.model.Objeto;
 		@NamedQuery(name = "consultarCpOrgaoUsuarioOrdenadoPorNome", query = "select u from CpOrgaoUsuario u order by u.nmOrgaoUsu"),
 		@NamedQuery(name = "consultarIdOrgaoUsuario", query = "from CpOrgaoUsuario org where upper(org.idOrgaoUsu) = upper(:idOrgaoUsu)"),
 		@NamedQuery(name = "consultarNomeOrgaoUsuario", query = "from CpOrgaoUsuario org where upper(org.nmOrgaoAI) = upper(:nome)"),
-		@NamedQuery(name = "consultarPorFiltroCpOrgaoUsuario", query = "from CpOrgaoUsuario org where (upper(org.nmOrgaoUsu) like upper('%' || :nome || '%'))	order by org.nmOrgaoUsu"),
+		@NamedQuery(name = "consultarPorFiltroCpOrgaoUsuario", query = "select org, (select dtContrato from CpContrato contrato where contrato.idOrgaoUsu = org.idOrgaoUsu) from CpOrgaoUsuario org where (upper(org.nmOrgaoUsu) like upper('%' || :nome || '%'))	order by org.nmOrgaoUsu"),
 		@NamedQuery(name = "consultarQuantidadeCpOrgaoUsuario", query = "select count(org) from CpOrgaoUsuario org"
 				+ " where ((upper(org.nmOrgaoUsu) like upper('%' || :nome || '%')) or (upper(org.siglaOrgaoUsu) like upper('%' || :nome || '%'))) order by org.siglaOrgaoUsu")})
 
@@ -88,6 +88,17 @@ public abstract class AbstractCpOrgaoUsuario extends Objeto implements
 
 	@Column(name = "ACRONIMO_ORGAO_USU", length = 12)
 	private String acronimoOrgaoUsu;
+	
+	@Column(name = "IS_EXTERNO_ORGAO_USU")
+	private Integer isExternoOrgaoUsu;
+
+	public Integer getIsExternoOrgaoUsu() {
+		return isExternoOrgaoUsu;
+	}
+
+	public void setIsExternoOrgaoUsu(Integer isExternoOrgaoUsu) {
+		this.isExternoOrgaoUsu = isExternoOrgaoUsu;
+	}
 
 	/*
 	 * (non-Javadoc)

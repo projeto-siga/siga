@@ -44,6 +44,7 @@
 		<class>br.gov.jfrj.siga.dp.CpMarca</class>
 		<class>br.gov.jfrj.siga.dp.CpTipoMarca</class>
 		<class>br.gov.jfrj.siga.cp.CpAcesso</class>
+		<class>br.gov.jfrj.siga.dp.CpContrato</class>
 		
 		
 		<class>br.gov.jfrj.siga.ex.ExTipoDocumento</class>

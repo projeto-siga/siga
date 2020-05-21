@@ -1184,7 +1184,7 @@ public class CpDao extends ModeloDao {
 				query.setParameter("idOrgaoUsu", 0L);
 
 			if (isFiltrarPorListaDeLotacao) {
-				query.setParameter("idLotacaoLista", flt.getIdLotacaoSelecao());
+				query.setParameter("idLotacaoLista", Arrays.asList(flt.getIdLotacaoSelecao()));
 			} else if (flt.getLotacao() != null) {
 				query.setParameter("idLotacaoLista", flt.getLotacao().getId());
 			} else {

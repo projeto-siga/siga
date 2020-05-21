@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
+<%@ taglib tagdir="/WEB-INF/tags/mensagem" prefix="siga-mensagem"%>
 <style>
 #passwordStrength {
 	height: 10px;
@@ -126,8 +127,7 @@
 			</c:if>
 
 			<h1 class="gt-form-head">${param.titulo}</h1>
-			<h2>${mensagem}</h2>
-
+			
 			<div class="card bg-light mb-3" >
 				<div class="card-header"><h5>Trocar senha</h5></div>
 
@@ -135,7 +135,7 @@
 					<form action="trocar_senha_gravar"
 						onsubmit="return validateUsuarioForm(this);" method="post">
 						<input type="hidden" name="page" value="1" />
-						<h1>${mensagem }</h1>
+						<siga-mensagem:sucesso texto="${mensagem}"></siga-mensagem:sucesso>						
 						<div class="row">
 							<div class="col-sm">
 								<div class="form-group">

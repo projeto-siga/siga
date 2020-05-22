@@ -226,8 +226,8 @@ public class UsuarioController extends SigaController {
 		
 		result.include("mensagem", "Email(s) alterado(s) com sucesso.");
 		result.include("volta", "troca");
-		result.include("titulo", "Troca de Email");
-		result.redirectTo("/app/principal");
+		result.include("titulo", "Troca de Email");							
+		result.redirectTo(UsuarioController.class).trocaEmail(usuario);
 	}
 
 	/*

@@ -189,7 +189,7 @@ public class ExDao extends CpDao {
 		
 		List<ExDocumentoNumeracao> l = query.getResultList();
 		if (!l.isEmpty()) {
-			return (ExDocumentoNumeracao) l;	
+			return l.get(0);	
 		} 
 		else 
 			return null;		

@@ -187,7 +187,12 @@ public class ExDao extends CpDao {
 			query.setLockMode(LockModeType.PESSIMISTIC_WRITE);
 		}
 		
-		return (ExDocumentoNumeracao) query.getSingleResult();		
+		List<ExDocumentoNumeracao> l = query.getResultList();
+		if (!l.isEmpty()) {
+			return (ExDocumentoNumeracao) l;	
+		} 
+		else 
+			return null;		
 	}
 	
 	public Long obterNumeroGerado(Long idOrgaoUsu, Long idFormaDoc, Long anoEmissao)
@@ -233,8 +238,12 @@ public class ExDao extends CpDao {
 		query.setParameter("idFormaDoc", idFormaDoc);
 		query.setParameter("rownum", 1L);
 		
-		return (Long) query.getSingleResult();
-
+		List<Long> l = query.getResultList();
+		if (!l.isEmpty()) {
+			return l.get(0);	
+		} 
+		else 
+			return null;
 	}
 	
 	

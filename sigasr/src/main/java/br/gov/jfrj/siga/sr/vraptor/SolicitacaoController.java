@@ -316,6 +316,15 @@ public class SolicitacaoController extends SrController {
 			 enviarErroValidacao();
 			 return;
 		}
+		
+		// BJN - caso a solicitação seja do tipo "Atividades da Lotação", 
+		// o atendente deverá ser a própria lotação do cadastrante titular
+		// MARRETA SOLICITACAO PARA PROPRIA LOTACAO
+		if(solicitacao.getAcao().getTituloAcao().toLowerCase().startsWith("atividades da lotação")) {
+			solicitacao.setAtendenteNaoDesignado(solicitacao.getSolicitante().getLotacao().getLotacaoAtual());
+		}
+		//FIM MARRETA
+		
         solicitacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
         result.use(Results.http()).body(solicitacao.getSiglaCompacta());
     }

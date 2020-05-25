@@ -537,7 +537,7 @@ public class CpBL {
 	 * @return se a Pessoa é um usuário externo.
 	 */
 	private boolean pessoaIsUsuarioExterno(DpPessoa pessoa) {
-		if (pessoa.getOrgaoUsuario() == null || pessoa.getLotacao() == null) {
+		if (pessoa.getOrgaoUsuario() == null && pessoa.getLotacao() == null) {
 			return false;
 		}		
 		

@@ -320,8 +320,10 @@ public class SolicitacaoController extends SrController {
 		// BJN - caso a solicitação seja do tipo "Atividades da Lotação", 
 		// o atendente deverá ser a própria lotação do cadastrante titular
 		// MARRETA SOLICITACAO PARA PROPRIA LOTACAO
+	        // voltando a pegar a lotacao do titular ao inves da do solicitante...
 		if(solicitacao.getAcao().getTituloAcao().toLowerCase().startsWith("atividades da lotação")) {
-			solicitacao.setAtendenteNaoDesignado(solicitacao.getSolicitante().getLotacao().getLotacaoAtual());
+			//solicitacao.setAtendenteNaoDesignado(solicitacao.getSolicitante().getLotacao().getLotacaoAtual());
+			solicitacao.setAtendenteNaoDesignado(getTitular().getLotacao().getLotacaoAtual());
 		}
 		//FIM MARRETA
 		

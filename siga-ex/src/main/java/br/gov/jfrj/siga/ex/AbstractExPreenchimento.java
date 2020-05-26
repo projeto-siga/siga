@@ -23,6 +23,7 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -45,10 +46,15 @@ import br.gov.jfrj.siga.model.Objeto;
  */
 @MappedSuperclass
 @NamedQueries({
-		@NamedQuery(name = "consultarPorFiltroExPreenchimento", query = "from ExPreenchimento pre "
-				+ "	      where upper(pre.nomePreenchimento) like upper('%' || :nomePreenchimento || '%') "
-				+ "			and (:lotacao = null or :lotacao = 0L or pre.dpLotacao = :lotacao)"
+		@NamedQuery(name = "consultarPorLotacaoModeloExPreenchimento", query = "from ExPreenchimento pre "
+				+ "	      where (:lotacao = null or :lotacao = 0L or pre.dpLotacao = :lotacao)"
 				+ "			and (:modelo=null or :modelo = 0L or pre.exModelo.hisIdIni = :modelo)"),
+	
+		@NamedQuery(name = "consultarPorFiltroExPreenchimento", query = "from ExPreenchimento pre "
+				+ "	      where (:lotacao = null or :lotacao = 0L or pre.dpLotacao = :lotacao)"
+				+ "			and (:modelo=null or :modelo = 0L or pre.exModelo.hisIdIni = :modelo)"
+				+ " 		and upper(pre.nomePreenchimento) like upper('%' || :nomePreenchimento || '%')"),
+
 		@NamedQuery(name = "excluirPorIdExPreenchimento", query = "delete from ExPreenchimento where idPreenchimento = :id") })
 public abstract class AbstractExPreenchimento extends Objeto implements
 		Serializable {
@@ -73,6 +79,7 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 
 	@Lob
 	@Column(name = "PREENCHIMENTO_BLOB")
+	@Basic(fetch = FetchType.LAZY)
 	private byte[] preenchimentoBlob;
 
 	/**

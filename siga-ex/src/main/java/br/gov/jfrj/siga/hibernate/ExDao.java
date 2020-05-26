@@ -876,13 +876,16 @@ public class ExDao extends CpDao {
 
 	public List<ExPreenchimento> consultar(ExPreenchimento exPreenchimento) {
 		try {
-			final Query query = em().createNamedQuery(
-					"consultarPorFiltroExPreenchimento");
-			if (exPreenchimento.getNomePreenchimento() != null)
+			final Query query;
+			if (exPreenchimento.getNomePreenchimento() != null) {
+				query = em().createNamedQuery(
+						"consultarPorFiltroExPreenchimento");
 				query.setParameter("nomePreenchimento", exPreenchimento
 						.getNomePreenchimento().toUpperCase().replace(' ', '%'));
-			else
-				query.setParameter("nomePreenchimento", "");
+			} else {
+				query = em().createNamedQuery(
+						"consultarPorLotacaoModeloExPreenchimento");
+			}
 			if (exPreenchimento.getDpLotacao() != null)
 				query.setParameter("lotacao", exPreenchimento.getDpLotacao()
 						.getIdLotacao());

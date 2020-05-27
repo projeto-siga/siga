@@ -308,7 +308,7 @@
 		  mounted: function() {
 			this.errormsg = undefined;
 	      	var self = this
-			self.exibeLota = (getParmUser('exibeLota') === 'true');
+			self.exibeLota = getParmUser('exibeLota');
 	      	self.carregarMesa();
 		  },
 		  data: function() {

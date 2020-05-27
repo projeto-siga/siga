@@ -519,9 +519,13 @@ public class Documento {
 				over.setRGBColorFill(255, 255, 255);
 				logo.setAnnotation(new Annotation(0, 0, 0, 0, 
 						"https://linksiga.trf2.jus.br")); 
-				over.addImage(logo);
-				
-	
+
+				if (SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+					if (i == 1)
+						over.addImage(logo);
+				} else {
+					over.addImage(logo);
+				}
 				// over.addImage(mask, mask.getScaledWidth() * 8, 0, 0,
 				// mask.getScaledHeight() * 8, 100, 450);
 	
@@ -611,9 +615,19 @@ public class Documento {
 						}
 					}
 					if (i > cOmitirNumeracao) {
-	
+						//tamanho fonte número
+						int textHeight = 23;
 						// Raio do circulo interno
-						final float radius = 18f;
+						float radius = 18f;
+						
+						if (SigaMessages.isSigaSP()) {
+							//tamanho fonte número
+							textHeight = 12;
+							// Raio do circulo interno
+							radius = 12f;
+							//não exibe órgão
+							orgaoUsu = "";
+						} 
 	
 						// Distancia entre o circulo interno e o externo
 						final float circleInterspace = Math.max(
@@ -676,7 +690,6 @@ public class Documento {
 						}
 	
 						over.beginText();
-						int textHeight = 23;
 	
 						// Diminui o tamanho do font ate que o texto caiba dentro do
 						// circulo interno

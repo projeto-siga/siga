@@ -38,24 +38,7 @@
 					</goals> </execution> </executions> <dependencies> <dependency> <groupId>siga</groupId> 
 					<artifactId>siga-ex</artifactId> <version>${project.version}</version> </dependency> 
 					</dependencies> </plugin> -->
-	
-	<!-- 
-				<plugin>
-					<groupId>org.hibernate.orm.tooling</groupId>
-					<artifactId>hibernate-enhance-maven-plugin</artifactId>
-					<version>4.2.21.Final</version>
-					<executions>
-						<execution>
-							<configuration>
-								<enableLazyInitialization>true</enableLazyInitialization>
-							</configuration>
-							<goals>
-								<goal>enhance</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-	-->
+				
 				<plugin>
 					<artifactId>maven-antrun-plugin</artifactId>
 					<executions>

@@ -766,7 +766,7 @@ public class ExServiceImpl implements ExService {
 				sequencia = dao().existeRangeSequencia(tipoSequencia);
 				
 				if (sequencia != null && "0".equals(sequencia.getZerarInicioAno())) { //Existe Range Anterior e Não pode Resetar numeracao
-					dao().updateMantemRangeNumeroDocumento(sequencia.getIdSequencia());
+					dao().updateMantemRangeSequencia(sequencia.getIdSequencia());
 		
 				} else { //Não existe ou deve resetar numeração
 					ExSequencia exSequencia = new ExSequencia();

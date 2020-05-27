@@ -1344,6 +1344,10 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDto.getMob(), getCadastrante(), getTitular(),
 				getLotaTitular(), true, false);
 
+		if(docVO != null && docVO.getDoc() != null && docVO.getDoc().getNumPaginas() == null) {
+			docVO.getDoc().setNumPaginas(docVO.getDoc().getContarNumeroDePaginas());
+		}
+
 		docVO.exibe();
 
 		String Sigla = "";
@@ -1712,6 +1716,9 @@ public class ExDocumentoController extends ExController {
 			 * fim da alteracao
 			 */
 			
+			if(exDocumentoDTO.getDoc().getExMobilPai() != null && Ex.getInstance().getComp().podeRestrigirAcesso(getCadastrante(), getLotaCadastrante(), exDocumentoDTO.getDoc().getExMobilPai())) {
+				exBL.copiarRestringir(exDocumentoDTO.getDoc().getMobilGeral(), exDocumentoDTO.getDoc().getExMobilPai().getDoc().getMobilGeral(), getCadastrante(), getTitular(), exDocumentoDTO.getDoc().getData());
+			}
 
 			if (!exDocumentoDTO.getDoc().isFinalizado()
 					&& (exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO || exDocumentoDTO

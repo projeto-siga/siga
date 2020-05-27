@@ -38,12 +38,20 @@ public class PermissaoUsuarioRelatorio extends RelatorioTemplate{
 		} catch (Exception e) {
 			throw new DJBuilderException("Parâmetro idPessoa inválido!");
 		}
-		this.setPageSizeAndOrientation( Page.Page_A4_Landscape());
+		parametros.put("titulo","SIGA");
+		parametros.put("subtitulo","Sistema de Gestão Administrativa");
+		parametros.put("secaoUsuario", "");
+		if ( System.getProperty("siga.relat.brasao") == null ) {
+			parametros.put("brasao","brasao.png");
+		} else {
+			parametros.put("brasao", System.getProperty("siga.relat.brasao"));
+		}
+		//System.out.println("Brasao: " + parametros.get("brasao"));
 	}
 	@Override
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException {
-		this.setTemplateFile(null);
+		//this.setTemplateFile(null);
 		this.setTitle("Permissão de " 
 				        + getDescricaoTipoConfiguracao() 
 						+ ": (" 
@@ -51,11 +59,12 @@ public class PermissaoUsuarioRelatorio extends RelatorioTemplate{
 						+ ") " 
 						+ dpPessoa.getNomePessoa()  
 						); 
-		this.addColuna("Serviço",58,RelatorioRapido.ESQUERDA,false, false);
-		this.addColuna("Situação",10,RelatorioRapido.ESQUERDA,false, false);
-		this.addColuna("Origem", 10,RelatorioRapido.ESQUERDA,false, false);
-		this.addColuna("Desde", 12,RelatorioRapido.ESQUERDA,false, false);  
-		this.addColuna("Cadastrante", 10,RelatorioRapido.ESQUERDA,false, false);
+		this.addColuna("Serviço",45,RelatorioRapido.ESQUERDA,false, false);
+		this.addColuna("Situação",7,RelatorioRapido.ESQUERDA,false, false);
+		this.addColuna("Origem", 7,RelatorioRapido.ESQUERDA,false, false);
+		this.addColuna("Desde", 9,RelatorioRapido.ESQUERDA,false, false);  
+		this.addColuna("Cadastrante", 9,RelatorioRapido.ESQUERDA,false, false);
+		this.setPageSizeAndOrientation( Page.Page_A4_Landscape());
 		return this;
 	}
 	/**

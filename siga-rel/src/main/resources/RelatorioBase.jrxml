@@ -26,6 +26,12 @@
 	<parameter name="secaoUsuario" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA[$P{secaoUsuario}]]></defaultValueExpression>
 	</parameter>
+	<parameter name="titulo" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[$P{titulo}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="subtitulo" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[$P{subtitulo}]]></defaultValueExpression>
+	</parameter>
 	<parameter name="dataInicio" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA[$P{dataInicio}]]></defaultValueExpression>
 	</parameter>
@@ -67,12 +73,12 @@ order by descr_forma_doc,nm_mod]]></queryString>
 		</background>
 		<title>
 			<band height="68"  isSplitAllowed="true" >
-				<staticText>
+				<textField isStretchWithOverflow="false">
 					<reportElement
 						mode="Opaque"
 						x="72"
 						y="12"
-						width="129"
+						width="250"
 						height="13"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -81,8 +87,8 @@ order by descr_forma_doc,nm_mod]]></queryString>
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Arial" pdfFontName="Helvetica" size="11" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<text><![CDATA[PODER JUDICIÁRIO]]></text>
-				</staticText>
+					<textFieldExpression   class="java.lang.String"><![CDATA[$P{titulo}.toString()]]></textFieldExpression>
+				</textField>
 				<image  scaleImage="RetainShape" vAlign="Middle" hAlign="Center" isUsingCache="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
@@ -95,14 +101,14 @@ order by descr_forma_doc,nm_mod]]></queryString>
 						key="image-1"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<graphicElement stretchType="NoStretch" pen="None" fill="Solid" />
-					<imageExpression class="java.lang.String"><![CDATA["brasao.png"]]></imageExpression>
+					<imageExpression class="java.lang.String"><![CDATA[$P{brasao}]]></imageExpression>
 				</image>
-				<staticText>
+				<textField isStretchWithOverflow="false">
 					<reportElement
 						mode="Opaque"
 						x="71"
 						y="26"
-						width="98"
+						width="250"
 						height="13"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -111,8 +117,8 @@ order by descr_forma_doc,nm_mod]]></queryString>
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Arial" pdfFontName="Helvetica" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<text><![CDATA[JUSTIÇA FEDERAL]]></text>
-				</staticText>
+					<textFieldExpression   class="java.lang.String"><![CDATA[$P{subtitulo}.toString()]]></textFieldExpression>
+				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"

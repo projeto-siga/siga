@@ -35,6 +35,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.LockModeType;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -187,12 +188,11 @@ public class ExDao extends CpDao {
 			query.setLockMode(LockModeType.PESSIMISTIC_WRITE);
 		}
 		
-		List<ExDocumentoNumeracao> l = query.getResultList();
-		if (!l.isEmpty()) {
-			return l.get(0);	
-		} 
-		else 
-			return null;		
+		try {
+			return (ExDocumentoNumeracao) query.getSingleResult();
+		} catch (NoResultException ne) {
+			return null;
+		}
 	}
 	
 	public Long obterNumeroGerado(Long idOrgaoUsu, Long idFormaDoc, Long anoEmissao)
@@ -238,12 +238,11 @@ public class ExDao extends CpDao {
 		query.setParameter("idFormaDoc", idFormaDoc);
 		query.setParameter("rownum", 1L);
 		
-		List<Long> l = query.getResultList();
-		if (!l.isEmpty()) {
-			return l.get(0);	
-		} 
-		else 
+		try {
+			return (Long) query.getSingleResult();
+		} catch (NoResultException ne) {
 			return null;
+		}
 	}
 	
 	
@@ -277,7 +276,11 @@ public class ExDao extends CpDao {
 			query.setLockMode(LockModeType.PESSIMISTIC_WRITE);
 		}
 		
-		return (ExSequencia) query.getSingleResult();		
+		try {
+			return (ExSequencia) query.getSingleResult();
+		} catch (NoResultException ne) {
+			return null;
+		}
 	}
 	
 	public Long obterNumeroGerado(Integer tipoSequencia, Long anoEmissao)
@@ -288,7 +291,11 @@ public class ExDao extends CpDao {
 		query.setParameter("anoEmissao", anoEmissao);
 		query.setParameter("flAtivo", "1");
 		
-		return (Long) query.getSingleResult();		
+		try {
+			return (Long) query.getSingleResult();
+		} catch (NoResultException ne) {
+			return null;
+		}
 	}
 	
 	public void incrementNumero(Long idSeq)
@@ -309,19 +316,22 @@ public class ExDao extends CpDao {
 		query.setParameter("tipoSequencia", tipoSequencia);
 		query.setParameter("rownum", 1L);
 		
-		return (ExSequencia) query.getSingleResult();
-
+		try {
+			return (ExSequencia) query.getSingleResult();
+		} catch (NoResultException ne) {
+			return null;
+		}
 	}
 	
 	public void updateMantemRangeSequencia(Long idSeq)
 			throws SQLException {
 		
-		final Query query = em().createNamedQuery("ExDocumentoNumeracao.mantemRangeSequencia");
+		final Query query = em().createNamedQuery("ExSequencia.mantemRangeNumero");
 		
 		Calendar c = Calendar.getInstance();
 		
 		query.setParameter("anoEmissao", c.get(Calendar.YEAR));
-		query.setParameter("flAtivo", 1L);
+		query.setParameter("flAtivo", "1");
 		query.setParameter("increment", 1L);
 		query.setParameter("id", idSeq);
 		
@@ -866,13 +876,16 @@ public class ExDao extends CpDao {
 
 	public List<ExPreenchimento> consultar(ExPreenchimento exPreenchimento) {
 		try {
-			final Query query = em().createNamedQuery(
-					"consultarPorFiltroExPreenchimento");
-			if (exPreenchimento.getNomePreenchimento() != null)
+			final Query query;
+			if (exPreenchimento.getNomePreenchimento() != null) {
+				query = em().createNamedQuery(
+						"consultarPorFiltroExPreenchimento");
 				query.setParameter("nomePreenchimento", exPreenchimento
 						.getNomePreenchimento().toUpperCase().replace(' ', '%'));
-			else
-				query.setParameter("nomePreenchimento", "");
+			} else {
+				query = em().createNamedQuery(
+						"consultarPorLotacaoModeloExPreenchimento");
+			}
 			if (exPreenchimento.getDpLotacao() != null)
 				query.setParameter("lotacao", exPreenchimento.getDpLotacao()
 						.getIdLotacao());

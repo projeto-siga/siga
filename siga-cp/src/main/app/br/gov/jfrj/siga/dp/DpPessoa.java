@@ -469,7 +469,7 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 			for (CpIdentidade identCpf : idsCpf) {
 				List<String> listaUserLota = new ArrayList<String>();
 				listaUserLota.add(identCpf.getNmLoginIdentidade());
-				listaUserLota.add(identCpf.getDpPessoa().getLotacao().getLotacaoAtual().getSiglaLotacao());
+				listaUserLota.add(identCpf.getDpPessoa().getPessoaAtual().getLotacao().getLotacaoAtual().getSiglaLotacao());
 				if (identCpf.getDpPessoa().getPessoaAtual().getFuncaoConfianca() != null) {
 					listaUserLota.add(identCpf.getDpPessoa().getPessoaAtual().getFuncaoConfianca().getNomeFuncao() + "/" +
 							identCpf.getDpPessoa().getPessoaAtual().getCargo().getNomeCargo());

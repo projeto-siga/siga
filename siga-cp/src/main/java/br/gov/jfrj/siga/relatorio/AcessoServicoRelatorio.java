@@ -106,17 +106,25 @@ public class AcessoServicoRelatorio extends RelatorioTemplate {
 			throw new DJBuilderException("Orgao Usuario inválido ! erro:"
 					+ e.getMessage());
 		}
-
+		parametros.put("titulo","SIGA");
+		parametros.put("subtitulo","Sistema de Gestão Administrativa");
+		parametros.put("secaoUsuario", "");
+		if ( System.getProperty("siga.relat.brasao") == null ) {
+			parametros.put("brasao","brasao.png");
+		} else {
+			parametros.put("brasao", System.getProperty("siga.relat.brasao"));
+		}
+		//System.out.println("Brasao: " + parametros.get("brasao"));
 	}
 
 	@Override
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException {
-		this.setTemplateFile(null);
+		//this.setTemplateFile(null);
 		this.setTitle("Acesso - " + getDescricaoTipoConfiguracao() + " - "
 				+ "(" + cpServico.getSiglaServico() + ") "
 				+ cpServico.getDscServico());
-		this.addColuna("Situação", 20, RelatorioRapido.ESQUERDA, true, false);
+		this.addColuna("Situação", 0, RelatorioRapido.ESQUERDA, true, false);
 		this.addColuna("Pessoa", 60, RelatorioRapido.ESQUERDA, false, false);
 		this.addColuna("Lotação", 20, RelatorioRapido.ESQUERDA, false, false);
 		this.addColuna("Desde", 12, RelatorioRapido.ESQUERDA, false, false);

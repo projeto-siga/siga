@@ -93,13 +93,22 @@ public class AlteracaoDireitosRelatorio extends RelatorioTemplate {
 		}
 		setDtInicio(t_dtaDataHoraIni);
 		setDtFim(t_dtaDataHoraFim);
+		parametros.put("titulo","SIGA");
+		parametros.put("subtitulo","Sistema de Gestão Administrativa");
+		parametros.put("secaoUsuario", "");
+		if ( System.getProperty("siga.relat.brasao") == null ) {
+			parametros.put("brasao","brasao.png");
+		} else {
+			parametros.put("brasao", System.getProperty("siga.relat.brasao"));
+		}
+		//System.out.println("Brasao: " + parametros.get("brasao"));
 		// this.setPageSizeAndOrientation(Page.Page_A4_Landscape());
 	}
 
 	@Override
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException {// jar:file:/fullpath/main.jar!/a.resource
-		this.setTemplateFile(null);
+		//this.setTemplateFile(null);
 		this.setTitle("Alteracao de Direitos - de "
 				+ parametros.get("dataInicio") + " até "
 				+ parametros.get("dataFim"));

@@ -278,7 +278,6 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_QUERY = //
 			CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_BEGIN //
 					+ "mov.exMobil.exDocumento = (SELECT mobBase.exDocumento FROM ExMobil mobBase WHERE mobBase.idMobil = :idMobil) "
-					+ "AND mov.exMobil.idMobil <> :idMobil " //
 					+ "AND mov.dtTimestamp >= (SELECT MIN(tramitacao.dtTimestamp) " //
 					+ "FROM ExMovimentacao tramitacao "
 					+ "WHERE tramitacao.exMobil.exDocumento = mov.exMobil.exDocumento AND tramitacao.exTipoMovimentacao.idTpMov = "

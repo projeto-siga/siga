@@ -104,10 +104,7 @@
                <executions>
                    <execution>
                     <configuration>
-                        <failOnError>true</failOnError>
                         <enableLazyInitialization>true</enableLazyInitialization>
-                        <enableDirtyTracking>true</enableDirtyTracking>
-                        <enableAssociationManagement>true</enableAssociationManagement>
                     </configuration>
                        <goals>
                            <goal>enhance</goal>

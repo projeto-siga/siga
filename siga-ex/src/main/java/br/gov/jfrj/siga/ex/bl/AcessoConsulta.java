@@ -108,7 +108,7 @@ public class AcessoConsulta {
 	
 	public static boolean ehPublicoExterno(DpPessoa titular) {
 		return ((titular.getOrgaoUsuario().getIsExternoOrgaoUsu() != null && titular.getOrgaoUsuario().getIsExternoOrgaoUsu() == 1)
-				|| titular.getLotacao() != null && titular.getLotacao().getIsExternaLotacao() == 1);
+				|| titular.getLotacao() != null && titular.getLotacao().getIsExternaLotacao() != null && titular.getLotacao().getIsExternaLotacao() == 1);
 	}
 
 }

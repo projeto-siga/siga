@@ -150,7 +150,7 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	}
 
 	public Integer getNumVias() {
-		return getExViaSet().size();
+		return getExViaSet() == null ? 0 : getExViaSet().size();
 	}
 
 	public String getDestinacoesFinais() {

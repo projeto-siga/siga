@@ -187,7 +187,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "   and (u.dtCancelamentoIdentidade is null)"
 				+ "   and (u.dtExpiracaoIdentidade is null or u.dtExpiracaoIdentidade > current_date())"
 				+ "   and (pes.dataFimPessoa is null)"
-				+ "   and (pes.situacaoFuncionalPessoa in ('1', '2', '31'))")
+				+ "   and (pes.situacaoFuncionalPessoa in ('1', '2', '4', '12', '22', '31', '36'))")
 })
 public abstract class AbstractDpPessoa extends DpResponsavel implements
 		Serializable, HistoricoAuditavel  {

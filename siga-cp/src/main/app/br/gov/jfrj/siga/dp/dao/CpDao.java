@@ -1572,9 +1572,11 @@ public class CpDao extends ModeloDao {
 			qry.setString("cpfZero", "0");
 			qry.setString("sfp1", "1");
 			qry.setString("sfp2", "2");
+			qry.setString("sfp4", "4");			
 			qry.setString("sfp12", "12");
 			qry.setString("sfp22", "22");
 			qry.setString("sfp31", "31");
+			qry.setString("sfp36", "36");			
 
 			// Cache was disabled because it would interfere with the
 			// "change password" action.
@@ -1604,9 +1606,11 @@ public class CpDao extends ModeloDao {
 			qry.setString("cpfZero", "0");
 			qry.setString("sfp1", "1");
 			qry.setString("sfp2", "2");
+			qry.setString("sfp4", "4");			
 			qry.setString("sfp12", "12");
 			qry.setString("sfp22", "22");
 			qry.setString("sfp31", "31");
+			qry.setString("sfp36", "36");			
 
 			qry.setCacheable(true);
 			qry.setCacheRegion(CACHE_QUERY_SECONDS);
@@ -1632,9 +1636,11 @@ public class CpDao extends ModeloDao {
 			qry.setString("cpfZero", "0");
 			qry.setString("sfp1", "1");
 			qry.setString("sfp2", "2");
+			qry.setString("sfp4", "4");			
 			qry.setString("sfp12", "12");
 			qry.setString("sfp22", "22");
 			qry.setString("sfp31", "31");
+			qry.setString("sfp36", "36");			
 
 			qry.setCacheable(true);
 			qry.setCacheRegion(CACHE_QUERY_SECONDS);

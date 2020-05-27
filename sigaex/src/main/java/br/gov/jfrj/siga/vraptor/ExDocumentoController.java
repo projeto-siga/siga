@@ -1344,6 +1344,10 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDto.getMob(), getCadastrante(), getTitular(),
 				getLotaTitular(), true, false);
 
+		if(docVO != null && docVO.getDoc() != null && docVO.getDoc().getNumPaginas() == null) {
+			docVO.getDoc().setNumPaginas(docVO.getDoc().getContarNumeroDePaginas());
+		}
+
 		docVO.exibe();
 
 		String Sigla = "";

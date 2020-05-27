@@ -192,6 +192,34 @@ public class Excel {
 		}
 		return "";
 	}
+	
+	public String validarIsExternaLotacao(String isLotacaoExterna, Integer linha) {			
+		if (montarIsExternaLotacao(isLotacaoExterna) == null) {
+			return "Linha " + linha +": LOTAÇÃO EXTERNA com valor diferente do esperado (aceito apenas SIM ou NÃO)" + System.getProperty("line.separator");
+		}			
+				
+		return "";		
+	}
+	
+	public Integer montarIsExternaLotacao(String isLotacaoExterna) {
+		if("".equals(isLotacaoExterna)) {
+			return 0;			
+		} 
+		
+		Integer valor = null;
+		
+		switch(isLotacaoExterna.toUpperCase()) {
+		case "SIM":
+			valor = 1;
+			break;
+		case "NÃO":
+		case "NAO":
+			valor = 0;
+			break;					
+		}			
+				
+		return valor;		
+	}
     
 	public String validarLocalidadeLotacao(List<CpLocalidade> localidades, Integer linha, CpLocalidade loc) {
 		if("".equals(loc.getNmLocalidade())) {
@@ -234,7 +262,7 @@ public class Excel {
 			List<CpLocalidade> localidades = new ArrayList();
 			List<String> nomes = new ArrayList();
 			List<String> siglas = new ArrayList();
-			List<DpLotacao> lista = new ArrayList(); 
+			List<DpLotacao> lista = new ArrayList(); 			
 			CpLocalidade loc = new CpLocalidade();
 			Date data = new Date(System.currentTimeMillis());
 			
@@ -284,6 +312,14 @@ public class Excel {
 					} else {
 						problemas += "Linha " + linha +": SIGLA de LOTAÇÃO PAI inválida" + System.getProperty("line.separator");
 					}
+				}
+				
+				//LOTACAO EXTERNA
+				celula = retornaConteudo(row.getCell(4, Row.CREATE_NULL_AS_BLANK));
+				problemas += validarIsExternaLotacao(celula.trim(), linha);
+				
+				if(problemas == null || "".equals(problemas.toString())) {
+					lot.setIsExternaLotacao(montarIsExternaLotacao(celula.trim()));
 				}
 					
 				

@@ -71,7 +71,7 @@ public class ExMesa2Controller extends ExController {
 
 	@Get("app/mesa2")
 	public void lista(Boolean exibirAcessoAnterior, Long idVisualizacao, String msg) {
-		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getCadastrante()));
+		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
 		if (exibirAcessoAnterior != null && exibirAcessoAnterior) {
 			CpAcesso a = dao.consultarAcessoAnterior(so.getCadastrante());
 			if (a == null)
@@ -105,7 +105,7 @@ public class ExMesa2Controller extends ExController {
 		List<br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem> g = new ArrayList<br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem>();
 		Map<String, Mesa2.SelGrupo> selGrupos = null;
 		List<Mesa2.GrupoItem> gruposMesa = new ArrayList<Mesa2.GrupoItem>();
-		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getCadastrante()));
+		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
 
 		try {
 			if (parms != null) {
@@ -114,7 +114,7 @@ public class ExMesa2Controller extends ExController {
 			}
 			if (exibeLotacao 
 					&& (Ex.getInstance().getComp().ehPublicoExterno(
-							getCadastrante()) 
+							getTitular()) 
 					|| !SigaBaseProperties.getBooleanValue("siga.mesa.carrega.lotacao"))) {
 				result.use(Results.http()).addHeader("Content-Type", "text/plain")
 					.body("Não é permitido exibir dados da sua " 

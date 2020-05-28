@@ -63,11 +63,14 @@
 					<c:forEach items="${acoesEAtendentes.keySet()}" var="cat">
 						<optgroup  label="${cat.tituloAcao}">
 							<c:forEach items="${acoesEAtendentes.get(cat)}" var="tarefa">
+								<c:set var="atividadeLotacao" value="${fn:startsWith(fn:toLowerCase(tarefa.acao.tituloAcao), 'atividades da lotação')}" />
+								
 								<option value="${tarefa.acao.idAcao}" ${solicitacao.acao.idAcao.equals(tarefa.acao.idAcao) ? 'selected' : ''}> 
 									${tarefa.acao.tituloAcao}
-									<c:if test="${exibeLotacaoNaAcao}">(${tarefa.conf.atendente.lotacaoAtual.siglaCompleta})</c:if>
+									<c:if test="${exibeLotacaoNaAcao && !atividadeLotacao}">(${tarefa.conf.atendente.lotacaoAtual.siglaCompleta})</c:if>
+									<c:if test="${atividadeLotacao}"><!-- (${tarefa.conf.atendente.lotacaoAtual.siglaCompleta}) --></c:if>
 								</option>
-							</c:forEach>					 
+							</c:forEach>
 						</optgroup>
 					</c:forEach>
 				</select>

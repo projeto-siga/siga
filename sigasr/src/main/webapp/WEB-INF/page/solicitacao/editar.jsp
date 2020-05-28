@@ -150,7 +150,7 @@
 					
 					<div id="divLocalRamalEMeioContato" depende="solicitacao.solicitante">
 						<script>
-							//Edson: talvez fosse possível fazer de um modo melhor, mas assim é mais prático
+							//Edson: talvez fosse possivel fazer de um modo melhor, mas assim é mais prático
 							$("#solicitacaosolicitanteSpan").html("${solicitacao.solicitante.descricaoCompleta}");
 							$("#horarioComunicacao").mask("99:99");
 						</script>
@@ -179,7 +179,7 @@
 						</div>
 						
 						<div class="gt-form-row-inline-block gt-width-33">
-							<label>Endereço de atendimento</label> 
+							<label>Endere&ccedil;o de atendimento</label> 
 								<input type="text" name="solicitacao.endereco" id="endereco" value="${solicitacao.endereco}" size="65" maxlength="255" />
 								<siga:error name="solicitacao.endereco"/>
 						</div>

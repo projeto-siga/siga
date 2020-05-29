@@ -8,6 +8,7 @@
 <%@ attribute name="metodo" required="true"%>
 <%@ attribute name="exibeLotacaoNaAcao" required="false"%>
 <%@ attribute name="exibeConhecimento" required="false"%>
+<%@ attribute name="lotacaoDoTitular" required="false"%>
 
 <div id="${metodo}" class="gt-form-row" style="min-width: 550px;">
 	<label>Produto, Servi&ccedil;o ou Sistema relacionado &agrave; Solicita&ccedil;&atilde;o</label>
@@ -260,6 +261,8 @@ function carregarLotacaoDaAcao() {
 			var siglaLotacao = getLotacaoDaAcao(opcaoSelecionada.html()); 
 			var spanLotacao = $(".lotacao-" + idAcao + ":contains(" + siglaLotacao + ")");
 			var descLotacao = spanLotacao.html();
+			if (opcaoSelecionada.text().toLowerCase().includes('atividades da lotação'))
+				descLotacao = '${lotacaoDoTitular}';
 			var idLotacao = spanLotacao.next().html();
 			var idDesignacaoDaAcao = spanLotacao.prev().html();
 			

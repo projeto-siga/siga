@@ -233,7 +233,7 @@
 		
 					<div id="divItem" depende="solicitacao.solicitante;solicitacao.local">
 						<c:if test="${not empty solicitacao.solicitante}">						
-							<sigasr:classificacao metodo="editar" exibeLotacaoNaAcao="true" exibeConhecimento="true"/>
+							<sigasr:classificacao metodo="editar" exibeLotacaoNaAcao="true" exibeConhecimento="true" lotacaoDoTitular="${lotacaoDoTitularLegivel}" />
 						</c:if>
 					</div>
 		

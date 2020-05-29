@@ -317,11 +317,11 @@ public class SolicitacaoController extends SrController {
 			 return;
 		}
 		
-		// BJN - caso a solicitação seja do tipo "Atividades da Lotação", 
+		// BJN - caso a solicitação seja NOVA E do tipo "Atividades da Lotação", 
 		// o atendente deverá ser a própria lotação do cadastrante titular
 		// MARRETA SOLICITACAO PARA PROPRIA LOTACAO
 	        // voltando a pegar a lotacao do titular ao inves da do solicitante...
-		if(solicitacao.getAcao().getTituloAcao().toLowerCase().startsWith("atividades da lotação")) {
+		if((solicitacao.getIdSolicitacao() == null) && solicitacao.getAcao().getTituloAcao().toLowerCase().startsWith("atividades da lotação")) {
 			//solicitacao.setAtendenteNaoDesignado(solicitacao.getSolicitante().getLotacao().getLotacaoAtual());
 			solicitacao.setAtendenteNaoDesignado(getTitular().getLotacao().getLotacaoAtual());
 		}
@@ -347,6 +347,7 @@ public class SolicitacaoController extends SrController {
         result.include("solicitante", solicitacao.getSolicitante());
         result.include("siglaCompacta", solicitacao.getSiglaCompacta());
         result.include("local", solicitacao.getLocal());
+        result.include("lotacaoDoTitularLegivel", getTitular().getLotacao().getLotacaoAtual().toString() + " - " + getTitular().getLotacao().getLotacaoAtual().getNomeLotacao());
 	}
 
 	private boolean validarFormEditar(SrSolicitacao solicitacao) throws Exception {

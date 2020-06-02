@@ -41,7 +41,7 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<div class="form-group text-center">
-					<label>C&oacute;digo do Documento: <b>${sigla}</b></label>
+					<label>N&uacute;mero do Documento: <b>${sigla}</b></label>
 				</div>
 			</div>
 		</div>

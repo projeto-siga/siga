@@ -39,6 +39,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
@@ -393,6 +394,34 @@ public class ExDao extends CpDao {
 			predicateAnd = criteriaBuilder.and(predicateEqualTipoMarcador);
 			criteriaQuery.where(predicateAnd);
 			return em().createQuery(criteriaQuery).getResultList();	
+		}
+		
+		public List<ExMovimentacao> consultarMovimentoIncluindoJuntadaPorMobils(List<ExMobil> mobils){			
+			CriteriaBuilder builder = em().getCriteriaBuilder();
+			CriteriaQuery<ExMovimentacao> query = builder.createQuery(ExMovimentacao.class);	
+			Root<ExMovimentacao> root = query.from(ExMovimentacao.class);
+			
+			Predicate predicate, predicateMobilIgnorandoMovimentacaoDeJuntada, predicateMobilRefComoMovimentacaoDeJuntada;
+			Expression<Long> mobil = root.get("exMobil");
+			Expression<Long> mobilRef = root.get("exMobilRef");																		
+			Join<ExMovimentacao, ExTipoMovimentacao> joinTipoMovimentacao = root.join("exTipoMovimentacao");
+			Join<ExMovimentacao, ExMovimentacao> joinMovimentacaoCanceladora = root.join("exMovimentacaoCanceladora", JoinType.LEFT);
+			
+			predicateMobilIgnorandoMovimentacaoDeJuntada = builder.and(mobil.in(mobils), 
+					builder.notEqual(joinTipoMovimentacao.get("idTpMov"), ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA),
+					builder.notEqual(joinTipoMovimentacao.get("idTpMov"), ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA),
+					builder.notEqual(joinTipoMovimentacao.get("idTpMov"), ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO));
+																
+			predicateMobilRefComoMovimentacaoDeJuntada = builder.and(mobilRef.in(mobils), 
+					builder.equal(joinTipoMovimentacao.get("idTpMov"), ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA),
+					builder.isNull(joinMovimentacaoCanceladora.get("idMov")));								
+			
+			predicate = builder.or(predicateMobilIgnorandoMovimentacaoDeJuntada, predicateMobilRefComoMovimentacaoDeJuntada);
+			
+			query.where(predicate)
+				.orderBy(builder.desc(root.get("dtTimestamp")));
+			
+			return em().createQuery(query).getResultList();	
 		}
 		
 		public String gerarCodigoProtocolo() {

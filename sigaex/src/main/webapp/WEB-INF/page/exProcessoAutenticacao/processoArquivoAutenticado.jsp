@@ -128,7 +128,11 @@
 												</c:otherwise>
 											</c:choose>
 											<td align="center">${dt}</td>
-											<td>${mov.descrTipoMovimentacao}</td>
+											<td>${mov.descrTipoMovimentacao} 
+												<c:if test="${mov.idTpMov == 12}">
+													<span style="font-size: .8rem;color: #9e9e9e;">| documento juntado ${mov.exMobil}</span>
+												</c:if>
+											</td>
 											<td align="left">${mov.lotaCadastrante.sigla} </td>
 											<td align="left">${mov.cadastrante.nomeAbreviado}</td>
 											<td align="left">${mov.lotaResp.sigla}</td>

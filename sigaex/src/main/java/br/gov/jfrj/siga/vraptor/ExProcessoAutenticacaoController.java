@@ -260,12 +260,9 @@ public class ExProcessoAutenticacaoController extends ExController {
 					mob = doc.getPrimeiraVia();
 				}
 			}
-
-			List<ExMovimentacao> lista = new ArrayList<ExMovimentacao>();
+			
 			List<ExMobil> lstMobil = dao().consultarMobilPorDocumento(doc);
-			for (ExMobil m : lstMobil)
-				lista.addAll(dao().consultarMovimentoPorMobil(m));
-			lista.addAll(doc.getAutenticacoesComSenha());
+			List<ExMovimentacao> lista = dao().consultarMovimentoIncluindoJuntadaPorMobils(lstMobil);								
 			
 			DpPessoa p = new DpPessoa();
 			DpLotacao l = new DpLotacao();

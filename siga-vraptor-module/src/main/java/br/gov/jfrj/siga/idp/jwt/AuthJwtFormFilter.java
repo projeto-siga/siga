@@ -6,7 +6,6 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.Filter;
@@ -20,21 +19,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import br.gov.jfrj.siga.base.HttpRequestUtils;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
-import br.gov.jfrj.siga.base.SigaMessages;
-import br.gov.jfrj.siga.cp.AbstractCpAcesso;
-import br.gov.jfrj.siga.cp.bl.Cp;
-import br.gov.jfrj.siga.model.ContextoPersistencia;
-
-import com.auth0.jwt.JWTAudienceException;
 import com.auth0.jwt.JWTExpiredException;
 import com.auth0.jwt.JWTVerifyException;
+
+import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 public class AuthJwtFormFilter implements Filter {
 
 	public static final String SIGA_JWT_AUTH_COOKIE_NAME = "siga-jwt-auth";
 	public static final String SIGA_JWT_AUTH_COOKIE_DOMAIN = SigaBaseProperties.getString("idp.jwt.modulo.cookie.domain");
+	private static final String NAME_ENVIRONMENT_PRODUCTION = "PROD";
+	private static final String NAME_ENVIRONMENT = SigaBaseProperties.getString("ambiente") != null ? SigaBaseProperties.getString("ambiente") : "";
+	
 	private static final int TIME_TO_EXPIRE_IN_S = 60 * 60 * 8; // 8h é o tempo
 																// de duração
 	private static final int TIME_TO_RENEW_IN_S = 60 * 60 * 7; // renova
@@ -44,7 +42,7 @@ public class AuthJwtFormFilter implements Filter {
 
 	static final String PROVIDER_ISSUER = "sigaidp";
 	static long DEFAULT_TTL_TOKEN = 3600; // default 1 hora
-
+	
 	private FilterConfig filterConfig;
 
 	private Map<String, Object> validarToken(String token)
@@ -83,12 +81,11 @@ public class AuthJwtFormFilter implements Filter {
 		Cookie[] cookies = request.getCookies();
 		String token = null;
 		ArrayList<String> tokens = new ArrayList<String>();
-		
-		//Estrutura Otimizada para Verificação de JWT prevendo múltiplos subdomínios
+				
 		if (cookies != null) {
 			//Percorre lista cookie e extrai tokens
-			for (Cookie c : cookies) {
-				if (SIGA_JWT_AUTH_COOKIE_NAME.equals(c.getName())) {
+			for (Cookie c : cookies) {				
+				if (getNameCookie().equals(c.getName())) {																
 					tokens.add(c.getValue());
 				}
 			}
@@ -173,20 +170,21 @@ public class AuthJwtFormFilter implements Filter {
 	}
 	
 	public static Cookie buildCookie(String tokenNew) {
-		Cookie cookie = new Cookie(SIGA_JWT_AUTH_COOKIE_NAME, tokenNew);
-		cookie.setPath("/");
-		if ("GOVSP".equals(SigaBaseProperties.getString("siga.local")) && SIGA_JWT_AUTH_COOKIE_DOMAIN != null){
+		
+		Cookie cookie = new Cookie(getNameCookie(), tokenNew);
+		cookie.setPath("/");	
+		
+		if (SigaMessages.isSigaSP() && SIGA_JWT_AUTH_COOKIE_DOMAIN != null){
 			cookie.setDomain(SIGA_JWT_AUTH_COOKIE_DOMAIN);
 		}
 		
-		// cookie.setSecure(true);
 		return cookie;
 	}
 
 	public static Cookie buildEraseCookie() {
-		Cookie cookie = new Cookie(SIGA_JWT_AUTH_COOKIE_NAME, "");
+		Cookie cookie = new Cookie(getNameCookie(), "");
 		cookie.setPath("/");
-		if ("GOVSP".equals(SigaBaseProperties.getString("siga.local")) && SIGA_JWT_AUTH_COOKIE_DOMAIN != null){
+		if (SigaMessages.isSigaSP() && SIGA_JWT_AUTH_COOKIE_DOMAIN != null){
 			cookie.setDomain(SIGA_JWT_AUTH_COOKIE_DOMAIN);
 		}
 		cookie.setMaxAge(0);
@@ -246,6 +244,25 @@ public class AuthJwtFormFilter implements Filter {
 
 	public void init(FilterConfig fConfig) throws ServletException {
 		this.filterConfig = fConfig;
+	}
+	
+	/**
+	 * Este cookie é utilizado na sessão do usuário.
+	 * Gera o nome do cookie de acordo com o valor da variavel de name=ambiente
+	 * que se encontra no standalone.xml do server.
+	 * Este metodo é importante para resolver o problema de compatibilidade de sessao 
+	 * quando se tem mais de uma aplicação aberta no mesmo navegador.
+	 * 
+	 * @return String
+	 */
+	private static String getNameCookie(){					
+		String nameCookie = SIGA_JWT_AUTH_COOKIE_NAME;   		
+	
+		if(SigaMessages.isSigaSP()) {			
+			if(!NAME_ENVIRONMENT_PRODUCTION.equals(NAME_ENVIRONMENT.toUpperCase().trim())) 
+				nameCookie += "-" + NAME_ENVIRONMENT;			
+		}
+		return nameCookie;		
 	}
 
 }

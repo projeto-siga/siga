@@ -117,7 +117,7 @@ public class LoginController extends SigaController {
 
 	@Get("public/app/logout")
 	public void logout() {
-		this.request.getSession().invalidate();
+		this.request.getSession(false);
 		this.response.addCookie(AuthJwtFormFilter.buildEraseCookie());
 		result.redirectTo("/");
 	}

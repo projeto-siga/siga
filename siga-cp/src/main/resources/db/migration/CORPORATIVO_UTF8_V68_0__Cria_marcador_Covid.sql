@@ -1,0 +1,2 @@
+ALTER SESSION SET CURRENT_SCHEMA=corporativo;
+insert into CORPORATIVO.CP_MARCADOR values(1006, 'COVID-19', 2, null);

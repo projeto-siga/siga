@@ -325,7 +325,10 @@ public class ExMobilController extends
 			texto.append(";");
 			
 			if(ma != null && ma.getCpMarcador() != null && ma.getCpMarcador().getDescrMarcador() != null) {
-				texto.append(ma.toString().substring(0, ma.toString().indexOf("[")).replaceAll(";",","));
+				if (ma.toString().indexOf("[") >= 0 )
+					texto.append(ma.toString().substring(0, ma.toString().indexOf("[")).replaceAll(";",","));
+				else
+					texto = texto.append(ma.toString().replaceAll(";",","));
 			}
 			texto.append(";");
 			

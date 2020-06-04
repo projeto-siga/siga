@@ -68,7 +68,7 @@ public class UsuarioController extends SigaController {
 		String senhaAtual = usuario.getSenhaAtual();
 		String senhaNova = usuario.getSenhaNova();
 		String senhaConfirma = usuario.getSenhaConfirma();
-		String nomeUsuario = usuario.getNomeUsuario().toUpperCase();
+		String nomeUsuario = usuario.getNomeUsuario().toUpperCase();		
 
 		if (SigaBaseProperties.getString("siga.local") != null
 				&& "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
@@ -96,13 +96,13 @@ public class UsuarioController extends SigaController {
 				}
 			}
 
-		}
+		}			
 
-		result.include("mensagem",
-				"A senha foi alterada com sucesso. <br/><br/><br/>OBS: A senha de rede e e-mail também foi alterada.");
+		result.include("mensagem", "A senha foi alterada com sucesso." + 
+				(("on".equals(usuario.getTrocarSenhaRede())) ?  " OBS: As senhas de rede e e-mail também foram alteradas." : ""));
 		result.include("volta", "troca");
 		result.include("titulo", "Troca de Senha");
-		result.redirectTo("/app/principal");
+		result.redirectTo(UsuarioController.class).trocaSenha();
 	}
 
 	/*
@@ -226,8 +226,8 @@ public class UsuarioController extends SigaController {
 		
 		result.include("mensagem", "Email(s) alterado(s) com sucesso.");
 		result.include("volta", "troca");
-		result.include("titulo", "Troca de Email");
-		result.redirectTo("/app/principal");
+		result.include("titulo", "Troca de Email");							
+		result.redirectTo(UsuarioController.class).trocaEmail(usuario);
 	}
 
 	/*

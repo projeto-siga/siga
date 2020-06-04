@@ -84,9 +84,9 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "or pes.situacaoFuncionalPessoa = :sfp31)")})
 
 public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
-	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.CP_IDENTIDADE_SEQ")
 	@Id
-	@GeneratedValue(generator = "generator")
+	@SequenceGenerator(name = "CP_IDENTIDADE_SEQ", sequenceName = "CORPORATIVO.CP_IDENTIDADE_SEQ")
+	@GeneratedValue(generator = "CP_IDENTIDADE_SEQ")
 	@Column(name = "ID_IDENTIDADE", unique = true, nullable = false)
 	@Desconsiderar
 	private Long idIdentidade;

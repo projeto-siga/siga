@@ -23,6 +23,7 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.io.ByteArrayInputStream;
+import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.util.Date;
 
@@ -106,9 +107,17 @@ public class ExArquivoController extends ExController {
 				completo = false;
 				estampar = false;
 			}
-			final ExMobil mob = Documento.getMobil(arquivo);
+			final ExMobil mob = Documento.getMobil(arquivo);			
 			if (mob != null) {				
 				mob.getMobilPrincipal().getDoc().setPodeExibirReordenacao(exibirReordenacao);
+				
+				if (sigla != null && !sigla.isEmpty()) {
+					ExMobil mobilDoDocumentoPrincipal = Documento.getMobil(sigla);
+					if (mobilDoDocumentoPrincipal != null) {
+						mob.getMobilPrincipal().getDoc().setIdDocPrincipal(mobilDoDocumentoPrincipal.getDoc().getIdDoc());
+					}
+				}
+												
 			} else {
 				throw new AplicacaoException("A sigla informada não corresponde a um documento da base de dados.");
 			}
@@ -127,7 +136,7 @@ public class ExArquivoController extends ExController {
 			byte ab[] = null;
 			if (isArquivoAuxiliar) {
 				ab = mov.getConteudoBlobMov2();
-				return new InputStreamDownload(makeByteArrayInputStream(ab, fB64), APPLICATION_OCTET_STREAM, mov.getNmArqMov());
+				return new InputStreamDownload(makeByteArrayInputStream(ab, fB64), APPLICATION_OCTET_STREAM, mov.getNmArqMov().replaceAll(",", "").replaceAll(";", ""));
 			}
 			if (isPdf) {
 				if (mov != null && !completo && !estampar && hash == null) {

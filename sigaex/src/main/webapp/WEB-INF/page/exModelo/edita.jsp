@@ -133,7 +133,7 @@
 						</div>		
 					</div>
 					<div class="row">						
-						<div class="col-md-2">
+						<div class="col-md-3">
 							<div class="form-group">
 								<label>Marca d'água no documento</label>
 								<input type="text" name="marcaDagua" value="${marcaDagua}" maxlength="13" class="form-control" />
@@ -144,14 +144,13 @@
 						<div class="col-md-2">
 							<div class="form-group">
 								<label>Tipo do Modelo</label>
-								<siga:escolha id="tipoModelo" var="tipoModelo">
+								<siga:escolha id="tipoModelo" var="tipoModelo" executarJavascript="false">
 							</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-sm-12">
-							<div class="form-group">
-								
+							<div class="form-group">								
 									<siga:opcao id="template/freemarker" texto="Freemarker">
 										<textarea id="conteudo" style="width: 100%;" cols="1" rows="1"
 											name="conteudo" class="form-control"><c:out value="${conteudo}"
@@ -159,8 +158,10 @@
 										<p align="right">Ctrl-I: Indentar, Crtl-S: Salvar</p>
 									</siga:opcao>
 									<siga:opcao id="template-file/jsp" texto="JSP">
-									&nbsp;&nbsp;&nbsp;&nbsp;Nome do arquivo:
-									<input type="text" name="arquivo" size="80" value="${arquivo}" />
+									<div class="col-md-8  p-0">
+										<label for="nomeArquivo">Nome do arquivo</label>
+										<input type="text" id="nomeArquivo" class="form-control" name="arquivo" size="80" value="${arquivo}" />
+									</div>
 									</siga:opcao>
 								</siga:escolha>
 							</div>
@@ -296,13 +297,13 @@
 				});	
 			}
 				
-			montaTableCadastradas('tableCadastradasEletronico', 4, 0 ,${id});
-			montaTableCadastradas('tableCadastradasCriar', 2, 0 ,${id});
-			montaTableCadastradas('tableCadastradasAssinar', 1, 11 ,${id});
-			montaTableCadastradas('tableCadastradasAssinarComSenha', 1, 58 ,${id});		
-			montaTableCadastradas('tableCadastradasAcessar', 6, 0 ,${id});
-			montaTableCadastradas('tableCadastradasNivelAcessoMaximo', 18, 0 ,${id});
-			montaTableCadastradas('tableCadastradasNivelAcessoMinimo', 19, 0 ,${id});
+			montaTableCadastradas('tableCadastradasEletronico', 4, 0, ${id});
+			montaTableCadastradas('tableCadastradasCriar', 2, 0, ${id});
+			montaTableCadastradas('tableCadastradasAssinar', 1, 11, ${id});
+			montaTableCadastradas('tableCadastradasAssinarComSenha', 1, 58, ${id});		
+			montaTableCadastradas('tableCadastradasAcessar', 6, 0, ${id});
+			montaTableCadastradas('tableCadastradasNivelAcessoMaximo', 18, 0, ${id});
+			montaTableCadastradas('tableCadastradasNivelAcessoMinimo', 19, 0, ${id});
 		</c:if>
 	</script>
 

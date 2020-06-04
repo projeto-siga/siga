@@ -3257,6 +3257,11 @@ public class ExMovimentacaoController extends ExController {
 
 		this.setPostback(postback);
 
+		if (dtMovString != null && !Data.validaDDMMYYYY(dtMovString)) { 
+			throw new AplicacaoException(
+					"Data inválida. Deve estar no formato DD/MM/AAAA e o ano deve estar neste século.");
+		}
+		
 		ExMovimentacao mov = ExMovimentacaoBuilder.novaInstancia()
 				.setDtMovString(dtMovString).setSubstituicao(substituicao)
 				.setSubscritorSel(subscritorSel).setTitularSel(titularSel)

@@ -59,7 +59,7 @@
 							<label for="idOrgaoUsu">&Oacute;rg&atilde;o</label>
 							<c:choose>
 								<c:when test="${empty id || podeAlterarOrgao}">
-									<select name="idOrgaoUsu" value="${idOrgaoUsu}" class="form-control  siga-select2">
+									<select name="idOrgaoUsu" value="${idOrgaoUsu}" onchange="carregarRelacionados(this.value)" class="form-control  siga-select2">
 										<c:forEach items="${orgaosUsu}" var="item">
 											<option value="${item.idOrgaoUsu}"
 												${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
@@ -92,6 +92,21 @@
 					</div>
 				</div>
 				<div class="row">
+					
+					<div class="col-sm-4">
+						<div class="form-group">
+							<label for="lotacaoPai"><fmt:message key="usuario.lotacao" /> Pai</label>
+							<select name="lotacaoPai" id="lotacaoPai" value="${lotacaoPai}" class="form-control  siga-select2">
+								<option value="" selected disabled hidden>Selecione uma <fmt:message key="usuario.lotacao" /></option>
+								<c:forEach items="${listaLotacao}" var="item">
+									<option value="${item.idLotacao}" ${item.idLotacao== lotacaoPai ? 'selected' : ''}>
+										${item.nomeLotacao}
+									</option>
+								</c:forEach>							
+							</select>
+						</div>
+					</div>
+					
 					<div class="col-sm-2">
 						<div class="form-group">
 							<label for="idLocalidade">Localidade</label>
@@ -104,6 +119,13 @@
 								</c:forEach>
 							</select>
 						</div>
+					</div>
+					<div class="col-sm-2">
+					  <label>Tipo de <fmt:message key="usuario.lotacao"/></label>
+					  <div class="form-check">
+					    <input type="checkbox" class="form-check-input" id="isExternaLotacao" name="isExternaLotacao" value="1" <c:if test="${isExternaLotacao == 1}">checked</c:if> />
+					    <label class="form-check-label" for="isExternaLotacao"><fmt:message key="usuario.lotacao" /> com Acesso Externo</label>
+					  </div>
 					</div>
 					<div class="col-sm-3">
 						<div class="form-group">
@@ -147,6 +169,12 @@
 			</div>
 		</div>
 	</div>
+<script type="text/javascript">
+	function carregarRelacionados(id) {
+		frm.action = 'carregarCombos';
+		frm.submit();
+	}
+</script>
 <script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
 <script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
 <script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>

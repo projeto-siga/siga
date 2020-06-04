@@ -694,7 +694,7 @@ public class ExServiceImpl implements ExService {
 			ContextoPersistencia.flushTransaction();
 			
 			//Verifica se Range atual existe
-			ExDocumentoNumeracao docNumeracao = dao().obterNumeroDocumento(idOrgaoUsu, idFormaDoc, anoEmissao, true);
+			ExDocumentoNumeracao docNumeracao = dao().obterNumeroDocumento(idOrgaoUsu, idFormaDoc, anoEmissao, false);
 
 			if (docNumeracao == null) {
 				CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
@@ -766,7 +766,7 @@ public class ExServiceImpl implements ExService {
 				sequencia = dao().existeRangeSequencia(tipoSequencia);
 				
 				if (sequencia != null && "0".equals(sequencia.getZerarInicioAno())) { //Existe Range Anterior e Não pode Resetar numeracao
-					dao().updateMantemRangeNumeroDocumento(sequencia.getIdSequencia());
+					dao().updateMantemRangeSequencia(sequencia.getIdSequencia());
 		
 				} else { //Não existe ou deve resetar numeração
 					ExSequencia exSequencia = new ExSequencia();

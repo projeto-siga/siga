@@ -34,6 +34,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.persistence.Entity;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -61,6 +62,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 @Table(name = "EX_MOVIMENTACAO", catalog = "SIGA")
 public class ExMovimentacao extends AbstractExMovimentacao implements
 		Serializable, Comparable<ExMovimentacao> {
+
 	/**
 	 * 
 	 */

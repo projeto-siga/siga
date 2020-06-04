@@ -185,20 +185,19 @@ public class RelDocumentosForaPrazo extends RelatorioTemplate {
 		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		String queryLotacao = "";
 		if (parametros.get("lotacao") != null
-				&& parametros.get("lotacao") != "") {
+				&& !"".equals(parametros.get("lotacao"))) {
 			queryLotacao = " AND DOC.ID_LOTA_CADASTRANTE IN ( SELECT LOTA.ID_LOTACAO FROM CORPORATIVO.DP_LOTACAO LOTA WHERE LOTA.ID_LOTACAO_INI = :lotacao ) ";
 		}
 
 		String queryUsuario = "";
 		if (parametros.get("usuario") != null
-				&& parametros.get("usuario") != "") {
+				&& !"".equals(parametros.get("usuario"))) {
 			queryUsuario = " AND DOC.ID_CADASTRANTE IN ( SELECT PES.ID_PESSOA FROM CORPORATIVO.DP_PESSOA PES WHERE PES.ID_PESSOA_INICIAL = :usuario ) ";
 		}
 
 		String queryModelo = "";
 		String queryJoin = "";
-		if (parametros.get("idMod") != null
-				&& parametros.get("idMod") != "") {
+		if (parametros.get("idMod") != null && !"".equals(parametros.get("idMod"))) {
 			queryModelo = " AND DOC.ID_MOD = :idMod "
 					+ " AND DOC.ID_LOTA_CADASTRANTE = :idLotaResp ";
 			queryJoin = " LEFT OUTER JOIN SIGA.EX_FORMA_DOCUMENTO FRM "
@@ -209,7 +208,7 @@ public class RelDocumentosForaPrazo extends RelatorioTemplate {
 					+ " ON ORG.ID_ORGAO_USU = DOC.ID_ORGAO_USU ";
 		}
 
-		Query query = ContextoPersistencia.em().createQuery(
+		Query query = ContextoPersistencia.em().createNativeQuery(
 						"SELECT "
 								+ querySelect
 								+ " FROM ( SELECT MOV.ID_MOBIL,"
@@ -274,12 +273,11 @@ public class RelDocumentosForaPrazo extends RelatorioTemplate {
 		query.setParameter("idTpMov3", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA);
 		query.setParameter("idTpMov4", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA);
 
-		if (parametros.get("orgao") != null && parametros.get("orgao") != "") {
+		if (parametros.get("orgao") != null && !"".equals(parametros.get("orgao"))) {
 			query.setParameter("orgao", Long.valueOf((String) parametros.get("orgao")));
 		}
 		
-		if (parametros.get("lotacao") != null
-				&& parametros.get("lotacao") != "") {
+		if (parametros.get("lotacao") != null && !"".equals(parametros.get("lotacao"))) {
 			Query qryLota = ContextoPersistencia.em().createQuery(
 					"from DpLotacao lot where lot.idLotacao = "
 							+ parametros.get("lotacao"));
@@ -291,8 +289,7 @@ public class RelDocumentosForaPrazo extends RelatorioTemplate {
 			query.setParameter("lotacao", lotacao.getIdInicial());
 		}
 
-		if (parametros.get("usuario") != null
-				&& parametros.get("usuario") != "") {
+		if (parametros.get("usuario") != null && !"".equals(parametros.get("usuario"))) {
 			Query qryPes = ContextoPersistencia.em().createQuery(
 					"from DpPessoa pes where pes.idPessoa = "
 							+ parametros.get("usuario"));
@@ -309,8 +306,7 @@ public class RelDocumentosForaPrazo extends RelatorioTemplate {
 		Date dtini;
 		Date dtfim;
 		Date dtfimMaisUm;
-		if (parametros.get("idMod") != null
-				&& parametros.get("idMod") != "") {
+		if (parametros.get("idMod") != null && !"".equals(parametros.get("idMod"))) {
 			query.setParameter("idMod", Long.valueOf((String) parametros.get("idMod")));
 			query.setParameter("idLotaResp", Long.valueOf((String) parametros.get("idLotaResp")));
 			dtini = formatter.parse((String) parametros.get("dataVencida"));

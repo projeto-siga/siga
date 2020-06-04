@@ -215,8 +215,8 @@ public abstract class GrupoController<T extends CpGrupo> extends
 			CpGrupo grp = daoGrupo(idCpGrupo);
 			configuracoesGrupo = Cp.getInstance().getConf().obterCfgGrupo(grp);
 			for (ConfiguracaoGrupo t_cfgConfiguracaoGrupo : configuracoesGrupo) {
-				CpConfiguracao t_cpcConfiguracao = t_cfgConfiguracaoGrupo
-						.getCpConfiguracao();
+				CpConfiguracao t_cpcConfiguracao = dao().consultar(
+						t_cfgConfiguracaoGrupo.getCpConfiguracao().getIdConfiguracao(), CpConfiguracao.class, false);
 				t_cpcConfiguracao.setHisDtFim(dt);
 				dao().gravarComHistorico(t_cpcConfiguracao,
 						getIdentidadeCadastrante());

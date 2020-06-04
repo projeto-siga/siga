@@ -330,33 +330,6 @@
 										de Usuário</a></li>
 							</ul></li>
 					</c:if>
-					<div class="dropdown-divider"></div>
-					<c:if
-						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;CAD_ORGAO_USUARIO:Cadastrar Orgãos Usuário')}">
-						<li><a class="dropdown-item"
-							href="/siga/app/orgaoUsuario/listar">Cadastro de Orgãos</a></li>
-					</c:if>
-					<c:if
-						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;CAD_CARGO:Cadastrar Cargo')}">
-						<li><a class="dropdown-item" href="/siga/app/cargo/listar">Cadastro
-								de Cargo</a></li>
-					</c:if>
-					<c:if
-						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;CAD_LOTACAO:Cadastrar Lotação')}">
-						<li><a class="dropdown-item"
-							href="/siga/app/lotacao/listar">Cadastro de Lotação</a></li>
-					</c:if>
-					<c:if
-						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;CAD_FUNCAO:Cadastrar Função de Confiança')}">
-						<li><a class="dropdown-item"
-							href="/siga/app/funcao/listar">Cadastro de Função de
-								Confiança</a></li>
-					</c:if>
-					<c:if
-						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;CAD_PESSOA:Cadastrar Pessoa')}">
-						<li><a class="dropdown-item"
-							href="/siga/app/pessoa/listar">Cadastro de Pessoa</a></li>
-					</c:if>
 				</ul></li>
 		</c:if>
 
@@ -402,7 +375,7 @@
 					<c:forEach var="substituicao" items="${meusTitulares}">
 						<div class="dropdown-item" href="#">
 						<a class=""
-							href="/siga/app/substituicao/substituirGravar?id=${substituicao.idSubstituicao}">
+							href="javascript:delSession();location.href='/siga/app/substituicao/substituirGravar?id=${substituicao.idSubstituicao}'">
 								<c:choose>
 									<c:when test="${not empty substituicao.titular}">
 										${f:maiusculasEMinusculas(substituicao.titular.pessoaAtual.nomePessoa)}

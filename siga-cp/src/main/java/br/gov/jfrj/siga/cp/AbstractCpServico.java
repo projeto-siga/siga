@@ -49,10 +49,9 @@ import br.gov.jfrj.siga.model.Objeto;
 				+ "where upper(org.siglaServico) like upper(:siglaServico)") })
 public abstract class AbstractCpServico extends Objeto implements Serializable {
 
-	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO"
-			+ ".CP_SERVICO_SEQ")
 	@Id
-	@GeneratedValue(generator = "generator")
+	@SequenceGenerator(name = "CP_SERVICO_SEQ", sequenceName = "CORPORATIVO.CP_SERVICO_SEQ")
+	@GeneratedValue(generator = "CP_SERVICO_SEQ")
 	@Column(name = "ID_SERVICO", unique = true, nullable = false)
 	private Long idServico;
 

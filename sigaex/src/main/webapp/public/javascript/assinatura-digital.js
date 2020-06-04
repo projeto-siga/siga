@@ -944,6 +944,14 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar) {
 				provider.assinar(signable);
 			}
 		} else {
+			if (( ($('#siglaUsuSubscritor').val() != "") && ($('#siglaUsuarioCadastrante').val() != $('#siglaUsuSubscritor').val()) )
+					&& !$('#siglaUsuCossignatarios').val().includes($('#siglaUsuarioCadastrante').val()) ) {
+				if (!confirm("DESEJA ASSINAR O DOCUMENTO POR \""+ $('#nomeUsuSubscritor').val() + "\" - \"" + $('#siglaUsuSubscritor').val() +"\" OU POR UM DOS COSIGNATARIOS (" + $('#siglaUsuCossignatarios').val() + " )\"")) {
+					gAssinando = false;
+					$(this).dialog('destroy').remove();				
+				}
+			}
+			
 			process.push("gNome='" + o.nome + "'; gAutenticar = "
 					+ (o.hasOwnProperty('autenticar') ? o.autenticar : Copia)
 					 + "; gTramitar = "

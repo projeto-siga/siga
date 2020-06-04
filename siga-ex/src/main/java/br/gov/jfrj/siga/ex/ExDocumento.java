@@ -102,6 +102,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	
 	@Transient
 	private boolean podeExibirReordenacao;
+	
+	@Transient
+	private Long idDocPrincipal;
 
 	/**
 	 * Simple constructor of ExDocumento instances.
@@ -924,8 +927,11 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	
 	public String getMarcaDagua() {
 		String marcaDagua = null;
-		if( getExModelo() != null &&  getExModelo().getModeloAtual() != null)
-			getExModelo().getModeloAtual().getMarcaDagua();
+		
+		if( getExModelo() != null &&  getExModelo().getModeloAtual() != null) {
+			marcaDagua = getExModelo().getModeloAtual().getMarcaDagua();
+		}
+			
 		return marcaDagua == null ? "" : marcaDagua.trim();
 	}
 
@@ -1527,7 +1533,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		
 		} else {					
 			listaFinal = listaInicial;			
-		}										
+		}				
 					
 		// Numerar as paginas
 		if (isNumeracaoUnicaAutomatica()) {
@@ -1695,14 +1701,29 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 				list.add(an);
 				m.getExDocumento().getAnexosNumerados(m.getExMobilRef(), list,
 						nivel + 1, true);
-			} else {
+			} else if (isDesentranhamentoSP(mob, m)) {				
+				continue;				
+			} else {			
 				an.setArquivo(m);
 				an.setMobil(m.getExMobil());
 				list.add(an);
 			}
 		}
+				
 	}
+	
+	private boolean isDesentranhamentoSP(ExMobil mobil, ExMovimentacao movimentacao) {
+		if (SigaMessages.isSigaSP() &&
+				movimentacao.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA &&
+						movimentacao.getExMobil().getId().equals(mobil.getId())) {
 
+			return this.getIdDocPrincipal() == this.getIdDoc();
+			
+		}	
+		
+		return false;
+	}
+		
 	/**
 	 * COMPLETAR
 	 * 
@@ -1782,6 +1803,14 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return getMobilGeral().getMovsNaoCanceladas(
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA);
 	}
+	
+	public Set<ExMovimentacao> getAssinaturasPorComSenha() {
+		if (getMobilGeral() == null)
+			return new TreeSet<ExMovimentacao>();
+		return getMobilGeral().getMovsNaoCanceladas(
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA);
+	}
+
 
 	public Set<ExMovimentacao> getAutenticacoesComSenha() {
 		if (getMobilGeral() == null)
@@ -1879,10 +1908,16 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 				.getAssinantesString(getAssinaturasComToken());
 		String assinantesSenha = Documento
 				.getAssinantesString(getAssinaturasComSenha());
+		String assinantesPorSenha = Documento
+				.getAssinantesStringComMatricula(getAssinaturasPorComSenha());
 
 		if (assinantesToken.length() > 0)
 			retorno = "Assinado digitalmente por " + assinantesToken + ".\n";
 
+		if (assinantesPorSenha.length() > 0) {
+			retorno = retorno + "Assinado com senha por " + assinantesPorSenha +".\n" ;
+		}
+		
 		if (assinantesSenha.length() > 0)
 			retorno = retorno + "Assinado com senha por " + assinantesSenha
 					+ ".\n";
@@ -2782,6 +2817,18 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	
 	public boolean podeExibirReordenacao() {
 		return this.podeExibirReordenacao;
+	}
+	
+	public void setIdDocPrincipal(Long idDocPrincipal) {
+		this.idDocPrincipal = idDocPrincipal;
+	}
+	
+	public Long getIdDocPrincipal() {
+		if (this.idDocPrincipal == null) {
+			return this.getIdDoc();
+		}
+		
+		return this.idDocPrincipal;
 	}
 
 }

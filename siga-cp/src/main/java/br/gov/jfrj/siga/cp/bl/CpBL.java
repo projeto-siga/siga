@@ -18,8 +18,11 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp.bl;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -61,6 +64,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
 import br.gov.jfrj.siga.gi.service.GiService;
+import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 public class CpBL {
 	CpCompetenciaBL comp;
@@ -75,6 +79,34 @@ public class CpBL {
 
 	private CpDao dao() {
 		return comp.getConfiguracaoBL().dao();
+	}
+
+	/**
+	 * Marca uma {@link CpConfiguracao} como Fechada. Para isso preenche a
+	 * {@link CpConfiguracao#setHisDtFim(Date) data de fim}. <br/>
+	 * <b>NOTA DE IMPLMENTAÇÃO:</b> Originalmente simplesmente chamava-se
+	 * {@link CpDao#gravarComHistorico(br.gov.jfrj.siga.cp.model.HistoricoAuditavel, CpIdentidade)}
+	 * com <code>confoOld</code> que é carregado da base de dados. Entretanto na
+	 * migração para o EAP 7.2 e o JPA (ao invés do Hibernate) ao se executar
+	 * <code>gravarComHistorico</code> era disparada uma exceção com a mensagem de
+	 * erro <cite>detached entity passed to persist</cite>. A solução encontrada foi
+	 * carregar uma outra {@link CpConfiguracao} da base de dados com o ID de
+	 * <code>confoOld</code>, preecher a {@link CpConfiguracao#setHisDtFim(Date)
+	 * data de fim} deste e passá-lo para <code>gravarComHistorico</code>.
+	 * 
+	 * @param confOld               Configuração a ser fechada.
+	 * @param identidadeCadastrante Usuário responsável pela atualização
+	 * @param dt                    Data de fechamenbto.
+	 * @see CpDao#gravarComHistorico(br.gov.jfrj.siga.cp.model.HistoricoAuditavel,
+	 *      CpIdentidade)
+	 */
+	private void fecharAntigaConfiguracao(CpConfiguracao confOld, CpIdentidade identidadeCadastrante, Date dt) {
+		if (confOld != null) {
+			Long idConfiguracaoOld = confOld.getIdConfiguracao();
+			CpConfiguracao confOldToSave = dao().consultar(idConfiguracaoOld, CpConfiguracao.class, false);
+			confOldToSave.setHisDtFim(dt);
+			dao().gravarComHistorico(confOldToSave, identidadeCadastrante);
+		}
 	}
 
 	public CpIdentidade alterarIdentidade(CpIdentidade ident, Date dtExpiracao, CpIdentidade identidadeCadastrante)
@@ -149,10 +181,7 @@ public class CpBL {
 		conf.setHisDtIni(dt);
 
 		dao().iniciarTransacao();
-		if (confOld != null) {
-			confOld.setHisDtFim(dt);
-			dao().gravarComHistorico(confOld, identidadeCadastrante);
-		}
+		fecharAntigaConfiguracao(confOld, identidadeCadastrante, dt);
 		dao().gravarComHistorico(conf, identidadeCadastrante);
 		dao().commitTransacao();
 		comp.getConfiguracaoBL().limparCacheSeNecessario();
@@ -186,10 +215,7 @@ public class CpBL {
 			conf.setCpTipoConfiguracao(tpConf);
 			conf.setHisDtIni(dt);
 
-			if (confOld != null) {
-				confOld.setHisDtFim(dt);
-				dao().gravarComHistorico(confOld, identidadeCadastrante);
-			}
+			fecharAntigaConfiguracao(confOld, identidadeCadastrante, dt);
 			dao().gravarComHistorico(conf, identidadeCadastrante);
 
 			for (CpIdentidade ident : dao().consultaIdentidades(pes)) {
@@ -235,10 +261,7 @@ public class CpBL {
 		conf.setCpTipoConfiguracao(tpConf);
 		conf.setHisDtIni(dt);
 
-		if (confOld != null) {
-			confOld.setHisDtFim(dt);
-			dao().gravarComHistorico(confOld, identidadeCadastrante);
-		}
+		fecharAntigaConfiguracao(confOld, identidadeCadastrante, dt);
 		dao().gravarComHistorico(conf, identidadeCadastrante);
 
 		comp.getConfiguracaoBL().limparCacheSeNecessario();
@@ -271,7 +294,7 @@ public class CpBL {
 					senhaGerada[0] = GeraMessageDigest.geraSenha();
 					for (CpIdentidade cpIdentidade : lista) {
 						Cp.getInstance().getBL().alterarSenhaDeIdentidade(cpIdentidade.getNmLoginIdentidade(),
-								StringUtils.leftPad(cpIdentidade.getDpPessoa().getCpfPessoa().toString(), 11, "0"),
+								StringUtils.leftPad(cpIdentidade.getDpPessoa().getPessoaAtual().getCpfPessoa().toString(), 11, "0"),
 								null, senhaGerada);
 					}
 					resultado = "OK";
@@ -454,10 +477,12 @@ public class CpBL {
 
 						if (SigaMessages.isSigaSP()) {
 							String[] destinanarios = { pessoa.getEmailPessoaAtual() };
-
+							String conteudoHTML = pessoaIsUsuarioExterno(pessoa)
+									? textoEmailNovoUsuarioExternoSP(idNova, matricula, novaSenha)
+									: textoEmailNovoUsuarioSP(idNova, matricula, novaSenha, autenticaPeloBanco);
+							
 							Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
-									destinanarios, "Novo Usuário", "",
-									textoEmailNovoUsuarioSP(idNova, matricula, novaSenha, autenticaPeloBanco));
+									destinanarios, "Novo Usuário", "", conteudoHTML);
 						} else {
 							Correio.enviar(pessoa.getEmailPessoaAtual(), "Novo Usuário",
 									textoEmailNovoUsuario(matricula, novaSenha, autenticaPeloBanco));
@@ -488,6 +513,49 @@ public class CpBL {
 
 	}
 
+	/**
+	 * Verifica se a {@link DpPessoa Pessoa} é um usuário externo. <br>
+	 * <b>NOTA DE IMPLEMENTAÇÃO:</b> Originalmente dentro de
+	 * {@link #criarIdentidade(String, String, CpIdentidade, String, String[], boolean)}
+	 * era chamado {@link DpPessoa#isUsuarioExterno()}, que faz uso de
+	 * {@link DpPessoa#getLotacao() lotação}. Entretanto durante a migração para o
+	 * EAP 7.2, verificou-se que quando o método <code>criarIdentidade</code> era
+	 * chamado a partir de
+	 * {@link #criarUsuario(String, Long, Long, Long, Long, Long, String, String, String, String)},
+	 * ao se chamar {@link DpPessoa#getLotacao()} dentro de
+	 * {@link DpPessoa#isUsuarioExterno()} acontecia um
+	 * {@link NullPointerException}, mesmo que essa pessoa tivesse acabado de ter
+	 * sido carregada pelo Hibernate. Entretanto, se for chamado
+	 * <code>pessoa.getLotacao().getId()</code> não houve problema. <br/>
+	 * A solução foi emular a implmentação de {@link DpPessoa#isUsuarioExterno()},
+	 * usar essa <code>pessoa.getLotacao().getId()</code>, para consultar a Lotação
+	 * na base de dados através de
+	 * {@link ModeloDao#consultar(java.io.Serializable, Class, boolean)} e chamar
+	 * {@link DpLotacao#getIsExternaLotacao()}.
+	 * 
+	 * @param pessoa Pessoa a ser avaliada.
+	 * @return se a Pessoa é um usuário externo.
+	 */
+	private boolean pessoaIsUsuarioExterno(DpPessoa pessoa) {
+		if (pessoa.getOrgaoUsuario() == null && pessoa.getLotacao() == null) {
+			return false;
+		}		
+		
+		CpOrgaoUsuario orgaoUsuario = pessoa.getOrgaoUsuario();
+		Integer isExternoOrgaoUsu = orgaoUsuario.getIsExternoOrgaoUsu();
+		if ((isExternoOrgaoUsu != null) && (isExternoOrgaoUsu == 1)) {
+			return true;
+		}
+
+		Long idLotacao = pessoa.getLotacao().getId();
+		if (idLotacao == null) {
+			return false;
+		}
+
+		DpLotacao lotacao = dao().consultar(idLotacao, DpLotacao.class, false);
+		return (lotacao != null) && (lotacao.getIsExternaLotacao() == 1);
+	}
+
 	private String textoEmailNovoUsuario(String matricula, String novaSenha, boolean autenticaPeloBanco) {
 		StringBuffer retorno = new StringBuffer();
 
@@ -514,7 +582,7 @@ public class CpBL {
 		retorno.append("<tr>");
 		retorno.append("<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>");
 		retorno.append(
-				"<img style='padding: 10px 0px; text-align: center;' src='http://www.documentos.spsempapel.sp.gov.br/siga/imagens/logo-sem-papel-cor.png' ");
+				"<img style='padding: 10px 0px; text-align: center;' src='https://www.documentos.spsempapel.sp.gov.br/siga/imagens/logo-sem-papel-cor.png' ");
 		retorno.append("alt='SP Sem Papel' width='108' height='50' /></td>");
 		retorno.append("</tr>");
 		retorno.append("<tr>");
@@ -564,6 +632,29 @@ public class CpBL {
 		retorno.append("</tbody>");
 		retorno.append("</table>");
 		return retorno.toString();
+	}
+	
+	private String textoEmailNovoUsuarioExternoSP(CpIdentidade identidade, String matricula, String novaSenha) {		
+		String conteudo = "";
+		
+		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/templates/email/novo-usuario-externo.html")))) {			
+			String str;
+			
+			while((str = bfr.readLine()) != null) {
+				conteudo += str;
+			}
+			
+		} catch (IOException e) {
+			throw new AplicacaoException("Erro ao montar e-mail para enviar ao usuário externo " + identidade.getDpPessoa().getNomePessoa());
+		}
+		
+		
+		conteudo = conteudo.replace("${nomeUsuario}", identidade.getDpPessoa().getNomePessoa())
+			.replace("${cpfUsuario}", matricula)
+			.replace("${url}", SigaBaseProperties.getString("siga.ex." + SigaBaseProperties.getString("siga.ambiente") + ".url").replace("/sigaex/app", ""))
+			.replace("${senhaUsuario}", novaSenha);
+		
+		return conteudo;
 	}
 
 	private String buscarModoAutenticacao(String orgao) {

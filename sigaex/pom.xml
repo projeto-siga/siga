@@ -100,6 +100,17 @@
 					</execution>
 				</executions>
 			</plugin>
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <version>2.0.2.Final</version>
+                <configuration>
+                    <server-groups>
+                        <server-group>siga</server-group>
+                    </server-groups>
+                    <skip>false</skip>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 

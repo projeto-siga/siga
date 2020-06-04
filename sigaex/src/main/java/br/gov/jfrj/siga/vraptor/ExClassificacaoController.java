@@ -158,7 +158,12 @@ public class ExClassificacaoController
 			String codificacao, String acao) throws Exception {
 		assertAcesso(ACESSO_SIGA_DOC_FE_PC);
 		ExClassificacao exClass = null;
-		if (codificacao != null && exClassificacao == null) {
+		
+		if (exClassificacao == null) {
+			exClassificacao = new ExClassificacao();
+		}		
+		
+		if (codificacao != null && exClassificacao.getId() == null) {
 			exClass = buscarExClassificacao(codificacao);
 		} else {
 			exClass = exClassificacao;

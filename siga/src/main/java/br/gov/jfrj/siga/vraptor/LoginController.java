@@ -117,7 +117,7 @@ public class LoginController extends SigaController {
 
 	@Get("public/app/logout")
 	public void logout() {
-		this.request.getSession().invalidate();
+		this.request.getSession(false);
 		this.response.addCookie(AuthJwtFormFilter.buildEraseCookie());
 		result.redirectTo("/");
 	}
@@ -202,7 +202,8 @@ public class LoginController extends SigaController {
 				cont += "&";
 			else
 				cont += "?";
-			cont += "exibirAcessoAnterior=true";
+			if (!SigaMessages.isSigaSP())
+				cont += "exibirAcessoAnterior=true";
 			result.redirectTo(cont);
 		} else
 			result.redirectTo("/");

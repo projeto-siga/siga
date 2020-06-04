@@ -110,7 +110,7 @@ function cpf_mask(v){
 					</div>
 					<div class="col-md-5">
 						<div class="form-group">
-							<label for="lotacao">Lota&ccedil;&atilde;o</label>
+							<label for="lotacao"><fmt:message key="usuario.lotacao"/></label>
 							<input type="hidden" name="idLotacaoPesquisa" value="${idLotacaoPesquisa}" id="inputHiddenLotacoesSelecionadas" />
 							<select id="lotacao" class="form-control  siga-multiploselect  js-siga-multiploselect--lotacao">
 								<c:forEach items="${listaLotacao}" var="item">
@@ -169,7 +169,7 @@ function cpf_mask(v){
 					<th align="left">CPF</th>
 					<th align="left">Data de Nascimento</th>
 					<th align="left">Matrícula</th>
-					<th align="left">Lotação</th>			
+					<th align="left"><fmt:message key="usuario.lotacao"/></th>			
 				</tr>
 			</thead>
 			<tbody>

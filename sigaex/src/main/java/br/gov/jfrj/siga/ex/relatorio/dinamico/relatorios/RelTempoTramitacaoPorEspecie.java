@@ -81,23 +81,21 @@ import net.sf.jasperreports.engine.JRException;
 			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
 			String queryEspecie = "";
-			if (parametros.get("especie") != null && parametros.get("especie") != "") {
+			if (parametros.get("especie") != null && !"".equals(parametros.get("especie"))) {
 				queryEspecie = "and doc.exFormaDocumento.idFormaDoc = :especie ";
 			}
 
 			String queryOrgao = "";
-			if (parametros.get("orgao") != null && parametros.get("orgao") != "") {
+			if (parametros.get("orgao") != null && !"".equals(parametros.get("orgao"))) {
 				queryOrgao = "and doc.orgaoUsuario.idOrgaoUsu = :orgao ";
 			}
 
 			String queryLotacao = "";
-			if (parametros.get("lotacao") != null
-					&& parametros.get("lotacao") != "") {
+			if (parametros.get("lotacao") != null && !"".equals(parametros.get("lotacao"))) {
 				queryLotacao = " and doc.lotaCadastrante.idLotacao in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :idLotacao) ";
 			}
 			String queryUsuario = "";
-			if (parametros.get("usuario") != null
-					&& parametros.get("usuario") != "") {
+			if (parametros.get("usuario") != null && !"".equals(parametros.get("usuario"))) {
 				queryUsuario = "and doc.cadastrante.idPessoa in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :usuario) ";
 			}
 			
@@ -152,15 +150,15 @@ import net.sf.jasperreports.engine.JRException;
 			query.setParameter("idTpMov6", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE);
 			query.setParameter("idTpMov7", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO);			
 			
-			if (parametros.get("especie") != null && parametros.get("especie") != "") {
+			if (parametros.get("especie") != null && !"".equals(parametros.get("especie"))) {
 				query.setParameter("especie", Long.valueOf((String) parametros.get("especie")));
 			}
 			
-			if (parametros.get("orgao") != null && parametros.get("orgao") != "") {
+			if (parametros.get("orgao") != null && !"".equals(parametros.get("orgao"))) {
 				query.setParameter("orgao", Long.valueOf((String) parametros.get("orgao")));
 			}
 			
-			if (parametros.get("lotacao") != null && parametros.get("lotacao") != "") {
+			if (parametros.get("lotacao") != null && !"".equals(parametros.get("lotacao"))) {
 				Query qryLota = ContextoPersistencia.em().createQuery(
 						"from DpLotacao lot where lot.idLotacao = " + parametros.get("lotacao"));
 				Set<DpLotacao> lotacaoSet = new HashSet<DpLotacao>();
@@ -169,8 +167,7 @@ import net.sf.jasperreports.engine.JRException;
 				query.setParameter("idLotacao",	lotacao.getIdInicial());
 			}
 
-			if (parametros.get("usuario") != null
-					&& parametros.get("usuario") != "") {
+			if (parametros.get("usuario") != null && !"".equals(parametros.get("usuario"))) {
 				Query qryPes = ContextoPersistencia.em().createQuery(
 						"from DpPessoa pes where pes.idPessoa = "
 								+ parametros.get("usuario"));

@@ -266,61 +266,69 @@
 							</table>
 						</div>
 					</c:if>
-
 		</form>
-		<div class="card">
-			<div class="card-body">
-				<div id="dados-assinatura" style="visible: hidden">
-					<input type="hidden" name="ad_url_base" value="" /> <input
-						type="hidden" name="ad_url_next"
-						value="/sigaex/app/expediente/mov/fechar_popup?sigla=${mob.sigla}" />
-					<input type="hidden" name="ad_descr_0" value="${mov.referencia}" />
-					<input type="hidden" name="ad_url_pdf_0"
-						value="/sigaex/app/arquivo/exibir?arquivo=${mov.nmPdf}" /> <input
-						type="hidden" name="ad_url_post_0"
-						value="/sigaex/app/expediente/mov/assinar_mov_gravar" /> <input
-						type="hidden" name="ad_url_post_password_0"
-						value="/sigaex/app/expediente/mov/assinar_mov_login_senha_gravar" />
-
-					<input type="hidden" name="ad_id_0"
-						value="${fn:replace(mov.referencia, ':', '_')}" /> <input
-						type="hidden" name="ad_description_0" value="${mov.obs}" /> <input
-						type="hidden" name="ad_kind_0"
-						value="${mov.exTipoMovimentacao.sigla}" />
-
-					<c:if test="${not autenticando}">
-						<c:choose>
-							<c:when test="${mov.exTipoMovimentacao.idTpMov == 2}">
-								<c:set var="botao" value="ambos" />
-							</c:when>
-							<c:otherwise>
-								<c:set var="botao" value="" />
-							</c:otherwise>
-						</c:choose>
-					</c:if>
-					<c:if test="${autenticando}">
-						<c:set var="botao" value="autenticando" />
-					</c:if>
-
-					<c:set var="lote" value="false" />
+		
+		<c:choose>
+		    <c:when test="${siga_cliente == 'GOVSP' && mov.idTpMov == 13 && mov.isAssinada()}">
+		        <span style="display:none">Termo de desentranhamento é assinado uma única vez para usuários de SP</span>	        
+		    </c:when>    
+		    <c:otherwise>
+		    	<div class="card">
+					<div class="card-body">
+						<div id="dados-assinatura" style="visible: hidden">
+							<input type="hidden" name="ad_url_base" value="" /> <input
+								type="hidden" name="ad_url_next"
+								value="/sigaex/app/expediente/mov/fechar_popup?sigla=${mob.sigla}" />
+							<input type="hidden" name="ad_descr_0" value="${mov.referencia}" />
+							<input type="hidden" name="ad_url_pdf_0"
+								value="/sigaex/app/arquivo/exibir?arquivo=${mov.nmPdf}" /> <input
+								type="hidden" name="ad_url_post_0"
+								value="/sigaex/app/expediente/mov/assinar_mov_gravar" /> <input
+								type="hidden" name="ad_url_post_password_0"
+								value="/sigaex/app/expediente/mov/assinar_mov_login_senha_gravar" />
+		
+							<input type="hidden" name="ad_id_0"
+								value="${fn:replace(mov.referencia, ':', '_')}" /> <input
+								type="hidden" name="ad_description_0" value="${mov.obs}" /> <input
+								type="hidden" name="ad_kind_0"
+								value="${mov.exTipoMovimentacao.sigla}" />
+		
+							<c:if test="${not autenticando}">
+								<c:choose>
+									<c:when test="${mov.exTipoMovimentacao.idTpMov == 2}">
+										<c:set var="botao" value="ambos" />
+									</c:when>
+									<c:otherwise>
+										<c:set var="botao" value="" />
+									</c:otherwise>
+								</c:choose>
+							</c:if>
+							<c:if test="${autenticando}">
+								<c:set var="botao" value="autenticando" />
+							</c:if>
+		
+							<c:set var="lote" value="false" />
+						</div>
+						<c:if test="${siga_cliente != 'GOVSP'}">
+							<tags:assinatura_botoes assinar="true"
+								autenticar="${mov.exTipoMovimentacao.idTpMov==2}"
+								assinarComSenha="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}"
+								autenticarComSenha="${f:podeAutenticarMovimentacaoComSenha(titular,lotaTitular,mov)}"
+								idMovimentacao="${mov.idMov}" />
+						</c:if>
+						<c:if test="${siga_cliente == 'GOVSP'}">
+							<tags:assinatura_botoes assinar="true"
+								autenticar="${mov.exTipoMovimentacao.idTpMov==2}"
+								assinarComSenhaChecado="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}"
+								autenticarComSenhaChecado="${f:podeAutenticarMovimentacaoComSenha(titular,lotaTitular,mov)}"
+								idMovimentacao="${mov.idMov}" />
+						</c:if>
+		
+					</div>
 				</div>
-				<c:if test="${siga_cliente != 'GOVSP'}">
-					<tags:assinatura_botoes assinar="true"
-						autenticar="${mov.exTipoMovimentacao.idTpMov==2}"
-						assinarComSenha="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}"
-						autenticarComSenha="${f:podeAutenticarMovimentacaoComSenha(titular,lotaTitular,mov)}"
-						idMovimentacao="${mov.idMov}" />
-				</c:if>
-				<c:if test="${siga_cliente == 'GOVSP'}">
-					<tags:assinatura_botoes assinar="true"
-						autenticar="${mov.exTipoMovimentacao.idTpMov==2}"
-						assinarComSenhaChecado="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}"
-						autenticarComSenhaChecado="${f:podeAutenticarMovimentacaoComSenha(titular,lotaTitular,mov)}"
-						idMovimentacao="${mov.idMov}" />
-				</c:if>
-
-			</div>
-		</div>
+		    </c:otherwise>
+		</c:choose>
+			
 		<div class="alert alert-primary" role="alert">
 			<b>Link para consulta à autenticidade: </b> ${enderecoAutenticacao}
 			(informar o código <b>${mov.siglaAssinaturaExterna}</b>)

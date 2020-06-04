@@ -48,11 +48,10 @@
 			</thead>
 			<tbody class="table-bordered align-middle text-center">
 				<c:forEach items="${classificacaoVigente}" var="cla">
-					<c:set var="nivel" value="${cla.nivel}" />
-					<c:set var="numVias" value="${fn:length(cla.exViaSet)}" />
+					<c:set var="nivel" value="${cla.nivel}" />					
 					<c:remove var="viasDefault" />
 					<c:choose>
-						<c:when test="${numVias == ''}">
+						<c:when test="${cla.numVias <= 0}">
 							<c:set var="viasDefault" value="1" />
 						</c:when>
 						<c:otherwise>
@@ -61,46 +60,36 @@
 					</c:choose>
 					<tr>
 
-						<td rowspan="${numVias + viasDefault}" class="align-middle"><a
+						<td rowspan="${cla.numVias + viasDefault}" class="align-middle"><a
 							title="${cla.descricao}"
 							href="editar?codificacao=${cla.codificacao}&acao=editar_classificacao">${cla.codificacao}</a></td>
-						<td rowspan="${numVias + viasDefault}"
+						<td rowspan="${cla.numVias + viasDefault}"
 							class="align-middle text-left">${cla.descrClassificacao}</td>
 						<c:choose>
-							<c:when test="${numVias > 0}">
+							<c:when test="${cla.numVias > 0}">
 								<c:forEach items="${cla.exViaSet}" var="via" varStatus="loop">
 									<c:if test="${loop.index>0}">
-					</tr>
-					<tr>
-						</c:if>
-						<td>${via.codVia}</td>
-						<td>${via.exTipoDestinacao.descrTipoDestinacao}</td>
-						<td>${via.temporalidadeCorrente.descTemporalidade}</td>
-						<td>${via.temporalidadeIntermediario.descTemporalidade}</td>
-						<td>${via.exDestinacaoFinal.descrTipoDestinacao}</td>
+										</tr>
+										<tr>
+									</c:if>	
+									<td>${via.codVia}</td>
+									<td>${via.exTipoDestinacao.descrTipoDestinacao}</td>
+									<td>${via.temporalidadeCorrente.descTemporalidade}</td>
+									<td>${via.temporalidadeIntermediario.descTemporalidade}</td>
+									<td>${via.exDestinacaoFinal.descrTipoDestinacao}</td>
+									</tr>
+								</c:forEach>
+							</c:when>
+							<c:otherwise>
+								<td />
+								<td />
+								<td />
+								<td />
+								<td />
+							</c:otherwise>
+						</c:choose>
 					</tr>
 				</c:forEach>
-				</c:when>
-				<c:otherwise>
-					<td />
-					<td />
-					<td />
-					<td />
-					<td />
-				</c:otherwise>
-				</c:choose>
-				</tr>
-				</c:forEach>
-
-
-
-
-
-
-
-
-
-
 			</tbody>
 		</table>
 

@@ -110,6 +110,12 @@
 		 a folha ${folhaInicial}
 		</c:if> do ${mobil.descricaoCompleta} do
 		documento em epígrafe.</p>
+		
+		<c:if test="${textoMotivo.isEmpty() == false}">
+			<p align="left" style="TEXT-INDENT: 2cm">
+				Motivo: ${textoMotivo}
+			</p>
+		</c:if>
 
 		<br />
 		<br />

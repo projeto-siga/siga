@@ -1070,7 +1070,7 @@
 										(Público)
 									</c:when>
 													<c:otherwise>
-										(${acesso.sigla})
+										(${acesso.sigla} - ${acesso.descricao})
 									</c:otherwise>
 												</c:choose>
 											</c:forEach>
@@ -1082,7 +1082,7 @@
 													<li>
 														<c:choose>
 															<c:when test="${siga_cliente == 'GOVSP'}">
-																${acesso.descricao} (${acesso.sigla})
+																${acesso.sigla} - ${acesso.descricao}
 															</c:when>
 															<c:otherwise>
 																${acesso.sigla}

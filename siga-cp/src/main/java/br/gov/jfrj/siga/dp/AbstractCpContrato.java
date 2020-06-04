@@ -40,7 +40,7 @@ public abstract class AbstractCpContrato extends Objeto implements
 	private static final long serialVersionUID = 1L;
 
 //	@Id
-//	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.CP_CONTRATO_SEQ")
+//	@SequenceGenerator(name = "CP_CONTRATO_SEQ", sequenceName = "CORPORATIVO.CP_CONTRATO_SEQ")
 //	@GeneratedValue(generator = "generator")
 //	@Column(name = "ID_CONTRATO", unique = true, nullable = false)
 //	@Desconsiderar

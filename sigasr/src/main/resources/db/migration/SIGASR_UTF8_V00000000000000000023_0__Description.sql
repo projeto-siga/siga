@@ -1,9 +1,9 @@
 
 ALTER SESSION SET CURRENT_SCHEMA=corporativo;
 -- Inserindo a localidade de Campo Grande
-insert into CORPORATIVO.CP_LOCALIDADE (ID_LOCALIDADE,NM_LOCALIDADE,ID_UF) values (24,'Campo Grande',19);
+--insert into CORPORATIVO.CP_LOCALIDADE (ID_LOCALIDADE,NM_LOCALIDADE,ID_UF) values (24,'Campo Grande',19);
   
-insert into corporativo.cp_complexo (id_complexo, nome_complexo, id_localidade, id_orgao_usu) values (27,'Campo Grande',24 , 1);
+--insert into corporativo.cp_complexo (id_complexo, nome_complexo, id_localidade, id_orgao_usu) values (27,'Campo Grande',24 , 1);
 
 -- Inserindo servico para notificacao de atendente
 insert into corporativo.cp_servico(id_servico, sigla_servico, desc_servico, id_servico_pai, id_tp_servico) 

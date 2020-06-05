@@ -9,6 +9,7 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="libs"%>
+<%@ taglib tagdir="/WEB-INF/tags/mensagem" prefix="siga-mensagem"%>
 
 <%@page import="br.gov.jfrj.siga.ex.ExMovimentacao"%>
 <%@page import="br.gov.jfrj.siga.ex.ExMobil"%>
@@ -202,7 +203,7 @@
 	}
 </script>
 
-<div class="container-fluid content" id="page">
+<div class="container-fluid content" id="page">	
 	<c:if test="${not empty param.msg}">
 		<div class="row mt-3">
 			<p align="center">
@@ -1294,41 +1295,41 @@
 </div>
 	
 <c:if test="${siga_cliente eq 'GOVSP'}">
-	<script>
-		$(document).ready(function() {
-			var btnArqCorrente = $('.arq-corrente-requer-confirmacao');
-			
-			if (btnArqCorrente.length > 0) {
-				var btnConfirmacaoArqCorrente = $('.btn-confirmacao-arq-corrente');
+	<c:if test="${docVO.doc.isComposto()}">
+		<script>
+			$(function() {
+				var btnArqCorrente = $('.siga-btn-arq-corrente');
 				
-				btnArqCorrente.attr('data-toggle', 'modal').attr('data-target', '#modalDeConfirmacaoArqCorrente');
-				btnConfirmacaoArqCorrente.attr('href', btnArqCorrente.attr('href'));	
-			}							
-		});	
-	</script>
+				if (btnArqCorrente) {
+					var btnAcao = $('#modalDeConfirmacaoArqCorrente').find('.btn-acao');					
+					
+					btnArqCorrente.attr('data-toggle', 'modal').attr('data-target', '#modalDeConfirmacaoArqCorrente');
+					btnAcao.attr('href', btnArqCorrente.attr('href'));	
+				}							
+			});	
+		</script>
+		
+		<siga-mensagem:alerta-modal idModal="modalDeConfirmacaoArqCorrente" descricaoBotaoQueFechaModal="Não" 
+			exibirBotaoDeAcao="true" descricaoBotaoDeAcao="Sim" urlBotaoDeAcao="#"
+			texto="Verifique se há necessidade de incluir o Termo de Encerramento para este documento. Deseja continuar com o arquivamento?">
+		</siga-mensagem:alerta-modal>
+	</c:if>	
+	<c:if test="${mob.isJuntado()}">
+		<script>
+			$(function() {
+				var btnCancelar = $('.siga-btn-tornar-documento-sem-efeito');
+				
+				if (btnCancelar) {										
+					btnCancelar.attr('data-toggle', 'modal').attr('data-target', '#modalDeAvisoTornarDocumentoSemEfeito');					
+				}							
+			});	
+		</script>	
 	
-	<div class="modal fade" id="modalDeConfirmacaoArqCorrente" tabindex="-1" role="dialog" aria-labelledby="confirmacao" aria-hidden="true">
-	  <div class="modal-dialog text-center" role="document">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <div class="col-12" style="margin: 0 auto;">
-	        	<i class="fas fa-exclamation-circle" style="font-size: 5em; color: #ffc107; margin: 15px 0;"></i>
-	        	<h5 class="modal-title" id="confirmacao" style="font-size: 2em; font-weight: bold">Atenção</h5>
-	        </div>
-	        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-left: -40px">
-	          <span aria-hidden="true">&times;</span>
-	        </button>
-	      </div>
-	      <div class="modal-body text-center" style="padding-top: 0;">
-	        Verifique se há necessidade de incluir o Termo de Encerramento para este documento. Deseja continuar com o arquivamento?
-	      </div>
-	      <div class="modal-footer text-center" style="margin: 0 auto;">
-	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>		        
-	        <a href="#" class="btn btn-primary btn-confirmacao-arq-corrente" role="button" aria-pressed="true">Sim</a>
-	      </div>
-	    </div>
-	  </div>
-	</div>
+		<siga-mensagem:alerta-modal idModal="modalDeAvisoTornarDocumentoSemEfeito" descricaoBotaoQueFechaModal="Ok" 
+			exibirBotaoDeAcao="false" texto="Desentranhar Documento antes de Cancelar">
+		</siga-mensagem:alerta-modal>
+	</c:if>				
+	
 	
 	<script>
 		var containerArquivosAuxiliares = $('.container-files');

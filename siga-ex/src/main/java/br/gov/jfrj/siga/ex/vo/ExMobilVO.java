@@ -424,7 +424,7 @@ public class ExMobilVO extends ExVO {
 		addAcao("box_add", "Ar_q. Corrente", "/app/expediente/mov",
 				"arquivar_corrente_gravar", Ex.getInstance().getComp()
 						.podeArquivarCorrente(titular, lotaTitular, mob), null,
-				null, null, null, "once" + (SigaMessages.isSigaSP() ? " arq-corrente-requer-confirmacao" : ""));
+				null, null, null, "once  siga-btn-arq-corrente");
 
 		addAcao("building_go",
 				"Indicar para Guarda Permanente",

@@ -4244,7 +4244,7 @@ public class ExBL extends CpBL {
 			novoDoc.setLotaTitular(doc.getLotaTitular().getLotacaoAtual());
 
 		novoDoc.setNumAntigoDoc(doc.getNumAntigoDoc());
-		novoDoc.setExDocAnterior(doc);
+		novoDoc.setIdDocAnterior(doc.getIdDoc());
 		// novoDoc.setNumPaginas(novoDoc.getContarNumeroDePaginas());
 
 		ExMobil mob = new ExMobil();
@@ -6841,7 +6841,7 @@ public class ExBL extends CpBL {
 		// doc.setDestinatario(null);
 		doc.setExBoletimDocSet(null);
 		doc.setExClassificacao(null);
-		doc.setExDocAnterior(null);
+		doc.setIdDocAnterior(null);
 		doc.setExFormaDocumento(null);
 		doc.setExMobilAutuado(null);
 		doc.setExMobilPai(null);

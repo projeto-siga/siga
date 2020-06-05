@@ -407,9 +407,8 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exDocumento")
 	private java.util.Set<ExBoletimDoc> exBoletimDocSet;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_DOC_ANTERIOR")
-	private ExDocumento exDocAnterior;
+	@Column(name = "ID_DOC_ANTERIOR")
+	private java.lang.Long idDocAnterior;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_MOB_AUTUADO")
@@ -553,8 +552,8 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 * 
 	 * @return
 	 */
-	public ExDocumento getExDocAnterior() {
-		return exDocAnterior;
+	public java.lang.Long getIdDocAnterior() {
+		return idDocAnterior;
 	}
 
 	/**
@@ -887,8 +886,8 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		this.exClassificacao = exClassificacao;
 	}
 
-	public void setExDocAnterior(ExDocumento exDocAnterior) {
-		this.exDocAnterior = exDocAnterior;
+	public void setIdDocAnterior(java.lang.Long idDocAnterior) {
+		this.idDocAnterior = idDocAnterior;
 	}
 
 	public void setExFormaDocumento(final ExFormaDocumento exFormaDocumento) {

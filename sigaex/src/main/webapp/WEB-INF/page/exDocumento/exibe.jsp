@@ -218,14 +218,19 @@
 			</form>
 			<h2>
 				<c:if test="${empty ocultarCodigo}">${docVO.sigla}
-				</c:if>
+				</c:if>																	
 				<button type="button" name="voltar" onclick="${(empty param.linkVolta) ? 'javascript:window.location.href=\'/siga\';' : 'javascript:'.concat(param.linkVolta) }" class="btn btn-secondary float-right ${hide_only_TRF2}" accesskey="r">Volta<u>r</u></button>
+				<c:if test="${documentoAReceber}">					
+		        	<button type="button" class="btn btn-primary float-right siga-btn-receber-doc">
+		        		<i class="fas fa-envelope-open-text"></i> Receber
+		        	</button>
+				</c:if>					
 			</h2>
 		</div>
 	</div>
 	<c:set var="primeiroMobil" value="${true}" />
 	<c:forEach var="m" items="${docVO.mobs}" varStatus="loop">
-		<div class="row">
+		<div class="row  siga-menu-acoes">
 			<div class="col">
 				<h3 class="${hide_only_GOVSP} style="margin-bottom: 0px;">
 					${m.getDescricaoCompletaEMarcadoresEmHtml(cadastrante,lotaTitular)}
@@ -236,8 +241,8 @@
 				<c:set var="ocultarCodigo" value="${true}" />
 				<c:if test='${param.popup!="true"}'>
 					<c:set var="acoes" value="${m.acoesOrdenadasPorNome}" />
-					<siga:links>
-						<c:forEach var="acao" items="${acoes}">
+					<siga:links>						
+						<c:forEach var="acao" items="${acoes}">							
 							<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}"
 								pre="${acao.pre}" pos="${acao.pos}"
 								url="${pageContext.request.contextPath}${acao.url}"
@@ -364,6 +369,13 @@
 						</div>
 					</c:if>
 				</div>
+				<c:if test="${documentoAReceber}">
+					<div class="row">					
+						<button type="button" class="btn btn-primary float-right siga-btn-receber-doc btn-bottom">
+			        		<i class="fas fa-envelope-open-text"></i> Receber
+			        	</button>
+					</div>
+				</c:if>
 			</div>
 			<div class="col col-sm-12 col-md-4">
 				<div class="gt-sidebar">
@@ -1295,7 +1307,73 @@
 </div>
 	
 <c:if test="${siga_cliente eq 'GOVSP'}">
-	<c:if test="${docVO.doc.isComposto()}">
+	<c:if test="${documentoAReceber}">				
+		<style>
+			.gt-sidebar, .siga-menu-acoes {
+				filter: blur(2px);
+    			-moz-filter: blur(2px);
+    			-webkit-filter: blur(2px);
+    			-o-filter: blur(2px);    			
+			}	
+			
+			.gt-sidebar a, .siga-menu-acoes a {
+				cursor: not-allowed;
+    			pointer-events: none;
+			}			
+			
+			#modalReceberDocumento {
+				left: auto !important;
+				overflow-y: hidden !important;
+				max-width: 260px;
+				max-height: 180px;
+				padding-right: 0;
+			}		
+			
+			.siga-btn-receber-doc {
+				margin-right: .5rem;				
+				opacity: 0;
+				visibility: hidden;
+				transition: opacity 2.7s;
+			}		
+			
+			.siga-btn-receber-doc.btn-bottom {
+				margin: 0 auto;	
+				margin-bottom: 10px;
+				margin-top: 10px;			
+			}		
+		</style>
+		
+		<siga-mensagem:alerta-modal idModal="modalReceberDocumento" exibirCabecalho="false" descricaoBotaoQueFechaModal="Não" 
+			exibirBotaoDeAcao="true" descricaoBotaoDeAcao="Sim" urlBotaoDeAcao="${linkTo[ExMovimentacaoController].aReceber()}?sigla=${sigla}"
+			texto="Deseja receber o documento?">
+		</siga-mensagem:alerta-modal>				
+		
+		<script>
+			$(function() {
+				var idModal = '#modalReceberDocumento';
+				var modalReceberDocumento = $(idModal);				
+				var btnReceberDocumento = $('.siga-btn-receber-doc');
+				
+				btnReceberDocumento.attr('data-toggle', 'modal').attr('data-target', idModal);
+				
+				modalReceberDocumento.on('hidden.bs.modal', function (e) {
+					btnReceberDocumento.css({'opacity':'1', 'visibility':'visible'});	
+					  $('html, body').animate({scrollTop : 0}, 800, function() {
+						  $('.siga-btn-receber-doc').not('.btn-bottom').focus();
+					  });					  					 
+				});										
+				modalReceberDocumento.modal('show');							
+				
+				$('body').css('overflow', 'auto');							
+			});	
+		</script>			
+	</c:if>
+	<c:if test="${docVO.doc.isComposto()}">			
+		<siga-mensagem:alerta-modal idModal="modalDeConfirmacaoArqCorrente" exibirCabecalho="true" descricaoBotaoQueFechaModal="Não" 
+			exibirBotaoDeAcao="true" descricaoBotaoDeAcao="Sim" urlBotaoDeAcao="#"
+			texto="Verifique se há necessidade de incluir o Termo de Encerramento para este documento. Deseja continuar com o arquivamento?">
+		</siga-mensagem:alerta-modal>
+		
 		<script>
 			$(function() {
 				var btnArqCorrente = $('.siga-btn-arq-corrente');
@@ -1308,13 +1386,12 @@
 				}							
 			});	
 		</script>
-		
-		<siga-mensagem:alerta-modal idModal="modalDeConfirmacaoArqCorrente" descricaoBotaoQueFechaModal="Não" 
-			exibirBotaoDeAcao="true" descricaoBotaoDeAcao="Sim" urlBotaoDeAcao="#"
-			texto="Verifique se há necessidade de incluir o Termo de Encerramento para este documento. Deseja continuar com o arquivamento?">
-		</siga-mensagem:alerta-modal>
 	</c:if>	
-	<c:if test="${mob.isJuntado()}">
+	<c:if test="${mob.isJuntado()}">			
+		<siga-mensagem:alerta-modal idModal="modalDeAvisoTornarDocumentoSemEfeito" exibirCabecalho="true" descricaoBotaoQueFechaModal="Ok" 
+			exibirBotaoDeAcao="false" texto="Desentranhar Documento antes de Cancelar">
+		</siga-mensagem:alerta-modal>
+		
 		<script>
 			$(function() {
 				var btnCancelar = $('.siga-btn-tornar-documento-sem-efeito');
@@ -1324,10 +1401,6 @@
 				}							
 			});	
 		</script>	
-	
-		<siga-mensagem:alerta-modal idModal="modalDeAvisoTornarDocumentoSemEfeito" descricaoBotaoQueFechaModal="Ok" 
-			exibirBotaoDeAcao="false" texto="Desentranhar Documento antes de Cancelar">
-		</siga-mensagem:alerta-modal>
 	</c:if>				
 	
 	

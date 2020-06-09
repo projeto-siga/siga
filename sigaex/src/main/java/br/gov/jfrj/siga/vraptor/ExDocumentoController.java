@@ -71,6 +71,7 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
@@ -1289,11 +1290,13 @@ public class ExDocumentoController extends ExController {
 		else											
 			result.redirectTo("/app/expediente/doc/exibirProcesso?sigla=" + sigla + "&exibirReordenacao=true");
 	}
-
+	
 	@Get({ "/app/expediente/doc/exibir", "/expediente/doc/exibir.action" })
 	public void exibe(final boolean conviteEletronico, final String sigla,
 			final ExDocumentoDTO exDocumentoDTO, final Long idmob, final Long idVisualizacao, boolean exibirReordenacao)
-			throws Exception {
+			throws Exception {		
+		boolean documentoAReceber = false;
+		
 		assertAcesso("");
 
 		ExDocumentoDTO exDocumentoDto;
@@ -1315,16 +1318,23 @@ public class ExDocumentoController extends ExController {
 
 		if(!podeVisualizarDocumento(exDocumentoDto.getMob(), getTitular(), idVisualizacao)) {
 			assertAcesso(exDocumentoDto);
-		}
+		}			
 
-		if (Ex.getInstance()
+		if (SigaMessages.isSigaSP() && Ex.getInstance().getComp()
+				.podeReceber(getTitular(), getLotaTitular(),
+				exDocumentoDto.getMob())) {
+			
+			documentoAReceber = true;
+			
+		} else if (Ex.getInstance()
 				.getComp()
 				.podeReceberEletronico(getTitular(), getLotaTitular(),
 						exDocumentoDto.getMob())) {
+					
 			Ex.getInstance()
-					.getBL()
-					.receber(getCadastrante(), getLotaTitular(),
-							exDocumentoDto.getMob(), new Date());
+			.getBL()
+			.receber(getCadastrante(), getLotaTitular(),
+					exDocumentoDto.getMob(), new Date());									
 		}
 
 		if (exDocumentoDto.getMob() == null
@@ -1365,7 +1375,7 @@ public class ExDocumentoController extends ExController {
 		result.include("param", exDocumentoDto.getParamsEntrevista());
 		result.include("idVisualizacao", idVisualizacao);
 		result.include("podeExibirReordenacao", exibirReordenacao);
-		
+		result.include("documentoAReceber", documentoAReceber);		
 	}
 
 	@Get("app/expediente/doc/exibirProcesso")

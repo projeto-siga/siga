@@ -83,10 +83,9 @@
 				<div class="row">
 					<div class="col-sm-5">
 						<div class="form-group">
-						  <label>Planilha para carga</label>	
-						  <div class="custom-file">
-						    <input type="file" name="arquivo" accept=".xlsx" class="custom-file-input" id="arquivo">
-						    <label  class="custom-file-label text-truncate" for="arquivo" data-browse="Escolha o Arquivo"><i class="far fa-file-excel"></i>  Selecione o arquivo contendo a planilha com dados</label>			
+						  <label>Planilha para carga</label>
+						  <div  class="custom-file">
+						 	<siga:uploadArquivo tamanhoMaximo='2' textoCaixa="Selecione o arquivo contendo a planilha com dados" tiposAceitos=".xlsx"/>
 						  </div>
 						</div>
 					</div>
@@ -136,6 +135,7 @@ function validaSelecaoAnexo(form) {
 	var result = true;
 	var arquivo = form.arquivo;
 	if (arquivo == null || arquivo.value == '') {
+		mensagemAlerta('Selecione um arquivo');
 		result = false;
 	}
 	return result;

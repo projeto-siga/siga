@@ -571,10 +571,17 @@ public class GcInformacao extends Objeto {
 				"\"/>");
 		return fragment;
 	}
+	
+	public boolean acessoExternoPublicoPermitido(long id) {
+		if(id == (int) GcAcesso.ACESSO_EXTERNO_PUBLICO)
+			return true;
+		return false;
+	}
 
 	public boolean acessoPermitido(DpPessoa titular, DpLotacao lotaTitular,
 			long id) {
 		switch ((int) id) {
+		case (int) GcAcesso.ACESSO_EXTERNO_PUBLICO:
 		case (int) GcAcesso.ACESSO_PUBLICO:
 			return true;
 		case (int) GcAcesso.ACESSO_ORGAO_USU:

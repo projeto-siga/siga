@@ -48,12 +48,12 @@
 						<c:if
 							test="${empty informacao.edicao.id || informacao.acessoPermitido(titular,lotaTitular, informacao.edicao.id)}">
 							<div class="gt-left-col gt-width-25" style="padding-left: 2em">
-								<siga:select label="VisualizacÃ£o" name="visualizacao.id" id="informacaoVisualizacao"
+								<siga:select label="Visualização" name="visualizacao.id" id="informacaoVisualizacao"
 									list="acessos" listKey="id" listValue="nome" value="${informacao.visualizacao.id}"
 									onchange="javascript:ocultaGrupo();" />
 							</div>
 							<div class="gt-left-col gt-width-25" style="padding-left: 2em">
-								<siga:select label="EdicÃ£o" name="edicao.id" list="acessos" id="informacaoEdicao"
+								<siga:select label="Edição" name="edicao.id" list="acessos" id="informacaoEdicao"
 									listKey="id" listValue="nome" value="${informacao.edicao.id}"
 									onchange="javascript:ocultaGrupo();" />
 							</div>

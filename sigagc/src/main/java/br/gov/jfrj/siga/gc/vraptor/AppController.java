@@ -755,6 +755,18 @@ public class AppController extends GcController {
 	public void selecaoInplace() throws Exception {
 		int a = 0;
 	}
+	
+	@Path("/public/app/exibir/{sigla}")
+	public void exibirPublicoExterno(String sigla, String mensagem, boolean historico,
+			boolean movimentacoes) throws Exception {
+		
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
+		if(!informacao.acessoExternoPublicoPermitido(informacao.visualizacao.id))
+			throw new AplicacaoException("Restrição de Acesso: O conhecimento solicitado não é acessível pelo público externo.");
+		
+		//TODO
+		
+	}
 
 	@Path({ "/app/exibir/{sigla}", "/app/exibir" })
 	public void exibir(String sigla, String mensagem, boolean historico,

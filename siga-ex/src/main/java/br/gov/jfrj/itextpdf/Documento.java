@@ -243,9 +243,7 @@ public class Documento {
 					s = movAssinatura.getDescrMov().trim().toUpperCase();
 					s = s.split(":")[0];
 					s = s.intern();
-					if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
-						s +=" - " + Data.formatDDMMYY_AS_HHMMSS(movAssinatura.getData());
-					}
+					s +=" - " + Data.formatDDMMYY_AS_HHMMSS(movAssinatura.getData());					 
 				}
 				if (!assinantes.contains(s)) {
 					assinantes.add(s);
@@ -266,10 +264,8 @@ public class Documento {
 				s = movAssinatura.getDescrMov().trim().toUpperCase();
 				s = s.replace(":", " - ");
 				s = s.replace("EM SUBSTITUIÇÃO A", "em substituição a");
-				s = s.intern();
-				if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
-					s +=" - " + Data.formatDDMMYY_AS_HHMMSS(movAssinatura.getData());
-				}
+				s = s.intern();				
+				s +=" - " + Data.formatDDMMYY_AS_HHMMSS(movAssinatura.getData());				
 			}
 			if (!assinantes.contains(s)) {
 				assinantes.add(s);

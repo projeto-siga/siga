@@ -611,7 +611,10 @@ public class ExMovimentacaoController extends ExController {
 			afTramite.ativo = false;
 			afTramite.fixo = true;
 		}
-		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local")) && (doc.getDtFinalizacao() != null && !DateUtils.isToday(doc.getDtFinalizacao()))) {
+		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local")) 
+				&& (doc.getDtFinalizacao() != null && !DateUtils.isToday(doc.getDtFinalizacao()))
+				&& doc.getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA).isEmpty()
+				&& doc.getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO).isEmpty()) {
 			Ex.getInstance().getBL().gravar(getCadastrante(), getTitular(), getLotaTitular(), doc);
 		}
 		result.include("sigla", sigla);

@@ -404,11 +404,6 @@ public class Mesa2 {
 			List<Integer> listMar = new ArrayList<Integer>();
 			for(MarcadorEnum mar : MarcadorEnum.values()) {
 				if (mar.grupo.nome.equals(nomegrupo)) {
-					if(!(SigaMessages.isSigaSP() 
-						&& (mar.equals(MarcadorEnum.CANCELADO)
-							|| mar.equals(MarcadorEnum.ARQUIVADO_CORRENTE)
-							|| mar.equals(MarcadorEnum.ARQUIVADO_INTERMEDIARIO)
-							|| mar.equals(MarcadorEnum.ARQUIVADO_PERMANENTE))))
 						listMar.add(mar.id);
 				}
 			}
@@ -419,6 +414,10 @@ public class Mesa2 {
 			return icone;
 		}
 
+		public int getId() {
+			return id;
+		}
+		
 		public String getNome() {
 			if (SigaMessages.isSigaSP() && nome.equals("Como Subscritor")) {
 				return "Responsável pela Assinatura";
@@ -452,7 +451,8 @@ public class Mesa2 {
 
 	private static List<MesaItem> listarReferencias(TipoDePainelEnum tipo,
 			Map<ExMobil, DocDados> references, DpPessoa pessoa,
-			DpLotacao unidade, Date currentDate, String grupoOrdem, boolean trazerAnotacoes) {
+			DpLotacao unidade, Date currentDate, String grupoOrdem, boolean trazerAnotacoes,
+			List<Integer> marcasAIgnorar) {
 		List<MesaItem> l = new ArrayList<>();
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
@@ -596,11 +596,12 @@ public class Mesa2 {
 	}
 
 	public static List<GrupoItem> getContadores(ExDao dao, DpPessoa titular, DpLotacao lotaTitular, 
-			Map<String, SelGrupo> selGrupos, boolean exibeLotacao) throws Exception {
+			Map<String, SelGrupo> selGrupos, boolean exibeLotacao, 
+			List<Integer> marcasAIgnorar) throws Exception {
 		List<GrupoItem> gruposMesa = new ArrayList<GrupoItem>();
 		gruposMesa = montaGruposUsuario(selGrupos);
 		List<Object[]> l = dao.consultarTotaisPorMarcador(titular, lotaTitular, gruposMesa, 
-				exibeLotacao);
+				exibeLotacao, marcasAIgnorar);
 
 		for (GrupoItem gItem : gruposMesa) {
 			gItem.grupoCounterUser = 0L;
@@ -624,11 +625,12 @@ public class Mesa2 {
 
 	public static List<GrupoItem> getMesa(ExDao dao, DpPessoa titular,
 			DpLotacao lotaTitular, Map<String, SelGrupo> selGrupos, List<Mesa2.GrupoItem> gruposMesa, 
-			boolean exibeLotacao, boolean trazerAnotacoes, boolean trazerComposto) throws Exception {
+			boolean exibeLotacao, boolean trazerAnotacoes, boolean trazerComposto, 
+			List<Integer> marcasAIgnorar) throws Exception {
 		Date dtNow = dao.consultarDataEHoraDoServidor();
 
 		List<Object[]> l = dao.listarMobilsPorMarcas(titular,
-				lotaTitular, exibeLotacao);
+				lotaTitular, exibeLotacao, marcasAIgnorar);
 
 		Map<ExMobil, DocDados> map = new HashMap<>();
 		List<Long> listIdMobil = new ArrayList<Long>();
@@ -690,7 +692,7 @@ public class Mesa2 {
 						iMobs = iMobsFim;
 					}
 					gItem.grupoDocs = Mesa2.listarReferencias(TipoDePainelEnum.UNIDADE, map, titular,
-							titular.getLotacao(), dtNow, gItem.grupoOrdem, trazerAnotacoes);
+							titular.getLotacao(), dtNow, gItem.grupoOrdem, trazerAnotacoes, marcasAIgnorar);
 					map = new HashMap<>();
 					listIdMobil = new ArrayList<Long>();
 				}

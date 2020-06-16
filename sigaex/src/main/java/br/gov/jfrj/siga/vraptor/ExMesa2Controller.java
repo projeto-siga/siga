@@ -51,6 +51,7 @@ import br.gov.jfrj.siga.dp.DpVisualizacao;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.Mesa2;
+import br.gov.jfrj.siga.ex.bl.Mesa2.MarcadorEnum;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 @Controller
@@ -99,14 +100,24 @@ public class ExMesa2Controller extends ExController {
 	}
 
 	@Post("app/mesa2.json")
-	public void json(Long idVisualizacao, boolean exibeLotacao, boolean trazerAnotacoes, 
-			boolean trazerComposto, String parms) throws Exception {
+	public void json(Long idVisualizacao, boolean exibeLotacao, boolean trazerAnotacoes, boolean trazerArquivados, 
+			boolean trazerComposto, boolean trazerCancelados, String parms) throws Exception {
 		
 		List<br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem> g = new ArrayList<br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem>();
 		Map<String, Mesa2.SelGrupo> selGrupos = null;
 		List<Mesa2.GrupoItem> gruposMesa = new ArrayList<Mesa2.GrupoItem>();
 		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
+		List<Integer> marcasAIgnorar = new ArrayList<Integer>();
 
+		if (SigaMessages.isSigaSP()) { 
+			if (!trazerArquivados) {
+				marcasAIgnorar.add(MarcadorEnum.ARQUIVADO_CORRENTE.getId()); 
+				marcasAIgnorar.add(MarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId()); 
+				marcasAIgnorar.add(MarcadorEnum.ARQUIVADO_PERMANENTE.getId()); 
+			}
+			if (!trazerCancelados) 
+				marcasAIgnorar.add(MarcadorEnum.CANCELADO.getId());
+		}
 		try {
 			if (parms != null) {
 				ObjectMapper mapper = new ObjectMapper();
@@ -131,15 +142,15 @@ public class ExMesa2Controller extends ExController {
 				DpVisualizacao vis = dao().consultar(idVisualizacao, DpVisualizacao.class, false);
 				lotaTitular = vis.getTitular().getLotacao();
 				gruposMesa = Mesa2.getContadores(dao(), vis.getTitular(), lotaTitular, selGrupos, 
-						exibeLotacao);
+						exibeLotacao, marcasAIgnorar);
 				g = Mesa2.getMesa(dao(), vis.getTitular(), lotaTitular, selGrupos, 
-						gruposMesa, exibeLotacao, trazerAnotacoes, trazerComposto);
+						gruposMesa, exibeLotacao, trazerAnotacoes, trazerComposto, marcasAIgnorar);
 			} else {
 				lotaTitular = getTitular().getLotacao();
 				gruposMesa = Mesa2.getContadores(dao(), getTitular(), lotaTitular, selGrupos, 
-						exibeLotacao);
+						exibeLotacao, marcasAIgnorar);
 				g = Mesa2.getMesa(dao(), getTitular(), lotaTitular, selGrupos, 
-						gruposMesa, exibeLotacao, trazerAnotacoes, trazerComposto);
+						gruposMesa, exibeLotacao, trazerAnotacoes, trazerComposto, marcasAIgnorar);
 			}
 	
 			String s = ExAssinadorExternoController.gson.toJson(g);

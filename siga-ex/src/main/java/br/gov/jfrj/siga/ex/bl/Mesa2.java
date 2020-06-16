@@ -439,8 +439,6 @@ public class Mesa2 {
 		List<MeM> listMeM;
 		Date movUltimaDtIniMov;
 		Date movUltimaDtFimMov;
-		String movUltimaSiglaOrgao;
-		String movUltimaSiglaLotacao;
 		String movTramiteSiglaOrgao;
 		String movTramiteSiglaLotacao;
 		String movAnotacaoDescrMov;
@@ -717,8 +715,6 @@ public class Mesa2 {
 			if (movUltima != null) {
 				docDados.movUltimaDtIniMov = movUltima.getDtIniMov();
 				docDados.movUltimaDtFimMov = movUltima.getDtFimMov();
-				docDados.movUltimaSiglaLotacao = movUltima.getLotacao().getSigla();
-				docDados.movUltimaSiglaOrgao = movUltima.getLotacao().getOrgaoUsuario().getSigla();
 			}
 			if (movTramite != null) {
 				docDados.movTramiteSiglaLotacao = movTramite.getLotacao().getSigla();

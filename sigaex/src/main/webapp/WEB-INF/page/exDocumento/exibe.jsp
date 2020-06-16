@@ -1293,6 +1293,22 @@
 </c:if>
 </div>
 </div>
+
+<c:if test="${mob.isJuntado()}">	
+	<siga-mensagem:alerta-modal idModal="modalDeAvisoTornarDocumentoSemEfeito" descricaoBotaoQueFechaModal="Ok" 
+		exibirBotaoDeAcao="false" texto="Desentranhar documento antes de cancelar">
+	</siga-mensagem:alerta-modal>
+	
+	<script>
+		$(function() {
+			var btnCancelar = $('.siga-btn-tornar-documento-sem-efeito');
+			
+			if (btnCancelar) {										
+				btnCancelar.attr('data-toggle', 'modal').attr('data-target', '#modalDeAvisoTornarDocumentoSemEfeito');					
+			}							
+		});	
+	</script>	
+</c:if>
 	
 <c:if test="${siga_cliente eq 'GOVSP'}">
 	<c:if test="${docVO.doc.isComposto()}">
@@ -1313,23 +1329,7 @@
 			exibirBotaoDeAcao="true" descricaoBotaoDeAcao="Sim" urlBotaoDeAcao="#"
 			texto="Verifique se há necessidade de incluir o Termo de Encerramento para este documento. Deseja continuar com o arquivamento?">
 		</siga-mensagem:alerta-modal>
-	</c:if>	
-	<c:if test="${mob.isJuntado()}">
-		<script>
-			$(function() {
-				var btnCancelar = $('.siga-btn-tornar-documento-sem-efeito');
-				
-				if (btnCancelar) {										
-					btnCancelar.attr('data-toggle', 'modal').attr('data-target', '#modalDeAvisoTornarDocumentoSemEfeito');					
-				}							
-			});	
-		</script>	
-	
-		<siga-mensagem:alerta-modal idModal="modalDeAvisoTornarDocumentoSemEfeito" descricaoBotaoQueFechaModal="Ok" 
-			exibirBotaoDeAcao="false" texto="Desentranhar Documento antes de Cancelar">
-		</siga-mensagem:alerta-modal>
-	</c:if>				
-	
+	</c:if>						
 	
 	<script>
 		var containerArquivosAuxiliares = $('.container-files');

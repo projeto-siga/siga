@@ -147,6 +147,10 @@ public class CorporativoController extends SrController {
 		Element pessoas = doc.createElement("pessoas");
 		rootElement.appendChild(pessoas);
 		for (Pessoa p : mp.values()) {
+			// BJN skip aposentados sem email
+			if(p.getPessoa_situacao().equals(4) && (p.getPessoa_email() == null || p.getPessoa_email().isEmpty()))
+				continue;
+
 			Element e = doc.createElement("pessoa");
 			setAttr(e, "id", p.getPessoa_id());
 			setAttr(e, "cpf", p.getPessoa_cpf());

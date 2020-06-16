@@ -64,14 +64,12 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-sm-3">
+					<div class="col-sm-6">
 						<div class="form-group">
-							<b>Selecione o arquivo contendo a planilha com dados:&nbsp;&nbsp;&nbsp;</b>
-						</div>
-					</div>
-					<div class="col-sm-3">
-						<div class="form-group">
-							<input type="file" name="arquivo" accept=".xlsx" class="form-control-file"/>				
+							<label>Selecione o arquivo contendo a planilha com dados</label>
+							<div  class="custom-file">
+									<siga:uploadArquivo tamanhoMaximo='2' textoCaixa="Selecione o arquivo contendo a planilha com dados"  tiposAceitos=".xlsx"/>
+							</div>
 						</div>
 					</div>
 				</div>		
@@ -115,6 +113,7 @@
 		var result = true;
 		var arquivo = form.arquivo;
 		if (arquivo == null || arquivo.value == '') {
+			mensagemAlerta('Selecione um arquivo');
 			result = false;
 		}
 		return result;

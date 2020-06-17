@@ -156,4 +156,8 @@ public interface IExMobilDaoFiltro {
 	public abstract boolean buscarPorCamposMarca();
 
 	public abstract boolean buscarPorCamposDoc();
+	
+	public abstract Long getIdDocFilhoJuntada();
+	
+	public abstract void setIdDocFilhoJuntada(Long idDocFilhoJuntada);
 }

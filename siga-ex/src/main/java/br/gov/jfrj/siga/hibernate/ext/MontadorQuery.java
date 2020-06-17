@@ -41,9 +41,17 @@ public class MontadorQuery implements IMontadorQuery {
 				&& flt.getUltMovIdEstadoDoc() != 0) {
 			sbf.append(" and label.cpMarcador.idMarcador = :ultMovIdEstadoDoc");
 			sbf.append(" and (dt_ini_marca is null or dt_ini_marca < sysdate)");
-			sbf.append(" and (dt_fim_marca is null or dt_fim_marca > sysdate)");
+			sbf.append(" and (dt_fim_marca is null or dt_fim_marca > sysdate)");					
+		} else if (flt.getIdDocFilhoJuntada() != null
+					&& flt.getIdDocFilhoJuntada() > 0) {			
+			sbf.append(" and (label.cpMarcador.idMarcador = :id1 or label.cpMarcador.idMarcador = :id2)");						
 		} else {
 			sbf.append(" and not (label.cpMarcador.idMarcador = :id1 or label.cpMarcador.idMarcador = :id2 or label.cpMarcador.idMarcador = :id3)");
+		}
+		
+		if (flt.getIdDocFilhoJuntada() != null
+				&& flt.getIdDocFilhoJuntada() > 0) {
+			sbf.append(" and not doc.idDoc = :idDocFilhoJuntada");
 		}
 
 		if (flt.getUltMovRespSelId() != null && flt.getUltMovRespSelId() != 0) {

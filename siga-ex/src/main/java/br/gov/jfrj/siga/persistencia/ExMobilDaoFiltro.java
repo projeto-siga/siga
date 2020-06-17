@@ -128,6 +128,8 @@ public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
 	private Long ultMovRespSelId;
 
 	private Integer ordem;
+	
+	private Long idDocFilhoJuntada;
 
 	public Integer getOrdem() {
 		return ordem;
@@ -380,7 +382,7 @@ public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
 
 	public void setIdMod(Long idMod) {
 		this.idMod = idMod;
-	}
+	}	
 
 	public boolean buscarPorCamposMarca() {
 		return (getUltMovIdEstadoDoc() != null && getUltMovIdEstadoDoc() != 0)
@@ -415,5 +417,13 @@ public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
 				|| (getIdOrgaoUsu() != null && getIdOrgaoUsu() != 0)
 				|| (getAnoEmissao() != null && getAnoEmissao() != 0)
 				|| (getNumExpediente() != null && getNumExpediente() != 0);
+	}
+	
+	public Long getIdDocFilhoJuntada() {
+		return idDocFilhoJuntada;
+	}
+	
+	public void setIdDocFilhoJuntada(Long idDocFilhoJuntada) {
+		this.idDocFilhoJuntada = idDocFilhoJuntada;
 	}
 }

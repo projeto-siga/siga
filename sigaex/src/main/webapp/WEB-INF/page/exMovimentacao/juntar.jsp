@@ -61,15 +61,23 @@
 						<div class="form-group">
 							<label>Documento</label>
 							<siga:escolha id="idDocumentoEscolha" var="idDocumentoEscolha">
-								<siga:opcao id='1' texto="Documento Interno" >
-									<p></p>
-									<siga:selecao tema='simple'  titulo="Documento Pai" propriedade="documentoRef" urlAcao="buscar" urlSelecionar="selecionar" modulo="sigaex"/>
-								</siga:opcao>
-								<c:if test="${siga_cliente!='GOVSP'}">
-									<siga:opcao id='2' texto="Documento Externo ao Siga-Doc" >
-										<input type="text" theme='simple' name="idDocumentoPaiExterno" value="${idDocumentoPaiExterno}" class="form-control mt-3"/>
-									</siga:opcao>
-								</c:if>
+								<c:choose>
+									<c:when test="${siga_cliente eq 'GOVSP'}">
+										<siga:opcao id='1' texto="Documento Interno" >
+											<p></p>
+											<siga:selecao tema='simple'  titulo="Documento Pai" propriedade="documentoRef" idDocFilhoJuntada="${doc.idDoc}" urlAcao="buscar" urlSelecionar="selecionar" modulo="sigaex"/>
+										</siga:opcao>	
+									</c:when>
+									<c:otherwise>
+										<siga:opcao id='1' texto="Documento Interno" >
+											<p></p>
+											<siga:selecao tema='simple'  titulo="Documento Pai" propriedade="documentoRef" urlAcao="buscar" urlSelecionar="selecionar" modulo="sigaex"/>
+										</siga:opcao>
+										<siga:opcao id='2' texto="Documento Externo ao Siga-Doc" >
+											<input type="text" theme='simple' name="idDocumentoPaiExterno" value="${idDocumentoPaiExterno}" class="form-control mt-3"/>
+										</siga:opcao>
+									</c:otherwise>								
+								</c:choose>								
 							</siga:escolha>
 						</div>						
 					</div>

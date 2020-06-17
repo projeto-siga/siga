@@ -101,6 +101,14 @@ public abstract class ExSelecionavelController<T extends Selecionavel, DaoFiltro
 		};
 		return dao().listarMarcadores(ids);
 	}
+	
+	protected List<CpMarcador> getEstadosQuandoJuntada() throws AplicacaoException {
+		Long[] ids = { 
+				CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA, 
+				CpMarcador.MARCADOR_EM_ANDAMENTO };
+		return dao().listarMarcadores(ids);
+	}
+
 
 	protected Map<Integer, String> getListaTipoResp() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();

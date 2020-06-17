@@ -614,6 +614,14 @@ function limpaCampos()
 					<div class="card bg-light mb-3">
 						<div class="card-header">
 							<h5>Dados do Documento</h5>
+							<c:if test="${not empty idDocFilhoJuntada}">
+								<div class="alert alert-secondary" style="background-color: transparent; margin: 0;" role="alert">
+  									<i class="fas fa-exclamation-circle" style="color:#919398"></i> Somente documentos assinados e aptos a serem juntados serão exibidos
+  									<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    									<span aria-hidden="true">&times;</span>
+  									</button>
+								</div>
+							</c:if>
 						</div>
 						<div class="card-body">
 							<form id="buscar" name="buscar" onsubmit="javascript: return limpaCampos()"
@@ -623,19 +631,31 @@ function limpaCampos()
 								<input type="hidden" name="postback" value="1" />
 								<input type="hidden" name="apenasRefresh" value="0" />
 								<input type="hidden" name="offset" value="0" />
+								<input type="hidden" name="idDocFilhoJuntada" value="${idDocFilhoJuntada}" />
 								<div class="row">
 									<div class="col-sm-6">
 										<div class="form-group">
 											<label>Situação</label> 
-											<select name="ultMovIdEstadoDoc" onchange="javascript:sbmt();" class="form-control">
+											<select name="ultMovIdEstadoDoc" onchange="javascript:sbmt();" class="form-control">												
 												<option value="0">
 													[Todos]
-												</option>
-												<c:forEach items="${estados}" var="item">
-													<option value="${item.idMarcador}" ${item.idMarcador == ultMovIdEstadoDoc ? 'selected' : ''}>
-														${item.descrMarcador}
-													</option>  
-												</c:forEach>
+												</option>												
+												<c:choose>
+													<c:when test="${empty idDocFilhoJuntada}">
+														<c:forEach items="${estados}" var="item">
+															<option value="${item.idMarcador}" ${item.idMarcador == ultMovIdEstadoDoc ? 'selected' : ''}>
+																${item.descrMarcador}
+															</option>  
+														</c:forEach>
+													</c:when>
+													<c:otherwise>
+														<c:forEach items="${estados}" var="item">
+															<option value="${item.idMarcador}" ${item.idMarcador == 62 ? 'selected' : ''}>
+																${item.descrMarcador}
+															</option>  
+														</c:forEach>
+													</c:otherwise>
+												</c:choose>																									
 											</select>
 										</div>
 									</div>

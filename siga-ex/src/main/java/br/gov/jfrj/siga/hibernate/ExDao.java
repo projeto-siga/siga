@@ -530,11 +530,20 @@ public class ExDao extends CpDao {
 				&& flt.getUltMovIdEstadoDoc() != 0) {
 
 			query.setParameter("ultMovIdEstadoDoc", flt.getUltMovIdEstadoDoc());
-
+			
+		} else if (flt.getIdDocFilhoJuntada() != null 
+					&& flt.getIdDocFilhoJuntada() > 0) {				
+			query.setParameter("id1", CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA);
+			query.setParameter("id2", CpMarcador.MARCADOR_EM_ANDAMENTO);						
 		} else {
 			query.setParameter("id1", 3L);
 			query.setParameter("id2", 14L);
 			query.setParameter("id3", 25L);
+		}
+		
+		if (flt.getIdDocFilhoJuntada() != null
+				&& flt.getIdDocFilhoJuntada() > 0) {		
+			query.setParameter("idDocFilhoJuntada", flt.getIdDocFilhoJuntada());
 		}
 
 		if (flt.getUltMovRespSelId() != null && flt.getUltMovRespSelId() != 0) {

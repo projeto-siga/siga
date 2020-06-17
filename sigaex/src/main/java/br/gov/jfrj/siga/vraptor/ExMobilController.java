@@ -56,6 +56,7 @@ import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -74,6 +75,7 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.GenericoSelecao;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
+import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 import br.gov.jfrj.siga.vraptor.builder.ExMobilBuilder;
 
 @Controller
@@ -126,7 +128,7 @@ public class ExMobilController extends
 			final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario, final DpPessoaSelecao destinatarioSel,
 			final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel, final String nmDestinatario,
 			final ExClassificacaoSelecao classificacaoSel, final String descrDocument, final String fullText, final Long ultMovEstadoDoc,
-			final Integer offset) {
+			final Integer offset, final Long idDocFilhoJuntada) {
 		assertAcesso("");
 		
 		getP().setOffset(offset);
@@ -164,11 +166,18 @@ public class ExMobilController extends
 					builder.getOffset(), getItemPagina(), getTitular(),
 					getLotaTitular()));
 		}
+		
+		List<CpMarcador> estados; 
+		if (idDocFilhoJuntada != null && idDocFilhoJuntada > 0) {
+			estados = this.getEstadosQuandoJuntada();
+		} else {
+			estados = this.getEstados();						
+		}
 
 		result.include("primeiraVez", primeiraVez);
 		result.include("popup", true);
 		result.include("apenasRefresh", apenasRefresh);
-		result.include("estados", this.getEstados());
+		result.include("estados", estados);
 		result.include("listaOrdem", this.getListaOrdem());
 		result.include("ordem", ordem);
 		result.include("listaVisualizacao", this.getListaVisualizacao());
@@ -217,7 +226,8 @@ public class ExMobilController extends
 		result.include("currentPageNumber", calculaPaginaAtual(offset));
 		result.include("idTipoFormaDoc", idTipoFormaDoc);
 		result.include("idFormaDoc", forma);
-		result.include("idMod", idMod);		
+		result.include("idMod", idMod);	
+		result.include("idDocFilhoJuntada", idDocFilhoJuntada);
 	}
 
 	private List<ExTipoDocumento> getTiposDocumentoParaConsulta() {
@@ -598,6 +608,10 @@ public class ExMobilController extends
 		}
 		flt.setIdMod(paramLong("idMod"));
 		flt.setOrdem(paramInteger("ordem"));
+				
+		if (paramLong("idDocFilhoJuntada") != null && paramLong("idDocFilhoJuntada") > 0) {
+			flt.setIdDocFilhoJuntada(paramLong("idDocFilhoJuntada"));
+		}		
 
 		return flt;
 	}

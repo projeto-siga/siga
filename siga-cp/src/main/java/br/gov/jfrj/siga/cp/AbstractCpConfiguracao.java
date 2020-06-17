@@ -103,12 +103,12 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	@Column(name = "DESCR_CONFIGURACAO")
 	private String descrConfiguracao;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ORGAO_USU")
 	@NaoRecursivo
 	private CpOrgaoUsuario orgaoUsuario;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_LOTACAO")
 	@NaoRecursivo
 	private DpLotacao lotacao;
@@ -118,17 +118,17 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	@NaoRecursivo
 	private CpComplexo complexo;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_CARGO")
 	@NaoRecursivo
 	private DpCargo cargo;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_FUNCAO_CONFIANCA")
 	@NaoRecursivo
 	private DpFuncaoConfianca funcaoConfianca;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_PESSOA")
 	@NaoRecursivo
 	private DpPessoa dpPessoa;
@@ -143,12 +143,12 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	@NaoRecursivo
 	private CpTipoConfiguracao cpTipoConfiguracao;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_SERVICO")
 	@NaoRecursivo
 	private CpServico cpServico;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_IDENTIDADE")
 	@NaoRecursivo
 	private CpIdentidade cpIdentidade;
@@ -166,7 +166,7 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	@NaoRecursivo
 	private String dscFormula;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_TP_LOTACAO")
 	@NaoRecursivo
 	private CpTipoLotacao cpTipoLotacao;
@@ -181,41 +181,41 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	@Column(name = "DT_FIM_VIG_CONFIGURACAO", length = 19)
 	private Date dtFimVigConfiguracao;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	private CpConfiguracao configuracaoInicial;
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "configuracaoInicial")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "configuracaoInicial")
 	@Desconsiderar
 	private Set<CpConfiguracao> configuracoesPosteriores = new HashSet<CpConfiguracao>(
 			0);
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ORGAO_OBJETO")
 	@NaoRecursivo
 	private CpOrgaoUsuario orgaoObjeto;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_LOTACAO_OBJETO")
 	@NaoRecursivo
 	private DpLotacao lotacaoObjeto;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_COMPLEXO_OBJETO")
 	@NaoRecursivo
 	private CpComplexo complexoObjeto;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_CARGO_OBJETO")
 	@NaoRecursivo
 	private DpCargo cargoObjeto;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_FUNCAO_CONFIANCA_OBJETO")
 	@NaoRecursivo
 	private DpFuncaoConfianca funcaoConfiancaObjeto;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_PESSOA_OBJETO")
 	@NaoRecursivo
 	private DpPessoa pessoaObjeto;

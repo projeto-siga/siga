@@ -26,8 +26,14 @@ import br.gov.jfrj.siga.model.Objeto;
 @Entity
 @Table(name = "GC_MOVIMENTACAO", schema = "SIGAGC")
 @NamedQueries({
-		@NamedQuery(name = "numeroEquipeLotacao", query = "select count(distinct p.idPessoaIni) from DpPessoa p join p.lotacao l where l.idLotacao = :idLotacao"),
-		@NamedQuery(name = "numeroEquipeCiente", query = "select count(*) from GcMovimentacao m where m.tipo.id= 7 and m.inf.id = :idInfo and m.lotacaoAtendente.idLotacao = :idLotacao and m.movRef = :movRef") })
+	@NamedQuery(name = "buscarInformacaoPorAnexo", query = 
+			"select info from GcMovimentacao mov "
+						+ "join mov.inf info "
+						+ "where mov.tipo.id = :idTipoMovAnexarArquivo "
+						+ "and mov.movCanceladora is null and mov.arq.id = :idArqMov"),
+	@NamedQuery(name = "numeroEquipeLotacao", query = "select count(distinct p.idPessoaIni) from DpPessoa p join p.lotacao l where l.idLotacao = :idLotacao"),
+	@NamedQuery(name = "numeroEquipeCiente", query = "select count(*) from GcMovimentacao m where m.tipo.id= 7 and m.inf.id = :idInfo and m.lotacaoAtendente.idLotacao = :idLotacao and m.movRef = :movRef") 
+})
 public class GcMovimentacao extends Objeto implements
 		Comparable<GcMovimentacao> {
 	private static final long serialVersionUID = 7936898203057280892L;
@@ -131,6 +137,23 @@ public class GcMovimentacao extends Objeto implements
 		if (o2.id < o1.id)
 			return -1;
 		return 0;
+	}
+	
+	public static GcInformacao buscarInformacaoPorAnexo(GcArquivo anexo) {
+		Query query = AR.em().createNamedQuery("buscarInformacaoPorAnexo");
+		
+		// BJN workaround pro erro na hora de usar a constante dentro do HQL direto
+		query.setParameter("idTipoMovAnexarArquivo", GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO);
+		
+		query.setParameter("idArqMov", anexo.id);
+		GcInformacao retorno = null;
+		try {
+			retorno = (GcInformacao) query.getSingleResult();
+		} catch (Exception e) {
+			return null;
+		}
+
+		return retorno;
 	}
 
 	public boolean todaLotacaoCiente(GcMovimentacao movRef) {

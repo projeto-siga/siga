@@ -757,15 +757,26 @@ public class AppController extends GcController {
 	}
 	
 	@Path("/public/app/exibir/{sigla}")
-	public void exibirPublicoExterno(String sigla, String mensagem, boolean historico,
-			boolean movimentacoes) throws Exception {
+	public void exibirPublicoExterno(String sigla) throws Exception {
 		
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
-		if(!informacao.acessoExternoPublicoPermitido(informacao.visualizacao.id))
+		if(!informacao.acessoExternoPublicoPermitido())
 			throw new AplicacaoException("Restrição de Acesso: O conhecimento solicitado não é acessível pelo público externo.");
 		
-		//TODO
+		// 2 lazies abaixo...
+		for (GcTag t : informacao.getTags())
+			;
+		for (GcMovimentacao m : informacao.getMovs())
+			;
 		
+		String conteudo = bl.marcarLinkNoConteudo(informacao, informacao.arq
+				.getConteudoTXT());
+		em().detach(informacao);
+		// if (conteudo != null)
+		// informacao.arq.setConteudoTXT(conteudo);
+
+		result.include("informacao", informacao);
+		result.include("conteudo", conteudo);
 	}
 
 	@Path({ "/app/exibir/{sigla}", "/app/exibir" })
@@ -1233,6 +1244,23 @@ public class AppController extends GcController {
 		 * getIdentidadeCadastrante(), titular(), lotaTitular());
 		 */
 		result.include("informacao", informacao);
+	}
+
+	@Path({ "/public/app/baixar/{id}", "/public/app/baixar" })
+	public Download baixarSemAutenticacao(Long id) throws Exception {
+		GcArquivo arq = GcArquivo.AR.findById(id);
+		
+		if (arq == null)
+			throw new Exception("Arquivo não encontrado.");
+		
+		//TODO verificar se o conhecimento pai eh sem autenticacao
+		GcInformacao infoMae = GcMovimentacao.buscarInformacaoPorAnexo(arq);
+		if (infoMae == null || !(infoMae.acessoExternoPublicoPermitido()))
+			throw new Exception("Arquivo não pode ser acessado sem autenticação.");
+		
+		return new ByteArrayDownload(arq.conteudo, arq.mimeType,
+					arq.titulo, false);
+		
 	}
 
 	@Path({ "/app/baixar/{id}", "/app/baixar" })

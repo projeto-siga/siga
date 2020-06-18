@@ -39,13 +39,13 @@
 					<b>Tipo: </b> ${informacao.tipo.nome}
 				</p>
 				<p>
-					<b>Órgão Usuário:</b> ${informacao.ou.acronimoOrgaoUsu}
+					<b>&Oacute;rg&atilde;o Usu&aacute;rio:</b> ${informacao.ou.acronimoOrgaoUsu}
 				</p>
 				<p>
-					<b>Visualização:</b> ${informacao.visualizacao.nome}
+					<b>Visualiza&ccedil;&atilde;o:</b> ${informacao.visualizacao.nome}
 				</p>
 				<p>
-					<b>Edição:</b> ${informacao.edicao.nome}
+					<b>Edi&ccedil;&atilde;o:</b> ${informacao.edicao.nome}
 				</p>
 				<c:if test="${not empty informacao.grupo}">
 				<p>
@@ -57,11 +57,11 @@
 					${informacao.autor.sigla}
 				</p>
 				<p>
-					<b>Lotação:</b> ${informacao.lotacao.descricaoIniciaisMaiusculas} -
+					<b>Lota&ccedil;&atilde;o:</b> ${informacao.lotacao.descricaoIniciaisMaiusculas} -
 					${informacao.lotacao.sigla}
 				</p>
 				<p>
-					<b>Data de criação:</b> ${informacao.dtIniString}
+					<b>Data de cria&ccedil;&atilde;o:</b> ${informacao.dtIniString}
 				</p>
 				<p>
 					<b>Finalizado em:</b> ${informacao.elaboracaoFim}
@@ -82,7 +82,7 @@
 				</c:if>
 				<c:if test="${empty cls}">
 					<p>
-						<b>Classificação:</b> ${(not empty informacao.arq.classificacao) ? informacao.arq.classificacao : "Esse conhecimento ainda não possui uma classificação"}
+						<b>Classifica&ccedil;&atilde;o:</b> ${(not empty informacao.arq.classificacao) ? informacao.arq.classificacao : "Esse conhecimento ainda n&atilde;o possui uma classifica&ccedil;&atilde;o"}
 					</p>
 				</c:if>
 				<c:if test="${informacao.contemArquivos}">
@@ -93,7 +93,7 @@
 							<p>
 								<img style="margin-bottom: -4px;"
 									src="/siga/css/famfamfam/icons/${m.arq.icon}.png" /> <a
-									target="_blank" href="${linkTo[AppController].baixar[m.arq.id]}">${m.arq.titulo}</a>
+									target="_blank" href="${linkTo[AppController].baixarSemAutenticacao[m.arq.id]}">${m.arq.titulo}</a>
 							</p>
 						</c:if>
 					</c:forEach>

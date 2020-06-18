@@ -1456,6 +1456,15 @@ public class ExDao extends CpDao {
 		query.setParameter("hisIdIni", mod.getHisIdIni());
 		return (ExModelo) query.getSingleResult();
 	}
+	
+	public ExModelo consultarModeloAtualPorId(Long idMod) {
+		final Query query = em().createNamedQuery("consultarModeloPorId");
+
+		query.setParameter("idMod", idMod);
+		ExModelo mod = (ExModelo) query.getSingleResult();
+		return consultarModeloAtual(mod);
+	}
+
 
 	public List<ExDocumento> listarDocPendenteAssinatura(DpPessoa pessoa, boolean apenasComSolicitacaoDeAssinatura) {
 		final Query query = em().createNamedQuery(

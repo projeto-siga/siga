@@ -389,7 +389,7 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.getMobilPaiSel(),
 				exDocumentoDTO.isCriandoAnexo(), exDocumentoDTO.getAutuando(),
 				exDocumentoDTO.getIdMobilAutuado(),
-				exDocumentoDTO.getCriandoSubprocesso(), null);
+				exDocumentoDTO.getCriandoSubprocesso(), null, 0L);
 	}
 
 	@Get("app/expediente/doc/criar_via")
@@ -459,8 +459,22 @@ public class ExDocumentoController extends ExController {
 						exDocumentoDTO.getAutuando(),
 						exDocumentoDTO.getIdMobilAutuado(),
 						exDocumentoDTO.getCriandoSubprocesso(),
-						jsonHierarquiaDeModelos);
+						jsonHierarquiaDeModelos, 0L);
 		return exDocumentoDTO;
+	}
+	
+	@Get("app/expediente/doc/criarNoModelo")
+	public void criarNoModelo(Long idMod) throws IOException, IllegalAccessException,
+	InvocationTargetException {
+		result.forwardTo(this)
+		.edita(null, null, null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				idMod);
 	}
 
 	@Post("app/expediente/doc/editar")
@@ -469,8 +483,8 @@ public class ExDocumentoController extends ExController {
 			final String sigla, String[] vars,
 			final ExMobilSelecao mobilPaiSel, final Boolean criandoAnexo,
 			final Boolean autuando, final Long idMobilAutuado,
-			final Boolean criandoSubprocesso, String jsonHierarquiaDeModelos)
-			throws IOException, IllegalAccessException,
+			final Boolean criandoSubprocesso, String jsonHierarquiaDeModelos, Long idMod )
+			throws IOException, IllegalAccessException, 
 			InvocationTargetException {
 		assertAcesso("");
 
@@ -510,17 +524,33 @@ public class ExDocumentoController extends ExController {
 
 			if (exDocumentoDTO.getTipoEmitente() == null)
 				exDocumentoDTO.setTipoEmitente(1);
+			
+			ExModelo modpassadoNaUrl = null;
+			if (idMod != null && idMod != 0) {
+				modpassadoNaUrl = ExDao.getInstance().consultarModeloAtualPorId(idMod);
+			}
 
 			if (exDocumentoDTO.getIdMod() == null) {
 				final List<ExModelo> modelos = getModelos(exDocumentoDTO);
 
 				ExModelo modeloDefault = null;
 				for (ExModelo mod : exDocumentoDTO.getModelos()) {
-					if ("Memorando".equals(mod.getNmMod())) {
-						modeloDefault = mod;
-						break;
+						if (modpassadoNaUrl !=null) {
+							if (modpassadoNaUrl.getId() == mod.getId()) {
+								modeloDefault = mod; 
+								break;
+							}
+						}
+
+						else {
+							if ("Memorando".equals(mod.getNmMod())) {
+								modeloDefault = mod;
+								break;
+							}
+						}
+						
 					}
-				}
+			
 
 				if (modeloDefault == null && modelos.size() > 0)
 					modeloDefault = modelos.get(0);
@@ -889,7 +919,7 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.getMobilPaiSel(),
 				exDocumentoDTO.isCriandoAnexo(), exDocumentoDTO.getAutuando(),
 				exDocumentoDTO.getIdMobilAutuado(),
-				exDocumentoDTO.getCriandoSubprocesso(), null);
+				exDocumentoDTO.getCriandoSubprocesso(), null, 0L);
 	}
 
 	@SuppressWarnings("static-access")
@@ -1554,7 +1584,7 @@ public class ExDocumentoController extends ExController {
 						exDocumentoDTO.getAutuando(),
 						exDocumentoDTO.getIdMobilAutuado(),
 						exDocumentoDTO.getCriandoSubprocesso(),
-						jsonHierarquiaDeModelos);
+						jsonHierarquiaDeModelos,0L);
 				return;
 			}
 

@@ -1882,8 +1882,14 @@ public class ExMovimentacaoController extends ExController {
 			
 	        if (SigaMessages.isSigaSP()) {
 	        	if (!DateUtils.isSameDay(new Date(), dtDevolucao) && dtDevolucao.before(new Date())) {
-					throw new AplicacaoException(
-							"Data de devolução não pode ser anterior à data de hoje.");
+	        		result.include("msgCabecClass", "alert-danger");
+	        		result.include("mensagemCabec", "Data de devolução não pode ser anterior à data de hoje.");
+	        		result.forwardTo(this).aTransferir(
+	        				sigla, idTpDespacho, tipoResponsavel, postback, dtMovString, subscritorSel, 
+	        				substituicao, titularSel, nmFuncaoSubscritor, idResp, tiposDespacho, descrMov, 
+	        				lotaResponsavelSel, responsavelSel, cpOrgaoSel, dtDevolucaoMovString, obsOrgao, protocolo);
+	        		
+	        			return;
 	        	}
 	        }
 		}

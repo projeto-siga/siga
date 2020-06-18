@@ -468,7 +468,8 @@ public class ExMarcadorBL {
 						(idMarcador == CpMarcador.MARCADOR_URGENTE ||
 						idMarcador == CpMarcador.MARCADOR_IDOSO  ||
 						idMarcador == CpMarcador.MARCADOR_PRIORITARIO  ||
-						idMarcador == CpMarcador.MARCADOR_RESTRICAO_ACESSO));
+						idMarcador == CpMarcador.MARCADOR_RESTRICAO_ACESSO||
+						idMarcador == CpMarcador.MARCADOR_COVID_19));
 								
 				if (temMarcaManual)	{
 					acrescentarMarca(mov.getMarcador().getIdMarcador(), dt, ultMovNaoCanc.getResp(), ultMovNaoCanc.getLotaResp());

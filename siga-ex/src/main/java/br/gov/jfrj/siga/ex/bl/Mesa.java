@@ -329,8 +329,10 @@ public class Mesa {
 		RESTRICAO_ACESSO(1004, "Restrição de Acesso", "fas fa-user-secret", "", GrupoDeMarcadorEnum.ALERTA),
 		//	
 		DOCUMENTO_ANALISADO(1005, "Documento Analisado", "fas fa-book-reader", "",
-				GrupoDeMarcadorEnum.ALERTA);
+				GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO),
 		//
+		COVID_19(1006, "COVID-19", "fas fa-tag", "",
+				GrupoDeMarcadorEnum.NENHUM);
 
 		private MarcadorEnum(int id, String nome, String icone,
 				String descricao, GrupoDeMarcadorEnum grupo) {

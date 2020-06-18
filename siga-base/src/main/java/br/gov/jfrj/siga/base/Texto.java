@@ -249,4 +249,8 @@ public class Texto {
 		return string.length() > limit ? (string.substring(0, max) + "...") : string;
 	}
 	
+	public static class FuncaoConfianca {
+		public static final String REGEX_CARACTERES_PERMITIDOS = "[a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ 0-9-/.]+";		
+	}
+	
 }

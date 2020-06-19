@@ -332,8 +332,14 @@ public class Mesa {
 				GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO),
 		//
 		COVID_19(1006, "COVID-19", "fas fa-tag", "",
+				GrupoDeMarcadorEnum.NENHUM),
+		//
+		PORTAL_TRANSPARENCIA(1007, "Portal da Transparência", "fas fa-tag", "",
+				GrupoDeMarcadorEnum.NENHUM),
+		//
+		NOTA_EMPENHO(1008, "Nota de Empenho", "fas fa-tag", "",
 				GrupoDeMarcadorEnum.NENHUM);
-
+		
 		private MarcadorEnum(int id, String nome, String icone,
 				String descricao, GrupoDeMarcadorEnum grupo) {
 			this.id = id;

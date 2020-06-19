@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
@@ -73,7 +72,7 @@ public class OpenIdServlet extends javax.servlet.http.HttpServlet {
     			
 			if (authRequest1 != null) {
 				String uriString = authRequest1.toURI().toString();
-				System.out.println("LOGIN SP: "  + uriString);
+				log.warn("LOGIN SP: "  + uriString);
 		        redirectToLogin(req, resp, uriString);
 			}    			
 		}catch(Exception e){
@@ -83,7 +82,7 @@ public class OpenIdServlet extends javax.servlet.http.HttpServlet {
 	}
 
 	private void redirectToLogin(HttpServletRequest request, HttpServletResponse response, String redirectTo) throws IOException {
-		System.out.println("Redirect: "  + redirectTo);
+		log.warn("Redirect: "  + redirectTo);
         response.sendRedirect(redirectTo);
     }
 	

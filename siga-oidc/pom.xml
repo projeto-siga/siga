@@ -88,6 +88,10 @@
 			<version>4.0.1</version>
 			<scope>provided</scope>
 		</dependency>
+  	 	<dependency>
+            <groupId>siga</groupId>
+            <artifactId>siga-base</artifactId>
+        </dependency>
 	</dependencies>
 
 </project>

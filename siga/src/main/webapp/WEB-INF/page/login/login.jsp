@@ -17,7 +17,7 @@
 		}
 	</script>
 	
-	<c:set var="siga_cliente_sso" scope="request" value="${f:resource('siga.integracao.com.login.sso')}" />
+	<c:set var="siga_cliente_sso" scope="request" value="${f:resource('siga.integracao.sso')}" />
 	
 	<c:choose>
 		<c:when test="${siga_cliente == 'GOVSP'}">

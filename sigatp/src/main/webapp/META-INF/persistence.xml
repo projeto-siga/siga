@@ -43,6 +43,7 @@
 		<class>br.gov.jfrj.siga.dp.CpTipoMarcador</class>
 		<class>br.gov.jfrj.siga.dp.CpMarca</class>
 		<class>br.gov.jfrj.siga.dp.CpTipoMarca</class>
+		<class>br.gov.jfrj.siga.dp.CpContrato</class>
 
 		<class>br.gov.jfrj.siga.tp.model.Abastecimento</class>
 		<class>br.gov.jfrj.siga.tp.model.Afastamento</class>

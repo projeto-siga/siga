@@ -311,7 +311,7 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	 * @param nmMod
 	 */
 	public void setNmMod(final java.lang.String nmMod) {
-		this.nmMod = nmMod;
+		this.nmMod = nmMod.replaceAll("/", "&#47;");
 	}
 
 	public java.lang.String getMarcaDagua() {

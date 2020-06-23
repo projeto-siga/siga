@@ -17,20 +17,22 @@
 		}
 	</script>
 	
+	<c:set var="siga_cliente_sso" scope="request" value="${f:resource('siga.integracao.com.login.sso')}" />
+	
 	<c:choose>
-	<c:when test="${siga_cliente == 'GOVSP'}">
-		<c:set var="login_box_class" value="box_login" />
-		<c:set var="login_box_logo" value="/siga/imagens/logo-sem-papel-cor.png" />
-		<c:set var="login_box_logo_size" value="150" />
-		<c:set var="login_box_text" value="" />
-	</c:when>
-	<c:otherwise>
-		<c:set var="login_box_class" value="" />
-		<c:set var="login_box_logo" value="" />
-		<c:set var="login_box_logo_size" value="" />
-		<c:set var="login_box_text" value="<fmt:message key='usuario.login.formulario' />" />
-	</c:otherwise>
-</c:choose>
+		<c:when test="${siga_cliente == 'GOVSP'}">
+			<c:set var="login_box_class" value="box_login" />
+			<c:set var="login_box_logo" value="/siga/imagens/logo-sem-papel-cor.png" />
+			<c:set var="login_box_logo_size" value="150" />
+			<c:set var="login_box_text" value="" />
+		</c:when>
+		<c:otherwise>
+			<c:set var="login_box_class" value="" />
+			<c:set var="login_box_logo" value="" />
+			<c:set var="login_box_logo_size" value="" />
+			<c:set var="login_box_text" value="<fmt:message key='usuario.login.formulario' />" />
+		</c:otherwise>
+	</c:choose>
 
 	<div class="container content pt-2">
 		<div class="row justify-content-center">
@@ -89,8 +91,11 @@
 								<div class="text-center">
 									<button type="submit" class="btn btn-lg btn-primary btn-block"><i class="fas fa-sign-in-alt"></i> Entrar</button>
 									
-									<a href="/siga/public/app/login_sp"class="btn btn-secondary btn-block">LoginSP</a>
-									
+									<c:choose>
+										<c:when test="${siga_cliente_sso}">
+											<a href="/siga/public/app/loginSSO"class="btn btn-secondary btn-block">LoginSP</a>
+										</c:when>
+									</c:choose>
 									<hr class="my-4">
 									<div class="mt-4">
 										<c:if test="${siga_cliente != 'GOVSP'}">

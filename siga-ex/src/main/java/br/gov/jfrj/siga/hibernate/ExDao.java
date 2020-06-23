@@ -1731,9 +1731,20 @@ public class ExDao extends CpDao {
 	}
 
 	public List consultarTotaisPorMarcador(DpPessoa pes, DpLotacao lot, List<GrupoItem> grupos, 
-			boolean exibeLotacao) {
+			boolean exibeLotacao, List<Integer> marcasAIgnorar) {
 		try {
 			String query = "";
+			String queryMarcasAIgnorar = "";
+			String queryMarcasAIgnorarWhere = "";
+			if (marcasAIgnorar != null && marcasAIgnorar.size() > 0) {
+				queryMarcasAIgnorar += " LEFT OUTER JOIN corporativo.cp_marca marca2 ON "
+						+ " marca2.id_ref = marca.id_ref AND (";
+				for (Integer marcaAIgnorar : marcasAIgnorar) {
+					queryMarcasAIgnorar += " marca2.id_marcador = " + marcaAIgnorar.toString() + " OR"; 
+				}
+				queryMarcasAIgnorar = queryMarcasAIgnorar.substring(0, queryMarcasAIgnorar.length() - 2) + ") ";
+				queryMarcasAIgnorarWhere = " AND marca2.id_marca IS null ";
+			}		
 			for (GrupoItem grupoItem : grupos) {
 				if (!grupoItem.grupoHide && grupoItem.grupoMarcadores.size() > 0) {
 					query += "SELECT "
@@ -1745,12 +1756,14 @@ public class ExDao extends CpDao {
 						+ " 			SUM(CASE WHEN marca.id_lotacao_ini = :idLotacaoIni THEN 1 ELSE 0 END) cont_lota"
 						+ "	   			FROM corporativo.cp_marca marca"
 						+ " 			INNER JOIN siga.ex_mobil mob on marca.id_ref = mob.id_mobil"
+						+ queryMarcasAIgnorar
 						+ "	   			WHERE (marca.dt_ini_marca IS NULL OR marca.dt_ini_marca < sysdate)"
 						+ "	   				AND (marca.dt_fim_marca IS NULL OR marca.dt_fim_marca > sysdate)"
 						+ "	   				AND ((marca.id_pessoa_ini = :idPessoaIni) OR (marca.id_lotacao_ini = :idLotacaoIni))"
 						+ "	   				AND marca.id_tp_marca = 1"
 						+ "					AND marca.id_marcador in (" 
 						+ grupoItem.grupoMarcadores.toString().replaceAll("\\[|\\]", "") + ") "
+						+ queryMarcasAIgnorarWhere
 						+ "				GROUP BY marca.id_ref )"
 						+ " UNION ALL ";
 				}
@@ -1771,8 +1784,19 @@ public class ExDao extends CpDao {
 	}
 
 	public List listarMobilsPorMarcas(DpPessoa titular,
-			DpLotacao lotaTitular, boolean exibeLotacao) {
+			DpLotacao lotaTitular, boolean exibeLotacao, List<Integer> marcasAIgnorar) {
 		String queryString;
+		String queryMarcasAIgnorar = "";
+		String queryMarcasAIgnorarWhere = "";
+		if (marcasAIgnorar != null && marcasAIgnorar.size() > 0) {
+			queryMarcasAIgnorar += " left join ExMarca marca2 on "
+					+ " marca2.exMobil = marca.exMobil AND (";
+			for (Integer marcaAIgnorar : marcasAIgnorar) {
+				queryMarcasAIgnorar += " marca2.cpMarcador.idMarcador = " + marcaAIgnorar.toString() + " OR"; 
+			}
+			queryMarcasAIgnorar = queryMarcasAIgnorar.substring(0, queryMarcasAIgnorar.length() - 2) + ") ";
+			queryMarcasAIgnorarWhere = " and marca2 is null ";
+		}		
 		List<List<String>> l = new ArrayList<List<String>> ();
 //		long tempoIni = System.nanoTime();
 		queryString =
@@ -1782,10 +1806,12 @@ public class ExDao extends CpDao {
 					+ " inner join marca.exMobil mobil"
 					+ " inner join marca.cpMarcador marcador"
 					+ " inner join mobil.exDocumento doc"
+					+ queryMarcasAIgnorar
 					+ " where (marca.dtIniMarca is null or marca.dtIniMarca < sysdate)"
 					+ " and (marca.dtFimMarca is null or marca.dtFimMarca > sysdate)"
 					+ (!exibeLotacao && titular != null ? " and (marca.dpPessoaIni.idPessoaIni = :titular)" : "") 
 					+ (exibeLotacao && lotaTitular != null ? " and (marca.dpLotacaoIni.idLotacaoIni = :lotaTitular)" : "")
+					+ queryMarcasAIgnorarWhere
 					+ " order by  doc.dtAltDoc desc, marca ";
 			
 		Query query = em()

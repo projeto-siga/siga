@@ -1885,8 +1885,14 @@ public class ExMovimentacaoController extends ExController {
 			
 	        if (SigaMessages.isSigaSP()) {
 	        	if (!DateUtils.isSameDay(new Date(), dtDevolucao) && dtDevolucao.before(new Date())) {
-					throw new AplicacaoException(
-							"Data de devolução não pode ser anterior à data de hoje.");
+	        		result.include("msgCabecClass", "alert-danger");
+	        		result.include("mensagemCabec", "Data de devolução não pode ser anterior à data de hoje.");
+	        		result.forwardTo(this).aTransferir(
+	        				sigla, idTpDespacho, tipoResponsavel, postback, dtMovString, subscritorSel, 
+	        				substituicao, titularSel, nmFuncaoSubscritor, idResp, tiposDespacho, descrMov, 
+	        				lotaResponsavelSel, responsavelSel, cpOrgaoSel, dtDevolucaoMovString, obsOrgao, protocolo);
+	        		
+	        			return;
 	        	}
 	        }
 		}
@@ -2187,6 +2193,15 @@ public class ExMovimentacaoController extends ExController {
 		}
 
 		final List<ExPapel> papeis = this.getListaExPapel();
+		
+		if (builder.getMob().getDoc().isAssinadoPorTodosOsSignatariosComTokenOuSenha()) {			
+			for (Iterator<ExPapel> iter = papeis.listIterator(); iter.hasNext(); ) {
+			    ExPapel p = iter.next();
+			    if (p.getIdPapel() == ExPapel.PAPEL_REVISOR) {
+			        iter.remove();
+			    }
+			}			
+		}
 		
 		if (SigaMessages.isSigaSP()) {
 			for (Iterator<ExPapel> iter = papeis.listIterator(); iter.hasNext(); ) {

@@ -14,94 +14,92 @@
 <%@page import="br.gov.jfrj.siga.ex.ExMobil"%>
 <siga:pagina titulo="${docVO.sigla}" popup="${param.popup}" >
 
-<c:if test="${siga_cliente eq 'GOVSP'}">
-	<style>									
-		.container-files {
-			opacity: 1;
-			transition: opacity 1s ease-in;										
-		}
-																				
-		.files {
-			margin-top: 15px;
-		}															
+<style>									
+	.container-files {
+		opacity: 1;
+		transition: opacity 1s ease-in;										
+	}
+																			
+	.files {
+		margin-top: 15px;
+	}															
+
+	.files .btn.btn-sm.btn-light {
+		width: 84%;
+		padding: 0;			
+		background-color: transparent;
+		border: none;
+		text-align: justify;
+		white-space: normal;  									
+		transition: padding .5s;																									
+	}
 	
+	.files .btn.btn-sm.btn-light:hover {
+		padding: 5px;
+		background-color: rgba(0, 123, 255, 0.18);
+		border: none;			
+		border-radius: 10px;
+	}	
+	
+	.files .btn.btn-sm.btn-light img {
+		float: left;
+	}																																
+	
+	.files .btn.btn-sm.btn-outline-danger.btn-cancel {
+		padding: 1px 3px;
+		margin-left: 10px;
+		right: 20px; 
+		position: absolute;
+		float: right;					
+		font-size: .9em; 																										
+	}
+	
+	.container-confirmacao-cancelar-arquivo {
+		width: 100%;
+	    height: 77%;
+	    margin: 0;    		
+	    position: absolute;
+	    left: 0;
+		bottom: 0;
+		background-color: white;
+		text-align: center;
+		visibility: hidden;																	
+		opacity: 0;
+		transition: opacity 1s ease-out;	    								
+	}	
+	
+	.confirmacao-cancelar-arquivo {
+		width: 100%;			
+		position: absolute;
+		top: 50%;			
+		transform: translate(0, -50%);			
+	}		
+	
+	.confirmacao-cancelar-arquivo h1 {
+		font-size: 1.3em;
+	}
+	
+	.confirmacao-cancelar-arquivo p {
+		max-width: 80%;
+		margin: 0 auto;
+	}															
+	
+	.confirmacao-cancelar-arquivo button {
+		margin: 10px 2px 0 2px;
+	}			
+	
+	@media (min-width: 768px) and (max-width: 1019px) {
 		.files .btn.btn-sm.btn-light {
-			width: 84%;
-			padding: 0;			
-			background-color: transparent;
-			border: none;
-			text-align: justify;
-			white-space: normal;  									
-			transition: padding .5s;																									
+			width: 65%;											
+		}					
+	}	
+	
+	@media (min-width: 1020px) and (max-width: 1416px) {
+		.files .btn.btn-sm.btn-light {
+			width: 75%;											
 		}
-		
-		.files .btn.btn-sm.btn-light:hover {
-			padding: 5px;
-			background-color: rgba(0, 123, 255, 0.18);
-			border: none;			
-			border-radius: 10px;
-		}	
-		
-		.files .btn.btn-sm.btn-light img {
-			float: left;
-		}																																
-		
-		.files .btn.btn-sm.btn-outline-danger.btn-cancel {
-			padding: 1px 3px;
-			margin-left: 10px;
-			right: 20px; 
-			position: absolute;
-			float: right;					
-			font-size: .9em; 																										
-		}
-		
-		.container-confirmacao-cancelar-arquivo {
-			width: 100%;
-		    height: 77%;
-		    margin: 0;    		
-		    position: absolute;
-		    left: 0;
-			bottom: 0;
-			background-color: white;
-			text-align: center;
-			visibility: hidden;																	
-			opacity: 0;
-			transition: opacity 1s ease-out;	    								
-		}	
-		
-		.confirmacao-cancelar-arquivo {
-			width: 100%;			
-			position: absolute;
-			top: 50%;			
-			transform: translate(0, -50%);			
-		}		
-		
-		.confirmacao-cancelar-arquivo h1 {
-			font-size: 1.3em;
-		}
-		
-		.confirmacao-cancelar-arquivo p {
-			max-width: 80%;
-			margin: 0 auto;
-		}															
-		
-		.confirmacao-cancelar-arquivo button {
-			margin: 10px 2px 0 2px;
-		}			
-		
-		@media (min-width: 768px) and (max-width: 1019px) {
-			.files .btn.btn-sm.btn-light {
-				width: 65%;											
-			}					
-		}	
-		
-		@media (min-width: 1020px) and (max-width: 1416px) {
-			.files .btn.btn-sm.btn-light {
-				width: 75%;											
-			}
-		}											
-	</style>
-</c:if>								
+	}											
+</style>						
 
 <script>
 	if (${not empty f:resource('graphviz.url')}) {
@@ -1328,51 +1326,50 @@
 	      </div>
 	    </div>
 	  </div>
-	</div>
-	
-	<script>
-		var containerArquivosAuxiliares = $('.container-files');
-		var containerConfimarcaoArquivoAuxiliarACancelar = $('.container-confirmacao-cancelar-arquivo');
-		var descricaoArquivoAuxiliarACancelar = $('.descricao-arquivo-confirmacao');
-		
-		$(document).ready(function() {																				
-			atualizarDescricaoArquivosAuxiliares();																												
-		});
-		
-		function atualizarDescricaoArquivosAuxiliares() {
-			$('.files').find('.btn.btn-sm.btn-light').each(function(index) {
-				var arquivo = $(this);
-				var btnCancelar = arquivo.parent().find('.btn.btn-sm.btn-outline-danger.btn-cancel');																					
-															
-				arquivo.attr('title', 'Clique para baixar o arquivo: ' + this.text);
-														
-				if (arquivo.text().length > 150) {
-					arquivo.text(this.text.substring(0, 150) + '...');
-				}																					
-				
-				if (btnCancelar) {
-					btnCancelar.attr('title', 'Cancelar arquivo: ' + this.text).attr('data-description', this.text);
-				}																							
-			});		
-		}
-		
-		function confirmarExclusaoArquivoAuxiliar(idMov, sigla, botao) {										
-			var btnCancela = $('.btn-cancelar-arquivo-nao');
-			var btnConfirma = $('.btn-cancelar-arquivo-sim');			
-			
-			containerConfimarcaoArquivoAuxiliarACancelar.css({'visibility':'visible', 'opacity':'1'});																				
-			containerArquivosAuxiliares.css({'visibility':'hidden', 'opacity':'0'});												
-			
-			btnCancela.attr('onclick', 'cancelarExclusaoArquivoAuxiliar()');										
-			btnConfirma.attr('onclick', 'excluirArqAuxiliar(' + idMov + ', \'' + sigla + '\')');
-						
-			descricaoArquivoAuxiliarACancelar.text($(botao).attr('data-description'));										
-		}
-		
-		function cancelarExclusaoArquivoAuxiliar() {
-			containerConfimarcaoArquivoAuxiliarACancelar.css({'visibility':'hidden', 'opacity':'0'});
-			containerArquivosAuxiliares.css({'visibility':'visible', 'opacity':'1'});				
-		}																	
-	</script>
+	</div>	
 </c:if>	
+<script>
+	var containerArquivosAuxiliares = $('.container-files');
+	var containerConfimarcaoArquivoAuxiliarACancelar = $('.container-confirmacao-cancelar-arquivo');
+	var descricaoArquivoAuxiliarACancelar = $('.descricao-arquivo-confirmacao');
+	
+	$(function() {																				
+		atualizarDescricaoArquivosAuxiliares();																												
+	});
+	
+	function atualizarDescricaoArquivosAuxiliares() {
+		$('.files').find('.btn.btn-sm.btn-light').each(function(index) {
+			var arquivo = $(this);
+			var btnCancelar = arquivo.parent().find('.btn.btn-sm.btn-outline-danger.btn-cancel');																					
+														
+			arquivo.attr('title', 'Clique para baixar o arquivo: ' + this.text);
+													
+			if (arquivo.text().length > 150) {
+				arquivo.text(this.text.substring(0, 150) + '...');
+			}																					
+			
+			if (btnCancelar) {
+				btnCancelar.attr('title', 'Cancelar arquivo: ' + this.text).attr('data-description', this.text);
+			}																							
+		});		
+	}
+	
+	function confirmarExclusaoArquivoAuxiliar(idMov, sigla, botao) {										
+		var btnCancela = $('.btn-cancelar-arquivo-nao');
+		var btnConfirma = $('.btn-cancelar-arquivo-sim');			
+		
+		containerConfimarcaoArquivoAuxiliarACancelar.css({'visibility':'visible', 'opacity':'1'});																				
+		containerArquivosAuxiliares.css({'visibility':'hidden', 'opacity':'0'});												
+		
+		btnCancela.attr('onclick', 'cancelarExclusaoArquivoAuxiliar()');										
+		btnConfirma.attr('onclick', 'excluirArqAuxiliar(' + idMov + ', \'' + sigla + '\')');
+					
+		descricaoArquivoAuxiliarACancelar.text($(botao).attr('data-description'));										
+	}
+	
+	function cancelarExclusaoArquivoAuxiliar() {
+		containerConfimarcaoArquivoAuxiliarACancelar.css({'visibility':'hidden', 'opacity':'0'});
+		containerArquivosAuxiliares.css({'visibility':'visible', 'opacity':'1'});				
+	}																	
+</script>
 </siga:pagina>

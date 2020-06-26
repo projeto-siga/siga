@@ -1586,7 +1586,23 @@ public class ExDao extends CpDao {
 		criteriaQuery.where(predicateAnd);
 		return em().createQuery(criteriaQuery).getResultList();
 	}
+	
+	
 
+	public List<CpMarcador> listarCpMarcadoresTaxonomiaAdministrada() {
+		
+		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
+		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);
+		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
+		Predicate predicateAnd;
+		Predicate predicateEqualTipoMarcador  = criteriaBuilder.equal(cpMarcadorRoot.get("cpTipoMarcador"), CpTipoMarcador.TIPO_MARCADOR_TAXONOMIA_ADMINISTRADA);
+
+		predicateAnd = criteriaBuilder.and(predicateEqualTipoMarcador);
+	
+		criteriaQuery.where(predicateAnd);
+		return em().createQuery(criteriaQuery).getResultList();
+	}
+	
 	public List<ExTpDocPublicacao> listarExTiposDocPublicacao() {
 		return findAndCacheByCriteria(CACHE_QUERY_HOURS,
 				ExTpDocPublicacao.class);

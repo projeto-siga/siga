@@ -816,6 +816,14 @@ public class ExDocumentoVO extends ExVO {
 				"Esta operação cancelará o documento pendente de assinatura. Prosseguir?",
 				null, null, null, "once");
 		
+		vo.addAcao(
+				"report_link",
+				"Publicar no Portal da Transparência",
+				"/app/expediente/mov",
+				"publicacao_transparencia",
+				true);
+
+		
 		if(mostrarGerarProtocolo(doc)) {
 			vo.addAcao(
 					"printer",

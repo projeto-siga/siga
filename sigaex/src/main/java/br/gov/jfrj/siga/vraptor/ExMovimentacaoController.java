@@ -10,6 +10,7 @@ import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -73,6 +74,7 @@ import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
+import br.gov.jfrj.siga.ex.ExProtocolo;
 import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDespacho;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
@@ -83,6 +85,7 @@ import br.gov.jfrj.siga.ex.ItemDeProtocoloComparator;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
+import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
@@ -4727,4 +4730,96 @@ public class ExMovimentacaoController extends ExController {
 
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
+	
+	private Object getListaMarcadoresTaxonomiaAdministrada() {
+		return dao().listarCpMarcadoresTaxonomiaAdministrada();
+	}
+	
+	@Get("/app/expediente/mov/publicacao_transparencia")
+	public void aPublicarTransparencia(String sigla, String descrPublicacao,
+			String mensagem) throws Exception {
+		
+		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+
+		final ExDocumento documento = buscarDocumento(documentoBuilder);
+
+		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
+				.novaInstancia().setMob(documentoBuilder.getMob());
+
+		final ExMovimentacao movimentacao = movimentacaoBuilder
+				.construir(dao());
+
+
+
+		result.include("sigla", sigla);
+		result.include("mob", documentoBuilder.getMob());
+		result.include("mov", movimentacao);
+		result.include("doc", documento);
+		result.include("descrMov", movimentacaoBuilder.getDescrMov());
+		result.include("listaMarcadores", this.getListaMarcadoresTaxonomiaAdministrada());
+		result.include("listaMarcadoresAtivos", this.getListaMarcadoresAtivos(documentoBuilder.getMob().getDoc().getMobilGeral()));
+	}
+	
+	
+	@Post("/app/expediente/mov/publicacao_transparencia_gravar")
+	public void publicarTransparenciaGravar(final String sigla,
+			final Long nivelAcesso) {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+
+		final ExDocumento doc = buscarDocumento(builder);
+
+		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
+				.novaInstancia();
+
+		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
+		/* Redefinição para Público */
+		ExNivelAcesso exTipoSig = null;
+		exTipoSig = dao().consultar(ExNivelAcesso.ID_PUBLICO, ExNivelAcesso.class, false);
+
+
+		if (!Ex.getInstance()
+				.getComp()
+				.podeRedefinirNivelAcesso(getTitular(), getLotaTitular(),
+						builder.getMob())) {
+			throw new AplicacaoException(
+					"Não é possível redefinir o nível de acesso");
+		}
+
+		Ex.getInstance()
+				.getBL()
+				.redefinirNivelAcesso(getCadastrante(), getLotaTitular(), doc,
+						mov.getDtMov(), mov.getLotaResp(), mov.getResp(),
+						mov.getSubscritor(), mov.getTitular(),
+						mov.getNmFuncaoSubscritor(), exTipoSig);
+		
+		/* Geração de URL */
+
+		
+		ExProtocolo prot = new ExProtocolo();
+		prot = Ex.getInstance().getBL().obterProtocolo(doc);
+		
+		if(prot == null) {
+			try {
+				prot = Ex.getInstance().getBL().gerarProtocolo(doc, getCadastrante(), getLotaCadastrante());
+			} catch (Exception e) {
+				throw new AplicacaoException(
+						"Ocorreu um erro ao gerar protocolo.");
+			}
+		}
+		
+
+		String url = "http://localhost:8080/sigaex";
+		String caminho = url + "/public/app/processoautenticar?n=" + prot.getCodigo();
+		
+		result.include("url", caminho);
+		
+		
+		result.include("msgCabecClass", "alert-info");
+		result.include("mensagemCabec", "Gerada URL permanente para o documento: <a href='"+caminho+"' target='_Blank' class='alert-link'>"+caminho+"</a>. ");
+
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}
+	
 }

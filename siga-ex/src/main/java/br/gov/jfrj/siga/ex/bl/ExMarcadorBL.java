@@ -446,11 +446,14 @@ public class ExMarcadorBL {
 					continue;
 				else if (mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha())
 					acrescentarMarca(CpMarcador.MARCADOR_COMO_SUBSCRITOR, mov.getDtIniMov(), mov.getSubscritor(), null);
-				else
+				else {
 					if (!(Boolean.valueOf(SigaBaseProperties.getString("siga.mesa.naoRevisarTemporarios")) 
 								&& !mob.getDoc().isFinalizado())) 
 						acrescentarMarca(CpMarcador.MARCADOR_REVISAR, mov.getDtIniMov(), mov.getSubscritor(), null);
-
+					if (!(Boolean.valueOf(SigaBaseProperties.getString("siga.mesa.naoRevisarTemporarios")) 
+							&& !mob.getDoc().isFinalizado()) && mov.getSubscritor().isUsuarioExterno())
+						acrescentarMarca(CpMarcador.MARCADOR_COMO_SUBSCRITOR, mov.getDtIniMov(), mov.getSubscritor(), null);						
+				}	
 			}
 		}
 	}
@@ -465,11 +468,13 @@ public class ExMarcadorBL {
 				Long tpMov = mov.getIdTpMov();
 				Long idMarcador = mov.getMarcador().getIdMarcador();
 				boolean temMarcaManual = (tpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO &&
-						(idMarcador == CpMarcador.MARCADOR_URGENTE ||
-						idMarcador == CpMarcador.MARCADOR_IDOSO  ||
-						idMarcador == CpMarcador.MARCADOR_PRIORITARIO  ||
-						idMarcador == CpMarcador.MARCADOR_RESTRICAO_ACESSO||
-						idMarcador == CpMarcador.MARCADOR_COVID_19));
+						(idMarcador == CpMarcador.MARCADOR_URGENTE 
+						|| idMarcador == CpMarcador.MARCADOR_IDOSO 
+						|| idMarcador == CpMarcador.MARCADOR_PRIORITARIO  
+						|| idMarcador == CpMarcador.MARCADOR_RESTRICAO_ACESSO
+						|| idMarcador == CpMarcador.MARCADOR_COVID_19
+						|| idMarcador == CpMarcador.MARCADOR_PORTAL_TRANSPARENCIA
+						|| idMarcador == CpMarcador.MARCADOR_NOTA_EMPENHO));
 								
 				if (temMarcaManual)	{
 					acrescentarMarca(mov.getMarcador().getIdMarcador(), dt, ultMovNaoCanc.getResp(), ultMovNaoCanc.getLotaResp());

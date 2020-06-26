@@ -1247,7 +1247,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		return (mob.doc().getSubscritor().equivale(titular)
 				|| (mob.doc().isExterno() && mob.doc().getCadastrante().equivale(titular))
-				|| (mob.doc().isCossignatario(titular) && mob.doc().isPendenteDeAssinatura() && mob.doc().isAssinadoPeloSubscritorComTokenOuSenha())
+				|| (mob.doc().isCossignatario(titular) && mob.doc().isPendenteDeAssinatura() && (mob.doc().isAssinadoPeloSubscritorComTokenOuSenha() || titular.isUsuarioExterno()))
 				|| podeMovimentar(titular, lotaTitular, mob))
 				&& (mob.doc().isFinalizado() || podeFinalizar(titular, lotaTitular, mob))
 				&& !mob.doc().isCancelado()

@@ -446,11 +446,14 @@ public class ExMarcadorBL {
 					continue;
 				else if (mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha())
 					acrescentarMarca(CpMarcador.MARCADOR_COMO_SUBSCRITOR, mov.getDtIniMov(), mov.getSubscritor(), null);
-				else
+				else {
 					if (!(Boolean.valueOf(SigaBaseProperties.getString("siga.mesa.naoRevisarTemporarios")) 
 								&& !mob.getDoc().isFinalizado())) 
 						acrescentarMarca(CpMarcador.MARCADOR_REVISAR, mov.getDtIniMov(), mov.getSubscritor(), null);
-
+					if (!(Boolean.valueOf(SigaBaseProperties.getString("siga.mesa.naoRevisarTemporarios")) 
+							&& !mob.getDoc().isFinalizado()) && mov.getSubscritor().isUsuarioExterno())
+						acrescentarMarca(CpMarcador.MARCADOR_COMO_SUBSCRITOR, mov.getDtIniMov(), mov.getSubscritor(), null);						
+				}	
 			}
 		}
 	}

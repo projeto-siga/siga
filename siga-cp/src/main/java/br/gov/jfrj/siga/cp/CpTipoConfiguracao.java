@@ -148,6 +148,8 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 	public static final long TIPO_CONFIG_DELEGAR_VISUALIZACAO = 44;
 
 	public static final long TIPO_CONFIG_INCLUIR_EM_AVULSO = 45;
+	
+	public static final long TIPO_CONFIG_COSIGNATARIO_ASSINAR_ANTES_SUBSCRITOR = 46;
 
 	// SIGA-WF
 

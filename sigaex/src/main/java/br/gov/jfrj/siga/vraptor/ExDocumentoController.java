@@ -444,6 +444,7 @@ public class ExDocumentoController extends ExController {
 			throws IllegalAccessException, InvocationTargetException,
 			IOException {
 		
+
 		if(exDocumentoDTO != null && exDocumentoDTO
 				.getSigla() != null) {
 			buscarDocumento(false, exDocumentoDTO);
@@ -814,10 +815,32 @@ public class ExDocumentoController extends ExController {
 		result.include("jsonHierarquiaDeModelos",
 				escapeHtml(jsonHierarquiaDeModelos));
 		result.include("podeEditarModelo", exDocumentoDTO.getDoc().isFinalizado());
+		result.include("podeTrocarPdfCapturado", podeTrocarPdfCapturado(exDocumentoDTO));
 
 		// Desabilita a proteção contra injeção maldosa de html e js
 		this.response.addHeader("X-XSS-Protection", "0");
 		return exDocumentoDTO;
+	}
+
+	private Object podeTrocarPdfCapturado(ExDocumentoDTO exDocumentoDTO) {
+		// TODO Auto-generated method stub
+		if ((exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO || exDocumentoDTO
+						.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO)
+				&& !exDocumentoDTO.getDoc().isFinalizado()) 
+		{
+			return true;
+		} else {
+			if (!exDocumentoDTO.getDoc().jaTransferido() && !exDocumentoDTO.getDoc().isAssinadoPorTodosOsSignatariosComTokenOuSenha() 
+					&&  !exDocumentoDTO.getMob().isJuntado() &&  !exDocumentoDTO.getMob().isJuntadoExterno()
+					&&  !exDocumentoDTO.getMob().isCancelada() && exDocumentoDTO.getDoc().getAutenticacoesComTokenOuSenha().isEmpty() 
+					&& (exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO
+					|| exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO && (Ex.getInstance().getConf().podePorConfiguracao(so.getTitular(), so.getLotaTitular(), CpTipoConfiguracao.TIPO_CONFIG_FINALIZAR_AUTOMATICAMENTE_CAPTURADOS))))
+					{
+						return true;
+					}
+		}
+				
+		return false;
 	}
 
 	private List<ExTipoDocumento> getTiposDocumentoParaCriacao() {
@@ -1722,7 +1745,7 @@ public class ExDocumentoController extends ExController {
 
 			if (!exDocumentoDTO.getDoc().isFinalizado()
 					&& (exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO || exDocumentoDTO
-							.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO))
+							.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO) && (exBL.getConf().podePorConfiguracao(so.getTitular(), so.getLotaTitular(), CpTipoConfiguracao.TIPO_CONFIG_FINALIZAR_AUTOMATICAMENTE_CAPTURADOS)))
 				exBL.finalizar(getCadastrante(), getLotaTitular(),
 						exDocumentoDTO.getDoc());
 

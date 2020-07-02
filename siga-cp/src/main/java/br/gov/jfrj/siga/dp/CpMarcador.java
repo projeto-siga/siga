@@ -191,6 +191,8 @@ public class CpMarcador extends AbstractCpMarcador {
 	final static public long MARCADOR_DOCUMENTO_ANALISADO = 1005;
 	
 	final static public long MARCADOR_COVID_19 = 1006;
+	final static public long MARCADOR_PORTAL_TRANSPARENCIA = 1007;
+	final static public long MARCADOR_NOTA_EMPENHO = 1008;
 
 	public static ActiveRecord<CpMarcador> AR = new ActiveRecord<>(CpMarcador.class);
 

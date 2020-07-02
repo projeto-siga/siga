@@ -189,7 +189,7 @@ public class SigaCpSinc {
 			OperadorComHistorico o = new OperadorComHistorico() {
 				public Sincronizavel gravar(Sincronizavel s) {
 					Sincronizavel o = CpDao.getInstance().gravar(s);
-					CpDao.getInstance().getSessao().flush();
+					CpDao.getInstance().descarregar();
 					return o;
 				}
 			};
@@ -255,7 +255,7 @@ public class SigaCpSinc {
 			throw new Exception("Erro na gravação", e);
 		}
 
-		HibernateUtil.getSessao().flush();
+		CpDao.getInstance().descarregar();
 		log("Total de alterações: " + list.size());
 		// ((GenericoHibernateDao) dao).getSessao().flush();
 	}

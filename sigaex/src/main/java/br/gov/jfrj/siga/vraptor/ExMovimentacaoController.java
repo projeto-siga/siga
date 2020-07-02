@@ -31,6 +31,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.PathParam;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.xerces.impl.dv.util.Base64;
@@ -52,12 +53,15 @@ import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.CpToken;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
@@ -83,9 +87,11 @@ import br.gov.jfrj.siga.ex.ExTopicoDestinacao;
 import br.gov.jfrj.siga.ex.ItemDeProtocolo;
 import br.gov.jfrj.siga.ex.ItemDeProtocoloComparator;
 import br.gov.jfrj.siga.ex.SigaExProperties;
+import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
 import br.gov.jfrj.siga.ex.bl.ExBL;
+import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
@@ -4795,31 +4801,31 @@ public class ExMovimentacaoController extends ExController {
 						mov.getNmFuncaoSubscritor(), exTipoSig);
 		
 		/* Geração de URL */
-
+		CpToken sigaUrlPermanente = new CpToken();
+		sigaUrlPermanente = null;
 		
-		ExProtocolo prot = new ExProtocolo();
-		prot = Ex.getInstance().getBL().obterProtocolo(doc);
-		
-		if(prot == null) {
+		if(sigaUrlPermanente == null) {
 			try {
-				prot = Ex.getInstance().getBL().gerarProtocolo(doc, getCadastrante(), getLotaCadastrante());
+				sigaUrlPermanente = Cp.getInstance().getBL().gerarUrlPermanente(doc.getIdDoc());
 			} catch (Exception e) {
 				throw new AplicacaoException(
-						"Ocorreu um erro ao gerar protocolo.");
+						"Ocorreu um erro ao gerar Token.");
 			}
 		}
 		
-
-		String url = "http://localhost:8080/sigaex";
-		String caminho = url + "/public/app/processoautenticar?n=" + prot.getCodigo();
+		RequestInfo ri = CurrentRequest.get();		
+		String url = Contexto.urlBase(ri.getRequest());
+		String caminho = url + "/siga/public/app/sigalink/1/" + sigaUrlPermanente.getToken();
 		
 		result.include("url", caminho);
 		
 		
 		result.include("msgCabecClass", "alert-info");
-		result.include("mensagemCabec", "Gerada URL permanente para o documento: <a href='"+caminho+"' target='_Blank' class='alert-link'>"+caminho+"</a>. ");
+		result.include("mensagemCabec", "Gerada URL permanente para o documento: <a class='alert-link' id='urlPermanente'  href='"+caminho+"' target='_Blank'  data-toggle='tooltip' data-placement='bottom'  data-html='true' title='Copiar endereço <i class=\"fa fa-link\"></i>'>Link</a>. <script>$(function () {$('[data-toggle=\"tooltip\"]').tooltip();$('#urlPermanente').tooltip('show');});</script> ");
 
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
+	
+
 	
 }

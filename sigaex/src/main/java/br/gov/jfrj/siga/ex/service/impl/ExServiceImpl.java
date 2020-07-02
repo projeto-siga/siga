@@ -810,5 +810,14 @@ public class ExServiceImpl implements ExService {
 					+ e.getMessage(), 0, e);
 		}	
 	}
+	
+	public String obterSiglaMobilPorIdDoc(Long idDoc)  throws Exception {
+		ExDocumento doc = ExDao.getInstance().consultar(idDoc, ExDocumento.class, false);
+		if (doc != null) {
+			return doc.getPrimeiroMobil().getSigla();
+		} else
+			return "";
+		
+	}
 
 }

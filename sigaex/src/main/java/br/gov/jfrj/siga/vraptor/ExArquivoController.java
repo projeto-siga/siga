@@ -26,6 +26,8 @@ import java.io.ByteArrayInputStream;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -33,6 +35,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.auth0.jwt.JWTSigner;
+import com.auth0.jwt.JWTVerifier;
 import com.lowagie.text.pdf.codec.Base64;
 
 import br.com.caelum.vraptor.Controller;
@@ -46,6 +50,9 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.bluc.service.HashRequest;
 import br.gov.jfrj.siga.bluc.service.HashResponse;
+import br.gov.jfrj.siga.cp.CpToken;
+import br.gov.jfrj.siga.ex.ExArquivo;
+import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
@@ -210,6 +217,41 @@ public class ExArquivoController extends ExController {
 		}
 	}
 
+	
+	@Get("/public/app/arquivo/obterPdfDocumento")
+	public Download aObterPdfDocumento(final String t, boolean completo, final boolean semmarcas) {
+		try {
+
+			final boolean isPdf = true;
+
+			String token = verifyJwtToken(t).get("token").toString();
+			
+			CpToken cpToken = new CpToken();
+			cpToken = dao().obterCpTokenPorTipoToken(1L, token);
+			
+			ExDocumento doc = Ex.getInstance().getBL().buscarDocumentoPorLinkPermanente(cpToken);
+			
+
+			final ExMobil mob = doc.getPrimeiroMobil();		
+			if (mob == null) {				
+				throw new AplicacaoException("A sigla informada não corresponde a um documento da base de dados.");
+			}
+			
+			byte ab[] = null;
+
+			if (isPdf) {
+				ab = Documento.getDocumento(mob, null, completo, semmarcas, null, null);
+				if (ab == null) {
+					throw new Exception("PDF inválido!");
+				}
+				
+			}
+			return new InputStreamDownload(makeByteArrayInputStream(ab, false), checkDownloadType(ab, isPdf, false), "TESTE.pdf");
+		} catch (Exception e) {
+			throw new RuntimeException("erro na geração do documento.", e);
+		}
+	}
+
 
 	@Get("/app/arquivo/download")
 	public Download download(String arquivo, String hash, HttpServletResponse response) throws Exception {
@@ -353,5 +395,36 @@ public class ExArquivoController extends ExController {
 		}
 		return failure;
 	}
+	
+	
+	private static String getJwtPassword() {
+		String pwd = null;
+		try {
+			pwd = System.getProperty("siga.ex.autenticacao.pwd");
+			if (pwd == null)
+				throw new AplicacaoException(
+						"Erro obtendo propriedade siga.ex.autenticacao.pwd");
+			return pwd;
+		} catch (Exception e) {
+			throw new AplicacaoException(
+					"Erro obtendo propriedade siga.ex.autenticacao.pwd", 0, e);
+		}
+	}
+
+
+	private static Map<String, Object> verifyJwtToken(String token) {
+		final JWTVerifier verifier = new JWTVerifier(getJwtPassword());
+		try {
+			Map<String, Object> map = verifier.verify(token);
+			return map;
+		} catch (Exception e) {
+			throw new AplicacaoException("Erro ao verificar token JWT", 0, e);
+		}
+	}
+	
+	
+	
+	
+	
 
 }

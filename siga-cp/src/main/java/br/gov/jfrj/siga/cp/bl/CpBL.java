@@ -53,6 +53,7 @@ import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
+import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.util.Excel;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -1273,4 +1274,63 @@ public class CpBL {
 
 		return "Usuário inativado com sucesso: " + pessoa.getSesbPessoa() + pessoa.getMatricula();
 	}
+	
+	
+	public CpToken gerarUrlPermanente(Long idRef) {
+		try {
+			CpToken sigaUrlPermanente = new CpToken();
+			sigaUrlPermanente = dao().obterCpTokenPorTipoIdRef(1L,idRef); //Se tem token não expirado, devolve token
+			if (sigaUrlPermanente == null ) {
+				sigaUrlPermanente = new CpToken();
+				//Seta tipo 1 - Token para URL Permamente
+				sigaUrlPermanente.setIdTpToken(1L);
+				
+				sigaUrlPermanente.setToken(gerarToken(128));
+				sigaUrlPermanente.setIdRef(idRef);
+
+				try {
+					dao().gravar(sigaUrlPermanente);
+				} catch (final Exception e) {
+	
+					throw new AplicacaoException("Erro na gravação", 0, e);
+				}
+			} 
+			return sigaUrlPermanente;
+
+			
+		} catch (final Exception e) {
+			throw new AplicacaoException("Ocorreu um erro ao gerar o Token.", 0, e);
+		}
+	}
+	
+	public String gerarToken(final int tokenSize) {
+		boolean existe = true;		
+		String codigo = "";
+		if (tokenSize > 256) {
+			throw new AplicacaoException("Tamanho máximo do Token excedido");
+		}
+		while(existe) {
+			codigo = randomAlfanumerico(tokenSize);
+			//if(obterProtocoloPorCodigo(codigo) == null)
+			existe = false;
+		}			
+		return codigo;
+	}
+	
+	
+	/*
+	 * Funcao para geracao de codigos alfanumericos randomicos
+	 * recebendo apenas a quantidade de caracteres que o codigo deve conter
+	 * Levar função para Utils
+	 */
+	public static String randomAlfanumerico(int contador) {
+		final String STRING_ALFANUMERICA = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+		StringBuilder sb = new StringBuilder();
+		while (contador-- != 0) {	
+			int caracteres = (int)(Math.random()*STRING_ALFANUMERICA.length());	
+			sb.append(STRING_ALFANUMERICA.charAt(caracteres));	
+		}	
+		return sb.toString();
+	}
+	
 }

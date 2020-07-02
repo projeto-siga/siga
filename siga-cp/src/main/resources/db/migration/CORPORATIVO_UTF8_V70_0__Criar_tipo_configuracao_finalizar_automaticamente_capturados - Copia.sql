@@ -1,0 +1,1 @@
+insert into CORPORATIVO.CP_TIPO_CONFIGURACAO values(47, 'Finalizar automaticamente os capturados', 2);

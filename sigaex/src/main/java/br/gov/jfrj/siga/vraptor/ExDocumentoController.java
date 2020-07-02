@@ -833,8 +833,8 @@ public class ExDocumentoController extends ExController {
 			if (!exDocumentoDTO.getDoc().jaTransferido() && !exDocumentoDTO.getDoc().isAssinadoPorTodosOsSignatariosComTokenOuSenha() 
 					&&  !exDocumentoDTO.getMob().isJuntado() &&  !exDocumentoDTO.getMob().isJuntadoExterno()
 					&&  !exDocumentoDTO.getMob().isCancelada() && exDocumentoDTO.getDoc().getAutenticacoesComTokenOuSenha().isEmpty() 
-					&& (exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO
-					|| exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO && (Ex.getInstance().getConf().podePorConfiguracao(so.getTitular(), so.getLotaTitular(), CpTipoConfiguracao.TIPO_CONFIG_FINALIZAR_AUTOMATICAMENTE_CAPTURADOS))))
+					&& ((exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO
+					|| exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO) && (Ex.getInstance().getConf().podePorConfiguracao(so.getTitular(), so.getLotaTitular(), CpTipoConfiguracao.TIPO_CONFIG_TROCAR_PDF_CAPTURADOS))))
 					{
 						return true;
 					}

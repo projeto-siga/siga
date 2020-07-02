@@ -8,7 +8,8 @@
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
-<siga:pagina titulo="Transferência em Lote">
+<fmt:message key="documento.transferencia.lote" var="titulo"/>
+<siga:pagina titulo="${titulo}">
 
 	<script type="text/javascript" language="Javascript1.1">
 		function sbmt(offset) {
@@ -107,7 +108,7 @@
 	<div class="container-fluid">
 		<div class="card bg-light mb-3">
 			<div class="card-header">
-				<h5>Transferência em Lote</h5>
+				<h5>${titulo}</h5>
 			</div>
 			<div class="card-body">
 				<form name="frm" action="transferir_lote_gravar" method="post">
@@ -224,7 +225,7 @@
 			</div>
 			<div class="row">
 				<div class="col-sm-1">
-					<button type="submit" class="btn btn-primary">Transferir</button>
+					<button type="submit" class="btn btn-primary"><fmt:message key="documento.transferir"/></button>
 				</div>
 			</div>
 		</div>
@@ -336,12 +337,12 @@
 									<td align="center" class="align-middle text-center"><input type="checkbox" name="${x}"
 										value="true" ${x_checked} id="${x}"
 										onclick="javascript:displaySel(this, '${tpd_x}');" /></td>
-									<td align="center" class="align-middle text-center d-none">
+									<td align="center" class="align-middle text-center d-none tpDespacho">
 											<c:remove var="style" /> 
 											<c:if test="${empty param[x]}">
 												<c:set var="style" value=" style=display:none" />
 											</c:if>
-										<div id="div_${tpd_x}" ${style}>
+										<div id="div_${tpd_x}" ${style} class="tpDespacho">
 											<select class="custom-select" name="${tpd_x}" id="${tpd_x}"
 												onchange="javascript:displayTxt(this, '${txt_x}');">
 												<c:forEach var="tpd" items="${tiposDespacho}">
@@ -357,7 +358,7 @@
 											<c:if test="${param[tpd_x] != -1}">
 												<c:set var="style" value=" style=display:none" />
 											</c:if>
-											<div id="div_${txt_x}" ${style}>
+											<div id="div_${txt_x}" ${style} class="tpDespacho">
 												<input type="text" name="${txt_x}" id="${txt_x}"
 													value="${param[txt_x]}" maxlength="255" class="form-control"/>
 											</div>

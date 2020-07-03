@@ -1,6 +1,6 @@
 solicitante:
-  nome: "sigadoc"
-  sobrenome: "DevOps"
+  nome: "siga"
+  sobrenome: "DevSecOps"
 
 homologacao:
   pre_aprovado: true
@@ -14,5 +14,5 @@ treinamento:
 
 producao:
   pre_aprovado: false
-  restricao_horario_inicio: "13:00"
+  restricao_horario_inicio: "23:00"
   restricao_horario_fim: "23:59"

@@ -1049,7 +1049,7 @@ public class Excel {
 			return "Linha " + linha +": NOME com mais de 60 caracteres" + System.getProperty("line.separator");
 		}
 
-		if(nomePessoa != null && !nomePessoa.matches("[a-zA-ZáâãäéêëíïóôõöúüçñÁÂÃÄÉÊËÍÏÓÔÕÖÚÜÇÑ'' ]+")) {
+		if(nomePessoa != null && !nomePessoa.matches(Texto.DpPessoa.NOME_REGEX_CARACTERES_PERMITIDOS)) {
 			return "Linha " + linha +": NOME com caracteres não permitidos" + System.getProperty("line.separator");
 		}
 		return "";

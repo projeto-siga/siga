@@ -298,7 +298,9 @@ public class ExMarcadorBL {
 		// Se não estiver finalizado
 		if (!mob.doc().isFinalizado()) {
 			acrescentarMarca(CpMarcador.MARCADOR_EM_ELABORACAO, mob.doc().getDtRegDoc(), mob.doc().getCadastrante(),
-					mob.doc().getLotaCadastrante());
+					(Ex.getInstance().getConf().podePorConfiguracao(mob.doc().getCadastrante(), mob.doc().getLotaCadastrante(), 
+							null, mob.doc().getExModelo().getExFormaDocumento(), null, CpTipoConfiguracao.TIPO_CONFIG_TMP_PARA_LOTACAO) ? 
+									mob.doc().getLotaCadastrante() : null));
 			if (mob.getExDocumento().getSubscritor() != null
 					&& !(Boolean.valueOf(SigaBaseProperties.getString("siga.mesa.naoRevisarTemporarios")) 
 							&& !mob.doc().getCadastrante().equals(mob.doc().getSubscritor()) 

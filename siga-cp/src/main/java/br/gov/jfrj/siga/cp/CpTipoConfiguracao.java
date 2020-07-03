@@ -155,6 +155,8 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 	
 	public static final long TIPO_CONFIG_TROCAR_PDF_CAPTURADOS = 48;
 
+	public static final long TIPO_CONFIG_TMP_PARA_LOTACAO = 47;
+
 	// SIGA-WF
 
 	public static final long TIPO_CONFIG_INSTANCIAR_PROCEDIMENTO = 100;

@@ -149,6 +149,8 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 
 	public static final long TIPO_CONFIG_INCLUIR_EM_AVULSO = 45;
 
+	public static final long TIPO_CONFIG_TMP_PARA_LOTACAO = 47;
+
 	// SIGA-WF
 
 	public static final long TIPO_CONFIG_INSTANCIAR_PROCEDIMENTO = 100;

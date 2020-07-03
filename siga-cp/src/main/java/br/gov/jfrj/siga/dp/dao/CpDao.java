@@ -1326,12 +1326,13 @@ public class CpDao extends ModeloDao {
 			}
 
 			query.setParameter("nome", flt.getNome().toUpperCase().replace(' ', '%'));
+			query.setParameter("identidade", flt.getIdentidade());
 
 			if(flt.getEmail() != null) {
 				query.setParameter("email", flt.getEmail().toUpperCase().replace(' ', '%'));
 			} else {
 				query.setParameter("email", null);
-			}
+			}						
 
 			if (!flt.isBuscarFechadas())
 				query.setParameter("situacaoFuncionalPessoa", flt.getSituacaoFuncionalPessoa());
@@ -1377,6 +1378,7 @@ public class CpDao extends ModeloDao {
 			query = em().createNamedQuery("consultarPessoaComOrgaoFuncaoCargo");
 
 			query.setParameter("nome", pes.getNomePessoa().toUpperCase().replace(' ', '%'));
+			query.setParameter("identidade", pes.getIdentidade());
 
 			if (pes.getEmailPessoa() != null) {
 				query.setParameter("email", pes.getEmailPessoa().toUpperCase().replace(' ', '%'));
@@ -1445,6 +1447,7 @@ public class CpDao extends ModeloDao {
 				query = em().createNamedQuery("consultarQuantidadeDpPessoaInclusiveFechadas");
 
 			query.setParameter("nome", flt.getNome().toUpperCase().replace(' ', '%'));
+			query.setParameter("identidade", flt.getIdentidade());
 
 			if (!flt.isBuscarFechadas())
 				query.setParameter("situacaoFuncionalPessoa", flt.getSituacaoFuncionalPessoa());
@@ -1931,7 +1934,7 @@ public class CpDao extends ModeloDao {
 			return gravarComHistorico(oNovo, identidadeCadastrante);
 		}
 
-		if (oNovo.semelhante(oAntigo, 0)) {
+		if (!(oNovo instanceof CpIdentidade) && (oNovo.semelhante(oAntigo, 0))) {
 			return oAntigo;
 		}
 

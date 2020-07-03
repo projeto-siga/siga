@@ -307,6 +307,7 @@ public class CpBL {
 			}
 
 		} catch (AplicacaoException e) {
+			resultado = e.getMessage();
 			e.printStackTrace();
 		}
 		return resultado;
@@ -700,7 +701,7 @@ public class CpBL {
 			String servico = "SIGA: Sistema Integrado de Gestão Administrativa;GI: Módulo de Gestão de Identidade;DEF_SENHA: Definir Senha";
 			try {
 				boolean admTrocaSenha = Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(
-						idCadastrante.getDpPessoa(), idCadastrante.getDpPessoa().getLotacao(), servico);
+						idCadastrante.getDpPessoa(), idCadastrante.getDpPessoa().getPessoaAtual().getLotacao(), servico);
 				if (admTrocaSenha) {
 					if (buscarModoAutenticacao(idCadastrante.getCpOrgaoUsuario().getSiglaOrgaoUsu())
 							.equals(GiService._MODO_AUTENTICACAO_BANCO)) {

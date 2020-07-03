@@ -306,6 +306,7 @@ public class CpBL {
 			}
 
 		} catch (AplicacaoException e) {
+			resultado = e.getMessage();
 			e.printStackTrace();
 		}
 		return resultado;

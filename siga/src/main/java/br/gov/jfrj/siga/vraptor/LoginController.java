@@ -5,8 +5,6 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -249,9 +247,10 @@ public class LoginController extends SigaController {
 	 * continua com a autenticação
 	 * 
 	 */
-	@Get("public/app/login_sp")
-	public void loginSP(String cont) throws AplicacaoException, IOException {
+	@Get("public/app/loginSSO")
+	public void loginSSO(String cont) throws AplicacaoException, IOException {
 		try {
+			
 			String cpf = (String) request.getSession().getAttribute("cpfAutenticado");
 
 			if(cpf == null){
@@ -271,10 +270,7 @@ public class LoginController extends SigaController {
 				}
 				if (!usuarioPermitido)
 					throw new ServletException("Usuário não cadastrado ou sem permissão de acesso: " + cpf + ".");
-					
-				this.response.addCookie(AuthJwtFormFilter.buildEraseCookie());
 				gravaCookieComToken(cpf, cont);
-				
 			}
 				
 			} catch(AplicacaoException a){

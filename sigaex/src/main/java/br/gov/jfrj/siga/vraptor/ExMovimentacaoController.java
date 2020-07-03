@@ -18,11 +18,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -32,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
 
@@ -2409,7 +2412,10 @@ public class ExMovimentacaoController extends ExController {
 			final DpLotacaoSelecao lotaResponsavelSel,
 			final CpOrgaoSelecao cpOrgaoSel, final String obsOrgao,
 			final Long tpdall, final String txtall,
-			final DpPessoaSelecao responsavelSel) {
+			final DpPessoaSelecao responsavelSel, final List<Long> documentosSelecionados) {
+		
+//		documentosSelecionados.stream().collect(Collectors.toMap(id -> "chk_" + id, id ->"true"));
+		
 		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder
 				.novaInstancia();
 		builder.setDtMovString(dtMovString).setSubscritorSel(subscritorSel)
@@ -2429,17 +2435,68 @@ public class ExMovimentacaoController extends ExController {
 		final HashMap<ExMobil, AplicacaoException> MapMensagens = new HashMap<ExMobil, AplicacaoException>();
 		final List<ExMobil> Mobeis = new ArrayList<ExMobil>();
 		final List<ExMobil> MobilSucesso = new ArrayList<ExMobil>();
+		
+//		if(true) {
+//			return;
+//		}
+		
 
-		if (mov.getResp() == null && mov.getLotaResp() == null) {
-			throw new AplicacaoException(
-					"Não foi definido o destino da transferência.");
+		if (Objects.isNull(mov.getResp()) && Objects.isNull(mov.getLotaResp())
+				&& Objects.isNull(mov.getOrgaoExterno())) {
+			throw new AplicacaoException("Não foi definido o destino da transferência.");
 		}
 		if (tpdall != null && tpdall != 0) {
 			despaUnico = true;
 		}
 
 		AplicacaoException msgErroNivelAcessoso = null;
+		
+		for (Long idDocumento : documentosSelecionados) {
+			try {
+				final Long idTpDespacho = despaUnico ? tpdall : 0L;
+				ExTipoDespacho tpd = dao().consultar(idTpDespacho, ExTipoDespacho.class, false);
 
+				final ExMobil mobil = dao().consultar(idDocumento, ExMobil.class, false);
+
+				if (!Ex.getInstance().getComp().podeAcessarDocumento(getTitular(), getLotaTitular(), mobil)) {
+					if (msgErroNivelAcessoso == null) {
+						msgErroNivelAcessoso = new AplicacaoException(
+								"O documento não pode ser transferido por estar inacessível ao usuário.");
+					}
+					if (!(msgErroNivelAcessoso == null)) {
+						MapMensagens.put(mobil, msgErroNivelAcessoso);
+					}
+				} else {
+//				Objects.toString(arg0)
+					String txt = despaUnico ? (StringUtils.isEmpty(txtall) ? null : txtall) : null;
+
+					nmobil = new ExMobil();
+					nmobil = mobil;
+					Mobeis.add(mobil);
+					
+					LOGGER.debug(idDocumento + ": " + mov + ", " + mobil + ", " + tpd + ", " + txt);
+
+					Ex.getInstance() //
+					.getBL()         //
+					.transferir(mov.getOrgaoExterno(),                 //
+							mov.getObsOrgao(), getCadastrante(),       //
+							getLotaTitular(), mobil,                   //
+							mov.getDtMov(), dt, mov.getDtFimMov(),     //
+							mov.getLotaResp(), mov.getResp(),          //
+							mov.getLotaDestinoFinal(),                 //
+							mov.getDestinoFinal(),                     //
+							mov.getSubscritor(), mov.getTitular(),     //
+							tpd, false, txt, null,                     //
+							mov.getNmFuncaoSubscritor(), false,        //
+							false);
+				}
+			} catch (AplicacaoException e) {
+				MapMensagens.put(nmobil, e);
+			}
+
+		}
+
+		/*
 		for (final String s : getPar().keySet()) {
 			try {
 				if (s.startsWith("chk_") && param(s).equals("true")) {
@@ -2512,6 +2569,7 @@ public class ExMovimentacaoController extends ExController {
 				MapMensagens.put(nmobil, e);
 			}
 		}
+		*/
 
 		final ArrayList<Object> al = new ArrayList<Object>();
 		final ArrayList<Object> check = new ArrayList<Object>();

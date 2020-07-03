@@ -12,6 +12,7 @@
 <siga:pagina titulo="${titulo}">
 
 	<script type="text/javascript" language="Javascript1.1">
+	/*
 		function sbmt(offset) {
 			frm.action = '${pageContext.request.contextPath}/app/expediente/mov/transferir_lote';
 			frm.submit();
@@ -32,8 +33,12 @@
 			document.getElementById('div_tpd_' + coreName).style.display = estiloCombo;
 			document.getElementById('div_lbl_' + coreName).style.display = estiloLabel;
 		}
-
+*/
 		function checkUncheckAll(theElement) {
+			let isChecked = theElement.checked;
+			Array.from(document.getElementsByClassName("chkDocumento")).forEach(chk => chk.checked = isChecked);
+			
+			/*
 			var theForm = theElement.form, z = 0;
 			for (z = 0; z < theForm.length; z++) {
 				if (theForm[z].type == 'checkbox'
@@ -49,9 +54,14 @@
 						enableDisableItem(theForm[z].name.substring(4), false);
 				}
 			}
+			*/
 		}
 
 		function displaySel(chk, el) {
+			document.getElementById("checkall").checked = 
+				Array.from(document.getElementsByClassName("chkDocumento")).every(chk => chk.checked);
+
+			/*
 			document.getElementById('div_' + el).style.display = chk.checked ? ''
 					: 'none';
 			if (chk.checked == -2)
@@ -60,6 +70,7 @@
 				enableDisableItem(chk.name.substring(4), true);
 			else
 				enableDisableItem(chk.name.substring(4), false);
+			*/
 		}
 
 		function displayTxt(sel, el) {
@@ -165,8 +176,6 @@
 							type="text" name="nmFuncaoSubscritor" id="nmFuncaoSubscritor"
 							value="${nmFuncaoSubscritor}" size="50" maxLength="128"
 							class="form-control" /> <small class="form-text text-muted">(opcional)</small>
-
-
 					</div>
 				</div>
 			</div>
@@ -253,13 +262,14 @@
 						<table class="table table-hover table-striped">
 							<thead class="${thead_color} align-middle text-center">
 								<tr>
+									<th rowspan="2" align="center">
+										<input type="checkbox" id="checkall"
+										name="checkall" value="true" onclick="checkUncheckAll(this)" />
+									</th>
 									<th rowspan="2" class="text-right">Número</th>
 									<th colspan="3">Documento</th>
 									<th colspan="2">Última Movimentação</th>
 									<th rowspan="2">Descrição</th>
-									<th rowspan="2" align="center"><input type="checkbox"
-										name="checkall" value="true" onclick="checkUncheckAll(this)" />
-									</th>
 									<th rowspan="2" class="col-5 d-none">Despacho <c:if
 											test="${secao==0}" />
 									</th>
@@ -277,6 +287,29 @@
 								</c:if>
 
 								<tr>
+									<c:set var="x" scope="request">
+												chk_${m.id}
+											</c:set>
+									<c:remove var="x_checked" scope="request" />
+									<c:if test="${param[x] == 'true'}">
+										<c:set var="x_checked" scope="request">checked</c:set>
+									</c:if>
+									<c:set var="tpd_x" scope="request">
+												tpd_${m.id}
+											</c:set>
+									<c:set var="txt_x" scope="request">
+												txt_${m.id}
+											</c:set>
+									<c:set var="lbl_x" scope="request">
+												lbl_${m.id}
+											</c:set>
+									<td align="center" class="align-middle text-center">
+										<input type="checkbox" name="documentosSelecionados" 
+											value="${m.id}" ${x_checked} 
+											id="${x}" 
+											class="chkDocumento"
+											onclick="javascript:displaySel(this, '${tpd_x}');" />
+									</td>
 									<td class="text-right"><c:choose>
 											<c:when test='${param.popup!="true"}'>
 												<a
@@ -318,26 +351,9 @@
 										<td class="text-center"></td>
 									</c:if>
 									<td>${f:descricaoConfidencial(m.doc, lotaTitular)}</td>
-									<c:set var="x" scope="request">
-												chk_${m.id}
-											</c:set>
-									<c:remove var="x_checked" scope="request" />
-									<c:if test="${param[x] == 'true'}">
-										<c:set var="x_checked" scope="request">checked</c:set>
-									</c:if>
-									<c:set var="tpd_x" scope="request">
-												tpd_${m.id}
-											</c:set>
-									<c:set var="txt_x" scope="request">
-												txt_${m.id}
-											</c:set>
-									<c:set var="lbl_x" scope="request">
-												lbl_${m.id}
-											</c:set>
-									<td align="center" class="align-middle text-center"><input type="checkbox" name="${x}"
-										value="true" ${x_checked} id="${x}"
-										onclick="javascript:displaySel(this, '${tpd_x}');" /></td>
-									<td align="center" class="align-middle text-center d-none tpDespacho">
+									
+									<td align="center" class="align-middle text-center d-none">
+									<c:if test="${false }">
 											<c:remove var="style" /> 
 											<c:if test="${empty param[x]}">
 												<c:set var="style" value=" style=display:none" />
@@ -364,7 +380,9 @@
 											</div>
 										</div>
 										<div id="div_${lbl_x}" style="display: none">Despacho
-											Único</div></td>
+											Único</div>
+									</c:if>
+									</td>
 								</tr>
 								</c:if>
 								</c:forEach>

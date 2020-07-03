@@ -24,7 +24,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -2427,7 +2426,6 @@ public class ExMovimentacaoController extends ExController {
 
 		final ExMovimentacao mov = builder.construir(dao());
 
-		final Pattern p = Pattern.compile("chk_([0-9]+)");
 		boolean despaUnico = false;
 		final Date dt = dao().dt();
 		mov.setDtIniMov(dt);
@@ -2435,11 +2433,6 @@ public class ExMovimentacaoController extends ExController {
 		final HashMap<ExMobil, AplicacaoException> MapMensagens = new HashMap<ExMobil, AplicacaoException>();
 		final List<ExMobil> Mobeis = new ArrayList<ExMobil>();
 		final List<ExMobil> MobilSucesso = new ArrayList<ExMobil>();
-		
-//		if(true) {
-//			return;
-//		}
-		
 
 		if (Objects.isNull(mov.getResp()) && Objects.isNull(mov.getLotaResp())
 				&& Objects.isNull(mov.getOrgaoExterno())) {
@@ -2467,14 +2460,13 @@ public class ExMovimentacaoController extends ExController {
 						MapMensagens.put(mobil, msgErroNivelAcessoso);
 					}
 				} else {
-//				Objects.toString(arg0)
 					String txt = despaUnico ? (StringUtils.isEmpty(txtall) ? null : txtall) : null;
 
 					nmobil = new ExMobil();
 					nmobil = mobil;
 					Mobeis.add(mobil);
 					
-					LOGGER.debug(idDocumento + ": " + mov + ", " + mobil + ", " + tpd + ", " + txt);
+//					LOGGER.debug(idDocumento + ": " + mov + ", " + mobil + ", " + tpd + ", " + txt);
 
 					Ex.getInstance() //
 					.getBL()         //
@@ -2496,81 +2488,23 @@ public class ExMovimentacaoController extends ExController {
 
 		}
 
-		/*
-		for (final String s : getPar().keySet()) {
-			try {
-				if (s.startsWith("chk_") && param(s).equals("true")) {
-					final Long idTpDespacho;
-					if (!despaUnico) {
-						idTpDespacho = Long.valueOf(param(s.replace("chk_",
-								"tpd_")));
-					} else {
-						idTpDespacho = tpdall;
-					}
+		final ArrayList<Object> arrays = montarArraysResultados(MapMensagens, Mobeis, MobilSucesso);
 
-					ExTipoDespacho tpd = null;
-					if (idTpDespacho != null && idTpDespacho > 0) {
-						tpd = dao().consultar(idTpDespacho,
-								ExTipoDespacho.class, false);
-					}
+		result.include("mov", mov);
+		result.include("itens", arrays);
+		result.include("lotaTitular", mov.getLotaTitular());
+		result.include("dtMovString", dtMovString);
+		result.include("subscritorSel", subscritorSel);
+		result.include("titularSel", titularSel);
+		result.include("nmFuncaoSubscritor", nmFuncaoSubscritor);
+		result.include("lotaResponsavelSel", lotaResponsavelSel);
+		result.include("cpOrgaoSel", cpOrgaoSel);
+		result.include("substituicao", substituicao);
+		result.include("responsavelSel", responsavelSel);
+	}
 
-					final Matcher m = p.matcher(s);
-					if (!m.find()) {
-						throw new AplicacaoException(
-								"Não foi possível ler a Id do documento e o número da via.");
-					}
-
-					final ExMobil mobil = dao().consultar(
-							Long.valueOf(m.group(1)), ExMobil.class, false);
-
-					if (!Ex.getInstance()
-							.getComp()
-							.podeAcessarDocumento(getTitular(),
-									getLotaTitular(), mobil)) {
-						if (msgErroNivelAcessoso == null) {
-							msgErroNivelAcessoso = new AplicacaoException(
-									"O documento não pode ser transferido por estar inacessível ao usuário.");
-						}
-						if (!(msgErroNivelAcessoso == null)) {
-							MapMensagens.put(mobil, msgErroNivelAcessoso);
-						}
-					} else {
-						String txt = "";
-						if (!despaUnico) {
-							txt = param(s.replace("chk_", "txt_"));
-						} else {
-							txt = txtall;
-						}
-						if (txt != null && txt.equals("")) {
-							txt = null;
-						}
-
-						nmobil = new ExMobil();
-						nmobil = mobil;
-						Mobeis.add(mobil);
-
-						Ex.getInstance()
-								.getBL()
-								.transferir(mov.getOrgaoExterno(),
-										mov.getObsOrgao(), getCadastrante(),
-										getLotaTitular(), mobil,
-										mov.getDtMov(), dt, mov.getDtFimMov(),
-										mov.getLotaResp(), mov.getResp(),
-										mov.getLotaDestinoFinal(),
-										mov.getDestinoFinal(),
-										mov.getSubscritor(), mov.getTitular(),
-										tpd, false, txt, null,
-										mov.getNmFuncaoSubscritor(), false,
-										false);
-
-					}
-				}
-			} catch (AplicacaoException e) {
-				MapMensagens.put(nmobil, e);
-			}
-		}
-		*/
-
+	private ArrayList<Object> montarArraysResultados(final HashMap<ExMobil, AplicacaoException> MapMensagens,
+			final List<ExMobil> Mobeis, final List<ExMobil> MobilSucesso) {
 		final ArrayList<Object> al = new ArrayList<Object>();
 		final ArrayList<Object> check = new ArrayList<Object>();
 		final ArrayList<Object> arrays = new ArrayList<Object>();
@@ -2614,18 +2548,7 @@ public class ExMovimentacaoController extends ExController {
 
 		arrays.add(al);
 		arrays.add(check);
-
-		result.include("mov", mov);
-		result.include("itens", arrays);
-		result.include("lotaTitular", mov.getLotaTitular());
-		result.include("dtMovString", dtMovString);
-		result.include("subscritorSel", subscritorSel);
-		result.include("titularSel", titularSel);
-		result.include("nmFuncaoSubscritor", nmFuncaoSubscritor);
-		result.include("lotaResponsavelSel", lotaResponsavelSel);
-		result.include("cpOrgaoSel", cpOrgaoSel);
-		result.include("substituicao", substituicao);
-		result.include("responsavelSel", responsavelSel);
+		return arrays;
 	}
 
 	@Get("app/expediente/mov/arquivar_intermediario_lote")

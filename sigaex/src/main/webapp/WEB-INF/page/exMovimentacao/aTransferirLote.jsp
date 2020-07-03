@@ -12,81 +12,16 @@
 <siga:pagina titulo="${titulo}">
 
 	<script type="text/javascript" language="Javascript1.1">
-	/*
-		function sbmt(offset) {
-			frm.action = '${pageContext.request.contextPath}/app/expediente/mov/transferir_lote';
-			frm.submit();
-		}
-
-		function enableDisableItem(coreName, enable) {
-			var estiloCombo, estiloLabel;
-			if (!document.getElementById('chk_' + coreName).checked) {
-				estiloLabel = 'none';
-				estiloCombo = 'none';
-			} else if (enable == true) {
-				estiloLabel = 'none';
-				estiloCombo = '';
-			} else {
-				estiloLabel = '';
-				estiloCombo = 'none';
-			}
-			document.getElementById('div_tpd_' + coreName).style.display = estiloCombo;
-			document.getElementById('div_lbl_' + coreName).style.display = estiloLabel;
-		}
-*/
 		function checkUncheckAll(theElement) {
 			let isChecked = theElement.checked;
 			Array.from(document.getElementsByClassName("chkDocumento")).forEach(chk => chk.checked = isChecked);
-			
-			/*
-			var theForm = theElement.form, z = 0;
-			for (z = 0; z < theForm.length; z++) {
-				if (theForm[z].type == 'checkbox'
-						&& (theForm[z].name != 'checkall' && theForm[z].name != 'substituicao') ) {
-					theForm[z].checked = !(theElement.checked);
-					theForm[z].click();
-				} else if (((theForm[z].type == 'select-one' && theForm[z].name
-						.substr(0, 4) == 'tpd_') || (theForm[z].type == 'text' && theForm[z].name
-						.substr(0, 4) == 'txt_'))
-						&& theForm[z].name != 'tpdall'
-						&& theForm[z].name != 'txtall') {
-					if (!theElement.checked)
-						enableDisableItem(theForm[z].name.substring(4), false);
-				}
-			}
-			*/
 		}
 
 		function displaySel(chk, el) {
 			document.getElementById("checkall").checked = 
 				Array.from(document.getElementsByClassName("chkDocumento")).every(chk => chk.checked);
-
-			/*
-			document.getElementById('div_' + el).style.display = chk.checked ? ''
-					: 'none';
-			if (chk.checked == -2)
-				document.getElementById(el).focus();
-			if (document.getElementById('tpdall').value == 0)
-				enableDisableItem(chk.name.substring(4), true);
-			else
-				enableDisableItem(chk.name.substring(4), false);
-			*/
 		}
 
-		function displayTxt(sel, el) {
-			document.getElementById('div_' + el).style.display = sel.value == -1 ? ''
-					: 'none';
-			document.getElementById(el).focus();
-		}
-
-		function enableDisableAll(theElement) {
-			if (theElement.value == -1) {
-				document.getElementById('div_txtall').style.display = '';
-				document.getElementById('txtall').focus();
-			} else {
-				document.getElementById('div_txtall').style.display = 'none';
-			}
-		}
 		function updateTipoResponsavel() {
 
 			var objSelecionado = document.getElementById("tipoResponsavel");
@@ -212,26 +147,6 @@
 					</div>
 				</div>
 			</div>
-			<div class="row d-none">
-				<div class="col-sm-4">
-					<div class="form-group" id="div_tpdall">
-						<label>Despacho Único</label> <select name="tpdall" id="tpdall"
-							class="custom-select"
-							onchange="javascript:enableDisableAll(this);">
-							<c:forEach var="item" items="${tiposDespacho}">
-								<option value="${item.idTpDespacho}">
-									${item.descTpDespacho}</option>
-							</c:forEach>
-						</select>
-					</div>
-				</div>
-				<div class="col-sm-8">
-					<div class="form-group" id="div_txtall" style="display: none;">
-						<label>&nbsp;</label> <input type="text" name="txtall" id="txtall"
-							maxlength="255" class="form-control" />
-					</div>
-				</div>
-			</div>
 			<div class="row">
 				<div class="col-sm-1">
 					<button type="submit" class="btn btn-primary"><fmt:message key="documento.transferir"/></button>
@@ -297,12 +212,7 @@
 									<c:set var="tpd_x" scope="request">
 												tpd_${m.id}
 											</c:set>
-									<c:set var="txt_x" scope="request">
-												txt_${m.id}
-											</c:set>
-									<c:set var="lbl_x" scope="request">
-												lbl_${m.id}
-											</c:set>
+
 									<td align="center" class="align-middle text-center">
 										<input type="checkbox" name="documentosSelecionados" 
 											value="${m.id}" ${x_checked} 
@@ -351,38 +261,6 @@
 										<td class="text-center"></td>
 									</c:if>
 									<td>${f:descricaoConfidencial(m.doc, lotaTitular)}</td>
-									
-									<td align="center" class="align-middle text-center d-none">
-									<c:if test="${false }">
-											<c:remove var="style" /> 
-											<c:if test="${empty param[x]}">
-												<c:set var="style" value=" style=display:none" />
-											</c:if>
-										<div id="div_${tpd_x}" ${style} class="tpDespacho">
-											<select class="custom-select" name="${tpd_x}" id="${tpd_x}"
-												onchange="javascript:displayTxt(this, '${txt_x}');">
-												<c:forEach var="tpd" items="${tiposDespacho}">
-													<c:remove var="selected" />
-													<c:if test="${tpd.idTpDespacho == param[tpd_x]}">
-														<c:set var="selected" value="selected" />
-													</c:if>
-													<option value="${tpd.idTpDespacho}" ${selected}>
-														${tpd.descTpDespacho}</option>
-												</c:forEach>
-											</select>
-											<c:remove var="style" />
-											<c:if test="${param[tpd_x] != -1}">
-												<c:set var="style" value=" style=display:none" />
-											</c:if>
-											<div id="div_${txt_x}" ${style} class="tpDespacho">
-												<input type="text" name="${txt_x}" id="${txt_x}"
-													value="${param[txt_x]}" maxlength="255" class="form-control"/>
-											</div>
-										</div>
-										<div id="div_${lbl_x}" style="display: none">Despacho
-											Único</div>
-									</c:if>
-									</td>
 								</tr>
 								</c:if>
 								</c:forEach>

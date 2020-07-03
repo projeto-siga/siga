@@ -9,6 +9,7 @@ import java.util.TreeSet;
 
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -451,7 +452,7 @@ public class ExMarcadorBL {
 								&& !mob.getDoc().isFinalizado())) 
 						acrescentarMarca(CpMarcador.MARCADOR_REVISAR, mov.getDtIniMov(), mov.getSubscritor(), null);
 					if (!(Boolean.valueOf(SigaBaseProperties.getString("siga.mesa.naoRevisarTemporarios")) 
-							&& !mob.getDoc().isFinalizado()) && mov.getSubscritor().isUsuarioExterno())
+							&& !mob.getDoc().isFinalizado()) && Ex.getInstance().getConf().podePorConfiguracao(mov.getSubscritor(), mov.getSubscritor().getLotacao(), CpTipoConfiguracao.TIPO_CONFIG_COSIGNATARIO_ASSINAR_ANTES_SUBSCRITOR))
 						acrescentarMarca(CpMarcador.MARCADOR_COMO_SUBSCRITOR, mov.getDtIniMov(), mov.getSubscritor(), null);						
 				}	
 			}

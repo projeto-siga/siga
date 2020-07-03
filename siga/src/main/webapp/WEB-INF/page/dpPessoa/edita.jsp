@@ -102,9 +102,14 @@
 		if(campo.value != "") {
 			var RegExp = /\b[\w]+@[\w-]+\.[\w]+/;
 	
-			if (campo.value.search(RegExp) == -1) {
-					alert("E-mail inválido!");
+			if (campo.value.search(RegExp) == -1) {					
+					mensagemAlerta("E-mail inválido!");
+					document.getElementById('email').focus();
 					return false;
+			} else if (campo.value.search(',') > 0) {
+				mensagemAlerta("E-mail inválido! Não pode conter vírgula ( , )");
+				document.getElementById('email').focus();
+				return false;				
 			}
 			return true;
 		} else {
@@ -295,7 +300,7 @@
 						<div class="col-md-4">
 							<div class="form-group">
 								<label for="nmPessoa">RG (Incluindo dígito)</label>
-								<input type="text" id="identidade" name="identidade" value="${identidade}" maxlength="60" class="form-control"/>
+								<input type="text" id="identidade" name="identidade" value="${identidade}" maxlength="20" class="form-control"/>
 							</div>
 						</div>
 						<div class="col-md-2">

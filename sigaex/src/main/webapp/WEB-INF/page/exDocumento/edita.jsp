@@ -449,7 +449,7 @@
 						</div>
 					</div>
 				</div>
-				<c:if test='${(not exDocumentoDTO.doc.finalizado) and (exDocumentoDTO.tipoDocumento == "interno_capturado" or  exDocumentoDTO.tipoDocumento == "externo_capturado")}'>
+				<c:if test='${podeTrocarPdfCapturado}'>
 				<div class="row  js-siga-sp-documento-analisa-alteracao">
 					<div class="col-sm-8">
 						<div class="form-group">

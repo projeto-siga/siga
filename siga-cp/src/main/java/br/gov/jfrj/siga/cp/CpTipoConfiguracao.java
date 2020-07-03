@@ -151,6 +151,10 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 	
 	public static final long TIPO_CONFIG_COSIGNATARIO_ASSINAR_ANTES_SUBSCRITOR = 46;
 
+	public static final long TIPO_CONFIG_FINALIZAR_AUTOMATICAMENTE_CAPTURADOS = 47;
+	
+	public static final long TIPO_CONFIG_TROCAR_PDF_CAPTURADOS = 48;
+
 	// SIGA-WF
 
 	public static final long TIPO_CONFIG_INSTANCIAR_PROCEDIMENTO = 100;

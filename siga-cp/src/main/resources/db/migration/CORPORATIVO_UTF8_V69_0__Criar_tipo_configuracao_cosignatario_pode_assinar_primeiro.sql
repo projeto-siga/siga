@@ -1,0 +1,1 @@
+insert into CORPORATIVO.CP_TIPO_CONFIGURACAO values(46, 'Cosignatário assinar antes do subscritor', 2);

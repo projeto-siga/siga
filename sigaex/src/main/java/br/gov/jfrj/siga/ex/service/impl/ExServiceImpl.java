@@ -32,9 +32,12 @@ import javax.servlet.ServletContext;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
+import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.util.SigaUtil;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -398,8 +401,8 @@ public class ExServiceImpl implements ExService {
 				final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
 				filter.setSigla(codigo);
 				mob = (ExMobil) dao().consultarPorSigla(filter);
-				//return Ex.getInstance().getBL().toJSON(mob);
-				return "";
+				return Ex.getInstance().getBL().toJSON(mob);
+				//return "";
 			}
 		} catch (Exception e) {
 			if (!isHideStackTrace())
@@ -818,6 +821,27 @@ public class ExServiceImpl implements ExService {
 		} else
 			return "";
 		
+	}
+	
+	
+	public String obterMetadadosDocumento(String siglaDocumento, String token) throws Exception {
+		try {
+			if("true".equals(SigaBaseProperties.getString("siga.ws.seguranca.token.jwt")))
+				SigaUtil.getInstance().validarToken(token);
+			
+			
+			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
+			filter.setSigla(siglaDocumento);
+			
+			ExMobil mob = dao().consultarPorSigla(filter);
+			if (mob != null){
+				return Ex.getInstance().getBL().documentoToJSON(mob.getDoc());
+			}
+		} catch (Exception e) {
+			throw new AplicacaoException("Ocorreu um problema na obtenção dos Metadados do Documento: "
+					+ e.getMessage(), 0, e);
+		}
+		return "Ocorreu um problema na obtenção dos Metadados do Documento";
 	}
 
 }

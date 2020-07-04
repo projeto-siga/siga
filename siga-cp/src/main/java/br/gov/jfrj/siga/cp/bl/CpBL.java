@@ -29,7 +29,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -56,6 +55,7 @@ import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.util.Excel;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
+import br.gov.jfrj.siga.cp.util.SigaUtil;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
@@ -1286,7 +1286,7 @@ public class CpBL {
 				//Seta tipo 1 - Token para URL Permamente
 				sigaUrlPermanente.setIdTpToken(1L);
 				
-				sigaUrlPermanente.setToken(gerarToken(128));
+				sigaUrlPermanente.setToken(SigaUtil.randomAlfanumerico(128));
 				sigaUrlPermanente.setIdRef(idRef);
 
 				try {
@@ -1303,35 +1303,15 @@ public class CpBL {
 			throw new AplicacaoException("Ocorreu um erro ao gerar o Token.", 0, e);
 		}
 	}
+		
 	
-	public String gerarToken(final int tokenSize) {
-		boolean existe = true;		
-		String codigo = "";
-		if (tokenSize > 256) {
-			throw new AplicacaoException("Tamanho máximo do Token excedido");
-		}
-		while(existe) {
-			codigo = randomAlfanumerico(tokenSize);
-			//if(obterProtocoloPorCodigo(codigo) == null)
-			existe = false;
-		}			
-		return codigo;
-	}
-	
-	
-	/*
-	 * Funcao para geracao de codigos alfanumericos randomicos
-	 * recebendo apenas a quantidade de caracteres que o codigo deve conter
-	 * Levar função para Utils
-	 */
-	public static String randomAlfanumerico(int contador) {
-		final String STRING_ALFANUMERICA = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-		StringBuilder sb = new StringBuilder();
-		while (contador-- != 0) {	
-			int caracteres = (int)(Math.random()*STRING_ALFANUMERICA.length());	
-			sb.append(STRING_ALFANUMERICA.charAt(caracteres));	
-		}	
-		return sb.toString();
+	public String obterURLPermanente(String tipoLink, String token) {
+		//String urlPermanente = System.getProperty("siga.base.url"); necessario implementar parametro
+		String urlPermanente = System.getProperty("siga.ex.enderecoAutenticidadeDocs").replace("/sigaex/public/app/autenticar", "");
+		
+		urlPermanente +=  "/siga/public/app/sigalink/"+tipoLink+"/"+token;
+		
+		return urlPermanente;
 	}
 	
 }

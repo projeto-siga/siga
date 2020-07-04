@@ -28,6 +28,7 @@ import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.cp.CpToken;
+import br.gov.jfrj.siga.cp.util.SigaUtil;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.gi.service.GiService;
@@ -137,7 +138,7 @@ public class SigaLinkPermanenteController extends SigaController {
 				ExService exService = Service.getExService();
 				String siglaDocumento = exService.obterSiglaMobilPorIdDoc(cpToken.getIdRef());
 
-				result.forwardTo(this).publicPermanenteURLPdfView(buildJwtToken(tipoLink,token,siglaDocumento));			
+				result.forwardTo(this).publicPermanenteURLPdfView(SigaUtil.buildJwtToken(tipoLink,token,siglaDocumento));			
 			}
 		} else {
 			throw new AplicacaoException("Endereço permamente inválido");
@@ -150,7 +151,7 @@ public class SigaLinkPermanenteController extends SigaController {
 	@Post
 	@Path("/public/app/sigalinkPdfView")
 	public void publicPermanenteURLPdfView(@PathParam("jwt") String jwt) throws Exception {
-		String sigla = verifyJwtToken(jwt).get("sigla").toString();
+		String sigla = SigaUtil.verifyGetJwtToken(jwt).get("sigla").toString();
 		result.include("sigla", sigla);
 		result.include("jwt", jwt);
 	}
@@ -160,8 +161,10 @@ public class SigaLinkPermanenteController extends SigaController {
 	@Path("/public/app/sigalinkStream/{jwt}") /* Desacoplar tela de visualização de PDF*/
 	public Download publicPermanenteURLStream(@PathParam("jwt") String jwt, boolean completo, boolean estampar) throws Exception {
 		estampar = true; //default
-		String tipoLink = verifyJwtToken(jwt).get("tipoLink").toString();
-		String sigla = verifyJwtToken(jwt).get("sigla").toString();
+		
+		Map<String, Object> token = SigaUtil.verifyGetJwtToken(jwt);
+		String tipoLink = token.get("tipoLink").toString();
+		String sigla = token.get("sigla").toString();
 		
 		if ("1".equals(tipoLink)) {
 			if (!"".equals(sigla)) {
@@ -184,50 +187,4 @@ public class SigaLinkPermanenteController extends SigaController {
 	}
 	
 
-	private static String getJwtPassword() {
-		String pwd = null;
-		try {
-			pwd = System.getProperty("siga.ex.autenticacao.pwd");
-			if (pwd == null)
-				throw new AplicacaoException(
-						"Erro obtendo propriedade siga.ex.autenticacao.pwd");
-			return pwd;
-		} catch (Exception e) {
-			throw new AplicacaoException(
-					"Erro obtendo propriedade siga.ex.autenticacao.pwd", 0, e);
-		}
-	}
-	
-	
-	private static String buildJwtToken(final String tipoLink, final String token, final String sigla) {
-		String jwt;
-
-		final JWTSigner signer = new JWTSigner(getJwtPassword());
-		final HashMap<String, Object> claims = new HashMap<String, Object>();
-
-		final long iat = System.currentTimeMillis() / 1000L; // issued at claim
-		final long exp = iat + 1 * 60 * 60L; // token expires in 1 hours
-		claims.put("exp", exp);
-		claims.put("iat", iat);
-
-		claims.put("tipoLink", tipoLink);
-		claims.put("token", token);
-		claims.put("sigla", sigla);
-		
-		jwt = signer.sign(claims);
-
-		return jwt;
-	}
-
-	private static Map<String, Object> verifyJwtToken(String token) {
-		final JWTVerifier verifier = new JWTVerifier(getJwtPassword());
-		try {
-			Map<String, Object> map = verifier.verify(token);
-			return map;
-		} catch (Exception e) {
-			throw new AplicacaoException("Erro ao verificar token JWT", 0, e);
-		}
-	}
-	
-	
 }

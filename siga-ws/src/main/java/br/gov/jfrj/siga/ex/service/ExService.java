@@ -91,5 +91,8 @@ public interface ExService extends Remote {
     
     @WebMethod
     public String obterSiglaMobilPorIdDoc(Long idDoc) throws Exception;
+    
+    @WebMethod
+    public String obterMetadadosDocumento(String siglaDocumento, String token) throws Exception;
 
 }

@@ -1871,7 +1871,7 @@ public class CpDao extends ModeloDao {
 		// kpf: com o cache true, as configuracoes sao exibidas de forma forma
 		// errada apos a primeira
 
-		// query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
+		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
 		return query.getResultList();
 	}
 

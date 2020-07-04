@@ -7127,4 +7127,83 @@ public class ExBL extends CpBL {
 		return doc;
 		
 	}
+	
+	public String documentoToJSON(ExDocumento doc) throws Exception {
+		
+	    Gson gson = new Gson();
+	    
+	    HashMap<String, Object> documentoJson = new HashMap<String, Object>();
+	    HashMap<String, Object> orgaoJson = new HashMap<String, Object>();
+	    HashMap<String, Object> modeloJson = new HashMap<String, Object>();
+	    HashMap<String, Object> nivelAcessoJson = new HashMap<String, Object>();
+	    HashMap<String, Object> classificacaoDocumentalJson = new HashMap<String, Object>();
+	    HashMap<String, Object> formaJson = new HashMap<String, Object>();
+	    HashMap<String, Object> marcadoresJson = new HashMap<String, Object>();
+	    
+	    documentoJson.put("idDoc", doc.getIdDoc());
+	    documentoJson.put("siglaDocumento", doc.getSigla());
+	    documentoJson.put("numExpediente", doc.getNumExpediente());
+	    documentoJson.put("anoEmissao", doc.getAnoEmissao());
+	    documentoJson.put("descricaoDocumento", doc.getDescrDocumento());
+	    documentoJson.put("dataFinalizacao", doc.getDtFinalizacao());
+	    
+	    
+	    CpToken cpToken = CpDao.getInstance().obterCpTokenPorTipoIdRef(1L,doc.getIdDoc());
+	    String urlPermanente = "";
+	    
+	    if (cpToken != null) { //Obter Link Permanente
+	    	urlPermanente = obterURLPermanente(cpToken.getIdTpToken().toString(), cpToken.getToken());
+	    } else {
+	    	urlPermanente = "Endereço público não disponível.";
+	    }
+	    
+	    documentoJson.put("urlPermanente", urlPermanente);   
+
+	    /* orgao */
+	    orgaoJson.put("orgaoSigla", doc.getOrgaoUsuario().getSiglaOrgaoUsu());
+	    orgaoJson.put("orgaoDescricao", doc.getOrgaoUsuario().getDescricao());
+	    
+	    documentoJson.put("orgao", orgaoJson);
+	    
+	    /* modelo */
+	    modeloJson.put("nomeModelo", doc.getExModelo().getNmMod());
+	    modeloJson.put("descModelo", doc.getExModelo().getDescMod());
+	    
+	    documentoJson.put("modelo", modeloJson);
+	    
+	    /* Nivel Acesso */
+	    nivelAcessoJson.put("idNivelAcesso", doc.getExNivelAcessoAtual().getIdNivelAcesso());
+	    nivelAcessoJson.put("nomeNivelAcesso", doc.getExNivelAcessoAtual().getNmNivelAcesso());
+	    
+	    documentoJson.put("nivelAcesso", nivelAcessoJson);
+	    
+	    /* Classificacao */
+	    classificacaoDocumentalJson.put("codificacaoClassificacao", doc.getExClassificacaoAtual().getCodificacao());
+	    classificacaoDocumentalJson.put("descClassificacao", doc.getExClassificacaoAtual().getDescrClassificacao());
+	    
+	    documentoJson.put("classificacao", classificacaoDocumentalJson);
+	    
+	    /* Forma Documental */
+	    formaJson.put("especieSigla", doc.getExFormaDocumento().getSigla());
+	    formaJson.put("especieDescricacao", doc.getExFormaDocumento().getDescricao());
+	    
+	    formaJson.put("especie", classificacaoDocumentalJson);
+	    
+	    /* Marcadores */
+	    marcadoresJson.put("marcadorGeral", doc.getMobilGeral().getMarcadores());
+	    marcadoresJson.put("marcadorMobil", doc.getPrimeiroMobil().getMarcadores());
+	    
+	    documentoJson.put("marcadores", marcadoresJson);
+	        
+	    
+	    
+	    
+	    // converte objetos Java para JSON e retorna JSON como String
+	    String json = gson.toJson(documentoJson);
+
+	
+
+		return json;
+		
+	}
 }

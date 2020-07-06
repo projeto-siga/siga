@@ -150,14 +150,14 @@
 					</div>
 				</div>
 				<div class="col-sm-3">
-<%-- 				
+ 				
 					<div class="form-group campo-orgao-externo" style="display: none;">
 						<div class="form-check form-check-inline mt-4 ">
 						  <input class="form-check-input" type="checkbox" name="protocolo" id="protocolo" value="mostrar" <c:if test="${protocolo}">checked</c:if>/>
 						  <label class="form-check-label" for="protocolo"><fmt:message key="tela.tramitar.checkbox"/></label>
 						</div>
 					</div>
- --%>					
+					
 				</div>
 				<div class="col-sm-3">
 					<div class="form-group campo-orgao-externo" style="display: none;">

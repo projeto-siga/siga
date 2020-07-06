@@ -23,29 +23,24 @@
 		}
 
 		function updateTipoResponsavel() {
+			document.getElementById("selecaoLotaResponsavel").style.display = 'none';
+			document.getElementById("selecaoResponsavel").style.display = 'none';
+			document.getElementById("selecaoCpOrgao").style.display = 'none';
+			Array.from(document.getElementsByClassName("campo-orgao-externo")).forEach(el => el.style.display = 'none'); 
 
 			var objSelecionado = document.getElementById("tipoResponsavel");
 
 			switch (parseInt(objSelecionado.value)) {
 			case 1:
 				document.getElementById("selecaoLotaResponsavel").style.display = '';
-				document.getElementById("selecaoResponsavel").style.display = 'none';
-				document.getElementById("selecaoCpOrgao").style.display = 'none';
-				document.getElementById("selecaoCpOrgaoObservacao").style.display = 'none';
 				break;
 			case 2:
-				document.getElementById("selecaoLotaResponsavel").style.display = 'none';
 				document.getElementById("selecaoResponsavel").style.display = '';
-				document.getElementById("selecaoCpOrgao").style.display = 'none';
-				document.getElementById("selecaoCpOrgaoObservacao").style.display = 'none';
 				break;
 			case 3:
-				document.getElementById("selecaoLotaResponsavel").style.display = 'none';
-				document.getElementById("selecaoResponsavel").style.display = 'none';
 				document.getElementById("selecaoCpOrgao").style.display = '';
-				document.getElementById("selecaoCpOrgaoObservacao").style.display = '';
+				Array.from(document.getElementsByClassName("campo-orgao-externo")).forEach(el => el.style.display = ''); 
 				break;
-
 			}
 		}
 	</script>
@@ -114,8 +109,15 @@
 					</div>
 				</div>
 			</div>
+			<div class="row campo-orgao-externo" style="display: none;">
+				<div class="col-sm">
+					<div class="form-group">
+						<span style="color: red"><fmt:message key="tela.tramitar.atencao"/></span>
+					</div>
+				</div>
+			</div>
 			<div class="row">
-				<div class="col-sm-4">
+				<div class="col-sm-2">
 					<div class="form-group">
 						<label>Atendente</label> <select class="custom-select"
 							id="tipoResponsavel" name="tipoResponsavel"
@@ -127,7 +129,7 @@
 						</select>
 					</div>
 				</div>
-				<div class="col-sm-8">
+				<div class="col-sm-6">
 					<div class="form-group">
 						<label>&nbsp;</label> <span id="selecaoLotaResponsavel"> <siga:selecao
 								propriedade="lotaResponsavel" tema="simple" modulo="siga" />
@@ -139,9 +141,26 @@
 					</div>
 				</div>
 			</div>
-			<div class="row" id="selecaoCpOrgaoObservacao" style="display: none;">
-				<div class="col-sm">
+			<div class="row">
+				<div class="col-sm-2">
 					<div class="form-group">
+						<label>Data da devolução</label> 
+						<input type="text" name="dtDevolucaoMovString"onblur="javascript:verifica_data(this,0);" value="${dtDevolucaoMovString}" class="form-control"/>					 
+						<small class="form-text text-muted">Atenção: somente preencher a data de devolução se a intenção for, realmente, que o documento seja devolvido até esta data.</small>
+					</div>
+				</div>
+				<div class="col-sm-3">
+<%-- 				
+					<div class="form-group campo-orgao-externo" style="display: none;">
+						<div class="form-check form-check-inline mt-4 ">
+						  <input class="form-check-input" type="checkbox" name="protocolo" id="protocolo" value="mostrar" <c:if test="${protocolo}">checked</c:if>/>
+						  <label class="form-check-label" for="protocolo"><fmt:message key="tela.tramitar.checkbox"/></label>
+						</div>
+					</div>
+ --%>					
+				</div>
+				<div class="col-sm-3">
+					<div class="form-group campo-orgao-externo" style="display: none;">
 						<label>Observação</label> <input type="text" size="30"
 							name="obsOrgao" id="obsOrgao" class="form-control" />
 					</div>

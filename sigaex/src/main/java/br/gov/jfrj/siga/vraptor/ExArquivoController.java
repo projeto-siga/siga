@@ -23,10 +23,8 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.io.ByteArrayInputStream;
-import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -35,7 +33,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 import com.lowagie.text.pdf.codec.Base64;
 
@@ -51,7 +48,6 @@ import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.bluc.service.HashRequest;
 import br.gov.jfrj.siga.bluc.service.HashResponse;
 import br.gov.jfrj.siga.cp.CpToken;
-import br.gov.jfrj.siga.ex.ExArquivo;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;

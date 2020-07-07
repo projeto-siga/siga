@@ -32,7 +32,6 @@ import javax.servlet.ServletContext;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
-import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
@@ -401,8 +400,8 @@ public class ExServiceImpl implements ExService {
 				final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
 				filter.setSigla(codigo);
 				mob = (ExMobil) dao().consultarPorSigla(filter);
-				return Ex.getInstance().getBL().toJSON(mob);
-				//return "";
+				//return Ex.getInstance().getBL().toJSON(mob);
+				return "";
 			}
 		} catch (Exception e) {
 			if (!isHideStackTrace())

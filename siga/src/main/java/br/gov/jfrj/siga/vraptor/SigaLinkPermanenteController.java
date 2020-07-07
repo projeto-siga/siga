@@ -1,9 +1,7 @@
 package br.gov.jfrj.siga.vraptor;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -12,11 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.PathParam;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
-
-import com.auth0.jwt.JWTSigner;
-import com.auth0.jwt.JWTVerifier;
-import com.lowagie.text.pdf.codec.Base64;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
@@ -28,7 +21,6 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
-import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
@@ -36,7 +28,6 @@ import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.util.SigaUtil;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.service.ExService;
-import br.gov.jfrj.siga.gi.service.GiService;
 import br.gov.jfrj.siga.unirest.proxy.GoogleRecaptcha;
 
 @Controller

@@ -361,7 +361,7 @@
 				</div>
 			</c:if>
 			<div id="paipainel" style="margin: 0px; padding: 0px; border: 0px; clear: both;">
-				<iframe style="visibility: visible; margin: 0px; padding: 0px;" name="painel" id="painel" src="" align="right" width="100%" onload="$(document).ready(function () {resize();});" frameborder="0" scrolling="auto"></iframe>
+				<iframe style="visibility: visible; margin: 0px; padding: 0px; min-height: 20em;" name="painel" id="painel" src="" align="right" width="100%" onload="$(document).ready(function () {resize();});" frameborder="0" scrolling="auto"></iframe>
 			</div>
 		</div>
 	</div>
@@ -469,7 +469,7 @@
 					ifr.src = path + refPDF + "&semmarcas=1"
 				else
 					ifr.src = path + refPDF;
-				ifrp.style.border = "1px solid black";
+				ifrp.style.border = "0px solid black";
 				ifr.height = pageHeight() - 300;
 			}
 		}

@@ -27,6 +27,7 @@ import java.awt.image.WritableRaster;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.security.MessageDigest;
 import java.sql.SQLException;
@@ -42,29 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.poi.ss.usermodel.DataFormat;
 
-import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Contexto;
-import br.gov.jfrj.siga.base.Data;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
-import br.gov.jfrj.siga.base.SigaMessages;
-import br.gov.jfrj.siga.base.Texto;
-import br.gov.jfrj.siga.ex.ExArquivoNumerado;
-import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
-import br.gov.jfrj.siga.ex.SigaExProperties;
-import br.gov.jfrj.siga.ex.bl.CurrentRequest;
-import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.bl.RequestInfo;
-import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
-import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
-import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
-
-import com.lowagie.text.Chunk;
 import com.lowagie.text.Annotation;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -94,6 +73,9 @@ import com.swetake.util.Qrcode;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
+import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -836,18 +818,18 @@ public class Documento {
 
 	public byte[] getDocumento(ExMobil mob, ExMovimentacao mov)
 			throws Exception {
-		return getDocumento(mob, mov, false, true, null, null);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		getDocumento(baos, null, mob, mov, false, true, null, null);
+		return baos.toByteArray();
 	}
 
-	public static byte[] getDocumento(ExMobil mob, ExMovimentacao mov,
+	public static boolean getDocumento(OutputStream os, String uuid, ExMobil mob, ExMovimentacao mov,
 			boolean completo, boolean estampar, String hash, byte[] certificado)
 			throws Exception {
-		final ByteArrayOutputStream bo2 = new ByteArrayOutputStream();
 		PdfReader reader;
 		int n;
 		int pageOffset = 0;
 		ArrayList master = new ArrayList();
-		int f = 0;
 		Document document = null;
 		PdfCopy writer = null;
 		int nivelInicial = 0;
@@ -858,6 +840,10 @@ public class Documento {
 		// null, request);
 		// }
 
+		Status status = null;
+		if (uuid != null)
+			status = Status.update(uuid, "Obtendo a lista de documentos", 0, 100, 0L);
+
 		List<ExArquivoNumerado> ans = mob.filtrarArquivosNumerados(mov,
 				completo);
 
@@ -867,14 +853,21 @@ public class Documento {
 				String alg = hash;
 				MessageDigest md = MessageDigest.getInstance(alg);
 				md.update(ans.get(0).getArquivo().getPdf());
-				return md.digest();
+				os.write(md.digest());
+				return true;
 			} else {
-				return ans.get(0).getArquivo().getPdf();
+				os.write(ans.get(0).getArquivo().getPdf());
+				return true;
 			}
 		}
 
+		int f = 0;
+		long bytes = 0;
 		try {
 			for (ExArquivoNumerado an : ans) {
+				if (uuid != null)
+					status = Status.update(uuid, "Agregando documento " + (f + 1) + "/" + ans.size(),
+							f * 2 + 1, ans.size() * 2 + 1, bytes);
 
 				// byte[] ab = getPdf(docvia, an.getArquivo(), an.getNumVia(),
 				// an
@@ -898,7 +891,9 @@ public class Documento {
 						an.getPaginaFinal(), an.getOmitirNumeracao(),
 						SigaExProperties.getTextoSuperiorCarimbo(), mob
 								.getExDocumento().getOrgaoUsuario()
-								.getDescricao(), mob.getExDocumento().getMarcaDagua());							
+								.getDescricao(), mob.getExDocumento().getMarcaDagua());	
+
+				bytes += ab.length;
 
 				// we create a reader for a certain document
 
@@ -920,7 +915,7 @@ public class Documento {
 					document = new Document(reader.getPageSizeWithRotation(1));
 					// step 2: we create a writer that listens to the
 					// document
-					writer = new PdfCopy(document, bo2);
+					writer = new PdfCopy(document, os);
 					writer.setFullCompression();
 
 					// writer.setViewerPreferences(PdfWriter.PageModeUseOutlines);
@@ -978,10 +973,19 @@ public class Documento {
 			// info.put(PdfName.ID, null);
 
 			document.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+
+			if (uuid != null)
+				status = Status.update(uuid, "PDF completo gerado", ans.size() * 2 + 1, ans.size() * 2 + 1,
+					bytes);
+
+		} catch (Exception ex) {
+			if (uuid != null) { 
+				status.ex = ex;
+				Status.update(uuid, status);
+			}
+			throw new RuntimeException(ex);
 		}
-		return bo2.toByteArray();
+		return true;
 	}
 
 	public static byte[] generatePdf(String sHtml) throws Exception {

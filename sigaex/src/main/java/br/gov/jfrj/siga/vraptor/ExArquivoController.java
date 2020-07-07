@@ -23,6 +23,7 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.util.Date;
@@ -50,8 +51,12 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.api.v1.DocumentoSiglaPdfGet;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentoSiglaPdfGetRequest;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentoSiglaPdfGetResponse;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.vraptor.builder.ExDownloadRTF;
 import br.gov.jfrj.siga.vraptor.builder.ExDownloadZip;
 import br.gov.jfrj.siga.vraptor.builder.ExInputStreamDownload;
@@ -142,7 +147,22 @@ public class ExArquivoController extends ExController {
 				if (mov != null && !completo && !estampar && hash == null) {
 					ab = mov.getConteudoBlobpdf();
 				} else {
-					ab = Documento.getDocumento(mob, mov, completo, estampar, hash, null);
+					if (completo && mob != null && mov == null) {
+						DocumentoSiglaPdfGet act = new DocumentoSiglaPdfGet();
+						DocumentoSiglaPdfGetRequest req = new DocumentoSiglaPdfGetRequest();
+						DocumentoSiglaPdfGetResponse resp = new DocumentoSiglaPdfGetResponse();
+						req.sigla = mob.getSigla();
+						req.estampa = estampar;
+						req.completo = completo;
+						DocumentoSiglaPdfGet.iniciarGeracaoDePdf(req, resp, ContextoPersistencia.getUserPrincipal());
+						result.redirectTo("/app/arquivo/status/" + URLEncoder.encode(req.sigla, "utf-8") + "/"
+								+ resp.uuid + "/" + resp.jwt + "/" + mob.getReferenciaPDF());
+						return null;
+					}
+
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					Documento.getDocumento(baos, null, mob, mov, completo, estampar, hash, null);
+					ab = baos.toByteArray();
 				}
 				if (ab == null) {
 					throw new Exception("PDF inválido!");
@@ -208,6 +228,14 @@ public class ExArquivoController extends ExController {
 			}
 			throw new RuntimeException("erro na geração do documento.", e);
 		}
+	}
+	
+	@Get("/app/arquivo/status/{sigla}/{uuid}/{jwt}/{filename}")
+	public void status(String sigla, String uuid, String jwt, String filename) {
+		result.include("sigla", sigla);
+		result.include("uuid", uuid);
+		result.include("jwt", jwt);
+		result.include("filename", filename);
 	}
 
 

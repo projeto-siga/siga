@@ -4227,7 +4227,11 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			
 			return false;
 		}
-
+		
+		/* Não permite redefinir acesso para documentos que foram publicados no portal da transparencia */
+		if (mob.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA).size() > 0) {
+			return false;
+		}
 
 		return !mob.isEliminado()
 				&& podeAcessarDocumento(titular, lotaTitular, mob)

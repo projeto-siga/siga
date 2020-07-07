@@ -4,14 +4,14 @@
 ALTER SESSION SET CURRENT_SCHEMA=corporativo;
 
 /* Criação do Tipo de Marcador para Categorização gerenciada pela administração do sistema */
-INSERT INTO CORPORATIVO.cp_tipo_marcador (id_tp_marcador,descr_tipo_marcador VALUES (6,"Taxonomia Gerenciada");
+INSERT INTO CORPORATIVO.cp_tipo_marcador (id_tp_marcador,descr_tipo_marcador) VALUES (6,"Taxonomia Gerenciada");
 commit;
 
 /* Ajuste do Marcador Portal da Transparência para Marcador de Sistema */
 INSERT INTO CORPORATIVO.CP_MARCADOR values(73, 'Portal da Transparência', 1, null);
 UPDATE corporativo.cp_marca set id_marcador = 73 where id_marcador = 1007; /*de-para */
 DELETE FROM CORPORATIVO.CP_MARCADOR where id_marcador = 1007;
-commit
+commit;
 
 /* Reordenação do Marcador Nota de Empenho de 1008 para 1007 */
 INSERT INTO CORPORATIVO.CP_MARCADOR values(1007, 'Nota de Empenho', 6, null);

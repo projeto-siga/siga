@@ -33,6 +33,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -202,7 +204,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	}
 
 	@Get("app/pessoa/listar")
-	public void lista(Integer paramoffset, Long idOrgaoUsu, String nome, String cpfPesquisa, Long idCargoPesquisa, Long idFuncaoPesquisa, Long idLotacaoPesquisa, String emailPesquisa) throws Exception {
+	public void lista(Integer paramoffset, Long idOrgaoUsu, String nome, String cpfPesquisa, Long idCargoPesquisa, Long idFuncaoPesquisa, Long idLotacaoPesquisa, String emailPesquisa, String identidadePesquisa) throws Exception {
 		
 		result.include("request",getRequest());
 		List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
@@ -234,6 +236,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			dpPessoa.setIdOrgaoUsu(idOrgaoUsu);
 			dpPessoa.setNome(Texto.removeAcento(nome != null ? nome : ""));
 			dpPessoa.setEmail(Texto.removeAcento(emailPesquisa != null ? emailPesquisa : ""));
+			dpPessoa.setIdentidade(identidadePesquisa);
 			if(idCargoPesquisa != null) {
 				DpCargo cargo = new DpCargo();
 				cargo.setId(idCargoPesquisa);
@@ -262,6 +265,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			result.include("idOrgaoUsu", idOrgaoUsu);
 			result.include("nome", nome);
 			result.include("emailPesquisa", emailPesquisa);
+			result.include("identidadePesquisa", identidadePesquisa);
 			result.include("cpfPesquisa", cpfPesquisa);
 			result.include("idCargoPesquisa", idCargoPesquisa);
 			result.include("idFuncaoPesquisa", idFuncaoPesquisa);
@@ -273,7 +277,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	}
 
 	@Get("/app/pessoa/ativarInativar")
-	public void ativarInativar(final Long id, Integer offset, Long idOrgaoUsu, String nome, String cpfPesquisa, Long idCargoPesquisa, Long idFuncaoPesquisa, Long idLotacaoPesquisa, String emailPesquisa) throws Exception{
+	public void ativarInativar(final Long id, Integer offset, Long idOrgaoUsu, String nome, String cpfPesquisa, Long idCargoPesquisa, Long idFuncaoPesquisa, Long idLotacaoPesquisa, String emailPesquisa, String identidadePesquisa) throws Exception{
 		CpOrgaoUsuario ou = new CpOrgaoUsuario();
 		DpPessoa pessoaAnt = dao().consultar(id, DpPessoa.class, false).getPessoaAtual();
 		DpPessoa pessoa = new DpPessoa();
@@ -338,7 +342,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			}
 
 			
-			this.result.redirectTo(this).lista(offset, idOrgaoUsu, nome, cpfPesquisa, idCargoPesquisa, idFuncaoPesquisa, idLotacaoPesquisa, emailPesquisa);
+			this.result.redirectTo(this).lista(offset, idOrgaoUsu, nome, cpfPesquisa, idCargoPesquisa, idFuncaoPesquisa, idLotacaoPesquisa, emailPesquisa, identidadePesquisa);
 		}
 	}
 
@@ -572,8 +576,12 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 
 		if (email == null || email.trim() == "")
 			throw new AplicacaoException("E-mail não informado");
+		
+		if (!isEmailValido(email)) {			
+			throw new AplicacaoException("E-mail inválido");
+		}
 
-		if (nmPessoa != null && !nmPessoa.matches("[a-zA-ZáâãäéêëíïóôõöúüçñÁÂÃÄÉÊËÍÏÓÔÕÖÚÜÇÑ'' ]+"))
+		if (nmPessoa != null && !nmPessoa.matches(Texto.DpPessoa.NOME_REGEX_CARACTERES_PERMITIDOS))
 			throw new AplicacaoException("Nome com caracteres não permitidos");
 
 		
@@ -760,7 +768,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			dao().rollbackTransacao();
 			throw new AplicacaoException("Erro na gravação", 0, e);
 		}
-		lista(0, null, "", "", null, null, null, "");
+		lista(0, null, "", "", null, null, null, "", null);
 	}
 	
 	@Get({"/app/pessoa/check_nome_por_cpf"})
@@ -936,7 +944,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	@Post
 	@Path("app/pessoa/exportarCsv")
 	public Download exportarCsv(Long idOrgaoUsu, String nome, String cpfPesquisa, Long idCargoPesquisa,
-			Long idFuncaoPesquisa, Long idLotacaoPesquisa, String emailPesquisa) throws UnsupportedEncodingException {
+			Long idFuncaoPesquisa, Long idLotacaoPesquisa, String emailPesquisa, String identidadePesquisa) throws UnsupportedEncodingException {
 
 		CpOrgaoUsuario ou = new CpOrgaoUsuario();
 
@@ -950,7 +958,8 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			}
 			dpPessoa.setOrgaoUsuario(ou);
 			dpPessoa.setNomePessoa(Texto.removeAcento(nome != null ? nome : ""));
-			dpPessoa.setEmailPessoa(Texto.removeAcento(emailPesquisa != null ? emailPesquisa : ""));			
+			dpPessoa.setEmailPessoa(Texto.removeAcento(emailPesquisa != null ? emailPesquisa : ""));	
+			dpPessoa.setIdentidade(identidadePesquisa);
 			if (idCargoPesquisa != null) {
 				DpCargo cargo = new DpCargo();
 				cargo.setId(idCargoPesquisa);
@@ -1013,7 +1022,8 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 					result.include("idCargoPesquisa", idCargoPesquisa);
 					result.include("idFuncaoPesquisa", idFuncaoPesquisa);
 					result.include("idLotacaoPesquisa", idLotacaoPesquisa);					
-					result.include("emailPesquisa", emailPesquisa);																		
+					result.include("emailPesquisa", emailPesquisa);			
+					result.include("identidadePesquisa", identidadePesquisa);
 					result.include("mensagemPesquisa", "Nenhum resultado encontrado.");
 					result.include("temPermissaoParaExportarDados", temPermissaoParaExportarDados());
 
@@ -1022,6 +1032,12 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		}
 
 		return null;
+	}
+	
+	public static boolean isEmailValido(String email) {
+		Pattern pattern = Pattern.compile(Texto.DpPessoa.EMAIL_REGEX_PATTERN);   
+	    Matcher matcher = pattern.matcher(email);   
+	    return matcher.find();   
 	}
 	
 	/*

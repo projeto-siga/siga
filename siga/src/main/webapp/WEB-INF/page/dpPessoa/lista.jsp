@@ -149,7 +149,13 @@
 							<label for="nome">E-mail</label>
 							<input type="text" id="emailPesquisa" name="emailPesquisa" value="${emailPesquisa}" maxlength="100" class="form-control">
 						</div>					
-					</div>								
+					</div>	
+					<div class="col-md-2">
+						<div class="form-group">
+							<label for="nmPessoa">RG (Incluindo dígito)</label>
+							<input type="text" id="identidadePesquisa" name="identidadePesquisa" value="${identidadePesquisa}" maxlength="20" class="form-control"/>
+						</div>
+					</div>							
 				</div>
 				<div class="row">
 					<div class="col-sm-12">

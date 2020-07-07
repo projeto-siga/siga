@@ -35,6 +35,7 @@ public class DpPessoaDaoFiltro extends DaoFiltroSelecionavel {
 	private Long cpf;
 	private Long id;
 	private String email;
+	private String identidade;
 	
 	
 	private boolean buscarFechadas;
@@ -78,6 +79,15 @@ public class DpPessoaDaoFiltro extends DaoFiltroSelecionavel {
 	public void setEmail(final String email) {
 		this.email = email;
 	}
+	
+	public String getIdentidade() {
+		return identidade;
+	}
+	
+	public void setIdentidade(String identidade) {
+		this.identidade = identidade;
+	}
+	
 	public DpLotacao getLotacao() {
 		return lotacao;
 	}	

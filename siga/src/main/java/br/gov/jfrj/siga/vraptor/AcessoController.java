@@ -194,6 +194,7 @@ public class AcessoController extends GiControllerSupport {
 
 			this.itens = (new ArrayList<ConfiguracaoAcesso>(acs));
 			this.itensHTML = arvoreHTML();
+			
 		}
 	}
 	

@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.vraptor;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
@@ -11,8 +12,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.PathParam;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
+
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
+import com.lowagie.text.pdf.codec.Base64;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
@@ -24,6 +28,7 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
@@ -37,7 +42,7 @@ import br.gov.jfrj.siga.unirest.proxy.GoogleRecaptcha;
 @Controller
 public class SigaLinkPermanenteController extends SigaController {
 	HttpServletResponse response;
-	String END_POINT_SIGALINK_DOCPDF = "/sigaex/public/app/arquivo/obterPdfDocumento";
+	String END_POINT_SIGALINK_DOC = "/sigaex/public/app/arquivo/obterDownloadDocumento";
 
 	/**
 	 * @deprecated CDI eyes only
@@ -141,7 +146,7 @@ public class SigaLinkPermanenteController extends SigaController {
 				result.forwardTo(this).publicPermanenteURLPdfView(SigaUtil.buildJwtToken(tipoLink,token,siglaDocumento));			
 			}
 		} else {
-			throw new AplicacaoException("Endereço permamente inválido");
+			throw new RuntimeException("Endereço permamente inválido");
 		}
 		return;
 		
@@ -151,9 +156,11 @@ public class SigaLinkPermanenteController extends SigaController {
 	@Post
 	@Path("/public/app/sigalinkPdfView")
 	public void publicPermanenteURLPdfView(@PathParam("jwt") String jwt) throws Exception {
+	
 		String sigla = SigaUtil.verifyGetJwtToken(jwt).get("sigla").toString();
 		result.include("sigla", sigla);
 		result.include("jwt", jwt);
+
 	}
 	
 	
@@ -161,30 +168,36 @@ public class SigaLinkPermanenteController extends SigaController {
 	@Path("/public/app/sigalinkStream/{jwt}") /* Desacoplar tela de visualização de PDF*/
 	public Download publicPermanenteURLStream(@PathParam("jwt") String jwt, boolean completo, boolean estampar) throws Exception {
 		estampar = true; //default
+		InputStream stream = null;
 		
 		Map<String, Object> token = SigaUtil.verifyGetJwtToken(jwt);
 		String tipoLink = token.get("tipoLink").toString();
 		String sigla = token.get("sigla").toString();
-		
-		if ("1".equals(tipoLink)) {
-			if (!"".equals(sigla)) {
-				/* Reaproveitado estrutura da ExArquivoController - Analisar levar para WebService */ 
-				String endPoint = Contexto.urlBase(request) + END_POINT_SIGALINK_DOCPDF + "?semmarcas="+ estampar +"&completo="+ completo +"&t="+jwt;
-				InputStream stream = new URL(endPoint).openStream();
-				
-				String fileName = sigla.replace("-", "").replace("/", "");
-				if (completo) 
-					fileName = fileName + "_completo.pdf";
-				else
-					fileName = fileName + ".pdf";
-				
-				return new InputStreamDownload(stream, "application/pdf",fileName);
+		try {
+
+			if ("1".equals(tipoLink)) {
+				if (!"".equals(sigla)) {
+					/* Reaproveitado estrutura da ExArquivoController - Analisar levar para WebService */ 
+					String endPoint = Contexto.urlBase(request) + END_POINT_SIGALINK_DOC + "?semmarcas="+ estampar +"&completo="+ completo +"&t="+jwt +"&mime=pdf";
+					stream = new URL(endPoint).openStream();
+					
+					String fileName = sigla.replace("-", "").replace("/", "");
+					if (completo) 
+						fileName = fileName + "_completo.pdf";
+					else
+						fileName = fileName + ".pdf";
+
+					return new InputStreamDownload(stream, "application/pdf",fileName);
+				}
 			}
-		}
-		
+		} catch (final Exception e) {
+			result.include("mensagemCabec", "Ocorreu um erro na geração ou documento não está mais disponível.");
+			result.include("msgCabecClass", "alert-danger");
+			return null;
+		} 
+
 		return null;
-		
+	
 	}
 	
-
 }

@@ -218,38 +218,50 @@ public class ExArquivoController extends ExController {
 	}
 
 	
-	@Get("/public/app/arquivo/obterPdfDocumento")
-	public Download aObterPdfDocumento(final String t, boolean completo, final boolean semmarcas) {
+	@Get("/public/app/arquivo/obterDownloadDocumento")
+	public Download aObterDownloadDocumento(final String t, boolean completo, final boolean semmarcas, final String mime) throws Exception  {
 		try {
 
-			final boolean isPdf = true;
-
+			boolean isPdf = "PDF".equalsIgnoreCase(mime);
+			boolean isHtml = "HTML".equalsIgnoreCase(mime); /*TODO: implementar*/
+			
+	
 			String token = verifyJwtToken(t).get("token").toString();
 			
 			CpToken cpToken = new CpToken();
 			cpToken = dao().obterCpTokenPorTipoToken(1L, token);
 			
 			ExDocumento doc = Ex.getInstance().getBL().buscarDocumentoPorLinkPermanente(cpToken);
-			
-
-			final ExMobil mob = doc.getPrimeiroMobil();		
+	
+			final ExMobil mob = doc.getPrimeiroMobil();	
 			if (mob == null) {				
-				throw new AplicacaoException("A sigla informada não corresponde a um documento da base de dados.");
+				throw new RuntimeException("A sigla informada não corresponde a um documento da base de dados.");
+			}
+			
+			/* Caso documento tenha URL permanente mas não tenha acesso público*/
+			if ( doc.getExNivelAcessoAtual().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO ) {
+				throw new RuntimeException("Documento não está disponível para acesso público.");
 			}
 			
 			byte ab[] = null;
-
+	
 			if (isPdf) {
 				ab = Documento.getDocumento(mob, null, completo, semmarcas, null, null);
 				if (ab == null) {
-					throw new Exception("PDF inválido!");
+					throw new Exception("Arquivo PDF inválido!");
 				}
+	
+				String fileName = mob.getSigla().replace("-", "").replace("/", "");
+				fileName = fileName + ".pdf";
 				
-			}
-			return new InputStreamDownload(makeByteArrayInputStream(ab, false), checkDownloadType(ab, isPdf, false), "TESTE.pdf");
+				return new InputStreamDownload(makeByteArrayInputStream(ab, false), checkDownloadType(ab, isPdf, false), fileName);
+			} 
+
+			
 		} catch (Exception e) {
-			throw new RuntimeException("erro na geração do documento.", e);
+			throw new RuntimeException(e.getMessage());
 		}
+		return null;
 	}
 
 

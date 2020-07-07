@@ -127,7 +127,7 @@ public class SigaLinkPermanenteController extends SigaController {
 			String hostname = request.getServerName();
 			if (body.getObject().getBoolean("success")) {
 				String retHostname = body.getObject().getString("hostname");
-				success = true;//retHostname.equals(hostname);
+				success = retHostname.equals(hostname);
 			}
 		}
 		if (!success) {

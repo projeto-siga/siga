@@ -7127,6 +7127,65 @@ public class ExBL extends CpBL {
 		return doc;
 		
 	}
+
+	public CpToken publicarTransparencia(ExMobil mob, DpPessoa cadastrante, DpLotacao lotaCadastrante, String[] listaMarcadores) {
+		
+		
+
+		/* 1- Redefinição para Público */
+		if (!Ex.getInstance().getComp().podeRedefinirNivelAcesso(cadastrante, lotaCadastrante,mob)) {
+			throw new AplicacaoException(
+					"Não é possível redefinir o nível de acesso");
+		}
+		ExNivelAcesso exTipoSig = null;
+		exTipoSig = dao().consultar(ExNivelAcesso.ID_PUBLICO, ExNivelAcesso.class, false);
+		
+		redefinirNivelAcesso(cadastrante, lotaCadastrante, mob.getDoc(), null, lotaCadastrante, cadastrante, cadastrante, cadastrante, null, exTipoSig);
+		/* END Redefinição para Público */
+		
+		
+		CpMarcador cpMarcador = new CpMarcador();
+		
+		/* 2- Gravação dos Marcadores */
+		for(String marcador: listaMarcadores) {
+		   cpMarcador = dao().consultar(Long.parseLong(marcador), CpMarcador.class, false);
+		   try {
+			vincularMarcador(cadastrante, lotaCadastrante, mob, null, lotaCadastrante, cadastrante, cadastrante, cadastrante, null, null, cpMarcador, true);
+		   } catch (Exception e) {
+				throw new AplicacaoException("Ocorreu um erro ao gravar marcadores");
+		   }
+		}
+		
+		/* END Gravação dos Marcadores  */
+		
+		/*3- Gerar URL Permanente */
+		CpToken sigaUrlPermanente = new CpToken();
+		try {
+			sigaUrlPermanente = Cp.getInstance().getBL().gerarUrlPermanente(mob.getDoc().getIdDoc());
+		} catch (Exception e) {
+			throw new AplicacaoException("Ocorreu um erro ao gerar Token.");
+		}
+		
+		/*4- Gerar Movimentação de Publicação */
+		try {
+			final ExMovimentacao mov = criarNovaMovimentacao(
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA, cadastrante, lotaCadastrante,
+					mob, null, cadastrante, null, cadastrante, null, null);
+			
+			mov.setDescrMov("Publicação em Portal da Transparência.");
+
+			gravarMovimentacao(mov);
+			atualizarMarcas(mob.getDoc());
+		} catch (Exception e) {
+			throw new AplicacaoException("Ocorreu um erro na publicação do documento em Portal da Transparência");
+		}
+
+		
+		return sigaUrlPermanente;
+		
+		
+		
+	}
 	
 	public String documentoToJSON(ExDocumento doc) throws Exception {
 		

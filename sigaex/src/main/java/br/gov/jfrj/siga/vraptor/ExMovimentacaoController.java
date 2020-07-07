@@ -4771,48 +4771,19 @@ public class ExMovimentacaoController extends ExController {
 	@Post("/app/expediente/mov/publicacao_transparencia_gravar")
 	public void publicarTransparenciaGravar(final String sigla,
 			final Long nivelAcesso) {
-		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
-
-		final ExDocumento doc = buscarDocumento(builder);
-
-		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
-				.novaInstancia();
-
-		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
-		/* Redefinição para Público */
-		ExNivelAcesso exTipoSig = null;
-		exTipoSig = dao().consultar(ExNivelAcesso.ID_PUBLICO, ExNivelAcesso.class, false);
-
-
-		if (!Ex.getInstance()
-				.getComp()
-				.podeRedefinirNivelAcesso(getTitular(), getLotaTitular(),
-						builder.getMob())) {
-			throw new AplicacaoException(
-					"Não é possível redefinir o nível de acesso");
-		}
-
-		Ex.getInstance()
-				.getBL()
-				.redefinirNivelAcesso(getCadastrante(), getLotaTitular(), doc,
-						mov.getDtMov(), mov.getLotaResp(), mov.getResp(),
-						mov.getSubscritor(), mov.getTitular(),
-						mov.getNmFuncaoSubscritor(), exTipoSig);
 		
-		/* Geração de URL */
+		buscarDocumento(documentoBuilder);
+
+		String[] listaMarcadores = request.getParameterValues("lstMarcadores");
+
+
+		/* Primeiro Passo - Documento para Público */
 		CpToken sigaUrlPermanente = new CpToken();
-		sigaUrlPermanente = null;
-		
-		if(sigaUrlPermanente == null) {
-			try {
-				sigaUrlPermanente = Cp.getInstance().getBL().gerarUrlPermanente(doc.getIdDoc());
-			} catch (Exception e) {
-				throw new AplicacaoException(
-						"Ocorreu um erro ao gerar Token.");
-			}
-		}
-		
+		sigaUrlPermanente = Ex.getInstance().getBL().publicarTransparencia(documentoBuilder.getMob(), getCadastrante(), getLotaCadastrante(),listaMarcadores);
+
+	
 		RequestInfo ri = CurrentRequest.get();		
 		String url = Contexto.urlBase(ri.getRequest());
 		String caminho = url + "/siga/public/app/sigalink/1/" + sigaUrlPermanente.getToken();
@@ -4821,7 +4792,7 @@ public class ExMovimentacaoController extends ExController {
 		
 		
 		result.include("msgCabecClass", "alert-info");
-		result.include("mensagemCabec", "Gerada URL permanente para o documento: <a class='alert-link' id='urlPermanente'  href='"+caminho+"' target='_Blank'  data-toggle='tooltip' data-placement='bottom'  data-html='true' title='Copiar endereço <i class=\"fa fa-link\"></i>'>Link</a>. <script>$(function () {$('[data-toggle=\"tooltip\"]').tooltip();$('#urlPermanente').tooltip('show');});</script> ");
+		result.include("mensagemCabec", "Documento enviado para publicação. Gerado <a class='alert-link' id='urlPermanente'  href='"+caminho+"' target='_Blank'  data-toggle='tooltip' data-placement='bottom'  data-html='true' title='Ir para endereço <i class=\"fa fa-link\"></i>'>Endereço Permanente</a> para acesso externo ao documento. <script>$(function () {$('[data-toggle=\"tooltip\"]').tooltip();$('#urlPermanente').tooltip('show');});</script> ");
 
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}

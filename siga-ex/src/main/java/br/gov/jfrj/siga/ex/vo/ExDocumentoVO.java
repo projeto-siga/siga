@@ -338,6 +338,7 @@ public class ExDocumentoVO extends ExVO {
 		marcasGeralPermitidas
 				.add(CpMarcador.MARCADOR_TRANSFERIR_PARA_ARQUIVO_INTERMEDIARIO);
 		marcasGeralPermitidas.add(CpMarcador.MARCADOR_PENDENTE_DE_ANEXACAO);
+		marcasGeralPermitidas.add(CpMarcador.MARCADOR_PORTAL_TRANSPARENCIA);
 
 		for (ExMobilVO mobVO : mobs) {
 
@@ -818,10 +819,11 @@ public class ExDocumentoVO extends ExVO {
 		
 		vo.addAcao(
 				"report_link",
-				"Publicar no Portal da Transparência",
+				SigaMessages.getMessage("documento.publicar.portaltransparencia"),
 				"/app/expediente/mov",
 				"publicacao_transparencia",
-				true);
+				Ex.getInstance().getComp()
+						.podePublicarPortalTransparencia(titular, lotaTitular, mob));
 
 		
 		if(mostrarGerarProtocolo(doc)) {

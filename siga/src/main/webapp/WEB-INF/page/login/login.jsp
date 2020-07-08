@@ -61,7 +61,7 @@
 					</c:if>
 
 					<!---->
-					<form role="form" method="post"
+					<form id="formLogin" role="form" method="post"
 						enctype="application/x-www-form-urlencoded">
 						<div class="form-group">
 							<label for="username"><fmt:message key="usuario.matricula"/></label> 
@@ -83,9 +83,15 @@
 						      </div>
 						      <input type="password" name="password" id="password" placeholder="Senha"
 								class="form-control" aria-label="Usuário" aria-describedby="icon-pass">
-						    </div>
-						
+						    </div>						
 						</div>
+						<c:if test="${siga_cliente eq 'GOVSP' and isSenhaUsuarioExpirada}">			
+							<div class="js-link-trocar-senha  hidden" style="text-align: center; margin: 0; padding: 0;">
+								<a href="#" class="btn  btn-default" title="Troca de senha" data-toggle="modal" data-target="#trocaSenhaUsuario" data-dismiss="modal">
+									Trocar senha
+								</a>	
+							</div>
+						</c:if>
 						<div class="row pt-3">
 							<div class="col">
 								<div class="text-center">
@@ -125,34 +131,63 @@
 			</div>
 		</div>
 	</div>
-	<div class="modal fade" id="msgModal" tabindex="-1" role="dialog" aria-labelledby="msgModalLabel" aria-hidden="true">
-	  <div class="modal-dialog modal-dialog-centered" role="document">
-	    <div class="modal-content">
-	    <div class="modal-header">
-	        <h5 class="modal-title" id="msgModalLongTitle">SP Sem Papel</h5>
-	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-	          <span aria-hidden="true">&times;</span>
-	        </button>
-	      </div>
-	      <div class="modal-body">
-	        Recomendamos o navegador Google Chrome para acesso.
-	      </div>
-	      <div class="modal-footer">
-	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-	      </div>
-	    </div>
-	  </div>
-	</div>
-	<script type="text/javascript">
-		$(document).ready(function() {
-			var isOpera = !!navigator.userAgent.match(/OPR/);
-			var isEdge = !!navigator.userAgent.match(/Edge/);
-			var isChrome = !!navigator.userAgent.match(/Chrome/) && !isOpera && !isEdge
-			if(!isChrome) {
-		    	$('#msgModal').modal('show');
-			}
-		})
-	</script>
+	<c:if test="${siga_cliente eq 'GOVSP' and isSenhaUsuarioExpirada}">						
+		<div class="modal  fade" id="trocaSenhaUsuarioMensagem" tabindex="-1" role="dialog">
+		 	<div class="modal-dialog modal-dialog-centered" role="alert">
+		   		<div class="modal-content">		
+		   			<div class="modal-header">
+		   				<img src="/siga/imagens/logo-sem-papel-cor.png" height="40">				        
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				          <span aria-hidden="true">&times;</span>
+				        </button>
+			      	</div>   					   					      	
+		      		<div class="modal-body">		      		
+		      			Sua senha expirou e deve ser alterada
+		      		</div>
+	      			<div class="modal-footer">		      			
+		      			<a href="#" class="btn  btn-secondary  js-troca-senha-mensagem-btn" title="Troca de senha"
+							data-toggle="modal" data-target="#trocaSenhaUsuario" data-dismiss="modal">
+						     	Trocar senha
+						</a>		      															
+					</div>   								  						   
+		   		</div>
+		 	</div> 	 	
+		</div>					
+		<siga:troca-senha-usuario></siga:troca-senha-usuario>			
+	</c:if>
+	
+	<c:if test="${!isSenhaUsuarioExpirada}">			
+		<div class="modal fade" id="msgModal" tabindex="-1" role="dialog" aria-labelledby="msgModalLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered" role="document">
+		    <div class="modal-content">
+		    <div class="modal-header">
+		        <c:if test="${siga_cliente eq 'GOVSP'}">
+		        	<img src="/siga/imagens/logo-sem-papel-cor.png" height="40">
+		        </c:if>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-body">
+		        Recomendamos o navegador Google Chrome para acesso.
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				var isOpera = !!navigator.userAgent.match(/OPR/);
+				var isEdge = !!navigator.userAgent.match(/Edge/);
+				var isChrome = !!navigator.userAgent.match(/Chrome/) && !isOpera && !isEdge
+				if(!isChrome) {
+			    	$('#msgModal').modal('show');
+				}
+			})
+		</script>
+	</c:if>
 	<script type="text/javascript">
 		
 		//$('input, textarea').placeholder();
@@ -204,3 +239,17 @@
 	</c:if>	
 	<script src="../../javascript/service-worker.js" async></script>
 </siga:pagina>
+<c:if test="${siga_cliente eq 'GOVSP' and isSenhaUsuarioExpirada}">
+	<script src="../../javascript/usuario.troca-senha.js"></script>
+	<script>
+		$(function() {
+			var trocaSenhaUsuarioMensagemModal = $('#trocaSenhaUsuarioMensagem'); 
+			trocaSenhaUsuarioMensagemModal.on('shown.bs.modal', function() {
+				$('.js-troca-senha-mensagem-btn').focus();
+			}).on('hidden.bs.modal', function() {
+				$('.js-link-trocar-senha').removeClass('hidden');	
+			});				
+			trocaSenhaUsuarioMensagemModal.modal('show');																		
+		});					
+	</script>
+</c:if>

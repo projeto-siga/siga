@@ -19,6 +19,9 @@
 package br.gov.jfrj.siga.cp;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 import javax.persistence.Cacheable;
@@ -102,6 +105,16 @@ public class CpIdentidade extends AbstractCpIdentidade {
 
 	public boolean ativaNaData(Date dt) {
 		return super.ativoNaData(dt);
+	}
+	
+	public boolean isSenhaUsuarioExpirada() {		
+		LocalDate hoje = CpDao.getInstance().consultarDataEHoraDoServidor().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();		
+		LocalDate ultimaTrocaDeSenha = getDtCriacaoIdentidade().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();							
+		long diasUltimaTrocaSenha = ChronoUnit.DAYS.between(ultimaTrocaDeSenha, hoje);
+		String parametro = System.getProperty("siga.cp.diasExpiracaoSenhaUsuario");		
+		final long diasExpiracaoSenha = parametro == null ? 90 : Integer.valueOf(parametro);
+						
+		return diasUltimaTrocaSenha >= diasExpiracaoSenha;
 	}
 
 	@Override

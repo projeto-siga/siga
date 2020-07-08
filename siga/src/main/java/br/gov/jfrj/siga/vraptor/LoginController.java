@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -17,15 +18,19 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 
+import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
+import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.AbstractCpAcesso;
@@ -104,8 +109,20 @@ public class LoginController extends SigaController {
 				
 				throw new RuntimeException(mensagem.toString());
 			}
+			
+			if (!SigaMessages.isSigaSP()) {
+				gravaCookieComToken(username, cont);			
+			} else {								
+				boolean isSenhaUsuarioExpirada = new JSONObject(usuarioLogado).getJSONObject("identidade").getBoolean("isSenhaUsuarioExpirada");													
 
-			gravaCookieComToken(username, cont);
+				if (isSenhaUsuarioExpirada) {
+					result.include("isSenhaUsuarioExpirada", isSenhaUsuarioExpirada);
+					result.include("loginUsuario", username);
+					result.forwardTo(this).login(cont);				
+				} else {
+					gravaCookieComToken(username, cont);
+				}
+			}			
 			
 		} catch (Exception e) {
 			result.include("loginMensagem", e.getMessage()); // aqui adicionar tente com a senha de rede windows 
@@ -237,6 +254,62 @@ public class LoginController extends SigaController {
 			return new JSONObject(opcoes).optString("perm");
 		}
 		return null;
+	}	
+	
+	@Consumes("application/json")
+	@Post("public/app/login/novaSenha")
+	public void trocarSenhaUsuario(UsuarioAction usuario) throws Exception {
+		String cpf = usuario.getCpf();
+		String senhaAtual = usuario.getSenhaAtual();
+		String senhaNova = usuario.getSenhaNova();
+		String senhaConfirma = usuario.getSenhaConfirma();
+		String nomeUsuario = usuario.getNomeUsuario().toUpperCase();					
+		CpIdentidade identidade = CpDao.getInstance().consultaIdentidadeCadastrante(nomeUsuario, true);
+		
+		if (identidade == null) {
+			throw new RuntimeException("Usuário não encontrado");
+		}
+						
+		if (!StringUtils.isEmpty(cpf)) {
+			if (!Long.valueOf(cpf).equals(identidade.getPessoaAtual().getCpfPessoa())) {
+				usuario.enviarErro("CPF", "Seu usuário não está vinculado a este CPF");
+			}					
+		} else {
+			usuario.enviarErro("CPF", "Favor informar o CPF");
+		}								
+
+		if (!StringUtils.isEmpty(senhaAtual)) {
+			final String hashAtual = GeraMessageDigest.executaHash(senhaAtual.getBytes(), "MD5");
+			if (!hashAtual.equals(identidade.getDscSenhaIdentidade())) {
+				usuario.enviarErro("senhaAtual", "Senha atual está incorreta");
+			}			
+		} else {
+			usuario.enviarErro("senhaAtual", "Favor informar a senha atual");			
+		}
+		
+		if (StringUtils.isEmpty(senhaNova)) {
+			usuario.enviarErro("senhaNova", "Favor informar a nova senha");
+		}
+		
+		if (StringUtils.isEmpty(senhaConfirma)) {
+			usuario.enviarErro("senhaConfirma", "Favor confirmar a nova senha");
+		}		
+		
+		if (!StringUtils.isEmpty(senhaNova) && !StringUtils.isEmpty(senhaConfirma)) {
+			if (!senhaNova.equals(senhaConfirma)) {
+				usuario.enviarErro("senhaConfirma", "Senhas não conferem");
+			}
+			if (!StringUtils.isEmpty(senhaAtual) && senhaNova.equals(senhaAtual)) {
+				usuario.enviarErro("senhaNova", "Nova senha deve ser diferente da atual");
+			}
+		}				
+		
+		if (!usuario.temErros()) {
+			Cp.getInstance().getBL().trocarSenhaDeIdentidadeGovSp(senhaAtual, senhaNova, senhaConfirma, nomeUsuario, 
+					identidade, Arrays.asList(identidade));							
+		}
+		
+		result.use(Results.json()).from(usuario.semExibirSenhas()).include("erros").serialize();
 	}
 	
 	/**

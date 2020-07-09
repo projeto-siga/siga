@@ -84,8 +84,8 @@
 						      <input type="password" name="password" id="password" placeholder="Senha"
 								class="form-control" aria-label="Usuário" aria-describedby="icon-pass">
 						    </div>						
-						</div>
-						<c:if test="${siga_cliente eq 'GOVSP' and isSenhaUsuarioExpirada}">			
+						</div>						
+						<c:if test="${isSenhaUsuarioExpirada}">			
 							<div class="js-link-trocar-senha  hidden" style="text-align: center; margin: 0; padding: 0;">
 								<a href="#" class="btn  btn-default" title="Troca de senha" data-toggle="modal" data-target="#trocaSenhaUsuario" data-dismiss="modal">
 									Trocar senha
@@ -131,12 +131,12 @@
 			</div>
 		</div>
 	</div>
-	<c:if test="${siga_cliente eq 'GOVSP' and isSenhaUsuarioExpirada}">						
+	<c:if test="${isSenhaUsuarioExpirada}">						
 		<div class="modal  fade" id="trocaSenhaUsuarioMensagem" tabindex="-1" role="dialog">
 		 	<div class="modal-dialog modal-dialog-centered" role="alert">
 		   		<div class="modal-content">		
-		   			<div class="modal-header">
-		   				<img src="/siga/imagens/logo-sem-papel-cor.png" height="40">				        
+		   			<div class="modal-header">		   			
+		   				<img src="/siga/imagens/${siga_cliente eq 'GOVSP' ? 'logo-sem-papel-cor.png' : 'logo-siga-novo-166px.png'}" height="40">			
 				        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 				          <span aria-hidden="true">&times;</span>
 				        </button>
@@ -161,8 +161,8 @@
 		  <div class="modal-dialog modal-dialog-centered" role="document">
 		    <div class="modal-content">
 		    <div class="modal-header">
-		        <c:if test="${siga_cliente eq 'GOVSP'}">
-		        	<img src="/siga/imagens/logo-sem-papel-cor.png" height="40">
+		        <c:if test="${siga_cliente eq 'GOVSP'}">		        	
+		        	<img src="/siga/imagens/${siga_cliente eq 'GOVSP' ? 'logo-sem-papel-cor.png' : 'logo-siga-novo-166px.png'}" height="40">			
 		        </c:if>
 		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 		          <span aria-hidden="true">&times;</span>
@@ -239,7 +239,7 @@
 	</c:if>	
 	<script src="../../javascript/service-worker.js" async></script>
 </siga:pagina>
-<c:if test="${siga_cliente eq 'GOVSP' and isSenhaUsuarioExpirada}">
+<c:if test="${isSenhaUsuarioExpirada}">
 	<script src="../../javascript/usuario.troca-senha.js"></script>
 	<script>
 		$(function() {

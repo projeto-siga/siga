@@ -244,6 +244,7 @@ public class GiServiceImpl implements GiService {
 		JSONObject lotacao = new JSONObject();
 		JSONObject cargo = new JSONObject();
 		JSONObject funcao = new JSONObject();
+		JSONObject identidade = new JSONObject();
 
 		try {
 			DpPessoa p = id.getPessoaAtual();
@@ -285,16 +286,14 @@ public class GiServiceImpl implements GiService {
 				funcao.put("siglaFuncaoConfianca", f.getSigla());
 				funcao.put("idPaiFuncaoConfianca", f.getIdFuncaoPai());
 			}
+			
+			identidade.put("isSenhaUsuarioExpirada", id.isSenhaUsuarioExpirada());
 
 			pessoa.put("lotacao", lotacao);
 			pessoa.put("cargo", cargo);
 			pessoa.put("funcaoConfianca", funcao);
+			pessoa.put("identidade", identidade);
 			
-			if (SigaMessages.isSigaSP()) {
-				JSONObject identidade = new JSONObject();
-				identidade.put("isSenhaUsuarioExpirada", id.isSenhaUsuarioExpirada());
-				pessoa.put("identidade", identidade);
-			}
 
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block

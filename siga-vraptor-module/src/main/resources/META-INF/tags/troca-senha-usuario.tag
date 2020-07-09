@@ -49,8 +49,8 @@
  	<div class="modal-dialog modal-dialog-centered" role="document">
    		<div class="modal-content">
    			<div class="modal-header">   			
-   				<img src="/siga/imagens/logo-sem-papel-cor.png" height="40">   				
-   				<h4 class="modal-title  titulo-modal-troca-senha"><i class="fas fa-key"></i> Troca de senha</h4>   				       			       	
+   				<img src="/siga/imagens/${siga_cliente eq 'GOVSP' ? 'logo-sem-papel-cor.png' : 'logo-siga-novo-166px.png'}" height="40">			
+   				<h4 class="modal-title  titulo-modal-troca-senha"><i class="fas fa-key"></i> Troca de senha</h4>    								  				       			     
       		</div>
       		
    			<div class="modal-body">   				   			
@@ -105,7 +105,7 @@
       						</div>						      							      
 					    </div>			                	
 		            </div>
-		             <div class="form-group">
+		            <div class="form-group">
 		            	<div class="input-group">
 					    	<div class="input-group-prepend">
 					    		<div class="input-group-text" id="icon-user"><i class="fas fa-lock"></i></div>
@@ -115,7 +115,18 @@
         						Confirmação da senha incorreta
       						</div>						      							      
 					    </div>			                	
-		            </div>		            
+		            </div>
+		            <c:if test="${not siga_cliente eq 'GOVSP'}">	
+			            <div class="form-group">
+			            	<div class="form-check">
+								<input type="checkbox" checked="checked" id="trocarSenhaRedeUsuario"
+									name="usuario.trocarSenhaRede" class="form-check-input"></input>										
+								<label class="form-check-label" for="trocarSenhaRedeUsuario">
+									Trocar também a senha do computador, da rede e do e-mail 
+								</label>
+							</div>	
+						</div>
+					</c:if>            
 		            <button type="submit" class="btn  btn-primary  troca-senha-usuario-btn  js-troca-senha-usuario-btn" disabled>		            	
 		            	Salvar		            	
 		            </button>

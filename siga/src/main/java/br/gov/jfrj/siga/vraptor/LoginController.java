@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.logging.Logger;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import br.com.caelum.vraptor.Consumes;
@@ -37,6 +39,7 @@ import br.gov.jfrj.siga.cp.AbstractCpAcesso;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
 import br.gov.jfrj.siga.gi.service.GiService;
 import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
 import br.gov.jfrj.siga.idp.jwt.SigaJwtProviderException;
@@ -108,21 +111,16 @@ public class LoginController extends SigaController {
 				}
 				
 				throw new RuntimeException(mensagem.toString());
+			}					
+													
+			if (isSenhaUsuarioExpirada(usuarioLogado)) {
+				result.include("isSenhaUsuarioExpirada", true);
+				result.include("loginUsuario", username);
+				result.forwardTo(this).login(cont);				
+			} else {
+				gravaCookieComToken(username, cont);
 			}
-			
-			if (!SigaMessages.isSigaSP()) {
-				gravaCookieComToken(username, cont);			
-			} else {								
-				boolean isSenhaUsuarioExpirada = new JSONObject(usuarioLogado).getJSONObject("identidade").getBoolean("isSenhaUsuarioExpirada");													
-
-				if (isSenhaUsuarioExpirada) {
-					result.include("isSenhaUsuarioExpirada", isSenhaUsuarioExpirada);
-					result.include("loginUsuario", username);
-					result.forwardTo(this).login(cont);				
-				} else {
-					gravaCookieComToken(username, cont);
-				}
-			}			
+					
 			
 		} catch (Exception e) {
 			result.include("loginMensagem", e.getMessage()); // aqui adicionar tente com a senha de rede windows 
@@ -135,7 +133,7 @@ public class LoginController extends SigaController {
 		this.request.getSession(false);
 		this.response.addCookie(AuthJwtFormFilter.buildEraseCookie());
 		result.redirectTo("/");
-	}
+	}		
 
 	private static String convertStreamToString(java.io.InputStream is) {
 		if (is == null)
@@ -263,7 +261,7 @@ public class LoginController extends SigaController {
 		String senhaAtual = usuario.getSenhaAtual();
 		String senhaNova = usuario.getSenhaNova();
 		String senhaConfirma = usuario.getSenhaConfirma();
-		String nomeUsuario = usuario.getNomeUsuario().toUpperCase();					
+		String nomeUsuario = usuario.getNomeUsuario().toUpperCase();		
 		CpIdentidade identidade = CpDao.getInstance().consultaIdentidadeCadastrante(nomeUsuario, true);
 		
 		if (identidade == null) {
@@ -304,9 +302,25 @@ public class LoginController extends SigaController {
 			}
 		}				
 		
-		if (!usuario.temErros()) {
-			Cp.getInstance().getBL().trocarSenhaDeIdentidadeGovSp(senhaAtual, senhaNova, senhaConfirma, nomeUsuario, 
-					identidade, Arrays.asList(identidade));							
+		if (!usuario.temErros()) {			
+			if (SigaMessages.isSigaSP()) {
+				Cp.getInstance().getBL().trocarSenhaDeIdentidadeGovSp(senhaAtual, senhaNova, senhaConfirma, nomeUsuario, 
+						identidade, Arrays.asList(identidade));							
+			} else {
+				if ("on".equals(usuario.getTrocarSenhaRede())) {
+					try {
+						IntegracaoLdapViaWebService.getInstancia().trocarSenha(nomeUsuario, senhaNova);
+					} catch (Exception e) {
+						usuario.enviarErro("trocarSenhaRede", "Não foi possível trocar a senha do computador, da rede e do e-mail." 
+								+ " Tente novamente em alguns instantes ou repita a operação desmarcando a caixa");												
+					}
+				}
+				
+				if (!usuario.temErros()) {
+					Cp.getInstance().getBL().trocarSenhaDeIdentidade(senhaAtual, senhaNova, senhaConfirma,
+							nomeUsuario, identidade);				
+				}
+			}						
 		}
 		
 		result.use(Results.json()).from(usuario.semExibirSenhas()).include("erros").serialize();
@@ -351,6 +365,15 @@ public class LoginController extends SigaController {
 				result.forwardTo(this).login(Contexto.urlBase(request) + "/siga/public/app/login");
 			}catch(Exception e){
 				throw new AplicacaoException("Não foi possivel acessar o Login SP." );
+		}
+	}
+	
+	private boolean isSenhaUsuarioExpirada(String jsonUsuarioLogado) {		
+		try {
+			return Boolean.valueOf(new JSONObject(jsonUsuarioLogado).getJSONObject("identidade").getBoolean("isSenhaUsuarioExpirada"));
+		} catch (JSONException e) {
+			Logger.getLogger(LoginController.class).warn("Não foi possível identificar se a senha do usuário estava expirada ao efetuar login!");
+			return false;
 		}
 	}
 }

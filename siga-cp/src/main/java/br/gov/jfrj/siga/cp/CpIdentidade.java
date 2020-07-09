@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.Optional;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -108,12 +109,16 @@ public class CpIdentidade extends AbstractCpIdentidade {
 	}
 	
 	public boolean isSenhaUsuarioExpirada() {		
+		final long diasExpiracaoSenha = Integer.valueOf(Optional.ofNullable(System.getProperty("siga.cp.diasExpiracaoSenhaUsuario")).orElseGet(() -> "0"));					
+		
+		if (diasExpiracaoSenha <= 0) {
+			return false;
+		}					
+		
 		LocalDate hoje = CpDao.getInstance().consultarDataEHoraDoServidor().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();		
 		LocalDate ultimaTrocaDeSenha = getDtCriacaoIdentidade().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();							
-		long diasUltimaTrocaSenha = ChronoUnit.DAYS.between(ultimaTrocaDeSenha, hoje);
-		String parametro = System.getProperty("siga.cp.diasExpiracaoSenhaUsuario");		
-		final long diasExpiracaoSenha = parametro == null ? 90 : Integer.valueOf(parametro);
-						
+		long diasUltimaTrocaSenha = ChronoUnit.DAYS.between(ultimaTrocaDeSenha, hoje);				
+				
 		return diasUltimaTrocaSenha >= diasExpiracaoSenha;
 	}
 

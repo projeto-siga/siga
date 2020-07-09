@@ -10,8 +10,9 @@ Siga.TrocaSenhaUsuario = (function() {
 		this.cpfInput = $('#cpfUsuario');
 		this.senhaAtualInput = $('#senhaAtualUsuario');
 		this.novaSenhaInput = $('#novaSenhaUsuario');
-		this.confirmacaoNovaSenhaUsuarioInput = $('#confirmacaoNovaSenhaUsuario');	
-		this.contInput = $('#cont');		
+		this.confirmacaoNovaSenhaUsuarioInput = $('#confirmacaoNovaSenhaUsuario');		
+		this.contInput = $('#cont');				
+		this.trocarSenhaRedeUsuarioCheckbox = $('#trocarSenhaRedeUsuario');
 		this.containerSenhaAlteradaSucesso = $('.container-senha-alterada-sucesso');		
 	}
 	
@@ -23,9 +24,10 @@ Siga.TrocaSenhaUsuario = (function() {
 		this.senhaAtualInput.on('blur', onSenhaAtualInformada.bind(this, checarBotaoSalvar));
 		this.senhaAtualInput.on('input', onSenhaAtualInformada.bind(this, checarBotaoSalvar));		
 		this.novaSenhaInput.on('blur', onNovaSenhaInformada.bind(this, checarBotaoSalvar));
-		this.novaSenhaInput.on('input', onNovaSenhaInformada.bind(this, checarBotaoSalvar));		
+		this.novaSenhaInput.on('input', onNovaSenhaInformada.bind(this, checarBotaoSalvar));				
 		this.confirmacaoNovaSenhaUsuarioInput.on('blur', onConfirmacaoNovaSenhaUsuario.bind(this, checarBotaoSalvar));
 		this.confirmacaoNovaSenhaUsuarioInput.on('input', onConfirmacaoNovaSenhaUsuario.bind(this, checarBotaoSalvar));
+		this.trocarSenhaRedeUsuarioCheckbox.on('click', onTrocarSenhaRedeUsuarioClicado.bind(this));
 		this.trocaSenhaUsuarioBtn.on('click', onTrocaSenhaUsuarioClicado.bind(this));
 	}
 	
@@ -145,6 +147,10 @@ Siga.TrocaSenhaUsuario = (function() {
 		callback.call(this);
 	}	
 	
+	function onTrocarSenhaRedeUsuarioClicado() {
+		this.trocarSenhaRedeUsuarioCheckbox.parent().find('label').css('color', 'black');				
+	}
+	
 	function checarBotaoSalvar() {
 		var temInputVazio = false;
 		this.trocaSenhaUsuarioModal.find('form').find('input[type=text], input[type=password]').each(function() {
@@ -175,8 +181,9 @@ Siga.TrocaSenhaUsuario = (function() {
 					'cpf': this.cpfInput.val().replace(/[^\d]+/g,''), 
 					'senhaAtual': this.senhaAtualInput.val(), 
 					'senhaNova': password, 
-					'senhaConfirma': this.confirmacaoNovaSenhaUsuarioInput.val(),
-					'cont': cont
+					'senhaConfirma': this.confirmacaoNovaSenhaUsuarioInput.val(),					
+					'cont': cont,
+					'trocarSenhaRede': (this.trocarSenhaRedeUsuarioCheckbox.is(':checked') ? 'on' : 'off')
 				}
 			};		
 
@@ -199,37 +206,42 @@ Siga.TrocaSenhaUsuario = (function() {
 			var primeiroInputComErro;
 			removerMensagemErroPainel.call(this);
 						
-			erros.forEach(function(item, index) {
-				if (item.campo == 'CPF') {					
-					adicionarMensagemErroPainel.call(this, item.mensagem);
-					exibirMensagemErroInput(this.cpfInput, item.mensagem);
+			erros.forEach(function(erro, index) {
+				if (erro.campo == 'CPF') {					
+					adicionarMensagemErroPainel.call(this, erro.mensagem);
+					exibirMensagemErroInput(this.cpfInput, erro.mensagem);
 					primeiroInputComErro = this.cpfInput;
 				}
 				
-				if (item.campo == 'senhaAtual') {					
-					adicionarMensagemErroPainel.call(this, item.mensagem);
-					exibirMensagemErroInput(this.senhaAtualInput, item.mensagem);
+				if (erro.campo == 'senhaAtual') {					
+					adicionarMensagemErroPainel.call(this, erro.mensagem);
+					exibirMensagemErroInput(this.senhaAtualInput, erro.mensagem);
 					if (!!!primeiroInputComErro) primeiroInputComErro = this.senhaAtualInput;
 				}
 				
-				if (item.campo == 'senhaNova') {					
-					adicionarMensagemErroPainel.call(this, item.mensagem);
+				if (erro.campo == 'senhaNova') {					
+					adicionarMensagemErroPainel.call(this, erro.mensagem);
 					this.novaSenhaInput.addClass('is-invalid');
-					exibirMensagemErroInput(this.novaSenhaInput, item.mensagem);
+					exibirMensagemErroInput(this.novaSenhaInput, erro.mensagem);
 					if (!!!primeiroInputComErro) primeiroInputComErro = this.novaSenhaInput;
 				}
 				
-				if (item.campo == 'senhaConfirma') {					
-					adicionarMensagemErroPainel.call(this, item.mensagem);
-					exibirMensagemErroInput(this.confirmacaoNovaSenhaUsuarioInput, item.mensagem);
+				if (erro.campo == 'senhaConfirma') {					
+					adicionarMensagemErroPainel.call(this, erro.mensagem);
+					exibirMensagemErroInput(this.confirmacaoNovaSenhaUsuarioInput, erro.mensagem);
 					if (!!!primeiroInputComErro) primeiroInputComErro = this.confirmacaoNovaSenhaUsuarioInput;
 				}								
+				
+				if (erro.campo == 'trocarSenhaRede') {					
+					adicionarMensagemErroPainel.call(this, erro.mensagem);
+					this.trocarSenhaRedeUsuarioCheckbox.parent().find('label').css('color', '#dc3545');									
+				}
 				
 			}.bind(this));
 			
 			exibirMensagemErroPainel.call(this);	
 			checarBotaoSalvar.call(this);
-			primeiroInputComErro.focus();
+			if (primeiroInputComErro) primeiroInputComErro.focus();
 		} else {
 			removerMensagemErroPainel.call(this);			
 			exibirMensagemSucesso.call(this);

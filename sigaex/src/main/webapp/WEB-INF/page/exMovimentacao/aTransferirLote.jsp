@@ -12,7 +12,21 @@
 <siga:pagina titulo="${titulo}">
 
 	<script type="text/javascript" language="Javascript1.1">
-		function checkUncheckAll(theElement) {
+	function sbmt(offset) {
+		if (offset == null) {
+			offset = 0;
+		}
+
+		let form = document.forms['frm'];
+		form ["paramoffset"].value = offset;
+		form.action = "transferir_lote";
+		form.method = "GET";
+		form ["p.offset"].value = offset;
+
+		form.submit();
+	}
+
+	function checkUncheckAll(theElement) {
 			let isChecked = theElement.checked;
 			Array.from(document.getElementsByClassName("chkDocumento")).forEach(chk => chk.checked = isChecked);
 		}
@@ -53,7 +67,9 @@
 			</div>
 			<div class="card-body">
 				<form name="frm" action="transferir_lote_gravar" method="post">
-					<input type="hidden" name="postback" value="1" />
+					<input type="hidden" name="postback" value="1" /> 
+					<input type="hidden" name="paramoffset" value="0" /> 
+					<input type="hidden" name="p.offset" value="0" />
 					<div class="row">
 						<div class="col-sm-3">
 							<div class="form-group">
@@ -84,9 +100,9 @@
 					<div id="tr_titular" style="display: none" class="row">
 						<div class="col-sm-6">
 							<div class="form-group">
-								<div >
+								<div>
 									<label>Titular</label> <input type="hidden" name="campos"
-									value="${titularSel.id}" />
+										value="${titularSel.id}" />
 									<siga:selecao propriedade="titular" tema="simple" modulo="siga" />
 								</div>
 							</div>
@@ -209,63 +225,64 @@
 									</tr>
 								</thead>
 								<tbody class="table-bordered">
-									<c:forEach var="m" items="${itens}">
+									<siga:paginador maxItens="${maxItems}" maxIndices="10"
+										totalItens="${tamanho}" itens="${itens}" var="documento">
 										<c:set var="x" scope="request">
-												chk_${m.id}
+												chk_${documento.id}
 											</c:set>
-										<c:remove var="x_checked" scope="request" />
-										<c:if test="${param[x] == 'true'}">
-											<c:set var="x_checked" scope="request">checked</c:set>
-										</c:if>
-										<c:set var="tpd_x" scope="request">tpd_${m.id}</c:set>
+										<c:set var="tpd_x" scope="request">tpd_${documento.id}</c:set>
 										<tr>
 											<td align="center" class="align-middle text-center"><input
 												type="checkbox" name="documentosSelecionados"
-												value="${m.id}" ${x_checked} id="${x}" class="chkDocumento"
+												value="${documento.id}" id="${x}" class="chkDocumento"
 												onclick="javascript:displaySel(this, '${tpd_x}');" /></td>
 											<td class="text-right"><c:choose>
 													<c:when test='${param.popup!="true"}'>
 														<a
-															href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${m.sigla}">
-															${m.sigla} </a>
+															href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${documento.sigla}">
+															${documento.sigla} </a>
 													</c:when>
 													<c:otherwise>
 														<a
-															href="javascript:opener.retorna_${param.propriedade}('${m.id}','${m.sigla},'');">
-															${m.sigla} </a>
+															href="javascript:opener.retorna_${param.propriedade}('${documento.id}','${documento.sigla},'');">
+															${documento.sigla} </a>
 													</c:otherwise>
 												</c:choose></td>
-											<c:if test="${not m.geral}">
-												<td class="text-center">${m.doc.dtDocDDMMYY}</td>
-												<td class="text-center"><siga:selecionado
-														isVraptor="true" sigla="${m.doc.lotaSubscritor.sigla}"
-														descricao="${m.doc.lotaSubscritor.descricao}" /></td>
-												<td class="text-center"><siga:selecionado
-														isVraptor="true" sigla="${m.doc.subscritor.iniciais}"
-														descricao="${m.doc.subscritor.descricao}" /></td>
-												<td class="text-center">${m.ultimaMovimentacaoNaoCancelada.dtMovDDMMYY}</td>
+											<c:if test="${not documento.geral}">
+												<td class="text-center">${documento.doc.dtDocDDMMYY}</td>
 												<td class="text-center"><siga:selecionado
 														isVraptor="true"
-														sigla="${m.ultimaMovimentacaoNaoCancelada.resp.iniciais}"
-														descricao="${m.ultimaMovimentacaoNaoCancelada.resp.descricao}" />
+														sigla="${documento.doc.lotaSubscritor.sigla}"
+														descricao="${documento.doc.lotaSubscritor.descricao}" /></td>
+												<td class="text-center"><siga:selecionado
+														isVraptor="true"
+														sigla="${documento.doc.subscritor.iniciais}"
+														descricao="${documento.doc.subscritor.descricao}" /></td>
+												<td class="text-center">${documento.ultimaMovimentacaoNaoCancelada.dtMovDDMMYY}</td>
+												<td class="text-center"><siga:selecionado
+														isVraptor="true"
+														sigla="${documento.ultimaMovimentacaoNaoCancelada.resp.iniciais}"
+														descricao="${documento.ultimaMovimentacaoNaoCancelada.resp.descricao}" />
 												</td>
 											</c:if>
-											<c:if test="${m.geral}">
-												<td class="text-center">${m.doc.dtDocDDMMYY}</td>
+											<c:if test="${documento.geral}">
+												<td class="text-center">${documento.doc.dtDocDDMMYY}</td>
 												<td class="text-center"><siga:selecionado
-														isVraptor="true" sigla="${m.doc.subscritor.iniciais}"
-														descricao="${m.doc.subscritor.descricao}" /></td>
+														isVraptor="true"
+														sigla="${documento.doc.subscritor.iniciais}"
+														descricao="${documento.doc.subscritor.descricao}" /></td>
 												<td class="text-center"><siga:selecionado
-														isVraptor="true" sigla="${m.doc.lotaSubscritor.sigla}"
-														descricao="${m.doc.lotaSubscritor.descricao}" /></td>
+														isVraptor="true"
+														sigla="${documento.doc.lotaSubscritor.sigla}"
+														descricao="${documento.doc.lotaSubscritor.descricao}" /></td>
 												<td class="text-center"></td>
 												<td class="text-center"></td>
 												<td class="text-center"></td>
 												<td class="text-center"></td>
 											</c:if>
-											<td>${f:descricaoConfidencial(m.doc, lotaTitular)}</td>
+											<td>${f:descricaoConfidencial(documento.doc, lotaTitular)}</td>
 										</tr>
-									</c:forEach>
+									</siga:paginador>
 								</tbody>
 							</table>
 						</div>

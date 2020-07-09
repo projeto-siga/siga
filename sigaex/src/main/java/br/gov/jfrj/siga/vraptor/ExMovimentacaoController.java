@@ -101,6 +101,8 @@ public class ExMovimentacaoController extends ExController {
 	private static final Logger LOGGER = Logger
 			.getLogger(ExMovimentacaoController.class);
 	
+	private static final int MAX_ITENS_PAGINA_TRAMITACAO_LOTE = 50;
+	
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -2378,15 +2380,19 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Get("app/expediente/mov/transferir_lote")
-	public void aTransferirLote() {
-		final List<ExMobil> provItens = dao()
-				.consultarParaTransferirEmLote(getLotaTitular());
+	public void aTransferirLote(Integer paramoffset) {
+		Long tamanho = dao().consultarQuantidadeParaTransferirEmLote(getLotaTitular());
 
-		final List<ExMobil> itens = new ArrayList<ExMobil>();
+		LOGGER.debug("TAMANHO : " + tamanho);
 
-		for (ExMobil i : provItens) {
-			itens.add(i);
-		}
+		int offset = Objects.nonNull(paramoffset)
+				? ((paramoffset >= tamanho) ? ((paramoffset / MAX_ITENS_PAGINA_TRAMITACAO_LOTE - 1) * MAX_ITENS_PAGINA_TRAMITACAO_LOTE)
+						: paramoffset)
+				: 0;
+
+		final List<ExMobil> provItens = (tamanho <= MAX_ITENS_PAGINA_TRAMITACAO_LOTE)
+				? dao().consultarParaTransferirEmLote(getLotaTitular(), null, null)
+				: dao().consultarParaTransferirEmLote(getLotaTitular(), offset, MAX_ITENS_PAGINA_TRAMITACAO_LOTE);
 
 		final DpPessoaSelecao titularSel = new DpPessoaSelecao();
 		final DpPessoaSelecao subscritorSel = new DpPessoaSelecao();
@@ -2396,12 +2402,16 @@ public class ExMovimentacaoController extends ExController {
 
 		result.include("listaTipoResp", this.getListaTipoResp());
 		result.include("tiposDespacho", this.getTiposDespacho(null));
-		result.include("itens", itens);
+		result.include("itens", provItens);
 		result.include("titularSel", titularSel);
 		result.include("subscritorSel", subscritorSel);
 		result.include("lotaResponsavelSel", lotaResponsavelSel);
 		result.include("responsavelSel", responsavelSel);
 		result.include("cpOrgaoSel", cpOrgaoSel);
+
+		result.include("maxItems", MAX_ITENS_PAGINA_TRAMITACAO_LOTE);
+		result.include("tamanho", tamanho);
+		result.include("currentPageNumber", (offset / MAX_ITENS_PAGINA_TRAMITACAO_LOTE + 1));
 	}
 
 	@Post("app/expediente/mov/transferir_lote_gravar")
@@ -2409,7 +2419,7 @@ public class ExMovimentacaoController extends ExController {
 			final boolean substituicao, final DpPessoaSelecao titularSel, final String nmFuncaoSubscritor,
 			final DpLotacaoSelecao lotaResponsavelSel, final CpOrgaoSelecao cpOrgaoSel,
 			final String dtDevolucaoMovString, final String obsOrgao, final String protocolo, final Long tpdall,
-			final String txtall, final DpPessoaSelecao responsavelSel, final List<Long> documentosSelecionados)
+			final String txtall, final DpPessoaSelecao responsavelSel, final List<Long> documentosSelecionados, Integer paramoffset)
 			throws Exception {
 
 		if (dtDevolucaoMovString != null && !"".equals(dtDevolucaoMovString.trim())) {
@@ -2420,7 +2430,7 @@ public class ExMovimentacaoController extends ExController {
 				if (!DateUtils.isSameDay(new Date(), dtDevolucao) && dtDevolucao.before(new Date())) {
 					result.include("msgCabecClass", "alert-danger");
 					result.include("mensagemCabec", "Data de devolução não pode ser anterior à data de hoje.");
-					result.forwardTo(this).aTransferirLote();
+					result.forwardTo(this).aTransferirLote(paramoffset);
 					return;
 				}
 			}

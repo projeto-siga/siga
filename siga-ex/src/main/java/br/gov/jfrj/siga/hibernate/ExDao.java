@@ -33,6 +33,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
@@ -1247,14 +1248,22 @@ public class ExDao extends CpDao {
 		return ((Long) query.getSingleResult()).intValue();
 	}
 
-	// public Query consultarParaTransferirEmLote(DpLotacao lot) {
-	@SuppressWarnings("unchecked")
-	public List<ExMobil> consultarParaTransferirEmLote(DpLotacao lot) {
-		final Query query = em().createNamedQuery(
-				"consultarParaTransferirEmLote");
-		query.setParameter("lotaIni", lot.getIdLotacaoIni());
-		// return query;s
+	public List<ExMobil> consultarParaTransferirEmLote(DpLotacao lot, Integer offset, Integer tamPagina) {
+		final Query query = em().createNamedQuery("consultarParaTransferirEmLote").setParameter("lotaIni",
+				lot.getIdLotacaoIni());
+		if (Objects.nonNull(offset)) {
+			query.setFirstResult(offset);
+		}
+		if (Objects.nonNull(tamPagina)) {
+			query.setMaxResults(tamPagina);
+		}
+
 		return query.getResultList();
+	}
+
+	public Long consultarQuantidadeParaTransferirEmLote(DpLotacao lot) {
+		return (Long) em().createNamedQuery("consultarQuantidadeParaTransferirEmLote", Long.class)
+				.setParameter("lotaIni", lot.getIdLotacaoIni()).getSingleResult();
 	}
 
 	public List<ExMobil> consultarParaAnotarEmLote(DpLotacao lot) {

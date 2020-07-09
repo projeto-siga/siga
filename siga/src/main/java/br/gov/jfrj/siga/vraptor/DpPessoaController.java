@@ -214,7 +214,6 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		
 		if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
 			list = dao().listarOrgaosUsuarios();
-			list.remove(0);
 			result.include("orgaosUsu", list);
 			if (idOrgaoUsu == null) {
 				carregarCombos(null, list.get(0).getId(), null, null, null, null, null, 0, Boolean.FALSE);

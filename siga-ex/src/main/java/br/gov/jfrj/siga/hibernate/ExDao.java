@@ -1606,6 +1606,19 @@ public class ExDao extends CpDao {
 		return em().createQuery(criteriaQuery).getResultList();
 	}
 	
+	public List<CpMarcador> listarCpMarcadoresGeraisTaxonomiaAdministrada() {
+		List<CpMarcador> listaConcatenada = listarCpMarcadoresGerais();
+		List<CpMarcador> listaTaxonomia = listarCpMarcadoresTaxonomiaAdministrada();
+		
+		if (listaTaxonomia != null) {
+			listaConcatenada.addAll(listaTaxonomia);	
+		}
+
+		return listaConcatenada;
+		
+		
+	}
+	
 	public List<ExTpDocPublicacao> listarExTiposDocPublicacao() {
 		return findAndCacheByCriteria(CACHE_QUERY_HOURS,
 				ExTpDocPublicacao.class);

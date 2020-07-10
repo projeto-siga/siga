@@ -2310,7 +2310,7 @@ public class ExMovimentacaoController extends ExController {
 
 		result.include("sigla", sigla);
 		result.include("mob", builder.getMob());
-		result.include("listaMarcadores", this.getListaMarcadoresGerais());
+		result.include("listaMarcadores", this.getListaMarcadoresGeraisTaxonomiaAdministrada());
 		result.include("listaMarcadoresAtivos", this.getListaMarcadoresAtivos(builder.getMob().getDoc().getMobilGeral()));
 	}
 	
@@ -2337,6 +2337,10 @@ public class ExMovimentacaoController extends ExController {
 
 	private Object getListaMarcadoresGerais() {
 		return dao().listarCpMarcadoresGerais();
+	}
+	
+	private Object getListaMarcadoresGeraisTaxonomiaAdministrada() {
+		return dao().listarCpMarcadoresGeraisTaxonomiaAdministrada();
 	}
 
 	@Post("/app/expediente/mov/marcar_gravar")
@@ -4749,15 +4753,21 @@ public class ExMovimentacaoController extends ExController {
 		final ExMovimentacao movimentacao = movimentacaoBuilder
 				.construir(dao());
 
+		List<CpMarcador> marcadores = dao().listarCpMarcadoresTaxonomiaAdministrada();
+		Set<CpMarcador> marcadoresAtivo = (Set<CpMarcador>) this.getListaMarcadoresAtivos(documentoBuilder.getMob().getDoc().getMobilGeral());
+		if (marcadores != null) {
+			marcadores.removeAll(marcadoresAtivo);
+		}
 
+		
 
 		result.include("sigla", sigla);
 		result.include("mob", documentoBuilder.getMob());
 		result.include("mov", movimentacao);
 		result.include("doc", documento);
 		result.include("descrMov", movimentacaoBuilder.getDescrMov());
-		result.include("listaMarcadores", this.getListaMarcadoresTaxonomiaAdministrada());
-		result.include("listaMarcadoresAtivos", this.getListaMarcadoresAtivos(documentoBuilder.getMob().getDoc().getMobilGeral()));
+		result.include("listaMarcadores", marcadores);
+		result.include("listaMarcadoresAtivos", marcadoresAtivo);
 	}
 	
 	

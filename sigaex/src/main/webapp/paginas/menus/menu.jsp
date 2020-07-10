@@ -2,6 +2,7 @@
 	buffer="64kb"%>
 <%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="fx"%>
 
@@ -38,8 +39,7 @@
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;TRAMITE:Trâmite;LOTE:Em Lote')}">
 					<li><a class="dropdown-item"
-						href="/sigaex/app/expediente/mov/transferir_lote">Transferir
-							em lote</a></li>
+						href="/sigaex/app/expediente/mov/transferir_lote"><fmt:message key="documento.transferencia.lote" /></a></li>
 					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/mov/receber_lote">Receber em lote</a></li>
 					<li><a class="dropdown-item"

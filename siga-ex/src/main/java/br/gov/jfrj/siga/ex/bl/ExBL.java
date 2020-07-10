@@ -7144,16 +7144,18 @@ public class ExBL extends CpBL {
 		/* END Redefinição para Público */
 		
 		
-		CpMarcador cpMarcador = new CpMarcador();
-		
 		/* 2- Gravação dos Marcadores */
-		for(String marcador: listaMarcadores) {
-		   cpMarcador = dao().consultar(Long.parseLong(marcador), CpMarcador.class, false);
-		   try {
-			vincularMarcador(cadastrante, lotaCadastrante, mob, null, lotaCadastrante, cadastrante, cadastrante, cadastrante, null, null, cpMarcador, true);
-		   } catch (Exception e) {
-				throw new AplicacaoException("Ocorreu um erro ao gravar marcadores");
-		   }
+		if (listaMarcadores != null) {
+			CpMarcador cpMarcador = new CpMarcador();
+			
+			for(String marcador: listaMarcadores) {
+			   cpMarcador = dao().consultar(Long.parseLong(marcador), CpMarcador.class, false);
+			   try {
+				vincularMarcador(cadastrante, lotaCadastrante, mob, null, lotaCadastrante, cadastrante, cadastrante, cadastrante, null, null, cpMarcador, true);
+			   } catch (Exception e) {
+					throw new AplicacaoException("Ocorreu um erro ao gravar marcadores");
+			   }
+			}
 		}
 		
 		/* END Gravação dos Marcadores  */

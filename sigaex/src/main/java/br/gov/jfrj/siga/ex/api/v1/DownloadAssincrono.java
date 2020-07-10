@@ -13,16 +13,24 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
-public class PdfCompleto implements Callable<String> {
+public class DownloadAssincrono implements Callable<String> {
 	private String uuid;
+	private String contenttype;
 	private String sigla;
 	private boolean estampar;
+	private boolean volumes;
+	private String contextpath;
+	String servernameport;
 
-	public PdfCompleto(String uuid, String sigla, boolean estampar) {
+	public DownloadAssincrono(String uuid, String contenttype, String sigla, boolean estampar, boolean volumes, String contextpath, String servernameport) {
 		super();
 		this.uuid = uuid;
+		this.contenttype = contenttype;
 		this.sigla = sigla;
 		this.estampar = estampar;
+		this.volumes = volumes;
+		this.contextpath = contextpath;
+		this.servernameport = servernameport;
 	}
 
 	@Override
@@ -40,18 +48,22 @@ public class PdfCompleto implements Callable<String> {
 
 			// Cria um documento em diretório temporário para agregar os
 			// diversos PDFs
-			bufName = getBufName(uuid, sigla);
+			bufName = getBufName(uuid, contenttype, sigla);
 			FileOutputStream buf = new FileOutputStream(bufName);
-			Documento.getDocumento(buf, this.uuid, mob, null, true, estampar, null, null);
+			if ("text/html".equals(this.contenttype))
+				Documento.getDocumentoHTML(buf, this.uuid, mob, null, true, volumes, this.contextpath, this.servernameport);
+			else
+				Documento.getDocumento(buf, this.uuid, mob, null, true, estampar, volumes, null, null);
 		} catch (Exception ex) {
-			SwaggerUtils.log(PdfCompleto.class).error(RequestExceptionLogger.simplificarStackTrace(ex));
+			SwaggerUtils.log(DownloadAssincrono.class).error(RequestExceptionLogger.simplificarStackTrace(ex));
 		}
 		return bufName;
 	}
 
-	public static String getBufName(String uuid, String sigla) {
+	public static String getBufName(String uuid, String contenttype, String sigla) {
 		String dirTemp = SwaggerServlet.getProperty("upload.dir.temp");
-		return dirTemp + "/" + Texto.slugify(sigla, true, false) + "-completo-" + uuid + ".pdf";
+		return dirTemp + "/" + Texto.slugify(sigla, true, false) + "-completo-" + uuid
+				+ ("text/html".equals(contenttype) ? ".html" : ".pdf");
 	}
 
 }

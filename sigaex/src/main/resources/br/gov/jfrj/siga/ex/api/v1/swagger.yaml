@@ -11,9 +11,18 @@ consumes: [application/json,application/x-www-form-urlencoded]
 produces: [application/json]
 
 tags:
+  - name: auth
+    description: Autenticação
   - name: download
     description: Download
-
+    
+securityDefinitions:
+  Basic:
+    type: basic
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
 
 ################################################################################
 #                                   Parameters                                 #
@@ -26,19 +35,19 @@ parameters:
     type: string
     required: true
   completo:
-    name: disposition
+    name: completo
     in: query
     description: Informar true se deseja receber todos os arquivos juntados e anexos
     required: false
     type: boolean
   estampa:
-    name: disposition
+    name: estampa
     in: query
     description: Informar true se deseja receber o PDF sem estampas
     required: false
     type: boolean
   volumes:
-    name: disposition
+    name: volumes
     in: query
     description: Informar true se deseja receber uma compilação com todos os volumes de um processo
     required: false
@@ -67,6 +76,12 @@ parameters:
     description: Informar attachment se desejar receber como um download
     required: false
     type: string
+  contenttype:
+    name: contenttype
+    in: query
+    description: Informar o tipo de arquivo desejado, pode ser application/pdf ou text/html
+    required: false
+    type: string
   chave:
     name: chave
     in: path
@@ -79,11 +94,34 @@ parameters:
 #                                           Paths                              #
 ################################################################################
 paths:
-  /documento/{sigla}/pdf:
+  /autenticar:
+    post:
+      summary: Recebe login e senha e gera um token JWT para ser usado nos outros métodos da API
+      tags: [auth]
+      security:
+        - Basic: []
+      parameters: []
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                description: Token JWT
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+  /documento/{sigla}/arquivo:
     get:
       summary: Inicia o processo de geração do PDF completo de um documento para visualização
       tags: [download]
+      security:
+        - Bearer: []
       parameters:
+        - $ref: "#/parameters/contenttype"
         - $ref: "#/parameters/sigla"
         - $ref: "#/parameters/estampa"
         - $ref: "#/parameters/completo"
@@ -96,7 +134,7 @@ paths:
             properties:
               uuid:
                 type: string
-                description: UUID para obter status da geração do PDF
+                description: UUID que pode ser usado como chave para obter status da geração do PDF
               jwt:
                 type: string
                 description: JWT com as informações para download do PDF

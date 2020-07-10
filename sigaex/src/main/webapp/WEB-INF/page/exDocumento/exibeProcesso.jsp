@@ -182,25 +182,35 @@
 					</div>
 				</div>				
 				<c:if test="${siga_cliente != 'GOVSP'}">
-					<div>
-						<siga:link icon="application_view_list" classe="mt-3 once" title="Visualizar&nbsp;_Movimentações"
+					<div class="mt-2">
+						<siga:link icon="application_view_list" classe="once" title="Visualizar&nbsp;_Movimentações"
 							url="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}" atalho="${true}"
-							test="${true}" />
-						<button type="button" class="ml-2 btn btn-secondary btn-sm align-center" id="TelaCheia" data-toggle="button" aria-pressed="false" autocomplete="off"
+							test="${true}" /> <span class="pl-2"></span>
+						<button type="button" class="link-btn btn btn-secondary btn-sm align-center" id="TelaCheia" data-toggle="button" aria-pressed="false" autocomplete="off"
 							accesskey="t" onclick="javascript: telaCheia(this);">
 							<u>T</u>ela Cheia
-						</button>						
-						<div class="d-inline-block col-sm-6 align-bottom pb-1 mt-3 mr-2">
+						</button>			
+						<span class="pl-2"></span>			
+						<div class="d-inline-block align-center mb-2 mt-2">
 							<siga:link icon="wrench" title="Preferência:" test="${true}" url="" />
+							<span class="pl-2"></span>			
+							<span style="white-space: nowrap;">
 							<input type="radio" id="radioHTML" name="formato" value="html" accesskey="h" checked="checked" onclick="exibir(htmlAtual,pdfAtual,'');">
-								&nbsp;<u>H</u>TML&nbsp;
+								<u>H</u>TML&nbsp;
 							</input>
+							</span>
+							<span class="pl-2"></span>			
+							<span style="white-space: nowrap;">
 							<input type="radio" id="radioPDF" name="formato" value="pdf" accesskey="p" onclick="exibir(htmlAtual,pdfAtual,'');">
-								&nbsp;<u>P</u>DF -  <a id="pdflink" accesskey="a"> <u>a</u>brir</a>
+								<u>P</u>DF -  <a id="pdflink" accesskey="a"> <u>a</u>brir</a>
 							</input>
-							<input class="ml-2" type="radio" id="radioPDFSemMarcas" name="formato" accesskey="s" value="pdfsemmarcas" onclick="exibir(htmlAtual,pdfAtual,'semmarcas/');">
-								&nbsp;PDF <u>s</u>em marcas - <a id="pdfsemmarcaslink" accesskey="b"> a<u>b</u>rir</a>
+							</span>
+							<span class="pl-2"></span>			
+							<span style="white-space: nowrap;">
+							<input type="radio" id="radioPDFSemMarcas" name="formato" accesskey="s" value="pdfsemmarcas" onclick="exibir(htmlAtual,pdfAtual,'semmarcas/');">
+								PDF <u>s</u>em marcas - <a id="pdfsemmarcaslink" accesskey="b"> a<u>b</u>rir</a>
 							</input>
+							</span>
 						</div>
 					</div>
 				</c:if>
@@ -211,8 +221,8 @@
 	<div class="row mt-3">
 		<c:set var="arqsNum" value="${mob.arquivosNumerados}" />
 		<c:set var="paginacao" value="${not empty arqsNum[0].paginaInicial}" />
-		<div class="wrapper col-sm-3 float-left" >
-			<nav id="sidebar">
+		<div class="wrapper col-sm-3" >
+			<div id="sidebar" class="w-100">
 				<div class="card-sidebar card bg-light mb-3" id="documentosDossie">
 					<div class="text-size-6 card-header">
 						<span class="titulo-docs">
@@ -242,8 +252,8 @@
 							</div>	
 						</c:if>							
 					</div>
-					<div class="card-body p-1">
-						<table class="text-size-6 table table-hover table-striped mov tabela-documentos">
+					<div class="card-body pl-1 pr-1 pt-0 pb-0">
+						<table class="text-size-6 table table-hover table-sm table-striped m-0 mov tabela-documentos">
 							<tbody id="${mob.doc.podeReordenar() ? 'sortable' : ''}">
 								<c:forEach var="arqNumerado" items="${arqsNum}">
 									<tr>										
@@ -319,6 +329,24 @@
 										</c:if>
 									</tr>
 								</c:if>
+								
+								<c:if test="${podeExibirTodosOsVolumes}">
+								<tr>
+									<td>
+										<a target="_blank" href="/sigaex/app/arquivo/exibir?arquivo=${arqsNum[0].referenciaPDFCompletoDocPrincipalVolumes}">
+											<img src="/siga/css/famfamfam/icons/page_white_acrobat.png">
+										</a>
+									</td>
+									<td style="padding-left: 5pt;">
+										<a class="js-siga-info-doc-completo" href="javascript:exibir('${arqsNum[0].referenciaHtmlCompletoDocPrincipalVolumes}','${arqsNum[0].referenciaPDFCompletoDocPrincipalVolumes}','')">TODOS OS VOLUMES</a>
+									</td>
+									<c:if test="${siga_cliente != 'GOVSP' && paginacao}">
+										<td align="center" style="padding-left: 5pt;"></td>										
+										<td align="center" style="padding-left: 5pt;">
+										</td>										
+									</c:if>	
+								</tr>							
+								</c:if>
 							</tfoot>
 						</table>
 						<c:if test="${mob.doc.podeReordenar() && podeExibirReordenacao && mob.doc.temOrdenacao()}">						
@@ -335,9 +363,9 @@
 						</c:if>					
 					</div>
 				</div>
-			</nav>
+			</div>
 		</div>
-		<div id="right-col" class="col-sm-9 float-right">
+		<div id="right-col" class="col-sm-9">
 			<c:if test="${siga_cliente == 'GOVSP'}">
 				<div id="linhaBtn" class="mb-2">						
 					<div class="input-group d-inline mb-2">						

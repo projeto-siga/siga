@@ -24,20 +24,32 @@ public interface IExApiV1 {
 		public String errormsg;
 	}
 
-	public class DocumentoSiglaPdfGetRequest implements ISwaggerRequest {
+	public class AutenticarPostRequest implements ISwaggerRequest {
+	}
+
+	public class AutenticarPostResponse implements ISwaggerResponse {
+		public String token;
+	}
+
+	public interface IAutenticarPost extends ISwaggerMethod {
+		public void run(AutenticarPostRequest req, AutenticarPostResponse resp) throws Exception;
+	}
+
+	public class DocumentoSiglaArquivoGetRequest implements ISwaggerRequest {
+		public String contenttype;
 		public String sigla;
 		public Boolean estampa;
 		public Boolean completo;
 		public Boolean volumes;
 	}
 
-	public class DocumentoSiglaPdfGetResponse implements ISwaggerResponse {
+	public class DocumentoSiglaArquivoGetResponse implements ISwaggerResponse {
 		public String uuid;
 		public String jwt;
 	}
 
-	public interface IDocumentoSiglaPdfGet extends ISwaggerMethod {
-		public void run(DocumentoSiglaPdfGetRequest req, DocumentoSiglaPdfGetResponse resp) throws Exception;
+	public interface IDocumentoSiglaArquivoGet extends ISwaggerMethod {
+		public void run(DocumentoSiglaArquivoGetRequest req, DocumentoSiglaArquivoGetResponse resp) throws Exception;
 	}
 
 	public class DownloadJwtFilenameGetRequest implements ISwaggerRequest {

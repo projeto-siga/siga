@@ -53,12 +53,14 @@ import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
@@ -4746,4 +4748,65 @@ public class ExMovimentacaoController extends ExController {
 
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
+	
+	private Object getListaMarcadoresTaxonomiaAdministrada() {
+		return dao().listarCpMarcadoresTaxonomiaAdministrada();
+	}
+	
+	@Get("/app/expediente/mov/publicacao_transparencia")
+	public void aPublicarTransparencia(String sigla, String descrPublicacao,
+			String mensagem) throws Exception {
+		
+		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+
+		final ExDocumento documento = buscarDocumento(documentoBuilder);
+
+		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
+				.novaInstancia().setMob(documentoBuilder.getMob());
+
+		final ExMovimentacao movimentacao = movimentacaoBuilder
+				.construir(dao());
+
+
+
+		result.include("sigla", sigla);
+		result.include("mob", documentoBuilder.getMob());
+		result.include("mov", movimentacao);
+		result.include("doc", documento);
+		result.include("descrMov", movimentacaoBuilder.getDescrMov());
+		result.include("listaMarcadores", this.getListaMarcadoresTaxonomiaAdministrada());
+		result.include("listaMarcadoresAtivos", this.getListaMarcadoresAtivos(documentoBuilder.getMob().getDoc().getMobilGeral()));
+	}
+	
+	
+	@Post("/app/expediente/mov/publicacao_transparencia_gravar")
+	public void publicarTransparenciaGravar(final String sigla,
+			final Long nivelAcesso) {
+		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+		
+		buscarDocumento(documentoBuilder);
+
+		String[] listaMarcadores = request.getParameterValues("lstMarcadores");
+
+
+		/* Primeiro Passo - Documento para Público */
+		CpToken sigaUrlPermanente = new CpToken();
+		sigaUrlPermanente = Ex.getInstance().getBL().publicarTransparencia(documentoBuilder.getMob(), getCadastrante(), getLotaCadastrante(),listaMarcadores);
+	
+		String url = Contexto.urlBase(request);
+		String caminho = url + "/siga/public/app/sigalink/1/" + sigaUrlPermanente.getToken();
+		
+		result.include("url", caminho);
+		
+		
+		result.include("msgCabecClass", "alert-info");
+		result.include("mensagemCabec", "Documento enviado para publicação. Gerado <a class='alert-link' id='urlPermanente'  href='"+caminho+"' target='_Blank'  data-toggle='tooltip' data-placement='bottom'  data-html='true' title='Ir para endereço <i class=\"fa fa-link\"></i>'>Endereço Permanente</a> para acesso externo ao documento. <script>$(function () {$('[data-toggle=\"tooltip\"]').tooltip();$('#urlPermanente').tooltip('show');});</script> ");
+
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}
+	
+
+	
 }

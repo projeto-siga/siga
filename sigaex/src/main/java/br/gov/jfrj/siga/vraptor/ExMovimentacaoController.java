@@ -51,12 +51,14 @@ import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
@@ -1885,8 +1887,14 @@ public class ExMovimentacaoController extends ExController {
 			
 	        if (SigaMessages.isSigaSP()) {
 	        	if (!DateUtils.isSameDay(new Date(), dtDevolucao) && dtDevolucao.before(new Date())) {
-					throw new AplicacaoException(
-							"Data de devolução não pode ser anterior à data de hoje.");
+	        		result.include("msgCabecClass", "alert-danger");
+	        		result.include("mensagemCabec", "Data de devolução não pode ser anterior à data de hoje.");
+	        		result.forwardTo(this).aTransferir(
+	        				sigla, idTpDespacho, tipoResponsavel, postback, dtMovString, subscritorSel, 
+	        				substituicao, titularSel, nmFuncaoSubscritor, idResp, tiposDespacho, descrMov, 
+	        				lotaResponsavelSel, responsavelSel, cpOrgaoSel, dtDevolucaoMovString, obsOrgao, protocolo);
+	        		
+	        			return;
 	        	}
 	        }
 		}
@@ -2188,6 +2196,15 @@ public class ExMovimentacaoController extends ExController {
 
 		final List<ExPapel> papeis = this.getListaExPapel();
 		
+		if (builder.getMob().getDoc().isAssinadoPorTodosOsSignatariosComTokenOuSenha()) {			
+			for (Iterator<ExPapel> iter = papeis.listIterator(); iter.hasNext(); ) {
+			    ExPapel p = iter.next();
+			    if (p.getIdPapel() == ExPapel.PAPEL_REVISOR) {
+			        iter.remove();
+			    }
+			}			
+		}
+		
 		if (SigaMessages.isSigaSP()) {
 			for (Iterator<ExPapel> iter = papeis.listIterator(); iter.hasNext(); ) {
 			    ExPapel p = iter.next();
@@ -2293,7 +2310,7 @@ public class ExMovimentacaoController extends ExController {
 
 		result.include("sigla", sigla);
 		result.include("mob", builder.getMob());
-		result.include("listaMarcadores", this.getListaMarcadoresGerais());
+		result.include("listaMarcadores", this.getListaMarcadoresGeraisTaxonomiaAdministrada());
 		result.include("listaMarcadoresAtivos", this.getListaMarcadoresAtivos(builder.getMob().getDoc().getMobilGeral()));
 	}
 	
@@ -2320,6 +2337,10 @@ public class ExMovimentacaoController extends ExController {
 
 	private Object getListaMarcadoresGerais() {
 		return dao().listarCpMarcadoresGerais();
+	}
+	
+	private Object getListaMarcadoresGeraisTaxonomiaAdministrada() {
+		return dao().listarCpMarcadoresGeraisTaxonomiaAdministrada();
 	}
 
 	@Post("/app/expediente/mov/marcar_gravar")
@@ -4712,4 +4733,71 @@ public class ExMovimentacaoController extends ExController {
 
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
+	
+	private Object getListaMarcadoresTaxonomiaAdministrada() {
+		return dao().listarCpMarcadoresTaxonomiaAdministrada();
+	}
+	
+	@Get("/app/expediente/mov/publicacao_transparencia")
+	public void aPublicarTransparencia(String sigla, String descrPublicacao,
+			String mensagem) throws Exception {
+		
+		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+
+		final ExDocumento documento = buscarDocumento(documentoBuilder);
+
+		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
+				.novaInstancia().setMob(documentoBuilder.getMob());
+
+		final ExMovimentacao movimentacao = movimentacaoBuilder
+				.construir(dao());
+
+		List<CpMarcador> marcadores = dao().listarCpMarcadoresTaxonomiaAdministrada();
+		Set<CpMarcador> marcadoresAtivo = (Set<CpMarcador>) this.getListaMarcadoresAtivos(documentoBuilder.getMob().getDoc().getMobilGeral());
+		if (marcadores != null) {
+			marcadores.removeAll(marcadoresAtivo);
+		}
+
+		
+
+		result.include("sigla", sigla);
+		result.include("mob", documentoBuilder.getMob());
+		result.include("mov", movimentacao);
+		result.include("doc", documento);
+		result.include("descrMov", movimentacaoBuilder.getDescrMov());
+		result.include("listaMarcadores", marcadores);
+		result.include("listaMarcadoresAtivos", marcadoresAtivo);
+	}
+	
+	
+	@Post("/app/expediente/mov/publicacao_transparencia_gravar")
+	public void publicarTransparenciaGravar(final String sigla,
+			final Long nivelAcesso) {
+		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+		
+		buscarDocumento(documentoBuilder);
+
+		String[] listaMarcadores = request.getParameterValues("lstMarcadores");
+
+
+		/* Primeiro Passo - Documento para Público */
+		CpToken sigaUrlPermanente = new CpToken();
+		sigaUrlPermanente = Ex.getInstance().getBL().publicarTransparencia(documentoBuilder.getMob(), getCadastrante(), getLotaCadastrante(),listaMarcadores);
+	
+		String url = Contexto.urlBase(request);
+		String caminho = url + "/siga/public/app/sigalink/1/" + sigaUrlPermanente.getToken();
+		
+		result.include("url", caminho);
+		
+		
+		result.include("msgCabecClass", "alert-info");
+		result.include("mensagemCabec", "Documento enviado para publicação. Gerado <a class='alert-link' id='urlPermanente'  href='"+caminho+"' target='_Blank'  data-toggle='tooltip' data-placement='bottom'  data-html='true' title='Ir para endereço <i class=\"fa fa-link\"></i>'>Endereço Permanente</a> para acesso externo ao documento. <script>$(function () {$('[data-toggle=\"tooltip\"]').tooltip();$('#urlPermanente').tooltip('show');});</script> ");
+
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}
+	
+
+	
 }

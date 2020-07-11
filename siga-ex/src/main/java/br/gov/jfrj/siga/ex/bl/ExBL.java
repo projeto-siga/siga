@@ -103,6 +103,7 @@ import br.gov.jfrj.siga.bluc.service.ValidateResponse;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
@@ -4032,6 +4033,7 @@ public class ExBL extends CpBL {
 					null, null);
 
 			mov.setExMobilRef(mobPai);
+			mov.getExDocumento().setExMobilPai(mobPai);
 
 			if (idDocEscolha.equals("1")) {
 				mov.setDescrMov("Juntado ao documento " + mov.getExMobilRef().getCodigo().toString());
@@ -7123,5 +7125,152 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new AplicacaoException("Ocorreu um erro ao reordenar documentos.", 0, e);
 		}
+	}
+	
+	public ExDocumento buscarDocumentoPorLinkPermanente(CpToken cpToken) {
+		
+		ExDocumento doc = ExDao.getInstance().consultar(cpToken.getIdRef(), ExDocumento.class, false);
+		return doc;
+		
+	}
+
+	public CpToken publicarTransparencia(ExMobil mob, DpPessoa cadastrante, DpLotacao lotaCadastrante, String[] listaMarcadores) {
+		
+		
+
+		/* 1- Redefinição para Público */
+		if (!Ex.getInstance().getComp().podeRedefinirNivelAcesso(cadastrante, lotaCadastrante,mob)) {
+			throw new AplicacaoException(
+					"Não é possível redefinir o nível de acesso");
+		}
+		ExNivelAcesso exTipoSig = null;
+		exTipoSig = dao().consultar(ExNivelAcesso.ID_PUBLICO, ExNivelAcesso.class, false);
+		
+		redefinirNivelAcesso(cadastrante, lotaCadastrante, mob.getDoc(), null, lotaCadastrante, cadastrante, cadastrante, cadastrante, null, exTipoSig);
+		/* END Redefinição para Público */
+		
+		
+		/* 2- Gravação dos Marcadores */
+		if (listaMarcadores != null) {
+			CpMarcador cpMarcador = new CpMarcador();
+			
+			for(String marcador: listaMarcadores) {
+			   cpMarcador = dao().consultar(Long.parseLong(marcador), CpMarcador.class, false);
+			   try {
+				vincularMarcador(cadastrante, lotaCadastrante, mob, null, lotaCadastrante, cadastrante, cadastrante, cadastrante, null, null, cpMarcador, true);
+			   } catch (Exception e) {
+					throw new AplicacaoException("Ocorreu um erro ao gravar marcadores");
+			   }
+			}
+		}
+		
+		/* END Gravação dos Marcadores  */
+		
+		/*3- Gerar URL Permanente */
+		CpToken sigaUrlPermanente = new CpToken();
+		try {
+			sigaUrlPermanente = Cp.getInstance().getBL().gerarUrlPermanente(mob.getDoc().getIdDoc());
+		} catch (Exception e) {
+			throw new AplicacaoException("Ocorreu um erro ao gerar Token.");
+		}
+		
+		/*4- Gerar Movimentação de Publicação */
+		try {
+			final ExMovimentacao mov = criarNovaMovimentacao(
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA, cadastrante, lotaCadastrante,
+					mob, null, cadastrante, null, cadastrante, null, null);
+			
+			mov.setDescrMov("Publicação em Portal da Transparência.");
+
+			gravarMovimentacao(mov);
+			atualizarMarcas(mob.getDoc());
+		} catch (Exception e) {
+			throw new AplicacaoException("Ocorreu um erro na publicação do documento em Portal da Transparência");
+		}
+
+		
+		return sigaUrlPermanente;
+		
+		
+		
+	}
+	
+	public String documentoToJSON(ExDocumento doc) throws Exception {
+		
+	    Gson gson = new Gson();
+	    
+	    HashMap<String, Object> documentoJson = new HashMap<String, Object>();
+	    HashMap<String, Object> orgaoJson = new HashMap<String, Object>();
+	    HashMap<String, Object> modeloJson = new HashMap<String, Object>();
+	    HashMap<String, Object> nivelAcessoJson = new HashMap<String, Object>();
+	    HashMap<String, Object> classificacaoDocumentalJson = new HashMap<String, Object>();
+	    HashMap<String, Object> formaJson = new HashMap<String, Object>();
+	    HashMap<String, Object> marcadoresJson = new HashMap<String, Object>();
+	    
+	    documentoJson.put("idDoc", doc.getIdDoc());
+	    documentoJson.put("siglaDocumento", doc.getSigla());
+	    documentoJson.put("numExpediente", doc.getNumExpediente());
+	    documentoJson.put("anoEmissao", doc.getAnoEmissao());
+	    documentoJson.put("descricaoDocumento", doc.getDescrDocumento());
+	    documentoJson.put("dataFinalizacao", doc.getDtFinalizacao());
+	    
+	    
+	    CpToken cpToken = CpDao.getInstance().obterCpTokenPorTipoIdRef(1L,doc.getIdDoc());
+	    String urlPermanente = "";
+	    
+	    if (cpToken != null) { //Obter Link Permanente
+	    	urlPermanente = obterURLPermanente(cpToken.getIdTpToken().toString(), cpToken.getToken());
+	    } else {
+	    	urlPermanente = "Endereço público não disponível.";
+	    }
+	    
+	    documentoJson.put("urlPermanente", urlPermanente);   
+
+	    /* orgao */
+	    orgaoJson.put("orgaoSigla", doc.getOrgaoUsuario().getSiglaOrgaoUsu());
+	    orgaoJson.put("orgaoDescricao", doc.getOrgaoUsuario().getDescricao());
+	    
+	    documentoJson.put("orgao", orgaoJson);
+	    
+	    /* modelo */
+	    modeloJson.put("nomeModelo", doc.getExModelo().getNmMod());
+	    modeloJson.put("descModelo", doc.getExModelo().getDescMod());
+	    
+	    documentoJson.put("modelo", modeloJson);
+	    
+	    /* Nivel Acesso */
+	    nivelAcessoJson.put("idNivelAcesso", doc.getExNivelAcessoAtual().getIdNivelAcesso());
+	    nivelAcessoJson.put("nomeNivelAcesso", doc.getExNivelAcessoAtual().getNmNivelAcesso());
+	    
+	    documentoJson.put("nivelAcesso", nivelAcessoJson);
+	    
+	    /* Classificacao */
+	    classificacaoDocumentalJson.put("codificacaoClassificacao", doc.getExClassificacaoAtual().getCodificacao());
+	    classificacaoDocumentalJson.put("descClassificacao", doc.getExClassificacaoAtual().getDescrClassificacao());
+	    
+	    documentoJson.put("classificacao", classificacaoDocumentalJson);
+	    
+	    /* Forma Documental */
+	    formaJson.put("especieSigla", doc.getExFormaDocumento().getSigla());
+	    formaJson.put("especieDescricacao", doc.getExFormaDocumento().getDescricao());
+	    
+	    formaJson.put("especie", classificacaoDocumentalJson);
+	    
+	    /* Marcadores */
+	    marcadoresJson.put("marcadorGeral", doc.getMobilGeral().getMarcadores());
+	    marcadoresJson.put("marcadorMobil", doc.getPrimeiroMobil().getMarcadores());
+	    
+	    documentoJson.put("marcadores", marcadoresJson);
+	        
+	    
+	    
+	    
+	    // converte objetos Java para JSON e retorna JSON como String
+	    String json = gson.toJson(documentoJson);
+
+	
+
+		return json;
+		
 	}
 }

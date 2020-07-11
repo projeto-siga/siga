@@ -127,6 +127,9 @@ public class Mesa2 {
 			this.collapsed = collapsed;
 			this.hide = hide;
 		}
+		public String getNome() {
+			return this.nome;
+		}
 		public static GrupoDeMarcadorEnum getByNome(String nome) {
 			for (GrupoDeMarcadorEnum i : GrupoDeMarcadorEnum.values()) {
 				if (i.nome.equals(nome))
@@ -366,6 +369,9 @@ public class Mesa2 {
 		MARCADOR_COMO_REVISOR(72, "Como Revisor", "fas fa-glasses", "",
 				GrupoDeMarcadorEnum.A_REVISAR),
 		//
+		MARCADOR_PORTAL_TRANSPARENCIA(73, "Portal da Transparência", "fas fa-globe", "",
+				GrupoDeMarcadorEnum.NENHUM),
+		//
 		URGENTE(1000, "Urgente", "fas fa-bomb", "", GrupoDeMarcadorEnum.ALERTA),
 
 		//
@@ -385,10 +391,7 @@ public class Mesa2 {
 		COVID_19(1006, "COVID-19", "fas fa-tag", "",
 				GrupoDeMarcadorEnum.NENHUM),
 		//
-		PORTAL_TRANSPARENCIA(1007, "Portal da Transparência", "fas fa-tag", "",
-				GrupoDeMarcadorEnum.NENHUM),
-		//
-		NOTA_EMPENHO(1008, "Nota de Empenho", "fas fa-tag", "",
+		NOTA_EMPENHO(1007, "Nota de Empenho", "fas fa-tag", "",
 				GrupoDeMarcadorEnum.NENHUM);
 
 		private MarcadorEnum(int id, String nome, String icone,
@@ -411,11 +414,6 @@ public class Mesa2 {
 			List<Integer> listMar = new ArrayList<Integer>();
 			for(MarcadorEnum mar : MarcadorEnum.values()) {
 				if (mar.grupo.nome.equals(nomegrupo)) {
-					if(!(SigaMessages.isSigaSP() 
-						&& (mar.equals(MarcadorEnum.CANCELADO)
-							|| mar.equals(MarcadorEnum.ARQUIVADO_CORRENTE)
-							|| mar.equals(MarcadorEnum.ARQUIVADO_INTERMEDIARIO)
-							|| mar.equals(MarcadorEnum.ARQUIVADO_PERMANENTE))))
 						listMar.add(mar.id);
 				}
 			}
@@ -426,6 +424,10 @@ public class Mesa2 {
 			return icone;
 		}
 
+		public int getId() {
+			return id;
+		}
+		
 		public String getNome() {
 			if (SigaMessages.isSigaSP() && nome.equals("Como Subscritor")) {
 				return "Responsável pela Assinatura";
@@ -446,8 +448,6 @@ public class Mesa2 {
 		List<MeM> listMeM;
 		Date movUltimaDtIniMov;
 		Date movUltimaDtFimMov;
-		String movUltimaSiglaOrgao;
-		String movUltimaSiglaLotacao;
 		String movTramiteSiglaOrgao;
 		String movTramiteSiglaLotacao;
 		String movAnotacaoDescrMov;
@@ -461,7 +461,8 @@ public class Mesa2 {
 
 	private static List<MesaItem> listarReferencias(TipoDePainelEnum tipo,
 			Map<ExMobil, DocDados> references, DpPessoa pessoa,
-			DpLotacao unidade, Date currentDate, String grupoOrdem, boolean trazerAnotacoes) {
+			DpLotacao unidade, Date currentDate, String grupoOrdem, boolean trazerAnotacoes,
+			List<Integer> marcasAIgnorar) {
 		List<MesaItem> l = new ArrayList<>();
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
@@ -605,11 +606,12 @@ public class Mesa2 {
 	}
 
 	public static List<GrupoItem> getContadores(ExDao dao, DpPessoa titular, DpLotacao lotaTitular, 
-			Map<String, SelGrupo> selGrupos, boolean exibeLotacao) throws Exception {
+			Map<String, SelGrupo> selGrupos, boolean exibeLotacao, 
+			List<Integer> marcasAIgnorar) throws Exception {
 		List<GrupoItem> gruposMesa = new ArrayList<GrupoItem>();
 		gruposMesa = montaGruposUsuario(selGrupos);
 		List<Object[]> l = dao.consultarTotaisPorMarcador(titular, lotaTitular, gruposMesa, 
-				exibeLotacao);
+				exibeLotacao, marcasAIgnorar);
 
 		for (GrupoItem gItem : gruposMesa) {
 			gItem.grupoCounterUser = 0L;
@@ -633,11 +635,12 @@ public class Mesa2 {
 
 	public static List<GrupoItem> getMesa(ExDao dao, DpPessoa titular,
 			DpLotacao lotaTitular, Map<String, SelGrupo> selGrupos, List<Mesa2.GrupoItem> gruposMesa, 
-			boolean exibeLotacao, boolean trazerAnotacoes, boolean trazerComposto) throws Exception {
+			boolean exibeLotacao, boolean trazerAnotacoes, boolean trazerComposto, 
+			List<Integer> marcasAIgnorar) throws Exception {
 		Date dtNow = dao.consultarDataEHoraDoServidor();
 
 		List<Object[]> l = dao.listarMobilsPorMarcas(titular,
-				lotaTitular, exibeLotacao);
+				lotaTitular, exibeLotacao, marcasAIgnorar);
 
 		Map<ExMobil, DocDados> map = new HashMap<>();
 		List<Long> listIdMobil = new ArrayList<Long>();
@@ -654,31 +657,44 @@ public class Mesa2 {
 				
 				for (Integer i = 0; i < l.size(); i++) {
 					reference = l.get(i);
-					mobil = (ExMobil) reference[2];
-					idMob = mobil.getIdMobil();
-					if (temMarcador(i, l, idMob, gItem) && !map.containsKey(mobil)) {
-						for (Integer i2 = 0; i2 < l.size(); i2++) {  
-							reference = l.get(i2);
-							mobil = (ExMobil) reference[2];
-							if (mobil.getIdMobil() == idMob) {
-								marca = (ExMarca) reference[0];
-								marcador = (CpMarcador) reference[1];
-								if (!map.containsKey(mobil)) {
-									if (listIdMobil.size() < gItem.grupoQtd) {
-										DocDados docDados = new DocDados();
+					// Se for TMP e o grupo nao for Em Elaboracao, nao deve mostrar no grupo (só GOVSP).
+					if (!(SigaMessages.isSigaSP()
+							&& reference[4] == null 
+							&& !gItem.grupoNome.equals(GrupoDeMarcadorEnum.EM_ELABORACAO.getNome()))) {
+						// Inclui o mobil no grupo da mesa
+						mobil = (ExMobil) reference[2];
+						idMob = mobil.getIdMobil();
+						
+						if (temMarcador(i, l, idMob, gItem) && !map.containsKey(mobil)) {
+							// Se o mobil possui um marcador do grupo e ele ainda nao foi incluido,
+							// inclui junto com as outras marcas que estao no resultado da query
+							for (Integer i2 = 0; i2 < l.size(); i2++) {  
+								reference = l.get(i2);
+								mobil = (ExMobil) reference[2];
+								if (mobil.getIdMobil() == idMob) {
+									marca = (ExMarca) reference[0];
+									marcador = (CpMarcador) reference[1];
+									if (!map.containsKey(mobil)) {
+										// Mobil ainda nao foi incluido no grupo, inclui
+										if (listIdMobil.size() < gItem.grupoQtd) {
+											DocDados docDados = new DocDados();
+											MeM mm = new MeM();
+											mm.marca = marca;
+											mm.marcador = marcador;
+											docDados.listMeM = new ArrayList<MeM>();
+											docDados.listMeM.add(mm);
+											map.put(mobil, docDados);
+											listIdMobil.add(mobil.getId());
+										} else {
+											break;
+										} 
+									} else {
+										// Mobil ja foi incluido no grupo, inclui so a marca no mobil
 										MeM mm = new MeM();
 										mm.marca = marca;
 										mm.marcador = marcador;
-										docDados.listMeM = new ArrayList<MeM>();
-										docDados.listMeM.add(mm);
-										map.put(mobil, docDados);
-										listIdMobil.add(mobil.getId());
-									} 
-								} else {
-									MeM mm = new MeM();
-									mm.marca = marca;
-									mm.marcador = marcador;
-									map.get(mobil).listMeM.add(mm);
+										map.get(mobil).listMeM.add(mm);
+									}
 								}
 							}
 						}
@@ -699,7 +715,7 @@ public class Mesa2 {
 						iMobs = iMobsFim;
 					}
 					gItem.grupoDocs = Mesa2.listarReferencias(TipoDePainelEnum.UNIDADE, map, titular,
-							titular.getLotacao(), dtNow, gItem.grupoOrdem, trazerAnotacoes);
+							titular.getLotacao(), dtNow, gItem.grupoOrdem, trazerAnotacoes, marcasAIgnorar);
 					map = new HashMap<>();
 					listIdMobil = new ArrayList<Long>();
 				}
@@ -724,8 +740,6 @@ public class Mesa2 {
 			if (movUltima != null) {
 				docDados.movUltimaDtIniMov = movUltima.getDtIniMov();
 				docDados.movUltimaDtFimMov = movUltima.getDtFimMov();
-				docDados.movUltimaSiglaLotacao = movUltima.getLotacao().getSigla();
-				docDados.movUltimaSiglaOrgao = movUltima.getLotacao().getOrgaoUsuario().getSigla();
 			}
 			if (movTramite != null) {
 				docDados.movTramiteSiglaLotacao = movTramite.getLotacao().getSigla();

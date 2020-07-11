@@ -91,6 +91,7 @@ public abstract class ExSelecionavelController<T extends Selecionavel, DaoFiltro
 				CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA,
 				CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA,
 				CpMarcador.MARCADOR_PENDENTE_DE_COLABORACAO,
+				CpMarcador.MARCADOR_PORTAL_TRANSPARENCIA,
 				CpMarcador.MARCADOR_PUBLICACAO_SOLICITADA,
 				CpMarcador.MARCADOR_PUBLICADO,
 				CpMarcador.MARCADOR_REMETIDO_PARA_PUBLICACAO,

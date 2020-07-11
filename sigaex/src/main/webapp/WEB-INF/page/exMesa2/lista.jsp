@@ -15,22 +15,16 @@
 			<button type="button" class="btn-mesa-config btn btn-secondary btn-sm h-100" @click="toggleMenuConfig();">
 				<i class="fas fa-cog"></i>
 			</button>
-			<div class="form-config border-bottom p-3">
+			<div class="form-config border-bottom p-2">
 				<h6>Configurações da Mesa Virtual</h6>
 	            <i><small>Quanto menos informações forem solicitadas, mais rapidamente a mesa carregará.</small></i>
-<!-- 		            <div class="form-group my-2 border-bottom"> -->
-<!-- 						<div class="form-check"> -->
-<!-- 							<input type="checkbox" class="form-check-input" v-model="versaoMesa"> -->
-<!-- 							<label class="form-check-label" for="versaoMesa"><small>Utilizar versão antiga da Mesa</small></label> -->
-<!-- 						</div>             -->
-<!-- 		            </div> -->
-	            <div class="form-group my-2 border-bottom">
+	            <div class="form-group my-1 border-bottom">
 					<div class="form-check">
 						<input type="checkbox" class="form-check-input" id="trazerAnotacoes" v-model="trazerAnotacoes" :disabled="carregando">
-						<label class="form-check-label" for="trazerAnotacoes"><small>Trazer anotações nos documentos</small></label>
+						<label class="form-check-label" for="trazerAnotacoes"><small>Trazer anotações nos docs.</small></label>
 					</div>            
 	            </div>
-	            <div class="form-group my-2 border-bottom">
+	            <div class="form-group my-1 border-bottom">
 					<div class="form-check">
 						<input type="checkbox" class="form-check-input" id="trazerComposto" v-model="trazerComposto" :disabled="carregando">
 						<label class="form-check-label" for="trazerComposto">
@@ -38,16 +32,25 @@
 						</label>
 					</div>            
 	            </div>
-	            <div class="form-group my-2 border-bottom">
+	            <div class="form-group my-1 border-bottom">
+					<div class="form-check">
+						<input type="checkbox" class="form-check-input" id="trazerCancelados" v-model="trazerCancelados" :disabled="carregando">
+						<label class="form-check-label" for="trazerCancelados">
+							<small>Exibir vias canceladas</small>
+						</label>
+					</div>            
+	            </div>
+	            <div class="form-group my-1 border-bottom">
 					<div class="form-check">
 						<input type="checkbox" class="form-check-input" id="trazerArquivados" v-model="trazerArquivados" :disabled="carregando">
 						<label class="form-check-label" for="trazerArquivados">
 							<small>Exibir pasta Aguardando Ação de Temporalidade</small>
 						</label>
 					</div>            
-	            </div>				<div class="form-group pb-2 mb-1 border-bottom">
+	            </div>
+				<div class="form-group pb-2 mb-1 border-bottom">
 					<label for="selQtdPagId"><small>Qtd. de documentos a trazer</small></label>
-					<select class="form-control form-control-sm" v-model="selQtdPag" :class="{disabled: carregando}">
+					<select class="form-control form-control-sm p-0" v-model="selQtdPag" :class="{disabled: carregando}">
 						  <option value="5">5</option>
 						  <option value="10">10</option>
 						  <option value="15">15</option>
@@ -57,8 +60,8 @@
 					</select>
 				</div>
 				<div class="form-group pt-2">
-			    	<button class="btn btn-secondary btn-sm h-60" @click="resetaStorage();" :class="{disabled: carregando}">Limpar configurações</button>
-			    	<p><small>Retorna as configurações iniciais da mesa.</small></p>
+			    	<button class="btn btn-secondary btn-sm py-0" @click="resetaStorage();" :class="{disabled: carregando}">Limpar configurações</button>
+			    	<p><small>Todas as configurações selecionadas serão desmarcadas.</small></p>
 			    </div>
         	</div>
         </div>	
@@ -329,6 +332,7 @@
 		      trazerAnotacoes: true,
 		      trazerComposto: false,
 		      trazerArquivados: false,
+		      trazerCancelados: false
 		    };
 		  },
 
@@ -409,7 +413,11 @@
 				setParmUser('trazerArquivados', this.trazerArquivados);
 				setValueGrupo('Aguardando Ação de Temporalidade', 'hide', !this.trazerArquivados);
 				this.recarregarMesa();
-			}			
+			},
+			trazerCancelados: function() {
+				setParmUser('trazerCancelados', this.trazerCancelados);
+				this.recarregarMesa();
+			}
 		  },
 		  methods: {
 		    carregarMesa: function(grpNome, qtdPagina) {
@@ -417,7 +425,8 @@
 	      	  this.trazerAnotacoes = (getParmUser('trazerAnotacoes') == null ? true : getParmUser('trazerAnotacoes'));
 	      	  this.trazerComposto = (getParmUser('trazerComposto') == null ? false : getParmUser('trazerComposto'));
 	      	  this.trazerArquivados = (getParmUser('trazerArquivados') == null ? false : getParmUser('trazerArquivados'));
-			  setValueGrupo('Aguardando Ação de Temporalidade', 'hide', !this.trazerArquivados);
+	      	  this.trazerCancelados = (getParmUser('trazerCancelados') == null ? false : getParmUser('trazerCancelados'));
+	      	  setValueGrupo('Aguardando Ação de Temporalidade', 'hide', !this.trazerArquivados);
 
 	      	  var timeout = Math.abs(new Date() - 
 		    		  new Date(sessionStorage.getItem('timeout' + getUser())));
@@ -453,12 +462,15 @@
 				  }
 		      }
 		      $.ajax({ 
-		          type: 'POST', 
+		          type: 'POST',
 		          url: 'mesa2.json', 
+		          	  timeout: 120000,
 			          data: {parms: JSON.stringify(parms),
 		        	  	 exibeLotacao: this.exibeLota,
 		        	  	 trazerAnotacoes: this.trazerAnotacoes,
 		        	  	 trazerComposto: this.trazerComposto,
+		        	  	 trazerArquivados: this.trazerArquivados,
+		        	  	 trazerCancelados: this.trazerCancelados,
 		        	  	 idVisualizacao: ${idVisualizacao}
 		        	  }, 
 		          complete: function (response, status, request) {   
@@ -468,11 +480,11 @@
 			        	  self.errormsg = response.responseText;
 				          self.carregando = false;
 				      } else {
-			        	  if (response.status > 300 && cType.indexOf('text/html') !== -1) {
-				        	  if (response.status > 400 ) {
-				        		  self.errormsg = response.responseText & " - " & response.status;
+				    	  if (response.status > 300) {
+				    		  if (cType.indexOf('text/html') !== -1) {
+				    			  document.write(response.responseText);
 				        	  } else {
-				                  window.location.href = response.redirect;
+				        		  self.errormsg = response.responseText & " - " & response.status;
 				        	  }
 						  } else {		  	
 							  carregaFromJson(response.responseText, self);
@@ -485,7 +497,6 @@
 		  	          self.carregando = false; 
 		  	          self.showError(response.responseText, self); 
 		          }
-		          
 		      }) 
 		    },
 		    resetaStorage: function() {
@@ -497,6 +508,7 @@
 		    	localStorage.removeItem('trazerAnotacoes' + getUser());
 		    	localStorage.removeItem('trazerComposto' + getUser());
 		    	localStorage.removeItem('trazerArquivados' + getUser());
+		    	localStorage.removeItem('trazerCancelados' + getUser());
 		    	this.recarregarMesa();
     			this.selQtdPag = 15;
 		    },

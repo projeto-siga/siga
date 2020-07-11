@@ -59,6 +59,7 @@ import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
 import br.gov.jfrj.siga.cp.CpTipoPapel;
+import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
@@ -1325,12 +1326,13 @@ public class CpDao extends ModeloDao {
 			}
 
 			query.setParameter("nome", flt.getNome().toUpperCase().replace(' ', '%'));
+			query.setParameter("identidade", flt.getIdentidade());
 
 			if(flt.getEmail() != null) {
 				query.setParameter("email", flt.getEmail().toUpperCase().replace(' ', '%'));
 			} else {
 				query.setParameter("email", null);
-			}
+			}						
 
 			if (!flt.isBuscarFechadas())
 				query.setParameter("situacaoFuncionalPessoa", flt.getSituacaoFuncionalPessoa());
@@ -1376,6 +1378,7 @@ public class CpDao extends ModeloDao {
 			query = em().createNamedQuery("consultarPessoaComOrgaoFuncaoCargo");
 
 			query.setParameter("nome", pes.getNomePessoa().toUpperCase().replace(' ', '%'));
+			query.setParameter("identidade", pes.getIdentidade());
 
 			if (pes.getEmailPessoa() != null) {
 				query.setParameter("email", pes.getEmailPessoa().toUpperCase().replace(' ', '%'));
@@ -1444,6 +1447,7 @@ public class CpDao extends ModeloDao {
 				query = em().createNamedQuery("consultarQuantidadeDpPessoaInclusiveFechadas");
 
 			query.setParameter("nome", flt.getNome().toUpperCase().replace(' ', '%'));
+			query.setParameter("identidade", flt.getIdentidade());
 
 			if (!flt.isBuscarFechadas())
 				query.setParameter("situacaoFuncionalPessoa", flt.getSituacaoFuncionalPessoa());
@@ -1597,9 +1601,11 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("cpfZero", 0L);
 			qry.setParameter("sfp1", "1");
 			qry.setParameter("sfp2", "2");
+			qry.setParameter("sfp4", "4");			
 			qry.setParameter("sfp12", "12");
 			qry.setParameter("sfp22", "22");
 			qry.setParameter("sfp31", "31");
+			qry.setParameter("sfp36", "36");
 
 			// Cache was disabled because it would interfere with the
 			// "change password" action.
@@ -1629,9 +1635,11 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("cpfZero", Long.valueOf(0));
 			qry.setParameter("sfp1", "1");
 			qry.setParameter("sfp2", "2");
+			qry.setParameter("sfp4", "4");			
 			qry.setParameter("sfp12", "12");
 			qry.setParameter("sfp22", "22");
 			qry.setParameter("sfp31", "31");
+			qry.setParameter("sfp36", "36");
 
 			qry.setHint("org.hibernate.cacheable", true);
 			qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SECONDS);
@@ -1657,9 +1665,11 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("cpfZero", Long.valueOf(0));
 			qry.setParameter("sfp1", "1");
 			qry.setParameter("sfp2", "2");
+			qry.setParameter("sfp4", "4");			
 			qry.setParameter("sfp12", "12");
 			qry.setParameter("sfp22", "22");
 			qry.setParameter("sfp31", "31");
+			qry.setParameter("sfp36", "36");
 
 			qry.setHint("org.hibernate.cacheable", true);
 			qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SECONDS);
@@ -1861,7 +1871,7 @@ public class CpDao extends ModeloDao {
 		// kpf: com o cache true, as configuracoes sao exibidas de forma forma
 		// errada apos a primeira
 
-		// query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
+		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
 		return query.getResultList();
 	}
 
@@ -2567,4 +2577,51 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
+	
+	public CpToken obterCpTokenPorTipoToken(final Long idTpToken, final String token) {
+		
+		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
+		CriteriaQuery<CpToken> criteriaQuery = criteriaBuilder.createQuery(CpToken.class);	
+		Root<CpToken> cpTokenRoot = criteriaQuery.from(CpToken.class);
+
+		Predicate predicateAnd;
+		Predicate predicateEqualTipo = criteriaBuilder.equal(cpTokenRoot.get("idTpToken"), idTpToken);
+		Predicate predicateEqualToken = criteriaBuilder.equal(cpTokenRoot.get("token"), token);
+		
+		predicateAnd = criteriaBuilder.and(predicateEqualTipo,predicateEqualToken);
+		criteriaQuery.where(predicateAnd);
+		
+		List<CpToken> l = em().createQuery(criteriaQuery).getResultList(); 
+		if(l.size() > 0) {
+			return l.get(0);
+		} else {
+			return null;
+		}			
+	}
+	
+	public CpToken obterCpTokenPorTipoIdRef(final Long idTpToken, final Long idRef) {
+		
+		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
+		CriteriaQuery<CpToken> criteriaQuery = criteriaBuilder.createQuery(CpToken.class);	
+		Root<CpToken> cpTokenRoot = criteriaQuery.from(CpToken.class);
+
+		Predicate predicateAnd;
+		Predicate predicateEqualTipo = criteriaBuilder.equal(cpTokenRoot.get("idTpToken"), idTpToken);
+		Predicate predicateEqualToken = criteriaBuilder.equal(cpTokenRoot.get("idRef"), idRef);
+		Predicate predicateNullDtExp = criteriaBuilder.isNull(cpTokenRoot.get("dtExp"));
+		
+		predicateAnd = criteriaBuilder.and(predicateEqualTipo,predicateEqualToken,predicateNullDtExp);
+		criteriaQuery.where(predicateAnd);
+		
+		List<CpToken> l = em().createQuery(criteriaQuery).getResultList(); 
+		if(l.size() > 0) {
+			return l.get(0);
+		} else {
+			return null;
+		}			
+	}
+	
+	
+	
+
 }

@@ -489,7 +489,7 @@ public class Excel {
 			return "Linha " + linha +": NOME já cadastrado" + System.getProperty("line.separator");
 		}
 		
-		if(!nomeFuncao.matches("[a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ 0-9.-]+")) {
+		if(!nomeFuncao.matches(Texto.FuncaoConfianca.REGEX_CARACTERES_PERMITIDOS)) {
 			return "Linha " + linha +": NOME com caracteres não permitidos" + System.getProperty("line.separator");
     	}
 		if(nomes.contains(Texto.removeAcento(Texto.removerEspacosExtra(nomeFuncao).trim().toUpperCase()))) {
@@ -1049,7 +1049,7 @@ public class Excel {
 			return "Linha " + linha +": NOME com mais de 60 caracteres" + System.getProperty("line.separator");
 		}
 
-		if(nomePessoa != null && !nomePessoa.matches("[a-zA-ZáâãäéêëíïóôõöúüçñÁÂÃÄÉÊËÍÏÓÔÕÖÚÜÇÑ'' ]+")) {
+		if(nomePessoa != null && !nomePessoa.matches(Texto.DpPessoa.NOME_REGEX_CARACTERES_PERMITIDOS)) {
 			return "Linha " + linha +": NOME com caracteres não permitidos" + System.getProperty("line.separator");
 		}
 		return "";

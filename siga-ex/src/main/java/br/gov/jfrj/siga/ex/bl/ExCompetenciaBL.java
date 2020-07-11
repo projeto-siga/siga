@@ -26,18 +26,15 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpComplexo;
-import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpCompetenciaBL;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -58,7 +55,6 @@ import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.model.dao.DaoFiltro;
 
 public class ExCompetenciaBL extends CpCompetenciaBL {
 
@@ -1247,7 +1243,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		return (mob.doc().getSubscritor().equivale(titular)
 				|| (mob.doc().isExterno() && mob.doc().getCadastrante().equivale(titular))
-				|| (mob.doc().isCossignatario(titular) && mob.doc().isPendenteDeAssinatura() && mob.doc().isAssinadoPeloSubscritorComTokenOuSenha())
+				|| (mob.doc().isCossignatario(titular) && mob.doc().isPendenteDeAssinatura() && (mob.doc().isAssinadoPeloSubscritorComTokenOuSenha() || Ex.getInstance().getConf().podePorConfiguracao(titular, titular.getLotacao(), CpTipoConfiguracao.TIPO_CONFIG_COSIGNATARIO_ASSINAR_ANTES_SUBSCRITOR)))
 				|| podeMovimentar(titular, lotaTitular, mob))
 				&& (mob.doc().isFinalizado() || podeFinalizar(titular, lotaTitular, mob))
 				&& !mob.doc().isCancelado()
@@ -4227,7 +4223,11 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			
 			return false;
 		}
-
+		
+		/* Não permite redefinir acesso para documentos que foram publicados no portal da transparencia */
+		if (mob.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA).size() > 0) {
+			return false;
+		}
 
 		return !mob.isEliminado()
 				&& podeAcessarDocumento(titular, lotaTitular, mob)
@@ -4741,6 +4741,24 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						lotaCadastrante,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA,
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR)) ;
+	}
+	
+	public boolean podePublicarPortalTransparencia(final DpPessoa cadastrante,
+			final DpLotacao lotacao, final ExMobil mob) {
+		
+		
+		return (mob.doc().isFinalizado() 
+				&& !mob.doc().isSemEfeito() 
+				&& !mob.doc().isEliminado()
+				&& podeMovimentar(cadastrante, lotacao, mob)
+				&& !mob.doc().isPendenteDeAssinatura()
+				&& (mob.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA).size() == 0)
+				&& getConf() 
+						.podePorConfiguracao(
+								cadastrante,
+								lotacao,
+								ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA,
+								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR)) ;
 	}
 
 	public boolean ehPublicoExterno(DpPessoa titular) {

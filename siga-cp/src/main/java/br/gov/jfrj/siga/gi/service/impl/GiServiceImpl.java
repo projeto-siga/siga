@@ -153,8 +153,8 @@ public class GiServiceImpl implements GiService {
 		
 		String resultado = "";
 		try {
-			if("true".equals(SigaBaseProperties.getString("siga.ws.seguranca.token.jwt")))
-				SigaUtil.getInstance().validarToken(token);
+			//if("true".equals(SigaBaseProperties.getString("siga.ws.seguranca.token.jwt")))
+				//SigaUtil.getInstance().validarToken(token);
 				
 			if (Pattern.matches("\\d+", cpf) && cpf.length() == 11) {
 				List<CpIdentidade> lista = new CpDao().consultaIdentidadesCadastrante(cpf, Boolean.TRUE);
@@ -169,8 +169,6 @@ public class GiServiceImpl implements GiService {
 
 		} catch (AplicacaoException e) {
 			e.printStackTrace();
-		} catch (TokenException e) {			
-			resultado = e.getMessage(); 
 		} 
 		return resultado;
 	}

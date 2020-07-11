@@ -169,7 +169,8 @@ public class SigaLinkPermanenteController extends SigaController {
 			if ("1".equals(tipoLink)) {
 				if (!"".equals(sigla)) {
 					/* Reaproveitado estrutura da ExArquivoController - Analisar levar para WebService */ 
-					String endPoint = Contexto.urlBase(request) + END_POINT_SIGALINK_DOC + "?semmarcas="+ estampar +"&completo="+ completo +"&t="+jwt +"&mime=pdf";
+					/* Identidicar parametro interno de contexto JBoss */
+					String endPoint = System.getProperty("exservice.endpoint").replace("/sigaex/servicos/ExService?wsdl", "") + END_POINT_SIGALINK_DOC + "?semmarcas="+ estampar +"&completo="+ completo +"&t="+jwt +"&mime=pdf";
 					stream = new URL(endPoint).openStream();
 					
 					String fileName = sigla.replace("-", "").replace("/", "");

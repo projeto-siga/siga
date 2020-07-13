@@ -17,10 +17,12 @@ public class XjusDocRecordServlet extends SwaggerServlet {
 	private static final long serialVersionUID = 1756711359239182178L;
 
 	@Override
-	public void initialize(ServletConfig config) throws ServletException {
-		setAPI(IXjusRecordAPI.class);
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
 
-		setActionPackage("br.gov.jfrj.siga.ex.xjus.doc");
+		super.setAPI(IXjusRecordAPI.class);
+
+		super.setActionPackage("br.gov.jfrj.siga.ex.xjus.doc");
 
 		String xjusPassword = null;
 		try {
@@ -34,12 +36,13 @@ public class XjusDocRecordServlet extends SwaggerServlet {
 	}
 
 	@Override
-	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
 		super.doPost(req, resp);
 	}
 
-	@Override
-	public String getService() {
-		return "siga-doc document record api";
-	}
+	// @Override
+	// public String getService() {
+	// return "siga-doc document record api";
+	// }
 }

@@ -33,6 +33,7 @@ import br.gov.jfrj.siga.acesso.ConfiguracaoAcesso;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpServico;
@@ -241,6 +242,7 @@ public class GiServiceImpl implements GiService {
 		JSONObject lotacao = new JSONObject();
 		JSONObject cargo = new JSONObject();
 		JSONObject funcao = new JSONObject();
+		JSONObject identidade = new JSONObject();
 
 		try {
 			DpPessoa p = id.getPessoaAtual();
@@ -282,10 +284,14 @@ public class GiServiceImpl implements GiService {
 				funcao.put("siglaFuncaoConfianca", f.getSigla());
 				funcao.put("idPaiFuncaoConfianca", f.getIdFuncaoPai());
 			}
+			
+			identidade.put("isSenhaUsuarioExpirada", id.isSenhaUsuarioExpirada());
 
 			pessoa.put("lotacao", lotacao);
 			pessoa.put("cargo", cargo);
 			pessoa.put("funcaoConfianca", funcao);
+			pessoa.put("identidade", identidade);
+			
 
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block

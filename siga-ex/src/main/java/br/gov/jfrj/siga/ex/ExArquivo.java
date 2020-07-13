@@ -104,7 +104,7 @@ public abstract class ExArquivo extends Objeto {
 		}
 	}
 	
-	public abstract Date getData();
+	//public abstract Date getData();
 
 	public abstract String getHtml();
 
@@ -120,6 +120,21 @@ public abstract class ExArquivo extends Objeto {
 		if (this instanceof ExMovimentacao) {
 			ExMovimentacao mov = (ExMovimentacao) this;
 			return mov.getIdMov();
+		}
+
+		return null;
+	}
+	
+	public Date getData() {
+		if (this instanceof ExDocumento) {
+			ExDocumento doc = (ExDocumento) this;
+			return doc.getData();
+		}
+		;
+
+		if (this instanceof ExMovimentacao) {
+			ExMovimentacao mov = (ExMovimentacao) this;
+			return mov.getData();
 		}
 
 		return null;

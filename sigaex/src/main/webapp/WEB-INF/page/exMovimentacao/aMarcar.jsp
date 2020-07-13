@@ -54,7 +54,7 @@
 									</c:forEach></td>
 							</tr>
 							<tr class="button">
-								<td colspan="2"><input type="button" value="Voltar"
+								<td colspan="2"><input type="button" value="OK"
 									onclick="javascript:history.back();"
 									class="btn btn-primary mt-3" /></td>
 							</tr>

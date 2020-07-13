@@ -25,8 +25,10 @@ package br.gov.jfrj.siga.vraptor;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.URLEncoder;
+
 import java.security.MessageDigest;
 import java.util.Date;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -34,6 +36,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.auth0.jwt.JWTVerifier;
 import com.lowagie.text.pdf.codec.Base64;
 
 import br.com.caelum.vraptor.Controller;
@@ -47,6 +50,8 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.bluc.service.HashRequest;
 import br.gov.jfrj.siga.bluc.service.HashResponse;
+import br.gov.jfrj.siga.cp.CpToken;
+import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
@@ -255,12 +260,59 @@ public class ExArquivoController extends ExController {
 		}
 	}
 
+
 	@Get("/app/arquivo/status/{sigla}/{uuid}/{jwt}/{filename}")
 	public void status(String sigla, String uuid, String jwt, String filename) {
 		result.include("sigla", sigla);
 		result.include("uuid", uuid);
 		result.include("jwt", jwt);
 		result.include("filename", filename);
+	}
+	
+	@Get("/public/app/arquivo/obterDownloadDocumento")
+	public Download aObterDownloadDocumento(final String t, boolean completo, final boolean semmarcas, final String mime) throws Exception  {
+		try {
+
+			boolean isPdf = "PDF".equalsIgnoreCase(mime);
+			boolean isHtml = "HTML".equalsIgnoreCase(mime); /*TODO: implementar*/
+			
+	
+			String token = verifyJwtToken(t).get("token").toString();
+			
+			CpToken cpToken = new CpToken();
+			cpToken = dao().obterCpTokenPorTipoToken(1L, token);
+			
+			ExDocumento doc = Ex.getInstance().getBL().buscarDocumentoPorLinkPermanente(cpToken);
+	
+			final ExMobil mob = doc.getPrimeiroMobil();	
+			if (mob == null) {				
+				throw new RuntimeException("A sigla informada não corresponde a um documento da base de dados.");
+			}
+			
+			/* Caso documento tenha URL permanente mas não tenha acesso público*/
+			if ( doc.getExNivelAcessoAtual().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO ) {
+				throw new RuntimeException("Documento não está disponível para acesso público.");
+			}
+			
+			byte ab[] = null;
+	
+			if (isPdf) {
+				ab = Documento.getDocumento(mob, null, completo, semmarcas, null, null);
+				if (ab == null) {
+					throw new Exception("Arquivo PDF inválido!");
+				}
+	
+				String fileName = mob.getSigla().replace("-", "").replace("/", "");
+				fileName = fileName + ".pdf";
+				
+				return new InputStreamDownload(makeByteArrayInputStream(ab, false), checkDownloadType(ab, isPdf, false), fileName);
+			} 
+
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+		return null;
 	}
 
 	@Get("/app/arquivo/download")
@@ -408,5 +460,36 @@ public class ExArquivoController extends ExController {
 		}
 		return failure;
 	}
+	
+	
+	private static String getJwtPassword() {
+		String pwd = null;
+		try {
+			pwd = System.getProperty("siga.ex.autenticacao.pwd");
+			if (pwd == null)
+				throw new AplicacaoException(
+						"Erro obtendo propriedade siga.ex.autenticacao.pwd");
+			return pwd;
+		} catch (Exception e) {
+			throw new AplicacaoException(
+					"Erro obtendo propriedade siga.ex.autenticacao.pwd", 0, e);
+		}
+	}
+
+
+	private static Map<String, Object> verifyJwtToken(String token) {
+		final JWTVerifier verifier = new JWTVerifier(getJwtPassword());
+		try {
+			Map<String, Object> map = verifier.verify(token);
+			return map;
+		} catch (Exception e) {
+			throw new AplicacaoException("Erro ao verificar token JWT", 0, e);
+		}
+	}
+	
+	
+	
+	
+	
 
 }

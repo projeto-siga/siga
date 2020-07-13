@@ -25,12 +25,14 @@
 			<c:set var="login_box_logo" value="/siga/imagens/logo-sem-papel-cor.png" />
 			<c:set var="login_box_logo_size" value="150" />
 			<c:set var="login_box_text" value="" />
+			<c:set var="login_titulo_modal" value="SP Sem Papel"/>
 		</c:when>
 		<c:otherwise>
 			<c:set var="login_box_class" value="" />
 			<c:set var="login_box_logo" value="" />
 			<c:set var="login_box_logo_size" value="" />
 			<c:set var="login_box_text" value="<fmt:message key='usuario.login.formulario' />" />
+			<c:set var="login_titulo_modal" value="Siga"/>
 		</c:otherwise>
 	</c:choose>
 
@@ -131,6 +133,7 @@
 			</div>
 		</div>
 	</div>
+
 	<c:if test="${isSenhaUsuarioExpirada}">						
 		<div class="modal  fade" id="trocaSenhaUsuarioMensagem" tabindex="-1" role="dialog">
 		 	<div class="modal-dialog modal-dialog-centered" role="alert">
@@ -188,6 +191,7 @@
 			})
 		</script>
 	</c:if>
+
 	<script type="text/javascript">
 		
 		//$('input, textarea').placeholder();

@@ -28,11 +28,12 @@
 				</div>
 				<div class="card-body">
 					<form name="frm" action="publicacao_transparencia_gravar" namespace="/expediente/mov" theme="simple" method="POST">
-						<input type="hidden" name="postback" value="1" /> 
-						<input type="hidden" name="sigla" value="${sigla}" />
+						  <input type="hidden" name="postback" value="1" /> 
+						  <input type="hidden" name="sigla" value="${sigla}" />
 	
 					    <h5 class="card-title"><fmt:message key="documento.publicar.portaltransparencia"/></h5>
 					    <p class="card-text"><fmt:message key="documento.publicar.portaltransparencia.texto"/></p>
+
 					    <div class="alert alert-warning text-center" role="alert">
 						  A publicação redefinirá o <strong>Nível de Acesso</strong> ao documento para <strong>Público</strong>. Nível de Acesso atual <strong>${doc.exNivelAcessoAtual.nmNivelAcesso}</strong>.
 						</div>

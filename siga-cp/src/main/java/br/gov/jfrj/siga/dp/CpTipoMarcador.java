@@ -43,4 +43,5 @@ public class CpTipoMarcador extends AbstractCpTipoMarcador {
 	public static final long TIPO_MARCADOR_LOTACAO_E_SUBLOTACOES = 3L;
 	public static final long TIPO_MARCADOR_LOTACAO = 4L;
 	public static final long TIPO_MARCADOR_PESSOA = 5L;
+	public static final long TIPO_MARCADOR_TAXONOMIA_ADMINISTRADA = 6L;
 }

@@ -33,7 +33,7 @@ public class AcessoConsulta {
 	}
 
 	public boolean podeAcessar(ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular) {
-		if (ehPublicoExterno(titular)) {
+		if (titular != null && ehPublicoExterno(titular)) {
 			return podeAcessarPublicoExterno(doc, titular, lotaTitular);
 		} else {
 			return this.pattern.matcher(doc.getDnmAcesso()).find();

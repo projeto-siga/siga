@@ -42,8 +42,8 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
 import br.gov.jfrj.siga.gi.service.GiService;
 import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
-import br.gov.jfrj.siga.idp.jwt.SigaJwtBL;
 import br.gov.jfrj.siga.idp.jwt.SigaJwtProviderException;
+import br.gov.jfrj.siga.util.SigaJwtBL;
 
 @Controller
 public class LoginController extends SigaController {
@@ -147,6 +147,18 @@ public class LoginController extends SigaController {
 		return request.getHeader("Authorization").replaceAll(".* ", "").trim();
 	}
 
+	private SigaJwtBL inicializarJwtBL(String modulo) throws IOException, ServletException {
+		SigaJwtBL jwtBL = null;
+
+		try {
+			jwtBL = SigaJwtBL.getInstance(modulo);
+		} catch (SigaJwtProviderException e) {
+			throw new ServletException("Erro ao iniciar o provider", e);
+		}
+
+		return jwtBL;
+	}
+
 	@Get("app/swapUser")
 	public void authSwap(String username, String cont) throws IOException {
 		
@@ -186,8 +198,8 @@ public class LoginController extends SigaController {
 	}
 
 	private void gravaCookieComToken(String username, String cont) throws Exception {
-		String modulo = SigaJwtBL.extrairModulo(request);
-		SigaJwtBL jwtBL = SigaJwtBL.inicializarJwtBL(modulo);
+		String modulo = extrairModulo(request);
+		SigaJwtBL jwtBL = inicializarJwtBL(modulo);
 
 		String token = jwtBL.criarToken(username, null, null, null);
 
@@ -210,6 +222,19 @@ public class LoginController extends SigaController {
 			result.redirectTo("/");
 	}
 	
+	private String extrairModulo(HttpServletRequest request) throws IOException, ServletException {
+		String opcoes = request.getHeader("Jwt-Options");
+		if (opcoes != null) {
+			String modulo = new JSONObject(opcoes).optString("mod");
+			if (modulo == null || modulo.length() == 0) {
+				throw new ServletException(
+						"O parâmetro mod deve ser informado no HEADER Jwt-Options do request. Ex: {\"mod\":\"siga-wf\"}");
+			}
+			return modulo;
+		}
+		return null;
+	}
+
 	private Integer extrairTTL(HttpServletRequest request) throws IOException {
 		String opcoes = request.getHeader("Jwt-Options");
 		if (opcoes != null) {

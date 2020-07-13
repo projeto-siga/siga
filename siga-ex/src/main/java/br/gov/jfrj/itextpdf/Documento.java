@@ -24,10 +24,16 @@ import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -43,29 +49,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.poi.ss.usermodel.DataFormat;
 
-import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Contexto;
-import br.gov.jfrj.siga.base.Data;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
-import br.gov.jfrj.siga.base.SigaMessages;
-import br.gov.jfrj.siga.base.Texto;
-import br.gov.jfrj.siga.ex.ExArquivoNumerado;
-import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
-import br.gov.jfrj.siga.ex.SigaExProperties;
-import br.gov.jfrj.siga.ex.bl.CurrentRequest;
-import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.bl.RequestInfo;
-import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
-import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
-import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
-
-import com.lowagie.text.Chunk;
 import com.lowagie.text.Annotation;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -95,6 +79,9 @@ import com.swetake.util.Qrcode;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
+import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -860,18 +847,18 @@ public class Documento {
 
 	public byte[] getDocumento(ExMobil mob, ExMovimentacao mov)
 			throws Exception {
-		return getDocumento(mob, mov, false, true, null, null);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		getDocumento(baos, null, mob, mov, false, true, false, null, null);
+		return baos.toByteArray();
 	}
 
-	public static byte[] getDocumento(ExMobil mob, ExMovimentacao mov,
-			boolean completo, boolean estampar, String hash, byte[] certificado)
+	public static boolean getDocumento(OutputStream os, String uuid, ExMobil mob, ExMovimentacao mov,
+			boolean completo, boolean estampar, boolean volumes, String hash, byte[] certificado)
 			throws Exception {
-		final ByteArrayOutputStream bo2 = new ByteArrayOutputStream();
 		PdfReader reader;
 		int n;
 		int pageOffset = 0;
 		ArrayList master = new ArrayList();
-		int f = 0;
 		Document document = null;
 		PdfCopy writer = null;
 		int nivelInicial = 0;
@@ -882,8 +869,11 @@ public class Documento {
 		// null, request);
 		// }
 
-		List<ExArquivoNumerado> ans = mob.filtrarArquivosNumerados(mov,
-				completo);
+		Status status = null;
+		if (uuid != null)
+			status = Status.update(uuid, "Obtendo a lista de documentos", 0, 100, 0L);
+
+		List<ExArquivoNumerado> ans = getArquivosNumerados(mob, mov, uuid, completo, volumes);
 
 		if (!completo && !estampar && ans.size() == 1) {
 			if (hash != null) {
@@ -891,14 +881,21 @@ public class Documento {
 				String alg = hash;
 				MessageDigest md = MessageDigest.getInstance(alg);
 				md.update(ans.get(0).getArquivo().getPdf());
-				return md.digest();
+				os.write(md.digest());
+				return true;
 			} else {
-				return ans.get(0).getArquivo().getPdf();
+				os.write(ans.get(0).getArquivo().getPdf());
+				return true;
 			}
 		}
 
+		int f = 0;
+		long bytes = 0;
 		try {
 			for (ExArquivoNumerado an : ans) {
+				if (uuid != null)
+					status = Status.update(uuid, "Agregando documento " + (f + 1) + "/" + ans.size(),
+							f * 2 + 1, ans.size() * 2 + 1, bytes);
 
 				// byte[] ab = getPdf(docvia, an.getArquivo(), an.getNumVia(),
 				// an
@@ -922,7 +919,9 @@ public class Documento {
 						an.getPaginaFinal(), an.getOmitirNumeracao(),
 						SigaExProperties.getTextoSuperiorCarimbo(), mob
 								.getExDocumento().getOrgaoUsuario()
-								.getDescricao(), mob.getExDocumento().getMarcaDagua());							
+								.getDescricao(), mob.getExDocumento().getMarcaDagua());	
+
+				bytes += ab.length;
 
 				// we create a reader for a certain document
 
@@ -944,7 +943,7 @@ public class Documento {
 					document = new Document(reader.getPageSizeWithRotation(1));
 					// step 2: we create a writer that listens to the
 					// document
-					writer = new PdfCopy(document, bo2);
+					writer = new PdfCopy(document, os);
 					writer.setFullCompression();
 
 					// writer.setViewerPreferences(PdfWriter.PageModeUseOutlines);
@@ -1002,10 +1001,35 @@ public class Documento {
 			// info.put(PdfName.ID, null);
 
 			document.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+
+			if (uuid != null)
+				status = Status.update(uuid, "PDF completo gerado", ans.size() * 2 + 1, ans.size() * 2 + 1,
+					bytes);
+
+		} catch (Exception ex) {
+			if (uuid != null) { 
+				status.ex = ex;
+				Status.update(uuid, status);
+			}
+			throw new RuntimeException(ex);
 		}
-		return bo2.toByteArray();
+		return true;
+	}
+
+	private static List<ExArquivoNumerado> getArquivosNumerados(ExMobil mob, ExMovimentacao mov, String uuid, boolean completo, boolean volumes) throws Exception {
+		List<ExArquivoNumerado> ans = null;
+		if (volumes && completo && mob.getDoc().isProcesso()) {
+			ExDocumento doc = mob.getDoc();
+			ans = new ArrayList<>();
+			Set<ExMobil> vols = doc.getVolumes();
+			for (ExMobil m : vols) {
+				if (uuid != null)
+					Status.update(uuid, "Obtendo a lista de documentos - Volume " + m.getNumSequencia() + "/" +  vols.size(), 0, 100, 0L);
+				ans.addAll(m.filtrarArquivosNumerados(null,	completo));
+			}
+		} else
+			ans = mob.filtrarArquivosNumerados(mov,	completo);
+		return ans;
 	}
 
 	public static byte[] generatePdf(String sHtml) throws Exception {
@@ -1024,85 +1048,94 @@ public class Documento {
 
 	}
 
-	public static byte[] getDocumentoHTML(ExMobil mob, ExMovimentacao mov,
-			boolean completo, String contextpath, String servernameport)
+	public static void getDocumentoHTML(OutputStream os, String uuid, ExMobil mob, ExMovimentacao mov,
+			boolean completo, boolean volumes, String contextpath, String servernameport)
 			throws Exception {
-		List<ExArquivoNumerado> ans = mob.filtrarArquivosNumerados(mov,
-				completo);
+		Status status = null;
+		if (uuid != null)
+			status = Status.update(uuid, "Obtendo a lista de documentos", 0, 100, 0L);
+		List<ExArquivoNumerado> ans = getArquivosNumerados(mob, mov, uuid, completo, volumes);
 
-		StringBuilder sb = new StringBuilder();
 		boolean fFirst = true;
 		// TAH: infelizmente o IE não funciona bem com background-color:
 		// transparent.
 		// sb.append("<html class=\"fisico\"><body style=\"margin:2px; padding:0pt; background-color: #E2EAEE;overflow:visible;\">");
-		sb.append("<html><head><base target=\"_parent\"/></head><body style=\"margin:2px; padding:0pt; background-color: "
-				+ (mob.getDoc().isEletronico() ? "#E2EAEE" : "#f1e9c6")
-				+ ";overflow:visible;\">");
-		for (ExArquivoNumerado an : ans) {
-			String numeracao = null;
+		try (PrintWriter sb = new PrintWriter(new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8)))) {
+			sb.append("<html><head><base target=\"_parent\"/></head><body style=\"margin:2px; padding:0pt; background-color: "
+					+ (mob.getDoc().isEletronico() ? "#E2EAEE" : "#f1e9c6")
+					+ ";overflow:visible;\">");
+			int f = 0;
+			for (ExArquivoNumerado an : ans) {
+				String numeracao = null;
+				if (uuid != null)
+					status = Status.update(uuid, "Agregando documento " + (f + 1) + "/" + ans.size(),
+							f * 2 + 1, ans.size() * 2 + 1, 0L);
 			// if (fFirst)
-			// fFirst = false;
-			// else
-			// sb
-			// .append("<div style=\"margin:10px; padding:10px; width:100%;
-			// border: medium double green;\" class=\"total\">");
-
-			sb.append("<div style=\"margin-bottom:6pt; padding:0pt; width:100%; clear:both; background-color: #fff; border: 1px solid #ccc; border-radius: 5px;\" class=\"documento\">");
-			sb.append("<table width=\"100%\" style=\"padding:3pt;\" border=0><tr><td>");
-			if (an.getPaginaInicial() != null) {
-				numeracao = an.getPaginaInicial().toString();
-				if (!an.getPaginaFinal().equals(an.getPaginaInicial()))
-					numeracao += " - " + an.getPaginaFinal();
-				sb.append("<div style=\"margin:3pt; padding:3pt; float:right; border: 1px solid #ccc; border-radius: 5px;\" class=\"numeracao\">");
-				sb.append(numeracao);
-				sb.append("</div>");
-			}
-			if (an.getArquivo().getHtml() != null) {
-				String sHtml = fixHtml(contextpath, an);				
-				sHtml = novoHtmlPersonalizado(sHtml).comBody().comBootstrap().comCSSInterno().obter();
-						
+				// fFirst = false;
+				// else
 				// sb
-				// .append("<div style=\"margin:3pt; padding:3pt; border: thin
-				// solid brown;\" class=\"dochtml\">");
-				sb.append(sHtml);
-				// sb.append("</div>");
-			} else {
-				sb.append("<div style=\"margin:3pt; padding:3pt;\" class=\"anexo\">");
-				sb.append("<img src=\"/siga/css/famfamfam/icons/page_white_acrobat.png\"/> <a href=\""
-						//+ "http://"
-						//+ servernameport
-						+ contextpath
-						+ "/app/arquivo/exibir?arquivo="
-						+ an.getArquivo().getReferenciaPDF()
-						+ "\" target=\"_blank\">");
-				sb.append(an.getNome());
-				sb.append("</a>");
-				if (an.getArquivo() instanceof ExMovimentacao) {
-					if (((ExMovimentacao) an.getArquivo()).getDescrMov() != null)
-						sb.append(": "
-								+ ((ExMovimentacao) an.getArquivo())
-										.getDescrMov());
-				} else {
-					if (((ExDocumento) an.getArquivo()).getDescrDocumento() != null)
-						sb.append(": "
-								+ ((ExDocumento) an.getArquivo()).getDescrDocumento());
+				// .append("<div style=\"margin:10px; padding:10px; width:100%;
+				// border: medium double green;\" class=\"total\">");
+	
+				sb.append("<div style=\"margin-bottom:6pt; padding:0pt; width:100%; clear:both; background-color: #fff; border: 1px solid #ccc; border-radius: 5px;\" class=\"documento\">");
+				sb.append("<table width=\"100%\" style=\"padding:3pt;\" border=0><tr><td>");
+				if (an.getPaginaInicial() != null) {
+					numeracao = an.getPaginaInicial().toString();
+					if (!an.getPaginaFinal().equals(an.getPaginaInicial()))
+						numeracao += " - " + an.getPaginaFinal();
+					sb.append("<div style=\"margin:3pt; padding:3pt; float:right; border: 1px solid #ccc; border-radius: 5px;\" class=\"numeracao\">");
+					sb.append(numeracao);
+					sb.append("</div>");
 				}
-
-				sb.append("</div>");
+				if (an.getArquivo().getHtml() != null) {
+					String sHtml = fixHtml(contextpath, an);				
+					sHtml = novoHtmlPersonalizado(sHtml).comBody().comBootstrap().comCSSInterno().obter();
+							
+					// sb
+					// .append("<div style=\"margin:3pt; padding:3pt; border: thin
+					// solid brown;\" class=\"dochtml\">");
+					sb.append(sHtml);
+					// sb.append("</div>");
+				} else {
+					sb.append("<div style=\"margin:3pt; padding:3pt;\" class=\"anexo\">");
+					sb.append("<img src=\"/siga/css/famfamfam/icons/page_white_acrobat.png\"/> <a href=\""
+							//+ "http://"
+							//+ servernameport
+							+ contextpath
+							+ "/app/arquivo/exibir?arquivo="
+							+ an.getArquivo().getReferenciaPDF()
+							+ "\" target=\"_blank\">");
+					sb.append(an.getNome());
+					sb.append("</a>");
+					if (an.getArquivo() instanceof ExMovimentacao) {
+						if (((ExMovimentacao) an.getArquivo()).getDescrMov() != null)
+							sb.append(": "
+									+ ((ExMovimentacao) an.getArquivo())
+											.getDescrMov());
+					} else {
+						if (((ExDocumento) an.getArquivo()).getDescrDocumento() != null)
+							sb.append(": "
+									+ ((ExDocumento) an.getArquivo()).getDescrDocumento());
+					}
+	
+					sb.append("</div>");
+				}
+	
+				if (an.getArquivo().getMensagem() != null
+						&& an.getArquivo().getMensagem().trim().length() > 0) {
+					sb.append("</td></tr><tr><td>");
+					sb.append("<div style=\"margin:3pt; padding:3pt; border: 1px solid #ccc; border-radius: 5px; background-color:lightgreen;\" class=\"anexo\">");
+					sb.append(an.getArquivo().getMensagem());
+					sb.append("</div>");
+				}
+				sb.append("</td></tr></table></div>");
+				f++;
 			}
-
-			if (an.getArquivo().getMensagem() != null
-					&& an.getArquivo().getMensagem().trim().length() > 0) {
-				sb.append("</td></tr><tr><td>");
-				sb.append("<div style=\"margin:3pt; padding:3pt; border: 1px solid #ccc; border-radius: 5px; background-color:lightgreen;\" class=\"anexo\">");
-				sb.append(an.getArquivo().getMensagem());
-				sb.append("</div>");
-			}
-			sb.append("</td></tr></table></div>");
+			sb.append("</body></html>");
+			
+			if (uuid != null)
+				status = Status.update(uuid, "PDF completo gerado", ans.size() * 2 + 1, ans.size() * 2 + 1, 0L);
 		}
-		sb.append("</body></html>");
-
-		return sb.toString().getBytes("utf-8");
 	}
 
 	public static String fixHtml(String contextpath, ExArquivoNumerado an)

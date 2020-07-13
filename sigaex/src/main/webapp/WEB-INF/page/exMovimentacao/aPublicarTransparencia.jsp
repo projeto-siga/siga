@@ -28,11 +28,12 @@
 				</div>
 				<div class="card-body">
 					<form name="frm" action="publicacao_transparencia_gravar" namespace="/expediente/mov" theme="simple" method="POST">
-						<input type="hidden" name="postback" value="1" /> 
-						<input type="hidden" name="sigla" value="${sigla}" />
+						  <input type="hidden" name="postback" value="1" /> 
+						  <input type="hidden" name="sigla" value="${sigla}" />
 	
-					    <h5 class="card-title">Publicação em Portal da Transparência</h5>
-					    <p class="card-text">Governo Aberto SP é uma iniciativa do Governo do Estado de São Paulo, de disponibilização, através da internet, de documentos, informações e dados governamentais de domínio público para a livre utilização pela sociedade, garantindo à mesma, acesso aos dados primários, de forma que possam ser reutilizados produzindo novas informações e aplicações digitais para a sociedade.</p>
+					    <h5 class="card-title"><fmt:message key="documento.publicar.portaltransparencia"/></h5>
+					    <p class="card-text"><fmt:message key="documento.publicar.portaltransparencia.texto"/></p>
+
 					    <div class="alert alert-warning text-center" role="alert">
 						  A publicação redefinirá o <strong>Nível de Acesso</strong> ao documento para <strong>Público</strong>. Nível de Acesso atual <strong>${doc.exNivelAcessoAtual.nmNivelAcesso}</strong>.
 						</div>
@@ -46,7 +47,7 @@
 							  	<div class="form-group col-6">
 									<label for="marcacoes">Marcações</label>
 									<input type="hidden" name="idMarcacoes" value="${idMarcacoes}" id="inputHiddenMarcacoesSelecionadas" />
-									<select id="marcacoes" class="form-control  siga-multiploselect  js-siga-multiploselect--marcacoes">
+									<select id="marcacoes" name="lstMarcadores" class="form-control  siga-multiploselect  js-siga-multiploselect--marcacoes">
 										<c:forEach items="${listaMarcadores}" var="item">
 											<option value="${item.idMarcador}"  data-content="<span class='badge badge-primary' style='min-width: 150px;'>${item.descrMarcador}</span>">${item.descrMarcador}</option>
 										</c:forEach>

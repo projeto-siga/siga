@@ -31,6 +31,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.security.MessageDigest;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -232,18 +233,29 @@ public class Documento {
 	}
 
 	public static ArrayList<String> getAssinantesStringLista(
-			Set<ExMovimentacao> movsAssinatura) {
+			Set<ExMovimentacao> movsAssinatura, Date dtDoc) {
 		ArrayList<String> assinantes = new ArrayList<String>();
 		for (ExMovimentacao movAssinatura : movsAssinatura) {
 			if(movAssinatura.getCadastrante().getId().equals(movAssinatura.getSubscritor().getId())) {
 				String s;
+				Date dataDeInicioDeObrigacaoExibirRodapeDeAssinatura=null;
 				if (movAssinatura.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)) {
 					s = Texto.maiusculasEMinusculas(movAssinatura.getCadastrante().getNomePessoa());
 				} else {
+					try {
+
+						dataDeInicioDeObrigacaoExibirRodapeDeAssinatura = SigaExProperties.getDataInicioObrigacaoDeExibirDataeHoraRodapeAssinatura();
+					}
+						catch (Exception e) {
+					}
 					s = movAssinatura.getDescrMov().trim().toUpperCase();
 					s = s.split(":")[0];
 					s = s.intern();
-					s +=" - " + Data.formatDDMMYY_AS_HHMMSS(movAssinatura.getData());					 
+					if((SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local")))
+							|| (dataDeInicioDeObrigacaoExibirRodapeDeAssinatura != null && !dataDeInicioDeObrigacaoExibirRodapeDeAssinatura.after(dtDoc)
+									)	) {
+							s +=" - " + Data.formatDDMMYY_AS_HHMMSS(movAssinatura.getData());
+						}				 
 				}
 				if (!assinantes.contains(s)) {
 					assinantes.add(s);
@@ -254,18 +266,30 @@ public class Documento {
 	}
 	
 	public static ArrayList<String> getAssinantesStringListaComMatricula(
-			Set<ExMovimentacao> movsAssinatura) {
+			Set<ExMovimentacao> movsAssinatura, Date dtDoc)  {
 		ArrayList<String> assinantes = new ArrayList<String>();
 		for (ExMovimentacao movAssinatura : movsAssinatura) {
 			String s;
+			Date dataDeInicioDeObrigacaoExibirRodapeDeAssinatura=null;
 			if (movAssinatura.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)) {
 				s = Texto.maiusculasEMinusculas(movAssinatura.getCadastrante().getNomePessoa());
 			} else {
+				try {
+
+					dataDeInicioDeObrigacaoExibirRodapeDeAssinatura = SigaExProperties.getDataInicioObrigacaoDeExibirDataeHoraRodapeAssinatura();
+				}
+					catch (Exception e) {
+				}
+				
 				s = movAssinatura.getDescrMov().trim().toUpperCase();
 				s = s.replace(":", " - ");
 				s = s.replace("EM SUBSTITUIÇÃO A", "em substituição a");
 				s = s.intern();				
-				s +=" - " + Data.formatDDMMYY_AS_HHMMSS(movAssinatura.getData());				
+				if((SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local")))
+					|| (dataDeInicioDeObrigacaoExibirRodapeDeAssinatura != null && !dataDeInicioDeObrigacaoExibirRodapeDeAssinatura.after(dtDoc)
+							)	) {
+					s +=" - " + Data.formatDDMMYY_AS_HHMMSS(movAssinatura.getData());
+				}				
 			}
 			if (!assinantes.contains(s)) {
 				assinantes.add(s);
@@ -274,8 +298,8 @@ public class Documento {
 		return assinantes;
 	}
 
-	public static String getAssinantesString(Set<ExMovimentacao> movsAssinatura) {
-		ArrayList<String> als = getAssinantesStringLista(movsAssinatura);
+	public static String getAssinantesString(Set<ExMovimentacao> movsAssinatura, Date dtDoc) {
+		ArrayList<String> als = getAssinantesStringLista(movsAssinatura,dtDoc);
 		String retorno = "";
 		if (als.size() > 0) {
 			for (int i = 0; i < als.size(); i++) {
@@ -293,8 +317,8 @@ public class Documento {
 		return retorno;
 	}
 	
-	public static String getAssinantesStringComMatricula(Set<ExMovimentacao> movsAssinatura) {
-		ArrayList<String> als = getAssinantesStringListaComMatricula(movsAssinatura);
+	public static String getAssinantesStringComMatricula(Set<ExMovimentacao> movsAssinatura, Date dtDoc) {
+		ArrayList<String> als = getAssinantesStringListaComMatricula(movsAssinatura,dtDoc);
 		String retorno = "";
 		if (als.size() > 0) {
 			for (int i = 0; i < als.size(); i++) {

@@ -819,10 +819,6 @@ public class ExDocumentoVO extends ExVO {
 		
 		vo.addAcao(
 				"report_link",
-				"Publicar no Portal da Transparência",
-				"/app/expediente/mov",
-				"publicacao_transparencia",
-				true);
 				SigaMessages.getMessage("documento.publicar.portaltransparencia"),
 				"/app/expediente/mov",
 				"publicacao_transparencia",

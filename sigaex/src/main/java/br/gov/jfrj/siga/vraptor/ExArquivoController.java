@@ -297,7 +297,7 @@ public class ExArquivoController extends ExController {
 			byte ab[] = null;
 	
 			if (isPdf) {
-				ab = Documento.getDocumento(mob, null, completo, semmarcas, null, null);
+				ab = null;// Documento.getDocumento(mob, null, completo, semmarcas, null, null); //TODO: Quebrada assinatura do método. Reimplementar.
 				if (ab == null) {
 					throw new Exception("Arquivo PDF inválido!");
 				}

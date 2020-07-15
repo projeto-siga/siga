@@ -18,7 +18,7 @@
 		function carregarCompleto() {
 			$("#completo").attr("disabled", true);
 			$("#spinnerModal").modal('show');
-		    $('#framePdf').attr('src', '/siga/public/app/sigalinkStream/${jwt}?completo=1');
+		    $('#framePdf').attr('src', '/siga/public/app/sigalinkStream/${jwt}?completo=1&volumes=1');
 		    return false;
 		}
 

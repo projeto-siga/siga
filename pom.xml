@@ -155,7 +155,25 @@
 			    <artifactId>vraptor</artifactId>
 			    <version>4.2.2</version>
 			</dependency>
-
+			
+			<dependency>
+				<groupId>com.crivano</groupId>
+				<artifactId>swaggerservlet</artifactId>
+				<version>1.30.0</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>br.jus.trf2.xjus</groupId>
+				<artifactId>x-jus-record-api</artifactId>
+				<version>1.0.0</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.crivano</groupId>
+						<artifactId>swaggerservlet</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+	
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-cp</artifactId>
@@ -373,7 +391,7 @@
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpclient</artifactId>
-				<version>4.3.6</version>
+				<version>4.5.10</version>
 			</dependency>
 
 			<dependency>

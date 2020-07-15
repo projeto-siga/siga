@@ -1055,15 +1055,9 @@ public class CpBL {
 		dao().gravar(acesso);
 	}
 
-	public InputStream uploadLotacao(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
-		InputStream inputStream = null;
-		try {
-			Excel excel = new Excel();
-			inputStream = excel.uploadLotacao(file, orgaoUsuario, extensao);
-		} catch (Exception e) {
-
-		}
-		return inputStream;
+	public InputStream uploadLotacao(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {			
+		Excel excel = new Excel();		
+		return excel.uploadLotacao(file, orgaoUsuario, extensao);
 	}
 
 	public InputStream uploadFuncao(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {

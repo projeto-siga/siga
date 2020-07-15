@@ -503,17 +503,30 @@ public class GiServiceImpl implements GiService {
 	 */
 	@Override
 	public  String gerarToken(String matricula, String senha) throws Exception{
-		CpIdentidade cpIdentidade = new CpIdentidade();
 		String token = "";
 
-		cpIdentidade = SigaUtil.getInstance().autenticar(matricula, senha);
-		if(cpIdentidade == null)			
-			throw new TokenException("Senha ou matricula invalido !"); 
+		CpIdentidade id = null;
+		CpDao dao = CpDao.getInstance();
+		id = dao.consultaIdentidadeCadastrante(matricula, true);
+		String modoAut = buscarModoAutenticacao(id);
+
+		/* Autenticação */
+		if(modoAut.equals(_MODO_AUTENTICACAO_BANCO)) {
+			if (!autenticaViaBanco(id, senha)) {
+				throw new AplicacaoException("Usuário ou Senha inválidos.");
+			}
+		} else if(modoAut.equals(_MODO_AUTENTICACAO_LDAP)) {
+			if(!autenticaViaLdap(matricula, senha)) {
+				throw new AplicacaoException("Usuário ou Senha inválidos.");
+			}
+		}
 		
-		Boolean permissaoWS =  SigaUtil.getInstance().verificaSePessoTemPermissaoWS(cpIdentidade.getDpPessoa());
+		/* Autorização */
+		Boolean permissaoWS =  SigaUtil.getInstance().verificaSePessoTemPermissaoWS(id.getDpPessoa());
 		if(!permissaoWS)
 			throw new TokenException("Usuário sem permissão de acesso ao Web Service.");
 		
+		/* Gera Token JWT para consumo dos WS SOAP*/
 		token = SigaUtil.getInstance().gerarToken(matricula);
 		if("".equals(token))			
 			throw new TokenException("Erro ao gerar TOKEN.");

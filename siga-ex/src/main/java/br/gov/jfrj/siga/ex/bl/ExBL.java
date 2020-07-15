@@ -7134,12 +7134,17 @@ public class ExBL extends CpBL {
 		
 	}
 
-	public CpToken publicarTransparencia(ExMobil mob, DpPessoa cadastrante, DpLotacao lotaCadastrante, String[] listaMarcadores) {
-		
-		
+	public CpToken publicarTransparencia(ExMobil mob, DpPessoa cadastrante, DpLotacao lotaCadastrante, String[] listaMarcadores, boolean viaWS) {
 
-		/* 1- Redefinição para Público */
-		if (!Ex.getInstance().getComp().podeRedefinirNivelAcesso(cadastrante, lotaCadastrante,mob)) {
+		/* Verificação de autorização - Via WS é feito bypass*/
+		if (!viaWS && !Ex.getInstance().getComp().podePublicarPortalTransparencia(cadastrante, lotaCadastrante,mob)) {
+			throw new AplicacaoException(
+					"Não é possível " + SigaMessages.getMessage("documento.publicar.portaltransparencia"));
+		}
+		
+		
+		/* 1- Redefinição para Público - Via WS é feito bypass*/	
+		if (!viaWS && !Ex.getInstance().getComp().podeRedefinirNivelAcesso(cadastrante, lotaCadastrante,mob)) {
 			throw new AplicacaoException(
 					"Não é possível redefinir o nível de acesso");
 		}
@@ -7261,16 +7266,42 @@ public class ExBL extends CpBL {
 	    marcadoresJson.put("marcadorMobil", doc.getPrimeiroMobil().getMarcadores());
 	    
 	    documentoJson.put("marcadores", marcadoresJson);
-	        
-	    
-	    
-	    
+
 	    // converte objetos Java para JSON e retorna JSON como String
 	    String json = gson.toJson(documentoJson);
 
-	
-
 		return json;
 		
+	}
+	
+	public String marcadoresGeraisTaxonomiaAdministradaToJSON() throws Exception {
+		Gson gson = new Gson();
+
+		ArrayList<HashMap<String, Object>> objectJson = new ArrayList<>();
+		try {
+			List<CpMarcador> listaMarcadores = dao().listarCpMarcadoresGeraisTaxonomiaAdministrada();
+			
+			for (CpMarcador marcador : listaMarcadores) {
+				HashMap<String, Object> marcadorJson = new HashMap<String, Object>();
+				HashMap<String, Object> tipoMarcadorJson = new HashMap<String, Object>();
+				
+				marcadorJson.put("id", marcador.getIdMarcador());
+				marcadorJson.put("descMarcador", marcador.getDescrMarcador());
+				
+				tipoMarcadorJson.put("idTipoMarcador", marcador.getCpTipoMarcador().getIdTpMarcador());
+				tipoMarcadorJson.put("descTipoMarcador", marcador.getCpTipoMarcador().getDescrTipoMarcador());
+				marcadorJson.put("tipoMarcador", tipoMarcadorJson);
+				
+				objectJson.add(marcadorJson);
+			}
+			
+			// converte objetos Java para JSON e retorna JSON como String
+		    String json = gson.toJson(objectJson);    
+		    return json;
+		} catch (Exception e) {
+			throw new AplicacaoException("Ocorreu um erro na conversão dos marcadores para JSON.");
+		} finally {
+			objectJson = null;
+		}
 	}
 }

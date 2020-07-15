@@ -4784,7 +4784,7 @@ public class ExMovimentacaoController extends ExController {
 
 		/* Primeiro Passo - Documento para Público */
 		CpToken sigaUrlPermanente = new CpToken();
-		sigaUrlPermanente = Ex.getInstance().getBL().publicarTransparencia(documentoBuilder.getMob(), getCadastrante(), getLotaCadastrante(),listaMarcadores);
+		sigaUrlPermanente = Ex.getInstance().getBL().publicarTransparencia(documentoBuilder.getMob(), getCadastrante(), getLotaCadastrante(),listaMarcadores,false);
 	
 		String url = Contexto.urlBase(request);
 		String caminho = url + "/siga/public/app/sigalink/1/" + sigaUrlPermanente.getToken();

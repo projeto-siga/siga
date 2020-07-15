@@ -92,5 +92,11 @@ public interface ExService extends Remote {
     
     @WebMethod
     public String obterMetadadosDocumento(String siglaDocumento, String token) throws Exception;
+    
+    @WebMethod
+    public String obterMarcadores(String token) throws Exception;
+    
+    @WebMethod
+    public String publicarDocumentoPortal(String siglaDocumento, String cadastranteStr, String marcadoresStr, String token) throws Exception;
 
 }

@@ -7,16 +7,17 @@
 <%@ taglib uri="http://localhost/libstag" prefix="fx"%>
 
 <c:if
-	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos') && cadastrante.orgaoUsuario.isExternoOrgaoUsu eq 0}">
+	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos') && (!fx:ehPublicoExterno(titular) || (f:resource('siga.local') eq 'GOVSP' && fx:podeCriarComoNovo(titular, titular.lotacao)))}">
 	<li class="nav-item dropdown"><a href="javascript:void(0);"
 		class="nav-link dropdown-toggle" data-toggle="dropdown">
 			Documentos </a>
 		<ul class="dropdown-menu">
 			<li><a class="dropdown-item"
 				href="/sigaex/app/expediente/doc/editar">Novo</a></li>
-			<li><a class="dropdown-item"
-				href="/sigaex/app/expediente/doc/listar?primeiraVez=sim">Pesquisar</a></li>
-
+			<c:if test="${!fx:ehPublicoExterno(titular)}">
+				<li><a class="dropdown-item"
+					href="/sigaex/app/expediente/doc/listar?primeiraVez=sim">Pesquisar</a></li>
+			</c:if>
 			<li><a class="dropdown-item" href="/sigaex/app/mesa">Mesa
 					Virtual </a></li>
 			

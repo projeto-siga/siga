@@ -10,7 +10,6 @@ import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,8 +22,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -33,6 +35,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xerces.impl.dv.util.Base64;
@@ -78,7 +81,6 @@ import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
-import br.gov.jfrj.siga.ex.ExProtocolo;
 import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDespacho;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
@@ -89,7 +91,6 @@ import br.gov.jfrj.siga.ex.ItemDeProtocoloComparator;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
-import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
@@ -2382,6 +2383,59 @@ public class ExMovimentacaoController extends ExController {
 							mov.getMarcador(), ativo);
 		}
 		resultOK();
+	}
+
+	private void salvarMarca(BuscaDocumentoBuilder builder, ExMovimentacaoBuilder movimentacaoBuilder, Long idMarcador,
+			boolean ativo) throws Exception {
+		movimentacaoBuilder.setIdMarcador(idMarcador);
+		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
+
+		Ex.getInstance().getBL().vincularMarcador(getCadastrante(), getLotaTitular(), //
+				builder.getMob(), mov.getDtMov(), //
+				mov.getLotaResp(), mov.getResp(), //
+				mov.getSubscritor(), mov.getTitular(), mov.getDescrMov(), mov.getNmFuncaoSubscritor(),
+				mov.getMarcador(), ativo);
+	}
+
+	@Post("/app/expediente/mov/salvar_marcas")
+	public void salvarMarcas(final Integer postback, final String sigla, final List<Long> marcadoresOriginais,
+			final List<Long> marcadoresSelecionados) throws Exception {
+		List<Long> idMarcasARemover = CollectionUtils.isEmpty(marcadoresOriginais) ? Collections.emptyList()
+				: ((CollectionUtils.isEmpty(marcadoresSelecionados) ? marcadoresOriginais: 
+					marcadoresOriginais.stream().filter(new Predicate<Long>() {
+					@Override
+					public boolean test(Long m) {
+						return !marcadoresSelecionados.contains(m);
+					}
+				}).collect(Collectors.toList())));
+		List<Long> idMarcasAAdicionar = CollectionUtils.isEmpty(marcadoresSelecionados) ? Collections.emptyList()
+				: (CollectionUtils.isEmpty(marcadoresOriginais)? marcadoresSelecionados: 
+					marcadoresSelecionados.stream().filter(new Predicate<Long>() {
+					@Override
+					public boolean test(Long m) {
+						return !marcadoresOriginais.contains(m);
+					}
+				}).collect(Collectors.toList()));
+
+		if (!idMarcasAAdicionar.isEmpty() || !idMarcasARemover.isEmpty()) {
+			final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+			buscarDocumento(builder);
+
+			if (!Ex.getInstance().getComp().podeMarcar(getTitular(), getLotaTitular(), builder.getMob())) {
+				throw new AplicacaoException("Não é possível fazer marcação");
+			}
+
+			final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder.novaInstancia();
+
+			for (Long idMarcaAAdicionar : idMarcasAAdicionar) {
+				salvarMarca(builder, movimentacaoBuilder, idMarcaAAdicionar, true);
+			}
+			for (Long idMarcaARemover : idMarcasARemover) {
+				salvarMarca(builder, movimentacaoBuilder, idMarcaARemover, false);
+			}
+		}
+
+		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
 
 	@Get("app/expediente/mov/transferir_lote")

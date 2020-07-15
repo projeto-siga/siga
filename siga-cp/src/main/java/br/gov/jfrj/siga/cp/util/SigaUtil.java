@@ -80,7 +80,6 @@ public class SigaUtil {
 			List<CpConfiguracao> ll = CpDao.getInstance().porLotacaoPessoaServicoTipo(t_cfgConfigExemplo);
 			for (CpConfiguracao cpConfiguracao : ll) {
 				if (cpConfiguracao.getCpServico().getSiglaServico().equals(CpServico.ACESSO_WEBSERVICE)) {
-					System.out.println("CP:" + cpConfiguracao.getCpServico().getDescricao());
 					retorno = true;
 				}
 			}
@@ -91,6 +90,19 @@ public class SigaUtil {
 
 		return retorno;
 
+	}
+	
+	/* Token JWT de Usuário Autenticado */
+	private SigaJwt inicializarJwtBL(String modulo) throws IOException, ServletException {
+		SigaJwt jwtBL = null;
+
+		try {
+			jwtBL = SigaJwt.getInstance(modulo);
+		} catch (SigaJwtProviderException e) {
+			throw new ServletException("Erro ao iniciar o provider", e);
+		}
+
+		return jwtBL;
 	}
 
 	/**
@@ -125,23 +137,61 @@ public class SigaUtil {
 
 		return token;
 	}
+	
+	
+	public Map<String, Object> parseTokenJwt(String token) throws TokenException {
 
-	private SigaJwt inicializarJwtBL(String modulo) throws IOException, ServletException {
-		SigaJwt jwtBL = null;
-
+		SigaJwt jwtBL;
 		try {
-			jwtBL = SigaJwt.getInstance(modulo);
-		} catch (SigaJwtProviderException e) {
-			throw new ServletException("Erro ao iniciar o provider", e);
-		}
+			jwtBL = inicializarJwtBL(null);
+			Map<String, Object> map = jwtBL.validarToken(token);
+			return map;
 
-		return jwtBL;
+		} catch (IOException e) {
+			throw new TokenException(TokenException.MSG_EX_TOKEN_INVALIDO);
+		} catch (ServletException e) {
+			throw new TokenException(TokenException.MSG_EX_TOKEN_INVALIDO);
+		} catch (InvalidKeyException e) {
+			throw new TokenException(TokenException.MSG_EX_TOKEN_INVALIDO);
+		} catch (NoSuchAlgorithmException e) {
+			throw new TokenException(TokenException.MSG_EX_TOKEN_INVALIDO);
+		} catch (IllegalStateException e) {
+			throw new TokenException(TokenException.MSG_EX_TOKEN_INVALIDO);
+		} catch (SignatureException e) {
+			throw new TokenException(TokenException.MSG_EX_TOKEN_INVALIDO);
+		} catch (JWTVerifyException e) {
+			throw new TokenException(TokenException.MSG_EX_TOKEN_INVALIDO);
+		}
 	}
 
 	public String gerarToken(String matricula) throws IOException, ServletException {
 		SigaJwt jwtBL = inicializarJwtBL(null);
 		String token = jwtBL.criarToken(matricula, null, null, null);
 		return token;
+	}
+	/***************/
+
+	
+	/* JWT de uso Externo - Sem autenticação no Sistema. Ex.: Acesso Arquivo,verificação autenticidade */
+	/*TODO: Verificar se não dá para unificar as rotinas JWT */
+	public static String buildJwtToken(final String tipoLink, final String token, final String sigla) {
+		String jwt;
+
+		final JWTSigner signer = new JWTSigner(getJwtPassword());
+		final HashMap<String, Object> claims = new HashMap<String, Object>();
+
+		final long iat = System.currentTimeMillis() / 1000L; // issued at claim
+		final long exp = iat + 1 * 60 * 60L; // token expires in 1 hours
+		claims.put("exp", exp);
+		claims.put("iat", iat);
+
+		claims.put("tipoLink", tipoLink);
+		claims.put("token", token);
+		claims.put("sigla", sigla);
+		
+		jwt = signer.sign(claims);
+
+		return jwt;
 	}
 	
 	
@@ -170,26 +220,7 @@ public class SigaUtil {
 		}
 	}
 	
-	
-	public static String buildJwtToken(final String tipoLink, final String token, final String sigla) {
-		String jwt;
-
-		final JWTSigner signer = new JWTSigner(getJwtPassword());
-		final HashMap<String, Object> claims = new HashMap<String, Object>();
-
-		final long iat = System.currentTimeMillis() / 1000L; // issued at claim
-		final long exp = iat + 1 * 60 * 60L; // token expires in 1 hours
-		claims.put("exp", exp);
-		claims.put("iat", iat);
-
-		claims.put("tipoLink", tipoLink);
-		claims.put("token", token);
-		claims.put("sigla", sigla);
-		
-		jwt = signer.sign(claims);
-
-		return jwt;
-	}
+	/*************************************/
 	
 	/*
 	 * Funcao para geracao de codigos alfanumericos randomicos

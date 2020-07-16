@@ -889,9 +889,11 @@ public class ExServiceImpl implements ExService {
 	    					"Não é possível " + SigaMessages.getMessage("documento.publicar.portaltransparencia"));
 	    		}
 				/* Fim da Validação */
+	    		String[] listaMarcadores = null;	    		
+	    		if (!"".equals(marcadoresStr)) {
+	    			listaMarcadores = marcadoresStr.split(",");
+	    		}
 	    		
-				String[] listaMarcadores = marcadoresStr.split(",");
-				
 				CpToken sigaUrlPermanente = new CpToken();
 				sigaUrlPermanente = Ex.getInstance().getBL().publicarTransparencia(mob, cadastrante, cadastrante.getLotacao(),listaMarcadores,true);
 				String url = System.getProperty("siga.ex.enderecoAutenticidadeDocs").replace("/sigaex/public/app/autenticar", "");

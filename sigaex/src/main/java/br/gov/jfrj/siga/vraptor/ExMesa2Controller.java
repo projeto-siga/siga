@@ -75,7 +75,7 @@ public class ExMesa2Controller extends ExController {
 		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
 		try {
 			result.include("podeNovoDocumento", Cp.getInstance().getConf().podePorConfiguracao(getTitular(), getTitular().getLotacao(),
-					CpTipoConfiguracao.TIPO_CONFIG_CRIAR_COMO_NOVO));
+					CpTipoConfiguracao.TIPO_CONFIG_CRIAR_NOVO_EXTERNO));
 		} catch (Exception e) {
 			throw e;
 		} 

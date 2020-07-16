@@ -112,9 +112,9 @@
   <function-signature>java.lang.Boolean podeDelegarVisualizacao( br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
  </function>
  <function>
- <name>podeCriarComoNovo</name>
+ <name>podeCriarNovoExterno</name>
   <function-class>br.gov.jfrj.siga.jee.SigaLibsEL</function-class>
-  <function-signature>java.lang.Boolean podeCriarComoNovo( br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
+  <function-signature>java.lang.Boolean podeCriarNovoExterno( br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
  </function>
  <function>
  <name>ehPublicoExterno</name>

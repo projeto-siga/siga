@@ -469,9 +469,9 @@ public class SigaLibsEL {
 				.podePorConfiguracao(cadastrante, lotacaoCadastrante, CpTipoConfiguracao.TIPO_CONFIG_DELEGAR_VISUALIZACAO);
 	}
 
-	public static Boolean podeCriarComoNovo(DpPessoa cadastrante, DpLotacao lotacaoCadastrante) throws Exception {
+	public static Boolean podeCriarNovoExterno(DpPessoa cadastrante, DpLotacao lotacaoCadastrante) throws Exception {
 		return Cp.getInstance().getConf()
-				.podePorConfiguracao(cadastrante, lotacaoCadastrante, CpTipoConfiguracao.TIPO_CONFIG_CRIAR_COMO_NOVO);
+				.podePorConfiguracao(cadastrante, lotacaoCadastrante, CpTipoConfiguracao.TIPO_CONFIG_CRIAR_NOVO_EXTERNO);
 	}
 
 	public static Boolean ehPublicoExterno(DpPessoa titular) {

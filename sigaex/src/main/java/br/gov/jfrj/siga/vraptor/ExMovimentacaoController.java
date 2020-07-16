@@ -1960,6 +1960,29 @@ public class ExMovimentacaoController extends ExController {
 		if (mov.getDtFimMov() != null && !Data.dataDentroSeculo21(mov.getDtFimMov()))
 			throw new AplicacaoException("Data de devolução inválida, deve estar entre o ano 2000 e ano 2100");	
 
+		
+		if(!Ex.getInstance().getConf().podePorConfiguracao(builder.getMob().getExDocumento().getExModelo(),CpTipoConfiguracao.TIPO_CONFIG_TRAMITAR_SEM_CAPTURADO)) {
+			Boolean podeTramitar = Boolean.FALSE;
+			Set<ExMobil> mobilsJuntados = builder.getMob().getDoc().getMobilDefaultParaReceberJuntada().getJuntados();
+
+			for (ExMobil exMobil : mobilsJuntados) {
+				if(exMobil.getDoc().isCapturado()) {
+					podeTramitar = Boolean.TRUE;
+					break;
+				}
+			}
+
+			if(!podeTramitar) {
+				result.include("msgCabecClass", "alert-danger");
+	    		result.include("mensagemCabec", "Para tramitar o documento é necessário incluir um documento do tipo capturado.");
+	    		result.forwardTo(this).aTransferir(
+	    				sigla, idTpDespacho, tipoResponsavel, postback, dtMovString, subscritorSel, 
+	    				substituicao, titularSel, nmFuncaoSubscritor, idResp, tiposDespacho, descrMov, 
+	    				lotaResponsavelSel, responsavelSel, cpOrgaoSel, dtDevolucaoMovString, obsOrgao, protocolo);    		
+	    			return;
+			}
+		}
+		
 		if (!(Ex.getInstance()
 				.getComp()
 				.podeTransferir(getTitular(), getLotaTitular(),

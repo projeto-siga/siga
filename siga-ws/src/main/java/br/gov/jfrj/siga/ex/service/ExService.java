@@ -18,12 +18,10 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.service;
 
-import br.gov.jfrj.siga.Remote;
-
 import javax.jws.WebMethod;
-import java.util.Date;
-
 import javax.jws.WebService;
+
+import br.gov.jfrj.siga.Remote;
 
 @WebService(targetNamespace = "http://impl.service.ex.siga.jfrj.gov.br/")
 public interface ExService extends Remote {
@@ -88,5 +86,17 @@ public interface ExService extends Remote {
     
     @WebMethod
 	public String obterSequencia(Integer tipoSequencia, Long anoEmissao, String zerarInicioAnno) throws Exception;
+    
+    @WebMethod
+    public String obterSiglaMobilPorIdDoc(Long idDoc) throws Exception;
+    
+    @WebMethod
+    public String obterMetadadosDocumento(String siglaDocumento, String token) throws Exception;
+    
+    @WebMethod
+    public String obterMarcadores(String token) throws Exception;
+    
+    @WebMethod
+    public String publicarDocumentoPortal(String siglaDocumento, String cadastranteStr, String marcadoresStr, String token) throws Exception;
 
 }

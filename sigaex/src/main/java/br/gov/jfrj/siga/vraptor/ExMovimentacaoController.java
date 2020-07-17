@@ -89,6 +89,7 @@ import br.gov.jfrj.siga.ex.ExTopicoDestinacao;
 import br.gov.jfrj.siga.ex.ItemDeProtocolo;
 import br.gov.jfrj.siga.ex.ItemDeProtocoloComparator;
 import br.gov.jfrj.siga.ex.SigaExProperties;
+import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
@@ -1851,6 +1852,7 @@ public class ExMovimentacaoController extends ExController {
 					"Não é possível fazer despacho nem transferência");
 		}
 
+		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
 		result.include("doc", doc);
 		result.include("mob", builder.getMob());
 		result.include("postback", this.getPostback());
@@ -1962,6 +1964,29 @@ public class ExMovimentacaoController extends ExController {
 		if (mov.getDtFimMov() != null && !Data.dataDentroSeculo21(mov.getDtFimMov()))
 			throw new AplicacaoException("Data de devolução inválida, deve estar entre o ano 2000 e ano 2100");	
 
+		
+		if(!Ex.getInstance().getConf().podePorConfiguracao(builder.getMob().getExDocumento().getExModelo(),CpTipoConfiguracao.TIPO_CONFIG_TRAMITAR_SEM_CAPTURADO)) {
+			Boolean podeTramitar = Boolean.FALSE;
+			Set<ExMobil> mobilsJuntados = builder.getMob().getDoc().getMobilDefaultParaReceberJuntada().getJuntados();
+
+			for (ExMobil exMobil : mobilsJuntados) {
+				if(exMobil.getDoc().isCapturado()) {
+					podeTramitar = Boolean.TRUE;
+					break;
+				}
+			}
+
+			if(!podeTramitar) {
+				result.include("msgCabecClass", "alert-danger");
+	    		result.include("mensagemCabec", "Para tramitar é necessário incluir um documento do tipo capturado.");
+	    		result.forwardTo(this).aTransferir(
+	    				sigla, idTpDespacho, tipoResponsavel, postback, dtMovString, subscritorSel, 
+	    				substituicao, titularSel, nmFuncaoSubscritor, idResp, tiposDespacho, descrMov, 
+	    				lotaResponsavelSel, responsavelSel, cpOrgaoSel, dtDevolucaoMovString, obsOrgao, protocolo);    		
+	    			return;
+			}
+		}
+		
 		if (!(Ex.getInstance()
 				.getComp()
 				.podeTransferir(getTitular(), getLotaTitular(),

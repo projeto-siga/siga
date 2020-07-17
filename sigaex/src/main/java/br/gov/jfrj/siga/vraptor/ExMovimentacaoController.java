@@ -2317,7 +2317,7 @@ public class ExMovimentacaoController extends ExController {
 
 		result.include("sigla", sigla);
 		result.include("mob", builder.getMob());
-		result.include("listaMarcadores", this.getListaMarcadoresGerais());
+		result.include("listaMarcadores", this.getListaMarcadoresGeraisTaxonomiaAdministrada());
 		result.include("listaMarcadoresAtivos", this.getListaMarcadoresAtivos(builder.getMob().getDoc().getMobilGeral()));
 	}
 	
@@ -2344,6 +2344,10 @@ public class ExMovimentacaoController extends ExController {
 
 	private Object getListaMarcadoresGerais() {
 		return dao().listarCpMarcadoresGerais();
+	}
+	
+	private Object getListaMarcadoresGeraisTaxonomiaAdministrada() {
+		return dao().listarCpMarcadoresGeraisTaxonomiaAdministrada();
 	}
 
 	@Post("/app/expediente/mov/marcar_gravar")
@@ -4771,15 +4775,21 @@ public class ExMovimentacaoController extends ExController {
 		final ExMovimentacao movimentacao = movimentacaoBuilder
 				.construir(dao());
 
+		List<CpMarcador> marcadores = dao().listarCpMarcadoresTaxonomiaAdministrada();
+		Set<CpMarcador> marcadoresAtivo = (Set<CpMarcador>) this.getListaMarcadoresAtivos(documentoBuilder.getMob().getDoc().getMobilGeral());
+		if (marcadores != null) {
+			marcadores.removeAll(marcadoresAtivo);
+		}
 
+		
 
 		result.include("sigla", sigla);
 		result.include("mob", documentoBuilder.getMob());
 		result.include("mov", movimentacao);
 		result.include("doc", documento);
 		result.include("descrMov", movimentacaoBuilder.getDescrMov());
-		result.include("listaMarcadores", this.getListaMarcadoresTaxonomiaAdministrada());
-		result.include("listaMarcadoresAtivos", this.getListaMarcadoresAtivos(documentoBuilder.getMob().getDoc().getMobilGeral()));
+		result.include("listaMarcadores", marcadores);
+		result.include("listaMarcadoresAtivos", marcadoresAtivo);
 	}
 	
 	
@@ -4796,7 +4806,7 @@ public class ExMovimentacaoController extends ExController {
 
 		/* Primeiro Passo - Documento para Público */
 		CpToken sigaUrlPermanente = new CpToken();
-		sigaUrlPermanente = Ex.getInstance().getBL().publicarTransparencia(documentoBuilder.getMob(), getCadastrante(), getLotaCadastrante(),listaMarcadores);
+		sigaUrlPermanente = Ex.getInstance().getBL().publicarTransparencia(documentoBuilder.getMob(), getCadastrante(), getLotaCadastrante(),listaMarcadores,false);
 	
 		String url = Contexto.urlBase(request);
 		String caminho = url + "/siga/public/app/sigalink/1/" + sigaUrlPermanente.getToken();

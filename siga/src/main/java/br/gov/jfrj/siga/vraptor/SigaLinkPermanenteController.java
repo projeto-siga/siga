@@ -157,7 +157,7 @@ public class SigaLinkPermanenteController extends SigaController {
 	
 	@Get
 	@Path("/public/app/sigalinkStream/{jwt}") /* Desacoplar tela de visualização de PDF*/
-	public Download publicPermanenteURLStream(@PathParam("jwt") String jwt, boolean completo, boolean estampar) throws Exception {
+	public Download publicPermanenteURLStream(@PathParam("jwt") String jwt, boolean completo, boolean estampar, boolean volumes) throws Exception {
 		estampar = true; //default
 		InputStream stream = null;
 		
@@ -169,7 +169,8 @@ public class SigaLinkPermanenteController extends SigaController {
 			if ("1".equals(tipoLink)) {
 				if (!"".equals(sigla)) {
 					/* Reaproveitado estrutura da ExArquivoController - Analisar levar para WebService */ 
-					String endPoint = Contexto.urlBase(request) + END_POINT_SIGALINK_DOC + "?semmarcas="+ estampar +"&completo="+ completo +"&t="+jwt +"&mime=pdf";
+					/* Identidicar parametro interno de contexto JBoss */
+					String endPoint = System.getProperty("exservice.endpoint").replace("/sigaex/servicos/ExService?wsdl", "") + END_POINT_SIGALINK_DOC + "?semmarcas="+ estampar +"&completo="+ completo +"&t="+jwt +"&mime=pdf";
 					stream = new URL(endPoint).openStream();
 					
 					String fileName = sigla.replace("-", "").replace("/", "");

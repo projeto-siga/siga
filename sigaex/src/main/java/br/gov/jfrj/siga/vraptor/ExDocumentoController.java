@@ -71,7 +71,12 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.cp.CpArquivo;
+import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCFacade;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCInterface;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoHCP;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -1348,6 +1353,13 @@ public class ExDocumentoController extends ExController {
 			docVO.getDoc().setNumPaginas(docVO.getDoc().getContarNumeroDePaginas());
 		}
 
+//		CpArquivo cpArquivo = new CpArquivo();
+//		cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.HCP);
+//		cpArquivo.setCaminho("2020/6/9/5/1/00f38a11-3769-49b5-a7ca-55864254a2f9.zip");
+//		ArmazenamentoBCInterface a = ArmazenamentoBCFacade.getArmazenamentoBC(cpArquivo);
+//		a.recuperar(cpArquivo);
+//		a.salvar(exDocumentoDTO.getDoc().getConteudoBlobDoc());
+		
 		docVO.exibe();
 
 		String Sigla = "";
@@ -1701,6 +1713,9 @@ public class ExDocumentoController extends ExController {
 				// }
 			}
 
+//			ArmazenamentoBCInterface a = new ArmazenamentoHCP();
+//			a.salvar(exDocumentoDTO.getDoc().getConteudoBlobDoc());
+			
 			exBL.gravar(getCadastrante(), getTitular(), getLotaTitular(),
 					exDocumentoDTO.getDoc());
 			

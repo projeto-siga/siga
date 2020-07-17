@@ -100,9 +100,14 @@ import br.gov.jfrj.siga.bluc.service.EnvelopeRequest;
 import br.gov.jfrj.siga.bluc.service.EnvelopeResponse;
 import br.gov.jfrj.siga.bluc.service.ValidateRequest;
 import br.gov.jfrj.siga.bluc.service.ValidateResponse;
+import br.gov.jfrj.siga.cp.CpArquivo;
+import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.TipoConteudo;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCFacade;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCInterface;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
@@ -3384,11 +3389,14 @@ public class ExBL extends CpBL {
 			tempoIni = System.currentTimeMillis();
 
 			if (doc.getConteudoBlobDoc() != null)
-				doc.setConteudoTpDoc("application/zip");
+				doc.setConteudoTpDoc(TipoConteudo.ZIP.getMimeType());
 
 			processarResumo(doc);
 
 			doc.setNumPaginas(doc.getContarNumeroDePaginas());
+			
+			salvarArquivo(doc);
+			
 			doc = ExDao.getInstance().gravar(doc);
 			for (ExMobil mob : doc.getExMobilSet()) {
 				if (mob.getIdMobil() == null)
@@ -3465,6 +3473,35 @@ public class ExBL extends CpBL {
 		}
 		// System.out.println(System.currentTimeMillis() + " - FIM gravar");
 		return doc;
+	}
+
+	private void salvarArquivo(ExDocumento doc) {
+		if(doc.getCpArquivo() == null) {
+			CpArquivo cpArquivo = new CpArquivo();
+			//TODO: K Ler do properties o mecanismo de armazenamento padrão
+			cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.HCP);
+			doc.setCpArquivo(cpArquivo);
+		}
+		ArmazenamentoBCInterface armazenamentoBC;
+		try {
+			armazenamentoBC = ArmazenamentoBCFacade.getArmazenamentoBC(doc.getCpArquivo());
+			armazenamentoBC.salvar(doc.getCpArquivo(), doc.getConteudoBlobDoc2());
+			ExDao.getInstance().gravar(doc.getCpArquivo());
+		} catch (Exception e) {
+			throw new AplicacaoException(e.getMessage());
+		}
+	}
+	
+	private void excluirArquivo(ExDocumento doc) {
+		if(doc.getCpArquivo() != null) {
+			try {
+				ArmazenamentoBCInterface armazenamentoBC = ArmazenamentoBCFacade.getArmazenamentoBC(doc.getCpArquivo());
+				armazenamentoBC.apagar(doc.getCpArquivo());
+				dao().excluir(doc.getCpArquivo());
+			} catch (Exception e) {
+				throw new AplicacaoException(e.getMessage());
+			}
+		}
 	}
 	
 	public void geraMovimentacaoSubstituicao(ExDocumento doc, DpPessoa cadastrante) throws AplicacaoException, SQLException {
@@ -3855,6 +3892,7 @@ public class ExBL extends CpBL {
 				obterMetodoPorString(funcao, doc);
 			}
 
+			excluirArquivo(doc);
 			dao().excluir(doc);
 			ExDao.commitTransacao();
 		} catch (final AplicacaoException e) {

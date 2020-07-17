@@ -48,6 +48,8 @@
 		<class>br.gov.jfrj.siga.dp.DpVisualizacaoAcesso</class>		
 		<class>br.gov.jfrj.siga.dp.CpContrato</class>
 		
+		<class>br.gov.jfrj.siga.cp.CpArquivo</class>
+		<class>br.gov.jfrj.siga.cp.CpArquivoBlob</class>
 		<class>br.gov.jfrj.siga.ex.ExTipoDocumento</class>
 		<class>br.gov.jfrj.siga.ex.ExFormaDocumento</class>
 		<class>br.gov.jfrj.siga.ex.ExClassificacao</class>
@@ -100,7 +102,7 @@
 			<property name="hibernate.default_batch_fetch_size" value="1000" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.Oracle12cDialect" />
 			<property name="hibernate.hbm2ddl.auto" value="none" />
-			<property name="hibernate.show_sql" value="false" />
+			<property name="hibernate.show_sql" value="true" />
 			
 			<!-- Desabilita o novo gerador de IDs para manter a compatibilidade -->
 			<property name="hibernate.id.new_generator_mappings" value="false"/>

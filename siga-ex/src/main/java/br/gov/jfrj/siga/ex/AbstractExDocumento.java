@@ -19,11 +19,11 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
-import java.sql.Blob;
 import java.util.Date;
 import java.util.TreeSet;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -45,6 +45,7 @@ import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -418,6 +419,10 @@ public abstract class AbstractExDocumento extends ExArquivo implements
     @JoinColumn(name = "ID_PROTOCOLO")
     private ExProtocolo exProtocolo;
 	
+	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "ID_ARQ")
+	private CpArquivo cpArquivo;
+
 	/**
 	 * Simple constructor of AbstractExDocumento instances.
 	 */
@@ -1100,6 +1105,27 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		this.dtAltDoc = dtAltDoc;
 	}
 
+	public CpArquivo getCpArquivo() {
+		return cpArquivo;
+	}
+
+	public void setCpArquivo(CpArquivo cpArquivo) {
+		this.cpArquivo = cpArquivo;
+	}
+	
+//	public java.lang.String getConteudoTpDoc() {
+//		if (getCpArquivo() == null)
+//			return conteudoTpDoc;
+//		return getCpArquivo().getConteudoTpArq();
+//	}
+//
+//	public void setConteudoTpDoc(final java.lang.String conteudoTp) {
+//		this.conteudoTpDoc = conteudoTp;
+//		if(cpArquivo==null)
+//			cpArquivo = new CpArquivo();
+//		cpArquivo.setConteudoTpArq(conteudoTp);
+//	}
+	
 	public ExProtocolo getExProtocolo() {
 		return exProtocolo;
 	}

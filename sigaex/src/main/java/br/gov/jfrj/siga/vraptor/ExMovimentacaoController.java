@@ -1974,7 +1974,7 @@ public class ExMovimentacaoController extends ExController {
 
 			if(!podeTramitar) {
 				result.include("msgCabecClass", "alert-danger");
-	    		result.include("mensagemCabec", "Para tramitar o documento é necessário incluir um documento do tipo capturado.");
+	    		result.include("mensagemCabec", "Para tramitar é necessário incluir um documento do tipo capturado.");
 	    		result.forwardTo(this).aTransferir(
 	    				sigla, idTpDespacho, tipoResponsavel, postback, dtMovString, subscritorSel, 
 	    				substituicao, titularSel, nmFuncaoSubscritor, idResp, tiposDespacho, descrMov, 

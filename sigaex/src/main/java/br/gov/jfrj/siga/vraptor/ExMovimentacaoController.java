@@ -22,8 +22,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -32,6 +35,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xerces.impl.dv.util.Base64;
@@ -2339,7 +2343,7 @@ public class ExMovimentacaoController extends ExController {
 
 		result.include("sigla", sigla);
 		result.include("mob", builder.getMob());
-		result.include("listaMarcadores", this.getListaMarcadoresGerais());
+		result.include("listaMarcadores", this.getListaMarcadoresGeraisTaxonomiaAdministrada());
 		result.include("listaMarcadoresAtivos", this.getListaMarcadoresAtivos(builder.getMob().getDoc().getMobilGeral()));
 	}
 	
@@ -2366,6 +2370,10 @@ public class ExMovimentacaoController extends ExController {
 
 	private Object getListaMarcadoresGerais() {
 		return dao().listarCpMarcadoresGerais();
+	}
+	
+	private Object getListaMarcadoresGeraisTaxonomiaAdministrada() {
+		return dao().listarCpMarcadoresGeraisTaxonomiaAdministrada();
 	}
 
 	@Post("/app/expediente/mov/marcar_gravar")
@@ -2404,6 +2412,59 @@ public class ExMovimentacaoController extends ExController {
 							mov.getMarcador(), ativo);
 		}
 		resultOK();
+	}
+
+	private void salvarMarca(BuscaDocumentoBuilder builder, ExMovimentacaoBuilder movimentacaoBuilder, Long idMarcador,
+			boolean ativo) throws Exception {
+		movimentacaoBuilder.setIdMarcador(idMarcador);
+		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
+
+		Ex.getInstance().getBL().vincularMarcador(getCadastrante(), getLotaTitular(), //
+				builder.getMob(), mov.getDtMov(), //
+				mov.getLotaResp(), mov.getResp(), //
+				mov.getSubscritor(), mov.getTitular(), mov.getDescrMov(), mov.getNmFuncaoSubscritor(),
+				mov.getMarcador(), ativo);
+	}
+
+	@Post("/app/expediente/mov/salvar_marcas")
+	public void salvarMarcas(final Integer postback, final String sigla, final List<Long> marcadoresOriginais,
+			final List<Long> marcadoresSelecionados) throws Exception {
+		List<Long> idMarcasARemover = CollectionUtils.isEmpty(marcadoresOriginais) ? Collections.emptyList()
+				: ((CollectionUtils.isEmpty(marcadoresSelecionados) ? marcadoresOriginais: 
+					marcadoresOriginais.stream().filter(new Predicate<Long>() {
+					@Override
+					public boolean test(Long m) {
+						return !marcadoresSelecionados.contains(m);
+					}
+				}).collect(Collectors.toList())));
+		List<Long> idMarcasAAdicionar = CollectionUtils.isEmpty(marcadoresSelecionados) ? Collections.emptyList()
+				: (CollectionUtils.isEmpty(marcadoresOriginais)? marcadoresSelecionados: 
+					marcadoresSelecionados.stream().filter(new Predicate<Long>() {
+					@Override
+					public boolean test(Long m) {
+						return !marcadoresOriginais.contains(m);
+					}
+				}).collect(Collectors.toList()));
+
+		if (!idMarcasAAdicionar.isEmpty() || !idMarcasARemover.isEmpty()) {
+			final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+			buscarDocumento(builder);
+
+			if (!Ex.getInstance().getComp().podeMarcar(getTitular(), getLotaTitular(), builder.getMob())) {
+				throw new AplicacaoException("Não é possível fazer marcação");
+			}
+
+			final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder.novaInstancia();
+
+			for (Long idMarcaAAdicionar : idMarcasAAdicionar) {
+				salvarMarca(builder, movimentacaoBuilder, idMarcaAAdicionar, true);
+			}
+			for (Long idMarcaARemover : idMarcasARemover) {
+				salvarMarca(builder, movimentacaoBuilder, idMarcaARemover, false);
+			}
+		}
+
+		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
 
 	@Get("app/expediente/mov/transferir_lote")
@@ -4793,15 +4854,21 @@ public class ExMovimentacaoController extends ExController {
 		final ExMovimentacao movimentacao = movimentacaoBuilder
 				.construir(dao());
 
+		List<CpMarcador> marcadores = dao().listarCpMarcadoresTaxonomiaAdministrada();
+		Set<CpMarcador> marcadoresAtivo = (Set<CpMarcador>) this.getListaMarcadoresAtivos(documentoBuilder.getMob().getDoc().getMobilGeral());
+		if (marcadores != null) {
+			marcadores.removeAll(marcadoresAtivo);
+		}
 
+		
 
 		result.include("sigla", sigla);
 		result.include("mob", documentoBuilder.getMob());
 		result.include("mov", movimentacao);
 		result.include("doc", documento);
 		result.include("descrMov", movimentacaoBuilder.getDescrMov());
-		result.include("listaMarcadores", this.getListaMarcadoresTaxonomiaAdministrada());
-		result.include("listaMarcadoresAtivos", this.getListaMarcadoresAtivos(documentoBuilder.getMob().getDoc().getMobilGeral()));
+		result.include("listaMarcadores", marcadores);
+		result.include("listaMarcadoresAtivos", marcadoresAtivo);
 	}
 	
 	
@@ -4818,7 +4885,7 @@ public class ExMovimentacaoController extends ExController {
 
 		/* Primeiro Passo - Documento para Público */
 		CpToken sigaUrlPermanente = new CpToken();
-		sigaUrlPermanente = Ex.getInstance().getBL().publicarTransparencia(documentoBuilder.getMob(), getCadastrante(), getLotaCadastrante(),listaMarcadores);
+		sigaUrlPermanente = Ex.getInstance().getBL().publicarTransparencia(documentoBuilder.getMob(), getCadastrante(), getLotaCadastrante(),listaMarcadores,false);
 	
 		String url = Contexto.urlBase(request);
 		String caminho = url + "/siga/public/app/sigalink/1/" + sigaUrlPermanente.getToken();

@@ -1876,13 +1876,14 @@ public class CpDao extends ModeloDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> List<T> listarAtivos(Class<T> clazz, String dtFim,
+	public <T> List<T> listarAtivos(Class<T> clazz, String campoDtFim,
 			long idOrgaoUsu) {
 		final CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
-		CriteriaQuery<T> crit = criteriaBuilder.createQuery(clazz);
-		Root<T> root = crit.from(clazz);
-		crit.where(cb().isNull(root.get("hisDtFim")), cb().equal(root.get("orgaoUsuario.idOrgaoUsu"), idOrgaoUsu));
-		return em().createQuery(crit).getResultList();
+		CriteriaQuery<T> q = criteriaBuilder.createQuery(clazz);
+		Root<T> c = q.from(clazz);
+		Join<T, CpOrgaoUsuario> joinOrgao = c.join("orgaoUsuario", JoinType.INNER);
+		q.where(cb().isNull(c.get(campoDtFim)), cb().equal(joinOrgao.get("idOrgaoUsu"), idOrgaoUsu));
+		return em().createQuery(q).getResultList();
 	}
 
 	public <T> List<T> listarAtivos(Class<T> clazz, String orderBy) {

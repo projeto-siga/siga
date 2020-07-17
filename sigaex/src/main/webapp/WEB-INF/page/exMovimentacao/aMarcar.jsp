@@ -14,48 +14,36 @@
 		</script>
 	</c:if>
 
-	<script type="text/javascript" language="Javascript1.1">
-		function sbmt() {
-			frm.action = '${pageContext.request.contextPath}/app/expediente/mov/vincularPapel';
-			frm.submit();
-		}
-
-		function marcar(id, ativo) {
-			$.ajax({
-				url : "marcar_gravar",
-				type : "POST",
-				data : {
-					sigla : "${sigla}",
-					idMarcador : id,
-					ativo : ativo
-				},
-				success : function(result) {
-					$("#div1").html(result);
-				}
-			});
-		}
-	</script>
 	<div class="container-fluid content pt-5">
 		<div class="row">
 			<div class="col offset-sm-3 col-sm-6">
 				<div class="jumbotron">
-					<h2><fmt:message key="documento.marcacao"/> ${mob.sigla}</h2>
-					<form name="frm" action="vincularPapel_gravar" method="post">
-						<input type="hidden" name="postback" value="1" /> <input
-							type="hidden" name="sigla" value="${sigla}" />
+					<h2>
+						<fmt:message key="documento.marcacao" />
+						${mob.sigla}
+					</h2>
+					<form name="frm" action="salvar_marcas" method="post">
+						<input type="hidden" name="postback" value="1" /> 
+						<input type="hidden" name="sigla" value="${sigla}" />
+						<c:forEach items="${listaMarcadoresAtivos}" var="marcaOriginal">
+							<input type="hidden" name="marcadoresOriginais"
+								value="${marcaOriginal.idMarcador}" />
+						</c:forEach>
 						<table class="">
 							<tr>
-								<td><c:forEach items="${listaMarcadores}" var="item">
+								<td>
+									<c:forEach items="${listaMarcadores}" var="item">
 										<input type="checkbox" value="${item.idMarcador}"
-											onclick="marcar(this.value,this.checked)"
+											name="marcadoresSelecionados"
 											${listaMarcadoresAtivos.contains(item) ? 'checked' : ''} />
 										${item.descrMarcador}
 										<br />
-									</c:forEach></td>
+									</c:forEach>
+								</td>
 							</tr>
 							<tr class="button">
-								<td colspan="2"><input type="button" value="OK"
-									onclick="javascript:history.back();"
+								<td colspan="2">
+									<input type="submit" value="OK"
 									class="btn btn-primary mt-3" /></td>
 							</tr>
 						</table>

@@ -479,7 +479,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		result.use(Results.page()).forwardTo("/WEB-INF/page/dpLotacao/cargaLotacao.jsp");
 	}
 	
-	@Post("/app/lotacao/carga")
+    @Post("/app/lotacao/carga")
 	public Download carga( final UploadedFile arquivo, Long idOrgaoUsu) throws Exception {
 		InputStream inputStream = null;
 		try {
@@ -501,7 +501,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			CpBL cpbl = new CpBL();
 			inputStream = cpbl.uploadLotacao(file, orgaoUsuario, extensao);
 		} catch (Exception e) {
-			System.err.println(e.getMessage());
+			throw new AplicacaoException("Problemas ao salvar unidades", 0, e);			
 		}
 		if(inputStream == null) {
 			result.include("msg", "Arquivo processado com sucesso!");

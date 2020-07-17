@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="ISO-8859-1" ?> 
-- <base orgaoUsuario="TT" dataHora="08/02/2011 14:34:22" versao="2" aditionalEmails="aym@jfrj.jus.br" >
-	- <cargos>
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<base orgaoUsuario="TT" dataHora="08/02/2011 14:34:22" versao="2" aditionalEmails="aym@jfrj.jus.br" >
+	 <cargos>
 		  <cargo id="7" nome="JUIZ FEDERAL" sigla="JFD"  /> 
 		  <cargo id="8" nome="JUIZ SUBSTITUTO - 2" sigla="JSB"   /> 
 		  <cargo id="10" nome="TÉCNICO JUDICIÁRIO" sigla="TJD"  /> 
@@ -11,7 +11,7 @@
 		  <cargo id="2131" nome="ANALISTA JUDICIARIO/INFORMATICA" sigla="AJI"  /> 
 		  <cargo id="2132" nome="TECNICO JUDICIARIO/INFORMATICA" sigla="TJI"  /> 
 	  </cargos>
-	- <funcoes>
+	  <funcoes>
 		  <funcao id="1" nome="DIRETOR GERAL" sigla="DGG"  /> 
 		  <funcao id="5" nome="DIRETOR DE SECRETARIA - 2" sigla="DSC"   /> 
 		  <funcao id="10" nome="DIRETOR DE SUBSECRETARIA" sigla="DSS"  /> 
@@ -26,19 +26,19 @@
 		  <funcao id="106" nome="OPERADOR DE VÍDEO" sigla="OVD"  /> 
 		  <funcao id="110" nome="EXECUTANTE DE MANDADOS" sigla="EMD"   /> 
 	  </funcoes>
-	-	<orgaos>
+	  <orgaos>
 			<orgao id="316" nome="FUNDACAO GETULIO VARGAS" sigla="FGV"   /> 
 			<orgao id="278" nome="BOLSA DE VALORES DE SAO PAULO" sigla="BOVESPA"   /> 
 		</orgaos>
-	- <lotacoes>
+	  <lotacoes>
 		  <lotacao id="0" nome="SEÇÃO JUDICIÁRIA da GUANABARA" idPai="" sigla="SJGN" tipoLotacao="Unidade Judicial" />
 		  <lotacao id="1040000000000" nome="DIR. DE INFORMATICA" sigla="DIINFO" idPai="0" tipoLotacao="Unidade da Administração"/> 
-		  <lotacao id="1380000000000" nome="GERÊNCIA DE RISCOS" sigla="GERISC"  idPai="1040000000000" idPai="1040000000000" tipoLotacao="Unidade da Administração"/> 
+		  <lotacao id="1380000000000" nome="GERÊNCIA DE RISCOS" sigla="GERISC"  idPai="1040000000000" tipoLotacao="Unidade da Administração"/> 
 		  <lotacao id="1390000000000" nome="VARA FEDERAL VXIIM" sigla="VFXIIM"  idPai="0" tipoLotacao="Unidade Judicial" /> 
 		  <lotacao id="1400000000000" nome="VARA FEDERAL MXXVII" sigla="VFXXVI" idPai="0" tipoLotacao="Unidade Judicial"/> 
 		  <lotacao id="1410000000000" nome="VARA FEDERAL VLMXXI" sigla="VFLMXX" idPai="0" tipoLotacao="Unidade Judicial"/> 
 	  </lotacoes>
-	- <pessoas>
+	 <pessoas>
 	  	<pessoa id="11111111111" cpf="11111111111" nome="JOSE JORGE DA SILVA PEREIRA" dtNascimento="17031965" nacionalidade="BRASILEIRA"  rua="Av. Rio Branco 1/ ap.10017" bairro="CENTRO" cidade="RIO DE JANEIRO" uf="RJ" cep="20000000" telefone="333-2212" naturalidade="RIO DE JANEIRO" tipoSanguineo="O+" grauInstrucao="SUPERIOR COMPLETO" matricula="60022" dtInicioExercicio="07011971" atoNomeacao="000" dtNomeacao="07011971" dtAtoPublicacao="" dtPosse="07011971" cargo="10" padraoReferencia="C-NS-15" situacao="1" lotacao="1380000000000" rg="765412334" rgOrgao="CAER" rgUf="RJ" rgDtExp="01012020"  sigla="XWM" email="josejo@jfrj.gov.br" funcaoConfianca="75" tipo="Servidor">
 			<papel  id="3128"    
 				 tipo="Principal" 

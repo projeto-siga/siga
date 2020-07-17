@@ -2931,15 +2931,15 @@ public class ExBL extends CpBL {
 				doc.setOrgaoUsuario(doc.getLotaCadastrante().getOrgaoUsuario());
 
 			/*
-			 * Desabilita para São Paulo numeração realizada pelo Select Max. Numeração
+			 * Desabilita se configuracao ativa numeração realizada pelo Select Max. Numeração
 			 * controlada pela table EX_DOCUMENTO_NUMERACAO
 			 */
-			if (!SigaMessages.isSigaSP()) {
-				if (doc.getNumExpediente() == null)
-					doc.setNumExpediente(obterProximoNumero(doc));
-			} else {
+			if ("true".equalsIgnoreCase(SigaBaseProperties.getString("sigaex.controlarNumeracaoExpediente")) || SigaMessages.isSigaSP()) {
 				doc.setAnoEmissao((long) c.get(Calendar.YEAR));
 				doc.setNumExpediente(obterNumeroDocumento(doc));
+			} else {
+				if (doc.getNumExpediente() == null)
+					doc.setNumExpediente(obterProximoNumero(doc));
 			}
 
 			doc.setDtFinalizacao(dt);

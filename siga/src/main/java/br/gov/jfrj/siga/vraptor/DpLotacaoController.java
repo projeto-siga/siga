@@ -288,7 +288,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 				result.include("lotacaoPai", lotacao.getLotacaoPai().getIdLotacao());
 			result.include("idLocalidade", lotacao.getLocalidade() != null ? lotacao.getLocalidade().getIdLocalidade() : Long.valueOf(0));
 			
-			List<DpPessoa> list = dao().getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE);
+			List<DpPessoa> list = CpDao.getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE);
 			if(list.size() == 0) {
 				result.include("podeAlterarOrgao", Boolean.TRUE);
 			}
@@ -351,7 +351,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		CpOrgaoUsuario ou = new CpOrgaoUsuario();
 		ou.setIdOrgaoUsu(idOrgaoUsu);
 		lotacao.setOrgaoUsuario(ou);
-		lotacao = dao().getInstance().consultarPorSigla(lotacao);
+		lotacao = CpDao.getInstance().consultarPorSigla(lotacao);
 		
 		if(lotacao != null && lotacao.getId() != null && !lotacao.getId().equals(id)) {
 			throw new AplicacaoException("Sigla já cadastrada para outra lotação");
@@ -367,7 +367,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			
 		} else {
 			lotacao = dao().consultar(id, DpLotacao.class, false);
-			listPessoa = dao().getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE);
+			listPessoa = CpDao.getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE);
 			if(dao().consultarQtdeDocCriadosPossePorDpLotacao(id) > 0 && 
 					(!lotacao.getNomeLotacao().equalsIgnoreCase(Texto.removerEspacosExtra(nmLotacao).trim()) || !lotacao.getSiglaLotacao().equalsIgnoreCase(siglaLotacao.toUpperCase().trim()))) {
 				throw new AplicacaoException("Não é permitido a alteração do nome e sigla da unidade após criação de documento ou tramitação de documento para unidade.");

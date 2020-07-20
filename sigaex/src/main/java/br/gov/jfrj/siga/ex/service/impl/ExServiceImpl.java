@@ -33,7 +33,7 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.util.SigaUtil;
@@ -825,7 +825,7 @@ public class ExServiceImpl implements ExService {
 	
 	public String obterMetadadosDocumento(String siglaDocumento, String token) throws Exception {
 		try {
-			if("true".equals(SigaBaseProperties.getString("siga.ws.seguranca.token.jwt")))
+			if("true".equals(Prop.get("/siga.ws.seguranca.token.jwt")))
 				SigaUtil.getInstance().validarToken(token);
 			
 			

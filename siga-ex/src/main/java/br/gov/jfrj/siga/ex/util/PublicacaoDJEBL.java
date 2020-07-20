@@ -50,12 +50,12 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import br.gov.jfrj.siga.AxisClientAlternativo;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
-import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
@@ -141,7 +141,7 @@ public class PublicacaoDJEBL {
 		Call call = (Call) service.createCall();
 
 		call.setOperation(oper);
-		call.setTargetEndpointAddress(new URL(SigaExProperties.getServidorDJE()));
+		call.setTargetEndpointAddress(new URL(Prop.get("dje.servidor.url")));
 		call.setOperationName(new QName("http://tempuri.org/", "GerarRespostaStatusPublicacoes"));
 		call.setProperty(Call.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
 		call.setProperty(Call.SOAPACTION_URI_PROPERTY, "http://tempuri.org/GerarRespostaStatusPublicacoes");
@@ -169,7 +169,7 @@ public class PublicacaoDJEBL {
 
 		log.info("DJE: prestes a chamarrrr serviço");
 		try {
-			AxisClientAlternativo cliente = new AxisClientAlternativo(SigaExProperties.getServidorDJE(), "RecebeDocumentos", true);
+			AxisClientAlternativo cliente = new AxisClientAlternativo(Prop.get("dje.servidor.url"), "RecebeDocumentos", true);
 
 			cliente.setParam(new Object[] { mov.getConteudoBlobMov2() });
 			Object o = cliente.call();
@@ -181,7 +181,7 @@ public class PublicacaoDJEBL {
 	}
 
 	public static void primeiroEnvio(ExMovimentacao mov) throws Exception {
-		if(!SigaExProperties.getServidorDJE().isEmpty()) {
+		if(Prop.get("dje.servidor.url") != null) {
 			String conteudoXML = enviarTRF(mov);
 	
 			System.out.println("\n\n DJE envio " + mov.getExDocumento().getCodigo() + ", retorno: " + conteudoXML);
@@ -500,7 +500,7 @@ public class PublicacaoDJEBL {
 
 		Call call = (Call) service.createCall();
 		call.setOperation(oper);
-		call.setTargetEndpointAddress(new URL(SigaExProperties.getServidorDJE()));
+		call.setTargetEndpointAddress(new URL(Prop.get("dje.servidor.url")));
 		call.setOperationName(new QName("http://tempuri.org/", "ExcluirDocumento"));
 		call.setProperty(Call.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
 		call.setProperty(Call.SOAPACTION_URI_PROPERTY, "http://tempuri.org/ExcluirDocumento");

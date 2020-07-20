@@ -91,7 +91,7 @@ import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.Par;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.util.SetUtils;
@@ -138,7 +138,6 @@ import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExVia;
-import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.BIE.BoletimInternoBL;
 import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
 import br.gov.jfrj.siga.ex.service.ExService;
@@ -652,9 +651,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExMobil());
 
 			try {
-				String mensagemTeste = null;
-				if (!SigaExProperties.isAmbienteProducao())
-					mensagemTeste = SigaExProperties.getString("email.baseTeste");
+				String mensagemTeste = mensagemDeTeste();
 
 				StringBuffer sb = new StringBuffer("Documento publicado no Boletim Interno " + doc.getCodigo());
 
@@ -673,13 +670,13 @@ public class ExBL extends CpBL {
 				sbHtml.append("</body></html>");
 
 				String emailsAtendentes[] = null;
-				String sDest = SigaExProperties.getString("bie.lista.destinatario.publicacao");
+				String sDest = Prop.get("bie.lista.destinatario.publicacao");
 
 				if (sDest != null && !sDest.isEmpty())
 					emailsAtendentes = sDest.split(",");
 
 				if (emailsAtendentes != null && emailsAtendentes.length > 0) {
-					Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"), emailsAtendentes,
+					Correio.enviar(null, emailsAtendentes,
 							"Documento disponibilizado no Boletim Interno " + doc.getCodigo(), sb.toString(),
 							sbHtml.toString());
 				}
@@ -690,6 +687,13 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao notificar publicação.", 0, e);
 		}
+	}
+
+	public String mensagemDeTeste() {
+		String mensagemTeste = null;
+		if (!"prod".equals(Prop.get("/siga.ambiente")))
+			mensagemTeste = Prop.get("email.mensagem.teste");
+		return mensagemTeste;
 	}
 
 	// Edson: os métodos abaixo apenas repassam a chamada aos correspondentes
@@ -752,10 +756,7 @@ public class ExBL extends CpBL {
 			gravarMovimentacao(mov);
 
 			// Verifica se está na base de teste
-			String mensagemTeste = null;
-			if (!SigaExProperties.isAmbienteProducao())
-				mensagemTeste = SigaExProperties.getString("email.baseTeste");
-
+			String mensagemTeste = mensagemDeTeste();
 			StringBuffer sb = new StringBuffer("Foi feita uma solicitação de remessa do documento "
 					+ mob.getExDocumento().getCodigo() + " para publicação no DJE.\n ");
 
@@ -797,7 +798,7 @@ public class ExBL extends CpBL {
 				}
 			}
 
-			Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
+			Correio.enviar(null,
 					emailsAtendentes.toArray(new String[emailsAtendentes.size()]),
 					"Nova solicitação de publicação DJE (" + mov.getLotaCadastrante().getSiglaLotacao() + ") ",
 					sb.toString(), sbHtml.toString());
@@ -826,10 +827,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExMobil());
 
 			try {
-				String mensagemTeste = null;
-				if (!SigaExProperties.isAmbienteProducao())
-					mensagemTeste = SigaExProperties.getString("email.baseTeste");
-
+				String mensagemTeste = mensagemDeTeste();
 				StringBuffer sb = new StringBuffer(
 						"Documento disponibilizado no Diário " + mob.getExDocumento().getCodigo());
 
@@ -849,13 +847,13 @@ public class ExBL extends CpBL {
 				sbHtml.append("</body></html>");
 
 				String emailsAtendentes[] = null;
-				String sDest = SigaExProperties.getString("dje.lista.destinatario.publicacao");
+				String sDest = Prop.get("dje.lista.destinatario.publicacao");
 
 				if (sDest != null && !sDest.isEmpty())
 					emailsAtendentes = sDest.split(",");
 
 				if (emailsAtendentes != null && emailsAtendentes.length > 0) {
-					Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"), emailsAtendentes,
+					Correio.enviar(null, emailsAtendentes,
 							"Documento disponibilizado no Diário " + mob.getExDocumento().getCodigo(), sb.toString(),
 							sbHtml.toString());
 				}
@@ -3249,11 +3247,10 @@ public class ExBL extends CpBL {
 			String uri = obterURIDoDocumento(documento.getSigla());
 			String conteudoHTML = Correio.obterHTMLEmailParaUsuarioExternoAssinarDocumento(uri, documento.getSigla(), pessoaSubscritorOuCossignatario.getSigla());			
 			String destinatario[] = { pessoaSubscritorOuCossignatario.getEmailPessoaAtual() };						
-			String remetente = SigaBaseProperties.getString("servidor.smtp.usuario.remetente");
 			String assunto = "Acesso ao documento nº " + documento;
 			
 			try {
-				Correio.enviar(remetente, destinatario, assunto, assunto, conteudoHTML);
+				Correio.enviar(null, destinatario, assunto, assunto, conteudoHTML);
 			} catch (Exception e) {
 				System.out.println("Problemas ao enviar e-mail para usuário externo assinar documento. Erro: " + e.getMessage());
 			}
@@ -5108,10 +5105,10 @@ public class ExBL extends CpBL {
 					if (doc.isProcesso()) {
 						ExModelo modPA = dao().consultarExModelo(null,
 								MODELO_FOLHA_DE_ROSTO_PROCESSO_ADMINISTRATIVO_INTERNO);
-						idMod = modPA != null ? modPA.getId() : SigaExProperties.getIdModPA();
+						idMod = modPA != null ? modPA.getId() : Prop.getInt("modelo.processo.administrativo");
 					} else {
 						ExModelo modInterno = dao().consultarExModelo(null, MODELO_FOLHA_DE_ROSTO_EXPEDIENTE_INTERNO);
-						idMod = modInterno != null ? modInterno.getId() : SigaExProperties.getIdModInternoImportado();
+						idMod = modInterno != null ? modInterno.getId() : Prop.getInt("modelo.interno.importado");
 					}
 					doc.setExModelo(dao().consultar(idMod, ExModelo.class, false));
 				}
@@ -5478,11 +5475,11 @@ public class ExBL extends CpBL {
 	private void acrescentarHashDeAuditoria(ExMovimentacao mov, byte[] sha256, boolean autenticar, String nome,
 			String cpf, String json) {
 		try {
-			String timestampUrl = Cp.getInstance().getProp().timestampUrl();
+			String timestampUrl = Prop.get("carimbo.url");
 			if (timestampUrl == null)
 				return;
 			TimestampPostRequest req = new TimestampPostRequest();
-			req.system = Cp.getInstance().getProp().timestampSystem();
+			req.system = Prop.get("carimbo.sistema");
 			req.sha256 = sha256;
 			req.tipo = autenticar ? "auth" : "sign";
 			req.nome = nome;
@@ -6093,7 +6090,7 @@ public class ExBL extends CpBL {
 			// Verifica se é Processo e conta o número de páginas para verificar
 			// se tem que encerrar o volume
 			if (mob.doc().isProcesso()) {
-				if (mob.getTotalDePaginasSemAnexosDoMobilGeral() >= SigaExProperties.getMaxPagVolume()) {
+				if (mob.getTotalDePaginasSemAnexosDoMobilGeral() >= Prop.getInt("volume.max.paginas")) {
 					encerrarVolume(cadastrante, lotaCadastrante, mob, dtMov, null, null, null, true);
 				}
 			}
@@ -6208,8 +6205,7 @@ public class ExBL extends CpBL {
 		if (modNovo.getNmMod() == null || modNovo.getNmMod().trim().length() == 0)
 			throw new AplicacaoException("não é possível salvar um modelo sem informar o nome.");
 		if ((modNovo.getDescMod() == null || modNovo.getDescMod().trim().length() == 0)
-				&& (SigaBaseProperties.getString("siga.local") == null
-						|| !"GOVSP".equals(SigaBaseProperties.getString("siga.local"))))
+				&& (!Prop.isGovSP()))
 			throw new AplicacaoException("não é possível salvar um modelo sem informar a descrição.");
 		try {
 			ExDao.iniciarTransacao();
@@ -6229,8 +6225,7 @@ public class ExBL extends CpBL {
 		if (!forma.isSiglaValida())
 			throw new AplicacaoException("Sigla inválida. A sigla deve ser formada por 3 letras.");
 
-		if (SigaBaseProperties.getString("siga.local") != null
-				&& "GOVSP".equals(SigaBaseProperties.getString("siga.local"))
+		if (Prop.isGovSP()
 				&& forma.getExTipoDocumentoSet().isEmpty())
 			throw new AplicacaoException("Selecione uma origem.");
 

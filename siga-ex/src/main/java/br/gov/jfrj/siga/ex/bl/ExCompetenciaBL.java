@@ -26,7 +26,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
@@ -1299,7 +1299,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 					CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR, doc.getSubscritor(), null, null, null, null, null))
 			 return false;
 							
-		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local")) &&
+		if("GOVSP".equals(Prop.get("/siga.local")) &&
 				!Long.valueOf(ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO).equals(Long.valueOf(doc.getExTipoDocumento().getId())) &&
 				!Long.valueOf(ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO).equals(Long.valueOf(doc.getExTipoDocumento().getId()))				
 				) {
@@ -2054,12 +2054,12 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			final DpLotacao lotaTitular, final ExMobil mob) {
 		if (!mob.isVia())
 			return false;
-		if (!mob.getExDocumento().isPendenteDeAssinatura() && (SigaBaseProperties.getString("siga.local") == null || !"GOVSP".equals(SigaBaseProperties.getString("siga.local"))))		
+		if (!mob.getExDocumento().isPendenteDeAssinatura() && (!"GOVSP".equals(Prop.get("/siga.local"))))		
 			return false;
 		if (!mob.getExDocumento().getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA).isEmpty()  && (!mob.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA).isEmpty() ||
 				!mob.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA).isEmpty() || !mob.getExDocumentoFilhoSet().isEmpty() ||
 				!mob.getJuntados(Boolean.TRUE).isEmpty()) &&
-				(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))))
+				("GOVSP".equals(Prop.get("/siga.local"))))
 			return false;
 		final ExMovimentacao exUltMovNaoCanc = mob
 				.getUltimaMovimentacaoNaoCancelada();

@@ -70,7 +70,7 @@ import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
@@ -2001,8 +2001,7 @@ public class ExDocumentoController extends ExController {
 		Calendar c = Calendar.getInstance();
 		c.setTime(prot.getData());
 
-		String servidor = SigaBaseProperties.getString("siga.ex."
-                + SigaBaseProperties.getString("siga.ambiente") + ".url");
+		String servidor = Prop.get("/sigaex.url");
 		
 		String caminho = url + "/public/app/processoautenticar?n=" + prot.getCodigo();
 		

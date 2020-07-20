@@ -159,11 +159,11 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 			if (lista.size() > 0) {				
 				InputStream inputStream = null;
 				StringBuffer texto = new StringBuffer();
-				texto.append("Função de Confiança" + System.getProperty("line.separator"));
+				texto.append("Função de Confiança" + System.lineSeparator());
 				
 				for (DpFuncaoConfianca funcao : lista) {
 					texto.append(funcao.getNomeFuncao() + ";");										
-					texto.append(System.getProperty("line.separator"));
+					texto.append(System.lineSeparator());
 				}
 				
 				inputStream = new ByteArrayInputStream(texto.toString().getBytes("ISO-8859-1"));									

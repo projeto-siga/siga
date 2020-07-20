@@ -4,25 +4,17 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Specializes;
 
 import br.com.caelum.vraptor.observer.upload.DefaultMultipartConfig;
-import br.gov.jfrj.siga.ex.SigaExProperties;
+import br.gov.jfrj.siga.base.Prop;
 
 @Specializes
 @ApplicationScoped  
 public class ExMultipartConfig extends DefaultMultipartConfig {  
   
     public long getSizeLimit() {  
-        try {
-			return SigaExProperties.getTamanhoMaxPDF();
-		} catch (Exception e) {		
-		}
-		return 0;
+        return Prop.getInt("pdf.tamanho.maximo");
     }
     
     public long getFileSizeLimit() {
-    	try {
-			return SigaExProperties.getTamanhoMaxPDF();
-		} catch (Exception e) {		
-		}
-		return 0;
+        return Prop.getInt("pdf.tamanho.maximo");
     }
 }  

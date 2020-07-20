@@ -4,12 +4,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
-import org.apache.http.HttpHost;
-
-import br.gov.jfrj.siga.base.SigaBaseProperties;
-import br.gov.jfrj.siga.ex.SigaExProperties;
-
-import com.mashape.unirest.http.Unirest;
+import br.gov.jfrj.siga.base.Prop;
 
 @Startup
 @Singleton
@@ -18,8 +13,8 @@ public class ExConfigUnirestProxy {
 	@PostConstruct
 	public void configProxyUnirest() {
 		try {
-			String host = System.getProperty("http.proxyHost");
-			String sPort = System.getProperty("http.proxyPort");
+			String host = Prop.get("/siga.http.proxy.host");
+			String sPort = Prop.get("/siga.http.proxy.port");
 			
 			if (host != null && sPort != null && sPort.matches("([0-9]){1,}")) {
 				/*	Se o proxy for configurado no Unirest ele será utilizado em todas as 

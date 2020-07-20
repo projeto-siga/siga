@@ -210,7 +210,7 @@ public class LoginController extends SigaController {
 			result.redirectTo("/");
 	}
 	
-	private Integer extrairTTL(HttpServletRequest request) throws IOException {
+	private Integer extrairTTL(HttpServletRequest request) throws Exception {
 		String opcoes = request.getHeader("Jwt-Options");
 		if (opcoes != null) {
 			Integer ttl = new JSONObject(opcoes).optInt("ttl");
@@ -221,7 +221,7 @@ public class LoginController extends SigaController {
 		return null;
 	}
 
-	private String extrairPermissoes(HttpServletRequest request) throws IOException {
+	private String extrairPermissoes(HttpServletRequest request) throws Exception {
 		String opcoes = request.getHeader("Jwt-Options");
 		if (opcoes != null) {
 			return new JSONObject(opcoes).optString("perm");

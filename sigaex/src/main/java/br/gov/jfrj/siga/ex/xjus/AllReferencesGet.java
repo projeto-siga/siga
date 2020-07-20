@@ -10,16 +10,16 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import br.gov.jfrj.siga.cp.bl.Cp;
-import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
-import br.jus.trf2.xjus.record.api.IXjusRecordAPI.AllReferencesGetRequest;
-import br.jus.trf2.xjus.record.api.IXjusRecordAPI.AllReferencesGetResponse;
-import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Reference;
-
 import com.crivano.swaggerservlet.SwaggerAsyncResponse;
 import com.crivano.swaggerservlet.SwaggerCall;
 import com.crivano.swaggerservlet.SwaggerException;
 import com.crivano.swaggerservlet.SwaggerServlet;
+
+import br.gov.jfrj.siga.base.Prop;
+import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
+import br.jus.trf2.xjus.record.api.IXjusRecordAPI.AllReferencesGetRequest;
+import br.jus.trf2.xjus.record.api.IXjusRecordAPI.AllReferencesGetResponse;
+import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Reference;
 
 public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
 	static public final long TIMEOUT_MILLISECONDS = 15000;
@@ -48,7 +48,7 @@ public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
 			Future<SwaggerAsyncResponse<AllReferencesGetResponse>> future = SwaggerCall
 					.callAsync(
 							service.name().toLowerCase() + "-all-references",
-							Cp.getInstance().getProp().xjusPassword(), "GET",
+							Prop.get("/siga.xjus.password"), "GET",
 							url, q, AllReferencesGetResponse.class);
 			map.put(service, future);
 		}

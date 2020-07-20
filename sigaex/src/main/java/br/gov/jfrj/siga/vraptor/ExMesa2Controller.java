@@ -41,7 +41,7 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.Data;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -126,7 +126,7 @@ public class ExMesa2Controller extends ExController {
 			if (exibeLotacao 
 					&& (Ex.getInstance().getComp().ehPublicoExterno(
 							getTitular()) 
-					|| !SigaBaseProperties.getBooleanValue("siga.mesa.carrega.lotacao"))) {
+					|| !Prop.getBool("/siga.mesa.carrega.lotacao"))) {
 				result.use(Results.http()).addHeader("Content-Type", "text/plain")
 					.body("Não é permitido exibir dados da sua " 
 							+ SigaMessages.getMessage("usuario.lotacao"))

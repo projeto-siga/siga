@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.crivano.swaggerservlet.SwaggerServlet;
 
-import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.base.Prop;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
 
 public class XjusRecordServlet extends SwaggerServlet {
@@ -24,7 +24,7 @@ public class XjusRecordServlet extends SwaggerServlet {
 
 		String xjusPassword = null;
 		try {
-			xjusPassword = Cp.getInstance().getProp().xjusPassword();
+			xjusPassword = Prop.get("/siga.xjus.password");
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}

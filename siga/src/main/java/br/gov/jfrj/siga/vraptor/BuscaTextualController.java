@@ -16,6 +16,7 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.HttpResult;
 import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -44,13 +45,13 @@ public class BuscaTextualController extends SigaController {
 	@Get("app/busca")
 	public void buscaTextual(String q) throws Exception {
 		result.include("q", q);
-		result.include("gsaUrl", Cp.getInstance().getProp().gsaUrl());
+		result.include("gsaUrl", Prop.get("/siga.gsa.url"));
 	}
 
 	@Get("app/buscargsa")
 	public void buscarNoGSA() throws Exception {
 		final SigaHTTP http = new SigaHTTP();
-		String url = Cp.getInstance().getProp().gsaUrl();
+		String url = Prop.get("/siga.gsa.url");
 		url += "?" + request.getQueryString();
 		if (url.contains("type=suggest"))
 			url = url.replace("search", "suggest");

@@ -24,9 +24,9 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.dp.CpFeriado;
-import br.gov.jfrj.siga.ex.SigaExProperties;
 
 public class DatasPublicacaoDJE {
 
@@ -111,7 +111,7 @@ public class DatasPublicacaoDJE {
 			corpo.append("</soapenv:Body>");
 			corpo.append("</soapenv:Envelope>");
 			
-			String retorno = FuncoesEL.webservice(SigaExProperties.getServidorDJEDataDisponivel(), corpo.toString(), 6000);
+			String retorno = FuncoesEL.webservice(Prop.get("dje.servidor.data.disponivel"), corpo.toString(), 6000);
 			String tagDataInicial = "<ProximaDataDisponivelResult>";
 			String tagDataFinal = "</ProximaDataDisponivelResult>";
 			String proximaDataDisponibilizacaoString = null; 

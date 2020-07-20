@@ -41,13 +41,12 @@ import org.xml.sax.InputSource;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.ReaisPorExtenso;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpLocalidade;
-import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -57,7 +56,6 @@ import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.ex.ExArquivo;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExEditalEliminacao;
-import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
@@ -66,7 +64,6 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExTratamento;
 import br.gov.jfrj.siga.ex.ExVia;
-import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExParte;
 import br.gov.jfrj.siga.ex.util.BIE.ModeloBIE;
@@ -916,12 +913,9 @@ public class FuncoesEL {
 		String chaveUrl = null;
 		String urlStr = null;
 
-		attrs.put("code_base_path",
-				SigaExProperties.getAssinaturaCodebasePath());
-		attrs.put("messages_url_path",
-				SigaExProperties.getAssinaturaMessagesURLPath());
-		attrs.put("policy_url_path",
-				SigaExProperties.getAssinaturaPorlicyUrlPath());
+		attrs.put("code_base_path", Prop.get("assinatura.code.base.path"));
+		attrs.put("messages_url_path", Prop.get("assinatura.messages.url.path"));
+		attrs.put("policy_url_path", Prop.get("assinatura.policy.url.path"));
 
 		attrs.put("request_scheme", requestScheme);
 		attrs.put("request_serverName", requestServerName);
@@ -1085,7 +1079,7 @@ public class FuncoesEL {
 	
 	public String dataAtual(ExDocumento doc) {
 		String retorno = "";
-		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+		if("GOVSP".equals(Prop.get("/siga.local"))) {
 			if(doc.getDtDoc() != null) {
 				Date data = new Date();
 				Calendar cal = new GregorianCalendar();

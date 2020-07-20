@@ -15,6 +15,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.JWTVerifyException;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpServico;
@@ -159,7 +160,7 @@ public class SigaUtil {
 	private static String getJwtPassword() {
 		String pwd = null;
 		try {
-			pwd = System.getProperty("siga.ex.autenticacao.pwd");
+			pwd = Prop.get("/siga.autenticacao.senha");
 			if (pwd == null)
 				throw new AplicacaoException(
 						"Erro obtendo propriedade siga.ex.autenticacao.pwd");

@@ -180,7 +180,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 
 		addPublicProperty("threadpool.size", "10");
 
-		addPrivateProperty("assinador.externo.password");
+		addPrivateProperty("assinador.externo.password", null);
 		addPublicProperty("assinatura.code.base.path", null);
 		addPublicProperty("assinatura.messages.url.path", null);
 		addPublicProperty("assinatura.policy.url.path", null);
@@ -195,7 +195,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPublicProperty("classificacao.nivel.minimo.de.enquadramento", null);
 		addPublicProperty("codigo.acronimo.ano.inicial", "9999");
 		addPublicProperty("conversor.html.ext", null);
-		addPublicProperty("conversor.html.factory", null);
+		addPublicProperty("conversor.html.factory", "br.gov.jfrj.siga.ex.ext.ConversorHTMLFactory");
 		addPublicProperty("data.obrigacao.assinar.anexo.despacho", "31/12/2099");
 		addPublicProperty("debug.modelo.padrao.arquivo", null);
 		addPublicProperty("dje.lista.destinatario.publicacao", null);
@@ -206,12 +206,15 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPublicProperty("modelo.interno.importado", null);
 		addPublicProperty("modelo.processo.administrativo", null);
 		addPublicProperty("montador.query", null);
-		addPublicProperty("pdf.tamanho.maximo", null);
+		addPublicProperty("pdf.tamanho.maximo", "5000000");
 		addPublicProperty("reordenacao.ativo", null);
 		addPublicProperty("rodape.data.assinatura.ativa", "31/12/2099");
 		addPublicProperty("util.webservice.password", null);
 		addPublicProperty("volume.max.paginas", "200");
 		addPrivateProperty("webdav.senha", null);
+		
+		addPublicProperty("modelos.cabecalho.titulo", "JUSTIÇA FEDERAL");
+		addPublicProperty("modelos.cabecalho.subtitulo", null);
 	}
 
 	@Override

@@ -109,9 +109,9 @@ public class CpIdentidade extends AbstractCpIdentidade {
 	}
 	
 	public boolean isSenhaUsuarioExpirada() {		
-		final long diasExpiracaoSenha = Prop.getInt("siga.senha.usuario.expiracao.dias");					
+		final Integer diasExpiracaoSenha = Prop.getInt("senha.usuario.expiracao.dias");					
 		
-		if (diasExpiracaoSenha <= 0) {
+		if (diasExpiracaoSenha == null) {
 			return false;
 		}					
 		

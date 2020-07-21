@@ -39,7 +39,7 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 			}
 
 			resp.id = req.id;
-			resp.url = Prop.get("/siga.xjus.permalink.url")
+			resp.url = Prop.get("/xjus.permalink.url")
 					+ doc.getCodigoCompacto();
 			resp.acl = "PUBLIC";
 			resp.refresh = "NEVER";

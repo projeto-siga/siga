@@ -39,7 +39,7 @@
 	</div>
 	<c:set var="primeiroMobil" value="${true}" />
 	<c:forEach var="m" items="${docVO.mobs}" varStatus="loop">
-		<c:if test="${f:resource('isWorkflowEnabled')}">
+		<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;WF:Módulo de Workflow')}">
 			<script type="text/javascript">
 				var url = "/sigawf/app/doc?sigla=${m.sigla}&ts=1${currentTimeMillis}";
 	            $.ajax({
@@ -65,7 +65,7 @@
 			</h4>
 			<c:set var="ocultarCodigo" value="${true}" />
 
-			<c:if test="${f:resource('isWorkflowEnabled')}">
+			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;WF:Módulo de Workflow')}">
 				<c:if test="${(not m.mob.geral)}">
 					<div id="${m.sigla}" depende=";wf;" class="wf_div${m.mob.codigoCompacto}" >
 					</div>

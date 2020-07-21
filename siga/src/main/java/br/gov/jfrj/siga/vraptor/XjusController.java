@@ -38,13 +38,13 @@ public class XjusController extends SigaController {
 	@Get("app/xjus")
 	public void pesquisa(String q) throws Exception {
 		result.include("q", q);
-		result.include("xjusUrl", Prop.get("/siga.xjus.url"));
+		result.include("xjusUrl", Prop.get("/xjus.url"));
 	}
 
 	@Get("app/xjus/query")
 	public void buscarNoXjus() throws Exception {
 		final SigaHTTP http = new SigaHTTP();
-		String url = Prop.get("/siga.xjus.url");
+		String url = Prop.get("/xjus.url");
 		url += "?" + request.getQueryString();
 		String contentType = "application/json";
 
@@ -52,7 +52,7 @@ public class XjusController extends SigaController {
 				+ getTitular().getLotacao().getIdInicial() + ";P"
 				+ getTitular().getIdInicial();
 
-		final JWTSigner signer = new JWTSigner(Prop.get("/siga.xjus.jwt.secret"));
+		final JWTSigner signer = new JWTSigner(Prop.get("/jwt.secret"));
 		final HashMap<String, Object> claims = new HashMap<String, Object>();
 
 		final long iat = System.currentTimeMillis() / 1000L; // issued at claim

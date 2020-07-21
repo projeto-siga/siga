@@ -9,7 +9,7 @@
 
 <siga:pagina titulo="Mesa Virtual">
 <script type="text/javascript" src="../javascript/vue.min.js"></script>
-	<c:set var="siga_mesaCarregaLotacao" scope="session" value="${f:resource('siga.mesa.carrega.lotacao')}" />
+	<c:set var="siga_mesaCarregaLotacao" scope="session" value="${f:resource('/siga.mesa.carrega.lotacao')}" />
 	<div id="app" class="container-fluid content" >
 		<div id="configMenu" class="mesa-config ml-auto" :class="toggleConfig">
 			<button type="button" class="btn-mesa-config btn btn-secondary btn-sm h-100" @click="toggleMenuConfig();">

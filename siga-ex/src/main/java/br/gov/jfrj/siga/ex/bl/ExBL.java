@@ -5679,8 +5679,7 @@ public class ExBL extends CpBL {
 	public void atualizarWorkflow(ExDocumento doc, ExMovimentacao mov) throws AplicacaoException {
 
 		try {
-			if (Contexto.resource("isWorkflowEnabled") != null
-					&& Boolean.valueOf(String.valueOf(Contexto.resource("isWorkflowEnabled")))) {
+			if (Prop.getBool("/sigawf.ativo")) {
 				if (mov != null) {
 					atualizarWorkFlow(mov);
 				} else {

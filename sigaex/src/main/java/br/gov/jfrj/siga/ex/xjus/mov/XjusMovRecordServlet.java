@@ -24,7 +24,7 @@ public class XjusMovRecordServlet extends SwaggerServlet {
 
 		String xjusPassword = null;
 		try {
-			xjusPassword = Prop.get("/siga.xjus.password");
+			xjusPassword = Prop.get("/xjus.password");
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}

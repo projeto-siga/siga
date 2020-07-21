@@ -63,7 +63,7 @@ public class AuthJwtFormFilter implements Filter {
 	}
 
 	public static SigaJwtProvider getProvider() throws SigaJwtProviderException {
-		String password = System.getProperty("idp.jwt.modulo.pwd.sigaidp");
+		String password = Prop.get("/siga.jwt.secret");
 		SigaJwtOptions options = new SigaJwtOptionsBuilder().setPassword(password).setModulo(null)
 				.setTTL(TIME_TO_EXPIRE_IN_S).build();
 		SigaJwtProvider provider = SigaJwtProvider.getInstance(options);
@@ -211,7 +211,7 @@ public class AuthJwtFormFilter implements Filter {
 		}
 
 		String cont = req.getRequestURL() + (req.getQueryString() != null ? "?" + req.getQueryString() : "");
-		String base = System.getProperty("siga.base.url");
+		String base = Prop.get("/siga.base.url");
 		if (base != null && base.startsWith("https:") && cont.startsWith("http:"))
 			cont = "https" + cont.substring(4);
 

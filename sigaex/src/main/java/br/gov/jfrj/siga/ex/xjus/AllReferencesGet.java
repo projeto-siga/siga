@@ -48,7 +48,7 @@ public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
 			Future<SwaggerAsyncResponse<AllReferencesGetResponse>> future = SwaggerCall
 					.callAsync(
 							service.name().toLowerCase() + "-all-references",
-							Prop.get("/siga.xjus.password"), "GET",
+							Prop.get("/xjus.password"), "GET",
 							url, q, AllReferencesGetResponse.class);
 			map.put(service, future);
 		}

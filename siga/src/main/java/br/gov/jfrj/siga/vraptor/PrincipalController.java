@@ -116,7 +116,7 @@ public class PrincipalController extends SigaController {
 			final GenericoSelecao sel = buscarGenericoPorSigla(sigla, pes, lot, incluirMatricula);
 
 			if (sel.getId() == null) {
-				if (Prop.getBool("/siga.xjus.url") != null) {
+				if (Prop.getBool("/xjus.url") != null) {
 					sel.setId(-1L);
 					sel.setSigla(sigla);
 					sel.setDescricao("/siga/app/xjus?q=" + sigla);
@@ -244,9 +244,9 @@ public class PrincipalController extends SigaController {
 	@Consumes("text/vnd.graphviz")
 	@Path("/public/app/graphviz/svg")
 	public Download graphvizProxy(String dot) throws Exception {
-		String url = (String) Contexto.resource("graphviz.url");
+		String url = (String) Prop.get("/vizservice.url");
 		if (url == null)
-			throw new Exception("Parâmetro graphviz.url precisa ser informado");
+			throw new Exception("Parâmetro vizservice.url precisa ser informado");
 		corsHeaders(response);
 
 		String body = Unirest.post(url).header("Content-Type", "text/vnd.graphviz").body(dot).asString().getBody();

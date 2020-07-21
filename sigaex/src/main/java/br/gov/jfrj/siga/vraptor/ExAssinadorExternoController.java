@@ -459,7 +459,9 @@ public class ExAssinadorExternoController extends ExController {
 
 	private void assertPassword() throws Exception {
 		String pwd = Prop.get("assinador.externo.password");
-		if (pwd != null && !pwd.equals(this.request.getHeader("Authorization")))
+		if (pwd == null) 
+			throw new Exception("Antes de utilizar o assinador externo é necessário configurar a propriedade sigaex.assinador.externo.senha");
+		if (!pwd.equals(this.request.getHeader("Authorization")))
 			throw new Exception("Falha de autenticação.");
 	}
 

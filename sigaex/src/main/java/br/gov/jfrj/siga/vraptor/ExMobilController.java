@@ -277,8 +277,8 @@ public class ExMobilController extends
 
 		InputStream inputStream = null;
 		StringBuffer texto = new StringBuffer();
-		texto.append(";Responsável pela Assinatura;;;Responsável pela situação atual" + System.getProperty("line.separator"));
-		texto.append("Número;Unidade;Usuário;Data;Unidade;Usuário;Data;Situação;Documento;Descrição" + System.getProperty("line.separator"));
+		texto.append(";Responsável pela Assinatura;;;Responsável pela situação atual" + System.lineSeparator());
+		texto.append("Número;Unidade;Usuário;Data;Unidade;Usuário;Data;Situação;Documento;Descrição" + System.lineSeparator());
 		
 		
 		ExDocumento e = new ExDocumento();
@@ -346,7 +346,7 @@ public class ExMobilController extends
 			}
 			
 			texto.append(";");
-			texto.append(System.getProperty("line.separator"));
+			texto.append(System.lineSeparator());
 		}
 		inputStream = new ByteArrayInputStream(texto.toString().getBytes("ISO-8859-1"));
 		

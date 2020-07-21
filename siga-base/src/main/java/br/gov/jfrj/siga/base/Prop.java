@@ -73,9 +73,23 @@ public class Prop {
 	}
 
 	public static void defineGlobalProperties() {
+		provider.addPublicProperty("/siga.base.url", "http://localhost:8080");
+		String base = get("/siga.base.url");
+
 		provider.addPublicProperty("/siga.gsa.url", null);
+		
 		provider.addPublicProperty("/siga.http.proxy.host", null);
-		provider.addPublicProperty("/siga.http.proxy.port", null);
+		if (get("/siga.http.proxy.host") != null)
+			provider.addPublicProperty("/siga.http.proxy.port");
+		else
+			provider.addPublicProperty("/siga.http.proxy.port", null);
+
+		provider.addPublicProperty("/siga.integracao.sso", null);
+		provider.addPublicProperty("/siga.omitir.metodo2", "true");
+		
+		provider.addPublicProperty("/siga.cabecalho.titulo", "Justiça Federal");
+		provider.addPublicProperty("/sigawf.ativo", "true");
+		
 		
 		provider.addPublicProperty("/siga.ldap.ambiente", null);
 		provider.addPublicProperty("/siga.ldap.dn.usuarios", null);
@@ -110,7 +124,6 @@ public class Prop {
 		provider.addPublicProperty("/siga.ambiente", "desenv");
 		provider.addPublicProperty("/siga.autenticacao.senha", null);
 		provider.addPublicProperty("/siga.base.teste", "true");
-		provider.addPublicProperty("/siga.base.url", "http://localhost:8080");
 		provider.addPublicProperty("/siga.devolucao.dias", null);
 		provider.addPublicProperty("/siga.jwt.cookie.domain", null);
 		provider.addPublicProperty("/siga.jwt.secret");
@@ -124,12 +137,37 @@ public class Prop {
 		provider.addPublicProperty("/siga.pagina.inicial.url", null);
 		provider.addPublicProperty("/siga.versao.teste", "true");
 		provider.addPublicProperty("/siga.ws.seguranca.token.jwt", null);
-		provider.addPublicProperty("/sigaex.autenticidade.url", "http://localhost:8080/sigaex/public/app/autenticar");
-		provider.addPublicProperty("/sigaex.url", "http://localhost:8080/sigaex");
+		provider.addPublicProperty("/sigaex.autenticidade.url", base + "/sigaex/public/app/autenticar");
+		provider.addPublicProperty("/sigaex.url", base + "/sigaex");
+		provider.addPublicProperty("/sigaex.manual.url", base + "/siga/arquivos/apostila_sigaex.pdf");
 
-		provider.addPublicProperty("/siga.xjus.jwt.secret", null);
-		provider.addPublicProperty("/siga.xjus.password", null);
-		provider.addPublicProperty("/siga.xjus.permalink.url", null);
-		provider.addPublicProperty("/siga.xjus.url", null);
+		provider.addPublicProperty("/xjus.jwt.secret", null);
+		provider.addPublicProperty("/xjus.password", null);
+		provider.addPublicProperty("/xjus.permalink.url", null);
+		provider.addPublicProperty("/xjus.url", null);
+
+		provider.addPublicProperty("/siga.service.endpoint", base + "/siga/servicos/GiService?wsdl");
+		provider.addPublicProperty("/siga.service.url", base + "/siga/servicos/GiService");
+		provider.addPublicProperty("/siga.service.qname", "http://impl.service.gi.siga.jfrj.gov.br/");
+		provider.addPublicProperty("/siga.service.name", "GiService");
+
+		provider.addPublicProperty("/sigaex.service.endpoint", base + "/sigaex/servicos/ExService?wsdl");
+		provider.addPublicProperty("/sigaex.service.url", base + "/sigaex/servicos/ExService");
+		provider.addPublicProperty("/sigaex.service.qname", "http://impl.service.ex.siga.jfrj.gov.br/");
+		provider.addPublicProperty("/sigaex.service.name", "ExService");
+
+		provider.addPublicProperty("/sigawf.service.endpoint", base + "/sigawf/servicos/WfService?wsdl");
+		provider.addPublicProperty("/sigawf.service.url", base + "/sigawf/servicos/WfService");
+		provider.addPublicProperty("/sigawf.service.qname", "http://impl.service.wf.siga.jfrj.gov.br/");
+		provider.addPublicProperty("/sigawf.service.name", "WfService");
+
+		provider.addPublicProperty("/sigagc.service.endpoint", base + "/sigagc/servicos/GcService?wsdl");
+		provider.addPublicProperty("/sigagc.service.url", base + "/sigagc/servicos/GcService");
+		provider.addPublicProperty("/sigagc.service.qname", "http://impl.service.gc.siga.jfrj.gov.br/");
+		provider.addPublicProperty("/sigagc.service.name", "GcService");
+
+		provider.addPublicProperty("/blucservice.url", base + "/blucservice/api/v1");
+		provider.addPublicProperty("/vizservice.url", base + "/vizservice");
+
 	}
 }

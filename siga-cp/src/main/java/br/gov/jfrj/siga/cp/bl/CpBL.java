@@ -661,6 +661,8 @@ public class CpBL {
 
 	public String buscarModoAutenticacao(String orgao) {
 		String retorno = GiService._MODO_AUTENTICACAO_DEFAULT;
+		if (Prop.get("/siga.ldap.orgaos") == null)
+			return retorno;
 		String modo = Prop.get("/siga.ldap." + orgao.toLowerCase() + ".modo");
 		if (modo != null)
 			retorno = modo;

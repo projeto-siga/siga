@@ -51,7 +51,7 @@ public class ChangedReferencesGet implements
 			q.lastid = lastid;
 			Future<SwaggerAsyncResponse<ChangedReferencesGetResponse>> future = SwaggerCall
 					.callAsync(service.name().toLowerCase()
-							+ "-changed-references", Prop.get("/siga.xjus.password"), "GET", url, q,
+							+ "-changed-references", Prop.get("/xjus.password"), "GET", url, q,
 							ChangedReferencesGetResponse.class);
 			map.put(service, future);
 		}

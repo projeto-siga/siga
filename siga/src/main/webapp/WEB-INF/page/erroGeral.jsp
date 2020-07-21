@@ -124,7 +124,7 @@ This is a useless buffer to fill the page to 513 bytes to avoid display of Frien
 									    </c:if> 
 								      	<tr> 
 								      		<td>Servidor:</td> 
-								      		<td><c:out value="${threadName}" /> / <c:out value="${f:resource('ambiente')}" /></td> 
+								      		<td><c:out value="${threadName}" /> / <c:out value="${f:resource('/siga.ambiente')}" /></td> 
 								      	</tr> 
 									  	<tr> 
 									  		<td>Usu&aacute;rio</td> 

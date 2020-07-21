@@ -24,7 +24,7 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 
 		SwaggerAsyncResponse<RecordIdGetResponse> o = SwaggerCall.callAsync(
 				service.name().toLowerCase() + "-record-id",
-				Prop.get("/siga.xjus.password"), "GET", url, null,
+				Prop.get("/xjus.password"), "GET", url, null,
 				RecordIdGetResponse.class).get(
 				AllReferencesGet.TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS);
 		if (o.getException() != null)

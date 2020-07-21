@@ -138,7 +138,7 @@ public class SigaApiV1Servlet extends SwaggerServlet implements IPropertyProvide
 
 	private void defineProperties() {
 		addPublicProperty("datasource.name", "java:/jboss/datasources/SigaCpDS");
-
+		addPublicProperty("senha.usuario.expiracao.dias", null);
 	}
 
 	@Override

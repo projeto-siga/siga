@@ -158,8 +158,13 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 	public static final long TIPO_CONFIG_TMP_PARA_LOTACAO = 49;
 
 	public static final long TIPO_CONFIG_RESTRINGIR_ACESSO_APOS_RECEBER = 50;
+  
+  public static final long TIPO_CONFIG_AUTORIZAR_MOVIMENTACAO_POR_WS = 51;
+
+	public static final long TIPO_CONFIG_TRAMITAR_SEM_CAPTURADO = 52;
 	
-	public static final long TIPO_CONFIG_AUTORIZAR_MOVIMENTACAO_POR_WS = 51;
+	public static final long TIPO_CONFIG_CRIAR_NOVO_EXTERNO = 53;
+
 
 	// SIGA-WF
 

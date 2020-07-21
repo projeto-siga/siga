@@ -677,8 +677,12 @@ public class ExMarcadorBL {
 		mar.setCpMarcador(ExDao.getInstance().consultar(idMarcador, CpMarcador.class, false));
 		if (pess != null)
 			mar.setDpPessoaIni(pess.getPessoaInicial());
-		if (lota != null)
-			mar.setDpLotacaoIni(lota.getLotacaoInicial());
+		if (lota != null) {
+			AcessoConsulta ac = new AcessoConsulta(0L, lota.getIdInicial(), 
+					0L, lota.getOrgaoUsuario().getId());
+			if (ac.podeAcessar(mob.doc(), null, lota)) 
+				mar.setDpLotacaoIni(lota.getLotacaoInicial());
+		}
 		mar.setDtIniMarca(dt);
 		set.add(mar);
 	}
@@ -689,8 +693,12 @@ public class ExMarcadorBL {
 		mar.setCpMarcador(ExDao.getInstance().consultar(idMarcador, CpMarcador.class, false));
 		if (pess != null)
 			mar.setDpPessoaIni(pess.getPessoaInicial());
-		if (lota != null)
-			mar.setDpLotacaoIni(lota.getLotacaoInicial());
+		if (lota != null) {
+			AcessoConsulta ac = new AcessoConsulta(0L, lota.getIdInicial(), 
+					0L, lota.getOrgaoUsuario().getId());
+			if (ac.podeAcessar(mob.doc(), null, lota)) 
+				mar.setDpLotacaoIni(lota.getLotacaoInicial());
+		}
 		mar.setDtIniMarca(dtIni);
 		mar.setDtFimMarca(dtFim);
 		set.add(mar);

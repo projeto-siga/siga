@@ -8,21 +8,19 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.crivano.swaggerservlet.SwaggerServlet;
+
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
-
-import com.crivano.swaggerservlet.SwaggerServlet;
 
 public class XjusMovRecordServlet extends SwaggerServlet {
 	private static final long serialVersionUID = 1756711359239182178L;
 
 	@Override
-	public void init(ServletConfig config) throws ServletException {
-		super.init(config);
+	public void initialize(ServletConfig config) throws ServletException {
+		setAPI(IXjusRecordAPI.class);
 
-		super.setAPI(IXjusRecordAPI.class);
-
-		super.setActionPackage("br.gov.jfrj.siga.ex.xjus.mov");
+		setActionPackage("br.gov.jfrj.siga.ex.xjus.mov");
 
 		String xjusPassword = null;
 		try {
@@ -41,8 +39,8 @@ public class XjusMovRecordServlet extends SwaggerServlet {
 		super.doPost(req, resp);
 	}
 
-	// @Override
-	// public String getService() {
-	// return "siga-doc movement record api";
-	// }
+	@Override
+	public String getService() {
+		return "siga-doc movement record api";
+	}
 }

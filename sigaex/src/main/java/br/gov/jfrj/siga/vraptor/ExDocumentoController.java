@@ -57,6 +57,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -114,9 +115,13 @@ import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 @Controller
 public class ExDocumentoController extends ExController {
 
+	private static final String ERRO_EXCLUIR_ARQUIVO = "Erro ao excluir o arquivo";
+	private static final String ERRO_GRAVAR_ARQUIVO = "Erro ao gravar o arquivo";
 	private static final String URL_EXIBIR = "/app/expediente/doc/exibir?sigla={0}";
 	private static final String URL_EDITAR = "/app/expediente/doc/editar?sigla={0}";
 	private String url = null;
+	
+	private final static Logger log = Logger.getLogger(ExDocumentoController.class);
 
 	/**
 	 * @deprecated CDI eyes only
@@ -256,16 +261,7 @@ public class ExDocumentoController extends ExController {
 		exPreenchimento.setPreenchimentoBA(getByteArrayFormPreenchimento(vars,
 				campos));
 		
-		try {
-			if (!(exPreenchimento.getCpArquivo() == null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(exPreenchimento.getCpArquivo().getTipoArmazenamento()))) {
-				ArmazenamentoBCInterface armazenamento = ArmazenamentoBCFacade.getArmazenamentoBC(exPreenchimento.getCpArquivo());
-				armazenamento.salvar(exPreenchimento.getCpArquivo(), exPreenchimento.getPreenchimentoBlob());
-			}
-		} catch (Exception e) {
-			// TODO: K Tratar log
-			e.printStackTrace();
-		}
-		
+		gravarArquivoPreenchimento(exPreenchimento);
 		dao().gravar(exPreenchimento);
 		ModeloDao.commitTransacao();
 
@@ -899,15 +895,7 @@ public class ExDocumentoController extends ExController {
 				.consultar(exDocumentoDTO.getPreenchimento(),
 						ExPreenchimento.class, false);
 		
-		try {
-			if (!(exemplo.getCpArquivo() == null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(exemplo.getCpArquivo().getTipoArmazenamento()))) {
-				ArmazenamentoBCInterface armazenamento = ArmazenamentoBCFacade.getArmazenamentoBC(exemplo.getCpArquivo());
-				armazenamento.apagar(exemplo.getCpArquivo());
-			}
-		} catch (Exception e) {
-			// TODO: K Tratar log
-			e.printStackTrace();
-		}
+		excluirArquivoPreenchimento(exemplo);
 		
 		dao().excluir(exemplo);
 		ModeloDao.commitTransacao();
@@ -1375,13 +1363,6 @@ public class ExDocumentoController extends ExController {
 			docVO.getDoc().setNumPaginas(docVO.getDoc().getContarNumeroDePaginas());
 		}
 
-//		CpArquivo cpArquivo = new CpArquivo();
-//		cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.HCP);
-//		cpArquivo.setCaminho("2020/6/9/5/1/00f38a11-3769-49b5-a7ca-55864254a2f9.zip");
-//		ArmazenamentoBCInterface a = ArmazenamentoBCFacade.getArmazenamentoBC(cpArquivo);
-//		a.recuperar(cpArquivo);
-//		a.salvar(exDocumentoDTO.getDoc().getConteudoBlobDoc());
-		
 		docVO.exibe();
 
 		String Sigla = "";
@@ -1816,20 +1797,10 @@ public class ExDocumentoController extends ExController {
 		exPreenchimento.setNomePreenchimento(exDocumentoDTO
 				.getNomePreenchimento());
 
-		CpArquivo cpArquivo = new CpArquivo();
-		cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.HCP);//TODO: K ler do properties
-		exPreenchimento.setCpArquivo(cpArquivo);
-
 		exPreenchimento.setPreenchimentoBA(getByteArrayFormPreenchimento(vars,
 				campos));
 		
-		try {
-			ArmazenamentoBCInterface armazenamento = ArmazenamentoBCFacade.getArmazenamentoBC(cpArquivo);
-			armazenamento.salvar(cpArquivo, exPreenchimento.getPreenchimentoBlob());
-		} catch (Exception e) {
-			// TODO: K Tratar log
-			e.printStackTrace();
-		}
+		gravarArquivoPreenchimento(exPreenchimento);
 		
 		dao().gravar(exPreenchimento);
 		ModeloDao.commitTransacao();
@@ -2920,4 +2891,38 @@ public class ExDocumentoController extends ExController {
 		result.include("docCancelado", docCancelado);
 	}
 
+	private void gravarArquivoPreenchimento(final ExPreenchimento exPreenchimento) {
+		try {
+			if(exPreenchimento.getIdPreenchimento()==null) {
+				exPreenchimento.setCpArquivo(criarCpArquivo());
+			}
+			if(exPreenchimento.getCpArquivo()!=null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(exPreenchimento.getCpArquivo().getTipoArmazenamento())) {
+				ArmazenamentoBCInterface armazenamento = ArmazenamentoBCFacade.getArmazenamentoBC(exPreenchimento.getCpArquivo());
+				armazenamento.salvar(exPreenchimento.getCpArquivo(), exPreenchimento.getPreenchimentoBlob());
+				dao().gravar(exPreenchimento.getCpArquivo());
+			}
+		} catch (Exception e) {
+			log.error(ERRO_GRAVAR_ARQUIVO, e);
+			throw new AplicacaoException(ERRO_GRAVAR_ARQUIVO);
+		}
+	}
+	
+	private void excluirArquivoPreenchimento(final ExPreenchimento exPreenchimento) {
+		try {
+			if (!(exPreenchimento.getCpArquivo() == null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(exPreenchimento.getCpArquivo().getTipoArmazenamento()))) {
+				ArmazenamentoBCInterface armazenamento = ArmazenamentoBCFacade.getArmazenamentoBC(exPreenchimento.getCpArquivo());
+				armazenamento.apagar(exPreenchimento.getCpArquivo());
+				dao().excluir(exPreenchimento.getCpArquivo());
+			}
+		} catch (Exception e) {
+			log.error(ERRO_EXCLUIR_ARQUIVO, e);
+			throw new AplicacaoException(ERRO_EXCLUIR_ARQUIVO);
+		}
+	}
+	
+	private CpArquivo criarCpArquivo() {
+		CpArquivo cpArquivo = new CpArquivo();
+		cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.HCP);//TODO: K ler do properties
+		return cpArquivo;
+	}
 }

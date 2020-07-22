@@ -171,6 +171,8 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 import br.gov.jfrj.siga.wf.service.WfService;
 
 public class ExBL extends CpBL {
+	private static final String ERRO_EXCLUIR_ARQUIVO = "Erro ao excluir o arquivo";
+	private static final String ERRO_GRAVAR_ARQUIVO = "Erro ao gravar o arquivo";
 	private static final String MODELO_FOLHA_DE_ROSTO_EXPEDIENTE_INTERNO = "Folha de Rosto - Expediente Interno";
 	private static final String MODELO_FOLHA_DE_ROSTO_PROCESSO_ADMINISTRATIVO_INTERNO = "Folha de Rosto - Processo Administrativo Interno";
 	private static final String SHA1 = "1.3.14.3.2.26";
@@ -426,6 +428,7 @@ public class ExBL extends CpBL {
 		ExDao.iniciarTransacao();
 		Integer numeroDePaginas = doc.getContarNumeroDePaginas();
 		doc.setNumPaginas(numeroDePaginas);
+//		gravarArquivoDocumento(doc);
 		dao().gravar(doc);
 		try {
 			ExDao.commitTransacao();
@@ -449,6 +452,7 @@ public class ExBL extends CpBL {
 		ExDao.iniciarTransacao();
 		Integer numeroDePaginas = mov.getContarNumeroDePaginas();
 		mov.setNumPaginas(numeroDePaginas);
+//		gravarArquivoDocumento(doc);
 		dao().gravar(mov);
 		try {
 			ExDao.commitTransacao();
@@ -478,6 +482,7 @@ public class ExBL extends CpBL {
 				try {
 					for (ExMovimentacao m : doc.getExMovimentacaoSet()) {
 						m.setNumPaginas(m.getContarNumeroDePaginas());
+						gravarArquivoMovimentacao(m);
 						dao().gravar(m);
 					}
 				} catch (Throwable e) {
@@ -1006,6 +1011,7 @@ public class ExBL extends CpBL {
 			gravarMovimentacao(mov);
 			for (ExMovimentacao m : cancelar) {
 				m.setExMovimentacaoCanceladora(mov);
+				gravarArquivoMovimentacao(m);
 				dao().gravar(m);
 			}
 
@@ -2965,6 +2971,8 @@ public class ExBL extends CpBL {
 			processar(doc, false, false);
 
 			doc.setNumPaginas(doc.getContarNumeroDePaginas());
+			
+			gravarArquivoDocumento(doc);
 			dao().gravar(doc);
 
 			if (doc.getExFormaDocumento().getExTipoFormaDoc().isExpediente()) {
@@ -3368,6 +3376,7 @@ public class ExBL extends CpBL {
 					if (mov == null)
 						break;
 					doc.getMobilGeral().getExMovimentacaoSet().remove(mov);
+					excluirArquivoMovimentacao(mov);
 					dao().excluir(mov);
 				}
 			}
@@ -3396,8 +3405,7 @@ public class ExBL extends CpBL {
 
 			doc.setNumPaginas(doc.getContarNumeroDePaginas());
 			
-			salvarArquivo(doc);
-			
+			gravarArquivoDocumento(doc);
 			doc = ExDao.getInstance().gravar(doc);
 			for (ExMobil mob : doc.getExMobilSet()) {
 				if (mob.getIdMobil() == null)
@@ -3476,35 +3484,6 @@ public class ExBL extends CpBL {
 		return doc;
 	}
 
-	private void salvarArquivo(ExDocumento doc) {
-		if(doc.getCpArquivo() == null) {
-			CpArquivo cpArquivo = new CpArquivo();
-			//TODO: K Ler do properties o mecanismo de armazenamento padrão
-			cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.HCP);
-			doc.setCpArquivo(cpArquivo);
-		}
-		ArmazenamentoBCInterface armazenamentoBC;
-		try {
-			armazenamentoBC = ArmazenamentoBCFacade.getArmazenamentoBC(doc.getCpArquivo());
-			armazenamentoBC.salvar(doc.getCpArquivo(), doc.getConteudoBlobDoc2());
-			ExDao.getInstance().gravar(doc.getCpArquivo());
-		} catch (Exception e) {
-			throw new AplicacaoException(e.getMessage());
-		}
-	}
-	
-	private void excluirArquivo(ExDocumento doc) {
-		if(doc.getCpArquivo() != null) {
-			try {
-				ArmazenamentoBCInterface armazenamentoBC = ArmazenamentoBCFacade.getArmazenamentoBC(doc.getCpArquivo());
-				armazenamentoBC.apagar(doc.getCpArquivo());
-				dao().excluir(doc.getCpArquivo());
-			} catch (Exception e) {
-				throw new AplicacaoException(e.getMessage());
-			}
-		}
-	}
-	
 	public void geraMovimentacaoSubstituicao(ExDocumento doc, DpPessoa cadastrante) throws AplicacaoException, SQLException {
 		final ExMovimentacao mov_substituto = criarNovaMovimentacao(
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_SUBSTITUICAO_RESPONSAVEL, cadastrante,
@@ -3766,20 +3745,7 @@ public class ExBL extends CpBL {
 			mov.setNumPaginas(mov.getContarNumeroDePaginas()); //Sempre conta a página para SP
 		}
 		
-		try {
-			if(mov.getIdMov()==null) {
-				CpArquivo cpArquivo = new CpArquivo();
-				cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.HCP);//TODO: K ler do properties
-				mov.setCpArquivo(cpArquivo);
-			}
-			if(mov.getCpArquivo()!=null) {
-				ArmazenamentoBCInterface armazenamento = ArmazenamentoBCFacade.getArmazenamentoBC(mov.getCpArquivo());
-				armazenamento.salvar(mov.getCpArquivo(), mov.getConteudoBlobMov2());
-			}
-		} catch (Exception e) {
-			// TODO: K Tratar log
-			e.printStackTrace();
-		}
+		gravarArquivoMovimentacao(mov);
 		
 		dao().gravar(mov);
 
@@ -3819,7 +3785,7 @@ public class ExBL extends CpBL {
 			}
 		}		
 	}
-	
+
 	public void getExTipoMovSubstituicaoAssinante(final ExMovimentacao mov) {
 			final ExMovimentacao mov_substituto = criarNovaMovimentacao(
 					ExTipoMovimentacao.TIPO_MOVIMENTACAO_SUBSTITUICAO_RESPONSAVEL,
@@ -3833,6 +3799,7 @@ public class ExBL extends CpBL {
 							+ mov.getExMobil().getDoc().getCadastrante().getNomePessoa() + " - "
 							+ mov.getExMobil().getDoc().getCadastrante().getOrgaoUsuario().getSiglaOrgaoUsu()
 						+ mov.getExMobil().getDoc().getCadastrante().getMatricula());
+		gravarArquivoMovimentacao(mov_substituto);
 		dao().gravar(mov_substituto);
 	}
 
@@ -3848,6 +3815,7 @@ public class ExBL extends CpBL {
 
 		if (movCancelada != null) {
 			movCancelada.setExMovimentacaoCanceladora(mov);
+			gravarArquivoMovimentacao(movCancelada);
 			dao().gravar(movCancelada);
 		}
 
@@ -3886,6 +3854,7 @@ public class ExBL extends CpBL {
 					final Object[] aMovimentacao = set.toArray();
 					for (int i = 0; i < set.size(); i++) {
 						final ExMovimentacao movimentacao = (ExMovimentacao) aMovimentacao[i];
+						excluirArquivoMovimentacao(movimentacao);
 						dao().excluir(movimentacao);
 					}
 				}
@@ -3912,7 +3881,7 @@ public class ExBL extends CpBL {
 				obterMetodoPorString(funcao, doc);
 			}
 
-			excluirArquivo(doc);
+			excluirArquivoDocumento(doc);
 			dao().excluir(doc);
 			ExDao.commitTransacao();
 		} catch (final AplicacaoException e) {
@@ -3939,6 +3908,7 @@ public class ExBL extends CpBL {
 		// break;
 		// }
 		// }
+		excluirArquivoMovimentacao(mov);
 		dao().excluir(mov);
 		mov.getExMobil().getExMovimentacaoSet().remove(mov);
 		for (ExMovimentacao m : mov.getExMobil().getExMovimentacaoSet()) {
@@ -5073,6 +5043,7 @@ public class ExBL extends CpBL {
 
 				}
 				exDocumento.setExNivelAcesso(nivelAcesso);
+				gravarArquivoDocumento(exDocumento);
 				dao().gravar(exDocumento);
 				concluirAlteracaoComRecalculoAcesso(exDocumento.getMobilGeral());
 			}
@@ -5205,6 +5176,7 @@ public class ExBL extends CpBL {
 
 				if (gravar) {
 					doc.setNumPaginas(doc.getContarNumeroDePaginas());
+					gravarArquivoDocumento(doc);
 					dao().gravar(doc);
 					if (transacao) {
 						concluirAlteracaoDoc(doc);
@@ -6371,6 +6343,7 @@ public class ExBL extends CpBL {
 			gravarMovimentacao(mov);
 
 			// A gravação deve ser chamada apenas para atualizar a timestamp
+			gravarArquivoDocumento(doc);
 			dao().gravar(doc);
 
 			String funcao = doc.getForm().get("acaoExcluir");
@@ -7370,5 +7343,69 @@ public class ExBL extends CpBL {
 		} finally {
 			objectJson = null;
 		}
+	}
+	
+	private void gravarArquivoDocumento(ExDocumento doc) {
+		try {
+			if(doc.getIdDoc()==null) {
+				doc.setCpArquivo(criarCpArquivo());
+			}
+			if(doc.getCpArquivo()!=null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(doc.getCpArquivo().getTipoArmazenamento())) {
+				ArmazenamentoBCInterface armazenamento = ArmazenamentoBCFacade.getArmazenamentoBC(doc.getCpArquivo());
+				armazenamento.salvar(doc.getCpArquivo(), doc.getConteudoBlobDoc2());
+				dao().gravar(doc.getCpArquivo());
+			}
+		} catch (Exception e) {
+			log.error(ERRO_GRAVAR_ARQUIVO, e);
+			throw new AplicacaoException(ERRO_GRAVAR_ARQUIVO);
+		}
+	}
+	
+	private void excluirArquivoDocumento(ExDocumento doc) {
+		try {
+			if (!(doc.getCpArquivo() == null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(doc.getCpArquivo().getTipoArmazenamento()))) {
+				ArmazenamentoBCInterface armazenamentoBC = ArmazenamentoBCFacade.getArmazenamentoBC(doc.getCpArquivo());
+				armazenamentoBC.apagar(doc.getCpArquivo());
+				dao().excluir(doc.getCpArquivo());
+			}
+		} catch (Exception e) {
+			log.error(ERRO_GRAVAR_ARQUIVO, e);
+			throw new AplicacaoException(ERRO_GRAVAR_ARQUIVO);
+		}
+	}
+	
+	private void gravarArquivoMovimentacao(final ExMovimentacao mov) {
+		try {
+			if(mov.getIdMov()==null) {
+				mov.setCpArquivo(criarCpArquivo());
+			}
+			if(mov.getCpArquivo()!=null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(mov.getCpArquivo().getTipoArmazenamento())) {
+				ArmazenamentoBCInterface armazenamento = ArmazenamentoBCFacade.getArmazenamentoBC(mov.getCpArquivo());
+				armazenamento.salvar(mov.getCpArquivo(), mov.getConteudoBlobMov2());
+				dao().gravar(mov.getCpArquivo());
+			}
+		} catch (Exception e) {
+			log.error(ERRO_GRAVAR_ARQUIVO, e);
+			throw new AplicacaoException(ERRO_GRAVAR_ARQUIVO);
+		}
+	}
+	
+	private void excluirArquivoMovimentacao(final ExMovimentacao movimentacao) {
+		try {
+			if (!(movimentacao.getCpArquivo() == null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(movimentacao.getCpArquivo().getTipoArmazenamento()))) {
+				ArmazenamentoBCInterface armazenamento = ArmazenamentoBCFacade.getArmazenamentoBC(movimentacao.getCpArquivo());
+				armazenamento.apagar(movimentacao.getCpArquivo());
+				dao().excluir(movimentacao.getCpArquivo());
+			}
+		} catch (Exception e) {
+			log.error(ERRO_EXCLUIR_ARQUIVO, e);
+			throw new AplicacaoException(ERRO_EXCLUIR_ARQUIVO);
+		}
+	}
+	
+	private CpArquivo criarCpArquivo() {
+		CpArquivo cpArquivo = new CpArquivo();
+		cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.HCP);//TODO: K ler do properties
+		return cpArquivo;
 	}
 }

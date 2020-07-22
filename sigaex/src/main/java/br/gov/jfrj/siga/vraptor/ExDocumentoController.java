@@ -76,7 +76,6 @@ import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCFacade;
 import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCInterface;
-import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoHCP;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpMarcador;

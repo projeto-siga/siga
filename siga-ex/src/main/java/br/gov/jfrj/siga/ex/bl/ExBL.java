@@ -3765,6 +3765,22 @@ public class ExBL extends CpBL {
 		} else {
 			mov.setNumPaginas(mov.getContarNumeroDePaginas()); //Sempre conta a página para SP
 		}
+		
+		try {
+			if(mov.getIdMov()==null) {
+				CpArquivo cpArquivo = new CpArquivo();
+				cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.HCP);//TODO: K ler do properties
+				mov.setCpArquivo(cpArquivo);
+			}
+			if(mov.getCpArquivo()!=null) {
+				ArmazenamentoBCInterface armazenamento = ArmazenamentoBCFacade.getArmazenamentoBC(mov.getCpArquivo());
+				armazenamento.salvar(mov.getCpArquivo(), mov.getConteudoBlobMov2());
+			}
+		} catch (Exception e) {
+			// TODO: K Tratar log
+			e.printStackTrace();
+		}
+		
 		dao().gravar(mov);
 
 		/*

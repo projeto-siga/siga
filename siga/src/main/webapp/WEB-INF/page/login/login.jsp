@@ -18,6 +18,7 @@
 	</script>
 	
 	<c:set var="siga_cliente_sso" scope="request" value="${f:resource('siga.integracao.sso')}" />
+	<c:set var="siga_cliente_sso_btn_txt" scope="request" value="${f:resource('siga.integracao.sso.btn.txt')}" />
 	
 	<c:choose>
 		<c:when test="${siga_cliente == 'GOVSP'}">
@@ -101,7 +102,7 @@
 									
 									<c:choose>
 										<c:when test="${siga_cliente_sso}">
-											<a href="/siga/public/app/loginSSO"class="btn btn-secondary btn-block">LoginSP</a>
+											<a href="/siga/public/app/loginSSO"class="btn btn-secondary btn-block">${siga_cliente_sso_btn_txt}</a>
 										</c:when>
 									</c:choose>
 									<hr class="my-4">

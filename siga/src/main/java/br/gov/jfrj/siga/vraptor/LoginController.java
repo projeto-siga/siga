@@ -43,7 +43,7 @@ import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
 import br.gov.jfrj.siga.gi.service.GiService;
 import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
 import br.gov.jfrj.siga.idp.jwt.SigaJwtBL;
-import br.gov.jfrj.siga.idp.jwt.SigaJwtProviderException;
+import br.gov.sp.prodesp.siga.servlet.CallBackServlet;
 
 @Controller
 public class LoginController extends SigaController {
@@ -130,9 +130,17 @@ public class LoginController extends SigaController {
 
 	@Get("public/app/logout")
 	public void logout() {
-		this.request.getSession(false);
+		/*
+		 * Interrompe a sessão local com SSO
+		 */
+		request.getSession().setAttribute(CallBackServlet.PUBLIC_CPF_USER_SSO, null);
+				
+		request.getSession(false);
 		this.response.addCookie(AuthJwtFormFilter.buildEraseCookie());
-		result.redirectTo("/");
+		
+		
+		result.redirectTo("/");					
+		
 	}		
 
 	private static String convertStreamToString(java.io.InputStream is) {
@@ -151,9 +159,6 @@ public class LoginController extends SigaController {
 	public void authSwap(String username, String cont) throws IOException {
 		
 		try {
-		//  Incluida na versão comum a todos
-		//	if (!SigaMessages.isSigaSP()) 
-		//		throw new ServletException("Funcionalidade não disponível neste ambiente.");
 
 			CpIdentidade usuarioSwap = CpDao.getInstance().consultaIdentidadeCadastrante(username, true);
 			
@@ -313,7 +318,7 @@ public class LoginController extends SigaController {
 	public void loginSSO(String cont) throws AplicacaoException, IOException {
 		try {
 			
-			String cpf = (String) request.getSession().getAttribute("cpfAutenticado");
+			String cpf = (String) request.getSession().getAttribute(CallBackServlet.PUBLIC_CPF_USER_SSO);
 
 			if(cpf == null){
 				result.redirectTo(Contexto.urlBase(request) + "/siga/openIdServlet");	

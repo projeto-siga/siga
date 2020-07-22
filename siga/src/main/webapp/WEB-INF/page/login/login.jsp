@@ -24,7 +24,7 @@
 		<c:when test="${siga_cliente == 'GOVSP'}">
 			<c:set var="login_box_class" value="box_login" />
 			<c:set var="login_box_logo" value="/siga/imagens/logo-sem-papel-cor.png" />
-			<c:set var="login_box_logo_size" value="150" />
+			<c:set var="login_box_logo_size" value="132" />
 			<c:set var="login_box_text" value="" />
 			<c:set var="login_titulo_modal" value="SP Sem Papel"/>
 		</c:when>
@@ -98,22 +98,23 @@
 						<div class="row pt-3">
 							<div class="col">
 								<div class="text-center">
-									<button type="submit" class="btn btn-lg btn-primary btn-block"><i class="fas fa-sign-in-alt"></i> Entrar</button>
-									
-									<c:choose>
-										<c:when test="${siga_cliente_sso}">
-											<a href="/siga/public/app/loginSSO"class="btn btn-secondary btn-block">${siga_cliente_sso_btn_txt}</a>
-										</c:when>
-									</c:choose>
-									<hr class="my-4">
+									<button type="submit" class="btn btn-lg btn-primary btn-block"><i class="fas fa-sign-in-alt"></i> Entrar</button>								
 									<div class="mt-4">
 										<c:if test="${siga_cliente != 'GOVSP'}">
 											<a href="/siga/public/app/usuario/incluir_usuario"
 												class="btn btn-secondary btn-block mb-2"><fmt:message key = "usuario.sounovo"/></a> 
 										</c:if>
-										<a href="/siga/public/app/usuario/esqueci_senha"
-										class="btn btn-secondary btn-block">Esqueci minha senha</a>
+										<a href="/siga/public/app/usuario/esqueci_senha" class="btn btn-link btn-block"><strong>Esqueci minha senha</strong></a>
 									</div>
+									
+									<hr class="my-2">
+									<p class="text-left font-weight-bold">Ou acesse com: </p>
+									<c:choose>
+										<c:when test="${siga_cliente_sso}">
+											<a href="/siga/public/app/loginSSO"class="btn btn-lg btn-dark btn-block">${siga_cliente_sso_btn_txt}</a>
+										</c:when>
+									</c:choose>
+									
 									<c:if test="${siga_cliente ne 'GOVSP'}">
 										<div class="mt-3">
 										    <div class="d-flex justify-content-between">

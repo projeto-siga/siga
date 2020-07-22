@@ -1,0 +1,4 @@
+/* Permissões para alterar nome e sigla da lotação após cadastro de documento */
+
+INSERT INTO "CORPORATIVO"."CP_SERVICO" (ID_SERVICO, SIGLA_SERVICO, DESC_SERVICO, ID_SERVICO_PAI, ID_TP_SERVICO) 
+    VALUES ("CORPORATIVO".CP_SERVICO_SEQ.nextval, 'SIGA-GI-CAD_LOTACAO-ALT', 'Alterar Lotação com Documentos', (SELECT max(id_servico) FROM "CORPORATIVO"."CP_SERVICO" WHERE SIGLA_SERVICO = 'SIGA-GI-CAD_LOTACAO') , '2');

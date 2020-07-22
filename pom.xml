@@ -38,7 +38,7 @@
     	<module>siga-ldap-cli</module>
 		<module>siga-jwt</module>
 		<!-- <module>siga-relarmaz</module> -->
-		<!--<module>siga-oidc</module> -->
+		<module>siga-oidc</module>
 		
 		
 	</modules>
@@ -294,26 +294,20 @@
 				<artifactId>sigawf</artifactId>
 				<version>${siga.version}</version>
 			</dependency>
-			<!-- 
+
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-oidc</artifactId>
 				<version>${siga.version}</version>
 			</dependency>
-			 -->
+
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>4.11</version>
 				<scope>test</scope>
 			</dependency>
-			<!--  
-			<dependency>
-				<groupId>siga</groupId>
-				<artifactId>siga-oidc</artifactId>
-				<version>${siga.version}</version>
-			</dependency>
-			-->
+
 			<dependency>
 				<groupId>org.codehaus.jettison</groupId>
 				<artifactId>jettison</artifactId>

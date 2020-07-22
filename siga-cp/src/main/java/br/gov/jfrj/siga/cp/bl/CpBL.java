@@ -29,7 +29,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -53,8 +52,10 @@ import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
+import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.util.Excel;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
+import br.gov.jfrj.siga.cp.util.SigaUtil;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
@@ -306,6 +307,7 @@ public class CpBL {
 			}
 
 		} catch (AplicacaoException e) {
+			resultado = e.getMessage();
 			e.printStackTrace();
 		}
 		return resultado;
@@ -699,7 +701,7 @@ public class CpBL {
 			String servico = "SIGA: Sistema Integrado de Gestão Administrativa;GI: Módulo de Gestão de Identidade;DEF_SENHA: Definir Senha";
 			try {
 				boolean admTrocaSenha = Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(
-						idCadastrante.getDpPessoa(), idCadastrante.getDpPessoa().getLotacao(), servico);
+						idCadastrante.getDpPessoa(), idCadastrante.getDpPessoa().getPessoaAtual().getLotacao(), servico);
 				if (admTrocaSenha) {
 					if (buscarModoAutenticacao(idCadastrante.getCpOrgaoUsuario().getSiglaOrgaoUsu())
 							.equals(GiService._MODO_AUTENTICACAO_BANCO)) {
@@ -1053,15 +1055,9 @@ public class CpBL {
 		dao().gravar(acesso);
 	}
 
-	public InputStream uploadLotacao(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
-		InputStream inputStream = null;
-		try {
-			Excel excel = new Excel();
-			inputStream = excel.uploadLotacao(file, orgaoUsuario, extensao);
-		} catch (Exception e) {
-
-		}
-		return inputStream;
+	public InputStream uploadLotacao(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {			
+		Excel excel = new Excel();		
+		return excel.uploadLotacao(file, orgaoUsuario, extensao);
 	}
 
 	public InputStream uploadFuncao(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
@@ -1273,4 +1269,43 @@ public class CpBL {
 
 		return "Usuário inativado com sucesso: " + pessoa.getSesbPessoa() + pessoa.getMatricula();
 	}
+	
+	
+	public CpToken gerarUrlPermanente(Long idRef) {
+		try {
+			CpToken sigaUrlPermanente = new CpToken();
+			sigaUrlPermanente = dao().obterCpTokenPorTipoIdRef(1L,idRef); //Se tem token não expirado, devolve token
+			if (sigaUrlPermanente == null ) {
+				sigaUrlPermanente = new CpToken();
+				//Seta tipo 1 - Token para URL Permamente
+				sigaUrlPermanente.setIdTpToken(1L);
+				
+				sigaUrlPermanente.setToken(SigaUtil.randomAlfanumerico(128));
+				sigaUrlPermanente.setIdRef(idRef);
+
+				try {
+					dao().gravar(sigaUrlPermanente);
+				} catch (final Exception e) {
+	
+					throw new AplicacaoException("Erro na gravação", 0, e);
+				}
+			} 
+			return sigaUrlPermanente;
+
+			
+		} catch (final Exception e) {
+			throw new AplicacaoException("Ocorreu um erro ao gerar o Token.", 0, e);
+		}
+	}
+		
+	
+	public String obterURLPermanente(String tipoLink, String token) {
+		//String urlPermanente = System.getProperty("siga.base.url"); necessario implementar parametro
+		String urlPermanente = System.getProperty("siga.ex.enderecoAutenticidadeDocs").replace("/sigaex/public/app/autenticar", "");
+		
+		urlPermanente +=  "/siga/public/app/sigalink/"+tipoLink+"/"+token;
+		
+		return urlPermanente;
+	}
+	
 }

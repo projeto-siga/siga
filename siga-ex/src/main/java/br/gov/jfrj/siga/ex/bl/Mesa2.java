@@ -127,6 +127,9 @@ public class Mesa2 {
 			this.collapsed = collapsed;
 			this.hide = hide;
 		}
+		public String getNome() {
+			return this.nome;
+		}
 		public static GrupoDeMarcadorEnum getByNome(String nome) {
 			for (GrupoDeMarcadorEnum i : GrupoDeMarcadorEnum.values()) {
 				if (i.nome.equals(nome))
@@ -366,6 +369,9 @@ public class Mesa2 {
 		MARCADOR_COMO_REVISOR(72, "Como Revisor", "fas fa-glasses", "",
 				GrupoDeMarcadorEnum.A_REVISAR),
 		//
+		MARCADOR_PORTAL_TRANSPARENCIA(73, "Portal da Transparência", "fas fa-globe", "",
+				GrupoDeMarcadorEnum.NENHUM),
+		//
 		URGENTE(1000, "Urgente", "fas fa-bomb", "", GrupoDeMarcadorEnum.ALERTA),
 
 		//
@@ -385,10 +391,7 @@ public class Mesa2 {
 		COVID_19(1006, "COVID-19", "fas fa-tag", "",
 				GrupoDeMarcadorEnum.NENHUM),
 		//
-		PORTAL_TRANSPARENCIA(1007, "Portal da Transparência", "fas fa-tag", "",
-				GrupoDeMarcadorEnum.NENHUM),
-		//
-		NOTA_EMPENHO(1008, "Nota de Empenho", "fas fa-tag", "",
+		NOTA_EMPENHO(1007, "Nota de Empenho", "fas fa-tag", "",
 				GrupoDeMarcadorEnum.NENHUM);
 
 		private MarcadorEnum(int id, String nome, String icone,
@@ -654,31 +657,44 @@ public class Mesa2 {
 				
 				for (Integer i = 0; i < l.size(); i++) {
 					reference = l.get(i);
-					mobil = (ExMobil) reference[2];
-					idMob = mobil.getIdMobil();
-					if (temMarcador(i, l, idMob, gItem) && !map.containsKey(mobil)) {
-						for (Integer i2 = 0; i2 < l.size(); i2++) {  
-							reference = l.get(i2);
-							mobil = (ExMobil) reference[2];
-							if (mobil.getIdMobil() == idMob) {
-								marca = (ExMarca) reference[0];
-								marcador = (CpMarcador) reference[1];
-								if (!map.containsKey(mobil)) {
-									if (listIdMobil.size() < gItem.grupoQtd) {
-										DocDados docDados = new DocDados();
+					// Se for TMP e o grupo nao for Em Elaboracao, nao deve mostrar no grupo (só GOVSP).
+					if (!(SigaMessages.isSigaSP()
+							&& reference[4] == null 
+							&& !gItem.grupoNome.equals(GrupoDeMarcadorEnum.EM_ELABORACAO.getNome()))) {
+						// Inclui o mobil no grupo da mesa
+						mobil = (ExMobil) reference[2];
+						idMob = mobil.getIdMobil();
+						
+						if (temMarcador(i, l, idMob, gItem) && !map.containsKey(mobil)) {
+							// Se o mobil possui um marcador do grupo e ele ainda nao foi incluido,
+							// inclui junto com as outras marcas que estao no resultado da query
+							for (Integer i2 = 0; i2 < l.size(); i2++) {  
+								reference = l.get(i2);
+								mobil = (ExMobil) reference[2];
+								if (mobil.getIdMobil() == idMob) {
+									marca = (ExMarca) reference[0];
+									marcador = (CpMarcador) reference[1];
+									if (!map.containsKey(mobil)) {
+										// Mobil ainda nao foi incluido no grupo, inclui
+										if (listIdMobil.size() < gItem.grupoQtd) {
+											DocDados docDados = new DocDados();
+											MeM mm = new MeM();
+											mm.marca = marca;
+											mm.marcador = marcador;
+											docDados.listMeM = new ArrayList<MeM>();
+											docDados.listMeM.add(mm);
+											map.put(mobil, docDados);
+											listIdMobil.add(mobil.getId());
+										} else {
+											break;
+										} 
+									} else {
+										// Mobil ja foi incluido no grupo, inclui so a marca no mobil
 										MeM mm = new MeM();
 										mm.marca = marca;
 										mm.marcador = marcador;
-										docDados.listMeM = new ArrayList<MeM>();
-										docDados.listMeM.add(mm);
-										map.put(mobil, docDados);
-										listIdMobil.add(mobil.getId());
-									} 
-								} else {
-									MeM mm = new MeM();
-									mm.marca = marca;
-									mm.marcador = marcador;
-									map.get(mobil).listMeM.add(mm);
+										map.get(mobil).listMeM.add(mm);
+									}
 								}
 							}
 						}

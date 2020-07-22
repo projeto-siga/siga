@@ -1895,15 +1895,15 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public String getAssinantesCompleto() {
 		String retorno = "";
 		String conferentes = Documento
-				.getAssinantesString(getAutenticacoesComToken());
+				.getAssinantesString(getAutenticacoesComToken(),getDtDoc());
 		String conferentesSenha = Documento
-				.getAssinantesString(getAutenticacoesComSenha());
+				.getAssinantesString(getAutenticacoesComSenha(),getDtDoc());
 		String assinantesToken = Documento
-				.getAssinantesString(getAssinaturasComToken());
+				.getAssinantesString(getAssinaturasComToken(),getDtDoc());
 		String assinantesSenha = Documento
-				.getAssinantesString(getAssinaturasComSenha());
+				.getAssinantesString(getAssinaturasComSenha(),getDtDoc());
 		String assinantesPorSenha = Documento
-				.getAssinantesStringComMatricula(getAssinaturasPorComSenha());
+				.getAssinantesStringComMatricula(getAssinaturasPorComSenha(),getDtDoc());
 
 		if (assinantesToken.length() > 0)
 			retorno = "Assinado digitalmente por " + assinantesToken + ".\n";
@@ -1932,7 +1932,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public String getSolicitantesDeAssinaturaCompleto() {
 		String retorno = "";
 		String revisores = Documento
-				.getAssinantesString(getSolicitantesDeAssinatura());
+				.getAssinantesString(getSolicitantesDeAssinatura(),getDtDoc());
 
 		if (revisores.length() > 0)
 			retorno = "Revisado por " + revisores + "";

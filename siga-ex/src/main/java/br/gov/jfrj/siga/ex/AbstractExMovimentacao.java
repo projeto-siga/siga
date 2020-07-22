@@ -73,6 +73,10 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 				+ "                where (mar.dpLotacaoIni.idLotacao=:lotaIni"
 				+ "                and (mar.cpMarcador.idMarcador=2)"
 				+ "                ) order by mar.dtIniMarca desc"),
+		@NamedQuery(name = "consultarQuantidadeParaTransferirEmLote", query = "select COUNT(mob) from ExMobil mob join mob.exMarcaSet mar"
+				+ "                where (mar.dpLotacaoIni.idLotacao=:lotaIni"
+				+ "                and (mar.cpMarcador.idMarcador=2)"
+				+ "                ) order by mar.dtIniMarca desc"),
 		// Somente os "a receber"
 		@NamedQuery(name = "consultarParaReceberEmLote", query = "select mob from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where (mar.dpLotacaoIni.idLotacao=:lotaIni"

@@ -9,6 +9,7 @@ import java.util.TreeSet;
 
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -148,7 +149,7 @@ public class ExMarcadorBL {
 					m = CpMarcador.MARCADOR_APENSADO;
 				}
 			}
-
+			
 			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO && mob.doc().isEletronico() && !mov.isAssinada()) {
 				m = CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA;
 			}
@@ -281,6 +282,7 @@ public class ExMarcadorBL {
 		acrescentarMarcadoresPendenciaDeAssinaturaMovimentacao();
 		acrescentarMarcadoresDoCossignatario();
 		acrescentarMarcadoresAssinaturaComSenha();
+		acrescentarMarcadorPublicacaoPortalTransparencia();
 	}
 
 	protected boolean acrescentarMarcadoresSemEfeito() {
@@ -297,7 +299,9 @@ public class ExMarcadorBL {
 		// Se não estiver finalizado
 		if (!mob.doc().isFinalizado()) {
 			acrescentarMarca(CpMarcador.MARCADOR_EM_ELABORACAO, mob.doc().getDtRegDoc(), mob.doc().getCadastrante(),
-					mob.doc().getLotaCadastrante());
+					(Ex.getInstance().getConf().podePorConfiguracao(mob.doc().getCadastrante(), mob.doc().getLotaCadastrante(), 
+							null, mob.doc().getExModelo().getExFormaDocumento(), null, CpTipoConfiguracao.TIPO_CONFIG_TMP_PARA_LOTACAO) ? 
+									mob.doc().getLotaCadastrante() : null));
 			if (mob.getExDocumento().getSubscritor() != null
 					&& !(Boolean.valueOf(SigaBaseProperties.getString("siga.mesa.naoRevisarTemporarios")) 
 							&& !mob.doc().getCadastrante().equals(mob.doc().getSubscritor()) 
@@ -451,7 +455,7 @@ public class ExMarcadorBL {
 								&& !mob.getDoc().isFinalizado())) 
 						acrescentarMarca(CpMarcador.MARCADOR_REVISAR, mov.getDtIniMov(), mov.getSubscritor(), null);
 					if (!(Boolean.valueOf(SigaBaseProperties.getString("siga.mesa.naoRevisarTemporarios")) 
-							&& !mob.getDoc().isFinalizado()) && mov.getSubscritor().isUsuarioExterno())
+							&& !mob.getDoc().isFinalizado()) && Ex.getInstance().getConf().podePorConfiguracao(mov.getSubscritor(), mov.getSubscritor().getLotacao(), CpTipoConfiguracao.TIPO_CONFIG_COSIGNATARIO_ASSINAR_ANTES_SUBSCRITOR))
 						acrescentarMarca(CpMarcador.MARCADOR_COMO_SUBSCRITOR, mov.getDtIniMov(), mov.getSubscritor(), null);						
 				}	
 			}
@@ -473,7 +477,6 @@ public class ExMarcadorBL {
 						|| idMarcador == CpMarcador.MARCADOR_PRIORITARIO  
 						|| idMarcador == CpMarcador.MARCADOR_RESTRICAO_ACESSO
 						|| idMarcador == CpMarcador.MARCADOR_COVID_19
-						|| idMarcador == CpMarcador.MARCADOR_PORTAL_TRANSPARENCIA
 						|| idMarcador == CpMarcador.MARCADOR_NOTA_EMPENHO));
 								
 				if (temMarcaManual)	{
@@ -501,6 +504,14 @@ public class ExMarcadorBL {
 			if (!jaAutenticado)
 				acrescentarMarca(CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA, mov.getDtIniMov(),
 						mov.getSubscritor(), null);
+		}
+	}
+	
+
+	public void acrescentarMarcadorPublicacaoPortalTransparencia() {
+		for (ExMovimentacao mov : movs(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA)) {
+			acrescentarMarca(CpMarcador.MARCADOR_PORTAL_TRANSPARENCIA, mov.getDtIniMov(), mov.getCadastrante(),
+					mov.getLotaCadastrante());
 		}
 	}
 
@@ -666,8 +677,12 @@ public class ExMarcadorBL {
 		mar.setCpMarcador(ExDao.getInstance().consultar(idMarcador, CpMarcador.class, false));
 		if (pess != null)
 			mar.setDpPessoaIni(pess.getPessoaInicial());
-		if (lota != null)
-			mar.setDpLotacaoIni(lota.getLotacaoInicial());
+		if (lota != null) {
+			AcessoConsulta ac = new AcessoConsulta(0L, lota.getIdInicial(), 
+					0L, lota.getOrgaoUsuario().getId());
+			if (ac.podeAcessar(mob.doc(), null, lota)) 
+				mar.setDpLotacaoIni(lota.getLotacaoInicial());
+		}
 		mar.setDtIniMarca(dt);
 		set.add(mar);
 	}
@@ -678,8 +693,12 @@ public class ExMarcadorBL {
 		mar.setCpMarcador(ExDao.getInstance().consultar(idMarcador, CpMarcador.class, false));
 		if (pess != null)
 			mar.setDpPessoaIni(pess.getPessoaInicial());
-		if (lota != null)
-			mar.setDpLotacaoIni(lota.getLotacaoInicial());
+		if (lota != null) {
+			AcessoConsulta ac = new AcessoConsulta(0L, lota.getIdInicial(), 
+					0L, lota.getOrgaoUsuario().getId());
+			if (ac.podeAcessar(mob.doc(), null, lota)) 
+				mar.setDpLotacaoIni(lota.getLotacaoInicial());
+		}
 		mar.setDtIniMarca(dtIni);
 		mar.setDtFimMarca(dtFim);
 		set.add(mar);

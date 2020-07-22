@@ -24,6 +24,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaConstraintViolationException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
@@ -138,6 +139,7 @@ public class Excel {
             System.err.println("Não foi possível econtrar arquivo: " + e.getMessage());
         } catch (Exception e) {
 			System.err.println(e.getMessage());
+			throw new AplicacaoException("Erro na gravação", 0, e);
         } finally {
             if (sc != null) {
                 sc.close();
@@ -340,7 +342,6 @@ public class Excel {
 				}
 			}
 			if(problemas == null || "".equals(problemas.toString())) {
-				try {
 	            	for (DpLotacao dpLotacao : lista) {
 		            	CpDao.getInstance().iniciarTransacao();
 		    			CpDao.getInstance().gravar(dpLotacao);
@@ -348,21 +349,27 @@ public class Excel {
 	    				if(dpLotacao.getIdLotacaoIni() == null && dpLotacao.getId() != null) {
 	    					dpLotacao.setIdLotacaoIni(dpLotacao.getId());
 	    					dpLotacao.setIdeLotacao(dpLotacao.getId().toString());
-	        				CpDao.getInstance().gravar(dpLotacao);
+	        				CpDao.getInstance().gravar(dpLotacao);	        				
 	        			}
 					}
-	    			CpDao.getInstance().commitTransacao();			
-	    		} catch (final Exception e) {
-	    			CpDao.getInstance().rollbackTransacao();
-	    			throw new AplicacaoException("Erro na gravação", 0, e);
-	    		}
+	            	CpDao.getInstance().em().getTransaction().commit();
 			}
 			if(problemas == null || "".equals(problemas.toString())) {
 	    		return null;
 	    	}
 	    	inputStream = new ByteArrayInputStream(problemas.getBytes("ISO-8859-1"));
-		} catch (Exception ioe) {
-            ioe.printStackTrace();
+		} catch (Exception e) {								
+			if (CpDao.getInstance().em().getTransaction().isActive()) {
+				CpDao.getInstance().em().getTransaction().rollback();
+			}			
+			if (e.getCause() != null && e.getCause().toString().contains("ConstraintViolationException")) {
+				throw new SigaConstraintViolationException("Identificado uma violação de integridade no banco de dados." 
+						+ " Isso pode ocorrer ao gravar um registro que já exista.<br/>" 
+						+ " Por segurança, todo o processo foi cancelado e nenhum registro foi gravado.<br/>"							
+						+ " Favor analisar a planilha e se certificar de que na mesma,"  
+						+ " não exista nenhuma SIGLA que já esteja cadastrada no sistema e tente novamente.");
+			}			
+			throw new AplicacaoException("Erro na gravação", 0, e);					
         }
     	return inputStream;
     }
@@ -1049,7 +1056,7 @@ public class Excel {
 			return "Linha " + linha +": NOME com mais de 60 caracteres" + System.getProperty("line.separator");
 		}
 
-		if(nomePessoa != null && !nomePessoa.matches("[a-zA-ZáâãäéêëíïóôõöúüçñÁÂÃÄÉÊËÍÏÓÔÕÖÚÜÇÑ'' ]+")) {
+		if(nomePessoa != null && !nomePessoa.matches(Texto.DpPessoa.NOME_REGEX_CARACTERES_PERMITIDOS)) {
 			return "Linha " + linha +": NOME com caracteres não permitidos" + System.getProperty("line.separator");
 		}
 		return "";

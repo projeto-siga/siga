@@ -24,6 +24,8 @@
  */
 package br.gov.jfrj.siga.vraptor;
 
+import java.util.ArrayList;
+import java.util.List;
 
 public class UsuarioAction {
 
@@ -62,6 +64,10 @@ public class UsuarioAction {
 	private String trocarSenhaRede;
 	
 	private String ajaxMsgErro;
+	
+	private String cont;
+	
+	private List<Erro> erros;	
 
 	public String getCpf() {
 		return cpf;
@@ -206,4 +212,69 @@ public class UsuarioAction {
 	public void setAjaxMsgErro(String ajaxMsgErro) {
 		this.ajaxMsgErro = ajaxMsgErro;
 	}
+	
+	public String getCont() {
+		return cont;
+	}
+	
+	public void setCont(String cont) {
+		this.cont = cont;
+	}
+		
+	public List<Erro> getErros() {	
+		return erros;
+	}
+	
+	public void setErros(List<Erro> erros) {
+		this.erros = erros;
+	}
+	
+	public void enviarErro(String campo, String mensagem) {
+		if (erros == null) {
+			erros = new ArrayList<>();
+		}
+		
+		erros.add(new Erro(campo, mensagem));		
+	}
+	
+	public boolean temErros() {
+		return erros != null && !erros.isEmpty();
+	}
+	
+	public UsuarioAction semExibirSenhas() {
+		senhaAtual = null;
+		senhaNova = null;
+		senhaConfirma = null;
+		senha1 = null;
+		senha2 = null;		
+		return this;
+	}
+	
+	public static class Erro {
+		private String campo;
+		private String mensagem;		
+		
+		public Erro(String campo, String mensagem) {			
+			this.campo = campo;
+			this.mensagem = mensagem;
+		}
+
+		public String getCampo() {
+			return campo;
+		}
+
+		public void setCampo(String campo) {
+			this.campo = campo;
+		}
+
+		public String getMensage() {
+			return mensagem;
+		}
+
+		public void setMensagem(String mensagem) {
+			this.mensagem = mensagem;
+		}
+		
+	}
+
 }

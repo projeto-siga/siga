@@ -71,7 +71,7 @@ public class CpArquivo implements Serializable {
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TP_ARMAZENAMENTO")
-	private CpArquivoTipoArmazenamentoEnum tipoArmazenamento;
+	private CpArquivoTipoArmazenamentoEnum tipoArmazenamento = CpArquivoTipoArmazenamentoEnum.BLOB;
 	
 	@Column(name = "CAMINHO")
 	private String caminho;

@@ -39,13 +39,18 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpArquivo;
+import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCFacade;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCInterface;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -233,6 +238,9 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@GeneratedValue(generator = "EX_DOCUMENTO_SEQ")
 	@Column(name = "ID_DOC")
 	private java.lang.Long idDoc;
+	
+	@Transient
+	protected byte[] cacheConteudoBlobDoc;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_MOB_PAI")
@@ -466,20 +474,6 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 */
 	public DpPessoa getCadastrante() {
 		return cadastrante;
-	}
-
-	/**
-	 * COMPLETAR
-	 */
-	public byte[] getConteudoBlobDoc() {
-		return this.conteudoBlobDoc;
-	}
-
-	/**
-	 * COMPLETAR
-	 */
-	public java.lang.String getConteudoTpDoc() {
-		return this.conteudoTpDoc;
 	}
 
 	/**
@@ -812,29 +806,6 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		this.cadastrante = cadastrante;
 	}
 
-	/**
-	 * Set the value of the CONTEUDO_BLOB_DOC column.
-	 * 
-	 * @param conteudoBlobDoc
-	 */
-	public void setConteudoBlobDoc(byte[] conteudoBlobDoc) {
-		this.conteudoBlobDoc = conteudoBlobDoc;
-	}
-
-	/**
-	 * Set the value of the CONTEUDO_TP_DOC column.
-	 * 
-	 * @param conteudoTpDoc
-	 */
-	public void setConteudoTpDoc(final java.lang.String conteudoTpDoc) {
-		this.conteudoTpDoc = conteudoTpDoc;
-	}
-
-	/*
-	 * public void setFgPessoal(final String fgPessoal) { this.fgPessoal =
-	 * fgPessoal; }
-	 */
-
 	public void setDescrClassifNovo(java.lang.String descrClassifNovo) {
 		this.descrClassifNovo = descrClassifNovo;
 	}
@@ -1113,18 +1084,40 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		this.cpArquivo = cpArquivo;
 	}
 	
-//	public java.lang.String getConteudoTpDoc() {
-//		if (getCpArquivo() == null)
-//			return conteudoTpDoc;
-//		return getCpArquivo().getConteudoTpArq();
-//	}
-//
-//	public void setConteudoTpDoc(final java.lang.String conteudoTp) {
-//		this.conteudoTpDoc = conteudoTp;
-//		if(cpArquivo==null)
-//			cpArquivo = new CpArquivo();
-//		cpArquivo.setConteudoTpArq(conteudoTp);
-//	}
+	public java.lang.String getConteudoTpDoc() {
+		if (getCpArquivo() == null || getCpArquivo().getConteudoTpArq() == null)
+			return conteudoTpDoc;
+		return getCpArquivo().getConteudoTpArq();
+	}
+
+	public void setConteudoTpDoc(final java.lang.String conteudoTp) {
+		this.conteudoTpDoc = conteudoTp;
+		setCpArquivo(CpArquivo.updateConteudoTp(getCpArquivo(), conteudoTp)); 
+	}
+	
+	public byte[] getConteudoBlobDoc() {
+		if(cacheConteudoBlobDoc != null) {
+			return cacheConteudoBlobDoc;
+		} else if (getCpArquivo() == null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(getCpArquivo().getTipoArmazenamento())) {
+			cacheConteudoBlobDoc = conteudoBlobDoc;
+		} else {
+			try {
+				ArmazenamentoBCInterface a = ArmazenamentoBCFacade.getArmazenamentoBC(getCpArquivo());
+				cacheConteudoBlobDoc = a.recuperar(getCpArquivo());
+			} catch (Exception e) {
+				//TODO: K Tratar Log
+				throw new AplicacaoException(e.getMessage());
+			}
+		}
+		return cacheConteudoBlobDoc;
+	}
+
+	public void setConteudoBlobDoc(byte[] createBlob) {
+		cacheConteudoBlobDoc = createBlob;
+		if (getCpArquivo() == null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(getCpArquivo().getTipoArmazenamento()))
+			conteudoBlobDoc = createBlob;
+		setCpArquivo(CpArquivo.updateConteudo(getCpArquivo(), createBlob));
+	}
 	
 	public ExProtocolo getExProtocolo() {
 		return exProtocolo;

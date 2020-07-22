@@ -253,8 +253,20 @@ public class ExDocumentoController extends ExController {
 				.consultar(exDocumentoDTO.getPreenchimento(),
 						ExPreenchimento.class, false);
 
+
 		exPreenchimento.setPreenchimentoBA(getByteArrayFormPreenchimento(vars,
 				campos));
+		
+		try {
+			if (!(exPreenchimento.getCpArquivo() == null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(exPreenchimento.getCpArquivo().getTipoArmazenamento()))) {
+				ArmazenamentoBCInterface armazenamento = ArmazenamentoBCFacade.getArmazenamentoBC(exPreenchimento.getCpArquivo());
+				armazenamento.salvar(exPreenchimento.getCpArquivo(), exPreenchimento.getPreenchimentoBlob());
+			}
+		} catch (Exception e) {
+			// TODO: K Tratar log
+			e.printStackTrace();
+		}
+		
 		dao().gravar(exPreenchimento);
 		ModeloDao.commitTransacao();
 
@@ -887,6 +899,17 @@ public class ExDocumentoController extends ExController {
 		final ExPreenchimento exemplo = dao()
 				.consultar(exDocumentoDTO.getPreenchimento(),
 						ExPreenchimento.class, false);
+		
+		try {
+			if (!(exemplo.getCpArquivo() == null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(exemplo.getCpArquivo().getTipoArmazenamento()))) {
+				ArmazenamentoBCInterface armazenamento = ArmazenamentoBCFacade.getArmazenamentoBC(exemplo.getCpArquivo());
+				armazenamento.apagar(exemplo.getCpArquivo());
+			}
+		} catch (Exception e) {
+			// TODO: K Tratar log
+			e.printStackTrace();
+		}
+		
 		dao().excluir(exemplo);
 		ModeloDao.commitTransacao();
 		exDocumentoDTO.setPreenchimento(0L);
@@ -1794,8 +1817,21 @@ public class ExDocumentoController extends ExController {
 		exPreenchimento.setNomePreenchimento(exDocumentoDTO
 				.getNomePreenchimento());
 
+		CpArquivo cpArquivo = new CpArquivo();
+		cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.HCP);//TODO: K ler do properties
+		exPreenchimento.setCpArquivo(cpArquivo);
+
 		exPreenchimento.setPreenchimentoBA(getByteArrayFormPreenchimento(vars,
 				campos));
+		
+		try {
+			ArmazenamentoBCInterface armazenamento = ArmazenamentoBCFacade.getArmazenamentoBC(cpArquivo);
+			armazenamento.salvar(cpArquivo, exPreenchimento.getPreenchimentoBlob());
+		} catch (Exception e) {
+			// TODO: K Tratar log
+			e.printStackTrace();
+		}
+		
 		dao().gravar(exPreenchimento);
 		ModeloDao.commitTransacao();
 

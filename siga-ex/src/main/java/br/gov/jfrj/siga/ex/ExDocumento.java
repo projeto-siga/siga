@@ -55,8 +55,6 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
-import br.gov.jfrj.siga.cp.CpArquivo;
-import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCFacade;
 import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCInterface;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -94,9 +92,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 
 	private static final Logger log = Logger.getLogger(ExDocumento.class);
 
-	@Transient
-	private byte[] cacheConteudoBlobDoc;
-	
 	@Transient
 	private List<ExMovimentacao> listaMovimentacaoPorRestricaoAcesso;	
 	
@@ -395,22 +390,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * blob do documento.
 	 */
 	public byte[] getConteudoBlobDoc2() {
-//		if (cacheConteudoBlobDoc == null)
-//			cacheConteudoBlobDoc = getConteudoBlobDoc();
-//		return cacheConteudoBlobDoc;
-		if (cacheConteudoBlobDoc == null)
-			if(getCpArquivo() != null) {
-				try {
-					ArmazenamentoBCInterface a = ArmazenamentoBCFacade.getArmazenamentoBC(getCpArquivo());
-					cacheConteudoBlobDoc = a.recuperar(getCpArquivo());
-				} catch (Exception e) {
-					//TODO: K Tratar Log
-					throw new AplicacaoException(e.getMessage());
-				}
-			}
-			else
-				cacheConteudoBlobDoc = getConteudoBlobDoc();
-		return cacheConteudoBlobDoc;
+		return getConteudoBlobDoc();
 	}
 
 	/**
@@ -2493,23 +2473,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public void setConteudoBlobDoc2(byte[] blob) {
 		if (blob != null) {
 			setConteudoBlobDoc(blob);
-//			if(getCpArquivo() == null) {
-//				CpArquivo cpArquivo = new CpArquivo();
-//				//TODO: K Ler do properties o mecanismo de armazenamento padrão
-//				cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.HCP);
-////				cpArquivo.setCaminho("2020/6/9/5/1/00f38a11-3769-49b5-a7ca-55864254a2f9.zip");
-//				setCpArquivo(cpArquivo);
-//			}
-//			ArmazenamentoBCInterface a;
-//			try {
-//				a = ArmazenamentoBCFacade.getArmazenamentoBC(getCpArquivo());
-//				a.salvar(getCpArquivo(), blob);
-//			} catch (Exception e) {
-//				//TODO: K Tratar Log
-//				e.printStackTrace();
-//			}
 		}
-		cacheConteudoBlobDoc = blob;
 	}
 
 	public void setConteudoBlobForm(final byte[] conteudo) {

@@ -40,11 +40,16 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.BatchSize;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpArquivo;
+import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCFacade;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCInterface;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -291,6 +296,9 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	@GeneratedValue(generator = "EX_MOVIMENTACAO_SEQ")
 	@Column(name = "ID_MOV", unique = true, nullable = false)
 	private Long idMov;
+	
+	@Transient
+	protected byte[] cacheConteudoBlobMov;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_cadastrante")
@@ -823,22 +831,37 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	}
 
 	public String getConteudoTpMov() {
-		if (getCpArquivo() == null)
+		if (getCpArquivo() == null || getCpArquivo().getConteudoTpArq() == null)
 			return conteudoTpMov;
 		return getCpArquivo().getConteudoTpArq();
 	}
 
 	public void setConteudoTpMov(final String conteudoTp) {
+		this.conteudoTpMov = conteudoTp;
 		setCpArquivo(CpArquivo.updateConteudoTp(getCpArquivo(), conteudoTp)); 
 	}
 
 	public byte[] getConteudoBlobMov() {
-		if (getCpArquivo() == null)
-			return null;
-		return getCpArquivo().getConteudoBlobArq();
+		if(cacheConteudoBlobMov != null) {
+			return cacheConteudoBlobMov;
+		} else if (getCpArquivo() == null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(getCpArquivo().getTipoArmazenamento())) {
+			cacheConteudoBlobMov = conteudoBlobMov;
+		} else {
+			try {
+				ArmazenamentoBCInterface a = ArmazenamentoBCFacade.getArmazenamentoBC(getCpArquivo());
+				cacheConteudoBlobMov = a.recuperar(getCpArquivo());
+			} catch (Exception e) {
+				//TODO: K Tratar Log
+				throw new AplicacaoException(e.getMessage());
+			}
+		}
+		return cacheConteudoBlobMov;
 	}
 
 	public void setConteudoBlobMov(byte[] createBlob) {
+		cacheConteudoBlobMov = createBlob;
+		if (getCpArquivo() == null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(getCpArquivo().getTipoArmazenamento()))
+			conteudoBlobMov = createBlob;
 		setCpArquivo(CpArquivo.updateConteudo(getCpArquivo(), createBlob));
 	}
 }

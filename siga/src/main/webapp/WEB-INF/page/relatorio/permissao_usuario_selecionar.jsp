@@ -30,27 +30,7 @@
 				</div>
 			</form>
 			</div>
-		</div>
-		<!-- Modal Alert-->
-		<div class="modal fade" id="alertaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-			<div class="modal-dialog" role="document">
-		    	<div class="modal-content">
-		      		<div class="modal-header">
-				        <h5 class="modal-title" id="alertaModalLabel">Alerta</h5>
-				        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-				          <span aria-hidden="true">&times;</span>
-				    	</button>
-				    </div>
-			      	<div class="modal-body">
-			        	<p class="mensagem-Modal"></p>
-			      	</div>
-					<div class="modal-footer">
-					  <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
-					</div>
-		    	</div>
-		  	</div>
-		</div>				
-		<!--Fim Modal Alert -->
+		</div>		
 	</div>
 </siga:pagina>
 <script type="text/javascript">
@@ -60,12 +40,8 @@
 			if (t_strIdPessoa.value) {
 				location.href = 'emitir_permissao_usuario?idPessoa=' + t_strIdPessoa.value;
 			} else {
-				mensagemAlerta("Por favor, é necessário preencher o campo pessoa!");
+				sigaModal.alerta("Por favor, é necessário preencher o campo pessoa!");
 			}
-		}
-	}
-	function mensagemAlerta(mensagem) {
-		$('#alertaModal').find('.mensagem-Modal').text(mensagem);
-		$('#alertaModal').modal();
-	}
+		}			
+	}	
 </script>

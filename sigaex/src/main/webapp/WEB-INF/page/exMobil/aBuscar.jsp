@@ -31,7 +31,7 @@ function submitBusca(cliente) {
 	if(cliente == 'GOVSP') {
 		var descricao = document.getElementById('descrDocumento').value.trim();
 		if(descricao.length != 0 && descricao.length < 5) {
-			mensagemAlerta("Preencha no mínimo 5 caracteres no campo descrição");
+			sigaModal.alerta("Preencha no mínimo 5 caracteres no campo descrição");
 		} else {
 			$('#buscandoSpinner').removeClass('d-none');
 			document.getElementById("btnBuscar").disabled = true;
@@ -42,11 +42,6 @@ function submitBusca(cliente) {
 		document.getElementById("btnBuscar").disabled = true;
 		buscar.submit();
 	}
-}
-
-function mensagemAlerta(mensagem) {
-	$('#alertaModal').find('.mensagem-Modal').text(mensagem);
-	$('#alertaModal').modal();
 }
 
 function montaDescricao(id,via,descrDoc){
@@ -1014,25 +1009,7 @@ function limpaCampos()
 											</button>
 										</div>
 									</div>
-								</div>
-								<div class="modal fade" id="alertaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-									<div class="modal-dialog" role="document">
-								    	<div class="modal-content">
-								      		<div class="modal-header">
-										        <h5 class="modal-title" id="alertaModalLabel">Alerta</h5>
-										        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-										          <span aria-hidden="true">&times;</span>
-										    	</button>
-										    </div>
-									      	<div class="modal-body">
-									        	<p class="mensagem-Modal"></p>
-									      	</div>
-											<div class="modal-footer">
-											  <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
-											</div>
-								    	</div>
-								  	</div>
-								</div>	
+								</div>					
 							</form>
 						</div>
 					</div>

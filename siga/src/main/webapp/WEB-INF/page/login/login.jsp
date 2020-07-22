@@ -107,10 +107,11 @@
 										<a href="/siga/public/app/usuario/esqueci_senha" class="btn btn-link btn-block"><strong>Esqueci minha senha</strong></a>
 									</div>
 									
-									<hr class="my-2">
-									<p class="text-left font-weight-bold">Ou acesse com: </p>
 									<c:choose>
 										<c:when test="${siga_cliente_sso}">
+											<hr class="my-2">
+											<p class="text-left font-weight-bold">Ou acesse com: </p>
+							
 											<a href="/siga/public/app/loginSSO"class="btn btn-lg btn-dark btn-block">${siga_cliente_sso_btn_txt}</a>
 										</c:when>
 									</c:choose>

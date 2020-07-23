@@ -371,6 +371,9 @@ ${meta}
 									<c:when test="${f:resource('ambiente') eq 'treinamento'}">
 										Ambiente de Simulação
 									</c:when>
+									<c:when test="${f:resource('ambiente') eq 'configuracao'}">
+										Ambiente de Configuração
+									</c:when>
 									<c:when test="${f:resource('ambiente') eq 'homolog'}">
 										Ambiente de Homologação
 									</c:when>

@@ -378,14 +378,18 @@
 										<u>P</u>DF
 	<!-- 									</a> -->
 							</a>
+							<a class="btn btn-primary btn-sm notActive" data-toggle="formato" data-title="pdfsemmarcas" id="radioPDFSemMarcas" name="pdfsemmarcas" value="pdfsemmarcas" accesskey="p" onclick="toggleBotaoHtmlPdf($(this)); exibir(htmlAtual,pdfAtual,'semmarcas/');">
+										PDF Sem Marcas
+							</a>
 						</div>
 						<a class="btn-btn-primary btn-sm d-none" id="pdflink" accesskey="a"><u>a</u>brir PDF</a>
+						<a class="btn-btn-primary btn-sm d-none" id="pdfsemmarcaslink" accesskey="b">a<u>b</u>rir PDF</a>
 						<input type="hidden" name="formato" id="radio" value="html">
 					</div>
 					<button type="button" class="btn btn-secondary btn-sm" id="TelaCheia" data-toggle="button" aria-pressed="false" autocomplete="off"
 						onclick="javascript: telaCheia(this);">
 						<u>T</u>ela Cheia
-					</button>								
+					</button>
 				</div>
 			</c:if>
 			<div id="paipainel" style="margin: 0px; padding: 0px; border: 0px; clear: both;">
@@ -442,6 +446,11 @@
 		
 		if ('${siga_cliente}' == 'GOVSP') {
 			document.getElementById('pdflink').href = path + refPDF + '&sigla=${sigla}';
+			
+			if ($('#radioPDFSemMarcas').hasClass('active')) {
+				document.getElementById('pdfsemmarcaslink').href = path + refPDF
+					+ "&semmarcas=1";
+			}
 		} else {
 			document.getElementById('pdflink').href = path + refPDF;
 		}
@@ -462,13 +471,14 @@
 		else if (ifr.attachEvent)
 			ifr.detachEvent("onload", resize); // Bug fix line
 
-		if (document.getElementById('radioPDFSemMarcas') == null) {
+			if ('${siga_cliente}' == 'GOVSP') {
 			// Para GOVSP com link buttons
 
 			var refSiglaDocPrincipal = '&sigla=${sigla}';
 			
 			if ($('#radioHTML').hasClass('active') && refHTML != '') {
 				$('#pdflink').addClass('d-none');
+				$('#pdfsemmarcaslink').addClass('d-none');
 				ifr.src = path + refHTML + refSiglaDocPrincipal;
 				ifrp.style.border = "0px solid black";
 				ifrp.style.borderBottom = "0px solid black";
@@ -477,8 +487,16 @@
 				else if (ifr.attachEvent)
 					ifr.attachEvent("onload", resize);
 			} else {
-				$('#pdflink').removeClass('d-none');
-				ifr.src = path + refPDF + refSiglaDocPrincipal;
+				if ($('#radioPDFSemMarcas').hasClass('active')) {
+					$('#pdfsemmarcaslink').removeClass('d-none');
+					$('#pdflink').addClass('d-none');
+					ifr.src = path + refPDF + "&semmarcas=1";
+				} else {
+					$('#pdflink').removeClass('d-none');
+					$('#pdfsemmarcaslink').addClass('d-none');
+					ifr.src = path + refPDF + refSiglaDocPrincipal;
+				}
+				
 				ifrp.style.border = "1px solid black";
 				ifr.height = pageHeight() - 300;
 			}

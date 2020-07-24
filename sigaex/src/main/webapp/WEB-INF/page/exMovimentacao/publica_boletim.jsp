@@ -16,9 +16,8 @@ function confirma(){
 }
 
 function mensagemConfirmacao(mensagem, funcaoConfirmacao) {
-	$('#modalConfirmacao').find('.modal-body').html(mensagem);
-	$('#btnConfirmacao').click(funcaoConfirmacao);
-	$('#modalConfirmacao').modal();
+	sigaModal.alterarLinkBotaoDeAcao('confirmacaoModal', 'javascript:'.concat(funcaoConfirmacao.name).concat('()'));
+	sigaModal.enviarHTMLEAbrir('confirmacaoModal', mensagem);	
 }
 
 var confirmar = function () {
@@ -54,25 +53,9 @@ var confirmar = function () {
 			</form>				
 			</div>
 		</div>
-		<!-- Modal Confirmacao -->
-		<div class="modal fade" id="modalConfirmacao" tabindex="-1" role="dialog" aria-labelledby="modalConfirmacao" aria-hidden="true">
-			<div class="modal-dialog" role="document">
-		    	<div class="modal-content">
-		      		<div class="modal-header">
-				        <h5 class="modal-title" id="exampleModalLabel">Confirmação</h5>
-				        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-				          <span aria-hidden="true">&times;</span>
-				        </button>
-					</div>
-			      	<div class="modal-body">
-					</div>
-				    <div class="modal-footer">
-				    	<button id="btnConfirmacao" type="button" class="btn btn-primary">Ok</button>
-				        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-				    </div>
-		  		</div>
-		  	</div>
-		</div>			
-		<!-- Fim Modal Confirmacao-->
+		<siga:siga-modal id="confirmacaoModal" exibirRodape="true" tituloADireita="ConfirmaÃ§Ã£o"
+			descricaoBotaoFechaModalDoRodape="Cancelar" linkBotaoDeAcao="#">
+			<div class="modal-body"></div>
+		</siga:siga-modal>	
 	</div>
 </siga:pagina>

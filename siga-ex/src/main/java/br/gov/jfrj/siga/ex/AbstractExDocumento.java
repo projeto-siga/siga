@@ -46,6 +46,7 @@ import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
@@ -430,7 +431,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
 	@JoinColumn(name = "ID_ARQ")
 	private CpArquivo cpArquivo;
-
+	
 	/**
 	 * Simple constructor of AbstractExDocumento instances.
 	 */
@@ -1010,6 +1011,8 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setOrgaoUsuario(CpOrgaoUsuario orgaoUsuario) {
 		this.orgaoUsuario = orgaoUsuario;
+		criarCpArquivo();
+		cpArquivo.setOrgaoUsuario(orgaoUsuario);
 	}
 
 	/**
@@ -1092,7 +1095,8 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setConteudoTpDoc(final java.lang.String conteudoTp) {
 		this.conteudoTpDoc = conteudoTp;
-		setCpArquivo(CpArquivo.updateConteudoTp(getCpArquivo(), conteudoTp)); 
+		criarCpArquivo();
+		cpArquivo.setConteudoTpArq(conteudoTp);
 	}
 	
 	public byte[] getConteudoBlobDoc() {
@@ -1105,7 +1109,6 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 				ArmazenamentoBCInterface a = ArmazenamentoBCFacade.getArmazenamentoBC(getCpArquivo());
 				cacheConteudoBlobDoc = a.recuperar(getCpArquivo());
 			} catch (Exception e) {
-				//TODO: K Tratar Log
 				throw new AplicacaoException(e.getMessage());
 			}
 		}
@@ -1114,9 +1117,18 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setConteudoBlobDoc(byte[] createBlob) {
 		cacheConteudoBlobDoc = createBlob;
-		if (getCpArquivo() == null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(getCpArquivo().getTipoArmazenamento()))
+		criarCpArquivo();
+		if (CpArquivoTipoArmazenamentoEnum.BLOB.equals(getCpArquivo().getTipoArmazenamento())) {
 			conteudoBlobDoc = createBlob;
-		setCpArquivo(CpArquivo.updateConteudo(getCpArquivo(), createBlob));
+			cpArquivo.setTamanho(conteudoBlobDoc.length);
+		}
+	}
+	
+	private void criarCpArquivo() {
+		if(cpArquivo == null)
+			cpArquivo = new CpArquivo();
+		if(conteudoBlobDoc != null)
+			cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.BLOB);
 	}
 	
 	public ExProtocolo getExProtocolo() {
@@ -1146,4 +1158,5 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	public void setDescrDocumentoAI(java.lang.String descrDocumentoAI) {
 		this.descrDocumentoAI = descrDocumentoAI;
 	}
+	
 }

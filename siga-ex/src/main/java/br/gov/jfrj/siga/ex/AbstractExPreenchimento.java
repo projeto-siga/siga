@@ -194,7 +194,6 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 		cacheConteudoBlobPre = preenchimentoBlob;
 		if (getCpArquivo() == null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(getCpArquivo().getTipoArmazenamento()))
 			this.preenchimentoBlob = preenchimentoBlob;
-		setCpArquivo(CpArquivo.updateConteudo(getCpArquivo(), preenchimentoBlob));
 	}
 	
 }

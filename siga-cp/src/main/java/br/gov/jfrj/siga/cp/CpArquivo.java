@@ -19,7 +19,6 @@
 package br.gov.jfrj.siga.cp;
 
 import java.io.Serializable;
-import java.util.Arrays;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -38,6 +37,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Immutable;
 
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 
@@ -71,15 +71,19 @@ public class CpArquivo implements Serializable {
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TP_ARMAZENAMENTO")
-	private CpArquivoTipoArmazenamentoEnum tipoArmazenamento = CpArquivoTipoArmazenamentoEnum.BLOB;
+	private CpArquivoTipoArmazenamentoEnum tipoArmazenamento;
 	
 	@Column(name = "CAMINHO")
 	private String caminho;
+	
+	@Column(name = "TAMANHO_ARQ")
+	private Integer tamanho;
 
 	/**
 	 * Simple constructor of AbstractExDocumento instances.
 	 */
 	public CpArquivo() {
+		tipoArmazenamento = CpArquivoTipoArmazenamentoEnum.valueOf(SigaBaseProperties.getString("siga.tipo.armazenamento.arquivo"));
 	}
 
 	public java.lang.Long getIdArq() {
@@ -122,7 +126,7 @@ public class CpArquivo implements Serializable {
 		return this.arquivoBlob.getConteudoBlobArq();
 	}
 
-	private void setConteudoBlobArq(byte[] createBlob) {
+	public void setConteudoBlobArq(byte[] createBlob) {
 		if (this.arquivoBlob == null) {
 			this.arquivoBlob = new CpArquivoBlob();
 			this.arquivoBlob.setArquivo(this);
@@ -160,15 +164,6 @@ public class CpArquivo implements Serializable {
 		return old;
 	}
 
-	public static CpArquivo updateConteudo(CpArquivo old, byte[] conteudo) {
-		if (old == null || !Arrays.equals(old.getConteudoBlobArq(), conteudo)) {
-			CpArquivo arq = CpArquivo.forUpdate(old);
-			arq.setConteudoBlobArq(conteudo);
-			return arq;
-		}
-		return old;
-	}
-
 	public CpArquivoTipoArmazenamentoEnum getTipoArmazenamento() {
 		return tipoArmazenamento;
 	}
@@ -183,5 +178,13 @@ public class CpArquivo implements Serializable {
 
 	public void setCaminho(String caminho) {
 		this.caminho = caminho;
+	}
+
+	public Integer getTamanho() {
+		return tamanho;
+	}
+
+	public void setTamanho(Integer tamanho) {
+		this.tamanho = tamanho;
 	}
 }

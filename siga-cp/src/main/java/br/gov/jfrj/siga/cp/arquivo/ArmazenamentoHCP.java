@@ -17,12 +17,22 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.jboss.logging.Logger;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.TipoConteudo;
 
 public class ArmazenamentoHCP implements ArmazenamentoBCInterface {
 
+	private static final String HCP = "HCP ";
+
+	private final static Logger log = Logger.getLogger(ArmazenamentoHCP.class);
+	
+	private static final String ERRO_RECUPERAR_ARQUIVO = "Erro ao recuperar o arquivo";
+	private static final String ERRO_GRAVAR_ARQUIVO = "Erro ao gravar o arquivo";
+	private static final String ERRO_EXCLUIR_ARQUIVO = "Erro ao excluir o arquivo";
+	
 	private static final String AUTHORIZATION = "Authorization";
 	private CloseableHttpClient client;
 	private String uri = "https://1118-spsempapel-documentos-digitais-desenv.999-prodesp.hcp.prodesp-dc00.sp.gov.br/rest/";
@@ -40,6 +50,7 @@ public class ArmazenamentoHCP implements ArmazenamentoBCInterface {
 	public void salvar(CpArquivo cpArquivo, byte[] conteudo) {
 		try {
 			init();
+			cpArquivo.setTamanho(conteudo.length);
 			if(cpArquivo.getCaminho()==null)
 				cpArquivo.setCaminho(gerarCaminho(cpArquivo));
 			else
@@ -52,8 +63,8 @@ public class ArmazenamentoHCP implements ArmazenamentoBCInterface {
 			HttpResponse response = client.execute(request);
 			System.out.println("Response Code : " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase()); 
 		} catch (Exception e) {
-			//TODO: IMPLEMENTAR LOG
-			e.printStackTrace();
+			log.error(ERRO_GRAVAR_ARQUIVO, cpArquivo.getIdArq(), e);
+			throw new AplicacaoException(ERRO_EXCLUIR_ARQUIVO);
 		}
 	}
 
@@ -66,8 +77,8 @@ public class ArmazenamentoHCP implements ArmazenamentoBCInterface {
 			HttpResponse response = client.execute(request);
 			System.out.println("Response Code : " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase()); 
 		} catch (Exception e) {
-			//TODO: IMPLEMENTAR LOG
-			e.printStackTrace();
+			log.error(ERRO_EXCLUIR_ARQUIVO, cpArquivo.getIdArq(), e);
+			throw new AplicacaoException(ERRO_EXCLUIR_ARQUIVO);
 		}
 	}
 	
@@ -91,8 +102,8 @@ public class ArmazenamentoHCP implements ArmazenamentoBCInterface {
 				System.out.println("Response Code : " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
 			}
 		} catch (Exception e) {
-			//TODO: IMPLEMENTAR LOG
-			e.printStackTrace();
+			log.error(ERRO_RECUPERAR_ARQUIVO, cpArquivo.getIdArq(), e);
+			throw new AplicacaoException(ERRO_RECUPERAR_ARQUIVO);
 		}
 		return null;
 	}
@@ -100,7 +111,7 @@ public class ArmazenamentoHCP implements ArmazenamentoBCInterface {
 	private void gerarToken() {
 		String usuarioBase64 = Base64.getEncoder().encodeToString(username.getBytes());
 		String senhaMD5 = DigestUtils.md5Hex(password.getBytes());
-		token = "HCP " + usuarioBase64 + ":" + senhaMD5;
+		token = HCP + usuarioBase64 + ":" + senhaMD5;
 	}
 
 	private String gerarCaminho(CpArquivo cpArquivo) {

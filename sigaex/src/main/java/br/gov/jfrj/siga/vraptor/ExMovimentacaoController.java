@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.MessageFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -540,17 +541,62 @@ public class ExMovimentacaoController extends ExController {
 		Ex.getInstance()
 				.getBL()
 				.desobrestar(getCadastrante(), getLotaTitular(), mob,
-						movimentacao.getDtMov(), movimentacao.getSubscritor());
+						movimentacao.getDtMov(), movimentacao.getSubscritor(), false);
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
+	@Get("/app/expediente/mov/sobrestar")
+	public void aSobrestar(final String sigla, final String dtDesobrestarString) {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+		buscarDocumento(builder);
 
-	@Get("app/expediente/mov/sobrestar_gravar")
-	public void sobrestarGravar(final String sigla) {
+		if (!Ex.getInstance()
+				.getComp()
+				.podeAcessarDocumento(getTitular(), getLotaTitular(),
+						builder.getMob())) {
+			throw new AplicacaoException(
+					"Acesso permitido a usuários autorizados.");
+		}
+
+		if (!Ex.getInstance()
+				.getComp()
+				.podeSobrestar(getTitular(), getLotaTitular(), builder.getMob())) {
+			throw new AplicacaoException("Via não pode ser sobrestada");
+		}
+		result.include("sigla", sigla);
+		result.include("dtDesobrestarString", dtDesobrestarString);
+	}
+
+	@Post("app/expediente/mov/sobrestar_gravar")	
+	public void sobrestarGravar(final String sigla, final String dtDesobrestarString) {
+        Date dtDesobrestar = null; 
+		if(dtDesobrestarString != null && !"".equals(dtDesobrestarString.trim())) {
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			try {
+				dtDesobrestar = sdf.parse(dtDesobrestarString);
+	        	if (!dtDesobrestar.after(new Date())) {
+	        		result.include("msgCabecClass", "alert-danger");
+	        		result.include("mensagemCabec", "Data para desobrestar deve ser posterior à data de hoje.");
+	        		result.forwardTo(this).aSobrestar(sigla, dtDesobrestarString);
+	       			return;
+	        	}
+			} catch (ParseException e) {
+        		result.include("msgCabecClass", "alert-danger");
+        		result.include("mensagemCabec", "Data para desobrestar o documento inválida.");
+        		result.forwardTo(this).aSobrestar(sigla, dtDesobrestarString);
+			}		
+		}
+			
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 
-		buscarDocumento(builder);
-
+		ExDocumento doc = buscarDocumento(builder);
+		if (dtDesobrestar != null) {
+			// Se informou data para desobrestar, marca no documento se for antes da ultima programada 
+			if (doc.getDtAcaoProgramada() == null || dtDesobrestar.before(doc.getDtAcaoProgramada()))
+				doc.setDtAcaoProgramada(dtDesobrestar);
+		}
+			
 		final ExMovimentacao mov = ExMovimentacaoBuilder.novaInstancia()
 				.construir(dao());
 
@@ -572,7 +618,7 @@ public class ExMovimentacaoController extends ExController {
 				.getBL()
 				.sobrestar(getCadastrante(), getLotaTitular(),
 						builder.getMob(), mov.getDtMov(), null,
-						mov.getSubscritor());
+						mov.getSubscritor(), dtDesobrestar);
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 		

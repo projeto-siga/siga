@@ -417,6 +417,10 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_PROTOCOLO")
     private ExProtocolo exProtocolo;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DT_ACAO_PROGRAMADA", length = 19)
+	private java.util.Date dtAcaoProgramada;
 	
 	/**
 	 * Simple constructor of AbstractExDocumento instances.
@@ -1126,5 +1130,21 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setDescrDocumentoAI(java.lang.String descrDocumentoAI) {
 		this.descrDocumentoAI = descrDocumentoAI;
+	}
+	/**
+	 * Retorna a data de uma acao programada para o documento.
+	 * Indica que nesta data deve realizar uma acao neste documento.
+	 */
+	public java.util.Date getDtAcaoProgramada() {
+		return this.dtAcaoProgramada;
+	}
+
+	/**
+	 * Seta a data de uma acao programada para o documento.
+	 * 
+	 * @param dtAcaoProgramada
+	 */
+	public void setDtAcaoProgramada(final java.util.Date dtAcaoProgramada) {
+		this.dtAcaoProgramada = dtAcaoProgramada;
 	}
 }

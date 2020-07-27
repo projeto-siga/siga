@@ -108,6 +108,7 @@ import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.util.ListaHierarquica;
 import br.gov.jfrj.siga.util.ListaHierarquicaItem;
 import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
+import br.gov.jfrj.siga.vraptor.builder.ExMovimentacaoBuilder;
 
 @Controller
 public class ExDocumentoController extends ExController {
@@ -1514,6 +1515,8 @@ public class ExDocumentoController extends ExController {
 				&& exDocumentoDto.getMob().getIdMobil() != null) {
 			verificaNivelAcesso(exDocumentoDto.getMob());
 		}
+
+		Ex.getInstance().getBL().verAcaoProgramada(exDocumentoDto.getDoc());
 	}
 
 	@Get("/app/expediente/doc/finalizar")

@@ -235,9 +235,17 @@ public class ExMarcadorBL {
 			// Edson: Os marcadores "Arq Corrente" e
 			// "Aguardando andamento" são mutuamente exclusivos
 			if (m != CpMarcador.MARCADOR_EM_ANDAMENTO
-					|| !(mob.isArquivado() || mob.doc().getMobilGeral().isArquivado()))
-				acrescentarMarca(m, dt, ultMovNaoCanc.getResp(), ultMovNaoCanc.getLotaResp());
-			
+					|| !(mob.isArquivado() || mob.doc().getMobilGeral().isArquivado())) {
+				if (m != CpMarcador.MARCADOR_SOBRESTADO) {
+					acrescentarMarca(m, dt, ultMovNaoCanc.getResp(), ultMovNaoCanc.getLotaResp());
+				} else {
+					acrescentarMarca(m, dt, ultMovNaoCanc.getDtFimMov(), ultMovNaoCanc.getResp(), ultMovNaoCanc.getLotaResp());
+					// Se sobrestado com prazo, inclui tambem marca de aguardando andamento para 
+					// aparecer no dia em que desobrestar
+					if (ultMovNaoCanc.getDtFimMov() != null)
+						acrescentarMarca(CpMarcador.MARCADOR_EM_ANDAMENTO, ultMovNaoCanc.getDtFimMov(), ultMovNaoCanc.getResp(), ultMovNaoCanc.getLotaResp());
+				}
+			}
  			if (SigaMessages.isSigaSP() && 
 					m == CpMarcador.MARCADOR_CAIXA_DE_ENTRADA && 
 					ultMovNaoCanc.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA) {
@@ -554,23 +562,23 @@ public class ExMarcadorBL {
 				dtMarca.setMinutes(59);
 				dtMarca.setSeconds(59);
 
-				acrescentarMarcaTransferencia(m_aguardando, dt, dtMarca, transfComData.getCadastrante(),
+				acrescentarMarca(m_aguardando, dt, dtMarca, transfComData.getCadastrante(),
 						transfComData.getLotaCadastrante()); // acrescenta a
 				// marca
 				// "Aguardando Devolução"
 
-				acrescentarMarcaTransferencia(m_aDevolver, dt, dtMarca, transfComData.getResp(),
+				acrescentarMarca(m_aDevolver, dt, dtMarca, transfComData.getResp(),
 						transfComData.getLotaResp());// acrescenta
 				// a
 				// marca
 				// "A Devolver"
 
-				acrescentarMarcaTransferencia(m_aguardandoFora, dtMarca, null, transfComData.getCadastrante(),
+				acrescentarMarca(m_aguardandoFora, dtMarca, null, transfComData.getCadastrante(),
 						transfComData.getLotaCadastrante()); // acrescenta a
 				// marca
 				// "Aguardando Devolução (Fora do Prazo)"
 
-				acrescentarMarcaTransferencia(m_aDevolverFora, dtMarca, null, transfComData.getResp(),
+				acrescentarMarca(m_aDevolverFora, dtMarca, null, transfComData.getResp(),
 						transfComData.getLotaResp());// acrescenta
 				// a
 				// marca
@@ -671,23 +679,11 @@ public class ExMarcadorBL {
 
 	}
 
-	private void acrescentarMarca(Long idMarcador, Date dt, DpPessoa pess, DpLotacao lota) {
-		ExMarca mar = new ExMarca();
-		mar.setExMobil(mob);
-		mar.setCpMarcador(ExDao.getInstance().consultar(idMarcador, CpMarcador.class, false));
-		if (pess != null)
-			mar.setDpPessoaIni(pess.getPessoaInicial());
-		if (lota != null) {
-			AcessoConsulta ac = new AcessoConsulta(0L, lota.getIdInicial(), 
-					0L, lota.getOrgaoUsuario().getId());
-			if (ac.podeAcessar(mob.doc(), null, lota)) 
-				mar.setDpLotacaoIni(lota.getLotacaoInicial());
-		}
-		mar.setDtIniMarca(dt);
-		set.add(mar);
+	private void acrescentarMarca(Long idMarcador, Date dtIni, DpPessoa pess, DpLotacao lota) {
+		acrescentarMarca(idMarcador, dtIni, null, pess, lota);
 	}
 
-	private void acrescentarMarcaTransferencia(Long idMarcador, Date dtIni, Date dtFim, DpPessoa pess, DpLotacao lota) {
+	private void acrescentarMarca(Long idMarcador, Date dtIni, Date dtFim, DpPessoa pess, DpLotacao lota) {
 		ExMarca mar = new ExMarca();
 		mar.setExMobil(mob);
 		mar.setCpMarcador(ExDao.getInstance().consultar(idMarcador, CpMarcador.class, false));
@@ -700,7 +696,8 @@ public class ExMarcadorBL {
 				mar.setDpLotacaoIni(lota.getLotacaoInicial());
 		}
 		mar.setDtIniMarca(dtIni);
-		mar.setDtFimMarca(dtFim);
+		if (dtFim != null) 
+			mar.setDtFimMarca(dtFim);
 		set.add(mar);
 	}
 

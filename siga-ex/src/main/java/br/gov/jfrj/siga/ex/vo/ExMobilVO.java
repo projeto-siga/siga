@@ -464,7 +464,7 @@ public class ExMobilVO extends ExVO {
 		addAcao("hourglass_add",
 				"So_brestar",
 				"/app/expediente/mov",
-				"sobrestar_gravar",
+				"sobrestar",
 				Ex.getInstance().getComp()
 						.podeSobrestar(titular, lotaTitular, mob), null, null,
 				null, null, "once");

@@ -261,6 +261,22 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	}
 
 	/**
+	 * Retorna a data de retorno da movimentação no formato dd/mm/aaaa, por
+	 * exemplo, 01/02/2010.
+	 * 
+	 * @return Data de retorno da movimentação no formato dd/mm/aaaa, por exemplo,
+	 *         01/02/2010.
+	 * 
+	 */
+	public String getDtFimMovDDMMYYYY() {
+		if (getDtFimMov() != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+			return df.format(getDtFimMov());
+		}
+		return "";
+	}
+
+	/**
 	 * Retorna a data de retorno da movimentação no formato dd/mm/aa HH:MI:SS,
 	 * por exemplo, 01/02/10 14:10:00.
 	 * 

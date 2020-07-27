@@ -2154,8 +2154,10 @@ public class CpDao extends ModeloDao {
 		whereList.add(cb().equal(c.get("orgaoUsuario"), orgaoUsuario));
 		whereList.add(cb().equal(c.get("siglaLotacao"), siglaLotacao));
 		q.where(whereList.toArray(new Predicate[2]));
-		q.select(c);
-		return em().createQuery(q).getSingleResult();
+		q.select(c);		
+		return em().createQuery(q).getResultList().stream()
+				.findFirst()
+				.orElse(null);
 	}
 	
 	public CpOrgaoUsuario consultarOrgaoUsuarioPorId(Long idOrgaoUsu) {

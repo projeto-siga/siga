@@ -198,9 +198,14 @@ public class CpDao extends ModeloDao {
 	
 	public CpServico acrescentarServico(CpServico srv) {
 		synchronized (CpDao.class) {
-			iniciarTransacao();
-			CpServico srvGravado = gravar(srv);
-			commitTransacao();
+			CpServico srvGravado = null;
+			try {
+				em().getTransaction().begin();
+				srvGravado = gravar(srv);
+				em().getTransaction().commit();
+			} catch (Exception e) {
+				em().getTransaction().rollback();
+			}
 			cacheServicos.put(srv.getSigla(), srv);
 			return srvGravado;
 		}

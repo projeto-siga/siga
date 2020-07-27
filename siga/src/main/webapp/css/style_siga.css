@@ -264,3 +264,40 @@ p.gt-table-action-list a.link-tag {
 	border-top: 1px solid #d2d3d4;
 }
 
+
+/*
+######################
+# SIGA MODAL
+######################
+*/
+
+.siga-modal__titulo {
+ 	font-size: 1em;     
+ 	margin-top: 8px;   						 	  	  				
+ }
+ 
+.siga-modal__titulo--direita { 	
+  	text-align: right; 						
+ }
+ 
+ .siga-modal__titulo--conteudo {
+ 	margin-top: 0;   	
+ 	margin-bottom: 20px;	
+ }
+ 
+ .siga-modal__logo {
+ 	width: 60px;
+    height: 40px;
+    object-fit: contain;
+ }				
+ 	
+ .siga-modal__btn-close { 	
+   	position: absolute;
+   	top: 4px;
+   	right: 10px;
+   	font-size: 1.4em;
+ }
+ 
+ .siga-modal__btn-close:focus {
+ 	outline: none; 	
+ }						

@@ -53,6 +53,8 @@ import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERE
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_REORDENACAO_DOCUMENTO;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ORDENACAO_ORIGINAL_DOCUMENTO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.hasDespacho;
 
 import java.util.HashMap;
@@ -64,6 +66,7 @@ import com.auth0.jwt.JWTVerifier;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -251,16 +254,18 @@ public class ExMovimentacaoVO extends ExVO {
 							|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO
 							|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA
 							|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
-							|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA)
+							|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA
+							|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA)
 							&& mov.isAssinada()) {
 
 						addAcao("printer", "Ver", "/app/arquivo", "exibir",
 								Ex.getInstance().getComp().podeVisualizarImpressao(titular, lotaTitular, mov.mob()),
 								null, "&popup=true&arquivo=" + mov.getReferenciaPDF(), null, null, null);
 
-						addAcao("script_key", "Autenticar", "/app/expediente/mov", "autenticar_mov",
-								Ex.getInstance().getComp().podeAutenticarMovimentacao(titular, lotaTitular, mov), null,
-								"&popup=true&autenticando=true", null, null, null);
+						if (idTpMov != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA)
+							addAcao("script_key", "Autenticar", "/app/expediente/mov", "autenticar_mov",
+									Ex.getInstance().getComp().podeAutenticarMovimentacao(titular, lotaTitular, mov), null,
+									"&popup=true&autenticando=true", null, null, null);
 
 					} else if (!(mov.isAssinada() && mov.mob().isEmTransito())) {
 						addAcao(null, "Ver/Assinar", "/app/expediente/mov", "exibir", true, null, "&popup=true", null,
@@ -344,9 +349,15 @@ public class ExMovimentacaoVO extends ExVO {
 					String mensagemPos = null;
 
 					if (!mov.getExMobilRef().getExDocumento().getDescrDocumento()
-							.equals(mov.getExMobil().getExDocumento().getDescrDocumento()))
-						mensagemPos = " Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento();
-
+							.equals(mov.getExMobil().getExDocumento().getDescrDocumento())) {
+						
+						String motivo = "";
+						if (SigaMessages.isSigaSP() && mov.getDescrMov() != null && mov.getDescrMov().length() > 0) 
+							motivo = ". Motivo: " + mov.getDescrMov();
+																	
+						mensagemPos = " Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento() + motivo;
+					}
+						
 					addAcao(null, mov.getExMobilRef().getSigla(), "/app/expediente/doc", "exibir", true, null,
 							"sigla=" + mov.getExMobilRef().getSigla(), "Desentranhado do documento: ", mensagemPos,
 							null);
@@ -465,7 +476,20 @@ public class ExMovimentacaoVO extends ExVO {
 			addAcao(null, mov.getNmArqMov(), "/app/arquivo", "download", mov.getNmArqMov() != null, null,
 					"arquivo=" + mov.getReferenciaZIP(), null, null, null);
 		}
-
+		
+		if (idTpMov == TIPO_MOVIMENTACAO_REORDENACAO_DOCUMENTO) {
+			String detalhe = mov.getExMobil().getDoc().temOrdenacao() ? "Ver última reordenação" : "Ver documento completo";
+			String complementoParam = mov.getExMobil().getDoc().temOrdenacao() ? "&exibirReordenacao=true" : "";
+			
+			addAcao(null, detalhe, "/app/expediente/doc", "exibirProcesso", true, null,
+					"sigla=" + mov.getExMobil().getSigla() + complementoParam, "Documento completo reordenado manualmente:", "", null);
+		}
+		
+		if (idTpMov == TIPO_MOVIMENTACAO_ORDENACAO_ORIGINAL_DOCUMENTO) {								
+			addAcao(null, "Ver documento completo", "/app/expediente/doc", "exibirProcesso", true, null,
+					"sigla=" + mov.getExMobil().getSigla(), "Documento completo reordenado para sua ordem original:", "", null);
+		}
+		
 		if (descricao != null && descricao.equals(mov.getObs())) {
 			descricao = ProcessadorReferencias.marcarReferenciasParaDocumentos(descricao, null);
 		}

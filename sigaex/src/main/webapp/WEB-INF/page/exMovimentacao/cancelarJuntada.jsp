@@ -11,7 +11,6 @@
 <c:if test="${not mob.doc.eletronico}">
 	<script type="text/javascript">$("html").addClass("fisico");$("body").addClass("fisico");</script>
 </c:if>
-
 	<!-- main content bootstrap -->
 	<div class="container-fluid">
 		<div class="card bg-light mb-3">
@@ -21,7 +20,7 @@
 				</h5>
 			</div>
 			<div class="card-body">
-				<form action="${request.contextPath}/app/expediente/mov/cancelar_juntada_gravar" method="post">
+				<form action="${request.contextPath}/app/expediente/mov/cancelar_juntada_gravar" method="post" class="js-formulario-cancelar-juntada" novalidate>
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="sigla" value="${sigla}" />
 					<div class="row">
@@ -40,7 +39,7 @@
 						<div class="col-sm-2 mt-4">
 							<div class="form-check form-check-inline">
 								<input class="form-check-input" type="checkbox" 
-									theme="simple" name="substituicao"  value="${substituicao}" 
+									theme="simple" name="substituicao" value="${substituicao}" 
 									onclick="javascript:displayTitular(this);" />
 								<label class="form-check-label">Substituto</label>
 							</div>
@@ -67,8 +66,9 @@
 					<div class="row">
 						<div class="col-sm">
 							<div class="form-group">
-								<label>Motivo</label>
-								<input class="form-control" type="text" name="descrMov" maxlength="80" size="80" />
+								<label for="motivo">Motivo</label>
+								<input class="form-control" type="text" id="motivo" name="descrMov" maxlength="80" size="80" required/>
+								<div class="invalid-feedback">Por favor, informe um motivo.</div>
 							</div>
 						</div>
 					</div>
@@ -82,4 +82,29 @@
 			</div>
 		</div>
 	</div>
+<script>
+	$('[name=dtMovString]').focus();
+</script>	
+<c:if test="${validarCamposObrigatoriosForm}">
+	<script>		
+		(function() {
+			'use strict';
+			window.addEventListener('load', function() {		 
+			 var forms = document.getElementsByClassName('js-formulario-cancelar-juntada');		 
+			 var validation = Array.prototype.filter.call(forms, function(form) {
+			   form.addEventListener('submit', function(event) {
+				 var motivo = $('#motivo');
+			     if (motivo.val().length == 0) {
+			       	motivo.addClass('is-invalid');	 		    	
+			     	event.preventDefault();
+			       	event.stopPropagation();		       
+			     } else {
+			    	motivo.removeClass('is-invalid');
+			     }		     
+			   }, false);
+			 });
+			}, false);
+		})();
+	</script>		
+</c:if>	
 </siga:pagina>

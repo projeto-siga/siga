@@ -65,15 +65,13 @@ public class ExModelo extends AbstractExModelo implements Sincronizavel {
 	/* Add customized code below */
 	public void setConteudoBlobMod2(final byte[] blob) {
 		if (blob != null)
-			setConteudoBlobMod(HibernateUtil.getSessao().getLobHelper()
-					.createBlob(blob));
+			setConteudoBlobMod(blob);
 		cacheConteudoBlobMod = blob;
 	}
 
 	public byte[] getConteudoBlobMod2() {
 		if (cacheConteudoBlobMod == null)
-			cacheConteudoBlobMod = br.gov.jfrj.siga.cp.util.Blob
-					.toByteArray(getConteudoBlobMod());
+			cacheConteudoBlobMod = getConteudoBlobMod();
 		return cacheConteudoBlobMod;
 	}
 
@@ -192,23 +190,5 @@ public class ExModelo extends AbstractExModelo implements Sincronizavel {
 		if (filename.contains("/"))
 			return filename.substring(0, filename.lastIndexOf("/"));
 		return null;
-	}
-
-	//
-	// Solução para não precisar criar HIS_ATIVO em todas as tabelas que herdam de HistoricoSuporte.
-	//
-	@Column(name = "HIS_ATIVO")
-	private Integer hisAtivo;
-
-	@Override
-	public Integer getHisAtivo() {
-		this.hisAtivo = super.getHisAtivo();
-		return this.hisAtivo;
-	}
-	
-	@Override
-	public void setHisAtivo(Integer hisAtivo) {
-		super.setHisAtivo(hisAtivo);
-		this.hisAtivo = getHisAtivo();
 	}
 }

@@ -124,12 +124,6 @@ public abstract class AbstractRelatorioBaseBuilder extends DynamicReportBuilder 
 		AutoText dataCriacao = new AutoText(AutoText.AUTOTEXT_CUSTOM_MESSAGE,AutoText.POSITION_HEADER,HorizontalBandAlignment.RIGHT);
 		String textoDataCriacao = DateFormat.getDateInstance(DateFormat.SHORT, new Locale("pt","br")).format(new Date());
 		dataCriacao.setMessageKey("Emissão:" + textoDataCriacao);
-//		this.addAutoText(dataCriacao);
-		
-        AutoText pagina = new AutoText(AutoText.AUTOTEXT_PAGE_X_OF_Y,AutoText.POSITION_FOOTER,HorizontalBandAlignment.CENTER);
-        pagina.setWidth(new Integer(100));
-        pagina.setWidth2(new Integer(100));
-//        this.addAutoText(pagina);
 
 	}
 	

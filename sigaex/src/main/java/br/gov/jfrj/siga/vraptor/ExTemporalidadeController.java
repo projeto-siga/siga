@@ -3,14 +3,15 @@ package br.gov.jfrj.siga.vraptor;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
@@ -20,11 +21,19 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
-@Resource
+@Controller
 public class ExTemporalidadeController extends ExController {
 
 	private static final String ACESSO_FE_TT = "FE:Ferramentas;TT:Tabela de Temporalidade";
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ExTemporalidadeController() {
+		super();
+	}
+
+	@Inject
 	public ExTemporalidadeController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so,
 			EntityManager em) {
 		super(request, response, context, result, ExDao.getInstance(), so, em);

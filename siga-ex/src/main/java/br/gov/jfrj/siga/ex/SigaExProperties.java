@@ -33,8 +33,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.model.prop.ext.ModeloPropriedade;
+import br.gov.jfrj.siga.model.prop.ModeloPropriedade;
 
 public class SigaExProperties extends ModeloPropriedade {
 	/*
@@ -231,9 +230,24 @@ public class SigaExProperties extends ModeloPropriedade {
 			throw new Exception("Erro ao obter propriedade para o data inicial de obrigação de assinatura de anexos e despachos em documentos eletrônicos");
 		}
 	}
+	
+	public static Date getDataInicioObrigacaoDeExibirDataeHoraRodapeAssinatura() throws Exception{
+		String s = getString("siga.ex.dataInicioObrigacaoExibirDataeHoraRodapeAssinatura");
+		
+		DateFormat formatter = new SimpleDateFormat("MM/dd/yy");  
+				
+		if (s == null)
+			return (Date)formatter.parse("31/12/2099");
+		try{
+			return (Date)formatter.parse(s);
+		} catch (NumberFormatException nfe){
+			throw new Exception("Erro ao obter propriedade para o data inicial de obrigação de exibir data/hora no rodapé da assinatura de documentos eletrônicos");
+		}
+	}
 
 	public static String getTextoSuperiorCarimbo() {
-		return getString("textoSuperiorCarimbo");
+		String textoSuperiorCarimbo = getString("textoSuperiorCarimbo");		
+		return textoSuperiorCarimbo != null ? textoSuperiorCarimbo : "";
 	}
 	
 	public static String getAssinadorExternoPassword() {

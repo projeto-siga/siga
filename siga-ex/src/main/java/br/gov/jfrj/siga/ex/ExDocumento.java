@@ -47,7 +47,7 @@ import javax.persistence.Transient;
 
 import org.apache.xerces.impl.dv.util.Base64;
 import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.DynamicUpdate;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.itextpdf.Documento;
@@ -80,6 +80,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 @Entity
 @BatchSize(size = 500)
 @Table(name = "EX_DOCUMENTO", catalog = "SIGA")
+@DynamicUpdate
 public class ExDocumento extends AbstractExDocumento implements Serializable,
 		CarimboDeTempo {
 
@@ -92,9 +93,18 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 
 	@Transient
 	private byte[] cacheConteudoBlobDoc;
-
-	@Formula("REMOVE_ACENTO(DESCR_DOCUMENTO)")
-	private String descrDocumentoAI;
+	
+	@Transient
+	private List<ExMovimentacao> listaMovimentacaoPorRestricaoAcesso;	
+	
+	@Transient
+	private Boolean podeReordenar;
+	
+	@Transient
+	private boolean podeExibirReordenacao;
+	
+	@Transient
+	private Long idDocPrincipal;
 
 	/**
 	 * Simple constructor of ExDocumento instances.
@@ -384,8 +394,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public byte[] getConteudoBlobDoc2() {
 
 		if (cacheConteudoBlobDoc == null)
-			cacheConteudoBlobDoc = br.gov.jfrj.siga.cp.util.Blob
-					.toByteArray(getConteudoBlobDoc());
+			cacheConteudoBlobDoc = getConteudoBlobDoc();
 		return cacheConteudoBlobDoc;
 
 	}
@@ -532,14 +541,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	}
 
 	/**
-	 * Retorna a descrição completa do documento de modo indiferente à
-	 * acentuação.
-	 */
-	public String getDescrDocumentoAI() {
-		return descrDocumentoAI;
-	}
-
-	/**
 	 * Retorna a <b>descrição</b> do nível de acesso do documento definido no
 	 * momento da criação do documento, desconsiderando as redefinições de
 	 * nível.
@@ -616,6 +617,19 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		}
 		return "";
 	}
+	
+	
+	/**
+	 * Retorna a data do documento no formato dd/mm/aa, por exemplo, 01/02/10.
+	 */
+	public String getDtPrimeiraAssinaturaDDMMYY() {
+		if (getDtPrimeiraAssinatura()!= null) {
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy");
+			return df.format(getDtPrimeiraAssinatura());
+		}
+		return "";
+	}
+	
 
 	/**
 	 * Retorna a data original do documento externo no formato dd/mm/aa, por
@@ -666,6 +680,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return "";
 	}
 
+	
+	
+	
 	/**
 	 * Retorna o nome da localidade (município) onde se encontra a lotação em
 	 * que o documento foi produzido, caso não tenha sido digitado valor para a
@@ -909,7 +926,12 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	}
 	
 	public String getMarcaDagua() {
-		String marcaDagua = getExModelo().getModeloAtual().getMarcaDagua();				
+		String marcaDagua = null;
+		
+		if( getExModelo() != null &&  getExModelo().getModeloAtual() != null) {
+			marcaDagua = getExModelo().getModeloAtual().getMarcaDagua();
+		}
+			
 		return marcaDagua == null ? "" : marcaDagua.trim();
 	}
 
@@ -1474,16 +1496,45 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 */
 	private List<ExArquivoNumerado> getArquivosNumerados(ExMobil mob,
 			List<ExArquivoNumerado> list, int nivel) {
+		
+		List<ExArquivoNumerado> listaInicial = list, listaFinal = new ArrayList<>();		
+		boolean podeAtualizarPaginas = true;
 
 		// Incluir o documento principal
 		ExArquivoNumerado anDoc = new ExArquivoNumerado();
 		anDoc.setArquivo(this);
 		anDoc.setMobil(mob);
-		anDoc.setNivel(nivel);
-		list.add(anDoc);
-
-		getAnexosNumerados(mob, list, nivel + 1, false);
-
+		anDoc.setNivel(nivel);			
+		listaInicial.add(anDoc);					
+				
+		getAnexosNumerados(mob, listaInicial, nivel + 1, false);						
+		
+		if (podeReordenar() && podeExibirReordenacao() && temOrdenacao()) {
+			boolean houveAlteracaoNaOrdenacao = false;
+			podeAtualizarPaginas = false;
+			String referenciaHtmlCompletoDocPrincipal = anDoc.getReferenciaHtmlCompleto();	
+			String referenciaPDFCompletoDocPrincipal = anDoc.getReferenciaPDFCompleto();
+			String ordenacaoDoc[] = this.getOrdenacaoDoc().split(";");			
+					
+			ordenarDocumentos(ordenacaoDoc, listaInicial, listaFinal, referenciaHtmlCompletoDocPrincipal, referenciaPDFCompletoDocPrincipal);
+			
+			if (listaInicial.size() > listaFinal.size()) {
+				adicionarDocumentosNovosNaOrdenacao(listaInicial, listaFinal);
+				houveAlteracaoNaOrdenacao = true;
+			}
+			
+			if (ordenacaoDoc.length > listaFinal.size())
+				houveAlteracaoNaOrdenacao = true;		
+			
+			if (estaNaOrdemOriginal(listaInicial, listaFinal)) 
+				limparOrdenacaoDosDocumentos();
+			else if (houveAlteracaoNaOrdenacao)
+				enviarNovaOrdenacaoDosDocumentos(listaFinal);								
+		
+		} else {					
+			listaFinal = listaInicial;			
+		}				
+					
 		// Numerar as paginas
 		if (isNumeracaoUnicaAutomatica()) {
 
@@ -1505,17 +1556,62 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 
 			// removerDesentranhamentosQueNaoFazemParteDoDossie(list);
 
-			for (ExArquivoNumerado an : list) {
-				an.setPaginaInicial(j);
-				j += an.getNumeroDePaginasParaInsercaoEmDossie() - 1;
-				an.setPaginaFinal(j);
-				j++;
-			}
+			montarPaginas(podeAtualizarPaginas ? listaFinal : listaInicial, j);			
 		}
 
-		return list;
+		return listaFinal;
 	}
-
+	
+	private boolean estaNaOrdemOriginal(List<ExArquivoNumerado> listaInicial, List<ExArquivoNumerado> listaFinal) {
+		return listaInicial.equals(listaFinal);
+	}
+	
+	private void montarPaginas(List<ExArquivoNumerado> arquivos, int j) {
+		for (ExArquivoNumerado an : arquivos) {
+			an.setPaginaInicial(j);
+			j += an.getNumeroDePaginasParaInsercaoEmDossie() - 1;
+			an.setPaginaFinal(j);
+			j++;
+		}
+	}
+	
+	private void ordenarDocumentos(String[] ordenacaoDoc, List<ExArquivoNumerado> listaInicial, List<ExArquivoNumerado> listaFinal, String referenciaHtmlCompletoDocPrincipal, String referenciaPDFCompletoDocPrincipal) {
+		for(String id : ordenacaoDoc) {
+			encontrarArquivoNumerado(Long.valueOf(id), listaInicial, listaFinal, referenciaHtmlCompletoDocPrincipal, referenciaPDFCompletoDocPrincipal);				
+		}				
+	}
+	
+	private void encontrarArquivoNumerado(Long id, List<ExArquivoNumerado> listaInicial, List<ExArquivoNumerado> listaFinal, String referenciaHtmlCompletoDocPrincipal, String referenciaPDFCompletoDocPrincipal) {
+		for (ExArquivoNumerado arquivo : listaInicial) {					
+			if (id.equals(arquivo.getArquivo().getIdDoc())) {
+				arquivo.setReferenciaHtmlCompletoDocPrincipal(referenciaHtmlCompletoDocPrincipal);
+				arquivo.setReferenciaPDFCompletoDocPrincipal(referenciaPDFCompletoDocPrincipal);
+				listaFinal.add(arquivo);					
+				break;
+			}					
+		}			
+	}
+	
+	private void adicionarDocumentosNovosNaOrdenacao(List<ExArquivoNumerado> listaInicial, List<ExArquivoNumerado> listaFinal) {
+		for (ExArquivoNumerado arquivo : listaInicial) {
+			if (!listaFinal.contains(arquivo)) 
+				listaFinal.add(arquivo);			
+		}
+	}
+	
+	private void enviarNovaOrdenacaoDosDocumentos(List<ExArquivoNumerado> listaArquivoNumerado) {
+		String ordenacao = "";
+		for (ExArquivoNumerado arquivoNumerado : listaArquivoNumerado) {				
+			if (ordenacao.length() > 0) ordenacao += ";";
+			ordenacao += arquivoNumerado.getArquivo().getIdDoc();				
+		}
+		this.setOrdenacaoDoc(ordenacao);
+	}
+	
+	private void limparOrdenacaoDosDocumentos() {
+		this.setOrdenacaoDoc(null);
+	}
+	
 	public void removerDesentranhamentosQueNaoFazemParteDoDossie(
 			List<ExArquivoNumerado> list) {
 		// Verifica se tem movimentação de desentranhamento que não pertence ao
@@ -1605,14 +1701,29 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 				list.add(an);
 				m.getExDocumento().getAnexosNumerados(m.getExMobilRef(), list,
 						nivel + 1, true);
-			} else {
+			} else if (isDesentranhamentoSP(mob, m)) {				
+				continue;				
+			} else {			
 				an.setArquivo(m);
 				an.setMobil(m.getExMobil());
 				list.add(an);
 			}
 		}
+				
 	}
+	
+	private boolean isDesentranhamentoSP(ExMobil mobil, ExMovimentacao movimentacao) {
+		if (SigaMessages.isSigaSP() &&
+				movimentacao.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA &&
+						movimentacao.getExMobil().getId().equals(mobil.getId())) {
 
+			return this.getIdDocPrincipal() == this.getIdDoc();
+			
+		}	
+		
+		return false;
+	}
+		
 	/**
 	 * COMPLETAR
 	 * 
@@ -1699,6 +1810,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return getMobilGeral().getMovsNaoCanceladas(
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA);
 	}
+
 
 	public Set<ExMovimentacao> getAutenticacoesComSenha() {
 		if (getMobilGeral() == null)
@@ -1789,20 +1901,19 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public String getAssinantesCompleto() {
 		String retorno = "";
 		String conferentes = Documento
-				.getAssinantesString(getAutenticacoesComToken());
+				.getAssinantesString(getAutenticacoesComToken(),getDtDoc());
 		String conferentesSenha = Documento
-				.getAssinantesString(getAutenticacoesComSenha());
+				.getAssinantesString(getAutenticacoesComSenha(),getDtDoc());
 		String assinantesToken = Documento
-				.getAssinantesString(getAssinaturasComToken());
+				.getAssinantesString(getAssinaturasComToken(),getDtDoc());
 		String assinantesSenha = Documento
-				.getAssinantesString(getAssinaturasComSenha());
+				.getAssinantesString(getAssinaturasComSenha(),getDtDoc());
 		String assinantesPorSenha = Documento
-				.getAssinantesStringComMatricula(getAssinaturasPorComSenha());
-
+				.getAssinantesStringComMatricula(getAssinaturasPorComSenha(),getDtDoc());
 
 		if (assinantesToken.length() > 0)
 			retorno = "Assinado digitalmente por " + assinantesToken + ".\n";
-		
+
 		if (assinantesPorSenha.length() > 0) {
 			retorno = retorno + "Assinado com senha por " + assinantesPorSenha +".\n" ;
 		}
@@ -1827,7 +1938,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public String getSolicitantesDeAssinaturaCompleto() {
 		String retorno = "";
 		String revisores = Documento
-				.getAssinantesString(getSolicitantesDeAssinatura());
+				.getAssinantesString(getSolicitantesDeAssinatura(),getDtDoc());
 
 		if (revisores.length() > 0)
 			retorno = "Revisado por " + revisores + "";
@@ -2367,8 +2478,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 
 	public void setConteudoBlobDoc2(byte[] blob) {
 		if (blob != null)
-			setConteudoBlobDoc(HibernateUtil.getSessao().getLobHelper()
-					.createBlob(blob));
+			setConteudoBlobDoc(blob);
 		cacheConteudoBlobDoc = blob;
 	}
 
@@ -2401,10 +2511,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			throw new AplicacaoException(
 					"O conteúdo não pode ser alterado pois o documento já está assinado");
 		setConteudoBlob("doc.pdf", conteudo);
-	}
-
-	public void setDescrDocumentoAI(String descrDocumentoAI) {
-		this.descrDocumentoAI = descrDocumentoAI;
 	}
 
 	public void setEletronico(boolean eletronico) {
@@ -2678,4 +2784,51 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			}
 		return null;
 	}
+	
+	public boolean isDocFilhoJuntadoAoPai() {
+		if (getExMobilPai() != null) {			
+			for (ExMobil mob : getExMobilPai().getJuntados()) {					
+				if (getIdDoc() == mob.doc().getIdDoc()) {
+					return true;
+				}									
+			}			
+		}	
+		return false;
+	}
+	
+	public void setListaMovimentacaoPorRestricaoAcesso(List<ExMovimentacao> listaMovs) {
+		this.listaMovimentacaoPorRestricaoAcesso = listaMovs;
+	}
+	
+	public List<ExMovimentacao> getListaMovimentacaoPorRestricaoAcesso() {
+		return this.listaMovimentacaoPorRestricaoAcesso;
+	}			
+		
+	public boolean podeReordenar() {		
+		if (podeReordenar == null) 
+			podeReordenar = Boolean.valueOf(System.getProperty("siga.ex.documento.permitirUsuarioOrdenar"));				
+			
+		return podeReordenar;
+	}
+	
+	public void setPodeExibirReordenacao(boolean podeExibirReordenacao) {
+		this.podeExibirReordenacao = podeExibirReordenacao;
+	}
+	
+	public boolean podeExibirReordenacao() {
+		return this.podeExibirReordenacao;
+	}
+	
+	public void setIdDocPrincipal(Long idDocPrincipal) {
+		this.idDocPrincipal = idDocPrincipal;
+	}
+	
+	public Long getIdDocPrincipal() {
+		if (this.idDocPrincipal == null) {
+			return this.getIdDoc();
+		}
+		
+		return this.idDocPrincipal;
+	}
+
 }

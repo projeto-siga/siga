@@ -29,7 +29,9 @@ public class ExArquivoNumerado implements Comparable {
 	private ExMobil mobil;
 	private Date data;
 	private int nivel;
-	private boolean copia;
+	private boolean copia;	
+	private String referenciaHtmlCompletoDocPrincipal;
+	private String referenciaPDFCompletoDocPrincipal;
 
 	public ExArquivo getArquivo() {
 		return arquivo;
@@ -105,6 +107,16 @@ public class ExArquivoNumerado implements Comparable {
 		}
 		return getNome();
 	};
+		
+	public String getNomeOuDescricaoComMovimentacao() {
+		if (getArquivo() instanceof ExMovimentacao) {
+			ExMovimentacao mov = (ExMovimentacao) getArquivo();
+			if (mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA))
+				return "Ciência (" + getNomeOuDescricao() + ")";
+		}
+		return getNomeOuDescricao();
+	}
+
 
 
 	public String getReferencia() {
@@ -131,6 +143,12 @@ public class ExArquivoNumerado implements Comparable {
 		return getReferencia() + ".pdf&completo=1";
 	}
 
+	public String getReferenciaPDFCompletoVolumes() {
+		if (!getArquivo().isPdf())
+			return null;
+		return getReferenciaPDFCompleto() + "&volumes=1";
+	}
+
 	public String getReferenciaHtml() {
 		if (getArquivo().getHtml() == null)
 			return null;
@@ -139,6 +157,10 @@ public class ExArquivoNumerado implements Comparable {
 	
 	public String getReferenciaHtmlCompleto() {
 		return getReferencia() + ".html&completo=1";
+	}
+
+	public String getReferenciaHtmlCompletoVolumes() {
+		return getReferenciaHtmlCompleto() + "&volumes=1";
 	}
 
 	public ExMobil getMobil() {
@@ -174,5 +196,30 @@ public class ExArquivoNumerado implements Comparable {
 	public void setCopia(boolean copia) {
 		this.copia = copia;
 	}
+	
+	public String getReferenciaHtmlCompletoDocPrincipal() {
+		return referenciaHtmlCompletoDocPrincipal != null ? referenciaHtmlCompletoDocPrincipal : getReferenciaHtmlCompleto();
+	}
+	
+	public String getReferenciaHtmlCompletoDocPrincipalVolumes() {
+		return referenciaHtmlCompletoDocPrincipal != null ? referenciaHtmlCompletoDocPrincipal + "&volumes=1" : getReferenciaHtmlCompletoVolumes();
+	}
+	
+	public void setReferenciaHtmlCompletoDocPrincipal(String referenciaHtmlCompletoDocPrincipal) {
+		this.referenciaHtmlCompletoDocPrincipal = referenciaHtmlCompletoDocPrincipal;
+	}
+	
+	public String getReferenciaPDFCompletoDocPrincipal() {
+		return referenciaPDFCompletoDocPrincipal != null ? referenciaPDFCompletoDocPrincipal : getReferenciaPDFCompleto();
+	}
+	
+	public String getReferenciaPDFCompletoDocPrincipalVolumes() {
+		return referenciaPDFCompletoDocPrincipal != null ? referenciaPDFCompletoDocPrincipal + "&volumes=1" : getReferenciaPDFCompletoVolumes();
+	}
+	
+	public void setReferenciaPDFCompletoDocPrincipal(String referenciaPDFCompletoDocPrincipal) {
+		this.referenciaPDFCompletoDocPrincipal = referenciaPDFCompletoDocPrincipal;
+	}
+
 
 }

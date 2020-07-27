@@ -1,6 +1,13 @@
 var newwindow = '';
 
 function testpdf(x) {
+	
+	var tamanhoArquivo = parseInt(document.getElementById("arquivo").files[0].size);
+    if(tamanhoArquivo > 10485760){
+        alert("TAMANHO DO ARQUIVO EXCEDE O PERMITIDO (10MB)!");
+        return false;
+    }
+	
 	padrao = /\.pdf/;
 	a = x.arquivo.value;
 	if(a.length > 3) {
@@ -196,6 +203,11 @@ function verifica_data(data, naoObriga) {
 		// verifica se o mes e valido
 		if (mes < 1 || mes > 12) {
 			msg = msg + "Mês inválido\n";
+		}
+
+		// verifica se o ano é maior que 9999
+		if (ano.length > 4 || ano.length == 3) {
+			msg = msg + "Ano deve ser no máximo 9999\n";
 		}
 
 		if (msg.length > 0) {
@@ -1530,3 +1542,115 @@ function RespostaAjax() {
 			errorCallback(responseText);
 	}
 }
+
+var sigaModal = {
+		alerta: function(mensagem, centralizar, titulo) {
+			if (mensagem) {
+				var sigaModalAlerta = $('#sigaModalAlerta'); 
+				sigaModalAlerta.find('.modal-body').text(mensagem);				
+				disposicaoSigaModal(sigaModalAlerta, centralizar);
+				atualizarTituloModal(sigaModalAlerta, titulo);
+				sigaModalAlerta.modal('show');
+			}
+		},
+		alertaHTML: function(html, centralizar, titulo) {
+			if (html) {
+				var sigaModalAlerta = $('#sigaModalAlerta'); 
+				sigaModalAlerta.find('.modal-body').html(html);
+				disposicaoSigaModal(sigaModalAlerta, centralizar);
+				atualizarTituloModal(sigaModalAlerta, titulo);
+				sigaModalAlerta.modal('show');
+			}
+		},			
+		abrir: function(idModal) {
+			if (idModal) {	
+				$('#'.concat(idModal)).modal('show');				
+			}
+		},
+		fechar: function(idModal) {
+			if (idModal) {		
+				$('#'.concat(idModal)).modal('hide');				
+			}
+		},		
+		enviarTextoEAbrir: function(idModal, texto) {
+			if (idModal && texto) {
+				var modal = $('#'.concat(idModal)); 
+				modal.find('.modal-body').text(texto);
+				modal.modal('show');
+			}
+		},
+		enviarHTMLEAbrir: function(idModal, html) {
+			if (idModal && html) {
+				var modal = $('#'.concat(idModal));
+				modal.find('.modal-body').html(html);
+				modal.modal('show');
+			}
+		},
+		alterarLinkBotaoDeAcao: function(idModal, conteudo) {
+			if (idModal && conteudo) {
+				$('#'.concat(idModal)).find('.siga-modal__btn-acao').attr('href', conteudo);								
+			}
+		}, 				
+		obterCabecalhoPadrao: function(tituloADireita) {
+			if (typeof uriLogoSiga !== 'undefined') {
+				var detalheEsquerda = uriLogoSiga ? '<div class="col-6  p-0"><img src="' + uriLogoSiga + '" class="siga-modal__logo" alt="logo siga"></div>' : '<h5 class="modal-title">Siga</h5>';
+				var detalheDireita = tituloADireita ? '<div class="col-6  p-0"><h4 class="modal-title  siga-modal__titulo  siga-modal__titulo--direita">' + tituloADireita + '&nbsp;&nbsp;&nbsp;</h4></div>' : ''; 
+				
+				return '<div class="modal-header">' + detalheEsquerda + detalheDireita				
+					+	 '<button type="button" class="close  p-0  m-0  siga-modal__btn-close" data-dismiss="modal" aria-label="Close">'
+					+ 		'<span aria-hidden="true">&times;</span>'
+					+ 	 '</button>'
+					+  '</div>';
+			}
+			
+			return '';
+		}
+	};
+
+var sigaSpinner = {
+		mostrar: function() {
+			$('#sigaModalSpinner').modal('show');
+		},
+		ocultar: function() {
+			$('#sigaModalSpinner').modal('hide');
+		}
+}
+
+function onModalAbrir() {
+	sigaModal.abrir(this.getAttribute('data-siga-modal-abrir'));
+}
+
+function onModalFechar() {
+	sigaModal.fechar(this.getAttribute('data-siga-modal-fechar'));
+}
+
+function onSpinnerMostrar() {		
+	sigaSpinner.mostrar();		
+}
+
+function onSpinnerOcultar() {	
+	sigaSpinner.ocultar();	
+}
+
+function disposicaoSigaModal(modal, centralizar) {
+	if (centralizar) {
+		modal.find('.modal-dialog').addClass('modal-dialog-centered');
+	} else {
+		modal.find('.modal-dialog').removeClass('modal-dialog-centered');
+	}
+}
+
+function atualizarTituloModal(modal, titulo) {
+	if (titulo && titulo.length > 0) {
+		modal.find('.siga-modal__titulo--direita').html(titulo.concat('&nbsp;&nbsp;&nbsp;'));
+	} else {
+		modal.find('.siga-modal__titulo--direita').html('Alerta'.concat('&nbsp;&nbsp;&nbsp;'));
+	}
+}
+
+$(function() {
+	$('[data-siga-modal-abrir]').on('click', onModalAbrir);
+	$('[data-siga-modal-fechar]').on('click', onModalFechar);
+	$('[data-siga-spinner="mostrar"]').on('click', onSpinnerMostrar);
+	$('[data-siga-spinner="ocultar"]').on('click', onSpinnerOcultar);		
+});

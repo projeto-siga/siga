@@ -22,6 +22,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.bl.Mesa2.GrupoDeMarcadorEnum;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class Mesa {
@@ -314,6 +315,9 @@ public class Mesa {
 		MARCADOR_COMO_REVISOR(72, "Como Revisor", "fas fa-glasses", "",
 				GrupoDeMarcadorEnum.A_REVISAR),
 		//
+		MARCADOR_PORTAL_TRANSPARENCIA(73, "Portal da Transparência", "fas fa-globe", "",
+				GrupoDeMarcadorEnum.NENHUM),
+		//
 		URGENTE(1000, "Urgente", "fas fa-bomb", "", GrupoDeMarcadorEnum.ALERTA),
 
 		//
@@ -325,9 +329,17 @@ public class Mesa {
 		//
 		PRIORITARIO(1003, "Prioritário", "fas fa-star", "", GrupoDeMarcadorEnum.ALERTA),
 		//		
-		RESTRICAO_ACESSO(1004, "Restrição de Acesso", "fas fa-user-secret", "", GrupoDeMarcadorEnum.ALERTA);
-		//		
-
+		RESTRICAO_ACESSO(1004, "Restrição de Acesso", "fas fa-user-secret", "", GrupoDeMarcadorEnum.ALERTA),
+		//	
+		DOCUMENTO_ANALISADO(1005, "Documento Analisado", "fas fa-book-reader", "",
+				GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO),
+		//
+		COVID_19(1006, "COVID-19", "fas fa-tag", "",
+				GrupoDeMarcadorEnum.NENHUM),
+		//
+		NOTA_EMPENHO(1007, "Nota de Empenho", "fas fa-tag", "",
+				GrupoDeMarcadorEnum.NENHUM);
+		
 		private MarcadorEnum(int id, String nome, String icone,
 				String descricao, GrupoDeMarcadorEnum grupo) {
 			this.id = id;
@@ -537,7 +549,8 @@ public class Mesa {
 			map.get(mobil).add(mm);
 		}
 
-		if (SigaBaseProperties.getBooleanValue("siga.mesa.carrega.lotacao")) {
+		if (SigaBaseProperties.getBooleanValue("siga.mesa.carrega.lotacao")
+				&& !Ex.getInstance().getComp().ehPublicoExterno(titular)) {
 			List<Object[]> lLota = dao.listarDocumentosCxEntradaPorPessoaOuLotacao(null,
 					lotaTitular);
 	

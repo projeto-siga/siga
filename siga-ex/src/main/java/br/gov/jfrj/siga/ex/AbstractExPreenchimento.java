@@ -23,11 +23,13 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
@@ -44,10 +46,15 @@ import br.gov.jfrj.siga.model.Objeto;
  */
 @MappedSuperclass
 @NamedQueries({
+		@NamedQuery(name = "consultarPorLotacaoModeloExPreenchimento", query = "from ExPreenchimento pre "
+				+ "	      where (:lotacao = null or :lotacao = 0L or pre.dpLotacao = :lotacao)"
+				+ "			and (:modelo=null or :modelo = 0L or pre.exModelo.hisIdIni = :modelo)"),
+	
 		@NamedQuery(name = "consultarPorFiltroExPreenchimento", query = "from ExPreenchimento pre "
-				+ "	      where upper(pre.nomePreenchimento) like upper('%' || :nomePreenchimento || '%') "
-				+ "			and (:lotacao = null or :lotacao = 0 or pre.dpLotacao = :lotacao)"
-				+ "			and (:modelo=null or :modelo = 0 or pre.exModelo.hisIdIni = :modelo)"),
+				+ "	      where (:lotacao = null or :lotacao = 0L or pre.dpLotacao = :lotacao)"
+				+ "			and (:modelo=null or :modelo = 0L or pre.exModelo.hisIdIni = :modelo)"
+				+ " 		and upper(pre.nomePreenchimento) like upper('%' || :nomePreenchimento || '%')"),
+
 		@NamedQuery(name = "excluirPorIdExPreenchimento", query = "delete from ExPreenchimento where idPreenchimento = :id") })
 public abstract class AbstractExPreenchimento extends Objeto implements
 		Serializable {
@@ -70,8 +77,10 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 	@Column(name = "EX_NOME_PREENCHIMENTO", nullable = false, length = 256)
 	private String nomePreenchimento;
 
+	@Lob
 	@Column(name = "PREENCHIMENTO_BLOB")
-	private java.sql.Blob preenchimentoBlob;
+	@Basic(fetch = FetchType.LAZY)
+	private byte[] preenchimentoBlob;
 
 	/**
 	 * Simple constructor of AbstractExTipoDespacho instances.
@@ -107,11 +116,11 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 		this.idPreenchimento = idPreenchimento;
 	}
 
-	public java.sql.Blob getPreenchimentoBlob() {
+	public byte[] getPreenchimentoBlob() {
 		return preenchimentoBlob;
 	}
 
-	public void setPreenchimentoBlob(java.sql.Blob preenchimentoBlob) {
+	public void setPreenchimentoBlob(byte[] preenchimentoBlob) {
 		this.preenchimentoBlob = preenchimentoBlob;
 	}
 

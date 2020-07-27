@@ -9,6 +9,20 @@
 
 <!--[if gte IE 5.5]><script language="JavaScript" src="/siga/javascript/jquery.ienav.js" type="text/javascript"></script><![endif]-->
 
+<c:choose>
+	<c:when test="${not empty sigaModalAlerta}">
+		<siga:siga-modal id="sigaModalAlerta" centralizar="${sigaModalAlerta.centralizar}" abrirAoCarregarPagina="true" exibirRodape="true" 
+			tituloADireita="${empty sigaModalAlerta.titulo ? 'Alerta' : sigaModalAlerta.titulo}" >
+			<div class="modal-body">${sigaModalAlerta.mensagem}</div>
+		</siga:siga-modal>	
+	</c:when>
+	<c:otherwise>
+		<siga:siga-modal id="sigaModalAlerta" exibirRodape="true" tituloADireita="Alerta">
+			<div class="modal-body">Mensagem de alerta</div>
+		</siga:siga-modal>
+	</c:otherwise>
+</c:choose>
+<siga:siga-spinner />
 
 <script src="/siga/javascript/jquery/jquery-migrate-1.2.1.min.js"
 	type="text/javascript"></script>
@@ -29,9 +43,6 @@
 <c:if test="${not empty incluirJs}">
 	<script src="${incluirJs}" type="text/javascript"></script>
 </c:if>
-
-
-
 
 <script type="text/javascript">
 	$(document).ready(function() {
@@ -91,7 +102,7 @@
 			
 			<hr class="p-0 m-0 mb-1">			
 			<div class="text-right text-white">
-				<b>SIGA.doc </b>8.0.2.1
+				<b>SIGA.doc </b>${siga_version}
 			</div>
 		</div>
 	</footer>

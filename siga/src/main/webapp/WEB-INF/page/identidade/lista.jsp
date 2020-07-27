@@ -21,8 +21,7 @@
 
 			<div class="card-body">
 				<form id="listar" name="listar"
-					action="/siga/app/gi/identidade/listar" method="get"
-					class="form100">
+					action="/siga/app/gi/identidade/listar" method="get">
 					
 					<input type="hidden" name="propriedade"	value="${param.propriedade}" />
 					<input type="hidden" name="postback" value="1" />

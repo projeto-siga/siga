@@ -424,7 +424,7 @@ public class ExMobilVO extends ExVO {
 		addAcao("box_add", "Ar_q. Corrente", "/app/expediente/mov",
 				"arquivar_corrente_gravar", Ex.getInstance().getComp()
 						.podeArquivarCorrente(titular, lotaTitular, mob), null,
-				null, null, null, "once");
+				null, null, null, "once" + (SigaMessages.isSigaSP() ? " arq-corrente-requer-confirmacao" : ""));
 
 		addAcao("building_go",
 				"Indicar para Guarda Permanente",
@@ -528,7 +528,7 @@ public class ExMobilVO extends ExVO {
 				&& mob.getUltimaMovimentacaoNaoCancelada()
 					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
 				&& mob.getUltimaMovimentacaoNaoCancelada()
-					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO
+					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO	
 				&& mob.getUltimaMovimentacaoNaoCancelada()
 					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO
 				&& mob.getUltimaMovimentacaoNaoCancelada()
@@ -537,6 +537,8 @@ public class ExMobilVO extends ExVO {
 					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA 
 				&& mob.getUltimaMovimentacaoNaoCancelada()
 					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO 
+				&& mob.getUltimaMovimentacaoNaoCancelada()
+				.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA
 				&& ((SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local")) && 
 					mob.getUltimaMovimentacaoNaoCancelada().getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA &&
 					mob.getUltimaMovimentacaoNaoCancelada().getCadastrante().equals(titular)) || (mob.getUltimaMovimentacaoNaoCancelada().getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA || 

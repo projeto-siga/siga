@@ -66,6 +66,7 @@ function checkIntegradoAD(){
 }
 
 function exibirDadosIntegracaoAD(response,param){
+	
 	if (response != "0"){
 		document.getElementById('dadosIntegracaoAD').style.display = 'block';
 		document.getElementById('msgExplicacao').innerHTML = 'Seu órgão está integrado ao AD. Sua senha de rede email serão alteradas.';
@@ -146,21 +147,16 @@ function validateUsuarioForm(form,metodo) {
 	}
 	var s = document.getElementById('passwordStrength' + metodo).className;
 	if (s == "strength0" || s == "strength1" || s == "strength2") {
-		mensagemAlerta("Senha muito fraca. Por favor, utilize uma senha com pelo menos 6 caracteres incluindo letras maiúsculas, minúsculas e números");
+		sigaModal.alerta("Senha muito fraca. Por favor, utilize uma senha com pelo menos 6 caracteres incluindo letras maiúsculas, minúsculas e números");
 		return false;
 	}
 	var p1 = document.getElementById("pass" + metodo).value;
 	var p2 = document.getElementById("pass2" + metodo).value;
 	if (p1 != p2) {
-		mensagemAlerta("Repetição da nova senha não confere, favor redigitar.");
+		sigaModal.alerta("Repetição da nova senha não confere, favor redigitar");
 		return false; 
 	}
 	return true;
-}
-
-function mensagemAlerta(mensagem) {
-	$('#alertaModal').find('.mensagem-Modal').text(mensagem);
-	$('#alertaModal').modal();
 }
 
 function validarCPF(Objcpf){
@@ -299,8 +295,7 @@ function refreshWindow(){
 										</div>
 										<div class="col-sm-4">
 											<label for="usuario.senhaConfirma">Repetição da nova senha</label>
-											<input type="password" name="usuario.senhaConfirma" id="pass2Met1"
-												onblur="javascript:converteUsuario(this)" 
+											<input type="password" name="usuario.senhaConfirma" id="pass2Met1"												
 												class="form-control"/>
 										</div>
 										<div class="col-sm-4">
@@ -358,7 +353,7 @@ function refreshWindow(){
 									<div class="col-sm-4">
 										<div class="form-group">
 											<label for="usuario.senha1">Senha</label>
-											<input type="password" name="usuario.senha1" onblur="javascript:converteUsuario(this)" 
+											<input type="password" name="usuario.senha1"  
 												class="form-control" />
 										</div>
 									</div>
@@ -388,7 +383,7 @@ function refreshWindow(){
 									<div class="col-sm-4">
 										<div class="form-group">
 											<label for="usuario.senha2">Senha</label>
-											<input type="password" name="usuario.senha2" onblur="javascript:converteUsuario(this)" 
+											<input type="password" name="usuario.senha2"  
 												class="form-control" />
 										</div>
 									</div>
@@ -426,7 +421,7 @@ function refreshWindow(){
 									<div class="col-sm-4">
 										<div class="form-group">
 											<label for="senhaConfirma">Repetição da nova senha</label>
-											<input type="password" name="senhaConfirma" id="pass2Met2" class="form-control" />
+											<input type="password" name="senhaConfirma" id="pass2Met2"  class="form-control" />
 										</div>
 									</div>
 									<div class="col-sm-4">
@@ -445,27 +440,7 @@ function refreshWindow(){
 							</form>
 						</div>				
 					</div>
-				</c:if>
-				<!-- Modal -->
-				<div class="modal fade" id="alertaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-					<div class="modal-dialog" role="document">
-				    	<div class="modal-content">
-				      		<div class="modal-header">
-						        <h5 class="modal-title" id="alertaModalLabel">Alerta</h5>
-						        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-						          <span aria-hidden="true">&times;</span>
-						    	</button>
-						    </div>
-					      	<div class="modal-body">
-					        	<p class="mensagem-Modal"></p>
-					      	</div>
-							<div class="modal-footer">
-							  <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
-							</div>
-				    	</div>
-				  	</div>
-				</div>				
-				<!--Fim Modal -->
+				</c:if>				
 			</div>
 		</div>
 	</div>		

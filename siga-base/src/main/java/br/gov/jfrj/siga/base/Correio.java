@@ -63,7 +63,7 @@ public class Correio {
 				SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
 				destinatarios, assunto, conteudo, null);
 	}
-
+		
 	public static void enviar(final String remetente,
 			final String[] destinatarios, final String assunto,
 			final String conteudo, final String conteudoHTML) throws Exception {
@@ -240,6 +240,47 @@ public class Correio {
 	public static void enviar(String remetente, String[] destinatarios,
 			String assunto, String conteudo) throws Exception {
 		Correio.enviar(remetente, destinatarios, assunto, conteudo, null);
-	}
+	}	
+	
+	public static String obterHTMLEmailParaUsuarioExternoAssinarDocumento(String uri, String siglaDocumento, String siglaUsuario) {
+		StringBuffer sbHtml = new StringBuffer();
+		
+		sbHtml.append("<html>");
+		sbHtml.append("<body>");
+		sbHtml.append("	<table>");
+		sbHtml.append("		<tbody>");
+		sbHtml.append("			<tr>");
+		sbHtml.append("				<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>");
+		sbHtml.append("					<img style='padding: 10px 0px; text-align: center;' src='https://www.documentos.spsempapel.sp.gov.br/siga/imagens/logo-sem-papel-cor.png' alt='SP Sem Papel' width='108' height='50' />");		
+		sbHtml.append("				</td>");
+		sbHtml.append("			</tr>");
+		sbHtml.append("			<tr>");
+		sbHtml.append("				<td style='background-color: #bbb; padding: 0 20px;'>");
+		sbHtml.append("					<h3 style='height: 20px;'>Governo do Estado de S&atilde;o Paulo</h3>");					
+		sbHtml.append("				</td>");
+		sbHtml.append("			</tr>");
+		sbHtml.append("			<tr>");
+		sbHtml.append("				<td style='height: 310px; padding: 10px 20px;'>");
+		sbHtml.append("					<div>");
+		sbHtml.append("						<p style='color: #808080;'>Esse <a style='color: #808080;' href='" + uri +  "' target='_blank'><b>link</b></a> fornece acesso ao documento nº <b>" + siglaDocumento + "</b>, do Programa SP Sem Papel, cujo usuário <b>" + siglaUsuario +  "</b> é interessado.</p>");
+		sbHtml.append("						<p style='color: #808080;'>Para visualizar e assinar o documento, acesse o link: <a style='color: #808080;' href='" + uri +  "' target='_blank'><b>" + uri + "</b></a>");
+		sbHtml.append("						<p style='color: #808080;'>Atenção: Esse e-mail é de uso restrito ao usuário e entidade para a qual foi endereçado. Se você não é destinatário desta mensagem, você está, por meio desta, notificado que não deverá retransmitir, imprimir, copiar, examinar, distribuir ou utilizar informação contida nesta mensagem.</p>");
+		sbHtml.append("					</div>");
+		sbHtml.append("				</td>");
+		sbHtml.append("			</tr>");
+		sbHtml.append("			<tr>");
+		sbHtml.append("				<td style='height: 18px; padding: 0 20px; background-color: #eaecee;'>"); 
+		sbHtml.append("					<p>");
+		sbHtml.append("						<span style='color: #aaa;'><b>Aten&ccedil;&atilde;o:</b> esta &eacute; uma mensagem autom&aacute;tica. Por favor n&atilde;o responda&nbsp;</span>");
+		sbHtml.append("					</p>");
+		sbHtml.append("				</td>");
+		sbHtml.append("			</tr>");
+		sbHtml.append("	 	</tbody>");
+		sbHtml.append("	</table>");			
+		sbHtml.append("</body>");
+		sbHtml.append("</html>");
+		
+		return sbHtml.toString();
+	}	
 
 }

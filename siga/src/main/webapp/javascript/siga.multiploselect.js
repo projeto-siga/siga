@@ -33,7 +33,7 @@ Componente.MultiploSelect = (function() {
         
         var screenHeight = screen.height;
         if (screenHeight >= 1080) {
-        	config.size = 18;
+        	config.size = 17;
         } else if(screenHeight >= 1024 && screenHeight < 1080) {
         	config.size = 15;
         } else if (screenHeight >= 900 && screenHeight < 1024) {

@@ -32,19 +32,20 @@ public class ExGraphTramitacao extends ExGraph {
 							.setLabel(String.valueOf(numTransicao))
 							.setTooltip(
 									"Transferido em " + mov.getDtRegMovDDMMYY()));
-				} else
+				} else 
 					atendenteInicial = mov.getLotaResp();
-
-				adicionar(new Nodo(mov.getLotaResp().getSiglaCompleta())
-						.setLabel(mov.getLotaResp().getSigla())
-						.setShape(
-								mov.getLotaResp().equals(atendenteInicial) ? "oval"
-										: "rectangle")
-						.setDestacar(
-								mov.getLotaResp().equals(
-										ultMovNaoCanc.getLotaResp()))
-						.setTooltip(mov.getLotaResp().getNomeLotacao()));
-				atendenteAnterior = mov.getLotaResp();
+					if (ultMovNaoCanc != null) {
+						adicionar(new Nodo(mov.getLotaResp().getSiglaCompleta())
+								.setLabel(mov.getLotaResp().getSigla())
+								.setShape(
+										mov.getLotaResp().equals(atendenteInicial) ? "oval"
+												: "rectangle")
+								.setDestacar(
+										mov.getLotaResp().equals(
+												ultMovNaoCanc.getLotaResp()))
+								.setTooltip(mov.getLotaResp().getNomeLotacao()));
+						atendenteAnterior = mov.getLotaResp();
+					}			
 			}
 		}
 	}

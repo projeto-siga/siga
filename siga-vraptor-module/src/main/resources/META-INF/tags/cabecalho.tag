@@ -102,7 +102,9 @@ ${meta}
 <link rel="stylesheet" href="/siga/fontawesome/css/all.css"	type="text/css" />
 
 <c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
-	
+
+<c:set var="siga_version"  scope="request" value="9.0.0.7" />
+
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
 		<meta name="theme-color" content="#35b44">
@@ -115,10 +117,11 @@ ${meta}
 		<c:if test="${desabilitarmenu == 'sim'}">
 			<c:set var="body_color" value="login_body_color" scope="request" />
 		</c:if>
-		
-		<c:set var="ico_siga" value="siga-doc.ico" />
+												
+		<c:set var="ico_siga" value="sem-papel.ico" />
 		<c:set var="menu_class" value="menusp" />
 		<c:set var="sub_menu_class" value="submenusp" />
+		<c:set var="ambiente_class" value="ambiente_class" />
 		<c:set var="navbar_class" value="navbar-light" />
 		<c:set var="navbar_logo" value="logo-sem-papel-cor.png" />
 		<c:set var="navbar_logo_size" value="50" />
@@ -128,10 +131,12 @@ ${meta}
 		<c:set var="collapse_ArqAuxiliares" scope="request" value="not collapsible" />
 		<c:set var="hide_only_GOVSP" scope="request"> d-none </c:set>
 		<c:set var="hide_only_TRF2" scope="request"> </c:set>
+		<c:set var="uri_logo_siga_pequeno" value="${f:resource('siga.base.url')}/siga/imagens/logo-sem-papel-150x70.png" scope="request" />
 	</c:when>
 	<c:otherwise>
 		<meta name="theme-color" content="bg-primary">
 				<c:set var="thead_color" value="thead-light" scope="request" />
+									
 		<c:set var="ico_siga" value="siga.ico" />
 		<c:set var="menu_class" value="bg-primary" /> 
 		<c:set var="sub_menu_class" value="bg-secondary text-white" />
@@ -149,6 +154,7 @@ ${meta}
 		<c:set var="collapse_ArqAuxiliares" scope="request" value="not collapsible" />
 		<c:set var="hide_only_GOVSP" scope="request"> </c:set>
 		<c:set var="hide_only_TRF2" scope="request"> d-none </c:set>
+		<c:set var="uri_logo_siga_pequeno" value="${f:resource('siga.base.url')}/siga/imagens/logo-siga-140x40.png" scope="request" />		
 	</c:otherwise>
 </c:choose>
 
@@ -209,7 +215,7 @@ ${meta}
 									    <div class="modal-dialog modal-dialog-centered modal-lg" style="max-width: 80% !important;">
 									        <div class="modal-content" >
 									            <div class="modal-header bg-success">
-									            	<h5 class="modal-title text-white" >Tutoriais SP Sem Papel</h5>
+									            	<h5 class="modal-title text-white">Tutoriais SP Sem Papel</h5>
 									                <button type="button" class="close text-white" data-dismiss="modal" aria-hidden="true">×</button>
 									            </div>
 										        <div class="modal-body bg-light">
@@ -344,45 +350,52 @@ ${meta}
 		<div class="container-fluid content">
 			<div class="row pt-2 pb-2 mb-3 ${sub_menu_class}" >
 				<!-- usuário -->
-				<div class="col col-12 col-sm-4">
-					<div class="gt-company d-inline align-middle">
-						<span class="h-100">
-							<strong><span>${f:resource('siga.cabecalho.titulo')}</span> </strong>
-							 <c:catch>
-									<c:if test="${not empty titular.orgaoUsuario.descricao}"><span style="white-space: nowrap;"> <i class="fa fa-angle-right"></i> ${titular.orgaoUsuario.descricao}</span></h6></c:if>
-							 </c:catch>
-						</span>
+				<div class="col col-12 col-md-6">
+					<div class="row">
+						<div class="col gt-company d-inline align-middle">
+							<span class="h-100">
+								<strong><span>${f:resource('siga.cabecalho.titulo')}</span> </strong>
+								 <c:catch>
+										<c:if test="${not empty titular.orgaoUsuario.descricao}"><span style="white-space: nowrap;"> <i class="fa fa-angle-right"></i> ${titular.orgaoUsuario.descricao}</span></h6></c:if>
+								 </c:catch>
+							</span>
+						</div>
 					</div>
+					<div class="row ${hide_only_TRF2}  ${ambiente_class}">
+						<div class="col">
+							<span>
+								<c:choose>
+									<c:when test="${f:resource('ambiente') eq 'desenv'}">
+										Ambiente de Desenvolvimento
+									</c:when>
+									<c:when test="${f:resource('ambiente') eq 'prod'}">
+										Ambiente Oficial
+									</c:when>
+									<c:when test="${f:resource('ambiente') eq 'treinamento'}">
+										Ambiente de Simulação
+									</c:when>
+									<c:when test="${f:resource('ambiente') eq 'configuracao'}">
+										Ambiente de Configuração
+									</c:when>
+									<c:when test="${f:resource('ambiente') eq 'homolog'}">
+										Ambiente de Homologação
+									</c:when>
+								</c:choose>
+							</span>
+							<span >- v.${siga_version}</span>
+						</div>
+					</div>
+
 					
-					<!-- 
-					<div class="gt-version">
-						Sistema Integrado de Gest&atilde;o Administrativa
-						<c:if test="${not empty env}"> - <span style="color: red">${env}</span>
-						</c:if>
-					</div>
-					 -->
+
 				</div>
-				<div class="col col-12 col-sm-4 text-center">
-					<span class="h3 text-success align-middle ${hide_only_TRF2}">
-						<c:choose>
-							<c:when test="${f:resource('ambiente') eq 'prod'}">
-								Ambiente Oficial
-							</c:when>
-							<c:when test="${f:resource('ambiente') eq 'treinamento'}">
-								Ambiente de Simulação
-							</c:when>
-							<c:when test="${f:resource('ambiente') eq 'homolog'}">
-								Ambiente de Homologação
-							</c:when>
-						</c:choose>
-					</span>
-				</div>
+				
 				<c:if test="${not empty cadastrante}">
-					<div class="col col-12 col-sm-4 text-right">
+					<div class="col col-12 col-md-6 text-right">
 						<div class="dropdown d-inline">
 							<span class="align-middle">Olá, <i class="fa fa-user"></i> 
 								<c:catch>
-									<strong data-toggle="tooltip" data-placement="top" title="${cadastrante.sigla}">									
+									<strong id="cadastrante" data-toggle="tooltip" data-placement="top" title="${cadastrante.sigla}">																		
 											<c:out default="Convidado" value="${f:maiusculasEMinusculas(cadastrante.nomePessoa)}" />
 									</strong>
 									<c:if test="${not empty cadastrante.lotacao}">
@@ -409,19 +422,17 @@ ${meta}
 								</c:catch> 
 							</span>
 						</div>
-						<button class="btn btn-danger btn-sm ml-3 mt-1 align-bottom" type="button" onclick="javascript:location.href='/siga/public/app/logout'"><i class="fas fa-sign-out-alt"></i> Sair</button>
-						<div class="d-inline">
+						<button class="btn btn-danger btn-sm ml-3 mt-1 align-bottom" type="button" onclick="delSession();javascript:location.href='/siga/public/app/logout'"><i class="fas fa-sign-out-alt"></i> Sair</button>
+						<div class="pt-1">
 							<c:catch>
 								<c:choose>
 									<c:when
 										test="${not empty titular && titular.idPessoa!=cadastrante.idPessoa}">Substituindo: <strong>${f:maiusculasEMinusculas(titular.nomePessoa)}</strong>
-										<span class="gt-util-separator">|</span>
-										<a href="/siga/app/substituicao/finalizar" class="text-white">Finalizar</a>
+										<button class="btn btn-secondary btn-sm" type="button" onclick="delSession();javascript:location.href='/siga/app/substituicao/finalizar'">Finalizar</button>
 									</c:when>
 									<c:when
 										test="${not empty lotaTitular && lotaTitular.idLotacao!=cadastrante.lotacao.idLotacao}">Substituindo: <strong>${f:maiusculasEMinusculas(lotaTitular.nomeLotacao)}</strong>
-										<span class="gt-util-separator">|</span>
-										<a href="/siga/app/substituicao/finalizar" class="text-white">Finalizar</a>
+										<button class="btn btn-secondary btn-sm" type="button" onclick="delSession();javascript:location.href='/siga/app/substituicao/finalizar'">Finalizar</button>
 									</c:when>
 									<c:otherwise></c:otherwise>
 								</c:choose>
@@ -430,7 +441,7 @@ ${meta}
 					</div>
 				</c:if>
 			</div>
-			<div class="row ${mensagemCabec==null?'d-none':''}" id=mensagemCabecId" >
+			<div class="row ${mensagemCabec==null?'d-none':''}" id="mensagemCabecId" >
 				<div class="col" >
 					<div class="alert ${msgCabecClass} fade show" id="mensagemCabec" role="alert">
 						${mensagemCabec}
@@ -448,4 +459,17 @@ ${meta}
 	</c:if>
 
 	<div id="carregando"
-		style="position: absolute; top: 0px; right: 0px; background-color: red; font-weight: bold; padding: 4px; color: white; display: none">Carregando...</div>
+		style="position: absolute; top: 0px; right: 0px; background-color: red; font-weight: bold; padding: 4px; color: white; display: none">Carregando...</div>	
+    
+<script type="text/javascript" language="Javascript1.1">
+setTimeout(function() {
+	$('#mensagemCabec.fade-close').fadeTo(1000, 0, function() {
+		$('#mensagemCabec.fade-close').slideUp(1000);
+	});
+}, 5000);
+
+function delSession() {
+	sessionStorage.removeItem('timeout' + document.getElementById('cadastrante').title);
+	sessionStorage.removeItem('mesa' + document.getElementById('cadastrante').title);
+}
+</script>		

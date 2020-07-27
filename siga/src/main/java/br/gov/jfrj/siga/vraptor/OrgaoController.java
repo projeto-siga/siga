@@ -1,12 +1,13 @@
 package br.gov.jfrj.siga.vraptor;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -17,9 +18,18 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.CpOrgaoDaoFiltro;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 
-@Resource
+@Controller
 public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, DaoFiltroSelecionavel>{
 
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public OrgaoController() {
+		super();
+	}
+
+	@Inject
 	public OrgaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 		// TODO Auto-generated constructor stub

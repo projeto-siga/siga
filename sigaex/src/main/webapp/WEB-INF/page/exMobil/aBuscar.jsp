@@ -27,6 +27,23 @@ function sbmt(offset) {
 	buscar.submit();
 }
 
+function submitBusca(cliente) {
+	if(cliente == 'GOVSP') {
+		var descricao = document.getElementById('descrDocumento').value.trim();
+		if(descricao.length != 0 && descricao.length < 5) {
+			sigaModal.alerta("Preencha no mínimo 5 caracteres no campo descrição");
+		} else {
+			$('#buscandoSpinner').removeClass('d-none');
+			document.getElementById("btnBuscar").disabled = true;
+			buscar.submit();
+		}
+	} else {
+		$('#buscandoSpinner').removeClass('d-none');
+		document.getElementById("btnBuscar").disabled = true;
+		buscar.submit();
+	}
+}
+
 function montaDescricao(id,via,descrDoc){
 	var popW = 700;
 	var popH = 500; 
@@ -378,6 +395,9 @@ function limpaCampos()
 		descarrega();
 		return false;
 	}
+	
+	document.getElementById("btnBuscar").disabled = false;
+	$('#buscandoSpinner').addClass('d-none');
 
 	return true;
 }
@@ -482,7 +502,7 @@ function limpaCampos()
 												</c:choose>
 											</c:when>
 											<c:otherwise>
-												<a href="javascript:opener.retorna_${propriedade}('${documento[1].id}','${documento[1].sigla}','${f:selDescricaoConfidencial(documento[1], lotaTitular, titular)}');">
+												<a href="javascript:parent.retorna_${propriedade}('${documento[1].id}','${documento[1].sigla}','${f:selDescricaoConfidencial(documento[1], lotaTitular, titular)}');">
 													${documento[1].codigo}
 												</a>
 											</c:otherwise>
@@ -680,7 +700,9 @@ function limpaCampos()
 						<div class="form-group col-md-3">
 							<label for="orgaoUsu">Órgão</label> <select class="form-control"
 								id="orgaoUsu" name="orgaoUsu">
-								<option value="0">[Todos]</option>
+								<c:if test="${siga_cliente != 'GOVSP'}">
+									<option value="0">[Todos]</option>
+								</c:if>
 								<c:forEach items="${orgaosUsu}" var="item">
 									<option value="${item.idOrgaoUsu}"
 										${item.idOrgaoUsu == orgaoUsu ? 'selected' : ''}>
@@ -968,7 +990,7 @@ function limpaCampos()
 									<div class="col-sm-4">
 										<div class="form-group">	
 											<label>Descrição</label>
-											<input type="text" name="descrDocumento" value="${descrDocumento}" size="80" class="form-control" />
+											<input type="text" name="descrDocumento" id="descrDocumento" value="${descrDocumento}" size="80" class="form-control" />
 										</div>
 									</div>
 								</div>	
@@ -982,10 +1004,12 @@ function limpaCampos()
 								<div class="row">
 									<div class="col-sm-4">
 										<div class="form-group">	
-											<siga:monobotao inputType="submit" value="Buscar" cssClass="btn btn-primary" />
+											<button id="btnBuscar" type="button" value="Buscar" class="btn btn-primary" onclick="submitBusca('${siga_cliente}')">
+												<span id="buscandoSpinner" class="spinner-border d-none" role="status"></span> Buscar
+											</button>
 										</div>
 									</div>
-								</div>	
+								</div>					
 							</form>
 						</div>
 					</div>

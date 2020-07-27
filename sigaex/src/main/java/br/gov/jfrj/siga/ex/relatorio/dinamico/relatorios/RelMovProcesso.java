@@ -1,36 +1,27 @@
 package br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.sf.jasperreports.engine.JRException;
-
-import org.hibernate.Query;
-
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
-import ar.com.fdvs.dj.domain.constants.Font;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import net.sf.jasperreports.engine.JRException;
 
 public class RelMovProcesso extends RelatorioTemplate {
 

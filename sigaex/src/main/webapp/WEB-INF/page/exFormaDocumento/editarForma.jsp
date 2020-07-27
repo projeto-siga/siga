@@ -12,17 +12,18 @@
 	<div class="container-fluid">
 		<div class="card bg-light mb-3">
 			<div class="card-header">
-				<h5>Dados da Espécie Documental</h5>
+				<h5>Dados da Espécie Documental</h5> 
 			</div>
 			<div class="card-body">
 				<form name="frm" action="gravar" theme="simple" method="POST">
-
+					<input type="hidden" id="id" name="id" value="${id}" />
 					<div class="row">
 						<div class="col-md-4">
 							<div class="form-group">
 								<label for="descricao">Descrição</label> <input type="text"
 									value="${descricao}" name="descricao" class="form-control" />
 							</div>
+							
 						</div>
 						<div class="col-md-1">
 							<div class="form-group">
@@ -42,7 +43,7 @@
 									</c:forEach>
 								</select>
 							</div>
-						</div>
+						</div>						
 						<div class="col-md-2">
 							<div class="form-group">
 								<div class="form-check form-check-inline mt-4">

@@ -37,10 +37,6 @@
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
 
-	<listener>
-		<listener-class>br.gov.jfrj.siga.jee.BouncyCastleServletContextListener</listener-class>
-	</listener>
-
 	<filter>
 		<filter-name>RequestLoggerFilter</filter-name>
 		<filter-class>br.gov.jfrj.siga.base.log.RequestLoggerFilter</filter-class>
@@ -126,17 +122,7 @@
 	<filter-mapping>
 		<filter-name>vraptor</filter-name>
 		<url-pattern>/app/*</url-pattern>
-		<dispatcher>FORWARD</dispatcher>
-		<dispatcher>REQUEST</dispatcher>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>vraptor</filter-name>
 		<url-pattern>/public/app/*</url-pattern>
-		<dispatcher>FORWARD</dispatcher>
-		<dispatcher>REQUEST</dispatcher>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>vraptor</filter-name>
 		<url-pattern>*.action</url-pattern>
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
@@ -242,6 +228,16 @@
 	<servlet-mapping>
 		<servlet-name>webdav</servlet-name>
 		<url-pattern>/webdav/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ExApiV1Servlet</servlet-name>
+		<servlet-class>br.gov.jfrj.siga.ex.api.v1.ExApiV1Servlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ExApiV1Servlet</servlet-name>
+		<url-pattern>/api/v1/*</url-pattern>
 	</servlet-mapping>
 
 	<servlet>

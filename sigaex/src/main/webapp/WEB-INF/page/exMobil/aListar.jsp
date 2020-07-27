@@ -44,6 +44,23 @@
 		listar["p.offset"].value = offset;
 		listar.submit();
 	}
+	
+	function submitBusca(cliente) {
+		if(cliente == 'GOVSP') {
+			var descricao = document.getElementById('descrDocumento').value.trim();
+			if(descricao.length != 0 && descricao.length < 5) {
+				sigaModal.alerta("Preencha no mínimo 5 caracteres no campo descrição");
+			} else {
+				$('#buscandoSpinner').removeClass('d-none');
+				document.getElementById("btnBuscar").disabled = true;
+				listar.submit();
+			}
+		} else {
+			$('#buscandoSpinner').removeClass('d-none');
+			document.getElementById("btnBuscar").disabled = true;
+			listar.submit();
+		}
+	}	
 
 	function montaDescricao(id, via, descrDoc) {
 		var popW = 700;
@@ -331,6 +348,9 @@
 			break;
 		}
 
+		document.getElementById("btnBuscar").disabled = false;
+		$('#buscandoSpinner').addClass('d-none');
+		
 		return true;
 	}
 </script>
@@ -378,7 +398,7 @@
 						<div class="form-row">
 							<div class="form-group col-md-6">
 								<label for="classificacao"><fmt:message key="documento.descricao"/></label> <input
-									class="form-control" type="text" name="descrDocumento"
+									class="form-control" type="text" name="descrDocumento" id="descrDocumento"
 									value="${descrDocumento}" size="80" />
 							</div>
 						</div>
@@ -444,7 +464,9 @@
 						<div class="form-group col-md-3">
 							<label for="orgaoUsu">Órgão</label> 
 							<select class="form-control  siga-select2" id="orgaoUsu" name="orgaoUsu">
-								<option value="0">[Todos]</option>
+								<c:if test="${siga_cliente != 'GOVSP' || orgaoUsu == '0'}">
+									<option value="0">[Todos]</option>
+								</c:if>
 								<c:forEach items="${orgaosUsu}" var="item">
 									<option value="${item.idOrgaoUsu}"
 										${item.idOrgaoUsu == orgaoUsu ? 'selected' : ''}>
@@ -688,14 +710,16 @@
 							</select>
 						</div>
 					</div>
-					<input type="submit" value="Buscar" class="btn btn-primary"/>
+					<button id="btnBuscar" type="button" value="Buscar" class="btn btn-primary" onclick="submitBusca('${siga_cliente}')">
+						<span id="buscandoSpinner" class="spinner-border d-none" role="status"></span> Buscar
+					</button>
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;FE:Ferramentas;LD:Listar Documentos')}">
 						<siga:monobotao inputType="button"
 							onclique="sbmtAction('listar', '/sigaex/app/ferramentas/doc/listar');"
 							value="Administrar Documentos" cssClass="btn btn-primary" />
 					</c:if>
-					<input type="button" value="Voltar" onclick="javascript:history.back();" class="btn btn-primary" />
+					<input type="button" value="Voltar" onclick="javascript:history.back();" class="btn btn-primary" />				
 				</form>
 			</div>
 		</div>

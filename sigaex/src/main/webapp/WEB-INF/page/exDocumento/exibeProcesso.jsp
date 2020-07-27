@@ -21,6 +21,56 @@
 	</script>
 </c:if>
 
+<c:if test="${mob.doc.podeReordenar()}"> 
+	<style>
+		.tabela-ordenavel tbody {
+			cursor: move;
+		}
+		
+		.tabela-ordenavel tbody tr {
+			border: 2px dashed #A9A9A9;				
+		}
+		
+		.tabela-ordenavel tbody tr:hover,
+		.tabela-ordenavel tbody tr:focus {
+			border-left: 3px dashed #007BFF;	
+			border-right: 3px dashed #007BFF;		
+			background-color: #CED4DA;	
+		}
+		
+		.tabela-ordenavel tbody a {
+			pointer-events: none;
+		}	
+			
+		.menu-ordenacao {
+			text-align: center;
+			height: auto;
+			max-height: 0;		
+			opacity: 0;		
+			position: relative;		
+			left: -999px;
+			transition: left .3s, opacity .3s, max-height .5s;		
+		}		
+		
+		.form {
+			text-align: center;
+		}		
+		
+		.checkbox-oculto {
+			display: none;
+		}
+		
+		#btnOrdenarDocumentos {
+			background-color: transparent;
+		}		
+		
+		#btnOrdenarDocumentos:disabled,
+		#btnSalvarOrdenacao:disabled {
+			cursor: not-allowed;
+		}
+	</style>
+</c:if>
+
 <script type="text/javascript">
 	var iframeids = [ "maincntnt" ]
 	var iframehide = "no"
@@ -65,19 +115,19 @@
         
         if ($('#TelaCheia').hasClass('btn-secondary')) {
 	 		b.classList.remove("btn-secondary");
-	 		b.setAttribute("class", "mt-3 ml-2 btn btn-primary btn-sm align-center");
+	 		b.setAttribute("class", "ml-2 btn btn-primary btn-sm align-center");
 	 		b.textContent = "Abrir Índice";
 	 		var divDocRight = document.getElementById('right-col');
 	 		divDocRight.setAttribute("class", "col-sm-12");
 		} else {
 	 		b.classList.remove("btn-primary");
-	 		b.setAttribute("class", "mt-3 ml-2 btn btn-secondary btn-sm align-center");
+	 		b.setAttribute("class", "ml-2 btn btn-secondary btn-sm align-center");
 	 		b.textContent = "Tela cheia";
 	 		var divDocRight = document.getElementById('right-col');
 	 		divDocRight.setAttribute("class", "col-sm-9");
 		}
 		resize();
-	}
+	}				
 </script>
 
 <!-- main content bootstrap -->
@@ -130,27 +180,37 @@
 							</a>
 						</p>
 					</div>
-				</div>
+				</div>				
 				<c:if test="${siga_cliente != 'GOVSP'}">
-					<div>
-						<siga:link icon="application_view_list" classe="mt-3 once" title="Visualizar&nbsp;_Movimentações"
+					<div class="mt-2">
+						<siga:link icon="application_view_list" classe="once" title="Visualizar&nbsp;_Movimentações"
 							url="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}" atalho="${true}"
-							test="${true}" />
-						<button type="button" class="mt-3 ml-2 btn btn-secondary btn-sm align-center" id="TelaCheia" data-toggle="button" aria-pressed="false" autocomplete="off"
+							test="${true}" /> <span class="pl-2"></span>
+						<button type="button" class="link-btn btn btn-secondary btn-sm align-center" id="TelaCheia" data-toggle="button" aria-pressed="false" autocomplete="off"
 							accesskey="t" onclick="javascript: telaCheia(this);">
 							<u>T</u>ela Cheia
-						</button>
-						<div class="d-inline-block col-sm-6 align-bottom pb-1 mt-3 mr-2">
+						</button>			
+						<span class="pl-2"></span>			
+						<div class="d-inline-block align-center mb-2 mt-2">
 							<siga:link icon="wrench" title="Preferência:" test="${true}" url="" />
+							<span class="pl-2"></span>			
+							<span style="white-space: nowrap;">
 							<input type="radio" id="radioHTML" name="formato" value="html" accesskey="h" checked="checked" onclick="exibir(htmlAtual,pdfAtual,'');">
-								&nbsp;<u>H</u>TML&nbsp;
+								<u>H</u>TML&nbsp;
 							</input>
+							</span>
+							<span class="pl-2"></span>			
+							<span style="white-space: nowrap;">
 							<input type="radio" id="radioPDF" name="formato" value="pdf" accesskey="p" onclick="exibir(htmlAtual,pdfAtual,'');">
-								&nbsp;<u>P</u>DF -  <a id="pdflink" accesskey="a"> <u>a</u>brir</a>
+								<u>P</u>DF -  <a id="pdflink" accesskey="a"> <u>a</u>brir</a>
 							</input>
-							<input class="ml-2" type="radio" id="radioPDFSemMarcas" name="formato" accesskey="s" value="pdfsemmarcas" onclick="exibir(htmlAtual,pdfAtual,'semmarcas/');">
-								&nbsp;PDF <u>s</u>em marcas - <a id="pdfsemmarcaslink" accesskey="b"> a<u>b</u>rir</a>
+							</span>
+							<span class="pl-2"></span>			
+							<span style="white-space: nowrap;">
+							<input type="radio" id="radioPDFSemMarcas" name="formato" accesskey="s" value="pdfsemmarcas" onclick="exibir(htmlAtual,pdfAtual,'semmarcas/');">
+								PDF <u>s</u>em marcas - <a id="pdfsemmarcaslink" accesskey="b"> a<u>b</u>rir</a>
 							</input>
+							</span>
 						</div>
 					</div>
 				</c:if>
@@ -161,17 +221,45 @@
 	<div class="row mt-3">
 		<c:set var="arqsNum" value="${mob.arquivosNumerados}" />
 		<c:set var="paginacao" value="${not empty arqsNum[0].paginaInicial}" />
-		<div class="wrapper col-sm-3 float-left" >
-			<nav id="sidebar">
+		<div class="wrapper col-sm-3" >
+			<div id="sidebar" class="w-100">
 				<div class="card-sidebar card bg-light mb-3" id="documentosDossie">
-					<div class="card-header">
-						<fmt:message key='documento.dossie'/>  /  <fmt:message key='usuario.lotacao'/>
+					<div class="text-size-6 card-header">
+						<span class="titulo-docs">
+							<fmt:message key='documento.dossie'/>  /  <fmt:message key='usuario.lotacao'/>
+							<c:if test="${mob.doc.podeReordenar()}">													
+								<button type="button" class="btn" id="btnOrdenarDocumentos" data-toggle="tooltip" data-placement="top" title="Reordenar itens" ${arqsNum.size() == 1 ? 'disabled' : ''}>
+									<i class="fas fa-sort"></i>
+								</button>									
+								<c:if test="${mob.doc.podeReordenar() && podeExibirReordenacao && mob.doc.temOrdenacao()}">								
+									<br />*reordenados temporariamente
+								</c:if>
+							</c:if>
+						</span>		
+						<c:if test="${mob.doc.podeReordenar()}">				
+							<div class="menu-ordenacao"">
+								Clique e arraste os itens tracejados para reordená-los<br />							
+								<form action="${pageContext.request.contextPath}/app/expediente/doc/reordenar" id="formReordenarDocs" class="form" method="POST">									
+									<input type="hidden" name="idDocumentos" id="inputHiddenIdDocs" />													
+									<input type="hidden" name="sigla" value="${sigla}" />
+									<button type="submit" class="mt-3 ml-2 btn btn-success btn-sm align-center" id="btnSalvarOrdenacao" disabled>
+										<i class="fas fa-check"></i> Salvar
+									</button>
+									<button type="button" class="mt-3 ml-2 btn btn-danger btn-sm align-center" id="btnCancelarOrdenacao">
+											<i class="fas fa-times"></i> Cancelar
+									</button>																					
+								</form>
+							</div>	
+						</c:if>							
 					</div>
-					<div class="card-body p-1">
-						<table class="table table-hover table-striped mov">
-							<tbody>
+					<div class="card-body pl-1 pr-1 pt-0 pb-0">
+						<table class="text-size-6 table table-hover table-sm table-striped m-0 mov tabela-documentos">
+							<tbody id="${mob.doc.podeReordenar() ? 'sortable' : ''}">
 								<c:forEach var="arqNumerado" items="${arqsNum}">
-									<tr>
+									<tr>										
+										<td style="display: none;">
+											${arqNumerado.arquivo.idDoc}	
+										</td>
 										<td>
 											<a target="_blank" title="${fn:substring(tooltipResumo,0,fn:length(tooltipResumo)-4)}" href="/sigaex/app/arquivo/exibir?arquivo=${arqNumerado.referenciaPDF}">
 												<img src="/siga/css/famfamfam/icons/page_white_acrobat.png">
@@ -183,7 +271,17 @@
 													<c:set var="tooltipResumo" value="${tooltipResumo}${itemResumo.key}:${itemResumo.value}&#13" />
 												</c:forEach>
 											</c:if> 
-											<a title="${fn:substring(tooltipResumo,0,fn:length(tooltipResumo)-4)}" href="javascript:exibir('${arqNumerado.referenciaHtml}','${arqNumerado.referenciaPDF}','')">${arqNumerado.nomeOuDescricao}</a>
+											<a title="${fn:substring(tooltipResumo,0,fn:length(tooltipResumo)-4)}" 
+												href="javascript:exibir('${arqNumerado.referenciaHtml}','${arqNumerado.referenciaPDF}','')">
+												<c:choose>
+													<c:when test="${siga_cliente == 'GOVSP'}">
+														${arqNumerado.nomeOuDescricaoComMovimentacao}
+													</c:when>
+													<c:otherwise>
+														${arqNumerado.nomeOuDescricao}
+													</c:otherwise>
+												</c:choose>
+											</a>
 											<c:set var="tooltipResumo" value="" />
 										</td>
 										<td align="center">${arqNumerado.arquivo.lotacao.sigla}</td>
@@ -202,23 +300,24 @@
 									</c:if>
 				
 								</c:forEach>
+							</tbody>
+							<tfoot>
 								<tr>
 									<td>
-										<a target="_blank" href="/sigaex/app/arquivo/exibir?arquivo=${arqsNum[0].referenciaPDFCompleto}">
+										<a target="_blank" href="/sigaex/app/arquivo/exibir?arquivo=${arqsNum[0].referenciaPDFCompletoDocPrincipal}">
 											<img src="/siga/css/famfamfam/icons/page_white_acrobat.png">
 										</a>
 									</td>
 									<td style="padding-left: 5pt;">
-										<a href="javascript:exibir('${arqsNum[0].referenciaHtmlCompleto}','${arqsNum[0].referenciaPDFCompleto}','')">COMPLETO</a>
+										<a class="js-siga-info-doc-completo" href="javascript:exibir('${arqsNum[0].referenciaHtmlCompletoDocPrincipal}','${arqsNum[0].referenciaPDFCompletoDocPrincipal}','')">COMPLETO</a>
 									</td>
-									<td align="center" style="padding-left: 5pt;"></td>
-									<c:if test="${paginacao}">
+									<c:if test="${siga_cliente != 'GOVSP' && paginacao}">
+										<td align="center" style="padding-left: 5pt;"></td>										
 										<td align="center" style="padding-left: 5pt;">
 											${arqsNum[fn:length(arqsNum)-1].paginaFinal}
-										</td>
-									</c:if>
-								</tr>
-				
+										</td>										
+									</c:if>	
+								</tr>							
 								<c:if test="${!empty possuiResumo}">
 									<tr>
 										<td></td>
@@ -230,13 +329,43 @@
 										</c:if>
 									</tr>
 								</c:if>
-							</tbody>
+								
+								<c:if test="${podeExibirTodosOsVolumes}">
+								<tr>
+									<td>
+										<a target="_blank" href="/sigaex/app/arquivo/exibir?arquivo=${arqsNum[0].referenciaPDFCompletoDocPrincipalVolumes}">
+											<img src="/siga/css/famfamfam/icons/page_white_acrobat.png">
+										</a>
+									</td>
+									<td style="padding-left: 5pt;">
+										<a class="js-siga-info-doc-completo" href="javascript:exibir('${arqsNum[0].referenciaHtmlCompletoDocPrincipalVolumes}','${arqsNum[0].referenciaPDFCompletoDocPrincipalVolumes}','')">TODOS OS VOLUMES</a>
+									</td>
+									<c:if test="${siga_cliente != 'GOVSP' && paginacao}">
+										<td align="center" style="padding-left: 5pt;"></td>										
+										<td align="center" style="padding-left: 5pt;">
+										</td>										
+									</c:if>	
+								</tr>							
+								</c:if>
+							</tfoot>
 						</table>
+						<c:if test="${mob.doc.podeReordenar() && podeExibirReordenacao && mob.doc.temOrdenacao()}">						
+							<div class="menu-retornar-para-original">
+								<hr>
+								<form action="${pageContext.request.contextPath}/app/expediente/doc/reordenar" id="formVoltarDocsParaOrdemOriginal" class="form" method="POST">
+									<input type="hidden" name="sigla" value="${sigla}" />																
+									<input type="checkbox" name="isVoltarParaOrdemOriginal" id="isVoltarParaOrdemOriginal" class="checkbox-oculto" checked disbled />																										
+									<button type="submit" class="btn btn-warning" id="btnResetarOrdemOriginal">
+										<i class="fas fa-undo-alt"></i> Retornar para ordem original									
+									</button>																						
+								</form>
+							</div>	
+						</c:if>					
 					</div>
 				</div>
-			</nav>
+			</div>
 		</div>
-		<div id="right-col" class="col-sm-9 float-right">
+		<div id="right-col" class="col-sm-9">
 			<c:if test="${siga_cliente == 'GOVSP'}">
 				<div id="linhaBtn" class="mb-2">						
 					<div class="input-group d-inline mb-2">						
@@ -249,8 +378,12 @@
 										<u>P</u>DF
 	<!-- 									</a> -->
 							</a>
+							<a class="btn btn-primary btn-sm notActive" data-toggle="formato" data-title="pdfsemmarcas" id="radioPDFSemMarcas" name="pdfsemmarcas" value="pdfsemmarcas" accesskey="p" onclick="toggleBotaoHtmlPdf($(this)); exibir(htmlAtual,pdfAtual,'semmarcas/');">
+										PDF Sem Marcas
+							</a>
 						</div>
 						<a class="btn-btn-primary btn-sm d-none" id="pdflink" accesskey="a"><u>a</u>brir PDF</a>
+						<a class="btn-btn-primary btn-sm d-none" id="pdfsemmarcaslink" accesskey="b">a<u>b</u>rir PDF</a>
 						<input type="hidden" name="formato" id="radio" value="html">
 					</div>
 					<button type="button" class="btn btn-secondary btn-sm" id="TelaCheia" data-toggle="button" aria-pressed="false" autocomplete="off"
@@ -260,21 +393,68 @@
 				</div>
 			</c:if>
 			<div id="paipainel" style="margin: 0px; padding: 0px; border: 0px; clear: both;">
-				<iframe style="visibility: visible; margin: 0px; padding: 0px;" name="painel" id="painel" src="" align="right" width="100%" onload="$(document).ready(function () {resize();});" frameborder="0" scrolling="auto"></iframe>
+				<iframe style="visibility: visible; margin: 0px; padding: 0px; min-height: 20em;" name="painel" id="painel" src="" align="right" width="100%" onload="$(document).ready(function () {resize();});" frameborder="0" scrolling="auto"></iframe>
 			</div>
 		</div>
 	</div>
 	<div id="final"></div>
 </div>
 </siga:pagina>
+<c:if test="${mob.doc.podeReordenar()}">
+	<script src="/siga/javascript/jquery-ui-1.12.1/custom/sortable/jquery-ui-1.12.1.min.js"></script>
+	<script src="/siga/javascript/jqueryui-touch-punch-0.2.3/jquery.ui.touch-punch-0.2.3.min.js"></script>
+</c:if>
 <script src="/siga/bootstrap/js/bootstrap.min.js"></script>
+<c:if test="${mob.doc.podeReordenar() && podeExibirReordenacao && mob.doc.temOrdenacao()}">
+	<script>	
+		$(document).ready(function() {
+			//se exibindo documentos reordenados, não permite visualização PDF						
+			$('#radioPDF').attr('data-toggle', 'tooltip').attr('data-placement', 'top').attr('title', 'Indisponível enquanto documento estiver reordenado').removeAttr('onclick').css({'cursor':'not-allowed', 'color':'rgba(0, 0, 0, 0.3)', 'border':'1px solid rgba(0, 0, 0, 0.3)'});		
+		});
+	</script>
+</c:if>
 <script>
-	var path = '/sigaex/app/arquivo/exibir?idVisualizacao=${idVisualizacao}&arquivo=';
-	var htmlAtual = '${arqsNum[0].referenciaHtmlCompleto}';
-	var pdfAtual = '${arqsNum[0].referenciaPDFCompleto}';
+	$(function () {
+	  $('[data-toggle="tooltip"]').tooltip()
+	})
+</script>
+<c:if test="${siga_cliente == 'GOVSP' && paginacao}">
+	<script>
+		$(function() {			
+			var quantidadePaginas = '${arqsNum[fn:length(arqsNum)-1].paginaFinal}';
+			
+			if (quantidadePaginas && quantidadePaginas > 0) {
+				var linkDocCompleto = $('.js-siga-info-doc-completo');
+				var title = quantidadePaginas + ' página' + (quantidadePaginas > 1 ? 's' : '');
+				
+				linkDocCompleto.attr('data-toggle', 'tooltip').attr('data-placement', 'right').attr('title', title);
+				linkDocCompleto.tooltip();
+				linkDocCompleto.css({'padding': '5px 5px 5px 0'});														
+			}
+		});
+	</script>
+</c:if>	
+<script>
+	var htmlAtual = '${arqsNum[0].referenciaHtmlCompletoDocPrincipal}';
+	var pdfAtual = '${arqsNum[0].referenciaPDFCompletoDocPrincipal}';	
+	var path = '/sigaex/app/arquivo/exibir?idVisualizacao=${idVisualizacao}';
+	
+	if ('${mob.doc.podeReordenar()}' === 'true' && '${podeExibirReordenacao}' === 'true') path += '&exibirReordenacao=true';			
+	path += '&arquivo=';			
 
 	function fixlinks(refHTML, refPDF) {
-		document.getElementById('pdflink').href = path + refPDF;
+		
+		if ('${siga_cliente}' == 'GOVSP') {
+			document.getElementById('pdflink').href = path + refPDF + '&sigla=${sigla}';
+			
+			if ($('#radioPDFSemMarcas').hasClass('active')) {
+				document.getElementById('pdfsemmarcaslink').href = path + refPDF
+					+ "&semmarcas=1";
+			}
+		} else {
+			document.getElementById('pdflink').href = path + refPDF;
+		}
+		
 		if (document.getElementById('radioPDFSemMarcas') != null) {
 			document.getElementById('pdfsemmarcaslink').href = path + refPDF
 					+ "&semmarcas=1";
@@ -291,12 +471,15 @@
 		else if (ifr.attachEvent)
 			ifr.detachEvent("onload", resize); // Bug fix line
 
-		if (document.getElementById('radioPDFSemMarcas') == null) {
+			if ('${siga_cliente}' == 'GOVSP') {
 			// Para GOVSP com link buttons
 
+			var refSiglaDocPrincipal = '&sigla=${sigla}';
+			
 			if ($('#radioHTML').hasClass('active') && refHTML != '') {
 				$('#pdflink').addClass('d-none');
-				ifr.src = path + refHTML;
+				$('#pdfsemmarcaslink').addClass('d-none');
+				ifr.src = path + refHTML + refSiglaDocPrincipal;
 				ifrp.style.border = "0px solid black";
 				ifrp.style.borderBottom = "0px solid black";
 				if (ifr.addEventListener)
@@ -304,8 +487,16 @@
 				else if (ifr.attachEvent)
 					ifr.attachEvent("onload", resize);
 			} else {
-				$('#pdflink').removeClass('d-none');
-				ifr.src = path + refPDF;
+				if ($('#radioPDFSemMarcas').hasClass('active')) {
+					$('#pdfsemmarcaslink').removeClass('d-none');
+					$('#pdflink').addClass('d-none');
+					ifr.src = path + refPDF + "&semmarcas=1";
+				} else {
+					$('#pdflink').removeClass('d-none');
+					$('#pdfsemmarcaslink').addClass('d-none');
+					ifr.src = path + refPDF + refSiglaDocPrincipal;
+				}
+				
 				ifrp.style.border = "1px solid black";
 				ifr.height = pageHeight() - 300;
 			}
@@ -324,7 +515,7 @@
 					ifr.src = path + refPDF + "&semmarcas=1"
 				else
 					ifr.src = path + refPDF;
-				ifrp.style.border = "1px solid black";
+				ifrp.style.border = "0px solid black";
 				ifr.height = pageHeight() - 300;
 			}
 		}
@@ -367,7 +558,7 @@
 		ifr.src = url;
 	}
 	
-	function toggleBotaoHtmlPdf(btn) {
+	function toggleBotaoHtmlPdf(btn) {		
 	    var sel = btn.data('title');
 	    var tog = btn.data('toggle');
 	    $('#'+tog).prop('value', sel);
@@ -387,3 +578,6 @@
 	    $('a[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
 	})
 </script>
+<c:if test="${mob.doc.podeReordenar()}"> 
+	<script src="/siga/javascript/documento.reordenar-doc.js"></script>
+</c:if>

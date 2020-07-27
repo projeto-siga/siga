@@ -19,7 +19,7 @@ function sbmt(offset) {
 </script>
 	<!-- main content -->
 	<div class="container-fluid">
-		<form name="frm" action="listar" class="form100" method="GET">
+		<form name="frm" action="listar" id="listar" class="form100" method="GET">
 		<input type="hidden" name="paramoffset" value="0" />
 		<input type="hidden" name="p.offset" value="0" />
 		<div class="card bg-light mb-3" >
@@ -27,6 +27,16 @@ function sbmt(offset) {
 				<h5>Cadastro de <fmt:message key="usuario.lotacao"/></h5>
 			</div>
 			<div class="card-body">
+				<div class="row">
+					<div class="col-sm">
+						<div class="alert alert-info  mensagem-pesquisa" role="alert" style="display: none;">
+    						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    							<span aria-hidden="true">×</span>
+  							</button>
+  							<i class="fas fa-info-circle"></i> ${mensagemPesquisa}
+						</div>
+					</div>
+				</div>
 				<div class="row">
 					<div class="col-md-4">
 						<div class="form-group">
@@ -48,9 +58,12 @@ function sbmt(offset) {
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-md-4">
+					<div class="col-sm-12">
 						<div class="form-group">
 							<input value="Pesquisar" class="btn btn-primary" onclick="javascript: sbmt(0);"/>
+							<c:if test="${temPermissaoParaExportarDados}">
+								<button type="button" class="btn btn-outline-success" id="exportarCsv" title="Exportar para CSV" onclick="javascript:csv('listar', '/siga/app/lotacao/exportarCsv');"><i class="fa fa-file-csv"></i> Exportar</button>
+							</c:if>							
 						</div>
 					</div>
 				</div>			
@@ -63,6 +76,7 @@ function sbmt(offset) {
 				<tr>
 					<th align="left">Nome</th>
 					<th align="left">Sigla</th>
+					<th align="left">Externa</th>
 					<th colspan="2" align="center">Op&ccedil;&otilde;es</th>					
 				</tr>
 			</thead>
@@ -73,6 +87,7 @@ function sbmt(offset) {
 					<tr>
 						<td align="left">${lotacao.descricao}</td>
 						<td align="left">${lotacao.sigla}</td>
+						<td align="left">${lotacao.isExternaLotacao == 1 ? 'SIM' : 'NÃO'}</td>
 						<td align="left">
 							<c:url var="url" value="/app/lotacao/editar">
 								<c:param name="id" value="${lotacao.id}"></c:param>
@@ -105,4 +120,27 @@ function sbmt(offset) {
 <script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
 <script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
 <script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {	
+		if ('${mensagemPesquisa}'.length > 0) $('.mensagem-pesquisa').css({'display':'block'});
+	});
+	
+	function csv(id, action) {
+		var frm = document.getElementById(id);
+		frm.method = "POST";
+		sbmtAction(id, action);
+		
+		$('.mensagem-pesquisa').alert('close');
+		
+		frm.action = 'listar';
+		frm.method = "GET";
+	}
+	
+	function sbmtAction(id, action) {
+		var frm = document.getElementById(id);
+		frm.action = action;
+		frm.submit();
+		return;
+	}
+</script>
 </siga:pagina>

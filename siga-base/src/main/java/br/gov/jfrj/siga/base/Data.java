@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.base;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -18,6 +19,22 @@ public class Data {
 			return true;
 		}
 
+	}
+
+	public static Boolean validaDDMMYYYY(String dataDDMMYYYY) {
+        Date data = null;
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        try {
+            format.setLenient(false);
+            data = format.parse(dataDDMMYYYY);
+            if (dataDentroSeculo21(data)) {
+            	return true;
+            } else {
+            	return false;
+            }
+        } catch (ParseException e) {
+        	return false;
+        }
 	}
 
 	public static String formatDDMMYY_AS_HHMMSS(Date dt) {

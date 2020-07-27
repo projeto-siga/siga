@@ -14,6 +14,20 @@
 	<script type="text/javascript" src="/siga/javascript/hierarchy-select/hierarchy-select.js"></script>
 
 	<div class="container-fluid">
+	<c:if test="${not empty mensagem}">
+			<div class="row">
+				<div class="col-sm-12">
+					<p id="mensagem" class="alert alert-warning"><fmt:message key="${mensagem}"/></p>
+					<script>
+						setTimeout(function() {
+							$('#mensagem').fadeTo(1000, 0, function() {
+								$('#mensagem').slideUp(1000);
+							});
+						}, 5000);
+					</script>
+				</div>
+			</div>
+		</c:if>
 		<div class="card bg-light mb-3" >
 			<div class="card-header">
 				<h5>
@@ -45,6 +59,7 @@
 				<input type="hidden" name="exDocumentoDTO.id" value="${exDocumentoDTO.doc.idDoc}" /> 
 				<input type="hidden" name="exDocumentoDTO.idMod.original" value="${exDocumentoDTO.modelo.idMod}" /> 
 				<input type="hidden" name="jsonHierarquiaDeModelos" value="${jsonHierarquiaDeModelos}" />
+				<input type="hidden" name="cliente" id="cliente" value="${siga_cliente}">
 				<c:choose>
 					<c:when	test="${(exDocumentoDTO.doc.eletronico) && (exDocumentoDTO.doc.numExpediente != null)}">
 						<c:set var="estiloTipo" value="display: none" />
@@ -155,11 +170,11 @@
 										</c:if>
 									</c:when>
 									<c:otherwise>
-										<input type="radio" name="exDocumentoDTO.eletronico" id="eletronicoCheck1" value="1" onchange="javascript:setFisico();"
+										<input type="radio" class="mt-4" name="exDocumentoDTO.eletronico" id="eletronicoCheck1" value="1" onchange="javascript:setFisico();"
 											<c:if test="${exDocumentoDTO.eletronicoFixo}">disabled</c:if>
 											<c:if test="${exDocumentoDTO.eletronico == 1}">checked</c:if> />
 										<label for="eletronicoCheck1">Digital</label>
-										<input type="radio" name="exDocumentoDTO.eletronico" id="eletronicoCheck2" value="2" onchange="javascript:setFisico();"
+										<input type="radio" class="mt-4 ml-2" name="exDocumentoDTO.eletronico" id="eletronicoCheck2" value="2" onchange="javascript:setFisico();"
 											<c:if test="${exDocumentoDTO.eletronicoFixo}">disabled</c:if>
 											<c:if test="${exDocumentoDTO.eletronico == 2}">checked</c:if> />
 										<label for="eletronicoCheck2">Físico</label>
@@ -216,37 +231,54 @@
 					<c:when test='${exDocumentoDTO.tipoDocumento == "externo" or exDocumentoDTO.tipoDocumento == "externo_capturado"}'>
 					</c:when>
 					<c:otherwise>
-						<div class="row">
-							<div class="col-sm-8">
-								<div class="form-group">
-									<input type="hidden" name="campos" value="subscritorSel.id" />
-									<input type="hidden" name="campos" value="substituicao" />
-									<input type="hidden" name="campos" value="personalizacao" />
-									<input type="hidden" id="temCossignatarios" value="${not empty exDocumentoDTO.doc.cosignatarios}" />
-									<label><fmt:message key="documento.subscritor"/></label>
-									<siga:selecao propriedade="subscritor" inputName="exDocumentoDTO.subscritor" modulo="siga" tema="simple" />
-								</div>
-							</div>
-							<div class="col-sm-2">
-								<div class="form-group">
-									<div class="form-check form-check-inline mt-4">
-										<fmt:message key="documento.help.substituto" var="documento_help_substituto" />
-										<input type="checkbox" name="exDocumentoDTO.substituicao" class="form-check-input" onclick="javascript:displayTitular(this);"
-											<c:if test="${exDocumentoDTO.substituicao}">checked</c:if> />
-										<label class="form-check-label" for="exDocumentoDTO.substituicao">Substituto </label>
-										<a class="fas fa-info-circle text-secondary ml-1  ${hide_only_TRF2}" data-toggle="tooltip" data-trigger="click" data-placement="bottom" title="${documento_help_substituto}"></a>
-										<input type="checkbox" name="exDocumentoDTO.personalizacao" class="form-check-input ml-3"  onclick="javascript:displayPersonalizacao(this);" 
-											<c:if test="${exDocumentoDTO.personalizacao}">checked</c:if> />
-										<label class="form-check-label" for="exDocumentoDTO.personalizacao">Personalizar</label>
+						<div class="row  js-siga-sp-documento-analisa-alteracao">
+							<c:choose>
+								<c:when test="${!ehPublicoExterno}">
+									<div class="col-sm-8">
+										<div class="form-group">
+											<input type="hidden" name="campos" value="subscritorSel.id" />
+											<input type="hidden" name="campos" value="substituicao" />
+											<input type="hidden" name="campos" value="personalizacao" />
+											<input type="hidden" id="temCossignatarios" value="${not empty exDocumentoDTO.doc.cosignatarios}" />
+											<label><fmt:message key="documento.subscritor"/></label>
+											<siga:selecao propriedade="subscritor" inputName="exDocumentoDTO.subscritor" modulo="siga" tema="simple" />
+										</div>
 									</div>
-								</div>
-							</div>
+									<div class="col-sm-2">
+										<div class="form-group">
+											<div class="form-check form-check-inline mt-4">
+												<fmt:message key="documento.help.substituto" var="documento_help_substituto" />
+												<input type="checkbox" name="exDocumentoDTO.substituicao" class="form-check-input" onclick="javascript:displayTitular(this);"
+													<c:if test="${exDocumentoDTO.substituicao}">checked</c:if> />
+												<label class="form-check-label" for="exDocumentoDTO.substituicao">Substituto </label>
+												<a class="fas fa-info-circle text-secondary ml-1  ${hide_only_TRF2}" data-toggle="tooltip" data-trigger="click" data-placement="bottom" title="${documento_help_substituto}"></a>
+												<input type="checkbox" name="exDocumentoDTO.personalizacao" class="form-check-input ml-3"  onclick="javascript:displayPersonalizacao(this);" 
+													<c:if test="${exDocumentoDTO.personalizacao}">checked</c:if> />
+												<label class="form-check-label" for="exDocumentoDTO.personalizacao">Personalizar</label>
+											</div>
+										</div>
+									</div>
+								</c:when>
+								<c:otherwise>
+									<div class="col-sm-12">
+										<label><fmt:message key="documento.subscritor"/></label>
+										<div class="row">
+											<div class="col-sm-4">
+												<input type="text" value="${exDocumentoDTO.subscritorSel.sigla}" class="form-control" disabled/>
+											</div>
+											<div class="col-sm-8">
+												<input type="text" value="${exDocumentoDTO.subscritorSel.descricao}" class="form-control" disabled/>
+											</div>
+										</div>					
+									</div>
+								</c:otherwise>
+							</c:choose>
 						</div>						
 					</c:otherwise>
 				</c:choose>
 				<input type="hidden" name="campos" value="titularSel.id" />
 				<div id="tr_titular" style="display: ${exDocumentoDTO.substituicao ? '' : 'none'};">
-					<div class="row">
+					<div class="row  js-siga-sp-documento-analisa-alteracao">
 						<div class="col-sm-8">
 							<div class="form-group">
 								<label><fmt:message key="documento.titular"/></label>
@@ -261,7 +293,7 @@
 					<div class="row ml-1">
 						<h6>Personalização</h6>
 					</div>
-					<div class="row">
+					<div class="row  js-siga-sp-documento-analisa-alteracao">
 						<div class="col-sm-2">
 							<div class="form-group">
 								<label>Função</label>
@@ -343,7 +375,7 @@
 					</div>
 				</div>
 				</c:if>	
-				<c:if test='${ exDocumentoDTO.tipoDocumento == "interno" }'>
+				<c:if test='${ exDocumentoDTO.tipoDocumento == "interno"  && !ehPublicoExterno}'>
 				<div class="row">
 					<input type="hidden" name="campos" value="preenchimento" />
 					<div class="col-sm-12">
@@ -423,7 +455,7 @@
 					<input type="hidden" id="descricaoAutomatica" value="sim" />
 				</c:if>
 				<div class="${displayDescricao}">
-					<div class="row">
+					<div class="row  js-siga-sp-documento-analisa-alteracao">
 						<div class="col-sm-8">
 							<div class="form-group">
 								<label>Descrição</label>
@@ -434,8 +466,8 @@
 						</div>
 					</div>
 				</div>
-				<c:if test='${(not exDocumentoDTO.doc.finalizado) and (exDocumentoDTO.tipoDocumento == "interno_capturado" or  exDocumentoDTO.tipoDocumento == "externo_capturado")}'>
-				<div class="row">
+				<c:if test='${podeTrocarPdfCapturado}'>
+				<div class="row  js-siga-sp-documento-analisa-alteracao">
 					<div class="col-sm-8">
 						<div class="form-group">
 							<input type="hidden" name="campos" value="descrDocumento" />
@@ -443,6 +475,7 @@
 							<br>
 							  <div class="form-group">
 							    <input type="file" class="form-control-file" id="arquivo" name="arquivo" accept="application/pdf" onchange="testpdf(this.form)">
+							    <small class="form-text text-muted">Tamanho máximo do arquivo é de 10MB</small> 
 							  </div>
 						</div>
 					</div>
@@ -452,7 +485,7 @@
 				<div class="row">
 					<h6>Dados do Documento Original</h6>
 				</div>
-				<div class="row">
+				<div class="row  js-siga-sp-documento-analisa-alteracao">
 					<input type="hidden" name="campos" value="dtDocOriginalString" />
 					<input type="hidden" name="campos" value="numExtDoc" />
 					<div class="col-sm-2">
@@ -477,7 +510,7 @@
 						</div>
 					</c:if>
 				</div>
-				<div class="row">
+				<div class="row  js-siga-sp-documento-analisa-alteracao">
 					<input type="hidden" name="campos" value="dtDocOriginalString" />
 					<input type="hidden" name="campos" value="numExtDoc" />
 					<div class="col-sm-2">

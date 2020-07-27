@@ -44,8 +44,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-import net.sf.ehcache.CacheManager;
-
 import org.hibernate.cfg.Configuration;
 import org.kxml2.io.KXmlParser;
 import org.xmlpull.v1.XmlPullParser;
@@ -67,7 +65,6 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.sinc.lib.Item;
 import br.gov.jfrj.siga.sinc.lib.Item.Operacao;
 import br.gov.jfrj.siga.sinc.lib.OperadorComHistorico;
@@ -75,6 +72,7 @@ import br.gov.jfrj.siga.sinc.lib.Sincronizador;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelComparator;
 import br.gov.jfrj.siga.util.ImportarXmlProperties;
+import net.sf.ehcache.CacheManager;
 
 public class SigaCpSinc {
 
@@ -185,11 +183,11 @@ public class SigaCpSinc {
 			throw new Exception("Erro na gravação", e);
 		}
 		try {
-			CpDao.getInstance().iniciarTransacao();
+			CpDao.getInstance().em().getTransaction().begin();
 			OperadorComHistorico o = new OperadorComHistorico() {
 				public Sincronizavel gravar(Sincronizavel s) {
 					Sincronizavel o = CpDao.getInstance().gravar(s);
-					CpDao.getInstance().getSessao().flush();
+					CpDao.getInstance().descarregar();
 					return o;
 				}
 			};
@@ -243,10 +241,10 @@ public class SigaCpSinc {
 				log("");
 				log("");
 
-				CpDao.getInstance().rollbackTransacao();
+				CpDao.getInstance().em().getTransaction().rollback();
 			} else {
 
-				CpDao.getInstance().commitTransacao();
+				CpDao.getInstance().em().getTransaction().commit();
 				log("Transação confirmada");
 			}
 		} catch (Exception e) {
@@ -255,7 +253,7 @@ public class SigaCpSinc {
 			throw new Exception("Erro na gravação", e);
 		}
 
-		HibernateUtil.getSessao().flush();
+		CpDao.getInstance().descarregar();
 		log("Total de alterações: " + list.size());
 		// ((GenericoHibernateDao) dao).getSessao().flush();
 	}
@@ -462,16 +460,14 @@ public class SigaCpSinc {
 		prop.setPrefixo(ambiente.getSigla());
 
 		Map<String, String> properties = new HashMap<>();
-
+		properties.put( "provider" , "org.hibernate.jpa.HibernatePersistenceProvider");
 		properties.put("hibernate.connection.url", prop.urlConexao());
 		properties.put("hibernate.connection.username", prop.usuario());
 		properties.put("hibernate.connection.password", prop.senha());
-		properties.put("hibernate.connection.driver_class",
-				prop.driverConexao());
-		properties.put("c3p0.min_size", prop.c3poMinSize());
-		properties.put("c3p0.max_size", prop.c3poMaxSize());
-		properties.put("c3p0.timeout", prop.c3poTimeout());
-		properties.put("c3p0.max_statements", prop.c3poMaxStatements());
+ 		properties.put("c3p0.min_size", prop.c3poMinSize());
+ 		properties.put("c3p0.max_size", prop.c3poMaxSize());
+ 		properties.put("c3p0.timeout", prop.c3poTimeout());
+ 		properties.put("c3p0.max_statements", prop.c3poMaxStatements());
 
 		// persistenceMap.put("javax.persistence.jdbc.url", "<url>");
 		// persistenceMap.put("javax.persistence.jdbc.user", "<username>");
@@ -481,9 +477,10 @@ public class SigaCpSinc {
 		// value="java:/EntityManager/simpledb"/>
 
 		properties.put("hibernate.jdbc.use_streams_for_binary", "true");
+		
 
 		EntityManagerFactory emf = Persistence.createEntityManagerFactory(
-				"default-ex", properties);
+				"siga-cp-sinc", properties);
 
 		EntityManager em = emf.createEntityManager();
 		ContextoPersistencia.setEntityManager(em);

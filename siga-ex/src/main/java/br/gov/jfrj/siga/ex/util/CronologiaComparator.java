@@ -8,10 +8,7 @@ public class CronologiaComparator implements Comparator<ExMovimentacao> {
 
 	public int compare(ExMovimentacao o1, ExMovimentacao o2) {
 		try {
-			int i = o2.getDtIniMov().compareTo(o1.getDtIniMov());
-			if (i != 0)
-				return i;
-			i = o2.getIdMov().compareTo(o1.getIdMov());
+			int i = o2.getDtTimestamp().compareTo(o1.getDtTimestamp());
 			return i;
 		} catch (final Exception ex) {
 			return 0;

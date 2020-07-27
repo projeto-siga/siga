@@ -249,4 +249,13 @@ public class Texto {
 		return string.length() > limit ? (string.substring(0, max) + "...") : string;
 	}
 	
+	public static class FuncaoConfianca {
+		public static final String REGEX_CARACTERES_PERMITIDOS = "[a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ 0-9-/.]+";		
+	}
+	
+	public static class DpPessoa {
+		public static final String NOME_REGEX_CARACTERES_PERMITIDOS = "[a-zA-ZáâãäéêëíïóôõöúüçñÁÂÃÄÉÊËÍÏÓÔÕÖÚÜÇÑ'' ]+";
+		public static final String EMAIL_REGEX_PATTERN = "^[\\w-]+(\\.[\\w-]+)*@([\\w-]+\\.)+[a-zA-Z]{2,7}$";														 
+	}
+	
 }

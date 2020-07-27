@@ -2049,7 +2049,7 @@ Pede deferimento.</span><br/><br/><br/>
     <!-- FIM SUBSCRITOR [#nested/] -->
 [/#macro]
 
-[#macro cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho=""]
+[#macro cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho=false]
 <table style="float:none; clear:both;" width="100%" align="left" border="0" cellpadding="0"
     cellspacing="0" bgcolor="#FFFFFF">
     <tr bgcolor="#FFFFFF">
@@ -2070,7 +2070,7 @@ Pede deferimento.</span><br/><br/><br/>
                 </td>
             </tr>
             [/#if]
-            [#if orgaoCabecalho??]
+            [#if orgaoCabecalho?? && orgaoCabecalho]
 	            <tr>
 	                <td width="100%" align="center">
 	                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 8pt;">
@@ -2258,19 +2258,19 @@ Pede deferimento.</span><br/><br/><br/>
 	</tr>
 [/#if]
 <tr>
-	<td width="60%" ></td>
-	<td width="40%" >
-		<table align="right" width="100%" border="1" style="border-color: black; border-spacing: 0px; border-collapse: collapse" bgcolor="#000000">
-			<tr>
-				<td align="center" width="55%" style="border-collapse: collapse; border-color: black; font-family:Arial; font-size:8pt;" bgcolor="#FFFFFF">
-					<i>Classif. documental</i>
-				</td>
-				<td align="center" width="45%" style="border-collapse: collapse; border-color: black; font-family:Arial;font-size:8pt;" bgcolor="#FFFFFF">
-					<span>${(doc.exClassificacao.sigla)!}</span>
-				</td>
-			</tr>
-		</table>
-	</td>
+<td width="60%" ></td>
+<td width="40%" >
+<table align="right" width="100%" border="1" style="border-color: black; border-spacing: 0px; border-collapse: collapse" bgcolor="#000000">
+<tr>
+<td align="center" width="55%" style="border-collapse: collapse; border-color: black; font-family:Arial; font-size:8pt;" bgcolor="#FFFFFF">
+	<i>Classif. documental</i>
+</td>
+<td align="center" width="45%" style="border-collapse: collapse; border-color: black; font-family:Arial;font-size:8pt;" bgcolor="#FFFFFF">
+	<span>${(doc.exClassificacao.sigla)!}</span>
+</td>
+</tr>
+</table>
+</td>
 </tr>
 [#if !somenteTR]
 </table>
@@ -2282,7 +2282,7 @@ Pede deferimento.</span><br/><br/><br/>
 	[#if texto?? && texto!=""]
 		<tr>
 			<td align="left" style="border-collapse: collapse; border-color: black; font-family:Arial; font-size:8pt;">
-				${texto}
+				${texto} 
 			</td>
 		</tr>
 	[/#if]
@@ -2343,44 +2343,40 @@ Pede deferimento.</span><br/><br/><br/>
             [@fimSubscritor]${(doc.subscritor.idPessoa)}[/@fimSubscritor]
         [/#if]
         
-        [#if (doc.mobilGeral.exMovimentacaoSet)??]
-       		[#list doc.mobilGeral.exMovimentacaoSet as mov]
-
-	            [#if (mov.exTipoMovimentacao.idTpMov)! == 24]
-	                [@inicioSubscritor]${(mov.subscritor.idPessoa)}[/@inicioSubscritor]
-	                    <br/><br/><br/>
-	                    [#if mov.nmSubscritor??]
-	                        ${mov.nmSubscritor}
-	                    [#else]
-	                        ${(mov.subscritor.nomePessoa)!}
-	                    [/#if]      
-	                    <br>
-	                    [#if mov.nmFuncao??]
-	                        ${mov.nmFuncao}
-	                    [#elseif (mov.titular.funcaoConfianca.nomeFuncao)??]
-	                        ${mov.titular.funcaoConfianca.nomeFuncao} 
-	                            [#if substituicao!false && ((doc.titular.idPessoa)!-1) != ((doc.subscritor.idPessoa)!-1)] EM EXERCÍCIO [/#if]
-	                    [#elseif (mov.subscritor.funcaoConfianca.nomeFuncao)??]
-	                        ${mov.subscritor.funcaoConfianca.nomeFuncao}
-	                    [#else]
-	                        ${(mov.subscritor.cargo.nomeCargo)!}
-	                    [/#if]
-	                    [#if formatarOrgao]
-	                        <br>
-	                        [#if mov.nmLotacao??]
-	                            ${mov.nmLotacao}
-	                        [#else]
-	                            ${mov.titular.lotacao.nomeLotacao}
-	                        [/#if]
-	                    [/#if]
-	                [@fimSubscritor]${(mov.subscritor.idPessoa)}[/@fimSubscritor]
-	    		[/#if]
- 		
-	    		
+                [#if (doc.mobilGeral.exMovimentacaoSet)??]
+        [#list doc.mobilGeral.exMovimentacaoSet as mov]
+                    [#if (mov.exTipoMovimentacao.idTpMov)! == 24]
+                        [@inicioSubscritor]${(mov.subscritor.idPessoa)}[/@inicioSubscritor]
+                        <br/><br/><br/>
+                        [#if mov.nmSubscritor??]
+                            ${mov.nmSubscritor}
+                        [#else]
+                            ${(mov.subscritor.nomePessoa)!}
+                        [/#if]      
+                        <br>
+                        [#if mov.nmFuncao??]
+                            ${mov.nmFuncao}
+                        [#elseif (mov.titular.funcaoConfianca.nomeFuncao)??]
+                            ${mov.titular.funcaoConfianca.nomeFuncao} 
+                                [#if substituicao!false && ((doc.titular.idPessoa)!-1) != ((doc.subscritor.idPessoa)!-1)] EM EXERCÍCIO [/#if]
+                        [#elseif (mov.subscritor.funcaoConfianca.nomeFuncao)??]
+                            ${mov.subscritor.funcaoConfianca.nomeFuncao}
+                        [#else]
+                            ${(mov.subscritor.cargo.nomeCargo)!}
+                        [/#if]
+                        [#if formatarOrgao]
+                            <br>
+                            [#if mov.nmLotacao??]
+                                ${mov.nmLotacao}
+                            [#else]
+                                ${mov.titular.lotacao.nomeLotacao}
+                            [/#if]
+                        [/#if]
+                        [@fimSubscritor]${(mov.subscritor.idPessoa)}[/@fimSubscritor]
+            [/#if]
         [/#list]
-      [/#if]
+            [/#if]
     [/#if]
-
     [#if textoFinal??]
         <br/>${textoFinal}
     [/#if]
@@ -2531,12 +2527,12 @@ Pede deferimento.</span><br/><br/><br/>
 [/#macro]
 
 
-[#macro estiloBrasaoCentralizado tipo tamanhoLetra="11pt" formatarOrgao=true orgaoCabecalho=true numeracaoCentralizada=false dataAntesDaAssinatura=false incluirMioloDJE=false omitirCodigo=false omitirData=false topoPrimeiraPagina='' incluirAssinaturaBIE=true exibeClassificacaoDocumental=true]
+[#macro estiloBrasaoCentralizado tipo tamanhoLetra="11pt"  exibeAssinatura=true formatarOrgao=true orgaoCabecalho=true numeracaoCentralizada=false dataAntesDaAssinatura=false incluirMioloDJE=false omitirCodigo=false omitirData=false topoPrimeiraPagina='' incluirAssinaturaBIE=true exibeClassificacaoDocumental=true]
     [@primeiroCabecalho]${topoPrimeiraPagina!}
     [@cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho/]
     [/@primeiroCabecalho]
     [@cabecalho]
-    [@cabecalhoCentralizado orgaoCabecalho/]
+    [@cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho/]
     [/@cabecalho]
     [@letra tamanhoLetra]
         [#if !numeracaoCentralizada]
@@ -2573,10 +2569,12 @@ Pede deferimento.</span><br/><br/><br/>
             [#nested]
             [#if dataAntesDaAssinatura]<p style="text-align:center">[#if mov??]${mov.dtExtenso!}[#else]${doc.dtExtenso!}[/#if]</p>[/#if]
             <p>&nbsp;</p>
+            [#if exibeAssinatura]
             [#if mov??]
                 [@assinaturaMovCentro formatarOrgao=formatarOrgao/]
             [#else]
                 [@assinaturaCentro formatarOrgao=formatarOrgao incluirAssinaturaBIE=incluirAssinaturaBIE/]
+            [/#if]
             [/#if]
             [/@mioloDJE]
         [#else]
@@ -2596,14 +2594,15 @@ Pede deferimento.</span><br/><br/><br/>
             	</p>
             [/#if]
             <p>&nbsp;</p>
+            [#if exibeAssinatura]
             [#if mov??]
                 [@assinaturaMovCentro formatarOrgao=formatarOrgao/]
             [#else]
                 [@assinaturaCentro formatarOrgao=formatarOrgao incluirAssinaturaBIE=incluirAssinaturaBIE/]
             [/#if]
-        [/#if]  
+        [/#if]
+        [/#if]      
    [/@letra]
-
    [@primeiroRodape exibeClassificacaoDocumental=exibeClassificacaoDocumental]
 	   [#if exibeClassificacaoDocumental]
 	   		[@rodapeClassificacaoDocumental/]
@@ -3306,12 +3305,12 @@ Pede deferimento.</span><br/><br/><br/>
 [/#macro]
 
 [#macro extensaoBuscaTextualbs4]
-	<div class="form-row">
+<!--	<div class="form-row">
 		<div class="form-group col-md-6">
 			<label for="conteudo">Conte&uacute;do</label>
 	        <input type="text" id="fullText" value="${valFullText}" size="80" name="fullText" class="form-control" />
 		</div>
-	</div>
+	</div> -->
 [/#macro]
 
 [#macro extensaoEditor nomeExtensao="" conteudoExtensao=""]
@@ -4451,6 +4450,6 @@ ${texto}
 [/#macro]
 
 [#assign _pathBrasao = "contextpath/imagens/brasaoColoridoTRF2.png" /]
-[#assign _pathBrasaoSecundario = "contextpath/imagens/brasao_prodesp_governo.png" /]
+[#assign _pathBrasaoSecundario = "contextpath/imagens/Logotipo_Prodesp_Governo_SP.png" /]
 [#assign _tituloGeral = "PODER JUDICIÁRIO" /]
 [#assign _subtituloGeral = "JUSTIÇA FEDERAL" /]

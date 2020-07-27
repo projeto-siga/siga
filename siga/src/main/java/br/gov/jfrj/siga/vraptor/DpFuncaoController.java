@@ -1,27 +1,31 @@
 package br.gov.jfrj.siga.vraptor;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.interceptor.download.Download;
-import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
-import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+import br.com.caelum.vraptor.observer.download.Download;
+import br.com.caelum.vraptor.observer.download.InputStreamDownload;
+import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
@@ -30,16 +34,22 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpFuncaoConfiancaDaoFiltro;
 import br.gov.jfrj.siga.model.Selecionavel;
 
-@Resource
+@Controller
 public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFuncaoConfianca, DpFuncaoConfiancaDaoFiltro>{
 
 	private Long orgaoUsu;
 	
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public DpFuncaoController() {
+		super();
+	}
+
+	@Inject
 	public DpFuncaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
-		
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
 		
 		setSel(new DpFuncaoConfianca());
 		setItemPagina(10);
@@ -67,6 +77,10 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 			if (l.size() == 1)
 				return (DpFuncaoConfianca) l.get(0);
 		return null;
+	}
+	
+	public boolean temPermissaoParaExportarDados() {
+		return Boolean.valueOf(Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getTitular().getLotacao(),"SIGA;GI;CAD_FUNCAO;EXP_DADOS"));
 	}
 	
 	@Get
@@ -105,7 +119,6 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 	
 	@Get("app/funcao/listar")
 	public void lista(Integer paramoffset, Long idOrgaoUsu, String nome) throws Exception {
-		
 		if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
 			result.include("orgaosUsu", dao().listarOrgaosUsuarios());
 		} else {
@@ -127,9 +140,56 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 			
 			result.include("idOrgaoUsu", idOrgaoUsu);
 			result.include("nome", nome);
+			
+			if (getItens().size() == 0) result.include("mensagemPesquisa", "Nenhum resultado encontrado.");
 		}
 		setItemPagina(15);
 		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));
+		result.include("temPermissaoParaExportarDados", temPermissaoParaExportarDados());
+	}
+	
+	@Post
+	@Path("app/funcao/exportarCsv")
+	public Download exportarCsv(Long idOrgaoUsu, String nome) throws Exception {				
+			
+ 		if(idOrgaoUsu != null) {
+ 			DpFuncaoConfiancaDaoFiltro dpFuncao = new DpFuncaoConfiancaDaoFiltro(nome, idOrgaoUsu);																
+															
+			List <DpFuncaoConfianca> lista = CpDao.getInstance().consultarPorFiltro(dpFuncao, 0, 0);
+			
+			if (lista.size() > 0) {				
+				InputStream inputStream = null;
+				StringBuffer texto = new StringBuffer();
+				texto.append("Função de Confiança" + System.getProperty("line.separator"));
+				
+				for (DpFuncaoConfianca funcao : lista) {
+					texto.append(funcao.getNomeFuncao() + ";");										
+					texto.append(System.getProperty("line.separator"));
+				}
+				
+				inputStream = new ByteArrayInputStream(texto.toString().getBytes("ISO-8859-1"));									
+				
+				return new InputStreamDownload(inputStream, "text/csv", "função_de_confiança.csv");
+				
+			} else {
+				
+				if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+					result.include("orgaosUsu", dao().listarOrgaosUsuarios());
+				} else {
+					CpOrgaoUsuario ou = CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario());
+					List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
+					list.add(ou);
+					result.include("orgaosUsu", list);
+				}
+					result.include("idOrgaoUsu", idOrgaoUsu);			
+					result.include("nome", nome);					
+					result.include("mensagemPesquisa", "Nenhum resultado encontrado.");		
+					result.include("temPermissaoParaExportarDados", temPermissaoParaExportarDados());
+					result.use(Results.page()).forwardTo("/WEB-INF/page/dpFuncao/lista.jsp");
+			}							
+		}					
+
+		return null;
 	}
 	
 	@Get("/app/funcao/editar")
@@ -140,7 +200,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 			result.include("idOrgaoUsu", funcao.getOrgaoUsuario().getId());
 			result.include("nmOrgaousu", funcao.getOrgaoUsuario().getNmOrgaoUsu());
 			
-			List<DpPessoa> list = dao().getInstance().consultarPessoasComFuncaoConfianca(id);
+			List<DpPessoa> list = CpDao.getInstance().consultarPessoasComFuncaoConfianca(id);
 			if(list.size() == 0) {
 				result.include("podeAlterarOrgao", Boolean.TRUE);
 			}
@@ -170,7 +230,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 		if(idOrgaoUsu == null)
 			throw new AplicacaoException("Órgão não informado");
 		
-		if(nmFuncao != null && !nmFuncao.matches("[a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ 0-9.-]+")) 
+		if(nmFuncao != null && !nmFuncao.matches(Texto.FuncaoConfianca.REGEX_CARACTERES_PERMITIDOS)) 
 			throw new AplicacaoException("Nome com caracteres não permitidos");
 		
 		DpFuncaoConfianca funcao = new DpFuncaoConfianca();
@@ -180,7 +240,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 		ou.setIdOrgaoUsu(idOrgaoUsu);
 		funcao.setOrgaoUsuario(ou);
 		
-		funcao = dao().getInstance().consultarPorNomeOrgao(funcao);
+		funcao = CpDao.getInstance().consultarPorNomeOrgao(funcao);
 		
 		if(funcao != null && !funcao.getId().equals(id)) {
 			throw new AplicacaoException("Nome da função já cadastrado!");
@@ -198,7 +258,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 			
 		} else {
 			funcao = dao().consultar(id, DpFuncaoConfianca.class, false);
-			listPessoa = dao().getInstance().consultarPessoasComFuncaoConfianca(id);
+			listPessoa = CpDao.getInstance().consultarPessoasComFuncaoConfianca(id);
 			
 		}
 		funcao.setNomeFuncao(Texto.removerEspacosExtra(nmFuncao).trim());
@@ -262,10 +322,9 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 		}
 			
 		if(inputStream == null) {
-			result.include("msg", "Arquivo processado com sucesso!");
+			result.include(SigaModal.ALERTA, SigaModal.mensagem("Arquivo processado com sucesso!").titulo("Sucesso"));
 			carregarExcel();
-		} else {
-			result.include("msg", "");
+		} else {			
 			return new InputStreamDownload(inputStream, "application/text", "inconsistencias.txt");	
 		}
 		return null;

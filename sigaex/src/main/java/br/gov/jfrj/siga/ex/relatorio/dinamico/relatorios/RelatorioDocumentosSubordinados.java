@@ -27,10 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.sf.jasperreports.engine.JRException;
-
-import org.hibernate.Query;
-import org.hibernate.Transaction;
+import javax.persistence.Query;
 
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
@@ -44,7 +41,9 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import net.sf.jasperreports.engine.JRException;
 
 public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 
@@ -83,13 +82,14 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 
 		// Obtém uma formaDoc a partir da sigla passada e monta trecho da query
 		// para a forma
-		Query qryTipoForma = HibernateUtil.getSessao().createQuery(
+		Query qryTipoForma = ContextoPersistencia.em().createQuery(
 				"from ExTipoFormaDoc tf where " + "tf.descTipoFormaDoc = '"
 						+ parametros.get("tipoFormaDoc") + "'");
 		
 		ExTipoFormaDoc tipoFormaDoc = null;
-		if (qryTipoForma.list().size() > 0) {
-			tipoFormaDoc = (ExTipoFormaDoc) qryTipoForma.uniqueResult();
+		try {
+			tipoFormaDoc = (ExTipoFormaDoc) qryTipoForma.getSingleResult();
+		} catch (Exception e) {
 		}
 		
 		String trechoQryTipoForma = tipoFormaDoc == null ? ""
@@ -98,11 +98,11 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 
 			
 		// Obtém a lotação com o id passado...
-		Query qrySetor = HibernateUtil.getSessao().createQuery(
+		Query qrySetor = ContextoPersistencia.em().createQuery(
 				"from DpLotacao lot where lot.idLotacao = " + parametros.get("lotacao"));
 			
 		Set<DpLotacao> lotacaoSet = new HashSet<DpLotacao>();
-		DpLotacao lotacao = (DpLotacao)qrySetor.list().get(0);
+		DpLotacao lotacao = (DpLotacao)qrySetor.getSingleResult();
 		lotacaoSet.add(lotacao);
 		
 	
@@ -147,8 +147,7 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 		
 		// bruno.lacerda@avantiprima.com.br
 		// int timeout = 1;
-		Query qryMarcas = HibernateUtil
-				.getSessao()
+		Query qryMarcas = ContextoPersistencia.em()
 				.createQuery(
 						"select " + "	marca.dpLotacaoIni.nomeLotacao, "
 								+ "doc.idDoc, orgao.siglaOrgaoUsu, orgao.acronimoOrgaoUsu, forma.siglaFormaDoc, doc.anoEmissao, doc.numExpediente, doc.numSequencia, tipoMob.idTipoMobil, mob.numSequencia,  "
@@ -187,7 +186,7 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 								+ " order by lot.siglaLotacao, doc.idDoc"/*, timeout*/);
 
 		// Retorna
-		List<Object[]> lista = qryMarcas.list();
+		List<Object[]> lista = qryMarcas.getResultList();
 
 		List<String> listaFinal = new ArrayList<String>();
 		for (Object[] array : lista) {
@@ -242,13 +241,14 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 
 		// Obtém uma formaDoc a partir da sigla passada e monta trecho da query
 		// para a forma
-		Query qryTipoForma = HibernateUtil.getSessao().createQuery(
+		Query qryTipoForma = ContextoPersistencia.em().createQuery(
 				"from ExTipoFormaDoc tf where " + "tf.descTipoFormaDoc = '"
 						+ parametros.get("tipoFormaDoc") + "'");
 		
 		ExTipoFormaDoc tipoFormaDoc = null;
-		if (qryTipoForma.list().size() > 0) {
-			tipoFormaDoc = (ExTipoFormaDoc) qryTipoForma.uniqueResult();
+		List resultList = qryTipoForma.getResultList();
+		if (resultList.size() > 0) {
+			tipoFormaDoc = (ExTipoFormaDoc) resultList.get(0);
 		}
 		
 		String trechoQryTipoForma = tipoFormaDoc == null ? ""
@@ -257,11 +257,11 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 
 			
 		// Obtém a lotação com o id passado...
-		Query qrySetor = HibernateUtil.getSessao().createQuery(
+		Query qrySetor = ContextoPersistencia.em().createQuery(
 				"from DpLotacao lot where lot.idLotacao = " + parametros.get("lotacao"));
 			
 		Set<DpLotacao> lotacaoSet = new HashSet<DpLotacao>();
-		DpLotacao lotacao = (DpLotacao)qrySetor.list().get(0);
+		DpLotacao lotacao = (DpLotacao)qrySetor.getResultList().get(0);
 		lotacaoSet.add(lotacao);
 		
 	
@@ -305,8 +305,7 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 		
 		// bruno.lacerda@avantiprima.com.br
 		// int timeout = 1;
-		Query qryMarcas = HibernateUtil
-				.getSessao()
+		Query qryMarcas = ContextoPersistencia.em()
 				.createQuery(
 						"select " + "	marca.dpLotacaoIni.nomeLotacao, "
 								+ trechoQryCodigoDoc
@@ -341,7 +340,7 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 								+ " order by lot.siglaLotacao, doc.idDoc"/*, timeout*/);
 
 		// Retorna
-		List<Object[]> lista = qryMarcas.list();
+		List<Object[]> lista = qryMarcas.getResultList();
 
 		List<String> listaFinal = new ArrayList<String>();
 		for (Object[] array : lista) {
@@ -358,16 +357,17 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 		String lotacoes = "";
 
 		String consulta = null;
-		Query qryTipoForma = HibernateUtil.getSessao().createQuery(
+		Query qryTipoForma = ContextoPersistencia.em().createQuery(
 				"from ExTipoFormaDoc tf where " + "tf.descTipoFormaDoc = '"
 						+ parametros.get("tipoFormaDoc") + "'");
 
 		ExTipoFormaDoc tipoFormaDoc = null;
-		if (qryTipoForma.list().size() > 0) {
-			tipoFormaDoc = (ExTipoFormaDoc) qryTipoForma.uniqueResult();
+		List resultList = qryTipoForma.getResultList();
+		if (resultList.size() > 0) {
+			tipoFormaDoc = (ExTipoFormaDoc) resultList.get(0);
 		}
 
-		Query qrySetor = HibernateUtil.getSessao().createQuery(
+		Query qrySetor = ContextoPersistencia.em().createQuery(
 				"from DpLotacao lot where " + "lot.dataFimLotacao is null "
 						+ "and lot.orgaoUsuario = "
 						+ parametros.get("orgaoUsuario") + " "
@@ -375,8 +375,7 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 						+ parametros.get("lotacao") + "'");
 
 		Set<DpLotacao> lotacaoSet = new HashSet<DpLotacao>();
-		for (Iterator iterator = qrySetor.list().iterator(); iterator.hasNext();) {
-			DpLotacao lot = (DpLotacao) iterator.next();
+		for (DpLotacao lot : (List<DpLotacao>) qrySetor.getResultList()) {
 			lotacaoSet.add(lot);
 		}
 
@@ -413,8 +412,7 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 		}
 
 		if (tipoFormaDoc != null) {
-			qryMovimentacao = HibernateUtil
-					.getSessao()
+			qryMovimentacao = ContextoPersistencia.em()
 					.createQuery(
 							"select mc from ExMarca mc "
 									+ "inner join fetch mc.exMobil mob "
@@ -428,8 +426,7 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 									+ lotacoes
 									+ " order by lot.siglaLotacao,doc.idDoc");
 		} else {
-			qryMovimentacao = HibernateUtil
-					.getSessao()
+			qryMovimentacao = ContextoPersistencia.em()
 					.createQuery(
 							"select mc from ExMarca mc "
 									+ "inner join fetch mc.exMobil mob "
@@ -442,16 +439,16 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 		int indice = 0;
 		qryMovimentacao.setFirstResult(indice);
 		java.util.List<ExMarca> listaMarcas = (List<ExMarca>) qryMovimentacao
-				.list();
+				.getResultList();
 
-		Query qryLotacaoTitular = HibernateUtil.getSessao().createQuery(
+		Query qryLotacaoTitular = ContextoPersistencia.em().createQuery(
 				"from DpLotacao lot " + "where lot.dataFimLotacao is null "
 						+ "and lot.orgaoUsuario = "
 						+ parametros.get("orgaoUsuario")
 						+ " and lot.siglaLotacao = '"
 						+ parametros.get("lotacaoTitular") + "'");
 
-		DpLotacao lotaTitular = (DpLotacao) qryLotacaoTitular.uniqueResult();
+		DpLotacao lotaTitular = (DpLotacao) qryLotacaoTitular.getSingleResult();
 
 		DpPessoa titular = ExDao.getInstance().consultar(
 				new Long((String) parametros.get("idTit")), DpPessoa.class,

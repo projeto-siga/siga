@@ -7,15 +7,15 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 
-import br.com.caelum.vraptor.deserialization.Deserializer;
-import br.com.caelum.vraptor.deserialization.Deserializes;
-import br.com.caelum.vraptor.resource.ResourceMethod;
+import br.com.caelum.vraptor.controller.ControllerMethod;
+import br.com.caelum.vraptor.serialization.Deserializer;
+import br.com.caelum.vraptor.serialization.Deserializes;
 
 @Deserializes("text/vnd.graphviz")
 public class VizDeserializer implements Deserializer {
 
 	@Override
-	public Object[] deserialize(InputStream is, ResourceMethod method) {
+	public Object[] deserialize(InputStream is, ControllerMethod method) {
 		List<Object> l = new ArrayList<>();
 		try {
 			String dot = IOUtils.toString(is);

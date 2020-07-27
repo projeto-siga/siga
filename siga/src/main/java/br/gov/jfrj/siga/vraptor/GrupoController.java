@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -71,6 +72,15 @@ import com.google.common.base.Optional;
 public abstract class GrupoController<T extends CpGrupo> extends
 		GiSelecionavelControllerSupport<T, CpGrupoDaoFiltro> {
 
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public GrupoController() {
+		super();
+	}
+
+	@Inject
 	public GrupoController(HttpServletRequest request, Result result,
 			CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);
@@ -205,8 +215,8 @@ public abstract class GrupoController<T extends CpGrupo> extends
 			CpGrupo grp = daoGrupo(idCpGrupo);
 			configuracoesGrupo = Cp.getInstance().getConf().obterCfgGrupo(grp);
 			for (ConfiguracaoGrupo t_cfgConfiguracaoGrupo : configuracoesGrupo) {
-				CpConfiguracao t_cpcConfiguracao = t_cfgConfiguracaoGrupo
-						.getCpConfiguracao();
+				CpConfiguracao t_cpcConfiguracao = dao().consultar(
+						t_cfgConfiguracaoGrupo.getCpConfiguracao().getIdConfiguracao(), CpConfiguracao.class, false);
 				t_cpcConfiguracao.setHisDtFim(dt);
 				dao().gravarComHistorico(t_cpcConfiguracao,
 						getIdentidadeCadastrante());

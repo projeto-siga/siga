@@ -88,8 +88,8 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 				+ " 		where  cla.hisIdIni = :hisIdIni"
 				+ "    	and cla.hisAtivo = 1"),
 		@NamedQuery(name = "consultarDescricaoExClassificacao", query = "select descrClassificacao from ExClassificacao cla"
-				+ "		where cla.codificacao in (:listaCodificacao)"
-				+ "		and cla.hisAtivo = 1 " + "		order by codificacao"),
+				+ "		where cla.codificacao in :listaCodificacao"
+				+ "		and cla.hisAtivo = 1 order by codificacao"),
 		@NamedQuery(name = "consultarExClassificacaoPorMascara", query = "select distinct(cla) from ExClassificacao cla left join fetch cla.exViaSet"
 				+ "		where cla.codificacao like :mascara"
 				+ "			and (upper(cla.descrClassificacao) like upper('%' || :descrClassificacao || '%'))"

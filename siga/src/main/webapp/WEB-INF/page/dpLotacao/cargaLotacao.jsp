@@ -14,8 +14,7 @@
 			<div class="card-body">
 			<form action="carga" method="POST" enctype="multipart/form-data" class="form">
 				<input type="hidden" name="postback" value="1" /> 
-				<input type="hidden" name="sigla" value="${sigla}" />
-				<c:if test="${not empty msg}"><script type="text/javascript">alert('Arquivo processado com sucesso!');</script></c:if>			
+				<input type="hidden" name="sigla" value="${sigla}" />				
 				<div class="row">
 					<div class="col-sm-4">
 						<div class="form-group">
@@ -35,6 +34,9 @@
 								<dd>- Nome: m&aacute;ximo de 100 caracteres alfanum&eacute;ricos, hífen , vírgula e ponto (letras, n&uacute;meros, "-", "," e ".")</dd>
 								<dd>- Sigla: m&aacute;ximo de 20 caracteres alfanum&eacute;ricos, barra e hífen (letras, n&uacute;meros, "/" e "-")</dd>
 								<dd>- Localidade: m&aacute;ximo de 256 caracteres alfanum&eacute;ricos. Somente nome de Munic&iacute;pios existentes no Estado.</dd>
+								<dd>- Sigla Lotação PAI: m&aacute;ximo de 20 caracteres alfanum&eacute;ricos, barra e hífen (letras, n&uacute;meros, "/" e "-")</dd>
+								<dd>  (A Sigla da Lotaç&atilde;o pai define o nível de hierarquia, indicando a qual unidade tal cadastro ir&aacute; pertencer)</dd>
+								<dd>- Unidade Externa: SIM ou N&Atilde;O (caso a coluna n&atilde;o seja informada ser&aacute; considerado como N&Atilde;O)</dd>																
 							</dl>
 						</div>
 					</div>
@@ -61,14 +63,12 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-sm-3">
+					<div class="col-sm-6">
 						<div class="form-group">
-							<b>Selecione o arquivo contendo a planilha com dados:&nbsp;&nbsp;&nbsp;</b>
-						</div>
-					</div>
-					<div class="col-sm-3">
-						<div class="form-group">
-							<input type="file" name="arquivo" accept=".xlsx" class="form-control-file"/>				
+							<label>Selecione o arquivo contendo a planilha com dados</label>
+							<div  class="custom-file">
+									<siga:uploadArquivo tamanhoMaximo='2' textoCaixa="Selecione o arquivo contendo a planilha com dados"  tiposAceitos=".xlsx"/>
+							</div>
 						</div>
 					</div>
 				</div>		
@@ -80,29 +80,9 @@
 						</div>
 					</div>
 				</div>								
-			</form>
-			<!-- Modal -->
-			<div class="modal fade" id="alertaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-				<div class="modal-dialog" role="document">
-			    	<div class="modal-content">
-			      		<div class="modal-header">
-					        <h5 class="modal-title" id="alertaModalLabel">Alerta</h5>
-					        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-					          <span aria-hidden="true">&times;</span>
-					    	</button>
-					    </div>
-				      	<div class="modal-body">
-				        	<p class="mensagem-Modal"></p>
-				      	</div>
-						<div class="modal-footer">
-						  <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
-						</div>
-			    	</div>
-			  	</div>
-			</div>				
-			<!--Fim Modal -->
+			</form>			
 			</div>
-		</div>
+		</div>		
 	</div>
 <script>
 	/**
@@ -112,13 +92,10 @@
 		var result = true;
 		var arquivo = form.arquivo;
 		if (arquivo == null || arquivo.value == '') {
+			sigaModal.alerta('Selecione um arquivo');
 			result = false;
 		}
 		return result;
-	}
-	function mensagemAlerta(mensagem) {
-		$('#alertaModal').find('.mensagem-Modal').text(mensagem);
-		$('#alertaModal').modal();
-	}
+	}	
 </script>
 </siga:pagina>

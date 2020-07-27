@@ -7,6 +7,9 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -146,7 +149,7 @@ public class ExMarcadorBL {
 					m = CpMarcador.MARCADOR_APENSADO;
 				}
 			}
-
+			
 			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO && mob.doc().isEletronico() && !mov.isAssinada()) {
 				m = CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA;
 			}
@@ -234,6 +237,13 @@ public class ExMarcadorBL {
 			if (m != CpMarcador.MARCADOR_EM_ANDAMENTO
 					|| !(mob.isArquivado() || mob.doc().getMobilGeral().isArquivado()))
 				acrescentarMarca(m, dt, ultMovNaoCanc.getResp(), ultMovNaoCanc.getLotaResp());
+			
+ 			if (SigaMessages.isSigaSP() && 
+					m == CpMarcador.MARCADOR_CAIXA_DE_ENTRADA && 
+					ultMovNaoCanc.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA) {
+				acrescentarMarcadoresManuaisPorOcorrenciaDeTransferencia(dt);
+			}
+		
 		}
 
 		return;
@@ -272,6 +282,7 @@ public class ExMarcadorBL {
 		acrescentarMarcadoresPendenciaDeAssinaturaMovimentacao();
 		acrescentarMarcadoresDoCossignatario();
 		acrescentarMarcadoresAssinaturaComSenha();
+		acrescentarMarcadorPublicacaoPortalTransparencia();
 	}
 
 	protected boolean acrescentarMarcadoresSemEfeito() {
@@ -288,11 +299,16 @@ public class ExMarcadorBL {
 		// Se não estiver finalizado
 		if (!mob.doc().isFinalizado()) {
 			acrescentarMarca(CpMarcador.MARCADOR_EM_ELABORACAO, mob.doc().getDtRegDoc(), mob.doc().getCadastrante(),
-					mob.doc().getLotaCadastrante());
-			if (mob.getExDocumento().getSubscritor() != null)
+					(Ex.getInstance().getConf().podePorConfiguracao(mob.doc().getCadastrante(), mob.doc().getLotaCadastrante(), 
+							null, mob.doc().getExModelo().getExFormaDocumento(), null, CpTipoConfiguracao.TIPO_CONFIG_TMP_PARA_LOTACAO) ? 
+									mob.doc().getLotaCadastrante() : null));
+			if (mob.getExDocumento().getSubscritor() != null
+					&& !(Boolean.valueOf(SigaBaseProperties.getString("siga.mesa.naoRevisarTemporarios")) 
+							&& !mob.doc().getCadastrante().equals(mob.doc().getSubscritor()) 
+							&& !mob.doc().isFinalizado())) {
 				acrescentarMarca(CpMarcador.MARCADOR_REVISAR, mob.doc().getDtRegDoc(),
 						mob.getExDocumento().getSubscritor(), null);
-
+			}
 		}
 	}
 
@@ -371,13 +387,19 @@ public class ExMarcadorBL {
 	}
 
 	public void acrescentarMarcadoresPendenciaDeAssinatura() {
-		if (mob.doc().isPendenteDeAssinatura() && !mob.doc().isCancelado()) {
+		if (!(SigaMessages.isSigaSP() && !mob.doc().isFinalizado()) 
+		                && mob.doc().isPendenteDeAssinatura() && !mob.doc().isCancelado()) {
+
+
 	/*		Não estava setando a amrca pendente de assinatura corretamente na susbituição.
 	 *      DpPessoa resp = ultMovNaoCanc != null ? ultMovNaoCanc.getResp() : mob.doc().getCadastrante();
 			DpLotacao lotaResp  = ultMovNaoCanc != null ? ultMovNaoCanc.getLotaResp() : mob.doc().getLotaCadastrante(); */
 			acrescentarMarca(CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA, mob.doc().getDtRegDoc(), mob.doc().getCadastrante(),
 					 mob.doc().getLotaCadastrante());
-			if (!mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha()) {
+			if (!mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha()
+					&& !(Boolean.valueOf(SigaBaseProperties.getString("siga.mesa.naoRevisarTemporarios"))
+						&& !mob.doc().getCadastrante().equals(mob.doc().getSubscritor()) 
+						&& !mob.doc().isFinalizado())) {
 				acrescentarMarca(CpMarcador.MARCADOR_COMO_SUBSCRITOR, mob.doc().getDtRegDoc(), mob.getExDocumento().getSubscritor(), null);
 				ExMovimentacao m = mob.doc().getMovSolicitacaoDeAssinatura();
 				if (m != null) {
@@ -428,13 +450,42 @@ public class ExMarcadorBL {
 					continue;
 				else if (mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha())
 					acrescentarMarca(CpMarcador.MARCADOR_COMO_SUBSCRITOR, mov.getDtIniMov(), mov.getSubscritor(), null);
-				else
-					acrescentarMarca(CpMarcador.MARCADOR_REVISAR, mov.getDtIniMov(), mov.getSubscritor(), null);
-
+				else {
+					if (!(Boolean.valueOf(SigaBaseProperties.getString("siga.mesa.naoRevisarTemporarios")) 
+								&& !mob.getDoc().isFinalizado())) 
+						acrescentarMarca(CpMarcador.MARCADOR_REVISAR, mov.getDtIniMov(), mov.getSubscritor(), null);
+					if (!(Boolean.valueOf(SigaBaseProperties.getString("siga.mesa.naoRevisarTemporarios")) 
+							&& !mob.getDoc().isFinalizado()) && Ex.getInstance().getConf().podePorConfiguracao(mov.getSubscritor(), mov.getSubscritor().getLotacao(), CpTipoConfiguracao.TIPO_CONFIG_COSIGNATARIO_ASSINAR_ANTES_SUBSCRITOR))
+						acrescentarMarca(CpMarcador.MARCADOR_COMO_SUBSCRITOR, mov.getDtIniMov(), mov.getSubscritor(), null);						
+				}	
 			}
 		}
 	}
 
+	public void acrescentarMarcadoresManuaisPorOcorrenciaDeTransferencia(Date dt) {	
+		ExMobil geral = mob.doc().getMobilGeral();
+		if (geral.getExMovimentacaoSet() != null) {
+			for (ExMovimentacao mov : geral.getExMovimentacaoSet()) {
+				if (mov.isCancelada() || mov.getMarcador() == null)
+					continue;
+				
+				Long tpMov = mov.getIdTpMov();
+				Long idMarcador = mov.getMarcador().getIdMarcador();
+				boolean temMarcaManual = (tpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO &&
+						(idMarcador == CpMarcador.MARCADOR_URGENTE 
+						|| idMarcador == CpMarcador.MARCADOR_IDOSO 
+						|| idMarcador == CpMarcador.MARCADOR_PRIORITARIO  
+						|| idMarcador == CpMarcador.MARCADOR_RESTRICAO_ACESSO
+						|| idMarcador == CpMarcador.MARCADOR_COVID_19
+						|| idMarcador == CpMarcador.MARCADOR_NOTA_EMPENHO));
+								
+				if (temMarcaManual)	{
+					acrescentarMarca(mov.getMarcador().getIdMarcador(), dt, ultMovNaoCanc.getResp(), ultMovNaoCanc.getLotaResp());
+				}																								
+			}
+		}	
+	}
+	
 	public void acrescentarMarcadoresAssinaturaComSenha() {
 		for (ExMovimentacao mov : movs(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA)) {
 			Long t = mov.getIdTpMov();
@@ -453,6 +504,14 @@ public class ExMarcadorBL {
 			if (!jaAutenticado)
 				acrescentarMarca(CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA, mov.getDtIniMov(),
 						mov.getSubscritor(), null);
+		}
+	}
+	
+
+	public void acrescentarMarcadorPublicacaoPortalTransparencia() {
+		for (ExMovimentacao mov : movs(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA)) {
+			acrescentarMarca(CpMarcador.MARCADOR_PORTAL_TRANSPARENCIA, mov.getDtIniMov(), mov.getCadastrante(),
+					mov.getLotaCadastrante());
 		}
 	}
 
@@ -618,8 +677,12 @@ public class ExMarcadorBL {
 		mar.setCpMarcador(ExDao.getInstance().consultar(idMarcador, CpMarcador.class, false));
 		if (pess != null)
 			mar.setDpPessoaIni(pess.getPessoaInicial());
-		if (lota != null)
-			mar.setDpLotacaoIni(lota.getLotacaoInicial());
+		if (lota != null) {
+			AcessoConsulta ac = new AcessoConsulta(0L, lota.getIdInicial(), 
+					0L, lota.getOrgaoUsuario().getId());
+			if (ac.podeAcessar(mob.doc(), null, lota)) 
+				mar.setDpLotacaoIni(lota.getLotacaoInicial());
+		}
 		mar.setDtIniMarca(dt);
 		set.add(mar);
 	}
@@ -630,8 +693,12 @@ public class ExMarcadorBL {
 		mar.setCpMarcador(ExDao.getInstance().consultar(idMarcador, CpMarcador.class, false));
 		if (pess != null)
 			mar.setDpPessoaIni(pess.getPessoaInicial());
-		if (lota != null)
-			mar.setDpLotacaoIni(lota.getLotacaoInicial());
+		if (lota != null) {
+			AcessoConsulta ac = new AcessoConsulta(0L, lota.getIdInicial(), 
+					0L, lota.getOrgaoUsuario().getId());
+			if (ac.podeAcessar(mob.doc(), null, lota)) 
+				mar.setDpLotacaoIni(lota.getLotacaoInicial());
+		}
 		mar.setDtIniMarca(dtIni);
 		mar.setDtFimMarca(dtFim);
 		set.add(mar);

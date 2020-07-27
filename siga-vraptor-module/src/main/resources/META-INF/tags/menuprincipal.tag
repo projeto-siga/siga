@@ -40,7 +40,7 @@
 	class="navbar-brand dropdown-toggle" data-toggle="dropdown"> <fmt:message
 			key="menu.titulo" /></a>
 	<ul class="dropdown-menu">
-		<c:if test="${not empty f:resource('siga.pagina.inicial.url')}">
+		<c:if test="${not empty f:resource('siga.pagina.inicial.url') && f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;QUADRO:Quadros Quantitativos')}">
 			<li><a class="dropdown-item"
 				href="/siga/app/principal?redirecionar=false">Quadros
 					Quantitativos</a></li>
@@ -49,6 +49,23 @@
 			<li><a class="dropdown-item" href="/siga/app/principal">Página
 					Inicial</a></li>
 		</c:if>
+		<c:if
+			test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF:Módulo de Workflow') or
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SR') or
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC:Módulo de Gestão de Conhecimento') or
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TP:Módulo de Transportes') or
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SE:Módulo de Servicos Externos') or
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GO:Gestão Orçamentária') or	
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar') or	
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;AQ: Módulo de Adicional de Qualificação') or
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;BDP: Módulo de Banco de Permutas') or 
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;BNF: Módulo de Benefícios') or 
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CAD: Módulo de Cadastro') or 
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CST: Módulo de Consultas') or 
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DCN: Módulo de Docência de Magistrados') or 
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;LOT: Módulo de Lotação') or 
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TRN: Módulo de Treinamento') or
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TERC: Módulo de Terceirizados')}">
 		<li class="dropdown-submenu"><a href="javascript:void(0);"
 			class="dropdown-item dropdown-toggle">Módulos</a>
 			<ul class="dropdown-menu">
@@ -169,6 +186,7 @@
 				</c:if>
 
 			</ul></li>
+		</c:if>
 		<c:if test="${f:resource('siga.local') eq 'GOVSP'}">
 			<c:if test="${not empty f:resource('gsa.url')}">
 				<li><a class="dropdown-item" href="/siga/app/busca">Busca
@@ -179,9 +197,13 @@
 		<li class="dropdown-submenu"><a href="javascript:void(0);"
 			class="dropdown-item dropdown-toggle">Administração</a>
 			<ul class="dropdown-menu">
-				<c:if test="${(!f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;ADM;TSEN:Ocultar Trocar Senha') || titular.orgaoUsuario.sigla == 'ZZ')}">
+				<c:if test="${(!f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;ADM:Administração;TSEN:Ocultar Trocar Senha') || titular.orgaoUsuario.sigla == 'ZZ')}">
 					<li><a class="dropdown-item"
 						href="/siga/app/usuario/trocar_senha">Trocar senha</a></li>
+				</c:if>
+				<c:if test="${(!f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;ADM;DEMAIL:Definir Email do Usuário') || titular.orgaoUsuario.sigla == 'ZZ')}">
+					<li><a class="dropdown-item"
+						href="/siga/app/usuario/trocar_email">Trocar Email do Usuário</a></li>
 				</c:if>
 				
 				<%--
@@ -371,7 +393,7 @@
 					<c:forEach var="substituicao" items="${meusTitulares}">
 						<div class="dropdown-item" href="#">
 						<a class=""
-							href="/siga/app/substituicao/substituirGravar?id=${substituicao.idSubstituicao}">
+							href="javascript:delSession();location.href='/siga/app/substituicao/substituirGravar?id=${substituicao.idSubstituicao}'">
 								<c:choose>
 									<c:when test="${not empty substituicao.titular}">
 										${f:maiusculasEMinusculas(substituicao.titular.pessoaAtual.nomePessoa)}
@@ -392,7 +414,6 @@
 						</div>
 						
 					</c:forEach>
-
 				</div></li>
 		</c:if>
 

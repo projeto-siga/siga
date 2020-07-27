@@ -19,6 +19,8 @@
 package br.gov.jfrj.siga.ex.vo;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,7 +28,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 
-import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -42,6 +43,7 @@ import br.gov.jfrj.siga.ex.util.ExGraphColaboracao;
 import br.gov.jfrj.siga.ex.util.ExGraphRelacaoDocs;
 import br.gov.jfrj.siga.ex.util.ExGraphTramitacao;
 import br.gov.jfrj.siga.ex.util.ProcessadorModeloFreemarker;
+import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class ExDocumentoVO extends ExVO {
 	DpPessoa titular;
@@ -102,7 +104,14 @@ public class ExDocumentoVO extends ExVO {
 
 		this.nomeCompleto = doc.getNomeCompleto();
 		this.dtDocDDMMYY = doc.getDtDocDDMMYY();
-		this.dataPrimeiraAssinatura = this.obterDataPrimeiraAssinatura(doc);
+		
+		/*
+		 * 16/01/2020 - Data da ultima assinatura
+		 */
+		this.dataPrimeiraAssinatura = doc.getDtPrimeiraAssinaturaDDMMYY();
+		
+		
+		/*this.dataPrimeiraAssinatura = this.obterDataPrimeiraAssinatura(doc);*/
 		this.subscritorString = doc.getSubscritorString();
 		this.cadastranteString = doc.getCadastranteString();
 		if (doc.getLotaCadastrante() != null)
@@ -147,7 +156,7 @@ public class ExDocumentoVO extends ExVO {
 				this.tipoFormaDocumento = "processo_administrativo";
 				break;
 			}
-
+		
 		this.dtFinalizacao = doc.getDtFinalizacaoDDMMYY();
 		if (doc.getExModelo() != null)
 			this.nmArqMod = doc.getExModelo().getNmArqMod();
@@ -233,6 +242,14 @@ public class ExDocumentoVO extends ExVO {
 		this.originalOrgao = doc.getOrgaoExterno() != null ? doc.getOrgaoExterno().getDescricao() : null;
 		
 		this.podeAnexarArquivoAuxiliar = Ex.getInstance().getComp().podeAnexarArquivoAuxiliar(titular, lotaTitular, mob);
+	}
+	
+	/*
+	 * Adicionado 14/02/2020
+	 */
+	
+	protected  ExDao dao() {
+		return ExDao.getInstance();
 	}
 
 	public List<Object> getListaDeAcessos() {
@@ -321,6 +338,7 @@ public class ExDocumentoVO extends ExVO {
 		marcasGeralPermitidas
 				.add(CpMarcador.MARCADOR_TRANSFERIR_PARA_ARQUIVO_INTERMEDIARIO);
 		marcasGeralPermitidas.add(CpMarcador.MARCADOR_PENDENTE_DE_ANEXACAO);
+		marcasGeralPermitidas.add(CpMarcador.MARCADOR_PORTAL_TRANSPARENCIA);
 
 		for (ExMobilVO mobVO : mobs) {
 
@@ -448,6 +466,40 @@ public class ExDocumentoVO extends ExVO {
 			}
 		}
 		return retorno;
+	}
+	
+	/*
+	 * Adicionado 14/02/2020
+	 */
+	private boolean mostrarGerarProtocolo(ExDocumento doc) {				
+		if(doc.getDtAssinatura() == null)
+			return false;
+		
+		List<ExMobil>mobs = dao().consultarMobilPorDocumento(doc);
+		List<ExMovimentacao>movs = new ArrayList<ExMovimentacao>();
+		
+		for(ExMobil mob:mobs)
+			movs.addAll(dao().consultarMovimentoPorMobil(mob));
+		
+		Collections.sort(movs, new Comparator<ExMovimentacao>() {
+			public int compare(ExMovimentacao m1, ExMovimentacao m2) {
+				return m2.getData().compareTo(m1.getData());
+			}
+		});
+		
+		for(ExMovimentacao mov:movs) {
+			if(mov.getDescrTipoMovimentacao().equalsIgnoreCase("Desarquivamento")||
+					mov.getDescrTipoMovimentacao().equalsIgnoreCase("Desentranhamento"))
+				return true;
+			
+			
+			if(mov.getDescrTipoMovimentacao().equalsIgnoreCase("Juntada")||
+					mov.getDescrTipoMovimentacao().equalsIgnoreCase("Cancelamento")||
+					mov.getDescrTipoMovimentacao().equalsIgnoreCase("Arquivamento Intermediário")||
+					mov.getDescrTipoMovimentacao().equalsIgnoreCase("Arquivamento Corrente"))
+				return false;
+		}
+		return true;
 	}
 	
 	/**
@@ -629,13 +681,13 @@ public class ExDocumentoVO extends ExVO {
 				"redefinir_nivel_acesso",
 				Ex.getInstance().getComp()
 						.podeRedefinirNivelAcesso(titular, lotaTitular, mob));
-		
+
 		vo.addAcao(
 				"group_link",
 				"Restrição de Acesso",
 				"/app/expediente/mov",
 				"restringir_acesso",
-				Ex.getInstance().getComp().podeRestrigirAcesso(doc.getCadastrante(), doc.getCadastrante().getLotacao(), mob));
+				Ex.getInstance().getComp().podeRestrigirAcesso(titular, lotaTitular, mob));
 		
 		vo.addAcao(
 				"arrow_undo",
@@ -644,7 +696,7 @@ public class ExDocumentoVO extends ExVO {
 				"desfazer_restricao_acesso",
 				Ex.getInstance()
 						.getComp()
-						.podeDesfazerRestricaoAcesso(doc.getCadastrante(), doc.getCadastrante().getLotacao(), mob),
+						.podeDesfazerRestricaoAcesso(titular, lotaTitular, mob),
 				"Esta operação anulará as Restrições de Acesso. Prosseguir?",
 				null, null, null, "once");
 		
@@ -755,15 +807,37 @@ public class ExDocumentoVO extends ExVO {
 				null, null, null, "once");
 		
 		vo.addAcao(
-				"printer",
-				"Gerar Protocolo",
+				"cancel",
+				"Cancelar",
 				"/app/expediente/doc",
-				"gerarProtocolo",
+				"cancelarDocumento",
 				Ex.getInstance()
 						.getComp()
-						.podeGerarProtocolo(titular, lotaTitular, mob),
-				null,
-				"&popup=true", null, null, null);
+						.podeCancelarDocumento(titular, lotaTitular, mob),
+				"Esta operação cancelará o documento pendente de assinatura. Prosseguir?",
+				null, null, null, "once");
+		
+		vo.addAcao(
+				"report_link",
+				SigaMessages.getMessage("documento.publicar.portaltransparencia"),
+				"/app/expediente/mov",
+				"publicacao_transparencia",
+				Ex.getInstance().getComp()
+						.podePublicarPortalTransparencia(titular, lotaTitular, mob));
+
+		
+		if(mostrarGerarProtocolo(doc)) {
+			vo.addAcao(
+					"printer",
+					"Gerar Protocolo",
+					"/app/expediente/doc",
+					"gerarProtocolo",
+					Ex.getInstance()
+							.getComp()
+							.podeGerarProtocolo(titular, lotaTitular, mob),
+					null,
+					"&popup=true", null, null, null);
+		}
 	}
 
 	public void addDadosComplementares() {

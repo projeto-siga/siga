@@ -53,6 +53,9 @@ public class ExProtocolo implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DATA", length = 19)
 	private java.util.Date data;
+	
+	@Column(length = 12)
+	private String codigo;
 
 	public ExProtocolo() {
 	}
@@ -88,4 +91,14 @@ public class ExProtocolo implements Serializable {
 	public void setData(java.util.Date data) {
 		this.data = data;
 	}
+
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+	
+	
 }

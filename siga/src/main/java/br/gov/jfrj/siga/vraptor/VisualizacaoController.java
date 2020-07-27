@@ -9,37 +9,39 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpVisualizacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
-@Resource
+@Controller
 public class VisualizacaoController extends SigaController {
-	
 	private String dtIniDeleg;
 	private String dtFimDeleg;	
 	private DpPessoaSelecao titularSel;
 	private DpPessoaSelecao delegadoSel;
 	
-	private Map<Integer, String> getListaTipo() {
-		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Matrícula");
-		map.put(2, "Órgão Integrado");
-		return map;
-	}	
-		
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public VisualizacaoController() {
+		super();
+	}
+
+	@Inject
 	public VisualizacaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 
@@ -52,6 +54,15 @@ public class VisualizacaoController extends SigaController {
 		
 	}
 	
+
+	private Map<Integer, String> getListaTipo() {
+		final Map<Integer, String> map = new TreeMap<Integer, String>();
+		map.put(1, "Matrícula");
+		map.put(2, "Órgão Integrado");
+		return map;
+	}	
+		
+
 	private List<DpVisualizacao> buscarVisualizacoes(DpPessoa pessoa) 
 			throws SQLException, AplicacaoException {
 		List<DpVisualizacao> todasVis = new ArrayList<DpVisualizacao>();
@@ -196,7 +207,8 @@ public class VisualizacaoController extends SigaController {
 		if (idVisualizacao == null)
 			throw new AplicacaoException("Dados não informados");
 			
-		result.redirectTo(Contexto.urlBase(request) + "/sigaex/app/mesa?idVisualizacao="+idVisualizacao);
+		result.redirectTo(Contexto.urlBase(request) + "/sigaex/app/mesa" 
+				+ SigaBaseProperties.getString("siga.mesa.versao") + "?idVisualizacao="+idVisualizacao);
 	}	
 	
 	public void exclui(Long id) throws Exception {

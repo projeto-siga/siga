@@ -114,7 +114,16 @@
 									<td></td>
 									<td></td>
 								</c:if>
-								<td class="text-left">${f:descricaoConfidencial(i.doc, lotaTitular)}</td>
+								<td class="text-left">
+									<c:choose>
+										<c:when test="${siga_cliente!='GOVSP'}">
+											${f:descricaoConfidencial(i.doc, lotaTitular)}
+										</c:when>
+										<c:otherwise>
+											${i.doc.descrDocumento}
+										</c:otherwise>
+									</c:choose>
+								</td>
 						</tr>
 					</c:forEach>
 

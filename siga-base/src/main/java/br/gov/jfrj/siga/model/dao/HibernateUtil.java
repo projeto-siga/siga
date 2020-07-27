@@ -50,10 +50,4 @@ public class HibernateUtil {
 
 	private HibernateUtil() {
 	}
-
-	public static Session getSessao() {
-		Session s = (Session) (ContextoPersistencia.em().getDelegate());
-		return s;
-	}
-
 }

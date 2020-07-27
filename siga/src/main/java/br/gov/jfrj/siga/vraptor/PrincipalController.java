@@ -7,6 +7,7 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,14 +15,14 @@ import javax.servlet.http.HttpServletResponse;
 import com.mashape.unirest.http.Unirest;
 
 import br.com.caelum.vraptor.Consumes;
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Options;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
-import br.com.caelum.vraptor.interceptor.download.Download;
+import br.com.caelum.vraptor.observer.download.ByteArrayDownload;
+import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Data;
@@ -34,10 +35,18 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.GenericoSelecao;
 
-@Resource
+@Controller
 public class PrincipalController extends SigaController {
 	HttpServletResponse response;
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public PrincipalController() {
+		super();
+	}
+
+	@Inject
 	public PrincipalController(HttpServletRequest request, HttpServletResponse response, Result result, CpDao dao,
 			SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);

@@ -111,7 +111,23 @@ public class CarregadorDeModeloPropriedade {
 
 		// tentar carregar propriedades a partir diretorio do programa
 		try {
-			String diretorioProperties = "C:"+File.separatorChar+"Desenvolvimento"+File.separatorChar+"jboss-eap-6.2.3"+File.separatorChar+"standalone"+File.separatorChar+"properties"+File.separatorChar+"";
+			String diretorioProperties = "C:"+File.separatorChar+"desenvolvimento"+File.separatorChar+"jboss-eap-6.2.3"+File.separatorChar+"standalone"+File.separatorChar+"properties"+File.separatorChar+"";
+			return carregarPropriedadesArquivoEspecifico(diretorioProperties + NOME_ARQ_PROPS);
+		} catch (Exception e) {
+
+		}
+		
+		// tentar carregar propriedades a partir diretorio do programa
+		try {
+			String diretorioProperties = "C:"+File.separatorChar+"desenvolvimento"+File.separatorChar+"jboss-eap-7.2.3"+File.separatorChar+"standalone"+File.separatorChar+"properties"+File.separatorChar+"";
+			return carregarPropriedadesArquivoEspecifico(diretorioProperties + NOME_ARQ_PROPS);
+		} catch (Exception e) {
+
+		}
+		
+		// tentar carregar propriedades a partir diretorio do programa
+		try {
+			String diretorioProperties = "D:"+File.separatorChar+"novo"+File.separatorChar+"jboss-eap-7.2.3"+File.separatorChar+"standalone"+File.separatorChar+"properties"+File.separatorChar+"";
 			return carregarPropriedadesArquivoEspecifico(diretorioProperties + NOME_ARQ_PROPS);
 		} catch (Exception e) {
 

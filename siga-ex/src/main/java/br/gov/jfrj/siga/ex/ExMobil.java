@@ -43,10 +43,12 @@ import java.util.regex.Pattern;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.BatchSize;
 import org.jboss.logging.Logger;
 
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -68,6 +70,9 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger log = Logger.getLogger(ExMobil.class);
+	
+	@Transient
+	private static boolean isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso = false;
 
 	/**
 	 * Retorna A penúltima movimentação não cancelada de um Mobil.
@@ -695,7 +700,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	public ExMovimentacao getUltimaMovimentacaoNaoCancelada() {
 		return getUltimaMovimentacaoNaoCancelada(0L);
 	}
-
+	
 	/**
 	 * Retorna a última movimentação não cancelada de um tipo específico que o
 	 * móbil recebeu.
@@ -730,7 +735,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	public ExMovimentacao getUltimaMovimentacaoNaoCancelada(ExMovimentacao movParam) {
 		return getUltimaMovimentacao(new long[] { movParam.getExTipoMovimentacao().getIdTpMov() }, new long[] { 0L },
 				this, false, movParam.getDtMov());
-	}
+	}	
 
 	/**
 	 * Retorna A última movimentação de um Mobil.
@@ -779,7 +784,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		for (ExMovimentacao mov : movSet) {
 			if (!permitirCancelada && (mov.isCancelada() || mov.isCanceladora()))
 				continue;
-
+		
 			if (tpMovs.length == 0 || tpMovs[0] == 0L)
 				movReturn = mov;
 			else
@@ -1753,7 +1758,12 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 
 		List<ExArquivoNumerado> arquivosNumerados = null;
 
-		arquivosNumerados = mobPrincipal.getExDocumento().getArquivosNumerados(mobPrincipal);
+		arquivosNumerados = mobPrincipal.getExDocumento().getArquivosNumerados(mobPrincipal);		
+		
+		boolean teveReordenacao = (mobPrincipal.getDoc() != null && 
+				mobPrincipal.getDoc().podeReordenar() &&
+				mobPrincipal.getDoc().podeExibirReordenacao() &&
+				mobPrincipal.getDoc().temOrdenacao());
 
 		List<ExArquivoNumerado> ans = new ArrayList<ExArquivoNumerado>();
 		int i = 0;
@@ -1783,9 +1793,24 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 				}
 			}
 		} else {
-			ans.add(arquivosNumerados.get(0));
+			if (mobPrincipal == this && teveReordenacao) {
+				for (ExArquivoNumerado arquivo : arquivosNumerados) {
+					if (mobPrincipal.getDoc().getIdDoc().equals(arquivo.getArquivo().getIdDoc())) {						
+						ans.add(arquivo);
+						break;
+					}
+				}
+			} else {
+				ans.add(arquivosNumerados.get(0));
+			}			
 		}
-		if (bCompleto && i != -1) {
+		
+		if (bCompleto && teveReordenacao) {
+			ans.clear();
+			for (ExArquivoNumerado arquivo : arquivosNumerados) {				
+				ans.add(arquivo);
+			}
+		} else if (bCompleto && i != -1) {
 			for (int j = i + 1; j < arquivosNumerados.size(); j++) {
 				ExArquivoNumerado anSub = arquivosNumerados.get(j);
 				if (anSub.getNivel() <= arquivosNumerados.get(i).getNivel())
@@ -2188,5 +2213,17 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 			set.add(m);
 		}
 		return set;
+	}
+	
+	public static void adicionarIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso() {
+		isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso = true;
+	}
+	
+	public static void removerIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso() {
+		isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso = false;
+	}
+	
+	public static boolean isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso() {
+		return isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso;
 	}
 }

@@ -25,16 +25,19 @@ package br.gov.jfrj.siga.vraptor;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -42,9 +45,18 @@ import br.gov.jfrj.siga.dp.DpVisualizacao;
 import br.gov.jfrj.siga.ex.bl.Mesa;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
-@Resource
+@Controller
 public class ExMesaController extends ExController {
+	private static final String ACESSO_MESA2 = "MESA2:Mesa Versão 2";
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ExMesaController() {
+		super();
+	}
+
+	@Inject
 	public ExMesaController(HttpServletRequest request, HttpServletResponse response, ServletContext context,
 			Result result, SigaObjects so, EntityManager em) {
 		super(request, response, context, result, ExDao.getInstance(), so, em);
@@ -52,6 +64,31 @@ public class ExMesaController extends ExController {
 
 	@Get("app/mesa")
 	public void lista(Boolean exibirAcessoAnterior, Long idVisualizacao) {
+		if (SigaBaseProperties.getString("siga.mesa.versao") != null) { 
+			if (exibirAcessoAnterior != null) {
+				result.redirectTo("/app/mesa" + SigaBaseProperties.getString("siga.mesa.versao") 
+				+ "?exibirAcessoAnterior=" + exibirAcessoAnterior.toString());
+				return;
+			} else {
+				result.redirectTo("/app/mesa" + SigaBaseProperties.getString("siga.mesa.versao")); 
+				return;
+			}
+		}
+
+		try {
+			super.assertAcesso(ACESSO_MESA2);
+			if (exibirAcessoAnterior != null) {
+				result.redirectTo("/app/mesa2" 
+				+ "?exibirAcessoAnterior=" + exibirAcessoAnterior.toString());
+				return;
+			} else {
+				result.redirectTo("/app/mesa2"); 
+				return;
+			}
+		} catch (AplicacaoException e) {
+			
+		}
+		
 		if (exibirAcessoAnterior != null && exibirAcessoAnterior) {
 			CpAcesso a = dao.consultarAcessoAnterior(so.getCadastrante());
 			if (a == null)

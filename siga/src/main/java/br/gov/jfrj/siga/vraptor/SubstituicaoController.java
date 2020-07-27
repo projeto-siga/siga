@@ -13,13 +13,14 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
@@ -34,7 +35,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
-@Resource
+@Controller
 public class SubstituicaoController extends SigaController {
 	
 	private Integer tipoTitular;
@@ -54,6 +55,15 @@ public class SubstituicaoController extends SigaController {
 	}	
 		
 
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public SubstituicaoController() {
+		super();
+	}
+
+	@Inject
 	public SubstituicaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 

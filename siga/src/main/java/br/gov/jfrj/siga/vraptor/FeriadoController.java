@@ -31,14 +31,15 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
@@ -50,9 +51,18 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
-@Resource
+@Controller
 public class FeriadoController extends SigaController {
 	
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public FeriadoController() {
+		super();
+	}
+
+	@Inject
 	public FeriadoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 	}

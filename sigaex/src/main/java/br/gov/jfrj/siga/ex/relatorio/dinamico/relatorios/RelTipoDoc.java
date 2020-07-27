@@ -10,26 +10,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
-import net.sf.jasperreports.engine.JRException;
+import javax.persistence.Query;
 
-import org.hibernate.Query;
-
-import ar.com.fdvs.dj.domain.DJCalculation;
-import ar.com.fdvs.dj.domain.DJCrosstab;
-import ar.com.fdvs.dj.domain.builders.ColumnBuilder;
-import ar.com.fdvs.dj.domain.builders.ColumnBuilderException;
-import ar.com.fdvs.dj.domain.builders.CrosstabBuilder;
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
-import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import net.sf.jasperreports.engine.JRException;
 
 public class RelTipoDoc extends RelatorioTemplate {
 
@@ -76,8 +68,7 @@ public class RelTipoDoc extends RelatorioTemplate {
 
 		List<String> d = new ArrayList<String>();
 
-		Query query = HibernateUtil
-				.getSessao()
+		Query query = ContextoPersistencia.em()
 				.createQuery(
 						"select doc.exFormaDocumento.exTipoFormaDoc.descTipoFormaDoc, "
 						+ "doc.exFormaDocumento.descrFormaDoc, "
@@ -91,11 +82,11 @@ public class RelTipoDoc extends RelatorioTemplate {
 						+ "doc.exFormaDocumento.descrFormaDoc");
 		
 		// Obtém a lotação com o id passado...
-		Query qrySetor = HibernateUtil.getSessao().createQuery(
+		Query qrySetor = ContextoPersistencia.em().createQuery(
 				"from DpLotacao lot where lot.idLotacao = " + parametros.get("lotacao"));
 					
 		Set<DpLotacao> lotacaoSet = new HashSet<DpLotacao>();
-		DpLotacao lotacao = (DpLotacao)qrySetor.list().get(0);
+		DpLotacao lotacao = (DpLotacao)qrySetor.getResultList().get(0);
 		lotacaoSet.add(lotacao);
 		
 		
@@ -106,13 +97,13 @@ public class RelTipoDoc extends RelatorioTemplate {
 		 * query.setLong("orgaoUsu", orgaoUsu);
 		 */
 		Date dtini = formatter.parse((String) parametros.get("dataInicial"));
-		query.setDate("dtini", dtini);
+		query.setParameter("dtini", dtini);
 		Date dtfim = formatter.parse((String) parametros.get("dataFinal"));
-		query.setDate("dtfim", dtfim);
+		query.setParameter("dtfim", dtfim);
 
 		Map<String, Long> map = new TreeMap<String, Long>();
 
-		Iterator it = query.list().iterator();
+		Iterator it = query.getResultList().iterator();
 		while (it.hasNext()) {
 			Object[] obj = (Object[]) it.next();
 			String tipodoc = (String) obj[0];

@@ -1094,8 +1094,8 @@ public class FuncoesEL {
 			}
 		}
 		return retorno;
-	}	
-
+	}
+	
 	public String assinadoPor(ExDocumento doc) {
 		String retorno = "";	
 		List<ExMovimentacao> mov;
@@ -1112,5 +1112,5 @@ public class FuncoesEL {
 		}
 		return retorno;
 	}	
-	
+
 }

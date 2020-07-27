@@ -25,6 +25,8 @@
    name="dtRegDoc" not-null="true" type="java.util.Date"/>
   <property column="DT_FINALIZACAO" generated="never" lazy="false"
    name="dtFinalizacao" type="java.util.Date"/>
+   <property column="DT_ULTIMAASSINATURA" generated="never" lazy="false"
+   name="dtUltimaAssinatura" type="java.util.Date"/>
   <property column="NM_SUBSCRITOR_EXT" generated="never" lazy="false"
    name="nmSubscritorExt" type="java.lang.String"/>
   <property column="NM_FUNCAO_SUBSCRITOR" generated="never" lazy="false"

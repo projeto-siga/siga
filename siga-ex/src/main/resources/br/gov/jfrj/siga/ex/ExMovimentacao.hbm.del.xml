@@ -262,7 +262,7 @@
         <query name="consultarMovimentacoes">
                 <![CDATA[from ExMovimentacao mov
                 where mov.cadastrante.idPessoaIni=:pessoaIni and mov.dtIniMov=to_date(:data, 'DD/MM/YYYY HH24:MI:SS')          
-                ) order by mov.idMov]]>
+                ) order by mov.dtTimestamp]]>
         </query>
 
 </hibernate-mapping>

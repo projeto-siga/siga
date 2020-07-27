@@ -43,7 +43,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
 @BatchSize(size = 500)
 @Immutable
 @Cacheable
-@Cache(region = CpDao.CACHE_QUERY_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
+@Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
 @Table(name = "EX_TIPO_MOVIMENTACAO", catalog = "SIGA")
 public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements Serializable, Selecionavel {
 	/**
@@ -205,7 +205,13 @@ public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements Se
 	 */
 	
 	final static public long TIPO_MOVIMENTACAO_SUBSTITUICAO_RESPONSAVEL = 74;
+	
+	final static public long TIPO_MOVIMENTACAO_REORDENACAO_DOCUMENTO = 75;
+	
+	final static public long TIPO_MOVIMENTACAO_ORDENACAO_ORIGINAL_DOCUMENTO = 76;
 
+	final static public long TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA = 77;
+	
 	public static boolean hasDespacho(long id) {
 		return id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
 				|| id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO

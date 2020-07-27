@@ -3,13 +3,13 @@ package br.gov.jfrj.siga.vraptor.converter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.ResourceBundle;
+
+import javax.enterprise.context.RequestScoped;
 
 import br.com.caelum.vraptor.Convert;
-import br.com.caelum.vraptor.Converter;
-import br.com.caelum.vraptor.Validator;
-import br.com.caelum.vraptor.ioc.RequestScoped;
+import br.com.caelum.vraptor.converter.Converter;
 import br.com.caelum.vraptor.validator.I18nMessage;
+import br.com.caelum.vraptor.validator.Validator;
 
 @RequestScoped
 @Convert(Calendar.class)
@@ -26,7 +26,7 @@ public class GenericCalendarConverter implements Converter<Calendar> {
 	}
 
 	@Override
-	public Calendar convert(String value, Class<? extends Calendar> type, ResourceBundle bundle) {
+	public Calendar convert(String value, Class<? extends Calendar> type) {
 		if (dataPreenchida(value)) {
 			if (value.matches("\\d\\d:\\d\\d")) {
 				return converterQuandoApenasHorasMinutos(value);
@@ -44,30 +44,29 @@ public class GenericCalendarConverter implements Converter<Calendar> {
 
 	private Calendar converterUtilizandoPadroesAceitos(String value) {
 		try {
-		    if(value.matches(PATTERN_DD_MM_YYYY))
-		        return getConvertedCalendar(value, DD_MM_YYYY);
+			if (value.matches(PATTERN_DD_MM_YYYY))
+				return getConvertedCalendar(value, DD_MM_YYYY);
 
 			return getConvertedCalendar(value, DD_MM_YYYY_HH_MM);
 		} catch (ParseException e) {
-		    validator.add(new I18nMessage("data", "data.validation.params", value));
+			validator.add(new I18nMessage("data", "data.validation.params", value));
 		}
 		return null;
 	}
 
-    private Calendar getConvertedCalendar(String value, String formatoData) throws ParseException {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat(formatoData);
-        sdf.setLenient(false);
-        calendar.setTime(sdf.parse(value));
-        return calendar;
-    }
+	private Calendar getConvertedCalendar(String value, String formatoData) throws ParseException {
+		Calendar calendar = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat(formatoData);
+		sdf.setLenient(false);
+		calendar.setTime(sdf.parse(value));
+		return calendar;
+	}
 
 	private Calendar converterQuandoApenasHorasMinutos(String value) {
 		try {
 			String dataHora = DATA_INICIO + value;
 			Calendar calendar = Calendar.getInstance();
-			calendar.setTime(new SimpleDateFormat(DD_MM_YYYY_HH_MM)
-					.parse(dataHora));
+			calendar.setTime(new SimpleDateFormat(DD_MM_YYYY_HH_MM).parse(dataHora));
 			return calendar;
 		} catch (ParseException e) {
 			throw new RuntimeException(e);

@@ -14,9 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.sf.jasperreports.engine.JRException;
-
-import org.hibernate.Query;
+import javax.persistence.Query;
 
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
@@ -26,10 +24,10 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import net.sf.jasperreports.engine.JRException;
 
 	public class RelVolumeTramitacaoPorModelo extends RelatorioTemplate {
  
@@ -79,22 +77,18 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 			List<String> d = new ArrayList<String>();
 			
 			String queryOrgao = "";
-			if (parametros.get("orgao") != null && parametros.get("orgao") != "") 
+			if (parametros.get("orgao") != null && !"".equals(parametros.get("orgao"))) 
 				queryOrgao = "and doc.orgaoUsuario.idOrgaoUsu = :orgao ";
 			
 			String queryLotacao = "";
-			if (parametros.get("lotacao") != null
-					&& parametros.get("lotacao") != "") 
+			if (parametros.get("lotacao") != null && !"".equals(parametros.get("lotacao"))) 
 				queryLotacao = " and doc.lotaCadastrante.idLotacao in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :idLotacao) ";
 			
 			String queryUsuario = "";
-			if (parametros.get("usuario") != null
-					&& parametros.get("usuario") != "") 
+			if (parametros.get("usuario") != null && !"".equals(parametros.get("usuario"))) 
 				queryUsuario = "and doc.cadastrante.idPessoa in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :usuario) ";
 			
-			Query query = HibernateUtil
-					.getSessao()
-					.createQuery(
+			Query query = ContextoPersistencia.em().createQuery(
 						"select "
 						+ "mod.hisIdIni, "
 						+ "forma.descrFormaDoc, "
@@ -123,14 +117,14 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 						+ "order by mod.nmMod "
 						);
 
-			query.setLong("idTpMov1", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);
-			query.setLong("idTpMov2", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA);
-			query.setLong("idTpMov3", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA);
-			query.setLong("idTpMov4", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA);
+			query.setParameter("idTpMov1", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);
+			query.setParameter("idTpMov2", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA);
+			query.setParameter("idTpMov3", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA);
+			query.setParameter("idTpMov4", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA);
 
 			setQueryParms(query);
 			
-			Iterator it = query.list().iterator();
+			Iterator it = query.getResultList().iterator();
 
 			totalTramites = 0L;
 			totalDocumentos = 0L;
@@ -174,35 +168,34 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 				throws ParseException {
 			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 			
-			if (parametros.get("orgao") != null && parametros.get("orgao") != "") {
-				query.setLong("orgao", Long.valueOf((String) parametros.get("orgao")));
+			if (parametros.get("orgao") != null && !"".equals(parametros.get("orgao"))) {
+				query.setParameter("orgao", Long.valueOf((String) parametros.get("orgao")));
 			}
 			
-			if (parametros.get("lotacao") != null && parametros.get("lotacao") != "") {
-				Query qryLota = HibernateUtil.getSessao().createQuery(
+			if (parametros.get("lotacao") != null && !"".equals(parametros.get("lotacao"))) {
+				Query qryLota = ContextoPersistencia.em().createQuery(
 						"from DpLotacao lot where lot.idLotacao = " + parametros.get("lotacao"));
 				Set<DpLotacao> lotacaoSet = new HashSet<DpLotacao>();
-				DpLotacao lotacao = (DpLotacao)qryLota.list().get(0);
+				DpLotacao lotacao = (DpLotacao)qryLota.getResultList().get(0);
 				lotacaoSet.add(lotacao);
 				query.setParameter("idLotacao",	lotacao.getIdInicial());
 			}
 
-			if (parametros.get("usuario") != null
-					&& parametros.get("usuario") != "") {
-				Query qryPes = HibernateUtil.getSessao().createQuery(
+			if (parametros.get("usuario") != null && !"".equals(parametros.get("usuario"))) {
+				Query qryPes = ContextoPersistencia.em().createQuery(
 						"from DpPessoa pes where pes.idPessoa = "
 								+ parametros.get("usuario"));
 				Set<DpPessoa> pessoaSet = new HashSet<DpPessoa>();
-				DpPessoa pessoa = (DpPessoa) qryPes.list().get(0);
+				DpPessoa pessoa = (DpPessoa) qryPes.getResultList().get(0);
 				pessoaSet.add(pessoa);
 				query.setParameter("usuario", pessoa.getIdPessoaIni());
 			}
 
 			Date dtini = formatter.parse((String) parametros.get("dataInicial"));
-			query.setDate("dtini", dtini);
+			query.setParameter("dtini", dtini);
 			Date dtfim = formatter.parse((String) parametros.get("dataFinal"));
 			Date dtfimMaisUm = new Date( dtfim.getTime() + 86400000L );
-			query.setDate("dtfim", dtfimMaisUm);
+			query.setParameter("dtfim", dtfimMaisUm);
 		}
 
 		@Override
@@ -210,26 +203,22 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 			List<String> d = new ArrayList<String>();
 
 			String queryModelo = "";
-			if (parametros.get("idMod") != null && parametros.get("idMod") != "") 
+			if (parametros.get("idMod") != null && !"".equals(parametros.get("idMod"))) 
 				queryModelo = "and doc.exModelo.hisIdIni = :idMod ";
 			
 			String queryOrgao = "";
-			if (parametros.get("orgao") != null && parametros.get("orgao") != "") 
+			if (parametros.get("orgao") != null && !"".equals(parametros.get("orgao"))) 
 				queryOrgao = "and doc.orgaoUsuario.idOrgaoUsu = :orgao ";
 			
 			String queryLotacao = "";
-			if (parametros.get("lotacao") != null
-					&& parametros.get("lotacao") != "") 
+			if (parametros.get("lotacao") != null && !"".equals(parametros.get("lotacao"))) 
 				queryLotacao = " and doc.lotaCadastrante.idLotacao in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :idLotacao) ";
 			
 			String queryUsuario = "";
-			if (parametros.get("usuario") != null
-					&& parametros.get("usuario") != "") 
+			if (parametros.get("usuario") != null && !"".equals(parametros.get("usuario"))) 
 				queryUsuario = "and doc.cadastrante.idPessoa in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :usuario) ";
 			
-			Query query = HibernateUtil
-					.getSessao()
-					.createQuery(
+			Query query = ContextoPersistencia.em().createQuery(
 						"select "
 						+ "doc.idDoc, "
 						+ "doc.orgaoUsuario.siglaOrgaoUsu, "
@@ -286,17 +275,17 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 						+ "doc.dtDoc "
 						);
 
-			query.setLong("idTpMov1", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);
-			query.setLong("idTpMov2", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA);
-			query.setLong("idTpMov3", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA);
-			query.setLong("idTpMov4", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA);
+			query.setParameter("idTpMov1", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);
+			query.setParameter("idTpMov2", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA);
+			query.setParameter("idTpMov3", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA);
+			query.setParameter("idTpMov4", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA);
 
-			if (parametros.get("idMod") != null && parametros.get("idMod") != "") {
-				query.setLong("idMod", Long.valueOf((String) parametros.get("idMod")));
+			if (parametros.get("idMod") != null && !"".equals(parametros.get("idMod"))) {
+				query.setParameter("idMod", Long.valueOf((String) parametros.get("idMod")));
 			}
 			setQueryParms(query);
 			
-			Iterator it = query.list().iterator();
+			Iterator it = query.getResultList().iterator();
 
 			totalModeloTramites = 0L;
 			String especie = "";

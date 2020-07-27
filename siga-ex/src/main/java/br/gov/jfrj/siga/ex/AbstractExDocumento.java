@@ -29,6 +29,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
@@ -43,6 +44,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -101,7 +103,7 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "					or (:titular!=null and :titular!=0 and doc.destinatario in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
 				+ "					or (:lotaTitular!=null and :lotaTitular!=0 and doc.destinatario = null and doc.lotaDestinatario in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
 				+ "					or (:lotaTitular!=null and :lotaTitular!=0 and label.dpLotacaoIni in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
-				+ "					or (:titular!=null and :titular!=0 and label.dpPessoaIni in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
+				+ "					or (:titular!=null and :titular!=0 and label.dpPessoaIni.idPessoa in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
 				+ "				)"
 				+ "			)"
 				+ "			"
@@ -152,7 +154,7 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "						or (:titular!=null and :titular!=0 and doc.destinatario in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
 				+ "						or (:lotaTitular!=null and :lotaTitular!=0 and doc.destinatario = null and doc.lotaDestinatario in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
 				+ "						or (:lotaTitular!=null and :lotaTitular!=0 and label.dpLotacaoIni in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
-				+ "						or (:titular!=null and :titular!=0 and label.dpPessoaIni in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
+				+ "						or (:titular!=null and :titular!=0 and label.dpPessoaIni.idPessoa in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
 				+ "					)"
 				+ "				)"
 				+ "				"
@@ -168,7 +170,7 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "				and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "				and (:anoEmissao = null or :anoEmissao = 0L or doc.anoEmissao = :anoEmissao)"
 				+ "				and (:numExpediente = null or :numExpediente = 0L or doc.numExpediente = :numExpediente)"
-				+ "				and (:idTpDoc = null or :idTpDoc = 0 or doc.exTipoDocumento.idTpDoc = :idTpDoc)"
+				+ "				and (:idTpDoc = null or :idTpDoc = 0L or doc.exTipoDocumento.idTpDoc = :idTpDoc)"
 				+ "				and (:idTipoFormaDoc = null or :idTipoFormaDoc = 0L or doc.exFormaDocumento.exTipoFormaDoc.idTipoFormaDoc = :idTipoFormaDoc)"
 				+ "				and (:idFormaDoc = null or :idFormaDoc = 0L or doc.exFormaDocumento.idFormaDoc = :idFormaDoc)"
 				+ "				and (:classificacaoSelId = null or :classificacaoSelId = 0L or doc.exClassificacao.idClassificacao = :classificacaoSelId)"
@@ -201,10 +203,10 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"),
 		@NamedQuery(name = "listarDocPendenteAssinatura", query = "select doc "
 				+ "			from ExDocumento doc where doc.idDoc in (select distinct(exDocumento.idDoc) from ExMobil mob where mob.idMobil in "
-				+ "			(select exMobil.idMobil from ExMarca label where label.cpMarcador.idMarcador = 25 and label.dpPessoaIni=:idPessoaIni)) order by doc.dtDoc desc"),
+				+ "			(select exMobil.idMobil from ExMarca label where label.cpMarcador.idMarcador = 25 and label.dpPessoaIni.idPessoa = :idPessoaIni)) order by doc.dtDoc desc"),
 		@NamedQuery(name = "listarDocPendenteAssinaturaERevisado", query = "select doc "
 				+ "			from ExDocumento doc where doc.idDoc in (select distinct(exDocumento.idDoc) from ExMobil mob where mob.idMobil in "
-				+ "			(select exMobil.idMobil from ExMarca label where label.cpMarcador.idMarcador = 71 and label.dpPessoaIni=:idPessoaIni)) order by doc.dtDoc desc"),
+				+ "			(select exMobil.idMobil from ExMarca label where label.cpMarcador.idMarcador = 71 and label.dpPessoaIni.idPessoa = :idPessoaIni)) order by doc.dtDoc desc"),
 		@NamedQuery(name = "consultarExDocumentoClassificados", query = "select doc from ExDocumento doc left join fetch doc.exClassificacao"
 				+ "		where doc.exClassificacao.codificacao like :mascara"
 				+ "		and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario"
@@ -246,6 +248,9 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	@Column(name = "DESCR_DOCUMENTO", length = 4000)
 	private java.lang.String descrDocumento;
+	
+	@Column(name = "DESCR_DOCUMENTO_AI", length = 4000)
+	private java.lang.String descrDocumentoAI;
 
 	@Column(name = "DSC_CLASS_DOC", length = 4000)
 	private java.lang.String descrClassifNovo;
@@ -261,6 +266,16 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DT_FINALIZACAO", length = 19)
 	private Date dtFinalizacao;
+	
+	
+	/*
+	 * 16/01/2020 - Data da primeira assinatura
+	 */
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DT_PRIMEIRAASSINATURA", length = 19)
+	private Date dtPrimeiraAssinatura;
+	
+	
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DT_REG_DOC", nullable = false, length = 19)
@@ -297,9 +312,10 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@Column(name = "FG_ELETRONICO", nullable = false, length = 1)
 	private String fgEletronico;
 
+	@Lob
 	@Column(name = "CONTEUDO_BLOB_DOC")
 	@Basic(fetch = FetchType.LAZY)
-	private Blob conteudoBlobDoc;
+	private byte[] conteudoBlobDoc;
 
 	@Column(name = "NUM_SEQUENCIA")
 	private Integer numSequencia;
@@ -310,6 +326,9 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	@Column(name = "DNM_ACESSO", length = 4000)
 	private String dnmAcesso;
+	
+	@Column(name = "ORDENACAO_DOC", length = 200)
+	private String ordenacaoDoc;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_SUBSCRITOR")
@@ -388,9 +407,8 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exDocumento")
 	private java.util.Set<ExBoletimDoc> exBoletimDocSet;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_DOC_ANTERIOR")
-	private ExDocumento exDocAnterior;
+	@Column(name = "ID_DOC_ANTERIOR")
+	private java.lang.Long idDocAnterior;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_MOB_AUTUADO")
@@ -448,7 +466,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	/**
 	 * COMPLETAR
 	 */
-	public Blob getConteudoBlobDoc() {
+	public byte[] getConteudoBlobDoc() {
 		return this.conteudoBlobDoc;
 	}
 
@@ -534,8 +552,8 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 * 
 	 * @return
 	 */
-	public ExDocumento getExDocAnterior() {
-		return exDocAnterior;
+	public java.lang.Long getIdDocAnterior() {
+		return idDocAnterior;
 	}
 
 	/**
@@ -794,7 +812,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 * 
 	 * @param conteudoBlobDoc
 	 */
-	public void setConteudoBlobDoc(Blob conteudoBlobDoc) {
+	public void setConteudoBlobDoc(byte[] conteudoBlobDoc) {
 		this.conteudoBlobDoc = conteudoBlobDoc;
 	}
 
@@ -823,6 +841,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 */
 	public void setDescrDocumento(final java.lang.String descrDocumento) {
 		this.descrDocumento = descrDocumento;
+		this.descrDocumentoAI = Texto.removeAcentoMaiusculas(this.descrDocumento);
 	}
 
 	/**
@@ -867,8 +886,8 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		this.exClassificacao = exClassificacao;
 	}
 
-	public void setExDocAnterior(ExDocumento exDocAnterior) {
-		this.exDocAnterior = exDocAnterior;
+	public void setIdDocAnterior(java.lang.Long idDocAnterior) {
+		this.idDocAnterior = idDocAnterior;
 	}
 
 	public void setExFormaDocumento(final ExFormaDocumento exFormaDocumento) {
@@ -1052,6 +1071,18 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	public void setDnmAcesso(String dnmAcesso) {
 		this.dnmAcesso = dnmAcesso;
 	}
+	
+	public String getOrdenacaoDoc() {
+		return ordenacaoDoc;
+	}
+
+	public void setOrdenacaoDoc(String ordenacaoDoc) {
+		this.ordenacaoDoc = ordenacaoDoc;
+	}
+
+	public boolean temOrdenacao() {
+		return ordenacaoDoc != null;
+	}
 
 	public ExNivelAcesso getDnmExNivelAcesso() {
 		return dnmExNivelAcesso;
@@ -1075,5 +1106,25 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setExProtocolo(ExProtocolo exProtocolo) {
 		this.exProtocolo = exProtocolo;
+	}
+
+	public Date getDtPrimeiraAssinatura() {
+		return dtPrimeiraAssinatura;
+	}
+
+	public void setDtPrimeiraAssinatura(Date dtPrimeiraAssinatura) {
+		this.dtPrimeiraAssinatura = dtPrimeiraAssinatura;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public java.lang.String getDescrDocumentoAI() {
+		return descrDocumentoAI;
+	}
+
+	public void setDescrDocumentoAI(java.lang.String descrDocumentoAI) {
+		this.descrDocumentoAI = descrDocumentoAI;
 	}
 }

@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.vraptor;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -8,23 +9,26 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.interceptor.download.Download;
-import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
-import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+import br.com.caelum.vraptor.observer.download.Download;
+import br.com.caelum.vraptor.observer.download.InputStreamDownload;
+import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.CpLocalidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -37,20 +41,30 @@ import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.model.GenericoSelecao;
 import br.gov.jfrj.siga.model.Selecionavel;
 
-@Resource
+@Controller
 public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLotacao, DpLotacaoDaoFiltro> {
 
 	private Long orgaoUsu;
 
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public DpLotacaoController() {
+		super();
+	}
+
+	@Inject
 	public DpLotacaoController(HttpServletRequest request, Result result,
 			CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);
 		
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
-		
 		setSel(new DpPessoa());
 		setItemPagina(10);
+	}
+	
+	public boolean temPermissaoParaExportarDados() {
+		return Boolean.valueOf(Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getTitular().getLotacao(),"SIGA;GI;CAD_LOTACAO;EXP_DADOS"));
 	}
 	
 	@Get
@@ -200,13 +214,69 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			
 			result.include("idOrgaoUsu", idOrgaoUsu);
 			result.include("nome", nome);
+			
+			if (getItens().size() == 0) result.include("mensagemPesquisa", "Nenhum resultado encontrado.");
 		}
 		setItemPagina(15);
 		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));
+		result.include("temPermissaoParaExportarDados", temPermissaoParaExportarDados());
+	}
+	
+	@Post
+	@Path("app/lotacao/exportarCsv")
+	public Download exportarCsv(Long idOrgaoUsu, String nome) throws Exception {				
+			
+ 		if(idOrgaoUsu != null) {
+			DpLotacaoDaoFiltro dpLotacao = new DpLotacaoDaoFiltro(nome, idOrgaoUsu);																
+															
+			List <DpLotacao> lista = CpDao.getInstance().consultarPorFiltro(dpLotacao, 0, 0);
+			
+			if (lista.size() > 0) {				
+				InputStream inputStream = null;
+				StringBuffer texto = new StringBuffer();
+				texto.append("Unidade" + System.getProperty("line.separator"));
+				
+				for (DpLotacao lotacao : lista) {
+					texto.append(lotacao.getNomeLotacao() + ";");										
+					texto.append(System.getProperty("line.separator"));
+				}
+				
+				inputStream = new ByteArrayInputStream(texto.toString().getBytes("ISO-8859-1"));									
+				
+				return new InputStreamDownload(inputStream, "text/csv", "unidades.csv");
+				
+			} else {
+				
+				if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+					result.include("orgaosUsu", dao().listarOrgaosUsuarios());
+				} else {
+					CpOrgaoUsuario ou = CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario());
+					List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
+					list.add(ou);
+					result.include("orgaosUsu", list);
+				}
+					result.include("idOrgaoUsu", idOrgaoUsu);			
+					result.include("nome", nome);					
+					result.include("mensagemPesquisa", "Nenhum resultado encontrado.");		
+					result.include("temPermissaoParaExportarDados", temPermissaoParaExportarDados());
+					result.use(Results.page()).forwardTo("/WEB-INF/page/dpLotacao/lista.jsp");
+			}							
+		}					
+
+		return null;
 	}
 	
 	@Get("/app/lotacao/editar")
 	public void edita(final Long id){
+		
+		if(id!=null) {
+			DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
+			List<DpLotacao>lista = carregaLotacao(lotacao.getOrgaoUsuario());
+			result.include("listaLotacao", lista);
+		} else {
+			List<DpLotacao>lista = carregaLotacao(getTitular().getOrgaoUsuario());
+			result.include("listaLotacao", lista);
+		}
 		if (id != null) {
 			DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
 			result.include("nmLotacao",lotacao.getDescricao());
@@ -214,13 +284,16 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			result.include("idOrgaoUsu", lotacao.getOrgaoUsuario().getId());
 			result.include("nmOrgaousu", lotacao.getOrgaoUsuario().getNmOrgaoUsu());
 			result.include("dtFimLotacao", lotacao.getDataFimLotacao());
+			result.include("isExternaLotacao", lotacao.getIsExternaLotacao());
+			if(lotacao.getLotacaoPai() != null)
+				result.include("lotacaoPai", lotacao.getLotacaoPai().getIdLotacao());
 			result.include("idLocalidade", lotacao.getLocalidade() != null ? lotacao.getLocalidade().getIdLocalidade() : Long.valueOf(0));
 			
-			List<DpPessoa> list = dao().getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE);
+			List<DpPessoa> list = CpDao.getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE);
 			if(list.size() == 0) {
 				result.include("podeAlterarOrgao", Boolean.TRUE);
 			}
-		}
+		}		
 		
 		if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
 			result.include("orgaosUsu", dao().listarOrgaosUsuarios());
@@ -229,7 +302,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
 			list.add(ou);
 			result.include("orgaosUsu", list);
-		}
+		}		
 		
 		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
 			CpUF uf = new CpUF();
@@ -249,7 +322,10 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 							 final Long idOrgaoUsu,
 							 final String siglaLotacao,
 							 final String situacao,
+							 final Boolean isExternaLotacao,
+							 final Long lotacaoPai,
 							 final Long idLocalidade) throws Exception{
+		
 		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_LOTACAO: Cadastrar Lotação");
 		
 		if(nmLotacao == null)
@@ -276,7 +352,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		CpOrgaoUsuario ou = new CpOrgaoUsuario();
 		ou.setIdOrgaoUsu(idOrgaoUsu);
 		lotacao.setOrgaoUsuario(ou);
-		lotacao = dao().getInstance().consultarPorSigla(lotacao);
+		lotacao = CpDao.getInstance().consultarPorSigla(lotacao);
 		
 		if(lotacao != null && lotacao.getId() != null && !lotacao.getId().equals(id)) {
 			throw new AplicacaoException("Sigla já cadastrada para outra lotação");
@@ -292,7 +368,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			
 		} else {
 			lotacao = dao().consultar(id, DpLotacao.class, false);
-			listPessoa = dao().getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE);
+			listPessoa = CpDao.getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE);
 			if(dao().consultarQtdeDocCriadosPossePorDpLotacao(id) > 0 && 
 					(!lotacao.getNomeLotacao().equalsIgnoreCase(Texto.removerEspacosExtra(nmLotacao).trim()) || !lotacao.getSiglaLotacao().equalsIgnoreCase(siglaLotacao.toUpperCase().trim()))) {
 				throw new AplicacaoException("Não é permitido a alteração do nome e sigla da unidade após criação de documento ou tramitação de documento para unidade.");
@@ -319,7 +395,9 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			lotacao.setDataFimLotacao(null);
 		}
 		
-        	
+		if(lotacaoPai != null) {
+			lotacao.setLotacaoPai(CpDao.getInstance().consultarLotacaoPorId(lotacaoPai));
+		}
 		lotacao.setNomeLotacao(Texto.removerEspacosExtra(nmLotacao).trim());
 		lotacao.setSiglaLotacao(siglaLotacao.toUpperCase());
 		
@@ -331,6 +409,12 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
 			orgaoUsuario = dao().consultar(idOrgaoUsu, CpOrgaoUsuario.class, false);	
 			lotacao.setOrgaoUsuario(orgaoUsuario);
+		}
+		
+		if (isExternaLotacao != null) {
+			lotacao.setIsExternaLotacao(1);
+		} else {
+			lotacao.setIsExternaLotacao(0);	
 		}
 		
 		try {
@@ -396,7 +480,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		result.use(Results.page()).forwardTo("/WEB-INF/page/dpLotacao/cargaLotacao.jsp");
 	}
 	
-	@Post("/app/lotacao/carga")
+    @Post("/app/lotacao/carga")
 	public Download carga( final UploadedFile arquivo, Long idOrgaoUsu) throws Exception {
 		InputStream inputStream = null;
 		try {
@@ -418,17 +502,52 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			CpBL cpbl = new CpBL();
 			inputStream = cpbl.uploadLotacao(file, orgaoUsuario, extensao);
 		} catch (Exception e) {
-			System.err.println(e.getMessage());
+			throw new AplicacaoException("Problemas ao salvar unidades", 0, e);			
 		}
 		if(inputStream == null) {
-			result.include("msg", "Arquivo processado com sucesso!");
+			result.include(SigaModal.ALERTA, SigaModal.mensagem("Arquivo processado com sucesso!").titulo("Sucesso"));
 			carregarExcel();
-		} else {
-			result.include("msg", "");
+		} else {			
 			return new InputStreamDownload(inputStream, "application/text", "inconsistencias.txt");	
 		}
 		return null;
 
+	}
+	
+	@Post("/app/lotacao/carregarCombos")
+	public void carregarCombos(final Long idOrgaoUsu, String nmLotacao, String siglaLotacao, Long idLocalidade) {
+		result.include("request", getRequest());
+		result.include("nmLotacao", nmLotacao);
+		result.include("siglaLotacao", siglaLotacao);
+		
+		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+			CpUF uf = new CpUF();
+			uf.setIdUF(Long.valueOf(26));
+			result.include("listaLocalidades", dao().consultarLocalidadesPorUF(uf));
+		} else {
+			result.include("listaLocalidades", dao().consultarLocalidades());
+		}
+		result.include("idLocalidade", idLocalidade);
+		
+		if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+			result.include("orgaosUsu", dao().listarOrgaosUsuarios());
+		} else {
+			CpOrgaoUsuario ou = CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario());
+			List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
+			list.add(ou);
+			result.include("orgaosUsu", list);
+		}
+		result.include("idOrgaoUsu", idOrgaoUsu);
+		
+		CpOrgaoUsuario u = CpDao.getInstance().consultarOrgaoUsuarioPorId(idOrgaoUsu);
+		List<DpLotacao>lista = new ArrayList<DpLotacao>(CpDao.getInstance().consultarLotacaoPorOrgao(u));
+		result.include("listaLotacao", lista);
+		result.use(Results.page()).forwardTo("/WEB-INF/page/dpLotacao/edita.jsp");
+	}
+	
+	public List<DpLotacao> carregaLotacao(CpOrgaoUsuario orgaoUsuario){
+		CpOrgaoUsuario u = CpDao.getInstance().consultarOrgaoUsuarioPorId(orgaoUsuario.getIdOrgaoUsu());
+		return (List<DpLotacao>)CpDao.getInstance().consultarLotacaoPorOrgao(u);
 	}
 
 }

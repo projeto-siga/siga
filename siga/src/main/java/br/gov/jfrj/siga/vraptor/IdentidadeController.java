@@ -4,11 +4,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpIdentidade;
@@ -17,14 +18,20 @@ import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
-@Resource
+@Controller
 public class IdentidadeController extends GiControllerSupport {
 
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public IdentidadeController() {
+		super();
+	}
+
+	@Inject
 	public IdentidadeController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
-
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
 	}
 	
 	@Get("/app/gi/identidade/listar")
@@ -75,7 +82,7 @@ public class IdentidadeController extends GiControllerSupport {
 		result.forwardTo(this).lista(pessoaSel);
 	}
 
-	@Get("/app/gi/identidade/desbloquear")
+	@Get("/app/gi/identidade/bloquear")
 	public void aBloquear(Long id, DpPessoaSelecao pessoaSel) throws Exception {
 		assertAcesso("ID:Gerenciar identidades");
 		if (id != null) {
@@ -86,7 +93,7 @@ public class IdentidadeController extends GiControllerSupport {
 			throw new AplicacaoException("Não foi informada id");
 	}
 
-	@Get("/app/gi/identidade/bloquear")
+	@Get("/app/gi/identidade/desbloquear")
 	public void aDesbloquear(Long id, DpPessoaSelecao pessoaSel) throws Exception {
 		assertAcesso("ID:Gerenciar identidades");
 		if (id != null) {

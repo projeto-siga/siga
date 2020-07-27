@@ -22,7 +22,6 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
-import java.sql.Blob;
 import java.util.Date;
 
 import javax.persistence.Basic;
@@ -31,6 +30,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
@@ -66,6 +66,10 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 				+ "                where (mar.dpLotacaoIni.idLotacao=:lotaIni"
 				+ "                and (mar.cpMarcador.idMarcador=2)"
 				+ "                ) order by mar.dtIniMarca desc"),
+		@NamedQuery(name = "consultarQuantidadeParaTransferirEmLote", query = "select COUNT(mob) from ExMobil mob join mob.exMarcaSet mar"
+				+ "                where (mar.dpLotacaoIni.idLotacao=:lotaIni"
+				+ "                and (mar.cpMarcador.idMarcador=2)"
+				+ "                ) order by mar.dtIniMarca desc"),
 		// Somente os "a receber"
 		@NamedQuery(name = "consultarParaReceberEmLote", query = "select mob from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where (mar.dpLotacaoIni.idLotacao=:lotaIni"
@@ -89,7 +93,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 				+ "                where mar.cpMarcador.idMarcador=51              "
 				+ "                and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
 				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)"
-				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)" + "                )"),
+				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)"),
 		// Somente os "a recolher para arquivo permanente"
 		@NamedQuery(name = "consultarParaArquivarPermanenteEmLote", query = "select mob, mar from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where mar.cpMarcador.idMarcador=50      "
@@ -101,7 +105,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 				+ "                where mar.cpMarcador.idMarcador=50              "
 				+ "                and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
 				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)"
-				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)" + "                )"),
+				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)"),
 		// Somente os "a eliminar"
 		@NamedQuery(name = "consultarAEliminar", query = "select mob, mar from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where (mar.cpMarcador.idMarcador=7)"
@@ -116,7 +120,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 				+ "                and (:dtIni is null or mob.exDocumento.dtDoc >= :dtIni)"
 				+ "                and (:dtFim is null or mob.exDocumento.dtDoc <= :dtFim)"
 				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)"
-				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)" + "                )"),
+				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)"),
 		// Somente os "em edital de eliminação"
 		@NamedQuery(name = "consultarEmEditalEliminacao", query = "select mob, mar" + "                from ExMobil mob"
 				+ "                join mob.exMarcaSet mar" + "                join mob.exDocumento doc"
@@ -157,11 +161,133 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 				+ "                and (lot.idLotacaoIni=:lotaTitular or 0 = :lotaTitular)" + "                )"),
 		// Voltar todas as movimentacoes realizadas por uma determinada pessoa
 		// em um exato momento. Usado principalmente para gerar segunda-via de
-		// protocolos.
+		// protocolos. 
 		@NamedQuery(name = "consultarMovimentacoes", query = "from ExMovimentacao mov"
 				+ "                where mov.cadastrante.idPessoaIni=:pessoaIni and mov.dtIniMov=to_date(:data, 'DD/MM/YYYY HH24:MI:SS')          "
-				+ "                ) order by mov.idMov"), })
+				+ "                order by mov.dtTimestamp"), 
+		@NamedQuery(name = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_NAMED_QUERY, query = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_QUERY),
+		@NamedQuery(name = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_NAMED_QUERY, query = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_QUERY),
+})
 public abstract class AbstractExMovimentacao extends ExArquivo implements Serializable {
+
+	private static final long serialVersionUID = -1521008574855565618L;
+
+	private static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_BEGIN = "SELECT mov FROM ExMovimentacao mov WHERE ";
+
+	private static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_END = //
+			"AND (" //
+					+ " (mov.exTipoMovimentacao.idTpMov = " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
+					+ ") OR"//
+							// Recebimento não exibido! apenas para indicar o instante de recebimento da tramitação.
+					+ " (mov.exTipoMovimentacao.idTpMov = " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO + ") OR"//
+					+ " (mov.exTipoMovimentacao.idTpMov = " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA + ") OR"//
+					+ " (mov.exTipoMovimentacao.idTpMov = " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE
+					+ ") OR"//
+					+ " (mov.exTipoMovimentacao.idTpMov = "
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO + ") OR"//
+					+ " (mov.exTipoMovimentacao.idTpMov = "
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE + ") OR"//
+					+ " (mov.exTipoMovimentacao.idTpMov = "
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO + ") OR"//
+					+ " (mov.exTipoMovimentacao.idTpMov = " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
+					+ ") OR"//
+					+ " (mov.exTipoMovimentacao.idTpMov = "
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO + ") OR"//
+					+ " (mov.exTipoMovimentacao.idTpMov = " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO
+					+ ")"//
+					+ ") " //
+					+ "ORDER BY mov.dtTimestamp DESC";
+
+	/**
+	 * Nome da {@link NamedQuery} usada para a consulta das {@link ExMovimentacao
+	 * Movimentações} para o histórico de tramitações de uma {@link ExMobil}
+	 * relacionada a um determinado {@link ExDocumento Documento} em ordem
+	 * cronológica decrescente ({@link ExMovimentacao#getDtTimestamp()}) a partir da
+	 * primeira {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA
+	 * tramitação} dessa {@link ExMobil} . As movimentações retornadas devm ser dos
+	 * seguintes {@link ExMovimentacao#getExTipoMovimentacao() Tipos}:
+	 * <ul>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA }
+	 * (Tramitação)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_RECEBIMENTO }</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_JUNTADA } (Juntada)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE }
+	 * (Arquivamento Corrente)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO }
+	 * (Arquivamento Intermediário)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE }
+	 * (Desarquivamento)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO }
+	 * (Desarquivamento Intermediário)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA }</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO }
+	 * (Cancelamento de Movimentação)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO }
+	 * (Cancelamento)</li>
+	 * </ul>
+	 * As movimentações do tipo
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_RECEBIMENTO } não serão exibidas.
+	 * Elas são apenas usadas para indicar a hora de recebimento da Movimentação de
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA } imediatamente
+	 * anterior.
+	 */
+	public static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_NAMED_QUERY = //
+			"ExMovimentacao.consultarTramitacoesPorMovimentacao";
+
+	static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_QUERY = //
+			CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_BEGIN //
+					+ "mov.exMobil.idMobil = :idMobil " //
+					+ "AND mov.dtTimestamp >= (SELECT MIN(tramitacao.dtTimestamp) " //
+					+ "FROM ExMovimentacao tramitacao "
+					+ "WHERE tramitacao.exMobil.idMobil = :idMobil AND tramitacao.exTipoMovimentacao.idTpMov = "
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA + ") " //
+					+ CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_END;
+
+	/**
+	 * Nome da {@link NamedQuery} usada para a consulta das {@link ExMovimentacao
+	 * Movimentações} para o histórico de tramitações do {@link ExDocumento
+	 * Documento} Cancelado de uma {@link ExMobil} relacionada a um determinado em
+	 * ordem cronológica decrescente ( {@link ExMovimentacao#getDtTimestamp()}) a
+	 * partir da primeira {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA
+	 * tramitação} das {@link ExMobil}s do Documento. As movimentações retornadas
+	 * devm ser dos seguintes {@link ExMovimentacao#getExTipoMovimentacao() Tipos}:
+	 * <ul>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA }
+	 * (Tramitação)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_RECEBIMENTO }</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_JUNTADA } (Juntada)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE }
+	 * (Arquivamento Corrente)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO }
+	 * (Arquivamento Intermediário)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE }
+	 * (Desarquivamento)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO }
+	 * (Desarquivamento Intermediário)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA }</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO }
+	 * (Cancelamento de Movimentação)</li>
+	 * <li>{@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO }
+	 * (Cancelamento)</li>
+	 * </ul>
+	 * As movimentações do tipo
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_RECEBIMENTO } não serão exibidas.
+	 * Elas são apenas usadas para indicar a hora de recebimento da Movimentação de
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TRANSFERENCIA } imediatamente
+	 * anterior.
+	 */
+	public static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_NAMED_QUERY = //
+			"ExMovimentacao.consultarTramitacoesPorMovimentacaoDocumentoCancelado";
+
+	static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_QUERY = //
+			CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_BEGIN //
+					+ "mov.exMobil.exDocumento = (SELECT mobBase.exDocumento FROM ExMobil mobBase WHERE mobBase.idMobil = :idMobil) "
+					+ "AND mov.dtTimestamp >= (SELECT MIN(tramitacao.dtTimestamp) " //
+					+ "FROM ExMovimentacao tramitacao "
+					+ "WHERE tramitacao.exMobil.exDocumento = mov.exMobil.exDocumento AND tramitacao.exTipoMovimentacao.idTpMov = "
+					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA + ") " //
+					+ CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_END;
+
 	@Id
 	@SequenceGenerator(sequenceName = "EX_MOVIMENTACAO_SEQ", name = "EX_MOVIMENTACAO_SEQ")
 	@GeneratedValue(generator = "EX_MOVIMENTACAO_SEQ")
@@ -172,9 +298,10 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	@JoinColumn(name = "id_cadastrante")
 	private DpPessoa cadastrante;
 
+	@Lob
 	@Column(name = "conteudo_blob_mov")
 	@Basic(fetch = FetchType.LAZY)
-	private Blob conteudoBlobMov;
+	private byte[] conteudoBlobMov;
 
 	@Column(name = "conteudo_tp_mov", length = 128)
 	private String conteudoTpMov;
@@ -183,7 +310,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exMovimentacaoRef")
 	private java.util.Set<ExMovimentacao> exMovimentacaoReferenciadoraSet;
 
-	@Column(name = "descr_mov", length = 400)
+	@Column(name = "descr_mov", length = 500)
 	private String descrMov;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -332,6 +459,10 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 
 	@Column(name = "hash_audit", length = 1024)
 	private String auditHash;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "dt_timestamp", insertable=false, updatable=false)
+	private Date dtTimestamp;
 
 	public void setNumPaginasOri(Integer numPaginasOri) {
 		this.numPaginasOri = numPaginasOri;
@@ -360,7 +491,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 		return cadastrante;
 	}
 
-	public Blob getConteudoBlobMov() {
+	public byte[] getConteudoBlobMov() {
 		return conteudoBlobMov;
 	}
 
@@ -436,7 +567,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 		this.cadastrante = cadastrante;
 	}
 
-	public void setConteudoBlobMov(Blob conteudoBlobMov) {
+	public void setConteudoBlobMov(byte[] conteudoBlobMov) {
 		this.conteudoBlobMov = conteudoBlobMov;
 	}
 
@@ -444,10 +575,19 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 		this.conteudoTpMov = conteudoTpMov;
 	}
 
-	public void setDescrMov(final String descrMov) {
-		this.descrMov = descrMov;
+	public void setDescrMov(final String descrMov) {		
+		this.descrMov = descrMov;		
+	}	
+	
+	public String obterDescrMovComPontoFinal() {				
+		if (this.descrMov != null && !this.descrMov.isEmpty() && !".".equals(this.descrMov.substring(this.descrMov.length() - 1))) {
+			return this.descrMov.trim() + ".";
+		} else if (this.descrMov == null) {
+			return "";
+		} else {			
+			return this.descrMov.trim();
+		}
 	}
-
 	public void setDestinoFinal(final DpPessoa destinoFinal) {
 		this.destinoFinal = destinoFinal;
 	}
@@ -678,5 +818,13 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 
 	public void setAuditHash(String auditHash) {
 		this.auditHash = auditHash;
+	}
+
+	public Date getDtTimestamp() {
+		return dtTimestamp;
+	}
+
+	public void setDtTimestamp(Date dtTimestamp) {
+		this.dtTimestamp = dtTimestamp;
 	}
 }

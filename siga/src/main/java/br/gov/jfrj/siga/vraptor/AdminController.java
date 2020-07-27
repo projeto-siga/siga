@@ -28,14 +28,14 @@ import java.util.Arrays;
 import java.util.Map;
 
 import javax.crypto.Cipher;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
-import br.com.caelum.vraptor.Consumes;
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.ldap.ILdapDao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -43,9 +43,18 @@ import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapProperties;
 import br.gov.jfrj.siga.integracao.ldap.IntegracaoLdap;
 
 @Path("/app/admin/ldap")
-@Resource
+@Controller
 public class AdminController extends SigaController {
 	
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public AdminController() {
+		super();
+	}
+
+	@Inject
 	public AdminController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 		assertAcesso("FE;LDAP_ADMIN:Administrar Integracao LDAP");

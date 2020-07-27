@@ -12,15 +12,15 @@
 		var siglaOrgaoUsuario = document.getElementsByName('siglaOrgaoUsuario')[0].value;	
 		var id = document.getElementsByName('id')[0].value;	
 		if (nmOrgaoUsuario==null || nmOrgaoUsuario=="") {			
-			mensagemAlerta("Preencha o nome do Órgão.");
+			sigaModal.alerta("Preencha o nome do Órgão.");
 			document.getElementById('nmOrgaoUsuario').focus();		
 		}else {
 			if (siglaOrgaoUsuario==null || siglaOrgaoUsuario=="") {			
-				mensagemAlerta("Preencha a sigla do Órgão.");
+				sigaModal.alerta("Preencha a sigla do Órgão.");
 				document.getElementById('siglaOrgaoUsuario').focus();	
 			}else {
 				if(id==null || id=="") {
-					mensagemAlerta("Preencha ID do Órgão.");
+					sigaModal.alerta("Preencha ID do Órgão.");
 					document.getElementById('id').focus();
 				} else {
 					frm.submit();
@@ -37,11 +37,6 @@
 		}else{
 		   return false;
 		}
-	}
-
-	function mensagemAlerta(mensagem) {
-		$('#alertaModal').find('.mensagem-Modal').text(mensagem);
-		$('#alertaModal').modal();
 	}
 </script>
 
@@ -97,6 +92,13 @@
 									 onblur="javascript:verifica_data(this,0);" class="form-control"/>
 							</div>
 						</div>
+						<div class="col-md-2">
+						  <label>Tipo de Órgão</label>
+						  <div class="form-check">
+						    <input type="checkbox" class="form-check-input" id="isExternoOrgaoUsu" name="isExternoOrgaoUsu" value="1" <c:if test="${isExternoOrgaoUsu == 1}">checked</c:if> />
+						    <label class="form-check-label" for="isExternoOrgaoUsu">Órgão com Acesso Externo</label>
+						  </div>
+						</div>
 					</div>
 					
 					<div class="row">
@@ -110,27 +112,7 @@
 				</div>
 			</div>
 			<br />
-		</form>
-		<!-- Modal -->
-		<div class="modal fade" id="alertaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-			<div class="modal-dialog" role="document">
-		    	<div class="modal-content">
-		      		<div class="modal-header">
-				        <h5 class="modal-title" id="alertaModalLabel">Alerta</h5>
-				        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-				          <span aria-hidden="true">&times;</span>
-				    	</button>
-				    </div>
-			      	<div class="modal-body">
-			        	<p class="mensagem-Modal"></p>
-			      	</div>
-					<div class="modal-footer">
-					  <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
-					</div>
-		    	</div>
-		  	</div>
-		</div>				
-		<!--Fim Modal -->
+		</form>		
 	</div>
 </div>
 

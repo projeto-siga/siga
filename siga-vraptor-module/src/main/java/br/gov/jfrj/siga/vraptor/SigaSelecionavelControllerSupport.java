@@ -38,6 +38,13 @@ import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, DaoFiltroT extends DaoFiltroSelecionavel>
 		extends SigaController {
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public SigaSelecionavelControllerSupport() {
+		super();
+	}
+
 	public SigaSelecionavelControllerSupport(HttpServletRequest request,
 			Result result, CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);

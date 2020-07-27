@@ -27,22 +27,31 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
-@Resource
+@Controller
 public class ExGadgetController extends ExController {
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ExGadgetController() {
+		super();
+	}
+
+	@Inject
 	public ExGadgetController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so, EntityManager em) {
 		super(request, response, context, result, ExDao.getInstance(), so, em);
 	}

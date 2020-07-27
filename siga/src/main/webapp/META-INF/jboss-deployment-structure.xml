@@ -2,7 +2,7 @@
 <jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<deployment>
-		<module-alias name="siga" />
+		<module-alias name="deployment.siga" />
 
 		<dependencies>
 			<module name="org.hibernate" export="true" />

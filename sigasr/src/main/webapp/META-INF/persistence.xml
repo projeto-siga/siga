@@ -148,6 +148,20 @@
 				value="300000" />
 
 
+			<!-- Cache Region CACHE_HOURS -->
+			<property name="hibernate.cache.infinispan.hours.eviction.strategy"
+				value="LRU" />
+			<property
+				name="hibernate.cache.infinispan.hours.eviction.wake_up_interval"
+				value="2500" />
+			<property
+				name="hibernate.cache.infinispan.hours.eviction.max_entries"
+				value="10000" />
+			<property name="hibernate.cache.infinispan.hours.expiration.lifespan"
+				value="36000000" />
+			<property name="hibernate.cache.infinispan.hours.expiration.max_idle"
+				value="3600000" />
+
 			<!-- Cache Region CACHE_SECONDS -->
 			<property name="hibernate.cache.infinispan.seconds.eviction.strategy"
 				value="LRU" />

@@ -499,33 +499,37 @@
 						          				</option>  
 						         			</c:forEach>
 						        		</select>
-						     	<div style="display: none;" id="matricula_${idConfiguracaoNova}">
-									<siga:selecao tipo="pessoa" tema="simple"
-											propriedade="matricula_${idConfiguracaoNova}" modulo="siga"/>
+						        	</div>
+						        </div>
+						        <div class="col">
+							     	<div style="display: none;" id="matricula_${idConfiguracaoNova}">
+										<siga:selecao tipo="pessoa" tema="simple"
+												propriedade="matricula_${idConfiguracaoNova}" modulo="siga"/>
+									</div>
+									<div style="display: none;" id="lotacao_${idConfiguracaoNova}">
+										<siga:selecao tipo="lotacao" tema="simple"
+											propriedade="lotacao_${idConfiguracaoNova}" modulo="siga"/>
+									</div>
+									<div style="display: none;" id="cargo_${idConfiguracaoNova}">
+										<siga:selecao tipo="cargo" tema="simple"
+											propriedade="cargo_${idConfiguracaoNova}" modulo="siga"/>
+									</div>
+									<div style="display: none;" id="funcao_${idConfiguracaoNova}">
+										<siga:selecao tipo="funcao" tema="simple"
+											propriedade="funcao_${idConfiguracaoNova}" modulo="siga"/>
+									</div>
+									<div style="display: none;" id="texto_${idConfiguracaoNova}">
+										<input type="text" size="64" maxlength="64"
+											name="formulario_texto_${idConfiguracaoNova}"
+											id="formulario_texto_${idConfiguracaoNova}" />
+									</div>
+									<div style="display: none;" id="area_${idConfiguracaoNova}">
+										<textarea rows="3" cols="64"
+											name="formulario_area_${idConfiguracaoNova}"
+											id="formulario_area_${idConfiguracaoNova}"></textarea>
+									</div> <input type="hidden" name="conteudoConfiguracaoNova"
+									id="conteudo_${idConfiguracaoNova}" value="" />
 								</div>
-								<div style="display: none;" id="lotacao_${idConfiguracaoNova}">
-									<siga:selecao tipo="lotacao" tema="simple"
-										propriedade="lotacao_${idConfiguracaoNova}" modulo="siga"/>
-								</div>
-								<div style="display: none;" id="cargo_${idConfiguracaoNova}">
-									<siga:selecao tipo="cargo" tema="simple"
-										propriedade="cargo_${idConfiguracaoNova}" modulo="siga"/>
-								</div>
-								<div style="display: none;" id="funcao_${idConfiguracaoNova}">
-									<siga:selecao tipo="funcao" tema="simple"
-										propriedade="funcao_${idConfiguracaoNova}" modulo="siga"/>
-								</div>
-								<div style="display: none;" id="texto_${idConfiguracaoNova}">
-									<input type="text" size="64" maxlength="64"
-										name="formulario_texto_${idConfiguracaoNova}"
-										id="formulario_texto_${idConfiguracaoNova}" />
-								</div>
-								<div style="display: none;" id="area_${idConfiguracaoNova}">
-									<textarea rows="3" cols="64"
-										name="formulario_area_${idConfiguracaoNova}"
-										id="formulario_area_${idConfiguracaoNova}"></textarea>
-								</div> <input type="hidden" name="conteudoConfiguracaoNova"
-								id="conteudo_${idConfiguracaoNova}" value="" />
 							</div>
 						</div>
 					</div>

@@ -29,14 +29,12 @@ import java.util.Set;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpComplexo;
-import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpCompetenciaBL;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -57,7 +55,6 @@ import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.model.dao.DaoFiltro;
 
 public class ExCompetenciaBL extends CpCompetenciaBL {
 
@@ -214,7 +211,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				: lotaTitular.getIdInicial(), titular == null ? 0L : titular
 				.getOrgaoUsuario().getId(), lotaTitular == null ? 0L
 				: lotaTitular.getOrgaoUsuario().getId());
-		return ac.podeAcessar(doc.getDnmAcesso());
+		return ac.podeAcessar(doc,titular,lotaTitular);
 	}
 
 
@@ -841,7 +838,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOBRESTAR,
 								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
-
+		
 	/**
 	 * Retorna se é possível tornar um documento sem efeito, segundo as
 	 * regras a seguir:
@@ -863,22 +860,19 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeTornarDocumentoSemEfeito(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) {
-		final ExMovimentacao ultMovNaoCancelada = mob
-				.getUltimaMovimentacaoNaoCancelada();
+			final DpLotacao lotaTitular, final ExMobil mob) {		
 		
-		if(mob.doc().isSemEfeito())
-			return false;
+		if(mob.doc().isSemEfeito()) return false;
 		
-		if(!mob.doc().isEletronico() || mob.doc().isPendenteDeAssinatura())
-			return false;
+		if(!mob.doc().isEletronico() || mob.doc().isPendenteDeAssinatura()) return false;
 
-		if (mob.doc().isCapturado()) {
-			if (mob.doc().getExMobilPai() != null)
-				return false;
-
-			if(!mob.doc().getCadastrante().equivale(titular))
-				return false;
+		if (mob.doc().isCapturado()) {				
+			
+			if (mob.doc().isDocFilhoJuntadoAoPai()) return false;		
+			
+			if (mob.doc().getSubscritor() == null || !mob.doc().getSubscritor().equivale(titular)) {
+				if (!mob.doc().getCadastrante().equivale(titular)) return false;
+			}
 			
 			if (!getConf()
 				.podePorConfiguracao(null, null, null, mob.doc().getExTipoDocumento(), mob.doc().getExFormaDocumento(), 
@@ -886,19 +880,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 					ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO,
 							ExTipoMovimentacao.class, false), 
 					null, null, null, lotaTitular, titular, null,null,
-					CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR, null, null, null, null, null, null) )
-				return false;
-
-			for (ExMobil m : mob.doc().getExMobilSet()) {
-				ExMovimentacao lastMov = m.getUltimaMovimentacaoNaoCancelada();
-				if (!(lastMov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA)
-					&& !(lastMov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO)
-					&& !(lastMov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO  
-						&& (mob.doc().getLotaCadastrante().equivale(lastMov.getLotaResp()) || mob.doc().getCadastrante().equivale(lastMov.getResp())) ) 
-					&& !(lastMov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA  
-						&& (mob.doc().getLotaCadastrante().equivale(lastMov.getLotaResp()) || mob.doc().getCadastrante().equivale(lastMov.getResp())) ) ) 
-						return false;
-			}
+					CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR, null, null, null, null, null, null))
+				return false;				
 		} else {
 			if(mob.doc().getSubscritor() == null || !mob.doc().getSubscritor().equivale(titular))
 				return false;
@@ -919,6 +902,52 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO,
 								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
+	
+	
+	/**
+	 * Retorna se é possível cancelar documento pendente de assinatura, segundo as
+	 * regras a seguir:
+
+
+	 * <ul>
+	 * <li>Documento tem de estar pendente de assinatura</li>
+	 * <li>Móbil tem de ser via ou volume (não pode ser geral)</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usuário / móbil</li>	 * 
+	 * <li>Não pode haver configuração impeditiva</li>
+	 * </ul>
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeCancelarDocumento(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) {		
+		
+		if (mob.doc().isCancelado() || !mob.doc().isFinalizado() 
+				|| (mob.doc().isEletronico() && !mob.doc().isPendenteDeAssinatura()) )
+			return false;
+			
+		if (mob.doc().isCapturado()) {				
+			
+			if (mob.doc().isDocFilhoJuntadoAoPai()) 
+				return false;		
+			
+			if (mob.doc().getSubscritor() == null || !mob.doc().getSubscritor().equivale(titular)) {
+				if (!mob.doc().getCadastrante().equivale(titular)) 
+					return false;
+			}			
+						
+		} else {
+			if(mob.doc().getSubscritor() == null || !mob.doc().getSubscritor().equivale(titular))
+				return false;
+		}
+			
+		return  true;
+	}
+	
+	
 	
 	public Boolean podeGerarProtocolo(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
@@ -1214,7 +1243,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		return (mob.doc().getSubscritor().equivale(titular)
 				|| (mob.doc().isExterno() && mob.doc().getCadastrante().equivale(titular))
-				|| (mob.doc().isCossignatario(titular) && mob.doc().isPendenteDeAssinatura() && mob.doc().isAssinadoPeloSubscritorComTokenOuSenha())
+				|| (mob.doc().isCossignatario(titular) && mob.doc().isPendenteDeAssinatura() && (mob.doc().isAssinadoPeloSubscritorComTokenOuSenha() || Ex.getInstance().getConf().podePorConfiguracao(titular, titular.getLotacao(), CpTipoConfiguracao.TIPO_CONFIG_COSIGNATARIO_ASSINAR_ANTES_SUBSCRITOR)))
 				|| podeMovimentar(titular, lotaTitular, mob))
 				&& (mob.doc().isFinalizado() || podeFinalizar(titular, lotaTitular, mob))
 				&& !mob.doc().isCancelado()
@@ -1262,6 +1291,14 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (!doc.isEletronico() || !doc.getAutenticacoesComTokenOuSenha().isEmpty())
 			return false;
 		
+		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO,
+				ExTipoMovimentacao.class, false);
+				
+		 if (!getConf().podePorConfiguracao(null, null, null, null, doc.getExFormaDocumento(), doc.getExModelo(), null,
+					null, exTpMov, null, null, null, lotaTitular, titular, null,null,
+					CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR, doc.getSubscritor(), null, null, null, null, null))
+			 return false;
+							
 		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local")) &&
 				!Long.valueOf(ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO).equals(Long.valueOf(doc.getExTipoDocumento().getId())) &&
 				!Long.valueOf(ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO).equals(Long.valueOf(doc.getExTipoDocumento().getId()))				
@@ -1956,16 +1993,16 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				|| mob.isCancelada())
 				return false;
 
-		final ExMovimentacao ultMovNaoCancelada = mob
-				.getUltimaMovimentacaoNaoCancelada();
+		final ExMovimentacao penultMovNaoCancelada = mob
+				.getPenultimaMovimentacaoNaoCancelada();
 		final ExMovimentacao ultMov = mob.getUltimaMovimentacao();
 		
-		if (ultMov == null || ultMovNaoCancelada == null)
+		if (ultMov == null || penultMovNaoCancelada == null)
 			return false;
 
-		if (ultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA &&
-				ultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO &&
-				ultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL)
+		if (penultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA &&
+				penultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO &&
+						penultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL)
 			return false;
 		
 		Set <ExMovimentacao> setMovCiente = mob.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA);
@@ -3890,7 +3927,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR) && !(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local")));
+				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
 
 	/**
@@ -4110,6 +4147,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 							CpTipoConfiguracao.TIPO_CONFIG_INCLUIR_DOCUMENTO) || mob.getDoc().getPai()==null) && listMovJuntada.size() == 0;
 	}
 
+
 	/**
 	 * Retorna se é possível exibir a opção para agendar publicação no Boletim.
 	 * Seguem as regras:
@@ -4185,7 +4223,11 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			
 			return false;
 		}
-
+		
+		/* Não permite redefinir acesso para documentos que foram publicados no portal da transparencia */
+		if (mob.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA).size() > 0) {
+			return false;
+		}
 
 		return !mob.isEliminado()
 				&& podeAcessarDocumento(titular, lotaTitular, mob)
@@ -4699,6 +4741,42 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						lotaCadastrante,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA,
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR)) ;
+	}
+	
+	public boolean podePublicarPortalTransparencia(final DpPessoa cadastrante,
+			final DpLotacao lotacao, final ExMobil mob) {
+		
+		
+		return (mob.doc().isFinalizado() 
+				&& !mob.doc().isSemEfeito() 
+				&& !mob.doc().isEliminado()
+				&& podeMovimentar(cadastrante, lotacao, mob)
+				&& !mob.doc().isPendenteDeAssinatura()
+				&& (mob.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA).size() == 0)
+				&& getConf() 
+						.podePorConfiguracao(
+								cadastrante,
+								lotacao,
+								ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA,
+								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR)) ;
+	}
+	
+	public boolean podePublicarPortalTransparenciaWS(final DpPessoa cadastrante,
+			final DpLotacao lotacao, final ExMobil mob) {
+		
+		
+		return (mob.doc().isFinalizado() 
+				&& !mob.doc().isSemEfeito() 
+				&& !mob.doc().isEliminado()
+				&& !mob.doc().isPendenteDeAssinatura()
+				&& (mob.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA).size() == 0)
+				&& getConf().podePorConfiguracao(cadastrante, lotacao,
+						CpTipoConfiguracao.TIPO_CONFIG_AUTORIZAR_MOVIMENTACAO_POR_WS));
+	}
+
+	public boolean ehPublicoExterno(DpPessoa titular) {
+		// TODO Auto-generated method stub
+		return AcessoConsulta.ehPublicoExterno(titular);
 	}
 
 }

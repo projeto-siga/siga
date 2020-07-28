@@ -61,8 +61,10 @@ import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.DateUtils;
+import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
@@ -1138,19 +1140,7 @@ public class ExMovimentacaoController extends ExController {
 		}
 
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
-		
-		if (mov.getExMobilRef() != null)
-			if (movimentacaoBuilder.getMob().getExDocumento().getIdDoc()
-					.equals(mov.getExMobilRef().getExDocumento().getIdDoc())
-					&& movimentacaoBuilder
-							.getMob()
-							.getExTipoMobil()
-							.getIdTipoMobil()
-							.equals(mov.getExMobilRef().getExTipoMobil()
-									.getIdTipoMobil()))
-				throw new AplicacaoException(
-						"não é possível juntar um documento a ele mesmo");
-		
+													
 		if (!Ex.getInstance()
 				.getComp()
 				.podeJuntar(getTitular(), getLotaTitular(),
@@ -1173,18 +1163,21 @@ public class ExMovimentacaoController extends ExController {
 			mov.setSubscritor(getCadastrante());
 			mov.setTitular(getTitular());
 		}
-
-		Ex.getInstance()
+			
+		try {
+			Ex.getInstance()
 				.getBL()
 				.juntarDocumento(getCadastrante(), getTitular(),
 						getLotaTitular(), idDocumentoPaiExterno,
 						movimentacaoBuilder.getMob(), mov.getExMobilRef(),
 						mov.getDtMov(), mov.getSubscritor(), mov.getTitular(),
 						idDocumentoEscolha);
-		
-		
-		
-		ExDocumentoController.redirecionarParaExibir(result, sigla);
+			
+			ExDocumentoController.redirecionarParaExibir(result, sigla);
+		} catch (RegraNegocioException e) {
+			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));			
+			result.forwardTo(this).juntar(sigla);
+		}						
 	}
 
 	@Get("app/expediente/mov/apensar")

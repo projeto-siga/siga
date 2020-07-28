@@ -3388,7 +3388,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 
 		if (mob.isPendenteDeAnexacao())
-			return false;
+			return false;			
 		
 		return !mob.isCancelada()
 				&& !mob.isVolumeEncerrado()
@@ -3401,10 +3401,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isArquivado()
 				&& !mob.isSobrestado()
 				&& !mob.doc().isSemEfeito()
-				&& podePorConfiguracao(titular, lotaTitular,
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR, null, null, null, null, null, null);
-
+				&& podePorConfiguracaoParaMovimentacao(titular, lotaTitular, mob, ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA);			
+		
 		// return true;
 	}
 
@@ -4777,6 +4775,15 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean ehPublicoExterno(DpPessoa titular) {
 		// TODO Auto-generated method stub
 		return AcessoConsulta.ehPublicoExterno(titular);
+	}
+	
+	private boolean podePorConfiguracaoParaMovimentacao(final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob, long idTpMov) {		
+		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(idTpMov, ExTipoMovimentacao.class, false);
+		
+		return getConf().podePorConfiguracao(null, mob.getDoc().getExFormaDocumento().getExTipoFormaDoc(), null, mob.getDoc().getExTipoDocumento(), 
+				mob.getDoc().getExFormaDocumento(), mob.getDoc().getExModelo(), null, null, 
+				exTpMov, null, null, null, lotaTitular, titular, null, null, 
+				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR, null, null, null, null, null, null);
 	}
 
 }

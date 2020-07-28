@@ -227,7 +227,7 @@ public class Documento {
 				if (movAssinatura.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)) {
 					s = Texto.maiusculasEMinusculas(movAssinatura.getCadastrante().getNomePessoa());
 				} else {
-					dataDeInicioDeObrigacaoExibirRodapeDeAssinatura = Prop.getData("sigaex.rodape.data.assinatura.ativa");
+					dataDeInicioDeObrigacaoExibirRodapeDeAssinatura = Prop.getData("rodape.data.assinatura.ativa");
 					s = movAssinatura.getDescrMov().trim().toUpperCase();
 					s = s.split(":")[0];
 					s = s.intern();
@@ -254,7 +254,7 @@ public class Documento {
 			if (movAssinatura.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)) {
 				s = Texto.maiusculasEMinusculas(movAssinatura.getCadastrante().getNomePessoa());
 			} else {
-				dataDeInicioDeObrigacaoExibirRodapeDeAssinatura = Prop.getData("sigaex.rodape.data.assinatura.ativa");
+				dataDeInicioDeObrigacaoExibirRodapeDeAssinatura = Prop.getData("rodape.data.assinatura.ativa");
 				s = movAssinatura.getDescrMov().trim().toUpperCase();
 				s = s.replace(":", " - ");
 				s = s.replace("EM SUBSTITUIÇÃO A", "em substituição a");

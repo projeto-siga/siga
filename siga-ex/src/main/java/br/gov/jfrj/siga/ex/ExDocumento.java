@@ -2803,7 +2803,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		
 	public boolean podeReordenar() {		
 		if (podeReordenar == null) 
-			podeReordenar = Prop.getBool("reordenacao.ativo");				
+			podeReordenar = Prop.getBool("reordenacao.ativo");
+		if (podeReordenar == null)
+			return false;
 			
 		return podeReordenar;
 	}

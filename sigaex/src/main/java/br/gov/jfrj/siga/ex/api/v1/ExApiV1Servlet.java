@@ -209,7 +209,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPublicProperty("pdf.tamanho.maximo", "5000000");
 		addPublicProperty("reordenacao.ativo", null);
 		addPublicProperty("rodape.data.assinatura.ativa", "31/12/2099");
-		addPublicProperty("util.webservice.password", null);
+		addPrivateProperty("util.webservice.password", null);
 		addPublicProperty("volume.max.paginas", "200");
 		addPrivateProperty("webdav.senha", null);
 		

@@ -103,30 +103,30 @@ public class Prop {
 				provider.addPublicProperty("/siga.ldap." + s + ".url", null);
 			}
 		}
-		provider.addPublicProperty("/siga.ldap.porta", null);
-		provider.addPublicProperty("/siga.ldap.senha", null);
-		provider.addPublicProperty("/siga.ldap.servidor", null);
-		provider.addPublicProperty("/siga.ldap.ssl.porta", null);
-		provider.addPublicProperty("/siga.ldap.usuario", null);
-		provider.addPublicProperty("/siga.ldap.ws.endereco.autenticacao", null);
-		provider.addPublicProperty("/siga.ldap.ws.endereco.busca", null);
-		provider.addPublicProperty("/siga.ldap.ws.endereco.troca.senha", null);
+		provider.addRestrictedProperty("/siga.ldap.porta", null);
+		provider.addPrivateProperty("/siga.ldap.senha", null);
+		provider.addRestrictedProperty("/siga.ldap.servidor", null);
+		provider.addRestrictedProperty("/siga.ldap.ssl.porta", null);
+		provider.addRestrictedProperty("/siga.ldap.usuario", null);
+		provider.addRestrictedProperty("/siga.ldap.ws.endereco.autenticacao", null);
+		provider.addRestrictedProperty("/siga.ldap.ws.endereco.busca", null);
+		provider.addRestrictedProperty("/siga.ldap.ws.endereco.troca.senha", null);
 		provider.addPublicProperty("/siga.smtp.starttls.enable", null);
 
 		provider.addPublicProperty("/siga.recaptcha.key", null);
-		provider.addPublicProperty("/siga.recaptcha.pwd", null);
+		provider.addPrivateProperty("/siga.recaptcha.pwd", null);
 		provider.addPublicProperty("/siga.smtp", null);
 		provider.addPublicProperty("/siga.smtp.auth", "false");
-		provider.addPublicProperty("/siga.smtp.auth.senha", null);
-		provider.addPublicProperty("/siga.smtp.auth.usuario", null);
+		provider.addPrivateProperty("/siga.smtp.auth.senha", null);
+		provider.addPrivateProperty("/siga.smtp.auth.usuario", null);
 		provider.addPublicProperty("/siga.smtp.porta", "25");
 		provider.addPublicProperty("/siga.smtp.usuario.remetente", "siga@projeto-siga.github.com");
 		provider.addPublicProperty("/siga.ambiente", "desenv");
-		provider.addPublicProperty("/siga.autenticacao.senha", null);
 		provider.addPublicProperty("/siga.base.teste", "true");
 		provider.addPublicProperty("/siga.devolucao.dias", null);
 		provider.addPublicProperty("/siga.jwt.cookie.domain", null);
-		provider.addPublicProperty("/siga.jwt.secret");
+		provider.addPrivateProperty("/siga.jwt.secret");
+		provider.addPrivateProperty("/siga.autenticacao.senha", provider.getProp("/siga.jwt.secret"));
 		provider.addPublicProperty("/siga.jwt.token.ttl", "3600");
 		provider.addPublicProperty("/siga.local", null);
 		provider.addPublicProperty("/siga.mensagens", null);
@@ -141,8 +141,8 @@ public class Prop {
 		provider.addPublicProperty("/sigaex.url", base + "/sigaex");
 		provider.addPublicProperty("/sigaex.manual.url", base + "/siga/arquivos/apostila_sigaex.pdf");
 
-		provider.addPublicProperty("/xjus.jwt.secret", null);
-		provider.addPublicProperty("/xjus.password", null);
+		provider.addPrivateProperty("/xjus.jwt.secret", null);
+		provider.addPrivateProperty("/xjus.password", null);
 		provider.addPublicProperty("/xjus.permalink.url", null);
 		provider.addPublicProperty("/xjus.url", null);
 

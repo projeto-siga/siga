@@ -68,7 +68,7 @@
 				var t_nodSelecao = document.getElementById("tipoConfiguracao_" + p_strId) ;
  				if (t_nodSelecao) {
 					if (t_nodSelecao.selectedIndex > 0) { 
-						mensagemAlerta("Por favor, digite um conteúdo para a configuração!");
+						sigaModal.alerta("Por favor, digite um conteúdo para a configuração!");
 						t_nodSelecao.focus();
 						return true;
 					}
@@ -90,12 +90,12 @@
 						var t_strAposArroba = t_arr1StrSepArroba[1];
 						var t_arr1StrSepPontos = t_strAposArroba.split('.');
 						if (t_arr1StrSepPontos.length < 2) {
-							mensagemAlerta("Por favor, digite um conteúdo de e-mail no formato aaa@bbb.ccc!");
+							sigaModal.alerta("Por favor, digite um conteúdo de e-mail no formato aaa@bbb.ccc!");
 							t_nodSelecao.focus();
 							return true;
 						}
 					} else {
-						mensagemAlerta("Por favor, digite um conteúdo de e-mail no formato aaa@bbb.ccc!");
+						sigaModal.alerta("Por favor, digite um conteúdo de e-mail no formato aaa@bbb.ccc!");
 						t_nodSelecao.focus();
 						return true;
 					}
@@ -121,7 +121,7 @@
 										&& t_nodSelecaoVerificar.selectedIndex != 0) {
 									if ((t_nodSelecaoGravado.selectedIndex == t_nodSelecaoVerificar.selectedIndex)
 										&& (t_nodConteudoGravado.value == t_nodConteudoVerificar.value)) {
-										mensagemAlerta("Por favor, retire o conteúdo repetido para a configuração!");
+										sigaModal.alerta("Por favor, retire o conteúdo repetido para a configuração!");
 										t_nodSelecaoVerificar.focus();
 										return true;
 									}
@@ -135,11 +135,6 @@
 		return false;
 	}
 
-	function mensagemAlerta(mensagem) {
-		$('#alertaModal').find('.mensagem-Modal').text(mensagem);
-		$('#alertaModal').modal();
-	}
-	
 	function obterIdsConfiguracoesGravadas() {
 		var t_arr1StrIdResult = new Array();
 		var t_arr1NodInput = document.getElementsByName("idConfiguracao");
@@ -161,10 +156,9 @@
 		mensagemConfirmacao(mensagem, retornar)
 	}
 
-	function mensagemConfirmacao(mensagem, funcaoConfirmacao) {
-		$('#modalConfirmacao').find('.modal-body').html(mensagem);
-		$('#btnConfirmacao').click(funcaoConfirmacao);
-		$('#modalConfirmacao').modal();
+	function mensagemConfirmacao(mensagem, funcaoConfirmacao) {		
+		sigaModal.alterarLinkBotaoDeAcao('confirmacaoModal', 'javascript:'.concat(funcaoConfirmacao.name).concat('()'));
+		sigaModal.enviarHTMLEAbrir('confirmacaoModal', mensagem);		
 	}
 	
 	var retornar = function () {
@@ -587,47 +581,11 @@
 						</div>
 					</div>
 				</div>
-			</div>
-			<!-- Modal Confirmacao -->
-			<div class="modal fade" id="modalConfirmacao" tabindex="-1" role="dialog" aria-labelledby="modalConfirmacao" aria-hidden="true">
-			  <div class="modal-dialog" role="document">
-			    <div class="modal-content">
-			      <div class="modal-header">
-			        <h5 class="modal-title" id="exampleModalLabel">Confirmação</h5>
-			        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-			          <span aria-hidden="true">&times;</span>
-			        </button>
-			      </div>
-			      <div class="modal-body">
-			      </div>
-			      <div class="modal-footer">
-			        <button id="btnConfirmacao" type="button" class="btn btn-primary">Ok</button>
-			        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-			      </div>
-			    </div>
-			  </div>
 			</div>			
-			<!-- Fim Modal Confirmacao-->
-			<!-- Modal Alerta -->
-			<div class="modal fade" id="alertaModal" tabindex="-1" role="dialog" aria-labelledby="alertaModal" aria-hidden="true">
-				<div class="modal-dialog" role="document">
-			    	<div class="modal-content">
-			      		<div class="modal-header">
-					        <h5 class="modal-title" id="alertaModalLabel">Alerta</h5>
-					        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-					          <span aria-hidden="true">&times;</span>
-					    	</button>
-					    </div>
-				      	<div class="modal-body">
-				        	<p class="mensagem-Modal"></p>
-				      	</div>
-						<div class="modal-footer">
-						  <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
-						</div>
-			    	</div>
-			  	</div>
-			</div>				
-			<!--Fim Modal Alerta -->
-		</form>
+		</form>		
+		<siga:siga-modal id="confirmacaoModal" exibirRodape="true" tituloADireita="Confirmação" 
+				descricaoBotaoFechaModalDoRodape="Cancelar" linkBotaoDeAcao="#">
+			<div class="modal-body"></div>
+		</siga:siga-modal>										
 	</div>	
 </siga:pagina>

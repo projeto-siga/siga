@@ -436,8 +436,10 @@ public class ExAcesso {
 			}
 		}
 	}
-
 	public String getAcessosString(ExDocumento doc, Date dt) {
+		return getAcessosString(doc, dt, null, null);
+	}
+	public String getAcessosString(ExDocumento doc, Date dt, Object incluirAcesso, Object excluirAcesso) {
 		calcularAcessos(doc, dt);
 
 		if (acessos.contains(ACESSO_PUBLICO)) {
@@ -465,6 +467,11 @@ public class ExAcesso {
 				}
 			}
 		}
+		if (incluirAcesso != null)
+			acessos.add(incluirAcesso);
+		if (excluirAcesso != null)
+			toRemove.add(excluirAcesso);
+		
 		acessos.removeAll(toRemove);
 
 		SortedSet<String> result = new TreeSet<String>();

@@ -16,39 +16,14 @@
 	${textoCaixa }
 </label>
 
-<!-- Modal -->
-<div class="modal fade" id="alertaM" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog" role="document">
-    	<div class="modal-content">
-      		<div class="modal-header">
-		        <h5 class="modal-title" id="alertaModalLabel">Alerta</h5>
-		        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-		          <span aria-hidden="true">&times;</span>
-		    	</button>
-		    </div>
-	      	<div class="modal-body">
-	        	<p class="mensagem-Modal"></p>
-	      	</div>
-			<div class="modal-footer">
-			  <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
-			</div>
-    	</div>
-  	</div>
-</div>				
-<!--Fim Modal -->
-
 <script type="text/javascript">
 	function testTamanho() {
 		var tamanhoArquivo = parseInt(document.getElementById("arquivo").files[0].size);
 	    if(tamanhoArquivo > ${tamanhoMaximo}*1024*1024){
-	    	mensagem("TAMANHO DO ARQUIVO EXCEDE O PERMITIDO (${tamanhoMaximo} MB)!");
+	    	sigaModal.alerta("Tamanho do arquivo excede o permitido (${tamanhoMaximo} MB)!");
 	        document.getElementById("arquivo").value = "";
 	    }
-	}
-	function mensagem(mensagem) {
-		$('#alertaM').find('.mensagem-Modal').text(mensagem);
-		$('#alertaM').modal();
-	}
+	}	
 </script>
 <script>
 	$('.custom-file-input').on('change', function() { 

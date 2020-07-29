@@ -80,6 +80,7 @@ public class CallBackServlet extends HTTPRequestParametersInterceptorServlet {
 	private static final String PENDING_REQUESTS = "pending-requests";
 	private static final String HTTP_REQUEST_PARAMETERS2 = "http-request-parameters";
 	private static final String PUBLIC_APP_LOGIN_SP = "public/app/loginSSO";
+	public  static final String PUBLIC_CPF_USER_SSO = "cpfUserSSO";
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -373,13 +374,15 @@ public class CallBackServlet extends HTTPRequestParametersInterceptorServlet {
 		}
 	}
 	
+	/*
+	 * SESSION
+	 */
 	private void reqSession(JSONObject jsonObject, HttpServletRequest req) {
 		String cpf = (String) jsonObject.get("sub");
 		if(!cpf.isEmpty()){
-			req.getSession().setAttribute("cpfAutenticado", cpf);
+			req.getSession().setAttribute(PUBLIC_CPF_USER_SSO, cpf);
 		}
-		
-		log.debug("CPF: " + cpf);
+		log.debug("CPF SSO: " + cpf);
 	}
 
 	private void handleCallback(HttpServletResponse resp) {

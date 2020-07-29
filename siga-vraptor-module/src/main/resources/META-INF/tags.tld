@@ -115,4 +115,16 @@
 		<name>uploadArquivo</name>
 		<path>/META-INF/tags/uploadArquivo.tag</path>
 	</tag-file>
+	<tag-file>
+		<name>troca-senha-usuario</name>
+		<path>/META-INF/tags/troca-senha-usuario.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>siga-modal</name>
+		<path>/META-INF/tags/siga-modal.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>siga-spinner</name>
+		<path>/META-INF/tags/siga-spinner.tag</path>
+	</tag-file>
 </taglib>

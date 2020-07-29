@@ -2,20 +2,22 @@
 	buffer="64kb"%>
 <%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="fx"%>
 
 <c:if
-	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos') && cadastrante.orgaoUsuario.isExternoOrgaoUsu eq 0}">
+	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos') && (!fx:ehPublicoExterno(titular) || (f:resource('siga.local') eq 'GOVSP' && fx:podeCriarNovoExterno(titular, titular.lotacao)))}">
 	<li class="nav-item dropdown"><a href="javascript:void(0);"
 		class="nav-link dropdown-toggle" data-toggle="dropdown">
 			Documentos </a>
 		<ul class="dropdown-menu">
 			<li><a class="dropdown-item"
 				href="/sigaex/app/expediente/doc/editar">Novo</a></li>
-			<li><a class="dropdown-item"
-				href="/sigaex/app/expediente/doc/listar?primeiraVez=sim">Pesquisar</a></li>
-
+			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar')}">
+				<li><a class="dropdown-item"
+					href="/sigaex/app/expediente/doc/listar?primeiraVez=sim">Pesquisar</a></li>
+			</c:if>
 			<li><a class="dropdown-item" href="/sigaex/app/mesa">Mesa
 					Virtual </a></li>
 			
@@ -38,8 +40,7 @@
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;TRAMITE:Trâmite;LOTE:Em Lote')}">
 					<li><a class="dropdown-item"
-						href="/sigaex/app/expediente/mov/transferir_lote">Transferir
-							em lote</a></li>
+						href="/sigaex/app/expediente/mov/transferir_lote"><fmt:message key="documento.transferencia.lote" /></a></li>
 					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/mov/receber_lote">Receber em lote</a></li>
 					<li><a class="dropdown-item"

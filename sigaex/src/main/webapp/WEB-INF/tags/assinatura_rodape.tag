@@ -2,6 +2,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
+<script>
+	var uriLogoSiga = '${uri_logo_siga_pequeno}';
+</script>
 <script src="/sigaex/public/javascript/assinatura-digital.js"></script>
 <input type="hidden" id="siglaUsuarioCadastrante" value="${cadastrante.sigla}"/>
 <input type="hidden" id="siglaUsuSubscritor" value="${doc.subscritor.sigla}"/>

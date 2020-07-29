@@ -23,6 +23,7 @@ import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
@@ -199,7 +200,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 			result.include("idOrgaoUsu", funcao.getOrgaoUsuario().getId());
 			result.include("nmOrgaousu", funcao.getOrgaoUsuario().getNmOrgaoUsu());
 			
-			List<DpPessoa> list = dao().getInstance().consultarPessoasComFuncaoConfianca(id);
+			List<DpPessoa> list = CpDao.getInstance().consultarPessoasComFuncaoConfianca(id);
 			if(list.size() == 0) {
 				result.include("podeAlterarOrgao", Boolean.TRUE);
 			}
@@ -239,7 +240,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 		ou.setIdOrgaoUsu(idOrgaoUsu);
 		funcao.setOrgaoUsuario(ou);
 		
-		funcao = dao().getInstance().consultarPorNomeOrgao(funcao);
+		funcao = CpDao.getInstance().consultarPorNomeOrgao(funcao);
 		
 		if(funcao != null && !funcao.getId().equals(id)) {
 			throw new AplicacaoException("Nome da função já cadastrado!");
@@ -257,7 +258,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 			
 		} else {
 			funcao = dao().consultar(id, DpFuncaoConfianca.class, false);
-			listPessoa = dao().getInstance().consultarPessoasComFuncaoConfianca(id);
+			listPessoa = CpDao.getInstance().consultarPessoasComFuncaoConfianca(id);
 			
 		}
 		funcao.setNomeFuncao(Texto.removerEspacosExtra(nmFuncao).trim());
@@ -321,10 +322,9 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 		}
 			
 		if(inputStream == null) {
-			result.include("msg", "Arquivo processado com sucesso!");
+			result.include(SigaModal.ALERTA, SigaModal.mensagem("Arquivo processado com sucesso!").titulo("Sucesso"));
 			carregarExcel();
-		} else {
-			result.include("msg", "");
+		} else {			
 			return new InputStreamDownload(inputStream, "application/text", "inconsistencias.txt");	
 		}
 		return null;

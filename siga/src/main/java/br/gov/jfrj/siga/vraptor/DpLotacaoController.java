@@ -26,6 +26,7 @@ import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
@@ -288,7 +289,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 				result.include("lotacaoPai", lotacao.getLotacaoPai().getIdLotacao());
 			result.include("idLocalidade", lotacao.getLocalidade() != null ? lotacao.getLocalidade().getIdLocalidade() : Long.valueOf(0));
 			
-			List<DpPessoa> list = dao().getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE);
+			List<DpPessoa> list = CpDao.getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE);
 			if(list.size() == 0) {
 				result.include("podeAlterarOrgao", Boolean.TRUE);
 			}
@@ -351,7 +352,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		CpOrgaoUsuario ou = new CpOrgaoUsuario();
 		ou.setIdOrgaoUsu(idOrgaoUsu);
 		lotacao.setOrgaoUsuario(ou);
-		lotacao = dao().getInstance().consultarPorSigla(lotacao);
+		lotacao = CpDao.getInstance().consultarPorSigla(lotacao);
 		
 		if(lotacao != null && lotacao.getId() != null && !lotacao.getId().equals(id)) {
 			throw new AplicacaoException("Sigla já cadastrada para outra lotação");
@@ -367,7 +368,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			
 		} else {
 			lotacao = dao().consultar(id, DpLotacao.class, false);
-			listPessoa = dao().getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE);
+			listPessoa = CpDao.getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE);
 			if(dao().consultarQtdeDocCriadosPossePorDpLotacao(id) > 0 && 
 					(!lotacao.getNomeLotacao().equalsIgnoreCase(Texto.removerEspacosExtra(nmLotacao).trim()) || !lotacao.getSiglaLotacao().equalsIgnoreCase(siglaLotacao.toUpperCase().trim()))) {
 				throw new AplicacaoException("Não é permitido a alteração do nome e sigla da unidade após criação de documento ou tramitação de documento para unidade.");
@@ -479,7 +480,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		result.use(Results.page()).forwardTo("/WEB-INF/page/dpLotacao/cargaLotacao.jsp");
 	}
 	
-	@Post("/app/lotacao/carga")
+    @Post("/app/lotacao/carga")
 	public Download carga( final UploadedFile arquivo, Long idOrgaoUsu) throws Exception {
 		InputStream inputStream = null;
 		try {
@@ -501,13 +502,12 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			CpBL cpbl = new CpBL();
 			inputStream = cpbl.uploadLotacao(file, orgaoUsuario, extensao);
 		} catch (Exception e) {
-			System.err.println(e.getMessage());
+			throw new AplicacaoException("Problemas ao salvar unidades", 0, e);			
 		}
 		if(inputStream == null) {
-			result.include("msg", "Arquivo processado com sucesso!");
+			result.include(SigaModal.ALERTA, SigaModal.mensagem("Arquivo processado com sucesso!").titulo("Sucesso"));
 			carregarExcel();
-		} else {
-			result.include("msg", "");
+		} else {			
 			return new InputStreamDownload(inputStream, "application/text", "inconsistencias.txt");	
 		}
 		return null;

@@ -23,14 +23,32 @@
         </dependency>
 
         <!-- JBPM -->
-        <dependency>
-            <groupId>org.jbpm.jbpm3</groupId>
-            <artifactId>jbpm-identity</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm.jbpm3</groupId>
-            <artifactId>jbpm-jpdl</artifactId>
-        </dependency>
+        		<!-- JBPM -->
+			<dependency>
+				<groupId>org.jbpm.jbpm3</groupId>
+				<artifactId>jbpm-identity</artifactId>
+				<version>3.3.1.GA</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jbpm.jbpm3</groupId>
+				<artifactId>jbpm-jpdl</artifactId>
+				<version>3.2.10.SP3_seam2</version>
+				<exclusions>
+					<exclusion>
+						<groupId>bouncycastle</groupId>
+						<artifactId>bcmail-jdk14</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>bouncycastle</groupId>
+						<artifactId>bcprov-jdk14</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.hibernate</groupId>
+						<artifactId>hibernate</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+        
         
        	<dependency>
 			<groupId>javax.jcr</groupId>
@@ -52,6 +70,7 @@
         <dependency>
             <groupId>backport-util-concurrent</groupId>
             <artifactId>backport-util-concurrent</artifactId>
+            <version>3.1</version>
         </dependency>
 
         <dependency>

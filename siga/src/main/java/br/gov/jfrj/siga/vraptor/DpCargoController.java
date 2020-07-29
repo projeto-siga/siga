@@ -23,6 +23,7 @@ import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
@@ -210,7 +211,7 @@ public class DpCargoController extends
 			result.include("idOrgaoUsu", cargo.getOrgaoUsuario().getId());
 			result.include("nmOrgaousu", cargo.getOrgaoUsuario().getNmOrgaoUsu());
 			
-			List<DpPessoa> list = dao().getInstance().consultarPessoasComCargo(id);
+			List<DpPessoa> list = CpDao.getInstance().consultarPessoasComCargo(id);
 			if(list.size() == 0) {
 				result.include("podeAlterarOrgao", Boolean.TRUE);
 			}
@@ -251,7 +252,7 @@ public class DpCargoController extends
 		ou.setIdOrgaoUsu(idOrgaoUsu);
 		cargo.setOrgaoUsuario(ou);
 		
-		cargo = dao().getInstance().consultarPorNomeOrgao(cargo);
+		cargo = CpDao.getInstance().consultarPorNomeOrgao(cargo);
 		
 		if(cargo != null && !cargo.getId().equals(id)) {
 			throw new AplicacaoException("Nome do cargo já cadastrado!");
@@ -265,7 +266,7 @@ public class DpCargoController extends
 			cargo.setDataInicio(data);
 		} else {
 			cargo = dao().consultar(id, DpCargo.class, false);
-			listPessoa = dao().getInstance().consultarPessoasComCargo(id);
+			listPessoa = CpDao.getInstance().consultarPessoasComCargo(id);
 			
 		}
 		cargo.setDescricao(Texto.removerEspacosExtra(nmCargo).trim());
@@ -329,10 +330,9 @@ public class DpCargoController extends
 		}
 			
 		if(inputStream == null) {
-			result.include("msg", "Arquivo processado com sucesso!");
+			result.include(SigaModal.ALERTA, SigaModal.mensagem("Arquivo processado com sucesso!").titulo("Sucesso"));
 			carregarExcel();
-		} else {
-			result.include("msg", "");
+		} else {			
 			return new InputStreamDownload(inputStream, "application/text", "inconsistencias.txt");	
 		}
 		return null;

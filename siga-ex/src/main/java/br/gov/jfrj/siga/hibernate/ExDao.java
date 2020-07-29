@@ -33,6 +33,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
@@ -1250,14 +1251,22 @@ public class ExDao extends CpDao {
 		return ((Long) query.getSingleResult()).intValue();
 	}
 
-	// public Query consultarParaTransferirEmLote(DpLotacao lot) {
-	@SuppressWarnings("unchecked")
-	public List<ExMobil> consultarParaTransferirEmLote(DpLotacao lot) {
-		final Query query = em().createNamedQuery(
-				"consultarParaTransferirEmLote");
-		query.setParameter("lotaIni", lot.getIdLotacaoIni());
-		// return query;s
+	public List<ExMobil> consultarParaTransferirEmLote(DpLotacao lot, Integer offset, Integer tamPagina) {
+		final Query query = em().createNamedQuery("consultarParaTransferirEmLote").setParameter("lotaIni",
+				lot.getIdLotacaoIni());
+		if (Objects.nonNull(offset)) {
+			query.setFirstResult(offset);
+		}
+		if (Objects.nonNull(tamPagina)) {
+			query.setMaxResults(tamPagina);
+		}
+
 		return query.getResultList();
+	}
+
+	public Long consultarQuantidadeParaTransferirEmLote(DpLotacao lot) {
+		return (Long) em().createNamedQuery("consultarQuantidadeParaTransferirEmLote", Long.class)
+				.setParameter("lotaIni", lot.getIdLotacaoIni()).getSingleResult();
 	}
 
 	public List<ExMobil> consultarParaAnotarEmLote(DpLotacao lot) {
@@ -1457,7 +1466,11 @@ public class ExDao extends CpDao {
 		final Query query = em().createNamedQuery("consultarModeloAtual");
 
 		query.setParameter("hisIdIni", mod.getHisIdIni());
-		return (ExModelo) query.getSingleResult();
+		try {
+			return (ExModelo) query.getSingleResult();
+		} catch (NoResultException ne) {
+			return null;
+		}
 	}
 
 	public List<ExDocumento> listarDocPendenteAssinatura(DpPessoa pessoa, boolean apenasComSolicitacaoDeAssinatura) {
@@ -1589,7 +1602,36 @@ public class ExDao extends CpDao {
 		criteriaQuery.where(predicateAnd);
 		return em().createQuery(criteriaQuery).getResultList();
 	}
+	
+	
 
+	public List<CpMarcador> listarCpMarcadoresTaxonomiaAdministrada() {
+		
+		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
+		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);
+		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
+		Predicate predicateAnd;
+		Predicate predicateEqualTipoMarcador  = criteriaBuilder.equal(cpMarcadorRoot.get("cpTipoMarcador"), CpTipoMarcador.TIPO_MARCADOR_TAXONOMIA_ADMINISTRADA);
+
+		predicateAnd = criteriaBuilder.and(predicateEqualTipoMarcador);
+	
+		criteriaQuery.where(predicateAnd);
+		return em().createQuery(criteriaQuery).getResultList();
+	}
+	
+	public List<CpMarcador> listarCpMarcadoresGeraisTaxonomiaAdministrada() {
+		List<CpMarcador> listaConcatenada = listarCpMarcadoresGerais();
+		List<CpMarcador> listaTaxonomia = listarCpMarcadoresTaxonomiaAdministrada();
+		
+		if (listaTaxonomia != null) {
+			listaConcatenada.addAll(listaTaxonomia);	
+		}
+
+		return listaConcatenada;
+		
+		
+	}
+	
 	public List<ExTpDocPublicacao> listarExTiposDocPublicacao() {
 		return findAndCacheByCriteria(CACHE_QUERY_HOURS,
 				ExTpDocPublicacao.class);

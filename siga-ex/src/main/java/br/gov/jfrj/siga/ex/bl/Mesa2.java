@@ -371,6 +371,9 @@ public class Mesa2 {
 		MARCADOR_COMO_REVISOR(72, "Como Revisor", "fas fa-glasses", "",
 				GrupoDeMarcadorEnum.A_REVISAR),
 		//
+		MARCADOR_PORTAL_TRANSPARENCIA(73, "Portal da Transparência", "fas fa-globe", "",
+				GrupoDeMarcadorEnum.NENHUM),
+		//
 		URGENTE(1000, "Urgente", "fas fa-bomb", "", GrupoDeMarcadorEnum.ALERTA),
 
 		//
@@ -390,10 +393,7 @@ public class Mesa2 {
 		COVID_19(1006, "COVID-19", "fas fa-tag", "",
 				GrupoDeMarcadorEnum.NENHUM),
 		//
-		PORTAL_TRANSPARENCIA(1007, "Portal da Transparência", "fas fa-tag", "",
-				GrupoDeMarcadorEnum.NENHUM),
-		//
-		NOTA_EMPENHO(1008, "Nota de Empenho", "fas fa-tag", "",
+		NOTA_EMPENHO(1007, "Nota de Empenho", "fas fa-tag", "",
 				GrupoDeMarcadorEnum.NENHUM);
 
 		private MarcadorEnum(int id, String nome, String icone,

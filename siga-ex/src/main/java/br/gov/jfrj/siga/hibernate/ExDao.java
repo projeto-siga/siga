@@ -1825,14 +1825,15 @@ public class ExDao extends CpDao {
 						+ " UNION ALL ";
 				}
 			}
-			if (query.length() > 0) 
+			List<Object[]> result = new ArrayList<Object[]>();
+			if (query.length() > 0) { 
 				query = query.substring(0, query.length() - 10);
-			Query sql = em().createNativeQuery(query);
-			sql.setParameter("idPessoaIni", pes.getIdPessoaIni());
-			sql.setParameter("idLotacaoIni", lot.getIdLotacaoIni());
-
-			List result = sql.getResultList();
-
+				Query sql = em().createNativeQuery(query);
+				sql.setParameter("idPessoaIni", pes.getIdPessoaIni());
+				sql.setParameter("idLotacaoIni", lot.getIdLotacaoIni());
+	
+				result = sql.getResultList();
+			}
 			return result;
 
 		} catch (final NullPointerException e) {

@@ -18,19 +18,22 @@
 	</script>
 	
 	<c:set var="siga_cliente_sso" scope="request" value="${f:resource('siga.integracao.sso')}" />
+	<c:set var="siga_cliente_sso_btn_txt" scope="request" value="${f:resource('siga.integracao.sso.btn.txt')}" />
 	
 	<c:choose>
 		<c:when test="${siga_cliente == 'GOVSP'}">
 			<c:set var="login_box_class" value="box_login" />
 			<c:set var="login_box_logo" value="/siga/imagens/logo-sem-papel-cor.png" />
-			<c:set var="login_box_logo_size" value="150" />
+			<c:set var="login_box_logo_size" value="132" />
 			<c:set var="login_box_text" value="" />
+			<c:set var="login_titulo_modal" value="SP Sem Papel"/>
 		</c:when>
 		<c:otherwise>
 			<c:set var="login_box_class" value="" />
 			<c:set var="login_box_logo" value="" />
 			<c:set var="login_box_logo_size" value="" />
 			<c:set var="login_box_text" value="<fmt:message key='usuario.login.formulario' />" />
+			<c:set var="login_titulo_modal" value="Siga"/>
 		</c:otherwise>
 	</c:choose>
 
@@ -61,7 +64,7 @@
 					</c:if>
 
 					<!---->
-					<form role="form" method="post"
+					<form id="formLogin" role="form" method="post"
 						enctype="application/x-www-form-urlencoded">
 						<div class="form-group">
 							<label for="username"><fmt:message key="usuario.matricula"/></label> 
@@ -83,28 +86,36 @@
 						      </div>
 						      <input type="password" name="password" id="password" placeholder="Senha"
 								class="form-control" aria-label="Usuário" aria-describedby="icon-pass">
-						    </div>
-						
-						</div>
+						    </div>						
+						</div>						
+						<c:if test="${isSenhaUsuarioExpirada}">			
+							<div class="js-link-trocar-senha  hidden" style="text-align: center; margin: 0; padding: 0;">
+								<a href="#" class="btn  btn-default" title="Troca de senha" data-toggle="modal" data-target="#trocaSenhaUsuario" data-dismiss="modal">
+									Trocar senha
+								</a>	
+							</div>
+						</c:if>
 						<div class="row pt-3">
 							<div class="col">
 								<div class="text-center">
-									<button type="submit" class="btn btn-lg btn-primary btn-block"><i class="fas fa-sign-in-alt"></i> Entrar</button>
-									
-									<c:choose>
-										<c:when test="${siga_cliente_sso}">
-											<a href="/siga/public/app/loginSSO"class="btn btn-secondary btn-block">LoginSP</a>
-										</c:when>
-									</c:choose>
-									<hr class="my-4">
+									<button type="submit" class="btn btn-lg btn-primary btn-block"><i class="fas fa-sign-in-alt"></i> Entrar</button>								
 									<div class="mt-4">
 										<c:if test="${siga_cliente != 'GOVSP'}">
 											<a href="/siga/public/app/usuario/incluir_usuario"
 												class="btn btn-secondary btn-block mb-2"><fmt:message key = "usuario.sounovo"/></a> 
 										</c:if>
-										<a href="/siga/public/app/usuario/esqueci_senha"
-										class="btn btn-secondary btn-block">Esqueci minha senha</a>
+										<a href="/siga/public/app/usuario/esqueci_senha" class="btn btn-link btn-block"><strong>Esqueci minha senha</strong></a>
 									</div>
+									
+									<c:choose>
+										<c:when test="${siga_cliente_sso}">
+											<hr class="my-2">
+											<p class="text-left font-weight-bold">Ou acesse com: </p>
+							
+											<a href="/siga/public/app/loginSSO"class="btn btn-lg btn-dark btn-block">${siga_cliente_sso_btn_txt}</a>
+										</c:when>
+									</c:choose>
+									
 									<c:if test="${siga_cliente ne 'GOVSP'}">
 										<div class="mt-3">
 										    <div class="d-flex justify-content-between">
@@ -125,34 +136,65 @@
 			</div>
 		</div>
 	</div>
-	<div class="modal fade" id="msgModal" tabindex="-1" role="dialog" aria-labelledby="msgModalLabel" aria-hidden="true">
-	  <div class="modal-dialog modal-dialog-centered" role="document">
-	    <div class="modal-content">
-	    <div class="modal-header">
-	        <h5 class="modal-title" id="msgModalLongTitle">SP Sem Papel</h5>
-	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-	          <span aria-hidden="true">&times;</span>
-	        </button>
-	      </div>
-	      <div class="modal-body">
-	        Recomendamos o navegador Google Chrome para acesso.
-	      </div>
-	      <div class="modal-footer">
-	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-	      </div>
-	    </div>
-	  </div>
-	</div>
-	<script type="text/javascript">
-		$(document).ready(function() {
-			var isOpera = !!navigator.userAgent.match(/OPR/);
-			var isEdge = !!navigator.userAgent.match(/Edge/);
-			var isChrome = !!navigator.userAgent.match(/Chrome/) && !isOpera && !isEdge
-			if(!isChrome) {
-		    	$('#msgModal').modal('show');
-			}
-		})
-	</script>
+
+	<c:if test="${isSenhaUsuarioExpirada}">						
+		<div class="modal  fade" id="trocaSenhaUsuarioMensagem" tabindex="-1" role="dialog">
+		 	<div class="modal-dialog modal-dialog-centered" role="alert">
+		   		<div class="modal-content">		
+		   			<div class="modal-header">		   			
+		   				<img src="/siga/imagens/${siga_cliente eq 'GOVSP' ? 'logo-sem-papel-cor.png' : 'logo-siga-novo-166px.png'}" height="40">			
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				          <span aria-hidden="true">&times;</span>
+				        </button>
+			      	</div>   					   					      	
+		      		<div class="modal-body">		      		
+		      			Sua senha expirou e deve ser alterada
+		      		</div>
+	      			<div class="modal-footer">		      			
+		      			<a href="#" class="btn  btn-secondary  js-troca-senha-mensagem-btn" title="Troca de senha"
+							data-toggle="modal" data-target="#trocaSenhaUsuario" data-dismiss="modal">
+						     	Trocar senha
+						</a>		      															
+					</div>   								  						   
+		   		</div>
+		 	</div> 	 	
+		</div>					
+		<siga:troca-senha-usuario></siga:troca-senha-usuario>			
+	</c:if>
+	
+	<c:if test="${!isSenhaUsuarioExpirada}">			
+		<div class="modal fade" id="msgModal" tabindex="-1" role="dialog" aria-labelledby="msgModalLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered" role="document">
+		    <div class="modal-content">
+		    <div class="modal-header">
+		        <c:if test="${siga_cliente eq 'GOVSP'}">		        	
+		        	<img src="/siga/imagens/${siga_cliente eq 'GOVSP' ? 'logo-sem-papel-cor.png' : 'logo-siga-novo-166px.png'}" height="40">			
+		        </c:if>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-body">
+		        Recomendamos o navegador Google Chrome para acesso.
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				var isOpera = !!navigator.userAgent.match(/OPR/);
+				var isEdge = !!navigator.userAgent.match(/Edge/);
+				var isChrome = !!navigator.userAgent.match(/Chrome/) && !isOpera && !isEdge
+				if(!isChrome) {
+			    	$('#msgModal').modal('show');
+				}
+			})
+		</script>
+	</c:if>
+
 	<script type="text/javascript">
 		
 		//$('input, textarea').placeholder();
@@ -204,3 +246,17 @@
 	</c:if>	
 	<script src="../../javascript/service-worker.js" async></script>
 </siga:pagina>
+<c:if test="${isSenhaUsuarioExpirada}">
+	<script src="../../javascript/usuario.troca-senha.js"></script>
+	<script>
+		$(function() {
+			var trocaSenhaUsuarioMensagemModal = $('#trocaSenhaUsuarioMensagem'); 
+			trocaSenhaUsuarioMensagemModal.on('shown.bs.modal', function() {
+				$('.js-troca-senha-mensagem-btn').focus();
+			}).on('hidden.bs.modal', function() {
+				$('.js-link-trocar-senha').removeClass('hidden');	
+			});				
+			trocaSenhaUsuarioMensagemModal.modal('show');																		
+		});					
+	</script>
+</c:if>

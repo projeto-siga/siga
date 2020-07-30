@@ -2933,15 +2933,15 @@ public class ExBL extends CpBL {
 				doc.setOrgaoUsuario(doc.getLotaCadastrante().getOrgaoUsuario());
 
 			/*
-			 * Desabilita para São Paulo numeração realizada pelo Select Max. Numeração
+			 * Desabilita se configuracao ativa numeração realizada pelo Select Max. Numeração
 			 * controlada pela table EX_DOCUMENTO_NUMERACAO
 			 */
-			if (!SigaMessages.isSigaSP()) {
-				if (doc.getNumExpediente() == null)
-					doc.setNumExpediente(obterProximoNumero(doc));
-			} else {
+			if ("true".equalsIgnoreCase(SigaBaseProperties.getString("sigaex.controlarNumeracaoExpediente")) || SigaMessages.isSigaSP()) {
 				doc.setAnoEmissao((long) c.get(Calendar.YEAR));
 				doc.setNumExpediente(obterNumeroDocumento(doc));
+			} else {
+				if (doc.getNumExpediente() == null)
+					doc.setNumExpediente(obterProximoNumero(doc));
 			}
 
 			doc.setDtFinalizacao(dt);
@@ -3665,8 +3665,11 @@ public class ExBL extends CpBL {
 	}
 
 	public void atualizarDnmAcesso(ExDocumento doc) {
+		atualizarDnmAcesso(doc, null, null);
+	}
+	public void atualizarDnmAcesso(ExDocumento doc, Object incluirAcesso, Object excluirAcesso) {
 		Date dt = ExDao.getInstance().dt();
-		String acessoRecalculado = new ExAcesso().getAcessosString(doc, dt);
+		String acessoRecalculado = new ExAcesso().getAcessosString(doc, dt, incluirAcesso, excluirAcesso);
 
 		if (doc.getDnmAcesso() == null || !doc.getDnmAcesso().equals(acessoRecalculado)) {
 			doc.setDnmAcesso(acessoRecalculado);
@@ -4346,7 +4349,15 @@ public class ExBL extends CpBL {
 				}
 
 				gravarMovimentacao(mov);
-				concluirAlteracaoParcial(m);
+				// Se houver configuração para restringir acesso somente para quem recebeu,
+				// remove a lotação das permissões de acesso e inclui o recebedor
+				if (Ex.getInstance().getConf().podePorConfiguracao(mov.getResp(), mov.getLotaResp(), 
+						null, mob.doc().getExModelo().getExFormaDocumento(), mob.doc().getExModelo(), 
+						CpTipoConfiguracao.TIPO_CONFIG_RESTRINGIR_ACESSO_APOS_RECEBER)) {
+					concluirAlteracaoParcial(m, true, mov.getResp(), mov.getLotaResp());
+				} else {
+					concluirAlteracaoParcial(m);
+				}
 			}
 			concluirAlteracao(null);
 		} catch (final Exception e) {
@@ -5590,25 +5601,33 @@ public class ExBL extends CpBL {
 	}
 
 	private void concluirAlteracaoParcial(ExMobil mob, boolean recalcularAcesso) {
+		concluirAlteracaoParcial(mob, recalcularAcesso, null, null);
+	}
+	private void concluirAlteracaoParcial(ExMobil mob, boolean recalcularAcesso, 
+			Object incluirAcesso, Object excluirAcesso) {
 		SortedSet<ExMobil> set = threadAlteracaoParcial.get();
 		if (set == null) {
 			threadAlteracaoParcial.set(new TreeSet<ExMobil>());
 			set = threadAlteracaoParcial.get();
 		}
 		if (mob != null && mob.doc() != null) {
+			if (recalcularAcesso)
+				atualizarVariaveisDenormalizadas(mob.doc(), incluirAcesso, excluirAcesso);
 			if (mob.isGeral())
 				atualizarMarcas(mob.doc());
 			else
 				atualizarMarcas(mob);
-			if (recalcularAcesso)
-				atualizarVariaveisDenormalizadas(mob.doc());
 		}
 		set.add(mob);
 	}
 
 	private void atualizarVariaveisDenormalizadas(ExDocumento doc) {
+		atualizarVariaveisDenormalizadas(doc, null, null);
+	}
+
+	private void atualizarVariaveisDenormalizadas(ExDocumento doc, Object incluirAcesso, Object excluirAcesso) {
 		atualizarDnmNivelAcesso(doc);
-		atualizarDnmAcesso(doc);
+		atualizarDnmAcesso(doc, incluirAcesso, excluirAcesso);
 	}
 
 	private void concluirAlteracao(ExMobil mob) throws Exception {
@@ -5629,16 +5648,16 @@ public class ExBL extends CpBL {
 
 	private void concluirAlteracao(ExMobil mob, ExDocumento doc, boolean recalcularAcesso) throws Exception {
 		if (mob != null) {
+			if (recalcularAcesso)
+				atualizarVariaveisDenormalizadas(mob.doc(), null, null);
 			if (mob.isGeral())
 				atualizarMarcas(mob.doc());
 			else
 				atualizarMarcas(mob);
-			if (recalcularAcesso)
-				atualizarVariaveisDenormalizadas(mob.doc());
 		} else if (doc != null) {
-			atualizarMarcas(doc);
 			if (recalcularAcesso)
-				atualizarVariaveisDenormalizadas(doc);
+				atualizarVariaveisDenormalizadas(doc, null, null);
+			atualizarMarcas(doc);
 		}
 		ExDao.commitTransacao();
 		// if (doc != null)
@@ -7134,12 +7153,17 @@ public class ExBL extends CpBL {
 		
 	}
 
-	public CpToken publicarTransparencia(ExMobil mob, DpPessoa cadastrante, DpLotacao lotaCadastrante, String[] listaMarcadores) {
-		
-		
+	public CpToken publicarTransparencia(ExMobil mob, DpPessoa cadastrante, DpLotacao lotaCadastrante, String[] listaMarcadores, boolean viaWS) {
 
-		/* 1- Redefinição para Público */
-		if (!Ex.getInstance().getComp().podeRedefinirNivelAcesso(cadastrante, lotaCadastrante,mob)) {
+		/* Verificação de autorização - Via WS é feito bypass*/
+		if (!viaWS && !Ex.getInstance().getComp().podePublicarPortalTransparencia(cadastrante, lotaCadastrante,mob)) {
+			throw new AplicacaoException(
+					"Não é possível " + SigaMessages.getMessage("documento.publicar.portaltransparencia"));
+		}
+		
+		
+		/* 1- Redefinição para Público - Via WS é feito bypass*/	
+		if (!viaWS && !Ex.getInstance().getComp().podeRedefinirNivelAcesso(cadastrante, lotaCadastrante,mob)) {
 			throw new AplicacaoException(
 					"Não é possível redefinir o nível de acesso");
 		}
@@ -7261,16 +7285,42 @@ public class ExBL extends CpBL {
 	    marcadoresJson.put("marcadorMobil", doc.getPrimeiroMobil().getMarcadores());
 	    
 	    documentoJson.put("marcadores", marcadoresJson);
-	        
-	    
-	    
-	    
+
 	    // converte objetos Java para JSON e retorna JSON como String
 	    String json = gson.toJson(documentoJson);
 
-	
-
 		return json;
 		
+	}
+	
+	public String marcadoresGeraisTaxonomiaAdministradaToJSON() throws Exception {
+		Gson gson = new Gson();
+
+		ArrayList<HashMap<String, Object>> objectJson = new ArrayList<>();
+		try {
+			List<CpMarcador> listaMarcadores = dao().listarCpMarcadoresGeraisTaxonomiaAdministrada();
+			
+			for (CpMarcador marcador : listaMarcadores) {
+				HashMap<String, Object> marcadorJson = new HashMap<String, Object>();
+				HashMap<String, Object> tipoMarcadorJson = new HashMap<String, Object>();
+				
+				marcadorJson.put("id", marcador.getIdMarcador());
+				marcadorJson.put("descMarcador", marcador.getDescrMarcador());
+				
+				tipoMarcadorJson.put("idTipoMarcador", marcador.getCpTipoMarcador().getIdTpMarcador());
+				tipoMarcadorJson.put("descTipoMarcador", marcador.getCpTipoMarcador().getDescrTipoMarcador());
+				marcadorJson.put("tipoMarcador", tipoMarcadorJson);
+				
+				objectJson.add(marcadorJson);
+			}
+			
+			// converte objetos Java para JSON e retorna JSON como String
+		    String json = gson.toJson(objectJson);    
+		    return json;
+		} catch (Exception e) {
+			throw new AplicacaoException("Ocorreu um erro na conversão dos marcadores para JSON.");
+		} finally {
+			objectJson = null;
+		}
 	}
 }

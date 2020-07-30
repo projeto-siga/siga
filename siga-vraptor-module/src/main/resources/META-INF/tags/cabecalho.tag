@@ -103,7 +103,7 @@ ${meta}
 
 <c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
 
-<c:set var="siga_version"  scope="request" value="9.0.0.3" />
+<c:set var="siga_version"  scope="request" value="9.0.0.6" />
 
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
@@ -370,6 +370,9 @@ ${meta}
 									</c:when>
 									<c:when test="${f:resource('ambiente') eq 'treinamento'}">
 										Ambiente de Simulação
+									</c:when>
+									<c:when test="${f:resource('ambiente') eq 'configuracao'}">
+										Ambiente de Configuração
 									</c:when>
 									<c:when test="${f:resource('ambiente') eq 'homolog'}">
 										Ambiente de Homologação

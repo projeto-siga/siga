@@ -40,7 +40,7 @@
 	class="navbar-brand dropdown-toggle" data-toggle="dropdown"> <fmt:message
 			key="menu.titulo" /></a>
 	<ul class="dropdown-menu">
-		<c:if test="${not empty f:resource('siga.pagina.inicial.url')}">
+		<c:if test="${not empty f:resource('siga.pagina.inicial.url') && (f:resource('siga.local') ne 'GOVSP' || !f:ehPublicoExterno(titular))}">
 			<li><a class="dropdown-item"
 				href="/siga/app/principal?redirecionar=false">Quadros
 					Quantitativos</a></li>
@@ -49,6 +49,7 @@
 			<li><a class="dropdown-item" href="/siga/app/principal">Página
 					Inicial</a></li>
 		</c:if>
+		<c:if test="${ f:resource('siga.local') ne 'GOVSP' || !f:ehPublicoExterno(titular)}">
 		<li class="dropdown-submenu"><a href="javascript:void(0);"
 			class="dropdown-item dropdown-toggle">Módulos</a>
 			<ul class="dropdown-menu">
@@ -169,6 +170,7 @@
 				</c:if>
 
 			</ul></li>
+		</c:if>
 		<c:if test="${f:resource('siga.local') eq 'GOVSP'}">
 			<c:if test="${not empty f:resource('gsa.url')}">
 				<li><a class="dropdown-item" href="/siga/app/busca">Busca

@@ -20,7 +20,7 @@
 	</script>
 	
 	<c:choose>
-	<c:when test="${siga_cliente == 'GOVSP'}">
+	<c:when test="${param.modal != true}">
 	    <!-- parteFuncao para fechar window -->
 	    <c:set var="parteFuncao" value="opener" />
 	</c:when>
@@ -44,7 +44,7 @@
 				<div class="card-body">
 					<div class="row">
 						<div class="col-sm-4">
-							<label>Nome ou Sigla:</label>
+							<label>Nome ou Sigla: </label>
 						</div>
 						<div class="col-sm-5">
 							<input type="text" name="sigla" value="${sigla}"
@@ -71,7 +71,7 @@
 				itens="${itens}" var="item">
 				<tr class="${evenorodd}">
 					<td width="10%" align="center"><a
-						href="javascript: opener.retorna_${propriedadeClean}('${item.id}','${item.sigla}','${item.descricao}');">${item.sigla}</a></td>
+						href="javascript: ${parteFuncao}.retorna_${propriedadeClean}('${item.id}','${item.sigla}','${item.descricao}');">${item.sigla}</a></td>
 					<td width="90%" align="left">${item.descricao}</td>
 				</tr>
 			</siga:paginador>

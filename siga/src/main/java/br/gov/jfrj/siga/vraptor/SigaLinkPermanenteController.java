@@ -157,7 +157,7 @@ public class SigaLinkPermanenteController extends SigaController {
 	
 	@Get
 	@Path("/public/app/sigalinkStream/{jwt}") /* Desacoplar tela de visualização de PDF*/
-	public Download publicPermanenteURLStream(@PathParam("jwt") String jwt, boolean completo, boolean estampar) throws Exception {
+	public Download publicPermanenteURLStream(@PathParam("jwt") String jwt, boolean completo, boolean estampar, boolean volumes) throws Exception {
 		estampar = true; //default
 		InputStream stream = null;
 		

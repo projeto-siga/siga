@@ -230,6 +230,20 @@ public class SigaExProperties extends ModeloPropriedade {
 			throw new Exception("Erro ao obter propriedade para o data inicial de obrigação de assinatura de anexos e despachos em documentos eletrônicos");
 		}
 	}
+	
+	public static Date getDataInicioObrigacaoDeExibirDataeHoraRodapeAssinatura() throws Exception{
+		String s = getString("siga.ex.dataInicioObrigacaoExibirDataeHoraRodapeAssinatura");
+		
+		DateFormat formatter = new SimpleDateFormat("MM/dd/yy");  
+				
+		if (s == null)
+			return (Date)formatter.parse("31/12/2099");
+		try{
+			return (Date)formatter.parse(s);
+		} catch (NumberFormatException nfe){
+			throw new Exception("Erro ao obter propriedade para o data inicial de obrigação de exibir data/hora no rodapé da assinatura de documentos eletrônicos");
+		}
+	}
 
 	public static String getTextoSuperiorCarimbo() {
 		String textoSuperiorCarimbo = getString("textoSuperiorCarimbo");		

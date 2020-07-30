@@ -63,8 +63,7 @@
 		</dependency>		
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.5.10</version>
+			<artifactId>httpclient</artifactId>			
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>

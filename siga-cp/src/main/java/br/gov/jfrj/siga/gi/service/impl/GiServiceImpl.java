@@ -18,8 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.gi.service.impl;
 
-import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
-
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -32,8 +30,7 @@ import org.codehaus.jettison.json.JSONObject;
 import br.gov.jfrj.siga.acesso.ConfiguracaoAcesso;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
-import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpServico;
@@ -42,13 +39,13 @@ import br.gov.jfrj.siga.cp.util.SigaUtil;
 import br.gov.jfrj.siga.cp.util.TokenException;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
-import br.gov.jfrj.siga.cp.bl.CpPropriedadeBL;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
+import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
 import br.gov.jfrj.siga.gi.service.GiService;
 
 /**
@@ -95,13 +92,9 @@ public class GiServiceImpl implements GiService {
     private String buscarModoAutenticacao(CpIdentidade id) {
     	String orgao = id.getCpOrgaoUsuario().getSiglaOrgaoUsu();
     	String retorno = _MODO_AUTENTICACAO_DEFAULT;
-    	CpPropriedadeBL props = new CpPropriedadeBL();
-    	try {
-			String modo = props.getModoAutenticacao(orgao);
-			if(modo != null) 
-				retorno = modo;
-		} catch (Exception e) {
-		}
+		String modo = Cp.getInstance().getBL().buscarModoAutenticacao(orgao);
+		if(modo != null) 
+			retorno = modo;
     	return retorno;
     }
     
@@ -154,7 +147,7 @@ public class GiServiceImpl implements GiService {
 		
 		String resultado = "";
 		try {
-			//if("true".equals(SigaBaseProperties.getString("siga.ws.seguranca.token.jwt")))
+			//if("true".equals(Prop.get("/siga.ws.seguranca.token.jwt")))
 				//SigaUtil.getInstance().validarToken(token);
 				
 			if (Pattern.matches("\\d+", cpf) && cpf.length() == 11) {

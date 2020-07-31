@@ -21,7 +21,7 @@ import javax.persistence.Persistence;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 

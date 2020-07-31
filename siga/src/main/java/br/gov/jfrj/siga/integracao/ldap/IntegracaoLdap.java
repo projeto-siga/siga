@@ -21,6 +21,7 @@ package br.gov.jfrj.siga.integracao.ldap;
 import br.gov.jfrj.ldap.ILdapDao;
 import br.gov.jfrj.ldap.LdapDaoImpl;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -43,9 +44,9 @@ public class IntegracaoLdap {
 	
 
 	public void atualizarSenhaLdap(CpIdentidade id, String senha) {
-		String localidade = id.getDpPessoa().getOrgaoUsuario().getAcronimoOrgaoUsu().toLowerCase();
+		String orgao = id.getDpPessoa().getOrgaoUsuario().getAcronimoOrgaoUsu().toLowerCase();
 		
-		IntegracaoLdapProperties prop = configurarProperties(localidade);
+		IntegracaoLdapProperties prop = new IntegracaoLdapProperties(orgao);
 		
 		
 		if (!integrarComLdap(id.getDpPessoa().getOrgaoUsuario())){
@@ -75,23 +76,10 @@ public class IntegracaoLdap {
 	
 	public boolean integrarComLdap(CpOrgaoUsuario orgaoUsuario){
 		String localidade = orgaoUsuario.getAcronimoOrgaoUsu().toLowerCase();
-		IntegracaoLdapProperties prop = configurarProperties(localidade);
+		IntegracaoLdapProperties prop = new IntegracaoLdapProperties(localidade);
 		
 		return prop.sincronizarSenhaLdap();
 		
 	}
 
-	public IntegracaoLdapProperties configurarProperties(String localidade) {
-		IntegracaoLdapProperties prop = new IntegracaoLdapProperties();
-		try {
-			String ambiente = prop.obterPropriedade("ambiente");
-			if (localidade.length()>0 && ambiente.length()>0){
-				prop.setPrefixo("siga.cp.sinc.ldap." + localidade + "." +ambiente) ;	
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return prop;
-	}
 }

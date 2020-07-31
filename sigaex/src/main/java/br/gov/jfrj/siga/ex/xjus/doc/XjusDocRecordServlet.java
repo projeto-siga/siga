@@ -8,6 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
 
@@ -24,7 +25,7 @@ public class XjusDocRecordServlet extends SwaggerServlet {
 
 		String xjusPassword = null;
 		try {
-			xjusPassword = Cp.getInstance().getProp().xjusPassword();
+			xjusPassword = Prop.get("/xjus.password");
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}

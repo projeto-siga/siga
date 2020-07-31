@@ -8,7 +8,7 @@ import java.util.Enumeration;
 import java.util.ListIterator;
 import java.util.logging.Logger;
 
-import br.gov.jfrj.siga.ex.SigaExProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.hibernate.ext.IMontadorQuery;
 
 /**
@@ -76,7 +76,7 @@ public class CarregadorPlugin {
 	 */
 	public IMontadorQuery getMontadorQueryImpl() {
 		try {
-			return (IMontadorQuery) Class.forName(SigaExProperties.getMontadorQuery(),true,this.classloader).newInstance();
+			return (IMontadorQuery) Class.forName(Prop.get("montador.query"),true,this.classloader).newInstance();
 		} catch (Exception e) {
 			log.warning("Não foi possível instanciar o MontadorQuery do plugin!");
 		}

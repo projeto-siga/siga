@@ -40,7 +40,7 @@
  				java.io.PrintWriter pw = new java.io.PrintWriter(sw);
  				t.printStackTrace(pw);
  				String s = sw.toString();
- 				String[] lines = s.split(System.getProperty("line.separator"));
+ 				String[] lines = s.split(System.lineSeparator());
  				for (int i=0; i<lines.length; i++) {
  					if (lines[i].contains("br.com.caelum.vraptor.core.DefaultReflectionProvider.invoke")) {
  						for (int j=i-1; j>0; j--) {
@@ -48,7 +48,7 @@
 				 				StringBuilder sb = new StringBuilder();
  								for (int k=0; k<=j; k++) {
  				 					sb.append(lines[k]);
- 				 					sb.append(System.getProperty("line.separator"));
+ 				 					sb.append(System.lineSeparator());
  								}
  								s = sb.toString();
  								break;
@@ -124,7 +124,7 @@ This is a useless buffer to fill the page to 513 bytes to avoid display of Frien
 									    </c:if> 
 								      	<tr> 
 								      		<td>Servidor:</td> 
-								      		<td><c:out value="${threadName}" /> / <c:out value="${f:resource('ambiente')}" /></td> 
+								      		<td><c:out value="${threadName}" /> / <c:out value="${f:resource('/siga.ambiente')}" /></td> 
 								      	</tr> 
 									  	<tr> 
 									  		<td>Usu&aacute;rio</td> 

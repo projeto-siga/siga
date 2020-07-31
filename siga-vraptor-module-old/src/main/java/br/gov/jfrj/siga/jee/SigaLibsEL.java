@@ -39,7 +39,7 @@ import org.mvel2.templates.TemplateRuntime;
 
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.ReaisPorExtenso;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpServico;

@@ -102,7 +102,7 @@
 </style>						
 
 <script>
-	if (${not empty f:resource('graphviz.url')}) {
+	if (${not empty f:resource('/vizservice.url')}) {
 	} else if (window.Worker) {
 		window.VizWorker = new Worker("/siga/javascript/viz.js");
 		window.VizWorker.onmessage = function(oEvent) {
@@ -126,7 +126,7 @@
 	}
 
 	function buildSvg(id, input, cont) {
-		if (${not empty f:resource('graphviz.url')}) {
+		if (${not empty f:resource('/vizservice.url')}) {
 		    input = input.replace(/fontsize=\d+/gm, "");
 			$.ajax({
 			    url: "/siga/public/app/graphviz/svg",
@@ -259,7 +259,7 @@
 		<div class="row mt-2">
 			<div class="col col-sm-12 col-md-8">
 				<div>
-					<c:if test="${f:resource('isWorkflowEnabled')}">
+					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;WF:Módulo de Workflow')}">
 						<c:if
 							test="${ (primeiroMobil == true) and (docVO.tipoFormaDocumento == 'processo_administrativo')}">
 							<div id="${docVO.sigla}" depende=";wf;" class="wf_div"></div>
@@ -1244,7 +1244,7 @@
 		class="gt-btn-large gt-btn-left">Voltar</a>
 </div>
 
-<c:if test="${f:resource('isWorkflowEnabled')}">
+<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;WF:Módulo de Workflow')}">
 	<script type="text/javascript">
 		<c:if test="${ (docVO.tipoFormaDocumento == 'processo_administrativo')}">
 			var url = "/sigawf/app/doc?sigla=${docVO.mob.sigla}&ts=1${currentTimeMillis}";

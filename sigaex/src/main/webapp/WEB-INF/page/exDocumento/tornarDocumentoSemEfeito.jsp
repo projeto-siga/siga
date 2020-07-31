@@ -51,14 +51,14 @@ function sbmt() {
 						<div class="col-sm-6">
 							<div class="form-group">
 								<label>Motivo</label>
-								<input class="form-control" type="text" name="descrMov" maxlength="80"size="80" />
+								<input class="form-control" type="text" name="descrMov" value="${descrMov}" maxlength="80"size="80" />
 							</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-sm">
-							<input type="submit" value="Ok" class="btn btn-primary" />
-							<input type="button" value="Cancela" onclick="javascript:history.back();" class="btn btn-cancel ml-2" />
+							<input type="submit" value="Ok" class="btn btn-primary" />							
+							<a href="${linkTo[ExDocumentoController].exibe()}?sigla=${sigla}" class="btn btn-cancel ml-2">Cancela</a>														 												
 						</div>
 					</div>
 				</form>

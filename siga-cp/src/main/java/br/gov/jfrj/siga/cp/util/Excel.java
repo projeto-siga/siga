@@ -312,7 +312,8 @@ public class Excel {
 					if(lo!=null) {
 						lot.setLotacaoPai(lo);
 					} else {
-						problemas += "Linha " + linha +": SIGLA de LOTAÇÃO PAI inválida" + System.lineSeparator();
+						problemas += "Linha " + linha +": SIGLA de LOTAÇÃO PAI não encontrada, se você deseja informar " 
+								+ lotacaopaisigla + " como unidade pai, é necessário cadastrá-lo antes de importar essa planilha" + System.getProperty("line.separator");
 					}
 				}
 				

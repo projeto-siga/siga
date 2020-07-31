@@ -14,7 +14,7 @@
 		<ul class="dropdown-menu">
 			<li><a class="dropdown-item"
 				href="/sigaex/app/expediente/doc/editar">Novo</a></li>
-			<c:if test="${!fx:ehPublicoExterno(titular)}">
+			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar')}">
 				<li><a class="dropdown-item"
 					href="/sigaex/app/expediente/doc/listar?primeiraVez=sim">Pesquisar</a></li>
 			</c:if>

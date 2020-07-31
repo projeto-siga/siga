@@ -70,8 +70,10 @@ import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -1941,18 +1943,18 @@ public class ExDocumentoController extends ExController {
 	}
 
 	@Get("/app/expediente/doc/tornarDocumentoSemEfeito")
-	public void tornarDocumentoSemEfeito(final String sigla) throws Exception {
+	public void tornarDocumentoSemEfeito(final String sigla, final String descrMov) throws Exception {
 		assertAcesso("");
 
 		final ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
 		exDocumentoDto.setSigla(sigla);
-		buscarDocumento(false, exDocumentoDto);
+		buscarDocumento(false, exDocumentoDto);			
 
 		result.include("sigla", sigla);
 		result.include("id", exDocumentoDto.getId());
 		result.include("mob", exDocumentoDto.getMob());
 		result.include("titularSel", new DpPessoaSelecao());
-		result.include("descrMov", exDocumentoDto.getDescrMov());
+		result.include("descrMov", descrMov);
 		result.include("doc", exDocumentoDto.getDoc());
 	}
 	
@@ -2031,32 +2033,25 @@ public class ExDocumentoController extends ExController {
 			final String descrMov) throws Exception {
 		assertAcesso("");
 
-		if (descrMov == null || descrMov.trim().length() == 0) {
-			throw new AplicacaoException(
-					"O preenchimento do campo MOTIVO é obrigatório!");
-		}
-		final ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
-		exDocumentoDto.setSigla(sigla);
-		buscarDocumento(Boolean.TRUE, exDocumentoDto);
-
-		ExMobil mob = exDocumentoDto.getMob();
-		ExDocumento doc = exDocumentoDto.getDoc();
-
-		if (!Ex.getInstance()
-				.getComp()
-				.podeTornarDocumentoSemEfeito(getTitular(), getLotaTitular(),
-						mob))
-			throw new AplicacaoException(
-					"Não é possível tornar documento sem efeito.");
-		try {			
+		try {
+			if (descrMov == null || descrMov.trim().length() == 0) {
+				throw new RegraNegocioException("Favor informar o motivo");
+			}
+			
+			final ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
+			exDocumentoDto.setSigla(sigla);
+			buscarDocumento(Boolean.TRUE, exDocumentoDto);						
+					
 			Ex.getInstance()
 					.getBL()
-					.TornarDocumentoSemEfeito(getCadastrante(),
-							getLotaTitular(), doc, descrMov);
-		} catch (final Exception e) {
-			throw e;
-		}
-		ExDocumentoController.redirecionarParaExibir(result, sigla);
+					.tornarDocumentoSemEfeito(getCadastrante(),
+							getLotaTitular(), exDocumentoDto.getDoc(), descrMov);
+			
+			ExDocumentoController.redirecionarParaExibir(result, sigla);
+		} catch (final RegraNegocioException e) {
+			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
+			result.forwardTo(this).tornarDocumentoSemEfeito(sigla, descrMov);
+		}		
 	}
 
 	private void carregarBeans(final ExDocumentoDTO exDocumentoDTO,

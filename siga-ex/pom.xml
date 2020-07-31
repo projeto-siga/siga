@@ -228,7 +228,7 @@
 							<sqlMigrationPrefix>SIGA_UTF8_V</sqlMigrationPrefix>
 							<placeholderPrefix>flyway${</placeholderPrefix>
 							<locations>
-								<location>filesystem:src\main\resources</location>
+								<location>filesystem:src\main\resources\db\migration</location>
 							</locations>
 						</configuration>
 						<executions>

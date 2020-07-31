@@ -26,6 +26,7 @@ import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
@@ -268,14 +269,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	@Get("/app/lotacao/editar")
 	public void edita(final Long id){
 		
-		if(id!=null) {
-			DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
-			List<DpLotacao>lista = carregaLotacao(lotacao.getOrgaoUsuario());
-			result.include("listaLotacao", lista);
-		} else {
-			List<DpLotacao>lista = carregaLotacao(getTitular().getOrgaoUsuario());
-			result.include("listaLotacao", lista);
-		}
+		List<DpLotacao> listaLotacaoPai = new ArrayList<DpLotacao>();
 		if (id != null) {
 			DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
 			result.include("nmLotacao",lotacao.getDescricao());
@@ -292,7 +286,12 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			if(list.size() == 0) {
 				result.include("podeAlterarOrgao", Boolean.TRUE);
 			}
-		}		
+			listaLotacaoPai = carregaLotacao(lotacao.getOrgaoUsuario());
+			listaLotacaoPai.remove(lotacao);
+		} else {
+			listaLotacaoPai = carregaLotacao(getTitular().getOrgaoUsuario());
+		}
+		result.include("listaLotacao", listaLotacaoPai);
 		
 		if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
 			result.include("orgaosUsu", dao().listarOrgaosUsuarios());
@@ -345,13 +344,14 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		if(siglaLotacao != null && !siglaLotacao.matches("[a-zA-ZçÇ0-9,/-]+")) 
 			throw new AplicacaoException("Sigla com caracteres não permitidos");
 		
-		DpLotacao lotacao;
-		lotacao = new DpLotacao();
+		DpLotacao lotacao = new DpLotacao();
+		DpLotacao lotacaoNova = new DpLotacao();
 		lotacao.setSiglaLotacao(siglaLotacao);
 		CpOrgaoUsuario ou = new CpOrgaoUsuario();
 		ou.setIdOrgaoUsu(idOrgaoUsu);
 		lotacao.setOrgaoUsuario(ou);
 		lotacao = CpDao.getInstance().consultarPorSigla(lotacao);
+		Date data = new Date(System.currentTimeMillis());
 		
 		if(lotacao != null && lotacao.getId() != null && !lotacao.getId().equals(id)) {
 			throw new AplicacaoException("Sigla já cadastrada para outra lotação");
@@ -359,109 +359,179 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		
 		List<DpPessoa> listPessoa = null;
 		
-		lotacao = new DpLotacao();	
-		if (id == null) {
-			lotacao = new DpLotacao();
-			Date data = new Date(System.currentTimeMillis());
-			lotacao.setDataInicio(data);
-			
-		} else {
+		lotacao = null;	
+		if(id != null) {
 			lotacao = dao().consultar(id, DpLotacao.class, false);
-			listPessoa = CpDao.getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE);
-			if(!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getTitular().getLotacao(),"SIGA;GI;CAD_LOTACAO;ALT") &&
-					dao().consultarQtdeDocCriadosPossePorDpLotacao(id) > 0 && 
-					(!lotacao.getNomeLotacao().equalsIgnoreCase(Texto.removerEspacosExtra(nmLotacao).trim()) || !lotacao.getSiglaLotacao().equalsIgnoreCase(siglaLotacao.toUpperCase().trim()))) {
-				throw new AplicacaoException("Não é permitido a alteração do nome e sigla da unidade após criação de documento ou tramitação de documento para unidade.");
+		}
+		
+		if(id == null || (id != null && lotacao != null && (!nmLotacao.equalsIgnoreCase(lotacao.getNomeLotacao()) || !siglaLotacao.equalsIgnoreCase(lotacao.getSiglaLotacao())
+										|| (lotacao.getDataFim() == null && "false".equals(situacao)) || (lotacao.getDataFim() != null && "true".equals(situacao)) 
+										|| (isExternaLotacao != null && ((lotacao.getIsExternaLotacao() == null) || lotacao.getIsExternaLotacao() == 0))
+										|| (isExternaLotacao == null && ((lotacao.getIsExternaLotacao() != null) && lotacao.getIsExternaLotacao() == 1))
+										|| (isExternaLotacao != null && lotacao.getIsExternaLotacao() != null && !isExternaLotacao.equals(lotacao.getIsExternaLotacao().equals(Integer.valueOf(1)) ? Boolean.TRUE : Boolean.FALSE))
+										|| (lotacaoPai != null && lotacao.getLotacaoPai() == null)
+										|| (lotacaoPai == null && lotacao.getLotacaoPai() != null)
+										|| (!lotacaoPai.equals(lotacao.getLotacaoPai() != null ? lotacao.getLotacaoPai().getId() : 0L))
+										|| !idLocalidade.equals(lotacao.getLocalidade().getId())))) {
+			if (id != null) {			
+				listPessoa = CpDao.getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE);
+				Integer qtdeDocumentoCriadosPosse = dao().consultarQtdeDocCriadosPossePorDpLotacao(lotacao.getIdInicial());
+				
+				if(!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getTitular().getLotacao(),"SIGA;GI;CAD_LOTACAO;ALT") && qtdeDocumentoCriadosPosse > 0 && 
+						(!lotacao.getNomeLotacao().equalsIgnoreCase(Texto.removerEspacosExtra(nmLotacao).trim()) || !lotacao.getSiglaLotacao().equalsIgnoreCase(siglaLotacao.toUpperCase().trim()))) {
+					throw new AplicacaoException("Não é permitido a alteração do nome e sigla da unidade após criação de documento ou tramitação de documento para unidade.");
+				}
+				
+				//valida se pode inativar lotação
+				if(lotacao.getDataFim() == null && "false".equals(situacao)) {
+			        if(listPessoa.size() > 0 || qtdeDocumentoCriadosPosse > 0) {	        		 
+			        	throw new AplicacaoException("Inativação não permitida. Existem documentos e usuários vinculados nessa " + SigaMessages.getMessage("usuario.lotacao") , 0);
+			        } else if(dao().listarLotacoesPorPai(lotacao).size() > 0) {
+			        	throw new AplicacaoException("Inativação não permitida. Está " + SigaMessages.getMessage("usuario.lotacao") + " é pai de outra " + SigaMessages.getMessage("usuario.lotacao") , 0);
+			        } else {
+			        	lotacaoNova.setDataFimLotacao(data);
+			        }
+				}
+				lotacaoNova.setIdLotacaoIni(lotacao.getIdLotacaoIni());
+			} else {
+				lotacao = null;
 			}
-		}
-		
-		//valida se pode inativar lotação
-		if(lotacao.getDataFim() == null && "false".equals(situacao)) {
-			DpPessoaDaoFiltro pessoaFiltro = new DpPessoaDaoFiltro();
-	        pessoaFiltro.setLotacao(lotacao);
-	        pessoaFiltro.setNome("");
-	        Integer qtdePessoa = dao().consultarQuantidade(pessoaFiltro);
-	        Integer qtdeDocumento = dao().consultarQuantidadeDocumentosPorDpLotacao(lotacao);
-	               
-	        if(qtdePessoa > 0 || qtdeDocumento > 0) {
-	        	throw new AplicacaoException("Inativação não permitida. Existem documentos e usuários vinculados nessa Lotação", 0);
-	        } else {
-	        	Calendar calendar = new GregorianCalendar();
-	            Date date = new Date();
-	            calendar.setTime(date);
-	            lotacao.setDataFimLotacao(calendar.getTime());
-	        }
-		} else if(lotacao.getDataFim() != null && "true".equals(situacao)){
-			lotacao.setDataFimLotacao(null);
-		}
-		
-		if(lotacaoPai != null) {
-			lotacao.setLotacaoPai(CpDao.getInstance().consultarLotacaoPorId(lotacaoPai));
-		}
-		lotacao.setNomeLotacao(Texto.removerEspacosExtra(nmLotacao).trim());
-		lotacao.setSiglaLotacao(siglaLotacao.toUpperCase());
-		
-		CpLocalidade localidade = new CpLocalidade();
-		localidade.setIdLocalidade(idLocalidade);
-		lotacao.setLocalidade(dao().consultarLocalidade(localidade));
-		
-		if (idOrgaoUsu != null && idOrgaoUsu != 0 && (listPessoa == null || listPessoa.size() == 0)) {
-			CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
-			orgaoUsuario = dao().consultar(idOrgaoUsu, CpOrgaoUsuario.class, false);	
-			lotacao.setOrgaoUsuario(orgaoUsuario);
-		}
-		
-		if (isExternaLotacao != null) {
-			lotacao.setIsExternaLotacao(1);
-		} else {
-			lotacao.setIsExternaLotacao(0);	
-		}
-		
-		try {
-			dao().iniciarTransacao();
-			dao().gravar(lotacao);
-			if(lotacao.getIdLotacaoIni() == null && lotacao.getId() != null) {
-				lotacao.setIdLotacaoIni(lotacao.getId());
-				lotacao.setIdeLotacao(lotacao.getId().toString());
-				dao().gravar(lotacao);
+			
+			if(lotacaoPai != null) {
+				DpLotacao lotPai = new DpLotacao();
+				lotPai = CpDao.getInstance().consultarLotacaoPorId(lotacaoPai);
+				if(id != null) {
+					while(lotPai != null) {				
+						if(lotPai.getId().equals(id)) {
+							throw new AplicacaoException(SigaMessages.getMessage("usuario.lotacao") + " não pode ser selecionada como pai", 0);
+						} else if(lotPai.getLotacaoPai() != null) {
+							lotPai = CpDao.getInstance().consultarLotacaoPorId(lotPai.getLotacaoPai().getId());
+						} else {
+							lotPai = null;
+						}
+					}
+				}
+				lotacaoNova.setLotacaoPai(CpDao.getInstance().consultarLotacaoPorId(lotacaoPai));
 			}
-			dao().commitTransacao();			
-		} catch (final Exception e) {
-			dao().rollbackTransacao();
-			throw new AplicacaoException("Erro na gravação", 0, e);
+			lotacaoNova.setNomeLotacao(Texto.removerEspacosExtra(nmLotacao).trim());
+			lotacaoNova.setSiglaLotacao(siglaLotacao.toUpperCase());
+			
+			CpLocalidade localidade = new CpLocalidade();
+			localidade.setIdLocalidade(idLocalidade);
+			lotacaoNova.setLocalidade(dao().consultarLocalidade(localidade));
+			
+			if(lotacaoNova.getOrgaoUsuario() == null && lotacao != null) {
+				lotacaoNova.setOrgaoUsuario(lotacao.getOrgaoUsuario());
+			} else {
+				lotacaoNova.setOrgaoUsuario(ou);
+			}
+			
+			if (isExternaLotacao != null) {
+				lotacaoNova.setIsExternaLotacao(1);
+			} else {
+				lotacaoNova.setIsExternaLotacao(0);	
+			}
+			
+			lotacaoNova.setDataInicioLotacao(data);
+			DpLotacao lotacaoFilhoNova = null;
+			DpLotacao lotacaoFilhoAntiga = null;
+			try {
+				if(lotacaoNova.getDataFimLotacao() != null) {
+					lotacao.setDataFimLotacao(lotacaoNova.getDataFimLotacao());
+					dao().gravarComHistorico(lotacao, getIdentidadeCadastrante());
+				} else {
+					dao().gravarComHistorico(lotacaoNova, lotacao, data, getIdentidadeCadastrante());
+				}
+				
+				if(lotacao != null && lotacao.getId() != null) {
+					
+					DpPessoa pessoaNova = null;
+					for (DpPessoa dpPessoa : listPessoa) {
+						pessoaNova = new DpPessoa();
+						if(dpPessoa.getLotacao().getIdInicial().equals(lotacaoNova.getIdLotacaoIni())) {
+							pessoaNova.setLotacao(lotacaoNova);
+						} else {
+							if(dpPessoa.getLotacao().getLotacaoPai() != null && lotacaoNova.getId().equals(dpPessoa.getLotacao().getLotacaoAtual().getLotacaoPai().getId())) {
+								pessoaNova.setLotacao(dpPessoa.getLotacao().getLotacaoAtual());
+							} else {
+								//grava nova lotacao filho e setar na pessoa
+								lotacaoFilhoNova = new DpLotacao();
+								lotacaoFilhoAntiga =  dpPessoa.getLotacao().getLotacaoAtual();
+								
+								lotacaoFilhoNova.setDataInicio(data);
+								copiaLotacao(lotacaoFilhoAntiga, lotacaoFilhoNova);
+								
+								dao().gravarComHistorico(lotacaoFilhoNova, lotacaoFilhoAntiga, data, getIdentidadeCadastrante());
+								pessoaNova.setLotacao(lotacaoFilhoNova);
+							}
+						}				
+						copiarPessoa(dpPessoa, pessoaNova);
+						dao().gravarComHistorico(pessoaNova, dpPessoa, data, getIdentidadeCadastrante());
+					}
+				}
+			} catch (final Exception e) {
+				throw new AplicacaoException("Erro na gravação", 0, e);
+			}
 		}
 		this.result.redirectTo(this).lista(0, null, "");
 	}
 	
+	public void copiaLotacao(DpLotacao lotAnt, DpLotacao lotNova) {
+		lotNova.setNomeLotacao(lotAnt.getNomeLotacao());
+		lotNova.setSiglaLotacao(lotAnt.getSiglaLotacao());		
+		lotNova.setIsExternaLotacao(lotAnt.getIsExternaLotacao());
+		lotNova.setIdInicial(lotAnt.getIdInicial());
+		lotNova.setLocalidade(lotAnt.getLocalidade());
+		lotNova.setLotacaoPai(lotAnt.getLotacaoPai() != null ? lotAnt.getLotacaoPai().getLotacaoAtual() : null);
+		lotNova.setOrgaoUsuario(lotAnt.getOrgaoUsuario());
+	}
+	
+	public void copiarPessoa(DpPessoa pesAnt, DpPessoa pesNova) {
+		pesNova.setNomePessoa(pesAnt.getNomePessoa());
+		pesNova.setCpfPessoa(pesAnt.getCpfPessoa());
+		pesNova.setCargo(pesAnt.getCargo());
+		pesNova.setDataNascimento(pesAnt.getDataNascimento());
+		pesNova.setFuncaoConfianca(pesAnt.getFuncaoConfianca());
+		pesNova.setOrgaoUsuario(pesAnt.getOrgaoUsuario());
+		pesNova.setEmailPessoa(pesAnt.getEmailPessoa());
+		pesNova.setIdentidade(pesAnt.getIdentidade());
+		pesNova.setDataExpedicaoIdentidade(pesAnt.getDataExpedicaoIdentidade());
+		pesNova.setOrgaoIdentidade(pesAnt.getOrgaoIdentidade());
+		pesNova.setUfIdentidade(pesAnt.getUfIdentidade());
+		pesNova.setUfIdentidade(pesAnt.getUfIdentidade());
+		pesNova.setSesbPessoa(pesAnt.getSesbPessoa());
+		pesNova.setSituacaoFuncionalPessoa(pesAnt.getSituacaoFuncionalPessoa());
+		pesNova.setMatricula(pesAnt.getMatricula());
+		pesNova.setIdPessoaIni(pesAnt.getIdPessoaIni());
+		pesNova.setIdePessoa(pesAnt.getIdePessoa());
+	}
+	
     @Get("/app/lotacao/ativarInativar")
     public void ativarInativar(final Long id) throws Exception{
-
         DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
         
         //ativar
         if(lotacao.getDataFimLotacao() != null && !"".equals(lotacao.getDataFimLotacao())) {
-            lotacao.setDataFimLotacao(null);
-        } else {//inativar            
-            DpPessoaDaoFiltro pessoaFiltro = new DpPessoaDaoFiltro();
-            pessoaFiltro.setLotacao(lotacao);
-            pessoaFiltro.setNome("");
-            Integer qtdePessoa = dao().consultarQuantidade(pessoaFiltro);
-            Integer qtdeDocumento = dao().consultarQuantidadeDocumentosPorDpLotacao(lotacao);
+        	DpLotacao lotacaoNova = new DpLotacao();
+        	copiaLotacao(lotacao, lotacaoNova);
+        	dao().gravarComHistorico(lotacaoNova, lotacao, null, getIdentidadeCadastrante());
+        } else {//inativar 
+            Integer qtdePessoa = CpDao.getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE).size();
+			Integer qtdeDocumentoCriadosPosse = dao().consultarQtdeDocCriadosPossePorDpLotacao(lotacao.getIdInicial());
                    
-            if(qtdePessoa > 0 || qtdeDocumento > 0) {
-            	throw new AplicacaoException("Inativação não permitida. Existem documentos e usuários vinculados nessa Lotação", 0);
-            } else {
+            if(qtdePessoa > 0 || qtdeDocumentoCriadosPosse > 0) {
+            	throw new AplicacaoException("Inativação não permitida. Existem documentos e usuários vinculados nessa " + SigaMessages.getMessage("usuario.lotacao"), 0);
+            } else if(dao().listarLotacoesPorPai(lotacao).size() > 0) {
+	        	throw new AplicacaoException("Inativação não permitida. Está " + SigaMessages.getMessage("usuario.lotacao") + " é pai de outra " + SigaMessages.getMessage("usuario.lotacao") , 0);
+	        }else {
 	            Calendar calendar = new GregorianCalendar();
 	            Date date = new Date();
 	            calendar.setTime(date);
 	            lotacao.setDataFimLotacao(calendar.getTime());
 	            
 	            try {
-		              dao().iniciarTransacao();
-		              dao().gravar(lotacao);
-		              dao().commitTransacao();            
+		              dao().gravarComHistorico(lotacao, getIdentidadeCadastrante());        
 		          } catch (final Exception e) {
-		              dao().rollbackTransacao();
 		              throw new AplicacaoException("Erro na gravação", 0, e);
 		          }
             }

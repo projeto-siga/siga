@@ -140,6 +140,7 @@ public class Prop {
 		provider.addPublicProperty("/sigaex.autenticidade.url", base + "/sigaex/public/app/autenticar");
 		provider.addPublicProperty("/sigaex.url", base + "/sigaex");
 		provider.addPublicProperty("/sigaex.manual.url", base + "/siga/arquivos/apostila_sigaex.pdf");
+		
 
 		provider.addPrivateProperty("/xjus.jwt.secret", null);
 		provider.addPrivateProperty("/xjus.password", null);

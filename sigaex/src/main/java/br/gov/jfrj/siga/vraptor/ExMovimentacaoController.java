@@ -63,6 +63,7 @@ import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.Texto;
@@ -625,7 +626,7 @@ public class ExMovimentacaoController extends ExController {
 			afTramite.ativo = false;
 			afTramite.fixo = true;
 		}
-		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local")) 
+		if(Prop.isGovSP()
 				&& (doc.getDtFinalizacao() != null && !DateUtils.isToday(doc.getDtFinalizacao()))
 				&& doc.getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA).isEmpty()
 				&& doc.getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO).isEmpty()) {
@@ -913,8 +914,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("doc", doc);
 		result.include("mov", mov);
 		result.include("autenticando", autenticando);
-		result.include("enderecoAutenticacao",
-				SigaExProperties.getEnderecoAutenticidadeDocs());
+		result.include("enderecoAutenticacao", Prop.get("/sigaex.autenticidade.url"));
 		result.include("popup", popup);
 		result.include("request", getRequest());
 
@@ -3070,9 +3070,7 @@ public class ExMovimentacaoController extends ExController {
 							"Pedido cancelado pela unidade gestora do BI");
 
 			// Verifica se está na base de teste
-			String mensagemTeste = null;
-			if (!SigaExProperties.isAmbienteProducao())
-				mensagemTeste = SigaExProperties.getString("email.baseTeste");
+			String mensagemTeste = Ex.getInstance().getBL().mensagemDeTeste();
 
 			StringBuffer sb = new StringBuffer(
 					"Informamos que o pedido de publicação no Boletim Interno do documento "
@@ -3097,8 +3095,7 @@ public class ExMovimentacaoController extends ExController {
 			emailsSolicitantes.add(movPedidoBI.getCadastrante()
 					.getEmailPessoaAtual());
 
-			Correio.enviar(SigaBaseProperties
-					.getString("servidor.smtp.usuario.remetente"),
+			Correio.enviar(null,
 					emailsSolicitantes.toArray(new String[emailsSolicitantes
 							.size()]),
 					"Cancelamento de pedido de publicação no DJE ("
@@ -3217,9 +3214,7 @@ public class ExMovimentacaoController extends ExController {
 							"Pedido cancelado pela unidade gestora do DJE");
 
 			// Verifica se está na base de teste
-			String mensagemTeste = null;
-			if (!SigaExProperties.isAmbienteProducao())
-				mensagemTeste = SigaExProperties.getString("email.baseTeste");
+			String mensagemTeste = Ex.getInstance().getBL().mensagemDeTeste();
 
 			StringBuffer sb = new StringBuffer(
 					"Informamos que o pedido de publicação no DJE do documento "
@@ -3244,8 +3239,7 @@ public class ExMovimentacaoController extends ExController {
 			emailsSolicitantes.add(movPedidoDJE.getCadastrante()
 					.getEmailPessoaAtual());
 
-			Correio.enviar(SigaBaseProperties
-					.getString("servidor.smtp.usuario.remetente"),
+			Correio.enviar(null,
 					emailsSolicitantes.toArray(new String[emailsSolicitantes
 							.size()]),
 					"Cancelamento de pedido de publicação no DJE ("

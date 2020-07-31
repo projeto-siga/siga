@@ -9,9 +9,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import com.crivano.swaggerservlet.ISwaggerModel;
+
 import br.gov.jfrj.siga.base.Data;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -523,8 +525,7 @@ public class Mesa2 {
 							.parseInt(((dataMovimentacao.getTime() - dataHoje.getTime() - +3600000L) / 86400000L)
 									+ "");
 
-					String qtdDias = SigaBaseProperties
-							.getString("siga.qtdDiasDevolucao");
+					String qtdDias = Prop.get("/siga.devolucao.dias");
 					
 					if(qtdDias == null){
 						qtdDias = "5";

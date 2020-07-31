@@ -52,7 +52,7 @@ import org.jboss.logging.Logger;
 
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -71,7 +71,6 @@ import br.gov.jfrj.siga.ex.util.ProcessadorReferencias;
 import br.gov.jfrj.siga.ex.util.TipoMobilComparatorInverso;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.CarimboDeTempo;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 /**
  * A class that represents a row in the 'EX_DOCUMENTO' table. This class may be
@@ -212,8 +211,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 
 			if (getOrgaoUsuario() != null) {
 				try {
-					if (getAnoEmissao() >= SigaExProperties
-							.getAnoInicioAcronimoNoCodigoDoDocumento()) {
+					if (getAnoEmissao() >= Prop.getInt("codigo.acronimo.ano.inicial")) {
 						return getOrgaoUsuario().getAcronimoOrgaoUsu() + "-"
 								+ getExFormaDocumento().getSiglaFormaDoc()
 								+ "-" + getAnoEmissao() + "/" + s;
@@ -314,8 +312,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			if (siglaOrgaoUsu != null) {
 				try {
 					Long l_anoEmissao = Long.valueOf(anoEmissao);
-					if (l_anoEmissao >= SigaExProperties
-							.getAnoInicioAcronimoNoCodigoDoDocumento()) {
+					if (l_anoEmissao >= Prop.getInt("codigo.acronimo.ano.inicial")) {
 						return acronimoOrgaoUsu + "-" + siglaFormaDoc + "-"
 								+ anoEmissao + "/" + s;
 					} else {
@@ -706,7 +703,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			lotaBase = getLotaCadastrante();
 
 		if (s == null && lotaBase != null) {
-			if (SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))
+			if ("GOVSP".equals(Prop.get("/siga.local"))
 						&& lotaBase.getLocalidade() != null && lotaBase.getLocalidade().getNmLocalidade() != null) {
 				s = lotaBase.getLocalidade().getNmLocalidade();	
 			} else {
@@ -2806,7 +2803,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		
 	public boolean podeReordenar() {		
 		if (podeReordenar == null) 
-			podeReordenar = Boolean.valueOf(System.getProperty("siga.ex.documento.permitirUsuarioOrdenar"));				
+			podeReordenar = Prop.getBool("reordenacao.ativo");
+		if (podeReordenar == null)
+			return false;
 			
 		return podeReordenar;
 	}

@@ -3949,68 +3949,66 @@ public class ExBL extends CpBL {
 		if (idDocEscolha.equals("1")) {
 
 			if (mobPai == null)
-				throw new AplicacaoException("não foi selecionado um documento para a juntada");
+				throw new RegraNegocioException("Não foi selecionado um documento para a juntada");
 
 			if (mob.getExDocumento().getIdDoc().equals(mobPai.getExDocumento().getIdDoc())
 					&& mob.getNumSequencia().equals(mobPai.getNumSequencia())
 					&& mob.getExTipoMobil().getIdTipoMobil().equals(mobPai.getExTipoMobil().getIdTipoMobil()))
-				throw new AplicacaoException("não é possível juntar um documento a ele mesmo");
-
+				throw new RegraNegocioException("Não é possível juntar um documento a ele mesmo");					
+			
 			if (!mobPai.getExDocumento().isFinalizado())
-				throw new AplicacaoException("não é possível juntar a um documento não finalizado");
+				throw new RegraNegocioException("Não é possível juntar a um documento não finalizado");
 
 			if (mobPai.isGeral())
 				mobPai = mobPai.doc().getMobilDefaultParaReceberJuntada();
 
 			if (mobPai.isGeral()) {
-				throw new AplicacaoException("É necessário informar a via é qual será feita a juntada");
+				throw new RegraNegocioException("É necessário informar a via é qual será feita a juntada");
 			}
 
 			if (mob.doc().isEletronico()) {
 				if (mob.temAnexosNaoAssinados() || mob.temDespachosNaoAssinados())
-					throw new AplicacaoException(
-							"não é possível juntar documento com anexo/despacho pendente de assinatura ou conferência");
+					throw new RegraNegocioException(
+							"Não é possível juntar documento com anexo/despacho pendente de assinatura ou conferência");
 			}
 
 			if (!mob.getDoc().isEletronico() && mobPai.getDoc().isEletronico())
-				throw new AplicacaoException("não é possível juntar um documento físico a um documento eletrônico.");
+				throw new RegraNegocioException("Não é possível juntar um documento físico a um documento eletrônico.");
 
 			if (mobPai.isSobrestado())
-				throw new AplicacaoException("não é possível juntar um documento a um volume sobrestado.");
+				throw new RegraNegocioException("Não é possível juntar um documento a um volume sobrestado.");
 
 			// Verifica se o documeto pai já estáapensado a este documento
 			for (ExMobil apenso : mob.getApensos()) {
 				if (apenso.getId() == mobPai.getId())
-					throw new AplicacaoException(
-							"não é possível juntar um documento a um documento que está apensado a ele.");
+					throw new RegraNegocioException(
+							"Não é possível juntar um documento a um documento que está apensado a ele.");
 			}
 
 			if (mobPai.isSobrestado())
-				throw new AplicacaoException("não é possível juntar um documento a um volume sobrestado.");
+				throw new RegraNegocioException("Não é possível juntar um documento a um volume sobrestado.");
 
 			if (mobPai.isCancelada())
-				throw new AplicacaoException("A via não pode ser juntada ao documento porque ele está cancelado.");
+				throw new RegraNegocioException("A via não pode ser juntada ao documento porque ele está cancelado.");
 
 			if (mobPai.isVolumeEncerrado())
-				throw new AplicacaoException("A via não pode ser juntada ao documento porque o volume está encerrado.");
+				throw new RegraNegocioException("A via não pode ser juntada ao documento porque o volume está encerrado.");
 
 //			if (mobPai.doc().isPendenteDeAssinatura())
-//				throw new AplicacaoException(
+//				throw new RegraNegocioException(
 //						"A via não pode ser juntada ao documento porque ele está pendente de assinatura.");
 
 			if (mobPai.isJuntado())
-				throw new AplicacaoException("A via não pode ser juntada ao documento porque ele está juntado.");
+				throw new RegraNegocioException("A via não pode ser juntada ao documento porque ele está juntado.");
 
 			if (mobPai.isEmTransito())
-				throw new AplicacaoException("A via não pode ser juntada ao documento porque ele está em trânsito.");
+				throw new RegraNegocioException("A via não pode ser juntada ao documento porque ele está em trânsito.");
 
 			if (mobPai.isArquivado())
-				throw new AplicacaoException("A via não pode ser juntada ao documento porque ele está arquivado");
+				throw new RegraNegocioException("A via não pode ser juntada ao documento porque ele está arquivado");
 
 			if (!getComp().podeMovimentar(docTitular, lotaCadastrante, mobPai))
-				throw new AplicacaoException(
-						"A via não pode ser juntada ao documento porque ele não pode ser movimentado.");
-
+				throw new RegraNegocioException("A via não pode ser juntada ao documento porque ele não pode ser movimentado.");
 		}
 
 		final ExMovimentacao mov;
@@ -4809,10 +4807,14 @@ public class ExBL extends CpBL {
 		if (descrMov == null) {
 			if (responsavel == null && lotaResponsavel == null)
 				if (dtMov == null)
-					throw new AplicacaoException("não foram informados dados para a anotação");
+					throw new RegraNegocioException("Não foram informados dados para a anotação");
+		}
+		
+		if (descrMov.length() > 500) {
+			throw new RegraNegocioException("Descrição com mais de 500 caracteres");
 		}
 
-		try {
+		try {						
 			// criarWorkflow(cadastrante, lotaCadastrante, doc, "Exoneracao");
 			iniciarAlteracao();
 

@@ -1828,6 +1828,8 @@ public class ExBL extends CpBL {
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
+			log.error(e.getMessage(), e);
+			e.printStackTrace();
 			throw new AplicacaoException("Erro ao registrar assinatura.", 0, e);
 		}
 
@@ -2929,15 +2931,15 @@ public class ExBL extends CpBL {
 				doc.setOrgaoUsuario(doc.getLotaCadastrante().getOrgaoUsuario());
 
 			/*
-			 * Desabilita para São Paulo numeração realizada pelo Select Max. Numeração
+			 * Desabilita se configuracao ativa numeração realizada pelo Select Max. Numeração
 			 * controlada pela table EX_DOCUMENTO_NUMERACAO
 			 */
-			if (!SigaMessages.isSigaSP()) {
-				if (doc.getNumExpediente() == null)
-					doc.setNumExpediente(obterProximoNumero(doc));
-			} else {
+			if ("true".equalsIgnoreCase(SigaBaseProperties.getString("sigaex.controlarNumeracaoExpediente")) || SigaMessages.isSigaSP()) {
 				doc.setAnoEmissao((long) c.get(Calendar.YEAR));
 				doc.setNumExpediente(obterNumeroDocumento(doc));
+			} else {
+				if (doc.getNumExpediente() == null)
+					doc.setNumExpediente(obterProximoNumero(doc));
 			}
 
 			doc.setDtFinalizacao(dt);
@@ -4519,6 +4521,8 @@ public class ExBL extends CpBL {
 				s = processarComandosEmTag(doc, "assinatura");
 		} catch (final Exception e) {
 			cancelarAlteracao();
+			log.error(e.getMessage(), e);
+			e.printStackTrace();
 			throw new AplicacaoException("Erro ao registrar assinatura.", 0, e);
 		}
 		return s;
@@ -5476,6 +5480,7 @@ public class ExBL extends CpBL {
 			String cpf, String json) {
 		try {
 			String timestampUrl = Prop.get("carimbo.url");
+			log.warn("URL_TIMESTAMP " + timestampUrl);
 			if (timestampUrl == null)
 				return;
 			TimestampPostRequest req = new TimestampPostRequest();
@@ -5495,6 +5500,7 @@ public class ExBL extends CpBL {
 				throw new RuntimeException("Carimbo de tempo para a assinatura com senha indisponível");
 			mov.setAuditHash(resp.getResp().jwt);
 		} catch (Exception e) {
+			log.error(e.getMessage(), e);
 			throw new RuntimeException("Erro obtendo o carimbo de tempo para a assinatura com senha", e);
 		}
 	}
@@ -7141,12 +7147,17 @@ public class ExBL extends CpBL {
 		
 	}
 
-	public CpToken publicarTransparencia(ExMobil mob, DpPessoa cadastrante, DpLotacao lotaCadastrante, String[] listaMarcadores) {
-		
-		
+	public CpToken publicarTransparencia(ExMobil mob, DpPessoa cadastrante, DpLotacao lotaCadastrante, String[] listaMarcadores, boolean viaWS) {
 
-		/* 1- Redefinição para Público */
-		if (!Ex.getInstance().getComp().podeRedefinirNivelAcesso(cadastrante, lotaCadastrante,mob)) {
+		/* Verificação de autorização - Via WS é feito bypass*/
+		if (!viaWS && !Ex.getInstance().getComp().podePublicarPortalTransparencia(cadastrante, lotaCadastrante,mob)) {
+			throw new AplicacaoException(
+					"Não é possível " + SigaMessages.getMessage("documento.publicar.portaltransparencia"));
+		}
+		
+		
+		/* 1- Redefinição para Público - Via WS é feito bypass*/	
+		if (!viaWS && !Ex.getInstance().getComp().podeRedefinirNivelAcesso(cadastrante, lotaCadastrante,mob)) {
 			throw new AplicacaoException(
 					"Não é possível redefinir o nível de acesso");
 		}
@@ -7157,16 +7168,18 @@ public class ExBL extends CpBL {
 		/* END Redefinição para Público */
 		
 		
-		CpMarcador cpMarcador = new CpMarcador();
-		
 		/* 2- Gravação dos Marcadores */
-		for(String marcador: listaMarcadores) {
-		   cpMarcador = dao().consultar(Long.parseLong(marcador), CpMarcador.class, false);
-		   try {
-			vincularMarcador(cadastrante, lotaCadastrante, mob, null, lotaCadastrante, cadastrante, cadastrante, cadastrante, null, null, cpMarcador, true);
-		   } catch (Exception e) {
-				throw new AplicacaoException("Ocorreu um erro ao gravar marcadores");
-		   }
+		if (listaMarcadores != null) {
+			CpMarcador cpMarcador = new CpMarcador();
+			
+			for(String marcador: listaMarcadores) {
+			   cpMarcador = dao().consultar(Long.parseLong(marcador), CpMarcador.class, false);
+			   try {
+				vincularMarcador(cadastrante, lotaCadastrante, mob, null, lotaCadastrante, cadastrante, cadastrante, cadastrante, null, null, cpMarcador, true);
+			   } catch (Exception e) {
+					throw new AplicacaoException("Ocorreu um erro ao gravar marcadores");
+			   }
+			}
 		}
 		
 		/* END Gravação dos Marcadores  */
@@ -7266,16 +7279,42 @@ public class ExBL extends CpBL {
 	    marcadoresJson.put("marcadorMobil", doc.getPrimeiroMobil().getMarcadores());
 	    
 	    documentoJson.put("marcadores", marcadoresJson);
-	        
-	    
-	    
-	    
+
 	    // converte objetos Java para JSON e retorna JSON como String
 	    String json = gson.toJson(documentoJson);
 
-	
-
 		return json;
 		
+	}
+	
+	public String marcadoresGeraisTaxonomiaAdministradaToJSON() throws Exception {
+		Gson gson = new Gson();
+
+		ArrayList<HashMap<String, Object>> objectJson = new ArrayList<>();
+		try {
+			List<CpMarcador> listaMarcadores = dao().listarCpMarcadoresGeraisTaxonomiaAdministrada();
+			
+			for (CpMarcador marcador : listaMarcadores) {
+				HashMap<String, Object> marcadorJson = new HashMap<String, Object>();
+				HashMap<String, Object> tipoMarcadorJson = new HashMap<String, Object>();
+				
+				marcadorJson.put("id", marcador.getIdMarcador());
+				marcadorJson.put("descMarcador", marcador.getDescrMarcador());
+				
+				tipoMarcadorJson.put("idTipoMarcador", marcador.getCpTipoMarcador().getIdTpMarcador());
+				tipoMarcadorJson.put("descTipoMarcador", marcador.getCpTipoMarcador().getDescrTipoMarcador());
+				marcadorJson.put("tipoMarcador", tipoMarcadorJson);
+				
+				objectJson.add(marcadorJson);
+			}
+			
+			// converte objetos Java para JSON e retorna JSON como String
+		    String json = gson.toJson(objectJson);    
+		    return json;
+		} catch (Exception e) {
+			throw new AplicacaoException("Ocorreu um erro na conversão dos marcadores para JSON.");
+		} finally {
+			objectJson = null;
+		}
 	}
 }

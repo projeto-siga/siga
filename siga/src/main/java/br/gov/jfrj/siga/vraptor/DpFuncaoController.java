@@ -199,7 +199,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 			result.include("idOrgaoUsu", funcao.getOrgaoUsuario().getId());
 			result.include("nmOrgaousu", funcao.getOrgaoUsuario().getNmOrgaoUsu());
 			
-			List<DpPessoa> list = dao().getInstance().consultarPessoasComFuncaoConfianca(id);
+			List<DpPessoa> list = CpDao.getInstance().consultarPessoasComFuncaoConfianca(id);
 			if(list.size() == 0) {
 				result.include("podeAlterarOrgao", Boolean.TRUE);
 			}
@@ -239,7 +239,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 		ou.setIdOrgaoUsu(idOrgaoUsu);
 		funcao.setOrgaoUsuario(ou);
 		
-		funcao = dao().getInstance().consultarPorNomeOrgao(funcao);
+		funcao = CpDao.getInstance().consultarPorNomeOrgao(funcao);
 		
 		if(funcao != null && !funcao.getId().equals(id)) {
 			throw new AplicacaoException("Nome da função já cadastrado!");
@@ -257,7 +257,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 			
 		} else {
 			funcao = dao().consultar(id, DpFuncaoConfianca.class, false);
-			listPessoa = dao().getInstance().consultarPessoasComFuncaoConfianca(id);
+			listPessoa = CpDao.getInstance().consultarPessoasComFuncaoConfianca(id);
 			
 		}
 		funcao.setNomeFuncao(Texto.removerEspacosExtra(nmFuncao).trim());

@@ -12,9 +12,11 @@
 	<c:set var="siga_mesaCarregaLotacao" scope="session" value="${f:resource('/siga.mesa.carrega.lotacao')}" />
 	<div id="app" class="container-fluid content" >
 		<div id="configMenu" class="mesa-config ml-auto" :class="toggleConfig">
-			<button type="button" class="btn-mesa-config btn btn-secondary btn-sm h-100" @click="toggleMenuConfig();">
-				<i class="fas fa-cog"></i>
-			</button>
+			<c:if test="${!ehPublicoExterno}">
+				<button type="button" class="btn-mesa-config btn btn-secondary btn-sm h-100" @click="toggleMenuConfig();">
+					<i class="fas fa-cog"></i>
+				</button>
+			</c:if>
 			<div class="form-config border-bottom p-2">
 				<h6>Configurações da Mesa Virtual</h6>
 	            <i><small>Quanto menos informações forem solicitadas, mais rapidamente a mesa carregará.</small></i>
@@ -83,16 +85,20 @@
 					<c:if test="${not empty visualizacao}"><b>(Delegante: ${visualizacao.titular.nomePessoa})</b></c:if> 
 				</span> 
 			</div> 
-			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos') && !ehPublicoExterno}">
-				<div class="col col-12 col-sm-4 col-md-auto pr-md-0 ml-md-auto mb-2">
-					<a href="expediente/doc/editar" class="btn btn-success form-control"> <i class="fas fa-plus-circle mr-1"></i>
-						<fmt:message key="documento.novo"/></a>
-				</div>
-				<div class="col col-12 col-sm-4 col-md-auto mb-2">
-					<a href="expediente/doc/listar?primeiraVez=sim" class="btn btn-primary form-control">
-						<i class="fas fa-search mr-1"></i><fmt:message key="documento.pesquisar"/> 
-					</a>
-				</div>
+			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos')}">
+				<c:if test="${!ehPublicoExterno || (siga_cliente == 'GOVSP' && ehPublicoExterno && podeNovoDocumento)}">
+					<div class="col col-12 col-sm-4 col-md-auto ml-md-auto mb-2">
+						<a href="expediente/doc/editar" class="btn btn-success form-control"> <i class="fas fa-plus-circle mr-1"></i>
+							<fmt:message key="documento.novo"/></a>
+					</div>
+				</c:if>
+				<c:if test="${!ehPublicoExterno}">
+					<div class="col col-12 col-sm-4 col-md-auto pl-md-0 mb-2">
+						<a href="expediente/doc/listar?primeiraVez=sim" class="btn btn-primary form-control">
+							<i class="fas fa-search mr-1"></i><fmt:message key="documento.pesquisar"/> 
+						</a>
+					</div>
+				</c:if>
 			</c:if>
 		</div>
 		<div id="rowTopMesa" style="z-index: 1" class="row sticky-top px-3 pt-1 bg-white shadow-sm" 

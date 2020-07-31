@@ -418,7 +418,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				c.setId(0L);
 				c.setDescricao("Selecione");
 				lista.add(c);
-				lista.addAll((List<DpCargo>) dao().getInstance().consultarPorFiltro(cargo));
+				lista.addAll((List<DpCargo>) CpDao.getInstance().consultarPorFiltro(cargo));
 				result.include("listaCargo", lista);
 
 				DpLotacaoDaoFiltro lotacao = new DpLotacaoDaoFiltro();
@@ -428,8 +428,13 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				DpLotacao l = new DpLotacao();
 				l.setNomeLotacao("Selecione");
 				l.setId(0L);
+				l.setSiglaLotacao("");
+				CpOrgaoUsuario cpOrgaoUsuario = new CpOrgaoUsuario();
+				cpOrgaoUsuario.setIdOrgaoUsu(0L);
+				cpOrgaoUsuario.setSiglaOrgaoUsu("");
+				l.setOrgaoUsuario(cpOrgaoUsuario);
 				listaLotacao.add(l);
-				listaLotacao.addAll(dao().getInstance().consultarPorFiltro(lotacao));
+				listaLotacao.addAll(CpDao.getInstance().consultarPorFiltro(lotacao));
 				result.include("listaLotacao", listaLotacao);
 
 				DpFuncaoConfiancaDaoFiltro funcao = new DpFuncaoConfiancaDaoFiltro();
@@ -440,7 +445,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				f.setNomeFuncao("Selecione");
 				f.setIdFuncao(0L);
 				listaFuncao.add(f);
-				listaFuncao.addAll(dao().getInstance().consultarPorFiltro(funcao));
+				listaFuncao.addAll(CpDao.getInstance().consultarPorFiltro(funcao));
 				result.include("listaFuncao", listaFuncao);
 
 				result.include("request", getRequest());
@@ -510,7 +515,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		c.setId(0L);
 		c.setDescricao("Selecione");
 		lista.add(c);
-		lista.addAll((List<DpCargo>) dao().getInstance().consultarPorFiltro(cargo));
+		lista.addAll((List<DpCargo>) CpDao.getInstance().consultarPorFiltro(cargo));
 		result.include("listaCargo", lista);
 
 		DpLotacaoDaoFiltro lotacao = new DpLotacaoDaoFiltro();
@@ -520,9 +525,14 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		DpLotacao l = new DpLotacao();
 		l.setNomeLotacao("Selecione");
 		l.setId(0L);
+		l.setSiglaLotacao("");
+		CpOrgaoUsuario cpOrgaoUsuario = new CpOrgaoUsuario();
+		cpOrgaoUsuario.setIdOrgaoUsu(0L);
+		cpOrgaoUsuario.setSiglaOrgaoUsu("");
+		l.setOrgaoUsuario(cpOrgaoUsuario);
 		listaLotacao.add(l);
 		if (idOrgaoUsu != null && idOrgaoUsu != 0)
-			listaLotacao.addAll(dao().getInstance().consultarPorFiltro(lotacao));
+			listaLotacao.addAll(CpDao.getInstance().consultarPorFiltro(lotacao));
 		result.include("listaLotacao", listaLotacao);
 
 		DpFuncaoConfiancaDaoFiltro funcao = new DpFuncaoConfiancaDaoFiltro();
@@ -533,7 +543,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		f.setNomeFuncao("Selecione");
 		f.setIdFuncao(0L);
 		listaFuncao.add(f);
-		listaFuncao.addAll(dao().getInstance().consultarPorFiltro(funcao));
+		listaFuncao.addAll(CpDao.getInstance().consultarPorFiltro(funcao));
 		result.include("listaFuncao", listaFuncao);
 		
 		
@@ -697,10 +707,12 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		List<DpPessoa> listaPessoasMesmoCPF = new ArrayList<DpPessoa>();
 		DpPessoa pessoa2 = new DpPessoa();
 		
-		listaPessoasMesmoCPF.addAll(dao().listarCpfAtivoInativoNomeDiferente(pessoa.getCpfPessoa(), pessoa.getNomePessoa()));
+	
+		listaPessoasMesmoCPF.addAll(dao().listarCpfAtivoInativo(pessoa.getCpfPessoa()));
+		
 		
 		try {
-			dao().iniciarTransacao();
+	//		dao().em().getTransaction().begin();
 
 			if(pessoaAnt != null && pessoaAnt.getId() != null) {
 				pessoa.setMatricula(pessoaAnt.getMatricula());
@@ -741,6 +753,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			}
 			
 			for (DpPessoa dpPessoaAnt2 : listaPessoasMesmoCPF) {
+				if (dpPessoaAnt2.getNomePessoa().equalsIgnoreCase(pessoa.getNomePessoa())) continue;
 				if(!dpPessoaAnt2.getId().equals(id)) {
 					pessoa2 = new DpPessoa();
 					pessoa2.setNomePessoa(pessoa.getNomePessoa());
@@ -762,9 +775,9 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				}
 			}
 
-			dao().commitTransacao();
+		//	dao().em().getTransaction().commit();
 		} catch (final Exception e) {
-			dao().rollbackTransacao();
+		//	dao().em().getTransaction().rollback();
 			throw new AplicacaoException("Erro na gravação", 0, e);
 		}
 		lista(0, null, "", "", null, null, null, "", null);

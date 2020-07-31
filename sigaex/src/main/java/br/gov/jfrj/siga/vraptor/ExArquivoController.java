@@ -173,7 +173,7 @@ public class ExArquivoController extends ExController {
 						: (volumes ? mob.doc().getReferenciaHtml() : mob.getReferenciaHtml());
 				DocumentoSiglaArquivoGet.iniciarGeracaoDePdf(req, resp, ContextoPersistencia.getUserPrincipal(),
 						filename, contextpath, servernameport);
-				result.redirectTo("/app/arquivo/status/" + URLEncoder.encode(req.sigla, "utf-8") + "/" + resp.uuid + "/"
+				result.redirectTo("/app/arquivo/status/" + mob.getCodigoCompacto() + "/" + resp.uuid + "/"
 						+ resp.jwt + "/" + filename);
 				return null;
 			}
@@ -270,13 +270,15 @@ public class ExArquivoController extends ExController {
 	}
 	
 	@Get("/public/app/arquivo/obterDownloadDocumento")
-	public Download aObterDownloadDocumento(final String t, boolean completo, final boolean semmarcas, final String mime) throws Exception  {
+	public Download aObterDownloadDocumento(final String t, boolean completo, final boolean semmarcas, final boolean volumes, final String mime) throws Exception  {
 		try {
 
 			boolean isPdf = "PDF".equalsIgnoreCase(mime);
 			boolean isHtml = "HTML".equalsIgnoreCase(mime); /*TODO: implementar*/
 			
-	
+			final String servernameport = getRequest().getServerName() + ":" + getRequest().getServerPort();
+			final String contextpath = getRequest().getContextPath();
+			
 			String token = verifyJwtToken(t).get("token").toString();
 			
 			CpToken cpToken = new CpToken();
@@ -294,10 +296,34 @@ public class ExArquivoController extends ExController {
 				throw new RuntimeException("Documento não está disponível para acesso público.");
 			}
 			
+			
+			/*TODO: Implementar bloco para escrita em disco e controle do status 
+			if ((isPdf || isHtml) && completo && mob != null) {
+				DocumentoSiglaArquivoGet act = new DocumentoSiglaArquivoGet();
+				DocumentoSiglaArquivoGetRequest req = new DocumentoSiglaArquivoGetRequest();
+				DocumentoSiglaArquivoGetResponse resp = new DocumentoSiglaArquivoGetResponse();
+				req.sigla = mob.getSigla();
+				req.contenttype = isPdf ? "application/pdf" : "text/html";
+				req.estampa = semmarcas;
+				req.completo = completo;
+				req.volumes = volumes;
+				String filename = isPdf ? (volumes ? mob.doc().getReferenciaPDF() : mob.getReferenciaPDF())
+						: (volumes ? mob.doc().getReferenciaHtml() : mob.getReferenciaHtml());
+				DocumentoSiglaArquivoGet.iniciarGeracaoDePdf(req, resp, ContextoPersistencia.getUserPrincipal(),
+						filename, contextpath, servernameport);
+				result.redirectTo("/app/arquivo/status/" + URLEncoder.encode(req.sigla, "utf-8") + "/" + resp.uuid + "/"
+						+ resp.jwt + "/" + filename);
+				return null;
+			}
+			*/
+			
 			byte ab[] = null;
 	
 			if (isPdf) {
-				ab = null;// Documento.getDocumento(mob, null, completo, semmarcas, null, null); //TODO: Quebrada assinatura do método. Reimplementar.
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				Documento.getDocumento(baos, null, mob, null, completo, semmarcas, volumes, null, null);
+				ab = baos.toByteArray();
+				
 				if (ab == null) {
 					throw new Exception("Arquivo PDF inválido!");
 				}

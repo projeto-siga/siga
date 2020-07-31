@@ -4760,6 +4760,19 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA,
 								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR)) ;
 	}
+	
+	public boolean podePublicarPortalTransparenciaWS(final DpPessoa cadastrante,
+			final DpLotacao lotacao, final ExMobil mob) {
+		
+		
+		return (mob.doc().isFinalizado() 
+				&& !mob.doc().isSemEfeito() 
+				&& !mob.doc().isEliminado()
+				&& !mob.doc().isPendenteDeAssinatura()
+				&& (mob.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA).size() == 0)
+				&& getConf().podePorConfiguracao(cadastrante, lotacao,
+						CpTipoConfiguracao.TIPO_CONFIG_AUTORIZAR_MOVIMENTACAO_POR_WS));
+	}
 
 	public boolean ehPublicoExterno(DpPessoa titular) {
 		// TODO Auto-generated method stub

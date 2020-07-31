@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import com.auth0.jwt.JWTVerifyException;
 
 import br.gov.jfrj.siga.Service;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.gi.service.GiService;
 
@@ -35,7 +36,7 @@ public class SigaJwtBL {
 	}
 
 	public SigaJwtProvider getProvider(String modulo) throws SigaJwtProviderException {
-		int ttl = Cp.getInstance().getProp().getJWTTokenTTL(modulo);
+		int ttl = Prop.getInt("/siga.jwt.token.ttl");
 		String moduloPwd = null;
 
 		if (modulo == null) {
@@ -43,7 +44,7 @@ public class SigaJwtBL {
 		}
 
 		try {
-			moduloPwd = Cp.getInstance().getProp().getJWTModuloPwd(modulo);
+			moduloPwd = Prop.get("/siga.jwt.secret");
 			if (moduloPwd == null) {
 				throw new SigaJwtProviderException(
 						"Senha do modulo indefinida. Defina a propriedade idp.jwt.modulo.pwd." + modulo);

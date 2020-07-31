@@ -27,6 +27,7 @@ import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
 import br.gov.jfrj.itextpdf.Documento;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.model.Objeto;
 @MappedSuperclass
@@ -154,7 +155,7 @@ public abstract class ExArquivo extends Objeto {
 			sMensagem += getAssinantesCompleto();
 			sMensagem += "Documento Nº: " + getSiglaAssinatura()
 					+ " - consulta à autenticidade em "
-					+ SigaExProperties.getEnderecoAutenticidadeDocs() + "?n="+getSiglaAssinatura();
+					+ Prop.get("/sigaex.autenticidade.url") + "?n="+getSiglaAssinatura();
 		}
 		return sMensagem;
 	}
@@ -221,7 +222,7 @@ public abstract class ExArquivo extends Objeto {
 	public String getQRCode() {
 		if (isAssinadoDigitalmente()) {
 			String sQRCode;
-			sQRCode = SigaExProperties.getEnderecoAutenticidadeDocs() + "?n="
+			sQRCode = Prop.get("/sigaex.autenticidade.url") + "?n="
 					+ getSiglaAssinatura();
 			return sQRCode;
 		}

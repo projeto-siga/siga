@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
 
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
 
 /**
  * 
@@ -90,15 +90,15 @@ public class LoadProperties {
 		 * PARAMETERS 
 		 * standalone.xml
 		 */
-		parametersOIDC.setIss(SigaBaseProperties.getString(sso_dominio) + iss);
-		parametersOIDC.setJwksUri(SigaBaseProperties.getString(sso_dominio)  + jwksUri);		
-		parametersOIDC.setAuthzUri(SigaBaseProperties.getString(sso_dominio)  + authzUri); 
-		parametersOIDC.setTokenUri(SigaBaseProperties.getString(sso_dominio ) + tokenUri);
-		parametersOIDC.setUserInfoUri(SigaBaseProperties.getString(sso_dominio)  + userInfoUri);
+		parametersOIDC.setIss(Prop.get(sso_dominio) + iss);
+		parametersOIDC.setJwksUri(Prop.get(sso_dominio)  + jwksUri);		
+		parametersOIDC.setAuthzUri(Prop.get(sso_dominio)  + authzUri); 
+		parametersOIDC.setTokenUri(Prop.get(sso_dominio ) + tokenUri);
+		parametersOIDC.setUserInfoUri(Prop.get(sso_dominio)  + userInfoUri);
 
-		parametersOIDC.setClientId(SigaBaseProperties.getString(clientId));
-		parametersOIDC.setClientSecret(SigaBaseProperties.getString(clientSecret));
-		parametersOIDC.setRedirectUri(SigaBaseProperties.getString(redirectUri));
+		parametersOIDC.setClientId(Prop.get(clientId));
+		parametersOIDC.setClientSecret(Prop.get(clientSecret));
+		parametersOIDC.setRedirectUri(Prop.get(redirectUri));
 		
 		/*
 		 * PARAMETERS 

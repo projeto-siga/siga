@@ -171,11 +171,11 @@ public class DpCargoController extends
 			if (lista.size() > 0) {				
 				InputStream inputStream = null;
 				StringBuffer texto = new StringBuffer();
-				texto.append("Cargo" + System.getProperty("line.separator"));
+				texto.append("Cargo" + System.lineSeparator());
 				
 				for (DpCargo cargo : lista) {
 					texto.append(cargo.getNomeCargo() + ";");										
-					texto.append(System.getProperty("line.separator"));
+					texto.append(System.lineSeparator());
 				}
 				
 				inputStream = new ByteArrayInputStream(texto.toString().getBytes("ISO-8859-1"));									

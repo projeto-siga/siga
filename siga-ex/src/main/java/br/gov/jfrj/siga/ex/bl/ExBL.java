@@ -91,7 +91,9 @@ import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.Par;
+import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.util.SetUtils;
@@ -138,7 +140,6 @@ import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExVia;
-import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.BIE.BoletimInternoBL;
 import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
 import br.gov.jfrj.siga.ex.service.ExService;
@@ -652,9 +653,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExMobil());
 
 			try {
-				String mensagemTeste = null;
-				if (!SigaExProperties.isAmbienteProducao())
-					mensagemTeste = SigaExProperties.getString("email.baseTeste");
+				String mensagemTeste = mensagemDeTeste();
 
 				StringBuffer sb = new StringBuffer("Documento publicado no Boletim Interno " + doc.getCodigo());
 
@@ -673,13 +672,13 @@ public class ExBL extends CpBL {
 				sbHtml.append("</body></html>");
 
 				String emailsAtendentes[] = null;
-				String sDest = SigaExProperties.getString("bie.lista.destinatario.publicacao");
+				String sDest = Prop.get("bie.lista.destinatario.publicacao");
 
 				if (sDest != null && !sDest.isEmpty())
 					emailsAtendentes = sDest.split(",");
 
 				if (emailsAtendentes != null && emailsAtendentes.length > 0) {
-					Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"), emailsAtendentes,
+					Correio.enviar(null, emailsAtendentes,
 							"Documento disponibilizado no Boletim Interno " + doc.getCodigo(), sb.toString(),
 							sbHtml.toString());
 				}
@@ -690,6 +689,13 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao notificar publicação.", 0, e);
 		}
+	}
+
+	public String mensagemDeTeste() {
+		String mensagemTeste = null;
+		if (!"prod".equals(Prop.get("/siga.ambiente")))
+			mensagemTeste = Prop.get("email.mensagem.teste");
+		return mensagemTeste;
 	}
 
 	// Edson: os métodos abaixo apenas repassam a chamada aos correspondentes
@@ -752,10 +758,7 @@ public class ExBL extends CpBL {
 			gravarMovimentacao(mov);
 
 			// Verifica se está na base de teste
-			String mensagemTeste = null;
-			if (!SigaExProperties.isAmbienteProducao())
-				mensagemTeste = SigaExProperties.getString("email.baseTeste");
-
+			String mensagemTeste = mensagemDeTeste();
 			StringBuffer sb = new StringBuffer("Foi feita uma solicitação de remessa do documento "
 					+ mob.getExDocumento().getCodigo() + " para publicação no DJE.\n ");
 
@@ -797,7 +800,7 @@ public class ExBL extends CpBL {
 				}
 			}
 
-			Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
+			Correio.enviar(null,
 					emailsAtendentes.toArray(new String[emailsAtendentes.size()]),
 					"Nova solicitação de publicação DJE (" + mov.getLotaCadastrante().getSiglaLotacao() + ") ",
 					sb.toString(), sbHtml.toString());
@@ -826,10 +829,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExMobil());
 
 			try {
-				String mensagemTeste = null;
-				if (!SigaExProperties.isAmbienteProducao())
-					mensagemTeste = SigaExProperties.getString("email.baseTeste");
-
+				String mensagemTeste = mensagemDeTeste();
 				StringBuffer sb = new StringBuffer(
 						"Documento disponibilizado no Diário " + mob.getExDocumento().getCodigo());
 
@@ -849,13 +849,13 @@ public class ExBL extends CpBL {
 				sbHtml.append("</body></html>");
 
 				String emailsAtendentes[] = null;
-				String sDest = SigaExProperties.getString("dje.lista.destinatario.publicacao");
+				String sDest = Prop.get("dje.lista.destinatario.publicacao");
 
 				if (sDest != null && !sDest.isEmpty())
 					emailsAtendentes = sDest.split(",");
 
 				if (emailsAtendentes != null && emailsAtendentes.length > 0) {
-					Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"), emailsAtendentes,
+					Correio.enviar(null, emailsAtendentes,
 							"Documento disponibilizado no Diário " + mob.getExDocumento().getCodigo(), sb.toString(),
 							sbHtml.toString());
 				}
@@ -1830,6 +1830,8 @@ public class ExBL extends CpBL {
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
+			log.error(e.getMessage(), e);
+			e.printStackTrace();
 			throw new AplicacaoException("Erro ao registrar assinatura.", 0, e);
 		}
 
@@ -3249,11 +3251,10 @@ public class ExBL extends CpBL {
 			String uri = obterURIDoDocumento(documento.getSigla());
 			String conteudoHTML = Correio.obterHTMLEmailParaUsuarioExternoAssinarDocumento(uri, documento.getSigla(), pessoaSubscritorOuCossignatario.getSigla());			
 			String destinatario[] = { pessoaSubscritorOuCossignatario.getEmailPessoaAtual() };						
-			String remetente = SigaBaseProperties.getString("servidor.smtp.usuario.remetente");
 			String assunto = "Acesso ao documento nº " + documento;
 			
 			try {
-				Correio.enviar(remetente, destinatario, assunto, assunto, conteudoHTML);
+				Correio.enviar(null, destinatario, assunto, assunto, conteudoHTML);
 			} catch (Exception e) {
 				System.out.println("Problemas ao enviar e-mail para usuário externo assinar documento. Erro: " + e.getMessage());
 			}
@@ -3948,68 +3949,66 @@ public class ExBL extends CpBL {
 		if (idDocEscolha.equals("1")) {
 
 			if (mobPai == null)
-				throw new AplicacaoException("não foi selecionado um documento para a juntada");
+				throw new RegraNegocioException("Não foi selecionado um documento para a juntada");
 
 			if (mob.getExDocumento().getIdDoc().equals(mobPai.getExDocumento().getIdDoc())
 					&& mob.getNumSequencia().equals(mobPai.getNumSequencia())
 					&& mob.getExTipoMobil().getIdTipoMobil().equals(mobPai.getExTipoMobil().getIdTipoMobil()))
-				throw new AplicacaoException("não é possível juntar um documento a ele mesmo");
-
+				throw new RegraNegocioException("Não é possível juntar um documento a ele mesmo");					
+			
 			if (!mobPai.getExDocumento().isFinalizado())
-				throw new AplicacaoException("não é possível juntar a um documento não finalizado");
+				throw new RegraNegocioException("Não é possível juntar a um documento não finalizado");
 
 			if (mobPai.isGeral())
 				mobPai = mobPai.doc().getMobilDefaultParaReceberJuntada();
 
 			if (mobPai.isGeral()) {
-				throw new AplicacaoException("É necessário informar a via é qual será feita a juntada");
+				throw new RegraNegocioException("É necessário informar a via é qual será feita a juntada");
 			}
 
 			if (mob.doc().isEletronico()) {
 				if (mob.temAnexosNaoAssinados() || mob.temDespachosNaoAssinados())
-					throw new AplicacaoException(
-							"não é possível juntar documento com anexo/despacho pendente de assinatura ou conferência");
+					throw new RegraNegocioException(
+							"Não é possível juntar documento com anexo/despacho pendente de assinatura ou conferência");
 			}
 
 			if (!mob.getDoc().isEletronico() && mobPai.getDoc().isEletronico())
-				throw new AplicacaoException("não é possível juntar um documento físico a um documento eletrônico.");
+				throw new RegraNegocioException("Não é possível juntar um documento físico a um documento eletrônico.");
 
 			if (mobPai.isSobrestado())
-				throw new AplicacaoException("não é possível juntar um documento a um volume sobrestado.");
+				throw new RegraNegocioException("Não é possível juntar um documento a um volume sobrestado.");
 
 			// Verifica se o documeto pai já estáapensado a este documento
 			for (ExMobil apenso : mob.getApensos()) {
 				if (apenso.getId() == mobPai.getId())
-					throw new AplicacaoException(
-							"não é possível juntar um documento a um documento que está apensado a ele.");
+					throw new RegraNegocioException(
+							"Não é possível juntar um documento a um documento que está apensado a ele.");
 			}
 
 			if (mobPai.isSobrestado())
-				throw new AplicacaoException("não é possível juntar um documento a um volume sobrestado.");
+				throw new RegraNegocioException("Não é possível juntar um documento a um volume sobrestado.");
 
 			if (mobPai.isCancelada())
-				throw new AplicacaoException("A via não pode ser juntada ao documento porque ele está cancelado.");
+				throw new RegraNegocioException("A via não pode ser juntada ao documento porque ele está cancelado.");
 
 			if (mobPai.isVolumeEncerrado())
-				throw new AplicacaoException("A via não pode ser juntada ao documento porque o volume está encerrado.");
+				throw new RegraNegocioException("A via não pode ser juntada ao documento porque o volume está encerrado.");
 
 //			if (mobPai.doc().isPendenteDeAssinatura())
-//				throw new AplicacaoException(
+//				throw new RegraNegocioException(
 //						"A via não pode ser juntada ao documento porque ele está pendente de assinatura.");
 
 			if (mobPai.isJuntado())
-				throw new AplicacaoException("A via não pode ser juntada ao documento porque ele está juntado.");
+				throw new RegraNegocioException("A via não pode ser juntada ao documento porque ele está juntado.");
 
 			if (mobPai.isEmTransito())
-				throw new AplicacaoException("A via não pode ser juntada ao documento porque ele está em trânsito.");
+				throw new RegraNegocioException("A via não pode ser juntada ao documento porque ele está em trânsito.");
 
 			if (mobPai.isArquivado())
-				throw new AplicacaoException("A via não pode ser juntada ao documento porque ele está arquivado");
+				throw new RegraNegocioException("A via não pode ser juntada ao documento porque ele está arquivado");
 
 			if (!getComp().podeMovimentar(docTitular, lotaCadastrante, mobPai))
-				throw new AplicacaoException(
-						"A via não pode ser juntada ao documento porque ele não pode ser movimentado.");
-
+				throw new RegraNegocioException("A via não pode ser juntada ao documento porque ele não pode ser movimentado.");
 		}
 
 		final ExMovimentacao mov;
@@ -4522,6 +4521,8 @@ public class ExBL extends CpBL {
 				s = processarComandosEmTag(doc, "assinatura");
 		} catch (final Exception e) {
 			cancelarAlteracao();
+			log.error(e.getMessage(), e);
+			e.printStackTrace();
 			throw new AplicacaoException("Erro ao registrar assinatura.", 0, e);
 		}
 		return s;
@@ -4808,10 +4809,14 @@ public class ExBL extends CpBL {
 		if (descrMov == null) {
 			if (responsavel == null && lotaResponsavel == null)
 				if (dtMov == null)
-					throw new AplicacaoException("não foram informados dados para a anotação");
+					throw new RegraNegocioException("Não foram informados dados para a anotação");
+		}
+		
+		if (descrMov.length() > 500) {
+			throw new RegraNegocioException("Descrição com mais de 500 caracteres");
 		}
 
-		try {
+		try {						
 			// criarWorkflow(cadastrante, lotaCadastrante, doc, "Exoneracao");
 			iniciarAlteracao();
 
@@ -5108,10 +5113,10 @@ public class ExBL extends CpBL {
 					if (doc.isProcesso()) {
 						ExModelo modPA = dao().consultarExModelo(null,
 								MODELO_FOLHA_DE_ROSTO_PROCESSO_ADMINISTRATIVO_INTERNO);
-						idMod = modPA != null ? modPA.getId() : SigaExProperties.getIdModPA();
+						idMod = modPA != null ? modPA.getId() : Prop.getInt("modelo.processo.administrativo");
 					} else {
 						ExModelo modInterno = dao().consultarExModelo(null, MODELO_FOLHA_DE_ROSTO_EXPEDIENTE_INTERNO);
-						idMod = modInterno != null ? modInterno.getId() : SigaExProperties.getIdModInternoImportado();
+						idMod = modInterno != null ? modInterno.getId() : Prop.getInt("modelo.interno.importado");
 					}
 					doc.setExModelo(dao().consultar(idMod, ExModelo.class, false));
 				}
@@ -5478,11 +5483,12 @@ public class ExBL extends CpBL {
 	private void acrescentarHashDeAuditoria(ExMovimentacao mov, byte[] sha256, boolean autenticar, String nome,
 			String cpf, String json) {
 		try {
-			String timestampUrl = Cp.getInstance().getProp().timestampUrl();
+			String timestampUrl = Prop.get("carimbo.url");
+			log.warn("URL_TIMESTAMP " + timestampUrl);
 			if (timestampUrl == null)
 				return;
 			TimestampPostRequest req = new TimestampPostRequest();
-			req.system = Cp.getInstance().getProp().timestampSystem();
+			req.system = Prop.get("carimbo.sistema");
 			req.sha256 = sha256;
 			req.tipo = autenticar ? "auth" : "sign";
 			req.nome = nome;
@@ -5498,6 +5504,7 @@ public class ExBL extends CpBL {
 				throw new RuntimeException("Carimbo de tempo para a assinatura com senha indisponível");
 			mov.setAuditHash(resp.getResp().jwt);
 		} catch (Exception e) {
+			log.error(e.getMessage(), e);
 			throw new RuntimeException("Erro obtendo o carimbo de tempo para a assinatura com senha", e);
 		}
 	}
@@ -5682,8 +5689,7 @@ public class ExBL extends CpBL {
 	public void atualizarWorkflow(ExDocumento doc, ExMovimentacao mov) throws AplicacaoException {
 
 		try {
-			if (Contexto.resource("isWorkflowEnabled") != null
-					&& Boolean.valueOf(String.valueOf(Contexto.resource("isWorkflowEnabled")))) {
+			if (Prop.getBool("/sigawf.ativo")) {
 				if (mov != null) {
 					atualizarWorkFlow(mov);
 				} else {
@@ -6093,7 +6099,7 @@ public class ExBL extends CpBL {
 			// Verifica se é Processo e conta o número de páginas para verificar
 			// se tem que encerrar o volume
 			if (mob.doc().isProcesso()) {
-				if (mob.getTotalDePaginasSemAnexosDoMobilGeral() >= SigaExProperties.getMaxPagVolume()) {
+				if (mob.getTotalDePaginasSemAnexosDoMobilGeral() >= Prop.getInt("volume.max.paginas")) {
 					encerrarVolume(cadastrante, lotaCadastrante, mob, dtMov, null, null, null, true);
 				}
 			}
@@ -6208,8 +6214,7 @@ public class ExBL extends CpBL {
 		if (modNovo.getNmMod() == null || modNovo.getNmMod().trim().length() == 0)
 			throw new AplicacaoException("não é possível salvar um modelo sem informar o nome.");
 		if ((modNovo.getDescMod() == null || modNovo.getDescMod().trim().length() == 0)
-				&& (SigaBaseProperties.getString("siga.local") == null
-						|| !"GOVSP".equals(SigaBaseProperties.getString("siga.local"))))
+				&& (!Prop.isGovSP()))
 			throw new AplicacaoException("não é possível salvar um modelo sem informar a descrição.");
 		try {
 			ExDao.iniciarTransacao();
@@ -6229,8 +6234,7 @@ public class ExBL extends CpBL {
 		if (!forma.isSiglaValida())
 			throw new AplicacaoException("Sigla inválida. A sigla deve ser formada por 3 letras.");
 
-		if (SigaBaseProperties.getString("siga.local") != null
-				&& "GOVSP".equals(SigaBaseProperties.getString("siga.local"))
+		if (Prop.isGovSP()
 				&& forma.getExTipoDocumentoSet().isEmpty())
 			throw new AplicacaoException("Selecione uma origem.");
 
@@ -6290,26 +6294,44 @@ public class ExBL extends CpBL {
 		}
 	}
 
-	public void TornarDocumentoSemEfeito(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExDocumento doc,
-			String motivo) throws Exception {
+	public void tornarDocumentoSemEfeito(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExDocumento doc,
+			String motivo) throws Exception {		
+		
+		if (!getComp().podeTornarDocumentoSemEfeito(cadastrante, lotaCadastrante, doc.getMobilGeral()))
+			throw new RegraNegocioException("Cancelamento não permitido." 
+					+ " Isso pode ocorrer se o documento não estiver apto a ser cancelado ou devido a alguma regra para não permitir esta operação");
+
+		// Verifica se o subscritor pode movimentar todos os mobils
+		// E Também se algum documento diferente está apensado ou juntado a este
+		// documento
+
+		for (ExMobil m : doc.getExMobilSet()) {
+			if(!m.isGeral() && !m.isCancelada()) { //Retirada as vias que foram canceladas					
+				
+				if (!getComp().podeMovimentar(cadastrante, lotaCadastrante, m)) {
+					throw new RegraNegocioException("Cancelamento não permitido. Você não possui permissão para executar essa operação no documento");
+				}
+				
+				if (m.isJuntado()) {
+					throw new RegraNegocioException("Não é possível efetuar o cancelamento, pois o documento está juntado");
+				}
+				
+				if (m.temDocumentosJuntados()) {
+					throw new RegraNegocioException("Não é possível efetuar o cancelamento, pois o documento possui documento(s) juntado(s)");
+				}
+				
+				if (m.isApensado()) {
+					throw new RegraNegocioException("Não é possível efetuar o cancelamento, pois o documento está apensado");
+				}
+				
+				if (m.temApensos()) {
+					throw new RegraNegocioException("Não é possível efetuar o cancelamento, pois o documento possui documento(s) apensado(s)");
+				}							
+			}
+		}
+
 		try {
 			iniciarAlteracao();
-
-			if (!getComp().podeTornarDocumentoSemEfeito(cadastrante, lotaCadastrante, doc.getMobilGeral()))
-				throw new AplicacaoException("Cancelamento não permitido");
-
-			// Verifica se o subscritor pode movimentar todos os mobils
-			// E Também se algum documento diferente está apensado ou juntado a este
-			// documento
-
-			for (ExMobil m : doc.getExMobilSet()) {
-				if(!m.isGeral() && !m.isCancelada()) { //Retirada as vias que foram canceladas
-					if (!getComp().podeMovimentar(cadastrante, lotaCadastrante, m) || m.isJuntado() || m.isApensado()
-							|| m.temApensos() || m.temDocumentosJuntados())
-						throw new AplicacaoException("Cancelamento não permitido");
-				}
-			}
-
 			final ExMovimentacao mov = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO,
 					cadastrante, lotaCadastrante, doc.getMobilGeral(), null, null, null, null, null, null);
 

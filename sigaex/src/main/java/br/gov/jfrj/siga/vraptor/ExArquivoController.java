@@ -25,7 +25,6 @@ package br.gov.jfrj.siga.vraptor;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.URLEncoder;
-
 import java.security.MessageDigest;
 import java.util.Date;
 import java.util.Map;
@@ -47,6 +46,7 @@ import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.bluc.service.HashRequest;
 import br.gov.jfrj.siga.bluc.service.HashResponse;
@@ -491,7 +491,7 @@ public class ExArquivoController extends ExController {
 	private static String getJwtPassword() {
 		String pwd = null;
 		try {
-			pwd = System.getProperty("siga.ex.autenticacao.pwd");
+			pwd = Prop.get("autenticacao.senha");
 			if (pwd == null)
 				throw new AplicacaoException(
 						"Erro obtendo propriedade siga.ex.autenticacao.pwd");

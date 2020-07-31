@@ -29,6 +29,7 @@ import com.google.gson.Gson;
 import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.gc.service.GcService;
@@ -74,46 +75,46 @@ public abstract class Service {
 	public static WfService getWfService() {
 		if (wf == null)
 			wf = getService(WfService.class,
-					System.getProperty("wfservice.endpoint"),
-					System.getProperty("wfservice.qname"),
-					System.getProperty("wfservice.servicename"),
-					System.getProperty("wfservice.url"));
+					Prop.get("/sigawf.service.endpoint"),
+					Prop.get("/sigawf.service.qname"),
+					Prop.get("/sigawf.service.name"),
+					Prop.get("/sigawf.service.url"));
 		return wf;
 	}
 
 	public static ExService getExService() {
 		if (ex == null)
 			ex = getService(ExService.class,
-					System.getProperty("exservice.endpoint"),
-					System.getProperty("exservice.qname"),
-					System.getProperty("exservice.servicename"),
-					System.getProperty("exservice.url"));
+					Prop.get("/sigaex.service.endpoint"),
+					Prop.get("/sigaex.service.qname"),
+					Prop.get("/sigaex.service.name"),
+					Prop.get("/sigaex.service.url"));
 		return ex;
 	}
 
 	public static GiService getGiService() {
 		if (gi == null)
 			gi = getService(GiService.class,
-					System.getProperty("giservice.endpoint"),
-					System.getProperty("giservice.qname"),
-					System.getProperty("giservice.servicename"),
-					System.getProperty("giservice.url"));
+					Prop.get("/siga.service.endpoint"),
+					Prop.get("/siga.service.qname"),
+					Prop.get("/siga.service.name"),
+					Prop.get("/siga.service.url"));
 		return gi;
 	}
 
 	public static GcService getGcService() {
 		if (gc == null)
 			gc = getService(GcService.class,
-					System.getProperty("gcservice.endpoint"),
-					System.getProperty("gcservice.qname"),
-					System.getProperty("gcservice.servicename"),
-					System.getProperty("gcservice.url"));
+					Prop.get("/sigagc.service.endpoint"),
+					Prop.get("/sigagc.service.qname"),
+					Prop.get("/sigagc.service.name"),
+					Prop.get("/sigagc.service.url"));
 		return gc;
 	}
 
 	public static BlucService getBlucService() {
 		if (bluc == null)
-			bluc = new BlucService(System.getProperty("blucservice.endpoint"));
+			bluc = new BlucService(Prop.get("/blucservice.url"));
 		return bluc;
 	}
 

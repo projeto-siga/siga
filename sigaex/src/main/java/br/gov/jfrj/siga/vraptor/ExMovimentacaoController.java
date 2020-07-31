@@ -65,6 +65,7 @@ import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
@@ -2060,7 +2061,7 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Get("/app/expediente/mov/anotar")
-	public void aAnotar(final String sigla) {
+	public void aAnotar(final String sigla, final String descrMov) {
 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 
@@ -2077,8 +2078,13 @@ public class ExMovimentacaoController extends ExController {
 				.podeFazerAnotacao(getTitular(), getLotaTitular(),
 						documentoBuilder.getMob())) {
 			throw new AplicacaoException("Não é possível fazer anotação");
+		}	
+		
+		String descricaoMov = movimentacaoBuilder.getDescrMov();
+		if (descricaoMov == null) {
+			descricaoMov = descrMov;
 		}
-
+				
 		result.include("sigla", sigla);
 		result.include("dtMovString", movimentacaoBuilder.getDtMovString());
 		result.include("mob", documentoBuilder.getMob());
@@ -2087,7 +2093,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("substituicao", movimentacaoBuilder.isSubstituicao());
 		result.include("nmFuncaoSubscritor",
 				movimentacaoBuilder.getNmFuncaoSubscritor());
-		result.include("descrMov", movimentacaoBuilder.getDescrMov());
+		result.include("descrMov", descricaoMov);
 		result.include("tipoResponsavel",
 				this.processarTipoResponsavel(documentoBuilder.getMob()));
 		result.include("obsOrgao", movimentacaoBuilder.getObsOrgao());
@@ -2102,6 +2108,11 @@ public class ExMovimentacaoController extends ExController {
 			final String nmFuncaoSubscritor, final String descrMov,
 			final String obsOrgao, final String[] campos) {
 		this.setPostback(postback);
+		
+		String descricaoMov = descrMov;
+		if (descricaoMov != null) {
+			descricaoMov = Texto.removerEspacosExtra(descricaoMov);
+		}
 
 		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder
 				.novaInstancia();
@@ -2109,7 +2120,7 @@ public class ExMovimentacaoController extends ExController {
 		builder.setDtMovString(dtMovString).setSubscritorSel(subscritorSel)
 				.setSubstituicao(substituicao).setTitularSel(titularSel)
 				.setNmFuncaoSubscritor(nmFuncaoSubscritor)
-				.setDescrMov(descrMov).setObsOrgao(obsOrgao);
+				.setDescrMov(descricaoMov).setObsOrgao(obsOrgao);
 
 		final ExMovimentacao mov = builder.construir(dao());
 
@@ -2124,16 +2135,21 @@ public class ExMovimentacaoController extends ExController {
 						documentoBuilder.getMob())) {
 			throw new AplicacaoException("Não é possível fazer anotação");
 		}
-
-		Ex.getInstance()
-				.getBL()
-				.anotar(getCadastrante(), getLotaTitular(),
-						documentoBuilder.getMob(), mov.getDtMov(),
-						mov.getLotaResp(), mov.getResp(), mov.getSubscritor(),
-						mov.getTitular(), mov.getDescrMov(),
-						mov.getNmFuncaoSubscritor());
-
-		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+		
+		try {
+			Ex.getInstance()
+			.getBL()
+			.anotar(getCadastrante(), getLotaTitular(),
+					documentoBuilder.getMob(), mov.getDtMov(),
+					mov.getLotaResp(), mov.getResp(), mov.getSubscritor(),
+					mov.getTitular(), mov.getDescrMov(),
+					mov.getNmFuncaoSubscritor());		
+			
+			result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);			
+		} catch (RegraNegocioException e) {
+			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
+			result.forwardTo(this).aAnotar(sigla, descrMov);			
+		}					
 	}
 
 	@Get("/app/expediente/mov/anotar_lote")

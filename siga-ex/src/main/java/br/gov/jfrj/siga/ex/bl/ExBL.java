@@ -92,7 +92,6 @@ import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.RegraNegocioException;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
@@ -2936,7 +2935,7 @@ public class ExBL extends CpBL {
 			 * Desabilita se configuracao ativa numeração realizada pelo Select Max. Numeração
 			 * controlada pela table EX_DOCUMENTO_NUMERACAO
 			 */
-			if ("true".equalsIgnoreCase(SigaBaseProperties.getString("sigaex.controlarNumeracaoExpediente")) || SigaMessages.isSigaSP()) {
+			if ("true".equalsIgnoreCase(Prop.get("controlar.numeracao.expediente")) || SigaMessages.isSigaSP()) {
 				doc.setAnoEmissao((long) c.get(Calendar.YEAR));
 				doc.setNumExpediente(obterNumeroDocumento(doc));
 			} else {

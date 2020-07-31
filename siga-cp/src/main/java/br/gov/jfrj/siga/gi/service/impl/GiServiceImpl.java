@@ -147,7 +147,7 @@ public class GiServiceImpl implements GiService {
 		
 		String resultado = "";
 		try {
-			//if("true".equals(SigaBaseProperties.getString("siga.ws.seguranca.token.jwt")))
+			//if("true".equals(Prop.get("/siga.ws.seguranca.token.jwt")))
 				//SigaUtil.getInstance().validarToken(token);
 				
 			if (Pattern.matches("\\d+", cpf) && cpf.length() == 11) {

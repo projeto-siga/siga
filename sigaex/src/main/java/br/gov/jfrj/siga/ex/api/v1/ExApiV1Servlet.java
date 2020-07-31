@@ -212,6 +212,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPrivateProperty("util.webservice.password", null);
 		addPublicProperty("volume.max.paginas", "200");
 		addPrivateProperty("webdav.senha", null);
+		addPublicProperty("controlar.numeracao.expediente", null);
 		
 		addPublicProperty("modelos.cabecalho.titulo", "JUSTIÇA FEDERAL");
 		addPublicProperty("modelos.cabecalho.subtitulo", null);

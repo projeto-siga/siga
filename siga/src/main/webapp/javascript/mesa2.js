@@ -11,6 +11,8 @@ setTimeout(function() {
 	$("#ultima-atualizacao").addClass("text-secondary");
 }, 5000);
 
+if (getParmUser('trazerAnotacoes') == null)
+	setParmUser('trazerAnotacoes', true)
 var appMesa = new Vue({
 	el: "#app",
 
@@ -134,7 +136,7 @@ var appMesa = new Vue({
 	methods: {
 		carregarMesa: function(grpNome, qtdPagina) {
 			var self = this
-			this.trazerAnotacoes = (getParmUser('trazerAnotacoes') == null ? true : getParmUser('trazerAnotacoes'));
+			this.trazerAnotacoes = (getParmUser('trazerAnotacoes') == null ? false : getParmUser('trazerAnotacoes'));
 			this.trazerComposto = (getParmUser('trazerComposto') == null ? false : getParmUser('trazerComposto'));
 			this.trazerArquivados = (getParmUser('trazerArquivados') == null ? false : getParmUser('trazerArquivados'));
 			this.trazerCancelados = (getParmUser('trazerCancelados') == null ? false : getParmUser('trazerCancelados'));
@@ -219,7 +221,7 @@ var appMesa = new Vue({
 		resetaStorage: function() {
 			sessionStorage.removeItem('mesa' + getUser());
 			localStorage.removeItem('gruposMesa' + getUser());
-			this.trazerAnotacoes = true;
+			this.trazerAnotacoes = false;
 			this.trazerComposto = false;
 			this.trazerArquivados = false;
 			localStorage.removeItem('trazerAnotacoes' + getUser());

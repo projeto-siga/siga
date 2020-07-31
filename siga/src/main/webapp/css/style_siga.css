@@ -92,8 +92,8 @@ p.gt-table-action-list a.link-tag {
 .badge.tagmesa {
 	background-color: transparent;
 	border: solid 1px;
-	border-color: #959faa!important;
-	color: #959faa  !important;
+	border-color: #bbb!important;
+	color: #666  !important;	
 }
 .anotacao.tooltip-inner {
   background-color: #ffc107 ;

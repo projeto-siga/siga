@@ -92,7 +92,6 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExTopicoDestinacao;
 import br.gov.jfrj.siga.ex.ItemDeProtocolo;
 import br.gov.jfrj.siga.ex.ItemDeProtocoloComparator;
-import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;

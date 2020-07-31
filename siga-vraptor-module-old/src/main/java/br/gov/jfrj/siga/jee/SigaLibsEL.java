@@ -38,6 +38,7 @@ import org.mvel2.templates.TemplateCompiler;
 import org.mvel2.templates.TemplateRuntime;
 
 import br.gov.jfrj.siga.base.Contexto;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.ReaisPorExtenso;
 
 import br.gov.jfrj.siga.base.SigaCalendar;
@@ -309,7 +310,7 @@ public class SigaLibsEL {
 	}
 
 	public static String getURLSistema(String nome) {
-		String ambiente = SigaBaseProperties.getString("ambiente");
+		String ambiente = Prop.get("ambiente");
 		String url = System.getProperty(nome + "." + ambiente + ".url");
 		if (url == null || url.length() == 0) {
 			url = "#";

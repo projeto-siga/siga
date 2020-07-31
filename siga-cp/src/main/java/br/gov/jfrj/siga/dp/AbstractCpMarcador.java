@@ -89,6 +89,9 @@ public abstract class AbstractCpMarcador extends Objeto implements Serializable 
 	@JoinColumn(name = "ID_TP_MARCADOR", nullable = false)
 	private CpTipoMarcador cpTipoMarcador;
 
+	@Column(name = "GRUPO_MARCADOR")
+	private Integer grupoMarcador;
+
 	public Long getIdMarcador() {
 		return idMarcador;
 	}
@@ -111,6 +114,14 @@ public abstract class AbstractCpMarcador extends Objeto implements Serializable 
 
 	public void setCpTipoMarcador(CpTipoMarcador cpTipoMarcador) {
 		this.cpTipoMarcador = cpTipoMarcador;
+	}
+
+	public Integer getGrupoMarcador() {
+		return grupoMarcador;
+	}
+
+	public void setGrupoMarcador(Integer grupoMarcador) {
+		this.grupoMarcador = grupoMarcador;
 	}
 
 }

@@ -1025,6 +1025,12 @@ public class FuncoesEL {
 				.podeAssinarComSenha(titular, lotaTitular, mob);
 	}
 
+	public static Boolean podeAssinarPorComSenha(DpPessoa titular,
+			DpLotacao lotaTitular, ExMobil mob) throws Exception {
+		return Ex.getInstance().getComp()
+				.podeAssinarPorComSenha(titular, lotaTitular, mob);
+	}
+
 	public static Boolean podeAssinarMovimentacaoComSenha(DpPessoa titular,
 			DpLotacao lotaTitular, ExMovimentacao mov) throws Exception {
 		return Ex.getInstance().getComp()

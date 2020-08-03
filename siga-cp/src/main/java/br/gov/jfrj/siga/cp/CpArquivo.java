@@ -19,6 +19,9 @@
 package br.gov.jfrj.siga.cp;
 
 import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -77,13 +80,13 @@ public class CpArquivo implements Serializable {
 	private String caminho;
 	
 	@Column(name = "TAMANHO_ARQ")
-	private Integer tamanho;
+	private Integer tamanho = 0;
 
 	/**
 	 * Simple constructor of AbstractExDocumento instances.
 	 */
 	public CpArquivo() {
-		tipoArmazenamento = CpArquivoTipoArmazenamentoEnum.valueOf(SigaBaseProperties.getString("siga.tipo.armazenamento.arquivo"));
+		tipoArmazenamento = CpArquivoTipoArmazenamentoEnum.valueOf(SigaBaseProperties.getString("siga.armazenamento.arquivo.tipo"));
 	}
 
 	public java.lang.Long getIdArq() {
@@ -187,4 +190,15 @@ public class CpArquivo implements Serializable {
 	public void setTamanho(Integer tamanho) {
 		this.tamanho = tamanho;
 	}
+
+	public void gerarCaminho(Date data) {
+		String extensao = TipoConteudo.ZIP.getExtensao();
+		
+		Calendar c = Calendar.getInstance();
+		c.set(Calendar.AM_PM, Calendar.PM);
+		c.setTime(data);
+		this.caminho = c.get(Calendar.YEAR)+"/"+(c.get(Calendar.MONTH)+1)+"/"+c.get(Calendar.DATE)+"/"+c.get(Calendar.HOUR_OF_DAY)+"/"+c.get(Calendar.MINUTE)+"/"+UUID.randomUUID().toString()+"."+extensao;
+	}
+	
+	
 }

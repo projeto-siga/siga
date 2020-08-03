@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -75,6 +76,7 @@ import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.TipoConteudo;
 import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCFacade;
 import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCInterface;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -1467,6 +1469,7 @@ public class ExDocumentoController extends ExController {
 			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
 			filter.setSigla(exDocumentoDto.getSigla());
 			exDocumentoDto.setMob((ExMobil) dao().consultarPorSigla(filter));
+			
 			if (exDocumentoDto.getMob() != null) {
 				exDocumentoDto.setDoc(exDocumentoDto.getMob().getExDocumento());
 			}
@@ -1716,9 +1719,6 @@ public class ExDocumentoController extends ExController {
 				// }
 			}
 
-//			ArmazenamentoBCInterface a = new ArmazenamentoHCP();
-//			a.salvar(exDocumentoDTO.getDoc().getConteudoBlobDoc());
-			
 			exBL.gravar(getCadastrante(), getTitular(), getLotaTitular(),
 					exDocumentoDTO.getDoc());
 			
@@ -2922,7 +2922,56 @@ public class ExDocumentoController extends ExController {
 	
 	private CpArquivo criarCpArquivo() {
 		CpArquivo cpArquivo = new CpArquivo();
-		cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.HCP);//TODO: K ler do properties
 		return cpArquivo;
+	}
+	
+	private void migrarDocumentoParaHCP(ExDocumento documento) {
+		try {
+			final Ex ex = Ex.getInstance();
+			final ExBL exBL = ex.getBL();	
+			if(documento.getCpArquivo() == null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(documento.getCpArquivo().getTipoArmazenamento())) {
+				byte[] arquivo = documento.getConteudoBlobDoc();
+				if(documento.getCpArquivo() == null)
+					documento.setCpArquivo(new CpArquivo());
+				else
+					documento.getCpArquivo().setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.valueOf(SigaBaseProperties.getString("siga.armazenamento.arquivo.tipo")));
+				documento.getCpArquivo().setOrgaoUsuario(documento.getOrgaoUsuario());
+				documento.getCpArquivo().setConteudoTpArq(documento.getConteudoTpDoc());
+				
+				String extensao = TipoConteudo.ZIP.getExtensao();
+				Calendar c = Calendar.getInstance();
+				c.set(Calendar.AM_PM, Calendar.PM);
+				c.setTime(documento.getData());
+				String caminho = c.get(Calendar.YEAR)+"/"+(c.get(Calendar.MONTH)+1)+"/"+c.get(Calendar.DATE)+"/"+c.get(Calendar.HOUR_OF_DAY)+"/"+c.get(Calendar.MINUTE)+"/"+UUID.randomUUID().toString()+"."+extensao;
+				documento.getCpArquivo().setCaminho(caminho);
+				
+				exBL.gravarArquivoDocumento(documento);
+
+			}
+			
+			for(ExMovimentacao mov: documento.getExMovimentacaoSet()) {
+				if(mov.getCpArquivo() == null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(mov.getCpArquivo().getTipoArmazenamento())) {
+					byte[] arquivo = mov.getConteudoBlobMov();
+					if(mov.getCpArquivo() == null)
+						mov.setCpArquivo(new CpArquivo());
+					else
+						mov.getCpArquivo().setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.valueOf(SigaBaseProperties.getString("siga.armazenamento.arquivo.tipo")));
+					
+					String extensao = TipoConteudo.ZIP.getExtensao();
+					Calendar c = Calendar.getInstance();
+					c.set(Calendar.AM_PM, Calendar.PM);
+					c.setTime(mov.getData());
+					String caminho = c.get(Calendar.YEAR)+"/"+(c.get(Calendar.MONTH)+1)+"/"+c.get(Calendar.DATE)+"/"+c.get(Calendar.HOUR_OF_DAY)+"/"+c.get(Calendar.MINUTE)+"/"+UUID.randomUUID().toString()+"."+extensao;
+					mov.getCpArquivo().setCaminho(caminho);
+					
+					exBL.gravarArquivoMovimentacao(mov);
+
+				}
+			}
+			
+		} catch (Exception e) {
+			log.error(ERRO_GRAVAR_ARQUIVO, e);
+			throw new AplicacaoException(ERRO_GRAVAR_ARQUIVO);
+		}
 	}
 }

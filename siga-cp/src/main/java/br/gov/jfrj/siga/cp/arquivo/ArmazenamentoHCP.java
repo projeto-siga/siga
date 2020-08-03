@@ -6,8 +6,6 @@ import java.util.Base64;
 import java.util.Calendar;
 import java.util.UUID;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -20,6 +18,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.TipoConteudo;
 
@@ -35,13 +34,12 @@ public class ArmazenamentoHCP implements ArmazenamentoBCInterface {
 	
 	private static final String AUTHORIZATION = "Authorization";
 	private CloseableHttpClient client;
-	private String uri = "https://1118-spsempapel-documentos-digitais-desenv.999-prodesp.hcp.prodesp-dc00.sp.gov.br/rest/";
-	String username = "usr_sempapel_doc_digitais_desenv";
-	String password = "Pu7*95%_af";
-	String token = null;
+	private String uri = SigaBaseProperties.getString("siga.armazenamento.arquivo.url");
+	private String usuario = SigaBaseProperties.getString("siga.armazenamento.arquivo.usuario");
+	private String senha = SigaBaseProperties.getString("siga.armazenamento.arquivo.senha");
+	private String token = null;
 
-	@PostConstruct
-	private void init() {
+	private void configurar() {
 		gerarToken();
 		client = HttpClients.createDefault();
 	}
@@ -49,19 +47,17 @@ public class ArmazenamentoHCP implements ArmazenamentoBCInterface {
 	@Override
 	public void salvar(CpArquivo cpArquivo, byte[] conteudo) {
 		try {
-			init();
+			configurar();
 			cpArquivo.setTamanho(conteudo.length);
 			if(cpArquivo.getCaminho()==null)
 				cpArquivo.setCaminho(gerarCaminho(cpArquivo));
 			else
 				apagar(cpArquivo);
-			//TODO: K implementar um controle transacional
 			HttpPut request = new HttpPut(uri+cpArquivo.getCaminho());
 			request.addHeader(AUTHORIZATION, token);
 			ByteArrayEntity requestEntity = new ByteArrayEntity(conteudo);
 			request.setEntity(requestEntity);
-			HttpResponse response = client.execute(request);
-			System.out.println("Response Code : " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase()); 
+			client.execute(request);
 		} catch (Exception e) {
 			log.error(ERRO_GRAVAR_ARQUIVO, cpArquivo.getIdArq(), e);
 			throw new AplicacaoException(ERRO_EXCLUIR_ARQUIVO);
@@ -71,11 +67,10 @@ public class ArmazenamentoHCP implements ArmazenamentoBCInterface {
 	@Override
 	public void apagar(CpArquivo cpArquivo) {
 		try {
-			init();
+			configurar();
 			HttpDelete request = new HttpDelete(uri+cpArquivo.getCaminho());
 			request.addHeader(AUTHORIZATION, token);
-			HttpResponse response = client.execute(request);
-			System.out.println("Response Code : " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase()); 
+			client.execute(request);
 		} catch (Exception e) {
 			log.error(ERRO_EXCLUIR_ARQUIVO, cpArquivo.getIdArq(), e);
 			throw new AplicacaoException(ERRO_EXCLUIR_ARQUIVO);
@@ -84,8 +79,10 @@ public class ArmazenamentoHCP implements ArmazenamentoBCInterface {
 	
 	@Override
 	public byte[] recuperar(CpArquivo cpArquivo) {
+		if(cpArquivo.getIdArq() == null || cpArquivo.getCaminho() == null)
+			return null;
 		try {
-			init();
+			configurar();
 			HttpGet httpGet = new HttpGet(uri+cpArquivo.getCaminho());
 			httpGet.addHeader(AUTHORIZATION, token);
 			CloseableHttpResponse response = client.execute(httpGet);
@@ -99,18 +96,17 @@ public class ArmazenamentoHCP implements ArmazenamentoBCInterface {
 				}
 				return bao.toByteArray();
 			} else {
-				System.out.println("Response Code : " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
+				throw new Exception("idArq: " + cpArquivo.getIdArq() + " Erro : " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
 			}
 		} catch (Exception e) {
 			log.error(ERRO_RECUPERAR_ARQUIVO, cpArquivo.getIdArq(), e);
 			throw new AplicacaoException(ERRO_RECUPERAR_ARQUIVO);
 		}
-		return null;
 	}
 
 	private void gerarToken() {
-		String usuarioBase64 = Base64.getEncoder().encodeToString(username.getBytes());
-		String senhaMD5 = DigestUtils.md5Hex(password.getBytes());
+		String usuarioBase64 = Base64.getEncoder().encodeToString(usuario.getBytes());
+		String senhaMD5 = DigestUtils.md5Hex(senha.getBytes());
 		token = HCP + usuarioBase64 + ":" + senhaMD5;
 	}
 
@@ -123,7 +119,8 @@ public class ArmazenamentoHCP implements ArmazenamentoBCInterface {
 			extensao = TipoConteudo.ZIP.getExtensao();
 		
 		Calendar c = Calendar.getInstance();
-		String caminho = c.get(Calendar.YEAR)+"/"+(c.get(Calendar.MONTH)+1)+"/"+c.get(Calendar.DATE)+"/"+c.get(Calendar.HOUR)+"/"+c.get(Calendar.MINUTE)+"/"+UUID.randomUUID().toString()+"."+extensao;
+		c.set(Calendar.AM_PM, Calendar.PM);
+		String caminho = c.get(Calendar.YEAR)+"/"+(c.get(Calendar.MONTH)+1)+"/"+c.get(Calendar.DATE)+"/"+c.get(Calendar.HOUR_OF_DAY)+"/"+c.get(Calendar.MINUTE)+"/"+UUID.randomUUID().toString()+"."+extensao;
 		return caminho;
 	}
 

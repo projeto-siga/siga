@@ -7345,15 +7345,11 @@ public class ExBL extends CpBL {
 		}
 	}
 	
-	private void gravarArquivoDocumento(ExDocumento doc) {
+	public void gravarArquivoDocumento(ExDocumento doc) {
 		try {
-			if(doc.getIdDoc()==null) {
-				doc.setCpArquivo(criarCpArquivo());
-			}
 			if(doc.getCpArquivo()!=null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(doc.getCpArquivo().getTipoArmazenamento())) {
 				ArmazenamentoBCInterface armazenamento = ArmazenamentoBCFacade.getArmazenamentoBC(doc.getCpArquivo());
 				armazenamento.salvar(doc.getCpArquivo(), doc.getConteudoBlobDoc2());
-				dao().gravar(doc.getCpArquivo());
 			}
 		} catch (Exception e) {
 			log.error(ERRO_GRAVAR_ARQUIVO, e);
@@ -7374,15 +7370,14 @@ public class ExBL extends CpBL {
 		}
 	}
 	
-	private void gravarArquivoMovimentacao(final ExMovimentacao mov) {
+	public void gravarArquivoMovimentacao(final ExMovimentacao mov) {
 		try {
-			if(mov.getIdMov()==null) {
+			if(mov.getIdMov()==null && mov.getCpArquivo()!=null) {
 				mov.setCpArquivo(criarCpArquivo());
 			}
-			if(mov.getCpArquivo()!=null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(mov.getCpArquivo().getTipoArmazenamento())) {
+			if(mov.getCpArquivo()!=null  && mov.getCpArquivo()!=null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(mov.getCpArquivo().getTipoArmazenamento())) {
 				ArmazenamentoBCInterface armazenamento = ArmazenamentoBCFacade.getArmazenamentoBC(mov.getCpArquivo());
 				armazenamento.salvar(mov.getCpArquivo(), mov.getConteudoBlobMov2());
-				dao().gravar(mov.getCpArquivo());
 			}
 		} catch (Exception e) {
 			log.error(ERRO_GRAVAR_ARQUIVO, e);
@@ -7405,7 +7400,6 @@ public class ExBL extends CpBL {
 	
 	private CpArquivo criarCpArquivo() {
 		CpArquivo cpArquivo = new CpArquivo();
-		cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.HCP);//TODO: K ler do properties
 		return cpArquivo;
 	}
 }

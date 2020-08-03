@@ -1118,15 +1118,17 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	public void setConteudoBlobDoc(byte[] createBlob) {
 		cacheConteudoBlobDoc = createBlob;
 		criarCpArquivo();
+		cpArquivo.setTamanho(cacheConteudoBlobDoc.length);
 		if (CpArquivoTipoArmazenamentoEnum.BLOB.equals(getCpArquivo().getTipoArmazenamento())) {
 			conteudoBlobDoc = createBlob;
-			cpArquivo.setTamanho(conteudoBlobDoc.length);
 		}
 	}
 	
 	private void criarCpArquivo() {
-		if(cpArquivo == null)
+		if(cpArquivo == null) {
 			cpArquivo = new CpArquivo();
+			cpArquivo.gerarCaminho(getDtRegDoc()!=null?getDtRegDoc():new Date());
+		}
 		if(conteudoBlobDoc != null)
 			cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.BLOB);
 	}

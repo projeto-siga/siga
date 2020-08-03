@@ -1,3 +1,4 @@
+/* Execução não deve ser feita via FlyWay, pois tabela pode estar em transação impedindo o drop da coluna
 ---------------------------------------------------------------------------    
 --  Coluna com Timestamp para permitir ordenar movimentacoes sem o ID_MOV
 ---------------------------------------------------------------------------
@@ -33,3 +34,4 @@ DECLARE
     COMMIT;
  end;
  /
+ */

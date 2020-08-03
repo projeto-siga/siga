@@ -576,7 +576,7 @@ public class ExDao extends CpDao {
 		}
 
 		if (flt.getIdTpDoc() != null && flt.getIdTpDoc() != 0) {
-			query.setParameter("idTpDoc", flt.getIdTpDoc());
+			query.setParameter("idTpDoc", new Long(flt.getIdTpDoc()));
 		}
 
 		if (flt.getIdFormaDoc() != null && flt.getIdFormaDoc() != 0) {

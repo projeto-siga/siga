@@ -133,7 +133,7 @@ ${meta}
 		<c:set var="collapse_ArqAuxiliares" scope="request" value="not collapsible" />
 		<c:set var="hide_only_GOVSP" scope="request"> d-none </c:set>
 		<c:set var="hide_only_TRF2" scope="request"> </c:set>
-		<c:set var="uri_logo_siga_pequeno" value="${f:resource('siga.base.url')}/siga/imagens/logo-sem-papel-150x70.png" scope="request" />
+		<c:set var="uri_logo_siga_pequeno" value="${f:resource('/siga.base.url')}/siga/imagens/logo-sem-papel-150x70.png" scope="request" />
 	</c:when>
 	<c:otherwise>
 		<meta name="theme-color" content="bg-primary">
@@ -156,7 +156,7 @@ ${meta}
 		<c:set var="collapse_ArqAuxiliares" scope="request" value="not collapsible" />
 		<c:set var="hide_only_GOVSP" scope="request"> </c:set>
 		<c:set var="hide_only_TRF2" scope="request"> d-none </c:set>
-		<c:set var="uri_logo_siga_pequeno" value="${f:resource('siga.base.url')}/siga/imagens/logo-siga-140x40.png" scope="request" />		
+		<c:set var="uri_logo_siga_pequeno" value="${f:resource('/siga.base.url')}/siga/imagens/logo-siga-140x40.png" scope="request" />		
 	</c:otherwise>
 </c:choose>
 
@@ -365,7 +365,7 @@ ${meta}
 					<div class="row">
 						<div class="col gt-company d-inline align-middle">
 							<span class="h-100">
-								<strong><span>${f:resource('siga.cabecalho.titulo')}</span> </strong>
+								<strong><span>${f:resource('/siga.cabecalho.titulo')}</span> </strong>
 								 <c:catch>
 										<c:if test="${not empty titular.orgaoUsuario.descricao}"><span style="white-space: nowrap;"> <i class="fa fa-angle-right"></i> ${titular.orgaoUsuario.descricao}</span></h6></c:if>
 								 </c:catch>
@@ -376,19 +376,19 @@ ${meta}
 						<div class="col">
 							<span>
 								<c:choose>
-									<c:when test="${f:resource('ambiente') eq 'desenv'}">
+									<c:when test="${f:resource('/siga.ambiente') eq 'desenv'}">
 										Ambiente de Desenvolvimento
 									</c:when>
-									<c:when test="${f:resource('ambiente') eq 'prod'}">
+									<c:when test="${f:resource('/siga.ambiente') eq 'prod'}">
 										Ambiente Oficial
 									</c:when>
-									<c:when test="${f:resource('ambiente') eq 'treinamento'}">
+									<c:when test="${f:resource('/siga.ambiente') eq 'treinamento'}">
 										Ambiente de Simulação
 									</c:when>
-									<c:when test="${f:resource('ambiente') eq 'configuracao'}">
+									<c:when test="${f:resource('/siga.ambiente') eq 'configuracao'}">
 										Ambiente de Configuração
 									</c:when>
-									<c:when test="${f:resource('ambiente') eq 'homolog'}">
+									<c:when test="${f:resource('/siga.ambiente') eq 'homolog'}">
 										Ambiente de Homologação
 									</c:when>
 								</c:choose>

@@ -23,7 +23,7 @@ public class LoadProperties {
 	private static OIDCParameters parametersOIDC;
 
 	/*   Formato dominio ex. https://homolog.login.sp.gov.br   */
-	static final String sso_dominio = "siga.integracao.sso.dominio";
+	static final String sso_dominio = "/siga.integracao.sso.dominio";
 	
 	static final String iss = "/sts";	
 	static final String jwksUri = "/sts/.well-known/openid-configuration/jwks";
@@ -31,9 +31,9 @@ public class LoadProperties {
 	static final String tokenUri = "/sts/connect/token";
 	static final String userInfoUri = "/sts/connect/userinfo";
 	
-	static final String clientId = "siga.integracao.sso.clienteId";
-	static final String clientSecret = "siga.integracao.sso.clientSecret";
-	static final String redirectUri = "siga.integracao.sso.redirectURI";
+	static final String clientId = "/siga.integracao.sso.cliente.id";
+	static final String clientSecret = "/siga.integracao.sso.client.secret";
+	static final String redirectUri = "/siga.integracao.sso.redirect.uri";
 	
 	static final String tokenEndpointAuthMethod = "token_endpoint_auth_method";
 	static final String tokenEndpointAuthSigningAlg = "token_endpoint_auth_signing_alg";

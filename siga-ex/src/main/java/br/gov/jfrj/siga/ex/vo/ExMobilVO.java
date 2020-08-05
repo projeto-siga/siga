@@ -539,7 +539,7 @@ public class ExMobilVO extends ExVO {
 					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO 
 				&& mob.getUltimaMovimentacaoNaoCancelada()
 				.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA
-				&& ((("GOVSP".equals(Prop.get("/siga.local")) && 
+				&& ((("GOVSP".equals(Prop.get("/siga.local"))  
 				&&  mob.getUltimaMovimentacaoNaoCancelada().getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
 				&& 	mob.getUltimaMovimentacaoNaoCancelada().getCadastrante().equals(titular))
 				|| 	(!"GOVSP".equals(Prop.get("/siga.local")))))

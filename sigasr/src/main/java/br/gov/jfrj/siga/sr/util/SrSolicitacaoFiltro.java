@@ -71,17 +71,24 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	}	
 
 	@SuppressWarnings("unchecked")
-	public Long buscarQuantidade() throws Exception {
+	public Long buscarQuantidade(DpPessoa buscador) throws Exception {
 		// Edson: foi necessario separar em subquery porque o Oracle nao aceita
 		// distinct em coluna CLOB em query contendo join
 		StringBuilder query = new StringBuilder("select count(*) ");
-		incluirJoinsEWheres(query);
-		return (Long) ContextoPersistencia.em().createQuery(query.toString())
-				.getSingleResult();
+		incluirJoinsEWheres(query, buscador);
+		try {
+			return (Long) ContextoPersistencia.em().createQuery(query.toString())
+					.getSingleResult();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return 0L;
+		}
+
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Object[]> buscarPorFiltro() throws Exception {
+	public List<Object[]> buscarPorFiltro(DpPessoa buscador) throws Exception {
 		
 		StringBuilder query = new StringBuilder("");
 		// Edson: foi necessario separar em subquery porque o Oracle nao aceita
@@ -89,7 +96,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		query.append("select sol, situacao, ultMov, marcaPrazo.dtIniMarca as prazo ");
 		query.append(idListaPrioridade != null && idListaPrioridade > 0 ? ", l " : " "); 
 				
-		incluirJoinsEWheres(query);
+		incluirJoinsEWheres(query, buscador);
 		
 		query.append(" order by ");
 		if (orderBy.equals("dtReg"))
@@ -137,7 +144,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		return jq.getResultList();
 	}
 
-	private void incluirJoinsEWheres(StringBuilder query) throws Exception {
+	private void incluirJoinsEWheres(StringBuilder query, DpPessoa buscador) throws Exception {
 
 		// Edson: A variável situacaoFiltro indica a marca pela qual será feita a busca por pessoa e lotação, pois há casos em que mais 
 		// de uma marca está em questão. Por exemplo, quando se busca pelo marcador "Como cadastrante", o que deve ser exibido na coluna 
@@ -162,7 +169,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		
 		query.append(" and (marcaPrazo.dpLotacaoIni is null or marcaPrazo.dpLotacaoIni = situacao.dpLotacaoIni) ");
 		
-		incluirWheresBasicos(query);
+		incluirWheresBasicos(query, buscador);
 		
 		if (situacaoFiltro.equals("situacaoAux") || getSituacao() == null)
 			//Edson: Juntado, Em andamento, fechado, pendente, cancelado em elaboração: marcas que não se repetem numa solicitação
@@ -198,7 +205,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 	}
 	
-	private void incluirWheresBasicos(StringBuilder query){
+	private void incluirWheresBasicos(StringBuilder query, DpPessoa buscador){
 		
 		query.append(" and not exists (from SrMovimentacao mov where solicitacao = sol and idMovimentacao > ultMov.idMovimentacao) ");
 		
@@ -289,6 +296,13 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			}
 			query.append(" ) ");
 		}
+		
+		// BJN usuario externo so ve suas solicitacoes ou as que ele pode atender.
+		// me parece um where basico
+		if(buscador.isUsuarioExterno()) {
+			query.append(" and ( sol.solicitante.idPessoaIni = " + buscador.getIdInicial().toString() + " ");
+			query.append(" or ultMov.atendente.idPessoaIni = " + buscador.getLotacao().getIdInicial().toString() + " ) " );
+		}
 	}
 
 	public boolean isRazoavelmentePreenchido() {
@@ -313,14 +327,14 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<SrSolicitacaoSimplificada> buscarSimplificado() throws Exception {
+	public List<SrSolicitacaoSimplificada> buscarSimplificado(DpPessoa buscador) throws Exception {
 		StringBuilder query = new StringBuilder("select sol.hisIdIni, "
 				+ " case when sol.descrSolicitacao is null then pai.descrSolicitacao else sol.descrSolicitacao end, "
 				+ " sol.dtReg "
 				+ " from SrSolicitacao sol left join sol.solicitacaoPai pai"
 				+ " left join sol.meuMovimentacaoSet ultMov "
 				+ " where sol.rascunho = false and sol.hisDtFim is null ");
-		incluirWheresBasicos(query);
+		incluirWheresBasicos(query, buscador);
 		query.append(" order by sol.idSolicitacao desc ");
 		List<Object[]> results = ContextoPersistencia.em().createQuery(query.toString()).setMaxResults(8).getResultList();
 		List<SrSolicitacaoSimplificada> sols = new ArrayList<SrSolicitacaoSimplificada>();

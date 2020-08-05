@@ -419,6 +419,14 @@ public class SolicitacaoController extends SrController {
         SrMovimentacao movimentacao = new SrMovimentacao(solicitacao);
 
         List<DpPessoa> atendentes = solicitacao.getPessoasAtendentesDisponiveis();
+        
+        // BJN - vetar usuario externo caso nao seja atendente ou o proprio solicitante
+        if(getTitular().isUsuarioExterno()) {
+        	boolean ehUmAtendente = atendentes.contains(getTitular());
+        	boolean ehSolicitante = getTitular().equals(solicitacao.getSolicitante());
+        	if(!ehUmAtendente && !ehSolicitante)
+        		throw new AplicacaoException("Este usuário n\u00e3o pode acessar esta solicita\u00e7\u00e3o.");
+        }
 
         if (todoOContexto == null)
             todoOContexto = solicitacao.isParteDeArvore();
@@ -573,7 +581,7 @@ public class SolicitacaoController extends SrController {
         	filtro.setItemConfiguracao(solicitacao.getItemConfiguracao());
         	filtro.setAcao(solicitacao.getAcao());
         }
-        result.include("solicitacoesRelacionadas", filtro.buscarSimplificado());
+        result.include("solicitacoesRelacionadas", filtro.buscarSimplificado(getTitular()));
         result.include("filtro", filtro);
         result.include(SOLICITACAO, solicitacao);
 	}

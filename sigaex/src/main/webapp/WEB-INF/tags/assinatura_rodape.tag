@@ -17,8 +17,8 @@
 <input type="hidden" id="siglaUsuCossignatarios" value="${cossignatarios}"/>
 
 <c:if
-	test="${not empty f:resource('siga.ex.assinador.externo.popup.url')}">
+	test="${not empty f:resource('assinador.externo.popup.url')}">
 	<script src="/siga/bootstrap/js/bootstrap.min.js"></script>
 	<script
-		src="${f:resource('siga.ex.assinador.externo.popup.url')}/popup-api.js"></script>
+		src="${f:resource('assinador.externo.popup.url')}/popup-api.js"></script>
 </c:if>

@@ -12,21 +12,14 @@ import java.net.URLEncoder;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
+import br.gov.jfrj.siga.base.Prop;
+
 public class GoogleRecaptcha {
 	
-	private static String proxyHost;
-	private static int proxyPort;
-
 	public static boolean isProxySetted() {
-		return proxyHost != null && proxyPort > 0;
-	}
-	
-	static void setProxyHost(String proxyHost) {
-		GoogleRecaptcha.proxyHost = proxyHost;
-	}
-	
-	static void setProxyPort(int proxyPort) {
-		GoogleRecaptcha.proxyPort = proxyPort;
+		String proxyHost = Prop.get("/siga.http.proxy.host");
+
+		return proxyHost != null;
 	}
 	
 	/**
@@ -39,6 +32,8 @@ public class GoogleRecaptcha {
 	 * @throws UnirestException
 	 */
 	public static JsonNode validarRecaptcha(String secretKey, String responseUIRecaptcha, String remoteip) throws UnirestException {
+		String proxyHost = Prop.get("/siga.http.proxy.host");
+		Integer proxyPort = Prop.getInt("/siga.http.proxy.port");
 
 		HttpURLConnection connection = null;
 		try {

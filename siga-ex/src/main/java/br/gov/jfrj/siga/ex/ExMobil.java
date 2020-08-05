@@ -48,6 +48,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.BatchSize;
 import org.jboss.logging.Logger;
 
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -1434,13 +1435,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 
 		List<ExMovimentacao> naoAssinados = new ArrayList<ExMovimentacao>();
 		Date dataDeInicioDeObrigacaoDeAssinatura = null;
-
-		try {
-
-			dataDeInicioDeObrigacaoDeAssinatura = SigaExProperties.getDataInicioObrigacaoDeAssinarAnexoEDespacho();
-		} catch (Exception e) {
-
-		}
+		dataDeInicioDeObrigacaoDeAssinatura = Prop.getData("data.obrigacao.assinar.anexo.despacho");
 
 		for (ExMovimentacao mov : this.getExMovimentacaoSet()) {
 			if (!mov.isCancelada()) {
@@ -1571,11 +1566,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		List<ExMovimentacao> naoAssinados = new ArrayList<ExMovimentacao>();
 		Date dataDeInicioDeObrigacaoDeAssinatura = null;
 
-		try {
-			dataDeInicioDeObrigacaoDeAssinatura = SigaExProperties.getDataInicioObrigacaoDeAssinarAnexoEDespacho();
-		} catch (Exception e) {
-
-		}
+		dataDeInicioDeObrigacaoDeAssinatura = Prop.getData("data.obrigacao.assinar.anexo.despacho");
 		for (ExMovimentacao mov : this.getExMovimentacaoSet()) {
 			if (!mov.isCancelada()) {
 				if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO

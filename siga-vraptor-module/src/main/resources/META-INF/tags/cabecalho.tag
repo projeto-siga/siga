@@ -105,7 +105,7 @@ ${meta}
 
 <c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
 
-<c:set var="siga_version"  scope="request" value="9.0.0.1" />
+<c:set var="siga_version"  scope="request" value="9.0.0.7" />
 
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
@@ -119,7 +119,7 @@ ${meta}
 		<c:if test="${desabilitarmenu == 'sim'}">
 			<c:set var="body_color" value="login_body_color" scope="request" />
 		</c:if>
-		
+												
 		<c:set var="ico_siga" value="sem-papel.ico" />
 		<c:set var="menu_class" value="menusp" />
 		<c:set var="sub_menu_class" value="submenusp" />
@@ -133,10 +133,12 @@ ${meta}
 		<c:set var="collapse_ArqAuxiliares" scope="request" value="not collapsible" />
 		<c:set var="hide_only_GOVSP" scope="request"> d-none </c:set>
 		<c:set var="hide_only_TRF2" scope="request"> </c:set>
+		<c:set var="uri_logo_siga_pequeno" value="${f:resource('siga.base.url')}/siga/imagens/logo-sem-papel-150x70.png" scope="request" />
 	</c:when>
 	<c:otherwise>
 		<meta name="theme-color" content="bg-primary">
 				<c:set var="thead_color" value="thead-light" scope="request" />
+									
 		<c:set var="ico_siga" value="siga.ico" />
 		<c:set var="menu_class" value="bg-primary" /> 
 		<c:set var="sub_menu_class" value="bg-secondary text-white" />
@@ -154,6 +156,7 @@ ${meta}
 		<c:set var="collapse_ArqAuxiliares" scope="request" value="not collapsible" />
 		<c:set var="hide_only_GOVSP" scope="request"> </c:set>
 		<c:set var="hide_only_TRF2" scope="request"> d-none </c:set>
+		<c:set var="uri_logo_siga_pequeno" value="${f:resource('siga.base.url')}/siga/imagens/logo-siga-140x40.png" scope="request" />		
 	</c:otherwise>
 </c:choose>
 
@@ -223,7 +226,7 @@ ${meta}
 									    <div class="modal-dialog modal-dialog-centered modal-lg" style="max-width: 80% !important;">
 									        <div class="modal-content" >
 									            <div class="modal-header bg-success">
-									            	<h5 class="modal-title text-white" >Tutoriais SP Sem Papel</h5>
+									            	<h5 class="modal-title text-white">Tutoriais SP Sem Papel</h5>
 									                <button type="button" class="close text-white" data-dismiss="modal" aria-hidden="true">×</button>
 									            </div>
 										        <div class="modal-body bg-light">
@@ -382,6 +385,9 @@ ${meta}
 									<c:when test="${f:resource('ambiente') eq 'treinamento'}">
 										Ambiente de Simulação
 									</c:when>
+									<c:when test="${f:resource('ambiente') eq 'configuracao'}">
+										Ambiente de Configuração
+									</c:when>
 									<c:when test="${f:resource('ambiente') eq 'homolog'}">
 										Ambiente de Homologação
 									</c:when>
@@ -464,13 +470,7 @@ ${meta}
 	</c:if>
 
 	<div id="carregando"
-		style="position: absolute; top: 0px; right: 0px; background-color: red; font-weight: bold; padding: 4px; color: white; display: none">Carregando...</div>
-	
-	<div class="modal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" id="spinnerModal">
-        <div class="modal-dialog modal-dialog-centered text-center" role="document">
-            <span class="fa fa-spinner fa-spin fa-3x w-100 text-white"></span>
-        </div>
-    </div>
+		style="position: absolute; top: 0px; right: 0px; background-color: red; font-weight: bold; padding: 4px; color: white; display: none">Carregando...</div>	
     
 <script type="text/javascript" language="Javascript1.1">
 setTimeout(function() {

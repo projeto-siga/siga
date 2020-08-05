@@ -23,6 +23,7 @@ import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
@@ -170,11 +171,11 @@ public class DpCargoController extends
 			if (lista.size() > 0) {				
 				InputStream inputStream = null;
 				StringBuffer texto = new StringBuffer();
-				texto.append("Cargo" + System.getProperty("line.separator"));
+				texto.append("Cargo" + System.lineSeparator());
 				
 				for (DpCargo cargo : lista) {
 					texto.append(cargo.getNomeCargo() + ";");										
-					texto.append(System.getProperty("line.separator"));
+					texto.append(System.lineSeparator());
 				}
 				
 				inputStream = new ByteArrayInputStream(texto.toString().getBytes("ISO-8859-1"));									
@@ -329,10 +330,9 @@ public class DpCargoController extends
 		}
 			
 		if(inputStream == null) {
-			result.include("msg", "Arquivo processado com sucesso!");
+			result.include(SigaModal.ALERTA, SigaModal.mensagem("Arquivo processado com sucesso!").titulo("Sucesso"));
 			carregarExcel();
-		} else {
-			result.include("msg", "");
+		} else {			
 			return new InputStreamDownload(inputStream, "application/text", "inconsistencias.txt");	
 		}
 		return null;

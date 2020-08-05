@@ -12,10 +12,12 @@ import java.net.URLEncoder;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
+import br.gov.jfrj.siga.base.Prop;
+
 public class GoogleRecaptcha {
 	
-	private static String proxyHost = System.getProperty("http.proxyHost");
-	private static int proxyPort = Integer.parseInt(System.getProperty("http.proxyPort"));
+	private static String proxyHost = Prop.get("/siga.http.proxy.host");
+	private static int proxyPort = Prop.getInt("/siga.http.proxy.port");
 
 	public static boolean isProxySetted() {
 		return proxyHost != null && proxyPort > 0;

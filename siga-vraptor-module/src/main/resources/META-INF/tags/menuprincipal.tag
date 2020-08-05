@@ -45,7 +45,7 @@
 				href="/siga/app/principal?redirecionar=false">Quadros
 					Quantitativos</a></li>
 		</c:if>
-		<c:if test="${f:resource('siga.local') ne 'GOVSP'}">
+		<c:if test="${f:resource('/siga.local') ne 'GOVSP'}">
 			<li><a class="dropdown-item" href="/siga/app/principal">Página
 					Inicial</a></li>
 		</c:if>
@@ -187,7 +187,7 @@
 
 			</ul></li>
 		</c:if>
-		<c:if test="${f:resource('siga.local') eq 'GOVSP'}">
+		<c:if test="${f:resource('/siga.local') eq 'GOVSP'}">
 			<c:if test="${not empty f:resource('gsa.url')}">
 				<li><a class="dropdown-item" href="/siga/app/busca">Busca
 						Textual</a></li>
@@ -418,7 +418,7 @@
 		</c:if>
 
 		<li><c:choose>
-				<c:when test="${f:resource('siga.local') eq 'GOVSP'}">
+				<c:when test="${f:resource('/siga.local') eq 'GOVSP'}">
 					<a class="dropdown-item" id="apostilaSiga"
 						href="/siga/arquivos/Manual-Basico-de-Operacoes-Sistema-SP-Sem-Papel-Documentos-Digitais.pdf"
 						target="_blank">Manual</a>

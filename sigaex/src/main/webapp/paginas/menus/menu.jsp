@@ -7,7 +7,7 @@
 <%@ taglib uri="http://localhost/libstag" prefix="fx"%>
 
 <c:if
-	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos') && (!fx:ehPublicoExterno(titular) || (f:resource('siga.local') eq 'GOVSP' && fx:podeCriarNovoExterno(titular, titular.lotacao)))}">
+	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos') && (!fx:ehPublicoExterno(titular) || (f:resource('/siga.local') eq 'GOVSP' && fx:podeCriarNovoExterno(titular, titular.lotacao)))}">
 	<li class="nav-item dropdown"><a href="javascript:void(0);"
 		class="nav-link dropdown-toggle" data-toggle="dropdown">
 			Documentos </a>

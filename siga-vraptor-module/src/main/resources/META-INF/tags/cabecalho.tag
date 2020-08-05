@@ -365,19 +365,19 @@ ${meta}
 						<div class="col">
 							<span>
 								<c:choose>
-									<c:when test="${f:resource('ambiente') eq 'desenv'}">
+									<c:when test="${f:resource('/siga.ambiente') eq 'desenv'}">
 										Ambiente de Desenvolvimento
 									</c:when>
-									<c:when test="${f:resource('ambiente') eq 'prod'}">
+									<c:when test="${f:resource('/siga.ambiente') eq 'prod'}">
 										Ambiente Oficial
 									</c:when>
-									<c:when test="${f:resource('ambiente') eq 'treinamento'}">
+									<c:when test="${f:resource('/siga.ambiente') eq 'treinamento'}">
 										Ambiente de Simulação
 									</c:when>
-									<c:when test="${f:resource('ambiente') eq 'configuracao'}">
+									<c:when test="${f:resource('/siga.ambiente') eq 'configuracao'}">
 										Ambiente de Configuração
 									</c:when>
-									<c:when test="${f:resource('ambiente') eq 'homolog'}">
+									<c:when test="${f:resource('/siga.ambiente') eq 'homolog'}">
 										Ambiente de Homologação
 									</c:when>
 								</c:choose>

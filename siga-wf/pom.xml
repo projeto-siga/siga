@@ -29,7 +29,8 @@
 			<artifactId>jlogic</artifactId>
 			<version>1.0.0</version>
 		</dependency>
-
+		
+				
 		<!-- https://mvnrepository.com/artifact/info.bliki.wiki/bliki-core
 		<dependency>
 			<groupId>info.bliki.wiki</groupId>

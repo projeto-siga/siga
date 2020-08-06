@@ -81,7 +81,6 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.4</version>
 				<configuration>
-					<packagingExcludes>WEB-INF/lib/siga-ext-*.jar</packagingExcludes>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -221,7 +220,6 @@
 				<groupId>siga</groupId>
 				<artifactId>siga-ext</artifactId>
 				<version>${siga.version}</version>
-				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
@@ -644,8 +642,14 @@
 			<dependency>
 				<groupId>com.crivano</groupId>
 				<artifactId>swaggerservlet</artifactId>
-				<version>1.29.0</version>
+				<version>1.33.0</version>
 			</dependency>
+			
+			<dependency>
+	            <groupId>org.flywaydb</groupId>
+	            <artifactId>flyway-core</artifactId>
+	            <version>6.5.3</version>
+	        </dependency>
 		</dependencies>
 	</dependencyManagement>
 

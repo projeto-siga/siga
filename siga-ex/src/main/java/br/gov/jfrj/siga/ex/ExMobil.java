@@ -2206,6 +2206,26 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return set;
 	}
 	
+	public Set<ExMovimentacao> getMovsNaoCanceladas(long[] idTpMovs) {
+		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
+
+		if (getExMovimentacaoSet() == null)
+			return set;
+				
+		for (ExMovimentacao m : getExMovimentacaoSet()) {
+			for (long idTpMov : idTpMovs) {
+				if (m.getExMovimentacaoCanceladora() != null)
+					continue;
+				if (m.getExTipoMovimentacao().getIdTpMov() != idTpMov)
+					continue;
+			
+				set.add(m);
+			}
+		}			
+		
+		return set;
+	}
+	
 	public static void adicionarIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso() {
 		isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso = true;
 	}

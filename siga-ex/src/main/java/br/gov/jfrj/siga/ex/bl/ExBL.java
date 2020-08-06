@@ -2355,8 +2355,7 @@ public class ExBL extends CpBL {
 				final ExMobil mobPai = mov.getExMovimentacaoRef().getExMobilRef();
 
 				if (mobPai.isArquivado())
-					throw new AplicacaoException(
-							"não é possível fazer o desentranhamento porque o documento ao qual este está juntado encontra-se arquivado.");
+					throw new RegraNegocioException("Não é possível fazer o desentranhamento porque o documento ao qual este está juntado encontra-se arquivado.");
 
 				ExMovimentacao ultMovDoc = null;
 				if (mobPai.isApensado()) {
@@ -2370,7 +2369,7 @@ public class ExBL extends CpBL {
 				mov.setLotaResp(ultMovDoc.getLotaResp());
 				mov.setResp(ultMovDoc.getResp());
 
-				if (mobPai.getMobilPrincipal().isNumeracaoUnicaAutomatica()) {
+				if (mobPai.getMobilPrincipal().isNumeracaoUnicaAutomatica() || SigaMessages.isSigaSP()) {
 					List<ExArquivoNumerado> ans = mov.getExMobil().filtrarArquivosNumerados(null, true);
 					armazenarCertidaoDeDesentranhamento(mov, mobPai.getMobilPrincipal(), ans, mov.obterDescrMovComPontoFinal());
 				}
@@ -2383,6 +2382,9 @@ public class ExBL extends CpBL {
 
 			gravarMovimentacao(mov);
 			concluirAlteracaoComRecalculoAcesso(mov.getExMobil());
+		} catch (RegraNegocioException e) {
+			cancelarAlteracao();
+			throw new RegraNegocioException(e.getMessage());
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao cancelar juntada.", 0, e);
@@ -4032,7 +4034,6 @@ public class ExBL extends CpBL {
 					null, null);
 
 			mov.setExMobilRef(mobPai);
-			mov.getExDocumento().setExMobilPai(mobPai);
 
 			if (idDocEscolha.equals("1")) {
 				mov.setDescrMov("Juntado ao documento " + mov.getExMobilRef().getCodigo().toString());

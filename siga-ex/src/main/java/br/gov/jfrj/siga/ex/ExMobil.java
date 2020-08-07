@@ -2237,4 +2237,8 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	public static boolean isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso() {
 		return isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso;
 	}
+	
+	public void indicarSeDeveExibirDocumentoCompletoReordenado(boolean exibirReordenacao) {
+		this.getDoc().setPodeExibirReordenacao(exibirReordenacao);
+	}
 }

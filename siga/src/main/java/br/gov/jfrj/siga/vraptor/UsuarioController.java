@@ -18,11 +18,10 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
-import br.gov.jfrj.siga.cp.bl.CpPropriedadeBL;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -60,7 +59,7 @@ public class UsuarioController extends SigaController {
 
 	@Get({ "/app/usuario/trocar_senha", "/public/app/usuario/trocar_senha" })
 	public void trocaSenha() {
-		result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
+		result.include("baseTeste", Prop.getBool("/siga.base.teste"));
 	}
 
 	@Post({ "/app/usuario/trocar_senha_gravar", "/public/app/usuario/trocar_senha_gravar" })
@@ -70,8 +69,7 @@ public class UsuarioController extends SigaController {
 		String senhaConfirma = usuario.getSenhaConfirma();
 		String nomeUsuario = usuario.getNomeUsuario().toUpperCase();		
 
-		if (SigaBaseProperties.getString("siga.local") != null
-				&& "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+		if (Prop.isGovSP()) {
 			List<CpIdentidade> lista1 = new ArrayList<CpIdentidade>();
 			CpIdentidade i = null;
 			nomeUsuario = nomeUsuario.replace(".", "").replace("-", "");
@@ -119,7 +117,7 @@ public class UsuarioController extends SigaController {
 		result.include("usuarios", lstDto);
 		result.include("matricula", so.getCadastrante().getSigla());
 		result.include("email", so.getCadastrante().getEmailPessoaAtual());
-		result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
+		result.include("baseTeste", Prop.getBool("/siga.base.teste"));
 	}	
 
 	@Post({ "/app/usuario/trocar_email_gravar", "/public/app/usuario/trocar_email_gravar" })
@@ -237,7 +235,7 @@ public class UsuarioController extends SigaController {
 	@Get({ "/app/usuario/incluir_usuario", "/public/app/usuario/incluir_usuario" })
 	public void incluirUsuario() {
 		if (!SigaMessages.isSigaSP()) {
-			result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
+			result.include("baseTeste", Prop.getBool("/siga.base.teste"));
 			result.include("titulo", SigaMessages.getMessage("usuario.novo"));
 			result.include("proxima_acao", "incluir_usuario_gravar");
 			result.forwardTo("/WEB-INF/page/usuario/esqueciSenha.jsp");
@@ -302,7 +300,7 @@ public class UsuarioController extends SigaController {
 
 	@Get({ "/app/usuario/esqueci_senha", "/public/app/usuario/esqueci_senha" })
 	public void esqueciSenha() {
-		result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
+		result.include("baseTeste", Prop.getBool("/siga.base.teste"));
 		result.include("titulo", "Esqueci Minha Senha");
 		result.include("proxima_acao", "esqueci_senha_gravar");
 	}
@@ -313,7 +311,7 @@ public class UsuarioController extends SigaController {
 		final CpIdentidade id = dao().consultaIdentidadeCadastrante(usuario.getMatricula(), true);
 		if (id == null)
 			throw new AplicacaoException("O usuário não está cadastrado.");
-		boolean autenticaPeloBanco = buscarModoAutenticacao(id.getCpOrgaoUsuario().getSiglaOrgaoUsu())
+		boolean autenticaPeloBanco = Cp.getInstance().getBL().buscarModoAutenticacao(id.getCpOrgaoUsuario().getSiglaOrgaoUsu())
 				.equals(GiService._MODO_AUTENTICACAO_BANCO);
 		if (!autenticaPeloBanco)
 			throw new AplicacaoException("O usuário deve modificar sua senha usando a interface do Windows "
@@ -339,8 +337,7 @@ public class UsuarioController extends SigaController {
 		case 1:
 //			verificarMetodoIntegracaoAD(usuario.getMatricula());
 
-			if (SigaBaseProperties.getString("siga.local") != null
-					&& "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+			if (Prop.isGovSP()) {
 				String msg = Cp.getInstance().getBL().alterarSenha(cpfNumerico, null, usuario.getMatricula());
 				if (msg != "OK") {
 					result.include("mensagemCabec", msg);
@@ -395,18 +392,6 @@ public class UsuarioController extends SigaController {
 		result.include("volta", "esqueci");
 		result.include("titulo", "Esqueci Minha Senha");
 		result.use(Results.page()).forwardTo("/WEB-INF/page/usuario/esqueciSenha.jsp");
-	}
-
-	private String buscarModoAutenticacao(String orgao) {
-		String retorno = GiService._MODO_AUTENTICACAO_DEFAULT;
-		CpPropriedadeBL props = new CpPropriedadeBL();
-		try {
-			String modo = props.getModoAutenticacao(orgao);
-			if (modo != null)
-				retorno = modo;
-		} catch (Exception e) {
-		}
-		return retorno;
 	}
 
 	@Get({ "/app/usuario/integracao_ldap", "/public/app/usuario/integracao_ldap" })

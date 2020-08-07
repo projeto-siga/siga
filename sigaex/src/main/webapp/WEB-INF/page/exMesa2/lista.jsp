@@ -9,7 +9,7 @@
 
 <siga:pagina titulo="Mesa Virtual">
 <script type="text/javascript" src="../javascript/vue.min.js"></script>
-	<c:set var="siga_mesaCarregaLotacao" scope="session" value="${f:resource('siga.mesa.carrega.lotacao')}" />
+	<c:set var="siga_mesaCarregaLotacao" scope="session" value="${f:resource('/siga.mesa.carrega.lotacao')}" />
 	<div id="app" class="container-fluid content" >
 		<div id="configMenu" class="mesa-config ml-auto" :class="toggleConfig">
 			<c:if test="${!ehPublicoExterno}">
@@ -189,7 +189,7 @@
 									<p class="alert alert-warning alert-dismissible fade show">Não há documentos a exibir para est{{exibeLota? 'a lotação.' : 'e usuário.'}}</p>
 								</div>
 							</div>
-							<table v-else class="text-size-6 text-muted table table-sm table-striped table-hover table-borderless">
+							<table v-else class="text-muted table table-sm table-striped table-hover table-borderless">
 								<thead v-if="!carregando">
 									<tr class="table-head d-flex">
 										<th scope="col" class="col-1 d-none d-md-block">Tempo</th>

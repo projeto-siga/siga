@@ -249,7 +249,7 @@ function refreshWindow(){
 		<div class="card bg-light mb-3" >
 			<div class="card-header"><h5>${titulo}</h5></div>
 			<div class="card-body">
-				<c:if test="${empty f:resource('siga.gi.omitir.metodo2') || f:resource('siga.gi.omitir.metodo2') != 'true'}">
+				<c:if test="${f:resource('/siga.omitir.metodo2') != 'true'}">
 					<h6 class="gt-form-head"><fmt:message key = "usuario.metodo1"/></h6>
 				</c:if>
 
@@ -315,7 +315,7 @@ function refreshWindow(){
 						</form>
 					</div>
 				</div>
-				<c:if test="${empty f:resource('siga.gi.omitir.metodo2') || f:resource('siga.gi.omitir.metodo2') != 'true'}">
+				<c:if test="${f:resource('/siga.omitir.metodo2') != 'true'}">
 					<br/>
 					<h6 class="gt-form-head">Método 2 - Alterar a senha com auxílio de 2 pessoas</h6>			
 					<p>

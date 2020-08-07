@@ -49,7 +49,7 @@ import javax.persistence.criteria.Root;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -85,7 +85,6 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
-import br.gov.jfrj.siga.ex.bl.Mesa.GrupoDeMarcadorEnum;
 import br.gov.jfrj.siga.ex.bl.Mesa2;
 import br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
@@ -576,7 +575,7 @@ public class ExDao extends CpDao {
 		}
 
 		if (flt.getIdTpDoc() != null && flt.getIdTpDoc() != 0) {
-			query.setParameter("idTpDoc", flt.getIdTpDoc());
+			query.setParameter("idTpDoc", new Long(flt.getIdTpDoc()));
 		}
 
 		if (flt.getIdFormaDoc() != null && flt.getIdFormaDoc() != 0) {
@@ -875,7 +874,7 @@ public class ExDao extends CpDao {
 		} else {
 			query = em().createNamedQuery("consultarEmailporLotacao");
 
-			query.setParameter("idLotacaoIni", lot);
+			query.setParameter("idLotacaoIni", lot.getLotacaoInicial());
 		}
 
 		return query.getResultList();
@@ -1582,7 +1581,7 @@ public class ExDao extends CpDao {
 		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
 		Predicate predicateAnd;
 		Predicate predicateEqualTipoMarcador  = criteriaBuilder.equal(cpMarcadorRoot.get("cpTipoMarcador"), marcador);
-		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+		if("GOVSP".equals(Prop.get("/siga.local"))) {
 
 			Predicate predicateNotEqualTipoMarcador1  = criteriaBuilder.notEqual(cpMarcadorRoot.get("idMarcador"), CpMarcador.MARCADOR_COMO_REVISOR);
 			Predicate predicateNotEqualTipoMarcador2  = criteriaBuilder.notEqual(cpMarcadorRoot.get("idMarcador"), CpMarcador.MARCADOR_PRONTO_PARA_ASSINAR);
@@ -1715,7 +1714,7 @@ public class ExDao extends CpDao {
 				+ " and (marca.dtFimMarca is null or marca.dtFimMarca > sysdate)"
 				+ (titular != null ? " and (marca.dpPessoaIni.idPessoaIni = :titular)"
 						: " and (marca.dpLotacaoIni.idLotacaoIni = :lotaTitular)");
-		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+		if("GOVSP".equals(Prop.get("/siga.local"))) {
 			q += " and ((mobil.exDocumento.numExpediente is null and marcador = 1) or (mobil.exDocumento.numExpediente is not null))"
 					+ " and marcador <> 10";
 		}
@@ -1778,60 +1777,67 @@ public class ExDao extends CpDao {
 	public List consultarTotaisPorMarcador(DpPessoa pes, DpLotacao lot, List<GrupoItem> grupos, 
 			boolean exibeLotacao, List<Integer> marcasAIgnorar) {
 		try {
+//			long tempoIni = System.nanoTime();
 			String query = "";
 			// Não conta os documentos que tiverem marcas na lista marcasAIgnorar
-			String queryMarcasAIgnorar = "";
+			String queryMarcasAIgnorar = marcasAIgnorar.toString().replaceAll("\\[|\\]", "");
 			String queryMarcasAIgnorarFinal = "";
-			if (marcasAIgnorar != null && marcasAIgnorar.size() > 0) {
-				for (Integer marcaAIgnorar : marcasAIgnorar) {
-					queryMarcasAIgnorar += " marca2.id_marcador = " + marcaAIgnorar.toString() + " OR"; 
-				}
-				queryMarcasAIgnorar = queryMarcasAIgnorar.substring(0, queryMarcasAIgnorar.length() - 2);
-			}
 			// Para cada grupo solicitado, gera a query para contagem
 			for (GrupoItem grupoItem : grupos) {
 				if (!grupoItem.grupoHide && grupoItem.grupoMarcadores.size() > 0) {
-					if(SigaMessages.isSigaSP() 
-							&& !grupoItem.grupoNome.equals(Mesa2.GrupoDeMarcadorEnum.EM_ELABORACAO.getNome())) {
-						// Se TMP, só conta se for do grupo Em Elaboração
-						queryMarcasAIgnorarFinal = queryMarcasAIgnorar 
-								+ (queryMarcasAIgnorar != "" ? "OR " : "") 
-								+ "marca2.id_marcador = " 
-								+ String.valueOf(CpMarcador.MARCADOR_EM_ELABORACAO);
-					} else {
-						queryMarcasAIgnorarFinal = queryMarcasAIgnorar; 
+					queryMarcasAIgnorarFinal = queryMarcasAIgnorar;
+					// Se for do grupo AGUARDANDO_ANDAMENTO, nao conta se tiver marca do grupo CAIXA_DE_ENTRADA
+					if(grupoItem.grupoNome.equals(Mesa2.GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO.getNome())) {
+						queryMarcasAIgnorarFinal = queryMarcasAIgnorarFinal 
+							+ ( "".equals(queryMarcasAIgnorarFinal) ? "" : ", ") 
+							+ String.valueOf(CpMarcador.MARCADOR_CAIXA_DE_ENTRADA)
+							+ ", " + String.valueOf(CpMarcador.MARCADOR_A_RECEBER)
+							+ ", " + String.valueOf(CpMarcador.MARCADOR_EM_TRANSITO)
+							+ ", " + String.valueOf(CpMarcador.MARCADOR_SOLICITACAO_A_RECEBER);
 					}
 					query += "SELECT "
 						+ grupoItem.grupoOrdem + ", "
 						+ " SUM(CASE WHEN cont_pessoa > 0 THEN 1 ELSE 0 END), " 
 						+ " SUM(CASE WHEN cont_lota > 0 THEN 1 ELSE 0 END) "
-						+ "			FROM (SELECT distinct marca.id_ref, "
-						+ " 			SUM(CASE WHEN marca.id_pessoa_ini = :idPessoaIni THEN 1 ELSE 0 END) cont_pessoa,"
-						+ " 			SUM(CASE WHEN marca.id_lotacao_ini = :idLotacaoIni THEN 1 ELSE 0 END) cont_lota"
-						+ "	   			FROM corporativo.cp_marca marca"
-						+ " 			INNER JOIN siga.ex_mobil mob on marca.id_ref = mob.id_mobil"
-						+ (queryMarcasAIgnorarFinal.length() > 0 ? 
-								 		" LEFT OUTER JOIN corporativo.cp_marca marca2 ON "
-								 			+ " marca2.id_ref = marca.id_ref AND ("
-								 			+ queryMarcasAIgnorarFinal + ")" : "")
-						+ "	   			WHERE (marca.dt_ini_marca IS NULL OR marca.dt_ini_marca < sysdate)"
-						+ "	   				AND (marca.dt_fim_marca IS NULL OR marca.dt_fim_marca > sysdate)"
-						+ "	   				AND ((marca.id_pessoa_ini = :idPessoaIni) OR (marca.id_lotacao_ini = :idLotacaoIni))"
-						+ "	   				AND marca.id_tp_marca = 1"
-						+ "					AND marca.id_marcador in (" 
-						+ grupoItem.grupoMarcadores.toString().replaceAll("\\[|\\]", "") + ") "
-						+ (queryMarcasAIgnorarFinal.length() > 0 ? " AND marca2.id_marca IS null " : "")
-						+ "				GROUP BY marca.id_ref )"
+						+ " FROM (SELECT distinct marca.id_ref, "
+						 + " SUM(CASE WHEN marca.id_pessoa_ini = :idPessoaIni THEN 1 ELSE 0 END) cont_pessoa,"
+						 + " SUM(CASE WHEN marca.id_lotacao_ini = :idLotacaoIni THEN 1 ELSE 0 END) cont_lota"
+						 + " FROM corporativo.cp_marca marca"
+						 + " INNER JOIN siga.ex_mobil mob on marca.id_ref = mob.id_mobil"
+						 + " INNER JOIN corporativo.cp_marcador marcador ON marca.id_marcador = marcador.id_marcador"
+						 + " LEFT OUTER JOIN corporativo.cp_marca marca2 ON "
+						  + " marca2.id_ref = marca.id_ref "
+						  + " AND (marca2.dt_ini_marca IS NULL OR marca2.dt_ini_marca < sysdate)"
+						  + " AND (marca2.dt_fim_marca IS NULL OR marca2.dt_fim_marca > sysdate)"
+						  + " AND ((marcador.GRUPO_MARCADOR <> " + String.valueOf(Mesa2.GrupoDeMarcadorEnum.EM_ELABORACAO.getId()) 
+						  	+ " AND MARCA2.ID_MARCADOR = " + String.valueOf(CpMarcador.MARCADOR_EM_ELABORACAO) + ") "
+						  	+ ( "".equals(queryMarcasAIgnorarFinal) ? ")" : 
+						  		"OR (((marca2.id_pessoa_ini = :idPessoaIni) OR (marca2.id_lotacao_ini = :idLotacaoIni))"
+						  		+ " AND marca2.id_tp_marca = 1"						 
+						  		+ " AND marca2.id_marcador in (" + queryMarcasAIgnorarFinal + ")))" )
+//  						  + (!grupoItem.grupoNome.equals(Mesa2.GrupoDeMarcadorEnum.EM_ELABORACAO.getNome())?
+//  								  " OR marca2.id_marcador = " + String.valueOf(CpMarcador.MARCADOR_EM_ELABORACAO) + ")" : ")")
+						 + " WHERE (marca.dt_ini_marca IS NULL OR marca.dt_ini_marca < sysdate)"
+						  + " AND (marca.dt_fim_marca IS NULL OR marca.dt_fim_marca > sysdate)"
+						  + " AND ((marca.id_pessoa_ini = :idPessoaIni) OR (marca.id_lotacao_ini = :idLotacaoIni))"
+						  + " AND marca.id_tp_marca = 1"
+						  + " AND marcador.grupo_marcador = " + grupoItem.grupoOrdem 
+						  + " AND marca2.id_marca IS null "
+						 + " GROUP BY marca.id_ref )"
+//								+ " GROUP BY tab1.grupo_marcador ORDER BY tab1.grupo_marcador asc"
 						+ " UNION ALL ";
 				}
 			}
-			if (query.length() > 0) 
+			List<Object[]> result = new ArrayList<Object[]>();
+			if (query.length() > 0) { 
 				query = query.substring(0, query.length() - 10);
-			Query sql = em().createNativeQuery(query);
-			sql.setParameter("idPessoaIni", pes.getIdPessoaIni());
-			sql.setParameter("idLotacaoIni", lot.getIdLotacaoIni());
 
-			List result = sql.getResultList();
+				Query sql = em().createNativeQuery(query);
+				sql.setParameter("idPessoaIni", pes.getIdPessoaIni());
+				sql.setParameter("idLotacaoIni", lot.getIdLotacaoIni());
+	
+				result = sql.getResultList();
+			}
 
 			return result;
 
@@ -1880,13 +1886,15 @@ public class ExDao extends CpDao {
 			query.setParameter("lotaTitular", lotaTitular.getIdLotacaoIni());
 
 		l = query.getResultList();
-// 		long tempoTotal = System.nanoTime() - tempoIni;
-		// System.out.println("listarMobilsPorMarcas: " + tempoTotal
-		// / 1000000 + " ms -> " + query + ", resultado: " + l);
+//		long tempoTotal = System.nanoTime() - tempoIni;
+//		System.out.println("listarMobilsPorMarcas: " + tempoTotal
+//		/ 1000000 + " ms ==> " + query);
 		return l;
 	}
 	
 	public List listarMovimentacoesMesa(List<Long> listIdMobil, boolean trazerComposto) {
+//		long tempoIni = System.nanoTime();
+		List<List<String>> l = new ArrayList<List<String>> ();
 		Query query = em()
 				.createQuery(
 						"select "
@@ -1912,79 +1920,10 @@ public class ExDao extends CpDao {
 		if (listIdMobil != null) {
 			query.setParameter("listIdMobil", listIdMobil);
 		}
-		return query.getResultList();
-	}
-
-	public Long marcasSemMobil(Date dtIni, Date dtFim, DpPessoa pes, DpLotacao lot) {
-//		Query sql = getSessao()
-//				.createSQLQuery("SELECT count(1) from corporativo.cp_marca marca " 
-//						+ "LEFT JOIN siga.ex_mobil mob ON mob.id_mobil = marca.id_ref "  
-//						+ "WHERE ( marca.dt_ini_marca IS NULL OR marca.dt_ini_marca < :dtIni ) " 
-//						+ " AND ( marca.dt_fim_marca IS NULL OR marca.dt_fim_marca > :dtFim ) "
-//						+ (pes != null ? " and (marca.dpPessoaIni = :pes)" : "") 
-//						+ (lot != null ? " and (marca.dpLotacaoIni = :lot)" : "")
-//						+ "	AND mob.id_mobil is null"
-//				);
-//		sql.setDate("dtIni", dtIni);
-//		sql.setDate("dtFim", dtFim);
-//		sql.setMaxResults(500);
-//		
-//		if (pes != null) {
-//			sql.setLong("idPessoaIni", pes.getIdPessoaIni());
-//		}
-//		if (lot != null) {
-//			sql.setLong("idLotacaoIni", lot.getIdLotacaoIni());
-//		}
-//		return Long.valueOf(sql.uniqueResult().toString());
-		return null;
-	}
-	
-	public List listarMarcasSemMobil(Date dtIni, Date dtFim, DpPessoa pes, DpLotacao lot) {
-		List<List<String>> l = new ArrayList<List<String>> ();
-			
-//		Query query = getSessao()
-//				.createSQLQuery("SELECT marca.id_marca, "
-//						+ " marca.dt_ini_marca, "
-//						+ " marca.id_marcador, "
-//						+ " marcador.descr_marcador, marca.id_ref "
-//						+ "FROM corporativo.cp_marca marca "
-//						+ "LEFT JOIN corporativo.cp_marcador marcador "
-//						+ "     ON marcador.id_marcador = marca.id_marcador "  
-//						+ "LEFT JOIN siga.ex_mobil mob ON mob.id_mobil = marca.id_ref "  
-//						+ "WHERE ( marca.dt_ini_marca is null OR marca.dt_ini_marca < :dtIni ) " 
-//						+ "   AND ( marca.dt_fim_marca is null OR marca.dt_fim_marca > :dtFim ) "
-//						+ (pes != null ? " and (marca.dp_pessoa_ini = :pes)" : "") 
-//						+ (lot != null ? " and (marca.dp_lotacao_ini = :lot)" : "")
-//						+ "	  AND mob.id_mobil is null "
-//						+ "ORDER BY marca.dt_ini_marca desc "
-//						);
-//		query.setDate("dtIni", dtIni);
-//		query.setDate("dtFim", dtFim);
-//		query.setMaxResults(500);
-//		
-//		if (pes != null) {
-//			query.setLong("idPessoaIni", pes.getIdPessoaIni());
-//		}
-//		if (lot != null) {
-//			query.setLong("idLotacaoIni", lot.getIdLotacaoIni());
-//		}
-//		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy HH:MM:SS");
-//		
-//		Iterator it = query.list().iterator();
-//		while (it.hasNext()) {
-//			Object[] obj = (Object[]) it.next();
-//			List<String> listDados = new ArrayList();
-//			listDados.add(new BigDecimal(obj[0].toString()).toString());
-//			if (obj[1] != null) {
-//				listDados.add(formato.format(obj[1]));
-//			} else {
-//				listDados.add("");
-//			}
-//			listDados.add(new BigDecimal(obj[2].toString()).toString());
-//			listDados.add(obj[3].toString());
-//			listDados.add(new BigDecimal(obj[4].toString()).toString());
-//			l.add(listDados);
-//		}
+		l = query.getResultList();
+//		long tempoTotal = System.nanoTime() - tempoIni;
+//		System.out.println("listarMobilsPorMarcas: " + tempoTotal
+//		/ 1000000 + " ms ==> " + query);
 		
 		return l;
 	}

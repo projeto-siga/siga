@@ -17,8 +17,8 @@
 		}
 	</script>
 	
-	<c:set var="siga_cliente_sso" scope="request" value="${f:resource('siga.integracao.sso')}" />
-	<c:set var="siga_cliente_sso_btn_txt" scope="request" value="${f:resource('siga.integracao.sso.btn.txt')}" />
+	<c:set var="siga_cliente_sso" scope="request" value="${f:resource('/siga.integracao.sso')}" />
+	<c:set var="siga_cliente_sso_btn_txt" scope="request" value="${f:resource('/siga.integracao.sso.btn.txt')}" />
 	
 	<c:choose>
 		<c:when test="${siga_cliente == 'GOVSP'}">
@@ -55,10 +55,7 @@
 							</div>
 
 							<div class="login-invalido-descricao ">	
-								<div class="${hide_only_GOVSP}">
-									<p class="alert alert-danger">${f:resource('siga.gi.texto.login')}</p>
-								</div>														
-								<p class="alert alert-danger ${hide_only_TRF2}">${loginMensagem}</p>
+								<p class="alert alert-danger">${loginMensagem}</p>
 							</div>
 						</div>
 					</c:if>

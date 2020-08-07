@@ -419,9 +419,11 @@
 
 		<li><c:choose>
 				<c:when test="${f:resource('/siga.local') eq 'GOVSP'}">
-					<a class="dropdown-item" id="apostilaSiga"
-						href="/siga/arquivos/Manual-Basico-de-Operacoes-Sistema-SP-Sem-Papel-Documentos-Digitais.pdf"
-						target="_blank">Manual</a>
+					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;MA:Manual')}">
+							<a class="dropdown-item" id="apostilaSiga"
+								href="/siga/arquivos/Manual-Basico-de-Operacoes-Sistema-SP-Sem-Papel-Documentos-Digitais.pdf"
+								target="_blank">Manual</a>
+					</c:if>
 				</c:when>
 				<c:otherwise>
 					<a class="dropdown-item" id="apostilaSiga"

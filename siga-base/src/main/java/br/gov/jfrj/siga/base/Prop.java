@@ -75,7 +75,10 @@ public class Prop {
 	public static void defineGlobalProperties() {
 		provider.addPublicProperty("/siga.base.url", "http://localhost:8080");
 		String base = get("/siga.base.url");
-
+		
+		provider.addRestrictedProperty("/siga.base.interna.url", base);
+		String baseInterna = get("/siga.base.interna.url");
+		
 		provider.addPublicProperty("/siga.gsa.url", null);
 		
 		/* proxy properties */
@@ -165,28 +168,28 @@ public class Prop {
 		provider.addPublicProperty("/xjus.permalink.url", null);
 		provider.addPublicProperty("/xjus.url", null);
 
-		provider.addPublicProperty("/siga.service.endpoint", base + "/siga/servicos/GiService?wsdl");
-		provider.addPublicProperty("/siga.service.url", base + "/siga/servicos/GiService");
+		provider.addPublicProperty("/siga.service.endpoint", baseInterna + "/siga/servicos/GiService?wsdl");
+		provider.addPublicProperty("/siga.service.url", baseInterna + "/siga/servicos/GiService");
 		provider.addPublicProperty("/siga.service.qname", "http://impl.service.gi.siga.jfrj.gov.br/");
 		provider.addPublicProperty("/siga.service.name", "GiService");
 
-		provider.addPublicProperty("/sigaex.service.endpoint", base + "/sigaex/servicos/ExService?wsdl");
-		provider.addPublicProperty("/sigaex.service.url", base + "/sigaex/servicos/ExService");
+		provider.addPublicProperty("/sigaex.service.endpoint", baseInterna + "/sigaex/servicos/ExService?wsdl");
+		provider.addPublicProperty("/sigaex.service.url", baseInterna + "/sigaex/servicos/ExService");
 		provider.addPublicProperty("/sigaex.service.qname", "http://impl.service.ex.siga.jfrj.gov.br/");
 		provider.addPublicProperty("/sigaex.service.name", "ExService");
 
-		provider.addPublicProperty("/sigawf.service.endpoint", base + "/sigawf/servicos/WfService?wsdl");
-		provider.addPublicProperty("/sigawf.service.url", base + "/sigawf/servicos/WfService");
+		provider.addPublicProperty("/sigawf.service.endpoint", baseInterna + "/sigawf/servicos/WfService?wsdl");
+		provider.addPublicProperty("/sigawf.service.url", baseInterna + "/sigawf/servicos/WfService");
 		provider.addPublicProperty("/sigawf.service.qname", "http://impl.service.wf.siga.jfrj.gov.br/");
 		provider.addPublicProperty("/sigawf.service.name", "WfService");
 
-		provider.addPublicProperty("/sigagc.service.endpoint", base + "/sigagc/servicos/GcService?wsdl");
-		provider.addPublicProperty("/sigagc.service.url", base + "/sigagc/servicos/GcService");
+		provider.addPublicProperty("/sigagc.service.endpoint", baseInterna + "/sigagc/servicos/GcService?wsdl");
+		provider.addPublicProperty("/sigagc.service.url", baseInterna + "/sigagc/servicos/GcService");
 		provider.addPublicProperty("/sigagc.service.qname", "http://impl.service.gc.siga.jfrj.gov.br/");
 		provider.addPublicProperty("/sigagc.service.name", "GcService");
 
-		provider.addPublicProperty("/blucservice.url", base + "/blucservice/api/v1");
-		provider.addPublicProperty("/vizservice.url", base + "/vizservice");
+		provider.addPublicProperty("/blucservice.url", baseInterna + "/blucservice/api/v1");
+		provider.addPublicProperty("/vizservice.url", baseInterna + "/vizservice");
 
 	}
 }

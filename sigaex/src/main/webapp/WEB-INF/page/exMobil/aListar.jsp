@@ -15,19 +15,19 @@
 	}
 	function alteraTipoDaForma(cont) {
 		ReplaceInnerHTMLFromAjaxResponse(
-				'${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_formas?tipoForma='
+				'/sigaex/app/expediente/doc/carregar_lista_formas?tipoForma='
 						+ document.getElementById('tipoForma').value
-						+ '&idFormaDoc=' + '${idFormaDoc}', null, document
-						.getElementById('comboFormaDiv'), function() {transformarEmSelect2(null, '#idFormaDoc', '#idFormaDocGroup')})
+						+ '&idFormaDoc=' + '', null, document
+						.getElementById('comboFormaDiv'), cont)
 	}
 
 	function alteraForma(cont) {
 		ReplaceInnerHTMLFromAjaxResponse(
-				'${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_modelos?forma='
+				'/sigaex/app/expediente/doc/carregar_lista_modelos?forma='
 						+ document.getElementById('idFormaDoc').value
-						+ '&idMod='	+ '${idMod}', null, document
-						.getElementById('comboModeloDiv'), function() {transformarEmSelect2(null, '#idMod', '#idModGroup')})
-	}		
+						+ '&idMod='	+ '', null, document
+						.getElementById('comboModeloDiv'), cont)
+	}
 
 	function sbmtAction(id, action) {
 		var frm = document.getElementById(id);

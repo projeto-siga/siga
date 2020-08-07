@@ -42,6 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.hibernate.exception.ConstraintViolationException;
+import org.jboss.logging.Logger;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
@@ -81,6 +82,8 @@ import br.gov.jfrj.siga.model.Selecionavel;
 @Controller
 public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPessoa, DpPessoaDaoFiltro> {
 
+	private static final Logger LOG = Logger.getLogger(DpPessoaController.class);
+	
 	private Long orgaoUsu;
 	private DpLotacaoSelecao lotacaoSel;
 	private String cpf;
@@ -349,6 +352,9 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 					if(e.getCause() instanceof ConstraintViolationException &&
 	    					("CORPORATIVO.DP_PESSOA_UNIQUE_PESSOA_ATIVA".equalsIgnoreCase(((ConstraintViolationException)e.getCause()).getConstraintName()))) {
 						result.include(SigaModal.ALERTA, SigaModal.mensagem("Ocorreu um problema no cadastro da pessoa"));
+	    			} else {
+	    				LOG.error("Erro ao ativar pessoa " + pessoa + ": " + e.getMessage(), e);
+	    				throw new AplicacaoException("Erro na gravação", 0, e);
 	    			}
 				}
 			}

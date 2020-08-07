@@ -2355,8 +2355,7 @@ public class ExBL extends CpBL {
 				final ExMobil mobPai = mov.getExMovimentacaoRef().getExMobilRef();
 
 				if (mobPai.isArquivado())
-					throw new AplicacaoException(
-							"não é possível fazer o desentranhamento porque o documento ao qual este está juntado encontra-se arquivado.");
+					throw new RegraNegocioException("Não é possível fazer o desentranhamento porque o documento ao qual este está juntado encontra-se arquivado.");
 
 				ExMovimentacao ultMovDoc = null;
 				if (mobPai.isApensado()) {
@@ -2370,7 +2369,7 @@ public class ExBL extends CpBL {
 				mov.setLotaResp(ultMovDoc.getLotaResp());
 				mov.setResp(ultMovDoc.getResp());
 
-				if (mobPai.getMobilPrincipal().isNumeracaoUnicaAutomatica()) {
+				if (mobPai.getMobilPrincipal().isNumeracaoUnicaAutomatica() || SigaMessages.isSigaSP()) {
 					List<ExArquivoNumerado> ans = mov.getExMobil().filtrarArquivosNumerados(null, true);
 					armazenarCertidaoDeDesentranhamento(mov, mobPai.getMobilPrincipal(), ans, mov.obterDescrMovComPontoFinal());
 				}
@@ -2383,6 +2382,9 @@ public class ExBL extends CpBL {
 
 			gravarMovimentacao(mov);
 			concluirAlteracaoComRecalculoAcesso(mov.getExMobil());
+		} catch (RegraNegocioException e) {
+			cancelarAlteracao();
+			throw new RegraNegocioException(e.getMessage());
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao cancelar juntada.", 0, e);
@@ -4032,7 +4034,6 @@ public class ExBL extends CpBL {
 					null, null);
 
 			mov.setExMobilRef(mobPai);
-			mov.getExDocumento().setExMobilPai(mobPai);
 
 			if (idDocEscolha.equals("1")) {
 				mov.setDescrMov("Juntado ao documento " + mov.getExMobilRef().getCodigo().toString());
@@ -4137,16 +4138,18 @@ public class ExBL extends CpBL {
 				obterMetodoPorString(funcao, doc);
 			}
 			
+			if (Prop.isGovSP()) {
 			//Gerar movimentação REFAZER para Mobil Pai
-			if (doc.getExMobilPai() != null) {
-				final ExMovimentacao mov = criarNovaMovimentacao(
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFAZER,
-						cadastrante, lotaCadastrante, doc.getExMobilPai(), null, null, null,
-						null, null, null);
-				mov.setDescrMov("Documento refeito. <br /> Documento Cancelado: " + doc.getSigla() + ".<br /> Novo Documento:  " + novoDoc);
+				if (doc.getExMobilPai() != null) {
+					final ExMovimentacao mov = criarNovaMovimentacao(
+							ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFAZER,
+							cadastrante, lotaCadastrante, doc.getExMobilPai(), null, null, null,
+							null, null, null);
+					mov.setDescrMov("Documento refeito. <br /> Documento Cancelado: " + doc.getSigla() + ".<br /> Novo Documento:  " + novoDoc);
 				
-				gravarMovimentacao(mov);
-			}
+					gravarMovimentacao(mov);
+				}
+			}	
 			
 			concluirAlteracaoDocComRecalculoAcesso(novoDoc);
 			// atualizarWorkflow(doc, null);
@@ -7338,4 +7341,32 @@ public class ExBL extends CpBL {
 			objectJson = null;
 		}
 	}
+
+	public void corrigeDocSemMobil(ExDocumento doc)
+			throws Exception {
+		Set<ExVia> setVias = doc.getSetVias();
+	
+		if (doc.getExFormaDocumento().getExTipoFormaDoc().isExpediente()) {
+			for (final ExVia via : setVias) {
+				Integer numVia = null;
+				if (via.getCodVia() != null)
+					numVia = Integer.parseInt(via.getCodVia());
+				if (numVia == null) {
+					numVia = 1;
+				}
+				criarVia(doc.getCadastrante(), doc.getLotaCadastrante(), doc, numVia);
+			}
+		} else {
+			criarVolume(doc.getCadastrante(), doc.getLotaCadastrante(), doc);
+		}
+	
+		concluirAlteracaoDocComRecalculoAcesso(doc);
+	
+		ContextoPersistencia.flushTransaction();
+	
+		if (setVias == null || setVias.size() == 0)
+			criarVia(doc.getCadastrante(), doc.getLotaCadastrante(), doc, null);
+		return;
+	}
 }
+

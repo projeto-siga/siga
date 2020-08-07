@@ -167,7 +167,7 @@
 				</c:otherwise>
 			</c:choose>
 			<siga:links inline="${true}">
-				<div class="d-inline position-fixed fixed-bottom">
+				<div class="d-inline position-fixed fixed-bottom" style="left:auto">
 					<div class="float-right mr-3 opacity-80">
 						<p>
 							<a class="btn btn-light btn-circle" href="#inicio"> 

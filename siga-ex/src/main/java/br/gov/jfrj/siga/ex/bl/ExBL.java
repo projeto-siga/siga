@@ -4139,7 +4139,7 @@ public class ExBL extends CpBL {
 				obterMetodoPorString(funcao, doc);
 			}
 			
-			if (SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+			if (Prop.isGovSP()) {
 			//Gerar movimentação REFAZER para Mobil Pai
 				if (doc.getExMobilPai() != null) {
 					final ExMovimentacao mov = criarNovaMovimentacao(

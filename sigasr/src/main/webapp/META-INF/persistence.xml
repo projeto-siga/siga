@@ -44,6 +44,7 @@
 		<class>br.gov.jfrj.siga.cp.CpPerfil</class>
 		<class>br.gov.jfrj.siga.cp.CpGrupoDeEmail</class>
 		<class>br.gov.jfrj.siga.cp.CpPerfilJEE</class>
+		<class>br.gov.jfrj.siga.dp.CpContrato</class>
 
 
 		<!-- colocar as classes do SigaSR -->

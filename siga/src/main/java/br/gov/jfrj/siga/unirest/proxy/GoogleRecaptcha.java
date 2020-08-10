@@ -16,8 +16,8 @@ import br.gov.jfrj.siga.base.Prop;
 
 public class GoogleRecaptcha {
 	
-	private static String proxyHost = Prop.get("/siga.http.proxy.host");
-	private static int proxyPort = Prop.getInt("/siga.http.proxy.port");
+	private static String proxyHost = Prop.get("/http.proxyHost");
+	private static int proxyPort = Prop.getInt("/http.proxyPort");
 
 	public static boolean isProxySetted() {
 		return proxyHost != null && proxyPort > 0;

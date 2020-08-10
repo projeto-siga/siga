@@ -64,7 +64,7 @@ public class DocumentoSiglaArquivoGet implements IDocumentoSiglaArquivoGet {
 		resp.jwt = DownloadJwtFilenameGet.jwt(u, resp.uuid, req.sigla, req.contenttype, filename);
 		ExApiV1Servlet.submitToExecutor(
 				new DownloadAssincrono(resp.uuid, req.contenttype, req.sigla, req.estampa == null ? false : req.estampa,
-						req.volumes == null ? false : req.volumes, contextpath, servernameport));
+						req.volumes == null ? false : req.volumes, contextpath, servernameport, req.exibirReordenacao));
 	}
 
 	@Override

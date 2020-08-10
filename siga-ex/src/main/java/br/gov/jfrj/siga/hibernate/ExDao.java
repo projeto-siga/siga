@@ -575,7 +575,7 @@ public class ExDao extends CpDao {
 		}
 
 		if (flt.getIdTpDoc() != null && flt.getIdTpDoc() != 0) {
-			query.setParameter("idTpDoc", flt.getIdTpDoc());
+			query.setParameter("idTpDoc", new Long(flt.getIdTpDoc()));
 		}
 
 		if (flt.getIdFormaDoc() != null && flt.getIdFormaDoc() != 0) {
@@ -874,7 +874,7 @@ public class ExDao extends CpDao {
 		} else {
 			query = em().createNamedQuery("consultarEmailporLotacao");
 
-			query.setParameter("idLotacaoIni", lot);
+			query.setParameter("idLotacaoIni", lot.getLotacaoInicial());
 		}
 
 		return query.getResultList();

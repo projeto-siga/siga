@@ -41,6 +41,7 @@ public interface IExApiV1 {
 		public Boolean estampa;
 		public Boolean completo;
 		public Boolean volumes;
+		public Boolean exibirReordenacao;  
 	}
 
 	public class DocumentoSiglaArquivoGetResponse implements ISwaggerResponse {

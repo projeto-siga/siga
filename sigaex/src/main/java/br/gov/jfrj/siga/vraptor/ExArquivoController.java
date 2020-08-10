@@ -125,7 +125,7 @@ public class ExArquivoController extends ExController {
 			}
 			final ExMobil mob = Documento.getMobil(arquivo);
 			if (mob != null) {
-				mob.getMobilPrincipal().getDoc().setPodeExibirReordenacao(exibirReordenacao);
+				mob.getMobilPrincipal().indicarSeDeveExibirDocumentoCompletoReordenado(exibirReordenacao);
 
 				if (sigla != null && !sigla.isEmpty()) {
 					ExMobil mobilDoDocumentoPrincipal = Documento.getMobil(sigla);
@@ -169,6 +169,7 @@ public class ExArquivoController extends ExController {
 				req.estampa = estampar;
 				req.completo = completo;
 				req.volumes = volumes;
+				req.exibirReordenacao = exibirReordenacao;
 				String filename = isPdf ? (volumes ? mob.doc().getReferenciaPDF() : mob.getReferenciaPDF())
 						: (volumes ? mob.doc().getReferenciaHtml() : mob.getReferenciaHtml());
 				DocumentoSiglaArquivoGet.iniciarGeracaoDePdf(req, resp, ContextoPersistencia.getUserPrincipal(),
@@ -307,6 +308,7 @@ public class ExArquivoController extends ExController {
 				req.estampa = semmarcas;
 				req.completo = completo;
 				req.volumes = volumes;
+				req.exibirReordenacao = exibirReordenacao;
 				String filename = isPdf ? (volumes ? mob.doc().getReferenciaPDF() : mob.getReferenciaPDF())
 						: (volumes ? mob.doc().getReferenciaHtml() : mob.getReferenciaHtml());
 				DocumentoSiglaArquivoGet.iniciarGeracaoDePdf(req, resp, ContextoPersistencia.getUserPrincipal(),

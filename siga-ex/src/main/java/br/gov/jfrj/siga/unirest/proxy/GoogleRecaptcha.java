@@ -17,7 +17,7 @@ import br.gov.jfrj.siga.base.Prop;
 public class GoogleRecaptcha {
 	
 	public static boolean isProxySetted() {
-		String proxyHost = Prop.get("/siga.http.proxy.host");
+		String proxyHost = Prop.get("/http.proxyHost");
 
 		return proxyHost != null;
 	}
@@ -32,8 +32,8 @@ public class GoogleRecaptcha {
 	 * @throws UnirestException
 	 */
 	public static JsonNode validarRecaptcha(String secretKey, String responseUIRecaptcha, String remoteip) throws UnirestException {
-		String proxyHost = Prop.get("/siga.http.proxy.host");
-		Integer proxyPort = Prop.getInt("/siga.http.proxy.port");
+		String proxyHost = Prop.get("/http.proxyHost");
+		Integer proxyPort = Prop.getInt("/http.proxyPort");
 
 		HttpURLConnection connection = null;
 		try {

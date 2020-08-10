@@ -1275,7 +1275,18 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
-	
+
+	public boolean podeAssinarPorComSenha(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) {
+		
+		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA,
+				ExTipoMovimentacao.class, false);
+
+		return getConf().podePorConfiguracao(null, null, null, null, mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), null,
+				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
+				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+	}
+
 	/*
 	 * Retorna se pode autenticar um documento que só foi assinado com senha.
 	 * 

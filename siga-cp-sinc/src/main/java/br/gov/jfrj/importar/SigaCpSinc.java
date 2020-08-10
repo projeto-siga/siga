@@ -52,9 +52,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpPapel;
 import br.gov.jfrj.siga.cp.CpTipoPapel;
-import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
-import br.gov.jfrj.siga.cp.bl.CpPropriedadeBL;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
@@ -71,7 +69,7 @@ import br.gov.jfrj.siga.sinc.lib.OperadorComHistorico;
 import br.gov.jfrj.siga.sinc.lib.Sincronizador;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelComparator;
-import br.gov.jfrj.siga.util.ImportarXmlProperties;
+import br.gov.jfrj.siga.util.CpSincPropriedade;
 import net.sf.ehcache.CacheManager;
 
 public class SigaCpSinc {
@@ -89,7 +87,9 @@ public class SigaCpSinc {
 
 	private static String destinatariosExtras = "";
 	private static Level logLevel = Level.WARNING;
-
+	
+	private CpSincPropriedade prop; 
+	
 	public String getServidor() {
 		return servidor;
 	}
@@ -174,9 +174,13 @@ public class SigaCpSinc {
 						if (p.getLotacao() == null) {
 							log("Pessoa sem lotação! " + p.getSigla());
 						}
+						if (p.getCargo() == null) {
+							log("Pessoa sem cargo! " + p.getSigla());
+						}
 					}
 				}
 			}
+
 			list = sinc.getOperacoes(dt);
 		} catch (Exception e) {
 			log("Transação abortada por erro: " + e.getMessage());
@@ -229,7 +233,7 @@ public class SigaCpSinc {
 				log("As alterações não serão efetivadas! Executando rollback...");
 				log("");
 				log("");
-				CpDao.getInstance().rollbackTransacao();
+				CpDao.getInstance().em().getTransaction().rollback();
 			} else if (maxSinc > 0 && list.size() > maxSinc) {
 				log("");
 				log("");
@@ -243,12 +247,10 @@ public class SigaCpSinc {
 
 				CpDao.getInstance().em().getTransaction().rollback();
 			} else {
-
-				CpDao.getInstance().em().getTransaction().commit();
 				log("Transação confirmada");
 			}
 		} catch (Exception e) {
-			CpDao.getInstance().rollbackTransacao();
+			CpDao.getInstance().em().getTransaction().rollback();
 			log("Transação abortada por erro: " + e.getMessage());
 			throw new Exception("Erro na gravação", e);
 		}
@@ -454,9 +456,9 @@ public class SigaCpSinc {
 		sinc.run();
 	}
 
-	public static void configurarEntityManager(CpAmbienteEnumBL ambiente)
+	
+	public void configurarEntityManager(CpAmbienteEnumBL ambiente)
 			throws Exception {
-		CpPropriedadeBL prop = Cp.getInstance().getProp();
 		prop.setPrefixo(ambiente.getSigla());
 
 		Map<String, String> properties = new HashMap<>();
@@ -468,6 +470,9 @@ public class SigaCpSinc {
  		properties.put("c3p0.max_size", prop.c3poMaxSize());
  		properties.put("c3p0.timeout", prop.c3poTimeout());
  		properties.put("c3p0.max_statements", prop.c3poMaxStatements());
+ 		properties.put("cache.use_second_level_cache", "false");
+ 		properties.put("cache.use_query_cache", "false");
+ 	
 
 		// persistenceMap.put("javax.persistence.jdbc.url", "<url>");
 		// persistenceMap.put("javax.persistence.jdbc.user", "<username>");
@@ -487,8 +492,6 @@ public class SigaCpSinc {
 	}
 
 	public void run() throws Exception, NamingException, AplicacaoException {
-
-		desativarCacheDeSegundoNivel();
 
 		Configuration cfg;
 		if (servidor.equals("prod"))
@@ -519,11 +522,6 @@ public class SigaCpSinc {
 		log(" ---- Fim do Processamento --- ");
 		logEnd();
 		CacheManager.getInstance().shutdown();
-	}
-
-	private void desativarCacheDeSegundoNivel() throws Exception {
-		Cp.getInstance().getProp().setCacheUseSecondLevelCache(false);
-		Cp.getInstance().getProp().setCacheUseQueryCache(false);
 	}
 
 	private void verificarOrigemDeDados() throws AplicacaoException {
@@ -568,10 +566,10 @@ public class SigaCpSinc {
 							+ servidor + "'");
 					return;
 				}
-				urlOrigem = ImportarXmlProperties.getString("url."
+				urlOrigem = prop.getString("url."
 						.concat(acron));
 				if (urlOrigem == null || urlOrigem.trim().equals(""))
-					urlOrigem = ImportarXmlProperties.getString("url.".concat(
+					urlOrigem = prop.getString("url.".concat(
 							acron + ".").concat(servidor));
 			}
 			URL urlMumps = new URL(urlOrigem);
@@ -608,6 +606,8 @@ public class SigaCpSinc {
 	}
 
 	public SigaCpSinc(String[] args) {
+		
+		prop  = new CpSincPropriedade();
 		this.args = args;
 		int result = parseParametros(args);
 		if (result != 0)
@@ -630,6 +630,8 @@ public class SigaCpSinc {
 
 		this.servidor = oServidor.substring(oServidor.indexOf("-") + 1);
 		this.url = aUrl;
+		
+
 	}
 
 	public List<Sincronizavel> importarTabela() {
@@ -1228,6 +1230,8 @@ public class SigaCpSinc {
 			o.setIdExterna(parseStr(parser, "lotacao"));
 			papel.setDpLotacao(o);
 		}
+		
+		papel.setHisAtivo(1);
 
 		return papel;
 	}
@@ -1237,7 +1241,7 @@ public class SigaCpSinc {
 	}
 
 	public void logEnd() throws Exception {
-		String sDest = ImportarXmlProperties.getString("lista.destinatario")
+		String sDest = prop.getString("lista.destinatario")
 				+ (!destinatariosExtras.trim().equals("") ? ","
 						+ destinatariosExtras : "");
 		if (getDataHora() != null) {
@@ -1467,10 +1471,12 @@ public class SigaCpSinc {
 			return "17";
 		} else if ("REDISTRIBUIDO".equalsIgnoreCase(situacaoFuncPessoa)) {
 			return "20";
+		} else if ("REMOÇÃO POR MOTIVO DE DESLOCAMENTO DO CÔNJUGE".equalsIgnoreCase(situacaoFuncPessoa)) {
+			return "36";	
 		} else {
 			try {
 				int parseIntSituacao = Integer.parseInt(situacaoFuncPessoa);
-				if (parseIntSituacao > 31) {
+				if (parseIntSituacao > 36) {
 					throw new Exception(
 							"Tag pessoa id "
 									+ idPessoa // parseStr(parser, "id")

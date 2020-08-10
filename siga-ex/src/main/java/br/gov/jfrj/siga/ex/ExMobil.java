@@ -48,6 +48,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.BatchSize;
 import org.jboss.logging.Logger;
 
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -1434,13 +1435,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 
 		List<ExMovimentacao> naoAssinados = new ArrayList<ExMovimentacao>();
 		Date dataDeInicioDeObrigacaoDeAssinatura = null;
-
-		try {
-
-			dataDeInicioDeObrigacaoDeAssinatura = SigaExProperties.getDataInicioObrigacaoDeAssinarAnexoEDespacho();
-		} catch (Exception e) {
-
-		}
+		dataDeInicioDeObrigacaoDeAssinatura = Prop.getData("data.obrigacao.assinar.anexo.despacho");
 
 		for (ExMovimentacao mov : this.getExMovimentacaoSet()) {
 			if (!mov.isCancelada()) {
@@ -1571,11 +1566,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		List<ExMovimentacao> naoAssinados = new ArrayList<ExMovimentacao>();
 		Date dataDeInicioDeObrigacaoDeAssinatura = null;
 
-		try {
-			dataDeInicioDeObrigacaoDeAssinatura = SigaExProperties.getDataInicioObrigacaoDeAssinarAnexoEDespacho();
-		} catch (Exception e) {
-
-		}
+		dataDeInicioDeObrigacaoDeAssinatura = Prop.getData("data.obrigacao.assinar.anexo.despacho");
 		for (ExMovimentacao mov : this.getExMovimentacaoSet()) {
 			if (!mov.isCancelada()) {
 				if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
@@ -2215,6 +2206,26 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return set;
 	}
 	
+	public Set<ExMovimentacao> getMovsNaoCanceladas(long[] idTpMovs) {
+		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
+
+		if (getExMovimentacaoSet() == null)
+			return set;
+				
+		for (ExMovimentacao m : getExMovimentacaoSet()) {
+			for (long idTpMov : idTpMovs) {
+				if (m.getExMovimentacaoCanceladora() != null)
+					continue;
+				if (m.getExTipoMovimentacao().getIdTpMov() != idTpMov)
+					continue;
+			
+				set.add(m);
+			}
+		}			
+		
+		return set;
+	}
+	
 	public static void adicionarIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso() {
 		isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso = true;
 	}
@@ -2225,5 +2236,9 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	
 	public static boolean isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso() {
 		return isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso;
+	}
+	
+	public void indicarSeDeveExibirDocumentoCompletoReordenado(boolean exibirReordenacao) {
+		this.getDoc().setPodeExibirReordenacao(exibirReordenacao);
 	}
 }

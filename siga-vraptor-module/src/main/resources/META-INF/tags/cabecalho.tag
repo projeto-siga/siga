@@ -42,6 +42,8 @@
 	<c:set var="XUACompatible" scope="request">${compatibilidade}</c:set>
 </c:if>
 
+<c:set var="logo_topo_orgao" scope="request" value="${f:resource('siga.logo.topo.orgao')}" />
+
 <c:set var="ambiente">
 	<c:if test="${f:resource('isVersionTest') or f:resource('isBaseTest')}">
 		<c:if test="${f:resource('isVersionTest')}">SISTEMA</c:if>
@@ -103,7 +105,7 @@ ${meta}
 
 <c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
 
-<c:set var="siga_version"  scope="request" value="9.0.0.6" />
+<c:set var="siga_version"  scope="request" value="9.0.2.0" />
 
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
@@ -117,7 +119,7 @@ ${meta}
 		<c:if test="${desabilitarmenu == 'sim'}">
 			<c:set var="body_color" value="login_body_color" scope="request" />
 		</c:if>
-		
+												
 		<c:set var="ico_siga" value="sem-papel.ico" />
 		<c:set var="menu_class" value="menusp" />
 		<c:set var="sub_menu_class" value="submenusp" />
@@ -131,10 +133,12 @@ ${meta}
 		<c:set var="collapse_ArqAuxiliares" scope="request" value="not collapsible" />
 		<c:set var="hide_only_GOVSP" scope="request"> d-none </c:set>
 		<c:set var="hide_only_TRF2" scope="request"> </c:set>
+		<c:set var="uri_logo_siga_pequeno" value="${f:resource('/siga.base.url')}/siga/imagens/logo-sem-papel-150x70.png" scope="request" />
 	</c:when>
 	<c:otherwise>
 		<meta name="theme-color" content="bg-primary">
 				<c:set var="thead_color" value="thead-light" scope="request" />
+									
 		<c:set var="ico_siga" value="siga.ico" />
 		<c:set var="menu_class" value="bg-primary" /> 
 		<c:set var="sub_menu_class" value="bg-secondary text-white" />
@@ -152,6 +156,7 @@ ${meta}
 		<c:set var="collapse_ArqAuxiliares" scope="request" value="not collapsible" />
 		<c:set var="hide_only_GOVSP" scope="request"> </c:set>
 		<c:set var="hide_only_TRF2" scope="request"> d-none </c:set>
+		<c:set var="uri_logo_siga_pequeno" value="${f:resource('/siga.base.url')}/siga/imagens/logo-siga-140x40.png" scope="request" />		
 	</c:otherwise>
 </c:choose>
 
@@ -177,9 +182,18 @@ ${meta}
 			</a>
 			
 			<c:if test="${siga_cliente != 'GOVSP'}">
-				<img id="logo-header2"
+				<c:choose>
+				<c:when test="${not empty logo_topo_orgao}">
+					<img id="logo-header2"
+					 src="${logo_topo_orgao}"
+					 alt="Logo do Órgão" height="38" class="ml-2" />
+				</c:when>
+				<c:otherwise>
+					<img id="logo-header2"
 					 src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABsAAAAmCAYAAAA1MOAmAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAB3RJTUUH4QUPFCQBHI8nPQAAA2pJREFUWMO9l0uIllUYx3/P+DkalpO3RU1hoQ7jpUDSTS1Gogi6EAm1icxFi4aKFkHShSgolAgqyhYhtGhX1sKwoqhFg1BYQS1EjJpoSiq7OEmTM47+WvS8cnqZyzvTNz3wcs57zvme/3n/z/WDWYi6RO3l/xD1UnVopr/rmCXeGWDZnIKpZ6ezuWHHTIAiAnUrcF4FWFygbTaqxuv9R9aoJ9SuuQK6Ux0pwH5Wn27716l3+W9Zo36n/qVubgrY1GY3197HgdPAQmC/uh1YpXapi/PpUqP8Uash2Kna+xDwFXAJsAJ4BTgGjNTOfabeCpyJiMY0vlGjsaWuV0edXl5UO2dis/drChbm+lXqFw0AP1CXRQOgxcBBoKdai+SkiL2NwOa05WRyqDWVu6fOrcDqYnt/DWgNsBHozkDvzHG0br/pvmqbOlbQcUK9oLZ/vEbZM+omdUPxrFcXoS5K7rfk05cBfLBQcEodUvsKoC01kGPq5RPk0bMSajdwExC1rD5W2OAX4JOI+C0VzQM+Aq4sYzEi9lX0TiSt5Pt24OQkbP4KHADeK258IXBxcWYwIvYVdp7ULi11dwP3Hc2Mj7oyaa1kd6MSExHjEXEP8NA0ZzuBveraTFWljDUBaxVuvEvtAPprxbETWJJjAHuAG9tSSiZYP0e9Tj1U0HZRZv1KXmpbLcv5UvXbWokx43Ddf24LSs9Kt3++2J6XntoXEYfmoj3YnF/Tm7T2zGW/2JtgK9QFM20JWjPEq3gdjoixqbJFO5vUmDZbtAFsOJ+Ohh7cLL6mULaqqtQz7oizAPaq36iDxfhj1qsHM6a+Vr8EromIkxnY3+fZQfVAxuIj6h/pSG+pS+u3Xa7ep+5Ux9W38/0y9eUskNvU11PJberanO/Ns9vVc9Uj6gPqh7l/72Qcb1D/VB8t1vaogzm/Wj2t7lB7Ull/7eLzc7wl9+8/6/oNPEpgufoccANwGHgVOD/371A3AT8AT0VE1Xv0Zx8yUIVIU28czwZ0NfBxRBwtPHIk09Zw8c9mB3At8HBEfD6Zp01H4wtJzUp1Xc7vrumo6Hu8aCEmjLOO7N/n1+pZ5eqv5fhEsb+gAOoG3szieoX6LrBzsnR1FNgFvFOs7QU+zYwxoD4GHAd+Ap4FBoqzvwNPZsNUXf5Itfk35wXnXBwGnuIAAAAASUVORK5CYII="
 				 	 alt="Logo TRF2" height="38" class="ml-2" />
+				</c:otherwise>
+				</c:choose>
 			</c:if>
 			
 			<button class="navbar-toggler" type="button" data-toggle="collapse"
@@ -212,7 +226,7 @@ ${meta}
 									    <div class="modal-dialog modal-dialog-centered modal-lg" style="max-width: 80% !important;">
 									        <div class="modal-content" >
 									            <div class="modal-header bg-success">
-									            	<h5 class="modal-title text-white" >Tutoriais SP Sem Papel</h5>
+									            	<h5 class="modal-title text-white">Tutoriais SP Sem Papel</h5>
 									                <button type="button" class="close text-white" data-dismiss="modal" aria-hidden="true">×</button>
 									            </div>
 										        <div class="modal-body bg-light">
@@ -351,7 +365,7 @@ ${meta}
 					<div class="row">
 						<div class="col gt-company d-inline align-middle">
 							<span class="h-100">
-								<strong><span>${f:resource('siga.cabecalho.titulo')}</span> </strong>
+								<strong><span>${f:resource('/siga.cabecalho.titulo')}</span> </strong>
 								 <c:catch>
 										<c:if test="${not empty titular.orgaoUsuario.descricao}"><span style="white-space: nowrap;"> <i class="fa fa-angle-right"></i> ${titular.orgaoUsuario.descricao}</span></h6></c:if>
 								 </c:catch>
@@ -362,19 +376,19 @@ ${meta}
 						<div class="col">
 							<span>
 								<c:choose>
-									<c:when test="${f:resource('ambiente') eq 'desenv'}">
+									<c:when test="${f:resource('/siga.ambiente') eq 'desenv'}">
 										Ambiente de Desenvolvimento
 									</c:when>
-									<c:when test="${f:resource('ambiente') eq 'prod'}">
+									<c:when test="${f:resource('/siga.ambiente') eq 'prod'}">
 										Ambiente Oficial
 									</c:when>
-									<c:when test="${f:resource('ambiente') eq 'treinamento'}">
+									<c:when test="${f:resource('/siga.ambiente') eq 'treinamento'}">
 										Ambiente de Simulação
 									</c:when>
-									<c:when test="${f:resource('ambiente') eq 'configuracao'}">
+									<c:when test="${f:resource('/siga.ambiente') eq 'configuracao'}">
 										Ambiente de Configuração
 									</c:when>
-									<c:when test="${f:resource('ambiente') eq 'homolog'}">
+									<c:when test="${f:resource('/siga.ambiente') eq 'homolog'}">
 										Ambiente de Homologação
 									</c:when>
 								</c:choose>
@@ -456,13 +470,7 @@ ${meta}
 	</c:if>
 
 	<div id="carregando"
-		style="position: absolute; top: 0px; right: 0px; background-color: red; font-weight: bold; padding: 4px; color: white; display: none">Carregando...</div>
-	
-	<div class="modal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" id="spinnerModal">
-        <div class="modal-dialog modal-dialog-centered text-center" role="document">
-            <span class="fa fa-spinner fa-spin fa-3x w-100 text-white"></span>
-        </div>
-    </div>
+		style="position: absolute; top: 0px; right: 0px; background-color: red; font-weight: bold; padding: 4px; color: white; display: none">Carregando...</div>	
     
 <script type="text/javascript" language="Javascript1.1">
 setTimeout(function() {

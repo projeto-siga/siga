@@ -20,8 +20,8 @@ package br.gov.jfrj.siga.ex.ext;
 
 import br.gov.jfrj.itextpdf.ConversorHtml;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
 
 /**
@@ -68,7 +68,7 @@ public abstract class AbstractConversorHTMLFactory {
 		if (instance == null) {
 			try {
 				instance = (AbstractConversorHTMLFactory) Class.forName(
-						SigaExProperties.getConversorHTMLFactory())
+						Prop.get("conversor.html.factory"))
 						.newInstance();
 			} catch (InstantiationException e) {
 				e.printStackTrace();

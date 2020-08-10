@@ -18,11 +18,12 @@ public class DownloadAssincrono implements Callable<String> {
 	private String contenttype;
 	private String sigla;
 	private boolean estampar;
-	private boolean volumes;
+	private boolean volumes;	
 	private String contextpath;
 	String servernameport;
+	private boolean exibirReordenacao;
 
-	public DownloadAssincrono(String uuid, String contenttype, String sigla, boolean estampar, boolean volumes, String contextpath, String servernameport) {
+	public DownloadAssincrono(String uuid, String contenttype, String sigla, boolean estampar, boolean volumes, String contextpath, String servernameport, boolean exibirReordenacao) {
 		super();
 		this.uuid = uuid;
 		this.contenttype = contenttype;
@@ -31,6 +32,7 @@ public class DownloadAssincrono implements Callable<String> {
 		this.volumes = volumes;
 		this.contextpath = contextpath;
 		this.servernameport = servernameport;
+		this.exibirReordenacao = exibirReordenacao;
 	}
 
 	@Override
@@ -41,7 +43,8 @@ public class DownloadAssincrono implements Callable<String> {
 
 			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
 			filter.setSigla(sigla);
-			ExMobil mob = (ExMobil) dao.consultarPorSigla(filter);
+			ExMobil mob = (ExMobil) dao.consultarPorSigla(filter);			
+			mob.getMobilPrincipal().indicarSeDeveExibirDocumentoCompletoReordenado(exibirReordenacao);
 
 			// Consulta o processo para saber quais são os documentos a serem
 			// concatenados

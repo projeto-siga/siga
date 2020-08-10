@@ -43,7 +43,7 @@
 				}
 			}	
 			function sbmt() {
-		        $("#spinnerModal").modal('show');
+				sigaSpinner.mostrar();
 		        document.getElementById('btnSubmit').disabled = true;
 	            if ($('#descrMov').val() == null || $('#descrMov').val() == '') {
 	            	frm.action = 'ciencia_gravar?sigla=${sigla}&postback=1';

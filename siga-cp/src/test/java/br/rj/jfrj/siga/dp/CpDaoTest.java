@@ -55,7 +55,7 @@ public class CpDaoTest extends TestCase {
 	public CpDaoTest() throws Exception {
 		if (false) {
 			CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
-			Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
+//			Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
 			// HibernateUtil.configurarHibernate(cfg);
 
 			dao = CpDao.getInstance();
@@ -336,7 +336,7 @@ public class CpDaoTest extends TestCase {
 			return;
 
 		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
-		Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
+//		Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
 
 		CpDao dao = CpDao.getInstance();
 

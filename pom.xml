@@ -159,7 +159,7 @@
 			<dependency>
 				<groupId>com.crivano</groupId>
 				<artifactId>swaggerservlet</artifactId>
-				<version>1.30.0</version>
+				<version>1.33.0</version>
 			</dependency>
 			
 			<dependency>

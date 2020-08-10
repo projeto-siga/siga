@@ -13,6 +13,7 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.HttpResult;
 import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -37,13 +38,13 @@ public class XjusController extends SigaController {
 	@Get("app/xjus")
 	public void pesquisa(String q) throws Exception {
 		result.include("q", q);
-		result.include("xjusUrl", Cp.getInstance().getProp().xjusUrl());
+		result.include("xjusUrl", Prop.get("/xjus.url"));
 	}
 
 	@Get("app/xjus/query")
 	public void buscarNoXjus() throws Exception {
 		final SigaHTTP http = new SigaHTTP();
-		String url = Cp.getInstance().getProp().xjusUrl();
+		String url = Prop.get("/xjus.url");
 		url += "?" + request.getQueryString();
 		String contentType = "application/json";
 
@@ -51,8 +52,7 @@ public class XjusController extends SigaController {
 				+ getTitular().getLotacao().getIdInicial() + ";P"
 				+ getTitular().getIdInicial();
 
-		final JWTSigner signer = new JWTSigner(Cp.getInstance().getProp()
-				.xjusJwtSecret());
+		final JWTSigner signer = new JWTSigner(Prop.get("/jwt.secret"));
 		final HashMap<String, Object> claims = new HashMap<String, Object>();
 
 		final long iat = System.currentTimeMillis() / 1000L; // issued at claim

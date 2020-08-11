@@ -190,6 +190,16 @@ public class Prop {
 
 		provider.addPublicProperty("/blucservice.url", baseInterna + "/blucservice/api/v1");
 		provider.addPublicProperty("/vizservice.url", baseInterna + "/vizservice");
+		
+		provider.addPublicProperty("/siga.sgp.bnf.url","/siga-beneficios");
+		provider.addPublicProperty("/siga.sgp.aq.url","/sigarhaq");
+		provider.addPublicProperty("/siga.sgp.cad.url","/sigarh");
+		provider.addPublicProperty("/siga.sgp.bdp.url","/sigarhaq1");
+		provider.addPublicProperty("/siga.sgp.dcn.url","/sigarhaq2");
+		provider.addPublicProperty("/siga.sgp.cst.url","/sigarhdadoscadastrais");
+		provider.addPublicProperty("/siga.sgp.lot.url","/sigarhlotacao");	
+		provider.addPublicProperty("/siga.sgp.trn.url","/sigatr");	
+		provider.addPublicProperty("/siga.sgp.terc.url","/sigarhterceirizados");
 
 	}
 }

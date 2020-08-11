@@ -42,7 +42,7 @@
 	<c:set var="XUACompatible" scope="request">${compatibilidade}</c:set>
 </c:if>
 
-<c:set var="logo_topo_orgao" scope="request" value="${f:resource('siga.logo.topo.orgao')}" />
+<c:set var="logo_topo_orgao" scope="request" value="${f:resource('/siga.logo.topo.orgao')}" />
 
 <c:set var="ambiente">
 	<c:if test="${f:resource('isVersionTest') or f:resource('isBaseTest')}">

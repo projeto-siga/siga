@@ -2,7 +2,8 @@ package br.gov.jfrj.siga.cp;
 
 public enum TipoConteudo {
 	
-	ZIP("application/zip", "zip");
+	ZIP("application/zip", "zip"),
+	PDF("application/pdf", "pdf");
 	
 	private TipoConteudo(String mimeType ,String extensao) {
 		this.mimeType = mimeType;

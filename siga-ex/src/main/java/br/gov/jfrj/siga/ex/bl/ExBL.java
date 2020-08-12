@@ -177,6 +177,8 @@ public class ExBL extends CpBL {
 	private static final String MODELO_FOLHA_DE_ROSTO_PROCESSO_ADMINISTRATIVO_INTERNO = "Folha de Rosto - Processo Administrativo Interno";
 	private static final String SHA1 = "1.3.14.3.2.26";
 	private static final String MIME_TYPE_PKCS7 = "application/pkcs7-signature";
+	
+	private static final  CpArquivoTipoArmazenamentoEnum tipoArmazenamento = CpArquivoTipoArmazenamentoEnum.valueOf(SigaBaseProperties.getString("siga.armazenamento.arquivo.tipo"));
 
 	private final ThreadLocal<SortedSet<ExMobil>> threadAlteracaoParcial = new ThreadLocal<SortedSet<ExMobil>>();
 
@@ -5464,6 +5466,7 @@ public class ExBL extends CpBL {
 			final byte pdf[] = Documento.generatePdf(strHtml);
 			mov.setConteudoBlobPdf(pdf);
 			mov.setConteudoTpMov("application/zip");
+			gravarArquivoMovimentacao(mov);
 			
 			final ExMovimentacao movAssMov = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA, cadastrante, lotaCadastrante,
 					mov.getExMobil(), null, null, null, null, null, null);
@@ -7372,10 +7375,7 @@ public class ExBL extends CpBL {
 	
 	public void gravarArquivoMovimentacao(final ExMovimentacao mov) {
 		try {
-			if(mov.getIdMov()==null && mov.getCpArquivo()!=null) {
-				mov.setCpArquivo(criarCpArquivo());
-			}
-			if(mov.getCpArquivo()!=null  && mov.getCpArquivo()!=null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(mov.getCpArquivo().getTipoArmazenamento())) {
+			if(mov.getCpArquivo()!=null  && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(mov.getCpArquivo().getTipoArmazenamento())) {
 				ArmazenamentoBCInterface armazenamento = ArmazenamentoBCFacade.getArmazenamentoBC(mov.getCpArquivo());
 				armazenamento.salvar(mov.getCpArquivo(), mov.getConteudoBlobMov2());
 			}
@@ -7398,8 +7398,4 @@ public class ExBL extends CpBL {
 		}
 	}
 	
-	private CpArquivo criarCpArquivo() {
-		CpArquivo cpArquivo = new CpArquivo();
-		return cpArquivo;
-	}
 }

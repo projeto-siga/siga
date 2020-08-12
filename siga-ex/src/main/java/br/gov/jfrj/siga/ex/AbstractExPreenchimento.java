@@ -22,6 +22,7 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -183,7 +184,6 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 				ArmazenamentoBCInterface a = ArmazenamentoBCFacade.getArmazenamentoBC(getCpArquivo());
 				cacheConteudoBlobPre = a.recuperar(getCpArquivo());
 			} catch (Exception e) {
-				//TODO: K Tratar Log
 				throw new AplicacaoException(e.getMessage());
 			}
 		}
@@ -192,8 +192,19 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 
 	public void setPreenchimentoBlob(byte[] preenchimentoBlob) {
 		cacheConteudoBlobPre = preenchimentoBlob;
-		if (getCpArquivo() == null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(getCpArquivo().getTipoArmazenamento()))
+		criarCpArquivo();
+		cpArquivo.setTamanho(cacheConteudoBlobPre.length);
+		if (CpArquivoTipoArmazenamentoEnum.BLOB.equals(getCpArquivo().getTipoArmazenamento())) {
 			this.preenchimentoBlob = preenchimentoBlob;
+		}
 	}
 	
+	private void criarCpArquivo() {
+		if(cpArquivo == null) {
+			cpArquivo = new CpArquivo();
+			cpArquivo.gerarCaminho(new Date());
+		}
+		if(preenchimentoBlob != null)
+			cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.BLOB);
+	}
 }

@@ -855,7 +855,6 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 				ArmazenamentoBCInterface a = ArmazenamentoBCFacade.getArmazenamentoBC(getCpArquivo());
 				cacheConteudoBlobMov = a.recuperar(getCpArquivo());
 			} catch (Exception e) {
-				//TODO: K Tratar Log
 				throw new AplicacaoException(e.getMessage());
 			}
 		}
@@ -864,7 +863,19 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 
 	public void setConteudoBlobMov(byte[] createBlob) {
 		cacheConteudoBlobMov = createBlob;
-		if (getCpArquivo() == null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(getCpArquivo().getTipoArmazenamento()))
+		criarCpArquivo();
+		cpArquivo.setTamanho(cacheConteudoBlobMov.length);
+		if (CpArquivoTipoArmazenamentoEnum.BLOB.equals(getCpArquivo().getTipoArmazenamento())) {
 			conteudoBlobMov = createBlob;
+		}
+	}
+	
+	private void criarCpArquivo() {
+		if(cpArquivo == null) {
+			cpArquivo = new CpArquivo();
+			cpArquivo.gerarCaminho(getDtMov()!=null?getDtMov():new Date());
+		}
+		if(conteudoBlobMov != null)
+			cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.BLOB);
 	}
 }

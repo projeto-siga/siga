@@ -7,7 +7,6 @@ import java.util.Calendar;
 import java.util.UUID;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -115,6 +114,8 @@ public class ArmazenamentoHCP implements ArmazenamentoBCInterface {
 		
 		if(TipoConteudo.ZIP.getMimeType().equals(cpArquivo.getConteudoTpArq()))
 			extensao = TipoConteudo.ZIP.getExtensao();
+		else if(TipoConteudo.PDF.getMimeType().equals(cpArquivo.getConteudoTpArq()))
+			extensao = TipoConteudo.PDF.getExtensao();
 		else
 			extensao = TipoConteudo.ZIP.getExtensao();
 		

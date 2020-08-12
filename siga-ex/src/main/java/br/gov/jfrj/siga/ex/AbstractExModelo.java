@@ -22,6 +22,7 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -431,7 +432,6 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 				ArmazenamentoBCInterface a = ArmazenamentoBCFacade.getArmazenamentoBC(getCpArquivo());
 				cacheConteudoBlobMod = a.recuperar(getCpArquivo());
 			} catch (Exception e) {
-				//TODO: K Tratar Log
 				throw new AplicacaoException(e.getMessage());
 			}
 		}
@@ -440,8 +440,20 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 
 	public void setConteudoBlobMod(byte[] createBlob) {
 		cacheConteudoBlobMod = createBlob;
-		if (getCpArquivo() == null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(getCpArquivo().getTipoArmazenamento()))
+		criarCpArquivo();
+		cpArquivo.setTamanho(cacheConteudoBlobMod.length);
+		if (CpArquivoTipoArmazenamentoEnum.BLOB.equals(getCpArquivo().getTipoArmazenamento())) {
 			conteudoBlobMod = createBlob;
+		}
+	}
+	
+	private void criarCpArquivo() {
+		if(cpArquivo == null) {
+			cpArquivo = new CpArquivo();
+			cpArquivo.gerarCaminho(new Date());
+		}
+		if(conteudoBlobMod != null)
+			cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.BLOB);
 	}
 
 }

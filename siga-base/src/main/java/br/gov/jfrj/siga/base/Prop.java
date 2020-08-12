@@ -201,6 +201,16 @@ public class Prop {
 		provider.addPublicProperty("/siga.sgp.lot.url","/sigarhlotacao");	
 		provider.addPublicProperty("/siga.sgp.trn.url","/sigatr");	
 		provider.addPublicProperty("/siga.sgp.terc.url","/sigarhterceirizados");
+		
+		provider.addPublicProperty("/sigaex.sgp.bnf.url","/siga-beneficios");
+		provider.addPublicProperty("/sigaex.sgp.aq.url","/sigarhaq");
+		provider.addPublicProperty("/sigaex.sgp.cad.url","/sigarh");
+		provider.addPublicProperty("/sigaex.sgp.bdp.url","/sigarhaq1");
+		provider.addPublicProperty("/sigaex.sgp.dcn.url","/sigarhaq2");
+		provider.addPublicProperty("/sigaex.sgp.cst.url","/sigarhdadoscadastrais");
+		provider.addPublicProperty("/sigaex.sgp.lot.url","/sigarhlotacao");	
+		provider.addPublicProperty("/sigaex.sgp.trn.url","/sigatr");	
+		provider.addPublicProperty("/sigaex.sgp.terc.url","/sigarhterceirizados");
 
 	}
 }

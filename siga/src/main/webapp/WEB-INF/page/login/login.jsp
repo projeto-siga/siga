@@ -153,7 +153,8 @@
 				var isEdge = !!navigator.userAgent.match(/Edge/);
 				var isChrome = !!navigator.userAgent.match(/Chrome/) && !isOpera && !isEdge
 				if(!isChrome) {			    						
-					sigaModal.alerta('Recomendamos o navegador Google Chrome para acesso', true, ' ');
+					var usernameInput = document.getElementById('username');
+					sigaModal.alerta('Recomendamos o navegador Google Chrome para acesso', true, ' ').focus(usernameInput);
 				}
 			});
 		</script>

@@ -1,3 +1,5 @@
+package br.gov.jfrj.siga.util;
+
 /*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
@@ -16,20 +18,18 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package br.gov.jfrj.siga.base;
 
+// TODO: _LAGS - eliminar (deixar a String livre) - Ver com Renato o CpDao.criarHibernateCfg(String) já existe para a passagem de datasource 
+public enum CpAmbienteEnum {
+	PRODUCAO("prod"), HOMOLOGACAO("homolo"), TREINAMENTO("treina"), DESENVOLVIMENTO(
+			"desenv");
+	private final String sigla;
 
-public class CorreioTest {
-	/**
-	 * @param args
-	 * @throws Exception
-	 */
-	public static void main(String[] args) throws Exception {
-		String[] destinatatios = args;
-		//envia em formato text/plain
-		Correio.enviar(destinatatios[0], "(text/plain)Assunto Teste Email Ação!", "Teste ação! Atenção: esta é uma mensagem automática. Por favor, não responda.");
-		
-		//envia em formato text/html
-		Correio.enviar(Prop.get("/siga.smtp.usuario.remetente"),destinatatios,"(text/html)Assunto Teste Email Ação!", "Teste ação! Atenção: esta é uma mensagem automática. Por favor, não responda.", "Teste ação! Atenção: esta é uma mensagem automática. Por favor, não responda.");
+	CpAmbienteEnum(String sigla) {
+		this.sigla = sigla;
+	}
+
+	public String getSigla() {
+		return sigla;
 	}
 }

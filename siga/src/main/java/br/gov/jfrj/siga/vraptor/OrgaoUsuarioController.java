@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Controller;
@@ -34,8 +35,8 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 	}
 
 	@Inject
-	public OrgaoUsuarioController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
-		super(request, result, CpDao.getInstance(), so, em);
+	public OrgaoUsuarioController(HttpServletRequest request, ServletContext context,Result result, SigaObjects so, EntityManager em) {
+		super(request, context,result, CpDao.getInstance(), so, em);
 		// TODO Auto-generated constructor stub
 	}
 

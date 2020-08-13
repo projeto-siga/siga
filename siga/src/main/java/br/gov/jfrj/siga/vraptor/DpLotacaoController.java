@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
@@ -55,9 +56,9 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	}
 
 	@Inject
-	public DpLotacaoController(HttpServletRequest request, Result result,
+	public DpLotacaoController(HttpServletRequest request, ServletContext context,Result result,
 			CpDao dao, SigaObjects so, EntityManager em) {
-		super(request, result, dao, so, em);
+		super(request,  context,result, dao, so, em);
 		
 		setSel(new DpPessoa());
 		setItemPagina(10);

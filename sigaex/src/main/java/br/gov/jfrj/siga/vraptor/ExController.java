@@ -77,7 +77,7 @@ public class ExController extends SigaController {
 
 	public ExController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, CpDao dao, SigaObjects so,
 			EntityManager em) {
-		super(request, result, dao, so, em);
+		super(request,context, result, dao, so, em);
 		this.response = response;
 		this.context = context;
 	}

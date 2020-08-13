@@ -60,33 +60,19 @@ public class LoginController extends SigaController {
 	@Inject
 	public LoginController(HttpServletRequest request, HttpServletResponse response, ServletContext context,
 			Result result, CpDao dao, SigaObjects so, EntityManager em) {
-		super(request, result, dao, so, em);
+		super(request, context, result, dao, so, em);
 		this.response = response;
 		this.context = context;
 	}
 
 	@Get("public/app/login")
 	public void login(String cont) throws IOException {
-		Map<String, String> manifest = new HashMap<>();
-		try (InputStream is = context.getResourceAsStream("/META-INF/VERSION.MF")) {
-			String m = convertStreamToString(is);
-			if (m != null) {
-				m = m.replaceAll("\r\n", "\n");
-				for (String s : m.split("\n")) {
-					String a[] = s.split(":", 2);
-					if (a.length == 2) {
-						manifest.put(a[0].trim(), a[1].trim());
-					}
-				}
-			}
-		}
 		
 		final DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
 		Calendar c = Calendar.getInstance();
 		
 		result.include("fAviso", "21-11-2019".equals(df.format(c.getTime())));
 		result.include("avisoMensagem", "Prezado usuário, o sistema SP Sem Papel passa por instabilidade e a equipe técnica está trabalhando para solucionar o mais rápido possível, assim que restabelecido essa mensagem sairá do ar.");
-		result.include("versao", manifest.get("Siga-Versao"));
 		result.include("cont", cont);
 	}
 

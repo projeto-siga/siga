@@ -27,6 +27,7 @@ package br.gov.jfrj.siga.vraptor;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Result;
@@ -45,9 +46,9 @@ public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, 
 		super();
 	}
 
-	public SigaSelecionavelControllerSupport(HttpServletRequest request,
+	public SigaSelecionavelControllerSupport(HttpServletRequest request, ServletContext context,
 			Result result, CpDao dao, SigaObjects so, EntityManager em) {
-		super(request, result, dao, so, em);
+		super(request, context,result, dao, so, em);
 	}
 
 	private static final long serialVersionUID = 1L;

@@ -30,6 +30,7 @@ import java.util.TreeMap;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.logging.Logger;
@@ -60,8 +61,8 @@ public class ExEmailNotificacaoController extends SigaController{
 	}
 
 	@Inject
-	public ExEmailNotificacaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
-		super(request, result, CpDao.getInstance(), so, em);
+	public ExEmailNotificacaoController(HttpServletRequest request,ServletContext context, Result result, SigaObjects so, EntityManager em) {
+		super(request, context, result, CpDao.getInstance(), so, em);
 	}
 
 	public ExEmailNotificacao daoEmail(long id) {

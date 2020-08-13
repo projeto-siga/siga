@@ -33,6 +33,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -63,8 +64,8 @@ public class FeriadoController extends SigaController {
 	}
 
 	@Inject
-	public FeriadoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
-		super(request, result, CpDao.getInstance(), so, em);
+	public FeriadoController(HttpServletRequest request, ServletContext context,Result result, SigaObjects so, EntityManager em) {
+		super(request, context, result, CpDao.getInstance(), so, em);
 	}
 	
 	@Get("/app/feriado/listar")

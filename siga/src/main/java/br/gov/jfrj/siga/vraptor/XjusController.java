@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import com.auth0.jwt.JWTSigner;
@@ -30,9 +31,9 @@ public class XjusController extends SigaController {
 	}
 
 	@Inject
-	public XjusController(HttpServletRequest request, Result result, CpDao dao,
+	public XjusController(HttpServletRequest request,ServletContext context, Result result, CpDao dao,
 			SigaObjects so, EntityManager em) {
-		super(request, result, dao, so, em);
+		super(request, context,result, dao, so, em);
 	}
 
 	@Get("app/xjus")

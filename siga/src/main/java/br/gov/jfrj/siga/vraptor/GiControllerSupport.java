@@ -20,6 +20,7 @@ package br.gov.jfrj.siga.vraptor;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Result;
@@ -37,9 +38,9 @@ public class GiControllerSupport extends SigaController {
 	}
 
 	@Inject
-	public GiControllerSupport(HttpServletRequest request, Result result,
+	public GiControllerSupport(HttpServletRequest request,ServletContext context, Result result,
 			CpDao dao, SigaObjects so, EntityManager em) {
-		super(request, result, dao, so, em);
+		super(request, context, result, dao, so, em);
 	}
 
 	public void assertAcesso(String pathServico) throws AplicacaoException {

@@ -20,6 +20,7 @@ package br.gov.jfrj.siga.vraptor;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Result;
@@ -40,8 +41,8 @@ public abstract class GiSelecionavelControllerSupport<T extends Selecionavel, Da
 	}
 
 	@Inject
-	public GiSelecionavelControllerSupport(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
-		super(request, result, dao, so, em);
+	public GiSelecionavelControllerSupport(HttpServletRequest request, ServletContext context,Result result, CpDao dao, SigaObjects so, EntityManager em) {
+		super(request, context,result, dao, so, em);
 	}
 
 	protected void assertAcesso(String pathServico) throws AplicacaoException {

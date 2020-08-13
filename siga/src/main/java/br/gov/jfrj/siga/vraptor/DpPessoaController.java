@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
@@ -96,9 +97,9 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	}
 
 	@Inject
-	public DpPessoaController(HttpServletRequest request, Result result, CpDao dao,
+	public DpPessoaController(HttpServletRequest request, ServletContext context,Result result, CpDao dao,
 			SigaObjects so, EntityManager em) {
-		super(request, result, dao, so, em);
+		super(request, context,result, dao, so, em);
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();

@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Controller;
@@ -88,9 +89,9 @@ public class ExMobilController extends
 	}
 
 	@Inject
-	public ExMobilController(HttpServletRequest request, Result result,
+	public ExMobilController(HttpServletRequest request, ServletContext context,Result result,
 			SigaObjects so, EntityManager em) {
-		super(request, result, ExDao.getInstance(), so, em);
+		super(request, context,result, ExDao.getInstance(), so, em);
 		setItemPagina(50);
 	}
 

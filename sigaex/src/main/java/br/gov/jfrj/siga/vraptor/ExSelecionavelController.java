@@ -24,6 +24,7 @@ import java.util.ResourceBundle;
 import java.util.TreeMap;
 
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Result;
@@ -48,8 +49,8 @@ public abstract class ExSelecionavelController<T extends Selecionavel, DaoFiltro
 		super();
 	}
 
-	public ExSelecionavelController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
-		super(request, result, dao, so, em);
+	public ExSelecionavelController(HttpServletRequest request, ServletContext context,Result result, CpDao dao, SigaObjects so, EntityManager em) {
+		super(request, context,result, dao, so, em);
 	}
 
 	protected ExDao dao() {

@@ -25,6 +25,7 @@ package br.gov.jfrj.siga.vraptor;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Controller;
@@ -52,9 +53,9 @@ public class ModeloController extends SigaController {
 	}
 
 	@Inject
-	public ModeloController(HttpServletRequest request, Result result,
+	public ModeloController(HttpServletRequest request,ServletContext context, Result result,
 			SigaObjects so, EntityManager em) {
-		super(request, result, CpDao.getInstance(), so, em);
+		super(request, context, result, CpDao.getInstance(), so, em);
 	}
 
 	public CpModelo daoMod(long id) {

@@ -29,6 +29,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -95,8 +96,8 @@ public class ServicoController 	extends SigaController {
 	}
 
 	@Inject
-	public ServicoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
-		super(request, result, CpDao.getInstance(), so, em);
+	public ServicoController(HttpServletRequest request, ServletContext context,Result result, SigaObjects so, EntityManager em) {
+		super(request, context,result, CpDao.getInstance(), so, em);
 
 //		result.on(AplicacaoException.class).forwardTo(this).appexception();
 //		result.on(Exception.class).forwardTo(this).exception();

@@ -27,6 +27,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Controller;
@@ -60,8 +61,8 @@ public class RelatorioController extends SigaController {
 	}
 
 	@Inject
-	public RelatorioController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
-		super(request, result, CpDao.getInstance(), so, em);
+	public RelatorioController(HttpServletRequest request, ServletContext context,Result result, SigaObjects so, EntityManager em) {
+		super(request, context,result, CpDao.getInstance(), so, em);
 		
 		setCpServicos(obterServicos());
 		setCpOrgaosUsuario(obterOrgaosUsuario());		

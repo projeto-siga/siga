@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -48,9 +49,9 @@ public class PrincipalController extends SigaController {
 	}
 
 	@Inject
-	public PrincipalController(HttpServletRequest request, HttpServletResponse response, Result result, CpDao dao,
+	public PrincipalController(HttpServletRequest request, ServletContext context,HttpServletResponse response, Result result, CpDao dao,
 			SigaObjects so, EntityManager em) {
-		super(request, result, dao, so, em);
+		super(request,context, result, dao, so, em);
 		this.response = response;
 	}
 

@@ -30,6 +30,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -68,9 +69,9 @@ public class ExClassificacaoController
 	}
 
 	@Inject
-	public ExClassificacaoController(HttpServletRequest request, Result result,
+	public ExClassificacaoController(HttpServletRequest request, ServletContext context,Result result,
 			SigaObjects so, EntityManager em) {
-		super(request, result, ExDao.getInstance(), so, em);
+		super(request, context,result, ExDao.getInstance(), so, em);
 		int totalItens = getTotalDeNiveis();
 		nivelSelecionado = new String[totalItens];
 	}

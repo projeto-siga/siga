@@ -11,6 +11,7 @@ import java.util.zip.ZipOutputStream;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -55,9 +56,9 @@ public class ExModeloController extends ExSelecionavelController {
 	}
 
 	@Inject
-	public ExModeloController(HttpServletRequest request, Result result,
+	public ExModeloController(HttpServletRequest request, ServletContext context,Result result,
 			CpDao dao, SigaObjects so, EntityManager em) {
-		super(request, result, dao, so, em);
+		super(request, context, result, dao, so, em);
 	}
 
 	@Get("app/modelo/listar")

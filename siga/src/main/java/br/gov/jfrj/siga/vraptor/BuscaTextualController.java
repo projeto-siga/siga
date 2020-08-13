@@ -4,6 +4,7 @@ import java.net.URI;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.http.client.CookieStore;
@@ -37,9 +38,9 @@ public class BuscaTextualController extends SigaController {
 	}
 
 	@Inject
-	public BuscaTextualController(HttpServletRequest request, Result result,
+	public BuscaTextualController(HttpServletRequest request,ServletContext context, Result result,
 			CpDao dao, SigaObjects so, EntityManager em) {
-		super(request, result, dao, so, em);
+		super(request, context, result, dao, so, em);
 	}
 
 	@Get("app/busca")

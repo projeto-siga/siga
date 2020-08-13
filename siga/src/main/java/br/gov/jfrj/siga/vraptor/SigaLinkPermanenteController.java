@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.PathParam;
@@ -44,9 +45,9 @@ public class SigaLinkPermanenteController extends SigaController {
 	}
 
 	@Inject
-	public SigaLinkPermanenteController(HttpServletRequest request, HttpServletResponse response, Result result, CpDao dao,
+	public SigaLinkPermanenteController(HttpServletRequest request, ServletContext context,HttpServletResponse response, Result result, CpDao dao,
 			SigaObjects so, EntityManager em) {
-		super(request, result, dao, so, em);
+		super(request, context,result, dao, so, em);
 		this.response = response;
 	}
 	

@@ -36,6 +36,7 @@ import java.util.TreeMap;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -81,9 +82,9 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	}
 
 	@Inject
-	public GrupoController(HttpServletRequest request, Result result,
+	public GrupoController(HttpServletRequest request, ServletContext context,Result result,
 			CpDao dao, SigaObjects so, EntityManager em) {
-		super(request, result, dao, so, em);
+		super(request, context,result, dao, so, em);
 	}
 
 	/**

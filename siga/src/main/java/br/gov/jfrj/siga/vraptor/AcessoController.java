@@ -31,6 +31,7 @@ import java.util.TreeSet;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Controller;
@@ -77,9 +78,9 @@ public class AcessoController extends GiControllerSupport {
 	}
 
 	@Inject
-	public AcessoController(HttpServletRequest request, Result result,SigaObjects so, EntityManager em) {
+	public AcessoController(HttpServletRequest request,ServletContext context, Result result,SigaObjects so, EntityManager em) {
 		
-		super(request, result, CpDao.getInstance(), so, em);
+		super(request, context,result, CpDao.getInstance(), so, em);
 		pessoaSel = new DpPessoaSelecao();
 		lotacaoSel = new DpLotacaoSelecao();
 		perfilSel = new CpPerfilSelecao();

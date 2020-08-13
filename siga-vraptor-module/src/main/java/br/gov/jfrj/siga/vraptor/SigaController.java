@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import com.google.common.collect.Lists;
@@ -40,6 +41,8 @@ public class SigaController {
 	protected Result result;
 
 	protected HttpServletRequest request;
+	
+	private ServletContext context;
 
 	private EntityManager em;
 	protected CpDao dao;
@@ -100,7 +103,7 @@ public class SigaController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public SigaController(HttpServletRequest request, Result result, CpDao dao,
+	public SigaController(HttpServletRequest request,ServletContext context, Result result, CpDao dao,
 			SigaObjects so, EntityManager em) {
 		super();
 		this.setRequest(request);
@@ -109,9 +112,28 @@ public class SigaController {
 		this.result = result;
 		this.so = so;
 		this.em = em;
+		this.context = context;
 
 		//result.on(AplicacaoException.class).forwardTo(this).appexception();
 		//result.on(Exception.class).forwardTo(this).exception();
+		
+		Map<String, String> manifest = new HashMap<>();
+		try (InputStream is = context.getResourceAsStream("/META-INF/VERSION.MF")) {
+			String m = convertStreamToString(is);
+			if (m != null) {
+				m = m.replaceAll("\r\n", "\n");
+				for (String s : m.split("\n")) {
+					String a[] = s.split(":", 2);
+					if (a.length == 2) {
+						manifest.put(a[0].trim(), a[1].trim());
+					}
+				}
+				result.include("versao", manifest.get("Siga-Versao"));
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			result.include("versao", "ERRO AO CAPTURAR A VERSÂO");
+		}
 		
 		result.include("cadastrante", getCadastrante());
 		result.include("lotaCadastrante", getLotaCadastrante());
@@ -375,6 +397,14 @@ public class SigaController {
 	protected boolean podeUtilizarServico(String servico)
 			throws Exception {
 		return Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), servico);
+	}
+	
+	private static String convertStreamToString(java.io.InputStream is) {
+		if (is == null)
+			return null;
+		try (java.util.Scanner s = new java.util.Scanner(is, "UTF-8")) {
+			return s.useDelimiter("\\A").hasNext() ? s.next() : "";
+		}
 	}
 
 }

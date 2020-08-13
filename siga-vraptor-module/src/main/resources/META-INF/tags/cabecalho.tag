@@ -105,7 +105,7 @@ ${meta}
 
 <c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
 
-<c:set var="siga_version"  scope="request" value="9.0.2.2" />
+<c:set var="siga_version"  scope="request" value="${versao}" />
 
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
@@ -372,7 +372,7 @@ ${meta}
 							</span>
 						</div>
 					</div>
-					<div class="row ${hide_only_TRF2}  ${ambiente_class}">
+					<div class="row  ${ambiente_class}">
 						<div class="col">
 							<span>
 								<c:choose>

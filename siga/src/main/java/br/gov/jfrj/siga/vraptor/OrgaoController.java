@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.vraptor;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Controller;
@@ -30,8 +31,8 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 	}
 
 	@Inject
-	public OrgaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
-		super(request, result, CpDao.getInstance(), so, em);
+	public OrgaoController(HttpServletRequest request, ServletContext context,Result result, SigaObjects so, EntityManager em) {
+		super(request, context,result, CpDao.getInstance(), so, em);
 		// TODO Auto-generated constructor stub
 	}
 

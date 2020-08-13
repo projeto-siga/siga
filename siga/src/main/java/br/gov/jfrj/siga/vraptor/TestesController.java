@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Controller;
@@ -41,9 +42,9 @@ public class TestesController extends SigaController {
 	}
 
 	@Inject
-	public TestesController(HttpServletRequest request, Result result,
+	public TestesController(HttpServletRequest request, ServletContext context,Result result,
 			CpDao dao, SigaObjects so, EntityManager em) {
-		super(request, result, dao, so, em);
+		super(request, context, result, dao, so, em);
 	}
 
 	@Get("/public/app/testes/testes")

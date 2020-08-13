@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
@@ -64,8 +65,8 @@ public class SubstituicaoController extends SigaController {
 	}
 
 	@Inject
-	public SubstituicaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
-		super(request, result, CpDao.getInstance(), so, em);
+	public SubstituicaoController(HttpServletRequest request,ServletContext context, Result result, SigaObjects so, EntityManager em) {
+		super(request, context, result, CpDao.getInstance(), so, em);
 
 		result.on(ServletException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();

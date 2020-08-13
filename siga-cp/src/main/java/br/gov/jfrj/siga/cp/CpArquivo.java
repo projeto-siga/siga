@@ -40,7 +40,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Immutable;
 
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 
@@ -86,7 +86,7 @@ public class CpArquivo implements Serializable {
 	 * Simple constructor of AbstractExDocumento instances.
 	 */
 	public CpArquivo() {
-		tipoArmazenamento = CpArquivoTipoArmazenamentoEnum.valueOf(SigaBaseProperties.getString("siga.armazenamento.arquivo.tipo"));
+		tipoArmazenamento = CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("siga.armazenamento.arquivo.tipo"));
 	}
 
 	public java.lang.Long getIdArq() {

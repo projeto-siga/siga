@@ -37,30 +37,22 @@ import br.gov.jfrj.siga.model.Objeto;
 
 @MappedSuperclass
 @NamedNativeQueries({ @NamedNativeQuery(name = "consultarPaginaInicial", query = "SELECT"
-		+ "			  	m.id_marcador,"
-		+ "			  	m.descr_marcador,"
-		+ "			  	c.cont_pessoa,"
-		+ "			  	c.cont_lota"
-		+ "			FROM corporativo.cp_marcador m,"
-		+ "			    (SELECT"
-		+ "			   		id_marcador,"
-		+ "			   		SUM(CASE WHEN id_pessoa_ini = :idPessoaIni THEN 1 ELSE 0 END) cont_pessoa,"
-		+ "			   		SUM(CASE WHEN id_lotacao_ini = :idLotacaoIni THEN 1 ELSE 0 END) cont_lota"
-		+ "			   	FROM corporativo.cp_marca marca"
-		+ "			   	WHERE(dt_ini_marca IS NULL OR dt_ini_marca < sysdate)"
-		+ "			   		AND(dt_fim_marca IS NULL OR dt_fim_marca > sysdate)"
-		+ "			   		AND((id_pessoa_ini = :idPessoaIni) OR(id_lotacao_ini = :idLotacaoIni))"
-		+ "			   		AND ("
-		+ "			   				select id_tipo_forma_doc from siga.ex_forma_documento where id_forma_doc = ("
-		+ "			   					select id_forma_doc from siga.ex_documento where id_doc = ("
-		+ "			   						select id_doc from siga.ex_mobil where id_mobil = marca.id_ref"
-		+ "			   					)"
-		+ "			   				)"
+		+ " grps.id_marcador, grps.descr_marcador, grps.cont_pessoa, grps.cont_lota from ("
+		+ "	SELECT mard.id_marcador, mard.descr_marcador, mard.ord_marcador, "
+		+ "	SUM(CASE WHEN id_pessoa_ini = :idPessoaIni THEN 1 ELSE 0 END) cont_pessoa,"
+		+ "	SUM(CASE WHEN id_lotacao_ini = :idLotacaoIni THEN 1 ELSE 0 END) cont_lota"
+		+ "	FROM corporativo.cp_marca marca"
+		+ "	JOIN corporativo.cp_marcador mard on marca.id_marcador = mard.id_marcador"
+		+ " WHERE(dt_ini_marca IS NULL OR dt_ini_marca < sysdate)"
+		+ "		AND(dt_fim_marca IS NULL OR dt_fim_marca > sysdate)"
+		+ "		AND((id_pessoa_ini = :idPessoaIni) OR (id_lotacao_ini = :idLotacaoIni))"
+		+ "		AND (select id_tipo_forma_doc from siga.ex_forma_documento where id_forma_doc = ("
+		+ "				select id_forma_doc from siga.ex_documento where id_doc = ("
+		+ "			   		select id_doc from siga.ex_mobil where id_mobil = marca.id_ref ))"
 		+ "			   			) = :idTipoForma"
-		+ "			   	AND id_tp_marca = 1"
-		+ "			   	GROUP BY id_marcador) c"
-		+ "			WHERE m.id_marcador = c.id_marcador"
-		+ "			ORDER BY m.ord_marcador"),
+		+ "	   	AND id_tp_marca = 1"
+		+ "	GROUP BY mard.id_marcador, mard.descr_marcador, mard.ord_marcador) grps"
+		+ "	ORDER BY grps.ord_marcador"),
 @NamedNativeQuery(name = "quantidadeDocumentos", query = "SELECT"
 		+ "		count(1)"
 		+ "	FROM corporativo.cp_marca marca"
@@ -89,6 +81,9 @@ public abstract class AbstractCpMarcador extends Objeto implements Serializable 
 	@JoinColumn(name = "ID_TP_MARCADOR", nullable = false)
 	private CpTipoMarcador cpTipoMarcador;
 
+	@Column(name = "GRUPO_MARCADOR")
+	private Integer grupoMarcador;
+
 	public Long getIdMarcador() {
 		return idMarcador;
 	}
@@ -111,6 +106,14 @@ public abstract class AbstractCpMarcador extends Objeto implements Serializable 
 
 	public void setCpTipoMarcador(CpTipoMarcador cpTipoMarcador) {
 		this.cpTipoMarcador = cpTipoMarcador;
+	}
+
+	public Integer getGrupoMarcador() {
+		return grupoMarcador;
+	}
+
+	public void setGrupoMarcador(Integer grupoMarcador) {
+		this.grupoMarcador = grupoMarcador;
 	}
 
 }

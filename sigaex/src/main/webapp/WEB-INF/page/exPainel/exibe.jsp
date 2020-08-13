@@ -15,13 +15,13 @@
 <siga:pagina titulo="Painel Administrativo">
 <script type="text/javascript" language="Javascript1.1">
 function sbmtDoc() {
-    $("#spinnerModal").modal('show');
+	sigaSpinner.mostrar();
     document.getElementById('btnSubmitDoc').disabled = true;
    	frm = document.getElementById('frmDoc');
     frm.action = 'exibir?documentoRefSel.sigla=${sigla}&postback=1';
     frm.submit();
     document.getElementById('btnSubmitDoc').disabled = false;
-    $("#spinnerModal").modal('show');
+    sigaSpinner.mostrar();
 }
 </script>
 <!-- main content bootstrap -->

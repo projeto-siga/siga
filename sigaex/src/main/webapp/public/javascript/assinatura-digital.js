@@ -610,17 +610,25 @@ var providerIttruP11 = {
 var providerPassword = {
 	nome : 'Assinatura com Senha',
 	inicializar : function(cont) {
-		try {
+		try {															
 			var senhaDialog = $(
 					'<div class="modal fade" tabindex="-1" role="dialog" id="senhaDialog"><div class="modal-dialog modal-dialog-centered" role="document"><div class="modal-content">'
-					+ '<div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Identificação</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+					+ sigaModal.obterCabecalhoPadrao('Identificação')
 					+ '<div class="modal-body"><fieldset><label>Matrícula</label> <br /> <input id="nomeUsuarioSubscritor" type="text" value="' + $('#siglaUsuarioCadastrante').val() + '" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)" /> <label>(modifique caso necessário)</label><br /> <br /> <label>Senha</label><br /> <input type="password" id="senhaUsuarioSubscritor" class="text ui-widget-content ui-corner-all" autocomplete="off" autofocus /></fieldset></div>'
 					+ '<div class="modal-footer"><button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button><button type="button" id="senhaOk" class="btn btn-primary">OK</button></div>'
 					+ '</div></div></div>')
-					.modal();
+					.modal();										
 			
 			senhaDialog.on('shown.bs.modal', function () {
 				$(this).find('[autofocus]').focus();
+				
+				$('#nomeUsuarioSubscritor, #senhaUsuarioSubscritor').on('keypress', function(e) {
+					// se pressionado enter
+				    if(e.which == 13) {
+				    	$('#senhaOk').click();				    	
+				    }
+				});
+				
 				$('#senhaOk').click(function () {
 					gLogin = $("#nomeUsuarioSubscritor").val();
 					gPassword = $("#senhaUsuarioSubscritor").val();
@@ -739,9 +747,8 @@ var process = {
 		
 		var progressDialog = $(
 				'<div class="modal fade" tabindex="-1" role="dialog" id="progressDialog"><div class="modal-dialog" role="document"><div class="modal-content">'
-				+ '<div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Assinatura Digital (' + provider.nome
-				+ ')</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
-				+ '<div class="modal-body"><p id="vbslog">Iniciando...</p><div id="progressbar-ad"></div></div>'
+				+ sigaModal.obterCabecalhoPadrao()				
+				+ '<div class="modal-body"><h1 class="siga-modal__titulo  siga-modal__titulo--conteudo">Assinatura Digital (' + provider.nome + ')</h1><p id="vbslog">Iniciando...</p><div id="progressbar-ad"></div></div>'
 				+ '<div class="modal-footer"><button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button><button type="button" id="senhaOk" class="btn btn-primary">OK</button></div>'
 				+ '</div></div></div>')
 				.modal();
@@ -791,9 +798,8 @@ var process = {
 function ModalAlert(err, title) {
 	var alertDialog = $(
 			'<div class="modal fade" tabindex="-1" role="dialog" id="alertDialog"><div class="modal-dialog" role="document"><div class="modal-content">'
-			+ '<div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">' + title
-			+ '</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
-			+ '<div class="modal-body"><p>' + err + '</p></div>'
+			+ sigaModal.obterCabecalhoPadrao()
+			+ '<div class="modal-body"><h1 class="siga-modal__titulo  siga-modal__titulo--conteudo">' + title + '</h1><p>' + err + '</p></div>'
 			+ '<div class="modal-footer"><button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button></div>'
 			+ '</div></div></div>')
 			.modal();
@@ -944,7 +950,7 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar) {
 				provider.assinar(signable);
 			}
 		} else {
-			if (( ($('#siglaUsuSubscritor').val() != "") && ($('#siglaUsuarioCadastrante').val() != $('#siglaUsuSubscritor').val()) )
+			if (( ($('#podeAssinarPorComSenha').val() == "true" && $('#siglaUsuSubscritor').val() != "") && ($('#siglaUsuarioCadastrante').val() != $('#siglaUsuSubscritor').val()) )
 					&& !$('#siglaUsuCossignatarios').val().includes($('#siglaUsuarioCadastrante').val()) ) {
 				if (!confirm("DESEJA ASSINAR O DOCUMENTO POR \""+ $('#nomeUsuSubscritor').val() + "\" - \"" + $('#siglaUsuSubscritor').val() +"\" OU POR UM DOS COSIGNATARIOS (" + $('#siglaUsuCossignatarios').val() + " )\"")) {
 					gAssinando = false;

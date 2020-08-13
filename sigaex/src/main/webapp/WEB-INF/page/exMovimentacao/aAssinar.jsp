@@ -124,5 +124,5 @@
 		</div>
 	</div>
 
-	<tags:assinatura_rodape />
+	<tags:assinatura_rodape podeAssinarPorComSenha="${f:podeAssinarPorComSenha(titular,lotaTitular,doc.mobilGeral)}"/>
 </siga:pagina>

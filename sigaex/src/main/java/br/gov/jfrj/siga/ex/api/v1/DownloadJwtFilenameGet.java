@@ -13,6 +13,7 @@ import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.JWTVerifyException;
 
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DownloadJwtFilenameGetRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DownloadJwtFilenameGetResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDownloadJwtFilenameGet;
@@ -93,7 +94,7 @@ public class DownloadJwtFilenameGet implements IDownloadJwtFilenameGet {
 	}
 
 	private static String getPassword() {
-		return System.getProperty("idp.jwt.modulo.pwd.sigaidp");
+		return Prop.get("/siga.jwt.secret");
 	}
 
 }

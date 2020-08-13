@@ -10,7 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.mvel2.MVEL;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.ex.SigaExProperties;
+import br.gov.jfrj.siga.base.Prop;
 
 public class MascaraUtil {
 
@@ -35,9 +35,9 @@ public class MascaraUtil {
 	
 	public static synchronized MascaraUtil getInstance(){
 		if (instancia == null){
-			MASK_IN = SigaExProperties.getExClassificacaoMascaraEntrada();
-			MASK_OUT = SigaExProperties.getExClassificacaoMascaraSaida();
-			MASK_SHOW = SigaExProperties.getExClassificacaoMascaraExibicao();
+			MASK_IN = Prop.get("classificacao.mascara.entrada");
+			MASK_OUT = Prop.get("classificacao.mascara.saida");
+			MASK_SHOW = Prop.get("classificacao.mascara.exibicao");
 			instancia = new MascaraUtil();
 		}
 		return instancia;

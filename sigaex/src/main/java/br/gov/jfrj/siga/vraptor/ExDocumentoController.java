@@ -72,7 +72,11 @@ import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.RegraNegocioException;
+
+import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.base.SigaModal;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -101,6 +105,7 @@ import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
@@ -258,7 +263,6 @@ public class ExDocumentoController extends ExController {
 		final ExPreenchimento exPreenchimento = dao()
 				.consultar(exDocumentoDTO.getPreenchimento(),
 						ExPreenchimento.class, false);
-
 
 		exPreenchimento.setPreenchimentoBA(getByteArrayFormPreenchimento(vars,
 				campos));
@@ -458,6 +462,7 @@ public class ExDocumentoController extends ExController {
 			throws IllegalAccessException, InvocationTargetException,
 			IOException {
 		
+
 		if(exDocumentoDTO != null && exDocumentoDTO
 				.getSigla() != null) {
 			buscarDocumento(false, exDocumentoDTO);
@@ -828,10 +833,33 @@ public class ExDocumentoController extends ExController {
 		result.include("jsonHierarquiaDeModelos",
 				escapeHtml(jsonHierarquiaDeModelos));
 		result.include("podeEditarModelo", exDocumentoDTO.getDoc().isFinalizado());
+		result.include("podeTrocarPdfCapturado", podeTrocarPdfCapturado(exDocumentoDTO));
+		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
 
 		// Desabilita a proteção contra injeção maldosa de html e js
 		this.response.addHeader("X-XSS-Protection", "0");
 		return exDocumentoDTO;
+	}
+
+	private Object podeTrocarPdfCapturado(ExDocumentoDTO exDocumentoDTO) {
+		// TODO Auto-generated method stub
+		if ((exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO || exDocumentoDTO
+						.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO)
+				&& !exDocumentoDTO.getDoc().isFinalizado()) 
+		{
+			return true;
+		} else {
+			if (!exDocumentoDTO.getDoc().jaTransferido() && !exDocumentoDTO.getDoc().isAssinadoPorTodosOsSignatariosComTokenOuSenha() 
+					&&  !exDocumentoDTO.getMob().isJuntado() &&  !exDocumentoDTO.getMob().isJuntadoExterno()
+					&&  !exDocumentoDTO.getMob().isCancelada() && exDocumentoDTO.getDoc().getAutenticacoesComTokenOuSenha().isEmpty() 
+					&& ((exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO
+					|| exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO) && (Ex.getInstance().getConf().podePorConfiguracao(so.getTitular(), so.getLotaTitular(), CpTipoConfiguracao.TIPO_CONFIG_TROCAR_PDF_CAPTURADOS))))
+					{
+						return true;
+					}
+		}
+				
+		return false;
 	}
 
 	private List<ExTipoDocumento> getTiposDocumentoParaCriacao() {
@@ -1382,6 +1410,7 @@ public class ExDocumentoController extends ExController {
 		result.include("param", exDocumentoDto.getParamsEntrevista());
 		result.include("idVisualizacao", idVisualizacao);
 		result.include("podeExibirReordenacao", exibirReordenacao);
+		result.include("podeExibirTodosOsVolumes", exDocumentoDto.getMob().isVolume()); //  && exDocumentoDto.getMob().getDoc().getVolumes().size() > 1
 		
 	}
 
@@ -1469,7 +1498,6 @@ public class ExDocumentoController extends ExController {
 			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
 			filter.setSigla(exDocumentoDto.getSigla());
 			exDocumentoDto.setMob((ExMobil) dao().consultarPorSigla(filter));
-			
 			if (exDocumentoDto.getMob() != null) {
 				exDocumentoDto.setDoc(exDocumentoDto.getMob().getExDocumento());
 			}
@@ -1740,7 +1768,7 @@ public class ExDocumentoController extends ExController {
 
 			if (!exDocumentoDTO.getDoc().isFinalizado()
 					&& (exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO || exDocumentoDTO
-							.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO))
+							.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO) && (exBL.getConf().podePorConfiguracao(so.getTitular(), so.getLotaTitular(), CpTipoConfiguracao.TIPO_CONFIG_FINALIZAR_AUTOMATICAMENTE_CAPTURADOS)))
 				exBL.finalizar(getCadastrante(), getLotaTitular(),
 						exDocumentoDTO.getDoc());
 
@@ -1934,18 +1962,18 @@ public class ExDocumentoController extends ExController {
 	}
 
 	@Get("/app/expediente/doc/tornarDocumentoSemEfeito")
-	public void tornarDocumentoSemEfeito(final String sigla) throws Exception {
+	public void tornarDocumentoSemEfeito(final String sigla, final String descrMov) throws Exception {
 		assertAcesso("");
 
 		final ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
 		exDocumentoDto.setSigla(sigla);
-		buscarDocumento(false, exDocumentoDto);
+		buscarDocumento(false, exDocumentoDto);			
 
 		result.include("sigla", sigla);
 		result.include("id", exDocumentoDto.getId());
 		result.include("mob", exDocumentoDto.getMob());
 		result.include("titularSel", new DpPessoaSelecao());
-		result.include("descrMov", exDocumentoDto.getDescrMov());
+		result.include("descrMov", descrMov);
 		result.include("doc", exDocumentoDto.getDoc());
 	}
 	
@@ -1998,8 +2026,7 @@ public class ExDocumentoController extends ExController {
 		Calendar c = Calendar.getInstance();
 		c.setTime(prot.getData());
 
-		String servidor = SigaBaseProperties.getString("siga.ex."
-                + SigaBaseProperties.getString("siga.ambiente") + ".url");
+		String servidor = Prop.get("/sigaex.url");
 		
 		String caminho = url + "/public/app/processoautenticar?n=" + prot.getCodigo();
 		
@@ -2025,32 +2052,25 @@ public class ExDocumentoController extends ExController {
 			final String descrMov) throws Exception {
 		assertAcesso("");
 
-		if (descrMov == null || descrMov.trim().length() == 0) {
-			throw new AplicacaoException(
-					"O preenchimento do campo MOTIVO é obrigatório!");
-		}
-		final ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
-		exDocumentoDto.setSigla(sigla);
-		buscarDocumento(Boolean.TRUE, exDocumentoDto);
-
-		ExMobil mob = exDocumentoDto.getMob();
-		ExDocumento doc = exDocumentoDto.getDoc();
-
-		if (!Ex.getInstance()
-				.getComp()
-				.podeTornarDocumentoSemEfeito(getTitular(), getLotaTitular(),
-						mob))
-			throw new AplicacaoException(
-					"Não é possível tornar documento sem efeito.");
-		try {			
+		try {
+			if (descrMov == null || descrMov.trim().length() == 0) {
+				throw new RegraNegocioException("Favor informar o motivo");
+			}
+			
+			final ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
+			exDocumentoDto.setSigla(sigla);
+			buscarDocumento(Boolean.TRUE, exDocumentoDto);						
+					
 			Ex.getInstance()
 					.getBL()
-					.TornarDocumentoSemEfeito(getCadastrante(),
-							getLotaTitular(), doc, descrMov);
-		} catch (final Exception e) {
-			throw e;
-		}
-		ExDocumentoController.redirecionarParaExibir(result, sigla);
+					.tornarDocumentoSemEfeito(getCadastrante(),
+							getLotaTitular(), exDocumentoDto.getDoc(), descrMov);
+			
+			ExDocumentoController.redirecionarParaExibir(result, sigla);
+		} catch (final RegraNegocioException e) {
+			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
+			result.forwardTo(this).tornarDocumentoSemEfeito(sigla, descrMov);
+		}		
 	}
 
 	private void carregarBeans(final ExDocumentoDTO exDocumentoDTO,
@@ -2453,7 +2473,12 @@ public class ExDocumentoController extends ExController {
 			doc.setSubscritor(daoPes(exDocumentoDTO.getSubscritorSel().getId()));
 			doc.setLotaSubscritor(doc.getSubscritor().getLotacao());
 		} else {
-			doc.setSubscritor(null);
+			if(SigaMessages.isSigaSP() && AcessoConsulta.ehPublicoExterno(getTitular()) && !doc.isCapturado()) {
+				doc.setSubscritor(getTitular());
+				doc.setLotaSubscritor(getTitular().getLotacao());
+			} else {
+				doc.setSubscritor(null);
+			}
 		}
 
 		if (exDocumentoDTO.isSubstituicao()) {
@@ -2934,7 +2959,7 @@ public class ExDocumentoController extends ExController {
 				if(documento.getCpArquivo() == null)
 					documento.setCpArquivo(new CpArquivo());
 				else
-					documento.getCpArquivo().setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.valueOf(SigaBaseProperties.getString("siga.armazenamento.arquivo.tipo")));
+					documento.getCpArquivo().setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("siga.armazenamento.arquivo.tipo")));
 				documento.getCpArquivo().setOrgaoUsuario(documento.getOrgaoUsuario());
 				documento.getCpArquivo().setConteudoTpArq(documento.getConteudoTpDoc());
 				
@@ -2955,7 +2980,7 @@ public class ExDocumentoController extends ExController {
 					if(mov.getCpArquivo() == null)
 						mov.setCpArquivo(new CpArquivo());
 					else
-						mov.getCpArquivo().setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.valueOf(SigaBaseProperties.getString("siga.armazenamento.arquivo.tipo")));
+						mov.getCpArquivo().setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("siga.armazenamento.arquivo.tipo")));
 					
 					String extensao = TipoConteudo.ZIP.getExtensao();
 					Calendar c = Calendar.getInstance();

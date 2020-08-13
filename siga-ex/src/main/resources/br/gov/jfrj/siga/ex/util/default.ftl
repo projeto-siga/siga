@@ -4375,13 +4375,13 @@ Pede deferimento.</span><br/><br/><br/>
 									<table align="left" width="100%" bgcolor="#FFFFFF">
 										<tr>
 											<td width="18%" width="100%" align="left">
-											<p style="font-size: 11pt;">${func.resource('siga.ex.modelos.cabecalho.titulo')!}</p>
+											<p style="font-size: 11pt;">${func.resource('modelos.cabecalho.titulo')!}</p>
 											</td>
 										</tr>
 										[#if func.resource('siga.ex.modelos.cabecalho.subtitulo')??]
 											<tr>
 												<td width="100%" align="left">
-												<p style="font-size: 10pt; font-weight: bold;">${func.resource('siga.ex.modelos.cabecalho.subtitulo')!}</p>
+												<p style="font-size: 10pt; font-weight: bold;">${func.resource('modelos.cabecalho.subtitulo')!}</p>
 												</td>
 											</tr>
 										[/#if]

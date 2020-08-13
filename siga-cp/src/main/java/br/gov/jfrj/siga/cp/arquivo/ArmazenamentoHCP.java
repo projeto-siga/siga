@@ -17,7 +17,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.TipoConteudo;
 
@@ -33,9 +33,9 @@ public class ArmazenamentoHCP implements ArmazenamentoBCInterface {
 	
 	private static final String AUTHORIZATION = "Authorization";
 	private CloseableHttpClient client;
-	private String uri = SigaBaseProperties.getString("siga.armazenamento.arquivo.url");
-	private String usuario = SigaBaseProperties.getString("siga.armazenamento.arquivo.usuario");
-	private String senha = SigaBaseProperties.getString("siga.armazenamento.arquivo.senha");
+	private String uri = Prop.get("siga.armazenamento.arquivo.url");
+	private String usuario = Prop.get("siga.armazenamento.arquivo.usuario");
+	private String senha = Prop.get("siga.armazenamento.arquivo.senha");
 	private String token = null;
 
 	private void configurar() {

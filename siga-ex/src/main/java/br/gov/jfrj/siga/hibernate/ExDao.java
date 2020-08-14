@@ -1425,8 +1425,11 @@ public class ExDao extends CpDao {
 			whereList.add(cb().equal(joinForma.get("descrFormaDoc"), sForma));
 		}		
 		q.where(whereList.toArray(new Predicate[0]));
-		
-		return em().createQuery(q).getSingleResult();
+		try {
+			return em().createQuery(q).getSingleResult();
+		} catch (NoResultException ne) {
+			return null;
+		}
 	}
 
 	public ExFormaDocumento consultarExFormaPorId(Long idFormaDoc) {
@@ -1466,7 +1469,11 @@ public class ExDao extends CpDao {
 		final Query query = em().createNamedQuery("consultarModeloAtual");
 
 		query.setParameter("hisIdIni", mod.getHisIdIni());
-		return (ExModelo) query.getSingleResult();
+		try {
+			return (ExModelo) query.getSingleResult();
+		} catch (NoResultException ne) {
+			return null;
+		}
 	}
 
 	public List<ExDocumento> listarDocPendenteAssinatura(DpPessoa pessoa, boolean apenasComSolicitacaoDeAssinatura) {

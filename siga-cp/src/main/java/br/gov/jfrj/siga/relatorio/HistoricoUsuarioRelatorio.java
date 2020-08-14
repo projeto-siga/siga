@@ -115,17 +115,26 @@ public class HistoricoUsuarioRelatorio extends RelatorioTemplate {
 		setPessoasDoUsuario(dao().obterPessoasDoUsuario(getDpPessoa()));
 		@SuppressWarnings("unused")
 		int conta = 0;
+		parametros.put("titulo","SIGA");
+		parametros.put("subtitulo","Sistema de Gestão Administrativa");
+		parametros.put("secaoUsuario", "");
+		if ( System.getProperty("siga.relat.brasao") == null ) {
+			parametros.put("brasao","brasao.png");
+		} else {
+			parametros.put("brasao", System.getProperty("siga.relat.brasao"));
+		}
+		//System.out.println("Brasao: " + parametros.get("brasao"));
 	}
 
 	@Override
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException {
-		this.setTemplateFile(null);
+		//this.setTemplateFile(null);
 		this.setTitle("Histórico de Usuário: " + "(" + dpPessoa.getSesbPessoa()
 				+ dpPessoa.getMatricula() + ") " + dpPessoa.getNomePessoa());
 		this.addColuna("Lotação", 0, RelatorioRapido.ESQUERDA, true, false);
-		this.addColuna("Desde", 12, RelatorioRapido.ESQUERDA, false, false);
-		this.addColuna("Serviço", 40, RelatorioRapido.ESQUERDA, false, false);
+		this.addColuna("Desde", 25, RelatorioRapido.ESQUERDA, false, false);
+		this.addColuna("Serviço", 60, RelatorioRapido.ESQUERDA, false, false);
 		this.addColuna("Situação", 15, RelatorioRapido.ESQUERDA, false, false);
 		this.addColuna("Origem", 13, RelatorioRapido.ESQUERDA, false, false);
 		this.addColuna("Cadastrante", 20, RelatorioRapido.ESQUERDA, false,

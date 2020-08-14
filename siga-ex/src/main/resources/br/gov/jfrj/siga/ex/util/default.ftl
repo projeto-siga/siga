@@ -1015,7 +1015,7 @@ LINHA  VARIÁVEL / CONTEÚDO
     [/#if]
 [/#macro]
 
-[#macro texto var titulo="" largura="" maxcaracteres="" idAjax="" reler="" relertab="" obrigatorio="nao" default="" atts={} onkeyup="" ]
+[#macro texto var titulo="" largura="" maxcaracteres="" idAjax="" reler="" relertab="" obrigatorio="nao" default="" atts={} onkeyup="" isCpf=false isCnpj=false ]
     [#if reler == 'ajax']
         [#local jreler = " onchange=\"javascript: sbmt('" + idAjax + "');\""]
     [/#if]
@@ -1040,32 +1040,73 @@ LINHA  VARIÁVEL / CONTEÚDO
     [#if v == ""]
         [#local v = default/]
     [/#if]
-
-    <input type="hidden" name="vars" value="${var}" />
-
-    [#if (alerta!"Não") = 'Sim' && v = ""]
-    [#list obrigatorios?split(",") as campo]
-         [#if campo == var]
-         [#local vermelho = "color:red"]
-             [/#if]
-        [/#list]
-    [/#if]
-
-    [#if obrigatorio == 'Sim']
-    [#local negrito = "font-weight:bold"]
-    <input type="hidden" name="obrigatorios" value="${var}" />
-    [/#if]
-
-    [#if titulo != ""]
-    <span style="${negrito!""};${vermelho!""}">${titulo}:</span>
-    [/#if]
     
-	 [#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
-    [#if !gerar_formulario!false]
-       <input type="text" name="${var}" value="${v}" ${jreler!""}${jrelertab!""}${jlargura!""}${jmaxcaracteres!""} ${attsHtml} onkeyup="${onkeyup}" class="form-control"/>
-    [#else]
-    <span class="valor">${v}</span>
-    [/#if]
+	<div class="form-group" style="margin-bottom:0">
+	    <input type="hidden" name="vars" value="${var}" />
+	
+	    [#if (alerta!"Não") = 'Sim' && v = ""]
+	    [#list obrigatorios?split(",") as campo]
+	         [#if campo == var]
+	         [#local vermelho = "color:red"]
+	             [/#if]
+	        [/#list]
+	    [/#if]
+	
+	    [#if obrigatorio == 'Sim']
+	    [#local negrito = "font-weight:bold"]
+	    <input type="hidden" name="obrigatorios" value="${var}" />
+	    [/#if]
+	
+		[#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
+	    [#if !gerar_formulario!false]    	
+    		[#if titulo != ""]    			
+    			<label for="${var}" style="${negrito!};${vermelho!}">${titulo}</label>
+    		[/#if]
+    		
+       		<input type="text" id="${var}" name="${var}" value="${v}" ${jreler!""}${jrelertab!""} ${attsHtml} onkeyup="${onkeyup}" class="form-control" [#if isCpf]data-formatar-cpf="true" placeholder="000.000.000-00" maxlength="14" style="max-width: 150px"[#elseif isCnpj]data-formatar-cnpj="true" placeholder="00.000.000/000-00" maxlength="18" style="max-width: 180px"[#else]${jlargura!""}${jmaxcaracteres!""}[/#if]/>
+       		<div class="invalid-feedback  invalid-feedback-${var}">Preenchimento obrigatório</div>	     	
+	     	[#if isCpf]    
+		     	<script>
+		     		function aplicarMascaraCPF(evento) {	     			             
+	            		cpf = this.value.replace(/([^\d])/g, '');
+	
+			            if (evento.type == 'change') {
+			              while (cpf.length < 11) {
+			                cpf = '0' + cpf;
+			              }               
+			            }
+			            cpf = cpf.replace(/^(\d{3})(\d)/, '$1.$2');
+			            cpf = cpf.replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3');
+			            cpf = cpf.replace(/\.(\d{3})(\d)/, '.$1-$2');            
+			            this.value = cpf;
+		     		}
+		     		document.querySelector('input[name=${var}]').addEventListener('input', aplicarMascaraCPF);
+	      			document.querySelector('input[name=${var}]').addEventListener('change', aplicarMascaraCPF);
+		     	</script>  
+	     	[#elseif isCnpj]
+	     		<script>
+		     		function aplicarMascaraCNPJ(evento) {	     			             
+	            		cnpj = this.value.replace(/([^\d])/g, '');
+	
+			            if (evento.type == 'change') {
+			              while (cnpj.length < 14) {
+			                cnpj = '0' + cnpj;
+			              }
+			            }
+			            cnpj = cnpj.replace(/^(\d{2})(\d)/, '$1.$2');
+			            cnpj = cnpj.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+			            cnpj = cnpj.replace(/\.(\d{3})(\d)/, '.$1/$2');
+			            cnpj = cnpj.replace(/(\d{4})(\d)/, '$1-$2');
+			            this.value = cnpj;
+		     		}
+		     		document.querySelector('input[name=${var}]').addEventListener('input', aplicarMascaraCNPJ);
+	      			document.querySelector('input[name=${var}]').addEventListener('change', aplicarMascaraCNPJ);
+		     	</script> 
+	     	[/#if] 
+	    [#else]
+	    <span class="valor">${v}</span>
+	    [/#if]
+	</div>	    
 [/#macro]
 
 [#macro oculto var valor="" default=""]
@@ -1091,33 +1132,40 @@ LINHA  VARIÁVEL / CONTEÚDO
         [@inlineTemplate/]
     [/#if]
 
-    <input type="hidden" name="vars" value="${var}" />
-    <input type="hidden" id="${var}" name="${var}" value="${v}" />
-
-    [#if (alerta!"Não") = 'Sim' && v = ""]
-    [#list obrigatorios?split(",") as campo]
-         [#if campo == var]
-         [#local vermelho = "color:red"]
-             [/#if]
-        [/#list]
-    [/#if]
-
-    [#if obrigatorio]
-    [#local negrito = "font-weight:bold"]
-    <input type="hidden" name="obrigatorios" value="${var}" />
-    [/#if]
-
-    [#if !gerar_formulario!false]
-        <input id="${id}" type="checkbox" name="${var}_chk" value="Sim"
-               [#if v=='Sim']checked[/#if] 
-               onclick="javascript: if (this.checked) document.getElementById('${var}').value = 'Sim'; else document.getElementById('${var}').value = '{default}'; ${onclique!""}; ${jreler!""}" /> <label for="${id}" style="${negrito!""};${vermelho!""}">${titulo!""}</label>
-
-    [#else]
-    <span class="valor">${v}</span>
-    [/#if]
+	<div class="form-group" style="margin-bottom:0">
+	    <input type="hidden" name="vars" value="${var}" />
+	    <input type="hidden" id="${var}" name="${var}" value="${v}" />
+	
+	    [#if (alerta!"Não") = 'Sim' && v = ""]
+	    [#list obrigatorios?split(",") as campo]
+	         [#if campo == var]
+	         [#local vermelho = "color:red"]
+	             [/#if]
+	        [/#list]
+	    [/#if]
+	
+	    [#if obrigatorio]
+	    [#local negrito = "font-weight:bold"]
+	    <input type="hidden" name="obrigatorios" value="${var}_chk" />
+	    [/#if]
+	
+	    [#if !gerar_formulario!false]    	
+			<div class="custom-control custom-checkbox">
+		        <input class="custom-control-input" id="${id}" type="checkbox" name="${var}_chk" value="Sim"
+		               [#if v=='Sim']checked[/#if] 
+		               onclick="javascript: if (this.checked) document.getElementById('${var}').value = 'Sim'; else document.getElementById('${var}').value = '{default}'; ${onclique!""}; ${jreler!""}" [#if id == ""]data-criar-id="true"[/#if]/> 
+		        <label class="custom-control-label" for="${id}" style="${negrito!""};${vermelho!""}" [#if id == ""]data-nome-ref="${var}_chk"[/#if]>${titulo!""}</label>
+		        [#if obrigatorio]
+					<div class="invalid-feedback  invalid-feedback-${var}_chk">Preenchimento obrigatório</div>
+				[/#if]		       
+			</div>		
+	    [#else]
+	    <span class="valor">${v}</span>
+	    [/#if]
+	</div>	    
 [/#macro]
 
-[#macro radio titulo var reler=false idAjax="" default="Não" valor="Sim" onclique="" atts={}]
+[#macro radio titulo var reler=false idAjax="" default="Não" valor="Sim" onclique="" atts={} obrigatorio=false id=""]	
     [#if reler == true && idAjax != ""]
             [#local jreler = " sbmt('" + idAjax + "');"]
     [#elseif reler == true]
@@ -1126,26 +1174,35 @@ LINHA  VARIÁVEL / CONTEÚDO
 
     [#local v = .vars[var]!(default == "Sim")?string(valor, "") /]
 
-    [#if !.vars["temRadio_"+var]??]
-        <input type="hidden" name="vars" value="${var}" />
-        <input type="hidden" id="${var}" name="${var}" value="${v}" />
-        [#assign inlineTemplate = ["[#assign temRadio_${var} = true/]", "assignInlineTemplate"]?interpret /]
-        [@inlineTemplate/]
-    [/#if]
-    [#if v == valor]
-        <script>document.getElementById('${var}').value = '${valor}';</script>
-    [/#if]
-
-	[#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
-    [#if !gerar_formulario!false]
-    <table><tr><td>
-            <input type="radio" name="${var}_chk" value="${valor}" [#if v == valor]checked[/#if]
-        onclick="javascript: if (this.checked) document.getElementById('${var}').value = '${valor}'; 
-                ${onclique}; ${jreler!};" ${attsHtml} /> 
-    </td><td>${titulo}</td></tr></table>
-    [#else]
-    <span class="valor">${v}</span>
-    [/#if]
+	<div class="form-group" style="margin-bottom:0">
+	    [#if !.vars["temRadio_"+var]??]
+	        <input type="hidden" name="vars" value="${var}" />
+	        <input type="hidden" id="${var}" name="${var}" value="${v}" />
+	        [#assign inlineTemplate = ["[#assign temRadio_${var} = true/]", "assignInlineTemplate"]?interpret /]
+	        [@inlineTemplate/]
+	    [/#if]
+	    [#if v == valor]
+	        <script>document.getElementById('${var}').value = '${valor}';</script>
+	    [/#if]
+	    
+	    [#if obrigatorio]
+	    	[#local negrito = "font-weight:bold"]
+	    	<input type="hidden" name="obrigatorios" value="${var}_chk" />
+	    [/#if]	    	   
+	
+		[#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
+	    [#if !gerar_formulario!false]        	
+			<div class="custom-control custom-radio">
+	        	<input class="custom-control-input" type="radio" id="${id}" name="${var}_chk" value="${valor}" [#if v == valor]checked[/#if] onclick="javascript: if (this.checked) document.getElementById('${var}').value = '${valor}'; ${onclique}; ${jreler!};" ${attsHtml} [#if id == ""]data-criar-id="true"[/#if]/>     			
+				<label class="custom-control-label" for="${id}" style="${negrito!""};${vermelho!""}" [#if id == ""]data-nome-ref="${var}_chk"[/#if]>${titulo!""}</label>
+				[#if obrigatorio]
+					<div class="invalid-feedback  invalid-feedback-${var}_chk">Preenchimento obrigatório</div>
+				[/#if]						
+			</div>  			  
+	    [#else]
+	    <span class="valor">${v}</span>    
+	    [/#if]
+    </div>
 [/#macro]
 
 [#macro editor_antigo var titulo="" default=""]
@@ -1366,29 +1423,38 @@ window.onload = function(){
 [/#macro]
 
 
-[#macro selecao var titulo opcoes reler=false idAjax="" onclick="" pontuacao=":" atts={}]
+[#macro selecao var titulo opcoes reler=false idAjax="" onclick="" pontuacao=":" atts={} opcaoNeutra="" obrigatorio=false]
     [#local l=opcoes?split(";")]
     [#if .vars[var]??]
         [#local v = .vars[var]/]
+        [#local temValor = v]
     [#else]
         [#local v = l?first/]
         [#--assign .vars[var] = v / --]
         		[#--Edson: voltei a comentar este trecho, pois não identifiquei pra que serve, e está dando erro com o Angular --]
                	 [#assign inlineTemplate = ["[#assign ${var} = v/]", "assignInlineTemplate"]?interpret /]
               	[@inlineTemplate/] 
-        [/#if]
-    
-        ${titulo!""}[#if titulo != ""]${pontuacao!""}[/#if]
-
+    [/#if]
+            
 	[#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
 
-    [#if !gerar_formulario!false]
-        <input type="hidden" name="vars" value="${var}" />
-        <select name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] onclick="${onclick}" class="form-control" ${attsHtml}>
-                    [#list l as opcao]
-                        <option[#if v == opcao] selected[/#if] value="${opcao}">${opcao}</option><br/>
-            [/#list]
-        </select>
+    [#if !gerar_formulario!false]    
+    	<div class="form-group" style="margin-bottom:0">
+    		[#if titulo?? && titulo != ""]<label for="${var}" [#if obrigatorio]style="font-weight:bold"[/#if]>${titulo}</label>[/#if]  
+    		<select id="${var}" name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] onclick="${onclick}" class="form-control" ${attsHtml}>
+    			[#if opcaoNeutra?? && opcaoNeutra != "" && obrigatorio]
+    				<option id="opcaoNeutra" value="${opcaoNeutra}" [#if !(temValor??)]selected[/#if]>${opcaoNeutra}</option>
+    			[/#if]
+                [#list l as opcao]
+                    <option value="${opcao}" [#if v == opcao && (opcaoNeutra == "" || (temValor?? && temValor != ""))] selected[/#if]>${opcao}</option><br/>
+            	[/#list]
+        	</select> 
+        	[#if obrigatorio]            		    
+				<div class="invalid-feedback  invalid-feedback-${var}">Selecione um opção</div>
+				<input type="hidden" name="obrigatorios" value="${var}" />
+			[/#if]    
+			<input type="hidden" name="vars" value="${var}" />                  	    	    	  	   		   								    			 				
+		</div>                
     [#else]
         <span class="valor">${v}</span>
     [/#if]
@@ -1446,45 +1512,46 @@ window.onload = function(){
 
         [#local v = .vars[var]!default]
 
+	<div class="form-group" style="margin-bottom:0">
         <input type="hidden" name="vars" value="${var}" />
 
         [#if (alerta!"Não") = 'Sim' && v = ""]
-    [#list obrigatorios?split(",") as campo]
-                    [#if campo == var]
-                        [#local vermelho = "color:red"]
-                        [/#if]
-                [/#list]
+    		[#list obrigatorios?split(",") as campo]
+                [#if campo == var]
+                	[#local vermelho = "color:red"]
+            	[/#if]
+           	[/#list]
         [/#if]
 
         [#if obrigatorio]
             [#local negrito = "font-weight:bold"]
             <input type="hidden" name="obrigatorios" value="${var}" />
         [/#if]
+        
+        [#if titulo != ""]                         
+        	<label for="${var}" style="${negrito!};${vermelho!}">${titulo}</label>
+        [/#if]
 
-        <div style="padding-top:5px;">
-                [#if titulo != ""] 
-                        <span style="${negrito!""};${vermelho!""}">${titulo}:<br/></span>
-                [/#if]
-
-                [#if !gerar_formulario!false]
-                    <textarea cols="${colunas}" rows="${linhas}" name="${var}" ${jreler!""} style="width:100%;" class="form-control">${v}</textarea>
-                [#else]
-                    <span class="valor">${v}</span>
-                [/#if]
-        </div>
+        [#if !gerar_formulario!false]
+        	<textarea id="${var}" cols="${colunas}" rows="${linhas}" name="${var}" ${jreler!""} style="width:100%;" class="form-control">${v}</textarea>
+        	<div class="invalid-feedback  invalid-feedback-${var}">Preenchimento obrigatório</div>
+        [#else]
+            <span class="valor">${v}</span>
+        [/#if]
+	</div>
 [/#macro]
 
 [#macro memocomposto var titulo colunas linhas reler=false obrigatorio=false default="" forceDefault=false disabled=false]
-        [#if reler == true]
-                [#local jreler = " onchange=\"javascript: sbmt();\""]
-        [/#if]
+    [#if reler == true]
+            [#local jreler = " onchange=\"javascript: sbmt();\""]
+    [/#if]
 
-        [#if forceDefault == true]
-        	[#local v = default! ]
-        [#else]
-        	[#local v = .vars[var]!default]
-    	[/#if]
-
+    [#if forceDefault == true]
+    	[#local v = default! ]
+    [#else]
+    	[#local v = .vars[var]!default]
+	[/#if]
+	<div class="form-group" style="margin-bottom:0">
         <input type="hidden" name="vars" value="${var}" />
 
         [#if (alerta!"Não") = 'Sim' && v = ""]
@@ -1500,17 +1567,18 @@ window.onload = function(){
             <input type="hidden" name="obrigatorios" value="${var}" />
         [/#if]
 
-        <div style="padding-top:5px;">
-                [#if titulo != ""] 
-                        <span style="${negrito!""};${vermelho!""}">${titulo}:<br/></span>
+        
+                [#if titulo != ""]                         
+                    <label for="${var}" style="${negrito!};${vermelho!}">${titulo}</label>
                 [/#if]
 
                 [#if !gerar_formulario!false]
-                    <textarea cols="${colunas}" rows="${linhas}" name="${var}" ${jreler!""} style="width:100%;"[#if disabled == true] readonly[/#if]>${v}</textarea>
+                    <textarea class="form-control" cols="${colunas}" rows="${linhas}" name="${var}" ${jreler!""} style="width:100%;"[#if disabled == true] readonly[/#if]>${v}</textarea>
+               		<div class="invalid-feedback  invalid-feedback-${var}">Preenchimento obrigatório</div>
                 [#else]
                     <span class="valor">${v}</span>
                 [/#if]
-        </div>
+    </div>
 [/#macro]
 [#macro XStandard nome="" conteudo=""]
         <script type="text/javascript" language="Javascript1.1">
@@ -1824,13 +1892,18 @@ Pede deferimento.</span><br/><br/><br/>
     <input type="hidden" name="${var}${tipoSel}Sel.buscar" />
     <input type="hidden" name="req${var}${tipoSel}Sel" />
     <input type="hidden" name="alterouSel" value="" id="alterouSel" />
-    <input type="text" name="${var}${tipoSel}Sel.sigla" value="${.vars[var+tipoSel+"Sel.sigla"]!}" onkeypress="return handleEnter(this, event)"
-        onblur="javascript: ajax_${var}${tipoSel}();" size="25" ${desativar?string('disabled="true"','')} />
-    [#if buscar]
-        <input type="button" id="${var}${tipoSel}SelButton" value="..."
-            onclick="javascript: popitup_${var}${tipoSel}('');"
-            ${desativar?string("disabled","")} theme="simple">
-    [/#if]
+    <div class="input-group">
+    <input type="text" class="form-control" name="${var}${tipoSel}Sel.sigla" value="${.vars[var+tipoSel+"Sel.sigla"]!}" onkeypress="return handleEnter(this, event)"
+	        onblur="javascript: ajax_${var}${tipoSel}();" size="25" ${desativar?string('disabled="true"','')} />
+	    [#if buscar]
+	    	<div class="input-group-append">
+		        <input type="button" class="btn btn-secondary" id="${var}${tipoSel}SelButton" value="..."
+		            onclick="javascript: popitup_${var}${tipoSel}('');"
+		            ${desativar?string("disabled","")} theme="simple">
+	        </div>
+	    [/#if]	    
+		<div class="invalid-feedback  invalid-feedback-${var}${tipoSel}Sel.sigla">Preenchimento obrigatório</div>		
+    </div>
     [#if !ocultarDescricao]
         <span id="${var}${tipoSel}SelSpan">${.vars[var+tipoSel+"Sel.descricao"]!}</span>
     [/#if]
@@ -1848,37 +1921,42 @@ Pede deferimento.</span><br/><br/><br/>
 [#macro selecionavel titulo var tipo reler=false idAjax="" default="" obrigatorio=false relertab="" paramList="" modulo=""]
     [#assign tipoSel = "_" + tipo /]
 
-    [#assign varName = var + tipoSel + "Sel.id" /]
+    [#assign varName = var + tipoSel + "Sel.id" /]    
     [#local vId = .vars[varName]!default]
-    <input type="hidden" name="vars" value="${varName}" />
-
-    [#assign varName = var + tipoSel + "Sel.sigla" /]
-    [#local vSigla = .vars[varName]!default]
-    <input type="hidden" name="vars" value="${varName}" />
-
-    [#assign varName = var + tipoSel + "Sel.descricao" /]
-    [#local vDescricao = .vars[varName]!default]
-    <input type="hidden" name="vars" value="${varName}" />
-
-    [#if (alerta!"Não") = 'Sim' && vId == ""]
-    [#list obrigatorios?split(",") as campo]
-         [#if campo == varName]
-         [#local vermelho = "color:red"]
-             [/#if]
-        [/#list]
-    [/#if]
-    [#if obrigatorio]
-    [#local negrito = "font-weight:bold"]
-    <input type="hidden" name="obrigatorios" value="${varName}" />
-    [/#if]
-
-    [#if titulo?? && titulo != ""]<span style="${negrito!};${vermelho!}">${titulo}:</span>[/#if]
-
-    [#if !gerar_formulario!false]
-        [@caixaSelecao titulo=titulo var=var tipo=tipo reler=reler idAjax=idAjax relertab=relertab paramList=paramList modulo=modulo /]
-    [#else]
-    <span class="valor">[#if vSigla??]${vSigla} - [/#if]${vDescricao}</span>
-    [/#if]
+    <div class="form-group" style="margin-bottom:0">
+	    <input type="hidden" name="vars" value="${varName}" />
+	
+	    [#assign varName = var + tipoSel + "Sel.sigla" /]
+	    [#local vSigla = .vars[varName]!default]
+	    <input type="hidden" name="vars" value="${varName}" />
+	
+	    [#assign varName = var + tipoSel + "Sel.descricao" /]
+	    [#local vDescricao = .vars[varName]!default]
+	    <input type="hidden" name="vars" value="${varName}" />
+	
+	    [#if (alerta!"Não") = 'Sim' && vId == ""]
+	    [#list obrigatorios?split(",") as campo]
+	         [#if campo == varName]
+	         [#local vermelho = "color:red"]
+	             [/#if]
+	        [/#list]
+	    [/#if]
+	    [#if obrigatorio]
+	    [#local negrito = "font-weight:bold"]
+	    [#assign varName = var + tipoSel + "Sel.sigla" /]
+	    <input type="hidden" name="obrigatorios" value="${varName}" />	    
+	    [/#if]
+	
+	    [#if titulo?? && titulo != ""]	    	
+	    	<label for="${varName}" style="${negrito!};${vermelho!}">${titulo}</label>
+	    [/#if]
+	
+	    [#if !gerar_formulario!false]
+	        [@caixaSelecao titulo=titulo var=var tipo=tipo reler=reler idAjax=idAjax relertab=relertab paramList=paramList modulo=modulo /]	        
+	    [#else]
+	    <span class="valor">[#if vSigla??]${vSigla} - [/#if]${vDescricao}</span>
+	    [/#if]
+    </div>
 [/#macro]
 
 [#macro pessoa titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList=""]
@@ -1928,31 +2006,32 @@ Pede deferimento.</span><br/><br/><br/>
         [/#list]
     [/#if]
 
-
-    [#if obrigatorio]
-    [#local negrito = "font-weight:bold"]
-    <input type="hidden" name="obrigatorios" value="${var}" />
-    [/#if]
-
-    [#if titulo?? && titulo != ""]<span style="${negrito!};${vermelho!}">${titulo}</span>[/#if]
-    [#if !gerar_formulario!false]
-        <input type="hidden" name="vars" value="${var}" />
-        
- 
- [#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
-<input type="text" id ="${var}" name="${var}" value="${v}" size="10" maxlength="10" onblur="javascript:verifica_data(this[#if !obrigatorio], 'Sim'[/#if]);${jreler!}" class="campoData" ${attsHtml} />
-    [#else]
-    <span class="valor">${v}</span>
-    [/#if]
-    <script>
-    	$('.campoData').mousedown(function() {
-  			$('.campoData').datepicker({
-            	onSelect: function(){
-                    ${onSelect}
-				}
+	<div class="form-group" style="margin-bottom:0">  
+	    [#if obrigatorio]
+	    [#local negrito = "font-weight:bold"]
+	    <input type="hidden" name="obrigatorios" value="${var}" />
+	    [/#if]
+	    
+	    [#if !gerar_formulario!false]
+	        <input type="hidden" name="vars" value="${var}" />
+	         
+		[#if titulo?? && titulo != ""]<label for="${var}" style="${negrito!};${vermelho!}">${titulo}</label>[/#if] 
+		[#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
+		<input type="text" id="${var}" name="${var}" value="${v}" size="10" maxlength="10" class="form-control  campoData" ${attsHtml} style="max-width: 115px" placeholder="00/00/0000"/>		
+		<div class="invalid-feedback  invalid-feedback-${var}">Preenchimento obrigatório</div>				
+	    [#else]
+	    <span class="valor">${v}</span>
+	    [/#if]
+	    <script>
+	    	$('.campoData').mousedown(function() {
+	  			$('.campoData').datepicker({
+	            	onSelect: function(){
+	                    ${onSelect}
+					}
+				});
 			});
-		});
-	</script>
+		</script>
+	</div>		
 [/#macro]
 
 [#macro letra tamanho]
@@ -3211,31 +3290,34 @@ Pede deferimento.</span><br/><br/><br/>
         [#local v = default/]
     [/#if]
 
-    <input type="hidden" name="vars" value="${var}" />
-
-    [#if (alerta!"Não") = 'Sim' && v = ""]
-    [#list obrigatorios?split(",") as campo]
-         [#if campo == var]
-         [#local vermelho = "color:red"]
-             [/#if]
-        [/#list]
-    [/#if]
-
-    [#if obrigatorio == 'Sim']
-    [#local negrito = "font-weight:bold"]
-    <input type="hidden" name="obrigatorios" value="${var}" />
-    [/#if]
-
-    [#if titulo != ""]
-    <span style="${negrito!""};${vermelho!""}">${titulo}:</span>
-    [/#if]
-    
-    [#if !gerar_formulario!false]
-    <input onkeypress="return formataReais(this, '.' , ',', event)"
-    type="text" name="${var}" value="${v}" ${jreler!""}${jrelertab!""}${jlargura!""}${jmaxcaracteres!""}/>
-    [#else]
-    <span class="valor">${v}</span>
-    [/#if]
+	<div class="form-group" style="margin-bottom:0">
+	    <input type="hidden" name="vars" value="${var}" />
+	
+	    [#if (alerta!"Não") = 'Sim' && v = ""]
+	    [#list obrigatorios?split(",") as campo]
+	         [#if campo == var]
+	         [#local vermelho = "color:red"]
+	             [/#if]
+	        [/#list]
+	    [/#if]
+	
+	    [#if obrigatorio == 'Sim']
+	    [#local negrito = "font-weight:bold"]
+	    <input type="hidden" name="obrigatorios" value="${var}" />
+	    [/#if]
+	
+	    [#if titulo != ""]    
+	    	<label for="${var}" style="${negrito!};${vermelho!}">${titulo}</label>
+	    [/#if]
+	    
+	    [#if !gerar_formulario!false]
+	    <input onkeypress="return formataReais(this, '.' , ',', event)"
+	    type="text" name="${var}" value="${v}" ${jreler!""}${jrelertab!""}${jlargura!""}${jmaxcaracteres!""} class="form-control"/>
+	    <div class="invalid-feedback  invalid-feedback-${var}">Preenchimento obrigatório</div>	    
+	    [#else]
+	    <span class="valor">${v}</span>
+	    [/#if]
+    </div>
 [/#macro]
 [#macro identificacao pessoa="" funcao="" nivelHierarquicoMaximoDaLotacao="" obs="" negrito="nao"]
     [#if pessoa?? && pessoa.sigla != ""]
@@ -3980,34 +4062,32 @@ Pede deferimento.</span><br/><br/><br/>
         [#local v = default/]
     [/#if]
 
-    <input type="hidden" name="vars" value="${var}" />
-
-    [#if (alerta!"Não") = 'Sim' && v = ""]
-    [#list obrigatorios?split(",") as campo]
-         [#if campo == var]
-         [#local vermelho = "color:red"]
-             [/#if]
-        [/#list]
-    [/#if]
-
-    [#if obrigatorio == 'Sim']
-    [#local negrito = "font-weight:bold"]
-    <input type="hidden" name="obrigatorios" value="${var}" />
-    [/#if]
-
-    [#if titulo != ""]
-    <span style="${negrito!""};${vermelho!""}">${titulo}:</span>
-    [/#if]
-    
-    [#if !gerar_formulario!false]
-    <input onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }" 
- type="text" name="${var}" value="${v}" ${jreler!""}${jrelertab!""}${jlargura!""}${jmaxcaracteres!""}/>
-    [#else]
-    <span class="valor">${v}</span>
-    [/#if]
+	<div class="form-group" style="margin-bottom:0">
+	    <input type="hidden" name="vars" value="${var}" />
+	
+	    [#if (alerta!"Não") = 'Sim' && v = ""]
+	    [#list obrigatorios?split(",") as campo]
+	         [#if campo == var]
+	         [#local vermelho = "color:red"]
+	             [/#if]
+	        [/#list]
+	    [/#if]
+	
+	    [#if obrigatorio == 'Sim']
+	    [#local negrito = "font-weight:bold"]
+	    <input type="hidden" name="obrigatorios" value="${var}" />
+	    [/#if]
+	
+	    [#if !gerar_formulario!false]    	    	  
+		   	[#if titulo?? && titulo != ""]<label for="${var}" style="${negrito!};${vermelho!}">${titulo}</label>[/#if]					
+		    <input onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }" 
+				id="${var}" type="text" name="${var}" value="${v}" ${jreler!""}${jrelertab!""}${jlargura!""}${jmaxcaracteres!""} class="form-control"/>			 					
+			<div class="invalid-feedback  invalid-feedback-${var}">Preenchimento obrigatório</div>			         
+	    [#else]
+	    <span class="valor">${v}</span>
+	    [/#if]
+    </div>
 [/#macro]
-
-
 
 [#macro horaMinuto titulo var reler=false idAjax="" default="" alerta=false obrigatorio=false]
     [#if reler == true && idAjax != ""]
@@ -4018,19 +4098,21 @@ Pede deferimento.</span><br/><br/><br/>
 
     [#local v = .vars[var]!default]
 
-    [#if obrigatorio]
-		[#local negrito = "font-weight:bold"]
-		<input type="hidden" name="obrigatorios" value="${var}" />
-    [/#if]
-
-    [#if titulo?? && titulo != ""]<span style="${negrito!};${vermelho!}">${titulo}</span>[/#if]
-
-    [#if !gerar_formulario!false]
-        <input type="hidden" name="vars" value="${var}" />
-		<input type="text" name="${var}" value="${v}" size="6" maxlength="5" onblur="javascript:verifica_hora(this, 'Sim');${jreler!}" class="form-control" />
-    [#else]
-		<span class="valor">${v}</span>
-    [/#if]
+	<div class="form-group" style="margin-bottom:0">
+	    [#if obrigatorio]
+			[#local negrito = "font-weight:bold"]
+			<input type="hidden" name="obrigatorios" value="${var}" />
+	    [/#if]          
+	
+	    [#if !gerar_formulario!false]
+	        <input type="hidden" name="vars" value="${var}" />                            	  
+			[#if titulo?? && titulo != ""]<label for="${var}" style="${negrito!};${vermelho!}">${titulo}</label>[/#if] 			
+			<input type="text" id="${var}" name="${var}" value="${v}" size="6" maxlength="5" class="form-control  campoHoraMinuto" style="max-width: 70px" placeholder="00:00" />
+			<div class="invalid-feedback  invalid-feedback-${var}">Preenchimento obrigatório</div>
+	    [#else]
+			<span class="valor">${v}</span>
+	    [/#if]
+	</div>	    
 [/#macro]
 
 [#macro webservice var url timeout cache=""]

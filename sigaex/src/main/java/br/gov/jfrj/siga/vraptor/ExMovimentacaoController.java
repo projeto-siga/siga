@@ -26,7 +26,6 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -3257,22 +3256,28 @@ public class ExMovimentacaoController extends ExController {
 
 		buscarDocumento(builder, true);
 		ExMobil mob = builder.getMob();
+		
+		try {
+			validarCancelamentoJuntada(mob);
 
-		validarCancelamentoJuntada(mob);
-
-		ExMobil mobilJuntado = mob.getExMobilPai();
-		if (mobilJuntado != null && !mobilJuntado.getDoc().isEletronico()) {
-			cancelarJuntadaGravar(DEFAULT_POSTBACK, sigla, null, null, null,
-					null, Boolean.FALSE);
-			return;
+			ExMobil mobilJuntado = mob.getExMobilPai();
+			if (mobilJuntado != null && !mobilJuntado.getDoc().isEletronico()) {
+				cancelarJuntadaGravar(DEFAULT_POSTBACK, sigla, null, null, null,
+						null, Boolean.FALSE);
+				return;
+			}
+			
+			result.include("mob", mob);
+			result.include("request", getRequest());
+			result.include("sigla", sigla);
+			result.include("substituicao", Boolean.FALSE);
+			result.include("subscritorSel", new DpPessoaSelecao());
+			result.include("titularSel", new DpPessoaSelecao());
+			result.include("validarCamposObrigatoriosForm", SigaMessages.isSigaSP());		
+		} catch (RegraNegocioException e) {
+			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
+			result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 		}
-		result.include("mob", mob);
-		result.include("request", getRequest());
-		result.include("sigla", sigla);
-		result.include("substituicao", Boolean.FALSE);
-		result.include("subscritorSel", new DpPessoaSelecao());
-		result.include("titularSel", new DpPessoaSelecao());
-		result.include("validarCamposObrigatoriosForm", SigaMessages.isSigaSP());
 	}
 
 	@Get("/app/expediente/mov/cancelar_anotacao")
@@ -3365,7 +3370,7 @@ public class ExMovimentacaoController extends ExController {
 	private void validarCancelamentoJuntada(ExMobil mob) {
 		if (!Ex.getInstance().getComp()
 				.podeCancelarJuntada(getTitular(), getLotaTitular(), mob))
-			throw new AplicacaoException("Não é possível cancelar juntada");
+			throw new RegraNegocioException("Não é possível cancelar juntada. Ação não permitida");
 	}
 
 	@Post("/app/expediente/mov/cancelar_juntada_gravar")
@@ -3374,34 +3379,35 @@ public class ExMovimentacaoController extends ExController {
 			DpPessoaSelecao titularSel, boolean substituicao) throws Exception {
 
 		this.setPostback(postback);
-
-		if (dtMovString != null && !Data.validaDDMMYYYY(dtMovString)) { 
-			throw new AplicacaoException(
-					"Data inválida. Deve estar no formato DD/MM/AAAA e o ano deve estar neste século.");
-		}
 		
-		ExMovimentacao mov = ExMovimentacaoBuilder.novaInstancia()
-				.setDtMovString(dtMovString).setSubstituicao(substituicao)
-				.setSubscritorSel(subscritorSel).setTitularSel(titularSel)
-				.construir(dao());
-
-		BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia()
-				.setSigla(sigla);
-
-		buscarDocumento(builder, true);
-
-		validarCancelamentoJuntada(builder.getMob());
-
 		try {
+			if (dtMovString != null && !Data.validaDDMMYYYY(dtMovString)) { 
+				throw new RegraNegocioException("Data inválida. Deve estar no formato DD/MM/AAAA e o ano deve estar neste século.");
+			}
+			
+			ExMovimentacao mov = ExMovimentacaoBuilder.novaInstancia()
+					.setDtMovString(dtMovString).setSubstituicao(substituicao)
+					.setSubscritorSel(subscritorSel).setTitularSel(titularSel)
+					.construir(dao());
+	
+			BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia()
+					.setSigla(sigla);
+	
+			buscarDocumento(builder, true);
+	
+			validarCancelamentoJuntada(builder.getMob());
+		
 			Ex.getInstance()
 					.getBL()
 					.cancelarJuntada(getCadastrante(), getLotaTitular(),
 							builder.getMob(), mov.getDtMov(),
 							mov.getSubscritor(), mov.getTitular(), descrMov);
-		} catch (final Exception e) {
-			throw e;
-		}
-		ExDocumentoController.redirecionarParaExibir(result, sigla);
+			
+			ExDocumentoController.redirecionarParaExibir(result, sigla);
+		} catch (final RegraNegocioException e) {
+			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));			
+			result.forwardTo(this).cancelarJuntada(sigla);
+		}		
 	}
 
 	@Get({"/app/expediente/mov/cancelar", "/expediente/mov/cancelar.action"})

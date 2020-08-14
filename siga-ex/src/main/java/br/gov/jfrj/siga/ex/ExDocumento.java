@@ -1526,8 +1526,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		}				
 					
 		// Numerar as paginas
-		if (isNumeracaoUnicaAutomatica()) {
-
+		if (isNumeracaoUnicaAutomatica() || (SigaMessages.isSigaSP() && mobilPrincipalPossuiJuntadaOuDesentranhamento(mob, listaFinal))) {				
 			if (mob.getDnmNumPrimeiraPagina() == null) {
 				if (mob.isVolume() && mob.getNumSequencia() > 1) {
 					List<ExArquivoNumerado> listVolumeAnterior = mob.doc()
@@ -1600,6 +1599,32 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	
 	private void limparOrdenacaoDosDocumentos() {
 		this.setOrdenacaoDoc(null);
+	}
+	
+	public boolean mobilPrincipalPossuiJuntadaOuDesentranhamento(ExMobil mobilPrincipal, List<ExArquivoNumerado> arquivosNumerados) {
+		if (arquivosNumerados != null) {
+			ExMovimentacao movimentacao;
+			long[] tpIdMovs = { ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA,
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO,
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA };			
+			
+			for (ExArquivoNumerado arquivoNumerado : arquivosNumerados) {				
+				if (arquivoNumerado.getMobil().getId() != mobilPrincipal.getId()) {
+					
+					movimentacao = arquivoNumerado.getMobil().getMovsNaoCanceladas(tpIdMovs)
+							.stream()
+							.filter(m -> m.getExMobilRef().getId() == mobilPrincipal.getId())
+							.findAny()
+							.orElse(null);
+												
+					if (movimentacao != null) {
+						return true;
+					}
+				}										
+			}			
+		}		
+		
+		return false;
 	}
 	
 	public void removerDesentranhamentosQueNaoFazemParteDoDossie(

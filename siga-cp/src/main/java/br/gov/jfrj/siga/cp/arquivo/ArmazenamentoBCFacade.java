@@ -9,9 +9,7 @@ public class ArmazenamentoBCFacade {
 			switch (cpArquivo.getTipoArmazenamento()) {
 			case HCP:
 				return new ArmazenamentoHCP();				
-			case BLOB:
-				return new ArmazenamentoBDTabela();				
-			case TABELA_ARQUIVO:
+			case TABELA:
 				return new ArmazenamentoBDTabela();
 			default:
 				throw new Exception("Não há um tipo de armazenamento definido para este documento!");

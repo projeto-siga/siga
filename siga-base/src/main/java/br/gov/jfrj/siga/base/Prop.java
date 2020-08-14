@@ -190,9 +190,11 @@ public class Prop {
 		
 		/* Parâmetros para configuração do armazenamento de documento */
 		provider.addPublicProperty("/siga.armazenamento.arquivo.tipo", "BLOB");
-		provider.addPublicProperty("/siga.armazenamento.arquivo.usuario", null);
-		provider.addPublicProperty("/siga.armazenamento.arquivo.senha", null);
-		provider.addPublicProperty("/siga.armazenamento.arquivo.url", null);
+		if ("HCP".equals(get("/siga.armazenamento.arquivo.tipo"))) {
+			provider.addPublicProperty("/siga.armazenamento.arquivo.usuario");
+			provider.addPublicProperty("/siga.armazenamento.arquivo.senha");
+			provider.addPublicProperty("/siga.armazenamento.arquivo.url");
+		}
 		
 	}
 }

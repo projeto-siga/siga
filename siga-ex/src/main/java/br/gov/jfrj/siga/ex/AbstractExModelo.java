@@ -40,6 +40,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCFacade;
@@ -425,7 +426,7 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	public byte[] getConteudoBlobMod() {
 		if(cacheConteudoBlobMod != null) {
 			return cacheConteudoBlobMod;
-		} else if (getCpArquivo() == null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(getCpArquivo().getTipoArmazenamento())) {
+		} else if (getCpArquivo() == null) {
 			cacheConteudoBlobMod = conteudoBlobMod;
 		} else {
 			try {
@@ -440,20 +441,20 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 
 	public void setConteudoBlobMod(byte[] createBlob) {
 		cacheConteudoBlobMod = createBlob;
-		criarCpArquivo();
-		cpArquivo.setTamanho(cacheConteudoBlobMod.length);
-		if (CpArquivoTipoArmazenamentoEnum.BLOB.equals(getCpArquivo().getTipoArmazenamento())) {
+		if (CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
 			conteudoBlobMod = createBlob;
+		} else {
+			criarCpArquivo();
+			cpArquivo.setTamanho(cacheConteudoBlobMod.length);
 		}
 	}
 	
 	private void criarCpArquivo() {
 		if(cpArquivo == null) {
 			cpArquivo = new CpArquivo();
+			cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")));
 			cpArquivo.gerarCaminho(new Date());
 		}
-		if(conteudoBlobMod != null)
-			cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.BLOB);
 	}
 
 }

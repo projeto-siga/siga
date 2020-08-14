@@ -33,9 +33,9 @@ public class ArmazenamentoHCP implements ArmazenamentoBCInterface {
 	
 	private static final String AUTHORIZATION = "Authorization";
 	private CloseableHttpClient client;
-	private String uri = Prop.get("siga.armazenamento.arquivo.url");
-	private String usuario = Prop.get("siga.armazenamento.arquivo.usuario");
-	private String senha = Prop.get("siga.armazenamento.arquivo.senha");
+	private String uri = Prop.get("/siga.armazenamento.arquivo.url");
+	private String usuario = Prop.get("/siga.armazenamento.arquivo.usuario");
+	private String senha = Prop.get("/siga.armazenamento.arquivo.senha");
 	private String token = null;
 
 	private void configurar() {
@@ -50,8 +50,8 @@ public class ArmazenamentoHCP implements ArmazenamentoBCInterface {
 			cpArquivo.setTamanho(conteudo.length);
 			if(cpArquivo.getCaminho()==null)
 				cpArquivo.setCaminho(gerarCaminho(cpArquivo));
-			else
-				apagar(cpArquivo);
+//			else
+//				apagar(cpArquivo);
 			HttpPut request = new HttpPut(uri+cpArquivo.getCaminho());
 			request.addHeader(AUTHORIZATION, token);
 			ByteArrayEntity requestEntity = new ByteArrayEntity(conteudo);

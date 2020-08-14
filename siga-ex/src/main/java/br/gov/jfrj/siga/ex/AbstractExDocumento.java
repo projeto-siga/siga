@@ -46,6 +46,7 @@ import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
@@ -1010,8 +1011,10 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setOrgaoUsuario(CpOrgaoUsuario orgaoUsuario) {
 		this.orgaoUsuario = orgaoUsuario;
-		criarCpArquivo();
-		cpArquivo.setOrgaoUsuario(orgaoUsuario);
+		if (!CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
+			criarCpArquivo();
+			cpArquivo.setOrgaoUsuario(orgaoUsuario);
+		}
 	}
 
 	/**
@@ -1087,21 +1090,24 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 	
 	public java.lang.String getConteudoTpDoc() {
-		if (getCpArquivo() == null || getCpArquivo().getConteudoTpArq() == null)
+		if (getCpArquivo() == null)
 			return conteudoTpDoc;
-		return getCpArquivo().getConteudoTpArq();
+		else
+			return getCpArquivo().getConteudoTpArq();
 	}
 
 	public void setConteudoTpDoc(final java.lang.String conteudoTp) {
 		this.conteudoTpDoc = conteudoTp;
-		criarCpArquivo();
-		cpArquivo.setConteudoTpArq(conteudoTp);
+		if (!CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
+			criarCpArquivo();
+			cpArquivo.setConteudoTpArq(conteudoTp);
+		}
 	}
 	
 	public byte[] getConteudoBlobDoc() {
 		if(cacheConteudoBlobDoc != null) {
 			return cacheConteudoBlobDoc;
-		} else if (getCpArquivo() == null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(getCpArquivo().getTipoArmazenamento())) {
+		} else if (getCpArquivo() == null) { 
 			cacheConteudoBlobDoc = conteudoBlobDoc;
 		} else {
 			try {
@@ -1116,20 +1122,20 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setConteudoBlobDoc(byte[] createBlob) {
 		cacheConteudoBlobDoc = createBlob;
-		criarCpArquivo();
-		cpArquivo.setTamanho(cacheConteudoBlobDoc.length);
-		if (CpArquivoTipoArmazenamentoEnum.BLOB.equals(getCpArquivo().getTipoArmazenamento())) {
+		if (CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
 			conteudoBlobDoc = createBlob;
+		} else {
+			criarCpArquivo();
+			cpArquivo.setTamanho(cacheConteudoBlobDoc.length);
 		}
 	}
 	
 	private void criarCpArquivo() {
 		if(cpArquivo == null) {
 			cpArquivo = new CpArquivo();
+			cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")));
 			cpArquivo.gerarCaminho(getDtRegDoc()!=null?getDtRegDoc():new Date());
 		}
-		if(conteudoBlobDoc != null)
-			cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.BLOB);
 	}
 	
 	public ExProtocolo getExProtocolo() {

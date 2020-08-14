@@ -7393,9 +7393,6 @@ public class ExBL extends CpBL {
 	
 	public void gravarArquivoMovimentacao(final ExMovimentacao mov) {
 		try {
-			if(mov.getIdMov()==null && mov.getCpArquivo()!=null) {
-				mov.setCpArquivo(criarCpArquivo());
-			}
 			if(mov.getCpArquivo()!=null  && mov.getCpArquivo()!=null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(mov.getCpArquivo().getTipoArmazenamento())) {
 				ArmazenamentoBCInterface armazenamento = ArmazenamentoBCFacade.getArmazenamentoBC(mov.getCpArquivo());
 				armazenamento.salvar(mov.getCpArquivo(), mov.getConteudoBlobMov2());
@@ -7419,9 +7416,4 @@ public class ExBL extends CpBL {
 		}
 	}
 
-	private CpArquivo criarCpArquivo() {
-		CpArquivo cpArquivo = new CpArquivo();
-		return cpArquivo;
-	}
-	
 }

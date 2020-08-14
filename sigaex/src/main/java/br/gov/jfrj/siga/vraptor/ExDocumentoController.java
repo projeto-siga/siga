@@ -2918,9 +2918,6 @@ public class ExDocumentoController extends ExController {
 
 	private void gravarArquivoPreenchimento(final ExPreenchimento exPreenchimento) {
 		try {
-			if(exPreenchimento.getIdPreenchimento()==null) {
-				exPreenchimento.setCpArquivo(criarCpArquivo());
-			}
 			if(exPreenchimento.getCpArquivo()!=null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(exPreenchimento.getCpArquivo().getTipoArmazenamento())) {
 				ArmazenamentoBCInterface armazenamento = ArmazenamentoBCFacade.getArmazenamentoBC(exPreenchimento.getCpArquivo());
 				armazenamento.salvar(exPreenchimento.getCpArquivo(), exPreenchimento.getPreenchimentoBlob());
@@ -2945,42 +2942,38 @@ public class ExDocumentoController extends ExController {
 		}
 	}
 	
-	private CpArquivo criarCpArquivo() {
-		CpArquivo cpArquivo = new CpArquivo();
-		return cpArquivo;
-	}
-	
 	private void migrarDocumentoParaHCP(ExDocumento documento) {
 		try {
 			final Ex ex = Ex.getInstance();
 			final ExBL exBL = ex.getBL();	
-			if(documento.getCpArquivo() == null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(documento.getCpArquivo().getTipoArmazenamento())) {
+			if(documento.getCpArquivo() == null) {
 				byte[] arquivo = documento.getConteudoBlobDoc();
-				if(documento.getCpArquivo() == null)
-					documento.setCpArquivo(new CpArquivo());
-				else
-					documento.getCpArquivo().setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("siga.armazenamento.arquivo.tipo")));
-				documento.getCpArquivo().setOrgaoUsuario(documento.getOrgaoUsuario());
-				documento.getCpArquivo().setConteudoTpArq(documento.getConteudoTpDoc());
+				CpArquivo cpArquivo = new CpArquivo();
+				documento.setCpArquivo(cpArquivo);
+				cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.HCP);
+				cpArquivo.setOrgaoUsuario(documento.getOrgaoUsuario());
+				cpArquivo.setConteudoTpArq(documento.getConteudoTpDoc());
+				cpArquivo.setTamanho(arquivo.length);
 				
 				String extensao = TipoConteudo.ZIP.getExtensao();
 				Calendar c = Calendar.getInstance();
 				c.set(Calendar.AM_PM, Calendar.PM);
 				c.setTime(documento.getData());
 				String caminho = c.get(Calendar.YEAR)+"/"+(c.get(Calendar.MONTH)+1)+"/"+c.get(Calendar.DATE)+"/"+c.get(Calendar.HOUR_OF_DAY)+"/"+c.get(Calendar.MINUTE)+"/"+UUID.randomUUID().toString()+"."+extensao;
-				documento.getCpArquivo().setCaminho(caminho);
+				cpArquivo.setCaminho(caminho);
 				
 				exBL.gravarArquivoDocumento(documento);
 
 			}
 			
 			for(ExMovimentacao mov: documento.getExMovimentacaoSet()) {
-				if(mov.getCpArquivo() == null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(mov.getCpArquivo().getTipoArmazenamento())) {
+				if(mov.getCpArquivo() == null) {
 					byte[] arquivo = mov.getConteudoBlobMov();
-					if(mov.getCpArquivo() == null)
-						mov.setCpArquivo(new CpArquivo());
-					else
-						mov.getCpArquivo().setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("siga.armazenamento.arquivo.tipo")));
+					CpArquivo cpArquivo = new CpArquivo();
+					mov.setCpArquivo(cpArquivo);
+					cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.HCP);
+					cpArquivo.setConteudoTpArq(mov.getConteudoTpMov());
+					cpArquivo.setTamanho(arquivo.length);
 					
 					String extensao = TipoConteudo.ZIP.getExtensao();
 					Calendar c = Calendar.getInstance();

@@ -2,6 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
@@ -98,7 +99,7 @@
 								<th rowspan="2" class="text-right">Número</th>
 								<th colspan="3">Documento</th>
 								<th colspan="3">Última Movimentação</th>
-								<th colspan="2">Atendente</th>
+								<th colspan="2"><fmt:message key="tela.tramitarLote.tipoResponsavel"/></th>
 								<th rowspan="2" class="text-left">Descrição</th>
 							</tr>
 							<tr>

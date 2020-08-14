@@ -125,49 +125,49 @@
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;AQ: Módulo de Adicional de Qualificação')}">
 									<li><a class="dropdown-item"
-										href="${f:getURLSistema('sgp.aq')}">AQ</a></li>
+										href="${f:getURLSistema('/siga.sgp.aq')}">AQ</a></li>
 								</c:if>
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;BDP: Módulo de Banco de Permutas')}">
 									<li><a class="dropdown-item"
-										href="${f:getURLSistema('sgp.bdp')}">Banco de
+										href="${f:getURLSistema('/siga.sgp.bdp')}">Banco de
 											Permutas</a></li>
 								</c:if>
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;BNF: Módulo de Benefícios')}">
 									<li><a class="dropdown-item"
-										href="${f:getURLSistema('sgp.bnf')}">Benefícios</a></li>
+										href="${f:getURLSistema('/siga.sgp.bnf')}">Benefícios</a></li>
 								</c:if>
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CAD: Módulo de Cadastro')}">
 									<li><a class="dropdown-item"
-										href="${f:getURLSistema('sgp.cad')}">Cadastro</a></li>
+										href="${f:getURLSistema('/siga.sgp.cad')}">Cadastro</a></li>
 								</c:if>
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CST: Módulo de Consultas')}">
 									<li><a class="dropdown-item"
-										href="${f:getURLSistema('sgp.cst')}">Consultas</a></li>
+										href="${f:getURLSistema('/siga.sgp.cst')}">Consultas</a></li>
 								</c:if>
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DCN: Módulo de Docência de Magistrados')}">
 									<li><a class="dropdown-item"
-										href="${f:getURLSistema('sgp.dcn')}">Docência de
+										href="${f:getURLSistema('/siga.sgp.dcn')}">Docência de
 											Magistrados</a></li>
 								</c:if>
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;LOT: Módulo de Lotação')}">
 									<li><a class="dropdown-item"
-										href="${f:getURLSistema('sgp.lot')}">Lotação</a></li>
+										href="${f:getURLSistema('/siga.sgp.lot')}">Lotação</a></li>
 								</c:if>
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TRN: Módulo de Treinamento')}">
 									<li><a class="dropdown-item"
-										href="${f:getURLSistema('sgp.trn')}">Treinamento</a></li>
+										href="${f:getURLSistema('/siga.sgp.trn')}">Treinamento</a></li>
 								</c:if>
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TERC: Módulo de Terceirizados')}">
 									<li><a class="dropdown-item"
-										href="${f:getURLSistema('sgp.terc')}">Terceirizados</a></li>
+										href="${f:getURLSistema('/siga.sgp.terc')}">Terceirizados</a></li>
 								</c:if>
 							</ul></li>
 					</c:if>
@@ -419,9 +419,11 @@
 
 		<li><c:choose>
 				<c:when test="${f:resource('/siga.local') eq 'GOVSP'}">
-					<a class="dropdown-item" id="apostilaSiga"
-						href="/siga/arquivos/Manual-Basico-de-Operacoes-Sistema-SP-Sem-Papel-Documentos-Digitais.pdf"
-						target="_blank">Manual</a>
+					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;MA:Manual')}">
+							<a class="dropdown-item" id="apostilaSiga"
+								href="/siga/arquivos/Manual-Basico-de-Operacoes-Sistema-SP-Sem-Papel-Documentos-Digitais.pdf"
+								target="_blank">Manual</a>
+					</c:if>
 				</c:when>
 				<c:otherwise>
 					<a class="dropdown-item" id="apostilaSiga"

@@ -2406,6 +2406,7 @@ public class CpDao extends ModeloDao {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public DpPessoa obterPessoaAtual(final DpPessoa pessoa) {
 		try {
 
@@ -2413,8 +2414,18 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("idPessoaIni", pessoa.getIdPessoaIni());
 			qry.setHint("org.hibernate.cacheable", true); 
 			qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
-			final DpPessoa pes = (DpPessoa) qry.getSingleResult();
-			return pes;
+			
+			
+			//final DpPessoa pes = (DpPessoa) qry.getSingleResult();
+			//return pes;
+			
+			List<DpPessoa> result = qry.getResultList();			
+			if (result == null || result.size() == 0)
+				return null;
+			return result.get(0);
+			
+			
+			
 		} catch (final IllegalArgumentException e) {
 			throw e;
 

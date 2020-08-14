@@ -130,7 +130,8 @@
 					<div class="row">
 						<div class="col-sm-3">
 							<div class="form-group">
-								<label>Atendente</label> <select class="custom-select"
+								<label for="tipoResponsavel"><fmt:message key="tela.tramitarLote.tipoResponsavel"/></label> 
+								<select class="custom-select"
 									id="tipoResponsavel" name="tipoResponsavel"
 									value="${tipoResponsavel}"
 									onchange="javascript:updateTipoResponsavel();">

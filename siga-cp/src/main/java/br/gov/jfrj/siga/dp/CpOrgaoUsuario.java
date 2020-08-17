@@ -28,7 +28,6 @@ import java.io.Serializable;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -93,6 +92,11 @@ public class CpOrgaoUsuario extends AbstractCpOrgaoUsuario implements
 
 	public Long getId() {
 		return getIdOrgaoUsu();
+	}
+	
+	@Override
+	public void setId(Long id) {
+		setIdOrgaoUsu(id);
 	}
 
 	public String getSigla() {

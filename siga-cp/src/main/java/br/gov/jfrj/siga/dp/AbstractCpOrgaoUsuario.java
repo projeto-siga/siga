@@ -30,7 +30,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
-import br.gov.jfrj.siga.model.Objeto;
+import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 
 @MappedSuperclass
 @NamedQueries({
@@ -43,8 +43,10 @@ import br.gov.jfrj.siga.model.Objeto;
 		@NamedQuery(name = "consultarQuantidadeCpOrgaoUsuario", query = "select count(org) from CpOrgaoUsuario org"
 				+ " where ((upper(org.nmOrgaoUsu) like upper('%' || :nome || '%')) or (upper(org.siglaOrgaoUsu) like upper('%' || :nome || '%'))) order by org.siglaOrgaoUsu")})
 
-public abstract class AbstractCpOrgaoUsuario extends Objeto implements
+public abstract class AbstractCpOrgaoUsuario extends HistoricoAuditavelSuporte implements
 		Serializable {
+
+	private static final long serialVersionUID = -4788748819884158050L;
 
 	@Column(name = "CGC_ORGAO_USU")
 	private Integer cgcOrgaoUsu;

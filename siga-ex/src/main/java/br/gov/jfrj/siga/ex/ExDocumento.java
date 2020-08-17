@@ -91,9 +91,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	private static final Logger log = Logger.getLogger(ExDocumento.class);
 
 	@Transient
-	private byte[] cacheConteudoBlobDoc;
-	
-	@Transient
 	private List<ExMovimentacao> listaMovimentacaoPorRestricaoAcesso;	
 	
 	@Transient
@@ -389,11 +386,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * blob do documento.
 	 */
 	public byte[] getConteudoBlobDoc2() {
-
-		if (cacheConteudoBlobDoc == null)
-			cacheConteudoBlobDoc = getConteudoBlobDoc();
-		return cacheConteudoBlobDoc;
-
+		return getConteudoBlobDoc();
 	}
 
 	/**
@@ -2499,9 +2492,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	}
 
 	public void setConteudoBlobDoc2(byte[] blob) {
-		if (blob != null)
+		if (blob != null) {
 			setConteudoBlobDoc(blob);
-		cacheConteudoBlobDoc = blob;
+		}
 	}
 
 	public void setConteudoBlobForm(final byte[] conteudo) {

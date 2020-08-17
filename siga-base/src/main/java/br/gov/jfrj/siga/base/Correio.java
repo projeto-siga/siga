@@ -52,7 +52,7 @@ public class Correio {
 		final String[] to = { destinatario };
 
 		Correio.enviar(
-				Prop.get("/servidor.smtp.usuario.remetente"),
+				Prop.get("/siga.smtp.usuario.remetente"),
 				to, assunto, conteudo, null);
 	}
 	
@@ -60,7 +60,7 @@ public class Correio {
 			final String conteudo) throws Exception {
 
 		Correio.enviar(
-				Prop.get("/servidor.smtp.usuario.remetente"),
+				Prop.get("/siga.smtp.usuario.remetente"),
 				destinatarios, assunto, conteudo, null);
 	}
 		
@@ -69,14 +69,14 @@ public class Correio {
 			final String conteudo, final String conteudoHTML) throws Exception {
 
 		if (remetente == null)
-			remetente = Prop.get("/servidor.smtp.usuario.remetente");
+			remetente = Prop.get("/siga.smtp.usuario.remetente");
 		
 		List<String> listaServidoresEmail = new ArrayList<>();
 
 		// lista indisponivel. Tenta ler apenas 1 servidor definido.
 		if (listaServidoresEmail == null || listaServidoresEmail.size() == 0) {
 			listaServidoresEmail = new ArrayList<String>();
-			listaServidoresEmail.add(Prop.get("/servidor.smtp"));
+			listaServidoresEmail.add(Prop.get("/siga.smtp"));
 		}
 
 		boolean servidorDisponivel = false;
@@ -117,17 +117,16 @@ public class Correio {
 		props.put("mail.smtp.host", servidorEmail);
 		props.put("mail.host", servidorEmail);
 		props.put("mail.mime.charset", "UTF-8");
-                if (Prop.getBool("/siga.smtp.starttls.enable")) {
-                    props.put("mail.smtp.starttls.enable", "true");
-                }
+        props.put("mail.smtp.starttls.enable", Prop.get("/siga.smtp.starttls.enable"));
+
 		// Cria sessão. setDebug(true) é interessante pois
 		// mostra os passos do envio da mensagem e o
 		// recebimento da mensagem do servidor no console.
 		Session session = null;
-		if (Prop.getBool("/servidor.smtp.auth")) {
+		if (Prop.getBool("/siga.smtp.auth")) {
 			props.put("mail.smtp.auth", "true");
-			final String usuario = Prop.get("/servidor.smtp.auth.usuario");
-			final String senha = Prop.get("/servidor.smtp.auth.senha");
+			final String usuario = Prop.get("/siga.smtp.auth.usuario");
+			final String senha = Prop.get("/siga.smtp.auth.senha");
 			session = Session.getInstance(props, new Authenticator() {
 				protected PasswordAuthentication getPasswordAuthentication() {
 					return new PasswordAuthentication(usuario, senha);
@@ -221,7 +220,7 @@ public class Correio {
 
 		Transport tr = new br.gov.jfrj.siga.base.SMTPTransport(session,
 				null);
-		tr.connect(servidorEmail, Prop.getInt("/servidor.smtp.porta"), null, null);
+		tr.connect(servidorEmail, Prop.getInt("/siga.smtp.porta"), null, null);
 		msg.saveChanges(); // don't forget this
 		tr.sendMessage(msg, msg.getAllRecipients());
 		tr.close();

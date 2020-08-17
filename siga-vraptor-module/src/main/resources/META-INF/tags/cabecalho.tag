@@ -42,7 +42,7 @@
 	<c:set var="XUACompatible" scope="request">${compatibilidade}</c:set>
 </c:if>
 
-<c:set var="logo_topo_orgao" scope="request" value="${f:resource('siga.logo.topo.orgao')}" />
+<c:set var="logo_topo_orgao" scope="request" value="${f:resource('/siga.logo.topo.orgao')}" />
 
 <c:set var="ambiente">
 	<c:if test="${f:resource('isVersionTest') or f:resource('isBaseTest')}">
@@ -105,7 +105,7 @@ ${meta}
 
 <c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
 
-<c:set var="siga_version"  scope="request" value="9.0.2.1" />
+<c:set var="siga_version"  scope="request" value="9.0.3.0" />
 
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">

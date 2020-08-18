@@ -33,12 +33,13 @@ public interface Historico extends Assemelhavel {
 
 	public void setId(Long id);
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "his_dt_ini", length = 19)
+	@Column(name = "HIS_ID_INI")
 	public Long getHisIdIni();
 
 	public void setHisIdIni(Long hisIdIni);
 
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "his_dt_ini", length = 19)
 	public Date getHisDtIni();
 
 	public void setHisDtIni(Date hisDtIni);

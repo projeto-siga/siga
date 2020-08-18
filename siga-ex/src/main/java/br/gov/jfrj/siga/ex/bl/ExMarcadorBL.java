@@ -477,7 +477,10 @@ public class ExMarcadorBL {
 						|| idMarcador == CpMarcador.MARCADOR_PRIORITARIO  
 						|| idMarcador == CpMarcador.MARCADOR_RESTRICAO_ACESSO
 						|| idMarcador == CpMarcador.MARCADOR_COVID_19
-						|| idMarcador == CpMarcador.MARCADOR_NOTA_EMPENHO));
+						|| idMarcador == CpMarcador.MARCADOR_NOTA_EMPENHO
+						|| idMarcador == CpMarcador.MARCADOR_DEMANDA_JUDICIAL_BAIXA
+						|| idMarcador == CpMarcador.MARCADOR_DEMANDA_JUDICIAL_MEDIA
+						|| idMarcador == CpMarcador.MARCADOR_DEMANDA_JUDICIAL_ALTA));
 								
 				if (temMarcaManual)	{
 					acrescentarMarca(mov.getMarcador().getIdMarcador(), dt, ultMovNaoCanc.getResp(), ultMovNaoCanc.getLotaResp());

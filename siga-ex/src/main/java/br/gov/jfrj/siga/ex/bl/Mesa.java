@@ -88,7 +88,7 @@ public class Mesa {
 		//
 		QUALQUER("Qualquer", "fas fa-inbox"),
 		//
-		NENHUM("Nenhum", "fas fa-inbox")
+		NENHUM("Nenhum", "fas fa-inbox"); 
 
 		private final String nome;
 		private final String icone;

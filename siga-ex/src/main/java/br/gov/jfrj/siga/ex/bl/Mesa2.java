@@ -405,9 +405,7 @@ public class Mesa2 {
                 GrupoDeMarcadorEnum.ALERTA),
 		//
 		DEMANDA_JUDICIAL_ALTA(1010, "Demanda Judicial Prioridade Alta", "fas fa-tag", "",
-                GrupoDeMarcadorEnum.ALERTA)
-		;
-		;
+                GrupoDeMarcadorEnum.ALERTA);
 
 		private MarcadorEnum(int id, String nome, String icone,
 				String descricao, GrupoDeMarcadorEnum grupo) {

@@ -19,6 +19,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.bl.Mesa2.GrupoDeMarcadorEnum;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class Mesa {
@@ -334,7 +335,16 @@ public class Mesa {
 				GrupoDeMarcadorEnum.NENHUM),
 		//
 		NOTA_EMPENHO(1007, "Nota de Empenho", "fas fa-tag", "",
-				GrupoDeMarcadorEnum.NENHUM);
+				GrupoDeMarcadorEnum.NENHUM),
+		//
+		DEMANDA_JUDICIAL_BAIXA(1008, "Demanda Judicial Prioridade Baixa", "fas fa-tag", "",
+                GrupoDeMarcadorEnum.ALERTA),
+		//
+		DEMANDA_JUDICIAL_MEDIA(1009, "Demanda Judicial Prioridade Média", "fas fa-tag", "",
+                GrupoDeMarcadorEnum.ALERTA),
+		//
+		DEMANDA_JUDICIAL_ALTA(1010, "Demanda Judicial Prioridade Alta", "fas fa-tag", "",
+                GrupoDeMarcadorEnum.ALERTA);
 		
 		private MarcadorEnum(int id, String nome, String icone,
 				String descricao, GrupoDeMarcadorEnum grupo) {

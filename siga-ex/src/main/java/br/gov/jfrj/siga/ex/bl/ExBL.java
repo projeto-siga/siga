@@ -6256,20 +6256,20 @@ public class ExBL extends CpBL {
 
 	public void gravarForma(ExFormaDocumento forma) throws AplicacaoException {
 		if (forma.getDescrFormaDoc() == null || forma.getDescrFormaDoc().isEmpty())
-			throw new AplicacaoException("não é possível salvar um tipo sem informar a descrição.");
+			throw new RegraNegocioException("Não é possível salvar um tipo sem informar a descrição.");
 		if (forma.getExTipoFormaDoc() == null)
-			throw new AplicacaoException("não é possível salvar um tipo sem informar se é processo ou expediente.");
+			throw new RegraNegocioException("Não é possível salvar um tipo sem informar se é processo ou expediente.");
 		if (!forma.isSiglaValida())
-			throw new AplicacaoException("Sigla inválida. A sigla deve ser formada por 3 letras.");
+			throw new RegraNegocioException("Sigla inválida. A sigla deve ser formada por 3 letras.");
 
 		if (Prop.isGovSP()
 				&& forma.getExTipoDocumentoSet().isEmpty())
-			throw new AplicacaoException("Selecione uma origem.");
+			throw new RegraNegocioException("Selecione uma origem.");
 
 		ExFormaDocumento formaConsulta = dao().consultarPorSigla(forma);
 		if ((forma.getIdFormaDoc() == null && formaConsulta != null) || (forma.getIdFormaDoc() != null
 				&& formaConsulta != null && !formaConsulta.getIdFormaDoc().equals(forma.getIdFormaDoc())))
-			throw new AplicacaoException("Esta sigla já está sendo utilizada.");
+			throw new RegraNegocioException("Esta sigla já está sendo utilizada.");
 
 		try {
 			ExDao.iniciarTransacao();

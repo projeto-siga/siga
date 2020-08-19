@@ -14,13 +14,13 @@ O módulo mas popular, o Siga-Doc, é capaz de controlar o trâmite de documento
 
 Para saber mais sobre o Siga-Doc, acesse um dos links abaixo:
 
-Conteúdo destinado a Órgãos que tenham interesse em conhecer o sistema: http://linksiga.trf2.jus.br/​
+Conteúdo destinado a Órgãos que tenham interesse em conhecer o sistema: http://linksiga.trf2.jus.br/
 
 Conteúdo destinado a usuários do sistema: https://colabore.trf2.jus.br/course/view.php?id=2
 
-Veja também a documentação para o desenvolvedor: Javadoc.
+Veja também a documentação para o desenvolvedor: [Javadoc](http://projeto-siga.github.io/artifacts/javadoc/).
 
-Para instalar uma versão de testes do Siga-Doc, utilizando o Docker, clique aqui.
+Para instalar uma versão de testes do Siga-Doc, utilizando o Docker, clique [aqui](https://github.com/projeto-siga/docker).
 
-Para tirar dúvidas, entre em contato através do forum.
+Para tirar dúvidas, entre em contato através do [forum](https://groups.google.com/forum/#!forum/siga-doc).
 

@@ -2,6 +2,13 @@ package br.gov.jfrj.siga.vraptor;
 
 import static br.gov.jfrj.siga.ex.ExMobil.adicionarIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso;
 import static br.gov.jfrj.siga.ex.ExMobil.removerIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso;
+import static com.google.common.base.Predicates.alwaysFalse;
+import static com.google.common.base.Predicates.in;
+import static com.google.common.base.Predicates.not;
+import static com.google.common.base.Predicates.or;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.isEmpty;
+import static com.google.common.collect.Lists.newArrayList;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -10,6 +17,7 @@ import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,10 +30,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -34,13 +40,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -60,9 +67,8 @@ import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.DateUtils;
-import br.gov.jfrj.siga.base.RegraNegocioException;
-
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.Texto;
@@ -109,6 +115,10 @@ public class ExMovimentacaoController extends ExController {
 	private static final int DEFAULT_POSTBACK = 1;
 	private static final Logger LOGGER = Logger
 			.getLogger(ExMovimentacaoController.class);
+	
+	private static final List<Long> MARCADORES_DEMANDA_JUDICIAL = Arrays.asList(
+			CpMarcador.MARCADOR_DEMANDA_JUDICIAL_BAIXA, CpMarcador.MARCADOR_DEMANDA_JUDICIAL_MEDIA,
+			CpMarcador.MARCADOR_DEMANDA_JUDICIAL_ALTA);
 	
 	private static final int MAX_ITENS_PAGINA_TRAMITACAO_LOTE = 50;
 	
@@ -2351,13 +2361,17 @@ public class ExMovimentacaoController extends ExController {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
 		buscarDocumento(builder);
 
-		if (!Ex.getInstance().getComp().podeMarcar(getTitular(), getLotaTitular(), builder.getMob())) 
+		ExMobil mob = builder.getMob();
+		if (!Ex.getInstance().getComp().podeMarcar(getTitular(), getLotaTitular(), mob)) 
 			throw new AplicacaoException("Não é possível fazer marcação");
 
+		ExMobil mobilGeral = mob.getDoc().getMobilGeral();
 		result.include("sigla", sigla);
-		result.include("mob", builder.getMob());
+		result.include("mob", mob);
 		result.include("listaMarcadores", this.getListaMarcadoresGeraisTaxonomiaAdministrada());
-		result.include("listaMarcadoresAtivos", this.getListaMarcadoresAtivos(builder.getMob().getDoc().getMobilGeral()));
+		result.include("listaMarcadoresAtivos", this.getListaMarcadoresAtivos(mobilGeral));
+		result.include("dataLimite", this.getDataLimiteDemanda(mobilGeral));
+		result.include("marcadoresDemandaJudicial", MARCADORES_DEMANDA_JUDICIAL);
 	}
 	
 	@Get("/app/expediente/mov/recalcular_acesso")
@@ -2381,14 +2395,31 @@ public class ExMovimentacaoController extends ExController {
 		return set;
 	}
 
-	private Object getListaMarcadoresGerais() {
-		return dao().listarCpMarcadoresGerais();
+	private Date getDataLimiteDemanda(ExMobil mob) {
+		Date dataLimite = null;
+		for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
+			if (mov.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO)
+					&& !mov.isCancelada() && MARCADORES_DEMANDA_JUDICIAL.contains(mov.getMarcador().getIdMarcador())) {
+				dataLimite = mov.getDtFimMov();
+				break;
+			}
+		}
+		return dataLimite ;
 	}
-	
+
 	private Object getListaMarcadoresGeraisTaxonomiaAdministrada() {
 		return dao().listarCpMarcadoresGeraisTaxonomiaAdministrada();
 	}
 
+	/**
+	 * 
+	 * @param sigla
+	 * @param idMarcador
+	 * @param ativo
+	 * @throws Exception
+	 * @deprecated remover. Funcionalidade substituída por {@link #salvarMarcas(Integer, String, List, List)}
+	 */
+	@Deprecated
 	@Post("/app/expediente/mov/marcar_gravar")
 	public void aMarcarGravar(final String sigla, final Long idMarcador,
 			final Boolean ativo) throws Exception {
@@ -2422,42 +2453,42 @@ public class ExMovimentacaoController extends ExController {
 							mov.getLotaResp(), mov.getResp(),
 							mov.getSubscritor(), mov.getTitular(),
 							mov.getDescrMov(), mov.getNmFuncaoSubscritor(),
-							mov.getMarcador(), ativo);
+							mov.getMarcador(), ativo, null);
 		}
 		resultOK();
 	}
 
 	private void salvarMarca(BuscaDocumentoBuilder builder, ExMovimentacaoBuilder movimentacaoBuilder, Long idMarcador,
-			boolean ativo) throws Exception {
+			boolean ativo, String strDataLimite) throws Exception {
 		movimentacaoBuilder.setIdMarcador(idMarcador);
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
+
+		// A data virá da página no formato "yyyy-MM-dd"
+		Date dateLimiteDemanda = (ativo && StringUtils.isNotEmpty(strDataLimite))
+				? DateFormatUtils.ISO_DATE_FORMAT.parse(strDataLimite)
+				: null;
 
 		Ex.getInstance().getBL().vincularMarcador(getCadastrante(), getLotaTitular(), //
 				builder.getMob(), mov.getDtMov(), //
 				mov.getLotaResp(), mov.getResp(), //
 				mov.getSubscritor(), mov.getTitular(), mov.getDescrMov(), mov.getNmFuncaoSubscritor(),
-				mov.getMarcador(), ativo);
+				mov.getMarcador(), ativo, dateLimiteDemanda);
 	}
 
 	@Post("/app/expediente/mov/salvar_marcas")
 	public void salvarMarcas(final Integer postback, final String sigla, final List<Long> marcadoresOriginais,
-			final List<Long> marcadoresSelecionados) throws Exception {
-		List<Long> idMarcasARemover = CollectionUtils.isEmpty(marcadoresOriginais) ? Collections.emptyList()
-				: ((CollectionUtils.isEmpty(marcadoresSelecionados) ? marcadoresOriginais: 
-					marcadoresOriginais.stream().filter(new Predicate<Long>() {
-					@Override
-					public boolean test(Long m) {
-						return !marcadoresSelecionados.contains(m);
-					}
-				}).collect(Collectors.toList())));
-		List<Long> idMarcasAAdicionar = CollectionUtils.isEmpty(marcadoresSelecionados) ? Collections.emptyList()
-				: (CollectionUtils.isEmpty(marcadoresOriginais)? marcadoresSelecionados: 
-					marcadoresSelecionados.stream().filter(new Predicate<Long>() {
-					@Override
-					public boolean test(Long m) {
-						return !marcadoresOriginais.contains(m);
-					}
-				}).collect(Collectors.toList()));
+			final List<Long> marcadoresSelecionados, final String dataLimite, final String dataLimiteOriginal)
+			throws Exception {
+		// Será usado para indicar um {@link CpMarcador Marcador} de demanda judicial
+		// que continua checado mas mudou de data limite.
+		Predicate<Long> mudouDataLimiteDemandaPredicate = Objects.equals(dataLimite, dataLimiteOriginal) ? alwaysFalse()
+				: in(MARCADORES_DEMANDA_JUDICIAL);
+		List<Long> idMarcasARemover = isEmpty(marcadoresOriginais) ? Collections.emptyList()
+				: newArrayList(filter(marcadoresOriginais,
+						or(not(in(marcadoresSelecionados)), mudouDataLimiteDemandaPredicate)));
+		List<Long> idMarcasAAdicionar = isEmpty(marcadoresSelecionados) ? Collections.emptyList()
+				: newArrayList(filter(marcadoresSelecionados,
+						or(not(in(marcadoresOriginais)), mudouDataLimiteDemandaPredicate)));
 
 		if (!idMarcasAAdicionar.isEmpty() || !idMarcasARemover.isEmpty()) {
 			final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
@@ -2469,11 +2500,11 @@ public class ExMovimentacaoController extends ExController {
 
 			final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder.novaInstancia();
 
-			for (Long idMarcaAAdicionar : idMarcasAAdicionar) {
-				salvarMarca(builder, movimentacaoBuilder, idMarcaAAdicionar, true);
-			}
 			for (Long idMarcaARemover : idMarcasARemover) {
-				salvarMarca(builder, movimentacaoBuilder, idMarcaARemover, false);
+				salvarMarca(builder, movimentacaoBuilder, idMarcaARemover, false, null);
+			}
+			for (Long idMarcaAAdicionar : idMarcasAAdicionar) {
+				salvarMarca(builder, movimentacaoBuilder, idMarcaAAdicionar, true, dataLimite);
 			}
 		}
 

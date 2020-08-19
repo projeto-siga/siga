@@ -85,14 +85,13 @@ import br.gov.jfrj.itextpdf.ConversorHtml;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.Par;
-import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.util.SetUtils;
@@ -101,7 +100,6 @@ import br.gov.jfrj.siga.bluc.service.EnvelopeRequest;
 import br.gov.jfrj.siga.bluc.service.EnvelopeResponse;
 import br.gov.jfrj.siga.bluc.service.ValidateRequest;
 import br.gov.jfrj.siga.bluc.service.ValidateResponse;
-import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
@@ -4899,7 +4897,7 @@ public class ExBL extends CpBL {
 	public void vincularMarcador(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, DpLotacao lotaResponsavel, final DpPessoa responsavel, final DpPessoa subscritor,
 			final DpPessoa titular, final String descrMov, String nmFuncaoSubscritor, CpMarcador marcador,
-			boolean ativo) throws Exception {
+			boolean ativo, Date dtFimMov) throws Exception {
 
 		if (marcador == null)
 			throw new AplicacaoException("não foi informado o marcador");
@@ -4916,6 +4914,7 @@ public class ExBL extends CpBL {
 				mov.setNmFuncaoSubscritor(nmFuncaoSubscritor);
 				mov.setDescrMov(descrMov);
 				mov.setMarcador(marcador);
+				mov.setDtFimMov(dtFimMov);
 
 				gravarMovimentacao(mov);
 				concluirAlteracao(mov.getExMobil());
@@ -7226,7 +7225,7 @@ public class ExBL extends CpBL {
 			for(String marcador: listaMarcadores) {
 			   cpMarcador = dao().consultar(Long.parseLong(marcador), CpMarcador.class, false);
 			   try {
-				vincularMarcador(cadastrante, lotaCadastrante, mob, null, lotaCadastrante, cadastrante, cadastrante, cadastrante, null, null, cpMarcador, true);
+				vincularMarcador(cadastrante, lotaCadastrante, mob, null, lotaCadastrante, cadastrante, cadastrante, cadastrante, null, null, cpMarcador, true, null);
 			   } catch (Exception e) {
 					throw new AplicacaoException("Ocorreu um erro ao gravar marcadores");
 			   }

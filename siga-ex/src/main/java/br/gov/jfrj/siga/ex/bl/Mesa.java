@@ -22,7 +22,8 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.bl.Mesa2.GrupoDeMarcadorEnum;
+import br.gov.jfrj.siga.ex.ExMovimentacao;
+import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class Mesa {
@@ -496,6 +497,16 @@ public class Mesa {
 							.getSigla();
 				t.inicio = tag.marca.getDtIniMarca();
 				t.termino = tag.marca.getDtFimMarca();
+				if(tag.marca.getCpMarcador().isDemandaJudicial()) {
+					t.nome += " até " + tag.marca.getExMobil().getDoc().getMobilGeral()
+							.getExMovimentacaoSet().stream() //
+							.filter(mov -> mov.getExTipoMovimentacao().getId()
+									.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO))
+							.filter(mov -> !mov.isCancelada()) //
+							.filter(mov -> mov.getMarcador().equals(tag.marca.getCpMarcador())) //
+							.map(ExMovimentacao::getDtFimMovDDMMYY) //
+							.findFirst().orElse("[indeterminado]");
+				}
 
 				if (GrupoDeMarcadorEnum.valueOf(r.grupo).ordinal() > mar.grupo
 						.ordinal()) {

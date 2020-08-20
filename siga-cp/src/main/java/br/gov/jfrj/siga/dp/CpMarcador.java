@@ -207,4 +207,11 @@ public class CpMarcador extends AbstractCpMarcador {
 	public CpMarcador() {
 		super();
 	}
+
+	public boolean isDemandaJudicial() {
+		return (this.getIdMarcador() == MARCADOR_DEMANDA_JUDICIAL_BAIXA)
+				|| (this.getIdMarcador() == MARCADOR_DEMANDA_JUDICIAL_MEDIA)
+				|| (this.getIdMarcador() == MARCADOR_DEMANDA_JUDICIAL_ALTA);
+	}
+
 }

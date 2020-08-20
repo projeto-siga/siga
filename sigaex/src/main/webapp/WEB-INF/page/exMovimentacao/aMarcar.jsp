@@ -10,10 +10,8 @@
 <siga:pagina titulo="Movimentação">
 	<fmt:formatDate var="dataLimiteDemanda" value="${dataLimite}" pattern="yyyy-MM-dd" />
 	<script type="text/javascript">
-		const movimentacoesDemanda = ${marcadoresDemandaJudicial};
-
-		function marcacaoSelecionada(idMarcacao, checado) {
-			if(movimentacoesDemanda.includes(idMarcacao)) {
+		function marcacaoSelecionada(idMarcacao, demandaJudicial, checado) {
+			if(demandaJudicial) {
 				Array.from(document.querySelectorAll(".demanda")).forEach(divDemanda => {
 					const checkDemanda = divDemanda.querySelector("input[type='checkbox']");
 					const dataDemanda = divDemanda.querySelector("input[type='date']");
@@ -44,12 +42,12 @@
 				.filter(chk => chk.checked);
 
 			if(demandasMarcadas.length > 1) {
-				sigaModal.alerta("Você pode apenas selecionar um tipo de Demanda Judicial");
+				sigaModal.alerta("Você pode apenas selecionar um tipo de Demanda Judicial.");
 				valido = false;
 			} else if(demandasMarcadas.length === 1) {
 				const campoDataLimite = document.getElementById("dataLimite-" + demandasMarcadas[0].value);
 				if(!campoDataLimite.value) {
-					sigaModal.alerta("Favor selecionar Data Limite");
+					sigaModal.alerta("Favor selecionar Data Limite.");
 					campoDataLimite.focus();
 					valido = false;
 				}
@@ -88,17 +86,15 @@
 									<c:forEach items="${listaMarcadores}" var="item">
 										<c:set var="estaMarcado"
 											value="${listaMarcadoresAtivos.contains(item)}" />
-										<c:set var="ehDemanda"
-											value="${fn:contains(marcadoresDemandaJudicial, item.idMarcador)}" />
 										<div id="marcacao-${item.idMarcador}"
-											class="${ehDemanda? 'demanda': ''}"
+											class="${item.demandaJudicial? 'demanda': ''}"
 											data-id="${item.idMarcador}">
 											<input id="marcador-${item.idMarcador}" type="checkbox"
 												value="${item.idMarcador}" name="marcadoresSelecionados"
 												${estaMarcado ? 'checked' : ''}
-												onchange="marcacaoSelecionada(${item.idMarcador}, this.checked)" />
+												onchange="marcacaoSelecionada(${item.idMarcador}, ${item.demandaJudicial}, this.checked)" />
 											<label for="marcador-${item.idMarcador}">${item.descrMarcador}</label>
-											<c:if test="${ehDemanda}">
+											<c:if test="${item.demandaJudicial}">
 												<div id="data-demanda-${item.idMarcador}">
 													<label for="dataLimite-${item.idMarcador}">Data Limite:</label> 
 													<br /> 

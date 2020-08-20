@@ -17,7 +17,6 @@ import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -113,10 +112,6 @@ public class ExMovimentacaoController extends ExController {
 	private static final int DEFAULT_POSTBACK = 1;
 	private static final Logger LOGGER = Logger
 			.getLogger(ExMovimentacaoController.class);
-	
-	private static final List<Long> MARCADORES_DEMANDA_JUDICIAL = Arrays.asList(
-			CpMarcador.MARCADOR_DEMANDA_JUDICIAL_BAIXA, CpMarcador.MARCADOR_DEMANDA_JUDICIAL_MEDIA,
-			CpMarcador.MARCADOR_DEMANDA_JUDICIAL_ALTA);
 	
 	private static final int MAX_ITENS_PAGINA_TRAMITACAO_LOTE = 50;
 	
@@ -2358,7 +2353,6 @@ public class ExMovimentacaoController extends ExController {
 		result.include("listaMarcadores", this.getListaMarcadoresGeraisTaxonomiaAdministrada());
 		result.include("listaMarcadoresAtivos", this.getListaMarcadoresAtivos(mobilGeral));
 		result.include("dataLimite", this.getDataLimiteDemanda(mobilGeral));
-		result.include("marcadoresDemandaJudicial", MARCADORES_DEMANDA_JUDICIAL);
 	}
 	
 	@Get("/app/expediente/mov/recalcular_acesso")
@@ -2386,7 +2380,7 @@ public class ExMovimentacaoController extends ExController {
 		Date dataLimite = null;
 		for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
 			if (mov.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO)
-					&& !mov.isCancelada() && MARCADORES_DEMANDA_JUDICIAL.contains(mov.getMarcador().getIdMarcador())) {
+					&& !mov.isCancelada() && mov.getMarcador().isDemandaJudicial()) {
 				dataLimite = mov.getDtFimMov();
 				break;
 			}
@@ -2469,7 +2463,7 @@ public class ExMovimentacaoController extends ExController {
 		// Será usado para indicar um {@link CpMarcador Marcador} de demanda judicial
 		// que continua checado mas mudou de data limite.
 		Predicate<Long> mudouDataLimiteDemandaPredicate = Objects.equals(dataLimite, dataLimiteOriginal) ? alwaysFalse()
-				: in(MARCADORES_DEMANDA_JUDICIAL);
+				: in(CpMarcador.MARCADORES_DEMANDA_JUDICIAL);
 		List<Long> idMarcasARemover = isEmpty(marcadoresOriginais) ? Collections.emptyList()
 				: newArrayList(filter(marcadoresOriginais,
 						or(not(in(marcadoresSelecionados)), mudouDataLimiteDemandaPredicate)));

@@ -22,6 +22,9 @@
  */
 package br.gov.jfrj.siga.dp;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -204,14 +207,15 @@ public class CpMarcador extends AbstractCpMarcador {
 
 	public static ActiveRecord<CpMarcador> AR = new ActiveRecord<>(CpMarcador.class);
 
+	public static final List<Long> MARCADORES_DEMANDA_JUDICIAL = Arrays.asList(MARCADOR_DEMANDA_JUDICIAL_BAIXA,
+			MARCADOR_DEMANDA_JUDICIAL_MEDIA, MARCADOR_DEMANDA_JUDICIAL_ALTA);
+
 	public CpMarcador() {
 		super();
 	}
 
 	public boolean isDemandaJudicial() {
-		return (this.getIdMarcador() == MARCADOR_DEMANDA_JUDICIAL_BAIXA)
-				|| (this.getIdMarcador() == MARCADOR_DEMANDA_JUDICIAL_MEDIA)
-				|| (this.getIdMarcador() == MARCADOR_DEMANDA_JUDICIAL_ALTA);
+		return MARCADORES_DEMANDA_JUDICIAL.contains(this.getIdMarcador());
 	}
 
 }

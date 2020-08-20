@@ -2457,13 +2457,18 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Post("/app/expediente/mov/salvar_marcas")
-	public void salvarMarcas(final Integer postback, final String sigla, final List<Long> marcadoresOriginais,
-			final List<Long> marcadoresSelecionados, final String dataLimite, final String dataLimiteOriginal)
+	public void salvarMarcas(final Integer postback, final String sigla, List<Long> marcadoresOriginais,
+			List<Long> marcadoresSelecionados, final String dataLimite, final String dataLimiteOriginal)
 			throws Exception {
 		// Será usado para indicar um {@link CpMarcador Marcador} de demanda judicial
 		// que continua checado mas mudou de data limite.
 		Predicate<Long> mudouDataLimiteDemandaPredicate = Objects.equals(dataLimite, dataLimiteOriginal) ? alwaysFalse()
 				: in(CpMarcador.MARCADORES_DEMANDA_JUDICIAL);
+
+		//if null inicializa lista de marcadores
+		marcadoresOriginais = marcadoresOriginais == null ? Collections.emptyList() : marcadoresOriginais;
+		marcadoresSelecionados = marcadoresSelecionados == null ? Collections.emptyList() : marcadoresSelecionados;
+		
 		List<Long> idMarcasARemover = isEmpty(marcadoresOriginais) ? Collections.emptyList()
 				: newArrayList(filter(marcadoresOriginais,
 						or(not(in(marcadoresSelecionados)), mudouDataLimiteDemandaPredicate)));

@@ -89,6 +89,7 @@ public class ExDocumentoVO extends ExVO {
 	ExGraphColaboracao dotColaboracao;
 	private List<Object> listaDeAcessos;
 	boolean podeAnexarArquivoAuxiliar;
+	private String dtLimiteDemandaJudicial;
 
 	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa cadastrante, DpPessoa titular,
 			DpLotacao lotaTitular, boolean completo, boolean exibirAntigo) {
@@ -242,6 +243,15 @@ public class ExDocumentoVO extends ExVO {
 		this.originalOrgao = doc.getOrgaoExterno() != null ? doc.getOrgaoExterno().getDescricao() : null;
 		
 		this.podeAnexarArquivoAuxiliar = Ex.getInstance().getComp().podeAnexarArquivoAuxiliar(titular, lotaTitular, mob);
+
+		this.dtLimiteDemandaJudicial = doc.getMobilGeral().getExMovimentacaoSet().stream() //
+				.filter(mov -> mov.getExTipoMovimentacao().getId()
+						.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO))
+				.filter(mov -> !mov.isCancelada()) //
+				.filter(mov -> mov.getMarcador().isDemandaJudicial()) //
+				.map(ExMovimentacao::getDtFimMovDDMMYY) //
+				.findFirst().orElse(null);
+
 	}
 	
 	/*
@@ -1056,4 +1066,9 @@ public class ExDocumentoVO extends ExVO {
 	public void setPodeAnexarArquivoAuxiliar(boolean podeAnexar) {
 		this.podeAnexarArquivoAuxiliar = podeAnexar;
 	}
+	
+	public String getDtLimiteDemandaJudicial() {
+		return dtLimiteDemandaJudicial;
+	}
+
 }

@@ -547,18 +547,21 @@
 											</c:choose> &nbsp;-&nbsp; 
 											<c:forEach var="marca" items="${entry.value}" varStatus="loop">
 												<c:if test="${marca.cpMarcador.idMarcador ne '56' && marca.cpMarcador.idMarcador ne '57' && marca.cpMarcador.idMarcador ne '58' && siga_cliente eq 'GOVSP'}">
-												    	${marca.cpMarcador.descrMarcador}
+														${marca.cpMarcador.descrMarcador}
 														<c:if test="${marca.dtIniMarca gt now}">
 															a partir de ${marca.dtIniMarcaDDMMYYYY}
 														</c:if>
 														<c:if test="${not empty marca.dtFimMarca}"> 
 															até ${marca.dtFimMarcaDDMMYYYY}
 														</c:if>
+														<c:if test="${marca.cpMarcador.demandaJudicial}">
+															até ${docVO.dtLimiteDemandaJudicial}
+														</c:if>
 														<c:if test="${not empty marca.dpLotacaoIni}">
 															[${marca.dpLotacaoIni.lotacaoAtual.sigla}
-															    <c:if test="${not empty marca.dpPessoaIni}">
-																    &nbsp;${marca.dpPessoaIni.pessoaAtual.sigla}
-															    </c:if>
+															<c:if test="${not empty marca.dpPessoaIni}">
+																&nbsp;${marca.dpPessoaIni.pessoaAtual.sigla}
+															</c:if>
 															]
 														</c:if>
 									

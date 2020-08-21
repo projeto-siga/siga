@@ -139,7 +139,7 @@ self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao) {
 	<c:if test="${ocultardescricao != 'sim'}">
 		try {
 			document.getElementsByName('${inputNameTipoSel}.descricao')[0].value = descricao;
-			document.getElementById('${spanName}SelSpan').value = descricao;
+			document.getElementById('${spanName}SelSpan').innerHTML = descricao;
 		} catch (E) {
 		}
 	</c:if>
@@ -316,9 +316,7 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	</c:if>
 	<c:if test="${ocultardescricao != 'sim'}">
 		<div class="input-group-append ml-2" style="width: 60%;">
-			<input class="form-control" id="${spanName}SelSpan"
-				value="<c:out value="${requestScope[propriedadeTipoSel].descricao}" escapeXml="false" />"
-				readonly />
+			<span class="form-control" style="overflow: hidden; white-space:nowrap; text-overflow:ellipsis;" id="${spanName}SelSpan"><c:out value="${requestScope[propriedadeTipoSel].descricao}" escapeXml="false" /></span>
 		</div>
 	</c:if>
 </div>
@@ -360,7 +358,7 @@ self.ajax_${propriedade}${tipoSel} = function() {
 		document.getElementsByName('${inputNameTipoSel}.sigla')[0].value = '${siglaSubst}';
 		document.getElementsByName('${inputNameTipoSel}.descricao')[0].value = "${descricaoSubst}";
 		<c:if test="${ocultardescricao != 'sim'}">
-			document.getElementById('${spanName}SelSpan')[0].value = "${descricaoSubst}";
+			document.getElementById('${spanName}SelSpan').innerHTML  = "${descricaoSubst}";
 		</c:if>
 	</script>
 </c:if>

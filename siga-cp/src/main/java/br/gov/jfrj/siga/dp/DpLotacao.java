@@ -152,6 +152,10 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 		return s;
 	}
 
+	public String getSiglaCompletaFormatada() {
+		return getOrgaoUsuario().getSiglaOrgaoUsu() + "-" + getSiglaLotacao();
+	}
+
 	public void setSigla(String sigla) {
 		if (sigla == null) {
 			sigla = "";

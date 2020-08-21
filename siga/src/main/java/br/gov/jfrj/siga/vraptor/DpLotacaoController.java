@@ -145,7 +145,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 				lotacao = (DpLotacao) dao().consultar(getSel().getId(), DpLotacao.class, false);
 				GenericoSelecao gs = new GenericoSelecao();
 				gs.setId(getSel().getId());
-				gs.setSigla(lotacao.getSiglaCompleta());
+				gs.setSigla(lotacao.getSiglaCompletaFormatada());
 				gs.setDescricao(getSel().getDescricao());
 				setSel(gs);
 			} catch (final Exception ex) {

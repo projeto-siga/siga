@@ -22,6 +22,9 @@
  */
 package br.gov.jfrj.siga.dp;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -195,10 +198,24 @@ public class CpMarcador extends AbstractCpMarcador {
 	final static public long MARCADOR_COVID_19 = 1006;
 
 	final static public long MARCADOR_NOTA_EMPENHO = 1007;
+	
+	final static public long MARCADOR_DEMANDA_JUDICIAL_BAIXA = 1008;
+	
+	final static public long MARCADOR_DEMANDA_JUDICIAL_MEDIA = 1009;
+	
+	final static public long MARCADOR_DEMANDA_JUDICIAL_ALTA = 1010;
 
 	public static ActiveRecord<CpMarcador> AR = new ActiveRecord<>(CpMarcador.class);
+
+	public static final List<Long> MARCADORES_DEMANDA_JUDICIAL = Arrays.asList(MARCADOR_DEMANDA_JUDICIAL_BAIXA,
+			MARCADOR_DEMANDA_JUDICIAL_MEDIA, MARCADOR_DEMANDA_JUDICIAL_ALTA);
 
 	public CpMarcador() {
 		super();
 	}
+
+	public boolean isDemandaJudicial() {
+		return MARCADORES_DEMANDA_JUDICIAL.contains(this.getIdMarcador());
+	}
+
 }

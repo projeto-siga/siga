@@ -2,18 +2,28 @@ package br.gov.jfrj.siga.cp.arquivo;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.UUID;
+
+import javax.net.ssl.SSLContext;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContexts;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -38,9 +48,15 @@ public class ArmazenamentoHCP implements ArmazenamentoBCInterface {
 	private String senha = Prop.get("/siga.armazenamento.arquivo.senha");
 	private String token = null;
 
-	private void configurar() {
+	private void configurar() throws Exception {
 		gerarToken();
-		client = HttpClients.createDefault();
+		
+		TrustStrategy acceptingTrustStrategy = new TrustSelfSignedStrategy();
+	    SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy).build();
+	    SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
+	    client = HttpClients.custom().setSSLSocketFactory(csf).build();
+
+//		client = HttpClients.createDefault();
 	}
 
 	@Override

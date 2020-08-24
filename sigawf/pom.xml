@@ -101,10 +101,12 @@
 		<dependency>
 			<groupId>org.jbpm.jbpm3</groupId>
 			<artifactId>jbpm-identity</artifactId>
+			<version>3.3.1.GA</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jbpm.jbpm3</groupId>
 			<artifactId>jbpm-jpdl</artifactId>
+			<version>3.2.10.SP3_seam2</version>	
 		</dependency>
 
 		<dependency>
@@ -143,6 +145,7 @@
 		<dependency>
 			<groupId>org.beanshell</groupId>
 			<artifactId>bsh</artifactId>
+			<version>2.0b5</version>
 		</dependency>
 
 		<dependency>
@@ -153,6 +156,7 @@
 		<dependency>
 			<groupId>jaxen</groupId>
 			<artifactId>jaxen</artifactId>
+			<version>1.1.6</version>
 		</dependency>
 
 		<!-- SIGA -->

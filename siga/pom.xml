@@ -221,10 +221,10 @@
 			<artifactId>siga-jwt</artifactId>
 		</dependency>
 
-		<!-- <dependency>
+		<dependency>
 			<groupId>siga</groupId>
 			<artifactId>siga-oidc</artifactId>
-		</dependency> -->
+		</dependency>
 		
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
@@ -260,6 +260,11 @@
 			<groupId>javax.enterprise</groupId>
 			<artifactId>cdi-api</artifactId>
 			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.crivano</groupId>
+			<artifactId>swaggerservlet</artifactId>
 		</dependency>
 	</dependencies>
 </project>

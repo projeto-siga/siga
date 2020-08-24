@@ -84,10 +84,13 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	}
 
 	public String getLocalidadeString() {
-		for (String municipio : CpLocalidade.getMunicipios())
-			if (getNomeLotacao().toLowerCase()
-					.contains(municipio.toLowerCase()))
-				return municipio;
+		List<String> municipios = CpLocalidade.getMunicipios();
+		if (municipios != null) {
+			for (String municipio : municipios)
+				if (getNomeLotacao().toLowerCase()
+						.contains(municipio.toLowerCase()))
+					return municipio;
+		}
 		return getOrgaoUsuario().getMunicipioOrgaoUsu();
 	}
 
@@ -147,6 +150,10 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	public String getSiglaCompleta() {
 		String s = getOrgaoUsuario().getSiglaOrgaoUsu() + getSiglaLotacao();
 		return s;
+	}
+
+	public String getSiglaCompletaFormatada() {
+		return getOrgaoUsuario().getSiglaOrgaoUsu() + "-" + getSiglaLotacao();
 	}
 
 	public void setSigla(String sigla) {

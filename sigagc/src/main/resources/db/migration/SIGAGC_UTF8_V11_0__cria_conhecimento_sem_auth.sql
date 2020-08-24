@@ -1,0 +1,4 @@
+ALTER SESSION SET CURRENT_SCHEMA=sigagc;
+
+insert into SIGAGC.GC_ACESSO (NOME_ACESSO, ID_ACESSO) values ('Ostensivo', 0);
+

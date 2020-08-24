@@ -26,18 +26,18 @@ public class SigaMessages {
 	}
 
 	public static boolean isSigaSP() {
-    	if (SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+    	if ("GOVSP".equals(Prop.get("/siga.local"))) {
     		return true;
     	}
     	return false;
     }
 	
 	public static String getLocalizationContext() {
-		String messages = System.getProperty("siga.messages");
+		String messages = Prop.get("/siga.mensagens");
 		if (messages == null) {
 			messages = "messages";
-			if (SigaBaseProperties.getString("siga.local") != null) {
-	    		messages += "_" + SigaBaseProperties.getString("siga.local");
+			if (Prop.get("/siga.local") != null) {
+	    		messages += "_" + Prop.get("/siga.local");
 	    	} else {
 	    		messages += "_SIGA";
 	    	}

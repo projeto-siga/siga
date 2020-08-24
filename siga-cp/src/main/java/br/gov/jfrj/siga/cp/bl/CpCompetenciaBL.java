@@ -105,4 +105,10 @@ public class CpCompetenciaBL {
 					0, e);
 		}
 	}
+	
+	public boolean podeMovimentarViaWS(final DpPessoa titular,
+			final DpLotacao lotaTitular) throws Exception {
+		return configuracaoBL.podePorConfiguracao(titular, lotaTitular,
+				CpTipoConfiguracao.TIPO_CONFIG_AUTORIZAR_MOVIMENTACAO_POR_WS);
+	}
 }

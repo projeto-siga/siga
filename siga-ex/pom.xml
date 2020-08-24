@@ -84,6 +84,24 @@
 				</plugin>
 	 		</plugins>
 	 	</pluginManagement>
+	 	<plugins>
+	 		<plugin>
+               <groupId>org.hibernate.orm.tooling</groupId>
+               <artifactId>hibernate-enhance-maven-plugin</artifactId>
+               <version>${hibernate.version}</version>
+               <executions>
+                   <execution>
+                    <configuration>
+                        <enableLazyInitialization>true</enableLazyInitialization>
+                    </configuration>
+                       <goals>
+                           <goal>enhance</goal>
+                       </goals>
+                   </execution>
+               </executions>
+           </plugin>
+		</plugins>
+	 	
 	</build>
 
 	<dependencies>
@@ -203,7 +221,11 @@
 		<dependency>
 			<groupId>br.jus.trf2.xjus</groupId>
 			<artifactId>x-jus-record-api</artifactId>
-			<version>1.0.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.crivano</groupId>
+			<artifactId>swaggerservlet</artifactId>
 		</dependency>
 	</dependencies>
 

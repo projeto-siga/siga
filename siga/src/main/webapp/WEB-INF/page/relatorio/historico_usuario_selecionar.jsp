@@ -32,28 +32,8 @@
 				</div>
 			</form>
 			</div>
-		</div>
-		<!-- Modal Alert-->
-		<div class="modal fade" id="alertaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-			<div class="modal-dialog" role="document">
-		    	<div class="modal-content">
-		      		<div class="modal-header">
-				        <h5 class="modal-title" id="alertaModalLabel">Alerta</h5>
-				        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-				          <span aria-hidden="true">&times;</span>
-				    	</button>
-				    </div>
-			      	<div class="modal-body">
-			        	<p class="mensagem-Modal"></p>
-			      	</div>
-					<div class="modal-footer">
-					  <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
-					</div>
-		    	</div>
-		  	</div>
-		</div>				
-		<!--Fim Modal Alert -->
-	</div>
+		</div>		
+	</div>	
 	<br />
 	<div id="div-tempo"
 		style="display: none; position: absolute; text-align: center; filter: alpha(opacity =           60); opacity: 0.4; background-color: #dcdcdc; vertical-align: middle; border-width: 2px; border-color: darkblue; border-style: solid;">
@@ -73,15 +53,10 @@ function submeter() {
 					}
 			, 50); 
 		} else {
-			mensagemAlerta("Por favor, é necessário preencher o campo pessoa!");
+			sigaModal.alerta("Por favor, é necessário preencher o campo pessoa!");
 		}
 	}
 }
-function mensagemAlerta(mensagem) {
-	$('#alertaModal').find('.mensagem-Modal').text(mensagem);
-	$('#alertaModal').modal();
-}
-
 </script>
 <script type="text/javascript">
 	 /*

@@ -19,6 +19,9 @@
 package br.gov.jfrj.siga.cp;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 import javax.persistence.Cacheable;
@@ -30,6 +33,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -102,6 +106,20 @@ public class CpIdentidade extends AbstractCpIdentidade {
 
 	public boolean ativaNaData(Date dt) {
 		return super.ativoNaData(dt);
+	}
+	
+	public boolean isSenhaUsuarioExpirada() {		
+		final Integer diasExpiracaoSenha = Prop.getInt("senha.usuario.expiracao.dias");					
+		
+		if (diasExpiracaoSenha == null) {
+			return false;
+		}					
+		
+		LocalDate hoje = CpDao.getInstance().consultarDataEHoraDoServidor().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();		
+		LocalDate ultimaTrocaDeSenha = getDtCriacaoIdentidade().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();							
+		long diasUltimaTrocaSenha = ChronoUnit.DAYS.between(ultimaTrocaDeSenha, hoje);				
+				
+		return diasUltimaTrocaSenha >= diasExpiracaoSenha;
 	}
 
 	@Override

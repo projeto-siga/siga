@@ -148,6 +148,23 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 	public static final long TIPO_CONFIG_DELEGAR_VISUALIZACAO = 44;
 
 	public static final long TIPO_CONFIG_INCLUIR_EM_AVULSO = 45;
+	
+	public static final long TIPO_CONFIG_COSIGNATARIO_ASSINAR_ANTES_SUBSCRITOR = 46;
+
+	public static final long TIPO_CONFIG_FINALIZAR_AUTOMATICAMENTE_CAPTURADOS = 47;
+	
+	public static final long TIPO_CONFIG_TROCAR_PDF_CAPTURADOS = 48;
+
+	public static final long TIPO_CONFIG_TMP_PARA_LOTACAO = 49;
+
+	public static final long TIPO_CONFIG_RESTRINGIR_ACESSO_APOS_RECEBER = 50;
+  
+  public static final long TIPO_CONFIG_AUTORIZAR_MOVIMENTACAO_POR_WS = 51;
+
+	public static final long TIPO_CONFIG_TRAMITAR_SEM_CAPTURADO = 52;
+	
+	public static final long TIPO_CONFIG_CRIAR_NOVO_EXTERNO = 53;
+
 
 	// SIGA-WF
 

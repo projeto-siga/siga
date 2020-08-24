@@ -71,16 +71,6 @@ function sbmt(id) {
 // <c:set var="url" value="gravar" />
 function gravarDoc() {
 	
-	var arquivo = document.getElementById("arquivo");
-	
-	if(arquivo !== null) {
-		var tamanhoArquivo = parseInt(document.getElementById("arquivo").files[0].size);
-		if(tamanhoArquivo > 10485760){
-	        alert("TAMANHO DO ARQUIVO EXCEDE O PERMITIDO (10MB)!");
-	        return false;
-	    }
-	}
-	
 	clearTimeout(saveTimer);
 	if (!validar(false)) {
 		triggerAutoSave();
@@ -121,8 +111,7 @@ function validar(silencioso) {
 		return false;
 	}
 	if (eletroHidden == null && !eletro1.checked && !eletro2.checked) {
-		aviso(
-				"É necessário informar se o documento será digital ou físico, na parte superior da tela.",
+		aviso("É necessário informar se o documento será digital ou físico, na parte superior da tela.",
 				silencioso);
 		return false;
 	}
@@ -140,52 +129,31 @@ function validar(silencioso) {
 				silencioso);
 		return false;
 	}
-
-	// Impede a gravação de um documento que possui campos obrigatorios quando
-	// esses não forem informados
-	var frm = document.getElementById('frm');
-	var obrigatorios = frm.elements["obrigatorios"];
-	if (typeof (obrigatorios) != "undefined") {
-		if (typeof (obrigatorios.length) != "number") {
-			obrigatorios = [ obrigatorios ];
+	
+	validarCamposEntrevista();
+	
+	var camposInvalidos = $('#frm').find('.is-invalid').not('input[type="hidden"]');
+	if (camposInvalidos.length > 0) {
+		var mensagem = 'Favor verificar os campos destacados';
+		
+		if (camposInvalidos.length == 1) {
+			mensagem = 'Favor verificar o campo destacado';
 		}
-		var s = "";
-		for (var i = 0; i < obrigatorios.length; i++) {
-			var elm = frm.elements[obrigatorios[i].value];
-			var obr = elm.value;
-			if (obr == null || obr == "" || !obr || /^\s*$/.test(obr)) {
-				aviso("Parâmetro obrigatório não foi informado: "
-						+ obrigatorios[i].value, silencioso);
-				elm.focus();
-				return false;
-			}
-		}
-	}
-
-	// Impede que um documento capturado seja gravado sem que seja informado o
-	// arquivo PDF
-	var origem = document.getElementsByName('exDocumentoDTO.idTpDoc')[0].value;
-	var id = document.getElementsByName('exDocumentoDTO.id')[0].value;
-	if (origem == 4 && !id) {
-		var arquivo = document.getElementsByName('arquivo')[0];
-		if (arquivo.value == "") {
-			aviso('('+document.getElementById('codigoDoc').innerHTML + ') ' +
-					'Documento capturado não pode ser gravado sem que seja informado o nome do arquivo PDF',
-					silencioso);
-			arquivo.focus();
-			return false;
-		}
-	}
+		
+		aviso(mensagem, silencioso, camposInvalidos[0]);
+		return false;
+	}	
+	
 	return true;
 }
 
-function aviso(msg, silencioso) {
+function aviso(msg, silencioso, elemento) {
 	document.getElementById("btnGravar").disabled = false;
 	
 	if (silencioso)
 		avisoVermelho('O documento não pôde ser salvo: ' + msg);
 	else
-		alert(msg);
+		sigaModal.alerta(msg).focus(elemento);
 }
 
 // <c:set var="url" value="excluirpreench" />

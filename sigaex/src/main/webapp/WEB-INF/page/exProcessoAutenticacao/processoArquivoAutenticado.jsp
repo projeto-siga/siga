@@ -63,7 +63,7 @@
 						<div class="card-body">
 						
 						<c:forEach var="m" items="${docVO.mobs}" varStatus="loop">
-							<c:if test="${f:resource('isWorkflowEnabled')}">
+							<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;WF:Módulo de Workflow')}">
 								<script type="text/javascript">
 									var url = "/sigawf/app/doc?sigla=${m.sigla}&ts=1${currentTimeMillis}";
 							        $.ajax({
@@ -96,7 +96,7 @@
 								<table class="table table-striped">
 									<thead class="bg-dark text-white">
 										<tr>
-											<th align="center" rowspan="2">Data</th>
+											<th align="left" rowspan="2">Data</th>
 											<th rowspan="2">Evento</th>
 											<th colspan="2" align="left">Cadastrante</th>
 											<c:if test="${ (exibirCompleto == 'true')}">
@@ -118,7 +118,7 @@
 									<c:set var="evenorodd" value="odd" />
 									<c:forEach var="mov" items="${movs}">
 										<tr>
-											<c:set var="dt" value="${mov.dtRegMovDDMMYY}" />
+											<c:set var="dt" value="${mov.dtRegMovDDMMYYYYHHMMSS}" />
 											<c:choose>
 												<c:when test="${dt == dtUlt}">
 													<c:set var="dt" value="" />
@@ -127,8 +127,8 @@
 													<c:set var="dtUlt" value="${dt}" />
 												</c:otherwise>
 											</c:choose>
-											<td align="center">${dt}</td>
-											<td>${mov.descrTipoMovimentacao} 
+											<td align="left">${dt}</td>
+											<td align="left">${mov.descrTipoMovimentacao} 
 												<c:if test="${mov.idTpMov == 12}">
 													<span style="font-size: .8rem;color: #9e9e9e;">| documento juntado ${mov.exMobil}</span>
 												</c:if>

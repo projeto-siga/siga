@@ -1,9 +1,6 @@
 package br.gov.jfrj.siga.ex.bl;
 
 import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,14 +12,15 @@ import java.util.Map;
 import com.crivano.swaggerservlet.ISwaggerModel;
 
 import br.gov.jfrj.siga.base.Data;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.bl.Mesa2.GrupoDeMarcadorEnum;
+import br.gov.jfrj.siga.ex.ExMovimentacao;
+import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class Mesa {
@@ -88,7 +86,7 @@ public class Mesa {
 		//
 		QUALQUER("Qualquer", "fas fa-inbox"),
 		//
-		NENHUM("Nenhum", "fas fa-inbox");
+		NENHUM("Nenhum", "fas fa-inbox"); 
 
 		private final String nome;
 		private final String icone;
@@ -315,6 +313,9 @@ public class Mesa {
 		MARCADOR_COMO_REVISOR(72, "Como Revisor", "fas fa-glasses", "",
 				GrupoDeMarcadorEnum.A_REVISAR),
 		//
+		MARCADOR_PORTAL_TRANSPARENCIA(73, "Portal da Transparência", "fas fa-globe", "",
+				GrupoDeMarcadorEnum.NENHUM),
+		//
 		URGENTE(1000, "Urgente", "fas fa-bomb", "", GrupoDeMarcadorEnum.ALERTA),
 
 		//
@@ -329,9 +330,23 @@ public class Mesa {
 		RESTRICAO_ACESSO(1004, "Restrição de Acesso", "fas fa-user-secret", "", GrupoDeMarcadorEnum.ALERTA),
 		//	
 		DOCUMENTO_ANALISADO(1005, "Documento Analisado", "fas fa-book-reader", "",
-				GrupoDeMarcadorEnum.ALERTA);
+				GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO),
 		//
-
+		COVID_19(1006, "COVID-19", "fas fa-tag", "",
+				GrupoDeMarcadorEnum.NENHUM),
+		//
+		NOTA_EMPENHO(1007, "Nota de Empenho", "fas fa-tag", "",
+				GrupoDeMarcadorEnum.NENHUM),
+		//
+		DEMANDA_JUDICIAL_BAIXA(1008, "Demanda Judicial Prioridade Baixa", "fas fa-tag", "",
+                GrupoDeMarcadorEnum.ALERTA),
+		//
+		DEMANDA_JUDICIAL_MEDIA(1009, "Demanda Judicial Prioridade Média", "fas fa-tag", "",
+                GrupoDeMarcadorEnum.ALERTA),
+		//
+		DEMANDA_JUDICIAL_ALTA(1010, "Demanda Judicial Prioridade Alta", "fas fa-tag", "",
+                GrupoDeMarcadorEnum.ALERTA);
+		
 		private MarcadorEnum(int id, String nome, String icone,
 				String descricao, GrupoDeMarcadorEnum grupo) {
 			this.id = id;
@@ -425,8 +440,7 @@ public class Mesa {
 							.parseInt(((dataMovimentacao.getTime() - dataHoje.getTime() - +3600000L) / 86400000L)
 									+ "");
 
-					String qtdDias = SigaBaseProperties
-							.getString("siga.qtdDiasDevolucao");
+					String qtdDias = Prop.get("/siga.devolucao.dias");
 					
 					if(qtdDias == null){
 						qtdDias = "5";
@@ -479,6 +493,16 @@ public class Mesa {
 							.getSigla();
 				t.inicio = tag.marca.getDtIniMarca();
 				t.termino = tag.marca.getDtFimMarca();
+				if(tag.marca.getCpMarcador().isDemandaJudicial()) {
+					t.nome += " até " + tag.marca.getExMobil().getDoc().getMobilGeral()
+							.getExMovimentacaoSet().stream() //
+							.filter(mov -> mov.getExTipoMovimentacao().getId()
+									.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO))
+							.filter(mov -> !mov.isCancelada()) //
+							.filter(mov -> mov.getMarcador().equals(tag.marca.getCpMarcador())) //
+							.map(ExMovimentacao::getDtFimMovDDMMYY) //
+							.findFirst().orElse("[indeterminado]");
+				}
 
 				if (GrupoDeMarcadorEnum.valueOf(r.grupo).ordinal() > mar.grupo
 						.ordinal()) {
@@ -541,7 +565,7 @@ public class Mesa {
 			map.get(mobil).add(mm);
 		}
 
-		if (SigaBaseProperties.getBooleanValue("siga.mesa.carrega.lotacao")
+		if (Prop.getBool("/siga.mesa.carrega.lotacao")
 				&& !Ex.getInstance().getComp().ehPublicoExterno(titular)) {
 			List<Object[]> lLota = dao.listarDocumentosCxEntradaPorPessoaOuLotacao(null,
 					lotaTitular);

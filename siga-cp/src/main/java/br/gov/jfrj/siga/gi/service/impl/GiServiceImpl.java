@@ -18,8 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.gi.service.impl;
 
-import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
-
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -32,7 +30,7 @@ import org.codehaus.jettison.json.JSONObject;
 import br.gov.jfrj.siga.acesso.ConfiguracaoAcesso;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpServico;
@@ -41,13 +39,13 @@ import br.gov.jfrj.siga.cp.util.SigaUtil;
 import br.gov.jfrj.siga.cp.util.TokenException;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
-import br.gov.jfrj.siga.cp.bl.CpPropriedadeBL;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
+import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
 import br.gov.jfrj.siga.gi.service.GiService;
 
 /**
@@ -94,13 +92,9 @@ public class GiServiceImpl implements GiService {
     private String buscarModoAutenticacao(CpIdentidade id) {
     	String orgao = id.getCpOrgaoUsuario().getSiglaOrgaoUsu();
     	String retorno = _MODO_AUTENTICACAO_DEFAULT;
-    	CpPropriedadeBL props = new CpPropriedadeBL();
-    	try {
-			String modo = props.getModoAutenticacao(orgao);
-			if(modo != null) 
-				retorno = modo;
-		} catch (Exception e) {
-		}
+		String modo = Cp.getInstance().getBL().buscarModoAutenticacao(orgao);
+		if(modo != null) 
+			retorno = modo;
     	return retorno;
     }
     
@@ -153,8 +147,8 @@ public class GiServiceImpl implements GiService {
 		
 		String resultado = "";
 		try {
-			if("true".equals(SigaBaseProperties.getString("siga.ws.seguranca.token.jwt")))
-				SigaUtil.getInstance().validarToken(token);
+			//if(Prop.getBool("/siga.ws.seguranca.token.jwt"))
+				//SigaUtil.getInstance().validarToken(token);
 				
 			if (Pattern.matches("\\d+", cpf) && cpf.length() == 11) {
 				List<CpIdentidade> lista = new CpDao().consultaIdentidadesCadastrante(cpf, Boolean.TRUE);
@@ -169,8 +163,6 @@ public class GiServiceImpl implements GiService {
 
 		} catch (AplicacaoException e) {
 			e.printStackTrace();
-		} catch (TokenException e) {			
-			resultado = e.getMessage(); 
 		} 
 		return resultado;
 	}
@@ -243,6 +235,7 @@ public class GiServiceImpl implements GiService {
 		JSONObject lotacao = new JSONObject();
 		JSONObject cargo = new JSONObject();
 		JSONObject funcao = new JSONObject();
+		JSONObject identidade = new JSONObject();
 
 		try {
 			DpPessoa p = id.getPessoaAtual();
@@ -284,10 +277,14 @@ public class GiServiceImpl implements GiService {
 				funcao.put("siglaFuncaoConfianca", f.getSigla());
 				funcao.put("idPaiFuncaoConfianca", f.getIdFuncaoPai());
 			}
+			
+			identidade.put("isSenhaUsuarioExpirada", id.isSenhaUsuarioExpirada());
 
 			pessoa.put("lotacao", lotacao);
 			pessoa.put("cargo", cargo);
 			pessoa.put("funcaoConfianca", funcao);
+			pessoa.put("identidade", identidade);
+			
 
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -505,17 +502,30 @@ public class GiServiceImpl implements GiService {
 	 */
 	@Override
 	public  String gerarToken(String matricula, String senha) throws Exception{
-		CpIdentidade cpIdentidade = new CpIdentidade();
 		String token = "";
 
-		cpIdentidade = SigaUtil.getInstance().autenticar(matricula, senha);
-		if(cpIdentidade == null)			
-			throw new TokenException("Senha ou matricula invalido !"); 
+		CpIdentidade id = null;
+		CpDao dao = CpDao.getInstance();
+		id = dao.consultaIdentidadeCadastrante(matricula, true);
+		String modoAut = buscarModoAutenticacao(id);
+
+		/* Autenticação */
+		if(modoAut.equals(_MODO_AUTENTICACAO_BANCO)) {
+			if (!autenticaViaBanco(id, senha)) {
+				throw new AplicacaoException("Usuário ou Senha inválidos.");
+			}
+		} else if(modoAut.equals(_MODO_AUTENTICACAO_LDAP)) {
+			if(!autenticaViaLdap(matricula, senha)) {
+				throw new AplicacaoException("Usuário ou Senha inválidos.");
+			}
+		}
 		
-		Boolean permissaoWS =  SigaUtil.getInstance().verificaSePessoTemPermissaoWS(cpIdentidade.getDpPessoa());
+		/* Autorização */
+		Boolean permissaoWS =  SigaUtil.getInstance().verificaSePessoTemPermissaoWS(id.getDpPessoa());
 		if(!permissaoWS)
 			throw new TokenException("Usuário sem permissão de acesso ao Web Service.");
 		
+		/* Gera Token JWT para consumo dos WS SOAP*/
 		token = SigaUtil.getInstance().gerarToken(matricula);
 		if("".equals(token))			
 			throw new TokenException("Erro ao gerar TOKEN.");

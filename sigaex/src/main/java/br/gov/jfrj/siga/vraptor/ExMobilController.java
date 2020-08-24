@@ -50,7 +50,7 @@ import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
@@ -67,7 +67,6 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
-import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -222,7 +221,7 @@ public class ExMobilController extends
 
 	private List<ExTipoDocumento> getTiposDocumentoParaConsulta() {
 		List<ExTipoDocumento> l = dao().listarExTiposDocumento();
-		if (!SigaExProperties.isConsultarFolhaDeRosto()) {
+		if ("inativa".equals(Prop.get("folha.de.rosto"))) {
 			List<ExTipoDocumento> l2 = new ArrayList<>();
 			for (ExTipoDocumento i : l) {
 				if (i.getId() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO || i.getId() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO)
@@ -278,8 +277,8 @@ public class ExMobilController extends
 
 		InputStream inputStream = null;
 		StringBuffer texto = new StringBuffer();
-		texto.append(";Responsável pela Assinatura;;;Responsável pela situação atual" + System.getProperty("line.separator"));
-		texto.append("Número;Unidade;Usuário;Data;Unidade;Usuário;Data;Situação;Documento;Descrição" + System.getProperty("line.separator"));
+		texto.append(";Responsável pela Assinatura;;;Responsável pela situação atual" + System.lineSeparator());
+		texto.append("Número;Unidade;Usuário;Data;Unidade;Usuário;Data;Situação;Documento;Descrição" + System.lineSeparator());
 		
 		
 		ExDocumento e = new ExDocumento();
@@ -325,7 +324,10 @@ public class ExMobilController extends
 			texto.append(";");
 			
 			if(ma != null && ma.getCpMarcador() != null && ma.getCpMarcador().getDescrMarcador() != null) {
-				texto.append(ma.toString().substring(0, ma.toString().indexOf("[")).replaceAll(";",","));
+				if (ma.toString().indexOf("[") >= 0 )
+					texto.append(ma.toString().substring(0, ma.toString().indexOf("[")).replaceAll(";",","));
+				else
+					texto = texto.append(ma.toString().replaceAll(";",","));
 			}
 			texto.append(";");
 			
@@ -334,7 +336,7 @@ public class ExMobilController extends
 			}
 			texto.append(";");
 			
-			if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+			if(Prop.isGovSP()) {
 				descricao = e.getDescrDocumento();
 			} else {
 				descricao = Ex.getInstance().getBL().descricaoSePuderAcessar(e, getTitular(), getTitular().getLotacao());
@@ -344,7 +346,7 @@ public class ExMobilController extends
 			}
 			
 			texto.append(";");
-			texto.append(System.getProperty("line.separator"));
+			texto.append(System.lineSeparator());
 		}
 		inputStream = new ByteArrayInputStream(texto.toString().getBytes("ISO-8859-1"));
 		
@@ -617,7 +619,7 @@ public class ExMobilController extends
 		final Calendar cal = Calendar.getInstance();
 		
 		Integer anoAux = 1990;
-		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+		if(Prop.isGovSP()) {
 			anoAux = 2018;
 		}
 		

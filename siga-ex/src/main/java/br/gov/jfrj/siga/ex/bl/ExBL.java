@@ -5446,6 +5446,15 @@ public class ExBL extends CpBL {
 	public void registrarCiencia(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, DpLotacao lotaResponsavel, final DpPessoa responsavel, final DpPessoa subscritor,
 			final String descrMov) throws AplicacaoException {
+		
+		if(!SigaMessages.isSigaSP()) {
+			throw new RegraNegocioException("Não é possível fazer ciência do documento neste ambiente.");
+		}
+
+		if (!Ex.getInstance().getComp().podeFazerCiencia(responsavel, lotaResponsavel, mob)) {
+			throw new RegraNegocioException("Não é possível fazer ciência do documento."			
+					+ " Isso pode ocorrer se o documento não estiver apto a receber ciência ou devido a alguma regra para não permitir esta operação");
+		}
 
 		try {
 			iniciarAlteracao();

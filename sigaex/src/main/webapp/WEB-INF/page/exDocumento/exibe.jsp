@@ -9,6 +9,7 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="libs"%>
+<%@ taglib tagdir="/WEB-INF/tags/mensagem" prefix="siga-mensagem"%>
 
 <%@page import="br.gov.jfrj.siga.ex.ExMovimentacao"%>
 <%@page import="br.gov.jfrj.siga.ex.ExMobil"%>
@@ -200,7 +201,7 @@
 	}
 </script>
 
-<div class="container-fluid content" id="page">
+<div class="container-fluid content" id="page">	
 	<c:if test="${not empty param.msg}">
 		<div class="row mt-3">
 			<p align="center">
@@ -1293,20 +1294,36 @@
 </c:if>
 </div>
 </div>
-	
-<c:if test="${siga_cliente eq 'GOVSP'}">
-	<script>
-		$(document).ready(function() {
-			var btnArqCorrente = $('.arq-corrente-requer-confirmacao');
-			
-			if (btnArqCorrente.length > 0) {
-				var btnConfirmacaoArqCorrente = $('.btn-confirmacao-arq-corrente');
+
+	<c:if test="${docVO.doc.isComposto()}">
+		<script>
+			$(document).ready(function() {
+				var btnArqCorrente = $('.siga-btn-arq-corrente');
 				
-				btnArqCorrente.attr('data-toggle', 'modal').attr('data-target', '#modalDeConfirmacaoArqCorrente');
-				btnConfirmacaoArqCorrente.attr('href', btnArqCorrente.attr('href'));	
-			}							
-		});	
-	</script>
+				if (btnArqCorrente) {
+					var btnConfirmacaoArqCorrente = $('.btn-confirmacao-arq-corrente');
+					
+					btnArqCorrente.attr('data-toggle', 'modal').attr('data-target', '#modalDeConfirmacaoArqCorrente');
+					btnConfirmacaoArqCorrente.attr('href', btnArqCorrente.attr('href'));	
+				}							
+			});	
+		</script>
+	</c:if>
+	<c:if test="${mob.isJuntado()}">	
+		<siga-mensagem:alerta-modal idModal="modalDeAvisoTornarDocumentoSemEfeito" descricaoBotaoQueFechaModal="Ok" 
+			exibirBotaoDeAcao="false" texto="Desentranhar documento antes de cancelar">
+		</siga-mensagem:alerta-modal>
+		
+		<script>
+			$(function() {
+				var btnCancelar = $('.siga-btn-tornar-documento-sem-efeito');
+				
+				if (btnCancelar) {										
+					btnCancelar.attr('data-toggle', 'modal').attr('data-target', '#modalDeAvisoTornarDocumentoSemEfeito');					
+				}							
+			});	
+		</script>	
+	</c:if>
 	
 	<div class="modal fade" id="modalDeConfirmacaoArqCorrente" tabindex="-1" role="dialog" aria-labelledby="confirmacao" aria-hidden="true">
 	  <div class="modal-dialog text-center" role="document">
@@ -1330,7 +1347,7 @@
 	    </div>
 	  </div>
 	</div>	
-</c:if>	
+
 <script>
 	var containerArquivosAuxiliares = $('.container-files');
 	var containerConfimarcaoArquivoAuxiliarACancelar = $('.container-confirmacao-cancelar-arquivo');

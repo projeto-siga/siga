@@ -29,7 +29,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -38,7 +37,7 @@ import org.apache.commons.lang.StringUtils;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
@@ -53,8 +52,10 @@ import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
+import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.util.Excel;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
+import br.gov.jfrj.siga.cp.util.SigaUtil;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
@@ -306,6 +307,7 @@ public class CpBL {
 			}
 
 		} catch (AplicacaoException e) {
+			resultado = e.getMessage();
 			e.printStackTrace();
 		}
 		return resultado;
@@ -366,7 +368,7 @@ public class CpBL {
 
 					if (SigaMessages.isSigaSP()) {
 						String[] destinanarios = { pessoa.getEmailPessoaAtual() };
-						Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"), destinanarios,
+						Correio.enviar(null, destinanarios,
 								"Esqueci Minha Senha", "",
 								"<table>" + "<tbody>" + "<tr>"
 										+ "<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>"
@@ -481,7 +483,7 @@ public class CpBL {
 									? textoEmailNovoUsuarioExternoSP(idNova, matricula, novaSenha)
 									: textoEmailNovoUsuarioSP(idNova, matricula, novaSenha, autenticaPeloBanco);
 							
-							Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
+							Correio.enviar(null,
 									destinanarios, "Novo Usuário", "", conteudoHTML);
 						} else {
 							Correio.enviar(pessoa.getEmailPessoaAtual(), "Novo Usuário",
@@ -651,21 +653,19 @@ public class CpBL {
 		
 		conteudo = conteudo.replace("${nomeUsuario}", identidade.getDpPessoa().getNomePessoa())
 			.replace("${cpfUsuario}", matricula)
-			.replace("${url}", SigaBaseProperties.getString("siga.ex." + SigaBaseProperties.getString("siga.ambiente") + ".url").replace("/sigaex/app", ""))
+			.replace("${url}", Prop.get("/sigaex.url").replace("/sigaex/app", ""))
 			.replace("${senhaUsuario}", novaSenha);
 		
 		return conteudo;
 	}
 
-	private String buscarModoAutenticacao(String orgao) {
+	public String buscarModoAutenticacao(String orgao) {
 		String retorno = GiService._MODO_AUTENTICACAO_DEFAULT;
-		CpPropriedadeBL props = new CpPropriedadeBL();
-		try {
-			String modo = props.getModoAutenticacao(orgao);
-			if (modo != null)
-				retorno = modo;
-		} catch (Exception e) {
-		}
+		if (Prop.get("/siga.ldap.orgaos") == null)
+			return retorno;
+		String modo = Prop.get("/siga.ldap." + orgao.toLowerCase() + ".modo");
+		if (modo != null)
+			retorno = modo;
 		return retorno;
 	}
 
@@ -699,7 +699,7 @@ public class CpBL {
 			String servico = "SIGA: Sistema Integrado de Gestão Administrativa;GI: Módulo de Gestão de Identidade;DEF_SENHA: Definir Senha";
 			try {
 				boolean admTrocaSenha = Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(
-						idCadastrante.getDpPessoa(), idCadastrante.getDpPessoa().getLotacao(), servico);
+						idCadastrante.getDpPessoa(), idCadastrante.getDpPessoa().getPessoaAtual().getLotacao(), servico);
 				if (admTrocaSenha) {
 					if (buscarModoAutenticacao(idCadastrante.getCpOrgaoUsuario().getSiglaOrgaoUsu())
 							.equals(GiService._MODO_AUTENTICACAO_BANCO)) {
@@ -1053,15 +1053,9 @@ public class CpBL {
 		dao().gravar(acesso);
 	}
 
-	public InputStream uploadLotacao(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
-		InputStream inputStream = null;
-		try {
-			Excel excel = new Excel();
-			inputStream = excel.uploadLotacao(file, orgaoUsuario, extensao);
-		} catch (Exception e) {
-
-		}
-		return inputStream;
+	public InputStream uploadLotacao(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {			
+		Excel excel = new Excel();		
+		return excel.uploadLotacao(file, orgaoUsuario, extensao);
 	}
 
 	public InputStream uploadFuncao(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
@@ -1273,4 +1267,42 @@ public class CpBL {
 
 		return "Usuário inativado com sucesso: " + pessoa.getSesbPessoa() + pessoa.getMatricula();
 	}
+	
+	
+	public CpToken gerarUrlPermanente(Long idRef) {
+		try {
+			CpToken sigaUrlPermanente = new CpToken();
+			sigaUrlPermanente = dao().obterCpTokenPorTipoIdRef(1L,idRef); //Se tem token não expirado, devolve token
+			if (sigaUrlPermanente == null ) {
+				sigaUrlPermanente = new CpToken();
+				//Seta tipo 1 - Token para URL Permamente
+				sigaUrlPermanente.setIdTpToken(1L);
+				
+				sigaUrlPermanente.setToken(SigaUtil.randomAlfanumerico(128));
+				sigaUrlPermanente.setIdRef(idRef);
+
+				try {
+					dao().gravar(sigaUrlPermanente);
+				} catch (final Exception e) {
+	
+					throw new AplicacaoException("Erro na gravação", 0, e);
+				}
+			} 
+			return sigaUrlPermanente;
+
+			
+		} catch (final Exception e) {
+			throw new AplicacaoException("Ocorreu um erro ao gerar o Token.", 0, e);
+		}
+	}
+		
+	
+	public String obterURLPermanente(String tipoLink, String token) {
+		String urlPermanente = Prop.get("/sigaex.autenticidade.url").replace("/sigaex/public/app/autenticar", "");
+		
+		urlPermanente +=  "/siga/public/app/sigalink/"+tipoLink+"/"+token;
+		
+		return urlPermanente;
+	}
+	
 }

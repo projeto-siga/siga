@@ -22,8 +22,10 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -35,7 +37,14 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Transient;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.cp.CpArquivo;
+import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCFacade;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCInterface;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.model.Objeto;
 
@@ -65,6 +74,9 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 	@GeneratedValue(generator = "EX_PREENCHIMENTO_SEQ")
 	@Column(name = "ID_PREENCHIMENTO", unique = true, nullable = false)
 	private java.lang.Long idPreenchimento;
+	
+	@Transient
+	protected byte[] cacheConteudoBlobPre;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_LOTACAO", nullable = false)
@@ -81,6 +93,10 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 	@Column(name = "PREENCHIMENTO_BLOB")
 	@Basic(fetch = FetchType.LAZY)
 	private byte[] preenchimentoBlob;
+	
+	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "ID_ARQ")
+	private CpArquivo cpArquivo;
 
 	/**
 	 * Simple constructor of AbstractExTipoDespacho instances.
@@ -114,14 +130,6 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 
 	public void setIdPreenchimento(java.lang.Long idPreenchimento) {
 		this.idPreenchimento = idPreenchimento;
-	}
-
-	public byte[] getPreenchimentoBlob() {
-		return preenchimentoBlob;
-	}
-
-	public void setPreenchimentoBlob(byte[] preenchimentoBlob) {
-		this.preenchimentoBlob = preenchimentoBlob;
 	}
 
 	@Override
@@ -158,5 +166,46 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 	public void setNomePreenchimento(String nomePreenchimento) {
 		this.nomePreenchimento = nomePreenchimento;
 	}
+	
+	public CpArquivo getCpArquivo() {
+		return cpArquivo;
+	}
 
+	public void setCpArquivo(CpArquivo cpArquivo) {
+		this.cpArquivo = cpArquivo;
+	}
+
+	public byte[] getPreenchimentoBlob() {
+		if(cacheConteudoBlobPre != null) {
+			return cacheConteudoBlobPre;
+		} else if (getCpArquivo() == null) {
+			cacheConteudoBlobPre = preenchimentoBlob;
+		} else {
+			try {
+				ArmazenamentoBCInterface a = ArmazenamentoBCFacade.getArmazenamentoBC(getCpArquivo());
+				cacheConteudoBlobPre = a.recuperar(getCpArquivo());
+			} catch (Exception e) {
+				throw new AplicacaoException(e.getMessage());
+			}
+		}
+		return cacheConteudoBlobPre;
+	}
+
+	public void setPreenchimentoBlob(byte[] preenchimentoBlob) {
+		cacheConteudoBlobPre = preenchimentoBlob;
+		if (CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
+			this.preenchimentoBlob = preenchimentoBlob;
+		} else {
+			criarCpArquivo();
+			cpArquivo.setTamanho(cacheConteudoBlobPre.length);
+		}
+	}
+	
+	private void criarCpArquivo() {
+		if(cpArquivo == null) {
+			cpArquivo = new CpArquivo();
+			cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")));
+			cpArquivo.gerarCaminho(new Date());
+		}
+	}
 }

@@ -33,8 +33,14 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Contexto;
+
+import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.CpToken;
+import br.gov.jfrj.siga.cp.util.SigaUtil;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -810,5 +816,100 @@ public class ExServiceImpl implements ExService {
 					+ e.getMessage(), 0, e);
 		}	
 	}
+	
+	public String obterSiglaMobilPorIdDoc(Long idDoc)  throws Exception {
+		ExDocumento doc = ExDao.getInstance().consultar(idDoc, ExDocumento.class, false);
+		if (doc != null) {
+			return doc.getPrimeiroMobil().getSigla();
+		} else
+			return "";
+		
+	}
+	
+	
+	public String obterMetadadosDocumento(String siglaDocumento, String token) throws Exception {
+		try {
+			if(Prop.getBool("/siga.ws.seguranca.token.jwt"))
+				SigaUtil.getInstance().validarToken(token);
+			
+			
+			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
+			filter.setSigla(siglaDocumento);
+			
+			ExMobil mob = dao().consultarPorSigla(filter);
+			if (mob != null){
+				return Ex.getInstance().getBL().documentoToJSON(mob.getDoc());
+			}
+		} catch (Exception e) {
+			throw new AplicacaoException("Ocorreu um problema na obtenção dos Metadados do Documento: "
+					+ e.getMessage(), 0, e);
+		}
+		return "Ocorreu um problema na obtenção dos Metadados do Documento";
+	}
+	
+	public String obterMarcadores(String token) throws Exception {
+		try {
+			if(Prop.getBool("/siga.ws.seguranca.token.jwt"))
+				SigaUtil.getInstance().validarToken(token);
+			
+			return Ex.getInstance().getBL().marcadoresGeraisTaxonomiaAdministradaToJSON();
+			
+		} catch (Exception e) {
+			throw new AplicacaoException("Ocorreu um problema na obtenção da lista de Marcadores: "
+					+ e.getMessage(), 0, e);
+		}
+	}
+	
+	public String publicarDocumentoPortal(String siglaDocumento, String cadastranteStr, String marcadoresStr, String token) throws Exception {
+		try {
+			if(Prop.getBool("/siga.ws.seguranca.token.jwt"))
+				SigaUtil.getInstance().validarToken(token);
+			
+			DpPessoa cadastrante = null;
+			
+    		cadastrante = dao().getPessoaFromSigla(cadastranteStr);
+    		
+    		if(cadastrante == null)
+    			throw new AplicacaoException("Não foi possível encontrar um cadastrante com a matrícula informada.");
+    		
+    		if(cadastrante.isFechada())
+    			throw new AplicacaoException("O cadastrante não está mais ativo.");
+			
+			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
+			filter.setSigla(siglaDocumento);
+			
+			ExMobil mob = dao().consultarPorSigla(filter);
+			
+			if (mob != null){
+				
+				/* Valida se usuário WS pode movimentar */
+				DpPessoa cadastranteWS = null;
+				cadastranteWS = dao().getPessoaFromSigla(SigaUtil.getInstance().parseTokenJwt(token).get("sub").toString());
+	    		if (!Ex.getInstance().getComp().podePublicarPortalTransparenciaWS(cadastranteWS, cadastranteWS.getLotacao(),mob)) {
+	    			throw new AplicacaoException(
+	    					"Não é possível " + SigaMessages.getMessage("documento.publicar.portaltransparencia"));
+	    		}
+				/* Fim da Validação */
+	    		String[] listaMarcadores = null;	    		
+	    		if (!"".equals(marcadoresStr)) {
+	    			listaMarcadores = marcadoresStr.split(",");
+	    		}
+	    		
+				CpToken sigaUrlPermanente = new CpToken();
+				sigaUrlPermanente = Ex.getInstance().getBL().publicarTransparencia(mob, cadastrante, cadastrante.getLotacao(),listaMarcadores,true);
+				String url = System.getProperty("siga.ex.enderecoAutenticidadeDocs").replace("/sigaex/public/app/autenticar", "");
+				String caminho = url + "/siga/public/app/sigalink/1/" + sigaUrlPermanente.getToken();
+				
+				return "Documento "+ siglaDocumento +" enviado para publicação. Gerado para acesso externo ao documento: "+ caminho; 
+			
+			
+			}
+		} catch (Exception e) {
+			throw new AplicacaoException("Ocorreu um problema na publicação de documento em Portal: "
+					+ e.getMessage(), 0, e);
+		}
+		return "Ocorreu um problema na publicação de documento em Portal.";
+	}
+
 
 }

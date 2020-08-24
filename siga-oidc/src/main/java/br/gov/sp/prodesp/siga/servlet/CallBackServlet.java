@@ -79,12 +79,13 @@ public class CallBackServlet extends HTTPRequestParametersInterceptorServlet {
 
 	private static final String PENDING_REQUESTS = "pending-requests";
 	private static final String HTTP_REQUEST_PARAMETERS2 = "http-request-parameters";
-	private static final String PUBLIC_APP_LOGIN_SP = "public/app/login_sp";
+	private static final String PUBLIC_APP_LOGIN_SP = "public/app/loginSSO";
+	public  static final String PUBLIC_CPF_USER_SSO = "cpfUserSSO";
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-		log.info("## doGET ##");
+		log.debug("## doGET ##");
 
 		AuthenticationResponse oidcResponse;
 		final Map<String, List<String>> params;
@@ -135,7 +136,7 @@ public class CallBackServlet extends HTTPRequestParametersInterceptorServlet {
 		AuthenticationSuccessResponse successResponse = (AuthenticationSuccessResponse)oidcResponse;
 		
 		try {
-			log.info("Received OpenID authentication success response: " + successResponse.toParameters());
+			log.debug("Received OpenID authentication success response: " + successResponse.toParameters());
 		} catch (Exception e) {
 			// Just in case toParameters fails
 			createError(e.getMessage());
@@ -200,9 +201,7 @@ public class CallBackServlet extends HTTPRequestParametersInterceptorServlet {
 			
 			try {
 				HTTPRequest httpRequest = tokenRequest.toHTTPRequest();
-				
 				HTTPResponse httpResponse = httpRequest.send();
-				
 				TokenResponse tokenResponse = OIDCTokenResponseParser.parse(httpResponse);
 				
 				if (tokenResponse instanceof TokenErrorResponse) {
@@ -215,7 +214,7 @@ public class CallBackServlet extends HTTPRequestParametersInterceptorServlet {
 				OIDCTokenResponse oidcTokenResponse = (OIDCTokenResponse)tokenResponse;
 				
 				accessToken = oidcTokenResponse.getOIDCTokens().getAccessToken();
-				log.info("Access token: " + accessToken.getValue());
+				log.debug("Access token: " + accessToken.getValue());
 				
 				if (oidcTokenResponse.getOIDCTokens().getIDToken() != null) {
 					idToken = oidcTokenResponse.getOIDCTokens().getIDToken();
@@ -322,21 +321,18 @@ public class CallBackServlet extends HTTPRequestParametersInterceptorServlet {
 			// Make UserInfo request
 			URI userInfoEndpoint = pendingRequest.getProviderMetadata().getUserInfoEndpointURI();
 			
-			log.info("Making UserInfo request to " + userInfoEndpoint);
+			log.debug("Making UserInfo request to " + userInfoEndpoint);
 			
 			UserInfoRequest userInfoRequest = new UserInfoRequest(userInfoEndpoint, (BearerAccessToken)accessToken);
 			
 			try {
 				HTTPRequest httpRequest = userInfoRequest.toHTTPRequest();
-				
 				HTTPResponse httpResponse = httpRequest.send();
-				
 				UserInfoResponse userInfoResponse = UserInfoResponse.parse(httpResponse);
 				
 				if (userInfoResponse instanceof UserInfoErrorResponse) {
-					
+				
 					UserInfoErrorResponse userInfoErrorResponse = (UserInfoErrorResponse)userInfoResponse;
-					
 					String msg = "[ " + userInfoErrorResponse.getErrorObject().getCode() + " ] ";
 					msg += userInfoErrorResponse.getErrorObject().getDescription();
 					createError("UserInfo error response: " + msg);
@@ -368,18 +364,25 @@ public class CallBackServlet extends HTTPRequestParametersInterceptorServlet {
 				
 				createUserInfo(userInfoJWEHeader, userInfoJWSHeader, jsonObject);
 				
-				String cpf = (String) jsonObject.get("sub");
-				if(!cpf.isEmpty()){
-					req.getSession().setAttribute("cpfAutenticado", cpf);
-				}
+				reqSession(jsonObject, req);
 				
-				log.info("CPF: " + cpf);
 				handleCallback(resp);
 				 
 			} catch (Exception e) {
 				createError("Couldn't make UserInfo request: " + e.getMessage());
 			}
 		}
+	}
+	
+	/*
+	 * SESSION
+	 */
+	private void reqSession(JSONObject jsonObject, HttpServletRequest req) {
+		String cpf = (String) jsonObject.get("sub");
+		if(!cpf.isEmpty()){
+			req.getSession().setAttribute(PUBLIC_CPF_USER_SSO, cpf);
+		}
+		log.debug("CPF SSO: " + cpf);
 	}
 
 	private void handleCallback(HttpServletResponse resp) {
@@ -424,27 +427,27 @@ public class CallBackServlet extends HTTPRequestParametersInterceptorServlet {
 
 		if (successResponse.getAuthorizationCode() != null) {
 			authorizationCode = successResponse.getAuthorizationCode().getValue();
-			log.info("Authorization Code: " + authorizationCode);
+			log.debug("Authorization Code: " + authorizationCode);
 		}
 
 		if (successResponse.getIDToken() != null) {
 			idToken = successResponse.getIDToken().getParsedString();
-			log.info("ID token: " + idToken);
+			log.debug("ID token: " + idToken);
 		}
 
 		if (successResponse.getAccessToken() != null) {
 			accessToken = successResponse.getAccessToken().getValue();
-			log.info("Access token: " + accessToken);
+			log.debug("Access token: " + accessToken);
 		}
 
 		if (successResponse.getState() != null) {
 			state = successResponse.getState().getValue();
-			log.info("State: " + state);
+			log.debug("State: " + state);
 		}
 
 		if (successResponse.getSessionState() != null) {
 			sessionState = successResponse.getSessionState().getValue();
-			log.info("Session State: " + sessionState);
+			log.debug("Session State: " + sessionState);
 		}
 	}
 
@@ -453,23 +456,23 @@ public class CallBackServlet extends HTTPRequestParametersInterceptorServlet {
 		JWT idToken = tokenResponse.getOIDCTokens().getIDToken();
 		
 		if (idToken != null && idToken.getParsedString() != null) {
-			log.info("IdToke: " + idToken.getParsedString());
+			log.debug("IdToke: " + idToken.getParsedString());
 		}
 		
 		AccessToken accessToken = tokenResponse.getOIDCTokens().getAccessToken();
 		
 		if (accessToken != null) {
-			log.info("Id Acces Token: " + accessToken.getType().getValue());
+			log.debug("Id Acces Token: " + accessToken.getType().getValue());
 			
 			BearerAccessToken bat = (BearerAccessToken)accessToken;
 			bat.getValue();
 			
 			if (bat.getScope() != null) {
-				log.info("Scope: " + bat.getScope().toString());
+				log.debug("Scope: " + bat.getScope().toString());
 			}
 		}
 		RefreshToken refreshToken = tokenResponse.getOIDCTokens().getRefreshToken();
-		log.info("Refresh Token: " + refreshToken.toString());
+		log.debug("Refresh Token: " + refreshToken.toString());
 	}
 	
 	private static void decrypt(final EncryptedJWT encryptedJWT, final Secret clientSecret)
@@ -499,17 +502,19 @@ public class CallBackServlet extends HTTPRequestParametersInterceptorServlet {
 	
 	private void createUserInfo(final JWEHeader jweHeader, final Header jwsHeader, final JSONObject userInfo) throws java.text.ParseException {
 
-			log.info("UserInfo");
+			log.debug("UserInfo");
 
 			PrettyJson jsonFormatter = new PrettyJson(PrettyJson.Style.COMPACT);
 			if (jweHeader != null) {
-				log.info(jsonFormatter.parseAndFormat(jweHeader.toJSONObject().toJSONString()));
+				log.debug(jsonFormatter.parseAndFormat(jweHeader.toJSONObject().toJSONString()));
 			}
 
 			if (jwsHeader != null) {
-				log.info(jsonFormatter.parseAndFormat(jwsHeader.toJSONObject().toJSONString()));
+				log.debug(jsonFormatter.parseAndFormat(jwsHeader.toJSONObject().toJSONString()));
 			}
-			log.info(jsonFormatter.parseAndFormat(userInfo.toJSONString()));
+			log.debug(jsonFormatter.parseAndFormat(userInfo.toJSONString()));
+			
+			
 	}
 	
 	private void createError(String errorResponse) {
@@ -542,9 +547,9 @@ public class CallBackServlet extends HTTPRequestParametersInterceptorServlet {
 			throw new RuntimeException("Failed to format ID token: " + e.getMessage());
 		}
 		
-		log.info(formattedJWEHeader);
-		log.info(formattedJWSHeader);
-		log.info(formattedClaims);
-		log.info(formattedSignature);
+		log.debug(formattedJWEHeader);
+		log.debug(formattedJWSHeader);
+		log.debug(formattedClaims);
+		log.debug(formattedSignature);
 	}
 }

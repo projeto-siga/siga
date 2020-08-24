@@ -232,30 +232,47 @@
 					</c:when>
 					<c:otherwise>
 						<div class="row  js-siga-sp-documento-analisa-alteracao">
-							<div class="col-sm-8">
-								<div class="form-group">
-									<input type="hidden" name="campos" value="subscritorSel.id" />
-									<input type="hidden" name="campos" value="substituicao" />
-									<input type="hidden" name="campos" value="personalizacao" />
-									<input type="hidden" id="temCossignatarios" value="${not empty exDocumentoDTO.doc.cosignatarios}" />
-									<label><fmt:message key="documento.subscritor"/></label>
-									<siga:selecao propriedade="subscritor" inputName="exDocumentoDTO.subscritor" modulo="siga" tema="simple" />
-								</div>
-							</div>
-							<div class="col-sm-2">
-								<div class="form-group">
-									<div class="form-check form-check-inline mt-4">
-										<fmt:message key="documento.help.substituto" var="documento_help_substituto" />
-										<input type="checkbox" name="exDocumentoDTO.substituicao" class="form-check-input" onclick="javascript:displayTitular(this);"
-											<c:if test="${exDocumentoDTO.substituicao}">checked</c:if> />
-										<label class="form-check-label" for="exDocumentoDTO.substituicao">Substituto </label>
-										<a class="fas fa-info-circle text-secondary ml-1  ${hide_only_TRF2}" data-toggle="tooltip" data-trigger="click" data-placement="bottom" title="${documento_help_substituto}"></a>
-										<input type="checkbox" name="exDocumentoDTO.personalizacao" class="form-check-input ml-3"  onclick="javascript:displayPersonalizacao(this);" 
-											<c:if test="${exDocumentoDTO.personalizacao}">checked</c:if> />
-										<label class="form-check-label" for="exDocumentoDTO.personalizacao">Personalizar</label>
+							<c:choose>
+								<c:when test="${!ehPublicoExterno}">
+									<div class="col-sm-8">
+										<div class="form-group">
+											<input type="hidden" name="campos" value="subscritorSel.id" />
+											<input type="hidden" name="campos" value="substituicao" />
+											<input type="hidden" name="campos" value="personalizacao" />
+											<input type="hidden" id="temCossignatarios" value="${not empty exDocumentoDTO.doc.cosignatarios}" />
+											<label><fmt:message key="documento.subscritor"/></label>
+											<siga:selecao propriedade="subscritor" inputName="exDocumentoDTO.subscritor" modulo="siga" tema="simple" />
+										</div>
 									</div>
-								</div>
-							</div>
+									<div class="col-sm-2">
+										<div class="form-group">
+											<div class="form-check form-check-inline mt-4">
+												<fmt:message key="documento.help.substituto" var="documento_help_substituto" />
+												<input type="checkbox" name="exDocumentoDTO.substituicao" class="form-check-input" onclick="javascript:displayTitular(this);"
+													<c:if test="${exDocumentoDTO.substituicao}">checked</c:if> />
+												<label class="form-check-label" for="exDocumentoDTO.substituicao">Substituto </label>
+												<a class="fas fa-info-circle text-secondary ml-1  ${hide_only_TRF2}" data-toggle="tooltip" data-trigger="click" data-placement="bottom" title="${documento_help_substituto}"></a>
+												<input type="checkbox" name="exDocumentoDTO.personalizacao" class="form-check-input ml-3"  onclick="javascript:displayPersonalizacao(this);" 
+													<c:if test="${exDocumentoDTO.personalizacao}">checked</c:if> />
+												<label class="form-check-label" for="exDocumentoDTO.personalizacao">Personalizar</label>
+											</div>
+										</div>
+									</div>
+								</c:when>
+								<c:otherwise>
+									<div class="col-sm-12">
+										<label><fmt:message key="documento.subscritor"/></label>
+										<div class="row">
+											<div class="col-sm-4">
+												<input type="text" value="${exDocumentoDTO.subscritorSel.sigla}" class="form-control" disabled/>
+											</div>
+											<div class="col-sm-8">
+												<input type="text" value="${exDocumentoDTO.subscritorSel.descricao}" class="form-control" disabled/>
+											</div>
+										</div>					
+									</div>
+								</c:otherwise>
+							</c:choose>
 						</div>						
 					</c:otherwise>
 				</c:choose>
@@ -358,7 +375,7 @@
 					</div>
 				</div>
 				</c:if>	
-				<c:if test='${ exDocumentoDTO.tipoDocumento == "interno" }'>
+				<c:if test='${ exDocumentoDTO.tipoDocumento == "interno"  && !ehPublicoExterno}'>
 				<div class="row">
 					<input type="hidden" name="campos" value="preenchimento" />
 					<div class="col-sm-12">
@@ -449,16 +466,18 @@
 						</div>
 					</div>
 				</div>
-				<c:if test='${(not exDocumentoDTO.doc.finalizado) and (exDocumentoDTO.tipoDocumento == "interno_capturado" or  exDocumentoDTO.tipoDocumento == "externo_capturado")}'>
+				<c:if test='${podeTrocarPdfCapturado}'>
 				<div class="row  js-siga-sp-documento-analisa-alteracao">
 					<div class="col-sm-8">
 						<div class="form-group">
-							<input type="hidden" name="campos" value="descrDocumento" />
-							<label> <fmt:message key = "usuario.novodocumento.arquivo"/></label>
-							<br>
-							  <div class="form-group">
-							    <input type="file" class="form-control-file" id="arquivo" name="arquivo" accept="application/pdf" onchange="testpdf(this.form)">
-							    <small class="form-text text-muted">Tamanho máximo do arquivo é de 10MB</small> 
+							  <input type="hidden" name="campos" value="descrDocumento" />							
+							  <br>
+							  <div class="form-group" style="margin-bottom:0">
+							    <div class="custom-file">								    
+								    <input type="file" class="custom-file-input" id="arquivo" name="arquivo" accept="application/pdf" onchange="testpdf(this.form)">
+								    <label class="custom-file-label" for="arquivo"><fmt:message key = "usuario.novodocumento.arquivo"/> (limite de 10MB)</label>								    								   
+								    <div class="invalid-feedback  invalid-feedback-arquivo">Selecione o arquivo</div>
+								</div>									    							  
 							  </div>
 						</div>
 					</div>
@@ -562,6 +581,8 @@
 		</div>
 	</div>
 	<!--  tabela do rodapé -->
+	
+	<script type="text/javascript" src="../../../javascript/documento.validacao.js"></script>
 </siga:pagina>
 
 <script type="text/javascript">

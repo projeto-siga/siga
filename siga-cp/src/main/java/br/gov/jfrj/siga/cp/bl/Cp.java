@@ -18,14 +18,13 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp.bl;
 
-public class Cp<TConf extends CpConfiguracaoBL, TComp extends CpCompetenciaBL, TBL extends CpBL, TProp extends CpPropriedadeBL> {
+public class Cp<TConf extends CpConfiguracaoBL, TComp extends CpCompetenciaBL, TBL extends CpBL> {
 	@SuppressWarnings("unchecked")
 	static private Cp instance;
 
 	TComp comp;
 	TConf conf;
 	TBL BL;
-	TProp prop;
 
 	public TBL getBL() {
 		return BL;
@@ -44,7 +43,6 @@ public class Cp<TConf extends CpConfiguracaoBL, TComp extends CpCompetenciaBL, T
 					CpConfiguracaoComparator comparator = new CpConfiguracaoComparator();
 					CpCompetenciaBL compBL = new CpCompetenciaBL();
 					CpBL cpBL = new CpBL();
-					CpPropriedadeBL propBL = new CpPropriedadeBL();
 					
 					instance = new Cp();
 					instance.setConf(confBL);
@@ -53,7 +51,6 @@ public class Cp<TConf extends CpConfiguracaoBL, TComp extends CpCompetenciaBL, T
 					instance.getComp().setConfiguracaoBL(instance.getConf());
 					instance.setBL(cpBL);
 					instance.getBL().setComp(instance.getComp());
-					instance.setProp(propBL);
 				}
 			}
 		}
@@ -86,21 +83,6 @@ public class Cp<TConf extends CpConfiguracaoBL, TComp extends CpCompetenciaBL, T
 
 	public void setConf(TConf conf) {
 		this.conf = conf;
-	}
-
-	/**
-	 * @return the prop
-	 */
-	public TProp getProp() {
-		return prop;
-	}
-
-	/**
-	 * @param prop
-	 *            the prop to set
-	 */
-	public void setProp(TProp prop) {
-		this.prop = prop;
 	}
 
 }

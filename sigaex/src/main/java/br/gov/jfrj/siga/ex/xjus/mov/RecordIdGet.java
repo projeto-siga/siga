@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import br.gov.jfrj.siga.base.HtmlToPlainText;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
@@ -46,7 +47,7 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 				dt = mov.getDtIniMov();
 
 			resp.id = req.id;
-			resp.url = Cp.getInstance().getProp().xjusPermalinkUrl()
+			resp.url = Prop.get("/xjus.permalink.url")
 					+ doc.getCodigoCompacto() + "/" + mov.getIdMov();
 			resp.acl = "PUBLIC";
 			resp.refresh = "NEVER";

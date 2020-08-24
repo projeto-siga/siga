@@ -9,102 +9,101 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="libs"%>
+<%@ taglib tagdir="/WEB-INF/tags/mensagem" prefix="siga-mensagem"%>
 
 <%@page import="br.gov.jfrj.siga.ex.ExMovimentacao"%>
 <%@page import="br.gov.jfrj.siga.ex.ExMobil"%>
 <siga:pagina titulo="${docVO.sigla}" popup="${param.popup}" >
 
-<c:if test="${siga_cliente eq 'GOVSP'}">
-	<style>									
-		.container-files {
-			opacity: 1;
-			transition: opacity 1s ease-in;										
-		}
-																				
-		.files {
-			margin-top: 15px;
-		}															
+<style>									
+	.container-files {
+		opacity: 1;
+		transition: opacity 1s ease-in;										
+	}
+																			
+	.files {
+		margin-top: 15px;
+	}															
+
+	.files .btn.btn-sm.btn-light {
+		width: 84%;
+		padding: 0;			
+		background-color: transparent;
+		border: none;
+		text-align: justify;
+		white-space: normal;  									
+		transition: padding .5s;																									
+	}
 	
+	.files .btn.btn-sm.btn-light:hover {
+		padding: 5px;
+		background-color: rgba(0, 123, 255, 0.18);
+		border: none;			
+		border-radius: 10px;
+	}	
+	
+	.files .btn.btn-sm.btn-light img {
+		float: left;
+	}																																
+	
+	.files .btn.btn-sm.btn-outline-danger.btn-cancel {
+		padding: 1px 3px;
+		margin-left: 10px;
+		right: 20px; 
+		position: absolute;
+		float: right;					
+		font-size: .9em; 																										
+	}
+	
+	.container-confirmacao-cancelar-arquivo {
+		width: 100%;
+	    height: 77%;
+	    margin: 0;    		
+	    position: absolute;
+	    left: 0;
+		bottom: 0;
+		background-color: white;
+		text-align: center;
+		visibility: hidden;																	
+		opacity: 0;
+		transition: opacity 1s ease-out;	    								
+	}	
+	
+	.confirmacao-cancelar-arquivo {
+		width: 100%;			
+		position: absolute;
+		top: 50%;			
+		transform: translate(0, -50%);			
+	}		
+	
+	.confirmacao-cancelar-arquivo h1 {
+		font-size: 1.3em;
+	}
+	
+	.confirmacao-cancelar-arquivo p {
+		max-width: 80%;
+		margin: 0 auto;
+	}															
+	
+	.confirmacao-cancelar-arquivo button {
+		margin: 10px 2px 0 2px;
+	}			
+	
+	@media (min-width: 768px) and (max-width: 1019px) {
 		.files .btn.btn-sm.btn-light {
-			width: 84%;
-			padding: 0;			
-			background-color: transparent;
-			border: none;
-			text-align: justify;
-			white-space: normal;  									
-			transition: padding .5s;																									
+			width: 65%;											
+		}					
+	}	
+	
+	@media (min-width: 1020px) and (max-width: 1416px) {
+		.files .btn.btn-sm.btn-light {
+			width: 75%;											
 		}
-		
-		.files .btn.btn-sm.btn-light:hover {
-			padding: 5px;
-			background-color: rgba(0, 123, 255, 0.18);
-			border: none;			
-			border-radius: 10px;
-		}	
-		
-		.files .btn.btn-sm.btn-light img {
-			float: left;
-		}																																
-		
-		.files .btn.btn-sm.btn-outline-danger.btn-cancel {
-			padding: 1px 3px;
-			margin-left: 10px;
-			right: 20px; 
-			position: absolute;
-			float: right;					
-			font-size: .9em; 																										
-		}
-		
-		.container-confirmacao-cancelar-arquivo {
-			width: 100%;
-		    height: 77%;
-		    margin: 0;    		
-		    position: absolute;
-		    left: 0;
-			bottom: 0;
-			background-color: white;
-			text-align: center;
-			visibility: hidden;																	
-			opacity: 0;
-			transition: opacity 1s ease-out;	    								
-		}	
-		
-		.confirmacao-cancelar-arquivo {
-			width: 100%;			
-			position: absolute;
-			top: 50%;			
-			transform: translate(0, -50%);			
-		}		
-		
-		.confirmacao-cancelar-arquivo h1 {
-			font-size: 1.3em;
-		}
-		
-		.confirmacao-cancelar-arquivo p {
-			max-width: 80%;
-			margin: 0 auto;
-		}															
-		
-		.confirmacao-cancelar-arquivo button {
-			margin: 10px 2px 0 2px;
-		}			
-		
-		@media (min-width: 768px) and (max-width: 1019px) {
-			.files .btn.btn-sm.btn-light {
-				width: 65%;											
-			}					
-		}	
-		
-		@media (min-width: 1020px) and (max-width: 1416px) {
-			.files .btn.btn-sm.btn-light {
-				width: 75%;											
-			}
-		}											
-	</style>
-</c:if>								
+	}											
+</style>						
 
 <script>
-	if (${not empty f:resource('graphviz.url')}) {
+	if (${not empty f:resource('/vizservice.url')}) {
 	} else if (window.Worker) {
 		window.VizWorker = new Worker("/siga/javascript/viz.js");
 		window.VizWorker.onmessage = function(oEvent) {
@@ -128,7 +127,7 @@
 	}
 
 	function buildSvg(id, input, cont) {
-		if (${not empty f:resource('graphviz.url')}) {
+		if (${not empty f:resource('/vizservice.url')}) {
 		    input = input.replace(/fontsize=\d+/gm, "");
 			$.ajax({
 			    url: "/siga/public/app/graphviz/svg",
@@ -261,7 +260,7 @@
 		<div class="row mt-2">
 			<div class="col col-sm-12 col-md-8">
 				<div>
-					<c:if test="${f:resource('isWorkflowEnabled')}">
+					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;WF:Módulo de Workflow')}">
 						<c:if
 							test="${ (primeiroMobil == true) and (docVO.tipoFormaDocumento == 'processo_administrativo')}">
 							<div id="${docVO.sigla}" depende=";wf;" class="wf_div"></div>
@@ -549,18 +548,21 @@
 											</c:choose> &nbsp;-&nbsp; 
 											<c:forEach var="marca" items="${entry.value}" varStatus="loop">
 												<c:if test="${marca.cpMarcador.idMarcador ne '56' && marca.cpMarcador.idMarcador ne '57' && marca.cpMarcador.idMarcador ne '58' && siga_cliente eq 'GOVSP'}">
-												    	${marca.cpMarcador.descrMarcador}
+														${marca.cpMarcador.descrMarcador}
 														<c:if test="${marca.dtIniMarca gt now}">
 															a partir de ${marca.dtIniMarcaDDMMYYYY}
 														</c:if>
 														<c:if test="${not empty marca.dtFimMarca}"> 
 															até ${marca.dtFimMarcaDDMMYYYY}
 														</c:if>
+														<c:if test="${marca.cpMarcador.demandaJudicial}">
+															até ${docVO.dtLimiteDemandaJudicial}
+														</c:if>
 														<c:if test="${not empty marca.dpLotacaoIni}">
 															[${marca.dpLotacaoIni.lotacaoAtual.sigla}
-															    <c:if test="${not empty marca.dpPessoaIni}">
-																    &nbsp;${marca.dpPessoaIni.pessoaAtual.sigla}
-															    </c:if>
+															<c:if test="${not empty marca.dpPessoaIni}">
+																&nbsp;${marca.dpPessoaIni.pessoaAtual.sigla}
+															</c:if>
 															]
 														</c:if>
 									
@@ -1246,7 +1248,7 @@
 		class="gt-btn-large gt-btn-left">Voltar</a>
 </div>
 
-<c:if test="${f:resource('isWorkflowEnabled')}">
+<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;WF:Módulo de Workflow')}">
 	<script type="text/javascript">
 		<c:if test="${ (docVO.tipoFormaDocumento == 'processo_administrativo')}">
 			var url = "/sigawf/app/doc?sigla=${docVO.mob.sigla}&ts=1${currentTimeMillis}";
@@ -1292,8 +1294,7 @@
 </c:if>
 </div>
 </div>
-	
-<c:if test="${siga_cliente eq 'GOVSP'}">
+
 	<c:if test="${docVO.doc.isComposto()}">
 		<script>
 			$(document).ready(function() {
@@ -1307,74 +1308,88 @@
 				}							
 			});	
 		</script>
+	</c:if>
+	<c:if test="${mob.isJuntado()}">	
+		<siga-mensagem:alerta-modal idModal="modalDeAvisoTornarDocumentoSemEfeito" descricaoBotaoQueFechaModal="Ok" 
+			exibirBotaoDeAcao="false" texto="Desentranhar documento antes de cancelar">
+		</siga-mensagem:alerta-modal>
 		
-		<div class="modal fade" id="modalDeConfirmacaoArqCorrente" tabindex="-1" role="dialog" aria-labelledby="confirmacao" aria-hidden="true">
-		  <div class="modal-dialog text-center" role="document">
-		    <div class="modal-content">
-		      <div class="modal-header">
-		        <div class="col-12" style="margin: 0 auto;">
-		        	<i class="fas fa-exclamation-circle" style="font-size: 5em; color: #ffc107; margin: 15px 0;"></i>
-		        	<h5 class="modal-title" id="confirmacao" style="font-size: 2em; font-weight: bold">Atenção</h5>
-		        </div>
-		        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-left: -40px">
-		          <span aria-hidden="true">&times;</span>
-		        </button>
-		      </div>
-		      <div class="modal-body text-center" style="padding-top: 0;">
-		        Verifique se há necessidade de incluir o Termo de Encerramento para este documento. Deseja continuar com o arquivamento?
-		      </div>
-		      <div class="modal-footer text-center" style="margin: 0 auto;">
-		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>		        
-		        <a href="#" class="btn btn-primary btn-confirmacao-arq-corrente" role="button" aria-pressed="true">Sim</a>
-		      </div>
-		    </div>
-		  </div>
-		</div>
+		<script>
+			$(function() {
+				var btnCancelar = $('.siga-btn-tornar-documento-sem-efeito');
+				
+				if (btnCancelar) {										
+					btnCancelar.attr('data-toggle', 'modal').attr('data-target', '#modalDeAvisoTornarDocumentoSemEfeito');					
+				}							
+			});	
+		</script>	
 	</c:if>
 	
-	<script>
-		var containerArquivosAuxiliares = $('.container-files');
-		var containerConfimarcaoArquivoAuxiliarACancelar = $('.container-confirmacao-cancelar-arquivo');
-		var descricaoArquivoAuxiliarACancelar = $('.descricao-arquivo-confirmacao');
-		
-		$(document).ready(function() {																				
-			atualizarDescricaoArquivosAuxiliares();																												
-		});
-		
-		function atualizarDescricaoArquivosAuxiliares() {
-			$('.files').find('.btn.btn-sm.btn-light').each(function(index) {
-				var arquivo = $(this);
-				var btnCancelar = arquivo.parent().find('.btn.btn-sm.btn-outline-danger.btn-cancel');																					
-															
-				arquivo.attr('title', 'Clique para baixar o arquivo: ' + this.text);
+	<div class="modal fade" id="modalDeConfirmacaoArqCorrente" tabindex="-1" role="dialog" aria-labelledby="confirmacao" aria-hidden="true">
+	  <div class="modal-dialog text-center" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <div class="col-12" style="margin: 0 auto;">
+	        	<i class="fas fa-exclamation-circle" style="font-size: 5em; color: #ffc107; margin: 15px 0;"></i>
+	        	<h5 class="modal-title" id="confirmacao" style="font-size: 2em; font-weight: bold">Atenção</h5>
+	        </div>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-left: -40px">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body text-center" style="padding-top: 0;">
+	        Verifique se há necessidade de incluir o Termo de Encerramento para este documento. Deseja continuar com o arquivamento?
+	      </div>
+	      <div class="modal-footer text-center" style="margin: 0 auto;">
+	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>		        
+	        <a href="#" class="btn btn-primary btn-confirmacao-arq-corrente" role="button" aria-pressed="true">Sim</a>
+	      </div>
+	    </div>
+	  </div>
+	</div>	
+
+<script>
+	var containerArquivosAuxiliares = $('.container-files');
+	var containerConfimarcaoArquivoAuxiliarACancelar = $('.container-confirmacao-cancelar-arquivo');
+	var descricaoArquivoAuxiliarACancelar = $('.descricao-arquivo-confirmacao');
+	
+	$(function() {																				
+		atualizarDescricaoArquivosAuxiliares();																												
+	});
+	
+	function atualizarDescricaoArquivosAuxiliares() {
+		$('.files').find('.btn.btn-sm.btn-light').each(function(index) {
+			var arquivo = $(this);
+			var btnCancelar = arquivo.parent().find('.btn.btn-sm.btn-outline-danger.btn-cancel');																					
 														
-				if (arquivo.text().length > 150) {
-					arquivo.text(this.text.substring(0, 150) + '...');
-				}																					
-				
-				if (btnCancelar) {
-					btnCancelar.attr('title', 'Cancelar arquivo: ' + this.text).attr('data-description', this.text);
-				}																							
-			});		
-		}
-		
-		function confirmarExclusaoArquivoAuxiliar(idMov, sigla, botao) {										
-			var btnCancela = $('.btn-cancelar-arquivo-nao');
-			var btnConfirma = $('.btn-cancelar-arquivo-sim');			
+			arquivo.attr('title', 'Clique para baixar o arquivo: ' + this.text);
+													
+			if (arquivo.text().length > 150) {
+				arquivo.text(this.text.substring(0, 150) + '...');
+			}																					
 			
-			containerConfimarcaoArquivoAuxiliarACancelar.css({'visibility':'visible', 'opacity':'1'});																				
-			containerArquivosAuxiliares.css({'visibility':'hidden', 'opacity':'0'});												
-			
-			btnCancela.attr('onclick', 'cancelarExclusaoArquivoAuxiliar()');										
-			btnConfirma.attr('onclick', 'excluirArqAuxiliar(' + idMov + ', \'' + sigla + '\')');
-						
-			descricaoArquivoAuxiliarACancelar.text($(botao).attr('data-description'));										
-		}
+			if (btnCancelar) {
+				btnCancelar.attr('title', 'Cancelar arquivo: ' + this.text).attr('data-description', this.text);
+			}																							
+		});		
+	}
+	
+	function confirmarExclusaoArquivoAuxiliar(idMov, sigla, botao) {										
+		var btnCancela = $('.btn-cancelar-arquivo-nao');
+		var btnConfirma = $('.btn-cancelar-arquivo-sim');			
 		
-		function cancelarExclusaoArquivoAuxiliar() {
-			containerConfimarcaoArquivoAuxiliarACancelar.css({'visibility':'hidden', 'opacity':'0'});
-			containerArquivosAuxiliares.css({'visibility':'visible', 'opacity':'1'});				
-		}																	
-	</script>
-</c:if>	
+		containerConfimarcaoArquivoAuxiliarACancelar.css({'visibility':'visible', 'opacity':'1'});																				
+		containerArquivosAuxiliares.css({'visibility':'hidden', 'opacity':'0'});												
+		
+		btnCancela.attr('onclick', 'cancelarExclusaoArquivoAuxiliar()');										
+		btnConfirma.attr('onclick', 'excluirArqAuxiliar(' + idMov + ', \'' + sigla + '\')');
+					
+		descricaoArquivoAuxiliarACancelar.text($(botao).attr('data-description'));										
+	}
+	
+	function cancelarExclusaoArquivoAuxiliar() {
+		containerConfimarcaoArquivoAuxiliarACancelar.css({'visibility':'hidden', 'opacity':'0'});
+		containerArquivosAuxiliares.css({'visibility':'visible', 'opacity':'1'});				
+	}																	
+</script>
 </siga:pagina>

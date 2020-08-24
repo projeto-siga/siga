@@ -59,6 +59,7 @@ import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
 import br.gov.jfrj.siga.cp.CpTipoPapel;
+import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
@@ -197,9 +198,14 @@ public class CpDao extends ModeloDao {
 	
 	public CpServico acrescentarServico(CpServico srv) {
 		synchronized (CpDao.class) {
-			iniciarTransacao();
-			CpServico srvGravado = gravar(srv);
-			commitTransacao();
+			CpServico srvGravado = null;
+			try {
+				em().getTransaction().begin();
+				srvGravado = gravar(srv);
+				em().getTransaction().commit();
+			} catch (Exception e) {
+				em().getTransaction().rollback();
+			}
 			cacheServicos.put(srv.getSigla(), srv);
 			return srvGravado;
 		}
@@ -1325,12 +1331,13 @@ public class CpDao extends ModeloDao {
 			}
 
 			query.setParameter("nome", flt.getNome().toUpperCase().replace(' ', '%'));
+			query.setParameter("identidade", flt.getIdentidade());
 
 			if(flt.getEmail() != null) {
 				query.setParameter("email", flt.getEmail().toUpperCase().replace(' ', '%'));
 			} else {
 				query.setParameter("email", null);
-			}
+			}						
 
 			if (!flt.isBuscarFechadas())
 				query.setParameter("situacaoFuncionalPessoa", flt.getSituacaoFuncionalPessoa());
@@ -1376,6 +1383,7 @@ public class CpDao extends ModeloDao {
 			query = em().createNamedQuery("consultarPessoaComOrgaoFuncaoCargo");
 
 			query.setParameter("nome", pes.getNomePessoa().toUpperCase().replace(' ', '%'));
+			query.setParameter("identidade", pes.getIdentidade());
 
 			if (pes.getEmailPessoa() != null) {
 				query.setParameter("email", pes.getEmailPessoa().toUpperCase().replace(' ', '%'));
@@ -1444,6 +1452,7 @@ public class CpDao extends ModeloDao {
 				query = em().createNamedQuery("consultarQuantidadeDpPessoaInclusiveFechadas");
 
 			query.setParameter("nome", flt.getNome().toUpperCase().replace(' ', '%'));
+			query.setParameter("identidade", flt.getIdentidade());
 
 			if (!flt.isBuscarFechadas())
 				query.setParameter("situacaoFuncionalPessoa", flt.getSituacaoFuncionalPessoa());
@@ -1597,9 +1606,11 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("cpfZero", 0L);
 			qry.setParameter("sfp1", "1");
 			qry.setParameter("sfp2", "2");
+			qry.setParameter("sfp4", "4");			
 			qry.setParameter("sfp12", "12");
 			qry.setParameter("sfp22", "22");
 			qry.setParameter("sfp31", "31");
+			qry.setParameter("sfp36", "36");
 
 			// Cache was disabled because it would interfere with the
 			// "change password" action.
@@ -1629,9 +1640,11 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("cpfZero", Long.valueOf(0));
 			qry.setParameter("sfp1", "1");
 			qry.setParameter("sfp2", "2");
+			qry.setParameter("sfp4", "4");			
 			qry.setParameter("sfp12", "12");
 			qry.setParameter("sfp22", "22");
 			qry.setParameter("sfp31", "31");
+			qry.setParameter("sfp36", "36");
 
 			qry.setHint("org.hibernate.cacheable", true);
 			qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SECONDS);
@@ -1657,9 +1670,11 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("cpfZero", Long.valueOf(0));
 			qry.setParameter("sfp1", "1");
 			qry.setParameter("sfp2", "2");
+			qry.setParameter("sfp4", "4");			
 			qry.setParameter("sfp12", "12");
 			qry.setParameter("sfp22", "22");
 			qry.setParameter("sfp31", "31");
+			qry.setParameter("sfp36", "36");
 
 			qry.setHint("org.hibernate.cacheable", true);
 			qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SECONDS);
@@ -1861,18 +1876,19 @@ public class CpDao extends ModeloDao {
 		// kpf: com o cache true, as configuracoes sao exibidas de forma forma
 		// errada apos a primeira
 
-		// query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
+		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
 		return query.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> List<T> listarAtivos(Class<T> clazz, String dtFim,
+	public <T> List<T> listarAtivos(Class<T> clazz, String campoDtFim,
 			long idOrgaoUsu) {
 		final CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
-		CriteriaQuery<T> crit = criteriaBuilder.createQuery(clazz);
-		Root<T> root = crit.from(clazz);
-		crit.where(cb().isNull(root.get("hisDtFim")), cb().equal(root.get("orgaoUsuario.idOrgaoUsu"), idOrgaoUsu));
-		return em().createQuery(crit).getResultList();
+		CriteriaQuery<T> q = criteriaBuilder.createQuery(clazz);
+		Root<T> c = q.from(clazz);
+		Join<T, CpOrgaoUsuario> joinOrgao = c.join("orgaoUsuario", JoinType.INNER);
+		q.where(cb().isNull(c.get(campoDtFim)), cb().equal(joinOrgao.get("idOrgaoUsu"), idOrgaoUsu));
+		return em().createQuery(q).getResultList();
 	}
 
 	public <T> List<T> listarAtivos(Class<T> clazz, String orderBy) {
@@ -1924,7 +1940,7 @@ public class CpDao extends ModeloDao {
 			return gravarComHistorico(oNovo, identidadeCadastrante);
 		}
 
-		if (oNovo.semelhante(oAntigo, 0)) {
+		if (!(oNovo instanceof CpIdentidade) && (oNovo.semelhante(oAntigo, 0))) {
 			return oAntigo;
 		}
 
@@ -2138,8 +2154,10 @@ public class CpDao extends ModeloDao {
 		whereList.add(cb().equal(c.get("orgaoUsuario"), orgaoUsuario));
 		whereList.add(cb().equal(c.get("siglaLotacao"), siglaLotacao));
 		q.where(whereList.toArray(new Predicate[2]));
-		q.select(c);
-		return em().createQuery(q).getSingleResult();
+		q.select(c);		
+		return em().createQuery(q).getResultList().stream()
+				.findFirst()
+				.orElse(null);
 	}
 	
 	public CpOrgaoUsuario consultarOrgaoUsuarioPorId(Long idOrgaoUsu) {
@@ -2388,6 +2406,7 @@ public class CpDao extends ModeloDao {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public DpPessoa obterPessoaAtual(final DpPessoa pessoa) {
 		try {
 
@@ -2395,8 +2414,18 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("idPessoaIni", pessoa.getIdPessoaIni());
 			qry.setHint("org.hibernate.cacheable", true); 
 			qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
-			final DpPessoa pes = (DpPessoa) qry.getSingleResult();
-			return pes;
+			
+			
+			//final DpPessoa pes = (DpPessoa) qry.getSingleResult();
+			//return pes;
+			
+			List<DpPessoa> result = qry.getResultList();			
+			if (result == null || result.size() == 0)
+				return null;
+			return result.get(0);
+			
+			
+			
 		} catch (final IllegalArgumentException e) {
 			throw e;
 
@@ -2567,4 +2596,51 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
+	
+	public CpToken obterCpTokenPorTipoToken(final Long idTpToken, final String token) {
+		
+		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
+		CriteriaQuery<CpToken> criteriaQuery = criteriaBuilder.createQuery(CpToken.class);	
+		Root<CpToken> cpTokenRoot = criteriaQuery.from(CpToken.class);
+
+		Predicate predicateAnd;
+		Predicate predicateEqualTipo = criteriaBuilder.equal(cpTokenRoot.get("idTpToken"), idTpToken);
+		Predicate predicateEqualToken = criteriaBuilder.equal(cpTokenRoot.get("token"), token);
+		
+		predicateAnd = criteriaBuilder.and(predicateEqualTipo,predicateEqualToken);
+		criteriaQuery.where(predicateAnd);
+		
+		List<CpToken> l = em().createQuery(criteriaQuery).getResultList(); 
+		if(l.size() > 0) {
+			return l.get(0);
+		} else {
+			return null;
+		}			
+	}
+	
+	public CpToken obterCpTokenPorTipoIdRef(final Long idTpToken, final Long idRef) {
+		
+		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
+		CriteriaQuery<CpToken> criteriaQuery = criteriaBuilder.createQuery(CpToken.class);	
+		Root<CpToken> cpTokenRoot = criteriaQuery.from(CpToken.class);
+
+		Predicate predicateAnd;
+		Predicate predicateEqualTipo = criteriaBuilder.equal(cpTokenRoot.get("idTpToken"), idTpToken);
+		Predicate predicateEqualToken = criteriaBuilder.equal(cpTokenRoot.get("idRef"), idRef);
+		Predicate predicateNullDtExp = criteriaBuilder.isNull(cpTokenRoot.get("dtExp"));
+		
+		predicateAnd = criteriaBuilder.and(predicateEqualTipo,predicateEqualToken,predicateNullDtExp);
+		criteriaQuery.where(predicateAnd);
+		
+		List<CpToken> l = em().createQuery(criteriaQuery).getResultList(); 
+		if(l.size() > 0) {
+			return l.get(0);
+		} else {
+			return null;
+		}			
+	}
+	
+	
+	
+
 }

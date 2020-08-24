@@ -11,6 +11,8 @@ import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.JWTVerifyException;
 
+import br.gov.jfrj.siga.base.Prop;
+
 /**
  * Provedor de tokens JWT Propriedades idp.jwt.token.ttl - Tempo de vida padrão
  * do token idp.jwt.modulo.pwd.[nome-do-modulo] - senha do módulo para o qual
@@ -25,7 +27,6 @@ public class SigaJwtProvider {
 	static final String PROVIDER_ISSUER = "sigaidp";
 	private long defaultTTLToken = 3600; // default 1 hora
 	private SigaJwtOptions options;
-	private static final String SIGA_JWT_AUDIENCE = System.getProperty("idp.jwt.modulo.cookie.domain");
 
 	private SigaJwtProvider(SigaJwtOptions options)
 			throws SigaJwtProviderException {
@@ -67,8 +68,9 @@ public class SigaJwtProvider {
 		claims.put("iss", PROVIDER_ISSUER);
 		claims.put("mod", options.getModulo());
 		
-		if ("GOVSP".equals(System.getProperty("siga.local")) && SIGA_JWT_AUDIENCE != null){
-			claims.put("aud", SIGA_JWT_AUDIENCE);
+		String cookieDomain = Prop.get("/siga.jwt.cookie.domain");
+		if (Prop.isGovSP() && cookieDomain != null){
+			claims.put("aud", cookieDomain);
 		}
 		
 
@@ -117,8 +119,9 @@ public class SigaJwtProvider {
 			IllegalStateException, SignatureException, IOException,
 			JWTVerifyException {
 		final JWTVerifier verifier;
-		if ("GOVSP".equals(System.getProperty("siga.local")) && SIGA_JWT_AUDIENCE != null){
-			verifier = new JWTVerifier(options.getPassword(), SIGA_JWT_AUDIENCE);
+		String cookieDomain = Prop.get("/siga.jwt.cookie.domain");
+		if (Prop.isGovSP() && cookieDomain != null){
+			verifier = new JWTVerifier(options.getPassword(), cookieDomain);
 		} else {
 			verifier = new JWTVerifier(options.getPassword());
 		}

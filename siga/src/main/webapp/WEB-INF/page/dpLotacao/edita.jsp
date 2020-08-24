@@ -11,14 +11,14 @@
 		var id = document.getElementsByName('id')[0].value;
 		var idLocalidade = document.getElementsByName('idLocalidade')[0].value;	
 		if (nmLotacao==null || nmLotacao=="") {			
-			alert("Preencha o nome da Lotação.");
+			sigaModal.alerta("Preencha o nome da Lotação");
 			document.getElementById('nmLotacao').focus();		
 		}else {
 			if(siglaLotacao==null || siglaLotacao=="") {
-				alert("Preencha a sigla da Lotação.");
+				sigaModal.alerta("Preencha a sigla da Lotação");
 			} else {
 				if(idLocalidade == 0) {
-					alert("Preencha a localidade da Lotação.");	
+					sigaModal.alerta("Preencha a localidade da Lotação");	
 				} else {
 					frm.submit();
 				}
@@ -38,6 +38,7 @@
 	function validarSigla(campo) {
 		campo.value = campo.value.replace(/[^a-zA-ZçÇ0-9/,-]/g,'');
 	}
+
 </script>
 <siga:pagina titulo="Cadastro de Lota&ccedil;&atilde;o">
 <link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
@@ -167,7 +168,7 @@
 				</div>
 			</form>
 			</div>
-		</div>
+		</div>		
 	</div>
 <script type="text/javascript">
 	function carregarRelacionados(id) {

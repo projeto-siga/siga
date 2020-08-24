@@ -7,9 +7,9 @@ import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
 
+import br.gov.jfrj.siga.base.Prop;
+
 /**
- * 
- * @author 03648469681
  * 
  * Carregador de parametros, Utilizar o Objeto parametersOIDC
  * 
@@ -19,21 +19,28 @@ public class LoadProperties {
 	protected static final Logger log = Logger.getLogger(LoadProperties.class.getName());
 	protected Properties adaptorProperties;
 
+
 	private static OIDCParameters parametersOIDC;
 
-	static final String DEFAULT_CONFIG_FILE = "client.properties";
-
-	static final String iss = "iss";
-	static final String jwksUri = "jwks_uri";
-	static final String authzUri = "authz_uri";
-	static final String tokenUri = "token_uri";
-	static final String userInfoUri = "userinfo_uri";
-	static final String clientId = "client_id";
-	static final String clientSecret = "client_secret";
-	static final String redirectUri = "redirect_uri";
+	/*   Formato dominio ex. https://homolog.login.sp.gov.br   */
+	static final String sso_dominio = "/siga.integracao.sso.dominio";
+	
+	static final String iss = "/sts";	
+	static final String jwksUri = "/sts/.well-known/openid-configuration/jwks";
+	static final String authzUri = "/sts/connect/authorize";
+	static final String tokenUri = "/sts/connect/token";
+	static final String userInfoUri = "/sts/connect/userinfo";
+	
+	static final String clientId = "/siga.integracao.sso.cliente.id";
+	static final String clientSecret = "/siga.integracao.sso.client.secret";
+	static final String redirectUri = "/siga.integracao.sso.redirect.uri";
+	
 	static final String tokenEndpointAuthMethod = "token_endpoint_auth_method";
 	static final String tokenEndpointAuthSigningAlg = "token_endpoint_auth_signing_alg";
 
+	//siga/WEB-INF/properties/client.properties
+	static final String DEFAULT_CONFIG_FILE = "client.properties";
+	
 	static final String responseType = "response_type";
 	static final String scopeOpenId = "scope_openid";
 	static final String scopeEmail = "scope_email";
@@ -67,20 +74,36 @@ public class LoadProperties {
 		log.info("# Propriedades de configuração inicial do cliente.");
 		
 		parametersOIDC = new OIDCParameters();
-
-		loadArquivo();
+		
+		
+		loadParameters();
+		
 	}
 
-	public void loadArquivo() {
-		parametersOIDC.setIss(adaptorProperties.getProperty(iss).trim());
-		parametersOIDC.setJwksUri(adaptorProperties.getProperty(jwksUri).trim());
-		parametersOIDC.setAuthzUri(adaptorProperties.getProperty(authzUri).trim());
-		parametersOIDC.setTokenUri(adaptorProperties.getProperty(tokenUri).trim());
-		parametersOIDC.setUserInfoUri(adaptorProperties.getProperty(userInfoUri).trim());
+	/**
+	 * Loader Parameters File
+	 * client.properties and
+	 * StandaAlone.xml
+	 */
+	private void loadParameters() {
+		/*
+		 * PARAMETERS 
+		 * standalone.xml
+		 */
+		parametersOIDC.setIss(Prop.get(sso_dominio) + iss);
+		parametersOIDC.setJwksUri(Prop.get(sso_dominio)  + jwksUri);		
+		parametersOIDC.setAuthzUri(Prop.get(sso_dominio)  + authzUri); 
+		parametersOIDC.setTokenUri(Prop.get(sso_dominio ) + tokenUri);
+		parametersOIDC.setUserInfoUri(Prop.get(sso_dominio)  + userInfoUri);
 
-		parametersOIDC.setClientId(adaptorProperties.getProperty(clientId).trim());
-		parametersOIDC.setClientSecret(adaptorProperties.getProperty(clientSecret).trim());
-		parametersOIDC.setRedirectUri(adaptorProperties.getProperty(redirectUri).trim());
+		parametersOIDC.setClientId(Prop.get(clientId));
+		parametersOIDC.setClientSecret(Prop.get(clientSecret));
+		parametersOIDC.setRedirectUri(Prop.get(redirectUri));
+		
+		/*
+		 * PARAMETERS 
+		 * client.properties
+		 */
 		parametersOIDC.setTokenEndpointAuthMethod(adaptorProperties.getProperty(tokenEndpointAuthMethod).trim());
 		parametersOIDC.setTokenEndpointAuthSigningAlg(adaptorProperties.getProperty(tokenEndpointAuthSigningAlg).trim());
 

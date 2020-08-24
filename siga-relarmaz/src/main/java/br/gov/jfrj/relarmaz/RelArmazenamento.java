@@ -21,7 +21,7 @@ import javax.persistence.Persistence;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
@@ -107,7 +107,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 			List<String> d = new ArrayList<String>();
 			
-			String qtdBytesPagina = SigaBaseProperties.getString("relarmazenamento.qtd.bytes.pagina");
+			String qtdBytesPagina = Prop.get("sigaex.relarmaz.qtd.bytes.pagina");
 			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
 			boolean detalhar = false;

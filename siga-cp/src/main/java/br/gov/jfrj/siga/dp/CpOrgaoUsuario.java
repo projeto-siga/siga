@@ -25,10 +25,14 @@
 package br.gov.jfrj.siga.dp;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Cacheable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.NamedQuery;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -37,10 +41,12 @@ import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Immutable;
 
 import br.gov.jfrj.siga.cp.CpConvertableEntity;
+import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
+import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
@@ -60,6 +66,27 @@ public class CpOrgaoUsuario extends AbstractCpOrgaoUsuario implements
 
 	@Formula(value = "REMOVE_ACENTO(NM_ORGAO_USU)")
 	private String nmOrgaoAI;
+
+	@Column(name = "HIS_DT_INI")
+	@Desconsiderar
+	private Date hisDtIni;
+
+	@Column(name = "HIS_DT_FIM")
+	@Desconsiderar
+	private Date hisDtFim;
+
+	@Desconsiderar
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "HIS_IDC_INI")
+	private CpIdentidade hisIdcIni;
+
+	@Desconsiderar
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "HIS_IDC_FIM")
+	private CpIdentidade hisIdcFim;
+
+	@Column(name = "HIS_ATIVO")
+	private Integer hisAtivo;
 
 	public CpOrgaoUsuario() {
 		super();
@@ -94,7 +121,7 @@ public class CpOrgaoUsuario extends AbstractCpOrgaoUsuario implements
 	public Long getId() {
 		return getIdOrgaoUsu();
 	}
-
+	
 	public String getSigla() {
 		return getSiglaOrgaoUsu();
 	}
@@ -117,6 +144,26 @@ public class CpOrgaoUsuario extends AbstractCpOrgaoUsuario implements
 
 	public void setNmOrgaoAI(String nmOrgaoAI) {
 		this.nmOrgaoAI = nmOrgaoAI;
+	}
+
+	public Date getHisDtIni() {
+		return hisDtIni;
+	}
+
+	public Date getHisDtFim() {
+		return hisDtFim;
+	}
+
+	public CpIdentidade getHisIdcIni() {
+		return hisIdcIni;
+	}
+
+	public CpIdentidade getHisIdcFim() {
+		return hisIdcFim;
+	}
+
+	public Integer getHisAtivo() {
+		return hisAtivo;
 	}
 
 	public boolean equivale(Object other) {

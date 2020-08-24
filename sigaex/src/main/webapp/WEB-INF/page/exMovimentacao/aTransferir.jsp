@@ -176,8 +176,8 @@ $(function(){
 				<div class="row">
 					<div class="col-sm-2">
 						<div class="form-group">
-							<a accesskey="o" id="button_ok" onclick="javascript:submeter();" class="btn btn-primary"><u>O</u>k</a>
-							<button type="button"  onclick="javascript:history.back();" class="btn btn-primary">Cancela</button>
+							<a accesskey="o" id="button_ok" onclick="javascript:submeter();" class="btn btn-primary"><u>O</u>k</a>																			
+							<a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}" class="btn btn-primary">Cancela</a>
 						</div>
 					</div>
 				</div>				

@@ -27,7 +27,7 @@ Documento.ReordenarDoc = (function() {
 	function onInicializar() {		
 		this.btnOrdenar.css({'display': 'none'});		
 		this.tituloTabelaDocumentos.css({'display': 'none'});
-		this.divMenuOrdenacao.css({'max-height':'111px', 'opacity':'1', 'left':'0'});			
+		this.divMenuOrdenacao.css({'max-height':'152px', 'opacity':'1', 'left':'0'});			
 		idDocsInicial = montarIdDocs(this.tabelaDosDocumentos);	
 		tabelaOriginal = this.tabelaDosDocumentos.html();		
 		this.tabelaDosDocumentos.addClass('tabela-ordenavel');						
@@ -46,7 +46,7 @@ Documento.ReordenarDoc = (function() {
 	
 	function onCancelar() {
 		this.btnOrdenar.css({'display': 'inline-block'});
-		this.tituloTabelaDocumentos.css({'display': 'flex'});
+		this.tituloTabelaDocumentos.css({'display': 'block'});
 		this.divMenuOrdenacao.css({'max-height':'0', 'opacity':'0','left':'-999px'});		
 		this.tabelaDosDocumentos.removeClass('tabela-ordenavel');
 		this.tabelaDosDocumentos.html(tabelaOriginal);

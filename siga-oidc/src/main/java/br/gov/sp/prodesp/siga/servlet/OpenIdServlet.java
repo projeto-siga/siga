@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
@@ -42,8 +41,6 @@ import br.gov.sp.prodesp.siga.client.LoadProperties;
 import br.gov.sp.prodesp.siga.client.PendingAuthenticationRequest;
 
 /**
- * 
- * @author 03648469681
  * OpenID Connect client
  * Provider LoginSP
  * Fluxo de autenticação (hybrid flow).
@@ -73,17 +70,17 @@ public class OpenIdServlet extends javax.servlet.http.HttpServlet {
     			
 			if (authRequest1 != null) {
 				String uriString = authRequest1.toURI().toString();
-				System.out.println("LOGIN SP: "  + uriString);
+				log.debug("LOGIN SP: "  + uriString);
 		        redirectToLogin(req, resp, uriString);
 			}    			
 		}catch(Exception e){
-			
+			log.error("Log OpenIdServlet: " + e.getMessage());
 		}
 	  
 	}
 
 	private void redirectToLogin(HttpServletRequest request, HttpServletResponse response, String redirectTo) throws IOException {
-		System.out.println("Redirect: "  + redirectTo);
+		log.debug("Redirect: "  + redirectTo);
         response.sendRedirect(redirectTo);
     }
 	
@@ -205,7 +202,7 @@ public class OpenIdServlet extends javax.servlet.http.HttpServlet {
 			
 			//String responseModeString = oidcParameter.getParametersOIDC().getResponseMode();
 			
-			String responseModeString = null;
+			//String responseModeString = null;
 
 			ResponseMode responseMode = null;
 			
@@ -237,7 +234,7 @@ public class OpenIdServlet extends javax.servlet.http.HttpServlet {
 			return authRequest;
 
 		} catch (Exception e) {
-			log.info(e.getMessage());
+			log.error(e.getMessage());
 			return null;
 		}
 	}

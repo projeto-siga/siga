@@ -4,9 +4,9 @@ import br.gov.jfrj.itextpdf.ConversorHtml;
 import br.gov.jfrj.itextpdf.FOP;
 import br.gov.jfrj.itextpdf.Nheengatu;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
 
 public class ConversorHTMLFactory extends AbstractConversorHTMLFactory {
@@ -63,7 +63,7 @@ public class ConversorHTMLFactory extends AbstractConversorHTMLFactory {
 	public ConversorHtml getExtensaoConversorHTML() throws AplicacaoException {
 		try {
 			return (ConversorHtml) Class.forName(
-					SigaExProperties.getExtensaoConversorHTML()).newInstance();
+					Prop.get("conversor.html.ext")).newInstance();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new AplicacaoException("Não foi possível carregar a extensão do conversor HTML para PDF: " + e.getMessage());

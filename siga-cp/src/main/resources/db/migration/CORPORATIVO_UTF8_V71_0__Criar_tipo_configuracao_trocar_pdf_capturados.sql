@@ -1,0 +1,1 @@
+insert into CORPORATIVO.CP_TIPO_CONFIGURACAO values(48, 'Trocar pdf de capturados', 1);

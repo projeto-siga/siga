@@ -34,6 +34,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -50,7 +51,7 @@ public class CpLocalidade extends AbstractCpLocalidade implements Serializable,
 	@SuppressWarnings("unchecked")
 	private static List<String> obterMunicipios() {
 		try {
-			return Cp.getInstance().getProp().obterMunicipios();
+			return Prop.getList("/siga.municipios");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ArrayList();

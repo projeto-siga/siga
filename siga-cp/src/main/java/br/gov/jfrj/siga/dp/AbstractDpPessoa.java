@@ -54,9 +54,9 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 		@NamedQuery(name = "consultarPorIdInicialDpPessoa", query = "select pes from DpPessoa pes where pes.idPessoaIni = :idPessoaIni and pes.dataFimPessoa = null"),
 		@NamedQuery(name = "consultarPorSiglaDpPessoa", query = "select pes from DpPessoa pes where pes.matricula = :matricula and pes.sesbPessoa = :sesb and pes.dataFimPessoa = null"),
 		@NamedQuery(name = "consultarPessoaAtualPelaInicial", query = "from DpPessoa pes "
-				+ "		where pes.dataInicioPessoa = "
-				+ "		(select max(p.dataInicioPessoa) from DpPessoa p where p.idPessoaIni = :idPessoaIni)"
-				+ "		 and pes.idPessoaIni = :idPessoaIni"),
+				+ "		where pes.idPessoaIni = :idPessoaIni "
+				+ "		and pes.dataInicioPessoa = (select max(p.dataInicioPessoa) from DpPessoa p where p.idPessoaIni = :idPessoaIni)"
+				+ "		order by idPessoa desc"),
 		@NamedQuery(name = "consultarPorIdInicialDpPessoaInclusiveFechadas", query = "select pes from DpPessoa pes where pes.idPessoaIni = :idPessoaIni"),
 		@NamedQuery(name = "consultarPorCpf", query = "from DpPessoa pes where pes.cpfPessoa = :cpfPessoa and pes.dataFimPessoa = null"),	
 		@NamedQuery(name = "consultarPorCpfAtivoInativo", query = "from DpPessoa pes where pes.cpfPessoa = :cpfPessoa and pes.idPessoa in"
@@ -81,7 +81,8 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ " and (pes.id <> :id or :id = 0)"
 				+ " and (:cargo = null or :cargo = 0L or pes.cargo.idCargo = :cargo) "
 		      	+ " and (:funcao = null or :funcao = 0L or pes.funcaoConfianca.idFuncao = :funcao) "
-		      	+ " and (:email = null or (upper(pes.emailPessoa) like upper('%' || :email || '%')) ) " 
+		      	+ " and (:email = null or (upper(pes.emailPessoa) like upper('%' || :email || '%')) ) "
+		      	+ " and (:identidade = null or (upper(pes.identidade) like upper('%' || :identidade || '%')) ) "
 				+ "	and (:situacaoFuncionalPessoa = null or pes.situacaoFuncionalPessoa = :situacaoFuncionalPessoa)"
 				+ "   	and pes.dataFimPessoa = null"
 				+ "   	order by pes.nomePessoa"),
@@ -121,6 +122,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ " and (:cpf = null or :cpf = 0L or pes.cpfPessoa = :cpf) "
 				+ " and (:email = null or (upper(pes.emailPessoa) like upper('%' || :email || '%')) ) "
+				+ " and (:identidade = null or (upper(pes.identidade) like upper('%' || :identidade || '%')) ) "
 				+ "	and (:lotacao = null or :lotacao = 0L or pes.lotacao.idLotacao = :lotacao)"
 				+ " and (:cargo = null or :cargo = 0L or pes.cargo.idCargo = :cargo) "
 		      	+ " and (:funcao = null or :funcao = 0L or pes.funcaoConfianca.idFuncao = :funcao) "
@@ -138,6 +140,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ " and (:cargo = null or :cargo = 0L or pes.cargo.idCargo = :cargo) "
 				+ " and (:funcao = null or :funcao = 0L or pes.funcaoConfianca.idFuncao = :funcao) "
 				+ " and (:email = null or (upper(pes.emailPessoa) like upper('%' || :email || '%')) ) " 
+				+ " and (:identidade = null or (upper(pes.identidade) like upper('%' || :identidade || '%')) ) "
 				+ "	group by pes.idPessoaIni"
 				+ ", pes.idPessoa having pes.idPessoa = (select max(a.idPessoa) from DpPessoa a where a.idPessoaIni = pes.idPessoaIni)"
 				+ ") order by pes.nomePessoaAI"),
@@ -155,6 +158,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ " and (:cargo = null or :cargo = 0L or pes.cargo.idCargo = :cargo) "
 				+ " and (:funcao = null or :funcao = 0L or pes.funcaoConfianca.idFuncao = :funcao) "
 				+ " and (:email = null or (upper(pes.emailPessoa) like upper('%' || :email || '%'))) "
+				+ " and (:identidade = null or (upper(pes.identidade) like upper('%' || :identidade || '%'))) "
 				+ "	group by pes.idPessoaIni) order by pes.nomePessoaAI"),
 		@NamedQuery(name = "consultarQuantidadeDpPessoaInclusiveFechadas", query = "select count(distinct pes.idPessoaIni)"
 				+ "		from DpPessoa pes"
@@ -163,6 +167,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ " and (:cpf = null or :cpf = 0L or pes.cpfPessoa like '%' || :cpf || '%') "
 				+ "  			and (:lotacao = null or :lotacao = 0L or pes.lotacao.idLotacao = :lotacao)"
 				+ " and (:email = null or (upper(pes.emailPessoa) like upper('%' || :email || '%')) ) "
+				+ " and (:identidade = null or (upper(pes.identidade) like upper('%' || :identidade || '%')) ) "
 				+ " and (:cargo = null or :cargo = 0L or pes.cargo.idCargo = :cargo) "
 	      		+ " and (:funcao = null or :funcao = 0L or pes.funcaoConfianca.idFuncao = :funcao) "
 	      		+ " "
@@ -185,7 +190,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "   and (u.dtCancelamentoIdentidade = null)"
 				+ "   and (u.dtExpiracaoIdentidade = null or u.dtExpiracaoIdentidade > current_date())"
 				+ "   and (pes.dataFimPessoa = null)"
-				+ "   and (pes.situacaoFuncionalPessoa in ('1', '2', '31'))")
+				+ "   and (pes.situacaoFuncionalPessoa in ('1', '2', '4', '12', '22', '31', '36'))")
 })
 public abstract class AbstractDpPessoa extends DpResponsavel implements
 		Serializable, HistoricoAuditavel {

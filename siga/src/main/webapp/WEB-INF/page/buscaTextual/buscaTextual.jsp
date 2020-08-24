@@ -28,8 +28,10 @@
 	</div>
 
 	<script src="/siga/bootstrap/js/bootstrap.min.js"></script>
-	<script src="/siga/bootstrap/js/typeahead.bundle.min.js"></script>
-		
+	<script src="/siga/bootstrap/js/typeahead.bundle.min.js"></script>	
+	<script>
+		var uriLogoSiga = '${uri_logo_siga_pequeno}';
+	</script>	
 	<script src="/siga/javascript/busca_textual_gsa.js"></script>
 	</body>
 

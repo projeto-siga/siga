@@ -52,7 +52,7 @@ import org.jboss.logging.Logger;
 
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -71,7 +71,6 @@ import br.gov.jfrj.siga.ex.util.ProcessadorReferencias;
 import br.gov.jfrj.siga.ex.util.TipoMobilComparatorInverso;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.CarimboDeTempo;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 /**
  * A class that represents a row in the 'EX_DOCUMENTO' table. This class may be
@@ -91,9 +90,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 
 	private static final Logger log = Logger.getLogger(ExDocumento.class);
 
-	@Transient
-	private byte[] cacheConteudoBlobDoc;
-	
 	@Transient
 	private List<ExMovimentacao> listaMovimentacaoPorRestricaoAcesso;	
 	
@@ -212,8 +208,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 
 			if (getOrgaoUsuario() != null) {
 				try {
-					if (getAnoEmissao() >= SigaExProperties
-							.getAnoInicioAcronimoNoCodigoDoDocumento()) {
+					if (getAnoEmissao() >= Prop.getInt("codigo.acronimo.ano.inicial")) {
 						return getOrgaoUsuario().getAcronimoOrgaoUsu() + "-"
 								+ getExFormaDocumento().getSiglaFormaDoc()
 								+ "-" + getAnoEmissao() + "/" + s;
@@ -314,8 +309,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			if (siglaOrgaoUsu != null) {
 				try {
 					Long l_anoEmissao = Long.valueOf(anoEmissao);
-					if (l_anoEmissao >= SigaExProperties
-							.getAnoInicioAcronimoNoCodigoDoDocumento()) {
+					if (l_anoEmissao >= Prop.getInt("codigo.acronimo.ano.inicial")) {
 						return acronimoOrgaoUsu + "-" + siglaFormaDoc + "-"
 								+ anoEmissao + "/" + s;
 					} else {
@@ -392,11 +386,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * blob do documento.
 	 */
 	public byte[] getConteudoBlobDoc2() {
-
-		if (cacheConteudoBlobDoc == null)
-			cacheConteudoBlobDoc = getConteudoBlobDoc();
-		return cacheConteudoBlobDoc;
-
+		return getConteudoBlobDoc();
 	}
 
 	/**
@@ -706,7 +696,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			lotaBase = getLotaCadastrante();
 
 		if (s == null && lotaBase != null) {
-			if (SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))
+			if ("GOVSP".equals(Prop.get("/siga.local"))
 						&& lotaBase.getLocalidade() != null && lotaBase.getLocalidade().getNmLocalidade() != null) {
 				s = lotaBase.getLocalidade().getNmLocalidade();	
 			} else {
@@ -1536,8 +1526,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		}				
 					
 		// Numerar as paginas
-		if (isNumeracaoUnicaAutomatica()) {
-
+		if (isNumeracaoUnicaAutomatica() || (SigaMessages.isSigaSP() && mobilPrincipalPossuiJuntadaOuDesentranhamento(mob, listaFinal))) {				
 			if (mob.getDnmNumPrimeiraPagina() == null) {
 				if (mob.isVolume() && mob.getNumSequencia() > 1) {
 					List<ExArquivoNumerado> listVolumeAnterior = mob.doc()
@@ -1610,6 +1599,32 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	
 	private void limparOrdenacaoDosDocumentos() {
 		this.setOrdenacaoDoc(null);
+	}
+	
+	public boolean mobilPrincipalPossuiJuntadaOuDesentranhamento(ExMobil mobilPrincipal, List<ExArquivoNumerado> arquivosNumerados) {
+		if (arquivosNumerados != null) {
+			ExMovimentacao movimentacao;
+			long[] tpIdMovs = { ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA,
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO,
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA };			
+			
+			for (ExArquivoNumerado arquivoNumerado : arquivosNumerados) {				
+				if (arquivoNumerado.getMobil().getId() != mobilPrincipal.getId()) {
+					
+					movimentacao = arquivoNumerado.getMobil().getMovsNaoCanceladas(tpIdMovs)
+							.stream()
+							.filter(m -> m.getExMobilRef().getId() == mobilPrincipal.getId())
+							.findAny()
+							.orElse(null);
+												
+					if (movimentacao != null) {
+						return true;
+					}
+				}										
+			}			
+		}		
+		
+		return false;
 	}
 	
 	public void removerDesentranhamentosQueNaoFazemParteDoDossie(
@@ -1901,15 +1916,15 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public String getAssinantesCompleto() {
 		String retorno = "";
 		String conferentes = Documento
-				.getAssinantesString(getAutenticacoesComToken());
+				.getAssinantesString(getAutenticacoesComToken(),getDtDoc());
 		String conferentesSenha = Documento
-				.getAssinantesString(getAutenticacoesComSenha());
+				.getAssinantesString(getAutenticacoesComSenha(),getDtDoc());
 		String assinantesToken = Documento
-				.getAssinantesString(getAssinaturasComToken());
+				.getAssinantesString(getAssinaturasComToken(),getDtDoc());
 		String assinantesSenha = Documento
-				.getAssinantesString(getAssinaturasComSenha());
+				.getAssinantesString(getAssinaturasComSenha(),getDtDoc());
 		String assinantesPorSenha = Documento
-				.getAssinantesStringComMatricula(getAssinaturasPorComSenha());
+				.getAssinantesStringComMatricula(getAssinaturasPorComSenha(),getDtDoc());
 
 		if (assinantesToken.length() > 0)
 			retorno = "Assinado digitalmente por " + assinantesToken + ".\n";
@@ -1938,7 +1953,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public String getSolicitantesDeAssinaturaCompleto() {
 		String retorno = "";
 		String revisores = Documento
-				.getAssinantesString(getSolicitantesDeAssinatura());
+				.getAssinantesString(getSolicitantesDeAssinatura(),getDtDoc());
 
 		if (revisores.length() > 0)
 			retorno = "Revisado por " + revisores + "";
@@ -2477,9 +2492,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	}
 
 	public void setConteudoBlobDoc2(byte[] blob) {
-		if (blob != null)
+		if (blob != null) {
 			setConteudoBlobDoc(blob);
-		cacheConteudoBlobDoc = blob;
+		}
 	}
 
 	public void setConteudoBlobForm(final byte[] conteudo) {
@@ -2806,7 +2821,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		
 	public boolean podeReordenar() {		
 		if (podeReordenar == null) 
-			podeReordenar = Boolean.valueOf(System.getProperty("siga.ex.documento.permitirUsuarioOrdenar"));				
+			podeReordenar = Prop.getBool("reordenacao.ativo");
+		if (podeReordenar == null)
+			return false;
 			
 		return podeReordenar;
 	}

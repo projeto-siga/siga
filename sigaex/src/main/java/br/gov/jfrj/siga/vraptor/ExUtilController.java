@@ -42,7 +42,7 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.itextpdf.ConversorHtml;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.ex.SigaExProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
@@ -158,7 +158,7 @@ public class ExUtilController extends ExController {
 	}
 
 	private void assertPassword() throws Exception {
-		String pwd = SigaExProperties.getUtilWebservicePassword();
+		String pwd = Prop.get("util.webservice.password");
 		if (pwd != null && !pwd.equals(this.request.getHeader("Authorization")))
 			throw new Exception("Falha de autenticação.");
 	}

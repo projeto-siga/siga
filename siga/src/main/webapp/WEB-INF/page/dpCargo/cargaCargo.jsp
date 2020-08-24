@@ -10,8 +10,7 @@
 		<div class="card bg-light mb-3" >
 			<div class="card-header"><h5>Carga de Planilha Cargo</h5></div>
 			<div class="card-body">
-				<form action="carga" method="POST" enctype="multipart/form-data" class="form">
-					<c:if test="${not empty msg}"><script type="text/javascript">alert('Arquivo processado com sucesso!');</script></c:if>
+				<form action="carga" method="POST" enctype="multipart/form-data" class="form">					
 					<div class="row">
 						<div class="col-sm-6">
 							<div class="form-group">
@@ -66,7 +65,9 @@
 						<div class="col-sm-6">
 							<div class="form-group">	
 								<label>Selecione o arquivo contendo a planilha com dados</label>
-								<input type="file" class="form-control-file" id="exampleFormControlFile1" name="arquivo" accept=".xlsx"/>
+								<div  class="custom-file">
+								 	<siga:uploadArquivo tamanhoMaximo='2' textoCaixa="Selecione o arquivo contendo a planilha com dados" tiposAceitos=".xlsx"/>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -78,10 +79,10 @@
 							</div>
 						</div>
 					</div>
-				</form>
+				</form>															
 			</div>
-		</div>
-	</div>
+		</div>		
+	</div>	
 	<script>
 		/**
 		 * Valida se o anexo foi selecionado ao clicar em OK
@@ -89,10 +90,11 @@
 		function validaSelecaoAnexo(form) {
 			var result = true;
 			var arquivo = form.arquivo;
-			if (arquivo == null || arquivo.value == '') {
+			if (arquivo == null || arquivo.value == '') {								
+				sigaModal.alerta('Selecione um arquivo');
 				result = false;
 			}
 			return result;
-		}
+		}		
 	</script>
 </siga:pagina>

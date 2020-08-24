@@ -3,6 +3,7 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <link rel="stylesheet" href="/siga/bootstrap/css/bootstrap.min.css"	type="text/css" media="screen, projection, print" />
 
@@ -21,8 +22,15 @@
 
 			<div class="col-sm-12">
 				<div class="text-center">
-					<img src="${pageContext.request.contextPath}/imagens/brasao_sp.png" class="rounded float-left" width="80px"/>
-					<h4><b>${f:resource('siga.cabecalho.titulo')}</b></h4>
+					<c:choose>
+					<c:when test="${f:resource('/siga.local') == 'GOVSP'}">
+						<img src="${pageContext.request.contextPath}/imagens/brasao_sp.png" class="rounded float-left" width="80px"/>
+					</c:when>
+					<c:otherwise>
+						<img src="${pageContext.request.contextPath}/imagens/brasaoColoridoTRF2.png" class="rounded float-left" width="80px"/>
+					</c:otherwise>
+					</c:choose>
+					<h4><b>${f:resource('/siga.cabecalho.titulo')}</b></h4>
 					<h5>${doc.orgaoUsuario.descricao}</h5>
 					<h5>${doc.lotacao.descricao }</h5>
 				</div>

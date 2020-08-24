@@ -1295,6 +1295,20 @@
 </div>
 </div>
 
+	<c:if test="${docVO.doc.isComposto()}">
+		<script>
+			$(document).ready(function() {
+				var btnArqCorrente = $('.siga-btn-arq-corrente');
+				
+				if (btnArqCorrente) {
+					var btnConfirmacaoArqCorrente = $('.btn-confirmacao-arq-corrente');
+					
+					btnArqCorrente.attr('data-toggle', 'modal').attr('data-target', '#modalDeConfirmacaoArqCorrente');
+					btnConfirmacaoArqCorrente.attr('href', btnArqCorrente.attr('href'));	
+				}							
+			});	
+		</script>
+	</c:if>
 	<c:if test="${mob.isJuntado()}">	
 		<siga-mensagem:alerta-modal idModal="modalDeAvisoTornarDocumentoSemEfeito" descricaoBotaoQueFechaModal="Ok" 
 			exibirBotaoDeAcao="false" texto="Desentranhar documento antes de cancelar">

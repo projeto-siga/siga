@@ -70,6 +70,8 @@ import br.gov.jfrj.siga.model.Objeto;
 		+ "	and id_marcador not in (9,8,10,11,12 ,13,16, 18, 20 , 21, 22, 24 ,26, 32, 62, 63, 64, 7, 50, 51)")})
 public abstract class AbstractCpMarcador extends Objeto implements Serializable {
 
+	private static final long serialVersionUID = 6436403895150961831L;
+
 	@Id
 	@Column(name = "ID_MARCADOR", nullable = false)
 	private Long idMarcador;
@@ -83,6 +85,9 @@ public abstract class AbstractCpMarcador extends Objeto implements Serializable 
 
 	@Column(name = "GRUPO_MARCADOR")
 	private Integer grupoMarcador;
+	
+	@Column(name = "ORD_MARCADOR")
+	private Integer ordem;
 
 	public Long getIdMarcador() {
 		return idMarcador;
@@ -114,6 +119,14 @@ public abstract class AbstractCpMarcador extends Objeto implements Serializable 
 
 	public void setGrupoMarcador(Integer grupoMarcador) {
 		this.grupoMarcador = grupoMarcador;
+	}
+
+	public Integer getOrdem() {
+		return ordem;
+	}
+
+	public void setOrdem(Integer ordem) {
+		this.ordem = ordem;
 	}
 
 }

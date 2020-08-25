@@ -44,18 +44,6 @@
 
 <c:set var="logo_topo_orgao" scope="request" value="${f:resource('/siga.logo.topo.orgao')}" />
 
-<c:set var="ambiente">
-	<c:if test="${f:resource('isVersionTest') or f:resource('isBaseTest')}">
-		<c:if test="${f:resource('isVersionTest')}">SISTEMA</c:if>
-		<c:if
-			test="${f:resource('isVersionTest') and f:resource('isBaseTest')}"> E </c:if>
-		<c:if test="${f:resource('isBaseTest')}">BASE</c:if> DE TESTES
-	</c:if>
-</c:set>
-<c:if test="${not empty ambiente}">
-	<c:set var="env" scope="request">${ambiente}</c:set>
-</c:if>
-
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
@@ -105,7 +93,7 @@ ${meta}
 
 <c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
 
-<c:set var="siga_version"  scope="request" value="9.0.4.1" />
+<c:set var="siga_version"  scope="request" value="9.0.4.2" />
 
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
@@ -144,7 +132,7 @@ ${meta}
 		<c:set var="sub_menu_class" value="bg-secondary text-white" />
 		
 		<c:set var="navbar_class" value="navbar-dark bg-primary" />
-		<c:if test="${f:resource('isBaseTest')}">
+		<c:if test="${f:resource('/siga.ambiente') ne 'prod'}">
 			<c:set var="navbar_class" value="navbar-dark bg-secondary" />
 		</c:if>
 		
@@ -372,7 +360,7 @@ ${meta}
 							</span>
 						</div>
 					</div>
-					<div class="row ${hide_only_TRF2}  ${ambiente_class}">
+					<div class="row  ${ambiente_class}">
 						<div class="col">
 							<span>
 								<c:choose>

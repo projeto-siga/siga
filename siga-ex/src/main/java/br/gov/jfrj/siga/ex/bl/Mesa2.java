@@ -594,7 +594,7 @@ public class Mesa2 {
 							.filter(mov -> mov.getExTipoMovimentacao().getId()
 									.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO))
 							.filter(mov -> !mov.isCancelada()) //
-							.filter(mov -> mov.getMarcador().equals(tag.marca.getCpMarcador())) //
+							.filter(mov -> tag.marca.getCpMarcador().equals(mov.getMarcador())) //
 							.map(ExMovimentacao::getDtFimMovDDMMYY) //
 							.findFirst().orElse("[indeterminado]");
 				}

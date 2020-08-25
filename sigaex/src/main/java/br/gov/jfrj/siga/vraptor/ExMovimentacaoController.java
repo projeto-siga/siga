@@ -2401,8 +2401,23 @@ public class ExMovimentacaoController extends ExController {
 		return dataLimite ;
 	}
 
-	private Object getListaMarcadoresGeraisTaxonomiaAdministrada() {
-		return dao().listarCpMarcadoresGeraisTaxonomiaAdministrada();
+	/**
+	 * Retorna a relação das opções de {@link CpMarcador Marcadores} que podem ser
+	 * atribuídos a um {@link ExDocumento Documento}. A ordenação é feita aqui ao
+	 * invés do método de origem pois
+	 * {@link ExDao#listarCpMarcadoresGeraisTaxonomiaAdministrada()} é chamado em
+	 * mais de um lugar e além disso nele é retornado a união de 2 queries
+	 * diferentes.
+	 * 
+	 * @return opções de {@link CpMarcador Marcadores} que podem ser atribuídos a um
+	 *         {@link ExDocumento Documento} devidamente ordenados de acordo com
+	 *         {@link CpMarcador#getOrdem()}
+	 */
+	private List<CpMarcador> getListaMarcadoresGeraisTaxonomiaAdministrada() {
+		List<CpMarcador> marcadores = dao().listarCpMarcadoresGeraisTaxonomiaAdministrada();
+		marcadores.sort(CpMarcador.ORDEM_COMPARATOR);
+
+		return marcadores;
 	}
 
 	/**
@@ -4812,7 +4827,7 @@ public class ExMovimentacaoController extends ExController {
 	}
     
 	@Get("/app/expediente/mov/ciencia")
-	public void aCiencia(final String sigla) {
+	public void aCiencia(final String sigla, final String descrMov) {
 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 
@@ -4823,27 +4838,32 @@ public class ExMovimentacaoController extends ExController {
 
 		final ExMovimentacao movimentacao = movimentacaoBuilder
 				.construir(dao());
+		
+		String descricao = movimentacaoBuilder.getDescrMov() == null ? descrMov : movimentacaoBuilder.getDescrMov();
 
-		if (!Ex.getInstance()
-				.getComp()
-				.podeFazerCiencia(getTitular(), getLotaTitular(),
-						documentoBuilder.getMob())) {
-			throw new AplicacaoException("Não é possível fazer ciência");
+		try {			
+		
+			if (!Ex.getInstance()
+					.getComp()
+					.podeFazerCiencia(getTitular(), getLotaTitular(),
+							documentoBuilder.getMob())) {
+				throw new RegraNegocioException("Não é possível fazer ciência do documento."			
+						+ " Isso pode ocorrer se o documento não estiver apto a receber ciência ou devido a alguma regra para não permitir esta operação");
+			}
+	
+			result.include("sigla", sigla);
+			result.include("mob", documentoBuilder.getMob());
+			result.include("mov", movimentacao);
+			result.include("doc", documento);
+			result.include("descrMov", descricao);
+		} catch (RegraNegocioException e) {
+			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
+			result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 		}
-
-		result.include("sigla", sigla);
-		result.include("mob", documentoBuilder.getMob());
-		result.include("mov", movimentacao);
-		result.include("doc", documento);
-		result.include("descrMov", movimentacaoBuilder.getDescrMov());
 	}
 
 	@Post("/app/expediente/mov/ciencia_gravar")
-	public void ciencia_gravar(final Integer postback, final String sigla, final String descrMov) {
-		if(!SigaMessages.isSigaSP()) {
-			throw new AplicacaoException("Não é possível fazer ciência do documento neste ambiente.");
-		}
-
+	public void ciencia_gravar(final Integer postback, final String sigla, final String descrMov) {					
 		this.setPostback(postback);
 		
 		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder
@@ -4855,28 +4875,26 @@ public class ExMovimentacaoController extends ExController {
 				.novaInstancia().setSigla(sigla);
 
 		buscarDocumento(documentoBuilder);
-
-		if (!Ex.getInstance()
-				.getComp()
-				.podeFazerCiencia(getTitular(), getLotaTitular(),
-						documentoBuilder.getMob())) {
-			throw new AplicacaoException("Não é possível fazer ciência do documento.");
-		}
-
+		
 		mov.setDtMov(dao().dt());
 		mov.setSubscritor(getCadastrante());
 		mov.setResp(getCadastrante());
 		mov.setLotaResp(getLotaTitular());
 		mov.setDescrMov(descrMov);
-		
-		Ex.getInstance()
-				.getBL()
-				.registrarCiencia(getCadastrante(), getLotaTitular(),
-						documentoBuilder.getMob(), mov.getDtMov(),
-						mov.getLotaResp(), mov.getResp(), mov.getSubscritor(),
-						mov.getDescrMov());
-
-		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+			
+		try {	
+			Ex.getInstance()
+					.getBL()
+					.registrarCiencia(getCadastrante(), getLotaTitular(),
+							documentoBuilder.getMob(), mov.getDtMov(),
+							mov.getLotaResp(), mov.getResp(), mov.getSubscritor(),
+							mov.getDescrMov());
+	
+			result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+		} catch (RegraNegocioException e) {
+			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
+			result.forwardTo(this).aCiencia(sigla, descrMov);
+		}
 	}
 	
 	private Object getListaMarcadoresTaxonomiaAdministrada() {

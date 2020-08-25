@@ -2401,8 +2401,23 @@ public class ExMovimentacaoController extends ExController {
 		return dataLimite ;
 	}
 
-	private Object getListaMarcadoresGeraisTaxonomiaAdministrada() {
-		return dao().listarCpMarcadoresGeraisTaxonomiaAdministrada();
+	/**
+	 * Retorna a relação das opções de {@link CpMarcador Marcadores} que podem ser
+	 * atribuídos a um {@link ExDocumento Documento}. A ordenação é feita aqui ao
+	 * invés do método de origem pois
+	 * {@link ExDao#listarCpMarcadoresGeraisTaxonomiaAdministrada()} é chamado em
+	 * mais de um lugar e além disso nele é retornado a união de 2 queries
+	 * diferentes.
+	 * 
+	 * @return opções de {@link CpMarcador Marcadores} que podem ser atribuídos a um
+	 *         {@link ExDocumento Documento} devidamente ordenados de acordo com
+	 *         {@link CpMarcador#getOrdem()}
+	 */
+	private List<CpMarcador> getListaMarcadoresGeraisTaxonomiaAdministrada() {
+		List<CpMarcador> marcadores = dao().listarCpMarcadoresGeraisTaxonomiaAdministrada();
+		marcadores.sort(CpMarcador.ORDEM_COMPARATOR);
+
+		return marcadores;
 	}
 
 	/**

@@ -191,11 +191,21 @@ public class CpArquivo implements Serializable {
 	}
 
 	public void gerarCaminho(Date data) {
-		String extensao = TipoConteudo.ZIP.getExtensao();
+		String extensao;
+		
+		if(TipoConteudo.ZIP.getMimeType().equals(getConteudoTpArq()))
+			extensao = TipoConteudo.ZIP.getExtensao();
+		else if(TipoConteudo.PDF.getMimeType().equals(getConteudoTpArq()))
+			extensao = TipoConteudo.PDF.getExtensao();
+		else if(TipoConteudo.TXT.getMimeType().equals(getConteudoTpArq()))
+			extensao = TipoConteudo.TXT.getExtensao();
+		else
+			extensao = TipoConteudo.ZIP.getExtensao();
 		
 		Calendar c = Calendar.getInstance();
 		c.set(Calendar.AM_PM, Calendar.PM);
-		c.setTime(data);
+		if(data!=null)
+			c.setTime(data);
 		this.caminho = c.get(Calendar.YEAR)+"/"+(c.get(Calendar.MONTH)+1)+"/"+c.get(Calendar.DATE)+"/"+c.get(Calendar.HOUR_OF_DAY)+"/"+c.get(Calendar.MINUTE)+"/"+UUID.randomUUID().toString()+"."+extensao;
 	}
 	

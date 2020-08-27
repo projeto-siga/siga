@@ -76,8 +76,8 @@
 				</div>
 				<div class="row">
 					<div class="form-group col-md-4">
-						<button type="submit" class="btn btn-primary mt-auto" >Ok</button>
-						<button type="button" onclick="javascript:history.back();" class="btn btn-cancel mt-auto" >Cancela</button>
+						<button type="submit" class="btn btn-primary mt-auto" >Ok</button>						
+						<a href="${linkTo[ExDocumentoController].exibe()}?sigla=${sigla}" class="btn btn-cancel ml-2">Cancela</a>
 					</div>
 				</div>
 			</form>

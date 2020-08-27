@@ -25,7 +25,8 @@ import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaModal;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
@@ -144,7 +145,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 				lotacao = (DpLotacao) dao().consultar(getSel().getId(), DpLotacao.class, false);
 				GenericoSelecao gs = new GenericoSelecao();
 				gs.setId(getSel().getId());
-				gs.setSigla(lotacao.getSiglaCompleta());
+				gs.setSigla(lotacao.getSiglaCompletaFormatada());
 				gs.setDescricao(getSel().getDescricao());
 				setSel(gs);
 			} catch (final Exception ex) {
@@ -233,11 +234,11 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			if (lista.size() > 0) {				
 				InputStream inputStream = null;
 				StringBuffer texto = new StringBuffer();
-				texto.append("Unidade" + System.getProperty("line.separator"));
+				texto.append("Unidade" + System.lineSeparator());
 				
 				for (DpLotacao lotacao : lista) {
 					texto.append(lotacao.getNomeLotacao() + ";");										
-					texto.append(System.getProperty("line.separator"));
+					texto.append(System.lineSeparator());
 				}
 				
 				inputStream = new ByteArrayInputStream(texto.toString().getBytes("ISO-8859-1"));									
@@ -303,7 +304,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			result.include("orgaosUsu", list);
 		}		
 		
-		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+		if(Prop.isGovSP()) {
 			CpUF uf = new CpUF();
 			uf.setIdUF(Long.valueOf(26));
 			result.include("listaLocalidades", dao().consultarLocalidadesPorUF(uf));
@@ -504,10 +505,9 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			throw new AplicacaoException("Problemas ao salvar unidades", 0, e);			
 		}
 		if(inputStream == null) {
-			result.include("msg", "Arquivo processado com sucesso!");
+			result.include(SigaModal.ALERTA, SigaModal.mensagem("Arquivo processado com sucesso!").titulo("Sucesso"));
 			carregarExcel();
-		} else {
-			result.include("msg", "");
+		} else {			
 			return new InputStreamDownload(inputStream, "application/text", "inconsistencias.txt");	
 		}
 		return null;
@@ -520,7 +520,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		result.include("nmLotacao", nmLotacao);
 		result.include("siglaLotacao", siglaLotacao);
 		
-		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+		if(Prop.isGovSP()) {
 			CpUF uf = new CpUF();
 			uf.setIdUF(Long.valueOf(26));
 			result.include("listaLocalidades", dao().consultarLocalidadesPorUF(uf));

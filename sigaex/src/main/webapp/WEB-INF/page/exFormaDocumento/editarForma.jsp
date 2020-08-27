@@ -20,22 +20,20 @@
 					<div class="row">
 						<div class="col-md-4">
 							<div class="form-group">
-								<label for="descricao">Descrição</label> <input type="text"
-									value="${descricao}" name="descricao" class="form-control" />
-							</div>
-							
+								<label for="descricao">Descrição</label> 
+								<input type="text" id="descricao" value="${descricao}" name="descricao" class="form-control" />
+							</div>							
 						</div>
-						<div class="col-md-1">
+						<div class="col-lg-1 col-md-2">
 							<div class="form-group">
-								<label for="sigla">Sigla</label> <input type="text"
-									value="${sigla}" name="sigla" id="gravar_sigla"
-									class="form-control" /> <span id="mensagem"></span>
+								<label for="sigla">Sigla</label> 
+								<input type="text" id="sigla" value="${sigla}" name="sigla" id="gravar_sigla" class="form-control"/> <span id="mensagem"></span>
 							</div>
 						</div>
-						<div class="col-md-2">
+						<div class="col-md-3">
 							<div class="form-group">
-								<label for="idTipoFormaDoc">Tipo</label> <select
-									name="idTipoFormaDoc" value="${idTipoFormaDoc}"
+								<label for="tipoFormaDoc">Tipo</label> 
+								<select id="tipoFormaDoc" name="idTipoFormaDoc" value="${idTipoFormaDoc}"
 									class="form-control">
 									<c:forEach var="tipo" items="${listaTiposFormaDoc}">
 										<option value="${tipo.idTipoFormaDoc}"
@@ -54,37 +52,42 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-sm-6">
-							<div class="form-group">
-								<label for="idTipoFormaDoc">Origem</label><br />
-								<div class="form-check form-check-inline">
-									<input class="form-check-input ml-2" type="checkbox"
-										name="origemExterno" value="true"
-										${origemExterno ? 'checked' : ''} /> Externo &nbsp; <input
-										class="form-check-input ml-3" type="checkbox"
-										name="origemInternoProduzido" value="true"
-										${origemInternoProduzido ? 'checked' : ''} /> Interno
-									Produzido &nbsp; <input class="form-check-input ml-3"
-										type="checkbox" name="origemInternoImportado" value="true"
-										${origemInternoImportado ? 'checked' : ''} /> Interno
-									Importado <input class="form-check-input ml-3" type="checkbox"
-										name="origemInternoCapturado" value="true"
-										${origemInternoCapturado ? 'checked' : ''} /> Interno
-									Capturado <input class="form-check-input ml-3" type="checkbox"
-										name="origemExternoCapturado" value="true"
-										${origemExternoCapturado ? 'checked' : ''} /> Externo
-									Capturado
+						<div class="col-sm-12">
+							<h3 style="font-size: 1rem; margin-bottom: 3px; font-weight: normal;">Origem</h3>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="form-group">								
+								<div class="form-check  form-check-inline">
+									<input type="checkbox" id="origemExterno" class="form-check-input" name="origemExterno" value="true" ${origemExterno ? 'checked' : ''}/> 
+									<label for="origemExterno">Externo</label>
+								</div>								
+								<div class="form-check  form-check-inline">	
+									<input type="checkbox" id="origemInternoProduzido" class="form-check-input" name="origemInternoProduzido" value="true" ${origemInternoProduzido ? 'checked' : ''}/>
+									<label for="origemInternoProduzido">Interno Produzido</label>
+								</div>
+								<div class="form-check  form-check-inline">	
+									<input type="checkbox" id="origemInternoImportado" class="form-check-input" name="origemInternoImportado" value="true" ${origemInternoImportado ? 'checked' : ''}/>
+									<label for="origemInternoImportado">Interno Importado</label>
+								</div>
+								<div class="form-check  form-check-inline">	
+									<input type="checkbox" id="origemInternoCapturado" class="form-check-input" name="origemInternoCapturado" value="true" ${origemInternoCapturado ? 'checked' : ''}/> 
+									<label for="origemInternoCapturado">Interno Capturado</label>
+								</div>
+								<div class="form-check  form-check-inline">	 
+									<input type="checkbox" id="origemExternoCapturado" class="form-check-input" name="origemExternoCapturado" value="true" ${origemExternoCapturado ? 'checked' : ''} /> 
+									<label for="origemExternoCapturado">Externo Capturado</label>
 								</div>
 							</div>
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-sm-3">
+						<div class="col-sm-8">
 							<div class="form-group">
 								<button type="submit" class="btn btn-primary">Ok</button>
-								<button type="submit" name="submit" class="btn btn-primary">Aplicar</button>
-								<button type="button" onclick="javascript:history.back();"
-									class="btn btn-primary">Cancela</button>
+								<button type="submit" name="submit" class="btn btn-primary">Aplicar</button>								
+								<a href="${linkTo[ExFormaDocumentoController].listarFormas()}?ordenar=descricao" class="btn btn-cancel">Cancela</a>
 							</div>
 						</div>
 					</div>

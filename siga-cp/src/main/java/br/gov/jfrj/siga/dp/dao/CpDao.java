@@ -198,9 +198,14 @@ public class CpDao extends ModeloDao {
 	
 	public CpServico acrescentarServico(CpServico srv) {
 		synchronized (CpDao.class) {
-			iniciarTransacao();
-			CpServico srvGravado = gravar(srv);
-			commitTransacao();
+			CpServico srvGravado = null;
+			try {
+				em().getTransaction().begin();
+				srvGravado = gravar(srv);
+				em().getTransaction().commit();
+			} catch (Exception e) {
+				em().getTransaction().rollback();
+			}
 			cacheServicos.put(srv.getSigla(), srv);
 			return srvGravado;
 		}
@@ -2149,8 +2154,10 @@ public class CpDao extends ModeloDao {
 		whereList.add(cb().equal(c.get("orgaoUsuario"), orgaoUsuario));
 		whereList.add(cb().equal(c.get("siglaLotacao"), siglaLotacao));
 		q.where(whereList.toArray(new Predicate[2]));
-		q.select(c);
-		return em().createQuery(q).getSingleResult();
+		q.select(c);		
+		return em().createQuery(q).getResultList().stream()
+				.findFirst()
+				.orElse(null);
 	}
 	
 	public CpOrgaoUsuario consultarOrgaoUsuarioPorId(Long idOrgaoUsu) {
@@ -2399,6 +2406,7 @@ public class CpDao extends ModeloDao {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public DpPessoa obterPessoaAtual(final DpPessoa pessoa) {
 		try {
 
@@ -2406,8 +2414,18 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("idPessoaIni", pessoa.getIdPessoaIni());
 			qry.setHint("org.hibernate.cacheable", true); 
 			qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
-			final DpPessoa pes = (DpPessoa) qry.getSingleResult();
-			return pes;
+			
+			
+			//final DpPessoa pes = (DpPessoa) qry.getSingleResult();
+			//return pes;
+			
+			List<DpPessoa> result = qry.getResultList();			
+			if (result == null || result.size() == 0)
+				return null;
+			return result.get(0);
+			
+			
+			
 		} catch (final IllegalArgumentException e) {
 			throw e;
 

@@ -31,6 +31,8 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.RegraNegocioException;
+import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExTipoDespacho;
 import br.gov.jfrj.siga.vraptor.builder.ExTipoDespachoBuilder;
@@ -95,16 +97,24 @@ public class ExTipoDespachoController extends ExController {
 	@Post("app/despacho/tipodespacho/gravar")
 	public void gravar(final ExTipoDespacho exTipoDespacho) {
 		assertAcesso(CAMINHO_ACESSO);
+			
+		if (exTipoDespacho.getDescTpDespacho() == null) {
+			result.include(SigaModal.ALERTA, SigaModal.mensagem("Favor informar uma descrição."));
+			result.forwardTo(this).edita(exTipoDespacho.getIdTpDespacho());
+			return;
+		}
+		
 		final ExTipoDespachoBuilder builder = ExTipoDespachoBuilder.novaInstancia();
 		builder.setIdTpDespacho(exTipoDespacho.getIdTpDespacho());
 		builder.setDescTpDespacho(exTipoDespacho.getDescTpDespacho());
 		builder.setAtivo(exTipoDespacho.getFgAtivo());
-
+		
 		try {
 			dao().iniciarTransacao();
 			dao().gravar(builder.construir(dao()));
 			dao().commitTransacao();
 			result.redirectTo(this).lista();
+					
 		} catch (Exception e) {
 			dao().rollbackTransacao();
 			throw new AplicacaoException("Ocorreu um Erro durante a gravação", 0, e);

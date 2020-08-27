@@ -814,7 +814,7 @@ public class ExDocumentoVO extends ExVO {
 						.getComp()
 						.podeTornarDocumentoSemEfeito(titular, lotaTitular, mob),
 				"Esta operação tornará esse documento sem efeito. Prosseguir?",
-				null, null, null, "once");
+				null, null, null, "once  siga-btn-tornar-documento-sem-efeito");
 		
 		vo.addAcao(
 				"cancel",

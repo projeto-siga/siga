@@ -4,7 +4,7 @@ import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
 import br.gov.jfrj.siga.base.Correio;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.util.CpSincPropriedade;
 
 /**
  * Tratador de logs de sincronismo que envia e-mail com relatório das operações
@@ -59,7 +59,7 @@ public class SincLogHandler extends Handler {
 		}
 		
 		Correio.enviar(
-				SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
+				new CpSincPropriedade().getString("servidor.smtp.usuario.remetente"),
 				getDestinatariosEmail(), getAssunto(), sb.toString(), null);
 	}
 

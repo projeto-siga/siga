@@ -12,12 +12,12 @@
 	</style>
 	<script>
 		$(document).ready(function() {
-			$("#spinnerModal").modal('show');
+			sigaSpinner.mostrar();
 		});
 		
 		function carregarCompleto() {
 			$("#completo").attr("disabled", true);
-			$("#spinnerModal").modal('show');
+			sigaSpinner.mostrar();
 		    $('#framePdf').attr('src', '/siga/public/app/sigalinkStream/${jwt}?completo=1&volumes=1');
 		    return false;
 		}
@@ -50,7 +50,7 @@
 				  </div>
 				  <div class="card-body bg-secondary text-white p-0">
 					  <c:url var='pdf' value='/public/app/sigalinkStream/${jwt}' />
-					  <iframe id="framePdf" src="${pdf}" width="100%" height="500" align="center" style="border: none;" onload='$("#spinnerModal").modal("hide");'  allowfullscreen>
+					  <iframe id="framePdf" src="${pdf}" width="100%" height="500" align="center" style="border: none;" onload='sigaSpinner.ocultar();'  allowfullscreen>
 					  	<h5>Carregando PDF...</h5>
 					  </iframe>
 					  </div>

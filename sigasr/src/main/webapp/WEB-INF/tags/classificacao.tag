@@ -8,6 +8,7 @@
 <%@ attribute name="metodo" required="true"%>
 <%@ attribute name="exibeLotacaoNaAcao" required="false"%>
 <%@ attribute name="exibeConhecimento" required="false"%>
+<%@ attribute name="lotacaoDoTitular" required="false"%>
 
 <div id="${metodo}" class="gt-form-row" style="min-width: 550px;">
 	<label>Produto, Servi&ccedil;o ou Sistema relacionado &agrave; Solicita&ccedil;&atilde;o</label>
@@ -63,11 +64,14 @@
 					<c:forEach items="${acoesEAtendentes.keySet()}" var="cat">
 						<optgroup  label="${cat.tituloAcao}">
 							<c:forEach items="${acoesEAtendentes.get(cat)}" var="tarefa">
+								<c:set var="atividadeLotacao" value="${fn:startsWith(fn:toLowerCase(tarefa.acao.tituloAcao), 'atividades da lotação')}" />
+								
 								<option value="${tarefa.acao.idAcao}" ${solicitacao.acao.idAcao.equals(tarefa.acao.idAcao) ? 'selected' : ''}> 
 									${tarefa.acao.tituloAcao}
-									<c:if test="${exibeLotacaoNaAcao}">(${tarefa.conf.atendente.lotacaoAtual.siglaCompleta})</c:if>
+									<c:if test="${exibeLotacaoNaAcao && !atividadeLotacao}">(${tarefa.conf.atendente.lotacaoAtual.siglaCompleta})</c:if>
+									<c:if test="${atividadeLotacao}"><!-- (${tarefa.conf.atendente.lotacaoAtual.siglaCompleta}) --></c:if>
 								</option>
-							</c:forEach>					 
+							</c:forEach>
 						</optgroup>
 					</c:forEach>
 				</select>
@@ -257,6 +261,8 @@ function carregarLotacaoDaAcao() {
 			var siglaLotacao = getLotacaoDaAcao(opcaoSelecionada.html()); 
 			var spanLotacao = $(".lotacao-" + idAcao + ":contains(" + siglaLotacao + ")");
 			var descLotacao = spanLotacao.html();
+			if (opcaoSelecionada.text().toLowerCase().includes('atividades da lotação'))
+				descLotacao = '${lotacaoDoTitular}';
 			var idLotacao = spanLotacao.next().html();
 			var idDesignacaoDaAcao = spanLotacao.prev().html();
 			

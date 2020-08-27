@@ -34,8 +34,9 @@ import javax.xml.ws.handler.MessageContext;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+
 import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpToken;
@@ -828,7 +829,7 @@ public class ExServiceImpl implements ExService {
 	
 	public String obterMetadadosDocumento(String siglaDocumento, String token) throws Exception {
 		try {
-			if("true".equals(SigaBaseProperties.getString("siga.ws.seguranca.token.jwt")))
+			if(Prop.getBool("/siga.ws.seguranca.token.jwt"))
 				SigaUtil.getInstance().validarToken(token);
 			
 			
@@ -848,7 +849,7 @@ public class ExServiceImpl implements ExService {
 	
 	public String obterMarcadores(String token) throws Exception {
 		try {
-			if("true".equals(SigaBaseProperties.getString("siga.ws.seguranca.token.jwt")))
+			if(Prop.getBool("/siga.ws.seguranca.token.jwt"))
 				SigaUtil.getInstance().validarToken(token);
 			
 			return Ex.getInstance().getBL().marcadoresGeraisTaxonomiaAdministradaToJSON();
@@ -861,7 +862,7 @@ public class ExServiceImpl implements ExService {
 	
 	public String publicarDocumentoPortal(String siglaDocumento, String cadastranteStr, String marcadoresStr, String token) throws Exception {
 		try {
-			if("true".equals(SigaBaseProperties.getString("siga.ws.seguranca.token.jwt")))
+			if(Prop.getBool("/siga.ws.seguranca.token.jwt"))
 				SigaUtil.getInstance().validarToken(token);
 			
 			DpPessoa cadastrante = null;

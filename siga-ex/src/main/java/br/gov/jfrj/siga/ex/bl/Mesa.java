@@ -1,9 +1,6 @@
 package br.gov.jfrj.siga.ex.bl;
 
 import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,7 +12,7 @@ import java.util.Map;
 import com.crivano.swaggerservlet.ISwaggerModel;
 
 import br.gov.jfrj.siga.base.Data;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -443,8 +440,7 @@ public class Mesa {
 							.parseInt(((dataMovimentacao.getTime() - dataHoje.getTime() - +3600000L) / 86400000L)
 									+ "");
 
-					String qtdDias = SigaBaseProperties
-							.getString("siga.qtdDiasDevolucao");
+					String qtdDias = Prop.get("/siga.devolucao.dias");
 					
 					if(qtdDias == null){
 						qtdDias = "5";
@@ -569,7 +565,7 @@ public class Mesa {
 			map.get(mobil).add(mm);
 		}
 
-		if (SigaBaseProperties.getBooleanValue("siga.mesa.carrega.lotacao")
+		if (Prop.getBool("/siga.mesa.carrega.lotacao")
 				&& !Ex.getInstance().getComp().ehPublicoExterno(titular)) {
 			List<Object[]> lLota = dao.listarDocumentosCxEntradaPorPessoaOuLotacao(null,
 					lotaTitular);

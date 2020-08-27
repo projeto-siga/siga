@@ -2,6 +2,8 @@ package br.gov.jfrj.siga.idp.jwt;
 
 import java.util.List;
 
+import br.gov.jfrj.siga.base.Prop;
+
 public class AuthUtils {
 
 	private List<String> listaPermissoes;
@@ -29,7 +31,7 @@ public class AuthUtils {
 	}
 
 	public String getModuloPassword(String nomeModulo) {
-		return System.getProperty("idp.jwt.client." + nomeModulo + ".pwd");
+		return Prop.get("/siga.jwt.secret");
 	}
 
 	public String getProviderIssuer() {

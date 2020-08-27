@@ -18,20 +18,26 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.util;
 
-import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Correio;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.ex.*;
-import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.hibernate.ExDao;
-import org.jboss.logging.Logger;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+
+import org.jboss.logging.Logger;
+
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Correio;
+import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.ex.ExEmailNotificacao;
+import br.gov.jfrj.siga.ex.ExModelo;
+import br.gov.jfrj.siga.ex.ExMovimentacao;
+import br.gov.jfrj.siga.ex.ExPapel;
+import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
+import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class Notificador {
 
@@ -49,8 +55,7 @@ public class Notificador {
 	// + SigaBaseProperties.getString(SigaBaseProperties
 	// .getString("ambiente") + ".servidor.principal");
 
-	private static String servidor = SigaBaseProperties.getString("siga.ex."
-					+ SigaBaseProperties.getString("siga.ambiente") + ".url");
+	private static String servidor = Prop.get("/sigaex.url");
 
 	
 	private static ExDao exDao() {
@@ -523,9 +528,7 @@ public class Notificador {
 
 			conteudoHTML.append("</body></html>");
 		} else {
-			String mensagemTeste = null;
-			if (!SigaExProperties.isAmbienteProducao())
-				mensagemTeste = SigaExProperties.getString("email.baseTeste");
+			String mensagemTeste = Ex.getInstance().getBL().mensagemDeTeste();
 
 			conteudo.append("O documento ");
 
@@ -613,8 +616,7 @@ public class Notificador {
 				for (Notificacao not : notificacoes){
 					txt = not.txt;
 					html = not.html;				
-					Correio.enviar(SigaBaseProperties
-								.getString("servidor.smtp.usuario.remetente"),
+					Correio.enviar(null,
 								not.dest.emails.toArray(new String[not.dest.emails.size()]),		
 								not.assunto, txt, html);					
 				}

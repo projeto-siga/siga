@@ -26,6 +26,7 @@ package br.gov.jfrj.siga.dp;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -33,6 +34,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -180,6 +182,13 @@ public class CpOrgaoUsuario extends AbstractCpOrgaoUsuario implements
 	@Override
 	public String toString() {
 		return getSigla();
+	}
+
+	@PrePersist
+	private void inserirComoAtivo() {
+		if(Objects.isNull(hisAtivo)) {
+			hisAtivo = 1;
+		}
 	}
 
 }

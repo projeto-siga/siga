@@ -269,6 +269,10 @@ p.gt-table-action-list a.link-tag {
     box-shadow: 0 0 0 0.2rem rgba(220,53,69,.25);
 }
 
+.custom-file-label::after {
+	content: 'Escolher arquivo' !important;
+}
+
 
 /*
 ######################

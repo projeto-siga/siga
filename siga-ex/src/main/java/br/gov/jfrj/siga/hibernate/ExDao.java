@@ -1327,7 +1327,7 @@ public class ExDao extends CpDao {
 		if (l.size() != 1)
 			return null;
 		return l.get(0);
-	}
+	}	
 
 	public int obterProximoNumeroVolume(ExDocumento doc) {
 		return doc.getNumUltimoVolume() + 1;
@@ -1435,7 +1435,7 @@ public class ExDao extends CpDao {
 		
 		q.where(cb().equal(c.get("idFormaDoc"), idFormaDoc));
 		return (ExFormaDocumento) em().createQuery(q).getSingleResult();
-	}
+	}	
 	
 	public ExFormaDocumento consultarExForma(String sForma) {
 		CriteriaQuery<ExFormaDocumento> q = cb().createQuery(ExFormaDocumento.class);
@@ -1443,6 +1443,15 @@ public class ExDao extends CpDao {
 		q.select(c);
 		q.where(cb().equal(c.get("descrFormaDoc"), sForma));
 		return em().createQuery(q).getSingleResult();
+	}
+	
+	public boolean isExFormaComDocumentoVinculado(Long idFormaDoc) {	   
+        Query query = em().createQuery("SELECT DISTINCT forma.idFormaDoc FROM ExFormaDocumento forma JOIN ExDocumento doc ON forma.idFormaDoc = doc.exFormaDocumento.idFormaDoc WHERE forma.idFormaDoc = :idFormaDoc")
+        		.setParameter("idFormaDoc", idFormaDoc);
+        
+        Long idFormaDocEncontrado = (Long) query.getResultStream().findFirst().orElse(0L);
+        
+        return idFormaDocEncontrado > 0L;	    
 	}
 
 	public ExTipoDocumento consultarExTipoDocumento(String descricao) {
@@ -1566,7 +1575,7 @@ public class ExDao extends CpDao {
 		q.setParameter("mascara", mascara);
 		q.setParameter("idOrgaoUsuario", orgaoUsu.getIdOrgaoUsu());
 		return q.getResultList();
-	}
+	}	
 
 	public List<ExPapel> listarExPapeis() {
 		return findByCriteria(ExPapel.class);

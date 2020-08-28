@@ -299,7 +299,7 @@ public class ExProcessoAutenticacaoController extends ExController {
 	}
 
 	private static String getJwtPassword() {
-		return Prop.get("autenticacao.senha");
+		return Prop.get("/siga.autenticacao.senha");
 	}
 
 	private static String buildJwtToken(String n) {

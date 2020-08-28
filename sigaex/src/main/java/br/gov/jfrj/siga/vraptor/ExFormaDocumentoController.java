@@ -141,7 +141,11 @@ public class ExFormaDocumentoController extends ExController {
 		setPostback(postback);
 
 		final ExFormaDocumento forma = id != null ? recuperarForma(id) : new ExFormaDocumento();
-
+				
+		if (forma.isEditando()) {
+			forma.setTipoFormaAlterada(forma.getExTipoFormaDoc().getId() != idTipoFormaDoc);
+		}
+		
 		forma.setDescrFormaDoc(descricao);
 		forma.setSigla(sigla);
 		forma.setExTipoFormaDoc(dao().consultar(idTipoFormaDoc, ExTipoFormaDoc.class, false));

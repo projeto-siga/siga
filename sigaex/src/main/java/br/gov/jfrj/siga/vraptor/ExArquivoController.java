@@ -493,7 +493,7 @@ public class ExArquivoController extends ExController {
 	private static String getJwtPassword() {
 		String pwd = null;
 		try {
-			pwd = Prop.get("autenticacao.senha");
+			pwd = Prop.get("/siga.autenticacao.senha");
 			if (pwd == null)
 				throw new AplicacaoException(
 						"Erro obtendo propriedade siga.ex.autenticacao.pwd");

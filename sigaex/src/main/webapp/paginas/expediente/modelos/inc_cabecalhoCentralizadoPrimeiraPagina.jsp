@@ -11,9 +11,9 @@
 		<table width="100%" border="0" cellpadding="2">
 			<tr>
 			<c:choose>
-				<c:when test="${not empty f:resource('siga.relat.brasao')}">
+				<c:when test="${not empty f:resource('/siga.relat.brasao')}">
 					<td width="100%" align="center" valign="bottom">
-						<img src="${f:resource('siga.relat.brasao')}" width="65" height="65" />
+						<img src="${f:resource('/siga.relat.brasao')}" width="65" height="65" />
 					</td>
 				</c:when>
 				<c:otherwise>

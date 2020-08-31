@@ -170,8 +170,7 @@ ORDER BY f.sigla_forma_doc, m.id_doc, m.num_via]]></queryString>
 				<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000"
 					bottomBorder="None" bottomBorderColor="#000000" />
 				<graphicElement stretchType="NoStretch" pen="None" fill="Solid" />
-				<!--<imageExpression class="java.lang.String"><![CDATA["C:\\Trabalhos\\Java\\siga\\WebContent\\imagens\\brasao2.png"]]></imageExpression>-->
-				<imageExpression class="java.lang.String"><![CDATA["brasao.png"]]></imageExpression>
+				<imageExpression class="java.lang.String"><![CDATA[$P{brasao}]]></imageExpression>
 			</image>
 		</band>
 	</title>

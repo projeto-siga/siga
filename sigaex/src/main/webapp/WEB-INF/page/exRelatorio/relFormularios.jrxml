@@ -111,7 +111,7 @@ order by descr_forma_doc,nm_mod]]></queryString>
 						isPrintWhenDetailOverflows="false"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<graphicElement stretchType="NoStretch" pen="None" fill="Solid" />
-					<imageExpression class="java.lang.String"><![CDATA["brasao.png"]]></imageExpression>				</image>
+					<imageExpression class="java.lang.String"><![CDATA[$P{brasao}]]></imageExpression>				</image>
 				<staticText>
 					<reportElement
 						mode="Opaque"

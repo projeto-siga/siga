@@ -31,6 +31,7 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
@@ -106,17 +107,25 @@ public class AcessoServicoRelatorio extends RelatorioTemplate {
 			throw new DJBuilderException("Orgao Usuario inválido ! erro:"
 					+ e.getMessage());
 		}
-
+		parametros.put("titulo","SIGA");
+		parametros.put("subtitulo","Sistema de Gestão Administrativa");
+		parametros.put("secaoUsuario", "");
+		if ( Prop.get("/siga.relat.brasao") == null ) {
+			parametros.put("brasao","brasao.png");
+		} else {
+			parametros.put("brasao",Prop.get("/siga.relat.brasao") );
+		}
+		//System.out.println("Brasao: " + parametros.get("brasao"));
 	}
 
 	@Override
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException {
-		this.setTemplateFile(null);
+		//this.setTemplateFile(null);
 		this.setTitle("Acesso - " + getDescricaoTipoConfiguracao() + " - "
 				+ "(" + cpServico.getSiglaServico() + ") "
 				+ cpServico.getDscServico());
-		this.addColuna("Situação", 20, RelatorioRapido.ESQUERDA, true, false);
+		this.addColuna("Situação", 0, RelatorioRapido.ESQUERDA, true, false);
 		this.addColuna("Pessoa", 60, RelatorioRapido.ESQUERDA, false, false);
 		this.addColuna("Lotação", 20, RelatorioRapido.ESQUERDA, false, false);
 		this.addColuna("Desde", 12, RelatorioRapido.ESQUERDA, false, false);

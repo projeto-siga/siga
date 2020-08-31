@@ -42,6 +42,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.hibernate.annotations.BatchSize;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -869,9 +870,10 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 		cacheConteudoBlobMov = createBlob;
 		if (CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
 			conteudoBlobMov = createBlob;
-		} else {
+		} else if(cacheConteudoBlobMov != null){
 			criarCpArquivo();
 			cpArquivo.setTamanho(cacheConteudoBlobMov.length);
+			cpArquivo.setHashMD5(DigestUtils.md5Hex(cacheConteudoBlobMov));
 		}
 		
 	}
@@ -880,7 +882,8 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 		if(cpArquivo == null) {
 			cpArquivo = new CpArquivo();
 			cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")));
-			cpArquivo.gerarCaminho(getDtMov()!=null?getDtMov():new Date());
+			if(CpArquivoTipoArmazenamentoEnum.HCP.equals(cpArquivo.getTipoArmazenamento()))
+				cpArquivo.gerarCaminho(getDtMov()!=null?getDtMov():new Date());
 		}
 	}
 }

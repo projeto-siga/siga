@@ -2025,5 +2025,23 @@ public class ExDao extends CpDao {
 				.setParameter("idMobil", idMobil) //
 				.getResultList();
 	}
+	
+	/**
+	 * Conta o total de movimentações assinadas
+	 * @param idDoc
+	 * @return
+	 */
+	public Integer contarMovimentacaoAssinada(Long idDoc) {
+		return em().createNamedQuery(
+				"select count(m) from Movimentacao m "
+				+ "left join m.exMobil mb "
+				+ "where mb.exDocumento.idDoc = :idDoc "
+				+ "and m.exMovimentacaoCanceladora is null "
+				+ "and (m.exTipoMovimentacao.idTpMov = :idAssinatura or m.exTipoMovimentacao.idTpMov = :idAssinaturaSenha)", Integer.class)
+				.setParameter("idDoc", idDoc)
+				.setParameter("idAssinatura", 11)
+				.setParameter("idAssinaturaSenha", 58)
+				.getSingleResult();
+	}
 
 }

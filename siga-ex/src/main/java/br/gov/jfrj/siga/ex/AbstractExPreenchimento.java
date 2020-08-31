@@ -39,6 +39,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 
+import org.apache.commons.codec.digest.DigestUtils;
+
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpArquivo;
@@ -196,9 +198,11 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 		cacheConteudoBlobPre = preenchimentoBlob;
 		if (CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
 			this.preenchimentoBlob = preenchimentoBlob;
-		} else {
+		} else if(cacheConteudoBlobPre != null){
 			criarCpArquivo();
 			cpArquivo.setTamanho(cacheConteudoBlobPre.length);
+			cpArquivo.setHashMD5(DigestUtils.md5Hex(cacheConteudoBlobPre));
+
 		}
 	}
 	
@@ -207,7 +211,8 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 			cpArquivo = new CpArquivo();
 			cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")));
 			cpArquivo.setConteudoTpArq(TipoConteudo.TXT.getMimeType());
-			cpArquivo.gerarCaminho(new Date());
+			if(CpArquivoTipoArmazenamentoEnum.HCP.equals(cpArquivo.getTipoArmazenamento()))
+				cpArquivo.gerarCaminho(new Date());
 		}
 	}
 }

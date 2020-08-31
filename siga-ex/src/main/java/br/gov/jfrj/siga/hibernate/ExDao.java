@@ -1855,11 +1855,15 @@ public class ExDao extends CpDao {
 		}
 	}
 
-	public List listarMobilsPorMarcas(DpPessoa titular,
-			DpLotacao lotaTitular, boolean exibeLotacao, List<Integer> marcasAIgnorar) {
+	public List listarMobilsPorMarcas(DpPessoa titular,	DpLotacao lotaTitular, boolean exibeLotacao, 
+			boolean ordemCrescenteData, List<Integer> marcasAIgnorar) {
 		String queryString;
 		String queryMarcasAIgnorar = "";
 		String queryMarcasAIgnorarWhere = "";
+		String ordem = " DESC ";
+		if (ordemCrescenteData) {
+			ordem = " ASC ";
+		}
 		if (marcasAIgnorar != null && marcasAIgnorar.size() > 0) {
 			queryMarcasAIgnorar += " left join ExMarca marca2 on "
 					+ " marca2.exMobil = marca.exMobil AND (";
@@ -1884,7 +1888,7 @@ public class ExDao extends CpDao {
 					+ (!exibeLotacao && titular != null ? " and (marca.dpPessoaIni.idPessoaIni = :titular)" : "") 
 					+ (exibeLotacao && lotaTitular != null ? " and (marca.dpLotacaoIni.idLotacaoIni = :lotaTitular)" : "")
 					+ queryMarcasAIgnorarWhere
-					+ " order by  doc.dtAltDoc desc, marca ";
+					+ " order by  doc.dtAltDoc " + ordem + ", marca ";
 			
 		Query query = em()
 				.createQuery(queryString);

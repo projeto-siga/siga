@@ -746,6 +746,14 @@ public class CpDao extends ModeloDao {
 		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
 		return query.getResultList();
 	}
+	
+	public List<DpLotacao> listarLotacoesPorPai(DpLotacao lotacaoPai) {
+		CriteriaQuery<DpLotacao> q = cb().createQuery(DpLotacao.class);
+		Root<DpLotacao> c = q.from(DpLotacao.class);
+		q.select(c);
+		q.where(cb().equal(c.get("lotacaoPai"), lotacaoPai),cb().isNull(c.get("dataFimLotacao")));
+		return em().createQuery(q).getResultList();
+	}
 
 	public Selecionavel consultarPorSigla(final DpLotacaoDaoFiltro flt) {
 		final DpLotacao o = new DpLotacao();
@@ -2134,7 +2142,7 @@ public class CpDao extends ModeloDao {
 	public List<DpLotacao> consultarLotacaoPorOrgao(CpOrgaoUsuario orgaoUsuario){
 		CriteriaQuery<DpLotacao> q = cb().createQuery(DpLotacao.class);
 		Root<DpLotacao> c = q.from(DpLotacao.class);
-		q.where(cb().equal(c.get("orgaoUsuario"), orgaoUsuario));
+		q.where(cb().equal(c.get("orgaoUsuario"), orgaoUsuario),cb().isNull(c.get("dataFimLotacao")));
 		q.select(c);
 		return em().createQuery(q).getResultList();
 	}

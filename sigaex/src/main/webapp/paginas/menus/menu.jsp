@@ -38,27 +38,37 @@
 			<div class="dropdown-divider"></div>
 			<c:catch>
 				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;TRAMITE:Trâmite;LOTE:Em Lote')}">
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;TRALOTE:Tramitar em Lote')}">
 					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/mov/transferir_lote"><fmt:message key="documento.transferencia.lote" /></a></li>
+				</c:if>
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;RECLOTE:Receber em Lote')}">
 					<li><a class="dropdown-item"
-						href="/sigaex/app/expediente/mov/receber_lote">Receber em lote</a></li>
+						href="/sigaex/app/expediente/mov/receber_lote">Receber em Lote</a></li>
+				</c:if>
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ANOLOTE:Anotar em Lote')}">
 					<li><a class="dropdown-item"
-						href="/sigaex/app/expediente/mov/anotar_lote">Anotar em lote</a></li>
-					<li><a class="dropdown-item"
-						href="/sigaex/app/expediente/mov/assinar_tudo">Assinar em lote</a></li>
+						href="/sigaex/app/expediente/mov/anotar_lote">Anotar em Lote</a></li>
+				</c:if>
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASSLOTE:Assinar em Lote')}">
+					<c:choose>
+						<c:when test="${siga_cliente == 'GOVSP'}">
+							<li><a class="dropdown-item"
+								href="/sigaex/app/expediente/mov/assinar_lote">Assinar em Lote</a></li>
+						</c:when>
+						<c:otherwise>
+							<li><a class="dropdown-item"
+								href="/sigaex/app/expediente/mov/assinar_tudo">Assinar em Lote</a></li>
+						</c:otherwise>
+					</c:choose>
 				</c:if>
 			</c:catch>
 
 
 		<!--  Retirado pois já não funcionava desta forma -->
-			<c:catch>
-				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-					<span class="${hide_only_TRF2}"><li><a class="dropdown-item"
-						href="/sigaex/app/expediente/mov/assinar_lote">Assinar em lote</a></li></span>
-				</c:if>
-			</c:catch>
 			<!--  
 			<c:catch>
 				<c:if
@@ -71,10 +81,10 @@
 			</c:catch> -->
 			<c:catch>
 				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;TRAMITE:Trâmite;LOTE:Em Lote')}">
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ARQLOTE:Arquivar em Lote')}">
 					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/mov/arquivar_corrente_lote">Arquivar
-							em lote</a></li>
+							em Lote</a></li>
 				</c:if>
 			</c:catch>
 			<c:catch>
@@ -82,7 +92,7 @@
 					test="${f:podeArquivarPermanentePorConfiguracao(titular,lotaTitular)}">
 					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/mov/arquivar_intermediario_lote">Arquivar
-							Intermediário em lote</a></li>
+							Intermediário em Lote</a></li>
 				</c:if>
 			</c:catch>
 			<c:catch>
@@ -90,7 +100,7 @@
 					test="${f:podeArquivarPermanentePorConfiguracao(titular,lotaTitular)}">
 					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/mov/arquivar_permanente_lote">Arquivar
-							Permanente em lote</a></li>
+							Permanente em Lote</a></li>
 				</c:if>
 			</c:catch>
 			<c:catch>

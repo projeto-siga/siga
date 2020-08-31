@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -43,6 +44,9 @@ import br.gov.jfrj.siga.model.Selecionavel;
 @Cache(region = ExDao.CACHE_EX, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class ExFormaDocumento extends AbstractExFormaDocumento implements
 		Serializable, Selecionavel, Comparable<ExFormaDocumento> {
+	
+	@Transient
+	boolean tipoFormaAlterada;
 	
 	/**
 	 * Simple constructor of ExFormaDocumento instances.
@@ -129,6 +133,18 @@ public class ExFormaDocumento extends AbstractExFormaDocumento implements
 			return true;
 
 		return false;
+	}
+	
+	public boolean isEditando() {
+		return getIdFormaDoc() != null; 
+	}
+	
+	public void setTipoFormaAlterada(boolean tipoFormaAlterada) {
+		this.tipoFormaAlterada = tipoFormaAlterada;
+	}
+	
+	public boolean isTipoFormaAlterada() {						
+		return isEditando() && tipoFormaAlterada;
 	}
 	
 }

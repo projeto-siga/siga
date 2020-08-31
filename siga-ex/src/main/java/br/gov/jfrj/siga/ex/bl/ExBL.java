@@ -6263,26 +6263,38 @@ public class ExBL extends CpBL {
 	}
 
 	public void gravarForma(ExFormaDocumento forma) throws AplicacaoException {
-		if (forma.getDescrFormaDoc() == null || forma.getDescrFormaDoc().isEmpty())
-			throw new RegraNegocioException("Não é possível salvar um tipo sem informar a descrição.");
-		if (forma.getExTipoFormaDoc() == null)
-			throw new RegraNegocioException("Não é possível salvar um tipo sem informar se é processo ou expediente.");
-		if (!forma.isSiglaValida())
-			throw new RegraNegocioException("Sigla inválida. A sigla deve ser formada por 3 letras.");
-
-		if (Prop.isGovSP()
-				&& forma.getExTipoDocumentoSet().isEmpty())
-			throw new RegraNegocioException("Selecione uma origem.");
-
-		ExFormaDocumento formaConsulta = dao().consultarPorSigla(forma);
-		if ((forma.getIdFormaDoc() == null && formaConsulta != null) || (forma.getIdFormaDoc() != null
-				&& formaConsulta != null && !formaConsulta.getIdFormaDoc().equals(forma.getIdFormaDoc())))
-			throw new RegraNegocioException("Esta sigla já está sendo utilizada.");
-
-		try {
+		try {		
+			if (forma.isTipoFormaAlterada()) {
+				boolean isExFormaComDocumentoVinculado = dao().isExFormaComDocumentoVinculado(forma.getId());
+				
+				if (isExFormaComDocumentoVinculado) {
+					throw new RegraNegocioException("Não é possível alterar o Tipo para <b>" + forma.getExTipoFormaDoc().getDescTipoFormaDoc() + "</b>"
+							+ ", existem documentos que dependem desta informação.");
+				}					
+			}
+					
+			if (forma.getDescrFormaDoc() == null || forma.getDescrFormaDoc().isEmpty())
+				throw new RegraNegocioException("Não é possível salvar um tipo sem informar a descrição.");
+			if (forma.getExTipoFormaDoc() == null)
+				throw new RegraNegocioException("Não é possível salvar um tipo sem informar se é processo ou expediente.");
+			if (!forma.isSiglaValida())
+				throw new RegraNegocioException("Sigla inválida. A sigla deve ser formada por 3 letras.");
+	
+			if (Prop.isGovSP()
+					&& forma.getExTipoDocumentoSet().isEmpty())
+				throw new RegraNegocioException("Selecione uma origem.");
+	
+			ExFormaDocumento formaConsulta = dao().consultarPorSigla(forma);
+			if ((forma.getIdFormaDoc() == null && formaConsulta != null) || (forma.getIdFormaDoc() != null
+					&& formaConsulta != null && !formaConsulta.getIdFormaDoc().equals(forma.getIdFormaDoc())))
+				throw new RegraNegocioException("Esta sigla já está sendo utilizada.");
+		
 			ExDao.iniciarTransacao();
 			dao().gravar(forma);
 			ExDao.commitTransacao();
+		} catch (RegraNegocioException e) {
+			dao().em().getTransaction().rollback();
+			throw new RegraNegocioException(e.getMessage());
 		} catch (Exception e) {
 			ExDao.rollbackTransacao();
 			throw new AplicacaoException("Erro ao salvar um tipo.", 0, e);

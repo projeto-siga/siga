@@ -9,7 +9,6 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="libs"%>
-<%@ taglib tagdir="/WEB-INF/tags/mensagem" prefix="siga-mensagem"%>
 
 <%@page import="br.gov.jfrj.siga.ex.ExMovimentacao"%>
 <%@page import="br.gov.jfrj.siga.ex.ExMobil"%>
@@ -217,13 +216,13 @@
 			<h2>
 				<c:if test="${empty ocultarCodigo}">${docVO.sigla}
 				</c:if>
-				<button type="button" name="voltar" onclick="${(empty param.linkVolta) ? 'javascript:window.location.href=\'/siga\';' : 'javascript:'.concat(param.linkVolta) }" class="btn btn-secondary float-right ${hide_only_TRF2}" accesskey="r">Volta<u>r</u></button>
+				<button type="button" name="voltar" onclick="${(empty param.linkVolta) ? 'javascript:window.location.href=\'/siga\';' : 'javascript:'.concat(param.linkVolta) }" class="btn btn-secondary float-right ${hide_only_TRF2}" accesskey="r">Volta<u>r</u></button>				
 			</h2>
 		</div>
 	</div>
 	<c:set var="primeiroMobil" value="${true}" />
 	<c:forEach var="m" items="${docVO.mobs}" varStatus="loop">
-		<div class="row">
+		<div class="row  siga-menu-acoes">
 			<div class="col">
 				<h3 class="${hide_only_GOVSP} style="margin-bottom: 0px;">
 					${m.getDescricaoCompletaEMarcadoresEmHtml(cadastrante,lotaTitular)}
@@ -361,7 +360,7 @@
 							</table>
 						</div>
 					</c:if>
-				</div>
+				</div>				
 			</div>
 			<div class="col col-sm-12 col-md-4">
 				<div class="gt-sidebar">
@@ -1295,59 +1294,136 @@
 </div>
 </div>
 
-	<c:if test="${docVO.doc.isComposto()}">
-		<script>
-			$(document).ready(function() {
-				var btnArqCorrente = $('.siga-btn-arq-corrente');
-				
-				if (btnArqCorrente) {
-					var btnConfirmacaoArqCorrente = $('.btn-confirmacao-arq-corrente');
-					
-					btnArqCorrente.attr('data-toggle', 'modal').attr('data-target', '#modalDeConfirmacaoArqCorrente');
-					btnConfirmacaoArqCorrente.attr('href', btnArqCorrente.attr('href'));	
-				}							
-			});	
-		</script>
-	</c:if>
-	<c:if test="${mob.isJuntado()}">	
-		<siga-mensagem:alerta-modal idModal="modalDeAvisoTornarDocumentoSemEfeito" descricaoBotaoQueFechaModal="Ok" 
-			exibirBotaoDeAcao="false" texto="Desentranhar documento antes de cancelar">
-		</siga-mensagem:alerta-modal>
+<c:if test="${recebimentoPendente}">				
+	<style>
+		.gt-sidebar, .siga-menu-acoes {
+			filter: blur(2px);
+   			-moz-filter: blur(2px);
+   			-webkit-filter: blur(2px);
+   			-o-filter: blur(2px);    			
+		}	
 		
-		<script>
-			$(function() {
-				var btnCancelar = $('.siga-btn-tornar-documento-sem-efeito');
+		.gt-sidebar a, .siga-menu-acoes a {
+			cursor: not-allowed;
+   			pointer-events: none;
+		}		
+		
+		#modalReceberDocumento {
+			left: auto !important;
+			overflow-y: hidden !important;
+			max-width: 260px;
+			max-height: 180px;
+			padding-right: 0;
+		}		
 				
-				if (btnCancelar) {										
-					btnCancelar.attr('data-toggle', 'modal').attr('data-target', '#modalDeAvisoTornarDocumentoSemEfeito');					
-				}							
-			});	
-		</script>	
-	</c:if>
+		.siga-btn-receber-doc {					
+			opacity: 0;
+			visibility: hidden;					
+			background: #007bff;
+			border-radius: 50%;
+			width: 60px;
+			height: 60px;		
+			position: fixed;
+			bottom: 25px;
+			right: 25px;			
+			box-shadow: 0 0 0 0 #28a745, 0 0 0 0 #007bff;	
+			transition: box-shadow 1.1s cubic-bezier(.19,1,.22,1), opacity 1.3s, visibility 1.3s;
+			animation: piscar 1s linear infinite;
+		}
+
+		.siga-btn-receber-doc:hover {
+			box-shadow: 0 0 0 8px #007bff, 0 0 0 8px #007bff;		
+		}
+		
+		.icone-receber-doc {		
+			font-size: 24px;			
+			transition: font-size .5s;
+		}
+		
+		.siga-btn-receber-doc:hover .icone-receber-doc {
+			font-size: 28px;
+		}	
+		
+		@keyframes piscar {
+		  50% {
+		    box-shadow: 0 0 0 8px #007bff, 0 0 0 8px #007bff;
+		  }
+		}	
+	</style>
 	
-	<div class="modal fade" id="modalDeConfirmacaoArqCorrente" tabindex="-1" role="dialog" aria-labelledby="confirmacao" aria-hidden="true">
+	<div class="modal fade" id="modalReceberDocumento" tabindex="-1" role="dialog" aria-labelledby="confirmacao" aria-hidden="true">
 	  <div class="modal-dialog text-center" role="document">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <div class="col-12" style="margin: 0 auto;">
-	        	<i class="fas fa-exclamation-circle" style="font-size: 5em; color: #ffc107; margin: 15px 0;"></i>
-	        	<h5 class="modal-title" id="confirmacao" style="font-size: 2em; font-weight: bold">Atenção</h5>
-	        </div>
-	        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-left: -40px">
-	          <span aria-hidden="true">&times;</span>
-	        </button>
-	      </div>
-	      <div class="modal-body text-center" style="padding-top: 0;">
-	        Verifique se há necessidade de incluir o Termo de Encerramento para este documento. Deseja continuar com o arquivamento?
-	      </div>
-	      <div class="modal-footer text-center" style="margin: 0 auto;">
-	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>		        
-	        <a href="#" class="btn btn-primary btn-confirmacao-arq-corrente" role="button" aria-pressed="true">Sim</a>
+	    <div class="modal-content">	      
+	      <div class="modal-body text-center">Deseja receber o documento?</div>
+	      <div class="modal-footer text-center">
+	      	<div class="row" style="margin: 0 auto;">
+		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>		        	       
+	        	<a href="${linkTo[ExMovimentacaoController].aReceber()}?sigla=${sigla}" class="btn btn-primary btn-acao" role="button" aria-pressed="true" style="margin-left: .5rem;">Sim</a>		        
+		    </div>    
 	      </div>
 	    </div>
 	  </div>
 	</div>	
+	<button type="button" class="btn btn-primary siga-btn-receber-doc" data-placement="left" title="Receber" data-siga-modal-abrir="modalReceberDocumento">
+		<i class="fas fa-envelope-open-text icone-receber-doc"></i>
+	</button>
+	
+	<script>
+		$(function() {						
+			var modalReceberDocumento = $('#modalReceberDocumento');				
+			var btnReceberDocumento = $('.siga-btn-receber-doc');
+			
+			sigaModal.abrir('modalReceberDocumento');								
+			btnReceberDocumento.tooltip();					
+			$('body').css('overflow', 'auto');
+										
+			modalReceberDocumento.on('shown.bs.modal', function (e) {
+				btnReceberDocumento.css({'opacity':'0', 'visibility':'hidden'});								
+			});	
+			
+			modalReceberDocumento.on('hidden.bs.modal', function (e) {
+				btnReceberDocumento.css({'opacity':'1', 'visibility':'visible'});								
+			});												
+		});	
+	</script>			
+</c:if>
+<c:if test="${docVO.doc.isComposto()}">	
+	<siga:siga-modal id="modalDeConfirmacaoArqCorrente" exibirRodape="true" 
+		tituloADireita="<i class='fas fa-exclamation-circle' style='font-size: 1.5em; color: #ffc107;'></i> <label style='font-size: 1.1em;vertical-align: middle;'><b>Atenção</b></label>"
+		descricaoBotaoFechaModalDoRodape="Não" descricaoBotaoDeAcao="Sim" linkBotaoDeAcao="${linkTo[ExMovimentacaoController].aArquivarCorrenteGravar()}?sigla=${sigla}">
+		<div class="modal-body">
+       		 Verifique se há necessidade de incluir o Termo de Encerramento para este documento. Deseja continuar com o arquivamento?
+     	</div>	     	
+	</siga:siga-modal>		
 
+	<script>
+		$(function() {
+			var btnArqCorrente = $('.siga-btn-arq-corrente');				
+			if (btnArqCorrente) {				
+				btnArqCorrente.attr('href', '#').attr('data-siga-modal-abrir', 'modalDeConfirmacaoArqCorrente');					
+			}							
+		});	
+	</script>
+</c:if>
+<c:if test="${mob.isJuntado()}">			
+	<siga:siga-modal id="modalDeAvisoTornarDocumentoSemEfeito" exibirRodape="true" 
+		tituloADireita="<i class='fas fa-exclamation-circle' style='font-size: 1.5em; color: #ffc107;'></i> <label style='font-size: 1.1em;vertical-align: middle;'><b>Atenção</b></label>"
+		descricaoBotaoFechaModalDoRodape="Ok">
+		<div class="modal-body">
+       		Favor desentranhar documento antes de cancelar
+     	</div>	     	
+	</siga:siga-modal>	
+			
+	<script>
+		$(function() {
+			var btnCancelar = $('.siga-btn-tornar-documento-sem-efeito');				
+			if (btnCancelar) {										
+				btnCancelar.attr('href', '#').attr('data-siga-modal-abrir', 'modalDeAvisoTornarDocumentoSemEfeito');					
+			}							
+		});	
+	</script>	
+</c:if>
+	
 <script>
 	var containerArquivosAuxiliares = $('.container-files');
 	var containerConfimarcaoArquivoAuxiliarACancelar = $('.container-confirmacao-cancelar-arquivo');

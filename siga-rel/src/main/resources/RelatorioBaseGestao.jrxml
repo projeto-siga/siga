@@ -6,14 +6,33 @@
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<parameter name="dataInicial" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="dataFinal" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="siglalotacao" class="java.lang.String" isForPrompting="false"/>
+
+
 	<parameter name="orgaoUsuario" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="totalDocumentos" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="totalPaginas" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="lotacaoRel" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="titulo" class="java.lang.String"/>
+	<parameter name="secaoUsuario" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[$P{secaoUsuario}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="titulo" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[$P{titulo}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="subtitulo" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[$P{subtitulo}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dataInicial" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[$P{dataInicial}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dataFinal" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[$P{dataFinal}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="lotacao" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[$P{lotacao}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="siglalotacao" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[$P{siglalotacao}]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[select 
 f.id_forma_doc, 
@@ -41,7 +60,7 @@ order by descr_forma_doc,nm_mod]]>
 	</background>
 	<title>
 		<band height="148" splitType="Stretch">
-			<staticText>
+			<textField>
 				<reportElement key="staticText-1" mode="Opaque" x="71" y="7" width="247" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="7fc51c41-aecd-45b2-9990-375d82abe7bb"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -53,8 +72,8 @@ order by descr_forma_doc,nm_mod]]>
 					<font fontName="Arial" size="14" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<text><![CDATA[Governo do Estado de São Paulo]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$P{titulo}]]></textFieldExpression>
+			</textField>
 			<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle" isUsingCache="true">
 				<reportElement key="image-1" mode="Opaque" x="1" y="2" width="65" height="65" forecolor="#000000" backcolor="#FFFFFF" uuid="07937434-db8c-49e0-8f96-c0f6b18c8244"/>
 				<box>
@@ -66,7 +85,7 @@ order by descr_forma_doc,nm_mod]]>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.0" lineStyle="Solid"/>
 				</graphicElement>
-				<imageExpression><![CDATA["brasao_sp.png"]]></imageExpression>
+				<imageExpression><![CDATA[$P{brasao}]]></imageExpression>
 			</image>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
 				<reportElement key="textField-1" mode="Opaque" x="479" y="7" width="55" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="5504f09b-5570-4a84-a922-40e54f506dad"/>
@@ -289,7 +308,7 @@ order by descr_forma_doc,nm_mod]]>
 				<textElement>
 					<font fontName="Arial" size="14" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{titulo}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{subtitulo}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>

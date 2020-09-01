@@ -35,6 +35,7 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
@@ -93,13 +94,22 @@ public class AlteracaoDireitosRelatorio extends RelatorioTemplate {
 		}
 		setDtInicio(t_dtaDataHoraIni);
 		setDtFim(t_dtaDataHoraFim);
+		parametros.put("titulo","SIGA");
+		parametros.put("subtitulo","Sistema de Gestão Administrativa");
+		parametros.put("secaoUsuario", "");
+		if ( Prop.get("/siga.relat.brasao")  == null ) {
+			parametros.put("brasao","brasao.png");
+		} else {
+			parametros.put("brasao", Prop.get("/siga.relat.brasao") );
+		}
+		//System.out.println("Brasao: " + parametros.get("brasao"));
 		// this.setPageSizeAndOrientation(Page.Page_A4_Landscape());
 	}
 
 	@Override
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException {// jar:file:/fullpath/main.jar!/a.resource
-		this.setTemplateFile(null);
+		//this.setTemplateFile(null);
 		this.setTitle("Alteracao de Direitos - de "
 				+ parametros.get("dataInicio") + " até "
 				+ parametros.get("dataFim"));

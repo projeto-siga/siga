@@ -195,7 +195,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPublicProperty("classificacao.mascara.saida", "%1$02d.%2$02d.%3$02d.%4$02d");
 		addPublicProperty("classificacao.nivel.minimo.de.enquadramento", null);
 		addPublicProperty("codigo.acronimo.ano.inicial", "9999");
-		addPublicProperty("conversor.html.ext", null);
+		addPublicProperty("conversor.html.ext", "br.gov.jfrj.itextpdf.MyPD4ML");
 		addPublicProperty("conversor.html.factory", "br.gov.jfrj.siga.ex.ext.ConversorHTMLFactory");
 		addPublicProperty("data.obrigacao.assinar.anexo.despacho", "31/12/2099");
 		addPublicProperty("debug.modelo.padrao.arquivo", null);
@@ -206,7 +206,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPublicProperty("folha.de.rosto", "inativa");
 		addPublicProperty("modelo.interno.importado", null);
 		addPublicProperty("modelo.processo.administrativo", null);
-		addPublicProperty("montador.query", null);
+		addPublicProperty("montador.query", "br.gov.jfrj.siga.hibernate.ext.MontadorQuery");
 		addPublicProperty("pdf.tamanho.maximo", "5000000");
 		addPublicProperty("relarmaz.qtd.bytes.pagina", "51200");
 		addPublicProperty("reordenacao.ativo", null);

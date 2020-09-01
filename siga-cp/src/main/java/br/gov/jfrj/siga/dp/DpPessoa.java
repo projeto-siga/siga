@@ -729,8 +729,10 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	}
 	
 	public boolean isUsuarioExterno() {
-		return ((this.getOrgaoUsuario().getIsExternoOrgaoUsu() != null && this.getOrgaoUsuario().getIsExternoOrgaoUsu() == 1)
-				|| this.getLotacao() != null && this.getLotacao().getIsExternaLotacao() == 1);
+		return ((this.getOrgaoUsuario().getIsExternoOrgaoUsu() != null
+				&& this.getOrgaoUsuario().getIsExternoOrgaoUsu() == 1)
+				|| (this.getLotacao() != null && this.getLotacao().getIsExternaLotacao() != null
+						&& this.getLotacao().getIsExternaLotacao() == 1));
 	}
 
 }

@@ -316,6 +316,17 @@ public class SolicitacaoController extends SrController {
 			 enviarErroValidacao();
 			 return;
 		}
+		
+		// BJN - caso a solicitação seja NOVA E do tipo "Atividades da Lotação", 
+		// o atendente deverá ser a própria lotação do cadastrante titular
+		// MARRETA SOLICITACAO PARA PROPRIA LOTACAO
+	        // voltando a pegar a lotacao do titular ao inves da do solicitante...
+		if((solicitacao.getIdSolicitacao() == null) && solicitacao.getAcao().getTituloAcao().toLowerCase().startsWith("atividades da lotação")) {
+			//solicitacao.setAtendenteNaoDesignado(solicitacao.getSolicitante().getLotacao().getLotacaoAtual());
+			solicitacao.setAtendenteNaoDesignado(getTitular().getLotacao().getLotacaoAtual());
+		}
+		//FIM MARRETA
+		
         solicitacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
         result.use(Results.http()).body(solicitacao.getSiglaCompacta());
     }
@@ -336,6 +347,7 @@ public class SolicitacaoController extends SrController {
         result.include("solicitante", solicitacao.getSolicitante());
         result.include("siglaCompacta", solicitacao.getSiglaCompacta());
         result.include("local", solicitacao.getLocal());
+        result.include("lotacaoDoTitularLegivel", getTitular().getLotacao().getLotacaoAtual().toString() + " - " + getTitular().getLotacao().getLotacaoAtual().getNomeLotacao());
 	}
 
 	private boolean validarFormEditar(SrSolicitacao solicitacao) throws Exception {
@@ -407,6 +419,14 @@ public class SolicitacaoController extends SrController {
         SrMovimentacao movimentacao = new SrMovimentacao(solicitacao);
 
         List<DpPessoa> atendentes = solicitacao.getPessoasAtendentesDisponiveis();
+        
+        // BJN - vetar usuario externo caso nao seja atendente ou o proprio solicitante
+        if(getTitular().isUsuarioExterno()) {
+        	boolean ehUmAtendente = atendentes.contains(getTitular());
+        	boolean ehSolicitante = getTitular().equals(solicitacao.getSolicitante());
+        	if(!ehUmAtendente && !ehSolicitante)
+        		throw new AplicacaoException("Este usuário n\u00e3o pode acessar esta solicita\u00e7\u00e3o.");
+        }
 
         if (todoOContexto == null)
             todoOContexto = solicitacao.isParteDeArvore();
@@ -561,7 +581,7 @@ public class SolicitacaoController extends SrController {
         	filtro.setItemConfiguracao(solicitacao.getItemConfiguracao());
         	filtro.setAcao(solicitacao.getAcao());
         }
-        result.include("solicitacoesRelacionadas", filtro.buscarSimplificado());
+        result.include("solicitacoesRelacionadas", filtro.buscarSimplificado(getTitular()));
         result.include("filtro", filtro);
         result.include(SOLICITACAO, solicitacao);
 	}

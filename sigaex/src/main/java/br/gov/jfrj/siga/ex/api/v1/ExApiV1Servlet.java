@@ -181,6 +181,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPublicProperty("threadpool.size", "10");
 
 		addPrivateProperty("assinador.externo.password", null);
+		addPrivateProperty("assinador.externo.popup.url", "https://ittrufusion.appspot.com");
 		addPublicProperty("assinatura.code.base.path", null);
 		addPublicProperty("assinatura.messages.url.path", null);
 		addPublicProperty("assinatura.policy.url.path", null);
@@ -207,13 +208,15 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPublicProperty("modelo.processo.administrativo", null);
 		addPublicProperty("montador.query", null);
 		addPublicProperty("pdf.tamanho.maximo", "5000000");
+		addPublicProperty("relarmaz.qtd.bytes.pagina", "51200");
 		addPublicProperty("reordenacao.ativo", null);
 		addPublicProperty("rodape.data.assinatura.ativa", "31/12/2099");
 		addPrivateProperty("util.webservice.password", null);
 		addPublicProperty("volume.max.paginas", "200");
 		addPrivateProperty("webdav.senha", null);
 		addPublicProperty("controlar.numeracao.expediente", "false");
-		
+		addPublicProperty("recebimento.automatico", "true");
+				
 		addPublicProperty("modelos.cabecalho.titulo", "JUSTIÇA FEDERAL");
 		addPublicProperty("modelos.cabecalho.subtitulo", null);
 	}

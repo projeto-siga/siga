@@ -57,11 +57,11 @@ public class SigaLinkPermanenteController extends SigaController {
 			pwd = Prop.get("/siga.recaptcha.key");
 			if (pwd == null)
 				throw new AplicacaoException(
-						"Erro obtendo propriedade siga.ex.autenticacao.recaptcha.key");
+						"Erro obtendo propriedade siga.recaptcha.key");
 			return pwd;
 		} catch (Exception e) {
 			throw new AplicacaoException(
-					"Erro obtendo propriedade siga.ex.autenticacao.recaptcha.key",
+					"Erro obtendo propriedade siga.recaptcha.key",
 					0, e);
 		}
 	}
@@ -72,11 +72,11 @@ public class SigaLinkPermanenteController extends SigaController {
 			pwd = Prop.get("/siga.recaptcha.pwd");
 			if (pwd == null)
 				throw new AplicacaoException(
-						"Erro obtendo propriedade siga.ex.autenticacao.recaptcha.pwd");
+						"Erro obtendo propriedade siga.recaptcha.pwd");
 			return pwd;
 		} catch (Exception e) {
 			throw new AplicacaoException(
-					"Erro obtendo propriedade siga.ex.autenticacao.recaptcha.pwd",
+					"Erro obtendo propriedade siga.recaptcha.pwd",
 					0, e);
 		}
 	}

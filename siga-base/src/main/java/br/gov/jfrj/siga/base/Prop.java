@@ -78,13 +78,35 @@ public class Prop {
 
 		provider.addPublicProperty("/siga.gsa.url", null);
 		
-		provider.addPublicProperty("/siga.http.proxy.host", null);
-		if (get("/siga.http.proxy.host") != null)
-			provider.addPublicProperty("/siga.http.proxy.port");
+		provider.addPublicProperty("/siga.relat.brasao", "brasao.png");
+		provider.addPublicProperty("/siga.relat.titulo", "PODER JUDICIÁRIO");
+		provider.addPublicProperty("/siga.relat.subtitulo", "JUSTIÇA FEDERAL");
+		
+		/* proxy properties */
+		provider.addRestrictedProperty("/http.proxyHost", null);
+		if (get("/http.proxyHost") != null)
+			provider.addRestrictedProperty("/http.proxyPort");
 		else
-			provider.addPublicProperty("/siga.http.proxy.port", null);
+			provider.addRestrictedProperty("/http.proxyPort", null);
+		
+		provider.addRestrictedProperty("/https.proxyHost", null);
+		if (get("/https.proxyHost") != null)
+			provider.addRestrictedProperty("/https.proxyPort");
+		else
+			provider.addRestrictedProperty("/https.proxyPort", null);
 
+		provider.addRestrictedProperty("/http.nonProxyHosts", "localhost|127.0.0.1|");
+		/* END proxy properties */
+		
+		/* Parâmetros para ativação de Login por SSO OAuth2/OIDC */
 		provider.addPublicProperty("/siga.integracao.sso", null);
+		provider.addPublicProperty("/siga.integracao.sso.dominio", null);
+		provider.addPrivateProperty("/siga.integracao.sso.cliente.id", null);
+		provider.addPrivateProperty("/siga.integracao.sso.client.secret", null);
+		provider.addPrivateProperty("/siga.integracao.sso.redirect.uri", base + "/siga/callBack");
+		provider.addPublicProperty("/siga.integracao.sso.btn.txt", "Entrar com o SSO");
+		/* Parâmetros para ativação de Login por SSO OAuth2/OIDC */
+
 		provider.addPublicProperty("/siga.omitir.metodo2", "true");
 		
 		provider.addPublicProperty("/siga.cabecalho.titulo", "Justiça Federal");
@@ -111,7 +133,7 @@ public class Prop {
 		provider.addRestrictedProperty("/siga.ldap.ws.endereco.autenticacao", null);
 		provider.addRestrictedProperty("/siga.ldap.ws.endereco.busca", null);
 		provider.addRestrictedProperty("/siga.ldap.ws.endereco.troca.senha", null);
-		provider.addPublicProperty("/siga.smtp.starttls.enable", null);
+		provider.addPublicProperty("/siga.smtp.starttls.enable", "false"); 
 
 		provider.addPublicProperty("/siga.recaptcha.key", null);
 		provider.addPrivateProperty("/siga.recaptcha.pwd", null);
@@ -132,7 +154,7 @@ public class Prop {
 		provider.addPublicProperty("/siga.mensagens", null);
 		provider.addPublicProperty("/siga.mesa.carrega.lotacao", "true");
 		provider.addPublicProperty("/siga.mesa.nao.revisar.temporarios", "false");
-		provider.addPublicProperty("/siga.mesa.versao", "1");
+		provider.addPublicProperty("/siga.mesa.versao", "2");
 		provider.addPublicProperty("/siga.municipios", null);
 		provider.addPublicProperty("/siga.pagina.inicial.url", null);
 		provider.addPublicProperty("/siga.versao.teste", "true");
@@ -169,6 +191,22 @@ public class Prop {
 
 		provider.addPublicProperty("/blucservice.url", base + "/blucservice/api/v1");
 		provider.addPublicProperty("/vizservice.url", base + "/vizservice");
-
+    
+		provider.addPublicProperty("/siga.sgp.bnf.url","/siga-beneficios");
+		provider.addPublicProperty("/siga.sgp.aq.url","/sigarhaq");
+		provider.addPublicProperty("/siga.sgp.cad.url","/sigarh");
+		provider.addPublicProperty("/siga.sgp.bdp.url","/sigarhaq1");
+		provider.addPublicProperty("/siga.sgp.dcn.url","/sigarhaq2");
+		provider.addPublicProperty("/siga.sgp.cst.url","/sigarhdadoscadastrais");
+		provider.addPublicProperty("/siga.sgp.lot.url","/sigarhlotacao");	
+		provider.addPublicProperty("/siga.sgp.trn.url","/sigatr");	
+		provider.addPublicProperty("/siga.sgp.terc.url","/sigarhterceirizados");
+		
+		/* Parâmetros para configuração do armazenamento de documento */
+		provider.addPublicProperty("/siga.armazenamento.arquivo.tipo", "BLOB");
+		provider.addPublicProperty("/siga.armazenamento.arquivo.usuario");
+		provider.addPublicProperty("/siga.armazenamento.arquivo.senha");
+		provider.addPublicProperty("/siga.armazenamento.arquivo.url");
+		
 	}
 }

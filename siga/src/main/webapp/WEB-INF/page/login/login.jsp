@@ -18,7 +18,7 @@
 	</script>
 	
 	<c:set var="siga_cliente_sso" scope="request" value="${f:resource('/siga.integracao.sso')}" />
-	<c:set var="siga_cliente_sso_btn_txt" scope="request" value="${f:resource('siga.integracao.sso.btn.txt')}" />
+	<c:set var="siga_cliente_sso_btn_txt" scope="request" value="${f:resource('/siga.integracao.sso.btn.txt')}" />
 	
 	<c:choose>
 		<c:when test="${siga_cliente == 'GOVSP'}">
@@ -153,7 +153,8 @@
 				var isEdge = !!navigator.userAgent.match(/Edge/);
 				var isChrome = !!navigator.userAgent.match(/Chrome/) && !isOpera && !isEdge
 				if(!isChrome) {			    						
-					sigaModal.alerta('Recomendamos o navegador Google Chrome para acesso', true, ' ');
+					var usernameInput = document.getElementById('username');
+					sigaModal.alerta('Recomendamos o navegador Google Chrome para acesso', true, ' ').focus(usernameInput);
 				}
 			});
 		</script>

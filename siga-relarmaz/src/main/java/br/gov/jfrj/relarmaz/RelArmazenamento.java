@@ -107,7 +107,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 			List<String> d = new ArrayList<String>();
 			
-			String qtdBytesPagina = SigaBaseProperties.getString("relarmazenamento.qtd.bytes.pagina");
+			String qtdBytesPagina = Prop.get("sigaex.relarmaz.qtd.bytes.pagina");
 			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
 			boolean detalhar = false;

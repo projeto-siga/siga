@@ -264,6 +264,15 @@ p.gt-table-action-list a.link-tag {
 	border-top: 1px solid #d2d3d4;
 }
 
+.custom-file-input.is-invalid:focus~.custom-file-label, .was-validated .custom-file-input:invalid:focus~.custom-file-label {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220,53,69,.25);
+}
+
+.custom-file-label::after {
+	content: 'Escolher arquivo' !important;
+}
+
 
 /*
 ######################
@@ -300,4 +309,4 @@ p.gt-table-action-list a.link-tag {
  
  .siga-modal__btn-close:focus {
  	outline: none; 	
- }						
+ }				

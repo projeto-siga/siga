@@ -14,6 +14,8 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.siga.base.RegraNegocioException;
+import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
@@ -51,26 +53,33 @@ public class ExFormaDocumentoController extends ExController {
 		}
 
 		result.include("itens", itens);
+		result.include("ordenadoPor", ordenar == null ? "descricao" : ordenar);
 	}
 
 	@Get("app/forma/editar")
-	public void editarForma(final Long id) {
+	public void editarForma(final Long id, String descricao, String sigla, Long idTipoFormaDoc, boolean origemExterno,
+			boolean origemInternoImportado, boolean origemInternoProduzido, boolean origemInternoCapturado, 
+			Integer isComposto, boolean origemExternoCapturado) {
+		
 		assertAcesso(ACESSO_SIGA_DOC_MOD);
 
 		final ExFormaDocumento forma = id != null ? recuperarForma(id) : new ExFormaDocumento();
+		
+		if (forma.getIdFormaDoc() != null) {
+			descricao = forma.getDescrFormaDoc();
+			sigla = forma.getSigla();
+			isComposto = forma.getIsComposto();
+			
+			if (forma.getExTipoFormaDoc() != null) {
+				idTipoFormaDoc = forma.getExTipoFormaDoc().getIdTipoFormaDoc();
+			}			
+		}
 
 		if (getPostback() == null) {
-			result.include("descricao", forma.getDescrFormaDoc());
-			result.include("sigla", forma.getSigla());
-			if (forma.getExTipoFormaDoc() != null) {
-				result.include("idTipoFormaDoc", forma.getExTipoFormaDoc().getIdTipoFormaDoc());
-			}
-
-			boolean origemExterno = false;
-			boolean origemInternoImportado = false;
-			boolean origemInternoProduzido = false;
-			boolean origemInternoCapturado = false;
-			boolean origemExternoCapturado = false;
+			result.include("descricao", descricao);
+			result.include("sigla", sigla);			
+			result.include("idTipoFormaDoc", idTipoFormaDoc);	
+			result.include("isComposto", isComposto);
 
 			if (forma.getExTipoDocumentoSet() != null) {
 				for (ExTipoDocumento origem : forma.getExTipoDocumentoSet()) {
@@ -91,13 +100,12 @@ public class ExFormaDocumentoController extends ExController {
 					}
 				}
 			}
-
-			result.include("isComposto", forma.getIsComposto());
+			
 			result.include("origemExterno", origemExterno);
 			result.include("origemInternoImportado", origemInternoImportado);
 			result.include("origemInternoProduzido", origemInternoProduzido);
 			result.include("origemInternoCapturado", origemInternoCapturado);
-			result.include("origemExternoCapturado", origemExternoCapturado);
+			result.include("origemExternoCapturado", origemExternoCapturado);			
 		}
 
 		result.include("id", id);
@@ -133,7 +141,11 @@ public class ExFormaDocumentoController extends ExController {
 		setPostback(postback);
 
 		final ExFormaDocumento forma = id != null ? recuperarForma(id) : new ExFormaDocumento();
-
+				
+		if (forma.isEditando()) {
+			forma.setTipoFormaAlterada(forma.getExTipoFormaDoc().getId() != idTipoFormaDoc);
+		}
+		
 		forma.setDescrFormaDoc(descricao);
 		forma.setSigla(sigla);
 		forma.setExTipoFormaDoc(dao().consultar(idTipoFormaDoc, ExTipoFormaDoc.class, false));
@@ -164,20 +176,27 @@ public class ExFormaDocumentoController extends ExController {
 			forma.getExTipoDocumentoSet().add(dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO, ExTipoDocumento.class, false));
 		}
 
-		Ex.getInstance().getBL().gravarForma(forma);
-
-		result.include("id", forma.getIdFormaDoc());
-		result.include("descricao", descricao);
-		result.include("sigla", sigla);
-		result.include("idTipoFormaDoc", idTipoFormaDoc);
-		result.include("isComposto", isComposto);
-		result.include("origemExterno", origemExterno);
-		result.include("origemInternoImportado", origemInternoImportado);
-		result.include("origemInternoProduzido", origemInternoProduzido);
-		result.include("origemInternoCapturado", origemInternoCapturado);
-		result.include("origemExternoCapturado", origemExternoCapturado);
-		
-		result.redirectTo("/app/forma/listar");
+		try {
+			Ex.getInstance().getBL().gravarForma(forma);
+			
+			result.include("id", forma.getIdFormaDoc());
+			result.include("descricao", descricao);
+			result.include("sigla", sigla);
+			result.include("idTipoFormaDoc", idTipoFormaDoc);
+			result.include("isComposto", isComposto);
+			result.include("origemExterno", origemExterno);
+			result.include("origemInternoImportado", origemInternoImportado);
+			result.include("origemInternoProduzido", origemInternoProduzido);
+			result.include("origemInternoCapturado", origemInternoCapturado);
+			result.include("origemExternoCapturado", origemExternoCapturado);
+			
+			result.redirectTo("/app/forma/listar");
+		} catch (RegraNegocioException e) {			
+			
+			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
+			result.forwardTo(this).editarForma(id, descricao, sigla, idTipoFormaDoc, origemExterno, origemInternoImportado,  origemInternoProduzido
+					, origemInternoCapturado, isComposto,  origemExternoCapturado);
+		}
 	}
 
 	private ExFormaDocumento recuperarForma(final Long id) {

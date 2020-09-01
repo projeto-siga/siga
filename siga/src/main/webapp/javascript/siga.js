@@ -1,10 +1,15 @@
 var newwindow = '';
 
 function testpdf(x) {
+	var inputFile = $('#arquivo');
+	var tamanhoArquivo = parseInt(inputFile[0].files[0].size);
 	
-	var tamanhoArquivo = parseInt(document.getElementById("arquivo").files[0].size);
+	inputFile.parent().find('label[for=arquivo]').text(inputFile[0].files[0].name);
+	
     if(tamanhoArquivo > 10485760){
-        alert("TAMANHO DO ARQUIVO EXCEDE O PERMITIDO (10MB)!");
+    	var mensagem = 'Tamanho do arquivo excede o permitido (10MB)';
+    	aplicarErro(inputFile, mensagem);    	    	
+        sigaModal.alerta(mensagem).focus(document.getElementById("arquivo"));
         return false;
     }
 	
@@ -15,10 +20,13 @@ function testpdf(x) {
 	}
 	OK = padrao.exec(a);
 	if (a != '' && !OK) {
-		window.alert("Somente é permitido anexar arquivo PDF!");
+		var mensagem = 'Somente é permitido anexar arquivo PDF';
+		aplicarErro(inputFile, mensagem);
+		sigaModal.alerta(mensagem).focus(arquivo);
 		x.arquivo.value = '';
-		x.arquivo.focus();
-	}
+		return false;
+	}		
+	removerErro(inputFile);
 }
 
 /*function popitup(url) {
@@ -161,7 +169,7 @@ function descarrega() {
 	carregando = false;
 }
 
-function verifica_data(data, naoObriga) {
+function verifica_data(data, naoObriga, retornarMensagem) {
 	mydata = new String(data.value);
 	var mySplit;
 	var msg = "";
@@ -180,17 +188,11 @@ function verifica_data(data, naoObriga) {
 		if ((dia == null) || (mes == null) || (ano == null) || (dia == "")
 				|| (mes == "") || (ano == "")) {
 			msg = msg
-			+ "A data deve estar num dos seguintes formatos: DD/MM/AAAA ou DDMMAAAA\n";
-			data.style.color = "red";
-			alert(msg);
-			return;
+			+ "A data deve estar num dos seguintes formatos: DD/MM/AAAA ou DDMMAAAA\n";						
 		}
 
 		if (isNaN(dia) || isNaN(mes) || isNaN(ano)) {
-			msg = msg + "A data só pode conter caracteres numéricos\n";
-			data.style.color = "red";
-			alert(msg);
-			return;
+			msg = msg + "A data só pode conter caracteres numéricos\n";			
 		}
 
 		// verifica o dia valido para cada mes
@@ -208,13 +210,18 @@ function verifica_data(data, naoObriga) {
 		// verifica se o ano é maior que 9999
 		if (ano.length > 4 || ano.length == 3) {
 			msg = msg + "Ano deve ser no máximo 9999\n";
-		}
-
+		}			
+		
 		if (msg.length > 0) {
-			data.style.color = "red";
-			alert(msg);
-			return;
+			if (!!retornarMensagem) {					
+				return msg;
+			} else {
+				data.style.color = "red";
+				sigaModal.alerta(msg);
+				return false;				
+			}
 		}
+		
 		if (dia.length < 2) {
 			dia = "00" + dia;
 			dia = dia.substring(dia.length - 2, dia.length);
@@ -232,6 +239,8 @@ function verifica_data(data, naoObriga) {
 		}
 		data.value = dia + "/" + mes + "/" + ano;
 		data.style.color = "black";
+		
+		return true;
 	}
 }
 
@@ -242,14 +251,12 @@ function verifica_data(data, naoObriga) {
  * chamada : onblur="javascript:verifica_hora(this)
  */
 //*-------------------------------------------------------------*//
-function verifica_hora(hora,naoObriga){ 
+function verifica_hora(hora, naoObriga, retornarMensagem){ 
 	myhora = new String(hora.value); 
 	var mySplit;
 	var msg="";
 	if (myhora.length==0 && naoObriga==null) {
-		msg=msg + "O campo hora deve ser preenchido\n";
-		alert(msg);
-		return;
+		msg=msg + "O campo hora deve ser preenchido\n";			
 	}
 	if (myhora.length>0) {
 		mySplit = myhora.split(":"); 
@@ -262,27 +269,27 @@ function verifica_hora(hora,naoObriga){
 		min = mySplit[1];
 
 		if ((hrs==null) || (min==null) ||(hrs=="") || (min=="")) {
-			msg=msg + "A hora deve estar num dos seguintes formatos: HH:MM ou HHMM\n";
-			alert(msg);
-			return;
+			msg=msg + "A hora deve estar num dos seguintes formatos: HH:MM ou HHMM\n";						
 		}
 
 		if (isNaN(hrs) || isNaN(min)) {
-			msg=msg + "A hora sÃ³ pode conter caracteres numÃ©ricos\n";
-			alert(msg);
-			return;
+			msg=msg + "A hora só pode conter caracteres numéricos\n";			
 		}
 
 		// verifica hrs e min 
 		if ((hrs < 00 ) || (hrs > 23) || ( min < 00) ||( min > 59)){ 
-			msg=msg + "Hora invÃ¡lida!";
-			alert(msg);
-			return; 
+			msg=msg + "Hora inválida!";					
 		}
-		if (msg.length>0) { 
-			alert(msg); 
-			return;
+						
+		if (msg.length > 0) {
+			if (!!retornarMensagem) {							
+				return msg;
+			} else {
+				sigaModal.alerta(msg);
+				return false;				
+			}
 		}
+				
 		if (hrs.length<2) {
 			hrs="00"+hrs;
 			hrs=hrs.substring(hrs.length-2,hrs.length);
@@ -292,6 +299,8 @@ function verifica_hora(hora,naoObriga){
 			min=min.substring(min.length-2,min.length);
 		}
 		hora.value=hrs+":"+min;
+		
+		return true;
 	}
 } 
 
@@ -597,7 +606,7 @@ function verificaCampos() {
 			|| document.form3.elements[i].value == " ") {
 			document.form3.elements[i].style.backgroundColor = "#FF333A";
 			document.form3.elements[i].focus();
-			alert("Preencha o campo '" + document.form3.elements[i].name
+			sigaModal.alerta("Preencha o campo '" + document.form3.elements[i].name
 					+ "'.\nTodos os campos precisam ser preenchidos");
 			return false;
 		} else {
@@ -1551,6 +1560,8 @@ var sigaModal = {
 				disposicaoSigaModal(sigaModalAlerta, centralizar);
 				atualizarTituloModal(sigaModalAlerta, titulo);
 				sigaModalAlerta.modal('show');
+				sigaModalAlerta.off('hidden.bs.modal');
+				return sigaModal.alerta;
 			}
 		},
 		alertaHTML: function(html, centralizar, titulo) {
@@ -1560,6 +1571,8 @@ var sigaModal = {
 				disposicaoSigaModal(sigaModalAlerta, centralizar);
 				atualizarTituloModal(sigaModalAlerta, titulo);
 				sigaModalAlerta.modal('show');
+				sigaModalAlerta.off('hidden.bs.modal');
+				return sigaModal.alertaHTML;
 			}
 		},			
 		abrir: function(idModal) {
@@ -1569,26 +1582,26 @@ var sigaModal = {
 		},
 		fechar: function(idModal) {
 			if (idModal) {		
-				$('#'.concat(idModal)).modal('hide');				
+				$('#'.concat(idModal)).modal('hide');								
 			}
 		},		
 		enviarTextoEAbrir: function(idModal, texto) {
 			if (idModal && texto) {
 				var modal = $('#'.concat(idModal)); 
 				modal.find('.modal-body').text(texto);
-				modal.modal('show');
+				modal.modal('show');							
 			}
 		},
 		enviarHTMLEAbrir: function(idModal, html) {
 			if (idModal && html) {
 				var modal = $('#'.concat(idModal));
 				modal.find('.modal-body').html(html);
-				modal.modal('show');
+				modal.modal('show');				
 			}
 		},
 		alterarLinkBotaoDeAcao: function(idModal, conteudo) {
 			if (idModal && conteudo) {
-				$('#'.concat(idModal)).find('.siga-modal__btn-acao').attr('href', conteudo);								
+				$('#'.concat(idModal)).find('.siga-modal__btn-acao').attr('href', conteudo);				
 			}
 		}, 				
 		obterCabecalhoPadrao: function(tituloADireita) {
@@ -1604,8 +1617,30 @@ var sigaModal = {
 			}
 			
 			return '';
-		}
+		},		
 	};
+
+sigaModal.alerta.focus = function(campoAReceberFoco) {
+	setarFocoAposFecharSigaModal(campoAReceberFoco);	
+}
+
+sigaModal.alertaHTML.focus = function(campoAReceberFoco) {
+	setarFocoAposFecharSigaModal(campoAReceberFoco);	
+}
+
+function setarFocoAposFecharSigaModal(campoAReceberFoco) {
+	var campo = $(campoAReceberFoco);
+	
+	if (campo.length > 0) {
+		$('#sigaModalAlerta').on('hidden.bs.modal', function (e) {
+			campo.focus();			
+		});
+	}	
+}
+
+function setarFocoBotaoFechar(evento) {
+	$(evento.currentTarget).find('.siga-modal__btn-fechar-rodape').focus()	
+}
 
 var sigaSpinner = {
 		mostrar: function() {
@@ -1648,9 +1683,10 @@ function atualizarTituloModal(modal, titulo) {
 	}
 }
 
-$(function() {
+$(function() {		
 	$('[data-siga-modal-abrir]').on('click', onModalAbrir);
 	$('[data-siga-modal-fechar]').on('click', onModalFechar);
 	$('[data-siga-spinner="mostrar"]').on('click', onSpinnerMostrar);
-	$('[data-siga-spinner="ocultar"]').on('click', onSpinnerOcultar);		
+	$('[data-siga-spinner="ocultar"]').on('click', onSpinnerOcultar);
+	$('#sigaModalAlerta').on('shown.bs.modal', setarFocoBotaoFechar.bind(this));
 });

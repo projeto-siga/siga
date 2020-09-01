@@ -470,12 +470,14 @@
 				<div class="row  js-siga-sp-documento-analisa-alteracao">
 					<div class="col-sm-8">
 						<div class="form-group">
-							<input type="hidden" name="campos" value="descrDocumento" />
-							<label> <fmt:message key = "usuario.novodocumento.arquivo"/></label>
-							<br>
-							  <div class="form-group">
-							    <input type="file" class="form-control-file" id="arquivo" name="arquivo" accept="application/pdf" onchange="testpdf(this.form)">
-							    <small class="form-text text-muted">Tamanho máximo do arquivo é de 10MB</small> 
+							  <input type="hidden" name="campos" value="descrDocumento" />							
+							  <br>
+							  <div class="form-group" style="margin-bottom:0">
+							    <div class="custom-file">								    
+								    <input type="file" class="custom-file-input" id="arquivo" name="arquivo" accept="application/pdf" onchange="testpdf(this.form)" title="arquivo">
+								    <label class="custom-file-label" for="arquivo"><fmt:message key = "usuario.novodocumento.arquivo"/> (limite de 10MB)</label>								    								   
+								    <div class="invalid-feedback  invalid-feedback-arquivo">Selecione o arquivo</div>
+								</div>									    							  
 							  </div>
 						</div>
 					</div>
@@ -579,6 +581,8 @@
 		</div>
 	</div>
 	<!--  tabela do rodapé -->
+	
+	<script type="text/javascript" src="../../../javascript/documento.validacao.js"></script>
 </siga:pagina>
 
 <script type="text/javascript">

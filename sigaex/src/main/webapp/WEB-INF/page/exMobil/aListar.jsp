@@ -15,19 +15,19 @@
 	}
 	function alteraTipoDaForma(cont) {
 		ReplaceInnerHTMLFromAjaxResponse(
-				'${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_formas?tipoForma='
+				'/sigaex/app/expediente/doc/carregar_lista_formas?tipoForma='
 						+ document.getElementById('tipoForma').value
 						+ '&idFormaDoc=' + '${idFormaDoc}', null, document
-						.getElementById('comboFormaDiv'), function() {transformarEmSelect2(null, '#idFormaDoc', '#idFormaDocGroup')})
+						.getElementById('comboFormaDiv'), cont)
 	}
 
 	function alteraForma(cont) {
 		ReplaceInnerHTMLFromAjaxResponse(
-				'${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_modelos?forma='
+				'/sigaex/app/expediente/doc/carregar_lista_modelos?forma='
 						+ document.getElementById('idFormaDoc').value
 						+ '&idMod='	+ '${idMod}', null, document
-						.getElementById('comboModeloDiv'), function() {transformarEmSelect2(null, '#idMod', '#idModGroup')})
-	}		
+						.getElementById('comboModeloDiv'), cont)
+	}
 
 	function sbmtAction(id, action) {
 		var frm = document.getElementById(id);
@@ -729,12 +729,8 @@
 	<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
 	<script>
 		alteraOrigem();
-	</script>
-	<c:if test="${siga_cliente == 'GOVSP'}">
-		<script>
 		$(document).ready(function() {
-			alteraTipoDaForma()					
+			init()					
 		});
-		</script>
-	</c:if>
+	</script>
 </siga:pagina>

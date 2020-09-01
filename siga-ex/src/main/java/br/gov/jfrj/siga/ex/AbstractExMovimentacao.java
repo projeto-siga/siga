@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -39,10 +40,17 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.BatchSize;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.cp.CpArquivo;
+import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCFacade;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCInterface;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -293,6 +301,9 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	@GeneratedValue(generator = "EX_MOVIMENTACAO_SEQ")
 	@Column(name = "ID_MOV", unique = true, nullable = false)
 	private Long idMov;
+	
+	@Transient
+	protected byte[] cacheConteudoBlobMov;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_cadastrante")
@@ -464,6 +475,10 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	@Column(name = "dt_timestamp", insertable=false, updatable=false)
 	private Date dtTimestamp;
 
+	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "ID_ARQ")
+	private CpArquivo cpArquivo;
+
 	public void setNumPaginasOri(Integer numPaginasOri) {
 		this.numPaginasOri = numPaginasOri;
 	}
@@ -489,14 +504,6 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 
 	public DpPessoa getCadastrante() {
 		return cadastrante;
-	}
-
-	public byte[] getConteudoBlobMov() {
-		return conteudoBlobMov;
-	}
-
-	public String getConteudoTpMov() {
-		return conteudoTpMov;
 	}
 
 	public String getDescrMov() {
@@ -565,14 +572,6 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 
 	public void setCadastrante(final DpPessoa cadastrante) {
 		this.cadastrante = cadastrante;
-	}
-
-	public void setConteudoBlobMov(byte[] conteudoBlobMov) {
-		this.conteudoBlobMov = conteudoBlobMov;
-	}
-
-	public void setConteudoTpMov(final String conteudoTpMov) {
-		this.conteudoTpMov = conteudoTpMov;
 	}
 
 	public void setDescrMov(final String descrMov) {		
@@ -826,5 +825,62 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 
 	public void setDtTimestamp(Date dtTimestamp) {
 		this.dtTimestamp = dtTimestamp;
+	}
+	
+	public CpArquivo getCpArquivo() {
+		return cpArquivo;
+	}
+
+	public void setCpArquivo(CpArquivo cpArquivo) {
+		this.cpArquivo = cpArquivo;
+	}
+
+	public String getConteudoTpMov() {
+		if (getCpArquivo() == null || getCpArquivo().getConteudoTpArq() == null)
+			return conteudoTpMov;
+		return getCpArquivo().getConteudoTpArq();
+	}
+
+	public void setConteudoTpMov(final String conteudoTp) {
+	    this.conteudoTpMov = conteudoTp;
+	    if (!CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
+	        criarCpArquivo();
+	        cpArquivo.setConteudoTpArq(conteudoTp);
+	    }
+	}
+
+	public byte[] getConteudoBlobMov() {
+		if(cacheConteudoBlobMov != null) {
+			return cacheConteudoBlobMov;
+		} else if (getCpArquivo() == null) {
+			cacheConteudoBlobMov = conteudoBlobMov;
+		} else {
+			try {
+				ArmazenamentoBCInterface a = ArmazenamentoBCFacade.getArmazenamentoBC(getCpArquivo());
+				cacheConteudoBlobMov = a.recuperar(getCpArquivo());
+			} catch (Exception e) {
+				throw new AplicacaoException(e.getMessage());
+			}
+		}
+		return cacheConteudoBlobMov;
+	}
+
+	public void setConteudoBlobMov(byte[] createBlob) {
+		cacheConteudoBlobMov = createBlob;
+		if (CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
+			conteudoBlobMov = createBlob;
+		} else {
+			criarCpArquivo();
+			cpArquivo.setTamanho(cacheConteudoBlobMov.length);
+		}
+		
+	}
+	
+	private void criarCpArquivo() {
+		if(cpArquivo == null) {
+			cpArquivo = new CpArquivo();
+			cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")));
+			cpArquivo.gerarCaminho(getDtMov()!=null?getDtMov():new Date());
+		}
 	}
 }

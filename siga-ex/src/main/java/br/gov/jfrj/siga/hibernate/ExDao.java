@@ -2031,16 +2031,16 @@ public class ExDao extends CpDao {
 	 * @param idDoc
 	 * @return
 	 */
-	public Integer contarMovimentacaoAssinada(Long idDoc) {
-		return em().createNamedQuery(
-				"select count(m) from Movimentacao m "
+	public Long contarMovimentacaoAssinada(Long idDoc) {
+		return em().createQuery(
+				"select count(m) from ExMovimentacao m "
 				+ "left join m.exMobil mb "
 				+ "where mb.exDocumento.idDoc = :idDoc "
 				+ "and m.exMovimentacaoCanceladora is null "
-				+ "and (m.exTipoMovimentacao.idTpMov = :idAssinatura or m.exTipoMovimentacao.idTpMov = :idAssinaturaSenha)", Integer.class)
+				+ "and (m.exTipoMovimentacao.idTpMov = :idAssinatura or m.exTipoMovimentacao.idTpMov = :idAssinaturaSenha)", Long.class)
 				.setParameter("idDoc", idDoc)
-				.setParameter("idAssinatura", 11)
-				.setParameter("idAssinaturaSenha", 58)
+				.setParameter("idAssinatura", 11L)
+				.setParameter("idAssinaturaSenha", 58L)
 				.getSingleResult();
 	}
 

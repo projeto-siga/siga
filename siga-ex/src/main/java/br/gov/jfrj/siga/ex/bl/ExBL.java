@@ -7426,7 +7426,7 @@ public class ExBL extends CpBL {
 				if(!doc.getCpArquivo().getHashMD5().equals(doc.getCpArquivo().getHashMD5Original())) {
 					//Caso o documento esteja assinado verifica se tem movimentação canceladora para permitir a alteração
 					if("S".equals(doc.getFgEletronico())){
-						Integer totalMovimentacoesAssinadas = dao().contarMovimentacaoAssinada(doc.getIdDoc());
+						Long totalMovimentacoesAssinadas = dao().contarMovimentacaoAssinada(doc.getIdDoc());
 						if(totalMovimentacoesAssinadas!=null && totalMovimentacoesAssinadas>0)
 							throw new Exception("Não é permitido alterar: eletrônico, com conteúdo, tipo mov. 11 ou 58 e sem mov. canceladora.");
 					}

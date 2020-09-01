@@ -1069,12 +1069,7 @@ public class ExRelatorioController extends ExController {
 					"Não é permitido consultas de outros órgãos.");
 		}
 		consistePeriodo(dataInicial, dataFinal);
-		
-		if (Prop.isGovSP())
-			parametros.put("subtitulo", "Tempo Médio de Tramitação Por Espécie Documental");
-		else
-			parametros.put("subtitulo", Prop.get("/siga.relat.subtitulo"));
-		
+			
 		parametros.put("orgaoUsuario", getLotaTitular().getOrgaoUsuario()
 				.getNmOrgaoUsu());
 		parametros.put("descrEspecie", descrFormaDoc);
@@ -1095,6 +1090,9 @@ public class ExRelatorioController extends ExController {
 				+ getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
 		addParametrosPersonalizadosOrgãoString(parametros);
+		
+		if (Prop.isGovSP()) /* Troca subtítulo por Nome do Relatório */
+			parametros.put("subtitulo", "Tempo Médio de Tramitação Por Espécie Documental");
 
 		final RelTempoTramitacaoPorEspecie rel = new RelTempoTramitacaoPorEspecie(
 				parametros);
@@ -1536,11 +1534,6 @@ public class ExRelatorioController extends ExController {
 
 		parametros.put("orgao", orgaoSelId.toString());
 
-		if (Prop.isGovSP())
-			parametros.put("subtitulo", "Documentos Por Volume");
-		else
-			parametros.put("subtitulo", Prop.get("/siga.relat.subtitulo"));
-		
 		parametros.put("orgaoUsuario", getLotaTitular().getOrgaoUsuario()
 				.getNmOrgaoUsu());
 		parametros.put("lotacao", getRequest().getParameter("lotacaoSel.id"));
@@ -1549,6 +1542,10 @@ public class ExRelatorioController extends ExController {
 		parametros.put("dataFinal",
 				 getRequest().getParameter("dataFinal"));
 		addParametrosPersonalizadosOrgãoString(parametros);
+		
+		if (Prop.isGovSP()) /* Troca subtítulo por Nome do Relatório */
+			parametros.put("subtitulo", "Documentos Por Volume");
+		
 		final RelDocumentosProduzidos rel = new RelDocumentosProduzidos(
 				parametros);
 		rel.setTemplateFile("RelatorioBaseGestao.jrxml");

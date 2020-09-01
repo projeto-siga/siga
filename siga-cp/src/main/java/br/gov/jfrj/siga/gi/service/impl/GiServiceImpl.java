@@ -183,6 +183,7 @@ public class GiServiceImpl implements GiService {
 					DpPessoa p = identidade.getPessoaAtual();
 					pessoa.put("siglaPessoa", p.getSiglaCompleta());
 					pessoa.put("nomePessoa", p.getNomePessoa());
+					pessoa.put("isExternaPessoa", p.isUsuarioExterno());
 					
 					// Orgao Pessoa
 					CpOrgaoUsuario o = p.getOrgaoUsuario();
@@ -241,6 +242,7 @@ public class GiServiceImpl implements GiService {
 			DpPessoa p = id.getPessoaAtual();
 			pessoa.put("idPessoa", p.getId());
 			pessoa.put("idExternaPessoa", p.getIdExterna());
+			pessoa.put("isExternaPessoa", p.isUsuarioExterno());
 			pessoa.put("matriculaPessoa", p.getMatricula());
 			pessoa.put("cpf", p.getCpfPessoa());
 			pessoa.put("siglaPessoa", p.getSiglaCompleta());

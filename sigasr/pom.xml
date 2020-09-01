@@ -297,6 +297,7 @@
 							<execution>
 								<phase>integration-test</phase>
 								<goals>
+									<goal>repair</goal>
 									<goal>migrate</goal>
 								</goals>
 							</execution>

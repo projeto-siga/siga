@@ -1069,8 +1069,12 @@ public class ExRelatorioController extends ExController {
 					"Não é permitido consultas de outros órgãos.");
 		}
 		consistePeriodo(dataInicial, dataFinal);
-
-		parametros.put("titulo", "Tempo Médio de Tramitação Por Espécie Documental");
+		
+		if (Prop.isGovSP())
+			parametros.put("subtitulo", "Tempo Médio de Tramitação Por Espécie Documental");
+		else
+			parametros.put("subtitulo", Prop.get("/siga.relat.subtitulo"));
+		
 		parametros.put("orgaoUsuario", getLotaTitular().getOrgaoUsuario()
 				.getNmOrgaoUsu());
 		parametros.put("descrEspecie", descrFormaDoc);
@@ -1531,7 +1535,12 @@ public class ExRelatorioController extends ExController {
 		consistePeriodo(dataInicial, dataFinal);
 
 		parametros.put("orgao", orgaoSelId.toString());
-		parametros.put("titulo", "Documentos Por Volume");
+
+		if (Prop.isGovSP())
+			parametros.put("subtitulo", "Documentos Por Volume");
+		else
+			parametros.put("subtitulo", Prop.get("/siga.relat.subtitulo"));
+		
 		parametros.put("orgaoUsuario", getLotaTitular().getOrgaoUsuario()
 				.getNmOrgaoUsu());
 		parametros.put("lotacao", getRequest().getParameter("lotacaoSel.id"));

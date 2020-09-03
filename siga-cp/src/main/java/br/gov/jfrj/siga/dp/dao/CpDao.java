@@ -1054,7 +1054,7 @@ public class CpDao extends ModeloDao {
 		Root<CpUF> c = q.from(CpUF.class);
 		q.where(cb().equal(c.get("nmUF"), uf));
 		q.select(c);
-		return em().createQuery(q).getSingleResult();
+		return em().createQuery(q).getResultStream().findFirst().orElse(null);		
 	}
 
 	@SuppressWarnings("unchecked")

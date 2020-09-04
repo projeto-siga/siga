@@ -39,6 +39,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 
+import org.apache.commons.codec.digest.DigestUtils;
+
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpArquivo;
@@ -446,9 +448,10 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 		cacheConteudoBlobMod = createBlob;
 		if (CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
 			conteudoBlobMod = createBlob;
-		} else {
+		} else if(cacheConteudoBlobMod != null){
 			criarCpArquivo();
 			cpArquivo.setTamanho(cacheConteudoBlobMod.length);
+			cpArquivo.setHashMD5(DigestUtils.md5Hex(cacheConteudoBlobMod));
 		}
 	}
 	
@@ -456,7 +459,8 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 		if(cpArquivo == null) {
 			cpArquivo = new CpArquivo();
 			cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")));
-			cpArquivo.gerarCaminho(new Date());
+			if(CpArquivoTipoArmazenamentoEnum.HCP.equals(cpArquivo.getTipoArmazenamento()))
+				cpArquivo.gerarCaminho(new Date());
 		}
 	}
 

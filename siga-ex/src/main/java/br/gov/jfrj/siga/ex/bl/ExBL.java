@@ -7419,6 +7419,19 @@ public class ExBL extends CpBL {
 	public void gravarArquivoDocumento(ExDocumento doc) {
 		try {
 			if(doc.getCpArquivo()!=null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(doc.getCpArquivo().getTipoArmazenamento())) {
+				if(doc.getCpArquivo().getHashMD5()==null || doc.getCpArquivo().getHashMD5().equals(doc.getCpArquivo().getHashMD5Original())){
+					//Não houve alteração no arquivo
+					return;
+				}
+				if(!doc.getCpArquivo().getHashMD5().equals(doc.getCpArquivo().getHashMD5Original())) {
+					//Caso o documento esteja assinado verifica se tem movimentação canceladora para permitir a alteração
+					if("S".equals(doc.getFgEletronico())){
+						Long totalMovimentacoesAssinadas = dao().contarMovimentacaoAssinada(doc.getIdDoc());
+						if(totalMovimentacoesAssinadas!=null && totalMovimentacoesAssinadas>0)
+							throw new Exception("Não é permitido alterar: eletrônico, com conteúdo, tipo mov. 11 ou 58 e sem mov. canceladora.");
+					}
+					
+				}
 				ArmazenamentoBCInterface armazenamento = ArmazenamentoBCFacade.getArmazenamentoBC(doc.getCpArquivo());
 				armazenamento.salvar(doc.getCpArquivo(), doc.getConteudoBlobDoc2());
 			}

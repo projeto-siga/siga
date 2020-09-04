@@ -41,6 +41,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
@@ -1124,9 +1125,10 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		cacheConteudoBlobDoc = createBlob;
 		if (CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
 			conteudoBlobDoc = createBlob;
-		} else {
+		} else if(cacheConteudoBlobDoc != null){
 			criarCpArquivo();
 			cpArquivo.setTamanho(cacheConteudoBlobDoc.length);
+			cpArquivo.setHashMD5(DigestUtils.md5Hex(cacheConteudoBlobDoc));
 		}
 	}
 	
@@ -1134,7 +1136,8 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		if(cpArquivo == null) {
 			cpArquivo = new CpArquivo();
 			cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")));
-			cpArquivo.gerarCaminho(getDtRegDoc()!=null?getDtRegDoc():new Date());
+			if(CpArquivoTipoArmazenamentoEnum.HCP.equals(cpArquivo.getTipoArmazenamento()))
+				cpArquivo.gerarCaminho(getDtRegDoc()!=null?getDtRegDoc():new Date());
 		}
 	}
 	

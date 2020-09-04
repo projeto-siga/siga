@@ -3344,22 +3344,7 @@ public class ExBL extends CpBL {
 			if (doc.getDtDocOriginal() != null && !Data.dataDentroSeculo21(doc.getDtDocOriginal())) {
 				throw new AplicacaoException("Data original inválida, deve estar entre o ano 2000 e ano 2100");
 			}
-			// Obtem a descricao pela macro @descricao
-			if (doc.getExModelo().isDescricaoAutomatica()) {
-				doc.setDescrDocumento(processarComandosEmTag(doc, "descricao"));
-
-				// Obter a descricao pela macro @entrevista
-			} else if (!Ex.getInstance().getComp().podeEditarDescricao(titular, lotaTitular, doc.getExModelo())) {
-				String s = processarModelo(doc, null, "entrevista", null, null);
-				String descr = extraiTag(s, "descricaoentrevista");
-				doc.setDescrDocumento(descr);
-			}
-			if (doc.getDescrDocumento() == null || doc.getDescrDocumento().isEmpty())
-				doc.setDescrDocumento(processarComandosEmTag(doc, "descricaodefault"));
-
-			if (doc.getDescrDocumento() == null || doc.getDescrDocumento().isEmpty())
-				doc.setDescrDocumento(doc.getExModelo().getNmMod()
-						+ (doc.getSubscritorString() != null ? " de " + doc.getSubscritorString() : ""));
+			gravaDescrDocumento(titular, lotaTitular, doc);
 
 			if (doc.getSubscritor() == null && !doc.getCosignatarios().isEmpty())
 				throw new AplicacaoException(
@@ -7414,6 +7399,38 @@ public class ExBL extends CpBL {
 		if (setVias == null || setVias.size() == 0)
 			criarVia(doc.getCadastrante(), doc.getLotaCadastrante(), doc, null);
 		return;
+	}
+	
+	public void corrigeDocSemDescricao(ExDocumento doc)
+			throws Exception {
+		if (doc.getDescrDocumento() != null)
+			throw new AplicacaoException("Documento já contém a descrição.");
+		gravaDescrDocumento(doc.getTitular(), doc.getLotaTitular(), doc);
+	
+		concluirAlteracaoDoc(doc);
+	
+		ContextoPersistencia.flushTransaction();
+	
+		return;
+	}
+
+	private void gravaDescrDocumento(DpPessoa titular, DpLotacao lotaTitular, ExDocumento doc) throws Exception {
+		// Obtem a descricao pela macro @descricao
+		if (doc.getExModelo().isDescricaoAutomatica()) {
+			doc.setDescrDocumento(processarComandosEmTag(doc, "descricao"));
+
+			// Obter a descricao pela macro @entrevista
+		} else if (!Ex.getInstance().getComp().podeEditarDescricao(titular, lotaTitular, doc.getExModelo())) {
+			String s = processarModelo(doc, null, "entrevista", null, null);
+			String descr = extraiTag(s, "descricaoentrevista");
+			doc.setDescrDocumento(descr);
+		}
+		if (doc.getDescrDocumento() == null || doc.getDescrDocumento().isEmpty())
+			doc.setDescrDocumento(processarComandosEmTag(doc, "descricaodefault"));
+
+		if (doc.getDescrDocumento() == null || doc.getDescrDocumento().isEmpty())
+			doc.setDescrDocumento(doc.getExModelo().getNmMod()
+					+ (doc.getSubscritorString() != null ? " de " + doc.getSubscritorString() : ""));
 	}
 	
 	public void gravarArquivoDocumento(ExDocumento doc) {

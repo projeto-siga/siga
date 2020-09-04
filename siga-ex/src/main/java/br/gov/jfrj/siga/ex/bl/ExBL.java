@@ -6250,17 +6250,32 @@ public class ExBL extends CpBL {
 		}
 	}
 
-	public void gravarForma(ExFormaDocumento forma) throws AplicacaoException {
-		try {		
-			if (forma.isTipoFormaAlterada()) {
+	public void gravarForma(ExFormaDocumento forma, List<ExTipoDocumento> origensCadastradas) throws AplicacaoException {
+		try {	
+			
+			if (forma.isEditando()) {
 				boolean isExFormaComDocumentoVinculado = dao().isExFormaComDocumentoVinculado(forma.getId());
 				
-				if (isExFormaComDocumentoVinculado) {
-					throw new RegraNegocioException("Não é possível alterar o Tipo para <b>" + forma.getExTipoFormaDoc().getDescTipoFormaDoc() + "</b>"
-							+ ", existem documentos que dependem desta informação.");
-				}					
-			}
+				if (isExFormaComDocumentoVinculado) {				
+					if (forma.isTipoFormaAlterada()) {													
+						throw new RegraNegocioException("Não é possível alterar o Tipo para <b>" + forma.getExTipoFormaDoc().getDescTipoFormaDoc() + "</b>"
+								+ ", existem documentos que dependem desta informação.");									
+					}
 					
+					for (ExTipoDocumento origemCadastrada : origensCadastradas) {
+						ExTipoDocumento origemEncontrada = forma.getExTipoDocumentoSet().stream()
+								.filter(o -> o.getIdTpDoc() == origemCadastrada.getIdTpDoc())
+								.findAny()
+								.orElse(null);
+						
+						if (origemEncontrada == null) {
+							throw new RegraNegocioException("Não é possível retirar a Origem <b>" + origemCadastrada.getDescricaoSimples() + "</b>"
+									+ ", existem documentos que dependem desta informação.");
+						}
+					}
+				}			
+			}				
+							
 			if (forma.getDescrFormaDoc() == null || forma.getDescrFormaDoc().isEmpty())
 				throw new RegraNegocioException("Não é possível salvar um tipo sem informar a descrição.");
 			if (forma.getExTipoFormaDoc() == null)

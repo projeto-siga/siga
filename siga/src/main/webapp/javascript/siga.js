@@ -4,7 +4,8 @@ function testpdf(x) {
 	var inputFile = $('#arquivo');
 	var tamanhoArquivo = parseInt(inputFile[0].files[0].size);
 	
-	inputFile.parent().find('label[for=arquivo]').text(inputFile[0].files[0].name);
+	inputFile.parent().find('label[for=arquivo]').html('<i class="far fa-file-pdf"></i>&nbsp;&nbsp;'.concat(inputFile[0].files[0].name));
+	inputFile.attr('title', 'arquivo selecionado: '.concat(inputFile[0].files[0].name));
 	
     if(tamanhoArquivo > 10485760){
     	var mensagem = 'Tamanho do arquivo excede o permitido (10MB)';
@@ -25,8 +26,10 @@ function testpdf(x) {
 		sigaModal.alerta(mensagem).focus(arquivo);
 		x.arquivo.value = '';
 		return false;
-	}		
+	}
+		
 	removerErro(inputFile);
+	inputFile.parent().find('label[for=arquivo]').css('color', '#495057');
 }
 
 /*function popitup(url) {

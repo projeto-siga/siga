@@ -343,17 +343,17 @@ public class Excel {
 				}
 			}
 			if(problemas == null || "".equals(problemas.toString())) {
-	            	for (DpLotacao dpLotacao : lista) {
-		            	CpDao.getInstance().iniciarTransacao();
-		    			CpDao.getInstance().gravar(dpLotacao);
-		    			
-	    				if(dpLotacao.getIdLotacaoIni() == null && dpLotacao.getId() != null) {
-	    					dpLotacao.setIdLotacaoIni(dpLotacao.getId());
-	    					dpLotacao.setIdeLotacao(dpLotacao.getId().toString());
-	        				CpDao.getInstance().gravar(dpLotacao);	        				
-	        			}
-					}
-	            	CpDao.getInstance().em().getTransaction().commit();
+            	for (DpLotacao dpLotacao : lista) {
+	            	CpDao.getInstance().iniciarTransacao();
+	    			CpDao.getInstance().gravar(dpLotacao);
+	    			
+    				if(dpLotacao.getIdLotacaoIni() == null && dpLotacao.getId() != null) {
+    					dpLotacao.setIdLotacaoIni(dpLotacao.getId());
+    					dpLotacao.setIdeLotacao(dpLotacao.getId().toString());
+        				CpDao.getInstance().gravar(dpLotacao);	        				
+        			}
+				}
+            	CpDao.getInstance().em().getTransaction().commit();
 			}
 			if(problemas == null || "".equals(problemas.toString())) {
 	    		return null;
@@ -609,10 +609,7 @@ public class Excel {
 	}
     
     public InputStream uploadPessoa(File file, CpOrgaoUsuario orgaoUsuario, String extensao, CpIdentidade identidade) {
-		InputStream retorno = null;
-		retorno = uploadExcelPessoa(file, orgaoUsuario, identidade);
-
-		return retorno;
+		return uploadExcelPessoa(file, orgaoUsuario, identidade);
 	}
     
     public InputStream uploadExcelPessoa(File file, CpOrgaoUsuario orgaoUsuario, CpIdentidade identidade) {
@@ -859,7 +856,7 @@ public class Excel {
 				 * Insercao dos campos RG, Orcao Expeditor, UF, Data Expedicao
 				 */
 				
-				//RG
+				//RG				
 				celula = retornaConteudo(row.getCell(8, Row.CREATE_NULL_AS_BLANK));
 				rg = celula;
 				
@@ -884,7 +881,7 @@ public class Excel {
 			    			problemas.append( "Linha " + linha + ": DATA DE EXPEDIÇÃO DO RG inválida" + System.lineSeparator());
 			    		}
 					} else if(row.getCell(11).getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
-						problemas.append(validarData(String.valueOf(((Double)row.getCell(11, Row.CREATE_NULL_AS_BLANK).getNumericCellValue()).longValue()), linha));
+						problemas.append(validarData(String.valueOf(((Double)row.getCell(11, Row.CREATE_NULL_AS_BLANK).getNumericCellValue()).longValue()), linha, "expedição"));
 						if(problemas != null && problemas.toString().equals("")) {
 							dataString = String.valueOf(((Double)row.getCell(11).getNumericCellValue()).longValue()).replaceAll("[^0-11]", "");
 							dateExp = formato.parse(dataString);	
@@ -895,7 +892,7 @@ public class Excel {
 						}
 						
 					} else if(row.getCell(11).getCellType() == HSSFCell.CELL_TYPE_STRING) {
-						problemas.append(validarData(row.getCell(11, Row.CREATE_NULL_AS_BLANK).getStringCellValue(), linha));
+						problemas.append(validarData(row.getCell(11, Row.CREATE_NULL_AS_BLANK).getStringCellValue(), linha, "expedição"));
 						if(problemas != null && problemas.toString().equals("")) {
 							dataString = row.getCell(11, Row.CREATE_NULL_AS_BLANK).getStringCellValue();
 							dateExp = formato.parse(dataString.replace("-", "").replace("/", "").trim());	
@@ -968,52 +965,57 @@ public class Excel {
 					lista.add(pe);
 				}
 			}
-			if(problemas == null || "".equals(problemas.toString())) {
-				try {
-					CpDao.getInstance().iniciarTransacao();
-					CpIdentidade usu = null;
-					CpIdentidade usuarioExiste = null;
-					List<CpIdentidade> lista1 = new ArrayList<CpIdentidade>();
-	            	for (DpPessoa dpPessoa : lista) {
-		    			CpDao.getInstance().gravar(dpPessoa);
+			if(problemas == null || "".equals(problemas.toString())) {				
+				CpDao.getInstance().iniciarTransacao();
+				CpIdentidade usu = null;
+				CpIdentidade usuarioExiste = null;
+				List<CpIdentidade> lista1 = new ArrayList<CpIdentidade>();
+            	for (DpPessoa dpPessoa : lista) {
+	    			CpDao.getInstance().gravar(dpPessoa);
 
-	    				if(dpPessoa.getIdPessoaIni() == null && dpPessoa.getId() != null) {
-	    					dpPessoa.setIdPessoaIni(dpPessoa.getId());
-	    					dpPessoa.setIdePessoa(dpPessoa.getId().toString());
-	    					dpPessoa.setMatricula(10000 + dpPessoa.getId());	
-	        				CpDao.getInstance().gravar(dpPessoa);
-	        				
-	        				lista1.clear();
-	        				lista1 = CpDao.getInstance().consultaIdentidadesPorCpf(dpPessoa.getCpfPessoa().toString());
-	        				
-	        				if(lista1.size() > 0) {
-	        					usuarioExiste = lista1.get(0);
-	        					usu = new CpIdentidade();
-	        					usu.setCpTipoIdentidade(CpDao.getInstance().consultar(1,
-	        										CpTipoIdentidade.class, false));
-	        					usu.setDscSenhaIdentidade(usuarioExiste.getDscSenhaIdentidade());
-	        					usu.setDtCriacaoIdentidade(CpDao.getInstance()
-	        							.consultarDataEHoraDoServidor());
-	        					usu.setCpOrgaoUsuario(dpPessoa.getOrgaoUsuario());
-	        					usu.setHisDtIni(usu.getDtCriacaoIdentidade());
-	        					usu.setHisAtivo(1);
-	        					
-		        				if(usu != null) {
-		        					usu.setNmLoginIdentidade(dpPessoa.getSesbPessoa() + dpPessoa.getMatricula());
-		        					usu.setDpPessoa(dpPessoa);
-		        					CpDao.getInstance().gravarComHistorico(usu, identidade);
-		        				}
+    				if(dpPessoa.getIdPessoaIni() == null && dpPessoa.getId() != null) {
+    					dpPessoa.setIdPessoaIni(dpPessoa.getId());
+    					dpPessoa.setIdePessoa(dpPessoa.getId().toString());
+    					dpPessoa.setMatricula(10000 + dpPessoa.getId());	
+        				CpDao.getInstance().gravar(dpPessoa);
+        				
+        				lista1.clear();
+        				lista1 = CpDao.getInstance().consultaIdentidadesPorCpf(dpPessoa.getCpfPessoa().toString());
+        				
+        				if(lista1.size() > 0) {
+        					usuarioExiste = lista1.get(0);
+        					usu = new CpIdentidade();
+        					usu.setCpTipoIdentidade(CpDao.getInstance().consultar(1,
+        										CpTipoIdentidade.class, false));
+        					usu.setDscSenhaIdentidade(usuarioExiste.getDscSenhaIdentidade());
+        					usu.setDtCriacaoIdentidade(CpDao.getInstance()
+        							.consultarDataEHoraDoServidor());
+        					usu.setCpOrgaoUsuario(dpPessoa.getOrgaoUsuario());
+        					usu.setHisDtIni(usu.getDtCriacaoIdentidade());
+        					usu.setHisAtivo(1);
+        					
+	        				if(usu != null) {
+	        					usu.setNmLoginIdentidade(dpPessoa.getSesbPessoa() + dpPessoa.getMatricula());
+	        					usu.setDpPessoa(dpPessoa);
+	        					CpDao.getInstance().gravarComHistorico(usu, identidade);
 	        				}
-	        			}
-					}
-	    			CpDao.getInstance().commitTransacao();			
-	    		} catch (final Exception e) {
-	    			CpDao.getInstance().rollbackTransacao();
-	    			throw new AplicacaoException("Erro na gravação", 0, e);
-	    		}
+        				}
+        			}
+				}
+            	CpDao.getInstance().em().getTransaction().commit();				    		
 			}
-		} catch (Exception ioe) {
-            ioe.printStackTrace();
+		} catch (Exception e) {														
+			if (CpDao.getInstance().em().getTransaction().isActive()) {
+				CpDao.getInstance().em().getTransaction().rollback();
+			}			
+			if (e.getCause() != null && e.getCause().toString().contains("ConstraintViolationException")) {
+				throw new SigaConstraintViolationException("Identificado uma violação de integridade no banco de dados." 
+						+ " Isso pode ocorrer ao gravar um registro que já exista.<br/>" 
+						+ " Por segurança, todo o processo foi cancelado e nenhum registro foi gravado.<br/>"							
+						+ " Favor analisar a planilha e se certificar de que na mesma,"  
+						+ " não exista nenhuma Pessoa que já esteja cadastrada no sistema e tente novamente.");
+			}			
+			throw new AplicacaoException("Erro na gravação", 0, e);						        									        
         }
     	if(problemas == null || "".equals(problemas.toString())) {
     		return null;
@@ -1023,7 +1025,12 @@ public class Excel {
     }
     
     public String validarData(String date, Integer linha) {
-    	date = (date == null ? "" : date).replaceAll("[^0-9]*", "");  
+    	return validarData(date, linha, "");
+    }
+    
+    public String validarData(String date, Integer linha, String nomeCampo) {
+    	date = (date == null ? "" : date).replaceAll("[^0-9]*", "");
+    	String campo = StringUtils.isEmpty(nomeCampo) ? "NASCIMENTO" : nomeCampo;  
     	  
         if (date.length() == 8) {  
             Integer dia = Integer.valueOf(date.substring(0, 2));  
@@ -1031,20 +1038,20 @@ public class Excel {
             Integer ano = Integer.valueOf(date.substring(4, 8));  
   
             if (mes < 0 || mes > 11) {  
-            	return "Linha " + linha + ": DATA DE NASCIMENTO inválida" + System.lineSeparator();
+            	return "Linha " + linha + ": DATA DE " + campo.toUpperCase() + " inválida" + System.lineSeparator();
             }  
   
             GregorianCalendar calendar = new GregorianCalendar();  
             calendar.set(ano, mes, 1);  
   
             if (dia <= 0 || dia > calendar.getActualMaximum(Calendar.DAY_OF_MONTH)) {  
-            	return "Linha " + linha + ": DATA DE NASCIMENTO inválida" + System.lineSeparator();
+            	return "Linha " + linha + ": DATA DE " + campo.toUpperCase() + " inválida" + System.lineSeparator();
             }  
  
             return "";  
         }  
   
-        return "Linha " + linha + ": DATA DE NASCIMENTO inválida" + System.lineSeparator();
+        return "Linha " + linha + ": DATA DE " + campo.toUpperCase() + " inválida" + System.lineSeparator();
     }
     
     public String validarNomePessoa(String nomePessoa, Integer linha, Integer tamanho) {

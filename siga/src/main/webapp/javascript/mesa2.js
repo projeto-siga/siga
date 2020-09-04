@@ -40,7 +40,8 @@ var appMesa = new Vue({
 			trazerAnotacoes: true,
 			trazerComposto: false,
 			trazerArquivados: false,
-			trazerCancelados: false
+			trazerCancelados: false,
+			ordemCrescenteData: false
 		};
 	},
 	computed: {
@@ -131,6 +132,10 @@ var appMesa = new Vue({
 		trazerCancelados: function() {
 			setParmUser('trazerCancelados', this.trazerCancelados);
 			this.recarregarMesa();
+		},
+		ordemCrescenteData: function() {
+			setParmUser('ordemCrescenteData', this.ordemCrescenteData);
+			this.recarregarMesa();
 		}
 	},
 	methods: {
@@ -140,6 +145,7 @@ var appMesa = new Vue({
 			this.trazerComposto = (getParmUser('trazerComposto') == null ? false : getParmUser('trazerComposto'));
 			this.trazerArquivados = (getParmUser('trazerArquivados') == null ? false : getParmUser('trazerArquivados'));
 			this.trazerCancelados = (getParmUser('trazerCancelados') == null ? false : getParmUser('trazerCancelados'));
+			this.ordemCrescenteData = (getParmUser('ordemCrescenteData') == null ? false : getParmUser('ordemCrescenteData'));
 			setValueGrupo('Aguardando Ação de Temporalidade', 'hide', !this.trazerArquivados);
 
 			var timeout = Math.abs(new Date() -
@@ -190,6 +196,7 @@ var appMesa = new Vue({
 					trazerComposto: this.trazerComposto,
 					trazerArquivados: this.trazerArquivados,
 					trazerCancelados: this.trazerCancelados,
+					ordemCrescenteData: this.ordemCrescenteData,
 					idVisualizacao: ID_VISUALIZACAO
 				},
 				complete: function(response, status, request) {
@@ -228,6 +235,7 @@ var appMesa = new Vue({
 			localStorage.removeItem('trazerComposto' + getUser());
 			localStorage.removeItem('trazerArquivados' + getUser());
 			localStorage.removeItem('trazerCancelados' + getUser());
+			localStorage.removeItem('ordemCrescenteData' + getUser());
 			this.recarregarMesa();
 			this.selQtdPag = 15;
 		},

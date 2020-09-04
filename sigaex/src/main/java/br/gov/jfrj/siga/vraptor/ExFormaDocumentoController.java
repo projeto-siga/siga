@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.vraptor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -140,6 +141,7 @@ public class ExFormaDocumentoController extends ExController {
 		assertAcesso(ACESSO_SIGA_DOC_MOD);
 		setPostback(postback);
 
+		List<ExTipoDocumento> origensCadastradas = new ArrayList<>();		
 		final ExFormaDocumento forma = id != null ? recuperarForma(id) : new ExFormaDocumento();
 				
 		if (forma.isEditando()) {
@@ -152,8 +154,14 @@ public class ExFormaDocumentoController extends ExController {
 
 		if (forma.getExTipoDocumentoSet() == null) {
 			forma.setExTipoDocumentoSet(new HashSet<ExTipoDocumento>());
-		} else {
-			forma.getExTipoDocumentoSet().clear();
+		} else {			
+			if (forma.isEditando()) {				
+				for (ExTipoDocumento origem : forma.getExTipoDocumentoSet()) {
+					origensCadastradas.add(origem);
+				}																	
+			}
+			
+			forma.getExTipoDocumentoSet().clear();					
 		}
 
 		forma.setIsComposto(isComposto);
@@ -177,7 +185,7 @@ public class ExFormaDocumentoController extends ExController {
 		}
 
 		try {
-			Ex.getInstance().getBL().gravarForma(forma);
+			Ex.getInstance().getBL().gravarForma(forma, origensCadastradas);
 			
 			result.include("id", forma.getIdFormaDoc());
 			result.include("descricao", descricao);

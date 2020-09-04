@@ -9,353 +9,360 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 
-<script type="text/javascript" language="Javascript1.1">
-	function init() {
-		alteraTipoDaForma(alteraForma);
-	}
-	function alteraTipoDaForma(cont) {
-		ReplaceInnerHTMLFromAjaxResponse(
-				'/sigaex/app/expediente/doc/carregar_lista_formas?tipoForma='
-						+ document.getElementById('tipoForma').value
-						+ '&idFormaDoc=' + '${idFormaDoc}', null, document
-						.getElementById('comboFormaDiv'), cont)
-	}
+<siga:pagina titulo="Lista de Expedientes" popup="${popup}">
+	<script type="text/javascript" language="Javascript1.1">
 
-	function alteraForma(cont) {
-		ReplaceInnerHTMLFromAjaxResponse(
-				'/sigaex/app/expediente/doc/carregar_lista_modelos?forma='
-						+ document.getElementById('idFormaDoc').value
-						+ '&idMod='	+ '${idMod}', null, document
-						.getElementById('comboModeloDiv'), cont)
-	}
-
-	function sbmtAction(id, action) {
-		var frm = document.getElementById(id);
-		frm.action = action;
-		frm.submit();
-		return;
-	}
-
-	function sbmt(offset) {
-		if (offset == null) {
-			offset = 0;
+		$(document).ready(function() {
+			alteraOrigem();
+			alteraTipoDaForma();
+			alteraForma();				
+		});
+		
+		function alteraTipoDaForma() {
+			SetInnerHTMLFromAjaxResponse(
+					'/sigaex/app/expediente/doc/carregar_lista_formas?tipoForma='
+							+ document.getElementById('tipoForma').value
+							+ '&idFormaDoc=' + '${idFormaDoc}', document
+							.getElementById('comboFormaDiv'));
+			
 		}
-		listar["paramoffset"].value = offset;
-		listar["p.offset"].value = offset;
-		listar.submit();
-	}
 	
-	function submitBusca(cliente) {
-		if(cliente == 'GOVSP') {
-			var descricao = document.getElementById('descrDocumento').value.trim();
-			if(descricao.length != 0 && descricao.length < 5) {
-				sigaModal.alerta("Preencha no mínimo 5 caracteres no campo descrição");
+		function alteraForma() {
+			var idFormaDoc = document.getElementById('idFormaDoc');
+			SetInnerHTMLFromAjaxResponse(
+					'/sigaex/app/expediente/doc/carregar_lista_modelos?forma='
+							+ (idFormaDoc != null ? idFormaDoc.value : '${idFormaDoc}' )
+							+ '&idMod='	+ '${idMod}', document
+							.getElementById('comboModeloDiv'));
+		}
+		
+		function sbmtAction(id, action) {
+			var frm = document.getElementById(id);
+			frm.action = action;
+			frm.submit();
+			return;
+		}
+	
+		function sbmt(offset) {
+			if (offset == null) {
+				offset = 0;
+			}
+			listar["paramoffset"].value = offset;
+			listar["p.offset"].value = offset;
+			listar.submit();
+		}
+		
+		function submitBusca(cliente) {
+			if(cliente == 'GOVSP') {
+				var descricao = document.getElementById('descrDocumento').value.trim();
+				if(descricao.length != 0 && descricao.length < 5) {
+					sigaModal.alerta("Preencha no mínimo 5 caracteres no campo descrição");
+				} else {
+					$('#buscandoSpinner').removeClass('d-none');
+					document.getElementById("btnBuscar").disabled = true;
+					listar.submit();
+				}
 			} else {
 				$('#buscandoSpinner').removeClass('d-none');
 				document.getElementById("btnBuscar").disabled = true;
 				listar.submit();
 			}
-		} else {
-			$('#buscandoSpinner').removeClass('d-none');
-			document.getElementById("btnBuscar").disabled = true;
-			listar.submit();
+		}	
+	
+		function montaDescricao(id, via, descrDoc) {
+			var popW = 700;
+			var popH = 500;
+			var winleft = (screen.width - popW) / 2;
+			var winUp = (screen.height - popH) / 2;
+			var winProp = '\'width=' + popW + ',height=' + popH + ',left='
+					+ winleft + ',top=' + winUp + ',scrollbars=yes,resizable\'';
+			var url = '\'<c:url value="/app/expediente/doc/exibir"/>?popup=true&id='
+					+ id + '&via=' + via + '\'';
+	
+			var onclick = ' onclick="javascript:window.open(' + url
+					+ ',\'documento\',' + winProp + ')"';
+			var href = ' href="javascript:void(0)"';
+	
+			var a = '<a'+href+onclick+'>' + descrDoc + '</a>';
+			return a;
 		}
-	}	
-
-	function montaDescricao(id, via, descrDoc) {
-		var popW = 700;
-		var popH = 500;
-		var winleft = (screen.width - popW) / 2;
-		var winUp = (screen.height - popH) / 2;
-		var winProp = '\'width=' + popW + ',height=' + popH + ',left='
-				+ winleft + ',top=' + winUp + ',scrollbars=yes,resizable\'';
-		var url = '\'<c:url value="/app/expediente/doc/exibir"/>?popup=true&id='
-				+ id + '&via=' + via + '\'';
-
-		var onclick = ' onclick="javascript:window.open(' + url
-				+ ',\'documento\',' + winProp + ')"';
-		var href = ' href="javascript:void(0)"';
-
-		var a = '<a'+href+onclick+'>' + descrDoc + '</a>';
-		return a;
-	}
-
-	function alteraOrigem() {
-		var objSelecionado = document.getElementById('idTpDoc');
-
-		switch (parseInt(objSelecionado.value)) {
-		case 0:
-			document.getElementById('trNumOrigDoc').style.display = 'none';
-			document.getElementById('trNumDocSistAntigo').style.display = 'none';
-			document.getElementById('trOrgExterno').style.display = 'none';
-			document.getElementById('trTipo').style.display = '';
-
-			if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
-			break;
-		case 1: // Interno Produzido
-			document.getElementById('trNumOrigDoc').style.display = 'none';
-			document.getElementById('trNumDocSistAntigo').style.display = 'none';
-			document.getElementById('trOrgExterno').style.display = 'none';
-			document.getElementById('trTipo').style.display = '';
-
-			if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
-			break;
-		case 2: // Interno Folha de Rosto
-			document.getElementById('trNumOrigDoc').style.display = '';
-			document.getElementById('trNumDocSistAntigo').style.display = '';
-			document.getElementById('trOrgExterno').style.display = 'none';
-			document.getElementById('trTipo').style.display = '';
-
-			if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
-			break;
-		case 3: // Externo Folha de Rosto
-			document.getElementById('trNumOrigDoc').style.display = '';
-			document.getElementById('trNumDocSistAntigo').style.display = '';
-			document.getElementById('trOrgExterno').style.display = '';
-			document.getElementById('trTipo').style.display = 'none';
-
-			if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '5';
-			break;
-		case 4: // Externo Capturado
-			document.getElementById('trNumOrigDoc').style.display = '';
-			document.getElementById('trNumDocSistAntigo').style.display = 'none';
-			document.getElementById('trOrgExterno').style.display = '';
-			document.getElementById('trTipo').style.display = 'none';
-
-			if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
-			break;
-		case 5: // Interno Capturado
-			document.getElementById('trNumOrigDoc').style.display = 'none';
-			document.getElementById('trNumDocSistAntigo').style.display = 'none';
-			document.getElementById('trOrgExterno').style.display = 'none';
-			document.getElementById('trTipo').style.display = '';
-
-			if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
-			break;
-		}
-	}
-
-	function alteraAtendente() {
-		var objSelecionado = document.getElementById('ultMovTipoResp');
-
-		switch (parseInt(objSelecionado.value)) {
-		case 1:
-			document.getElementById('divUltMovResp').style.display = '';
-			document.getElementById('divUltMovLotaResp').style.display = 'none';
-			break;
-		case 2:
-			document.getElementById('divUltMovResp').style.display = 'none';
-			document.getElementById('divUltMovLotaResp').style.display = '';
-			break;
-		}
-	}
-
-	function alteraCadastranteDocumento() {
-		var objSelecionado = document.getElementById('tipoCadastrante');
-
-		switch (parseInt(objSelecionado.value)) {
-		case 1:
-			document.getElementById('divCadastrante').style.display = '';
-			document.getElementById('divLotaCadastrante').style.display = 'none';
-			break;
-		case 2:
-			document.getElementById('divCadastrante').style.display = 'none';
-			document.getElementById('divLotaCadastrante').style.display = '';
-			break;
-		}
-	}
-
-	function alteraDestinatarioDocumento() {
-		var objSelecionado = document.getElementById('tipoDestinatario');
-
-		switch (parseInt(objSelecionado.value)) {
-		case 1:
-			document.getElementById('divDestinatario').style.display = '';
-			document.getElementById('divLotaDestinatario').style.display = 'none';
-			document.getElementById('divOrgaoExternoDestinatario').style.display = 'none';
-			document.getElementById('divNmDestinatario').style.display = 'none';
-			break;
-		case 2:
-			document.getElementById('divDestinatario').style.display = 'none';
-			document.getElementById('divLotaDestinatario').style.display = '';
-			document.getElementById('divOrgaoExternoDestinatario').style.display = 'none';
-			document.getElementById('divNmDestinatario').style.display = 'none';
-			break;
-		case 3:
-			document.getElementById('divDestinatario').style.display = 'none';
-			document.getElementById('divLotaDestinatario').style.display = 'none';
-			document.getElementById('divOrgaoExternoDestinatario').style.display = '';
-			document.getElementById('divNmDestinatario').style.display = 'none';
-			break;
-		case 4:
-			document.getElementById('divDestinatario').style.display = 'none';
-			document.getElementById('divLotaDestinatario').style.display = 'none';
-			document.getElementById('divOrgaoExternoDestinatario').style.display = 'none';
-			document.getElementById('divNmDestinatario').style.display = '';
-			break;
-		}
-	}
-
-	function limpaCampos() {
-
-		var ultMovTipoResp = document.getElementById('ultMovTipoResp');
-
-		switch (parseInt(ultMovTipoResp.value)) {
-		case 1:
-			document.getElementById('formulario_ultMovLotaRespSel_id').value = '';
-			document.getElementById('formulario_ultMovLotaRespSel_descricao').value = '';
-			document.getElementById('formulario_ultMovLotaRespSel_buscar').value = '';
-			document.getElementById('formulario_ultMovLotaRespSel_sigla').value = '';
-			document.getElementById('ultMovLotaRespSelSpan').innerHTML = '';
-			break;
-		case 2:
-			document.getElementById('formulario_ultMovRespSel_id').value = '';
-			document.getElementById('formulario_ultMovRespSel_descricao').value = '';
-			document.getElementById('formulario_ultMovRespSel_buscar').value = '';
-			document.getElementById('formulario_ultMovRespSel_sigla').value = '';
-			document.getElementById('ultMovRespSelSpan').innerHTML = '';
-			break;
-		}
-
-		var tipoCadastrante = document.getElementById('tipoCadastrante');
-
-		switch (parseInt(tipoCadastrante.value)) {
-		case 1:
-			document.getElementById('formulario_lotaCadastranteSel_id').value = '';
-			document.getElementById('formulario_lotaCadastranteSel_descricao').value = '';
-			document.getElementById('formulario_lotaCadastranteSel_buscar').value = '';
-			document.getElementById('formulario_lotaCadastranteSel_sigla').value = '';
-			document.getElementById('lotaCadastranteSelSpan').innerHTML = '';
-			break;
-		case 2:
-			document.getElementById('formulario_cadastranteSel_id').value = '';
-			document.getElementById('formulario_cadastranteSel_descricao').value = '';
-			document.getElementById('formulario_cadastranteSel_buscar').value = '';
-			document.getElementById('formulario_cadastranteSel_sigla').value = '';
-			document.getElementById('cadastranteSelSpan').innerHTML = '';
-			break;
-		}
-
-		var tipoDestinatario = document.getElementById('tipoDestinatario');
-
-		switch (parseInt(tipoDestinatario.value)) {
-		case 1:
-			document.getElementById('formulario_lotacaoDestinatarioSel_id').value = '';
-			document.getElementById('formulario_lotacaoDestinatarioSel_descricao').value = '';
-			document.getElementById('formulario_lotacaoDestinatarioSel_buscar').value = '';
-			document.getElementById('formulario_reqlotacaoDestinatarioSel').value = '';
-			document.getElementById('formulario_lotacaoDestinatarioSel_sigla').value = '';
-			document.getElementById('lotacaoDestinatarioSelSpan').innerHTML = '';
-			document.getElementById('formulario_orgaoExternoDestinatarioSel_id').value = '';
-			document.getElementById('formulario_orgaoExternoDestinatarioSel_descricao').value = '';
-			document.getElementById('formulario_orgaoExternoDestinatarioSel_buscar').value = '';
-			document.getElementById('formulario_reqorgaoExternoDestinatarioSel').value = '';
-			document.getElementById('formulario_orgaoExternoDestinatarioSel_sigla').value = '';
-			document.getElementById('orgaoExternoDestinatarioSelSpan').innerHTML = '';
-			document.getElementById('nmDestinatario').value = '';
-
-			break;
-		case 2:
-			document.getElementById('formulario_destinatarioSel_id').value = '';
-			document.getElementById('formulario_destinatarioSel_descricao').value = '';
-			document.getElementById('formulario_destinatarioSel_buscar').value = '';
-			document.getElementById('formulario_reqdestinatarioSel').value = '';
-			document.getElementById('formulario_destinatarioSel_sigla').value = '';
-			document.getElementById('destinatarioSelSpan').innerHTML = '';
-			document.getElementById('formulario_orgaoExternoDestinatarioSel_id').value = '';
-			document.getElementById('formulario_orgaoExternoDestinatarioSel_descricao').value = '';
-			document.getElementById('formulario_orgaoExternoDestinatarioSel_buscar').value = '';
-			document.getElementById('formulario_reqorgaoExternoDestinatarioSel').value = '';
-			document.getElementById('formulario_orgaoExternoDestinatarioSel_sigla').value = '';
-			document.getElementById('orgaoExternoDestinatarioSelSpan').innerHTML = '';
-			document.getElementById('nmDestinatario').value = '';
-
-			break;
-		case 3:
-			document.getElementById('formulario_destinatarioSel_id').value = '';
-			document.getElementById('formulario_destinatarioSel_descricao').value = '';
-			document.getElementById('formulario_destinatarioSel_buscar').value = '';
-			document.getElementById('formulario_reqdestinatarioSel').value = '';
-			document.getElementById('formulario_destinatarioSel_sigla').value = '';
-			document.getElementById('destinatarioSelSpan').innerHTML = '';
-			document.getElementById('formulario_lotacaoDestinatarioSel_id').value = '';
-			document.getElementById('formulario_lotacaoDestinatarioSel_descricao').value = '';
-			document.getElementById('formulario_lotacaoDestinatarioSel_buscar').value = '';
-			document.getElementById('formulario_reqlotacaoDestinatarioSel').value = '';
-			document.getElementById('formulario_lotacaoDestinatarioSel_sigla').value = '';
-			document.getElementById('lotacaoDestinatarioSelSpan').innerHTML = '';
-			document.getElementById('nmDestinatario').value = '';
-
-			break;
-		case 4:
-			document.getElementById('formulario_destinatarioSel_id').value = '';
-			document.getElementById('formulario_destinatarioSel_descricao').value = '';
-			document.getElementById('formulario_destinatarioSel_buscar').value = '';
-			document.getElementById('formulario_reqdestinatarioSel').value = '';
-			document.getElementById('formulario_destinatarioSel_sigla').value = '';
-			document.getElementById('destinatarioSelSpan').innerHTML = '';
-			document.getElementById('formulario_lotacaoDestinatarioSel_id').value = '';
-			document.getElementById('formulario_lotacaoDestinatarioSel_descricao').value = '';
-			document.getElementById('formulario_lotacaoDestinatarioSel_buscar').value = '';
-			document.getElementById('formulario_reqlotacaoDestinatarioSel').value = '';
-			document.getElementById('formulario_lotacaoDestinatarioSel_sigla').value = '';
-			document.getElementById('lotacaoDestinatarioSelSpan').innerHTML = '';
-			document.getElementById('formulario_orgaoExternoDestinatarioSel_id').value = '';
-			document.getElementById('formulario_orgaoExternoDestinatarioSel_descricao').value = '';
-			document.getElementById('formulario_orgaoExternoDestinatarioSel_buscar').value = '';
-			document.getElementById('formulario_reqorgaoExternoDestinatarioSel').value = '';
-			document.getElementById('formulario_orgaoExternoDestinatarioSel_sigla').value = '';
-			document.getElementById('orgaoExternoDestinatarioSelSpan').innerHTML = '';
-
-			break;
-		}
-
-		var listar_idTpDoc = document.getElementById('idTpDoc');
-
-		switch (parseInt(listar_idTpDoc.value)) {
-		case 0:
-			document.getElementById('numExtDoc').value = '';
-
-			document.getElementById('formulario_cpOrgaoSel_id').value = '';
-			document.getElementById('formulario_cpOrgaoSel_descricao').value = '';
-			document.getElementById('formulario_cpOrgaoSel_buscar').value = '';
-			document.getElementById('formulario_cpOrgaoSel_sigla').value = '';
-			document.getElementById('cpOrgaoSelSpan').innerHTML = '';
-			document.getElementById('numAntigoDoc').value = '';
-
-			break;
-		case 1:
-			document.getElementById('numExtDoc').value = '';
-			document.getElementById('formulario_cpOrgaoSel_id').value = '';
-			document.getElementById('formulario_cpOrgaoSel_descricao').value = '';
-			document.getElementById('formulario_cpOrgaoSel_buscar').value = '';
-			document.getElementById('formulario_cpOrgaoSel_sigla').value = '';
-			document.getElementById('cpOrgaoSelSpan').innerHTML = '';
-			document.getElementById('numAntigoDoc').value = '';
-
-			break;
-		case 2:
-			document.getElementById('formulario_cpOrgaoSel_id').value = '';
-			document.getElementById('formulario_cpOrgaoSel_descricao').value = '';
-			document.getElementById('formulario_cpOrgaoSel_buscar').value = '';
-			document.getElementById('formulario_cpOrgaoSel_sigla').value = '';
-			document.getElementById('cpOrgaoSelSpan').innerHTML = '';
-
-			break;
-		case 3:
-			document.getElementById('idFormaDoc').value = '5';
-
-			break;
-		}
-
-		document.getElementById("btnBuscar").disabled = false;
-		$('#buscandoSpinner').addClass('d-none');
+	
+		function alteraOrigem() {
+			var objSelecionado = document.getElementById('idTpDoc');
+			if (objSelecionado != null) {
+				switch (parseInt(objSelecionado.value)) {
+				case 0:
+					document.getElementById('trNumOrigDoc').style.display = 'none';
+					document.getElementById('trNumDocSistAntigo').style.display = 'none';
+					document.getElementById('trOrgExterno').style.display = 'none';
+					document.getElementById('trTipo').style.display = '';
 		
-		return true;
-	}
-</script>
-
-<siga:pagina titulo="Lista de Expedientes" popup="${popup}">
+					if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
+					break;
+				case 1: // Interno Produzido
+					document.getElementById('trNumOrigDoc').style.display = 'none';
+					document.getElementById('trNumDocSistAntigo').style.display = 'none';
+					document.getElementById('trOrgExterno').style.display = 'none';
+					document.getElementById('trTipo').style.display = '';
+		
+					if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
+					break;
+				case 2: // Interno Folha de Rosto
+					document.getElementById('trNumOrigDoc').style.display = '';
+					document.getElementById('trNumDocSistAntigo').style.display = '';
+					document.getElementById('trOrgExterno').style.display = 'none';
+					document.getElementById('trTipo').style.display = '';
+		
+					if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
+					break;
+				case 3: // Externo Folha de Rosto
+					document.getElementById('trNumOrigDoc').style.display = '';
+					document.getElementById('trNumDocSistAntigo').style.display = '';
+					document.getElementById('trOrgExterno').style.display = '';
+					document.getElementById('trTipo').style.display = 'none';
+		
+					if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '5';
+					break;
+				case 4: // Externo Capturado
+					document.getElementById('trNumOrigDoc').style.display = '';
+					document.getElementById('trNumDocSistAntigo').style.display = 'none';
+					document.getElementById('trOrgExterno').style.display = '';
+					document.getElementById('trTipo').style.display = 'none';
+		
+					if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
+					break;
+				case 5: // Interno Capturado
+					document.getElementById('trNumOrigDoc').style.display = 'none';
+					document.getElementById('trNumDocSistAntigo').style.display = 'none';
+					document.getElementById('trOrgExterno').style.display = 'none';
+					document.getElementById('trTipo').style.display = '';
+		
+					if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
+					break;
+				}
+			}
+		}
+	
+		function alteraAtendente() {
+			var objSelecionado = document.getElementById('ultMovTipoResp');
+	
+			switch (parseInt(objSelecionado.value)) {
+			case 1:
+				document.getElementById('divUltMovResp').style.display = '';
+				document.getElementById('divUltMovLotaResp').style.display = 'none';
+				break;
+			case 2:
+				document.getElementById('divUltMovResp').style.display = 'none';
+				document.getElementById('divUltMovLotaResp').style.display = '';
+				break;
+			}
+		}
+	
+		function alteraCadastranteDocumento() {
+			var objSelecionado = document.getElementById('tipoCadastrante');
+	
+			switch (parseInt(objSelecionado.value)) {
+			case 1:
+				document.getElementById('divCadastrante').style.display = '';
+				document.getElementById('divLotaCadastrante').style.display = 'none';
+				break;
+			case 2:
+				document.getElementById('divCadastrante').style.display = 'none';
+				document.getElementById('divLotaCadastrante').style.display = '';
+				break;
+			}
+		}
+	
+		function alteraDestinatarioDocumento() {
+			var objSelecionado = document.getElementById('tipoDestinatario');
+	
+			switch (parseInt(objSelecionado.value)) {
+			case 1:
+				document.getElementById('divDestinatario').style.display = '';
+				document.getElementById('divLotaDestinatario').style.display = 'none';
+				document.getElementById('divOrgaoExternoDestinatario').style.display = 'none';
+				document.getElementById('divNmDestinatario').style.display = 'none';
+				break;
+			case 2:
+				document.getElementById('divDestinatario').style.display = 'none';
+				document.getElementById('divLotaDestinatario').style.display = '';
+				document.getElementById('divOrgaoExternoDestinatario').style.display = 'none';
+				document.getElementById('divNmDestinatario').style.display = 'none';
+				break;
+			case 3:
+				document.getElementById('divDestinatario').style.display = 'none';
+				document.getElementById('divLotaDestinatario').style.display = 'none';
+				document.getElementById('divOrgaoExternoDestinatario').style.display = '';
+				document.getElementById('divNmDestinatario').style.display = 'none';
+				break;
+			case 4:
+				document.getElementById('divDestinatario').style.display = 'none';
+				document.getElementById('divLotaDestinatario').style.display = 'none';
+				document.getElementById('divOrgaoExternoDestinatario').style.display = 'none';
+				document.getElementById('divNmDestinatario').style.display = '';
+				break;
+			}
+		}
+	
+		function limpaCampos() {
+	
+			var ultMovTipoResp = document.getElementById('ultMovTipoResp');
+	
+			switch (parseInt(ultMovTipoResp.value)) {
+			case 1:
+				document.getElementById('formulario_ultMovLotaRespSel_id').value = '';
+				document.getElementById('formulario_ultMovLotaRespSel_descricao').value = '';
+				document.getElementById('formulario_ultMovLotaRespSel_buscar').value = '';
+				document.getElementById('formulario_ultMovLotaRespSel_sigla').value = '';
+				document.getElementById('ultMovLotaRespSelSpan').innerHTML = '';
+				break;
+			case 2:
+				document.getElementById('formulario_ultMovRespSel_id').value = '';
+				document.getElementById('formulario_ultMovRespSel_descricao').value = '';
+				document.getElementById('formulario_ultMovRespSel_buscar').value = '';
+				document.getElementById('formulario_ultMovRespSel_sigla').value = '';
+				document.getElementById('ultMovRespSelSpan').innerHTML = '';
+				break;
+			}
+	
+			var tipoCadastrante = document.getElementById('tipoCadastrante');
+	
+			switch (parseInt(tipoCadastrante.value)) {
+			case 1:
+				document.getElementById('formulario_lotaCadastranteSel_id').value = '';
+				document.getElementById('formulario_lotaCadastranteSel_descricao').value = '';
+				document.getElementById('formulario_lotaCadastranteSel_buscar').value = '';
+				document.getElementById('formulario_lotaCadastranteSel_sigla').value = '';
+				document.getElementById('lotaCadastranteSelSpan').innerHTML = '';
+				break;
+			case 2:
+				document.getElementById('formulario_cadastranteSel_id').value = '';
+				document.getElementById('formulario_cadastranteSel_descricao').value = '';
+				document.getElementById('formulario_cadastranteSel_buscar').value = '';
+				document.getElementById('formulario_cadastranteSel_sigla').value = '';
+				document.getElementById('cadastranteSelSpan').innerHTML = '';
+				break;
+			}
+	
+			var tipoDestinatario = document.getElementById('tipoDestinatario');
+	
+			switch (parseInt(tipoDestinatario.value)) {
+			case 1:
+				document.getElementById('formulario_lotacaoDestinatarioSel_id').value = '';
+				document.getElementById('formulario_lotacaoDestinatarioSel_descricao').value = '';
+				document.getElementById('formulario_lotacaoDestinatarioSel_buscar').value = '';
+				document.getElementById('formulario_reqlotacaoDestinatarioSel').value = '';
+				document.getElementById('formulario_lotacaoDestinatarioSel_sigla').value = '';
+				document.getElementById('lotacaoDestinatarioSelSpan').innerHTML = '';
+				document.getElementById('formulario_orgaoExternoDestinatarioSel_id').value = '';
+				document.getElementById('formulario_orgaoExternoDestinatarioSel_descricao').value = '';
+				document.getElementById('formulario_orgaoExternoDestinatarioSel_buscar').value = '';
+				document.getElementById('formulario_reqorgaoExternoDestinatarioSel').value = '';
+				document.getElementById('formulario_orgaoExternoDestinatarioSel_sigla').value = '';
+				document.getElementById('orgaoExternoDestinatarioSelSpan').innerHTML = '';
+				document.getElementById('nmDestinatario').value = '';
+	
+				break;
+			case 2:
+				document.getElementById('formulario_destinatarioSel_id').value = '';
+				document.getElementById('formulario_destinatarioSel_descricao').value = '';
+				document.getElementById('formulario_destinatarioSel_buscar').value = '';
+				document.getElementById('formulario_reqdestinatarioSel').value = '';
+				document.getElementById('formulario_destinatarioSel_sigla').value = '';
+				document.getElementById('destinatarioSelSpan').innerHTML = '';
+				document.getElementById('formulario_orgaoExternoDestinatarioSel_id').value = '';
+				document.getElementById('formulario_orgaoExternoDestinatarioSel_descricao').value = '';
+				document.getElementById('formulario_orgaoExternoDestinatarioSel_buscar').value = '';
+				document.getElementById('formulario_reqorgaoExternoDestinatarioSel').value = '';
+				document.getElementById('formulario_orgaoExternoDestinatarioSel_sigla').value = '';
+				document.getElementById('orgaoExternoDestinatarioSelSpan').innerHTML = '';
+				document.getElementById('nmDestinatario').value = '';
+	
+				break;
+			case 3:
+				document.getElementById('formulario_destinatarioSel_id').value = '';
+				document.getElementById('formulario_destinatarioSel_descricao').value = '';
+				document.getElementById('formulario_destinatarioSel_buscar').value = '';
+				document.getElementById('formulario_reqdestinatarioSel').value = '';
+				document.getElementById('formulario_destinatarioSel_sigla').value = '';
+				document.getElementById('destinatarioSelSpan').innerHTML = '';
+				document.getElementById('formulario_lotacaoDestinatarioSel_id').value = '';
+				document.getElementById('formulario_lotacaoDestinatarioSel_descricao').value = '';
+				document.getElementById('formulario_lotacaoDestinatarioSel_buscar').value = '';
+				document.getElementById('formulario_reqlotacaoDestinatarioSel').value = '';
+				document.getElementById('formulario_lotacaoDestinatarioSel_sigla').value = '';
+				document.getElementById('lotacaoDestinatarioSelSpan').innerHTML = '';
+				document.getElementById('nmDestinatario').value = '';
+	
+				break;
+			case 4:
+				document.getElementById('formulario_destinatarioSel_id').value = '';
+				document.getElementById('formulario_destinatarioSel_descricao').value = '';
+				document.getElementById('formulario_destinatarioSel_buscar').value = '';
+				document.getElementById('formulario_reqdestinatarioSel').value = '';
+				document.getElementById('formulario_destinatarioSel_sigla').value = '';
+				document.getElementById('destinatarioSelSpan').innerHTML = '';
+				document.getElementById('formulario_lotacaoDestinatarioSel_id').value = '';
+				document.getElementById('formulario_lotacaoDestinatarioSel_descricao').value = '';
+				document.getElementById('formulario_lotacaoDestinatarioSel_buscar').value = '';
+				document.getElementById('formulario_reqlotacaoDestinatarioSel').value = '';
+				document.getElementById('formulario_lotacaoDestinatarioSel_sigla').value = '';
+				document.getElementById('lotacaoDestinatarioSelSpan').innerHTML = '';
+				document.getElementById('formulario_orgaoExternoDestinatarioSel_id').value = '';
+				document.getElementById('formulario_orgaoExternoDestinatarioSel_descricao').value = '';
+				document.getElementById('formulario_orgaoExternoDestinatarioSel_buscar').value = '';
+				document.getElementById('formulario_reqorgaoExternoDestinatarioSel').value = '';
+				document.getElementById('formulario_orgaoExternoDestinatarioSel_sigla').value = '';
+				document.getElementById('orgaoExternoDestinatarioSelSpan').innerHTML = '';
+	
+				break;
+			}
+	
+			var listar_idTpDoc = document.getElementById('idTpDoc');
+	
+			switch (parseInt(listar_idTpDoc.value)) {
+			case 0:
+				document.getElementById('numExtDoc').value = '';
+	
+				document.getElementById('formulario_cpOrgaoSel_id').value = '';
+				document.getElementById('formulario_cpOrgaoSel_descricao').value = '';
+				document.getElementById('formulario_cpOrgaoSel_buscar').value = '';
+				document.getElementById('formulario_cpOrgaoSel_sigla').value = '';
+				document.getElementById('cpOrgaoSelSpan').innerHTML = '';
+				document.getElementById('numAntigoDoc').value = '';
+	
+				break;
+			case 1:
+				document.getElementById('numExtDoc').value = '';
+				document.getElementById('formulario_cpOrgaoSel_id').value = '';
+				document.getElementById('formulario_cpOrgaoSel_descricao').value = '';
+				document.getElementById('formulario_cpOrgaoSel_buscar').value = '';
+				document.getElementById('formulario_cpOrgaoSel_sigla').value = '';
+				document.getElementById('cpOrgaoSelSpan').innerHTML = '';
+				document.getElementById('numAntigoDoc').value = '';
+	
+				break;
+			case 2:
+				document.getElementById('formulario_cpOrgaoSel_id').value = '';
+				document.getElementById('formulario_cpOrgaoSel_descricao').value = '';
+				document.getElementById('formulario_cpOrgaoSel_buscar').value = '';
+				document.getElementById('formulario_cpOrgaoSel_sigla').value = '';
+				document.getElementById('cpOrgaoSelSpan').innerHTML = '';
+	
+				break;
+			case 3:
+				document.getElementById('idFormaDoc').value = '5';
+	
+				break;
+			}
+	
+			document.getElementById("btnBuscar").disabled = false;
+			$('#buscandoSpinner').addClass('d-none');
+			
+			return true;
+		}
+	</script>
+	
 	<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
 	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
 	
@@ -520,9 +527,6 @@
 
 						<div class="form-group col-md-3">
 							<div style="display: inline" id="comboFormaDiv"></div>
-							<script type="text/javascript">
-								alteraTipoDaForma();
-							</script>
 						</div>
 
 						<div class="form-group col-md-6">
@@ -727,10 +731,5 @@
 	<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
 	<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
 	<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
-	<script>
-		alteraOrigem();
-		$(document).ready(function() {
-			init()					
-		});
-	</script>
+
 </siga:pagina>

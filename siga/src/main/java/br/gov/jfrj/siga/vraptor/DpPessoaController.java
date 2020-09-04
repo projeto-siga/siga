@@ -866,12 +866,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			CpBL cpbl = new CpBL();
 			inputStream = cpbl.uploadPessoa(file, orgaoUsuario, extensao, getIdentidadeCadastrante());
 		} catch (Exception e) {
-			if(e.getCause() instanceof ConstraintViolationException &&
-					("CORPORATIVO.DP_PESSOA_UNIQUE_PESSOA_ATIVA".equalsIgnoreCase(((ConstraintViolationException)e.getCause()).getConstraintName()))) {
-				result.include(SigaModal.ALERTA, SigaModal.mensagem("Ocorreu um problema no cadastro da pessoa"));
-			} else {
-				System.err.println(e.getMessage());
-			}	
+			throw new AplicacaoException("Problemas ao salvar pessoa(s)", 0, e);	
 		}
 		if (inputStream == null) {
 			result.include(SigaModal.ALERTA, SigaModal.mensagem("Arquivo processado com sucesso!").titulo("Sucesso"));
@@ -880,7 +875,6 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			return new InputStreamDownload(inputStream, "application/text", "inconsistencias.txt");
 		}
 		return null;
-
 	}
 	
 	@Consumes("application/json")

@@ -2673,9 +2673,12 @@ public class ExBL extends CpBL {
 				throw new AplicacaoException("não é possível cancelar definição de perfil");
 
 		} else if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO) {
-			if (!Ex.getInstance().getComp().podeCancelarVinculacaoMarca(titular, lotaTitular, mob, movCancelar))
-				throw new AplicacaoException("não é possível cancelar definição de marca");
-
+			Ex.getInstance().getComp().podeCancelarVinculacaoMarca(titular, lotaTitular, mob, movCancelar)
+					.ifPresent(msg -> {
+						String msgErro = String.format("Não é possível cancelar definição da marca '%s': %s",
+								movCancelar.getMarcador().getDescrMarcador(), msg);
+						throw new AplicacaoException(msgErro);
+					});
 		} else if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFERENCIA) {
 			if (!Ex.getInstance().getComp().podeCancelarVinculacaoDocumento(titular, lotaTitular, mob, movCancelar))
 				throw new AplicacaoException("não é possível cancelar vinculação de documento");
@@ -3344,22 +3347,7 @@ public class ExBL extends CpBL {
 			if (doc.getDtDocOriginal() != null && !Data.dataDentroSeculo21(doc.getDtDocOriginal())) {
 				throw new AplicacaoException("Data original inválida, deve estar entre o ano 2000 e ano 2100");
 			}
-			// Obtem a descricao pela macro @descricao
-			if (doc.getExModelo().isDescricaoAutomatica()) {
-				doc.setDescrDocumento(processarComandosEmTag(doc, "descricao"));
-
-				// Obter a descricao pela macro @entrevista
-			} else if (!Ex.getInstance().getComp().podeEditarDescricao(titular, lotaTitular, doc.getExModelo())) {
-				String s = processarModelo(doc, null, "entrevista", null, null);
-				String descr = extraiTag(s, "descricaoentrevista");
-				doc.setDescrDocumento(descr);
-			}
-			if (doc.getDescrDocumento() == null || doc.getDescrDocumento().isEmpty())
-				doc.setDescrDocumento(processarComandosEmTag(doc, "descricaodefault"));
-
-			if (doc.getDescrDocumento() == null || doc.getDescrDocumento().isEmpty())
-				doc.setDescrDocumento(doc.getExModelo().getNmMod()
-						+ (doc.getSubscritorString() != null ? " de " + doc.getSubscritorString() : ""));
+			gravaDescrDocumento(titular, lotaTitular, doc);
 
 			if (doc.getSubscritor() == null && !doc.getCosignatarios().isEmpty())
 				throw new AplicacaoException(
@@ -6262,17 +6250,32 @@ public class ExBL extends CpBL {
 		}
 	}
 
-	public void gravarForma(ExFormaDocumento forma) throws AplicacaoException {
-		try {		
-			if (forma.isTipoFormaAlterada()) {
+	public void gravarForma(ExFormaDocumento forma, List<ExTipoDocumento> origensCadastradas) throws AplicacaoException {
+		try {	
+			
+			if (forma.isEditando()) {
 				boolean isExFormaComDocumentoVinculado = dao().isExFormaComDocumentoVinculado(forma.getId());
 				
-				if (isExFormaComDocumentoVinculado) {
-					throw new RegraNegocioException("Não é possível alterar o Tipo para <b>" + forma.getExTipoFormaDoc().getDescTipoFormaDoc() + "</b>"
-							+ ", existem documentos que dependem desta informação.");
-				}					
-			}
+				if (isExFormaComDocumentoVinculado) {				
+					if (forma.isTipoFormaAlterada()) {													
+						throw new RegraNegocioException("Não é possível alterar o Tipo para <b>" + forma.getExTipoFormaDoc().getDescTipoFormaDoc() + "</b>"
+								+ ", existem documentos que dependem desta informação.");									
+					}
 					
+					for (ExTipoDocumento origemCadastrada : origensCadastradas) {
+						ExTipoDocumento origemEncontrada = forma.getExTipoDocumentoSet().stream()
+								.filter(o -> o.getIdTpDoc() == origemCadastrada.getIdTpDoc())
+								.findAny()
+								.orElse(null);
+						
+						if (origemEncontrada == null) {
+							throw new RegraNegocioException("Não é possível retirar a Origem <b>" + origemCadastrada.getDescricaoSimples() + "</b>"
+									+ ", existem documentos que dependem desta informação.");
+						}
+					}
+				}			
+			}				
+							
 			if (forma.getDescrFormaDoc() == null || forma.getDescrFormaDoc().isEmpty())
 				throw new RegraNegocioException("Não é possível salvar um tipo sem informar a descrição.");
 			if (forma.getExTipoFormaDoc() == null)
@@ -7416,9 +7419,54 @@ public class ExBL extends CpBL {
 		return;
 	}
 	
+	public void corrigeDocSemDescricao(ExDocumento doc)
+			throws Exception {
+		if (doc.getDescrDocumento() != null)
+			throw new AplicacaoException("Documento já contém a descrição.");
+		gravaDescrDocumento(doc.getTitular(), doc.getLotaTitular(), doc);
+	
+		concluirAlteracaoDoc(doc);
+	
+		ContextoPersistencia.flushTransaction();
+	
+		return;
+	}
+
+	private void gravaDescrDocumento(DpPessoa titular, DpLotacao lotaTitular, ExDocumento doc) throws Exception {
+		// Obtem a descricao pela macro @descricao
+		if (doc.getExModelo().isDescricaoAutomatica()) {
+			doc.setDescrDocumento(processarComandosEmTag(doc, "descricao"));
+
+			// Obter a descricao pela macro @entrevista
+		} else if (!Ex.getInstance().getComp().podeEditarDescricao(titular, lotaTitular, doc.getExModelo())) {
+			String s = processarModelo(doc, null, "entrevista", null, null);
+			String descr = extraiTag(s, "descricaoentrevista");
+			doc.setDescrDocumento(descr);
+		}
+		if (doc.getDescrDocumento() == null || doc.getDescrDocumento().isEmpty())
+			doc.setDescrDocumento(processarComandosEmTag(doc, "descricaodefault"));
+
+		if (doc.getDescrDocumento() == null || doc.getDescrDocumento().isEmpty())
+			doc.setDescrDocumento(doc.getExModelo().getNmMod()
+					+ (doc.getSubscritorString() != null ? " de " + doc.getSubscritorString() : ""));
+	}
+	
 	public void gravarArquivoDocumento(ExDocumento doc) {
 		try {
 			if(doc.getCpArquivo()!=null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(doc.getCpArquivo().getTipoArmazenamento())) {
+				if(doc.getCpArquivo().getHashMD5()==null || doc.getCpArquivo().getHashMD5().equals(doc.getCpArquivo().getHashMD5Original())){
+					//Não houve alteração no arquivo
+					return;
+				}
+				if(!doc.getCpArquivo().getHashMD5().equals(doc.getCpArquivo().getHashMD5Original())) {
+					//Caso o documento esteja assinado verifica se tem movimentação canceladora para permitir a alteração
+					if("S".equals(doc.getFgEletronico())){
+						Long totalMovimentacoesAssinadas = dao().contarMovimentacaoAssinada(doc.getIdDoc());
+						if(totalMovimentacoesAssinadas!=null && totalMovimentacoesAssinadas>0)
+							throw new Exception("Não é permitido alterar: eletrônico, com conteúdo, tipo mov. 11 ou 58 e sem mov. canceladora.");
+					}
+					
+				}
 				ArmazenamentoBCInterface armazenamento = ArmazenamentoBCFacade.getArmazenamentoBC(doc.getCpArquivo());
 				armazenamento.salvar(doc.getCpArquivo(), doc.getConteudoBlobDoc2());
 			}

@@ -18,12 +18,16 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.bl;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import br.gov.jfrj.siga.base.Prop;
@@ -3018,8 +3022,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * <ul>
 	 * <li>Vinculação de perfil não pode estar cancelada</li>
 	 * <li>Lotação do usuário tem de ser a lotação cadastrante da movimentação</li>
-	 * <li>Não pode haver configuração impeditiva. Tipo de configuração:
-	 * Cancelar Movimentação</li>
+	 * <li>Não pode haver configuração impeditiva. Tipo de configuração: Cancelar
+	 * Movimentação</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -3029,24 +3033,32 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean podeCancelarVinculacaoMarca(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob,
-			final ExMovimentacao mov) {
+	public Optional<String> podeCancelarVinculacaoMarca(final DpPessoa titular, final DpLotacao lotaTitular,
+			final ExMobil mob, final ExMovimentacao mov) {
+		if (mov.isCancelada()) {
+			return Optional.of("Marcação já cancelada.");
+		}
 
-		if (mov.isCancelada())
-			return false;
-		
-		if ((mov.getSubscritor()!= null && mov.getSubscritor().equivale(titular))||( mov.getSubscritor()==null && mov.getLotaSubscritor().equivale(lotaTitular)))
-			return true;
+		if ((nonNull(mov.getSubscritor()) && mov.getSubscritor().equivale(titular))
+				|| (isNull(mov.getSubscritor()) && mov.getLotaSubscritor().equivale(lotaTitular))) {
+			return Optional.empty();
+		}
 
-		if ((mov.getCadastrante()!= null && mov.getCadastrante().equivale(titular))||( mov.getCadastrante()==null && mov.getLotaCadastrante().equivale(lotaTitular)))
-			return true;
+		if ((nonNull(mov.getCadastrante()) && mov.getCadastrante().equivale(titular))
+				|| (isNull(mov.getCadastrante()) && mov.getLotaCadastrante().equivale(lotaTitular))) {
+			return Optional.empty();
+		}
 
-		return getConf().podePorConfiguracao(titular, lotaTitular,
-				mov.getIdTpMov(),
-				CpTipoConfiguracao.TIPO_CONFIG_CANCELAR_MOVIMENTACAO);
+		if (getConf().podePorConfiguracao(titular, lotaTitular, mov.getIdTpMov(),
+				CpTipoConfiguracao.TIPO_CONFIG_CANCELAR_MOVIMENTACAO)) {
+			return Optional.empty();
+		}
+
+		return Optional.of("Usuário deve ser ou o cadastrante ou o subscritor da movimentação "
+				+ "ou deve estar na mesma unidade desses " //
+				+ "ou deve ter autorização para cancelar marcações.");
 	}
-	
+
 	/**
 	 * <b>(Quando é usado este método?)</b> Retorna se é possível cancelar
 	 * movimentação do tipo despacho, representada pelo parâmetro mov. São estas

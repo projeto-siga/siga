@@ -60,14 +60,19 @@ public class ArmazenamentoHCP implements ArmazenamentoBCInterface {
 			cpArquivo.setTamanho(conteudo.length);
 			if(cpArquivo.getCaminho()==null)
 				cpArquivo.gerarCaminho(null);
+			
+			apagarArquivo(cpArquivo);
+			
 			HttpPut request = new HttpPut(uri+cpArquivo.getCaminho());
 			request.addHeader(AUTHORIZATION, token);
 			ByteArrayEntity requestEntity = new ByteArrayEntity(conteudo);
 			request.setEntity(requestEntity);
-			client.execute(request);
+			CloseableHttpResponse response = client.execute(request);
+			if(response.getStatusLine().getStatusCode()!=201)
+				throw new Exception(response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
 		} catch (Exception e) {
 			log.error(ERRO_GRAVAR_ARQUIVO, cpArquivo.getIdArq(), e);
-			throw new AplicacaoException(ERRO_EXCLUIR_ARQUIVO);
+			throw new AplicacaoException(ERRO_GRAVAR_ARQUIVO);
 		}
 	}
 
@@ -75,12 +80,22 @@ public class ArmazenamentoHCP implements ArmazenamentoBCInterface {
 	public void apagar(CpArquivo cpArquivo) {
 		try {
 			configurar();
-			HttpDelete request = new HttpDelete(uri+cpArquivo.getCaminho());
-			request.addHeader(AUTHORIZATION, token);
-			client.execute(request);
+			apagarArquivo(cpArquivo);
 		} catch (Exception e) {
 			log.error(ERRO_EXCLUIR_ARQUIVO, cpArquivo.getIdArq(), e);
 			throw new AplicacaoException(ERRO_EXCLUIR_ARQUIVO);
+		}
+	}
+		
+	private void apagarArquivo(CpArquivo cpArquivo) throws Exception {
+		try {
+			HttpDelete request = new HttpDelete(uri+cpArquivo.getCaminho());
+			request.addHeader(AUTHORIZATION, token);
+			CloseableHttpResponse response = client.execute(request);
+			if(!(response.getStatusLine().getStatusCode()==200 || response.getStatusLine().getStatusCode()==404))
+				throw new Exception(response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
+		} catch (Exception e) {
+			throw e;
 		}
 	}
 	
@@ -103,7 +118,7 @@ public class ArmazenamentoHCP implements ArmazenamentoBCInterface {
 				}
 				return bao.toByteArray();
 			} else {
-				throw new Exception("idArq: " + cpArquivo.getIdArq() + " Erro : " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
+				throw new Exception(response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
 			}
 		} catch (Exception e) {
 			log.error(ERRO_RECUPERAR_ARQUIVO, cpArquivo.getIdArq(), e);

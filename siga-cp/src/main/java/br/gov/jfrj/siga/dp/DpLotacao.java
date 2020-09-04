@@ -24,6 +24,8 @@
  */
 package br.gov.jfrj.siga.dp;
 
+import static java.util.Objects.nonNull;
+
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -33,10 +35,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.persistence.Query;
 import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -57,7 +56,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @Table(name = "DP_LOTACAO", schema = "CORPORATIVO")
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpLotacao extends AbstractDpLotacao implements Serializable,
-		Selecionavel, Historico, Sincronizavel, Comparable, DpConvertableEntity {
+		Selecionavel, Historico, Sincronizavel, Comparable<Object>, DpConvertableEntity {
 	private static final long serialVersionUID = 5628179687234082413L;
 	public static ActiveRecord<DpLotacao> AR = new ActiveRecord<>(
 			DpLotacao.class);
@@ -83,15 +82,22 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 		return true;
 	}
 
+	/**
+	 * Retorna o nome da Localidade da {@link DpLotacao Lotação}.
+	 * 
+	 * @return O {@link CpLocalidade#getNmLocalidade() nome} da {@link CpLocalidade
+	 *         Localidade} ou o {@link CpOrgaoUsuario#getMunicipioOrgaoUsu()
+	 *         município} do {@link CpOrgaoUsuario Órgão} ou
+	 *         "{@literal Indeterminado}".
+	 */
 	public String getLocalidadeString() {
-		List<String> municipios = CpLocalidade.getMunicipios();
-		if (municipios != null) {
-			for (String municipio : municipios)
-				if (getNomeLotacao().toLowerCase()
-						.contains(municipio.toLowerCase()))
-					return municipio;
+		if (nonNull(getLocalidade())) {
+			return getLocalidade().getNmLocalidade();
 		}
-		return getOrgaoUsuario().getMunicipioOrgaoUsu();
+		if (nonNull(getOrgaoUsuario())) {
+			return getOrgaoUsuario().getMunicipioOrgaoUsu();
+		}
+		return "Indeterminado";
 	}
 
 	public String iniciais(String s) {

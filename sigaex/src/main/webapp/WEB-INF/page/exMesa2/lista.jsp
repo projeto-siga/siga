@@ -50,6 +50,14 @@
 						</label>
 					</div>            
 	            </div>
+	            <div class="form-group my-1 border-bottom">
+					<div class="form-check">
+						<input type="checkbox" class="form-check-input" id="ordemCrescenteData" v-model="ordemCrescenteData" :disabled="carregando">
+						<label class="form-check-label" for="ordemCrescenteData">
+							<small>Exibir em ordem crescente</small>
+						</label>
+					</div>            
+	            </div>
 				<div class="form-group pb-2 mb-1 border-bottom">
 					<label for="selQtdPagId"><small>Qtd. de documentos a trazer</small></label>
 					<select class="form-control form-control-sm p-0" v-model="selQtdPag" :class="{disabled: carregando}">

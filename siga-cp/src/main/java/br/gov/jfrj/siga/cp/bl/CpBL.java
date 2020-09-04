@@ -1081,14 +1081,8 @@ public class CpBL {
 	}
 
 	public InputStream uploadPessoa(File file, CpOrgaoUsuario orgaoUsuario, String extensao, CpIdentidade i) {
-		InputStream inputStream = null;
-		try {
-			Excel excel = new Excel();
-			inputStream = excel.uploadPessoa(file, orgaoUsuario, extensao, i);
-		} catch (Exception e) {
-
-		}
-		return inputStream;
+		Excel excel = new Excel();				
+		return excel.uploadPessoa(file, orgaoUsuario, extensao, i);
 	}
 
 	public String criarUsuario(String cadastranteStr, final Long id, final Long idOrgaoUsu, final Long idCargo,

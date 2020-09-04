@@ -83,31 +83,31 @@
 										<c:choose>
 											<c:when test="${origem.id eq 1}">												
 												<span class="badge badge-primary  mb-1">
-													${origem.descricao}
+													${origem.descricaoSimples}
 												</span>
 												<br />
 											</c:when>
 											<c:when test="${origem.id eq 2}">												
 												<span class="badge badge-info  mb-1">
-													${origem.descricao}
+													${origem.descricaoSimples}
 												</span>
 												<br />
 											</c:when>
 											<c:when test="${origem.id eq 3}">												
 												<span class="badge badge-secondary  mb-1">
-													${origem.descricao}
+													${origem.descricaoSimples}
 												</span>
 												<br />
 											</c:when>
 											<c:when test="${origem.id eq 4}">												
 												<span class="badge badge-dark  mb-1">
-													${origem.descricao}
+													${origem.descricaoSimples}
 												</span>
 												<br />
 											</c:when>
 											<c:when test="${origem.id eq 5}">												
 												<span class="badge badge-light  mb-1">
-													${origem.descricao}
+													${origem.descricaoSimples}
 												</span>
 												<br />
 											</c:when>

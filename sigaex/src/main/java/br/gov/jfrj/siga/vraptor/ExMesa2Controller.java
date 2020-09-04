@@ -107,7 +107,7 @@ public class ExMesa2Controller extends ExController {
 
 	@Post("app/mesa2.json")
 	public void json(Long idVisualizacao, boolean exibeLotacao, boolean trazerAnotacoes, boolean trazerArquivados, 
-			boolean trazerComposto, boolean trazerCancelados, String parms) throws Exception {
+			boolean trazerComposto, boolean trazerCancelados, boolean ordemCrescenteData, String parms) throws Exception {
 		
 		List<br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem> g = new ArrayList<br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem>();
 		Map<String, Mesa2.SelGrupo> selGrupos = null;
@@ -150,13 +150,13 @@ public class ExMesa2Controller extends ExController {
 				gruposMesa = Mesa2.getContadores(dao(), vis.getTitular(), lotaTitular, selGrupos, 
 						exibeLotacao, marcasAIgnorar);
 				g = Mesa2.getMesa(dao(), vis.getTitular(), lotaTitular, selGrupos, 
-						gruposMesa, exibeLotacao, trazerAnotacoes, trazerComposto, marcasAIgnorar);
+						gruposMesa, exibeLotacao, trazerAnotacoes, trazerComposto, ordemCrescenteData, marcasAIgnorar);
 			} else {
 				lotaTitular = getTitular().getLotacao();
 				gruposMesa = Mesa2.getContadores(dao(), getTitular(), lotaTitular, selGrupos, 
 						exibeLotacao, marcasAIgnorar);
 				g = Mesa2.getMesa(dao(), getTitular(), lotaTitular, selGrupos, 
-						gruposMesa, exibeLotacao, trazerAnotacoes, trazerComposto, marcasAIgnorar);
+						gruposMesa, exibeLotacao, trazerAnotacoes, trazerComposto, ordemCrescenteData, marcasAIgnorar);
 			}
 	
 			String s = ExAssinadorExternoController.gson.toJson(g);

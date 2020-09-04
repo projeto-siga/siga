@@ -21,6 +21,8 @@
  */
 package br.gov.jfrj.siga.ex;
 
+import static java.util.Objects.nonNull;
+
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
@@ -287,15 +289,12 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 			else if (getLotaCadastrante() != null)
 				lotaBase = getLotaCadastrante();
 
-			if (s == null && lotaBase != null) {
-				s = lotaBase.getLocalidadeString();
-				/*
-				 * s = getLotaTitular().getOrgaoUsuario().getMunicipioOrgaoUsu()
-				 * + ", ";
-				 */
-			}
+			String parteLocalidade = nonNull(s) ? (s + ", ")
+					: (nonNull(lotaBase) && nonNull(lotaBase.getLocalidadeString()))
+							? (lotaBase.getLocalidadeString() + ", ")
+							: "";
 
-			return s + ", " + df1.format(getDtMov()).toLowerCase();
+			return parteLocalidade + df1.format(getDtMov()).toLowerCase();
 		} catch (Exception e) {
 			return null;
 		}

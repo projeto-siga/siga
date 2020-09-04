@@ -37,6 +37,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Immutable;
 
@@ -80,6 +81,12 @@ public class CpArquivo implements Serializable {
 	
 	@Column(name = "TAMANHO_ARQ")
 	private Integer tamanho = 0;
+	
+	@Column(name = "HASH_MD5")
+	private String hashMD5;
+	
+	@Transient
+	private String hashMD5Original;
 
 	/**
 	 * Simple constructor of AbstractExDocumento instances.
@@ -207,6 +214,20 @@ public class CpArquivo implements Serializable {
 		if(data!=null)
 			c.setTime(data);
 		this.caminho = c.get(Calendar.YEAR)+"/"+(c.get(Calendar.MONTH)+1)+"/"+c.get(Calendar.DATE)+"/"+c.get(Calendar.HOUR_OF_DAY)+"/"+c.get(Calendar.MINUTE)+"/"+UUID.randomUUID().toString()+"."+extensao;
+	}
+
+	public String getHashMD5() {
+		return hashMD5;
+	}
+
+	public void setHashMD5(String hash) {
+		if(this.hashMD5Original == null && this.getIdArq()!=null)
+			this.hashMD5Original = this.hashMD5;
+		this.hashMD5 = hash;
+	}
+
+	public String getHashMD5Original() {
+		return hashMD5Original;
 	}
 	
 	

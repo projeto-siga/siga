@@ -82,6 +82,9 @@ public class ExPainelController extends ExController {
 					&& exDocumentoDTO.getDoc().getExMobilSet().size() <= 1) {
 				result.include("erroSemMobil", true);
 			}
+			if (exDocumentoDTO.getDoc().getDescrDocumento() == null) {
+				result.include("erroSemDescricao", true);
+			}
 		} catch (AplicacaoException e) {
 			result.include("mensagemCabec", "Documento não encontrado." );
 			result.include("msgCabecClass", "alert-danger");
@@ -140,7 +143,48 @@ public class ExPainelController extends ExController {
 						exDocumentoDTO.getDoc());
 
 		} catch (final Throwable t) {
-			throw new AplicacaoException("Erro ao finalizar documento", 0, t);
+			throw new AplicacaoException("Erro ao tentar corrigir documento sem mobil.", 0, t);
+		}
+		result.redirectTo(this).exibe(documentoRefSel);
+	}
+
+	@Get("app/expediente/painel/corrigeDocSemDescricao")
+	public void corrigeDocSemDescricao(final ExMobilSelecao documentoRefSel) throws Exception {
+		assertAcesso(CORRIGEMOBIL);
+		
+		result.include("postback", true);
+
+		if (documentoRefSel.getSigla() == null) {
+			result.include("mensagemCabec", "Informe o número do documento.");
+			result.include("msgCabecClass", "alert-warning");
+			result.redirectTo(this).exibe(documentoRefSel);
+			return;
+		}
+		final ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO();
+		exDocumentoDTO.setSigla(documentoRefSel.getSigla());
+		ExDocumentoVO docVO;
+		try {
+			buscarDocumento(false, exDocumentoDTO);
+			docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
+					exDocumentoDTO.getMob(), getCadastrante(), getTitular(),
+					getLotaTitular(), true, true);
+		} catch (Exception e) {
+		}
+		if (exDocumentoDTO.getDoc().getDescrDocumento() != null) {
+			result.include("mensagemCabec", "Documento já está com a descrição.");
+			result.include("msgCabecClass", "alert-danger");
+			result.redirectTo(this).exibe(documentoRefSel);
+			return;
+		}
+
+		try {
+			Ex.getInstance()
+				.getBL()
+				.corrigeDocSemDescricao(
+						exDocumentoDTO.getDoc());
+
+		} catch (final Throwable t) {
+			throw new AplicacaoException("Erro ao tentar corrigir descrição do documento", 0, t);
 		}
 		result.redirectTo(this).exibe(documentoRefSel);
 	}

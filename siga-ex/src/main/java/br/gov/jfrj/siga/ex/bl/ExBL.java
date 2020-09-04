@@ -2673,9 +2673,12 @@ public class ExBL extends CpBL {
 				throw new AplicacaoException("não é possível cancelar definição de perfil");
 
 		} else if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO) {
-			if (!Ex.getInstance().getComp().podeCancelarVinculacaoMarca(titular, lotaTitular, mob, movCancelar))
-				throw new AplicacaoException("não é possível cancelar definição de marca");
-
+			Ex.getInstance().getComp().podeCancelarVinculacaoMarca(titular, lotaTitular, mob, movCancelar)
+					.ifPresent(msg -> {
+						String msgErro = String.format("Não é possível cancelar definição da marca '%s': %s",
+								movCancelar.getMarcador().getDescrMarcador(), msg);
+						throw new AplicacaoException(msgErro);
+					});
 		} else if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFERENCIA) {
 			if (!Ex.getInstance().getComp().podeCancelarVinculacaoDocumento(titular, lotaTitular, mob, movCancelar))
 				throw new AplicacaoException("não é possível cancelar vinculação de documento");

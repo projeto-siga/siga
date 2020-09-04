@@ -475,7 +475,7 @@ public class Mesa2 {
 
 	private static List<MesaItem> listarReferencias(TipoDePainelEnum tipo,
 			Map<ExMobil, DocDados> references, DpPessoa pessoa,
-			DpLotacao unidade, Date currentDate, String grupoOrdem, boolean trazerAnotacoes,
+			DpLotacao unidade, Date currentDate, String grupoOrdem, boolean trazerAnotacoes, boolean ordemCrescenteData,
 			List<Integer> marcasAIgnorar) {
 		List<MesaItem> l = new ArrayList<>();
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -619,7 +619,12 @@ public class Mesa2 {
 		Collections.sort(l, new Comparator<MesaItem>() {
 			@Override
 			public int compare(MesaItem o1, MesaItem o2) {
-				int i = o2.datahora.compareTo(o1.datahora);
+				int i;
+				if (ordemCrescenteData) {
+					i = o1.datahora.compareTo(o2.datahora);
+				} else {
+					i = o2.datahora.compareTo(o1.datahora);
+				}
 				if (i != 0)
 					return i;
 				return 0;
@@ -660,13 +665,13 @@ public class Mesa2 {
 
 	public static List<GrupoItem> getMesa(ExDao dao, DpPessoa titular,
 			DpLotacao lotaTitular, Map<String, SelGrupo> selGrupos, List<Mesa2.GrupoItem> gruposMesa, 
-			boolean exibeLotacao, boolean trazerAnotacoes, boolean trazerComposto, 
+			boolean exibeLotacao, boolean trazerAnotacoes, boolean trazerComposto, boolean ordemCrescenteData,
 			List<Integer> marcasAIgnorar) throws Exception {
 //		long tempoIni = System.nanoTime();
 		Date dtNow = dao.consultarDataEHoraDoServidor();
 
 		List<Object[]> l = dao.listarMobilsPorMarcas(titular,
-				lotaTitular, exibeLotacao, marcasAIgnorar);
+				lotaTitular, exibeLotacao, ordemCrescenteData, marcasAIgnorar);
 
 		Map<ExMobil, DocDados> map = new HashMap<>();
 		List<Long> listIdMobil = new ArrayList<Long>();
@@ -745,7 +750,7 @@ public class Mesa2 {
 						iMobs = iMobsFim;
 					}
 					gItem.grupoDocs = Mesa2.listarReferencias(TipoDePainelEnum.UNIDADE, map, titular,
-							titular.getLotacao(), dtNow, gItem.grupoOrdem, trazerAnotacoes, marcasAIgnorar);
+							titular.getLotacao(), dtNow, gItem.grupoOrdem, trazerAnotacoes, ordemCrescenteData, marcasAIgnorar);
 					map = new HashMap<>();
 					listIdMobil = new ArrayList<Long>();
 				}

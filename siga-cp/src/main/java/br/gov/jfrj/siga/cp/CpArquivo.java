@@ -38,18 +38,15 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.hibernate.annotations.Immutable;
+import javax.persistence.Version;
 
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 /**
  * A class that represents a row in the CP_ARQUIVO table. You can customize the
  * behavior of this class by editing the class, {@link CpArquivo()}.
  */
 @Entity
-@Immutable
 @Table(name = "CP_ARQUIVO", schema = "CORPORATIVO")
 public class CpArquivo implements Serializable {
 
@@ -87,6 +84,9 @@ public class CpArquivo implements Serializable {
 	
 	@Transient
 	private String hashMD5Original;
+	
+	@Version
+	private Long versao;
 
 	/**
 	 * Simple constructor of AbstractExDocumento instances.
@@ -141,36 +141,6 @@ public class CpArquivo implements Serializable {
 			this.arquivoBlob.setArquivo(this);
 		}
 		this.arquivoBlob.setConteudoBlobArq(createBlob);
-	}
-
-	public static CpArquivo forUpdate(CpArquivo old) {
-		if (old != null) {
-			if (old.getIdArq() != null) {
-				CpArquivo arq = new CpArquivo();
-				arq.setConteudoTpArq(old.getConteudoTpArq());
-				arq.setOrgaoUsuario(old.getOrgaoUsuario());
-				if (old.getArquivoBlob() != null) {
-					arq.setArquivoBlob(new CpArquivoBlob());
-					arq.getArquivoBlob().setArquivo(arq);
-					arq.getArquivoBlob().setConteudoBlobArq(old.getArquivoBlob().getConteudoBlobArq());
-				}
-				ContextoPersistencia.em().remove(old);
-				return arq;
-			} else
-				return old;
-		} else
-			return new CpArquivo();
-	}
-
-	public static CpArquivo updateConteudoTp(CpArquivo old, String conteudoTp) {
-		//TODO: Verificar essa linha
-		//if (old == null || !Texto.equals(old.getConteudoTpArq(), conteudoTp)) {
-		if (old == null) {
-			CpArquivo arq = CpArquivo.forUpdate(old);
-			arq.setConteudoTpArq(conteudoTp);
-			return arq;
-		}
-		return old;
 	}
 
 	public CpArquivoTipoArmazenamentoEnum getTipoArmazenamento() {
@@ -228,6 +198,14 @@ public class CpArquivo implements Serializable {
 
 	public String getHashMD5Original() {
 		return hashMD5Original;
+	}
+
+	public Long getVersao() {
+		return versao;
+	}
+
+	public void setVersao(Long versao) {
+		this.versao = versao;
 	}
 	
 	

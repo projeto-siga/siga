@@ -882,8 +882,6 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 		if(cpArquivo == null) {
 			cpArquivo = new CpArquivo();
 			cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")));
-			if(CpArquivoTipoArmazenamentoEnum.HCP.equals(cpArquivo.getTipoArmazenamento()))
-				cpArquivo.gerarCaminho(getDtMov()!=null?getDtMov():new Date());
 		}
 	}
 }

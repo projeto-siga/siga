@@ -211,8 +211,6 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 			cpArquivo = new CpArquivo();
 			cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")));
 			cpArquivo.setConteudoTpArq(TipoConteudo.TXT.getMimeType());
-			if(CpArquivoTipoArmazenamentoEnum.HCP.equals(cpArquivo.getTipoArmazenamento()))
-				cpArquivo.gerarCaminho(new Date());
 		}
 	}
 }

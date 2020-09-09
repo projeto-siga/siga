@@ -1136,8 +1136,6 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		if(cpArquivo == null) {
 			cpArquivo = new CpArquivo();
 			cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")));
-			if(CpArquivoTipoArmazenamentoEnum.HCP.equals(cpArquivo.getTipoArmazenamento()))
-				cpArquivo.gerarCaminho(getDtRegDoc()!=null?getDtRegDoc():new Date());
 		}
 	}
 	

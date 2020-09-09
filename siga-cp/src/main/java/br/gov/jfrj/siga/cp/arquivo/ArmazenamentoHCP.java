@@ -24,6 +24,8 @@ import org.jboss.logging.Logger;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpArquivo;
+import br.gov.jfrj.siga.cp.CpArquivoExcluir;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 public class ArmazenamentoHCP implements ArmazenamentoBCInterface {
 
@@ -49,19 +51,22 @@ public class ArmazenamentoHCP implements ArmazenamentoBCInterface {
 	    SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy).build();
 	    SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
 	    client = HttpClients.custom().setSSLSocketFactory(csf).build();
-
-//		client = HttpClients.createDefault();
 	}
 
 	@Override
 	public void salvar(CpArquivo cpArquivo, byte[] conteudo) {
 		try {
 			configurar();
-			cpArquivo.setTamanho(conteudo.length);
-			if(cpArquivo.getCaminho()==null)
-				cpArquivo.gerarCaminho(null);
 			
-			apagarArquivo(cpArquivo);
+			if(cpArquivo.getCaminho()!=null) {
+				CpArquivoExcluir excluir = new CpArquivoExcluir();
+				excluir.setCaminho(cpArquivo.getCaminho());
+				ContextoPersistencia.em().persist(excluir);
+			}
+			
+			cpArquivo.setTamanho(conteudo.length);
+			cpArquivo.gerarCaminho(null);
+			
 			
 			HttpPut request = new HttpPut(uri+cpArquivo.getCaminho());
 			request.addHeader(AUTHORIZATION, token);

@@ -1969,7 +1969,8 @@ public class CpDao extends ModeloDao {
 			entidade.setHisIdIni(entidade.getId());
 			gravar(entidade);
 		}
-		descarregar();
+		em().flush();
+//		descarregar();
 		try {
 			invalidarCache(entidade);
 			// Edson: não há necessidade de limpar o cache de configs no próprio

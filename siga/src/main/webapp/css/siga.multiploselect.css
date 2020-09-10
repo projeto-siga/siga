@@ -36,3 +36,7 @@
 .dropdown-item.active .check-mark, .dropdown-item:active .check-mark {
 	color: #fff;
 }
+
+.bootstrap-select.show-tick .dropdown-menu .selected span.check-mark {
+	left: 0;
+}

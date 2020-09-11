@@ -28,20 +28,20 @@
 	</c:if>
 	<c:if test="${menuRequisicoesMostrarAbertas}">
 		<img src="/sigatp/public/images/filter-icon.png"/>
-		<a class="filtro_B" id="menuRequisicoesAprovarMostrarAbertas" href="${linkTo[RequisicaoController].listarPAprovarFiltrado['ABERTA']}">B</a>
-		<a href="${linkTo[RequisicaoController].listarPAprovarFiltrado['ABERTA']}">A<U>b</U>ertas</a>&nbsp;&nbsp;&nbsp;
+		<a class="filtro_B" id="menuRequisicoesAprovarMostrarAbertas" href="${linkTo[RequisicaoController].listarPAprovarFiltrado('ABERTA')}">B</a>
+		<a href="${linkTo[RequisicaoController].listarPAprovarFiltrado('ABERTA')}">A<U>b</U>ertas</a>&nbsp;&nbsp;&nbsp;
 	</c:if>
 	<c:if test="${menuRequisicoesMostrarAutorizadas}">
 		<img src="/sigatp/public/images/filter-icon.png"/>
-		<a class="filtro_U" id="menuRequisicoesAprovarMostrarAutorizadas" href="${linkTo[RequisicaoController].listarPAprovarFiltrado['AUTORIZADA']}">U</a>
-		<a href="${linkTo[RequisicaoController].listarPAprovarFiltrado['AUTORIZADA']}">A<U>u</U>torizadas</a>&nbsp;&nbsp;&nbsp;
+		<a class="filtro_U" id="menuRequisicoesAprovarMostrarAutorizadas" href="${linkTo[RequisicaoController].listarPAprovarFiltrado('AUTORIZADA')}">U</a>
+		<a href="${linkTo[RequisicaoController].listarPAprovarFiltrado('AUTORIZADA')}">A<U>u</U>torizadas</a>&nbsp;&nbsp;&nbsp;
 	</c:if>
 	<c:if test="${menuRequisicoesMostrarRejeitadas}">
 		<img src="/sigatp/public/images/filter-icon.png"/>
-		<a class="filtro_R" id="menuRequisicoesAprovarMostrarRejeitadas" href="${linkTo[RequisicaoController].listarPAprovarFiltrado['REJEITADA']}">R</a>
-		<a href="${linkTo[RequisicaoController].listarPAprovarFiltrado['REJEITADA']}"><U>R</U>ejeitadas</a>&nbsp;&nbsp;&nbsp;
+		<a class="filtro_R" id="menuRequisicoesAprovarMostrarRejeitadas" href="${linkTo[RequisicaoController].listarPAprovarFiltrado('REJEITADA')}">R</a>
+		<a href="${linkTo[RequisicaoController].listarPAprovarFiltrado('REJEITADA')}"><U>R</U>ejeitadas</a>&nbsp;&nbsp;&nbsp;
 	</c:if>
-	<c:if test="${menuRequisicoesMostrarAvancado && (fn:length(estReq.values()) > 0 && dataInicio == null && dataFim == null)}">
+	<c:if test="${menuRequisicoesMostrarAvancado && (fn:length(estReq.values) > 0 && dataInicio == null && dataFim == null)}">
 		<span class="filtro">
 			<img src="/sigatp/public/images/filter-icon.png" />
 			<a class="filtro_Avancado" href="#"></a>
@@ -83,7 +83,7 @@
 	</div>
 </p>
 
-<c:if test="${menuRequisicoesMostrarVoltar && (fn:length(estReq.values()) > 0 || dataInicio != null || dataFim != null)}">
+<c:if test="${menuRequisicoesMostrarVoltar && (fn:length(estReq.values) > 0 || dataInicio != null || dataFim != null)}">
 	<script type="text/javascript">
 		trocaExibicaoCaixaBuscaAvancada();
 	</script>

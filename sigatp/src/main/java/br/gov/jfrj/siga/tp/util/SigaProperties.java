@@ -3,7 +3,8 @@ package br.gov.jfrj.siga.tp.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import org.apache.log4j.Logger;
+
+import org.jboss.logging.Logger;
 
 public class SigaProperties {
 	

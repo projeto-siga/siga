@@ -31,7 +31,7 @@
 		<input type="submit" value="${acao}" class="gt-btn-medium gt-btn-left" />
 		<c:choose>
 			<c:when test="${acao.equals('Cancelar')}">
-				<input type="button" value="<fmt:message key="views.botoes.voltar" />" onClick="javascript:location.href='${linkTo[RequisicaoController].buscarPelaSequence[popUp][andamento.requisicaoTransporte.buscarSequence()]}'" class="gt-btn-medium gt-btn-left" />
+				<input type="button" value="<fmt:message key="views.botoes.voltar" />" onClick="javascript:location.href='${linkTo[RequisicaoController].buscarPelaSequence(popUp,andamento.requisicaoTransporte.buscarSequence())}'" class="gt-btn-medium gt-btn-left" />
 			</c:when> 
 			<c:otherwise> 
 				<input type="button" value="<fmt:message key="views.botoes.voltar" />" onClick="javascript:location.href='${linkTo[RequisicaoController].listarPAprovar}'" class="gt-btn-medium gt-btn-left" />		

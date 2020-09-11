@@ -5,6 +5,7 @@ import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.ADM_ADMINISTRAR;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -13,7 +14,7 @@ import org.jfree.util.Log;
 
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.Service;
@@ -37,7 +38,7 @@ import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.uteis.PessoaLotaFuncCargoSelecaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-@Resource
+@Controller
 @Path("app/itemConfiguracao")
 public class ItemConfiguracaoController extends SrController {
 
@@ -49,6 +50,14 @@ public class ItemConfiguracaoController extends SrController {
 	private static final String PESQUISA_SATISFACAO = "pesquisaSatisfacao";
 	private final static Logger log = Logger.getLogger(ItemConfiguracaoController.class);
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ItemConfiguracaoController() {
+		super();
+	}
+	
+	@Inject
 	public ItemConfiguracaoController(HttpServletRequest request,
 			Result result, CpDao dao, SigaObjects so, EntityManager em,
 			SrValidator srValidator) {

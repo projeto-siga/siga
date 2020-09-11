@@ -19,8 +19,8 @@
 	<c:if test="${menuMissoesMostrarVoltar}">
 		<span class="filtro">
 			<img src="/sigatp/public/images/filter-icon.png"/>
-			<a class="filtro_Voltar" href="${linkTo[MissaoController].listarFiltrado['PROGRAMADA']}"></a>
-			<a href="${linkTo[MissaoController].listarFiltrado['PROGRAMADA']}">Voltar</a>&nbsp;&nbsp;
+			<a class="filtro_Voltar" href="${linkTo[MissaoController].listarFiltrado('PROGRAMADA')}"></a>
+			<a href="${linkTo[MissaoController].listarFiltrado('PROGRAMADA')}">Voltar</a>&nbsp;&nbsp;
 		</span>
 	</c:if>
 	<c:if test="${menuMissoesMostrarTodas}">
@@ -44,32 +44,32 @@
 	<c:if test="${menuMissoesMostrarProgramadas}">
 		<span class="filtro">
 	   		<img src="/sigatp/public/images/filter-icon.png"/>
-	   		<a class="filtro_P" href="${linkTo[MissaoController].listarFiltrado['PROGRAMADA']}"></a>
-			<a href="${linkTo[MissaoController].listarFiltrado['PROGRAMADA']}"><U>P</U>rogramadas</a>&nbsp;&nbsp;
+	   		<a class="filtro_P" href="${linkTo[MissaoController].listarFiltrado('PROGRAMADA')}"></a>
+			<a href="${linkTo[MissaoController].listarFiltrado('PROGRAMADA')}"><U>P</U>rogramadas</a>&nbsp;&nbsp;
 		</span>
 	</c:if>
 	<c:if test="${menuMissoesMostrarIniciadas}">
 		<span class="filtro">
 	   		<img src="/sigatp/public/images/filter-icon.png"/>
-	   		<a class="filtro_I" href="${linkTo[MissaoController].listarFiltrado['INICIADA']}"></a>
-			<a href="${linkTo[MissaoController].listarFiltrado['INICIADA']}"><U>I</U>niciadas</a>&nbsp;&nbsp;
+	   		<a class="filtro_I" href="${linkTo[MissaoController].listarFiltrado('INICIADA')}"></a>
+			<a href="${linkTo[MissaoController].listarFiltrado('INICIADA')}"><U>I</U>niciadas</a>&nbsp;&nbsp;
 		</span>
 	</c:if>
 	<c:if test="${menuMissoesMostrarFinalizadas}">
 		<span class="filtro">
 			<img src="/sigatp/public/images/filter-icon.png"/>
-			<a class="filtro_F" href="${linkTo[MissaoController].listarFiltrado['FINALIZADA']}"></a>
-			<a href="${linkTo[MissaoController].listarFiltrado['FINALIZADA']}"><U>F</U>inalizadas</a>&nbsp;&nbsp;
+			<a class="filtro_F" href="${linkTo[MissaoController].listarFiltrado('FINALIZADA')}"></a>
+			<a href="${linkTo[MissaoController].listarFiltrado('FINALIZADA')}"><U>F</U>inalizadas</a>&nbsp;&nbsp;
 		</span>
 	</c:if>
 	<c:if test="${menuMissoesMostrarCanceladas}">
 		<span class="filtro">
 			<img src="/sigatp/public/images/filter-icon.png"/>
-			<a class="filtro_C" href="${linkTo[MissaoController].listarFiltrado['CANCELADA']}"></a>
-			<a href="${linkTo[MissaoController].listarFiltrado['CANCELADA']}"><U>C</U>anceladas</a>&nbsp;&nbsp;
+			<a class="filtro_C" href="${linkTo[MissaoController].listarFiltrado('CANCELADA')}"></a>
+			<a href="${linkTo[MissaoController].listarFiltrado('CANCELADA')}"><U>C</U>anceladas</a>&nbsp;&nbsp;
 		</span>
 	</c:if>
-	<c:if test="${menuMissoesMostrarAvancado && (fn:length(condutoresEscalados) > 0 && fn:length(estMis.values()) > 0 && dataInicio == null && dataFim == null)}">
+	<c:if test="${menuMissoesMostrarAvancado && (fn:length(condutoresEscalados) > 0 && fn:length(estMis.valores) > 0 && dataInicio == null && dataFim == null)}">
 		<span class="filtro">
 			<img src="/sigatp/public/images/filter-icon.png"/>
 			<a class="filtro_Avancado" href="#"></a>
@@ -115,7 +115,7 @@
 	</div>
 </p>
 
-<c:if test="${menuMissoesMostrarVoltar && (fn:length(condutoresEscalados) > 0 || fn:length(estMis.values()) > 0 || dataInicio != null || dataFim != null)}">
+<c:if test="${menuMissoesMostrarVoltar && (fn:length(condutoresEscalados) > 0 || fn:length(estMis.valores) > 0 || dataInicio != null || dataFim != null)}">
 	<script type="text/javascript">
 		trocaExibicaoCaixaBuscaAvancada();
 	</script>

@@ -30,10 +30,10 @@
 								<c:forEach items="${controlesGabinete}" var="controleGabinete">
 									<tr>
 										<td>
-											<sigatp:formatarColuna operacao="editar" href="${linkTo[ControleGabineteController].editar[controleGabinete.id]}" titulo="controle" />
+											<sigatp:formatarColuna operacao="editar" href="${linkTo[ControleGabineteController].editar(controleGabinete.id)}" titulo="controle" />
 										</td>
 										<td>
-											<sigatp:formatarColuna operacao="excluir" href="${linkTo[ControleGabineteController].excluir[controleGabinete.id]}" titulo="controle"
+											<sigatp:formatarColuna operacao="excluir" href="${linkTo[ControleGabineteController].excluir(controleGabinete.id)}" titulo="controle"
 											onclick="javascript:return confirm('Tem certeza de que deseja excluir este controle?');"/>
 										</td>
 										<td><fmt:formatDate pattern="dd/MM/yyyy HH:mm" value="${controleGabinete.dataHoraSaida.time}" /></td>

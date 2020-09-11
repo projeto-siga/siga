@@ -29,10 +29,10 @@
 								<c:forEach items="${plantoes}" var="item">
 									<tr>
 							    		<td>
-							    			<sigatp:formatarColuna operacao="editar" href="${linkTo[PlantaoController].editar[item.condutor.id][item.id]}" titulo="plant&atilde;o"/>
+							    			<sigatp:formatarColuna operacao="editar" href="${linkTo[PlantaoController].editar[item.condutor.id](item.id)}" titulo="plant&atilde;o"/>
 							    		</td>
 							    		<td>
-							    			<sigatp:formatarColuna operacao="excluir" href="${linkTo[PlantaoController].excluir[item.id]}" 
+							    			<sigatp:formatarColuna operacao="excluir" href="${linkTo[PlantaoController].excluir(item.id)}" 
 							    			onclick="javascript:return confirm('Tem certeza de que deseja excluir este plant\u00E3o?');" titulo="plant&atilde;o"/>
 							    		</td>
 										<td><fmt:formatDate pattern="dd/MM/yyyy HH:mm" value="${item.dataHoraInicio.time}" /></td>
@@ -50,7 +50,7 @@
 				</c:otherwise>
 			</c:choose>
 			<div class="gt-table-buttons">
-				<a href="${linkTo[PlantaoController].incluir[condutor.id]}" class="gt-btn-medium gt-btn-left">
+				<a href="${linkTo[PlantaoController].incluir(condutor.id)}" class="gt-btn-medium gt-btn-left">
 					<fmt:message key="views.botoes.incluir"/>
 				</a>
 			</div>

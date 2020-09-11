@@ -45,62 +45,114 @@ public class GcMovimentacao extends Objeto implements
 	@SequenceGenerator(sequenceName = "SIGAGC.hibernate_sequence", name = "gcMovimentacaoSeq")
 	@GeneratedValue(generator = "gcMovimentacaoSeq")
 	@Column(name = "ID_MOVIMENTACAO")
-	public long id;
+	private long id;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_TIPO_MOVIMENTACAO")
-	public GcTipoMovimentacao tipo;
+	private GcTipoMovimentacao tipo;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_INFORMACAO")
-	public GcInformacao inf;
+	private GcInformacao inf;
 
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_MOVIMENTACAO_REF")
-	public GcMovimentacao movRef;
+	private GcMovimentacao movRef;
 
 	@ManyToOne(optional = true, cascade = CascadeType.ALL)
 	@JoinColumn(name = "ID_MOVIMENTACAO_CANCELADORA")
-	public GcMovimentacao movCanceladora;
+	private GcMovimentacao movCanceladora;
 
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_PESSOA_ATENDENTE")
-	public DpPessoa pessoaAtendente;
+	private DpPessoa pessoaAtendente;
 
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_LOTACAO_ATENDENTE")
-	public DpLotacao lotacaoAtendente;
+	private DpLotacao lotacaoAtendente;
 	
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_PAPEL")
-	public GcPapel papel;
+	private GcPapel papel;
 
 	// Edson: pode ser usado quando o grupo de e-mail notificado for do siga-gi
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_GRUPO")
-	public CpGrupo grupo;
+	private CpGrupo grupo;
 
 	@Column(name = "DESCRICAO")
-	public String descricao;
+	private String descricao;
 
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_PESSOA_TITULAR")
-	public DpPessoa pessoaTitular;
+	private DpPessoa pessoaTitular;
 
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_LOTACAO_TITULAR")
-	public DpLotacao lotacaoTitular;
+	private DpLotacao lotacaoTitular;
 
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_CONTEUDO")
-	public GcArquivo arq;
+	private GcArquivo arq;
 
 	@Column(name = "HIS_DT_INI")
-	public Date hisDtIni;
+	private Date hisDtIni;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "HIS_IDC_INI")
-	public CpIdentidade hisIdcIni;
+	private CpIdentidade hisIdcIni;
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public void setTipo(GcTipoMovimentacao tipo) {
+		this.tipo = tipo;
+	}
+
+	public void setInf(GcInformacao inf) {
+		this.inf = inf;
+	}
+
+	public void setMovRef(GcMovimentacao movRef) {
+		this.movRef = movRef;
+	}
+
+	public void setMovCanceladora(GcMovimentacao movCanceladora) {
+		this.movCanceladora = movCanceladora;
+	}
+
+	public void setPessoaAtendente(DpPessoa pessoaAtendente) {
+		this.pessoaAtendente = pessoaAtendente;
+	}
+
+	public void setLotacaoAtendente(DpLotacao lotacaoAtendente) {
+		this.lotacaoAtendente = lotacaoAtendente;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
+
+	public void setPessoaTitular(DpPessoa pessoaTitular) {
+		this.pessoaTitular = pessoaTitular;
+	}
+
+	public void setLotacaoTitular(DpLotacao lotacaoTitular) {
+		this.lotacaoTitular = lotacaoTitular;
+	}
+
+	public void setArq(GcArquivo arq) {
+		this.arq = arq;
+	}
+
+	public void setHisDtIni(Date hisDtIni) {
+		this.hisDtIni = hisDtIni;
+	}
+
+	public void setHisIdcIni(CpIdentidade hisIdcIni) {
+		this.hisIdcIni = hisIdcIni;
+	}
 
 	/**
 	 * verifica se uma movimentação está cancelada. Uma movimentação está
@@ -115,7 +167,7 @@ public class GcMovimentacao extends Objeto implements
 	}
 
 	public boolean isCanceladora() {
-		switch ((int) this.tipo.id) {
+		switch ((int) this.tipo.getId()) {
 		case (int) GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE:
 		case (int) GcTipoMovimentacao.TIPO_MOVIMENTACAO_REVISADO:
 			return true;
@@ -145,7 +197,7 @@ public class GcMovimentacao extends Objeto implements
 		// BJN workaround pro erro na hora de usar a constante dentro do HQL direto
 		query.setParameter("idTipoMovAnexarArquivo", GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO);
 		
-		query.setParameter("idArqMov", anexo.id);
+		query.setParameter("idArqMov", anexo.getId());
 		GcInformacao retorno = null;
 		try {
 			retorno = (GcInformacao) query.getSingleResult();
@@ -162,7 +214,7 @@ public class GcMovimentacao extends Objeto implements
 		Long count = (Long) query.getSingleResult();
 
 		Query query2 = AR.em().createNamedQuery("numeroEquipeCiente");
-		query2.setParameter("idInfo", inf.id);
+		query2.setParameter("idInfo", inf.getId());
 		query2.setParameter("idLotacao", lotacaoAtendente.getId());
 		query2.setParameter("movRef", movRef);
 		Long count2 = (Long) query2.getSingleResult();

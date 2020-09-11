@@ -9,7 +9,7 @@
 
 <sigatp:erros/>
 
-<form id="formFinalidade" action="${linkTo[FinalidadeController].salvar[finalidade]}" method="post" enctype="multipart/form-data">
+<form id="formFinalidade" action="${linkTo[FinalidadeController].salvar(finalidade)}" method="post" enctype="multipart/form-data">
 	<div class="gt-content-box gt-form"> 
 		<label for="finalidade.descricao" class="obrigatorio">Descri&ccedil;&atilde;o</label>
 		<input type="text" name="finalidade.descricao" value="${finalidade.descricao}" />

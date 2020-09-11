@@ -132,19 +132,19 @@ public class RelatorioUsoVeiculos {
                  + "FROM Missao m "
                  + "INNER JOIN m.requisicoesTransporte r "
                  + "INNER JOIN r.andamentos a "
-                 + "WHERE m.cpOrgaoUsuario = ? and m.estadoMissao = ? "
-                 + "and   m.dataHoraRetorno BETWEEN ? AND ? "
+                 + "WHERE m.cpOrgaoUsuario = :orgao and m.estadoMissao = :estadoMissao "
+                 + "and   m.dataHoraRetorno BETWEEN :dataInicio AND :dataFim? "
                  + "and   m.id = a.missao.id "
-                 + "AND   a.estadoRequisicao in (?, ?) "
+                 + "AND   a.estadoRequisicao in (:estadoRequisicao1, :estadoRequisicao2) "
                  + "ORDER BY m.id";
 
 		Query qry = ContextoPersistencia.em().createQuery(qrl);
-		qry.setParameter(1, orgao);
-		qry.setParameter(2, EstadoMissao.FINALIZADA);
-		qry.setParameter(3, dataInicio);
-		qry.setParameter(4, dataFim);
-		qry.setParameter(5, EstadoRequisicao.ATENDIDA);
-		qry.setParameter(6, EstadoRequisicao.ATENDIDAPARCIALMENTE);
+		qry.setParameter("orgao", orgao);
+		qry.setParameter("estadoMissao", EstadoMissao.FINALIZADA);
+		qry.setParameter("dataInicio", dataInicio);
+		qry.setParameter("dataFim", dataFim);
+		qry.setParameter("estadoRequisicao1", EstadoRequisicao.ATENDIDA);
+		qry.setParameter("estadoRequisicao2", EstadoRequisicao.ATENDIDAPARCIALMENTE);
 		lista = (List<Missao>) qry.getResultList();
 		
 		for (int i = 0; i < lista.size(); i++) {

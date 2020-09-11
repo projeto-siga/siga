@@ -4,14 +4,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import com.google.common.collect.Lists;
+
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
+import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.tp.auth.AutorizacaoGI;
 import br.gov.jfrj.siga.tp.auth.annotation.LogMotivo;
@@ -32,9 +36,7 @@ import br.gov.jfrj.siga.tp.model.Veiculo;
 import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-import com.google.common.collect.Lists;
-
-@Resource
+@Controller
 @Path("/app/abastecimento/")
 public class AbastecimentoController extends TpController {
 
@@ -44,11 +46,19 @@ public class AbastecimentoController extends TpController {
     private static final String VEICULOS = "veiculos";
     private static final String FORNECEDORES = "fornecedores";
 
+    @Inject
     private AutorizacaoGI autorizacaoGI;
 
-    public AbastecimentoController(HttpServletRequest request, Result result, Validator validator, SigaObjects so, EntityManager em, AutorizacaoGI autorizacaoGI) {
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public AbastecimentoController() {
+		super();
+	}
+	
+    @Inject
+	public AbastecimentoController(HttpServletRequest request, Result result,  Validator validator, SigaObjects so,  EntityManager em) {
         super(request, result, TpDao.getInstance(), validator, so, em);
-        this.autorizacaoGI = autorizacaoGI;
     }
 
     @Path("/listar")

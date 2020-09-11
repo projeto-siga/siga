@@ -80,7 +80,7 @@
 			   	    		<td>
 			   	    			<tptags:link texto="${requisicaoTransporte.descricaoCompleta}"
 			   	    						 parteTextoLink="${requisicaoTransporte.buscarSequence()}"
-			   	    						 comando="${linkTo[RequisicaoController].buscarPelaSequence[true][requisicaoTransporte.buscarSequence()]}">
+			   	    						 comando="${linkTo[RequisicaoController].buscarPelaSequence(true,requisicaoTransporte.buscarSequence())}">
 			   	    			</tptags:link>
 							</td>
 							<c:if test="${requisicaoTransporte.servicoVeiculo != null}">
@@ -287,7 +287,7 @@
 			<input type="button" id="btnSalvar" value="<fmt:message key='views.botoes.salvar'/>" onClick="submitForm('${linkTo[MissaoController].salvar}')" class="gt-btn-medium gt-btn-left" />
 			<c:choose>
 				<c:when test="${missao.id > 0}">
-					<input type="button" id="btnVoltar"  value="<fmt:message key='views.botoes.voltar'/>" onClick="javascript:location.href='${linkTo[MissaoController].buscarPelaSequence[false][missao.sequence]}'" class="gt-btn-medium gt-btn-left" />
+					<input type="button" id="btnVoltar"  value="<fmt:message key='views.botoes.voltar'/>" onClick="javascript:location.href='${linkTo[MissaoController].buscarPelaSequence(false,missao.sequence)}'" class="gt-btn-medium gt-btn-left" />
 				</c:when>
 				<c:otherwise>
 	 			    <c:choose>
@@ -313,14 +313,14 @@
 	<c:if test="${mostrarBotoesIniciar}">
 		<div id="btnAcoes" class="gt-table-buttons">
 			<input type="button" id="btnIniciar" value="<fmt:message key='views.botoes.iniciar'/>" onClick="submitForm('${linkTo[MissaoController].iniciarMissao}')" class="gt-btn-medium gt-btn-left" />
-			<input type="button" id="btnVoltar"  value="<fmt:message key='views.botoes.voltar'/>" onClick="javascript:location.href='${linkTo[MissaoController].buscarPelaSequence[false][missao.sequence]}'" class="gt-btn-medium gt-btn-left" />
+			<input type="button" id="btnVoltar"  value="<fmt:message key='views.botoes.voltar'/>" onClick="javascript:location.href='${linkTo[MissaoController].buscarPelaSequence(false,missao.sequence)}'" class="gt-btn-medium gt-btn-left" />
 		</div>
 	</c:if>
 
 	<c:if test="${mostrarBotoesFinalizar}">
 		<div id="btnAcoes" class="gt-table-buttons">
 			<input type="button" id="btnFinalizar" value="<fmt:message key='views.botoes.finalizar'/>" onClick="submitForm('${linkTo[MissaoController].finalizarMissao}')" class="gt-btn-medium gt-btn-left" />
-			<input type="button" id="btnVoltar"  value="<fmt:message key='views.botoes.voltar'/>" onClick="javascript:location.href='${linkTo[MissaoController].buscarPelaSequence[false][missao.sequence]}'" class="gt-btn-medium gt-btn-left" />
+			<input type="button" id="btnVoltar"  value="<fmt:message key='views.botoes.voltar'/>" onClick="javascript:location.href='${linkTo[MissaoController].buscarPelaSequence(false,missao.sequence)}'" class="gt-btn-medium gt-btn-left" />
 		</div>
 	</c:if>
 
@@ -366,7 +366,7 @@
 				   	    			<td>
 				   	    				<tptags:link texto="${requisicaoTransporte.descricaoCompleta}"
 				   	    							 parteTextoLink="${requisicaoTransporte.buscarSequence()}"
-				   	    							 comando="${linkTo[RequisicaoController].buscarPelaSequence[true][requisicaoTransporte.buscarSequence()]}">
+				   	    							 comando="${linkTo[RequisicaoController].buscarPelaSequence(true,requisicaoTransporte.buscarSequence())}">
 				   	    				</tptags:link>
 									</td>
 									<c:if test="${requisicaoTransporte.servicoVeiculo != null}">

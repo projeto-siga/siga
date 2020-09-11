@@ -25,13 +25,13 @@
 								<c:forEach items="${avarias}" var="item">
 							   	<tr>
 								   	<td>
-										<sigatp:formatarColuna operacao="editar" href="${linkTo[AvariaController].editar[item.veiculo.id][item.id][false]}" titulo="avaria" />
+										<sigatp:formatarColuna operacao="editar" href="${linkTo[AvariaController].editar(item.veiculo.id,item.id,false)}" titulo="avaria" />
 									</td>
 									<td>
-										<sigatp:formatarColuna operacao="excluir" href="${linkTo[AvariaController].excluir[item.id][false]}" titulo="avaria"
+										<sigatp:formatarColuna operacao="excluir" href="${linkTo[AvariaController].excluir(item.id,false)}" titulo="avaria"
 										onclick="javascript:return confirm('Tem certeza de que deseja excluir esta avaria?');"/>
 									</td>
-						    	    <td><a href="${linkTo[AvariaController].listarPorVeiculo[item.veiculo.id]}" alt="Veja apenas as avarias desde ve&iacute;culo">${(null != item.veiculo) ? item.veiculo.dadosParaExibicao : ""}</a></td>
+						    	    <td><a href="${linkTo[AvariaController].listarPorVeiculo(item.veiculo.id)}" alt="Veja apenas as avarias desde ve&iacute;culo">${(null != item.veiculo) ? item.veiculo.dadosParaExibicao : ""}</a></td>
 						    		<td><fmt:formatDate pattern="dd/MM/yyyy" value="${item.dataDeRegistro.time}"/></td>
 						    		<td><fmt:formatDate pattern="dd/MM/yyyy" value="${item.dataDeSolucao.time}"/></td>
 						    		<td style="white-space: pre-line;">${item.descricao}</td>
@@ -39,7 +39,7 @@
 								</c:forEach>
 							</tbody>
 				     	</table>
-						<sigatp:paginacao>
+						<sigatp:paginacao></sigatp:paginacao>
 					</div>
 				</c:when>
 				<c:otherwise>

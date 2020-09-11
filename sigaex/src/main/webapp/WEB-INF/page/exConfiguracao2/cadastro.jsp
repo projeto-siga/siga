@@ -2,8 +2,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="32kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <siga:pagina titulo="Cadastro de configuração">	
@@ -13,11 +11,11 @@
 <link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
 
 <style>
-	.tab {
+	.js-etapa {
 		display: none;
 	}
 	
-	.step {
+	.js-indicador-etapa {
 	  height: 15px;
 	  width: 15px;
 	  margin: 0 2px;
@@ -28,11 +26,11 @@
 	  opacity: 0.5;
 	}
 	
-	.step.active {
+	.js-indicador-etapa.active {
   		opacity: 1;	
 	}
 	
-	.step.finish {
+	.js-indicador-etapa.finish {
   		background-color: #4CAF50;
 	}
 	
@@ -69,7 +67,7 @@
 			<div class="card-body">
 				<form action="nova">	
 			
-					<div class="tab">
+					<div class="js-etapa">
 						<h3 class="text-center p-4">
 							<label for="modelo">Qual ou quais modelos você deseja configurar?</label>
 						</h3>
@@ -77,8 +75,8 @@
 						<div class="row">
 							<div class="col-sm-12">
 								<div class="form-group">																	
-									<input type="hidden" name="idModeloPesquisa" value="${idModeloPesquisa}" id="inputHiddenModelosSelecionados" />																			
-				                    <select id="modelo" class="form-control siga-multiploselect  js-siga-multiploselect--modelo">				                    		
+									<input type="hidden" name="idModeloPesquisa" value="${idModeloPesquisa}" id="inputHiddenModelosSelecionados" />																																		
+				                    <select id="modelo" class="form-control siga-multiploselect  js-siga-multiploselect--modelo" data-quantidade-modelos="${quantidadeModelos}">				                    		
 				                    	<c:forEach items="${listaModelos}" var="modelo">
 				                    		<option value="${modelo.id}">${modelo.nmMod}</option>
 				                    	</c:forEach>				                        			                            				                        				                       
@@ -91,7 +89,7 @@
 						</div>
 					</div>
 					
-					<div class="tab">
+					<div class="js-etapa">
 						<h3 class="text-center p-4">
 							<label for="tipoConfiguracao">Qual configuração deseja aplicar?</label>
 						</h3>
@@ -111,7 +109,7 @@
 						</div>
 					</div>
 					
-					<div class="tab">
+					<div class="js-etapa">
 						<h3 class="text-center p-4">
 							<label for="nivelAcesso">Escolha o nível de acesso</label>
 						</h3>
@@ -128,7 +126,7 @@
 						</div>
 					</div>
 					
-					<div class="tab">
+					<div class="js-etapa">
 						<h3 class="text-center p-4">
 							<label for="unidade">E por fim, selecione as unidades</label>
 						</h3>
@@ -151,16 +149,16 @@
 					
 					<div style="overflow:auto;">
 					  <div style="float:right;">
-						  <button type="button" id="prevBtn" class="btn btn-secondary" onclick="nextPrev(-1)">Anterior</button>	
-						  <button type="button" id="nextBtn" class="btn btn-primary" onclick="nextPrev(1)">Próximo</button>					    					  
+						  <button type="button" class="btn  btn-secondary  js-btn-anterior">Anterior</button>	
+						  <button type="button" class="btn  btn-primary  js-btn-proximo">Próximo</button>					    					  
 					  </div>
 					</div>
 					
 					<div class="text-center  pt-4">
-						<span class="step"></span>
-						<span class="step"></span>
-						<span class="step"></span>
-						<span class="step"></span>
+						<a href="#" class="js-link-indicador-etapa" data-indicador-etapa="1"><span class="js-indicador-etapa"></span></a>
+						<a href="#" class="js-link-indicador-etapa" data-indicador-etapa="2"><span class="js-indicador-etapa"></span></a>
+						<a href="#" class="js-link-indicador-etapa" data-indicador-etapa="3"><span class="js-indicador-etapa"></span></a>
+						<a href="#" class="js-link-indicador-etapa" data-indicador-etapa="4"><span class="js-indicador-etapa"></span></a>
 					</div>
 				
 				
@@ -178,66 +176,19 @@
 		</div>
 	</div>
 	
-<script>
-var currentTab = 0; // Current tab is set to be the first tab (0)
-showTab(currentTab); // Display the current tab
-
-function showTab(n) {
-  // This function will display the specified tab of the form ...
-  var x = document.getElementsByClassName("tab");
-  x[n].style.display = "block";
-  // ... and fix the Previous/Next buttons:
-  if (n == 0) {
-    document.getElementById("prevBtn").style.display = "none";
-  } else {
-    document.getElementById("prevBtn").style.display = "inline";
-  }
-  if (n == (x.length - 1)) {
-    document.getElementById("nextBtn").innerHTML = "Salvar";
-  } else {
-    document.getElementById("nextBtn").innerHTML = "Próximo";
-  }
-  // ... and run a function that displays the correct step indicator:
-  fixStepIndicator(n)
-}
-
-function nextPrev(n) {
-  // This function will figure out which tab to display
-  var x = document.getElementsByClassName("tab");
-  // Exit the function if any field in the current tab is invalid:
-  //if (n == 1 && !validateForm()) return false;
-  // Hide the current tab:
-  x[currentTab].style.display = "none";
-  // Increase or decrease the current tab by 1:
-  currentTab = currentTab + n;
-  // if you have reached the end of the form... :
-  if (currentTab >= x.length) {
-    //...the form gets submitted:
-    document.getElementById("regForm").submit();
-    return false;
-  }
-  // Otherwise, display the correct tab:
-  showTab(currentTab);
-}
-
-function fixStepIndicator(n) {
-  // This function removes the "active" class of all steps...
-  var i, x = document.getElementsByClassName("step");
-  for (i = 0; i < x.length; i++) {
-    x[i].className = x[i].className.replace(" active", "");
-  }
-  //... and adds the "active" class to the current step:
-  x[n].className += " active";
-}
-
-	$(function() {
-		$('[name=idTpConfiguracao]').addClass('siga-select2');
-	});
-
-</script>			 	
+<siga:siga-modal id="confirmacaoModal" exibirRodape="false" tituloADireita="Confirma&ccedil;&atilde;o">
+	<div class="modal-body">
+      		Você selecionou todos os modelos, tem certeza que deseja aplicar configuração em todos?
+    	</div>
+    	<div class="modal-footer">
+      		<button type="button" class="btn btn-success" data-dismiss="modal">Voltar</button>		        
+      		<a href="#" class="btn btn-danger btn-confirmacao-modal" role="button" aria-pressed="true">Continuar</a>
+	</div>
+</siga:siga-modal>				 
 <script type="text/javascript" src="/siga/javascript/selectpicker/bootstrap-select.min.js"></script>
 <script type="text/javascript" src="/siga/javascript/siga.multiploselect.js"></script>
 <script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
 <script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
-<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>			
+<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
+<script type="text/javascript" src="../../../javascript/exconfiguracao.js"></script>			
 </siga:pagina>

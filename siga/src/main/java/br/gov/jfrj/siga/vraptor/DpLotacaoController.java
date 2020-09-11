@@ -372,7 +372,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 										|| (isExternaLotacao != null && lotacao.getIsExternaLotacao() != null && !isExternaLotacao.equals(lotacao.getIsExternaLotacao().equals(Integer.valueOf(1)) ? Boolean.TRUE : Boolean.FALSE))
 										|| (lotacaoPai != null && lotacao.getLotacaoPai() == null)
 										|| (lotacaoPai == null && lotacao.getLotacaoPai() != null)
-										|| (!lotacaoPai.equals(lotacao.getLotacaoPai() != null ? lotacao.getLotacaoPai().getId() : 0L))
+										|| (lotacaoPai != null && !lotacaoPai.equals(lotacao.getLotacaoPai() != null ? lotacao.getLotacaoPai().getId() : 0L))
 										|| !idLocalidade.equals(lotacao.getLocalidade().getId())))) {
 			if (id != null) {			
 				listPessoa = CpDao.getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE);

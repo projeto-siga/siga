@@ -6250,28 +6250,50 @@ public class ExBL extends CpBL {
 		}
 	}
 
-	public void gravarForma(ExFormaDocumento forma, List<ExTipoDocumento> origensCadastradas) throws AplicacaoException {
+	public void gravarForma(ExFormaDocumento forma, ExFormaDocumento formaCadastrada) throws AplicacaoException {
 		try {	
 			
 			if (forma.isEditando()) {
-				boolean isExFormaComDocumentoVinculado = dao().isExFormaComDocumentoVinculado(forma.getId());
+				boolean temDocumentoVinculado = dao().isExFormaComDocumentoVinculado(forma.getId());
 				
-				if (isExFormaComDocumentoVinculado) {				
-					if (forma.isTipoFormaAlterada()) {													
-						throw new RegraNegocioException("Não é possível alterar o Tipo para <b>" + forma.getExTipoFormaDoc().getDescTipoFormaDoc() + "</b>"
-								+ ", existem documentos que dependem desta informação.");									
+				if (temDocumentoVinculado) {
+					if (!forma.getSigla().equals(formaCadastrada.getSigla())) {													
+						throw new RegraNegocioException("Não é possível alterar a sigla. Existem documentos que dependem desta informação.");									
 					}
 					
-					for (ExTipoDocumento origemCadastrada : origensCadastradas) {
+					if (!forma.getExTipoFormaDoc().getId().equals(formaCadastrada.getExTipoFormaDoc().getId())) {													
+						throw new RegraNegocioException("Não é possível alterar o Tipo para <b>" + forma.getExTipoFormaDoc().getDescTipoFormaDoc() + "</b>"
+								+ ". Existem documentos que dependem desta informação.");									
+					}					
+					
+					if ((forma.getIsComposto() == null && formaCadastrada.getIsComposto() != null) ||
+							(forma.getIsComposto() != null && formaCadastrada.getIsComposto() == null)) {													
+						throw new RegraNegocioException("Não é possível alterar o indicativo de Documento Composto. Existem documentos que dependem desta informação.");									
+					}
+					
+					String descricaoOrigens = "";					
+					for (ExTipoDocumento origemCadastrada : formaCadastrada.getExTipoDocumentoSet()) {
 						ExTipoDocumento origemEncontrada = forma.getExTipoDocumentoSet().stream()
-								.filter(o -> o.getIdTpDoc() == origemCadastrada.getIdTpDoc())
+								.filter(o -> o.getIdTpDoc().equals(origemCadastrada.getIdTpDoc()))
 								.findAny()
 								.orElse(null);
 						
 						if (origemEncontrada == null) {
-							throw new RegraNegocioException("Não é possível retirar a Origem <b>" + origemCadastrada.getDescricaoSimples() + "</b>"
-									+ ", existem documentos que dependem desta informação.");
+							if (descricaoOrigens.length() > 0) descricaoOrigens += "<br/>";
+							descricaoOrigens += origemCadastrada.getDescricaoSimples();						
 						}
+					}
+					
+					if (!descricaoOrigens.isEmpty()) {				
+						String mensagem;
+						
+						if (descricaoOrigens.contains("<br/>")) {
+							mensagem = "Não é possível retirar as Origens: <br/><b>" + descricaoOrigens + "</b><br/> Existem documentos que dependem destas informações.";
+						} else {
+							mensagem = "Não é possível retirar a Origem: <br/><b>" + descricaoOrigens + "</b><br/> Existem documentos que dependem desta informação.";
+						}
+												
+						throw new RegraNegocioException(mensagem);
 					}
 				}			
 			}				

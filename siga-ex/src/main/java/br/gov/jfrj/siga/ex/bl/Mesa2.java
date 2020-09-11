@@ -582,10 +582,15 @@ public class Mesa2 {
 					DpPessoa pes = tag.marca.getDpPessoaIni().getPessoaAtual();
 					if (pes.getNomeExibicao() != null)
 						t.pessoa = pes.getNomeExibicao();
+					
+					t.titulo += " - " + pes.getNomePessoa() + " - " + pes.getSesbPessoa() + pes.getMatricula();
+
 				}
-				if (tag.marca.getDpLotacaoIni() != null)
+				if (tag.marca.getDpLotacaoIni() != null) {
 					t.lotacao = tag.marca.getDpLotacaoIni().getLotacaoAtual()
 							.getSigla();
+					t.titulo += " - " + tag.marca.getDpLotacaoIni().getLotacaoAtual().getSiglaLotacao();
+				}
 				t.inicio = tag.marca.getDtIniMarca();
 				t.termino = tag.marca.getDtFimMarca();
 				if(tag.marca.getCpMarcador().isDemandaJudicial()) {

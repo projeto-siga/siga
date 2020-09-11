@@ -6,24 +6,34 @@
 
 <script type="text/javascript">
 	function validar() {
+		sigaSpinner.mostrar();
+		document.getElementById("btnOk").disabled = true;
 		var nmLotacao = document.getElementsByName('nmLotacao')[0].value;
 		var siglaLotacao = document.getElementsByName('siglaLotacao')[0].value;		
 		var id = document.getElementsByName('id')[0].value;
 		var idLocalidade = document.getElementsByName('idLocalidade')[0].value;	
-		if (nmLotacao==null || nmLotacao=="") {			
+		if (nmLotacao==null || nmLotacao=="") {
+			habilitarBotaoOk();
 			sigaModal.alerta("Preencha o nome da Lotação");
 			document.getElementById('nmLotacao').focus();		
 		}else {
 			if(siglaLotacao==null || siglaLotacao=="") {
+				habilitarBotaoOk();
 				sigaModal.alerta("Preencha a sigla da Lotação");
 			} else {
 				if(idLocalidade == 0) {
+					habilitarBotaoOk();
 					sigaModal.alerta("Preencha a localidade da Lotação");	
 				} else {
 					frm.submit();
 				}
 			}
 		}			
+	}
+	
+	function habilitarBotaoOk() {		
+		sigaSpinner.ocultar();
+		document.getElementById("btnOk").disabled = false;
 	}
 	
 	function carregarExcel() {
@@ -161,7 +171,7 @@
 				<div class="row">
 					<div class="col-sm-2">
 						<div class="form-group">
-							<button type="button" onclick="javascript: validar();" class="btn btn-primary" >Ok</button>
+							<button type="button" id="btnOk" onclick="javascript: validar();" class="btn btn-primary" >Ok</button>
 							<button type="button" onclick="javascript:history.back();" class="btn btn-primary" >Cancelar</button>
 						</div>
 					</div>

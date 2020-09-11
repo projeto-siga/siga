@@ -56,7 +56,10 @@ public class ExConfiguracao2Controller extends ExController {
 	
 	@Get("/nova")
 	public void cadastro() throws Exception {
-		result.include("listaModelos", this.getModelos(null));
+		List<ExModelo> modelos = this.getModelos(null);
+		
+		result.include("listaModelos", modelos);
+		result.include("quantidadeModelos", modelos.size());
 		result.include("listaTiposConfiguracao", getListaTiposConfiguracao());		
 		result.include("listaNivelAcesso", getListaNivelAcesso());
 	}

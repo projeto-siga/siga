@@ -43,10 +43,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
 @Table(name = "EX_FORMA_DOCUMENTO", catalog = "SIGA")
 @Cache(region = ExDao.CACHE_EX, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class ExFormaDocumento extends AbstractExFormaDocumento implements
-		Serializable, Selecionavel, Comparable<ExFormaDocumento> {
-	
-	@Transient
-	boolean tipoFormaAlterada;
+		Serializable, Selecionavel, Comparable<ExFormaDocumento> {	
 	
 	/**
 	 * Simple constructor of ExFormaDocumento instances.
@@ -137,14 +134,6 @@ public class ExFormaDocumento extends AbstractExFormaDocumento implements
 	
 	public boolean isEditando() {
 		return getIdFormaDoc() != null; 
-	}
-	
-	public void setTipoFormaAlterada(boolean tipoFormaAlterada) {
-		this.tipoFormaAlterada = tipoFormaAlterada;
-	}
-	
-	public boolean isTipoFormaAlterada() {						
-		return isEditando() && tipoFormaAlterada;
-	}
+	}	
 	
 }

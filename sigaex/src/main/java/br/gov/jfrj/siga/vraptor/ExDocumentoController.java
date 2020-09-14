@@ -49,7 +49,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -72,17 +71,11 @@ import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
-
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
-import br.gov.jfrj.siga.base.Prop;
-import br.gov.jfrj.siga.cp.CpArquivo;
-import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.cp.TipoConteudo;
-import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCFacade;
-import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCInterface;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -267,7 +260,6 @@ public class ExDocumentoController extends ExController {
 		exPreenchimento.setPreenchimentoBA(getByteArrayFormPreenchimento(vars,
 				campos));
 		
-		gravarArquivoPreenchimento(exPreenchimento);
 		dao().gravar(exPreenchimento);
 		ModeloDao.commitTransacao();
 
@@ -924,8 +916,6 @@ public class ExDocumentoController extends ExController {
 		final ExPreenchimento exemplo = dao()
 				.consultar(exDocumentoDTO.getPreenchimento(),
 						ExPreenchimento.class, false);
-		
-		excluirArquivoPreenchimento(exemplo);
 		
 		dao().excluir(exemplo);
 		ModeloDao.commitTransacao();
@@ -1828,8 +1818,6 @@ public class ExDocumentoController extends ExController {
 
 		exPreenchimento.setPreenchimentoBA(getByteArrayFormPreenchimento(vars,
 				campos));
-		
-		gravarArquivoPreenchimento(exPreenchimento);
 		
 		dao().gravar(exPreenchimento);
 		ModeloDao.commitTransacao();
@@ -2917,80 +2905,4 @@ public class ExDocumentoController extends ExController {
 		result.include("docCancelado", docCancelado);
 	}
 
-	private void gravarArquivoPreenchimento(final ExPreenchimento exPreenchimento) {
-		try {
-			if(exPreenchimento.getCpArquivo()!=null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(exPreenchimento.getCpArquivo().getTipoArmazenamento())) {
-				ArmazenamentoBCInterface armazenamento = ArmazenamentoBCFacade.getArmazenamentoBC(exPreenchimento.getCpArquivo());
-				armazenamento.salvar(exPreenchimento.getCpArquivo(), exPreenchimento.getPreenchimentoBlob());
-				dao().gravar(exPreenchimento.getCpArquivo());
-			}
-		} catch (Exception e) {
-			log.error(ERRO_GRAVAR_ARQUIVO, e);
-			throw new AplicacaoException(ERRO_GRAVAR_ARQUIVO);
-		}
-	}
-	
-	private void excluirArquivoPreenchimento(final ExPreenchimento exPreenchimento) {
-		try {
-			if (!(exPreenchimento.getCpArquivo() == null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(exPreenchimento.getCpArquivo().getTipoArmazenamento()))) {
-				ArmazenamentoBCInterface armazenamento = ArmazenamentoBCFacade.getArmazenamentoBC(exPreenchimento.getCpArquivo());
-				armazenamento.apagar(exPreenchimento.getCpArquivo());
-				dao().excluir(exPreenchimento.getCpArquivo());
-			}
-		} catch (Exception e) {
-			log.error(ERRO_EXCLUIR_ARQUIVO, e);
-			throw new AplicacaoException(ERRO_EXCLUIR_ARQUIVO);
-		}
-	}
-	
-	private void migrarDocumentoParaHCP(ExDocumento documento) {
-		try {
-			final Ex ex = Ex.getInstance();
-			final ExBL exBL = ex.getBL();	
-			if(documento.getCpArquivo() == null) {
-				byte[] arquivo = documento.getConteudoBlobDoc();
-				CpArquivo cpArquivo = new CpArquivo();
-				documento.setCpArquivo(cpArquivo);
-				cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.HCP);
-				cpArquivo.setOrgaoUsuario(documento.getOrgaoUsuario());
-				cpArquivo.setConteudoTpArq(documento.getConteudoTpDoc());
-				cpArquivo.setTamanho(arquivo.length);
-				
-				String extensao = TipoConteudo.ZIP.getExtensao();
-				Calendar c = Calendar.getInstance();
-				c.set(Calendar.AM_PM, Calendar.PM);
-				c.setTime(documento.getData());
-				String caminho = c.get(Calendar.YEAR)+"/"+(c.get(Calendar.MONTH)+1)+"/"+c.get(Calendar.DATE)+"/"+c.get(Calendar.HOUR_OF_DAY)+"/"+c.get(Calendar.MINUTE)+"/"+UUID.randomUUID().toString()+"."+extensao;
-				cpArquivo.setCaminho(caminho);
-				
-				exBL.gravarArquivoDocumento(documento);
-
-			}
-			
-			for(ExMovimentacao mov: documento.getExMovimentacaoSet()) {
-				if(mov.getCpArquivo() == null) {
-					byte[] arquivo = mov.getConteudoBlobMov();
-					CpArquivo cpArquivo = new CpArquivo();
-					mov.setCpArquivo(cpArquivo);
-					cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.HCP);
-					cpArquivo.setConteudoTpArq(mov.getConteudoTpMov());
-					cpArquivo.setTamanho(arquivo.length);
-					
-					String extensao = TipoConteudo.ZIP.getExtensao();
-					Calendar c = Calendar.getInstance();
-					c.set(Calendar.AM_PM, Calendar.PM);
-					c.setTime(mov.getData());
-					String caminho = c.get(Calendar.YEAR)+"/"+(c.get(Calendar.MONTH)+1)+"/"+c.get(Calendar.DATE)+"/"+c.get(Calendar.HOUR_OF_DAY)+"/"+c.get(Calendar.MINUTE)+"/"+UUID.randomUUID().toString()+"."+extensao;
-					mov.getCpArquivo().setCaminho(caminho);
-					
-					exBL.gravarArquivoMovimentacao(mov);
-
-				}
-			}
-			
-		} catch (Exception e) {
-			log.error(ERRO_GRAVAR_ARQUIVO, e);
-			throw new AplicacaoException(ERRO_GRAVAR_ARQUIVO);
-		}
-	}
 }

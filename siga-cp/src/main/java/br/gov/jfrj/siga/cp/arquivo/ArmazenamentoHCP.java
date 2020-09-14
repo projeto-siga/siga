@@ -25,7 +25,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpArquivo;
 
-public class ArmazenamentoHCP implements ArmazenamentoBCInterface {
+public class ArmazenamentoHCP {
 
 	private static final String HCP = "HCP ";
 
@@ -53,13 +53,9 @@ public class ArmazenamentoHCP implements ArmazenamentoBCInterface {
 //		client = HttpClients.createDefault();
 	}
 
-	@Override
 	public void salvar(CpArquivo cpArquivo, byte[] conteudo) {
 		try {
 			configurar();
-			cpArquivo.setTamanho(conteudo.length);
-			if(cpArquivo.getCaminho()==null)
-				cpArquivo.gerarCaminho(null);
 			
 			apagarArquivo(cpArquivo);
 			
@@ -76,7 +72,6 @@ public class ArmazenamentoHCP implements ArmazenamentoBCInterface {
 		}
 	}
 
-	@Override
 	public void apagar(CpArquivo cpArquivo) {
 		try {
 			configurar();
@@ -99,7 +94,6 @@ public class ArmazenamentoHCP implements ArmazenamentoBCInterface {
 		}
 	}
 	
-	@Override
 	public byte[] recuperar(CpArquivo cpArquivo) {
 		if(cpArquivo.getIdArq() == null || cpArquivo.getCaminho() == null)
 			return null;

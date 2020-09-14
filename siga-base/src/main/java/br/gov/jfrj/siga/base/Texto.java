@@ -257,5 +257,12 @@ public class Texto {
 		public static final String NOME_REGEX_CARACTERES_PERMITIDOS = "[a-zA-ZáâãäéêëíïóôõöúüçñÁÂÃÄÉÊËÍÏÓÔÕÖÚÜÇÑ'' ]+";
 		public static final String EMAIL_REGEX_PATTERN = "^[\\w-]+(\\.[\\w-]+)*@([\\w-]+\\.)+[a-zA-Z]{2,7}$";														 
 	}
-	
+
+	public static boolean equals(String s1, String s2) {
+		if (s1 == null && s2 == null)
+			return true;
+		if (s1 == null || s2 == null)
+			return false;
+		return s1.equals(s2);
+	}
 }

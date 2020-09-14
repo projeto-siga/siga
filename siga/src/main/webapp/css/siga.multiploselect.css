@@ -40,3 +40,7 @@
 .bootstrap-select.show-tick .dropdown-menu .selected span.check-mark {
 	left: 0;
 }
+
+.bootstrap-select .dropdown-toggle:focus, .bootstrap-select>select.mobile-device:focus+.dropdown-toggle {
+    outline: none!important;    
+}

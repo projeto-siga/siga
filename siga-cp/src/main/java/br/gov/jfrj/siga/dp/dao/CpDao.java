@@ -84,6 +84,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpPessoaTrocaEmailDTO;
 import br.gov.jfrj.siga.dp.DpPessoaUsuarioDTO;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
+import br.gov.jfrj.siga.dp.DpUnidadeDTO;
 import br.gov.jfrj.siga.dp.DpVisualizacao;
 import br.gov.jfrj.siga.model.CarimboDeTempo;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
@@ -2187,6 +2188,18 @@ public class CpDao extends ModeloDao {
 	@SuppressWarnings("unchecked")
 	public List<CpOrgaoUsuario> listarOrgaosUsuarios() {
 		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpOrgaoUsuario.class);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<DpUnidadeDTO> lotacaoPorOrgaos(Long[] lista) {		
+		
+		List<Long> listaOrgaos = Arrays.asList(lista);
+		
+        Query query = em().createQuery("SELECT new br.gov.jfrj.siga.dp.DpUnidadeDTO(lot.idLotacao, lot.nomeLotacao, lot.siglaLotacao, lot.orgaoUsuario.nmOrgaoUsu) FROM DpLotacao lot WHERE lot.orgaoUsuario.idOrgaoUsu in (:listaOrgaos) and lot.dataFimLotacao = null order by lot.orgaoUsuario.nmOrgaoUsu, lot.nomeLotacao")        	
+        		.setParameter("listaOrgaos", listaOrgaos)
+        		.setHint("org.hibernate.cacheable", true)
+        		.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);                
+        return (List<DpUnidadeDTO>) query.getResultList();	    
 	}
 
 	@SuppressWarnings("unchecked")

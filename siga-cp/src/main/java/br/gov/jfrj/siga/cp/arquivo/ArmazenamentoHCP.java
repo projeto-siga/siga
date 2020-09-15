@@ -49,15 +49,11 @@ public class ArmazenamentoHCP {
 	    SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy).build();
 	    SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
 	    client = HttpClients.custom().setSSLSocketFactory(csf).build();
-
-//		client = HttpClients.createDefault();
 	}
 
 	public void salvar(CpArquivo cpArquivo, byte[] conteudo) {
 		try {
 			configurar();
-			
-			apagarArquivo(cpArquivo);
 			
 			HttpPut request = new HttpPut(uri+cpArquivo.getCaminho());
 			request.addHeader(AUTHORIZATION, token);
@@ -71,26 +67,18 @@ public class ArmazenamentoHCP {
 			throw new AplicacaoException(ERRO_GRAVAR_ARQUIVO);
 		}
 	}
-
+		
 	public void apagar(CpArquivo cpArquivo) {
 		try {
 			configurar();
-			apagarArquivo(cpArquivo);
-		} catch (Exception e) {
-			log.error(ERRO_EXCLUIR_ARQUIVO, cpArquivo.getIdArq(), e);
-			throw new AplicacaoException(ERRO_EXCLUIR_ARQUIVO);
-		}
-	}
-		
-	private void apagarArquivo(CpArquivo cpArquivo) throws Exception {
-		try {
 			HttpDelete request = new HttpDelete(uri+cpArquivo.getCaminho());
 			request.addHeader(AUTHORIZATION, token);
 			CloseableHttpResponse response = client.execute(request);
 			if(!(response.getStatusLine().getStatusCode()==200 || response.getStatusLine().getStatusCode()==404))
 				throw new Exception(response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
 		} catch (Exception e) {
-			throw e;
+			log.error(ERRO_EXCLUIR_ARQUIVO, cpArquivo.getIdArq(), e);
+			throw new AplicacaoException(ERRO_EXCLUIR_ARQUIVO);
 		}
 	}
 	

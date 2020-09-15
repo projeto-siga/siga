@@ -98,10 +98,21 @@ public class CpArquivo implements Serializable {
 	@PrePersist
 	private void salvarArquivo() {
 		validar();
-		if(CpArquivoTipoArmazenamentoEnum.HCP.equals(getTipoArmazenamento())) {
+		switch (getTipoArmazenamento()) {
+		case TABELA:
+			if (this.arquivoBlob == null) {
+				this.arquivoBlob = new CpArquivoBlob();
+				this.arquivoBlob.setArquivo(this);
+			}
+			this.arquivoBlob.setConteudoBlobArq(this.getConteudo());
+			break;
+		case HCP:
 			gerarCaminho();
 			ArmazenamentoHCP a = new ArmazenamentoHCP();
 			a.salvar(this, this.getConteudo());
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -133,7 +144,7 @@ public class CpArquivo implements Serializable {
 			return cacheArquivo;
 		switch (getTipoArmazenamento()) {
 		case TABELA: 
-			cacheArquivo = getArquivoBlob().getConteudoBlobArq();
+			cacheArquivo = getArquivoBlob()!=null?getArquivoBlob().getConteudoBlobArq():null;
 			break;
 		case HCP:
 			ArmazenamentoHCP a = new ArmazenamentoHCP();
@@ -147,17 +158,10 @@ public class CpArquivo implements Serializable {
 
 	private void setConteudo(byte[] createBlob) {
 		this.cacheArquivo = createBlob;
-		if(CpArquivoTipoArmazenamentoEnum.TABELA.equals(getTipoArmazenamento())) {
-			if (this.arquivoBlob == null) {
-				this.arquivoBlob = new CpArquivoBlob();
-				this.arquivoBlob.setArquivo(this);
-			}
-			this.arquivoBlob.setConteudoBlobArq(createBlob);
-		}
 	}
 
 	public static CpArquivo updateOrgaoUsuario(CpArquivo old, CpOrgaoUsuario orgaoUsuario) {
-		if (old == null || !old.getOrgaoUsuario().equals(orgaoUsuario)) {
+		if (old == null || old.getOrgaoUsuario() == null || !old.getOrgaoUsuario().equals(orgaoUsuario)) {
 			CpArquivo arq = CpArquivo.forUpdate(old);
 			arq.setOrgaoUsuario(orgaoUsuario);
 			return arq;

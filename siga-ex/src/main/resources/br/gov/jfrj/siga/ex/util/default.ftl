@@ -2442,7 +2442,7 @@ Pede deferimento.</span><br/><br/><br/>
 	                    [#else]
 	                    	<td align="left">
 		                         [#if !omitirCodigo]                           
-		                           <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br><br>${tipo} SIGA N&ordm; ${(doc.codigo)!}</p>
+		                           <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br><br>${tipo} processo.rio N&ordm; ${(doc.codigo)!}</p>
 		                         [/#if]
 		                    </td>
 	                    [/#if]
@@ -2540,7 +2540,7 @@ Pede deferimento.</span><br/><br/><br/>
               <tr>
               <td align="left">
               [#if !omitirCodigo]
-                    <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br/>[@numeroDJE]${tipo}[#if tipo != ""] SIGA N&ordm; ${(doc.codigo)!} [/#if] [/@numeroDJE]</p>
+                    <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br/>[@numeroDJE]${tipo}[#if tipo != ""] processo.rio N&ordm; ${(doc.codigo)!} [/#if] [/@numeroDJE]</p>
               [/#if]
               </td>
               </tr>
@@ -2555,7 +2555,7 @@ Pede deferimento.</span><br/><br/><br/>
               <tr>
               <td align="center">
                   <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br/>
-                  [@numeroDJE] [#if tipo != ""] ${tipo} SIGA N&ordm; ${(doc.codigo)!}[/#if] [/@numeroDJE]
+                  [@numeroDJE] [#if tipo != ""] ${tipo} processo.rio N&ordm; ${(doc.codigo)!}[/#if] [/@numeroDJE]
                   [#if !dataAntesDaAssinatura && doc?? && doc.dtD??] de ${doc.dtD} de ${doc.dtMMMM} de ${doc.dtYYYY}[/#if]</p>
               </td>
               </tr>
@@ -3908,7 +3908,7 @@ Pede deferimento.</span><br/><br/><br/>
               <tr>
               <td align="left">
               [#if !omitirCodigo]
-                <p style="font-family:Arial;align:center;font-weight:bold;font-size:11pt;"><br/>[@numeroDJE][#if tipo != ""] ${tipo} SIGA N&ordm; ${(doc.codigo)!} [/#if] [/@numeroDJE]</p>
+                <p style="font-family:Arial;align:center;font-weight:bold;font-size:11pt;"><br/>[@numeroDJE][#if tipo != ""] ${tipo} processo.rio N&ordm; ${(doc.codigo)!} [/#if] [/@numeroDJE]</p>
               [/#if]
               </td>
               </tr>

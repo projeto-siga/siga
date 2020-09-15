@@ -120,7 +120,8 @@
 										    		Versão: ${versao}
 										    	    </div>
 										    	    <div>
-										    		<a class="text-top" href="http://linksiga.trf2.jus.br" target="_blank" class="btn btn-link">Sobre o SIGA</a> 
+										    		<a class="text-top" href="   https://processo.rio/" target="_blank" class="btn btn-link">Sobre o processo.rio</a> 
+
 										    	    </div>
 										    </div>
 										</div>

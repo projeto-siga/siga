@@ -19,11 +19,11 @@
 		<module>siga-vraptor-module</module>
 		<module>siga-dump</module>
 		<module>siga</module>
-		<module>sigawf</module>
-		<module>siga-wf</module>
 		<module>sigaex</module>
 		<module>siga-ext</module>
 		<module>siga-ex</module>
+		<module>sigawf</module>
+		<module>siga-wf</module>
 		<module>siga-ex-gsa</module>
 		<module>siga-ex-sinc</module>
 		<module>siga-gc-gsa</module>
@@ -50,7 +50,7 @@
 		<hibernate.version>5.3.7.Final</hibernate.version>
 		<version.jboss.bom.eap>6.2.0-redhat-1</version.jboss.bom.eap>
 		<spring.version>4.0.6.RELEASE</spring.version>
-		<siga.versao>develop</siga.versao>
+		<siga.versao>9.0.0.5f</siga.versao>
 	</properties>
 
 	<build>

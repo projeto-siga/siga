@@ -1,0 +1,73 @@
+package br.gov.jfrj.siga.ex.api.v1;
+
+import com.crivano.swaggerservlet.PresentableUnloggedException;
+
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.ex.ExDocumento;
+import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaTramitarPostRequest;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaTramitarPostResponse;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocSiglaTramitarPost;
+import br.gov.jfrj.siga.ex.api.v1.TokenCriarPost.Usuario;
+
+public class DocSiglaTramitarPost implements IDocSiglaTramitarPost {
+
+	@Override
+	public void run(DocSiglaTramitarPostRequest req,
+			DocSiglaTramitarPostResponse resp) throws Exception {
+		String authorization = TokenCriarPost.assertAuthorization();
+		Usuario u = TokenCriarPost.assertUsuario();
+
+
+		try {
+			DpPessoa cadastrante = ExDao.getInstance().getPessoaPorPrincipal(u.usuario);
+			DpLotacao lotaCadastrante = cadastrante.getLotacao();
+			DpPessoa titular = cadastrante;
+			DpLotacao lotaTitular = cadastrante.getLotacao();
+
+			ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
+			flt.setSigla(req.sigla);
+			ExMobil mob = ExDao.getInstance().consultarPorSigla(flt);
+			ExDocumento doc = mob.doc();
+
+			DpLotacao lot = new DpLotacao();
+			lot.setSigla(req.lotacao);
+			lot = ExDao.getInstance().consultarPorSigla(lot);
+
+			DpPessoa pes = new DpPessoa();
+			pes.setSigla(req.matricula);
+			pes = ExDao.getInstance().consultarPorSigla(pes);
+
+			Utils.assertAcesso(mob, titular, lotaTitular);
+
+			if (!Ex.getInstance().getComp()
+					.podeTransferir(titular, lotaTitular, mob))
+				throw new PresentableUnloggedException("O documento " + req.sigla
+						+ " não pode ser tramitado por "
+						+ titular.getSiglaCompleta() + "/"
+						+ lotaTitular.getSiglaCompleta());
+
+			Ex.getInstance()
+					.getBL()
+					.transferir(null, null, cadastrante, lotaCadastrante,
+							mob, null, null, null, lot, pes, null, null,
+							null, titular, null, true, null, null, null,
+							false, false);
+			ExDao.commitTransacao();
+			resp.status = "OK";
+		} catch (Exception ex) {
+			ExDao.rollbackTransacao();
+		}
+
+	}
+
+	@Override
+	public String getContext() {
+		return "tramitar documento";
+	}
+
+}

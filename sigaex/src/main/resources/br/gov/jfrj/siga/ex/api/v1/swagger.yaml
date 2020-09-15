@@ -15,6 +15,16 @@ tags:
     description: Autenticação
   - name: download
     description: Download
+  - name: mesa
+    description: Mesa Virtual
+  - name: consulta
+    description: Consulta a Documentos
+  - name: acao
+    description: Ações em Documentos
+  - name: cadastro
+    description: Consulta nos Cadastros
+  - name: utils
+    description: Utilitários
     
 securityDefinitions:
   Basic:
@@ -52,6 +62,12 @@ parameters:
     description: Informar true se deseja receber uma compilação com todos os volumes de um processo
     required: false
     type: boolean
+  exibirReordenacao:
+    name: exibirReordenacao
+    in: query
+    description: Informar true se deseja habilitar a reordenação dos documentos
+    required: false
+    type: boolean    
   pdf:
     name: pdf
     in: path
@@ -88,6 +104,74 @@ parameters:
     description: Chave que referencia um processo assíncrono
     required: true
     type: string
+  nome:
+    name: nome
+    in: formData
+    description: Nome do usuário
+    type: string
+    required: false
+  email:
+    name: email
+    in: formData
+    description: Email do usuário
+    type: string
+    required: false
+  mensagem:
+    name: mensagem
+    in: formData
+    description: Sugestão
+    type: string
+    required: true
+  username:
+    name: username
+    in: formData
+    description: Identificador do usuário
+    type: string
+    required: true
+  password:
+    name: password
+    in: formData
+    description: Senha do usuário
+    type: string
+    required: true
+  id:
+    name: id
+    in: path
+    description: Identificador da movimentação
+    required: true
+    type: string
+  lotacao:
+    name: lotacao
+    in: formData
+    description: Sigla completa da lotação
+    required: false
+    type: string
+  matricula:
+    name: matricula
+    in: formData
+    description: Sigla completa da matrícula
+    required: false
+    type: string
+  matriculaQuery:
+    name: matricula
+    in: query
+    description: Sigla completa da matrícula
+    required: false
+    type: string
+  anotacao:
+    name: anotacao
+    in: path
+    description: Texto da anotação
+    required: true
+    type: string
+  texto:
+    name: texto
+    in: path
+    description: Texto a ser pesquisado
+    required: true
+    type: string    
+    
+    
 
 
 ################################################################################
@@ -126,6 +210,7 @@ paths:
         - $ref: "#/parameters/estampa"
         - $ref: "#/parameters/completo"
         - $ref: "#/parameters/volumes"
+        - $ref: "#/parameters/exibirReordenacao"
       responses:
         200:
           description: Successful response
@@ -202,7 +287,303 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
+  /mesa:
+    get:
+      description: Listar as mesas virtuais disponíveis
+      tags: [mesa]
+      security:
+        - Bearer: []      
+      parameters: []
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/MesaItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+  /doc/{sigla}:
+    get:
+      description: Exibir um documento
+      tags: [consulta]
+      parameters:
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: file
+          headers:
+            Content-Type:
+              type: string
+              description: application/pdf
+            Content-Disposition:
+              type: string
+              description: attachment
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /doc/{sigla}/pdf:
+    get:
+      description: Obter o PDF de um documento para visualização
+      tags: [consulta]
+      parameters:
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              jwt:
+                type: string
+                description: JWT com as informações para download do PDF
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
 
+  /doc/{sigla}/pdf-completo:
+    get:
+      description: Obter o PDF completo de um documento para visualização
+      tags: [consulta]
+      parameters:
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              jwt:
+                type: string
+                description: JWT com as informações para download do PDF
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /doc/{sigla}/mov/{id}/pdf:
+    get:
+      description: Obter o PDF de uma movimentação para visualização
+      tags: [consulta]
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              jwt:
+                type: string
+                description: JWT com as informações para download do PDF
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+  /doc/{sigla}/assinar-com-senha:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/username"
+        - $ref: "#/parameters/password"
+      description: Assinar documento com senha
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /doc/{sigla}/tramitar:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/lotacao"
+        - $ref: "#/parameters/matricula"
+      description: Tramitar documento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /doc/{sigla}/anotar:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/anotacao"
+      description: Anotar documento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /doc/{sigla}/pesquisar-sigla:
+    get:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/matriculaQuery"
+      description: Tramitar documento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              codigo:
+                type: string
+              sigla:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+  /sugestao:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [utils]
+      parameters:
+        - $ref: "#/parameters/nome"
+        - $ref: "#/parameters/email"
+        - $ref: "#/parameters/mensagem"
+      description: Enviar sugestões
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"         
+  /token/criar:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [utils]
+      parameters:
+        - $ref: "#/parameters/username"
+        - $ref: "#/parameters/password"
+      description: Autenticar usuário
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              id_token:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /acessos:
+    get:
+      description: Listar os últimos acessos
+      tags: [utils]
+      parameters: []
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/AcessoItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+
+            
+  /pessoa/{texto}/pesquisar:
+    get:
+      description: Retornar uma lista de pessoas
+      tags: [cadastro]
+      parameters:
+        - $ref: "#/parameters/texto"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/ResultadoDePesquisa"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /lotacao/{texto}/pesquisar:
+    get:
+      description: Retornar uma lista de lotações
+      tags: [cadastro]
+      parameters:
+        - $ref: "#/parameters/texto"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/ResultadoDePesquisa"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"            
+                           
 
 ################################################################################
 #                                     Definitions                              #
@@ -235,3 +616,118 @@ definitions:
     properties:
       errormsg:
         type: string
+  MesaItem:
+    description: Lista documentos na mesa
+    type: object
+    properties:
+      tipo:
+        type: string
+      datahora:
+        type: string
+        format: date-time
+      tempoRelativo:
+        type: string
+      codigo:
+        type: string
+      sigla:
+        type: string
+      descr:
+        type: string
+      origem:
+        type: string
+      grupo:
+        type: string
+      grupoNome:
+        type: string
+      grupoOrdem:
+        type: string
+      podeAnotar:
+        type: boolean
+      podeAssinar:
+        type: boolean
+      podeAssinarEmLote:
+        type: boolean
+      podeTramitar:
+        type: boolean
+      list:
+        type: array
+        items:
+          $ref: "#/definitions/Marca"      
+  AcessoItem:
+    description: Acessos recentes
+    type: object
+    properties:
+      datahora:
+        type: string
+        format: date-time
+      ip:
+        type: string
+
+  Marca:
+    description: Etiquetas relacionadas a um documento
+    type: object
+    properties:
+      pessoa:
+        type: string
+      lotacao:
+        type: string
+      nome:
+        type: string
+      icone:
+        type: string
+      titulo:
+        type: string
+      inicio:
+        type: string
+        format: date-time
+      termino:
+        type: string
+        format: date-time
+      daPessoa:
+        type: boolean
+      deOutraPessoa:
+        type: boolean
+      daLotacao:
+        type: boolean
+
+  Acao:
+    description: Ação que pode ser realizada a um documento
+    type: object
+    properties:
+      nome:
+        type: string
+      icone:
+        type: string
+      ativa:
+        type: boolean
+
+  Documento:
+    description: Dados de um documento
+    type: object
+    properties:
+      sigla:
+        type: string
+      html:
+        type: string
+      data:
+        type: string
+      descr:
+        type: string
+      marca:
+        type: array
+        items:
+          $ref: "#/definitions/Marca"
+      acao:
+        type: array
+        items:
+          $ref: "#/definitions/Acao"
+
+  ResultadoDePesquisa:
+    description: Dados de um item
+    type: object
+    properties:
+      sigla:
+        type: string
+      nome:
+        type: string
+        

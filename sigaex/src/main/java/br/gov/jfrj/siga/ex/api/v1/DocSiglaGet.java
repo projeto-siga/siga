@@ -2,31 +2,14 @@ package br.gov.jfrj.siga.ex.api.v1;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.lang.reflect.Type;
+import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 
-import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExPapel;
-import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
-import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
-import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaGetRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaGetResponse;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocSiglaGet;
-import br.gov.jfrj.siga.ex.api.v1.TokenCriarPost.Usuario;
-
+import com.crivano.swaggerservlet.SwaggerServlet;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
@@ -35,15 +18,35 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.ex.ExDocumento;
+import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaGetRequest;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaGetResponse;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocSiglaGet;
+import br.gov.jfrj.siga.ex.bl.CurrentRequest;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.RequestInfo;
+import br.gov.jfrj.siga.ex.vo.ExDocumentoSigaLeVO;
+import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
+import br.gov.jfrj.siga.vraptor.SigaObjects;
+
 public class DocSiglaGet implements IDocSiglaGet {
 
 	@Override
 	public void run(DocSiglaGetRequest req, DocSiglaGetResponse resp) throws Exception {
-		String authorization = TokenCriarPost.assertAuthorization();
-		Usuario u = TokenCriarPost.assertUsuario();
+		CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
+
+		SwaggerHelper.buscarEValidarUsuarioLogado();
+		
+		ApiContext apiContext = new ApiContext(true);
+		SigaObjects so = SwaggerHelper.getSigaObjects();
+		so.assertAcesso("DOC:Módulo de Documentos;" + "");
 
 		try {
-			DpPessoa cadastrante = ExDao.getInstance().getPessoaPorPrincipal(u.usuario);
+			DpPessoa cadastrante = so.getCadastrante();
 			DpPessoa titular = cadastrante;
 			DpLotacao lotaTitular = cadastrante.getLotacao();
 
@@ -57,11 +60,12 @@ public class DocSiglaGet implements IDocSiglaGet {
 			// Recebimento automático
 			if (Ex.getInstance().getComp().podeReceberEletronico(titular, lotaTitular, mob)) {
 				try {
-					ExDao.iniciarTransacao();
 					Ex.getInstance().getBL().receber(cadastrante, lotaTitular, mob, new Date());
-					ExDao.commitTransacao();
-				} catch (Exception ex) {
-					ExDao.rollbackTransacao();
+					apiContext.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.out);
+					apiContext.rollback(e);
+					throw e;
 				}
 			}
 
@@ -76,21 +80,21 @@ public class DocSiglaGet implements IDocSiglaGet {
 				}
 			}
 
-			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, cadastrante, titular, lotaTitular, true, false);
-
-			Type collectionType = new TypeToken<org.hibernate.proxy.HibernateProxy>() {
-			}.getType();
-			// Gson gson = new GsonBuilder().registerTypeAdapter(collectionType,
-			// new OutroParametroSerializer())
-			// .setExclusionStrategies(new
-			// ConsultaProcessualExclStrat()).create();
-			Gson gson = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY).create();
+			final ExDocumentoSigaLeVO docVO = new ExDocumentoSigaLeVO(doc, mob, cadastrante, titular, lotaTitular, true, false);
+//TODO: Resolver o problema declares multiple JSON fields named serialVersionUID
+			//Usado o Expose temporariamente
+			Gson gson = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY)
+					.excludeFieldsWithModifiers(Modifier.TRANSIENT)
+					.excludeFieldsWithoutExposeAnnotation()
+					.create();
 			String json = gson.toJson(docVO);
 
 			resp.inputstream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
 			resp.contenttype = "application/json";
-		} catch (Exception ex) {
-			ExDao.rollbackTransacao();
+		} catch (Exception e) {
+			e.printStackTrace(System.out);
+			apiContext.rollback(e);
+			throw e;
 		}
 
 	}
@@ -138,7 +142,7 @@ public class DocSiglaGet implements IDocSiglaGet {
 			// serialization
 			TypeAdapter delegate = context.getAdapter(TypeToken.get(baseType));
 			// Get a filled instance of the original class
-			Object unproxiedValue = ((HibernateProxy) value).getHibernateLazyInitializer().getImplementation();
+			((HibernateProxy) value).getHibernateLazyInitializer().getImplementation();
 			// Serialize the value
 			// delegate.write(out, unproxiedValue);
 			delegate.write(out, "__OMITIDO__");

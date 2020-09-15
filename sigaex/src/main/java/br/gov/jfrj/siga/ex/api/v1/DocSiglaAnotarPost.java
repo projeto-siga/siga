@@ -1,44 +1,35 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import com.crivano.swaggerservlet.SwaggerServlet;
 
-import org.hibernate.Hibernate;
-import org.hibernate.proxy.HibernateProxy;
-
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExPapel;
-import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaAnotarPostRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaAnotarPostResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocSiglaAnotarPost;
-import br.gov.jfrj.siga.ex.api.v1.TokenCriarPost.Usuario;
-
-import com.google.gson.Gson;
-import com.google.gson.TypeAdapter;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
+import br.gov.jfrj.siga.ex.bl.CurrentRequest;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.RequestInfo;
+import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
+import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class DocSiglaAnotarPost implements IDocSiglaAnotarPost {
 
 	@Override
 	public void run(DocSiglaAnotarPostRequest req,
 			DocSiglaAnotarPostResponse resp) throws Exception {
-		String authorization = TokenCriarPost.assertAuthorization();
-		Usuario u = TokenCriarPost.assertUsuario();
+		
+		SwaggerHelper.buscarEValidarUsuarioLogado();
+		ApiContext apiContext = new ApiContext(true);
+		CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
+		
+		SigaObjects so = SwaggerHelper.getSigaObjects();
+		so.assertAcesso("DOC:Módulo de Documentos;" + "");
 
 		try {
-			DpPessoa cadastrante = ExDao.getInstance().getPessoaPorPrincipal(u.usuario);
+			DpPessoa cadastrante = so.getCadastrante();
 			DpLotacao lotaCadastrante = cadastrante.getLotacao();
 			DpPessoa titular = cadastrante;
 			DpLotacao lotaTitular = cadastrante.getLotacao();
@@ -46,7 +37,6 @@ public class DocSiglaAnotarPost implements IDocSiglaAnotarPost {
 			ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
 			flt.setSigla(req.sigla);
 			ExMobil mob = ExDao.getInstance().consultarPorSigla(flt);
-			ExDocumento doc = mob.doc();
 
 			Utils.assertAcesso(mob, titular, lotaTitular);
 
@@ -54,10 +44,12 @@ public class DocSiglaAnotarPost implements IDocSiglaAnotarPost {
 					.getBL()
 					.anotar(cadastrante, lotaCadastrante, mob, null, null,
 							null, null, cadastrante, req.anotacao, null);
-			ExDao.commitTransacao();
+			apiContext.close();
 			resp.status = "OK";
-		} catch (Exception ex) {
-			ExDao.rollbackTransacao();
+		} catch (Exception e) {
+			e.printStackTrace(System.out);
+			apiContext.rollback(e);
+			throw e;
 		}
 	}
 

@@ -48,6 +48,11 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @Table(name = "CP_IDENTIDADE", schema = "CORPORATIVO")
 public class CpIdentidade extends AbstractCpIdentidade {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5911884614189757579L;
+
 	public DpPessoa getPessoaAtual() {
 		return CpDao.getInstance().consultarPorIdInicial(
 				getDpPessoa().getIdInicial());

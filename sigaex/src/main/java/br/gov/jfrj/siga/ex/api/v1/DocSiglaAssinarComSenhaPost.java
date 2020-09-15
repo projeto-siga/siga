@@ -1,21 +1,11 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.Hibernate;
-import org.hibernate.proxy.HibernateProxy;
-
 import com.crivano.swaggerservlet.PresentableUnloggedException;
 import com.crivano.swaggerservlet.SwaggerServlet;
-import com.google.gson.Gson;
-import com.google.gson.TypeAdapter;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -23,31 +13,34 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExPapel;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaAssinarComSenhaPostRequest;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaAssinarComSenhaPostResponse;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocSiglaAssinarComSenhaPost;
 import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaAssinarComSenhaPostRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaAssinarComSenhaPostResponse;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocSiglaAssinarComSenhaPost;
-import br.gov.jfrj.siga.ex.api.v1.TokenCriarPost.Usuario;
+import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class DocSiglaAssinarComSenhaPost implements IDocSiglaAssinarComSenhaPost {
 
+	@SuppressWarnings("resource")
 	@Override
 	public void run(DocSiglaAssinarComSenhaPostRequest req, DocSiglaAssinarComSenhaPostResponse resp) throws Exception {
 		// Necessário pois é chamado o método "realPath" durante a criação do
 		// PDF.
-		CurrentRequest.set(
-				new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
+		CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 
-		String authorization = TokenCriarPost.assertAuthorization();
-		Usuario u = TokenCriarPost.assertUsuario();
+		SwaggerHelper.buscarEValidarUsuarioLogado();
+		
+		ApiContext apiContext = new ApiContext(true);
+		SigaObjects so = SwaggerHelper.getSigaObjects();
+		so.assertAcesso("DOC:Módulo de Documentos;" + "");
 
 
 		try {
-			DpPessoa cadastrante = ExDao.getInstance().getPessoaPorPrincipal(u.usuario);
+			DpPessoa cadastrante = so.getCadastrante();
 			DpPessoa titular = cadastrante;
 			DpLotacao lotaTitular = cadastrante.getLotacao();
 
@@ -58,18 +51,21 @@ public class DocSiglaAssinarComSenhaPost implements IDocSiglaAssinarComSenhaPost
 
 			assertAcesso(mob, titular, lotaTitular);
 
-			if (!Ex.getInstance().getComp().podeAssinarComSenha(titular, lotaTitular, mob))
+			if (!Ex.getInstance().getComp().podeAssinarComSenha(titular, lotaTitular, mob)) {
 				throw new PresentableUnloggedException(
 						"O documento " + req.sigla + " não pode ser assinado com senha por "
 								+ titular.getSiglaCompleta() + "/" + lotaTitular.getSiglaCompleta());
+			}
 
-			Ex.getInstance().getBL().assinarDocumentoComSenha(cadastrante, lotaTitular, doc, null, u.usuario, null,
+			Ex.getInstance().getBL().assinarDocumentoComSenha(cadastrante, lotaTitular, doc, null, cadastrante.getSiglaCompleta(), null,
 					false, titular, false, null, false);
 
-			ExDao.commitTransacao();
+			apiContext.close();
 			resp.status = "OK";
-		} catch (Exception ex) {
-			ExDao.rollbackTransacao();
+		} catch (Exception e) {
+			e.printStackTrace(System.out);
+			apiContext.rollback(e);
+			throw e;
 		}
 	}
 	
@@ -87,7 +83,7 @@ public class DocSiglaAssinarComSenhaPost implements IDocSiglaAssinarComSenhaPost
 			for (ExPapel exPapel : mapa.keySet()) {
 				Iterator<Object> it = mapa.get(exPapel).iterator();
 
-				if ((exPapel != null) && (exPapel.getIdPapel() == exPapel.PAPEL_INTERESSADO)) {
+				if ((exPapel != null) && (exPapel.getIdPapel().equals(ExPapel.PAPEL_INTERESSADO))) {
 					while (it.hasNext() && !isInteressado) {
 						Object item = it.next();
 						isInteressado = item.toString().equals(titular.getSigla()) ? true : false;
@@ -111,51 +107,6 @@ public class DocSiglaAssinarComSenhaPost implements IDocSiglaAssinarComSenhaPost
 	@Override
 	public String getContext() {
 		return "registrar assinatura com senha";
-	}
-
-	/**
-	 * This TypeAdapter unproxies Hibernate proxied objects, and serializes them
-	 * through the registered (or default) TypeAdapter of the base class.
-	 */
-	private static class HibernateProxyTypeAdapter extends TypeAdapter<HibernateProxy> {
-
-		public static final TypeAdapterFactory FACTORY = new TypeAdapterFactory() {
-			@Override
-			@SuppressWarnings("unchecked")
-			public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
-				return (HibernateProxy.class.isAssignableFrom(type.getRawType())
-						? (TypeAdapter<T>) new HibernateProxyTypeAdapter(gson) : null);
-			}
-		};
-		private final Gson context;
-
-		private HibernateProxyTypeAdapter(Gson context) {
-			this.context = context;
-		}
-
-		@Override
-		public HibernateProxy read(JsonReader in) throws IOException {
-			throw new UnsupportedOperationException("Not supported");
-		}
-
-		@SuppressWarnings({ "rawtypes", "unchecked" })
-		@Override
-		public void write(JsonWriter out, HibernateProxy value) throws IOException {
-			if (value == null) {
-				out.nullValue();
-				return;
-			}
-			// Retrieve the original (not proxy) class
-			Class<?> baseType = Hibernate.getClass(value);
-			// Get the TypeAdapter of the original class, to delegate the
-			// serialization
-			TypeAdapter delegate = context.getAdapter(TypeToken.get(baseType));
-			// Get a filled instance of the original class
-			Object unproxiedValue = ((HibernateProxy) value).getHibernateLazyInitializer().getImplementation();
-			// Serialize the value
-			// delegate.write(out, unproxiedValue);
-			delegate.write(out, "__OMITIDO__");
-		}
 	}
 
 }

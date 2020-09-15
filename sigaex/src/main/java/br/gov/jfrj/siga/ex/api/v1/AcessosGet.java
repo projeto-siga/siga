@@ -9,19 +9,19 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.AcessoItem;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.AcessosGetRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.AcessosGetResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IAcessosGet;
-import br.gov.jfrj.siga.ex.api.v1.TokenCriarPost.Usuario;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class AcessosGet implements IAcessosGet {
 
 	@Override
 	public void run(AcessosGetRequest req, AcessosGetResponse resp) throws Exception {
-		Usuario u = TokenCriarPost.assertUsuario();
+		SwaggerHelper.buscarEValidarUsuarioLogado();
+		SigaObjects so = SwaggerHelper.getSigaObjects();
 
 		resp.list = new ArrayList<>();
 
-
-		DpPessoa cadastrante = ExDao.getInstance().getPessoaPorPrincipal(u.usuario);
+		DpPessoa cadastrante = so.getCadastrante();
 
 		List<CpAcesso> l = ExDao.getInstance().consultarAcessosRecentes(cadastrante);
 

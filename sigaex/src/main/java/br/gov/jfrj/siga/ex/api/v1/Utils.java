@@ -16,6 +16,7 @@ import org.ocpsoft.prettytime.PrettyTime;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -26,7 +27,7 @@ public class Utils {
 
 	public static String getUsuariosRestritos() {
 		try {
-			return SwaggerServlet.getProperty("username.restriction");
+			return Prop.get("username.restriction");
 		} catch (Exception e) {
 			throw new RuntimeException("Erro de configuração", e);
 		}
@@ -38,7 +39,7 @@ public class Utils {
 	}
 
 	public static String getJwtSecret() {
-		return SwaggerServlet.getProperty("/siga.jwt.secret");
+		return Prop.get("/siga.jwt.secret");
 	}
 
 	/**

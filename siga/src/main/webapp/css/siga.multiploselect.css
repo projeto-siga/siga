@@ -44,3 +44,7 @@
 .bootstrap-select .dropdown-toggle:focus, .bootstrap-select>select.mobile-device:focus+.dropdown-toggle {
     outline: none!important;    
 }
+
+div.filter-option-inner-inner {
+    color: #555555;
+}

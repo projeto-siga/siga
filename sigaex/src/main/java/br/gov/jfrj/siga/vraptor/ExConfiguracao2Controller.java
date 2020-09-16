@@ -1,7 +1,5 @@
 package br.gov.jfrj.siga.vraptor;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -17,18 +15,15 @@ import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.dp.DpPessoaUsuarioDTO;
 import br.gov.jfrj.siga.dp.DpUnidadeDTO;
-import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
+import br.gov.jfrj.siga.ex.ExConfiguracaoNivelAcesso;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
-import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
@@ -36,7 +31,7 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 @Path("app/expediente/configuracao2")
 public class ExConfiguracao2Controller extends ExController {
 	
-	private static final String VERIFICADOR_ACESSO = "FE:Ferramentas;CFG:Configurações";
+	//private static final String VERIFICADOR_ACESSO = "FE:Ferramentas;CFG:Configurações";
 	
 	/**
 	 * @deprecated CDI eyes only
@@ -55,7 +50,7 @@ public class ExConfiguracao2Controller extends ExController {
 		super.assertAcesso("DOC:Módulo de Documentos;" + pathServico);
 	}
 	
-	@Get("/listar")
+	@Get("/pesquisa")
 	public void lista() throws Exception {
 		//assertAcesso(VERIFICADOR_ACESSO);
 				
@@ -64,21 +59,22 @@ public class ExConfiguracao2Controller extends ExController {
 	}
 	
 	@Get("/nova")
-	public void cadastro() throws Exception {
-//		List<ExModelo> modelos = this.getModelos(null);
+	public void cadastro() throws Exception {	
+		//assertAcesso(VERIFICADOR_ACESSO);
 		
-//		result.include("listaModelos", modelos);
-//		result.include("quantidadeModelos", modelos.size());
-		result.include("listaTiposConfiguracao", getListaTiposConfiguracao());		
-		result.include("listaNivelAcesso", getListaNivelAcesso());		
-		
+		result.include("tiposConfiguracao", getListaTiposConfiguracao());
+		result.include("niveisAcesso", ExConfiguracaoNivelAcesso.values());						
+	}
+	
+	@Get("/tipos/dicionario")
+	public void dicionario() throws Exception {	
+		result.include("tiposConfiguracao", getListaTiposConfiguracao());			
 	}
 	
 	@Consumes("application/json")
 	@Path("/unidades")
 	public void listarUnidades(DpUnidadeDTO dados) {										
-		List<DpUnidadeDTO> unidades = dao().lotacaoPorOrgaos(dados.getIdOrgaoSelecao());
-		
+		List<DpUnidadeDTO> unidades = dao().lotacaoPorOrgaos(dados.getIdOrgaoSelecao());		
 		result.use(Results.json()).from(unidades).serialize();
 	}
 	
@@ -92,7 +88,7 @@ public class ExConfiguracao2Controller extends ExController {
 	@Consumes("application/json")
 	@Path("/modelos")
 	public void listarModelos() {			
-		List<ExModelo> modelos = this.getModelos(null);		
+		List<ExModelo> modelos = getModelos(null);		
 		result.use(Results.json()).from(modelos).serialize();
 	}
 	
@@ -122,10 +118,5 @@ public class ExConfiguracao2Controller extends ExController {
 		s.addAll(dao().listarTiposConfiguracao());
 
 		return s;
-	}
-	
-	private List<ExNivelAcesso> getListaNivelAcesso() throws Exception {
-		return dao().listarOrdemNivel();
-	}
-
+	}	
 }

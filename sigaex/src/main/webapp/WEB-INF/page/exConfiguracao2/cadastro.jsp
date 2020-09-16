@@ -1,84 +1,36 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	buffer="32kb"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <siga:pagina titulo="Cadastro de configuração">	
-<link rel="stylesheet" href="/siga/css/selectpicker/bootstrap-select.min.css" type="text/css" media="screen, projection" />
-<link rel="stylesheet" href="/siga/css/siga.multiploselect.css" type="text/css" media="screen, projection" />
-<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
-<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
-
-<style>
-	.etapa {
-		display: none;
-	}
-	
-	.indicador-etapa {
-	  height: 15px;
-	  width: 15px;
-	  margin: 0 2px;
-	  background-color: #007bff;
-	  border: none;
-	  border-radius: 50%;
-	  display: inline-block;
-	  opacity: 0.5;
-	}
-	
-	.indicador-etapa.active {
-  		opacity: 1;	
-	}
-	
-	.indicador-etapa.finish {
-  		background-color: #4CAF50;
-	}
-	
-	.btn-proximo[disabled] {
-		cursor: not-allowed;
-	}
-		
-	div.dropdown-menu.show {
-		min-width: 100%!important;
-		max-width: 100%!important;
-	}
-	
-	ul.dropdown-menu.inner.show {
-		margin-bottom: 0!important;
-	}
-	
-	.btn.dropdown-toggle {
-		background-color: #FFF;
-	}
-	
-	.select2-container--bootstrap {
-		width: 100%!important; 
-	}
-	
-</style>
-
+<link rel="stylesheet" href="/siga/css/selectpicker/bootstrap-select.min.css" type="text/css" media="screen, projection"/>
+<link rel="stylesheet" href="/siga/css/siga.multiploselect.css" type="text/css" media="screen, projection"/>
+<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection"/>
+<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection"/>
+<link rel="stylesheet" href="../../../stylesheet/exconfiguracao.css"/>
  	
  	<div class="container-fluid">
-		<div class="card bg-light mb-3" >
+		<div class="card bg-light mb-3">
 				
 			<div class="card-header">
 				<div class="row">
-					<div class="col-sm-8">
-						<h5>Nova Configuração - Modelos</h5>
+					<div class="col-sm-9">
+						<h5 class="titulo-nova-configuracao  js-titulo-nova-configuracao">Nova Configuração</h5>
 					</div>
-					<div class="col-sm-4">
-						<a class="btn btn-primary  float-right" href="listar">Pesquisa de Configurações</a>
+					<div class="col-sm-3  text-right">
+						<a class="btn btn-outline-primary  btn-pesquisa-configuracoes  js-btn-pesquisa-configuracoes" href="#" title="Pesquisa de Configurações"><i class="fas fa-search"></i> Pesquisa</a>
+						<a class="btn btn-outline-primary  btn-dicionario" href="tipos/dicionario" target="_blank" title="Dicionário de Tipos de Configurações"><i class="fas fa-book-reader"></i> Dicionário</a>						
 					</div>
 				</div>
 			</div>
 							
 			<div class="card-body">
-				<form action="nova">	
-			
+				<form name="formularioCadastro">				
 					<div id="selecaoModelos" class="etapa  js-etapa">
-						<h3 class="text-center p-4">
+						<h1 class="text-center display-4 p-4">
 							<label for="modelo">Qual ou quais modelos você deseja configurar?</label>
-						</h3>
+						</h1>
 					
 						<div class="row">
 							<div class="col-sm-12">
@@ -100,45 +52,48 @@
 					</div>
 					
 					<div id="selecaoConfiguracao" class="etapa  js-etapa">
-						<h3 class="text-center p-4">
+						<h3 class="text-center display-4 p-4">
 							<label for="tipoConfiguracao">Qual configuração deseja aplicar?</label>
 						</h3>
 					
 						<div class="row">
 							<div class="col-sm-12">
-								<div class="form-group">																
-									<siga:select name="idTpConfiguracao"
-										list="listaTiposConfiguracao" listKey="idTpConfiguracao"
-										id="tipoConfiguracao" headerValue="[Selecione a configuração a ser aplicada]" headerKey="0"
-										listValue="dscTpConfiguracao" theme="simple" />																																								                   			            																														
+								<div class="form-group">																																																	
+									<select id="tipoConfiguracao" name="tipoConfiguracao" class="form-control  js-tipo-configuracao siga-select2" 
+										data-siga-select2-placeholder="Selecione a configuração a ser aplicada">
+										<option value="">Selecione a configuração a ser aplicada</option>																											
+										<c:forEach items="${tiposConfiguracao}" var="tipoConfiguracao">
+											<option value="${tipoConfiguracao.idTpConfiguracao}">${tipoConfiguracao.dscTpConfiguracao}</option>
+										</c:forEach>																				
+									</select>																																										                   			            																														
 								</div>
 							</div>						
 						</div>
 					</div>
 					
 					<div id="selecaoNivelAcesso" class="etapa  js-etapa">
-						<h3 class="text-center p-4">
-							<label for="nivelAcesso">Para quem se destina essa configuração?</label>
+						<h3 class="text-center display-4 p-4">							
+							<label for="nivelAcesso">Para quem se destina essa configuração?</label>							  
 						</h3>
 					
 						<div class="row">
 							<div class="col-sm-12">
 								<div class="form-group">																												
-									<select id="nivelAcesso" name="nivelAcesso" class="form-control  js-nivel-acesso">
-										<option value="0">[Selecione como deverá ser o acesso a essa configuração]</option>									
-										<option value="1">Órgãos</option>
-										<option value="2">Unidades</option>
-										<option value="3">Cargos</option>
-										<option value="4">Usuários</option>
-									</select>									            																														
+									<select id="nivelAcesso" name="nivelAcesso" class="form-control  js-nivel-acesso siga-select2" 
+										data-siga-select2-placeholder="Selecione como deverá ser o acesso a essa configuração">
+										<option value="">Selecione como deverá ser o acesso a essa configuração</option>																											
+										<c:forEach items="${niveisAcesso}" var="acesso">
+											<option value="id_${acesso}">${acesso.descricao}</option>
+										</c:forEach>																				
+									</select>																            																													
 								</div>
 							</div>						
 						</div>
 					</div>
 					
 					<div id="selecaoOrgaosEUnidades" class="etapa  js-etapa">
-						<h3 class="text-center p-4">
-							<label for="idOrgaoUsu">Selecione os órgãos e por fim, selecione as unidades desejadas</label>
+						<h3 class="text-center display-4 p-4">
+							<label for="idOrgaoUsu">Selecione os órgãos as unidades desejadas</label>
 						</h3>
 					
 						<div class="row">
@@ -174,13 +129,13 @@
 							</div>
 						</div>														
 					</div>
-					
-					<div style="overflow:auto;">
-					  <div style="float:right;">
-						  <button type="button" class="btn  btn-secondary  btn-anterior  js-btn-anterior"><i class="fas fa-long-arrow-alt-left"></i> Anterior</button>	
-						  <button type="button" class="btn  btn-primary  btn-proximo  js-btn-proximo">Próximo <i class="fas fa-arrow-right"></i></button>					    					  
-					  </div>
-					</div>
+										
+					<div class="row">						
+					  	<div class="col-sm-12 text-right">					  	  
+							<button type="button" class="btn  btn-secondary  btn-anterior  js-btn-anterior"><i class="fas fa-long-arrow-alt-left"></i> Anterior</button>	
+						  	<button type="button" class="btn  btn-primary  btn-proximo  js-btn-proximo">Próximo <i class="fas fa-arrow-right"></i></button>					    					  
+					  	</div>
+					</div>									
 					
 					<div class="text-center  pt-4">
 						<span class="indicador-etapa  js-indicador-etapa"></span>
@@ -198,20 +153,21 @@
 					</div>
 				</div>-->
 				
-			</form>
-		</div>			
+				</form>
+			</div>			
 		</div>
 	</div>
 	
-<siga:siga-modal id="confirmacaoModal" exibirRodape="false" tituloADireita="Confirma&ccedil;&atilde;o">
-	<div class="modal-body">
-      		Você selecionou todos os modelos, tem certeza que deseja aplicar configuração em todos?
-    	</div>
-    	<div class="modal-footer">
-      		<button type="button" class="btn btn-success" data-dismiss="modal">Voltar</button>		        
-      		<a href="#" class="btn btn-danger btn-confirmacao-modal" role="button" aria-pressed="true">Continuar</a>
-	</div>
-</siga:siga-modal>				
+	<siga:siga-modal id="confirmacaoModal" exibirRodape="false" tituloADireita="Confirma&ccedil;&atilde;o">
+		<div class="modal-body">
+	    	Você selecionou todos os modelos, tem certeza que deseja aplicar configuração em todos?
+	   	</div>
+	   	<div class="modal-footer">
+	   		<button type="button" class="btn btn-success" data-dismiss="modal">Voltar</button>		        
+	   		<a href="#" class="btn btn-danger btn-confirmacao-modal" role="button" aria-pressed="true">Continuar</a>
+		</div>
+	</siga:siga-modal>	
+				
 <script type="text/javascript" src="/siga/javascript/selectpicker/bootstrap-select.min.js"></script>
 <script type="text/javascript" src="/siga/javascript/siga.multiploselect.js"></script>
 <script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>

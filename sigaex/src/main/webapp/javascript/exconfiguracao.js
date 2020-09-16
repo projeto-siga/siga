@@ -5,61 +5,59 @@ ExConfiguracao.Etapas = (function() {
 	function Etapas() {
 		this.etapaAtual = 0;
 		this.etapas = $('.js-etapa');
-		this.btnProximo = $('.js-btn-proximo');
-		this.btnAnterior = $('.js-btn-anterior');		
+		this.btnPesquisa = $('.js-btn-pesquisa-configuracoes');
+		this.btnAnterior = $('.js-btn-anterior');
+		this.btnProximo = $('.js-btn-proximo');			
 		this.spanIndicadorEtapa = $('.js-indicador-etapa');
-		this.btnConfirmacaoModal = $('.btn-confirmacao-modal');
-		
+		this.btnConfirmacaoModal = $('.btn-confirmacao-modal');						
 		this.comboModelos = $('.js-siga-multiploselect--modelo.selectpicker');		
-		this.comboTipoConfiguracao = $('select[name="idTpConfiguracao"]');		
+		this.comboTipoConfiguracao = $('.js-tipo-configuracao');		
 		this.comboNivelAcesso = $('.js-nivel-acesso');
 		this.comboOrgaos = $('.js-siga-multiploselect--orgao.selectpicker');
-		this.comboUnidades = $('.js-siga-multiploselect--unidade.selectpicker'); 				
-		
+		this.comboUnidades = $('.js-siga-multiploselect--unidade.selectpicker');
+		this.tituloNovaConfiguracao = $('.js-titulo-nova-configuracao');
 		this.selecaoModelosOK = false;
 		this.selecaoConfiguracaoOK = false;
 		this.selecaoNivelAcessoOK = false;
-		this.selecaoOrgaosEUnidadesOK = false;
-								
+		this.selecaoOrgaosEUnidadesOK = false;								
 		this.emitter = $({});
-		this.on = this.emitter.on.bind(this.emitter);		
+		this.on = this.emitter.on.bind(this.emitter);				
 	}
 	
 	Etapas.prototype.iniciar = function() {
+		this.btnPesquisa.on('click', onBtnPesquisaClicado.bind(this));
 		this.btnAnterior.on('click', onBtnAnteriorClicado.bind(this));
 		this.btnProximo.on('click', onBtnProximoClicado.bind(this));
-		this.btnConfirmacaoModal.on('click', onBtnConfirmacaoModalClicado.bind(this));
-		
+		this.btnConfirmacaoModal.on('click', onBtnConfirmacaoModalClicado.bind(this));					
 		this.comboModelos.on('change', atualizarBtnProximo.bind(this, this.comboModelos));
 		this.comboTipoConfiguracao.on('change', atualizarBtnProximo.bind(this, this.comboTipoConfiguracao));
 		this.comboNivelAcesso.on('change', atualizarBtnProximo.bind(this, this.comboNivelAcesso));
-		this.comboUnidades.on('change', atualizarBtnProximo.bind(this, this.comboUnidades));		
-				
+		this.comboUnidades.on('change', atualizarBtnProximo.bind(this, this.comboUnidades));						
 		desabilitarBtnProximo.call(this);
 		exibirEtapa.call(this, this.etapaAtual);			
 	}	
-		
-	function atualizarBtnProximo(combo) {
-		if (combo.val() > 0 || 								
-				(combo.hasClass('selectpicker') && combo.val() != null)) {
-			habilitarBtnProximo.call(this);			
+	
+	function onBtnPesquisaClicado() {
+		if (this.comboModelos.val() != null) {
+			this.btnConfirmacaoModal.addClass('is-pesquisa');
+			sigaModal.enviarTextoEAbrir('confirmacaoModal', 'Tem certeza que deseja cancelar o cadastro e ir para a página de Pesquisa de Configurações.');			
 		} else {
-			desabilitarBtnProximo.call(this);
-		}				
+			location.href = 'pesquisa';
+		}
 	}
 	
 	function onBtnAnteriorClicado() {			
 		switch (this.etapas[this.etapaAtual - 1].id) {
-			case 'selecaoModelos':
-				atualizarBtnProximo.call(this, this.comboModelos);
+			case 'selecaoModelos':				
+				atualizarBtnProximo.call(this, this.comboModelos);				
 				break;
-			case 'selecaoConfiguracao':
+			case 'selecaoConfiguracao':				
 				atualizarBtnProximo.call(this, this.comboTipoConfiguracao);
 				break;
-			case 'selecaoNivelAcesso':
+			case 'selecaoNivelAcesso':				
 				atualizarBtnProximo.call(this, this.comboNivelAcesso);
 				break;
-			case 'selecaoOrgaosEUnidades':
+			case 'selecaoOrgaosEUnidades':				
 				atualizarBtnProximo.call(this, this.comboUnidades);				
 				break;
 		}
@@ -70,37 +68,44 @@ ExConfiguracao.Etapas = (function() {
 	function onBtnProximoClicado(podeValidar) {
 		if (podeValidar !== false && !validarCampos.call(this, this.etapaAtual)) {
 			return false;
-		} 
+		} 			
 		
 		if (sigaModal.isAberto('confirmacaoModal')) {
 			sigaModal.fechar('confirmacaoModal');
 		}
-		
-		switch (this.etapas[this.etapaAtual + 1].id) {
-			case 'selecaoModelos':				
+				
+		if (typeof this.etapas[this.etapaAtual + 1] !== 'undefined') {
+			switch (this.etapas[this.etapaAtual + 1].id) {
+			case 'selecaoModelos':					
 				if (this.comboModelos[0].length <= 0) {
 					this.emitter.trigger('inicializarModelos');
-				}
+				}								
 				atualizarBtnProximo.call(this, this.comboModelos);
 				break;
-			case 'selecaoConfiguracao':
+			case 'selecaoConfiguracao':				
 				atualizarBtnProximo.call(this, this.comboTipoConfiguracao);
 				break;
-			case 'selecaoNivelAcesso':
+			case 'selecaoNivelAcesso':							
 				atualizarBtnProximo.call(this, this.comboNivelAcesso);
 				break;
 			case 'selecaoOrgaosEUnidades':				
 				if (this.comboOrgaos[0].length <= 0) {					
 					this.emitter.trigger('inicializarOrgaos');
-				}
+				}							
 				atualizarBtnProximo.call(this, this.comboUnidades);	
 				break;
-		}
-		
-		atualizarEtapa.call(this, 1);
+			}
+			
+			atualizarEtapa.call(this, 1);
+		}						
 	}
 	
 	function onBtnConfirmacaoModalClicado() {		
+		if (this.btnConfirmacaoModal.hasClass('is-pesquisa')) {			
+			location.href = 'pesquisa';
+			return false;
+		}		
+		
 		switch (this.etapas[this.etapaAtual].id) {
 		case 'selecaoModelos':
 			this.selecaoModelosOK = true;
@@ -119,6 +124,16 @@ ExConfiguracao.Etapas = (function() {
 		onBtnProximoClicado.call(this, false);			
 	}
 	
+	function atualizarBtnProximo(combo) {
+		if (combo.val() > 0 || 		
+				(combo.hasClass('js-nivel-acesso') && combo.val() !== '') ||
+				(combo.hasClass('selectpicker') && combo.val() != null)) {
+			habilitarBtnProximo.call(this);			
+		} else {
+			desabilitarBtnProximo.call(this);
+		}				
+	}
+	
 	function desabilitarBtnProximo() {
 		this.btnProximo.attr('disabled', 'disabled');
 	}
@@ -127,7 +142,7 @@ ExConfiguracao.Etapas = (function() {
 		this.btnProximo.removeAttr('disabled');
 	}
 	
-	function exibirEtapa(numeroEtapa) {    
+	function exibirEtapa(numeroEtapa) {		
 		this.etapas[numeroEtapa].style.display = "block";
 	  
 		if (numeroEtapa == 0) {
@@ -142,7 +157,8 @@ ExConfiguracao.Etapas = (function() {
 			this.btnProximo.removeClass('btn-success').addClass('btn-primary');
 			this.btnProximo.html('Próximo  <i class="fas fa-long-arrow-alt-right"></i>');    
 		}
-	  
+		
+		atualizarTituloEtapaTopo.call(this);
 		atualizarSpanIndicadorEtapa.call(this, numeroEtapa);
 	}
 	
@@ -152,8 +168,14 @@ ExConfiguracao.Etapas = (function() {
 		this.etapaAtual += numeroEtapa;
 	  
 		if (this.etapaAtual >= this.etapas.length) {
-			//submeter form
-			//document.getElementById("frm").submit();
+			//efetuar request para salvar os dados
+			
+			// colocar um spinner no meio da tela
+			
+			if (this.comboModelos.val() != null && this.comboModelos.val().length >= 10) {
+				// colocar uma mensagem ao salvar, avisando que foram selecionados muitos modelos e o processo pode demorar um pouco			
+			} 
+			
 			return false;
 	  }
 	  
@@ -194,6 +216,51 @@ ExConfiguracao.Etapas = (function() {
 		return true;
 	}
 	
+	function atualizarTituloEtapaTopo() {
+		this.tituloNovaConfiguracao.find('.js-titulo-etapa-topo').remove();
+		this.tituloNovaConfiguracao.find('.js-titulo-etapa-topo--duvida').remove();
+				
+		for (var i = 0; i <= this.etapaAtual; i++) {
+			switch (this.etapas[i].id) {				
+			case 'selecaoModelos':					
+				this.tituloNovaConfiguracao.append('<span class="titulo-etapa-topo  js-titulo-etapa-topo">&nbsp;<i class="fa fa-angle-right" style="color: #000;font-size: 1rem;"></i>&nbsp;Modelos</span>');				
+				break;
+			case 'selecaoConfiguracao':				
+				this.tituloNovaConfiguracao.append('<span class="titulo-etapa-topo  js-titulo-etapa-topo">&nbsp;<i class="fa fa-angle-right" style="color: #000;font-size: 1rem;"></i>&nbsp;Configuração</span>');				
+				break;
+			case 'selecaoNivelAcesso':				
+				this.tituloNovaConfiguracao.append('<span class="titulo-etapa-topo  js-titulo-etapa-topo">&nbsp;<i class="fa fa-angle-right" style="color: #000;font-size: 1rem;"></i>&nbsp;Nível de acesso</span>');							
+				break;
+			case 'selecaoOrgaosEUnidades':				
+				this.tituloNovaConfiguracao.append('<span class="titulo-etapa-topo  js-titulo-etapa-topo">&nbsp;<i class="fa fa-angle-right" style="color: #000;font-size: 1rem;"></i>&nbsp;Unidades</span>');									
+				break;
+			}					
+		}	
+		
+		switch (this.etapas[this.etapaAtual].id) {				
+		case 'selecaoModelos':					
+			this.tituloNovaConfiguracao.append('<span class="titulo-etapa-topo--duvida  js-titulo-etapa-topo--duvida"><i class="fas fa-info-circle"></i></span>');		
+			this.tituloNovaConfiguracao.find('.js-titulo-etapa-topo--duvida').popover({
+				title: 'Seleção de modelos',
+				html: true,
+				content: 'Nessa etapa você deve selecionar os modelos que deseja configurar'
+			  });					
+			break;
+		case 'selecaoConfiguracao':				
+			this.tituloNovaConfiguracao.append('<span class="titulo-etapa-topo--duvida  js-titulo-etapa-topo--duvida"><i class="fas fa-info-circle"></i></span>');		
+			this.tituloNovaConfiguracao.find('.js-titulo-etapa-topo--duvida').popover({
+				title: 'Seleção de tipo de configuração',
+				html: true,
+				content: 'Nessa etapa você deve selecionar o tipo de configuração a ser aplicada, se quiser entender melhor o que cada configuração faz <a href="tipos/dicionario" target="_blank">clique aqui</a>'
+			  });				
+			break;
+		case 'selecaoNivelAcesso':												
+			break;
+		case 'selecaoOrgaosEUnidades':																
+			break;
+		}
+	}
+	
 	function atualizarSpanIndicadorEtapa(numeroEtapa) {  
 		this.spanIndicadorEtapa.removeClass('active');	   
 	  	this.spanIndicadorEtapa[numeroEtapa].className += " active";
@@ -207,8 +274,7 @@ ExConfiguracao.ComboModelo = (function() {
 	function ComboModelo(Etapas) {		
 		this.combo = $('.js-siga-multiploselect--modelo');				
 		this.spinner = $('.js-spinner--modelo');
-		this.Etapas = Etapas;		
-		this.selecaoModelosOK = false;
+		this.Etapas = Etapas;				
 	}
 				
 	ComboModelo.prototype.iniciar = function() {			
@@ -224,7 +290,7 @@ ExConfiguracao.ComboModelo = (function() {
 	
 	function iniciarConfiguracoes() {
 		this.combo.selectpicker({
-			noneSelectedText: '[Selecione um ou mais modelos]',
+			noneSelectedText: 'Selecione um ou mais modelos',
 			noneResultsText: 'Nenhum modelo encontrado para {0}',
 			countSelectedText: function(e,t){return 1==e?'{0} modelo selecionado':'{0} modelos selecionados'},
 			selectedTextFormat: 'count > 2'
@@ -281,14 +347,12 @@ ExConfiguracao.ComboModelo = (function() {
 		if (this.combo.val() != null) {			
 			if (!validacao.alertaConfirmado && this.combo.val().length >= this.quantidadeModelos) {
 				sigaModal.enviarTextoEAbrir('confirmacaoModal', 'Você selecionou todos os modelos, tem certeza que deseja aplicar configuração para todos?');		  		  
-//				onComboModelosAlterada.call(this);
 				validacao.resultado = false;
 				return false;
 			}
 			
 			if (!validacao.alertaConfirmado && this.combo.val().length > 10) {			
 				sigaModal.enviarTextoEAbrir('confirmacaoModal', 'Você selecionou ' + this.combo.val().length + ' modelos, tem certeza que deseja aplicar configuração para todos os modelos selecionados?');		  
-//				onComboModelosAlterada.call(this);
 				validacao.resultado = false;
 				return false;
 			}			
@@ -324,7 +388,7 @@ ExConfiguracao.ComboOrgao = (function() {
 	
 	function iniciarConfiguracoes() {
 		this.combo.selectpicker({
-			noneSelectedText: '[Selecione um ou mais órgãos]',
+			noneSelectedText: 'Selecione um ou mais órgãos',
 			noneResultsText: 'Nenhum órgão encontrado para {0}',
 			countSelectedText: function(e,t){return 1==e?'{0} órgão selecionado':'{0} órgãos selecionados'},
 			selectedTextFormat: 'count > 1'
@@ -408,7 +472,6 @@ ExConfiguracao.ComboUnidade = (function() {
 	
 	ComboUnidade.prototype.iniciar = function() {		
 		reset.call(this);	
-		//this.combo.on('changed.bs.select', onUnidadeSelecionada.bind(this));
 		this.ComboOrgao.on('selecionado', onOrgaoSelecionado.bind(this));		
 		var idOrgao = this.ComboOrgao.combo.val();		
 		onInicializar.call(this, idOrgao);		
@@ -425,7 +488,7 @@ ExConfiguracao.ComboUnidade = (function() {
 	
 	function iniciarConfiguracoes() {
 		this.combo.selectpicker({
-			noneSelectedText: '[Selecione uma ou mais unidades]',
+			noneSelectedText: 'Selecione uma ou mais unidades',
 			noneResultsText: 'Nenhuma unidade encontrada para {0}',
 			countSelectedText: function(e,t){return 1==e?'{0} unidade selecionada':'{0} unidades selecionadas'},
 			selectedTextFormat: 'count > 1'
@@ -498,6 +561,7 @@ ExConfiguracao.ComboUnidade = (function() {
 
 $(function() {
 	$('[name=idTpConfiguracao]').addClass('siga-select2');
+	$('[data-toggle="popover"]').popover();
 	
 	var etapas = new ExConfiguracao.Etapas();
 	etapas.iniciar();

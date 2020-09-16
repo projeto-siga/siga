@@ -63,6 +63,7 @@
 						<div class="col-sm-6">
 							<input type="button" value="Pesquisar" class="btn btn-primary" onclick="javascript:montaTableCadastradas();" />							
 							<a class="btn btn-primary" href="nova">Nova Configuração</a>							
+							<a class="btn btn-primary" href="tipos/dicionario">Dicionário</a>
 						</div>
 					</div>
 				

@@ -25,7 +25,7 @@ public class DownloadJwtFilenameGet implements IDownloadJwtFilenameGet {
 	public void run(DownloadJwtFilenameGetRequest req, DownloadJwtFilenameGetResponse resp) throws Exception {
 		Map<String, Object> map = verify(req.jwt);
 
-		String principal = (String) map.get("principal");
+		//String principal = (String) map.get("principal");
 		String uuid = (String) map.get("uuid");
 		String doc = (String) map.get("doc");
 		String filename = (String) map.get("fname");

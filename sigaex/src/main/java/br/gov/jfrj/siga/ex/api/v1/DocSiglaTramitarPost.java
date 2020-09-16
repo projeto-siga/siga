@@ -1,30 +1,38 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
 import com.crivano.swaggerservlet.PresentableUnloggedException;
+import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaTramitarPostRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaTramitarPostResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocSiglaTramitarPost;
-import br.gov.jfrj.siga.ex.api.v1.TokenCriarPost.Usuario;
+import br.gov.jfrj.siga.ex.bl.CurrentRequest;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.RequestInfo;
+import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
+import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class DocSiglaTramitarPost implements IDocSiglaTramitarPost {
 
+	@SuppressWarnings("resource")
 	@Override
 	public void run(DocSiglaTramitarPostRequest req,
 			DocSiglaTramitarPostResponse resp) throws Exception {
-		String authorization = TokenCriarPost.assertAuthorization();
-		Usuario u = TokenCriarPost.assertUsuario();
+		CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
+
+		SwaggerHelper.buscarEValidarUsuarioLogado();
+		
+		ApiContext apiContext = new ApiContext(true);
+		SigaObjects so = SwaggerHelper.getSigaObjects();
+		so.assertAcesso("DOC:Módulo de Documentos;" + "");
 
 
 		try {
-			DpPessoa cadastrante = ExDao.getInstance().getPessoaPorPrincipal(u.usuario);
+			DpPessoa cadastrante = so.getCadastrante();
 			DpLotacao lotaCadastrante = cadastrante.getLotacao();
 			DpPessoa titular = cadastrante;
 			DpLotacao lotaTitular = cadastrante.getLotacao();
@@ -32,7 +40,6 @@ public class DocSiglaTramitarPost implements IDocSiglaTramitarPost {
 			ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
 			flt.setSigla(req.sigla);
 			ExMobil mob = ExDao.getInstance().consultarPorSigla(flt);
-			ExDocumento doc = mob.doc();
 
 			DpLotacao lot = new DpLotacao();
 			lot.setSigla(req.lotacao);
@@ -57,10 +64,12 @@ public class DocSiglaTramitarPost implements IDocSiglaTramitarPost {
 							mob, null, null, null, lot, pes, null, null,
 							null, titular, null, true, null, null, null,
 							false, false);
-			ExDao.commitTransacao();
+			apiContext.close();
 			resp.status = "OK";
-		} catch (Exception ex) {
-			ExDao.rollbackTransacao();
+		} catch (Exception e) {
+			e.printStackTrace(System.out);
+			apiContext.rollback(e);
+			throw e;
 		}
 
 	}

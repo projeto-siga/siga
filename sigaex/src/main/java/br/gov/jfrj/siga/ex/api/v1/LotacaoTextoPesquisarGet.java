@@ -3,6 +3,8 @@ package br.gov.jfrj.siga.ex.api.v1;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.crivano.swaggerservlet.SwaggerServlet;
+
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
@@ -10,7 +12,8 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.ILotacaoTextoPesquisarGet;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.LotacaoTextoPesquisarGetRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.LotacaoTextoPesquisarGetResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.ResultadoDePesquisa;
-import br.gov.jfrj.siga.ex.api.v1.TokenCriarPost.Usuario;
+import br.gov.jfrj.siga.ex.bl.CurrentRequest;
+import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class LotacaoTextoPesquisarGet implements ILotacaoTextoPesquisarGet {
@@ -18,8 +21,9 @@ public class LotacaoTextoPesquisarGet implements ILotacaoTextoPesquisarGet {
 	@Override
 	public void run(LotacaoTextoPesquisarGetRequest req,
 			LotacaoTextoPesquisarGetResponse resp) throws Exception {
-		String authorization = TokenCriarPost.assertAuthorization();
-		Usuario u = TokenCriarPost.assertUsuario();
+		CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
+
+		SwaggerHelper.buscarEValidarUsuarioLogado();
 
 		resp.list = new ArrayList<>();
 		final DpLotacaoDaoFiltro flt = new DpLotacaoDaoFiltro();

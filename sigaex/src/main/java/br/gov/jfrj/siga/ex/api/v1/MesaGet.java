@@ -8,21 +8,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.crivano.swaggerservlet.SwaggerServlet;
+
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
-import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IMesaGet;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.Marca;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.MesaGetRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.MesaGetResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.MesaItem;
 import br.gov.jfrj.siga.ex.api.v1.TokenCriarPost.Usuario;
+import br.gov.jfrj.siga.ex.bl.CurrentRequest;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
+import br.gov.jfrj.siga.ex.bl.RequestInfo;
+import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class MesaGet implements IMesaGet {
 
@@ -59,11 +64,11 @@ public class MesaGet implements IMesaGet {
 		NENHUM("Nenhum", "inbox");
 
 		private final String nome;
-		private final String icone;
+		//private final String icone;
 
 		private GrupoDeMarcadorEnum(String nome, String icone) {
 			this.nome = nome;
-			this.icone = icone;
+			//this.icone = icone;
 		}
 	}
 
@@ -235,7 +240,7 @@ public class MesaGet implements IMesaGet {
 			this.id = id;
 			this.nome = nome;
 			this.icone = icone;
-			this.descricao = descricao;
+			//this.descricao = descricao;
 			this.grupo = grupo;
 		}
 
@@ -258,7 +263,7 @@ public class MesaGet implements IMesaGet {
 		private final int id;
 		private final String nome;
 		private final String icone;
-		private final String descricao;
+		//private final String descricao;
 		private final GrupoDeMarcadorEnum grupo;
 
 	}
@@ -268,13 +273,18 @@ public class MesaGet implements IMesaGet {
 		CpMarcador marcador;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void run(MesaGetRequest req, MesaGetResponse resp) throws Exception {
-		String authorization = TokenCriarPost.assertAuthorization();
-		Usuario u = TokenCriarPost.assertUsuario();
+		CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 
+		SwaggerHelper.buscarEValidarUsuarioLogado();
+		SigaObjects so = SwaggerHelper.getSigaObjects();
+		Usuario u = TokenCriarPost.assertUsuario();
+		so.assertAcesso("DOC:Módulo de Documentos;" + "");
+		
 		try {
-			DpPessoa cadastrante = ExDao.getInstance().getPessoaPorPrincipal(u.usuario);
+			DpPessoa cadastrante = so.getCadastrante();
 			
 			List<Object[]> l = ExDao.getInstance().listarDocumentosPorPessoaOuLotacao(cadastrante, cadastrante.getLotacao());
 

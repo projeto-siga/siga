@@ -37,7 +37,7 @@
 	<c:if test="${assinarComSenha || autenticarComSenha}">
 		<div class="form-check form-check-inline mr-2">
 			<input class="form-check-input" type="checkbox" accesskey="c"
-				name="ad_password_0" id="ad_password_0" /> <label
+				name="ad_password_0" id="ad_password_0" checked/> <label
 				class="form-check-label" for="ad_juntar_0"><u>C</u>om Senha</label>
 		</div>
 

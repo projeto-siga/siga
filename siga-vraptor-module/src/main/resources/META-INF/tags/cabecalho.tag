@@ -73,7 +73,7 @@
 		SP Sem Papel - ${titulo_pagina}
 	</c:when>
 	<c:otherwise>
-		SIGA - ${titulo_pagina}	
+		PROCESSO.RIO - ${titulo_pagina}	
 	</c:otherwise>
 </c:choose>
 </title>
@@ -137,7 +137,7 @@ ${meta}
 	<c:otherwise>
 		<meta name="theme-color" content="bg-primary">
 				<c:set var="thead_color" value="thead-light" scope="request" />
-		<c:set var="ico_siga" value="siga.ico" />
+		<c:set var="ico_siga" value="processorio.png" />
 		<c:set var="menu_class" value="bg-primary" /> 
 		<c:set var="sub_menu_class" value="bg-secondary text-white" />
 		

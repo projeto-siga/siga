@@ -49,24 +49,28 @@ parameters:
     in: query
     description: Informar true se deseja receber todos os arquivos juntados e anexos
     required: false
+    default: false
     type: boolean
   estampa:
     name: estampa
     in: query
     description: Informar true se deseja receber o PDF sem estampas
     required: false
+    default: false
     type: boolean
   volumes:
     name: volumes
     in: query
     description: Informar true se deseja receber uma compilação com todos os volumes de um processo
     required: false
+    default: false
     type: boolean
   exibirReordenacao:
     name: exibirReordenacao
     in: query
     description: Informar true se deseja habilitar a reordenação dos documentos
     required: false
+    default: false
     type: boolean    
   pdf:
     name: pdf
@@ -92,12 +96,20 @@ parameters:
     description: Informar attachment se desejar receber como um download
     required: false
     type: string
+    default: inline
+    enum:
+      - attachment
+      - inline
   contenttype:
     name: contenttype
     in: query
     description: Informar o tipo de arquivo desejado, pode ser application/pdf ou text/html
     required: false
     type: string
+    default: application/pdf
+    enum:
+      - application/pdf 
+      - text/html
   chave:
     name: chave
     in: path
@@ -115,6 +127,7 @@ parameters:
     in: formData
     description: Email do usuário
     type: string
+    format: email
     required: false
   mensagem:
     name: mensagem
@@ -170,9 +183,35 @@ parameters:
     description: Texto a ser pesquisado
     required: true
     type: string    
-    
-    
-
+  tipoDestinatario:
+    name: tipoDestinatario
+    in: formData
+    description: Tipo do Destinatário. Órgão Integrado e Usuário e Externo
+    required: true
+    type: string
+    enum: 
+      - ORGAO
+      - USUARIO
+      - EXTERNO
+  destinatario:
+    name: destinatario
+    in: formData
+    description: Destinatário. Pode ser Órgão Integrado e Usuário e Externo
+    required: true
+    type: string
+  observacao:
+    name: observacao
+    in: formData
+    description: Somente quando `tipoDestinatario` = `EXTERNO`. Poderá ser preenchido com e-mail do destinatário.
+    required: false
+    type: string            
+  dataDevolucao:
+    name: dataDevolucao
+    in: formData
+    description: Data de Devolução do documento (por exemplo, `2020-12-02T10:57:23.000-03:00`)
+    required: false
+    type: string
+    format: date
 
 ################################################################################
 #                                           Paths                              #
@@ -434,6 +473,36 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
+
+  /doc/{sigla}/tramitar-sp:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      description: Tramitar documento (SP Sem Papel) 
+      summary: Tramita (transfere) um documento para outra pessoa ou órgão (interno ou externo).
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: '#/parameters/tipoDestinatario'
+        - $ref: '#/parameters/destinatario'
+        - $ref: '#/parameters/observacao'
+        - $ref: '#/parameters/dataDevolucao'
+      responses:
+#Tive que adicionar o 200 porque se tivesse apenas o 201 swaggerservlet soltaria uma exceção
+        200:
+          description: Ok
+        403:
+          description: Acesso ao documento não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Via ou volume não encontrado
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: Erro na Tramitação
+          schema:
+            $ref: "#/definitions/Error"
+
 
   /doc/{sigla}/anotar:
     post:

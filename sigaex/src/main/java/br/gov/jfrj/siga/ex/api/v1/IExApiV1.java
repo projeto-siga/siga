@@ -299,6 +299,21 @@ public interface IExApiV1 {
 		public void run(DocSiglaTramitarPostRequest req, DocSiglaTramitarPostResponse resp) throws Exception;
 	}
 
+	public class DocSiglaTramitarSpPostRequest implements ISwaggerRequest {
+		public String sigla;
+		public String tipoDestinatario;
+		public String destinatario;
+		public String observacao;
+		public Date dataDevolucao;
+	}
+
+	public class DocSiglaTramitarSpPostResponse implements ISwaggerResponse {
+	}
+
+	public interface IDocSiglaTramitarSpPost extends ISwaggerMethod {
+		public void run(DocSiglaTramitarSpPostRequest req, DocSiglaTramitarSpPostResponse resp) throws Exception;
+	}
+
 	public class DocSiglaAnotarPostRequest implements ISwaggerRequest {
 		public String sigla;
 		public String anotacao;

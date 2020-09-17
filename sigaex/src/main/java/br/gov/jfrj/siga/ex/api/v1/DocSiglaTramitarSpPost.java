@@ -38,7 +38,6 @@ public class DocSiglaTramitarSpPost implements IDocSiglaTramitarSpPost {
 			}
 
 			LocalDate dataDevolucao = null;
-			/*
 			if (StringUtils.isNotEmpty(req.dataDevolucao)) {
 				dataDevolucao = LocalDate.parse(req.dataDevolucao);
 				if (dataDevolucao.isBefore(LocalDate.now())) {
@@ -47,7 +46,6 @@ public class DocSiglaTramitarSpPost implements IDocSiglaTramitarSpPost {
 							req, resp, null);
 				}
 			}
-			*/
 
 			return Pair.of(tipoTramitacao, dataDevolucao);
 		} catch (IllegalArgumentException e) {

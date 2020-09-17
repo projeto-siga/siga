@@ -186,7 +186,11 @@ parameters:
   tipoDestinatario:
     name: tipoDestinatario
     in: formData
-    description: Tipo do Destinatário. Órgão Integrado e Usuário e Externo
+    description: > 
+      Tipo do Destinatário. 
+        * ORGAO - Órgão Integrado ao São Paulo sem Papel
+        * USUARIO - Usuário do São Paulo sem Papel
+        * EXTERNO - Órgão Externo ao São Paulo sem Papel
     required: true
     type: string
     enum: 
@@ -196,7 +200,15 @@ parameters:
   destinatario:
     name: destinatario
     in: formData
-    description: Destinatário. Pode ser Órgão Integrado e Usuário e Externo
+    description: >
+      Destinatário. Dependendo do `tipoDestinatario` deverá ter os seguintes significados e formatos
+        * ORGAO - Deve estar no formato `OO-UUU`, onde 
+          - 'OO' (apenas letras maiúsculas, quantidade variável) corresponde ao código do órgão propriamente dito 
+          - 'UUU' (letras maiúsculas e dígitos, quantidade variável) correspondem ao código da unidade.
+        * USUARIO - Deve estar no formato OONNNNN onde 
+          - 'OO' (apenas letras maiúsculas, quantidade variável) corresponde ao código do órgão propriamente dito.
+          - 'NNNN' (apenas dígitos, quantidade variável) à sua respectiva matrícula nesse órgão.
+        * EXTERNO - Código do Órgão Externo ao São Paulo Sem Papel (Deve ter até 10 letras maiúsculas).
     required: true
     type: string
   observacao:
@@ -208,10 +220,10 @@ parameters:
   dataDevolucao:
     name: dataDevolucao
     in: formData
-    description: Data de Devolução do documento (por exemplo, `2020-12-02T10:57:23.000-03:00`)
+    description: Data de Devolução do documento (por exemplo, `2020-12-02`). Deve ser igual ou maior que o dia corrente!
     required: false
     type: string
-    format: date
+    pattern: ^\d{4}-(0\d|1[012])-([012]\d|3[01])
 
 ################################################################################
 #                                           Paths                              #

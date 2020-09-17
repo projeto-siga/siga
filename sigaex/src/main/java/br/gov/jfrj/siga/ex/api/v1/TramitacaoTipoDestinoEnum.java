@@ -8,7 +8,7 @@ enum TramitacaoTipoDestinoEnum {
 	USUARIO("Código do Usuário", "^[A-Z]+\\d+$", "Deve estar no formato OONNNNN, "
 			+ "onde 'OO' (apenas letras maiúsculas, quantidade variável) corresponde ao código do órgão propriamente dito "
 			+ "e 'NNNN' (apenas dígitos, quantidade variável) à sua respectiva matrícula nesse órgão."),
-	EXTERNO("Código de Órgão Externo", "^[A-Z]+$", "Código do órgão externo ao São Paulo Sem Papel");
+	EXTERNO("Código de Órgão Externo", "^[A-Z]{1,10}$", "Deve ter até 10 letras maiúsculas.");
 
 	final String descricao;
 

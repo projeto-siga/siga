@@ -304,7 +304,7 @@ public interface IExApiV1 {
 		public String tipoDestinatario;
 		public String destinatario;
 		public String observacao;
-		public Date dataDevolucao;
+		public String dataDevolucao;
 	}
 
 	public class DocSiglaTramitarSpPostResponse implements ISwaggerResponse {

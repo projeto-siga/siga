@@ -35,6 +35,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
+import javax.persistence.PreRemove;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -97,7 +98,6 @@ public class CpArquivo implements Serializable {
 	
 	@PrePersist
 	private void salvarArquivo() {
-		validar();
 		switch (getTipoArmazenamento()) {
 		case TABELA:
 			if (this.arquivoBlob == null) {
@@ -115,12 +115,22 @@ public class CpArquivo implements Serializable {
 			break;
 		}
 	}
-
-	private void validar() {
-		// TODO Auto-generated method stub
-		
-	}
 	
+	@PreRemove
+	private void removerArquivo() {
+		switch (getTipoArmazenamento()) {
+		case HCP:
+			if(getCaminho()!=null) {
+				CpArquivoExcluir excluir = new CpArquivoExcluir();
+				excluir.setCaminho(getCaminho());
+				ContextoPersistencia.em().persist(excluir);
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
 	public static CpArquivo forUpdate(CpArquivo old) {
 		if (old != null) {
 			if (old.getIdArq() != null) {
@@ -197,6 +207,8 @@ public class CpArquivo implements Serializable {
 			extensao = TipoConteudo.PDF.getExtensao();
 		else if(TipoConteudo.TXT.getMimeType().equals(getConteudoTpArq()))
 			extensao = TipoConteudo.TXT.getExtensao();
+		else if(TipoConteudo.FREEMARKER.getMimeType().equals(getConteudoTpArq()))
+			extensao = TipoConteudo.FREEMARKER.getExtensao();
 		else
 			extensao = TipoConteudo.ZIP.getExtensao();
 		

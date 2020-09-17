@@ -4,6 +4,8 @@ public enum TipoConteudo {
 	
 	ZIP("application/zip", "zip"),
 	TXT("application/txt", "txt"),
+	FREEMARKER("template/freemarker", "txt"),
+	JSP("template-file/jsp", "txt"),
 	PDF("application/pdf", "pdf");
 	
 	private TipoConteudo(String mimeType ,String extensao) {

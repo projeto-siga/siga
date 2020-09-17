@@ -420,7 +420,7 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 
 	public void setConteudoTpBlob(final java.lang.String conteudoTpMod) {
 		this.conteudoTpBlob = conteudoTpMod;
-		if (!CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
+		if (conteudoBlobMod==null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
 			cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, conteudoTpMod);
 	    }
 	}

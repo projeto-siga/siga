@@ -80,7 +80,7 @@
 								<div class="form-group">
 									<label for="modelos-select"><fmt:message key="documento.modelo"/></label>
 
-									<div class="btn-group hierarchy-select form-control p-0" data-resize="auto" id="modelos-select">
+									<div class="btn-group hierarchy-select form-control p-0" data-resize="auto" id="modelos-select" style="min-width: 0px !important;">
 										<button type="button" class="btn btn-light dropdown-toggle bg-white"  <c:if test='${podeEditarModelo}'>disabled</c:if>
 											id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-disabled="true">
 											<span class="selected-label pull-left">&nbsp;</span>

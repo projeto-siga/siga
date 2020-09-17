@@ -40,8 +40,6 @@ public class DocSiglaGet implements IDocSiglaGet {
 		CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 
 		SwaggerHelper.buscarEValidarUsuarioLogado();
-		
-		ApiContext apiContext = new ApiContext(true);
 		SigaObjects so = SwaggerHelper.getSigaObjects();
 		so.assertAcesso("DOC:Módulo de Documentos;" + "");
 
@@ -61,10 +59,8 @@ public class DocSiglaGet implements IDocSiglaGet {
 			if (Ex.getInstance().getComp().podeReceberEletronico(titular, lotaTitular, mob)) {
 				try {
 					Ex.getInstance().getBL().receber(cadastrante, lotaTitular, mob, new Date());
-					apiContext.close();
 				} catch (Exception e) {
 					e.printStackTrace(System.out);
-					apiContext.rollback(e);
 					throw e;
 				}
 			}
@@ -93,7 +89,6 @@ public class DocSiglaGet implements IDocSiglaGet {
 			resp.contenttype = "application/json";
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
-			apiContext.rollback(e);
 			throw e;
 		}
 

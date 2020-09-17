@@ -12,12 +12,12 @@ import br.gov.jfrj.siga.hibernate.ExStarter;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
-public class ApiContext implements Closeable {
+public class ApiContext_Remover implements Closeable {
 	EntityManager em;
 	boolean transacional;
 	long inicio = System.currentTimeMillis();
 
-	public ApiContext(boolean transacional) {
+	public ApiContext_Remover(boolean transacional) { 
 		this.transacional = transacional;
 		em = ExStarter.emf.createEntityManager();
 		ContextoPersistencia.setEntityManager(em);

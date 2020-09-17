@@ -110,8 +110,11 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 
 			@Override
 			public boolean test() throws Exception {
-				try (ApiContext ctx = new ApiContext(true)) {
+				try {
 					return ExDao.getInstance().dt() != null;
+				} catch (Exception e) {
+					e.printStackTrace(System.out);
+					throw e;
 				}
 			}
 

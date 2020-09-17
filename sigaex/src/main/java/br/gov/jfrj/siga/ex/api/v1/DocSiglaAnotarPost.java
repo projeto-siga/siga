@@ -22,7 +22,6 @@ public class DocSiglaAnotarPost implements IDocSiglaAnotarPost {
 			DocSiglaAnotarPostResponse resp) throws Exception {
 		
 		SwaggerHelper.buscarEValidarUsuarioLogado();
-		ApiContext apiContext = new ApiContext(true);
 		CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 		
 		SigaObjects so = SwaggerHelper.getSigaObjects();
@@ -44,11 +43,9 @@ public class DocSiglaAnotarPost implements IDocSiglaAnotarPost {
 					.getBL()
 					.anotar(cadastrante, lotaCadastrante, mob, null, null,
 							null, null, cadastrante, req.anotacao, null);
-			apiContext.close();
 			resp.status = "OK";
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
-			apiContext.rollback(e);
 			throw e;
 		}
 	}

@@ -26,7 +26,6 @@ public class DocSiglaTramitarPost implements IDocSiglaTramitarPost {
 
 		SwaggerHelper.buscarEValidarUsuarioLogado();
 		
-		ApiContext apiContext = new ApiContext(true);
 		SigaObjects so = SwaggerHelper.getSigaObjects();
 		so.assertAcesso("DOC:Módulo de Documentos;" + "");
 
@@ -64,11 +63,9 @@ public class DocSiglaTramitarPost implements IDocSiglaTramitarPost {
 							mob, null, null, null, lot, pes, null, null,
 							null, titular, null, true, null, null, null,
 							false, false);
-			apiContext.close();
 			resp.status = "OK";
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
-			apiContext.rollback(e);
 			throw e;
 		}
 

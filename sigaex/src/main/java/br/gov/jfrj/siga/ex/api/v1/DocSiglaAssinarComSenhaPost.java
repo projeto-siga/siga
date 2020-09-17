@@ -33,8 +33,6 @@ public class DocSiglaAssinarComSenhaPost implements IDocSiglaAssinarComSenhaPost
 		CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 
 		SwaggerHelper.buscarEValidarUsuarioLogado();
-		
-		ApiContext apiContext = new ApiContext(true);
 		SigaObjects so = SwaggerHelper.getSigaObjects();
 		so.assertAcesso("DOC:Módulo de Documentos;" + "");
 
@@ -60,11 +58,9 @@ public class DocSiglaAssinarComSenhaPost implements IDocSiglaAssinarComSenhaPost
 			Ex.getInstance().getBL().assinarDocumentoComSenha(cadastrante, lotaTitular, doc, null, cadastrante.getSiglaCompleta(), null,
 					false, titular, false, null, false);
 
-			apiContext.close();
 			resp.status = "OK";
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
-			apiContext.rollback(e);
 			throw e;
 		}
 	}

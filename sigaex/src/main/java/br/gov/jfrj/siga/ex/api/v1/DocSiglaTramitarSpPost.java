@@ -55,7 +55,7 @@ public class DocSiglaTramitarSpPost implements IDocSiglaTramitarSpPost {
 				so.getCadastrante(), // DpPessoa titular
 				null, // ExTipoDespacho tpDespacho. Que tipo de despacho?
 				true, // final boolean fInterno: QUANDO USO ISSO?
-				DESCR_MOV, // String descrMov
+				null, // String descrMov
 				null, // String conteudo
 				null, // String nmFuncaoSubscritor
 				false, // boolean forcarTransferencia
@@ -70,8 +70,8 @@ public class DocSiglaTramitarSpPost implements IDocSiglaTramitarSpPost {
 		usuarioDestino.setSigla(req.destinatario);
 		usuarioDestino = ExDao.getInstance().consultarPorSigla(usuarioDestino);
 		if (Objects.isNull(usuarioDestino)) {
-			throw new SwaggerException("Não foi encontrado Usuário com a Matrícula " + req.destinatario, 404, null, req, resp,
-					null);
+			throw new SwaggerException("Não foi encontrado Usuário com a Matrícula " + req.destinatario, 404, null, req,
+					resp, null);
 		}
 		Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
 // dao().getOrgaoFromSiglaExata(destinatarioStr);
@@ -100,12 +100,12 @@ public class DocSiglaTramitarSpPost implements IDocSiglaTramitarSpPost {
 		);
 	}
 
-	void efetuarTramitacaoParaOrgaoExtrno(SigaObjects so, ExMobil mob, Date dtDevolucao, DocSiglaTramitarSpPostRequest req,
-			DocSiglaTramitarSpPostResponse resp) throws SwaggerException {
+	void efetuarTramitacaoParaOrgaoExtrno(SigaObjects so, ExMobil mob, Date dtDevolucao,
+			DocSiglaTramitarSpPostRequest req, DocSiglaTramitarSpPostResponse resp) throws SwaggerException {
 		CpOrgao orgaoExternoDestino = ExDao.getInstance().getOrgaoFromSiglaExata(req.destinatario);
 		if (Objects.isNull(orgaoExternoDestino)) {
-			throw new SwaggerException("Não foi encontrado Órgão Externo com o código " + req.destinatario, 404, null, req, resp,
-					null);
+			throw new SwaggerException("Não foi encontrado Órgão Externo com o código " + req.destinatario, 404, null,
+					req, resp, null);
 		}
 
 		Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();

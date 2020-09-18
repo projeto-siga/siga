@@ -11,15 +11,25 @@ ExConfiguracao.Etapas = (function() {
 		this.spanIndicadorEtapa = $('.js-indicador-etapa');
 		this.btnConfirmacaoModal = $('.btn-confirmacao-modal');						
 		this.comboModelos = $('.js-siga-multiploselect--modelo.selectpicker');		
-		this.comboTipoConfiguracao = $('.js-tipo-configuracao');		
-		this.comboNivelAcesso = $('.js-nivel-acesso');
-		this.comboOrgaos = $('.js-siga-multiploselect--orgao.selectpicker');
+		this.comboTipoConfiguracao = $('.js-siga-select2--configuracao');		
+		this.comboMovimentacao = $('.js-siga-select2--tipo-movimentacao');
+		this.comboDestinatario = $('.js-siga-select2--destinatario');		
+		this.comboOrgaos = $('.js-siga-multiploselect--orgao.selectpicker');		
 		this.comboUnidades = $('.js-siga-multiploselect--unidade.selectpicker');
+		this.containerMovimentacao = $('.js-container-campos--tipo-movimentacao');
+		this.containerTipoConfiguracao = $('.js-container-campos--tipo-configuracao');
+		this.containerOrgaos = $('.js-container-campos--orgao');
+		this.containerUnidades = $('.js-container-campos--unidade');
+		this.containerCargos = $('.js-container-campos--cargo');
+		this.containerFuncoes = $('.js-container-campos--funcao');
+		this.containerPessoas = $('.js-container-campos--pessoa');
+		this.labelDestinatarioDefinicao = $('.js-label-destinatario-definicao');
+		this.labelMovimentacao = $('.js-label-movimentacao');
 		this.tituloNovaConfiguracao = $('.js-titulo-nova-configuracao');
 		this.selecaoModelosOK = false;
 		this.selecaoConfiguracaoOK = false;
-		this.selecaoNivelAcessoOK = false;
-		this.selecaoOrgaosEUnidadesOK = false;								
+		this.selecaoDestinatarioOK = false;
+		this.selecaoDestinatarioDefinicaoOK = false;								
 		this.emitter = $({});
 		this.on = this.emitter.on.bind(this.emitter);				
 	}
@@ -30,8 +40,9 @@ ExConfiguracao.Etapas = (function() {
 		this.btnProximo.on('click', onBtnProximoClicado.bind(this));
 		this.btnConfirmacaoModal.on('click', onBtnConfirmacaoModalClicado.bind(this));					
 		this.comboModelos.on('change', atualizarBtnProximo.bind(this, this.comboModelos));
-		this.comboTipoConfiguracao.on('change', atualizarBtnProximo.bind(this, this.comboTipoConfiguracao));
-		this.comboNivelAcesso.on('change', atualizarBtnProximo.bind(this, this.comboNivelAcesso));
+		this.comboTipoConfiguracao.on('change', onComboTipoConfiguracaoSelecionado.bind(this));
+		this.comboMovimentacao.on('change', onComboMovimentacaoSelecionada.bind(this));
+		this.comboDestinatario.on('change', atualizarBtnProximo.bind(this, this.comboDestinatario));
 		this.comboUnidades.on('change', atualizarBtnProximo.bind(this, this.comboUnidades));						
 		desabilitarBtnProximo.call(this);
 		exibirEtapa.call(this, this.etapaAtual);			
@@ -54,10 +65,10 @@ ExConfiguracao.Etapas = (function() {
 			case 'selecaoConfiguracao':				
 				atualizarBtnProximo.call(this, this.comboTipoConfiguracao);
 				break;
-			case 'selecaoNivelAcesso':				
-				atualizarBtnProximo.call(this, this.comboNivelAcesso);
+			case 'selecaoDestinatario':				
+				atualizarBtnProximo.call(this, this.comboDestinatario);
 				break;
-			case 'selecaoOrgaosEUnidades':				
+			case 'selecaoDestinatarioDefinicao':				
 				atualizarBtnProximo.call(this, this.comboUnidades);				
 				break;
 		}
@@ -82,23 +93,68 @@ ExConfiguracao.Etapas = (function() {
 				}								
 				atualizarBtnProximo.call(this, this.comboModelos);
 				break;
-			case 'selecaoConfiguracao':				
+			case 'selecaoConfiguracao':
+				this.containerTipoConfiguracao.show();				
 				atualizarBtnProximo.call(this, this.comboTipoConfiguracao);
 				break;
-			case 'selecaoNivelAcesso':							
-				atualizarBtnProximo.call(this, this.comboNivelAcesso);
+			case 'selecaoDestinatario':							
+				atualizarBtnProximo.call(this, this.comboDestinatario);
 				break;
-			case 'selecaoOrgaosEUnidades':				
-				if (this.comboOrgaos[0].length <= 0) {					
-					this.emitter.trigger('inicializarOrgaos');
-				}							
+			case 'selecaoDestinatarioDefinicao':
+				
+				this.containerOrgaos.show();
+				this.emitter.trigger('inicializarOrgaos');				
+				
+				switch (this.comboDestinatario.val()) {
+				case 'id_ORGAOS':	
+					this.labelDestinatarioDefinicao.text('Por fim, selecione os órgãos desejados');
+					this.containerOrgaos.removeClass('col-sm-6').addClass('col-sm-12');					
+					this.containerUnidades.hide();
+					this.containerCargos.hide();
+					this.containerFuncoes.hide();
+					this.containerPessoas.hide();
+					break;
+				case 'id_UNIDADES':
+					this.labelDestinatarioDefinicao.text('Selecione os órgãos e por fim as unidades desejadas');
+					this.containerOrgaos.removeClass('col-sm-12').addClass('col-sm-6');
+					this.containerUnidades.show();
+					this.containerCargos.hide();
+					this.containerFuncoes.hide();
+					this.containerPessoas.hide();
+					break;
+				case 'id_CARGOS':
+					this.labelDestinatarioDefinicao.text('Selecione os órgãos e por fim os cargos desejados');
+					this.containerOrgaos.removeClass('col-sm-12').addClass('col-sm-6');					
+					this.containerUnidades.hide();
+					this.containerCargos.show();
+					this.containerFuncoes.hide();
+					this.containerPessoas.hide();
+					break;
+				case 'id_FUNCOES':
+					this.labelDestinatarioDefinicao.text('Selecione os órgãos e por fim as funções desejadas');
+					this.containerOrgaos.removeClass('col-sm-12').addClass('col-sm-6');					
+					this.containerUnidades.hide();
+					this.containerCargos.hide();
+					this.containerFuncoes.show();
+					this.containerPessoas.hide();
+					break;
+				case 'id_PESSOAS':
+					this.labelDestinatarioDefinicao.text('Selecione os órgãos e por fim as pessoas desejadas');
+					this.containerOrgaos.removeClass('col-sm-12').addClass('col-sm-6');
+					this.containerUnidades.hide();
+					this.containerCargos.hide();					
+					this.containerFuncoes.hide();					
+					this.containerPessoas.show();									
+					break;
+				}
+								
 				atualizarBtnProximo.call(this, this.comboUnidades);	
 				break;
 			}
 			
 			atualizarEtapa.call(this, 1);
 		}						
-	}
+	}	
 	
 	function onBtnConfirmacaoModalClicado() {		
 		if (this.btnConfirmacaoModal.hasClass('is-pesquisa')) {			
@@ -113,20 +169,46 @@ ExConfiguracao.Etapas = (function() {
 		case 'selecaoConfiguracao':
 			this.selecaoConfiguracaoOK = true;
 			break;
-		case 'selecaoNivelAcesso':
-			this.selecaoNivelAcessoOK = true;
+		case 'selecaoDestinatario':
+			this.selecaoDestinatarioOK = true;
 			break;
-		case 'selecaoOrgaosEUnidades':
-			this.selecaoOrgaosEUnidadesOK = true;
+		case 'selecaoDestinatarioDefinicao':
+			this.selecaoDestinatarioDefinicaoOK = true;
 			break;
 		}
 				
 		onBtnProximoClicado.call(this, false);			
 	}
 	
-	function atualizarBtnProximo(combo) {
+	function onComboTipoConfiguracaoSelecionado() {
+		// se for opção movimentar
+		if (this.comboTipoConfiguracao.val() == 1) {						
+			if (this.comboMovimentacao.find('option').length <= 1) {
+				this.emitter.trigger('opcaoMovimentarSelecionada');
+			}
+			
+			if (this.comboMovimentacao.val() == null || this.comboMovimentacao.val() === '') {
+				this.labelMovimentacao.css('opacity', '1');
+			}			
+			this.containerMovimentacao.css({'visibility': 'visible', 'opacity': '1', 'max-width': '50%'});
+			this.containerTipoConfiguracao.removeClass('col-sm-12').addClass('col-sm-6').css('max-width', '50%');
+			atualizarBtnProximo.call(this, this.comboMovimentacao);			
+		} else {
+			this.containerMovimentacao.css({'visibility': 'collapse', 'opacity': '0', 'max-width': '0px'});
+			this.containerTipoConfiguracao.removeClass('col-sm-6').addClass('col-sm-12').css('max-width', '100%');
+			this.labelMovimentacao.css('opacity', '0');
+			atualizarBtnProximo.call(this, this.comboTipoConfiguracao);
+		}				
+	}
+	
+	function onComboMovimentacaoSelecionada() {
+		this.labelMovimentacao.css('opacity', '0');
+		atualizarBtnProximo.call(this, this.comboMovimentacao);
+	}
+	
+	function atualizarBtnProximo(combo, evento) {		
 		if (combo.val() > 0 || 		
-				(combo.hasClass('js-nivel-acesso') && combo.val() !== '') ||
+				(combo.hasClass('js-siga-select2--destinatario') && combo.val() !== '') ||
 				(combo.hasClass('selectpicker') && combo.val() != null)) {
 			habilitarBtnProximo.call(this);			
 		} else {
@@ -193,10 +275,10 @@ ExConfiguracao.Etapas = (function() {
 			case 'selecaoConfiguracao':
 				//validarSelecaoConfiguracao.call(this);
 				break;
-			case 'selecaoNivelAcesso':
+			case 'selecaoDestinatario':
 				//resposta = validarSelecaoNivelAcesso.call(this);
 				break;
-			case 'selecaoOrgaosEUnidades':
+			case 'selecaoDestinatarioDefinicao':
 				//resposta = validarSelecaoOrgaosEUnidades.call(this);
 				break;
 		}
@@ -228,11 +310,27 @@ ExConfiguracao.Etapas = (function() {
 			case 'selecaoConfiguracao':				
 				this.tituloNovaConfiguracao.append('<span class="titulo-etapa-topo  js-titulo-etapa-topo">&nbsp;<i class="fa fa-angle-right" style="color: #000;font-size: 1rem;"></i>&nbsp;Configuração</span>');				
 				break;
-			case 'selecaoNivelAcesso':				
-				this.tituloNovaConfiguracao.append('<span class="titulo-etapa-topo  js-titulo-etapa-topo">&nbsp;<i class="fa fa-angle-right" style="color: #000;font-size: 1rem;"></i>&nbsp;Nível de acesso</span>');							
+			case 'selecaoDestinatario':				
+				this.tituloNovaConfiguracao.append('<span class="titulo-etapa-topo  js-titulo-etapa-topo">&nbsp;<i class="fa fa-angle-right" style="color: #000;font-size: 1rem;"></i>&nbsp;Destinatário</span>');							
 				break;
-			case 'selecaoOrgaosEUnidades':				
-				this.tituloNovaConfiguracao.append('<span class="titulo-etapa-topo  js-titulo-etapa-topo">&nbsp;<i class="fa fa-angle-right" style="color: #000;font-size: 1rem;"></i>&nbsp;Unidades</span>');									
+			case 'selecaoDestinatarioDefinicao':	
+				switch (this.comboDestinatario.val()) {
+				case 'id_ORGAOS':	
+					this.tituloNovaConfiguracao.append('<span class="titulo-etapa-topo  js-titulo-etapa-topo">&nbsp;<i class="fa fa-angle-right" style="color: #000;font-size: 1rem;"></i>&nbsp;Órgãos</span>');
+					break;
+				case 'id_UNIDADES':
+					this.tituloNovaConfiguracao.append('<span class="titulo-etapa-topo  js-titulo-etapa-topo">&nbsp;<i class="fa fa-angle-right" style="color: #000;font-size: 1rem;"></i>&nbsp;Unidades</span>');
+					break;
+				case 'id_CARGOS':
+					this.tituloNovaConfiguracao.append('<span class="titulo-etapa-topo  js-titulo-etapa-topo">&nbsp;<i class="fa fa-angle-right" style="color: #000;font-size: 1rem;"></i>&nbsp;Cargos</span>');
+					break;
+				case 'id_FUNCOES':
+					this.tituloNovaConfiguracao.append('<span class="titulo-etapa-topo  js-titulo-etapa-topo">&nbsp;<i class="fa fa-angle-right" style="color: #000;font-size: 1rem;"></i>&nbsp;Funções</span>');
+					break;
+				case 'id_PESSOAS':
+					this.tituloNovaConfiguracao.append('<span class="titulo-etapa-topo  js-titulo-etapa-topo">&nbsp;<i class="fa fa-angle-right" style="color: #000;font-size: 1rem;"></i>&nbsp;Pessoas</span>');
+					break;
+				}												
 				break;
 			}					
 		}	
@@ -254,9 +352,9 @@ ExConfiguracao.Etapas = (function() {
 				content: 'Nessa etapa você deve selecionar o tipo de configuração a ser aplicada, se quiser entender melhor o que cada configuração faz <a href="tipos/dicionario" target="_blank">clique aqui</a>'
 			  });				
 			break;
-		case 'selecaoNivelAcesso':												
+		case 'selecaoDestinatario':												
 			break;
-		case 'selecaoOrgaosEUnidades':																
+		case 'selecaoDestinatarioDefinicao':																
 			break;
 		}
 	}
@@ -269,10 +367,73 @@ ExConfiguracao.Etapas = (function() {
 	return Etapas;	
 }());
 
+ExConfiguracao.ComboMovimentacao = (function() {
+	
+	function ComboMovimentacao(Etapas) {
+		this.Etapas = Etapas;		
+		this.combo = Etapas.comboMovimentacao;
+		this.spinner = $('.js-spinner--tipo-movimentacao');				
+	}
+	
+	ComboMovimentacao.prototype.iniciar = function() {		
+		reset.call(this);	
+		this.Etapas.on('opcaoMovimentarSelecionada', onTipoConfiguracaoSelecionada.bind(this));								
+	}	
+		
+	function onTipoConfiguracaoSelecionada() {
+		onInicializar.call(this);		
+	}
+	
+	function onInicializar() {								
+		var resposta = $.ajax({
+			url: 'movimentacoes',
+			method: 'GET',									 										
+			beforeSend: iniciarRequisicao.bind(this),
+			complete: finalizarRequisicao.bind(this)
+		});			
+		resposta.done(onBuscarMovimentacoesFinalizado.bind(this));		
+	}
+	
+	function onBuscarMovimentacoesFinalizado(movimentacoes) {
+		var options = [];		
+		if(movimentacoes.list.length > 0) {						
+			options.push('<option value="">' + this.combo.data('sigaSelect2Placeholder') + '</option>');
+			
+			movimentacoes.list.forEach(function(movimentacao){											
+				options.push('<option value="' + movimentacao.idTpMov + '">' + movimentacao.descrTipoMovimentacao + '</option>');				
+			});							
+								
+			this.combo.html(options.join(''));	
+			this.combo.removeAttr('disabled');									
+		} else {			
+			reset.call(this);			
+		} 			
+	}
+	
+	function reset() {		
+		this.combo.html('');				
+		this.combo.attr('disabled', 'disabled');											
+	}
+	
+	function iniciarRequisicao() {
+		reset.call(this);
+		this.combo.parent().css({'width':'calc(100% - 30px)', 'transition':'width .2s'});
+		this.spinner.show();
+	}
+	
+	function finalizarRequisicao() {		
+		this.spinner.hide();				
+		this.combo.selectpicker('refresh');			
+	}
+	
+	return ComboMovimentacao;
+	
+}());
+
 ExConfiguracao.ComboModelo = (function() {
 	
 	function ComboModelo(Etapas) {		
-		this.combo = $('.js-siga-multiploselect--modelo');				
+		this.combo = Etapas.comboModelos;				
 		this.spinner = $('.js-spinner--modelo');
 		this.Etapas = Etapas;				
 	}
@@ -368,9 +529,9 @@ ExConfiguracao.ComboModelo = (function() {
 ExConfiguracao.ComboOrgao = (function() {
 	
 	function ComboOrgao(Etapas) {		
-		this.combo = $('.js-siga-multiploselect--orgao');				
+		this.combo = Etapas.comboOrgaos;				
 		this.spinner = $('.js-spinner--orgao');
-		this.Etapas = Etapas;		
+		this.Etapas = Etapas;				
 		this.emitter = $({});
 		this.on = this.emitter.on.bind(this.emitter);		
 	}
@@ -381,9 +542,13 @@ ExConfiguracao.ComboOrgao = (function() {
 		this.Etapas.on('inicializarOrgaos', onInicializar.bind(this));
 	}
 	
-	function onInicializar() {						
-		iniciarConfiguracoes.call(this);
-		buscar.call(this);
+	function onInicializar() {		
+		if (this.combo[0].length <= 0) {					
+			iniciarConfiguracoes.call(this);
+			buscar.call(this);
+		} else {
+			onOrgaoSelecionado.call(this);
+		}					
 	}
 	
 	function iniciarConfiguracoes() {
@@ -446,7 +611,7 @@ ExConfiguracao.ComboOrgao = (function() {
 		}					
 	}	
 	
-	function onOrgaoSelecionado() {				
+	function onOrgaoSelecionado() {			
 		this.emitter.trigger('selecionado');		
 	}
 	
@@ -466,6 +631,7 @@ ExConfiguracao.ComboUnidade = (function() {
 	
 	function ComboUnidade(ComboOrgao) {
 		this.ComboOrgao = ComboOrgao;
+		this.comboDestinatario = $('.js-siga-select2--destinatario');
 		this.combo = $(".js-siga-multiploselect--unidade");
 		this.spinner = $('.js-spinner--unidade');				
 	}
@@ -477,8 +643,12 @@ ExConfiguracao.ComboUnidade = (function() {
 		onInicializar.call(this, idOrgao);		
 	}	
 		
-	function onOrgaoSelecionado() {			
-		onInicializar.call(this, this.ComboOrgao.combo.val());		
+	function onOrgaoSelecionado() {	
+		if (this.comboDestinatario.val() === 'id_UNIDADES') {				
+			onInicializar.call(this, this.ComboOrgao.combo.val());
+		} else {
+			reset.call(this);
+		}
 	}
 	
 	function onInicializar(idOrgaoSelecao) {						
@@ -559,6 +729,313 @@ ExConfiguracao.ComboUnidade = (function() {
 	
 }());
 
+
+ExConfiguracao.ComboCargo = (function() {
+	
+	function ComboCargo(ComboOrgao) {
+		this.ComboOrgao = ComboOrgao;
+		this.comboDestinatario = $('.js-siga-select2--destinatario');
+		this.combo = $(".js-siga-multiploselect--cargo");
+		this.spinner = $('.js-spinner--cargo');				
+	}
+	
+	ComboCargo.prototype.iniciar = function() {		
+		reset.call(this);	
+		this.ComboOrgao.on('selecionado', onOrgaoSelecionado.bind(this));		
+		var idOrgao = this.ComboOrgao.combo.val();		
+		onInicializar.call(this, idOrgao);		
+	}	
+		
+	function onOrgaoSelecionado() {	
+		if (this.comboDestinatario.val() === 'id_CARGOS') {				
+			onInicializar.call(this, this.ComboOrgao.combo.val());
+		} else {
+			reset.call(this);
+		}
+	}
+	
+	function onInicializar(idOrgaoSelecao) {						
+		iniciarConfiguracoes.call(this);
+		buscar.call(this, idOrgaoSelecao);
+	}
+	
+	function iniciarConfiguracoes() {
+		this.combo.selectpicker({
+			noneSelectedText: 'Selecione um ou mais cargos',
+			noneResultsText: 'Nenhum cargo encontrado para {0}',
+			countSelectedText: function(e,t){return 1==e?'{0} cargo selecionado':'{0} cargos selecionados'},
+			selectedTextFormat: 'count > 2'
+		});
+	}
+	
+	function buscar(idOrgaoSelecao) {				
+		if (idOrgaoSelecao) {		
+			var dados = {'dados': { 'idOrgaoSelecao': idOrgaoSelecao }};
+			var resposta = $.ajax({
+				url: 'cargos',
+				method: 'POST',
+				contentType: 'application/json',
+				dataType: 'json',
+				data: JSON.stringify(dados), 											
+				beforeSend: iniciarRequisicao.bind(this),
+				complete: finalizarRequisicao.bind(this)
+			});			
+			resposta.done(onBuscarCargosFinalizado.bind(this));
+		} else {			
+			reset.call(this);
+		}	
+	}
+	
+	function onBuscarCargosFinalizado(cargos) {
+		var options = [];
+		var nomeOrgao = '';		
+		if(cargos.list.length > 0) {
+			cargos.list.forEach(function(cargo){		
+				if (nomeOrgao != cargo.nomeOrgao) {
+					if (nomeOrgao != '') options.push('</optgroup>');
+					options.push('<optgroup label="' + cargo.nomeOrgao + '">');			
+				}						
+				options.push('<option value="' + cargo.id + '">' + cargo.nome + '</option>');
+				nomeOrgao = cargo.nomeOrgao;												
+			});				
+			options.push('</optgroup>');
+								
+			this.combo.html(options.join(''));	
+			this.combo.removeAttr('disabled');			
+			this.combo.parent().removeClass('disabled');
+			this.combo.parent().children().removeClass('disabled');					
+		} else {			
+			reset.call(this);			
+		} 			
+	}
+	
+	function reset() {		
+		this.combo.html('');				
+		this.combo.attr('disabled', 'disabled');				
+		this.combo.parent().children().addClass('disabled');	
+		this.spinner.parent().removeClass('disabled');				
+		this.combo.selectpicker('refresh');			
+	}
+	
+	function iniciarRequisicao() {
+		reset.call(this);
+		this.combo.parent().css({'width':'calc(100% - 30px)', 'transition':'width .2s'});
+		this.spinner.show();
+	}
+	
+	function finalizarRequisicao() {		
+		this.spinner.hide();				
+		this.combo.selectpicker('refresh');			
+	}
+	
+	return ComboCargo;
+	
+}());
+
+ExConfiguracao.ComboFuncao = (function() {
+	
+	function ComboFuncao(ComboOrgao) {
+		this.ComboOrgao = ComboOrgao;
+		this.comboDestinatario = $('.js-siga-select2--destinatario');
+		this.combo = $(".js-siga-multiploselect--funcao");
+		this.spinner = $('.js-spinner--funcao');				
+	}
+	
+	ComboFuncao.prototype.iniciar = function() {		
+		reset.call(this);	
+		this.ComboOrgao.on('selecionado', onOrgaoSelecionado.bind(this));		
+		var idOrgao = this.ComboOrgao.combo.val();		
+		onInicializar.call(this, idOrgao);		
+	}	
+		
+	function onOrgaoSelecionado() {	
+		if (this.comboDestinatario.val() === 'id_FUNCOES') {				
+			onInicializar.call(this, this.ComboOrgao.combo.val());
+		} else {
+			reset.call(this);
+		}
+	}
+	
+	function onInicializar(idOrgaoSelecao) {						
+		iniciarConfiguracoes.call(this);
+		buscar.call(this, idOrgaoSelecao);
+	}
+	
+	function iniciarConfiguracoes() {
+		this.combo.selectpicker({
+			noneSelectedText: 'Selecione uma ou mais funções',
+			noneResultsText: 'Nenhuma função encontrada para {0}',
+			countSelectedText: function(e,t){return 1==e?'{0} função selecionada':'{0} funções selecionadas'},
+			selectedTextFormat: 'count > 2'
+		});
+	}
+	
+	function buscar(idOrgaoSelecao) {				
+		if (idOrgaoSelecao) {		
+			var dados = {'dados': { 'idOrgaoSelecao': idOrgaoSelecao }};
+			var resposta = $.ajax({
+				url: 'funcoes',
+				method: 'POST',
+				contentType: 'application/json',
+				dataType: 'json',
+				data: JSON.stringify(dados), 											
+				beforeSend: iniciarRequisicao.bind(this),
+				complete: finalizarRequisicao.bind(this)
+			});			
+			resposta.done(onBuscarFuncoesFinalizado.bind(this));
+		} else {			
+			reset.call(this);
+		}	
+	}
+	
+	function onBuscarFuncoesFinalizado(funcoes) {
+		var options = [];
+		var nomeOrgao = '';		
+		if(funcoes.list.length > 0) {
+			funcoes.list.forEach(function(funcao){		
+				if (nomeOrgao != funcao.nomeOrgao) {
+					if (nomeOrgao != '') options.push('</optgroup>');
+					options.push('<optgroup label="' + funcao.nomeOrgao + '">');			
+				}						
+				options.push('<option value="' + funcao.id + '">' + funcao.nome + '</option>');
+				nomeOrgao = funcao.nomeOrgao;												
+			});				
+			options.push('</optgroup>');
+								
+			this.combo.html(options.join(''));	
+			this.combo.removeAttr('disabled');			
+			this.combo.parent().removeClass('disabled');
+			this.combo.parent().children().removeClass('disabled');					
+		} else {			
+			reset.call(this);			
+		} 			
+	}
+	
+	function reset() {		
+		this.combo.html('');				
+		this.combo.attr('disabled', 'disabled');				
+		this.combo.parent().children().addClass('disabled');	
+		this.spinner.parent().removeClass('disabled');				
+		this.combo.selectpicker('refresh');			
+	}
+	
+	function iniciarRequisicao() {
+		reset.call(this);
+		this.combo.parent().css({'width':'calc(100% - 30px)', 'transition':'width .2s'});
+		this.spinner.show();
+	}
+	
+	function finalizarRequisicao() {		
+		this.spinner.hide();				
+		this.combo.selectpicker('refresh');			
+	}
+	
+	return ComboFuncao;
+	
+}());
+
+ExConfiguracao.ComboPessoa = (function() {
+	
+	function ComboPessoa(ComboOrgao) {
+		this.ComboOrgao = ComboOrgao;
+		this.comboDestinatario = $('.js-siga-select2--destinatario');
+		this.combo = $(".js-siga-multiploselect--pessoa");
+		this.spinner = $('.js-spinner--pessoa');				
+	}
+	
+	ComboPessoa.prototype.iniciar = function() {		
+		reset.call(this);	
+		this.ComboOrgao.on('selecionado', onOrgaoSelecionado.bind(this));		
+		var idOrgao = this.ComboOrgao.combo.val();		
+		onInicializar.call(this, idOrgao);		
+	}	
+		
+	function onOrgaoSelecionado() {	
+		if (this.comboDestinatario.val() === 'id_PESSOAS') {				
+			onInicializar.call(this, this.ComboOrgao.combo.val());
+		} else {
+			reset.call(this);
+		}
+	}
+	
+	function onInicializar(idOrgaoSelecao) {						
+		iniciarConfiguracoes.call(this);
+		buscar.call(this, idOrgaoSelecao);
+	}
+	
+	function iniciarConfiguracoes() {
+		this.combo.selectpicker({
+			noneSelectedText: 'Selecione uma ou mais pessoas',
+			noneResultsText: 'Nenhuma pessoa encontrada para {0}',
+			countSelectedText: function(e,t){return 1==e?'{0} pessoa selecionada':'{0} pessoa selecionadas'},
+			selectedTextFormat: 'count > 2'
+		});
+	}
+	
+	function buscar(idOrgaoSelecao) {				
+		if (idOrgaoSelecao) {		
+			var dados = {'dados': { 'idOrgaoSelecao': idOrgaoSelecao }};
+			var resposta = $.ajax({
+				url: 'pessoas',
+				method: 'POST',
+				contentType: 'application/json',
+				dataType: 'json',
+				data: JSON.stringify(dados), 											
+				beforeSend: iniciarRequisicao.bind(this),
+				complete: finalizarRequisicao.bind(this)
+			});			
+			resposta.done(onBuscarPessoasFinalizado.bind(this));
+		} else {			
+			reset.call(this);
+		}	
+	}
+	
+	function onBuscarPessoasFinalizado(pessoas) {
+		var options = [];
+		var nomeOrgao = '';		
+		if(pessoas.list.length > 0) {
+			pessoas.list.forEach(function(pessoa){		
+				if (nomeOrgao != pessoa.nomeOrgao) {
+					if (nomeOrgao != '') options.push('</optgroup>');
+					options.push('<optgroup label="' + pessoa.nomeOrgao + '">');			
+				}						
+				options.push('<option value="' + pessoa.id + '">' + pessoa.nome + '</option>');
+				nomeOrgao = pessoa.nomeOrgao;												
+			});				
+			options.push('</optgroup>');
+								
+			this.combo.html(options.join(''));	
+			this.combo.removeAttr('disabled');			
+			this.combo.parent().removeClass('disabled');
+			this.combo.parent().children().removeClass('disabled');					
+		} else {			
+			reset.call(this);			
+		} 			
+	}
+	
+	function reset() {		
+		this.combo.html('');				
+		this.combo.attr('disabled', 'disabled');				
+		this.combo.parent().children().addClass('disabled');	
+		this.spinner.parent().removeClass('disabled');				
+		this.combo.selectpicker('refresh');			
+	}
+	
+	function iniciarRequisicao() {
+		reset.call(this);
+		this.combo.parent().css({'width':'calc(100% - 30px)', 'transition':'width .2s'});
+		this.spinner.show();
+	}
+	
+	function finalizarRequisicao() {		
+		this.spinner.hide();				
+		this.combo.selectpicker('refresh');			
+	}
+	
+	return ComboPessoa;
+	
+}());
+
 $(function() {
 	$('[name=idTpConfiguracao]').addClass('siga-select2');
 	$('[data-toggle="popover"]').popover();
@@ -569,9 +1046,21 @@ $(function() {
 	var comboModelos = new ExConfiguracao.ComboModelo(etapas);
 	comboModelos.iniciar();
 	
+	var comboMovimentacao = new ExConfiguracao.ComboMovimentacao(etapas);
+	comboMovimentacao.iniciar();
+	
 	var comboOrgaos = new ExConfiguracao.ComboOrgao(etapas);
 	comboOrgaos.iniciar();
 	
 	var comboUnidades = new ExConfiguracao.ComboUnidade(comboOrgaos);
-	comboUnidades.iniciar();		
+	comboUnidades.iniciar();	
+	
+	var comboCargos = new ExConfiguracao.ComboCargo(comboOrgaos);
+	comboCargos.iniciar();
+	
+	var comboFuncoes = new ExConfiguracao.ComboFuncao(comboOrgaos);
+	comboFuncoes.iniciar();
+	
+	var comboPessoas = new ExConfiguracao.ComboPessoa(comboOrgaos);
+	comboPessoas.iniciar();
 });

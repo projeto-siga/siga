@@ -7,8 +7,6 @@ import java.util.Date;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.crivano.swaggerservlet.SwaggerException;
 
@@ -25,10 +23,8 @@ import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class DocSiglaTramitarSpPost implements IDocSiglaTramitarSpPost {
 
-	private static final String DESCR_MOV = "Tramitação executada através de WebService";
-
-	void efetuarTramitacaoLotacao(SigaObjects so, ExMobil mob, Date dtDevolucao, DocSiglaTramitarSpPostRequest req,
-			DocSiglaTramitarSpPostResponse resp) throws SwaggerException {
+	void efetuarTramitacaoParaLotacao(SigaObjects so, ExMobil mob, Date dtDevolucao, Date dt,
+			DocSiglaTramitarSpPostRequest req, DocSiglaTramitarSpPostResponse resp) throws SwaggerException {
 		DpLotacao lot = new DpLotacao();
 		lot.setSigla(req.destinatario.replace("-", ""));
 		lot = ExDao.getInstance().consultarPorSigla(lot);
@@ -36,8 +32,6 @@ public class DocSiglaTramitarSpPost implements IDocSiglaTramitarSpPost {
 			throw new SwaggerException("Não foi encontrado Órgão com sigla " + req.destinatario, 404, null, req, resp,
 					null);
 		}
-		Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
-
 		Ex.getInstance().getBL().transferir(//
 				null, // CpOrgao orgaoExterno
 				null, // String obsOrgao
@@ -64,8 +58,8 @@ public class DocSiglaTramitarSpPost implements IDocSiglaTramitarSpPost {
 
 	}
 
-	void efetuarTramitacaoParaUsuario(SigaObjects so, ExMobil mob, Date dtDevolucao, DocSiglaTramitarSpPostRequest req,
-			DocSiglaTramitarSpPostResponse resp) throws SwaggerException {
+	void efetuarTramitacaoParaUsuario(SigaObjects so, ExMobil mob, Date dtDevolucao, Date dt,
+			DocSiglaTramitarSpPostRequest req, DocSiglaTramitarSpPostResponse resp) throws SwaggerException {
 		DpPessoa usuarioDestino = new DpPessoa();
 		usuarioDestino.setSigla(req.destinatario);
 		usuarioDestino = ExDao.getInstance().consultarPorSigla(usuarioDestino);
@@ -73,8 +67,7 @@ public class DocSiglaTramitarSpPost implements IDocSiglaTramitarSpPost {
 			throw new SwaggerException("Não foi encontrado Usuário com a Matrícula " + req.destinatario, 404, null, req,
 					resp, null);
 		}
-		Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
-// dao().getOrgaoFromSiglaExata(destinatarioStr);
+
 		Ex.getInstance().getBL().transferir(//
 				null, // CpOrgao orgaoExterno
 				null, // String obsOrgao
@@ -100,15 +93,13 @@ public class DocSiglaTramitarSpPost implements IDocSiglaTramitarSpPost {
 		);
 	}
 
-	void efetuarTramitacaoParaOrgaoExtrno(SigaObjects so, ExMobil mob, Date dtDevolucao,
+	void efetuarTramitacaoParaOrgaoExtrno(SigaObjects so, ExMobil mob, Date dtDevolucao, Date dt,
 			DocSiglaTramitarSpPostRequest req, DocSiglaTramitarSpPostResponse resp) throws SwaggerException {
 		CpOrgao orgaoExternoDestino = ExDao.getInstance().getOrgaoFromSiglaExata(req.destinatario);
 		if (Objects.isNull(orgaoExternoDestino)) {
 			throw new SwaggerException("Não foi encontrado Órgão Externo com o código " + req.destinatario, 404, null,
 					req, resp, null);
 		}
-
-		Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
 
 		Ex.getInstance().getBL().transferir(//
 				orgaoExternoDestino, // CpOrgao orgaoExterno
@@ -177,22 +168,12 @@ public class DocSiglaTramitarSpPost implements IDocSiglaTramitarSpPost {
 		}
 	}
 
-//	public void transferir(final CpOrgao orgaoExterno, final String obsOrgao, final DpPessoa cadastrante,
-//			final DpLotacao lotaCadastrante, final ExMobil mob, final Date dtMov, final Date dtMovIni,
-//			final Date dtFimMov, DpLotacao lotaResponsavel, final DpPessoa responsavel,
-//			final DpLotacao lotaDestinoFinal, final DpPessoa destinoFinal, final DpPessoa subscritor,
-//			final DpPessoa titular, final ExTipoDespacho tpDespacho, final boolean fInterno, final String descrMov,
-//			final String conteudo, String nmFuncaoSubscritor, boolean forcarTransferencia, boolean automatico) {
-
 	@Override
 	public void run(DocSiglaTramitarSpPostRequest req, DocSiglaTramitarSpPostResponse resp) throws Exception {
 		req.sigla = SwaggerHelper.decodePathParam(req.sigla);
 		TramitacaoTipoDestinoEnum tipoDestino = getTipoTramitcao(req, resp);
 		Date dataDevolucao = getDataDevolucao(req, resp);
-		System.out.println("MobilTramitarSiglaPost: "
-				+ ToStringBuilder.reflectionToString(req, ToStringStyle.SHORT_PREFIX_STYLE) + ", " + tipoDestino);
 
-		ApiContext_Remover apiContext = new ApiContext_Remover(true);
 		try {
 			SwaggerHelper.buscarEValidarUsuarioLogado();
 			SigaObjects so = SwaggerHelper.getSigaObjects();
@@ -209,23 +190,23 @@ public class DocSiglaTramitarSpPost implements IDocSiglaTramitarSpPost {
 						+ so.getCadastrante().getLotacao().getSiglaCompleta(), 403, null, req, resp, null);
 			}
 
+			Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
+
 			switch (tipoDestino) {
 			case ORGAO:
-				this.efetuarTramitacaoLotacao(so, mob, dataDevolucao, req, resp);
+				this.efetuarTramitacaoParaLotacao(so, mob, dataDevolucao, dt, req, resp);
 				break;
 			case USUARIO:
-				this.efetuarTramitacaoParaUsuario(so, mob, dataDevolucao, req, resp);
+				this.efetuarTramitacaoParaUsuario(so, mob, dataDevolucao, dt, req, resp);
 				break;
 			case EXTERNO:
-				this.efetuarTramitacaoParaOrgaoExtrno(so, mob, dataDevolucao, req, resp);
+				this.efetuarTramitacaoParaOrgaoExtrno(so, mob, dataDevolucao, dt, req, resp);
 				break;
 			}
 
-			apiContext.close();
 			return;
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
-			apiContext.rollback(e);
 			throw e;
 		}
 	}

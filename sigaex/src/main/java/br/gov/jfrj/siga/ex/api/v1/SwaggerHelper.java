@@ -24,6 +24,8 @@ import br.gov.jfrj.siga.vraptor.SigaObjects;
  */
 class SwaggerHelper {
 
+	private static final String DOC_MÓDULO_DE_DOCUMENTOS = "DOC:Módulo de Documentos;";
+
 	/**
 	 * Verifica a presença de um usuário logado e o retorna.
 	 * 
@@ -44,13 +46,27 @@ class SwaggerHelper {
 	/**
 	 * Retorna uma instância de {@link SigaObjects} a partir do Request do
 	 * {@link SwaggerServlet}.
+	 * @throws Exception Se houver algo de errado.
+	 */
+	static SigaObjects getSigaObjects(String acesso) throws Exception {
+		SigaObjects sigaObjects = new SigaObjects(SwaggerServlet.getHttpServletRequest());
+		sigaObjects.assertAcesso(DOC_MÓDULO_DE_DOCUMENTOS + acesso);
+
+		return sigaObjects;
+	}
+
+	/**
+	 * Retorna uma instância de {@link SigaObjects} a partir do Request do
+	 * {@link SwaggerServlet}. Ainda verifica se o usuário tem aceso ao serviço
+	 * <code>{@value #DOC_MÓDULO_DE_DOCUMENTOS}<code>.
 	 * 
+	 * @param acesso Acesso solicitado.
 	 * @return Instância de {@link SigaObjects} a partir do Request do
 	 *         {@link SwaggerServlet}.
 	 * @throws Exception Se houver algo de errado.
 	 */
 	static SigaObjects getSigaObjects() throws Exception {
-		return new SigaObjects(SwaggerServlet.getHttpServletRequest());
+		return getSigaObjects("");
 	}
 
 	/**

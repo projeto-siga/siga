@@ -27,7 +27,7 @@ public class DocSiglaTramitarPost implements IDocSiglaTramitarPost {
 		SwaggerHelper.buscarEValidarUsuarioLogado();
 		
 		SigaObjects so = SwaggerHelper.getSigaObjects();
-		so.assertAcesso("DOC:Módulo de Documentos;" + "");
+//		so.assertAcesso("DOC:Módulo de Documentos;" + "");
 
 
 		try {

@@ -45,9 +45,9 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		defineProperties();
 
 		// Threadpool
-		if (SwaggerServlet.getProperty("redis.password") != null)
+		if (Prop.get("redis.password") != null)
 			SwaggerUtils.setCache(new MemCacheRedis());
-		executor = Executors.newFixedThreadPool(new Integer(SwaggerServlet.getProperty("threadpool.size")));
+		executor = Executors.newFixedThreadPool(Prop.getInt("threadpool.size"));
 
 		class HttpGetDependency extends TestableDependency {
 			String testsite;
@@ -96,7 +96,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		}
 
 		addDependency(
-				new FileSystemWriteDependency("upload.dir.temp", getProperty("upload.dir.temp"), false, 0, 10000));
+				new FileSystemWriteDependency("upload.dir.temp", Prop.get("upload.dir.temp"), false, 0, 10000));
 
 		addDependency(new HttpGetDependency("rest", "www.google.com/recaptcha",
 				"https://www.google.com/recaptcha/api/siteverify", false, 0, 10000));
@@ -105,13 +105,16 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 
 			@Override
 			public String getUrl() {
-				return getProperty("datasource.name");
+				return Prop.get("datasource.name");
 			}
 
 			@Override
 			public boolean test() throws Exception {
-				try (ApiContext ctx = new ApiContext(true)) {
+				try {
 					return ExDao.getInstance().dt() != null;
+				} catch (Exception e) {
+					e.printStackTrace(System.out);
+					throw e;
 				}
 			}
 
@@ -121,7 +124,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 			}
 		});
 
-		if (SwaggerServlet.getProperty("redis.password") != null)
+		if (Prop.get("redis.password") != null)
 			addDependency(new TestableDependency("cache", "redis", false, 0, 10000) {
 
 				@Override
@@ -159,7 +162,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 //		addPublicProperty("cookie.renew.seconds", Long.toString(15 * 60L)); // Renova 15min antes de expirar
 
 		addRestrictedProperty("datasource.url", null);
-		if (getProperty("datasource.url") != null) {
+		if (Prop.get("datasource.url") != null) {
 			addRestrictedProperty("datasource.username");
 			addPrivateProperty("datasource.password");
 			addRestrictedProperty("datasource.name", null);
@@ -219,6 +222,10 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 				
 		addPublicProperty("modelos.cabecalho.titulo", "JUSTIÇA FEDERAL");
 		addPublicProperty("modelos.cabecalho.subtitulo", null);
+		
+		//Siga-Le
+		addPublicProperty("smtp.sugestao.destinatario");
+		addPublicProperty("smtp.sugestao.assunto", "Siga-Le: Sugestão");
 	}
 
 	@Override
@@ -266,5 +273,6 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 	public String getProp(String nome) {
 		return getProperty(nome);
 	}
+
 
 }

@@ -16,31 +16,35 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package br.gov.jfrj.siga.cp;
+package br.gov.jfrj.sigale.ex.vo;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+public class DuracaoApiVO {
+	private String duracao;
+	private int span;
+	private int spanExibirCompleto;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Immutable;
-
-import br.gov.jfrj.siga.dp.dao.CpDao;
-
-
-@Entity
-@Immutable
-@Cacheable
-@Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
-@Table(schema = "CORPORATIVO", name="CP_TIPO_IDENTIDADE")
-public class CpTipoIdentidade extends AbstractCpTipoIdentidade {
-	public static final Integer FORMULARIO = new Integer(1);
-	public static final Integer CERTIFICADO = new Integer(2);
-	public boolean isTipoFormulario() {
-		return CpTipoIdentidade.FORMULARIO.equals(this.getIdCpTpIdentidade());
+	public String getDuracao() {
+		return duracao;
 	}
-	public boolean isTipoCertificado() {
-		return CpTipoIdentidade.CERTIFICADO.equals(this.getIdCpTpIdentidade());
+
+	public void setDuracao(String duracao) {
+		this.duracao = duracao;
 	}
+
+	public int getSpan() {
+		return span;
+	}
+
+	public void setSpan(int span) {
+		this.span = span;
+	}
+
+	public int getSpanExibirCompleto() {
+		return spanExibirCompleto;
+	}
+
+	public void setSpanExibirCompleto(int spanExibirCompleto) {
+		this.spanExibirCompleto = spanExibirCompleto;
+	}
+
 }

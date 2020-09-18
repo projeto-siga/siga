@@ -22,7 +22,6 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -39,15 +38,11 @@ import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 
-import org.apache.commons.codec.digest.DigestUtils;
-
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.TipoConteudo;
-import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCFacade;
-import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCInterface;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.model.Objeto;
 
@@ -185,8 +180,7 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 			cacheConteudoBlobPre = preenchimentoBlob;
 		} else {
 			try {
-				ArmazenamentoBCInterface a = ArmazenamentoBCFacade.getArmazenamentoBC(getCpArquivo());
-				cacheConteudoBlobPre = a.recuperar(getCpArquivo());
+				cacheConteudoBlobPre = getCpArquivo().getConteudo();
 			} catch (Exception e) {
 				throw new AplicacaoException(e.getMessage());
 			}
@@ -196,23 +190,12 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 
 	public void setPreenchimentoBlob(byte[] preenchimentoBlob) {
 		cacheConteudoBlobPre = preenchimentoBlob;
-		if (CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
+		if (this.preenchimentoBlob!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
 			this.preenchimentoBlob = preenchimentoBlob;
 		} else if(cacheConteudoBlobPre != null){
-			criarCpArquivo();
-			cpArquivo.setTamanho(cacheConteudoBlobPre.length);
-			cpArquivo.setHashMD5(DigestUtils.md5Hex(cacheConteudoBlobPre));
-
+			cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, TipoConteudo.TXT.getMimeType());
+			cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobPre);
 		}
 	}
 	
-	private void criarCpArquivo() {
-		if(cpArquivo == null) {
-			cpArquivo = new CpArquivo();
-			cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")));
-			cpArquivo.setConteudoTpArq(TipoConteudo.TXT.getMimeType());
-			if(CpArquivoTipoArmazenamentoEnum.HCP.equals(cpArquivo.getTipoArmazenamento()))
-				cpArquivo.gerarCaminho(new Date());
-		}
-	}
 }

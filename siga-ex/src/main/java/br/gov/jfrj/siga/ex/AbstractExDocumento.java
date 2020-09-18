@@ -41,7 +41,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
@@ -51,8 +50,6 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
-import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCFacade;
-import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCInterface;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -1012,9 +1009,8 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setOrgaoUsuario(CpOrgaoUsuario orgaoUsuario) {
 		this.orgaoUsuario = orgaoUsuario;
-		if (!CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
-			criarCpArquivo();
-			cpArquivo.setOrgaoUsuario(orgaoUsuario);
+		if (conteudoBlobDoc==null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
+			cpArquivo = CpArquivo.updateOrgaoUsuario(cpArquivo, orgaoUsuario);
 		}
 	}
 
@@ -1099,9 +1095,8 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setConteudoTpDoc(final java.lang.String conteudoTp) {
 		this.conteudoTpDoc = conteudoTp;
-		if (!CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
-			criarCpArquivo();
-			cpArquivo.setConteudoTpArq(conteudoTp);
+		if (conteudoBlobDoc==null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
+			cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, this.conteudoTpDoc);
 		}
 	}
 	
@@ -1112,8 +1107,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 			cacheConteudoBlobDoc = conteudoBlobDoc;
 		} else {
 			try {
-				ArmazenamentoBCInterface a = ArmazenamentoBCFacade.getArmazenamentoBC(getCpArquivo());
-				cacheConteudoBlobDoc = a.recuperar(getCpArquivo());
+				cacheConteudoBlobDoc = getCpArquivo().getConteudo();
 			} catch (Exception e) {
 				throw new AplicacaoException(e.getMessage());
 			}
@@ -1123,21 +1117,10 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setConteudoBlobDoc(byte[] createBlob) {
 		cacheConteudoBlobDoc = createBlob;
-		if (CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
+		if (conteudoBlobDoc!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
 			conteudoBlobDoc = createBlob;
 		} else if(cacheConteudoBlobDoc != null){
-			criarCpArquivo();
-			cpArquivo.setTamanho(cacheConteudoBlobDoc.length);
-			cpArquivo.setHashMD5(DigestUtils.md5Hex(cacheConteudoBlobDoc));
-		}
-	}
-	
-	private void criarCpArquivo() {
-		if(cpArquivo == null) {
-			cpArquivo = new CpArquivo();
-			cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")));
-			if(CpArquivoTipoArmazenamentoEnum.HCP.equals(cpArquivo.getTipoArmazenamento()))
-				cpArquivo.gerarCaminho(getDtRegDoc()!=null?getDtRegDoc():new Date());
+			cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobDoc);
 		}
 	}
 	

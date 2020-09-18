@@ -1,15 +1,16 @@
 package br.gov.jfrj.siga.ex;
 
-public enum ExConfiguracaoNivelAcesso {
+public enum ExConfiguracaoDestinatarios {
 	
 	ORGAOS("Órgãos"),
 	UNIDADES("Unidades"),
 	CARGOS("Cargos"),
+	FUNCOES("Funções"),
 	PESSOAS("Pessoas");
 	
 	private String descricao;
 	
-	ExConfiguracaoNivelAcesso(String descricao) {
+	ExConfiguracaoDestinatarios(String descricao) {
 		this.descricao = descricao;
 	}
 	

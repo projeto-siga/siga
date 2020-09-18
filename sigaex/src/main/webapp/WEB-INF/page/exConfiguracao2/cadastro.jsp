@@ -51,15 +51,15 @@
 						</div>
 					</div>
 					
-					<div id="selecaoConfiguracao" class="etapa  js-etapa">
+					<div id="selecaoConfiguracao" class="etapa  js-etapa" style="position: relative">
 						<h3 class="text-center display-4 p-4">
-							<label for="tipoConfiguracao">Qual configuração deseja aplicar?</label>
+							<label for="tipoConfiguracao">Qual configuração deseja aplicar?</label>							
 						</h3>
 					
 						<div class="row">
-							<div class="col-sm-12">
-								<div class="form-group">																																																	
-									<select id="tipoConfiguracao" name="tipoConfiguracao" class="form-control  js-tipo-configuracao siga-select2" 
+							<div class="col-sm-12  container-campos--tipo-configuracao  js-container-campos--tipo-configuracao">
+								<div class="form-group">																																																									
+									<select id="tipoConfiguracao" name="tipoConfiguracao" class="form-control  siga-select2  js-siga-select2--configuracao" 
 										data-siga-select2-placeholder="Selecione a configuração a ser aplicada">
 										<option value="">Selecione a configuração a ser aplicada</option>																											
 										<c:forEach items="${tiposConfiguracao}" var="tipoConfiguracao">
@@ -67,23 +67,38 @@
 										</c:forEach>																				
 									</select>																																										                   			            																														
 								</div>
+							</div>				
+														
+							<div class="col-sm-6  container-campos--tipo-movimentacao  js-container-campos--tipo-movimentacao">
+								<div class="form-group">
+									<label for="tipoMovimentacao" class="label-movimentacao  js-label-movimentacao"><i class="fas fa-arrow-down"></i></label>
+									<div style="display: flex; width: 100%">																																																																		
+										<select id="tipoMovimentacao" name="tipoMovimentacao" class="form-control  siga-select2  js-siga-select2--tipo-movimentacao" 
+											data-siga-select2-placeholder="Agora, selecione o tipo de movimentação desejada">
+											<option value="">Agora, selecione o tipo de movimentação desejada</option>																																												
+										</select>
+										 <div>
+					                    	<span class="spinner js-spinner--tipo-movimentacao"></span>
+					                    </div>
+				            		</div>																																																			                   			            																													
+								</div>
 							</div>						
 						</div>
 					</div>
 					
-					<div id="selecaoNivelAcesso" class="etapa  js-etapa">
+					<div id="selecaoDestinatario" class="etapa  js-etapa">
 						<h3 class="text-center display-4 p-4">							
-							<label for="nivelAcesso">Para quem se destina essa configuração?</label>							  
+							<label for="destinatario">Para quem se destina essa configuração?</label>							  
 						</h3>
 					
 						<div class="row">
 							<div class="col-sm-12">
 								<div class="form-group">																												
-									<select id="nivelAcesso" name="nivelAcesso" class="form-control  js-nivel-acesso siga-select2" 
+									<select id="destinatario" name="destinatario" class="form-control  siga-select2  js-siga-select2--destinatario" 
 										data-siga-select2-placeholder="Selecione como deverá ser o acesso a essa configuração">
 										<option value="">Selecione como deverá ser o acesso a essa configuração</option>																											
-										<c:forEach items="${niveisAcesso}" var="acesso">
-											<option value="id_${acesso}">${acesso.descricao}</option>
+										<c:forEach items="${destinatarios}" var="destinatario">
+											<option value="id_${destinatario}">${destinatario.descricao}</option>
 										</c:forEach>																				
 									</select>																            																													
 								</div>
@@ -91,13 +106,13 @@
 						</div>
 					</div>
 					
-					<div id="selecaoOrgaosEUnidades" class="etapa  js-etapa">
+					<div id="selecaoDestinatarioDefinicao" class="etapa  js-etapa">
 						<h3 class="text-center display-4 p-4">
-							<label for="idOrgaoUsu">Selecione os órgãos as unidades desejadas</label>
+							<label for="idOrgaoUsu" class="js-label-destinatario-definicao">Selecione os órgãos e por fim as unidades desejadas</label>
 						</h3>
 					
 						<div class="row">
-							<div class="col-sm-6">
+							<div class="col-sm-6  container-campos  js-container-campos--orgao">
 								<div class="form-group">									
 									<div style="display: flex; width: 100%">																												
 										<select name="idOrgaoUsu" id="idOrgaoUsu" class="form-control  siga-multiploselect  js-siga-multiploselect--orgao">								
@@ -110,10 +125,10 @@
 								</div>
 							</div>
 							
-							<div class="col-sm-6">
+							<div class="col-sm-6  container-campos  js-container-campos--unidade">
 								<div class="form-group">
 									<div style="display: flex; width: 100%">																												
-					                    <select id="unidade" class="form-control siga-multiploselect  js-siga-multiploselect--unidade">				               			  
+					                    <select id="unidade" class="form-control  siga-multiploselect js-siga-multiploselect--unidade">				               			  
 				                        	<optgroup label="Prodesp">
 					                            <option>Unidade 1</option>                  
 					                            <option>Unidade 2</option>
@@ -123,6 +138,60 @@
 					                    </select>						                    						                   					                    
 					                    <div>
 					                    	<span class="spinner js-spinner--unidade"></span>
+					                    </div>
+				            		</div>		   	            																													
+								</div>
+							</div>
+							
+							<div class="col-sm-6  container-campos  js-container-campos--cargo">
+								<div class="form-group">
+									<div style="display: flex; width: 100%">																												
+					                    <select id="cargo" class="form-control  siga-multiploselect js-siga-multiploselect--cargo">				               			  
+				                        	<optgroup label="Prodesp">
+					                            <option>Cargo 1</option>                  
+					                            <option>Cargo 2</option>
+					                            <option>Cargo 3</option>
+					                            <option>Cargo 4</option>
+					                        </optgroup>
+					                    </select>						                    						                   					                    
+					                    <div>
+					                    	<span class="spinner js-spinner--cargo"></span>
+					                    </div>
+				            		</div>		   	            																													
+								</div>
+							</div>
+							
+							<div class="col-sm-6  container-campos  js-container-campos--funcao">
+								<div class="form-group">
+									<div style="display: flex; width: 100%">																												
+					                    <select id="unidade" class="form-control  siga-multiploselect js-siga-multiploselect--funcao">				               			  
+				                        	<optgroup label="Prodesp">
+					                            <option>Função 1</option>                  
+					                            <option>Função 2</option>
+					                            <option>Função 3</option>
+					                            <option>Função 4</option>
+					                        </optgroup>
+					                    </select>						                    						                   					                    
+					                    <div>
+					                    	<span class="spinner js-spinner--funcao"></span>
+					                    </div>
+				            		</div>		   	            																													
+								</div>
+							</div>
+							
+							<div class="col-sm-6  container-campos  js-container-campos--pessoa">
+								<div class="form-group">
+									<div style="display: flex; width: 100%">																												
+					                    <select id="unidade" class="form-control  siga-multiploselect js-siga-multiploselect--pessoa">				               			  
+				                        	<optgroup label="Prodesp">
+					                            <option>Pessoa 1</option>                  
+					                            <option>Pessoa 2</option>
+					                            <option>Pessoa 3</option>
+					                            <option>Pessoa 4</option>
+					                        </optgroup>
+					                    </select>						                    						                   					                    
+					                    <div>
+					                    	<span class="spinner js-spinner--pessoa"></span>
 					                    </div>
 				            		</div>		   	            																													
 								</div>

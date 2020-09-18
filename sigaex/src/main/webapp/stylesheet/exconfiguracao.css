@@ -14,11 +14,11 @@
 }
 
 .indicador-etapa.active {
- 		opacity: 1;	
+	opacity: 1;	
 }
 
 .indicador-etapa.finish {
- 		background-color: #4CAF50;
+ 	background-color: #4CAF50;
 }
 
 .btn-proximo[disabled] {
@@ -59,6 +59,50 @@ ul.dropdown-menu.inner.show {
 	top: -5px; 
 	left: 2px; 
 	opacity: .6;
+}
+
+.container-campos {
+	display: none;
+}
+
+.container-campos--tipo-configuracao {
+	display: none;
+	transition: max-width 1s;	
+}
+
+.container-campos--tipo-movimentacao {
+	visibility: collapse;	
+	opacity: 0;
+	transition: max-width 1s, opacity .3s, visibility .3s;	
+	position: absolute;   
+	margin: 0;
+	padding: 0;	
+	max-width: 0;
+	left: 50%;
+	margin-left: 10px;
+}
+
+.label-movimentacao {
+	position: absolute;
+    top: -30px; 
+    opacity: 0;
+    transition: opacity 2s;       
+}
+
+.label-movimentacao i {
+	position: absolute;
+	margin-left: 10px;
+	animation: pular .9s linear infinite;
+}
+
+.label-movimentacao::after {
+	content: 'Movimenta\00E7\00E3o';
+	margin-left: 30px;
+}
+
+@keyframes pular {
+  from {top: 0px;}
+  to {top: 8px;}
 }
 
 .btn-pesquisa-configuracoes {

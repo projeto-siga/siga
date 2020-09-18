@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.vraptor;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -20,10 +21,14 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.DpCargoDTO;
+import br.gov.jfrj.siga.dp.DpFuncaoDTO;
+import br.gov.jfrj.siga.dp.DpPessoaDTO;
 import br.gov.jfrj.siga.dp.DpUnidadeDTO;
-import br.gov.jfrj.siga.ex.ExConfiguracaoNivelAcesso;
+import br.gov.jfrj.siga.ex.ExConfiguracaoDestinatarios;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
+import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
@@ -62,20 +67,22 @@ public class ExConfiguracao2Controller extends ExController {
 	public void cadastro() throws Exception {	
 		//assertAcesso(VERIFICADOR_ACESSO);
 		
-		result.include("tiposConfiguracao", getListaTiposConfiguracao());
-		result.include("niveisAcesso", ExConfiguracaoNivelAcesso.values());						
-	}
+		result.include("tiposConfiguracao", getListaTiposConfiguracao());		
+		result.include("destinatarios", ExConfiguracaoDestinatarios.values());		
+	}	
 	
-	@Get("/tipos/dicionario")
-	public void dicionario() throws Exception {	
-		result.include("tiposConfiguracao", getListaTiposConfiguracao());			
+	@Consumes("application/json")
+	@Path("/modelos")
+	public void listarModelos() {			
+		List<ExModelo> modelos = getModelos(null);		
+		result.use(Results.json()).from(modelos).serialize();
 	}
 	
 	@Consumes("application/json")
-	@Path("/unidades")
-	public void listarUnidades(DpUnidadeDTO dados) {										
-		List<DpUnidadeDTO> unidades = dao().lotacaoPorOrgaos(dados.getIdOrgaoSelecao());		
-		result.use(Results.json()).from(unidades).serialize();
+	@Path("/movimentacoes")
+	public void listarMovimentacoes() throws Exception {				
+		List<ExTipoMovimentacao> tiposMovimentacao = getListaTiposMovimentacao();		
+		result.use(Results.json()).from(tiposMovimentacao).serialize();
 	}
 	
 	@Consumes("application/json")
@@ -86,10 +93,36 @@ public class ExConfiguracao2Controller extends ExController {
 	}
 	
 	@Consumes("application/json")
-	@Path("/modelos")
-	public void listarModelos() {			
-		List<ExModelo> modelos = getModelos(null);		
-		result.use(Results.json()).from(modelos).serialize();
+	@Path("/unidades")
+	public void listarUnidades(DpUnidadeDTO dados) {										
+		List<DpUnidadeDTO> unidades = dao().lotacaoPorOrgaos(dados.getIdOrgaoSelecao());		
+		result.use(Results.json()).from(unidades).serialize();
+	}
+	
+	@Consumes("application/json")
+	@Path("/cargos")
+	public void listarCargos(DpCargoDTO dados) {
+		List<DpCargoDTO> cargos = dao().cargoPorOrgaos(dados.getIdOrgaoSelecao());
+		result.use(Results.json()).from(cargos).serialize();
+	}
+	
+	@Consumes("application/json")
+	@Path("/funcoes")
+	public void listarFuncoes(DpFuncaoDTO dados) {
+		List<DpFuncaoDTO> funcoes = dao().funcaoPorOrgaos(dados.getIdOrgaoSelecao());
+		result.use(Results.json()).from(funcoes).serialize();
+	}
+	
+	@Consumes("application/json")
+	@Path("/pessoas")
+	public void listarPessoas(DpPessoaDTO dados) {
+		List<DpPessoaDTO> pessoas = dao().pessoaPorOrgaos(dados.getIdOrgaoSelecao());
+		result.use(Results.json()).from(pessoas).serialize();
+	}
+	
+	@Get("/tipos/dicionario")
+	public void dicionario() throws Exception {	
+		result.include("tiposConfiguracao", getListaTiposConfiguracao());			
 	}
 	
 	private List<ExModelo> getModelos(final Long idFormaDoc) {
@@ -118,5 +151,21 @@ public class ExConfiguracao2Controller extends ExController {
 		s.addAll(dao().listarTiposConfiguracao());
 
 		return s;
-	}	
+	}
+	
+	@SuppressWarnings("all")
+	private List<ExTipoMovimentacao> getListaTiposMovimentacao() throws Exception {
+		TreeSet<ExTipoMovimentacao> s = new TreeSet<ExTipoMovimentacao>(new Comparator() {
+
+			public int compare(Object o1, Object o2) {
+				return ((ExTipoMovimentacao) o1).getDescrTipoMovimentacao()
+						.compareTo(((ExTipoMovimentacao) o2).getDescrTipoMovimentacao());
+			}
+
+		});
+
+		s.addAll(dao().listarExTiposMovimentacao());
+
+		return new ArrayList<>(s);
+	}
 }

@@ -314,6 +314,19 @@ public interface IExApiV1 {
 		public void run(DocSiglaTramitarSpPostRequest req, DocSiglaTramitarSpPostResponse resp) throws Exception;
 	}
 
+	public class DocSiglaJuntarPostRequest implements ISwaggerRequest {
+		public String sigla;
+		public String siglapai;
+	}
+
+	public class DocSiglaJuntarPostResponse implements ISwaggerResponse {
+		public String status;
+	}
+
+	public interface IDocSiglaJuntarPost extends ISwaggerMethod {
+		public void run(DocSiglaJuntarPostRequest req, DocSiglaJuntarPostResponse resp) throws Exception;
+	}
+
 	public class DocSiglaAnotarPostRequest implements ISwaggerRequest {
 		public String sigla;
 		public String anotacao;

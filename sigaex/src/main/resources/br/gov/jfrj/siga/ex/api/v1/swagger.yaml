@@ -44,6 +44,12 @@ parameters:
     description: Sigla do mobil
     type: string
     required: true
+  siglapai:
+    name: siglapai
+    in: query
+    description: Sigla do mobil do documento pai
+    type: string
+    required: true
   completo:
     name: completo
     in: query
@@ -512,6 +518,36 @@ paths:
             $ref: "#/definitions/Error"
         500:
           description: Erro na Tramitação
+          schema:
+            $ref: "#/definitions/Error"
+
+
+  /doc/{sigla}/juntar:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/siglapai"
+      description: Junta a via de um documento com outro informado em siglapai
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        403:
+          description: Acesso ao documento não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Via ou volume não encontrado
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
 

@@ -20,10 +20,18 @@ public class GcTipoTag extends Objeto {
 
 	@Id
 	@Column(name = "ID_TIPO_TAG")
-	public long id;
+	private long id;
 
 	@Column(name = "NOME_TIPO_TAG", nullable = false)
-	public String nome;
+	private String nome;
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
 
 	public GcTipoTag() {
 		super();

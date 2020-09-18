@@ -7,14 +7,19 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
-import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.com.caelum.vraptor.validator.Validator;
 import br.gov.jfrj.siga.tp.exceptions.RelatorioException;
 import br.gov.jfrj.siga.tp.model.Afastamento;
 import br.gov.jfrj.siga.tp.model.DiaDaSemana;
@@ -23,13 +28,10 @@ import br.gov.jfrj.siga.tp.model.EscalaDeTrabalho;
 import br.gov.jfrj.siga.tp.model.Missao;
 import br.gov.jfrj.siga.tp.model.Plantao;
 import br.gov.jfrj.siga.tp.model.ServicoVeiculo;
+import br.gov.jfrj.siga.tp.model.TpDao;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-
-@Resource
+@Controller
 @Path("/app/relatorio")
 public class RelatorioController extends TpController {
 
@@ -50,8 +52,16 @@ public class RelatorioController extends TpController {
     private static SimpleDateFormat formatoDataDDMMYYYY = new SimpleDateFormat("dd/MM/yyyy");
     private static SimpleDateFormat formatoDataYYYYMDHMS = new SimpleDateFormat("yyyy,M,d,H,m,s");
 
-    public RelatorioController(HttpServletRequest request, Result result, CpDao dao, Validator validator, SigaObjects so, EntityManager em) {
-        super(request, result, dao, validator, so, em);
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public RelatorioController() {
+		super();
+	}
+	
+	@Inject
+    public RelatorioController(HttpServletRequest request, Result result,   Validator validator, SigaObjects so,  EntityManager em) {
+        super(request, result, TpDao.getInstance(), validator, so, em);
     }
 
     @Path("/listarAgendaPorCondutorNoProximoDia/{idCondutor}/{dataPesquisa*}")

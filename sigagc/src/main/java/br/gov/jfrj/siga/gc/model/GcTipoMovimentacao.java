@@ -49,10 +49,18 @@ public class GcTipoMovimentacao extends Objeto {
 
 	@Id
 	@Column(name = "ID_TIPO_MOVIMENTACAO")
-	public long id;
+	private long id;
 
 	@Column(name = "NOME_TIPO_MOVIMENTACAO", nullable = false)
-	public String nome;
+	private String nome;
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
 
 	public GcTipoMovimentacao() {
 		super();

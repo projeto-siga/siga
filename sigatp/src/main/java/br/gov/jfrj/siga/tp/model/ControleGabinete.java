@@ -1,7 +1,9 @@
 package br.gov.jfrj.siga.tp.model;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,14 +28,14 @@ import br.gov.jfrj.siga.tp.validation.annotation.Data;
 @Entity
 @Audited
 @Table(schema = "SIGATP")
-public class ControleGabinete extends TpModel implements ConvertableEntity {
+public class ControleGabinete extends TpModel implements ConvertableEntity<Long> {
 
     private static final long serialVersionUID = 5270396853989326489L;
     public static final ActiveRecord<ControleGabinete> AR = new ActiveRecord<>(ControleGabinete.class);
     private static final Logger LOGGER = LoggerFactory.getLogger(ControleGabinete.class);
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator")
+    @GeneratedValue(generator = "hibernate_sequence_generator")
     @SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "SIGATP.hibernate_sequence")
     private Long id;
 
@@ -85,6 +87,7 @@ public class ControleGabinete extends TpModel implements ConvertableEntity {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -191,8 +194,11 @@ public class ControleGabinete extends TpModel implements ConvertableEntity {
 
     public static double buscarUltimoOdometroPorVeiculo(Veiculo veiculo, ControleGabinete controleGabinete) {
         double retorno = 0;
+		Map<String, Object> parametros = new HashMap<String,Object>();
+		parametros.put("veiculo",veiculo);
+		parametros.put("id",controleGabinete.id);
         try {
-            retorno = ((ControleGabinete) ControleGabinete.AR.find("veiculo = ? and id <> ? order by id desc", veiculo, controleGabinete.id).fetch().get(0)).odometroEmKmRetorno;
+            retorno = ((ControleGabinete) ControleGabinete.AR.find("veiculo = :veiculo and id <> :id order by id desc", parametros).fetch().get(0)).odometroEmKmRetorno;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

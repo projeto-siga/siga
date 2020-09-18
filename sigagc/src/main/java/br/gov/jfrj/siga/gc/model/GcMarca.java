@@ -40,7 +40,15 @@ public class GcMarca extends CpMarca implements Comparable<GcMarca> {
 
 	@ManyToOne
 	@JoinColumn(name = "ID_REF")
-	public GcInformacao inf;
+	private GcInformacao inf;
+
+	public GcInformacao getInf() {
+		return inf;
+	}
+
+	public void setInf(GcInformacao inf) {
+		this.inf = inf;
+	}
 
 	public GcMarca() {
 

@@ -29,7 +29,7 @@
 		$('#lstAbastecimentoInicial').find('option').remove();
 		$('#lstAbastecimentoFinal').find('option').remove();
 		var idVeiculo = $('#lstVeiculos').val();
-		var lstAbastecimento = "${linkTo[RelatorioConsumoMedioController].carregarComboAbastecimentoInicial['"+idVeiculo+"']}";
+		var lstAbastecimento = "${linkTo[RelatorioConsumoMedioController].carregarComboAbastecimentoInicial()('"+idVeiculo+"')}";
 		$.get(
 				lstAbastecimento, 
 		        function(html) {

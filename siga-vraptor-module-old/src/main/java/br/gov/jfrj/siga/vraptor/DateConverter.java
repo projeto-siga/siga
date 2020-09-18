@@ -3,11 +3,11 @@ package br.gov.jfrj.siga.vraptor;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.ResourceBundle;
+
+import javax.enterprise.context.ApplicationScoped;
 
 import br.com.caelum.vraptor.Convert;
-import br.com.caelum.vraptor.Converter;
-import br.com.caelum.vraptor.ioc.ApplicationScoped;
+import br.com.caelum.vraptor.converter.Converter;
 
 @Convert(Date.class)
 @ApplicationScoped
@@ -15,8 +15,7 @@ public class DateConverter implements Converter<Date> {
 
 	public final static SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
-	public Date convert(String value, Class<? extends Date> type,
-			ResourceBundle bundle) {
+	public Date convert(String value, Class<? extends Date> type) {
 		String s = stringOrNull(value);
 		if (s == null) {
 			return null;

@@ -5,8 +5,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import net.sf.oval.configuration.annotation.Constraint;
-import br.gov.jfrj.siga.tp.validation.UpperCaseConstraintValidator;
 
 /**
  * Tem por finalidade converter para maiusculas os atributos que estiverem 
@@ -18,7 +16,7 @@ import br.gov.jfrj.siga.tp.validation.UpperCaseConstraintValidator;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-@Constraint(checkWith=UpperCaseConstraintValidator.class)
 public @interface UpperCase
 {
+
 }

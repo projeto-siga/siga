@@ -26,10 +26,18 @@ public class GcAcesso extends Objeto {
 	
 	@Id
 	@Column(name = "ID_ACESSO")
-	public long id;
+	private long id;
 
 	@Column(name = "NOME_ACESSO", nullable = false)
-	public String nome;
+	private String nome;
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
 
 	public GcAcesso() {
 		super();

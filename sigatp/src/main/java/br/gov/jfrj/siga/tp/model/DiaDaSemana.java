@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import br.gov.jfrj.siga.tp.util.Situacao;
+
 public enum DiaDaSemana {
 	
 	DOMINGO	(0, "Domingo", "Domingo"),
@@ -57,6 +59,10 @@ public enum DiaDaSemana {
 	public static DiaDaSemana getDiaDaSemana(Calendar data) throws ParseException {
 		int dia = data.get(Calendar.DAY_OF_WEEK);
 		return DiaDaSemana.values()[dia-1];
+	}
+	
+	public DiaDaSemana[] getValues() {
+		return DiaDaSemana.values();
 	}
 	
 }

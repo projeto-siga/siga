@@ -20,7 +20,7 @@
 					<tbody>
 						<c:forEach var="i" items="${listaMaisRecentes}">
 						<tr class="gt-td">
-							<td width="45%"><h4 class="gt-categories-link"><a href="${linkTo[AppController].exibir[i.siglaCompacta]}">${i.arq.titulo}</h4></a></td>
+							<td width="45%"><h4 class="gt-categories-link"><a href="${linkTo[AppController].exibir(i.siglaCompacta)}">${i.arq.titulo}</h4></a></td>
 							<td width="20%">${i.dtElaboracaoFim}</td>
 							<td width="20%">${i.autor.primeiroNomeEIniciais}</td>
 							<td width="15%">${i.lotacao.sigla}</td>
@@ -50,7 +50,7 @@
 					<tbody>
 						<c:forEach var="i" items="${listaMaisVisitados}">
 						<tr class="gt-td">
-							<td width="45%"><h4 class="gt-categories-link"><a href="${linkTo[AppController].exibir[i.siglaCompacta]}">${i.arq.titulo}</h4></a></td>
+							<td width="45%"><h4 class="gt-categories-link"><a href="${linkTo[AppController].exibir(i.siglaCompacta)}">${i.arq.titulo}</h4></a></td>
 							<td width="20%">${i.dtElaboracaoFim}</td>
 							<td width="20%">${i.autor.primeiroNomeEIniciais}</td>
 							<td width="15%">${i.lotacao.sigla}</td>

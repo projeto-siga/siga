@@ -5,11 +5,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.NoResultException;
@@ -27,15 +28,15 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 @Entity
 @Audited
 @Table(schema = "SIGATP")
-public class EscalaDeTrabalho extends TpModel implements ConvertableEntity  {
+public class EscalaDeTrabalho extends TpModel implements ConvertableEntity<Long>  {
 
 	private static final long serialVersionUID = 1L;
 	public static final ActiveRecord<EscalaDeTrabalho> AR = new ActiveRecord<>(EscalaDeTrabalho.class);
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator")
+	@GeneratedValue(generator = "hibernate_sequence_generator")
 	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "SIGATP.hibernate_sequence")
-	private long id;
+	private Long id;
 
 	@NotNull
 	private Calendar dataVigenciaInicio;
@@ -51,7 +52,7 @@ public class EscalaDeTrabalho extends TpModel implements ConvertableEntity  {
 	private List<DiaDeTrabalho> diasDeTrabalho;
 
 	public EscalaDeTrabalho() {
-		this.id = 0;
+		this.id = 0L;
 		this.diasDeTrabalho = new ArrayList<DiaDeTrabalho>();
 	}
 
@@ -60,7 +61,8 @@ public class EscalaDeTrabalho extends TpModel implements ConvertableEntity  {
 		return id;
 	}
 
-	public void setId(long id) {
+	@Override
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -105,7 +107,9 @@ public class EscalaDeTrabalho extends TpModel implements ConvertableEntity  {
 	}
 
 	public static List<EscalaDeTrabalho> buscarTodosPorCondutor(Condutor condutor) {
-		return EscalaDeTrabalho.AR.find("condutor = ? ORDER BY dataVigenciaInicio DESC, dataVigenciaFim DESC", condutor).fetch();		
+		HashMap<String, Object> parametros = new HashMap<String,Object>();
+		parametros.put("condutor", condutor);
+		return EscalaDeTrabalho.AR.find("condutor = :condutor ORDER BY dataVigenciaInicio DESC, dataVigenciaFim DESC", parametros).fetch();		
 	}
 
 	public static List<EscalaDeTrabalho> buscarTodasVigentes() {

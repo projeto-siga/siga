@@ -1,16 +1,18 @@
 package br.gov.jfrj.siga.tp.vraptor;
 
 import java.util.List;
+import java.util.Locale;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
-import br.com.caelum.vraptor.core.Localization;
+import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdmin;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdminFrota;
@@ -21,12 +23,20 @@ import br.gov.jfrj.siga.tp.model.Veiculo;
 import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-@Resource
+@Controller
 @Path("/app/relatorioDiario/")
 public class RelatorioDiarioController extends TpController {
 	
-	public RelatorioDiarioController(HttpServletRequest request, Result result, Localization localization, 
-			Validator validator, SigaObjects so, EntityManager em) {
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public RelatorioDiarioController() {
+		super();
+	}
+	
+	@Inject
+	public RelatorioDiarioController(HttpServletRequest request, Result result, Locale localization, 
+			 Validator validator, SigaObjects so,  EntityManager em) {
 		super(request, result, TpDao.getInstance(), validator, so, em);
 	}
 

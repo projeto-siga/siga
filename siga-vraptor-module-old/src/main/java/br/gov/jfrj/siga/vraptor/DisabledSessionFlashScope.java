@@ -2,11 +2,11 @@ package br.gov.jfrj.siga.vraptor;
 
 import javax.servlet.http.HttpSession;
 
-import br.com.caelum.vraptor.ioc.Component;
-import br.com.caelum.vraptor.resource.ResourceMethod;
+import br.com.caelum.vraptor.Intercepts;
+import br.com.caelum.vraptor.controller.ControllerMethod;
 import br.com.caelum.vraptor.view.SessionFlashScope;
 
-@Component
+@Intercepts
 public class DisabledSessionFlashScope extends SessionFlashScope {
 
 	public DisabledSessionFlashScope(HttpSession session) {
@@ -14,12 +14,12 @@ public class DisabledSessionFlashScope extends SessionFlashScope {
 	}
 
 	@Override
-	public Object[] consumeParameters(ResourceMethod method) {
+	public Object[] consumeParameters(ControllerMethod method) {
 		return null;
 	}
 
 	@Override
-	public void includeParameters(ResourceMethod method, Object[] args) {
+	public void includeParameters(ControllerMethod method, Object[] args) {
 		return;
 	}
 

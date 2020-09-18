@@ -4,22 +4,25 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.ObjectWriter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.validator.I18nMessage;
+import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -48,7 +51,7 @@ import br.gov.jfrj.siga.tp.util.PerguntaSimNao;
 import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-@Resource
+@Controller
 @Path("/app/missao")
 public class MissaoController extends TpController {
 
@@ -71,12 +74,20 @@ public class MissaoController extends TpController {
 	private static final String PROGRAMAR_RAPIDO =  "programarRapido";
 	private static final String MISSOESPORCONDUTOREESCALA_STR = "missoesPorCondutoreEscala";
 
+	@Inject
 	private AutorizacaoGI autorizacaoGI;
 	private RequisicaoController requisicaoController;
 	
-	public MissaoController(HttpServletRequest request, Result result, Validator validator, SigaObjects so, EntityManager em, AutorizacaoGI autorizacaoGI, RequisicaoController requisicaoController){
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public MissaoController() {
+		super();
+	}
+	
+	@Inject
+	public MissaoController(HttpServletRequest request, Result result,  Validator validator, SigaObjects so,  EntityManager em, RequisicaoController requisicaoController){
 		super(request, result, TpDao.getInstance(), validator, so, em);
-		this.autorizacaoGI = autorizacaoGI;
 		this.requisicaoController = requisicaoController;
 	}
 
@@ -86,9 +97,14 @@ public class MissaoController extends TpController {
 	@RoleAdminMissaoComplexo
 	@Path("/listar")
 	public void listar() throws Exception {
-		Object[] parametros = { getTitular().getOrgaoUsuario(), EstadoMissao.PROGRAMADA, EstadoMissao.INICIADA, EstadoMissao.FINALIZADA, EstadoMissao.CANCELADA };
+		HashMap<String, Object> parametros = new HashMap<String,Object>();
+		parametros.put("cpOrgaoUsuario", getTitular().getOrgaoUsuario());
+		parametros.put("estado1", EstadoMissao.PROGRAMADA);
+		parametros.put("estado2", EstadoMissao.INICIADA);	
+		parametros.put("estado3", EstadoMissao.FINALIZADA);
+		parametros.put("estado4", EstadoMissao.CANCELADA);		
 		StringBuilder criterio = new StringBuilder();
-		criterio.append("cpOrgaoUsuario = ? and estadoMissao in (?,?,?,?)");
+		criterio.append("cpOrgaoUsuario = :cpOrgaoUsuario and estadoMissao in (:estado1,:estado2,:estado3,:estado4)");
 		List<Missao> missoes = carregarMissoesUltimosDiasInformadosPorEstados(criterio, parametros);
 		EstadoMissao estadoMissao = EstadoMissao.PROGRAMADA;
 		EstadoMissao estMis = EstadoMissao.CANCELADA;
@@ -107,53 +123,30 @@ public class MissaoController extends TpController {
 		validator.onErrorUse(Results.logic()).forwardTo(MissaoController.class).listarFiltrado(estado);
 	}
 	
-	private List<Missao> carregarMissoesUltimosDiasInformadosPorEstados(StringBuilder criterio, Object[] parametrosBuscar) throws Exception {
+	private List<Missao> carregarMissoesUltimosDiasInformadosPorEstados(StringBuilder criterio, HashMap<String, Object> parametrosBuscar) throws Exception {
         StringBuilder criterioBusca = new StringBuilder();
 		int totalDias = Integer.parseInt(Parametro.buscarValorEmVigor("total.dias.pesquisa", getTitular(), autorizacaoGI.getComplexoPadrao()));
-		criterioBusca.append("((dataHoraRetorno is null and dataHoraSaida >= ?) or (dataHoraRetorno >= ?)) and cpOrgaoUsuario = ? ");
+		criterioBusca.append("((dataHoraRetorno is null and dataHoraSaida >= :ultimosdias) or (dataHoraRetorno >= :ultimosdias)) and cpOrgaoUsuario = :cpOrgaoUsuario ");
         criterioBusca.append(" and ").append(criterio);
         Calendar ultimosdias = Calendar.getInstance();
         ultimosdias.add(Calendar.DATE, -totalDias);
-        Object[] parametros = { ultimosdias, ultimosdias, getTitular().getOrgaoUsuario() };
-        
-        Object[] parametrosParaBuscar = new Object[(parametros.length + parametrosBuscar.length)];
-        
-        for (int i = 0; i < parametros.length; i++) {
-        	parametrosParaBuscar[i] = parametros[i];       				
-		}
-        for (int i = 0; i < parametrosBuscar.length; i++) {
-        	parametrosParaBuscar[parametros.length + i] = parametrosBuscar[i];       				
-		}        
-        return recuperarMissoes(criterioBusca, parametrosParaBuscar);
+        parametrosBuscar.put("ultimosdias",ultimosdias);
+    
+        return recuperarMissoes(criterioBusca, parametrosBuscar);
     }	
 	
-	private List<Missao> recuperarMissoes(StringBuilder criterioBusca, Object[] parametros) throws Exception {
-		Object[] parametrosParaBuscar = new Object[parametros.length + 1];
-		parametrosParaBuscar = parametros;
+	private List<Missao> recuperarMissoes(StringBuilder criterioBusca, HashMap<String, Object> parametrosParaBuscar) throws Exception {
 
 		if (!autorizacaoGI.ehAdministrador() && !autorizacaoGI.ehAdministradorMissao() && !autorizacaoGI.ehAdministradorMissaoPorComplexo()) {
 			Condutor condutorLogado = Condutor.recuperarLogado(getTitular(), getTitular().getOrgaoUsuario());
 			if (condutorLogado != null) {
-				criterioBusca.append(" and condutor = ?");
-				Object[] parametrosFiltrado = new Object[parametros.length + 1];
-				for (int i = 0; i < parametros.length; i++) {
-					parametrosFiltrado[i] = parametros[i];
-				}
-				parametrosFiltrado[parametros.length] = condutorLogado;
-				parametrosParaBuscar = parametrosFiltrado;
+				criterioBusca.append(" and condutor = :condutor");
+				parametrosParaBuscar.put("condutor", condutorLogado);
 			}
 
 		} else if (autorizacaoGI.ehAdministradorMissaoPorComplexo()) {
-			criterioBusca.append(" and cpComplexo = ?");
- 			Object[] parametrosFiltrado = new Object[parametros.length + 1];
-			for (int i = 0; i < parametros.length; i++) {
-				parametrosFiltrado[i] = parametros[i];
-			}
-			if (autorizacaoGI.ehAdministradorMissaoPorComplexo()) {
-				parametrosFiltrado[parametros.length] = autorizacaoGI.getComplexoAdministrador();
-			}
-
-			parametrosParaBuscar = parametrosFiltrado;
+			criterioBusca.append(" and cpComplexo = :cpComplexo");
+			parametrosParaBuscar.put("cpComplexo", autorizacaoGI.getComplexoAdministrador());
 		}
 
 		return Missao.AR.find(criterioBusca.toString() + " order by dataHoraSaida desc", parametrosParaBuscar).fetch();
@@ -215,9 +208,11 @@ public class MissaoController extends TpController {
 		EstadoMissao estadoMissao = seEstadoNuloUsarDefault(estado);
 		EstadoMissao estMis = EstadoMissao.CANCELADA;
 		
-		Object[] parametros = {getTitular().getOrgaoUsuario(), estadoMissao};
+		HashMap<String, Object> parametros = new HashMap<String,Object>();
+		parametros.put("cpOrgaoUsuario", getTitular().getOrgaoUsuario());
+		parametros.put("estadoMissao", estadoMissao);
 		StringBuilder criterio = new StringBuilder();
-		criterio.append("cpOrgaoUsuario = ? and estadoMissao = ?");
+		criterio.append("cpOrgaoUsuario = :cpOrgaoUsuario and estadoMissao = :estadoMissao");
 		List<Missao> missoes = carregarMissoesUltimosDiasInformadosPorEstados(criterio, parametros);
 		MenuMontador.instance(result).recuperarMenuMissoes(estado);
 		montarComboCondutor();
@@ -331,9 +326,11 @@ public class MissaoController extends TpController {
 	}
 
 	private void deletarAndamentos(List<RequisicaoTransporte> requisicoesTransporte, Missao missao) throws Exception {
-
+		HashMap<String, Object> parametros = new HashMap<String,Object>();
 		for (RequisicaoTransporte requisicaoTransporte : requisicoesTransporte) {
-			List<Andamento> andamentos = Andamento.AR.find("requisicaoTransporte.id = ? order by id desc", requisicaoTransporte.getId()).fetch();
+			parametros.put("idRequisicaoTransporte", requisicaoTransporte.getId());
+			List<Andamento> andamentos = Andamento.AR.find("requisicaoTransporte.id = :idRequisicaoTransporte order by id desc", parametros).fetch();
+			parametros.clear();
 			for (Andamento andamento : andamentos) {
 				if (missaoEmAndamento(missao, andamento) && andamento.getEstadoRequisicao().equals(EstadoRequisicao.PROGRAMADA)) {
 					andamento.delete();
@@ -343,9 +340,11 @@ public class MissaoController extends TpController {
 	}
 
 	private void atualizarAndamentos(Missao missao) throws Exception {
+		HashMap<String, Object> parametros = new HashMap<String,Object>();
 		for (RequisicaoTransporte requisicaoTransporte : missao.getRequisicoesTransporte()) {
-			List<Andamento> andamentos = Andamento.AR.find("requisicaoTransporte.id = ? order by id desc", requisicaoTransporte.getId()).fetch();
-
+			parametros.put("idRequisicaoTransporte", requisicaoTransporte.getId());
+			List<Andamento> andamentos = Andamento.AR.find("requisicaoTransporte.id = :idRequisicaoTransporte order by id desc", parametros).fetch();
+			parametros.clear();
 			for (Andamento andamento : andamentos)
 				if (!missaoEmAndamento(missao, andamento)) {
 					gravaAndamento(getCadastrante(), "PROGRAMADA", missao, EstadoRequisicao.PROGRAMADA, requisicaoTransporte);
@@ -845,10 +844,12 @@ public class MissaoController extends TpController {
 		Calendar ultimos7dias = Calendar.getInstance();
 		ultimos7dias.add(Calendar.DATE, -7);
 		CpOrgaoUsuario orgaoParametro = getTitular().getOrgaoUsuario();
-		Object[] parametros = { ultimos7dias, ultimos7dias, orgaoParametro };
 		EstadoRequisicao[] estados = { EstadoRequisicao.AUTORIZADA, EstadoRequisicao.PROGRAMADA, EstadoRequisicao.EMATENDIMENTO, EstadoRequisicao.NAOATENDIDA, EstadoRequisicao.ATENDIDAPARCIALMENTE };
 		StringBuilder criterioBusca = new StringBuilder();
-		criterioBusca.append("((dataHoraRetornoPrevisto is not null and dataHoraRetornoPrevisto >= ?) or (dataHoraRetornoPrevisto is null and dataHoraSaidaPrevista >= ?)) and cpOrgaoUsuario = ?");
+        HashMap<String, Object> parametros = new HashMap<String, Object>();
+        parametros.put("ultimos7dias",ultimos7dias);
+        parametros.put("cpOrgaoUsuario",orgaoParametro);
+		criterioBusca.append("((dataHoraRetornoPrevisto is not null and dataHoraRetornoPrevisto >= :ultimos7dias) or (dataHoraRetornoPrevisto is null and dataHoraSaidaPrevista >= :ultimos7dias)) and cpOrgaoUsuario = :cpOrgaoUsuario");
 		requisicaoController.recuperarRequisicoes(criterioBusca, parametros, estados);
 	}
 

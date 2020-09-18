@@ -2,7 +2,6 @@ package br.gov.jfrj.siga.tp.model;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -29,17 +28,41 @@ public class LotacaoAtdRequisicao/* extends GenericModel*/ {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator") @SequenceGenerator(name = "hibernate_sequence_generator", sequenceName="SIGATP.hibernate_sequence") 
-	public Long id;
+	@GeneratedValue(generator = "hibernate_sequence_generator") @SequenceGenerator(name = "hibernate_sequence_generator", sequenceName="SIGATP.hibernate_sequence") 
+	private Long id;
 	
  	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	@ManyToOne
 	@JoinColumn(name = "ID_ORGAO_USU")
-	public CpOrgaoUsuario cpOrgaoUsuario;
+ 	private CpOrgaoUsuario cpOrgaoUsuario;
 	
  	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	@ManyToOne
 	@NotNull
 	@JoinColumn(name = "ID_LOTA_SOLICITANTE")
-	public DpLotacao dpLotacao;
+ 	private DpLotacao dpLotacao;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public CpOrgaoUsuario getCpOrgaoUsuario() {
+		return cpOrgaoUsuario;
+	}
+
+	public void setCpOrgaoUsuario(CpOrgaoUsuario cpOrgaoUsuario) {
+		this.cpOrgaoUsuario = cpOrgaoUsuario;
+	}
+
+	public DpLotacao getDpLotacao() {
+		return dpLotacao;
+	}
+
+	public void setDpLotacao(DpLotacao dpLotacao) {
+		this.dpLotacao = dpLotacao;
+	}
 }

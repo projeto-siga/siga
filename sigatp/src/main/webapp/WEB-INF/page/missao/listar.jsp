@@ -63,24 +63,24 @@
 									<c:forEach items="${missoes}" var="missao">
 									   	<tr>
 						 		    		<td>
-						 		    			<c:if test="${!'FINALIZADA'.equals(missao.estadoMissao.descricao) && !'CANCELADA'.equals(missao.estadoMissao.descricao)}">
-						 		    				<sigatp:formatarColuna operacao="editar" href="${linkTo[MissaoController].editar[missao.id]}" titulo="miss&atilde;o" />
+						 		    			<c:if test="${!'FINALIZADA' == missao.estadoMissao.descricao && !'CANCELADA' == missao.estadoMissao.descricao}">
+						 		    				<sigatp:formatarColuna operacao="editar" href="${linkTo[MissaoController].editar(missao.id)}" titulo="miss&atilde;o" />
 						 		    			</c:if>
 						 		    		</td>
 	
 								    		<td>
-								    			<c:if test="${'PROGRAMADA'.equals(missao.estadoMissao.descricao)}">
-											    	<sigatp:formatarColuna operacao="cancelar" href="${linkTo[MissaoController].cancelar[missao.id]}" titulo="miss&atilde;o"/>
+								    			<c:if test="${'PROGRAMADA' == missao.estadoMissao.descricao}">
+											    	<sigatp:formatarColuna operacao="cancelar" href="${linkTo[MissaoController].cancelar(missao.id)}" titulo="miss&atilde;o"/>
 								    			</c:if>
 								    		</td>
 	
 								    	    <td>
 								    	    	<c:choose>
 								    	    		<c:when test="${exibirMenuAdministrar || exibirMenuAdministrarMissao || exibirMenuAdministrarMissaoComplexo || exibirMenuAgente}">
-								    	    			<nobr><a href="${linkTo[MissaoController].buscarPelaSequence[false][missao.sequence]}">${missao.sequence}</a> <a href="#" onclick="javascript:window.open('${linkTo[MissaoController].buscarPelaSequence[true][missao.sequence]}');"><img src="/sigatp/public/images/linknovajanelaicon.png" alt="Abrir em uma nova janela" title="Abrir em uma nova janela"></a></nobr>
+								    	    			<nobr><a href="${linkTo[MissaoController].buscarPelaSequence(false,missao.sequence)}">${missao.sequence}</a> <a href="#" onclick="javascript:window.open('${linkTo[MissaoController].buscarPelaSequence(true,missao.sequence)}');"><img src="/sigatp/public/images/linknovajanelaicon.png" alt="Abrir em uma nova janela" title="Abrir em uma nova janela"></a></nobr>
 								    	    		</c:when>
 								    	    		<c:otherwise>
-								    	    			<nobr>${missao.sequence}<a href="#" onclick="javascript:window.open('${linkTo[MissaoController].buscarPelaSequence[true][missao.sequence]}');"><img src="/sigatp/public/images/linknovajanelaicon.png" alt="Abrir em uma nova janela" title="Abrir em uma nova janela"></a></nobr>
+								    	    			<nobr>${missao.sequence}<a href="#" onclick="javascript:window.open('${linkTo[MissaoController].buscarPelaSequence(true,missao.sequence)}');"><img src="/sigatp/public/images/linknovajanelaicon.png" alt="Abrir em uma nova janela" title="Abrir em uma nova janela"></a></nobr>
 								    	    		</c:otherwise>
 								    	    	</c:choose>
 							    	    	</td>
@@ -103,7 +103,7 @@
 								    								<td>
 							    										<tptags:link texto="${requisicaoTransporte.descricaoCompleta}"
 							    											 parteTextoLink="${requisicaoTransporte.buscarSequence()}"
-							    											 comando="${linkTo[RequisicaoController].buscarPelaSequence[true][requisicaoTransporte.buscarSequence()]}">
+							    											 comando="${linkTo[RequisicaoController].buscarPelaSequence(true,requisicaoTransporte.buscarSequence())}">
 							    										</tptags:link>
 							    									</td>
 							    									</tr>
@@ -119,7 +119,7 @@
 								    		</td>
 	
 								    		<td>
-								    			<sigatp:formatarColuna operacao="imprimir" href="#" onclick="javascript:window.open('${linkTo[RelatorioController].listarDadosDaMissao[missao.id]}');" titulo="miss&atilde;o" />
+								    			<sigatp:formatarColuna operacao="imprimir" href="#" onclick="javascript:window.open('${linkTo[RelatorioController].listarDadosDaMissao(missao.id)}');" titulo="miss&atilde;o" />
 									    	</td>
 										</tr>
 									</c:forEach>

@@ -33,10 +33,10 @@
 									<c:forEach items="${abastecimentos}" var="abastecimento">
 										<tr>
 											<td>
-												<sigatp:formatarColuna operacao="editar" href="${linkTo[GabineteController].editar[abastecimento.id]}" titulo="abastecimento" />
+												<sigatp:formatarColuna operacao="editar" href="${linkTo[GabineteController].editar(abastecimento.id)}" titulo="abastecimento" />
 											</td>
 											<td>
-												<sigatp:formatarColuna operacao="excluir" href="${linkTo[GabineteController].excluir[abastecimento.id]}" titulo="abastecimento"
+												<sigatp:formatarColuna operacao="excluir" href="${linkTo[GabineteController].excluir(abastecimento.id)}" titulo="abastecimento"
 												class="lnkMotivoLog" />
 											</td>
 											<td><fmt:formatDate pattern="dd/MM/yyyy HH:mm" value="${abastecimento.dataHora.time}" /></td>

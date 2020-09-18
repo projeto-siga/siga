@@ -201,14 +201,9 @@ public class CpArquivo implements Serializable {
 	private void gerarCaminho() {
 		String extensao;
 		
-		if(TipoConteudo.ZIP.getMimeType().equals(getConteudoTpArq()))
-			extensao = TipoConteudo.ZIP.getExtensao();
-		else if(TipoConteudo.PDF.getMimeType().equals(getConteudoTpArq()))
-			extensao = TipoConteudo.PDF.getExtensao();
-		else if(TipoConteudo.TXT.getMimeType().equals(getConteudoTpArq()))
-			extensao = TipoConteudo.TXT.getExtensao();
-		else if(TipoConteudo.FREEMARKER.getMimeType().equals(getConteudoTpArq()))
-			extensao = TipoConteudo.FREEMARKER.getExtensao();
+		TipoConteudo t = TipoConteudo.getByMimeType(getConteudoTpArq());
+		if(t!=null)
+			extensao = t.getExtensao();
 		else
 			extensao = TipoConteudo.ZIP.getExtensao();
 		

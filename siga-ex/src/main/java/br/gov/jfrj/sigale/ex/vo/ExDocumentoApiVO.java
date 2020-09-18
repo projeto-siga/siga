@@ -16,24 +16,19 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package br.gov.jfrj.siga.ex.vo;
+package br.gov.jfrj.sigale.ex.vo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.SortedSet;
-
-import com.google.gson.annotations.Expose;
 
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
@@ -43,50 +38,51 @@ import br.gov.jfrj.siga.ex.util.ExGraphColaboracao;
 import br.gov.jfrj.siga.ex.util.ExGraphRelacaoDocs;
 import br.gov.jfrj.siga.ex.util.ExGraphTramitacao;
 
-public class ExDocumentoSigaLeVO extends ExVO {
-	@Expose String classe;
-	@Expose List<ExMobilVO> mobs = new ArrayList<ExMobilVO>();
-	@Expose List<ExDocumentoVO> documentosPublicados = new ArrayList<ExDocumentoVO>();
-	@Expose ExDocumentoVO boletim;
-	@Expose Map<ExMobil, Set<ExMarca>> marcasPorMobil = new LinkedHashMap<ExMobil, Set<ExMarca>>();
-	@Expose String outrosMobsLabel;
-	@Expose String nomeCompleto;
-	@Expose String dtDocDDMMYY;
-	@Expose String subscritorString;
-	@Expose String originalNumero;
-	@Expose String originalData;
-	@Expose String originalOrgao;
-	@Expose String classificacaoDescricaoCompleta;
-	@Expose List<String> tags;
-	@Expose String destinatarioString;
-	@Expose String descrDocumento;
-	@Expose String nmNivelAcesso;
-	@Expose String paiSigla;
-	@Expose String tipoDocumento;
+public class ExDocumentoApiVO extends ExApiVO {
+	String classe;
+	List<ExMobilApiVO> mobs = new ArrayList<ExMobilApiVO>();
+	List<ExDocumentoApiVO> documentosPublicados = new ArrayList<ExDocumentoApiVO>();
+	ExDocumentoApiVO boletim;
+	// Map<ExMobil, Set<ExMarca>> marcasPorMobil = new LinkedHashMap<ExMobil,
+	// Set<ExMarca>>();
+	String outrosMobsLabel;
+	String nomeCompleto;
+	String dtDocDDMMYY;
+	String subscritorString;
+	String originalNumero;
+	String originalData;
+	String originalOrgao;
+	String classificacaoDescricaoCompleta;
+	List<String> tags;
+	String destinatarioString;
+	String descrDocumento;
+	String nmNivelAcesso;
+	String paiSigla;
+	String tipoDocumento;
 
-	@Expose String dtFinalizacao;
-	@Expose String nmArqMod;
-	@Expose String conteudoBlobHtmlString;
-	@Expose String sigla;
-	@Expose String fisicoOuEletronico;
-	@Expose boolean fDigital;
-	//@Expose Map<ExMovimentacao, Boolean> cossignatarios = new HashMap<ExMovimentacao, Boolean>();
-	@Expose String dadosComplementares;
-	@Expose String forma;
-	@Expose String modelo;
-	@Expose String tipoFormaDocumento;
-	@Expose String cadastranteString;
-	@Expose String lotaCadastranteString;
-	@Expose String dotTramitacao;
-	@Expose String dotRelacaoDocs;
-	@Expose String dotColaboracao;
-	@Expose boolean podeAssinar;
-	@Expose String exTipoDocumentoDescricao;
+	String dtFinalizacao;
+	String nmArqMod;
+	String conteudoBlobHtmlString;
+	String sigla;
+	String fisicoOuEletronico;
+	boolean fDigital;
+	Map<ExMovimentacao, Boolean> cossignatarios = new HashMap<ExMovimentacao, Boolean>();
+	String dadosComplementares;
+	String forma;
+	String modelo;
+	String tipoFormaDocumento;
+	String cadastranteString;
+	String lotaCadastranteString;
+	String dotTramitacao;
+	String dotRelacaoDocs;
+	String dotColaboracao;
+	boolean podeAssinar;
+	String exTipoDocumentoDescricao;
 
 	// Desabilitado temporariamente
 	// private List<Object> listaDeAcessos;
 
-	public ExDocumentoSigaLeVO(ExDocumento doc, ExMobil mob, DpPessoa cadastrante, DpPessoa titular, DpLotacao lotaTitular,
+	public ExDocumentoApiVO(ExDocumento doc, ExMobil mob, DpPessoa cadastrante, DpPessoa titular, DpLotacao lotaTitular,
 			boolean completo, boolean exibirAntigo) {
 		this.sigla = doc.getSigla();
 		this.descrDocumento = doc.getDescrDocumento();
@@ -153,10 +149,10 @@ public class ExDocumentoSigaLeVO extends ExVO {
 		}
 
 		ExCompetenciaBL comp = Ex.getInstance().getComp();
-		/*for (ExMovimentacao movCossig : doc.getMovsCosignatario())
+		for (ExMovimentacao movCossig : doc.getMovsCosignatario())
 			cossignatarios.put(movCossig, comp.podeExcluirCosignatario(titular, lotaTitular,
 					doc.getMobilGeral(), movCossig));
-*/
+
 		this.forma = doc.getExFormaDocumento() != null ? doc.getExFormaDocumento().getDescricao() : "";
 		this.modelo = doc.getExModelo() != null ? doc.getExModelo().getNmMod() : "";
 
@@ -169,7 +165,7 @@ public class ExDocumentoSigaLeVO extends ExVO {
 
 			for (ExMobil m : mobsDoc) {
 				if (mob.isGeral() || m.isGeral() || mob.getId().equals(m.getId()))
-					mobs.add(new ExMobilVO(m, cadastrante, titular, lotaTitular, completo));
+					mobs.add(new ExMobilApiVO(m, cadastrante, titular, lotaTitular, completo));
 			}
 
 			addAcoes(doc, titular, lotaTitular, exibirAntigo);
@@ -211,13 +207,13 @@ public class ExDocumentoSigaLeVO extends ExVO {
 		// if (doc.getDocumentosPublicadosNoBoletim() != null) {
 		// for (ExDocumento documentoPublicado : doc
 		// .getDocumentosPublicadosNoBoletim()) {
-		// documentosPublicados.add(new ExDocumentoVO(documentoPublicado));
+		// documentosPublicados.add(new ExDocumentoApiVO(documentoPublicado));
 		// }
 		// }
 		//
 		// ExDocumento bol = doc.getBoletimEmQueDocFoiPublicado();
 		// if (bol != null)
-		// boletim = new ExDocumentoVO(bol);
+		// boletim = new ExDocumentoApiVO(bol);
 
 		this.originalNumero = doc.getNumExtDoc();
 		this.originalData = doc.getDtDocOriginalDDMMYYYY();
@@ -263,13 +259,13 @@ public class ExDocumentoSigaLeVO extends ExVO {
 		marcasGeralPermitidas.add(CpMarcador.MARCADOR_TRANSFERIR_PARA_ARQUIVO_INTERMEDIARIO);
 		marcasGeralPermitidas.add(CpMarcador.MARCADOR_PENDENTE_DE_ANEXACAO);
 
-		for (ExMobilVO mobVO : mobs) {
+		for (ExMobilApiVO mobVO : mobs) {
 
 			// Limpa as Movimentações
-			List<ExMovimentacaoVO> movimentacoesFinais = new ArrayList<ExMovimentacaoVO>();
-			List<ExMovimentacaoVO> juntadasRevertidas = new ArrayList<ExMovimentacaoVO>();
+			List<ExMovimentacaoApiVO> movimentacoesFinais = new ArrayList<ExMovimentacaoApiVO>();
+			List<ExMovimentacaoApiVO> juntadasRevertidas = new ArrayList<ExMovimentacaoApiVO>();
 
-			for (ExMovimentacaoVO exMovVO : mobVO.getMovs()) {
+			for (ExMovimentacaoApiVO exMovVO : mobVO.getMovs()) {
 				if (!exMovVO.isCancelada() && movimentacoesPermitidas.contains(exMovVO.getIdTpMov())) {
 
 					// Desabilitado temporariamente
@@ -292,10 +288,10 @@ public class ExDocumentoSigaLeVO extends ExVO {
 			mobVO.setMovs(movimentacoesFinais);
 		}
 
-		ExMobilVO mobilGeral = null;
-		ExMobilVO mobilEspecifico = null;
+		ExMobilApiVO mobilGeral = null;
+		ExMobilApiVO mobilEspecifico = null;
 
-		for (ExMobilVO mobilVO : mobs) {
+		for (ExMobilApiVO mobilVO : mobs) {
 			if (mobilVO.isGeral)
 				mobilGeral = mobilVO;
 			else
@@ -303,27 +299,24 @@ public class ExDocumentoSigaLeVO extends ExVO {
 		}
 
 		// MarcasPorMobil
-		for (ExMobil cadaMobil : doc.getExMobilSet()) {
-			// if (!cadaMobil.isGeral())
-				marcasPorMobil.put(cadaMobil, cadaMobil.getExMarcaSet());
-		}
-
-		if (mobilEspecifico != null && mobilGeral != null) {
-			mobilEspecifico.getAcoes().addAll(mobilGeral.getAcoes());
-			mobilEspecifico.getMovs().addAll(mobilGeral.getMovs());
-			mobilEspecifico.anexosNaoAssinados
-					.addAll(mobilGeral.anexosNaoAssinados);
-			for (ExMarca m : mobilGeral.getMarcasAtivas())
-				if (marcasGeralPermitidas.contains(m.getCpMarcador()
-						.getIdMarcador()))
-					mobilEspecifico.getMarcasAtivas().add(m);
+//		for (ExMobil cadaMobil : doc.getExMobilSet()) {
+//			if (!cadaMobil.isGeral())
+//				marcasPorMobil.put(cadaMobil, cadaMobil.getExMarcaSet());
+//		}
+//
+//		if (mobilEspecifico != null && mobilGeral != null) {
+//			mobilEspecifico.getAcoes().addAll(mobilGeral.getAcoes());
+//			mobilEspecifico.getMovs().addAll(mobilGeral.getMovs());
+//			mobilEspecifico.anexosNaoAssinados.addAll(mobilGeral.anexosNaoAssinados);
+//			for (ExMarca m : mobilGeral.getMarcasAtivas())
+//				if (marcasGeralPermitidas.contains(m.getCpMarcador().getIdMarcador()))
+//					mobilEspecifico.getMarcasAtivas().add(m);
 //			for (ExMarca m : mobilGeral.getMob().getExMarcaSet())
-//				if (marcasGeralPermitidas.contains(m.getCpMarcador()
-//						.getIdMarcador()))
+//				if (marcasGeralPermitidas.contains(m.getCpMarcador().getIdMarcador()))
 //					for (ExMobil cadaMobil : marcasPorMobil.keySet())
 //						marcasPorMobil.get(cadaMobil).add(m);
-			mobs.remove(mobilGeral);
-		}
+//			mobs.remove(mobilGeral);
+//		}
 //
 //		// Edson: mostra lista de vias/volumes só se número de
 //		// vias/volumes além do geral for > que 1 ou se o móbil
@@ -339,8 +332,8 @@ public class ExDocumentoSigaLeVO extends ExVO {
 	 * @throws Exception
 	 */
 	private void addAcoes(ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular, boolean exibirAntigo) {
-		ExVO vo = this;
-		for (ExMobilVO mobvo : mobs) {
+		ExApiVO vo = this;
+		for (ExMobilApiVO mobvo : mobs) {
 			if (mobvo.isGeral)
 				vo = mobvo;
 		}
@@ -510,7 +503,7 @@ public class ExDocumentoSigaLeVO extends ExVO {
 		return dtFinalizacao;
 	}
 
-	public List<ExMobilVO> getMobs() {
+	public List<ExMobilApiVO> getMobs() {
 		return mobs;
 	}
 
@@ -567,7 +560,7 @@ public class ExDocumentoSigaLeVO extends ExVO {
 	@Override
 	public String toString() {
 		String s = getSigla() + "[" + getAcoes() + "]";
-		for (ExMobilVO m : getMobs()) {
+		for (ExMobilApiVO m : getMobs()) {
 			s += "\n" + m.toString();
 		}
 		return s;
@@ -617,30 +610,31 @@ public class ExDocumentoSigaLeVO extends ExVO {
 		return outrosMobsLabel;
 	}
 
-	public List<ExDocumentoVO> getDocumentosPublicados() {
+	public List<ExDocumentoApiVO> getDocumentosPublicados() {
 		return documentosPublicados;
 	}
 
-	public ExDocumentoVO getBoletim() {
+	public ExDocumentoApiVO getBoletim() {
 		return boletim;
 	}
 
 	// Desabilitado temporariamente
-	 public Map<ExMobil, Set<ExMarca>> getMarcasPorMobil() {
-		 return marcasPorMobil;
-	 }
-	
-	 public void setMarcasPorMobil(Map<ExMobil, Set<ExMarca>> marcasPorMobil) {
-		 this.marcasPorMobil = marcasPorMobil;
-	 }
+	// public Map<ExMobil, Set<ExMarca>> getMarcasPorMobil() {
+	// return marcasPorMobil;
+	// }
+	//
+	// public void setMarcasPorMobil(Map<ExMobil, Set<ExMarca>> marcasPorMobil)
+	// {
+	// this.marcasPorMobil = marcasPorMobil;
+	// }
 
-	/*public Map<ExMovimentacao, Boolean> getCossignatarios() {
+	public Map<ExMovimentacao, Boolean> getCossignatarios() {
 		return cossignatarios;
 	}
 
 	public void setCossignatarios(Map<ExMovimentacao, Boolean> cossignatarios) {
 		this.cossignatarios = cossignatarios;
-	}*/
+	}
 
 	public String getOriginalNumero() {
 		return originalNumero;

@@ -66,7 +66,7 @@ public class ExDocumentoApiVO extends ExApiVO {
 	String sigla;
 	String fisicoOuEletronico;
 	boolean fDigital;
-	Map<ExMovimentacao, Boolean> cossignatarios = new HashMap<ExMovimentacao, Boolean>();
+	Map<ExMovimentacaoApiVO, Boolean> cossignatarios = new HashMap<ExMovimentacaoApiVO, Boolean>();
 	String dadosComplementares;
 	String forma;
 	String modelo;
@@ -149,10 +149,11 @@ public class ExDocumentoApiVO extends ExApiVO {
 		}
 
 		ExCompetenciaBL comp = Ex.getInstance().getComp();
-		for (ExMovimentacao movCossig : doc.getMovsCosignatario())
-			cossignatarios.put(movCossig, comp.podeExcluirCosignatario(titular, lotaTitular,
-					doc.getMobilGeral(), movCossig));
-
+		for (ExMovimentacao movCossig : doc.getMovsCosignatario()) {
+			ExMobilApiVO mobilApiVO = new ExMobilApiVO(doc.getMobilGeral(), titular, titular, lotaTitular, exibirAntigo);
+			ExMovimentacaoApiVO movApiVO =  new ExMovimentacaoApiVO(mobilApiVO, movCossig, cadastrante, titular, lotaTitular);
+			cossignatarios.put(movApiVO, comp.podeExcluirCosignatario(titular, lotaTitular,	doc.getMobilGeral(), movCossig));
+		}
 		this.forma = doc.getExFormaDocumento() != null ? doc.getExFormaDocumento().getDescricao() : "";
 		this.modelo = doc.getExModelo() != null ? doc.getExModelo().getNmMod() : "";
 
@@ -628,11 +629,11 @@ public class ExDocumentoApiVO extends ExApiVO {
 	// this.marcasPorMobil = marcasPorMobil;
 	// }
 
-	public Map<ExMovimentacao, Boolean> getCossignatarios() {
+	public Map<ExMovimentacaoApiVO, Boolean> getCossignatarios() {
 		return cossignatarios;
 	}
 
-	public void setCossignatarios(Map<ExMovimentacao, Boolean> cossignatarios) {
+	public void setCossignatarios(Map<ExMovimentacaoApiVO, Boolean> cossignatarios) {
 		this.cossignatarios = cossignatarios;
 	}
 

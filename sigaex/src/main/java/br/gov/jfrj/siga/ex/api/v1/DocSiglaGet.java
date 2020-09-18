@@ -28,10 +28,10 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocSiglaGet;
 import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.RequestInfo;
-import br.gov.jfrj.siga.ex.vo.ExDocumentoSigaLeVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
+import br.gov.jfrj.sigale.ex.vo.ExDocumentoApiVO;
 
 public class DocSiglaGet implements IDocSiglaGet {
 
@@ -76,12 +76,11 @@ public class DocSiglaGet implements IDocSiglaGet {
 				}
 			}
 
-			final ExDocumentoSigaLeVO docVO = new ExDocumentoSigaLeVO(doc, mob, cadastrante, titular, lotaTitular, true, false);
+			final ExDocumentoApiVO docVO = new ExDocumentoApiVO(doc, mob, cadastrante, titular, lotaTitular, true, false);
 //TODO: Resolver o problema declares multiple JSON fields named serialVersionUID
 			//Usado o Expose temporariamente
 			Gson gson = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY)
 					.excludeFieldsWithModifiers(Modifier.TRANSIENT)
-					.excludeFieldsWithoutExposeAnnotation()
 					.create();
 			String json = gson.toJson(docVO);
 

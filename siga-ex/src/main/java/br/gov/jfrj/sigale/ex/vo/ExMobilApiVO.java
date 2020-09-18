@@ -39,8 +39,6 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExParte;
 
 public class ExMobilApiVO extends ExApiVO {
-	static Logger log = Logger.getLogger(ExMobilApiVO.class.getCanonicalName());
-
 	String sigla;
 	boolean isGeral;
 	List<ExMobilApiVO> apensos = new ArrayList<ExMobilApiVO>();
@@ -133,8 +131,6 @@ public class ExMobilApiVO extends ExApiVO {
 				continue;
 			apensos.add(new ExMobilApiVO(m, cadastrante, titular, lotaTitular, false));
 		}
-		log.debug(mob.getExDocumento().getCodigoString() + ": aExibir - mobil " + mob.getNumSequencia()
-				+ " - adicao apensos: " + (System.currentTimeMillis() - tempoIni));
 
 		tempoIni = System.currentTimeMillis();
 		for (ExDocumento d : mob.getExDocumentoFilhoSet()) {
@@ -150,13 +146,10 @@ public class ExMobilApiVO extends ExApiVO {
 			expedientesFilhosNaoJuntados
 					.add(new ExDocumentoApiVO(doc, null, cadastrante, titular, lotaTitular, false, false));
 
-		log.debug(mob.getExDocumento().getCodigoString() + ": aExibir - mobil " + mob.getNumSequencia()
-				+ " - adicao filhos: " + (System.currentTimeMillis() - tempoIni));
+
 
 		tempoIni = System.currentTimeMillis();
 		addAcoes(mob, titular, lotaTitular);
-		log.debug(mob.getExDocumento().getCodigoString() + ": aExibir - mobil " + mob.getNumSequencia()
-				+ " - adicao acoes: " + (System.currentTimeMillis() - tempoIni));
 
 		tempoIni = System.currentTimeMillis();
 
@@ -307,8 +300,6 @@ public class ExMobilApiVO extends ExApiVO {
 			span--;
 		}
 
-		log.debug(mob.getExDocumento().getCodigoString() + ": aExibir - mobil " + mob.getNumSequencia()
-				+ " - adicao movs: " + (System.currentTimeMillis() - tempoIni));
 
 	}
 

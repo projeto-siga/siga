@@ -79,5 +79,9 @@ public enum TipoDePassageiro {
 
 		return retorno.toArray(new String[retorno.size()]);
 	}
+	
+	public TipoDePassageiro[] getValues() {
+		return TipoDePassageiro.values();
+	}
 
 }

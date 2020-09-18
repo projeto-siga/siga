@@ -112,6 +112,7 @@
 		<url-pattern>/webdav/*</url-pattern>
 		<url-pattern>/servicos/*</url-pattern>
 		<url-pattern>/apis/*</url-pattern>
+		<url-pattern>/api/*</url-pattern>
 	</filter-mapping>
 
 	<filter-mapping>

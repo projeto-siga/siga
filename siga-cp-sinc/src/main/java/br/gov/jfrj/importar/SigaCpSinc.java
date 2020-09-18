@@ -84,6 +84,8 @@ public class SigaCpSinc {
 	private String servidor = "";
 
 	private String url = "";
+	
+	private int statusErro = 0;
 
 	private static String destinatariosExtras = "";
 	private static Level logLevel = Level.WARNING;
@@ -191,7 +193,7 @@ public class SigaCpSinc {
 			OperadorComHistorico o = new OperadorComHistorico() {
 				public Sincronizavel gravar(Sincronizavel s) {
 					Sincronizavel o = CpDao.getInstance().gravar(s);
-					CpDao.getInstance().descarregar();
+					CpDao.getInstance().em().flush();
 					return o;
 				}
 			};
@@ -234,6 +236,9 @@ public class SigaCpSinc {
 				log("");
 				log("");
 				CpDao.getInstance().em().getTransaction().rollback();
+				log("Total de alterações: " + list.size());
+				statusErro = 1;
+				return;
 			} else if (maxSinc > 0 && list.size() > maxSinc) {
 				log("");
 				log("");
@@ -246,16 +251,21 @@ public class SigaCpSinc {
 				log("");
 
 				CpDao.getInstance().em().getTransaction().rollback();
+				log("Total de alterações: " + list.size());
+				statusErro = 1;
+				return;
 			} else {
 				log("Transação confirmada");
 			}
 		} catch (Exception e) {
 			CpDao.getInstance().em().getTransaction().rollback();
 			log("Transação abortada por erro: " + e.getMessage());
-			throw new Exception("Erro na gravação", e);
+			statusErro = 1;
+			return;
 		}
 
-		CpDao.getInstance().descarregar();
+		CpDao.getInstance().em().getTransaction().commit();
+		statusErro = 0;
 		log("Total de alterações: " + list.size());
 		// ((GenericoHibernateDao) dao).getSessao().flush();
 	}
@@ -521,7 +531,7 @@ public class SigaCpSinc {
 
 		log(" ---- Fim do Processamento --- ");
 		logEnd();
-		CacheManager.getInstance().shutdown();
+		System.exit(statusErro);
 	}
 
 	private void verificarOrigemDeDados() throws AplicacaoException {
@@ -1254,6 +1264,7 @@ public class SigaCpSinc {
 		}
 
 		logHandler.setDestinatariosEmail(sDest.split(","));
+		statusErro = logHandler.close(logger);
 
 	}
 

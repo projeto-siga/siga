@@ -44,6 +44,7 @@ public class ExMobilVO extends ExVO {
 	Logger log = Logger.getLogger(ExMobilVO.class.getCanonicalName());
 	ExMobil mob;
 	String sigla;
+	boolean isGeral;
 	List<ExMobilVO> apensos = new ArrayList<ExMobilVO>();
 	// List<ExDocumentoVO> filhos = new ArrayList<ExDocumentoVO>();
 	List<ExDocumentoVO> expedientesFilhosNaoCancelados = new ArrayList<ExDocumentoVO>();
@@ -99,6 +100,7 @@ public class ExMobilVO extends ExVO {
 			boolean completo, Long tpMov, boolean movAssinada) {
 		this.mob = mob;
 		this.sigla = mob.getSigla();
+		this.isGeral = mob.isGeral();
 
 		if (!completo || mob.isEliminado())
 			return;

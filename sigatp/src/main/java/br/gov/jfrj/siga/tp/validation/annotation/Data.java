@@ -25,4 +25,6 @@ public @interface Data {
 	int intervalo() default 1;
 	
 	String descricaoCampo();
+	
+	boolean nullable() default true;
 }

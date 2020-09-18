@@ -26,7 +26,7 @@ public class DocumentoSiglaArquivoGet implements IDocumentoSiglaArquivoGet {
 
 	@Override
 	public void run(DocumentoSiglaArquivoGetRequest req, DocumentoSiglaArquivoGetResponse resp) throws Exception {
-		try (ApiContext ctx = new ApiContext(false)) {
+		try {
 			String usuario = ContextoPersistencia.getUserPrincipal();
 
 			if (usuario == null)
@@ -53,6 +53,9 @@ public class DocumentoSiglaArquivoGet implements IDocumentoSiglaArquivoGet {
 			final String contextpath = request.getContextPath();
 
 			iniciarGeracaoDePdf(req, resp, usuario, filename, contextpath, servernameport);
+		}catch (Exception e) {
+			e.printStackTrace(System.out);
+			throw e;
 		}
 	}
 

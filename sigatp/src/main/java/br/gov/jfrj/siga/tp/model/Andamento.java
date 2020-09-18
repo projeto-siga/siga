@@ -32,7 +32,7 @@ public class Andamento extends TpModel implements Comparable<Andamento> {
 	public static final ActiveRecord<Andamento> AR = new ActiveRecord<>(Andamento.class);
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator") @SequenceGenerator(name = "hibernate_sequence_generator", sequenceName="SIGATP.hibernate_sequence")
+	@GeneratedValue(generator = "hibernate_sequence_generator") @SequenceGenerator(name = "hibernate_sequence_generator", sequenceName="SIGATP.hibernate_sequence")
 	private Long id;
 
 	@UpperCase

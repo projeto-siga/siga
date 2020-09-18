@@ -5,18 +5,27 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
+import br.com.caelum.vraptor.validator.Validator;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.tp.auth.AutorizacaoGI;
@@ -32,12 +41,9 @@ import br.gov.jfrj.siga.tp.model.ServicoVeiculo;
 import br.gov.jfrj.siga.tp.model.TpDao;
 import br.gov.jfrj.siga.tp.util.CondutorFiltro;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
+import javax.transaction.Transactional;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-
-@Resource
+@Controller
 @Path("/app/application")
 @SuppressWarnings("unused")
 public class ApplicationController extends TpController {
@@ -92,18 +98,19 @@ public class ApplicationController extends TpController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationController.class);
 
     private AutorizacaoGI autorizacaoGI;
-    private MissaoController missaoController;
-    private RequisicaoController requisicaoController;
-	private ServicoVeiculoController servicoVeiculoController;
 	protected int totalDiasARecuperar;
 
-    public ApplicationController(HttpServletRequest request, Result result, Validator validator, SigaObjects so, EntityManager em, AutorizacaoGI autorizacaoGI, MissaoController missaoController,
-            RequisicaoController requisicaoController, ServicoVeiculoController servicoVeiculoController) {
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ApplicationController() {
+		super();
+	}
+	
+	@Inject	
+	public ApplicationController(HttpServletRequest request, Result result,  Validator validator, SigaObjects so,  EntityManager em, AutorizacaoGI autorizacaoGI) {
         super(request, result, TpDao.getInstance(), validator, so, em);
         this.autorizacaoGI = autorizacaoGI;
-        this.missaoController = missaoController;
-        this.requisicaoController = requisicaoController;
-        this.servicoVeiculoController = servicoVeiculoController;
         this.totalDiasARecuperar = retornaDias();
     }
     
@@ -135,6 +142,7 @@ public class ApplicationController extends TpController {
          */
     }
 
+    @Transactional
     @Path("/selecionarPessoa")
     public void selecionarPessoa() {
         CondutorFiltro filtro = new CondutorFiltro();
@@ -143,6 +151,7 @@ public class ApplicationController extends TpController {
         result.include("filtro", filtro);
     }
 
+    @Transactional
     @Path({ "/selecionarPessoa/{sigla}/{tipo}/{nome}", "/selecionarPessoa" })
     public void selecionarSiga(String sigla, String tipo, String nome) throws ApplicationControllerException {
         try {
@@ -152,6 +161,7 @@ public class ApplicationController extends TpController {
         }
     }
 
+    @Transactional
     @Path({ "/buscarSiga/{sigla}/{tipo}/{nome}", "/buscarSiga" })
     public void buscarSiga(String sigla, String tipo, String nome) throws ApplicationControllerException {
         try {
@@ -161,6 +171,7 @@ public class ApplicationController extends TpController {
         }
     }
 
+    @Transactional
     @Path("/exibirManualUsuario")
     public void exibirManualUsuario() {
         /**
@@ -175,6 +186,7 @@ public class ApplicationController extends TpController {
          */
     }
 
+    @Transactional
     @Path("/gadget")
     public void gadget() {
         try {
@@ -222,8 +234,12 @@ public class ApplicationController extends TpController {
 
     private void adicionarServicosAdministradorFrota(Long idOrgaoUsu, List<String[]> lista) {
         EstadoServico[] estados = { EstadoServico.AGENDADO, EstadoServico.INICIADO };
-        String query = "cpOrgaoUsuario.idOrgaoUsu=? and (situacaoServico = ? or situacaoServico = ?)";
-        List<ServicoVeiculo> servicos = ServicoVeiculo.AR.find(query, idOrgaoUsu, estados[0], estados[1]).fetch();
+		Map<String, Object> parametros = new HashMap<String,Object>();
+		parametros.put("idOrgaoUsu",idOrgaoUsu);
+		parametros.put("estado1",estados[0]);
+		parametros.put("estado2",estados[1]);
+        String query = "cpOrgaoUsuario.idOrgaoUsu=:idOrgaoUsu and (situacaoServico = :estado1 or situacaoServico = :estado2)";
+        List<ServicoVeiculo> servicos = ServicoVeiculo.AR.find(query, parametros).fetch();
 
         for (EstadoServico item : estados) {
             String titulo = "Servi&ccedil;os " + (item.equals(EstadoServico.AGENDADO) ? "agendados" : "iniciados");
@@ -247,8 +263,13 @@ public class ApplicationController extends TpController {
         int total;
         Long idCondutor = Condutor.recuperarLogado(getTitular(), getTitular().getOrgaoUsuario()).getId();
         EstadoMissao[] estados = { EstadoMissao.PROGRAMADA, EstadoMissao.INICIADA };
-        String query = "condutor.id = ? and cpOrgaoUsuario.idOrgaoUsu = ? and (estadoMissao = ? or estadoMissao = ?)";
-        List<Missao> missoes = Missao.AR.find(query, idCondutor, idOrgaoUsu, estados[0], estados[1]).fetch();
+		Map<String, Object> parametros = new HashMap<String,Object>();
+		parametros.put("idOrgaoUsu",idOrgaoUsu);
+		parametros.put("idCondutor",idCondutor);
+		parametros.put("estado1",estados[0]);
+		parametros.put("estado2",estados[1]);
+        String query = "condutor.id = :idCondutor and cpOrgaoUsuario.idOrgaoUsu = :idOrgaoUsu and (estadoMissao = :estado1 or estadoMissao = :estado2)";
+        List<Missao> missoes = Missao.AR.find(query, parametros).fetch();
 
         for (EstadoMissao item : estados) {
             titulo = "Miss&otilde;es " + (item.equals(EstadoMissao.PROGRAMADA) ? "programadas" : "iniciadas");

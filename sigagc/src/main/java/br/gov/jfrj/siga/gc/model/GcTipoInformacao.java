@@ -23,14 +23,26 @@ public class GcTipoInformacao extends Objeto {
 	
 	@Id
 	@Column(name = "ID_TIPO_INFORMACAO")
-	public long id;
+	private long id;
 
 	@Column(name = "NOME_TIPO_INFORMACAO", nullable = false)
-	public String nome;
+	private String nome;
 	
 	@ManyToOne()
 	@JoinColumn(name = "ARQUIVO")
-	public GcArquivo arq;
+	private GcArquivo arq;
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public void setArq(GcArquivo arq) {
+		this.arq = arq;
+	}
 
 	public GcTipoInformacao(long id, String nome) {
 		super();

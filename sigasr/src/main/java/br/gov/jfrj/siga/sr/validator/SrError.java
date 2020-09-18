@@ -5,6 +5,9 @@ public class SrError {
 	private final String category;
 	private final String message;
 
+
+	
+
 	public SrError(String category, String message) {
 		this.category = category;
 		this.message = message;

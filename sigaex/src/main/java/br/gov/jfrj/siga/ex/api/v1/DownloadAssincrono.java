@@ -7,6 +7,7 @@ import com.crivano.swaggerservlet.SwaggerServlet;
 import com.crivano.swaggerservlet.SwaggerUtils;
 
 import br.gov.jfrj.itextpdf.Documento;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.log.RequestExceptionLogger;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -38,7 +39,7 @@ public class DownloadAssincrono implements Callable<String> {
 	@Override
 	public String call() throws Exception {
 		String bufName = null;
-		try (ApiContext ctx = new ApiContext(false)) {
+		try {
 			ExDao dao = ExDao.getInstance();
 
 			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
@@ -64,7 +65,7 @@ public class DownloadAssincrono implements Callable<String> {
 	}
 
 	public static String getBufName(String uuid, String contenttype, String sigla) {
-		String dirTemp = SwaggerServlet.getProperty("upload.dir.temp");
+		String dirTemp = Prop.get("upload.dir.temp");
 		return dirTemp + "/" + Texto.slugify(sigla, true, false) + "-completo-" + uuid
 				+ ("text/html".equals(contenttype) ? ".html" : ".pdf");
 	}

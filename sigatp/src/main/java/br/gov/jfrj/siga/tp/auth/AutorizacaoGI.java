@@ -4,23 +4,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.persistence.Query;
 
+import com.google.common.base.Optional;
+
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.ioc.Component;
-import br.com.caelum.vraptor.ioc.RequestScoped;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
-import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.tp.model.RequisicaoTransporte;
-import br.gov.jfrj.siga.tp.model.TpDao;
 import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
-
-import com.google.common.base.Optional;
 
 /**
  * Classe que contem os dados de autorizacao do usuario. Agrupa em um mapa o nome da permissao e um boleano indicando se o usuario a possui ou nao.
@@ -29,7 +25,6 @@ import com.google.common.base.Optional;
  *
  */
 @RequestScoped
-@Component
 public class AutorizacaoGI {
 
 	public static final String CP_COMPLEXO_ADMINISTRADOR = "cpComplexoAdministrador";
@@ -38,6 +33,16 @@ public class AutorizacaoGI {
 	private CpComplexo complexoPadrao;
 	private CpComplexo complexoAdministrador;
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public AutorizacaoGI() {
+		this.so = null;
+		this.statusPermissoes = null;
+		
+	}
+	
+	@Inject
 	public AutorizacaoGI(SigaObjects so) throws Exception {
 		this.so = so;
 		this.statusPermissoes = new HashMap<String, Boolean>();

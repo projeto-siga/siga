@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -16,10 +17,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.jasperreports.engine.JRParameter;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.interceptor.download.Download;
-import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
+import br.com.caelum.vraptor.observer.download.Download;
+import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -30,12 +31,20 @@ import br.gov.jfrj.siga.sr.reports.SrRelAtendimento;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-@Resource
+@Controller
 @Path("app/relatorio")
 public class RelatorioController extends SrController {
 
 	private HttpServletResponse response;
 	
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public RelatorioController() {
+		super();
+	}
+	
+	@Inject
 	public RelatorioController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em, SrValidator srValidator,
 			HttpServletResponse response) {
 		super(request, result, dao, so, em, srValidator);

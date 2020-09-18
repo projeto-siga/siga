@@ -17,8 +17,8 @@
 	<c:if test="${menuRequisicoesMostrarVoltar}">
 		<span class="filtro">
 			<img src="/sigatp/public/images/filter-icon.png"/>
-			<a class="filtro_Voltar" id="menuRequisicoesVoltar" href="${linkTo[RequisicaoController].listarFiltrado['PROGRAMADA']}"></a>
-			<a href="${linkTo[RequisicaoController].listarFiltrado['PROGRAMADA']}">Voltar</a>
+			<a class="filtro_Voltar" id="menuRequisicoesVoltar" href="${linkTo[RequisicaoController].listarFiltrado('PROGRAMADA')}"></a>
+			<a href="${linkTo[RequisicaoController].listarFiltrado('PROGRAMADA')}">Voltar</a>
 		</span>
 	</c:if>
 	<c:if test="${menuRequisicoesMostrarTodas}">
@@ -31,67 +31,67 @@
 	<c:if test="${menuRequisicoesMostrarAutorizadasENaoAtendidas}">
 		<span class="filtro">
 			<img src="/sigatp/public/images/filter-icon.png"/>
-			<a class="filtro_na_A" id="menuRequisicoesMostrarAutorizadasENaoAtendidas" href="${linkTo[RequisicaoController].listarFiltrado['AUTORIZADA']['NAOATENDIDA']}">AN</a>
-			<a href="${linkTo[RequisicaoController].listarFiltrado['AUTORIZADA']['NAOATENDIDA']}">A<U>u</U>torizadas/<U>N</U>&atilde;o Atendidas</a>&nbsp;&nbsp;&nbsp;
+			<a class="filtro_na_A" id="menuRequisicoesMostrarAutorizadasENaoAtendidas" href="${linkTo[RequisicaoController].listarFiltrado('AUTORIZADA','NAOATENDIDA')}">AN</a>
+			<a href="${linkTo[RequisicaoController].listarFiltrado('AUTORIZADA','NAOATENDIDA')}">A<U>u</U>torizadas/<U>N</U>&atilde;o Atendidas</a>&nbsp;&nbsp;&nbsp;
 		</span>
 	</c:if>
 	<c:if test="${menuRequisicoesMostrarAbertas}">
 		<span class="filtro">
 			<img src="/sigatp/public/images/filter-icon.png"/>
-			<a class="filtro_B" id="menuRequisicoesMostrarAbertas" href="${linkTo[RequisicaoController].listarFiltrado['ABERTA']}"></a>
-			<a href="${linkTo[RequisicaoController].listarFiltrado['ABERTA']}">A<U>b</U>ertas</a>&nbsp;&nbsp;&nbsp;
+			<a class="filtro_B" id="menuRequisicoesMostrarAbertas" href="${linkTo[RequisicaoController].listarFiltrado('ABERTA')}"></a>
+			<a href="${linkTo[RequisicaoController].listarFiltrado('ABERTA')}">A<U>b</U>ertas</a>&nbsp;&nbsp;&nbsp;
 		</span>
 	</c:if>
 	<c:if test="${menuRequisicoesMostrarAutorizadas}">
 		<span class="filtro">
 	   		<img src="/sigatp/public/images/filter-icon.png"/>
-	   		<a class="filtro_U" id="menuRequisicoesMostrarAutorizadas" href="${linkTo[RequisicaoController].listarFiltrado['AUTORIZADA']}"></a>
-			<a href="${linkTo[RequisicaoController].listarFiltrado['AUTORIZADA']}">A<U>u</U>torizadas</a>&nbsp;&nbsp;&nbsp;
+	   		<a class="filtro_U" id="menuRequisicoesMostrarAutorizadas" href="${linkTo[RequisicaoController].listarFiltrado('AUTORIZADA')}"></a>
+			<a href="${linkTo[RequisicaoController].listarFiltrado('AUTORIZADA')}">A<U>u</U>torizadas</a>&nbsp;&nbsp;&nbsp;
 		</span>
 	</c:if>
 	<c:if test="${menuRequisicoesMostrarRejeitadas}">
 		<span class="filtro">
 	   		<img src="/sigatp/public/images/filter-icon.png"/>
-	   		<a class="filtro_R" id="menuRequisicoesMostrarRejeitadas" href="${linkTo[RequisicaoController].listarFiltrado['REJEITADA']}"></a>
-			<a href="${linkTo[RequisicaoController].listarFiltrado['REJEITADA']}"><U>R</U>ejeitadas</a>&nbsp;&nbsp;&nbsp;
+	   		<a class="filtro_R" id="menuRequisicoesMostrarRejeitadas" href="${linkTo[RequisicaoController].listarFiltrado('REJEITADA')}"></a>
+			<a href="${linkTo[RequisicaoController].listarFiltrado('REJEITADA')}"><U>R</U>ejeitadas</a>&nbsp;&nbsp;&nbsp;
 		</span>
 	</c:if>
 	<c:if test="${menuRequisicoesMostrarProgramadas}">
 		<span class="filtro">
 	   		<img src="/sigatp/public/images/filter-icon.png"/>
-	   		<a class="filtro_P" id="menuRequisicoesMostrarProgramadas" href="${linkTo[RequisicaoController].listarFiltrado['PROGRAMADA']}"></a>
-			<a href="${linkTo[RequisicaoController].listarFiltrado['PROGRAMADA']}"><U>P</U>rogramadas</a>&nbsp;&nbsp;&nbsp;
+	   		<a class="filtro_P" id="menuRequisicoesMostrarProgramadas" href="${linkTo[RequisicaoController].listarFiltrado('PROGRAMADA')}"></a>
+			<a href="${linkTo[RequisicaoController].listarFiltrado('PROGRAMADA')}"><U>P</U>rogramadas</a>&nbsp;&nbsp;&nbsp;
 		</span>
 	</c:if>
 	<c:if test="${menuRequisicoesMostrarEmAtendimento}">
 		<span class="filtro">
 	   		<img src="/sigatp/public/images/filter-icon.png"/>
-	   		<a class="filtro_E" id=menuRequisicoesMostrarEmAtendimento href="${linkTo[RequisicaoController].listarFiltrado['EMATENDIMENTO']}"></a>
-			<a href="${linkTo[RequisicaoController].listarFiltrado['EMATENDIMENTO']}"><U>E</U>m Atendimento</a>&nbsp;&nbsp;&nbsp;
+	   		<a class="filtro_E" id=menuRequisicoesMostrarEmAtendimento href="${linkTo[RequisicaoController].listarFiltrado('EMATENDIMENTO')}"></a>
+			<a href="${linkTo[RequisicaoController].listarFiltrado('EMATENDIMENTO')}"><U>E</U>m Atendimento</a>&nbsp;&nbsp;&nbsp;
 		</span>
 	</c:if>
 	<c:if test="${menuRequisicoesMostrarAtendidas}">
 		<span class="filtro">
 	   		<img src="/sigatp/public/images/filter-icon.png"/>
-	   		<a class="filtro_A" id="menuRequisicoesMostrarAtendidas" href="${linkTo[RequisicaoController].listarFiltrado['ATENDIDA']}"></a>
-			<a href="${linkTo[RequisicaoController].listarFiltrado['ATENDIDA']}"><U>A</U>tendidas</a>&nbsp;&nbsp;&nbsp;
+	   		<a class="filtro_A" id="menuRequisicoesMostrarAtendidas" href="${linkTo[RequisicaoController].listarFiltrado('ATENDIDA')}"></a>
+			<a href="${linkTo[RequisicaoController].listarFiltrado('ATENDIDA')}"><U>A</U>tendidas</a>&nbsp;&nbsp;&nbsp;
 		</span>
 	</c:if>
 	<c:if test="${menuRequisicoesMostrarNaoAtendidas}">
 		<span class="filtro">
 	   		<img src="/sigatp/public/images/filter-icon.png"/>
-	   		<a class="filtro_N" id=menuRequisicoesMostrarNaoAtendidas href="${linkTo[RequisicaoController].listarFiltrado['NAOATENDIDA']}"></a>
-			<a href="${linkTo[RequisicaoController].listarFiltrado['NAOATENDIDA']}"><U>N</U>&atilde;o Atendidas</a>&nbsp;&nbsp;&nbsp;
+	   		<a class="filtro_N" id=menuRequisicoesMostrarNaoAtendidas href="${linkTo[RequisicaoController].listarFiltrado('NAOATENDIDA')}"></a>
+			<a href="${linkTo[RequisicaoController].listarFiltrado('NAOATENDIDA')}"><U>N</U>&atilde;o Atendidas</a>&nbsp;&nbsp;&nbsp;
 		</span>
 	</c:if>
 	<c:if test="${menuRequisicoesMostrarCanceladas}">
 		<span class="filtro">
 	   		<img src="/sigatp/public/images/filter-icon.png"/>
-	   		<a class="filtro_C" id="menuRequisicoesMostrarCanceladas" href="${linkTo[RequisicaoController].listarFiltrado['CANCELADA']}"></a>
-			<a href="${linkTo[RequisicaoController].listarFiltrado['CANCELADA']}"><U>C</U>anceladas</a>&nbsp;&nbsp;&nbsp;
+	   		<a class="filtro_C" id="menuRequisicoesMostrarCanceladas" href="${linkTo[RequisicaoController].listarFiltrado('CANCELADA')}"></a>
+			<a href="${linkTo[RequisicaoController].listarFiltrado('CANCELADA')}"><U>C</U>anceladas</a>&nbsp;&nbsp;&nbsp;
 		</span>
 	</c:if>
-	<c:if test="${menuRequisicoesMostrarAvancado && (fn:length(estReq.values()) > 0 && dataInicio == null && dataFim == null)}">
+	<c:if test="${menuRequisicoesMostrarAvancado && (fn:length(estReq.values) > 0 && dataInicio == null && dataFim == null)}">
 		<span class="filtro">
 			<img src="/sigatp/public/images/filter-icon.png" />
 			<a class="filtro_Avancado" href="#"></a>
@@ -117,7 +117,7 @@
 					<label for="estadoRequisicao">Estado</label>
 					<select name="estadoRequisicao">
 						<option />
-						<c:forEach items="${estReq.values()}" var="item">
+						<c:forEach items="${estReq.values}" var="item">
 							<option value="<c:out value='${item.descricao}'/>" 
 								<c:if test="${estadoRequisicao.equals(item) && !menuRequisicoesMostrarAvancado}">selected</c:if> > 
 								<c:out value="${item.descricao}" />
@@ -133,7 +133,7 @@
 	</div>
 </p>
 
-<c:if test="${menuRequisicoesMostrarVoltar && (fn:length(estReq.values()) > 0 || dataInicio != null || dataFim != null)}">
+<c:if test="${menuRequisicoesMostrarVoltar && (fn:length(estReq.values) > 0 || dataInicio != null || dataFim != null)}">
 	<script type="text/javascript">
 		trocaExibicaoCaixaBuscaAvancada();
 	</script>

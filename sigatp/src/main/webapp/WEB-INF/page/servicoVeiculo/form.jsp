@@ -202,7 +202,7 @@
 				<div class="container" id="lstAvarias">
 					<c:forEach items="${avarias}" var="avaria">
 						<input type="checkbox" name="chk" id="avaria_${avaria.id}" />
-						<tptags:link texto="${avaria.descricao}" parteTextoLink="${avaria.descricao}" comando="${linkTo[AvariaController].editar[servico.veiculo.id][avaria.id][false]}"></tptags:link>
+						<tptags:link texto="${avaria.descricao}" parteTextoLink="${avaria.descricao}" comando="${linkTo[AvariaController].editar(servico.veiculo.id,avaria.id,false)}"></tptags:link>
 		    			<br/>
 					</c:forEach>
 				</div>

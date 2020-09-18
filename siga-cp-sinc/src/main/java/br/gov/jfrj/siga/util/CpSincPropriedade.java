@@ -85,6 +85,38 @@ public class CpSincPropriedade extends ModeloPropriedade {
 	public String timestampSystem  ( ) throws Exception {
 		return this.obterPropriedade("timestamp.system");
 	}
+
+	public String emailRemetente  ( ) throws Exception {
+		return this.obterPropriedade("siga.cp.sinc.xml.servidor.usuario.remetente");
+	}
+	
+	public String listaDestinatarios  ( ) throws Exception {
+		return this.obterPropriedade("siga.cp.sinc.xml.lista.destinatario");
+	}
+	
+	public String servidorSmtp  ( ) throws Exception {
+		return this.obterPropriedade("servidor.smtp");
+	}
+	
+	public String servidorSmtpPorta  ( ) throws Exception {
+		return this.obterPropriedade("servidor.smtp.porta");
+	}
+	
+	public String servidorSmtpAuth  ( ) throws Exception {
+		return this.obterPropriedade("servidor.smtp.auth");
+	}
+	
+	public String servidorSmtpAuthUsuario  ( ) throws Exception {
+		return this.obterPropriedade("servidor.smtp.auth.usuario");
+	}
+	
+	public String servidorSmtpAuthSenha  ( ) throws Exception {
+		return this.obterPropriedade("servidor.smtp.auth.senha");
+	}
+	
+	public String servidorSmtpStarttlsEnable  ( ) throws Exception {
+		return this.obterPropriedade("servidor.smtp.starttls.enable");
+	}
 	
 	public String getPrefixoModulo() {
 		return "siga.cp";

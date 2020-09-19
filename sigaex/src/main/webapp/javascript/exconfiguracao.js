@@ -13,19 +13,27 @@ ExConfiguracao.Etapas = (function() {
 		this.comboModelos = $('.js-siga-multiploselect--modelo.selectpicker');		
 		this.comboTipoConfiguracao = $('.js-siga-select2--configuracao');		
 		this.comboMovimentacao = $('.js-siga-select2--tipo-movimentacao');
-		this.comboDestinatario = $('.js-siga-select2--destinatario');		
+		this.comboDestinatario = $('.js-siga-select2--destinatario');
+		this.comboVisibilidade = $('.js-siga-select2--visibilidade');
 		this.comboOrgaos = $('.js-siga-multiploselect--orgao.selectpicker');		
-		this.comboUnidades = $('.js-siga-multiploselect--unidade.selectpicker');
+		this.comboUnidades = $('.js-siga-multiploselect--unidade.selectpicker');		
+		this.comboCargos = $('.js-siga-multiploselect--cargo.selectpicker');
+		this.comboFuncoes = $('.js-siga-multiploselect--funcao.selectpicker');
+		this.comboPessoas = $('.js-siga-multiploselect--pessoa.selectpicker');				
 		this.containerMovimentacao = $('.js-container-campos--tipo-movimentacao');
 		this.containerTipoConfiguracao = $('.js-container-campos--tipo-configuracao');
+		this.containerDestinatario = $('.js-container-campos--destinatario');
+		this.containerVisibilidade = $('.js-container-campos--visibilidade');
 		this.containerOrgaos = $('.js-container-campos--orgao');
 		this.containerUnidades = $('.js-container-campos--unidade');
 		this.containerCargos = $('.js-container-campos--cargo');
 		this.containerFuncoes = $('.js-container-campos--funcao');
 		this.containerPessoas = $('.js-container-campos--pessoa');
-		this.labelDestinatarioDefinicao = $('.js-label-destinatario-definicao');
-		this.labelMovimentacao = $('.js-label-movimentacao');
+		this.labelVisibilidade = $('.js-label-visibilidade');
+		this.labelDestinatarioDefinicao = $('.js-label-destinatario-definicao');		
+		this.labelMovimentacao = $('.js-label-movimentacao');		
 		this.tituloNovaConfiguracao = $('.js-titulo-nova-configuracao');
+		this.spinner = $('.js-spinner--salvando');
 		this.selecaoModelosOK = false;
 		this.selecaoConfiguracaoOK = false;
 		this.selecaoDestinatarioOK = false;
@@ -42,18 +50,40 @@ ExConfiguracao.Etapas = (function() {
 		this.comboModelos.on('change', atualizarBtnProximo.bind(this, this.comboModelos));
 		this.comboTipoConfiguracao.on('change', onComboTipoConfiguracaoSelecionado.bind(this));
 		this.comboMovimentacao.on('change', onComboMovimentacaoSelecionada.bind(this));
-		this.comboDestinatario.on('change', atualizarBtnProximo.bind(this, this.comboDestinatario));
-		this.comboUnidades.on('change', atualizarBtnProximo.bind(this, this.comboUnidades));						
+		this.comboDestinatario.on('change', onComboDestinatarioSelecionado.bind(this));
+		this.comboVisibilidade.on('change', onComboVisibilidadeSelecionada.bind(this));
+		this.comboUnidades.on('change', atualizarBtnProximo.bind(this, this.comboUnidades));
+		
+		this.comboOrgaos.on('change', onDestinatarioDefinido.bind(this, this.comboOrgaos));
+		this.comboUnidades.on('change', onDestinatarioDefinido.bind(this, this.comboUnidades));
+		this.comboCargos.on('change', onDestinatarioDefinido.bind(this, this.comboCargos));
+		this.comboFuncoes.on('change', onDestinatarioDefinido.bind(this, this.comboFuncoes));
+		this.comboPessoas.on('change', onDestinatarioDefinido.bind(this, this.comboPessoas));
 		desabilitarBtnProximo.call(this);
 		exibirEtapa.call(this, this.etapaAtual);			
 	}	
 	
+	function onDestinatarioDefinido(combo) {
+		if (this.etapaAtual + 1 >= this.etapas.length) {		
+			if (this.comboDestinatario.val() != 'id_ORGAOS') {
+				if (this.comboOrgaos.val() != null && !combo.hasClass('js-siga-multiploselect--orgao') && combo.val() != null) {
+					atualizarBtnProximo.call(this, combo);
+				} else {
+					desabilitarBtnProximo.call(this);
+				}
+			} else {
+				atualizarBtnProximo.call(this, combo);
+			}
+		}
+	}
+	
 	function onBtnPesquisaClicado() {
 		if (this.comboModelos.val() != null) {
 			this.btnConfirmacaoModal.addClass('is-pesquisa');
+			this.btnConfirmacaoModal.removeClass('hidden');
 			sigaModal.enviarTextoEAbrir('confirmacaoModal', 'Tem certeza que deseja cancelar o cadastro e ir para a página de Pesquisa de Configurações.');			
 		} else {
-			location.href = 'pesquisa';
+			location.href = '../configuracao/listar';
 		}
 	}
 	
@@ -97,11 +127,11 @@ ExConfiguracao.Etapas = (function() {
 				this.containerTipoConfiguracao.show();				
 				atualizarBtnProximo.call(this, this.comboTipoConfiguracao);
 				break;
-			case 'selecaoDestinatario':							
+			case 'selecaoDestinatario':
+				this.containerDestinatario.show();
 				atualizarBtnProximo.call(this, this.comboDestinatario);
 				break;
-			case 'selecaoDestinatarioDefinicao':
-				
+			case 'selecaoDestinatarioDefinicao':				
 				this.containerOrgaos.show();
 				this.emitter.trigger('inicializarOrgaos');				
 				
@@ -113,6 +143,7 @@ ExConfiguracao.Etapas = (function() {
 					this.containerCargos.hide();
 					this.containerFuncoes.hide();
 					this.containerPessoas.hide();
+					atualizarBtnProximo.call(this, this.comboOrgaos);
 					break;
 				case 'id_UNIDADES':
 					this.labelDestinatarioDefinicao.text('Selecione os órgãos e por fim as unidades desejadas');
@@ -121,6 +152,7 @@ ExConfiguracao.Etapas = (function() {
 					this.containerCargos.hide();
 					this.containerFuncoes.hide();
 					this.containerPessoas.hide();
+					atualizarBtnProximo.call(this, this.comboUnidades);
 					break;
 				case 'id_CARGOS':
 					this.labelDestinatarioDefinicao.text('Selecione os órgãos e por fim os cargos desejados');
@@ -129,6 +161,7 @@ ExConfiguracao.Etapas = (function() {
 					this.containerCargos.show();
 					this.containerFuncoes.hide();
 					this.containerPessoas.hide();
+					atualizarBtnProximo.call(this, this.comboCargos);
 					break;
 				case 'id_FUNCOES':
 					this.labelDestinatarioDefinicao.text('Selecione os órgãos e por fim as funções desejadas');
@@ -137,6 +170,7 @@ ExConfiguracao.Etapas = (function() {
 					this.containerCargos.hide();
 					this.containerFuncoes.show();
 					this.containerPessoas.hide();
+					atualizarBtnProximo.call(this, this.comboFuncoes);
 					break;
 				case 'id_PESSOAS':
 					this.labelDestinatarioDefinicao.text('Selecione os órgãos e por fim as pessoas desejadas');
@@ -144,21 +178,22 @@ ExConfiguracao.Etapas = (function() {
 					this.containerUnidades.hide();
 					this.containerCargos.hide();					
 					this.containerFuncoes.hide();					
-					this.containerPessoas.show();									
+					this.containerPessoas.show();
+					atualizarBtnProximo.call(this, this.comboPessoas);
 					break;
-				}
-								
-				atualizarBtnProximo.call(this, this.comboUnidades);	
+				}											
 				break;
 			}
 			
 			atualizarEtapa.call(this, 1);
-		}						
-	}	
+		} else if (this.etapaAtual + 1 >= this.etapas.length) {
+			salvar.call(this);
+		}
+	}
 	
 	function onBtnConfirmacaoModalClicado() {		
 		if (this.btnConfirmacaoModal.hasClass('is-pesquisa')) {			
-			location.href = 'pesquisa';
+			location.href = '../configuracao/listar';
 			return false;
 		}		
 		
@@ -180,9 +215,45 @@ ExConfiguracao.Etapas = (function() {
 		onBtnProximoClicado.call(this, false);			
 	}
 	
+	function onComboDestinatarioSelecionado() {		
+		this.comboVisibilidade.html('');
+		this.comboVisibilidade.append('<option value="">Agora, selecione como deve ser a visibilidade</option>');
+		switch (this.comboDestinatario.val()) {
+		case 'id_ORGAOS':	
+			this.comboVisibilidade.append('<option value="id_PODE">Pode - órgaos selecionados poderão visualizar os modelos</option>');
+			this.comboVisibilidade.append('<option value="id_NAO_PODE">Não Pode - órgãos selecionados não poderão visualizar os modelos</option>');
+			break;
+		case 'id_UNIDADES':
+			this.comboVisibilidade.append('<option value="id_PODE">Pode - unidades selecionadas poderão visualizar os modelos</option>');
+			this.comboVisibilidade.append('<option value="id_NAO_PODE">Não Pode - unidades selecionadas não poderão visualizar os modelos</option>');
+			break;
+		case 'id_CARGOS':
+			this.comboVisibilidade.append('<option value="id_PODE">Pode - cargos selecionados poderão visualizar os modelos</option>');
+			this.comboVisibilidade.append('<option value="id_NAO_PODE">Não Pode - cargos selecionados não poderão visualizar os modelos</option>');
+			break;
+		case 'id_FUNCOES':
+			this.comboVisibilidade.append('<option value="id_PODE">Pode - funções selecionadas poderão visualizar os modelos</option>');
+			this.comboVisibilidade.append('<option value="id_NAO_PODE">Não Pode - funções selecionadas não poderão visualizar os modelos</option>');
+			break;
+		case 'id_PESSOAS':
+			this.comboVisibilidade.append('<option value="id_PODE">Pode - pessoas selecionadas poderão visualizar os modelos</option>');
+			this.comboVisibilidade.append('<option value="id_NAO_PODE">Não Pode - pessoas selecionadas não poderão visualizar os modelos</option>');
+			break;
+		}										
+		this.labelVisibilidade.css('opacity', '1');
+		this.containerVisibilidade.css({'visibility': 'visible', 'opacity': '1', 'max-width': 'calc(50% - 30px)'});
+		this.containerDestinatario.removeClass('col-sm-12').addClass('col-sm-6').css('max-width', '50%');
+		desabilitarBtnProximo.call(this);
+	}
+	
+	function onComboVisibilidadeSelecionada() {
+		this.labelVisibilidade.css('opacity', '0');
+		atualizarBtnProximo.call(this, this.comboVisibilidade);
+	}
+	
 	function onComboTipoConfiguracaoSelecionado() {
-		// se for opção movimentar
-		if (this.comboTipoConfiguracao.val() == 1) {						
+		var movimentar = 1;
+		if (this.comboTipoConfiguracao.val() == movimentar) {						
 			if (this.comboMovimentacao.find('option').length <= 1) {
 				this.emitter.trigger('opcaoMovimentarSelecionada');
 			}
@@ -206,9 +277,10 @@ ExConfiguracao.Etapas = (function() {
 		atualizarBtnProximo.call(this, this.comboMovimentacao);
 	}
 	
-	function atualizarBtnProximo(combo, evento) {		
+	function atualizarBtnProximo(combo, evento) {						
 		if (combo.val() > 0 || 		
-				(combo.hasClass('js-siga-select2--destinatario') && combo.val() !== '') ||
+				(combo.hasClass('js-siga-select2--destinatario') && combo.val() !== '') ||				
+				(combo.hasClass('js-siga-select2--visibilidade') && combo.val() !== '') ||
 				(combo.hasClass('selectpicker') && combo.val() != null)) {
 			habilitarBtnProximo.call(this);			
 		} else {
@@ -249,21 +321,71 @@ ExConfiguracao.Etapas = (function() {
 	  
 		this.etapaAtual += numeroEtapa;
 	  
-		if (this.etapaAtual >= this.etapas.length) {
-			//efetuar request para salvar os dados
-			
-			// colocar um spinner no meio da tela
-			
-			if (this.comboModelos.val() != null && this.comboModelos.val().length >= 10) {
-				// colocar uma mensagem ao salvar, avisando que foram selecionados muitos modelos e o processo pode demorar um pouco			
-			} 
-			
-			return false;
-	  }
-	  
-	  exibirEtapa.call(this, this.etapaAtual);
-	}
+		exibirEtapa.call(this, this.etapaAtual);
+	}		
+	function salvar() {																			
+		var orgaos, unidades, cargos, funcoes, pessoas;			
 		
+		switch (this.comboDestinatario.val()) {
+		case 'id_ORGAOS':	
+			orgaos = this.comboOrgaos.val();
+			break;
+		case 'id_UNIDADES':
+			unidades = this.comboUnidades.val();
+			break;
+		case 'id_CARGOS':
+			cargos = this.comboCargos.val();
+			break;
+		case 'id_FUNCOES':
+			funcoes = this.comboFuncoes.val();
+			break;
+		case 'id_PESSOAS':
+			pessoas = this.comboPessoas.val();					
+			break;
+		}
+		
+		var dados = {
+			'configuracao': {
+				'modelos' : this.comboModelos.val(),
+				'tipoConfiguracao' : this.comboTipoConfiguracao.val(),
+				'movimentacao' : this.comboMovimentacao.val(),
+				'destinatarios' : this.comboDestinatario.val().replace('id_', ''),
+				'visibilidade': this.comboVisibilidade.val().replace('id_', ''),
+				'orgaos': orgaos, 
+				'unidades' : unidades, 
+				'cargos' : cargos, 
+				'funcoes' : funcoes, 
+				'pessoas' : pessoas 
+			}
+		};
+								
+		$.ajax({
+			url: 'nova',
+			method: 'POST',
+			contentType: 'application/json',
+			dataType: 'json',
+			data: JSON.stringify(dados), 											
+			beforeSend: iniciarRequisicao.bind(this),
+			complete: finalizarRequisicao.bind(this)
+		});									
+	}
+	
+	function iniciarRequisicao() {
+		$(this.etapas[this.etapaAtual]).hide();
+		this.spanIndicadorEtapa.parent().hide();
+		this.btnProximo.parent().hide();					
+		this.spinner.parent().parent().parent().show();
+		this.spinner.css({'border': '15px solid rgba(0, 0, 0, .1)', 'border-left-color': '#28a745'});		
+		this.spinner.parent().parent().parent().find('h1').html('Salvando configurações...');
+		this.spinner.parent().find('.icone-salvo-sucesso').css('opacity', '0');		
+	}
+	
+	function finalizarRequisicao() {
+		this.spinner.css('border-color', '#28a745');		
+		this.spinner.parent().parent().parent().find('h1').html('Pronto! Suas configurações foram definidas!<br/><a class="btn btn-default text-center mt-2" href="nova" title="Cadastrar Nova Configuração"><i class="fas fa-plus"></i> Cadastrar Nova Configuração</a>');
+		this.spinner.parent().parent().parent().find('.icone-salvo-sucesso').css('opacity', '1');					
+	}	
+	
 	function validarCampos(numeroEtapa) {				
 		var retorno = { resultado: true, alertaConfirmado: false };
 		
@@ -273,30 +395,15 @@ ExConfiguracao.Etapas = (function() {
 				this.emitter.trigger('validarModelos', retorno);				
 				break;
 			case 'selecaoConfiguracao':
-				//validarSelecaoConfiguracao.call(this);
 				break;
 			case 'selecaoDestinatario':
-				//resposta = validarSelecaoNivelAcesso.call(this);
 				break;
 			case 'selecaoDestinatarioDefinicao':
-				//resposta = validarSelecaoOrgaosEUnidades.call(this);
 				break;
 		}
 		
 		return retorno.resultado;					
-	}
-		
-	function validarSelecaoConfiguracao() {
-		return true;	
-	}
-	
-	function validarSelecaoNivelAcesso() {
-		return true;
-	}
-	
-	function validarSelecaoOrgaosEUnidades() {
-		return true;
-	}
+	}		
 	
 	function atualizarTituloEtapaTopo() {
 		this.tituloNovaConfiguracao.find('.js-titulo-etapa-topo').remove();
@@ -341,7 +448,7 @@ ExConfiguracao.Etapas = (function() {
 			this.tituloNovaConfiguracao.find('.js-titulo-etapa-topo--duvida').popover({
 				title: 'Seleção de modelos',
 				html: true,
-				content: 'Nessa etapa você deve selecionar os modelos que deseja configurar'
+				content: 'Nessa etapa você deve selecionar os modelos que deseja aplicar a configuração'
 			  });					
 			break;
 		case 'selecaoConfiguracao':				
@@ -435,7 +542,8 @@ ExConfiguracao.ComboModelo = (function() {
 	function ComboModelo(Etapas) {		
 		this.combo = Etapas.comboModelos;				
 		this.spinner = $('.js-spinner--modelo');
-		this.Etapas = Etapas;				
+		this.Etapas = Etapas;
+		this.btnConfirmacaoModal = Etapas.btnConfirmacaoModal;
 	}
 				
 	ComboModelo.prototype.iniciar = function() {			
@@ -484,7 +592,7 @@ ExConfiguracao.ComboModelo = (function() {
 		var options = [];		
 		if(modelos.list.length > 0) {
 			modelos.list.forEach(function(modelo){											
-				options.push('<option value="' + modelo.id + '">' + modelo.nmMod + '</option>');													
+				options.push('<option value="' + modelo.idMod + '">' + modelo.nmMod + '</option>');													
 			});															
 			this.combo.html(options.join(''));		
 			this.combo.removeAttr('disabled');			
@@ -499,20 +607,23 @@ ExConfiguracao.ComboModelo = (function() {
 	function reset() {		
 		this.combo.html('');				
 		this.combo.attr('disabled', 'disabled');				
-		this.combo.parent().children().addClass('disabled');	
+		this.combo.parent().children().addClass('disabled');		
 		this.spinner.parent().removeClass('disabled');				
 		this.combo.selectpicker('refresh');				
 	}
 	
 	function onValidar(evento, validacao) {				
 		if (this.combo.val() != null) {			
-			if (!validacao.alertaConfirmado && this.combo.val().length >= this.quantidadeModelos) {
-				sigaModal.enviarTextoEAbrir('confirmacaoModal', 'Você selecionou todos os modelos, tem certeza que deseja aplicar configuração para todos?');		  		  
+			if (this.combo.val().length >= this.quantidadeModelos) {
+				this.btnConfirmacaoModal.addClass('hidden');
+				sigaModal.enviarTextoEAbrir('confirmacaoModal', 'Você selecionou todos os modelos, se o seu objetivo é criar uma configuração que impacte' 
+						+ ' todos os modelos, então você deve criar uma configuração genérica pelo cadastro de configurações antigo.');		  		  
 				validacao.resultado = false;
 				return false;
 			}
 			
-			if (!validacao.alertaConfirmado && this.combo.val().length > 10) {			
+			if (!validacao.alertaConfirmado && this.combo.val().length > 10) {
+				this.btnConfirmacaoModal.removeClass('hidden');
 				sigaModal.enviarTextoEAbrir('confirmacaoModal', 'Você selecionou ' + this.combo.val().length + ' modelos, tem certeza que deseja aplicar configuração para todos os modelos selecionados?');		  
 				validacao.resultado = false;
 				return false;

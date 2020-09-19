@@ -1,5 +1,7 @@
 package br.gov.jfrj.siga.vraptor;
 
+import static br.gov.jfrj.siga.ex.ExConfiguracaoDestinatarios.*;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -16,27 +18,33 @@ import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.RegraNegocioException;
+import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargoDTO;
 import br.gov.jfrj.siga.dp.DpFuncaoDTO;
 import br.gov.jfrj.siga.dp.DpPessoaDTO;
 import br.gov.jfrj.siga.dp.DpUnidadeDTO;
+import br.gov.jfrj.siga.ex.ExConfiguracao;
+import br.gov.jfrj.siga.ex.ExConfiguracaoDTO;
 import br.gov.jfrj.siga.ex.ExConfiguracaoDestinatarios;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.vraptor.builder.ExConfiguracaoBuilder;
 
 @Controller
 @Path("app/expediente/configuracao2")
 public class ExConfiguracao2Controller extends ExController {
 	
-	//private static final String VERIFICADOR_ACESSO = "FE:Ferramentas;CFG:Configurações";
+	private static final String VERIFICADOR_ACESSO = "FE:Ferramentas;CFG:Configurações";
 	
 	/**
 	 * @deprecated CDI eyes only
@@ -50,27 +58,54 @@ public class ExConfiguracao2Controller extends ExController {
 			Result result, SigaObjects so, EntityManager em) {
 		super(request, response, context, result, ExDao.getInstance(), so, em);
 	}
-	
-	protected void assertAcesso(String pathServico) throws AplicacaoException {
-		super.assertAcesso("DOC:Módulo de Documentos;" + pathServico);
-	}
-	
-	@Get("/pesquisa")
-	public void lista() throws Exception {
-		//assertAcesso(VERIFICADOR_ACESSO);
-				
-		result.include("listaTiposConfiguracao", getListaTiposConfiguracao());
-		result.include("orgaoUsu", getOrgaosUsu());
-	}
-	
+		
 	@Get("/nova")
 	public void cadastro() throws Exception {	
-		//assertAcesso(VERIFICADOR_ACESSO);
+		assertAcesso(VERIFICADOR_ACESSO);
 		
 		result.include("tiposConfiguracao", getListaTiposConfiguracao());		
 		result.include("destinatarios", ExConfiguracaoDestinatarios.values());		
-	}	
-	
+	}
+		
+	@Consumes("application/json")
+	@Post("/nova")
+	public void salvar(ExConfiguracaoDTO configuracao) throws Exception {
+		assertAcesso(VERIFICADOR_ACESSO);
+		
+		try {
+		
+			if (configuracao != null) {							
+				for (Long idModelo : configuracao.getIdModelos()) {										
+					if (configuracao.getDestinatarios().equals(ORGAOS)) {
+						gravarConfiguracaoOrgaos(configuracao, idModelo);					
+					}
+					
+					if (configuracao.getDestinatarios().equals(UNIDADES)) {
+						gravarConfiguracaoUnidades(configuracao, idModelo);													
+					}
+					
+					if (configuracao.getDestinatarios().equals(CARGOS)) {
+						gravarConfiguracaoCargos(configuracao, idModelo);
+					}
+					
+					if (configuracao.getDestinatarios().equals(FUNCOES)) {
+						gravarConfiguracaoFuncoes(configuracao, idModelo);
+					}
+					
+					if (configuracao.getDestinatarios().equals(PESSOAS)) {
+						gravarConfiguracaoPessoas(configuracao, idModelo);
+					}											
+				}			
+			}
+			
+			result.nothing();
+			
+		} catch (RegraNegocioException e) {
+			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
+			result.forwardTo(this).cadastro();
+		}		
+	}
+
 	@Consumes("application/json")
 	@Path("/modelos")
 	public void listarModelos() {			
@@ -167,5 +202,180 @@ public class ExConfiguracao2Controller extends ExController {
 		s.addAll(dao().listarExTiposMovimentacao());
 
 		return new ArrayList<>(s);
+	}
+	
+	private void gravarConfiguracaoOrgaos(ExConfiguracaoDTO configuracao, Long idModelo) {
+		ExConfiguracaoBuilder configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia();
+		for (Long idOrgao : configuracao.getIdOrgaos()) {
+			configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia().setId(null)
+					.setTipoPublicador(null)
+					.setIdTpMov(configuracao.getMovimentacao())
+					.setIdTpDoc(null)
+					.setIdMod(idModelo)
+					.setIdFormaDoc(null)
+					.setIdTpFormaDoc(null)
+					.setIdNivelAcesso(null)
+					.setIdPapel(null)
+					.setIdSituacao(configuracao.getIdSituacao())
+					.setIdTpConfiguracao(configuracao.getTipoConfiguracao())								
+					.setIdOrgaoUsu(idOrgao)
+					.setLotacaoSel(null)
+					.setCargoSel(null)
+					.setFuncaoSel(null)
+					.setPessoaSel(null)
+					.setClassificacaoSel(null)
+					.setIdOrgaoObjeto(null)
+					.setPessoaObjetoSel(null)
+					.setLotacaoObjetoSel(null)
+					.setCargoObjetoSel(null)
+					.setFuncaoObjetoSel(null)								
+					.setIdTpLotacao(null);
+			
+			gravarConfiguracao(configuracao.getTipoConfiguracao(), configuracao.getIdSituacao(), configuracaoBuilder.construir(dao()));
+		}						
+	}
+	
+	private void gravarConfiguracaoUnidades(ExConfiguracaoDTO configuracao, Long idModelo) {
+		ExConfiguracaoBuilder configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia();		
+		for (Long idUnidade : configuracao.getIdUnidades()) {
+			configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia().setId(null)
+					.setTipoPublicador(null)
+					.setIdTpMov(configuracao.getMovimentacao())
+					.setIdTpDoc(null)
+					.setIdMod(idModelo)
+					.setIdFormaDoc(null)
+					.setIdTpFormaDoc(null)
+					.setIdNivelAcesso(null)
+					.setIdPapel(null)
+					.setIdSituacao(configuracao.getIdSituacao())
+					.setIdTpConfiguracao(configuracao.getTipoConfiguracao())								
+					.setIdOrgaoUsu(null)
+					.setLotacaoSel(configuracao.getLotacaoSelecao(idUnidade))
+					.setCargoSel(null)
+					.setFuncaoSel(null)
+					.setPessoaSel(null)
+					.setClassificacaoSel(null)
+					.setIdOrgaoObjeto(null)
+					.setPessoaObjetoSel(null)
+					.setLotacaoObjetoSel(null)
+					.setCargoObjetoSel(null)
+					.setFuncaoObjetoSel(null)								
+					.setIdTpLotacao(null);	
+			
+			gravarConfiguracao(configuracao.getTipoConfiguracao(), configuracao.getIdSituacao(), configuracaoBuilder.construir(dao()));
+		}				
+	}
+	
+	private void gravarConfiguracaoCargos(ExConfiguracaoDTO configuracao, Long idModelo) {
+		ExConfiguracaoBuilder configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia();				
+		for (Long idCargo : configuracao.getIdCargos()) {
+			configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia().setId(null)
+					.setTipoPublicador(null)
+					.setIdTpMov(configuracao.getMovimentacao())
+					.setIdTpDoc(null)
+					.setIdMod(idModelo)
+					.setIdFormaDoc(null)
+					.setIdTpFormaDoc(null)
+					.setIdNivelAcesso(null)
+					.setIdPapel(null)
+					.setIdSituacao(configuracao.getIdSituacao())
+					.setIdTpConfiguracao(configuracao.getTipoConfiguracao())								
+					.setIdOrgaoUsu(null)
+					.setLotacaoSel(null)
+					.setCargoSel(configuracao.getCargoSelecao(idCargo))
+					.setFuncaoSel(null)
+					.setPessoaSel(null)
+					.setClassificacaoSel(null)
+					.setIdOrgaoObjeto(null)
+					.setPessoaObjetoSel(null)
+					.setLotacaoObjetoSel(null)
+					.setCargoObjetoSel(null)
+					.setFuncaoObjetoSel(null)								
+					.setIdTpLotacao(null);		
+			
+			gravarConfiguracao(configuracao.getTipoConfiguracao(), configuracao.getIdSituacao(), configuracaoBuilder.construir(dao()));
+		}			
+	}
+	
+	private void gravarConfiguracaoFuncoes(ExConfiguracaoDTO configuracao, Long idModelo) {
+		ExConfiguracaoBuilder configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia();				
+		for (Long idFuncao : configuracao.getIdFuncoes()) {
+			configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia().setId(null)
+					.setTipoPublicador(null)
+					.setIdTpMov(configuracao.getMovimentacao())
+					.setIdTpDoc(null)
+					.setIdMod(idModelo)
+					.setIdFormaDoc(null)
+					.setIdTpFormaDoc(null)
+					.setIdNivelAcesso(null)
+					.setIdPapel(null)
+					.setIdSituacao(configuracao.getIdSituacao())
+					.setIdTpConfiguracao(configuracao.getTipoConfiguracao())								
+					.setIdOrgaoUsu(null)
+					.setLotacaoSel(null)
+					.setCargoSel(null)
+					.setFuncaoSel(configuracao.getFuncaoSelecao(idFuncao))
+					.setPessoaSel(null)
+					.setClassificacaoSel(null)
+					.setIdOrgaoObjeto(null)
+					.setPessoaObjetoSel(null)
+					.setLotacaoObjetoSel(null)
+					.setCargoObjetoSel(null)
+					.setFuncaoObjetoSel(null)								
+					.setIdTpLotacao(null);			
+			
+			gravarConfiguracao(configuracao.getTipoConfiguracao(), configuracao.getIdSituacao(), configuracaoBuilder.construir(dao()));
+		}				
+	}
+	
+	private void gravarConfiguracaoPessoas(ExConfiguracaoDTO configuracao, Long idModelo) {
+		ExConfiguracaoBuilder configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia();				
+		for (Long idPessoa : configuracao.getIdPessoas()) {
+			configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia().setId(null)
+					.setTipoPublicador(null)
+					.setIdTpMov(configuracao.getMovimentacao())
+					.setIdTpDoc(null)
+					.setIdMod(idModelo)
+					.setIdFormaDoc(null)
+					.setIdTpFormaDoc(null)
+					.setIdNivelAcesso(null)
+					.setIdPapel(null)
+					.setIdSituacao(configuracao.getIdSituacao())
+					.setIdTpConfiguracao(configuracao.getTipoConfiguracao())								
+					.setIdOrgaoUsu(null)
+					.setLotacaoSel(null)
+					.setCargoSel(null)
+					.setFuncaoSel(null)
+					.setPessoaSel(configuracao.getPessoaSel(idPessoa))
+					.setClassificacaoSel(null)
+					.setIdOrgaoObjeto(null)
+					.setPessoaObjetoSel(null)
+					.setLotacaoObjetoSel(null)
+					.setCargoObjetoSel(null)
+					.setFuncaoObjetoSel(null)								
+					.setIdTpLotacao(null);	
+			
+			gravarConfiguracao(configuracao.getTipoConfiguracao(), configuracao.getIdSituacao(), configuracaoBuilder.construir(dao()));
+		}			
+	}
+	
+	@SuppressWarnings("static-access")
+	private void gravarConfiguracao(Long idTpConfiguracao, Long idSituacao, final ExConfiguracao config) {
+
+		if (idTpConfiguracao == null || idTpConfiguracao == 0)
+			throw new RegraNegocioException("Tipo de configuracao não informado");
+
+		if (idSituacao == null || idSituacao == 0)
+			throw new RegraNegocioException("Situação de Configuracao não informada");
+
+		try {
+			dao().iniciarTransacao();
+			config.setHisDtIni(dao().consultarDataEHoraDoServidor());
+			dao().gravarComHistorico(config, getIdentidadeCadastrante());
+			dao().commitTransacao();
+		} catch (final Exception e) {
+			dao().em().getTransaction().rollback();
+			throw new AplicacaoException("Erro na gravação", 0, e);
+		}
 	}
 }

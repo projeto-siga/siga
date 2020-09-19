@@ -1,7 +1,6 @@
 package br.gov.jfrj.siga.ex;
 
 public enum ExConfiguracaoDestinatarios {
-	
 	ORGAOS("Órgãos"),
 	UNIDADES("Unidades"),
 	CARGOS("Cargos"),

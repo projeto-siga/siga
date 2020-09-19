@@ -38,10 +38,7 @@
 									<div style="display: flex; width: 100%">																												
 					                    <select id="modelo" class="form-control siga-multiploselect  js-siga-multiploselect--modelo">				                    		
 					                    	<option>Modelo 1</option>			                        			                            				                        				                       
-					                    </select>						                    						                   
-					                    <!--  <div class="invalid-feedback">
-									     	Favor, selecione um ou mais modelos
-									    </div>-->					            																															
+					                    </select>						                    						                   					                        																														
 									     <div>
 					                    	<span class="spinner js-spinner--modelo"></span>
 					                    </div>
@@ -51,7 +48,7 @@
 						</div>
 					</div>
 					
-					<div id="selecaoConfiguracao" class="etapa  js-etapa" style="position: relative">
+					<div id="selecaoConfiguracao" class="etapa  js-etapa">
 						<h3 class="text-center display-4 p-4">
 							<label for="tipoConfiguracao">Qual configuração deseja aplicar?</label>							
 						</h3>
@@ -61,10 +58,10 @@
 								<div class="form-group">																																																									
 									<select id="tipoConfiguracao" name="tipoConfiguracao" class="form-control  siga-select2  js-siga-select2--configuracao" 
 										data-siga-select2-placeholder="Selecione a configuração a ser aplicada">
-										<option value="">Selecione a configuração a ser aplicada</option>																											
+										<option value="">Selecione a configuração a ser aplicada</option>
 										<c:forEach items="${tiposConfiguracao}" var="tipoConfiguracao">
 											<option value="${tipoConfiguracao.idTpConfiguracao}">${tipoConfiguracao.dscTpConfiguracao}</option>
-										</c:forEach>																				
+										</c:forEach>																																																								
 									</select>																																										                   			            																														
 								</div>
 							</div>				
@@ -90,9 +87,9 @@
 						<h3 class="text-center display-4 p-4">							
 							<label for="destinatario">Para quem se destina essa configuração?</label>							  
 						</h3>
-					
+						
 						<div class="row">
-							<div class="col-sm-12">
+							<div class="col-sm-12  container-campos--destinatario  js-container-campos--destinatario">								
 								<div class="form-group">																												
 									<select id="destinatario" name="destinatario" class="form-control  siga-select2  js-siga-select2--destinatario" 
 										data-siga-select2-placeholder="Selecione como deverá ser o acesso a essa configuração">
@@ -101,9 +98,19 @@
 											<option value="id_${destinatario}">${destinatario.descricao}</option>
 										</c:forEach>																				
 									</select>																            																													
+								</div>							
+							</div>				
+														
+							<div class="col-sm-6  container-campos--visibilidade  js-container-campos--visibilidade">
+								<div class="form-group">
+									<label for="visibilidade" class="label-visibilidade  js-label-visibilidade"><i class="fas fa-arrow-down"></i></label>																																																																									
+									<select id="visibilidade" name="visibilidade" class="form-control  siga-select2  js-siga-select2--visibilidade" 
+										data-siga-select2-placeholder="Agora, selecione como deve ser a visibilidade">
+										<option value="">Agora, selecione como deve ser a visibilidade</option>																																												
+									</select>																																																												                   			            																													
 								</div>
 							</div>						
-						</div>
+						</div>									
 					</div>
 					
 					<div id="selecaoDestinatarioDefinicao" class="etapa  js-etapa">
@@ -198,6 +205,19 @@
 							</div>
 						</div>														
 					</div>
+					
+					<div id="salvando" class="etapa etapa--final  js-etapa-final">
+						<h1 class="text-center display-4">
+							Salvando suas configurações...													
+						</h1>											
+											
+						<div class="row">
+							<div class="col-sm-12">
+					            <span class="spinner spinner--salvando js-spinner--salvando"></span>
+					            <span class="icone-salvo-sucesso"><i class="fas fa-check-circle"></i></span>					            					            					           
+							</div>						
+						</div>
+					</div>
 										
 					<div class="row">						
 					  	<div class="col-sm-12 text-right">					  	  
@@ -211,17 +231,7 @@
 						<span class="indicador-etapa  js-indicador-etapa"></span>
 						<span class="indicador-etapa  js-indicador-etapa"></span>
 						<span class="indicador-etapa  js-indicador-etapa"></span>
-					</div>
-								
-				<!-- <div class="row">
-					<div class="col-sm-12">
-						<div class="form-group mb-0">
-							<input type="submit" value="Ok"	class="btn btn-primary" /> 
-							<input type="button" value="Cancelar" onclick="javascript:history.back();" class="btn btn-primary" />
-						</div>
-					</div>
-				</div>-->
-				
+					</div>										
 				</form>
 			</div>			
 		</div>

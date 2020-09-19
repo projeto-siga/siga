@@ -147,7 +147,7 @@
 							configurações</a></li>
 							
 					<li>
-						<a class="dropdown-item" href="/sigaex/app/expediente/configuracao2/pesquisa">
+						<a class="dropdown-item" href="/sigaex/app/expediente/configuracao2/nova">
 							Cadastro de configurações <span class="badge badge-pill badge-success">NOVO</span>
 						</a>
 					</li>		

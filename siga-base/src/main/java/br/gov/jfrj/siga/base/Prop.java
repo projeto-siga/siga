@@ -77,18 +77,18 @@ public class Prop {
 		String base = get("/siga.base.url");
 
 		provider.addPublicProperty("/siga.gsa.url", null);
-		
+
 		provider.addPublicProperty("/siga.relat.brasao", "brasao.png");
 		provider.addPublicProperty("/siga.relat.titulo", "PODER JUDICIÁRIO");
 		provider.addPublicProperty("/siga.relat.subtitulo", "JUSTIÇA FEDERAL");
-		
+
 		/* proxy properties */
 		provider.addRestrictedProperty("/http.proxyHost", null);
 		if (get("/http.proxyHost") != null)
 			provider.addRestrictedProperty("/http.proxyPort");
 		else
 			provider.addRestrictedProperty("/http.proxyPort", null);
-		
+
 		provider.addRestrictedProperty("/https.proxyHost", null);
 		if (get("/https.proxyHost") != null)
 			provider.addRestrictedProperty("/https.proxyPort");
@@ -97,7 +97,7 @@ public class Prop {
 
 		provider.addRestrictedProperty("/http.nonProxyHosts", "localhost|127.0.0.1|");
 		/* END proxy properties */
-		
+
 		/* Parâmetros para ativação de Login por SSO OAuth2/OIDC */
 		provider.addPublicProperty("/siga.integracao.sso", null);
 		provider.addPublicProperty("/siga.integracao.sso.dominio", null);
@@ -108,11 +108,10 @@ public class Prop {
 		/* Parâmetros para ativação de Login por SSO OAuth2/OIDC */
 
 		provider.addPublicProperty("/siga.omitir.metodo2", "true");
-		
+
 		provider.addPublicProperty("/siga.cabecalho.titulo", "Justiça Federal");
 		provider.addPublicProperty("/sigawf.ativo", "true");
-		
-		
+
 		provider.addPublicProperty("/siga.ldap.ambiente", null);
 		provider.addPublicProperty("/siga.ldap.dn.usuarios", null);
 		provider.addPublicProperty("/siga.ldap.keystore", null);
@@ -133,7 +132,7 @@ public class Prop {
 		provider.addRestrictedProperty("/siga.ldap.ws.endereco.autenticacao", null);
 		provider.addRestrictedProperty("/siga.ldap.ws.endereco.busca", null);
 		provider.addRestrictedProperty("/siga.ldap.ws.endereco.troca.senha", null);
-		provider.addPublicProperty("/siga.smtp.starttls.enable", "false"); 
+		provider.addPublicProperty("/siga.smtp.starttls.enable", "false");
 
 		provider.addPublicProperty("/siga.recaptcha.key", null);
 		provider.addPrivateProperty("/siga.recaptcha.pwd", null);
@@ -162,7 +161,6 @@ public class Prop {
 		provider.addPublicProperty("/sigaex.autenticidade.url", base + "/sigaex/public/app/autenticar");
 		provider.addPublicProperty("/sigaex.url", base + "/sigaex");
 		provider.addPublicProperty("/sigaex.manual.url", base + "/siga/arquivos/apostila_sigaex.pdf");
-		
 
 		provider.addPrivateProperty("/xjus.jwt.secret", null);
 		provider.addPrivateProperty("/xjus.password", null);
@@ -191,22 +189,28 @@ public class Prop {
 
 		provider.addPublicProperty("/blucservice.url", base + "/blucservice/api/v1");
 		provider.addPublicProperty("/vizservice.url", base + "/vizservice");
-    
-		provider.addPublicProperty("/siga.sgp.bnf.url","/siga-beneficios");
-		provider.addPublicProperty("/siga.sgp.aq.url","/sigarhaq");
-		provider.addPublicProperty("/siga.sgp.cad.url","/sigarh");
-		provider.addPublicProperty("/siga.sgp.bdp.url","/sigarhaq1");
-		provider.addPublicProperty("/siga.sgp.dcn.url","/sigarhaq2");
-		provider.addPublicProperty("/siga.sgp.cst.url","/sigarhdadoscadastrais");
-		provider.addPublicProperty("/siga.sgp.lot.url","/sigarhlotacao");	
-		provider.addPublicProperty("/siga.sgp.trn.url","/sigatr");	
-		provider.addPublicProperty("/siga.sgp.terc.url","/sigarhterceirizados");
-		
+
+		provider.addPublicProperty("/siga.sgp.bnf.url", "/siga-beneficios");
+		provider.addPublicProperty("/siga.sgp.aq.url", "/sigarhaq");
+		provider.addPublicProperty("/siga.sgp.cad.url", "/sigarh");
+		provider.addPublicProperty("/siga.sgp.bdp.url", "/sigarhaq1");
+		provider.addPublicProperty("/siga.sgp.dcn.url", "/sigarhaq2");
+		provider.addPublicProperty("/siga.sgp.cst.url", "/sigarhdadoscadastrais");
+		provider.addPublicProperty("/siga.sgp.lot.url", "/sigarhlotacao");
+		provider.addPublicProperty("/siga.sgp.trn.url", "/sigatr");
+		provider.addPublicProperty("/siga.sgp.terc.url", "/sigarhterceirizados");
+
 		/* Parâmetros para configuração do armazenamento de documento */
 		provider.addPublicProperty("/siga.armazenamento.arquivo.tipo", "BLOB");
-		provider.addPublicProperty("/siga.armazenamento.arquivo.usuario");
-		provider.addPublicProperty("/siga.armazenamento.arquivo.senha");
-		provider.addPublicProperty("/siga.armazenamento.arquivo.url");
-		
+		String armaz = get("/siga.armazenamento.arquivo.tipo");
+		if ("BLOB".equals(armaz) || "TABELA".equals(armaz)) {
+			provider.addRestrictedProperty("/siga.armazenamento.arquivo.usuario", null);
+			provider.addPrivateProperty("/siga.armazenamento.arquivo.senha", null);
+			provider.addRestrictedProperty("/siga.armazenamento.arquivo.url", null);
+		} else {
+			provider.addRestrictedProperty("/siga.armazenamento.arquivo.usuario");
+			provider.addPrivateProperty("/siga.armazenamento.arquivo.senha");
+			provider.addRestrictedProperty("/siga.armazenamento.arquivo.url");
+		}
 	}
 }

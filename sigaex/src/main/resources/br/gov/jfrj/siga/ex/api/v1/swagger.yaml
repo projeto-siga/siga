@@ -220,7 +220,7 @@ parameters:
   observacao:
     name: observacao
     in: formData
-    description: Somente quando `tipoDestinatario` = `EXTERNO`. Poderá ser preenchido com e-mail do destinatário.
+    description: Somente quando `tipoDestinatario` = `EXTERNO`. Para outros tipos de Destinatário será ignorado.
     required: false
     type: string            
   dataDevolucao:
@@ -229,7 +229,14 @@ parameters:
     description: Data de Devolução do documento (por exemplo, `2020-12-02`). Deve ser igual ou maior que o dia corrente!
     required: false
     type: string
-    pattern: ^\d{4}-(0\d|1[012])-([012]\d|3[01])
+    pattern: ^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01])
+  autenticar:
+    name: autenticar
+    in: query
+    description: Indica se o documento deverá ser autenticado.
+    required: false
+    default: false
+    type: boolean
 
 ################################################################################
 #                                           Paths                              #
@@ -454,8 +461,9 @@ paths:
       tags: [acao]
       parameters:
         - $ref: "#/parameters/sigla"
-        - $ref: "#/parameters/username"
-        - $ref: "#/parameters/password"
+#        - $ref: "#/parameters/username"
+#        - $ref: "#/parameters/password"
+        - $ref: '#/parameters/autenticar'
       description: Assinar documento com senha
       responses:
         200:

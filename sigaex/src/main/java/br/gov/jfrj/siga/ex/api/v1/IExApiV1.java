@@ -273,8 +273,7 @@ public interface IExApiV1 {
 
 	public class DocSiglaAssinarComSenhaPostRequest implements ISwaggerRequest {
 		public String sigla;
-		public String username;
-		public String password;
+		public Boolean autenticar;
 	}
 
 	public class DocSiglaAssinarComSenhaPostResponse implements ISwaggerResponse {

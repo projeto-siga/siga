@@ -25,7 +25,6 @@ import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class DocSiglaAssinarComSenhaPost implements IDocSiglaAssinarComSenhaPost {
 
-	@SuppressWarnings("resource")
 	@Override
 	public void run(DocSiglaAssinarComSenhaPostRequest req, DocSiglaAssinarComSenhaPostResponse resp) throws Exception {
 		// Necessário pois é chamado o método "realPath" durante a criação do
@@ -34,8 +33,6 @@ public class DocSiglaAssinarComSenhaPost implements IDocSiglaAssinarComSenhaPost
 
 		SwaggerHelper.buscarEValidarUsuarioLogado();
 		SigaObjects so = SwaggerHelper.getSigaObjects();
-		so.assertAcesso("DOC:Módulo de Documentos;" + "");
-
 
 		try {
 			DpPessoa cadastrante = so.getCadastrante();
@@ -56,7 +53,7 @@ public class DocSiglaAssinarComSenhaPost implements IDocSiglaAssinarComSenhaPost
 			}
 
 			Ex.getInstance().getBL().assinarDocumentoComSenha(cadastrante, lotaTitular, doc, null, cadastrante.getSiglaCompleta(), null,
-					false, titular, false, null, false);
+					false, titular, req.autenticar, null, false);
 
 			resp.status = "OK";
 		} catch (Exception e) {

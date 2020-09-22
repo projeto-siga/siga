@@ -304,6 +304,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 			grpNovo.setSiglaGrupo(siglaGrupo);
 
 			dao().iniciarTransacao();
+			
 			grp = (CpGrupo) dao().gravarComHistorico(grpNovo, grp, dt,
 					getIdentidadeCadastrante());
 			idCpGrupo = grp.getIdGrupo();
@@ -422,6 +423,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 			}
 
 			dao().commitTransacao();
+			
 			Cp.getInstance().getConf().limparCacheSeNecessario();
 			return idCpGrupo;
 		} catch (Exception e) {

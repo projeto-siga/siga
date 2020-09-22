@@ -1971,9 +1971,25 @@ public class CpDao extends ModeloDao {
 		return entidade;
 	}
 
+	/*
+	 * Jira: PROCESSO_RIO-82
+	 * Ao acessar esse metodo na exclusão da configuração do grupo (CpConfiguracao)
+	 * o objeto chegava com Id != null, sendo que a classe CpConfiguracao tem anotação de 
+	 * Id autoincrement, ocasionando erro ao persistir o objeto. Uma vez que o metodo gravar 
+	 * utiliza o PERSIST.
+	 * Sendo assim implementamos na super classe o metodo Atualizar utilizando o MERGE.
+	 */
 	public <T> T gravar(final T entidade) {
-		if (entidade instanceof CarimboDeTempo)
+		if (entidade instanceof CarimboDeTempo){
 			((CarimboDeTempo) entidade).setHisDtAlt(this.dt());
+		}
+
+		if ( (entidade instanceof CpConfiguracao) && 
+			((CpConfiguracao) entidade).getId() != null ){
+			super.atualizar(entidade);
+			return entidade;
+		}
+		
 		super.gravar(entidade);
 		invalidarCache(entidade);
 		return entidade;

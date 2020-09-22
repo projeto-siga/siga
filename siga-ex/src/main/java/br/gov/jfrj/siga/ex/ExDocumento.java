@@ -1795,6 +1795,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return getIdDoc() + "-" + Math.abs(getDescrCurta().hashCode() % 10000);
 	}
 
+	/**
+	 * Retorna as {@link ExMovimentacao Movimentações} de
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
+	 * Assinaturas Com Token} válidas.
+	 * 
+	 * @return Movimentações de Assinaturas Com Token
+	 */
 	public Set<ExMovimentacao> getAssinaturasComToken() {
 		if (getMobilGeral() == null)
 			return new TreeSet<ExMovimentacao>();
@@ -1803,6 +1810,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO);
 	}
 
+	/**
+	 * Retorna as {@link ExMovimentacao Movimentações} de
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
+	 * Autenticação com token} validas.
+	 * 
+	 * @return Movimentações de Autenticação com token.
+	 */
 	public Set<ExMovimentacao> getAutenticacoesComToken() {
 		if (getMobilGeral() == null)
 			return new TreeSet<ExMovimentacao>();
@@ -1812,6 +1826,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 						true);
 	}
 
+	/**
+	 * Retorna as {@link ExMovimentacao Movimentações} de
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA Assinaturas
+	 * Com Senha} válidas.
+	 * 
+	 * @return Movimentações de Assinaturas Com Senha
+	 */
 	public Set<ExMovimentacao> getAssinaturasComSenha() {
 		if (getMobilGeral() == null)
 			return new TreeSet<ExMovimentacao>();
@@ -1827,6 +1848,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	}
 
 
+	/**
+	 * Retorna as {@link ExMovimentacao Movimentações} de
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA
+	 * Autenticação com senha} validas.
+	 * 
+	 * @return Movimentações de Autenticação com senha.
+	 */
 	public Set<ExMovimentacao> getAutenticacoesComSenha() {
 		if (getMobilGeral() == null)
 			return new TreeSet<ExMovimentacao>();
@@ -1853,6 +1881,15 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 						true);
 	}
 
+	/**
+	 * Retorna as {@link ExMovimentacao movimentações} de assinatura, seja
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA com senha},
+	 * seja com
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
+	 * token}, validas.
+	 * 
+	 * @return As Movimentações de Assinatura.
+	 */
 	public Set<ExMovimentacao> getAssinaturasComTokenOuSenha() {
 		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
 		set.addAll(getAssinaturasComSenha());
@@ -1867,6 +1904,15 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return set;
 	}
 
+	/**
+	 * Retorna as {@link ExMovimentacao movimentações} de autenticação, seja
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA com
+	 * senha}, seja com
+	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
+	 * token}, validas.
+	 * 
+	 * @return As Movimentações de Autenticação.
+	 */
 	public Set<ExMovimentacao> getAutenticacoesComTokenOuSenha() {
 		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
 		set.addAll(getAutenticacoesComSenha());

@@ -2181,10 +2181,35 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return transferenciasComData;
 	}
 
+	/**
+	 * Retorna as {@link ExMovimentacao Movimentações} de determinado tipo e que
+	 * <i>não {@link ExMovimentacao#getExMovimentacaoCanceladora() foram
+	 * canceladas}</i>.
+	 * 
+	 * @param idTpMov Tipo de Movimentação solicitada
+	 * @return As Movimentações do tipo Solicitado.
+	 * @see #getMovsNaoCanceladas(long, boolean)
+	 */
 	public Set<ExMovimentacao> getMovsNaoCanceladas(long idTpMov) {
 		return getMovsNaoCanceladas(idTpMov, false);
 	}
 
+	/**
+	 * Retorna as {@link ExMovimentacao Movimentações} de determinado tipo e que
+	 * <i>não {@link ExMovimentacao#getExMovimentacaoCanceladora() foram
+	 * canceladas}</i>.
+	 * 
+	 * @param idTpMov                  Tipo de Movimentação solicitada
+	 * @param apenasNaoReferenciadoras <code>true</code> se as Movimentações
+	 *                                 solicitadas <b>não</b> devem fazer
+	 *                                 {@link ExMovimentacao#getExMovimentacaoRef()
+	 *                                 referências a outras Movimentações}. Serve
+	 *                                 para, por exemplo, não retornar movimentações
+	 *                                 de autenticação de anexos, mas apenas de
+	 *                                 documento
+	 * @return As Movimentações do tipo Solicitado.
+	 * @see #getExMovimentacaoSet()
+	 */
 	public Set<ExMovimentacao> getMovsNaoCanceladas(long idTpMov, boolean apenasNaoReferenciadoras) {
 		// Edson: o apenasNaoReferenciadoras serve para, por exemplo, não
 		// retornar movimentações

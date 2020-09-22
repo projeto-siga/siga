@@ -4,13 +4,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.crivano.swaggerservlet.PresentableUnloggedException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.bl.CurrentRequest;
@@ -22,16 +20,27 @@ import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 abstract class DocSiglaAssinarAutenticarComSenhaPost {
 
-	private final boolean autenticar;
+	/**
+	 * Valida o documento.
+	 * 
+	 * @param titular     Usuário logado no webservice.
+	 * @param lotaTitular Lotação do titular.
+	 * @param mob         {@link ExMobil} representando o documento
+	 * 
+	 * @throws Exception
+	 */
+	protected abstract void assertDocumento(final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob)
+			throws Exception;
 
-	private final String acao;
-
-	protected DocSiglaAssinarAutenticarComSenhaPost(boolean autenticar, String acao) {
-		this.autenticar = autenticar;
-		this.acao = acao;
-	}
-
-	protected void executar(String sigla) throws Exception {
+	/**
+	 * Executa a Autenticação ou Assinatuyra do documento.
+	 * 
+	 * @param sigla      Sigla do Documento
+	 * @param autenticar Se o documento será autenticado (<code>true</code>) ou
+	 *                   apenas assinado (<code>false</code>).
+	 * @throws Exception Se houver algo de errado.
+	 */
+	protected void executar(String sigla, boolean autenticar) throws Exception {
 		// Necessário pois é chamado o método "realPath" durante a criação do
 		// PDF.
 		CurrentRequest.set(
@@ -45,27 +54,27 @@ abstract class DocSiglaAssinarAutenticarComSenhaPost {
 			DpPessoa titular = cadastrante;
 			DpLotacao lotaTitular = cadastrante.getLotacao();
 
-			ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
-			flt.setSigla(sigla);
-			ExMobil mob = ExDao.getInstance().consultarPorSigla(flt);
-			ExDocumento doc = mob.doc();
+			ExMobil mob = getMob(sigla);
 
-			assertAcesso(mob, titular, lotaTitular);
+			assertAcesso(titular, lotaTitular, mob);
+			assertDocumento(titular, lotaTitular, mob);
 
-			if (!Ex.getInstance().getComp().podeAssinarComSenha(titular, lotaTitular, mob)) {
-				throw new PresentableUnloggedException("O documento " + sigla + " não pode ser " + this.acao
-						+ " com senha por " + titular.getSiglaCompleta() + "/" + lotaTitular.getSiglaCompleta());
-			}
-
-			Ex.getInstance().getBL().assinarDocumentoComSenha(cadastrante, lotaTitular, doc, null,
-					cadastrante.getSiglaCompleta(), null, false, titular, this.autenticar, null, false);
+			Ex.getInstance().getBL().assinarDocumentoComSenha(cadastrante, lotaTitular, mob.doc(), null,
+					cadastrante.getSiglaCompleta(), null, false, titular, autenticar, null, false);
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
 			throw e;
 		}
 	}
 
-	private void assertAcesso(final ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
+	private ExMobil getMob(String sigla) {
+		ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
+		flt.setSigla(sigla);
+
+		return ExDao.getInstance().consultarPorSigla(flt);
+	}
+
+	private void assertAcesso(DpPessoa titular, DpLotacao lotaTitular, final ExMobil mob) throws Exception {
 		if (!Ex.getInstance().getComp().podeAcessarDocumento(titular, lotaTitular, mob)) {
 			String s = "";
 			s += mob.doc().getListaDeAcessosString();
@@ -84,7 +93,6 @@ abstract class DocSiglaAssinarAutenticarComSenhaPost {
 						isInteressado = item.toString().equals(titular.getSigla()) ? true : false;
 					}
 				}
-
 			}
 
 			if (mob.doc().isSemEfeito()) {

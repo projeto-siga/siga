@@ -455,16 +455,34 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
+
   /doc/{sigla}/assinar-com-senha:
     post:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [acao]
       parameters:
         - $ref: "#/parameters/sigla"
-#        - $ref: "#/parameters/username"
-#        - $ref: "#/parameters/password"
-        - $ref: '#/parameters/autenticar'
       description: Assinar documento com senha
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /doc/{sigla}/autenticar-com-senha:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      parameters:
+        - $ref: "#/parameters/sigla"
+      description: Autenticar documento com senha
       responses:
         200:
           description: Successful response

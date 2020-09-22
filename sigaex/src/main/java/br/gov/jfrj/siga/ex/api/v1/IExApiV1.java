@@ -273,7 +273,6 @@ public interface IExApiV1 {
 
 	public class DocSiglaAssinarComSenhaPostRequest implements ISwaggerRequest {
 		public String sigla;
-		public Boolean autenticar;
 	}
 
 	public class DocSiglaAssinarComSenhaPostResponse implements ISwaggerResponse {
@@ -282,6 +281,18 @@ public interface IExApiV1 {
 
 	public interface IDocSiglaAssinarComSenhaPost extends ISwaggerMethod {
 		public void run(DocSiglaAssinarComSenhaPostRequest req, DocSiglaAssinarComSenhaPostResponse resp) throws Exception;
+	}
+
+	public class DocSiglaAutenticarComSenhaPostRequest implements ISwaggerRequest {
+		public String sigla;
+	}
+
+	public class DocSiglaAutenticarComSenhaPostResponse implements ISwaggerResponse {
+		public String status;
+	}
+
+	public interface IDocSiglaAutenticarComSenhaPost extends ISwaggerMethod {
+		public void run(DocSiglaAutenticarComSenhaPostRequest req, DocSiglaAutenticarComSenhaPostResponse resp) throws Exception;
 	}
 
 	public class DocSiglaTramitarPostRequest implements ISwaggerRequest {

@@ -442,7 +442,7 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 
 	public void setConteudoBlobMod(byte[] createBlob) {
 		cacheConteudoBlobMod = createBlob;
-		if (this.conteudoBlobMod!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
+		if (this.cpArquivo==null && (this.conteudoBlobMod!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"))))) {
 			this.conteudoBlobMod = createBlob;
 		} else if(cacheConteudoBlobMod != null){
 			cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobMod);

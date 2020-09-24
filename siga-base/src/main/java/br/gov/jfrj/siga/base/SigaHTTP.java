@@ -348,9 +348,7 @@ public class SigaHTTP {
 			return IOUtils.toString(conn.getInputStream(), "UTF-8");
 
 		} catch (IOException ioe) {
-			throw new AplicacaoException(
-					"NÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o foi possÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel abrir conexÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o",
-					1, ioe);
+			throw new RuntimeException("Não foi possível abrir conexão", ioe);
 		}
 
 	}

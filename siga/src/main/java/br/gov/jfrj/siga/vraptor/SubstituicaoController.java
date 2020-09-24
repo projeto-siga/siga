@@ -354,17 +354,17 @@ public class SubstituicaoController extends SigaController {
 
 		String corpo = "Informamos que a matrícula: #matriculaCadastrante# - #nomeCadastrante# cadastrou uma substituição da matrícula: #matriculaSubstituto# - #nomeSubstituto# "
 				+ "para matricula: #matriculaSubstituido# - #nomeSubstituido# com inicio em #inicioSubstituicao# e término em #terminoSubstituicao#. "
-				+ "Neste interstício, #nomeSubstituto#, matrícula: #matriculaSubstituto#, poderá visualizar visualizar e assinar documentos destinados ao usuário #nomeSubstituido#, matrícula #matriculaSubstituido#.\n" + 
+				+ "Neste interstício, #nomeSubstituto#, matrícula: #matriculaSubstituto#, poderá visualizar e assinar documentos destinados ao usuário #nomeSubstituido#, matrícula #matriculaSubstituido#.\n" + 
 				"O sistema irá distinguir os atos assinados por cada agente, deixando claro que o subscritor é um substituto e não o destinatário original";
 		
-		corpo.replace("#matriculaCadastrante#", getCadastrante().getSesbPessoa() + getCadastrante().getMatricula());
-		corpo.replace("#nomeCadastrante#", getCadastrante().getNomePessoa());
-		corpo.replace("#matriculaSubstituto#", subst.getSubstituto().getSesbPessoa() + subst.getSubstituto().getMatricula());
-		corpo.replace("#nomeSubstituto#", subst.getSubstituto().getNomePessoa());
-		corpo.replace("#matriculaSubstituido#", subst.getTitular().getSesbPessoa() + subst.getTitular().getMatricula());
-		corpo.replace("#nomeSubstituido#", subst.getTitular().getNomePessoa());
-		corpo.replace("#inicioSubstituicao#", subst.getDtIniSubstDDMMYY().toString());
-		corpo.replace("#terminoSubstituicao#", subst.getDtFimSubstDDMMYY().toString());
+		corpo = corpo.replace("#matriculaCadastrante#", getCadastrante().getSesbPessoa() + getCadastrante().getMatricula());
+		corpo = corpo.replace("#nomeCadastrante#", getCadastrante().getNomePessoa());
+		corpo = corpo.replace("#matriculaSubstituto#", subst.getSubstituto().getSesbPessoa() + subst.getSubstituto().getMatricula());
+		corpo = corpo.replace("#nomeSubstituto#", subst.getSubstituto().getNomePessoa());
+		corpo = corpo.replace("#matriculaSubstituido#", subst.getTitular().getSesbPessoa() + subst.getTitular().getMatricula());
+		corpo = corpo.replace("#nomeSubstituido#", subst.getTitular().getNomePessoa());
+		corpo = corpo.replace("#inicioSubstituicao#", subst.getDtIniSubstDDMMYY().toString());
+		corpo = corpo.replace("#terminoSubstituicao#", subst.getDtFimSubstDDMMYY().toString());
 
 		return corpo;
 	}

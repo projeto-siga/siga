@@ -340,49 +340,33 @@ public class SubstituicaoController extends SigaController {
 
 	}
 
+	/**
+	 * Monta o corpo do Email de informação de substituição enviado de Pessoa para Pessoa
+	 * 
+	 * @param subst
+	 * @return String com o Corpo do Email
+	 */
 	private String getMensagemPessoaParaPessoa(DpSubstituicao subst){
 		
-		/*
-		 email desejado de pessoa para pessoa
+//		Pra pegar a lotacao
+//		String.format(" lotação: %s - %s", subst.getLotaSubstituto().getSigla(), subst.getLotaSubstituto().getNomeLotacao());
+//		String.format(" lotação: %s - %s", subst.getLotaTitular().getSigla() , subst.getLotaTitular().getNomeLotacao());
 
-Informamos que a matrícula: IPL26217485 - IVAN GONCALVES SILVERIO cadastrou uma substituição da matrícula: IPL26218325 -
- ANDRE MARCIO DA CONCEICAO CARVALHO para matricula: IPL26217485 - IVAN GONCALVES SILVERIO com inicio em 23/09/20 e término em 22/09/22.
-  Neste interstício, ANDRE MARCIO DA CONCEICAO CARVALHO, matrícula: IPL26218325, poderá visualizar visualizar e
-   assinar documentos destinados ao usuário IVAN GONCALVES SILVERIO, matrícula IPL26217485.
-O sistema irá distinguir os atos assinados por cada agente, deixando claro que o subscritor é um substituto e não o destinatário original
-		 */
+		String corpo = "Informamos que a matrícula: #matriculaCadastrante# - #nomeCadastrante# cadastrou uma substituição da matrícula: #matriculaSubstituto# - #nomeSubstituto# "
+				+ "para matricula: #matriculaSubstituido# - #nomeSubstituido# com inicio em #inicioSubstituicao# e término em #terminoSubstituicao#. "
+				+ "Neste interstício, #nomeSubstituto#, matrícula: #matriculaSubstituto#, poderá visualizar visualizar e assinar documentos destinados ao usuário #nomeSubstituido#, matrícula #matriculaSubstituido#.\n" + 
+				"O sistema irá distinguir os atos assinados por cada agente, deixando claro que o subscritor é um substituto e não o destinatário original";
+		
+		corpo.replace("#matriculaCadastrante#", getCadastrante().getSesbPessoa() + getCadastrante().getMatricula());
+		corpo.replace("#nomeCadastrante#", getCadastrante().getNomePessoa());
+		corpo.replace("#matriculaSubstituto#", subst.getSubstituto().getSesbPessoa() + subst.getSubstituto().getMatricula());
+		corpo.replace("#nomeSubstituto#", subst.getSubstituto().getNomePessoa());
+		corpo.replace("#matriculaSubstituido#", subst.getTitular().getSesbPessoa() + subst.getTitular().getMatricula());
+		corpo.replace("#nomeSubstituido#", subst.getTitular().getNomePessoa());
+		corpo.replace("#inicioSubstituicao#", subst.getDtIniSubstDDMMYY().toString());
+		corpo.replace("#terminoSubstituicao#", subst.getDtFimSubstDDMMYY().toString());
 
-		StringBuilder sbTextoPessoa = new StringBuilder();
-		
-		sbTextoPessoa.append(getSubstitutoSubstituicao(tipoSubstituto, subst));
-		
-		sbTextoPessoa.append(" para ");
-		
-		sbTextoPessoa.append(getTitularSubstituicao(tipoTitular, subst));
-
-		sbTextoPessoa.append(getPeriodoSubstituicao(subst));
-		
-		sbTextoPessoa.append("Neste interstício, ");
-		
-		sbTextoPessoa.append(subst.getTitular().getNomePessoa());
-		
-		sbTextoPessoa.append(subst.getSubstituto().getNomePessoa());
-		
-		sbTextoPessoa.append(", matricula: ");
-		sbTextoPessoa.append(subst.getSubstituto().getSesbPessoa());
-		sbTextoPessoa.append(subst.getSubstituto().getMatricula());
-
-		sbTextoPessoa.append(" poderá visualizar e assinar documentos destinados ao usuário(a) ");
-		
-		sbTextoPessoa.append(", matricula: ");
-		sbTextoPessoa.append(subst.getTitular().getSesbPessoa());
-		sbTextoPessoa.append(subst.getTitular().getMatricula());
-		
-		sbTextoPessoa.append(".\n");
-		
-		sbTextoPessoa.append("O sistema irá distinguir os atos assinados por cada agente, deixando claro que o subscritor é um substituto e não o destinatário original.");
-
-		return sbTextoPessoa.toString();
+		return corpo;
 	}
 
 	private void enviarEmailSubstituicao(Integer tipoTitular, Integer tipoSubstituto, DpSubstituicao subst)
@@ -390,23 +374,14 @@ O sistema irá distinguir os atos assinados por cada agente, deixando claro que 
 		
 		String assunto = "Cadastro de Substituição";
 		
-		StringBuilder sbTextoEmail = new StringBuilder();
+		StringBuffer sbTextoEmail = new StringBuffer();
 
-		sbTextoEmail.append("Informamos que a matrícula: ");
-		
-		sbTextoEmail.append(getCadastranteSubstituicao());
-		
-		sbTextoEmail.append(" cadastrou uma substituição da ");
-		
 		// pessoa para pessoa
 		if (tipoTitular == 1  && tipoSubstituto == 1){
 			sbTextoEmail.append(getMensagemPessoaParaPessoa(subst));
-			
 		}
 				
-		sbTextoEmail.append("\n\n");
-		
-		sbTextoEmail.append("Atenção: esta é uma mensagem automática. Por favor, não responda.");
+		sbTextoEmail.append(this.getEmailRodape());
 
 		List<String> listaDeEmails = getDestinatariosEmailSubstituicao(tipoTitular, tipoSubstituto, subst );
 		
@@ -442,37 +417,14 @@ O sistema irá distinguir os atos assinados por cada agente, deixando claro que 
 		return listaDeEmails;
 	}
 
+	
+	private String getEmailRodape() {
 
-	private String getPeriodoSubstituicao(DpSubstituicao subst) {
-		String strPeriodoSubstituicao = String.format(" com inicio em %s  e término em %s.", subst.getDtIniSubstDDMMYY().toString() , subst.getDtFimSubstDDMMYY().toString());
-		return strPeriodoSubstituicao;
-	}
-
-
-
-	private String getCadastranteSubstituicao() {
-		String strCadastrante = String.format(" %s - %s", getCadastrante().getSesbPessoa()+ getCadastrante().getMatricula(),getCadastrante().getNomePessoa() );
-		return strCadastrante;
-	}
-
-
-
-	private String getSubstitutoSubstituicao(Integer tipoSubstituto, DpSubstituicao subst) {
-		String strSubstituto = tipoSubstituto == 1 ?
-				String.format(" matricula: %s  - %s", subst.getSubstituto().getSesbPessoa() + subst.getSubstituto().getMatricula() , subst.getSubstituto().getNomePessoa()) :
-				String.format(" lotação: %s - %s", subst.getLotaSubstituto().getSigla(), subst.getLotaSubstituto().getNomeLotacao());
-		return strSubstituto;
-	}
-
-
-
-	private String getTitularSubstituicao(Integer tipoTitular, DpSubstituicao subst) {
-		String strTitular = tipoTitular == 1 ? 
-				String.format(" matricula: %s - %s", subst.getTitular().getSesbPessoa() + subst.getTitular().getMatricula(),subst.getTitular().getNomePessoa()) :
-				String.format(" lotação: %s - %s", subst.getLotaTitular().getSigla() , subst.getLotaTitular().getNomeLotacao());
-		return strTitular;
+		String rodape = "\n\n Atenção: Esta é uma mensagem automática. Por favor, não responda.";
+		return rodape;
 	}
 	
+
 	@Get("/app/substituicao/finalizar")
 	public void finalizar() throws Exception {
 		try {

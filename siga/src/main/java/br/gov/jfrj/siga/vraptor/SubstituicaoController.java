@@ -362,7 +362,7 @@ public class SubstituicaoController extends SigaController {
 
 		return corpo;
 	}
-
+	
 	/**
 	 * Monta o corpo do Email de informação de substituição enviado de Lotacao para Lotacao
 	 * 

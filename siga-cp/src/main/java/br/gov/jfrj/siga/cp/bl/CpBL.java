@@ -33,8 +33,10 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
+import org.omg.PortableInterceptor.RequestInfo;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
@@ -63,12 +65,14 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
+import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
 import br.gov.jfrj.siga.gi.service.GiService;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 public class CpBL {
 	CpCompetenciaBL comp;
+	
 
 	public CpCompetenciaBL getComp() {
 		return comp;
@@ -393,6 +397,7 @@ public class CpBL {
 										+ "<p><span style='color: #aaa;'><strong>Aten&ccedil;&atilde;o:</strong> esta &eacute; uma mensagem autom&aacute;tica. Por favor n&atilde;o responda&nbsp;</span></p>"
 										+ "</td>" + "</tr>" + "</tbody>" + "</table>");
 					} else {
+						
 						Correio.enviar(pessoa.getEmailPessoaAtual(), "Alteração de senha ",
 								"\n" + idNova.getDpPessoa().getNomePessoa() + "\nMatricula: "
 										+ idNova.getDpPessoa().getSigla() + "\n" + "\nSua senha foi alterada para: "
@@ -486,7 +491,7 @@ public class CpBL {
 							Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
 									destinanarios, "Novo Usuário", "", conteudoHTML);
 						} else {
-							Correio.enviar(pessoa.getEmailPessoaAtual(), "Novo Usuário",
+							Correio.enviar(pessoa.getEmailPessoaAtual(), "Novo Usuário - processo.rio",
 									textoEmailNovoUsuario(matricula, novaSenha, autenticaPeloBanco));
 						}
 						dao().commitTransacao();
@@ -561,18 +566,31 @@ public class CpBL {
 	private String textoEmailNovoUsuario(String matricula, String novaSenha, boolean autenticaPeloBanco) {
 		StringBuffer retorno = new StringBuffer();
 
-		retorno.append("Seu login é: ");
+		retorno.append("Seja muito bem-vindos(a)!");
+		retorno.append("\nEsta é a sua credencial de acesso ao sistema processo.rio.");
+		retorno.append("\n\nNome de usuário: ");
 		retorno.append(matricula);
-		retorno.append("\n e sua senha é ");
+		
+		retorno.append("\nSenha: ");
+		
 		if (autenticaPeloBanco) {
 			retorno.append(novaSenha);
 		} else {
 			retorno.append("a mesma usada para logon na rede (Windows).");
 		}
-		retorno.append("\n\n Atenção: esta é uma ");
-		retorno.append("mensagem automática. Por favor não responda ");
+
+		retorno.append("Endereço para acesso ao sistema: ");
+		
+		retorno.append(getServidorAplicacao());
+		
+		retorno.append("\n\n Atenção: esta é uma mensagem automática. Por favor não responda ");
 
 		return retorno.toString();
+	}
+	
+	private String getServidorAplicacao(){
+
+		return "teste";
 	}
 
 	private String textoEmailNovoUsuarioSP(CpIdentidade identidade, String matricula, String novaSenha,

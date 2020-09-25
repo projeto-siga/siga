@@ -409,8 +409,7 @@
 				</c:when>
 				<c:otherwise>
 					<a class="dropdown-item" id="apostilaSiga"
-						href="https://processo.rio/wp-content/uploads/2020/09/MANUAL-PROCESSO.RIO-usuário.pdf" target="_blank">Apostila
-						SIGA-Doc</a>
+						href="https://processo.rio/wp-content/uploads/2020/09/MANUAL-PROCESSO.RIO-usuário.pdf" target="_blank">Manual processo.rio</a>
 
 				</c:otherwise>
 			</c:choose></li>

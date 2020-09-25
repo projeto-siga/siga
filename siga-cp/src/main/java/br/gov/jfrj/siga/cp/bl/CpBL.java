@@ -33,10 +33,9 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
-import org.omg.PortableInterceptor.RequestInfo;
+import org.apache.poi.util.StringUtil;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
@@ -65,7 +64,6 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
-import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
 import br.gov.jfrj.siga.gi.service.GiService;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
@@ -426,8 +424,15 @@ public class CpBL {
 		}
 	}
 
+	
 	public CpIdentidade criarIdentidade(String matricula, String cpf, CpIdentidade idCadastrante,
 			final String senhaDefinida, String[] senhaGerada, boolean marcarParaSinc) throws AplicacaoException {
+		
+		return criarIdentidade(matricula, cpf, idCadastrante, senhaDefinida, senhaGerada, marcarParaSinc, "");
+	}
+
+	public CpIdentidade criarIdentidade(String matricula, String cpf, CpIdentidade idCadastrante,
+			final String senhaDefinida, String[] senhaGerada, boolean marcarParaSinc, String urlAplicacao) throws AplicacaoException {
 
 		Long longCpf = CPFUtils.getLongValueValidaSimples(cpf);
 		final List<DpPessoa> listaPessoas = dao().listarPorCpf(longCpf);
@@ -492,7 +497,7 @@ public class CpBL {
 									destinanarios, "Novo Usuário", "", conteudoHTML);
 						} else {
 							Correio.enviar(pessoa.getEmailPessoaAtual(), "Novo Usuário - processo.rio",
-									textoEmailNovoUsuario(matricula, novaSenha, autenticaPeloBanco));
+									textoEmailNovoUsuario(matricula, novaSenha, autenticaPeloBanco, urlAplicacao));
 						}
 						dao().commitTransacao();
 						return idNova;
@@ -563,10 +568,10 @@ public class CpBL {
 		return (lotacao != null) && (lotacao.getIsExternaLotacao() == 1);
 	}
 
-	private String textoEmailNovoUsuario(String matricula, String novaSenha, boolean autenticaPeloBanco) {
+	private String textoEmailNovoUsuario(String matricula, String novaSenha, boolean autenticaPeloBanco, String urlAplicacao) {
 		StringBuffer retorno = new StringBuffer();
 
-		retorno.append("Seja muito bem-vindos(a)!");
+		retorno.append("Seja muito bem-vindo(a)!");
 		retorno.append("\nEsta é a sua credencial de acesso ao sistema processo.rio.");
 		retorno.append("\n\nNome de usuário: ");
 		retorno.append(matricula);
@@ -579,9 +584,12 @@ public class CpBL {
 			retorno.append("a mesma usada para logon na rede (Windows).");
 		}
 
-		retorno.append("Endereço para acesso ao sistema: ");
-		
-		retorno.append(getServidorAplicacao());
+		if (StringUtils.isNotEmpty(urlAplicacao)) {
+
+			retorno.append("\n\nEndereço para acesso ao sistema: ");
+			
+			retorno.append(urlAplicacao);
+		}
 		
 		retorno.append("\n\n Atenção: esta é uma mensagem automática. Por favor não responda ");
 

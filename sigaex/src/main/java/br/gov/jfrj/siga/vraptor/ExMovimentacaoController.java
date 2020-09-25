@@ -2561,8 +2561,7 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Post("app/expediente/mov/transferir_lote_gravar")
-	public void aTransferirLoteGravar(final String dtMovString, final DpPessoaSelecao subscritorSel,
-			final boolean substituicao, final DpPessoaSelecao titularSel, final String nmFuncaoSubscritor,
+	public void aTransferirLoteGravar(
 			final DpLotacaoSelecao lotaResponsavelSel, final CpOrgaoSelecao cpOrgaoSel,
 			final String dtDevolucaoMovString, final String obsOrgao, final String protocolo, final Long tpdall,
 			final String txtall, final DpPessoaSelecao responsavelSel, final List<Long> documentosSelecionados, Integer paramoffset)
@@ -2583,8 +2582,8 @@ public class ExMovimentacaoController extends ExController {
 		}
 
 		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder.novaInstancia();
-		builder.setDtMovString(dtMovString).setSubscritorSel(subscritorSel).setSubstituicao(substituicao)
-				.setTitularSel(titularSel).setNmFuncaoSubscritor(nmFuncaoSubscritor)
+		builder//.setDtMovString(dtMovString).setSubscritorSel(subscritorSel).setSubstituicao(substituicao)
+				//.setTitularSel(titularSel).setNmFuncaoSubscritor(nmFuncaoSubscritor)
 				.setLotaResponsavelSel(lotaResponsavelSel).setCpOrgaoSel(cpOrgaoSel).setObsOrgao(obsOrgao)
 				.setDtDevolucaoMovString(dtDevolucaoMovString).setResponsavelSel(responsavelSel);
 
@@ -2676,13 +2675,13 @@ public class ExMovimentacaoController extends ExController {
 		result.include("mov", mov);
 		result.include("itens", arrays);
 		result.include("lotaTitular", mov.getLotaTitular());
-		result.include("dtMovString", dtMovString);
-		result.include("subscritorSel", subscritorSel);
-		result.include("titularSel", titularSel);
-		result.include("nmFuncaoSubscritor", nmFuncaoSubscritor);
+//		result.include("dtMovString", dtMovString);
+//		result.include("subscritorSel", subscritorSel);
+//		result.include("titularSel", titularSel);
+//		result.include("nmFuncaoSubscritor", nmFuncaoSubscritor);
 		result.include("lotaResponsavelSel", lotaResponsavelSel);
 		result.include("cpOrgaoSel", cpOrgaoSel);
-		result.include("substituicao", substituicao);
+//		result.include("substituicao", substituicao);
 		result.include("responsavelSel", responsavelSel);
 //		}
 	}

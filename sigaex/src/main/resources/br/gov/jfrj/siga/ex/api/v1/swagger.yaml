@@ -462,15 +462,19 @@ paths:
       tags: [acao]
       parameters:
         - $ref: "#/parameters/sigla"
-      description: Assinar documento com senha
+      summary: Assinar documento com senha
       responses:
         200:
           description: Successful response
           schema:
             type: object
             properties:
+              sigla:
+                description: Sigla do documento assinado
+                type: string
               status:
                 type: string
+                default: "OK"
         500:
           description: Error ocurred
           schema:
@@ -482,15 +486,19 @@ paths:
       tags: [acao]
       parameters:
         - $ref: "#/parameters/sigla"
-      description: Autenticar documento com senha
+      summary: Autenticar documento com senha
       responses:
         200:
           description: Successful response
           schema:
             type: object
             properties:
+              sigla:
+                description: Sigla do documento autenticado
+                type: string
               status:
                 type: string
+                default: "OK"
         500:
           description: Error ocurred
           schema:

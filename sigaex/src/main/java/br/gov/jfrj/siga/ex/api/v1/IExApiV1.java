@@ -276,6 +276,7 @@ public interface IExApiV1 {
 	}
 
 	public class DocSiglaAssinarComSenhaPostResponse implements ISwaggerResponse {
+		public String sigla;
 		public String status;
 	}
 
@@ -288,6 +289,7 @@ public interface IExApiV1 {
 	}
 
 	public class DocSiglaAutenticarComSenhaPostResponse implements ISwaggerResponse {
+		public String sigla;
 		public String status;
 	}
 

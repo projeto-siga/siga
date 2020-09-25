@@ -13,9 +13,12 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 public class DocSiglaAssinarComSenhaPost extends DocSiglaAssinarAutenticarComSenhaPost
 		implements IDocSiglaAssinarComSenhaPost {
 
+	public DocSiglaAssinarComSenhaPost() {
+		super(false);
+	}
+
 	@Override
-	protected void assertDocumento(DpPessoa titular, DpLotacao lotaTitular, ExMobil mob)
-			throws Exception {
+	protected void assertDocumento(DpPessoa titular, DpLotacao lotaTitular, ExMobil mob) throws Exception {
 		if (!Ex.getInstance().getComp().podeAssinarComSenha(titular, lotaTitular, mob)) {
 			throw new PresentableUnloggedException(
 					"O documento " + mob.getSigla() + " não pode ser assinado com senha por "
@@ -25,8 +28,10 @@ public class DocSiglaAssinarComSenhaPost extends DocSiglaAssinarAutenticarComSen
 
 	@Override
 	public void run(DocSiglaAssinarComSenhaPostRequest req, DocSiglaAssinarComSenhaPostResponse resp) throws Exception {
-		super.executar(req.sigla, false);
-		resp.status = "OK";
+		super.executar(req.sigla, (sigla, status) -> {
+			resp.sigla = sigla;
+			resp.status = status;
+		});
 	}
 
 	@Override

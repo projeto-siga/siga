@@ -14,11 +14,16 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 
 public class DocSiglaAutenticarComSenhaPost extends DocSiglaAssinarAutenticarComSenhaPost
 		implements IDocSiglaAutenticarComSenhaPost {
+	
+	public DocSiglaAutenticarComSenhaPost() {
+		super(true);
+	}
 
 	@Override
 	protected void assertDocumento(DpPessoa titular, DpLotacao lotaTitular, ExMobil mob) throws Exception {
 		// Documento é Capturado?
 		Long idTipoDoc = mob.getDoc().getExTipoDocumento().getId();
+		// TODO: Jogar dentro do podeAutenticarComSenha?
 		if (!(idTipoDoc == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO
 				|| idTipoDoc == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO)) {
 			throw new SwaggerException("Documento não é Capturado", 400, null, null, null, null);
@@ -40,8 +45,10 @@ public class DocSiglaAutenticarComSenhaPost extends DocSiglaAssinarAutenticarCom
 	@Override
 	public void run(DocSiglaAutenticarComSenhaPostRequest req, DocSiglaAutenticarComSenhaPostResponse resp)
 			throws Exception {
-		super.executar(req.sigla, true);
-		resp.status = "OK";
+		super.executar(req.sigla, (sigla, status) -> {
+			resp.sigla = sigla;
+			resp.status = status;
+		});
 	}
 
 	@Override

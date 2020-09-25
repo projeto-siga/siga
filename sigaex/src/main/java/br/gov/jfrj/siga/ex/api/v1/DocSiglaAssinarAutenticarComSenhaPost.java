@@ -3,12 +3,15 @@ package br.gov.jfrj.siga.ex.api.v1;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.BiConsumer;
 
 import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.bl.CurrentRequest;
@@ -20,6 +23,17 @@ import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 abstract class DocSiglaAssinarAutenticarComSenhaPost {
 
+	private final boolean autenticar;
+
+	/**
+	 * 
+	 * @param autenticar Indica se o documento será autnticado (<code>true</code>)
+	 *                   ou assinado (<code>false</code>).
+	 */
+	protected DocSiglaAssinarAutenticarComSenhaPost(boolean autenticar) {
+		this.autenticar = autenticar;
+	}
+
 	/**
 	 * Valida o documento.
 	 * 
@@ -27,20 +41,22 @@ abstract class DocSiglaAssinarAutenticarComSenhaPost {
 	 * @param lotaTitular Lotação do titular.
 	 * @param mob         {@link ExMobil} representando o documento
 	 * 
-	 * @throws Exception
+	 * @throws Exception Se o documento não estiver válido.
 	 */
 	protected abstract void assertDocumento(final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob)
 			throws Exception;
 
 	/**
-	 * Executa a Autenticação ou Assinatuyra do documento.
+	 * Executa a Autenticação ou Assinatura do documento.
 	 * 
-	 * @param sigla      Sigla do Documento
-	 * @param autenticar Se o documento será autenticado (<code>true</code>) ou
-	 *                   apenas assinado (<code>false</code>).
+	 * @param sigla               Sigla (temporária) do Documento a ser assinado.
+	 * @param preenchedorResposta Vai preencher a resposta com a
+	 *                            {@link ExDocumento#getSigla() Sigla do Documento}
+	 *                            assinada e com o retorno da Assinatura (ou
+	 *                            <code>OK</code> se esse retorno estiver vazio).
 	 * @throws Exception Se houver algo de errado.
 	 */
-	protected void executar(String sigla, boolean autenticar) throws Exception {
+	protected void executar(String sigla, BiConsumer<String, String> preenchedorResposta) throws Exception {
 		// Necessário pois é chamado o método "realPath" durante a criação do
 		// PDF.
 		CurrentRequest.set(
@@ -59,8 +75,11 @@ abstract class DocSiglaAssinarAutenticarComSenhaPost {
 			assertAcesso(titular, lotaTitular, mob);
 			assertDocumento(titular, lotaTitular, mob);
 
-			Ex.getInstance().getBL().assinarDocumentoComSenha(cadastrante, lotaTitular, mob.doc(), null,
-					cadastrante.getSiglaCompleta(), null, false, titular, autenticar, null, false);
+			String retornoAssinatura = Ex.getInstance().getBL().assinarDocumentoComSenha(cadastrante, lotaTitular,
+					mob.doc(), null, cadastrante.getSiglaCompleta(), null, false, titular, this.autenticar, null,
+					false);
+
+			preenchedorResposta.accept(mob.doc().getCodigo(), Objects.toString(retornoAssinatura, "OK"));
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
 			throw e;

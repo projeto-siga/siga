@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import org.jboss.logging.Logger;
 
 import br.com.caelum.vraptor.freemarker.Freemarker;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.sr.prop.SigaBaseProperties;
 import br.gov.jfrj.siga.sr.model.SrMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrTipoMovimentacao;

@@ -119,7 +119,7 @@ public class PrincipalController extends SigaController {
 				if (Prop.getBool("/xjus.url") != null) {
 					sel.setId(-1L);
 					sel.setSigla(sigla);
-					sel.setDescricao("/siga/app/xjus?q=" + sigla);
+					sel.setDescricao("/siga/app/xjus#!?filter=" + sigla);
 				} else if (Prop.get("/siga.gsa.url") != null) {
 					sel.setId(-1L);
 					sel.setSigla(sigla);

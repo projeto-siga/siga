@@ -388,7 +388,7 @@ public class SubstituicaoController extends SigaController {
 		// TODO Aguardar Jira
 		return "";
 	}
-
+	
 	/**
 	 * Monta a mensagem do Email de informação de substituição enviado de Lotação para Pessoa
 	 * 

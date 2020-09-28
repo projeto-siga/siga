@@ -254,11 +254,13 @@ public class UsuarioController extends SigaController {
 		String[] senhaGerada = new String[1];
 		boolean isIntegradoAoAD = isIntegradoAD(usuario.getMatricula());
 		CpIdentidade idNova = null;
+		String urlAplicacao = "http://" + request.getHeader("Host") + "/siga";
+
 		switch (usuario.getMetodo()) {
 		case 1:
 
 			idNova = Cp.getInstance().getBL().criarIdentidade(usuario.getMatricula(), usuario.getCpf(),
-					getIdentidadeCadastrante(), usuario.getSenhaNova(), senhaGerada, isIntegradoAoAD);
+					getIdentidadeCadastrante(), usuario.getSenhaNova(), senhaGerada, isIntegradoAoAD, urlAplicacao);
 			if (isIntegradoAoAD) {
 				try {
 					IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova, usuario.getSenhaNova());

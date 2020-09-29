@@ -525,18 +525,20 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			list.add(ou);
 			result.include("orgaosUsu", list);
 		}
-
-		DpCargoDaoFiltro cargo = new DpCargoDaoFiltro();
-		cargo.setNome("");
-		cargo.setIdOrgaoUsu(idOrgaoUsu);
-		List<DpCargo> lista = new ArrayList<DpCargo>();
-		DpCargo c = new DpCargo();
-		c.setId(0L);
-		c.setDescricao("Selecione");
-		lista.add(c);
-		lista.addAll((List<DpCargo>) CpDao.getInstance().consultarPorFiltro(cargo));
-		result.include("listaCargo", lista);
-
+		
+		if (retornarEnvioEmail == null || !retornarEnvioEmail) {
+			DpCargoDaoFiltro cargo = new DpCargoDaoFiltro();
+			cargo.setNome("");
+			cargo.setIdOrgaoUsu(idOrgaoUsu);
+			List<DpCargo> lista = new ArrayList<DpCargo>();
+			DpCargo c = new DpCargo();
+			c.setId(0L);
+			c.setDescricao("Selecione");
+			lista.add(c);
+			lista.addAll((List<DpCargo>) CpDao.getInstance().consultarPorFiltro(cargo));
+			result.include("listaCargo", lista);
+		}	
+		
 		DpLotacaoDaoFiltro lotacao = new DpLotacaoDaoFiltro();
 		lotacao.setNome("");
 		lotacao.setIdOrgaoUsu(idOrgaoUsu);
@@ -554,21 +556,24 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			listaLotacao.addAll(CpDao.getInstance().consultarPorFiltro(lotacao));
 		result.include("listaLotacao", listaLotacao);
 
-		DpFuncaoConfiancaDaoFiltro funcao = new DpFuncaoConfiancaDaoFiltro();
-		funcao.setNome("");
-		funcao.setIdOrgaoUsu(idOrgaoUsu);
-		List<DpFuncaoConfianca> listaFuncao = new ArrayList<DpFuncaoConfianca>();
-		DpFuncaoConfianca f = new DpFuncaoConfianca();
-		f.setNomeFuncao("Selecione");
-		f.setIdFuncao(0L);
-		listaFuncao.add(f);
-		listaFuncao.addAll(CpDao.getInstance().consultarPorFiltro(funcao));
-		result.include("listaFuncao", listaFuncao);
+		if (retornarEnvioEmail == null || !retornarEnvioEmail) {
+			DpFuncaoConfiancaDaoFiltro funcao = new DpFuncaoConfiancaDaoFiltro();
+			funcao.setNome("");
+			funcao.setIdOrgaoUsu(idOrgaoUsu);
+			List<DpFuncaoConfianca> listaFuncao = new ArrayList<DpFuncaoConfianca>();
+			DpFuncaoConfianca f = new DpFuncaoConfianca();
+			f.setNomeFuncao("Selecione");
+			f.setIdFuncao(0L);
+			listaFuncao.add(f);
+			listaFuncao.addAll(CpDao.getInstance().consultarPorFiltro(funcao));
+			result.include("listaFuncao", listaFuncao);
+		}
 		
-		
-		/*Carrega lista UF*/
-		List<CpUF> ufList = dao().consultarUF();
-		result.include("ufList",ufList);
+		if (retornarEnvioEmail == null || !retornarEnvioEmail) {
+			/*Carrega lista UF*/
+			List<CpUF> ufList = dao().consultarUF();
+			result.include("ufList",ufList);
+		}
 
 		if (paramoffset == null) {
 			result.use(Results.page()).forwardTo("/WEB-INF/page/dpPessoa/edita.jsp");
@@ -894,7 +899,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	@Post
 	@Path({"app/pessoa/enviarEmail", "/pessoa/enviarEmail.action"})
 	public void enviaEmail(Integer paramoffset, Long idOrgaoUsu, String nome, String cpfPesquisa,
-			String idLotacaoPesquisa, String idUsuarioPesquisa) throws Exception {
+			String idLotacaoPesquisa, String idUsuarioPesquisa, Integer paramTamanho) throws Exception {
 		result.include("request", getRequest());
 		List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
 		CpOrgaoUsuario ou = new CpOrgaoUsuario();
@@ -930,7 +935,13 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			dpPessoa.setBuscarFechadas(Boolean.TRUE);
 			setItens(CpDao.getInstance().consultarPorFiltroSemIdentidade(dpPessoa, paramoffset, 15));			
 			result.include("itens", getItens());
-			Integer tamanho = dao().consultarQuantidadeDpPessoaSemIdentidade(dpPessoa);			
+			
+			Integer tamanho = 0;
+			if (paramTamanho == null) {
+				tamanho = dao().consultarQuantidadeDpPessoaSemIdentidade(dpPessoa);	
+			} else {
+				tamanho = paramTamanho;
+			}
 			result.include("tamanho", tamanho);
 
 			result.include("idOrgaoUsu", idOrgaoUsu);
@@ -972,7 +983,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 					dpPessoa2.getCpfFormatado(), getIdentidadeCadastrante(), null, senhaGerada, Boolean.FALSE);
 			cpfAnterior = dpPessoa2.getCpfPessoa().toString();
 		}
-		this.result.redirectTo(this).enviaEmail(0, idOrgaoUsu, nome, cpfPesquisa, idLotacaoPesquisa, idUsuarioPesquisa);
+		this.result.redirectTo(this).enviaEmail(0, idOrgaoUsu, nome, cpfPesquisa, idLotacaoPesquisa, idUsuarioPesquisa,0);
 	}
 
 	@Post

@@ -1606,7 +1606,13 @@ var sigaModal = {
 			if (idModal && conteudo) {
 				$('#'.concat(idModal)).find('.siga-modal__btn-acao').attr('href', conteudo);				
 			}
-		}, 				
+		},
+		isAberto: function(idModal) {
+			if (idModal) {
+				var modal = $('#'.concat(idModal));
+				return (typeof modal.data('bs.modal') !== 'undefined' && modal.data('bs.modal')._isShown);				
+			}
+		},
 		obterCabecalhoPadrao: function(tituloADireita) {
 			if (typeof uriLogoSiga !== 'undefined') {
 				var detalheEsquerda = uriLogoSiga ? '<div class="col-6  p-0"><img src="' + uriLogoSiga + '" class="siga-modal__logo" alt="logo siga"></div>' : '<h5 class="modal-title">Siga</h5>';

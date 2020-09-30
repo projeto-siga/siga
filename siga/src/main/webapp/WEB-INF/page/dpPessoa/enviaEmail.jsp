@@ -16,6 +16,7 @@ function sbmt(offset) {
 
 	if (offset == null) {
 		offset = 0;
+		frm.elements["paramTamanho"].value = null;
 	}
 	frm.elements["paramoffset"].value = offset;
 	frm.elements["p.offset"].value = offset;
@@ -84,6 +85,7 @@ function cpf_mask(v){
 			<input type="hidden" name="paramoffset" value="0" />
 			<input type="hidden" name="p.offset" value="0" />
 			<input type="hidden" name="retornarEnvioEmail" value="true" />
+			<input type="hidden" name="paramTamanho" value="${tamanho}" />
 			<div class="card bg-light mb-3" >
 				<div class="card-header">
 					<h5>Envio de E-mail para Novos Usuários</h5>
@@ -135,12 +137,14 @@ function cpf_mask(v){
 						</div>					
 					</div>
 					<div class="row">
-						<div class="col-md-3">
-							<div class="form-group">
-								<label for="nome">Nome</label>
-								<input type="text" id="nome" name="nome" value="${nome}" maxlength="100" class="form-control"/>
-							</div>					
-						</div>					
+						<c:if test="false"> <!-- Desativada por deterioração da consulta -->
+							<div class="col-md-3">
+								<div class="form-group">
+									<label for="nome">Nome</label>
+									<input type="text" id="nome" name="nome" value="${nome}" maxlength="100" class="form-control"/>
+								</div>					
+							</div>		
+						</c:if>			
 						<div class="col-md-2">
 							<div class="form-group">
 								<label for="nome">CPF</label>

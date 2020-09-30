@@ -1160,7 +1160,8 @@ public class CpDao extends ModeloDao {
 			if (itemPagina > 0) {
 				query.setMaxResults(itemPagina);
 			}
-			query.setParameter("nome", flt.getNome().toUpperCase().replace(' ', '%'));
+			//Desativado pesquisa textual por nome. Nome não é passível de indexação que deteriorava a rotina
+			//query.setParameter("nome", flt.getNome().toUpperCase().replace(' ', '%'));
 
 			if(flt.getCpf() != null && !"".equals(flt.getCpf())) {
 				query.setParameter("cpf", Long.valueOf(flt.getCpf()));
@@ -1230,7 +1231,8 @@ public class CpDao extends ModeloDao {
 				query = em().createNamedQuery("consultarQuantidadeDpPessoaSemIdentidade");
 			}
 
-			query.setParameter("nome", flt.getNome().toUpperCase().replace(' ', '%'));
+			//Desativado pesquisa textual por nome. Nome não é passível de indexação que deteriorava a rotina
+			//query.setParameter("nome", flt.getNome().toUpperCase().replace(' ', '%'));
 
 			if(flt.getCpf() != null && !"".equals(flt.getCpf())) {
 				query.setParameter("cpf", Long.valueOf(flt.getCpf()));
@@ -1304,8 +1306,7 @@ public class CpDao extends ModeloDao {
 		else
 			queryTemp = "from DpPessoa pes ";
 
-		queryTemp += "  where (upper(pes.nomePessoaAI) like upper('%' || :nome || '%'))"
-				+ " and (pes.cpfPessoa = :cpf or :cpf = 0)" + " and pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
+		queryTemp += "  where (pes.cpfPessoa = :cpf or :cpf = 0)" + " and pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
 				+ "  and (";
 		for (int i = 1; i <= quantidadeDeClausulaIN; i++) {
 			if (i > 1)

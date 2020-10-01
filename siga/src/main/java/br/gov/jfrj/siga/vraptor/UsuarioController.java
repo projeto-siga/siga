@@ -378,8 +378,11 @@ public class UsuarioController extends SigaController {
 			}
 
 			CpIdentidade idAux1 = dao.consultaIdentidadeCadastrante(usuario.getAuxiliar1(), true);
+			
+			String urlAplicacao = "http://" + request.getHeader("Host") + "/siga";
+
 			Cp.getInstance().getBL().definirSenhaDeIdentidade(usuario.getSenhaNova(), usuario.getSenhaConfirma(),
-					usuario.getMatricula(), usuario.getAuxiliar1(), usuario.getAuxiliar2(), idAux1);
+					usuario.getMatricula(), usuario.getAuxiliar1(), usuario.getAuxiliar2(), idAux1, urlAplicacao);
 //			senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNovaDefinida,senhaNova);
 			break;
 

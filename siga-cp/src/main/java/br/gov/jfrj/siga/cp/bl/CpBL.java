@@ -990,9 +990,16 @@ public class CpBL {
 		}
 		return true;
 	}
-
+	
 	public CpIdentidade definirSenhaDeIdentidade(String senhaNova, String senhaConfirma, String nomeUsuario,
 			String auxiliar1, String auxiliar2, CpIdentidade idCadastrante)
+			throws NoSuchAlgorithmException, AplicacaoException {
+
+		return definirSenhaDeIdentidade(senhaNova, senhaConfirma, nomeUsuario, auxiliar1, auxiliar2, idCadastrante,"");
+	}
+	
+	public CpIdentidade definirSenhaDeIdentidade(String senhaNova, String senhaConfirma, String nomeUsuario,
+			String auxiliar1, String auxiliar2, CpIdentidade idCadastrante, String urlAplicacao)
 			throws NoSuchAlgorithmException, AplicacaoException {
 
 		final CpIdentidade id = dao().consultaIdentidadeCadastrante(nomeUsuario, true);
@@ -1016,6 +1023,13 @@ public class CpBL {
 				dao().iniciarTransacao();
 				dao().gravarComHistorico(idNova, id, dt, idCadastrante);
 				dao().commitTransacao();
+				
+				/*
+				 * 		Correio.enviar(pessoa.getEmailPessoaAtual(), "Nova senha - processo.rio ",
+								textoEmailSenhaUsuario(matricula, novaSenha, true, urlAplicacao, 		"nova senha") );
+				
+				 */
+				
 				Correio.enviar(id.getDpPessoa().getEmailPessoaAtual(), "Alteração de senha ",
 						"\n" + idNova.getDpPessoa().getNomePessoa() + "\nMatricula: " + idNova.getDpPessoa().getSigla()
 								+ "\n" + "\nSua senha foi alterada para: " + senhaNova

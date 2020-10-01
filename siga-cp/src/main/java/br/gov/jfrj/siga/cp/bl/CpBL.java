@@ -403,11 +403,7 @@ public class CpBL {
 										+ "<p><span style='color: #aaa;'><strong>Aten&ccedil;&atilde;o:</strong> esta &eacute; uma mensagem autom&aacute;tica. Por favor n&atilde;o responda&nbsp;</span></p>"
 										+ "</td>" + "</tr>" + "</tbody>" + "</table>");
 					} else {
-						/*
-						 * 	Correio.enviar(pessoa.getEmailPessoaAtual(), "Novo Usuário - processo.rio",
-									textoEmailNovoUsuario(matricula, novaSenha, autenticaPeloBanco, urlAplicacao));
-						
-						 */
+						 
 						Correio.enviar(pessoa.getEmailPessoaAtual(), "Nova senha - processo.rio ",
 								textoEmailSenhaUsuario(matricula, novaSenha, true, urlAplicacao, 		"nova senha") );
 					}
@@ -585,7 +581,7 @@ public class CpBL {
 				+ "Nome de usuário: #matricula#\n"
 				+ "Senha:  #novaSenha# " 
 				+ "#urlAplicacao#"
-				+ "\n\n Atenção: esta é uma mensagem automática. Por favor não responda ";
+				+ "\n\n Atenção: esta é uma mensagem automática. Por favor não responda. ";
 
 		corpoEmail = corpoEmail.replace("#complementoTexto#", complementoTexto);
 		corpoEmail = corpoEmail.replace("#matricula#", matricula);

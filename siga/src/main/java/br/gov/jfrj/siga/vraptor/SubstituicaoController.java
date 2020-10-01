@@ -425,17 +425,19 @@ public class SubstituicaoController extends SigaController {
 	 */
 	private String getMensagemLotacaoParaLotacao(DpSubstituicao subst){
 
-		String mensagem = "da lotação: #siglaLotacaoSubstituta# - #nomeLotacaoSubstituta# "
-				+ "para a lotação: #siglaLotacaoSubstituida# - #nomeLotacaoSubstituida# com inicio em #inicioSubstituicao# e término em #terminoSubstituicao#. "
-				+ "Neste interstício, todos os colaboradores com lotação na unidade substituta #siglaLotacaoSubstituta# - #nomeLotacaoSubstituta#, "
-				+ "poderão visualizar e assinar documentos destinados à unidade titular  #siglaLotacaoSubstituida# - #nomeLotacaoSubstituida#.\n";
+		String mensagem = "do setor: #siglaLotacaoSubstituida# - #nomeLotacaoSubstituida# "
+				+ "para o setor: #nomeLotacaoSubstituida# com inicio em #inicioSubstituicao# e término em #terminoSubstituicao#. "
+				+ "Desta forma, todos os agentes públicos lotados em #siglaLotacaoSubstituta# - #nomeLotacaoSubstituta#, "
+				+ "podem ter acessar, criar e assinar documentos na lotação #siglaLotacaoSubstituida# - #nomeLotacaoSubstituida# "
+				+ "como se tivessem uma lotação formal na mesma. Para isso basta acessar o menu, administração e gerenciar possíveis substitutos. "
+				+ "O substituto pode recusar o acesso, clicando no X, ao lado do item referente ao acesso lançado pelo cadastrante.\n";
 		
-		mensagem = mensagem.replace("#siglaLotacaoSubstituta#",subst.getLotaSubstituto().getSigla());
-		mensagem = mensagem.replace("#nomeLotacaoSubstituta#", subst.getLotaSubstituto().getNomeLotacao());
-		mensagem = mensagem.replace("#siglaLotacaoSubstituida#",  subst.getLotaTitular().getSigla());
-		mensagem = mensagem.replace("#nomeLotacaoSubstituida#",subst.getLotaTitular().getNomeLotacao());
-		mensagem = mensagem.replace("#inicioSubstituicao#", subst.getDtIniSubstDDMMYY().toString());
-		mensagem = mensagem.replace("#terminoSubstituicao#", subst.getDtFimSubstDDMMYY().toString());
+		mensagem = mensagem.replace("#siglaLotacaoSubstituida#",subst.getLotaSubstituto().getSigla());
+		mensagem = mensagem.replace("#nomeLotacaoSubstituida#", subst.getLotaSubstituto().getNomeLotacao());
+		mensagem = mensagem.replace("#siglaLotacaoSubstituta#",  subst.getLotaTitular().getSigla());
+		mensagem = mensagem.replace("#nomeLotacaoSubstituta#",subst.getLotaTitular().getNomeLotacao());
+		mensagem = mensagem.replace("#inicioSubstituicao#", subst.getDtIniSubstDDMMYYYY().toString());
+		mensagem = mensagem.replace("#terminoSubstituicao#", subst.getDtFimSubstDDMMYYYY().toString());
 
 		return mensagem;
 	}

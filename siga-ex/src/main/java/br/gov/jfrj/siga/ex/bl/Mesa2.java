@@ -580,18 +580,13 @@ public class Mesa2 {
 						.calcularTempoRelativo(tag.marca.getDtIniMarca());
 
 				if (tag.marca.getDpPessoaIni() != null) {
-					DpPessoa pes = tag.marca.getDpPessoaIni().getPessoaAtual();
-					if (pes.getNomeExibicao() != null)
-						t.pessoa = pes.getNomeExibicao();
-					
-					t.titulo += " - " + pes.getNomePessoa() + " - " + pes.getSesbPessoa() + pes.getMatricula();
+					t.pessoa = tag.marca.getDpPessoaIni().getIdInicial().toString();
 
 				}
 				if (tag.marca.getDpLotacaoIni() != null) {
-					t.lotacao = tag.marca.getDpLotacaoIni().getLotacaoAtual()
-							.getSigla();
-					t.titulo += " - " + tag.marca.getDpLotacaoIni().getLotacaoAtual().getSiglaLotacao();
+					t.lotacao = tag.marca.getDpLotacaoIni().getIdInicial().toString();
 				}
+				
 				t.inicio = tag.marca.getDtIniMarca();
 				t.termino = tag.marca.getDtFimMarca();
 				if(tag.marca.getCpMarcador().isDemandaJudicial()) {

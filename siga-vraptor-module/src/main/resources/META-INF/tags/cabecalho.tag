@@ -470,5 +470,11 @@ setTimeout(function() {
 function delSession() {
 	sessionStorage.removeItem('timeout' + document.getElementById('cadastrante').title);
 	sessionStorage.removeItem('mesa' + document.getElementById('cadastrante').title);
+
+	for (var obj in sessionStorage) {
+      if (sessionStorage.hasOwnProperty(obj) && (obj.includes("pessoa.") || obj.includes("lotacao."))) {
+    	  sessionStorage.removeItem(obj);
+      }
+	}
 }
 </script>		

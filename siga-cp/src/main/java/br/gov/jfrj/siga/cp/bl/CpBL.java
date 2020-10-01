@@ -315,6 +315,14 @@ public class CpBL {
 		return resultado;
 	}
 
+	
+	public CpIdentidade alterarSenhaDeIdentidade(String matricula, String cpf, CpIdentidade idCadastrante,
+			String[] senhaGerada) throws AplicacaoException {
+
+		return alterarSenhaDeIdentidade(matricula, cpf, idCadastrante,  senhaGerada,  "");
+	}
+	
+		
 	/**
 	 * Altera a senha da identidade.
 	 * 
@@ -328,7 +336,7 @@ public class CpBL {
 	 * @throws AplicacaoException
 	 */
 	public CpIdentidade alterarSenhaDeIdentidade(String matricula, String cpf, CpIdentidade idCadastrante,
-			String[] senhaGerada) throws AplicacaoException {
+			String[] senhaGerada,String urlAplicacao) throws AplicacaoException {
 
 		Long longCpf = CPFUtils.getLongValueValidaSimples(cpf);
 		final List<DpPessoa> listaPessoas = dao().listarPorCpf(longCpf);
@@ -395,12 +403,13 @@ public class CpBL {
 										+ "<p><span style='color: #aaa;'><strong>Aten&ccedil;&atilde;o:</strong> esta &eacute; uma mensagem autom&aacute;tica. Por favor n&atilde;o responda&nbsp;</span></p>"
 										+ "</td>" + "</tr>" + "</tbody>" + "</table>");
 					} else {
+						/*
+						 * 	Correio.enviar(pessoa.getEmailPessoaAtual(), "Novo Usuário - processo.rio",
+									textoEmailNovoUsuario(matricula, novaSenha, autenticaPeloBanco, urlAplicacao));
 						
-						Correio.enviar(pessoa.getEmailPessoaAtual(), "Alteração de senha ",
-								"\n" + idNova.getDpPessoa().getNomePessoa() + "\nMatricula: "
-										+ idNova.getDpPessoa().getSigla() + "\n" + "\nSua senha foi alterada para: "
-										+ novaSenha + "\n\n Atenção: esta é uma "
-										+ "mensagem automática. Por favor, não responda. ");
+						 */
+						Correio.enviar(pessoa.getEmailPessoaAtual(), "Nova senha - processo.rio ",
+								textoEmailSenhaUsuario(matricula, novaSenha, true, urlAplicacao, 		"nova senha") );
 					}
 
 					return idNova;
@@ -423,7 +432,6 @@ public class CpBL {
 			}
 		}
 	}
-
 	
 	public CpIdentidade criarIdentidade(String matricula, String cpf, CpIdentidade idCadastrante,
 			final String senhaDefinida, String[] senhaGerada, boolean marcarParaSinc) throws AplicacaoException {
@@ -497,7 +505,8 @@ public class CpBL {
 									destinanarios, "Novo Usuário", "", conteudoHTML);
 						} else {
 							Correio.enviar(pessoa.getEmailPessoaAtual(), "Novo Usuário - processo.rio",
-									textoEmailNovoUsuario(matricula, novaSenha, autenticaPeloBanco, urlAplicacao));
+									textoEmailSenhaUsuario(matricula, novaSenha, autenticaPeloBanco, urlAplicacao, "credencial"));
+
 						}
 						dao().commitTransacao();
 						return idNova;
@@ -568,37 +577,25 @@ public class CpBL {
 		return (lotacao != null) && (lotacao.getIsExternaLotacao() == 1);
 	}
 
-	private String textoEmailNovoUsuario(String matricula, String novaSenha, boolean autenticaPeloBanco, String urlAplicacao) {
-		StringBuffer retorno = new StringBuffer();
-
-		retorno.append("Seja muito bem-vindo(a)!");
-		retorno.append("\nEsta é a sua credencial de acesso ao sistema processo.rio.");
-		retorno.append("\n\nNome de usuário: ");
-		retorno.append(matricula);
-		
-		retorno.append("\nSenha: ");
-		
-		if (autenticaPeloBanco) {
-			retorno.append(novaSenha);
-		} else {
-			retorno.append("a mesma usada para logon na rede (Windows).");
-		}
-
-		if (StringUtils.isNotEmpty(urlAplicacao)) {
-
-			retorno.append("\n\nEndereço para acesso ao sistema: ");
-			
-			retorno.append(urlAplicacao);
-		}
-		
-		retorno.append("\n\n Atenção: esta é uma mensagem automática. Por favor não responda ");
-
-		return retorno.toString();
-	}
 	
-	private String getServidorAplicacao(){
+	private String textoEmailSenhaUsuario(String matricula, String novaSenha, boolean autenticaPeloBanco, String urlAplicacao, String complementoTexto) {
 
-		return "teste";
+		String corpoEmail = "Seja muito bem-vindo(a)!\n"
+				+ "Esta é a sua #complementoTexto# de acesso ao sistema processo.rio. \n\n"
+				+ "Nome de usuário: #matricula#\n"
+				+ "Senha:  #novaSenha# " 
+				+ "#urlAplicacao#"
+				+ "\n\n Atenção: esta é uma mensagem automática. Por favor não responda ";
+
+		corpoEmail = corpoEmail.replace("#complementoTexto#", complementoTexto);
+		corpoEmail = corpoEmail.replace("#matricula#", matricula);
+		corpoEmail = corpoEmail.replace("#novaSenha#",
+				autenticaPeloBanco ? novaSenha : "a mesma usada para logon na rede (Windows).");
+		corpoEmail = corpoEmail.replace("#urlAplicacao#",
+				StringUtils.isNotEmpty(urlAplicacao) ? "\n\nEndereço para acesso ao sistema:" + urlAplicacao : "");
+
+		return corpoEmail;
+		
 	}
 
 	private String textoEmailNovoUsuarioSP(CpIdentidade identidade, String matricula, String novaSenha,

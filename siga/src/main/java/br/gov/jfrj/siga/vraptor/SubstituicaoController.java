@@ -53,8 +53,6 @@ public class SubstituicaoController extends SigaController {
 		map.put(2, "Órgão Integrado");
 		return map;
 	}	
-		
-
 
 	/**
 	 * @deprecated CDI eyes only
@@ -425,14 +423,6 @@ public class SubstituicaoController extends SigaController {
 	 * @return String com a mensagem do Email
 	 */
 	private String getMensagemLotacaoParaLotacao(DpSubstituicao subst){
-		/*
-		 *   do setor: 48009 - IPLANRIO/PRE/DPN/GTIS-4, para o setor : IPLANRIO/PRE/DSI/GDS, 
- com inicio em 23/0999/2020 e término em 22/09/2022.
-Desta forma, todos os agentes públicos lotados em 39575 - IPLANRIO/PRE/DSI/GDS, 
-podem ter acessar, criar e assinar documentos na lotação 48009 - IPLANRIO/PRE/DPN/GTIS-4, 
-como se tivessem uma lotação formal na mesma. Para isso basta acessar o menu, administração e 
-gerenciar possíveis substitutos. O substituto pode recusar o acesso, clicando no X, ao lado do item referente ao acesso lançado pelo cadastrante.
-		 */
 
 		String mensagem = "do setor: #siglaLotacaoSubstituida# - #nomeLotacaoSubstituida# "
 				+ "para o setor: #nomeLotacaoSubstituta#, com inicio em #inicioSubstituicao# e término em #terminoSubstituicao#. \n"

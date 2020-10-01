@@ -354,8 +354,11 @@ public class UsuarioController extends SigaController {
 				}
 			} else {
 				String[] senhaGerada = new String[1];
+				String urlAplicacao = "http://" + request.getHeader("Host") + "/siga";
 				Cp.getInstance().getBL().alterarSenhaDeIdentidade(usuario.getMatricula(), cpfNumerico,
-						getIdentidadeCadastrante(), senhaGerada);
+						getIdentidadeCadastrante(), senhaGerada, 
+						urlAplicacao
+						);
 			}
 			break;
 		case 2:

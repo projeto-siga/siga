@@ -162,13 +162,19 @@ parameters:
   lotacao:
     name: lotacao
     in: formData
-    description: Sigla completa da lotação
+    description: Sigla completa da lotação integrada ao Siga
     required: false
     type: string
   matricula:
     name: matricula
     in: formData
-    description: Sigla completa da matrícula
+    description: Sigla completa da matrícula do usuário do Siga
+    required: false
+    type: string
+  orgao:
+    name: orgao
+    in: formData
+    description: Sigla completa do órgão externo ao Siga
     required: false
     type: string
   matriculaQuery:
@@ -189,38 +195,10 @@ parameters:
     description: Texto a ser pesquisado
     required: true
     type: string    
-  tipoDestinatario:
-    name: tipoDestinatario
-    in: formData
-    description: > 
-      Tipo do Destinatário. 
-        * ORGAO - Órgão Integrado ao São Paulo sem Papel
-        * USUARIO - Usuário do São Paulo sem Papel
-        * EXTERNO - Órgão Externo ao São Paulo sem Papel
-    required: true
-    type: string
-    enum: 
-      - ORGAO
-      - USUARIO
-      - EXTERNO
-  destinatario:
-    name: destinatario
-    in: formData
-    description: >
-      Destinatário. Dependendo do `tipoDestinatario` deverá ter os seguintes significados e formatos
-        * ORGAO - Deve estar no formato `OO-UUU`, onde 
-          - 'OO' (apenas letras maiúsculas, quantidade variável) corresponde ao código do órgão propriamente dito 
-          - 'UUU' (letras maiúsculas e dígitos, quantidade variável) correspondem ao código da unidade.
-        * USUARIO - Deve estar no formato OONNNNN onde 
-          - 'OO' (apenas letras maiúsculas, quantidade variável) corresponde ao código do órgão propriamente dito.
-          - 'NNNN' (apenas dígitos, quantidade variável) à sua respectiva matrícula nesse órgão.
-        * EXTERNO - Código do Órgão Externo ao São Paulo Sem Papel (Deve ter até 10 letras maiúsculas).
-    required: true
-    type: string
   observacao:
     name: observacao
     in: formData
-    description: Somente quando `tipoDestinatario` = `EXTERNO`. Para outros tipos de Destinatário será ignorado.
+    description: Usado apenas quando `orgao` estiver preenchido. Para outros tipos de Destinatário será ignorado.
     required: false
     type: string            
   dataDevolucao:
@@ -230,13 +208,6 @@ parameters:
     required: false
     type: string
     pattern: ^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01])
-  autenticar:
-    name: autenticar
-    in: query
-    description: Indica se o documento deverá ser autenticado.
-    required: false
-    default: false
-    type: boolean
 
 ################################################################################
 #                                           Paths                              #
@@ -512,7 +483,11 @@ paths:
         - $ref: "#/parameters/sigla"
         - $ref: "#/parameters/lotacao"
         - $ref: "#/parameters/matricula"
-      description: Tramitar documento
+        - $ref: "#/parameters/orgao"
+        - $ref: '#/parameters/observacao'
+        - $ref: '#/parameters/dataDevolucao'
+      summary: Tramitar documento para outro usuário ou lotação ou Órgão externo
+      description: Se `orgao` estiver preenchido, `lotacao` e `matricula` deverão estar vazios.
       responses:
         200:
           description: Successful response
@@ -525,36 +500,6 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
-
-  /doc/{sigla}/tramitar-sp:
-    post:
-      consumes: ["application/x-www-form-urlencoded"]
-      tags: [acao]
-      description: Tramitar documento (SP Sem Papel) 
-      summary: Tramita (transfere) um documento para outra pessoa ou órgão (interno ou externo).
-      parameters:
-        - $ref: "#/parameters/sigla"
-        - $ref: '#/parameters/tipoDestinatario'
-        - $ref: '#/parameters/destinatario'
-        - $ref: '#/parameters/observacao'
-        - $ref: '#/parameters/dataDevolucao'
-      responses:
-#Tive que adicionar o 200 porque se tivesse apenas o 201 swaggerservlet soltaria uma exceção
-        200:
-          description: Ok
-        403:
-          description: Acesso ao documento não permitido
-          schema:
-            $ref: "#/definitions/Error"
-        404:
-          description: Via ou volume não encontrado
-          schema:
-            $ref: "#/definitions/Error"
-        500:
-          description: Erro na Tramitação
-          schema:
-            $ref: "#/definitions/Error"
-
 
   /doc/{sigla}/juntar:
     post:

@@ -301,6 +301,9 @@ public interface IExApiV1 {
 		public String sigla;
 		public String lotacao;
 		public String matricula;
+		public String orgao;
+		public String observacao;
+		public String dataDevolucao;
 	}
 
 	public class DocSiglaTramitarPostResponse implements ISwaggerResponse {
@@ -309,21 +312,6 @@ public interface IExApiV1 {
 
 	public interface IDocSiglaTramitarPost extends ISwaggerMethod {
 		public void run(DocSiglaTramitarPostRequest req, DocSiglaTramitarPostResponse resp) throws Exception;
-	}
-
-	public class DocSiglaTramitarSpPostRequest implements ISwaggerRequest {
-		public String sigla;
-		public String tipoDestinatario;
-		public String destinatario;
-		public String observacao;
-		public String dataDevolucao;
-	}
-
-	public class DocSiglaTramitarSpPostResponse implements ISwaggerResponse {
-	}
-
-	public interface IDocSiglaTramitarSpPost extends ISwaggerMethod {
-		public void run(DocSiglaTramitarSpPostRequest req, DocSiglaTramitarSpPostResponse resp) throws Exception;
 	}
 
 	public class DocSiglaJuntarPostRequest implements ISwaggerRequest {

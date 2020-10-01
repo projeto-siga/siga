@@ -401,18 +401,19 @@ public class SubstituicaoController extends SigaController {
 	private String getMensagemLotacaoParaPessoa(DpSubstituicao subst){
 		
 		
-		String mensagem = "da matrícula: #matriculaSubstituto# - #nomeSubstituto#, "
-				+ "na lotação: #nomeLotacaoSubstituida# "
-				+ "com inicio em #inicioSubstituicao# e término em #terminoSubstituicao#. "
-				+ "Desta forma, o servidor pode ter acesso e assinar documentos na lotação #nomeLotacaoSubstituida#, "
-				+ "como se tivesse uma lotação formal na mesma. Para isso basta acessar o menu substituir. ";
+		String mensagem = " da matrícula:  #nomeSubstituto#(#matriculaSubstituto#), na lotação: #nomeLotacaoSubstituida#"
+				+ " com inicio em #inicioSubstituicao# e término em #terminoSubstituicao#.\n"
+				+ "Desta forma, o agente público #nomeSubstituto#(#matriculaSubstituto#) pode ter acesso, editar, criar e assinar documentos na "
+				+ " lotação #nomeLotacaoSubstituida#, como se tivesse uma lotação formal na mesma. Para isso basta acessar o menu, administração e"
+				+ " gerenciar possíveis substitutos. O substituto pode recusar o acesso,"
+				+ " clicando no X, ao lado do item referente ao acesso lançado pelo cadastrante.";
 		
 		mensagem = mensagem.replace("#matriculaSubstituto#", subst.getSubstituto().getSesbPessoa() + subst.getSubstituto().getMatricula());
 		mensagem = mensagem.replace("#nomeSubstituto#", subst.getSubstituto().getNomePessoa());
 		mensagem = mensagem.replace("#siglaLotacaoSubstituida#",  subst.getLotaTitular().getSigla());
 		mensagem = mensagem.replace("#nomeLotacaoSubstituida#",subst.getLotaTitular().getNomeLotacao());
-		mensagem = mensagem.replace("#inicioSubstituicao#", subst.getDtIniSubstDDMMYY().toString());
-		mensagem = mensagem.replace("#terminoSubstituicao#", subst.getDtFimSubstDDMMYY().toString());
+		mensagem = mensagem.replace("#inicioSubstituicao#", subst.getDtIniSubstDDMMYYYY().toString());
+		mensagem = mensagem.replace("#terminoSubstituicao#", subst.getDtFimSubstDDMMYYYY().toString());
 
 		return mensagem;
 	}
@@ -442,7 +443,7 @@ public class SubstituicaoController extends SigaController {
 	
 	private String getEmailCabecalho(){
 
-		String cabecalho = "Informamos que o agente público: #nomeCadastrante# (#matriculaCadastrante#) cadastrou uma substituição ";
+		String cabecalho = "Informamos que o agente público: #nomeCadastrante#(#matriculaCadastrante#) cadastrou uma substituição ";
 		cabecalho = cabecalho.replace("#matriculaCadastrante#", getCadastrante().getSesbPessoa() + getCadastrante().getMatricula());
 		cabecalho = cabecalho.replace("#nomeCadastrante#", getCadastrante().getNomePessoa());
 

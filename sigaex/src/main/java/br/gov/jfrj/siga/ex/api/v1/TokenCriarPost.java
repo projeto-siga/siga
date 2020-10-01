@@ -24,12 +24,14 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.ITokenCriarPost;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.TokenCriarPostRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.TokenCriarPostResponse;
+import br.gov.jfrj.siga.ex.bl.CurrentRequest;
+import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class TokenCriarPost implements ITokenCriarPost {
 	@Override
 	public void run(TokenCriarPostRequest req, TokenCriarPostResponse resp) throws Exception {
-
+		CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 		try {
 			String usuariosRestritos = Utils.getUsuariosRestritos();
 			if (usuariosRestritos != null) {

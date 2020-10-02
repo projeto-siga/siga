@@ -68,6 +68,25 @@ public class ExMarca extends AbstractExMarca implements Comparable {
 		return 0;
 	}
 	
+	public String getDescricaoMarcadorFormatadoComData() { 
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(this.getCpMarcador().getDescrMarcador());
+
+		if (getDtIniMarca() != null && getDtIniMarca().after(new Date())) {
+			sb.append(" a partir de ");
+			sb.append(getDtIniMarcaDDMMYYYY());
+		}
+
+		if (getDtFimMarca() != null) {
+			sb.append(" até ");
+			sb.append(getDtFimMarcaDDMMYYYY());
+		}
+		
+		return sb.toString();
+	}
+	
+	/* Cuidado com esse método em rotinas massivas por causa a obtenção da pessoa e lotaca Atual */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

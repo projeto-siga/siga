@@ -285,6 +285,7 @@ public class ExMobilController extends
 		ExMobil m = new ExMobil();
 		ExMarca ma = new ExMarca();
 		String descricao = "";
+		String marcadorFormatado = "";
 		
 		for (Object object : lista) {
 			e = (ExDocumento)(((Object[])object)[0]);
@@ -323,11 +324,11 @@ public class ExMobilController extends
 			}
 			texto.append(";");
 			
+			
+			
 			if(ma != null && ma.getCpMarcador() != null && ma.getCpMarcador().getDescrMarcador() != null) {
-				if (ma.toString().indexOf("[") >= 0 )
-					texto.append(ma.toString().substring(0, ma.toString().indexOf("[")).replaceAll(";",","));
-				else
-					texto = texto.append(ma.toString().replaceAll(";",","));
+				marcadorFormatado = ma.getDescricaoMarcadorFormatadoComData().replaceAll(";",",");
+				texto.append(marcadorFormatado);
 			}
 			texto.append(";");
 			

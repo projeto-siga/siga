@@ -147,72 +147,10 @@ public class ExController extends SigaController {
 	}
 
 	protected  ExNivelAcesso getNivelAcessoDefault(final ExTipoDocumento exTpDoc, final ExFormaDocumento forma, final ExModelo exMod, final ExClassificacao classif) {
-		final Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
-
-		final ExConfiguracao config = new ExConfiguracao();
-		final CpTipoConfiguracao exTpConfig = new CpTipoConfiguracao();
-		final CpSituacaoConfiguracao exStConfig = new CpSituacaoConfiguracao();
-		config.setDpPessoa(getTitular());
-		config.setLotacao(getLotaTitular());
-		config.setExTipoDocumento(exTpDoc);
-		config.setExFormaDocumento(forma);
-		config.setExModelo(exMod);
-		config.setExClassificacao(classif);
-		exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVELACESSO);
-		config.setCpTipoConfiguracao(exTpConfig);
-		exStConfig.setIdSitConfiguracao(CpSituacaoConfiguracao.SITUACAO_DEFAULT);
-		config.setCpSituacaoConfiguracao(exStConfig);
-		ExConfiguracao exConfig;
-
-		try {
-			exConfig = criarExConfiguracaoPorCpConfiguracao(Ex.getInstance().getConf()
-					.buscaConfiguracao(config, new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt));
-		} catch (Exception e) {
-			exConfig = null;
-		}
-
-		if (exConfig != null) {
-			return exConfig.getExNivelAcesso();
-		}
-
-		return null;
+		return ExNivelAcesso
+				.getNivelAcessoDefault(exTpDoc, forma, exMod, classif, getTitular(), getLotaTitular());
 	}
 
-	public ExConfiguracao criarExConfiguracaoPorCpConfiguracao(CpConfiguracao configuracaoBaseParaExConfiguracao) {
-		ExConfiguracao exConfiguracao = new ExConfiguracao();
-
-		if (configuracaoBaseParaExConfiguracao.isAtivo())
-			exConfiguracao.updateAtivo();
-		exConfiguracao.setCargo(configuracaoBaseParaExConfiguracao.getCargo());
-		exConfiguracao.setComplexo(configuracaoBaseParaExConfiguracao.getComplexo());
-		exConfiguracao.setConfiguracaoInicial(configuracaoBaseParaExConfiguracao.getConfiguracaoInicial());
-		exConfiguracao.setConfiguracoesPosteriores(configuracaoBaseParaExConfiguracao.getConfiguracoesPosteriores());
-		exConfiguracao.setCpGrupo(configuracaoBaseParaExConfiguracao.getCpGrupo());
-		exConfiguracao.setCpIdentidade(configuracaoBaseParaExConfiguracao.getCpIdentidade());
-		exConfiguracao.setCpServico(configuracaoBaseParaExConfiguracao.getCpServico());
-		exConfiguracao.setCpSituacaoConfiguracao(configuracaoBaseParaExConfiguracao.getCpSituacaoConfiguracao());
-		exConfiguracao.setCpTipoConfiguracao(configuracaoBaseParaExConfiguracao.getCpTipoConfiguracao());
-		exConfiguracao.setCpTipoLotacao(configuracaoBaseParaExConfiguracao.getCpTipoLotacao());
-		exConfiguracao.setDpPessoa(configuracaoBaseParaExConfiguracao.getDpPessoa());
-		exConfiguracao.setDscFormula(configuracaoBaseParaExConfiguracao.getDscFormula());
-		exConfiguracao.setDtFimVigConfiguracao(configuracaoBaseParaExConfiguracao.getDtFimVigConfiguracao());
-		exConfiguracao.setDtIniVigConfiguracao(configuracaoBaseParaExConfiguracao.getDtIniVigConfiguracao());
-		exConfiguracao.setFuncaoConfianca(configuracaoBaseParaExConfiguracao.getFuncaoConfianca());
-		exConfiguracao.setHisAtivo(configuracaoBaseParaExConfiguracao.getHisAtivo());
-		exConfiguracao.setHisDtFim(configuracaoBaseParaExConfiguracao.getHisDtFim());
-		exConfiguracao.setHisDtIni(configuracaoBaseParaExConfiguracao.getHisDtIni());
-		exConfiguracao.setHisIdcFim(configuracaoBaseParaExConfiguracao.getHisIdcFim());
-		exConfiguracao.setHisIdcIni(configuracaoBaseParaExConfiguracao.getHisIdcIni());
-		exConfiguracao.setHisIdIni(configuracaoBaseParaExConfiguracao.getHisIdIni());
-		exConfiguracao.setId(configuracaoBaseParaExConfiguracao.getId());
-		exConfiguracao.setIdConfiguracao(configuracaoBaseParaExConfiguracao.getIdConfiguracao());
-		exConfiguracao.setLotacao(configuracaoBaseParaExConfiguracao.getLotacao());
-		exConfiguracao.setNmEmail(configuracaoBaseParaExConfiguracao.getNmEmail());
-		exConfiguracao.setOrgaoObjeto(configuracaoBaseParaExConfiguracao.getOrgaoObjeto());
-		exConfiguracao.setOrgaoUsuario(configuracaoBaseParaExConfiguracao.getOrgaoUsuario());
-		return exConfiguracao;
-
-	}
 
 	@SuppressWarnings("static-access")
 	protected  String getDescrDocConfidencial(ExDocumento doc) {

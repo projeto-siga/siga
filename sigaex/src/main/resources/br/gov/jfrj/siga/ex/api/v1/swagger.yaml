@@ -823,7 +823,11 @@ definitions:
     type: object
     properties:
       sigla:
+        description: Sigla completa da Lotação ou matrícula da Pessoa
         type: string
       nome:
+        description: Nome da Lotação ou da Pessoa
         type: string
-        
+      siglaLotacao:
+        description: Sigla simples da Lotação solicitada ou Lotação onde a Pessoa solicitada trabalha.
+        type: string

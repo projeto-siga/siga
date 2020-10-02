@@ -1,7 +1,8 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.crivano.swaggerservlet.SwaggerServlet;
 
@@ -18,29 +19,28 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class PessoaTextoPesquisarGet implements IPessoaTextoPesquisarGet {
 
+	private ResultadoDePesquisa lotacaoToResultadoPesquisa(DpPessoa p) {
+		ResultadoDePesquisa rp = new ResultadoDePesquisa();
+
+		rp.nome = p.getNomePessoa();
+		rp.sigla = p.getSigla();
+		rp.siglaLotacao = Objects.isNull(p.getLotacao()) ? null : p.getLotacao().getSigla();
+
+		return rp;
+	}
+
 	@Override
-	public void run(PessoaTextoPesquisarGetRequest req,
-			PessoaTextoPesquisarGetResponse resp) throws Exception {
-		CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
+	public void run(PessoaTextoPesquisarGetRequest req, PessoaTextoPesquisarGetResponse resp) throws Exception {
+		CurrentRequest.set(
+				new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 		SwaggerHelper.buscarEValidarUsuarioLogado();
 
-		resp.list = new ArrayList<>();
-		try {
-			final DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
-			flt.setNome(Texto.removeAcentoMaiusculas(req.texto));
-			//TODO: ver se precisa de outros parametros listarPessoa
-			List<DpPessoa> l = ExDao.getInstance().consultarPorFiltro(flt);
+		final DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
+		flt.setNome(Texto.removeAcentoMaiusculas(req.texto));
+		// TODO: ver se precisa de outros parametros listarPessoa
+		List<DpPessoa> l = ExDao.getInstance().consultarPorFiltro(flt);
 
-			for (DpPessoa p : l) {
-				ResultadoDePesquisa rp = new ResultadoDePesquisa();
-				rp.nome = p.getNomePessoa();
-				rp.sigla = p.getSigla();
-				resp.list.add(rp);
-			}
-		}catch (Exception e) {
-			// TODO: handle exception
-		}
-
+		resp.list = l.stream().map(this::lotacaoToResultadoPesquisa).collect(Collectors.toList());
 	}
 
 	@Override

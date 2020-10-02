@@ -79,6 +79,7 @@ public interface IExApiV1 {
 	public class ResultadoDePesquisa implements ISwaggerModel {
 		public String sigla;
 		public String nome;
+		public String siglaLotacao;
 	}
 
 	public class AutenticarPostRequest implements ISwaggerRequest {

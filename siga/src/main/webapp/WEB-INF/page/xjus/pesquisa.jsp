@@ -13,12 +13,11 @@
 	<script src="/siga/javascript/x-jus/dir-pagination/dirPagination.js"></script>
 
 
-	<div class="wrapper" ng-app="app" ng-controller="ctrlSearch"
-		ng-init="filter = '${q}'">
+	<div class="wrapper" ng-app="app" ng-controller="ctrlSearch">
 		<div class="container content mt-3">
-			<div class="row">
+			<div class="row justify-content-center">
 				<!-- Sidebar -->
-				<div class="col text-center mb-5">
+				<div class="col col-auto text-center mb-3">
 					<form name="Pessoa" style="border: none;"
 						class="sky-form ng-pristine ng-valid">
 						<label for="code" style="padding-top: 0px;" title="" class="label">Pesquisar:
@@ -27,9 +26,10 @@
 							ng-model-options="{ debounce: 1000 }" name="filter" id="filter"
 							type="text"
 							class="form-control ng-pristine ng-valid ng-empty ng-touched"
-							style=""></label>
+							style=""></label><div class="ml-2" style="visibility:  {{loading ? 'visible' : 'hidden'}}; display: inline-block"><div class="loader"></div></div>
 					</form>
 				</div>
+				<div class="col col-auto"></div>
 			</div>
 			<div class="row">
 				<!-- Sidebar -->

@@ -93,7 +93,7 @@ ${meta}
 
 <c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
 
-<c:set var="siga_version"  scope="request" value="9.0.8.1" />
+<c:set var="siga_version"  scope="request" value="9.0.8.3" />
 
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
@@ -470,5 +470,11 @@ setTimeout(function() {
 function delSession() {
 	sessionStorage.removeItem('timeout' + document.getElementById('cadastrante').title);
 	sessionStorage.removeItem('mesa' + document.getElementById('cadastrante').title);
+
+	for (var obj in sessionStorage) {
+      if (sessionStorage.hasOwnProperty(obj) && (obj.includes("pessoa.") || obj.includes("lotacao."))) {
+    	  sessionStorage.removeItem(obj);
+      }
+	}
 }
 </script>		

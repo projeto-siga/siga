@@ -831,3 +831,33 @@ definitions:
       siglaLotacao:
         description: Sigla simples da Lotação solicitada ou Lotação onde a Pessoa solicitada trabalha.
         type: string
+
+  Pessoa:
+    description: Dados de uma determinada Pessoa
+    type: object
+    properties:
+      idPessoa:
+        type: string
+      idPessoaIni:
+        type: string        
+      sigla:
+        type: string
+      nome:
+        type: string        
+      siglaLotacao:
+        type: string          
+
+  Lotacao:
+    description: Dados de uma determinada Lotação
+    type: object
+    properties:
+      idLotacao:
+        type: string
+      idLotacaoIni:
+        type: string        
+      sigla:
+        type: string
+      nome:
+        type: string
+      orgao:
+        type: string        

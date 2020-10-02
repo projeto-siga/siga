@@ -190,7 +190,7 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 
 	public void setPreenchimentoBlob(byte[] preenchimentoBlob) {
 		cacheConteudoBlobPre = preenchimentoBlob;
-		if (this.preenchimentoBlob!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
+		if (this.cpArquivo==null && (this.preenchimentoBlob!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"))))){
 			this.preenchimentoBlob = preenchimentoBlob;
 		} else if(cacheConteudoBlobPre != null){
 			cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, TipoConteudo.TXT.getMimeType());

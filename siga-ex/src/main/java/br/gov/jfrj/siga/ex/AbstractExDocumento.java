@@ -1117,7 +1117,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setConteudoBlobDoc(byte[] createBlob) {
 		cacheConteudoBlobDoc = createBlob;
-		if (conteudoBlobDoc!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
+		if (this.cpArquivo==null && (conteudoBlobDoc!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"))))) {
 			conteudoBlobDoc = createBlob;
 		} else if(cacheConteudoBlobDoc != null){
 			cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobDoc);

@@ -82,6 +82,22 @@ public interface IExApiV1 {
 		public String siglaLotacao;
 	}
 
+	public class Pessoa implements ISwaggerModel {
+		public String idPessoa;
+		public String idPessoaIni;
+		public String sigla;
+		public String nome;
+		public String siglaLotacao;
+	}
+	
+	public class Lotacao implements ISwaggerModel {
+		public String idLotacao;
+		public String idLotacaoIni;
+		public String sigla;
+		public String nome;
+		public String orgao;
+	}
+
 	public class AutenticarPostRequest implements ISwaggerRequest {
 	}
 
@@ -405,6 +421,20 @@ public interface IExApiV1 {
 		public void run(PessoaTextoPesquisarGetRequest req, PessoaTextoPesquisarGetResponse resp) throws Exception;
 	}
 
+	
+	public class PessoaIdPessoaIniPessoaAtualGetRequest implements ISwaggerRequest {
+		public String idPessoaIni;
+	}
+
+	public class PessoaIdPessoaIniPessoaAtualGetResponse implements ISwaggerResponse {
+		public Pessoa pessoaAtual;
+	}
+
+	public interface IPessoaIdPessoaIniPessoaAtualGet extends ISwaggerMethod {
+		public void run(PessoaIdPessoaIniPessoaAtualGetRequest req, PessoaIdPessoaIniPessoaAtualGetResponse resp) throws Exception;
+	}
+
+
 	public class LotacaoTextoPesquisarGetRequest implements ISwaggerRequest {
 		public String texto;
 	}
@@ -415,6 +445,19 @@ public interface IExApiV1 {
 
 	public interface ILotacaoTextoPesquisarGet extends ISwaggerMethod {
 		public void run(LotacaoTextoPesquisarGetRequest req, LotacaoTextoPesquisarGetResponse resp) throws Exception;
+	}
+	
+	
+	public class LotacaoIdLotacaoIniLotacaoAtualGetRequest implements ISwaggerRequest {
+		public String idLotacaoIni;
+	}
+
+	public class LotacaoIdLotacaoIniLotacaoAtualGetResponse implements ISwaggerResponse {
+		public Lotacao lotacaoAtual;
+	}
+
+	public interface ILotacaoIdLotacaoIniLotacaoAtualGet extends ISwaggerMethod {
+		public void run(LotacaoIdLotacaoIniLotacaoAtualGetRequest req, LotacaoIdLotacaoIniLotacaoAtualGetResponse resp) throws Exception;
 	}
 
 }

@@ -276,6 +276,16 @@ p.gt-table-action-list a.link-tag {
 
 /*
 ######################
+# SELECT 2
+######################
+*/
+.select2-container--bootstrap .select2-selection--single .select2-selection__placeholder {
+   	color: #555555!important;
+}
+
+
+/*
+######################
 # SIGA MODAL
 ######################
 */
@@ -309,4 +319,30 @@ p.gt-table-action-list a.link-tag {
  
  .siga-modal__btn-close:focus {
  	outline: none; 	
- }				
+ }			
+ 
+ .loader {
+  border: 2px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 2px solid #3498db;
+  width: 1em;
+  height: 1em;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+article p em {
+	font-weight: bold;
+	font-style: normal;
+}

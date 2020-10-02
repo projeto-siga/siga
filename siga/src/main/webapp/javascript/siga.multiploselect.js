@@ -29,7 +29,7 @@ Componente.MultiploSelect = (function() {
         config.width = "100%";
         config.liveSearch = true;
         config.actionsBox = true;
-        config.selectedTextFormat = "count > 3";
+        config.selectedTextFormat = "count > 3";        
         
         var screenHeight = screen.height;
         if (screenHeight >= 1080) {

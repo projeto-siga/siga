@@ -863,7 +863,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 
 	public void setConteudoBlobMov(byte[] createBlob) {
 		cacheConteudoBlobMov = createBlob;
-		if (this.conteudoBlobMov!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
+		if (this.cpArquivo==null && (this.conteudoBlobMov!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"))))) {
 			this.conteudoBlobMov = createBlob;
 		} else if(cacheConteudoBlobMov != null){
 			cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobMov);

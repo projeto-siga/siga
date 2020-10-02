@@ -30,14 +30,18 @@ public class DocSiglaTramitarPost implements IDocSiglaTramitarPost {
 	private void validarPreenchimentoDestino(DocSiglaTramitarPostRequest req, DocSiglaTramitarPostResponse resp)
 			throws SwaggerException {
 		if (StringUtils.isEmpty(req.orgao) && StringUtils.isEmpty(req.lotacao) && StringUtils.isEmpty(req.matricula)) {
-			throw new SwaggerException("Você deve preencher ou orgao (apenas) ou lotacao ou matricula (um ou os dois)",
+			throw new SwaggerException("Você deve fornecer ou orgao (apenas) ou matricula ou lotacao *com* a matricula",
 					400, null, req, resp, null);
+		}
+		if (StringUtils.isEmpty(req.orgao) && !StringUtils.isEmpty(req.lotacao) && StringUtils.isEmpty(req.matricula)) {
+			throw new SwaggerException("Você deve fornecer a lotacao caso a matricula esteja fornecida", 400, null, req,
+					resp, null);
 		}
 		if (StringUtils.isNotEmpty(req.orgao)
 				&& (StringUtils.isNotEmpty(req.lotacao) || StringUtils.isNotEmpty(req.matricula))) {
 			throw new SwaggerException(
-					"Orgão externo não deve estar selecionado se for tramitar para Lotação e/ou Matrícula", 400, null,
-					req, resp, null);
+					"Orgão externo não deve ser fornecido se for tramitar para Lotação e/ou Matrícula", 400, null, req,
+					resp, null);
 		}
 	}
 

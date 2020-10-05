@@ -255,33 +255,41 @@ public class ExMobilController extends
 		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		
 		try {
+			final ExMobilDaoFiltro flt = createDaoFiltro();
+			//long tempoIni = System.currentTimeMillis();
+			setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,getTitular(), getLotaTitular()));
+			
+			
 			LocalDate dtIni = null;
 			LocalDate dtFinal = null;
 			LocalDate dataAtual = LocalDate.now();
 			
-			if (!"".equals(param("dtDocString"))) {
-				if (Data.validaDDMMYYYY(param("dtDocString"))) {
-					dtIni = LocalDate.parse(param("dtDocString"), formatter);
+			if (getTamanho() > 50000) {		
+				if (!"".equals(param("dtDocString"))) {
+					if (Data.validaDDMMYYYY(param("dtDocString"))) {
+						dtIni = LocalDate.parse(param("dtDocString"), formatter);
+					} else {
+						throw new RegraNegocioException("Data Inicial inválida.");
+					}
 				} else {
-					throw new RegraNegocioException("Data Inicial inválida.");
+					throw new RegraNegocioException("Data Inicial não informada. Para grandes volumes, período para exportação não deve ser superior à 90 dias.");
 				}
-			} else {
-				throw new RegraNegocioException("Data Inicial não informada. Período para exportação não deve ser superior à 90 dias.");
-			}
-			
-			if (!"".equals(param("dtDocFinalString"))) {
-				if (Data.validaDDMMYYYY(param("dtDocFinalString"))) {
-					dtFinal = LocalDate.parse(param("dtDocFinalString"), formatter);
-					if (ChronoUnit.DAYS.between(dtIni, dtFinal) > 90) {
-						throw new RegraNegocioException("Período para exportação não deve ser superior à 90 dias.");
+				
+				if (!"".equals(param("dtDocFinalString"))) {
+					if (Data.validaDDMMYYYY(param("dtDocFinalString"))) {
+						dtFinal = LocalDate.parse(param("dtDocFinalString"), formatter);
+						if (ChronoUnit.DAYS.between(dtIni, dtFinal) > 90) {
+							throw new RegraNegocioException("Para grandes volumes, período para exportação não deve ser superior à 90 dias.");
+						}	
+					} else {
+						throw new RegraNegocioException("Data Final inválida.");
+					}
+				} else {
+					if (ChronoUnit.DAYS.between(dtIni, dataAtual) > 90) {
+						throw new RegraNegocioException("Para grandes volumes, período para exportação não deve ser superior à 90 dias. Informe a Data Final.");
 					}	
-				} else {
-					throw new RegraNegocioException("Data Final inválida.");
 				}
-			} else {
-				if (ChronoUnit.DAYS.between(dtIni, dataAtual) > 90) {
-					throw new RegraNegocioException("Período para exportação não deve ser superior à 90 dias. Informe a Data Final.");
-				}	
+			
 			}
 		
 			getP().setOffset(paramoffset);
@@ -304,10 +312,6 @@ public class ExMobilController extends
 					.setClassificacaoSel(classificacaoSel).setOffset(paramoffset);
 	
 			builder.processar(getLotaTitular());
-	
-			final ExMobilDaoFiltro flt = createDaoFiltro();
-			//long tempoIni = System.currentTimeMillis();
-			setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,getTitular(), getLotaTitular()));
 			
 			if (getTamanho() > 500000) {
 				throw new RegraNegocioException("Numero máximo de registros para exportação excedido. Use os filtros para restringir resultado.");

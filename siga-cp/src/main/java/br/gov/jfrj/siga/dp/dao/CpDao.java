@@ -1191,29 +1191,25 @@ public class CpDao extends ModeloDao {
 
 	@SuppressWarnings("unchecked")
 	public List<DpPessoaUsuarioDTO> consultarUsuariosComEnvioDeEmailPendenteFiltrandoPorLotacao(final DpPessoaDaoFiltro flt) {
-		try {
-			final Query query;
-			boolean isFiltrarPorListaDeLotacao = (flt.getIdLotacaoSelecao() != null && flt.getIdLotacaoSelecao().length > 0);
+		final Query query;
+		boolean isFiltrarPorListaDeLotacao = (flt.getIdLotacaoSelecao() != null && flt.getIdLotacaoSelecao().length > 0);
 
-			query = em().createNamedQuery("consultarUsuariosComEnvioDeEmailPendenteFiltrandoPorLotacao");
+		query = em().createNamedQuery("consultarUsuariosComEnvioDeEmailPendenteFiltrandoPorLotacao");
 
-			if (flt.getIdOrgaoUsu() != null)
-				query.setParameter("idOrgaoUsu", flt.getIdOrgaoUsu());
-			else
-				query.setParameter("idOrgaoUsu", 0L);
+		if (flt.getIdOrgaoUsu() != null)
+			query.setParameter("idOrgaoUsu", flt.getIdOrgaoUsu());
+		else
+			query.setParameter("idOrgaoUsu", 0L);
 
-			if (isFiltrarPorListaDeLotacao) {
-				query.setParameter("idLotacaoLista", Arrays.asList(flt.getIdLotacaoSelecao()));
-			} else if (flt.getLotacao() != null) {
-				query.setParameter("idLotacaoLista", flt.getLotacao().getId());
-			} else {
-				query.setParameter("idLotacaoLista", 0L);
-			}
-
-			return (List<DpPessoaUsuarioDTO>) query.getResultList();
-		} catch (Exception e) {
-			return null;
+		if (isFiltrarPorListaDeLotacao) {
+			query.setParameter("idLotacaoLista", Arrays.asList(flt.getIdLotacaoSelecao()));
+		} else if (flt.getLotacao() != null) {
+			query.setParameter("idLotacaoLista", flt.getLotacao().getId());
+		} else {
+			query.setParameter("idLotacaoLista", 0L);
 		}
+
+		return (List<DpPessoaUsuarioDTO>) query.getResultList();
 	}
 
 	public int consultarQuantidadeDpPessoaSemIdentidade(final DpPessoaDaoFiltro flt) {
@@ -1518,70 +1514,46 @@ public class CpDao extends ModeloDao {
 
 	@SuppressWarnings("unchecked")
 	public List<DpSubstituicao> consultarSubstituicoesPermitidas(final DpSubstituicao exemplo) throws SQLException {
-		try {
-			Query query = null;
-			query = em().createNamedQuery("consultarSubstituicoesPermitidas");
-			query.setParameter("idSubstitutoIni", exemplo.getSubstituto().getIdPessoaIni());
-			query.setParameter("idLotaSubstitutoIni", exemplo.getLotaSubstituto().getIdLotacaoIni());
-			// Reativado pois esse query é executado a cada chamada, inclusive
-			// as ajax.
-			query.setHint("org.hibernate.cacheable", true);
-			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
+		Query query = null;
+		query = em().createNamedQuery("consultarSubstituicoesPermitidas");
+		query.setParameter("idSubstitutoIni", exemplo.getSubstituto().getIdPessoaIni());
+		query.setParameter("idLotaSubstitutoIni", exemplo.getLotaSubstituto().getIdLotacaoIni());
+		// Reativado pois esse query é executado a cada chamada, inclusive
+		// as ajax.
+		query.setHint("org.hibernate.cacheable", true);
+		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
 //			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SUBSTITUICAO);
-			return query.getResultList();
-		} catch (final IllegalArgumentException e) {
-			throw e;
-		} catch (final Exception e) {
-			return null;
-		}
+		return query.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<DpSubstituicao> consultarOrdemData(final DpSubstituicao exemplo) throws SQLException {
-		try {
-			Query query = null;
-			query = em().createNamedQuery("consultarOrdemData");
-			query.setParameter("idTitularIni", exemplo.getTitular().getIdPessoaIni());
-			query.setParameter("idLotaTitularIni", exemplo.getLotaTitular().getIdLotacaoIni());
-			// query.setHint("org.hibernate.cacheable", true);
-			// query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SUBSTITUICAO);
-			return query.getResultList();
-		} catch (final IllegalArgumentException e) {
-			throw e;
-		} catch (final Exception e) {
-			return null;
-		}
+		Query query = null;
+		query = em().createNamedQuery("consultarOrdemData");
+		query.setParameter("idTitularIni", exemplo.getTitular().getIdPessoaIni());
+		query.setParameter("idLotaTitularIni", exemplo.getLotaTitular().getIdLotacaoIni());
+		// query.setHint("org.hibernate.cacheable", true);
+		// query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SUBSTITUICAO);
+		return query.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<DpVisualizacao> consultarVisualizacoesPermitidas(final DpVisualizacao exemplo) throws SQLException {
-		try {
-			Query query = null;
-			query = em().createNamedQuery("consultarVisualizacoesPermitidas");
-			query.setParameter("idDelegadoIni", exemplo.getDelegado().getIdPessoaIni());
-			query.setHint("org.hibernate.cacheable", true);
+		Query query = null;
+		query = em().createNamedQuery("consultarVisualizacoesPermitidas");
+		query.setParameter("idDelegadoIni", exemplo.getDelegado().getIdPessoaIni());
+		query.setHint("org.hibernate.cacheable", true);
 //			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SUBSTITUICAO);
-			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
-			return query.getResultList();
-		} catch (final IllegalArgumentException e) {
-			throw e;
-		} catch (final Exception e) {
-			return null;
-		}
+		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
+		return query.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<DpVisualizacao> consultarOrdemData(final DpVisualizacao exemplo) throws SQLException {
-		try {
-			Query query = null;
-			query = em().createNamedQuery("consultarOrdem");
-			query.setParameter("idTitularIni", exemplo.getTitular().getIdPessoaIni());
-			return query.getResultList();
-		} catch (final IllegalArgumentException e) {
-			throw e;
-		} catch (final Exception e) {
-			return null;
-		}
+		Query query = null;
+		query = em().createNamedQuery("consultarOrdem");
+		query.setParameter("idTitularIni", exemplo.getTitular().getIdPessoaIni());
+		return query.getResultList();
 	}
 
 	public CpIdentidade consultaIdentidadeCadastrante(final String nmUsuario, boolean fAtiva)
@@ -1818,14 +1790,13 @@ public class CpDao extends ModeloDao {
 		return pes;
 	}
 
-	public Date consultarDataEHoraDoServidor() throws AplicacaoException {
-		Query sql = em().createNamedQuery("consultarDataEHoraDoServidor");
-
-		List result = sql.getResultList();
-		if (result.size() != 1)
-			throw new AplicacaoException("Nao foi possivel obter a data e a hora atuais do servidor.");
-
-		return (Date) ((result.get(0)));
+	public Date consultarDataEHoraDoServidor() {
+		String sql = "SELECT sysdate from dual";
+		String dialect = System.getProperty("siga.hibernate.dialect");
+		if (dialect != null && dialect.contains("MySQL"))
+			sql = "SELECT CURRENT_TIMESTAMP";
+		Query query = em().createNativeQuery(sql);
+		return (Date) query.getSingleResult();
 	}
 
 	public List<CpConfiguracao> consultarConfiguracoesDesde(Date desde) {
@@ -2449,62 +2420,36 @@ public class CpDao extends ModeloDao {
 	}
 
 	public DpLotacao obterLotacaoAtual(final DpLotacao lotacao) {
-		try {
-
-			final Query qry = em().createNamedQuery("consultarLotacaoAtualPelaLotacaoInicial");
-			qry.setParameter("idLotacaoIni", lotacao.getIdLotacaoIni());
-			qry.setHint("org.hibernate.cacheable", true); 
-			qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
-			final DpLotacao lot = (DpLotacao) qry.getSingleResult();
-			return lot;
-		} catch (final IllegalArgumentException e) {
-			throw e;
-
-		} catch (final Exception e) {
-			return null;
-		}
+		final Query qry = em().createNamedQuery("consultarLotacaoAtualPelaLotacaoInicial");
+		qry.setParameter("idLotacaoIni", lotacao.getIdLotacaoIni());
+		qry.setHint("org.hibernate.cacheable", true); 
+		qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
+		final DpLotacao lot = (DpLotacao) qry.getSingleResult();
+		return lot;
 	}
 
 	@SuppressWarnings("unchecked")
 	public DpPessoa obterPessoaAtual(final DpPessoa pessoa) {
-		try {
-
-			final Query qry = em().createNamedQuery("consultarPessoaAtualPelaInicial");
-			qry.setParameter("idPessoaIni", pessoa.getIdPessoaIni());
-			qry.setHint("org.hibernate.cacheable", true); 
-			qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
-			
-			
-			//final DpPessoa pes = (DpPessoa) qry.getSingleResult();
-			//return pes;
-			
-			List<DpPessoa> result = qry.getResultList();			
-			if (result == null || result.size() == 0)
-				return null;
-			return result.get(0);
-			
-			
-			
-		} catch (final IllegalArgumentException e) {
-			throw e;
-
-		} catch (final Exception e) {
+		final Query qry = em().createNamedQuery("consultarPessoaAtualPelaInicial");
+		qry.setParameter("idPessoaIni", pessoa.getIdPessoaIni());
+		qry.setHint("org.hibernate.cacheable", true); 
+		qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
+		
+		
+		//final DpPessoa pes = (DpPessoa) qry.getSingleResult();
+		//return pes;
+		
+		List<DpPessoa> result = qry.getResultList();			
+		if (result == null || result.size() == 0)
 			return null;
-		}
+		return result.get(0);
 	}
 
 	public CpIdentidade obterIdentidadeAtual(final CpIdentidade u) {
-		try {
-			final Query qry = em().createNamedQuery("consultarIdentidadeAtualPelaInicial");
-			qry.setParameter("idIni", u.getHisIdIni());
-			final CpIdentidade id = (CpIdentidade) qry.getSingleResult();
-			return id;
-		} catch (final IllegalArgumentException e) {
-			throw e;
-
-		} catch (final Exception e) {
-			return null;
-		}
+		final Query qry = em().createNamedQuery("consultarIdentidadeAtualPelaInicial");
+		qry.setParameter("idIni", u.getHisIdIni());
+		final CpIdentidade id = (CpIdentidade) qry.getSingleResult();
+		return id;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -2537,8 +2482,8 @@ public class CpDao extends ModeloDao {
 		try {
 			String consultarQuantidadeDocumentosPorDpLotacao = "SELECT count(1) FROM DpLotacao lotacao"
 					+ " left join CpMarca marca on lotacao.idLotacao = marca.dpLotacaoIni"
-					+ " WHERE(marca.dtIniMarca IS NULL OR marca.dtIniMarca < sysdate)"
-					+ " AND(marca.dtFimMarca IS NULL OR marca.dtFimMarca > sysdate)"
+					+ " WHERE(marca.dtIniMarca IS NULL OR marca.dtIniMarca < CURRENT_TIMESTAMP)"
+					+ " AND(marca.dtFimMarca IS NULL OR marca.dtFimMarca > CURRENT_TIMESTAMP)"
 					+ " AND marca.cpMarcador.idMarcador not in (1,10,32)"
 					+ " AND lotacao.idLotacaoIni = :idLotacao"
 					+ " AND marca.cpTipoMarca.idTpMarca = :idTipoMarca ";
@@ -2584,8 +2529,8 @@ public class CpDao extends ModeloDao {
 					+ queryLotacao
 					+ queryUsuario
 					+ "and marcador.idMarcador = :idMarcador " 
-					+ "and (dt_ini_marca is null or dt_ini_marca < sysdate) " 
-					+ "and (dt_fim_marca is null or dt_fim_marca > sysdate) " 
+					+ "and (dt_ini_marca is null or dt_ini_marca < CURRENT_TIMESTAMP) " 
+					+ "and (dt_fim_marca is null or dt_fim_marca > CURRENT_TIMESTAMP) " 
 				;
 
 		Query query = em().createQuery(queryTemp);

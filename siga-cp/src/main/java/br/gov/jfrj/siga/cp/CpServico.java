@@ -33,7 +33,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
-@Table(name = "CP_SERVICO", schema = "CORPORATIVO")
+@Table(name = "corporativo.cp_servico")
 @Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
@@ -64,6 +64,8 @@ public class CpServico extends AbstractCpServico implements Selecionavel {
 
 	public boolean equivale(Object other) {
 		if (other == null)
+			return false;
+		if (this.getIdServico() == null || ((CpServico) other).getIdServico() == null)
 			return false;
 		return this.getIdServico().longValue() == ((CpServico) other)
 				.getIdServico().longValue();

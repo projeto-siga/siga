@@ -947,7 +947,7 @@ public class ExDao extends CpDao {
 		StringBuffer sbf = new StringBuffer();
 
 		sbf.append("select * from siga.ex_configuracao ex inner join "
-				+ "CORPORATIVO"
+				+ "corporativo"
 				+ ".cp_configuracao cp on ex.id_configuracao_ex = cp.id_configuracao ");
 
 		sbf.append("" + "where 1 = 1");
@@ -995,21 +995,21 @@ public class ExDao extends CpDao {
 			sbf.append(" and (cp.id_orgao_usu = ");
 			sbf.append(orgao.getId());
 			sbf.append(" or cp.id_lotacao in (select id_lotacao from "
-					+ "CORPORATIVO"
+					+ "corporativo"
 					+ ".dp_lotacao lot where lot.id_orgao_usu= ");
 			sbf.append(orgao.getId());
 			sbf.append(")");
 			sbf.append(" or cp.id_pessoa in (select id_pessoa from "
-					+ "CORPORATIVO"
+					+ "corporativo"
 					+ ".dp_pessoa pes where pes.id_orgao_usu = ");
 			sbf.append(orgao.getId());
 			sbf.append(")");
 			sbf.append(" or cp.id_cargo in (select id_cargo from "
-					+ "CORPORATIVO" + ".dp_cargo cr where cr.id_orgao_usu = ");
+					+ "corporativo" + ".dp_cargo cr where cr.id_orgao_usu = ");
 			sbf.append(orgao.getId());
 			sbf.append(")");
 			sbf.append(" or cp.id_funcao_confianca in (select id_funcao_confianca from "
-					+ "CORPORATIVO"
+					+ "corporativo"
 					+ ".dp_funcao_confianca fc where fc.id_orgao_usu = ");
 			sbf.append(orgao.getId());
 			sbf.append(")");
@@ -1181,15 +1181,9 @@ public class ExDao extends CpDao {
 	}
 
 	public ExTpDocPublicacao consultarPorModelo(ExModelo mod) {
-		try {
-			final Query query = em().createNamedQuery("consultarPorModelo");
-			query.setParameter("idMod", mod.getHisIdIni());
-
-			return (ExTpDocPublicacao) query.getResultList().get(0);
-		} catch (final Throwable t) {
-			// engolindo a exceï¿½ï¿½o. Melhorar isso.
-			return null;
-		}
+		final Query query = em().createNamedQuery("consultarPorModelo");
+		query.setParameter("idMod", mod.getHisIdIni());
+		return (ExTpDocPublicacao) query.getResultList().get(0);
 	}
 
 	public List<ExDocumento> listarSolicitados(CpOrgaoUsuario orgaoUsu) {
@@ -1704,17 +1698,11 @@ public class ExDao extends CpDao {
 	}
 
 	public ExClassificacao obterClassificacaoAtual(
-			final ExClassificacao classificacao) {
-		try {
-			final Query qry = em().createNamedQuery("consultarAtualPorId");
-			qry.setParameter("hisIdIni", classificacao.getHisIdIni());
-			final ExClassificacao c = (ExClassificacao) qry.getSingleResult();
-			return c;
-		} catch (final IllegalArgumentException e) {
-			throw e;
-		} catch (final Exception e) {
-			return null;
-		}
+		final ExClassificacao classificacao) {
+		final Query qry = em().createNamedQuery("consultarAtualPorId");
+		qry.setParameter("hisIdIni", classificacao.getHisIdIni());
+		final ExClassificacao c = (ExClassificacao) qry.getSingleResult();
+		return c;
 	}
 	
 	public List listarDocumentosPorPessoaOuLotacao(DpPessoa titular,
@@ -1722,8 +1710,8 @@ public class ExDao extends CpDao {
 		String q = "select marca, marcador, mobil from ExMarca marca"
 				+ " inner join marca.cpMarcador marcador"
 				+ " inner join marca.exMobil mobil"
-				+ " where (marca.dtIniMarca is null or marca.dtIniMarca < sysdate)"
-				+ " and (marca.dtFimMarca is null or marca.dtFimMarca > sysdate)"
+				+ " where (marca.dtIniMarca is null or marca.dtIniMarca < CURRENT_TIMESTAMP)"
+				+ " and (marca.dtFimMarca is null or marca.dtFimMarca > CURRENT_TIMESTAMP)"
 				+ (titular != null ? " and (marca.dpPessoaIni.idPessoaIni = :titular)"
 						: " and (marca.dpLotacaoIni.idLotacaoIni = :lotaTitular)");
 		if("GOVSP".equals(Prop.get("/siga.local"))) {
@@ -1756,8 +1744,8 @@ public class ExDao extends CpDao {
 						"select marca, marcador, mobil from ExMarca marca"
 								+ " inner join marca.cpMarcador marcador"
 								+ " inner join marca.exMobil mobil"
-								+ " where (marca.dtIniMarca is null or marca.dtIniMarca < sysdate)"
-								+ " and (marca.dtFimMarca is null or marca.dtFimMarca > sysdate)"
+								+ " where (marca.dtIniMarca is null or marca.dtIniMarca < CURRENT_TIMESTAMP)"
+								+ " and (marca.dtFimMarca is null or marca.dtFimMarca > CURRENT_TIMESTAMP)"
 								+ " and (marca.cpMarcador.idMarcador = 14L)"
 								+ (titular != null ? " and (marca.dpPessoaIni.idPessoaIni = :titular)"
 										: " and (marca.dpLotacaoIni.idLotacaoIni = :lotaTitular)"));
@@ -1819,8 +1807,8 @@ public class ExDao extends CpDao {
 						 + " INNER JOIN corporativo.cp_marcador marcador ON marca.id_marcador = marcador.id_marcador"
 						 + " LEFT OUTER JOIN corporativo.cp_marca marca2 ON "
 						  + " marca2.id_ref = marca.id_ref "
-						  + " AND (marca2.dt_ini_marca IS NULL OR marca2.dt_ini_marca < sysdate)"
-						  + " AND (marca2.dt_fim_marca IS NULL OR marca2.dt_fim_marca > sysdate)"
+						  + " AND (marca2.dt_ini_marca IS NULL OR marca2.dt_ini_marca < CURRENT_TIMESTAMP)"
+						  + " AND (marca2.dt_fim_marca IS NULL OR marca2.dt_fim_marca > CURRENT_TIMESTAMP)"
 						  + " AND ((marcador.GRUPO_MARCADOR <> " + String.valueOf(Mesa2.GrupoDeMarcadorEnum.EM_ELABORACAO.getId()) 
 						  	+ " AND MARCA2.ID_MARCADOR = " + String.valueOf(CpMarcador.MARCADOR_EM_ELABORACAO) + ") "
 						  	+ ( "".equals(queryMarcasAIgnorarFinal) ? ")" : 
@@ -1829,8 +1817,8 @@ public class ExDao extends CpDao {
 						  		+ " AND marca2.id_marcador in (" + queryMarcasAIgnorarFinal + ")))" )
 //  						  + (!grupoItem.grupoNome.equals(Mesa2.GrupoDeMarcadorEnum.EM_ELABORACAO.getNome())?
 //  								  " OR marca2.id_marcador = " + String.valueOf(CpMarcador.MARCADOR_EM_ELABORACAO) + ")" : ")")
-						 + " WHERE (marca.dt_ini_marca IS NULL OR marca.dt_ini_marca < sysdate)"
-						  + " AND (marca.dt_fim_marca IS NULL OR marca.dt_fim_marca > sysdate)"
+						 + " WHERE (marca.dt_ini_marca IS NULL OR marca.dt_ini_marca < CURRENT_TIMESTAMP)"
+						  + " AND (marca.dt_fim_marca IS NULL OR marca.dt_fim_marca > CURRENT_TIMESTAMP)"
 						  + " AND ((marca.id_pessoa_ini = :idPessoaIni) OR (marca.id_lotacao_ini = :idLotacaoIni))"
 						  + " AND marca.id_tp_marca = 1"
 						  + " AND marcador.grupo_marcador = " + grupoItem.grupoOrdem 
@@ -1886,8 +1874,8 @@ public class ExDao extends CpDao {
 					+ " inner join marca.cpMarcador marcador"
 					+ " inner join mobil.exDocumento doc"
 					+ queryMarcasAIgnorar
-					+ " where (marca.dtIniMarca is null or marca.dtIniMarca < sysdate)"
-					+ " and (marca.dtFimMarca is null or marca.dtFimMarca > sysdate)"
+					+ " where (marca.dtIniMarca is null or marca.dtIniMarca < CURRENT_TIMESTAMP)"
+					+ " and (marca.dtFimMarca is null or marca.dtFimMarca > CURRENT_TIMESTAMP)"
 					+ (!exibeLotacao && titular != null ? " and (marca.dpPessoaIni.idPessoaIni = :titular)" : "") 
 					+ (exibeLotacao && lotaTitular != null ? " and (marca.dpLotacaoIni.idLotacaoIni = :lotaTitular)" : "")
 					+ queryMarcasAIgnorarWhere

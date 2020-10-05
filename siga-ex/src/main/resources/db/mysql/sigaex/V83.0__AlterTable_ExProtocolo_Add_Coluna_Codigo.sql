@@ -1,4 +1,4 @@
 ---------------------------------------------------------------------------    
---  Coluna de number 0 ou 1 para informar se orgão é externo 
+--  Coluna de texto para codigo alfanumerico do protocolo
 ---------------------------------------------------------------------------
-ALTER TABLE CORPORATIVO.CP_ORGAO_USUARIO ADD IS_EXTERNO_ORGAO_USU NUMBER(1,0) DEFAULT 0;
+ALTER TABLE siga.ex_protocolo ADD CODIGO VARCHAR(12);

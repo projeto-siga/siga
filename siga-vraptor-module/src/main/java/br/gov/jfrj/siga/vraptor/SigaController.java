@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -21,6 +22,7 @@ import com.google.common.collect.Lists;
 
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
+import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.HttpResult;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -53,6 +55,8 @@ public class SigaController {
 	
 	//Todo: verificar se após a migração do vraptor se ainda necessita deste atributo "par"
 	private Map<String, String[]> par;
+	
+	private Validator validator;
 	
 	protected Map<String, String[]> getPar() {
 		return par;
@@ -110,8 +114,8 @@ public class SigaController {
 		this.so = so;
 		this.em = em;
 
-		//result.on(AplicacaoException.class).forwardTo(this).appexception();
-		//result.on(Exception.class).forwardTo(this).exception();
+		result.on(AplicacaoException.class).forwardTo(this).appexception();
+		result.on(Exception.class).forwardTo(this).exception();
 		
 		result.include("cadastrante", getCadastrante());
 		result.include("lotaCadastrante", getLotaCadastrante());
@@ -122,6 +126,12 @@ public class SigaController {
 		result.include("identidadeCadastrante",getIdentidadeCadastrante());
 	}
 
+	@Inject
+	private void setValidator(Validator validator) {
+		this.validator = validator;
+		this.validator.onErrorUse(Results.page()).of(SigaController.class).exception();
+	}
+	
 	protected List<DpSubstituicao> getMeusTitulares() {
 		try {
 			List<DpSubstituicao> substituicoes = so.getMeusTitulares();

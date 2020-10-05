@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.gc.api.v1;
+package br.gov.jfrj.siga.sr.api.v1;
 
 import java.net.URL;
 import java.net.URLConnection;
@@ -18,14 +18,14 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 
-public class GcApiV1Servlet extends SwaggerServlet implements IPropertyProvider {
+public class SrApiV1Servlet extends SwaggerServlet implements IPropertyProvider {
 	private static final long serialVersionUID = 1756711359239182178L;
 
 	@Override
 	public void initialize(ServletConfig config) throws ServletException {
-		setAPI(IGcApiV1.class);
+		setAPI(ISrApiV1.class);
 
-		setActionPackage("br.gov.jfrj.siga.gc.api.v1");
+		setActionPackage("br.gov.jfrj.siga.sr.api.v1");
 
 		Prop.setProvider(this);
 		Prop.defineGlobalProperties();
@@ -53,7 +53,7 @@ public class GcApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 			}
 		}
 
-		addDependency(new TestableDependency("database", "sigagcds", false, 0, 10000) {
+		addDependency(new TestableDependency("database", "sigasrds", false, 0, 10000) {
 
 			@Override
 			public String getUrl() {
@@ -84,7 +84,7 @@ public class GcApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		} else {
 			addRestrictedProperty("datasource.username", null);
 			addPrivateProperty("datasource.password", null);
-			addRestrictedProperty("datasource.name", "java:/jboss/datasources/SigaGcDS");
+			addRestrictedProperty("datasource.name", "java:/jboss/datasources/SigaSrDS");
 		}
 		
 	}

@@ -1822,6 +1822,8 @@ public class ExDao extends CpDao {
 						  + " AND ((marca.id_pessoa_ini = :idPessoaIni) OR (marca.id_lotacao_ini = :idLotacaoIni))"
 						  + " AND marca.id_tp_marca = 1"
 						  + " AND marcador.grupo_marcador = " + grupoItem.grupoOrdem 
+						  + " AND marca.id_marcador <> :marcaAssinSenha "
+						  + " AND marca.id_marcador <> :marcaMovAssinSenha "
 						  + " AND marca2.id_marca IS null "
 						 + " GROUP BY marca.id_ref )"
 //								+ " GROUP BY tab1.grupo_marcador ORDER BY tab1.grupo_marcador asc"
@@ -1835,6 +1837,8 @@ public class ExDao extends CpDao {
 				Query sql = em().createNativeQuery(query);
 				sql.setParameter("idPessoaIni", pes.getIdPessoaIni());
 				sql.setParameter("idLotacaoIni", lot.getIdLotacaoIni());
+				sql.setParameter("marcaAssinSenha", CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA);
+				sql.setParameter("marcaMovAssinSenha", CpMarcador.MARCADOR_MOVIMENTACAO_ASSINADA_COM_SENHA);
 	
 				result = sql.getResultList();
 			}
@@ -1879,6 +1883,8 @@ public class ExDao extends CpDao {
 					+ (!exibeLotacao && titular != null ? " and (marca.dpPessoaIni.idPessoaIni = :titular)" : "") 
 					+ (exibeLotacao && lotaTitular != null ? " and (marca.dpLotacaoIni.idLotacaoIni = :lotaTitular)" : "")
 					+ queryMarcasAIgnorarWhere
+					+ " AND marca.cpMarcador.idMarcador <> :marcaAssinSenha "
+					+ " AND marca.cpMarcador.idMarcador <> :marcaMovAssinSenha "
 					+ " order by  doc.dtAltDoc " + ordem + ", marca ";
 			
 		Query query = em()
@@ -1888,6 +1894,9 @@ public class ExDao extends CpDao {
 		
 		if (exibeLotacao && lotaTitular != null)
 			query.setParameter("lotaTitular", lotaTitular.getIdLotacaoIni());
+
+		query.setParameter("marcaAssinSenha", CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA);
+		query.setParameter("marcaMovAssinSenha", CpMarcador.MARCADOR_MOVIMENTACAO_ASSINADA_COM_SENHA);
 
 		l = query.getResultList();
 //		long tempoTotal = System.nanoTime() - tempoIni;

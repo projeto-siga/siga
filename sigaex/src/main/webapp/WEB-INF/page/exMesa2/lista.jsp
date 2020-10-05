@@ -247,15 +247,14 @@
 															data-toggle="popover" data-trigger="hover focus" :data-content="f.anotacao"></a>
 												</span>
 												<span class="xrp-label-container">
-													<span v-for="m in f.list" :title="m.titulo">
-														<span class="text-size-8 badge badge-pill badge-secondary tagmesa m-1 btn-xs">												
-<!-- 														<button	class="btn btn-default btn-sm xrp-label"> -->
-															<i :class="m.icone"></i> {{m.nome}}<span
-																v-if="m.pessoa &amp;&amp; !m.daPessoa"> -
-																{{m.pessoa}}/ </span><span
-																v-if="m.unidade &amp;&amp; (!m.daLotacao || (!m.daPessoa && !m.deOutraPessoa))">
-																{{m.unidade}}</span>
-														</span>
+													<span v-for="m in f.list">
+														<a class="popover-dismiss ml-1" role="button" 
+															data-toggle="popover" data-trigger="hover focus" :title="m.titulo" data-html="true" :data-pessoa="m.pessoa" :data-lotacao="m.lotacao">
+															<span class="text-size-8 badge badge-pill badge-secondary tagmesa m-1 btn-xs">												
+	<!-- 														<button	class="btn btn-default btn-sm xrp-label"> -->
+																<i :class="m.icone"></i> {{m.nome}}
+															</span>
+														</a>
 													</span>
 												</span>
 											</td>
@@ -309,7 +308,12 @@
 		<div id="final"></div>		
 	</div>
 	<script type="text/javascript">
-const ID_VISUALIZACAO = ${idVisualizacao};
+		const ID_VISUALIZACAO = ${idVisualizacao};
+		$( document ).ready(function() {
+			initPopovers();
+		});
 	</script>
 	<script type="text/javascript" src="/siga/javascript/mesa2.js"></script>
+	
+	
 </siga:pagina>

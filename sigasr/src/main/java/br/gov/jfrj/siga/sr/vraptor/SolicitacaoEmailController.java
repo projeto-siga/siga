@@ -18,7 +18,7 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.upload.DefaultUploadedFile;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.sr.prop.SigaBaseProperties;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.model.SrAcao;

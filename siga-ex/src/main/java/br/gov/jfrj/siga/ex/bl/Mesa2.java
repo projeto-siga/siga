@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.crivano.swaggerservlet.ISwaggerModel;
 
@@ -579,18 +580,13 @@ public class Mesa2 {
 						.calcularTempoRelativo(tag.marca.getDtIniMarca());
 
 				if (tag.marca.getDpPessoaIni() != null) {
-					DpPessoa pes = tag.marca.getDpPessoaIni().getPessoaAtual();
-					if (pes.getNomeExibicao() != null)
-						t.pessoa = pes.getNomeExibicao();
-					
-					t.titulo += " - " + pes.getNomePessoa() + " - " + pes.getSesbPessoa() + pes.getMatricula();
+					t.pessoa = tag.marca.getDpPessoaIni().getIdInicial().toString();
 
 				}
 				if (tag.marca.getDpLotacaoIni() != null) {
-					t.lotacao = tag.marca.getDpLotacaoIni().getLotacaoAtual()
-							.getSigla();
-					t.titulo += " - " + tag.marca.getDpLotacaoIni().getLotacaoAtual().getSiglaLotacao();
+					t.lotacao = tag.marca.getDpLotacaoIni().getIdInicial().toString();
 				}
+				
 				t.inicio = tag.marca.getDtIniMarca();
 				t.termino = tag.marca.getDtFimMarca();
 				if(tag.marca.getCpMarcador().isDemandaJudicial()) {
@@ -679,6 +675,12 @@ public class Mesa2 {
 				lotaTitular, exibeLotacao, ordemCrescenteData, marcasAIgnorar);
 
 		Map<ExMobil, DocDados> map = new HashMap<>();
+		// Cria hashmap para pesquisa do mobil nos grupos
+		Map<Long, List<Long>> hashMobGrp = l.stream()
+		        .collect(Collectors.groupingBy(k -> (Long.valueOf(((ExMobil) k[2]).getIdMobil())), 
+		                Collectors.mapping(v -> (Long.valueOf(((CpMarcador) v[1]).getGrupoMarcador())), 
+		                		Collectors.toList())));
+		
 		List<Long> listIdMobil = new ArrayList<Long>();
 		Long idMob = 0L;
 
@@ -703,10 +705,10 @@ public class Mesa2 {
 						continue;
 					// Se for do grupo Aguardando Andamento e tiver marcador da caixa de entrada, nao inclui
 					if (gItem.grupoNome.equals(GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO.getNome())
-							&& temMarcador(0, l, idMob, Integer.valueOf(GrupoDeMarcadorEnum.CAIXA_DE_ENTRADA.id))) 
+							&& temMarcador(hashMobGrp, idMob, Integer.valueOf(GrupoDeMarcadorEnum.CAIXA_DE_ENTRADA.id))) 
 						continue;
 					
-					if (temMarcador(i, l, idMob, Integer.valueOf(gItem.grupoOrdem)) && !map.containsKey(mobil)) {
+					if (temMarcador(hashMobGrp, idMob, Integer.valueOf(gItem.grupoOrdem)) && !map.containsKey(mobil)) {
 						// Se o mobil possui um marcador do grupo e ele ainda nao foi incluido,
 						// inclui junto com as outras marcas que estao no resultado da query
 						for (Integer i2 = 0; i2 < l.size(); i2++) {  
@@ -792,20 +794,12 @@ public class Mesa2 {
 		}
 	}
 
-	private static boolean temMarcador(Integer listStart, List<Object[]> l, Long idMobil, Integer grupoId) {
+	private static boolean temMarcador(Map<Long, List<Long>> hashMobGrp, Long idMobil, Integer grupoId) {
 		// Pesquisa na lista retornada pela query se um determinado mobil (idMobil) tem
 		// algum marcador do grupoId informado. Devolve true se existir.
-		for (Integer i = listStart; i < l.size(); i++ ) {
-			Object[] ref = l.get(i);
-			ExMobil mobil = (ExMobil) ref[2];
-			if (idMobil == mobil.getIdMobil()) {
-				CpMarcador marcador = (CpMarcador) ref[1];
-				if (grupoId.equals(marcador.getGrupoMarcador())) {
-					return true;
-				}
-			}
-		}
-		return false;
+		return ((List<Long>) hashMobGrp
+				.get(idMobil))
+				.contains(grupoId.longValue());
 	}
 	public static void carregaGruposBase() {
 		if (gruposBase == null) {

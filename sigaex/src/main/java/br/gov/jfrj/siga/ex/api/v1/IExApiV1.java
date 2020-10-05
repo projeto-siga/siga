@@ -78,7 +78,7 @@ public interface IExApiV1 {
 	}
 
 	public class DocumentoDTO implements ISwaggerModel {
-		public String idmodelo;
+		public String modelo;
 		public String siglamobilpai;
 		public String subscritor;
 		public String titular;
@@ -438,6 +438,17 @@ public interface IExApiV1 {
 		public void run(PessoaTextoPesquisarGetRequest req, PessoaTextoPesquisarGetResponse resp) throws Exception;
 	}
 
+	public class PessoaIdPessoaIniPessoaAtualGetRequest implements ISwaggerRequest {
+		public String idPessoaIni;
+	}
+
+	public class PessoaIdPessoaIniPessoaAtualGetResponse implements ISwaggerResponse {
+	}
+
+	public interface IPessoaIdPessoaIniPessoaAtualGet extends ISwaggerMethod {
+		public void run(PessoaIdPessoaIniPessoaAtualGetRequest req, PessoaIdPessoaIniPessoaAtualGetResponse resp) throws Exception;
+	}
+
 	public class LotacaoTextoPesquisarGetRequest implements ISwaggerRequest {
 		public String texto;
 	}
@@ -450,13 +461,24 @@ public interface IExApiV1 {
 		public void run(LotacaoTextoPesquisarGetRequest req, LotacaoTextoPesquisarGetResponse resp) throws Exception;
 	}
 
+	public class LotacaoIdLotacaoIniLotacaoAtualGetRequest implements ISwaggerRequest {
+		public String idLotacaoIni;
+	}
+
+	public class LotacaoIdLotacaoIniLotacaoAtualGetResponse implements ISwaggerResponse {
+	}
+
+	public interface ILotacaoIdLotacaoIniLotacaoAtualGet extends ISwaggerMethod {
+		public void run(LotacaoIdLotacaoIniLotacaoAtualGetRequest req, LotacaoIdLotacaoIniLotacaoAtualGetResponse resp) throws Exception;
+	}
+
+
 	/* ESTE CÓDIGO DEVE SER MANTIDO POIS FOI GERADO MANUALMENTE.
 	 * 
 	 * O swaggerServlet não permite geração automatica de campos de upload de arquivos.
 	 */
 	public class DocPostRequest implements ISwaggerRequest, ISwaggerRequestFile {	
-//		public ExDocumentoApiV1DTO documentodto;
-		public String idmodelo;
+		public String modelo;
 		public String siglamobilpai;
 		public String subscritor;
 		public String titular;
@@ -469,8 +491,7 @@ public interface IExApiV1 {
 		public String destinatariocampoextra;
 		public String descricaodocumento;
 		public String nivelacesso;
-		public String formatocamposmodelo;
-		public String camposmodelo;
+		public String entrevista;
 		public String arquivo;
 
 		public String filename;

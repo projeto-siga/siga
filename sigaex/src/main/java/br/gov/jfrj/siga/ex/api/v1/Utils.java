@@ -1,5 +1,8 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
@@ -19,8 +22,11 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExPapel;
+import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 
 public class Utils {
@@ -200,6 +206,33 @@ public class Utils {
 		return Double.parseDouble(s);
 	}
 
+	/**
+	 * Verifica se uma string é composta somente por caracteres numéricos.
+	 * 
+	 * @param str String a verificar se é numérico
+	 * @return	<ul><li><b>true</b> se for totalmente numérico</li> 
+	 * 			<li><b>false</b> se houver qualquer caracter não numérico.</li></ul>
+	 */
+	public static boolean isNumerico(String str) {
+		return str.matches("^\\d+$");
+	}
+
+	/**
+	 * Converte string em UTF-8 para ISO-8859-1
+	 * 
+	 * @param str String a ser convertida.
+	 * @return	String convertida.
+	 */
+	public static String UTF8toISO(String str){
+        Charset utf8charset = Charset.forName("UTF-8");
+        Charset iso88591charset = Charset.forName("ISO-8859-1");
+        ByteBuffer inputBuffer = ByteBuffer.wrap(str.getBytes());
+        CharBuffer data = utf8charset.decode(inputBuffer);
+        ByteBuffer outputBuffer = iso88591charset.encode(data);
+        byte[] outputData = outputBuffer.array();
+        return new String(outputData);
+    }
+	
 	public static String calcularTempoRelativo(Date anterior) {
 		PrettyTime p = new PrettyTime(new Date(), new Locale("pt"));
 

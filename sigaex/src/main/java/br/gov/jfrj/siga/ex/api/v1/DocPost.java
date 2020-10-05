@@ -39,6 +39,7 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
@@ -64,6 +65,7 @@ public class DocPost implements IDocPost {
 			DpPessoa cadastrante = null;
     		ExModelo modelo = null;
     		ExClassificacao classificacao = null;
+    		CpOrgao destinatarioOrgaoExterno = null;    		
     		cadastrante = so.getCadastrante();
     		ExDocumento doc = new ExDocumento();
 			if (req.descricaodocumento != null)
@@ -75,17 +77,28 @@ public class DocPost implements IDocPost {
 				doc.setEletronico(true);
 			}
 			doc.setExModelo(null);
-			if (req.idmodelo != null) {
-	    		modelo = dao().consultar(Long.valueOf(req.idmodelo),
-	    				ExModelo.class, false);
-				if (modelo != null) {
-					doc.setExModelo(modelo.getModeloAtual());
-					doc.setExFormaDocumento(modelo.getExFormaDocumento());
+			if (req.modelo != null) {
+				if (Utils.isNumerico(req.modelo)) {
+		    		modelo = dao().consultar(Long.valueOf(req.modelo),
+		    				ExModelo.class, false);
+					if (modelo != null) {
+						doc.setExModelo(modelo.getModeloAtual());
+						doc.setExFormaDocumento(modelo.getExFormaDocumento());
+					} else {
+		    			throw new AplicacaoException("Não foi possível encontrar um modelo com o id informado.");
+					}
 				} else {
-	    			throw new AplicacaoException("Não foi possível encontrar um modelo com o id informado.");
+		    		modelo = (dao()).consultarExModelo(null, req.modelo);
+					if (modelo != null) {
+						doc.setExModelo(modelo);
+						doc.setExFormaDocumento(modelo.getExFormaDocumento());
+					} else {
+		    			throw new AplicacaoException("Não foi possível encontrar um modelo com o nome informado.");
+					}
+					
 				}
 			} else {
-    			throw new AplicacaoException("O id do modelo não foi informado.");
+    			throw new AplicacaoException("O modelo não foi informado.");
 			}
     		
     		if (req.classificacao != null) {
@@ -145,6 +158,30 @@ public class DocPost implements IDocPost {
 				doc.setTitular(doc.getSubscritor());
 				doc.setLotaTitular(doc.getLotaSubscritor());
 			}
+
+			if (req.pessoadestinatario != null) {
+				doc.setDestinatario(dao().getPessoaFromSigla(req.pessoadestinatario));
+				doc.setLotaDestinatario(doc.getDestinatario().getLotacao());
+				doc.setOrgaoExternoDestinatario(null);
+			} else {
+				doc.setDestinatario(null);
+				if (req.lotadestinatario != null) {
+					doc.setLotaDestinatario(dao().getLotacaoFromSigla(
+							req.lotadestinatario));
+					doc.setOrgaoExternoDestinatario(null);
+				} else {
+					doc.setLotaDestinatario(null);
+					if (req.orgaoexternodestinatario != null) {
+						destinatarioOrgaoExterno = dao().getOrgaoFromSiglaExata(req.pessoadestinatario);
+						if(destinatarioOrgaoExterno != null) {
+							doc.setOrgaoExternoDestinatario(destinatarioOrgaoExterno);
+							doc.setNmOrgaoExterno(req.destinatariocampoextra);
+						}
+					} else {
+						doc.setOrgaoExternoDestinatario(null);
+					}
+				}
+			}			
 			doc.setDtRegDoc(dao().dt());
 
 			if (req.siglamobilpai != null) {
@@ -168,8 +205,9 @@ public class DocPost implements IDocPost {
 			}
 			
 			if (req.nivelacesso != null) {
-				doc.setExNivelAcesso(dao().consultar(req.nivelacesso,
-						ExNivelAcesso.class, false));
+				doc.setExNivelAcesso(dao()
+						.consultarExNidelAcesso(
+								Utils.UTF8toISO(req.nivelacesso)));
 			} else {
 				final ExNivelAcesso nivelDefault =  ExNivelAcesso
 						.getNivelAcessoDefault(doc.getExTipoDocumento(), doc.getExFormaDocumento(),
@@ -190,26 +228,29 @@ public class DocPost implements IDocPost {
 				doc.setExNivelAcesso(doc.getExModelo().getExNivelAcesso());
 			}
 			
-			
 			String camposModelo = "";
-			String conteudo = UTF8toISO(req.camposmodelo);
+			String conteudo = Utils.UTF8toISO(req.entrevista);
 			Map <String, String> conteudoMap;
 			
 			try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-				if (req.formatocamposmodelo != null && req.formatocamposmodelo.equals("QUERY")) {
-				    String[] keyAndValues = conteudo.split("&");
-				    for (String keyAndValue : keyAndValues) {
-				        int idx = keyAndValue.indexOf("=");
-				        camposModelo = camposModelo + keyAndValue.substring(0, idx) + "=" +
-				        		URLEncoder.encode(keyAndValue.substring(idx + 1), "iso-8859-1") + "&";
-				    }
-				} else {
-					ObjectMapper objectMapper = new ObjectMapper();
-					conteudoMap = objectMapper.readValue(conteudo, Map.class);
-					for (String key : conteudoMap.keySet()){
-						camposModelo = camposModelo + key + "=" 
-							+ URLEncoder.encode(conteudoMap.get(key), "iso-8859-1") + "&";
+				if (req.entrevista != null) {
+					if (req.entrevista.startsWith("{")) {
+						ObjectMapper objectMapper = new ObjectMapper();
+						conteudoMap = objectMapper.readValue(conteudo, Map.class);
+						for (String key : conteudoMap.keySet()){
+							camposModelo = camposModelo + key + "=" 
+								+ URLEncoder.encode(conteudoMap.get(key), "iso-8859-1") + "&";
+						}
+					} else {
+					    String[] keyAndValues = conteudo.split("&");
+					    for (String keyAndValue : keyAndValues) {
+					        int idx = keyAndValue.indexOf("=");
+					        camposModelo = camposModelo + keyAndValue.substring(0, idx) + "=" +
+					        		URLEncoder.encode(keyAndValue.substring(idx + 1), "iso-8859-1") + "&";
+					    }
 					}
+				} else {
+	    			throw new AplicacaoException("O parâmetro entrevista não foi informado.");
 				}
 				if (camposModelo.length() > 0)
 					camposModelo = camposModelo.substring(0, camposModelo.length() - 1);
@@ -317,20 +358,11 @@ public class DocPost implements IDocPost {
 		} catch (final AplicacaoException e) {
 			throw new AplicacaoException(e.getMessage());
 		} catch (final Exception e) {
-			throw new AplicacaoException("Erro na gravação", 0, e);
+			throw new AplicacaoException(e.getMessage(), 0, e);
+//			throw new AplicacaoException("Erro na gravação", 0, e);
 		}
 	}
 	
-	private static String UTF8toISO(String str){
-        Charset utf8charset = Charset.forName("UTF-8");
-        Charset iso88591charset = Charset.forName("ISO-8859-1");
-        ByteBuffer inputBuffer = ByteBuffer.wrap(str.getBytes());
-        CharBuffer data = utf8charset.decode(inputBuffer);
-        ByteBuffer outputBuffer = iso88591charset.encode(data);
-        byte[] outputData = outputBuffer.array();
-        return new String(outputData);
-    }
-
 	protected  ExDao dao() {
 		return ExDao.getInstance();
 	}

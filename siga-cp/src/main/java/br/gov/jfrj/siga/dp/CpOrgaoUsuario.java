@@ -52,7 +52,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
-@Table(name = "CP_ORGAO_USUARIO", schema = "CORPORATIVO")
+@Table(name = "corporativo.cp_orgao_usuario")
 @Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.READ_ONLY)

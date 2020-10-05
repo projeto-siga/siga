@@ -10,7 +10,7 @@ import javax.persistence.Table;
  * 
  */
 @Entity
-@Table(name="CP_TOKEN", schema = "CORPORATIVO")
+@Table(name = "corporativo.cp_token")
 @NamedQueries({
 	@NamedQuery(name="CpToken.findAll", query="SELECT t FROM CpToken t"),
 	@NamedQuery(name="CpToken.findById", query="SELECT t.idToken FROM CpToken t where t.idToken = :id ")

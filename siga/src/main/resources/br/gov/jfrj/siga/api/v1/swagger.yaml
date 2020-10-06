@@ -2,10 +2,10 @@ swagger: '2.0'
 
 info:
   version: "1.0.0"
-  title: ExApiV1
+  title: SigaApiV1
   description: API para o Siga-Doc
 
-basePath: /sigaex/api/v1
+basePath: /siga/api/v1
 schemes: [http,https]
 consumes: [application/json,application/x-www-form-urlencoded]
 produces: [application/json]
@@ -86,6 +86,12 @@ parameters:
     name: chave
     in: path
     description: Chave que referencia um processo assíncrono
+    required: true
+    type: string
+  cpf:
+    name: cpf
+    in: path
+    description: CPF do usuário
     required: true
     type: string
 
@@ -203,6 +209,37 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /perfisacesso/{cpf}:
+    get:
+      consumes: ["application/x-www-form-urlencoded"]
+      produces: [application/json]
+      tags: [acao]
+      parameters:
+        - $ref: "#/parameters/cpf"
+      description: Lista os dados dos perfis de acesso associados ao CPF informado.
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              lista:
+                type: array
+                items:
+                  $ref: "#/definitions/PerfilAcesso"          
+        403:
+          description: Acesso não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Identidade não encontrada para este CPF.
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
 
 ################################################################################
 #                                     Definitions                              #
@@ -235,3 +272,82 @@ definitions:
     properties:
       errormsg:
         type: string
+
+  PerfilAcesso:
+    description: Dados do perfil de acesso do usuário
+    type: object
+    properties:
+      siglaPessoa:
+        type: string
+      nomePessoa:
+        type: string        
+      isExternaPessoa:
+        type: boolean
+        description: Devolve true se for pessoa externa e false se não for
+      orgao:
+        $ref: "#/definitions/OrgaoPerfil"
+      lotacao:
+        $ref: "#/definitions/LotacaoPerfil"
+      cargo:
+        $ref: "#/definitions/CargoPerfil"
+      funcaoConfianca:
+        $ref: "#/definitions/FuncaoConfiancaPerfil"
+        
+  OrgaoPerfil:
+    type: object
+    description: Dados do Órgão da pessoa para perfil de acesso
+    properties:
+      id:
+        type: string
+        description: Id do Órgão da Pessoa
+      nome:
+        type: string
+        description: Nome do Órgão da Pessoa
+      sigla:
+        type: string
+        description: Sigla do Órgão da Pessoa
+  LotacaoPerfil:
+    description: Dados de uma determinada Lotação para perfil de acesso
+    type: object
+    properties:
+      id:
+        type: string
+      nome:
+        type: string
+      sigla:
+        type: string
+  CargoPerfil:
+    type: object
+    description: Dados do Cargo da Pessoa para perfil de acesso
+    properties:
+      id:
+        type: string
+        description: Id do Cargo
+      idExterna:
+        type: string
+        description: id do Cargo Externo
+      nome: 
+        type: string
+        description: Nome do Cargo
+      sigla:
+        type: string
+        description: Sigla do Cargo
+  FuncaoConfiancaPerfil:
+    type: object
+    description: Dados da Função de Confiança da Pessoa para perfil de acesso
+    properties:
+      id:
+        type: string
+        description: Id da função de confiança
+      idExterna:
+        type: string
+        description: id da função de confiança externa
+      nome: 
+        type: string
+        description: Nome da função de confiança
+      sigla:
+        type: string
+        description: Sigla da função de confiança
+      idpai:
+        type: string
+        description: id da função de confiança pai

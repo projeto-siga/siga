@@ -78,12 +78,16 @@ import br.gov.jfrj.siga.dp.CpTipoMarca;
 import br.gov.jfrj.siga.dp.CpTipoPessoa;
 import br.gov.jfrj.siga.dp.CpUF;
 import br.gov.jfrj.siga.dp.DpCargo;
+import br.gov.jfrj.siga.dp.DpCargoDTO;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
+import br.gov.jfrj.siga.dp.DpFuncaoDTO;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.DpPessoaDTO;
 import br.gov.jfrj.siga.dp.DpPessoaTrocaEmailDTO;
 import br.gov.jfrj.siga.dp.DpPessoaUsuarioDTO;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
+import br.gov.jfrj.siga.dp.DpUnidadeDTO;
 import br.gov.jfrj.siga.dp.DpVisualizacao;
 import br.gov.jfrj.siga.model.CarimboDeTempo;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
@@ -199,18 +203,12 @@ public class CpDao extends ModeloDao {
 	public CpServico acrescentarServico(CpServico srv) {
 		synchronized (CpDao.class) {
 			CpServico srvGravado = null;
-			if(em().getTransaction().isActive()) {
+			try {
+				em().getTransaction().begin();
 				srvGravado = gravar(srv);
-			} else {
-				try {
-					em().getTransaction().begin();
-					srvGravado = gravar(srv);
-					em().getTransaction().commit();
-				} catch (Exception e) {
-					em().getTransaction().rollback();
-				} finally {
-					em().close();
-				}
+				em().getTransaction().commit();
+			} catch (Exception e) {
+				em().getTransaction().rollback();
 			}
 			cacheServicos.put(srv.getSigla(), srv);
 			return srvGravado;
@@ -2188,6 +2186,51 @@ public class CpDao extends ModeloDao {
 	public List<CpOrgaoUsuario> listarOrgaosUsuarios() {
 		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpOrgaoUsuario.class);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<DpUnidadeDTO> lotacaoPorOrgaos(Long[] orgaos) {				
+		List<Long> idOrgaos = Arrays.asList(orgaos);
+		
+        Query query = em().createQuery("SELECT new br.gov.jfrj.siga.dp.DpUnidadeDTO(lot.idLotacao, lot.nomeLotacao, lot.siglaLotacao, lot.orgaoUsuario.nmOrgaoUsu) FROM DpLotacao lot WHERE lot.orgaoUsuario.idOrgaoUsu in (:idOrgaos) and lot.dataFimLotacao = null order by lot.orgaoUsuario.nmOrgaoUsu, lot.nomeLotacao")        	
+        		.setParameter("idOrgaos", idOrgaos)
+        		.setHint("org.hibernate.cacheable", true)
+        		.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);                
+        return (List<DpUnidadeDTO>) query.getResultList();	    
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<DpCargoDTO> cargoPorOrgaos(Long[] orgaos) {				
+		List<Long> idOrgaos = Arrays.asList(orgaos);
+		
+        Query query = em().createQuery("SELECT new br.gov.jfrj.siga.dp.DpCargoDTO(cargo.idCargo, cargo.nomeCargo, cargo.orgaoUsuario.nmOrgaoUsu) FROM DpCargo cargo WHERE cargo.orgaoUsuario.idOrgaoUsu in (:idOrgaos) and cargo.dataFimCargo = null order by cargo.orgaoUsuario.nmOrgaoUsu, cargo.nomeCargo")        	
+        		.setParameter("idOrgaos", idOrgaos)
+        		.setHint("org.hibernate.cacheable", true)
+        		.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);                
+        return (List<DpCargoDTO>) query.getResultList();	    
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<DpFuncaoDTO> funcaoPorOrgaos(Long[] orgaos) {				
+		List<Long> idOrgaos = Arrays.asList(orgaos);
+		
+        Query query = em().createQuery("SELECT new br.gov.jfrj.siga.dp.DpFuncaoDTO(funcao.idFuncao, funcao.nomeFuncao, funcao.orgaoUsuario.nmOrgaoUsu) FROM DpFuncaoConfianca funcao WHERE funcao.orgaoUsuario.idOrgaoUsu in (:idOrgaos) and funcao.dataFimFuncao = null order by funcao.orgaoUsuario.nmOrgaoUsu, funcao.nomeFuncao")        	
+        		.setParameter("idOrgaos", idOrgaos)
+        		.setHint("org.hibernate.cacheable", true)
+        		.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);                
+        return (List<DpFuncaoDTO>) query.getResultList();	    
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<DpPessoaDTO> pessoaPorOrgaos(Long[] orgaos) {				
+		List<Long> idOrgaos = Arrays.asList(orgaos);
+		
+        Query query = em().createQuery("SELECT new br.gov.jfrj.siga.dp.DpPessoaDTO(pes.idPessoa, pes.nomePessoa, pes.orgaoUsuario.nmOrgaoUsu) FROM DpPessoa pes WHERE pes.orgaoUsuario.idOrgaoUsu in (:idOrgaos) and pes.dataFimPessoa = null order by pes.orgaoUsuario.nmOrgaoUsu, pes.nomePessoa")        	
+        		.setParameter("idOrgaos", idOrgaos)
+        		.setHint("org.hibernate.cacheable", true)
+        		.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);                
+        return (List<DpPessoaDTO>) query.getResultList();	    
+	}
+
 
 	@SuppressWarnings("unchecked")
 	public List<CpOrgao> listarOrgaos() {

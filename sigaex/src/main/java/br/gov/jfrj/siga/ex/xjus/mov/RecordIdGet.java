@@ -102,6 +102,7 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 
 	private void addMetadataForMov(ExDocumento doc, ExMovimentacao mov,
 			RecordIdGetResponse resp) {
+		addFacet(resp, "tipo", "Documento");
 		addFieldAndFacet(resp, "orgao", doc.getOrgaoUsuario()
 				.getAcronimoOrgaoUsu());
 		addField(resp, "codigo", doc.getCodigo() + ":" + mov.getIdMov());
@@ -118,8 +119,11 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 		if (doc.getDnmExNivelAcesso() != null)
 			addField(resp, "acesso", doc.getDnmExNivelAcesso()
 					.getNmNivelAcesso());
-		if (mov.getDtMovYYYYMMDD() != null)
+		if (mov.getDtMovYYYYMMDD() != null) {
 			addField(resp, "data", mov.getDtMovYYYYMMDD());
+			addFacet(resp, "ano", mov.getDtMovYYYYMMDD().substring(0, 4));
+			addFacet(resp, "mes", mov.getDtMovYYYYMMDD().substring(5, 7));
+		}
 		if (mov.getLotaSubscritor() != null)
 			addFieldAndFacet(resp, "subscritor_lotacao", mov
 					.getLotaSubscritor().getSiglaLotacao());

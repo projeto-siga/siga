@@ -6295,10 +6295,17 @@ public class ExBL extends CpBL {
 	public void TornarDocumentoSemEfeito(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExDocumento doc,
 			String motivo) throws Exception {
 		try {
+			
+			String msgCancelamento = "Só é admitido o cancelamento de documentos eletrônicos, "
+					+ "não apensados a um outro, e que não possuam outros apensados a eles. "
+					+ "Esta ação cape apenas ao subscritor, do documento produzido, ou ao cadastrante do documento capturado.\n"
+					+ "O Documento não deve estar tramitado para outro local, diverso do demandante do cancelamento.";
+			
 			iniciarAlteracao();
 
 			if (!getComp().podeTornarDocumentoSemEfeito(cadastrante, lotaCadastrante, doc.getMobilGeral()))
-				throw new AplicacaoException("Cancelamento não permitido");
+//				throw new AplicacaoException("Cancelamento não permitido");
+				throw new AplicacaoException(msgCancelamento);
 
 			// Verifica se o subscritor pode movimentar todos os mobils
 			// E Também se algum documento diferente está apensado ou juntado a este
@@ -6308,7 +6315,9 @@ public class ExBL extends CpBL {
 				if(!m.isGeral() && !m.isCancelada()) { //Retirada as vias que foram canceladas
 					if (!getComp().podeMovimentar(cadastrante, lotaCadastrante, m) || m.isJuntado() || m.isApensado()
 							|| m.temApensos() || m.temDocumentosJuntados())
-						throw new AplicacaoException("Cancelamento não permitido");
+//						throw new AplicacaoException("Cancelamento não permitido");
+						throw new AplicacaoException(msgCancelamento);
+
 				}
 			}
 

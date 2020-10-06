@@ -230,6 +230,18 @@ parameters:
     required: false
     type: string
     pattern: ^\d{4}-(0\d|1[012])-([012]\d|3[01])
+  idPessoaIni:
+    name: idPessoaIni
+    in: path
+    description: Identificador da Pessoa Inicial
+    required: true
+    type: string    
+  idLotacaoIni:
+    name: idLotacaoIni
+    in: path
+    description: Identificador da Lotação Inicial
+    required: true
+    type: string        
 
 ################################################################################
 #                                           Paths                              #
@@ -679,6 +691,22 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
+
+  /pessoa/{idPessoaIni}/pessoaAtual:
+    get:
+      description: Retorna o objeto da Pessoa Atual a partir da Pessoa Inicial
+      tags: [cadastro]
+      parameters:
+        - $ref: "#/parameters/idPessoaIni"
+      responses:
+        200:
+          description: Successful response
+          schema:
+             $ref: "#/definitions/Pessoa"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"         
             
   /lotacao/{texto}/pesquisar:
     get:
@@ -701,7 +729,22 @@ paths:
           schema:
             $ref: "#/definitions/Error"            
                            
-
+  /lotacao/{idLotacaoIni}/lotacaoAtual:
+    get:
+      description: Retorna o objeto da Lotação Atual a partir da Lotação Inicial
+      tags: [cadastro]
+      parameters:
+        - $ref: "#/parameters/idLotacaoIni"
+      responses:
+        200:
+          description: Successful response
+          schema:
+             $ref: "#/definitions/Lotacao"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"   
+            
 ################################################################################
 #                                     Definitions                              #
 ################################################################################
@@ -847,4 +890,34 @@ definitions:
         type: string
       nome:
         type: string
-        
+
+  Pessoa:
+    description: Dados de uma determinada Pessoa
+    type: object
+    properties:
+      idPessoa:
+        type: string
+      idPessoaIni:
+        type: string        
+      sigla:
+        type: string
+      nome:
+        type: string        
+      siglaLotacao:
+        type: string          
+
+  Lotacao:
+    description: Dados de uma determinada Lotação
+    type: object
+    properties:
+      idLotacao:
+        type: string
+      idLotacaoIni:
+        type: string        
+      sigla:
+        type: string
+      nome:
+        type: string
+      orgao:
+        type: string        
+              

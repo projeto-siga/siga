@@ -65,32 +65,9 @@ var appMesa = new Vue({
 					grps[g].grupoDocs = a;
 				}
 			}
-			this.$nextTick(function() {
-				// Ao carregar a página, a função popover ainda não está definida, causando erro de execução. 
-				//Por isso foi acrescentada essa verificação.
-				if (!$('.popover-dismiss').popover) {
-					return;
-				}
-
-				$('.popover-dismiss').popover({
-					html: true,
-					animation: false,
-					trigger: 'manual'
-				}).on("mouseenter", function() {
-					var _this = this;
-					$(this).popover("show");
-					$(".popover").on("mouseleave", function() {
-						$(_this).popover('hide');
-					});
-				}).on("mouseleave", function() {
-					var _this = this;
-					setTimeout(function() {
-						if (!$(".popover:hover").length) {
-							$(_this).popover("hide");
-						}
-					}, 300);
-				})
-			});
+			this.$nextTick(function() { 
+				initPopovers();
+			}); 
 
 			return grps;
 		},
@@ -153,6 +130,7 @@ var appMesa = new Vue({
 			if (timeout < 120000 && grpNome == null) {
 				if (sessionStorage.getItem('mesa' + getUser()) != undefined) {
 					carregaFromJson(sessionStorage.getItem('mesa' + getUser()), self);
+					resetCacheLotacaoPessoaAtual();
 					return;
 				}
 			}
@@ -214,6 +192,7 @@ var appMesa = new Vue({
 							}
 						} else {
 							carregaFromJson(response.responseText, self);
+							resetCacheLotacaoPessoaAtual();
 							sessionStorage.setItem(
 								'timeout' + getUser(), new Date());
 						}
@@ -238,6 +217,8 @@ var appMesa = new Vue({
 			localStorage.removeItem('ordemCrescenteData' + getUser());
 			this.recarregarMesa();
 			this.selQtdPag = 15;
+			
+			resetCacheLotacaoPessoaAtual();
 		},
 		recarregarMesa: function() {
 			this.grupos = [];
@@ -295,9 +276,13 @@ var appMesa = new Vue({
 			setValueGrupoVue(grupoNome, 'grupoCollapsed', true);
 		},
 		getLastRefreshTime: function() {
-			var dt = new Date(sessionStorage.getItem('timeout' + getUser()));
-			return ("0" + dt.getDate()).slice(-2) + "/" + ("0" + (dt.getMonth() + 1)).slice(-2) + " "
-				+ ("0" + dt.getHours()).slice(-2) + ":" + ("0" + dt.getMinutes()).slice(-2);
+			if (sessionStorage.getItem('timeout' + getUser()) != null) {
+				var dt = new Date(sessionStorage.getItem('timeout' + getUser()));
+				return ("0" + dt.getDate()).slice(-2) + "/" + ("0" + (dt.getMonth() + 1)).slice(-2) + " "
+					+ ("0" + dt.getHours()).slice(-2) + ":" + ("0" + dt.getMinutes()).slice(-2);
+				
+			}
+			return "Atualizando...";
 		},
 		toggleMenuConfig: function() {
 			if (this.toggleConfig === 'show-config') {
@@ -543,3 +528,104 @@ function processDescription(descr, limit = null) {
 	return (result.length > _limit) ? result.substring(0, _limit).concat('...') : result;
 }
 
+function initPopovers() {
+	if (!$('.popover-dismiss').popover) { 
+		return; 
+	} 
+
+	$('.popover-dismiss').popover({
+		html: true,
+		animation: false,
+		trigger: 'manual'
+	}).on("mouseenter", function() {
+		var _this = this;
+		
+		if ($(_this).attr('data-pessoa') !== undefined) {
+			mountPopoverMarcaPessoa(_this);
+		} else if ($(_this).attr('data-lotacao') !== undefined) {
+			mountPopoverMarcaLotacao(_this);
+		}
+		
+		$(_this).popover("show");
+		$(".popover").on("mouseleave", function() {
+			$(_this).popover('hide');
+		});
+
+	}).on("click", function() {
+		var _this = this;
+		/*** Implementar function***/
+		$(this).popover("show");
+		$(".popover").on("mouseleave", function() {
+			$(_this).popover('hide');
+		});
+	}).on("mouseleave", function() {
+		var _this = this;
+		setTimeout(function() {
+			if (!$(".popover:hover").length) {
+				$(_this).popover("hide");
+			}
+		}, 100);
+	})
+	
+	
+}
+
+
+
+function mountPopoverMarcaPessoa(_this) {
+	
+	if ($(_this).attr('data-content') === undefined) { 
+		$(_this).attr('data-content', "<div class='spinner-border' role='status'>");
+		var cache = sessionStorage.getItem("pessoa."+$(_this).attr('data-pessoa'));
+		if (cache == null) {
+			$.ajax({
+		        url: "/sigaex/api/v1/pessoa/"+ $(_this).attr('data-pessoa') + "/pessoaAtual",
+		        contentType: "application/json",
+		        dataType: 'json',
+		        success: function(result){
+		        	sessionStorage.setItem("pessoa."+$(_this).attr('data-pessoa'), JSON.stringify(result));
+		        	$(_this).attr('data-content', '<b>'+ result.pessoaAtual.siglaLotacao +'</b>  '+result.pessoaAtual.nome);
+		        	$(_this).popover("show");
+		        }
+		    });
+		} else {
+			var pessoaAtualParsed = JSON.parse(cache);
+        	$(_this).attr('data-content', '<b>'+ pessoaAtualParsed.pessoaAtual.siglaLotacao +'</b>  '+pessoaAtualParsed.pessoaAtual.nome);
+        	$(_this).popover("show");
+		}
+	}
+}
+
+
+function mountPopoverMarcaLotacao(_this) {
+	
+	if ($(_this).attr('data-content') === undefined) { 
+		$(_this).attr('data-content', "<div class='spinner-border' role='status'>");
+		var cache = sessionStorage.getItem("lotacao."+$(_this).attr('data-lotacao'));
+		if (cache == null) {
+			$.ajax({
+		        url: "/sigaex/api/v1/lotacao/"+ $(_this).attr('data-lotacao') + "/lotacaoAtual",
+		        contentType: "application/json",
+		        dataType: 'json',
+		        success: function(result){
+		        	sessionStorage.setItem("lotacao."+$(_this).attr('data-lotacao'), JSON.stringify(result));
+		        	$(_this).attr('data-content', '<b>'+ result.lotacaoAtual.sigla +'</b>  '+result.lotacaoAtual.nome);
+		        	$(_this).popover("show");
+		        }
+		    });
+		} else {
+			var lotacaoAtualParsed = JSON.parse(cache);
+        	$(_this).attr('data-content', '<b>'+ lotacaoAtualParsed.lotacaoAtual.sigla +'</b>  '+lotacaoAtualParsed.lotacaoAtual.nome);
+        	$(_this).popover("show");
+		}
+	}
+}
+
+
+function resetCacheLotacaoPessoaAtual() {
+	for (var obj in sessionStorage) {
+	      if (sessionStorage.hasOwnProperty(obj) && (obj.includes("pessoa.") || obj.includes("lotacao."))) {
+	    	  sessionStorage.removeItem(obj);
+	      }
+	}
+}

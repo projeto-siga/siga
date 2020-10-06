@@ -108,7 +108,7 @@ public class CpArquivo implements Serializable {
 			break;
 		case HCP:
 			gerarCaminho();
-			ArmazenamentoHCP a = new ArmazenamentoHCP();
+			ArmazenamentoHCP a = ArmazenamentoHCP.getInstance();
 			a.salvar(this, this.getConteudo());
 			break;
 		default:
@@ -157,7 +157,7 @@ public class CpArquivo implements Serializable {
 			cacheArquivo = getArquivoBlob()!=null?getArquivoBlob().getConteudoBlobArq():null;
 			break;
 		case HCP:
-			ArmazenamentoHCP a = new ArmazenamentoHCP();
+			ArmazenamentoHCP a = ArmazenamentoHCP.getInstance();
 			cacheArquivo = a.recuperar(this);
 			break;
 		default:

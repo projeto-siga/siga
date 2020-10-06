@@ -355,8 +355,12 @@ public class ExMobilController extends
 				}
 				texto.append(";");
 				
-				if(ma.getDpLotacaoIni() != null && ma.getDpLotacaoIni().getLotacaoAtual() != null && ma.getDpLotacaoIni().getLotacaoAtual().getSigla() != null) {
+				/*if(ma.getDpLotacaoIni() != null && ma.getDpLotacaoIni().getLotacaoAtual() != null && ma.getDpLotacaoIni().getLotacaoAtual().getSigla() != null) {
 					texto.append(ma.getDpLotacaoIni().getLotacaoAtual().getSigla().replaceAll(";",","));
+				}*/
+				
+				if(ma.getDpLotacaoIni() != null && ma.getDpLotacaoIni().getSigla() != null) {
+					texto.append(ma.getDpLotacaoIni().getSigla().replaceAll(";",","));
 				}
 				texto.append(";");
 				

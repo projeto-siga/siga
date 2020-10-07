@@ -756,7 +756,8 @@ paths:
             
   /pessoa/{texto}/pesquisar:
     get:
-      description: Retornar uma lista de pessoas
+      summary: Pesquisa por Pessoas cuja Matrícula ou nome contém uma determinada palavra.
+      description: Retornar uma lista de pessoas. A pesquisa será feita sobre a Matrícula e o Nome da Pessoa.
       tags: [cadastro]
       parameters:
         - $ref: "#/parameters/texto"
@@ -793,7 +794,8 @@ paths:
                         
   /lotacao/{texto}/pesquisar:
     get:
-      description: Retornar uma lista de lotações
+      summary: Pesquisa por Lotações cuja sigla ou nome contém uma determinada palavra.
+      description: Retornar uma lista de lotações. A pesquisa será feita sobre a Sigla e o Nome da Lotação.
       tags: [cadastro]
       parameters:
         - $ref: "#/parameters/texto"

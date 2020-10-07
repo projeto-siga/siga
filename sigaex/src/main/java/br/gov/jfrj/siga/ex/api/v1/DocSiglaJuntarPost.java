@@ -19,34 +19,27 @@ import br.gov.jfrj.siga.vraptor.SigaObjects;
 public class DocSiglaJuntarPost implements IDocSiglaJuntarPost {
 
 	@Override
-	public void run(DocSiglaJuntarPostRequest req,
-			DocSiglaJuntarPostResponse resp) throws Exception {
-		
+	public void run(DocSiglaJuntarPostRequest req, DocSiglaJuntarPostResponse resp) throws Exception {
+		CurrentRequest.set(
+				new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 		SwaggerHelper.buscarEValidarUsuarioLogado();
-		CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-		
+
 		SigaObjects so = SwaggerHelper.getSigaObjects();
-		so.assertAcesso("DOC:Módulo de Documentos;" + "");
 
-		try {
-			DpPessoa cadastrante = so.getCadastrante();
-			DpLotacao lotaTitular = cadastrante.getLotacao();
+		DpPessoa cadastrante = so.getCadastrante();
+		DpLotacao lotaTitular = cadastrante.getLotacao();
 
-			ExMobil mobFilho = SwaggerHelper.buscarEValidarMobil(req.sigla, so, req, resp, "Documento Secundário");
-			ExMobil mobPai = SwaggerHelper.buscarEValidarMobil(req.siglapai, so, req, resp, "Documento Principal");
-			Date dt = ExDao.getInstance().consultarDataEHoraDoServidor(); 
+		ExMobil mobFilho = SwaggerHelper.buscarEValidarMobil(req.sigla, so, req, resp, "Documento Secundário");
+		ExMobil mobPai = SwaggerHelper.buscarEValidarMobil(req.siglapai, so, req, resp, "Documento Principal");
 
-			Utils.assertAcesso(mobFilho, cadastrante, lotaTitular);
+		Utils.assertAcesso(mobFilho, cadastrante, lotaTitular);
 
-			Ex.getInstance()
-					.getBL()
-					.juntarDocumento(cadastrante, cadastrante, lotaTitular,
-							null, mobFilho, mobPai, dt, cadastrante, cadastrante, "1");
-			resp.status = "OK";
-		} catch (Exception e) {
-			e.printStackTrace(System.out);
-			throw e;
-		}
+		Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
+
+		Ex.getInstance().getBL().juntarDocumento(cadastrante, cadastrante, lotaTitular, null, mobFilho, mobPai, dt,
+				cadastrante, cadastrante, "1");
+
+		resp.status = "OK";
 	}
 
 	@Override

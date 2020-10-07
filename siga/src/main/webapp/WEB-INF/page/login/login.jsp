@@ -63,7 +63,7 @@
 					</c:if>
 
 					<!---->
-					<form id="formLogin" role="form" method="post"
+					<form autocomplete="off"  id="formLogin" role="form" method="post" 
 						enctype="application/x-www-form-urlencoded">
 						<div class="form-group">
 							<label for="username"><fmt:message key="usuario.matricula"/></label> 
@@ -73,7 +73,7 @@
 						        <span class="input-group-text" id="icon-user"><i class="fas fa-user"></i></span>
 						      </div>
 						      <input id="username" type="text" name="username" placeholder="<fmt:message key="usuario.digite.usuario"/>" onblur="javascript:converteUsuario(this)" autocorrect="off"
-								autocapitalize="none" class="form-control" aria-label="Usuário" aria-describedby="icon-user">
+								autocapitalize="none" class="form-control" aria-label="Usuário" aria-describedby="icon-user" autocomplete="off" >
 						    </div>
 	
 						</div>
@@ -83,7 +83,7 @@
 						      <div class="input-group-prepend">
 						        <span class="input-group-text" id="icon-pass"><i class="fas fa-lock"></i></span>
 						      </div>
-						      <input type="password" name="password" id="password" placeholder="Senha"
+						      <input type="password" name="password" id="password" placeholder="Senha" autocomplete="new-password" 
 								class="form-control" aria-label="Usuário" aria-describedby="icon-pass">
 						    </div>						
 						</div>						

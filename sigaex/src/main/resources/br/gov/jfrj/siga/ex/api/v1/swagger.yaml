@@ -185,9 +185,10 @@ parameters:
     type: string
   anotacao:
     name: anotacao
-    in: path
-    description: Texto da anotação
+    in: formData
+    description: Texto da anotação. Tamanho Máximo = 500.
     required: true
+    maxLength: 500
     type: string
   texto:
     name: texto

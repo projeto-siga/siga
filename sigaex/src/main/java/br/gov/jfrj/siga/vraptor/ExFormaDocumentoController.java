@@ -61,7 +61,16 @@ public class ExFormaDocumentoController extends ExController {
 
 		if (getPostback() == null) {
 			result.include("descricao", forma.getDescrFormaDoc());
+
 			result.include("sigla", forma.getSigla());
+			
+			if ((id != null) && (dao().contarDocumentorPorSigla(forma.getSigla()) > 0)) {
+				result.include("desabilitaSigla", true);
+			} else {
+				result.include("desabilitaSigla", false);
+			}
+			
+
 			if (forma.getExTipoFormaDoc() != null) {
 				result.include("idTipoFormaDoc", forma.getExTipoFormaDoc().getIdTipoFormaDoc());
 			}
@@ -135,7 +144,12 @@ public class ExFormaDocumentoController extends ExController {
 		final ExFormaDocumento forma = id != null ? recuperarForma(id) : new ExFormaDocumento();
 
 		forma.setDescrFormaDoc(descricao);
-		forma.setSigla(sigla);
+		
+		if ((id == null) || (dao().contarDocumentorPorSigla(forma.getSigla()) == 0)) {
+			
+			forma.setSigla(sigla);
+		}
+		
 		forma.setExTipoFormaDoc(dao().consultar(idTipoFormaDoc, ExTipoFormaDoc.class, false));
 
 		if (forma.getExTipoDocumentoSet() == null) {

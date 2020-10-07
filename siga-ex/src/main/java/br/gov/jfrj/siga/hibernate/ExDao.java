@@ -1330,6 +1330,13 @@ public class ExDao extends CpDao {
 		return l.get(0);
 	}
 
+	public int contarDocumentorPorSigla(String sigla) {
+		final Query query = em().createNamedQuery("contarDocumentosPorSigla");
+		query.setParameter("sigla", sigla);
+
+		return ((Long) query.getSingleResult()).intValue();
+	}
+
 	public int obterProximoNumeroVolume(ExDocumento doc) {
 		return doc.getNumUltimoVolume() + 1;
 	}

@@ -29,7 +29,7 @@
 							<div class="form-group">
 								<label for="sigla">Sigla</label> <input type="text"
 									value="${sigla}" name="sigla" id="gravar_sigla"
-									class="form-control" /> <span id="mensagem"></span>
+									class="form-control" <c:if test="${desabilitaSigla}">disabled</c:if> /> <span id="mensagem"></span>
 							</div>
 						</div>
 						<div class="col-md-2">

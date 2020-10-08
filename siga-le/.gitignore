@@ -1,0 +1,25 @@
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# maven products
+/target/
+
+# eclipse project
+.project
+.classpath
+.tern-project
+.settings
+
+#compiled frontend
+/src/main/webapp/index.html
+/src/main/webapp/service-worker.js
+/src/main/webapp/manifest*
+/src/main/webapp/static/
+/target/

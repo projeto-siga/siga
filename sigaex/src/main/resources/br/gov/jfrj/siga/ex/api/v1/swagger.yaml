@@ -628,26 +628,6 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"         
-  /token/criar:
-    post:
-      consumes: ["application/x-www-form-urlencoded"]
-      tags: [utils]
-      parameters:
-        - $ref: "#/parameters/username"
-        - $ref: "#/parameters/password"
-      description: Autenticar usuário
-      responses:
-        200:
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              id_token:
-                type: string
-        500:
-          description: Error ocurred
-          schema:
-            $ref: "#/definitions/Error"
             
   /acessos:
     get:

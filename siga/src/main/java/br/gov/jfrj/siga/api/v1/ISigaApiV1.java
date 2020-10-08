@@ -24,6 +24,43 @@ public interface ISigaApiV1 {
 		public String errormsg;
 	}
 
+	public class PerfilAcesso implements ISwaggerModel {
+		public String siglaPessoa;
+		public String nomePessoa;
+		public Boolean isExternaPessoa;
+		public OrgaoPerfil orgao;
+		public LotacaoPerfil lotacao;
+		public CargoPerfil cargo;
+		public FuncaoConfiancaPerfil funcaoConfianca;
+	}
+
+	public class OrgaoPerfil implements ISwaggerModel {
+		public String id;
+		public String nome;
+		public String sigla;
+	}
+
+	public class LotacaoPerfil implements ISwaggerModel {
+		public String id;
+		public String nome;
+		public String sigla;
+	}
+
+	public class CargoPerfil implements ISwaggerModel {
+		public String id;
+		public String idExterna;
+		public String nome;
+		public String sigla;
+	}
+
+	public class FuncaoConfiancaPerfil implements ISwaggerModel {
+		public String id;
+		public String idExterna;
+		public String nome;
+		public String sigla;
+		public String idpai;
+	}
+
 	public class AutenticarPostRequest implements ISwaggerRequest {
 	}
 
@@ -68,39 +105,30 @@ public interface ISigaApiV1 {
 		public String getContenttype() {
 			return contenttype;
 		}
-
 		public void setContenttype(String contenttype) {
 			this.contenttype = contenttype;
 		}
-
 		public String getContentdisposition() {
 			return contentdisposition;
 		}
-
 		public void setContentdisposition(String contentdisposition) {
 			this.contentdisposition = contentdisposition;
 		}
-
 		public Long getContentlength() {
 			return contentlength;
 		}
-
 		public void setContentlength(Long contentlength) {
 			this.contentlength = contentlength;
 		}
-
 		public InputStream getInputstream() {
 			return inputstream;
 		}
-
 		public void setInputstream(InputStream inputstream) {
 			this.inputstream = inputstream;
 		}
-
 		public Map<String, List<String>> getHeaderFields() {
 			return headerFields;
 		}
-
 		public void setHeaderFields(Map<String, List<String>> headerFields) {
 			this.headerFields = headerFields;
 		}
@@ -125,6 +153,18 @@ public interface ISigaApiV1 {
 
 	public interface IStatusChaveGet extends ISwaggerMethod {
 		public void run(StatusChaveGetRequest req, StatusChaveGetResponse resp) throws Exception;
+	}
+
+	public class PerfisacessoCpfGetRequest implements ISwaggerRequest {
+		public String cpf;
+	}
+
+	public class PerfisacessoCpfGetResponse implements ISwaggerResponse {
+		public List<PerfilAcesso> lista;
+	}
+
+	public interface IPerfisacessoCpfGet extends ISwaggerMethod {
+		public void run(PerfisacessoCpfGetRequest req, PerfisacessoCpfGetResponse resp) throws Exception;
 	}
 
 }

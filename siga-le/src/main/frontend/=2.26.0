@@ -1,0 +1,4 @@
++ html-webpack-plugin@4.5.0
+added 17 packages from 49 contributors and audited 2217 packages in 19.232s
+found 35 vulnerabilities (8 low, 2 moderate, 25 high)
+  run `npm audit fix` to fix them, or `npm audit` for details

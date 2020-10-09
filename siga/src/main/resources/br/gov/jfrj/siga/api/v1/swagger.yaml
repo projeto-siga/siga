@@ -15,6 +15,9 @@ tags:
     description: Autenticação
   - name: download
     description: Download
+  - name: cadastro
+    description: Consulta nos Cadastros
+    
     
 securityDefinitions:
   Basic:
@@ -88,12 +91,55 @@ parameters:
     description: Chave que referencia um processo assíncrono
     required: true
     type: string
+
+  lotacao:
+    name: lotacao
+    in: formData
+    description: Sigla completa da lotação integrada ao Siga
+    required: false
+    type: string
+  matricula:
+    name: matricula
+    in: formData
+    description: Sigla completa da matrícula do usuário do Siga
+    required: false
+    type: string
+  orgao:
+    name: orgao
+    in: formData
+    description: Sigla completa do órgão externo ao Siga
+    required: false
+    type: string
+  matriculaQuery:
+    name: matricula
+    in: query
+    description: Sigla completa da matrícula
+    required: false
+    type: string
+  texto:
+    name: texto
+    in: query
+    description: Texto a ser pesquisado
+    required: false
+    type: string    
   cpf:
     name: cpf
-    in: path
-    description: CPF do usuário
-    required: true
+    in: query
+    description: CPF do usuário, somente números sem ponto ou traço
+    required: false
     type: string
+  idPessoaIni:
+    name: idPessoaIni
+    in: path
+    description: Identificador da Pessoa Inicial
+    required: true
+    type: string    
+  idLotacaoIni:
+    name: idLotacaoIni
+    in: path
+    description: Identificador da Lotação Inicial
+    required: true
+    type: string            
 
 
 ################################################################################
@@ -209,36 +255,93 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-  /perfisacesso/{cpf}:
+  /pessoa:
     get:
-      consumes: ["application/x-www-form-urlencoded"]
-      produces: [application/json]
-      tags: [acao]
+      summary: "Permite a pesquisa de pessoa por texto ou CPF"
+      description: "Retornar uma lista de pessoas. A pesquisa será feita de acordo com um dos parâmetros informados:
+        <ul><li><b>texto=</b> Pesquisa as Pessoas cuja Matrícula ou nome contém uma determinada palavra.</li>
+        <li><b>cpf=</b> Pesquisa as Pessoas que contem determinado CPF</li></ul>"
+      tags: [cadastro]
       parameters:
+        - $ref: "#/parameters/texto"
         - $ref: "#/parameters/cpf"
-      description: Lista os dados dos perfis de acesso associados ao CPF informado.
       responses:
         200:
           description: Successful response
           schema:
             type: object
             properties:
-              lista:
+              list:
                 type: array
                 items:
-                  $ref: "#/definitions/PerfilAcesso"          
+                  $ref: "#/definitions/Pessoa"
         403:
           description: Acesso não permitido
           schema:
             $ref: "#/definitions/Error"
         404:
-          description: Identidade não encontrada para este CPF.
+          description: Nenhuma Pessoa foi encontrada para os parâmetros informados.
           schema:
             $ref: "#/definitions/Error"                
         500:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
+
+  /pessoa/{idPessoaIni}/pessoaAtual:
+    get:
+      description: Retorna o objeto da Pessoa Atual a partir da Pessoa Inicial
+      tags: [cadastro]
+      parameters:
+        - $ref: "#/parameters/idPessoaIni"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: "#/definitions/PessoaAtual"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"         
+
+  /lotacao:
+    get:
+      summary: "Pesquisa lotações por:
+        texto= cuja sigla ou nome contém uma determinada palavra."
+      description: Retornar uma lista de lotações. A pesquisa será feita sobre a Sigla e o Nome da Lotação.
+      tags: [cadastro]
+      parameters:
+        - $ref: "#/parameters/texto"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Lotacao"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"            
+  
+  /lotacao/{idLotacaoIni}/lotacaoAtual:
+    get:
+      description: Retorna o objeto da Lotação Atual a partir da Lotação Inicial
+      tags: [cadastro]
+      parameters:
+        - $ref: "#/parameters/idLotacaoIni"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: "#/definitions/LotacaoAtual" 
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"   
 
 
 ################################################################################
@@ -273,81 +376,133 @@ definitions:
       errormsg:
         type: string
 
-  PerfilAcesso:
-    description: Dados do perfil de acesso do usuário
+  Pessoa:
     type: object
+    description: Dados de uma determinada Pessoa
     properties:
-      siglaPessoa:
+      idPessoa:
         type: string
-      nomePessoa:
+        description: Id da pessoa
+      idPessoaIni:
         type: string        
+        description: Id inicial da pessoa
+      sigla:
+        type: string
+        description: Sigla da pessoa
+      nome:
+        type: string        
+        description: Nome da pessoa
+      siglaLotacao:
+        type: string          
+        description: Sigla da lotação da pessoa
       isExternaPessoa:
         type: boolean
         description: Devolve true se for pessoa externa e false se não for
-      orgao:
-        $ref: "#/definitions/OrgaoPerfil"
       lotacao:
-        $ref: "#/definitions/LotacaoPerfil"
+        $ref: "#/definitions/Lotacao"
       cargo:
-        $ref: "#/definitions/CargoPerfil"
+        $ref: "#/definitions/Cargo"
       funcaoConfianca:
-        $ref: "#/definitions/FuncaoConfiancaPerfil"
-        
-  OrgaoPerfil:
+        $ref: "#/definitions/FuncaoConfianca"
+  
+  PessoaAtual:
+    description: Dados de uma determinada Pessoa
+    type: object
+    properties:
+      idPessoa:
+        type: string
+      idPessoaIni:
+        type: string        
+      sigla:
+        type: string
+      nome:
+        type: string        
+      siglaLotacao:
+        type: string        
+
+  Orgao:
     type: object
     description: Dados do Órgão da pessoa para perfil de acesso
     properties:
-      id:
+      idOrgao:
         type: string
         description: Id do Órgão da Pessoa
-      nome:
-        type: string
-        description: Nome do Órgão da Pessoa
       sigla:
         type: string
         description: Sigla do Órgão da Pessoa
-  LotacaoPerfil:
-    description: Dados de uma determinada Lotação para perfil de acesso
+      nome:
+        type: string
+        description: Nome do Órgão da Pessoa
+
+  Lotacao:
+    type: object
+    description: Dados de uma determinada Lotação
+    properties:
+      idLotacao:
+        type: string
+        description: Id da lotação
+      idLotacaoIni:
+        type: string
+        description: Id inicial da lotação 
+      sigla:
+        type: string
+        description: Sigla completa da Lotação (com o órgão)
+      siglaLotacao:
+        type: string
+        description: Sigla da lotação (sem o órgão)
+      nome:
+        type: string
+        description: Nome da lotação
+      orgao:
+        $ref: "#/definitions/Orgao"
+
+  LotacaoAtual:
     type: object
     properties:
-      id:
+      idLotacao:
+        type: string
+      idLotacaoIni:
+        type: string        
+      sigla:
         type: string
       nome:
         type: string
-      sigla:
-        type: string
-  CargoPerfil:
+      orgao:
+        type: string        
+
+  Cargo:
     type: object
-    description: Dados do Cargo da Pessoa para perfil de acesso
+    description: Dados do Cargo da Pessoa
     properties:
-      id:
+      idCargo:
         type: string
         description: Id do Cargo
       idExterna:
         type: string
         description: id do Cargo Externo
-      nome: 
-        type: string
-        description: Nome do Cargo
       sigla:
         type: string
         description: Sigla do Cargo
-  FuncaoConfiancaPerfil:
+      nome: 
+        type: string
+        description: Nome do Cargo
+
+  FuncaoConfianca:
     type: object
-    description: Dados da Função de Confiança da Pessoa para perfil de acesso
+    description: Dados da Função de Confiança da Pessoa
     properties:
-      id:
+      idFuncaoConfianca:
         type: string
         description: Id da função de confiança
       idExterna:
         type: string
         description: id da função de confiança externa
-      nome: 
-        type: string
-        description: Nome da função de confiança
       sigla:
         type: string
         description: Sigla da função de confiança
+      nome: 
+        type: string
+        description: Nome da função de confiança
       idpai:
         type: string
         description: id da função de confiança pai

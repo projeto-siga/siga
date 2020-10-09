@@ -1,15 +1,13 @@
-package br.gov.jfrj.siga.ex.api.v1;
+package br.gov.jfrj.siga.api.v1;
 
 import com.crivano.swaggerservlet.SwaggerServlet;
 
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.ILotacaoIdLotacaoIniLotacaoAtualGet;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.LotacaoAtual;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.LotacaoIdLotacaoIniLotacaoAtualGetRequest;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.LotacaoIdLotacaoIniLotacaoAtualGetResponse;
 import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.ILotacaoIdLotacaoIniLotacaoAtualGet;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.Lotacao;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.LotacaoIdLotacaoIniLotacaoAtualGetRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.LotacaoIdLotacaoIniLotacaoAtualGetResponse;
-import br.gov.jfrj.siga.ex.bl.CurrentRequest;
-import br.gov.jfrj.siga.ex.bl.RequestInfo;
-import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 
 public class LotacaoIdLotacaoIniLotacaoAtualGet implements ILotacaoIdLotacaoIniLotacaoAtualGet {
 
@@ -29,9 +27,9 @@ public class LotacaoIdLotacaoIniLotacaoAtualGet implements ILotacaoIdLotacaoIniL
 			DpLotacao Lotacao = new DpLotacao();
 			Lotacao.setIdLotacaoIni(Long.valueOf(req.idLotacaoIni));
 			
-			DpLotacao lotacaoAtual = ExDao.getInstance().obterLotacaoAtual(Lotacao);
+			DpLotacao lotacaoAtual = CpDao.getInstance().obterLotacaoAtual(Lotacao);
 			
-			Lotacao lotacaoResp = new Lotacao();
+			LotacaoAtual lotacaoResp = new LotacaoAtual();
 			lotacaoResp.idLotacao = lotacaoAtual.getId().toString();
 			lotacaoResp.idLotacaoIni = lotacaoAtual.getIdLotacaoIni().toString();
 			lotacaoResp.nome = lotacaoAtual.getNomeLotacao();
@@ -39,9 +37,9 @@ public class LotacaoIdLotacaoIniLotacaoAtualGet implements ILotacaoIdLotacaoIniL
 			lotacaoResp.orgao = lotacaoAtual.getOrgaoUsuario().getNmOrgaoUsu();
 			
 			resp.lotacaoAtual = lotacaoResp;
-
 		}catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace(System.out);
+			throw e;
 		}
 		
 	}

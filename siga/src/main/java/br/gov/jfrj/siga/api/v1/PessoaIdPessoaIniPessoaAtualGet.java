@@ -1,15 +1,13 @@
-package br.gov.jfrj.siga.ex.api.v1;
+package br.gov.jfrj.siga.api.v1;
 
 import com.crivano.swaggerservlet.SwaggerServlet;
 
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.IPessoaIdPessoaIniPessoaAtualGet;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.PessoaAtual;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.PessoaIdPessoaIniPessoaAtualGetRequest;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.PessoaIdPessoaIniPessoaAtualGetResponse;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IPessoaIdPessoaIniPessoaAtualGet;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.Pessoa;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.PessoaIdPessoaIniPessoaAtualGetRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.PessoaIdPessoaIniPessoaAtualGetResponse;
-import br.gov.jfrj.siga.ex.bl.CurrentRequest;
-import br.gov.jfrj.siga.ex.bl.RequestInfo;
-import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 
 public class PessoaIdPessoaIniPessoaAtualGet implements IPessoaIdPessoaIniPessoaAtualGet {
 
@@ -29,9 +27,9 @@ public class PessoaIdPessoaIniPessoaAtualGet implements IPessoaIdPessoaIniPessoa
 			DpPessoa pessoa = new DpPessoa();
 			pessoa.setIdPessoaIni(Long.valueOf(req.idPessoaIni));
 			
-			DpPessoa pessoaAtual = ExDao.getInstance().obterPessoaAtual(pessoa);
+			DpPessoa pessoaAtual = CpDao.getInstance().obterPessoaAtual(pessoa);
 			
-			Pessoa pessoaResp = new Pessoa();
+			PessoaAtual pessoaResp = new PessoaAtual();
 			pessoaResp.idPessoa = pessoaAtual.getId().toString();
 			pessoaResp.idPessoaIni = pessoaAtual.getIdPessoaIni().toString();
 			pessoaResp.nome = pessoaAtual.getNomePessoa();
@@ -39,11 +37,11 @@ public class PessoaIdPessoaIniPessoaAtualGet implements IPessoaIdPessoaIniPessoa
 			pessoaResp.siglaLotacao = pessoaAtual.getLotacao().getSiglaCompletaFormatada();
 			
 			resp.pessoaAtual = pessoaResp;
-
-		}catch (Exception e) {
-			// TODO: handle exception
+			
+		} catch (Exception e) {
+			e.printStackTrace(System.out);
+			throw e;
 		}
-		
 	}
 
 

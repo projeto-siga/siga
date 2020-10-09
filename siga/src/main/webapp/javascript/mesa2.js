@@ -575,7 +575,7 @@ function mountPopoverMarcaPessoa(_this) {
 		var cache = sessionStorage.getItem("pessoa."+$(_this).attr('data-pessoa'));
 		if (cache == null) {
 			$.ajax({
-		        url: "/sigaex/api/v1/pessoa/"+ $(_this).attr('data-pessoa') + "/pessoaAtual",
+		        url: "/siga/api/v1/pessoa/"+ $(_this).attr('data-pessoa') + "/pessoaAtual",
 		        contentType: "application/json",
 		        dataType: 'json',
 		        success: function(result){
@@ -600,7 +600,7 @@ function mountPopoverMarcaLotacao(_this) {
 		var cache = sessionStorage.getItem("lotacao."+$(_this).attr('data-lotacao'));
 		if (cache == null) {
 			$.ajax({
-		        url: "/sigaex/api/v1/lotacao/"+ $(_this).attr('data-lotacao') + "/lotacaoAtual",
+		        url: "/siga/api/v1/lotacao/"+ $(_this).attr('data-lotacao') + "/lotacaoAtual",
 		        contentType: "application/json",
 		        dataType: 'json',
 		        success: function(result){

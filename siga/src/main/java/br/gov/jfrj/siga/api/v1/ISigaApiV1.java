@@ -24,40 +24,61 @@ public interface ISigaApiV1 {
 		public String errormsg;
 	}
 
-	public class PerfilAcesso implements ISwaggerModel {
-		public String siglaPessoa;
-		public String nomePessoa;
+	public class Pessoa implements ISwaggerModel {
+		public String idPessoa;
+		public String idPessoaIni;
+		public String sigla;
+		public String nome;
+		public String siglaLotacao;
 		public Boolean isExternaPessoa;
-		public OrgaoPerfil orgao;
-		public LotacaoPerfil lotacao;
-		public CargoPerfil cargo;
-		public FuncaoConfiancaPerfil funcaoConfianca;
+		public Lotacao lotacao;
+		public Cargo cargo;
+		public FuncaoConfianca funcaoConfianca;
 	}
 
-	public class OrgaoPerfil implements ISwaggerModel {
-		public String id;
-		public String nome;
+	public class PessoaAtual implements ISwaggerModel {
+		public String idPessoa;
+		public String idPessoaIni;
 		public String sigla;
-	}
-
-	public class LotacaoPerfil implements ISwaggerModel {
-		public String id;
 		public String nome;
-		public String sigla;
+		public String siglaLotacao;
 	}
 
-	public class CargoPerfil implements ISwaggerModel {
-		public String id;
+	public class Orgao implements ISwaggerModel {
+		public String idOrgao;
+		public String sigla;
+		public String nome;
+	}
+
+	public class Lotacao implements ISwaggerModel {
+		public String idLotacao;
+		public String idLotacaoIni;
+		public String sigla;
+		public String siglaLotacao;
+		public String nome;
+		public Orgao orgao;
+	}
+
+	public class LotacaoAtual implements ISwaggerModel {
+		public String idLotacao;
+		public String idLotacaoIni;
+		public String sigla;
+		public String nome;
+		public String orgao;
+	}
+
+	public class Cargo implements ISwaggerModel {
+		public String idCargo;
 		public String idExterna;
-		public String nome;
 		public String sigla;
+		public String nome;
 	}
 
-	public class FuncaoConfiancaPerfil implements ISwaggerModel {
-		public String id;
+	public class FuncaoConfianca implements ISwaggerModel {
+		public String idFuncaoConfianca;
 		public String idExterna;
-		public String nome;
 		public String sigla;
+		public String nome;
 		public String idpai;
 	}
 
@@ -155,16 +176,53 @@ public interface ISigaApiV1 {
 		public void run(StatusChaveGetRequest req, StatusChaveGetResponse resp) throws Exception;
 	}
 
-	public class PerfisacessoCpfGetRequest implements ISwaggerRequest {
+	public class PessoaGetRequest implements ISwaggerRequest {
+		public String texto;
 		public String cpf;
 	}
 
-	public class PerfisacessoCpfGetResponse implements ISwaggerResponse {
-		public List<PerfilAcesso> lista;
+	public class PessoaGetResponse implements ISwaggerResponse {
+		public List<Pessoa> list;
 	}
 
-	public interface IPerfisacessoCpfGet extends ISwaggerMethod {
-		public void run(PerfisacessoCpfGetRequest req, PerfisacessoCpfGetResponse resp) throws Exception;
+	public interface IPessoaGet extends ISwaggerMethod {
+		public void run(PessoaGetRequest req, PessoaGetResponse resp) throws Exception;
+	}
+
+	public class PessoaIdPessoaIniPessoaAtualGetRequest implements ISwaggerRequest {
+		public String idPessoaIni;
+	}
+
+	public class PessoaIdPessoaIniPessoaAtualGetResponse implements ISwaggerResponse {
+		public PessoaAtual pessoaAtual;
+	}
+
+	public interface IPessoaIdPessoaIniPessoaAtualGet extends ISwaggerMethod {
+		public void run(PessoaIdPessoaIniPessoaAtualGetRequest req, PessoaIdPessoaIniPessoaAtualGetResponse resp) throws Exception;
+	}
+
+	public class LotacaoGetRequest implements ISwaggerRequest {
+		public String texto;
+	}
+
+	public class LotacaoGetResponse implements ISwaggerResponse {
+		public List<Lotacao> list;
+	}
+
+	public interface ILotacaoGet extends ISwaggerMethod {
+		public void run(LotacaoGetRequest req, LotacaoGetResponse resp) throws Exception;
+	}
+
+	public class LotacaoIdLotacaoIniLotacaoAtualGetRequest implements ISwaggerRequest {
+		public String idLotacaoIni;
+	}
+
+	public class LotacaoIdLotacaoIniLotacaoAtualGetResponse implements ISwaggerResponse {
+		public LotacaoAtual lotacaoAtual;
+	}
+
+	public interface ILotacaoIdLotacaoIniLotacaoAtualGet extends ISwaggerMethod {
+		public void run(LotacaoIdLotacaoIniLotacaoAtualGetRequest req, LotacaoIdLotacaoIniLotacaoAtualGetResponse resp) throws Exception;
 	}
 
 }

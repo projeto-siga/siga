@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
+import javax.persistence.FlushModeType;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -1796,6 +1797,7 @@ public class CpDao extends ModeloDao {
 		if (dialect != null && dialect.contains("MySQL"))
 			sql = "SELECT CURRENT_TIMESTAMP";
 		Query query = em().createNativeQuery(sql);
+		query.setFlushMode(FlushModeType.COMMIT);
 		return (Date) query.getSingleResult();
 	}
 

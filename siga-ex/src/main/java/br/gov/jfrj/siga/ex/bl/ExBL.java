@@ -7397,6 +7397,23 @@ public class ExBL extends CpBL {
 	public void corrigeDocSemMobil(ExDocumento doc)
 			throws Exception {
 		Set<ExVia> setVias = doc.getSetVias();
+		List<Integer> mobs = new ArrayList<Integer>(); 
+		if (doc.getExMobilSet().isEmpty())
+			doc.setExMobilSet(new TreeSet<ExMobil>());
+
+		for (ExMobil m : doc.getExMobilSet()) {
+			if (!m.isGeral())
+				mobs.add(m.getNumSequencia());
+		}
+
+		if (doc.getMobilGeral() == null) {
+			ExMobil mob = new ExMobil();
+			mob.setExTipoMobil(dao().consultar(ExTipoMobil.TIPO_MOBIL_GERAL, ExTipoMobil.class, false));
+			mob.setNumSequencia(1);
+			mob.setExDocumento(doc);
+			doc.getExMobilSet().add(mob);
+			mob = dao().gravar(mob);
+		}
 	
 		if (doc.getExFormaDocumento().getExTipoFormaDoc().isExpediente()) {
 			for (final ExVia via : setVias) {
@@ -7406,7 +7423,8 @@ public class ExBL extends CpBL {
 				if (numVia == null) {
 					numVia = 1;
 				}
-				criarVia(doc.getCadastrante(), doc.getLotaCadastrante(), doc, numVia);
+				if (!mobs.contains(numVia))
+					criarVia(doc.getCadastrante(), doc.getLotaCadastrante(), doc, numVia);
 			}
 		} else {
 			criarVolume(doc.getCadastrante(), doc.getLotaCadastrante(), doc);

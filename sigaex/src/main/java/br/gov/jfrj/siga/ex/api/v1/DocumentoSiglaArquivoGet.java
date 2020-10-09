@@ -47,13 +47,13 @@ public class DocumentoSiglaArquivoGet implements IDocumentoSiglaArquivoGet {
 								+ so.getTitular().getSigla() + "/" + so.getLotaTitular().getSiglaCompleta() + ")");
 
 			String filename = "text/html".equals(req.contenttype)
-					? (req.volumes ? mob.doc().getReferenciaPDF() : mob.getReferenciaPDF())
-					: (req.volumes ? mob.doc().getReferenciaHtml() : mob.getReferenciaHtml());
+					? ((req.volumes != null && req.volumes) ? mob.doc().getReferenciaPDF() : mob.getReferenciaPDF())
+					: ((req.volumes != null && req.volumes) ? mob.doc().getReferenciaHtml() : mob.getReferenciaHtml());
 			final String servernameport = request.getServerName() + ":" + request.getServerPort();
 			final String contextpath = request.getContextPath();
 
 			iniciarGeracaoDePdf(req, resp, usuario, filename, contextpath, servernameport);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace(System.out);
 			throw e;
 		}
@@ -65,9 +65,9 @@ public class DocumentoSiglaArquivoGet implements IDocumentoSiglaArquivoGet {
 		Status.update(resp.uuid, "Aguardando na fila de tarefas", 0, 100, 0L);
 
 		resp.jwt = DownloadJwtFilenameGet.jwt(u, resp.uuid, req.sigla, req.contenttype, filename);
-		ExApiV1Servlet.submitToExecutor(
-				new DownloadAssincrono(resp.uuid, req.contenttype, req.sigla, req.estampa == null ? false : req.estampa,
-						req.volumes == null ? false : req.volumes, contextpath, servernameport, req.exibirReordenacao));
+		ExApiV1Servlet.submitToExecutor(new DownloadAssincrono(resp.uuid, req.contenttype, req.sigla,
+				(req.estampa != null && req.estampa), (req.volumes != null && req.volumes), contextpath, servernameport,
+				(req.exibirReordenacao != null && req.exibirReordenacao)));
 	}
 
 	@Override

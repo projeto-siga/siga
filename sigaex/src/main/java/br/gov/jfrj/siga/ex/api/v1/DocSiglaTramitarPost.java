@@ -41,12 +41,16 @@ public class DocSiglaTramitarPost implements IDocSiglaTramitarPost {
 			ExMobil mob = ExDao.getInstance().consultarPorSigla(flt);
 
 			DpLotacao lot = new DpLotacao();
-			lot.setSigla(req.lotacao);
-			lot = ExDao.getInstance().consultarPorSigla(lot);
+			if (req.lotacao != null) {
+				lot.setSigla(req.lotacao);
+				lot = ExDao.getInstance().consultarPorSigla(lot);
+			}
 
 			DpPessoa pes = new DpPessoa();
-			pes.setSigla(req.matricula);
-			pes = ExDao.getInstance().consultarPorSigla(pes);
+			if (req.matricula != null) {
+				pes.setSigla(req.matricula);
+				pes = ExDao.getInstance().consultarPorSigla(pes);
+			}
 
 			Utils.assertAcesso(mob, titular, lotaTitular);
 

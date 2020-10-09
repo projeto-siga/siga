@@ -78,7 +78,7 @@ import br.gov.jfrj.siga.model.CarimboDeTempo;
  */
 @Entity
 @BatchSize(size = 500)
-@Table(name = "EX_DOCUMENTO", catalog = "SIGA")
+@Table(name = "siga.ex_documento")
 @DynamicUpdate
 public class ExDocumento extends AbstractExDocumento implements Serializable,
 		CarimboDeTempo {

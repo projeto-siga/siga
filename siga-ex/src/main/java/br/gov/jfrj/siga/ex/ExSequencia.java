@@ -18,7 +18,7 @@ import javax.persistence.Table;
  * 
  */
 @Entity
-@Table(name="EX_SEQUENCIA")
+@Table(name = "siga.ex_sequencia")
 @NamedQueries({
 	@NamedQuery(name="ExSequencia.findAll", query="SELECT e FROM ExSequencia e"),
 	@NamedQuery(name="ExSequencia.findById", query="SELECT e.idSequencia FROM ExSequencia e where e.idSequencia = :id "),

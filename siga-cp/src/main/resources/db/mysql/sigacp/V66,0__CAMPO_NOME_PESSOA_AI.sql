@@ -1,0 +1,1 @@
+ALTER TABLE corporativo.dp_pessoa ADD NOME_PESSOA_AI VARCHAR(60);

@@ -23,7 +23,6 @@ public class DocSiglaAutenticarComSenhaPost extends DocSiglaAssinarAutenticarCom
 	protected void assertDocumento(DpPessoa titular, DpLotacao lotaTitular, ExMobil mob) throws Exception {
 		// Documento é Capturado?
 		Long idTipoDoc = mob.getDoc().getExTipoDocumento().getId();
-		// TODO: Jogar dentro do podeAutenticarComSenha?
 		if (!(idTipoDoc == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO
 				|| idTipoDoc == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO)) {
 			throw new SwaggerException("Documento não é Capturado", 400, null, null, null, null);
@@ -34,12 +33,12 @@ public class DocSiglaAutenticarComSenhaPost extends DocSiglaAssinarAutenticarCom
 			throw new SwaggerException("Documento já autenticado anteriormente", 400, null, null, null, null);
 		}
 
+		// Usuário pode Autenticar o documento?
 		if (!Ex.getInstance().getComp().podeAutenticarComSenha(titular, lotaTitular, mob)) {
 			throw new PresentableUnloggedException(
 					"O documento " + mob.getSigla() + " não pode ser autenticado com senha por "
 							+ titular.getSiglaCompleta() + "/" + lotaTitular.getSiglaCompleta());
 		}
-
 	}
 
 	@Override

@@ -19,6 +19,7 @@ public class DocSiglaAssinarComSenhaPost extends DocSiglaAssinarAutenticarComSen
 
 	@Override
 	protected void assertDocumento(DpPessoa titular, DpLotacao lotaTitular, ExMobil mob) throws Exception {
+		// Usuário pode Assinar o documento?
 		if (!Ex.getInstance().getComp().podeAssinarComSenha(titular, lotaTitular, mob)) {
 			throw new PresentableUnloggedException(
 					"O documento " + mob.getSigla() + " não pode ser assinado com senha por "

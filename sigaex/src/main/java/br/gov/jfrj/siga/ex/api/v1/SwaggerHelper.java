@@ -1,9 +1,5 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-
 import com.crivano.swaggerservlet.ISwaggerRequest;
 import com.crivano.swaggerservlet.ISwaggerResponse;
 import com.crivano.swaggerservlet.SwaggerAuthorizationException;
@@ -142,8 +138,8 @@ class SwaggerHelper {
 	 *                                      será disparada.
 	 * @see {@link URLDecoder#decode(String, String)}
 	 */
-	static String decodePathParam(String pathParamValue) throws UnsupportedEncodingException {
-		return URLDecoder.decode(pathParamValue, StandardCharsets.UTF_8.toString());
-	}
+//	static String decodePathParam(String pathParamValue) throws UnsupportedEncodingException {
+//		return URLDecoder.decode(pathParamValue, StandardCharsets.UTF_8.toString());
+//	}
 
 }

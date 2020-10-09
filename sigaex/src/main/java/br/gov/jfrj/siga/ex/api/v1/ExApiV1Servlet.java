@@ -253,6 +253,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 					if ((Integer) decodedToken.get("exp") < now + AuthJwtFormFilter.TIME_TO_RENEW_IN_S) {
 						// Seria bom incluir o attributo HttpOnly
 						String tokenNew = AuthJwtFormFilter.renovarToken(token);
+						@SuppressWarnings("unused")
 						Map<String, Object> decodedNewToken = AuthJwtFormFilter.validarToken(token);
 						Cookie cookie = AuthJwtFormFilter.buildCookie(tokenNew);
 						context.getResponse().addCookie(cookie);

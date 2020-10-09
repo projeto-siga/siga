@@ -26,7 +26,6 @@ import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
 import br.gov.jfrj.siga.ex.bl.RequestInfo;
-import br.gov.jfrj.siga.ex.bl.Mesa2.GrupoDeMarcadorEnum;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
@@ -68,19 +67,12 @@ public class MesaGet implements IMesaGet {
 
 		private final Integer id;
 		private final String nome;
-		private final String icone;
-		private final boolean visible;
-		private final boolean collapsed;
-		private final boolean hide;
 
 		private GrupoDeMarcadorEnum(Integer id, String nome, String icone, boolean visible, boolean collapsed, boolean hide) {
 			this.id = id;
 			this.nome = nome;
-			this.icone = icone;
-			this.visible = visible;
-			this.collapsed = collapsed;
-			this.hide = hide;
 		}
+
 		public String getNome() {
 			return this.nome;
 		}

@@ -3,14 +3,8 @@ package br.gov.jfrj.siga.ex.api.v1;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
 
 import com.crivano.swaggerservlet.SwaggerServlet;
@@ -39,7 +33,6 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
@@ -49,6 +42,7 @@ public class DocPost implements IDocPost {
 		SwaggerUtils.setUploadHandler(new ArquivoUploadHandler());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void run(DocPostRequest req,
 			DocPostResponse resp) throws Exception {

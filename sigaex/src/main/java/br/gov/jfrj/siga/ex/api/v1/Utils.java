@@ -25,15 +25,6 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 
 public class Utils {
 
-	public static String getUsuariosRestritos() {
-		try {
-			return Prop.get("username.restriction");
-		} catch (Exception e) {
-			throw new RuntimeException("Erro de configuração", e);
-		}
-
-	}
-
 	public static String getJwtIssuer() {
 		return "jwt.issuer";
 	}

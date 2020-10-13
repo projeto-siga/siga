@@ -1,0 +1,1 @@
+ALTER TABLE siga.ex_movimentacao MODIFY DESCR_MOV VARCHAR(500);

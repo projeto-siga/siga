@@ -313,7 +313,7 @@ public class ExMobilController extends
 	
 			builder.processar(getLotaTitular());
 			
-			if (getTamanho() > 500000) {
+			if (getTamanho() > 200000) {
 				throw new RegraNegocioException("Numero máximo de registros para exportação excedido. Use os filtros para restringir resultado.");
 			}
 			

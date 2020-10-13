@@ -484,6 +484,8 @@ paths:
             
   /doc/{sigla}/pdf:
     get:
+      summary: SEM IMPLEMENTACAO PRONTA! NAO USAR!
+      deprecated: true
       description: Obter o PDF de um documento para visualização
       tags: [consulta]
       parameters:
@@ -524,6 +526,8 @@ paths:
             
   /doc/{sigla}/mov/{id}/pdf:
     get:
+      summary: SEM IMPLEMENTACAO PRONTA! NAO USAR!
+      deprecated: true
       description: Obter o PDF de uma movimentação para visualização
       tags: [consulta]
       parameters:

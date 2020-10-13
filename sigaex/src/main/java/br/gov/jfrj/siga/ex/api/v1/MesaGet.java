@@ -436,7 +436,7 @@ public class MesaGet implements IMesaGet {
 		return "obter classe processual";
 	}
 
-	static String calcularTempoRelativo(Date anterior) {
+	private static String calcularTempoRelativo(Date anterior) {
 		PrettyTime p = new PrettyTime(new Date(), new Locale("pt"));
 	
 		String tempo = p.format(anterior);

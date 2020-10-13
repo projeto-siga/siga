@@ -10,6 +10,8 @@ import java.text.MessageFormat;
 import java.util.Map;
 import java.util.TreeSet;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.crivano.swaggerservlet.SwaggerServlet;
 import com.crivano.swaggerservlet.SwaggerUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -75,7 +77,7 @@ public class DocPost implements IDocPost {
 			}
 			doc.setExModelo(null);
 			if (req.modelo != null) {
-				if (DocPost.isNumerico(req.modelo)) {
+				if (StringUtils.isNumeric(req.modelo)) {
 		    		modelo = dao().consultar(Long.valueOf(req.modelo),
 		    				ExModelo.class, false);
 					if (modelo != null) {
@@ -375,7 +377,7 @@ public class DocPost implements IDocPost {
 	 * @param str String a ser convertida.
 	 * @return String convertida.
 	 */
-	static String UTF8toISO(String str) {
+	private static String UTF8toISO(String str) {
 		Charset utf8charset = Charset.forName("UTF-8");
 		Charset iso88591charset = Charset.forName("ISO-8859-1");
 		ByteBuffer inputBuffer = ByteBuffer.wrap(str.getBytes());

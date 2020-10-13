@@ -30,7 +30,7 @@ public class DocSiglaAnotarPost implements IDocSiglaAnotarPost {
 
 		ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, so, req, resp, "Documento a Anotar");
 
-		Utils.assertAcesso(mob, titular, lotaTitular);
+		SwaggerHelper.assertAcesso(mob, titular, lotaTitular);
 
 		Ex.getInstance().getBL().anotar(cadastrante, lotaCadastrante, mob, null, null, null, null, cadastrante,
 				req.anotacao, null);

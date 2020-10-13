@@ -17,6 +17,7 @@ import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.AbstractCpAcesso;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -33,7 +34,7 @@ public class TokenCriarPost implements ITokenCriarPost {
 	public void run(TokenCriarPostRequest req, TokenCriarPostResponse resp) throws Exception {
 		CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 		try {
-			String usuariosRestritos = Utils.getUsuariosRestritos();
+			String usuariosRestritos = TokenCriarPost.getUsuariosRestritos();
 			if (usuariosRestritos != null) {
 				if (!ArrayUtils.contains(usuariosRestritos.split(","), req.username))
 					throw new PresentableUnloggedException("Usuário não autorizado.");
@@ -85,7 +86,7 @@ public class TokenCriarPost implements ITokenCriarPost {
 	}
 
 	private static Map<String, Object> verify(String jwt) throws SwaggerAuthorizationException {
-		final JWTVerifier verifier = new JWTVerifier(Utils.getJwtSecret());
+		final JWTVerifier verifier = new JWTVerifier(TokenCriarPost.getJwtSecret());
 		Map<String, Object> map;
 		try {
 			map = verifier.verify(jwt);
@@ -160,12 +161,12 @@ public class TokenCriarPost implements ITokenCriarPost {
 	}
 
 	private static String jwt(String origin, String username, String cpf, String name, String email) {
-		final String issuer = Utils.getJwtIssuer();
+		final String issuer = TokenCriarPost.getJwtIssuer();
 
 		final long iat = System.currentTimeMillis() / 1000L; // issued at claim
 		final long exp = iat + 18 * 60 * 60L; // token expires in 18 hours
 
-		final JWTSigner signer = new JWTSigner(Utils.getJwtSecret());
+		final JWTSigner signer = new JWTSigner(TokenCriarPost.getJwtSecret());
 		final HashMap<String, Object> claims = new HashMap<String, Object>();
 		if (issuer != null)
 			claims.put("iss", issuer);
@@ -186,6 +187,23 @@ public class TokenCriarPost implements ITokenCriarPost {
 	@Override
 	public String getContext() {
 		return "autenticar usuário";
+	}
+
+	static String getJwtSecret() {
+		return Prop.get("/siga.jwt.secret");
+	}
+
+	static String getJwtIssuer() {
+		return "jwt.issuer";
+	}
+
+	static String getUsuariosRestritos() {
+		try {
+			return Prop.get("username.restriction");
+		} catch (Exception e) {
+			throw new RuntimeException("Erro de configuração", e);
+		}
+	
 	}
 
 }

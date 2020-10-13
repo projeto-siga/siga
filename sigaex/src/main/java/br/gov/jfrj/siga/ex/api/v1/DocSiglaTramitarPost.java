@@ -47,7 +47,7 @@ public class DocSiglaTramitarPost implements IDocSiglaTramitarPost {
 
 	private void validarAcesso(DocSiglaTramitarPostRequest req, DpPessoa titular, DpLotacao lotaTitular, ExMobil mob)
 			throws Exception, PresentableUnloggedException {
-		Utils.assertAcesso(mob, titular, lotaTitular);
+		SwaggerHelper.assertAcesso(mob, titular, lotaTitular);
 
 		if (!Ex.getInstance().getComp().podeTransferir(titular, lotaTitular, mob))
 			throw new PresentableUnloggedException("O documento " + req.sigla + " não pode ser tramitado por "

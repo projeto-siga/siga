@@ -47,7 +47,7 @@ public class DocSiglaGet implements IDocSiglaGet {
 
 		ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, req, resp);
 
-		Utils.assertAcesso(mob, titular, lotaTitular);
+		SwaggerHelper.assertAcesso(mob, titular, lotaTitular);
 
 		// Recebimento automático
 		if (Ex.getInstance().getComp().podeReceberEletronico(titular, lotaTitular, mob)) {

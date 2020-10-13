@@ -6,7 +6,10 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+
+import org.ocpsoft.prettytime.PrettyTime;
 
 import com.crivano.swaggerservlet.SwaggerServlet;
 
@@ -433,6 +436,19 @@ public class MesaGet implements IMesaGet {
 		return "obter classe processual";
 	}
 
+	static String calcularTempoRelativo(Date anterior) {
+		PrettyTime p = new PrettyTime(new Date(), new Locale("pt"));
+	
+		String tempo = p.format(anterior);
+		tempo = tempo.replace(" atrás", "");
+		tempo = tempo.replace(" dias", " dias");
+		tempo = tempo.replace(" horas", "h");
+		tempo = tempo.replace(" minutos", "min");
+		tempo = tempo.replace(" segundos", "s");
+		tempo = tempo.replace("agora há pouco", "agora");
+		return tempo;
+	}
+
 	public static List<MesaItem> listarReferencias(TipoDePainelEnum tipo, Map<ExMobil, List<MeM>> references,
 			DpPessoa pessoa, DpLotacao unidade, Usuario usuario, Date currentDate) {
 		List<MesaItem> l = new ArrayList<>();
@@ -447,7 +463,7 @@ public class MesaGet implements IMesaGet {
 			else
 				datahora = mobil.getDoc().getDtAltDoc();
 			r.datahora = datahora;
-			r.tempoRelativo = Utils.calcularTempoRelativo(datahora);
+			r.tempoRelativo = MesaGet.calcularTempoRelativo(datahora);
 
 			r.codigo = mobil.getCodigoCompacto();
 			r.sigla = mobil.getSigla();
@@ -482,7 +498,7 @@ public class MesaGet implements IMesaGet {
 
 				t.nome = mar.getNome();
 				t.icone = mar.getIcone();
-				t.titulo = Utils.calcularTempoRelativo(tag.marca.getDtIniMarca());
+				t.titulo = MesaGet.calcularTempoRelativo(tag.marca.getDtIniMarca());
 
 				if (tag.marca.getDpPessoaIni() != null) {
 					DpPessoa pes = tag.marca.getDpPessoaIni().getPessoaAtual();

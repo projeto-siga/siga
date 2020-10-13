@@ -1,5 +1,9 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import com.crivano.swaggerservlet.ISwaggerRequest;
 import com.crivano.swaggerservlet.ISwaggerResponse;
 import com.crivano.swaggerservlet.SwaggerAuthorizationException;
@@ -8,7 +12,11 @@ import com.crivano.swaggerservlet.SwaggerServlet;
 
 import static java.util.Objects.isNull;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
@@ -120,6 +128,40 @@ class SwaggerHelper {
 	static ExMobil buscarEValidarMobil(final String sigla, ISwaggerRequest req, ISwaggerResponse resp)
 			throws Exception {
 		return buscarEValidarMobil(sigla, getSigaObjects(), req, resp, "Documento");
+	}
+
+	static void assertAcesso(final ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
+		if (!Ex.getInstance().getComp().podeAcessarDocumento(titular, lotaTitular, mob)) {
+			String s = "";
+			s += mob.doc().getListaDeAcessosString();
+			s = "(" + s + ")";
+			s = " " + mob.doc().getExNivelAcessoAtual().getNmNivelAcesso() + " " + s;
+	
+			Map<ExPapel, List<Object>> mapa = mob.doc().getPerfis();
+			boolean isInteressado = false;
+	
+			for (ExPapel exPapel : mapa.keySet()) {
+				Iterator<Object> it = mapa.get(exPapel).iterator();
+	
+				if ((exPapel != null) && (exPapel.getIdPapel() == ExPapel.PAPEL_INTERESSADO)) {
+					while (it.hasNext() && !isInteressado) {
+						Object item = it.next();
+						isInteressado = item.toString().equals(titular.getSigla()) ? true : false;
+					}
+				}
+	
+			}
+	
+			if (mob.doc().isSemEfeito()) {
+				if (!mob.doc().getCadastrante().equals(titular) && !mob.doc().getSubscritor().equals(titular)
+						&& !isInteressado) {
+					throw new AplicacaoException("Documento " + mob.getSigla() + " cancelado ");
+				}
+			} else {
+				throw new AplicacaoException("Documento " + mob.getSigla() + " inacessível ao usuário "
+						+ titular.getSigla() + "/" + lotaTitular.getSiglaCompleta() + "." + s);
+			}
+		}
 	}
 
 	/**

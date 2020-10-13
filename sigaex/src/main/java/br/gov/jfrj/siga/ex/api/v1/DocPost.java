@@ -3,6 +3,9 @@ package br.gov.jfrj.siga.ex.api.v1;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.TreeSet;
@@ -72,7 +75,7 @@ public class DocPost implements IDocPost {
 			}
 			doc.setExModelo(null);
 			if (req.modelo != null) {
-				if (Utils.isNumerico(req.modelo)) {
+				if (DocPost.isNumerico(req.modelo)) {
 		    		modelo = dao().consultar(Long.valueOf(req.modelo),
 		    				ExModelo.class, false);
 					if (modelo != null) {
@@ -201,7 +204,7 @@ public class DocPost implements IDocPost {
 			if (req.nivelacesso != null) {
 				doc.setExNivelAcesso(dao()
 						.consultarExNidelAcesso(
-								Utils.UTF8toISO(req.nivelacesso)));
+								DocPost.UTF8toISO(req.nivelacesso)));
 			} else {
 				final ExNivelAcesso nivelDefault =  ExNivelAcesso
 						.getNivelAcessoDefault(doc.getExTipoDocumento(), doc.getExFormaDocumento(),
@@ -223,7 +226,7 @@ public class DocPost implements IDocPost {
 			}
 			
 			String camposModelo = "";
-			String conteudo = Utils.UTF8toISO(req.entrevista);
+			String conteudo = DocPost.UTF8toISO(req.entrevista);
 			Map <String, String> conteudoMap;
 			
 			try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
@@ -364,5 +367,35 @@ public class DocPost implements IDocPost {
 	@Override
 	public String getContext() {
 		return "Incluir documento";
+	}
+
+	/**
+	 * Converte string em UTF-8 para ISO-8859-1
+	 * 
+	 * @param str String a ser convertida.
+	 * @return String convertida.
+	 */
+	static String UTF8toISO(String str) {
+		Charset utf8charset = Charset.forName("UTF-8");
+		Charset iso88591charset = Charset.forName("ISO-8859-1");
+		ByteBuffer inputBuffer = ByteBuffer.wrap(str.getBytes());
+		CharBuffer data = utf8charset.decode(inputBuffer);
+		ByteBuffer outputBuffer = iso88591charset.encode(data);
+		byte[] outputData = outputBuffer.array();
+		return new String(outputData);
+	}
+
+	/**
+	 * Verifica se uma string é composta somente por caracteres numéricos.
+	 * 
+	 * @param str String a verificar se é numérico
+	 * @return
+	 *         <ul>
+	 *         <li><b>true</b> se for totalmente numérico</li>
+	 *         <li><b>false</b> se houver qualquer caracter não numérico.</li>
+	 *         </ul>
+	 */
+	static boolean isNumerico(String str) {
+		return str.matches("^\\d+$");
 	}
 }

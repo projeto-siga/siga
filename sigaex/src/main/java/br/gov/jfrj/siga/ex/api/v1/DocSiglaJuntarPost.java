@@ -32,7 +32,7 @@ public class DocSiglaJuntarPost implements IDocSiglaJuntarPost {
 		ExMobil mobFilho = SwaggerHelper.buscarEValidarMobil(req.sigla, so, req, resp, "Documento Secundário");
 		ExMobil mobPai = SwaggerHelper.buscarEValidarMobil(req.siglapai, so, req, resp, "Documento Principal");
 
-		Utils.assertAcesso(mobFilho, cadastrante, lotaTitular);
+		SwaggerHelper.assertAcesso(mobFilho, cadastrante, lotaTitular);
 
 		Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
 

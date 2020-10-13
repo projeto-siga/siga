@@ -28,7 +28,7 @@ public class DocSiglaPdfCompletoGet implements IDocSiglaPdfCompletoGet {
 
 		ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, req, resp);
 
-		Utils.assertAcesso(mob, titular, lotaTitular);
+		SwaggerHelper.assertAcesso(mob, titular, lotaTitular);
 
 		resp.jwt = DownloadJwtFilenameGet.jwt(cadastrante.getSiglaCompleta(), mob.getCodigoCompacto(), null, null,
 				null);

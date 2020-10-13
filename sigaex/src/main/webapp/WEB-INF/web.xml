@@ -114,12 +114,15 @@
 		<url-pattern>/apis/*</url-pattern>
 		
 		<!-- Filter API -->
+		<url-pattern>/api/v1/autenticar/*</url-pattern>
+
 		<url-pattern>/api/v1/test/*</url-pattern>
 		<url-pattern>/api/v1/documento/*</url-pattern>
 		<url-pattern>/api/v1/doc/*</url-pattern>	
 		<url-pattern>/api/v1/mesa/*</url-pattern>
 		<url-pattern>/api/v1/acessos/*</url-pattern>
 		<url-pattern>/api/v1/token/*</url-pattern>
+
 	</filter-mapping>
 
 	<filter-mapping>

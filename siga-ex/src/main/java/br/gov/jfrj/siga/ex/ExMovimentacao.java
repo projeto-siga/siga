@@ -58,7 +58,7 @@ import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 
 @Entity
 @BatchSize(size = 500)
-@Table(name = "EX_MOVIMENTACAO", catalog = "SIGA")
+@Table(name = "siga.ex_movimentacao")
 public class ExMovimentacao extends AbstractExMovimentacao implements
 		Serializable, Comparable<ExMovimentacao> {
 

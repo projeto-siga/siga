@@ -100,6 +100,7 @@ import br.gov.jfrj.siga.bluc.service.EnvelopeRequest;
 import br.gov.jfrj.siga.bluc.service.EnvelopeResponse;
 import br.gov.jfrj.siga.bluc.service.ValidateRequest;
 import br.gov.jfrj.siga.bluc.service.ValidateResponse;
+import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -3328,7 +3329,7 @@ public class ExBL extends CpBL {
 			// Nato: para obter o numero do TMP na primeira gravação
 			boolean primeiraGravacao = false;
 			if (doc.getIdDoc() == null) {
-				doc = ExDao.getInstance().gravar(doc);
+				doc = salvarDocSemSalvarArq(doc);
 				primeiraGravacao = true;
 			}
 
@@ -3459,6 +3460,20 @@ public class ExBL extends CpBL {
 			//
 		}
 		// System.out.println(System.currentTimeMillis() + " - FIM gravar");
+		return doc;
+	}
+
+	private ExDocumento salvarDocSemSalvarArq(ExDocumento doc) {
+		CpArquivo arqTemp = null;
+		// Nato: remover o cpArquivo para que ele não seja salvo automaticamente pelo
+		// JPA, pois isso acarreta em gravação desnecessária na tabela CpArquivo.
+		if (doc.getCpArquivo() != null && doc.getCpArquivo().getIdArq() == null) {
+			arqTemp = doc.getCpArquivo();
+			doc.setCpArquivo(null);
+		}
+		doc = ExDao.getInstance().gravar(doc);
+		if (arqTemp != null) 
+			doc.setCpArquivo(arqTemp);
 		return doc;
 	}
 	
@@ -3652,7 +3667,7 @@ public class ExBL extends CpBL {
 		if (nivel == null)
 			nivel = doc.getExNivelAcesso();
 		doc.setDnmExNivelAcesso(nivel);
-		ExDao.getInstance().gravar(doc);
+		doc = salvarDocSemSalvarArq(doc);
 		return nivel;
 	}
 
@@ -7397,6 +7412,23 @@ public class ExBL extends CpBL {
 	public void corrigeDocSemMobil(ExDocumento doc)
 			throws Exception {
 		Set<ExVia> setVias = doc.getSetVias();
+		List<Integer> mobs = new ArrayList<Integer>(); 
+		if (doc.getExMobilSet().isEmpty())
+			doc.setExMobilSet(new TreeSet<ExMobil>());
+
+		for (ExMobil m : doc.getExMobilSet()) {
+			if (!m.isGeral())
+				mobs.add(m.getNumSequencia());
+		}
+
+		if (doc.getMobilGeral() == null) {
+			ExMobil mob = new ExMobil();
+			mob.setExTipoMobil(dao().consultar(ExTipoMobil.TIPO_MOBIL_GERAL, ExTipoMobil.class, false));
+			mob.setNumSequencia(1);
+			mob.setExDocumento(doc);
+			doc.getExMobilSet().add(mob);
+			mob = dao().gravar(mob);
+		}
 	
 		if (doc.getExFormaDocumento().getExTipoFormaDoc().isExpediente()) {
 			for (final ExVia via : setVias) {
@@ -7406,7 +7438,8 @@ public class ExBL extends CpBL {
 				if (numVia == null) {
 					numVia = 1;
 				}
-				criarVia(doc.getCadastrante(), doc.getLotaCadastrante(), doc, numVia);
+				if (!mobs.contains(numVia))
+					criarVia(doc.getCadastrante(), doc.getLotaCadastrante(), doc, numVia);
 			}
 		} else {
 			criarVolume(doc.getCadastrante(), doc.getLotaCadastrante(), doc);

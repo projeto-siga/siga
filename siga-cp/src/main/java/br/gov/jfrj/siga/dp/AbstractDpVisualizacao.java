@@ -43,8 +43,8 @@ import br.gov.jfrj.siga.model.Objeto;
 @MappedSuperclass
 @NamedQueries({
 		@NamedQuery(name = "consultarVisualizacoesPermitidas", query = "from DpVisualizacao as dps "
-				+ " where (dps.dtIniDeleg < sysdate or dps.dtIniDeleg is null) "
-				+ " and (dps.dtFimDeleg > sysdate or dps.dtFimDeleg is null) "
+				+ " where (dps.dtIniDeleg < CURRENT_TIMESTAMP or dps.dtIniDeleg is null) "
+				+ " and (dps.dtFimDeleg > CURRENT_TIMESTAMP or dps.dtFimDeleg is null) "
 				+ " and dps.delegado.idPessoa in (select pes.idPessoa from DpPessoa as pes where pes.idPessoaIni = :idDelegadoIni) "
 				+ " and dps.dtFimRegistro is null "),
 		@NamedQuery(name = "consultarOrdem", query = "from DpVisualizacao as dps "

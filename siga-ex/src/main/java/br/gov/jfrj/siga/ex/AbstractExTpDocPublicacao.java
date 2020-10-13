@@ -51,7 +51,7 @@ public abstract class AbstractExTpDocPublicacao extends Objeto implements
 	private String nmDocPublicacao;
 
 	@ManyToMany
-	@JoinTable(name = "EX_MODELO_TP_DOC_PUBLICACAO", joinColumns = { @JoinColumn(name = "ID_DOC_PUBLICACAO") }, inverseJoinColumns = { @JoinColumn(name = "ID_MOD") })
+	@JoinTable(name = "siga.ex_modelo_tp_doc_publicacao", joinColumns = { @JoinColumn(name = "ID_DOC_PUBLICACAO") }, inverseJoinColumns = { @JoinColumn(name = "ID_MOD") })
 	private Set<ExModelo> exModeloSet;
 
 	@Column(name = "CARATER", length = 1)

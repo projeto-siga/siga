@@ -76,6 +76,8 @@ public class Prop {
 		provider.addPublicProperty("/siga.base.url", "http://localhost:8080");
 		String base = get("/siga.base.url");
 
+		provider.addPublicProperty("/siga.hibernate.dialect");
+		
 		provider.addPublicProperty("/siga.gsa.url", null);
 
 		provider.addPublicProperty("/siga.relat.brasao", "brasao.png");

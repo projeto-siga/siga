@@ -13,11 +13,9 @@ import javax.inject.Inject;
 import org.jboss.logging.Logger;
 
 import br.com.caelum.vraptor.freemarker.Freemarker;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.sr.model.SrMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrTipoMovimentacao;
-import br.gov.jfrj.siga.sr.util.SigaSrProperties;
 import br.gov.jfrj.siga.sr.vraptor.CompatibilidadeController;
 import freemarker.template.TemplateException;
 
@@ -160,7 +158,7 @@ public class Correio {
 	}
 
 	private String link(SrSolicitacao solicitacao) {
-		String url = SigaSrProperties.getString("url");
+		String url = System.getProperty("siga.sr.url");
 		if (url != null)
 			return url + (url.endsWith("/") ? "" : "/") + "solicitacao/exibir?id=" + solicitacao.getId();
 		log.error("Não foi encontrada a property siga.sr.url");
@@ -219,8 +217,7 @@ public class Correio {
 		@Override
 		public void run() {		
 			try{
-				br.gov.jfrj.siga.base.Correio.enviar(SigaBaseProperties
-						.getString("servidor.smtp.usuario.remetente"),
+				br.gov.jfrj.siga.base.Correio.enviar(System.getProperty("servidor.smtp.usuario.remetente"),
 						dest,		
 						assunto, txt, html);					
 			} catch (Exception e) {

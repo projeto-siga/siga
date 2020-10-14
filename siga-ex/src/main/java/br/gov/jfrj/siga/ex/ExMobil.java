@@ -277,7 +277,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		}
 
 		s = s + "', 'documento', " + winProp + ")\">" + descricaoCurta + "</a>";
-		return s;
+		return descricaoCurta;
 	}
 
 	/**
@@ -2240,5 +2240,20 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	
 	public void indicarSeDeveExibirDocumentoCompletoReordenado(boolean exibirReordenacao) {
 		this.getDoc().setPodeExibirReordenacao(exibirReordenacao);
+	}
+	
+	public boolean isModeloIncluso(Long idModelo) {
+		ExModelo mod = ExDao.getInstance().consultar(idModelo, ExModelo.class, false);
+		
+		for (ExMovimentacao m : getExMovimentacaoReferenciaSet()) {
+			if (m.getExMovimentacaoCanceladora() != null)
+				continue;
+			if (m.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA)
+				continue;
+			if (m.getExMobilRef() == this && m.getExMobil() != null 
+					&& m.getExMobil().doc().getExModelo().getIdInicial().equals(mod.getIdInicial()))
+				return true;
+		}
+		return false;
 	}
 }

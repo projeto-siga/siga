@@ -1,6 +1,7 @@
 package br.gov.jfrj.siga.model;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 
 public class ContextoPersistencia {
 
@@ -11,6 +12,11 @@ public class ContextoPersistencia {
 		emByThread.set(em);
 	}
 
+	static public EntityManager getEntityManager() {
+		EntityManager em = emByThread.get();
+		return em;
+	}
+	
 	static public EntityManager em() {
 		EntityManager em = emByThread.get();
 		if (em == null)
@@ -23,9 +29,24 @@ public class ContextoPersistencia {
 			em().flush();
 			em().getTransaction().commit();
 			em().getTransaction().begin();
-		}	
+		}
+	}
+	
+	public static void begin() {
+		EntityTransaction transaction = em().getTransaction();
+		if (transaction != null && !transaction.isActive()) {
+			transaction.begin();
+		}
 	}
 
+	public static void commit() {
+		EntityTransaction transaction = em().getTransaction();
+ 		em().flush();
+		if (transaction != null && transaction.isActive()) {
+			em().getTransaction().commit();
+		}
+ 	}
+	
 	static public void setUserPrincipal(String userPrincipal) {
 		userPrincipalByThread.set(userPrincipal);
 	}

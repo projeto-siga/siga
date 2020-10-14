@@ -569,7 +569,7 @@ public class CpDao extends ModeloDao {
 	@SuppressWarnings("unchecked")
 	public List<CpAplicacaoFeriado> listarAplicacoesFeriado(final CpAplicacaoFeriado apl) {
 		final Query query = em().createNamedQuery("listarAplicacoesFeriado");
-		query.setParameter("cpOcorrenciaFeriado", apl.getCpOcorrenciaFeriado().getId());
+		query.setParameter("cpOcorrenciaFeriado", apl.getCpOcorrenciaFeriado());
 
 		query.setHint("org.hibernate.cacheable", true);
 		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
@@ -1349,8 +1349,12 @@ public class CpDao extends ModeloDao {
 				query.setParameter("email", null);
 			}						
 
-			if (!flt.isBuscarFechadas())
-				query.setParameter("situacaoFuncionalPessoa", flt.getSituacaoFuncionalPessoa());
+			if (!flt.isBuscarFechadas()) {
+				String situacaoFuncionalPessoa = flt.getSituacaoFuncionalPessoa();
+				if (situacaoFuncionalPessoa != null && situacaoFuncionalPessoa.length() == 0)
+					situacaoFuncionalPessoa = null;
+				query.setParameter("situacaoFuncionalPessoa", situacaoFuncionalPessoa);
+			}
 
 			if (flt.getCpf() != null && !"".equals(flt.getCpf())) {
 				query.setParameter("cpf", Long.valueOf(flt.getCpf()));
@@ -1769,7 +1773,7 @@ public class CpDao extends ModeloDao {
 			}
 			whereList.add(c.get("situacaoFuncionalPessoa").in(situacoesFuncionais.getValor()));
 			whereList.add(cb().isNull(c.get("dataFimPessoa")));
-			q.where(whereList.toArray(new Predicate[0]));
+			q.where(whereList.toArray(new Predicate[whereList.size()]));
 
 			q.orderBy(cb().asc(c.get("nomePessoa")));
 			lstCompleta.addAll((List<DpPessoa>) em().createQuery(q).getResultList());
@@ -1798,7 +1802,9 @@ public class CpDao extends ModeloDao {
 			sql = "SELECT CURRENT_TIMESTAMP";
 		Query query = em().createNativeQuery(sql);
 		query.setFlushMode(FlushModeType.COMMIT);
-		return (Date) query.getSingleResult();
+		 Date dt = (Date) query.getSingleResult();
+		 ContextoPersistencia.setDt(dt);
+		 return dt; 
 	}
 
 	public List<CpConfiguracao> consultarConfiguracoesDesde(Date desde) {
@@ -1874,7 +1880,7 @@ public class CpDao extends ModeloDao {
 		Root<T> c = q.from(clazz);
 		Join<T, CpOrgaoUsuario> joinOrgao = c.join("orgaoUsuario", JoinType.INNER);
 		q.where(cb().isNull(c.get(campoDtFim)), cb().equal(joinOrgao.get("idOrgaoUsu"), idOrgaoUsu));
-		return em().createQuery(q).getResultList();
+		return em().createQuery(q).getResultList();	
 	}
 
 	public <T> List<T> listarAtivos(Class<T> clazz, String orderBy) {
@@ -2648,5 +2654,15 @@ public class CpDao extends ModeloDao {
 	
 	
 	
+	public <T extends Selecionavel> T carregarPorId(T o) {
+		Long id = o.getId();
+		if (id == null)
+			return null;
+		return (T) consultar(id, o.getClass(), false);
+	}
 
+	public <T> T carregar(T objetoDetachado) {
+		return (T) em().find(objetoDetachado.getClass(), 
+				em().getEntityManagerFactory().getPersistenceUnitUtil().getIdentifier(objetoDetachado));
+	}
 }

@@ -4033,8 +4033,7 @@ public class ExBL extends CpBL {
 			mov = criarNovaMovimentacao(idTpMov, cadastrante, lotaCadastrante, mob, dtMov, subscritor, null, titular,
 					null, null);
 
-			mov.setExMobilRef(mobPai);
-			mov.getExDocumento().setExMobilPai(mobPai);
+			mov.setExMobilRef(mobPai);			
 
 			if (idDocEscolha.equals("1")) {
 				mov.setDescrMov("Juntado ao documento " + mov.getExMobilRef().getCodigo().toString());

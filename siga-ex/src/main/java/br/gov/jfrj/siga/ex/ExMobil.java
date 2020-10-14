@@ -49,8 +49,10 @@ import org.hibernate.annotations.BatchSize;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.bl.ExParte;
 import br.gov.jfrj.siga.ex.util.CronologiaComparator;
@@ -275,7 +277,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		}
 
 		s = s + "', 'documento', " + winProp + ")\">" + descricaoCurta + "</a>";
-		return s;
+		return descricaoCurta;
 	}
 
 	/**
@@ -2239,19 +2241,19 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	public void indicarSeDeveExibirDocumentoCompletoReordenado(boolean exibirReordenacao) {
 		this.getDoc().setPodeExibirReordenacao(exibirReordenacao);
 	}
-
-
-	/**
-	 * Verifica se exibe o conteudo do documento no histórico do acompanhamento do protocolo
-	 * 
-	 * @return
-	 */
-	public boolean getPodeExibirNoAcompanhamento() {
-		Set<ExMovimentacao> movs = getMovsNaoCanceladas(ExTipoMovimentacao
-				.TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO);
-		if (!movs.isEmpty())
-			return true;
+	
+	public boolean isModeloIncluso(Long idModelo) {
+		ExModelo mod = ExDao.getInstance().consultar(idModelo, ExModelo.class, false);
+		
+		for (ExMovimentacao m : getExMovimentacaoReferenciaSet()) {
+			if (m.getExMovimentacaoCanceladora() != null)
+				continue;
+			if (m.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA)
+				continue;
+			if (m.getExMobilRef() == this && m.getExMobil() != null 
+					&& m.getExMobil().doc().getExModelo().getIdInicial().equals(mod.getIdInicial()))
+				return true;
+		}
 		return false;
 	}
-	
 }

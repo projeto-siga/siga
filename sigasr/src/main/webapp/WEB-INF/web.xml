@@ -126,6 +126,8 @@
 		<url-pattern>/javascripts/*</url-pattern>
 		<url-pattern>/stylesheets/*</url-pattern>
 	</filter-mapping>
+	
+
 
 	<error-page>
 		<location>/WEB-INF/page/erroGeral.jsp</location>

@@ -51,7 +51,7 @@
 		</dependency>
 		<dependency>
 			<groupId>siga</groupId>
-			<artifactId>siga-vraptor-module-old</artifactId>
+			<artifactId>siga-vraptor-module</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>net.objectlab.kit</groupId>
@@ -177,6 +177,44 @@
 			<artifactId>vraptor-freemarker</artifactId>
 			<version>1.1.3</version>
 		</dependency>
+		
+		
+			<!-- CDI -->
+		<dependency>
+			<groupId>org.jboss.spec.javax.ejb</groupId>
+			<artifactId>jboss-ejb-api_3.1_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>br.com.caelum.vraptor</groupId>
+			<artifactId>vraptor-jpa</artifactId>
+			<version>4.0.5</version>
+			<exclusions>
+				<exclusion>  <!-- declare the exclusion here -->
+					<groupId>org.eclipse.persistence</groupId>
+					<artifactId>javax.persistence</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.birt.runtime.3_7_1</groupId>
+			<artifactId>Tidy</artifactId>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/javax.enterprise/cdi-api -->
+		<dependency>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+            <groupId>siga</groupId>
+            <artifactId>siga-jwt</artifactId>
+        </dependency>
+		
 
 	</dependencies>
 	<build>

@@ -538,7 +538,7 @@ public class ExMobilVO extends ExVO {
 			listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA);
 			
 			//Adiciona restrição para SP - Transferencia só pode ser cancelada por quem realizou
-			if ("GOVSP".equals(Prop.get("/siga.local")) 
+			if ("GOVSP".equals(SigaBaseProperties.getString("siga.local")) 
 				&& ultimaMovNaoCancelada.get().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA 
 				&& !ultimaMovNaoCancelada.get().getCadastrante().equals(titular)) {
 				listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);

@@ -214,6 +214,11 @@
             <groupId>siga</groupId>
             <artifactId>siga-jwt</artifactId>
         </dependency>
+        
+      	<dependency>
+			<groupId>com.crivano</groupId>
+			<artifactId>swaggerservlet</artifactId>
+		</dependency>
 		
 
 	</dependencies>

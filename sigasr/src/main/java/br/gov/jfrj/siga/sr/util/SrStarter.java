@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.gc.util;
+package br.gov.jfrj.siga.sr.util;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -11,7 +11,7 @@ import javax.persistence.Persistence;
  *
  */
 @ApplicationScoped
-public class GcStarter {
+public class SrStarter {
 
 	public static EntityManagerFactory emf;
 

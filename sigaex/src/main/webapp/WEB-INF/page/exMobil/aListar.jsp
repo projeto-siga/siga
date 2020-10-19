@@ -127,7 +127,7 @@
 					document.getElementById('trNumOrigDoc').style.display = '';
 					document.getElementById('trNumDocSistAntigo').style.display = 'none';
 					document.getElementById('trOrgExterno').style.display = '';
-					document.getElementById('trTipo').style.display = 'none';
+					document.getElementById('trTipo').style.display = '';
 		
 					if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
 					break;

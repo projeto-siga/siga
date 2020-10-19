@@ -119,15 +119,15 @@
 			document.getElementById('trOrgExterno').style.display = '';
 			document.getElementById('trTipo').style.display = 'none';
 
-			if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '5';
+		 	if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '5';
 			break;
 		case 4: // Externo Capturado
 			document.getElementById('trNumOrigDoc').style.display = '';
 			document.getElementById('trNumDocSistAntigo').style.display = 'none';
 			document.getElementById('trOrgExterno').style.display = '';
-			document.getElementById('trTipo').style.display = 'none';
+			document.getElementById('trTipo').style.display = '';
 
-			if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
+		 	if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
 			break;
 		case 5: // Interno Capturado
 			document.getElementById('trNumOrigDoc').style.display = 'none';

@@ -56,6 +56,7 @@ import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrLista;
 import br.gov.jfrj.siga.sr.model.SrMeioComunicacao;
 import br.gov.jfrj.siga.sr.model.SrMovimentacao;
+import br.gov.jfrj.siga.sr.model.SrOperacao;
 import br.gov.jfrj.siga.sr.model.SrPendencia;
 import br.gov.jfrj.siga.sr.model.SrPrioridade;
 import br.gov.jfrj.siga.sr.model.SrPrioridadeSolicitacao;
@@ -503,7 +504,7 @@ public class SolicitacaoController extends SrController {
 
 	@Path({ "/editar", "/editar/{sigla}"})
     public void editar(String sigla, SrSolicitacao solicitacao, String item, String acao, String descricao, Long solicitante) throws Exception {
-		//Edson: se a sigla é != null, está vindo pelo link Editar. Se sigla for == null mas solicitacao for != null é um postback.
+		//Edson: se a sigla é != null, está vindo pelo link Editar. Se sigla for == null mas solicitacao for != null é um postback.		
 		if (sigla != null) {
 			solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);  
 			//carregamento forçado de atributos lazy
@@ -515,33 +516,31 @@ public class SolicitacaoController extends SrController {
 			}
 		}
 		else {
-			if (solicitacao == null){
-				solicitacao = new SrSolicitacao();
-		        try{
-		        	so.assertAcesso(SALVAR_SOLICITACAO_AO_ABRIR);
-		        	solicitacao.setRascunho(true);
-		        	solicitacao.salvar(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular());
-		        	solicitacao.setRascunho(false);
-		        	
-		        	//Edson: para evitar que o JPA tente salvar a solicitação por causa dos próximos set's chamados
-		        	if (solicitacao.getAcordos() != null)
-						solicitacao.getAcordos().size();
-			        em().detach(solicitacao);
-		        
-		        } catch(AplicacaoException ae){
-		        	solicitacao.setCadastrante(getCadastrante());
-		        	solicitacao.setLotaCadastrante(getLotaCadastrante());
-		        	solicitacao.setTitular(getTitular());
-		        	solicitacao.setLotaTitular(getLotaTitular());
-		        	solicitacao.completarPreenchimento();
-		        }
-		        if (item != null && !item.equals(""))
-		        	solicitacao.setItemConfiguracao((SrItemConfiguracao)SrItemConfiguracao.AR.find("bySiglaItemConfiguracaoAndHisDtFimIsNull", item).first());
-		        if (acao != null && !acao.equals(""))
-		        	solicitacao.setAcao((SrAcao)SrAcao.AR.find("bySiglaAcaoAndHisDtFimIsNull", acao).first());
-		        if (descricao != null && !descricao.equals(""))
-		        	solicitacao.setDescricao(descricao);
-			} 
+			solicitacao = new SrSolicitacao();
+	        try{
+	        	so.assertAcesso(SALVAR_SOLICITACAO_AO_ABRIR);
+	        	solicitacao.setRascunho(true);
+	        	solicitacao.salvar(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular());
+	        	solicitacao.setRascunho(false);
+	        	
+	        	//Edson: para evitar que o JPA tente salvar a solicitação por causa dos próximos set's chamados
+	        	if (solicitacao.getAcordos() != null)
+					solicitacao.getAcordos().size();
+		        em().detach(solicitacao);
+	        
+	        } catch(AplicacaoException ae){
+	        	solicitacao.setCadastrante(getCadastrante());
+	        	solicitacao.setLotaCadastrante(getLotaCadastrante());
+	        	solicitacao.setTitular(getTitular());
+	        	solicitacao.setLotaTitular(getLotaTitular());
+	        	solicitacao.completarPreenchimento();
+	        }
+	        if (item != null && !item.equals(""))
+	        	solicitacao.setItemConfiguracao((SrItemConfiguracao)SrItemConfiguracao.AR.find("bySiglaItemConfiguracaoAndHisDtFimIsNull", item).first());
+	        if (acao != null && !acao.equals(""))
+	        	solicitacao.setAcao((SrAcao)SrAcao.AR.find("bySiglaAcaoAndHisDtFimIsNull", acao).first());
+	        if (descricao != null && !descricao.equals(""))
+	        	solicitacao.setDescricao(descricao);
 						
 			//Edson: O deduzir(), o setItem(), o setAcao() e o asociarPrioridade() deveriam ser chamados dentro da própria solicitação pois é responsabilidade 
 			//da própria classe atualizar os seus atributos para manter consistência após a entrada de um dado. 

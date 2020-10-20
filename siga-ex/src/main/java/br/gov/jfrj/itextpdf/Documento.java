@@ -221,7 +221,7 @@ public class Documento {
 			Set<ExMovimentacao> movsAssinatura, Date dtDoc) {
 		ArrayList<String> assinantes = new ArrayList<String>();
 		for (ExMovimentacao movAssinatura : movsAssinatura) {
-			if(!Prop.isGovSP() || movAssinatura.getCadastrante().getId().equals(movAssinatura.getSubscritor().getId())) {
+			if(movAssinatura.getCadastrante().getId().equals(movAssinatura.getSubscritor().getId())) {
 				String s;
 				Date dataDeInicioDeObrigacaoExibirRodapeDeAssinatura=null;
 				if (movAssinatura.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)) {
@@ -578,13 +578,21 @@ public class Documento {
 				}
 	
 				if (cancelado) {
-					tarjar("CANCELADO", over, helv, r);
+					if (SigaMessages.isSigaSP()) {
+						tarjar("SEM EFEITO", over, helv, r);
+					} else {
+						tarjar("CANCELADO", over, helv, r);
+					}
 				} else if (rascunho && copia) {
 					tarjar("CÓPIA DE MINUTA", over, helv, r);
 				} else if (rascunho) {
 					tarjar("MINUTA", over, helv, r);
 				} else if (semEfeito) {
-					tarjar("SEM EFEITO", over, helv, r);
+					if (SigaMessages.isSigaSP()) {
+						tarjar("CANCELADO", over, helv, r);
+					} else {
+						tarjar("SEM EFEITO", over, helv, r);
+					}
 				} else if (copia) {
 					tarjar("CÓPIA", over, helv, r);
 				} else if (SigaMessages.isSigaSP() && ("treinamento".equals(Prop.get("/siga.ambiente"))) ) {

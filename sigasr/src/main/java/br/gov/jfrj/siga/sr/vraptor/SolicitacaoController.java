@@ -109,7 +109,7 @@ public class SolicitacaoController extends SrController {
 	}
 	
 	@Inject
-    public SolicitacaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em,  SrValidator srValidator, Validator validator) {
+    public SolicitacaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em,  SrValidator srValidator, Validator validator) throws Throwable {
         super(request, result, dao, so, em, srValidator);
         
         result.on(AplicacaoException.class).forwardTo(this).appexception();

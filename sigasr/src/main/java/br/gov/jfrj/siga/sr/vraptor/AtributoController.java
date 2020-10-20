@@ -45,7 +45,7 @@ public class AtributoController extends SrController {
 	}
 	
 	@Inject
-	public AtributoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em, SrValidator srValidator) {
+	public AtributoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em, SrValidator srValidator) throws Throwable {
 		super(request, result, CpDao.getInstance(), so, em, srValidator);
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();

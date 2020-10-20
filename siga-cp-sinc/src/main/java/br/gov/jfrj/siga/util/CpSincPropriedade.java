@@ -118,10 +118,7 @@ public class CpSincPropriedade extends ModeloPropriedade {
 		return this.obterPropriedade("servidor.smtp.starttls.enable");
 	}
 	
-	public String servidorSmtpDebug  ( ) throws Exception {
-		return this.obterPropriedade("servidor.smtp.debug");
-	}
-	
+
 	public String getPrefixoModulo() {
 		return "siga.cp";
 	}
@@ -131,6 +128,14 @@ public class CpSincPropriedade extends ModeloPropriedade {
 	}
 	public void setCacheUseQueryCache(Boolean b) throws Exception {
 		this.setPropriedade("cache.use_query_cache",b.toString());
+	}
+	public String servidorSmtpDebug() {
+		// TODO Auto-generated method stub
+		try {
+			return this.obterPropriedade("servidor.smtp.debug");
+		} catch (Exception e) {
+			return "false";
+		}
 	}
 
 }

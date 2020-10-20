@@ -2256,4 +2256,17 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		}
 		return false;
 	}
+	
+	/**
+	 * Verifica se exibe o conteudo do documento no histórico do acompanhamento do protocolo
+	 * 
+	 * @return
+	 */
+	public boolean getPodeExibirNoAcompanhamento() {
+		Set<ExMovimentacao> movs = getMovsNaoCanceladas(ExTipoMovimentacao
+				.TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO);
+		if (!movs.isEmpty())
+			return true;
+		return false;
+	}
 }

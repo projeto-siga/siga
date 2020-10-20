@@ -122,14 +122,14 @@ public class CorreioSinc {
 		props.put("mail.smtp.host", servidorEmail);
 		props.put("mail.host", servidorEmail);
 		props.put("mail.mime.charset", "UTF-8");
-        props.put("mail.smtp.starttls.enable", Boolean.valueOf(prop.servidorSmtpStarttlsEnable()));
+        props.put("mail.smtp.starttls.enable", prop.servidorSmtpStarttlsEnable());
 
 		// Cria sessão. setDebug(true) é interessante pois
 		// mostra os passos do envio da mensagem e o
 		// recebimento da mensagem do servidor no console.
 		Session session = null;
 		if (Boolean.valueOf(prop.servidorSmtpAuth())) {
-			props.put("mail.smtp.auth", true);
+			props.put("mail.smtp.auth", "true");
 			final String usuario = prop.servidorSmtpAuthUsuario();
 			final String senha = prop.servidorSmtpAuthSenha();
 			session = Session.getInstance(props, new Authenticator() {
@@ -141,7 +141,7 @@ public class CorreioSinc {
 			session = Session.getInstance(props);
 		}
 
-		final boolean debug = Boolean.parseBoolean("false");
+		final boolean debug = Boolean.parseBoolean(prop.servidorSmtpDebug());
 		// final boolean debug = Boolean.parseBoolean(Mensagens
 		// .getString("servidor.smtp.debug"));
 		session.setDebug(debug);

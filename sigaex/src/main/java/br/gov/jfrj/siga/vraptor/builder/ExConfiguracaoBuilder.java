@@ -119,7 +119,10 @@ public final class ExConfiguracaoBuilder {
 			config.setExPapel(dao.consultar(idPapel,
 					ExPapel.class, false));
 		} else
-			config.setExNivelAcesso(null);
+			// Creio q. esse set esteja errado
+			//config.setExNivelAcesso(null);
+			config.setExPapel(null);
+			
 
 		if (idSituacao != null && idSituacao != 0) {
 			config.setCpSituacaoConfiguracao(dao.consultar(idSituacao,

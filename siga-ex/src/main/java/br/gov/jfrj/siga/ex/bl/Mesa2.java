@@ -255,7 +255,7 @@ public class Mesa2 {
 		SOBRESTADO(31, "Sobrestado", "fas fa-hourglass-start", "",
 				GrupoDeMarcadorEnum.ACOMPANHANDO),
 		//
-		SEM_EFEITO(32, "Sem Efeito", "fas fa-power-off", "",
+		SEM_EFEITO(32, SigaMessages.getMessage("situacao.cancelado.mesa"), "fas fa-power-off", "",
 				GrupoDeMarcadorEnum.NENHUM),
 
 		//

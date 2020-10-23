@@ -574,6 +574,13 @@
 								<button type="button" name="voltar" onclick="javascript: history.back();" class="btn btn-info ${hide_only_TRF2}" accesskey="r">Volta<u>r</u></button>
 							</c:if>
 						</c:if>
+<%-- 						<c:if test='${exDocumentoDTO.modelo.exFormaDocumento.descrFormaDoc == "Despacho"}'> --%>
+<!-- 							<span class="form-check-inline ml-4"> -->
+<!-- 								<input type="checkbox" name="exDocumentoDTO.isExibirNoAcompanhamento" class="form-check-input"  -->
+<%-- 									<c:if test="${exDocumentoDTO.isExibirNoAcompanhamento}">checked</c:if> /> --%>
+<!-- 								<label class="form-check-label" for="exDocumentoDTO.isExibirNoAcompanhamento">Disponibilizar ao interessado</label> -->
+<!-- 							</span> -->
+<%-- 						</c:if> --%>
 					</div>
 				</div>
 			</form>

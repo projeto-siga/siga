@@ -228,6 +228,8 @@ public class ExDocumentoDTO {
 	
 	private List<ExNivelAcesso> listaNivelAcesso;
 
+	private boolean isExibirNoAcompanhamento;
+
 	public ExDocumentoDTO() {
 		classificacaoSel = new ExClassificacaoSelecao();
 		destinatarioSel = new DpPessoaSelecao();
@@ -1023,6 +1025,18 @@ public class ExDocumentoDTO {
     
     public List<ExNivelAcesso> getListaNivelAcesso() {
 		return listaNivelAcesso;
+	}
+
+	public boolean isExibirNoAcompanhamento() {
+		return isExibirNoAcompanhamento;
+	}
+
+	public boolean getIsExibirNoAcompanhamento() {
+		return isExibirNoAcompanhamento;
+	}
+
+	public void setIsExibirNoAcompanhamento(boolean podeExibirNoAcompanhamento) {
+		this.isExibirNoAcompanhamento = podeExibirNoAcompanhamento;
 	}
 
 }

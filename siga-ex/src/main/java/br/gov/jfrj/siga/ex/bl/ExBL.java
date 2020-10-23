@@ -7486,5 +7486,29 @@ public class ExBL extends CpBL {
 					+ (doc.getSubscritorString() != null ? " de " + doc.getSubscritorString() : ""));
 	}
 
+	public void disponibilizarAoInteressado(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, 
+			final ExMobil mob, final DpPessoa titular) throws AplicacaoException {
+
+		Set<ExMovimentacao> movs = mob.getMovsNaoCanceladas(ExTipoMovimentacao
+				.TIPO_MOVIMENTACAO_DISPONIBILIZAR_AO_INTERESSADO);
+		if (!movs.isEmpty())
+			throw new AplicacaoException("Disponibilização ao interessado no acompanhamento do protocolo já foi solicitada anteriormente.");
+		
+		try {						
+			iniciarAlteracao();
+
+			final ExMovimentacao mov = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DISPONIBILIZAR_AO_INTERESSADO, 
+					cadastrante, lotaCadastrante, mob, dao().dt(), null, null, titular, null, dao().dt());
+
+			gravarMovimentacao(mov);
+
+			concluirAlteracao(mov.getExMobil());
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro ao permitir a exibição do documento no acompanhamento do protocolo.", 0, e);
+		}
+	}
+
+	
 }
 

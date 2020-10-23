@@ -4959,5 +4959,74 @@ public class ExMovimentacaoController extends ExController {
 
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
+
+	@Get("/app/expediente/mov/disponibilizar_ao_interessado")
+	public void disponibilizarAoInteressado(final String sigla) {					
+		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder
+				.novaInstancia();
+
+		final ExMovimentacao mov = builder.construir(dao());
+
+		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+
+		buscarDocumento(documentoBuilder);
+		
+		mov.setDtMov(dao().dt());
+		mov.setLotaTitular(getLotaTitular());
+		mov.setTitular(getTitular());
+		String siglaRetorno = sigla;
+
+		if (documentoBuilder.getMob().getDoc().getExMobilPai() != null) {
+			siglaRetorno = documentoBuilder.getMob().getDoc().getExMobilPai().getSigla();
+		}
+			
+		try {	
+			Ex.getInstance()
+					.getBL()
+					.disponibilizarAoInteressado(getCadastrante(), getLotaTitular(),
+							documentoBuilder.getMob(), mov.getTitular());
+	
+		} catch (AplicacaoException e) {
+			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
+		}
+
+		ExDocumentoController.redirecionarParaExibir(result, siglaRetorno);
+	}
+	
+	@Get("/app/expediente/mov/desfazer_disponibilizar_ao_interessado")
+	public void desfazerDisponibilizarAoInteressado(final Long id) throws Exception {					
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+				.novaInstancia().setId(id);
+		buscarDocumento(builder);
+		final ExMobil mob = builder.getMob();
+		String siglaRetorno = mob.getSigla();
+
+		if (mob.getDoc().getExMobilPai() != null) {
+			siglaRetorno = mob.getDoc().getExMobilPai().getSigla();
+		}
+		
+
+		final ExMovimentacao mov = dao().consultar(id, ExMovimentacao.class,
+				false);
+
+		if (mov == null 
+				|| !mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DISPONIBILIZAR_AO_INTERESSADO) 
+				|| mov.isCancelada()) {
+			throw new AplicacaoException("Não existe a disponibilização ao interessado a ser cancelada.");
+		}
+		
+		try {
+			Ex.getInstance()
+			.getBL()
+			.cancelar(getTitular(), getLotaTitular(), builder.getMob(),
+					mov, null, null, null,
+					"Disponibilização ao Interessado");
+		} catch (final Exception e) {
+			throw e;
+		}
+
+		ExDocumentoController.redirecionarParaExibir(result, siglaRetorno);
+	}
 	
 }

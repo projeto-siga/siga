@@ -464,6 +464,7 @@ public class SigaCpSinc {
 	public static void main(String[] args) throws Exception {
 		SigaCpSinc sinc = new SigaCpSinc(args);
 		sinc.run();
+		System.exit(-1);
 	}
 
 	

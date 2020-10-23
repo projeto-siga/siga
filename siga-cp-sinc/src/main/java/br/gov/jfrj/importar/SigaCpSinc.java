@@ -74,10 +74,6 @@ import net.sf.ehcache.CacheManager;
 
 public class SigaCpSinc {
 
-	// a rotina do Markenson está fazendo coisas demais
-	// a rotina de sync está atribuindo um nível de dependencia estranho para
-	// renato (8)
-
 	private static boolean modoLog = false;
 	protected static int maxSinc = -1;
 
@@ -159,12 +155,11 @@ public class SigaCpSinc {
 	//
 	@SuppressWarnings("static-access")
 	public void gravar(Date dt) throws Exception {
-		// List<Item> list;
+
 		Sincronizador sinc = new Sincronizador();
 		try {
 			sinc.religarListaPorIdExterna(setNovo);
 			sinc.setSetNovo(setNovo);
-			// sinc.religarListaPorIdExterna(setAntigo);
 			sinc.setSetAntigo(setAntigo);
 
 			// verifica se as pessoas possuem lotação
@@ -267,7 +262,6 @@ public class SigaCpSinc {
 		CpDao.getInstance().em().getTransaction().commit();
 		statusErro = 0;
 		log("Total de alterações: " + list.size());
-		// ((GenericoHibernateDao) dao).getSessao().flush();
 	}
 
 	/**
@@ -464,6 +458,7 @@ public class SigaCpSinc {
 	public static void main(String[] args) throws Exception {
 		SigaCpSinc sinc = new SigaCpSinc(args);
 		sinc.run();
+		System.exit(-1);
 	}
 
 	
@@ -482,15 +477,6 @@ public class SigaCpSinc {
  		properties.put("c3p0.max_statements", prop.c3poMaxStatements());
  		properties.put("cache.use_second_level_cache", "false");
  		properties.put("cache.use_query_cache", "false");
- 	
-
-		// persistenceMap.put("javax.persistence.jdbc.url", "<url>");
-		// persistenceMap.put("javax.persistence.jdbc.user", "<username>");
-		// persistenceMap.put("javax.persistence.jdbc.password", "<password>");
-		// persistenceMap.put("javax.persistence.jdbc.driver", "<driver>");
-		// <property name="jboss.entity.manager.jndi.name"
-		// value="java:/EntityManager/simpledb"/>
-
 		properties.put("hibernate.jdbc.use_streams_for_binary", "true");
 		
 
@@ -810,25 +796,8 @@ public class SigaCpSinc {
 		boolean fDocumentoCompleto = false;
 
 		try {
-			// Mensagens.getString("url.origem")
-			/*
-			 * Código antigo (passou para )superior.
-			 * 
-			 * String urlOrigem = ""; if (this.url.startsWith("-url")) urlOrigem
-			 * = this.url.substring(5);
-			 * 
-			 * else urlOrigem = Mensagens.getString("url.".concat(this.url
-			 * .substring(1)));
-			 * 
-			 * URL urlMumps = new URL(urlOrigem);
-			 * 
-			 * URLConnection connMumps = urlMumps.openConnection();
-			 * connMumps.setReadTimeout(0);
-			 */
+
 			parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
-			// BufferedReader xmlReader = new BufferedReader(new
-			// InputStreamReader(connMumps.getInputStream()));
-			// parser.setInput(xmlReader);
 			parser.setInput(in, null);
 
 			while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {
@@ -1086,27 +1055,13 @@ public class SigaCpSinc {
 			pessoa.setIdExterna(parseStr(parser, "id"));
 			String situacaoFuncPessoa = obterSituacaoPessoaPelaDescricao(
 					parseStr(parser, "situacao").trim(), parseStr(parser, "id"));
-			// A unicidade da ID somente é verificada para os ATIVOS
-			// (situacao=1)
-			/*
-			 * if ("1".equals(situacaoFuncPessoa) ) {
-			 * criarUnicidade(cpOrgaoUsuario.getSiglaOrgaoUsu(), "pessoa",
-			 * "idExterna", parseStr(parser, "id"), parseStr(parser, "sigla"));
-			 * }
-			 */
+
 			try {
 				pessoa.setCpfPessoa(parseLong(parser, "cpf"));
 			} catch (Exception ex) {
 				pessoa.setCpfPessoa(parseLong(parser, "id"));
 			}
-			// A unicidade do CPF somente é verificada para os ATIVOS
-			// (situacao=1)
-			/*
-			 * if ("1".equals(situacaoFuncPessoa ) ) {
-			 * criarUnicidade(cpOrgaoUsuario.getSiglaOrgaoUsu(), "pessoa",
-			 * "cpf", pessoa.getCpfPessoa().toString(), parseStr( parser,
-			 * "id")); }
-			 */
+
 			pessoa.setNomePessoa(parseStr(parser, "nome"));
 			Date dtNascimento = parseData(parser, "dtNascimento");
 			if (dtNascimento == null)

@@ -6,20 +6,18 @@ import javax.persistence.EntityManager;
 
 import br.com.caelum.vraptor.Accepts;
 import br.com.caelum.vraptor.AroundCall;
-import br.com.caelum.vraptor.InterceptionException;
 import br.com.caelum.vraptor.Intercepts;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.controller.ControllerMethod;
-import br.com.caelum.vraptor.core.InterceptorStack;
-import br.com.caelum.vraptor.interceptor.Interceptor;
+import br.com.caelum.vraptor.interceptor.InterceptorMethodParametersResolver;
 import br.com.caelum.vraptor.interceptor.SimpleInterceptorStack;
+import br.com.caelum.vraptor.jpa.JPATransactionInterceptor;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.Sr;
-import br.gov.jfrj.siga.vraptor.ParameterOptionalLoaderInterceptor;
 
 @RequestScoped
-@Intercepts(before = { 	ParameterOptionalLoaderInterceptor.class })
+@Intercepts(before = { 	InterceptorMethodParametersResolver.class, JPATransactionInterceptor.class })
 public class ContextInterceptor  {
 	private EntityManager em;
 	

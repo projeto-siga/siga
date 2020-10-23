@@ -1697,9 +1697,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         if (getDtOrigem() == null)
             setDtOrigem(new Date());
 
-        if (getOrgaoUsuario() == null || getOrgaoUsuario().getId() == null)
-            setOrgaoUsuario(getLotaSolicitante().getOrgaoUsuario());
-        
+        if(getLotaSolicitante() != null) {
+        	 if (getOrgaoUsuario() == null || getOrgaoUsuario().getId() == null)
+                 setOrgaoUsuario(getLotaSolicitante().getOrgaoUsuario());
+        }
+       
         if (getFormaAcompanhamento() == null)
         	setFormaAcompanhamento(SrFormaAcompanhamento.ABERTURA_ANDAMENTO);
 

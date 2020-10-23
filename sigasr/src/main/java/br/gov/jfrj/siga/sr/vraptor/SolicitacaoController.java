@@ -516,40 +516,56 @@ public class SolicitacaoController extends SrController {
 			}
 		}
 		else {
-			solicitacao = new SrSolicitacao();
-	        try{
-	        	so.assertAcesso(SALVAR_SOLICITACAO_AO_ABRIR);
-	        	solicitacao.setRascunho(true);
-	        	solicitacao.salvar(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular());
-	        	solicitacao.setRascunho(false);
-	        	
-	        	//Edson: para evitar que o JPA tente salvar a solicitação por causa dos próximos set's chamados
-	        	if (solicitacao.getAcordos() != null)
-					solicitacao.getAcordos().size();
-		        em().detach(solicitacao);
-	        
-	        } catch(AplicacaoException ae){
-	        	solicitacao.setCadastrante(getCadastrante());
-	        	solicitacao.setLotaCadastrante(getLotaCadastrante());
-	        	solicitacao.setTitular(getTitular());
-	        	solicitacao.setLotaTitular(getLotaTitular());
-	        	solicitacao.completarPreenchimento();
-	        }
-	        if (item != null && !item.equals(""))
-	        	solicitacao.setItemConfiguracao((SrItemConfiguracao)SrItemConfiguracao.AR.find("bySiglaItemConfiguracaoAndHisDtFimIsNull", item).first());
-	        if (acao != null && !acao.equals(""))
-	        	solicitacao.setAcao((SrAcao)SrAcao.AR.find("bySiglaAcaoAndHisDtFimIsNull", acao).first());
-	        if (descricao != null && !descricao.equals(""))
-	        	solicitacao.setDescricao(descricao);
+			if(solicitacao == null || solicitante == null ) {
+				
+				solicitacao = new SrSolicitacao();
+		        try{
+		        	so.assertAcesso(SALVAR_SOLICITACAO_AO_ABRIR);
+		        	solicitacao.setRascunho(true);
+		        	solicitacao.salvar(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular());
+		        	solicitacao.setRascunho(false);
+		        	
+		        	//Edson: para evitar que o JPA tente salvar a solicitação por causa dos próximos set's chamados
+		        	if (solicitacao.getAcordos() != null)
+						solicitacao.getAcordos().size();
+			        em().detach(solicitacao);
+		        
+		        } catch(AplicacaoException ae){
+		        	solicitacao.setCadastrante(getCadastrante());
+		        	solicitacao.setLotaCadastrante(getLotaCadastrante());
+		        	solicitacao.setTitular(getTitular());
+		        	solicitacao.setLotaTitular(getLotaTitular());
+		        	solicitacao.completarPreenchimento();
+		        }
+		        if (item != null && !item.equals(""))
+		        	solicitacao.setItemConfiguracao((SrItemConfiguracao)SrItemConfiguracao.AR.find("bySiglaItemConfiguracaoAndHisDtFimIsNull", item).first());
+		        if (acao != null && !acao.equals(""))
+		        	solicitacao.setAcao((SrAcao)SrAcao.AR.find("bySiglaAcaoAndHisDtFimIsNull", acao).first());
+		        if (descricao != null && !descricao.equals(""))
+		        	solicitacao.setDescricao(descricao);
+			}
 						
 			//Edson: O deduzir(), o setItem(), o setAcao() e o asociarPrioridade() deveriam ser chamados dentro da própria solicitação pois é responsabilidade 
 			//da própria classe atualizar os seus atributos para manter consistência após a entrada de um dado. 
 			if (solicitacao.getLocal() == null || 
 					(solicitacao.getSolicitante() != null && !solicitacao.getSolicitante().getId().equals(solicitante)))
 				solicitacao.deduzirLocalRamalEMeioContato();
-			if (solicitacao.getItemConfiguracao() != null && !solicitacao.getItensDisponiveis().contains(solicitacao.getItemConfiguracao())){
-				solicitacao.setItemConfiguracao(null);
+			
+			
+			if (solicitacao.getItemConfiguracao() != null) {
+				SrItemConfiguracao srItemConf = solicitacao.getItemConfiguracao();
+				boolean found = false;
+				for(SrItemConfiguracao itemConf : solicitacao.getItensDisponiveis()) {
+					if(srItemConf.getIdItemConfiguracao().equals(itemConf.getIdItemConfiguracao())) {
+						found = true;
+					}
+				}
+				if(!found) {
+					solicitacao.setItemConfiguracao(null);
+				}
 			}
+			
+			
 			if (solicitacao.getAcao() != null){
 				boolean containsAcao = false;
 				for (List<SrTarefa> tarefas : solicitacao.getAcoesEAtendentes().values())

@@ -222,7 +222,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			query.append(" and sol.lotaSolicitante.idLotacaoIni = "
 					+ getLotaSolicitante().getIdInicial());
 		
-		if (Filtros.deveAdicionar(getItemConfiguracao())){
+		if (Filtros.deveAdicionar(getItemConfiguracao()) && getItemConfiguracao().getItemInicial() != null) {
 			query.append(" and ultMov.itemConfiguracao.hisIdIni = "
 					+ getItemConfiguracao().getItemInicial().getIdItemConfiguracao());
 		}

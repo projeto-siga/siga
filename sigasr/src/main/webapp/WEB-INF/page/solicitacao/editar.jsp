@@ -56,7 +56,10 @@
 		});
 
 		function postbackURL(){
-			return '${linkTo[SolicitacaoController].editar}?'+$('#formSolicitacao').serialize();
+			toRemove =  ['solicitacao.solicitante.descricao','solicitacao.solicitante.sigla', 'solicitacao.cadastrante.sigla', 'solicitacao.interlocutor.descricao', 'solicitacao.interloculor.sigla'];			
+			url = '${linkTo[SolicitacaoController].editar}?'+$('#formSolicitacao').serialize();					
+			return url.split('&').filter(e => toRemove.indexOf(e.substring(0,e.indexOf('='))) < 0).join('&');
+			//return url;
 		}
 
 		function submitURL() {

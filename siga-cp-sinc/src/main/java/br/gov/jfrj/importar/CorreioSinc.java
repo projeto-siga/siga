@@ -122,14 +122,15 @@ public class CorreioSinc {
 		props.put("mail.smtp.host", servidorEmail);
 		props.put("mail.host", servidorEmail);
 		props.put("mail.mime.charset", "UTF-8");
-        props.put("mail.smtp.starttls.enable", Boolean.valueOf(prop.servidorSmtpStarttlsEnable()));
+        props.put("mail.smtp.starttls.enable", prop.servidorSmtpStarttlsEnable());
+        
 
 		// Cria sessão. setDebug(true) é interessante pois
 		// mostra os passos do envio da mensagem e o
 		// recebimento da mensagem do servidor no console.
 		Session session = null;
 		if (Boolean.valueOf(prop.servidorSmtpAuth())) {
-			props.put("mail.smtp.auth", true);
+			props.put("mail.smtp.auth", "true");
 			final String usuario = prop.servidorSmtpAuthUsuario();
 			final String senha = prop.servidorSmtpAuthSenha();
 			session = Session.getInstance(props, new Authenticator() {
@@ -141,12 +142,11 @@ public class CorreioSinc {
 			session = Session.getInstance(props);
 		}
 
-		final boolean debug = Boolean.parseBoolean("false");
-		// final boolean debug = Boolean.parseBoolean(Mensagens
-		// .getString("servidor.smtp.debug"));
+		final boolean debug = Boolean.parseBoolean(prop.servidorSmtpDebug());
+
 		session.setDebug(debug);
-		// Cria mensagem e seta alguns valores que constituem
-		// os seus headers.
+	
+		// Cria mensagem e seta alguns valores que constituem os seus headers.
 		final Message msg = new MimeMessage(session);
 
 		if (destinatarios.length == 1) {
@@ -178,7 +178,6 @@ public class CorreioSinc {
 		
 
 		if (conteudoHTML == null) {
-			// msg.setText(conteudo);
 			msg.setSubject(assunto);
 			msg.setContent(conteudo, "text/plain;charset=UTF-8");
 		} else {
@@ -205,7 +204,6 @@ public class CorreioSinc {
 		}
 
 		// Envia mensagem.
-		// Transport.send(msg);
 
 		Transport tr = new br.gov.jfrj.siga.base.SMTPTransport(session,
 				null);

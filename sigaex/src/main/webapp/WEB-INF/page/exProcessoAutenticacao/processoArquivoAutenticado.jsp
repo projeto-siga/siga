@@ -130,7 +130,12 @@
 											<td align="left">${dt}</td>
 											<td align="left">${mov.descrTipoMovimentacao} 
 												<c:if test="${mov.idTpMov == 12}">
-													<span style="font-size: .8rem;color: #9e9e9e;">| documento juntado ${mov.exMobil}</span>
+													<span style="font-size: .8rem;color: #9e9e9e;"
+														<c:if test="${mov.exMobil.podeExibirNoAcompanhamento}">
+															class="showConteudoDoc" rel="popover" data-title="${mov.exMobil}" 
+	    													data-content="" onmouseenter="exibeDoc(this);"
+	    												</c:if>
+														>| documento juntado ${mov.exMobil}</span>
 												</c:if>
 											</td>
 											<td align="left">${mov.lotaCadastrante.sigla} </td>
@@ -157,3 +162,46 @@
 	</div>
 	<tags:assinatura_rodape />
 </siga:pagina>
+<script type="text/javascript">
+	function exibeDoc(elem) {
+    	var timeOut;
+		$(elem).popover({
+			trigger: "hover",
+			html : true,
+    	})
+    	timeOut = setTimeout(setDataContent, 1000, elem);
+	}
+	
+   	function setDataContent(elem) {
+   	   	if ($(elem).attr('data-content') === "" 
+				&& ($("." + $(elem).context.className + ":hover")).length > 0) {
+			sigladoc = $(elem).attr("data-title").replace("/", "").replace("-", "");
+			var div_id = "tmp-id-" + sigladoc;
+			$(elem).attr("data-content", '<div id="'+ div_id +'" class="spinner-border"></div>');
+			$(elem).popover('show');
+			conteudodoc = exibirConteudoDoc(div_id, sigladoc, elem);
+		}
+	}
+	
+	function exibirConteudoDoc(div_id, sigla, elem) {
+		$.ajax({
+		    url: "/sigaex/api/v1/doc/"+ sigla + "/html",
+		    contentType: "application/json",
+		    headers: {"Authorization": "${jwt}"},
+		    dataType: 'json',
+		    success: function(result) {
+			    conteudoDoc = new DOMParser().parseFromString(result.html, "text/html");
+				conteudo = conteudoDoc.getElementsByTagName("BODY")[0].innerText.substring(0, 500);
+				$('#'+div_id).removeClass("spinner-border");
+				$('#'+div_id).html(conteudo);
+				$(elem).attr("data-content", conteudo);
+		    },				
+		    error: function (response, status, error) {
+	        	msgErro = "Ocorreu um erro na solicitação: " + response.responseJSON.errormsg;
+				$('#'+div_id).removeClass("spinner-border");
+				$('#'+div_id).html(msgErro);
+				$(elem).attr("data-content", "");
+	    	}
+	    });
+	}
+</script>

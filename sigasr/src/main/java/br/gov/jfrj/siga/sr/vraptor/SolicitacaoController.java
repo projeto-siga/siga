@@ -567,6 +567,8 @@ public class SolicitacaoController extends SrController {
 			
 			
 			if (solicitacao.getAcao() != null){
+				if(solicitacao.getAcao().getHisIdIni() == null)
+					solicitacao.setAcao(SrAcao.AR.findById(solicitacao.getAcao().getIdAcao()));
 				boolean containsAcao = false;
 				for (List<SrTarefa> tarefas : solicitacao.getAcoesEAtendentes().values())
 					for (SrTarefa t : tarefas)
@@ -600,6 +602,9 @@ public class SolicitacaoController extends SrController {
         	filtro.setSolicitante(solicitacao.getSolicitante());
         	filtro.setItemConfiguracao(solicitacao.getItemConfiguracao());
         	filtro.setAcao(solicitacao.getAcao());
+        }
+        if(solicitacao.getAcao() != null && solicitacao.getAcao().getTituloAcao() == null) {
+        	solicitacao.setAcao(SrAcao.AR.findById(solicitacao.getAcao().getIdAcao()));
         }
         result.include("solicitacoesRelacionadas", filtro.buscarSimplificado(getTitular()));
         result.include("filtro", filtro);

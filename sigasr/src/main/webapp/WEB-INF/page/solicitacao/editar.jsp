@@ -55,10 +55,15 @@
 			$('#prioridade').text($('#gravidade option:selected').attr('prioridade'));
 		});
 
-		function postbackURL(){
-			toRemove =  ['solicitacao.solicitante.descricao','solicitacao.solicitante.sigla', 'solicitacao.cadastrante.sigla', 'solicitacao.interlocutor.descricao', 'solicitacao.interloculor.sigla'];			
-			url = '${linkTo[SolicitacaoController].editar}?'+$('#formSolicitacao').serialize();					
+		function filtraURL(url) {
+			toRemove =  ['solicitacao.solicitante.descricao','solicitacao.solicitante.sigla', 'solicitacao.cadastrante.sigla', 'solicitacao.interlocutor.descricao', 'solicitacao.interloculor.sigla'];
 			return url.split('&').filter(e => toRemove.indexOf(e.substring(0,e.indexOf('='))) < 0).join('&');
+		}
+		
+		function postbackURL(){
+			return filtraURL('${linkTo[SolicitacaoController].editar}?'+$('#formSolicitacao').serialize());
+			//url = '${linkTo[SolicitacaoController].editar}?'+$('#formSolicitacao').serialize();					
+			//return url.split('&').filter(e => toRemove.indexOf(e.substring(0,e.indexOf('='))) < 0).join('&');
 			//return url;
 		}
 
@@ -335,7 +340,8 @@
 						if (campo.val() && (!filtro.length || filtro.is(":checked")))
 							url += '&' + 'filtro.'+camposFiltraveis[i]+'.id=' + campo.val();
 					}
-					SetInnerHTMLFromAjaxResponse(url,"divInternaSolicitacoesRelacionadas");
+					
+					SetInnerHTMLFromAjaxResponse(filtraURL(url),"divInternaSolicitacoesRelacionadas");
 				}
 				carregar();
 			</script>

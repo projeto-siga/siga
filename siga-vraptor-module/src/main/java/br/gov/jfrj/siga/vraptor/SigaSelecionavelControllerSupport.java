@@ -24,6 +24,7 @@
  */
 package br.gov.jfrj.siga.vraptor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -65,6 +66,40 @@ public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, 
 	private String sigla;
 
 	private Integer tamanho;
+	
+	
+	protected void aBuscarJson(String sigla) throws Exception{
+		Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
+	
+		if (sigla == null)
+			sigla = "";
+		
+		aBuscar(sigla, "");
+		
+		try {
+			RetornoJson l = new RetornoJson();
+			for (Selecionavel s : (List<Selecionavel>) getItens()) {
+				RetornoJsonItem i = new RetornoJsonItem();
+				i.key = Long.toString(s.getId());
+				i.firstLine = s.getSigla();
+				i.secondLine = s.getDescricao();
+				l.list.add(i);
+			}
+			jsonSuccess(l);
+		} catch (Exception e) {
+			jsonError(e);
+		}
+	}
+	
+	protected static class RetornoJson {
+		List<RetornoJsonItem> list = new ArrayList<>();
+	}
+
+	protected static class RetornoJsonItem {
+		String key;
+		String firstLine;
+		String secondLine;
+	}
 
 	protected String aBuscar(String sigla, String postback) throws Exception {
 		if (sigla != null) 

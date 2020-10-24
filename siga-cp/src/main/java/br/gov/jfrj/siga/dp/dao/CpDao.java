@@ -204,13 +204,7 @@ public class CpDao extends ModeloDao {
 	public CpServico acrescentarServico(CpServico srv) {
 		synchronized (CpDao.class) {
 			CpServico srvGravado = null;
-			try {
-				em().getTransaction().begin();
-				srvGravado = gravar(srv);
-				em().getTransaction().commit();
-			} catch (Exception e) {
-				em().getTransaction().rollback();
-			}
+			srvGravado = gravar(srv);
 			cacheServicos.put(srv.getSigla(), srv);
 			return srvGravado;
 		}
@@ -1796,15 +1790,17 @@ public class CpDao extends ModeloDao {
 	}
 
 	public Date consultarDataEHoraDoServidor() {
+		if (ContextoPersistencia.dt() != null)
+			return ContextoPersistencia.dt();
 		String sql = "SELECT sysdate from dual";
 		String dialect = System.getProperty("siga.hibernate.dialect");
 		if (dialect != null && dialect.contains("MySQL"))
 			sql = "SELECT CURRENT_TIMESTAMP";
 		Query query = em().createNativeQuery(sql);
 		query.setFlushMode(FlushModeType.COMMIT);
-		 Date dt = (Date) query.getSingleResult();
-		 ContextoPersistencia.setDt(dt);
-		 return dt; 
+		Date dt = (Date) query.getSingleResult();
+		ContextoPersistencia.setDt(dt);
+		return dt; 
 	}
 
 	public List<CpConfiguracao> consultarConfiguracoesDesde(Date desde) {

@@ -761,8 +761,14 @@ var process = {
 		
 		progressDialog.on('hidden.bs.modal', function () {
 			gAssinando = false;
-			// progressDialog.modal('dispose');
-			$('#progressDialog').remove();
+			try {
+				progressDialog.modal('dispose');
+			} catch (e) {
+			}
+			try {
+				$('#progressDialog').remove();
+			} catch (e) {
+			}
 		});
 	},
 	finalize : function() {

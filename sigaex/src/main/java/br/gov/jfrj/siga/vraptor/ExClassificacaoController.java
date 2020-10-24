@@ -42,6 +42,7 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExTemporalidade;
 import br.gov.jfrj.siga.ex.ExTipoDestinacao;
@@ -153,20 +154,10 @@ public class ExClassificacaoController
 	}
 
 	@Get("app/expediente/classificacao/editar")
-	public ExClassificacao edita(ExClassificacao exClassificacao,
+	public ExClassificacao edita(
 			String codificacao, String acao) throws Exception {
 		assertAcesso(ACESSO_SIGA_DOC_FE_PC);
-		ExClassificacao exClass = null;
-		
-		if (exClassificacao == null) {
-			exClassificacao = new ExClassificacao();
-		}		
-		
-		if (codificacao != null && exClassificacao.getId() == null) {
-			exClass = buscarExClassificacao(codificacao);
-		} else {
-			exClass = exClassificacao;
-		}
+		ExClassificacao exClass = buscarExClassificacao(codificacao);
 
 		if (exClass == null && !acao.equals("nova_classificacao")) {
 			throw new AplicacaoException(
@@ -174,6 +165,7 @@ public class ExClassificacaoController
 							+ codificacao);
 		}
 
+		result.include("exClassificacao", exClass);
 		result.include("listaExTipoDestinacao", getListaExTipoDestinacao());
 		result.include("listaExTemporalidade", getListaExTemporalidade());
 		result.include("idTpDestinacao", -1);
@@ -190,13 +182,14 @@ public class ExClassificacaoController
 		return exClass;
 	}
 
+	@Transacional
 	@Get("app/expediente/classificacao/gravar")
 	public void gravar(ExClassificacao exClassificacao,
 			String codificacaoAntiga, String acao) throws Exception {
 		assertAcesso(ACESSO_SIGA_DOC_FE_PC);
 
-		if (exClassificacao.getCodificacao().length() == 0
-				|| exClassificacao.getDescrClassificacao().length() == 0) {
+		if (Utils.empty(exClassificacao.getCodificacao())
+				|| Utils.empty(exClassificacao.getDescrClassificacao())) {
 			throw new AplicacaoException(
 					"Preencha o código da classificação e a descrição!");
 		}
@@ -211,15 +204,7 @@ public class ExClassificacaoController
 			}
 		}
 
-		dao().iniciarTransacao();
 		try {
-
-			if (exClassificacao.getCodificacao().length() == 0
-					|| exClassificacao.getDescrClassificacao().length() == 0) {
-				throw new AplicacaoException(
-						"Preencha o código da classificação e a descrição!");
-			}
-
 			if (acao.equals("nova_classificacao")) {
 				Ex.getInstance()
 						.getBL()
@@ -259,39 +244,33 @@ public class ExClassificacaoController
 
 			}
 
-			dao().commitTransacao();
 			setMensagem("Classificação salva!");
 			result.redirectTo("editar?codificacao="
 					+ exClassificacao.getCodificacao()
 					+ "&acao=editar_classificacao");
 		} catch (Exception e) {
-			dao().rollbackTransacao();
-			throw new AplicacaoException(
-					"Não foi possível gravar classificação no banco de dados."
-							+ e.getMessage());
+			throw new Exception("Não foi possível gravar classificação no banco de dados.", e);
 		}
 	}
 
+	@Transacional
 	@Get("app/expediente/classificacao/excluir")
 	public void excluir(String codificacao) throws Exception {
 		assertAcesso(ACESSO_SIGA_DOC_FE_PC);
-		dao().iniciarTransacao();
 		try {
 			ExClassificacao exClass;
 			exClass = buscarExClassificacao(codificacao);
 			Ex.getInstance()
 					.getBL()
 					.excluirExClassificacao(exClass, getIdentidadeCadastrante());
-			dao().commitTransacao();
 			result.redirectTo(this).lista();
 		} catch (Exception e) {
-			dao().rollbackTransacao();
-			throw new AplicacaoException(
-					"Não foi possível excluir classificação do banco de dados."
-							+ e.getMessage());
+			throw new Exception(
+					"Não foi possível excluir classificação do banco de dados.", e);
 		}
 	}
 
+	@Transacional
 	@Post("app/expediente/classificacao/gravarVia")
 	public void gravarVia(String acao, String codificacao, Long idVia, String obsVia, Long idDestino, Long idTemporalidadeArqCorr,
 			Long idTemporalidadeArqInterm, Long idDestinacaoFinal) throws Exception {
@@ -393,6 +372,7 @@ public class ExClassificacaoController
 		}
 	}
 
+	@Transacional
 	@Get("app/expediente/classificacao/excluirVia")
 	public void excluirVia(Long idVia, String codificacao, String acao)
 			throws Exception {

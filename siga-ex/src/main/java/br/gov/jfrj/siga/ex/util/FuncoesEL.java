@@ -673,14 +673,6 @@ public class FuncoesEL {
 			DpPessoa cadastrante, DpPessoa titular, DpLotacao lotaCadastrante,
 			DpLotacao lotaTitular) throws Exception {
 
-		// Nato: Nesse caso, o titular ï¿½ considerado o subscritor do
-		// documento.
-		// Nï¿½o sei se isso ï¿½ 100% correto, mas acho que ï¿½ uma abordagem
-		// bastante
-		// razoï¿½vel.
-		// Markenson: Conversando com o Renato, alteramos o titular para o
-		// titular do sistema
-		// e nï¿½o do documento.
 		Ex.getInstance()
 				.getBL()
 				.criarWorkflow(cadastrante,
@@ -993,6 +985,9 @@ public class FuncoesEL {
 		try {
 			HashMap<String, String> headers = new HashMap<String, String>();
 			headers.put("Content-Type", "text/xml;charset=UTF-8");
+			String auth = (String) resource("/siga.freemarker.webservice.password");
+			if (auth != null)
+				headers.put("Authorization", auth);
 			// String s = ConexaoHTTP.get(url, headers, timeout, corpo);
 			// //Reescrito para utilizar o SigaTTP
 			SigaHTTP sigaHTTP = new SigaHTTP();
@@ -1025,10 +1020,22 @@ public class FuncoesEL {
 				.podeAssinarPorComSenha(titular, lotaTitular, mob);
 	}
 
+	public static Boolean deveAssinarComSenha(DpPessoa titular,
+			DpLotacao lotaTitular, ExMobil mob) throws Exception {
+		return Ex.getInstance().getComp()
+				.deveAssinarComSenha(titular, lotaTitular, mob);
+	}
+			
 	public static Boolean podeAssinarMovimentacaoComSenha(DpPessoa titular,
 			DpLotacao lotaTitular, ExMovimentacao mov) throws Exception {
 		return Ex.getInstance().getComp()
 				.podeAssinarMovimentacaoComSenha(titular, lotaTitular, mov);
+	}
+	
+	public static Boolean deveAssinarMovimentacaoComSenha(DpPessoa titular,
+			DpLotacao lotaTitular, ExMovimentacao mov) throws Exception {
+		return Ex.getInstance().getComp()
+				.deveAssinarMovimentacaoComSenha(titular, lotaTitular, mov);
 	}
 
 	public static Boolean podeAutenticarMovimentacaoComSenha(
@@ -1038,6 +1045,16 @@ public class FuncoesEL {
 				.getInstance()
 				.getComp()
 				.podeAutenticarMovimentacaoComSenha(titular, lotaTitular,
+						mov);
+	}
+	
+	public static Boolean deveAutenticarMovimentacaoComSenha(
+			DpPessoa titular, DpLotacao lotaTitular, ExMovimentacao mov)
+			throws Exception {
+		return Ex
+				.getInstance()
+				.getComp()
+				.deveAutenticarMovimentacaoComSenha(titular, lotaTitular,
 						mov);
 	}
 
@@ -1054,6 +1071,16 @@ public class FuncoesEL {
 				.getInstance()
 				.getComp()
 				.podeAutenticarComSenha(titular, lotaTitular,
+						mob);
+	}
+	
+	public static Boolean deveAutenticarComSenha(
+			DpPessoa titular, DpLotacao lotaTitular, ExMobil mob)
+			throws Exception {
+		return Ex
+				.getInstance()
+				.getComp()
+				.deveAutenticarComSenha(titular, lotaTitular,
 						mob);
 	}
 

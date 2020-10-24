@@ -45,9 +45,6 @@ public class VisualizacaoController extends SigaController {
 	public VisualizacaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
-
 		titularSel = new DpPessoaSelecao();	
 		
 		delegadoSel = new DpPessoaSelecao();		

@@ -145,8 +145,8 @@ public class Notificador {
 				else lotacao = mov.getLotaResp();
 					adicionarDestinatariosEmail(mov, destinatariosEmail, null, mov.getResp(), lotacao); /* verificar ExEmailNotificação também*/
 			} catch (Exception e) {
-				throw new AplicacaoException(
-						"Erro ao enviar email de notificação de movimentação.", 0,
+				throw new RuntimeException(
+						"Erro ao enviar email de notificação de movimentação.", 
 						e);
 			}	
 		}

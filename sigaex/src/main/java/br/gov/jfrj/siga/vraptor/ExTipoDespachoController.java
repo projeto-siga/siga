@@ -77,6 +77,7 @@ public class ExTipoDespachoController extends ExController {
 		}
 	}
 
+	@Transacional
 	@Get("app/despacho/tipodespacho/apagar")
 	public void exclui(final Long id) {
 		assertAcesso(CAMINHO_ACESSO);
@@ -94,6 +95,7 @@ public class ExTipoDespachoController extends ExController {
 		}
 	}
 
+	@Transacional
 	@Post("app/despacho/tipodespacho/gravar")
 	public void gravar(final ExTipoDespacho exTipoDespacho) {
 		assertAcesso(CAMINHO_ACESSO);

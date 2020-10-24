@@ -50,7 +50,6 @@ import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
-import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -90,11 +89,13 @@ import br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
 import br.gov.jfrj.siga.hibernate.ext.IMontadorQuery;
+import br.gov.jfrj.siga.hibernate.ext.MontadorQuery;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.persistencia.ExClassificacaoDaoFiltro;
 import br.gov.jfrj.siga.persistencia.ExDocumentoDaoFiltro;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
+import br.gov.jfrj.siga.persistencia.ExModeloDaoFiltro;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class ExDao extends CpDao {
@@ -870,7 +871,7 @@ public class ExDao extends CpDao {
 
 		if (pess != null) {
 			query = em().createNamedQuery("consultarEmailporPessoa");
-			query.setParameter("idPessoaIni", pess.getPessoaInicial());
+			query.setParameter("idPessoaIni", pess.getIdInicial());
 		} else {
 			query = em().createNamedQuery("consultarEmailporLotacao");
 
@@ -1481,7 +1482,7 @@ public class ExDao extends CpDao {
 	public List<ExDocumento> listarDocPendenteAssinatura(DpPessoa pessoa, boolean apenasComSolicitacaoDeAssinatura) {
 		final Query query = em().createNamedQuery(
 				"listarDocPendenteAssinatura" + (apenasComSolicitacaoDeAssinatura ? "ERevisado" : ""));
-		query.setParameter("idPessoaIni", pessoa.getIdPessoaIni());
+		query.setParameter("idPessoaIni", pessoa);
 		return query.getResultList();
 	}
 
@@ -1712,9 +1713,9 @@ public class ExDao extends CpDao {
 				+ " inner join marca.exMobil mobil"
 				+ " where (marca.dtIniMarca is null or marca.dtIniMarca < CURRENT_TIMESTAMP)"
 				+ " and (marca.dtFimMarca is null or marca.dtFimMarca > CURRENT_TIMESTAMP)"
-				+ (titular != null ? " and (marca.dpPessoaIni.idPessoaIni = :titular)"
-						: " and (marca.dpLotacaoIni.idLotacaoIni = :lotaTitular)");
-		if("GOVSP".equals(Prop.get("/siga.local"))) {
+				+ " and (marca.dpPessoaIni.idPessoa = :titular or "
+				+ " (marca.dpPessoaIni.idPessoa = null and marca.dpLotacaoIni.idLotacao = :lotaTitular))";
+		if(Prop.isGovSP()) {
 			q += " and ((mobil.exDocumento.numExpediente is null and marcador = 1) or (mobil.exDocumento.numExpediente is not null))"
 					+ " and marcador <> 10";
 		}
@@ -1725,14 +1726,44 @@ public class ExDao extends CpDao {
 
 		if (titular != null)
 			query.setParameter("titular", titular.getIdPessoaIni());
-		else if (lotaTitular != null)
+		else
+			query.setParameter("titular", null);
+		if (lotaTitular != null)
 			query.setParameter("lotaTitular", lotaTitular.getIdLotacaoIni());
+		else
+			query.setParameter("lotaTitular", null);
 
 		List l = query.getResultList();
  		long tempoTotal = System.nanoTime() - tempoIni;
 		// System.out.println("consultarPorFiltroOtimizado: " + tempoTotal
 		// / 1000000 + " ms -> " + query + ", resultado: " + l);
 		return l;
+	}
+	
+	public List<ExModelo> consultarPorFiltro(
+			final ExModeloDaoFiltro flt) {
+		return consultarPorFiltro(flt, 0, 0);
+	}
+	
+	public List<ExModelo> consultarPorFiltro(
+			final ExModeloDaoFiltro flt, final int offset,
+			final int itemPagina) {
+		CriteriaQuery<ExModelo> q = cb().createQuery(ExModelo.class);
+		Root<ExModelo> c = q.from(ExModelo.class);
+		q.select(c);
+		List<Predicate> whereList = new LinkedList<Predicate>();
+		if(flt.getSigla() != null) {
+			whereList.add(cb().like(c.get("nmMod").as(String.class), "%" + flt.getSigla() + "%"));
+		}
+		Predicate[] whereArray = new Predicate[whereList.size()];
+		whereList.toArray(whereArray);
+		q.where(whereArray);
+			q.orderBy(cb().desc(c.get("nmMod")));
+		return em().createQuery(q).getResultList();
+	}
+
+	public int consultarQuantidade(final ExModeloDaoFiltro flt) {
+		return consultarPorFiltro(flt).size();
 	}
 
 	public List listarDocumentosCxEntradaPorPessoaOuLotacao(DpPessoa titular,

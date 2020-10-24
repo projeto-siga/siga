@@ -313,7 +313,9 @@
 							<tags:assinatura_botoes assinar="true"
 								autenticar="${mov.exTipoMovimentacao.idTpMov==2}"
 								assinarComSenha="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}"
+								assinarComSenhaChecado="${f:deveAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}"
 								autenticarComSenha="${f:podeAutenticarMovimentacaoComSenha(titular,lotaTitular,mov)}"
+								autenticarComSenhaChecado="${f:deveAutenticarMovimentacaoComSenha(titular,lotaTitular,mov)}" 
 								idMovimentacao="${mov.idMov}" />
 						</c:if>
 						<c:if test="${siga_cliente == 'GOVSP'}">

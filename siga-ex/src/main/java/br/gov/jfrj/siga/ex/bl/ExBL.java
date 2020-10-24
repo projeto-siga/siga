@@ -52,6 +52,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.persistence.FlushModeType;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 
@@ -95,6 +96,7 @@ import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.util.SetUtils;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.bluc.service.EnvelopeRequest;
 import br.gov.jfrj.siga.bluc.service.EnvelopeResponse;
@@ -1493,8 +1495,7 @@ public class ExBL extends CpBL {
 			String sMatricula = sNome.split(":")[1];
 			lMatricula = Long.valueOf(sMatricula);
 		} catch (final Exception e) {
-			// throw new AplicacaoException(
-			// "não foi possível obter a matrícula do assinante", 0, e);
+			throw new RuntimeException("não foi possível obter a matrícula do assinante", e);
 		}
 
 		// Verifica se a matrícula confere com o subscritor titular ou com um
@@ -2167,8 +2168,7 @@ public class ExBL extends CpBL {
 				String sMatricula = sNome.split(":")[1];
 				lMatricula = Long.valueOf(sMatricula.replace("-", ""));
 			} catch (final Exception e) {
-				// throw new AplicacaoException(
-				// "não foi possível obter a matrícula do assinante", 0, e);
+				throw new RuntimeException("não foi possível obter a matrícula do assinante", e);
 			}
 
 			// Verifica se a matrícula confere com o subscritor do Despacho ou
@@ -2378,7 +2378,7 @@ public class ExBL extends CpBL {
 			throw new RegraNegocioException(e.getMessage());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao cancelar juntada.", 0, e);
+			throw new RuntimeException("Erro ao cancelar juntada.", e);
 		}
 	}
 
@@ -2834,8 +2834,10 @@ public class ExBL extends CpBL {
 			excluirMovimentacao(mov);
 			if (mob.doc().isPendenteDeAssinatura()
 					&& ((mob.doc().isFisico() && !mob.doc().isFinalizado()) || (mob.doc().isEletronico()
-							&& mob.doc().getAssinaturasEAutenticacoesComTokenOuSenhaERegistros().isEmpty())))
+							&& mob.doc().getAssinaturasEAutenticacoesComTokenOuSenhaERegistros().isEmpty()))) {
 				processar(mob.getExDocumento(), true, false);
+				mob.getExDocumento().armazenar(); 
+			}
 			concluirAlteracao(mov);
 
 		} catch (final Exception e) {
@@ -2944,6 +2946,7 @@ public class ExBL extends CpBL {
 			Set<ExVia> setVias = doc.getSetVias();
 
 			processar(doc, false, false);
+			doc.armazenar();
 
 			doc.setNumPaginas(doc.getContarNumeroDePaginas());
 			
@@ -3283,6 +3286,9 @@ public class ExBL extends CpBL {
 		}
 
 		try {
+			//Nato: Importante restaurar o flush mode para evitar um erro de Can not set java.lang.Long field br.gov.jfrj.siga.cp.CpArquivoBlob.idArqBlob to org.hibernate.action.internal.DelayedPostInsertIdentifier
+			// dao().em().setFlushMode(FlushModeType.AUTO);
+			
 			Date dt = dao().dt();
 
 			// System.out.println(System.currentTimeMillis() + " - INI gravar");
@@ -3302,7 +3308,8 @@ public class ExBL extends CpBL {
 			// Nato: para obter o numero do TMP na primeira gravação
 			boolean primeiraGravacao = false;
 			if (doc.getIdDoc() == null) {
-				doc = salvarDocSemSalvarArq(doc);
+				doc = ExDao.getInstance().gravar(doc);
+				//doc = salvarDocSemSalvarArq(doc);
 				primeiraGravacao = true;
 			}
 
@@ -3380,13 +3387,15 @@ public class ExBL extends CpBL {
 			// Incluir movimentações de definição automática de perfil.
 			if (!doc.isFinalizado())
 				atualizarDefinicaoAutomaticaDePapel(cadastrante, lotaTitular, doc);
-
+			
 			concluirAlteracaoDocComRecalculoAcesso(doc);
-
+			
 			// Finaliza o documento automaticamente se ele for coloborativo
 			if (!primeiraGravacao && doc.isColaborativo() && !doc.isFisico() && !doc.isFinalizado()) {
 				finalizar(cadastrante, lotaTitular, doc);
 			}
+			
+			doc.armazenar();
 			
 			if (doc.getSubscritor() != null) {
 				if (!doc.getCadastrante().equivale(doc.getSubscritor()) && usuarioExternoTemQueAssinar(doc, doc.getSubscritor())) {
@@ -3425,30 +3434,25 @@ public class ExBL extends CpBL {
 			if (t != null && t instanceof AplicacaoException)
 				throw (AplicacaoException) t;
 			else
-				throw new AplicacaoException("Erro na gravação", 0, e);
-		}
-		try {
-
-		} catch (Exception ex) {
-			//
+				throw new RuntimeException("Erro na gravação", e);
 		}
 		// System.out.println(System.currentTimeMillis() + " - FIM gravar");
 		return doc;
 	}
 
-	private ExDocumento salvarDocSemSalvarArq(ExDocumento doc) {
-		CpArquivo arqTemp = null;
-		// Nato: remover o cpArquivo para que ele não seja salvo automaticamente pelo
-		// JPA, pois isso acarreta em gravação desnecessária na tabela CpArquivo.
-		if (doc.getCpArquivo() != null && doc.getCpArquivo().getIdArq() == null) {
-			arqTemp = doc.getCpArquivo();
-			doc.setCpArquivo(null);
-		}
-		doc = ExDao.getInstance().gravar(doc);
-		if (arqTemp != null) 
-			doc.setCpArquivo(arqTemp);
-		return doc;
-	}
+//	private ExDocumento salvarDocSemSalvarArq(ExDocumento doc) {
+//		CpArquivo arqTemp = null;
+//		// Nato: remover o cpArquivo para que ele não seja salvo automaticamente pelo
+//		// JPA, pois isso acarreta em gravação desnecessária na tabela CpArquivo.
+//		if (doc.getCpArquivo() != null && doc.getCpArquivo().getIdArq() == null) {
+//			arqTemp = doc.getCpArquivo();
+//			doc.setCpArquivo(null);
+//		}
+//		doc = ExDao.getInstance().gravar(doc);
+//		if (arqTemp != null) 
+//			doc.setCpArquivo(arqTemp);
+//		return doc;
+//	}
 	
 	public void geraMovimentacaoSubstituicao(ExDocumento doc, DpPessoa cadastrante) throws AplicacaoException, SQLException {
 		final ExMovimentacao mov_substituto = criarNovaMovimentacao(
@@ -3640,7 +3644,8 @@ public class ExBL extends CpBL {
 		if (nivel == null)
 			nivel = doc.getExNivelAcesso();
 		doc.setDnmExNivelAcesso(nivel);
-		doc = salvarDocSemSalvarArq(doc);
+		//doc = salvarDocSemSalvarArq(doc);
+		doc = ExDao.getInstance().gravar(doc);
 		return nivel;
 	}
 
@@ -3804,7 +3809,6 @@ public class ExBL extends CpBL {
 			}
 
 			if (doc.isFinalizado())
-
 				throw new AplicacaoException("Documento já foi finalizado e não pode ser excluído", 2);
 			for (ExMobil m : doc.getExMobilSet()) {
 				Set set = m.getExMovimentacaoSet();
@@ -3849,7 +3853,7 @@ public class ExBL extends CpBL {
 			throw e;
 		} catch (final Exception e) {
 			ExDao.rollbackTransacao();
-			throw new AplicacaoException("Ocorreu um Erro durante a Operação", 0, e);
+			throw new RuntimeException("Ocorreu um Erro durante a Operação", e);
 		}
 
 	}
@@ -3917,6 +3921,7 @@ public class ExBL extends CpBL {
 
 			gravarMovimentacao(mov);
 			processar(doc, true, false);
+			doc.armazenar();
 			concluirAlteracaoDocComRecalculoAcesso(mov);
 		} catch (final Exception e) {
 			cancelarAlteracao();
@@ -4047,7 +4052,7 @@ public class ExBL extends CpBL {
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao juntar documento.", 0, e);
+			throw new RuntimeException("Erro ao juntar documento.", e);
 		}
 
 	}
@@ -4138,7 +4143,7 @@ public class ExBL extends CpBL {
 			return novoDoc;
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao refazer o documento.", 0, e);
+			throw new RuntimeException("Erro ao refazer o documento.", e);
 		}
 	}
 
@@ -4155,7 +4160,7 @@ public class ExBL extends CpBL {
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao duplicar o documento.", 0, e);
+			throw new RuntimeException("Erro ao duplicar o documento.", e);
 		}
 	}
 
@@ -4265,7 +4270,7 @@ public class ExBL extends CpBL {
 					concluirAlteracaoDoc(novaMov);
 				} catch (final Exception e) {
 					cancelarAlteracao();
-					throw new AplicacaoException("Erro ao gravar movimentacao.", 0, e);
+					throw new RuntimeException("Erro ao gravar movimentacao.", e);
 				}
 			}
 		}
@@ -4342,7 +4347,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao();
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao receber documento.", 0, e);
+			throw new RuntimeException("Erro ao receber documento.", e);
 		}
 	}
 
@@ -4471,7 +4476,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov);
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao copiar documento.", 0, e);
+			throw new RuntimeException("Erro ao copiar documento.", e);
 		}
 	}
 
@@ -5458,7 +5463,7 @@ public class ExBL extends CpBL {
 			
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao fazer ciência.", 0, e);
+			throw new RuntimeException("Erro ao fazer ciência.", e);
 		}
 	}
 
@@ -7128,7 +7133,7 @@ public class ExBL extends CpBL {
 			return prot;
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Ocorreu um erro ao gerar protocolo.", 0, e);
+			throw new RuntimeException("Ocorreu um erro ao gerar protocolo.", e);
 		}
 	}
 	
@@ -7136,7 +7141,7 @@ public class ExBL extends CpBL {
 		try {
 			return dao().obterProtocoloPorDocumento(doc);
 		} catch (Exception e) {
-			throw new AplicacaoException("Ocorreu um erro ao obter protocolo.", 0, e);
+			throw new RuntimeException("Ocorreu um erro ao obter protocolo.", e);
 		}
 	}
 	
@@ -7242,7 +7247,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(doc.getMobilGeral());			
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Ocorreu um erro ao reordenar documentos.", 0, e);
+			throw new RuntimeException("Ocorreu um erro ao reordenar documentos.", e);
 		}
 	}
 	
@@ -7283,7 +7288,7 @@ public class ExBL extends CpBL {
 			   try {
 				vincularMarcador(cadastrante, lotaCadastrante, mob, null, lotaCadastrante, cadastrante, cadastrante, cadastrante, null, null, cpMarcador, true, null);
 			   } catch (Exception e) {
-					throw new AplicacaoException("Ocorreu um erro ao gravar marcadores");
+					throw new RuntimeException("Ocorreu um erro ao gravar marcadores", e);
 			   }
 			}
 		}
@@ -7295,7 +7300,7 @@ public class ExBL extends CpBL {
 		try {
 			sigaUrlPermanente = Cp.getInstance().getBL().gerarUrlPermanente(mob.getDoc().getIdDoc());
 		} catch (Exception e) {
-			throw new AplicacaoException("Ocorreu um erro ao gerar Token.");
+			throw new RuntimeException("Ocorreu um erro ao gerar Token.", e);
 		}
 		
 		/*4- Gerar Movimentação de Publicação */
@@ -7309,7 +7314,7 @@ public class ExBL extends CpBL {
 			gravarMovimentacao(mov);
 			atualizarMarcas(mob.getDoc());
 		} catch (Exception e) {
-			throw new AplicacaoException("Ocorreu um erro na publicação do documento em Portal da Transparência");
+			throw new RuntimeException("Ocorreu um erro na publicação do documento em Portal da Transparência", e);
 		}
 
 		
@@ -7418,7 +7423,7 @@ public class ExBL extends CpBL {
 		    String json = gson.toJson(objectJson);    
 		    return json;
 		} catch (Exception e) {
-			throw new AplicacaoException("Ocorreu um erro na conversão dos marcadores para JSON.");
+			throw new RuntimeException("Ocorreu um erro na conversão dos marcadores para JSON.", e);
 		} finally {
 			objectJson = null;
 		}

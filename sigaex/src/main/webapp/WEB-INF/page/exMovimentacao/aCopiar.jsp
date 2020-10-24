@@ -65,7 +65,7 @@
 								</div>
 							</div>
 							<div class="row">
-								<div class="col-sm-6">
+								<div class="col-12">
 									<div class="form-group">
 										<c:choose>
 											<c:when test="${!substituicao}">
@@ -83,7 +83,7 @@
 								</div>
 							</div>
 							<div class="row">
-								<div class="col-sm">
+								<div class="col-12">
 									<div class="form-group">
 										<label>Função do Responsável</label> <input
 											class="form-control" type="hidden" name="campos"
@@ -97,14 +97,14 @@
 						</c:when>
 					</c:choose>
 					<div class="row">
-						<div class="col col-lg-6">
+						<div class="col col-12">
 							<siga:selecao titulo="Documento" propriedade="documentoRef"
 								urlAcao="expediente/buscar"
 								urlSelecionar="expediente/selecionar" modulo="sigaex" />
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-sm">
+						<div class="col-12">
 							<input type="submit" value="Ok" class="btn btn-primary" /> <input
 								type="button" value="Cancela"
 								onclick="javascript:history.back();" class="btn btn-cancel ml-2" />

@@ -2169,7 +2169,7 @@ index d27f99697a..0000000000
 -			nome="LOTACAO DE TESTE 2" 
 -			sigla="LOTACAOTESTE2" 
 -			idPai=""
--			tipoLotacao="Unidade da Administração"
+-			tipoLotacao="Unidade da Administraï¿½ï¿½o"
 -			/>
 -  </lotacoes>
 -  <pessoas>
@@ -2310,7 +2310,7 @@ index 1fd2a9b39c..0000000000
 -			nome="LOTACAO DE TESTE 2" 
 -			sigla="LOTACAOTESTE2" 
 -			idPai=""
--			tipoLotacao="Unidade da Administração"
+-			tipoLotacao="Unidade da Administraï¿½ï¿½o"
 -			/>
 -  </lotacoes>
 -  
@@ -2488,7 +2488,7 @@ index 82f6692854..0000000000
 -			nome="LOTACAO DE TESTE" 
 -			sigla="LOTACAODUP" 
 -			idPai=""
--			tipoLotacao="Unidade da Administração"
+-			tipoLotacao="Unidade da Administraï¿½ï¿½o"
 -			/>  -->
 -  </lotacoes>
 -  
@@ -2591,8 +2591,8 @@ index a8cf001e22..0000000000
 -	- <cargos>
 -		  <cargo id="7" nome="JUIZ FEDERAL" sigla="JFD"  /> 
 -		  <cargo id="8" nome="JUIZ SUBSTITUTO - 2" sigla="JSB"   /> 
--		  <cargo id="10" nome="TÉCNICO JUDICIÁRIO" sigla="TJD"  /> 
--		  <cargo id="14" nome="OFICIAL DE JUSTIÇA AVALIADOR" sigla="OJA"  /> 
+-		  <cargo id="10" nome="Tï¿½CNICO JUDICIï¿½RIO" sigla="TJD"  /> 
+-		  <cargo id="14" nome="OFICIAL DE JUSTIï¿½A AVALIADOR" sigla="OJA"  /> 
 -		  <cargo id="16" nome="TAQUIGRAFO JUDICIARIO" sigla="TQJ"  /> 
 -		  <cargo id="46" nome="ENGENHEIRO" sigla="ENG"  /> 
 -		  <cargo id="64" nome="ANALISTA DE SISTEMAS" sigla="ANL"  />  
@@ -2606,12 +2606,12 @@ index a8cf001e22..0000000000
 -		  <funcao id="65" nome="SUPERVISOR" sigla="SUP"  /> 
 -		  <funcao id="70" nome="SUPERVISOR ASSISTENTE" sigla="SPA"   /> 
 -		  <funcao id="75" nome="ASSISTENTE DE INFORMATICA" sigla="ASI"  /> 
--		  <funcao id="80" nome="ASSISTENTE DATILÓGRAFO" sigla="DTL"  /> 
--		  <funcao id="85" nome="SECRETÁRIO" sigla="SEC"  /> 
+-		  <funcao id="80" nome="ASSISTENTE DATILï¿½GRAFO" sigla="DTL"  /> 
+-		  <funcao id="85" nome="SECRETï¿½RIO" sigla="SEC"  /> 
 -		  <funcao id="90" nome="AUXILIAR ESPECIALIZADO" sigla="AUE"   /> 
 -		  <funcao id="95" nome="AUXILIAR" sigla="AUX"  /> 
 -		  <funcao id="105" nome="OPERADOR XEROX E TELEX" sigla="OXT"   /> 
--		  <funcao id="106" nome="OPERADOR DE VÍDEO" sigla="OVD"  /> 
+-		  <funcao id="106" nome="OPERADOR DE Vï¿½DEO" sigla="OVD"  /> 
 -		  <funcao id="110" nome="EXECUTANTE DE MANDADOS" sigla="EMD"   /> 
 -	  </funcoes>
 -	-	<orgaos>
@@ -2619,9 +2619,9 @@ index a8cf001e22..0000000000
 -			<orgao id="278" nome="BOLSA DE VALORES DE SAO PAULO" sigla="BOVESPA"   /> 
 -		</orgaos>
 -	- <lotacoes>
--		  <lotacao id="0" nome="SEÇÃO JUDICIÁRIA da GUANABARA" idPai="" sigla="SJGN" tipoLotacao="Unidade Judicial" />
--		  <lotacao id="1040000000000" nome="DIR. DE INFORMATICA" sigla="DIINFO" idPai="0" tipoLotacao="Unidade da Administração"/> 
--		  <lotacao id="1380000000000" nome="GERÊNCIA DE RISCOS" sigla="GERISC"  idPai="1040000000000" idPai="1040000000000" tipoLotacao="Unidade da Administração"/> 
+-		  <lotacao id="0" nome="SEï¿½ï¿½O JUDICIï¿½RIA da GUANABARA" idPai="" sigla="SJGN" tipoLotacao="Unidade Judicial" />
+-		  <lotacao id="1040000000000" nome="DIR. DE INFORMATICA" sigla="DIINFO" idPai="0" tipoLotacao="Unidade da Administraï¿½ï¿½o"/> 
+-		  <lotacao id="1380000000000" nome="GERï¿½NCIA DE RISCOS" sigla="GERISC"  idPai="1040000000000" idPai="1040000000000" tipoLotacao="Unidade da Administraï¿½ï¿½o"/> 
 -		  <lotacao id="1390000000000" nome="VARA FEDERAL VXIIM" sigla="VFXIIM"  idPai="0" tipoLotacao="Unidade Judicial" /> 
 -		  <lotacao id="1400000000000" nome="VARA FEDERAL MXXVII" sigla="VFXXVI" idPai="0" tipoLotacao="Unidade Judicial"/> 
 -		  <lotacao id="1410000000000" nome="VARA FEDERAL VLMXXI" sigla="VFLMXX" idPai="0" tipoLotacao="Unidade Judicial"/> 
@@ -2678,7 +2678,7 @@ index fe13798c53..0000000000
 -			<orgao id="1" nome="ORGAO DE IMPLANTACAO" sigla="ORGIMPL"    />  
 -		</orgaos>
 -	- <lotacoes>
--		  <lotacao id="1000000000000" nome="LOTACAO DE IMPLANTACAO" sigla="DIINFO" idPai="" tipoLotacao="Unidade da Administração"/> 
+-		  <lotacao id="1000000000000" nome="LOTACAO DE IMPLANTACAO" sigla="DIINFO" idPai="" tipoLotacao="Unidade da Administraï¿½ï¿½o"/> 
 -	  </lotacoes>
 -	- <pessoas>
 -	  	<pessoa id="11111111111" cpf="11111111111" nome="PESSOA DE IMPLANTACAO" dtNascimento="17031965" nacionalidade="BRASILEIRA"  rua="Av. Rio Branco 1/ ap.10017" bairro="CENTRO" cidade="RIO DE JANEIRO" uf="RJ" cep="20000000" telefone="333-2212" naturalidade="RIO DE JANEIRO" tipoSanguineo="O-" grauInstrucao="SUPERIOR COMPLETO" matricula="60022" dtInicioExercicio="07011971" atoNomeacao="000" dtNomeacao="07011971" dtAtoPublicacao="" dtPosse="07011971" cargo="1" padraoReferencia="C-NS-15" situacao="1" lotacao="1000000000000" rg="765412334" rgOrgao="CAER" rgUf="RJ" rgDtExp="01012020"  sigla="IMPL" email="impl@xxx.yyy.br" funcaoConfianca="1" tipo="Servidor">
@@ -3145,6 +3145,7 @@ index 343f6c499d..af3200a6e1 100644
  	public String xjusPassword  ( ) throws Exception {
  		return this.obterPropriedade("xjus.password");
  	}
+	 !!!!!!
 +	public String sincPassword  ( ) throws Exception {
 +		return this.obterPropriedade("siga.sinc.password");
 +	}
@@ -9481,14 +9482,14 @@ index 83688fd5ef..7a86ca97e0 100644
  documento.modelo=Modelo
  documento.modelo2=Modelo
 -documento.label.especie=&nbsp;
-+documento.label.especie=Espécie
++documento.label.especie=Espï¿½cie
  documento.subscritor=Subscritor
  documento.subscritor.antigo=Subscritor Antigo
- documento.preenchimento.automatico=Preenchimento automático
+ documento.preenchimento.automatico=Preenchimento automï¿½tico
 @@ -50,4 +50,4 @@ usuario.esqueciminhasenha.sucesso=A Senha foi alterada com sucesso e foi enviada
  usuario.primeiroacesso.sucessocomplemento=O seu login e senha foram enviados para seu email.
  usuario.mesavirtual.etiquetas=Etiquetas
- usuario.mesavirtual.codigo=Código
+ usuario.mesavirtual.codigo=Cï¿½digo
 -usuario.novodocumento.arquivo=Arquivo PDF
 \ No newline at end of file
 +usuario.novodocumento.arquivo=Arquivo PDF
@@ -10237,6 +10238,7 @@ index a3ecea000c..b409351611 100644
  		}
  	}
  
+ !!!!!!
 -	/**
 -	 * @param map
 -	 * @param form
@@ -15132,6 +15134,7 @@ index 6aacc7b5d3..c2902f2dc6 100644
  				<c:if
  					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF:MÃ³dulo de Workflow')}">
 -					<li><a class="dropdown-item" href="/sigawf/app/resumo">Workflow</a></li>
+!!!!!!
 +					<li><a class="dropdown-item" href="/sigawf/app/ativos">Workflow</a></li>
  				</c:if>
  
@@ -26432,7 +26435,7 @@ index 050a1a8bc1..7dee72a5d8 100644
 @@ -369,10 +371,10 @@ public abstract class GrupoController<T extends CpGrupo> extends
  												+ ". Por favor, entre em contato com o suporte tÃ©cnico para realizar tal configuraÃ§Ã£o.");
  							}
- 
+ !!!!!!
 -							cfgGrpGravada.getCpConfiguracao().setHisDtFim(dt);
 -							dao().gravarComHistorico(
 -									cfgGrpGravada.getCpConfiguracao(),
@@ -26451,7 +26454,7 @@ index 1b394d77cc..e93dd9d2a2 100644
 @@ -120,6 +120,7 @@ public class PerfilJEEController extends GrupoController {
  		result.redirectTo(MessageFormat.format("/app/gi/perfilJEE/editar?idCpGrupo={0}", novoIdCpGrupo.toString()));
  	}	
- 
+ !!!!!! Vou ter que pesquisar todos os POSTs para botar esse @Transacional
 +	@Transacional
  	@Post("/app/gi/perfilJEE/excluir")
  	public void excluir(Long idCpGrupo) throws Exception {
@@ -27058,6 +27061,7 @@ index dad621cfc0..0a025795e3 100644
 +			origemtext = "Interno Capturado ";
 +			break;
 +		}
++		String titulo = "RelaÃ§Ã£o de Documento(s) " + origemtext + " de " + dateToString(dataInicial) + " a " + dateToString(dataFinal);
 +		String titulo = "RelaÃ§Ã£o de Documento(s) " + origemtext + " de " + dateToString(dataInicial) + " a " + dateToString(dataFinal);
 +		String subtitulo = "Do(a) " + lotacao.getNomeLotacao();
 +
@@ -31138,7 +31142,7 @@ index 6bea56f273..7c27e8261f 100644
  <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
  <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
  
--<siga:pagina titulo="Lista de Espécies Documentais">
+-<siga:pagina titulo="Lista de Espï¿½cies Documentais">
 +<siga:pagina titulo="Lista de Espï¿½cies Documentais">
  	<!-- main content -->
  	<div class="container-fluid">

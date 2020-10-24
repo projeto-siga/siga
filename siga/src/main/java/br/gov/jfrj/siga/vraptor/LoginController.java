@@ -65,6 +65,7 @@ public class LoginController extends SigaController {
 		this.context = context;
 	}
 
+	@Transacional
 	@Get("public/app/login")
 	public void login(String cont) throws IOException {
 		Map<String, String> manifest = new HashMap<>();

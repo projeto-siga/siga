@@ -100,6 +100,7 @@ public class ExMobilController extends
 		setItemPagina(50);
 	}
 
+	@Transacional
 	@Get("app/expediente/doc/marcar")
 	public void aMarcar() {
 		assertAcesso("");
@@ -533,7 +534,7 @@ public class ExMobilController extends
 		return s;
 	}
 	
-	public ExClassificacao daoClassificacao(long id) {
+	protected ExClassificacao daoClassificacao(long id) {
 		return dao().consultar(id, ExClassificacao.class, false);
 	}
 
@@ -708,7 +709,7 @@ public class ExMobilController extends
 	private Map<Integer, String> getListaTipoDest() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(1, SigaMessages.getMessage("usuario.matricula"));
-		map.put(2, "Órgão Integrado");
+		map.put(2, "Lotação");
 		map.put(3, "Externo");
 		map.put(4, "Campo Livre");
 		return map;

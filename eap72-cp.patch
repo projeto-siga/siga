@@ -1,0 +1,4536 @@
+diff --git a/pom.xml b/pom.xml
+index fde7890955..7eff2c8328 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -85,6 +85,46 @@
+ 					<packagingExcludes>WEB-INF/lib/siga-ext-*.jar</packagingExcludes>
+ 				</configuration>
+ 			</plugin>
++			<plugin>
++				<groupId>org.apache.maven.plugins</groupId>
++				<artifactId>maven-enforcer-plugin</artifactId>
++				<version>1.3.1</version>
++				<executions>
++					<execution>
++						<id>enforce-property</id>
++						<goals>
++							<goal>enforce</goal>
++						</goals>
++						<configuration>
++							<rules>
++								<requireProperty>
++									<property>siga.versao</property>
++									<message>
++										${line.separator}
++										${line.separator}
++	DEFINA A PROPRIEDADE siga.versao !
++	${line.separator}
++	-Dsiga.versao=a.b.c.d
++										${line.separator}
++										${line.separator}
++									</message>
++									<regex>(develop|(release-|hotfix-)?\d{1,}\.\d{1,}\.\d{1,}(\.\d{1,})?)(-alfa|-beta|-teste)?(-\d.*)?</regex>
++									<regexMessage>
++										${line.separator}
++										${line.separator}
++	FORMATO INVALIDO DO PARAMETRO siga.versao.
++										${line.separator}
++	Exemplos: 3.10.0, 3.11.1.5, release-1.0.0, hotfix-1.2.3.4, develop, 4.5.0-beta										
++										${line.separator}
++										${line.separator}
++									</regexMessage>
++								</requireProperty>
++							</rules>
++							<fail>true</fail>
++						</configuration>
++					</execution>
++				</executions>
++			</plugin>
+ 		</plugins>
+ 	</build>
+ 
+diff --git a/siga-base/src/main/java/br/gov/jfrj/siga/base/Texto.java b/siga-base/src/main/java/br/gov/jfrj/siga/base/Texto.java
+index c556de22f6..a3de1dba3f 100644
+--- a/siga-base/src/main/java/br/gov/jfrj/siga/base/Texto.java
++++ b/siga-base/src/main/java/br/gov/jfrj/siga/base/Texto.java
+@@ -249,4 +249,12 @@ public class Texto {
+ 		return string.length() > limit ? (string.substring(0, max) + "...") : string;
+ 	}
+ 	
++	public static boolean equals(String s1, String s2) {
++		if (s1 == null && s2 == null)
++			return true;
++		if (s1 == null || s2 == null)
++			return false;
++		return s1.equals(s2);
++	}
++	
+ }
+diff --git a/siga-base/src/main/java/br/gov/jfrj/siga/model/ContextoPersistencia.java b/siga-base/src/main/java/br/gov/jfrj/siga/model/ContextoPersistencia.java
+index 722ef1d734..8a3564b296 100644
+--- a/siga-base/src/main/java/br/gov/jfrj/siga/model/ContextoPersistencia.java
++++ b/siga-base/src/main/java/br/gov/jfrj/siga/model/ContextoPersistencia.java
+@@ -1,11 +1,14 @@
+ package br.gov.jfrj.siga.model;
+ 
++import java.util.Date;
++
+ import javax.persistence.EntityManager;
+ 
+ public class ContextoPersistencia {
+ 
+ 	private final static ThreadLocal<EntityManager> emByThread = new ThreadLocal<EntityManager>();
+ 	private final static ThreadLocal<String> userPrincipalByThread = new ThreadLocal<String>();
++	private final static ThreadLocal<Date> dataEHoraDoServidor = new ThreadLocal<Date>();
+ 
+ 	static public void setEntityManager(EntityManager em) {
+ 		emByThread.set(em);
+@@ -35,4 +38,13 @@ public class ContextoPersistencia {
+ 	static public void removeUserPrincipal() {
+ 		userPrincipalByThread.remove();
+ 	}
++
++	static public void setDt(Date dt) {
++		dataEHoraDoServidor.set(dt);
++	}
++
++	static public Date dt() {
++		return dataEHoraDoServidor.get();
++	}
++
+ }
+\ No newline at end of file
+diff --git a/siga-cp/src/main/app/br/gov/jfrj/siga/cp/AbstractCpModelo.java b/siga-cp/src/main/app/br/gov/jfrj/siga/cp/AbstractCpModelo.java
+index d763ab8f99..dc8e646a75 100644
+--- a/siga-cp/src/main/app/br/gov/jfrj/siga/cp/AbstractCpModelo.java
++++ b/siga-cp/src/main/app/br/gov/jfrj/siga/cp/AbstractCpModelo.java
+@@ -21,6 +21,7 @@ package br.gov.jfrj.siga.cp;
+ import java.sql.Blob;
+ 
+ import javax.persistence.Basic;
++import javax.persistence.CascadeType;
+ import javax.persistence.Column;
+ import javax.persistence.FetchType;
+ import javax.persistence.GeneratedValue;
+@@ -48,16 +49,14 @@ public abstract class AbstractCpModelo extends HistoricoAuditavelSuporte {
+ 	@Desconsiderar
+ 	private java.lang.Long idMod;
+ 
+-	/** The value of the simple conteudoBlobMod property. */
+-	@Lob
+-	@Basic(fetch = FetchType.LAZY)
+-	@Column(name = "CONTEUDO_BLOB_MOD")
+-	private byte[] conteudoBlobMod;
+-
+ 	@ManyToOne(fetch = FetchType.LAZY)
+ 	@JoinColumn(name = "ID_ORGAO_USU")
+ 	private CpOrgaoUsuario cpOrgaoUsuario;
+ 
++	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
++	@JoinColumn(name = "ID_ARQ")
++	private CpArquivo cpArquivo;
++
+ 	/**
+ 	 * Return the value of the primary key column.
+ 	 * 
+@@ -67,14 +66,6 @@ public abstract class AbstractCpModelo extends HistoricoAuditavelSuporte {
+ 		return idMod;
+ 	}
+ 
+-	/**
+-	 * Return the value of the CONTEUDO_BLOB_MOD column.
+-	 * 
+-	 * @return java.lang.String
+-	 */
+-	public byte[] getConteudoBlobMod() {
+-		return this.conteudoBlobMod;
+-	}
+ 
+ 	/**
+ 	 * /** Set the simple primary key value that identifies this object.
+@@ -85,15 +76,6 @@ public abstract class AbstractCpModelo extends HistoricoAuditavelSuporte {
+ 		this.idMod = idMod;
+ 	}
+ 
+-	/**
+-	 * Set the value of the CONTEUDO_BLOB_MOD column.
+-	 * 
+-	 * @param conteudoBlobMod
+-	 */
+-	public void setConteudoBlobMod(byte[] conteudoBlobMod) {
+-		this.conteudoBlobMod = conteudoBlobMod;
+-	}
+-
+ 	public CpOrgaoUsuario getCpOrgaoUsuario() {
+ 		return cpOrgaoUsuario;
+ 	}
+@@ -102,4 +84,32 @@ public abstract class AbstractCpModelo extends HistoricoAuditavelSuporte {
+ 		this.cpOrgaoUsuario = cpOrgaoUsuario;
+ 	}
+ 
++	public CpArquivo getCpArquivo() {
++		return cpArquivo;
++	}
++
++	public void setCpArquivo(CpArquivo cpArquivo) {
++		this.cpArquivo = cpArquivo;
++	}
++
++	public java.lang.String getConteudoTpBlob() {
++		if (getCpArquivo() == null)
++			return null;
++		return getCpArquivo().getConteudoTpArq();
++	}
++
++	public void setConteudoTpBlob(final java.lang.String conteudoTpMod) {
++		setCpArquivo(CpArquivo.updateConteudoTp(getCpArquivo(), conteudoTpMod)); 
++	}
++
++	public byte[] getConteudoBlobMod() {
++		if (getCpArquivo() == null)
++			return null;
++		return getCpArquivo().getConteudoBlobArq();
++	}
++
++	public void setConteudoBlobMod(byte[] createBlob) {
++		setCpArquivo(CpArquivo.updateConteudo(getCpArquivo(), createBlob));
++		setConteudoTpBlob("template/freemarker");
++	}
+ }
+diff --git a/siga-cp/src/main/app/br/gov/jfrj/siga/cp/CpArquivo.java b/siga-cp/src/main/app/br/gov/jfrj/siga/cp/CpArquivo.java
+new file mode 100644
+index 0000000000..359e60a62d
+--- /dev/null
++++ b/siga-cp/src/main/app/br/gov/jfrj/siga/cp/CpArquivo.java
+@@ -0,0 +1,161 @@
++/*******************************************************************************
++ * Copyright (c) 2006 - 2011 SJRJ.
++ * 
++ *     This file is part of SIGA.
++ * 
++ *     SIGA is free software: you can redistribute it and/or modify
++ *     it under the terms of the GNU General Public License as published by
++ *     the Free Software Foundation, either version 3 of the License, or
++ *     (at your option) any later version.
++ * 
++ *     SIGA is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ * 
++ *     You should have received a copy of the GNU General Public License
++ *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
++ ******************************************************************************/
++package br.gov.jfrj.siga.cp;
++
++import java.io.Serializable;
++import java.util.Arrays;
++
++import javax.persistence.CascadeType;
++import javax.persistence.Column;
++import javax.persistence.Entity;
++import javax.persistence.FetchType;
++import javax.persistence.GeneratedValue;
++import javax.persistence.Id;
++import javax.persistence.JoinColumn;
++import javax.persistence.ManyToOne;
++import javax.persistence.OneToOne;
++import javax.persistence.PrimaryKeyJoinColumn;
++import javax.persistence.SequenceGenerator;
++import javax.persistence.Table;
++
++import org.hibernate.annotations.Immutable;
++
++import br.gov.jfrj.siga.base.Texto;
++import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
++import br.gov.jfrj.siga.model.ContextoPersistencia;
++
++/**
++ * A class that represents a row in the CP_ARQUIVO table. You can customize the
++ * behavior of this class by editing the class, {@link CpArquivo()}.
++ */
++@Entity
++@Immutable
++@Table(name = "CP_ARQUIVO", schema = "CORPORATIVO")
++public class CpArquivo implements Serializable {
++
++	private static final long serialVersionUID = 1L;
++
++	@Id
++	@SequenceGenerator(sequenceName = "CORPORATIVO.CP_ARQUIVO_SEQ", name = "CP_ARQUIVO_SEQ")
++	@GeneratedValue(generator = "CP_ARQUIVO_SEQ")
++	@Column(name = "ID_ARQ")
++	private java.lang.Long idArq;
++
++	@ManyToOne
++	@JoinColumn(name = "ID_ORGAO_USU")
++	private CpOrgaoUsuario orgaoUsuario;
++
++	@Column(name = "CONTEUDO_TP_ARQ", length = 128)
++	private java.lang.String conteudoTpArq;
++
++	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
++	@PrimaryKeyJoinColumn
++	private CpArquivoBlob arquivoBlob;
++
++	/**
++	 * Simple constructor of AbstractExDocumento instances.
++	 */
++	public CpArquivo() {
++	}
++
++	public java.lang.Long getIdArq() {
++		return idArq;
++	}
++
++	public void setIdArq(java.lang.Long idArq) {
++		this.idArq = idArq;
++	}
++
++	public java.lang.String getConteudoTpArq() {
++		return conteudoTpArq;
++	}
++
++	private void setConteudoTpArq(java.lang.String conteudoTpArq) {
++		this.conteudoTpArq = conteudoTpArq;
++	}
++
++	public CpOrgaoUsuario getOrgaoUsuario() {
++		return orgaoUsuario;
++	}
++
++	public void setOrgaoUsuario(CpOrgaoUsuario orgaoUsuario) {
++		this.orgaoUsuario = orgaoUsuario;
++	}
++
++	private CpArquivoBlob getArquivoBlob() {
++		return arquivoBlob;
++	}
++
++	private void setArquivoBlob(CpArquivoBlob arquivoBlob) {
++		this.arquivoBlob = arquivoBlob;
++	}
++
++	public byte[] getConteudoBlobArq() {
++		if (this.arquivoBlob == null) {
++			this.arquivoBlob = new CpArquivoBlob();
++			this.arquivoBlob.setArquivo(this);
++		}
++		return this.arquivoBlob.getConteudoBlobArq();
++	}
++
++	private void setConteudoBlobArq(byte[] createBlob) {
++		if (this.arquivoBlob == null) {
++			this.arquivoBlob = new CpArquivoBlob();
++			this.arquivoBlob.setArquivo(this);
++		}
++		this.arquivoBlob.setConteudoBlobArq(createBlob);
++	}
++
++	public static CpArquivo forUpdate(CpArquivo old) {
++		if (old != null) {
++			if (old.getIdArq() != null) {
++				CpArquivo arq = new CpArquivo();
++				arq.setConteudoTpArq(old.getConteudoTpArq());
++				arq.setOrgaoUsuario(old.getOrgaoUsuario());
++				if (old.getArquivoBlob() != null) {
++					arq.setArquivoBlob(new CpArquivoBlob());
++					arq.getArquivoBlob().setArquivo(arq);
++					arq.getArquivoBlob().setConteudoBlobArq(old.getArquivoBlob().getConteudoBlobArq());
++				}
++				ContextoPersistencia.em().remove(old);
++				return arq;
++			} else
++				return old;
++		} else
++			return new CpArquivo();
++	}
++
++	public static CpArquivo updateConteudoTp(CpArquivo old, String conteudoTp) {
++		if (old == null || !Texto.equals(old.getConteudoTpArq(), conteudoTp)) {
++			CpArquivo arq = CpArquivo.forUpdate(old);
++			arq.setConteudoTpArq(conteudoTp);
++			return arq;
++		}
++		return old;
++	}
++
++	public static CpArquivo updateConteudo(CpArquivo old, byte[] conteudo) {
++		if (old == null || !Arrays.equals(old.getConteudoBlobArq(), conteudo)) {
++			CpArquivo arq = CpArquivo.forUpdate(old);
++			arq.setConteudoBlobArq(conteudo);
++			return arq;
++		}
++		return old;
++	}
++}
+\ No newline at end of file
+diff --git a/siga-cp/src/main/app/br/gov/jfrj/siga/cp/CpArquivoBlob.java b/siga-cp/src/main/app/br/gov/jfrj/siga/cp/CpArquivoBlob.java
+new file mode 100644
+index 0000000000..857884d13a
+--- /dev/null
++++ b/siga-cp/src/main/app/br/gov/jfrj/siga/cp/CpArquivoBlob.java
+@@ -0,0 +1,88 @@
++/*******************************************************************************
++ * Copyright (c) 2006 - 2011 SJRJ.
++ * 
++ *     This file is part of SIGA.
++ * 
++ *     SIGA is free software: you can redistribute it and/or modify
++ *     it under the terms of the GNU General Public License as published by
++ *     the Free Software Foundation, either version 3 of the License, or
++ *     (at your option) any later version.
++ * 
++ *     SIGA is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ * 
++ *     You should have received a copy of the GNU General Public License
++ *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
++ ******************************************************************************/
++package br.gov.jfrj.siga.cp;
++
++import java.io.Serializable;
++
++import javax.persistence.Column;
++import javax.persistence.Entity;
++import javax.persistence.Id;
++import javax.persistence.JoinColumn;
++import javax.persistence.Lob;
++import javax.persistence.MapsId;
++import javax.persistence.OneToOne;
++import javax.persistence.Table;
++
++import org.hibernate.annotations.Immutable;
++
++/**
++ * A class that represents a row in the CP_ARQUIVO_BLOB table. You can customize
++ * the behavior of this class by editing the class, {@link CpArquivoBlob()}.
++ */
++@Entity
++@Immutable
++@Table(name = "CP_ARQUIVO_BLOB", schema = "CORPORATIVO")
++public class CpArquivoBlob implements Serializable {
++
++	private static final long serialVersionUID = 1L;
++
++	@Id
++	@Column(name = "ID_ARQ_BLOB")
++	private java.lang.Long idArqBlob;
++
++	@MapsId
++	@OneToOne(mappedBy = "arquivoBlob")
++	@JoinColumn(name = "ID_ARQ_BLOB") // same name as id @Column
++	private CpArquivo arquivo;
++
++	@Lob
++	@Column(name = "CONTEUDO_ARQ_BLOB")
++	private byte[] conteudoBlobArq;
++
++	/**
++	 * Simple constructor of AbstractExDocumento instances.
++	 */
++	public CpArquivoBlob() {
++	}
++
++	public java.lang.Long getIdArqBlob() {
++		return idArqBlob;
++	}
++
++	public void setIdArqBlob(java.lang.Long idArqBlob) {
++		this.idArqBlob = idArqBlob;
++	}
++
++	public CpArquivo getArquivo() {
++		return arquivo;
++	}
++
++	public void setArquivo(CpArquivo arquivo) {
++		this.arquivo = arquivo;
++	}
++
++	public byte[] getConteudoBlobArq() {
++		return conteudoBlobArq;
++	}
++
++	public void setConteudoBlobArq(byte[] conteudoBlobArq) {
++		this.conteudoBlobArq = conteudoBlobArq;
++	}
++
++}
+\ No newline at end of file
+diff --git a/siga-cp/src/main/app/br/gov/jfrj/siga/cp/bl/CpBL.java b/siga-cp/src/main/app/br/gov/jfrj/siga/cp/bl/CpBL.java
+index dc8c47b029..be1e164d85 100644
+--- a/siga-cp/src/main/app/br/gov/jfrj/siga/cp/bl/CpBL.java
++++ b/siga-cp/src/main/app/br/gov/jfrj/siga/cp/bl/CpBL.java
+@@ -229,6 +229,8 @@ public class CpBL {
+ 					new int[] { 0 }, null);
+ 			if (confOld != null && !confOld.isEspecifica(confFiltro))
+ 				confOld = null;
++			if (confOld != null) 
++				confOld = dao().consultar(confOld.getIdConfiguracao(), CpConfiguracao.class, false);
+ 		} catch (Exception e) {
+ 			e.printStackTrace();
+ 		}
+diff --git a/siga-cp/src/main/app/br/gov/jfrj/siga/dp/dao/CpDao.java b/siga-cp/src/main/app/br/gov/jfrj/siga/dp/dao/CpDao.java
+index fa6bb2ad91..3e0c446920 100644
+--- a/siga-cp/src/main/app/br/gov/jfrj/siga/dp/dao/CpDao.java
++++ b/siga-cp/src/main/app/br/gov/jfrj/siga/dp/dao/CpDao.java
+@@ -1447,6 +1447,9 @@ public class CpDao extends ModeloDao {
+ 	}
+ 
+ 	public Date consultarDataEHoraDoServidor() throws AplicacaoException {
++		if (ContextoPersistencia.dt() != null)
++			return ContextoPersistencia.dt();
++		
+ 		Query sql = em().createNamedQuery(
+ 				"consultarDataEHoraDoServidor");
+ 
+@@ -1455,7 +1458,9 @@ public class CpDao extends ModeloDao {
+ 			throw new AplicacaoException(
+ 					"Nao foi possivel obter a data e a hora atuais do servidor.");
+ 
+-		return (Date) ((result.get(0)));
++		Date dt = (Date) ((result.get(0)));
++		ContextoPersistencia.setDt(dt);
++		return dt;
+ 	}
+ 
+ 	public List<CpConfiguracao> consultarConfiguracoesDesde(Date desde) {
+diff --git a/siga-cp/src/main/resources/db/migration/CORPORATIVO_UTF8_V47_0__acrescenta_configuracao_para_juntar_automaticamente.sql b/siga-cp/src/main/resources/db/migration/CORPORATIVO_UTF8_V47_0__acrescenta_configuracao_para_juntar_automaticamente.sql
+index 3f9b69319e..658217a88d 100644
+--- a/siga-cp/src/main/resources/db/migration/CORPORATIVO_UTF8_V47_0__acrescenta_configuracao_para_juntar_automaticamente.sql
++++ b/siga-cp/src/main/resources/db/migration/CORPORATIVO_UTF8_V47_0__acrescenta_configuracao_para_juntar_automaticamente.sql
+@@ -3,6 +3,4 @@
+ ----------------------------------------------------------------------
+ ALTER SESSION SET CURRENT_SCHEMA=corporativo;
+ 
+-Insert into CORPORATIVO.CP_TIPO_CONFIGURACAO (ID_TP_CONFIGURACAO,DSC_TP_CONFIGURACAO,ID_SIT_CONFIGURACAO) values (40,'Definição Automática de Perfil', 1);
+-
+ Insert into CORPORATIVO.CP_TIPO_CONFIGURACAO (ID_TP_CONFIGURACAO,DSC_TP_CONFIGURACAO,ID_SIT_CONFIGURACAO) values (41,'Juntada Automática', 1);
+\ No newline at end of file
+diff --git a/siga-cp/src/main/resources/db/migration/CORPORATIVO_UTF8_V47_0__orgao_cinco.sql b/siga-cp/src/main/resources/db/migration/CORPORATIVO_UTF8_V47_1__orgao_cinco.sql
+similarity index 100%
+rename from siga-cp/src/main/resources/db/migration/CORPORATIVO_UTF8_V47_0__orgao_cinco.sql
+rename to siga-cp/src/main/resources/db/migration/CORPORATIVO_UTF8_V47_1__orgao_cinco.sql
+diff --git a/siga-cp/src/main/resources/db/migration/CORPORATIVO_UTF8_V49_0__cp_arquivo.sql b/siga-cp/src/main/resources/db/migration/CORPORATIVO_UTF8_V49_0__cp_arquivo.sql
+new file mode 100644
+index 0000000000..1590c23793
+--- /dev/null
++++ b/siga-cp/src/main/resources/db/migration/CORPORATIVO_UTF8_V49_0__cp_arquivo.sql
+@@ -0,0 +1,79 @@
++CREATE SEQUENCE "CORPORATIVO"."CP_ARQUIVO_SEQ" 
++  MINVALUE 1 
++  MAXVALUE 999999999999999999999999999 
++  INCREMENT BY 1 
++  START WITH 1 
++  CACHE 20 
++  NOORDER 
++  NOCYCLE; 
++
++CREATE TABLE "CORPORATIVO"."CP_ARQUIVO" 
++  ( 
++     "ID_ARQ"            NUMBER, 
++     "ID_ORGAO_USU"      NUMBER, 
++     "CONTEUDO_TP_ARQ"   VARCHAR2(128)
++  ); 
++  
++COMMENT ON COLUMN "CORPORATIVO"."CP_ARQUIVO"."ID_ARQ" IS 'Identificador do arquivo';
++COMMENT ON COLUMN "CORPORATIVO"."CP_ARQUIVO"."ID_ORGAO_USU" IS 'Identificador do órgão usuário dono deste arquivo';
++COMMENT ON COLUMN "CORPORATIVO"."CP_ARQUIVO"."CONTEUDO_TP_ARQ" IS 'Content-Type do arquivo';
++
++ALTER TABLE "CORPORATIVO"."CP_ARQUIVO" 
++  ADD CONSTRAINT "ARQUIVO_PK" PRIMARY KEY ("ID_ARQ") ENABLE; 
++
++GRANT SELECT ON "CORPORATIVO"."CP_ARQUIVO_SEQ" TO "SIGA"; 
++
++GRANT ALTER ON "CORPORATIVO"."CP_ARQUIVO" TO "SIGA"; 
++
++GRANT DELETE ON "CORPORATIVO"."CP_ARQUIVO" TO "SIGA"; 
++
++GRANT INDEX ON "CORPORATIVO"."CP_ARQUIVO" TO "SIGA"; 
++
++GRANT INSERT ON "CORPORATIVO"."CP_ARQUIVO" TO "SIGA"; 
++
++GRANT SELECT ON "CORPORATIVO"."CP_ARQUIVO" TO "SIGA"; 
++
++GRANT UPDATE ON "CORPORATIVO"."CP_ARQUIVO" TO "SIGA"; 
++
++GRANT REFERENCES ON "CORPORATIVO"."CP_ARQUIVO" TO "SIGA"; 
++
++GRANT ON COMMIT refresh ON "CORPORATIVO"."CP_ARQUIVO" TO "SIGA"; 
++
++GRANT query rewrite ON "CORPORATIVO"."CP_ARQUIVO" TO "SIGA"; 
++
++GRANT debug ON "CORPORATIVO"."CP_ARQUIVO" TO "SIGA"; 
++
++GRANT flashback ON "CORPORATIVO"."CP_ARQUIVO" TO "SIGA"; 
++
++
++CREATE TABLE "CORPORATIVO"."CP_ARQUIVO_BLOB" 
++  ( 
++     "ID_ARQ_BLOB"          NUMBER, 
++     "CONTEUDO_ARQ_BLOB" 	BLOB 
++  ); 
++  
++COMMENT ON COLUMN "CORPORATIVO"."CP_ARQUIVO_BLOB"."ID_ARQ_BLOB" IS 'Identificador do arquivo';
++COMMENT ON COLUMN "CORPORATIVO"."CP_ARQUIVO_BLOB"."CONTEUDO_ARQ_BLOB" IS 'Bytes do arquivo';
++
++GRANT ALTER ON "CORPORATIVO"."CP_ARQUIVO_BLOB" TO "SIGA"; 
++
++GRANT DELETE ON "CORPORATIVO"."CP_ARQUIVO_BLOB" TO "SIGA"; 
++
++GRANT INDEX ON "CORPORATIVO"."CP_ARQUIVO_BLOB" TO "SIGA"; 
++
++GRANT INSERT ON "CORPORATIVO"."CP_ARQUIVO_BLOB" TO "SIGA"; 
++
++GRANT SELECT ON "CORPORATIVO"."CP_ARQUIVO_BLOB" TO "SIGA"; 
++
++GRANT UPDATE ON "CORPORATIVO"."CP_ARQUIVO_BLOB" TO "SIGA"; 
++
++GRANT REFERENCES ON "CORPORATIVO"."CP_ARQUIVO_BLOB" TO "SIGA"; 
++
++GRANT ON COMMIT refresh ON "CORPORATIVO"."CP_ARQUIVO_BLOB" TO "SIGA"; 
++
++GRANT query rewrite ON "CORPORATIVO"."CP_ARQUIVO_BLOB" TO "SIGA"; 
++
++GRANT debug ON "CORPORATIVO"."CP_ARQUIVO_BLOB" TO "SIGA"; 
++
++GRANT flashback ON "CORPORATIVO"."CP_ARQUIVO_BLOB" TO "SIGA"; 
++
+diff --git a/siga-cp/src/main/resources/db/migration/CORPORATIVO_UTF8_V50_0__Acrescentando_referencias_para_Cp_Arquivo.sql b/siga-cp/src/main/resources/db/migration/CORPORATIVO_UTF8_V50_0__Acrescentando_referencias_para_Cp_Arquivo.sql
+new file mode 100644
+index 0000000000..c86e07fb28
+--- /dev/null
++++ b/siga-cp/src/main/resources/db/migration/CORPORATIVO_UTF8_V50_0__Acrescentando_referencias_para_Cp_Arquivo.sql
+@@ -0,0 +1,3 @@
++ALTER TABLE CORPORATIVO.CP_MODELO ADD (ID_ARQ number(19,0) NULL);
++COMMENT ON COLUMN "CORPORATIVO"."CP_MODELO"."ID_ARQ" IS 'Identificador do arquivo';
++ALTER TABLE CORPORATIVO.CP_MODELO ADD FOREIGN KEY (ID_ARQ) REFERENCES CORPORATIVO.CP_ARQUIVO (ID_ARQ) ENABLE;
+diff --git a/siga-cp/src/main/resources/db/migration/CORPORATIVO_UTF8_V50_1__Transferindo_blobs_de_Cp_Modelo.sql b/siga-cp/src/main/resources/db/migration/CORPORATIVO_UTF8_V50_1__Transferindo_blobs_de_Cp_Modelo.sql
+new file mode 100644
+index 0000000000..7697a65ddc
+--- /dev/null
++++ b/siga-cp/src/main/resources/db/migration/CORPORATIVO_UTF8_V50_1__Transferindo_blobs_de_Cp_Modelo.sql
+@@ -0,0 +1,42 @@
++declare 
++    cursor c1( 
++      p_rows_to_process in number) is 
++      select * 
++      from   cp_modelo 
++      where  id_arq is null 
++         and conteudo_blob_mod is not null; 
++    l_moretodo       boolean := true; 
++    l_rows_processed pls_integer := 0; 
++    l_chunk          number := 1000; 
++begin 
++    while l_moretodo loop 
++        l_rows_processed := 0; 
++
++        for r1 in c1(l_chunk) loop 
++            insert into corporativo.cp_arquivo_blob
++                        (id_arq_blob,conteudo_arq_blob) 
++            values      (corporativo.cp_arquivo_seq.nextval,r1.conteudo_blob_mod);
++
++            insert into corporativo.cp_arquivo
++                        (id_arq,id_orgao_usu,conteudo_tp_arq) 
++            values      (corporativo.cp_arquivo_seq.currval,null,'template/freemarker');
++
++            update cp_modelo
++            set    id_arq = corporativo.cp_arquivo_seq.currval 
++            where  id_modelo = r1.id_modelo; 
++
++            l_rows_processed := l_rows_processed + 1; 
++        end loop; 
++
++        commit; 
++
++        dbms_output.Put_line('Processed: ' 
++                             ||l_rows_processed); 
++
++        if l_rows_processed < l_chunk then 
++          dbms_output.Put_line('Exiting loop...'); 
++
++          l_moretodo := false; 
++        end if; 
++    end loop; 
++end;
+\ No newline at end of file
+diff --git a/siga-cp/src/main/resources/db/migration/CORPORATIVO_UTF8_V50_2__Removendo_blobs_antigos.sql b/siga-cp/src/main/resources/db/migration/CORPORATIVO_UTF8_V50_2__Removendo_blobs_antigos.sql
+new file mode 100644
+index 0000000000..d066e1807a
+--- /dev/null
++++ b/siga-cp/src/main/resources/db/migration/CORPORATIVO_UTF8_V50_2__Removendo_blobs_antigos.sql
+@@ -0,0 +1 @@
++-- alter table cp_modelo drop (conteudo_blob_mod);
+diff --git a/siga-ex/pom.xml b/siga-ex/pom.xml
+index bfc89d1147..0c1cba5f44 100644
+--- a/siga-ex/pom.xml
++++ b/siga-ex/pom.xml
+@@ -32,73 +32,6 @@
+ 					</execution>
+ 				</executions>
+ 			</plugin>
+-			<!-- <plugin> <groupId>org.hibernate.orm.tooling</groupId> <artifactId>hibernate-enhance-maven-plugin</artifactId> 
+-				<executions> <execution> <phase>compile</phase> <goals> <goal>enhance</goal> 
+-				</goals> </execution> </executions> <dependencies> <dependency> <groupId>siga</groupId> 
+-				<artifactId>siga-ex</artifactId> <version>${project.version}</version> </dependency> 
+-				</dependencies> </plugin> -->
+-
+-<!-- 
+-			<plugin>
+-				<groupId>org.hibernate.orm.tooling</groupId>
+-				<artifactId>hibernate-enhance-maven-plugin</artifactId>
+-				<version>4.2.21.Final</version>
+-				<executions>
+-					<execution>
+-						<configuration>
+-							<enableLazyInitialization>true</enableLazyInitialization>
+-						</configuration>
+-						<goals>
+-							<goal>enhance</goal>
+-						</goals>
+-					</execution>
+-				</executions>
+-			</plugin>
+--->
+-			<plugin>
+-				<artifactId>maven-antrun-plugin</artifactId>
+-				<executions>
+-					<execution>
+-						<phase>process-classes</phase>
+-						<goals>
+-							<goal>run</goal>
+-						</goals>
+-					</execution>
+-				</executions>
+-				<configuration>
+-					<tasks>
+-						<taskdef name="instrument"
+-							classname="org.hibernate.tool.instrument.javassist.InstrumentTask">
+-							<classpath path="maven.compile.classpath" />
+-							<classpath path="maven.runtime.classpath" />
+-							<classpath path="maven.plugin.classpath" />
+-						</taskdef>
+-						<instrument>
+-<!-- 							<fileset dir="${project.build.outputDirectory}/br/gov/jfrj/siga/ex">
+-								<include name="*.class" />
+-							</fileset>
+- -->						</instrument>
+-					</tasks>
+-				</configuration>
+-				<dependencies>
+-					<dependency>
+-						<groupId>org.hibernate</groupId>
+-						<artifactId>hibernate-core</artifactId>
+-						<version>${hibernate.version}</version>
+-					</dependency>
+-					<dependency>
+-						<groupId>org.javassist</groupId>
+-						<artifactId>javassist</artifactId>
+-						<version>3.18.1-GA</version>
+-						<scope>compile</scope>
+-					</dependency>
+-					<dependency>
+-						<groupId>siga</groupId>
+-						<artifactId>siga-ex</artifactId>
+-						<version>${project.version}</version>
+-					</dependency>
+-				</dependencies>
+-			</plugin>
+  		</plugins>
+ 	</build>
+ 
+diff --git a/siga-ex/src/main/java/br/gov/jfrj/siga/ex/AbstractExDocumento.java b/siga-ex/src/main/java/br/gov/jfrj/siga/ex/AbstractExDocumento.java
+index 4b017c3689..fd3d2b8bfa 100644
+--- a/siga-ex/src/main/java/br/gov/jfrj/siga/ex/AbstractExDocumento.java
++++ b/siga-ex/src/main/java/br/gov/jfrj/siga/ex/AbstractExDocumento.java
+@@ -19,17 +19,15 @@
+ package br.gov.jfrj.siga.ex;
+ 
+ import java.io.Serializable;
+-import java.sql.Blob;
+ import java.util.Date;
+ import java.util.TreeSet;
+ 
+-import javax.persistence.Basic;
++import javax.persistence.CascadeType;
+ import javax.persistence.Column;
+ import javax.persistence.FetchType;
+ import javax.persistence.GeneratedValue;
+ import javax.persistence.Id;
+ import javax.persistence.JoinColumn;
+-import javax.persistence.Lob;
+ import javax.persistence.ManyToOne;
+ import javax.persistence.MappedSuperclass;
+ import javax.persistence.NamedQueries;
+@@ -43,6 +41,8 @@ import org.hibernate.annotations.BatchSize;
+ import org.hibernate.annotations.Sort;
+ import org.hibernate.annotations.SortType;
+ 
++import br.gov.jfrj.siga.base.Texto;
++import br.gov.jfrj.siga.cp.CpArquivo;
+ import br.gov.jfrj.siga.dp.CpOrgao;
+ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+ import br.gov.jfrj.siga.dp.DpLotacao;
+@@ -56,43 +56,30 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
+ @MappedSuperclass
+ @NamedQueries({
+ 		@NamedQuery(name = "obterProximoNumeroSub", query = "select max(doc.numExpediente)+1"
+-				+ "			from ExDocumento doc"
+-				+ "			inner join doc.subscritor sub "
+-				+ "			inner join doc.exFormaDocumento frm "
+-				+ "			where doc.anoEmissao = :anoEmissao"
+-				+ "			and sub.sesbPessoa = :sesb"
+-				+ "			and frm.idFormaDoc = :idFormaDoc"),
++				+ "			from ExDocumento doc" + "			inner join doc.subscritor sub "
++				+ "			inner join doc.exFormaDocumento frm " + "			where doc.anoEmissao = :anoEmissao"
++				+ "			and sub.sesbPessoa = :sesb" + "			and frm.idFormaDoc = :idFormaDoc"),
+ 		@NamedQuery(name = "obterProximoNumeroCad", query = "select max(doc.numExpediente)+1 "
+-				+ "			from ExDocumento doc"
+-				+ "			inner join doc.cadastrante sub "
+-				+ "			inner join doc.exFormaDocumento frm "
+-				+ "			where doc.anoEmissao = :anoEmissao"
+-				+ "			and sub.sesbPessoa = :sesb"
+-				+ "			and frm.idFormaDoc = :idFormaDoc"),
++				+ "			from ExDocumento doc" + "			inner join doc.cadastrante sub "
++				+ "			inner join doc.exFormaDocumento frm " + "			where doc.anoEmissao = :anoEmissao"
++				+ "			and sub.sesbPessoa = :sesb" + "			and frm.idFormaDoc = :idFormaDoc"),
+ 		@NamedQuery(name = "obterProximoNumero", query = "select max(doc.numExpediente)+1"
+-				+ "			from ExDocumento doc"
+-				+ "			inner join doc.exFormaDocumento frm"
+-				+ "			inner join doc.orgaoUsuario org"
+-				+ "			where org.idOrgaoUsu = :idOrgaoUsu"
+-				+ "			and frm.idFormaDoc = :idFormaDoc"
+-				+ "			and doc.anoEmissao = :anoEmissao"),
+-		@NamedQuery(name = "consultarPorSiglaDocumento", query = "from ExDocumento doc"
+-				+ "		where ("
++				+ "			from ExDocumento doc" + "			inner join doc.exFormaDocumento frm"
++				+ "			inner join doc.orgaoUsuario org" + "			where org.idOrgaoUsu = :idOrgaoUsu"
++				+ "			and frm.idFormaDoc = :idFormaDoc" + "			and doc.anoEmissao = :anoEmissao"),
++		@NamedQuery(name = "consultarPorSiglaDocumento", query = "from ExDocumento doc" + "		where ("
+ 				+ "		doc.anoEmissao=:anoEmissao"
+ 				+ "		and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+ 				+ "		and doc.exFormaDocumento.idFormaDoc=:idFormaDoc"
+ 				+ "		and doc.numExpediente=:numExpediente" + "		)"),
+ 		@NamedQuery(name = "consultarPorModeloEAssinatura", query = "from ExDocumento d where d.idDoc in (select doc.idDoc from ExDocumento as doc join doc.exMobilSet as mob join mob.exMovimentacaoSet as mov"
+ 				+ "			where (mov.exTipoMovimentacao.idTpMov = 11 or mov.exTipoMovimentacao.idTpMov = 25)"
+-				+ "			and mov.exMovimentacaoCanceladora = null"
+-				+ "			and doc.exModelo.idMod = :idMod"
+-				+ "			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
+-				+ "			group by doc.idDoc"
++				+ "			and mov.exMovimentacaoCanceladora = null" + "			and doc.exModelo.idMod = :idMod"
++				+ "			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu" + "			group by doc.idDoc"
+ 				+ "			having min(mov.dtIniMov) between :dataIni and :dataFim)"),
+ 		@NamedQuery(name = "consultarPorFiltro", query = "select doc, mob, label "
+ 				+ "			from ExMarca label inner join label.exMobil mob inner join label.exMobil.exDocumento doc"
+-				+ "			"
+-				+ "			where ("
++				+ "			" + "			where ("
+ 				+ "				:descrDocumento = null or :descrDocumento = '' or ("
+ 				+ "					doc.exNivelAcesso.grauNivelAcesso < 21 and label.cpMarcador.idMarcador != 1 and label.cpMarcador.idMarcador != 10"
+ 				+ "				) or ( "
+@@ -102,11 +89,7 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
+ 				+ "					or (:lotaTitular!=null and :lotaTitular!=0 and doc.destinatario = null and doc.lotaDestinatario in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
+ 				+ "					or (:lotaTitular!=null and :lotaTitular!=0 and label.dpLotacaoIni in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
+ 				+ "					or (:titular!=null and :titular!=0 and label.dpPessoaIni in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
+-				+ "				)"
+-				+ "			)"
+-				+ "			"
+-				+ "			and ("
+-				+ "				("
++				+ "				)" + "			)" + "			" + "			and (" + "				("
+ 				+ "					(:ultMovIdEstadoDoc = null or :ultMovIdEstadoDoc = 0L) and not (label.cpMarcador.idMarcador in (3, 14, 25))"
+ 				+ "				) 	or label.cpMarcador.idMarcador = :ultMovIdEstadoDoc"
+ 				+ "			) and (:ultMovRespSelId = null or :ultMovRespSelId = 0L or label.dpPessoaIni.idPessoa = :ultMovRespSelId)"
+@@ -122,10 +105,8 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
+ 				+ "			and (:idTipoFormaDoc = null or :idTipoFormaDoc = 0L or doc.exFormaDocumento.exTipoFormaDoc.idTipoFormaDoc = :idTipoFormaDoc)"
+ 				+ "			and (:classificacaoSelId = null or :classificacaoSelId = 0L or doc.exClassificacao.idClassificacao = :classificacaoSelId)"
+ 				+ "			and (:descrDocumento = null or :descrDocumento = '' or upper(doc.descrDocumentoAI) like upper('%' || :descrDocumento || '%'))"
+-				+ "			"
+-				+ "			and (:dtDoc = null or doc.dtDoc >= :dtDoc)"
+-				+ "			and (:dtDocFinal = null or doc.dtDoc <= :dtDocFinal)"
+-				+ "			"
++				+ "			" + "			and (:dtDoc = null or doc.dtDoc >= :dtDoc)"
++				+ "			and (:dtDocFinal = null or doc.dtDoc <= :dtDocFinal)" + "			"
+ 				+ "			and (:numAntigoDoc = null or :numAntigoDoc = '' or upper (doc.numAntigoDoc) like upper('%' || :numAntigoDoc || '%'))	"
+ 				+ "			"
+ 				+ "			and (:destinatarioSelId = null or :destinatarioSelId = 0L or doc.destinatario.idPessoa in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :destinatarioSelId))"
+@@ -142,8 +123,7 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
+ 				+ "			" + "			order by doc.dtDoc desc"),
+ 		@NamedQuery(name = "consultarQuantidadePorFiltro", query = "select count(doc) "
+ 				+ "				from ExMarca label inner join label.exMobil mob inner join label.exMobil.exDocumento doc"
+-				+ "				"
+-				+ "				where ("
++				+ "				" + "				where ("
+ 				+ "					:descrDocumento = null or :descrDocumento = '' or ("
+ 				+ "						doc.exNivelAcesso.grauNivelAcesso < 21 and label.cpMarcador.idMarcador != 1 and label.cpMarcador.idMarcador != 10"
+ 				+ "					) or ( "
+@@ -153,10 +133,7 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
+ 				+ "						or (:lotaTitular!=null and :lotaTitular!=0 and doc.destinatario = null and doc.lotaDestinatario in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
+ 				+ "						or (:lotaTitular!=null and :lotaTitular!=0 and label.dpLotacaoIni in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
+ 				+ "						or (:titular!=null and :titular!=0 and label.dpPessoaIni in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
+-				+ "					)"
+-				+ "				)"
+-				+ "				"
+-				+ "				and ("
++				+ "					)" + "				)" + "				" + "				and ("
+ 				+ "					("
+ 				+ "						(:ultMovIdEstadoDoc = null or :ultMovIdEstadoDoc = 0L) and not (label.cpMarcador.idMarcador in (3, 14, 25))"
+ 				+ "					) 	or label.cpMarcador.idMarcador = :ultMovIdEstadoDoc"
+@@ -173,10 +150,8 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
+ 				+ "				and (:idFormaDoc = null or :idFormaDoc = 0L or doc.exFormaDocumento.idFormaDoc = :idFormaDoc)"
+ 				+ "				and (:classificacaoSelId = null or :classificacaoSelId = 0L or doc.exClassificacao.idClassificacao = :classificacaoSelId)"
+ 				+ "				and (:descrDocumento = null or :descrDocumento = '' or upper(doc.descrDocumentoAI) like upper('%' || :descrDocumento || '%'))"
+-				+ "				"
+-				+ "				and (:dtDoc = null or doc.dtDoc >= :dtDoc)"
+-				+ "				and (:dtDocFinal = null or doc.dtDoc <= :dtDocFinal)"
+-				+ "				"
++				+ "				" + "				and (:dtDoc = null or doc.dtDoc >= :dtDoc)"
++				+ "				and (:dtDocFinal = null or doc.dtDoc <= :dtDocFinal)" + "				"
+ 				+ "				and (:numAntigoDoc = null or :numAntigoDoc = '' or upper (doc.numAntigoDoc) like upper('%' || :numAntigoDoc || '%'))	"
+ 				+ "				"
+ 				+ "				and (:destinatarioSelId = null or :destinatarioSelId = 0L or doc.destinatario.idPessoa in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :destinatarioSelId))"
+@@ -207,8 +182,7 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
+ 				+ "			(select exMobil.idMobil from ExMarca label where label.cpMarcador.idMarcador = 71 and label.dpPessoaIni=:idPessoaIni)) order by doc.dtDoc desc"),
+ 		@NamedQuery(name = "consultarExDocumentoClassificados", query = "select doc from ExDocumento doc left join fetch doc.exClassificacao"
+ 				+ "		where doc.exClassificacao.codificacao like :mascara"
+-				+ "		and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario"
+-				+ "		and doc.dtFinalizacao is not null"),
++				+ "		and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario" + "		and doc.dtFinalizacao is not null"),
+ 		@NamedQuery(name = "consultarExDocumentoClassificadosPorLotacao", query = "select doc from ExDocumento doc left join fetch doc.exClassificacao"
+ 				+ "		where doc.exClassificacao.codificacao like :mascara"
+ 				+ "			and (doc.lotaTitular.id = :idLotacao)"
+@@ -220,8 +194,7 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
+ 				+ "					and doc.dtFinalizacao is not null"
+ 				+ "					and doc.dtFinalizacao between :dataInicial and :dataFinal"
+ 				+ "				order by  doc.dtFinalizacao") })
+-public abstract class AbstractExDocumento extends ExArquivo implements
+-		Serializable {
++public abstract class AbstractExDocumento extends ExArquivo implements Serializable {
+ 
+ 	private static final long serialVersionUID = 1L;
+ 
+@@ -241,9 +214,6 @@ public abstract class AbstractExDocumento extends ExArquivo implements
+ 	@Column(name = "NUM_EXPEDIENTE")
+ 	private java.lang.Long numExpediente;
+ 
+-	@Column(name = "CONTEUDO_TP_DOC", length = 128)
+-	private java.lang.String conteudoTpDoc;
+-
+ 	@Column(name = "DESCR_DOCUMENTO", length = 4000)
+ 	private java.lang.String descrDocumento;
+ 
+@@ -297,11 +267,6 @@ public abstract class AbstractExDocumento extends ExArquivo implements
+ 	@Column(name = "FG_ELETRONICO", nullable = false, length = 1)
+ 	private String fgEletronico;
+ 
+-	@Lob
+-	@Column(name = "CONTEUDO_BLOB_DOC")
+-	@Basic(fetch = FetchType.LAZY)
+-	private byte[] conteudoBlobDoc;
+-
+ 	@Column(name = "NUM_SEQUENCIA")
+ 	private Integer numSequencia;
+ 
+@@ -380,12 +345,12 @@ public abstract class AbstractExDocumento extends ExArquivo implements
+ 	@JoinColumn(name = "ID_ORGAO_DESTINATARIO")
+ 	private CpOrgao orgaoExternoDestinatario;
+ 
+-	@BatchSize(size=1)
++	@BatchSize(size = 1)
+ 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exDocumento")
+ 	@Sort(type = SortType.NATURAL)
+ 	private java.util.SortedSet<ExMobil> exMobilSet = new TreeSet<ExMobil>();
+ 
+-	@BatchSize(size=1)
++	@BatchSize(size = 1)
+ 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exDocumento")
+ 	private java.util.Set<ExBoletimDoc> exBoletimDocSet;
+ 
+@@ -397,6 +362,10 @@ public abstract class AbstractExDocumento extends ExArquivo implements
+ 	@JoinColumn(name = "ID_MOB_AUTUADO")
+ 	private ExMobil exMobilAutuado;
+ 
++	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
++	@JoinColumn(name = "ID_ARQ")
++	private CpArquivo cpArquivo;
++
+ 	/**
+ 	 * Simple constructor of AbstractExDocumento instances.
+ 	 */
+@@ -442,20 +411,6 @@ public abstract class AbstractExDocumento extends ExArquivo implements
+ 		return cadastrante;
+ 	}
+ 
+-	/**
+-	 * COMPLETAR
+-	 */
+-	public byte[] getConteudoBlobDoc() {
+-		return this.conteudoBlobDoc;
+-	}
+-
+-	/**
+-	 * COMPLETAR
+-	 */
+-	public java.lang.String getConteudoTpDoc() {
+-		return this.conteudoTpDoc;
+-	}
+-
+ 	/**
+ 	 * COMPLETAR
+ 	 * 
+@@ -507,8 +462,8 @@ public abstract class AbstractExDocumento extends ExArquivo implements
+ 	}
+ 
+ 	/**
+-	 * Retorna o objeto de relacionamento boletim x documentos relacionado a
+-	 * este documento
++	 * Retorna o objeto de relacionamento boletim x documentos relacionado a este
++	 * documento
+ 	 * 
+ 	 * @return
+ 	 */
+@@ -612,14 +567,14 @@ public abstract class AbstractExDocumento extends ExArquivo implements
+ 
+ 	/**
+ 	 * Retorna a lotação destinatária do documento
+-	 * */
++	 */
+ 	public DpLotacao getLotaDestinatario() {
+ 		return lotaDestinatario;
+ 	}
+ 
+ 	/**
+ 	 * Retorna a lotação subscritora do documento
+-	 * */
++	 */
+ 	public DpLotacao getLotaSubscritor() {
+ 		return lotaSubscritor;
+ 	}
+@@ -696,9 +651,8 @@ public abstract class AbstractExDocumento extends ExArquivo implements
+ 	}
+ 
+ 	/**
+-	 * Retorna o número de sequência do documento. Não é o número do expediente.
+-	 * No caso de ser um subprocesso, retorna o número que gera o código .01,
+-	 * .02, etc.
++	 * Retorna o número de sequência do documento. Não é o número do expediente. No
++	 * caso de ser um subprocesso, retorna o número que gera o código .01, .02, etc.
+ 	 * 
+ 	 * @return
+ 	 */
+@@ -755,17 +709,16 @@ public abstract class AbstractExDocumento extends ExArquivo implements
+ 	}
+ 
+ 	/**
+-	 * Implementation of the hashCode method conforming to the Bloch pattern
+-	 * with the exception of array properties (these are very unlikely primary
+-	 * key types).
++	 * Implementation of the hashCode method conforming to the Bloch pattern with
++	 * the exception of array properties (these are very unlikely primary key
++	 * types).
+ 	 * 
+ 	 * @return int
+ 	 */
+ 	@Override
+ 	public int hashCode() {
+ 		int result = 17;
+-		final int idDocValue = this.getIdDoc() == null ? 0 : this.getIdDoc()
+-				.hashCode();
++		final int idDocValue = this.getIdDoc() == null ? 0 : this.getIdDoc().hashCode();
+ 		return result * 37 + idDocValue;
+ 	}
+ 
+@@ -779,36 +732,12 @@ public abstract class AbstractExDocumento extends ExArquivo implements
+ 	}
+ 
+ 	/**
+-	 * @param cadastrante
+-	 *            Atribui a cadastrante o valor.
++	 * @param cadastrante Atribui a cadastrante o valor.
+ 	 */
+ 	public void setCadastrante(final DpPessoa cadastrante) {
+ 		this.cadastrante = cadastrante;
+ 	}
+ 
+-	/**
+-	 * Set the value of the CONTEUDO_BLOB_DOC column.
+-	 * 
+-	 * @param conteudoBlobDoc
+-	 */
+-	public void setConteudoBlobDoc(byte[] conteudoBlobDoc) {
+-		this.conteudoBlobDoc = conteudoBlobDoc;
+-	}
+-
+-	/**
+-	 * Set the value of the CONTEUDO_TP_DOC column.
+-	 * 
+-	 * @param conteudoTpDoc
+-	 */
+-	public void setConteudoTpDoc(final java.lang.String conteudoTpDoc) {
+-		this.conteudoTpDoc = conteudoTpDoc;
+-	}
+-
+-	/*
+-	 * public void setFgPessoal(final String fgPessoal) { this.fgPessoal =
+-	 * fgPessoal; }
+-	 */
+-
+ 	public void setDescrClassifNovo(java.lang.String descrClassifNovo) {
+ 		this.descrClassifNovo = descrClassifNovo;
+ 	}
+@@ -823,8 +752,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
+ 	}
+ 
+ 	/**
+-	 * @param destinatario
+-	 *            Atribui a destinatario o valor.
++	 * @param destinatario Atribui a destinatario o valor.
+ 	 */
+ 	public void setDestinatario(final DpPessoa destinatario) {
+ 		this.destinatario = destinatario;
+@@ -911,24 +839,21 @@ public abstract class AbstractExDocumento extends ExArquivo implements
+ 	}
+ 
+ 	/**
+-	 * @param lotaCadastrante
+-	 *            Atribui a lotaCadastrante o valor.
++	 * @param lotaCadastrante Atribui a lotaCadastrante o valor.
+ 	 */
+ 	public void setLotaCadastrante(final DpLotacao lotaCadastrante) {
+ 		this.lotaCadastrante = lotaCadastrante;
+ 	}
+ 
+ 	/**
+-	 * @param lotaDestinatario
+-	 *            Atribui a lotaDestinatario o valor.
++	 * @param lotaDestinatario Atribui a lotaDestinatario o valor.
+ 	 */
+ 	public void setLotaDestinatario(final DpLotacao lotaDestinatario) {
+ 		this.lotaDestinatario = lotaDestinatario;
+ 	}
+ 
+ 	/**
+-	 * @param lotaSubscritor
+-	 *            Atribui a lotaSubscritor o valor.
++	 * @param lotaSubscritor Atribui a lotaSubscritor o valor.
+ 	 */
+ 	public void setLotaSubscritor(final DpLotacao lotaSubscritor) {
+ 		this.lotaSubscritor = lotaSubscritor;
+@@ -948,8 +873,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
+ 	}
+ 
+ 	/**
+-	 * @param nomeDestinatario
+-	 *            Atribui a nomeDestinatario o valor.
++	 * @param nomeDestinatario Atribui a nomeDestinatario o valor.
+ 	 */
+ 	public void setNmDestinatario(final String nomeDestinatario) {
+ 		this.nmDestinatario = nomeDestinatario;
+@@ -1015,8 +939,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
+ 	}
+ 
+ 	/**
+-	 * @param subscritor
+-	 *            Atribui a subscritor o valor.
++	 * @param subscritor Atribui a subscritor o valor.
+ 	 */
+ 	public void setSubscritor(final DpPessoa subscritor) {
+ 		this.subscritor = subscritor;
+@@ -1065,4 +988,33 @@ public abstract class AbstractExDocumento extends ExArquivo implements
+ 	public void setDtAltDoc(java.util.Date dtAltDoc) {
+ 		this.dtAltDoc = dtAltDoc;
+ 	}
++
++	public CpArquivo getCpArquivo() {
++		return cpArquivo;
++	}
++
++	public void setCpArquivo(CpArquivo cpArquivo) {
++		this.cpArquivo = cpArquivo;
++	}
++
++	public java.lang.String getConteudoTpDoc() {
++		if (getCpArquivo() == null)
++			return null;
++		return getCpArquivo().getConteudoTpArq();
++	}
++
++	public void setConteudoTpDoc(final java.lang.String conteudoTp) {
++		setCpArquivo(CpArquivo.updateConteudoTp(getCpArquivo(), conteudoTp)); 
++	}
++
++	public byte[] getConteudoBlobDoc() {
++		if (getCpArquivo() == null)
++			return null;
++		return getCpArquivo().getConteudoBlobArq();
++	}
++
++	public void setConteudoBlobDoc(byte[] createBlob) {
++		setCpArquivo(CpArquivo.updateConteudo(getCpArquivo(), createBlob));
++	}
++
+ }
+\ No newline at end of file
+diff --git a/siga-ex/src/main/java/br/gov/jfrj/siga/ex/AbstractExEmailNotificacao.java b/siga-ex/src/main/java/br/gov/jfrj/siga/ex/AbstractExEmailNotificacao.java
+index 0245f583ba..6ad69a22b8 100644
+--- a/siga-ex/src/main/java/br/gov/jfrj/siga/ex/AbstractExEmailNotificacao.java
++++ b/siga-ex/src/main/java/br/gov/jfrj/siga/ex/AbstractExEmailNotificacao.java
+@@ -37,8 +37,8 @@ import br.gov.jfrj.siga.model.Objeto;
+ 
+ @MappedSuperclass
+ @NamedQueries({
+-		@NamedQuery(name = "consultarEmailporPessoa", query = "from ExEmailNotificacao e where e.dpPessoa = :idPessoaIni"),
+-		@NamedQuery(name = "consultarEmailporLotacao", query = "from ExEmailNotificacao e where e.dpLotacao = :idLotacaoIni") })
++		@NamedQuery(name = "consultarEmailporPessoa", query = "from ExEmailNotificacao e where e.dpPessoa.idPessoa = :idPessoaIni"),
++		@NamedQuery(name = "consultarEmailporLotacao", query = "from ExEmailNotificacao e where e.dpLotacao.idLotacao = :idLotacaoIni") })
+ public class AbstractExEmailNotificacao extends Objeto {
+ 
+ 	/** The composite primary key value. */
+diff --git a/siga-ex/src/main/java/br/gov/jfrj/siga/ex/AbstractExModelo.java b/siga-ex/src/main/java/br/gov/jfrj/siga/ex/AbstractExModelo.java
+index 2296e1e503..17323170b8 100644
+--- a/siga-ex/src/main/java/br/gov/jfrj/siga/ex/AbstractExModelo.java
++++ b/siga-ex/src/main/java/br/gov/jfrj/siga/ex/AbstractExModelo.java
+@@ -22,21 +22,20 @@ package br.gov.jfrj.siga.ex;
+ 
+ import java.io.Serializable;
+ import java.io.UnsupportedEncodingException;
+-import java.sql.Blob;
+ 
+-import javax.persistence.Basic;
++import javax.persistence.CascadeType;
+ import javax.persistence.Column;
+ import javax.persistence.FetchType;
+ import javax.persistence.GeneratedValue;
+ import javax.persistence.Id;
+ import javax.persistence.JoinColumn;
+-import javax.persistence.Lob;
+ import javax.persistence.ManyToOne;
+ import javax.persistence.MappedSuperclass;
+ import javax.persistence.NamedQueries;
+ import javax.persistence.NamedQuery;
+ import javax.persistence.SequenceGenerator;
+ 
++import br.gov.jfrj.siga.cp.CpArquivo;
+ import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
+ import br.gov.jfrj.siga.model.Assemelhavel;
+ 
+@@ -55,16 +54,6 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
+ 	@Column(name = "ID_MOD", unique = true, nullable = false)
+ 	private java.lang.Long idMod;
+ 
+-	/** The value of the simple conteudoBlobMod property. */
+-	@Lob
+-	@Column(name = "CONTEUDO_BLOB_MOD")
+-	@Basic(fetch = FetchType.LAZY)
+-	private byte[] conteudoBlobMod;
+-
+-	/** The value of the simple conteudoTpBlob property. */
+-	@Column(name = "CONTEUDO_TP_BLOB", length = 128)
+-	private java.lang.String conteudoTpBlob;
+-
+ 	/** The value of the simple descMod property. */
+ 	@Column(name = "DESC_MOD", length = 256)
+ 	private java.lang.String descMod;
+@@ -85,6 +74,10 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
+ 	@JoinColumn(name = "ID_NIVEL_ACESSO")
+ 	private ExNivelAcesso exNivelAcesso;
+ 
++	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
++	@JoinColumn(name = "ID_ARQ")
++	private CpArquivo cpArquivo;
++
+ 	/** The value of the exModeloTipologiaSet one-to-many association. */
+ 
+ 	@Column(name = "NM_ARQ_MOD", length = 256)
+@@ -157,24 +150,6 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
+ 
+ 	}
+ 
+-	/**
+-	 * Return the value of the CONTEUDO_BLOB_MOD column.
+-	 * 
+-	 * @return java.lang.String
+-	 */
+-	public byte[] getConteudoBlobMod() {
+-		return this.conteudoBlobMod;
+-	}
+-
+-	/**
+-	 * Return the value of the CONTEUDO_TP_BLOB column.
+-	 * 
+-	 * @return java.lang.String
+-	 */
+-	public java.lang.String getConteudoTpBlob() {
+-		return this.conteudoTpBlob;
+-	}
+-
+ 	/**
+ 	 * Return the value of the DESC_MOD column.
+ 	 * 
+@@ -250,24 +225,6 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
+ 		return result * 37 + idValue;
+ 	}
+ 
+-	/**
+-	 * Set the value of the CONTEUDO_BLOB_MOD column.
+-	 * 
+-	 * @param conteudoBlobMod
+-	 */
+-	public void setConteudoBlobMod(byte[] conteudoBlobMod) {
+-		this.conteudoBlobMod = conteudoBlobMod;
+-	}
+-
+-	/**
+-	 * Set the value of the CONTEUDO_TP_BLOB column.
+-	 * 
+-	 * @param conteudoTpBlob
+-	 */
+-	public void setConteudoTpBlob(final java.lang.String conteudoTpBlob) {
+-		this.conteudoTpBlob = conteudoTpBlob;
+-	}
+-
+ 	/**
+ 	 * Set the value of the DESC_MOD column.
+ 	 * 
+@@ -341,8 +298,8 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
+ 		if (getClass() != obj.getClass())
+ 			return false;
+ 		AbstractExModelo other = (AbstractExModelo) obj;
+-		if (conteudoBlobMod == null) {
+-			if (other.conteudoBlobMod != null)
++		if (getConteudoBlobMod() == null) {
++			if (other.getConteudoBlobMod() != null)
+ 				return false;
+ 		} else {
+ 			if (other.getConteudoBlobMod() == null)
+@@ -366,10 +323,10 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
+ 				throw new RuntimeException(e);
+ 			}
+ 		}
+-		if (conteudoTpBlob == null) {
+-			if (other.conteudoTpBlob != null)
++		if (getConteudoTpBlob() == null) {
++			if (other.getConteudoTpBlob() != null)
+ 				return false;
+-		} else if (!conteudoTpBlob.equals(other.conteudoTpBlob))
++		} else if (!getConteudoTpBlob().equals(other.getConteudoTpBlob()))
+ 			return false;
+ 		if (descMod == null) {
+ 			if (other.descMod != null)
+@@ -414,4 +371,32 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
+ 		return true;
+ 	}
+ 
++	public CpArquivo getCpArquivo() {
++		return cpArquivo;
++	}
++
++	public void setCpArquivo(CpArquivo cpArquivo) {
++		this.cpArquivo = cpArquivo;
++	}
++
++	public java.lang.String getConteudoTpBlob() {
++		if (getCpArquivo() == null)
++			return null;
++		return getCpArquivo().getConteudoTpArq();
++	}
++
++	public void setConteudoTpBlob(final java.lang.String conteudoTpMod) {
++		setCpArquivo(CpArquivo.updateConteudoTp(getCpArquivo(), conteudoTpMod)); 
++	}
++
++	public byte[] getConteudoBlobMod() {
++		if (getCpArquivo() == null)
++			return null;
++		return getCpArquivo().getConteudoBlobArq();
++	}
++
++	public void setConteudoBlobMod(byte[] createBlob) {
++		setCpArquivo(CpArquivo.updateConteudo(getCpArquivo(), createBlob));
++	}
++
+ }
+diff --git a/siga-ex/src/main/java/br/gov/jfrj/siga/ex/AbstractExMovimentacao.java b/siga-ex/src/main/java/br/gov/jfrj/siga/ex/AbstractExMovimentacao.java
+index 3674af8596..78223f8ac9 100644
+--- a/siga-ex/src/main/java/br/gov/jfrj/siga/ex/AbstractExMovimentacao.java
++++ b/siga-ex/src/main/java/br/gov/jfrj/siga/ex/AbstractExMovimentacao.java
+@@ -1,4 +1,3 @@
+-
+ /*******************************************************************************
+  * Copyright (c) 2006 - 2011 SJRJ.
+  * 
+@@ -25,6 +24,7 @@ import java.io.Serializable;
+ import java.util.Date;
+ 
+ import javax.persistence.Basic;
++import javax.persistence.CascadeType;
+ import javax.persistence.Column;
+ import javax.persistence.FetchType;
+ import javax.persistence.GeneratedValue;
+@@ -42,6 +42,7 @@ import javax.persistence.TemporalType;
+ 
+ import org.hibernate.annotations.BatchSize;
+ 
++import br.gov.jfrj.siga.cp.CpArquivo;
+ import br.gov.jfrj.siga.cp.CpIdentidade;
+ import br.gov.jfrj.siga.dp.CpMarcador;
+ import br.gov.jfrj.siga.dp.CpOrgao;
+@@ -172,14 +173,6 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
+ 	@JoinColumn(name = "id_cadastrante")
+ 	private DpPessoa cadastrante;
+ 
+-	@Lob
+-	@Column(name = "conteudo_blob_mov")
+-	@Basic(fetch = FetchType.LAZY)
+-	private byte[] conteudoBlobMov;
+-
+-	@Column(name = "conteudo_tp_mov", length = 128)
+-	private String conteudoTpMov;
+-
+ 	@BatchSize(size=1)
+ 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exMovimentacaoRef")
+ 	private java.util.Set<ExMovimentacao> exMovimentacaoReferenciadoraSet;
+@@ -334,6 +327,10 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
+ 	@Column(name = "hash_audit", length = 1024)
+ 	private String auditHash;
+ 
++	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
++	@JoinColumn(name = "ID_ARQ")
++	private CpArquivo cpArquivo;
++
+ 	public void setNumPaginasOri(Integer numPaginasOri) {
+ 		this.numPaginasOri = numPaginasOri;
+ 	}
+@@ -361,14 +358,6 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
+ 		return cadastrante;
+ 	}
+ 
+-	public byte[] getConteudoBlobMov() {
+-		return conteudoBlobMov;
+-	}
+-
+-	public String getConteudoTpMov() {
+-		return conteudoTpMov;
+-	}
+-
+ 	public String getDescrMov() {
+ 		return descrMov;
+ 	}
+@@ -437,14 +426,6 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
+ 		this.cadastrante = cadastrante;
+ 	}
+ 
+-	public void setConteudoBlobMov(byte[] conteudoBlobMov) {
+-		this.conteudoBlobMov = conteudoBlobMov;
+-	}
+-
+-	public void setConteudoTpMov(final String conteudoTpMov) {
+-		this.conteudoTpMov = conteudoTpMov;
+-	}
+-
+ 	public void setDescrMov(final String descrMov) {
+ 		this.descrMov = descrMov;
+ 	}
+@@ -680,4 +661,34 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
+ 	public void setAuditHash(String auditHash) {
+ 		this.auditHash = auditHash;
+ 	}
++	
++	public CpArquivo getCpArquivo() {
++		return cpArquivo;
++	}
++
++	public void setCpArquivo(CpArquivo cpArquivo) {
++		this.cpArquivo = cpArquivo;
++	}
++
++	public java.lang.String getConteudoTpMov() {
++		if (getCpArquivo() == null)
++			return null;
++		return getCpArquivo().getConteudoTpArq();
++	}
++
++	public void setConteudoTpMov(final java.lang.String conteudoTp) {
++		setCpArquivo(CpArquivo.updateConteudoTp(getCpArquivo(), conteudoTp)); 
++	}
++
++	public byte[] getConteudoBlobMov() {
++		if (getCpArquivo() == null)
++			return null;
++		return getCpArquivo().getConteudoBlobArq();
++	}
++
++	public void setConteudoBlobMov(byte[] createBlob) {
++		setCpArquivo(CpArquivo.updateConteudo(getCpArquivo(), createBlob));
++	}
++
++
+ }
+\ No newline at end of file
+diff --git a/siga-ex/src/main/java/br/gov/jfrj/siga/ex/AbstractExPreenchimento.java b/siga-ex/src/main/java/br/gov/jfrj/siga/ex/AbstractExPreenchimento.java
+index ec7a52d418..9b060ce39e 100644
+--- a/siga-ex/src/main/java/br/gov/jfrj/siga/ex/AbstractExPreenchimento.java
++++ b/siga-ex/src/main/java/br/gov/jfrj/siga/ex/AbstractExPreenchimento.java
+@@ -23,6 +23,7 @@ package br.gov.jfrj.siga.ex;
+ 
+ import java.io.Serializable;
+ 
++import javax.persistence.CascadeType;
+ import javax.persistence.Column;
+ import javax.persistence.FetchType;
+ import javax.persistence.GeneratedValue;
+@@ -35,6 +36,7 @@ import javax.persistence.NamedQueries;
+ import javax.persistence.NamedQuery;
+ import javax.persistence.SequenceGenerator;
+ 
++import br.gov.jfrj.siga.cp.CpArquivo;
+ import br.gov.jfrj.siga.dp.DpLotacao;
+ import br.gov.jfrj.siga.model.Objeto;
+ 
+@@ -71,9 +73,9 @@ public abstract class AbstractExPreenchimento extends Objeto implements
+ 	@Column(name = "EX_NOME_PREENCHIMENTO", nullable = false, length = 256)
+ 	private String nomePreenchimento;
+ 
+-	@Lob
+-	@Column(name = "PREENCHIMENTO_BLOB")
+-	private byte[] preenchimentoBlob;
++	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
++	@JoinColumn(name = "ID_ARQ")
++	private CpArquivo cpArquivo;
+ 
+ 	/**
+ 	 * Simple constructor of AbstractExTipoDespacho instances.
+@@ -109,21 +111,13 @@ public abstract class AbstractExPreenchimento extends Objeto implements
+ 		this.idPreenchimento = idPreenchimento;
+ 	}
+ 
+-	public byte[] getPreenchimentoBlob() {
+-		return preenchimentoBlob;
+-	}
+-
+-	public void setPreenchimentoBlob(byte[] preenchimentoBlob) {
+-		this.preenchimentoBlob = preenchimentoBlob;
+-	}
+-
+ 	@Override
+ 	public boolean equals(final Object rhs) {
+ 		if ((rhs == null) || !(rhs instanceof ExPreenchimento))
+ 			return false;
+ 		final ExPreenchimento that = (ExPreenchimento) rhs;
+ 		if ((this.getIdPreenchimento() == null ? that.getIdPreenchimento() == null
+-				: this.getIdPreenchimento().equals(that.getPreenchimentoBlob())))
++				: this.getIdPreenchimento().equals(that.getIdPreenchimento())))
+ 			return true;
+ 		return false;
+ 
+@@ -151,5 +145,34 @@ public abstract class AbstractExPreenchimento extends Objeto implements
+ 	public void setNomePreenchimento(String nomePreenchimento) {
+ 		this.nomePreenchimento = nomePreenchimento;
+ 	}
++	
++	public CpArquivo getCpArquivo() {
++		return cpArquivo;
++	}
++
++	public void setCpArquivo(CpArquivo cpArquivo) {
++		this.cpArquivo = cpArquivo;
++	}
++
++	public java.lang.String getConteudoTp() {
++		if (getCpArquivo() == null)
++			return null;
++		return getCpArquivo().getConteudoTpArq();
++	}
++
++	public void setConteudoTp(final java.lang.String conteudoTp) {
++		setCpArquivo(CpArquivo.updateConteudoTp(getCpArquivo(), conteudoTp)); 
++	}
++
++	public byte[] getConteudo() {
++		if (getCpArquivo() == null)
++			return null;
++		return getCpArquivo().getConteudoBlobArq();
++	}
++
++	public void setConteudo(byte[] createBlob) {
++		setCpArquivo(CpArquivo.updateConteudo(getCpArquivo(), createBlob));
++	}
++
+ 
+ }
+diff --git a/siga-ex/src/main/java/br/gov/jfrj/siga/ex/ExArquivo.java b/siga-ex/src/main/java/br/gov/jfrj/siga/ex/ExArquivo.java
+index cddfa16a35..55378c2427 100644
+--- a/siga-ex/src/main/java/br/gov/jfrj/siga/ex/ExArquivo.java
++++ b/siga-ex/src/main/java/br/gov/jfrj/siga/ex/ExArquivo.java
+@@ -23,17 +23,27 @@ import java.util.Date;
+ import java.util.Map;
+ import java.util.Set;
+ 
++import javax.persistence.CascadeType;
+ import javax.persistence.Column;
++import javax.persistence.FetchType;
++import javax.persistence.JoinColumn;
++import javax.persistence.ManyToOne;
+ import javax.persistence.MappedSuperclass;
+ 
+ import br.gov.jfrj.itextpdf.Documento;
++import br.gov.jfrj.siga.cp.CpArquivo;
+ import br.gov.jfrj.siga.dp.DpLotacao;
+ import br.gov.jfrj.siga.model.Objeto;
++
+ @MappedSuperclass
+ public abstract class ExArquivo extends Objeto {
+ 	@Column(name = "NUM_PAGINAS")
+ 	private Integer numPaginas;
+ 
++	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
++	@JoinColumn(name = "ID_ARQ")
++	private CpArquivo cpArquivo;
++
+ 	public abstract String getAssinantesCompleto();
+ 
+ 	public abstract Set<ExMovimentacao> getAssinaturasDigitais();
+@@ -73,8 +83,8 @@ public abstract class ExArquivo extends Objeto {
+ 			// Verifica se é possível estampar o documento
+ 			try {
+ 				byte[] documentoComStamp = Documento.stamp(abPdf, "", true,
+-						false, false, false, false, null, null, null, null, null,
+-						null, null);
++						false, false, false, false, null, null, null, null,
++						null, null, null);
+ 
+ 				return documentoComStamp;
+ 
+@@ -103,7 +113,7 @@ public abstract class ExArquivo extends Objeto {
+ 			return 0;
+ 		}
+ 	}
+-	
++
+ 	public abstract Date getData();
+ 
+ 	public abstract String getHtml();
+@@ -182,7 +192,7 @@ public abstract class ExArquivo extends Objeto {
+ 	}
+ 
+ 	public abstract byte[] getPdf();
+-	
++
+ 	public abstract boolean isPdf();
+ 
+ 	public long getByteCount() {
+@@ -244,7 +254,8 @@ public abstract class ExArquivo extends Objeto {
+ 	}
+ 
+ 	/**
+-	 * Retorna a referência do objeto mais o extensão ".html" e um outro parâmetro de queryString para indicar o arquivo completo.
++	 * Retorna a referência do objeto mais o extensão ".html" e um outro
++	 * parâmetro de queryString para indicar o arquivo completo.
+ 	 * 
+ 	 */
+ 	public String getReferenciaHtmlCompleto() {
+@@ -260,13 +271,13 @@ public abstract class ExArquivo extends Objeto {
+ 			return null;
+ 		return getReferencia() + ".pdf";
+ 	};
+-	
++
+ 	public String getReferenciaPDFCompleto() {
+ 		if (getNumPaginas() == null || getNumPaginas() == 0)
+ 			return null;
+ 		return getReferencia() + ".pdf&completo=1";
+ 	};
+-	
++
+ 	/**
+ 	 * Retorna a referência do objeto mais o extensão ".pdf".
+ 	 * 
+@@ -280,7 +291,7 @@ public abstract class ExArquivo extends Objeto {
+ 	};
+ 
+ 	public abstract String getSiglaAssinatura();
+-	
++
+ 	public abstract String getSiglaAssinaturaExterna();
+ 
+ 	/**
+@@ -306,9 +317,17 @@ public abstract class ExArquivo extends Objeto {
+ 	public void setNumPaginas(Integer numPaginas) {
+ 		this.numPaginas = numPaginas;
+ 	}
+-	
++
+ 	public abstract boolean isCodigoParaAssinaturaExterna(String num);
+-	
++
+ 	public abstract String getTipoDescr();
+ 
++	public CpArquivo getCpArquivo() {
++		return cpArquivo;
++	}
++
++	public void setCpArquivo(CpArquivo cpArquivo) {
++		this.cpArquivo = cpArquivo;
++	}
++
+ }
+\ No newline at end of file
+diff --git a/siga-ex/src/main/java/br/gov/jfrj/siga/ex/ExDocumento.java b/siga-ex/src/main/java/br/gov/jfrj/siga/ex/ExDocumento.java
+index 6522dc4c22..a2a07f26eb 100644
+--- a/siga-ex/src/main/java/br/gov/jfrj/siga/ex/ExDocumento.java
++++ b/siga-ex/src/main/java/br/gov/jfrj/siga/ex/ExDocumento.java
+@@ -24,6 +24,7 @@ package br.gov.jfrj.siga.ex;
+ import java.io.Serializable;
+ import java.io.UnsupportedEncodingException;
+ import java.net.URLDecoder;
++import java.sql.Blob;
+ import java.text.ParseException;
+ import java.text.SimpleDateFormat;
+ import java.util.ArrayList;
+@@ -53,6 +54,7 @@ import org.jboss.logging.Logger;
+ import br.gov.jfrj.itextpdf.Documento;
+ import br.gov.jfrj.siga.base.AplicacaoException;
+ import br.gov.jfrj.siga.base.Texto;
++import br.gov.jfrj.siga.cp.CpArquivo;
+ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+ import br.gov.jfrj.siga.dp.DpLotacao;
+ import br.gov.jfrj.siga.dp.DpPessoa;
+@@ -380,9 +382,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
+ 	 * blob do documento.
+ 	 */
+ 	public byte[] getConteudoBlobDoc2() {
+-
+-		if (cacheConteudoBlobDoc == null)
+-			cacheConteudoBlobDoc = getConteudoBlobDoc();
++		if (cacheConteudoBlobDoc == null && getCpArquivo() != null)
++			cacheConteudoBlobDoc = getCpArquivo().getConteudoBlobArq();
+ 		return cacheConteudoBlobDoc;
+ 
+ 	}
+@@ -2632,4 +2633,5 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
+ 			}
+ 		return null;
+ 	}
++
+ }
+diff --git a/siga-ex/src/main/java/br/gov/jfrj/siga/ex/ExMovimentacao.java b/siga-ex/src/main/java/br/gov/jfrj/siga/ex/ExMovimentacao.java
+index 1ee8c0fe6f..205897bcf4 100644
+--- a/siga-ex/src/main/java/br/gov/jfrj/siga/ex/ExMovimentacao.java
++++ b/siga-ex/src/main/java/br/gov/jfrj/siga/ex/ExMovimentacao.java
+@@ -1174,4 +1174,5 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
+ 		}
+ 		return "Outro";
+ 	}
++	
+ }
+\ No newline at end of file
+diff --git a/siga-ex/src/main/java/br/gov/jfrj/siga/ex/ExPreenchimento.java b/siga-ex/src/main/java/br/gov/jfrj/siga/ex/ExPreenchimento.java
+index 505d6f5b66..ab69faac25 100644
+--- a/siga-ex/src/main/java/br/gov/jfrj/siga/ex/ExPreenchimento.java
++++ b/siga-ex/src/main/java/br/gov/jfrj/siga/ex/ExPreenchimento.java
+@@ -25,13 +25,10 @@ import java.io.Serializable;
+ 
+ import javax.persistence.Entity;
+ import javax.persistence.Table;
+-import javax.persistence.Transient;
+ 
+ import org.hibernate.annotations.BatchSize;
+ 
+-import br.gov.jfrj.siga.base.AplicacaoException;
+ import br.gov.jfrj.siga.dp.DpLotacao;
+-import br.gov.jfrj.siga.model.dao.HibernateUtil;
+ 
+ /**
+  * A class that represents a row in the 'EX_TIPO_DESPACHO' table. This class may
+@@ -62,8 +59,10 @@ public class ExPreenchimento extends AbstractExPreenchimento implements
+ 	 */
+ 
+ 	public void setPreenchimentoBA(byte[] blob) {
+-		if (blob != null)
+-			setPreenchimentoBlob(blob);
++		if (blob != null) {
++			setConteudo(blob);
++			setConteudoTp("application/x-www-form-urlencoded");
++		}
+ 	}
+ 
+ 	public ExPreenchimento() {
+diff --git a/siga-ex/src/main/java/br/gov/jfrj/siga/ex/bl/ExBL.java b/siga-ex/src/main/java/br/gov/jfrj/siga/ex/bl/ExBL.java
+index 566bedc36b..a3ecea000c 100644
+--- a/siga-ex/src/main/java/br/gov/jfrj/siga/ex/bl/ExBL.java
++++ b/siga-ex/src/main/java/br/gov/jfrj/siga/ex/bl/ExBL.java
+@@ -3464,7 +3464,7 @@ public class ExBL extends CpBL {
+ 			if (t != null && t instanceof AplicacaoException)
+ 				throw (AplicacaoException) t;
+ 			else
+-				throw new AplicacaoException("Erro na gravação", 0, e);
++				throw new Exception("Erro na gravação", e);
+ 		}
+ 		try {
+ 
+@@ -3691,7 +3691,7 @@ public class ExBL extends CpBL {
+ 
+ 		} catch (final Exception e) {
+ 			cancelarAlteracao();
+-			throw new AplicacaoException("Erro na gravação", 0, e);
++			throw new Exception("Erro na gravação", e);
+ 
+ 		}
+ 
+@@ -3708,7 +3708,7 @@ public class ExBL extends CpBL {
+ 
+ 		} catch (final Exception e) {
+ 			cancelarAlteracao();
+-			throw new AplicacaoException("Erro na gravação", 0, e);
++			throw new Exception("Erro na gravação", e);
+ 
+ 		}
+ 
+@@ -3844,8 +3844,8 @@ public class ExBL extends CpBL {
+ 			throw e;
+ 		} catch (final Exception e) {
+ 			ExDao.rollbackTransacao();
+-			throw new AplicacaoException("Ocorreu um Erro durante a Operação",
+-					0, e);
++			throw new Exception("Ocorreu um Erro durante a Operação",
++					e);
+ 		}
+ 
+ 	}
+@@ -3904,7 +3904,7 @@ public class ExBL extends CpBL {
+ 	public void incluirCosignatario(final DpPessoa cadastrante,
+ 			final DpLotacao lotaCadastrante, final ExDocumento doc,
+ 			final Date dtMov, final DpPessoa subscritor,
+-			final String funcaoCosignatario) throws AplicacaoException {
++			final String funcaoCosignatario) throws Exception {
+ 
+ 		try {
+ 			if (subscritor == null) {
+@@ -3926,7 +3926,7 @@ public class ExBL extends CpBL {
+ 			concluirAlteracaoDocComRecalculoAcesso(doc);
+ 		} catch (final Exception e) {
+ 			cancelarAlteracao();
+-			throw new AplicacaoException("Erro ao incluir Cossignatário.", 0, e);
++			throw new Exception("Erro ao incluir Cossignatário.", e);
+ 		}
+ 	}
+ 
+@@ -3934,7 +3934,7 @@ public class ExBL extends CpBL {
+ 			final DpPessoa docTitular, final DpLotacao lotaCadastrante,
+ 			final String idDocExterno, final ExMobil mob, ExMobil mobPai,
+ 			final Date dtMov, final DpPessoa subscritor,
+-			final DpPessoa titular, final String idDocEscolha) {
++			final DpPessoa titular, final String idDocEscolha) throws Exception {
+ 
+ 		if (idDocEscolha.equals("1")) {
+ 
+@@ -4065,13 +4065,13 @@ public class ExBL extends CpBL {
+ 			
+ 		} catch (final Exception e) {
+ 			cancelarAlteracao();
+-			throw new AplicacaoException("Erro ao juntar documento.", 0, e);
++			throw new Exception("Erro ao juntar documento.", e);
+ 		}
+ 
+ }
+ 
+ 	public ExDocumento refazer(DpPessoa cadastrante,
+-			final DpLotacao lotaCadastrante, ExDocumento doc) {
++			final DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
+ 
+ 		// As alterações devem ser feitas em cancelardocumento.
+ 		try {
+@@ -4094,13 +4094,13 @@ public class ExBL extends CpBL {
+ 			return novoDoc;
+ 		} catch (final Exception e) {
+ 			cancelarAlteracao();
+-			throw new AplicacaoException("Erro ao refazer o documento.", 0, e);
++			throw new Exception("Erro ao refazer o documento.", e);
+ 		}
+ 	}
+ 
+ 	// Nato: removi: HttpServletRequest request
+ 	public ExDocumento duplicar(DpPessoa cadastrante,
+-			final DpLotacao lotaCadastrante, ExDocumento doc) {
++			final DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
+ 
+ 		try {
+ 			iniciarAlteracao();
+@@ -4113,7 +4113,7 @@ public class ExBL extends CpBL {
+ 
+ 		} catch (final Exception e) {
+ 			cancelarAlteracao();
+-			throw new AplicacaoException("Erro ao duplicar o documento.", 0, e);
++			throw new Exception("Erro ao duplicar o documento.", e);
+ 		}
+ 	}
+ 
+@@ -4236,8 +4236,8 @@ public class ExBL extends CpBL {
+ 					concluirAlteracaoDoc(novaMov.getExDocumento());
+ 				} catch (final Exception e) {
+ 					cancelarAlteracao();
+-					throw new AplicacaoException(
+-							"Erro ao gravar movimentacao.", 0, e);
++					throw new Exception(
++							"Erro ao gravar movimentacao.", e);
+ 				}
+ 			}
+ 		}
+@@ -4285,7 +4285,7 @@ public class ExBL extends CpBL {
+ 	// pois nao eram utilizados
+ 	public void receber(final DpPessoa cadastrante,
+ 			final DpLotacao lotaCadastrante, final ExMobil mob, final Date dtMov)
+-			throws AplicacaoException {
++			throws Exception {
+ 
+ 
+ 		SortedSet<ExMobil> set = mob.getMobilEApensosExcetoVolumeApensadoAoProximo();
+@@ -4311,11 +4311,11 @@ public class ExBL extends CpBL {
+ 			concluirAlteracao(null);
+ 		} catch (final Exception e) {
+ 			cancelarAlteracao();
+-			throw new AplicacaoException("Erro ao receber documento.", 0, e);
++			throw new Exception("Erro ao receber documento.", e);
+ 		}
+ 	}
+ 
+-	public void receberEletronico(ExMovimentacao mov) throws AplicacaoException {
++	public void receberEletronico(ExMovimentacao mov) throws Exception {
+ 
+ 		// try {
+ 		// iniciarAlteracao();
+@@ -4340,7 +4340,7 @@ public class ExBL extends CpBL {
+ 			final DpLotacao lotaCadastrante, final ExMobil mob,
+ 			final Date dtMov, final DpPessoa subscritor,
+ 			final DpPessoa titular, final String descrMov)
+-			throws AplicacaoException {
++			throws Exception {
+ 
+ 		try {
+ 			iniciarAlteracao();
+@@ -4356,15 +4356,15 @@ public class ExBL extends CpBL {
+ 			concluirAlteracao(mov.getExMobil());
+ 		} catch (final Exception e) {
+ 			cancelarAlteracao();
+-			throw new AplicacaoException(
+-					"Erro ao indicar para guarda permenente.", 0, e);
++			throw new Exception(
++					"Erro ao indicar para guarda permenente.", e);
+ 		}
+ 	}
+ 
+ 	public void reverterIndicacaoPermanente(final DpPessoa cadastrante,
+ 			final DpLotacao lotaCadastrante, final ExMobil mob,
+ 			final Date dtMov, final DpPessoa subscritor,
+-			final DpPessoa titular, String descrMov) throws AplicacaoException {
++			final DpPessoa titular, String descrMov) throws Exception {
+ 
+ 		try {
+ 			iniciarAlteracao();
+@@ -4380,15 +4380,15 @@ public class ExBL extends CpBL {
+ 			concluirAlteracao(mov.getExMobil());
+ 		} catch (final Exception e) {
+ 			cancelarAlteracao();
+-			throw new AplicacaoException(
+-					"Erro ao reverter indicação para guarda permenente.", 0, e);
++			throw new Exception(
++					"Erro ao reverter indicação para guarda permenente.", e);
+ 		}
+ 	}
+ 
+ 	public void referenciarDocumento(final DpPessoa cadastrante,
+ 			final DpLotacao lotaCadastrante, final ExMobil mob,
+ 			final ExMobil mobRef, final Date dtMov, final DpPessoa subscritor,
+-			final DpPessoa titular) throws AplicacaoException {
++			final DpPessoa titular) throws Exception {
+ 
+ 		if (mobRef == null)
+ 			throw new AplicacaoException(
+@@ -4422,14 +4422,14 @@ public class ExBL extends CpBL {
+ 			concluirAlteracao(mov.getExMobil());
+ 		} catch (final Exception e) {
+ 			cancelarAlteracao();
+-			throw new AplicacaoException("Erro ao vincular documento.", 0, e);
++			throw new Exception("Erro ao vincular documento.", e);
+ 		}
+ 	}
+ 
+ 	public void copiar(final DpPessoa cadastrante,
+ 			final DpLotacao lotaCadastrante, final ExMobil mob,
+ 			final ExMobil mobRef, final Date dtMov, final DpPessoa subscritor,
+-			final DpPessoa titular) throws AplicacaoException {
++			final DpPessoa titular) throws Exception {
+ 		
+ 		final ExMobil mobRefGeral = mobRef.doc().getMobilGeral();
+ 
+@@ -4465,14 +4465,14 @@ public class ExBL extends CpBL {
+ 			concluirAlteracao(mov.getExMobil());
+ 		} catch (final Exception e) {
+ 			cancelarAlteracao();
+-			throw new AplicacaoException("Erro ao copiar documento.", 0, e);
++			throw new Exception("Erro ao copiar documento.", e);
+ 		}
+ 	}
+ 
+ 	public String RegistrarAssinatura(final DpPessoa cadastrante,
+ 			final DpLotacao lotaCadastrante, final ExDocumento doc,
+ 			final Date dtMov, final DpPessoa subscritor, final DpPessoa titular)
+-			throws AplicacaoException {
++			throws Exception {
+ 		boolean fPreviamenteAssinado = !doc.isPendenteDeAssinatura();
+ 
+ 		if (!doc.isFinalizado())
+@@ -4502,7 +4502,7 @@ public class ExBL extends CpBL {
+ 				s = processarComandosEmTag(doc, "assinatura");
+ 		} catch (final Exception e) {
+ 			cancelarAlteracao();
+-			throw new AplicacaoException("Erro ao registrar assinatura.", 0, e);
++			throw new Exception("Erro ao registrar assinatura.", e);
+ 		}
+ 		return s;
+ 	}
+diff --git a/siga-ex/src/main/java/br/gov/jfrj/siga/ex/bl/ExCompetenciaBL.java b/siga-ex/src/main/java/br/gov/jfrj/siga/ex/bl/ExCompetenciaBL.java
+index fdb2165dd6..9fbb394730 100644
+--- a/siga-ex/src/main/java/br/gov/jfrj/siga/ex/bl/ExCompetenciaBL.java
++++ b/siga-ex/src/main/java/br/gov/jfrj/siga/ex/bl/ExCompetenciaBL.java
+@@ -2324,7 +2324,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
+ 	 */
+ 	public boolean podeEditar(final DpPessoa titular,
+ 			final DpLotacao lotaTitular, final ExMobil mob) {
+-
+ 		if (mob.doc().isEletronico()){
+ 			if (!mob.doc().getAssinaturasEAutenticacoesComTokenOuSenhaERegistros().isEmpty())
+ 				return false;
+diff --git a/siga-ex/src/main/resources/META-INF/persistence.xml b/siga-ex/src/main/resources/META-INF/persistence.xml
+index ffbc80930b..ced5bb52a3 100644
+--- a/siga-ex/src/main/resources/META-INF/persistence.xml
++++ b/siga-ex/src/main/resources/META-INF/persistence.xml
+@@ -45,6 +45,8 @@
+ 		<class>br.gov.jfrj.siga.dp.CpTipoMarca</class>
+ 		<class>br.gov.jfrj.siga.cp.CpAcesso</class>
+ 		
++		<class>br.gov.jfrj.siga.cp.CpArquivo</class>
++		<class>br.gov.jfrj.siga.cp.CpArquivoBlob</class>
+ 		
+ 		<class>br.gov.jfrj.siga.ex.ExTipoDocumento</class>
+ 		<class>br.gov.jfrj.siga.ex.ExFormaDocumento</class>
+diff --git a/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V47_0__Description.sql b/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V47_0__Description.sql
+new file mode 100644
+index 0000000000..e69de29bb2
+diff --git a/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V47_0__Novos_campos_de_auditoria.sql b/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V47_1__Novos_campos_de_auditoria.sql
+similarity index 100%
+rename from siga-ex/src/main/resources/db/migration/SIGA_UTF8_V47_0__Novos_campos_de_auditoria.sql
+rename to siga-ex/src/main/resources/db/migration/SIGA_UTF8_V47_1__Novos_campos_de_auditoria.sql
+diff --git a/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V51_0__Juntada_Automatica.sql b/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V51_0__Juntada_Automatica.sql
+deleted file mode 100644
+index 1157308ec7..0000000000
+--- a/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V51_0__Juntada_Automatica.sql
++++ /dev/null
+@@ -1,5 +0,0 @@
+-﻿---------------------------------------------------------
+---	SCRIPT: Criando a configuração Juntada automática
+----------------------------------------------------------
+-
+-insert into corporativo.cp_tipo_configuracao values(41, 'Juntada Automática', 5);
+diff --git a/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V52_0__Acrescentando_Referencias_Para_Arquivo.sql b/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V52_0__Acrescentando_Referencias_Para_Arquivo.sql
+new file mode 100644
+index 0000000000..87f63ac560
+--- /dev/null
++++ b/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V52_0__Acrescentando_Referencias_Para_Arquivo.sql
+@@ -0,0 +1,17 @@
++--Transferindo os blobs para uma tabela separada 
++
++ALTER TABLE SIGA.EX_MODELO ADD (ID_ARQ number(19,0) NULL);
++COMMENT ON COLUMN "SIGA"."EX_MODELO"."ID_ARQ" IS 'Identificador do arquivo';
++ALTER TABLE SIGA.EX_MODELO ADD FOREIGN KEY (ID_ARQ) REFERENCES CORPORATIVO.CP_ARQUIVO (ID_ARQ) ENABLE;
++
++ALTER TABLE SIGA.EX_DOCUMENTO ADD (ID_ARQ number(19,0) NULL);
++COMMENT ON COLUMN "SIGA"."EX_DOCUMENTO"."ID_ARQ" IS 'Identificador do arquivo';
++ALTER TABLE SIGA.EX_DOCUMENTO ADD FOREIGN KEY (ID_ARQ) REFERENCES CORPORATIVO.CP_ARQUIVO (ID_ARQ) ENABLE;
++
++ALTER TABLE SIGA.EX_MOVIMENTACAO ADD (ID_ARQ number(19,0) NULL);
++COMMENT ON COLUMN "SIGA"."EX_MOVIMENTACAO"."ID_ARQ" IS 'Identificador do arquivo';
++ALTER TABLE SIGA.EX_MOVIMENTACAO ADD FOREIGN KEY (ID_ARQ) REFERENCES CORPORATIVO.CP_ARQUIVO (ID_ARQ) ENABLE;
++
++ALTER TABLE SIGA.EX_PREENCHIMENTO ADD (ID_ARQ number(19,0) NULL);
++COMMENT ON COLUMN "SIGA"."EX_PREENCHIMENTO"."ID_ARQ" IS 'Identificador do arquivo';
++ALTER TABLE SIGA.EX_PREENCHIMENTO ADD FOREIGN KEY (ID_ARQ) REFERENCES CORPORATIVO.CP_ARQUIVO (ID_ARQ) ENABLE;
+diff --git a/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V52_1__Transferindo_blobs_Ex_Modelo.sql b/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V52_1__Transferindo_blobs_Ex_Modelo.sql
+new file mode 100644
+index 0000000000..c999a15d4d
+--- /dev/null
++++ b/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V52_1__Transferindo_blobs_Ex_Modelo.sql
+@@ -0,0 +1,42 @@
++declare 
++    cursor c1( 
++      p_rows_to_process in number) is 
++      select * 
++      from   ex_modelo 
++      where  id_arq is null 
++         and conteudo_blob_mod is not null; 
++    l_moretodo       boolean := true; 
++    l_rows_processed pls_integer := 0; 
++    l_chunk          number := 1000; 
++begin 
++    while l_moretodo loop 
++        l_rows_processed := 0; 
++
++        for r1 in c1(l_chunk) loop 
++            insert into corporativo.cp_arquivo_blob
++                        (id_arq_blob,conteudo_arq_blob) 
++            values      (corporativo.cp_arquivo_seq.nextval,r1.conteudo_blob_mod);
++
++            insert into corporativo.cp_arquivo
++                        (id_arq,id_orgao_usu,conteudo_tp_arq) 
++            values      (corporativo.cp_arquivo_seq.currval,null,r1.conteudo_tp_blob);
++
++            update ex_modelo 
++            set    id_arq = corporativo.cp_arquivo_seq.currval 
++            where  id_mod = r1.id_mod; 
++
++            l_rows_processed := l_rows_processed + 1; 
++        end loop; 
++
++        commit; 
++
++        dbms_output.Put_line('Processed: ' 
++                             ||l_rows_processed); 
++
++        if l_rows_processed < l_chunk then 
++          dbms_output.Put_line('Exiting loop...'); 
++
++          l_moretodo := false; 
++        end if; 
++    end loop; 
++end;
+diff --git a/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V52_2__Transferindo_blobs_Ex_Movimentacao.sql b/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V52_2__Transferindo_blobs_Ex_Movimentacao.sql
+new file mode 100644
+index 0000000000..eeeda00613
+--- /dev/null
++++ b/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V52_2__Transferindo_blobs_Ex_Movimentacao.sql
+@@ -0,0 +1,43 @@
++declare 
++    cursor c1( 
++      p_rows_to_process in number) is 
++      select * 
++      from   ex_movimentacao 
++      where  id_arq is null 
++         and conteudo_blob_mov is not null; 
++    l_moretodo       boolean := true; 
++    l_rows_processed pls_integer := 0; 
++    l_chunk          number := 1000; 
++begin 
++    while l_moretodo loop 
++        l_rows_processed := 0; 
++
++        for r1 in c1(l_chunk) loop 
++            insert into corporativo.cp_arquivo_blob
++                        (id_arq_blob,conteudo_arq_blob) 
++            values      (corporativo.cp_arquivo_seq.nextval,r1.conteudo_blob_mov);
++
++            insert into corporativo.cp_arquivo
++                        (id_arq,id_orgao_usu,conteudo_tp_arq) 
++            values      (corporativo.cp_arquivo_seq.currval,null,r1.conteudo_tp_mov);
++
++            update ex_movimentacao
++            set    id_arq = corporativo.cp_arquivo_seq.currval 
++            where  id_mov = r1.id_mov; 
++
++            l_rows_processed := l_rows_processed + 1; 
++        end loop; 
++
++        commit; 
++
++        dbms_output.Put_line('Processed: ' 
++                             ||l_rows_processed); 
++
++        if l_rows_processed < l_chunk then 
++          dbms_output.Put_line('Exiting loop...'); 
++
++          l_moretodo := false; 
++        end if; 
++    end loop; 
++end;
++
+diff --git a/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V52_3__Transferindo_blobs_Ex_Documento.sql b/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V52_3__Transferindo_blobs_Ex_Documento.sql
+new file mode 100644
+index 0000000000..ec84e289e8
+--- /dev/null
++++ b/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V52_3__Transferindo_blobs_Ex_Documento.sql
+@@ -0,0 +1,42 @@
++declare 
++    cursor c1( 
++      p_rows_to_process in number) is 
++      select * 
++      from   ex_documento 
++      where  id_arq is null 
++         and conteudo_blob_doc is not null; 
++    l_moretodo       boolean := true; 
++    l_rows_processed pls_integer := 0; 
++    l_chunk          number := 1000; 
++begin 
++    while l_moretodo loop 
++        l_rows_processed := 0; 
++
++        for r1 in c1(l_chunk) loop 
++            insert into corporativo.cp_arquivo_blob
++                        (id_arq_blob,conteudo_arq_blob) 
++            values      (corporativo.cp_arquivo_seq.nextval,r1.conteudo_blob_doc);
++
++            insert into corporativo.cp_arquivo
++                        (id_arq,id_orgao_usu,conteudo_tp_arq) 
++            values      (corporativo.cp_arquivo_seq.currval,null,r1.conteudo_tp_doc);
++
++            update ex_documento
++            set    id_arq = corporativo.cp_arquivo_seq.currval 
++            where  id_doc = r1.id_doc; 
++
++            l_rows_processed := l_rows_processed + 1; 
++        end loop; 
++
++        commit; 
++
++        dbms_output.Put_line('Processed: ' 
++                             ||l_rows_processed); 
++
++        if l_rows_processed < l_chunk then 
++          dbms_output.Put_line('Exiting loop...'); 
++
++          l_moretodo := false; 
++        end if; 
++    end loop; 
++end;
+diff --git a/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V52_4__Transferindo_blobs_Ex_Preenchimento.sql b/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V52_4__Transferindo_blobs_Ex_Preenchimento.sql
+new file mode 100644
+index 0000000000..0c38d3ee94
+--- /dev/null
++++ b/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V52_4__Transferindo_blobs_Ex_Preenchimento.sql
+@@ -0,0 +1,42 @@
++declare 
++    cursor c1( 
++      p_rows_to_process in number) is 
++      select * 
++      from   ex_preenchimento 
++      where  id_arq is null 
++         and preenchimento_blob is not null; 
++    l_moretodo       boolean := true; 
++    l_rows_processed pls_integer := 0; 
++    l_chunk          number := 1000; 
++begin 
++    while l_moretodo loop 
++        l_rows_processed := 0; 
++
++        for r1 in c1(l_chunk) loop 
++            insert into corporativo.cp_arquivo_blob
++                        (id_arq_blob,conteudo_arq_blob) 
++            values      (corporativo.cp_arquivo_seq.nextval,r1.preenchimento_blob);
++
++            insert into corporativo.cp_arquivo
++                        (id_arq,id_orgao_usu,conteudo_tp_arq) 
++            values      (corporativo.cp_arquivo_seq.currval,null,'application/x-www-form-urlencoded');
++
++            update ex_preenchimento
++            set    id_arq = corporativo.cp_arquivo_seq.currval 
++            where  id_preenchimento = r1.id_preenchimento; 
++
++            l_rows_processed := l_rows_processed + 1; 
++        end loop; 
++
++        commit; 
++
++        dbms_output.Put_line('Processed: ' 
++                             ||l_rows_processed); 
++
++        if l_rows_processed < l_chunk then 
++          dbms_output.Put_line('Exiting loop...'); 
++
++          l_moretodo := false; 
++        end if; 
++    end loop; 
++end;
+diff --git a/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V52_6__Removendo_blobs_antigos.sql b/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V52_6__Removendo_blobs_antigos.sql
+new file mode 100644
+index 0000000000..9cde948113
+--- /dev/null
++++ b/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V52_6__Removendo_blobs_antigos.sql
+@@ -0,0 +1,4 @@
++-- alter table ex_modelo drop (conteudo_blob_mod, conteudo_tp_blob);
++-- alter table ex_movimentacao drop (conteudo_blob_mov, conteudo_tp_mov);
++-- alter table ex_documento drop (conteudo_blob_doc, conteudo_tp_doc);
++-- alter table ex_preenchimento drop (preenchimento_blob);
+diff --git a/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V52_7__Alterando_trigger_que_protege_Ex_Documento.sql b/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V52_7__Alterando_trigger_que_protege_Ex_Documento.sql
+new file mode 100644
+index 0000000000..11111c6501
+--- /dev/null
++++ b/siga-ex/src/main/resources/db/migration/SIGA_UTF8_V52_7__Alterando_trigger_que_protege_Ex_Documento.sql
+@@ -0,0 +1,144 @@
++create or replace Trigger SIGA_SEC_POLICY.EX_DOCUMENTO_BLOCK
++Before Update or Delete on SIGA.EX_DOCUMENTO
++For Each Row
++WHEN (Old.dt_finalizacao is not null)
++DECLARE
++  PRAGMA AUTONOMOUS_TRANSACTION; -- Trigger em transação autônoma.
++  QTD_DOC_VAR  number(10,0):= 0;
++        
++begin
++        if updating then
++            if  :Old.dt_finalizacao <> :New.dt_finalizacao
++               then
++                 raise_application_error( -20101,'Não é permitido alterar uma DATA de FINALIZACAO já existente' );
++             end if;
++ 
++             if :Old.fg_eletronico = 'N' then
++                if    :New.id_arq <> :old.id_arq then
++                    if
++                      :old.ID_DOC <> :New.ID_DOC OR
++                      :old.NUM_EXPEDIENTE <> :New.NUM_EXPEDIENTE OR
++                      :old.ANO_EMISSAO <> :New.ANO_EMISSAO OR
++                      :old.ID_TP_DOC <> :New.ID_TP_DOC OR
++                      :old.ID_CADASTRANTE <> :New.ID_CADASTRANTE OR
++                      :old.ID_LOTA_CADASTRANTE <> :New.ID_LOTA_CADASTRANTE OR
++                      :old.ID_SUBSCRITOR <> :New.ID_SUBSCRITOR OR
++                      :old.ID_LOTA_SUBSCRITOR <> :New.ID_LOTA_SUBSCRITOR OR
++                      :old.DESCR_DOCUMENTO <> :New.DESCR_DOCUMENTO OR
++                      :old.DT_DOC <> :New.DT_DOC OR
++                      :old.DT_REG_DOC <> :New.DT_REG_DOC OR
++                      :old.NM_SUBSCRITOR_EXT <> :New.NM_SUBSCRITOR_EXT OR
++                      :old.NUM_EXT_DOC <> :New.NUM_EXT_DOC OR
++              --        dbms_lob.compare(:old.CONTEUDO_BLOB_DOC,:New.CONTEUDO_BLOB_DOC) <> 0 OR
++                      :old.NM_ARQ_DOC <> :New.NM_ARQ_DOC OR
++                      :old.CONTEUDO_TP_DOC <> :New.CONTEUDO_TP_DOC OR
++                      :old.ID_DESTINATARIO <> :New.ID_DESTINATARIO OR
++                      :old.ID_LOTA_DESTINATARIO <> :New.ID_LOTA_DESTINATARIO OR
++                      :old.NM_DESTINATARIO <> :New.NM_DESTINATARIO OR
++                      :old.DT_FINALIZACAO <> :New.DT_FINALIZACAO OR
++                      dbms_lob.compare(:old.ASSINATURA_BLOB_DOC,:New.ASSINATURA_BLOB_DOC) <> 0 OR
++                      :old.ID_MOD <> :New.ID_MOD OR
++                      :old.ID_ORGAO_USU <> :New.ID_ORGAO_USU OR
++                      :old.ID_CLASSIFICACAO <> :New.ID_CLASSIFICACAO OR
++                      :old.ID_FORMA_DOC <> :New.ID_FORMA_DOC OR
++                      :old.FG_PESSOAL <> :New.FG_PESSOAL OR
++                      :old.ID_ORGAO_DESTINATARIO <> :New.ID_ORGAO_DESTINATARIO OR
++                      :old.ID_ORGAO <> :New.ID_ORGAO OR
++                      :old.OBS_ORGAO_DOC <> :New.OBS_ORGAO_DOC OR
++                      :old.NM_ORGAO_DESTINATARIO <> :New.NM_ORGAO_DESTINATARIO OR
++                      :old.FG_SIGILOSO <> :New.FG_SIGILOSO OR
++                      :old.NM_FUNCAO_SUBSCRITOR <> :New.NM_FUNCAO_SUBSCRITOR OR
++                      :old.FG_ELETRONICO <> :New.FG_ELETRONICO OR
++                      :old.NUM_ANTIGO_DOC <> :New.NUM_ANTIGO_DOC OR
++                      :old.ID_LOTA_TITULAR <> :New.ID_LOTA_TITULAR OR
++                      :old.ID_TITULAR <> :New.ID_TITULAR OR
++                      :old.NUM_AUX_DOC <> :New.NUM_AUX_DOC OR
++                      :old.DSC_CLASS_DOC <> :New.DSC_CLASS_DOC OR
++                --      :old.ID_NIVEL_ACESSO <> :New.ID_NIVEL_ACESSO OR
++                      :old.ID_DOC_PAI <> :New.ID_DOC_PAI OR
++                      :old.NUM_VIA_DOC_PAI <> :New.NUM_VIA_DOC_PAI OR
++                      :old.ID_DOC_ANTERIOR <> :New.ID_DOC_ANTERIOR OR
++                      :old.ID_MOB_PAI <> :New.ID_MOB_PAI OR
++                      :old.NUM_SEQUENCIA <> :New.NUM_SEQUENCIA OR
++                      :old.NUM_PAGINAS <> :New.NUM_PAGINAS OR
++                      :old.DT_DOC_ORIGINAL <> :New.DT_DOC_ORIGINAL OR
++                      :old.ID_MOB_AUTUADO <> :New.ID_MOB_AUTUADO
++                  then
++                    raise_application_error( -20101,'Não é permitido alterar: físico com data de finalizacao e com conteúdo.' );
++                  end if;
++                else
++                    raise_application_error( -20101,'Não é permitido alterar: físico com data de finalizacao e com conteúdo.' );
++                end if;
++             elsif :Old.fg_eletronico = 'S' then
++                    select count(*) into QTD_DOC_VAR
++                    from siga.ex_documento doc
++                    where  EXISTS (select * --d.id_doc  
++                                    from siga.ex_movimentacao m,
++                                          siga.ex_mobil mb --,
++                                          -- siga.ex_documento d  
++                                    where --d.id_doc=fora.id_doc_var and
++                                         -- d.id_doc=:old.id_doc and
++                                          mb.id_doc = doc.id_doc and
++                                          mb.id_doc = :old.id_doc and
++                                          (m.id_tp_mov = 11 or m.id_tp_mov = 58) and
++                                          m.id_mov_canceladora is null and
++                                          m.id_mobil = mb.id_mobil);
++               
++                    if  QTD_DOC_VAR <> 0 then
++                        if
++                          :old.ID_DOC <> :New.ID_DOC OR
++                          :old.NUM_EXPEDIENTE <> :New.NUM_EXPEDIENTE OR
++                          :old.ANO_EMISSAO <> :New.ANO_EMISSAO OR
++                          :old.ID_TP_DOC <> :New.ID_TP_DOC OR
++                          :old.ID_CADASTRANTE <> :New.ID_CADASTRANTE OR
++                          :old.ID_LOTA_CADASTRANTE <> :New.ID_LOTA_CADASTRANTE OR
++                          :old.ID_SUBSCRITOR <> :New.ID_SUBSCRITOR OR
++                          :old.ID_LOTA_SUBSCRITOR <> :New.ID_LOTA_SUBSCRITOR OR
++                          :old.DESCR_DOCUMENTO <> :New.DESCR_DOCUMENTO OR
++                          :old.DT_DOC <> :New.DT_DOC OR
++                          :old.DT_REG_DOC <> :New.DT_REG_DOC OR
++                          :old.NM_SUBSCRITOR_EXT <> :New.NM_SUBSCRITOR_EXT OR
++                          :old.NUM_EXT_DOC <> :New.NUM_EXT_DOC OR
++                          :old.id_arq <> :New.id_arq OR
++                          :old.NM_ARQ_DOC <> :New.NM_ARQ_DOC OR
++                          :old.CONTEUDO_TP_DOC <> :New.CONTEUDO_TP_DOC OR
++                          :old.ID_DESTINATARIO <> :New.ID_DESTINATARIO OR
++                          :old.ID_LOTA_DESTINATARIO <> :New.ID_LOTA_DESTINATARIO OR
++                          :old.NM_DESTINATARIO <> :New.NM_DESTINATARIO OR
++                          :old.DT_FINALIZACAO <> :New.DT_FINALIZACAO OR
++                          dbms_lob.compare(:old.ASSINATURA_BLOB_DOC,:New.ASSINATURA_BLOB_DOC) <> 0 OR
++                          :old.ID_MOD <> :New.ID_MOD OR
++                          :old.ID_ORGAO_USU <> :New.ID_ORGAO_USU OR
++                          :old.ID_CLASSIFICACAO <> :New.ID_CLASSIFICACAO OR
++                          :old.ID_FORMA_DOC <> :New.ID_FORMA_DOC OR
++                          :old.FG_PESSOAL <> :New.FG_PESSOAL OR
++                          :old.ID_ORGAO_DESTINATARIO <> :New.ID_ORGAO_DESTINATARIO OR
++                          :old.ID_ORGAO <> :New.ID_ORGAO OR
++                          :old.OBS_ORGAO_DOC <> :New.OBS_ORGAO_DOC OR
++                          :old.NM_ORGAO_DESTINATARIO <> :New.NM_ORGAO_DESTINATARIO OR
++                          :old.FG_SIGILOSO <> :New.FG_SIGILOSO OR
++                          :old.NM_FUNCAO_SUBSCRITOR <> :New.NM_FUNCAO_SUBSCRITOR OR
++                          :old.FG_ELETRONICO <> :New.FG_ELETRONICO OR
++                          :old.NUM_ANTIGO_DOC <> :New.NUM_ANTIGO_DOC OR
++                          :old.ID_LOTA_TITULAR <> :New.ID_LOTA_TITULAR OR
++                          :old.ID_TITULAR <> :New.ID_TITULAR OR
++                          :old.NUM_AUX_DOC <> :New.NUM_AUX_DOC OR
++                          :old.DSC_CLASS_DOC <> :New.DSC_CLASS_DOC OR
++                      --    :old.ID_NIVEL_ACESSO <> :New.ID_NIVEL_ACESSO OR
++                          :old.ID_DOC_PAI <> :New.ID_DOC_PAI OR
++                          :old.NUM_VIA_DOC_PAI <> :New.NUM_VIA_DOC_PAI OR
++                          :old.ID_DOC_ANTERIOR <> :New.ID_DOC_ANTERIOR OR
++                          :old.ID_MOB_PAI <> :New.ID_MOB_PAI OR
++                          :old.NUM_SEQUENCIA <> :New.NUM_SEQUENCIA OR
++                          :old.NUM_PAGINAS <> :New.NUM_PAGINAS OR
++                          :old.DT_DOC_ORIGINAL <> :New.DT_DOC_ORIGINAL OR
++                          :old.ID_MOB_AUTUADO <> :New.ID_MOB_AUTUADO
++                        then      
++                          raise_application_error( -20101,'Não é permitido alterar: eletrônico, com conteúdo, tipo mov. 11 e sem mov. canceladora.' );
++                        end if;
++                   end if;
++             end if;
++        elsif deleting then
++             raise_application_error( -20101,'Não é permitido excluir: data de finalizacao existente.' );
++        end if;
++end;
+diff --git a/siga-vraptor-module/pom.xml b/siga-vraptor-module/pom.xml
+index 2d6635dd2f..1486d1da73 100644
+--- a/siga-vraptor-module/pom.xml
++++ b/siga-vraptor-module/pom.xml
+@@ -26,6 +26,18 @@
+ 			</exclusions>
+ 		</dependency>
+ 		
++		<dependency>
++			<groupId>br.com.caelum.vraptor</groupId>
++			<artifactId>vraptor-jpa</artifactId>
++			<version>4.0.5</version>
++			<exclusions>
++				<exclusion>  <!-- declare the exclusion here -->
++					<groupId>org.eclipse.persistence</groupId>
++					<artifactId>javax.persistence</artifactId>
++				</exclusion>
++			</exclusions>
++		</dependency>
++		
+ 		<dependency>
+ 			<groupId>br.com.caelum</groupId>
+ 			<artifactId>iogi</artifactId>
+diff --git a/siga-vraptor-module/src/main/java/br/gov/jfrj/siga/jee/BouncyCastleServletContextListener.java b/siga-vraptor-module/src/main/java/br/gov/jfrj/siga/jee/BouncyCastleServletContextListener.java
+new file mode 100644
+index 0000000000..53d4cb33ce
+--- /dev/null
++++ b/siga-vraptor-module/src/main/java/br/gov/jfrj/siga/jee/BouncyCastleServletContextListener.java
+@@ -0,0 +1,37 @@
+!!!!!!
++package br.gov.jfrj.siga.jee;
++
++import java.security.Security;
++
++import javax.servlet.ServletContextEvent;
++import javax.servlet.ServletContextListener;
++
++import org.bouncycastle.jce.provider.BouncyCastleProvider;
++
++/**
++ * Listener criado para adicionar o SecurityProvider do BouncyCastle aos Providers de Segurança da JVM.
++ * As bibliotecas do BouncyCastle devem estar na pasta ${JBOSS_HOME}/server/[PROFILE]/lib
++ * 
++ * @author bruno.lacerda@avantiprima.com.br
++ *
++ */
++public class BouncyCastleServletContextListener implements ServletContextListener {
++	
++	private BouncyCastleProvider bouncyCastleProvider;
++
++	@Override
++	public void contextInitialized(ServletContextEvent arg0) {
++		this.bouncyCastleProvider = (BouncyCastleProvider) Security.getProvider( BouncyCastleProvider.PROVIDER_NAME );
++		if ( this.bouncyCastleProvider == null ) {
++			this.bouncyCastleProvider = new BouncyCastleProvider();
++			Security.addProvider( this.bouncyCastleProvider );
++		}
++	}
++	
++	@Override
++	public void contextDestroyed(ServletContextEvent arg0) {
++		if ( this.bouncyCastleProvider != null ) {
++			Security.removeProvider( this.bouncyCastleProvider.getName() );
++		}
++	}
++
++}
+diff --git a/siga-vraptor-module/src/main/java/br/gov/jfrj/siga/vraptor/SigaTransacionalInterceptor.java b/siga-vraptor-module/src/main/java/br/gov/jfrj/siga/vraptor/SigaTransacionalInterceptor.java
+new file mode 100644
+index 0000000000..7c30e997ba
+--- /dev/null
++++ b/siga-vraptor-module/src/main/java/br/gov/jfrj/siga/vraptor/SigaTransacionalInterceptor.java
+@@ -0,0 +1,157 @@
++package br.gov.jfrj.siga.vraptor;
++
++import javax.enterprise.inject.Specializes;
++import javax.enterprise.inject.spi.BeanManager;
++import javax.inject.Inject;
++import javax.persistence.EntityManager;
++import javax.persistence.EntityTransaction;
++import javax.servlet.http.HttpServletRequest;
++
++import org.hibernate.FlushMode;
++import org.hibernate.Session;
++
++import br.com.caelum.vraptor.Accepts;
++import br.com.caelum.vraptor.AroundCall;
++import br.com.caelum.vraptor.Intercepts;
++import br.com.caelum.vraptor.controller.ControllerMethod;
++import br.com.caelum.vraptor.http.MutableResponse;
++import br.com.caelum.vraptor.interceptor.SimpleInterceptorStack;
++import br.com.caelum.vraptor.jpa.event.AfterCommit;
++import br.com.caelum.vraptor.jpa.event.AfterRollback;
++import br.com.caelum.vraptor.jpa.event.BeforeCommit;
++import br.com.caelum.vraptor.proxy.CDIProxies;
++import br.com.caelum.vraptor.validator.Validator;
++import br.gov.jfrj.siga.model.ContextoPersistencia;
++
++/**
++ * An interceptor that manages Entity Manager Transaction. All requests are
++ * intercepted and a transaction is created before execution. If the request has
++ * no erros, the transaction will commited, or a rollback occurs otherwise.
++ * 
++ * @author Lucas Cavalcanti
++ */
++@Specializes
++@Intercepts
++public class SigaTransacionalInterceptor extends br.com.caelum.vraptor.jpa.JPATransactionInterceptor {
++
++	private final BeanManager beanManager;
++	private final EntityManager manager;
++	private final Validator validator;
++	private final MutableResponse response;
++	private HttpServletRequest request;
++	private ControllerMethod method;
++	EntityTransaction transaction = null;
++
++	private final static ThreadLocal<SigaTransacionalInterceptor> current = new ThreadLocal<SigaTransacionalInterceptor>();
++
++	/**
++	 * @deprecated CDI eyes only.
++	 */
++	protected SigaTransacionalInterceptor() {
++		this(null, null, null, null, null);
++	}
++
++	@Inject
++	public SigaTransacionalInterceptor(BeanManager beanManager, EntityManager manager, Validator validator,
++			MutableResponse response, HttpServletRequest request) {
++		this.beanManager = beanManager;
++		this.manager = manager;
++		this.validator = validator;
++		this.response = response;
++		this.request = request;
++		current.set(this);
++	}
++
++	@Accepts
++	public boolean accepts(ControllerMethod method) {
++		this.method = method;
++		return true;
++	}
++
++	@AroundCall
++	public void intercept(SimpleInterceptorStack stack) {
++		addRedirectListener();
++
++		try {
++			if (this.method.containsAnnotation(Transacional.class)
++					&& !(this.request.getRequestURI().startsWith("app/sigawf"))) {
++				transaction = manager.getTransaction();
++				transaction.begin();
++			} else {
++				disableAutoFlush();
++			}
++			
++			System.out.println("*** " + this.method.toString() + " - " + (transaction == null ? "NÃO" : "") + " Transacional");
++
++			stack.next();
++
++			commit(transaction);
++
++		} finally {
++			ContextoPersistencia.setDt(null);
++			if (transaction != null && transaction.isActive()) {
++				transaction.rollback();
++				beanManager.fireEvent(new AfterRollback());
++			}
++		}
++	}
++
++	private void commit(EntityTransaction trn) {
++		if (trn == null)
++			return;
++
++		if (trn.isActive())
++			beanManager.fireEvent(new BeforeCommit());
++
++		if (!validator.hasErrors() && trn.isActive()) {
++			trn.commit();
++			beanManager.fireEvent(new AfterCommit());
++		}
++	}
++
++	/**
++	 * We force the commit before the redirect, this way we can abort the redirect
++	 * if a database error occurs.
++	 */
++	private void addRedirectListener() {
++		response.addRedirectListener(new MutableResponse.RedirectListener() {
++			@Override
++			public void beforeRedirect() {
++				commit(manager.getTransaction());
++			}
++		});
++	}
++
++	public static void upgradeParaTransacional() {
++		SigaTransacionalInterceptor thiz = current.get();
++		if (thiz != null && thiz.transaction == null) {
++			System.out.println("*** UPGRADE para Transacional - " + thiz.method.toString());
++			enableAutoFlush();
++			thiz.transaction = thiz.manager.getTransaction();
++			thiz.transaction.begin();
++		}
++	}
++
++	public static void downgradeParaNaoTransacional() {
++		SigaTransacionalInterceptor thiz = current.get();
++		if (thiz != null && thiz.transaction != null) {
++			thiz.commit(thiz.transaction);
++			System.out.println("*** DOWNGRADE para NÃO Transacional - " + thiz.method.toString());
++			disableAutoFlush();
++			thiz.transaction = thiz.manager.getTransaction();
++			thiz.transaction.begin();
++		}
++	}
++
++	public static void disableAutoFlush() {
++		SigaTransacionalInterceptor thiz = current.get();
++		Session session = CDIProxies.unproxifyIfPossible(thiz.manager).unwrap(org.hibernate.Session.class);
++		session.setFlushMode(FlushMode.MANUAL);
++	}
++
++	public static void enableAutoFlush() {
++		SigaTransacionalInterceptor thiz = current.get();
++		Session session = CDIProxies.unproxifyIfPossible(thiz.manager).unwrap(org.hibernate.Session.class);
++		session.setFlushMode(FlushMode.AUTO);
++	}
++}
+diff --git a/siga-vraptor-module/src/main/java/br/gov/jfrj/siga/vraptor/Transacional.java b/siga-vraptor-module/src/main/java/br/gov/jfrj/siga/vraptor/Transacional.java
+new file mode 100644
+index 0000000000..8ba42b87a7
+--- /dev/null
++++ b/siga-vraptor-module/src/main/java/br/gov/jfrj/siga/vraptor/Transacional.java
+@@ -0,0 +1,19 @@
++package br.gov.jfrj.siga.vraptor;
++
++import java.lang.annotation.ElementType;
++import java.lang.annotation.Retention;
++import java.lang.annotation.RetentionPolicy;
++import java.lang.annotation.Target;
++
++/**
++ * Anotação criada para ser colocada antes de funcionalidades que fazem
++ * operações de DML(INSERT, UPDATE OU DELETE) tendo como objetivo abrir
++ * transações
++ * 
++ * @author João Luis
++ */
++@Target({ ElementType.METHOD, ElementType.TYPE })
++@Retention(RetentionPolicy.RUNTIME)
++public @interface Transacional {
++
++}
+\ No newline at end of file
+diff --git a/siga/src/main/java/br/gov/jfrj/siga/vraptor/AcessoController.java b/siga/src/main/java/br/gov/jfrj/siga/vraptor/AcessoController.java
+index e896a73454..66ae1c0fb7 100644
+--- a/siga/src/main/java/br/gov/jfrj/siga/vraptor/AcessoController.java
++++ b/siga/src/main/java/br/gov/jfrj/siga/vraptor/AcessoController.java
+@@ -219,6 +219,7 @@ public class AcessoController extends GiControllerSupport {
+ 		return lista;
+ 	}
+ 
++	@Transacional
+ 	@Get("/app/gi/acesso/gravar")
+ 	public void gravar(Long idServico
+ 			          ,Long idSituacao
+@@ -404,7 +405,7 @@ public class AcessoController extends GiControllerSupport {
+ 		sb.append("</li>");
+ 	}
+ 
+-	public List<CpOrgaoUsuario> getOrgaosUsu() throws AplicacaoException {
++	protected List<CpOrgaoUsuario> getOrgaosUsu() throws AplicacaoException {
+ 		return this.dao.listarOrgaosUsuarios();
+ 	}	
+ 	
+diff --git a/siga/src/main/java/br/gov/jfrj/siga/vraptor/DpCargoController.java b/siga/src/main/java/br/gov/jfrj/siga/vraptor/DpCargoController.java
+index a6dc91c126..56dd6fa596 100644
+--- a/siga/src/main/java/br/gov/jfrj/siga/vraptor/DpCargoController.java
++++ b/siga/src/main/java/br/gov/jfrj/siga/vraptor/DpCargoController.java
+@@ -78,7 +78,7 @@ public class DpCargoController extends
+ 	}
+ 
+ 	@Override
+-	public DpCargoDaoFiltro createDaoFiltro() {
++	protected DpCargoDaoFiltro createDaoFiltro() {
+ 		final DpCargoDaoFiltro flt = new DpCargoDaoFiltro();
+ 		flt.setNome(Texto.removeAcentoMaiusculas(getNome()));
+ 		flt.setIdOrgaoUsu(orgaoUsu);
+@@ -93,7 +93,7 @@ public class DpCargoController extends
+ 	}
+ 	
+ 	@Override
+-	public Selecionavel selecionarPorNome(final DpCargoDaoFiltro flt)
++	protected Selecionavel selecionarPorNome(final DpCargoDaoFiltro flt)
+ 			throws AplicacaoException {
+ 		// Procura por nome
+ 		flt.setNome(Texto.removeAcentoMaiusculas(flt.getSigla()));
+@@ -176,6 +176,7 @@ public class DpCargoController extends
+ 		result.include("id",id);
+ 	}
+ 	
++	@Transacional
+ 	@Post("/app/cargo/gravar")
+ 	public void editarGravar(final Long id, 
+ 							 final String nmCargo, 
+@@ -248,6 +249,7 @@ public class DpCargoController extends
+ 		result.use(Results.page()).forwardTo("/WEB-INF/page/dpCargo/cargaCargo.jsp");
+ 	}
+ 	
++	@Transacional
+ 	@Post("/app/cargo/carga")
+ 	public Download carga( final UploadedFile arquivo, Long idOrgaoUsu) throws Exception {
+ 		InputStream inputStream = null;
+diff --git a/siga/src/main/java/br/gov/jfrj/siga/vraptor/DpFuncaoController.java b/siga/src/main/java/br/gov/jfrj/siga/vraptor/DpFuncaoController.java
+index e13a5af401..2298e1cdee 100644
+--- a/siga/src/main/java/br/gov/jfrj/siga/vraptor/DpFuncaoController.java
++++ b/siga/src/main/java/br/gov/jfrj/siga/vraptor/DpFuncaoController.java
+@@ -64,7 +64,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
+ 	}
+ 	
+ 	@Override
+-	public Selecionavel selecionarPorNome(final DpFuncaoConfiancaDaoFiltro flt)
++	protected Selecionavel selecionarPorNome(final DpFuncaoConfiancaDaoFiltro flt)
+ 			throws AplicacaoException {
+ 		// Procura por nome
+ 		flt.setNome(Texto.removeAcentoMaiusculas(flt.getSigla()));
+@@ -166,6 +166,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
+ 		result.include("id",id);
+ 	}
+ 	
++	@Transacional
+ 	@Post("/app/funcao/gravar")
+ 	public void editarGravar(final Long id, 
+ 							 final String nmFuncao, 
+@@ -241,6 +242,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
+ 		result.use(Results.page()).forwardTo("/WEB-INF/page/dpFuncao/cargaFuncao.jsp");
+ 	}
+ 	
++	@Transacional
+ 	@Post("/app/funcao/carga")
+ 	public Download carga( final UploadedFile arquivo, Long idOrgaoUsu) throws Exception {
+ 		InputStream inputStream = null;
+diff --git a/siga/src/main/java/br/gov/jfrj/siga/vraptor/DpLotacaoController.java b/siga/src/main/java/br/gov/jfrj/siga/vraptor/DpLotacaoController.java
+index df5c7b6e51..89c3d8dd8b 100644
+--- a/siga/src/main/java/br/gov/jfrj/siga/vraptor/DpLotacaoController.java
++++ b/siga/src/main/java/br/gov/jfrj/siga/vraptor/DpLotacaoController.java
+@@ -87,7 +87,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
+ 	}
+ 
+ 	@Override
+-	public DpLotacaoDaoFiltro createDaoFiltro() {
++	protected DpLotacaoDaoFiltro createDaoFiltro() {
+ 		final DpLotacaoDaoFiltro flt = new DpLotacaoDaoFiltro();
+ 		flt.setNome(Texto.removeAcentoMaiusculas(getNome()));
+ 		/*
+@@ -108,7 +108,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
+ 	}
+ 
+ 	@Override
+-	public Selecionavel selecionarPorNome(final DpLotacaoDaoFiltro flt)
++	protected Selecionavel selecionarPorNome(final DpLotacaoDaoFiltro flt)
+ 			throws AplicacaoException {
+ 		// Procura por nome
+ 		flt.setNome(Texto.removeAcentoMaiusculas(flt.getSigla()));
+@@ -245,6 +245,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
+ 		result.include("id",id);
+ 	}
+ 	
++	@Transacional
+ 	@Post("/app/lotacao/gravar")
+ 	public void editarGravar(final Long id, 
+ 							 final String nmLotacao, 
+@@ -351,6 +352,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
+ 		this.result.redirectTo(this).lista(0, null, "");
+ 	}
+ 	
++	@Transacional
+     @Get("/app/lotacao/ativarInativar")
+     public void ativarInativar(final Long id) throws Exception{
+ 
+@@ -398,6 +400,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
+ 		result.use(Results.page()).forwardTo("/WEB-INF/page/dpLotacao/cargaLotacao.jsp");
+ 	}
+ 	
++	@Transacional
+ 	@Post("/app/lotacao/carga")
+ 	public Download carga( final UploadedFile arquivo, Long idOrgaoUsu) throws Exception {
+ 		InputStream inputStream = null;
+diff --git a/siga/src/main/java/br/gov/jfrj/siga/vraptor/DpPessoaController.java b/siga/src/main/java/br/gov/jfrj/siga/vraptor/DpPessoaController.java
+index f01b3c44bc..ac02500a88 100644
+--- a/siga/src/main/java/br/gov/jfrj/siga/vraptor/DpPessoaController.java
++++ b/siga/src/main/java/br/gov/jfrj/siga/vraptor/DpPessoaController.java
+@@ -133,7 +133,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
+ 	 }
+ 
+ 	@Override
+-	public DpPessoaDaoFiltro createDaoFiltro() {
++	protected DpPessoaDaoFiltro createDaoFiltro() {
+ 		final DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
+ 		flt.setNome(Texto.removeAcentoMaiusculas(getNome()));
+ 		if (lotacaoSel != null){
+@@ -150,7 +150,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
+ 	}
+ 
+ 	@Override
+-	public Selecionavel selecionarPorNome(final DpPessoaDaoFiltro flt)
++	protected Selecionavel selecionarPorNome(final DpPessoaDaoFiltro flt)
+ 			throws AplicacaoException {
+ 		Selecionavel sel = null;
+ 
+@@ -251,6 +251,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
+ 		}
+ 	}
+ 	
++	@Transacional
+ 	@Get("/app/pessoa/ativarInativar")
+ 	public void ativarInativar(final Long id, Integer offset, Long idOrgaoUsu, String nome, String cpfPesquisa, Long idCargoPesquisa, Long idFuncaoPesquisa, Long idLotacaoPesquisa) throws Exception{
+ 		CpOrgaoUsuario ou = new CpOrgaoUsuario();
+@@ -442,6 +443,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
+ 		}
+ 	}
+ 	
++	@Transacional
+ 	@Post("/app/pessoa/gravar")
+ 	public void editarGravar(final Long id, final Long idOrgaoUsu, final Long idCargo, final Long idFuncao, final Long idLotacao, final String nmPessoa, final String dtNascimento, 
+ 			final String cpf, final String email) throws Exception{
+@@ -548,6 +550,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
+ 		result.use(Results.page()).forwardTo("/WEB-INF/page/dpPessoa/cargaPessoa.jsp");
+ 	}
+ 	
++	@Transacional
+ 	@Post("/app/pessoa/carga")
+ 	public Download carga( final UploadedFile arquivo, Long idOrgaoUsu) throws Exception {
+ 		InputStream inputStream = null;
+diff --git a/siga/src/main/java/br/gov/jfrj/siga/vraptor/FeriadoController.java b/siga/src/main/java/br/gov/jfrj/siga/vraptor/FeriadoController.java
+index ef0ae52775..b68f621d0c 100644
+--- a/siga/src/main/java/br/gov/jfrj/siga/vraptor/FeriadoController.java
++++ b/siga/src/main/java/br/gov/jfrj/siga/vraptor/FeriadoController.java
+@@ -79,6 +79,7 @@ public class FeriadoController extends SigaController {
+ 		result.include("itens", CpDao.getInstance().listarCpFeriadoPorDescricao());
+ 	}
+ 	
++	@Transacional
+ 	@Post("/app/feriado/salvar")
+ 	public void aEditarGravar(String dscFeriado, Integer id) throws Exception {
+ 		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
+@@ -104,6 +105,7 @@ public class FeriadoController extends SigaController {
+ 		result.redirectTo(this).lista(null);
+ 	}
+ 	
++	@Transacional
+ 	@Get("/app/feriado/excluir")
+ 	public void excluirFeriado(Integer id) throws Exception {
+ 		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
+@@ -125,6 +127,7 @@ public class FeriadoController extends SigaController {
+ 		result.redirectTo(this).lista(null);
+ 	}
+ 	
++	@Transacional
+ 	@Get("/app/feriado/excluir-ocorrencia")
+ 	public void excluirOcorrencia(Long idOcorrencia) throws Exception {
+ 		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
+@@ -176,6 +179,7 @@ public class FeriadoController extends SigaController {
+ 		
+ 	}
+ 	
++	@Transacional
+ 	@Post("/app/feriado/gravar-ocorrencia")
+ 	public void gravarOcorrencia(Date dtIniFeriado, Date dtFimFeriado, Long idOcorrencia,
+ 			Integer id, DpLotacaoSelecao lotacao_lotacaoSel, Long idOrgaoUsu, Long idLocalidade) throws Exception {
+@@ -253,6 +257,7 @@ public class FeriadoController extends SigaController {
+ 		result.include("listaLocalidades", localidades);
+ 	}
+ 	
++	@Transacional
+ 	@Get("/app/feriado/excluir-aplicacao")
+ 	public void excluirAplicacao(Integer idAplicacao) throws Exception {
+ //		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
+@@ -272,19 +277,19 @@ public class FeriadoController extends SigaController {
+ 		}
+ 	}
+ 
+-	public CpFeriado daoFeriado(Integer id) {
++	protected CpFeriado daoFeriado(Integer id) {
+ 		return dao().consultar(id, CpFeriado.class, false);
+ 	}
+ 	
+-	public CpOcorrenciaFeriado daoOcorrenciaFeriado(long id) {
++	protected CpOcorrenciaFeriado daoOcorrenciaFeriado(long id) {
+ 		return dao().consultar(id, CpOcorrenciaFeriado.class, false);
+ 	}
+ 	
+-	public CpAplicacaoFeriado daoAplicacaoFeriado(long id) {
++	protected CpAplicacaoFeriado daoAplicacaoFeriado(long id) {
+ 		return dao().consultar(id, CpAplicacaoFeriado.class, false);
+ 	}
+ 	
+-	public Date stringToDate(String data) throws Exception {   
++	protected Date stringToDate(String data) throws Exception {   
+         if (data == null || data.equals(""))  
+             return null;            
+         Date date = null;  
+@@ -298,7 +303,7 @@ public class FeriadoController extends SigaController {
+     }  
+ 
+ 
+-	public List<CpAplicacaoFeriado> getListaAplicacoes(Long idOcorrencia) {
++	protected List<CpAplicacaoFeriado> getListaAplicacoes(Long idOcorrencia) {
+ 		List<CpAplicacaoFeriado> aplicacoes = new ArrayList<CpAplicacaoFeriado>();
+ 		CpAplicacaoFeriado apl = new CpAplicacaoFeriado();
+ 		CpOcorrenciaFeriado ocorrencia = new CpOcorrenciaFeriado();
+diff --git a/siga/src/main/java/br/gov/jfrj/siga/vraptor/GiControllerSupport.java b/siga/src/main/java/br/gov/jfrj/siga/vraptor/GiControllerSupport.java
+index 8f9fa6c81b..7e1d0e2636 100644
+--- a/siga/src/main/java/br/gov/jfrj/siga/vraptor/GiControllerSupport.java
++++ b/siga/src/main/java/br/gov/jfrj/siga/vraptor/GiControllerSupport.java
+@@ -42,7 +42,7 @@ public class GiControllerSupport extends SigaController {
+ 		super(request, result, dao, so, em);
+ 	}
+ 
+-	public void assertAcesso(String pathServico) throws AplicacaoException {
++	protected void assertAcesso(String pathServico) throws AplicacaoException {
+ 		super.assertAcesso("GI:Módulo de Gestão de Identidade;" + pathServico);
+ 	}
+ 
+diff --git a/siga/src/main/java/br/gov/jfrj/siga/vraptor/GrupoController.java b/siga/src/main/java/br/gov/jfrj/siga/vraptor/GrupoController.java
+index 1ea0215542..050a1a8bc1 100644
+--- a/siga/src/main/java/br/gov/jfrj/siga/vraptor/GrupoController.java
++++ b/siga/src/main/java/br/gov/jfrj/siga/vraptor/GrupoController.java
+@@ -251,6 +251,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
+ 	 * @throws InstantiationException
+ 	 * @throws InvocationTargetException
+ 	 */
++	@Transacional
+ 	protected Long aGravar(Long idCpGrupo, String siglaGrupo, String dscGrupo,
+ 			CpGrupoDeEmailSelecao grupoPaiSel,
+ 			Integer codigoTipoConfiguracaoNova,
+diff --git a/siga/src/main/java/br/gov/jfrj/siga/vraptor/GrupoDeEmailController.java b/siga/src/main/java/br/gov/jfrj/siga/vraptor/GrupoDeEmailController.java
+index 48f448f6c4..45552fcc4f 100644
+--- a/siga/src/main/java/br/gov/jfrj/siga/vraptor/GrupoDeEmailController.java
++++ b/siga/src/main/java/br/gov/jfrj/siga/vraptor/GrupoDeEmailController.java
+@@ -98,6 +98,7 @@ public class GrupoDeEmailController extends GrupoController {
+ 		}
+ 	}
+ 
++	@Transacional
+ 	@Post("app/gi/grupoDeEmail/excluir")
+ 	public void excluir(Long idCpGrupo) throws Exception {
+ 		assertAcesso("GDISTR:Gerenciar grupos de distribuição;EXC:Excluir");
+@@ -105,6 +106,7 @@ public class GrupoDeEmailController extends GrupoController {
+ 		result.redirectTo(this).lista();
+ 	}
+ 
++	@Transacional
+ 	@SuppressWarnings("unchecked")
+ 	@Post("app/gi/grupoDeEmail/gravar")
+ 	public void gravar(Long idCpGrupo, String siglaGrupo, String dscGrupo,
+@@ -167,6 +169,7 @@ public class GrupoDeEmailController extends GrupoController {
+ 
+ 	}
+ 
++	@Transacional
+ 	@Get("app/gi/grupoDeEmail/excluirGestorGrupo")
+ 	public void excluirGestorGrupo(Long idCpGrupo, Long idConfGestor)
+ 			throws Exception {
+@@ -187,6 +190,7 @@ public class GrupoDeEmailController extends GrupoController {
+ 		result.redirectTo("editar?idCpGrupo=" + idCpGrupo);
+ 	}
+ 
++	@Transacional
+ 	@Post("app/gi/grupoDeEmail/gravarGestorGrupo")
+ 	public void gravarGestorGrupo(Long idCpGrupo,
+ 			DpLotacaoSelecao lotacaoGestoraSel) throws Exception {
+diff --git a/siga/src/main/java/br/gov/jfrj/siga/vraptor/IdentidadeController.java b/siga/src/main/java/br/gov/jfrj/siga/vraptor/IdentidadeController.java
+index 61efe6dd79..990d7cb357 100644
+--- a/siga/src/main/java/br/gov/jfrj/siga/vraptor/IdentidadeController.java
++++ b/siga/src/main/java/br/gov/jfrj/siga/vraptor/IdentidadeController.java
+@@ -49,6 +49,7 @@ public class IdentidadeController extends GiControllerSupport {
+ 		return (pessoaSel == null) ? new DpPessoaSelecao() : pessoaSel;
+ 	}
+ 	
++	@Transacional
+ 	@Get("/app/gi/identidade/editar_gravar")
+ 	public void aEditarGravar(DpPessoaSelecao pessoaSel, String dtExpiracao, Long id) throws Exception {
+ 		assertAcesso("ID:Gerenciar identidades");
+@@ -70,6 +71,7 @@ public class IdentidadeController extends GiControllerSupport {
+ 		result.forwardTo(this).lista(pessoaSel);
+ 	}
+ 
++	@Transacional
+ 	@Get("/app/gi/identidade/cancelar")
+ 	public void aCancelar(Long id, DpPessoaSelecao pessoaSel) throws Exception {
+ 		assertAcesso("ID:Gerenciar identidades");
+@@ -82,6 +84,7 @@ public class IdentidadeController extends GiControllerSupport {
+ 		result.forwardTo(this).lista(pessoaSel);
+ 	}
+ 
++	@Transacional
+ 	@Get("/app/gi/identidade/desbloquear")
+ 	public void aBloquear(Long id, DpPessoaSelecao pessoaSel) throws Exception {
+ 		assertAcesso("ID:Gerenciar identidades");
+@@ -93,6 +96,7 @@ public class IdentidadeController extends GiControllerSupport {
+ 			throw new AplicacaoException("Não foi informada id");
+ 	}
+ 
++	@Transacional
+ 	@Get("/app/gi/identidade/bloquear")
+ 	public void aDesbloquear(Long id, DpPessoaSelecao pessoaSel) throws Exception {
+ 		assertAcesso("ID:Gerenciar identidades");
+@@ -104,6 +108,7 @@ public class IdentidadeController extends GiControllerSupport {
+ 			throw new AplicacaoException("Não foi informada id");
+ 	}
+ 
++	@Transacional
+ 	@Get("/app/gi/identidade/bloquear_pessoa")
+ 	public void aBloquearPessoa(DpPessoaSelecao pessoaSel) throws Exception {
+ 		assertAcesso("ID:Gerenciar identidades");
+@@ -116,6 +121,7 @@ public class IdentidadeController extends GiControllerSupport {
+ 			throw new AplicacaoException("Não foi informada a pessoa");
+ 	}
+ 
++	@Transacional
+ 	@Get("/app/gi/identidade/desbloquear_pessoa")
+ 	public void aDesbloquearPessoa(DpPessoaSelecao pessoaSel) throws Exception {
+ 		assertAcesso("ID:Gerenciar identidades");
+diff --git a/siga/src/main/java/br/gov/jfrj/siga/vraptor/LoginController.java b/siga/src/main/java/br/gov/jfrj/siga/vraptor/LoginController.java
+index 3b0ae3c28b..321a71effb 100644
+--- a/siga/src/main/java/br/gov/jfrj/siga/vraptor/LoginController.java
++++ b/siga/src/main/java/br/gov/jfrj/siga/vraptor/LoginController.java
+@@ -72,6 +72,7 @@ public class LoginController extends SigaController {
+ 		result.include("cont", cont);
+ 	}
+ 
++	@Transacional
+ 	@Post("public/app/login")
+ 	public void auth(String username, String password, String cont) throws IOException {
+ 		try {
+diff --git a/siga/src/main/java/br/gov/jfrj/siga/vraptor/ModeloController.java b/siga/src/main/java/br/gov/jfrj/siga/vraptor/ModeloController.java
+index 11092c1b49..a2536a2c89 100644
+--- a/siga/src/main/java/br/gov/jfrj/siga/vraptor/ModeloController.java
++++ b/siga/src/main/java/br/gov/jfrj/siga/vraptor/ModeloController.java
+@@ -57,11 +57,11 @@ public class ModeloController extends SigaController {
+ 		super(request, result, CpDao.getInstance(), so, em);
+ 	}
+ 
+-	public CpModelo daoMod(long id) {
++	private CpModelo daoMod(long id) {
+ 		return dao().consultar(id, CpModelo.class, false);
+ 	}
+ 
+-	public CpModelo daoModAtual(long id) {
++	private CpModelo daoModAtual(long id) {
+ 		return dao().consultarPorIdInicialCpModelo(daoMod(id).getIdInicial());
+ 	}
+ 
+@@ -71,6 +71,7 @@ public class ModeloController extends SigaController {
+ 		result.include("itens", dao().consultaCpModelos());
+ 	}
+ 
++	@Transacional
+ 	@Post("/app/modelo/gravar")
+ 	public void gravar(Integer id, String conteudo) throws Exception {
+ 		assertAcesso("FE:Ferramentas;MODEDITAR:Editar modelos");
+diff --git a/siga/src/main/java/br/gov/jfrj/siga/vraptor/OrgaoController.java b/siga/src/main/java/br/gov/jfrj/siga/vraptor/OrgaoController.java
+index 342541f0e2..3b340e5380 100644
+--- a/siga/src/main/java/br/gov/jfrj/siga/vraptor/OrgaoController.java
++++ b/siga/src/main/java/br/gov/jfrj/siga/vraptor/OrgaoController.java
+@@ -54,10 +54,11 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao,
+ 		result.include("currentPageNumber", calculaPaginaAtual(offset));
+ 	}
+ 	
+-	public void selecionarPorNome(){
++	protected void selecionarPorNome(){
+ 		
+ 	}
+ 	
++	@Transacional
+ 	public void excluir(final Long id) throws Exception{
+ 		assertAcesso("FE:Ferramentas;CAD_ORGAO: Cadastrar Orgãos");
+ 		if (id != null) {
+@@ -89,6 +90,7 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao,
+ 		result.include("orgaosUsu",this.getOrgaosUsu());
+ 	}
+ 	
++	@Transacional
+ 	@Post("/app/orgao/gravar")
+ 	public void editarGravar(final Long id, 
+ 							 final String nmOrgao,
+@@ -131,7 +133,7 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao,
+ 		this.result.redirectTo(this).lista(0);
+ 	}
+ 	
+-	public CpOrgao daoOrgao(long id) {
++	protected CpOrgao daoOrgao(long id) {
+ 		return dao().consultar(id, CpOrgao.class, false);
+ 	}
+ 	
+diff --git a/siga/src/main/java/br/gov/jfrj/siga/vraptor/OrgaoUsuarioController.java b/siga/src/main/java/br/gov/jfrj/siga/vraptor/OrgaoUsuarioController.java
+index 934285528b..7f8e9951f3 100644
+--- a/siga/src/main/java/br/gov/jfrj/siga/vraptor/OrgaoUsuarioController.java
++++ b/siga/src/main/java/br/gov/jfrj/siga/vraptor/OrgaoUsuarioController.java
+@@ -78,6 +78,7 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
+ 		result.include("id",id);
+ 	}
+ 	
++	@Transacional
+ 	@Post("/app/orgaoUsuario/gravar")
+ 	public void editarGravar(final Long id, 
+ 							 final String nmOrgaoUsuario,
+@@ -156,7 +157,7 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
+ 		this.result.redirectTo(this).lista(0, "");
+ 	}
+ 	
+-	public CpOrgaoUsuario daoOrgaoUsuario(long id) {
++	private CpOrgaoUsuario daoOrgaoUsuario(long id) {
+ 		return dao().consultar(id, CpOrgaoUsuario.class, false);
+ 	}	
+ }
+diff --git a/siga/src/main/java/br/gov/jfrj/siga/vraptor/PerfilController.java b/siga/src/main/java/br/gov/jfrj/siga/vraptor/PerfilController.java
+index 82f080c348..62010c9c6f 100644
+--- a/siga/src/main/java/br/gov/jfrj/siga/vraptor/PerfilController.java
++++ b/siga/src/main/java/br/gov/jfrj/siga/vraptor/PerfilController.java
+@@ -94,6 +94,7 @@ public class PerfilController extends GrupoController {
+ 		result.include("idConfiguracaoNova", getIdConfiguracaoNova());
+ 	}
+ 
++	@Transacional
+ 	@SuppressWarnings("unchecked")
+ 	@Post("/app/gi/perfil/gravar")
+ 	public void gravar(Long idCpGrupo, String siglaGrupo, String dscGrupo,
+@@ -121,6 +122,7 @@ public class PerfilController extends GrupoController {
+ 		result.redirectTo(MessageFormat.format("/app/gi/perfil/editar?idCpGrupo={0}", novoIdCpGrupo.toString()));
+ 	}
+ 
++	@Transacional
+ 	@Post("/app/gi/perfil/excluir")
+ 	public void excluir(Long idCpGrupo) throws Exception {
+ 		assertAcesso("PERFIL:Gerenciar grupos de email");
+diff --git a/siga/src/main/java/br/gov/jfrj/siga/vraptor/PerfilJEEController.java b/siga/src/main/java/br/gov/jfrj/siga/vraptor/PerfilJEEController.java
+index 35ee705cb8..1b394d77cc 100644
+--- a/siga/src/main/java/br/gov/jfrj/siga/vraptor/PerfilJEEController.java
++++ b/siga/src/main/java/br/gov/jfrj/siga/vraptor/PerfilJEEController.java
+@@ -93,6 +93,7 @@ public class PerfilJEEController extends GrupoController {
+ 		result.include("idConfiguracaoNova", getIdConfiguracaoNova());
+ 	}
+ 	
++	@Transacional
+ 	@SuppressWarnings("unchecked")
+ 	@Post("/app/gi/perfilJEE/gravar")
+ 	public void gravar(Long idCpGrupo
+diff --git a/siga/src/main/java/br/gov/jfrj/siga/vraptor/ServicoController.java b/siga/src/main/java/br/gov/jfrj/siga/vraptor/ServicoController.java
+index f99ca70f12..2c40a6906b 100644
+--- a/siga/src/main/java/br/gov/jfrj/siga/vraptor/ServicoController.java
++++ b/siga/src/main/java/br/gov/jfrj/siga/vraptor/ServicoController.java
+@@ -218,14 +218,14 @@ public class ServicoController 	extends SigaController {
+ 	/**
+ 	*@param dpPessoasDaLotacao the dpPessoasDaLotacao to set
+ 	*/
+-	public void setDpPessoasDaLotacao(List<DpPessoa> dpPessoasDaLotacao) {
++	private void setDpPessoasDaLotacao(List<DpPessoa> dpPessoasDaLotacao) {
+ 		this.dpPessoasDaLotacao = dpPessoasDaLotacao;
+ 	}
+ 	
+ 	/**
+ 	 * @param cpConfiguracoesAdotadas the cpConfiguracoesAdotadas to set
+ 	 */
+-	public void setCpConfiguracoesAdotadas(
++	private void setCpConfiguracoesAdotadas(
+ 			List<CpConfiguracao> cpConfiguracoesAdotadas) {
+ 		this.cpConfiguracoesAdotadas = cpConfiguracoesAdotadas;
+ 	}
+@@ -247,7 +247,7 @@ public class ServicoController 	extends SigaController {
+ 	/**
+ 	* @param cpTipoConfiguracaoUtilizador the cpTipoConfiguracaoUtilizador to set
+ 	*/
+-	public void setCpTipoConfiguracaoUtilizador(
++	private void setCpTipoConfiguracaoUtilizador(
+ 			CpTipoConfiguracao cpTipoConfiguracaoUtilizador) {
+ 		this.cpTipoConfiguracaoUtilizador = cpTipoConfiguracaoUtilizador;
+ 	}
+@@ -267,7 +267,7 @@ public class ServicoController 	extends SigaController {
+ 	/**
+ 	* @param cpTipoConfiguracaoAConfigurar the cpTipoConfiguracaoAConfigurar to set
+ 	*/
+-	public void setCpTipoConfiguracaoAConfigurar(
++	private void setCpTipoConfiguracaoAConfigurar(
+ 			CpTipoConfiguracao cpTipoConfiguracaoAConfigurar) {
+ 		this.cpTipoConfiguracaoAConfigurar = cpTipoConfiguracaoAConfigurar;
+ 	}
+@@ -291,7 +291,7 @@ public class ServicoController 	extends SigaController {
+ 	/**
+ 	* @param cpServicosDisponiveis the cpServicosDisponiveis to set
+ 	*/
+-	public void setCpServicosDisponiveis(List<CpServico> cpServicosDisponiveis) {
++	private void setCpServicosDisponiveis(List<CpServico> cpServicosDisponiveis) {
+ 		this.cpServicosDisponiveis = cpServicosDisponiveis;
+ 	}
+ 	
+@@ -325,6 +325,7 @@ public class ServicoController 	extends SigaController {
+ 	}
+ 	
+ 
++	@Transacional
+ 	@Post("/app/gi/servico/inserirPessoaExtra")
+ 	public void aInserirPessoaExtra() throws Exception{
+ 		DpPessoa pes = dao.consultar(paramLong("pessoaExtra_pessoaSel.id"), DpPessoa.class,false);
+@@ -355,6 +356,7 @@ public class ServicoController 	extends SigaController {
+ 	
+ 	
+ 	
++	@Transacional
+ 	@Get("/app/gi/servico/excluir-pessoa-extra/{id}")
+ 	public void excluirPessoaExtra(Long id) throws Exception{
+ 		DpPessoa pes = dao().consultar(id, DpPessoa.class,false);
+@@ -364,6 +366,7 @@ public class ServicoController 	extends SigaController {
+ 		result.redirectTo(this).edita();
+ 	}
+ 	
++	@Transacional
+ 	@Get("/app/gi/servico/gravar")
+ 	public void gravar(String idPessoaConfiguracao, 
+ 					String idServicoConfiguracao, 
+@@ -415,12 +418,12 @@ public class ServicoController 	extends SigaController {
+    }
+ 
+ 
+-	public String getRespostaXMLStringRPC() {
++	private String getRespostaXMLStringRPC() {
+ 		return respostaXMLStringRPC;
+ 	}
+ 
+ 
+-	public void setRespostaXMLStringRPC(String respostaXMLStringRPC) {
++	private void setRespostaXMLStringRPC(String respostaXMLStringRPC) {
+ 		this.respostaXMLStringRPC = respostaXMLStringRPC;
+ 	}
+ }
+\ No newline at end of file
+diff --git a/siga/src/main/java/br/gov/jfrj/siga/vraptor/SubstituicaoController.java b/siga/src/main/java/br/gov/jfrj/siga/vraptor/SubstituicaoController.java
+index fd73badaa1..8893cba360 100644
+--- a/siga/src/main/java/br/gov/jfrj/siga/vraptor/SubstituicaoController.java
++++ b/siga/src/main/java/br/gov/jfrj/siga/vraptor/SubstituicaoController.java
+@@ -187,6 +187,7 @@ public class SubstituicaoController extends SigaController {
+ 		result.include("lotaSubstitutoSel", lotaSubstitutoSel);//tipoSubstituto=2
+ 	}
+ 	
++	@Transacional
+ 	@Post("/app/substituicao/gravar")
+ 	public void gravar(DpSubstituicao substituicao
+ 					  ,Integer tipoTitular
+@@ -363,6 +364,7 @@ public class SubstituicaoController extends SigaController {
+ 
+ 	}
+ 	
++	@Transacional
+ 	@Get("/app/substituicao/finalizar")
+ 	public void finalizar() throws Exception {
+ 		try {
+@@ -392,6 +394,7 @@ public class SubstituicaoController extends SigaController {
+ 		dao().gravar(per);
+ 	}
+ 	
++	@Transacional
+ 	@Get("/app/substituicao/substituirGravar")
+ 	public void substituirGravar(Long id) throws Exception {
+ 		try {
+@@ -432,8 +435,8 @@ public class SubstituicaoController extends SigaController {
+ 			result.redirectTo(PrincipalController.class).principal(false, null);
+ 	}	
+ 	
++	@Transacional
+ 	public void exclui(Long id) throws Exception {
+-		
+ 		try{
+ 		
+ 		if (id != null) {
+diff --git a/siga/src/main/java/br/gov/jfrj/siga/vraptor/UsuarioController.java b/siga/src/main/java/br/gov/jfrj/siga/vraptor/UsuarioController.java
+index c7bc607784..7747178be9 100644
+--- a/siga/src/main/java/br/gov/jfrj/siga/vraptor/UsuarioController.java
++++ b/siga/src/main/java/br/gov/jfrj/siga/vraptor/UsuarioController.java
+@@ -49,6 +49,7 @@ public class UsuarioController extends SigaController {
+ 		result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
+ 	}
+ 
++	@Transacional
+ 	@Post({"/app/usuario/trocar_senha_gravar","/public/app/usuario/trocar_senha_gravar"})
+ 	public void gravarTrocaSenha(UsuarioAction usuario) throws Exception {
+ 		String senhaAtual = usuario.getSenhaAtual();
+@@ -85,6 +86,7 @@ public class UsuarioController extends SigaController {
+ 		
+ 	}
+ 	
++	@Transacional
+ 	@Post({"/app/usuario/incluir_usuario_gravar","/public/app/usuario/incluir_usuario_gravar"})
+ 	public void gravarIncluirUsuario(UsuarioAction usuario) throws Exception {
+ 		String msgComplemento = "";
+@@ -145,6 +147,7 @@ public class UsuarioController extends SigaController {
+ 		result.include("proxima_acao", "esqueci_senha_gravar");
+ 	}
+ 	
++	@Transacional
+ 	@Post({"/app/usuario/esqueci_senha_gravar","/public/app/usuario/esqueci_senha_gravar"})
+ 	public void gravarEsqueciSenha(UsuarioAction usuario) throws Exception {
+ 		String msgAD = "";
+diff --git a/siga/src/main/webapp/META-INF/persistence.xml b/siga/src/main/webapp/META-INF/persistence.xml
+index 0accb18c5d..673a716271 100644
+--- a/siga/src/main/webapp/META-INF/persistence.xml
++++ b/siga/src/main/webapp/META-INF/persistence.xml
+@@ -44,7 +44,9 @@
+ 		<class>br.gov.jfrj.siga.dp.CpMarca</class>
+ 		<class>br.gov.jfrj.siga.dp.CpTipoMarca</class>
+ 		<class>br.gov.jfrj.siga.cp.CpAcesso</class>
+-		
++		<class>br.gov.jfrj.siga.cp.CpArquivo</class>
++		<class>br.gov.jfrj.siga.cp.CpArquivoBlob</class>
++
+ 		<properties>
+ 			<property name="hibernate.cache.use_query_cache" value="true" />
+ 			<property name="hibernate.cache.use_second_level_cache"
+diff --git a/siga/src/main/webapp/WEB-INF/web.xml b/siga/src/main/webapp/WEB-INF/web.xml
+index 12cb4fe942..df659f45a9 100644
+--- a/siga/src/main/webapp/WEB-INF/web.xml
++++ b/siga/src/main/webapp/WEB-INF/web.xml
+@@ -51,6 +51,10 @@
+ 
+ 	
+ !!!!!!
++	<listener>
++		<listener-class>br.gov.jfrj.siga.jee.BouncyCastleServletContextListener</listener-class>
++	</listener>
++
+ 	<!-- The Usual Welcome File List -->
+ 	<welcome-file-list>
+ 		<welcome-file>index.jsp</welcome-file>
+diff --git a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExAssinadorExternoController.java b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExAssinadorExternoController.java
+index e15d9c3c12..0cc39da455 100644
+--- a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExAssinadorExternoController.java
++++ b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExAssinadorExternoController.java
+@@ -253,6 +253,7 @@ public class ExAssinadorExternoController extends ExController {
+ 		}
+ 	}
+ 	
++	@Transacional
+ 	@Put("/public/app/assinador-externo/doc/{id}/sign")
+ 	public void assinadorExternoSave(String id) throws Exception {
+ 		try {
+@@ -265,6 +266,7 @@ public class ExAssinadorExternoController extends ExController {
+ 		assinadorPopupSave(id);
+ 	}
+ 
++	@Transacional
+ 	@Put("/app/assinador-popup/doc/{id}/sign")
+ 	public void assinadorPopupSave(String id) throws Exception {
+ 		try {
+diff --git a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExAutenticacaoController.java b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExAutenticacaoController.java
+index 06842a52b7..e91ac9946c 100644
+--- a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExAutenticacaoController.java
++++ b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExAutenticacaoController.java
+@@ -137,6 +137,7 @@ public class ExAutenticacaoController extends ExController {
+ 				certificado = null;
+ 
+ 			try {
++				SigaTransacionalInterceptor.upgradeParaTransacional();
+ 				Ex.getInstance()
+ 						.getBL()
+ 						.assinarMovimentacao(
+diff --git a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExClassificacaoController.java b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExClassificacaoController.java
+index a8f298a277..085ac4a9c6 100644
+--- a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExClassificacaoController.java
++++ b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExClassificacaoController.java
+@@ -187,6 +187,7 @@ public class ExClassificacaoController
+ 		return exClass;
+ 	}
+ 
++	@Transacional
+ 	@Get("app/expediente/classificacao/gravar")
+ 	public void gravar(ExClassificacao exClassificacao,
+ 			String codificacaoAntiga, String acao) throws Exception {
+@@ -269,6 +270,7 @@ public class ExClassificacaoController
+ 		}
+ 	}
+ 
++	@Transacional
+ 	@Get("app/expediente/classificacao/excluir")
+ 	public void excluir(String codificacao) throws Exception {
+ 		assertAcesso(ACESSO_SIGA_DOC_FE_PC);
+@@ -289,6 +291,7 @@ public class ExClassificacaoController
+ 		}
+ 	}
+ 
++	@Transacional
+ 	@Post("app/expediente/classificacao/gravarVia")
+ 	public void gravarVia(String acao, String codificacao, Long idVia, String obsVia, Long idDestino, Long idTemporalidadeArqCorr,
+ 			Long idTemporalidadeArqInterm, Long idDestinacaoFinal) throws Exception {
+@@ -390,6 +393,7 @@ public class ExClassificacaoController
+ 		}
+ 	}
+ 
++	@Transacional
+ 	@Get("app/expediente/classificacao/excluirVia")
+ 	public void excluirVia(Long idVia, String codificacao, String acao)
+ 			throws Exception {
+diff --git a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExConfiguracaoController.java b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExConfiguracaoController.java
+index 6c831c0d18..5bd0e0a8c2 100644
+--- a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExConfiguracaoController.java
++++ b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExConfiguracaoController.java
+@@ -122,6 +122,7 @@ public class ExConfiguracaoController extends ExController {
+ 		result.include("configuracao", config);
+ 	}
+ 
++	@Transacional
+ 	@SuppressWarnings("all")
+ 	@Get("app/expediente/configuracao/excluir")
+ 	public void excluir(Long id, String nmTipoRetorno, Long idMod, Long idFormaDoc) throws Exception {
+@@ -144,6 +145,7 @@ public class ExConfiguracaoController extends ExController {
+ 		escreveFormRetornoExclusao(nmTipoRetorno, idMod, idFormaDoc);
+ 	}
+ 
++	@Transacional
+ 	@SuppressWarnings("all")
+ 	@Get("app/expediente/configuracao/editar_gravar")
+ 	public void editarGravar(Long id, Long idOrgaoUsu, Long idTpMov, Long idTpDoc, Long idTpFormaDoc, Long idMod,
+@@ -166,6 +168,7 @@ public class ExConfiguracaoController extends ExController {
+ 		escreveFormRetorno(nmTipoRetorno, campoFixo, configuracaoBuilder);
+ 	}
+ 
++	@Transacional
+ 	@Post("app/expediente/configuracao/gerenciar_publicacao_boletim_gravar")
+ 	public void gerenciarPublicacaoBoletimGravar(Integer postback, String gerenciaPublicacao, Long idTpMov,
+ 			Long idTpConfiguracao, Long idFormaDoc, Long idMod, Integer tipoPublicador, Long idSituacao,
+@@ -281,6 +284,7 @@ public class ExConfiguracaoController extends ExController {
+ 		}
+ 	}
+ 
++	@Transacional
+ 	@SuppressWarnings("static-access")
+ 	private void gravarConfiguracao(Long idTpConfiguracao, Long idSituacao, final ExConfiguracao config) {
+ 		assertAcesso(VERIFICADOR_ACESSO);
+diff --git a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExController.java b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExController.java
+index 145685099c..768923328d 100644
+--- a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExController.java
++++ b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExController.java
+@@ -174,7 +174,7 @@ public class ExController extends SigaController {
+ 		return null;
+ 	}
+ 
+-	public ExConfiguracao criarExConfiguracaoPorCpConfiguracao(CpConfiguracao configuracaoBaseParaExConfiguracao) {
++	protected ExConfiguracao criarExConfiguracaoPorCpConfiguracao(CpConfiguracao configuracaoBaseParaExConfiguracao) {
+ 		ExConfiguracao exConfiguracao = new ExConfiguracao();
+ 
+ 		if (configuracaoBaseParaExConfiguracao.isAtivo())
+diff --git a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExDocumentoController.java b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExDocumentoController.java
+index 2d069b1d49..bd10b40040 100644
+--- a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExDocumentoController.java
++++ b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExDocumentoController.java
+@@ -133,6 +133,7 @@ public class ExDocumentoController extends ExController {
+ 		return doc;
+ 	}
+ 
++	@Transacional
+ 	@Get("app/expediente/doc/atualizar_marcas")
+ 	public void aAtualizarMarcasDoc(final String sigla) {
+ 		assertAcesso("");
+@@ -146,6 +147,7 @@ public class ExDocumentoController extends ExController {
+ 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+ 	}
+ 
++	@Transacional
+ 	@Get("/app/expediente/doc/recalcular_acesso")
+ 	public void aRecalcularAcesso(final String sigla) {
+ 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+@@ -161,6 +163,7 @@ public class ExDocumentoController extends ExController {
+ 				.setStatusCode(200);
+ 	}
+ 
++	@Transacional
+ 	@Get("app/expediente/doc/cancelar_movimentacoes_replicadas")
+ 	public void aCancelarMovimentacoesReplicadasDoc(final String sigla)
+ 			throws Exception {
+@@ -187,6 +190,7 @@ public class ExDocumentoController extends ExController {
+ 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+ 	}
+ 
++	@Transacional
+ 	@Get("app/expediente/doc/corrigirPDF")
+ 	public void aCorrigirPDF(final String sigla) {
+ 		assertAcesso("");
+@@ -200,6 +204,7 @@ public class ExDocumentoController extends ExController {
+ 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+ 	}
+ 
++	@Transacional
+ 	@Get("app/expediente/doc/desfazerCancelamentoDocumento")
+ 	public void aDesfazerCancelamentoDocumento(final String sigla) {
+ 		assertAcesso("");
+@@ -223,13 +228,13 @@ public class ExDocumentoController extends ExController {
+ 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+ 	}
+ 
++	@Transacional
+ 	@Post("app/expediente/doc/alterarpreench")
+ 	public void aAlterarPreenchimento(final ExDocumentoDTO exDocumentoDTO,
+ 			final String[] vars, final String[] campos) throws IOException,
+ 			IllegalAccessException, InvocationTargetException {
+ 		assertAcesso("");
+ 
+-		ModeloDao.iniciarTransacao();
+ 		final ExPreenchimento exPreenchimento = dao()
+ 				.consultar(exDocumentoDTO.getPreenchimento(),
+ 						ExPreenchimento.class, false);
+@@ -237,7 +242,7 @@ public class ExDocumentoController extends ExController {
+ 		exPreenchimento.setPreenchimentoBA(getByteArrayFormPreenchimento(vars,
+ 				campos));
+ 		dao().gravar(exPreenchimento);
+-		ModeloDao.commitTransacao();
++		SigaTransacionalInterceptor.downgradeParaNaoTransacional();
+ 
+ 		exDocumentoDTO.setPreenchimento(exPreenchimento.getIdPreenchimento());
+ 
+@@ -284,7 +289,7 @@ public class ExDocumentoController extends ExController {
+ 		final ExPreenchimento exPreenchimento = dao()
+ 				.consultar(exDocumentoDTO.getPreenchimento(),
+ 						ExPreenchimento.class, false);
+-		final String strBanco = new String(exPreenchimento.getPreenchimentoBlob());
++		final String strBanco = new String(exPreenchimento.getConteudo());
+ 		final String arrStrBanco[] = strBanco.split("&");
+ 		String strBancoLimpa = new String();
+ 
+@@ -378,6 +383,7 @@ public class ExDocumentoController extends ExController {
+ 				exDocumentoDTO.getCriandoSubprocesso(), null);
+ 	}
+ 
++	@Transacional
+ 	@Get("app/expediente/doc/criar_via")
+ 	public void criarVia(final String sigla) {
+ 		assertAcesso("");
+@@ -400,6 +406,7 @@ public class ExDocumentoController extends ExController {
+ 		ExDocumentoController.redirecionarParaExibir(result, sigla);
+ 	}
+ 
++	@Transacional
+ 	@Get("app/expediente/doc/criar_volume")
+ 	public void criarVolume(final String sigla) {
+ 		assertAcesso("");
+@@ -783,6 +790,7 @@ public class ExDocumentoController extends ExController {
+ 
+ 		// Desabilita a proteção contra injeção maldosa de html e js
+ 		this.response.addHeader("X-XSS-Protection", "0");
++		
+ 		return exDocumentoDTO;
+ 	}
+ 
+@@ -823,6 +831,7 @@ public class ExDocumentoController extends ExController {
+ 		}
+ 	}
+ 
++	@Transacional
+ 	@Get("/app/expediente/doc/excluir")
+ 	public void aExcluirDocMovimentacoes(final String sigla) throws Exception {
+ 		assertAcesso("");
+@@ -838,18 +847,19 @@ public class ExDocumentoController extends ExController {
+ 		result.redirectTo("/");
+ 	}
+ 
++	@Transacional
+ 	@Post("app/expediente/doc/excluirpreench")
+ 	public void aExcluirPreenchimento(final ExDocumentoDTO exDocumentoDTO,
+ 			final String[] vars) throws IllegalAccessException,
+ 			InvocationTargetException, IOException {
+ 		assertAcesso("");
+ 
+-		ModeloDao.iniciarTransacao();
+ 		final ExPreenchimento exemplo = dao()
+ 				.consultar(exDocumentoDTO.getPreenchimento(),
+ 						ExPreenchimento.class, false);
+ 		dao().excluir(exemplo);
+-		ModeloDao.commitTransacao();
++		SigaTransacionalInterceptor.downgradeParaNaoTransacional();
++
+ 		exDocumentoDTO.setPreenchimento(0L);
+ 		result.forwardTo(this).edita(exDocumentoDTO, null, vars,
+ 				exDocumentoDTO.getMobilPaiSel(),
+@@ -910,6 +920,7 @@ public class ExDocumentoController extends ExController {
+ 		}
+ 	}
+ 
++	@Transacional
+ 	private String arquivamentoAutomatico(ExMobil mob) throws Exception {
+ 
+ 		String msgDestinoDoc = "";
+@@ -1060,6 +1071,7 @@ public class ExDocumentoController extends ExController {
+ 				.getComp()
+ 				.podeReceberEletronico(getTitular(), getLotaTitular(),
+ 						exDocumentoDTO.getMob())) {
++			SigaTransacionalInterceptor.upgradeParaTransacional();
+ 			Ex.getInstance()
+ 					.getBL()
+ 					.receber(getCadastrante(), getLotaTitular(),
+@@ -1113,6 +1125,7 @@ public class ExDocumentoController extends ExController {
+ 				.getComp()
+ 				.podeReceberEletronico(getTitular(), getLotaTitular(),
+ 						exDocumentoDto.getMob())) {
++			SigaTransacionalInterceptor.upgradeParaTransacional();
+ 			Ex.getInstance()
+ 					.getBL()
+ 					.receber(getCadastrante(), getLotaTitular(),
+@@ -1262,7 +1275,7 @@ public class ExDocumentoController extends ExController {
+ 		if (exDocumentoDto.getDoc() != null && exDocumentoDto.getMob() == null) {
+ 			exDocumentoDto.setMob(exDocumentoDto.getDoc().getMobilGeral());
+ 		}
+-
++		
+ 		if (!fPodeNaoExistir && exDocumentoDto.getDoc() == null) {
+ 			throw new AplicacaoException("Documento não informado");
+ 		}
+@@ -1272,6 +1285,7 @@ public class ExDocumentoController extends ExController {
+ 		}
+ 	}
+ 
++	@Transacional
+ 	@Get("/app/expediente/doc/finalizar")
+ 	public void aFinalizar(final String sigla) {
+ 		final ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
+@@ -1313,10 +1327,11 @@ public class ExDocumentoController extends ExController {
+ 		result.redirectTo("exibir?sigla=" + exDocumentoDto.getDoc().getCodigo());
+ 	}
+ 
++	@Transacional
+ 	@Post("/app/expediente/doc/gravar")
+ 	public void gravar(final ExDocumentoDTO exDocumentoDTO,
+ 			final String[] vars, final String[] campos,
+-			final UploadedFile arquivo, String jsonHierarquiaDeModelos) {
++			final UploadedFile arquivo, String jsonHierarquiaDeModelos) throws Exception {
+ 		final Ex ex = Ex.getInstance();
+ 		final ExBL exBL = ex.getBL();
+ 
+@@ -1511,7 +1526,7 @@ public class ExDocumentoController extends ExController {
+ 			}
+ 
+ 		} catch (final Exception e) {
+-			throw new AplicacaoException("Erro na gravação", 0, e);
++			throw new Exception("Erro na gravação", e);
+ 		}
+ 
+ 		if (param("ajax") != null && param("ajax").equals("true")) {
+@@ -1529,13 +1544,13 @@ public class ExDocumentoController extends ExController {
+ 		}
+ 	}
+ 
++	@Transacional
+ 	@Post("app/expediente/doc/gravarpreench")
+ 	public void aGravarPreenchimento(final ExDocumentoDTO exDocumentoDTO,
+ 			final String[] vars, final String[] campos) throws IOException,
+ 			IllegalAccessException, InvocationTargetException {
+ 		assertAcesso("");
+ 
+-		ModeloDao.iniciarTransacao();
+ 		final ExPreenchimento exPreenchimento = new ExPreenchimento();
+ 
+ 		final DpLotacao provLota = getLotaTitular();
+@@ -1550,7 +1565,7 @@ public class ExDocumentoController extends ExController {
+ 		exPreenchimento.setPreenchimentoBA(getByteArrayFormPreenchimento(vars,
+ 				campos));
+ 		dao().gravar(exPreenchimento);
+-		ModeloDao.commitTransacao();
++		SigaTransacionalInterceptor.downgradeParaNaoTransacional();
+ 
+ 		exDocumentoDTO.setPreenchimento(exPreenchimento.getIdPreenchimento());
+ 
+@@ -1636,8 +1651,9 @@ public class ExDocumentoController extends ExController {
+ 				"application/pdf", "document.pdf");
+ 	}
+ 
++	@Transacional
+ 	@Get("app/expediente/doc/refazer")
+-	public void refazer(final String sigla) {
++	public void refazer(final String sigla) throws Exception {
+ 		assertAcesso("");
+ 
+ 		final ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO();
+@@ -1659,8 +1675,9 @@ public class ExDocumentoController extends ExController {
+ 				.getDoc().getSigla());
+ 	}
+ 
++	@Transacional
+ 	@Get("app/expediente/doc/duplicar")
+-	public void aDuplicar(final boolean conviteEletronico, final String sigla) {
++	public void aDuplicar(final boolean conviteEletronico, final String sigla) throws Exception {
+ 		assertAcesso("");
+ 
+ 		final ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
+@@ -1696,6 +1713,7 @@ public class ExDocumentoController extends ExController {
+ 		result.include("doc", exDocumentoDto.getDoc());
+ 	}
+ 
++	@Transacional
+ 	@Post("/app/expediente/doc/tornarDocumentoSemEfeitoGravar")
+ 	public void tornarDocumentoSemEfeitoGravar(final String sigla,
+ 			final Integer id, final DpPessoaSelecao titularSel,
+@@ -2393,6 +2411,7 @@ public class ExDocumentoController extends ExController {
+ 				dto.getMob().getCodigoCompacto()).concat(".pdf"));
+ 	}
+ 
++	@Transacional
+ 	@Get("/app/expediente/doc/corrigir_arquivamentos_volume")
+ 	public void aCorrigirArquivamentosVolume(Integer de, Integer ate,
+ 			Boolean efetivar) throws Exception {
+diff --git a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExEmailNotificacaoController.java b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExEmailNotificacaoController.java
+index 200fe6bcd9..ed1bb032d3 100644
+--- a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExEmailNotificacaoController.java
++++ b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExEmailNotificacaoController.java
+@@ -80,6 +80,7 @@ public class ExEmailNotificacaoController extends SigaController{
+ 		}
+ 	}
+ 	
++	@Transacional
+ 	@Get("app/expediente/emailNotificacao/excluir")
+ 	public void excluir(Long id){
+ 		try {
+@@ -126,6 +127,7 @@ public class ExEmailNotificacaoController extends SigaController{
+ 		result.include("pessEmailSel", new DpPessoaSelecao());
+ 	}
+ 	
++	@Transacional
+ 	@Get("app/expediente/emailNotificacao/editar_gravar")
+ 	public void editarGravar(final DpLotacaoSelecao lotaSel, final DpLotacaoSelecao lotaEmailSel, final DpPessoaSelecao pessSel,
+ 			final DpPessoaSelecao pessEmailSel, final Integer tipoDest, final Integer tipoEmail, final String emailTela){
+diff --git a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExFormaDocumentoController.java b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExFormaDocumentoController.java
+index 83032eb32a..a1db366d38 100644
+--- a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExFormaDocumentoController.java
++++ b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExFormaDocumentoController.java
+@@ -124,6 +124,7 @@ public class ExFormaDocumentoController extends ExController {
+ 		result.use(Results.page()).forwardTo("/WEB-INF/page/mensagemAjax.jsp");
+ 	}
+ 
++	@Transacional
+ 	@Post("app/forma/gravar")
+ 	public void gravar(final Integer postback, final Long id, final String descricao, final String sigla, final Long idTipoFormaDoc, final boolean origemExterno,
+ 			final boolean origemInternoImportado, final boolean origemInternoProduzido, final boolean origemInternoCapturado, final boolean origemExternoCapturado) {
+diff --git a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExMobilController.java b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExMobilController.java
+index f1414c8e57..3e63a5e663 100644
+--- a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExMobilController.java
++++ b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExMobilController.java
+@@ -94,6 +94,7 @@ public class ExMobilController extends
+ 		setItemPagina(50);
+ 	}
+ 
++	@Transacional
+ 	@Get("app/expediente/doc/marcar")
+ 	public void aMarcar() {
+ 		assertAcesso("");
+@@ -473,7 +474,7 @@ public class ExMobilController extends
+ 		return s;
+ 	}
+ 	
+-	public ExClassificacao daoClassificacao(long id) {
++	protected ExClassificacao daoClassificacao(long id) {
+ 		return dao().consultar(id, ExClassificacao.class, false);
+ 	}
+ 
+diff --git a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExModeloController.java b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExModeloController.java
+index 7e31f04533..98ecb85c8d 100644
+--- a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExModeloController.java
++++ b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExModeloController.java
+@@ -124,6 +124,7 @@ public class ExModeloController extends ExSelecionavelController {
+ 		}
+ 	}
+ 
++	@Transacional
+ 	@Post("app/modelo/gravar")
+ 	public void editarGravar(final Long id, final String nome,
+ 			final String tipoModelo, final String conteudo,
+@@ -169,6 +170,7 @@ public class ExModeloController extends ExSelecionavelController {
+ 		result.redirectTo(ExModeloController.class).lista(null);
+ 	}
+ 
++	@Transacional
+ 	@Get("app/modelo/desativar")
+ 	public void desativar(final Long id) throws Exception {
+ 		ModeloDao.iniciarTransacao();
+@@ -232,6 +234,7 @@ public class ExModeloController extends ExSelecionavelController {
+ 					}
+ 					if (m.getUuid() == null) {
+ 						m.setUuid(UUID.randomUUID().toString());
++						SigaTransacionalInterceptor.upgradeParaTransacional();
+ 						dao().gravar(m);
+ 					}
+ 					if (m.getUuid() != null) {
+@@ -365,6 +368,7 @@ public class ExModeloController extends ExSelecionavelController {
+ 				}
+ 				if (m.getUuid() == null) {
+ 			        m.setUuid(UUID.randomUUID().toString());
++			        SigaTransacionalInterceptor.upgradeParaTransacional();
+ 			        dao().gravar(m);
+ 				}
+ 				if (m.getUuid() != null) {
+@@ -422,7 +426,7 @@ public class ExModeloController extends ExSelecionavelController {
+ 	}
+ 
+ 	@Override
+-	public DaoFiltroSelecionavel createDaoFiltro() {
++	protected DaoFiltroSelecionavel createDaoFiltro() {
+ 		return null;
+ 	}
+ 
+diff --git a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExMovimentacaoController.java b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExMovimentacaoController.java
+index 0523e64e24..8c206c5996 100644
+--- a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExMovimentacaoController.java
++++ b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExMovimentacaoController.java
+@@ -189,6 +189,7 @@ public class ExMovimentacaoController extends ExController {
+ 				"/WEB-INF/page/exMovimentacao/anexa.jsp");
+ 	}
+ 
++	@Transacional
+ 	@Post("app/expediente/mov/anexar_gravar")
+ 	public void anexarGravar(final String sigla,
+ 			final DpPessoaSelecao subscritorSel,
+@@ -346,6 +347,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("request", getRequest());
+ 	}
+ 
++	@Transacional
+ 	@Post("app/expediente/mov/anexar_arquivo_auxiliar_gravar")
+ 	public void anexarArquivoAuxiliarGravar(final String sigla, final UploadedFile arquivo) throws IOException {
+ 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
+@@ -451,12 +453,13 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("documentoRefSel", new ExDocumentoSelecao());
+ 	}
+ 	
++	@Transacional
+ 	@Post("app/expediente/mov/copiar_gravar")
+ 	public void copiarGravar(final String sigla,
+ 			final String dtMovString, final boolean substituicao,
+ 			final DpPessoaSelecao titularSel,
+ 			final DpPessoaSelecao subscritorSel,
+-			final ExMobilSelecao documentoRefSel) {
++			final ExMobilSelecao documentoRefSel) throws Exception {
+ 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
+ 				.novaInstancia().setSigla(sigla);
+ 
+@@ -504,6 +507,7 @@ public class ExMovimentacaoController extends ExController {
+ 				.getExDocumento().getSigla());
+ 	}
+ 
++	@Transacional
+ 	@Get("app/expediente/mov/desobrestar_gravar")
+ 	public void aDesobrestarGravar(final String sigla) {
+ 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+@@ -530,6 +534,7 @@ public class ExMovimentacaoController extends ExController {
+ 		ExDocumentoController.redirecionarParaExibir(result, sigla);
+ 	}
+ 
++	@Transacional
+ 	@Get("app/expediente/mov/sobrestar_gravar")
+ 	public void sobrestarGravar(final String sigla) {
+ 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+@@ -607,12 +612,12 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("tramitarFixo", afTramite.fixo);
+ 	}
+ 	
+-	public static class AtivoEFixo {
++	private static class AtivoEFixo {
+ 		public boolean ativo;
+ 		public boolean fixo;
+ 	}
+ 
+-	public AtivoEFixo obterAtivoEFixo(ExModelo modelo, ExTipoDocumento tipoDocumento, long tipoConf) {
++	private AtivoEFixo obterAtivoEFixo(ExModelo modelo, ExTipoDocumento tipoDocumento, long tipoConf) {
+ 		final Long idSit = Ex
+ 				.getInstance()
+ 				.getConf()
+@@ -663,6 +668,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("titularSel", titularSel);
+ 	}
+ 
++	@Transacional
+ 	@Post("app/expediente/mov/redefinir_nivel_acesso_gravar")
+ 	public void redefinirNivelAcessoGravar(final String sigla,
+ 			final DpPessoaSelecao subscritorSel,
+@@ -705,6 +711,7 @@ public class ExMovimentacaoController extends ExController {
+ 		ExDocumentoController.redirecionarParaExibir(result, sigla);
+ 	}
+ 
++	@Transacional
+ 	@Get("/app/expediente/mov/cancelarMovimentacao")
+ 	public void aCancelarUltimaMovimentacao(final String sigla) {
+ 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
+@@ -738,6 +745,7 @@ public class ExMovimentacaoController extends ExController {
+ 		ExDocumentoController.redirecionarParaExibir(result, sigla);
+ 	}
+ 
++	@Transacional
+ 	@Get("app/expediente/mov/excluir")
+ 	public void excluir(final Long id, boolean continuarTela) {
+ 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+@@ -947,6 +955,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("documentoRefSel", documentoRefSel);
+ 	}
+ 
++	@Transacional
+ 	@Post("app/expediente/mov/juntar_gravar")
+ 	public void aJuntarGravar(final Integer postback, final String sigla,
+ 			final String dtMovString, final boolean substituicao,
+@@ -954,7 +963,7 @@ public class ExMovimentacaoController extends ExController {
+ 			final DpPessoaSelecao subscritorSel,
+ 			final DpPessoaSelecao titularSel,
+ 			final ExMobilSelecao documentoRefSel,
+-			final String idDocumentoEscolha) {
++			final String idDocumentoEscolha) throws Exception {
+ 		this.setPostback(postback);
+ 
+ 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+@@ -1043,6 +1052,7 @@ public class ExMovimentacaoController extends ExController {
+ 
+ 	}
+ 
++	@Transacional
+ 	@Post("app/expediente/mov/apensar_gravar")
+ 	public void apensarGravar(final ExMobilSelecao documentoRefSel,
+ 			final DpPessoaSelecao subscritorSel,
+@@ -1112,11 +1122,12 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("substituicao", false);
+ 	}
+ 
++	@Transacional
+ 	@Post("/app/expediente/mov/registrar_assinatura_gravar")
+ 	public void registrar_assinatura_gravar(final int postback,
+ 			final String sigla, final String dtMovString,
+ 			final DpPessoaSelecao subscritorSel, final boolean substituicao,
+-			final DpPessoaSelecao tilularSel) {
++			final DpPessoaSelecao tilularSel) throws Exception {
+ 		this.setPostback(postback);
+ 
+ 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+@@ -1177,10 +1188,11 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("mob", builder.getMob());
+ 	}
+ 
++	@Transacional
+ 	@Post("/app/expediente/mov/incluir_cosignatario_gravar")
+ 	public void aIncluirCosignatarioGravar(final String sigla,
+ 			final DpPessoaSelecao cosignatarioSel,
+-			final String funcaoCosignatario, final String  unidadeCosignatario, final Integer postback) {
++			final String funcaoCosignatario, final String  unidadeCosignatario, final Integer postback) throws Exception {
+ 		this.setPostback(postback);
+ 
+ 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
+@@ -1239,8 +1251,9 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("itens", itens);
+ 	}
+ 
++	@Transacional
+ 	@Post("/app/expediente/mov/receber_lote_gravar")
+-	public void aReceberLoteGravar(final Integer postback) {
++	public void aReceberLoteGravar(final Integer postback) throws Exception {
+ 		this.setPostback(postback);
+ 
+ 		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder
+@@ -1292,6 +1305,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("itens", itens);
+ 	}
+ 
++	@Transacional
+ 	@Post("/app/expediente/mov/arquivar_corrente_lote_gravar")
+ 	public void aArquivarCorrenteLoteGravar(final Integer postback) {
+ 		this.setPostback(postback);
+@@ -1324,6 +1338,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.redirectTo("/app/expediente/mov/arquivar_corrente_lote");
+ 	}
+ 
++	@Transacional
+ 	@Get("/app/expediente/mov/arquivar_corrente_gravar")
+ 	public void aArquivarCorrenteGravar(final String sigla) {
+ 
+@@ -1360,6 +1375,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+ 	}
+ 
++	@Transacional
+ 	@Get("/app/expediente/mov/arquivar_permanente_gravar")
+ 	public void aArquivarPermanenteGravar(final String sigla) {
+ 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+@@ -1387,6 +1403,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+ 	}
+ 
++	@Transacional
+ 	@Get("/app/expediente/mov/reabrir_gravar")
+ 	public void aReabrirGravar(final String sigla) {
+ 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+@@ -1412,6 +1429,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+ 	}
+ 
++	@Transacional
+ 	@Get("/app/expediente/mov/desarquivar_intermediario_gravar")
+ 	public void aDesarquivarIntermediarioGravar(final String sigla) {
+ 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+@@ -1466,8 +1484,9 @@ public class ExMovimentacaoController extends ExController {
+ 				movimentacoesQuePodemSerAssinadasComSenha);
+ 	}
+ 
++	@Transacional
+ 	@Get("/app/expediente/mov/receber")
+-	public void aReceber(final String sigla) {
++	public void aReceber(final String sigla) throws Exception {
+ 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+ 				.novaInstancia().setSigla(sigla);
+ 		buscarDocumento(builder);
+@@ -1489,6 +1508,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+ 	}
+ 	
++	@Transacional
+ 	@Get("/app/expediente/mov/solicitar_assinatura")
+ 	public void aSolicitarAssinatura(final String sigla) {
+ 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+@@ -1588,12 +1608,13 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("mov", mov);
+ 	}
+ 
++	@Transacional
+ 	@Post("/app/expediente/mov/referenciar_gravar")
+ 	public void aReferenciarGravar(final String sigla,
+ 			final String dtMovString, final boolean substituicao,
+ 			final DpPessoaSelecao titularSel,
+ 			final DpPessoaSelecao subscritorSel,
+-			final ExMobilSelecao documentoRefSel) {
++			final ExMobilSelecao documentoRefSel) throws Exception {
+ 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+ 				.novaInstancia().setSigla(sigla);
+ 		buscarDocumento(builder);
+@@ -1711,6 +1732,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("dtDevolucaoMovString", dtDevolucaoMovString);
+ 	}
+ 
++	@Transacional
+ 	@Post("/app/expediente/mov/transferir_gravar")
+ 	public void transferirGravar(final int postback, final String sigla,
+ 			final String dtMovString, final DpPessoaSelecao subscritorSel,
+@@ -1816,6 +1838,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("doc", doc);
+ 	}
+ 
++	@Transacional
+ 	@Get("app/expediente/mov/encerrar_volume")
+ 	public void encerrarVolumeGravar(final String sigla) {
+ 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+@@ -1873,6 +1896,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("titularSel", movimentacaoBuilder.getTitularSel());
+ 	}
+ 
++	@Transacional
+ 	@Post("/app/expediente/mov/anotar_gravar")
+ 	public void anotar_gravar(final Integer postback, final String sigla,
+ 			final String dtMovString, final DpPessoaSelecao subscritorSel,
+@@ -1935,6 +1959,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("titularSel", new DpPessoaSelecao());
+ 	}
+ 
++	@Transacional
+ 	@Post("/app/expediente/mov/anotar_lote_gravar")
+ 	public void aAnotarLoteGravar(final Integer postback,
+ 			final String dtMovString, final DpPessoaSelecao subscritorSel,
+@@ -2006,6 +2031,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("lotaResponsavelSel", new DpLotacaoSelecao());
+ 	}
+ 
++	@Transacional
+ 	@Post("/app/expediente/mov/vincularPapel_gravar")
+ 	public void vincularPapel_gravar(final int postback, final String sigla,
+ 			final String dtMovString, final int tipoResponsavel,
+@@ -2081,6 +2107,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("listaMarcadoresAtivos", this.getListaMarcadoresAtivos(builder.getMob().getDoc().getMobilGeral()));
+ 	}
+ 	
++	@Transacional
+ 	@Get("/app/expediente/mov/recalcular_acesso")
+ 	public void aRecalcularAcesso(final String sigla) {
+ 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+@@ -2106,6 +2133,7 @@ public class ExMovimentacaoController extends ExController {
+ 		return dao().listarCpMarcadoresGerais();
+ 	}
+ 
++	@Transacional
+ 	@Post("/app/expediente/mov/marcar_gravar")
+ 	public void aMarcarGravar(final String sigla, final Long idMarcador,
+ 			final Boolean ativo) throws Exception {
+@@ -2171,6 +2199,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("cpOrgaoSel", cpOrgaoSel);
+ 	}
+ 
++	@Transacional
+ 	@Post("app/expediente/mov/transferir_lote_gravar")
+ 	public void aTransferirLoteGravar(final String dtMovString,
+ 			final DpPessoaSelecao subscritorSel, final boolean substituicao,
+@@ -2388,6 +2417,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("itens", listaFinal);
+ 	}
+ 
++	@Transacional
+ 	@Get("app/expediente/mov/arquivar_intermediario_lote_gravar")
+ 	public void aArquivarIntermediarioLoteGravar(final Integer postback,
+ 			final Integer paramOffset, final String dtMovString,
+@@ -2484,6 +2514,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("itens", listaFinal);
+ 	}
+ 
++	@Transacional
+ 	@Get("app/expediente/mov/arquivar_permanente_lote_gravar")
+ 	public void aArquivarPermanenteLoteGravar(final Integer postback,
+ 			final Integer paramOffset, final String dtMovString,
+@@ -2579,6 +2610,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("request", getRequest());
+ 	}
+ 
++	@Transacional
+ 	@Post("/app/expediente/mov/assinar_gravar")
+ 	public void aAssinarGravar(final String sigla, final Boolean copia,
+ 			final String atributoAssinavelDataHora, String assinaturaB64,
+@@ -2640,6 +2672,7 @@ public class ExMovimentacaoController extends ExController {
+ 		httpOK();
+ 	}
+ 
++	@Transacional
+ 	@Post("/app/expediente/mov/assinar_senha_gravar")
+ 	public void aAssinarSenhaGravar(String sigla, final Boolean copia, final Boolean juntar, final Boolean tramitar, String nomeUsuarioSubscritor,
+ 			String senhaUsuarioSubscritor) throws Exception {
+@@ -2666,6 +2699,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.use(Results.page()).forwardTo("/WEB-INF/page/ok.jsp");
+ 	}
+ 
++	@Transacional
+ 	@Get
+ 	@Post
+ 	@Path("/app/expediente/mov/assinar_mov_login_senha_gravar")
+@@ -2702,6 +2736,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.use(Results.page()).forwardTo("/WEB-INF/page/ok.jsp");
+ 	}
+ 
++	@Transacional
+ 	@Get({ "/app/expediente/mov/cancelar_pedido_publicacao_boletim",
+ 			"/expediente/mov/cancelar_pedido_publicacao_boletim.action" })
+ 	public void aCancelarPedidoPublicacaoBoletim(final String sigla)
+@@ -2777,6 +2812,7 @@ public class ExMovimentacaoController extends ExController {
+ 				dao().listarSolicitados(getTitular().getOrgaoUsuario()));
+ 	}
+ 
++	@Transacional
+ 	@Get("/app/expediente/mov/atender_pedido_publicacao_gravar")
+ 	public void aAtenderPedidoPublicacaoGravar() throws Exception {
+ 
+@@ -2843,6 +2879,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.redirectTo("/app/expediente/mov/atender_pedido_publicacao");
+ 	}
+ 
++	@Transacional
+ 	@Get("/app/expediente/mov/atender_pedido_publicacao_cancelar")
+ 	public void aAtenderPedidoPublicacaoCancelar(final String sigla)
+ 			throws Exception {
+@@ -2922,6 +2959,7 @@ public class ExMovimentacaoController extends ExController {
+ 
+ 		ExMobil mobilJuntado = mob.getExMobilPai();
+ 		if (mobilJuntado != null && !mobilJuntado.getDoc().isEletronico()) {
++			SigaTransacionalInterceptor.upgradeParaTransacional();
+ 			cancelarJuntadaGravar(DEFAULT_POSTBACK, sigla, null, null, null,
+ 					null, Boolean.FALSE);
+ 			return;
+@@ -2940,6 +2978,7 @@ public class ExMovimentacaoController extends ExController {
+ 			throw new AplicacaoException("Não é possível cancelar juntada");
+ 	}
+ 
++	@Transacional
+ 	@Post("/app/expediente/mov/cancelar_juntada_gravar")
+ 	public void cancelarJuntadaGravar(Integer postback, String sigla,
+ 			String dtMovString, String descrMov, DpPessoaSelecao subscritorSel,
+@@ -2989,6 +3028,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("request", getRequest());
+ 	}
+ 
++	@Transacional
+ 	@Post("/app/expediente/mov/cancelar_movimentacao_gravar")
+ 	public void cancelarMovimentacaoGravar(Integer postback, Long id,
+ 			String sigla, String dtMovString, boolean substituicao,
+@@ -3041,6 +3081,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("titularSel", new DpPessoaSelecao());
+ 	}
+ 
++	@Transacional
+ 	@Post("/app/expediente/mov/retirar_de_edital_eliminacao_gravar")
+ 	public void retirarDeEditalEliminacaoGravar(Integer postback, String sigla,
+ 			String dtMovString, boolean substituicao, String descrMov,
+@@ -3173,6 +3214,7 @@ public class ExMovimentacaoController extends ExController {
+ 		}
+ 	}
+ 
++	@Transacional
+ 	@Get
+ 	@Post
+ 	@Path("/app/expediente/mov/arquivar_intermediario_gravar")
+@@ -3233,6 +3275,7 @@ public class ExMovimentacaoController extends ExController {
+ 			throw new AplicacaoException("Não é possível desapensar");
+ 
+ 		if (doc.isEletronico()) {
++			SigaTransacionalInterceptor.upgradeParaTransacional();
+ 			aDesapensarGravar(1, sigla, dtMovString, Boolean.FALSE, null, null);
+ 			return;
+ 		}
+@@ -3244,6 +3287,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("titularSel", new DpPessoaSelecao());
+ 	}
+ 
++	@Transacional
+ 	@Post("/app/expediente/mov/desapensar_gravar")
+ 	public void aDesapensarGravar(Integer postback, String sigla,
+ 			String dtMovString, boolean substituicao,
+@@ -3310,6 +3354,7 @@ public class ExMovimentacaoController extends ExController {
+ 
+ 	}
+ 
++	@Transacional
+ 	@Post("/app/expediente/mov/reclassificar_gravar")
+ 	public void aReclassificarGravar(final String sigla, final String descrMov,
+ 			final String[] campos, final Integer postback,
+@@ -3357,43 +3402,9 @@ public class ExMovimentacaoController extends ExController {
+ 		ExDocumentoController.redirecionarParaExibir(result, sigla);
+ 	}
+ 
+-	@Get("/app/expediente/mov/simular_assinatura")
+-	public void aSimularAssinatura(final String sigla) {
+-		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+-				.novaInstancia().setSigla(sigla);
+-		final ExDocumento doc = buscarDocumento(builder, true);
+-
+-		Ex.getInstance()
+-				.getBL()
+-				.simularAssinaturaDocumento(getCadastrante(), getLotaTitular(),
+-						doc);
+-
+-		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+-	}
+-
+-	@Get("/app/expediente/mov/simular_assinatura_mov")
+-	public void aSimularAssinaturaMov(final Long id) {
+-		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+-				.novaInstancia().setId(id);
+-		buscarDocumento(builder, true);
+-
+-		final ExMobil mob = builder.getMob();
+-		final ExMovimentacao mov = builder.getMov();
+-
+-		Ex.getInstance()
+-				.getBL()
+-				.simularAssinaturaMovimentacao(
+-						getCadastrante(),
+-						getLotaTitular(),
+-						mov,
+-						new Date(),
+-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO);
+-
+-		result.redirectTo("/app/expediente/doc/exibir?sigla=" + mob.getSigla());
+-	}
+-
++	// Desabilitado pois não está sendo usado e é um risco
+ 	@Get("/app/expediente/mov/simular_anexacao")
+-	public void aSimularAnexacao(final String sigla) throws IOException,
++	private void aSimularAnexacao(final String sigla) throws IOException,
+ 			DocumentException {
+ 		final Document document = new Document();
+ 		byte abPDF[];
+@@ -3496,6 +3507,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("classificacaoSel", new ExClassificacaoSelecao());
+ 	}
+ 
++	@Transacional
+ 	@Post("/app/expediente/mov/avaliar_gravar")
+ 	public void aAvaliarGravar(final String sigla, final String descrMov,
+ 			final String obsOrgao, final String[] campos,
+@@ -3604,6 +3616,7 @@ public class ExMovimentacaoController extends ExController {
+ 				DatasPublicacaoDJE.consultarProximaDataDisponivelString());
+ 	}
+ 
++	@Transacional
+ 	@Post("/app/expediente/mov/agendar_publicacao_gravar")
+ 	public void agendarPublicacaoGravar(Integer postback, String sigla,
+ 			String tipoMateria, String dtDispon, Long idLotPublicacao,
+@@ -3955,6 +3968,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("doc", mob.getDoc());
+ 	}
+ 
++	@Transacional
+ 	@Get("/app/expediente/mov/boletim_publicar_gravar")
+ 	public void aBoletimPublicarGravar(final String sigla, final String dtPubl)
+ 			throws Exception {
+@@ -4029,6 +4043,7 @@ public class ExMovimentacaoController extends ExController {
+ 				DatasPublicacaoDJE.consultarProximaDataDisponivelString());
+ 	}
+ 
++	@Transacional
+ 	@Post("/app/expediente/mov/pedirPublicacaoGravar")
+ 	public void pedirPublicacaoGravar(String sigla, Integer postback,
+ 			String tipoMateria, String dtDispon, Long idLotPublicacao,
+@@ -4097,6 +4112,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("titularSel", new DpPessoaSelecao());
+ 	}
+ 
++	@Transacional
+ 	@Post("/app/expediente/mov/indicar_permanente_gravar")
+ 	public void indicarPermanenteGravar(final String sigla,
+ 			final String dtMovString, final DpPessoaSelecao subscritorSel,
+@@ -4162,6 +4178,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("titularSel", new DpPessoaSelecao());
+ 	}
+ 
++	@Transacional
+ 	@Post("/app/expediente/mov/reverter_indicacao_permanente_gravar")
+ 	public void reverterIndicacaoPermanenteGravar(final String sigla,
+ 			final String dtMovString, final DpPessoaSelecao subscritorSel,
+@@ -4207,6 +4224,7 @@ public class ExMovimentacaoController extends ExController {
+ 		ExDocumentoController.redirecionarParaExibir(result, sigla);
+ 	}
+ 
++	@Transacional
+ 	@Get
+ 	@Post
+ 	@Path("/app/expediente/mov/assinar_mov_gravar")
+@@ -4269,6 +4287,7 @@ public class ExMovimentacaoController extends ExController {
+ 		result.include("mob", mob);
+ 	}
+ 
++	@Transacional
+ 	@Get("/public/app/atualizar_publicacao")
+ 	public void atualizarPublicacao(final String data,
+ 			final String tipoCaderno, final String secao, final String soLerXml)
+diff --git a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExSelecionavelController.java b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExSelecionavelController.java
+index db157d7d2f..02368c6341 100644
+--- a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExSelecionavelController.java
++++ b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExSelecionavelController.java
+@@ -18,7 +18,6 @@
+  ******************************************************************************/
+ package br.gov.jfrj.siga.vraptor;
+ 
+-import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.ResourceBundle;
+@@ -33,7 +32,6 @@ import br.gov.jfrj.siga.base.SigaBaseProperties;
+ import br.gov.jfrj.siga.dp.CpMarcador;
+ import br.gov.jfrj.siga.dp.dao.CpDao;
+ import br.gov.jfrj.siga.ex.ExTipoDocumento;
+-import br.gov.jfrj.siga.ex.SigaExProperties;
+ import br.gov.jfrj.siga.hibernate.ExDao;
+ import br.gov.jfrj.siga.model.Selecionavel;
+ import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
+diff --git a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExTemporalidadeController.java b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExTemporalidadeController.java
+index 910ce0a9cc..03e3835e85 100644
+--- a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExTemporalidadeController.java
++++ b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExTemporalidadeController.java
+@@ -65,6 +65,7 @@ public class ExTemporalidadeController extends ExController {
+ 		result.include("listaCpUnidade", listaCpUnidade);
+ 	}
+ 
++	@Transacional
+ 	@Post("app/expediente/temporalidade/gravar")
+ 	public void gravar(final Long idTemporalidade, final String acao, final String descTemporalidade, Integer valorTemporalidade, final Long idCpUnidade) {
+ 		assertAcesso(ACESSO_FE_TT);
+@@ -118,6 +119,7 @@ public class ExTemporalidadeController extends ExController {
+ 		exTemporal.setCpUnidadeMedida(cpUnidade);
+ 	}
+ 
++	@Transacional
+ 	@Get("app/expediente/temporalidade/excluir")
+ 	public void excluir(final Long idTemporalidade) {
+ 		assertAcesso(ACESSO_FE_TT);
+diff --git a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExTipoDespachoController.java b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExTipoDespachoController.java
+index 425b2f799b..6928c89641 100644
+--- a/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExTipoDespachoController.java
++++ b/sigaex/src/main/java/br/gov/jfrj/siga/vraptor/ExTipoDespachoController.java
+@@ -75,6 +75,7 @@ public class ExTipoDespachoController extends ExController {
+ 		}
+ 	}
+ 
++	@Transacional
+ 	@Get("app/despacho/tipodespacho/apagar")
+ 	public void exclui(final Long id) {
+ 		assertAcesso(CAMINHO_ACESSO);
+@@ -92,6 +93,7 @@ public class ExTipoDespachoController extends ExController {
+ 		}
+ 	}
+ 
++	@Transacional
+ 	@Post("app/despacho/tipodespacho/gravar")
+ 	public void gravar(final ExTipoDespacho exTipoDespacho) {
+ 		assertAcesso(CAMINHO_ACESSO);
+diff --git a/sigaex/src/main/webapp/WEB-INF/page/exMobil/aListar.jsp b/sigaex/src/main/webapp/WEB-INF/page/exMobil/aListar.jsp
+index 1a396af4cc..02a28fbdcc 100644
+--- a/sigaex/src/main/webapp/WEB-INF/page/exMobil/aListar.jsp
++++ b/sigaex/src/main/webapp/WEB-INF/page/exMobil/aListar.jsp
+@@ -10,20 +10,23 @@
+ <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
+ 
+ <script type="text/javascript" language="Javascript1.1">
+-	function alteraTipoDaForma() {
+	!!!!!!
++	function init() {
++		alteraTipoDaForma(alteraForma);
++	}
++	function alteraTipoDaForma(cont) {
+ 		ReplaceInnerHTMLFromAjaxResponse(
+ 				'${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_formas?tipoForma='
+ 						+ document.getElementById('tipoForma').value
+ 						+ '&idFormaDoc=' + '${idFormaDoc}', null, document
+-						.getElementById('comboFormaDiv'))
++						.getElementById('comboFormaDiv'), cont)
+ 	}
+ 
+-	function alteraForma() {
++	function alteraForma(cont) {
+ 		ReplaceInnerHTMLFromAjaxResponse(
+ 				'${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_modelos?forma='
+ 						+ document.getElementById('idFormaDoc').value
+ 						+ '&idMod='	+ '${idMod}', null, document
+-						.getElementById('comboModeloDiv'))
++						.getElementById('comboModeloDiv'), cont)
+ 	}
+ 
+ 	function sbmtAction(id, action) {
+@@ -70,7 +73,7 @@
+ 			document.getElementById('trOrgExterno').style.display = 'none';
+ 			document.getElementById('trTipo').style.display = '';
+ 
+-			document.getElementById('idFormaDoc').value = '0';
++			if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
+ 			break;
+ 		case 1: // Interno Produzido
+ 			document.getElementById('trNumOrigDoc').style.display = 'none';
+@@ -78,7 +81,7 @@
+ 			document.getElementById('trOrgExterno').style.display = 'none';
+ 			document.getElementById('trTipo').style.display = '';
+ 
+-			document.getElementById('idFormaDoc').value = '0';
++			if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
+ 			break;
+ 		case 2: // Interno Folha de Rosto
+ 			document.getElementById('trNumOrigDoc').style.display = '';
+@@ -86,7 +89,7 @@
+ 			document.getElementById('trOrgExterno').style.display = 'none';
+ 			document.getElementById('trTipo').style.display = '';
+ 
+-			document.getElementById('idFormaDoc').value = '0';
++			if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
+ 			break;
+ 		case 3: // Externo Folha de Rosto
+ 			document.getElementById('trNumOrigDoc').style.display = '';
+@@ -94,7 +97,7 @@
+ 			document.getElementById('trOrgExterno').style.display = '';
+ 			document.getElementById('trTipo').style.display = 'none';
+ 
+-			document.getElementById('idFormaDoc').value = '5';
++			if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '5';
+ 			break;
+ 		case 4: // Externo Capturado
+ 			document.getElementById('trNumOrigDoc').style.display = '';
+@@ -102,7 +105,7 @@
+ 			document.getElementById('trOrgExterno').style.display = '';
+ 			document.getElementById('trTipo').style.display = 'none';
+ 
+-			document.getElementById('idFormaDoc').value = '0';
++			if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
+ 			break;
+ 		case 5: // Interno Capturado
+ 			document.getElementById('trNumOrigDoc').style.display = 'none';
+@@ -110,7 +113,7 @@
+ 			document.getElementById('trOrgExterno').style.display = 'none';
+ 			document.getElementById('trTipo').style.display = '';
+ 
+-			document.getElementById('idFormaDoc').value = '0';
++			if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
+ 			break;
+ 		}
+ 	}
+@@ -332,7 +335,7 @@
+ 	}
+ </script>
+ 
+-<siga:pagina titulo="Lista de Expedientes" popup="${popup}">
++<siga:pagina titulo="Lista de Expedientes" popup="${popup}" onLoad="init()">
+ 	<div class="container-fluid content mb-3">
+ 		<c:if
+ 			test="${((empty primeiraVez) or (primeiraVez != 'sim')) and ((empty apenasRefresh) or (apenasRefresh != 1))}">
+@@ -490,16 +493,10 @@
+ 
+ 						<div class="form-group col-md-3">
+ 							<div style="display: inline" id="comboFormaDiv"></div>
+-							<script type="text/javascript">
+-									alteraTipoDaForma();
+-								</script>
+ 						</div>
+ 
+ 						<div class="form-group col-md-6">
+ 							<div style="display: inline" id="comboModeloDiv"></div>
+-							<script type="text/javascript">
+-							setTimeout("alteraForma()", 2000);
+-								</script>
+ 						</div>
+ 					</div>
+ 
+diff --git a/sigaex/src/main/webapp/WEB-INF/web.xml b/sigaex/src/main/webapp/WEB-INF/web.xml
+index 9e02661db5..961b6929bc 100644
+--- a/sigaex/src/main/webapp/WEB-INF/web.xml
++++ b/sigaex/src/main/webapp/WEB-INF/web.xml
+@@ -42,6 +42,10 @@
+ 		<dispatcher>REQUEST</dispatcher>
+ 	</filter-mapping>
+ !!!!!!
++	<listener>
++		<listener-class>br.gov.jfrj.siga.jee.BouncyCastleServletContextListener</listener-class>
++	</listener>
++
+ 	<filter>
+ 		<filter-name>RequestLoggerFilter</filter-name>
+ 		<filter-class>br.gov.jfrj.siga.base.log.RequestLoggerFilter</filter-class>

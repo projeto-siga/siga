@@ -139,6 +139,7 @@ public class ExFormaDocumentoController extends ExController {
 		result.use(Results.page()).forwardTo("/WEB-INF/page/mensagemAjax.jsp");
 	}
 
+	@Transacional
 	@Post("app/forma/gravar")
 	public void gravar(final Integer postback, final Long id, final String descricao, final String sigla, final Long idTipoFormaDoc, final boolean origemExterno,
 			final boolean origemInternoImportado, final boolean origemInternoProduzido, final boolean origemInternoCapturado, 
@@ -197,7 +198,7 @@ public class ExFormaDocumentoController extends ExController {
 			result.include("origemInternoCapturado", origemInternoCapturado);
 			result.include("origemExternoCapturado", origemExternoCapturado);
 			
-			result.redirectTo("/app/forma/listar");
+			result.redirectTo(this).listarFormas(null);
 		} catch (RegraNegocioException e) {			
 			
 			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));

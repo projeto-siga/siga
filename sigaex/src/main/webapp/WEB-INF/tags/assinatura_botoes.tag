@@ -39,15 +39,7 @@
 	<c:if test="${assinarComSenha || autenticarComSenha}">
 		<div class="form-check form-check-inline mr-2">
 			<input class="form-check-input" type="checkbox" accesskey="c"
-				name="ad_password_0" id="ad_password_0" /> <label
-				class="form-check-label" for="ad_juntar_0"><u>C</u>om Senha</label>
-		</div>
-
-	</c:if>
-	<c:if test="${assinarComSenhaChecado || autenticarComSenhaChecado}">
-		<div class="form-check form-check-inline mr-2">
-			<input class="form-check-input" type="checkbox" accesskey="c"
-				name="ad_password_0" id="ad_password_0" checked /> <label
+				name="ad_password_0" id="ad_password_0" <c:if test="${assinarComSenhaChecado || autenticarComSenhaChecado}">checked</c:if> /> <label
 				class="form-check-label" for="ad_juntar_0"><u>C</u>om Senha</label>
 		</div>
 

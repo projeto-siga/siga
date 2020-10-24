@@ -1282,12 +1282,13 @@
 		var urlGc = "${url}";
 
         $.ajax({
-            url: url,
+            url: urlGc,
             type: "GET"
         }).fail(function(jqXHR, textStatus, errorThrown){
-			$("#gc").html(errorThrown);
+        	if (errorThrown !== "Not Fount")
+        		$("#gc").html(errorThrown);
         }).done(function(data, textStatus, jqXHR ){
-			$("#gc").html(response);
+        	$("#gc").html(data); 
         });
 	</script>
 </c:if>

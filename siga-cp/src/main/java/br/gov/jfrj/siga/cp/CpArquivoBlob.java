@@ -48,7 +48,7 @@ public class CpArquivoBlob implements Serializable {
 
 	@MapsId
 	@OneToOne(mappedBy = "arquivoBlob")
-	@JoinColumn(name = "ID_ARQ_BLOB") // same name as id @Column
+	@JoinColumn(name = "ID_ARQ_BLOB", referencedColumnName = "ID_ARQ") // same name as id @Column
 	private CpArquivo arquivo;
 
 	@Lob

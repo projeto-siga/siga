@@ -8,8 +8,6 @@
 		</exclusions>
 		
 		<dependencies>
-			<module name="sigadoc.fop"/>
-		
 			<module name="org.hibernate" export="true" />
 
 			<module name="org.apache.commons.lang" />
@@ -18,9 +16,6 @@
 			<module name="org.apache.commons.logging" />
 			<module name="javax.wsdl4j.api" />
 			<module name="asm.asm" />
-
-			<module name="sigadoc.org.bouncycastle" export="true" />
-			<module name="sigadoc.ext" />
 
 			<module name="org.javassist" />
 			<module name="javax.api" />

@@ -455,7 +455,7 @@ public class ExDocumentoDTO {
 	public Map<Integer, String> getListaTipoDest() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(1, "Matrícula");
-		map.put(2, "Órgão Integrado");
+		map.put(2, "Lotação");
 		map.put(3, "Externo");
 		map.put(4, "Campo Livre");
 		return map;

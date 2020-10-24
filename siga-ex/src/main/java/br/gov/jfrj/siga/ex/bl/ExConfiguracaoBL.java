@@ -278,55 +278,85 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 			DpLotacao lotacaoObjeto, CpComplexo complexoObjeto, DpCargo cargoObjeto, 
 			DpFuncaoConfianca funcaoConfiancaObjeto, CpOrgaoUsuario orgaoObjeto) {
 
-		if (isUsuarioRoot(dpPessoa) && idTpConf != CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_EXTENSAO_CONVERSOR_HTML){
-			return true;
-		}
-
-		try {
-			ExConfiguracao config = new ExConfiguracao();
-			config.setCargo(cargo);
-			config.setOrgaoUsuario(cpOrgaoUsu);
-			config.setFuncaoConfianca(dpFuncaoConfianca);
-			config.setLotacao(dpLotacao);
-			config.setDpPessoa(dpPessoa);
-			config.setCpTipoConfiguracao(CpDao.getInstance().consultar(idTpConf,
-					CpTipoConfiguracao.class, false));
-			config.setCpTipoLotacao(cpTpLotacao);
-
-			config.setCpServico(cpServico);
-			config.setExTipoFormaDoc(exTipoFormaDoc);
-			config.setExPapel(exPapel);
-			config.setExTipoDocumento(exTpDoc);
-			config.setExFormaDocumento(exFormaDoc);
-			config.setExModelo(exMod);
-			config.setExClassificacao(exClassificacao);
-			config.setExVia(exVia);
-			config.setExTipoMovimentacao(exTpMov);
-			config.setExNivelAcesso(nivelAcesso);
-			
-			config.setPessoaObjeto(pessoaObjeto);
-			config.setLotacaoObjeto(lotacaoObjeto);
-			config.setComplexoObjeto(complexoObjeto);
-			config.setCargoObjeto(cargoObjeto);
-			config.setFuncaoConfiancaObjeto(funcaoConfiancaObjeto);
-			config.setOrgaoObjeto(orgaoObjeto);
-
-			CpConfiguracao cfg = (CpConfiguracao) buscaConfiguracao(config,
-					new int[] { 0 }, null);
-
-			CpSituacaoConfiguracao situacao;
-			if (cfg != null)
-				situacao = cfg.getCpSituacaoConfiguracao();
-			else
-				situacao = config.getCpTipoConfiguracao().getSituacaoDefault();
-
+			CpSituacaoConfiguracao situacao = situacaoPorConfiguracao(cpServico, exTipoFormaDoc, exPapel, exTpDoc,
+							exFormaDoc, exMod, exClassificacao, exVia, exTpMov, cargo, cpOrgaoUsu, dpFuncaoConfianca, dpLotacao,
+							dpPessoa, nivelAcesso, cpTpLotacao, idTpConf, pessoaObjeto, lotacaoObjeto, complexoObjeto, cargoObjeto,
+							funcaoConfiancaObjeto, orgaoObjeto);
 			if (situacao != null
-					&& situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_PODE)
+					&& (situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_PODE ||
+							situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_DEFAULT ||
+							situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_OBRIGATORIO))			
 				return true;
-		} catch (Exception e) {
-			return false;
-		}		
 		return false;
+	}
+	
+	public CpSituacaoConfiguracao situacaoPorConfiguracao(CpServico cpServico,
+			ExTipoFormaDoc exTipoFormaDoc, ExPapel exPapel,
+			ExTipoDocumento exTpDoc, ExFormaDocumento exFormaDoc,
+			ExModelo exMod, ExClassificacao exClassificacao, ExVia exVia,
+			ExTipoMovimentacao exTpMov, DpCargo cargo,
+			CpOrgaoUsuario cpOrgaoUsu, DpFuncaoConfianca dpFuncaoConfianca,
+			DpLotacao dpLotacao, DpPessoa dpPessoa, ExNivelAcesso nivelAcesso, CpTipoLotacao cpTpLotacao,
+			long idTpConf, DpPessoa pessoaObjeto, 
+			DpLotacao lotacaoObjeto, CpComplexo complexoObjeto, DpCargo cargoObjeto, 
+			DpFuncaoConfianca funcaoConfiancaObjeto, CpOrgaoUsuario orgaoObjeto) {
+
+		ExConfiguracao config = new ExConfiguracao();
+		config.setCargo(cargo);
+		config.setOrgaoUsuario(cpOrgaoUsu);
+		config.setFuncaoConfianca(dpFuncaoConfianca);
+		config.setLotacao(dpLotacao);
+		config.setDpPessoa(dpPessoa);
+		config.setCpTipoConfiguracao(CpDao.getInstance().consultar(idTpConf,
+				CpTipoConfiguracao.class, false));
+		config.setCpTipoLotacao(cpTpLotacao);
+
+		config.setCpServico(cpServico);
+		config.setExTipoFormaDoc(exTipoFormaDoc);
+		config.setExPapel(exPapel);
+		config.setExTipoDocumento(exTpDoc);
+		config.setExFormaDocumento(exFormaDoc);
+		config.setExModelo(exMod);
+		config.setExClassificacao(exClassificacao);
+		config.setExVia(exVia);
+		config.setExTipoMovimentacao(exTpMov);
+		config.setExNivelAcesso(nivelAcesso);
+		
+		config.setPessoaObjeto(pessoaObjeto);
+		config.setLotacaoObjeto(lotacaoObjeto);
+		config.setComplexoObjeto(complexoObjeto);
+		config.setCargoObjeto(cargoObjeto);
+		config.setFuncaoConfiancaObjeto(funcaoConfiancaObjeto);
+		config.setOrgaoObjeto(orgaoObjeto);
+
+		CpConfiguracao cfg = (CpConfiguracao) buscaConfiguracao(config,
+				new int[] { 0 }, null);
+
+		CpSituacaoConfiguracao situacao;
+		if (cfg != null)
+			situacao = cfg.getCpSituacaoConfiguracao();
+		else
+			situacao = config.getCpTipoConfiguracao().getSituacaoDefault();
+		
+		return situacao;
+	}
+	
+	public CpSituacaoConfiguracao situacaoPorConfiguracao(CpServico cpServico,
+			ExTipoFormaDoc exTipoFormaDoc, ExPapel exPapel,
+			ExTipoDocumento exTpDoc, ExFormaDocumento exFormaDoc,
+			ExModelo exMod, ExClassificacao exClassificacao, ExVia exVia,
+			ExTipoMovimentacao exTpMov, DpCargo cargo,
+			CpOrgaoUsuario cpOrgaoUsu, DpFuncaoConfianca dpFuncaoConfianca,
+			DpLotacao dpLotacao, DpPessoa dpPessoa, ExNivelAcesso nivelAcesso, CpTipoLotacao cpTpLotacao,
+			long idTpConf) {
+		return situacaoPorConfiguracao(cpServico,
+				exTipoFormaDoc, exPapel,
+				exTpDoc, exFormaDoc,
+				exMod, exClassificacao, exVia,
+				exTpMov, cargo,
+				cpOrgaoUsu, dpFuncaoConfianca,
+				dpLotacao, dpPessoa, nivelAcesso, cpTpLotacao,
+				idTpConf, null, null, null, null, null, null);
 	}
 	
 	public boolean podePorConfiguracao(CpServico cpServico,

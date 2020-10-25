@@ -35,6 +35,12 @@
 	</style>
 	
 	<script>
+		const toRemoveFromParams = ['solicitacao.solicitante.sigla',
+			 'solicitacao.solicitante.descricao',			 
+			 'solicitacao.cadastrante.sigla',
+			 'solicitacao.interlocutor.sigla', 
+			 'solicitacao.interlocutor.descricao'];
+	
 		jQuery(document).ready(function($) {
 			
 			$('#gravar').click(function() {
@@ -42,6 +48,12 @@
 					var stringDt= $('#calendarioComunicacao').val() + ' ' + $('#horarioComunicacao').val();
 					$('#stringDtMeioContato').val(stringDt);
 				}
+
+				// Removendo entradas que causam excecoes no vraptor:
+				toRemoveFromParams.forEach(e => {
+					$("input[name='" + e + "']", "#formSolicitacao ").remove();
+				})
+
 				gravar(); 
 			}); 
 	
@@ -55,14 +67,14 @@
 			$('#prioridade').text($('#gravidade option:selected').attr('prioridade'));
 		});
 
-		function filtraURL(url) {
-			toRemove =  ['solicitacao.solicitante.descricao','solicitacao.solicitante.sigla', 'solicitacao.cadastrante.sigla', 'solicitacao.interlocutor.descricao', 'solicitacao.interloculor.sigla'];
-			return url.split('&').filter(e => toRemove.indexOf(e.substring(0,e.indexOf('='))) < 0).join('&');
+		function filtraURL(url) {			
+			return url.split('&').filter(e => toRemoveFromParams.indexOf(e.substring(0,e.indexOf('='))) < 0).join('&');
 		}
 		
 		function postbackURL(){
+			
 			return filtraURL('${linkTo[SolicitacaoController].editar}?'+$('#formSolicitacao').serialize());
-			//url = '${linkTo[SolicitacaoController].editar}?'+$('#formSolicitacao').serialize();					
+			//return '${linkTo[SolicitacaoController].editar}?'+$('#formSolicitacao').serialize();					
 			//return url.split('&').filter(e => toRemove.indexOf(e.substring(0,e.indexOf('='))) < 0).join('&');
 			//return url;
 		}

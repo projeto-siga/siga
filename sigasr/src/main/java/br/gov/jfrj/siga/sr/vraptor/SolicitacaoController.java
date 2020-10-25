@@ -504,7 +504,18 @@ public class SolicitacaoController extends SrController {
 
 	@Path({ "/editar", "/editar/{sigla}"})
     public void editar(String sigla, SrSolicitacao solicitacao, String item, String acao, String descricao, Long solicitante) throws Exception {
-		//Edson: se a sigla é != null, está vindo pelo link Editar. Se sigla for == null mas solicitacao for != null é um postback.		
+		//Edson: se a sigla é != null, está vindo pelo link Editar. Se sigla for == null mas solicitacao for != null é um postback.
+		
+		if(solicitacao != null) {
+			if(solicitacao.getSolicitante() != null && solicitacao.getSolicitante().getId() == null) 
+				solicitacao.setSolicitante(null);
+			if(solicitacao.getCadastrante() != null && solicitacao.getCadastrante().getId() == null) 
+				solicitacao.setCadastrante(null);
+			if(solicitacao.getInterlocutor() != null && solicitacao.getInterlocutor().getId() == null) 
+				solicitacao.setInterlocutor(null);
+			if(solicitacao.getItemConfiguracao() != null && solicitacao.getItemConfiguracao().getId() == null) 
+				solicitacao.setItemConfiguracao(null);
+		}
 		if (sigla != null) {
 			solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);  
 			//carregamento forçado de atributos lazy
@@ -603,8 +614,11 @@ public class SolicitacaoController extends SrController {
         	filtro.setItemConfiguracao(solicitacao.getItemConfiguracao());
         	filtro.setAcao(solicitacao.getAcao());
         }
-        if(solicitacao.getAcao() != null && solicitacao.getAcao().getTituloAcao() == null) {
+        if(solicitacao.getAcao() != null && solicitacao.getAcao().getTituloAcao() == null && solicitacao.getAcao().getIdAcao() != null) {
         	solicitacao.setAcao(SrAcao.AR.findById(solicitacao.getAcao().getIdAcao()));
+        }
+        if(solicitacao.getItemConfiguracao() != null && solicitacao.getItemConfiguracao().getId() == null) {
+        	solicitacao.setItemConfiguracao(null);
         }
         result.include("solicitacoesRelacionadas", filtro.buscarSimplificado(getTitular()));
         result.include("filtro", filtro);

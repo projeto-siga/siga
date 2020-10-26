@@ -193,6 +193,9 @@
 				name="hibernate.cache.infinispan.corporativo.expiration.max_idle"
 				value="5000" />
 			
+			
+			<!-- Desabilita o novo gerador de IDs para manter a compatibilidade -->
+			<property name="hibernate.id.new_generator_mappings" value="false"/>
 		</properties>
 	</persistence-unit>
 </persistence>

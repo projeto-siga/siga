@@ -234,7 +234,7 @@ public class Documento {
 					if(Prop.isGovSP()
 							|| (dataDeInicioDeObrigacaoExibirRodapeDeAssinatura != null && !dataDeInicioDeObrigacaoExibirRodapeDeAssinatura.after(dtDoc)
 									)	) {
-							s +=" - " + Data.formatDDMMYY_AS_HHMMSS(movAssinatura.getData());
+							s +=" - " + Data.formatDDMMYYYY_AS_HHMMSS(movAssinatura.getData());
 						}				 
 				}
 				if (!assinantes.contains(s)) {

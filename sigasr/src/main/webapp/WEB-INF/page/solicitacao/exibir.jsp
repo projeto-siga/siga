@@ -57,7 +57,7 @@
 				${solicitacao.getMarcadoresEmHtml(titular, lotaTitular)}
 				<c:if test="${solicitacao.solicitacaoPrincipalJuntada != null}"> -
                 <a style="text-decoration: none"
-						href="${linkTo[SolicitacaoController].exibir[solicitacao.solicitacaoPrincipalJuntada.siglaCompacta]}">
+						href="${linkTo[SolicitacaoController].exibir(solicitacao.solicitacaoPrincipalJuntada.siglaCompacta)}">
 						${solicitacao.solicitacaoPrincipalJuntada.codigo} </a>
 				</c:if>
 			</h3>
@@ -603,7 +603,7 @@
 	                            <input type="hidden" name="idlista"
 	                            value="${listas.idLista}" /> <a
 	                            style="color: #365b6d; text-decoration: none"
-	                            href="${linkTo[SolicitacaoController].exibirLista[listas.idLista]}">
+	                            href="${linkTo[SolicitacaoController].exibirLista(listas.idLista)}">
 	                                ${listas.listaAtual.nomeLista} </a>
 	                        </p>
 	                    </c:forEach>

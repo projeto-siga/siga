@@ -299,6 +299,8 @@ public class SolicitacaoController extends SrController {
     	if (solicitacao == null)
     		throw new AplicacaoException("Não foram informados dados suficientes para a gravação");
     	
+    	limparDpPessoa(solicitacao);
+    	
     	//Edson: por causa do detach no ObjetoObjectInstantiator:
     	if (solicitacao.getSolicitacaoInicial() != null){
     		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId())); 
@@ -501,12 +503,14 @@ public class SolicitacaoController extends SrController {
 		retorno.setAtendente(getCadastrante());
 		return retorno;
 	}
-
-	@Path({ "/editar", "/editar/{sigla}"})
-    public void editar(String sigla, SrSolicitacao solicitacao, String item, String acao, String descricao, Long solicitante) throws Exception {
-		//Edson: se a sigla é != null, está vindo pelo link Editar. Se sigla for == null mas solicitacao for != null é um postback.
-		
-		if(solicitacao != null) {
+    
+    
+    /**
+     * Metodo necessario devido a diferenca da 7.2, onde os objetos ja vem instanciados, mas vazios.
+     * @param solicitacao
+     */
+    private void limparDpPessoa(SrSolicitacao solicitacao) {
+    	if(solicitacao != null) {
 			if(solicitacao.getSolicitante() != null && solicitacao.getSolicitante().getId() == null) 
 				solicitacao.setSolicitante(null);
 			if(solicitacao.getCadastrante() != null && solicitacao.getCadastrante().getId() == null) 
@@ -516,6 +520,14 @@ public class SolicitacaoController extends SrController {
 			if(solicitacao.getItemConfiguracao() != null && solicitacao.getItemConfiguracao().getId() == null) 
 				solicitacao.setItemConfiguracao(null);
 		}
+    }
+
+	@Path({ "/editar", "/editar/{sigla}"})
+    public void editar(String sigla, SrSolicitacao solicitacao, String item, String acao, String descricao, Long solicitante) throws Exception {
+		//Edson: se a sigla é != null, está vindo pelo link Editar. Se sigla for == null mas solicitacao for != null é um postback.
+		
+		limparDpPessoa(solicitacao);
+		
 		if (sigla != null) {
 			solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);  
 			//carregamento forçado de atributos lazy

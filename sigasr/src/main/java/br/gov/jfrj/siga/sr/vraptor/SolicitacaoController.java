@@ -325,6 +325,11 @@ public class SolicitacaoController extends SrController {
 			 return;
 		}
 		
+		// Carregar a acao:
+		if(solicitacao.getAcao() != null && solicitacao.getAcao().getTituloAcao() == null && solicitacao.getAcao().getIdAcao() != null) {
+        	solicitacao.setAcao(SrAcao.AR.findById(solicitacao.getAcao().getIdAcao()));
+        }
+		
 		// BJN - caso a solicitação seja NOVA E do tipo "Atividades da Lotação", 
 		// o atendente deverá ser a própria lotação do cadastrante titular
 		// MARRETA SOLICITACAO PARA PROPRIA LOTACAO

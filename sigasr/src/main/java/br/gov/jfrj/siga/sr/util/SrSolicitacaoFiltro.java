@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.enterprise.inject.Specializes;
 import javax.persistence.Query;
 
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -19,6 +20,7 @@ import br.gov.jfrj.siga.sr.model.SrLista;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import edu.emory.mathcs.backport.java.util.Arrays;
 
+@Specializes
 public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 	private static final long serialVersionUID = 1L;

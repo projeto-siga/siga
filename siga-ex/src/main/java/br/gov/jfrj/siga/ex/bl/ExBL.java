@@ -1421,7 +1421,8 @@ public class ExBL extends CpBL {
 					"Não é possível assinar o documento pois a descrição está vazia. Edite-o e informe uma descrição.");
 
 		if (!doc.isFinalizado())
-			finalizar(cadastrante, lotaCadastrante, doc);
+			throw new AplicacaoException(
+					"Não é possível assinar o documento pois não está finalizado.");
 
 		boolean fPreviamenteAssinado = !doc.isPendenteDeAssinatura();
 
@@ -1469,9 +1470,7 @@ public class ExBL extends CpBL {
 			validatereq.setSha256(bluc.bytearray2b64(bluc.calcSha256(data)));
 			validatereq.setTime(dtMov);
 			validatereq.setCrl("true");
-			ValidateResponse validateresp = bluc.validate(validatereq);
-			if (validateresp.getErrormsg() != null)
-				throw new Exception("BluC não conseguiu validar a assinatura digital. " + validateresp.getErrormsg());
+			ValidateResponse validateresp = assertValid(bluc, validatereq);
 
 			sNome = validateresp.getCn();
 
@@ -1655,6 +1654,15 @@ public class ExBL extends CpBL {
 		}
 
 		return s;
+	}
+
+	private ValidateResponse assertValid(BlucService bluc, ValidateRequest validatereq) throws Exception {
+		ValidateResponse validateresp = bluc.validate(validatereq);
+		if (validateresp.getErrormsg() != null)
+			throw new Exception("BluC não conseguiu validar a assinatura digital. " + validateresp.getErrormsg());
+		if (!"GOOD".equals(validateresp.getStatus()) && !"UNKNOWN".equals(validateresp.getStatus()))
+			throw new Exception("BluC não validou a assinatura digital. " + validateresp.getStatus());
+		return validateresp;
 	}
 
 	private void trasferirAutomaticamente(final DpPessoa cadastrante, final DpLotacao lotaCadastrante,
@@ -2155,9 +2163,7 @@ public class ExBL extends CpBL {
 			validatereq.setSha256(bluc.bytearray2b64(bluc.calcSha256(data)));
 			validatereq.setTime(dao().dt());
 			validatereq.setCrl("true");
-			ValidateResponse validateresp = bluc.validate(validatereq);
-			if (validateresp.getErrormsg() != null)
-				throw new Exception("BluC não conseguiu validar a assinatura digital. " + validateresp.getErrormsg());
+			ValidateResponse validateresp = assertValid(bluc, validatereq);
 
 			sNome = validateresp.getCn();
 			Service.throwExceptionIfError(sNome);
@@ -6198,9 +6204,7 @@ public class ExBL extends CpBL {
 		validatereq.setSha256(bluc.bytearray2b64(bluc.calcSha256(conteudo)));
 		validatereq.setTime(dtAssinatura);
 		validatereq.setCrl("true");
-		ValidateResponse validateresp = bluc.validate(validatereq);
-		if (validateresp.getErrormsg() != null)
-			throw new Exception("BluC não conseguiu validar a assinatura digital. " + validateresp.getErrormsg());
+		ValidateResponse validateresp = assertValid(bluc, validatereq);
 
 		String sNome;
 		Long lCPF;

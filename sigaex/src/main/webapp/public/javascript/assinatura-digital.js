@@ -160,7 +160,7 @@ var providerAssijusPopup = {
 				var errormsg = this.errormsg;
 				$.ajax({
 					url : "/sigaex/app/assinador-popup/doc/" + id + "/hash",
-					type : "GET",
+					type : "POST",
 					async : false,
 					success : function(xhr) {
 						console.log(xhr)

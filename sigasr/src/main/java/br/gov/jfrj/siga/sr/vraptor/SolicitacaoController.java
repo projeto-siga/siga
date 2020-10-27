@@ -39,6 +39,7 @@ import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -481,12 +482,14 @@ public class SolicitacaoController extends SrController {
     public void buscar(SrSolicitacaoFiltro filtro, String propriedade, boolean popup, boolean telaDeListas) throws Exception {
         
         if (filtro != null && filtro.isPesquisar()){
+        	setupFiltros(filtro);
         	SrSolicitacaoListaVO solicitacaoListaVO = new SrSolicitacaoListaVO(filtro, telaDeListas, propriedade, popup, getLotaTitular(), getCadastrante());
         	result.use(Results.json()).withoutRoot().from(solicitacaoListaVO).excludeAll().include("recordsFiltered").include("data").serialize();
         } else {
-        	if (filtro == null){
+        	if (filtro == null || filtro.isVazio()){
         		filtro = novoFiltroZerado();
         	}
+        	
         	result.include("solicitacaoListaVO", new SrSolicitacaoListaVO(filtro, false, propriedade, popup, getLotaTitular(), getCadastrante()));
         	result.include("tipos", new String[] { "Pessoa", "Lota\u00e7\u00e3o" });
         	result.include("marcadores", ContextoPersistencia.em().createQuery("select distinct cpMarcador from SrMarca").getResultList());
@@ -497,6 +500,19 @@ public class SolicitacaoController extends SrController {
             result.include("listasPrioridade", SrLista.listar(false));
         	result.include("prioridadesEnum", SrPrioridade.values());
         }
+    }
+    
+    private void setupFiltros(SrSolicitacaoFiltro filtro) {
+    	
+    	if(filtro.getSituacao() != null && filtro.getSituacao().getIdMarcador() != null && filtro.getSituacao().getDescrMarcador() == null) {
+    		filtro.setSituacao(CpMarcador.AR.findById(filtro.getSituacao().getIdMarcador()));
+    	}
+    	if(filtro.getItemConfiguracao() != null && filtro.getItemConfiguracao().getIdItemConfiguracao() != null) {
+    		filtro.setItemConfiguracao(SrItemConfiguracao.AR.findById(filtro.getItemConfiguracao().getIdItemConfiguracao()));
+    	}
+    	if(filtro.getAcao() != null && filtro.getAcao().getIdAcao() != null) {
+    		filtro.setAcao(SrAcao.AR.findById(filtro.getAcao().getIdAcao()));
+    	}
     }
     
     private SrSolicitacaoFiltro novoFiltroZerado() {

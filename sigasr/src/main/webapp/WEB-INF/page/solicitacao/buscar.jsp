@@ -14,7 +14,10 @@
 	    <h2>Pesquisa de Solicita&ccedil;&otilde;es</h2>
 	     <%--<c:choose>
 	       <c:when test="${not empty solicitacaoListaVO.getItens()}"> --%>
+	       
 	           <sigasr:solicitacao solicitacaoListaVO="solicitacaoListaVO" filtro="filtro" modoExibicao="solicitacao" />
+	           
+	           
 	        <%--</c:when>
 	        <c:when test="${filtro.pesquisar}">
 	            <div align="center" style="font-size: 14px; color: #365b6d; font-weight: bold">Nenhum item foi encontrado.</div>
@@ -23,6 +26,7 @@
 	    
 	    <div class="gt-content-box gt-for-table" style="margin-top: 15px;">
 	        <form id="frm" action="${linkTo[SolicitacaoController].buscar}" method="get" onsubmit="javascript: return block();" >
+	        	<input type="hidden" name="filtro.vazio" value="${false}" />
 	            <input type="hidden" name="propriedade" value="${propriedade}" />
 	            <input type="hidden" name="popup" value="${popup}" />
 	            <table class="gt-form-table">
@@ -32,7 +36,7 @@
 	                    <tr>
 	                        <td>Situa&ccedil;&atilde;o</td>
 	                        <td>
-	                           <siga:select name="filtro.situacao.id" 
+	                           <siga:select name="filtro.situacao.idMarcador" 
 	                                        list="marcadores"
 	                                        listKey="idMarcador"
 	                                        listValue="descrMarcador"

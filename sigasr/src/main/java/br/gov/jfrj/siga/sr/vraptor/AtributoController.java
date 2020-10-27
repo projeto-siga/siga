@@ -33,7 +33,7 @@ import br.gov.jfrj.siga.uteis.PessoaLotaFuncCargoSelecaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 @Controller
-@Path("/app/atributo")
+@Path("app/atributo")
 public class AtributoController extends SrController {
 
 

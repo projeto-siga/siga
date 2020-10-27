@@ -579,9 +579,9 @@ public class Documento {
 	
 				if (cancelado) {
 					if (SigaMessages.isSigaSP()) {
-						tarjar("SEM EFEITO", over, helv, r);
+						tarjar(SigaMessages.getMessage("marcador.cancelado.label").toUpperCase(), over, helv, r);
 					} else {
-						tarjar("CANCELADO", over, helv, r);
+						tarjar(SigaMessages.getMessage("marcador.semEfeito.label").toUpperCase(), over, helv, r);
 					}
 				} else if (rascunho && copia) {
 					tarjar("CÓPIA DE MINUTA", over, helv, r);
@@ -589,9 +589,9 @@ public class Documento {
 					tarjar("MINUTA", over, helv, r);
 				} else if (semEfeito) {
 					if (SigaMessages.isSigaSP()) {
-						tarjar("CANCELADO", over, helv, r);
+						tarjar(SigaMessages.getMessage("marcador.semEfeito.label").toUpperCase(), over, helv, r);
 					} else {
-						tarjar("SEM EFEITO", over, helv, r);
+						tarjar(SigaMessages.getMessage("marcador.cancelado.label").toUpperCase(), over, helv, r);
 					}
 				} else if (copia) {
 					tarjar("CÓPIA", over, helv, r);

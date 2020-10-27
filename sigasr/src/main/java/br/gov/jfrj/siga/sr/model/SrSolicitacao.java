@@ -1556,6 +1556,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         
         try {
         	super.salvarComHistorico();
+        	ContextoPersistencia.em().flush();
         } catch (PersistenceException pe) {
         	Throwable t = pe.getCause();
         	if (t instanceof ConstraintViolationException) 

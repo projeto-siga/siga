@@ -578,13 +578,21 @@ public class Documento {
 				}
 	
 				if (cancelado) {
-					tarjar("CANCELADO", over, helv, r);
+					if (SigaMessages.isSigaSP()) {
+						tarjar(SigaMessages.getMessage("marcador.cancelado.label").toUpperCase(), over, helv, r);
+					} else {
+						tarjar(SigaMessages.getMessage("marcador.semEfeito.label").toUpperCase(), over, helv, r);
+					}
 				} else if (rascunho && copia) {
 					tarjar("CÓPIA DE MINUTA", over, helv, r);
 				} else if (rascunho) {
 					tarjar("MINUTA", over, helv, r);
 				} else if (semEfeito) {
-					tarjar("SEM EFEITO", over, helv, r);
+					if (SigaMessages.isSigaSP()) {
+						tarjar(SigaMessages.getMessage("marcador.semEfeito.label").toUpperCase(), over, helv, r);
+					} else {
+						tarjar(SigaMessages.getMessage("marcador.cancelado.label").toUpperCase(), over, helv, r);
+					}
 				} else if (copia) {
 					tarjar("CÓPIA", over, helv, r);
 				} else if (SigaMessages.isSigaSP() && ("treinamento".equals(Prop.get("/siga.ambiente"))) ) {

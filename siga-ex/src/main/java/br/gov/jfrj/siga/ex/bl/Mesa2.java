@@ -187,7 +187,7 @@ public class Mesa2 {
 		JUNTADO_EXTERNO(16, "Juntado Externo", "fas fa-lock", "",
 				GrupoDeMarcadorEnum.OUTROS),
 		//
-		CANCELADO(10, "Cancelado", "fas fa-ban", "", GrupoDeMarcadorEnum.OUTROS),
+		CANCELADO(10, SigaMessages.getMessage("marcador.cancelado.label"), "fas fa-ban", "", GrupoDeMarcadorEnum.OUTROS),
 		//
 		TRANSFERIDO_A_ORGAO_EXTERNO(11, "Tranferido a Órgão Externo", "fas fa-paper-plane",
 				"", GrupoDeMarcadorEnum.OUTROS),
@@ -255,7 +255,7 @@ public class Mesa2 {
 		SOBRESTADO(31, "Sobrestado", "fas fa-hourglass-start", "",
 				GrupoDeMarcadorEnum.ACOMPANHANDO),
 		//
-		SEM_EFEITO(32, "Sem Efeito", "fas fa-power-off", "",
+		SEM_EFEITO(32, SigaMessages.getMessage("marcador.semEfeito.label"), "fas fa-power-off", "",
 				GrupoDeMarcadorEnum.NENHUM),
 
 		//

@@ -2345,7 +2345,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     	filha.setAcao(SrAcao.AR.findById(acao.getIdAcao()));
     	filha.setDesignacao(designacao);
     	filha.setDescrSolicitacao(descricao);
-    	if (atendenteNaoDesignado != null)
+    	if (atendenteNaoDesignado != null && atendenteNaoDesignado.getIdeLotacao() != null)
     		filha.setAtendenteNaoDesignado(atendenteNaoDesignado);
     	filha.setAtributoSolicitacaoMap(atributos);
     	filha.definirAtributoSolicitacaoMapComoInicial();
@@ -2369,7 +2369,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         mov.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO));
         mov.setItemConfiguracao(SrItemConfiguracao.AR.findById(itemConfiguracao.getId()));
         mov.setAcao(SrAcao.AR.findById(acao.getIdAcao()));
-        mov.setLotaAtendente(atendenteNaoDesignado != null ? atendenteNaoDesignado : atendente);
+        mov.setLotaAtendente(atendenteNaoDesignado != null && atendenteNaoDesignado.getIdLotacao() != null ? atendenteNaoDesignado : atendente);
         // Edson: isso abaixo talvez pudesse valer pra todas as movimentacoes e ficar la no
         // mov.checarCampos()
         if (getAtendente() != null && !mov.getLotaAtendente().equivale(getLotaAtendente()))

@@ -512,7 +512,19 @@ public class SolicitacaoController extends SrController {
     	}
     	if(filtro.getAcao() != null && filtro.getAcao().getIdAcao() != null) {
     		filtro.setAcao(SrAcao.AR.findById(filtro.getAcao().getIdAcao()));
+    	}    	
+    	if(filtro.getCadastranteBusca() != null && filtro.getCadastranteBusca().getIdPessoa() != null) {
+    		filtro.setCadastranteBusca(DpPessoa.AR.findById(filtro.getCadastranteBusca().getIdPessoa()));
     	}
+    	if(filtro.getLotaCadastranteBusca() != null && filtro.getLotaCadastranteBusca().getIdLotacao() != null) {
+    		filtro.setLotaCadastranteBusca(DpLotacao.AR.findById(filtro.getLotaCadastranteBusca().getIdLotacao()));
+    	}
+    	if(filtro.getSolicitante() != null && filtro.getSolicitante().getIdPessoa() != null) {
+    		filtro.setSolicitante(DpPessoa.AR.findById(filtro.getSolicitante().getIdPessoa()));
+    	}
+    	if(filtro.getLotaSolicitante() != null && filtro.getLotaSolicitante().getIdLotacao() != null) {
+    		filtro.setLotaSolicitante(DpLotacao.AR.findById(filtro.getLotaSolicitante().getIdLotacao()));
+		}
     }
     
     private SrSolicitacaoFiltro novoFiltroZerado() {

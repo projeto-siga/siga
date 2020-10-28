@@ -118,6 +118,10 @@ public class CpSincPropriedade extends ModeloPropriedade {
 		return this.obterPropriedade("servidor.smtp.starttls.enable");
 	}
 	
+	public String servidorSmtpDebug  ( ) throws Exception {
+		return this.obterPropriedade("servidor.smtp.debug");
+	}
+	
 	public String getPrefixoModulo() {
 		return "siga.cp";
 	}

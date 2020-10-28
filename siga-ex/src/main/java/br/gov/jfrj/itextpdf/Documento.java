@@ -1134,6 +1134,8 @@ public class Documento {
 				"<!-- FIM PRIMEIRO CABECALHO -->");
 		sHtml = sHtml.replace("<!-- INICIO PRIMEIRO RODAPE",
 				"<!-- INICIO PRIMEIRO RODAPE -->");
+		sHtml = sHtml.replace("<!-- div style=\"font-size:11pt;\" class=\"footnotes\"",
+				"<div style=\"font-size:11pt;\" class=\"footnotes\">");
 		sHtml = sHtml.replace("FIM PRIMEIRO RODAPE -->",
 				"<!-- FIM PRIMEIRO RODAPE-->");
 		// s = s.replace("http://localhost:8080/siga/", "/siga/");

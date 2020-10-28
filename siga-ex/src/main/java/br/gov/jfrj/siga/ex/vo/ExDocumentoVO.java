@@ -736,7 +736,7 @@ public class ExDocumentoVO extends ExVO {
 				"refazer",
 				Ex.getInstance().getComp()
 						.podeRefazer(titular, lotaTitular, mob),
-						SigaMessages.getMessage("mensagem.semEfeito.documento"),
+						SigaMessages.getMessage("mensagem.cancela.documento"),
 				null, null, null, "once");
 
 		vo.addAcao(
@@ -813,7 +813,7 @@ public class ExDocumentoVO extends ExVO {
 				Ex.getInstance()
 						.getComp()
 						.podeTornarDocumentoSemEfeito(titular, lotaTitular, mob),
-				(SigaMessages.getMessage("mensagem.cancela.documento")),
+				(SigaMessages.getMessage("mensagem.semEfeito.documento")),
 				null, null, null, "once  siga-btn-tornar-documento-sem-efeito");
 		
 		vo.addAcao(

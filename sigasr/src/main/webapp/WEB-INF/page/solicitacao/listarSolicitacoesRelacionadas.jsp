@@ -17,17 +17,17 @@
 	como dito, se um campo do filtro chega lá vazio, é entendido que o usuário desmarcou de propósito, não que a check não existia --%>
 	<input type="hidden" name="filtro.pesquisar" value="false" />
 	<label>Buscar por</label>
-	<c:if test="${not empty solicitacao.solicitante}">
+	<c:if test="${not empty solicitacao.solicitante.idPessoa}">
 		<input type="checkbox" name="filtro.solicitante.id"
 			onchange="sbmt('formRelacionadas', '${linkTo[SolicitacaoController].listarSolicitacoesRelacionadas}?'+$('#formRelacionadas').serialize(), true)"
 			value="${solicitacao.solicitante.idPessoa}" ${not empty filtro.solicitante ? 'checked' : ''}/> <b>Solicitante:</b> ${solicitacao.solicitante.nomeAbreviado}<br/>
 	</c:if>
-	<c:if test="${not empty solicitacao.itemConfiguracao}">
+	<c:if test="${not empty solicitacao.itemConfiguracao.id}">
 		<input type="checkbox" name="filtro.itemConfiguracao.id"
 			onchange="sbmt('formRelacionadas', '${linkTo[SolicitacaoController].listarSolicitacoesRelacionadas}?'+$('#formRelacionadas').serialize(), true)"
 			value="${solicitacao.itemConfiguracao.id}" ${not empty filtro.itemConfiguracao ? 'checked' : ''} /> <b>Item:</b> ${solicitacao.itemConfiguracao.tituloItemConfiguracao}<br/>
 	</c:if>
-	<c:if test="${not empty solicitacao.acao}">
+	<c:if test="${not empty solicitacao.acao.id}">
 		<input type="checkbox" name="filtro.acao.id"
 			onchange="sbmt('formRelacionadas', '${linkTo[SolicitacaoController].listarSolicitacoesRelacionadas}?'+$('#formRelacionadas').serialize(), true)"
 			value="${solicitacao.acao.id}" ${not empty filtro.acao ? 'checked' : '' } /> <b>Ação:</b> ${solicitacao.acao.tituloAcao}<br/>

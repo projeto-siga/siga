@@ -2391,7 +2391,11 @@ Pede deferimento.</span><br/><br/><br/>
     [#if (doc.nmSubscritor)??]
         ${doc.nmSubscritor}
     [#else]
-        ${(doc.subscritor.descricao)!}
+       [#if (mov.subscritor.nomeExibicao)??]
+           ${mov.subscritor.nomeExibicao}
+       [#else]
+           ${(mov.subscritor.nomePessoa)!}
+       [/#if]
     [/#if]
     [#if !apenasNome??] 
         <br />
@@ -2430,7 +2434,11 @@ Pede deferimento.</span><br/><br/><br/>
                         [#if mov.nmSubscritor??]
                             ${mov.nmSubscritor}
                         [#else]
-                            ${(mov.subscritor.nomePessoa)!}
+                           [#if (mov.subscritor.nomeExibicao)??]
+                           		${mov.subscritor.nomeExibicao}
+                           [#else]
+                           ${(mov.subscritor.nomePessoa)!}
+                           [/#if]
                         [/#if]      
                         <br>
                         [#if mov.nmFuncao??]

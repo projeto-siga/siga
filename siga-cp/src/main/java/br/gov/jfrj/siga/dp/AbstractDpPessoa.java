@@ -319,7 +319,6 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 	private Integer idEstadoCivil;
 
 	@Column(name = "NOME_EXIBICAO")
-	@Desconsiderar
 	private String nomeExibicao;
 
 	@ManyToOne(fetch = FetchType.LAZY)

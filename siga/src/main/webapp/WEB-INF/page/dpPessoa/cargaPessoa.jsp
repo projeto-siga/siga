@@ -26,7 +26,7 @@
 							<b>Observa&ccedil;&otilde;es:</b>
 						</div>
 					</div>
-				</div>				
+				</div>					
 				<div class="row">
 					<div class="col-sm">
 						<ul class="list-group">
@@ -47,6 +47,7 @@
 								<li class="list-group-item"> Nome da Fun&ccedil;&atilde;o de Confian&ccedil;a</li>
 								<li class="list-group-item list-group-item-success"> Sigla da <fmt:message key="usuario.lotacao"/></li>
 								<li class="list-group-item list-group-item-success">Nome: m&aacute;ximo de 60 caracteres</li>
+								<li class="list-group-item list-group-item-success"> Nome Abreviado: m&aacute;ximo de 40 caracteres</li>
 								<li class="list-group-item"> Data de nascimento (8 n&uacute;meros dd/mm/aaaa)</li>
 								<li class="list-group-item list-group-item-success"> CPF: m&aacute;ximo de 11 caracteres num&eacute;ricos</li>
 								<li class="list-group-item list-group-item-success"> E-mail: m&aacute;ximo de 60 caracteres</li>

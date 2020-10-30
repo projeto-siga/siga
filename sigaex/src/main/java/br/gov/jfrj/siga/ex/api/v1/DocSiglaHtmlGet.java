@@ -1,8 +1,5 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
-import static java.util.Objects.isNull;
-
-import java.util.Date;
 import java.util.Map;
 
 import org.apache.http.HttpHeaders;
@@ -13,8 +10,6 @@ import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
-import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExProtocolo;
@@ -25,7 +20,6 @@ import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
-import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 @AcessoPublico
 public class DocSiglaHtmlGet implements IDocSiglaHtmlGet {
@@ -49,7 +43,7 @@ public class DocSiglaHtmlGet implements IDocSiglaHtmlGet {
 				}
 				ExDocumento doc = mob.doc();
 	
-				if (!(docPai.getIdDoc() == doc.getExMobilPai().getDoc().getIdDoc()
+				if (!(docPai.getIdDoc() == mob.getExMobilPai().getDoc().getIdDoc()
 						&& mob.getPodeExibirNoAcompanhamento())) {
 					throw new SwaggerException("Documento não permitido para visualização: " + req.sigla, 403, null, req, resp,
 							null);

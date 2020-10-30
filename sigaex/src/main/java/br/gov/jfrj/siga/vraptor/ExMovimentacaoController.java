@@ -2977,7 +2977,8 @@ public class ExMovimentacaoController extends ExController {
 	@Post("/app/expediente/mov/assinar_gravar")
 	public void aAssinarGravar(final String sigla, final Boolean copia,
 			final String atributoAssinavelDataHora, String assinaturaB64,
-			final String certificadoB64, final Boolean juntar, final Boolean tramitar) throws AplicacaoException,
+			final String certificadoB64, final Boolean juntar, final Boolean tramitar, 
+			final Boolean exibirNoProtocolo) throws AplicacaoException,
 			ServletException {
 		try {
 
@@ -3025,8 +3026,9 @@ public class ExMovimentacaoController extends ExController {
 							.getBL()
 							.assinarDocumento(getCadastrante(),
 									getLotaTitular(), mob.doc(), dt,
-									assinatura, certificado, tpMovAssinatura, juntar, tramitar));
-
+									assinatura, certificado, tpMovAssinatura, juntar, tramitar,
+									exibirNoProtocolo));
+			
 		} catch (final Exception e) {
 			httpError(e);
 			return;
@@ -3036,7 +3038,8 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Post("/app/expediente/mov/assinar_senha_gravar")
-	public void aAssinarSenhaGravar(String sigla, final Boolean copia, final Boolean juntar, final Boolean tramitar, String nomeUsuarioSubscritor,
+	public void aAssinarSenhaGravar(String sigla, final Boolean copia, final Boolean juntar, 
+			final Boolean tramitar, final Boolean exibirNoProtocolo, String nomeUsuarioSubscritor,
 			String senhaUsuarioSubscritor) throws Exception {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
@@ -3052,12 +3055,12 @@ public class ExMovimentacaoController extends ExController {
 					.assinarDocumentoComSenha(getCadastrante(),
 							getLotaTitular(), doc, mov.getDtMov(),
 							nomeUsuarioSubscritor, senhaUsuarioSubscritor, true,
-							mov.getTitular(), copia, juntar, tramitar);
+							mov.getTitular(), copia, juntar, tramitar, exibirNoProtocolo);
 		} catch (final Exception e) {
 			httpError(e);
 			return;
 		}
-
+		
 		result.use(Results.page()).forwardTo("/WEB-INF/page/ok.jsp");
 	}
 
@@ -4960,21 +4963,13 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
-	@Get("/app/expediente/mov/disponibilizar_ao_interessado")
-	public void disponibilizarAoInteressado(final String sigla) {					
-		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder
-				.novaInstancia();
-
-		final ExMovimentacao mov = builder.construir(dao());
-
+	@Get("/app/expediente/mov/exibir_no_acompanhamento_do_protocolo")
+	public void exibirNoAcompanhamentoDoProtocolo(final String sigla) {					
 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 
 		buscarDocumento(documentoBuilder);
 		
-		mov.setDtMov(dao().dt());
-		mov.setLotaTitular(getLotaTitular());
-		mov.setTitular(getTitular());
 		String siglaRetorno = sigla;
 
 		if (documentoBuilder.getMob().getDoc().getExMobilPai() != null) {
@@ -4984,18 +4979,19 @@ public class ExMovimentacaoController extends ExController {
 		try {	
 			Ex.getInstance()
 					.getBL()
-					.disponibilizarAoInteressado(getCadastrante(), getLotaTitular(),
-							documentoBuilder.getMob(), mov.getTitular());
+					.exibirNoAcompanhamentoDoProtocolo(getCadastrante(), getLotaTitular(),
+							documentoBuilder.getMob(), getTitular());
 	
-		} catch (AplicacaoException e) {
+		} catch (RegraNegocioException | AplicacaoException e) {
 			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
+			ExDocumentoController.redirecionarParaExibir(result, siglaRetorno);
 		}
 
 		ExDocumentoController.redirecionarParaExibir(result, siglaRetorno);
 	}
 	
-	@Get("/app/expediente/mov/desfazer_disponibilizar_ao_interessado")
-	public void desfazerDisponibilizarAoInteressado(final Long id) throws Exception {					
+	@Get("/app/expediente/mov/desfazer_exibir_no_acompanhamento_do_protocolo")
+	public void desfazerExibirNoAcompanhamentoDoProtocolo(final Long id) throws Exception {					
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setId(id);
 		buscarDocumento(builder);
@@ -5011,9 +5007,9 @@ public class ExMovimentacaoController extends ExController {
 				false);
 
 		if (mov == null 
-				|| !mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DISPONIBILIZAR_AO_INTERESSADO) 
+				|| !mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO) 
 				|| mov.isCancelada()) {
-			throw new AplicacaoException("Não existe a disponibilização ao interessado a ser cancelada.");
+			throw new AplicacaoException("Não existe a disponibilização no acompanhamento do protocolo a ser cancelada.");
 		}
 		
 		try {
@@ -5021,9 +5017,11 @@ public class ExMovimentacaoController extends ExController {
 			.getBL()
 			.cancelar(getTitular(), getLotaTitular(), builder.getMob(),
 					mov, null, null, null,
-					"Disponibilização ao Interessado");
-		} catch (final Exception e) {
-			throw e;
+					"Disponibilização no acompanhamento do protocolo");
+		} catch (RegraNegocioException | AplicacaoException e) {
+			result.include(SigaModal.ALERTA, SigaModal.mensagem("Erro ao desfazer a disponibilização no acompanhamento do protocolo - " 
+					+ e.getMessage()));
+			ExDocumentoController.redirecionarParaExibir(result, siglaRetorno);
 		}
 
 		ExDocumentoController.redirecionarParaExibir(result, siglaRetorno);

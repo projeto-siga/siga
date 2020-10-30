@@ -212,7 +212,7 @@ public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements Se
 
 	final static public long TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA = 77;
 	
-	final static public long TIPO_MOVIMENTACAO_DISPONIBILIZAR_AO_INTERESSADO = 79;
+	final static public long TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO = 79;
 	
 	public static boolean hasDespacho(long id) {
 		return id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO

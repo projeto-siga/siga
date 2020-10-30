@@ -420,6 +420,34 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /doc/{sigla}/html:
+    get:
+      description: Obter o HTML de um documento para visualização
+      tags: [consulta]
+      parameters:
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              html:
+                type: string
+                description: HTML do documento solicitado. Por enquanto disponível somente no acesso público.
+        403:
+          description: Acesso ao documento não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Documento não encontrado
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
   /doc/{sigla}/pdf-completo:
     get:
       description: Obter o PDF completo de um documento para visualização

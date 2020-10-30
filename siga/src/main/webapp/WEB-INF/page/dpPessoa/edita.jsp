@@ -280,6 +280,12 @@
 								<input type="text" id="nmPessoa" name="nmPessoa" value="${nmPessoa}" maxlength="60" class="form-control" onkeyup="validarNome(this)"/>
 							</div>
 						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="nmPessoa">Nome Abreviado</label>
+								<input type="text" id="nmPessoaAbreviado" name="nmPessoaAbreviado" value="${nmPessoaAbreviado}" maxlength="60" class="form-control" onkeyup="validarNome(this)"/>
+							</div>
+						</div>
 						<div class="col-md-2">
 							<div class="form-group">
 								<label for="nmPessoa">Data de Nascimento</label>

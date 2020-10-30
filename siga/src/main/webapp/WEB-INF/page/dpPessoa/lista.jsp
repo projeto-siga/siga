@@ -137,7 +137,13 @@
 								<label for="nome">Nome</label>
 								<input type="text" id="nome" name="nome" value="${nome}" maxlength="100" class="form-control"/>
 							</div>					
-						</div>					
+						</div>	
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="nome">Nome Abreviado</label>
+								<input type="text" id="nomeAbreviado" name="nomeAbreviado" value="${nomeAbreviado}" maxlength="100" class="form-control"/>
+							</div>					
+						</div>						
 						<div class="col-md-2">
 							<div class="form-group">
 								<label for="nome">CPF</label>
@@ -175,7 +181,8 @@
 				<table border="0" class="table table-sm table-striped">
 					<thead class="thead-dark">
 						<tr>
-							<th align="left">Nome</th>						
+							<th align="left">Nome</th>
+							<th align="left">Nome Abreviado</th>						
 							<th align="left">Unidade</th>
 							<th align="left">Cargo</th>
 							<th align="left">Função</th>						
@@ -190,7 +197,8 @@
 						<siga:paginador maxItens="15" maxIndices="10" totalItens="${tamanho}"
 							itens="${itens}" var="pessoa">
 							<tr>
-								<td align="left">${pessoa.descricao}</td>						
+								<td align="left">${pessoa.descricao}</td>
+								<td align="left">${pessoa.nomeExibicao}</td>							
 								<td align="left"><span data-toggle="tooltip" data-placement="bottom" title="${pessoa.lotacao.siglaLotacao} / ${pessoa.lotacao.nomeLotacao}">${pessoa.lotacao.siglaLotacao}</span></td>
 								<td align="left">${pessoa.cargo.nomeCargo}</td>
 								<td align="left">${pessoa.funcaoString}</td>												

@@ -93,6 +93,7 @@ import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.util.SetUtils;
 import br.gov.jfrj.siga.bluc.service.BlucService;
@@ -1409,7 +1410,7 @@ public class ExBL extends CpBL {
 
 	public String assinarDocumento(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExDocumento doc,
 			final Date dtMov, final byte[] pkcs7, final byte[] certificado, long tpMovAssinatura, Boolean juntar,
-			Boolean tramitar) throws AplicacaoException {
+			Boolean tramitar, Boolean exibirNoProtocolo) throws AplicacaoException {
 		String sNome;
 		Long lCPF = null;
 
@@ -1653,6 +1654,11 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro ao remover revisores.", 0, e);
 		}
 
+		if (exibirNoProtocolo != null && exibirNoProtocolo) {
+			exibirNoAcompanhamentoDoProtocolo(cadastrante, lotaCadastrante,
+								doc.getVia(1), cadastrante);
+		}
+		
 		return s;
 	}
 
@@ -1682,7 +1688,7 @@ public class ExBL extends CpBL {
 	public String assinarDocumentoComSenha(final DpPessoa cadastrante, final DpLotacao lotaCadastrante,
 			final ExDocumento doc, final Date dtMov, final String matriculaSubscritor, final String senhaSubscritor,
 			final boolean validarSenha, final DpPessoa titular, final boolean autenticando, Boolean juntar,
-			Boolean tramitar) throws Exception {
+			Boolean tramitar, final Boolean exibirNoProtocolo) throws Exception {
 
 		DpPessoa subscritor = null;
 		DpPessoa cosignatario = null;
@@ -1855,6 +1861,11 @@ public class ExBL extends CpBL {
 				removerPapel(doc, ExPapel.PAPEL_REVISOR);
 		} catch (final Exception e) {
 			throw new AplicacaoException("Erro ao remover revisores.", 0, e);
+		}
+
+		if (exibirNoProtocolo != null && exibirNoProtocolo) {
+			exibirNoAcompanhamentoDoProtocolo(cadastrante, lotaCadastrante,
+								doc.getVia(1), cadastrante);
 		}
 
 		return s;
@@ -7490,5 +7501,35 @@ public class ExBL extends CpBL {
 					+ (doc.getSubscritorString() != null ? " de " + doc.getSubscritorString() : ""));
 	}
 
+	public void exibirNoAcompanhamentoDoProtocolo(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, 
+			final ExMobil mob, final DpPessoa titular) throws AplicacaoException {
+		if (mob == null)
+			throw new AplicacaoException("Não existe via para a disponibilização no acompanhamento do protocolo.");
+		
+		if (!mob.getExDocumento().getExFormaDocumento().getDescricao().contains("Despacho"))
+			throw new AplicacaoException("Disponibilização no acompanhamento do protocolo só é permitida para despachos.");
+		
+		Set<ExMovimentacao> movs = mob.getMovsNaoCanceladas(ExTipoMovimentacao
+				.TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO);
+		if (!movs.isEmpty())
+			throw new AplicacaoException("Disponibilização no acompanhamento do protocolo já foi solicitada anteriormente.");
+		
+		try {						
+			iniciarAlteracao();
+
+			final ExMovimentacao mov = criarNovaMovimentacao(
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO, 
+					cadastrante, lotaCadastrante, mob, dao().dt(), null, null, titular, null, dao().dt());
+
+			gravarMovimentacao(mov);
+
+			concluirAlteracao(mov.getExMobil());
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro ao permitir a disponibilização do documento no acompanhamento do protocolo.", 0, e);
+		}
+	}
+
+	
 }
 

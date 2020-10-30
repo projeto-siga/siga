@@ -278,7 +278,7 @@ public class ExAcesso {
 			// Cancelado
 			else if (doc.isCancelado()) {
 				add(doc.getLotaCadastrante());
-				add(doc.getSubscritor());
+				add((doc.getSubscritor() != null)?doc.getSubscritor():doc.getCadastrante());
 				add(doc.getTitular());
 			}
 	
@@ -286,7 +286,7 @@ public class ExAcesso {
 	
 			// Sem Efeito
 			else if (doc.isSemEfeito()) {			
-				add(doc.getSubscritor());			
+				add((doc.getSubscritor() != null)?doc.getSubscritor():doc.getCadastrante());			
 			}
 	
 			// Por nivel de acesso

@@ -2938,8 +2938,8 @@ public class ExMovimentacaoController extends ExController {
 
 	@Get("/app/expediente/mov/assinar_lote")
 	public void assina_lote() throws Exception {
-		final List<ExDocumento> itensComoSubscritor = dao()
-				.listarDocPendenteAssinatura(getTitular(), false);
+		boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(getTitular(), CpTipoConfiguracao.TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO);
+		final List<ExDocumento> itensComoSubscritor = dao().listarDocPendenteAssinatura(getTitular(), apenasComSolicitacaoDeAssinatura);
 		final List<ExDocumento> itensFinalizados = new ArrayList<ExDocumento>();
 
 		for (final ExDocumento doc : itensComoSubscritor) {

@@ -132,7 +132,7 @@
 												<c:if test="${mov.idTpMov == 12}">
 													<span style="font-size: .8rem;color: #9e9e9e;"
 														<c:if test="${mov.exMobil.podeExibirNoAcompanhamento}">
-															class="showConteudoDoc" rel="popover" data-title="${mov.exMobil}" 
+															class="showConteudoDoc text-primary" rel="popover" data-title="${mov.exMobil}" 
 	    													data-content="" onmouseenter="exibeDoc(this);"
 	    												</c:if>
 														>| documento juntado ${mov.exMobil}</span>
@@ -169,12 +169,12 @@
 			trigger: "hover",
 			html : true,
     	})
-    	timeOut = setTimeout(setDataContent, 1000, elem);
+    	timeOut = setTimeout(setDataContent, 700, elem);
 	}
 	
    	function setDataContent(elem) {
    	   	if ($(elem).attr('data-content') === "" 
-				&& ($("." + $(elem).context.className + ":hover")).length > 0) {
+				&& ($("." + $(elem).context.className.split(' ')[0] + ":hover")).length > 0) {
 			sigladoc = $(elem).attr("data-title").replace("/", "").replace("-", "");
 			var div_id = "tmp-id-" + sigladoc;
 			$(elem).attr("data-content", '<div id="'+ div_id +'" class="spinner-border"></div>');

@@ -2248,7 +2248,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	 */
 	public boolean getPodeExibirNoAcompanhamento() {
 		Set<ExMovimentacao> movs = getMovsNaoCanceladas(ExTipoMovimentacao
-				.TIPO_MOVIMENTACAO_DISPONIBILIZAR_AO_INTERESSADO);
+				.TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO);
 		if (!movs.isEmpty())
 			return true;
 		return false;

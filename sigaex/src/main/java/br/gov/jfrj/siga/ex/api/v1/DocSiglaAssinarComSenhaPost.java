@@ -56,7 +56,7 @@ public class DocSiglaAssinarComSenhaPost implements IDocSiglaAssinarComSenhaPost
 			}
 
 			Ex.getInstance().getBL().assinarDocumentoComSenha(cadastrante, lotaTitular, doc, null, cadastrante.getSiglaCompleta(), null,
-					false, titular, false, null, false);
+					false, titular, false, null, false, null);
 
 			resp.status = "OK";
 		} catch (Exception e) {

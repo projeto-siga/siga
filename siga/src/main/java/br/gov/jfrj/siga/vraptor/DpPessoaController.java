@@ -588,13 +588,12 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	public void editarGravar(final Long id, final Long idOrgaoUsu, final Long idCargo, final Long idFuncao,
 			final Long idLotacao, final String nmPessoa, final String dtNascimento, final String cpf,
 			final String email, final String identidade, final String orgaoIdentidade, final String ufIdentidade,
-			final String dataExpedicaoIdentidade) throws Exception {
+			final String dataExpedicaoIdentidade, final String nmPessoaAbreviado) throws Exception {
 		
 		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_PESSOA:Cadastrar Pessoa");
 
 		if (idOrgaoUsu == null || idOrgaoUsu == 0)
 			throw new AplicacaoException("Órgão não informado");
-
 		if (idCargo == null || idCargo == 0)
 			throw new AplicacaoException("Cargo não informado");
 
@@ -647,6 +646,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		pessoa.setDataInicio(data);
 		pessoa.setMatricula(0L);
 		pessoa.setSituacaoFuncionalPessoa(SituacaoFuncionalEnum.APENAS_ATIVOS.getValor()[0]);
+		pessoa.setNomeExibicao(nmPessoaAbreviado);
 		
 		if (dtNascimento != null && !"".equals(dtNascimento)) {
 			Date dtNasc = new Date();

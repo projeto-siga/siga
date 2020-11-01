@@ -15,9 +15,8 @@ import br.com.caelum.vraptor.jpa.JPATransactionInterceptor;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.Sr;
-
-@RequestScoped
-@Intercepts(before = { 	InterceptorMethodParametersResolver.class, JPATransactionInterceptor.class })
+//@RequestScoped
+//@Intercepts(before = { 	InterceptorMethodParametersResolver.class, JPATransactionInterceptor.class })
 public class ContextInterceptor  {
 	private EntityManager em;
 	
@@ -28,17 +27,17 @@ public class ContextInterceptor  {
 		super();
 	}
 	
-	@Inject
+//	@Inject
 	public ContextInterceptor(EntityManager em, Result result)  {
 		this.em = em;
 	}
 
-	@Accepts
+//	@Accepts
 	public boolean accepts(ControllerMethod method) {
 		return true;
 	}
 
-	@AroundCall
+//	@AroundCall
 	public void intercept(SimpleInterceptorStack stack) throws Exception  {
 		ContextoPersistencia.setEntityManager(em);
 		CpDao.freeInstance();

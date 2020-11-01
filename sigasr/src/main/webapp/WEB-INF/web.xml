@@ -71,6 +71,18 @@
 	</filter-mapping>
 
 	<filter>
+		<filter-name>SrThreadFilter</filter-name>
+		<filter-class>br.gov.jfrj.siga.sr.util.SrThreadFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>SrThreadFilter</filter-name>
+		<url-pattern>/app/*</url-pattern>
+		<url-pattern>/solicitacao/*</url-pattern>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>
+
+	<filter>
 		<filter-name>ResponseHeaderFilterEx</filter-name>
 		<filter-class>br.gov.jfrj.siga.jee.ResponseHeaderFilter</filter-class>
 		<init-param>

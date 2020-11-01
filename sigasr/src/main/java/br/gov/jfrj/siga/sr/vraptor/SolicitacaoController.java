@@ -623,7 +623,7 @@ public class SolicitacaoController extends SrController {
 			
 			
 			if (solicitacao.getAcao() != null){
-				if(solicitacao.getAcao().getHisIdIni() == null)
+				if(solicitacao.getAcao().getHisIdIni() == null && solicitacao.getAcao().getIdAcao() != null)
 					solicitacao.setAcao(SrAcao.AR.findById(solicitacao.getAcao().getIdAcao()));
 				boolean containsAcao = false;
 				for (List<SrTarefa> tarefas : solicitacao.getAcoesEAtendentes().values())

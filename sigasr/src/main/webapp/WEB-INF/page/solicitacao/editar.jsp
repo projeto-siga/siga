@@ -51,10 +51,15 @@
 
 				// Removendo entradas que causam excecoes no vraptor:
 				toRemoveFromParams.forEach(e => {
-					$("input[name='" + e + "']", "#formSolicitacao ").remove();
+					$("input[name='" + e + "']", "#formSolicitacao ").prop("disabled", true);
 				})
 
-				gravar(); 
+				gravar();
+
+				// Retornando as entradas caso de erro de validacao: 
+				toRemoveFromParams.forEach(e => {
+					$("input[name='" + e + "']", "#formSolicitacao ").prop("disabled", false);
+				}) 
 			}); 
 	
 			$('#checkRascunho').change(function() {

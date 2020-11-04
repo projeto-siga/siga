@@ -875,7 +875,7 @@ public class ExDao extends CpDao {
 		} else {
 			query = em().createNamedQuery("consultarEmailporLotacao");
 
-			query.setParameter("idLotacaoIni", lot.getLotacaoInicial());
+			query.setParameter("idLotacaoIni", lot.getIdInicial());
 		}
 
 		return query.getResultList();

@@ -1,6 +1,7 @@
 <%@ tag body-content="empty" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib uri="http://localhost/libstag" prefix="libs"%>
 <%@ attribute name="pre"%>
 <%@ attribute name="icon"%>
 <%@ attribute name="title"%>
@@ -19,11 +20,14 @@
 <%@ attribute name="explicacao"%>
 <%@ attribute name="post"%>
 
+<c:set var="linkId">${title}</c:set>
 <c:if test="${(atalho == true) and fn:contains(title, '_')}">
 	<c:set var="ious" value="${fn:indexOf(title, '_')}" />
 	<c:set var="accesskey" value="${fn:toLowerCase(fn:substring(title, ious+1, ious+2))}" />
+	<c:set var="linkId">${fn:substring(title, 0, ious)}${fn:substring(title, ious+1, ious+2)}${fn:substring(title, ious+2, -1)}</c:set>
 	<c:set var="title">${fn:substring(title, 0, ious)}<u>${fn:substring(title, ious+1, ious+2)}</u>${fn:substring(title, ious+2, -1)}</c:set>
 </c:if>
+<c:set var="linkId" value="${fn:replace(libs:slugify(linkId, true, false),'-nbsp-','-')}" />
 
 <c:if test="${(atalho == true) and fn:contains(title, '_')}">
 	<c:set var="ious" value="${fn:indexOf(title, '_')}" />
@@ -60,20 +64,20 @@
 	<c:if test="${not empty url}">
 		<c:choose>
 			<c:when test="${not empty modal}">
-				<a
+				<a id="${linkId}"
 					class="${classe} ${linkBotoes ? 'btn btn-sm btn-info text-white link-tag' : ''}"
 					<c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
 					data-toggle="modal" data-target="#${modal}" title="${explicacao}">${img}${title}</a>
 			</c:when>
 			<c:when test="${not empty popup and popup != false}">
-				<a
+				<a id="${linkId}"
 					class="${classe} ${linkBotoes ? 'btn btn-sm btn-info text-white link-tag' : ''}"
 					<c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
 					href="javascript:${linkConfirm}popitup('${url}');"
 					title="${explicacao}">${img}${title}</a>
 			</c:when>
 			<c:when test="${not empty ajax and ajax != false}">
-				<span id="spanAjax_${idAjax}"> <a
+				<span id="spanAjax_${idAjax}"> <a id="${linkId}"
 					class="${classe} ${linkBotoes ? 'btn btn-sm btn-info text-white link-tag' : ''} link-tag"
 					<c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
 					href="javascript: SetInnerHTMLFromAjaxResponse('${url}', 'spanAjax_${idAjax}');"
@@ -82,14 +86,14 @@
 			<c:otherwise>
 				<c:choose>
 					<c:when test="${not empty linkConfirm}">
-						<a
+						<a id="${linkId}"
 							class="${classe} ${linkBotoes ? 'btn btn-sm btn-info text-white link-tag' : ''} link-tag"
 							<c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
 							href="javascript:${linkConfirm}${post ? 'postToUrl(\''.concat(url).concat('\')') : 'location.href=\''.concat(url).concat('\';')}"
 							title="${explicacao}">${img}${title}</a>
 					</c:when>
 					<c:otherwise>
-						<a
+						<a id="${linkId}"
 							class="${classe} ${linkBotoes ? 'btn btn-sm btn-info text-white link-tag' : ''} link-tag"
 							<c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
 							href="${post ? 'javascript:postToUrl(\''.concat(url).concat('\')') : url}"

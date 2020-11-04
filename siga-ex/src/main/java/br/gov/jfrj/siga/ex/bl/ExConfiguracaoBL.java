@@ -332,11 +332,12 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 		CpConfiguracao cfg = (CpConfiguracao) buscaConfiguracao(config,
 				new int[] { 0 }, null);
 
-		CpSituacaoConfiguracao situacao;
+		CpSituacaoConfiguracao situacao = null;
 		if (cfg != null)
 			situacao = cfg.getCpSituacaoConfiguracao();
 		else
-			situacao = config.getCpTipoConfiguracao().getSituacaoDefault();
+			if (config.getCpTipoConfiguracao() != null)
+				situacao = config.getCpTipoConfiguracao().getSituacaoDefault();
 		
 		return situacao;
 	}

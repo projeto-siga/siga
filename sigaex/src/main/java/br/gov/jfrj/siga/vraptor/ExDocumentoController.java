@@ -1619,7 +1619,6 @@ public class ExDocumentoController extends ExController {
 	public void gravar(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars, final String[] campos,
 			final UploadedFile arquivo, String jsonHierarquiaDeModelos) {
-		// dao().em().setFlushMode(FlushModeType.COMMIT);
 		final Ex ex = Ex.getInstance();
 		final ExBL exBL = ex.getBL();		
 		try {

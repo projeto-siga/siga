@@ -2853,7 +2853,7 @@ public class ExBL extends CpBL {
 					&& ((mob.doc().isFisico() && !mob.doc().isFinalizado()) || (mob.doc().isEletronico()
 							&& mob.doc().getAssinaturasEAutenticacoesComTokenOuSenhaERegistros().isEmpty()))) {
 				processar(mob.getExDocumento(), true, false);
-				mob.getExDocumento().armazenar(); 
+				// mob.getExDocumento().armazenar(); 
 			}
 			concluirAlteracao(mov);
 
@@ -2963,7 +2963,7 @@ public class ExBL extends CpBL {
 			Set<ExVia> setVias = doc.getSetVias();
 
 			processar(doc, false, false);
-			doc.armazenar();
+			// doc.armazenar();
 
 			doc.setNumPaginas(doc.getContarNumeroDePaginas());
 			
@@ -3325,8 +3325,8 @@ public class ExBL extends CpBL {
 			// Nato: para obter o numero do TMP na primeira gravação
 			boolean primeiraGravacao = false;
 			if (doc.getIdDoc() == null) {
-				doc = ExDao.getInstance().gravar(doc);
-				//doc = salvarDocSemSalvarArq(doc);
+				// doc = ExDao.getInstance().gravar(doc);
+				doc = salvarDocSemSalvarArq(doc);
 				primeiraGravacao = true;
 			}
 
@@ -3412,7 +3412,7 @@ public class ExBL extends CpBL {
 				finalizar(cadastrante, lotaTitular, doc);
 			}
 			
-			doc.armazenar();
+			// doc.armazenar();
 			
 			if (doc.getSubscritor() != null) {
 				if (!doc.getCadastrante().equivale(doc.getSubscritor()) && usuarioExternoTemQueAssinar(doc, doc.getSubscritor())) {
@@ -3457,19 +3457,19 @@ public class ExBL extends CpBL {
 		return doc;
 	}
 
-//	private ExDocumento salvarDocSemSalvarArq(ExDocumento doc) {
-//		CpArquivo arqTemp = null;
-//		// Nato: remover o cpArquivo para que ele não seja salvo automaticamente pelo
-//		// JPA, pois isso acarreta em gravação desnecessária na tabela CpArquivo.
-//		if (doc.getCpArquivo() != null && doc.getCpArquivo().getIdArq() == null) {
-//			arqTemp = doc.getCpArquivo();
-//			doc.setCpArquivo(null);
-//		}
-//		doc = ExDao.getInstance().gravar(doc);
-//		if (arqTemp != null) 
-//			doc.setCpArquivo(arqTemp);
-//		return doc;
-//	}
+	private ExDocumento salvarDocSemSalvarArq(ExDocumento doc) {
+		CpArquivo arqTemp = null;
+		// Nato: remover o cpArquivo para que ele não seja salvo automaticamente pelo
+		// JPA, pois isso acarreta em gravação desnecessária na tabela CpArquivo.
+		if (doc.getCpArquivo() != null && doc.getCpArquivo().getIdArq() == null) {
+			arqTemp = doc.getCpArquivo();
+			doc.setCpArquivo(null);
+		}
+		doc = ExDao.getInstance().gravar(doc);
+		if (arqTemp != null) 
+			doc.setCpArquivo(arqTemp);
+		return doc;
+	}
 	
 	public void geraMovimentacaoSubstituicao(ExDocumento doc, DpPessoa cadastrante) throws AplicacaoException, SQLException {
 		final ExMovimentacao mov_substituto = criarNovaMovimentacao(
@@ -3661,8 +3661,8 @@ public class ExBL extends CpBL {
 		if (nivel == null)
 			nivel = doc.getExNivelAcesso();
 		doc.setDnmExNivelAcesso(nivel);
-		//doc = salvarDocSemSalvarArq(doc);
-		doc = ExDao.getInstance().gravar(doc);
+		doc = salvarDocSemSalvarArq(doc);
+		// doc = ExDao.getInstance().gravar(doc);
 		return nivel;
 	}
 
@@ -3938,7 +3938,7 @@ public class ExBL extends CpBL {
 
 			gravarMovimentacao(mov);
 			processar(doc, true, false);
-			doc.armazenar();
+			// doc.armazenar();
 			concluirAlteracaoDocComRecalculoAcesso(mov);
 		} catch (final Exception e) {
 			cancelarAlteracao();
@@ -5699,41 +5699,26 @@ public class ExBL extends CpBL {
 		// Nato: meio confuso esse código de commitar a transação e depois atualizar o workflow, mas
 		// quis manter assim mesmo para não correr o risco de mudar alguma lógica e provocar algum erro
 		// inesperado.
-		boolean commited = false;
-		
-		if (mov != null && mov.getExMobilRef() != null) {
-			if (!commited) {
-				ContextoPersistencia.flushTransaction();
-				commited = true;
+		if (Prop.getBool("/sigawf.ativo")) {
+			ContextoPersistencia.flushTransaction();
+			if (mov != null && mov.getExMobilRef() != null) {
+				atualizarWorkFlow(mov.getExMobilRef().doc());
 			}
-			atualizarWorkFlow(mov.getExMobilRef().doc());
+	 
+	 		SortedSet<ExMobil> set = threadAlteracaoParcial.get();
+	 		if (set != null && set.size() > 0) {
+	 			for (ExMobil mobParcial : set) {
+	 				atualizarWorkflow(mobParcial.doc(), null);
+	 			}
+	 			set.clear();
+	 		} else {
+	 			if (mob != null) {
+	 				atualizarWorkflow(mob.doc(), null);
+				} else if (doc != null) {
+					atualizarWorkflow(doc, null);
+	 			}
+	 		}
 		}
- 
- 		SortedSet<ExMobil> set = threadAlteracaoParcial.get();
- 		if (set != null && set.size() > 0) {
- 			for (ExMobil mobParcial : set) {
-				if (!commited) {
-					ContextoPersistencia.flushTransaction();
-					commited = true;
-				}
- 				atualizarWorkflow(mobParcial.doc(), null);
- 			}
- 			set.clear();
- 		} else {
- 			if (mob != null) {
-				if (!commited) {
-					ContextoPersistencia.flushTransaction();
-					commited = true;
-				}
- 				atualizarWorkflow(mob.doc(), null);
-			} else if (doc != null) {
-				if (!commited) {
-					ContextoPersistencia.flushTransaction();
-					commited = true;
-				}
-				atualizarWorkflow(doc, null);
- 			}
- 		}
  	}
 
 	private void cancelarAlteracao() throws AplicacaoException {

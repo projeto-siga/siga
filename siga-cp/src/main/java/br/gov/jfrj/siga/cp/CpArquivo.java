@@ -103,10 +103,10 @@ public class CpArquivo implements Serializable {
 	private void salvarArquivo() {
 		switch (getTipoArmazenamento()) {
 		case TABELA:
-			EntityTransaction transaction = CpDao.getInstance().em().getTransaction();
-			 System.out.println("* " + (CpDao.getInstance().em().getTransaction() ==
-					 null || !CpDao.getInstance().em().getTransaction().isActive() ? "NÃO" : "") + " TRANSACIONAL" );
-		
+//			EntityTransaction transaction = CpDao.getInstance().em().getTransaction();
+//			 System.out.println("* " + (CpDao.getInstance().em().getTransaction() ==
+//					 null || !CpDao.getInstance().em().getTransaction().isActive() ? "NÃO" : "") + " TRANSACIONAL" );
+//		
 			if (this.arquivoBlob == null) {
 				this.arquivoBlob = new CpArquivoBlob();
 				this.arquivoBlob.setArquivo(this);

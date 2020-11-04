@@ -404,12 +404,9 @@ public class CpConfiguracaoBL {
 		}
 
 		TreeSet<CpConfiguracao> lista = null;
-		// try {
-		lista = getListaPorTipo(cpConfiguracaoFiltro.getCpTipoConfiguracao()
+		if (cpConfiguracaoFiltro.getCpTipoConfiguracao() != null)
+			lista = getListaPorTipo(cpConfiguracaoFiltro.getCpTipoConfiguracao()
 				.getIdTpConfiguracao());
-		// } catch (Exception e) {
-		// System.out.println(e.getStackTrace());
-		// }
 		if (lista == null)
 			return null;
 

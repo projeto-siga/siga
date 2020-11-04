@@ -10,23 +10,25 @@
 <%@ attribute name="exibeConhecimento" required="false"%>
 <%@ attribute name="lotacaoDoTitular" required="false"%>
 
-<div id="${metodo}" class="gt-form-row" style="min-width: 550px;">
-	<label>Produto, Servi&ccedil;o ou Sistema relacionado &agrave; Solicita&ccedil;&atilde;o</label>
-	<siga:selecao2 propriedade="solicitacao.itemConfiguracao" 
-		tipo="itemConfiguracao" 
-		tema="simple" 
-		modulo="sigasr" 
-		tamanho="grande"
-		onchange="dispararFuncoesOnBlurItem();"
-		checarInput="true"
-		paramList="sol.id=${solicitacao.id};sol.solicitante.id=${solicitante.idPessoa};sol.local.id=${local.idComplexo};sol.titular.id=${titular.idPessoa};sol.lotaTitular.id=${lotaTitular.idLotacao}" />
+<div id="${metodo}">
+	<div class="form-group">
+		<label>Produto, Servi&ccedil;o ou Sistema relacionado &agrave; Solicita&ccedil;&atilde;o</label>
+		<sigasr:selecao3 propriedade="solicitacao.itemConfiguracao" 
+			tipo="itemConfiguracao" 
+			tema="simple" 
+			modulo="sigasr" 
+			tamanho="grande"
+			onchange="dispararFuncoesOnBlurItem();"
+			checarInput="true"			
+			paramList="sol.id=${solicitacao.id};sol.solicitante.id=${solicitante.idPessoa};sol.local.id=${local.idComplexo};sol.titular.id=${titular.idPessoa};sol.lotaTitular.id=${lotaTitular.idLotacao}" />
+	</div>
 	<br/><span id="itemNaoInformado" class="error" style="color: red; display: none;">Item não informado</span>
 	<br/>
 	<div id="divAcao" depende="solicitacao.itemConfiguracao" >
 		<c:if test="${exibeConhecimento}">
 			<c:if test="${solicitacao.itemConfiguracao != null && podeUtilizarServicoSigaGC}">
 				<c:if test="${podeVerGestorItem && not empty solicitacao.itemConfiguracao.gestorSet}">
-					<div class="gt-form-row">
+					<div class="form-control">
 						<label>Gestor do Produto</label>
 					    <c:forEach var="g" items="${solicitacao.itemConfiguracao.gestorSet}">
 					        <p>
@@ -55,9 +57,9 @@
 		</c:if>
 		<c:set var="acoesEAtendentes" value="${solicitacao.acoesEAtendentes}" />
 		<c:if test="${not empty solicitacao.itemConfiguracao && not empty acoesEAtendentes}"> 
-			<div class="gt-form-row" style="margin-top: 10px;">
+			<div class="form-group" style="margin-top: 10px;">
 				<label>A&ccedil;&atilde;o</label>	
-				<select name="solicitacao.acao.id" id="selectAcao" onchange="carregarAcao();">
+				<select name="solicitacao.acao.id" id="selectAcao" onchange="carregarAcao();" class="form-control">
 					<c:if test="${metodo == 'editar'}">
 						<option value=""></option>
 					</c:if>	
@@ -91,7 +93,7 @@
 					</c:forEach>
 			
 					<label id="labelAtendentePadrao">Atendente</label>
-					<span id="atendentePadrao" style="display:block;"></span>
+					<span id="atendentePadrao" style="display:block;" class="form-controxl" readonly></span>
 					<input type="hidden" name="solicitacao.designacao.id" id="idDesignacao" value="" />
 					<input type="hidden" name="atendente.id" id="idAtendente" value="" />
 				</div>

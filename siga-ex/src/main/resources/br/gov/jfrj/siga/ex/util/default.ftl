@@ -918,6 +918,16 @@ LINHA  VARIÁVEL / CONTEÚDO
                         margin-top: ${margemSuperior};
                         margin-bottom: ${margemInferior};
                     }
+                    .footnotes {
+                    	font-size:8pt !important;
+                    	margin-top: 25pt !important;
+                    }
+                    .footnotes hr {
+					   width: 25% !important;
+					   border-top: 1px solid #000 !important;
+					   text-align: left !important;
+					   margin-left: 0 !important;
+                    }
                 </style>
             </head>
             <body>
@@ -1330,15 +1340,14 @@ CKEDITOR.replace( '${var}',
         [/#if]
 
         [#if !gerar_formulario!false]
-
             <input type="hidden" name="vars" value="${var}" />
             <input type="hidden" id="desconsiderarExtensao" name="desconsiderarExtensao" value="${desconsiderarExtensao!'false'}" />
 
                         [#if ( (func.podeUtilizarExtensaoEditor(lotaCadastrante, doc.exModelo.idMod?number)!false)
                            && (!((desconsiderarExtensao == 'true')!false)) )]
-[#else]
-<textarea id="${var}" name="${var}" class="editor"> ${default!}${v?html}</textarea>
-[/#if]
+		[#else]
+		<textarea id="${var}" name="${var}" class="editor"> ${default!}${v?html}</textarea>
+		[/#if]
             <table class="entrevista" width="100%">
                 <tr>
                     <td></td>
@@ -1351,63 +1360,89 @@ CKEDITOR.replace( '${var}',
                              <input type="hidden" id="${var}" name="${var}" value="${v?html}">
                             [@extensaoEditor nomeExtensao=var conteudoExtensao=v/]
                         [#else]
-                            
                             <script type="text/javascript">
 
-CKEDITOR.config.disableNativeSpellChecker = false;
-CKEDITOR.config.scayt_autoStartup = false;
-CKEDITOR.config.scayt_sLang = 'pt_BR';
-CKEDITOR.config.stylesSet = 'siga_ckeditor_styles';
-
-
-
-CKEDITOR.stylesSet.add('siga_ckeditor_styles',[
-                                               {
-                                            	   name:'Título',
-                                            	   element:'h1',
-                                            	   styles:{
-                                            		   'text-align':'justify',
-                                            		   'text-indent':'2cm'
-                                            			   }
-                                               },
-                                               {
-                                            	   name:'Subtítulo',
-                                            	   element:'h2',
-                                            	   styles:{
-                                            		   'text-align':'justify',
-                                            		   'text-indent':'2cm'
-                                            			   }
-                                               },
-                                               {
-                                            	   name:'Com recuo',
-                                            	   element:'p',
-                                            	   styles:{
-                                            		   'text-align':'justify',
-                                            		   'text-indent':'2cm'
-                                            			   }
-                                               }]);
-	CKEDITOR.config.toolbar = 'SigaToolbar';
- 
-	CKEDITOR.config.toolbar_SigaToolbar =
-	[
-		{ name: 'styles', items : [ 'Styles' ] },
-		{ name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
-		{ name: 'editing', items : [ 'Find','Replace','-','SelectAll' ] },
-		'/',
-		{ name: 'basicstyles', items : [ 'Bold','Italic','Subscript','Underline','Strike','-','RemoveFormat' ] },
-		{ name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','JustifyLeft','JustifyCenter','JustifyBlock','JustifyRight' ] },
-		{ name: 'insert', items : [ 'Table','-','SpecialChar','-','PageBreak' ] },
-		{ name: 'document', items : [ 'Source' ] }
-	];
-
-window.onload = function(){
-     $( "textarea.editor" ).each(function( index ) {
-        CKEDITOR.replace( this,
-	{
-	   toolbar : 'SigaToolbar'
-	});
-     });
-}
+								CKEDITOR.config.disableNativeSpellChecker = false;
+								CKEDITOR.config.scayt_autoStartup = false;
+								CKEDITOR.config.scayt_sLang = 'pt_BR';
+								CKEDITOR.config.stylesSet = 'siga_ckeditor_styles';
+								
+								CKEDITOR.stylesSet.add('siga_ckeditor_styles', [{
+								        name: 'Título',
+								        element: 'h1',
+								        styles: {
+								            'text-align': 'justify',
+								            'text-indent': '2cm'
+								        }
+								    },
+								    {
+								        name: 'Subtítulo',
+								        element: 'h2',
+								        styles: {
+								            'text-align': 'justify',
+								            'text-indent': '2cm'
+								        }
+								    },
+								    {
+								        name: 'Com recuo',
+								        element: 'p',
+								        styles: {
+								            'text-align': 'justify',
+								            'text-indent': '2cm'
+								        }
+								    },
+								    {
+								        name: 'Marcador',
+								        element: 'span',
+								        styles: {
+								        	'background-color' : '#FFFF00'
+								        }
+								    },
+								    {
+								        name: 'Normal',
+								        element: 'span'
+								    }
+								]);
+								CKEDITOR.config.toolbar = 'SigaToolbar';
+								
+								CKEDITOR.config.toolbar_SigaToolbar = [{
+								        name: 'styles',
+								        items: ['Styles']
+								    },
+								    {
+								        name: 'clipboard',
+								        items: ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']
+								    },
+								    {
+								        name: 'editing',
+								        items: ['Find', 'Replace', '-', 'SelectAll']
+								    },
+								    '/',
+								    {
+								        name: 'basicstyles',
+								        items: ['Bold', 'Italic', 'Subscript', 'Underline', 'Strike', '-', 'RemoveFormat']
+								    },
+								    {
+								        name: 'paragraph',
+								        items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyBlock', 'JustifyRight']
+								    },
+								    {
+								        name: 'insert',
+								        items: ['Table' , 'Footnotes', '-', 'SpecialChar', '-', 'PageBreak']
+								    },
+								    {
+								        name: 'document',
+								        items: ['Source']
+								    }
+								];
+								CKEDITOR.config.extraPlugins = 'footnotes';
+								window.onload = function() {
+								    $("textarea.editor").each(function(index) {
+								        CKEDITOR.replace(this, {
+								            toolbar: 'SigaToolbar'
+								        });
+								    });
+								}
 
                             </script>
                             
@@ -2391,7 +2426,11 @@ Pede deferimento.</span><br/><br/><br/>
     [#if (doc.nmSubscritor)??]
         ${doc.nmSubscritor}
     [#else]
-        ${(doc.subscritor.descricao)!}
+       [#if (mov.subscritor.nomeExibicao)??]
+           ${mov.subscritor.nomeExibicao}
+       [#else]
+           ${(mov.subscritor.nomePessoa)!}
+       [/#if]
     [/#if]
     [#if !apenasNome??] 
         <br />
@@ -2430,7 +2469,11 @@ Pede deferimento.</span><br/><br/><br/>
                         [#if mov.nmSubscritor??]
                             ${mov.nmSubscritor}
                         [#else]
-                            ${(mov.subscritor.nomePessoa)!}
+                           [#if (mov.subscritor.nomeExibicao)??]
+                           		${mov.subscritor.nomeExibicao}
+                           [#else]
+                           ${(mov.subscritor.nomePessoa)!}
+                           [/#if]
                         [/#if]      
                         <br>
                         [#if mov.nmFuncao??]

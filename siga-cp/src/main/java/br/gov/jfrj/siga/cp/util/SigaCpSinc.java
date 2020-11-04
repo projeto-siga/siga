@@ -119,12 +119,11 @@ public class SigaCpSinc {
 	//
 	@SuppressWarnings("static-access")
 	public void gravar(Date dt) throws Exception {
-		// List<Item> list;
+
 		Sincronizador sinc = new Sincronizador();
 		try {
 			sinc.religarListaPorIdExterna(setNovo);
 			sinc.setSetNovo(setNovo);
-			// sinc.religarListaPorIdExterna(setAntigo);
 			sinc.setSetAntigo(setAntigo);
 
 			// verifica se as pessoas possuem lotação

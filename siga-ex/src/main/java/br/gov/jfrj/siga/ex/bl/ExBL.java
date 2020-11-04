@@ -94,6 +94,7 @@ import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.util.SetUtils;
 import br.gov.jfrj.siga.base.util.Utils;
@@ -1406,7 +1407,7 @@ public class ExBL extends CpBL {
 
 	public String assinarDocumento(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExDocumento doc,
 			final Date dtMov, final byte[] pkcs7, final byte[] certificado, long tpMovAssinatura, Boolean juntar,
-			Boolean tramitar) throws AplicacaoException {
+			Boolean tramitar, Boolean exibirNoProtocolo) throws AplicacaoException {
 		String sNome;
 		Long lCPF = null;
 
@@ -1418,7 +1419,8 @@ public class ExBL extends CpBL {
 					"Não é possível assinar o documento pois a descrição está vazia. Edite-o e informe uma descrição.");
 
 		if (!doc.isFinalizado())
-			finalizar(cadastrante, lotaCadastrante, doc);
+			throw new AplicacaoException(
+					"Não é possível assinar o documento pois não está finalizado.");
 
 		boolean fPreviamenteAssinado = !doc.isPendenteDeAssinatura();
 
@@ -1466,9 +1468,7 @@ public class ExBL extends CpBL {
 			validatereq.setSha256(bluc.bytearray2b64(bluc.calcSha256(data)));
 			validatereq.setTime(dtMov);
 			validatereq.setCrl("true");
-			ValidateResponse validateresp = bluc.validate(validatereq);
-			if (validateresp.getErrormsg() != null)
-				throw new Exception("BluC não conseguiu validar a assinatura digital. " + validateresp.getErrormsg());
+			ValidateResponse validateresp = assertValid(bluc, validatereq);
 
 			sNome = validateresp.getCn();
 
@@ -1646,7 +1646,21 @@ public class ExBL extends CpBL {
 			throw new RuntimeException("Erro ao remover revisores.", e);
 		}
 
+		if (exibirNoProtocolo != null && exibirNoProtocolo) {
+			exibirNoAcompanhamentoDoProtocolo(cadastrante, lotaCadastrante,
+								doc.getVia(1), cadastrante);
+		}
+		
 		return s;
+	}
+
+	private ValidateResponse assertValid(BlucService bluc, ValidateRequest validatereq) throws Exception {
+		ValidateResponse validateresp = bluc.validate(validatereq);
+		if (validateresp.getErrormsg() != null)
+			throw new Exception("BluC não conseguiu validar a assinatura digital. " + validateresp.getErrormsg());
+		if (!"GOOD".equals(validateresp.getStatus()) && !"UNKNOWN".equals(validateresp.getStatus()))
+			throw new Exception("BluC não validou a assinatura digital. " + validateresp.getStatus());
+		return validateresp;
 	}
 
 	private void trasferirAutomaticamente(final DpPessoa cadastrante, final DpLotacao lotaCadastrante,
@@ -1666,7 +1680,7 @@ public class ExBL extends CpBL {
 	public String assinarDocumentoComSenha(final DpPessoa cadastrante, final DpLotacao lotaCadastrante,
 			final ExDocumento doc, final Date dtMov, final String matriculaSubscritor, final String senhaSubscritor,
 			final boolean validarSenha, final DpPessoa titular, final boolean autenticando, Boolean juntar,
-			Boolean tramitar) throws Exception {
+			Boolean tramitar, final Boolean exibirNoProtocolo) throws Exception {
 
 		DpPessoa subscritor = null;
 		DpPessoa cosignatario = null;
@@ -1839,6 +1853,11 @@ public class ExBL extends CpBL {
 				removerPapel(doc, ExPapel.PAPEL_REVISOR);
 		} catch (final Exception e) {
 			throw new RuntimeException("Erro ao remover revisores.", e);
+		}
+
+		if (exibirNoProtocolo != null && exibirNoProtocolo) {
+			exibirNoAcompanhamentoDoProtocolo(cadastrante, lotaCadastrante,
+								doc.getVia(1), cadastrante);
 		}
 
 		return s;
@@ -2147,9 +2166,7 @@ public class ExBL extends CpBL {
 			validatereq.setSha256(bluc.bytearray2b64(bluc.calcSha256(data)));
 			validatereq.setTime(dao().dt());
 			validatereq.setCrl("true");
-			ValidateResponse validateresp = bluc.validate(validatereq);
-			if (validateresp.getErrormsg() != null)
-				throw new Exception("BluC não conseguiu validar a assinatura digital. " + validateresp.getErrormsg());
+			ValidateResponse validateresp = assertValid(bluc, validatereq);
 
 			sNome = validateresp.getCn();
 			Service.throwExceptionIfError(sNome);
@@ -6203,9 +6220,7 @@ public class ExBL extends CpBL {
 		validatereq.setSha256(bluc.bytearray2b64(bluc.calcSha256(conteudo)));
 		validatereq.setTime(dtAssinatura);
 		validatereq.setCrl("true");
-		ValidateResponse validateresp = bluc.validate(validatereq);
-		if (validateresp.getErrormsg() != null)
-			throw new Exception("BluC não conseguiu validar a assinatura digital. " + validateresp.getErrormsg());
+		ValidateResponse validateresp = assertValid(bluc, validatereq);
 
 		String sNome;
 		Long lCPF;
@@ -7491,5 +7506,35 @@ public class ExBL extends CpBL {
 					+ (doc.getSubscritorString() != null ? " de " + doc.getSubscritorString() : ""));
 	}
 
+	public void exibirNoAcompanhamentoDoProtocolo(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, 
+			final ExMobil mob, final DpPessoa titular) throws AplicacaoException {
+		if (mob == null)
+			throw new AplicacaoException("Não existe via para a disponibilização no acompanhamento do protocolo.");
+		
+		if (!mob.getExDocumento().getExFormaDocumento().getDescricao().contains("Despacho"))
+			throw new AplicacaoException("Disponibilização no acompanhamento do protocolo só é permitida para despachos.");
+		
+		Set<ExMovimentacao> movs = mob.getMovsNaoCanceladas(ExTipoMovimentacao
+				.TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO);
+		if (!movs.isEmpty())
+			throw new AplicacaoException("Disponibilização no acompanhamento do protocolo já foi solicitada anteriormente.");
+		
+		try {						
+			iniciarAlteracao();
+
+			final ExMovimentacao mov = criarNovaMovimentacao(
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO, 
+					cadastrante, lotaCadastrante, mob, dao().dt(), null, null, titular, null, dao().dt());
+
+			gravarMovimentacao(mov);
+
+			concluirAlteracao(mov.getExMobil());
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro ao permitir a disponibilização do documento no acompanhamento do protocolo.", 0, e);
+		}
+	}
+
+	
 }
 

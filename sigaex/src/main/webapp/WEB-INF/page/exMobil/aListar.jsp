@@ -127,7 +127,7 @@
 					document.getElementById('trNumOrigDoc').style.display = '';
 					document.getElementById('trNumDocSistAntigo').style.display = 'none';
 					document.getElementById('trOrgExterno').style.display = '';
-					document.getElementById('trTipo').style.display = 'none';
+					document.getElementById('trTipo').style.display = '';
 		
 					if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
 					break;
@@ -509,8 +509,7 @@
 						</div>
 					</div>
 					
-					<div id="trTipo" style="display:${idTpDoc == 3 ? 'none' : ''}"
-						class="form-row">
+					<div id="trTipo" class="form-row">
 						<div class="form-group col-md-3 ${hide_only_GOVSP}">
 							<label for="tipoForma">Tipo da Espécie</label> 
 							<select

@@ -95,7 +95,7 @@
 				$('#meioComunicacaoEDataOrigem')[0].style.display='none';
 			}
 			else {
-				$('#interlocutor')[0].style.display='inline-block';
+				$('#interlocutor')[0].style.display='block';
 				$('#meioComunicacaoEDataOrigem')[0].style.display='inline-block';
 			}
 			
@@ -111,11 +111,8 @@
 	
 	<div class="container-fluid">
 		<div class="row">
-			<!--  main -->
 			<div class="col-sm-8">
-			
 				<div class="card bg-light mb-3" >
-				
 					<div class="card-header">
 						<h5>
 							<c:choose>
@@ -150,6 +147,7 @@
 							
 								<div class="error-message gt-form-table"><p></p></div>
 								
+								<!--  Cadastrante -->
 								<div class="row">
 									<div class="col-sm-12">								
 										<div class="form-group">
@@ -165,31 +163,30 @@
 									</div>									
 								</div>
 								
+								<!--  Solicitante -->
 								<div class="row">
 									<div class="col-sm-12">
 										<div class="form-group">
 											<label for="formulario_solicitacaosolicitante_sigla">Solicitante</label> 	
-											<div>
-												<siga:selecao2 tipo="pessoa"
-													propriedade="solicitacao.solicitante"
-													tema="simple"
-													modulo="siga"
-													reler="ajax"
-													onchange="toggleInterlocutorMeioComunicacaoEDataOrigem();" />
-												<siga:error name="solicitacao.solicitante"/>
-											</div>										
+											<sigasr:selecao3 tipo="pessoa"
+												propriedade="solicitacao.solicitante"
+												tema="simple"
+												modulo="siga"
+												reler="ajax"
+												onchange="toggleInterlocutorMeioComunicacaoEDataOrigem();" />
+											<siga:error name="solicitacao.solicitante"/>
 											
 										</div>
 									</div>
 								</div>
 								
-								
-								<div class="row" id="interlocutor" style="display: none;">
+								<!--  Interlocutor -->
+								<div class="row">
 									<div class="col-sm-12">
-										<div class="form-group">
-											<label>Interlocutor (Opcional)</label> 
-											<div>
-												<siga:selecao2 tipo="pessoa"
+										<div id="interlocutor" style="display: none;">
+											<div class="form-group">
+												<label>Interlocutor (Opcional)</label> 
+												<sigasr:selecao3 tipo="pessoa"
 													propriedade="solicitacao.interlocutor" 
 													tema="simple"
 													modulo="siga"/>
@@ -201,7 +198,7 @@
 								
 								<div id="divLocalRamalEMeioContato" depende="solicitacao.solicitante">
 									<script>
-										//Edson: talvez fosse possivel fazer de um modo melhor, mas assim é mais prático
+										//Edson: talvez fosse possivel fazer de um modo melhor, mas assim ï¿½ mais prï¿½tico
 										$("#solicitacaosolicitanteSpan").html("${solicitacao.solicitante.descricaoCompleta}");
 										$("#horarioComunicacao").mask("99:99");
 									</script>
@@ -228,8 +225,8 @@
 										</div>
 									</c:if>
 										
-									<div class="row">
-									
+									<!--  Telefone e Endereco de Atendimento -->
+									<div class="row">									
 										<div class="col-sm-4">
 											<div class="form-group">
 												<label>Telefone</label>
@@ -250,9 +247,9 @@
 											</div>
 										</div>
 									</div>
-									
-							
-																			
+																
+													
+									<!--  Meio comunicacao e contato inicial -->						
 									<div id="meioComunicacaoEDataOrigem">
 										<div class="row">
 											<div class="col-sm-12">
@@ -301,21 +298,30 @@
 									<script>
 										toggleInterlocutorMeioComunicacaoEDataOrigem();
 									</script>
-										
-										
-										
-										
-									<div class="gt-form-row gt-width-66">
-										<label>Quando deseja receber notifica&ccedil;&atilde;o dessa solicita&ccedil;&atilde;o por e-mail?</label>
-										<siga:select name="solicitacao.formaAcompanhamento" list="formaAcompanhamentoList"
-											listValue="descrFormaAcompanhamento" listKey="idFormaAcompanhamento" isEnum="true"
-											value="${solicitacao.formaAcompanhamento != null ? solicitacao.formaAcompanhamento : ''}" />
-									</div>	
-										
-											
 								</div>
-							</div>
+										
+										
+										
+										
+								<div class="row">
+									<div class="col-sm-12">
+										<div class="form-group">
+											<label>Quando deseja receber notifica&ccedil;&atilde;o dessa solicita&ccedil;&atilde;o por e-mail?</label>
+											<siga:select name="solicitacao.formaAcompanhamento" list="formaAcompanhamentoList"
+													listValue="descrFormaAcompanhamento" listKey="idFormaAcompanhamento" isEnum="true"
+													value="${solicitacao.formaAcompanhamento != null ? solicitacao.formaAcompanhamento : ''}" />
+										</div>
+									</div>
+								</div>	
+											
+							</div> <!-- Fim Dados Basicos -->
 							
+
+
+
+
+
+
 							
 
 							
@@ -325,10 +331,14 @@
 								</div>
 							
 								
-								<div id="divItem" depende="solicitacao.solicitante;solicitacao.local">
-									<c:if test="${not empty solicitacao.solicitante}">						
-										<sigasr:classificacao metodo="editar" exibeLotacaoNaAcao="true" exibeConhecimento="true" lotacaoDoTitular="${lotacaoDoTitularLegivel}" />
-									</c:if>
+								<div class="row">
+									<div class="col-sm-12">
+										<div id="divItem" depende="solicitacao.solicitante;solicitacao.local" class="form-controlss">
+											<c:if test="${not empty solicitacao.solicitante}">						
+												<sigasr:classificacao metodo="editar" exibeLotacaoNaAcao="true" exibeConhecimento="true" lotacaoDoTitular="${lotacaoDoTitularLegivel}" />
+											</c:if>
+										</div>
+									</div>
 								</div>
 		
 								<div class="form-group">
@@ -444,9 +454,9 @@
 					<div id="divInternaSolicitacoesRelacionadas"></div>
 						<script type="text/javascript">
 							function carregar(){
-								//Edson: verifica se há algum campo no formulário para o qual não existe checkbox no quadro de 
-								//solicitações relacionadas (!.length), ou então existe *e* está marcado, e envia na url como true. Veja no 
-								//comentário de listarSolicitacoesRelacionadas.jsp o motivo pelo qual esta verificação tem de ser feita aqui:
+								//Edson: verifica se hï¿½ algum campo no formulï¿½rio para o qual nï¿½o existe checkbox no quadro de 
+								//solicitaï¿½ï¿½es relacionadas (!.length), ou entï¿½o existe *e* estï¿½ marcado, e envia na url como true. Veja no 
+								//comentï¿½rio de listarSolicitacoesRelacionadas.jsp o motivo pelo qual esta verificaï¿½ï¿½o tem de ser feita aqui:
 								var camposFiltraveis = ['solicitante', 'itemConfiguracao', 'acao'];
 								var url = '${linkTo[SolicitacaoController].listarSolicitacoesRelacionadas}?'+$('#formSolicitacao').serialize();
 								for (var i = 0; i < camposFiltraveis.length; i++){

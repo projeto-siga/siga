@@ -96,7 +96,7 @@
 			}
 			else {
 				$('#interlocutor')[0].style.display='block';
-				$('#meioComunicacaoEDataOrigem')[0].style.display='inline-block';
+				$('#meioComunicacaoEDataOrigem')[0].style.display='block';
 			}
 			
 			toggleDataOrigem();
@@ -140,9 +140,9 @@
 							<input type="hidden" name="solicitacao.numSequencia" value="${solicitacao.numSequencia}" />
 							<input type="hidden" id="isDirty" value="false" />
 						
-							<div>
-								<div>
-									<h6>Dados B&aacute;sicos</h6>
+							<div class="">
+								<div style="margin-top: 5px">
+									<h5>Dados B&aacute;sicos</h5>
 								</div>
 							
 								<div class="error-message gt-form-table"><p></p></div>
@@ -205,21 +205,19 @@
 									
 									<c:if test="${locaisDisponiveis.size() > 1}">
 										<div class="row">
-											<div class="col-sm-4">
+											<div class="col-sm-12">
 												<div class="form-group">
 													<label>Local</label>
-													<div>											
-														<input type="hidden" name="solicitante" value="${solicitacao.solicitante.id}" id="solicitante"></input>
-					 									<select name="solicitacao.local.id" id="local" onchange="sbmt('solicitacao.local')" class="form-control">
-						        						<c:forEach items="${locaisDisponiveis.keySet()}" var="orgao">
-						                						<optgroup label="${orgao.acronimoOrgaoUsu}">
-						                						<c:forEach items="${locaisDisponiveis.get(orgao)}" var="local">
-						                        						<option value="${local.idComplexo}" ${solicitacao.local.idComplexo.equals(local.idComplexo) ? 'selected' : ''}>${local.nomeComplexo}</option>
-						                						</c:forEach>
-						                						</optgroup>
-						        						</c:forEach>
-														</select>
-													</div>
+													<input type="hidden" name="solicitante" value="${solicitacao.solicitante.id}" id="solicitante"></input>
+				 									<select name="solicitacao.local.id" id="local" onchange="sbmt('solicitacao.local')" class="form-control">
+					        						<c:forEach items="${locaisDisponiveis.keySet()}" var="orgao">
+					                						<optgroup label="${orgao.acronimoOrgaoUsu}">
+					                						<c:forEach items="${locaisDisponiveis.get(orgao)}" var="local">
+					                        						<option value="${local.idComplexo}" ${solicitacao.local.idComplexo.equals(local.idComplexo) ? 'selected' : ''}>${local.nomeComplexo}</option>
+					                						</c:forEach>
+					                						</optgroup>
+					        						</c:forEach>
+													</select>
 												</div>
 											</div>
 										</div>
@@ -255,16 +253,14 @@
 											<div class="col-sm-12">
 												<div class="form-group">
 													<label>Origem da Demanda</label>
-													<div>
-														<siga:select id="meioComunicacao" 
-						                     				name="solicitacao.meioComunicacao" 
-						                     				list="meiosComunicadaoList" 
-						                     				listValue="descrMeioComunicacao" 
-						                     				listKey="idTipoContato"
-						                     				value="${solicitacao.meioComunicacao}"
-						                     				isEnum="true"
-						                     				onchange="toggleDataOrigem();" />
-						                     		</div>
+													<siga:select id="meioComunicacao" 
+					                     				name="solicitacao.meioComunicacao" 
+					                     				list="meiosComunicadaoList" 
+					                     				listValue="descrMeioComunicacao" 
+					                     				listKey="idTipoContato"
+					                     				value="${solicitacao.meioComunicacao}"
+					                     				isEnum="true"
+					                     				onchange="toggleDataOrigem();" />
 												</div>
 											</div>
 										</div>
@@ -326,8 +322,8 @@
 
 							
 							<div>
-								<div>
-									<h6>Detalhamento</h6>
+								<div style="margin-top: 15px">
+									<h5>Detalhamento</h5>
 								</div>
 							
 								

@@ -21,9 +21,9 @@
 			onchange="dispararFuncoesOnBlurItem();"
 			checarInput="true"			
 			paramList="sol.id=${solicitacao.id};sol.solicitante.id=${solicitante.idPessoa};sol.local.id=${local.idComplexo};sol.titular.id=${titular.idPessoa};sol.lotaTitular.id=${lotaTitular.idLotacao}" />
+		<span id="itemNaoInformado" class="error" style="color: red; display: none;">Item não informado</span>
 	</div>
-	<br/><span id="itemNaoInformado" class="error" style="color: red; display: none;">Item não informado</span>
-	<br/>
+	
 	<div id="divAcao" depende="solicitacao.itemConfiguracao" >
 		<c:if test="${exibeConhecimento}">
 			<c:if test="${solicitacao.itemConfiguracao != null && podeUtilizarServicoSigaGC}">
@@ -57,7 +57,7 @@
 		</c:if>
 		<c:set var="acoesEAtendentes" value="${solicitacao.acoesEAtendentes}" />
 		<c:if test="${not empty solicitacao.itemConfiguracao && not empty acoesEAtendentes}"> 
-			<div class="form-group" style="margin-top: 10px;">
+			<div class="form-group">
 				<label>A&ccedil;&atilde;o</label>	
 				<select name="solicitacao.acao.id" id="selectAcao" onchange="carregarAcao();" class="form-control">
 					<c:if test="${metodo == 'editar'}">
@@ -76,11 +76,11 @@
 							</c:forEach>
 						</optgroup>
 					</c:forEach>
+				<span id="acaoNaoInformada" class="error" style="color: red; display: none;">Ação não informada</span>
 				</select>
-				<br/><span id="acaoNaoInformada" class="error" style="color: red; display: none;">Ação não informada</span>
 			</div>
 			<c:if test="${exibeLotacaoNaAcao}">
-				<div class="gt-form-row" style="margin-top: 10px;">
+				<div class="form-group">
 					<!-- Necessario listar novamente a lista "acoesEAtendentes" para ter a lotacao designada da cada acao
 							ja que acima no select nao tem como "esconder" essa informacao -->
 					<c:forEach items="${acoesEAtendentes.keySet()}" var="cat" varStatus="catPosition">
@@ -93,7 +93,7 @@
 					</c:forEach>
 			
 					<label id="labelAtendentePadrao">Atendente</label>
-					<span id="atendentePadrao" style="display:block;" class="form-controxl" readonly></span>
+					<span id="atendentePadrao" style="display:none;" class="form-control" readonly></span>
 					<input type="hidden" name="solicitacao.designacao.id" id="idDesignacao" value="" />
 					<input type="hidden" name="atendente.id" id="idAtendente" value="" />
 				</div>
@@ -154,8 +154,9 @@ function carregarAcao() {
 		carregarLotacaoDaAcao();
 		removerAcaoRepetida();
 		apagarMsgErroFechamentoAutomatico();
+		$('#atendentePadrao').show();
 		sbmt('solicitacao.acao', postbackURL()+'&solicitacao.acao.id='+idSelecionado, false, null);
-	}
+	}	
 }
 function apagarMsgErroFechamentoAutomatico() {
 	$('#erroCheckFechadoAuto').hide();

@@ -250,11 +250,12 @@
 											</div>
 										</div>
 									</div>
-										
+									
+							
 																			
 									<div id="meioComunicacaoEDataOrigem">
 										<div class="row">
-											<div class="col-sm-6">
+											<div class="col-sm-12">
 												<div class="form-group">
 													<label>Origem da Demanda</label>
 													<div>
@@ -269,27 +270,40 @@
 						                     		</div>
 												</div>
 											</div>
+										</div>
 										
-											<div id="dataOrigem" class="col-sm-4">
-												<label>Contato inicial</label> 
-												<label>Data</label> 
-												<siga:dataCalendar nome="calendario" id="calendarioComunicacao" value="${solicitacao.dtOrigemDDMMYYYY}"/>
-												<siga:error name="calendario"/>
-											</div>
-											<div class="col-sm-2">
-												<div class="form-group">
-													<label>Hora</label> 
-													<input class="form-control" type="text" name="horario" id="horarioComunicacao" value="${solicitacao.dtOrigemHHMM}" />
-					    							<siga:error name="horario"/>
+										<div id="dataOrigem">
+											<div class="row">
+												<div class="col-sm-3">
+													<label>Contato inicial</label>
 												</div>
-											</div>
-											<input type="hidden" name="solicitacao.dtOrigemString" id="stringDtMeioContato" value="${solicitacao.dtOrigemDDMMYYYYHHMM}" />																													
+												<div class="col-sm-4">
+													<div class="form-group">
+														<label>Data</label>
+														<!-- <input class="form-control" type="date" value="${solicitacao.dtOrigemDDMMYYYY}" id="calendarioComunicacao"  nome="calendario">  --> 	
+														<siga:dataCalendar nome="calendario" id="calendarioComunicacao" value="${solicitacao.dtOrigemDDMMYYYY}"/>
+
+														<siga:error name="calendario"/>
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group">
+														<label>Hora</label> 
+														<input class="form-control" type="text" name="horario" id="horarioComunicacao" value="${solicitacao.dtOrigemHHMM}" />
+					    								<siga:error name="horario"/>
+													</div>
+												</div>
+												<input type="hidden" name="solicitacao.dtOrigemString" id="stringDtMeioContato" value="${solicitacao.dtOrigemDDMMYYYYHHMM}" />
+											</div>																													
 										</div>
 									</div>
 										
 									<script>
 										toggleInterlocutorMeioComunicacaoEDataOrigem();
 									</script>
+										
+										
+										
 										
 									<div class="gt-form-row gt-width-66">
 										<label>Quando deseja receber notifica&ccedil;&atilde;o dessa solicita&ccedil;&atilde;o por e-mail?</label>

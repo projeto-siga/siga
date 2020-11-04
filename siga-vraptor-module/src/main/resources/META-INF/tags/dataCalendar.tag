@@ -12,14 +12,14 @@
 	<c:set var="nomeclean" value="${id}" />
 </c:if>
 
-<input type="text" name="${nome}" id="${nomeclean}" value="${value}" onchange="${onchange}" class="${cssClass}">
+<input type="text" name="${nome}" id="${nomeclean}" value="${value}" onchange="${onchange}" class="${cssClass} form-control">
 
 <script>
 	$(function() {
 		$("#${nomeclean}").datepicker({
-		    showOn: "button",
-		    buttonImage: "/siga/css/famfamfam/icons/calendar.png",
-		    buttonImageOnly: true,
+		    //showOn: "button",
+		    //buttonImage: "/siga/css/famfamfam/icons/calendar.png",
+		    //buttonImageOnly: true,
 		    dateFormat: 'dd/mm/yy',
 		    monthNames: ["Janeiro", "Fevereiro", "Mar\u00E7o", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
 		    monthNamesShort : ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],

@@ -145,7 +145,14 @@
 									<h5>Dados B&aacute;sicos</h5>
 								</div>
 							
-								<div class="error-message gt-form-table"><p></p></div>
+								<div class="error-message gt-form-table">
+									<p class="alert alert-danger" role="alert" style="display: none">
+									</p>
+								</div>
+							
+							
+
+							
 								
 								<!--  Cadastrante -->
 								<div class="row">
@@ -399,40 +406,15 @@
 										<br />
 									</c:when>
 								</c:choose>
-								<div class="gt-form-row">
+								<div class="gt-form-row mt-2">
 									<input type="button" value="Gravar" class="btn btn-primary" id="gravar" /> 
 									<c:if test="${not empty solicitacao.id}">
 									<a href="${linkTo[SolicitacaoController].excluir}?sigla=${solicitacao.siglaCompacta}" class="gt-btn-alternate-medium gt-btn-left">Descartar</a>
 									</c:if>
 								</div>
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
 							</div>		
 						</form>
-					
-					
-					
-					
-					
-						
 					</div>									
-					
 				</div>
 			</div>
 			

@@ -76,8 +76,8 @@
 							</c:forEach>
 						</optgroup>
 					</c:forEach>
-				<span id="acaoNaoInformada" class="error" style="color: red; display: none;">Ação não informada</span>
 				</select>
+				<span id="acaoNaoInformada" class="error" style="color: red; display: none;">Ação não informada</span>
 			</div>
 			<c:if test="${exibeLotacaoNaAcao}">
 				<div class="form-group">
@@ -201,7 +201,7 @@ function limparMensagemListener() {
 function addMensagemErroGeral() {
 	$('div.error-message').find('p')
 		.addClass('gt-error')
-		.text('Alguns campos obrigatórios não foram preenchidos. Verificar mensagens abaixo.');
+		.text('Alguns campos obrigatórios não foram preenchidos. Verificar mensagens abaixo.').show();
 
 	$('html, body').animate({ scrollTop: 0 }, 'fast');
 }

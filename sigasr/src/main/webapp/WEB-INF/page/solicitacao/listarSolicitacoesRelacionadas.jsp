@@ -1,14 +1,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<div class="card">
-	<div class="card-header">
-		<h6>Solicita&ccedil;&otilde;es Relacionadas</h6>
-	</div>
+<div class="card mb-1">
+	<h6 class="card-header">Solicita&ccedil;&otilde;es Relacionadas</h6>
 
 	<div class="card-body">
 
-		<div class="gt-content-box gt-form" style="margin-bottom: 5px !important; padding: 10px 10px 10px 10px;">
+		<div class="gt-content-box gt-form">
 			<form id="formRelacionadas">
 			
 			<%-- Edson: o hidden abaixo impede que o filtro chegue nulo ao servidor no postback se nenhuma checkbox estiver marcada.

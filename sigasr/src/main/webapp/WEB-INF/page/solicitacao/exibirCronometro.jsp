@@ -8,13 +8,11 @@
 <c:if test="${not empty etapasCronometro}">
 <c:forEach var="etapa" items="${etapasCronometro}">
 
-	<div class="card cronometro ${etapa.ativo ? 'ligado' : 'desligado'}">
-		<div class="card-header">
-			<h6>
-				<img src="/siga/css/famfamfam/icons/clock.png" width="15px;"
-					style="vertical-align: bottom;">&nbsp;${etapa.descricaoCompleta}
-			</h6>
-		</div>
+	<div class="card mb-1 cronometro ${etapa.ativo ? 'ligado' : 'desligado'}">
+		<h6 class="card-header">
+			<img src="/siga/css/famfamfam/icons/clock.png" width="15px;"
+				style="vertical-align: bottom;">&nbsp;${etapa.descricaoCompleta}
+		</h6>
 		<div class="card-body">
 		
 			<c:if test="${not empty etapa.inicio}">

@@ -108,6 +108,7 @@
 					<c:if test="${not empty solicitacao.itemConfiguracao && not empty solicitacao.acao && podeUtilizarServicoSigaGC}">
 						<!-- CONHECIMENTOS RELACIONADOS -->
 						<div style="display: inline-block" >
+							<!-- Exibe resultado da chamada exibirConhecimentoRelacionadoAoItemEAcao: -->
 							<div id="gc-ancora-item-acao"></div>
 						</div>
 						<script>

@@ -207,6 +207,14 @@ public class AppController extends GcController {
 		renderKnowledge(id, tags, "sidebar", msgvazio, urlvazio, titulo,
 				testarAcesso, popup, estiloBusca, podeCriar, pagina);
 	}
+	
+	public void knowledgeSidebarSr(Long id, String[] tags, String msgvazio,
+			String urlvazio, String titulo, boolean testarAcesso,
+			boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
+			throws Exception {
+		renderKnowledge(id, tags, "sidebar", msgvazio, urlvazio, titulo,
+				testarAcesso, popup, estiloBusca, podeCriar, pagina);
+	}
 
 	private void renderKnowledge(Long id, String[] tags, String estilo,
 			String msgvazio, String urlvazio, String titulo,

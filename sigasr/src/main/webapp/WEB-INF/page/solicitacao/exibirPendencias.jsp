@@ -1,10 +1,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <c:if test="${not empty pendencias}">
-		<div class="card">
-			<div class="card-header">		
-				Pend&ecirc;ncias
-			</div>
+		<div class="card mb-1">
+			<h6 class="card-header">Pend&ecirc;ncias</h6>
 			<div class="card-body">
 			
 				<c:forEach items="${pendencias}" var="pendencia">

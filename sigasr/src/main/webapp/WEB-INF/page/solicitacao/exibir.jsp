@@ -49,7 +49,7 @@
 
 	</style>
 
-	<div class="gt-bd gt-cols clearfix" style="padding-bottom: 0px;">
+	<div class="container-fluid">
 		<div class="gt-content">
 			<h2>${solicitacao.codigo}</h2>
 			<p></p>
@@ -110,6 +110,7 @@
 					}
 					parseDescricao('descrSolicitacao');
 				</script>
+				
 				<c:forEach items="${atributos}" var="att">
 					<c:if test="${att.valorAtributoSolicitacao != null && !att.valorAtributoSolicitacao.isEmpty()}">
 						<div>

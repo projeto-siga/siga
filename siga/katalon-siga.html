@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+	<title>katalon-siga</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Login</td></tr>
+</thead>
+<tbody>
+<tr><td>open</td><td>http://localhost:8080/siga/public/app/login<datalist><option>http://localhost:8080/siga/public/app/login?cont=http%3A%2F%2Flocalhost%3A8080%2Fsiga%2Fapp%2Fprincipal</option><option>http://localhost:8080/siga/public/app/login</option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>id=username<datalist><option>id=username</option><option>name=username</option><option>//input[@id='username']</option><option>//form[@id='formLogin']/div/div/input</option><option>//input</option><option>css=#username</option></datalist></td><td></td>
+</tr>
+<tr><td>type</td><td>id=username<datalist><option>id=username</option><option>name=username</option><option>//input[@id='username']</option><option>//form[@id='formLogin']/div/div/input</option><option>//input</option><option>css=#username</option></datalist></td><td>ZZ99999</td>
+</tr>
+<tr><td>click</td><td>//button[@type='submit']<datalist><option>//button[@type='submit']</option><option>//form[@id='formLogin']/div[3]/div/div/button</option><option>//div[3]/div/div/button</option><option>css=button.btn.btn-lg.btn-primary.btn-block</option></datalist></td><td></td>
+</tr>
+</tbody></table>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Criar Memorando</td></tr>
+</thead>
+<tbody>
+<tr><td>open</td><td>http://localhost:8080/siga/app/principal?exibirAcessoAnterior=true<datalist><option>http://localhost:8080/siga/app/principal?exibirAcessoAnterior=true</option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>link=Criar Documento<datalist><option>link=Criar Documento</option><option>//a[contains(text(),'Criar Documento')]</option><option>//a[contains(@href, "javascript: window.location.href='/sigaex/app/expediente/doc/editar'")]</option><option>//div[3]/a</option><option>css=a.btn.btn-primary.float-right.btn-sm.ml-2</option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>id=formulario_exDocumentoDTO.lotacaoDestinatarioSel_sigla<datalist><option>id=formulario_exDocumentoDTO.lotacaoDestinatarioSel_sigla</option><option>name=exDocumentoDTO.lotacaoDestinatarioSel.sigla</option><option>//input[@id='formulario_exDocumentoDTO.lotacaoDestinatarioSel_sigla']</option><option>//span[@id='destinatario']/div/input</option><option>//span/div/input</option></datalist></td><td></td>
+</tr>
+<tr><td>type</td><td>id=formulario_exDocumentoDTO.lotacaoDestinatarioSel_sigla<datalist><option>id=formulario_exDocumentoDTO.lotacaoDestinatarioSel_sigla</option><option>name=exDocumentoDTO.lotacaoDestinatarioSel.sigla</option><option>//input[@id='formulario_exDocumentoDTO.lotacaoDestinatarioSel_sigla']</option><option>//span[@id='destinatario']/div/input</option><option>//span/div/input</option></datalist></td><td>LTEST</td>
+</tr>
+<tr><td>click</td><td>id=formulario_exDocumentoDTO.classificacaoSel_sigla<datalist><option>id=formulario_exDocumentoDTO.classificacaoSel_sigla</option><option>name=exDocumentoDTO.classificacaoSel.sigla</option><option>//input[@id='formulario_exDocumentoDTO.classificacaoSel_sigla']</option><option>//span[@id='classificacao']/div/input</option><option>//div[9]/div/div/div/span/div/input</option></datalist></td><td></td>
+</tr>
+<tr><td>type</td><td>id=formulario_exDocumentoDTO.classificacaoSel_sigla<datalist><option>id=formulario_exDocumentoDTO.classificacaoSel_sigla</option><option>name=exDocumentoDTO.classificacaoSel.sigla</option><option>//input[@id='formulario_exDocumentoDTO.classificacaoSel_sigla']</option><option>//span[@id='classificacao']/div/input</option><option>//div[9]/div/div/div/span/div/input</option></datalist></td><td>00.01.01.01</td>
+</tr>
+<tr><td>click</td><td>id=descrDocumento<datalist><option>id=descrDocumento</option><option>name=exDocumentoDTO.descrDocumento</option><option>//textarea[@id='descrDocumento']</option><option>//form[@id='frm']/div[10]/div/div/div/textarea</option><option>//textarea</option><option>css=#descrDocumento</option></datalist></td><td></td>
+</tr>
+<tr><td>type</td><td>id=descrDocumento<datalist><option>id=descrDocumento</option><option>name=exDocumentoDTO.descrDocumento</option><option>//textarea[@id='descrDocumento']</option><option>//form[@id='frm']/div[10]/div/div/div/textarea</option><option>//textarea</option><option>css=#descrDocumento</option></datalist></td><td>Teste</td>
+</tr>
+<tr><td>selectFrame</td><td>index=0<datalist><option>index=0</option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>//html<datalist><option>//html</option><option>css=html</option></datalist></td><td></td>
+</tr>
+<tr><td>editContent</td><td>//body<datalist><option>//body</option><option>css=body.cke_editable.cke_editable_themed.cke_contents_ltr.vsc-initialized.cke_show_borders</option></datalist></td><td>&lt;p style="text-align:justify; text-indent:2cm"&gt;Teste.&lt;/p&gt;</td>
+</tr>
+<tr><td>selectFrame</td><td>relative=parent<datalist><option>relative=parent</option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>id=btnGravar<datalist><option>id=btnGravar</option><option>name=gravar</option><option>//button[@id='btnGravar']</option><option>//form[@id='frm']/div[12]/div/button</option><option>//div[12]/div/button</option><option>css=#btnGravar</option></datalist></td><td></td>
+</tr>
+</tbody></table>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Definir Perfil</td></tr>
+</thead>
+<tbody>
+<tr><td>click</td><td>link=Definir Perfil<datalist><option>link=Definir Perfil</option><option>//a[contains(text(),'Definir&amp;nbsp;Perfil')]</option><option>//div[@id='page']/div[2]/div/p/a[2]</option><option>//a[contains(@href, '/sigaex/app/expediente/mov/vincularPapel?sigla=TMP-26&amp;')]</option><option>//a[2]</option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>id=formulario_responsavelSel_sigla<datalist><option>id=formulario_responsavelSel_sigla</option><option>name=responsavelSel.sigla</option><option>//input[@id='formulario_responsavelSel_sigla']</option><option>//span[@id='selecaoResponsavel']/div/input</option><option>//span/div/input</option><option>css=#formulario_responsavelSel_sigla</option></datalist></td><td></td>
+</tr>
+<tr><td>type</td><td>id=formulario_responsavelSel_sigla<datalist><option>id=formulario_responsavelSel_sigla</option><option>name=responsavelSel.sigla</option><option>//input[@id='formulario_responsavelSel_sigla']</option><option>//span[@id='selecaoResponsavel']/div/input</option><option>//span/div/input</option><option>css=#formulario_responsavelSel_sigla</option></datalist></td><td>zz99998</td>
+</tr>
+<tr><td>click</td><td>name=dtMovString<datalist><option>name=dtMovString</option><option>//input[@name='dtMovString']</option><option>//div/div/input</option><option>css=input[name="dtMovString"]</option></datalist></td><td></td>
+</tr>
+<tr><td>type</td><td>name=dtMovString<datalist><option>name=dtMovString</option><option>//input[@name='dtMovString']</option><option>//div/div/input</option><option>css=input[name="dtMovString"]</option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>name=idPapel<datalist><option>name=idPapel</option><option>//select[@name='idPapel']</option><option>//div[2]/div/div/select</option><option>css=select[name="idPapel"]</option></datalist></td><td></td>
+</tr>
+<tr><td>select</td><td>name=idPapel<datalist><option>name=idPapel</option><option>//select[@name='idPapel']</option><option>//div[2]/div/div/select</option><option>css=select[name="idPapel"]</option></datalist></td><td>label=Interessado</td>
+</tr>
+<tr><td>click</td><td>//input[@value='Ok']<datalist><option>//input[@value='Ok']</option><option>//div[3]/div/input</option><option>css=input.btn.btn-primary</option><option>//input[@value='O1k']</option></datalist></td><td></td>
+</tr>
+</tbody></table>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Editar</td></tr>
+</thead>
+<tbody>
+<tr><td>click</td><td>link=Editar<datalist><option>link=Editar</option><option>//div[@id='page']/div[2]/div/p/a[4]</option><option>//a[contains(@href, '/sigaex/app/expediente/doc/editar?sigla=TMP-26&amp;')]</option><option>//a[4]</option></datalist></td><td></td>
+</tr>
+<tr><td>selectFrame</td><td>index=0<datalist><option>index=0</option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>//p<datalist><option>//p</option><option>css=p</option></datalist></td><td></td>
+</tr>
+<tr><td>editContent</td><td>//body<datalist><option>//body</option><option>css=body.cke_editable.cke_editable_themed.cke_contents_ltr.vsc-initialized.cke_show_borders</option></datalist></td><td>&lt;p style="text-align:justify; text-indent:2cm"&gt;Teste. Teste 2.&lt;/p&gt;</td>
+</tr>
+<tr><td>selectFrame</td><td>relative=parent<datalist><option>relative=parent</option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>//button[@id='btnGravar']/u<datalist><option>//button[@id='btnGravar']/u</option><option>//u</option><option>css=u</option></datalist></td><td></td>
+</tr>
+</tbody></table>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Incluir cossignatario</td></tr>
+</thead>
+<tbody>
+<tr><td>click</td><td>link=Incluir Cossignatário<datalist><option>link=Incluir Cossignatário</option><option>//a[contains(text(),'Incluir&amp;nbsp;Cossignatário')]</option><option>//div[@id='page']/div[2]/div/p/a[7]</option><option>//a[contains(@href, '/sigaex/app/expediente/mov/incluir_cosignatario?sigla=TMP-26&amp;')]</option><option>//a[7]</option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>id=formulario_cosignatarioSel_sigla<datalist><option>id=formulario_cosignatarioSel_sigla</option><option>name=cosignatarioSel.sigla</option><option>//input[@id='formulario_cosignatarioSel_sigla']</option><option>//div/div/div/div/div/input</option><option>css=#formulario_cosignatarioSel_sigla</option></datalist></td><td></td>
+</tr>
+<tr><td>type</td><td>id=formulario_cosignatarioSel_sigla<datalist><option>id=formulario_cosignatarioSel_sigla</option><option>name=cosignatarioSel.sigla</option><option>//input[@id='formulario_cosignatarioSel_sigla']</option><option>//div/div/div/div/div/input</option><option>css=#formulario_cosignatarioSel_sigla</option></datalist></td><td>zz99998</td>
+</tr>
+<tr><td>click</td><td>name=funcaoCosignatario<datalist><option>name=funcaoCosignatario</option><option>//input[@name='funcaoCosignatario']</option><option>//div/div[2]/div/input</option><option>css=input[name="funcaoCosignatario"]</option></datalist></td><td></td>
+</tr>
+<tr><td>type</td><td>name=funcaoCosignatario<datalist><option>name=funcaoCosignatario</option><option>//input[@name='funcaoCosignatario']</option><option>//div/div[2]/div/input</option><option>css=input[name="funcaoCosignatario"]</option></datalist></td><td> </td>
+</tr>
+<tr><td>type</td><td>name=funcaoCosignatario<datalist><option>name=funcaoCosignatario</option><option>//input[@name='funcaoCosignatario']</option><option>//div/div[2]/div/input</option><option>css=input[name="funcaoCosignatario"]</option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>//input[@value='Ok']<datalist><option>//input[@value='Ok']</option><option>//div[2]/div/input</option><option>css=input.btn.btn-primary</option></datalist></td><td></td>
+</tr>
+</tbody></table>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Excluir Cossignatario</td></tr>
+</thead>
+<tbody>
+<tr><td>click</td><td>xpath=(//a[contains(text(),'Excluir')])[2]<datalist><option>xpath=(//a[contains(text(),'Excluir')])[2]</option><option>//div[@id='collapseCossignatários']/ul/li/a</option><option>//a[contains(@href, '/sigaex/app/expediente/mov/excluir?id=4')]</option><option>//div[4]/div[2]/ul/li/a</option><option>css=a.btn.btn-sm.btn-light.mb-2</option></datalist></td><td></td>
+</tr>
+</tbody></table>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Ver Dossiê</td></tr>
+</thead>
+<tbody>
+<tr><td>click</td><td>link=Ver Dossiê<datalist><option>link=Ver Dossiê</option><option>//div[@id='page']/div[2]/div/p/a[10]</option><option>//a[contains(@href, '/sigaex/app/expediente/doc/exibirProcesso?sigla=TMP-26&amp;')]</option><option>//a[10]</option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>id=radioPDF<datalist><option>id=radioPDF</option><option>//input[@id='radioPDF']</option><option>//div[@id='page']/div[3]/div/div[2]/div/span[4]/input</option><option>//span[4]/input</option><option>css=#radioPDF</option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>id=radioPDFSemMarcas<datalist><option>id=radioPDFSemMarcas</option><option>//input[@id='radioPDFSemMarcas']</option><option>//div[@id='page']/div[3]/div/div[2]/div/span[6]/input</option><option>//span[6]/input</option><option>css=#radioPDFSemMarcas</option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>id=TelaCheia<datalist><option>id=TelaCheia</option><option>//button[@id='TelaCheia']</option><option>//div[@id='page']/div[3]/div/div[2]/button</option><option>//div[3]/div/div[2]/button</option><option>css=#TelaCheia</option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>link=Visualizar Movimentações<datalist><option>link=Visualizar Movimentações</option><option>//div[@id='page']/div[3]/div/div[2]/a</option><option>xpath=(//a[contains(@href, '/sigaex/app/expediente/doc/exibir?sigla=TMP-26')])[2]</option><option>//div[2]/a</option><option>css=a.once.btn.btn-sm.btn-info.text-white.link-tag.link-tag</option></datalist></td><td></td>
+</tr>
+</tbody></table>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Finalizar</td></tr>
+</thead>
+<tbody>
+<tr><td>click</td><td>link=Ver Mais<datalist><option>link=Ver Mais</option><option>//div[@id='page']/div[2]/div/p/a[12]</option><option>//a[contains(@href, '/sigaex/app/expediente/doc/exibirAntigo?sigla=TMP-28&amp;')]</option><option>//a[12]</option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>link=Finalizar<datalist><option>link=Finalizar</option><option>//div[@id='page']/p/a[7]</option><option>//a[contains(@href, '/sigaex/app/expediente/doc/finalizar?sigla=TMP-28&amp;')]</option><option>//a[7]</option></datalist></td><td></td>
+</tr>
+</tbody></table>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Anotar</td></tr>
+</thead>
+<tbody>
+<tr><td>click</td><td>link=Anotar<datalist><option>link=Anotar</option><option>//div[@id='page']/div[2]/div/p/a</option><option>//a[contains(@href, '/sigaex/app/expediente/mov/anotar?sigla=ZZ-MEM-2020/00002-A&amp;')]</option><option>//p/a</option></datalist></td><td></td>
+</tr>
+<tr><td>type</td><td>name=descrMov<datalist><option>name=descrMov</option><option>//textarea[@name='descrMov']</option><option>//div[@id='page']/div/div/div[2]/form/div[4]/div/div/textarea</option><option>//textarea</option><option>css=textarea[name="descrMov"]</option></datalist></td><td>Teste de anotação</td>
+</tr>
+<tr><td>click</td><td>//input[@value='Ok']<datalist><option>//input[@value='Ok']</option><option>//div[@id='page']/div/div/div[2]/form/div[5]/div/input</option><option>//div[5]/div/input</option><option>css=input.btn.btn-primary</option></datalist></td><td></td>
+</tr>
+</tbody></table>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Excluir Anotação</td></tr>
+</thead>
+<tbody>
+<tr><td>click</td><td>link=Excluir<datalist><option>link=Excluir</option><option>//a[contains(text(),'Excluir')]</option><option>//div[@id='page']/div[3]/div/div/div[3]/table/tbody/tr/td[4]/a</option><option>//a[contains(@href, '/sigaex/app/expediente/mov/excluir?sigla=ZZ-MEM-2020/00002-A&amp;id=8&amp;')]</option><option>//td[4]/a</option></datalist></td><td></td>
+</tr>
+</tbody></table>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Redefinir Acesso</td></tr>
+</thead>
+<tbody>
+<tr><td>click</td><td>link=Redefinir Acesso<datalist><option>link=Redefinir Acesso</option><option>//a[contains(text(),'Redefinir&amp;nbsp;Acesso')]</option><option>//div[@id='page']/div[2]/div/p/a[11]</option><option>//a[contains(@href, '/sigaex/app/expediente/mov/redefinir_nivel_acesso?sigla=ZZ-MEM-2020/00002&amp;')]</option><option>//a[11]</option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>name=nivelAcesso<datalist><option>name=nivelAcesso</option><option>//select[@name='nivelAcesso']</option><option>//select</option><option>css=select[name="nivelAcesso"]</option></datalist></td><td></td>
+</tr>
+<tr><td>select</td><td>name=nivelAcesso<datalist><option>name=nivelAcesso</option><option>//select[@name='nivelAcesso']</option><option>//select</option><option>css=select[name="nivelAcesso"]</option></datalist></td><td>label=Limitado entre pessoas</td>
+</tr>
+<tr><td>click</td><td>//input[@value='Ok']<datalist><option>//input[@value='Ok']</option><option>//div[4]/div/input</option><option>css=input.btn.btn-primary</option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>link=Redefinir Acesso<datalist><option>link=Redefinir Acesso</option><option>//a[contains(text(),'Redefinir&amp;nbsp;Acesso')]</option><option>//div[@id='page']/div[2]/div/p/a[12]</option><option>//a[contains(@href, '/sigaex/app/expediente/mov/redefinir_nivel_acesso?sigla=ZZ-MEM-2020/00002&amp;')]</option><option>//a[12]</option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>name=nivelAcesso<datalist><option>name=nivelAcesso</option><option>//select[@name='nivelAcesso']</option><option>//select</option><option>css=select[name="nivelAcesso"]</option></datalist></td><td></td>
+</tr>
+<tr><td>select</td><td>name=nivelAcesso<datalist><option>name=nivelAcesso</option><option>//select[@name='nivelAcesso']</option><option>//select</option><option>css=select[name="nivelAcesso"]</option></datalist></td><td>label=Público</td>
+</tr>
+<tr><td>click</td><td>//input[@value='Ok']<datalist><option>//input[@value='Ok']</option><option>//div[4]/div/input</option><option>css=input.btn.btn-primary</option></datalist></td><td></td>
+</tr>
+</tbody></table>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Assinar com Senha</td></tr>
+</thead>
+<tbody>
+<tr><td>click</td><td>id=assinar<datalist><option>id=assinar</option><option>link=Assinar</option><option>//a[@id='assinar']</option><option>//div[@id='page']/div[2]/div/p/a</option><option>//a[contains(@href, '/sigaex/app/expediente/mov/assinar?sigla=TMP-31&amp;')]</option><option>//p/a</option><option>css=#assinar</option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>id=bot-assinar<datalist><option>id=bot-assinar</option><option>link=Assinar</option><option>//a[@id='bot-assinar']</option><option>//a[contains(@href, '#')]</option><option>//div[2]/a</option><option>css=#bot-assinar</option></datalist></td><td></td>
+</tr>
+<tr><td>type</td><td>id=senhaUsuarioSubscritor<datalist><option>id=senhaUsuarioSubscritor</option><option>//input[@id='senhaUsuarioSubscritor']</option><option>//div[@id='senhaDialog']/div/div/div[2]/fieldset/input[2]</option><option>//fieldset/input[2]</option><option>css=#senhaUsuarioSubscritor</option></datalist></td><td>Password1</td>
+</tr>
+<tr><td>click</td><td>id=senhaDialog<datalist><option>id=senhaDialog</option><option>//div[@id='senhaDialog']</option><option>//div[8]</option><option>css=#senhaDialog</option></datalist></td><td></td>
+</tr>
+<tr><td>type</td><td>id=nomeUsuarioSubscritor<datalist><option>id=nomeUsuarioSubscritor</option><option>//input[@id='nomeUsuarioSubscritor']</option><option>//div[@id='senhaDialog']/div/div/div[2]/fieldset/input</option><option>//fieldset/input</option><option>css=#nomeUsuarioSubscritor</option></datalist></td><td></td>
+</tr>
+<tr><td>type</td><td>id=senhaUsuarioSubscritor<datalist><option>id=senhaUsuarioSubscritor</option><option>//input[@id='senhaUsuarioSubscritor']</option><option>//div[@id='senhaDialog']/div/div/div[2]/fieldset/input[2]</option><option>//fieldset/input[2]</option><option>css=#senhaUsuarioSubscritor</option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>id=nomeUsuarioSubscritor<datalist><option>id=nomeUsuarioSubscritor</option><option>//input[@id='nomeUsuarioSubscritor']</option><option>//div[@id='senhaDialog']/div/div/div[2]/fieldset/input</option><option>//fieldset/input</option><option>css=#nomeUsuarioSubscritor</option></datalist></td><td></td>
+</tr>
+<tr><td>type</td><td>id=nomeUsuarioSubscritor<datalist><option>id=nomeUsuarioSubscritor</option><option>//input[@id='nomeUsuarioSubscritor']</option><option>//div[@id='senhaDialog']/div/div/div[2]/fieldset/input</option><option>//fieldset/input</option><option>css=#nomeUsuarioSubscritor</option></datalist></td><td>ZZ99999</td>
+</tr>
+<tr><td>type</td><td>id=senhaUsuarioSubscritor<datalist><option>id=senhaUsuarioSubscritor</option><option>//input[@id='senhaUsuarioSubscritor']</option><option>//div[@id='senhaDialog']/div/div/div[2]/fieldset/input[2]</option><option>//fieldset/input[2]</option><option>css=#senhaUsuarioSubscritor</option></datalist></td><td>Password1</td>
+</tr>
+<tr><td>click</td><td>id=senhaOk<datalist><option>id=senhaOk</option><option>//button[@id='senhaOk']</option><option>//div[@id='senhaDialog']/div/div/div[3]/button[2]</option><option>//button[2]</option><option>css=#senhaOk</option></datalist></td><td></td>
+</tr>
+</tbody></table>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Receber</td></tr>
+</thead>
+<tbody>
+<tr><td>click</td><td>id=receber<datalist><option>id=receber</option><option>link=Receber</option><option>//a[contains(text(),'Receber')]</option><option>//a[@id='receber']</option><option>//div[@id='page']/div[2]/div/p/a[8]</option><option>//a[contains(@href, '/sigaex/app/expediente/mov/receber?sigla=ZZ-MEM-2020/00005-A&amp;')]</option><option>//a[8]</option><option>css=#receber</option></datalist></td><td></td>
+</tr>
+</tbody></table>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Arquivar Corrente e Desarquivar</td></tr>
+</thead>
+<tbody>
+<tr><td>click</td><td>id=arq-corrente<datalist><option>id=arq-corrente</option><option>link=Arq. Corrente</option><option>//a[@id='arq-corrente']</option><option>//div[@id='page']/div[2]/div/p/a[3]</option><option>//a[contains(@href, '/sigaex/app/expediente/mov/arquivar_corrente_gravar?sigla=ZZ-MEM-2020/00005-A&amp;')]</option><option>//a[3]</option><option>css=#arq-corrente</option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>id=desarq-corrente<datalist><option>id=desarq-corrente</option><option>link=Desarq. Corrente</option><option>//a[@id='desarq-corrente']</option><option>//div[@id='page']/div[2]/div/p/a[5]</option><option>//a[contains(@href, '/sigaex/app/expediente/mov/reabrir_gravar?sigla=ZZ-MEM-2020/00005-A&amp;')]</option><option>//a[5]</option><option>css=#desarq-corrente</option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>id=arq-corrente<datalist><option>id=arq-corrente</option><option>link=Arq. Corrente</option><option>//a[@id='arq-corrente']</option><option>//div[@id='page']/div[2]/div/p/a[3]</option><option>//a[contains(@href, '/sigaex/app/expediente/mov/arquivar_corrente_gravar?sigla=ZZ-MEM-2020/00005-A&amp;')]</option><option>//a[3]</option><option>css=#arq-corrente</option></datalist></td><td></td>
+</tr>
+<tr><td>chooseOkOnNextConfirmation</td><td><datalist><option></option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>id=desfazer-arquivamento-corrente<datalist><option>id=desfazer-arquivamento-corrente</option><option>link=Desfazer Arquivamento Corrente</option><option>//a[@id='desfazer-arquivamento-corrente']</option><option>//div[@id='page']/div[2]/div/p/a[6]</option><option>//a[contains(@href, "javascript:if (confirm('Confirma o cancelamento da última movimentação (Arquivamento Corrente)?')) location.href='/sigaex/app/expediente/mov/cancelarMovimentacao?sigla=ZZ-MEM-2020/00005-A&amp;';")]</option><option>//a[6]</option><option>css=#desfazer-arquivamento-corrente</option></datalist></td><td></td>
+</tr>
+<tr><td>assertConfirmation</td><td>Confirma o cancelamento da última movimentação (Arquivamento Corrente)?<datalist><option>Confirma o cancelamento da última movimentação (Arquivamento Corrente)?</option></datalist></td><td></td>
+</tr>
+</tbody></table>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Sobrestar e Dessobrestar</td></tr>
+</thead>
+<tbody>
+<tr><td>click</td><td>id=sobrestar<datalist><option>id=sobrestar</option><option>link=Sobrestar</option><option>//a[@id='sobrestar']</option><option>//div[@id='page']/div[2]/div/p/a[16]</option><option>//a[contains(@href, '/sigaex/app/expediente/mov/sobrestar_gravar?sigla=ZZ-MEM-2020/00005-A&amp;')]</option><option>//a[16]</option><option>css=#sobrestar</option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>id=desobrestar<datalist><option>id=desobrestar</option><option>link=Desobrestar</option><option>//a[@id='desobrestar']</option><option>//div[@id='page']/div[2]/div/p/a[6]</option><option>//a[contains(@href, '/sigaex/app/expediente/mov/desobrestar_gravar?sigla=ZZ-MEM-2020/00005-A&amp;')]</option><option>//a[6]</option><option>css=#desobrestar</option></datalist></td><td></td>
+</tr>
+</tbody></table>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Tramitar e cancelar tramite</td></tr>
+</thead>
+<tbody>
+<tr><td>click</td><td>id=tramitar<datalist><option>id=tramitar</option><option>link=Tramitar</option><option>//a[@id='tramitar']</option><option>//div[@id='page']/div[2]/div/p/a[18]</option><option>//a[contains(@href, '/sigaex/app/expediente/mov/transferir?sigla=ZZ-MEM-2020/00005-A&amp;')]</option><option>//a[18]</option><option>css=#tramitar</option></datalist></td><td></td>
+</tr>
+<tr><td>type</td><td>id=formulario_lotaResponsavelSel_sigla<datalist><option>id=formulario_lotaResponsavelSel_sigla</option><option>name=lotaResponsavelSel.sigla</option><option>//input[@id='formulario_lotaResponsavelSel_sigla']</option><option>//form[@id='frm']/div/div[2]/div/div/input</option><option>//div/div[2]/div/div/input</option><option>css=#formulario_lotaResponsavelSel_sigla</option></datalist></td><td>ltest2</td>
+</tr>
+<tr><td>click</td><td>name=dtDevolucaoMovString<datalist><option>name=dtDevolucaoMovString</option><option>//input[@name='dtDevolucaoMovString']</option><option>//form[@id='frm']/div[2]/div/div/input</option><option>//div[2]/div/div/input</option><option>css=input[name="dtDevolucaoMovString"]</option></datalist></td><td></td>
+</tr>
+<tr><td>type</td><td>name=dtDevolucaoMovString<datalist><option>name=dtDevolucaoMovString</option><option>//input[@name='dtDevolucaoMovString']</option><option>//form[@id='frm']/div[2]/div/div/input</option><option>//div[2]/div/div/input</option><option>css=input[name="dtDevolucaoMovString"]</option></datalist></td><td>11/11/2011</td>
+</tr>
+<tr><td>click</td><td>//form[@id='frm']/div[2]/div<datalist><option>//form[@id='frm']/div[2]/div</option><option>//form/div[2]/div</option></datalist></td><td></td>
+</tr>
+<tr><td>type</td><td>name=dtDevolucaoMovString<datalist><option>name=dtDevolucaoMovString</option><option>//input[@name='dtDevolucaoMovString']</option><option>//form[@id='frm']/div[2]/div/div/input</option><option>//div[2]/div/div/input</option><option>css=input[name="dtDevolucaoMovString"]</option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>//form[@id='frm']/div[2]<datalist><option>//form[@id='frm']/div[2]</option><option>//form/div[2]</option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>//a[@id='button_ok']/u<datalist><option>//a[@id='button_ok']/u</option><option>//u</option><option>css=u</option></datalist></td><td></td>
+</tr>
+<tr><td>chooseOkOnNextConfirmation</td><td><datalist><option></option></datalist></td><td></td>
+</tr>
+<tr><td>click</td><td>id=desfazer-transferencia<datalist><option>id=desfazer-transferencia</option><option>link=Desfazer Transferência</option><option>//a[@id='desfazer-transferencia']</option><option>//div[@id='page']/div[2]/div/p/a[4]</option><option>//a[contains(@href, "javascript:if (confirm('Confirma o cancelamento da última movimentação (Transferência)?')) location.href='/sigaex/app/expediente/mov/cancelarMovimentacao?sigla=ZZ-MEM-2020/00001-A&amp;';")]</option><option>//a[4]</option><option>css=#desfazer-transferencia</option></datalist></td><td></td>
+</tr>
+<tr><td>assertConfirmation</td><td>Confirma o cancelamento da última movimentação (Transferência)?<datalist><option>Confirma o cancelamento da última movimentação (Transferência)?</option></datalist></td><td></td>
+</tr>
+</tbody></table>
+</body>
+</html>

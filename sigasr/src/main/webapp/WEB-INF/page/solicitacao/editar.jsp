@@ -352,7 +352,19 @@
 								</div>
 								<div class="form-group">
 									<label>Anexar arquivo</label>
+									<div class="form-control custom-file">
+										<input class="custom-file-input" id="idSelecaoArquivo" type="file" name="solicitacao.arquivo" accept="*.*"/>
+										<label class="custom-file-label text-truncate" for="idSelecaoArquivo" data-browse="Escolha o Arquivo">Clique para selecionar o arquivo a anexar</label>
+									</div>
+									<script js>
+										$('.custom-file-input').on('change', function() { 
+											   let fileName = $(this).val().split('\\').pop(); 
+											   $(this).next('.custom-file-label').addClass("selected").html(fileName); 
+											});
+									</script>
+									<!-- 
 									<input type="file" name="solicitacao.arquivo" class="form-control"/>
+									 -->
 								</div>
 		
 								<c:if test="${exibirCampoPrioridade}">

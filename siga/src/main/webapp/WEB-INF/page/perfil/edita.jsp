@@ -53,7 +53,9 @@
 				return;
 			}
 			document.formulario.action =  t_strUrl;
+			desabilitarCampos();
 			document.formulario.submit();
+			rehabilitarCampos();
 		}
 	}
 	function trim (p_strString) {
@@ -321,7 +323,36 @@
 			}
 		}
 	} 
-</script>
+	
+	function desabilitarCampos() {
+		$("input[name^='matricula_']").attr('disabled', 'disabled');
+		$("input[name^='reqmatricula_']").attr('disabled', 'disabled');
+		$("input[name^='lotacao_']").attr('disabled', 'disabled');
+		$("input[name^='reqlotacao_']").attr('disabled', 'disabled');
+		$("input[name^='cargo_']").attr('disabled', 'disabled');
+		$("input[name^='reqcargo_']").attr('disabled', 'disabled');
+		$("input[name^='funcao_']").attr('disabled', 'disabled');
+		$("input[name^='reqfuncao_']").attr('disabled', 'disabled');
+		$("input[name^='formulario_texto_']").attr('disabled', 'disabled');
+		$("textarea[name^='formulario_area_']").attr('disabled', 'disabled');
+		$("input[name='alterouSel']").attr('disabled', 'disabled');
+	}
+
+	function rehabilitarCampos() {
+		$("input[name^='matricula_']").removeAttr('disabled');
+		$("input[name^='reqmatricula_']").removeAttr('disabled');
+		$("input[name^='lotacao_']").removeAttr('disabled');
+		$("input[name^='reqlotacao_']").removeAttr('disabled');
+		$("input[name^='cargo_']").removeAttr('disabled');
+		$("input[name^='reqcargo_']").removeAttr('disabled');
+		$("input[name^='funcao_']").removeAttr('disabled');
+		$("input[name^='reqfuncao_']").removeAttr('disabled');
+		$("input[name^='formulario_texto_']").removeAttr('disabled');
+		$("textarea[name^='formulario_area_']").removeAttr('disabled');
+		$("input[name='alterouSel']").removeAttr('disabled');
+	}
+
+	</script>
 <siga:pagina titulo="Edição de ${cpTipoGrupo.dscTpGrupo}">
 	<!-- main content -->
 	<div class="container-fluid">

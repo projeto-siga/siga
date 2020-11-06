@@ -6,6 +6,8 @@
 
 <siga:pagina titulo="${solicitacao.codigo}">
 	<jsp:include page="../main.jsp"></jsp:include>
+	
+	<script src="/siga/javascript/siga.js"></script>
 
 	<script src="/sigasr/javascripts/jquery.dataTables.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>

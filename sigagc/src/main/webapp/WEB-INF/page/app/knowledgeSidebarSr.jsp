@@ -1,20 +1,6 @@
 <%@ include file="/WEB-INF/page/include.jsp"%>
-
-
-
-
-
-
-<!-- 
-<a title="Registrar um novo conhecimento" style="float: right;"
-	href="${linkTo[AppController].editar}?classificacao=${classificacao}"
-	${popup?'target="_blank" ':''}> <img
-	src="/siga/css/famfamfam/icons/add.png">
-</a>
-<h3>Conhecimentos Relacionados</h3>
- -->
  
-<div class="card mb-1">
+<div class="card mb-3">
 	<h6 class="card-header">Conhecimentos Relacionados
 		<a title="Registrar um novo conhecimento" style="float: right;"
 			href="${linkTo[AppController].editar}?classificacao=${classificacao}"

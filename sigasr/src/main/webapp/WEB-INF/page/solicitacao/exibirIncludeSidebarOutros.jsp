@@ -72,5 +72,5 @@
 </c:if>
   
  <div id="divConhecimentosRelacionados">
-     <jsp:include page="exibirConhecimentosRelacionados.jsp"></jsp:include>
+     <jsp:include page="exibirConhecimentosRelacionados.jsp"/>
  </div>

@@ -2659,5 +2659,15 @@ public class CpDao extends ModeloDao {
 	
 	
 	
+	public <T extends Selecionavel> T carregarPorId(T o) {
+		Long id = o.getId();
+		if (id == null)
+			return null;
+		return (T) consultar(id, o.getClass(), false);
+	}
 
+	public <T> T carregar(T objetoDetachado) {
+		return (T) em().find(objetoDetachado.getClass(), 
+				em().getEntityManagerFactory().getPersistenceUnitUtil().getIdentifier(objetoDetachado));
+	}
 }

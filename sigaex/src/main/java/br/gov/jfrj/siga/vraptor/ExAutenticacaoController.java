@@ -1,6 +1,7 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -149,6 +150,7 @@ public class ExAutenticacaoController extends ExController {
 				certificado = null;
 
 			try {
+				SigaTransacionalInterceptor.upgradeParaTransacional();
 				Ex.getInstance()
 						.getBL()
 						.assinarMovimentacao(
@@ -190,18 +192,31 @@ public class ExAutenticacaoController extends ExController {
 
 		ExArquivo arq = Ex.getInstance().getBL().buscarPorNumeroAssinatura(n);
 
-		byte[] bytes;
-		String fileName;
-		String contentType;
-		if (idMov != null && idMov != 0) {
-			ExMovimentacao mov = dao().consultar(idMov, ExMovimentacao.class,
-					false);
-
-			fileName = arq.getReferencia() + "_" + mov.getIdMov() + ".p7s";
-			contentType = mov.getConteudoTpMov();
-
-			bytes = mov.getConteudoBlobMov2();
-
+		byte[] bytes = null;
+		String fileName = null;
+		String contentType = null;
+ 		if (idMov != null && idMov != 0) {
+ 			ExMovimentacao mov = dao().consultar(idMov, ExMovimentacao.class,
+ 					false);
+			
+			switch ( mov.getExTipoMovimentacao().getId().intValue()) {
+			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA:
+			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA:
+				fileName = arq.getReferencia() + "_" + mov.getIdMov() + ".jwt";
+				contentType = "application/jwt";
+				if (mov.getAuditHash() == null)
+					throw new AplicacaoException(
+							"Esta é uma assinatura digital como login e senha e não há nenhum artefato comprobatório disponível para download.");
+				bytes = mov.getAuditHash().getBytes(StandardCharsets.UTF_8);
+				break;
+				
+			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO:
+			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO:
+				fileName = arq.getReferencia() + "_" + mov.getIdMov() + ".p7s";
+				contentType = mov.getConteudoTpMov();
+				bytes = mov.getConteudoBlobMov2();
+				break;
+			}
 		} else {
 			fileName = arq.getReferenciaPDF();
 			contentType = "application/pdf";

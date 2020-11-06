@@ -1,7 +1,7 @@
--------------------------------------------
+-- -----------------------------------------
 --	SCRIPT: CAMPOS CP_ORGAO_USUARIO
 --	RESOLUÇÃO DO TRELLO 1390 (Tabela cp_orgao_usuario - incluir campos)
--------------------------------------------
+-- -----------------------------------------
 
 ALTER TABLE corporativo.cp_orgao_usuario ADD (HIS_DT_INI DATE);
 ALTER TABLE corporativo.cp_orgao_usuario ADD (HIS_DT_FIM DATE);

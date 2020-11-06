@@ -21,7 +21,6 @@ package br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +32,8 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -42,24 +43,23 @@ import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import net.sf.jasperreports.engine.JRException;
 
 public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 
 	public RelatorioDocumentosSubordinados(Map parametros)
-			throws DJBuilderException {
+			throws Exception {
 		super(parametros);
-		if (parametros.get("secaoUsuario") == null) {
-			throw new DJBuilderException(
+		if (Utils.empty((String) parametros.get("secaoUsuario"))) {
+			throw new AplicacaoException(
 					"Parâmetro secaoUsuario não informado!");
 		}
-		if (parametros.get("lotacao") == null) {
-			throw new DJBuilderException(
+		if (Utils.empty((String) parametros.get("lotacao"))) {
+			throw new AplicacaoException(
 					"Parâmetro lotação não informado!");
 		}
-		if (parametros.get("link_siga") == null) {
-			throw new DJBuilderException("Parâmetro link_siga não informado!");
+		if (Utils.empty((String) parametros.get("link_siga"))) {
+			throw new AplicacaoException("Parâmetro link_siga não informado!");
 		}
 
 	}

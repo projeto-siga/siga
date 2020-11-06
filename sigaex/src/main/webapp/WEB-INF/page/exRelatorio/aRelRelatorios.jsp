@@ -16,6 +16,7 @@ page
 
 		var newwindow = '';
 		function visualizarRelatorio(rel) {
+			// Alterado para gerar o relatório na própria página, pois assim os erros podem ser tratados com o botão de "Voltar".
 			if (!newwindow.closed && newwindow.location) {
 			} else {
 				var popW = 600;
@@ -134,6 +135,7 @@ page
 			<div class="card-body">
 				<form name="frmRelatorios" action="${actionName}" theme="simple"
 					method="get" enctype="multipart/form-data">
+					<input type="hidden" name="newWindow" value="1" />
 					<input type="hidden" name="postback" value="1" /> <input
 						type="hidden" name="secaoUsuario"
 						value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" /> <input

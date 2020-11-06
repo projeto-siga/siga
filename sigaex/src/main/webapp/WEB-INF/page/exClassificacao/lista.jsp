@@ -34,7 +34,7 @@
 			</div>
 		</div>
 
-		<table class="table table-hover ">
+		<table class="table table-hover table-sm">
 			<thead class="${thead_color} align-middle text-center">
 				<tr>
 					<th>Codificação</th>
@@ -66,20 +66,21 @@
 						<td rowspan="${cla.numVias + viasDefault}"
 							class="align-middle text-left">${cla.descrClassificacao}</td>
 						<c:choose>
-							<c:when test="${cla.numVias > 0}">
-								<c:forEach items="${cla.exViaSet}" var="via" varStatus="loop">
-									<c:if test="${loop.index>0}">
-										</tr>
+							<c:when test="${numVias > 0}">
+ 								<c:forEach items="${cla.exViaSet}" var="via" varStatus="loop">
+ 									<c:if test="${loop.index>0}">
 										<tr>
-									</c:if>	
+									</c:if>
 									<td>${via.codVia}</td>
 									<td>${via.exTipoDestinacao.descrTipoDestinacao}</td>
 									<td>${via.temporalidadeCorrente.descTemporalidade}</td>
 									<td>${via.temporalidadeIntermediario.descTemporalidade}</td>
 									<td>${via.exDestinacaoFinal.descrTipoDestinacao}</td>
-									</tr>
-								</c:forEach>
-							</c:when>
+									<c:if test="${loop.index<numVias0}">
+					 					</tr>
+									</c:if>
+				 				</c:forEach>
+			 				</c:when>
 							<c:otherwise>
 								<td />
 								<td />

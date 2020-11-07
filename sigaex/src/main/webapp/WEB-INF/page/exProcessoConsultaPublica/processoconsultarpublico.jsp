@@ -44,32 +44,7 @@
 					</div>	
 				</div>
 			</div>
-			<div class="col">
-			
-				<div class="card mb-3" >
-				  <div class="card-header">
-				    <h5>Informações Gerais</h5>
-				  </div>
-				  <div class="card-body">
-				    <p>Para utilizar a Confirmação da Autenticidade do Protocolo é
-					obrigatório informar o código do Protocolo.</p>
-					<p>
-						<u>Preenchimento do campo Código do Protocolo</u>
-					</p>
-					<ul>
-						<li>O campo deve ser preenchido com todos os números e letras
-						(Maiúsculas e Minúsculas).</li>
-						<li>Exemplo de preenchimento: eF4Gf5gM5F</li>
-					</ul>
-					<br />
-					<p>
-						<u>Ao preencher o código do protocolo, favor clicar na caixa em "Verificação"</u>
-					</p>
-				  </div>
-				</div>
-			</div>
 		</div>
-		
 	</div>
 	</div>
 	</div>

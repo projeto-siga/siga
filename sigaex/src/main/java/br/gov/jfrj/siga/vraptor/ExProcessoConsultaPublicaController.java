@@ -3,7 +3,6 @@ package br.gov.jfrj.siga.vraptor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -28,11 +27,9 @@ import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.ex.ExArquivo;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
@@ -103,9 +100,15 @@ public class ExProcessoConsultaPublicaController extends ExController {
 
 		final ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO();
 		exDocumentoDTO.setSigla(n);
-		buscarDocumento(false, exDocumentoDTO);
-		ExDocumento doc = exDocumentoDTO.getDoc();
-
+		buscarDocumento(false, true, exDocumentoDTO);
+		
+		ExDocumento doc;
+		if (exDocumentoDTO.getDoc() != null) {
+			doc = exDocumentoDTO.getDoc();
+		} else {
+			throw new AplicacaoException("Documento não encontrado.");
+		}
+		
 		if (doc.getNivelAcesso().equals("10")) {
 
 			ExMobil mob = null;
@@ -140,77 +143,9 @@ public class ExProcessoConsultaPublicaController extends ExController {
 			result.include("mob", exDocumentoDTO.getMob());
 			
 		} else {
-			setDefaultResults();
-			result.redirectTo(URL_EXIBIR);
+			
+			throw new AplicacaoException("O número informado faz referência a um documento que não é público.");
 		}
-		
-
-		
-		
-//		ExArquivo arq = Ex.getInstance().getBL().buscarPorProtocolo(n);
-//
-//		Set<ExMovimentacao> assinaturas = arq.getAssinaturasDigitais();
-//
-//		/*
-//		 * ExMovimentacao mov = null; if (arq.isCodigoParaAssinaturaExterna(n)) { mov =
-//		 * (ExMovimentacao) arq; }
-//		 */
-//		setDefaultResults();
-//		result.include("assinaturas", assinaturas);
-//		// result.include("mov", mov);
-//		result.include("n", n);
-//		result.include("jwt", jwt);
-//		
-//		if (arq instanceof ExDocumento) {
-//			ExMobil mob = null;
-//			ExDocumento doc = (ExDocumento) arq;
-//			if (doc.isFinalizado()) {
-//				if (doc.isProcesso()) {
-//					mob = doc.getUltimoVolume();
-//				} else {
-//					mob = doc.getPrimeiraVia();
-//				}
-//			}
-//
-//			final ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO();
-//
-//			exDocumentoDTO.setSigla(doc.getSigla());
-//			buscarDocumento(false, exDocumentoDTO);
-//
-//			if (doc.isFinalizado()) {
-//				if (doc.isProcesso()) {
-//					mob = doc.getUltimoVolume();
-//				} else {
-//					mob = doc.getPrimeiraVia();
-//				}
-//			}
-//			
-//			List<ExMobil> lstMobil = dao().consultarMobilPorDocumento(doc);
-//			List<ExMovimentacao> lista = dao().consultarMovimentoIncluindoJuntadaPorMobils(lstMobil);								
-//			
-//			DpPessoa p = new DpPessoa();
-//			DpLotacao l = new DpLotacao();
-//
-//			p = doc.getSubscritor();
-//			l = doc.getLotaSubscritor();
-//
-//			if (p == null && !lista.isEmpty()) {
-//				p = lista.get(0).getSubscritor();
-//			}
-//
-//			if (l == null && !lista.isEmpty()) {
-//				l = lista.get(0).getLotaSubscritor();
-//			}
-//
-//			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getCadastrante(), p, l, true, true);
-//			docVO.exibe();
-//			result.include("movs", lista);
-//			result.include("sigla",exDocumentoDTO.getDoc().getSigla());
-//			result.include("msg", exDocumentoDTO.getMsg());
-//			result.include("docVO", docVO);
-//			result.include("mob", exDocumentoDTO.getMob());
-//
-//		}
 	}
 
 	
@@ -255,13 +190,6 @@ public class ExProcessoConsultaPublicaController extends ExController {
 		}
 	}
 
-	/*
-	 * Base de historico
-	 */
-
-	private void buscarDocumento(final boolean fVerificarAcesso, final ExDocumentoDTO exDocumentoDTO) {
-		buscarDocumento(fVerificarAcesso, false, exDocumentoDTO);
-	}
 
 	private void buscarDocumento(final boolean fVerificarAcesso, final boolean fPodeNaoExistir,
 			final ExDocumentoDTO exDocumentoDto) {

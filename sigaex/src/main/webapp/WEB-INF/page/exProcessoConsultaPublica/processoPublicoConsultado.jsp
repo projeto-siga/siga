@@ -19,37 +19,8 @@
 							Acompanhamento e Autenticação de Protocolo - Documento <b>${sigla}</b> 
 						</h5>
 					</div>
-					<!--
-					<div class="card-body">
-						<div>
-							<c:url var='pdfAssinado'
-								value='/public/app/processoArquivoAutenticado_stream?jwt=${jwt}&assinado=true' />
-							<c:url var='pdf'
-								value='/public/app/processoArquivoAutenticado_stream?jwt=${jwt}&assinado=false' />
-							<iframe src="${pdfAssinado}" width="100%" height="600" align="center" style="margin-top: 10px;"> </iframe>
-						</div>
-					</div>
-					-->
 				</div>
 			</div>
-			<!--
-			<div class="col">
-				<div class="row">
-					<div class="col">
-						<div class="card bg-light mb-3" >
-							<div class="card-header">
-								<h5>
-									<i class="fa fa-file-pdf"></i> Arquivos para Download
-								</h5>
-							</div>
-							<div class="card-body">
-								<i class="fa fa-angle-double-right"></i> <a href="${pdf}" target="_blank">PDF do documento</a>
-							</div>
-						</div>
-					</div>
-				</div>				
-			</div>
-			-->
 		</div>
 		<div class="row">
 			<div class="col-12">
@@ -133,9 +104,9 @@
 													<span style="font-size: .8rem;color: #9e9e9e;">| documento juntado ${mov.exMobil}</span>
 												</c:if>
 											</td>
-											<td align="left">${mov.lotaCadastrante.sigla} </td>
+											<td align="left">${mov.lotaCadastrante.nomeLotacao}(${mov.lotaCadastrante.sigla})</td>
 											<td align="left">${mov.cadastrante.nomeAbreviado}</td>
-											<td align="left">${mov.lotaResp.sigla}</td>
+											<td align="left">${mov.lotaResp.nomeLotacao}(${mov.lotaResp.sigla})</td>
 											<td align="left">${mov.resp.nomeAbreviado}</td>
 										</tr>
 										<c:choose>

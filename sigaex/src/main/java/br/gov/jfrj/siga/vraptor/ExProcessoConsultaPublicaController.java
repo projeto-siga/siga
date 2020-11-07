@@ -231,7 +231,6 @@ public class ExProcessoConsultaPublicaController extends ExController {
 
 	
 //	------------------------------ CAPTCHA
-
 	private boolean isCaptchaValido() throws UnirestException, JSONException {
 		
 		String recaptchaSitePassword = getRecaptchaSitePassword();
@@ -258,9 +257,7 @@ public class ExProcessoConsultaPublicaController extends ExController {
 			}
 		}
 		
-//		TODO: Retirar isso AQUI!!!! 
-//		return success;
-		return true;
+		return success;
 	}
 
 	

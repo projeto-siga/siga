@@ -8,7 +8,7 @@
 		-
 		${solicitacao.descrAcaoAtual}
 	</label>
-	<p id="descrSolicitacao" class="form-control">${solicitacao.descricao}</p>
+	<p id="descricaoSolicitacao" class="form-control">${solicitacao.descricao}</p>
 	<script language="javascript">
 
 		function formatStr(str, n) {
@@ -47,7 +47,7 @@
 				return '<a href="' + b + '">' + b + '</a>' + a.replace(b, '');
 			});
 		}
-		parseDescricao('descrSolicitacao');
+		parseDescricao('descricaoSolicitacao');
 	</script>
 	
 	<c:forEach items="${atributos}" var="att">

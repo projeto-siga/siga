@@ -28,7 +28,7 @@
 	            <label>Descri&ccedil;&atilde;o</label>
 	            <textarea name="movimentacao.descrMovimentacao"
 	            	class="form-control"
-	                id="descrSolicitacao" cols="70" rows="4"></textarea>
+	                id="descrAnexoArquivo" cols="70" rows="4"></textarea>
 	        </div>
 	        <div class="mt-2">
 	            <input type="submit" value="Gravar"

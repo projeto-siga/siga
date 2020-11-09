@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ attribute name="acoes" type="java.util.SortedSet"%>
 
-<p class="gt-table-action-list">
+<p class="gt-table-action-list mb-2">
 	<c:set var="linkSeparator" value="${false}"/>
 	<c:set var="classbtn" value="link-btn btn btn-sm btn-light"/>
 	

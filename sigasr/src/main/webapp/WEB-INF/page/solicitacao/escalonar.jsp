@@ -59,9 +59,9 @@
 				
 				<input type="hidden" name="atendenteNaoDesignado.id" id="atendenteNaoDesignado" value="" />
 				<br/>
-				<div class="gt-form-row">
+				<div class="form-group">
 					<label>Descri&ccedil;&atilde;o</label>
-					<textarea name="descricao" cols="85" rows="4"></textarea>
+					<textarea name="descricao" class="form-control" rows="4"></textarea>
 				</div>
 			<div id="outrasInformacoesDaFilha" class="gt-form-row">
 				<c:if test="${!isPai && empty solicitacaoPai}">
@@ -73,7 +73,7 @@
 					<span style="display: none; color: red" id="erroCheckFechadoAuto">N&atilde;o é possível fechar automaticamente solicita&ccedil;&atilde;o com a&ccedil;&atilde;o Atendimento de 1º nível. Necessário reclassificar a aç&atilde;o.</span>
 				</c:if>
 			</div>
-			<div id="motivoEscalonamento" class="gt-form-row">
+			<div id="motivoEscalonamento" class="form-group">
 				<label>Motivo do Escalonamento</label>
 				<siga:select name="motivo" value="NOVO_ATENDENTE" list="tipoMotivoEscalonamentoList" isEnum="true" 
 					listValue="descrTipoMotivoEscalonamento" listKey="descrTipoMotivoEscalonamento" style="width: auto;"/>
@@ -81,30 +81,22 @@
 			<div class="gt-form-row">
 				<input type="hidden" name="solicitacao.codigo" id="sigla" value="${siglaCompacta}" />
 				<input type="hidden" name="solicitante" value="${solicitante}">
-				<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="gravar()"/>
-				<a href="${linkTo[SolicitacaoController].exibir(siglaCompacta)}" class="gt-btn-medium gt-btn-left">Voltar</a>
+				<input type="button" value="Gravar" class="btn btn-primary" onclick="gravar()"/>				
+				<a class="btn btn-primary" role="button" href="${linkTo[SolicitacaoController].exibir(siglaCompacta)}" style="color: #fff">Voltar</a>
 			</div>
 		</form>
 	</div>
 
 	<sigasr:modal nome="lotacaoAtendente" titulo="Alterar Atendente padrão">
-		<div id="dialogAtendente">
-			<div class="gt-content">
-				<div class="gt-form gt-content-box">
-					<div class="gt-form-row">
-						<div class="gt-form-row">
-							<label>Lota&ccedil;&atilde;o Atendente</label> 
-							<input type="hidden" name="lotacaoSelecao" id="lotacaoSelecao" class="selecao">
-							<siga:selecao2 tipo="lotacao" propriedade="lotacao" tema="simple" modulo="siga" />
-							<span style="display: none; color: red" id="atendente">Atendente n&atilde;o informado.</span>
-						</div>
-						<div class="gt-form-row">
-							<a href="javascript: alterarAtendente()" class="gt-btn-medium gt-btn-left">Ok</a>
-							<a href="javascript: modalFechar('lotacaoAtendente')" class="gt-btn-medium gt-btn-left">Cancelar</a>
-						</div>
-					</div>
-				</div>
-			</div>
+		<div class="form-group">
+			<label>Lota&ccedil;&atilde;o Atendente</label> 
+			<input type="hidden" name="lotacaoSelecao" id="lotacaoSelecao" class="selecao">
+			<siga:selecao2 tipo="lotacao" propriedade="lotacao" tema="simple" modulo="siga" />
+			<span style="display: none; color: red" id="atendente">Atendente n&atilde;o informado.</span>
+		</div>
+		<div class="gt-form-row">
+			<a href="javascript: alterarAtendente()" class="btn btn-primary" style="color: #fff">Ok</a>
+			<a href="javascript: modalFechar('lotacaoAtendente')" class="btn btn-primary" style="color: #fff">Cancelar</a>
 		</div>
 	</sigasr:modal>
 

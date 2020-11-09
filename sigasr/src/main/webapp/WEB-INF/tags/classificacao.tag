@@ -93,12 +93,13 @@
 					</c:forEach>
 			
 					<label id="labelAtendentePadrao">Atendente</label>
-					<span id="atendentePadrao" style="display:none;" class="form-control" readonly></span>
+					<span id="atendentePadrao" style="display:block;" class="form-control" readonly>						
+					</span>
 					<input type="hidden" name="solicitacao.designacao.id" id="idDesignacao" value="" />
 					<input type="hidden" name="atendente.id" id="idAtendente" value="" />
 				</div>
 				<c:if test="${metodo == 'escalonar'}">
-					<a href="javascript: modalAbrir('lotacaoAtendente')" class="gt-btn-medium" style="margin: 5px 0 0 -3px;">
+					<a href="javascript: modalAbrir('lotacaoAtendente')" class="btn btn-primary" style="color: #fff">
 						Alterar atendente
 					</a>
 				</c:if>
@@ -166,7 +167,7 @@ function apagarMsgErroFechamentoAutomatico() {
 }
 function dispararFuncoesOnBlurItem() {
 	var executarFuncao = carregarLotacaoDaAcao;
-	$('#itemNaoInformado').hide();
+	$('#itemNaoInformado').hide();	
 	if ('${metodo}' !== 'editar')
 		executarFuncao = carregarAcao;
 	sbmt('solicitacao.itemConfiguracao', null, false, executarFuncao);
@@ -282,7 +283,10 @@ function carregarLotacaoDaAcao() {
 
 function definirDesignacaoEAtendente(idDesignacaoDaAcao, descLotacao, idLotacao) {
 	$("#idDesignacao").val(idDesignacaoDaAcao);
-	$("#atendentePadrao").html(descLotacao);
+	if(descLotacao)
+		$("#atendentePadrao").html(descLotacao);
+	else 
+		$("#atendentePadrao").hide();
 	$("#idAtendente").val(idLotacao);
 	//garante que quando alterar a acao o atendenteNaoDesignado fique vazio
 	$("#atendenteNaoDesignado").val('');

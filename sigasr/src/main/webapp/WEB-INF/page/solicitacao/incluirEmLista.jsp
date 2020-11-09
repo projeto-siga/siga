@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
-<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
+<div>
 	<form id="formSelecionarLista" action="${linkTo[SolicitacaoController].incluirEmListaGravar}?sigla=${solicitacao.siglaCompacta}
 		${lista != null ? '&idLista='+lista.idLista : ''}" onsubmit="javascript: return block();" enctype="multipart/form-data">
 		<input type="hidden" name="prioridade" />
@@ -9,28 +9,26 @@
 			
 		<div>
 			<table border="0" class="table">
-				<col width="20%" />
-		   		<col width="20%" />
-		    		<thead>
-						<tr class="gt-celula-nowrap">
-							<th style="color: #333; font-weight: bold; padding: 7px 10px;">Incluir</th>
-							<th style="color: #333; font-weight: bold; padding: 7px 10px;">Descri&ccedil;&atilde;o da Lista</th>
-		  				</tr>
-		  			</thead>
-				<tb	ody>
-				<c:forEach items="${solicitacao.getListasDisponiveisParaInclusao(lotaTitular, titular)}" var="lista">
-					<tr>
-						<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-							<input type="radio" name="idLista" value="${lista.idLista}" data-pode-priorizar="${lista.podePriorizar(lotaTitular, titular)}">	
-						</td>
-						<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;" "id="descrLista">
-							${lista.nomeLista}
-						</td>
-					</tr>		
-				</c:forEach>
+	    		<thead>
+					<tr class="gt-celula-nowrap">
+						<th>Incluir</th>
+						<th>Descri&ccedil;&atilde;o da Lista</th>
+	  				</tr>
+	  			</thead>
+	  			<tbody>
+					<c:forEach items="${solicitacao.getListasDisponiveisParaInclusao(lotaTitular, titular)}" var="lista">
+						<tr>
+							<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+								<input type="radio" name="idLista" value="${lista.idLista}" data-pode-priorizar="${lista.podePriorizar(lotaTitular, titular)}">	
+							</td>
+							<td style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;" "id="descrLista">
+								${lista.nomeLista}
+							</td>
+						</tr>		
+					</c:forEach>
 				</tbody>
 			</table>
-		</div>	
+		</div>
 		
 		<div class="gt-table-button gt-width-66">
 			<input type="hidden" name="sigla" value="${solicitacao.siglaCompacta}">

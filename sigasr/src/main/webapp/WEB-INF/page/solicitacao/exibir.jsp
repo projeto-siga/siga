@@ -96,6 +96,13 @@
 <script language="javascript">	
 	function terminarPendencia(idMov) {
 		$("#movimentacaoId").val(idMov);
+		$("#terminarPendenciaModal_dialog").dialog({
+			autoOpen: false,
+	    	height: 'auto',
+		    width: '80%',
+		    modal: true,
+		    resizable: false
+		})
 		$("#terminarPendenciaModal_dialog").dialog("open");
 	}
 

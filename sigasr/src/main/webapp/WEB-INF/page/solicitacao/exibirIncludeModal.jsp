@@ -94,31 +94,29 @@
 <sigasr:modal nome="responderPesquisa" titulo="Responder Pesquisa" url="responderPesquisa?sigla=${solicitacao.siglaCompacta}" largura="80%"/>
 
 <sigasr:modal nome="deixarPendente" titulo="Pendência" largura="80%">
-        <div class="gt-content-box gt-form clearfix">
+        <div class="mb-2">
             <form action="${linkTo[SolicitacaoController].deixarPendente}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
                 <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
-                <input type="hidden" name="ocultas" value="${ocultas}" />
-                <div class="gt-form-row gt-width-66">
+                <input type="hidden" name="ocultas" value="${ocultas}" />                
+                <div class="form-group">
                     <label>Data de T&eacute;rmino</label>
                     <siga:dataCalendar nome="calendario" id="calendario"/>
                 </div>
-                <div class="gt-form-row gt-width-66">
+                <div class="form-group">
                     <label>Hor&aacute;rio de T&eacute;rmino</label>
-                    <input type="text" name="horario" id="horario" />
+                    <input type="text" name="horario" id="horario" class="form-control"/>
                 </div>
-                <div class="gt-form-row gt-width-66">
+                <div class="form-group">
                     <label>Motivo</label>
                     <siga:select name="motivo" id="motivo" list="motivosPendencia"
                          listValue="descrTipoMotivoPendencia" theme="simple" isEnum="true"/>
                 </div>
-                <div class="gt-form-row gt-width-66">
+                <div class="form-group">
                     <label>Detalhamento do Motivo</label>
-                    <textarea name="detalheMotivo" cols="50" rows="4"> </textarea>
+                    <textarea name="detalheMotivo" rows="4" class="form-control"> </textarea>
                 </div>
-                <div class="gt-form-row">
-                    <input type="hidden" name="sigla" value="${solicitacao.siglaCompacta}" /> <input
-                        type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
-                </div>
+               	<input type="hidden" name="sigla" value="${solicitacao.siglaCompacta}" /> 
+               	<input type="submit" value="Gravar" class="btn btn-primary" />
             </form>
         </div>
 </sigasr:modal> 
@@ -155,17 +153,20 @@
 </sigasr:modal>   
 
 <sigasr:modal nome="terminarPendenciaModal" titulo="Terminar Pendência" largura="80%">
-    <form action="${linkTo[SolicitacaoController].terminarPendencia}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
+    <form action="${linkTo[SolicitacaoController].terminarPendencia}"    	
+    		method="post" 
+    		onsubmit="javascript: return block();" 
+    		enctype="multipart/form-data">
         <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
         <input type="hidden" name="ocultas" value="${ocultas}" />
-        <div style="display: inline" class="gt-form-row gt-width-66">
+        <div class="form-group">
             <label>Descri&ccedil;&atilde;o</label>
-            <textarea style="width: 100%" name="descricao" cols="50" rows="4"> </textarea>
+            <textarea style="width: 100%" name="descricao" rows="4" class="form-control"> </textarea>
         </div>
         <input
             type="hidden" name="idMovimentacao" id="movimentacaoId" value="" /><input
             type="hidden" name="motivo" id="motivoId" value="" /><input
             type="hidden" name="sigla" value="${solicitacao.siglaCompacta}" /> <input
-            type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
+            type="submit" value="Gravar" class="btn btn-primary" />
     </form>
     </sigasr:modal>  

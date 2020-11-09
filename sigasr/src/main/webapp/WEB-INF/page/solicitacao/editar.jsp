@@ -336,7 +336,7 @@
 								
 								<div class="row">
 									<div class="col-sm-12">
-										<div id="divItem" depende="solicitacao.solicitante;solicitacao.local" class="form-controlss">
+										<div id="divItem" depende="solicitacao.solicitante;solicitacao.local" class="form-control">
 											<c:if test="${not empty solicitacao.solicitante}">						
 												<sigasr:classificacao metodo="editar" exibeLotacaoNaAcao="true" exibeConhecimento="true" lotacaoDoTitular="${lotacaoDoTitularLegivel}" />
 											</c:if>

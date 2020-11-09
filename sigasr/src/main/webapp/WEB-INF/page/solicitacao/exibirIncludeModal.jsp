@@ -11,17 +11,28 @@
 	            value="${solicitacao.idSolicitacao}" /> 
 	        <input type="hidden" name="movimentacao.tipoMov.idTipoMov" value="12" />
 	        <input type="hidden" name="movimentacao.tipoMov.nome" value="Anexação de Arquivo" />
-	        <div class="gt-form-row">
-	            <label>Arquivo</label> <input type="file" name="movimentacao.arquivo" />
+	        <div class="form-group">
+	            <label>Arquivo</label> 
+	            <div class="form-control custom-file">
+		            <input class="custom-file-input" id="custom-file-input" type="file" name="movimentacao.arquivo"/>
+		            <label class="custom-file-label text-truncate" for="idSelecaoArquivo" data-browse="Escolha o Arquivo">Clique para selecionar o arquivo a anexar</label>
+	            </div>
+	        	<script js>
+					$('.custom-file-input').on('change', function() { 
+						   let fileName = $(this).val().split('\\').pop(); 
+						   $(this).next('.custom-file-label').addClass("selected").html(fileName); 
+						});
+				</script>
 	        </div>
-	        <div style="display: inline" class="gt-form-row gt-width-66">
+	        <div style="display: inline" class="form-group">
 	            <label>Descri&ccedil;&atilde;o</label>
-	            <textarea style="width: 100%" name="movimentacao.descrMovimentacao"
+	            <textarea name="movimentacao.descrMovimentacao"
+	            	class="form-control"
 	                id="descrSolicitacao" cols="70" rows="4"></textarea>
 	        </div>
-	        <div class="gt-form-row">
+	        <div class="mt-2">
 	            <input type="submit" value="Gravar"
-	                class="gt-btn-medium gt-btn-left" />
+	                class="btn btn-primary" />
 	        </div>
 	    </form>
 	</div>

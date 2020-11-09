@@ -54,6 +54,7 @@
 		   </div>
 	</div>
 </c:if>
+
 <c:if test="${not empty listas}">
 	<div class="card-sidebar card bg-light mb-3">
 	    <div class="card-header">Listas de Prioridade</div>
@@ -61,13 +62,13 @@
 	        <c:forEach items="${listas}" var="listas">
 	            <p>
 	                <input type="hidden" name="idlista"
-	                value="${listas.idLista}" /> <a
-	                style="color: #365b6d; text-decoration: none"
+	                value="${listas.idLista}" /> 
+	                <a style="color: #365b6d; text-decoration: none"
 	                href="${linkTo[SolicitacaoController].exibirLista(listas.idLista)}">
 	                    ${listas.listaAtual.nomeLista} </a>
 	            </p>
 	        </c:forEach>
-       </div
+       </div>
 	</div>
 </c:if>
   

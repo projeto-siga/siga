@@ -51,19 +51,20 @@
         <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
         <input type="hidden" name="ocultas" value="${ocultas}" />
         <input type="hidden" name="sigla" value="${solicitacao.siglaCompacta}" /> 
-        <div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
+        <div class="form-group">
             <label>Solicita&ccedil;&atilde;o</label> <br />
             <siga:selecao2 propriedade="solRecebeJuntada" tipo="solicitacao" tema="simple" modulo="sigasr" onchange="validarAssociacao('Juncao');"
             	tamanho="grande"/>
             <span id="erroSolicitacaoJuncao" style="color: red; display: none;">Solicita&ccedil;&atilde;o n&atilde;o informada.</span>
         </div>
-        <div class="gt-form-row gt-width-100" style="padding: 10px 0;">
+        <div class="form-group">
             <label>Justificativa</label>
-            <textarea style="width: 100%;" cols="70" rows="4" name="justificativa" id="justificativaJuncao" maxlength="255" onkeyup="validarAssociacao('Juncao')"></textarea>
+            <textarea class="form-control" rows="4" name="justificativa" id="justificativaJuncao" maxlength="255" 
+            	onkeyup="validarAssociacao('Juncao')"></textarea>
             <span id="erroJustificativaJuncao" style="color: red; display: none;"><br />Justificativa n&atilde;o informada.</span>
         </div>
         <div style="display: inline" class="gt-form-row ">
-            <input type="button" onclick="gravarAssociacao('Juncao');" value="Gravar" class="gt-btn-medium gt-btn-left" />
+            <input type="button" onclick="gravarAssociacao('Juncao');" value="Gravar" class="btn btn-primary" />
         </div>
     </form>
 </sigasr:modal>

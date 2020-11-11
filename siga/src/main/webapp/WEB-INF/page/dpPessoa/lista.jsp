@@ -141,7 +141,7 @@
 						<div class="col-md-4">
 							<div class="form-group">
 								<label for="nome">Nome Abreviado</label>
-								<input type="text" id="nomeAbreviado" name="nomeAbreviado" value="${nomeAbreviado}" maxlength="100" class="form-control"/>
+								<input type="text" id="nomeAbreviado" name="nomeExibicao" value="${nomeExibicao}" maxlength="100" class="form-control"/>
 							</div>					
 						</div>						
 						<div class="col-md-2">

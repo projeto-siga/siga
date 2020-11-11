@@ -75,19 +75,22 @@
 
 
 <script language="javascript">
-	var select = document
-			.getElementById('${propriedadePessoaClean}${propriedadeLotacaoClean}');
+	var select = document.getElementById('${propriedadePessoaClean}${propriedadeLotacaoClean}');
 
-	/*
-	if (document.getElementById('formulario_${propriedadePessoaClean}_id').value)
+	// Seta opcao Pessoa se id da pessoa estiver presente. Caso contrario seta Lotacao no 'select':
+	if (document.getElementById('formulario_${propriedadePessoa}_id').value)
 		select.value = 1;
 	else
 		select.value = 2;
+
+	// Exibe o campo siga:select correto (pessoa ou lotacao):
+	alteraAtendente_${propriedadePessoaClean}();
+	
 	// O onchange tem de ser definido da forma abaixo porque, quando esta tag está dentro de um código
 	// carregado por ajax, não funciona o tratamento do modo tradicional (onchange="", etc)
 	// http://stackoverflow.com/questions/8893786/uncaught-referenceerror-x-is-not-defined
 	
-	
+	/*
 	select.onchange = function() {
 		var select = document
 				.getElementById('${propriedadePessoaClean}${propriedadeLotacaoClean}');
@@ -145,17 +148,29 @@
 		const idSelect = '${propriedadePessoaClean}${propriedadeLotacaoClean}';
 		const idPessoa = "spanPessoa${propriedadePessoaClean}";
 		const idLotacao = "spanLotacao${propriedadeLotacaoClean}";
-		
+
 		var objSelecionado = document.getElementById(idSelect);
 	
 		switch (parseInt(objSelecionado.value)) {
 		case 1:
+			// Exibe as entradas para pessoa e esconde as entradas para lotacao:
 			document.getElementById(idPessoa).style.display = '';
 			document.getElementById(idLotacao).style.display = 'none';
+
+			// Apaga as informacoes da lotacao selecionada:
+			document.getElementById('formulario_${propriedadeLotacao}_id').value = '';
+			document.getElementById('formulario_${propriedadeLotacao}_sigla').value = '';
+			document.getElementById('${propriedadeLotacaoClean}_lotacaoSelSpan').innerHTML = '';
 			break;
 		case 2:
+			// Exibe as entradas para lotacao e esconde as entradas para pessoa:
 			document.getElementById(idPessoa).style.display = 'none';
 			document.getElementById(idLotacao).style.display = '';
+
+			// Apaga as informacoes da pessoa selecionada:
+			document.getElementById('formulario_${propriedadePessoa}_id').value = '';
+			document.getElementById('formulario_${propriedadePessoa}_sigla').value = '';
+			document.getElementById('${propriedadePessoaClean}_pessoaSelSpan').innerHTML = '';
 			break;
 		}
 	}

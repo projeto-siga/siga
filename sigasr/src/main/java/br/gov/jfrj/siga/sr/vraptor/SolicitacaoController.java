@@ -482,6 +482,7 @@ public class SolicitacaoController extends SrController {
     public void buscar(SrSolicitacaoFiltro filtro, String propriedade, boolean popup, boolean telaDeListas) throws Exception {
         
     	setupFiltros(filtro);
+    	
         if (filtro != null && filtro.isPesquisar()){
         	SrSolicitacaoListaVO solicitacaoListaVO = new SrSolicitacaoListaVO(filtro, telaDeListas, propriedade, popup, getLotaTitular(), getCadastrante());
         	result.use(Results.json()).withoutRoot().from(solicitacaoListaVO).excludeAll().include("recordsFiltered").include("data").serialize();
@@ -489,6 +490,7 @@ public class SolicitacaoController extends SrController {
         	if (filtro == null || filtro.isVazio()){
         		filtro = novoFiltroZerado();
         	}
+        	
         	
         	result.include("solicitacaoListaVO", new SrSolicitacaoListaVO(filtro, false, propriedade, popup, getLotaTitular(), getCadastrante()));
         	result.include("tipos", new String[] { "Pessoa", "Lota\u00e7\u00e3o" });
@@ -525,6 +527,12 @@ public class SolicitacaoController extends SrController {
     	if(filtro.getLotaSolicitante() != null && filtro.getLotaSolicitante().getIdLotacao() != null) {
     		filtro.setLotaSolicitante(DpLotacao.AR.findById(filtro.getLotaSolicitante().getIdLotacao()));
 		}
+    	if(filtro.getAtendente() != null && filtro.getAtendente().getIdPessoa() != null) {
+    		filtro.setAtendente(DpPessoa.AR.findById(filtro.getAtendente().getIdPessoa())); 
+    	}
+    	if(filtro.getLotaAtendente() != null && filtro.getLotaAtendente().getIdLotacao() != null) {
+    		filtro.setLotaAtendente(DpLotacao.AR.findById(filtro.getLotaAtendente().getIdLotacao()));
+    	}
     }
     
     private SrSolicitacaoFiltro novoFiltroZerado() {

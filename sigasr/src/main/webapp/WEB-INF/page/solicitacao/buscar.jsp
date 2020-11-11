@@ -80,11 +80,11 @@
             				<div class="col-sm-3 form-group">
             					<label>Data de cria&ccedil;&atilde;o</label>
            					</div>
-           					<div class="col-sm-4">
+           					<div class="col-sm-4" style="z-index: 2">
             					<siga:dataCalendar nome="filtro.dtIni" value="${filtro.dtIni}"/>
            					</div>           				
            					<span class="col-sm">a</span>	
-           					<div class="col-sm-4">
+           					<div class="col-sm-4" style="z-index: 2">
             					<siga:dataCalendar nome="filtro.dtFim" value="${filtro.dtFim}"/>
            					</div>
             		</div>

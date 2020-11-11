@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <siga:pagina titulo="Pesquisar Solicitações">
 
 <jsp:include page="../main.jsp"></jsp:include>
@@ -24,7 +24,7 @@
 	        </c:when>
 	    </c:choose> --%>
 	    
-	    <div class="card">
+	    <div class="card mb-2">
 	    	<div class="card-header">
 	    		<h5>Dados para busca</h5>
 	    	</div>
@@ -69,6 +69,7 @@
 	            		</div>
 	            	</div>
 	            	
+	            	<!-- Solicitante -->
 	            	<div class="row">
 	            		<div class="col-sm-12">
             		         <sigasr:pessoaLotaSelecao2 propriedadePessoa="filtro.solicitante" propriedadeLotacao="filtro.lotaSolicitante" labelPessoaLotacao="Solicitante"/>
@@ -210,25 +211,16 @@
 						</div>
 					</div>
             					
-		            <input type="submit" value="Buscar" class="btn btn-primary" />
-		            
-		            <table class="gt-form-table">
-		                    <tr>
-		                        <td colspan="2"></td>
-		                    </tr>
-		            </table>
+		            <input type="submit" value="Buscar" class="btn btn-primary"/>
+		            		           
 	        	</form>
 	    	</div>
 	    </div>
 	    
-	    <div class="gt-content-box gt-for-table" style="margin-top: 15px;">
-	        
-	    </div>
     </div>
 </div>
 <script>
-
-
+	
 	function toggleInputValorAtributo() {
 		var show = true;
 		var inputNomeAtributo = $('#formulario_filtroatributoSolicitacaoatributo_sigla');
@@ -247,4 +239,5 @@
 
 	toggleInputValorAtributo();
 </script>
+
 </siga:pagina>

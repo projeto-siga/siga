@@ -39,23 +39,24 @@
 	}	
 </style>
 
-<div class="gt-content-box gt-for-table dataTables_div">
-	<div class="siga-multiple-select">
-		<select id="selectColunasTabela" name="colunasTabela" multiple="multiple"/></select>
-		<c:if test="${modoExibicao == 'solicitacao'}">
-		    <select id="selectColunasDetalhamento" name="colunasDetalhamento" multiple="multiple"></select>
-	    </c:if>
+<div class="card mb-2">
+	<div class="card-body">
+		<div class="siga-multiple-select">
+			<select id="selectColunasTabela" name="colunasTabela" multiple="multiple"/></select>
+			<c:if test="${modoExibicao == 'solicitacao'}">
+			    <select id="selectColunasDetalhamento" name="colunasDetalhamento" multiple="multiple"></select>
+		    </c:if>
+		</div>	
+		<c:set var="jsonEscaped"><c:out value="${requestScope[solicitacaoListaVO].toJson()}" escapeXml='true'/></c:set>
+		<div class="table-responsive">
+			<table id="solicitacoes_table" border="0" class="table" data-json="${jsonEscaped}">
+				<thead></thead>
+				<tbody id="sortable" class="ui-sortable"></tbody>
+			</table>
+		</div>
 	</div>
-	<div>
-	</div>
-	<c:set var="jsonEscaped"><c:out value="${requestScope[solicitacaoListaVO].toJson()}" escapeXml='true'/></c:set>
-	<table id="solicitacoes_table" border="0" class="gt-table-nowrap display" data-json="${jsonEscaped}">
-		<thead></thead>
-		<tbody id="sortable" class="ui-sortable"></tbody>
-	</table>
-</div>
-
-<div class="legenda-prioridade">
+	<div class="card-footer">
+		<div class="legenda-prioridade">
 			<div class="PRIORIDADE-IMEDIATO">
 				<span class="cor"></span>
 				<span class="descricao">Imediata</span>
@@ -80,7 +81,10 @@
 				<span class="cor"></span>
 				<span class="descricao">Planejada</span>
 			</div>
+		</div>	
+	</div>
 </div>
+
 
 <script type="text/javascript">
 
@@ -112,8 +116,11 @@
 				    },
 				"data": function (d) {
 					$("#frm").find("input").each(function(){
-						if (this.name && this.value)
+						console.log(this.name, this.value);	
+						if (this.name && this.value) {			
+										
 							d[this.name] = this.value;
+						}
 					});
 					$("#frm").find("select").each(function(){
 						if (this.name && $(this).val())

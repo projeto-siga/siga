@@ -2,6 +2,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
+
 
 <%@ attribute name="propriedadePessoa" required="true"%>
 <%@ attribute name="propriedadeLotacao" required="true"%>
@@ -44,7 +46,7 @@
 		<!-- Matricula -->
 		<div id="spanPessoa${propriedadePessoaClean}" class="form-group">
 			<label>Pessoa</label> 
-			<siga:selecao
+			<sigasr:selecao
 				tipo="pessoa" propriedade="${propriedadePessoa}" tema="simple"
 				modulo="siga" desativar="${desativar}" />
 		</div>
@@ -52,7 +54,7 @@
 		<!-- Lotacao -->
 		<div id="spanLotacao${propriedadeLotacaoClean}" class="form-group" style="display: none">
 			<label>Lotação</label> 
-			<siga:selecao
+			<sigasr:selecao
 				tipo="lotacao" propriedade="${propriedadeLotacao}" tema="simple"
 				modulo="siga" desativar="${desativar}" />
 		</div>

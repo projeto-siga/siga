@@ -1,7 +1,7 @@
--------------------------------------------------
+-- -----------------------------------------------
 --	SCRIPT: CRIACAO DE TABELA DE GERAÇÃO DE TOKENS GENÉRICO
 --  Criação preliminar para gerar Token URL permanente: public/app/{TIPO}/{TOKEN}
--------------------------------------------------
+-- -----------------------------------------------
 /* Criação da tabela Tipo de Token */
 CREATE TABLE corporativo.cp_tipo_token
 (

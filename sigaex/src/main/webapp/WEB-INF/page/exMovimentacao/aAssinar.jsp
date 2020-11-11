@@ -109,6 +109,8 @@
 							autenticar="${autenticando}"
 							assinarComSenha="${assinando and f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"
 							autenticarComSenha="${autenticando and f:podeAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"
+							assinarComSenhaChecado="${assinando and f:deveAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"
+							autenticarComSenhaChecado="${autenticando and f:deveAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"
 							juntarAtivo="${juntarAtivo}" juntarFixo="${juntarFixo}"
 							tramitarAtivo="${tramitarAtivo}" tramitarFixo="${tramitarFixo}" 
 							exibirNoProtocoloAtivo="${exibirNoProtocoloAtivo}" exibirNoProtocoloFixo="false"

@@ -35,6 +35,8 @@
 							<dt>&#149;&#160;Ap&oacute;s realizar a carga, os dados ser&atilde;o inseridos automaticamente na base de dados;</dt>
 							<dt>&#149;&#160;O sistema consistir&aacute; a exist&ecirc;ncia de duplicidade dos dados confrontando a planilha como banco de dados;</dt>
 							<dt>&#149;&#160;A planilha deve conter os seguintes campos/formatos: (itens destacados são obrigatórios)</dt>
+							<dt>&#149;&#160;O campo nome abreviado só deverá ser preenchido caso o usuário opte por usar seu nome de registro civil com abreviação na assinatura dos documentos. Vale considerar que ainda sim no rodapé do documento será exibido seu nome completo</dt>
+							
 						</ul>
 					</div>
 				</div>

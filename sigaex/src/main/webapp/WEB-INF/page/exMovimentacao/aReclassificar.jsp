@@ -48,7 +48,7 @@ function sbmt() {
 					</div>
 				</div>
 				<div class="row" id="tr_titular" style="display: ${exDocumentoDTO.substituicao ? '' : 'none'};" >
-					<div class="col-sm-6" >
+					<div class="col-12" >
 					<input type="hidden" name="campos" value="titularSel.id" />
 						<div class="form-group">
 							<label>Titular</label>
@@ -58,12 +58,12 @@ function sbmt() {
 					</div>
 				</div>				
 				<div class="row">
-					<div class="col-sm-6" >
+					<div class="col-12" >
 						<div class="form-group">
 							<siga:selecao titulo="Nova Classificação" propriedade="classificacao" modulo="sigaex" urlAcao="buscar" urlSelecionar="selecionar"/>
 						</div>
 					</div>
-					<div class="col-sm-6">
+					<div class="col-12">
 						<div class="form-group">
 							<label>Motivo</label>
 							<input type="text" name="descrMov" maxLength="128" class="form-control"/>
@@ -72,7 +72,7 @@ function sbmt() {
 				</div>				
 				<c:if test="${tipoResponsavel == 3}">
 				<div class="row">
-					<div class="col-sm-6" >
+					<div class="col-12" >
 						<div class="form-group">
 							<label>Observação</label>
 							<input type="text" size="30" name="obsOrgao" class="form-control"/>
@@ -81,7 +81,7 @@ function sbmt() {
 				</div>				
 				</c:if>
 				<div class="row">
-					<div class="col-sm-2">
+					<div class="col-12">
 						<div class="form-group">
 							<button type="submit" class="btn btn-primary" >Ok</button>
 							<button type="button" onclick="javascript:history.back();" class="btn btn-primary" >Cancela</button>

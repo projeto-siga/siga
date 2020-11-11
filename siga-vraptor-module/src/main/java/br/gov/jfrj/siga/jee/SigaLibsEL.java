@@ -82,11 +82,18 @@ public class SigaLibsEL {
 		return Texto.maiusculasEMinusculas(s);
 	}
 
+	public static String slugify(String string, Boolean lowercase,
+			Boolean underscore) {
+		return Texto.slugify(string, lowercase, underscore);
+	}
+
 	public static Object resource(String name) {
 		return Contexto.resource(name);
 	}
 
 	public static String espera(Date dt) {
+		if (dt == null)
+			return null;
 		SigaCalendar c = new SigaCalendar();
 		SigaCalendar lAnterior = new SigaCalendar(dt.getTime());
 		// long l = -c.diffDayPeriods(lAnterior);

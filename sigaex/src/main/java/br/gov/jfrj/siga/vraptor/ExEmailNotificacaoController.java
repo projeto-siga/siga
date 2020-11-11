@@ -80,6 +80,7 @@ public class ExEmailNotificacaoController extends SigaController{
 		}
 	}
 	
+	@Transacional
 	@Get("app/expediente/emailNotificacao/excluir")
 	public void excluir(Long id){
 		try {
@@ -126,6 +127,7 @@ public class ExEmailNotificacaoController extends SigaController{
 		result.include("pessEmailSel", new DpPessoaSelecao());
 	}
 	
+	@Transacional
 	@Get("app/expediente/emailNotificacao/editar_gravar")
 	public void editarGravar(final DpLotacaoSelecao lotaSel, final DpLotacaoSelecao lotaEmailSel, final DpPessoaSelecao pessSel,
 			final DpPessoaSelecao pessEmailSel, final Integer tipoDest, final Integer tipoEmail, final String emailTela){
@@ -197,7 +199,7 @@ public class ExEmailNotificacaoController extends SigaController{
 	private Map<Integer, String> getListaTipoDest() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(1, "Matrícula");
-		map.put(2, "Órgão Integrado");
+		map.put(2, "Lotação");
 		return map;
 	}
 	
@@ -205,7 +207,7 @@ public class ExEmailNotificacaoController extends SigaController{
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(1, "Default");
 		map.put(2, "Matrícula");
-		map.put(3, "Órgão Integrado");		
+		map.put(3, "Lotação");		
 		map.put(4, "Email");
 		return map;
 	}

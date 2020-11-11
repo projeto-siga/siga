@@ -64,8 +64,14 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		setItemPagina(10);
 	}
 	
-	public boolean temPermissaoParaExportarDados() {
+	protected boolean temPermissaoParaExportarDados() {
 		return Boolean.valueOf(Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getTitular().getLotacao(),"SIGA;GI;CAD_LOTACAO;EXP_DADOS"));
+	}
+	
+	@Get
+	@Path({"/app/lotacao/buscar-json/{sigla}"})
+	public void busca(String sigla) throws Exception{
+		aBuscarJson(sigla);
 	}
 	
 	@Get
@@ -117,7 +123,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	}
 
 	@Override
-	public Selecionavel selecionarPorNome(final DpLotacaoDaoFiltro flt)
+	protected Selecionavel selecionarPorNome(final DpLotacaoDaoFiltro flt)
 			throws AplicacaoException {
 		// Procura por nome
 		flt.setNome(Texto.removeAcentoMaiusculas(flt.getSigla()));
@@ -315,6 +321,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		result.include("id",id);
 	}
 	
+	@Transacional
 	@Post("/app/lotacao/gravar")
 	public void editarGravar(final Long id, 
 							 final String nmLotacao, 
@@ -507,6 +514,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		pesNova.setIdePessoa(pesAnt.getIdePessoa());
 	}
 	
+	@Transacional
     @Get("/app/lotacao/ativarInativar")
     public void ativarInativar(final Long id) throws Exception{
         DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
@@ -551,7 +559,8 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		result.use(Results.page()).forwardTo("/WEB-INF/page/dpLotacao/cargaLotacao.jsp");
 	}
 	
-    @Post("/app/lotacao/carga")
+	@Transacional
+	@Post("/app/lotacao/carga")
 	public Download carga( final UploadedFile arquivo, Long idOrgaoUsu) throws Exception {
 		InputStream inputStream = null;
 		try {
@@ -616,7 +625,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		result.use(Results.page()).forwardTo("/WEB-INF/page/dpLotacao/edita.jsp");
 	}
 	
-	public List<DpLotacao> carregaLotacao(CpOrgaoUsuario orgaoUsuario){
+	protected List<DpLotacao> carregaLotacao(CpOrgaoUsuario orgaoUsuario){
 		CpOrgaoUsuario u = CpDao.getInstance().consultarOrgaoUsuarioPorId(orgaoUsuario.getIdOrgaoUsu());
 		return (List<DpLotacao>)CpDao.getInstance().consultarLotacaoPorOrgao(u);
 	}

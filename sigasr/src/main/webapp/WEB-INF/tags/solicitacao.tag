@@ -116,9 +116,7 @@
 				    },
 				"data": function (d) {
 					$("#frm").find("input").each(function(){
-						console.log(this.name, this.value);	
 						if (this.name && this.value) {			
-										
 							d[this.name] = this.value;
 						}
 					});

@@ -133,6 +133,7 @@
 <script type="text/javascript">
 
 self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao) {
+
     try {
     	document.getElementById('btnsenhaDialog${propriedade}').click(); 
     } catch (E) {
@@ -290,24 +291,25 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	<c:set var="onblur" value="${onchange}"></c:set>
 </c:if>
 
-	<input type="hidden" name="req${inputNameTipoSel}" value=""
-		id="formulario_req${inputNameTipoSel}" /> 
-	<input type="hidden"
-		name="alterouSel" value="" id="alterouSel" /> 
-	<input type="hidden"
-		name="${propriedadeOriginal}.id"
-		value="<c:out value="${f:evaluate(f:concat(propriedadeOriginal,'.id'),requestScope)}"/>"		
-		id="formulario_${inputNameTipoSel}_id" /> 
-	<input type="hidden"
-		name="${propriedadeOriginal}.descricao"
-		value="<c:out value="${f:evaluate(f:concat(propriedadeOriginal,'.descricao'),requestScope)}"/>"
-		id="formulario_${inputNameTipoSel}_descricao" /> 
+
+<input type="hidden" name="req${inputNameTipoSel}" value=""
+	id="formulario_req${inputNameTipoSel}" /> 
+<input type="hidden"
+	name="alterouSel" value="" id="alterouSel" /> 
+<input type="hidden"
+	name="${propriedadeOriginal}.id"
+	value="<c:out value="${f:evaluate(f:concat(propriedadeOriginal,'.id'),requestScope)}"/>"		
+	id="formulario_${inputNameTipoSel}_id" /> 
+<input type="hidden"
+	name="${propriedadeOriginal}.descricao"
+	value="<c:out value="${f:evaluate(f:concat(propriedadeOriginal,'.descricao'),requestScope)}"/>"
+	id="formulario_${inputNameTipoSel}_descricao" />
+	
+<input type="hidden"
+	name="${propriedadeOriginal}.buscar"
+	value=""
+	id="formulario_${inputNameTipoSel}_buscar" />
 		
-	<input type="hidden"
-		name="${propriedadeOriginal}.buscar"
-		value=""
-		id="formulario_${inputNameTipoSel}_buscar" />
-		 
 <div class="input-group">
 	<input type="search"
 		name="${inputNameTipoSel}.sigla"
@@ -318,6 +320,7 @@ self.ajax_${propriedade}${tipoSel} = function() {
 		<c:if test="${not empty onblur}">${onblur};</c:if>
 		onchange="<c:if test="${not empty onchange}">javascript: ${onchange};</c:if>"
 		class="form-control" style="width: 1%;" ${disabledTxt} />
+		
 	<c:if test="${buscar != 'nao'}">
 		<div class="input-group-append">
 			<input type="button" id="${propriedade}${tipoSel}SelButton"
@@ -326,6 +329,7 @@ self.ajax_${propriedade}${tipoSel} = function() {
 				${disabledBtn} class="btn btn-secondary" style="border-bottom-right-radius: 0.25em;border-top-right-radius: 0.25em;">
 		</div>
 	</c:if>
+	
 	<c:if test="${ocultardescricao != 'sim'}">
 		<div class="input-group-append ml-2" style="width: 60%;">
 			<span class="form-control" style="overflow: hidden; white-space:nowrap; text-overflow:ellipsis;" id="${spanName}SelSpan">
@@ -368,8 +372,11 @@ self.ajax_${propriedade}${tipoSel} = function() {
 		</c:otherwise>
 	</c:choose>
 	<script type="text/javascript">
+		console.log(${siglaSubst});
+		console.log(${descricaoSubst});
+		
 		document.getElementsByName('${propriedadeOriginal}.id')[0].value = '${idSubst}';
-		document.getElementsByName('${inputNameTipoSel}.sigla')[0].value = '${siglaSubst}';
+		document.getElementsByName('${propriedadeOriginal}.sigla')[0].value = '${siglaSubst}';
 		document.getElementsByName('${inputNameTipoSel}.descricao')[0].value = "${descricaoSubst}";
 		<c:if test="${ocultardescricao != 'sim'}">
 			document.getElementById('${spanName}SelSpan').innerHTML  = "${descricaoSubst}";

@@ -481,8 +481,8 @@ public class SolicitacaoController extends SrController {
     @Path("/buscar")
     public void buscar(SrSolicitacaoFiltro filtro, String propriedade, boolean popup, boolean telaDeListas) throws Exception {
         
+    	setupFiltros(filtro);
         if (filtro != null && filtro.isPesquisar()){
-        	setupFiltros(filtro);
         	SrSolicitacaoListaVO solicitacaoListaVO = new SrSolicitacaoListaVO(filtro, telaDeListas, propriedade, popup, getLotaTitular(), getCadastrante());
         	result.use(Results.json()).withoutRoot().from(solicitacaoListaVO).excludeAll().include("recordsFiltered").include("data").serialize();
         } else {

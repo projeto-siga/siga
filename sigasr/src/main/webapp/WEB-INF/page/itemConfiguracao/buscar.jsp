@@ -52,8 +52,8 @@ function sbmt(nivel){
 		</div>
 	</div>
 
-	<div class="gt-content-box gt-for-table">
-		<table class=" gt-table gt-table-nowrap display" id="tabela">
+	<div class="gt-content-box gt-for-table table-responsive">
+		<table class="table gt-table gt-table-nowraps display" id="tabela">
 	  		<thead>
 				<tr id="plim">
 					<th style="width: 30%">Título</th>

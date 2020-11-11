@@ -408,6 +408,8 @@ public class ExMobilVO extends ExVO {
 		addAcao(AcaoVO.builder().nome("_Anotar").icone("note_add").acao("/app/expediente/mov/anotar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAnotar(mob, titular, lotaTitular)).build());
 		
+		addAcao(AcaoVO.builder().nome("Definir Marca").icone("note_add").modal("definirMarcaModal").exp(new ExPodeAnotar(mob, titular, lotaTitular)).build());
+		
 		if (mob.isVia() || mob.isVolume()) {
 			addAcao("attach",
 					"Ane_xar",

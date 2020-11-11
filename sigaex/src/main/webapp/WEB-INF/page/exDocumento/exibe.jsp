@@ -1188,6 +1188,7 @@
 					</div>
 	</c:forEach>
 
+	<%@ include file="definirMarca.jsp"%>
 </div>
 </div>
 

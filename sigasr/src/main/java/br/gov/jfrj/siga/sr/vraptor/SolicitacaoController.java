@@ -564,6 +564,35 @@ public class SolicitacaoController extends SrController {
 				solicitacao.setItemConfiguracao(null);
 		}
     }
+    
+    private void setupItemConfiguracao(SrSolicitacao solicitacao) throws Exception {
+    	if (solicitacao.getItemConfiguracao() != null) {
+			SrItemConfiguracao srItemConf = solicitacao.getItemConfiguracao();
+			boolean found = false;
+			for(SrItemConfiguracao itemConf : solicitacao.getItensDisponiveis()) {
+				if(srItemConf.getIdItemConfiguracao().equals(itemConf.getIdItemConfiguracao())) {
+					found = true;
+				}
+			}
+			if(!found) {
+				solicitacao.setItemConfiguracao(null);
+			}
+		}
+    }
+    
+    private void setupAcoes(SrSolicitacao solicitacao) throws Exception {
+    	if (solicitacao.getAcao() != null) {
+			if(solicitacao.getAcao().getHisIdIni() == null && solicitacao.getAcao().getIdAcao() != null)
+				solicitacao.setAcao(SrAcao.AR.findById(solicitacao.getAcao().getIdAcao()));
+			boolean containsAcao = false;
+			for (List<SrTarefa> tarefas : solicitacao.getAcoesEAtendentes().values())
+				for (SrTarefa t : tarefas)
+					if (t.getAcao().equivale(solicitacao.getAcao()))
+						containsAcao = true;
+			if (!containsAcao)
+				solicitacao.setAcao(null);
+		}
+    }
 
 	@Path({ "/editar", "/editar/{sigla}"})
     public void editar(String sigla, SrSolicitacao solicitacao, String item, String acao, String descricao, Long solicitante) throws Exception {
@@ -618,31 +647,10 @@ public class SolicitacaoController extends SrController {
 				solicitacao.deduzirLocalRamalEMeioContato();
 			
 			
-			if (solicitacao.getItemConfiguracao() != null) {
-				SrItemConfiguracao srItemConf = solicitacao.getItemConfiguracao();
-				boolean found = false;
-				for(SrItemConfiguracao itemConf : solicitacao.getItensDisponiveis()) {
-					if(srItemConf.getIdItemConfiguracao().equals(itemConf.getIdItemConfiguracao())) {
-						found = true;
-					}
-				}
-				if(!found) {
-					solicitacao.setItemConfiguracao(null);
-				}
-			}
+			setupItemConfiguracao(solicitacao);
 			
+			setupAcoes(solicitacao);
 			
-			if (solicitacao.getAcao() != null){
-				if(solicitacao.getAcao().getHisIdIni() == null && solicitacao.getAcao().getIdAcao() != null)
-					solicitacao.setAcao(SrAcao.AR.findById(solicitacao.getAcao().getIdAcao()));
-				boolean containsAcao = false;
-				for (List<SrTarefa> tarefas : solicitacao.getAcoesEAtendentes().values())
-					for (SrTarefa t : tarefas)
-						if (t.getAcao().equivale(solicitacao.getAcao()))
-							containsAcao = true;
-				if (!containsAcao)
-					solicitacao.setAcao(null);
-			}
 			//Edson: por causa do detach:
 			if (solicitacao.getSolicitacaoInicial() != null){
 				solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
@@ -829,6 +837,9 @@ public class SolicitacaoController extends SrController {
 
     @Path("/escalonar")
     public void escalonar(SrSolicitacao solicitacao) throws Exception {
+    	setupItemConfiguracao(solicitacao);
+		setupAcoes(solicitacao);
+		
     	if (solicitacao.getCodigo() == null || solicitacao.getCodigo().trim().equals(""))
     		throw new AplicacaoException("Número não informado");
     	SrSolicitacao solicitacaoEntity = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(solicitacao.getCodigo());

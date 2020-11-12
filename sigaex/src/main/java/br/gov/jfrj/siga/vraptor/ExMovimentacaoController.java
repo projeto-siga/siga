@@ -647,9 +647,10 @@ public class ExMovimentacaoController extends ExController {
 		result.include("lotaTitular", this.getLotaTitular());
 		result.include("autenticando", autenticando);
 		result.include("assinando", assinando);
+		result.include("voltarAtivo", true);
 		result.include("juntarAtivo", doc.getPai() != null && afJuntada.ativo ? true : null);
 		result.include("juntarFixo", doc.getPai() != null && afJuntada.fixo ? false : null);
-		result.include("tramitarAtivo", afTramite.ativo);
+		result.include("tramitarAtivo", Prop.isGovSP() ? "" : afTramite.ativo);
 		result.include("tramitarFixo", afTramite.fixo);
 	}
 	

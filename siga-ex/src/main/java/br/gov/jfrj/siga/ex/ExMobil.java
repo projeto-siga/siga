@@ -49,10 +49,8 @@ import org.hibernate.annotations.BatchSize;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.Prop;
-import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.bl.ExParte;
 import br.gov.jfrj.siga.ex.util.CronologiaComparator;
@@ -62,7 +60,7 @@ import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
 @Entity
 @BatchSize(size = 500)
-@Table(name = "EX_MOBIL", catalog = "SIGA")
+@Table(name = "siga.ex_mobil")
 public class ExMobil extends AbstractExMobil implements Serializable, Selecionavel, Comparable {
 
 	/**
@@ -2266,4 +2264,19 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	public void indicarSeDeveExibirDocumentoCompletoReordenado(boolean exibirReordenacao) {
 		this.getDoc().setPodeExibirReordenacao(exibirReordenacao);
 	}
+
+
+	/**
+	 * Verifica se exibe o conteudo do documento no histórico do acompanhamento do protocolo
+	 * 
+	 * @return
+	 */
+	public boolean getPodeExibirNoAcompanhamento() {
+		Set<ExMovimentacao> movs = getMovsNaoCanceladas(ExTipoMovimentacao
+				.TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO);
+		if (!movs.isEmpty())
+			return true;
+		return false;
+	}
+	
 }

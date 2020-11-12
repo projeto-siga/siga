@@ -221,7 +221,7 @@ public class Documento {
 			Set<ExMovimentacao> movsAssinatura, Date dtDoc) {
 		ArrayList<String> assinantes = new ArrayList<String>();
 		for (ExMovimentacao movAssinatura : movsAssinatura) {
-			if(movAssinatura.getCadastrante().getId().equals(movAssinatura.getSubscritor().getId())) {
+			if(!Prop.isGovSP() || movAssinatura.getCadastrante().getId().equals(movAssinatura.getSubscritor().getId())) {
 				String s;
 				Date dataDeInicioDeObrigacaoExibirRodapeDeAssinatura=null;
 				if (movAssinatura.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)) {
@@ -234,7 +234,7 @@ public class Documento {
 					if(Prop.isGovSP()
 							|| (dataDeInicioDeObrigacaoExibirRodapeDeAssinatura != null && !dataDeInicioDeObrigacaoExibirRodapeDeAssinatura.after(dtDoc)
 									)	) {
-							s +=" - " + Data.formatDDMMYY_AS_HHMMSS(movAssinatura.getData());
+							s +=" - " + Data.formatDDMMYYYY_AS_HHMMSS(movAssinatura.getData());
 						}				 
 				}
 				if (!assinantes.contains(s)) {
@@ -578,13 +578,13 @@ public class Documento {
 				}
 	
 				if (cancelado) {
-					tarjar("CANCELADO", over, helv, r);
+					tarjar(SigaMessages.getMessage("marcador.cancelado.label").toUpperCase(), over, helv, r);
 				} else if (rascunho && copia) {
 					tarjar("CÓPIA DE MINUTA", over, helv, r);
 				} else if (rascunho) {
 					tarjar("MINUTA", over, helv, r);
 				} else if (semEfeito) {
-					tarjar("SEM EFEITO", over, helv, r);
+					tarjar(SigaMessages.getMessage("marcador.semEfeito.label").toUpperCase(), over, helv, r);
 				} else if (copia) {
 					tarjar("CÓPIA", over, helv, r);
 				} else if (SigaMessages.isSigaSP() && ("treinamento".equals(Prop.get("/siga.ambiente"))) ) {
@@ -1134,6 +1134,8 @@ public class Documento {
 				"<!-- FIM PRIMEIRO CABECALHO -->");
 		sHtml = sHtml.replace("<!-- INICIO PRIMEIRO RODAPE",
 				"<!-- INICIO PRIMEIRO RODAPE -->");
+		sHtml = sHtml.replace("<!-- div style=\"font-size:11pt;\" class=\"footnotes\"",
+				"<div style=\"font-size:11pt;\" class=\"footnotes\">");
 		sHtml = sHtml.replace("FIM PRIMEIRO RODAPE -->",
 				"<!-- FIM PRIMEIRO RODAPE-->");
 		// s = s.replace("http://localhost:8080/siga/", "/siga/");

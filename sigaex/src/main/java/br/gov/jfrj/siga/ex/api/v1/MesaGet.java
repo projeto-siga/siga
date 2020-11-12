@@ -24,7 +24,6 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.Marca;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.MesaGetRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.MesaGetResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.MesaItem;
-import br.gov.jfrj.siga.ex.api.v1.TokenCriarPost.Usuario;
 import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
@@ -399,7 +398,6 @@ public class MesaGet implements IMesaGet {
 
 		SwaggerHelper.buscarEValidarUsuarioLogado();
 		SigaObjects so = SwaggerHelper.getSigaObjects();
-		Usuario u = TokenCriarPost.assertUsuario();
 		so.assertAcesso("DOC:Módulo de Documentos;" + "");
 		
 		try {
@@ -422,7 +420,7 @@ public class MesaGet implements IMesaGet {
 				map.get(mobil).add(mm);
 			}
 
-			resp.list = listarReferencias(TipoDePainelEnum.UNIDADE, map, cadastrante, cadastrante.getLotacao(), u,
+			resp.list = listarReferencias(TipoDePainelEnum.UNIDADE, map, cadastrante, cadastrante.getLotacao(), 
 					ExDao.getInstance().consultarDataEHoraDoServidor());
 		}catch (Exception e) {
 			e.printStackTrace(System.out);
@@ -450,7 +448,7 @@ public class MesaGet implements IMesaGet {
 	}
 
 	public static List<MesaItem> listarReferencias(TipoDePainelEnum tipo, Map<ExMobil, List<MeM>> references,
-			DpPessoa pessoa, DpLotacao unidade, Usuario usuario, Date currentDate) {
+			DpPessoa pessoa, DpLotacao unidade, Date currentDate) {
 		List<MesaItem> l = new ArrayList<>();
 
 		for (ExMobil mobil : references.keySet()) {

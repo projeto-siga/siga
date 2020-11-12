@@ -44,7 +44,13 @@ public class Data {
 		}
 		return null;
 	}
-	
+	public static String formatDDMMYYYY_AS_HHMMSS(Date dt) {
+		if (dt != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy _ HH:mm:ss");
+			return df.format(dt).replaceAll("_", "às");
+		}
+		return null;
+	}
 	public static String calcularTempoRelativo(Date anterior) {
 		PrettyTime p = new PrettyTime(new Date(), new Locale("pt"));
 

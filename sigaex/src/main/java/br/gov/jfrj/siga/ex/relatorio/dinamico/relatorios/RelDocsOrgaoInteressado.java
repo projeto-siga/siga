@@ -131,8 +131,8 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 						+ "			where label.cpMarcador.idMarcador = :idMarcador "
 						+ "			and (label.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :orgaoPesqId "
 						+ "			or label.dpPessoaIni.orgaoUsuario.idOrgaoUsu = :orgaoPesqId) "
-						+ "			and (label.dtIniMarca is null or label.dtIniMarca < sysdate) " 
-						+ "			and (label.dtFimMarca is null or label.dtFimMarca > sysdate)) "
+						+ "			and (label.dtIniMarca is null or label.dtIniMarca < CURRENT_TIMESTAMP) " 
+						+ "			and (label.dtFimMarca is null or label.dtFimMarca > CURRENT_TIMESTAMP)) "
 						+ "		and doc.dtDoc >= :dtini and doc.dtDoc < :dtfim "
 						+ "		and doc.dtFinalizacao is not null "
 						+ queryOrgao

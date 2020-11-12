@@ -39,7 +39,7 @@ import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
  */
 @Entity
 @BatchSize(size = 500)
-@Table(name = "EX_MODELO", catalog = "SIGA")
+@Table(name = "siga.ex_modelo")
 public class ExModelo extends AbstractExModelo implements Sincronizavel {
 
 	/**

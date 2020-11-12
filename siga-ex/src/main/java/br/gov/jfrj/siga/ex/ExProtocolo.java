@@ -27,7 +27,7 @@ import javax.persistence.Transient;
  * 
  */
 @Entity
-@Table(name="EX_PROTOCOLO")
+@Table(name = "siga.ex_protocolo")
 @NamedQueries({
 	@NamedQuery(name="ExProtocolo.obterProtocoloPorDocumento", query="SELECT e FROM ExProtocolo e where e.exDocumento.idDoc = :idDoc and rownum = :rownum")
 	

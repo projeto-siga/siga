@@ -8,7 +8,7 @@
 
 <siga:pagina titulo="Novo Documento">
 	<link rel="stylesheet" href="/siga/javascript/hierarchy-select/hierarchy-select.css" type="text/css" media="screen, projection" />
-	<script type="text/javascript" src="/ckeditor/ckeditor/ckeditor.js"></script>
+	<script type="text/javascript" src="/ckeditor/ckeditor/ckeditor.js?v=4.15.0"></script>
 	<script type="text/javascript" src="../../../javascript/exDocumentoEdita.js"></script>
 	<script type="text/javascript" src="/siga/javascript/jquery.blockUI.js"></script>
 	<script type="text/javascript" src="/siga/javascript/hierarchy-select/hierarchy-select.js"></script>
@@ -121,7 +121,7 @@
 					</div>
 				</div>
 					<div class="row ${((exDocumentoDTO.tiposDocumento).size() != 1 or (exDocumentoDTO.tipoDocumento != 'interno_capturado' and podeEditarData) or (exDocumentoDTO.listaNivelAcesso.size() != 1) or (!exDocumentoDTO.eletronicoFixo))? '': 'd-none'}">
-						<div class="col-sm-2 ${(exDocumentoDTO.tiposDocumento).size() != 1? '': 'd-none'} ${hide_only_GOVSP}">
+						<div class="col-sm-2 ${(exDocumentoDTO.tiposDocumento).size() != 1 ? '': 'd-none'} ${hide_only_GOVSP}">
 							<div class="form-group">
 								<label for="exDocumentoDTO.idTpDoc">Origem</label>
 								<select name="exDocumentoDTO.idTpDoc" onkeypress="presskeySelect(event, this, null)" onmousedown="javascript:document.getElementById('clickSelect').value='true';"
@@ -142,7 +142,7 @@
 							</div>
 						</div>
 
-						<div class="col-sm-2 ${(exDocumentoDTO.listaNivelAcesso).size() != 1? '': 'd-none'}">
+						<div class="col-sm-2 ${(exDocumentoDTO.listaNivelAcesso).size() != 1 ? '': 'd-none'}">
 							<div class="form-group">
 								<input type="hidden" name="campos" value="nivelAcesso" /> 
 								<label for="exDocumentoDTO.dtDocString">Acesso</label>

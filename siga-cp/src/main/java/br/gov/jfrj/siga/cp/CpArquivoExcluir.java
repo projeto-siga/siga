@@ -30,7 +30,7 @@ import javax.persistence.Table;
  * behavior of this class by editing the class, {@link CpArquivoExcluir()}.
  */
 @Entity
-@Table(name = "CP_ARQUIVO_EXCLUIR", schema = "CORPORATIVO")
+@Table(name = "corporativo.cp_arquivo_excluir")
 public class CpArquivoExcluir implements Serializable {
 
 	private static final long serialVersionUID = 1L;

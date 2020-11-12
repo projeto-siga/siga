@@ -280,6 +280,18 @@ public interface IExApiV1 {
 		public void run(DocSiglaPdfGetRequest req, DocSiglaPdfGetResponse resp) throws Exception;
 	}
 
+	public class DocSiglaHtmlGetRequest implements ISwaggerRequest {
+		public String sigla;
+	}
+
+	public class DocSiglaHtmlGetResponse implements ISwaggerResponse {
+		public String html;
+	}
+
+	public interface IDocSiglaHtmlGet extends ISwaggerMethod {
+		public void run(DocSiglaHtmlGetRequest req, DocSiglaHtmlGetResponse resp) throws Exception;
+	}
+
 	public class DocSiglaPdfCompletoGetRequest implements ISwaggerRequest {
 		public String sigla;
 	}

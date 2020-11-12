@@ -47,7 +47,7 @@ function TestarAssinaturaDigital() {
 // Inicia a operação de assinatura para todos os documentos referenciados na
 // pagina
 //
-function AssinarDocumentos(copia, politica, juntar, tramitar) {
+function AssinarDocumentos(copia, politica, juntar, tramitar, exibirNoProtocolo) {
 	if (gAssinando)
 		return;
 	gAssinando = true;
@@ -68,25 +68,25 @@ function AssinarDocumentos(copia, politica, juntar, tramitar) {
 
 	if (tipo == 1) {
 		if ("OK" == provider.inicializar(function() {
-			ExecutarAssinarDocumentos(copia, juntar, tramitar);
+			ExecutarAssinarDocumentos(copia, juntar, tramitar, exibirNoProtocolo);
 		})) {
-			ExecutarAssinarDocumentos(copia, juntar, tramitar);
+			ExecutarAssinarDocumentos(copia, juntar, tramitar, exibirNoProtocolo);
 		}
 	}
 
 	if (tipo == 2) {
 		provider = providerPassword;
 		providerPassword.inicializar(function() {
-			ExecutarAssinarDocumentos(copia, juntar, tramitar);
+			ExecutarAssinarDocumentos(copia, juntar, tramitar, exibirNoProtocolo);
 		});
 	}
 
 	if (tipo == 3) {
 		providerPassword.inicializar(function() {
 			if ("OK" == provider.inicializar(function() {
-				ExecutarAssinarDocumentos(copia, juntar, tramitar);
+				ExecutarAssinarDocumentos(copia, juntar, tramitar, exibirNoProtocolo);
 			})) {
-				ExecutarAssinarDocumentos(copia, juntar, tramitar);
+				ExecutarAssinarDocumentos(copia, juntar, tramitar, exibirNoProtocolo);
 			}
 		});
 	}
@@ -160,7 +160,7 @@ var providerAssijusPopup = {
 				var errormsg = this.errormsg;
 				$.ajax({
 					url : "/sigaex/app/assinador-popup/doc/" + id + "/hash",
-					type : "GET",
+					type : "POST",
 					async : false,
 					success : function(xhr) {
 						console.log(xhr)
@@ -815,7 +815,7 @@ function Erro(err) {
 	return "Ocorreu um erro durante o processo de assinatura: " + err.message;
 }
 
-function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar) {
+function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar, ExibirNoProtocolo) {
 	process.reset();
 
 	if (Copia || Copia == "true") {
@@ -864,6 +864,9 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar) {
 								+ "; gJuntar = "
 								+ (o.hasOwnProperty('juntar') ? o.juntar
 										: Juntar)
+								+ "; gExibirNoProtocolo = "
+								+ (o.hasOwnProperty('exibirNoProtocolo') ? o.exibirNoProtocolo
+										: ExibirNoProtocolo)
 								+ "; gUrlPost = '"
 								+ oUrlBase.value
 								+ o.urlPost
@@ -903,6 +906,9 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar) {
 					}
 					if (gTramitar !== undefined) {
 						DadosDoPost = DadosDoPost + "&tramitar=" + gTramitar;
+					}
+					if (gExibirNoProtocolo !== undefined) {
+						DadosDoPost = DadosDoPost + "&exibirNoProtocolo=" + gExibirNoProtocolo;
 					}
 					if (gPolitica) {
 						DadosDoPost = DadosDoPost + "&certificadoB64="
@@ -947,6 +953,9 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar) {
 				if (o.hasOwnProperty('tramitar') || Tramitar || Tramitar == false)
 					signable.extra += (signable.extra.length > 0 ? "," : "") + ((o.tramitar || Tramitar == "true" || Tramitar == true) ? "tramitar" : "nao_tramitar");
 				
+				if (o.hasOwnProperty('exibirNoProtocolo') || ExibirNoProtocolo || ExibirNoProtocolo == false)
+					signable.extra += (signable.extra.length > 0 ? "," : "") + ((o.exibirNoProtocolo || ExibirNoProtocolo == "true" || ExibirNoProtocolo == true) ? "exibirNoProtocolo" : "nao_exibirNoProtocolo");
+				
 				provider.assinar(signable);
 			}
 		} else {
@@ -964,6 +973,8 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar) {
 					+ (o.hasOwnProperty('tramitar') ? o.tramitar : Tramitar)
 					 + "; gJuntar = "
 					+ (o.hasOwnProperty('juntar') ? o.juntar : Juntar)
+					 + "; gExibirNoProtocolo = "
+					+ (o.hasOwnProperty('exibirNoProtocolo') ? o.exibirNoProtocolo : ExibirNoProtocolo)
 					+ "; gUrlPostPassword = '" + oUrlBase.value
 					+ o.urlPostPassword + "';");
 
@@ -982,6 +993,9 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar) {
 				}
 				if (gJuntar !== undefined) {
 					DadosDoPost = DadosDoPost + "&juntar=" + gJuntar;
+				}
+				if (gExibirNoProtocolo !== undefined) {
+					DadosDoPost = DadosDoPost + "&exibirNoProtocolo=" + gExibirNoProtocolo;
 				}
 				Status = GravarAssinatura(gUrlPostPassword, DadosDoPost);
 				gRet = Status;
@@ -1111,6 +1125,11 @@ function identificarOperacoes() {
 					+ operacao.codigo)[0];
 			if (oChkJuntar != null) 
 				operacao.juntar = oChkJuntar.checked;
+
+			var oChkExibirNoProtocolo = document.getElementsByName("ad_exibirNoProtocolo_"
+					+ operacao.codigo)[0];
+			if (oChkExibirNoProtocolo != null) 
+				operacao.exibirNoProtocolo = oChkExibirNoProtocolo.checked;
 
 			gOperacoes.push(operacao);
 		}

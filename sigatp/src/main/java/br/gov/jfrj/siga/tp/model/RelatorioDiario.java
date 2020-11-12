@@ -25,7 +25,7 @@ import br.gov.jfrj.siga.tp.validation.annotation.UpperCase;
 @Entity
 @Audited
 @Table(schema = "SIGATP")
-public class RelatorioDiario extends TpModel implements ConvertableEntity<Long> {
+public class RelatorioDiario extends TpModel implements ConvertableEntity {
 	
 	public static ActiveRecord<RelatorioDiario> AR = new ActiveRecord<>(RelatorioDiario.class);
 	
@@ -87,7 +87,6 @@ public class RelatorioDiario extends TpModel implements ConvertableEntity<Long> 
 		return id;
 	}
 
-	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}

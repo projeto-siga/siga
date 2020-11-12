@@ -28,7 +28,7 @@ import br.gov.jfrj.siga.tp.validation.annotation.UpperCase;
 @Entity
 @Audited
 @Table(schema = "SIGATP")
-public class Avaria extends TpModel implements ConvertableEntity<Long>, Comparable<Avaria> {
+public class Avaria extends TpModel implements ConvertableEntity, Comparable<Avaria> {
 
 	private static final long serialVersionUID = 1L;
 	public static final ActiveRecord<Avaria> AR = new ActiveRecord<>(Avaria.class);
@@ -80,7 +80,7 @@ public class Avaria extends TpModel implements ConvertableEntity<Long>, Comparab
 		return this.id;
 	}
 
-	@Override
+	
 	public void setId(Long id) {
 		this.id = id;
 	}

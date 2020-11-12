@@ -22,7 +22,7 @@ import br.gov.jfrj.siga.tp.validation.annotation.UpperCase;
 @Audited
 @Immutable
 @Table(name = "GRUPOVEICULO", schema = "SIGATP")
-public class Grupo extends TpModel implements ConvertableEntity<Long>, Comparable<Grupo> {
+public class Grupo extends TpModel implements ConvertableEntity, Comparable<Grupo> {
 
 	private static final long serialVersionUID = -3681022838391034811L;
 
@@ -75,7 +75,6 @@ public class Grupo extends TpModel implements ConvertableEntity<Long>, Comparabl
 		return id;
 	}
 
-	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}

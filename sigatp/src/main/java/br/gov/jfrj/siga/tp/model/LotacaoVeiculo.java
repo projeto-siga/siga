@@ -28,7 +28,7 @@ import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 // @Table(name = "LOTACAO_VEICULO_2", schema="SIGAOR")
 @Audited
 @Table(schema = "SIGATP")
-public class LotacaoVeiculo extends TpModel implements ConvertableEntity<Long> {
+public class LotacaoVeiculo extends TpModel implements ConvertableEntity {
 
 	@Id
 	@GeneratedValue(generator = "hibernate_sequence_generator")
@@ -106,7 +106,6 @@ public class LotacaoVeiculo extends TpModel implements ConvertableEntity<Long> {
 		return id;
 	}
 
-	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}

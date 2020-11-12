@@ -28,7 +28,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 @Entity
 @Audited
 @Table(schema = "SIGATP")
-public class EscalaDeTrabalho extends TpModel implements ConvertableEntity<Long>  {
+public class EscalaDeTrabalho extends TpModel implements ConvertableEntity  {
 
 	private static final long serialVersionUID = 1L;
 	public static final ActiveRecord<EscalaDeTrabalho> AR = new ActiveRecord<>(EscalaDeTrabalho.class);
@@ -61,7 +61,6 @@ public class EscalaDeTrabalho extends TpModel implements ConvertableEntity<Long>
 		return id;
 	}
 
-	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}

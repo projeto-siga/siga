@@ -31,7 +31,6 @@ import javax.persistence.Query;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -53,10 +52,12 @@ import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 import br.gov.jfrj.siga.uteis.SiglaDocumentoType;
 import br.gov.jfrj.siga.vraptor.handler.Resources;
 
+
+
 @Entity
 @Audited
 @Table(name = "REQUISICAOTRANSPORTE", schema = "SIGATP")
-public class RequisicaoTransporte extends TpModel implements Comparable<RequisicaoTransporte>, ConvertableEntity<Long> {
+public class RequisicaoTransporte extends TpModel implements Comparable<RequisicaoTransporte>, ConvertableEntity {
     /**
 	 * 
 	 */
@@ -107,7 +108,7 @@ public class RequisicaoTransporte extends TpModel implements Comparable<Requisic
     @UpperCase
     private String passageiros;
 
-    @NotEmpty
+    @org.hibernate.validator.constraints.NotEmpty
     @UpperCase
     private String itinerarios;
 
@@ -314,7 +315,6 @@ public class RequisicaoTransporte extends TpModel implements Comparable<Requisic
         this.idSolicitante = idSolicitante;
     }
 
-    @Override
     public void setId(Long id) {
         this.id = id;
     }

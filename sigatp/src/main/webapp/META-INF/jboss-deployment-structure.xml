@@ -1,18 +1,16 @@
 <?xml version="1.0"?>
-<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<deployment>
 		<module-alias name="deployment.sigatp" />
-
 		<exclusions>
 			<module name="org.apache.xalan" />
 			<module name="org.antlr"/>
-	
 		</exclusions>
 		
 		<dependencies>
 			<module name="asm.asm" />
 			<!-- Fim -->
 		</dependencies>
+
 	</deployment>
 </jboss-deployment-structure>

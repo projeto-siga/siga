@@ -29,7 +29,7 @@ import br.gov.jfrj.siga.tp.validation.annotation.Data;
 @Entity
 @Audited
 @Table(schema = "SIGATP")
-public class Plantao extends TpModel implements ConvertableEntity<Long>, Comparable<Plantao> {
+public class Plantao extends TpModel implements ConvertableEntity, Comparable<Plantao> {
 
     public static final ActiveRecord<Plantao> AR = new ActiveRecord<>(Plantao.class);
 
@@ -77,7 +77,6 @@ public class Plantao extends TpModel implements ConvertableEntity<Long>, Compara
         return id;
     }
 
-    @Override
     public void setId(Long id) {
         this.id = id;
     }

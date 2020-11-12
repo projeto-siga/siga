@@ -47,7 +47,7 @@ import br.gov.jfrj.siga.validation.Email;
 @Audited
 @Table(schema = "SIGATP")
 @Unique(message="{condutor.dppessoa.unique}" ,field = "dpPessoa", uniqueColumn="DPPESSOA_ID_PESSOA")
-public class Condutor extends TpModel implements ConvertableEntity<Long>, Comparable<Condutor> {
+public class Condutor extends TpModel implements ConvertableEntity, Comparable<Condutor> {
 
 	public static final ActiveRecord<Condutor> AR = new ActiveRecord<>(Condutor.class);
 
@@ -356,7 +356,6 @@ public class Condutor extends TpModel implements ConvertableEntity<Long>, Compar
 		return id;
 	}
 
-	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}

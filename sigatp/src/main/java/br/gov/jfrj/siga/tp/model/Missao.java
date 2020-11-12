@@ -44,7 +44,7 @@ import br.gov.jfrj.siga.uteis.SiglaDocumentoType;
 @Entity
 @Audited
 @Table(schema = "SIGATP")
-public class Missao extends TpModel implements ConvertableEntity<Long>, Comparable<Missao>, SequenceMethods {
+public class Missao extends TpModel implements ConvertableEntity, Comparable<Missao>, SequenceMethods {
 
 	/**
 	 * 
@@ -395,7 +395,6 @@ public class Missao extends TpModel implements ConvertableEntity<Long>, Comparab
 		return id;
 	}
 
-	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}

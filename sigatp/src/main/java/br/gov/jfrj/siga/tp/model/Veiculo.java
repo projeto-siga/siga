@@ -47,7 +47,7 @@ import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 @Audited
 @Table(schema = "SIGATP")
 @Unique(message = "{veiculo.placa.unique}", field = "placa")
-public class Veiculo extends TpModel implements ConvertableEntity<Long>, Comparable<Veiculo> {
+public class Veiculo extends TpModel implements ConvertableEntity, Comparable<Veiculo> {
 
 	private static final long serialVersionUID = -3602265045747814797L;
 	public static final ActiveRecord<Veiculo> AR = new ActiveRecord<>(Veiculo.class);
@@ -391,7 +391,6 @@ public class Veiculo extends TpModel implements ConvertableEntity<Long>, Compara
 		return id;
 	}
 
-	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}

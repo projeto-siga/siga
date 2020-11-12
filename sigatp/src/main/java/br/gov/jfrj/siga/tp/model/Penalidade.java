@@ -24,7 +24,7 @@ import br.gov.jfrj.siga.tp.validation.annotation.UpperCase;
 @Audited
 @Table(schema = "SIGATP")
 @Unique(message="{penalidade.codigoInfracao.unique}", field="codigoInfracao")
-public class Penalidade extends TpModel implements ConvertableEntity<Long> {
+public class Penalidade extends TpModel implements ConvertableEntity {
 	/**
 	 * 
 	 */
@@ -96,7 +96,6 @@ public class Penalidade extends TpModel implements ConvertableEntity<Long> {
 	}
 	
 	
-	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}

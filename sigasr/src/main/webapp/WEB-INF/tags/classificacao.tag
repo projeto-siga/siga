@@ -5,6 +5,13 @@
 <%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
+<%@ taglib uri="http://localhost/libstag" prefix="f"%>
+
+<c:if test="${empty uri_logo_siga_pequeno}">
+	<c:set var="uri_logo_siga_pequeno" value="${f:resource('/siga.base.url')}/siga/imagens/logo-siga-140x40.png" scope="request" />
+</c:if>
+
+
 <%@ attribute name="metodo" required="true"%>
 <%@ attribute name="exibeLotacaoNaAcao" required="false"%>
 <%@ attribute name="exibeConhecimento" required="false"%>

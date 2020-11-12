@@ -726,6 +726,9 @@ public class SolicitacaoController extends SrController {
     
 	@Path("/reclassificar")
     public void reclassificar(SrSolicitacao solicitacao) throws Exception {
+		setupItemConfiguracao(solicitacao);
+		setupAcoes(solicitacao);
+		
 		if (solicitacao.getCodigo() == null || solicitacao.getCodigo().trim().equals(""))
 			throw new AplicacaoException("Número não informado");
     	SrSolicitacao solicitacaoEntity = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(solicitacao.getCodigo());

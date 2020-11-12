@@ -362,7 +362,9 @@ public class SolicitacaoController extends SrController {
         result.include("siglaCompacta", solicitacao.getSiglaCompacta());
         result.include("local", solicitacao.getLocal());
         result.include("lotacaoDoTitularLegivel", getTitular().getLotacao().getLotacaoAtual().toString() + " - " + getTitular().getLotacao().getLotacaoAtual().getNomeLotacao());
+        result.include("solicitanteDescricaoCompleta", solicitacao.getSolicitante().getDescricaoCompleta());
 	}
+    
 
 	private boolean validarFormEditar(SrSolicitacao solicitacao) throws Exception {
         if (solicitacao.getSolicitante() == null || solicitacao.getSolicitante().getId() == null) 

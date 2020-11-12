@@ -202,14 +202,12 @@
 									</div>
 								</div>
 								
-								
 								<div id="divLocalRamalEMeioContato" depende="solicitacao.solicitante">
 									<script>
 										//Edson: talvez fosse possivel fazer de um modo melhor, mas assim � mais pr�tico
-										$("#solicitacaosolicitanteSpan").html("${solicitacao.solicitante.descricaoCompleta}");
+										$("#solicitacaosolicitanteSpan").html("${solicitanteDescricaoCompleta}");
 										$("#horarioComunicacao").mask("99:99");
 									</script>
-									
 									<c:if test="${locaisDisponiveis.size() > 1}">
 										<div class="row">
 											<div class="col-sm-12">
@@ -252,7 +250,6 @@
 											</div>
 										</div>
 									</div>
-																
 													
 									<!--  Meio comunicacao e contato inicial -->						
 									<div id="meioComunicacaoEDataOrigem">
@@ -304,7 +301,7 @@
 								</div>
 										
 										
-										
+						
 										
 								<div class="row">
 									<div class="col-sm-12">

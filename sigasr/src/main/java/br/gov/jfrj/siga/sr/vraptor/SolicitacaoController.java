@@ -779,6 +779,9 @@ public class SolicitacaoController extends SrController {
 
     @Path("/fechar")
     public void fechar(SrSolicitacao solicitacao) throws Exception {
+    	setupItemConfiguracao(solicitacao);
+		setupAcoes(solicitacao);
+    	
     	reclassificar(solicitacao);
     	Set<SrTipoMotivoFechamento> motivos = new TreeSet<SrTipoMotivoFechamento>(new Comparator<SrTipoMotivoFechamento>(){
 			@Override

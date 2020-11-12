@@ -75,9 +75,9 @@
         <input type="hidden" name="ocultas" value="${ocultas}" />
         <input type="hidden" name="sigla" value="${solicitacao.siglaCompacta}" /> 
         <div style="display: inline; padding-top: 10px;" class="form-group">
-            <label>Solicita&ccedil;&atilde;o</label> <br />
-            <siga:selecao2 propriedade="solRecebeVinculo" tipo="solicitacao" tema="simple" modulo="sigasr" onchange="validarAssociacao('Vinculo');"
-            	tamanho="grande"/>
+            
+			<sigasr:selecao titulo="Solicita&ccedil;&atilde;o" propriedade="solRecebeVinculo" urlAcao="solicitacao/buscar" urlSelecionar="solicitacao/selecionar" modulo="sigasr"/>            	
+            	
             <span id="erroSolicitacaoVinculo" style="color: red; display: none;">Solicita&ccedil;&atilde;o n&atilde;o informada.</span>
         </div>
         <div class="form-group mt-2">

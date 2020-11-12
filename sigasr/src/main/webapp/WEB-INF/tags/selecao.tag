@@ -176,12 +176,13 @@ self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao) {
 
 //
 //Provider: modal que simula window
-//
+// tabindex="-1" removido da div modal pois gerava erro de "Maximum call stack size exceeded"
+// no js, quando um model era aberto dentro de outro modal.
 var modalsimulawindow${propriedade} = 	function(url) {
 		try {
 			var urlInterna = url;			
 			var senhaDialog${propriedade}  = $(
-					'<div class="modal modal-selecao" tabindex="-1" role="dialog" id="senhaDialog${propriedade}">'
+					'<div class="modal modal-selecao" role="dialog" id="senhaDialog${propriedade}">'
 				+	'  <div class="modal-dialog modal-lg" role="document">'
 				+	'    <div class="modal-content">'
 				+	'    <div class="modal-header">'
@@ -216,7 +217,7 @@ var modalsimulawindow${propriedade} = 	function(url) {
 self.newwindow_${propriedade} = '';
 self.popitup_${propriedade}${tipoSel} = function(sigla) {
 
-	var url =  '/${urlPrefix}${urlBuscar}?propriedade=${propriedade}${tipoSel}&sigla='+encodeURI($.trim(sigla)) +'${selecaoParams}&modal=true';
+	var url =  '/${urlPrefix}${urlBuscar}?propriedade=${propriedade}${tipoSel}&sigla='+encodeURI($.trim(sigla)) +'${selecaoParams}&popup=true&modal=true';
 	
 	newwindow_${propriedade} = modalsimulawindow${propriedade};
 	
@@ -243,8 +244,17 @@ self.resposta_ajax_${propriedade}${tipoSel} = function(response, d1, d2, d3) {
 	</c:choose>
 }
 
-self.ajax_${propriedade}${tipoSel} = function() {
-	var sigla = $.trim(document.getElementsByName('${inputNameTipoSel}.sigla')[0].value);
+// Armazena o ultimo valor do campo 'sigla' (input com name="${inputNameTipoSel}.sigla")
+// Utilizado para comparar com valor do evento onblur.
+var lastValue;
+
+self.ajax_${propriedade}${tipoSel} = function(value) {
+	
+	// Para evitar de chamar a funcao se nao houver mudanca:
+	if(lastValue === value) return;
+	
+	//var sigla = $.trim(document.getElementsByName('${inputNameTipoSel}.sigla')[0].value);
+	var sigla = value;
 	if (sigla == '') {
 		return retorna_${propriedade}${tipoSel}('', '', '');
 	}
@@ -268,8 +278,12 @@ self.ajax_${propriedade}${tipoSel} = function() {
 		resposta_ajax_${propriedade}${tipoSel}(response);
 	});
 
-	//PassAjaxResponseToFunction(url, 'resposta_ajax_${propriedade}${tipoSel}', false);
-	
+	//PassAjaxResponseToFunction(url, 'resposta_ajax_${propriedade}${tipoSel}', false);	
+}
+
+// Armazena o valor para comprar no self.ajax_*, para evitar a chamada da funcao 'retorna_*'
+self.onfocus_${propriedade}${tipoSel} = function(value) {
+	lastValue = value;
 }
 
 </script>
@@ -316,7 +330,8 @@ self.ajax_${propriedade}${tipoSel} = function() {
 		value="<c:out value="${f:evaluate(f:concat(propriedadeOriginal,'.sigla'),requestScope)}"/>"
 		id="formulario_${inputNameTipoSel}_sigla"
 		onkeypress="return handleEnter(this, event)" ${requiredValue}
-		onblur="javascript: ajax_${propriedade}${tipoSel}();"
+		onfocus="javascript: onfocus_${propriedade}${tipoSel}(this.value);"
+		onblur="javascript: ajax_${propriedade}${tipoSel}(this.value);"
 		<c:if test="${not empty onblur}">${onblur};</c:if>
 		onchange="<c:if test="${not empty onchange}">javascript: ${onchange};</c:if>"
 		class="form-control" style="width: 1%;" ${disabledTxt} />

@@ -748,8 +748,7 @@ public class SolicitacaoController extends SrController {
     
 	@Path("/reclassificar")
     public void reclassificar(SrSolicitacao solicitacao) throws Exception {
-		setupItemConfiguracao(solicitacao);
-		setupAcoes(solicitacao);
+		
 		
 		if (solicitacao.getCodigo() == null || solicitacao.getCodigo().trim().equals(""))
 			throw new AplicacaoException("Número não informado");
@@ -804,8 +803,6 @@ public class SolicitacaoController extends SrController {
 
     @Path("/fechar")
     public void fechar(SrSolicitacao solicitacao) throws Exception {
-    	setupItemConfiguracao(solicitacao);
-		setupAcoes(solicitacao);
     	
     	reclassificar(solicitacao);
     	Set<SrTipoMotivoFechamento> motivos = new TreeSet<SrTipoMotivoFechamento>(new Comparator<SrTipoMotivoFechamento>(){
@@ -865,9 +862,7 @@ public class SolicitacaoController extends SrController {
 
     @Path("/escalonar")
     public void escalonar(SrSolicitacao solicitacao) throws Exception {
-    	setupItemConfiguracao(solicitacao);
-		setupAcoes(solicitacao);
-		
+    	
     	if (solicitacao.getCodigo() == null || solicitacao.getCodigo().trim().equals(""))
     		throw new AplicacaoException("Número não informado");
     	SrSolicitacao solicitacaoEntity = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(solicitacao.getCodigo());

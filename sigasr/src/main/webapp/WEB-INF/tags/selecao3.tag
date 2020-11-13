@@ -111,8 +111,9 @@ self.retorna_${propriedadeClean} = function(id, sigla, descricao) {
 var modalsimulawindow${propriedadeClean} = 	function(url) {
 		try {
 			var urlInterna = url;			
+			// tabindex="-1" removido da div class="modal" para corrigir erro de Maximum call stack size exceeded no js.
 			var senhaDialog${propriedadeClean}  = $(
-					'<div class="modal modal-selecao" tabindex="-1" role="dialog" id="senhaDialog${propriedadeClean}">'
+					'<div class="modal modal-selecao" role="dialog" id="senhaDialog${propriedadeClean}">'
 				+	'  <div class="modal-dialog modal-lg" role="document">'
 				+	'    <div class="modal-content">'
 				+	'    <div class="modal-header">'

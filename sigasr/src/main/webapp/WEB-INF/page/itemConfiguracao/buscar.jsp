@@ -76,7 +76,7 @@ function sbmt(nivel){
 							</c:choose>
 							<c:choose>
 								<c:when test="${item.especifico || (empty sol.solicitante && empty sol.local) }">
-									<a href="javascript:parent.retorna_${param.propriedade}${nome}('${item.id}','${item.sigla}','${item.descricao}');window.close()">${item.tituloItemConfiguracao}</a>
+									<a href="javascript:parent.retorna_${param.propriedade}${nome}('${item.id}','${item.sigla}','${item.descricao}');">${item.tituloItemConfiguracao}</a>
 								</c:when>
 								<c:otherwise>
 									<span>${item.tituloItemConfiguracao}</span>

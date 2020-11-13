@@ -362,8 +362,18 @@ public class SolicitacaoController extends SrController {
         result.include("siglaCompacta", solicitacao.getSiglaCompacta());
         result.include("local", solicitacao.getLocal());
         result.include("lotacaoDoTitularLegivel", getTitular().getLotacao().getLotacaoAtual().toString() + " - " + getTitular().getLotacao().getLotacaoAtual().getNomeLotacao());
-        result.include("solicitanteDescricaoCompleta", solicitacao.getSolicitante().getDescricaoCompleta());
+        result.include("solicitanteDescricaoCompleta", getDescricaoCompleta(solicitacao.getSolicitante()));
 	}
+    
+    private String getDescricaoCompleta(DpPessoa solicitante) {
+    	String result = "";    	
+    	try {
+    		result = solicitante.getDescricaoCompleta(); 
+    	}
+    	catch(Exception e) {    		
+    	}
+    	return result;
+    }
     
 
 	private boolean validarFormEditar(SrSolicitacao solicitacao) throws Exception {
@@ -450,6 +460,10 @@ public class SolicitacaoController extends SrController {
         if (ocultas == null)
             ocultas = false;
 
+        // Para informacoes do solicitante, exibidas no sidebar (exibirIncludeSidebarSolicitacao): 
+        setupInfoSolicitante(solicitacao);
+       
+        
         Set<SrMovimentacao> movs = solicitacao.getMovimentacaoSet(ocultas, null, false, todoOContexto, !ocultas, false);
         Set<SrArquivo> arqs = solicitacao.getArquivosAnexos(todoOContexto);
         Set<SrLista> listas = solicitacao.getListasAssociadas(todoOContexto);
@@ -477,6 +491,14 @@ public class SolicitacaoController extends SrController {
         result.include(PRIORIDADE_LIST, SrPrioridade.values());
         result.include("podeUtilizarServicoSigaGC", podeUtilizarServico("SIGA;GC"));
         result.include("atributos", atributos);
+    }
+    
+    private void setupInfoSolicitante(SrSolicitacao solicitacao) {
+    	// para evitar erro de 'no session' quando acessado diretamente apos reiniciar
+    	solicitacao.getSolicitante().getSiglaCompleta();
+    	solicitacao.getSolicitante().getFuncaoStringIniciaisMaiusculas();
+    	solicitacao.getSolicitante().getLotacao().getSiglaCompleta();
+    	solicitacao.getLocal().getNomeComplexo();    	
     }
 
     @SuppressWarnings("unchecked")

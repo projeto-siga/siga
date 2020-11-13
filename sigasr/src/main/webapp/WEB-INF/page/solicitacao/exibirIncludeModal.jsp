@@ -82,8 +82,10 @@
         </div>
         <div class="form-group mt-2">
             <label>Justificativa</label>
-            <textarea class="form-control" style="width: 100%;" cols="70" rows="4" name="justificativa" id="justificativaVinculo" maxlength="255" onkeyup="validarAssociacao('Vinculo')">
-            </textarea>
+            <textarea class="form-control" 
+            			style="width: 100%;" cols="70" rows="4" 
+            			name="justificativa" id="justificativaVinculo" maxlength="255" 
+            			onkeyup="validarAssociacao('Vinculo')"></textarea>
             <span id="erroJustificativaVinculo" style="color: red; display: none;"><br />Justificativa n&atilde;o informada.</span>
         </div>
         <input type="button" onclick="gravarAssociacao('Vinculo');" value="Gravar" class="btn btn-primary" />

@@ -91,7 +91,9 @@
 		<div class="form-group">
 			<label>Lota&ccedil;&atilde;o Atendente</label> 
 			<input type="hidden" name="lotacaoSelecao" id="lotacaoSelecao" class="selecao">
-			<siga:selecao2 tipo="lotacao" propriedade="lotacao" tema="simple" modulo="siga" />
+			
+			<sigasr:selecao tipo="lotacao" propriedade="lotacao" tema="simple"modulo="siga" />
+			
 			<span style="display: none; color: red" id="atendente">Atendente n&atilde;o informado.</span>
 		</div>
 		<div class="gt-form-row">

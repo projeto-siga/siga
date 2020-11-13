@@ -309,22 +309,13 @@
 		
 							<c:set var="lote" value="false" />
 						</div>
-						<c:if test="${siga_cliente != 'GOVSP'}">
-							<tags:assinatura_botoes assinar="true"
-								autenticar="${mov.exTipoMovimentacao.idTpMov==2}"
-								assinarComSenha="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}"
-								assinarComSenhaChecado="${f:deveAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}"
-								autenticarComSenha="${f:podeAutenticarMovimentacaoComSenha(titular,lotaTitular,mov)}"
-								autenticarComSenhaChecado="${f:deveAutenticarMovimentacaoComSenha(titular,lotaTitular,mov)}" 
-								idMovimentacao="${mov.idMov}" />
-						</c:if>
-						<c:if test="${siga_cliente == 'GOVSP'}">
-							<tags:assinatura_botoes assinar="true"
-								autenticar="${mov.exTipoMovimentacao.idTpMov==2}"
-								assinarComSenhaChecado="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}"
-								autenticarComSenhaChecado="${f:podeAutenticarMovimentacaoComSenha(titular,lotaTitular,mov)}"
-								idMovimentacao="${mov.idMov}" />
-						</c:if>
+						<tags:assinatura_botoes assinar="true"
+							autenticar="${mov.exTipoMovimentacao.idTpMov==2}"
+							assinarComSenha="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}"
+							assinarComSenhaChecado="${f:deveAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}"
+							autenticarComSenha="${f:podeAutenticarMovimentacaoComSenha(titular,lotaTitular,mov)}"
+							autenticarComSenhaChecado="${f:deveAutenticarMovimentacaoComSenha(titular,lotaTitular,mov)}" 
+							idMovimentacao="${mov.idMov}" />
 		
 					</div>
 				</div>

@@ -131,11 +131,13 @@
 											<td align="left">${mov.descrTipoMovimentacao} 
 												<c:if test="${mov.idTpMov == 12}">
 													<span style="font-size: .8rem;color: #9e9e9e;"
+														>| documento juntado ${mov.exMobil}
 														<c:if test="${mov.exMobil.podeExibirNoAcompanhamento}">
-															class="showConteudoDoc text-primary" rel="popover" data-title="${mov.exMobil}" 
-	    													data-content="" onmouseenter="exibeDoc(this);"
+															&nbsp<a class="link-btn btn btn-sm btn-light" href="#" 
+																onclick="popitup('/sigaex/public/app/processoArquivoAutenticado_stream?jwt=${jwt}&sigla=${mov.exMobil}');"
+																>Ver</a>
 	    												</c:if>
-														>| documento juntado ${mov.exMobil}</span>
+													</span>
 												</c:if>
 											</td>
 											<td align="left">${mov.lotaCadastrante.sigla} </td>
@@ -163,37 +165,15 @@
 	<tags:assinatura_rodape />
 </siga:pagina>
 <script type="text/javascript">
-	function exibeDoc(elem) {
-    	var timeOut;
-		$(elem).popover({
-			trigger: "hover",
-			html : true,
-    	})
-    	timeOut = setTimeout(setDataContent, 700, elem);
-	}
-	
-   	function setDataContent(elem) {
-   	   	if ($(elem).attr('data-content') === "" 
-				&& ($("." + $(elem).context.className.split(' ')[0] + ":hover")).length > 0) {
-			sigladoc = $(elem).attr("data-title").replace("/", "").replace("-", "");
-			var div_id = "tmp-id-" + sigladoc;
-			$(elem).attr("data-content", '<div id="'+ div_id +'" class="spinner-border"></div>');
-			$(elem).popover('show');
-			conteudodoc = exibirConteudoDoc(div_id, sigladoc, elem);
-		}
-	}
-	
-	function exibirConteudoDoc(div_id, sigla, elem) {
+	function exibirConteudoDoc(sigla) {
 		$.ajax({
-		    url: "/sigaex/api/v1/doc/"+ sigla + "/html",
+		    url: "/public/app/processoArquivoAutenticado_stream"+ sigla + "/arquivo",
 		    contentType: "application/json",
 		    headers: {"Authorization": "${jwt}"},
 		    dataType: 'json',
 		    success: function(result) {
-			    conteudoDoc = new DOMParser().parseFromString(result.html, "text/html");
-				conteudo = conteudoDoc.getElementsByTagName("BODY")[0].innerText.substring(0, 500);
-				$('#'+div_id).removeClass("spinner-border");
-				$('#'+div_id).html(conteudo);
+			    conteudoDoc = new DOMParser().parseFromString(result.pdf, "application/pdf");
+			    var ws = window.open("", '_blank', "width=800,height=600,location=no,menubar=no,status=no,titilebar=no,resizable=no")
 				$(elem).attr("data-content", conteudo);
 		    },				
 		    error: function (response, status, error) {

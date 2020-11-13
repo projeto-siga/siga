@@ -15,7 +15,7 @@
 		
 		$(document).ready(function() {
 			$('#outrasInformacoesDaFilha').hide();
-			$("#escalonar_dialog").dialog('option', 'width', 700);
+			$("#escalonar_dialog").dialog();
 			onchangeCheckCriaFilha();
 		});
 		
@@ -47,9 +47,9 @@
 		}
 				
 	</script>
-	<div class="gt-content-box gt-form">
+	<div>
 		<form action="#" method="post" enctype="multipart/form-data" id="frmEscalonar">
-			<div class="gt-form-row">
+			<div class="">
 				<label>
 					<siga:checkbox name="criaFilha" onchange="onchangeCheckCriaFilha()" value="${criarFilhaDefault}" /> 
 					Criar Solicita&ccedil;&atilde;o filha de ${codigo}
@@ -76,7 +76,7 @@
 			<div id="motivoEscalonamento" class="form-group">
 				<label>Motivo do Escalonamento</label>
 				<siga:select name="motivo" value="NOVO_ATENDENTE" list="tipoMotivoEscalonamentoList" isEnum="true" 
-					listValue="descrTipoMotivoEscalonamento" listKey="descrTipoMotivoEscalonamento" style="width: auto;"/>
+					listValue="descrTipoMotivoEscalonamento" listKey="descrTipoMotivoEscalonamento"/>
 			</div>
 			<div class="gt-form-row">
 				<input type="hidden" name="solicitacao.codigo" id="sigla" value="${siglaCompacta}" />
@@ -92,7 +92,7 @@
 			<label>Lota&ccedil;&atilde;o Atendente</label> 
 			<input type="hidden" name="lotacaoSelecao" id="lotacaoSelecao" class="selecao">
 			
-			<sigasr:selecao tipo="lotacao" propriedade="lotacao" tema="simple"modulo="siga" />
+			<sigasr:selecao tipo="lotacao" propriedade="lotacao" tema="simple" modulo="siga" />
 			
 			<span style="display: none; color: red" id="atendente">Atendente n&atilde;o informado.</span>
 		</div>

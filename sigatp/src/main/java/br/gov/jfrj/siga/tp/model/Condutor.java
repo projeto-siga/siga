@@ -45,7 +45,7 @@ import br.gov.jfrj.siga.validation.Email;
 @SuppressWarnings({"serial", "unchecked"})
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "condutor", schema = "sigatp")
 @Unique(message="{condutor.dppessoa.unique}" ,field = "dpPessoa", uniqueColumn="DPPESSOA_ID_PESSOA")
 public class Condutor extends TpModel implements ConvertableEntity, Comparable<Condutor> {
 

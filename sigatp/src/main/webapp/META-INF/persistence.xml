@@ -74,6 +74,7 @@
  
 
 		<properties>
+				<property name="hibernate.jpa.compliance.global_id_generators" value="false"/>
 			<property name="hibernate.cache.use_query_cache" value="true" />
 			<property name="hibernate.cache.use_second_level_cache"
 				value="true" />

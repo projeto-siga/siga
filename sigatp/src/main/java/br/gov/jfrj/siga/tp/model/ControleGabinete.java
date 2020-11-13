@@ -27,7 +27,7 @@ import br.gov.jfrj.siga.tp.validation.annotation.Data;
 
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "controlegabinete", schema = "sigatp")
 public class ControleGabinete extends TpModel implements ConvertableEntity {
 
     private static final long serialVersionUID = 5270396853989326489L;

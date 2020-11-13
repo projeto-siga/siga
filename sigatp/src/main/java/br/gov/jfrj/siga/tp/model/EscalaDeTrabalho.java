@@ -27,7 +27,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "escaladetrabalho", schema = "sigatp")
 public class EscalaDeTrabalho extends TpModel implements ConvertableEntity  {
 
 	private static final long serialVersionUID = 1L;

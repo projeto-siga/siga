@@ -22,7 +22,7 @@ import br.gov.jfrj.siga.tp.validation.annotation.UpperCase;
 
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "penalidade", schema = "sigatp")
 @Unique(message="{penalidade.codigoInfracao.unique}", field="codigoInfracao")
 public class Penalidade extends TpModel implements ConvertableEntity {
 	/**

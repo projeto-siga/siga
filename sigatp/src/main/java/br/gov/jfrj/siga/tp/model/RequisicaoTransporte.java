@@ -56,7 +56,7 @@ import br.gov.jfrj.siga.vraptor.handler.Resources;
 
 @Entity
 @Audited
-@Table(name = "REQUISICAOTRANSPORTE", schema = "SIGATP")
+@Table(name = "requisicaotransporte", schema = "sigatp")
 public class RequisicaoTransporte extends TpModel implements Comparable<RequisicaoTransporte>, ConvertableEntity {
     /**
 	 * 

@@ -28,7 +28,7 @@ import br.gov.jfrj.siga.tp.validation.annotation.UpperCase;
 @SuppressWarnings("serial")
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "afastamento", schema = "sigatp")
 public class Afastamento extends TpModel implements ConvertableEntity {
 
     public static final ActiveRecord<Afastamento> AR = new ActiveRecord<>(Afastamento.class);

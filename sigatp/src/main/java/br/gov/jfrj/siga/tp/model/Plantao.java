@@ -28,7 +28,7 @@ import br.gov.jfrj.siga.tp.validation.annotation.Data;
 @SuppressWarnings("serial")
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "plantao", schema = "sigatp")
 public class Plantao extends TpModel implements ConvertableEntity, Comparable<Plantao> {
 
     public static final ActiveRecord<Plantao> AR = new ActiveRecord<>(Plantao.class);

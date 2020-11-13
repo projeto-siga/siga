@@ -45,7 +45,7 @@ import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "veiculo", schema = "sigatp")
 @Unique(message = "{veiculo.placa.unique}", field = "placa")
 public class Veiculo extends TpModel implements ConvertableEntity, Comparable<Veiculo> {
 

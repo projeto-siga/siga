@@ -23,7 +23,7 @@ import br.gov.jfrj.siga.validation.Email;
 @SuppressWarnings("serial")
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "fornecedor", schema = "sigatp")
 @Unique.List(value = { @Unique(message = "{fornecedor.cnpj.unique}", field = "cnpj"), @Unique(message = "{fornecedor.email.unique}", field = "eMail") })
 public class Fornecedor extends TpModel implements ConvertableEntity, Comparable<Fornecedor> {
 

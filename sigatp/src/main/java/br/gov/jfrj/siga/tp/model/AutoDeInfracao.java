@@ -29,7 +29,7 @@ import br.gov.jfrj.siga.tp.validation.annotation.UpperCase;
 @SuppressWarnings("serial")
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "autodeinfracao", schema = "sigatp")
 public class AutoDeInfracao extends TpModel implements ConvertableEntity, Comparable<AutoDeInfracao> {
 
 	public static final ActiveRecord<AutoDeInfracao> AR = new ActiveRecord<>(AutoDeInfracao.class);

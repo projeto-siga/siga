@@ -40,7 +40,7 @@ import br.gov.jfrj.siga.uteis.SiglaDocumentoType;
 
 @Entity
 @Audited
-@Table(name = "SERVICOVEICULO", schema = "SIGATP")
+@Table(name = "servicoveiculo", schema = "sigatp")
 public class ServicoVeiculo extends TpModel implements Comparable<ServicoVeiculo>, SequenceMethods, ConvertableEntity {
 
 	/**

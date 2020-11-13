@@ -27,7 +27,7 @@ import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 @Entity
 // @Table(name = "LOTACAO_VEICULO_2", schema="SIGAOR")
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "lotacaoveiculo", schema = "sigatp")
 public class LotacaoVeiculo extends TpModel implements ConvertableEntity {
 
 	@Id

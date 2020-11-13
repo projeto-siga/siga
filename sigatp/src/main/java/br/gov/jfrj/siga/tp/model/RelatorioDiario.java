@@ -24,7 +24,7 @@ import br.gov.jfrj.siga.tp.validation.annotation.UpperCase;
 @SuppressWarnings("serial")
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "relatoriodiario", schema = "sigatp")
 public class RelatorioDiario extends TpModel implements ConvertableEntity {
 	
 	public static ActiveRecord<RelatorioDiario> AR = new ActiveRecord<>(RelatorioDiario.class);

@@ -27,7 +27,7 @@ import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 @SuppressWarnings("serial")
 @Entity
 @Audited
-@Table(name = "FinalidadeRequisicao", schema = "SIGATP")
+@Table(name = "finalidaderequisicao", schema = "sigatp")
 @Unique(message = "{finalidadeRequisicao.descricao.unique}", field = "descricao")
 public class FinalidadeRequisicao extends TpModel implements ConvertableEntity, Comparable<FinalidadeRequisicao> {
 

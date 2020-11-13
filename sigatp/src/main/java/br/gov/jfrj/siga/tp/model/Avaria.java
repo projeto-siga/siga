@@ -27,7 +27,7 @@ import br.gov.jfrj.siga.tp.validation.annotation.UpperCase;
 
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "avaria", schema = "sigatp")
 public class Avaria extends TpModel implements ConvertableEntity, Comparable<Avaria> {
 
 	private static final long serialVersionUID = 1L;

@@ -52,9 +52,13 @@
         <input type="hidden" name="ocultas" value="${ocultas}" />
         <input type="hidden" name="sigla" value="${solicitacao.siglaCompacta}" /> 
         <div class="form-group">
-            <label>Solicita&ccedil;&atilde;o</label> <br />
-            <siga:selecao2 propriedade="solRecebeJuntada" tipo="solicitacao" tema="simple" modulo="sigasr" onchange="validarAssociacao('Juncao');"
-            	tamanho="grande"/>
+            <sigasr:selecao 
+            	titulo="Solicita&ccedil;&atilde;o" 
+            	propriedade="solRecebeJuntada" 
+            	urlAcao="solicitacao/buscar" 
+            	urlSelecionar="solicitacao/selecionar" 
+            	onchange="validarAssociacao('Juncao');"
+            	modulo="sigasr"/>  
             <span id="erroSolicitacaoJuncao" style="color: red; display: none;">Solicita&ccedil;&atilde;o n&atilde;o informada.</span>
         </div>
         <div class="form-group">

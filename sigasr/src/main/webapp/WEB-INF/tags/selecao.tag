@@ -246,12 +246,12 @@ self.resposta_ajax_${propriedade}${tipoSel} = function(response, d1, d2, d3) {
 
 // Armazena o ultimo valor do campo 'sigla' (input com name="${inputNameTipoSel}.sigla")
 // Utilizado para comparar com valor do evento onblur.
-var lastValue;
+var lastValue_${propriedade};
 
 self.ajax_${propriedade}${tipoSel} = function(value) {
 	
 	// Para evitar de chamar a funcao se nao houver mudanca:
-	if(lastValue === value) return;
+	if(lastValue_${propriedade} === value) return;
 	
 	//var sigla = $.trim(document.getElementsByName('${inputNameTipoSel}.sigla')[0].value);
 	var sigla = value;
@@ -283,7 +283,7 @@ self.ajax_${propriedade}${tipoSel} = function(value) {
 
 // Armazena o valor para comprar no self.ajax_*, para evitar a chamada da funcao 'retorna_*'
 self.onfocus_${propriedade}${tipoSel} = function(value) {
-	lastValue = value;
+	lastValue_${propriedade} = value;
 }
 
 </script>

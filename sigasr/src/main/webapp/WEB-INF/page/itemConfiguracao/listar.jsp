@@ -54,62 +54,60 @@
 	}
 	</style>
 	
-	<div class="gt-bd clearfix">
-		<div class="gt-content">
+	<div class="container-fluid mb-2">
 			<h2>Itens de Configuração</h2>
 			<!-- content bomex -->
-			<div class="gt-content-box dataTables_div">
+			<div class="card card-body mb-2">
 				<div class="gt-form-row dataTables_length">
 					<label>
 						<siga:checkbox name="mostrarDesativados" value="${mostrarDesativados}"></siga:checkbox>
 						<b>Incluir Inativas</b>
 					</label>
 				</div>
-				<table id="itens_configuracao_table" class="gt-table display">
-					<thead>
-						<tr>
-							<th style="color: #333" class="hide-sort-arrow">
-								<button class="bt-expandir">
-									<span id="iconeBotaoExpandirTodos">+</span>
-								</button>
-							</th>
-							<th>Código</th>
-							<th>Título</th>
-							<th>Descrição</th>
-							<th>Similaridade</th>
-							<th></th>
-							<th style="display: none;">VO Item</th>
-						</tr>
-					</thead>
-	
-					<tbody>
-						<c:forEach items="${itens}" var="item">
-							<tr data-json-id="${item.idItemConfiguracao}" data-json='${item.toVO().toJson()}' 
-								onclick="itemConfiguracaoService.editar($(this).data('json'), 'Alterar item de configuração')"
-								style="cursor: pointer;">
-								<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td>
-								<td>${item.siglaItemConfiguracao}</td>
-								<td>${item.tituloItemConfiguracao}</td>
-								<td>${item.descrItemConfiguracao}</td>
-								<td>${item.descricaoSimilaridade}</td>
-								<td class="acoes">
-									<sigasr:desativarReativar id="${item.idItemConfiguracao}" onReativar="itemConfiguracaoService.reativar" onDesativar="itemConfiguracaoService.desativar" isAtivo="${item.isAtivo()}"></sigasr:desativarReativar>
-								</td>
-								<td style="display: none;">${item.srItemConfiguracaoJson}</td>
+				<div class="table-responsive">
+					<table id="itens_configuracao_table" class="table">
+						<thead>
+							<tr>
+								<th style="color: #333" class="hide-sort-arrow">
+									<button class="bt-expandir">
+										<span id="iconeBotaoExpandirTodos">+</span>
+									</button>
+								</th>
+								<th>Código</th>
+								<th>Título</th>
+								<th>Descrição</th>
+								<th>Similaridade</th>
+								<th></th>
+								<th style="display: none;">VO Item</th>
 							</tr>
-						</c:forEach>
-					</tbody>
-				</table>
+						</thead>
+		
+						<tbody>
+							<c:forEach items="${itens}" var="item">
+								<tr data-json-id="${item.idItemConfiguracao}" data-json='${item.toVO().toJson()}' 
+									onclick="itemConfiguracaoService.editar($(this).data('json'), 'Alterar item de configuração')"
+									style="cursor: pointer;">
+									<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td>
+									<td>${item.siglaItemConfiguracao}</td>
+									<td>${item.tituloItemConfiguracao}</td>
+									<td>${item.descrItemConfiguracao}</td>
+									<td>${item.descricaoSimilaridade}</td>
+									<td class="acoes">
+										<sigasr:desativarReativar id="${item.idItemConfiguracao}" onReativar="itemConfiguracaoService.reativar" onDesativar="itemConfiguracaoService.desativar" isAtivo="${item.isAtivo()}"></sigasr:desativarReativar>
+									</td>
+									<td style="display: none;">${item.srItemConfiguracaoJson}</td>
+								</tr>
+							</c:forEach>
+						</tbody>
+					</table>
+				</div>
 			</div>
 			<!-- /content box -->
-			<div class="gt-table-buttons">
-				<a onclick="itemConfiguracaoService.cadastrar('Incluir Item')" class="gt-btn-medium gt-btn-left">Incluir</a>
-			</div>
-		</div>
+			<a onclick="itemConfiguracaoService.cadastrar('Incluir Item')" class="btn btn-primary" style="color: #fff">Incluir</a>
 	</div>
 </siga:pagina>
 
-<sigasr:modal nome="editarItem" titulo="Editar Item">
+<sigasr:modal nome="editarItem" titulo="Editar Item" largura="80%">
 	<div id="divEditarItem"><jsp:include page="editar.jsp"></jsp:include></div>
 </sigasr:modal>
 

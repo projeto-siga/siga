@@ -67,7 +67,7 @@
 				<a id="${linkId}"
 					class="${classe} ${linkBotoes ? 'btn btn-sm btn-info text-white link-tag' : ''}"
 					<c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
-					data-toggle="modal" data-target="#${modal}" title="${explicacao}">${img}${title}</a>
+					data-toggle="modal" data-target="#${modal}" title="${explicacao}" onclick="if (init${modal}) init${modal}()">${img}${title}</a>
 			</c:when>
 			<c:when test="${not empty popup and popup != false}">
 				<a id="${linkId}"

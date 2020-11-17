@@ -36,6 +36,17 @@ public class Data {
         	return false;
         }
 	}
+	
+	public static Date parse(String s) {
+		if (s == null || s.trim().length() == 0)
+			return null;
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		try {
+			return df.parse(s);
+		} catch (Exception ex) {
+			throw new RuntimeException("Data inválida " + s, ex);
+		}
+	}
 
 	public static String formatDDMMYY_AS_HHMMSS(Date dt) {
 		if (dt != null) {
@@ -63,4 +74,5 @@ public class Data {
 		tempo = tempo.replace("agora há pouco", "agora");
 		return tempo;
 	}
-}
+
+	}

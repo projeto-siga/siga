@@ -1632,6 +1632,8 @@ public class ExDao extends CpDao {
 		if (listaTaxonomia != null) {
 			listaConcatenada.addAll(listaTaxonomia);	
 		}
+		
+		listaConcatenada.sort(CpMarcador.ORDEM_COMPARATOR);
 
 		return listaConcatenada;
 		

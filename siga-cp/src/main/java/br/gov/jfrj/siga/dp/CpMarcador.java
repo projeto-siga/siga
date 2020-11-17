@@ -217,7 +217,8 @@ public class CpMarcador extends AbstractCpMarcador {
 	 * Ordena de acordo com a {@link #getOrdem() Ordem}.
 	 */
 	public static final Comparator<CpMarcador> ORDEM_COMPARATOR = Comparator
-			.nullsFirst(Comparator.comparing(CpMarcador::getOrdem));
+			.nullsFirst(Comparator.comparing(CpMarcador::getOrdem, 
+					  Comparator.nullsFirst(Comparator.naturalOrder())));
 
 	public CpMarcador() {
 		super();

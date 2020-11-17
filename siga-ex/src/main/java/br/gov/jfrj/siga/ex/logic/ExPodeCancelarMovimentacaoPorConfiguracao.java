@@ -8,21 +8,22 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.bl.Ex;
 
-public class ExPodePorConfiguracao implements Expression {
+public class ExPodeCancelarMovimentacaoPorConfiguracao implements Expression {
 
-	private long idTpConf;
+	private long idTpMov;
 	private DpPessoa titular;
 	private DpLotacao lotaTitular;
 
-	public ExPodePorConfiguracao(long idTpConf, DpPessoa titular, DpLotacao lotaTitular) {
-		this.idTpConf = idTpConf;
+	public ExPodeCancelarMovimentacaoPorConfiguracao(long idTpMov, DpPessoa titular, DpLotacao lotaTitular) {
+		this.idTpMov = idTpMov;
 		this.titular = titular;
 		this.lotaTitular = lotaTitular;
 	}
 
 	@Override
 	public boolean eval() {
-		return Ex.getInstance().getConf().podePorConfiguracao(titular, lotaTitular, idTpConf);
+		return Ex.getInstance().getConf().podePorConfiguracao(titular, lotaTitular, idTpMov,
+				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
 
 	@Override

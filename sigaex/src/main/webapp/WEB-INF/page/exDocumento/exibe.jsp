@@ -341,7 +341,7 @@
 																url="${pageContext.request.contextPath}${acao.url}"
 																test="${true}" popup="${acao.popup}"
 																confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
-																idAjax="${mov.idMov}" classe="${acao.classe}" />
+																idAjax="${mov.idMov}" classe="${acao.classe}" post="${acao.post}" />
 															<c:if test='${assinadopor and mov.idTpMov == 2}'> ${mov.complemento}
 																<c:set var="assinadopor" value="${false}" />
 															</c:if>
@@ -1188,7 +1188,7 @@
 					</div>
 	</c:forEach>
 
-	<%@ include file="definirMarca.jsp"%>
+	<%@ include file="marcar.jsp"%>
 </div>
 </div>
 

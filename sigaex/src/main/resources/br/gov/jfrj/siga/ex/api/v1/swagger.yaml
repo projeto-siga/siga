@@ -635,6 +635,28 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
+
+  /doc/{sigla}/marcadores-disponiveis:
+    get:
+      description: Obter lista de marcadores que podem ser aplicados a um móbil
+      tags: [consulta]
+      parameters:
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Marcador"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
   /sugestao:
     post:
       consumes: ["application/x-www-form-urlencoded"]
@@ -710,7 +732,10 @@ paths:
         200:
           description: Successful response
           schema:
-             $ref: "#/definitions/Pessoa"
+            type: object
+            properties:
+              pessoaAtual:
+                $ref: "#/definitions/Pessoa"
         500:
           description: Error ocurred
           schema:
@@ -747,7 +772,10 @@ paths:
         200:
           description: Successful response
           schema:
-             $ref: "#/definitions/Lotacao"
+            type: object
+            properties:
+              lotacaoAtual:
+                $ref: "#/definitions/Lotacao"
         500:
           description: Error ocurred
           schema:
@@ -928,4 +956,17 @@ definitions:
         type: string
       orgao:
         type: string        
-              
+        
+  Marcador:
+    description: Dados de um marcador
+    type: object
+    properties:
+      idMarcador:
+        type: string
+      nome:
+        type: string
+      ativo:
+        type: boolean
+      explicacao:
+        type: string
+        

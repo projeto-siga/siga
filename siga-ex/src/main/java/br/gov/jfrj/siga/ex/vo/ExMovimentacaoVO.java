@@ -46,6 +46,7 @@ import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_EM_EDITAL_DE_ELIMINACAO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO_PUBL_BI;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ORDENACAO_ORIGINAL_DOCUMENTO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO;
@@ -64,7 +65,9 @@ import java.util.TreeMap;
 
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.internal.org.bouncycastle.jcajce.provider.symmetric.util.PBE.Util;
 
+import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
@@ -75,6 +78,8 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
+import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
 import br.gov.jfrj.siga.ex.util.ProcessadorReferencias;
 
 public class ExMovimentacaoVO extends ExVO {
@@ -173,6 +178,14 @@ public class ExMovimentacaoVO extends ExVO {
 		if (idTpMov == TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
 			addAcao(null, "Cancelar", "/app/expediente/mov", "cancelar",
 					Ex.getInstance().getComp().podeCancelarVinculacaoPapel(titular, lotaTitular, mov.mob(), mov));
+		}
+
+		if (idTpMov == TIPO_MOVIMENTACAO_MARCACAO) {
+			descricao = mov.getMarcador().getDescrMarcador() + (mov.getObs() != null && mov.getObs().trim().length() > 0 ? ", obs: " + mov.getObs() : "");
+			addAcao(AcaoVO.builder().nome("Cancelar").nameSpace("/app/expediente/mov")
+					.acao("cancelar_movimentacao_gravar").params("sigla", mov.mob().getCodigoCompacto())
+					.params("id", mov.getIdMov().toString()).post(true)
+					.exp(new ExPodeCancelarMarcacao(mov, titular, lotaTitular)).build());
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_REFERENCIA) {

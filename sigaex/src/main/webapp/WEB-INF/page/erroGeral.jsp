@@ -9,15 +9,7 @@
 	<c:if test="${empty exceptionGeral or empty exceptionStackGeral}">
 		<%
 			try {
-				// Servidor: ultimos dois bytes antes de / e ultimos dois bytes da porta (antes do hifen): 
-				//     xxx-xxxxx-xAA/nnn.nnn.nnn.nnn:nnBB-nn ==> AABB  
-				String th = Thread.currentThread().getName(); 
-				String port1 = th.split(":") [1]; 
-				String port2 = port1.split("-") [0]; 
-				String serv1 = th.split("/") [0]; 
-				String serv2 = serv1.substring(serv1.length() - 2); 
-				pageContext.getRequest().setAttribute("threadName",  
-						serv1.substring(serv1.length() - 2) + (port2.substring(port2.length() - 3)) );
+				pageContext.getRequest().setAttribute("threadName", System.getProperty("jboss.server.name") + "|" + request.getServerName() + "|"+request.getServerPort());
 			} catch (Exception e) {
 				pageContext.getRequest().setAttribute("threadName", "* Nome do servidor fora do padrao");
 			}

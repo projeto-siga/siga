@@ -133,8 +133,10 @@
 													<span style="font-size: .8rem;color: #9e9e9e;"
 														>| documento juntado ${mov.exMobil}
 														<c:if test="${mov.exMobil.podeExibirNoAcompanhamento}">
-															&nbsp<a class="link-btn btn btn-sm btn-light" href="#" 
+															&nbsp<a class="showConteudoDoc link-btn btn btn-sm btn-light" href="#" 
 																onclick="popitup('/sigaex/public/app/processoArquivoAutenticado_stream?jwt=${jwt}&sigla=${mov.exMobil}');"
+																rel="popover" data-title="${mov.exMobil}" 
+		    													data-content="" onmouseenter="exibeDoc(this);"
 																>Ver</a>
 	    												</c:if>
 													</span>
@@ -165,6 +167,50 @@
 	<tags:assinatura_rodape />
 </siga:pagina>
 <script type="text/javascript">
+	function exibeDoc(elem) {
+		var timeOut;
+		$(elem).popover({
+			trigger: "hover",
+			html : true,
+		})
+		timeOut = setTimeout(setDataContent, 700, elem);
+	}
+	
+	function setDataContent(elem) {
+	   	if ($(elem).attr('data-content') === "" 
+				&& ($("." + $(elem).context.className.split(' ')[0] + ":hover")).length > 0) {
+			sigladoc = $(elem).attr("data-title").replace("/", "").replace("-", "");
+			var div_id = "tmp-id-" + sigladoc;
+			$(elem).attr("data-content", '<div id="'+ div_id +'" class="spinner-border"></div>');
+			$(elem).popover('show');
+			conteudodoc = exibirBodyDoc(div_id, sigladoc, elem);
+		}
+	}
+	
+	function exibirBodyDoc(div_id, sigla, elem) {
+		$.ajax({
+		    url: "/sigaex/api/v1/doc/"+ sigla + "/html",
+		    contentType: "application/json",
+		    headers: {"Authorization": "${jwt}"},
+		    dataType: 'json',
+		    success: function(result) {
+			    conteudoDoc = new DOMParser().parseFromString(result.html, "text/html");
+				conteudo = conteudoDoc.getElementsByTagName("BODY")[0].innerText.substring(0, 500)
+					.replace(/\s*\n+|\s*\n\r+|\s*\r+/g, '<br>')
+					+ "... <br /><br /><i>Clique no botão para ver o documento completo.</i>";
+				$('#'+div_id).removeClass("spinner-border");
+				$('#'+div_id).html(conteudo);
+				$(elem).attr("data-content", conteudo);
+		    },				
+		    error: function (response, status, error) {
+	        	msgErro = "Ocorreu um erro na solicitação: " + response.responseJSON.errormsg;
+				$('#'+div_id).removeClass("spinner-border");
+				$('#'+div_id).html(msgErro);
+				$(elem).attr("data-content", "");
+	    	}
+	    });
+	}
+	
 	function exibirConteudoDoc(sigla) {
 		$.ajax({
 		    url: "/public/app/processoArquivoAutenticado_stream"+ sigla + "/arquivo",

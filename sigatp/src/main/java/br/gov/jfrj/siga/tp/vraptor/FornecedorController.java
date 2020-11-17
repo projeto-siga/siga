@@ -3,16 +3,17 @@ package br.gov.jfrj.siga.tp.vraptor;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
+import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdmin;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdminFrota;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdminGabinete;
@@ -23,7 +24,7 @@ import br.gov.jfrj.siga.tp.model.TpDao;
 import br.gov.jfrj.siga.tp.model.Uf;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-@Resource
+@Controller
 @Path("/app/fornecedor")
 public class FornecedorController extends TpController {
 	
@@ -31,7 +32,15 @@ public class FornecedorController extends TpController {
 	private static final String LABEL_EDITAR = "views.label.editar";
 	private static final String LABEL_INCLUIR = "views.label.incluir";
 
-	public FornecedorController(HttpServletRequest request, Result result, CpDao dao, Validator validator, SigaObjects so, EntityManager em) {
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public FornecedorController() {
+		super();
+	}
+	
+	@Inject
+	public FornecedorController(HttpServletRequest request, Result result,   Validator validator, SigaObjects so,  EntityManager em) {
 		super(request, result, TpDao.getInstance(), validator, so, em);
 	}
 

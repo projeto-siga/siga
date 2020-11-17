@@ -10,26 +10,26 @@ import br.gov.jfrj.siga.tp.validation.annotation.Data;
 
 public class DataValidator implements ConstraintValidator<Data, Calendar> {
 
-	private Data data;
+	private Data annotation;
 
 	@Override
-	public void initialize(Data data) {
-		this.data = data;
+	public void initialize(Data annotation) {
+		this.annotation = annotation;
 	}
 
 	@Override
 	public boolean isValid(Calendar value, ConstraintValidatorContext context) {
 
 		//		data.message("Ano de " + data.descricaoCampo() + " nao deve ser maior que o ano de " + ano + ".");
-		if (!(value instanceof Calendar))
-			return Boolean.TRUE;
-
-		boolean isValida = validarAnoData(value, data.intervalo());
+	    if(annotation.nullable() && (value == null || value.equals(""))) 
+	        return true;
+		
+		boolean isValida = validarAnoData(value, annotation.intervalo());
 		if(!isValida) {
-			int ano = Calendar.getInstance().get(Calendar.YEAR) + data.intervalo();
+			int ano = Calendar.getInstance().get(Calendar.YEAR) + annotation.intervalo();
 			context.disableDefaultConstraintViolation();
 			context
-				.buildConstraintViolationWithTemplate(MessageFormat.format("Ano de {0} n&atilde;o deve ser maior que o ano de {1}.", data.descricaoCampo(), String.valueOf(ano)))
+				.buildConstraintViolationWithTemplate(MessageFormat.format("Ano de {0} n&atilde;o deve ser maior que o ano de {1}.", annotation.descricaoCampo(), String.valueOf(ano)))
 				.addConstraintViolation();
 		}
 		

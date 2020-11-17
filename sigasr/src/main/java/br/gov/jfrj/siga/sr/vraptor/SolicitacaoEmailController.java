@@ -4,15 +4,19 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
 
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+import br.com.caelum.vraptor.observer.upload.DefaultUploadedFile;
+import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -27,7 +31,7 @@ import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-@Resource
+@Controller
 @Path("/public/app/solicitacaoEmail")
 public class SolicitacaoEmailController extends SrController {
 	
@@ -44,19 +48,27 @@ public class SolicitacaoEmailController extends SrController {
 		}
 	}
 	
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public SolicitacaoEmailController() {
+		super();
+	}
+	
+	@Inject
 	public SolicitacaoEmailController(HttpServletRequest request, Result result,  SigaObjects so, EntityManager em, SrValidator srValidator) {
 		super(request, result, CpDao.getInstance(), so, em, srValidator);
 	}
 	
 	private UploadedFile getArquivoMsg(final byte[] mensagem, final String assunto) {
-		return new UploadedFile() {
+		return new DefaultUploadedFile(null, null, null, 0L) {
 			
 			@Override
 			public long getSize() {
 				return mensagem.length;
 			}
 			
-			@Override
 			public String getFileName() {
 				return limparParaNomeDeArquivo(assunto) + ".msg";
 			}
@@ -135,7 +147,9 @@ public class SolicitacaoEmailController extends SrController {
 		String siglaDaAcao = SigaBaseProperties.getString(_NOME_PARAM_ACAO_SIGLA);
 		SrAcao acao = null;
 		try {
-			acao = (SrAcao) SrAcao.AR.find("siglaAcao = ? and hisDtFim is null", siglaDaAcao).first();
+			Map<String, Object> parametros = new HashMap<String,Object>();
+			parametros.put("siglaacao", siglaDaAcao);
+			acao = (SrAcao) SrAcao.AR.find("siglaAcao = :siglaacao and hisDtFim is null", parametros).first();
 		} catch(Exception e) {
 			return null;
 		}
@@ -146,7 +160,9 @@ public class SolicitacaoEmailController extends SrController {
 		String siglaDoItem = SigaBaseProperties.getString(_NOME_PARAM_ITEM_SIGLA);
 		SrItemConfiguracao itemConfiguracao = null;
 		try {
-			itemConfiguracao = (SrItemConfiguracao) SrItemConfiguracao.AR.find("siglaItemConfiguracao = ? and hisDtFim is null", siglaDoItem).first();
+			Map<String, Object> parametros = new HashMap<String,Object>();
+			parametros.put("siglaItemConfiguracao", siglaDoItem);
+			itemConfiguracao = (SrItemConfiguracao) SrItemConfiguracao.AR.find("siglaItemConfiguracao = :siglaItemConfiguracao and hisDtFim is null", parametros).first();
 		} catch(Exception e) {
 			return null;
 		}
@@ -156,7 +172,9 @@ public class SolicitacaoEmailController extends SrController {
 	private static DpPessoa localizarPessoaPeloEmail(String emailPessoa) {
 		DpPessoa pessoa = null;
 		try {
-			pessoa = ((DpPessoa) DpPessoa.AR.find("emailPessoa = ? and dataFimPessoa is null", emailPessoa).first());
+			Map<String, Object> parametros = new HashMap<String,Object>();
+			parametros.put("emailPessoa", emailPessoa);
+			pessoa = ((DpPessoa) DpPessoa.AR.find("emailPessoa = :emailPessoa and dataFimPessoa is null", parametros).first());
 		}
 		catch(Exception e) {
 			return null;

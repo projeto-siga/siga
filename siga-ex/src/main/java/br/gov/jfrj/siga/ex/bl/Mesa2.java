@@ -9,9 +9,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import com.crivano.swaggerservlet.ISwaggerModel;
+
 import br.gov.jfrj.siga.base.Data;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -19,7 +21,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.bl.Mesa.GrupoDeMarcadorEnum;
+import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class Mesa2 {
@@ -129,6 +131,9 @@ public class Mesa2 {
 		}
 		public String getNome() {
 			return this.nome;
+		}
+		public Integer getId() {
+			return this.id;
 		}
 		public static GrupoDeMarcadorEnum getByNome(String nome) {
 			for (GrupoDeMarcadorEnum i : GrupoDeMarcadorEnum.values()) {
@@ -392,7 +397,16 @@ public class Mesa2 {
 				GrupoDeMarcadorEnum.NENHUM),
 		//
 		NOTA_EMPENHO(1007, "Nota de Empenho", "fas fa-tag", "",
-				GrupoDeMarcadorEnum.NENHUM);
+				GrupoDeMarcadorEnum.NENHUM),
+		//
+		DEMANDA_JUDICIAL_BAIXA(1008, "Demanda Judicial Prioridade Baixa", "fas fa-tag", "",
+                GrupoDeMarcadorEnum.ALERTA),
+		//
+		DEMANDA_JUDICIAL_MEDIA(1009, "Demanda Judicial Prioridade Média", "fas fa-tag", "",
+                GrupoDeMarcadorEnum.ALERTA),
+		//
+		DEMANDA_JUDICIAL_ALTA(1010, "Demanda Judicial Prioridade Alta", "fas fa-tag", "",
+                GrupoDeMarcadorEnum.ALERTA);
 
 		private MarcadorEnum(int id, String nome, String icone,
 				String descricao, GrupoDeMarcadorEnum grupo) {
@@ -461,7 +475,7 @@ public class Mesa2 {
 
 	private static List<MesaItem> listarReferencias(TipoDePainelEnum tipo,
 			Map<ExMobil, DocDados> references, DpPessoa pessoa,
-			DpLotacao unidade, Date currentDate, String grupoOrdem, boolean trazerAnotacoes,
+			DpLotacao unidade, Date currentDate, String grupoOrdem, boolean trazerAnotacoes, boolean ordemCrescenteData,
 			List<Integer> marcasAIgnorar) {
 		List<MesaItem> l = new ArrayList<>();
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -521,8 +535,7 @@ public class Mesa2 {
 							.parseInt(((dataMovimentacao.getTime() - dataHoje.getTime() - +3600000L) / 86400000L)
 									+ "");
 
-					String qtdDias = SigaBaseProperties
-							.getString("siga.qtdDiasDevolucao");
+					String qtdDias = Prop.get("/siga.devolucao.dias");
 					
 					if(qtdDias == null){
 						qtdDias = "5";
@@ -569,12 +582,27 @@ public class Mesa2 {
 					DpPessoa pes = tag.marca.getDpPessoaIni().getPessoaAtual();
 					if (pes.getNomeExibicao() != null)
 						t.pessoa = pes.getNomeExibicao();
+					
+					t.titulo += " - " + pes.getNomePessoa() + " - " + pes.getSesbPessoa() + pes.getMatricula();
+
 				}
-				if (tag.marca.getDpLotacaoIni() != null)
+				if (tag.marca.getDpLotacaoIni() != null) {
 					t.lotacao = tag.marca.getDpLotacaoIni().getLotacaoAtual()
 							.getSigla();
+					t.titulo += " - " + tag.marca.getDpLotacaoIni().getLotacaoAtual().getSiglaLotacao();
+				}
 				t.inicio = tag.marca.getDtIniMarca();
 				t.termino = tag.marca.getDtFimMarca();
+				if(tag.marca.getCpMarcador().isDemandaJudicial()) {
+					t.nome += " até " + tag.marca.getExMobil().getDoc().getMobilGeral()
+							.getExMovimentacaoSet().stream() //
+							.filter(mov -> mov.getExTipoMovimentacao().getId()
+									.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO))
+							.filter(mov -> !mov.isCancelada()) //
+							.filter(mov -> tag.marca.getCpMarcador().equals(mov.getMarcador())) //
+							.map(ExMovimentacao::getDtFimMovDDMMYY) //
+							.findFirst().orElse("[indeterminado]");
+				}
 
 				r.list.add(t);
 				if (pessoa != null && tag.marca.getDpPessoaIni() != null) {
@@ -596,7 +624,12 @@ public class Mesa2 {
 		Collections.sort(l, new Comparator<MesaItem>() {
 			@Override
 			public int compare(MesaItem o1, MesaItem o2) {
-				int i = o2.datahora.compareTo(o1.datahora);
+				int i;
+				if (ordemCrescenteData) {
+					i = o1.datahora.compareTo(o2.datahora);
+				} else {
+					i = o2.datahora.compareTo(o1.datahora);
+				}
 				if (i != 0)
 					return i;
 				return 0;
@@ -612,7 +645,9 @@ public class Mesa2 {
 		gruposMesa = montaGruposUsuario(selGrupos);
 		List<Object[]> l = dao.consultarTotaisPorMarcador(titular, lotaTitular, gruposMesa, 
 				exibeLotacao, marcasAIgnorar);
-
+		if (l == null)
+			return gruposMesa;
+		
 		for (GrupoItem gItem : gruposMesa) {
 			gItem.grupoCounterUser = 0L;
 			gItem.grupoCounterLota = 0L;
@@ -635,18 +670,19 @@ public class Mesa2 {
 
 	public static List<GrupoItem> getMesa(ExDao dao, DpPessoa titular,
 			DpLotacao lotaTitular, Map<String, SelGrupo> selGrupos, List<Mesa2.GrupoItem> gruposMesa, 
-			boolean exibeLotacao, boolean trazerAnotacoes, boolean trazerComposto, 
+			boolean exibeLotacao, boolean trazerAnotacoes, boolean trazerComposto, boolean ordemCrescenteData,
 			List<Integer> marcasAIgnorar) throws Exception {
+//		long tempoIni = System.nanoTime();
 		Date dtNow = dao.consultarDataEHoraDoServidor();
 
 		List<Object[]> l = dao.listarMobilsPorMarcas(titular,
-				lotaTitular, exibeLotacao, marcasAIgnorar);
+				lotaTitular, exibeLotacao, ordemCrescenteData, marcasAIgnorar);
 
 		Map<ExMobil, DocDados> map = new HashMap<>();
 		List<Long> listIdMobil = new ArrayList<Long>();
 		Long idMob = 0L;
 
-		if (l.size() > 0) {
+		if (l != null && l.size() > 0) {
 			// Para cada grupo da mesa, pesquisa no resultado da query
 			for (GrupoItem gItem : gruposMesa) {
 				Object[] reference = l.get(0);
@@ -657,44 +693,48 @@ public class Mesa2 {
 				
 				for (Integer i = 0; i < l.size(); i++) {
 					reference = l.get(i);
+					// Inclui o mobil no grupo da mesa
+					mobil = (ExMobil) reference[2];
+					idMob = mobil.getIdMobil();
 					// Se for TMP e o grupo nao for Em Elaboracao, nao deve mostrar no grupo (só GOVSP).
-					if (!(SigaMessages.isSigaSP()
+					if (SigaMessages.isSigaSP()
 							&& reference[4] == null 
-							&& !gItem.grupoNome.equals(GrupoDeMarcadorEnum.EM_ELABORACAO.getNome()))) {
-						// Inclui o mobil no grupo da mesa
-						mobil = (ExMobil) reference[2];
-						idMob = mobil.getIdMobil();
-						
-						if (temMarcador(i, l, idMob, gItem) && !map.containsKey(mobil)) {
-							// Se o mobil possui um marcador do grupo e ele ainda nao foi incluido,
-							// inclui junto com as outras marcas que estao no resultado da query
-							for (Integer i2 = 0; i2 < l.size(); i2++) {  
-								reference = l.get(i2);
-								mobil = (ExMobil) reference[2];
-								if (mobil.getIdMobil() == idMob) {
-									marca = (ExMarca) reference[0];
-									marcador = (CpMarcador) reference[1];
-									if (!map.containsKey(mobil)) {
-										// Mobil ainda nao foi incluido no grupo, inclui
-										if (listIdMobil.size() < gItem.grupoQtd) {
-											DocDados docDados = new DocDados();
-											MeM mm = new MeM();
-											mm.marca = marca;
-											mm.marcador = marcador;
-											docDados.listMeM = new ArrayList<MeM>();
-											docDados.listMeM.add(mm);
-											map.put(mobil, docDados);
-											listIdMobil.add(mobil.getId());
-										} else {
-											break;
-										} 
-									} else {
-										// Mobil ja foi incluido no grupo, inclui so a marca no mobil
+							&& !gItem.grupoNome.equals(GrupoDeMarcadorEnum.EM_ELABORACAO.getNome())) 
+						continue;
+					// Se for do grupo Aguardando Andamento e tiver marcador da caixa de entrada, nao inclui
+					if (gItem.grupoNome.equals(GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO.getNome())
+							&& temMarcador(0, l, idMob, Integer.valueOf(GrupoDeMarcadorEnum.CAIXA_DE_ENTRADA.id))) 
+						continue;
+					
+					if (temMarcador(i, l, idMob, Integer.valueOf(gItem.grupoOrdem)) && !map.containsKey(mobil)) {
+						// Se o mobil possui um marcador do grupo e ele ainda nao foi incluido,
+						// inclui junto com as outras marcas que estao no resultado da query
+						for (Integer i2 = 0; i2 < l.size(); i2++) {  
+							reference = l.get(i2);
+							mobil = (ExMobil) reference[2];
+							if (mobil.getIdMobil() == idMob) {
+								marca = (ExMarca) reference[0];
+								marcador = (CpMarcador) reference[1];
+								if (!map.containsKey(mobil)) {
+									// Mobil ainda nao foi incluido no grupo, inclui
+									if (listIdMobil.size() < gItem.grupoQtd) {
+										DocDados docDados = new DocDados();
 										MeM mm = new MeM();
 										mm.marca = marca;
 										mm.marcador = marcador;
-										map.get(mobil).listMeM.add(mm);
-									}
+										docDados.listMeM = new ArrayList<MeM>();
+										docDados.listMeM.add(mm);
+										map.put(mobil, docDados);
+										listIdMobil.add(mobil.getId());
+									} else {
+										break;
+									} 
+								} else {
+									// Mobil ja foi incluido no grupo, inclui so a marca no mobil
+									MeM mm = new MeM();
+									mm.marca = marca;
+									mm.marcador = marcador;
+									map.get(mobil).listMeM.add(mm);
 								}
 							}
 						}
@@ -715,12 +755,16 @@ public class Mesa2 {
 						iMobs = iMobsFim;
 					}
 					gItem.grupoDocs = Mesa2.listarReferencias(TipoDePainelEnum.UNIDADE, map, titular,
-							titular.getLotacao(), dtNow, gItem.grupoOrdem, trazerAnotacoes, marcasAIgnorar);
+							titular.getLotacao(), dtNow, gItem.grupoOrdem, trazerAnotacoes, ordemCrescenteData, marcasAIgnorar);
 					map = new HashMap<>();
 					listIdMobil = new ArrayList<Long>();
 				}
 			}
 		}
+//		long tempoTotal = System.nanoTime() - tempoIni;
+//		System.out.println("getMesa: " + tempoTotal
+//		/ 1000000 + " ms ==> ");
+
 		return gruposMesa;
 	}
 
@@ -748,21 +792,17 @@ public class Mesa2 {
 		}
 	}
 
-	private static boolean temMarcador(Integer listStart, List<Object[]> l, Long idMobil, GrupoItem gItem) {
+	private static boolean temMarcador(Integer listStart, List<Object[]> l, Long idMobil, Integer grupoId) {
 		// Pesquisa na lista retornada pela query se um determinado mobil (idMobil) tem
-		// algum marcador constante em gItem.grupoMarcadores. Devolve true se existir.
+		// algum marcador do grupoId informado. Devolve true se existir.
 		for (Integer i = listStart; i < l.size(); i++ ) {
 			Object[] ref = l.get(i);
 			ExMobil mobil = (ExMobil) ref[2];
 			if (idMobil == mobil.getIdMobil()) {
 				CpMarcador marcador = (CpMarcador) ref[1];
-				for (Integer grpMarca : gItem.grupoMarcadores) {
-					if (grpMarca.equals(marcador.getIdMarcador().intValue())) {
-						return true;
-					}
+				if (grupoId.equals(marcador.getGrupoMarcador())) {
+					return true;
 				}
-			} else {
-				break;
 			}
 		}
 		return false;

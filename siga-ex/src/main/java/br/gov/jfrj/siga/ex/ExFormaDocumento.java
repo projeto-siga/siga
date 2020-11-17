@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -42,7 +43,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
 @Table(name = "EX_FORMA_DOCUMENTO", catalog = "SIGA")
 @Cache(region = ExDao.CACHE_EX, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class ExFormaDocumento extends AbstractExFormaDocumento implements
-		Serializable, Selecionavel, Comparable<ExFormaDocumento> {
+		Serializable, Selecionavel, Comparable<ExFormaDocumento> {	
 	
 	/**
 	 * Simple constructor of ExFormaDocumento instances.
@@ -130,5 +131,9 @@ public class ExFormaDocumento extends AbstractExFormaDocumento implements
 
 		return false;
 	}
+	
+	public boolean isEditando() {
+		return getIdFormaDoc() != null; 
+	}	
 	
 }

@@ -17,7 +17,7 @@ public class ApiContext implements Closeable {
 	boolean transacional;
 	long inicio = System.currentTimeMillis();
 
-	public ApiContext(boolean transacional) {
+	public ApiContext(boolean transacional) { 
 		this.transacional = transacional;
 		em = ExStarter.emf.createEntityManager();
 		ContextoPersistencia.setEntityManager(em);

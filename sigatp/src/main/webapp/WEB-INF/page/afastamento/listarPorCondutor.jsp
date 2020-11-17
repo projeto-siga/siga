@@ -28,10 +28,10 @@
 								<c:forEach items="${afastamentos}" var="afastamento">
 									<tr>
 										<td>
-											<sigatp:formatarColuna operacao="editar" href="${linkTo[AfastamentoController].editar[afastamento.condutor.id][afastamento.id]}" titulo="afastamento" />
+											<sigatp:formatarColuna operacao="editar" href="${linkTo[AfastamentoController].editar(afastamento.condutor.id,afastamento.id)}" titulo="afastamento" />
 										</td>
 										<td>
-											<sigatp:formatarColuna operacao="excluir" href="${linkTo[AfastamentoController].excluir[afastamento.id]}" titulo="afastamento"
+											<sigatp:formatarColuna operacao="excluir" href="${linkTo[AfastamentoController].excluir(afastamento.id)}" titulo="afastamento"
 											onclick="javascript:return confirm('Tem certeza de que deseja excluir este afastamento?');"/> 
 										</td>								
 										<td>
@@ -56,7 +56,7 @@
 				</c:otherwise>
 			</c:choose>
 			<div class="gt-table-buttons">
-				<a href="${linkTo[AfastamentoController].incluir[condutor.id]}" id="botaoIncluirCondutor" class="gt-btn-medium gt-btn-left"><fmt:message key="views.botoes.incluir" /></a>
+				<a href="${linkTo[AfastamentoController].incluir(condutor.id)}" id="botaoIncluirCondutor" class="gt-btn-medium gt-btn-left"><fmt:message key="views.botoes.incluir" /></a>
 			</div>
 		</div>
 	</div>

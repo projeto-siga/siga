@@ -17,7 +17,7 @@
 	        <div class="gt-form-row gt-width-100">
 	            <br /><br /><br />    
 	            <p class="gt-cancel">
-	                <a href="${linkTo[AppController].exibir[informacao.siglaCompacta]}">voltar</a>
+	                <a href="${linkTo[AppController].exibir(informacao.siglaCompacta)}">voltar</a>
 	            </p>
 	        </div>
 		</div>
@@ -114,7 +114,7 @@
 	               UploadComplete: function(up, files) {
 	                   if(up.files.length == $anexados) {
 	                       up.destroy();
-	                       location.href = "${linkTo[AppController].exibir[informacao.siglaCompacta]}";
+	                       location.href = "${linkTo[AppController].exibir(informacao.siglaCompacta)}";
 	                   }
 	                   else {
 	                       $("p.gt-notice-box").remove();

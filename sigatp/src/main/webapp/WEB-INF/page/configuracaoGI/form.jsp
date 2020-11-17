@@ -44,6 +44,6 @@ $(function() {
 	<span class="alerta menor"><fmt:message key="views.erro.preenchimentoObrigatorio"/></span>
 	<div class="gt-table-buttons">
 		<input type="submit" value="<fmt:message key="views.botoes.salvar"/>" class="gt-btn-medium gt-btn-left" />
-		<input type="button" value="<fmt:message key="views.botoes.cancelar"/>" onClick="javascript:location.href='${linkTo[ConfiguracaoGIController].pesquisar[cpConfiguracao.orgaoUsuario.idOrgaoUsu]}'" class="gt-btn-medium gt-btn-left" />
+		<input type="button" value="<fmt:message key="views.botoes.cancelar"/>" onClick="javascript:location.href='${linkTo[ConfiguracaoGIController].pesquisar(cpConfiguracao.orgaoUsuario.idOrgaoUsu)}'" class="gt-btn-medium gt-btn-left" />
 	</div>
 </form>

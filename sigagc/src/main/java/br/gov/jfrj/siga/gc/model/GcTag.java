@@ -36,10 +36,10 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 	@SequenceGenerator(sequenceName = "SIGAGC.hibernate_sequence", name = "gcTagSeq")
 	@GeneratedValue(generator = "gcTagSeq")
 	@Column(name = "ID_TAG")
-	public long id;
+	private long id;
 
 	@ManyToOne(optional = false)
-	public GcTipoTag tipo;
+	private GcTipoTag tipo;
 
 	@Column(name = "CATEGORIA", length = 32)
 	private String categoria;
@@ -52,6 +52,14 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 	//
 	// @Column(name = "ID_EXTERNA", length = 256)
 	// private String ide;
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public void setTipo(GcTipoTag tipo) {
+		this.tipo = tipo;
+	}
 
 	public GcTag() {
 		// TODO Auto-generated constructor stub
@@ -108,7 +116,7 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 		
 		// Se não estiver na lista, busca no banco
 		if (tag == null) {
-			String query = "from GcTag where tipo = " + tipoTag.id;
+			String query = "from GcTag where tipo = " + tipoTag.getId();
 			if (grupo != null && ide != null) {
 				query += " and categoria like '" + grupo + "-%-" + ide + "'";
 			}
@@ -140,7 +148,7 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 	@Override
 	public int compareTo(GcTag o) {
 		int i = 0;
-		i = Long.valueOf(tipo.id).compareTo(Long.valueOf(o.tipo.id));
+		i = Long.valueOf(tipo.getId()).compareTo(Long.valueOf(o.tipo.getId()));
 		if (i != 0)
 			return i;
 		i = GcBL.compareStrings(getCategoria(), o.getCategoria());
@@ -256,7 +264,7 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 
 	@Override
 	public String toString() {
-		return (tipo.id == 1 ? "@" : (tipo.id == 2 ? "#" : "^"))
+		return (tipo.getId() == 1 ? "@" : (tipo.getId() == 2 ? "#" : "^"))
 				+ (getCategoria() != null ? getCategoria() + ":" : "")
 				+ getTitulo();
 	}

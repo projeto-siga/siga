@@ -25,30 +25,31 @@ import static java.util.Arrays.asList;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.metamodel.IdentifiableType;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.Type;
 import javax.servlet.http.HttpServletRequest;
 
-import br.com.caelum.vraptor.Converter;
-import br.com.caelum.vraptor.InterceptionException;
-import br.com.caelum.vraptor.Intercepts;
-import br.com.caelum.vraptor.Lazy;
-import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.core.Converters;
-import br.com.caelum.vraptor.core.InterceptorStack;
-import br.com.caelum.vraptor.core.Localization;
-import br.com.caelum.vraptor.http.ParameterNameProvider;
-import br.com.caelum.vraptor.interceptor.Interceptor;
-import br.com.caelum.vraptor.interceptor.ParametersInstantiatorInterceptor;
-import br.com.caelum.vraptor.resource.ResourceMethod;
-import br.com.caelum.vraptor.view.FlashScope;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
-/**
+import br.com.caelum.vraptor.InterceptionException;
+import br.com.caelum.vraptor.Intercepts;
+import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.controller.ControllerMethod;
+import br.com.caelum.vraptor.converter.Converter;
+import br.com.caelum.vraptor.core.Converters;
+import br.com.caelum.vraptor.core.InterceptorStack;
+import br.com.caelum.vraptor.http.Parameter;
+import br.com.caelum.vraptor.http.ParameterNameProvider;
+import br.com.caelum.vraptor.interceptor.Interceptor;
+import br.com.caelum.vraptor.jpa.JPATransactionInterceptor;
+import br.com.caelum.vraptor.view.FlashScope;	
+
+/**	
  * Interceptor that loads given entity from the database.
  *
  * @author Lucas Cavalcanti
@@ -57,8 +58,8 @@ import com.google.common.collect.Iterables;
  * @since 3.3.2
  *
  */
-@Intercepts(before = ParametersInstantiatorInterceptor.class)
-@Lazy
+@RequestScoped
+@Intercepts(before=JPATransactionInterceptor.class)
 public class ParameterOptionalLoaderInterceptor implements Interceptor {
 
 	private final EntityManager em;
@@ -66,40 +67,54 @@ public class ParameterOptionalLoaderInterceptor implements Interceptor {
 	private final ParameterNameProvider provider;
 	private final Result result;
 	private final Converters converters;
-	private final Localization localization;
 	private final FlashScope flash;
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ParameterOptionalLoaderInterceptor() {
+		super();
+		em = null;
+		request = null;
+		result = null;
+		provider = null;
+		converters = null;		
+		flash = null;
+		
+		
+	}
+	
+	@Inject
 	public ParameterOptionalLoaderInterceptor(EntityManager em,
 			HttpServletRequest request, ParameterNameProvider provider,
-			Result result, Converters converters, Localization localization,
+			Result result, Converters converters, 
 			FlashScope flash) {
 		this.em = em;
 		this.request = request;
 		this.provider = provider;
 		this.result = result;
 		this.converters = converters;
-		this.localization = localization;
 		this.flash = flash;
 	}
 
-	public boolean accepts(ResourceMethod method) {
+	public boolean accepts(ControllerMethod method) {
 		return any(asList(method.getMethod().getParameterAnnotations()),
 				hasAnnotation(LoadOptional.class));
 	}
 
-	public void intercept(InterceptorStack stack, ResourceMethod method,
+	public void intercept(InterceptorStack stack, ControllerMethod method,
 			Object resourceInstance) throws InterceptionException {
 		Annotation[][] annotations = method.getMethod()
 				.getParameterAnnotations();
 
-		String[] names = provider.parameterNamesFor(method.getMethod());
+		Parameter[] names = provider.parametersFor(method.getMethod());
 		Class<?>[] types = method.getMethod().getParameterTypes();
 
 		Object[] args = flash.consumeParameters(method);
 
 		for (int i = 0; i < names.length; i++) {
 			if (hasLoadAnnotation(annotations[i])) {
-				Object loaded = load(names[i], types[i]);
+				Object loaded = load(names[i].getName(), types[i]);
 
 //				if (loaded == null) {
 //					result.notFound();
@@ -109,7 +124,7 @@ public class ParameterOptionalLoaderInterceptor implements Interceptor {
 				if (args != null) {
 					args[i] = loaded;
 				} else {
-					request.setAttribute(names[i], loaded);
+					request.setAttribute(names[i].getName(), loaded);
 				}
 			}
 		}
@@ -134,8 +149,7 @@ public class ParameterOptionalLoaderInterceptor implements Interceptor {
 				"Entity %s id type %s must have a converter",
 				type.getSimpleName(), idProperty.getType());
 
-		Serializable id = (Serializable) converter.convert(parameter, type,
-				localization.getBundle());
+		Serializable id = (Serializable) converter.convert(parameter, type);
 		return em.find(type, id);
 	}
 

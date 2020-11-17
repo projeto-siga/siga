@@ -2,9 +2,13 @@ package br.gov.jfrj.importar;
 
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
+import java.util.logging.Logger;
+
+import org.apache.commons.logging.Log;
+import org.slf4j.event.Level;
 
 import br.gov.jfrj.siga.base.Correio;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.util.CpSincPropriedade;
 
 /**
  * Tratador de logs de sincronismo que envia e-mail com relatório das operações
@@ -37,15 +41,20 @@ public class SincLogHandler extends Handler {
 
 	}
 
-	@Override
-	public void close() throws SecurityException {
+	public int close(Logger log) throws SecurityException {
+		int statusErro = 0;
 		try {
 			enviarEmail();
+			statusErro = 0;
 		} catch (Exception e) {
-			throw new RuntimeException("Não foi possível enviar o e-mail!");
+			statusErro = 1;
+			log.warning("Não foi possível enviar e-mail - causa: " + e.getMessage());
 		}
+		close();
+		return statusErro;
 	}
 	
+		
 	public void enviarEmail() throws Exception {
 		sb.append("Enviando e-mails para: ");
 		
@@ -58,8 +67,8 @@ public class SincLogHandler extends Handler {
 			sb.deleteCharAt(sb.lastIndexOf(","));
 		}
 		
-		Correio.enviar(
-				SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
+		CorreioSinc.enviar(
+				new CpSincPropriedade().getString("servidor.smtp.usuario.remetente"),
 				getDestinatariosEmail(), getAssunto(), sb.toString(), null);
 	}
 
@@ -77,6 +86,12 @@ public class SincLogHandler extends Handler {
 
 	public void setAssunto(String assunto) {
 		this.assunto = assunto;
+	}
+
+	@Override
+	public void close() throws SecurityException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

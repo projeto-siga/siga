@@ -286,6 +286,12 @@
 								<configuration>
 									<!-- specify your SQL commands, can be all of the following configurations -->
 									<sqlCommand>
+									    SELECT * FROM DUAL;
+										CREATE USER sigatp IDENTIFIED BY sigatp default tablespace USERS;
+										CREATE USER sigapmp IDENTIFIED BY sigapmp default tablespace USERS;
+										CREATE USER sigatp_con IDENTIFIED BY sigatp_con default tablespace USERS;
+										CREATE USER sigase IDENTIFIED BY sigase default tablespace USERS;
+										CREATE USER sigase_con IDENTIFIED BY sigase_con default tablespace USERS;										
 										CREATE USER corporativo IDENTIFIED BY corporativo default tablespace USERS;
 										CREATE USER siga IDENTIFIED BY siga default tablespace USERS;
 										CREATE USER sigawf IDENTIFIED BY sigawf default tablespace USERS;
@@ -295,7 +301,9 @@
 										grant connect,resource to SIGA;
 										grant connect,resource to SIGAWF;
 										grant connect,resource to SIGAGC;
-										grant connect,resource to SIGASR;
+										grant connect,resource to SIGASR; 
+										grant connect,resource to SIGATP;
+                                        grant connect,resource to SIGAPMP;
 									</sqlCommand>
 									<autocommit>true</autocommit>
 								</configuration>

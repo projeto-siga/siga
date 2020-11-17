@@ -48,12 +48,12 @@
 						<c:if
 							test="${empty informacao.edicao.id || informacao.acessoPermitido(titular,lotaTitular, informacao.edicao.id)}">
 							<div class="gt-left-col gt-width-25" style="padding-left: 2em">
-								<siga:select label="Visualizac√£o" name="visualizacao.id" id="informacaoVisualizacao"
+								<siga:select label="VisualizaÁ„o" name="visualizacao.id" id="informacaoVisualizacao"
 									list="acessos" listKey="id" listValue="nome" value="${informacao.visualizacao.id}"
 									onchange="javascript:ocultaGrupo();" />
 							</div>
 							<div class="gt-left-col gt-width-25" style="padding-left: 2em">
-								<siga:select label="Edic√£o" name="edicao.id" list="acessos" id="informacaoEdicao"
+								<siga:select label="EdiÁ„o" name="edicao.id" list="acessos" id="informacaoEdicao"
 									listKey="id" listValue="nome" value="${informacao.edicao.id}"
 									onchange="javascript:ocultaGrupo();" />
 							</div>
@@ -100,10 +100,10 @@
 							<c:choose>
 								<c:when
 									test="${not empty informacao && not empty informacao.id && informacao.id != 0}">
-								ou <a href="${linkTo[AppController].editar[informacao.siglaCompacta]}">cancelar
+								ou <a href="${linkTo[AppController].editar(informacao.siglaCompacta)}">cancelar
 										altera√ß√µes</a>
 								ou <a
-										href="${linkTo[AppController].movimentacoes[informacao.siglaCompacta]}">exibir
+										href="${linkTo[AppController].movimentacoes(informacao.siglaCompacta)}">exibir
 										movimenta√ß√µes</a>
 								</c:when>
 								<c:otherwise>

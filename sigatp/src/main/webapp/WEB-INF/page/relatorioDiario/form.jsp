@@ -50,6 +50,6 @@
 	<span class="alerta menor"><fmt:message key="views.erro.preenchimentoObrigatorio"/></span>
 	<div class="gt-table-buttons">
 		<input type="submit" class="gt-btn-medium gt-btn-left" value="<fmt:message key="views.botoes.salvar"/>"/>
-		<input type="button" onClick="javascript:location.href='${linkTo[RelatorioDiarioController].listarPorVeiculo[relatorioDiario.veiculo.id]}'" class="gt-btn-medium gt-btn-left" value="<fmt:message key="views.botoes.cancelar"/>"/>
+		<input type="button" onClick="javascript:location.href='${linkTo[RelatorioDiarioController].listarPorVeiculo(relatorioDiario.veiculo.id)}'" class="gt-btn-medium gt-btn-left" value="<fmt:message key="views.botoes.cancelar"/>"/>
 	</div>
 </form>

@@ -35,6 +35,7 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
@@ -96,10 +97,10 @@ public class AlteracaoDireitosRelatorio extends RelatorioTemplate {
 		parametros.put("titulo","SIGA");
 		parametros.put("subtitulo","Sistema de Gestão Administrativa");
 		parametros.put("secaoUsuario", "");
-		if ( System.getProperty("siga.relat.brasao") == null ) {
+		if ( Prop.get("/siga.relat.brasao")  == null ) {
 			parametros.put("brasao","brasao.png");
 		} else {
-			parametros.put("brasao", System.getProperty("siga.relat.brasao"));
+			parametros.put("brasao", Prop.get("/siga.relat.brasao") );
 		}
 		//System.out.println("Brasao: " + parametros.get("brasao"));
 		// this.setPageSizeAndOrientation(Page.Page_A4_Landscape());

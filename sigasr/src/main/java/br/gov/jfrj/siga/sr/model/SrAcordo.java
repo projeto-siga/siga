@@ -57,7 +57,15 @@ public class SrAcordo extends HistoricoSuporte implements Selecionavel {
 
 	@OneToMany(targetEntity = SrAcordo.class, mappedBy = "acordoInicial", fetch = FetchType.LAZY)
 	@OrderBy("hisDtIni desc")
-	public List<SrAcordo> meuAcordoHistoricoSet;
+	private List<SrAcordo> meuAcordoHistoricoSet;
+
+	public List<SrAcordo> getMeuAcordoHistoricoSet() {
+		return meuAcordoHistoricoSet;
+	}
+
+	public void setMeuAcordoHistoricoSet(List<SrAcordo> meuAcordoHistoricoSet) {
+		this.meuAcordoHistoricoSet = meuAcordoHistoricoSet;
+	}
 
 	@OneToMany(targetEntity = SrParametroAcordo.class, mappedBy = "acordo", fetch = FetchType.LAZY)
 	private List<SrParametroAcordo> parametroAcordoSet;

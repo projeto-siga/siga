@@ -29,7 +29,7 @@ public class Contexto {
 		Context envContext = null;
 
 		try {
-			return System.getProperty(name);
+			return Prop.get(name);
 		} catch (Exception ex) {
 			try {
 				initContext = new InitialContext();
@@ -44,7 +44,7 @@ public class Contexto {
 	}
 	
 	public static String urlBase(HttpServletRequest request) {
-		String urlBase = System.getProperty("siga.base.url");
+		String urlBase = Prop.get("/siga.base.url");
 		if (urlBase == null || urlBase.trim().length() == 0)
 			urlBase = request.getScheme() + "://"
 					+ request.getServerName() + ":"

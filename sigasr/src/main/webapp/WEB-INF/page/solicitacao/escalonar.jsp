@@ -82,7 +82,7 @@
 				<input type="hidden" name="solicitacao.codigo" id="sigla" value="${siglaCompacta}" />
 				<input type="hidden" name="solicitante" value="${solicitante}">
 				<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="gravar()"/>
-				<a href="${linkTo[SolicitacaoController].exibir[siglaCompacta]}" class="gt-btn-medium gt-btn-left">Voltar</a>
+				<a href="${linkTo[SolicitacaoController].exibir(siglaCompacta)}" class="gt-btn-medium gt-btn-left">Voltar</a>
 			</div>
 		</form>
 	</div>

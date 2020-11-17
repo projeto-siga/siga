@@ -22,19 +22,13 @@ import javax.servlet.http.HttpSession;
 import com.auth0.jwt.JWTExpiredException;
 import com.auth0.jwt.JWTVerifyException;
 
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 public class AuthJwtFormFilter implements Filter {
 
 	public static final String SIGA_JWT_AUTH_COOKIE_NAME = "siga-jwt-auth";
-	public static final String SIGA_JWT_AUTH_COOKIE_DOMAIN = SigaBaseProperties
-			.getString("idp.jwt.modulo.cookie.domain");
-	private static final String NAME_ENVIRONMENT_PRODUCTION = "PROD";
-	private static final String NAME_ENVIRONMENT = SigaBaseProperties.getString("ambiente") != null
-			? SigaBaseProperties.getString("ambiente")
-			: "";
 
 	private static final int TIME_TO_EXPIRE_IN_S = 60 * 60 * 8; // 8h é o tempo
 																// de duração
@@ -69,7 +63,7 @@ public class AuthJwtFormFilter implements Filter {
 	}
 
 	public static SigaJwtProvider getProvider() throws SigaJwtProviderException {
-		String password = System.getProperty("idp.jwt.modulo.pwd.sigaidp");
+		String password = Prop.get("/siga.jwt.secret");
 		SigaJwtOptions options = new SigaJwtOptionsBuilder().setPassword(password).setModulo(null)
 				.setTTL(TIME_TO_EXPIRE_IN_S).build();
 		SigaJwtProvider provider = SigaJwtProvider.getInstance(options);
@@ -179,8 +173,8 @@ public class AuthJwtFormFilter implements Filter {
 		Cookie cookie = new Cookie(getNameCookie(), tokenNew);
 		cookie.setPath("/");
 
-		if (SigaMessages.isSigaSP() && SIGA_JWT_AUTH_COOKIE_DOMAIN != null) {
-			cookie.setDomain(SIGA_JWT_AUTH_COOKIE_DOMAIN);
+		if (SigaMessages.isSigaSP() && getCookieDomain() != null) {
+			cookie.setDomain(getCookieDomain());
 		}
 
 		return cookie;
@@ -189,8 +183,8 @@ public class AuthJwtFormFilter implements Filter {
 	public static Cookie buildEraseCookie() {
 		Cookie cookie = new Cookie(getNameCookie(), "");
 		cookie.setPath("/");
-		if (SigaMessages.isSigaSP() && SIGA_JWT_AUTH_COOKIE_DOMAIN != null) {
-			cookie.setDomain(SIGA_JWT_AUTH_COOKIE_DOMAIN);
+		if (SigaMessages.isSigaSP() && getCookieDomain() != null) {
+			cookie.setDomain(getCookieDomain());
 		}
 		cookie.setMaxAge(0);
 		return cookie;
@@ -217,20 +211,11 @@ public class AuthJwtFormFilter implements Filter {
 		}
 
 		String cont = req.getRequestURL() + (req.getQueryString() != null ? "?" + req.getQueryString() : "");
-		String base = System.getProperty("siga.base.url");
+		String base = Prop.get("/siga.base.url");
 		if (base != null && base.startsWith("https:") && cont.startsWith("http:"))
 			cont = "https" + cont.substring(4);
 
-		/*
-		 * if (SigaMessages.isSigaSP() &&
-		 * "true".equals(SigaBaseProperties.getString("siga.integracao.sso"))) {
-		 * resp.sendRedirect(SigaBaseProperties.getString("siga.url.sempapel")); } else
-		 * { resp.sendRedirect("/siga/public/app/login?cont=" + URLEncoder.encode(cont,
-		 * "UTF-8")); }
-		 */
-
 		resp.sendRedirect("/siga/public/app/login?cont=" + URLEncoder.encode(cont, "UTF-8"));
-
 	}
 
 	private void informarAutenticacaoInvalida(HttpServletResponse resp, Exception e) throws IOException {
@@ -267,6 +252,8 @@ public class AuthJwtFormFilter implements Filter {
 	 * @return String
 	 */
 	private static String getNameCookie() {
+		final String NAME_ENVIRONMENT_PRODUCTION = "PROD";
+		final String NAME_ENVIRONMENT = Prop.get("/siga.ambiente");
 		String nameCookie = SIGA_JWT_AUTH_COOKIE_NAME;
 
 		if (SigaMessages.isSigaSP()) {
@@ -274,6 +261,10 @@ public class AuthJwtFormFilter implements Filter {
 				nameCookie += "-" + NAME_ENVIRONMENT;
 		}
 		return nameCookie;
+	}
+	
+	private static String getCookieDomain() {
+		return Prop.get("/siga.jwt.cookie.domain");
 	}
 
 }

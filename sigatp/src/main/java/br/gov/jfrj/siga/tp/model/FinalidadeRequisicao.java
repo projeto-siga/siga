@@ -1,11 +1,12 @@
 package br.gov.jfrj.siga.tp.model;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -28,13 +29,13 @@ import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 @Audited
 @Table(name = "FinalidadeRequisicao", schema = "SIGATP")
 @Unique(message = "{finalidadeRequisicao.descricao.unique}", field = "descricao")
-public class FinalidadeRequisicao extends TpModel implements ConvertableEntity, Comparable<FinalidadeRequisicao> {
+public class FinalidadeRequisicao extends TpModel implements ConvertableEntity<Long>, Comparable<FinalidadeRequisicao> {
 
 	private static final long _ID_DA_FINALIDADE_OUTRA = -1;
 	public static ActiveRecord<FinalidadeRequisicao> AR = new ActiveRecord<>(FinalidadeRequisicao.class);
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator")
+	@GeneratedValue(generator = "hibernate_sequence_generator")
 	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "SIGATP.hibernate_sequence")
 	private Long id;
 
@@ -51,10 +52,12 @@ public class FinalidadeRequisicao extends TpModel implements ConvertableEntity, 
 		this.id = new Long(0);
 	}
 
+	@Override
 	public Long getId() {
 		return id;
 	}
 
+	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -78,7 +81,9 @@ public class FinalidadeRequisicao extends TpModel implements ConvertableEntity, 
 	public static FinalidadeRequisicao buscar(String descricaoBuscar) {
 		FinalidadeRequisicao retorno = null;
 		try {
-			retorno = FinalidadeRequisicao.AR.find("descricao = ?", descricaoBuscar).first();
+			Map<String, Object> parametros = new HashMap<String,Object>();
+			parametros.put("descricao", descricaoBuscar);
+			retorno = FinalidadeRequisicao.AR.find("descricao = :descricao", parametros).first();
 		} catch (Exception e) {
 			return null;
 		}
@@ -88,7 +93,9 @@ public class FinalidadeRequisicao extends TpModel implements ConvertableEntity, 
 	public static FinalidadeRequisicao buscar(Long idBuscar) {
 		FinalidadeRequisicao retorno = null;
 		try {
-			retorno = FinalidadeRequisicao.AR.find("id = ?", idBuscar).first();
+			Map<String, Object> parametros = new HashMap<String,Object>();
+			parametros.put("id", idBuscar);
+			retorno = FinalidadeRequisicao.AR.find("id = :id", parametros).first();
 		} catch (Exception e) {
 			return null;
 		}
@@ -100,7 +107,11 @@ public class FinalidadeRequisicao extends TpModel implements ConvertableEntity, 
 	}
 
 	public static List<FinalidadeRequisicao> listarTodos(CpOrgaoUsuario orgaoUsuario) {
-		return FinalidadeRequisicao.AR.find("cpOrgaoOrigem = ? and id <> ?", orgaoUsuario, _ID_DA_FINALIDADE_OUTRA).fetch();
+		HashMap<String, Object> parametros = new HashMap<String,Object>();
+		parametros.put("cpOrgaoOrigem", orgaoUsuario);
+		parametros.put("id", _ID_DA_FINALIDADE_OUTRA);
+		List<FinalidadeRequisicao> finalidades = FinalidadeRequisicao.AR.find("cpOrgaoOrigem = :cpOrgaoOrigem and id <> :id",parametros ).fetch();
+		return finalidades;
 	}
 
 	@SuppressWarnings("unchecked")

@@ -7,31 +7,47 @@ import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.EXIBIR_MENU_CONHECI
 import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.EXIBIR_MENU_RELATORIOS;
 import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.EXIBIR_CAMPO_PRIORIDADE;
 import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.REL_RELATORIOS;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+
 import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.PRIORIZAR_AO_ABRIR;
+
+import br.com.caelum.vraptor.Accepts;
+import br.com.caelum.vraptor.AroundCall;
 import br.com.caelum.vraptor.InterceptionException;
 import br.com.caelum.vraptor.Intercepts;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.controller.ControllerMethod;
 import br.com.caelum.vraptor.core.InterceptorStack;
-import br.com.caelum.vraptor.interceptor.InstantiateInterceptor;
 import br.com.caelum.vraptor.interceptor.Interceptor;
-import br.com.caelum.vraptor.ioc.RequestScoped;
-import br.com.caelum.vraptor.resource.ResourceMethod;
+
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 @RequestScoped
-@Intercepts(after = { ContextInterceptor.class }, before = InstantiateInterceptor.class)
-public class AcessoInterceptor implements Interceptor {
+@Intercepts(after = { ContextInterceptor.class })
+public class AcessoInterceptor  {
     
     private Result result;
     private SigaObjects so;
 
-    public AcessoInterceptor(Result result, SigaObjects so) {
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public AcessoInterceptor() {
+		super();
+		result = null;
+		so = null;
+	}
+    
+    @Inject
+	public AcessoInterceptor(Result result, SigaObjects so) {
         this.result = result;
         this.so = so;
     }
 
-    @Override
-    public void intercept(InterceptorStack stack, ResourceMethod method, Object resourceInstance) throws InterceptionException {
+    @AroundCall
+    public void intercept(InterceptorStack stack, ControllerMethod method, Object resourceInstance) throws InterceptionException {
         addPermissaoMenu(result);
 
         stack.next(method, resourceInstance);
@@ -68,8 +84,8 @@ public class AcessoInterceptor implements Interceptor {
         }
     }
 
-    @Override
-    public boolean accepts(ResourceMethod method) {
+    @Accepts
+    public boolean accepts(ControllerMethod method) {
         return Boolean.TRUE;
     }
 

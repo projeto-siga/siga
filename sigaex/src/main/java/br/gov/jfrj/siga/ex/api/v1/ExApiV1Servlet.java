@@ -23,11 +23,13 @@ import com.crivano.swaggerservlet.SwaggerServlet;
 import com.crivano.swaggerservlet.SwaggerUtils;
 import com.crivano.swaggerservlet.dependency.TestableDependency;
 
+import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.Prop.IPropertyProvider;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 
-public class ExApiV1Servlet extends SwaggerServlet {
+public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider {
 	private static final long serialVersionUID = 1756711359239182178L;
 
 	public static ExecutorService executor = null;
@@ -38,49 +40,14 @@ public class ExApiV1Servlet extends SwaggerServlet {
 
 		setActionPackage("br.gov.jfrj.siga.ex.api.v1");
 
-		addPublicProperty("env", "desenv");
-		addPublicProperty("wootric.token", null);
-		addPublicProperty("base.url", "http://localhost:8080/sigaex/api/v1");
-		addPublicProperty("recaptcha.site.key", null);
-		addPrivateProperty("recaptcha.secret.key", null);
-
-		addRestrictedProperty("upload.dir.temp");
-
-		addPrivateProperty("api.secret", null);
-
-//		addPrivateProperty("jwt.secret", System.getProperty("idp.jwt.modulo.pwd.sigaidp"));
-//		addPublicProperty("jwt.issuer", "siga");
-//		addPublicProperty("cookie.name", "siga-jwt");
-//		addPublicProperty("cookie.domain", null);
-//		addPublicProperty("cookie.expire.seconds", Long.toString(20 * 60L)); // Expira em 20min
-//		addPublicProperty("cookie.renew.seconds", Long.toString(15 * 60L)); // Renova 15min antes de expirar
-
-		addRestrictedProperty("datasource.url", null);
-		if (getProperty("datasource.url") != null) {
-			addRestrictedProperty("datasource.username");
-			addPrivateProperty("datasource.password");
-			addRestrictedProperty("datasource.name", null);
-		} else {
-			addRestrictedProperty("datasource.username", null);
-			addPrivateProperty("datasource.password", null);
-			addRestrictedProperty("datasource.name", "java:/jboss/datasources/SigaExDS");
-		}
-
-		// Redis
-		//
-		addRestrictedProperty("redis.database", "10");
-		addPrivateProperty("redis.password", null);
-		addRestrictedProperty("redis.slave.port", "0");
-		addRestrictedProperty("redis.slave.host", null);
-		addRestrictedProperty("redis.master.host", "localhost");
-		addRestrictedProperty("redis.master.port", "6379");
-
-		if (SwaggerServlet.getProperty("redis.password") != null)
-			SwaggerUtils.setCache(new MemCacheRedis());
+		Prop.setProvider(this);
+		Prop.defineGlobalProperties();
+		defineProperties();
 
 		// Threadpool
-		addPublicProperty("threadpool.size", "10");
-		executor = Executors.newFixedThreadPool(new Integer(SwaggerServlet.getProperty("threadpool.size")));
+		if (Prop.get("redis.password") != null)
+			SwaggerUtils.setCache(new MemCacheRedis());
+		executor = Executors.newFixedThreadPool(Prop.getInt("threadpool.size"));
 
 		class HttpGetDependency extends TestableDependency {
 			String testsite;
@@ -129,7 +96,7 @@ public class ExApiV1Servlet extends SwaggerServlet {
 		}
 
 		addDependency(
-				new FileSystemWriteDependency("upload.dir.temp", getProperty("upload.dir.temp"), false, 0, 10000));
+				new FileSystemWriteDependency("upload.dir.temp", Prop.get("upload.dir.temp"), false, 0, 10000));
 
 		addDependency(new HttpGetDependency("rest", "www.google.com/recaptcha",
 				"https://www.google.com/recaptcha/api/siteverify", false, 0, 10000));
@@ -138,13 +105,16 @@ public class ExApiV1Servlet extends SwaggerServlet {
 
 			@Override
 			public String getUrl() {
-				return getProperty("datasource.name");
+				return Prop.get("datasource.name");
 			}
 
 			@Override
 			public boolean test() throws Exception {
-				try (ApiContext ctx = new ApiContext(true)) {
+				try {
 					return ExDao.getInstance().dt() != null;
+				} catch (Exception e) {
+					e.printStackTrace(System.out);
+					throw e;
 				}
 			}
 
@@ -154,7 +124,7 @@ public class ExApiV1Servlet extends SwaggerServlet {
 			}
 		});
 
-		if (SwaggerServlet.getProperty("redis.password") != null)
+		if (Prop.get("redis.password") != null)
 			addDependency(new TestableDependency("cache", "redis", false, 0, 10000) {
 
 				@Override
@@ -174,6 +144,88 @@ public class ExApiV1Servlet extends SwaggerServlet {
 				}
 			});
 
+	}
+
+	private void defineProperties() {
+		addPublicProperty("carimbo.sistema", "siga");
+		addPublicProperty("carimbo.url", null);
+
+		addRestrictedProperty("upload.dir.temp");
+
+		addPrivateProperty("api.secret", null);
+
+//		addPrivateProperty("jwt.secret", System.getProperty("idp.jwt.modulo.pwd.sigaidp"));
+//		addPublicProperty("jwt.issuer", "siga");
+//		addPublicProperty("cookie.name", "siga-jwt");
+//		addPublicProperty("cookie.domain", null);
+//		addPublicProperty("cookie.expire.seconds", Long.toString(20 * 60L)); // Expira em 20min
+//		addPublicProperty("cookie.renew.seconds", Long.toString(15 * 60L)); // Renova 15min antes de expirar
+
+		addRestrictedProperty("datasource.url", null);
+		if (Prop.get("datasource.url") != null) {
+			addRestrictedProperty("datasource.username");
+			addPrivateProperty("datasource.password");
+			addRestrictedProperty("datasource.name", null);
+		} else {
+			addRestrictedProperty("datasource.username", null);
+			addPrivateProperty("datasource.password", null);
+			addRestrictedProperty("datasource.name", "java:/jboss/datasources/SigaExDS");
+		}
+
+		// Redis
+		//
+		addRestrictedProperty("redis.database", "10");
+		addPrivateProperty("redis.password", null);
+		addRestrictedProperty("redis.slave.port", "0");
+		addRestrictedProperty("redis.slave.host", null);
+		addRestrictedProperty("redis.master.host", "localhost");
+		addRestrictedProperty("redis.master.port", "6379");
+
+		addPublicProperty("threadpool.size", "10");
+
+		addPrivateProperty("assinador.externo.password", null);
+		addPrivateProperty("assinador.externo.popup.url", "https://ittrufusion.appspot.com");
+		addPublicProperty("assinatura.code.base.path", null);
+		addPublicProperty("assinatura.messages.url.path", null);
+		addPublicProperty("assinatura.policy.url.path", null);
+		addRestrictedProperty("bie.lista.destinatario.publicacao", null);
+		addPublicProperty("carimbo.texto.superior", null);
+		addPublicProperty("classificacao.mascara.entrada",
+				"([0-9]{0,2})\\.?([0-9]{0,2})?\\.?([0-9]{0,2})?\\.?([0-9]{0,2})?([A-Z])?");
+		addPublicProperty("classificacao.mascara.exibicao", null);
+		addPublicProperty("classificacao.mascara.javascript", "99.99.99.99");
+		addPublicProperty("classificacao.mascara.nome.nivel", "NULL,Assunto,Classe,Subclasse,Atividade");
+		addPublicProperty("classificacao.mascara.saida", "%1$02d.%2$02d.%3$02d.%4$02d");
+		addPublicProperty("classificacao.nivel.minimo.de.enquadramento", null);
+		addPublicProperty("codigo.acronimo.ano.inicial", "9999");
+		addPublicProperty("conversor.html.ext", "br.gov.jfrj.itextpdf.MyPD4ML");
+		addPublicProperty("conversor.html.factory", "br.gov.jfrj.siga.ex.ext.ConversorHTMLFactory");
+		addPublicProperty("data.obrigacao.assinar.anexo.despacho", "31/12/2099");
+		addPublicProperty("debug.modelo.padrao.arquivo", null);
+		addPublicProperty("dje.lista.destinatario.publicacao", null);
+		addPublicProperty("dje.servidor.data.disponivel", null);
+		addPublicProperty("dje.servidor.url", null);
+		addPublicProperty("email.mensagem.teste", null);
+		addPublicProperty("folha.de.rosto", "inativa");
+		addPublicProperty("modelo.interno.importado", null);
+		addPublicProperty("modelo.processo.administrativo", null);
+		addPublicProperty("montador.query", "br.gov.jfrj.siga.hibernate.ext.MontadorQuery");
+		addPublicProperty("pdf.tamanho.maximo", "5000000");
+		addPublicProperty("relarmaz.qtd.bytes.pagina", "51200");
+		addPublicProperty("reordenacao.ativo", null);
+		addPublicProperty("rodape.data.assinatura.ativa", "31/12/2099");
+		addPrivateProperty("util.webservice.password", null);
+		addPublicProperty("volume.max.paginas", "200");
+		addPrivateProperty("webdav.senha", null);
+		addPublicProperty("controlar.numeracao.expediente", "false");
+		addPublicProperty("recebimento.automatico", "true");
+				
+		addPublicProperty("modelos.cabecalho.titulo", "JUSTIÇA FEDERAL");
+		addPublicProperty("modelos.cabecalho.subtitulo", null);
+		
+		//Siga-Le
+		addPublicProperty("smtp.sugestao.destinatario", getProp("/siga.smtp.usuario.remetente"));
+		addPublicProperty("smtp.sugestao.assunto", "Siga-Le: Sugestão");
 	}
 
 	@Override
@@ -216,5 +268,11 @@ public class ExApiV1Servlet extends SwaggerServlet {
 			ContextoPersistencia.removeUserPrincipal();
 		}
 	}
+
+	@Override
+	public String getProp(String nome) {
+		return getProperty(nome);
+	}
+
 
 }

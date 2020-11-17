@@ -120,16 +120,16 @@ public class GcServiceImplTest extends TestCase {
 		a1.save();
 
 		i1 = new GcInformacao();
-		i1.tipo = ti1;
-		i1.arq = a1;
-		i1.autor = p1;
-		i1.lotacao = l1;
-		i1.edicao = acc1;
-		i1.visualizacao = acc1;
-		i1.tags = new TreeSet<GcTag>();
-		i1.tags.addAll(list);
-		i1.ou = ou1;
-		i1.hisIdcIni = id1;
+		i1.setTipo(ti1);
+		i1.setArq(a1);
+		i1.setAutor(p1);
+		i1.setLotacao(l1);
+		i1.setEdicao(acc1);
+		i1.setVisualizacao(acc1);
+		i1.setTags(new TreeSet<GcTag>());
+		i1.getTags().addAll(list);
+		i1.setOu(ou1);
+		i1.setHisIdcIni(id1);
 		i1.save();
 
 		t4 = GcTag.getInstance("^sr-item-1-123:sistemas", null, true, true);
@@ -144,30 +144,30 @@ public class GcServiceImplTest extends TestCase {
 		t6.save();
 
 		i2 = new GcInformacao();
-		i2.tipo = ti1;
-		i2.arq = a1;
-		i2.autor = p1;
-		i2.lotacao = l1;
-		i2.edicao = acc1;
-		i2.visualizacao = acc1;
-		i2.tags = new TreeSet<GcTag>();
-		i2.tags.add(t4);
-		i2.ou = ou1;
-		i2.hisIdcIni = id1;
+		i2.setTipo(ti1);
+		i2.setArq(a1);
+		i2.setAutor(p1);
+		i2.setLotacao(l1);
+		i2.setEdicao(acc1);
+		i2.setVisualizacao(acc1);
+		i2.setTags(new TreeSet<GcTag>());
+		i2.getTags().add(t4);
+		i2.setOu(ou1);
+		i2.setHisIdcIni(id1);
 		i2.save();
 
 		i3 = new GcInformacao();
-		i3.tipo = ti1;
-		i3.arq = a1;
-		i3.autor = p1;
-		i3.lotacao = l1;
-		i3.edicao = acc1;
-		i3.visualizacao = acc1;
-		i3.tags = new TreeSet<GcTag>();
-		i3.tags.add(t5);
-		i3.tags.add(t6);
-		i3.ou = ou1;
-		i3.hisIdcIni = id1;
+		i3.setTipo(ti1);
+		i3.setArq(a1);
+		i3.setAutor(p1);
+		i3.setLotacao(l1);
+		i3.setEdicao(acc1);
+		i3.setVisualizacao(acc1);
+		i3.setTags(new TreeSet<GcTag>());
+		i3.getTags().add(t5);
+		i3.getTags().add(t6);
+		i3.setOu(ou1);
+		i3.setHisIdcIni(id1);
 		i3.save();
 
 		em.getTransaction().commit();

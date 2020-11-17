@@ -163,13 +163,13 @@
 										   	<tr id ="row_${requisicaoTransporte.id}">
 												<td class="edicao">
 													<c:if test="${requisicaoTransporte.podeAlterar}">
-										    			<sigatp:formatarColuna operacao="editar" href="${linkTo[RequisicaoController].editar[requisicaoTransporte.id]}" titulo="requisi&ccedil;&atilde;o" />
+										    			<sigatp:formatarColuna operacao="editar" href="${linkTo[RequisicaoController].editar(requisicaoTransporte.id)}" titulo="requisi&ccedil;&atilde;o" />
 													</c:if>
 												</td>
 												
 									    		<td class="edicao">
 									    			<c:if test="${requisicaoTransporte.podeExcluir}">
-									    				<sigatp:formatarColuna operacao="excluir" href="${linkTo[RequisicaoController].excluir[requisicaoTransporte.id]}" titulo="requisi&ccedil;&atilde;o"
+									    				<sigatp:formatarColuna operacao="excluir" href="${linkTo[RequisicaoController].excluir(requisicaoTransporte.id)}" titulo="requisi&ccedil;&atilde;o"
 														onclick="javascript:return confirm('Tem certeza de que deseja excluir esta requisi&ccedil;&atilde;o ?');" />
 													</c:if>
 									    		</td>
@@ -196,7 +196,7 @@
 										   	    <td>
 										   	    	<tptags:link texto="${requisicaoTransporte.descricaoCompleta}"
 										   	    				 parteTextoLink="${requisicaoTransporte.buscarSequence()}"
-										   	    				 comando="${linkTo[RequisicaoController].buscarPelaSequence[true][requisicaoTransporte.buscarSequence()]}"
+										   	    				 comando="${linkTo[RequisicaoController].buscarPelaSequence(true,requisicaoTransporte.buscarSequence())}"
 										   	    				 ehEditavel="true">
 										   	    	</tptags:link>
 												</td>
@@ -211,7 +211,7 @@
 																		${requisicaoTransporte.getUltimoEstadoNestaMissao(missao.id).primeiraLetra()}
 																	</span>
 																	
-																	<a href="#" onclick="javascript:window.open('${linkTo[MissaoController].buscarPelaSequence[true][missao.sequence]}');">
+																	<a href="#" onclick="javascript:window.open('${linkTo[MissaoController].buscarPelaSequence(true,missao.sequence)}');">
 																		<img src="/sigatp/public/images/linknovajanelaicon.png" alt="Abrir em uma nova janela" title="Abrir em uma nova janela">
 																	</a>
 																	<br />

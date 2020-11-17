@@ -25,7 +25,7 @@ import java.util.Optional;
 
 import org.jboss.logging.Logger;
 
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -44,6 +44,7 @@ public class ExMobilVO extends ExVO {
 	Logger log = Logger.getLogger(ExMobilVO.class.getCanonicalName());
 	ExMobil mob;
 	String sigla;
+	boolean isGeral;
 	List<ExMobilVO> apensos = new ArrayList<ExMobilVO>();
 	// List<ExDocumentoVO> filhos = new ArrayList<ExDocumentoVO>();
 	List<ExDocumentoVO> expedientesFilhosNaoCancelados = new ArrayList<ExDocumentoVO>();
@@ -99,6 +100,7 @@ public class ExMobilVO extends ExVO {
 			boolean completo, Long tpMov, boolean movAssinada) {
 		this.mob = mob;
 		this.sigla = mob.getSigla();
+		this.isGeral = mob.isGeral();
 
 		if (!completo || mob.isEliminado())
 			return;
@@ -425,7 +427,7 @@ public class ExMobilVO extends ExVO {
 		addAcao("box_add", "Ar_q. Corrente", "/app/expediente/mov",
 				"arquivar_corrente_gravar", Ex.getInstance().getComp()
 						.podeArquivarCorrente(titular, lotaTitular, mob), null,
-				null, null, null, "once" + (SigaMessages.isSigaSP() ? " arq-corrente-requer-confirmacao" : ""));
+				null, null, null, "once  siga-btn-arq-corrente");
 
 		addAcao("building_go",
 				"Indicar para Guarda Permanente",
@@ -538,7 +540,8 @@ public class ExMobilVO extends ExVO {
 			listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA);
 			
 			//Adiciona restrição para SP - Transferencia só pode ser cancelada por quem realizou
-			if ("GOVSP".equals(SigaBaseProperties.getString("siga.local")) 
+
+			if ("GOVSP".equals(Prop.get("/siga.local")) 
 				&& ultimaMovNaoCancelada.get().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA 
 				&& !ultimaMovNaoCancelada.get().getCadastrante().equals(titular)) {
 				listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);

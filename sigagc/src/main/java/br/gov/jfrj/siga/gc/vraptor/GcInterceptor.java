@@ -1,52 +1,65 @@
 package br.gov.jfrj.siga.gc.vraptor;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.com.caelum.vraptor.Accepts;
+import br.com.caelum.vraptor.AroundCall;
 import br.com.caelum.vraptor.Intercepts;
-import br.com.caelum.vraptor.Validator;
-import br.com.caelum.vraptor.core.InterceptorStack;
-import br.com.caelum.vraptor.interceptor.Interceptor;
-import br.com.caelum.vraptor.ioc.Component;
-import br.com.caelum.vraptor.resource.ResourceMethod;
-import br.com.caelum.vraptor.util.jpa.JPATransactionInterceptor;
+import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.controller.ControllerMethod;
+import br.com.caelum.vraptor.interceptor.SimpleInterceptorStack;
+import br.com.caelum.vraptor.jpa.JPATransactionInterceptor;
+import br.com.caelum.vraptor.validator.Validator;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.model.dao.ModeloDao;
 
-@Component
 @Intercepts(before = JPATransactionInterceptor.class)
-public class GcInterceptor implements Interceptor {
+public class GcInterceptor  {
 
 	private final EntityManager manager;
-	private final Validator validator;
-	private HttpServletRequest request;
-	private HttpServletResponse response;
-	private ServletContext context;
-
+	
+	private final static ThreadLocal<Result> resultByThread = new ThreadLocal<Result>();
+	
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public GcInterceptor() {
+		super();
+		this.manager = null;
+	}
+	
+	@Inject
 	public GcInterceptor(EntityManager manager, Validator validator,
 			ServletContext context, HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response,Result result) {
 		this.manager = manager;
-		this.validator = validator;
-		this.request = request;
-		this.response = response;
-		this.context = context;
+		resultByThread.set(result);
 	}
 
-	public void intercept(InterceptorStack stack, ResourceMethod method,
-			Object instance) {
+	@AroundCall
+	public void intercept(SimpleInterceptorStack stack)  {
 
 		ContextoPersistencia.setEntityManager(this.manager);
+		
+		ModeloDao.freeInstance();
+		CpDao.getInstance();
 
-		try {
-			stack.next(method, instance);
-		} finally {
-			ContextoPersistencia.setEntityManager(null);
-		}
+		stack.next();
+
 	}
 
-	public boolean accepts(ResourceMethod method) {
+	@Accepts
+	public boolean accepts(ControllerMethod method) {
 		return true; // Will intercept all requests
+	}
+
+	public static Result result() {
+		// TODO Auto-generated method stub
+		return resultByThread.get();
 	}
 }

@@ -26,7 +26,7 @@
 							class="gt-btn-medium gt-btn-left" style="cursor: pointer;" />
 						<p class="gt-cancel">
 							ou <a
-								href="${linkTo[AppController].exibir[informacao.siglaCompacta]}">voltar</a>
+								href="${linkTo[AppController].exibir(informacao.siglaCompacta)}">voltar</a>
 						</p>
 					</div>
 				</form>

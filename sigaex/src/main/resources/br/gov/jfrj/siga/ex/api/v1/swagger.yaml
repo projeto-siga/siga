@@ -15,6 +15,16 @@ tags:
     description: Autenticação
   - name: download
     description: Download
+  - name: mesa
+    description: Mesa Virtual
+  - name: consulta
+    description: Consulta a Documentos
+  - name: acao
+    description: Ações em Documentos
+  - name: cadastro
+    description: Consulta nos Cadastros
+  - name: utils
+    description: Utilitários
     
 securityDefinitions:
   Basic:
@@ -34,24 +44,40 @@ parameters:
     description: Sigla do mobil
     type: string
     required: true
+  siglapai:
+    name: siglapai
+    in: query
+    description: Sigla do mobil do documento pai
+    type: string
+    required: true
   completo:
     name: completo
     in: query
     description: Informar true se deseja receber todos os arquivos juntados e anexos
     required: false
+    default: false
     type: boolean
   estampa:
     name: estampa
     in: query
     description: Informar true se deseja receber o PDF sem estampas
     required: false
+    default: false
     type: boolean
   volumes:
     name: volumes
     in: query
     description: Informar true se deseja receber uma compilação com todos os volumes de um processo
     required: false
+    default: false
     type: boolean
+  exibirReordenacao:
+    name: exibirReordenacao
+    in: query
+    description: Informar true se deseja habilitar a reordenação dos documentos
+    required: false
+    default: false
+    type: boolean    
   pdf:
     name: pdf
     in: path
@@ -76,19 +102,134 @@ parameters:
     description: Informar attachment se desejar receber como um download
     required: false
     type: string
+    default: inline
+    enum:
+      - attachment
+      - inline
   contenttype:
     name: contenttype
     in: query
     description: Informar o tipo de arquivo desejado, pode ser application/pdf ou text/html
     required: false
     type: string
+    default: application/pdf
+    enum:
+      - application/pdf 
+      - text/html
   chave:
     name: chave
     in: path
     description: Chave que referencia um processo assíncrono
     required: true
     type: string
-
+  nome:
+    name: nome
+    in: formData
+    description: Nome do usuário
+    type: string
+    required: false
+  email:
+    name: email
+    in: formData
+    description: Email do usuário
+    type: string
+    format: email
+    required: false
+  mensagem:
+    name: mensagem
+    in: formData
+    description: Sugestão
+    type: string
+    required: true
+  username:
+    name: username
+    in: formData
+    description: Identificador do usuário
+    type: string
+    required: true
+  password:
+    name: password
+    in: formData
+    description: Senha do usuário
+    type: string
+    required: true
+  id:
+    name: id
+    in: path
+    description: Identificador da movimentação
+    required: true
+    type: string
+  lotacao:
+    name: lotacao
+    in: formData
+    description: Sigla completa da lotação
+    required: false
+    type: string
+  matricula:
+    name: matricula
+    in: formData
+    description: Sigla completa da matrícula
+    required: false
+    type: string
+  matriculaQuery:
+    name: matricula
+    in: query
+    description: Sigla completa da matrícula
+    required: false
+    type: string
+  anotacao:
+    name: anotacao
+    in: path
+    description: Texto da anotação
+    required: true
+    type: string
+  texto:
+    name: texto
+    in: path
+    description: Texto a ser pesquisado
+    required: true
+    type: string    
+  tipoDestinatario:
+    name: tipoDestinatario
+    in: formData
+    description: > 
+      Tipo do Destinatário. 
+        * ORGAO - Órgão Integrado ao São Paulo sem Papel
+        * USUARIO - Usuário do São Paulo sem Papel
+        * EXTERNO - Órgão Externo ao São Paulo sem Papel
+    required: true
+    type: string
+    enum: 
+      - ORGAO
+      - USUARIO
+      - EXTERNO
+  destinatario:
+    name: destinatario
+    in: formData
+    description: >
+      Destinatário. Dependendo do `tipoDestinatario` deverá ter os seguintes significados e formatos
+        * ORGAO - Deve estar no formato `OO-UUU`, onde 
+          - 'OO' (apenas letras maiúsculas, quantidade variável) corresponde ao código do órgão propriamente dito 
+          - 'UUU' (letras maiúsculas e dígitos, quantidade variável) correspondem ao código da unidade.
+        * USUARIO - Deve estar no formato OONNNNN onde 
+          - 'OO' (apenas letras maiúsculas, quantidade variável) corresponde ao código do órgão propriamente dito.
+          - 'NNNN' (apenas dígitos, quantidade variável) à sua respectiva matrícula nesse órgão.
+        * EXTERNO - Código do Órgão Externo ao São Paulo Sem Papel (Deve ter até 10 letras maiúsculas).
+    required: true
+    type: string
+  observacao:
+    name: observacao
+    in: formData
+    description: Somente quando `tipoDestinatario` = `EXTERNO`. Poderá ser preenchido com e-mail do destinatário.
+    required: false
+    type: string            
+  dataDevolucao:
+    name: dataDevolucao
+    in: formData
+    description: Data de Devolução do documento (por exemplo, `2020-12-02`). Deve ser igual ou maior que o dia corrente!
+    required: false
+    type: string
+    pattern: ^\d{4}-(0\d|1[012])-([012]\d|3[01])
 
 ################################################################################
 #                                           Paths                              #
@@ -126,6 +267,7 @@ paths:
         - $ref: "#/parameters/estampa"
         - $ref: "#/parameters/completo"
         - $ref: "#/parameters/volumes"
+        - $ref: "#/parameters/exibirReordenacao"
       responses:
         200:
           description: Successful response
@@ -202,7 +344,363 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
+  /mesa:
+    get:
+      description: Listar as mesas virtuais disponíveis
+      tags: [mesa]
+      security:
+        - Bearer: []      
+      parameters: []
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/MesaItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+  /doc/{sigla}:
+    get:
+      description: Exibir um documento
+      tags: [consulta]
+      parameters:
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: file
+          headers:
+            Content-Type:
+              type: string
+              description: application/pdf
+            Content-Disposition:
+              type: string
+              description: attachment
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /doc/{sigla}/pdf:
+    get:
+      description: Obter o PDF de um documento para visualização
+      tags: [consulta]
+      parameters:
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              jwt:
+                type: string
+                description: JWT com as informações para download do PDF
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
 
+  /doc/{sigla}/pdf-completo:
+    get:
+      description: Obter o PDF completo de um documento para visualização
+      tags: [consulta]
+      parameters:
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              jwt:
+                type: string
+                description: JWT com as informações para download do PDF
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /doc/{sigla}/mov/{id}/pdf:
+    get:
+      description: Obter o PDF de uma movimentação para visualização
+      tags: [consulta]
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              jwt:
+                type: string
+                description: JWT com as informações para download do PDF
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+  /doc/{sigla}/assinar-com-senha:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/username"
+        - $ref: "#/parameters/password"
+      description: Assinar documento com senha
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /doc/{sigla}/tramitar:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/lotacao"
+        - $ref: "#/parameters/matricula"
+      description: Tramitar documento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /doc/{sigla}/tramitar-sp:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      description: Tramitar documento (SP Sem Papel) 
+      summary: Tramita (transfere) um documento para outra pessoa ou órgão (interno ou externo).
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: '#/parameters/tipoDestinatario'
+        - $ref: '#/parameters/destinatario'
+        - $ref: '#/parameters/observacao'
+        - $ref: '#/parameters/dataDevolucao'
+      responses:
+#Tive que adicionar o 200 porque se tivesse apenas o 201 swaggerservlet soltaria uma exceção
+        200:
+          description: Ok
+        403:
+          description: Acesso ao documento não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Via ou volume não encontrado
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: Erro na Tramitação
+          schema:
+            $ref: "#/definitions/Error"
+
+
+  /doc/{sigla}/juntar:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/siglapai"
+      description: Junta a via de um documento com outro informado em siglapai
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        403:
+          description: Acesso ao documento não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Via ou volume não encontrado
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+
+  /doc/{sigla}/anotar:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/anotacao"
+      description: Anotar documento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /doc/{sigla}/pesquisar-sigla:
+    get:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/matriculaQuery"
+      description: Tramitar documento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              codigo:
+                type: string
+              sigla:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+  /sugestao:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [utils]
+      parameters:
+        - $ref: "#/parameters/nome"
+        - $ref: "#/parameters/email"
+        - $ref: "#/parameters/mensagem"
+      description: Enviar sugestões
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"         
+  /token/criar:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [utils]
+      parameters:
+        - $ref: "#/parameters/username"
+        - $ref: "#/parameters/password"
+      description: Autenticar usuário
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              id_token:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /acessos:
+    get:
+      description: Listar os últimos acessos
+      tags: [utils]
+      parameters: []
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/AcessoItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+
+            
+  /pessoa/{texto}/pesquisar:
+    get:
+      description: Retornar uma lista de pessoas
+      tags: [cadastro]
+      parameters:
+        - $ref: "#/parameters/texto"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/ResultadoDePesquisa"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /lotacao/{texto}/pesquisar:
+    get:
+      description: Retornar uma lista de lotações
+      tags: [cadastro]
+      parameters:
+        - $ref: "#/parameters/texto"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/ResultadoDePesquisa"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"            
+                           
 
 ################################################################################
 #                                     Definitions                              #
@@ -235,3 +733,118 @@ definitions:
     properties:
       errormsg:
         type: string
+  MesaItem:
+    description: Lista documentos na mesa
+    type: object
+    properties:
+      tipo:
+        type: string
+      datahora:
+        type: string
+        format: date-time
+      tempoRelativo:
+        type: string
+      codigo:
+        type: string
+      sigla:
+        type: string
+      descr:
+        type: string
+      origem:
+        type: string
+      grupo:
+        type: string
+      grupoNome:
+        type: string
+      grupoOrdem:
+        type: string
+      podeAnotar:
+        type: boolean
+      podeAssinar:
+        type: boolean
+      podeAssinarEmLote:
+        type: boolean
+      podeTramitar:
+        type: boolean
+      list:
+        type: array
+        items:
+          $ref: "#/definitions/Marca"      
+  AcessoItem:
+    description: Acessos recentes
+    type: object
+    properties:
+      datahora:
+        type: string
+        format: date-time
+      ip:
+        type: string
+
+  Marca:
+    description: Etiquetas relacionadas a um documento
+    type: object
+    properties:
+      pessoa:
+        type: string
+      lotacao:
+        type: string
+      nome:
+        type: string
+      icone:
+        type: string
+      titulo:
+        type: string
+      inicio:
+        type: string
+        format: date-time
+      termino:
+        type: string
+        format: date-time
+      daPessoa:
+        type: boolean
+      deOutraPessoa:
+        type: boolean
+      daLotacao:
+        type: boolean
+
+  Acao:
+    description: Ação que pode ser realizada a um documento
+    type: object
+    properties:
+      nome:
+        type: string
+      icone:
+        type: string
+      ativa:
+        type: boolean
+
+  Documento:
+    description: Dados de um documento
+    type: object
+    properties:
+      sigla:
+        type: string
+      html:
+        type: string
+      data:
+        type: string
+      descr:
+        type: string
+      marca:
+        type: array
+        items:
+          $ref: "#/definitions/Marca"
+      acao:
+        type: array
+        items:
+          $ref: "#/definitions/Acao"
+
+  ResultadoDePesquisa:
+    description: Dados de um item
+    type: object
+    properties:
+      sigla:
+        type: string
+      nome:
+        type: string
+        

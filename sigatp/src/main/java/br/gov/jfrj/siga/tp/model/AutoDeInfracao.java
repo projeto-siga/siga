@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -29,12 +30,12 @@ import br.gov.jfrj.siga.tp.validation.annotation.UpperCase;
 @Entity
 @Audited
 @Table(schema = "SIGATP")
-public class AutoDeInfracao extends TpModel implements ConvertableEntity, Comparable<AutoDeInfracao> {
+public class AutoDeInfracao extends TpModel implements ConvertableEntity<Long>, Comparable<AutoDeInfracao> {
 
 	public static final ActiveRecord<AutoDeInfracao> AR = new ActiveRecord<>(AutoDeInfracao.class);
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator")
+	@GeneratedValue(generator = "hibernate_sequence_generator")
 	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "SIGATP.hibernate_sequence")
 	private Long id;
 
@@ -78,6 +79,7 @@ public class AutoDeInfracao extends TpModel implements ConvertableEntity, Compar
 	private String enquadramento; */
 
 	@NotNull
+	@NotEmpty
 	@UpperCase
 	private String local;
 
@@ -293,6 +295,7 @@ public class AutoDeInfracao extends TpModel implements ConvertableEntity, Compar
 		this.numeroDoProcesso = numeroDoProcesso;
 	}
 
+	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}

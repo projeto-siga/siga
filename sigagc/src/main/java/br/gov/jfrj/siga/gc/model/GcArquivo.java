@@ -30,20 +30,40 @@ public class GcArquivo extends Objeto implements Serializable {
 	@SequenceGenerator(sequenceName = "SIGAGC.hibernate_sequence", name = "gcArquivoSeq")
 	@GeneratedValue(generator = "gcArquivoSeq")
 	@Column(name = "ID_CONTEUDO")
-	public long id;
+	private long id;
 
 	@Column(name = "TITULO")
-	public String titulo;
+	private String titulo;
 
 	@Column(name = "CLASSIFICACAO")
-	public String classificacao;
+	private String classificacao;
 
 	@Lob
 	@Column(name = "CONTEUDO")
-	public byte[] conteudo;
+	private byte[] conteudo;
 
 	@Column(name = "CONTEUDO_TIPO")
-	public String mimeType;
+	private String mimeType;
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
+	}
+
+	public void setClassificacao(String classificacao) {
+		this.classificacao = classificacao;
+	}
+
+	public void setConteudo(byte[] conteudo) {
+		this.conteudo = conteudo;
+	}
+
+	public void setMimeType(String mimeType) {
+		this.mimeType = mimeType;
+	}
 
 	public void setConteudoTXT(String html) {
 		if (html != null && html.startsWith("<")) {

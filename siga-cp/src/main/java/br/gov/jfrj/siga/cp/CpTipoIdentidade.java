@@ -28,7 +28,6 @@ import org.hibernate.annotations.Immutable;
 
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
-import br.gov.jfrj.siga.dp.dao.CpDao;
 
 @Entity
 @Immutable

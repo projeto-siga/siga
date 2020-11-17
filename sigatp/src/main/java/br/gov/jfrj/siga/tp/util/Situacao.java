@@ -9,4 +9,7 @@ public enum Situacao {
 		return this.name();
 	}
     
+	public Situacao[] getValues() {
+		return Situacao.values();
+	}
 }

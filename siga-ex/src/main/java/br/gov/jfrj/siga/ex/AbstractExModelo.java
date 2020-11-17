@@ -22,9 +22,9 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import java.sql.Blob;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -36,7 +36,12 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Transient;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.cp.CpArquivo;
+import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
@@ -48,6 +53,9 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 @NamedQueries({ @NamedQuery(name = "consultarModeloAtual", query = "select mod from ExModelo mod where mod.hisIdIni = :hisIdIni and mod.hisDtFim = null") })
 public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 		implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
 	/** The composite primary key value. */
 	@Id
 	@SequenceGenerator(sequenceName = "EX_MODELO_SEQ", name = "EX_MODELO_SEQ")
@@ -55,6 +63,9 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	@Column(name = "ID_MOD", unique = true, nullable = false)
 	private java.lang.Long idMod;
 
+	@Transient
+	protected byte[] cacheConteudoBlobMod;
+	
 	/** The value of the simple conteudoBlobMod property. */
 	@Lob
 	@Column(name = "CONTEUDO_BLOB_MOD")
@@ -84,6 +95,10 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_NIVEL_ACESSO")
 	private ExNivelAcesso exNivelAcesso;
+
+	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "ID_ARQ")
+	private CpArquivo cpArquivo;
 
 	/** The value of the exModeloTipologiaSet one-to-many association. */
 
@@ -161,24 +176,6 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	}
 
 	/**
-	 * Return the value of the CONTEUDO_BLOB_MOD column.
-	 * 
-	 * @return java.lang.String
-	 */
-	public byte[] getConteudoBlobMod() {
-		return this.conteudoBlobMod;
-	}
-
-	/**
-	 * Return the value of the CONTEUDO_TP_BLOB column.
-	 * 
-	 * @return java.lang.String
-	 */
-	public java.lang.String getConteudoTpBlob() {
-		return this.conteudoTpBlob;
-	}
-
-	/**
 	 * Return the value of the DESC_MOD column.
 	 * 
 	 * @return java.lang.String
@@ -251,24 +248,6 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 		result = result * 37 + idValue;
 		idValue = this.getDescMod() == null ? 0 : this.getDescMod().hashCode();
 		return result * 37 + idValue;
-	}
-
-	/**
-	 * Set the value of the CONTEUDO_BLOB_MOD column.
-	 * 
-	 * @param conteudoBlobMod
-	 */
-	public void setConteudoBlobMod(byte[] conteudoBlobMod) {
-		this.conteudoBlobMod = conteudoBlobMod;
-	}
-
-	/**
-	 * Set the value of the CONTEUDO_TP_BLOB column.
-	 * 
-	 * @param conteudoTpBlob
-	 */
-	public void setConteudoTpBlob(final java.lang.String conteudoTpBlob) {
-		this.conteudoTpBlob = conteudoTpBlob;
 	}
 
 	/**
@@ -352,8 +331,8 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 		if (getClass() != obj.getClass())
 			return false;
 		AbstractExModelo other = (AbstractExModelo) obj;
-		if (conteudoBlobMod == null) {
-			if (other.conteudoBlobMod != null)
+		if (getConteudoBlobMod() == null) {
+			if (other.getConteudoBlobMod() != null)
 				return false;
 		} else {
 			if (other.getConteudoBlobMod() == null)
@@ -377,10 +356,10 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 				throw new RuntimeException(e);
 			}
 		}
-		if (conteudoTpBlob == null) {
-			if (other.conteudoTpBlob != null)
+		if (getConteudoTpBlob() == null) {
+			if (other.getConteudoTpBlob() != null)
 				return false;
-		} else if (!conteudoTpBlob.equals(other.conteudoTpBlob))
+		} else if (!getConteudoTpBlob().equals(other.getConteudoTpBlob()))
 			return false;
 		if (descMod == null) {
 			if (other.descMod != null)
@@ -425,4 +404,49 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 		return true;
 	}
 
+	public CpArquivo getCpArquivo() {
+		return cpArquivo;
+	}
+
+	public void setCpArquivo(CpArquivo cpArquivo) {
+		this.cpArquivo = cpArquivo;
+	}
+
+	public java.lang.String getConteudoTpBlob() {
+		if (getCpArquivo() == null || getCpArquivo().getConteudoTpArq() == null)
+			return conteudoTpBlob;
+		return getCpArquivo().getConteudoTpArq();
+	}
+
+	public void setConteudoTpBlob(final java.lang.String conteudoTpMod) {
+		this.conteudoTpBlob = conteudoTpMod;
+		if (conteudoBlobMod==null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
+			cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, conteudoTpMod);
+	    }
+	}
+
+	public byte[] getConteudoBlobMod() {
+		if(cacheConteudoBlobMod != null) {
+			return cacheConteudoBlobMod;
+		} else if (getCpArquivo() == null) {
+			cacheConteudoBlobMod = conteudoBlobMod;
+		} else {
+			try {
+				cacheConteudoBlobMod = getCpArquivo().getConteudo();
+			} catch (Exception e) {
+				throw new AplicacaoException(e.getMessage());
+			}
+		}
+		return cacheConteudoBlobMod;
+	}
+
+	public void setConteudoBlobMod(byte[] createBlob) {
+		cacheConteudoBlobMod = createBlob;
+		if (this.cpArquivo==null && (this.conteudoBlobMod!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"))))) {
+			this.conteudoBlobMod = createBlob;
+		} else if(cacheConteudoBlobMod != null){
+			cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobMod);
+		}
+	}
+	
 }

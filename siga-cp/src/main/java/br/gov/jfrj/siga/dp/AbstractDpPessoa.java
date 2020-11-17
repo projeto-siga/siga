@@ -54,9 +54,9 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 		@NamedQuery(name = "consultarPorIdInicialDpPessoa", query = "select pes from DpPessoa pes where pes.idPessoaIni = :idPessoaIni and pes.dataFimPessoa = null"),
 		@NamedQuery(name = "consultarPorSiglaDpPessoa", query = "select pes from DpPessoa pes where pes.matricula = :matricula and pes.sesbPessoa = :sesb and pes.dataFimPessoa = null"),
 		@NamedQuery(name = "consultarPessoaAtualPelaInicial", query = "from DpPessoa pes "
-				+ "		where pes.dataInicioPessoa = "
-				+ "		(select max(p.dataInicioPessoa) from DpPessoa p where p.idPessoaIni = :idPessoaIni)"
-				+ "		 and pes.idPessoaIni = :idPessoaIni"),
+				+ "		where pes.idPessoaIni = :idPessoaIni "
+				+ "		and pes.dataInicioPessoa = (select max(p.dataInicioPessoa) from DpPessoa p where p.idPessoaIni = :idPessoaIni)"
+				+ "		order by idPessoa desc"),
 		@NamedQuery(name = "consultarPorIdInicialDpPessoaInclusiveFechadas", query = "select pes from DpPessoa pes where pes.idPessoaIni = :idPessoaIni"),
 		@NamedQuery(name = "consultarPorCpf", query = "from DpPessoa pes where pes.cpfPessoa = :cpfPessoa and pes.dataFimPessoa = null"),	
 		@NamedQuery(name = "consultarPorCpfAtivoInativo", query = "from DpPessoa pes where pes.cpfPessoa = :cpfPessoa and pes.idPessoa in"
@@ -90,33 +90,21 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "	 where pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
 				+ " and pes.lotacao.idLotacao in (:idLotacaoLista)"
 				+ " and pes.dataFimPessoa = null"
-				+ " and not exists (select ident.dpPessoa.idPessoaIni from CpIdentidade ident where pes.idPessoaIni = ident.dpPessoa.idPessoaIni)"
+				+ "  and not exists (select 1 from CpIdentidade i inner join i.dpPessoa pes1 where pes1.idPessoaIni = pes.idPessoaIni and pes1.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "   	order by pes.lotacao.nomeLotacao, pes.nomePessoaAI"),
 		@NamedQuery(name = "consultarPorFiltroDpPessoaSemIdentidade", query = "from DpPessoa pes "
-				 	+ " where (pes.nomePessoaAI like upper('%' || :nome || '%'))"
-					+ " and (pes.cpfPessoa = :cpf or :cpf = 0L)"
+				 	+ " where (pes.cpfPessoa = :cpf or :cpf = 0L)"
 					+ " and pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
 					+ "	and (pes.lotacao.idLotacao = :lotacao or :lotacao = 0L)"
 					+ " and pes.dataFimPessoa = null"
-					+ " and pes.idPessoaIni not in ("
-					+ " select pes1.idPessoaIni from CpIdentidade i inner join i.dpPessoa pes1"
-					+ "	where (pes.nomePessoaAI like upper('%' || :nome || '%'))" 
-										+ " and (pes.cpfPessoa = :cpf or :cpf = 0L)" 
-										+ " and pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu" 
-										+ "	and (pes.lotacao.idLotacao = :lotacao or :lotacao = 0L))"
-					+ " order by pes.lotacao.nomeLotacao, pes.nomePessoaAI, pes.cpfPessoa"
-				),		
+					+ " and not exists (select 1 from CpIdentidade i inner join i.dpPessoa pes1 where pes1.idPessoaIni = pes.idPessoaIni and pes1.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+					+ " order by pes.nomePessoaAI, pes.cpfPessoa"),		
 		@NamedQuery(name = "consultarQuantidadeDpPessoaSemIdentidade", query = "select count(pes) from DpPessoa pes "
-				+ "  where (pes.nomePessoaAI like upper('%' || :nome || '%'))"
-				+ " and (pes.cpfPessoa = :cpf or :cpf = 0L)"
+				+ "  where (pes.cpfPessoa = :cpf or :cpf = 0L)"
 				+ " and pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
 				+ "	and (pes.lotacao.idLotacao = :lotacao or :lotacao = 0L)"
 				+ " and pes.dataFimPessoa = null"
-				+ " and pes.idPessoaIni not in (select pes1.idPessoaIni from CpIdentidade i inner join i.dpPessoa pes1"
-				+	"					where (pes.nomePessoaAI like upper('%' || :nome || '%'))"
-				+	"								 and (pes.cpfPessoa = :cpf or :cpf = 0L)"
-				+	"								 and pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
-				+	"									and (pes.lotacao.idLotacao = :lotacao or :lotacao = 0L))"),		
+				+ " and not exists (select 1 from CpIdentidade i inner join i.dpPessoa pes1 where pes1.idPessoaIni = pes.idPessoaIni and pes1.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"),		
 		@NamedQuery(name = "consultarQuantidadeDpPessoa", query = "select count(pes) from DpPessoa pes "
 				+ "  where ((pes.nomePessoaAI like upper('%' || :nome || '%')) or ((pes.sesbPessoa || pes.matricula) like upper('%' || :nome || '%'))) "
 				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"

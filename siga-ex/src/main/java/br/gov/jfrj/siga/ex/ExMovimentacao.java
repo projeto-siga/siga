@@ -21,6 +21,8 @@
  */
 package br.gov.jfrj.siga.ex;
 
+import static java.util.Objects.nonNull;
+
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
@@ -34,9 +36,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.persistence.Entity;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.apache.xerces.impl.dv.util.Base64;
 import org.hibernate.annotations.BatchSize;
@@ -50,7 +50,6 @@ import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.ex.util.ProcessadorReferencias;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 /**
  * A class that represents a row in the 'EX_MOVIMENTACAO' table. This class may
@@ -67,9 +66,6 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 * 
 	 */
 	private static final long serialVersionUID = 2559924666592487436L;
-
-	@Transient
-	private byte[] cacheConteudoBlobMov;
 
 	/**
 	 * Simple constructor of ExMovimentacao instances.
@@ -114,10 +110,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	}
 
 	public byte[] getConteudoBlobMov2() {
-
-		if (cacheConteudoBlobMov == null)
-			cacheConteudoBlobMov = getConteudoBlobMov();
-		return cacheConteudoBlobMov;
+		return getConteudoBlobMov();
 
 	}
 
@@ -160,7 +153,6 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	public void setConteudoBlobMov2(byte[] blob) {
 		if (blob != null)
 			setConteudoBlobMov(blob);
-		cacheConteudoBlobMov = blob;
 	}
 
 	/**
@@ -297,15 +289,12 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 			else if (getLotaCadastrante() != null)
 				lotaBase = getLotaCadastrante();
 
-			if (s == null && lotaBase != null) {
-				s = lotaBase.getLocalidadeString();
-				/*
-				 * s = getLotaTitular().getOrgaoUsuario().getMunicipioOrgaoUsu()
-				 * + ", ";
-				 */
-			}
+			String parteLocalidade = nonNull(s) ? (s + ", ")
+					: (nonNull(lotaBase) && nonNull(lotaBase.getLocalidadeString()))
+							? (lotaBase.getLocalidadeString() + ", ")
+							: "";
 
-			return s + ", " + df1.format(getDtMov()).toLowerCase();
+			return parteLocalidade + df1.format(getDtMov()).toLowerCase();
 		} catch (Exception e) {
 			return null;
 		}

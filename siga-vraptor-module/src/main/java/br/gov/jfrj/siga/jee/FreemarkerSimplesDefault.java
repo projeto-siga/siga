@@ -6,13 +6,12 @@ import java.nio.file.Paths;
 
 import org.apache.commons.io.IOUtils;
 
-import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.base.Prop;
 
 public class FreemarkerSimplesDefault {
 	public static String getDefaultTemplate() {
 		try {
-			String pathname = Cp.getInstance().getProp()
-					.obterPropriedade("siga.debug.default.template.pathname");
+			String pathname = Prop.get("debug.modelo.padrao.arquivo");
 			if (pathname != null)
 				return new String(Files.readAllBytes(Paths.get(pathname)),
 						"UTF-8");

@@ -920,11 +920,14 @@ $(document).on('ready', function(){
 		},
 		// Função para montar modal de carregamento.
 		div_loader:{
-	        pleaseWaitDiv: $(
-	        	'<div class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true" style="padding-top:15%; overflow-y:visible;">' +
+	        pleaseWaitDiv: $(	        		
+				'<div class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true" style="padding-top:15%; overflow-y:visible;">' +
 					'<div class="modal-dialog modal-m">' +
 						'<div class="modal-content">' +
-							'<div class="modal-header"><h3 style="margin:0;">Processando a busca</h3></div>' +
+							'<div class="modal-header">'+
+								(typeof uriLogoSiga !== 'undefined' ? '<div class="col-6  p-0"><img src="' + uriLogoSiga + '" class="siga-modal__logo" alt="logo siga"></div>' : '<h5 class="modal-title">Siga</h5>') +
+								'<div class="col-6  p-0"><h4 class="modal-title  siga-modal__titulo  siga-modal__titulo--direita">Processando a busca</h4></div>' +
+							'</div>' +
 							'<div class="modal-body">' +
 								'<div class="progress progress-striped active" style="margin-bottom:0;"><div class="progress-bar" style="width: 100%"></div></div>' +
 							'</div>' +

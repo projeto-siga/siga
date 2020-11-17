@@ -52,11 +52,13 @@ import java.util.TreeSet;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.FlushModeType;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -70,8 +72,10 @@ import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
@@ -112,9 +116,13 @@ import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 @Controller
 public class ExDocumentoController extends ExController {
 
+	private static final String ERRO_EXCLUIR_ARQUIVO = "Erro ao excluir o arquivo";
+	private static final String ERRO_GRAVAR_ARQUIVO = "Erro ao gravar o arquivo";
 	private static final String URL_EXIBIR = "/app/expediente/doc/exibir?sigla={0}";
 	private static final String URL_EDITAR = "/app/expediente/doc/editar?sigla={0}";
 	private String url = null;
+	
+	private final static Logger log = Logger.getLogger(ExDocumentoController.class);
 
 	/**
 	 * @deprecated CDI eyes only
@@ -252,6 +260,7 @@ public class ExDocumentoController extends ExController {
 
 		exPreenchimento.setPreenchimentoBA(getByteArrayFormPreenchimento(vars,
 				campos));
+		
 		dao().gravar(exPreenchimento);
 		ModeloDao.commitTransacao();
 
@@ -908,6 +917,7 @@ public class ExDocumentoController extends ExController {
 		final ExPreenchimento exemplo = dao()
 				.consultar(exDocumentoDTO.getPreenchimento(),
 						ExPreenchimento.class, false);
+		
 		dao().excluir(exemplo);
 		ModeloDao.commitTransacao();
 		exDocumentoDTO.setPreenchimento(0L);
@@ -1319,7 +1329,10 @@ public class ExDocumentoController extends ExController {
 	@Get({ "/app/expediente/doc/exibir", "/expediente/doc/exibir.action" })
 	public void exibe(final boolean conviteEletronico, final String sigla,
 			final ExDocumentoDTO exDocumentoDTO, final Long idmob, final Long idVisualizacao, boolean exibirReordenacao)
-			throws Exception {
+			throws Exception {		
+		final boolean recebimentoAutomatico = Prop.getBool("recebimento.automatico");
+		boolean recebimentoPendente = false;
+		
 		assertAcesso("");
 
 		ExDocumentoDTO exDocumentoDto;
@@ -1342,16 +1355,14 @@ public class ExDocumentoController extends ExController {
 		if(!podeVisualizarDocumento(exDocumentoDto.getMob(), getTitular(), idVisualizacao)) {
 			assertAcesso(exDocumentoDto);
 		}
-
-		if (Ex.getInstance()
-				.getComp()
-				.podeReceberEletronico(getTitular(), getLotaTitular(),
-						exDocumentoDto.getMob())) {
-			Ex.getInstance()
-					.getBL()
-					.receber(getCadastrante(), getLotaTitular(),
-							exDocumentoDto.getMob(), new Date());
-		}
+		
+		if (recebimentoAutomatico) {				
+			if (Ex.getInstance().getComp().podeReceberEletronico(getTitular(), getLotaTitular(), exDocumentoDto.getMob())) {
+				Ex.getInstance().getBL().receber(getCadastrante(), getLotaTitular(),exDocumentoDto.getMob(), new Date());
+			}														
+		} else if (Ex.getInstance().getComp().podeReceber(getTitular(), getLotaTitular(),exDocumentoDto.getMob())) {			
+			recebimentoPendente = true;			
+		} 		
 
 		if (exDocumentoDto.getMob() == null
 				|| exDocumentoDto.getMob().isGeral()) {
@@ -1392,7 +1403,7 @@ public class ExDocumentoController extends ExController {
 		result.include("idVisualizacao", idVisualizacao);
 		result.include("podeExibirReordenacao", exibirReordenacao);
 		result.include("podeExibirTodosOsVolumes", exDocumentoDto.getMob().isVolume()); //  && exDocumentoDto.getMob().getDoc().getVolumes().size() > 1
-		
+		result.include("recebimentoPendente", recebimentoPendente);		
 	}
 
 	@Get("app/expediente/doc/exibirProcesso")
@@ -1561,6 +1572,7 @@ public class ExDocumentoController extends ExController {
 	public void gravar(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars, final String[] campos,
 			final UploadedFile arquivo, String jsonHierarquiaDeModelos) {
+		dao().em().setFlushMode(FlushModeType.COMMIT);
 		final Ex ex = Ex.getInstance();
 		final ExBL exBL = ex.getBL();		
 		try {
@@ -1808,6 +1820,7 @@ public class ExDocumentoController extends ExController {
 
 		exPreenchimento.setPreenchimentoBA(getByteArrayFormPreenchimento(vars,
 				campos));
+		
 		dao().gravar(exPreenchimento);
 		ModeloDao.commitTransacao();
 
@@ -1940,18 +1953,18 @@ public class ExDocumentoController extends ExController {
 	}
 
 	@Get("/app/expediente/doc/tornarDocumentoSemEfeito")
-	public void tornarDocumentoSemEfeito(final String sigla) throws Exception {
+	public void tornarDocumentoSemEfeito(final String sigla, final String descrMov) throws Exception {
 		assertAcesso("");
 
 		final ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
 		exDocumentoDto.setSigla(sigla);
-		buscarDocumento(false, exDocumentoDto);
+		buscarDocumento(false, exDocumentoDto);			
 
 		result.include("sigla", sigla);
 		result.include("id", exDocumentoDto.getId());
 		result.include("mob", exDocumentoDto.getMob());
 		result.include("titularSel", new DpPessoaSelecao());
-		result.include("descrMov", exDocumentoDto.getDescrMov());
+		result.include("descrMov", descrMov);
 		result.include("doc", exDocumentoDto.getDoc());
 	}
 	
@@ -2004,8 +2017,7 @@ public class ExDocumentoController extends ExController {
 		Calendar c = Calendar.getInstance();
 		c.setTime(prot.getData());
 
-		String servidor = SigaBaseProperties.getString("siga.ex."
-                + SigaBaseProperties.getString("siga.ambiente") + ".url");
+		String servidor = Prop.get("/sigaex.url");
 		
 		String caminho = url + "/public/app/processoautenticar?n=" + prot.getCodigo();
 		
@@ -2031,32 +2043,25 @@ public class ExDocumentoController extends ExController {
 			final String descrMov) throws Exception {
 		assertAcesso("");
 
-		if (descrMov == null || descrMov.trim().length() == 0) {
-			throw new AplicacaoException(
-					"O preenchimento do campo MOTIVO é obrigatório!");
-		}
-		final ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
-		exDocumentoDto.setSigla(sigla);
-		buscarDocumento(Boolean.TRUE, exDocumentoDto);
-
-		ExMobil mob = exDocumentoDto.getMob();
-		ExDocumento doc = exDocumentoDto.getDoc();
-
-		if (!Ex.getInstance()
-				.getComp()
-				.podeTornarDocumentoSemEfeito(getTitular(), getLotaTitular(),
-						mob))
-			throw new AplicacaoException(
-					"Não é possível tornar documento sem efeito.");
-		try {			
+		try {
+			if (descrMov == null || descrMov.trim().length() == 0) {
+				throw new RegraNegocioException("Favor informar o motivo");
+			}
+			
+			final ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
+			exDocumentoDto.setSigla(sigla);
+			buscarDocumento(Boolean.TRUE, exDocumentoDto);						
+					
 			Ex.getInstance()
 					.getBL()
-					.TornarDocumentoSemEfeito(getCadastrante(),
-							getLotaTitular(), doc, descrMov);
-		} catch (final Exception e) {
-			throw e;
-		}
-		ExDocumentoController.redirecionarParaExibir(result, sigla);
+					.tornarDocumentoSemEfeito(getCadastrante(),
+							getLotaTitular(), exDocumentoDto.getDoc(), descrMov);
+			
+			ExDocumentoController.redirecionarParaExibir(result, sigla);
+		} catch (final RegraNegocioException e) {
+			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
+			result.forwardTo(this).tornarDocumentoSemEfeito(sigla, descrMov);
+		}		
 	}
 
 	private void carregarBeans(final ExDocumentoDTO exDocumentoDTO,

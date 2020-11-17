@@ -412,6 +412,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 								cfgGrpNova.setCpConfiguracao(cfgNova);
 								cfgGrpNova.setCpGrupo(grp);
 								cfgGrpNova.atualizarCpConfiguracao();
+								cfgGrpGravada.setCpConfiguracao(dao.carregar(cfgGrpGravada.getCpConfiguracao()));
 								dao().gravarComHistorico(cfgNova,
 										cfgGrpGravada.getCpConfiguracao(), dt,
 										getIdentidadeCadastrante());

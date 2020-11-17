@@ -134,7 +134,7 @@
 														>| documento juntado ${mov.exMobil}
 														<c:if test="${mov.exMobil.podeExibirNoAcompanhamento}">
 															&nbsp<a class="showConteudoDoc link-btn btn btn-sm btn-light" href="#" 
-																onclick="popitup('/sigaex/public/app/processoArquivoAutenticado_stream?jwt=${jwt}&sigla=${mov.exMobil}');"
+																onclick="popitup('/sigaex/public/app/processoArquivoAutenticado_stream?jwt=${jwt}&sigla=${mov.exMobil}&assinado=true');"
 																rel="popover" data-title="${mov.exMobil}" 
 		    													data-content="" onmouseenter="exibeDoc(this);"
 																>Ver</a>
@@ -200,26 +200,6 @@
 					+ "... <br /><br /><i>Clique no botão para ver o documento completo.</i>";
 				$('#'+div_id).removeClass("spinner-border");
 				$('#'+div_id).html(conteudo);
-				$(elem).attr("data-content", conteudo);
-		    },				
-		    error: function (response, status, error) {
-	        	msgErro = "Ocorreu um erro na solicitação: " + response.responseJSON.errormsg;
-				$('#'+div_id).removeClass("spinner-border");
-				$('#'+div_id).html(msgErro);
-				$(elem).attr("data-content", "");
-	    	}
-	    });
-	}
-	
-	function exibirConteudoDoc(sigla) {
-		$.ajax({
-		    url: "/public/app/processoArquivoAutenticado_stream"+ sigla + "/arquivo",
-		    contentType: "application/json",
-		    headers: {"Authorization": "${jwt}"},
-		    dataType: 'json',
-		    success: function(result) {
-			    conteudoDoc = new DOMParser().parseFromString(result.pdf, "application/pdf");
-			    var ws = window.open("", '_blank', "width=800,height=600,location=no,menubar=no,status=no,titilebar=no,resizable=no")
 				$(elem).attr("data-content", conteudo);
 		    },				
 		    error: function (response, status, error) {

@@ -228,4 +228,28 @@ public class CpMarcador extends AbstractCpMarcador {
 		return MARCADORES_DEMANDA_JUDICIAL.contains(this.getIdMarcador());
 	}
 
+	public boolean isAplicacaoGeral() {
+		return false;
+	}
+
+	public boolean isAplicacaoViaEspecificaOuUltimoVolume() {
+		return false;
+	}
+
+	public boolean isAplicacaoTodasAsVias() {
+		return true;
+	}
+
+	public boolean isInteressadoAtentende() {
+		return true;
+	}
+
+	public boolean isInteressadoPessoa() {
+		return false;
+	}
+
+	public boolean isInteressadoLotacao() {
+		return false;
+	}
+
 }

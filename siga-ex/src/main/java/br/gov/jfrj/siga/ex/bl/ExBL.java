@@ -3512,7 +3512,7 @@ public class ExBL extends CpBL {
 		// Inclui em setAntes os papeis que já estão atribuídos de acordo com as
 		// movimentações de vínculo de papel
 		List<ExMovimentacao> movs = doc.getMobilGeral()
-				.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL);
+				.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL, false);
 		for (ExMovimentacao mov : movs) {
 			if (mov.isCancelada() || mov.getCadastrante() != null)
 				continue;
@@ -3588,7 +3588,7 @@ public class ExBL extends CpBL {
 	private void removerPapel(ExDocumento doc, long idPapel) throws Exception {
 		ExMovimentacao movCancelamento = null;
 		List<ExMovimentacao> movs = doc.getMobilGeral()
-				.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL);
+				.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL, false);
 		boolean removido = false;
 		for (ExMovimentacao mov : movs) {
 			if (mov.isCancelada() || !mov.getExPapel().getIdPapel().equals(idPapel))

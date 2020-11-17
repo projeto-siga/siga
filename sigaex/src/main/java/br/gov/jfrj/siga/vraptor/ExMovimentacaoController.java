@@ -2486,7 +2486,7 @@ public class ExMovimentacaoController extends ExController {
 						mov.getSubscritor(), mov.getLotaSubscritor(),
 						mov.getDescrMov(), 
 						mov.getMarcador(), dtPlanejada, dtLimite);
-		resultOK();
+		ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getSigla());
 	}
 
 	@Get("app/expediente/mov/transferir_lote")

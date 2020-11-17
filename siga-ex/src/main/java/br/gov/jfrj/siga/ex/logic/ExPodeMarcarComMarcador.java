@@ -28,7 +28,7 @@ public class ExPodeMarcarComMarcador extends CompositeExpressionSuport {
 	@Override
 	protected Expression create() {
 		return And.of(Not.of(And.of(new ExEMarcadorUnico(marcador), new ExEstaMarcadoComMarcador(mob, marcador))),
-				Not.of(new ExEMarcadorDeSistema(marcador)), new ExPodeMarcar(mob, titular, lotaTitular));
+				new ExPodeMarcar(mob, titular, lotaTitular));
 	}
 
 	public static void afirmar(ExMobil mob, CpMarcador marcador, DpPessoa titular, DpLotacao lotaTitular) {

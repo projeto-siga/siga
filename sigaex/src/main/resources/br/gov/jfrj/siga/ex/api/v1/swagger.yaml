@@ -969,4 +969,15 @@ definitions:
         type: boolean
       explicacao:
         type: string
-        
+      podePessoa:
+        type: boolean
+      podeLotacao:
+        type: boolean
+      podePlanejada:
+        type: boolean
+      podeLimite:
+        type: boolean
+      podeJustificar:
+        type: boolean
+      deveJustificar:
+        type: boolean

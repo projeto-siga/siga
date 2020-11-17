@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.ArrayList;
 
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
@@ -171,20 +172,7 @@ public class ExMarcadorBL {
 		if (!mob.isArquivado())
 			calcularMarcadoresTransferencia(dt);
 
-		// Acrescentar marcas manuais (Urgente, Idoso, etc)
-		if (m == CpMarcador.MARCADOR_EM_ANDAMENTO) {
-			ExMobil geral = mob.doc().getMobilGeral();
-			if (geral.getExMovimentacaoSet() != null) {
-				for (ExMovimentacao mov : geral.getExMovimentacaoSet()) {
-					if (mov.isCancelada())
-						continue;
-					Long t = mov.getIdTpMov();
-					if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO)
-						acrescentarMarca(mov.getMarcador().getIdMarcador(), dt, ultMovNaoCanc.getResp(),
-								ultMovNaoCanc.getLotaResp());
-				}
-			}
-		}
+		acrescentarMarcadoresManuais(m, dt);
 
 		// Quando está na caixa de entrada, substituir por "A Receber", se for
 		// físico
@@ -249,6 +237,55 @@ public class ExMarcadorBL {
 		return;
 	}
 
+	private void acrescentarMarcadoresManuais(long m, Date dt) {
+		// Acrescentar marcas manuais (Urgente, Idoso, etc)
+		boolean fEmAndamento = m == CpMarcador.MARCADOR_EM_ANDAMENTO;
+		ExMobil geral = mob.doc().getMobilGeral();
+		
+		// Conteplar movimentações gerais e também as da via específica
+		List<ExMovimentacao> marcacoes = new ArrayList<>();
+		marcacoes.addAll(geral.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true));
+		if (mob.isVia()) 
+			marcacoes.addAll(mob.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true));
+
+		// Marcações gerais
+		for (ExMovimentacao mov : marcacoes) {
+			CpMarcador marcador = mov.getMarcador(); 
+			
+			// Aplicar apenas no móbil correto
+			if (marcador.isAplicacaoGeral() && !mob.isGeral())
+				continue;
+			if (marcador.isAplicacaoViaEspecificaOuUltimoVolume() && (mob.isGeral() || mob.isVolumeEncerrado()))
+				continue;
+			if (marcador.isAplicacaoTodasAsVias() && !mob.isVia())
+				continue;
+			
+			// Calcular datas de início e fim
+			Date dtIni = null;
+			Date dtFim = null;
+			if (dtIni == null && mov.getDtParam1() != null)
+				dtIni = mov.getDtParam1();
+			if (dtIni == null && mov.getDtParam2() != null)
+				dtIni = mov.getDtParam2();
+			if (dtIni == null)
+				dtIni = dt;
+
+			// Calcular pessoa ou lotação
+			DpPessoa pes = null;
+			DpLotacao lot = null;
+			if (marcador.isInteressadoAtentende()) {
+				pes = ultMovNaoCanc.getResp();
+				lot = ultMovNaoCanc.getLotaResp();
+			} else if (marcador.isInteressadoPessoa() && mov.getSubscritor() != null) {
+				pes = mov.getSubscritor();
+				lot = mov.getLotaSubscritor();
+			} else if (marcador.isInteressadoLotacao() && mov.getLotaSubscritor() != null) {
+				lot = mov.getLotaSubscritor();
+			}
+			acrescentarMarcaTransferencia(marcador.getIdMarcador(), dtIni, dtFim, pes,	lot);
+		}
+	}
+	
 	protected boolean acrescentarMarcadorCancelado() {
 		// Cancelado
 		if (ultMovNaoCanc == null) {
@@ -524,8 +561,8 @@ public class ExMarcadorBL {
 		long m_aguardando = CpMarcador.MARCADOR_AGUARDANDO;
 		long m_aguardandoFora = CpMarcador.MARCADOR_AGUARDANDO_DEVOLUCAO_FORA_DO_PRAZO;
 
-		List<ExMovimentacao> transferencias = mob.getMovimentacoesPorTipo(3);
-		transferencias.addAll(mob.getMovimentacoesPorTipo(6));
+		List<ExMovimentacao> transferencias = mob.getMovimentacoesPorTipo(3, false);
+		transferencias.addAll(mob.getMovimentacoesPorTipo(6, false));
 		transferencias.removeAll(mob.getMovimentacoesCanceladas());
 		Set<ExMovimentacao> transferenciasComData = new TreeSet<ExMovimentacao>();
 
@@ -709,8 +746,8 @@ public class ExMarcadorBL {
 
 	public ExMovimentacao contemTransferenciaRetorno(ExMovimentacao mov, ExMobil mob) {
 		ExMovimentacao movRetorno = null;
-		List<ExMovimentacao> transferencias = mob.getMovimentacoesPorTipo(3);
-		transferencias.addAll(mob.getMovimentacoesPorTipo(6));
+		List<ExMovimentacao> transferencias = mob.getMovimentacoesPorTipo(3, false);
+		transferencias.addAll(mob.getMovimentacoesPorTipo(6, false));
 		transferencias.removeAll(mob.getMovimentacoesCanceladas());
 
 		Iterator it = transferencias.iterator();

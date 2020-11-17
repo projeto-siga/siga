@@ -1186,9 +1186,9 @@
 							<div id="gc"></div>
 						</div>
 					</div>
+		<%@ include file="marcar.jsp"%>
 	</c:forEach>
 
-	<%@ include file="marcar.jsp"%>
 </div>
 </div>
 

@@ -70,6 +70,12 @@ public class DocSiglaMarcadoresDisponiveisGet implements IDocSiglaMarcadoresDisp
 					ExPodeMarcarComMarcador pode = new ExPodeMarcarComMarcador(mob, m, titular, lotaTitular);
 					mr.ativo = pode.eval();
 					mr.explicacao = AcaoVO.Helper.formatarExplicacao(pode, mr.ativo);
+					mr.podePessoa = false;
+					mr.podeLotacao = false;
+					mr.podePlanejada = false;
+					mr.podeLimite = true;
+					mr.podeJustificar = false;
+					mr.deveJustificar = false;
 					resp.list.add(mr);
 				}
 			}

@@ -1,7 +1,7 @@
 <!-- Marcar Modal -->
 <div class="modal fade" id="definirMarcaModal" tabindex="-1"
 	role="dialog" aria-labelledby="anotarModalLabel" aria-hidden="true">
-	<div class="modal-dialog" role="document">
+	<div class="modal-dialog modal-lgxx" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title" id="anotarModalLabel">Acrescentar uma
@@ -14,33 +14,44 @@
 			<div class="modal-body">
 				<form id="anotarForm" name="marcar_gravar" method="POST"
 					action="${linkTo[ExMovimentacaoController].aMarcarGravar()}">
-					<input type="hidden" name="sigla" value="${sigla}" />
+					<input type="hidden" name="sigla" value="${m.sigla}" />
 					<div class="form-group">
 						<div class="form-group">
 							<div class="form-group">
 								<label for="marcador">Marcador</label> <select
-									name="marcador" v-model="marcador" id="marcador"
+									name="marcador" v-model="idMarcador" id="marcador"
 									class="form-control">
-									<option v-for="option in lista"
+									<option v-for="option in lista" v-if="option.ativo"
 										v-bind:value="option.idMarcador">{{ option.nome }}</option>
 								</select>
 							</div>
-							<div class="form-group">
-								<label for="marcador">Interessado</label>
-								<siga:pessoaLotaSelecao2 propriedadePessoa="subscritorSel"
-									propriedadeLotacao="lotaSubscritorSel" />
+							<div class="form-group" v-if="exibirInteressado">
+								<label for="marcador">Interessado</label> <select
+									name="interessado" v-model="interessado" id="interessado"
+									class="form-control">
+									<option v-if="marcador.podeLotacao" value="pessoa">Pessoa</option>
+									<option v-if="marcador.podePessoa" value="lotacao">Lotacao</option>
+								</select>
 							</div>
-							<div class="form-group row">
-								<div class="col">
+							<div v-if="exibirLotacao" class="form-group">
+								<label for="marcador">Lotacao</label>	
+								<siga:selecao tema='simple' titulo="Lotação:" propriedade="lotaSubscritor" tipo="lotacao" modulo="siga" />
+							</div>
+							<div v-if="exibirPessoa" class="form-group">
+								<label for="marcador">Pessoa</label>
+								<siga:selecao tema='simple' titulo="Matrícula:" propriedade="subscritor" tipo="pessoa" modulo="siga" />
+							</div>
+							<div v-if="marcador && (marcador.podePlanejada || marcador.podeLimite)" class="form-group row">
+								<div class="col col-12 col-md-6" v-if="marcador && marcador.podePlanejada">
 									<label for="planejada">Data Planejada</label> <input
-										name="planejada" id="planejada" class="form-control" />
+										name="planejada" id="planejada" class="form-control" onblur="javascript:verifica_data(this,0);"/>
 								</div>
-								<div class="col">
+								<div class="col col-12 col-md-6" v-if="marcador && marcador.podeLimite">
 									<label for="limite">Data Limite</label> <input name="limite"
-										id="limite" class="form-control" />
+										id="limite" class="form-control" onblur="javascript:verifica_data(this,0);"/>
 								</div>
 							</div>
-							<div class="form-group">
+							<div class="form-group" v-if="marcador && marcador.podeJustificar">
 								<label for="observacoes">Justificativa</label> <input
 									name="observacoes" id="observacoes" class="form-control" />
 							</div>
@@ -96,12 +107,41 @@
 
 					data : function() {
 						return {
-							marcador : undefined,
+							interessado: undefined,
+							idMarcador : undefined,
 							lista : [],
 							carregando : false,
 							primeiraCarga : true,
 							errormsg : undefined
 						};
+					},
+					
+					computed: {
+						marcador: function() {
+							if (!this.idMarcador)
+								return;
+							for (var i = 0; i < this.lista.length; i++) {
+								if (this.lista[i].idMarcador == this.idMarcador) 
+									return this.lista[i];
+							}
+							return;
+						},
+						exibirInteressado: function() {
+							if	(!this.marcador) return false;
+							if (this.marcador.podePessoa && this.marcador.podeLotacao)
+								return true;
+							return false;
+						},
+						exibirPessoa: function() {
+							if (!this.marcador || !this.marcador.podePessoa) return false;
+							if (!this.marcador.podeLotacao) return true;
+							return this.interessado == 'pessoa';
+						},
+						exibirLotacao: function() {
+							if (!this.marcador || !this.marcador.podeLotacao) return false;
+							if (!this.marcador.podePessoa) return true;
+							return this.interessado == 'lotacao';
+						}
 					},
 
 					methods : {
@@ -109,7 +149,7 @@
 							this.carregando = true;
 							var self = this
 							httpGet(
-									'/sigaex/api/v1/doc/${sigla}/marcadores-disponiveis',
+									'/sigaex/api/v1/doc/${m.mob.codigoCompacto}/marcadores-disponiveis',
 									function(text) {
 										self.carregando = false;
 										self.lista.length = 0;

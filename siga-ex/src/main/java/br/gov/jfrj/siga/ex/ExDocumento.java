@@ -2643,10 +2643,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public List<DpResponsavel> getResponsaveisPorPapel(ExPapel papel) {
 		List<DpResponsavel> lista = new ArrayList<DpResponsavel>();
 		List<ExMovimentacao> movs = getMobilGeral().getMovimentacoesPorTipo(
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL);
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL, true);
 		for (ExMovimentacao mov : movs) {
-			if (mov.isCancelada()
-					|| !papel.getIdPapel()
+			if (!papel.getIdPapel()
 							.equals(mov.getExPapel().getIdPapel()))
 				continue;
 			if (mov.getSubscritor() != null)

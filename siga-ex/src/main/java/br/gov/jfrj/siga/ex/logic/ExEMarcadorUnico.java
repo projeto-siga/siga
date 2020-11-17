@@ -21,7 +21,7 @@ public class ExEMarcadorUnico implements Expression {
 
 	@Override
 	public String explain(boolean result) {
-		return JLogic.explain("é marcador de sistema", result);
+		return JLogic.explain("é marcador único", result);
 	}
 
 }

@@ -1128,7 +1128,7 @@ public class FuncoesEL {
 		List<ExMovimentacao> mov;
 		try {
 			if (doc.isFinalizado()) {
-				mov = doc.getMobilGeral().getMovimentacoesPorTipo(72);
+				mov = doc.getMobilGeral().getMovimentacoesPorTipo(72, false);
 				for (ExMovimentacao movAssPor : mov) {
 					retorno = "Documento assinado POR  \"" +  movAssPor.getSubscritor().getNomePessoa() + "\" - \"" + movAssPor.getSubscritor().getSigla()+ "\"";
 				}

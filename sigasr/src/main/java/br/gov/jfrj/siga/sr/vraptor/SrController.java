@@ -35,10 +35,6 @@ public class SrController extends SigaController {
 	public SrController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em, SrValidator srValidator) {
 		super(request, result, dao, so, em);
 		this.srValidator = srValidator;
-		
-		// Seta as permissoes SR:
-		SrSigaPermissaoPerfil.setaPermissoes(so, result);
-	
 	}
 
 	public void enviarErroValidacao() {

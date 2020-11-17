@@ -215,5 +215,8 @@ public class Prop {
 			provider.addPrivateProperty("/siga.armazenamento.arquivo.senha");
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.url");
 		}
+		
+		/* Tipos de possíveis responsáveis */
+		provider.addPublicProperty("/siga.substituto.tipos", "MATRICULA,LOTACAO");
 	}
 }

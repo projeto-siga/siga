@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>   
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>  
 <%@ taglib uri="http://localhost/libstag" prefix="f"%> 
 
 <c:catch var="selectException">
@@ -95,7 +95,7 @@
 				    <li class="list-group-item">
 				    	<strong>Ambiente </strong>
 				    	<c:out value="${f:resource('/siga.ambiente')}" /> [<c:out value="${serverName}" />]
-				    	&nbsp;<strong>Versão </strong>SIGA.doc <c:out value="${siga_version}" />
+				    	&nbsp;<strong>Versão </strong>SIGA <c:out value="${siga_version}" />
 				    </li>
 				  </ul>
 				  <div class="card-footer text-center pt-2">

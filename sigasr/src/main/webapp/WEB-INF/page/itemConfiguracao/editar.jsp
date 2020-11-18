@@ -2,6 +2,7 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
 
+
 <style>
 .inline {
 	display: inline-flex !important;
@@ -60,6 +61,7 @@
 	max-width: 800px !important;
 }
 </style>
+
 
 <div class="container-fluid">
 	<form id="formItemConfiguracao" class="form100" enctype="multipart/form-data">
@@ -165,26 +167,24 @@
 </div>
 		
 
+
+<!-- ========================= -->
+<!-- Modal para incluir Gestor -->
+<!-- ========================= -->
 <div id="dialog">
-	<div class="gt-content">
-		<form id="formGestor" enctype="multipart/form-data">
-			<div class="gt-form gt-content-box">
-				<div class="gt-form-row">
-					<label>Gestor: <span>*</span></label>
-					<div id="divGestor">
-						<siga:pessoaLotaSelecao2
-							propriedadePessoa="gestorPessoaSel"
-							propriedadeLotacao="gestorLotacaoSel"/>
-					</div>
-				</div>
-				<div class="gt-form-row">
-					<input type="button" id="modalOk" value="Ok"
-						class="gt-btn-medium gt-btn-left" /> <input type="button"
-						value="Cancelar" id="modalCancel" class="gt-btn-medium gt-btn-left" />
-				</div>
+	<form id="formGestor" enctype="multipart/form-data">
+		<div class="form-group">			
+			<div id="divGestor">
+				<sigasr:pessoaLotaSelecao2
+						propriedadePessoa="gestorPessoaSel"
+						propriedadeLotacao="gestorLotacaoSel"
+						labelPessoaLotacao="Gestor *"
+						/>
 			</div>
-		</form>
-	</div>
+			<input type="button" id="modalOk" value="Ok" class="btn btn-primary" /> 
+			<input type="button" value="Cancelar" id="modalCancel" class="btn btn-secondary" />
+		</div>
+	</form>
 </div>
 
 <div id="dialogFator">
@@ -274,16 +274,16 @@
 		jDialog.dialog({
 		    autoOpen: false,
 		    height: 'auto',
-		    width: 'auto',
+		    width: '80%',
 		    modal: true,
 		    resizable: false,
 		    close: function() {
 		        $("#formulario_gestorPessoaSel_sigla").val('');
 				$("#formulario_gestorLotacaoSel_sigla").val('');
 				$("#formulario_gestorPessoaSel_descricao").val('');
-				$("#formulario_gestorLotacaoSel_descricao").val('');
-				$("#gestorPessoaSelSpan").html('');  
-				$("#gestorLotacaoSelSpan").html('');
+				$("#formulario_gestorLotacaoSel_descricao").val('');				
+				$("#gestorPessoaSel_pessoaSelSpan").html('');  
+				$("#gestorLotacaoSel_lotacaoSelSpan").html('');
 				jDialog.data('gestorSet','');
 		
 		        validatorFormGestor.resetForm();

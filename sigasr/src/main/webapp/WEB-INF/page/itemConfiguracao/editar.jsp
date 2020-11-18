@@ -187,34 +187,36 @@
 	</form>
 </div>
 
+<!-- ==================================================== -->
+<!-- Modal Incluir Fator de Multiplicacao por Solicitante -->
+<!-- ==================================================== -->
 <div id="dialogFator">
-	<div class="gt-content">
-		<form id="formFator" enctype="multipart/form-data">
-			<div class="gt-form gt-content-box">
-				<div class="gt-form-row ">
-					<label>Solicitante: <span>*</span></label>
-					<div id="divFator">
- 						<siga:pessoaLotaSelecao2
- 							propriedadePessoa="fatorPessoaSel"
- 							propriedadeLotacao="fatorLotacaoSel"/>
-					</div>
-				</div>
-				<div class="gt-form-row">
-					<label>Fator de Multiplicação: </label>
-					<input id="numfatorMult" onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
-						   type="text" name="numfatorMult" value="1" size="43" maxlength="9"
-						   required 
-						   min="1"/>
-						   <span style="display: none; color: red;" id="erroNumFatorMult">Fator de multiplicação menor que 1</span>
-				</div>
-				<div class="gt-form-row">
-					<input type="button" id="modalOkFator" value="Ok"
-						class="gt-btn-medium gt-btn-left" /> <input type="button"
-						value="Cancelar" id="modalCancelFator" class="gt-btn-medium gt-btn-left" />
-				</div>
+	<form id="formFator" enctype="multipart/form-data">
+		<div class="form-group">
+			<div id="divFator">
+				<sigasr:pessoaLotaSelecao2
+						propriedadePessoa="fatorPessoaSel"
+						propriedadeLotacao="fatorLotacaoSel"
+						labelPessoaLotacao="Solicitante *"
+						/>
 			</div>
-		</form>
-	</div>
+		</div>
+		<div class="form-group">
+			<label>Fator de Multiplicação: </label>
+			<input id="numfatorMult" 
+				onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
+				type="text" name="numfatorMult" value="1" size="43" maxlength="9"
+				required
+				class="form-control" 
+				min="1"/>
+		   <span style="display: none; color: red;" id="erroNumFatorMult">Fator de multiplicação menor que 1</span>
+		</div>
+		<input type="button" id="modalOkFator" value="Ok"
+				class="btn btn-primary" /> 
+		<input type="button"
+				value="Cancelar" id="modalCancelFator" 
+				class="btn btn-secondary" />
+	</form>
 </div>
 
 <div id="designacaoComponent">
@@ -340,7 +342,7 @@
 		jDialogFator.dialog({
 		    autoOpen: false,
 		    height: 'auto',
-		    width: 'auto',
+		    width: '80%',
 		    modal: true,
 		    resizable: false,
 		    close: function() {
@@ -349,8 +351,9 @@
 				$("#formulario_fatorPessoaSel_descricao").val('');
 				$("#formulario_fatorLotacaoSel_descricao").val('');
 				$("#numfatorMult").val('1');
-				$("#fatorPessoaSelSpan").html('');  
-				$("#fatorLotacaoSelSpan").html('');
+				$("#fatorPessoaSel_pessoaSelSpan").html('');  
+				$("#fatorLotacaoSel_lotacaoSelSpan").html('');
+				
 				jDialogFator.data('fatorMultiplicacaoSet','');
 		    	validatorFormFator.resetForm();
 			}, 

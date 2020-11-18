@@ -17,6 +17,9 @@ import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.util.Utils;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
@@ -25,31 +28,44 @@ import net.sf.jasperreports.engine.JRException;
 
 public class RelMovCad extends RelatorioTemplate {
 
-	public RelMovCad(Map parametros) throws DJBuilderException {
-		super(parametros);
-		if (parametros.get("secaoUsuario") == null) {
-			throw new DJBuilderException(
-					"Parâmetro secaoUsuario não informado!");
-		}
-		if (parametros.get("lotacaoTitular") == null) {
-			throw new DJBuilderException("Parâmetro lotação não informado!");
-		}
-		if (parametros.get("dataInicial") == null) {
-			throw new DJBuilderException("Parâmetro dataInicial não informado!");
-		}
-		if (parametros.get("dataFinal") == null) {
-			throw new DJBuilderException("Parâmetro dataFinal não informado!");
-		}
-		if (parametros.get("link_siga") == null) {
-			throw new DJBuilderException("Parâmetro link_siga não informado!");
-		}
+	private DpLotacao lotacao;
+	
+	public RelMovCad(Map<String, String> parametros) throws Exception {
+ 		super(parametros);
+		if (Utils.empty(parametros.get("secaoUsuario"))) {
+			throw new AplicacaoException("Parâmetro secaoUsuario não informado!");
+ 		}
+		if (Utils.empty(parametros.get("lotacao"))) {
+			throw new AplicacaoException("Parâmetro lotação não informado!");
+ 		}
+		if (Utils.empty(parametros.get("dataInicial"))) {
+			throw new AplicacaoException("Parâmetro dataInicial não informado!");
+ 		}
+		if (Utils.empty(parametros.get("dataFinal"))) {
+			throw new AplicacaoException("Parâmetro dataFinal não informado!");
+ 		}
+ 		if (parametros.get("link_siga") == null) {
+			throw new AplicacaoException("Parâmetro link_siga não informado!");
+ 		}
+		this.lotacao = buscarLotacaoPor(Long.valueOf(parametros.get("lotacao")));
 	}
-
-	@Override
-	public AbstractRelatorioBaseBuilder configurarRelatorio()
-			throws DJBuilderException, JRException {
-		this.addAutoText("Período: " + parametros.get("dataInicial").toString() + " a " + parametros.get("dataFinal").toString(), AutoText.POSITION_HEADER,(byte) RelatorioRapido.ESQUERDA,200);
-		this.setTitle("Relatório de Movimentações por Cadastrante");
+	
+	private DpLotacao buscarLotacaoPor(Long id) {
+		CpDao dao = CpDao.getInstance();
+		DpLotacao lotacao = dao.consultar(id, DpLotacao.class, false);
+		return lotacao;
+ 	}
+		
+	public AbstractRelatorioBaseBuilder configurarRelatorio() throws DJBuilderException, JRException {
+		//this.addAutoText(
+		//		"Período: " + parametros.get("dataInicial").toString() + " a " + //parametros.get("dataFinal").toString(),
+		//		AutoText.POSITION_HEADER, (byte) RelatorioRapido.ESQUERDA, 200);
+		//this.setTitle("Relatório de Movimentações por Cadastrante");
+		String titulo = "Relatório de Movimentações por Cadastrante de " + parametros.get("dataInicial").toString() + " a " + parametros.get("dataFinal").toString();
+		String subtitulo = "Do(a) " + lotacao.getNomeLotacao();
+		
+		this.setTitle(titulo);
+		this.setSubtitle(subtitulo);
 		this.addColuna("Cadastrante", 100, RelatorioRapido.ESQUERDA, true);
 		this.addColuna("Documento", 40, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Data da Movimentação", 50, RelatorioRapido.ESQUERDA, false);

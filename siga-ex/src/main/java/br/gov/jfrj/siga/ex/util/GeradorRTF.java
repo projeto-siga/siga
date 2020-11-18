@@ -167,6 +167,8 @@ public class GeradorRTF {
 				inicioNumero = "<!-- INICIO NUMERO";
 				fimNumero = "FIM NUMERO -->";
 			}
+			
+			assertContemTags(doc.getCodigo(), html, "número", inicioNumero, fimNumero);
 
 			htmlDocPrincipal = html.substring(html.indexOf(inicioNumero)
 					+ inicioNumero.length(), html.indexOf(fimNumero))
@@ -175,6 +177,8 @@ public class GeradorRTF {
 			String htmlTitulo = "";
 			String inicioTituloForm = "<!-- INICIO TITULO";
 			String fimTituloForm = "FIM TITULO -->";
+			
+			assertContemTags(doc.getCodigo(), html, "título", inicioTituloForm, fimTituloForm);
 
 			if (html.contains(inicioTituloForm))
 				htmlTitulo = html.substring(html.indexOf(inicioTituloForm)
@@ -183,6 +187,7 @@ public class GeradorRTF {
 
 			String inicioMiolo = "<!-- INICIO MIOLO -->";
 			String fimMiolo = "<!-- FIM MIOLO -->";
+			assertContemTags(doc.getCodigo(), html, "conteúdo do documento", inicioMiolo, fimMiolo);
 			html = htmlTitulo
 					+ html.substring(
 							html.indexOf(inicioMiolo) + inicioMiolo.length(),
@@ -197,11 +202,13 @@ public class GeradorRTF {
 						if (docFilho.getExFormaDocumento().getIdFormaDoc() == 60) {
 							String htmlFilho = docFilho
 									.getConteudoBlobHtmlString();
+							assertContemTags(docFilho.getCodigo(), htmlFilho, "título", inicioTitulo, fimTitulo);
 							html = html
 									+ htmlFilho.substring(
 											htmlFilho.indexOf(inicioTitulo)
 													+ inicioTitulo.length(),
 											htmlFilho.indexOf(fimTitulo));
+							assertContemTags(docFilho.getCodigo(), htmlFilho, "conteúdo do documento", inicioMiolo, fimMiolo);
 							html = html
 									+ htmlFilho.substring(
 											htmlFilho.indexOf(inicioMiolo)
@@ -231,6 +238,13 @@ public class GeradorRTF {
 							+ e.getMessage());
 		}
 	}
+	
+	private void assertContemTags(String sigla, String html, String trecho, String inicio, String fim) {
+		if (!html.contains(inicio) || !html.contains(fim) ) 
+			throw new AplicacaoException(
+					"O HTML do documento " + sigla + " deve conter tags para marcar o início e o término do " + trecho + ", utilizar: '" + inicio + "' e '\" + fim + \"'.");
+	}
+
 
 	private String removerTabela(String html) {
 		final String tags[] = { "<table", "</table", "<tr", "</tr", "<td",

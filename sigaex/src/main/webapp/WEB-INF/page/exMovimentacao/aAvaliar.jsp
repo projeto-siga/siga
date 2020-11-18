@@ -53,7 +53,7 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-sm-6">
+						<div class="col-12">
 							<div class="form-group">
 							<c:choose>
 								<c:when test="${!substituicao}">
@@ -71,7 +71,7 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-sm-6">
+						<div class="col-12">
 							<div class="form-group">
 								<siga:selecao titulo="Nova Classificação" propriedade="classificacao" modulo="sigaex" urlAcao="buscar" urlSelecionar="selecionar"/>
 								<small class="form-text text-muted">(opcional)</small>
@@ -85,7 +85,7 @@
 							</div>
 						</div>
 						<c:if test="${tipoResponsavel == 3}">
-							<div class="col-sm-6">
+							<div class="col-12">
 								<div class="form-group">
 									<label>Observação</label>
 									<input class="form-control" type="text" size="30" name="obsOrgao" />
@@ -95,7 +95,7 @@
 		
 					</div>
 					<div class="row">
-						<div class="col-sm">
+						<div class="col-12">
 							<input type="submit" value="Ok" class="btn btn-primary" />
 							<input type="button" value="Cancela" onclick="javascript:history.back();" class="btn btn-cancel ml-2" />
 						</div>

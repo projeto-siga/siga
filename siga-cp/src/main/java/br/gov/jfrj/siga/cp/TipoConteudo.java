@@ -17,7 +17,8 @@ public enum TipoConteudo {
 	XLSX("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "xlsx"),
 	DOCX("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "docx"),
 	OCTET("application/octet-stream", "octet-stream"),
-	PDF("application/pdf", "pdf");
+	PDF("application/pdf", "pdf"),
+	X_WWW_FORM_URLENCODED("application/x-www-form-urlencoded", "txt");
 	
 	private TipoConteudo(String mimeType ,String extensao) {
 		this.mimeType = mimeType;

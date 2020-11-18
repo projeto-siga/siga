@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://localhost/libstag" prefix="libs"%>
 
 <%@ attribute name="propriedadePessoa" required="true"%>
 <%@ attribute name="propriedadeLotacao" required="true"%>
@@ -9,11 +10,11 @@
 <%@ attribute name="disabled" required="false"%>
 
 <c:set var="propriedadePessoaClean"
-	value="${fn:replace(propriedadePessoa,'.','')}" />
+	value="${libs:slugify(propriedadePessoa, false, true)}" />
 <c:set var="propriedadeLotacaoClean"
-	value="${fn:replace(propriedadeLotacao,'.','')}" />
+	value="${libs:slugify(propriedadeLotacao, false, true)}" />
 <c:set var="propriedadeEmailClean"
-	value="${fn:replace(propriedadeEmail,'.','')}" />
+	value="${libs:slugify(propriedadeEmail, false, true)}" />
 
 <c:set var="desativar" value="nao"></c:set>
 <c:if test="${disabled == 'sim'}">

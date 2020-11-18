@@ -3,15 +3,27 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%> 
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%> 
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 <c:catch var="selectException">
 	<c:if test="${empty exceptionGeral or empty exceptionStackGeral}">
 		<%
 			try {
-				pageContext.getRequest().setAttribute("threadName", System.getProperty("jboss.server.name") + "|" + request.getServerName() + "|"+request.getServerPort());
+				Cookie[] cookies = request.getCookies();
+				String jsessionid = "";
+				if (cookies != null) {
+					for (Cookie c : cookies) {
+						if ("JSESSIONID".equals(c.getName())) {
+							jsessionid = c.getValue();
+							break;
+						}
+					}
+				}
+				
+				String serverName = java.util.Base64.getEncoder().encodeToString(jsessionid.split("[.]")[1].getBytes()); 
+
+				pageContext.getRequest().setAttribute("serverName", serverName);
 			} catch (Exception e) {
-				pageContext.getRequest().setAttribute("threadName", "* Nome do servidor fora do padrao");
+				pageContext.getRequest().setAttribute("serverName", "* Ambiente fora do padrão");
 			}
 
 			java.lang.Throwable t = (Throwable) pageContext.getRequest().getAttribute("exception");
@@ -115,8 +127,8 @@ This is a useless buffer to fill the page to 513 bytes to avoid display of Frien
 									      	</tr> 
 									    </c:if> 
 								      	<tr> 
-								      		<td>Servidor:</td> 
-								      		<td><c:out value="${threadName}" /> / <c:out value="${f:resource('/sig.ambiente')}" /></td> 
+								      		<td>Ambiente:</td> 
+								      		<td><c:out value="${serverName}" /> / <c:out value="${f:resource('/siga.ambiente')}" /></td> 
 								      	</tr> 
 									  	<tr> 
 									  		<td>Usu&aacute;rio</td> 

@@ -16,7 +16,7 @@
 
 <div class="gt-content">
 	<!-- content bomex -->
-	<div class="gt-content-box dataTables_div">
+	<div class="table-responsive">
 		<c:if test="${requestScope[modoExibicao] == 'designacao'}">
 			<div class="gt-form-row dataTables_length">
 				<label>
@@ -26,7 +26,7 @@
 			</div>
 		</c:if>
 
-		<table id="designacoes_table" class="gt-table display">
+		<table id="designacoes_table" class="table">
 			<thead>
 				<tr>
 					<th style="color: #333">
@@ -78,7 +78,7 @@
 	</div>
 	<!-- /content box -->
 	<div class="gt-table-buttons">
-		<a onclick="designacaoService.cadastrar('Incluir Designa&ccedil;&atilde;o')" class="gt-btn-medium gt-btn-left">Incluir</a>
+		<a onclick="designacaoService.cadastrar('Incluir Designa&ccedil;&atilde;o')" class="btn btn-primary" style="color: #fff">Incluir</a>
 	</div>
 </div>
 

@@ -79,6 +79,7 @@ public class Mesa2 {
 		public Boolean daPessoa;
 		public Boolean deOutraPessoa;
 		public Boolean daLotacao;
+		public String cor;
 	}
 
 	public enum TipoDePainelEnum {
@@ -451,11 +452,11 @@ public class Mesa2 {
 			}
 		}
 
-		private final int id;
-		private final String nome;
-		private final String icone;
-		private final String descricao;
-		private final GrupoDeMarcadorEnum grupo;
+		private int id;
+		private String nome;
+		private String icone;
+		private String descricao;
+		private GrupoDeMarcadorEnum grupo;
 
 	}
 	
@@ -573,9 +574,14 @@ public class Mesa2 {
 				Marca t = new Marca();
 				MarcadorEnum mar = MarcadorEnum.getById(tag.marcador
 						.getIdMarcador().intValue());
-
-				t.nome = mar.getNome();
-				t.icone = mar.getIcone();
+				if (mar != null) {
+					t.nome = mar.getNome();
+					t.icone = mar.getIcone();
+				} else {
+					t.nome = tag.marcador.getDescrMarcador();
+					t.icone = "fas fa-tag";
+					t.cor = "#" + tag.marcador.getCor();
+				}
 				t.titulo = Data
 						.calcularTempoRelativo(tag.marca.getDtIniMarca());
 

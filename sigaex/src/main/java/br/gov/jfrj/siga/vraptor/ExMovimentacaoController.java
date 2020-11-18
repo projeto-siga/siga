@@ -78,6 +78,7 @@ import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.cp.model.enm.TipoDeExibicaoDeMarca;
 import br.gov.jfrj.siga.dp.CpMarcador;
+import br.gov.jfrj.siga.dp.CpTipoMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -2386,6 +2387,7 @@ public class ExMovimentacaoController extends ExController {
 	@Get("/app/expediente/mov/marcar")
 	public void aMarcar(final String sigla) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+
 		buscarDocumento(builder);
 
 		ExMobil mob = builder.getMob();
@@ -2397,6 +2399,8 @@ public class ExMovimentacaoController extends ExController {
 		result.include("mob", mob);
 		result.include("listaMarcadores", this.getListaMarcadoresGeraisTaxonomiaAdministrada());
 		result.include("listaMarcadoresAtivos", this.getListaMarcadoresAtivos(mobilGeral));
+		result.include("listaMarcadoresLotacao", dao
+				.listarCpMarcadoresPorLotacaoESublotacoes(getLotaTitular(), true));
 		result.include("dataLimite", this.getDataLimiteDemanda(mobilGeral));
 	}
 	

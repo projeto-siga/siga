@@ -346,3 +346,40 @@ article p em {
 	font-weight: bold;
 	font-style: normal;
 }
+
+/*
+	Transforma radio buttons em imagens
+	Formato: <
+*/
+.imageRadio > input[type=radio] {
+    visibility: hidden; 
+}
+
+.imageRadio > input[type="radio"] + label > i {
+	font-size: 1.5em;
+}
+
+.imageRadio > input[type="radio"]:checked + label > i::before {
+	display: block;
+	content: "\f00c";
+	font-family: 'FontAwesome';
+	color: #52BE80;
+	font-size: 1em;
+	padding: .5em;
+	position: absolute;
+	left: 10%;
+	top: 10%;
+	z-index: 99;
+}
+
+.check-icon {
+  content: "\f00c";
+  font-family: FontAwesome;
+  color: #52BE80;
+  font-size: 1em;
+  padding: .5em;
+  position: absolute;
+  left: 10%;
+  top: 10%;
+  z-index: 99;
+}

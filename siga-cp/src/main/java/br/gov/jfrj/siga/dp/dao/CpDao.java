@@ -76,6 +76,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpPersonalizacao;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.CpTipoMarca;
+import br.gov.jfrj.siga.dp.CpTipoMarcador;
 import br.gov.jfrj.siga.dp.CpTipoPessoa;
 import br.gov.jfrj.siga.dp.CpUF;
 import br.gov.jfrj.siga.dp.DpCargo;
@@ -1900,6 +1901,26 @@ public class CpDao extends ModeloDao {
 		return em().createQuery(q).getResultList();
 	}
 
+	public <T> List<T> listarTodosPorIdInicial(Class<T> clazz, Long hisIdIni, String campoOrderBy, Boolean isDescendente) {
+		CriteriaQuery<T> q = cb().createQuery(clazz);
+		Root<T> c = q.from(clazz);
+		q.select(c);
+		q.where(
+			cb().equal(c.get("hisIdIni"), hisIdIni)
+		);
+		if (campoOrderBy != null) {
+			if (isDescendente != null) {
+				if (isDescendente) {
+					q.orderBy(cb().desc(c.get(campoOrderBy)));
+				} else {
+					q.orderBy(cb().asc(c.get(campoOrderBy)));
+				}
+			}
+		}
+
+		return em().createQuery(q).getResultList();
+	}
+
 	public <T> T consultarAtivoPorIdInicial(Class<T> clazz, Long hisIdIni) {
 		CriteriaQuery<T> q = cb().createQuery(clazz);
 		Root<T> c = q.from(clazz);
@@ -2646,6 +2667,27 @@ public class CpDao extends ModeloDao {
 		} else {
 			return null;
 		}			
+	}
+
+	public List<CpMarcador> listarCpMarcadoresPorLotacaoESublotacoes(DpLotacao lotacao, Boolean ativos) {
+		CpTipoMarcador marcador = consultar(CpTipoMarcador.TIPO_MARCADOR_LOTACAO_E_SUBLOTACOES,
+				CpTipoMarcador.class, false);
+		
+		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
+		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);
+		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
+		Predicate predicateAnd;
+		Predicate predicateEqualTipoMarcador  = criteriaBuilder.equal(cpMarcadorRoot.get("cpTipoMarcador"), marcador);
+		Predicate predicateEqualLotacao  = criteriaBuilder.equal(cpMarcadorRoot.get("dpLotacaoIni"), lotacao.getLotacaoInicial());
+		if (ativos == null || ativos) {
+			Predicate predicateNullHisDtFim = criteriaBuilder.isNull(cpMarcadorRoot.get("hisDtFim"));
+			predicateAnd = criteriaBuilder.and(predicateEqualTipoMarcador, predicateEqualLotacao, predicateNullHisDtFim);
+		} else {
+			predicateAnd = criteriaBuilder.and(predicateEqualTipoMarcador, predicateEqualLotacao);
+		}
+		
+		criteriaQuery.where(predicateAnd);
+		return em().createQuery(criteriaQuery).getResultList();
 	}
 	
 	

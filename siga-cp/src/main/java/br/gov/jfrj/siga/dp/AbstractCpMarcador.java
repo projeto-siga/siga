@@ -23,17 +23,32 @@
 package br.gov.jfrj.siga.dp;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedNativeQueries;
 import javax.persistence.NamedNativeQuery;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
-import br.gov.jfrj.siga.model.Objeto;
+import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoDataEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoJustificativaEnum;
+import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
+import br.gov.jfrj.siga.model.Historico;
+import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
 @MappedSuperclass
 @NamedNativeQueries({ @NamedNativeQuery(name = "consultarPaginaInicial", query = "SELECT"
@@ -68,12 +83,14 @@ import br.gov.jfrj.siga.model.Objeto;
 		+ "			) in (1, 2)"
 		+ "	AND id_tp_marca = 1"
 		+ "	and id_marcador not in (9,8,10,11,12 ,13,16, 18, 20 , 21, 22, 24 ,26, 32, 62, 63, 64, 7, 50, 51)")})
-public abstract class AbstractCpMarcador extends Objeto implements Serializable {
+public abstract class AbstractCpMarcador  extends HistoricoAuditavelSuporte implements Serializable, Historico {
 
 	private static final long serialVersionUID = 6436403895150961831L;
 
 	@Id
-	@Column(name = "ID_MARCADOR", nullable = false)
+	@SequenceGenerator(name = "CP_MARCADOR_LOTACAO_SEQ", sequenceName = "CORPORATIVO.CP_MARCADOR_LOTACAO_SEQ")
+	@GeneratedValue(generator = "CP_MARCADOR_LOTACAO_SEQ")
+	@Column(name = "ID_MARCADOR", unique = true, nullable = false)
 	private Long idMarcador;
 
 	@Column(name = "DESCR_MARCADOR")
@@ -88,6 +105,68 @@ public abstract class AbstractCpMarcador extends Objeto implements Serializable 
 	
 	@Column(name = "ORD_MARCADOR")
 	private Integer ordem;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_LOTACAO_INI")
+	private DpLotacao dpLotacaoIni;
+
+	@Column(name = "DESCR_DETALHADA")
+	private String descrDetalhada;
+
+	@Column(name = "COR")
+	private String cor;
+
+	@Column(name = "ICONE")
+	private String icone;
+	
+	@Enumerated(EnumType.ORDINAL)
+	@Column(name = "ID_TP_APLICACAO_MARCADOR")
+	private CpMarcadorTipoAplicacaoEnum idTpAplicacao;
+
+	@Enumerated(EnumType.ORDINAL)
+	@Column(name = "ID_TP_DATA_LIMITE")
+	private CpMarcadorTipoDataEnum idTpDataLimite;
+
+	@Enumerated(EnumType.ORDINAL)
+	@Column(name = "ID_TP_DATA_PLANEJADA")
+	private CpMarcadorTipoDataEnum idTpDataPlanejada;
+
+	@Enumerated(EnumType.ORDINAL)
+	@Column(name = "ID_TP_OPCAO_EXIBICAO")
+	private CpMarcadorTipoExibicaoEnum idTpExibicao;
+
+	@Enumerated(EnumType.ORDINAL)
+	@Column(name = "ID_TP_JUSTIFICATIVA")
+	private CpMarcadorTipoJustificativaEnum idTpJustificativa;
+
+	@Enumerated(EnumType.ORDINAL)
+	@Column(name = "ID_TP_INTERESSADO")
+	private CpMarcadorTipoInteressadoEnum idTpInteressado;
+
+	@Column(name = "HIS_ID_INI")
+	@Desconsiderar
+	private Long hisIdIni;
+
+	@Column(name = "HIS_DT_FIM", length = 19)
+	@Temporal(TemporalType.TIMESTAMP)
+	@Desconsiderar
+	private Date hisDtFim;
+
+	@Column(name = "HIS_DT_INI", length = 19)
+	@Temporal(TemporalType.TIMESTAMP)
+	@Desconsiderar
+	private Date hisDtIni;
+
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="HIS_IDC_INI")
+	private CpIdentidade hisIdcIni;
+
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="HIS_IDC_FIM")
+	private CpIdentidade hisIdcFim;
+
+	@Column(name = "HIS_ATIVO")
+	private Integer hisAtivo;
 
 	public Long getIdMarcador() {
 		return idMarcador;
@@ -125,8 +204,136 @@ public abstract class AbstractCpMarcador extends Objeto implements Serializable 
 		return ordem;
 	}
 
+	public Long getHisIdIni() {
+		return hisIdIni;
+	}
+
+	public void setHisIdIni(Long hisIdIni) {
+		this.hisIdIni = hisIdIni;
+	}
+
 	public void setOrdem(Integer ordem) {
 		this.ordem = ordem;
+	}
+
+	public DpLotacao getDpLotacaoIni() {
+		return dpLotacaoIni;
+	}
+
+	public void setDpLotacaoIni(DpLotacao dpLotacaoIni) {
+		this.dpLotacaoIni = dpLotacaoIni;
+	}
+
+	public String getCor() {
+		return cor;
+	}
+
+	public void setCor(String cor) {
+		this.cor = cor;
+	}
+
+	public String getDescrDetalhada() {
+		return descrDetalhada;
+	}
+
+	public void setDescrDetalhada(String descrDetalhada) {
+		this.descrDetalhada = descrDetalhada;
+	}
+
+	public String getIcone() {
+		return icone;
+	}
+
+	public void setIcone(String icone) {
+		this.icone = icone;
+	}
+
+	public CpMarcadorTipoAplicacaoEnum getIdTpAplicacao() {
+		return idTpAplicacao;
+	}
+
+	public void setIdTpAplicacao(CpMarcadorTipoAplicacaoEnum idTpAplicacaoMarcador) {
+		this.idTpAplicacao = idTpAplicacaoMarcador;
+	}
+
+	public CpMarcadorTipoDataEnum getIdTpDataLimite() {
+		return idTpDataLimite;
+	}
+
+	public void setIdTpDataLimite(CpMarcadorTipoDataEnum idTpDataLimite) {
+		this.idTpDataLimite = idTpDataLimite;
+	}
+
+	public CpMarcadorTipoDataEnum getIdTpDataPlanejada() {
+		return idTpDataPlanejada;
+	}
+
+	public void setIdTpDataPlanejada(CpMarcadorTipoDataEnum idTpDataPlanejada) {
+		this.idTpDataPlanejada = idTpDataPlanejada;
+	}
+
+	public CpMarcadorTipoExibicaoEnum getIdTpExibicao() {
+		return idTpExibicao;
+	}
+
+	public void setIdTpExibicao(CpMarcadorTipoExibicaoEnum idTpExibicao) {
+		this.idTpExibicao = idTpExibicao;
+	}
+
+	public CpMarcadorTipoJustificativaEnum getIdTpJustificativa() {
+		return idTpJustificativa;
+	}
+
+	public void setIdTpJustificativa(CpMarcadorTipoJustificativaEnum idTpJustificativa) {
+		this.idTpJustificativa = idTpJustificativa;
+	}
+
+	public CpMarcadorTipoInteressadoEnum getIdTpInteressado() {
+		return idTpInteressado;
+	}
+
+	public void setIdTpInteressado(CpMarcadorTipoInteressadoEnum idTpInteressado) {
+		this.idTpInteressado = idTpInteressado;
+	}
+
+	public Date getHisDtFim() {
+		return hisDtFim;
+	}
+
+	public void setHisDtFim(Date hisDtFim) {
+		this.hisDtFim = hisDtFim;
+	}
+
+	public Date getHisDtIni() {
+		return hisDtIni;
+	}
+
+	public void setHisDtIni(Date hisDtIni) {
+		this.hisDtIni = hisDtIni;
+	}
+
+	public CpIdentidade getHisIdcIni() {
+		return hisIdcIni;
+	}
+
+	public void setHisIdcIni(CpIdentidade hisIdcIni) {
+		this.hisIdcIni = hisIdcIni;
+	}
+
+	public CpIdentidade getHisIdcFim() {
+		return hisIdcFim;
+	}
+
+	public void setHisIdcFim(CpIdentidade hisIdcFim) {
+		this.hisIdcFim = hisIdcFim;
+	}
+
+	public Integer getHisAtivo() {
+		return this.hisAtivo;
+	}
+	
+	public void setHisAtivo(Integer hisAtivo) {
+		this.hisAtivo = getHisAtivo();
 	}
 
 }

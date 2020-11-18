@@ -3,7 +3,7 @@ swagger: '2.0'
 info:
   version: "1.0.0"
   title: ExApiV1
-  description: API para o Siga-Doc
+  description: API para o Siga-Doc 
 
 basePath: /sigaex/api/v1
 schemes: [http,https]
@@ -88,7 +88,116 @@ parameters:
     description: Chave que referencia um processo assíncrono
     required: true
     type: string
-
+  idLotacaoIni:
+    name: idLotacaoIni
+    in: path
+    description: Identificador da Lotação Inicial
+    required: true
+    type: string        
+  id:
+    name: id
+    in: path
+    description: Número de identificação do registro
+    type: string
+    required: true
+  descricao:
+    name: descricao
+    in: query
+    description: Descrição
+    required: false
+    type: string
+  descricaoDetalhada:
+    name: descricaoDetalhada
+    in: query
+    description: Descrição detalhada
+    required: false
+    type: string
+  idGrupoMarcador:
+    name: idGrupoMarcador
+    in: query
+    description: Id do grupo do marcador
+    required: false
+    type: string
+  cor:
+    name: cor
+    in: query
+    description: Cor em código hexa
+    required: false
+    type: string
+  icone:
+    name: icone
+    in: query
+    description: Nome do ícone Fontawesome
+    required: false
+    type: string
+  tipoAplicacao:
+    name: tipoAplicacao
+    in: query
+    description: Tipo de aplicação desejado (via ou volume em que será aplicado o marcador)
+    required: false
+    type: string
+    default: Geral
+    enum:
+      - Geral
+      - Em todas as vias
+      - Via específica ou último volume
+  tipoDataPlanejada:
+    name: tipoDataPlanejada
+    in: query
+    description: Tipo de exibição da data planejada desejado
+    required: false
+    type: string
+    default: Desativada
+    enum:
+      - Desativada
+      - Opcional
+      - Obrigatória
+  tipoDataLimite:
+    name: tipoDataLimite
+    in: query
+    description: Tipo de exibição da data limite desejado
+    required: false
+    type: string
+    default: Desativada
+    enum:
+      - Desativada
+      - Opcional
+      - Obrigatória
+  tipoExibicao:
+    name: tipoExibicao
+    in: query
+    description: Tipo de exibição desejado (momento em que o marcador será aplicado)
+    required: false
+    type: string
+    default: Imediata
+    enum:
+      - Imediata
+      - Na data limite
+      - Na data planejada
+  tipoJustificativa:
+    name: tipoJustificativa
+    in: query
+    description: Tipo de exibição da justificativa desejado
+    required: false
+    type: string
+    default: Desativada
+    enum:
+      - Desativada
+      - Opcional
+      - Obrigatória
+  tipoInteressado:
+    name: tipoInteressado
+    in: query
+    description: Tipo de exibição do interessado
+    required: false
+    type: string
+    default: Atendente
+    enum:
+      - Atendente
+      - Pessoa
+      - Lotação
+      - Pessoa ou lotação
+      - Lotação ou pessoa
 
 ################################################################################
 #                                           Paths                              #
@@ -203,6 +312,117 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /lotacoes/{idLotacaoIni}/marcadores:
+    get:
+      summary: Devolve uma lista de marcadores de uma lotação
+      tags: [marcadores]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/idLotacaoIni"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Marcador"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /marcadores/{id}:
+    get:
+      summary: Devolve os dados de um marcador
+      tags: [marcadores]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              marcador:
+                $ref: "#/definitions/Marcador"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /marcadores:
+    post:
+      summary: Cria um marcador da lotação
+      tags: [marcadores]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/descricao"
+        - $ref: "#/parameters/descricaoDetalhada"
+        - $ref: "#/parameters/idGrupoMarcador"
+        - $ref: "#/parameters/cor"
+        - $ref: "#/parameters/icone"
+        - $ref: "#/parameters/tipoAplicacao"
+        - $ref: "#/parameters/tipoDataPlanejada"
+        - $ref: "#/parameters/tipoDataLimite"
+        - $ref: "#/parameters/tipoExibicao"
+        - $ref: "#/parameters/tipoJustificativa"
+        - $ref: "#/parameters/tipoInteressado"
+        
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Id do marcador criado
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /marcadores/{id}:
+    post:
+      summary: Edita um marcador da lotação
+      tags: [marcadores]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/id"
+        - $ref: "#/parameters/descricao"
+        - $ref: "#/parameters/descricaoDetalhada"
+        - $ref: "#/parameters/idGrupoMarcador"
+        - $ref: "#/parameters/cor"
+        - $ref: "#/parameters/icone"
+        - $ref: "#/parameters/tipoAplicacao"
+        - $ref: "#/parameters/tipoDataPlanejada"
+        - $ref: "#/parameters/tipoDataLimite"
+        - $ref: "#/parameters/tipoExibicao"
+        - $ref: "#/parameters/tipoJustificativa"
+        - $ref: "#/parameters/tipoInteressado"
+        
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Id do marcador alterado
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
 
 ################################################################################
 #                                     Definitions                              #
@@ -234,4 +454,28 @@ definitions:
     type: object
     properties:
       errormsg:
+        type: string
+  Marcador:
+    description: Dados de um marcador
+    type: object
+    properties:
+      idMarcador:
+        type: string
+      descricao:
+        type: string
+      descricaoDetalhada:
+        type: string
+      ativo:
+        type: boolean
+      tipoAplicacao:
+        type: string
+      tipoDataPlanejada:
+        type: string
+      tipoDataLimite:
+        type: string
+      tipoExibicao:
+        type: string
+      tipoJustificativa:
+        type: string
+      tipoInteressado:
         type: string

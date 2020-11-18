@@ -46,6 +46,11 @@ import br.gov.jfrj.siga.cp.AbstractCpAcesso.CpTipoAcessoEnum;
 import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoDataEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoJustificativaEnum;
 import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
@@ -56,7 +61,9 @@ import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.util.Excel;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.cp.util.SigaUtil;
+import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.CpTipoMarcador;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -1299,6 +1306,73 @@ public class CpBL {
 		urlPermanente +=  "/siga/public/app/sigalink/"+tipoLink+"/"+token;
 		
 		return urlPermanente;
+	}
+
+	public void gravarMarcadorDaLotacao(final Long id, final DpPessoa cadastrante, final DpLotacao lotacao, final CpIdentidade identidade, 
+			final String descricao, final String descrDetalhada, final String cor, final String icone, final Integer grupoId, 
+			final Integer idTpMarcador, final Integer idTpAplicacao, final Integer idTpDataPlanejada, final Integer idTpDataLimite, 
+			final Integer idTpExibicao,	final Integer idTpJustificativa, final Integer idTpInteressado 
+			) throws Exception {
+		if (descricao == null)
+			throw new AplicacaoException ("Preencha a descrição do marcador.");
+			
+		if (descricao.length() > 40) 
+			throw new AplicacaoException ("Descrição do marcador tem mais de 40 bytes.");
+		
+		String msgLotacao = SigaMessages.getMessage("usuario.lotacao");
+		List<CpMarcador> listaMarcadoresLotacao = dao().listarCpMarcadoresPorLotacaoESublotacoes(lotacao, true);
+		
+		if (listaMarcadoresLotacao.size() > 9) 
+			throw new AplicacaoException ("Atingiu o limite de 10 marcadores possíveis para " + msgLotacao);
+		
+		if (id == null && (listaMarcadoresLotacao.stream()
+				.filter(mar -> mar.getDescrMarcador()
+						.equals(descricao)).count() > 0)) 
+			throw new AplicacaoException ("Já existe um marcador com esta descrição para esta " + msgLotacao);
+
+//		Integer ordem;
+		if (id != null) {
+			CpMarcador marcador = dao().consultar(id, CpMarcador.class, false);
+			if (marcador != null) {
+				marcador.setDescrMarcador(descricao);
+				marcador.setDescrDetalhada(descrDetalhada);
+				marcador.setCor(cor);
+				marcador.setIcone(icone);
+				marcador.setGrupoMarcador(grupoId);
+				marcador.setIdTpAplicacao(CpMarcadorTipoAplicacaoEnum.values() [idTpAplicacao]);
+				marcador.setIdTpDataPlanejada(CpMarcadorTipoDataEnum.values() [idTpDataPlanejada]);
+				marcador.setIdTpDataLimite(CpMarcadorTipoDataEnum.values() [idTpDataLimite]);
+				marcador.setIdTpExibicao(CpMarcadorTipoExibicaoEnum.values() [idTpExibicao]);
+				marcador.setIdTpJustificativa(CpMarcadorTipoJustificativaEnum.values() [idTpJustificativa]);
+				marcador.setIdTpInteressado(CpMarcadorTipoInteressadoEnum.values() [idTpInteressado]);
+				marcador.salvarComHistorico();
+			} else {
+				throw new AplicacaoException ("Marcador não existente para esta " + msgLotacao 
+						+ " (" + id.toString() + ").");
+			}
+		} else {
+			Integer ordem = listaMarcadoresLotacao.size() + 1; 
+			CpMarcador marcador = new CpMarcador();
+//			ordem = marcador.getOrdem();
+			marcador.setDescrMarcador(descricao);
+			marcador.setDescrDetalhada(descrDetalhada);
+			marcador.setCor(cor);
+			marcador.setIcone(icone);
+			marcador.setGrupoMarcador(grupoId);
+			marcador.setIdTpAplicacao(CpMarcadorTipoAplicacaoEnum.values() [idTpAplicacao]);
+			marcador.setIdTpDataPlanejada(CpMarcadorTipoDataEnum.values() [idTpDataPlanejada]);
+			marcador.setIdTpDataLimite(CpMarcadorTipoDataEnum.values() [idTpDataLimite]);
+			marcador.setIdTpExibicao(CpMarcadorTipoExibicaoEnum.values() [idTpExibicao]);
+			marcador.setIdTpJustificativa(CpMarcadorTipoJustificativaEnum.values() [idTpJustificativa]);
+			marcador.setIdTpInteressado(CpMarcadorTipoInteressadoEnum.values() [idTpInteressado]);
+			marcador.setCpTipoMarcador(CpDao.getInstance().consultar(
+					CpTipoMarcador.TIPO_MARCADOR_LOTACAO_E_SUBLOTACOES, CpTipoMarcador.class, false));
+			marcador.setDpLotacaoIni(lotacao);
+			marcador.setOrdem(ordem);
+			
+			marcador.salvarComHistorico();
+			dao().gravarComHistorico(marcador, null, null, identidade);
+		}
 	}
 	
 }

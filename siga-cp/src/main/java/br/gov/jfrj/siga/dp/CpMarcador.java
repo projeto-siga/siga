@@ -22,6 +22,7 @@
  */
 package br.gov.jfrj.siga.dp;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -32,17 +33,18 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Immutable;
 
+import br.gov.jfrj.siga.cp.CpMarcadorTipoDataEnum;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
-@Immutable
 @Cacheable
-@Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
+@Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "corporativo.cp_marcador")
-public class CpMarcador extends AbstractCpMarcador {
+public class CpMarcador extends AbstractCpMarcador implements Serializable {
 
 	private static final long serialVersionUID = -909421649258750797L;
 
@@ -226,6 +228,21 @@ public class CpMarcador extends AbstractCpMarcador {
 
 	public boolean isDemandaJudicial() {
 		return MARCADORES_DEMANDA_JUDICIAL.contains(this.getIdMarcador());
+	}
+
+	@Override
+	public Long getId() {
+		return getIdMarcador();
+	}
+
+	@Override
+	public void setId(Long id) {
+		setIdMarcador(id);
+		return;
+	}
+
+	public boolean semelhante(Assemelhavel obj, int nivel) {
+		return SincronizavelSuporte.semelhante(this, obj, nivel);
 	}
 
 	public boolean isAplicacaoGeral() {

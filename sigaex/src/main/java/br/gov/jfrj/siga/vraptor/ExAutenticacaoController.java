@@ -206,7 +206,7 @@ public class ExAutenticacaoController extends ExController {
 				contentType = "application/jwt";
 				if (mov.getAuditHash() == null)
 					throw new AplicacaoException(
-							"Esta é uma assinatura digital como login e senha e não há nenhum artefato comprobatório disponível para download.");
+							"Esta é uma assinatura digital com login e senha e não há nenhum artefato comprobatório disponível para download.");
 				bytes = mov.getAuditHash().getBytes(StandardCharsets.UTF_8);
 				break;
 				

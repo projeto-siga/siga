@@ -71,6 +71,7 @@ import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.TipoResponsavelEnum;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
@@ -647,9 +648,10 @@ public class ExMovimentacaoController extends ExController {
 		result.include("lotaTitular", this.getLotaTitular());
 		result.include("autenticando", autenticando);
 		result.include("assinando", assinando);
+		result.include("voltarAtivo", true);
 		result.include("juntarAtivo", doc.getPai() != null && afJuntada.ativo ? true : null);
 		result.include("juntarFixo", doc.getPai() != null && afJuntada.fixo ? false : null);
-		result.include("tramitarAtivo", afTramite.ativo);
+		result.include("tramitarAtivo", Prop.isGovSP() ? "" : afTramite.ativo);
 		result.include("tramitarFixo", afTramite.fixo);
 	}
 	
@@ -4381,17 +4383,14 @@ public class ExMovimentacaoController extends ExController {
 
 	protected Map<Integer, String> getListaTipoResp() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Lotação");
+		map.put(1, SigaMessages.getMessage("usuario.lotacao"));
 		map.put(2, SigaMessages.getMessage("usuario.matricula"));
-		map.put(3, "Externo");
+		map.put(3, SigaMessages.getMessage("responsavel.externo"));
 		return map;
 	}
 
 	private Map<Integer, String> getListaTipoRespPerfil() {
-		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, SigaMessages.getMessage("usuario.matricula"));
-		map.put(2, "Lotação");
-		return map;
+		return TipoResponsavelEnum.getListaMatriculaLotacao();
 	}
 
 	@SuppressWarnings("unchecked")

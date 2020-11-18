@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -25,6 +24,8 @@ import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.TipoResponsavelEnum;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
@@ -47,11 +48,10 @@ public class SubstituicaoController extends SigaController {
 	private DpPessoaSelecao substitutoSel;
 	private DpLotacaoSelecao lotaSubstitutoSel;	
 	
+	private List<String> chaves = Prop.getList("/siga.substituto.tipos");
+	
 	private Map<Integer, String> getListaTipo() {
-		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Matrícula");
-		map.put(2, "Lotação");
-		return map;
+		return TipoResponsavelEnum.getLista(chaves);
 	}	
 		
 

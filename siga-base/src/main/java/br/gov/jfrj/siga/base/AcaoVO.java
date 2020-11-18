@@ -20,10 +20,13 @@ package br.gov.jfrj.siga.base;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
+import com.crivano.jlogic.Expression;
 
 public class AcaoVO {
 	private String icone;
@@ -214,6 +217,148 @@ public class AcaoVO {
 
 	public void setParams(Map<String, String> params) {
 		this.params = params;
+	}
+
+	public static AcaoVO.Builder builder() {
+		return new AcaoVO.Builder();
+	}
+
+	public static class Builder {
+		private String icone;
+		private String nome;
+		private String nameSpace;
+		private String acao;
+		private boolean pode;
+		private String msgConfirmacao;
+		private String pre;
+		private String pos;
+		private String classe;
+		private String modal;
+		private Map<String, String> params;
+		private String explicacao;
+		private boolean post;
+
+		public Builder icone(String icone) {
+			this.icone = icone;
+			return this;
+		}
+
+		public Builder nome(String nome) {
+			this.nome = nome;
+			return this;
+		}
+
+		public Builder nameSpace(String nameSpace) {
+			this.nameSpace = nameSpace;
+			return this;
+		}
+
+		public Builder acao(String acao) {
+			this.acao = acao;
+			return this;
+		}
+
+		public Builder pode(boolean pode) {
+			this.pode = pode;
+			return this;
+		}
+
+		public Builder msgConfirmacao(String msgConfirmacao) {
+			this.msgConfirmacao = msgConfirmacao;
+			return this;
+		}
+
+		public Builder pre(String pre) {
+			this.pre = pre;
+			return this;
+		}
+
+		public Builder pos(String pos) {
+			this.pos = pos;
+			return this;
+		}
+
+		public Builder classe(String classe) {
+			this.classe = classe;
+			return this;
+		}
+
+		public Builder modal(String modal) {
+			this.modal = modal;
+			return this;
+		}
+
+		public Builder params(Map<String, String> params) {
+			this.params = params;
+			return this;
+		}
+
+
+		public Builder params(String key, String value) {
+			if (this.params == null)
+				this.params = new HashMap<>();
+			this.params.put(key, value);
+			return this;
+		}
+
+		public Builder explicacao(String explicacao) {
+			this.explicacao = explicacao;
+			return this;
+		}
+
+		public Builder post(boolean post) {
+			this.post = post;
+			return this;
+		}
+
+		public Builder exp(Expression exp) {
+			this.pode = exp.eval();
+			this.explicacao = Helper.formatarExplicacao(exp, this.pode);
+			return this;
+		}
+
+		public AcaoVO build() {
+			AcaoVO acaoVO = new AcaoVO();
+			acaoVO.setIcone(icone);
+			acaoVO.setNome(nome);
+			acaoVO.setNameSpace(nameSpace);
+			acaoVO.setAcao(acao);
+			acaoVO.setPode(pode);
+			acaoVO.setMsgConfirmacao(msgConfirmacao);
+			acaoVO.setPre(pre);
+			acaoVO.setPos(pos);
+			acaoVO.setClasse(classe);
+			acaoVO.setModal(modal);
+			acaoVO.setParams(params);
+			acaoVO.setExplicacao(explicacao);
+			acaoVO.setPost(post);
+			return acaoVO;
+		}
+	}
+
+	public static class Helper {
+
+		public static AcaoVO criarAcao(String icone, String nome, String nameSpace, String acao, Expression pode) {
+			boolean f = pode.eval();
+			return new AcaoVO(icone, nome, nameSpace, acao, f, formatarExplicacao(pode, f), null, null, null, null,
+					null, null);
+		}
+
+		public static AcaoVO criarAcao(String icone, String nome, String nameSpace, String acao, Expression pode,
+				String msgConfirmacao, TreeMap<String, String> params, String pre, String pos, String classe,
+				String modal) {
+			boolean f = pode.eval();
+			return new AcaoVO(icone, nome, nameSpace, acao, f, formatarExplicacao(pode, f), msgConfirmacao, params, pre,
+					pos, classe, modal);
+		}
+
+		public static String formatarExplicacao(Expression exp, boolean f) {
+			String s = exp.explain(f).replace("_not_", "não");
+			s = s.replace("_and_", "e").replace("_or_", "ou");
+			s = "Está " + (f ? "h" : "des") + "abilitado porque " + s;
+			return s;
+		};
+
 	}
 
 }

@@ -24,10 +24,10 @@
 
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
-		<c:set var="btnClass" value="btn btn-sm btn-light link-tag" />
+		<c:set var="btnClass" value="btn btn-sm btn-light" />
 	</c:when>
 	<c:otherwise>
-		<c:set var="btnClass" value="btn btn-sm btn-info text-white link-tag" />
+		<c:set var="btnClass" value="btn btn-sm btn-info text-white" />
 	</c:otherwise>
 </c:choose>
 
@@ -76,13 +76,13 @@
 		<c:choose>
 			<c:when test="${not empty modal}">
 				<a id="${linkId}"
-					class="${classe} ${linkBotoes ? 'btn btn-sm btnClass text-white link-tag' : ''}"
+					class="${classe} ${linkBotoes ? btnClass : ''} link-tag"
 					<c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
 					data-toggle="modal" data-target="#${modal}" title="${explicacao}">${img}${title}</a>
 			</c:when>
 			<c:when test="${not empty popup and popup != false}">
 				<a id="${linkId}"
-					class="${classe} ${linkBotoes ? btnClass : ''}"
+					class="${classe} ${linkBotoes ? btnClass : ''} link-tag"
 					<c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
 					href="javascript:${linkConfirm}popitup('${url}');"
 					title="${explicacao}">${img}${title}</a>

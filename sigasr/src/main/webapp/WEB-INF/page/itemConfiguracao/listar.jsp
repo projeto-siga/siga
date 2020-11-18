@@ -105,11 +105,13 @@
 			<!-- /content box -->
 			<a onclick="itemConfiguracaoService.cadastrar('Incluir Item')" class="btn btn-primary" style="color: #fff">Incluir</a>
 	</div>
+	
+	<sigasr:modal nome="editarItem" titulo="Editar Item" largura="80%">
+		<div id="divEditarItem"><jsp:include page="editar.jsp"></jsp:include></div>
+	</sigasr:modal>
+	
 </siga:pagina>
 
-<sigasr:modal nome="editarItem" titulo="Editar Item" largura="80%">
-	<div id="divEditarItem"><jsp:include page="editar.jsp"></jsp:include></div>
-</sigasr:modal>
 
 
 <script type="text/javascript">

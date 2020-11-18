@@ -8,7 +8,7 @@ function printpage()
 }
 </script>
 
-<div style="width: 100%; ">
+<div class="container-fluid">
 	<a style="text-decoration: none" href="javascript:printpage();">
 	Imprimir</a>	
 	<div style="width: 45%; float: right;">
@@ -143,7 +143,7 @@ function printpage()
 		</p>
 		</div>		
 		<p></p>
-		<div style="height: 80px; font-size: 11pt; font-weight: bold; text-align:center; ">
+		<div style="font-size: 11pt; font-weight: bold; text-align:center; ">
 		ACEITA&Ccedil;&Atilde;O DO USU&Aacute;RIO
 		<p></p>
 		<font style="font-weight: normal;">
@@ -152,7 +152,7 @@ function printpage()
 		</font>
 		</div>
 		
-		<div style="height: 50px; text-align:center;">
+		<div style="text-align:center;">
 			<p> 
 			<font style="font-size: 11pt; font-weight: bold; text-align:center; ">
 			&nbsp;
@@ -163,7 +163,7 @@ function printpage()
 		</div>
 		<p></p>
 		<br/><br/>
-		<div style="height: 80px; font-size: 11pt; font-weight: bold; text-align:center; ">
+		<div style="font-size: 11pt; font-weight: bold; text-align:center; ">
 			<div>
 			<p style="font-weight: normal; text-align: left;">
 		 	NOME DO T&Eacute;CNICO:

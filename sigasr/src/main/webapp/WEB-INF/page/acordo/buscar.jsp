@@ -44,7 +44,7 @@
                     <tr
 	                    <c:choose>
 	                        <c:when test="${popup}">
-	                            onclick="javascript:opener.retorna_${param.propriedade}('${acordo.id}','${acordo.nomeAcordo}','${acordo.descrAcordo}');window.close()"
+	                            onclick="javascript:parent.retorna_${param.propriedade}('${acordo.id}','${acordo.nomeAcordo}','${acordo.descrAcordo}');window.close()"
 	                        </c:when>
 	                        <c:otherwise>
 	                            data-json-id="${acordo.id}" data-json='${acordo.toJson()}' onclick="acordoService.editar($(this).data('json'), 'Alterar Acordo')"

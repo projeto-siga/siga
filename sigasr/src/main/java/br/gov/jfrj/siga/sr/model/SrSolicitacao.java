@@ -1556,6 +1556,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         
         try {
         	super.salvarComHistorico();
+        	ContextoPersistencia.em().flush();
         } catch (PersistenceException pe) {
         	Throwable t = pe.getCause();
         	if (t instanceof ConstraintViolationException) 
@@ -1697,9 +1698,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         if (getDtOrigem() == null)
             setDtOrigem(new Date());
 
-        if (getOrgaoUsuario() == null || getOrgaoUsuario().getId() == null)
-            setOrgaoUsuario(getLotaSolicitante().getOrgaoUsuario());
-        
+        if(getLotaSolicitante() != null) {
+        	 if (getOrgaoUsuario() == null || getOrgaoUsuario().getId() == null)
+                 setOrgaoUsuario(getLotaSolicitante().getOrgaoUsuario());
+        }
+       
         if (getFormaAcompanhamento() == null)
         	setFormaAcompanhamento(SrFormaAcompanhamento.ABERTURA_ANDAMENTO);
 
@@ -2342,7 +2345,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     	filha.setAcao(SrAcao.AR.findById(acao.getIdAcao()));
     	filha.setDesignacao(designacao);
     	filha.setDescrSolicitacao(descricao);
-    	if (atendenteNaoDesignado != null)
+    	if (atendenteNaoDesignado != null && atendenteNaoDesignado.getIdeLotacao() != null)
     		filha.setAtendenteNaoDesignado(atendenteNaoDesignado);
     	filha.setAtributoSolicitacaoMap(atributos);
     	filha.definirAtributoSolicitacaoMapComoInicial();
@@ -2366,7 +2369,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         mov.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO));
         mov.setItemConfiguracao(SrItemConfiguracao.AR.findById(itemConfiguracao.getId()));
         mov.setAcao(SrAcao.AR.findById(acao.getIdAcao()));
-        mov.setLotaAtendente(atendenteNaoDesignado != null ? atendenteNaoDesignado : atendente);
+        mov.setLotaAtendente(atendenteNaoDesignado != null && atendenteNaoDesignado.getIdLotacao() != null ? atendenteNaoDesignado : atendente);
         // Edson: isso abaixo talvez pudesse valer pra todas as movimentacoes e ficar la no
         // mov.checarCampos()
         if (getAtendente() != null && !mov.getLotaAtendente().equivale(getLotaAtendente()))

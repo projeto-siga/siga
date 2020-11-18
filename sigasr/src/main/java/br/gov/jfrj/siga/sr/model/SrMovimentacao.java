@@ -36,6 +36,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sr.notifiers.CorreioHolder;
 import br.gov.jfrj.siga.sr.util.SrViewUtil;
@@ -348,6 +349,7 @@ public class SrMovimentacao extends Objeto {
 
         checarCampos();
         super.save();
+        ContextoPersistencia.em().flush();
 
         getSolicitacao().refresh();
 

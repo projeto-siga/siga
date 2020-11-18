@@ -35,7 +35,7 @@
 			<c:if test="${podePriorizar}">
 				<input type="button" id="btn" value="Gravar" class="gt-btn-medium gt-btn-left" />
 			</c:if>
-			<a href="${linkTo[SolicitacaoController].listarLista[false]}" class="gt-btn-medium gt-btn-left">Cancelar</a>
+			<a href="${linkTo[SolicitacaoController].listarLista(false)}" class="gt-btn-medium gt-btn-left">Cancelar</a>
 		</div>
 	</div>
 	

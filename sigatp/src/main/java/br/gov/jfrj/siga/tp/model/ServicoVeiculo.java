@@ -40,8 +40,8 @@ import br.gov.jfrj.siga.uteis.SiglaDocumentoType;
 
 @Entity
 @Audited
-@Table(name = "SERVICOVEICULO", schema = "SIGATP")
-public class ServicoVeiculo extends TpModel implements Comparable<ServicoVeiculo>, SequenceMethods, ConvertableEntity<Long> {
+@Table(name = "servicoveiculo", schema = "sigatp")
+public class ServicoVeiculo extends TpModel implements Comparable<ServicoVeiculo>, SequenceMethods, ConvertableEntity {
 
 	/**
 	 * 
@@ -128,7 +128,6 @@ public class ServicoVeiculo extends TpModel implements Comparable<ServicoVeiculo
 		return id;
 	}
 
-	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}

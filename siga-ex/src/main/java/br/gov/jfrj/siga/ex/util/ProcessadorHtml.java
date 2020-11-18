@@ -392,6 +392,9 @@ public class ProcessadorHtml {
 
 		if (fBodyOnly) {
 			String sBody = bodyOnly(s);
+			
+			sBody = sBody.replace("FIM FOOTNOTE -->", "<!-- FIM FOOTNOTE -->");
+			sBody = sBody.replace("<!-- div style=\"font-size:11pt;\" class=\"footnotes\"", "<div style=\"font-size:11pt;\" class=\"footnotes\">");
 			if (sBody != null)
 				return sBody;
 		}

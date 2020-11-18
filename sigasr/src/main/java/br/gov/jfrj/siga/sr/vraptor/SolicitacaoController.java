@@ -39,6 +39,7 @@ import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -56,6 +57,7 @@ import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrLista;
 import br.gov.jfrj.siga.sr.model.SrMeioComunicacao;
 import br.gov.jfrj.siga.sr.model.SrMovimentacao;
+import br.gov.jfrj.siga.sr.model.SrOperacao;
 import br.gov.jfrj.siga.sr.model.SrPendencia;
 import br.gov.jfrj.siga.sr.model.SrPrioridade;
 import br.gov.jfrj.siga.sr.model.SrPrioridadeSolicitacao;
@@ -107,7 +109,7 @@ public class SolicitacaoController extends SrController {
 	}
 	
 	@Inject
-    public SolicitacaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em,  SrValidator srValidator, Validator validator) {
+    public SolicitacaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em,  SrValidator srValidator, Validator validator) throws Throwable {
         super(request, result, dao, so, em, srValidator);
         
         result.on(AplicacaoException.class).forwardTo(this).appexception();
@@ -298,6 +300,8 @@ public class SolicitacaoController extends SrController {
     	if (solicitacao == null)
     		throw new AplicacaoException("Não foram informados dados suficientes para a gravação");
     	
+    	limparDpPessoa(solicitacao);
+    	
     	//Edson: por causa do detach no ObjetoObjectInstantiator:
     	if (solicitacao.getSolicitacaoInicial() != null){
     		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId())); 
@@ -321,6 +325,11 @@ public class SolicitacaoController extends SrController {
 			 enviarErroValidacao();
 			 return;
 		}
+		
+		// Carregar a acao:
+		if(solicitacao.getAcao() != null && solicitacao.getAcao().getTituloAcao() == null && solicitacao.getAcao().getIdAcao() != null) {
+        	solicitacao.setAcao(SrAcao.AR.findById(solicitacao.getAcao().getIdAcao()));
+        }
 		
 		// BJN - caso a solicitação seja NOVA E do tipo "Atividades da Lotação", 
 		// o atendente deverá ser a própria lotação do cadastrante titular
@@ -353,7 +362,19 @@ public class SolicitacaoController extends SrController {
         result.include("siglaCompacta", solicitacao.getSiglaCompacta());
         result.include("local", solicitacao.getLocal());
         result.include("lotacaoDoTitularLegivel", getTitular().getLotacao().getLotacaoAtual().toString() + " - " + getTitular().getLotacao().getLotacaoAtual().getNomeLotacao());
+        result.include("solicitanteDescricaoCompleta", getDescricaoCompleta(solicitacao.getSolicitante()));
 	}
+    
+    private String getDescricaoCompleta(DpPessoa solicitante) {
+    	String result = "";    	
+    	try {
+    		result = solicitante.getDescricaoCompleta(); 
+    	}
+    	catch(Exception e) {    		
+    	}
+    	return result;
+    }
+    
 
 	private boolean validarFormEditar(SrSolicitacao solicitacao) throws Exception {
         if (solicitacao.getSolicitante() == null || solicitacao.getSolicitante().getId() == null) 
@@ -439,6 +460,10 @@ public class SolicitacaoController extends SrController {
         if (ocultas == null)
             ocultas = false;
 
+        // Para informacoes do solicitante, exibidas no sidebar (exibirIncludeSidebarSolicitacao): 
+        setupInfoSolicitante(solicitacao);
+       
+        
         Set<SrMovimentacao> movs = solicitacao.getMovimentacaoSet(ocultas, null, false, todoOContexto, !ocultas, false);
         Set<SrArquivo> arqs = solicitacao.getArquivosAnexos(todoOContexto);
         Set<SrLista> listas = solicitacao.getListasAssociadas(todoOContexto);
@@ -467,18 +492,30 @@ public class SolicitacaoController extends SrController {
         result.include("podeUtilizarServicoSigaGC", podeUtilizarServico("SIGA;GC"));
         result.include("atributos", atributos);
     }
+    
+    private void setupInfoSolicitante(SrSolicitacao solicitacao) {
+    	// para evitar erro de 'no session' quando acessado diretamente apos reiniciar
+    	solicitacao.getSolicitante().getSiglaCompleta();
+    	solicitacao.getSolicitante().getFuncaoStringIniciaisMaiusculas();
+    	solicitacao.getSolicitante().getLotacao().getSiglaCompleta();
+    	solicitacao.getLocal().getNomeComplexo();    	
+    }
 
     @SuppressWarnings("unchecked")
     @Path("/buscar")
     public void buscar(SrSolicitacaoFiltro filtro, String propriedade, boolean popup, boolean telaDeListas) throws Exception {
         
+    	setupFiltros(filtro);
+    	
         if (filtro != null && filtro.isPesquisar()){
         	SrSolicitacaoListaVO solicitacaoListaVO = new SrSolicitacaoListaVO(filtro, telaDeListas, propriedade, popup, getLotaTitular(), getCadastrante());
         	result.use(Results.json()).withoutRoot().from(solicitacaoListaVO).excludeAll().include("recordsFiltered").include("data").serialize();
         } else {
-        	if (filtro == null){
+        	if (filtro == null || filtro.isVazio()){
         		filtro = novoFiltroZerado();
         	}
+        	
+        	
         	result.include("solicitacaoListaVO", new SrSolicitacaoListaVO(filtro, false, propriedade, popup, getLotaTitular(), getCadastrante()));
         	result.include("tipos", new String[] { "Pessoa", "Lota\u00e7\u00e3o" });
         	result.include("marcadores", ContextoPersistencia.em().createQuery("select distinct cpMarcador from SrMarca").getResultList());
@@ -491,6 +528,37 @@ public class SolicitacaoController extends SrController {
         }
     }
     
+    private void setupFiltros(SrSolicitacaoFiltro filtro) {
+    	
+    	if(filtro.getSituacao() != null && filtro.getSituacao().getIdMarcador() != null && filtro.getSituacao().getDescrMarcador() == null) {
+    		filtro.setSituacao(CpMarcador.AR.findById(filtro.getSituacao().getIdMarcador()));
+    	}
+    	if(filtro.getItemConfiguracao() != null && filtro.getItemConfiguracao().getIdItemConfiguracao() != null) {
+    		filtro.setItemConfiguracao(SrItemConfiguracao.AR.findById(filtro.getItemConfiguracao().getIdItemConfiguracao()));
+    	}
+    	if(filtro.getAcao() != null && filtro.getAcao().getIdAcao() != null) {
+    		filtro.setAcao(SrAcao.AR.findById(filtro.getAcao().getIdAcao()));
+    	}    	
+    	if(filtro.getCadastranteBusca() != null && filtro.getCadastranteBusca().getIdPessoa() != null) {
+    		filtro.setCadastranteBusca(DpPessoa.AR.findById(filtro.getCadastranteBusca().getIdPessoa()));
+    	}
+    	if(filtro.getLotaCadastranteBusca() != null && filtro.getLotaCadastranteBusca().getIdLotacao() != null) {
+    		filtro.setLotaCadastranteBusca(DpLotacao.AR.findById(filtro.getLotaCadastranteBusca().getIdLotacao()));
+    	}
+    	if(filtro.getSolicitante() != null && filtro.getSolicitante().getIdPessoa() != null) {
+    		filtro.setSolicitante(DpPessoa.AR.findById(filtro.getSolicitante().getIdPessoa()));
+    	}
+    	if(filtro.getLotaSolicitante() != null && filtro.getLotaSolicitante().getIdLotacao() != null) {
+    		filtro.setLotaSolicitante(DpLotacao.AR.findById(filtro.getLotaSolicitante().getIdLotacao()));
+		}
+    	if(filtro.getAtendente() != null && filtro.getAtendente().getIdPessoa() != null) {
+    		filtro.setAtendente(DpPessoa.AR.findById(filtro.getAtendente().getIdPessoa())); 
+    	}
+    	if(filtro.getLotaAtendente() != null && filtro.getLotaAtendente().getIdLotacao() != null) {
+    		filtro.setLotaAtendente(DpLotacao.AR.findById(filtro.getLotaAtendente().getIdLotacao()));
+    	}
+    }
+    
     private SrSolicitacaoFiltro novoFiltroZerado() {
 		SrSolicitacaoFiltro retorno = new SrSolicitacaoFiltro();
 		Date hoje = new Date();
@@ -500,10 +568,60 @@ public class SolicitacaoController extends SrController {
 		retorno.setAtendente(getCadastrante());
 		return retorno;
 	}
+    
+    
+    /**
+     * Metodo necessario devido a diferenca da 7.2, onde os objetos ja vem instanciados, mas vazios.
+     * @param solicitacao
+     */
+    private void limparDpPessoa(SrSolicitacao solicitacao) {
+    	if(solicitacao != null) {
+			if(solicitacao.getSolicitante() != null && solicitacao.getSolicitante().getId() == null) 
+				solicitacao.setSolicitante(null);
+			if(solicitacao.getCadastrante() != null && solicitacao.getCadastrante().getId() == null) 
+				solicitacao.setCadastrante(null);
+			if(solicitacao.getInterlocutor() != null && solicitacao.getInterlocutor().getId() == null) 
+				solicitacao.setInterlocutor(null);
+			if(solicitacao.getItemConfiguracao() != null && solicitacao.getItemConfiguracao().getId() == null) 
+				solicitacao.setItemConfiguracao(null);
+		}
+    }
+    
+    private void setupItemConfiguracao(SrSolicitacao solicitacao) throws Exception {
+    	if (solicitacao.getItemConfiguracao() != null) {
+			SrItemConfiguracao srItemConf = solicitacao.getItemConfiguracao();
+			boolean found = false;
+			for(SrItemConfiguracao itemConf : solicitacao.getItensDisponiveis()) {
+				if(srItemConf.getIdItemConfiguracao().equals(itemConf.getIdItemConfiguracao())) {
+					found = true;
+				}
+			}
+			if(!found) {
+				solicitacao.setItemConfiguracao(null);
+			}
+		}
+    }
+    
+    private void setupAcoes(SrSolicitacao solicitacao) throws Exception {
+    	if (solicitacao.getAcao() != null) {
+			if(solicitacao.getAcao().getHisIdIni() == null && solicitacao.getAcao().getIdAcao() != null)
+				solicitacao.setAcao(SrAcao.AR.findById(solicitacao.getAcao().getIdAcao()));
+			boolean containsAcao = false;
+			for (List<SrTarefa> tarefas : solicitacao.getAcoesEAtendentes().values())
+				for (SrTarefa t : tarefas)
+					if (t.getAcao().equivale(solicitacao.getAcao()))
+						containsAcao = true;
+			if (!containsAcao)
+				solicitacao.setAcao(null);
+		}
+    }
 
 	@Path({ "/editar", "/editar/{sigla}"})
     public void editar(String sigla, SrSolicitacao solicitacao, String item, String acao, String descricao, Long solicitante) throws Exception {
 		//Edson: se a sigla é != null, está vindo pelo link Editar. Se sigla for == null mas solicitacao for != null é um postback.
+		
+		limparDpPessoa(solicitacao);
+		
 		if (sigla != null) {
 			solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);  
 			//carregamento forçado de atributos lazy
@@ -515,7 +633,8 @@ public class SolicitacaoController extends SrController {
 			}
 		}
 		else {
-			if (solicitacao == null){
+			if(solicitacao == null || solicitante == null ) {
+				
 				solicitacao = new SrSolicitacao();
 		        try{
 		        	so.assertAcesso(SALVAR_SOLICITACAO_AO_ABRIR);
@@ -541,25 +660,19 @@ public class SolicitacaoController extends SrController {
 		        	solicitacao.setAcao((SrAcao)SrAcao.AR.find("bySiglaAcaoAndHisDtFimIsNull", acao).first());
 		        if (descricao != null && !descricao.equals(""))
 		        	solicitacao.setDescricao(descricao);
-			} 
+			}
 						
 			//Edson: O deduzir(), o setItem(), o setAcao() e o asociarPrioridade() deveriam ser chamados dentro da própria solicitação pois é responsabilidade 
 			//da própria classe atualizar os seus atributos para manter consistência após a entrada de um dado. 
 			if (solicitacao.getLocal() == null || 
 					(solicitacao.getSolicitante() != null && !solicitacao.getSolicitante().getId().equals(solicitante)))
 				solicitacao.deduzirLocalRamalEMeioContato();
-			if (solicitacao.getItemConfiguracao() != null && !solicitacao.getItensDisponiveis().contains(solicitacao.getItemConfiguracao())){
-				solicitacao.setItemConfiguracao(null);
-			}
-			if (solicitacao.getAcao() != null){
-				boolean containsAcao = false;
-				for (List<SrTarefa> tarefas : solicitacao.getAcoesEAtendentes().values())
-					for (SrTarefa t : tarefas)
-						if (t.getAcao().equivale(solicitacao.getAcao()))
-							containsAcao = true;
-				if (!containsAcao)
-					solicitacao.setAcao(null);
-			}
+			
+			
+			setupItemConfiguracao(solicitacao);
+			
+			setupAcoes(solicitacao);
+			
 			//Edson: por causa do detach:
 			if (solicitacao.getSolicitacaoInicial() != null){
 				solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
@@ -585,6 +698,12 @@ public class SolicitacaoController extends SrController {
         	filtro.setSolicitante(solicitacao.getSolicitante());
         	filtro.setItemConfiguracao(solicitacao.getItemConfiguracao());
         	filtro.setAcao(solicitacao.getAcao());
+        }
+        if(solicitacao.getAcao() != null && solicitacao.getAcao().getTituloAcao() == null && solicitacao.getAcao().getIdAcao() != null) {
+        	solicitacao.setAcao(SrAcao.AR.findById(solicitacao.getAcao().getIdAcao()));
+        }
+        if(solicitacao.getItemConfiguracao() != null && solicitacao.getItemConfiguracao().getId() == null) {
+        	solicitacao.setItemConfiguracao(null);
         }
         result.include("solicitacoesRelacionadas", filtro.buscarSimplificado(getTitular()));
         result.include("filtro", filtro);
@@ -629,6 +748,9 @@ public class SolicitacaoController extends SrController {
     
 	@Path("/reclassificar")
     public void reclassificar(SrSolicitacao solicitacao) throws Exception {
+		
+		carregaItemConfiguracao(solicitacao);
+		
 		if (solicitacao.getCodigo() == null || solicitacao.getCodigo().trim().equals(""))
 			throw new AplicacaoException("Número não informado");
     	SrSolicitacao solicitacaoEntity = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(solicitacao.getCodigo());
@@ -682,6 +804,8 @@ public class SolicitacaoController extends SrController {
 
     @Path("/fechar")
     public void fechar(SrSolicitacao solicitacao) throws Exception {
+    	carregaItemConfiguracao(solicitacao);
+    	
     	reclassificar(solicitacao);
     	Set<SrTipoMotivoFechamento> motivos = new TreeSet<SrTipoMotivoFechamento>(new Comparator<SrTipoMotivoFechamento>(){
 			@Override
@@ -737,9 +861,21 @@ public class SolicitacaoController extends SrController {
         SrArquivo arq = SrArquivo.AR.findById(idArquivo);
         return new ByteArrayDownload(arq.getBlob(), arq.getMime(), arq.getNomeArquivo(), false);
     }
+    
+    private void carregaItemConfiguracao(SrSolicitacao solicitacao) {
+    	SrItemConfiguracao item = solicitacao.getItemConfiguracao();
+    	if(item != null && item.getIdItemConfiguracao() != null && item.getDescrItemConfiguracao() == null) {
+    		solicitacao.setItemConfiguracao(SrItemConfiguracao.AR.findById(item.getIdItemConfiguracao()));
+    	}
+    }
 
     @Path("/escalonar")
     public void escalonar(SrSolicitacao solicitacao) throws Exception {
+    	setupItemConfiguracao(solicitacao);
+		setupAcoes(solicitacao);
+		
+    	carregaItemConfiguracao(solicitacao);
+
     	if (solicitacao.getCodigo() == null || solicitacao.getCodigo().trim().equals(""))
     		throw new AplicacaoException("Número não informado");
     	SrSolicitacao solicitacaoEntity = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(solicitacao.getCodigo());

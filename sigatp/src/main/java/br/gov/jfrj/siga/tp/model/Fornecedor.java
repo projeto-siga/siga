@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -24,9 +23,9 @@ import br.gov.jfrj.siga.validation.Email;
 @SuppressWarnings("serial")
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "fornecedor", schema = "sigatp")
 @Unique.List(value = { @Unique(message = "{fornecedor.cnpj.unique}", field = "cnpj"), @Unique(message = "{fornecedor.email.unique}", field = "eMail") })
-public class Fornecedor extends TpModel implements ConvertableEntity<Long>, Comparable<Fornecedor> {
+public class Fornecedor extends TpModel implements ConvertableEntity, Comparable<Fornecedor> {
 
 	public static ActiveRecord<Fornecedor> AR = new ActiveRecord<>(Fornecedor.class);
 
@@ -132,7 +131,6 @@ public class Fornecedor extends TpModel implements ConvertableEntity<Long>, Comp
 		return id;
 	}
 
-	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}

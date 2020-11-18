@@ -18,6 +18,7 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaHtmlGetResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocSiglaHtmlGet;
 import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.RequestInfo;
+import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
@@ -48,7 +49,7 @@ public class DocSiglaHtmlGet implements IDocSiglaHtmlGet {
 					throw new SwaggerException("Documento não permitido para visualização: " + req.sigla, 403, null, req, resp,
 							null);
 				}
-				resp.html = doc.getHtml();
+				resp.html = ProcessadorHtml.bodyOnly(doc.getHtml());
 				return;
 			} else {
 				throw new SwaggerException("O token de acesso não foi enviado." + req.sigla, 401, null, req, resp,

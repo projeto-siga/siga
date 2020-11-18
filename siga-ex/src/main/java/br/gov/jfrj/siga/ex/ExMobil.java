@@ -49,10 +49,8 @@ import org.hibernate.annotations.BatchSize;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.Prop;
-import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.bl.ExParte;
 import br.gov.jfrj.siga.ex.util.CronologiaComparator;
@@ -2256,7 +2254,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Verifica se exibe o conteudo do documento no histórico do acompanhamento do protocolo
 	 * 

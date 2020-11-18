@@ -44,6 +44,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Immutable;
+import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.Texto;
@@ -62,6 +63,8 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
 public class CpArquivo implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	
+	private final static Logger log = Logger.getLogger(CpArquivo.class);
 
 	@Id
 	@SequenceGenerator(sequenceName = "CORPORATIVO.CP_ARQUIVO_SEQ", name = "CP_ARQUIVO_SEQ")
@@ -101,6 +104,7 @@ public class CpArquivo implements Serializable {
 
 	@PrePersist
 	private void salvarArquivo() {
+		long ini = System.currentTimeMillis();
 		switch (getTipoArmazenamento()) {
 		case TABELA:
 //			EntityTransaction transaction = CpDao.getInstance().em().getTransaction();
@@ -121,6 +125,8 @@ public class CpArquivo implements Serializable {
 		default:
 			break;
 		}
+		long fim = System.currentTimeMillis();
+		log.info("### Tempo: " + (fim-ini) + " Tamanho: " + this.getConteudo().length);
 	}
 
 	@PostPersist

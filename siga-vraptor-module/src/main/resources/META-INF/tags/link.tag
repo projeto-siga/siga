@@ -76,7 +76,7 @@
 		<c:choose>
 			<c:when test="${not empty modal}">
 				<a id="${linkId}"
-					class="${classe} ${linkBotoes ? 'btn btn-sm btnClass text-white link-tag' : ''}"
+					class="${classe} ${linkBotoes ? btnClass : ''}"
 					<c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
 					data-toggle="modal" data-target="#${modal}" title="${explicacao}">${img}${title}</a>
 			</c:when>

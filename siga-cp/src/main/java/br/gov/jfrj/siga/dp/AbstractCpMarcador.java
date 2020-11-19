@@ -54,13 +54,13 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 @NamedNativeQueries({ @NamedNativeQuery(name = "consultarPaginaInicial", query = "SELECT"
 		+ " grps.id_marcador, grps.descr_marcador, grps.cont_pessoa, grps.cont_lota from ("
 		+ "	SELECT mard.id_marcador, mard.descr_marcador, mard.ord_marcador, "
-		+ "	SUM(CASE WHEN id_pessoa_ini = :idPessoaIni THEN 1 ELSE 0 END) cont_pessoa,"
-		+ "	SUM(CASE WHEN id_lotacao_ini = :idLotacaoIni THEN 1 ELSE 0 END) cont_lota"
+		+ "	SUM(CASE WHEN marca.id_pessoa_ini = :idPessoaIni THEN 1 ELSE 0 END) cont_pessoa,"
+		+ "	SUM(CASE WHEN marca.id_lotacao_ini = :idLotacaoIni THEN 1 ELSE 0 END) cont_lota"
 		+ "	FROM corporativo.cp_marca marca"
 		+ "	JOIN corporativo.cp_marcador mard on marca.id_marcador = mard.id_marcador"
 		+ " WHERE(dt_ini_marca IS NULL OR dt_ini_marca < CURRENT_TIMESTAMP)"
 		+ "		AND(dt_fim_marca IS NULL OR dt_fim_marca > CURRENT_TIMESTAMP)"
-		+ "		AND((id_pessoa_ini = :idPessoaIni) OR (id_lotacao_ini = :idLotacaoIni))"
+		+ "		AND((marca.id_pessoa_ini = :idPessoaIni) OR (marca.id_lotacao_ini = :idLotacaoIni))"
 		+ "		AND (select id_tipo_forma_doc from siga.ex_forma_documento where id_forma_doc = ("
 		+ "				select id_forma_doc from siga.ex_documento where id_doc = ("
 		+ "			   		select id_doc from siga.ex_mobil where id_mobil = marca.id_ref ))"
@@ -147,13 +147,13 @@ public abstract class AbstractCpMarcador  extends HistoricoAuditavelSuporte impl
 	@Desconsiderar
 	private Long hisIdIni;
 
-	@Column(name = "HIS_DT_FIM", length = 19)
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "HIS_DT_FIM", length = 19)
 	@Desconsiderar
 	private Date hisDtFim;
 
-	@Column(name = "HIS_DT_INI", length = 19)
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "HIS_DT_INI", length = 19)
 	@Desconsiderar
 	private Date hisDtIni;
 

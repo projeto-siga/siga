@@ -268,5 +268,12 @@ public class CpMarcador extends AbstractCpMarcador implements Serializable {
 	public boolean isInteressadoLotacao() {
 		return false;
 	}
+	
+	public Integer getHisAtivo() {
+		return getHisDtFim() != null ? 1 : 0;
+	}
 
+	public void setHisAtivo(Integer hisAtivo) {
+		//
+	}
 }

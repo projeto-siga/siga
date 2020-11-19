@@ -2,31 +2,15 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<link rel="stylesheet" href="/siga/javascript/select2/select2.css"
-	type="text/css" media="screen, projection" />
-<link rel="stylesheet"
-	href="/siga/javascript/select2/select2-bootstrap.css" type="text/css"
-	media="screen, projection" />
 
 <siga:pagina titulo="Lista Marcadores">
-	<script type="text/javascript" language="Javascript1.1">
-function sbmt(offset) {
-	if (offset == null) {
-		offset = 0;
-	}
-	frm.elements["paramoffset"].value = offset;
-	frm.elements["p.offset"].value = offset;
-	frm.submit();
-}
-</script>
 	<form name="frm" action="listar" class="form" method="GET">
 		<input type="hidden" name="paramoffset" value="0" /> <input
 			type="hidden" name="p.offset" value="0" />
 		<div class="container-fluid">
 			<div class="card bg-light mb-3">
 				<div class="card-header">
-					<h5>Cadastro de Marcadores</h5>
+					<h5>Cadastro de Marcadores</h5> 
 				</div>
 				<div class="card-body">
 					<div class="row">
@@ -116,11 +100,11 @@ function sbmt(offset) {
 										onclick="historico(${marcador.hisIdIni})" title="Historico">
 										<i class="fas fa-history"></i>
 									</button>
-									<button type="button" id="btn-editar"
+									<a type="button" id="btn-editar"
 										class="btn btn-outline-secondary btn-sm p-1 m-1 float-right"
-										onclick="editar(${marcador.id})" title="Editar">
-										<i class="far fa-edit"></i>
-									</button>
+										href="/siga/app/marcador/editar?id=${marcador.id}"
+										title="Editar"> <i class="far fa-edit"></i>
+									</a>
 								</div>
 							</td>
 						</tr>
@@ -129,13 +113,10 @@ function sbmt(offset) {
 			</table>
 
 			<div class="gt-table-buttons">
-				<button type="button" id="btn-editar" 
-					class="btn btn-primary" onclick="$('#editarModal').modal('show');">Incluir
-				</button>
+				<a id="btn-editar" class="btn btn-primary" href="/siga/app/marcador/editar">Incluir</a>
 			</div>
 		</div>
 	</form>
-	<jsp:include page="edita.jsp" />
 	<div class="modal fade" id="historicoModal" tabindex="-1" role="dialog"
 		aria-labelledby="historicoModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-lg" role="document">
@@ -170,21 +151,13 @@ function sbmt(offset) {
 			</div>
 		</div>
 	</div>
-<script type="text/javascript"
-	src="/siga/javascript/select2/select2.min.js"></script>
-<script type="text/javascript"
-	src="/siga/javascript/select2/i18n/pt-BR.js"></script>
-<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
+	<script type="text/javascript"
+		src="/siga/javascript/select2/select2.min.js"></script>
+	<script type="text/javascript"
+		src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+	<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
 
-<script type="text/javascript">
-	$('#editarModal').on('show.bs.modal', function (event) {
-		var button = $(event.relatedTarget);
-		var titulo = button.data('titulo');
-		var modal = $(this);
-  		modal.find('.modal-title').text(titulo);
-  		$('#id').val('');
-	})
-	
+	<script type="text/javascript">
 	function toggleDataLimite(idMarcacao, checado) {
 		$("#dataLimite-" + idMarcacao).prop("disabled", !checado);
 		if(checado) {
@@ -246,31 +219,6 @@ function sbmt(offset) {
 	        );
 	    });
 		
-	}
-	
-	function editar(id) {
-		$.ajax({
-			url: "${request.contextPath}/siga/app/marcador/editar",
-			type: "GET",
-			data: {id}
-		})
-		.done(function (response, status, jqXHR){
-			$('#idMarcador').val(response['id']);
-			$('#descricao').val(response['descricao']);
-			$('#cor' + response['cor']).prop("checked", true);
-			if (response['temDataLimite']) {
-				$('#tem-data-limite').prop("checked", true);	
-			}
-			$('#editarModalLabel').text('Editar Marcador');
-			
-			$('#editarModal').modal('show');
-	    })
-		.fail(function (jqXHR, textStatus, errorThrown){
-	        console.error(
-	            "Ocorreu um erro na edição: "+
-	            textStatus, errorThrown
-	        );
-	    });
 	}
 </script>
 </siga:pagina>

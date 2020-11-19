@@ -31,6 +31,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Objeto;
@@ -148,21 +149,7 @@ public abstract class HistoricoSuporte extends Objeto implements Historico, Asse
 			
 			//Edson: caso a instância esteja fechada, obtém a última
 			if (thisAntigo.getHisDtFim() != null) {
-				CriteriaBuilder builder = em().getCriteriaBuilder();
-				
-				CriteriaQuery query = builder.createQuery(thisAntigo.getClass());
-				
-				Subquery<Date> sub = query.subquery(Date.class);
-				Root subFrom = sub.from(this.getClass());
-				sub.select(builder.greatest(subFrom.<Date>get("hisDtIni")));
-				sub.where(builder.equal(subFrom.get("hisIdIni"), thisAntigo.getHisIdIni()));
-				
-				Root from = query.from(this.getClass());
-				CriteriaQuery select = query.select(from);
-				select.where(builder.and(builder.equal(from.get("hisIdIni"), thisAntigo.getHisIdIni()), builder.equal(from.get("hisDtIni"), sub)));
-				
-				TypedQuery typedQuery = em().createQuery(query);
-				thisAntigo = (HistoricoSuporte) typedQuery.getSingleResult();
+				thisAntigo = CpDao.getInstance().obterAtual(thisAntigo);
 			} 
 			
 			if (thisAntigo.getHisDtFim() == null)

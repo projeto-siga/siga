@@ -1330,6 +1330,8 @@ public class CpBL {
 						.equals(descricao)).count() > 0)) 
 			throw new AplicacaoException ("Já existe um marcador com esta descrição para esta " + msgLotacao);
 
+		CpTipoMarcador tpMarcador = dao().consultar((long) idTpMarcador, CpTipoMarcador.class, false);
+		
 //		Integer ordem;
 		if (id != null) {
 			CpMarcador marcador = dao().consultar(id, CpMarcador.class, false);
@@ -1339,6 +1341,7 @@ public class CpBL {
 				marcador.setCor(cor);
 				marcador.setIcone(icone);
 				marcador.setGrupoMarcador(grupoId);
+				marcador.setCpTipoMarcador(tpMarcador);
 				marcador.setIdTpAplicacao(CpMarcadorTipoAplicacaoEnum.values() [idTpAplicacao]);
 				marcador.setIdTpDataPlanejada(CpMarcadorTipoDataEnum.values() [idTpDataPlanejada]);
 				marcador.setIdTpDataLimite(CpMarcadorTipoDataEnum.values() [idTpDataLimite]);
@@ -1359,14 +1362,13 @@ public class CpBL {
 			marcador.setCor(cor);
 			marcador.setIcone(icone);
 			marcador.setGrupoMarcador(grupoId);
+			marcador.setCpTipoMarcador(tpMarcador);
 			marcador.setIdTpAplicacao(CpMarcadorTipoAplicacaoEnum.values() [idTpAplicacao]);
 			marcador.setIdTpDataPlanejada(CpMarcadorTipoDataEnum.values() [idTpDataPlanejada]);
 			marcador.setIdTpDataLimite(CpMarcadorTipoDataEnum.values() [idTpDataLimite]);
 			marcador.setIdTpExibicao(CpMarcadorTipoExibicaoEnum.values() [idTpExibicao]);
 			marcador.setIdTpJustificativa(CpMarcadorTipoJustificativaEnum.values() [idTpJustificativa]);
 			marcador.setIdTpInteressado(CpMarcadorTipoInteressadoEnum.values() [idTpInteressado]);
-			marcador.setCpTipoMarcador(CpDao.getInstance().consultar(
-					CpTipoMarcador.TIPO_MARCADOR_LOTACAO_E_SUBLOTACOES, CpTipoMarcador.class, false));
 			marcador.setDpLotacaoIni(lotacao);
 			marcador.setOrdem(ordem);
 			

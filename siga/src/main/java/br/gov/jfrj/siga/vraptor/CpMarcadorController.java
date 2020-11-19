@@ -22,7 +22,7 @@
  * To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-package br.gov.jfrj.siga.vraptor; 
+package br.gov.jfrj.siga.vraptor;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -58,6 +58,7 @@ import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 public class CpMarcadorController extends SigaController {
 
 	private static final Logger LOG = Logger.getLogger(CpMarcadorController.class);
+
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -66,11 +67,11 @@ public class CpMarcadorController extends SigaController {
 	}
 
 	@Inject
-	public CpMarcadorController(HttpServletRequest request, Result result, CpDao dao,
-			SigaObjects so, EntityManager em) {
+	public CpMarcadorController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so,
+			EntityManager em) {
 		super(request, result, dao, so, em);
 	}
-	
+
 	@Get("/app/marcador/listar")
 	public void lista(final DpLotacao lotacaoSel) throws Exception {
 		DpLotacaoDaoFiltro lotacao = new DpLotacaoDaoFiltro();
@@ -103,18 +104,14 @@ public class CpMarcadorController extends SigaController {
 		result.include("listaTipoDataLimite", CpMarcadorTipoDataEnum.values());
 		result.include("listaTipoJustificativa", CpMarcadorTipoJustificativaEnum.values());
 		result.include("listaTipoInteressado", CpMarcadorTipoInteressadoEnum.values());
-		result.include("listaMarcadores", dao
-				.listarCpMarcadoresPorLotacaoESublotacoes(getLotaCadastrante(), true));
+		result.include("listaMarcadores", dao.listarCpMarcadoresPorLotacaoESublotacoes(getLotaCadastrante(), true));
 	}
 
 	@Get("/app/marcador/historico")
 	public void historico(final Long id) throws Exception {
-		List<CpMarcador> listMar = dao()
-				.listarTodosPorIdInicial(CpMarcador.class, id, "hisDtIni", true);
-		result.use(Results.http())
-							.addHeader("Content-Type", "application/json")
-							.body(toJson(listMar))
-							.setStatusCode(200);		
+		List<CpMarcador> listMar = dao().listarTodosPorIdInicial(CpMarcador.class, id, "hisDtIni", true);
+		result.use(Results.http()).addHeader("Content-Type", "application/json").body(toJson(listMar))
+				.setStatusCode(200);
 	}
 
 	@Get("/app/marcador/excluir")
@@ -123,16 +120,12 @@ public class CpMarcadorController extends SigaController {
 			if (id != null) {
 				CpMarcador mar = dao().consultar(id, CpMarcador.class, false);
 				dao().excluirComHistorico(mar, null, getIdentidadeCadastrante());
-				result.use(Results.http())
-					.addHeader("Content-Type", "application/text")
-					.body("Excluído com sucesso.")
-					.setStatusCode(200);
+				result.use(Results.http()).addHeader("Content-Type", "application/text").body("Excluído com sucesso.")
+						.setStatusCode(200);
 			}
 		} catch (AplicacaoException e) {
-			result.use(Results.http())
-				.addHeader("Content-Type", "application/text")
-				.body("Erro na exclusão do marcador: " + e.getMessage())
-				.setStatusCode(400);
+			result.use(Results.http()).addHeader("Content-Type", "application/text")
+					.body("Erro na exclusão do marcador: " + e.getMessage()).setStatusCode(400);
 		}
 	}
 
@@ -142,68 +135,68 @@ public class CpMarcadorController extends SigaController {
 		String json = "";
 		if (id != null) {
 			CpMarcador marcador = dao().consultar(id, CpMarcador.class, false);
-			HashMap<String, Object> marcadorHashMap = toHashMap(marcador);
-		    json = gson.toJson(marcadorHashMap);    
+			marcador = dao().obterAtual(marcador);
+			result.include("marcador", marcador);
 		}
-		result.use(Results.http())
-			.addHeader("Content-Type", "application/json")
-			.body(json)
-			.setStatusCode(200);
+		result.include("listaTipoMarcador", dao.listarTodos(CpTipoMarcador.class, null));
+		result.include("listaCores", CpMarcadorCoresEnum.getList());
+		result.include("listaTipoAplicacao", CpMarcadorTipoAplicacaoEnum.values());
+		result.include("listaTipoExibicao", CpMarcadorTipoExibicaoEnum.values());
+		result.include("listaTipoDataPlanejada", CpMarcadorTipoDataEnum.values());
+		result.include("listaTipoDataLimite", CpMarcadorTipoDataEnum.values());
+		result.include("listaTipoJustificativa", CpMarcadorTipoJustificativaEnum.values());
+		result.include("listaTipoInteressado", CpMarcadorTipoInteressadoEnum.values());
 	}
 
 	@Transacional
 	@Post("/app/marcador/gravar")
-	public void marcadorGravar(final Long id, final String sigla, final String descricao,
-			final String descrDetalhada, final String cor, final String icone, final Integer grupoId, 
-			final Integer idTpMarcador, final Integer idTpAplicacao, final Integer idTpDataPlanejada, final Integer idTpDataLimite, 
-			final Integer idTpExibicao,	final Integer idTpJustificativa, final Integer idTpInteressado 
-			) throws Exception {
-		
-		//assertAcesso("GI:Módulo de Gestão de Identidade;CAD_MARCADOR:Cadastrar Marcador");
-		
-		try {
-			Cp.getInstance()
-				.getBL()
-				.gravarMarcadorDaLotacao(id, getCadastrante(), getLotaTitular(), getIdentidadeCadastrante(), 
-						descricao, descrDetalhada, cor.replace("#", ""), icone, 14, 
-						idTpMarcador, idTpAplicacao, idTpDataPlanejada, idTpDataLimite, 
-						idTpExibicao, idTpJustificativa, idTpInteressado);
-			
-			result.redirectTo(getRequest().getHeader("referer"));
-		} catch (AplicacaoException e) {
-			result.include("msgModalClass", "alert-info");
-			result.include("msgModal", e.getMessage());
+	public void marcadorGravar(Long id, final String sigla, final String descricao, final String descrDetalhada,
+			final String cor, final String icone, final Integer grupoId, final Integer idTpMarcador,
+			final Integer idTpAplicacao, final Integer idTpDataPlanejada, final Integer idTpDataLimite,
+			final Integer idTpExibicao, final Integer idTpJustificativa, final Integer idTpInteressado)
+			throws Exception {
+
+		// assertAcesso("GI:Módulo de Gestão de Identidade;CAD_MARCADOR:Cadastrar
+		// Marcador");
+
+		if (id != null) {
+			CpMarcador marcador = dao().consultar(id, CpMarcador.class, false);
+			marcador = dao().obterAtual(marcador);
+			id = marcador.getId();
 		}
+		
+		Cp.getInstance().getBL().gravarMarcadorDaLotacao(id, getCadastrante(), getLotaTitular(),
+				getIdentidadeCadastrante(), descricao, descrDetalhada, cor.replace("#", ""), icone, 14, idTpMarcador,
+				idTpAplicacao, idTpDataPlanejada, idTpDataLimite, idTpExibicao, idTpJustificativa, idTpInteressado);
+
+		result.redirectTo(this).lista(null);
 	}
-	
+
 	private String toJson(final List<CpMarcador> list) throws Exception {
 		Gson gson = new Gson();
 		ArrayList<HashMap<String, Object>> listObjJson = new ArrayList<>();
-		
+
 		for (CpMarcador marcador : list) {
 			HashMap<String, Object> marcadorJson = toHashMap(marcador);
 			listObjJson.add(marcadorJson);
 		}
-	    String json = gson.toJson(listObjJson);    
-	    return json;
+		String json = gson.toJson(listObjJson);
+		return json;
 	}
 
 	private HashMap<String, Object> toHashMap(CpMarcador marcador) {
 		HashMap<String, Object> marcadorJson = new HashMap<String, Object>();
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-		
+
 		marcadorJson.put("id", marcador.getIdMarcador());
-		marcadorJson.put("hisDtIni", (marcador.getHisDtIni() != null? 
-				df.format(marcador.getHisDtIni()) : ""));
-		marcadorJson.put("hisDtFim", (marcador.getHisDtFim() != null? 
-				df.format(marcador.getHisDtFim()) : ""));
-		marcadorJson.put("descricao", marcador.getDescrMarcador()); 
-		marcadorJson.put("descricaoDetalhada", marcador.getDescrDetalhada()); 
-		marcadorJson.put("cor", marcador.getCor()); 
-		marcadorJson.put("icone", marcador.getIcone()); 
-		marcadorJson.put("responsavel", marcador.getHisIdcIni().getNmLoginIdentidade()); 
-		marcadorJson.put("nomeResponsavel", marcador.getHisIdcIni().getDpPessoa()
-				.getNomePessoa());
+		marcadorJson.put("hisDtIni", (marcador.getHisDtIni() != null ? df.format(marcador.getHisDtIni()) : ""));
+		marcadorJson.put("hisDtFim", (marcador.getHisDtFim() != null ? df.format(marcador.getHisDtFim()) : ""));
+		marcadorJson.put("descricao", marcador.getDescrMarcador());
+		marcadorJson.put("descricaoDetalhada", marcador.getDescrDetalhada());
+		marcadorJson.put("cor", marcador.getCor());
+		marcadorJson.put("icone", marcador.getIcone());
+		marcadorJson.put("responsavel", marcador.getHisIdcIni().getNmLoginIdentidade());
+		marcadorJson.put("nomeResponsavel", marcador.getHisIdcIni().getDpPessoa().getNomePessoa());
 		marcadorJson.put("idTpAplicacao", marcador.getIdTpAplicacao());
 		marcadorJson.put("idTpDataPlanejada", marcador.getIdTpDataLimite());
 		marcadorJson.put("idTpDataLimite", marcador.getIdTpDataLimite());
@@ -212,5 +205,5 @@ public class CpMarcadorController extends SigaController {
 		marcadorJson.put("idTpInteressado", marcador.getIdTpInteressado());
 		return marcadorJson;
 	}
-	
+
 }

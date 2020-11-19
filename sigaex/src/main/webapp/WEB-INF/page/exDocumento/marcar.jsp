@@ -1,7 +1,7 @@
 <!-- Marcar Modal -->
 <div class="modal fade" id="definirMarcaModal" tabindex="-1"
 	role="dialog" aria-labelledby="anotarModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-lgxx" role="document">
+	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title" id="anotarModalLabel">Acrescentar uma

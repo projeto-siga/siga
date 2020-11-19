@@ -38,13 +38,16 @@ import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 import javax.persistence.FlushModeType;
+import javax.persistence.NamedQuery;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.DateUtils;
@@ -66,6 +69,7 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
+import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.dp.CpAplicacaoFeriado;
 import br.gov.jfrj.siga.dp.CpFeriado;
@@ -93,6 +97,7 @@ import br.gov.jfrj.siga.dp.DpUnidadeDTO;
 import br.gov.jfrj.siga.dp.DpVisualizacao;
 import br.gov.jfrj.siga.model.CarimboDeTempo;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.DaoFiltro;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
@@ -2477,6 +2482,37 @@ public class CpDao extends ModeloDao {
 		return id;
 	}
 
+	public <T extends Historico> T obterAtual(final T u) {
+//		CriteriaBuilder builder = em().getCriteriaBuilder();
+//		
+//		CriteriaQuery query = builder.createQuery(thisAntigo.getClass());
+//		
+//		Subquery<Date> sub = query.subquery(Date.class);
+//		Root subFrom = sub.from(this.getClass());
+//		sub.select(builder.greatest(subFrom.<Date>get("hisDtIni")));
+//		sub.where(builder.equal(subFrom.get("hisIdIni"), thisAntigo.getHisIdIni()));
+//		
+//		Root from = query.from(this.getClass());
+//		CriteriaQuery select = query.select(from);
+//		select.where(builder.and(builder.equal(from.get("hisIdIni"), thisAntigo.getHisIdIni()), builder.equal(from.get("hisDtIni"), sub)));
+//		
+//		TypedQuery typedQuery = em().createQuery(query);
+//		thisAntigo = (HistoricoSuporte) typedQuery.getSingleResult();
+		
+		String clazz = u.getClass().getSimpleName();
+		String sql = "from " + clazz + " u where u.hisDtIni = "
+			+ "		(select max(p.hisDtIni) from " + clazz + " p where p.hisIdIni = :idIni)"
+			+ "		 and u.hisIdIni = :idIni";		
+		javax.persistence.Query qry = ContextoPersistencia.em().createQuery(sql);
+		qry.setParameter("idIni", u.getHisIdIni());
+		qry.setFirstResult(0);
+		qry.setMaxResults(1);
+		List<CpAcesso> result = qry.getResultList();
+		if (result == null || result.size() == 0)
+			return null;
+		return (T) result.get(0);
+	}
+
 	@SuppressWarnings("unchecked")
 	public CpAcesso consultarAcessoAnterior(final DpPessoa pessoa) {
 		String sql = "from CpAcesso a where a.cpIdentidade.dpPessoa.idPessoaIni = :idPessoaIni order by a.dtInicio desc";
@@ -2670,20 +2706,20 @@ public class CpDao extends ModeloDao {
 	}
 
 	public List<CpMarcador> listarCpMarcadoresPorLotacaoESublotacoes(DpLotacao lotacao, Boolean ativos) {
-		CpTipoMarcador marcador = consultar(CpTipoMarcador.TIPO_MARCADOR_LOTACAO_E_SUBLOTACOES,
+		CpTipoMarcador marcador = consultar(CpTipoMarcador.TIPO_MARCADOR_SISTEMA,
 				CpTipoMarcador.class, false);
 		
 		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
 		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);
 		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
 		Predicate predicateAnd;
-		Predicate predicateEqualTipoMarcador  = criteriaBuilder.equal(cpMarcadorRoot.get("cpTipoMarcador"), marcador);
+		Predicate predicateNotEqualTipoMarcadorSistema  = criteriaBuilder.notEqual(cpMarcadorRoot.get("cpTipoMarcador"), marcador);
 		Predicate predicateEqualLotacao  = criteriaBuilder.equal(cpMarcadorRoot.get("dpLotacaoIni"), lotacao.getLotacaoInicial());
 		if (ativos == null || ativos) {
 			Predicate predicateNullHisDtFim = criteriaBuilder.isNull(cpMarcadorRoot.get("hisDtFim"));
-			predicateAnd = criteriaBuilder.and(predicateEqualTipoMarcador, predicateEqualLotacao, predicateNullHisDtFim);
+			predicateAnd = criteriaBuilder.and(predicateNotEqualTipoMarcadorSistema, predicateEqualLotacao, predicateNullHisDtFim);
 		} else {
-			predicateAnd = criteriaBuilder.and(predicateEqualTipoMarcador, predicateEqualLotacao);
+			predicateAnd = criteriaBuilder.and(predicateNotEqualTipoMarcadorSistema, predicateEqualLotacao);
 		}
 		
 		criteriaQuery.where(predicateAnd);

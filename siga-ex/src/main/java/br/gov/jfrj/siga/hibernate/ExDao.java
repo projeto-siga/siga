@@ -1634,6 +1634,7 @@ public class ExDao extends CpDao {
 		}
 		
 		listaConcatenada.sort(CpMarcador.ORDEM_COMPARATOR);
+		listaConcatenada.removeIf(m -> m.getHisDtFim() != null);
 
 		return listaConcatenada;
 		

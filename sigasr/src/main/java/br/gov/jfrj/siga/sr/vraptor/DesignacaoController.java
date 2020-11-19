@@ -121,6 +121,7 @@ public class DesignacaoController extends SrController {
 	 * Utilizado para ajustar o objeto recebido devido a mudanca do vraptor 3 para o 4.
 	 */
 	private List<SrItemConfiguracao> setupItemConfiguracao(List<SrItemConfiguracao> itemConfiguracaoSet) {
+		if(itemConfiguracaoSet == null || itemConfiguracaoSet.size() == 0) return null;
 		List<SrItemConfiguracao> result = new ArrayList<>();
 		for(SrItemConfiguracao item : itemConfiguracaoSet) {
 			if(item.getIdItemConfiguracao() != null)
@@ -133,6 +134,8 @@ public class DesignacaoController extends SrController {
 	 * Utilizado para ajustar o objeto recebido devido a mudanca do vraptor 3 para o 4.
 	 */
 	private List<SrAcao> setupAcoes(List<SrAcao> acoesSet) {
+		if(acoesSet == null || acoesSet.size() == 0) return null;
+		
 		List<SrAcao> result = new ArrayList<>();
 		for(SrAcao acao : acoesSet) {
 			if(acao.getIdAcao() != null)

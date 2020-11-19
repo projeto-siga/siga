@@ -313,7 +313,7 @@ public class ServicoVeiculo extends TpModel implements Comparable<ServicoVeiculo
 	}
 
 	public static List<ServicoVeiculo> buscarEmAndamento() {
-		return ServicoVeiculo.AR.find("trunc(dataHoraFim) = trunc(sysdate)").fetch();
+		return ServicoVeiculo.AR.find("trunc(dataHoraFim) = trunc(CURRENT_TIMESTAMP)").fetch();
 	}
 
 	public static ServicoVeiculo buscar(String sequence) throws Exception {

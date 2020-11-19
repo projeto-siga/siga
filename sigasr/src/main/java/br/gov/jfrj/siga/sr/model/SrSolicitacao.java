@@ -2114,7 +2114,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
                     listaSubstitutos = ContextoPersistencia.em().createQuery("from DpSubstituicao dps "
                     						+ "where dps.titular = null and dps.lotaTitular.idLotacao in "
                                             + "(select lot.idLotacao from DpLotacao lot where lot.idLotacaoIni = :idLotacaoIni) and "
-                                            + "(dtFimSubst = null or dtFimSubst > sysdate) and dps.substituto is not null "
+                                            + "(dtFimSubst = null or dtFimSubst > CURRENT_TIMESTAMP) and dps.substituto is not null "
                                             + "and dtFimRegistro = null")
                                             .setParameter("idLotacaoIni", lotaAtendente.getIdInicial()).getResultList();
                     

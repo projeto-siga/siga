@@ -241,7 +241,7 @@ public class Missao extends TpModel implements ConvertableEntity, Comparable<Mis
 	}
 
 	public static List<Missao> buscarEmAndamento() {
-		return Missao.AR.find("trunc(dataHoraSaida) = trunc(sysdate)").fetch();
+		return Missao.AR.find("trunc(dataHoraSaida) = trunc(CURRENT_TIMESTAMP)").fetch();
 	}
 
 	public static Missao buscar(String sequence) throws Exception {

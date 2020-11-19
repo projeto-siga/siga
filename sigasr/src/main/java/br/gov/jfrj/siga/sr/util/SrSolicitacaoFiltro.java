@@ -182,18 +182,18 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			query.append(" and situacao.cpMarcador.idMarcador = " + getSituacao().getIdMarcador()); 
 		
 		query.append(" and (situacao.dtIniMarca is null or "
-					+ "situacao.dtIniMarca < sysdate) ");
+					+ "situacao.dtIniMarca < CURRENT_TIMESTAMP) ");
 		query.append(" and (situacao.dtFimMarca is null or "
-					+ "situacao.dtFimMarca > sysdate) ");
+					+ "situacao.dtFimMarca > CURRENT_TIMESTAMP) ");
 		
 		if (situacaoFiltro.equals("situacaoAux")) {
 			if (getSituacao() != null)
 				query.append(" and situacaoAux.cpMarcador.idMarcador = "
 					+ getSituacao().getIdMarcador());
 			query.append(" and (situacaoAux.dtIniMarca is null or "
-					+ "situacaoAux.dtIniMarca < sysdate) ");
+					+ "situacaoAux.dtIniMarca < CURRENT_TIMESTAMP) ");
 			query.append(" and (situacaoAux.dtFimMarca is null or "
-					+ "situacaoAux.dtFimMarca > sysdate) ");
+					+ "situacaoAux.dtFimMarca > CURRENT_TIMESTAMP) ");
 		}
 		
 		if (Filtros.deveAdicionar(getAtendente())){

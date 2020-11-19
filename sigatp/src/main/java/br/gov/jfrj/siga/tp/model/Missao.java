@@ -43,7 +43,7 @@ import br.gov.jfrj.siga.uteis.SiglaDocumentoType;
 
 @Entity
 @Audited
-@Table(name = "nissao", schema = "sigatp")
+@Table(name = "missao", schema = "sigatp")
 public class Missao extends TpModel implements ConvertableEntity, Comparable<Missao>, SequenceMethods {
 
 	/**

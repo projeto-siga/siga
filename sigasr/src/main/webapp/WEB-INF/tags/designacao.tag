@@ -93,23 +93,27 @@
         line-height: 1.2em;
 }
 </style>
-<sigasr:modal nome="designacao" titulo="Cadastrar Designação">
+<sigasr:modal nome="designacao" titulo="Cadastrar Designação" largura="80%">
 	<div id="divEditarDesignacaoItem">
-		<div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
-			<form id="formDesignacao">
-				<input type="hidden" id="designacao" name="designacao" value="" />
-				<input type="hidden" id="idConfiguracao" name="designacao.id" value="${idConfiguracao}" />
-				<input type="hidden" id="hisIdIni" name="designacao.hisIdIni" value="${hisIdIni}" />
-				<div>
-					<div class="gt-form-row">
+		<form id="formDesignacao">
+			<input type="hidden" id="designacao" name="designacao" value="" />
+			<input type="hidden" id="idConfiguracao" name="designacao.id" value="${idConfiguracao}" />
+			<input type="hidden" id="hisIdIni" name="designacao.hisIdIni" value="${hisIdIni}" />
+			<div>
+				<div class="card card-body mb-2">
+				
+					<!-- Descricao -->
+					<div class="form-group">
 						<label>Descri&ccedil;&atilde;o <span>*</span></label>
-						<input id="descrConfiguracao" type="text" name="designacao.descrConfiguracao" value="${descrConfiguracao}" maxlength="255" style="width: 791px;" required/>
+						<input id="descrConfiguracao" type="text" name="designacao.descrConfiguracao" value="${descrConfiguracao}" maxlength="255" required class="form-control"/>
 						<span style="display:none;color: red" id="designacao.descrConfiguracao">Descri&ccedil;&atilde;o n&atilde;o informada.</span>
 					</div>
-					<div class="gt-form-row box-wrapper">
-						<div id="divSolicitante" class="box box-left gt-width-50">
+					
+					<!-- Solicitante -->
+					<div class="form-group">
+						<div id="divSolicitante">
 							<label>Solicitante</label>
-							<siga:pessoaLotaFuncCargoSelecao
+							<sigasr:pessoaLotaFuncCargoSelecao
 								nomeSelLotacao="lotacao"
 								nomeSelPessoa="dpPessoa"
 								nomeSelFuncao="funcaoConfianca"
@@ -121,53 +125,56 @@
 								valueCargo="${cargo}"
 								valueGrupo="${cpGrupo}"
 								disabled="disabled">
-							</siga:pessoaLotaFuncCargoSelecao>
-						</div>
-						<div class="box gt-width-50">
-							<label>&Oacute;rg&atilde;o</label>
-							<siga:select id="orgaoUsuario" name="orgaoUsuario" list="orgaos" listKey="idOrgaoUsu" listValue="nmOrgaoUsu" value="${orgaoUsuario.idOrgaoUsu}" headerKey="" headerValue="Nenhum"/>
+							</sigasr:pessoaLotaFuncCargoSelecao>
 						</div>
 					</div>
+					
+					<!-- Orgao -->
+					<div class="form-group">
+						<label>&Oacute;rg&atilde;o</label>
+						<siga:select id="orgaoUsuario" name="orgaoUsuario" list="orgaos" listKey="idOrgaoUsu" listValue="nmOrgaoUsu" value="${orgaoUsuario.idOrgaoUsu}" headerKey="" headerValue="Nenhum"/>
+					</div>
+					
 					<input type="hidden" id="designacao.lotacao.id" name="designacao.lotacao.id" />
 					<input type="hidden" id="designacao.dpPessoa.id" name="designacao.dpPessoa.id" />
 					<input type="hidden" id="designacao.funcaoConfianca.id" name="designacao.funcaoConfianca.id" />
 					<input type="hidden" id="designacao.cargo.id" name="designacao.cargo.id" />
+					<!--
+						// cpGrupo eh abstrato e nao pode ser instanciado pelo vraptor: 
 					<input type="hidden" id="designacao.cpGrupo.id" name="designacao.cpGrupo.id" />
+					 -->
 					<input type="hidden" id="designacao.complexo.id" name="designacao.complexo.id" />
 					<input type="hidden" id="designacao.orgaoUsuario.id" name="designacao.orgaoUsuario.id" />
 					<input type="hidden" name="designacao.atendente.id" id="designacao.atendente.id">
-		
-					<div class="gt-form-row box-wrapper">
-						<div class="box box-left gt-width-50">
-							<label>Local</label>
-							<siga:select id="complexo" name="complexo" list="locais" listKey="idComplexo" listValue="nomeComplexo" value="${complexo.idComplexo}" headerKey="" headerValue="Nenhum"/>
-						</div>
-						<div class="box gt-width-50">
-							<label>Atendente<span>*</span></label>
-							
-							<input type="hidden" name="atendente" id="atendente" class="selecao">
-							<siga:selecao propriedade="atendente" tema="simple" modulo="siga" urlAcao="buscar" inputName="atendente" desativar="${requestScope[modoExibicao] == 'equipe' ? 'true' : disabled}"/>
-		
-							<span style="display:none;color: red" id="designacao.atendente">Atendente n&atilde;o informado;</span>
-						</div>
+	
+					<!-- Local -->
+					<div class="form-group">
+						<label>Local</label>
+						<siga:select id="complexo" name="complexo" list="locais" listKey="idComplexo" listValue="nomeComplexo" value="${complexo.idComplexo}" headerKey="" headerValue="Nenhum"/>
 					</div>
-					<sigasr:configuracaoItemAcao itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"/>
-		
-					<div class="gt-form-row">
-						<div class="gt-form-row">
-							<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="preparaObjeto();designacaoService.gravar()"/>
-							<a class="gt-btn-medium gt-btn-left" onclick="designacaoService.cancelarGravacao()">Cancelar</a>
-							<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="preparaObjeto();designacaoService.aplicar()"/>
-						</div>
+					
+					<!-- Atendente -->
+					<div class="form-group">
+						<label>Atendente<span>*</span></label>
+						<input type="hidden" name="atendente" id="atendente" class="selecao">
+						<siga:selecao propriedade="atendente" tema="simple" modulo="siga" urlAcao="buscar" inputName="atendente" desativar="${requestScope[modoExibicao] == 'equipe' ? 'true' : disabled}"/>
+						<span style="display:none;color: red" id="designacao.atendente">Atendente n&atilde;o informado;</span>
 					</div>
-		
-					<div class="gt-form-row gt-width-100">
-						<p class="gt-error" style="display:none;" id="erroCamposObrigatorios">Alguns campos obrigat&oacute;rios n&atilde;o foram
-							preenchidos.</p>
-					</div>
+	
 				</div>
-			</form>
-		</div>
+
+				<!-- Itens de Configuracao e Acoes -->
+				<sigasr:configuracaoItemAcao itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"/>
+			
+	
+				<input type="button" value="Gravar" class="btn btn-primary" onclick="preparaObjeto();designacaoService.gravar()"/>
+				<a class="btn btn-secondary" style="color: #fff" onclick="designacaoService.cancelarGravacao()">Cancelar</a>
+				<input type="button" value="Aplicar" class="btn btn-primary" onclick="preparaObjeto();designacaoService.aplicar()"/>
+	
+				<p class="gt-error" style="display:none;" id="erroCamposObrigatorios">Alguns campos obrigat&oacute;rios n&atilde;o foram
+						preenchidos.</p>
+			</div>
+		</form>
 	</div>
 </sigasr:modal>
 		

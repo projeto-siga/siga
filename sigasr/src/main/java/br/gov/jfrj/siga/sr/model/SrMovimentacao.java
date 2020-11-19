@@ -42,7 +42,7 @@ import br.gov.jfrj.siga.sr.notifiers.CorreioHolder;
 import br.gov.jfrj.siga.sr.util.SrViewUtil;
 
 @Entity
-@Table(name = "SR_MOVIMENTACAO", schema = "SIGASR")
+@Table(name = "sr_movimentacao", schema = "sigasr")
 public class SrMovimentacao extends Objeto {
     private static final long serialVersionUID = 1L;
     public static final ActiveRecord<SrMovimentacao> AR = new ActiveRecord<>(SrMovimentacao.class);

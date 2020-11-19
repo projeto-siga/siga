@@ -84,7 +84,7 @@ import br.gov.jfrj.siga.sr.util.Util;
 import br.gov.jfrj.siga.uteis.SigaPlayCalendar;
 
 @Entity
-@Table(name = "SR_SOLICITACAO", schema = "SIGASR")
+@Table(name = "sr_solicitacao", schema = "sigasr")
 public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     private static final String MODAL_TRUE = "modal=true";
     private static final String OPERACAO_NAO_PERMITIDA = "Opera\u00E7\u00E3o n\u00E3o permitida";

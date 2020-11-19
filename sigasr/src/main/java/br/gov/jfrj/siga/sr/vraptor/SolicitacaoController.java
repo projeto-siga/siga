@@ -75,6 +75,7 @@ import br.gov.jfrj.siga.sr.util.SrViewUtil;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.uteis.PessoaLotaFuncCargoSelecaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
+import br.gov.jfrj.siga.vraptor.Transacional;
 import edu.emory.mathcs.backport.java.util.Arrays;
 
 @Controller
@@ -143,6 +144,7 @@ public class SolicitacaoController extends SrController {
         result.include("cargocargoAtualSel", new DpCargoSelecao());
     }
 
+    @Transacional
     @Path("/gravarPermissaoUsoLista")
     public void gravarPermissaoUsoLista(SrConfiguracao permissao) throws Exception {
         permissao.salvarComoPermissaoUsoLista();
@@ -175,6 +177,7 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).body(SrConfiguracao.buscaParaConfiguracaoInsercaoAutomaticaListaJSON(lista.getListaAtual(), mostrarDesativados));
     }
 
+    @Transacional
     @Path("/configuracaoAutomaticaGravar")
     public void configuracaoAutomaticaGravar(SrConfiguracao configuracao, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet) throws Exception {
         configuracao.setAcoesSet(acoesSet);
@@ -183,6 +186,7 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).body(configuracao.toVO().toJson());
     }
 
+    @Transacional
     @Path("/desativarConfiguracaoAutomaticaGravar")
     public void desativarConfiguracaoAutomaticaGravar(Long id) throws Exception {
         SrConfiguracao configuracao = ContextoPersistencia.em().find(SrConfiguracao.class, id);
@@ -190,6 +194,7 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).body(configuracao.toVO().toJson());
     }
 
+    @Transacional
     @Path("/reativarConfiguracaoAutomaticaGravar")
     public void reativarConfiguracaoAutomaticaGravar(Long id) throws Exception {
         SrConfiguracao configuracao = ContextoPersistencia.em().find(SrConfiguracao.class, id);
@@ -211,6 +216,7 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).body(SrConfiguracao.convertToJSon(permissoes));
     }
 
+    @Transacional
     @Path("/gravarLista")
     public void gravarLista(SrLista lista) throws Exception {
         lista.setLotaCadastrante(getLotaTitular());
@@ -237,6 +243,7 @@ public class SolicitacaoController extends SrController {
         }
     }
 
+    @Transacional
     @Path("/desativarLista")
     public void desativarLista(Long id, boolean mostrarDesativados) throws Exception {
         SrLista lista = SrLista.AR.findById(id);
@@ -245,6 +252,7 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).body(lista.toJson());
     }
 
+    @Transacional
     @Path("/reativarLista")
     public void reativarLista(Long id, boolean mostrarDesativados) throws Exception {
         SrLista lista = SrLista.AR.findById(id);
@@ -295,6 +303,7 @@ public class SolicitacaoController extends SrController {
         PessoaLotaFuncCargoSelecaoHelper.adicionarCamposSelecao(result);
     }
 
+    @Transacional
     @Path("/gravar")
     public void gravar(SrSolicitacao solicitacao) throws Exception {
     	if (solicitacao == null)
@@ -710,7 +719,8 @@ public class SolicitacaoController extends SrController {
         result.include(SOLICITACAO, solicitacao);
 	}
 	
-    @Path("/retirarDeLista")
+    @Transacional
+	@Path("/retirarDeLista")
     public void retirarDeLista(String sigla, Long idLista) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
     		throw new AplicacaoException("Número não informado");
@@ -732,6 +742,7 @@ public class SolicitacaoController extends SrController {
         result.include("prioridades", prioridades);
     }
 
+    @Transacional
     @Path("/incluirEmListaGravar")
     public void incluirEmListaGravar(String sigla, Long idLista, SrPrioridade prioridade, boolean naoReposicionarAutomatico) throws Exception {
         if (idLista == null) {
@@ -778,7 +789,8 @@ public class SolicitacaoController extends SrController {
         incluirListasReclassificacao(solicitacaoEntity);
     }
         
-    @Path("/reclassificarGravar")
+	@Transacional
+	@Path("/reclassificarGravar")
     public void reclassificarGravar(SrSolicitacao solicitacao) throws Exception {
     	if (solicitacao.getCodigo() == null || solicitacao.getCodigo().trim().equals(""))
     		throw new AplicacaoException("Número não informado");
@@ -819,6 +831,7 @@ public class SolicitacaoController extends SrController {
     	result.include("motivosFechamento", motivos);
     }
     
+    @Transacional
     @Path("/fecharGravar")
     public void fecharGravar(SrSolicitacao solicitacao, String motivoFechar, SrTipoMotivoFechamento tpMotivo, String conhecimento) throws Exception {
     	if (solicitacao.getCodigo() == null || solicitacao.getCodigo().trim().equals(""))
@@ -844,6 +857,7 @@ public class SolicitacaoController extends SrController {
     }
 
 
+    @Transacional
     @Path("/responderPesquisaGravar")
     public void responderPesquisaGravar(String sigla, Map<Long, String> respostaMap) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
@@ -923,6 +937,7 @@ public class SolicitacaoController extends SrController {
         result.include(TIPO_MOTIVO_ESCALONAMENTO_LIST, SrTipoMotivoEscalonamento.values());
     }
 
+    @Transacional
     @Path("/escalonarGravar")
     public void escalonarGravar(SrSolicitacao solicitacao, DpLotacao atendente, DpLotacao atendenteNaoDesignado, 
         	SrTipoMotivoEscalonamento motivo, String descricao,
@@ -952,6 +967,7 @@ public class SolicitacaoController extends SrController {
         }
     }
 
+    @Transacional
     @Path("/vincular")
     public void vincular(String sigla, SrSolicitacao solRecebeVinculo, String justificativa) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
@@ -961,6 +977,7 @@ public class SolicitacaoController extends SrController {
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
+    @Transacional
     @Path("/juntar")
     public void juntar(String sigla, SrSolicitacao solRecebeJuntada, String justificativa) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
@@ -970,6 +987,7 @@ public class SolicitacaoController extends SrController {
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
+    @Transacional
     @Path("/desentranhar")
     public void desentranhar(String sigla, String justificativa) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
@@ -979,6 +997,7 @@ public class SolicitacaoController extends SrController {
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
+    @Transacional
     @Path("/cancelar")
     public void cancelar(String sigla) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
@@ -989,6 +1008,7 @@ public class SolicitacaoController extends SrController {
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
+    @Transacional
     @Path("/reabrir")
     public void reabrir(String sigla) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
@@ -998,6 +1018,7 @@ public class SolicitacaoController extends SrController {
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
+    @Transacional
     @Path("/deixarPendente")
     public void deixarPendente(String sigla, SrTipoMotivoPendencia motivo, String calendario, String horario, String detalheMotivo) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
@@ -1013,6 +1034,7 @@ public class SolicitacaoController extends SrController {
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
+    @Transacional
     @Path("/excluir")
     public void excluir(String sigla) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
@@ -1023,6 +1045,7 @@ public class SolicitacaoController extends SrController {
         result.redirectTo("/../siga/");
     }
 
+    @Transacional
     @Path("/anexarArquivo")
     public void anexarArquivo(SrMovimentacao movimentacao) throws Exception {
     	if (movimentacao == null || movimentacao.getArquivo() == null)
@@ -1047,6 +1070,7 @@ public class SolicitacaoController extends SrController {
         result.include("atributos", atributos);
     }
 
+    @Transacional
     @Path("/desfazerUltimaMovimentacao")
     public void desfazerUltimaMovimentacao(String sigla) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
@@ -1057,6 +1081,7 @@ public class SolicitacaoController extends SrController {
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
+    @Transacional
     @Path("/alterarPrioridade")
     public void alterarPrioridade(String sigla, SrPrioridade prioridade) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
@@ -1066,6 +1091,7 @@ public class SolicitacaoController extends SrController {
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
+    @Transacional
     @Path("/terminarPendencia")
     public void terminarPendencia(String sigla, String descricao, Long idMovimentacao) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
@@ -1075,6 +1101,7 @@ public class SolicitacaoController extends SrController {
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
+    @Transacional
     @Path("/darAndamento")
     public void darAndamento(SrMovimentacao movimentacao) throws Exception {
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO));
@@ -1082,6 +1109,7 @@ public class SolicitacaoController extends SrController {
         result.redirectTo(this).exibir(movimentacao.getSolicitacao().getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
+    @Transacional
     @Path("/priorizarLista")
     public void priorizarLista(List<SrPrioridadeSolicitacao> listaPrioridadeSolicitacao, Long id) throws Exception {
     	for (SrPrioridadeSolicitacao pNova : listaPrioridadeSolicitacao){
@@ -1146,6 +1174,7 @@ public class SolicitacaoController extends SrController {
         result.include("contagens", contagens);
     }
     
+    @Transacional
     @Path("/atributo/gravar")
     public void gravarAtributo(SrAtributoSolicitacao atributo) throws Exception {
     	SrAtributoSolicitacao atributoEntity = SrAtributoSolicitacao.AR.findById(atributo.getId());
@@ -1153,6 +1182,7 @@ public class SolicitacaoController extends SrController {
     	result.use(Results.http()).body(atributo.getValorAtributoSolicitacao());
     }
     
+    @Transacional
     @Path("/atributo/excluir")
 	public void excluirAtributo(Long id) throws Exception {
 		SrAtributoSolicitacao atributoEntity = SrAtributoSolicitacao.AR.findById(id);	

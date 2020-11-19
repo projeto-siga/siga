@@ -70,12 +70,10 @@ public class DocSiglaMarcadoresDisponiveisGet implements IDocSiglaMarcadoresDisp
 					ExPodeMarcarComMarcador pode = new ExPodeMarcarComMarcador(mob, m, titular, lotaTitular);
 					mr.ativo = pode.eval();
 					mr.explicacao = AcaoVO.Helper.formatarExplicacao(pode, mr.ativo);
-					mr.podePessoa = false;
-					mr.podeLotacao = false;
-					mr.podePlanejada = false;
-					mr.podeLimite = true;
-					mr.podeJustificar = false;
-					mr.deveJustificar = false;
+					mr.interessado = m.getIdTpInteressado() != null ? m.getIdTpInteressado().name() : null;
+					mr.planejada = m.getIdTpDataPlanejada() != null ? m.getIdTpDataPlanejada().name() : null;
+					mr.limite = m.getIdTpDataLimite() != null ? m.getIdTpDataLimite().name() : null;
+					mr.descr = m.getIdTpDescricao() != null ? m.getIdTpDescricao().name() : null;
 					resp.list.add(mr);
 				}
 			}

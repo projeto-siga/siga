@@ -9,7 +9,7 @@ ALTER TABLE corporativo.cp_marcador ADD ID_TP_APLICACAO_MARCADOR tinyint(4) COMM
 ALTER TABLE corporativo.cp_marcador ADD ID_TP_DATA_PLANEJADA tinyint(4) COMMENT 'Id do tipo de exibição da data planejada';
 ALTER TABLE corporativo.cp_marcador ADD ID_TP_DATA_LIMITE tinyint(4) COMMENT 'Id do tipo de exibição da data limite';
 ALTER TABLE corporativo.cp_marcador ADD ID_TP_OPCAO_EXIBICAO tinyint(4) COMMENT 'Id do tipo de exibição do Marcador';
-ALTER TABLE corporativo.cp_marcador ADD ID_TP_JUSTIFICATIVA tinyint(4) COMMENT 'Id do tipo de exibição da justificativa';
+ALTER TABLE corporativo.cp_marcador ADD ID_TP_DESCRICAO tinyint(4) COMMENT 'Id do tipo de exibição da descrição';
 ALTER TABLE corporativo.cp_marcador ADD ID_TP_INTERESSADO tinyint(4) COMMENT 'Id do tipo de opção de exibição do interessado';
 ALTER TABLE corporativo.cp_marcador ADD HIS_ID_INI INT UNSIGNED COMMENT 'Id do marcador inicial deste marcador';
 ALTER TABLE corporativo.cp_marcador ADD HIS_DT_INI DATETIME COMMENT 'Data de criação ou alteração do marcador';

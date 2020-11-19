@@ -102,12 +102,10 @@ public interface IExApiV1 {
 		public String nome;
 		public Boolean ativo;
 		public String explicacao;
-		public Boolean podePessoa;
-		public Boolean podeLotacao;
-		public Boolean podePlanejada;
-		public Boolean podeLimite;
-		public Boolean podeJustificar;
-		public Boolean deveJustificar;
+		public String interessado;
+		public String planejada;
+		public String limite;
+		public String descr;
 	}
 
 	public class AutenticarPostRequest implements ISwaggerRequest {

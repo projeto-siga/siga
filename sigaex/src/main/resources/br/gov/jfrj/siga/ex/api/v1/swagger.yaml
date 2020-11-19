@@ -969,15 +969,11 @@ definitions:
         type: boolean
       explicacao:
         type: string
-      podePessoa:
-        type: boolean
-      podeLotacao:
-        type: boolean
-      podePlanejada:
-        type: boolean
-      podeLimite:
-        type: boolean
-      podeJustificar:
-        type: boolean
-      deveJustificar:
-        type: boolean
+      interessado:
+        type: string
+      planejada:
+        type: string
+      limite:
+        type: string
+      descr:
+        type: string

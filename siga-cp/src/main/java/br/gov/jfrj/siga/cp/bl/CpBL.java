@@ -50,7 +50,7 @@ import br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoDataEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoJustificativaEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoDescricaoEnum;
 import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
@@ -1311,7 +1311,7 @@ public class CpBL {
 	public void gravarMarcadorDaLotacao(final Long id, final DpPessoa cadastrante, final DpLotacao lotacao, final CpIdentidade identidade, 
 			final String descricao, final String descrDetalhada, final String cor, final String icone, final Integer grupoId, 
 			final Integer idTpMarcador, final Integer idTpAplicacao, final Integer idTpDataPlanejada, final Integer idTpDataLimite, 
-			final Integer idTpExibicao,	final Integer idTpJustificativa, final Integer idTpInteressado 
+			final Integer idTpExibicao,	final Integer idTpDescricao, final Integer idTpInteressado 
 			) throws Exception {
 		if (descricao == null)
 			throw new AplicacaoException ("Preencha a descrição do marcador.");
@@ -1346,7 +1346,7 @@ public class CpBL {
 				marcador.setIdTpDataPlanejada(CpMarcadorTipoDataEnum.values() [idTpDataPlanejada]);
 				marcador.setIdTpDataLimite(CpMarcadorTipoDataEnum.values() [idTpDataLimite]);
 				marcador.setIdTpExibicao(CpMarcadorTipoExibicaoEnum.values() [idTpExibicao]);
-				marcador.setIdTpJustificativa(CpMarcadorTipoJustificativaEnum.values() [idTpJustificativa]);
+				marcador.setIdTpDescricao(CpMarcadorTipoDescricaoEnum.values() [idTpDescricao]);
 				marcador.setIdTpInteressado(CpMarcadorTipoInteressadoEnum.values() [idTpInteressado]);
 				marcador.salvarComHistorico();
 			} else {
@@ -1367,7 +1367,7 @@ public class CpBL {
 			marcador.setIdTpDataPlanejada(CpMarcadorTipoDataEnum.values() [idTpDataPlanejada]);
 			marcador.setIdTpDataLimite(CpMarcadorTipoDataEnum.values() [idTpDataLimite]);
 			marcador.setIdTpExibicao(CpMarcadorTipoExibicaoEnum.values() [idTpExibicao]);
-			marcador.setIdTpJustificativa(CpMarcadorTipoJustificativaEnum.values() [idTpJustificativa]);
+			marcador.setIdTpDescricao(CpMarcadorTipoDescricaoEnum.values() [idTpDescricao]);
 			marcador.setIdTpInteressado(CpMarcadorTipoInteressadoEnum.values() [idTpInteressado]);
 			marcador.setDpLotacaoIni(lotacao);
 			marcador.setOrdem(ordem);

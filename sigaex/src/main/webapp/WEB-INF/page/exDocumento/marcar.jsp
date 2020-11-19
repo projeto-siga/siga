@@ -29,8 +29,8 @@
 								<label for="marcador">Interessado</label> <select
 									name="interessado" v-model="interessado" id="interessado"
 									class="form-control">
-									<option v-if="marcador.podeLotacao" value="pessoa">Pessoa</option>
-									<option v-if="marcador.podePessoa" value="lotacao">Lotacao</option>
+									<option v-if="marcador.interessado.includes('PESSOA')" value="pessoa">Pessoa</option>
+									<option v-if="marcador.interessado.includes('LOTACAO')" value="lotacao">Lotacao</option>
 								</select>
 							</div>
 							<div v-if="exibirLotacao" class="form-group">
@@ -41,17 +41,17 @@
 								<label for="marcador">Pessoa</label>
 								<siga:selecao tema='simple' titulo="Matrícula:" propriedade="subscritor" tipo="pessoa" modulo="siga" />
 							</div>
-							<div v-if="marcador && (marcador.podePlanejada || marcador.podeLimite)" class="form-group row">
-								<div class="col col-12 col-md-6" v-if="marcador && marcador.podePlanejada">
+							<div v-if="marcador && (marcador.planejada != 'DESATIVADA' || marcador.limite !== 'DESATIVADA')" class="form-group row">
+								<div class="col col-12 col-md-6" v-if="marcador && marcador.planejada != 'DESATIVADA'">
 									<label for="planejada">Data Planejada</label> <input
 										name="planejada" id="planejada" class="form-control" onblur="javascript:verifica_data(this,0);"/>
 								</div>
-								<div class="col col-12 col-md-6" v-if="marcador && marcador.podeLimite">
+								<div class="col col-12 col-md-6" v-if="marcador && marcador.limite != 'DESATIVADA'">
 									<label for="limite">Data Limite</label> <input name="limite"
 										id="limite" class="form-control" onblur="javascript:verifica_data(this,0);"/>
 								</div>
 							</div>
-							<div class="form-group" v-if="marcador && marcador.podeJustificar">
+							<div class="form-group" v-if="marcador && marcador.descr && marcador.descr != 'DESATIVADA'">
 								<label for="observacoes">Justificativa</label> <input
 									name="observacoes" id="observacoes" class="form-control" />
 							</div>
@@ -128,18 +128,18 @@
 						},
 						exibirInteressado: function() {
 							if	(!this.marcador) return false;
-							if (this.marcador.podePessoa && this.marcador.podeLotacao)
+							if (this.marcador.interessado && this.marcador.interessado != 'ATENDENTE')
 								return true;
 							return false;
 						},
 						exibirPessoa: function() {
-							if (!this.marcador || !this.marcador.podePessoa) return false;
-							if (!this.marcador.podeLotacao) return true;
+							if (!this.marcador || !this.marcador.interessado) return false;
+							if (this.marcador.interessado == 'PESSOA') return true;
 							return this.interessado == 'pessoa';
 						},
 						exibirLotacao: function() {
-							if (!this.marcador || !this.marcador.podeLotacao) return false;
-							if (!this.marcador.podePessoa) return true;
+							if (!this.marcador || !this.marcador.interessado) return false;
+							if (this.marcador.interessado == 'LOTACAO') return true;
 							return this.interessado == 'lotacao';
 						}
 					},

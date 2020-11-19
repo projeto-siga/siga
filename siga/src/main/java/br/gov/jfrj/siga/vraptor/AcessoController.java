@@ -220,6 +220,7 @@ public class AcessoController extends GiControllerSupport {
 		return lista;
 	}
 
+	@Transacional
 	@Get("/app/gi/acesso/gravar")
 	public void gravar(Long idServico
 			          ,Long idSituacao
@@ -405,7 +406,7 @@ public class AcessoController extends GiControllerSupport {
 		sb.append("</li>");
 	}
 
-	public List<CpOrgaoUsuario> getOrgaosUsu() throws AplicacaoException {
+	protected List<CpOrgaoUsuario> getOrgaosUsu() throws AplicacaoException {
 		return this.dao.listarOrgaosUsuarios();
 	}	
 	

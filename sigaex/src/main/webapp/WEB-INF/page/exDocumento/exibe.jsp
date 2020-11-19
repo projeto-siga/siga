@@ -238,9 +238,11 @@
 							<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}"
 								pre="${acao.pre}" pos="${acao.pos}"
 								url="${pageContext.request.contextPath}${acao.url}"
-								test="${true}" popup="${acao.popup}"
-								confirm="${acao.msgConfirmacao}" classe="${acao.classe}"
-								estilo="line-height: 160% !important" atalho="${true}" />
+								popup="${acao.popup}" confirm="${acao.msgConfirmacao}"
+								classe="${acao.classe}" estilo="line-height: 160% !important"
+								atalho="${true}" modal="${acao.modal}"
+								explicacao="${acao.explicacao}" post="${acao.post}"
+								test="${acao.pode}" />
 						</c:forEach>
 					</siga:links>
 				</c:if>
@@ -1247,7 +1249,7 @@
 		class="gt-btn-large gt-btn-left">Voltar</a>
 </div>
 
-<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;WF:Módulo de Workflow')}">
+<c:if test="${f:resource('/sigawf.ativo') and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;WF:Módulo de Workflow')}">
 	<script type="text/javascript">
 		<c:if test="${ (docVO.tipoFormaDocumento == 'processo_administrativo')}">
 			var url = "/sigawf/app/doc?sigla=${docVO.mob.sigla}&ts=1${currentTimeMillis}";
@@ -1282,12 +1284,13 @@
 		var urlGc = "${url}";
 
         $.ajax({
-            url: url,
+            url: urlGc,
             type: "GET"
         }).fail(function(jqXHR, textStatus, errorThrown){
-			$("#gc").html(errorThrown);
+        	if (errorThrown !== "Not Fount")
+        		$("#gc").html(errorThrown);
         }).done(function(data, textStatus, jqXHR ){
-			$("#gc").html(response);
+        	$("#gc").html(data); 
         });
 	</script>
 </c:if>

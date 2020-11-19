@@ -392,9 +392,6 @@ public class ProcessadorHtml {
 
 		if (fBodyOnly) {
 			String sBody = bodyOnly(s);
-			
-			sBody = sBody.replace("FIM FOOTNOTE -->", "<!-- FIM FOOTNOTE -->");
-			sBody = sBody.replace("<!-- div style=\"font-size:11pt;\" class=\"footnotes\"", "<div style=\"font-size:11pt;\" class=\"footnotes\">");
 			if (sBody != null)
 				return sBody;
 		}
@@ -405,6 +402,11 @@ public class ProcessadorHtml {
 	}
 
 	public static String bodyOnly(String s) {
+		
+		//ativa edição nota de rodapé
+		s = s.replace("FIM FOOTNOTE -->", "<!-- FIM FOOTNOTE -->");
+		s = s.replace("<!-- div style=\"font-size:11pt;\" class=\"footnotes\"", "<div style=\"font-size:11pt;\" class=\"footnotes\">");
+
 		Pattern p = Pattern.compile("<body[^>]*>\n?(\\s*+.*?)\\s*+</body>",
 				Pattern.CASE_INSENSITIVE + Pattern.DOTALL);
 		Matcher m = p.matcher(s);

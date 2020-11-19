@@ -99,10 +99,6 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	public DpPessoaController(HttpServletRequest request, Result result, CpDao dao,
 			SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);
-
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
-		//this.so = so;
 		setSel(new DpPessoa());
 		setItemPagina(10);
 	}
@@ -152,7 +148,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	}
 		
 	@Override
-	public DpPessoaDaoFiltro createDaoFiltro() {
+	protected DpPessoaDaoFiltro createDaoFiltro() {
 		final DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
 		flt.setNome(Texto.removeAcentoMaiusculas(getNome()));
 		if (lotacaoSel != null) {
@@ -168,7 +164,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	}
 
 	@Override
-	public Selecionavel selecionarPorNome(final DpPessoaDaoFiltro flt) throws AplicacaoException {
+	protected Selecionavel selecionarPorNome(final DpPessoaDaoFiltro flt) throws AplicacaoException {
 		Selecionavel sel = null;
 
 		// Acrescenta o sesb e repete a busca
@@ -190,7 +186,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		return null;
 	}
 	
-	public boolean temPermissaoParaExportarDados() {
+	private boolean temPermissaoParaExportarDados() {
 		return Boolean.valueOf(Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getTitular().getLotacao(),"SIGA;GI;CAD_PESSOA;EXP_DADOS"));
 	}
 
@@ -280,6 +276,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		}		
 	}
 
+	@Transacional
 	@Get("/app/pessoa/ativarInativar")
 	public void ativarInativar(final Long id, Integer offset, Long idOrgaoUsu, String nome, String cpfPesquisa, Long idCargoPesquisa, Long idFuncaoPesquisa, Long idLotacaoPesquisa, String emailPesquisa, String identidadePesquisa) throws Exception{
 		CpOrgaoUsuario ou = new CpOrgaoUsuario();
@@ -405,6 +402,9 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				}
 				if (pessoa.getCargo() != null) {
 					result.include("idCargo", pessoa.getCargo().getId());
+				}
+				if (pessoa.getNomeExibicao() != null) {
+					result.include("nomeExibicao", pessoa.getNomeExibicao());
 				}
 				if (pessoa.getFuncaoConfianca() != null) {
 					result.include("idFuncao", pessoa.getFuncaoConfianca().getId());
@@ -584,11 +584,12 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		}
 	}
 
+	@Transacional
 	@Post("/app/pessoa/gravar")
 	public void editarGravar(final Long id, final Long idOrgaoUsu, final Long idCargo, final Long idFuncao,
 			final Long idLotacao, final String nmPessoa, final String dtNascimento, final String cpf,
 			final String email, final String identidade, final String orgaoIdentidade, final String ufIdentidade,
-			final String dataExpedicaoIdentidade, final String nmPessoaAbreviado) throws Exception {
+			final String dataExpedicaoIdentidade, final String nomeExibicao) throws Exception {
 		
 		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_PESSOA:Cadastrar Pessoa");
 
@@ -646,7 +647,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		pessoa.setDataInicio(data);
 		pessoa.setMatricula(0L);
 		pessoa.setSituacaoFuncionalPessoa(SituacaoFuncionalEnum.APENAS_ATIVOS.getValor()[0]);
-		pessoa.setNomeExibicao(nmPessoaAbreviado);
+		pessoa.setNomeExibicao(nomeExibicao);
 		
 		if (dtNascimento != null && !"".equals(dtNascimento)) {
 			Date dtNasc = new Date();
@@ -849,6 +850,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		result.use(Results.page()).forwardTo("/WEB-INF/page/dpPessoa/cargaPessoa.jsp");
 	}
 
+	@Transacional
 	@Post("/app/pessoa/carga")
 	public Download carga(final UploadedFile arquivo, Long idOrgaoUsu) throws Exception {
 		InputStream inputStream = null;
@@ -1079,7 +1081,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		return null;
 	}
 	
-	public static boolean isEmailValido(String email) {
+	protected static boolean isEmailValido(String email) {
 		Pattern pattern = Pattern.compile(Texto.DpPessoa.EMAIL_REGEX_PATTERN);   
 	    Matcher matcher = pattern.matcher(email);   
 	    return matcher.find();   

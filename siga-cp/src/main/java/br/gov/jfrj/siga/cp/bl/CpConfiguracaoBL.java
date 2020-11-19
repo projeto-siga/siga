@@ -54,6 +54,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.CpGrupoDaoFiltro;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 /**
@@ -403,12 +404,9 @@ public class CpConfiguracaoBL {
 		}
 
 		TreeSet<CpConfiguracao> lista = null;
-		// try {
-		lista = getListaPorTipo(cpConfiguracaoFiltro.getCpTipoConfiguracao()
+		if (cpConfiguracaoFiltro.getCpTipoConfiguracao() != null)
+			lista = getListaPorTipo(cpConfiguracaoFiltro.getCpTipoConfiguracao()
 				.getIdTpConfiguracao());
-		// } catch (Exception e) {
-		// System.out.println(e.getStackTrace());
-		// }
 		if (lista == null)
 			return null;
 
@@ -696,14 +694,6 @@ public class CpConfiguracaoBL {
 			CpServico cpServico, CpIdentidade cpIdentidade, CpGrupo cpGrupo,
 			CpTipoLotacao cpTpLotacao, long idTpConf) throws Exception {
 		try {
-			if (isUsuarioRoot(dpPessoa)){
-				return true;
-			}
-			
-			if (cpIdentidade !=null && isUsuarioRoot(cpIdentidade.getDpPessoa())){
-				return true;
-			}
-			
 			CpConfiguracao cfgFiltro = createNewConfiguracao();
 	
 			cfgFiltro.setCargo(cargo);
@@ -746,17 +736,6 @@ public class CpConfiguracaoBL {
 	}
 
 	
-	protected boolean isUsuarioRoot(DpPessoa dpPessoa) {
-		// if (true) return false;
-		return dpPessoa != null
-				&& dpPessoa.getIdInicial().equals(ID_USUARIO_ROOT)
-				&& dpPessoa.getMatricula().equals(MATRICULA_USUARIO_ROOT)
-				&& dpPessoa.getCpfPessoa().equals(CPF_ROOT)
-				&& dpPessoa.getDataFim() == null
-				&& dpPessoa.getOrgaoUsuario().getSigla().equals(SIGLA_ORGAO_ROOT)
-				&& dpPessoa.getOrgaoUsuario().getId().equals(ID_ORGAO_ROOT);
-	}
-
 	/**
 	 * 
 	 * Usado para se verificar se uma pessoa pode realizar uma determinada
@@ -897,7 +876,9 @@ public class CpConfiguracaoBL {
 						srv.setDscServico(sDesc);
 						srv.setCpServicoPai(srvPai);
 						srv.setCpTipoServico(tpsrv);
+						ContextoPersistencia.begin();
 						dao().acrescentarServico(srv);
+						ContextoPersistencia.commit();
 					}
 					srvPai = srvRecuperado;
 				}

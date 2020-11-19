@@ -11,32 +11,6 @@
 
 	<artifactId>siga-cp</artifactId>
 
-	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>build-helper-maven-plugin</artifactId>
-					<version>1.9</version>
-					<executions>
-						<execution>
-							<id>add-source</id>
-							<phase>generate-sources</phase>
-							<goals>
-								<goal>add-source</goal>
-							</goals>
-							<configuration>
-								<sources>
-									<source>src/main/app</source>
-								</sources>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
-
 	<dependencies>
 
 		<dependency>
@@ -105,6 +79,11 @@
 		    <artifactId>xmlbeans</artifactId>
 		    <version>3.0.2</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>net.sf.kxml</groupId>
+			<artifactId>kxml2</artifactId>
+ 		</dependency>
 
 		<!-- Siga -->
 		<dependency>
@@ -136,6 +115,10 @@
             <groupId>org.mvel</groupId>
             <artifactId>mvel2</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+         </dependency>
 	</dependencies>
 	
 	
@@ -326,7 +309,7 @@
 							<sqlMigrationPrefix>CORPORATIVO_UTF8_V</sqlMigrationPrefix>
 							<placeholderPrefix>flyway${</placeholderPrefix>
 							<locations>
-								<location>filesystem:src\main\resources</location>
+								<location>filesystem:src\main\resources\db\migration</location>
 							</locations>
 						</configuration>
 						<executions>

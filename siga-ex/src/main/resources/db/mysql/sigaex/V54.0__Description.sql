@@ -1,9 +1,9 @@
--------------------------------------------
+-- -----------------------------------------
 --	SCRIPT:Cria Estrutura para Controle de Numeração de Documentos
--------------------------------------------
-------------------------------------------------------
+-- -----------------------------------------
+-- ----------------------------------------------------
 --  DDL for Table EX_DOCUMENTO_NUMERACAO
---------------------------------------------------------
+-- ------------------------------------------------------
 
   CREATE TABLE siga.ex_documento_numeracao
    (	ID_DOCUMENTO_NUMERACAO INT UNSIGNED NOT NULL AUTO_INCREMENT, 
@@ -21,9 +21,9 @@
         CONSTRAINT EX_DOCUMENTO_NUMERACAO_ORGAO FOREIGN KEY (ID_ORGAO_USU) REFERENCES CORPORATIVO.CP_ORGAO_USUARIO (ID_ORGAO_USU)
    ) ;
    
---------------------------------------------------------
+-- ------------------------------------------------------
 --  CARGA INICIAL PARA ESTRUTURA DE NUMERACAO
---------------------------------------------------------	  
+-- ------------------------------------------------------	  
 	TRUNCATE TABLE siga.ex_documento_numeracao;
 	
 	INSERT INTO siga.ex_documento_numeracao (id_orgao_usu, id_forma_doc, ano_emissao, nr_documento, nr_inicial)

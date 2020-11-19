@@ -13,15 +13,13 @@ public class FreemarkerDefault {
 		try {
 			String pathname = Prop.get("debug.modelo.padrao.arquivo");
 			if (pathname != null)
-				return new String(Files.readAllBytes(Paths.get(pathname)),
-						"UTF-8");
+				return new String(Files.readAllBytes(Paths.get(pathname)), "UTF-8");
 		} catch (Exception e1) {
 		}
 
 		String template;
 		try (InputStream stream = FreemarkerDefault.class.getClassLoader()
-				.getResourceAsStream(
-						"br/gov/jfrj/siga/ex/util/" + "default.ftl")) {
+				.getResourceAsStream("br/gov/jfrj/siga/ex/util/" + "default.ftl")) {
 			template = IOUtils.toString(stream, "UTF-8");
 			return template;
 		} catch (Exception e) {

@@ -41,7 +41,7 @@ import br.gov.jfrj.siga.model.Objeto;
 
 //Essa anotação é necessária por causa do mappedBy em CpOcorrenciaFeriado que aponta pra cá 
 @MappedSuperclass
-@NamedQueries({ @NamedQuery(name = "listarAplicacoesFeriado", query = "from CpAplicacaoFeriado apl where apl.cpOcorrenciaFeriado = :cpOcorrenciaFeriado") })
+@NamedQueries({ @NamedQuery(name = "listarAplicacoesFeriado", query = "from CpAplicacaoFeriado apl where apl.cpOcorrenciaFeriado.idOcorrencia = :cpOcorrenciaFeriado") })
 public abstract class AbstractCpAplicacaoFeriado extends Objeto implements
 		Serializable {
 

@@ -129,12 +129,12 @@
 
 									<div class="col">
 										<div class="form-group">
-											<label for="idTpJustificativa">Justificativa</label> <select
-												class="form-control" id="idTpJustificativa"
-												name="idTpJustificativa" value="${idTpJustificativa}">
+											<label for="idTpTexto">Justificativa</label> <select
+												class="form-control" id="idTpTexto"
+												name="idTpTexto" value="${idTpTexto}">
 												<c:forEach items="${listaTipoJustificativa}" var="item">
 													<option value="${item.id}"
-														${item == marcador.idTpJustificativa ? 'selected' : ''}>
+														${item == marcador.idTpTexto ? 'selected' : ''}>
 														${item.descricao}</option>
 												</c:forEach>
 											</select>

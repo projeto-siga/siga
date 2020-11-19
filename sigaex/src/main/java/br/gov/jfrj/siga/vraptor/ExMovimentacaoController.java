@@ -2467,7 +2467,7 @@ public class ExMovimentacaoController extends ExController {
 	@Transacional
 	@Post("/app/expediente/mov/marcar_gravar")
 	public void aMarcarGravar(final String sigla, final Long marcador,
-			final String planejada, String limite, final String observacoes) throws Exception {
+			final String planejada, String limite, final String texto) throws Exception {
 		Date dtPlanejada = Data.parse(planejada);
 		Date dtLimite = Data.parse(limite);
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -2483,6 +2483,7 @@ public class ExMovimentacaoController extends ExController {
 				.novaInstancia();
 		movimentacaoBuilder.setIdMarcador(marcador);
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
+		mov.setDescrMov(texto);
 		Ex.getInstance()
 				.getBL()
 				.marcar(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular(),

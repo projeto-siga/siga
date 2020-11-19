@@ -51,9 +51,9 @@
 										id="limite" class="form-control" onblur="javascript:verifica_data(this,0);"/>
 								</div>
 							</div>
-							<div class="form-group" v-if="marcador && marcador.descr && marcador.descr != 'DESATIVADA'">
-								<label for="observacoes">Justificativa</label> <input
-									name="observacoes" id="observacoes" class="form-control" />
+							<div class="form-group" v-if="marcador && marcador.texto && marcador.texto != 'DESATIVADA'">
+								<label for="texto">Texto</label> <input
+									name="texto" id="texto" class="form-control" />
 							</div>
 
 						</div>

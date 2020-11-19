@@ -73,7 +73,7 @@ public class DocSiglaMarcadoresDisponiveisGet implements IDocSiglaMarcadoresDisp
 					mr.interessado = m.getIdTpInteressado() != null ? m.getIdTpInteressado().name() : null;
 					mr.planejada = m.getIdTpDataPlanejada() != null ? m.getIdTpDataPlanejada().name() : null;
 					mr.limite = m.getIdTpDataLimite() != null ? m.getIdTpDataLimite().name() : null;
-					mr.descr = m.getIdTpDescricao() != null ? m.getIdTpDescricao().name() : null;
+					mr.texto = m.getIdTpTexto() != null ? m.getIdTpTexto().name() : null;
 					resp.list.add(mr);
 				}
 			}

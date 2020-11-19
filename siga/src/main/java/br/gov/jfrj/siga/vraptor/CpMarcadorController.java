@@ -45,7 +45,7 @@ import br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoDataEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoDescricaoEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoTextoEnum;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -102,7 +102,7 @@ public class CpMarcadorController extends SigaController {
 		result.include("listaTipoExibicao", CpMarcadorTipoExibicaoEnum.values());
 		result.include("listaTipoDataPlanejada", CpMarcadorTipoDataEnum.values());
 		result.include("listaTipoDataLimite", CpMarcadorTipoDataEnum.values());
-		result.include("listaTipoJustificativa", CpMarcadorTipoDescricaoEnum.values());
+		result.include("listaTipoJustificativa", CpMarcadorTipoTextoEnum.values());
 		result.include("listaTipoInteressado", CpMarcadorTipoInteressadoEnum.values());
 		result.include("listaMarcadores", dao.listarCpMarcadoresPorLotacaoESublotacoes(getLotaCadastrante(), true));
 	}
@@ -144,7 +144,7 @@ public class CpMarcadorController extends SigaController {
 		result.include("listaTipoExibicao", CpMarcadorTipoExibicaoEnum.values());
 		result.include("listaTipoDataPlanejada", CpMarcadorTipoDataEnum.values());
 		result.include("listaTipoDataLimite", CpMarcadorTipoDataEnum.values());
-		result.include("listaTipoJustificativa", CpMarcadorTipoDescricaoEnum.values());
+		result.include("listaTipoJustificativa", CpMarcadorTipoTextoEnum.values());
 		result.include("listaTipoInteressado", CpMarcadorTipoInteressadoEnum.values());
 	}
 
@@ -153,7 +153,7 @@ public class CpMarcadorController extends SigaController {
 	public void marcadorGravar(Long id, final String sigla, final String descricao, final String descrDetalhada,
 			final String cor, final String icone, final Integer grupoId, final Integer idTpMarcador,
 			final Integer idTpAplicacao, final Integer idTpDataPlanejada, final Integer idTpDataLimite,
-			final Integer idTpExibicao, final Integer idTpJustificativa, final Integer idTpInteressado)
+			final Integer idTpExibicao, final Integer idTpTexto, final Integer idTpInteressado)
 			throws Exception {
 
 		// assertAcesso("GI:Módulo de Gestão de Identidade;CAD_MARCADOR:Cadastrar
@@ -167,7 +167,7 @@ public class CpMarcadorController extends SigaController {
 		
 		Cp.getInstance().getBL().gravarMarcadorDaLotacao(id, getCadastrante(), getLotaTitular(),
 				getIdentidadeCadastrante(), descricao, descrDetalhada, cor.replace("#", ""), icone, 14, idTpMarcador,
-				idTpAplicacao, idTpDataPlanejada, idTpDataLimite, idTpExibicao, idTpJustificativa, idTpInteressado);
+				idTpAplicacao, idTpDataPlanejada, idTpDataLimite, idTpExibicao, idTpTexto, idTpInteressado);
 
 		result.redirectTo(this).lista(null);
 	}
@@ -201,7 +201,7 @@ public class CpMarcadorController extends SigaController {
 		marcadorJson.put("idTpDataPlanejada", marcador.getIdTpDataLimite());
 		marcadorJson.put("idTpDataLimite", marcador.getIdTpDataLimite());
 		marcadorJson.put("idTpExibicao", marcador.getIdTpExibicao());
-		marcadorJson.put("idTpJustificativa", marcador.getIdTpDescricao());
+		marcadorJson.put("idTpTexto", marcador.getIdTpTexto());
 		marcadorJson.put("idTpInteressado", marcador.getIdTpInteressado());
 		return marcadorJson;
 	}

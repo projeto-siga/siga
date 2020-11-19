@@ -975,5 +975,5 @@ definitions:
         type: string
       limite:
         type: string
-      descr:
+      texto:
         type: string

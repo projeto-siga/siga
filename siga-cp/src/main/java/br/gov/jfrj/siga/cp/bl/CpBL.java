@@ -50,7 +50,7 @@ import br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoDataEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoDescricaoEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoTextoEnum;
 import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
@@ -1346,7 +1346,7 @@ public class CpBL {
 				marcador.setIdTpDataPlanejada(CpMarcadorTipoDataEnum.values() [idTpDataPlanejada]);
 				marcador.setIdTpDataLimite(CpMarcadorTipoDataEnum.values() [idTpDataLimite]);
 				marcador.setIdTpExibicao(CpMarcadorTipoExibicaoEnum.values() [idTpExibicao]);
-				marcador.setIdTpDescricao(CpMarcadorTipoDescricaoEnum.values() [idTpDescricao]);
+				marcador.setIdTpDescricao(CpMarcadorTipoTextoEnum.values() [idTpDescricao]);
 				marcador.setIdTpInteressado(CpMarcadorTipoInteressadoEnum.values() [idTpInteressado]);
 				marcador.salvarComHistorico();
 			} else {
@@ -1367,7 +1367,7 @@ public class CpBL {
 			marcador.setIdTpDataPlanejada(CpMarcadorTipoDataEnum.values() [idTpDataPlanejada]);
 			marcador.setIdTpDataLimite(CpMarcadorTipoDataEnum.values() [idTpDataLimite]);
 			marcador.setIdTpExibicao(CpMarcadorTipoExibicaoEnum.values() [idTpExibicao]);
-			marcador.setIdTpDescricao(CpMarcadorTipoDescricaoEnum.values() [idTpDescricao]);
+			marcador.setIdTpDescricao(CpMarcadorTipoTextoEnum.values() [idTpDescricao]);
 			marcador.setIdTpInteressado(CpMarcadorTipoInteressadoEnum.values() [idTpInteressado]);
 			marcador.setDpLotacaoIni(lotacao);
 			marcador.setOrdem(ordem);

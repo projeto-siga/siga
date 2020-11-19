@@ -45,7 +45,7 @@ import br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoDataEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoDescricaoEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoTextoEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
@@ -136,8 +136,8 @@ public abstract class AbstractCpMarcador  extends HistoricoAuditavelSuporte impl
 	private CpMarcadorTipoExibicaoEnum idTpExibicao;
 
 	@Enumerated(EnumType.ORDINAL)
-	@Column(name = "ID_TP_DESCRICAO")
-	private CpMarcadorTipoDescricaoEnum idTpDescricao;
+	@Column(name = "ID_TP_TEXTO")
+	private CpMarcadorTipoTextoEnum idTpTexto;
 
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "ID_TP_INTERESSADO")
@@ -280,12 +280,12 @@ public abstract class AbstractCpMarcador  extends HistoricoAuditavelSuporte impl
 		this.idTpExibicao = idTpExibicao;
 	}
 
-	public CpMarcadorTipoDescricaoEnum getIdTpDescricao() {
-		return idTpDescricao;
+	public CpMarcadorTipoTextoEnum getIdTpTexto() {
+		return idTpTexto;
 	}
 
-	public void setIdTpDescricao(CpMarcadorTipoDescricaoEnum idTpDescricao) {
-		this.idTpDescricao = idTpDescricao;
+	public void setIdTpDescricao(CpMarcadorTipoTextoEnum idTpTexto) {
+		this.idTpTexto = idTpTexto;
 	}
 
 	public CpMarcadorTipoInteressadoEnum getIdTpInteressado() {

@@ -105,7 +105,7 @@ public interface IExApiV1 {
 		public String interessado;
 		public String planejada;
 		public String limite;
-		public String descr;
+		public String texto;
 	}
 
 	public class AutenticarPostRequest implements ISwaggerRequest {

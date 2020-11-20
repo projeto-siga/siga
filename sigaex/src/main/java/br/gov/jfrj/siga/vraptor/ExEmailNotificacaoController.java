@@ -38,6 +38,8 @@ import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.base.TipoResponsavelEnum;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -197,17 +199,14 @@ public class ExEmailNotificacaoController extends SigaController{
 	}
 
 	private Map<Integer, String> getListaTipoDest() {
-		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Matrícula");
-		map.put(2, "Lotação");
-		return map;
+		return TipoResponsavelEnum.getListaMatriculaLotacao();
 	}
 	
 	private Map<Integer, String> getListaTipoEmail() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(1, "Default");
-		map.put(2, "Matrícula");
-		map.put(3, "Lotação");		
+		map.put(2, SigaMessages.getMessage("usuario.matricula"));
+		map.put(3, SigaMessages.getMessage("usuario.lotacao"));		
 		map.put(4, "Email");
 		return map;
 	}

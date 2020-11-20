@@ -71,6 +71,7 @@ import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.TipoResponsavelEnum;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
@@ -4382,17 +4383,14 @@ public class ExMovimentacaoController extends ExController {
 
 	protected Map<Integer, String> getListaTipoResp() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Lotação");
+		map.put(1, SigaMessages.getMessage("usuario.lotacao"));
 		map.put(2, SigaMessages.getMessage("usuario.matricula"));
-		map.put(3, "Externo");
+		map.put(3, SigaMessages.getMessage("responsavel.externo"));
 		return map;
 	}
 
 	private Map<Integer, String> getListaTipoRespPerfil() {
-		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, SigaMessages.getMessage("usuario.matricula"));
-		map.put(2, "Lotação");
-		return map;
+		return TipoResponsavelEnum.getListaMatriculaLotacao();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -5036,6 +5034,7 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
+	@Transacional
 	@Get("/app/expediente/mov/exibir_no_acompanhamento_do_protocolo")
 	public void exibirNoAcompanhamentoDoProtocolo(final String sigla) {					
 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
@@ -5063,6 +5062,7 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, siglaRetorno);
 	}
 	
+	@Transacional
 	@Get("/app/expediente/mov/desfazer_exibir_no_acompanhamento_do_protocolo")
 	public void desfazerExibirNoAcompanhamentoDoProtocolo(final Long id) throws Exception {					
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder

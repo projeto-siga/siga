@@ -77,7 +77,7 @@
 		</table>
 	</div>
 	<!-- /content box -->
-	<div class="gt-table-buttons">
+	<div class="gt-table-buttons mt-2">
 		<a onclick="designacaoService.cadastrar('Incluir Designa&ccedil;&atilde;o')" class="btn btn-primary" style="color: #fff">Incluir</a>
 	</div>
 </div>

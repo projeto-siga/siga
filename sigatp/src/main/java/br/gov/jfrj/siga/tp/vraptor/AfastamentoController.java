@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Path;
@@ -78,6 +79,7 @@ public class AfastamentoController extends TpController {
 		result.include(AFASTAMENTO, afastamento);
 	}
 
+    @Transactional
 	@RoleAdmin
 	@RoleAdminMissao
 	@RoleAdminMissaoComplexo
@@ -122,7 +124,8 @@ public class AfastamentoController extends TpController {
 		}
 	}
 
-	@RoleAdmin
+    @Transactional
+    @RoleAdmin
 	@RoleAdminMissao
 	@RoleAdminMissaoComplexo
 	@Path("/excluir/{id}")

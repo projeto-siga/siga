@@ -1,8 +1,11 @@
 package br.gov.jfrj.siga.tp.interceptor;
 
+import java.util.ResourceBundle;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.servlet.jsp.jstl.core.Config;
 
 import br.com.caelum.vraptor.Accepts;
 import br.com.caelum.vraptor.AroundCall;
@@ -14,6 +17,7 @@ import br.com.caelum.vraptor.jpa.JPATransactionInterceptor;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.tp.model.TpDao;
+import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 
 
 /**
@@ -30,6 +34,9 @@ public class ContextInterceptor   {
 
 
 	private EntityManager em;
+	
+	@Inject
+    private ResourceBundle bundle;
 	
 	/**
 	 * @deprecated CDI eyes only
@@ -49,14 +56,14 @@ public class ContextInterceptor   {
 	public void intercept(SimpleInterceptorStack stack)  {
 		try {
 			ContextoPersistencia.setEntityManager(this.em);
-			//	MessagesBundle.set()
+			MessagesBundle.set(bundle);
 			TpDao.freeInstance();
 			TpDao.getInstance();
 			stack.next();
 		} catch (Exception e) {
 			throw new InterceptionException(e);
 		} finally {
-		//	MessagesBundle.remove();
+		  MessagesBundle.remove();
 		}
 	}
 

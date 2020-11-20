@@ -134,7 +134,7 @@
 														>| documento juntado ${mov.exMobil}
 														<c:if test="${mov.exMobil.podeExibirNoAcompanhamento}">
 															&nbsp<a class="showConteudoDoc link-btn btn btn-sm btn-light" href="#" 
-																onclick="popitup('/sigaex/public/app/processoArquivoAutenticado_stream?jwt=${jwt}&sigla=${mov.exMobil}&assinado=true');"
+																onclick="popitup('/sigaex/public/app/processoArquivoAutenticado_stream?jwt=${jwt}&sigla=${mov.exMobil}');"
 																rel="popover" data-title="${mov.exMobil}" 
 		    													data-content="" onmouseenter="exibeDoc(this);"
 																>Ver</a>

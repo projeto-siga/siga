@@ -31,7 +31,7 @@
 				<h5>Apensação de Documento - ${mob.siglaEDescricaoCompleta}</h5>
 			</div>
 			<div class="card-body">
-				<form action="apensar_gravar" enctype="multipart/form-data"
+				<form id="frmDoc" action="apensar_gravar" enctype="multipart/form-data"
 					class="form" method="POST">
 					<input type="hidden" name="postback" value="1" /> <input
 						type="hidden" name="sigla" value="${sigla}" />

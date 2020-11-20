@@ -180,6 +180,7 @@ public class ConfiguracaoGIController extends TpController {
         }
     }
 
+    @Transactional
     public void salvar(CpConfiguracao cpConfiguracao) throws ConfiguracaoGIControllerException {
         try {
             isValid(cpConfiguracao);

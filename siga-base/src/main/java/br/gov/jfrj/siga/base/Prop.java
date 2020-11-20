@@ -218,5 +218,8 @@ public class Prop {
 		
 		/* Tipos de possíveis responsáveis */
 		provider.addPublicProperty("/siga.substituto.tipos", "MATRICULA,LOTACAO");
+		
+		/* Obriga o preenchimento da descrição da ciência */
+		provider.addPublicProperty("/siga.ciencia.preenchimento.obrigatorio", "true");
 	}
 }

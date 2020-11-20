@@ -4934,6 +4934,10 @@ public class ExMovimentacaoController extends ExController {
 	public void ciencia_gravar(final Integer postback, final String sigla, final String descrMov) {					
 		this.setPostback(postback);
 		
+		if (Prop.getBool("/siga.ciencia.preenchimento.obrigatorio") && (descrMov == null || descrMov.trim().length() == 0)) {
+			throw new AplicacaoException("Necessário o preenchimento do campo para dar Ciência.");
+		}
+		
 		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder
 				.novaInstancia();
 

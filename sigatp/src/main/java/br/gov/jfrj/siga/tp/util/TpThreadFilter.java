@@ -61,6 +61,6 @@ public class TpThreadFilter implements Filter {
 
 
 	protected String getLoggerName() {
-		return "br.gov.jfrj.siga.sr";
+		return "br.gov.jfrj.siga.tp";
 	}
 }

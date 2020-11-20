@@ -5030,6 +5030,7 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
+	@Transacional
 	@Get("/app/expediente/mov/exibir_no_acompanhamento_do_protocolo")
 	public void exibirNoAcompanhamentoDoProtocolo(final String sigla) {					
 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
@@ -5057,6 +5058,7 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, siglaRetorno);
 	}
 	
+	@Transacional
 	@Get("/app/expediente/mov/desfazer_exibir_no_acompanhamento_do_protocolo")
 	public void desfazerExibirNoAcompanhamentoDoProtocolo(final Long id) throws Exception {					
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder

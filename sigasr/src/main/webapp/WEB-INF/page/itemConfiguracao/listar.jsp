@@ -324,7 +324,7 @@
 	function detalhesItemConfiguracaoFormat( d, obj) {
 		var tr = obj.ativo == true ? $('<tr class="detail">') : $('<tr class="detail configuracao-herdada">'),
 			detailHTML = '<td colspan="6"><table class="datatable" cellpadding="5" cellspacing="0" style="margin-left:56px;">'+
-			'<tr>'+
+			'<tr style="border-top: hidden">'+
 				'<td style="padding-right: 0px;"><b>Similaridade:</b></td>'+
 					'<td style="padding-left: 5px;">' + (obj.descricaoSimilaridade || "") + '</td>'+
 		        '</tr>'+

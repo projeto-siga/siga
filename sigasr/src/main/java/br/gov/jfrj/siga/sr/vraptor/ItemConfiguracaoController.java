@@ -39,7 +39,7 @@ import br.gov.jfrj.siga.uteis.PessoaLotaFuncCargoSelecaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 @Controller
-@Path("app/itemConfiguracao")
+@Path("/app/itemConfiguracao")
 public class ItemConfiguracaoController extends SrController {
 
 	private static final String MOSTRAR_DESATIVADOS = "mostrarDesativados";

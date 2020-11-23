@@ -18,7 +18,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "lotacaoatdrequisicao", schema = "sigatp")
 public class LotacaoAtdRequisicao/* extends GenericModel*/ {
 
 	/**

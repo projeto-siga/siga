@@ -22,7 +22,7 @@ import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "diadetrabalho", schema = "sigatp")
 public class DiaDeTrabalho extends TpModel implements Comparable<DiaDeTrabalho> {
 
 	private static final long serialVersionUID = 1L;

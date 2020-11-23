@@ -9,7 +9,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "SR_TIPO_PERMISSAO_LISTA", schema = "SIGASR")
+@Table(name = "sr_tipo_permissao_lista", schema = "sigasr")
 public class SrTipoPermissaoLista extends Objeto {
 
     private static final long serialVersionUID = 1555809464123606397L;

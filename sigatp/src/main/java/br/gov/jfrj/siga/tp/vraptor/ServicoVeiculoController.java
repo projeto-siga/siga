@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Path;
@@ -85,6 +86,7 @@ public class ServicoVeiculoController extends TpController {
         result.include(estadoServico);
     }
 
+    @Transactional
     @RoleAdmin
     @RoleAdminFrota
     @Path("/salvar")
@@ -237,6 +239,7 @@ public class ServicoVeiculoController extends TpController {
         result.include(SERVICO_STR, servico);
     }
 
+    @Transactional
     @Path("/gravarAndamentosRequisicao/{estadoRequisicao}/{dpPessoa}")
     private void gravarAndamentosRequisicao(EstadoRequisicao estadoRequisicao, DpPessoa dpPessoa, String descricao, RequisicaoTransporte requisicaoTransporte) {
         Andamento andamento = new Andamento();
@@ -272,6 +275,7 @@ public class ServicoVeiculoController extends TpController {
         return requisicaoTransporte;
     }
 
+    @Transactional
     @RoleAdmin
     @RoleAdminFrota
     @Path("/excluir/{id}")

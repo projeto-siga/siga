@@ -32,7 +32,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 @Entity
-@Table(name = "SR_ACAO", schema = "SIGASR")
+@Table(name = "sr_acao", schema = "sigasr")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class SrAcao extends HistoricoSuporte implements SrSelecionavel, Comparable<SrAcao>,  Selecionavel {
 	private static final long serialVersionUID = 8387408543308440033L;

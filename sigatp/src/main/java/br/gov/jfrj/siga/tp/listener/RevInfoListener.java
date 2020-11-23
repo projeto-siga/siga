@@ -1,13 +1,10 @@
 package br.gov.jfrj.siga.tp.listener;
 import java.net.InetAddress;
 
-import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.spi.CDI;
 
 import org.hibernate.envers.RevisionListener;
 
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.CDI;
-import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.tp.auth.annotation.DadosAuditoria;
 import br.gov.jfrj.siga.tp.model.RevInfo;
 import br.gov.jfrj.siga.tp.util.Verificador;
@@ -24,7 +21,7 @@ public class RevInfoListener  implements RevisionListener  {
 			entity.setMotivoLog(null);
 		} else {
 			
-			DadosAuditoria da = (DadosAuditoria)  CDI.current().select(DadosAuditoria.class).get(); //toria");
+			DadosAuditoria da = CDI.current().select(DadosAuditoria.class).get(); 
 			if(da == null) {
 				entity.setMatricula(null);
 				entity.setMotivoLog(null);

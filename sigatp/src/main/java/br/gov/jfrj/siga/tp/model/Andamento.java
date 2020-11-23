@@ -26,7 +26,7 @@ import br.gov.jfrj.siga.tp.vraptor.ParametroController;
 @SuppressWarnings("serial")
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "andamento", schema = "sigatp")
 public class Andamento extends TpModel implements Comparable<Andamento> {
 
 	public static final ActiveRecord<Andamento> AR = new ActiveRecord<>(Andamento.class);

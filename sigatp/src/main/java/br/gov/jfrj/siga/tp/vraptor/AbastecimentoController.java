@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import com.google.common.collect.Lists;
@@ -150,6 +151,7 @@ public class AbastecimentoController extends TpController {
         return null != getRequest().getAttribute(ABASTECIMENTO) ? getRequest().getAttribute(ABASTECIMENTO) : new Abastecimento();
     }
 
+    @Transactional
     @RoleAdmin
     @RoleAdminGabinete
     @RoleAdminMissao
@@ -208,6 +210,7 @@ public class AbastecimentoController extends TpController {
         result.include(TIPOS_COMBUSTIVEL_PARA_ABASTECIMENTO, TipoDeCombustivel.tiposParaAbastecimento());
     }
 
+    @Transactional
     @LogMotivo
     @RoleAdmin
     @RoleAdminGabinete

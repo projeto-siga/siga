@@ -1,14 +1,12 @@
 package br.gov.jfrj.siga.sr;
 
-import br.gov.jfrj.siga.sr.prop.SigaBaseProperties;
 import br.gov.jfrj.siga.sr.model.SrMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 
 
 public class SrCorreio {
 	
-	private static String remetente = SigaBaseProperties
-			.getString("servidor.smtp.usuario.remetente");
+	private static String remetente = System.getProperty("servidor.smtp.usuario.remetente");
 
 	public static void notificarAbertura(SrSolicitacao sol) throws Exception{
 		/*if (sol.solicitante.getEmailPessoa() == null)

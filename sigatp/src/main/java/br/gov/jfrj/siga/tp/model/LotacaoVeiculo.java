@@ -27,8 +27,8 @@ import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 @Entity
 // @Table(name = "LOTACAO_VEICULO_2", schema="SIGAOR")
 @Audited
-@Table(schema = "SIGATP")
-public class LotacaoVeiculo extends TpModel implements ConvertableEntity<Long> {
+@Table(name = "lotacaoveiculo", schema = "sigatp")
+public class LotacaoVeiculo extends TpModel implements ConvertableEntity {
 
 	@Id
 	@GeneratedValue(generator = "hibernate_sequence_generator")
@@ -79,7 +79,7 @@ public class LotacaoVeiculo extends TpModel implements ConvertableEntity<Long> {
 	public static String atualizarDataFimLotacaoAnterior(Veiculo veiculo) throws Exception {
 		try {
 			Map<String, Object> parametros = new HashMap<String,Object>();
-			parametros.put("idveiculo",veiculo.getId());
+			parametros.put("idVeiculo",veiculo.getId());
 			List<LotacaoVeiculo> lotacoesVeiculo = LotacaoVeiculo.AR.find("veiculo.id = :idVeiculo and dataHoraFim is null order by dataHoraInicio DESC", parametros).fetch();
 			if (lotacoesVeiculo.size() == 1) {
 				lotacoesVeiculo.get(0).dataHoraFim = Calendar.getInstance();
@@ -106,7 +106,6 @@ public class LotacaoVeiculo extends TpModel implements ConvertableEntity<Long> {
 		return id;
 	}
 
-	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}

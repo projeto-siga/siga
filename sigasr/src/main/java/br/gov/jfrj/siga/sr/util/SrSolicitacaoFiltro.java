@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.enterprise.inject.Specializes;
 import javax.persistence.Query;
 
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -19,6 +20,7 @@ import br.gov.jfrj.siga.sr.model.SrLista;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import edu.emory.mathcs.backport.java.util.Arrays;
 
+@Specializes
 public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 	private static final long serialVersionUID = 1L;
@@ -26,6 +28,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	public static final Long NENHUMA_LISTA = 0L;
 	private static final String AND = " AND ";
 
+	// Indica se o filtro esta vazio. Equivalente a filtro == null
+	private boolean vazio = true;
 	private boolean pesquisar = false;
 
 	private String dtIni;
@@ -178,18 +182,18 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			query.append(" and situacao.cpMarcador.idMarcador = " + getSituacao().getIdMarcador()); 
 		
 		query.append(" and (situacao.dtIniMarca is null or "
-					+ "situacao.dtIniMarca < sysdate) ");
+					+ "situacao.dtIniMarca < CURRENT_TIMESTAMP) ");
 		query.append(" and (situacao.dtFimMarca is null or "
-					+ "situacao.dtFimMarca > sysdate) ");
+					+ "situacao.dtFimMarca > CURRENT_TIMESTAMP) ");
 		
 		if (situacaoFiltro.equals("situacaoAux")) {
 			if (getSituacao() != null)
 				query.append(" and situacaoAux.cpMarcador.idMarcador = "
 					+ getSituacao().getIdMarcador());
 			query.append(" and (situacaoAux.dtIniMarca is null or "
-					+ "situacaoAux.dtIniMarca < sysdate) ");
+					+ "situacaoAux.dtIniMarca < CURRENT_TIMESTAMP) ");
 			query.append(" and (situacaoAux.dtFimMarca is null or "
-					+ "situacaoAux.dtFimMarca > sysdate) ");
+					+ "situacaoAux.dtFimMarca > CURRENT_TIMESTAMP) ");
 		}
 		
 		if (Filtros.deveAdicionar(getAtendente())){
@@ -222,7 +226,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			query.append(" and sol.lotaSolicitante.idLotacaoIni = "
 					+ getLotaSolicitante().getIdInicial());
 		
-		if (Filtros.deveAdicionar(getItemConfiguracao())){
+		if (Filtros.deveAdicionar(getItemConfiguracao()) && getItemConfiguracao().getItemInicial() != null) {
 			query.append(" and ultMov.itemConfiguracao.hisIdIni = "
 					+ getItemConfiguracao().getItemInicial().getIdItemConfiguracao());
 		}
@@ -473,4 +477,17 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		this.atributoSolicitacao = atributoSolicitacao;
 	}
 
+	public boolean isVazio() {
+		return vazio;
+	}
+
+	public void setVazio(boolean vazio) {
+		this.vazio = vazio;
+	}
+
+
+
+	
+	
+	
 }

@@ -1,8 +1,7 @@
 package br.gov.jfrj.siga.sr.util;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
+import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
@@ -11,8 +10,7 @@ import javax.persistence.Persistence;
  * @author Rodrigo Ramalho hodrigohamalho@gmail.com
  *
  */
-@Startup
-@Singleton
+@ApplicationScoped
 public class SrStarter {
 
 	public static EntityManagerFactory emf;

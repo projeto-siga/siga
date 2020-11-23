@@ -23,7 +23,7 @@ import br.gov.jfrj.siga.sr.model.vo.SrParametroAcordoVO;
 import br.gov.jfrj.siga.sr.vraptor.AtributoController;
 
 @Entity
-@Table(name = "SR_ATRIBUTO_ACORDO", schema = "SIGASR")
+@Table(name = "sr_atributo_acordo", schema = "sigasr")
 public class SrParametroAcordo extends HistoricoSuporte {
 
 	private static final long serialVersionUID = 1L;

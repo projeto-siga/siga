@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import br.com.caelum.vraptor.Controller;
@@ -50,6 +51,7 @@ public class ParametroController extends TpController {
         result.include("parametro", parametro);
     }
 
+    @Transactional
     @RoleAdmin
     @Path("/excluir/{id}")
     public void excluir(Long id) {
@@ -65,6 +67,7 @@ public class ParametroController extends TpController {
         result.include("parametro", parametro);
     }
 
+    @Transactional
     @RoleAdmin
     public void salvar(@Valid Parametro parametro) {
         validaCamposNulos(parametro);

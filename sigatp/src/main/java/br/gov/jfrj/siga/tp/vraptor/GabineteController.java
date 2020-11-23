@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import br.com.caelum.vraptor.Controller;
@@ -111,6 +112,7 @@ public class GabineteController extends TpController {
         }
     }
 
+    @Transactional
     @RoleAdmin
     public void salvar(@Valid Abastecimento abastecimento) throws GabineteControllerException {
         try {
@@ -135,6 +137,7 @@ public class GabineteController extends TpController {
         }
     }
 
+    @Transactional
     @RoleAdmin
     @Path("/excluir/{id}")
     public void excluir(Long id) throws GabineteControllerException {

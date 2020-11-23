@@ -52,7 +52,7 @@
 			</tr>
 			<c:forEach items="${items}" var="acao">
 				<tr>
-					<td><a href="javascript:opener.retorna_${param.propriedade}('${acao.id}','${acao.sigla}','${acao.descricao}');window.close()">${acao.sigla}</a></td>
+					<td><a href="javascript:parent.retorna_${param.propriedade}('${acao.id}','${acao.sigla}','${acao.descricao}');window.close()">${acao.sigla}</a></td>
 					<td style="padding-left: ${acao.nivel*13}px;">${acao.descricao}</td>
 				</tr>
 			</c:forEach>

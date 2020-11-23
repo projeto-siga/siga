@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,6 +102,7 @@ public class PlantoesMensaisController extends TpController {
         return Mes.getMes(mesPorExtenso);
     }
 
+    @Transactional
     @RoleAdmin
     @RoleAdminMissao
     @RoleAdminMissaoComplexo
@@ -299,6 +301,7 @@ public class PlantoesMensaisController extends TpController {
         }
     }
 
+    @Transactional
     @RoleAdmin
     @RoleAdminMissao
     @RoleAdminMissaoComplexo

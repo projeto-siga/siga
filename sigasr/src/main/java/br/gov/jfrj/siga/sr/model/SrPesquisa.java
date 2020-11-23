@@ -28,7 +28,7 @@ import com.google.gson.JsonObject;
 import edu.emory.mathcs.backport.java.util.Collections;
 
 @Entity
-@Table(name = "SR_PESQUISA", schema = "SIGASR")
+@Table(name = "sr_pesquisa", schema = "sigasr")
 public class SrPesquisa extends HistoricoSuporte {
 
 	/**

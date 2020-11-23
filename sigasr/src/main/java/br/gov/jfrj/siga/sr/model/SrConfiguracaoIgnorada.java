@@ -15,7 +15,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "SR_CONFIGURACAO_IGNORADA", schema = "SIGASR")
+@Table(name = "sr_configuracao_ignorada", schema = "sigasr")
 public class SrConfiguracaoIgnorada extends Objeto {
 
     private static final long serialVersionUID = 1L;

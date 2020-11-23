@@ -13,6 +13,7 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -228,6 +229,7 @@ public class MissaoController extends TpController {
 		return null == estado ? EstadoMissao.PROGRAMADA : estado;
 	}
 
+    @Transactional
 	@RoleAgente
 	@RoleAdmin
 	@RoleAdminMissao
@@ -397,6 +399,7 @@ public class MissaoController extends TpController {
 		condicaoComponentesVeiculo();
 	}
 
+    @Transactional
 	@RoleAdmin
 	@RoleAdminMissao
 	@RoleAdminMissaoComplexo
@@ -451,7 +454,8 @@ public class MissaoController extends TpController {
         return odometro.equals(0.0);
     }    
     
-	@RoleAdmin
+    @Transactional
+    @RoleAdmin
 	@RoleAdminMissao
 	@RoleAdminMissaoComplexo
 	@RoleAgente
@@ -506,6 +510,7 @@ public class MissaoController extends TpController {
 		return missao;
 	}
 
+    @Transactional
 	@RoleAdmin
 	@RoleAdminMissao
 	@RoleAdminMissaoComplexo
@@ -617,6 +622,7 @@ public class MissaoController extends TpController {
 		result.include(MISSAO_STR, missao);
 	}
 
+    @Transactional
 	@RoleAdmin
 	@RoleAdminMissao
 	@RoleAdminMissaoComplexo
@@ -858,6 +864,7 @@ public class MissaoController extends TpController {
 		result.include("condutoresEscalados", condutores);
 	}
 	
+    @Transactional
 	@RoleAdmin
 	@RoleAdminMissao
 	@RoleAdminMissaoComplexo

@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import br.com.caelum.vraptor.Controller;
@@ -87,6 +88,7 @@ public class PlantaoController extends TpController {
         result.forwardTo(PlantaoController.class).editar(idCondutor, 0L);
     }
 
+    @Transactional
     @RoleAdmin
     @RoleAdminMissao
     @RoleAdminMissaoComplexo
@@ -156,6 +158,7 @@ public class PlantaoController extends TpController {
         }
     }
 
+    @Transactional
     @RoleAdmin
     @RoleAdminMissao
     @RoleAdminMissaoComplexo

@@ -28,7 +28,7 @@ import br.gov.jfrj.siga.vraptor.PathResolver;
  *
  * @author Guilherme Silveira
  */
-@Typed(SigaLogicResult.class)
+@Specializes
 public class SigaLogicResult extends DefaultLogicResult {
 
 	private static final Logger logger = LoggerFactory.getLogger(DefaultLogicResult.class);

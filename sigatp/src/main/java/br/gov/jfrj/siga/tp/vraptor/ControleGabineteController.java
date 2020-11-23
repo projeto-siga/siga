@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import br.com.caelum.vraptor.Controller;
@@ -162,6 +163,7 @@ public class ControleGabineteController extends TpController {
             validator.add(new I18nMessage("odometroEmKmSaida", "controlesGabinete.odometroEmKmSaida.validation"));
     }
 
+    @Transactional
     @RoleGabinete
     @RoleAdminGabinete
     public void salvar(@Valid ControleGabinete controleGabinete) throws ControleGabineteControllerException {
@@ -193,6 +195,7 @@ public class ControleGabineteController extends TpController {
         }
     }
 
+    @Transactional
     @RoleGabinete
     @RoleAdminGabinete
     @Path("/excluir/{id}")

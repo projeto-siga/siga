@@ -185,8 +185,10 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	}
 
 	public String getDescricaoCompleta() {
-		return getNomePessoa() + ", " + getFuncaoString().toUpperCase() + ", "
-				+ getLotacao().getSiglaCompleta();
+		String funcaoStr = getFuncaoString();
+		DpLotacao lotacao = getLotacao();
+		return getNomePessoa() + ", " + (funcaoStr != null ? funcaoStr.toUpperCase() : "") + ", "
+				+ (lotacao != null ? lotacao.getSiglaCompleta() : "");				
 	}
 
 	public String getDescricaoCompletaIniciaisMaiusculas() {
@@ -197,7 +199,9 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 
 	static Pattern p1 = null;
 
-	public void setSigla(String sigla) {
+	public void setSigla(String sigla) {	
+		if (sigla == null) return;
+		
 		if (p1 == null) {
 			Map<String, CpOrgaoUsuario> mapAcronimo = new TreeMap<String, CpOrgaoUsuario>();
 			for (CpOrgaoUsuario ou : CpDao.getInstance().listarOrgaosUsuarios()) {
@@ -227,6 +231,8 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	public boolean equivale(Object other) {
 		if (other == null || ((DpPessoa) other).getId() == null
 				|| this.getId() == null)
+			return false;
+		if(this.getIdInicial() == null || ((DpPessoa)other).getIdInicial() == null)
 			return false;
 		return this.getIdInicial().longValue() == ((DpPessoa) other)
 				.getIdInicial().longValue();

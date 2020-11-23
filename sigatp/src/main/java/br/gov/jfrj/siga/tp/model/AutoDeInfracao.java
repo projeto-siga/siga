@@ -15,10 +15,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
@@ -29,8 +29,8 @@ import br.gov.jfrj.siga.tp.validation.annotation.UpperCase;
 @SuppressWarnings("serial")
 @Entity
 @Audited
-@Table(schema = "SIGATP")
-public class AutoDeInfracao extends TpModel implements ConvertableEntity<Long>, Comparable<AutoDeInfracao> {
+@Table(name = "autodeinfracao", schema = "sigatp")
+public class AutoDeInfracao extends TpModel implements ConvertableEntity, Comparable<AutoDeInfracao> {
 
 	public static final ActiveRecord<AutoDeInfracao> AR = new ActiveRecord<>(AutoDeInfracao.class);
 
@@ -295,7 +295,7 @@ public class AutoDeInfracao extends TpModel implements ConvertableEntity<Long>, 
 		this.numeroDoProcesso = numeroDoProcesso;
 	}
 
-	@Override
+	
 	public void setId(Long id) {
 		this.id = id;
 	}

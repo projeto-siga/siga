@@ -208,10 +208,10 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"),
 		@NamedQuery(name = "listarDocPendenteAssinatura", query = "select doc "
 				+ "			from ExDocumento doc where doc.idDoc in (select distinct(exDocumento.idDoc) from ExMobil mob where mob.idMobil in "
-				+ "			(select exMobil.idMobil from ExMarca label where label.cpMarcador.idMarcador = 25 and label.dpPessoaIni = :idPessoaIni)) order by doc.dtDoc desc"),
+				+ "			(select exMobil.idMobil from ExMarca label where label.cpMarcador.idMarcador = 25 and label.dpPessoaIni.idPessoa = :idPessoaIni)) order by doc.dtDoc desc"),
 		@NamedQuery(name = "listarDocPendenteAssinaturaERevisado", query = "select doc "
 				+ "			from ExDocumento doc where doc.idDoc in (select distinct(exDocumento.idDoc) from ExMobil mob where mob.idMobil in "
-				+ "			(select exMobil.idMobil from ExMarca label where label.cpMarcador.idMarcador = 71 and label.dpPessoaIni = :idPessoaIni)) order by doc.dtDoc desc"),
+				+ "			(select exMobil.idMobil from ExMarca label where label.cpMarcador.idMarcador = 71 and label.dpPessoaIni.idPessoa = :idPessoaIni)) order by doc.dtDoc desc"),
 		@NamedQuery(name = "consultarExDocumentoClassificados", query = "select doc from ExDocumento doc left join fetch doc.exClassificacao"
 				+ "		where doc.exClassificacao.codificacao like :mascara"
 				+ "		and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario"

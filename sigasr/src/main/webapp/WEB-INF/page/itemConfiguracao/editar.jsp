@@ -187,6 +187,61 @@
 	</form>
 </div>
 
+<!-- ============================================= -->
+<!-- Script referente ao modal para incluir Gestor -->
+<!-- ============================================= -->
+<script type="text/javascript">
+
+	var jDialog = $('#dialog');
+	
+	jDialog.dialog({
+	    autoOpen: false,
+	    height: 'auto',
+	    width: '80%',
+	    modal: true,
+	    resizable: false,
+	    close: function() {
+	        $("#formulario_gestorPessoaSel_sigla").val('');
+			$("#formulario_gestorLotacaoSel_sigla").val('');
+			$("#formulario_gestorPessoaSel_descricao").val('');
+			$("#formulario_gestorLotacaoSel_descricao").val('');				
+			$("#gestorPessoaSel_pessoaSelSpan").html('');  
+			$("#gestorLotacaoSel_lotacaoSelSpan").html('');
+			jDialog.data('gestorSet','');
+	
+	        validatorFormGestor.resetForm();
+	    },
+	  	open: function(){
+	      	if (jDialog.data("gestorSet"))
+	          	jDialog.dialog('option', 'title', 'Alterar Gestor');
+	      	else
+	          	jDialog.dialog('option', 'title', 'Incluir Gestor');  
+	  	}
+	});
+
+	$("#modalOk").click(function(){
+		if (!jQuery("#formGestor").valid())
+		    return false;
+	    
+		var acao = jDialog.data('acao');
+		var jTipoEscolhido = jSelect.find("option:selected");
+		
+		if(jTipoEscolhido.val() == 1) {
+			acao($("#formulario_gestorPessoaSel_sigla").val(), $("#formulario_gestorPessoaSel_descricao").val(), 'pessoa', $("#formulario_gestorPessoaSel_id").val(), jDialog.data("id"));
+			} else if (jTipoEscolhido.val() == 2) {
+				acao($("#formulario_gestorLotacaoSel_sigla").val(), $("#formulario_gestorLotacaoSel_descricao").val(), 'lotacao', $("#formulario_gestorLotacaoSel_id").val(), jDialog.data("id"));
+		}
+		
+		jDialog.dialog('close');
+	});
+		
+	$("#modalCancel").click(function(){
+		jDialog.dialog('close');
+		validatorFormGestor.resetForm();
+	});
+	
+</script>
+
 <!-- ==================================================== -->
 <!-- Modal Incluir Fator de Multiplicacao por Solicitante -->
 <!-- ==================================================== -->
@@ -224,10 +279,12 @@
  		unidadesMedida="unidadesMedida" pesquisaSatisfacao="pesquisaSatisfacao" listasPrioridade="listasPrioridade" />
 </div>
 
+
+
+
 <script type="text/javascript">
 	var jGestores = null,
 		gestores = null,
-		jDialog = null,
 		dialog = null,
 		jSelect = null,
 		jFatores = null,
@@ -262,7 +319,6 @@
 		// POPUP PARA ADICIONAR UM GESTOR
 		jGestores = $("#gestoresUl");
 		gestores = jGestores[0];
-		jDialog = $("#dialog");
 		dialog = jDialog[0];
 		jSelect = $("#gestorPessoaSelgestorLotacaoSel");
 		
@@ -273,30 +329,7 @@
 		    jDialog.data('acao',gestores.incluirItem).dialog('open');
 		});
 			 
-		jDialog.dialog({
-		    autoOpen: false,
-		    height: 'auto',
-		    width: '80%',
-		    modal: true,
-		    resizable: false,
-		    close: function() {
-		        $("#formulario_gestorPessoaSel_sigla").val('');
-				$("#formulario_gestorLotacaoSel_sigla").val('');
-				$("#formulario_gestorPessoaSel_descricao").val('');
-				$("#formulario_gestorLotacaoSel_descricao").val('');				
-				$("#gestorPessoaSel_pessoaSelSpan").html('');  
-				$("#gestorLotacaoSel_lotacaoSelSpan").html('');
-				jDialog.data('gestorSet','');
 		
-		        validatorFormGestor.resetForm();
-		    },
-		  	open: function(){
-		      	if (jDialog.data("gestorSet"))
-		          	jDialog.dialog('option', 'title', 'Alterar Gestor');
-		      	else
-		          	jDialog.dialog('option', 'title', 'Incluir Gestor');  
-		  	}
-		});
 			
 		gestores["index"] = 0;
 		gestores.incluirItem = function(siglaGestor, nomeGestor, tipoGestor, idDerivadoGestor, id) {
@@ -398,26 +431,7 @@
 		};
 	});
 		
-	$("#modalOk").click(function(){
-		if (!jQuery("#formGestor").valid())
-		    return false;
-	    
-		var acao = jDialog.data('acao');
-		var jTipoEscolhido = jSelect.find("option:selected");
-		
-		if(jTipoEscolhido.val() == 1) {
-			acao($("#formulario_gestorPessoaSel_sigla").val(), $("#formulario_gestorPessoaSel_descricao").val(), 'pessoa', $("#formulario_gestorPessoaSel_id").val(), jDialog.data("id"));
-			} else if (jTipoEscolhido.val() == 2) {
-				acao($("#formulario_gestorLotacaoSel_sigla").val(), $("#formulario_gestorLotacaoSel_descricao").val(), 'lotacao', $("#formulario_gestorLotacaoSel_id").val(), jDialog.data("id"));
-		}
-		
-		jDialog.dialog('close');
-	});
-		
-	$("#modalCancel").click(function(){
-		jDialog.dialog('close');
-		validatorFormGestor.resetForm();
-	});
+
 		
 	$("#modalOkFator").click(function() {
 		if (!jQuery("#formFator").valid())

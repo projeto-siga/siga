@@ -164,8 +164,17 @@
 		<input type="button" value="Aplicar" class="btn btn-primary" onclick="itemConfiguracaoService.aplicar()"/>
 		
 	</form>
+</div>	
+
+
+<!-- ===================== -->
+<!--  Modal de Designacao  -->
+<!-- ===================== -->
+<div id="designacaoComponent">
+	<sigasr:designacao modoExibicao="item" designacoes="designacoesItem" orgaos="orgaos" locais="locais"
+ 		unidadesMedida="unidadesMedida" pesquisaSatisfacao="pesquisaSatisfacao" listasPrioridade="listasPrioridade" />
 </div>
-		
+
 
 
 <!-- ========================= -->
@@ -219,6 +228,12 @@
 	  	}
 	});
 
+	// Click no botao "Incluir" Gestores:
+	$("#botaoIncluir").click(function(){
+	    jDialog.data('acao',gestores.incluirItem).dialog('open');
+	});
+
+	// Click no botao Ok do modal:
 	$("#modalOk").click(function(){
 		if (!jQuery("#formGestor").valid())
 		    return false;
@@ -234,13 +249,17 @@
 		
 		jDialog.dialog('close');
 	});
-		
+
+	// Click no botao Cancelar do modal:
 	$("#modalCancel").click(function(){
 		jDialog.dialog('close');
 		validatorFormGestor.resetForm();
 	});
 	
 </script>
+
+
+
 
 <!-- ==================================================== -->
 <!-- Modal Incluir Fator de Multiplicacao por Solicitante -->
@@ -274,10 +293,74 @@
 	</form>
 </div>
 
-<div id="designacaoComponent">
-	<sigasr:designacao modoExibicao="item" designacoes="designacoesItem" orgaos="orgaos" locais="locais"
- 		unidadesMedida="unidadesMedida" pesquisaSatisfacao="pesquisaSatisfacao" listasPrioridade="listasPrioridade" />
-</div>
+<!-- ================================================== -->
+<!-- Script referente ao modal para incluir Priorizacao -->
+<!-- ================================================== -->
+<script type="text/javascript">
+	var jDialogFator = $("#dialogFator");
+	jDialogFator.dialog({
+	    autoOpen: false,
+	    height: 'auto',
+	    width: '80%',
+	    modal: true,
+	    resizable: false,
+	    close: function() {
+	    	$("#formulario_fatorPessoaSel_sigla").val('');
+			$("#formulario_fatorLotacaoSel_sigla").val('');
+			$("#formulario_fatorPessoaSel_descricao").val('');
+			$("#formulario_fatorLotacaoSel_descricao").val('');
+			$("#numfatorMult").val('1');
+			$("#fatorPessoaSel_pessoaSelSpan").html('');  
+			$("#fatorLotacaoSel_lotacaoSelSpan").html('');
+			
+			jDialogFator.data('fatorMultiplicacaoSet','');
+	    	validatorFormFator.resetForm();
+		}, 
+		open: function(){
+	    	$('#erroNumFatorMult').hide();
+	
+	    	if (jDialogFator.data("fatorMultiplicacaoSet"))
+	        	jDialogFator.dialog('option', 'title', 'Alterar Fator de Multiplicação');
+	        else
+	          	jDialogFator.dialog('option', 'title', 'Incluir Fator de Multiplicação');  
+	       	}
+	});
+
+	// Click no botao "Incluir" Priorizacao:
+	$("#botaoIncluirFator").click(function(){
+	    jDialogFator.data('acaoFator',fatores.incluirItem).dialog('open');
+	});
+
+	// Click no botao Ok do modal:
+	$("#modalOkFator").click(function() {
+		if (!jQuery("#formFator").valid())
+		    return false;
+		
+		var acaoFator = jDialogFator.data('acaoFator');
+		var jTipoEscolhidoFator = jSelectFator.find("option:selected");
+		var numFatorMult = $('#numfatorMult');
+		
+		if(numFatorMult.val() > 0) {
+		    if(jTipoEscolhidoFator.val() == 1) {
+		        acaoFator($("#formulario_fatorPessoaSel_sigla").val(), $("#formulario_fatorPessoaSel_descricao").val(), $("#numfatorMult").val(), 'pessoa', $("#formulario_fatorPessoaSel_id").val(), jDialogFator.data("id"));
+		    } else if (jTipoEscolhidoFator.val() == 2) {
+		        acaoFator($("#formulario_fatorLotacaoSel_sigla").val(), $("#formulario_fatorLotacaoSel_descricao").val(), $("#numfatorMult").val(), 'lotacao', $("#formulario_fatorLotacaoSel_id").val(), jDialogFator.data("id"));
+		    }
+		    
+			  jDialogFator.dialog('close');
+		} else {
+		    $('#erroNumFatorMult').show();
+		}
+	});
+
+	// Click no botao Cancelar do modal:
+	$("#modalCancelFator").click(function(){
+		jDialogFator.dialog('close');
+		validatorFormFator.resetForm();
+	});	
+
+	
+</script>
 
 
 
@@ -285,11 +368,9 @@
 <script type="text/javascript">
 	var jGestores = null,
 		gestores = null,
-		dialog = null,
 		jSelect = null,
 		jFatores = null,
 		fatores = null,
-		jDialogFator = null,
 		dialogFator = null,
 		jSelectFator = null,
 		jNumFatorMult = null,
@@ -319,16 +400,10 @@
 		// POPUP PARA ADICIONAR UM GESTOR
 		jGestores = $("#gestoresUl");
 		gestores = jGestores[0];
-		dialog = jDialog[0];
 		jSelect = $("#gestorPessoaSelgestorLotacaoSel");
 		
 		$( "#gestoresUl" ).sortable({placeholder: "ui-state-highlight"});
 		$( "#gestoresUl" ).disableSelection();
-		
-		$("#botaoIncluir").click(function(){
-		    jDialog.data('acao',gestores.incluirItem).dialog('open');
-		});
-			 
 		
 			
 		gestores["index"] = 0;
@@ -360,45 +435,16 @@
 			//POPUP PARA ADICIONAR UM FATOR DE MULTIPLICAÃÃO E SOLICITANTE
 		jFatores = $("#fatoresUl");
 		fatores = jFatores[0];
-		jDialogFator = $("#dialogFator");
-		dialogFator = jDialogFator[0];
+		
 		jSelectFator = $("#fatorPessoaSelfatorLotacaoSel");
 		jNumFatorMult = $("#numfatorMult");
 		
 		$( "#fatoresUl" ).sortable({placeholder: "ui-state-highlight"});
 		$( "#fatoresUl" ).disableSelection();
 		
-		$("#botaoIncluirFator").click(function(){
-		    jDialogFator.data('acaoFator',fatores.incluirItem).dialog('open');
-		});
-			 
-		jDialogFator.dialog({
-		    autoOpen: false,
-		    height: 'auto',
-		    width: '80%',
-		    modal: true,
-		    resizable: false,
-		    close: function() {
-		    	$("#formulario_fatorPessoaSel_sigla").val('');
-				$("#formulario_fatorLotacaoSel_sigla").val('');
-				$("#formulario_fatorPessoaSel_descricao").val('');
-				$("#formulario_fatorLotacaoSel_descricao").val('');
-				$("#numfatorMult").val('1');
-				$("#fatorPessoaSel_pessoaSelSpan").html('');  
-				$("#fatorLotacaoSel_lotacaoSelSpan").html('');
-				
-				jDialogFator.data('fatorMultiplicacaoSet','');
-		    	validatorFormFator.resetForm();
-			}, 
-			open: function(){
-		    	$('#erroNumFatorMult').hide();
 		
-		    	if (jDialogFator.data("fatorMultiplicacaoSet"))
-		        	jDialogFator.dialog('option', 'title', 'Alterar Fator de Multiplicação');
-		        else
-		          	jDialogFator.dialog('option', 'title', 'Incluir Fator de Multiplicação');  
-		       	}
-		});
+			 
+	
 		
 		fatores["index"] = 0;
 		fatores.incluirItem = function( siglaSolicitante, nomeSolicitante, numFator, tipoFator, idDerivadoFator, idF){
@@ -433,29 +479,5 @@
 		
 
 		
-	$("#modalOkFator").click(function() {
-		if (!jQuery("#formFator").valid())
-		    return false;
-		
-		var acaoFator = jDialogFator.data('acaoFator');
-		var jTipoEscolhidoFator = jSelectFator.find("option:selected");
-		var numFatorMult = $('#numfatorMult');
-		
-		if(numFatorMult.val() > 0) {
-		    if(jTipoEscolhidoFator.val() == 1) {
-		        acaoFator($("#formulario_fatorPessoaSel_sigla").val(), $("#formulario_fatorPessoaSel_descricao").val(), $("#numfatorMult").val(), 'pessoa', $("#formulario_fatorPessoaSel_id").val(), jDialogFator.data("id"));
-		    } else if (jTipoEscolhidoFator.val() == 2) {
-		        acaoFator($("#formulario_fatorLotacaoSel_sigla").val(), $("#formulario_fatorLotacaoSel_descricao").val(), $("#numfatorMult").val(), 'lotacao', $("#formulario_fatorLotacaoSel_id").val(), jDialogFator.data("id"));
-		    }
-		    
-			  jDialogFator.dialog('close');
-		} else {
-		    $('#erroNumFatorMult').show();
-		}
-	});
-		
-	$("#modalCancelFator").click(function(){
-		jDialogFator.dialog('close');
-		validatorFormFator.resetForm();
-	});	
+	
 </script>

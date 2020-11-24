@@ -4934,6 +4934,10 @@ public class ExMovimentacaoController extends ExController {
 	public void ciencia_gravar(final Integer postback, final String sigla, final String descrMov) {					
 		this.setPostback(postback);
 		
+		if (Prop.getBool("/siga.ciencia.preenchimento.obrigatorio") && (descrMov == null || descrMov.trim().length() == 0)) {
+			throw new AplicacaoException("Necessário o preenchimento do campo para dar Ciência.");
+		}
+		
 		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder
 				.novaInstancia();
 
@@ -5030,6 +5034,7 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
+	@Transacional
 	@Get("/app/expediente/mov/exibir_no_acompanhamento_do_protocolo")
 	public void exibirNoAcompanhamentoDoProtocolo(final String sigla) {					
 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
@@ -5057,6 +5062,7 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, siglaRetorno);
 	}
 	
+	@Transacional
 	@Get("/app/expediente/mov/desfazer_exibir_no_acompanhamento_do_protocolo")
 	public void desfazerExibirNoAcompanhamentoDoProtocolo(final Long id) throws Exception {					
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder

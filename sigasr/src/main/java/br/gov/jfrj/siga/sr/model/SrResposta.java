@@ -14,7 +14,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "SR_RESPOSTA", schema = "SIGASR")
+@Table(name = "sr_resposta", schema = "sigasr")
 public class SrResposta extends Objeto {
     private static final long serialVersionUID = 6748786172865091607L;
     public static final ActiveRecord<SrResposta> AR = new ActiveRecord<>(SrResposta.class);

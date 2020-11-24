@@ -207,6 +207,14 @@ public class AppController extends GcController {
 		renderKnowledge(id, tags, "sidebar", msgvazio, urlvazio, titulo,
 				testarAcesso, popup, estiloBusca, podeCriar, pagina);
 	}
+	
+	public void knowledgeSidebarSr(Long id, String[] tags, String msgvazio,
+			String urlvazio, String titulo, boolean testarAcesso,
+			boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
+			throws Exception {
+		renderKnowledge(id, tags, "sidebar", msgvazio, urlvazio, titulo,
+				testarAcesso, popup, estiloBusca, podeCriar, pagina);
+	}
 
 	private void renderKnowledge(Long id, String[] tags, String estilo,
 			String msgvazio, String urlvazio, String titulo,
@@ -434,30 +442,28 @@ public class AppController extends GcController {
 	}
 
 	public void estatisticaLotacao() throws Exception {
-		// List<GcInformacao> lista = GcInformacao.all().fetch();
 
 		DpLotacao lotacao = getLotaTitular();
 
 		Query query1 = em().createNamedQuery("maisRecentesLotacao");
-		// query1.setParameter("idLotacao", lotacao.getId());
 		query1.setParameter("idlotacaoInicial", lotacao.getIdLotacaoIni());
 		query1.setMaxResults(5);
 		List<Object[]> listaMaisRecentes = query1.getResultList();
-		if (listaMaisRecentes.size() == 0)
+		if (listaMaisRecentes.isEmpty())
 			listaMaisRecentes = null;
 
 		Query query2 = em().createNamedQuery("maisVisitadosLotacao");
 		query2.setParameter("idlotacaoInicial", lotacao.getIdLotacaoIni());
 		query2.setMaxResults(5);
 		List<Object[]> listaMaisVisitados = query2.getResultList();
-		if (listaMaisVisitados.size() == 0)
+		if (listaMaisVisitados.isEmpty())
 			listaMaisVisitados = null;
 
 		Query query3 = em().createNamedQuery("principaisAutoresLotacao");
 		query3.setParameter("idlotacaoInicial", lotacao.getIdLotacaoIni());
 		query3.setMaxResults(5);
 		List<Object[]> listaPrincipaisAutores = query3.getResultList();
-		if (listaPrincipaisAutores.size() == 0)
+		if (listaPrincipaisAutores.isEmpty())
 			listaPrincipaisAutores = null;
 
 		GcCloud cloud = new GcCloud(150.0, 60.0);
@@ -465,7 +471,7 @@ public class AppController extends GcController {
 		query4.setParameter("idlotacaoInicial", lotacao.getIdLotacaoIni());
 		query4.setMaxResults(50);
 		List<Object[]> listaPrincipaisTags = query4.getResultList();
-		if (listaPrincipaisTags.size() == 0)
+		if (listaPrincipaisTags.isEmpty())
 			listaPrincipaisTags = null;
 		else {
 			for (Object[] t : listaPrincipaisTags) {

@@ -46,7 +46,7 @@ public class AcordoController extends SrController {
 	}
 	
 	@Inject
-    public AcordoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em, SrValidator srValidator) {
+    public AcordoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em, SrValidator srValidator) throws Throwable {
         super(request, result, dao, so, em, srValidator);
         result.on(AplicacaoException.class).forwardTo(this).appexception();
         result.on(Exception.class).forwardTo(this).exception();

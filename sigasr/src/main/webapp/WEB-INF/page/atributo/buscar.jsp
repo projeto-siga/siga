@@ -40,7 +40,7 @@
 			</tr>
 			<c:forEach items="${atributos}" var="atributo">
 				<tr>
-					<td><a href="javascript:opener.retorna_${param.propriedade}('${atributo.idAtributo}','${atributo.sigla}','${atributo.descricao}');window.close()">${atributo.nomeAtributo}</a></td>
+					<td><a href="javascript:parent.retorna_${param.propriedade}('${atributo.idAtributo}','${atributo.sigla}','${atributo.descricao}');window.close()">${atributo.nomeAtributo}</a></td>
 					<td>${atributo.descrAtributo}</td>
 				</tr>
 			</c:forEach>

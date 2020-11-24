@@ -17,7 +17,7 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 import br.gov.jfrj.siga.sr.model.vo.SrGestorItemVO;
 
 @Entity
-@Table(name = "SR_GESTOR_ITEM", schema = "SIGASR")
+@Table(name = "sr_gestor_item", schema = "sigasr")
 public class SrGestorItem extends Objeto{
 
 	/**

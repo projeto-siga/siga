@@ -58,6 +58,18 @@
     	<name>classificacao</name>
     	<path>/WEB-INF/tags/classificacao.tag</path>
     </tag-file>
+    <tag-file>
+    	<name>selecao3</name>
+    	<path>/WEB-INF/tags/selecao3.tag</path>
+    </tag-file>
+     <tag-file>
+    	<name>selecao</name>
+    	<path>/WEB-INF/tags/selecao.tag</path>
+    </tag-file>
+     <tag-file>
+    	<name>pessoaLotaSelecao2</name>
+    	<path>/WEB-INF/tags/pessoaLotaSelecao2.tag</path>
+    </tag-file>
     <function>
   		<name>replaceSiglas</name>
   		<function-class>br.gov.jfrj.siga.sr.util.SrViewUtil</function-class>

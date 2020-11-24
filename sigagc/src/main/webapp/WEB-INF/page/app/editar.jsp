@@ -1,3 +1,4 @@
+<%@ page contentType="text/html; charset=UTF-8" %>
 <%@ include file="/WEB-INF/page/include.jsp"%>
 <siga:pagina titulo="Edição de Tópico de Informação">
 
@@ -48,12 +49,12 @@
 						<c:if
 							test="${empty informacao.edicao.id || informacao.acessoPermitido(titular,lotaTitular, informacao.edicao.id)}">
 							<div class="gt-left-col gt-width-25" style="padding-left: 2em">
-								<siga:select label="Visualiza��o" name="visualizacao.id" id="informacaoVisualizacao"
+								<siga:select label="Visualização" name="visualizacao.id" id="informacaoVisualizacao"
 									list="acessos" listKey="id" listValue="nome" value="${informacao.visualizacao.id}"
 									onchange="javascript:ocultaGrupo();" />
 							</div>
 							<div class="gt-left-col gt-width-25" style="padding-left: 2em">
-								<siga:select label="Edi��o" name="edicao.id" list="acessos" id="informacaoEdicao"
+								<siga:select label="Edição" name="edicao.id" list="acessos" id="informacaoEdicao"
 									listKey="id" listValue="nome" value="${informacao.edicao.id}"
 									onchange="javascript:ocultaGrupo();" />
 							</div>
@@ -83,7 +84,7 @@
 						<label>Classificação</label>
 						<c:choose>
 							<c:when test="${empty classificacao && !editarClassificacao}">
-								<p>Esse conhecimento ainda não possui uma classificação</p>
+								<p>Esse conhecimento ainda nÃ£o possui uma classificaÃ§Ã£o</p>
 							</c:when>
 							<c:otherwise>
 								<textarea name="classificacao" class="gt-form-text" ${editarClassificacao ? '' : 'readonly'}>${classificacao}</textarea>
@@ -101,7 +102,7 @@
 								<c:when
 									test="${not empty informacao && not empty informacao.id && informacao.id != 0}">
 								ou <a href="${linkTo[AppController].editar(informacao.siglaCompacta)}">cancelar
-										alterações</a>
+										alteraÃ§Ãµes</a>
 								ou <a
 										href="${linkTo[AppController].movimentacoes(informacao.siglaCompacta)}">exibir
 										movimentações</a>
@@ -120,7 +121,7 @@
 			<!-- Sidebar Content -->
 			<div class="gt-sidebar-content">
 				<h3>Informações sobre o Preenchimento</h3>
-				<p>O campo "Título" sempre será acessível, independente do
+				<p>O campo "Título" sempre será¡ acessível, independente do
 					controle de acesso selecionado.</p>
 
 				<div id="ajax_arquivo">
@@ -128,7 +129,7 @@
 						<h3 style="padding-top: 1em">Incluir Imagens ou Arquivos no
 							Texto</h3>
 						<p>Clique em uma imagem/arquivo abaixo para incluir uma
-							referência no texto.</p>
+							referÃªncia no texto.</p>
 						<c:forEach items="${informacao.movs}" var="m">
 							<c:if
 								test="${m.tipo.id == 13 && m.movCanceladora == null}">
@@ -140,7 +141,7 @@
 									[ <img style="margin-bottom: -1px; width: 9px;"
 										src="/siga/css/famfamfam/icons/cross.png" /> <span
 										class="gt-table-action-list"> <a
-										href="javascript:if (confirm('Confirma a remoção deste anexo?')) 
+										href="javascript:if (confirm('Confirma a remoÃ§Ã£o deste anexo?')) 
 											ReplaceInnerHTMLFromAjaxResponse('../removerAnexo?sigla=${informacao.sigla}&idArq=${m.arq.id}&idMov=${m.id}',
 																null, document.getElementById('ajax_arquivo'));">remover</a></span>
 									&nbsp;]
@@ -151,51 +152,51 @@
 				</div>
 				<h3 style="padding-top: 1em">Inserir classificação no Texto</h3>
 				<p>
-					O conteúdo do campo "Texto" pode receber uma marcação especial para
+					O conteÃºdo do campo "Texto" pode receber uma marcação especial para
 					classificação. Clique <a id="marcadores" href="#">aqui</a> para
-					visualizar a opção disponível.
+					visualizar a opÃ§Ã£o disponÃ­vel.
 				</p>
 				<div id="cheatsheet" style="display: none;">
 					<table class="side-bar-light-table">
 						<tbody>
 							<!-- <tr>
-							<td>//itálico//</td>
-							<td class="arrow">→</td>
-							<td><em>itálico</em></td>
+							<td>//itÃ¡lico//</td>
+							<td class="arrow">â</td>
+							<td><em>itÃ¡lico</em></td>
 						</tr>
 						<tr>
 							<td>**negrito**</td>
-							<td class="arrow">→</td>
+							<td class="arrow">â</td>
 							<td><strong>negrito</strong></td>
 						</tr>
 						<tr>
 							<td>&&highlight&&</td>
-							<td class="arrow">→</td>
+							<td class="arrow">â</td>
 							<td><mark>highlight</mark></td>
 						</tr>
 						<tr>
-							<td>* Lista não numerada<br>* Segundo item<br>**
+							<td>* Lista nÃ£o numerada<br>* Segundo item<br>**
 								Sub item</td>
-							<td class="arrow">→</td>
-							<td>• Lista não numerada<br>• Segundo item<br>..•
+							<td class="arrow">â</td>
+							<td>â¢ Lista nÃ£o numerada<br>â¢ Segundo item<br>..â¢
 								Sub item</td>
 						</tr>
 						<tr>
 							<td># Lista numerada<br># Segundo item<br>## Sub
 								item</td>
-							<td class="arrow">→</td>
+							<td class="arrow">â</td>
 							<td>1. Lista numerada<br>2. Segundo item<br>2.1
 								Sub item</td>
 						</tr> -->
 							<tr>
 								<td>#classificacao-conhecimento<br>
-								<td class="arrow">→</td>
+								<td class="arrow">â</td>
 								<td><a href="#">#classificacao-conhecimento</a></td>
 							</tr>
 							<!-- 
 					<tr>
 						<td>Link para [[outro conhecimento]]</td>
-						<td class="arrow">→</td>
+						<td class="arrow">â</td>
 						<td>Link to <a
 							href="http://www.wikicreole.org/attach/CheatSheet/URL">wiki
 								page</a>
@@ -204,60 +205,60 @@
  -->
 							<!-- 	<tr>
 							<td>[[URL|nome do link]]</td>
-							<td class="arrow">→</td>
+							<td class="arrow">â</td>
 							<td><a
 								href="http://www.wikicreole.org/attach/CheatSheet/URL">nome
 									do link</a></td>
 						</tr>
 
 						<tr>
-							<td>== Título grande<br>=== Título médio<br>====
-								Título pequeno</td>
-							<td class="arrow">→</td>
+							<td>== TÃ­tulo grande<br>=== TÃ­tulo mÃ©dio<br>====
+								TÃ­tulo pequeno</td>
+							<td class="arrow">â</td>
 							<td><span style="font-size: 120%; font-weight: bold;">
-									Título grande</span><br> <span
-								style="font-size: 110%; font-weight: bold;">Título médio</span><br>
-								<span style="font-size: 100%; font-weight: bold;">Título
+									TÃ­tulo grande</span><br> <span
+								style="font-size: 110%; font-weight: bold;">TÃ­tulo mÃ©dio</span><br>
+								<span style="font-size: 100%; font-weight: bold;">TÃ­tulo
 									pequeno</span></td>
 						</tr>
 
 						<tr>
-							<td>Não<br> quebrar a linha!<br> <br>Use uma
+							<td>NÃ£o<br> quebrar a linha!<br> <br>Use uma
 								linha vazia</td>
-							<td class="arrow">→</td>
-							<td>Não quebrar a linha!<br> <br>Use uma linha
+							<td class="arrow">â</td>
+							<td>NÃ£o quebrar a linha!<br> <br>Use uma linha
 								vazia</td>
 						</tr>
 						<tr>
-							<td>Quebra de linha\\forçada<br></td>
-							<td class="arrow">→</td>
-							<td>Quebra de linha<br>forçada</td>
+							<td>Quebra de linha\\forÃ§ada<br></td>
+							<td class="arrow">â</td>
+							<td>Quebra de linha<br>forÃ§ada</td>
 						</tr>
 						<tr>
 							<td>Linha horizontal:<br>----</td>
-							<td class="arrow">→</td>
+							<td class="arrow">â</td>
 							<td>Linha horizontal:
 								<hr></td>
 						</tr>
 						<tr>
-							<td>{{imagem.jpg|título}}</td>
-							<td class="arrow">→</td>
-							<td>Imagem com título</td>
+							<td>{{imagem.jpg|tÃ­tulo}}</td>
+							<td class="arrow">â</td>
+							<td>Imagem com tÃ­tulo</td>
 						</tr>
 						<tr>
-							<td>|cabeçalho|cabeçalho|<br>|coluna|coluna|<br>|coluna|coluna|</td>
-							<td class="arrow">→</td>
+							<td>|cabeÃ§alho|cabeÃ§alho|<br>|coluna|coluna|<br>|coluna|coluna|</td>
+							<td class="arrow">â</td>
 							<td>Tabela</td>
 						</tr>
 						<tr>
-							<td>{{{<br>== [[não|formatar]]<br />}}}</td>
-							<td class="arrow">→</td>
-							<td>== [[não|formatar]]:</td>
+							<td>{{{<br>== [[nÃ£o|formatar]]<br />}}}</td>
+							<td class="arrow">â</td>
+							<td>== [[nÃ£o|formatar]]:</td>
 						</tr> -->
 						</tbody>
 					</table>
 					<br />
-					<p>Não usar caracteres especiais ou espaço</p>
+					<p>NÃ£o usar caracteres especiais ou espaço</p>
 				</div>
 			</div>
 		</div>

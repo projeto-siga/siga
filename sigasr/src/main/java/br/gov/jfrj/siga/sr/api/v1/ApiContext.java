@@ -12,6 +12,7 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.sr.util.SrStarter;
 
+
 public class ApiContext implements Closeable {
 	EntityManager em;
 	boolean transacional;

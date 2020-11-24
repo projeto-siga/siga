@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Path;
@@ -167,6 +168,7 @@ public class ConfiguracaoGIController extends TpController {
         }
     }
 
+    @Transactional
     @Path("/excluir/{id}")
     public void excluir(Long id) throws ConfiguracaoGIControllerException {
         try {
@@ -178,6 +180,7 @@ public class ConfiguracaoGIController extends TpController {
         }
     }
 
+    @Transactional
     public void salvar(CpConfiguracao cpConfiguracao) throws ConfiguracaoGIControllerException {
         try {
             isValid(cpConfiguracao);

@@ -11,14 +11,12 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
-
-import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Controller;
+import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.upload.DefaultUploadedFile;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
-import br.gov.jfrj.siga.sr.prop.SigaBaseProperties;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.model.SrAcao;
@@ -144,7 +142,7 @@ public class SolicitacaoEmailController extends SrController {
 	}
 
 	private SrAcao recuperarAcao() {
-		String siglaDaAcao = SigaBaseProperties.getString(_NOME_PARAM_ACAO_SIGLA);
+		String siglaDaAcao = System.getProperty(_NOME_PARAM_ACAO_SIGLA);
 		SrAcao acao = null;
 		try {
 			Map<String, Object> parametros = new HashMap<String,Object>();
@@ -157,7 +155,7 @@ public class SolicitacaoEmailController extends SrController {
 	}
 
 	private SrItemConfiguracao recuperarItem() {
-		String siglaDoItem = SigaBaseProperties.getString(_NOME_PARAM_ITEM_SIGLA);
+		String siglaDoItem = System.getProperty(_NOME_PARAM_ITEM_SIGLA);
 		SrItemConfiguracao itemConfiguracao = null;
 		try {
 			Map<String, Object> parametros = new HashMap<String,Object>();

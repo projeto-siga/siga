@@ -1641,6 +1641,42 @@ public class ExDao extends CpDao {
 		
 	}
 	
+	public List<CpMarcador> listarCpMarcadoresDaLotacao(DpLotacao lot) {
+		DpLotacao lotIni = lot.getLotacaoInicial();
+		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
+		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);
+		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
+		Predicate predicateAnd;
+		Predicate predicateEqualTipoMarcador  = criteriaBuilder.equal(cpMarcadorRoot.get("cpTipoMarcador"), CpTipoMarcador.TIPO_MARCADOR_LOTACAO);
+		Predicate predicateEqualLotacaoIni  = criteriaBuilder.equal(cpMarcadorRoot.get("dpLotacaoIni"), lotIni);
+		
+		predicateAnd = criteriaBuilder.and(predicateEqualTipoMarcador, predicateEqualLotacaoIni);
+		
+		criteriaQuery.where(predicateAnd);
+		return em().createQuery(criteriaQuery).getResultList();
+	}
+	
+	public List<CpMarcador> listarCpMarcadoresDisponiveis(DpLotacao lot) {
+		List<CpMarcador> listaConcatenada = listarCpMarcadoresGerais();
+		List<CpMarcador> listaTaxonomia = listarCpMarcadoresTaxonomiaAdministrada();
+		List<CpMarcador> listaLotacao = listarCpMarcadoresDaLotacao(lot);
+		
+		if (listaTaxonomia != null) {
+			listaConcatenada.addAll(listaTaxonomia);	
+		}
+		
+		if (listaLotacao != null) {
+			listaConcatenada.addAll(listaLotacao);	
+		}
+		
+		listaConcatenada.sort(CpMarcador.ORDEM_COMPARATOR);
+		listaConcatenada.removeIf(m -> m.getHisDtFim() != null);
+
+		return listaConcatenada;
+		
+		
+	}
+	
 	public List<ExTpDocPublicacao> listarExTiposDocPublicacao() {
 		return findAndCacheByCriteria(CACHE_QUERY_HOURS,
 				ExTpDocPublicacao.class);

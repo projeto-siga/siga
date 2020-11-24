@@ -10,8 +10,11 @@ import java.util.ArrayList;
 
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
+import br.gov.jfrj.siga.dp.CpTipoMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMarca;
@@ -172,7 +175,7 @@ public class ExMarcadorBL {
 		if (!mob.isArquivado())
 			calcularMarcadoresTransferencia(dt);
 
-		acrescentarMarcadoresManuais(m, dt);
+		acrescentarMarcadoresManuais();
 
 		// Quando está na caixa de entrada, substituir por "A Receber", se for
 		// físico
@@ -237,9 +240,8 @@ public class ExMarcadorBL {
 		return;
 	}
 
-	private void acrescentarMarcadoresManuais(long m, Date dt) {
+	private void acrescentarMarcadoresManuais() {
 		// Acrescentar marcas manuais (Urgente, Idoso, etc)
-		boolean fEmAndamento = m == CpMarcador.MARCADOR_EM_ANDAMENTO;
 		ExMobil geral = mob.doc().getMobilGeral();
 		
 		// Conteplar movimentações gerais e também as da via específica
@@ -255,20 +257,37 @@ public class ExMarcadorBL {
 			// Aplicar apenas no móbil correto
 			if (marcador.isAplicacaoGeral() && !mob.isGeral())
 				continue;
-			if (marcador.isAplicacaoViaEspecificaOuUltimoVolume() && (mob.isGeral() || mob.isVolumeEncerrado()))
+			if (marcador.isAplicacaoGeralOuViaEspecificaOuUltimoVolume() && (mob.isGeral() || mob.isVolumeEncerrado()))
 				continue;
-			if (marcador.isAplicacaoTodasAsVias() && !mob.isVia())
+			if (marcador.isAplicacaoGeralOuTodasAsViasOuUltimoVolume() && ((mob.isGeral() && mob.doc().isFinalizado())
+					|| mob.isVolumeEncerrado()))
 				continue;
+			
+			// Aplicar marcas de lotação apenas se o atendente for a lotação
+			if (marcador.getCpTipoMarcador().getIdTpMarcador().equals(CpTipoMarcador.TIPO_MARCADOR_LOTACAO)
+					&& marcador.getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.ATENDENTE
+					&& marcador.getDpLotacaoIni() != null) {
+				DpLotacao lotaResp = mob.doc().getLotaCadastrante();
+				if (mob.doc().isFinalizado() && !mob.isGeral() && mob.getUltimaMovimentacaoNaoCancelada() != null) {
+					DpLotacao lot = mob.getUltimaMovimentacaoNaoCancelada().getLotaResp();
+					if (lot != null)
+						lotaResp = lot;
+				}
+				if (!lotaResp.equivale(marcador.getDpLotacaoIni()))
+						continue;
+			}
 			
 			// Calcular datas de início e fim
 			Date dtIni = null;
 			Date dtFim = null;
-			if (dtIni == null && mov.getDtParam1() != null)
+			if (dtIni == null && mov.getDtParam1() != null && mov.getDtParam2() != null && marcador.getIdTpExibicao() == CpMarcadorTipoExibicaoEnum.MENOR_DATA)
+				dtIni = mov.getDtParam1().before(mov.getDtParam2()) ? mov.getDtParam1() : mov.getDtParam2();
+			if (dtIni == null && mov.getDtParam1() != null && marcador.getIdTpExibicao() == CpMarcadorTipoExibicaoEnum.DATA_PLANEJADA)
 				dtIni = mov.getDtParam1();
-			if (dtIni == null && mov.getDtParam2() != null)
+			if (dtIni == null && mov.getDtParam2() != null && marcador.getIdTpExibicao() == CpMarcadorTipoExibicaoEnum.DATA_LIMITE)
 				dtIni = mov.getDtParam2();
 			if (dtIni == null)
-				dtIni = dt;
+				dtIni = mov.getDtIniMov();
 
 			// Calcular pessoa ou lotação
 			DpPessoa pes = null;
@@ -320,6 +339,7 @@ public class ExMarcadorBL {
 		acrescentarMarcadoresDoCossignatario();
 		acrescentarMarcadoresAssinaturaComSenha();
 		acrescentarMarcadorPublicacaoPortalTransparencia();
+		acrescentarMarcadoresManuais();
 	}
 
 	protected boolean acrescentarMarcadoresSemEfeito() {

@@ -140,7 +140,7 @@ public class ExMovimentacaoVO extends ExVO {
 
 		calcularClasse(mov);
 
-		desabilitada = mov.getExMovimentacaoRef() != null && mov.getExMovimentacaoRef().isCancelada()
+		desabilitada = (mov.getExMovimentacaoRef() != null && mov.getExMovimentacaoRef().isCancelada() && !mov.getIdTpMov().equals(TIPO_MOVIMENTACAO_MARCACAO))
 				|| mov.getExMovimentacaoCanceladora() != null
 				|| mov.getIdTpMov().equals(TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO);
 		
@@ -181,7 +181,17 @@ public class ExMovimentacaoVO extends ExVO {
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_MARCACAO) {
-			descricao = mov.getMarcador().getDescrMarcador() + (mov.getObs() != null && mov.getObs().trim().length() > 0 ? ", obs: " + mov.getObs() : "");
+			descricao = mov.getMarcador().getDescrMarcador();
+			if (mov.getSubscritor() != null) 
+				descricao += ", interessado: " + mov.getSubscritor().getPrimeiroNomeEIniciais();
+			if (mov.getLotaSubscritor() != null) 
+				descricao += (mov.getSubscritor() == null ? ", lotação interessada: " : "/") + mov.getLotaSubscritor().getSiglaCompleta();
+			if (mov.getDtParam1() != null) 
+				descricao += ", data planejada: " + Data.formatDataETempoRelativo(mov.getDtParam1());
+			if (mov.getDtParam1() != null) 
+				descricao += ", data limite: " + Data.formatDataETempoRelativo(mov.getDtParam2());
+			if (mov.getObs() != null && mov.getObs().trim().length() > 0)
+				descricao += ", obs: " + mov.getObs();
 			addAcao(AcaoVO.builder().nome("Cancelar").nameSpace("/app/expediente/mov")
 					.acao("cancelar_movimentacao_gravar").params("sigla", mov.mob().getCodigoCompacto())
 					.params("id", mov.getIdMov().toString()).post(true)

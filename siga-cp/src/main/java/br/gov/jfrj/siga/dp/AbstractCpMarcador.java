@@ -26,6 +26,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
@@ -48,6 +49,7 @@ import br.gov.jfrj.siga.cp.CpMarcadorTipoDataEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoTextoEnum;
+import br.gov.jfrj.siga.cp.converter.CpMarcadorTipoAplicacaoEnumConverter;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
@@ -123,29 +125,23 @@ public abstract class AbstractCpMarcador  extends HistoricoAuditavelSuporte impl
 	@Column(name = "ID_ICONE")
 	private CpMarcadorIconesEnum idIcone;
 	
-	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "ID_TP_APLICACAO_MARCADOR")
 	private CpMarcadorTipoAplicacaoEnum idTpAplicacao;
 
-	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "ID_TP_DATA_LIMITE")
 	private CpMarcadorTipoDataEnum idTpDataLimite;
 
-	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "ID_TP_DATA_PLANEJADA")
 	private CpMarcadorTipoDataEnum idTpDataPlanejada;
 
-	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "ID_TP_OPCAO_EXIBICAO")
 	private CpMarcadorTipoExibicaoEnum idTpExibicao;
 
-	@Enumerated(EnumType.ORDINAL)
-	@Column(name = "ID_TP_TEXTO")
-	private CpMarcadorTipoTextoEnum idTpTexto;
-
-	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "ID_TP_INTERESSADO")
 	private CpMarcadorTipoInteressadoEnum idTpInteressado;
+	
+	@Column(name = "ID_TP_TEXTO")
+	private CpMarcadorTipoTextoEnum idTpTexto;
 
 	@Column(name = "HIS_ID_INI")
 	@Desconsiderar

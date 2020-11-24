@@ -4,6 +4,7 @@ import com.crivano.jlogic.And;
 import com.crivano.jlogic.CompositeExpressionSuport;
 import com.crivano.jlogic.Expression;
 import com.crivano.jlogic.Not;
+import com.crivano.jlogic.Or;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -27,7 +28,9 @@ public class ExPodeMarcarComMarcador extends CompositeExpressionSuport {
 
 	@Override
 	protected Expression create() {
-		return And.of(Not.of(And.of(new ExEMarcadorUnico(marcador), new ExEstaMarcadoComMarcador(mob, marcador))),
+		return And.of(
+				Or.of(Not.of(new ExEMarcadorUnico(marcador)),
+						Not.of(new ExEstaMarcadoComMarcadorOuOGeral(mob, marcador))),
 				new ExPodeMarcar(mob, titular, lotaTitular));
 	}
 

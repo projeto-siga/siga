@@ -103,6 +103,7 @@ import br.gov.jfrj.siga.bluc.service.ValidateResponse;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.TipoConteudo;
@@ -112,6 +113,7 @@ import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.CpTipoMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpResponsavel;
@@ -4883,26 +4885,48 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("não foi informado o marcador");
 		
 		final ExMobil geral = mob.doc().getMobilGeral();
-
-			try {
-				iniciarAlteracao();
-
-				final ExMovimentacao mov = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO,
-						cadastrante, lotaCadastrante, geral, dtMov, null, null, titular, lotaTitular, dtMov);
-
-				mov.setDescrMov(observacoes);
-				mov.setMarcador(marcador);
-				mov.setDtParam1(dataPlanejada);
-				mov.setDtParam2(dataLimite);
-				mov.setSubscritor(subscritor);
-				mov.setLotaSubscritor(lotaSubscritor);
-
-				gravarMovimentacao(mov);
-				concluirAlteracao(mov);
-			} catch (final Exception e) {
-				cancelarAlteracao();
-				throw new RuntimeException("Erro ao fazer marcação.", e);
+		
+		// Localiza a última movimentação de marcação de lotação
+		ExMovimentacao movAnterior = null;
+		if (marcador.getCpTipoMarcador().getIdTpMarcador().equals(CpTipoMarcador.TIPO_MARCADOR_LOTACAO) 
+				&& marcador.getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.ATENDENTE) {
+			List<ExMovimentacao> movs = mob.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true);
+			if (!mob.isGeral())
+				movs.addAll(geral.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true));
+			for (ExMovimentacao mov : movs) {
+				if (mov.getMarcador() != null && mov.getMarcador().getCpTipoMarcador().getIdTpMarcador().equals(CpTipoMarcador.TIPO_MARCADOR_LOTACAO)) {
+					movAnterior = mov;
+					break;
+				}
 			}
+		}
+
+		try {
+			iniciarAlteracao();
+
+			final ExMovimentacao mov = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO,
+					cadastrante, lotaCadastrante, 
+					mob.isVia() && marcador.isAplicacaoGeralOuViaEspecificaOuUltimoVolume() 
+					 ? mob : geral, 
+					dtMov, null, null, titular, lotaTitular, dtMov);
+
+			mov.setDescrMov(observacoes);
+			mov.setMarcador(marcador);
+			mov.setDtParam1(dataPlanejada);
+			mov.setDtParam2(dataLimite);
+			mov.setSubscritor(subscritor);
+			mov.setLotaSubscritor(lotaSubscritor);
+
+			if (movAnterior != null) {
+				mov.setExMovimentacaoRef(movAnterior);
+				gravarMovimentacaoCancelamento(mov, movAnterior);
+			} else
+				gravarMovimentacao(mov);
+			concluirAlteracao(mov);
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new RuntimeException("Erro ao fazer marcação.", e);
+		}
 	}
 
 	public void redefinirNivelAcesso(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExDocumento doc,

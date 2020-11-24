@@ -315,7 +315,6 @@
 										<th class="text-left"><fmt:message key="usuario.lotacao"/></th>
 										<th class="text-left">Evento</th>
 										<th class="text-left">Descrição</th>
-										<th></th>
 									</tr>
 								</thead>
 								<c:set var="evenorodd" value="odd" />
@@ -339,7 +338,7 @@
 															<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}"
 																pos="${acao.pos}"
 																url="${pageContext.request.contextPath}${acao.url}"
-																test="${true}" popup="${acao.popup}"
+																test="${acao.pode}" explicacao="${acao.explicacao}" popup="${acao.popup}"
 																confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
 																idAjax="${mov.idMov}" classe="${acao.classe}" post="${acao.post}" />
 															<c:if test='${assinadopor and mov.idTpMov == 2}'> ${mov.complemento}

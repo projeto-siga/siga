@@ -59,7 +59,7 @@ public class DocSiglaMarcadoresDisponiveisGet implements IDocSiglaMarcadoresDisp
 						"Acesso ao documento " + mob.getSigla() + " permitido somente a usuários autorizados. ("
 								+ titular.getSigla() + "/" + lotaTitular.getSiglaCompleta() + ")");
 
-			List<CpMarcador> marcadores = ExDao.getInstance().listarCpMarcadoresGeraisTaxonomiaAdministrada();
+			List<CpMarcador> marcadores = ExDao.getInstance().listarCpMarcadoresDisponiveis(so.getLotaTitular());
 
 			if (marcadores != null) {
 				resp.list = new ArrayList<>();

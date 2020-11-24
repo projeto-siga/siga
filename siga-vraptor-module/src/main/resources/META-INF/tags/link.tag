@@ -45,7 +45,6 @@
 			class="mr-1 mb-1" title="${titleImg}">
 	</c:set>
 </c:if>
-
 <c:if test="${empty test or test}">
 	<c:if test="${!linkBotoes}">
 		<c:if test="${not empty linkSeparator}">

@@ -80,6 +80,14 @@
 		<class>br.gov.jfrj.siga.cp.CpArquivoBlob</class>
 		<class>br.gov.jfrj.siga.cp.CpArquivoExcluir</class>
 
+		<class>br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum</class>
+
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoAplicacaoEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoDataEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoExibicaoEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoInteressadoEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoTextoEnumConverter</class>
+
 		<properties>
 		<property name="hibernate.jpa.compliance.global_id_generators" value="false"/>
 			<property name="hibernate.cache.use_query_cache" value="true" />

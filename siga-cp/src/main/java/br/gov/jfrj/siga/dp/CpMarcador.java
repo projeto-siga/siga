@@ -34,14 +34,14 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import br.gov.jfrj.siga.cp.CpMarcadorTipoDataEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
-@Cacheable
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "corporativo.cp_marcador")
 public class CpMarcador extends AbstractCpMarcador implements Serializable {
@@ -185,9 +185,9 @@ public class CpMarcador extends AbstractCpMarcador implements Serializable {
 	final static public long MARCADOR_PRONTO_PARA_ASSINAR = 71;
 
 	public static final long MARCADOR_COMO_REVISOR = 72;
-	
+
 	public static final long MARCADOR_PORTAL_TRANSPARENCIA = 73;
-	
+
 	final static public long MARCADOR_URGENTE = 1000;
 
 	final static public long MARCADOR_IDOSO = 1001;
@@ -197,17 +197,17 @@ public class CpMarcador extends AbstractCpMarcador implements Serializable {
 	final static public long MARCADOR_PRIORITARIO = 1003;
 
 	final static public long MARCADOR_RESTRICAO_ACESSO = 1004;
-	
+
 	final static public long MARCADOR_DOCUMENTO_ANALISADO = 1005;
-	
+
 	final static public long MARCADOR_COVID_19 = 1006;
 
 	final static public long MARCADOR_NOTA_EMPENHO = 1007;
-	
+
 	final static public long MARCADOR_DEMANDA_JUDICIAL_BAIXA = 1008;
-	
+
 	final static public long MARCADOR_DEMANDA_JUDICIAL_MEDIA = 1009;
-	
+
 	final static public long MARCADOR_DEMANDA_JUDICIAL_ALTA = 1010;
 
 	public static ActiveRecord<CpMarcador> AR = new ActiveRecord<>(CpMarcador.class);
@@ -219,8 +219,7 @@ public class CpMarcador extends AbstractCpMarcador implements Serializable {
 	 * Ordena de acordo com a {@link #getOrdem() Ordem}.
 	 */
 	public static final Comparator<CpMarcador> ORDEM_COMPARATOR = Comparator
-			.nullsFirst(Comparator.comparing(CpMarcador::getOrdem, 
-					  Comparator.nullsFirst(Comparator.naturalOrder())));
+			.nullsFirst(Comparator.comparing(CpMarcador::getOrdem, Comparator.nullsFirst(Comparator.naturalOrder())));
 
 	public CpMarcador() {
 		super();
@@ -246,29 +245,33 @@ public class CpMarcador extends AbstractCpMarcador implements Serializable {
 	}
 
 	public boolean isAplicacaoGeral() {
-		return false;
+		return getIdTpAplicacao() == CpMarcadorTipoAplicacaoEnum.GERAL;
 	}
 
-	public boolean isAplicacaoViaEspecificaOuUltimoVolume() {
-		return false;
+	public boolean isAplicacaoGeralOuViaEspecificaOuUltimoVolume() {
+		return getIdTpAplicacao() == CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME;
 	}
 
-	public boolean isAplicacaoTodasAsVias() {
-		return true;
+	public boolean isAplicacaoGeralOuTodasAsViasOuUltimoVolume() {
+		return getIdTpAplicacao() == CpMarcadorTipoAplicacaoEnum.TODAS_AS_VIAS_OU_ULTIMO_VOLUME;
 	}
 
 	public boolean isInteressadoAtentende() {
-		return true;
+		return getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.ATENDENTE;
 	}
 
 	public boolean isInteressadoPessoa() {
-		return false;
+		return getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.PESSOA
+				|| getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA
+				|| getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.PESSOA_OU_LOTACAO;
 	}
 
 	public boolean isInteressadoLotacao() {
-		return false;
+		return getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.LOTACAO
+				|| getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA
+				|| getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.PESSOA_OU_LOTACAO;
 	}
-	
+
 	public Integer getHisAtivo() {
 		return getHisDtFim() != null ? 1 : 0;
 	}

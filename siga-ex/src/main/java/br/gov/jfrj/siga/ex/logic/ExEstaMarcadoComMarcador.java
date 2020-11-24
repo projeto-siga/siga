@@ -4,8 +4,9 @@ import com.crivano.jlogic.Expression;
 import com.crivano.jlogic.JLogic;
 
 import br.gov.jfrj.siga.dp.CpMarcador;
-import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.ExMovimentacao;
+import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 
 public class ExEstaMarcadoComMarcador implements Expression {
 
@@ -19,8 +20,8 @@ public class ExEstaMarcadoComMarcador implements Expression {
 
 	@Override
 	public boolean eval() {
-		for (ExMarca mar : mob.getExMarcaSetAtivas()) {
-			if (marcador.equals(mar.getCpMarcador()))
+		for (ExMovimentacao mov : mob.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true)) {
+			if (this.marcador.equivale(mov.getMarcador()))
 				return true;
 		}
 		return false;
@@ -28,7 +29,8 @@ public class ExEstaMarcadoComMarcador implements Expression {
 
 	@Override
 	public String explain(boolean result) {
-		return JLogic.explain("está marcado com " + marcador.getDescrMarcador(), result);
+		return mob.getCodigoCompacto() + " " + (result ? "" : JLogic.NOT) + "está marcado com "
+				+ marcador.getDescrMarcador();
 	}
 
 }

@@ -3,9 +3,14 @@ package br.gov.jfrj.siga.cp;
 import java.util.ArrayList;
 import java.util.List;
 
-public enum CpMarcadorTipoAplicacaoEnum {
-	GERAL(0, "Geral"), EM_TODAS_VIAS(1, "Em todas as vias"),
-	VIA_ESPECIFICA_OU_ULTIMO_VOLUME(2, "Via específica ou último volume");
+import br.gov.jfrj.siga.cp.converter.IEnumWithId;
+
+public enum CpMarcadorTipoAplicacaoEnum implements IEnumWithId {
+	GERAL(1, "Geral"),
+	//
+	TODAS_AS_VIAS_OU_ULTIMO_VOLUME(2, "Em todas as vias"),
+	//
+	VIA_ESPECIFICA_OU_ULTIMO_VOLUME(3, "Via específica ou último volume"),;
 
 	private final Integer id;
 	private final String descricao;
@@ -30,4 +35,5 @@ public enum CpMarcadorTipoAplicacaoEnum {
 	public String getDescricao() {
 		return descricao;
 	}
+
 }

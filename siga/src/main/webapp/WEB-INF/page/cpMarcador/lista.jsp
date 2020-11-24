@@ -8,67 +8,20 @@
 		<input type="hidden" name="paramoffset" value="0" /> <input
 			type="hidden" name="p.offset" value="0" />
 		<div class="container-fluid">
-			<div class="card bg-light mb-3">
-				<div class="card-header">
-					<h5>Cadastro de Marcadores</h5> 
-				</div>
-				<div class="card-body">
-					<div class="row">
-						<div class="col-md-4">
-							<div class="form-group" id="idLotacaoGroup">
-								<label for="idLotacaoPesquisa"><fmt:message
-										key="usuario.lotacao" /></label> <select
-									class="form-control siga-select2" id="idLotacaoPesquisa"
-									style="width: 100%" name="idLotacaoPesquisa"
-									value="${idLotacaoPesquisa}">
-									<c:forEach items="${listaLotacao}" var="item">
-										<option value="${item.idLotacao}"
-											${item.idLotacao == idLotacaoPesquisa ? 'selected' : ''}>
-											<c:if test="${item.descricao ne 'Selecione'}">${item.siglaLotacao} / </c:if>${item.descricao}
-										</option>
-									</c:forEach>
-								</select>
-							</div>
-						</div>
-						<div class="col-md-2">
-							<div class="form-group" id="tipoMarcador">
-								<label for="idTpMarcador">Tipo de Marcador</label> <select
-									class="form-control" id="idTpMarcador" name="idTpMarcador"
-									value="${idTpMarcador}">
-									<c:forEach items="${listaTipoMarcador}" var="item">
-										<option value="${item.idTpMarcador}"
-											${item.idTpMarcador == idTpMarcador ? 'selected' : ''}>
-											${item.descrTipoMarcador}</option>
-									</c:forEach>
-								</select>
-							</div>
-						</div>
-						<div class="col-md-4">
-							<div class="form-group" id="idDescricao">
-								<label for="idDescricao">Descri&ccedil;&atilde;o</label> <input
-									class="form-control" id="idDescricao" name="idDescricao"
-									value="${idDescricao}"> </input>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-sm-12">
-							<button type="submit" class="btn btn-primary">Pesquisar</button>
-						</div>
-					</div>
-				</div>
+			<div class="card-header">
+				<h5>Cadastro de Marcadores</h5> 
 			</div>
 
 			<!-- main content -->
-			<h5>Marcadores cadastrados</h5>
 			<table border="0" class="table table-sm table-striped">
 				<thead class="${thead_color}">
 					<tr>
 						<th class="text-left w-10">Tipo</th>
-						<th class="text-left w-10">Exibição</th>
-						<th class="text-left w-40">Marcador</th>
-						<th class="text-left w-20">Exibir para</th>
-						<th class="text-left w-10">Aplica&ccedil;&atilde;o</th>
+						<th class="text-left w-20">Marcador</th>
+						<th class="text-left w-5">Aplica&ccedil;&atilde;o</th>
+						<th class="text-left w-5">Exibição</th>
+						<th class="text-left w-5">Texto</th>
+						<th class="text-left w-5">Interessado</th>
 						<th colspan="2" class="text-left w-10">Op&ccedil;&otilde;es</th>
 					</tr>
 				</thead>
@@ -77,33 +30,33 @@
 					<c:forEach items="${listaMarcadores}" var="marcador">
 						<tr>
 							<td class="text-left w-10">${marcador.cpTipoMarcador.descrTipoMarcador}</td>
-							<td class="text-left w-10">Na Data Prevista</td>
-							<td class="text-left w-40"><span
+							<td class="text-left w-20"><span
 								class="badge badge-pill badge-secondary tagmesa btn-xs"
-								:style="{color: marcador.cor + ' !important'}"> <i
-									class="fas fa-tag" style="color: ${marcador.cor}"></i>
+								:style="{color: marcador.idCor.descricao + ' !important'}"> <i
+									class="${marcador.idIcone.codigoFontAwesome}" style="color: ${marcador.idCor.descricao}"></i>
 									${marcador.descrMarcador}
-							</span> <small class="">${marcador.idTpDataLimite ne CpMarcadorTipoDataEnum.DESATIVADA ? ' - Com Data Limite' : ''}</small>
+								</span>
 							</td>
-							<td class="text-left w-20"
-								title="${marcador.dpLotacaoIni.nomeLotacao}">${marcador.dpLotacaoIni.siglaLotacao}</td>
-							<td class="text-left w-20">Em todas as vias</td>
+							<td class="text-left w-5">${marcador.idTpAplicacao.descricao}</td>
+							<td class="text-left w-5">${marcador.idTpExibicao.descricao}</td>
+							<td class="text-left w-5">${marcador.idTpTexto.descricao}</td>
+							<td class="text-left w-5">${marcador.idTpInteressado.descricao}</td>
 							<td class="text-left w-10">
 								<div class="">
-									<button type="button" id="btn-excluir"
+									<a type="button" id="btn-excluir"
 										class="btn btn-outline-secondary btn-sm p-1 m-1 float-right"
-										onclick="excluir(${marcador.id})" title="Excluir">
-										<i class="far fa-trash-alt"></i>
-									</button>
-									<button type="button" id="btn-historico"
+										href="/siga/app/marcador/excluir?id=${marcador.id}"
+										title="Excluir"><i class="far fa-trash-alt"></i>
+									</a>
+									<a type="button" id="btn-historico"
 										class="btn btn-outline-secondary btn-sm p-1 m-1 float-right"
-										onclick="historico(${marcador.hisIdIni})" title="Historico">
-										<i class="fas fa-history"></i>
-									</button>
+										href="/siga/app/marcador/historico?id=${marcador.hisIdIni}"
+										title="Histórico"><i class="fas fa-history"></i>
+									</a>
 									<a type="button" id="btn-editar"
 										class="btn btn-outline-secondary btn-sm p-1 m-1 float-right"
 										href="/siga/app/marcador/editar?id=${marcador.id}"
-										title="Editar"> <i class="far fa-edit"></i>
+										title="Editar"><i class="far fa-edit"></i>
 									</a>
 								</div>
 							</td>
@@ -114,6 +67,7 @@
 
 			<div class="gt-table-buttons">
 				<a id="btn-editar" class="btn btn-primary" href="/siga/app/marcador/editar">Incluir</a>
+				<input type="button" value="Voltar" onclick="javascript:history.back();" class="btn btn-cancel ml-2" />
 			</div>
 		</div>
 	</form>
@@ -158,15 +112,6 @@
 	<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
 
 	<script type="text/javascript">
-	function toggleDataLimite(idMarcacao, checado) {
-		$("#dataLimite-" + idMarcacao).prop("disabled", !checado);
-		if(checado) {
-			$("#dataLimite-" + idMarcacao).focus();
-		} else {
-			$("#dataLimite-" + idMarcacao).val(null);
-		}		
-	}
-
 	function excluir(id) {
 		$.ajax({
 			url: "${request.contextPath}/siga/app/marcador/excluir",

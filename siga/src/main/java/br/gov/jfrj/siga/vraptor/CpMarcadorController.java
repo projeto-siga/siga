@@ -24,16 +24,14 @@
  */
 package br.gov.jfrj.siga.vraptor;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.logging.Logger;
-import com.google.gson.Gson;
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
@@ -41,6 +39,7 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpMarcadorCoresEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorIconesEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoDataEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum;
@@ -58,6 +57,9 @@ import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 public class CpMarcadorController extends SigaController {
 
 	private static final Logger LOG = Logger.getLogger(CpMarcadorController.class);
+	private static final String ACESSO_CAD_MARCADOR = "FE: Ferramentas;CAD_MARCADOR: Cadastro de Marcadores;";
+	private static final String ACESSO_CAD_MARCADOR_LOTA = "MAR_LOTA:Cadastro de Marcador da Lotação;";
+	private static final String ACESSO_CAD_MARCADOR_GERAL_LOTA = "MAR_GERAL_LOTA:Cadastro de Marcador Geral da Lotação;";
 
 	/**
 	 * @deprecated CDI eyes only
@@ -74,6 +76,7 @@ public class CpMarcadorController extends SigaController {
 
 	@Get("/app/marcador/listar")
 	public void lista(final DpLotacao lotacaoSel) throws Exception {
+		assertAcesso("");
 		DpLotacaoDaoFiltro lotacao = new DpLotacaoDaoFiltro();
 		Long idOrgaoUsu = getCadastrante().getOrgaoUsuario().getId();
 		lotacao.setNome("");
@@ -90,14 +93,11 @@ public class CpMarcadorController extends SigaController {
 		listaLotacao.add(l);
 		if (idOrgaoUsu != null && idOrgaoUsu != 0)
 			listaLotacao.addAll(CpDao.getInstance().consultarPorFiltro(lotacao));
-//		result.include("listaTipoExibicao", listaTipoMarcadorEnum);
-//		String[] listaCores = (String[]) EnumUtils.getEnumMap(CpMarcador.CoresMarcadorEnum.class).keySet().toArray();
-//		for (CoresMarcadorEnum item : CpMarcador.CoresMarcadorEnum.values()){
-//		    listaCores.add(item.name().replace("COR_", ""));
-//		}
-		result.include("listaTipoMarcador", dao.listarTodos(CpTipoMarcador.class, null));
+				
+		result.include("listaTipoMarcador", listarTipoMarcador());
 		result.include("listaLotacao", listaLotacao);
-		result.include("listaCores", CpMarcadorCoresEnum.getList());
+		result.include("listaCores", CpMarcadorCoresEnum.values());
+		result.include("listaIcones", CpMarcadorIconesEnum.values());
 		result.include("listaTipoAplicacao", CpMarcadorTipoAplicacaoEnum.values());
 		result.include("listaTipoExibicao", CpMarcadorTipoExibicaoEnum.values());
 		result.include("listaTipoDataPlanejada", CpMarcadorTipoDataEnum.values());
@@ -109,13 +109,14 @@ public class CpMarcadorController extends SigaController {
 
 	@Get("/app/marcador/historico")
 	public void historico(final Long id) throws Exception {
+		assertAcesso("");
 		List<CpMarcador> listMar = dao().listarTodosPorIdInicial(CpMarcador.class, id, "hisDtIni", true);
-		result.use(Results.http()).addHeader("Content-Type", "application/json").body(toJson(listMar))
-				.setStatusCode(200);
+		result.include("listaHistorico", listMar);
 	}
 
 	@Get("/app/marcador/excluir")
 	public void exclui(final Long id) {
+		assertAcesso(ACESSO_CAD_MARCADOR_LOTA);
 		try {
 			if (id != null) {
 				CpMarcador mar = dao().consultar(id, CpMarcador.class, false);
@@ -131,15 +132,16 @@ public class CpMarcadorController extends SigaController {
 
 	@Get("/app/marcador/editar")
 	public void edita(final Long id) {
-		Gson gson = new Gson();
-		String json = "";
+		assertAcesso(ACESSO_CAD_MARCADOR_LOTA);
+		
 		if (id != null) {
 			CpMarcador marcador = dao().consultar(id, CpMarcador.class, false);
 			marcador = dao().obterAtual(marcador);
 			result.include("marcador", marcador);
 		}
-		result.include("listaTipoMarcador", dao.listarTodos(CpTipoMarcador.class, null));
-		result.include("listaCores", CpMarcadorCoresEnum.getList());
+		result.include("listaTipoMarcador", listarTipoMarcador());
+		result.include("listaCores", CpMarcadorCoresEnum.values());
+		result.include("listaIcones", CpMarcadorIconesEnum.values());
 		result.include("listaTipoAplicacao", CpMarcadorTipoAplicacaoEnum.values());
 		result.include("listaTipoExibicao", CpMarcadorTipoExibicaoEnum.values());
 		result.include("listaTipoDataPlanejada", CpMarcadorTipoDataEnum.values());
@@ -151,13 +153,15 @@ public class CpMarcadorController extends SigaController {
 	@Transacional
 	@Post("/app/marcador/gravar")
 	public void marcadorGravar(Long id, final String sigla, final String descricao, final String descrDetalhada,
-			final String cor, final String icone, final Integer grupoId, final Integer idTpMarcador,
+			final Integer idCor, final Integer idIcone, final Integer grupoId, final Long idTpMarcador,
 			final Integer idTpAplicacao, final Integer idTpDataPlanejada, final Integer idTpDataLimite,
 			final Integer idTpExibicao, final Integer idTpTexto, final Integer idTpInteressado)
 			throws Exception {
 
-		// assertAcesso("GI:Módulo de Gestão de Identidade;CAD_MARCADOR:Cadastrar
-		// Marcador");
+		assertAcesso(ACESSO_CAD_MARCADOR_LOTA);
+		
+		if (idTpMarcador.equals(CpTipoMarcador.TIPO_MARCADOR_GERAL))		
+			assertAcesso(ACESSO_CAD_MARCADOR_GERAL_LOTA);
 
 		if (id != null) {
 			CpMarcador marcador = dao().consultar(id, CpMarcador.class, false);
@@ -166,44 +170,41 @@ public class CpMarcadorController extends SigaController {
 		}
 		
 		Cp.getInstance().getBL().gravarMarcadorDaLotacao(id, getCadastrante(), getLotaTitular(),
-				getIdentidadeCadastrante(), descricao, descrDetalhada, cor.replace("#", ""), icone, 14, idTpMarcador,
+				getIdentidadeCadastrante(), descricao, descrDetalhada, idCor, idIcone, 14, idTpMarcador,
 				idTpAplicacao, idTpDataPlanejada, idTpDataLimite, idTpExibicao, idTpTexto, idTpInteressado);
 
 		result.redirectTo(this).lista(null);
 	}
 
-	private String toJson(final List<CpMarcador> list) throws Exception {
-		Gson gson = new Gson();
-		ArrayList<HashMap<String, Object>> listObjJson = new ArrayList<>();
-
-		for (CpMarcador marcador : list) {
-			HashMap<String, Object> marcadorJson = toHashMap(marcador);
-			listObjJson.add(marcadorJson);
+	private List<CpTipoMarcador> listarTipoMarcador() {
+		List<CpTipoMarcador> lstTpMarcador = dao.listarTodos(CpTipoMarcador.class, null);
+		boolean podeMarcadorGeral;
+		try {
+			assertAcesso(ACESSO_CAD_MARCADOR_GERAL_LOTA);
+			podeMarcadorGeral = true;
+		} catch (AplicacaoException e) {
+			podeMarcadorGeral = false;
 		}
-		String json = gson.toJson(listObjJson);
-		return json;
+		for (Iterator<CpTipoMarcador> iter = lstTpMarcador.listIterator(); iter.hasNext(); ) {
+		    CpTipoMarcador tipoMar = iter.next();
+			if (tipoMar.getIdTpMarcador() == CpTipoMarcador.TIPO_MARCADOR_GERAL
+					&& !podeMarcadorGeral)
+				iter.remove();
+			if (tipoMar.getIdTpMarcador() == CpTipoMarcador.TIPO_MARCADOR_SISTEMA)
+				iter.remove();
+		}
+			
+//		lstTpMarcador.removeIf(t -> t.getIdTpMarcador() == CpTipoMarcador.TIPO_MARCADOR_SISTEMA);
+//		try {
+//			assertAcesso(ACESSO_MARCADOR_GERAL_LOTA);
+//		} catch (AplicacaoException e) {
+//			lstTpMarcador.removeIf(t -> t.getIdTpMarcador() == CpTipoMarcador.TIPO_MARCADOR_GERAL);
+//		}
+		return lstTpMarcador;
 	}
 
-	private HashMap<String, Object> toHashMap(CpMarcador marcador) {
-		HashMap<String, Object> marcadorJson = new HashMap<String, Object>();
-		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-
-		marcadorJson.put("id", marcador.getIdMarcador());
-		marcadorJson.put("hisDtIni", (marcador.getHisDtIni() != null ? df.format(marcador.getHisDtIni()) : ""));
-		marcadorJson.put("hisDtFim", (marcador.getHisDtFim() != null ? df.format(marcador.getHisDtFim()) : ""));
-		marcadorJson.put("descricao", marcador.getDescrMarcador());
-		marcadorJson.put("descricaoDetalhada", marcador.getDescrDetalhada());
-		marcadorJson.put("cor", marcador.getCor());
-		marcadorJson.put("icone", marcador.getIcone());
-		marcadorJson.put("responsavel", marcador.getHisIdcIni().getNmLoginIdentidade());
-		marcadorJson.put("nomeResponsavel", marcador.getHisIdcIni().getDpPessoa().getNomePessoa());
-		marcadorJson.put("idTpAplicacao", marcador.getIdTpAplicacao());
-		marcadorJson.put("idTpDataPlanejada", marcador.getIdTpDataLimite());
-		marcadorJson.put("idTpDataLimite", marcador.getIdTpDataLimite());
-		marcadorJson.put("idTpExibicao", marcador.getIdTpExibicao());
-		marcadorJson.put("idTpTexto", marcador.getIdTpTexto());
-		marcadorJson.put("idTpInteressado", marcador.getIdTpInteressado());
-		return marcadorJson;
+	protected void assertAcesso(String pathServico) throws AplicacaoException {
+		super.assertAcesso(ACESSO_CAD_MARCADOR 
+					+ pathServico);
 	}
-
 }

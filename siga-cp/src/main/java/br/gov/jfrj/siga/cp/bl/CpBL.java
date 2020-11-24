@@ -46,6 +46,8 @@ import br.gov.jfrj.siga.cp.AbstractCpAcesso.CpTipoAcessoEnum;
 import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpMarcadorCoresEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorIconesEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoDataEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum;
@@ -1309,10 +1311,13 @@ public class CpBL {
 	}
 
 	public void gravarMarcadorDaLotacao(final Long id, final DpPessoa cadastrante, final DpLotacao lotacao, final CpIdentidade identidade, 
-			final String descricao, final String descrDetalhada, final String cor, final String icone, final Integer grupoId, 
-			final Integer idTpMarcador, final Integer idTpAplicacao, final Integer idTpDataPlanejada, final Integer idTpDataLimite, 
-			final Integer idTpExibicao,	final Integer idTpDescricao, final Integer idTpInteressado 
+			final String descricao, final String descrDetalhada, final Integer idCor, final Integer idIcone, final Integer grupoId, 
+			final Long idTpMarcador, final Integer idTpAplicacao, final Integer idTpDataPlanejada, final Integer idTpDataLimite, 
+			final Integer idTpExibicao,	final Integer idTpTexto, final Integer idTpInteressado 
 			) throws Exception {
+		if (idTpMarcador.equals(CpTipoMarcador.TIPO_MARCADOR_SISTEMA))
+			throw new AplicacaoException ("Não é permitido o cadastro de marcadores de sistema.");
+			
 		if (descricao == null)
 			throw new AplicacaoException ("Preencha a descrição do marcador.");
 			
@@ -1338,15 +1343,15 @@ public class CpBL {
 			if (marcador != null) {
 				marcador.setDescrMarcador(descricao);
 				marcador.setDescrDetalhada(descrDetalhada);
-				marcador.setCor(cor);
-				marcador.setIcone(icone);
+				marcador.setIdCor(CpMarcadorCoresEnum.values() [idCor]);
+				marcador.setIdIcone(CpMarcadorIconesEnum.values() [idIcone]);
 				marcador.setGrupoMarcador(grupoId);
 				marcador.setCpTipoMarcador(tpMarcador);
 				marcador.setIdTpAplicacao(CpMarcadorTipoAplicacaoEnum.values() [idTpAplicacao]);
 				marcador.setIdTpDataPlanejada(CpMarcadorTipoDataEnum.values() [idTpDataPlanejada]);
 				marcador.setIdTpDataLimite(CpMarcadorTipoDataEnum.values() [idTpDataLimite]);
 				marcador.setIdTpExibicao(CpMarcadorTipoExibicaoEnum.values() [idTpExibicao]);
-				marcador.setIdTpDescricao(CpMarcadorTipoTextoEnum.values() [idTpDescricao]);
+				marcador.setIdTpTexto(CpMarcadorTipoTextoEnum.values() [idTpTexto]);
 				marcador.setIdTpInteressado(CpMarcadorTipoInteressadoEnum.values() [idTpInteressado]);
 				marcador.salvarComHistorico();
 			} else {
@@ -1359,15 +1364,15 @@ public class CpBL {
 //			ordem = marcador.getOrdem();
 			marcador.setDescrMarcador(descricao);
 			marcador.setDescrDetalhada(descrDetalhada);
-			marcador.setCor(cor);
-			marcador.setIcone(icone);
+			marcador.setIdCor(CpMarcadorCoresEnum.values() [idCor]);
+			marcador.setIdIcone(CpMarcadorIconesEnum.values() [idIcone]);
 			marcador.setGrupoMarcador(grupoId);
 			marcador.setCpTipoMarcador(tpMarcador);
 			marcador.setIdTpAplicacao(CpMarcadorTipoAplicacaoEnum.values() [idTpAplicacao]);
 			marcador.setIdTpDataPlanejada(CpMarcadorTipoDataEnum.values() [idTpDataPlanejada]);
 			marcador.setIdTpDataLimite(CpMarcadorTipoDataEnum.values() [idTpDataLimite]);
 			marcador.setIdTpExibicao(CpMarcadorTipoExibicaoEnum.values() [idTpExibicao]);
-			marcador.setIdTpDescricao(CpMarcadorTipoTextoEnum.values() [idTpDescricao]);
+			marcador.setIdTpTexto(CpMarcadorTipoTextoEnum.values() [idTpTexto]);
 			marcador.setIdTpInteressado(CpMarcadorTipoInteressadoEnum.values() [idTpInteressado]);
 			marcador.setDpLotacaoIni(lotacao);
 			marcador.setOrdem(ordem);

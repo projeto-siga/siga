@@ -2,6 +2,7 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<link rel="stylesheet" href="/siga/css/selectpicker/bootstrap-select.min.css" type="text/css" media="screen, projection"/>
 
 <siga:pagina titulo="Forma">
 	<!-- main content -->
@@ -60,13 +61,14 @@
 									</div>
 									<div class="col col-6">
 										<div class="form-group">
-											<label for="idTpAplicacao">Cor</label> <select
-												class="form-control" id="idCor" name="cor"
-												>
+											<label for="idCor">Cor</label> <select
+												class="form-control" id="idCor" name="idCor"
+												value="${idCor.id}">
 												<c:forEach items="${listaCores}" var="item">
-													<option value="${item}" style="background-color: ${item}"
-														${item == marcador.cor ? 'selected' : ''}>
-														${item}</option>
+													<option value="${item.id}"
+														style="background-color: ${item.descricao}"
+														${item.id == marcador.idCor.id ? 'selected' : ''}>
+													</option>
 												</c:forEach>
 											</select>
 										</div>
@@ -74,11 +76,14 @@
 
 									<div class="col col-6">
 										<div class="form-group">
-											<label for="icone">Ícone</label> <select name="icone"
-												id="icone" class="form-control">
-												<option value="1">Pessoa</option>
-												<option value="2">Etiqueta</option>
-												<option value="3">Bomba</option>
+											<label for="idIcone">Ícone</label> <select
+												class="form-control selectpicker" id="idIcone" name="idIcone"
+												value="${idIcone.id}" data-show-content="true">
+												<c:forEach items="${listaIcones}" var="item">
+													<option value="${item.id}"
+														${item.id == marcador.idIcone.id ? 'selected' : ''} 
+														data-icon="${item.codigoFontAwesome}">  ${item.descricao}</option>
+												</c:forEach>
 											</select>
 										</div>
 									</div>
@@ -161,10 +166,11 @@
 
 					<div class="form-group">
 						<input type="submit" type="button" class="btn btn-primary  btn-salvar" value="OK">
-						<a href="/sigaex/app/marcador/listar" class="btn btn-cancel">Cancela</a>
+						<a href="/siga/app/marcador/listar" class="btn btn-cancel">Cancela</a>
 					</div>
 				</form>
 			</div>
 		</div>
 	</div>
 </siga:pagina>
+<script type="text/javascript" src="/siga/javascript/selectpicker/bootstrap-select.min.js"></script>

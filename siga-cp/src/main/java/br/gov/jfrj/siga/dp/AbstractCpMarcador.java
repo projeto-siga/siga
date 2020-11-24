@@ -41,6 +41,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpMarcadorCoresEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorIconesEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoDataEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum;
@@ -113,11 +115,13 @@ public abstract class AbstractCpMarcador  extends HistoricoAuditavelSuporte impl
 	@Column(name = "DESCR_DETALHADA")
 	private String descrDetalhada;
 
-	@Column(name = "COR")
-	private String cor;
+	@Enumerated(EnumType.ORDINAL)
+	@Column(name = "ID_COR")
+	private CpMarcadorCoresEnum idCor;
 
-	@Column(name = "ICONE")
-	private String icone;
+	@Enumerated(EnumType.ORDINAL)
+	@Column(name = "ID_ICONE")
+	private CpMarcadorIconesEnum idIcone;
 	
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "ID_TP_APLICACAO_MARCADOR")
@@ -224,14 +228,6 @@ public abstract class AbstractCpMarcador  extends HistoricoAuditavelSuporte impl
 		this.dpLotacaoIni = dpLotacaoIni;
 	}
 
-	public String getCor() {
-		return cor;
-	}
-
-	public void setCor(String cor) {
-		this.cor = cor;
-	}
-
 	public String getDescrDetalhada() {
 		return descrDetalhada;
 	}
@@ -240,12 +236,20 @@ public abstract class AbstractCpMarcador  extends HistoricoAuditavelSuporte impl
 		this.descrDetalhada = descrDetalhada;
 	}
 
-	public String getIcone() {
-		return icone;
+	public CpMarcadorCoresEnum getIdCor() {
+		return idCor;
 	}
 
-	public void setIcone(String icone) {
-		this.icone = icone;
+	public void setIdCor(CpMarcadorCoresEnum idCor) {
+		this.idCor = idCor;
+	}
+
+	public CpMarcadorIconesEnum getIdIcone() {
+		return idIcone;
+	}
+
+	public void setIdIcone(CpMarcadorIconesEnum idIcone) {
+		this.idIcone = idIcone;
 	}
 
 	public CpMarcadorTipoAplicacaoEnum getIdTpAplicacao() {
@@ -284,7 +288,7 @@ public abstract class AbstractCpMarcador  extends HistoricoAuditavelSuporte impl
 		return idTpTexto;
 	}
 
-	public void setIdTpDescricao(CpMarcadorTipoTextoEnum idTpTexto) {
+	public void setIdTpTexto(CpMarcadorTipoTextoEnum idTpTexto) {
 		this.idTpTexto = idTpTexto;
 	}
 

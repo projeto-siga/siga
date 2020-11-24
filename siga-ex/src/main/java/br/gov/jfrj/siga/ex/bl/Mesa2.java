@@ -579,8 +579,8 @@ public class Mesa2 {
 					t.icone = mar.getIcone();
 				} else {
 					t.nome = tag.marcador.getDescrMarcador();
-					t.icone = "fas fa-tag";
-					t.cor = "#" + tag.marcador.getCor();
+					t.icone = tag.marcador.getIdIcone().getCodigoFontAwesome();
+					t.cor = tag.marcador.getIdCor().getDescricao();
 				}
 				t.titulo = Data
 						.calcularTempoRelativo(tag.marca.getDtIniMarca());

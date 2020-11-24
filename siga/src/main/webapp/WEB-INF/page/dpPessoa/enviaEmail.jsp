@@ -81,7 +81,7 @@ function cpf_mask(v){
 
 	<!-- main content -->
 	<div class="container-fluid">
-		<form name="frm" id="enviarEmail" action="enviarEmail" class="form100" method="GET">
+		<form name="frm" id="enviarEmail" action="enviarEmail" class="form100" method="Post">
 			<input type="hidden" name="paramoffset" value="0" />
 			<input type="hidden" name="p.offset" value="0" />
 			<input type="hidden" name="retornarEnvioEmail" value="true" />

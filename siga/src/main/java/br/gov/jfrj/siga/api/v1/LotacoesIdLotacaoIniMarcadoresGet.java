@@ -16,7 +16,7 @@ import br.gov.jfrj.siga.api.v1.ISigaApiV1.LotacoesIdLotacaoIniMarcadoresGetReque
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.LotacoesIdLotacaoIniMarcadoresGetResponse;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Marcador;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.cp.CpMarcadorCoresEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorCorEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoDataEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum;

@@ -1,9 +1,12 @@
 package br.gov.jfrj.siga.cp;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public enum CpMarcadorCoresEnum {
+import br.gov.jfrj.siga.cp.converter.IEnumWithId;
+
+public enum CpMarcadorCorEnum implements IEnumWithId, Serializable {
 	COR_BB8FCE(1, "BB8FCE"), 
 	COR_85C1E9(2, "85C1E9"), 
 	COR_73C6B6(3, "73C6B6"), 
@@ -32,14 +35,14 @@ public enum CpMarcadorCoresEnum {
 	private final Integer id;
 	private final String descricao;
 
-	private CpMarcadorCoresEnum(Integer id, String descricao) {
+	private CpMarcadorCorEnum(Integer id, String descricao) {
 		this.id = id;
 		this.descricao = descricao;
 	}
 
 	public static List<String> getList() {
 		List<String> list = new ArrayList<String>();
-		for (CpMarcadorCoresEnum item : values()) {
+		for (CpMarcadorCorEnum item : values()) {
 			list.add(item.descricao);
 		}
 		return list;

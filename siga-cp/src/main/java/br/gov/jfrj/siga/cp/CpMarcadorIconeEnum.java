@@ -3,7 +3,9 @@ package br.gov.jfrj.siga.cp;
 import java.util.ArrayList;
 import java.util.List;
 
-public enum CpMarcadorIconesEnum {
+import br.gov.jfrj.siga.cp.converter.IEnumWithId;
+
+public enum CpMarcadorIconeEnum implements IEnumWithId {
 	ICONE_ETIQUETA(1, "Etiqueta", "fas fa-tag"), 
 	ICONE_BOMBA(2, "Bomba", "fas fa-bomb"), 
 	ICONE_SEGURANCA(3, "Segurança", "fas fa-user-shield"), 
@@ -19,7 +21,7 @@ public enum CpMarcadorIconesEnum {
 	private final String descricao;
 	private final String codigoFontAwesome;
 
-	private CpMarcadorIconesEnum(Integer id, String descricao, String codigoFontAwesome) {
+	private CpMarcadorIconeEnum(Integer id, String descricao, String codigoFontAwesome) {
 		this.id = id;
 		this.descricao = descricao;
 		this.codigoFontAwesome = codigoFontAwesome;
@@ -27,7 +29,7 @@ public enum CpMarcadorIconesEnum {
 
 	public static List<String> getList() {
 		List<String> list = new ArrayList<String>();
-		for (CpMarcadorIconesEnum item : values()) {
+		for (CpMarcadorIconeEnum item : values()) {
 			list.add(item.descricao);
 		}
 		return list;

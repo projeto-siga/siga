@@ -46,8 +46,8 @@ import br.gov.jfrj.siga.cp.AbstractCpAcesso.CpTipoAcessoEnum;
 import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
-import br.gov.jfrj.siga.cp.CpMarcadorCoresEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorIconesEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorCorEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorIconeEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoDataEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum;
@@ -1344,8 +1344,8 @@ public class CpBL {
 			if (marcador != null) {
 				marcador.setDescrMarcador(descricao);
 				marcador.setDescrDetalhada(descrDetalhada);
-				marcador.setIdCor(CpMarcadorCoresEnum.values() [idCor]);
-				marcador.setIdIcone(CpMarcadorIconesEnum.values() [idIcone]);
+				marcador.setIdCor(IEnumWithId.getEnumFromId(idCor, CpMarcadorCorEnum.class));
+				marcador.setIdIcone(IEnumWithId.getEnumFromId(idIcone, CpMarcadorIconeEnum.class));
 				marcador.setGrupoMarcador(grupoId);
 				marcador.setCpTipoMarcador(tpMarcador);
 				marcador.setIdTpAplicacao(IEnumWithId.getEnumFromId(idTpAplicacao, CpMarcadorTipoAplicacaoEnum.class));
@@ -1365,8 +1365,8 @@ public class CpBL {
 //			ordem = marcador.getOrdem();
 			marcador.setDescrMarcador(descricao);
 			marcador.setDescrDetalhada(descrDetalhada);
-			marcador.setIdCor(CpMarcadorCoresEnum.values() [idCor]);
-			marcador.setIdIcone(CpMarcadorIconesEnum.values() [idIcone]);
+			marcador.setIdCor(IEnumWithId.getEnumFromId(idCor, CpMarcadorCorEnum.class));
+			marcador.setIdIcone(IEnumWithId.getEnumFromId(idIcone, CpMarcadorIconeEnum.class));
 			marcador.setGrupoMarcador(grupoId);
 			marcador.setCpTipoMarcador(tpMarcador);
 			marcador.setIdTpAplicacao(IEnumWithId.getEnumFromId(idTpAplicacao, CpMarcadorTipoAplicacaoEnum.class));

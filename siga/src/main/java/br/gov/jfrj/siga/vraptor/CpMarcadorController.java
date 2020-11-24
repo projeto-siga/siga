@@ -38,8 +38,8 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.cp.CpMarcadorCoresEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorIconesEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorCorEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorIconeEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoDataEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum;
@@ -96,8 +96,8 @@ public class CpMarcadorController extends SigaController {
 				
 		result.include("listaTipoMarcador", listarTipoMarcador());
 		result.include("listaLotacao", listaLotacao);
-		result.include("listaCores", CpMarcadorCoresEnum.values());
-		result.include("listaIcones", CpMarcadorIconesEnum.values());
+		result.include("listaCores", CpMarcadorCorEnum.values());
+		result.include("listaIcones", CpMarcadorIconeEnum.values());
 		result.include("listaTipoAplicacao", CpMarcadorTipoAplicacaoEnum.values());
 		result.include("listaTipoExibicao", CpMarcadorTipoExibicaoEnum.values());
 		result.include("listaTipoDataPlanejada", CpMarcadorTipoDataEnum.values());
@@ -140,8 +140,8 @@ public class CpMarcadorController extends SigaController {
 			result.include("marcador", marcador);
 		}
 		result.include("listaTipoMarcador", listarTipoMarcador());
-		result.include("listaCores", CpMarcadorCoresEnum.values());
-		result.include("listaIcones", CpMarcadorIconesEnum.values());
+		result.include("listaCores", CpMarcadorCorEnum.values());
+		result.include("listaIcones", CpMarcadorIconeEnum.values());
 		result.include("listaTipoAplicacao", CpMarcadorTipoAplicacaoEnum.values());
 		result.include("listaTipoExibicao", CpMarcadorTipoExibicaoEnum.values());
 		result.include("listaTipoDataPlanejada", CpMarcadorTipoDataEnum.values());

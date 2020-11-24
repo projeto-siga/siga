@@ -26,6 +26,7 @@ function Formulario(form) {
 
 	/**
 	 * Faz a preparação do objeto para conter os campos necessários para popular os componentes do TRF.
+	 * ToDo: nao buscar por className pois elas foram alteradas e sao apenas para apresentacao!
 	 */
 	this.prepareObjectToForm = function(obj) {
 		for (var x in obj) {
@@ -57,7 +58,7 @@ function Formulario(form) {
 			        	select.changeValue(objeto.tipo);
 			        	this.prepareForSelecaoComponent(x, obj, objeto);
 			        }
-			        else if (className == 'select-siga') {
+			        else { // if (className == 'select-siga') {
 			        	obj[x] = objeto ? objeto.id : '';
 			        }
 		        }

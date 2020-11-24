@@ -1,6 +1,7 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -32,6 +33,7 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
+import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
@@ -174,6 +176,8 @@ public class ExProcessoAutenticacaoController extends ExController {
 
 		byte[] bytes;
 
+		String fileName;
+		String contentType;
 		if (sigla != null) {
 			Long idDocPai = arq.getIdDoc();
 			ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
@@ -187,26 +191,29 @@ public class ExProcessoAutenticacaoController extends ExController {
 				throw new AplicacaoException("Documento não permitido para visualização: " + sigla);
 			}
 			arq = mob.doc();
-		}
-
-		String fileName;
-		String contentType;
-		if (idMov != null && idMov != 0) {
-			ExMovimentacao mov = dao().consultar(idMov, ExMovimentacao.class, false);
-
-			fileName = arq.getReferencia() + "_" + mov.getIdMov() + ".p7s";
-			contentType = mov.getConteudoTpMov();
-
-			bytes = mov.getConteudoBlobMov2();
-
-		} else {
 			fileName = arq.getReferenciaPDF();
 			contentType = "application/pdf";
-
-			if (assinado)
-				bytes = Ex.getInstance().getBL().obterPdfPorProtocolo(n);
-			else
-				bytes = arq.getPdf();
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			Documento.getDocumento(baos, null, mob, null, false, true, false, null, null);
+			bytes = baos.toByteArray();
+		} else {			
+			if (idMov != null && idMov != 0) {
+				ExMovimentacao mov = dao().consultar(idMov, ExMovimentacao.class, false);
+	
+				fileName = arq.getReferencia() + "_" + mov.getIdMov() + ".p7s";
+				contentType = mov.getConteudoTpMov();
+	
+				bytes = mov.getConteudoBlobMov2();
+	
+			} else {
+				fileName = arq.getReferenciaPDF();
+				contentType = "application/pdf";
+	
+				if (assinado)
+					bytes = Ex.getInstance().getBL().obterPdfPorProtocolo(n);
+				else
+					bytes = arq.getPdf();
+			}
 		}
 		if (bytes == null) {
 			throw new AplicacaoException("Arquivo não encontrado para Download.");

@@ -72,7 +72,7 @@
 		<script type="text/javascript">
 			function confirmaExibirNoProtocolo(checkbox) {
 			  if (checkbox.checked) {
-			    if (!confirm("O interessado visualizará o conteúdo do despacho através do número de protocolo. Deseja Continuar?")) {
+			    if (!confirm("Ao clicar em OK o conteúdo deste documento ficará disponível através do número do protocolo de acompanhamento. Deseja continuar? ")) {
 				  checkbox.checked = false;
 			    }
 			  }

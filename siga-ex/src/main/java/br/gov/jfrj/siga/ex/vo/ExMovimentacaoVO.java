@@ -348,15 +348,15 @@ public class ExMovimentacaoVO extends ExVO {
 								.TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO);
 						addAcao(null, "Desfazer Disponibilizar no Acompanhamento do Protocolo", "/app/expediente/mov", 
 								"desfazer_exibir_no_acompanhamento_do_protocolo",
-								true, "Ao clicar em OK o interessado deixará de visualizar o conteúdo " + 
-									"do despacho através do número de protocolo. Deseja continuar?", 
+								true, "Ao clicar em OK o conteúdo deste documento deixará de ficar disponível através do número do " 
+										+ "protocolo de acompanhamento. Deseja continuar?", 
 								"id=" + movs.iterator().next().getIdMov().toString(), null,
 								null, null);
 					} else {
 						addAcao(null, "Disponibilizar no Acompanhamento do Protocolo", "/app/expediente/mov", 
 								"exibir_no_acompanhamento_do_protocolo", 
-								true, "Ao clicar em OK o interessado visualizará o conteúdo " + 
-									"do despacho através do número de protocolo. Deseja continuar?", 
+								true, "Ao clicar em OK o conteúdo deste documento ficará disponível através do número do "
+										+ "protocolo de acompanhamento. Deseja continuar? ",
 								"sigla=" + mov.getExMobil().getSigla(), null,
 								null, null);
 					}

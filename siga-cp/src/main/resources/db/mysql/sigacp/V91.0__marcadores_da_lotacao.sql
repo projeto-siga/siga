@@ -3,8 +3,8 @@
 -- -----------------------------------------------------------------------------------
 ALTER TABLE corporativo.cp_marcador ADD ID_LOTACAO_INI INT UNSIGNED COMMENT 'Id inicial da lotação que o marcador pertence (para marcas da lotação)';
 ALTER TABLE corporativo.cp_marcador ADD DESCR_DETALHADA VARCHAR(255) COMMENT 'Descrição do marcador';
-ALTER TABLE corporativo.cp_marcador ADD COR CHAR(6) COMMENT 'Cor (hexa) do marcador';
-ALTER TABLE corporativo.cp_marcador ADD ICONE VARCHAR(30) COMMENT 'Código do ícone do marcador';
+ALTER TABLE corporativo.cp_marcador ADD ID_COR tinyint(4) COMMENT 'Cor (hexa) do marcador';
+ALTER TABLE corporativo.cp_marcador ADD ID_ICONE tinyint(4) COMMENT 'Código do ícone do marcador';
 ALTER TABLE corporativo.cp_marcador ADD ID_TP_APLICACAO_MARCADOR tinyint(4) COMMENT 'Id do tipo de mobil em que será aplicado o Marcador';
 ALTER TABLE corporativo.cp_marcador ADD ID_TP_DATA_PLANEJADA tinyint(4) COMMENT 'Id do tipo de exibição da data planejada';
 ALTER TABLE corporativo.cp_marcador ADD ID_TP_DATA_LIMITE tinyint(4) COMMENT 'Id do tipo de exibição da data limite';

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum CpMarcadorCoresEnum {
-	COR_F1948A(0, "F1948A"), 
 	COR_BB8FCE(1, "BB8FCE"), 
 	COR_85C1E9(2, "85C1E9"), 
 	COR_73C6B6(3, "73C6B6"), 
@@ -27,7 +26,8 @@ public enum CpMarcadorCoresEnum {
 	COR_239B56(20, "239B56"), 
 	COR_B9770E(21, "B9770E"), 
 	COR_A04000(22, "A04000"), 
-	COR_909497(23, "909497");
+	COR_909497(23, "909497"),
+	COR_F1948A(24, "F1948A"); 
 
 	private final Integer id;
 	private final String descricao;

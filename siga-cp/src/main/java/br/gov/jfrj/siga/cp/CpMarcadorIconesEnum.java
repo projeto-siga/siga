@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum CpMarcadorIconesEnum {
-	ICONE_ETIQUETA(0, "Etiqueta", "fas fa-tag"), 
-	ICONE_BOMBA(1, "Bomba", "fas fa-bomb"), 
-	ICONE_SEGURANCA(2, "Segurança", "fas fa-user-shield"), 
-	ICONE_EXCLAMACAO(3, "Aviso Exclamação", "fas fa-exclamation-triangle"), 
-	ICONE_CAVEIRA(4, "Caveira", "fas fa-skull-crossbones"), 
-	ICONE_ESPIAO(5, "Espião", "fas fa-user-secret"), 
-	ICONE_GRADUACAO(6, "Graduação", "fas fa-user-graduate"),
-	ICONE_PESSOA(7, "Pessoa", "fas fa-user"),
-	ICONE_PROIBIDO(8, "Proibido", "fas fa-ban"),
-	ICONE_SMILE(9, "Smile", "far fa-smile");
+	ICONE_ETIQUETA(1, "Etiqueta", "fas fa-tag"), 
+	ICONE_BOMBA(2, "Bomba", "fas fa-bomb"), 
+	ICONE_SEGURANCA(3, "Segurança", "fas fa-user-shield"), 
+	ICONE_EXCLAMACAO(4, "Aviso Exclamação", "fas fa-exclamation-triangle"), 
+	ICONE_CAVEIRA(5, "Caveira", "fas fa-skull-crossbones"), 
+	ICONE_ESPIAO(6, "Espião", "fas fa-user-secret"), 
+	ICONE_GRADUACAO(7, "Graduação", "fas fa-user-graduate"),
+	ICONE_PESSOA(8, "Pessoa", "fas fa-user"),
+	ICONE_PROIBIDO(9, "Proibido", "fas fa-ban"),
+	ICONE_SMILE(10, "Smile", "far fa-smile");
 
 	private final Integer id;
 	private final String descricao;

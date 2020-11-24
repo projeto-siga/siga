@@ -16,12 +16,9 @@ public class EnumWithIdConverter<E extends IEnumWithId> implements AttributeConv
 	}
 
 	@Override
-	public E convertToEntityAttribute(Integer dbData) {
+	public E convertToEntityAttribute(Integer id) {
 		Class<E> clazz = (Class<E>) ((ParameterizedType) this.getClass().getGenericSuperclass())
 				.getActualTypeArguments()[0];
-		for (E v : clazz.getEnumConstants())
-			if (v.getId().equals(dbData))
-				return v;
-		return null;
+		return IEnumWithId.getEnumFromId(id, clazz);
 	}
 }

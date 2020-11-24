@@ -60,6 +60,7 @@ import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.CpToken;
+import br.gov.jfrj.siga.cp.converter.IEnumWithId;
 import br.gov.jfrj.siga.cp.util.Excel;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.cp.util.SigaUtil;
@@ -1347,12 +1348,12 @@ public class CpBL {
 				marcador.setIdIcone(CpMarcadorIconesEnum.values() [idIcone]);
 				marcador.setGrupoMarcador(grupoId);
 				marcador.setCpTipoMarcador(tpMarcador);
-				marcador.setIdTpAplicacao(CpMarcadorTipoAplicacaoEnum.values() [idTpAplicacao]);
-				marcador.setIdTpDataPlanejada(CpMarcadorTipoDataEnum.values() [idTpDataPlanejada]);
-				marcador.setIdTpDataLimite(CpMarcadorTipoDataEnum.values() [idTpDataLimite]);
-				marcador.setIdTpExibicao(CpMarcadorTipoExibicaoEnum.values() [idTpExibicao]);
-				marcador.setIdTpTexto(CpMarcadorTipoTextoEnum.values() [idTpTexto]);
-				marcador.setIdTpInteressado(CpMarcadorTipoInteressadoEnum.values() [idTpInteressado]);
+				marcador.setIdTpAplicacao(IEnumWithId.getEnumFromId(idTpAplicacao, CpMarcadorTipoAplicacaoEnum.class));
+				marcador.setIdTpDataPlanejada(IEnumWithId.getEnumFromId(idTpDataPlanejada, CpMarcadorTipoDataEnum.class));
+				marcador.setIdTpDataLimite(IEnumWithId.getEnumFromId(idTpDataLimite, CpMarcadorTipoDataEnum.class));
+				marcador.setIdTpExibicao(IEnumWithId.getEnumFromId(idTpExibicao, CpMarcadorTipoExibicaoEnum.class));
+				marcador.setIdTpTexto(IEnumWithId.getEnumFromId(idTpTexto, CpMarcadorTipoTextoEnum.class));
+				marcador.setIdTpInteressado(IEnumWithId.getEnumFromId(idTpInteressado, CpMarcadorTipoInteressadoEnum.class));
 				marcador.salvarComHistorico();
 			} else {
 				throw new AplicacaoException ("Marcador não existente para esta " + msgLotacao 
@@ -1368,12 +1369,12 @@ public class CpBL {
 			marcador.setIdIcone(CpMarcadorIconesEnum.values() [idIcone]);
 			marcador.setGrupoMarcador(grupoId);
 			marcador.setCpTipoMarcador(tpMarcador);
-			marcador.setIdTpAplicacao(CpMarcadorTipoAplicacaoEnum.values() [idTpAplicacao]);
-			marcador.setIdTpDataPlanejada(CpMarcadorTipoDataEnum.values() [idTpDataPlanejada]);
-			marcador.setIdTpDataLimite(CpMarcadorTipoDataEnum.values() [idTpDataLimite]);
-			marcador.setIdTpExibicao(CpMarcadorTipoExibicaoEnum.values() [idTpExibicao]);
-			marcador.setIdTpTexto(CpMarcadorTipoTextoEnum.values() [idTpTexto]);
-			marcador.setIdTpInteressado(CpMarcadorTipoInteressadoEnum.values() [idTpInteressado]);
+			marcador.setIdTpAplicacao(IEnumWithId.getEnumFromId(idTpAplicacao, CpMarcadorTipoAplicacaoEnum.class));
+			marcador.setIdTpDataPlanejada(IEnumWithId.getEnumFromId(idTpDataPlanejada, CpMarcadorTipoDataEnum.class));
+			marcador.setIdTpDataLimite(IEnumWithId.getEnumFromId(idTpDataLimite, CpMarcadorTipoDataEnum.class));
+			marcador.setIdTpExibicao(IEnumWithId.getEnumFromId(idTpExibicao, CpMarcadorTipoExibicaoEnum.class));
+			marcador.setIdTpTexto(IEnumWithId.getEnumFromId(idTpTexto, CpMarcadorTipoTextoEnum.class));
+			marcador.setIdTpInteressado(IEnumWithId.getEnumFromId(idTpInteressado, CpMarcadorTipoInteressadoEnum.class));
 			marcador.setDpLotacaoIni(lotacao);
 			marcador.setOrdem(ordem);
 			

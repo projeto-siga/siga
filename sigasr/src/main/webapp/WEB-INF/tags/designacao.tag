@@ -143,6 +143,9 @@
 						// cpGrupo eh abstrato e nao pode ser instanciado pelo vraptor: 
 					<input type="hidden" id="designacao.cpGrupo.id" name="designacao.cpGrupo.id" />
 					 -->
+					 <!-- Armazena id do grupo selecionado -->
+					<input type="hidden" id="cpGrupoId" name="cpGrupoId" />
+					 
 					<input type="hidden" id="designacao.complexo.id" name="designacao.complexo.id" />
 					<input type="hidden" id="designacao.orgaoUsuario.id" name="designacao.orgaoUsuario.id" />
 					<input type="hidden" name="designacao.atendente.id" id="designacao.atendente.id">
@@ -209,7 +212,7 @@
 	colunasDesignacao.utilizarHerdado= 				10;
 
 	var preparaObjeto = function() {
-		var solicitanteTypes = ["lotacao", "dpPessoa", "funcaoConfianca", "cargo", "cpGrupo"];
+		var solicitanteTypes = ["lotacao", "dpPessoa", "funcaoConfianca", "cargo"];
 		
 		solicitanteTypes.forEach(function(entry) {
 			var inputName = entry + "Sel.id";
@@ -225,6 +228,10 @@
 
 		var atendenteValue =$( "input[name='atendenteSel.id']" ).val();
 		$("input[name='designacao.atendente.id']").val(atendenteValue);
+
+		// CpGrupo sendo tratado separadamente devido ao erro no momento de instanciar CpGrupo em SrConfiguracao.
+		const grupoIdVal = $("input[name='cpGrupoSel.id']").val();
+		$("input[name='cpGrupoId']").val(grupoIdVal);
 	}
 	
 	designacaoOpts = {

@@ -955,8 +955,9 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			carregarCombos(null, idOrgaoUsu, null, null, null, null, cpfPesquisa, paramoffset, Boolean.TRUE);
 		}
 	}
-
-	@Get("app/pessoa/enviar")
+	
+	@Transacional
+	@Post("app/pessoa/enviar")
 	public void enviar(Long idOrgaoUsu, String nome, String cpfPesquisa, String idLotacaoPesquisa, String idUsuarioPesquisa) throws Exception {
 		String[] senhaGerada = new String[1];
 

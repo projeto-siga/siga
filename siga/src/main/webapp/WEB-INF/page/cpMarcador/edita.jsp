@@ -39,9 +39,9 @@
 												class="form-control" id="idTpMarcador" name="idTpMarcador"
 												value="${idTpMarcador}">
 												<c:forEach items="${listaTipoMarcador}" var="item">
-													<option value="${item.idTpMarcador}"
-														${item.idTpMarcador eq marcador.cpTipoMarcador.idTpMarcador ? 'selected' : ''}>
-														${item.descrTipoMarcador}</option>
+													<option value="${item.name()}"
+														${item eq marcador.cpTipoMarcador ? 'selected' : ''}>
+														${item.descricao}</option>
 												</c:forEach>
 											</select>
 										</div>
@@ -52,7 +52,7 @@
 												class="form-control" id="idTpAplicacao" name="idTpAplicacao"
 												value="${idTpAplicacao}">
 												<c:forEach items="${listaTipoAplicacao}" var="item">
-													<option value="${item.id}"
+													<option value="${item.name()}"
 														${item == marcador.idTpAplicacao ? 'selected' : ''}>
 														${item.descricao}</option>
 												</c:forEach>
@@ -65,7 +65,7 @@
 												class="form-control" id="idCor" name="idCor"
 												value="${idCor.id}">
 												<c:forEach items="${listaCores}" var="item">
-													<option value="${item.id}"
+													<option value="${item.name()}"
 														style="background-color: ${item.descricao}"
 														${item.id == marcador.idCor.id ? 'selected' : ''}>
 													</option>
@@ -80,7 +80,7 @@
 												class="form-control selectpicker" id="idIcone" name="idIcone"
 												value="${idIcone.id}" data-show-content="true">
 												<c:forEach items="${listaIcones}" var="item">
-													<option value="${item.id}"
+													<option value="${item.name()}"
 														${item.id == marcador.idIcone.id ? 'selected' : ''} 
 														data-icon="${item.codigoFontAwesome}">  ${item.descricao}</option>
 												</c:forEach>
@@ -96,7 +96,7 @@
 												class="form-control" id="idTpDataPlanejada"
 												name="idTpDataPlanejada" value="${idTpDataPlanejada}">
 												<c:forEach items="${listaTipoDataPlanejada}" var="item">
-													<option value="${item.id}"
+													<option value="${item.name()}"
 														${item == marcador.idTpDataPlanejada ? 'selected' : ''}>
 														${item.descricao}</option>
 												</c:forEach>
@@ -109,7 +109,7 @@
 												class="form-control" id="idTpDataLimite"
 												name="idTpDataLimite" value="${idTpDataLimite}">
 												<c:forEach items="${listaTipoDataLimite}" var="item">
-													<option value="${item.id}"
+													<option value="${item.name()}"
 														${item == marcador.idTpDataLimite ? 'selected' : ''}>
 														${item.descricao}</option>
 												</c:forEach>
@@ -124,7 +124,7 @@
 												class="form-control" id="idTpExibicao" name="idTpExibicao"
 												value="${idTpExibicao}">
 												<c:forEach items="${listaTipoExibicao}" var="item">
-													<option value="${item.id}"
+													<option value="${item.name()}"
 														${item == marcador.idTpExibicao ? 'selected' : ''}>
 														${item.descricao}</option>
 												</c:forEach>
@@ -138,7 +138,7 @@
 												class="form-control" id="idTpTexto"
 												name="idTpTexto" value="${idTpTexto}">
 												<c:forEach items="${listaTipoJustificativa}" var="item">
-													<option value="${item.id}"
+													<option value="${item.name()}"
 														${item == marcador.idTpTexto ? 'selected' : ''}>
 														${item.descricao}</option>
 												</c:forEach>
@@ -152,7 +152,7 @@
 												class="form-control" id="idTpInteressado"
 												name="idTpInteressado" value="${idTpInteressado}">
 												<c:forEach items="${listaTipoInteressado}" var="item">
-													<option value="${item.id}"
+													<option value="${item.name()}"
 														${item == marcador.idTpInteressado ? 'selected' : ''}>
 														${item.descricao}</option>
 												</c:forEach>

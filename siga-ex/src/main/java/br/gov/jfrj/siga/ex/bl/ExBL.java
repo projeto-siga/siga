@@ -103,6 +103,7 @@ import br.gov.jfrj.siga.bluc.service.ValidateResponse;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpToken;
@@ -113,7 +114,6 @@ import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.dp.CpTipoMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpResponsavel;
@@ -4888,13 +4888,13 @@ public class ExBL extends CpBL {
 		
 		// Localiza a última movimentação de marcação de lotação
 		ExMovimentacao movAnterior = null;
-		if (marcador.getCpTipoMarcador().getIdTpMarcador().equals(CpTipoMarcador.TIPO_MARCADOR_LOTACAO) 
+		if (marcador.getCpTipoMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO
 				&& marcador.getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.ATENDENTE) {
 			List<ExMovimentacao> movs = mob.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true);
 			if (!mob.isGeral())
 				movs.addAll(geral.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true));
 			for (ExMovimentacao mov : movs) {
-				if (mov.getMarcador() != null && mov.getMarcador().getCpTipoMarcador().getIdTpMarcador().equals(CpTipoMarcador.TIPO_MARCADOR_LOTACAO)) {
+				if (mov.getMarcador() != null && mov.getMarcador().getCpTipoMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO) {
 					movAnterior = mov;
 					break;
 				}
@@ -7420,8 +7420,8 @@ public class ExBL extends CpBL {
 				marcadorJson.put("id", marcador.getIdMarcador());
 				marcadorJson.put("descMarcador", marcador.getDescrMarcador());
 				
-				tipoMarcadorJson.put("idTipoMarcador", marcador.getCpTipoMarcador().getIdTpMarcador());
-				tipoMarcadorJson.put("descTipoMarcador", marcador.getCpTipoMarcador().getDescrTipoMarcador());
+				tipoMarcadorJson.put("idTipoMarcador", marcador.getCpTipoMarcador().getId());
+				tipoMarcadorJson.put("descTipoMarcador", marcador.getCpTipoMarcador().getDescricao());
 				marcadorJson.put("tipoMarcador", tipoMarcadorJson);
 				
 				objectJson.add(marcadorJson);

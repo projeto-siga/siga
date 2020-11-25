@@ -29,7 +29,7 @@
 				<tbody>
 					<c:forEach items="${listaMarcadores}" var="marcador">
 						<tr>
-							<td class="text-left w-10">${marcador.cpTipoMarcador.descrTipoMarcador}</td>
+							<td class="text-left w-10">${marcador.cpTipoMarcador.descricao}</td>
 							<td class="text-left w-20"><span
 								class="badge badge-pill badge-secondary tagmesa btn-xs"
 								:style="{color: marcador.idCor.descricao + ' !important'}"> <i

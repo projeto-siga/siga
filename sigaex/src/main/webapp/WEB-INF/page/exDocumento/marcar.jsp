@@ -21,8 +21,10 @@
 								<label for="marcador">Marcador</label> <select
 									name="marcador" v-model="idMarcador" id="marcador"
 									class="form-control">
-									<option v-for="option in lista" v-if="option.ativo"
+									<optgroup v-for="grupo in listaAgrupada" v-bind:label="grupo.grupo">
+									<option v-for="option in grupo.lista" v-if="option.ativo"
 										v-bind:value="option.idMarcador">{{ option.nome }}</option>
+									</optgroup>
 								</select>
 							</div>
 							<div class="form-group" v-if="exibirInteressado">
@@ -117,6 +119,18 @@
 					},
 					
 					computed: {
+						listaAgrupada: function() {
+							if (!this.lista)
+								return;
+							var l = [];
+							for (var i = 0; i < this.lista.length; i++) {
+								var m = this.lista[i];
+								if (l.length == 0 || l[l.length - 1].grupo != m.grupo) 
+									l.push({grupo: m.grupo, lista: []})
+								l[l.length -1].lista.push(m)
+							}
+							return l;
+						},
 						marcador: function() {
 							if (!this.idMarcador)
 								return;

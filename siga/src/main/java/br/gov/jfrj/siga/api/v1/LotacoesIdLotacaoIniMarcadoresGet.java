@@ -1,13 +1,10 @@
 package br.gov.jfrj.siga.api.v1;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.crivano.swaggerservlet.PresentableUnloggedException;
 import com.crivano.swaggerservlet.SwaggerAuthorizationException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
@@ -15,16 +12,7 @@ import br.gov.jfrj.siga.api.v1.ISigaApiV1.ILotacoesIdLotacaoIniMarcadoresGet;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.LotacoesIdLotacaoIniMarcadoresGetRequest;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.LotacoesIdLotacaoIniMarcadoresGetResponse;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Marcador;
-import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.cp.CpMarcadorCorEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoDataEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoTextoEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
-import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.dp.CpTipoMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;

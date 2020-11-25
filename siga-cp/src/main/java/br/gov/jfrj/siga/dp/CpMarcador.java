@@ -22,11 +22,11 @@
  */
 package br.gov.jfrj.siga.dp;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -41,11 +41,10 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
-@Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+// @Cacheable(false)
+// @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "corporativo.cp_marcador")
-public class CpMarcador extends AbstractCpMarcador implements Serializable {
-
-	private static final long serialVersionUID = -909421649258750797L;
+public class CpMarcador extends AbstractCpMarcador {
 
 	final static public long MARCADOR_EM_ELABORACAO = 1;
 
@@ -218,7 +217,9 @@ public class CpMarcador extends AbstractCpMarcador implements Serializable {
 	 * Ordena de acordo com a {@link #getOrdem() Ordem}.
 	 */
 	public static final Comparator<CpMarcador> ORDEM_COMPARATOR = Comparator
-			.nullsFirst(Comparator.comparing(CpMarcador::getOrdem, Comparator.nullsFirst(Comparator.naturalOrder())));
+			.nullsFirst(Comparator.comparing(CpMarcador::getCpTipoMarcador, Comparator.nullsFirst(Comparator.naturalOrder())))
+				.thenComparing(Comparator.comparing(CpMarcador::getOrdem, Comparator.nullsFirst(Comparator.naturalOrder())))
+				.thenComparing(Comparator.comparing(CpMarcador::getDescrMarcador, Comparator.nullsFirst(Comparator.naturalOrder())));
 
 	public CpMarcador() {
 		super();

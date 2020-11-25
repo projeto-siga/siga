@@ -99,6 +99,7 @@ public interface IExApiV1 {
 
 	public class Marcador implements ISwaggerModel {
 		public String idMarcador;
+		public String grupo;
 		public String nome;
 		public Boolean ativo;
 		public String explicacao;

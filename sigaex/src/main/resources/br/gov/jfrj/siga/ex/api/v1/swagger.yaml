@@ -963,6 +963,8 @@ definitions:
     properties:
       idMarcador:
         type: string
+      grupo:
+        type: string
       nome:
         type: string
       ativo:

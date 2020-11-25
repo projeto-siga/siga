@@ -1,20 +1,20 @@
 package br.gov.jfrj.siga.ex.bl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.ArrayList;
 
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
-import br.gov.jfrj.siga.dp.CpTipoMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMarca;
@@ -264,7 +264,7 @@ public class ExMarcadorBL {
 				continue;
 			
 			// Aplicar marcas de lotação apenas se o atendente for a lotação
-			if (marcador.getCpTipoMarcador().getIdTpMarcador().equals(CpTipoMarcador.TIPO_MARCADOR_LOTACAO)
+			if (marcador.getCpTipoMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO
 					&& marcador.getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.ATENDENTE
 					&& marcador.getDpLotacaoIni() != null) {
 				DpLotacao lotaResp = mob.doc().getLotaCadastrante();

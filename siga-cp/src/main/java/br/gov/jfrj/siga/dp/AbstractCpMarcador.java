@@ -43,6 +43,7 @@ import br.gov.jfrj.siga.cp.CpMarcadorCorEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorIconeEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoDataEnum;
+import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoTextoEnum;
@@ -91,9 +92,8 @@ public abstract class AbstractCpMarcador extends HistoricoAuditavelSuporte imple
 	@Column(name = "DESCR_MARCADOR")
 	private String descrMarcador;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_TP_MARCADOR", nullable = false)
-	private CpTipoMarcador cpTipoMarcador;
+	@Column(name = "ID_TP_MARCADOR", nullable = false)
+	private CpTipoMarcadorEnum cpTipoMarcador;
 
 	@Column(name = "GRUPO_MARCADOR")
 	private Integer grupoMarcador;
@@ -173,11 +173,11 @@ public abstract class AbstractCpMarcador extends HistoricoAuditavelSuporte imple
 		this.descrMarcador = descrMarcador;
 	}
 
-	public CpTipoMarcador getCpTipoMarcador() {
+	public CpTipoMarcadorEnum getCpTipoMarcador() {
 		return cpTipoMarcador;
 	}
 
-	public void setCpTipoMarcador(CpTipoMarcador cpTipoMarcador) {
+	public void setCpTipoMarcador(CpTipoMarcadorEnum cpTipoMarcador) {
 		this.cpTipoMarcador = cpTipoMarcador;
 	}
 

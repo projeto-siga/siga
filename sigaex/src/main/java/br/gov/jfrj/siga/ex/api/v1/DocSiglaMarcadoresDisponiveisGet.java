@@ -66,6 +66,7 @@ public class DocSiglaMarcadoresDisponiveisGet implements IDocSiglaMarcadoresDisp
 				for (CpMarcador m : marcadores) {
 					Marcador mr = new Marcador();
 					mr.idMarcador = m.getIdMarcador().toString();
+					mr.grupo = m.getCpTipoMarcador().getDescricao();
 					mr.nome = m.getDescrMarcador();
 					ExPodeMarcarComMarcador pode = new ExPodeMarcarComMarcador(mob, m, titular, lotaTitular);
 					mr.ativo = pode.eval();

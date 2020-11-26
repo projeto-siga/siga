@@ -42,9 +42,8 @@
 		<div class="form-group">
 			<label>Objetivo do atributo<span>*</span></label>
 			<select id="objetivoAtributo" 
-					name="atributo.objetivoAtributo.id" 
-					class="form-control select-siga" 
-					style="width:393px;" 
+					name="objetivoAtributoId" 
+					class="form-control select-siga" 					
 					onchange="javascript:ocultaAssociacoes();">
 				<c:forEach items="${objetivos}" var="objetivo">
 					<option value="${objetivo.idObjetivo}">${objetivo.descrObjetivo}</option>

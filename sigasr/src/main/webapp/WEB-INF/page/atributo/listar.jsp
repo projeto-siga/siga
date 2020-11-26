@@ -44,19 +44,15 @@
 	 		
 	</style>
 	
-	<div class="gt-bd clearfix">
-		<div class="gt-content">
-			<h2>Pesquisa de atributos</h2>
-					 
-			<!-- content bomex -->
-			<div class="gt-content-box dataTables_div">
-				<div class="gt-form-row dataTables_length">
-					<label>
-						<siga:checkbox name="mostrarDesativado" value="${mostrarDesativados}"></siga:checkbox>
-						<b>Incluir Inativas</b>
-					</label>
-				</div>
-				
+	<div class="container-fluid mb-2">
+		<h2>Pesquisa de atributos</h2>
+		
+		<div class="card card-body mb-2">
+			<label>
+				<siga:checkbox name="mostrarDesativado" value="${mostrarDesativados}"></siga:checkbox>
+				<b>Incluir Inativas</b>
+			</label>
+			<div class="table-responsive">
 				<table id="atributo_table" class="gt-table display">
 					<thead>
 						<tr>
@@ -69,7 +65,7 @@
 							<th style="display: none;">jSon</th>
 						</tr>
 					</thead>
-	
+		
 					<tbody>
 						<c:forEach items="${atts}" var="att">
 							<tr data-json-id="${att.idAtributo}" data-json='${att.toJson()}' onclick="atributoService.editar($(this).data('json'), 'Alterar atributo')" 
@@ -93,11 +89,10 @@
 					</tbody>
 				</table>
 			</div>
-			<!-- /content box -->
-			<div class="gt-table-buttons">
-				<a onclick="atributoService.cadastrar('Incluir Atributo')" class="gt-btn-medium gt-btn-left">Incluir</a>
-			</div>
 		</div>
+				
+		<!-- Botao Incluir -->			
+		<a onclick="atributoService.cadastrar('Incluir Atributo')" class="btn btn-primary" style="color: #fff">Incluir</a>
 	</div>
 	
 	<sigasr:modal nome="editarAtributo" titulo="Cadastrar Atributo" largura="820">

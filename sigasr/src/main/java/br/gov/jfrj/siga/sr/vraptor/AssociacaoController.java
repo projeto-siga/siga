@@ -62,7 +62,7 @@ public class AssociacaoController extends SrController {
 	@AssertAcesso(ADM_ADMINISTRAR)
 	public void gravarAssociacao(SrConfiguracao associacao,SrAtributo atributo, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, CpComplexo complexo, CpOrgaoUsuario orgaoUsuario,
 			DpLotacaoSelecao lotacaoSel, DpPessoaSelecao dpPessoaSel, DpFuncaoConfiancaSelecao funcaoConfiancaSel, DpCargoSelecao cargoSel, CpPerfilSelecao cpGrupoSel, SrPesquisa pesquisaSatisfacao) throws Exception {
-		if (associacao == null)
+		if (associacao == null || associacao.getIdConfiguracao() == null)
 			associacao = new SrConfiguracao();
 		setDadosAssociacao(associacao, atributo, itemConfiguracaoSet, acoesSet, complexo, orgaoUsuario, lotacaoSel, dpPessoaSel, funcaoConfiancaSel, cargoSel, cpGrupoSel, pesquisaSatisfacao);
 		associacao.salvarComoAssociacaoAtributo();
@@ -83,15 +83,17 @@ public class AssociacaoController extends SrController {
 			DpLotacaoSelecao lotacaoSel, DpPessoaSelecao pessoaSel, DpFuncaoConfiancaSelecao funcaoSel, DpCargoSelecao cargoSel, CpPerfilSelecao perfilSel, SrPesquisa pesquisaSatisfacao) throws Exception {
 		associacao.setItemConfiguracaoSet(itemConfiguracaoSet);
 		associacao.setAcoesSet(acoesSet);
-		associacao.setAtributo(atributo == null ? null : SrAtributo.AR.findById(atributo.getId()));
-		associacao.setPesquisaSatisfacao(pesquisaSatisfacao == null ? null : SrPesquisa.AR.findById(pesquisaSatisfacao.getId()));
-		associacao.setComplexo(complexo == null ? null : CpComplexo.AR.findById(complexo.getIdComplexo()));
-		associacao.setOrgaoUsuario(orgaoUsuario == null ? null : CpOrgaoUsuario.AR.findById(orgaoUsuario.getIdOrgaoUsu()));
+		associacao.setAtributo(atributo == null || atributo.getId() == null ? null : SrAtributo.AR.findById(atributo.getId()));
+		associacao.setPesquisaSatisfacao(pesquisaSatisfacao == null || pesquisaSatisfacao.getId() == null ? null : SrPesquisa.AR.findById(pesquisaSatisfacao.getId()));
+		associacao.setComplexo(complexo == null || complexo.getIdComplexo() == null ? null : CpComplexo.AR.findById(complexo.getIdComplexo()));
+		associacao.setOrgaoUsuario(orgaoUsuario == null || orgaoUsuario.getIdOrgaoUsu() == null ? null : CpOrgaoUsuario.AR.findById(orgaoUsuario.getIdOrgaoUsu()));
 		associacao.setDpPessoa(pessoaSel.buscarObjeto());
 		associacao.setLotacao(lotacaoSel.buscarObjeto());
 		associacao.setFuncaoConfianca(funcaoSel.buscarObjeto());
 		associacao.setCargo(cargoSel.buscarObjeto());
 		associacao.setCpGrupo(perfilSel.buscarObjeto());
 	}
+	
+	
 
 }

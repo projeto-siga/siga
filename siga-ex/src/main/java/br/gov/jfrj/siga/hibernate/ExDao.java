@@ -884,8 +884,13 @@ public class ExDao extends CpDao {
 	public List consultarPaginaInicial(DpPessoa pes, DpLotacao lot,
 			Integer idTipoForma) {
 		try {
+			String sufixoParaQueryEmMysql="";
+			String dialect = System.getProperty("siga.hibernate.dialect");
+			if (dialect != null && dialect.contains("MySQL"))
+				sufixoParaQueryEmMysql="_MYSQL";
+			
 			Query sql = em().createNamedQuery(
-					"consultarPaginaInicial");
+					"consultarPaginaInicial" + sufixoParaQueryEmMysql);
 
 			sql.setParameter("idPessoaIni", pes.getIdPessoaIni());
 			sql.setParameter("idLotacaoIni", lot.getIdLotacaoIni());

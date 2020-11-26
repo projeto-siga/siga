@@ -2581,7 +2581,12 @@ public class CpDao extends ModeloDao {
 
 	public Integer quantidadeDocumentos(DpPessoa pes) {
 		try {
-			Query sql = (Query) em().createNamedQuery("quantidadeDocumentos");
+			String sufixoParaQueryEmMysql="";
+			String dialect = System.getProperty("siga.hibernate.dialect");
+			if (dialect != null && dialect.contains("MySQL"))
+				sufixoParaQueryEmMysql="_MYSQL";
+			
+			Query sql = (Query) em().createNamedQuery("quantidadeDocumentos"+sufixoParaQueryEmMysql);
 
 			sql.setParameter("idPessoaIni", pes.getIdPessoaIni());
 			List result = sql.getResultList();

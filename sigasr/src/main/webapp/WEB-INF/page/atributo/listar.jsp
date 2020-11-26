@@ -95,7 +95,7 @@
 		<a onclick="atributoService.cadastrar('Incluir Atributo')" class="btn btn-primary" style="color: #fff">Incluir</a>
 	</div>
 	
-	<sigasr:modal nome="editarAtributo" titulo="Cadastrar Atributo" largura="820">
+	<sigasr:modal nome="editarAtributo" titulo="Cadastrar Atributo" largura="80%">
 		<div id="divEditarAtributoForm"><jsp:include page="editar.jsp"></jsp:include></div>
 	</sigasr:modal>
 	

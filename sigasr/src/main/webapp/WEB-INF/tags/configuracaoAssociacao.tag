@@ -14,40 +14,43 @@
 <%@ attribute name="itemConfiguracaoSet" type="java.util.List" required="false"%>
 <%@ attribute name="acoesSet" type="java.util.List" required="false"%>
 
-<div class="gt-content" style="padding-top: 10px;">
-	<h3>Associações</h3>
-	<div class="gt-content-box dataTables_div">
-        <div class="gt-form-row dataTables_length">
+<div class="card mb-2">
+	<h5 class="card-header">Associações</h5>
+	
+	<div class="card-body">
+		<div class="table-responsive">
             <label>
             	<siga:checkbox name="mostrarAssocDesativada" value="${mostrarDesativado}"></siga:checkbox>
             	<b>Incluir Inativas</b>
             </label>
-        </div>        
-		<table id="associacao_table" class="gt-table display">
-			<thead>
-				<tr>
-					<th style="color: #333">
-						<span class="bt-expandir">
-							<span id="iconeBotaoExpandirTodos">+</span>
-						</span>
-					</th>
-					<th>idAssociacao</th>
-					<th>Orgão</th>
-					<th>Local</th>
-					<th>Solicitante</th>
-					<th><i>Item &darr;</i></th>
-					<th>Ação</th>
-					<th>Obrigatório</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-			</tbody>
-		</table>
+			<table id="associacao_table" class="gt-table display">
+				<thead>
+					<tr>
+						<th style="color: #333">
+							<span class="bt-expandir">
+								<span id="iconeBotaoExpandirTodos">+</span>
+							</span>
+						</th>
+						<th>idAssociacao</th>
+						<th>Orgão</th>
+						<th>Local</th>
+						<th>Solicitante</th>
+						<th><i style="white-space: nowrap">Item &darr;</i></th>
+						<th>Ação</th>
+						<th>Obrigatório</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		
+		</div>
+		<!-- Botao incluir -->
+	    <a href="javascript: associacaoService.cadastrar('Cadastrar Associação')" class="btn btn-primary" style="color: #fff">Incluir</a>
+                
 	</div>
-	<div class="gt-table-buttons">
-           <a href="javascript: associacaoService.cadastrar('Cadastrar Associação')" class="gt-btn-small gt-btn-left">Incluir</a>
-	</div>
+	
 </div>
 
 <sigasr:modal nome="associacao" titulo="Cadastrar associação">

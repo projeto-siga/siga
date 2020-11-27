@@ -272,11 +272,4 @@ public class CpMarcador extends AbstractCpMarcador {
 				|| getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.PESSOA_OU_LOTACAO;
 	}
 
-	public Integer getHisAtivo() {
-		return getHisDtFim() != null ? 1 : 0;
-	}
-
-	public void setHisAtivo(Integer hisAtivo) {
-		//
-	}
 }

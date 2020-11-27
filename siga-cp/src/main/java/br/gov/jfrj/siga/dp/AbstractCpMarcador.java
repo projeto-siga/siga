@@ -317,12 +317,14 @@ public abstract class AbstractCpMarcador extends HistoricoAuditavelSuporte imple
 		this.hisIdcFim = hisIdcFim;
 	}
 
+	@Override
 	public Integer getHisAtivo() {
 		return this.hisAtivo;
 	}
-
+	
+	@Override
 	public void setHisAtivo(Integer hisAtivo) {
-		this.hisAtivo = getHisAtivo();
+		this.hisAtivo = hisAtivo;
 	}
 
 }

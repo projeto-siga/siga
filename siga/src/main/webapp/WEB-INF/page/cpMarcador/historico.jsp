@@ -34,15 +34,16 @@
 								<td>${marcador.hisDtIni}</td>
 								<td>${marcador.hisDtFim}</td>
 								<td title="${marcador.hisIdcIni.dpPessoa.nomePessoa}">${marcador.hisIdcIni.nmLoginIdentidade}</td>
-								<td><i class='${marcador.idIcone.codigoFontAwesome}' style='color: #${marcador.idCor.descricao}'></i> ${marcador.descrMarcador}</td>
-								<td>${marcador.cpTipoMarcador.descrTipoMarcador}</td>
+								<td title="${marcador.descrDetalhada}"><i class='${marcador.idIcone.codigoFontAwesome}' style='color: #${marcador.idCor.descricao}'>
+									</i> ${marcador.descrMarcador}</td>
+								<td>${marcador.cpTipoMarcador.descricao}</td>
 								<td>${marcador.idTpAplicacao.descricao}</td>
 								<td>${marcador.idTpDataPlanejada.descricao}</td>
 								<td>${marcador.idTpDataLimite.descricao}</td>
 								<td>${marcador.idTpExibicao.descricao}</td>
 								<td>${marcador.idTpTexto.descricao}</td>
 								<td>${marcador.idTpInteressado.descricao}</td>
-								<td>${marcador.hisAtivo == 1? 'Sim' : 'Não'}</td>
+								<td>${marcador.hisAtivo eq 1? 'Sim' : 'Não'}</td>
 							</tr>
 						</c:forEach>
 					</tbody>

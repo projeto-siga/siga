@@ -1339,8 +1339,14 @@ public class CpBL {
 
 //		Integer ordem;
 		if (id != null) {
-			CpMarcador marcador = dao().consultar(id, CpMarcador.class, false);
-			if (marcador != null) {
+			CpMarcador marcadorAnt = new CpMarcador();
+			CpMarcador marcador = new CpMarcador();
+
+			marcadorAnt = dao().consultar(id, CpMarcador.class, false);
+			if (marcadorAnt != null) {
+				marcador.setHisIdIni(marcadorAnt.getHisIdIni());
+				marcador.setOrdem(marcadorAnt.getOrdem());
+				marcador.setDpLotacaoIni(marcadorAnt.getDpLotacaoIni());
 				marcador.setDescrMarcador(descricao);
 				marcador.setDescrDetalhada(descrDetalhada);
 				marcador.setGrupoMarcador(grupoId);
@@ -1353,7 +1359,9 @@ public class CpBL {
 				marcador.setIdTpExibicao(idTpExibicao);
 				marcador.setIdTpTexto(idTpTexto);
 				marcador.setIdTpInteressado(idTpInteressado);
-				marcador.salvarComHistorico();
+				marcador.setHisAtivo(1);
+				marcadorAnt.setHisAtivo(0);
+				dao().gravarComHistorico(marcador, marcadorAnt, null, identidade);
 			} else {
 				throw new AplicacaoException ("Marcador não existente para esta " + msgLotacao 
 						+ " (" + id.toString() + ").");
@@ -1361,7 +1369,6 @@ public class CpBL {
 		} else {
 			Integer ordem = listaMarcadoresLotacao.size() + 1; 
 			CpMarcador marcador = new CpMarcador();
-//			ordem = marcador.getOrdem();
 			marcador.setDescrMarcador(descricao);
 			marcador.setDescrDetalhada(descrDetalhada);
 			marcador.setGrupoMarcador(grupoId);
@@ -1376,8 +1383,8 @@ public class CpBL {
 			marcador.setIdTpInteressado(idTpInteressado);
 			marcador.setDpLotacaoIni(lotacao);
 			marcador.setOrdem(ordem);
+			marcador.setHisAtivo(1);
 			
-			marcador.salvarComHistorico();
 			dao().gravarComHistorico(marcador, null, null, identidade);
 		}
 	}

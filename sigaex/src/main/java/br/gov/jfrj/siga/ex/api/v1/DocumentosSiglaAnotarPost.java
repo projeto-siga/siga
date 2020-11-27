@@ -5,18 +5,18 @@ import com.crivano.swaggerservlet.SwaggerServlet;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaAnotarPostRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaAnotarPostResponse;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocSiglaAnotarPost;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaAnotarPostRequest;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaAnotarPostResponse;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaAnotarPost;
 import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-public class DocSiglaAnotarPost implements IDocSiglaAnotarPost {
+public class DocumentosSiglaAnotarPost implements IDocumentosSiglaAnotarPost {
 
 	@Override
-	public void run(DocSiglaAnotarPostRequest req, DocSiglaAnotarPostResponse resp) throws Exception {
+	public void run(DocumentosSiglaAnotarPostRequest req, DocumentosSiglaAnotarPostResponse resp) throws Exception {
 		CurrentRequest.set(
 				new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 		SwaggerHelper.buscarEValidarUsuarioLogado();

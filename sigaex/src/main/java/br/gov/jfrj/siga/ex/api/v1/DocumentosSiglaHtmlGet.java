@@ -13,9 +13,9 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExProtocolo;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaHtmlGetRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaHtmlGetResponse;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocSiglaHtmlGet;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaHtmlGetRequest;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaHtmlGetResponse;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaHtmlGet;
 import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
@@ -23,9 +23,9 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
 @AcessoPublico
-public class DocSiglaHtmlGet implements IDocSiglaHtmlGet {
+public class DocumentosSiglaHtmlGet implements IDocumentosSiglaHtmlGet {
 	@Override
-	public void run(DocSiglaHtmlGetRequest req, DocSiglaHtmlGetResponse resp) throws Exception {
+	public void run(DocumentosSiglaHtmlGetRequest req, DocumentosSiglaHtmlGetResponse resp) throws Exception {
 		try {
 			CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 	

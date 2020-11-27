@@ -22,19 +22,19 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaGetRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaGetResponse;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocSiglaGet;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaGetRequest;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaGetResponse;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaGet;
 import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 import br.gov.jfrj.sigale.ex.vo.ExDocumentoApiVO;
 
-public class DocSiglaGet implements IDocSiglaGet {
+public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 
 	@Override
-	public void run(DocSiglaGetRequest req, DocSiglaGetResponse resp) throws Exception {
+	public void run(DocumentosSiglaGetRequest req, DocumentosSiglaGetResponse resp) throws Exception {
 		CurrentRequest.set(
 				new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 

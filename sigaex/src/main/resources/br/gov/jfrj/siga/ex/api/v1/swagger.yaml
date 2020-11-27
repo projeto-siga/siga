@@ -347,7 +347,7 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
-  /documento/{sigla}/arquivo:
+  /documentos/{sigla}/arquivo:
     get:
       summary: Inicia o processo de geração do PDF completo de um documento para visualização
       tags: [download]
@@ -459,7 +459,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-  /doc/{sigla}:
+  /documentos/{sigla}:
     get:
       description: Exibir um documento
       tags: [consulta]
@@ -482,7 +482,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
             
-  /doc/{sigla}/pdf:
+  /documentos/{sigla}/pdf:
     get:
       summary: SEM IMPLEMENTACAO PRONTA! NAO USAR!
       deprecated: true
@@ -504,7 +504,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-  /doc/{sigla}/html:
+  /documentos/{sigla}/html:
     get:
       description: Obter o HTML de um documento para visualização
       tags: [consulta]
@@ -532,7 +532,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-  /doc/{sigla}/pdf-completo:
+  /documentos/{sigla}/pdf-completo:
     get:
       description: Obter o PDF completo de um documento para visualização
       tags: [consulta]
@@ -552,7 +552,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
             
-  /doc/{sigla}/mov/{id}/pdf:
+  /documentos/{sigla}/mov/{id}/pdf:
     get:
       summary: SEM IMPLEMENTACAO PRONTA! NAO USAR!
       deprecated: true
@@ -575,7 +575,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-  /doc/{sigla}/assinar-com-senha:
+  /documentos/{sigla}/assinar-com-senha:
     post:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [acao]
@@ -599,7 +599,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-  /doc/{sigla}/autenticar-com-senha:
+  /documentos/{sigla}/autenticar-com-senha:
     post:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [acao]
@@ -623,7 +623,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-  /doc/{sigla}/tramitar:
+  /documentos/{sigla}/tramitar:
     post:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [acao]
@@ -649,7 +649,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-  /doc/{sigla}/juntar:
+  /documentos/{sigla}/juntar:
     post:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [acao]
@@ -679,7 +679,7 @@ paths:
             $ref: "#/definitions/Error"
 
 
-  /doc/{sigla}/anotar:
+  /documentos/{sigla}/anotar:
     post:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [acao]
@@ -700,7 +700,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-  /doc/{sigla}/pesquisar-sigla:
+  /documentos/{sigla}/pesquisar-sigla:
     get:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [acao]
@@ -764,7 +764,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-  /doc:
+  /documentos:
     post:
       summary: Cria um novo documento
       tags: [acao]

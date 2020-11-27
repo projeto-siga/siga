@@ -16,18 +16,18 @@ import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaTramitarPostRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaTramitarPostResponse;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocSiglaTramitarPost;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaTramitarPostRequest;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaTramitarPostResponse;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaTramitarPost;
 import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-public class DocSiglaTramitarPost implements IDocSiglaTramitarPost {
+public class DocumentosSiglaTramitarPost implements IDocumentosSiglaTramitarPost {
 
-	private void validarPreenchimentoDestino(DocSiglaTramitarPostRequest req, DocSiglaTramitarPostResponse resp)
+	private void validarPreenchimentoDestino(DocumentosSiglaTramitarPostRequest req, DocumentosSiglaTramitarPostResponse resp)
 			throws SwaggerException {
 		if (StringUtils.isEmpty(req.orgao) && StringUtils.isEmpty(req.lotacao) && StringUtils.isEmpty(req.matricula)) {
 			throw new SwaggerException("Você deve fornecer ou orgao (apenas) ou matricula ou lotacao *com* a matricula",
@@ -45,7 +45,7 @@ public class DocSiglaTramitarPost implements IDocSiglaTramitarPost {
 		}
 	}
 
-	private void validarAcesso(DocSiglaTramitarPostRequest req, DpPessoa titular, DpLotacao lotaTitular, ExMobil mob)
+	private void validarAcesso(DocumentosSiglaTramitarPostRequest req, DpPessoa titular, DpLotacao lotaTitular, ExMobil mob)
 			throws Exception, PresentableUnloggedException {
 		SwaggerHelper.assertAcesso(mob, titular, lotaTitular);
 
@@ -54,7 +54,7 @@ public class DocSiglaTramitarPost implements IDocSiglaTramitarPost {
 					+ titular.getSiglaCompleta() + "/" + lotaTitular.getSiglaCompleta());
 	}
 
-	private CpOrgao getOrgaoExterno(DocSiglaTramitarPostRequest req, DocSiglaTramitarPostResponse resp)
+	private CpOrgao getOrgaoExterno(DocumentosSiglaTramitarPostRequest req, DocumentosSiglaTramitarPostResponse resp)
 			throws SwaggerException {
 		if (StringUtils.isEmpty(req.orgao)) {
 			return null;
@@ -68,7 +68,7 @@ public class DocSiglaTramitarPost implements IDocSiglaTramitarPost {
 		return orgaoExternoDestino;
 	}
 
-	private DpPessoa getResponsavel(DocSiglaTramitarPostRequest req, CpOrgao orgaoExterno) {
+	private DpPessoa getResponsavel(DocumentosSiglaTramitarPostRequest req, CpOrgao orgaoExterno) {
 		DpPessoa pes = null;
 		if (Objects.isNull(orgaoExterno) && StringUtils.isNotEmpty(req.matricula)) {
 			pes = new DpPessoa();
@@ -78,7 +78,7 @@ public class DocSiglaTramitarPost implements IDocSiglaTramitarPost {
 		return pes;
 	}
 
-	private DpLotacao getLotacao(DocSiglaTramitarPostRequest req, CpOrgao orgaoExterno) {
+	private DpLotacao getLotacao(DocumentosSiglaTramitarPostRequest req, CpOrgao orgaoExterno) {
 		DpLotacao lot = null;
 		if (Objects.isNull(orgaoExterno) && StringUtils.isNotEmpty(req.lotacao)) {
 			lot = new DpLotacao();
@@ -88,7 +88,7 @@ public class DocSiglaTramitarPost implements IDocSiglaTramitarPost {
 		return lot;
 	}
 
-	private Date getDataDevolucao(DocSiglaTramitarPostRequest req, DocSiglaTramitarPostResponse resp)
+	private Date getDataDevolucao(DocumentosSiglaTramitarPostRequest req, DocumentosSiglaTramitarPostResponse resp)
 			throws SwaggerException {
 		if (StringUtils.isEmpty(req.dataDevolucao)) {
 			return null;
@@ -107,7 +107,7 @@ public class DocSiglaTramitarPost implements IDocSiglaTramitarPost {
 	}
 
 	@Override
-	public void run(DocSiglaTramitarPostRequest req, DocSiglaTramitarPostResponse resp) throws Exception {
+	public void run(DocumentosSiglaTramitarPostRequest req, DocumentosSiglaTramitarPostResponse resp) throws Exception {
 		CurrentRequest.set(
 				new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 

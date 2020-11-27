@@ -12,9 +12,9 @@ import com.crivano.swaggerservlet.SwaggerServlet;
 import br.gov.jfrj.itextpdf.Status;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentoSiglaArquivoGetRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentoSiglaArquivoGetResponse;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentoSiglaArquivoGet;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaArquivoGetRequest;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaArquivoGetResponse;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaArquivoGet;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
@@ -22,10 +22,10 @@ import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 @AcessoPublicoEPrivado
-public class DocumentoSiglaArquivoGet implements IDocumentoSiglaArquivoGet {
+public class DocumentosSiglaArquivoGet implements IDocumentosSiglaArquivoGet {
 
 	@Override
-	public void run(DocumentoSiglaArquivoGetRequest req, DocumentoSiglaArquivoGetResponse resp) throws Exception {
+	public void run(DocumentosSiglaArquivoGetRequest req, DocumentosSiglaArquivoGetResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(false)) {
 			String usuario = ContextoPersistencia.getUserPrincipal();
 
@@ -56,7 +56,7 @@ public class DocumentoSiglaArquivoGet implements IDocumentoSiglaArquivoGet {
 		}
 	}
 
-	public static void iniciarGeracaoDePdf(DocumentoSiglaArquivoGetRequest req, DocumentoSiglaArquivoGetResponse resp,
+	public static void iniciarGeracaoDePdf(DocumentosSiglaArquivoGetRequest req, DocumentosSiglaArquivoGetResponse resp,
 			String u, String filename, String contextpath, String servernameport) throws IOException, Exception {
 		resp.uuid = UUID.randomUUID().toString();
 		Status.update(resp.uuid, "Aguardando na fila de tarefas", 0, 100, 0L);

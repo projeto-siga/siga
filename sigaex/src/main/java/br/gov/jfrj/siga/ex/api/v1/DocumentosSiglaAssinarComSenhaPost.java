@@ -5,15 +5,15 @@ import com.crivano.swaggerservlet.PresentableUnloggedException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaAssinarComSenhaPostRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaAssinarComSenhaPostResponse;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocSiglaAssinarComSenhaPost;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaAssinarComSenhaPostRequest;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaAssinarComSenhaPostResponse;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaAssinarComSenhaPost;
 import br.gov.jfrj.siga.ex.bl.Ex;
 
-public class DocSiglaAssinarComSenhaPost extends DocSiglaAssinarAutenticarComSenhaPost
-		implements IDocSiglaAssinarComSenhaPost {
+public class DocumentosSiglaAssinarComSenhaPost extends DocumentosSiglaAssinarAutenticarComSenhaPost
+		implements IDocumentosSiglaAssinarComSenhaPost {
 
-	public DocSiglaAssinarComSenhaPost() {
+	public DocumentosSiglaAssinarComSenhaPost() {
 		super(false);
 	}
 
@@ -28,7 +28,7 @@ public class DocSiglaAssinarComSenhaPost extends DocSiglaAssinarAutenticarComSen
 	}
 
 	@Override
-	public void run(DocSiglaAssinarComSenhaPostRequest req, DocSiglaAssinarComSenhaPostResponse resp) throws Exception {
+	public void run(DocumentosSiglaAssinarComSenhaPostRequest req, DocumentosSiglaAssinarComSenhaPostResponse resp) throws Exception {
 		super.executar(req.sigla, (sigla, status) -> {
 			resp.sigla = sigla;
 			resp.status = status;

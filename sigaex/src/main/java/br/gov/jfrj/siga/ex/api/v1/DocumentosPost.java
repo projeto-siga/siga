@@ -29,9 +29,9 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocPostRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocPostResponse;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocPost;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosPostRequest;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosPostResponse;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosPost;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
@@ -42,15 +42,15 @@ import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 @AcessoPublicoEPrivado
-public class DocPost implements IDocPost {
-	public DocPost () {
+public class DocumentosPost implements IDocumentosPost {
+	public DocumentosPost () {
 		SwaggerUtils.setUploadHandler(new ArquivoUploadHandler());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void run(DocPostRequest req,
-			DocPostResponse resp) throws Exception {
+	public void run(DocumentosPostRequest req,
+			DocumentosPostResponse resp) throws Exception {
 		SwaggerHelper.buscarEValidarUsuarioLogado();
 		CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 		
@@ -206,7 +206,7 @@ public class DocPost implements IDocPost {
 			if (req.nivelacesso != null) {
 				doc.setExNivelAcesso(dao()
 						.consultarExNidelAcesso(
-								DocPost.UTF8toISO(req.nivelacesso)));
+								DocumentosPost.UTF8toISO(req.nivelacesso)));
 			} else {
 				final ExNivelAcesso nivelDefault =  ExNivelAcesso
 						.getNivelAcessoDefault(doc.getExTipoDocumento(), doc.getExFormaDocumento(),
@@ -228,7 +228,7 @@ public class DocPost implements IDocPost {
 			}
 			
 			String camposModelo = "";
-			String conteudo = DocPost.UTF8toISO(req.entrevista);
+			String conteudo = DocumentosPost.UTF8toISO(req.entrevista);
 			Map <String, String> conteudoMap;
 			
 			try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {

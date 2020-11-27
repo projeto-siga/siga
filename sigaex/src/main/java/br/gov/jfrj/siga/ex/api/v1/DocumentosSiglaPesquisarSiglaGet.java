@@ -3,16 +3,16 @@ package br.gov.jfrj.siga.ex.api.v1;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaPesquisarSiglaGetRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaPesquisarSiglaGetResponse;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocSiglaPesquisarSiglaGet;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaPesquisarSiglaGetRequest;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaPesquisarSiglaGetResponse;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaPesquisarSiglaGet;
 import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.RequestInfo;
 
-public class DocSiglaPesquisarSiglaGet implements IDocSiglaPesquisarSiglaGet {
+public class DocumentosSiglaPesquisarSiglaGet implements IDocumentosSiglaPesquisarSiglaGet {
 
 	@Override
-	public void run(DocSiglaPesquisarSiglaGetRequest req, DocSiglaPesquisarSiglaGetResponse resp) throws Exception {
+	public void run(DocumentosSiglaPesquisarSiglaGetRequest req, DocumentosSiglaPesquisarSiglaGetResponse resp) throws Exception {
 		CurrentRequest.set(
 				new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 		SwaggerHelper.buscarEValidarUsuarioLogado();

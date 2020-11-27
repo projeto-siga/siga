@@ -5,17 +5,17 @@ import com.crivano.swaggerservlet.SwaggerServlet;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaPdfCompletoGetRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaPdfCompletoGetResponse;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocSiglaPdfCompletoGet;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaPdfCompletoGetRequest;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaPdfCompletoGetResponse;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaPdfCompletoGet;
 import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-public class DocSiglaPdfCompletoGet implements IDocSiglaPdfCompletoGet {
+public class DocumentosSiglaPdfCompletoGet implements IDocumentosSiglaPdfCompletoGet {
 
 	@Override
-	public void run(DocSiglaPdfCompletoGetRequest req, DocSiglaPdfCompletoGetResponse resp) throws Exception {
+	public void run(DocumentosSiglaPdfCompletoGetRequest req, DocumentosSiglaPdfCompletoGetResponse resp) throws Exception {
 		CurrentRequest.set(
 				new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 

@@ -7,15 +7,15 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaAutenticarComSenhaPostRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaAutenticarComSenhaPostResponse;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocSiglaAutenticarComSenhaPost;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaAutenticarComSenhaPostRequest;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaAutenticarComSenhaPostResponse;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaAutenticarComSenhaPost;
 import br.gov.jfrj.siga.ex.bl.Ex;
 
-public class DocSiglaAutenticarComSenhaPost extends DocSiglaAssinarAutenticarComSenhaPost
-		implements IDocSiglaAutenticarComSenhaPost {
+public class DocumentosSiglaAutenticarComSenhaPost extends DocumentosSiglaAssinarAutenticarComSenhaPost
+		implements IDocumentosSiglaAutenticarComSenhaPost {
 	
-	public DocSiglaAutenticarComSenhaPost() {
+	public DocumentosSiglaAutenticarComSenhaPost() {
 		super(true);
 	}
 
@@ -42,7 +42,7 @@ public class DocSiglaAutenticarComSenhaPost extends DocSiglaAssinarAutenticarCom
 	}
 
 	@Override
-	public void run(DocSiglaAutenticarComSenhaPostRequest req, DocSiglaAutenticarComSenhaPostResponse resp)
+	public void run(DocumentosSiglaAutenticarComSenhaPostRequest req, DocumentosSiglaAutenticarComSenhaPostResponse resp)
 			throws Exception {
 		super.executar(req.sigla, (sigla, status) -> {
 			resp.sigla = sigla;

@@ -7,19 +7,19 @@ import com.crivano.swaggerservlet.SwaggerServlet;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaJuntarPostRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaJuntarPostResponse;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocSiglaJuntarPost;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaJuntarPostRequest;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaJuntarPostResponse;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaJuntarPost;
 import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-public class DocSiglaJuntarPost implements IDocSiglaJuntarPost {
+public class DocumentosSiglaJuntarPost implements IDocumentosSiglaJuntarPost {
 
 	@Override
-	public void run(DocSiglaJuntarPostRequest req, DocSiglaJuntarPostResponse resp) throws Exception {
+	public void run(DocumentosSiglaJuntarPostRequest req, DocumentosSiglaJuntarPostResponse resp) throws Exception {
 		CurrentRequest.set(
 				new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 		SwaggerHelper.buscarEValidarUsuarioLogado();

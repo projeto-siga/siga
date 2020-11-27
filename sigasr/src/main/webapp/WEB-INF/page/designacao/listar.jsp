@@ -17,37 +17,37 @@
 	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
 	<script src="/sigasr/javascripts/moment.js"></script>
 	
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-			<h2>Designa&ccedil;&otilde;es</h2>
+	<div class="container-fluid mb-2">
+		<h2>Designa&ccedil;&otilde;es</h2>
 
-			<script type="text/javascript">
-				var telaOrigem = 'listarDesignacao';
-				
-				//removendo a referencia de '$' para o jQuery
-				$( document ).ready(function() {
-					if ("${mostrarDesativados}" != "") {
-						document.getElementById('checkmostrarDesativados').checked = ${mostrarDesativados};
-						document.getElementById('checkmostrarDesativados').value = ${mostrarDesativados};
-					}
-					
-					$("#checkmostrarDesativados").click(function() {
-						jQuery.blockUI(objBlock);
-						if (document.getElementById('checkmostrarDesativados').checked)
-							location.href = '${linkTo[DesignacaoController].listar}' + '?mostrarDesativados=true';
-						else
-							location.href = '${linkTo[DesignacaoController].listar}' + '?mostrarDesativados=false';
-					});
-				});
-			</script>
-		
-			<sigasr:designacao modoExibicao="modoExibicao" designacoes="designacoes" mostrarDesativados="mostrarDesativados"/> 
+		<script type="text/javascript">
+			var telaOrigem = 'listarDesignacao';
 			
-			<script>
-				$(document).ready(function() {
-					designacaoService.configurarDataTable()
+			//removendo a referencia de '$' para o jQuery
+			$( document ).ready(function() {
+				if ("${mostrarDesativados}" != "") {
+					document.getElementById('checkmostrarDesativados').checked = ${mostrarDesativados};
+					document.getElementById('checkmostrarDesativados').value = ${mostrarDesativados};
+				}
+				
+				$("#checkmostrarDesativados").click(function() {
+					jQuery.blockUI(objBlock);
+					if (document.getElementById('checkmostrarDesativados').checked)
+						location.href = '${linkTo[DesignacaoController].listar}' + '?mostrarDesativados=true';
+					else
+						location.href = '${linkTo[DesignacaoController].listar}' + '?mostrarDesativados=false';
 				});
-			</script>
+			});
+		</script>
+		
+		<div class="card card-body">
+			<sigasr:designacao modoExibicao="modoExibicao" designacoes="designacoes" mostrarDesativados="mostrarDesativados"/> 
 		</div>
+			
+		<script>
+			$(document).ready(function() {
+				designacaoService.configurarDataTable()
+			});
+		</script>
 	</div>
 </siga:pagina>

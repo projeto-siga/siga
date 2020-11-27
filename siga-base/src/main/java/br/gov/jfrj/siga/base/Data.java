@@ -2,6 +2,8 @@ package br.gov.jfrj.siga.base;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Locale;
 
@@ -75,12 +77,30 @@ public class Data {
 		PrettyTime p = new PrettyTime(new Date(), new Locale("pt"));
 
 		String tempo = p.format(anterior);
+		tempo = abreviarTempoRelativo(tempo);
+		return tempo;
+	}
+
+	private static String abreviarTempoRelativo(String tempo) {
 		tempo = tempo.replace(" atrás", "");
 		tempo = tempo.replace(" dias", " dias");
 		tempo = tempo.replace(" horas", "h");
 		tempo = tempo.replace(" minutos", "min");
 		tempo = tempo.replace(" segundos", "s");
 		tempo = tempo.replace("agora há pouco", "agora");
+		return tempo;
+	}
+
+	public static String calcularTempoRelativoEmDias(Date anterior) {
+		Date agora = Date.from(new Date().toInstant().truncatedTo(ChronoUnit.DAYS));
+//		Instant instant = anterior.toInstant();
+//		Instant truncatedTo = instant.truncatedTo(ChronoUnit.DAYS);
+//		anterior = Date.from(truncatedTo);
+		PrettyTime p = new PrettyTime(agora, new Locale("pt"));
+
+		String tempo = p.format(anterior);
+		tempo = abreviarTempoRelativo(tempo);
+		tempo = tempo.replace("agora", "hoje");
 		return tempo;
 	}
 

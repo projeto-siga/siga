@@ -1850,8 +1850,10 @@ public class ExDao extends CpDao {
 			// Não conta os documentos que tiverem marcas na lista marcasAIgnorar
 			String queryMarcasAIgnorar = marcasAIgnorar.toString().replaceAll("\\[|\\]", "");
 			String queryMarcasAIgnorarFinal = "";
+			int i = 0;
 			// Para cada grupo solicitado, gera a query para contagem
 			for (GrupoItem grupoItem : grupos) {
+				i++;
 				if (!grupoItem.grupoHide && grupoItem.grupoMarcadores.size() > 0) {
 					queryMarcasAIgnorarFinal = queryMarcasAIgnorar;
 					// Se for do grupo AGUARDANDO_ANDAMENTO, nao conta se tiver marca do grupo CAIXA_DE_ENTRADA
@@ -1893,7 +1895,7 @@ public class ExDao extends CpDao {
 						  + " AND marca.id_marcador <> :marcaAssinSenha "
 						  + " AND marca.id_marcador <> :marcaMovAssinSenha "
 						  + " AND marca2.id_marca IS null "
-						 + " GROUP BY marca.id_ref )"
+						 + " GROUP BY marca.id_ref ) t" + i 
 //								+ " GROUP BY tab1.grupo_marcador ORDER BY tab1.grupo_marcador asc"
 						+ " UNION ALL ";
 				}

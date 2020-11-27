@@ -301,7 +301,7 @@ public class ExMarcadorBL {
 			} else if (marcador.isInteressadoLotacao() && mov.getLotaSubscritor() != null) {
 				lot = mov.getLotaSubscritor();
 			}
-			acrescentarMarcaTransferencia(marcador.getIdMarcador(), dtIni, dtFim, pes,	lot);
+			acrescentarMarcaTransferencia(marcador.getIdMarcador(), dtIni, dtFim, pes,	lot, mov);
 		}
 	}
 	
@@ -615,23 +615,23 @@ public class ExMarcadorBL {
 				dtMarca.setSeconds(59);
 
 				acrescentarMarcaTransferencia(m_aguardando, dt, dtMarca, transfComData.getCadastrante(),
-						transfComData.getLotaCadastrante()); // acrescenta a
+						transfComData.getLotaCadastrante(), transfComData); // acrescenta a
 				// marca
 				// "Aguardando Devolução"
 
 				acrescentarMarcaTransferencia(m_aDevolver, dt, dtMarca, transfComData.getResp(),
-						transfComData.getLotaResp());// acrescenta
+						transfComData.getLotaResp(), transfComData);// acrescenta
 				// a
 				// marca
 				// "A Devolver"
 
 				acrescentarMarcaTransferencia(m_aguardandoFora, dtMarca, null, transfComData.getCadastrante(),
-						transfComData.getLotaCadastrante()); // acrescenta a
+						transfComData.getLotaCadastrante(), transfComData); // acrescenta a
 				// marca
 				// "Aguardando Devolução (Fora do Prazo)"
 
 				acrescentarMarcaTransferencia(m_aDevolverFora, dtMarca, null, transfComData.getResp(),
-						transfComData.getLotaResp());// acrescenta
+						transfComData.getLotaResp(), transfComData);// acrescenta
 				// a
 				// marca
 				// "A Devolver (Fora do Prazo)"
@@ -747,10 +747,11 @@ public class ExMarcadorBL {
 		set.add(mar);
 	}
 
-	private void acrescentarMarcaTransferencia(Long idMarcador, Date dtIni, Date dtFim, DpPessoa pess, DpLotacao lota) {
+	private void acrescentarMarcaTransferencia(Long idMarcador, Date dtIni, Date dtFim, DpPessoa pess, DpLotacao lota, ExMovimentacao mov) {
 		ExMarca mar = new ExMarca();
 		mar.setExMobil(mob);
 		mar.setCpMarcador(ExDao.getInstance().consultar(idMarcador, CpMarcador.class, false));
+		mar.setExMovimentacao(mov);
 		if (pess != null)
 			mar.setDpPessoaIni(pess.getPessoaInicial());
 		if (lota != null) {

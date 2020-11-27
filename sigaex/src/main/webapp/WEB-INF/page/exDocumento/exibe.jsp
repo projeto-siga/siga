@@ -519,22 +519,39 @@
 						</div>
 					</c:if>
 
+					<!-- tabela de móbiles e marcas -->
 					<c:if test="${not empty docVO.outrosMobsLabel and not empty docVO.marcasPorMobil}">
 						<jsp:useBean id="now" class="java.util.Date" />
 						<div class="card-sidebar card bg-light mb-3">
-							<tags:collapse title="${docVO.outrosMobsLabel}" id="OutrosMob" collapseMode="${collapse_Expanded}">
-								<a title="Atualizar marcas"
-								style="float: right; margin-top: -3px;"
+							<c:set var="butRefresh"><a title="Atualizar marcas"
+								style="float: right; margin-top: 0px; padding-left: 1em; padding-right: 1em;"
 								href="${linkTo[ExDocumentoController].aAtualizarMarcasDoc(sigla)}?sigla=${sigla}"
 								${popup?'target="_blank" ':''}> <img
 								src="/siga/css/famfamfam/icons/arrow_refresh.png">
 								
-							</a>
-								<ul style="list-style-type: none; margin: 0; padding: 0;">
+							</a></c:set>
+							<tags:collapse title="${docVO.outrosMobsLabel}" id="OutrosMob" collapseMode="${collapse_Expanded}" addToTitle="${butRefresh}" classInfo="m-0 p-0">
+								<div class="table-responsive">
+								<table class="table table-sm mb-0 w-100">
+								<!-- <thead class="align-middle text-center">
+									<tr>
+										<th class="text-left"></th>
+										<th class="text-left">Marca</th>
+										<th class="text-left"><fmt:message key="usuario.pessoa"/></th>
+										<th class="text-left"><fmt:message key="usuario.lotacao"/></th>
+										<th class="text-left">Texto</th>
+									</tr>
+								</thead> -->
+								<tbody>
 									<c:forEach var="entry" items="${docVO.marcasPorMobil}">
 										<c:set var="outroMob" value="${entry.key}" />
 										<c:set var="mobNome" value="${outroMob.isGeral() ? 'Geral' : outroMob.terminacaoSigla}" />
-										<li><c:choose>
+											<c:forEach var="marca" items="${entry.value}" varStatus="loop">
+											<c:set var="lotacaoAtual" value="${marca.dpLotacaoIni.lotacaoAtual}"/>
+											<c:set var="pessoaAtual" value="${marca.dpPessoaIni.pessoaAtual}"/>
+										<tr class="${mov.classe} ${mov.disabled}">
+										<c:if test="${loop.first}">
+										<td rowspan="${entry.value.size()}" style="padding-left: 1.25rem"><c:choose>
 												<c:when test="${(not outroMob.geral) and outroMob.numSequencia == m.mob.numSequencia}">
 													<i><b>${mobNome}</b></i>
 												</c:when>
@@ -545,35 +562,23 @@
 														style="text-decoration: none">
 														${mobNome} </a>
 												</c:otherwise>
-											</c:choose> &nbsp;-&nbsp; 
-											<c:forEach var="marca" items="${entry.value}" varStatus="loop">
-												<c:if test="${marca.cpMarcador.idMarcador ne '56' && marca.cpMarcador.idMarcador ne '57' && marca.cpMarcador.idMarcador ne '58' && siga_cliente eq 'GOVSP'}">
-														${marca.cpMarcador.descrMarcador}
-														<c:if test="${marca.dtIniMarca gt now}">
-															a partir de ${marca.dtIniMarcaDDMMYYYY}
-														</c:if>
-														<c:if test="${not empty marca.dtFimMarca}"> 
-															até ${marca.dtFimMarcaDDMMYYYY}
-														</c:if>
-														<c:if test="${marca.cpMarcador.demandaJudicial}">
-															até ${docVO.dtLimiteDemandaJudicial}
-														</c:if>
-														<c:if test="${not empty marca.dpLotacaoIni}">
-															[${marca.dpLotacaoIni.lotacaoAtual.sigla}
-															<c:if test="${not empty marca.dpPessoaIni}">
-																&nbsp;${marca.dpPessoaIni.pessoaAtual.sigla}
-															</c:if>
-															]
-														</c:if>
-									
-												</c:if>
-												<c:if test="${siga_cliente ne 'GOVSP'}">
-												    ${marca}<c:if test="${!lopp.last}">,</c:if>
-												</c:if>
+											</c:choose></td>
+										</c:if>
+										<td>${marca.descricaoComDatas}</td>
+										<td><siga:selecionado isVraptor="true" sigla="${pessoaAtual.nomeAbreviado}"
+											descricao="${pessoaAtual.descricao} - ${pessoaAtual.sigla}"
+											pessoaParam="${pessoaAtual.siglaCompleta}" /></td>
+										<td><siga:selecionado isVraptor="true" sigla="${marca.dpLotacaoIni.lotacaoAtual.sigla}"
+											descricao="${marca.dpLotacaoIni.lotacaoAtual.descricaoAmpliada}"
+											lotacaoParam="${marca.dpLotacaoIni.lotacaoAtual.siglaCompleta}" /></td>
+										<td style="padding-right: 1.25rem">${marca.exMovimentacao.descrMov}
+										</td>
+										</tr>
 											</c:forEach>
-										</li>
 									</c:forEach>
-								</ul>
+								</tbody>
+							</table>
+							</div>
 							</tags:collapse>
 						</div>
 					</c:if>

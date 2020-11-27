@@ -35,12 +35,24 @@ public class AbstractExMarca extends CpMarca {
 	@JoinColumn(name = "ID_REF")
 	private ExMobil exMobil;
 
+	@ManyToOne
+	@JoinColumn(name = "ID_MOV")
+	private ExMovimentacao exMovimentacao;
+
 	public ExMobil getExMobil() {
 		return exMobil;
 	}
 
 	public void setExMobil(ExMobil exMobil) {
 		this.exMobil = exMobil;
+	}
+
+	public ExMovimentacao getExMovimentacao() {
+		return exMovimentacao;
+	}
+
+	public void setExMovimentacao(ExMovimentacao exMovimentacao) {
+		this.exMovimentacao = exMovimentacao;
 	}
 
 }

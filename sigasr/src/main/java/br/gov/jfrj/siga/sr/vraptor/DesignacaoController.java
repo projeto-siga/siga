@@ -30,6 +30,7 @@ import br.gov.jfrj.siga.sr.model.SrPesquisa;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.uteis.PessoaLotaFuncCargoSelecaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
+import br.gov.jfrj.siga.vraptor.Transacional;
 
 @Controller
 @Path("/app/designacao")
@@ -70,6 +71,7 @@ public class DesignacaoController extends SrController {
 		PessoaLotaFuncCargoSelecaoHelper.adicionarCamposSelecao(result);
 	}
 	 
+	@Transacional
 	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/desativar")
 	public void desativar(Long id) throws Exception {
@@ -79,6 +81,7 @@ public class DesignacaoController extends SrController {
 		result.use(Results.http()).body(designacao.toJson());
 	}
 
+	@Transacional
 	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/reativar")
 	public void reativar(Long id) throws Exception {
@@ -89,6 +92,7 @@ public class DesignacaoController extends SrController {
 		result.use(Results.http()).body(designacao.toJson());
 	}
 
+	@Transacional
 	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/gravar")
 	public void gravar(SrConfiguracao designacao, Long cpGrupoId, 

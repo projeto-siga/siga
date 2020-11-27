@@ -111,7 +111,8 @@ public class AcaoController extends SrController {
 
 	@Path("/selecionar")
 	public void selecionar(String sigla, SrSolicitacao sol)throws Exception {
-		SrAcao acao = new SrAcao().selecionar(sigla, sol != null ? sol.getAcoesDisponiveis() : null);
+		boolean possuiAcoesDisponiveis = sol != null && sol.getAcoesDisponiveis() != null && sol.getAcoesDisponiveis().size() > 0;
+		SrAcao acao = new SrAcao().selecionar(sigla, possuiAcoesDisponiveis ? sol.getAcoesDisponiveis() : null);
 		result
 			.forwardTo(SelecaoController.class)
 			.ajaxRetorno(acao);

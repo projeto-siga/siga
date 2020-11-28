@@ -162,13 +162,19 @@ parameters:
   lotacao:
     name: lotacao
     in: formData
-    description: Sigla completa da lotação
+    description: Sigla completa da lotação integrada ao Siga
     required: false
     type: string
   matricula:
     name: matricula
     in: formData
-    description: Sigla completa da matrícula
+    description: Sigla completa da matrícula do usuário do Siga
+    required: false
+    type: string
+  orgao:
+    name: orgao
+    in: formData
+    description: Sigla completa do órgão externo ao Siga
     required: false
     type: string
   matriculaQuery:
@@ -179,9 +185,10 @@ parameters:
     type: string
   anotacao:
     name: anotacao
-    in: path
-    description: Texto da anotação
+    in: formData
+    description: Texto da anotação. Tamanho Máximo = 500.
     required: true
+    maxLength: 500
     type: string
   texto:
     name: texto
@@ -189,38 +196,10 @@ parameters:
     description: Texto a ser pesquisado
     required: true
     type: string    
-  tipoDestinatario:
-    name: tipoDestinatario
-    in: formData
-    description: > 
-      Tipo do Destinatário. 
-        * ORGAO - Órgão Integrado ao São Paulo sem Papel
-        * USUARIO - Usuário do São Paulo sem Papel
-        * EXTERNO - Órgão Externo ao São Paulo sem Papel
-    required: true
-    type: string
-    enum: 
-      - ORGAO
-      - USUARIO
-      - EXTERNO
-  destinatario:
-    name: destinatario
-    in: formData
-    description: >
-      Destinatário. Dependendo do `tipoDestinatario` deverá ter os seguintes significados e formatos
-        * ORGAO - Deve estar no formato `OO-UUU`, onde 
-          - 'OO' (apenas letras maiúsculas, quantidade variável) corresponde ao código do órgão propriamente dito 
-          - 'UUU' (letras maiúsculas e dígitos, quantidade variável) correspondem ao código da unidade.
-        * USUARIO - Deve estar no formato OONNNNN onde 
-          - 'OO' (apenas letras maiúsculas, quantidade variável) corresponde ao código do órgão propriamente dito.
-          - 'NNNN' (apenas dígitos, quantidade variável) à sua respectiva matrícula nesse órgão.
-        * EXTERNO - Código do Órgão Externo ao São Paulo Sem Papel (Deve ter até 10 letras maiúsculas).
-    required: true
-    type: string
   observacao:
     name: observacao
     in: formData
-    description: Somente quando `tipoDestinatario` = `EXTERNO`. Poderá ser preenchido com e-mail do destinatário.
+    description: Usado apenas quando `orgao` estiver preenchido. Para outros tipos de Destinatário será ignorado.
     required: false
     type: string            
   dataDevolucao:
@@ -229,7 +208,7 @@ parameters:
     description: Data de Devolução do documento (por exemplo, `2020-12-02`). Deve ser igual ou maior que o dia corrente!
     required: false
     type: string
-    pattern: ^\d{4}-(0\d|1[012])-([012]\d|3[01])
+    pattern: ^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01])
   idPessoaIni:
     name: idPessoaIni
     in: path
@@ -241,7 +220,108 @@ parameters:
     in: path
     description: Identificador da Lotação Inicial
     required: true
-    type: string        
+    type: string            
+  autenticar:
+    name: autenticar
+    in: query
+    description: Indica se o documento deverá ser autenticado.
+    required: false
+    default: false
+    type: boolean
+  modelo:
+    name: modelo
+    in: formData
+    description: Identificacao do modelo (ID) ou nome do modelo. 
+      Se for numérico, será assumido o ID, caso contrário será assumido o nome do modelo cadastrado.
+      Pode ser obtido através do webservice de modelo.
+    type: string
+    required: true
+  siglamobilpai:
+    name: siglamobilpai
+    in: formData
+    description: Sigla da via ou volume (mobil) do documento pai
+    type: string
+    required: false
+  subscritor:
+    name: subscritor
+    in: formData
+    description: Subscritor do documento
+    type: string
+    required: false
+  titular:
+    name: titular
+    in: formData
+    description: Titular do documento
+    type: string
+    required: false
+  eletronico:
+    name: eletronico
+    in: formData
+    description: Indicação se eletrônico ou não
+    type: boolean
+    required: false
+  pessoadestinatario:
+    name: pessoadestinatario
+    in: formData
+    description: Destinatário do documento se for pessoa
+    type: string
+    required: false
+  lotadestinatario:
+    name: lotadestinatario
+    in: formData
+    description: Destinatário do documento se for lotação (unidade)
+    type: string
+    required: false
+  orgaoexternodestinatario:
+    name: orgaoexternodestinatario
+    in: formData
+    description: Destinatário do documento se for órgão externo
+    type: string
+    required: false
+  destinatariocampoextra:
+    name: destinatariocampoextra
+    in: formData
+    description: Campo extra de destinatário caso seja para órgão externo
+    type: string
+    required: false    
+  descricaotipodoc:
+    name: descricaotipodoc
+    in: formData
+    description: Descrição do tipo de documento. Ex. Interno, Interno Folha de Rosto, Interno Capturado, Externo Folha de Rosto, Externo Capturado
+    type: string
+    required: false
+  classificacao:
+    name: classificacao
+    in: formData
+    description: Classificação do documento
+    type: string
+    required: false
+  descricaodocumento:
+    name: descricaodocumento
+    in: formData
+    description: Descrição do documento
+    type: string
+    required: false
+  nivelacesso:
+    name: nivelacesso
+    in: formData
+    description: Nome do nivel de acesso do documento. Ex. Publico, Limitado Entre Orgaos, Limitado Entre Lotacoes, Limitado Entre Pessoas, ...
+    type: string
+    required: false
+  entrevista:
+    name: entrevista
+    in: formData
+    description: Campos e conteudos do modelo do documento a ser criado. 
+      Para obtê-los, acessar o webservice de modelos. Pode ser descrito em dois formatos, JSON ou Form Data (chave1=valor1&chave2=valor2&chave3=valor3) 
+    type: string
+    required: true
+  arquivo:    
+    name: arquivo
+    in: formData
+    description: Arquivo para upload se necessário para operação.
+    type: file
+    required: false
+   
 
 ################################################################################
 #                                           Paths                              #
@@ -267,7 +347,7 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
-  /documento/{sigla}/arquivo:
+  /documentos/{sigla}/arquivo:
     get:
       summary: Inicia o processo de geração do PDF completo de um documento para visualização
       tags: [download]
@@ -356,6 +436,7 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
+
   /mesa:
     get:
       description: Listar as mesas virtuais disponíveis
@@ -377,7 +458,8 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
-  /doc/{sigla}:
+
+  /documentos/{sigla}:
     get:
       description: Exibir um documento
       tags: [consulta]
@@ -400,8 +482,10 @@ paths:
           schema:
             $ref: "#/definitions/Error"
             
-  /doc/{sigla}/pdf:
+  /documentos/{sigla}/pdf:
     get:
+      summary: SEM IMPLEMENTACAO PRONTA! NAO USAR!
+      deprecated: true
       description: Obter o PDF de um documento para visualização
       tags: [consulta]
       parameters:
@@ -420,7 +504,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-  /doc/{sigla}/html:
+  /documentos/{sigla}/html:
     get:
       description: Obter o HTML de um documento para visualização
       tags: [consulta]
@@ -448,7 +532,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-  /doc/{sigla}/pdf-completo:
+  /documentos/{sigla}/pdf-completo:
     get:
       description: Obter o PDF completo de um documento para visualização
       tags: [consulta]
@@ -468,8 +552,10 @@ paths:
           schema:
             $ref: "#/definitions/Error"
             
-  /doc/{sigla}/mov/{id}/pdf:
+  /documentos/{sigla}/mov/{id}/pdf:
     get:
+      summary: SEM IMPLEMENTACAO PRONTA! NAO USAR!
+      deprecated: true
       description: Obter o PDF de uma movimentação para visualização
       tags: [consulta]
       parameters:
@@ -488,29 +574,56 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
-  /doc/{sigla}/assinar-com-senha:
+
+  /documentos/{sigla}/assinar-com-senha:
     post:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [acao]
       parameters:
         - $ref: "#/parameters/sigla"
-        - $ref: "#/parameters/username"
-        - $ref: "#/parameters/password"
-      description: Assinar documento com senha
+      summary: Assinar documento com senha
       responses:
         200:
           description: Successful response
           schema:
             type: object
             properties:
+              sigla:
+                description: Sigla do documento assinado
+                type: string
               status:
                 type: string
+                default: "OK"
         500:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
 
-  /doc/{sigla}/tramitar:
+  /documentos/{sigla}/autenticar-com-senha:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      parameters:
+        - $ref: "#/parameters/sigla"
+      summary: Autenticar documento com senha
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento autenticado
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/tramitar:
     post:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [acao]
@@ -518,7 +631,11 @@ paths:
         - $ref: "#/parameters/sigla"
         - $ref: "#/parameters/lotacao"
         - $ref: "#/parameters/matricula"
-      description: Tramitar documento
+        - $ref: "#/parameters/orgao"
+        - $ref: '#/parameters/observacao'
+        - $ref: '#/parameters/dataDevolucao'
+      summary: Tramitar documento para outro usuário ou lotação ou Órgão externo
+      description: Se `orgao` estiver preenchido, `lotacao` e `matricula` deverão estar vazios.
       responses:
         200:
           description: Successful response
@@ -532,37 +649,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-  /doc/{sigla}/tramitar-sp:
-    post:
-      consumes: ["application/x-www-form-urlencoded"]
-      tags: [acao]
-      description: Tramitar documento (SP Sem Papel) 
-      summary: Tramita (transfere) um documento para outra pessoa ou órgão (interno ou externo).
-      parameters:
-        - $ref: "#/parameters/sigla"
-        - $ref: '#/parameters/tipoDestinatario'
-        - $ref: '#/parameters/destinatario'
-        - $ref: '#/parameters/observacao'
-        - $ref: '#/parameters/dataDevolucao'
-      responses:
-#Tive que adicionar o 200 porque se tivesse apenas o 201 swaggerservlet soltaria uma exceção
-        200:
-          description: Ok
-        403:
-          description: Acesso ao documento não permitido
-          schema:
-            $ref: "#/definitions/Error"
-        404:
-          description: Via ou volume não encontrado
-          schema:
-            $ref: "#/definitions/Error"
-        500:
-          description: Erro na Tramitação
-          schema:
-            $ref: "#/definitions/Error"
-
-
-  /doc/{sigla}/juntar:
+  /documentos/{sigla}/juntar:
     post:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [acao]
@@ -592,7 +679,7 @@ paths:
             $ref: "#/definitions/Error"
 
 
-  /doc/{sigla}/anotar:
+  /documentos/{sigla}/anotar:
     post:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [acao]
@@ -613,7 +700,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-  /doc/{sigla}/pesquisar-sigla:
+  /documentos/{sigla}/pesquisar-sigla:
     get:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [acao]
@@ -677,82 +764,51 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-
-            
-  /pessoa/{texto}/pesquisar:
-    get:
-      description: Retornar uma lista de pessoas
-      tags: [cadastro]
+  /documentos:
+    post:
+      summary: Cria um novo documento
+      tags: [acao]
+      security:
+        - Bearer: []
+      consumes:
+        - multipart/form-data
       parameters:
-        - $ref: "#/parameters/texto"
+        - $ref: "#/parameters/modelo"
+        - $ref: "#/parameters/siglamobilpai"
+        - $ref: "#/parameters/subscritor"
+        - $ref: "#/parameters/titular"
+        - $ref: "#/parameters/eletronico"
+        - $ref: "#/parameters/descricaotipodoc"
+        - $ref: "#/parameters/classificacao"
+        - $ref: "#/parameters/pessoadestinatario"
+        - $ref: "#/parameters/lotadestinatario"
+        - $ref: "#/parameters/orgaoexternodestinatario"
+        - $ref: "#/parameters/destinatariocampoextra"        
+        - $ref: "#/parameters/descricaodocumento"
+        - $ref: "#/parameters/nivelacesso"
+        - $ref: "#/parameters/entrevista"
+        - $ref: "#/parameters/arquivo"
+      description: Inclusão de documento. Pode ser informado o id do modelo do documento ou o nome do modelo completo. 
+        Para o conteúdo do documento é necessário saber o nome de seus campos (de entrevista), que serão passados no parâmetro entrevista (chave e valor).
+        Caso seja um documento capturado, o pdf deve ser enviado no campo arquivo. 
       responses:
         200:
           description: Successful response
           schema:
             type: object
             properties:
-              list:
-                type: array
-                items:
-                  $ref: "#/definitions/ResultadoDePesquisa"
+              sigladoc:
+                type: string
+        403:
+          description: Inclusão de documento não permitida
+          schema:
+            $ref: "#/definitions/Error"
         500:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
 
-  /pessoa/{idPessoaIni}/pessoaAtual:
-    get:
-      description: Retorna o objeto da Pessoa Atual a partir da Pessoa Inicial
-      tags: [cadastro]
-      parameters:
-        - $ref: "#/parameters/idPessoaIni"
-      responses:
-        200:
-          description: Successful response
-          schema:
-             $ref: "#/definitions/Pessoa"
-        500:
-          description: Error ocurred
-          schema:
-            $ref: "#/definitions/Error"         
-            
-  /lotacao/{texto}/pesquisar:
-    get:
-      description: Retornar uma lista de lotações
-      tags: [cadastro]
-      parameters:
-        - $ref: "#/parameters/texto"
-      responses:
-        200:
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              list:
-                type: array
-                items:
-                  $ref: "#/definitions/ResultadoDePesquisa"
-        500:
-          description: Error ocurred
-          schema:
-            $ref: "#/definitions/Error"            
-                           
-  /lotacao/{idLotacaoIni}/lotacaoAtual:
-    get:
-      description: Retorna o objeto da Lotação Atual a partir da Lotação Inicial
-      tags: [cadastro]
-      parameters:
-        - $ref: "#/parameters/idLotacaoIni"
-      responses:
-        200:
-          description: Successful response
-          schema:
-             $ref: "#/definitions/Lotacao"
-        500:
-          description: Error ocurred
-          schema:
-            $ref: "#/definitions/Error"   
-            
+
 ################################################################################
 #                                     Definitions                              #
 ################################################################################
@@ -889,43 +945,48 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/Acao"
-
-  ResultadoDePesquisa:
-    description: Dados de um item
+  DocumentoDTO:
+    description: DTO para inclusao de documentos
     type: object
+    required:
+      - idmodelo
     properties:
-      sigla:
+      modelo:
+        description: Identificacao do modelo
         type: string
-      nome:
+      siglamobilpai:
+        description: Sigla da via ou volume (mobil) do documento pai
         type: string
-
-  Pessoa:
-    description: Dados de uma determinada Pessoa
-    type: object
-    properties:
-      idPessoa:
+      subscritor:
+        description: Subscritor do documento
         type: string
-      idPessoaIni:
-        type: string        
-      sigla:
+      titular:
+        description: Titular do documento
         type: string
-      nome:
-        type: string        
-      siglaLotacao:
-        type: string          
-
-  Lotacao:
-    description: Dados de uma determinada Lotação
-    type: object
-    properties:
-      idLotacao:
+      descricaotipodoc:
+        description: Descrição do tipo de documento. Ex. Interno, Interno Folha de Rosto, Interno Capturado, Externo Folha de Rosto, Externo Capturado
         type: string
-      idLotacaoIni:
-        type: string        
-      sigla:
+      classificacao:
+        description: Classificação do documento
         type: string
-      nome:
+      eletronico:
+        description: Indicação se eletrônico ou não
+        type: boolean
+      pessoadestinatario:
+        description: Pessoa destinatária do documento
         type: string
-      orgao:
-        type: string        
-              
+      lotadestinatario:
+        description: Lotação do destinatario do documento
+        type: string
+      orgaoExternoDestinatario:  
+        description: Órgão Externo Destinatário do documento
+        type: string
+      destinatariocampoextra:
+        description: Campo extra de destinatário caso seja para órgão externo
+        type: string
+      descricaodocumento:
+        description: Descrição do documento
+        type: string
+      nivelacesso:
+        description: Nome do nivel de acesso do documento. Ex. Publico, Limitado Entre Orgaos, Limitado Entre Lotacoes, Limitado Entre Pessoas, ...
+        type: string

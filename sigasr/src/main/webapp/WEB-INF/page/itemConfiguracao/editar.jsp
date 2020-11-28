@@ -2,6 +2,7 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
 
+
 <style>
 .inline {
 	display: inline-flex !important;
@@ -61,210 +62,315 @@
 }
 </style>
 
-<div class="gt-form gt-content-box div-editar-item">
-	<div>
-		<div class="gt-content-box gt-for-table">
-			<form id="formItemConfiguracao" class="form100" enctype="multipart/form-data">
-				<input type="hidden" name="itemConfiguracao.idItemConfiguracao" id="idItemConfiguracao" value="${id}">
-				<input type="hidden" name="itemConfiguracao.hisIdIni" id="hisIdIni" value="${hisIdIni} }">
-				
-				<table class="gt-form-table">
-					<tr class="header">
-						<td align="center" valign="top" colspan="2" style="border-radius: 5px;">Dados Básicos</td>
-					</tr>
-					<tr>
-						<td width="5%">
-							<label class="inline">Código: <span>*</span></label> 
-						</td>
-						<td>
-							<input id="siglaItemConfiguracao"
-								   type="text"
-								   name="itemConfiguracao.siglaItemConfiguracao"
-								   maxlength="255"
-								   required /> 
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<label class="inline"
-							style="margin-left: 10px;">Título: <span>*</span></label> 
-						</td>
-						<td>	
-							<input type="text" 
-								   id="tituloItemConfiguracao"
-								   name="itemConfiguracao.tituloItemConfiguracao"
-								   style="width: 67.6%;"
-								   maxlength="255"
-								   required />
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<label class="inline">Descrição:</label> 
-						</td>
-						<td colspan="2">
-							<input type="text"
-								id="descrItemConfiguracao"
-								name="itemConfiguracao.descrItemConfiguracao"
-								style="width: 690px" maxlength="255" />
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<label>Gestores: </label>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="3" style="padding: 0 10px;">
-							<ul id="gestoresUl" style="color: #365b6d"></ul>
-						</td>
-					</tr>
-					<tr>
-						<td style="padding-top: 0px;">
-							<input type="button" value="Incluir" id="botaoIncluir"
-								class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
-						</td>
-					</tr>
-					<tr>
-						<td colspan="3">
-							<label class="inline">Similaridade (Separar itens com ponto e vírgula):</label>
-							<textarea cols="63" rows="3" maxlength="8192" 
-								name="itemConfiguracao.descricaoSimilaridade"
-								id="descricaoSimilaridade"></textarea>
-						</td>
-					</tr>
-				</table>
-				<table class="gt-form-table">
-					<tr class="header"><td align="center" valign="top" colspan="3">Priorização</td></tr>
 
-					<tr>
-						<td width="10.5%">
-							<label class="inline">Fator de Multiplicação: <span>*</span></label> 
-						</td>
-						<td>
-							<input onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true; else{ if (tecla==8 || tecla==0) return true; else return false; }"
-								   type="text" id="numFatorMultiplicacaoGeral" 
-								   name="itemConfiguracao.numFatorMultiplicacaoGeral"
-								   size="20"
-								   maxlength="9"
-								   required
-								   min="1"/>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<label class="inline">Fator de Multiplicação por Solicitante:</label> 
-						</td>
-					</tr>
-					<tr>
-						<td colspan="3" style="padding: 0 10px;">
-							<ul id="fatoresUl" style="color: #365b6d"></ul>
-						</td>
-					</tr>
-					<tr>
-						<td style="padding-top: 0px;">
-							<input type="button" value="Incluir" id="botaoIncluirFator"
-                                                class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
-						</td>
-					</tr>
-					
-                    <tr class="header">
-                        <td align="center" valign="top" colspan="2" style="border-radius: 5px;">Designações</td>
-                    </tr>
-				</table>
-				
-				<div id="divDesignacoes" class="gt-form-row">
-					
+<div class="container-fluid">
+	<form id="formItemConfiguracao" class="form100" enctype="multipart/form-data">
+		<input type="hidden" name="itemConfiguracao.idItemConfiguracao" id="idItemConfiguracao" value="${id}">
+		<input type="hidden" name="itemConfiguracao.hisIdIni" id="hisIdIni" value="${hisIdIni} }">
+		
+		<div class="card mb-2">
+			<h5 class="card-header">Dados Básicos</h5>
+			<div class="card-body">
+			
+				<!---------- Codigo ---------------->
+				<div class="form-group">
+					<label>Código * </label>
+					<input id="siglaItemConfiguracao"
+						   type="text"
+						   class="form-control"
+						   name="itemConfiguracao.siglaItemConfiguracao"
+						   maxlength="255"
+						   required /> 
 				</div>
 				
-				<table class="gt-form-table">
-					<tr>
-						<tr>
-							<td>
-								<p class="gt-error" style="display:none;" id="erroCamposObrigatorios">Não foi possível gravar o registro.</p>
-							</td>
-						</tr>
-					<tr>
-						<td>
-							<div class="gt-form-row">
-								<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="itemConfiguracaoService.gravar()"/>
-								<a class="gt-btn-medium gt-btn-left" onclick="itemConfiguracaoService.cancelarGravacao()">Cancelar</a>
-								<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="itemConfiguracaoService.aplicar()"/>
-							</div>
-						</td>						
-					</tr>
-				</table>
-			</form>
+				<!---------- Titulo ---------------->
+				<div class="form-group">
+					<label>Título *</label>
+					<input type="text" 
+						   class="form-control"
+						   id="tituloItemConfiguracao"
+						   name="itemConfiguracao.tituloItemConfiguracao"
+						   maxlength="255"
+						   required />
+				</div>
+			
+				<!---------- Descricao ---------------->
+				<div class="form-group">
+					<label>Descrição</label>
+					<input type="text"
+							class="form-control"
+							id="descrItemConfiguracao"
+							name="itemConfiguracao.descrItemConfiguracao"
+							maxlength="255" />
+				</div>
+				
+				<!---------- Gestores ---------------->
+				<div class="form-group">
+					<label>Gestores</label>
+					<ul id="gestoresUl" class="list-group" style="color: #365b6d"></ul>
+					<input type="button" value="Incluir" id="botaoIncluir"
+									class="btn btn-primary btn-sm mt-2"  />
+				</div>
+				
+				<!---------- Similaridade ---------------->
+				<div class="form-group">
+					<label>Similaridade (Separar itens com ponto e vírgula)</label>
+					<textarea class="form-control" rows="3" maxlength="8192" 
+						name="itemConfiguracao.descricaoSimilaridade"
+						id="descricaoSimilaridade"></textarea>
+				</div>
+			</div>
 		</div>
-	</div>
-</div>
-
-<div id="dialog">
-	<div class="gt-content">
-		<form id="formGestor" enctype="multipart/form-data">
-			<div class="gt-form gt-content-box">
-				<div class="gt-form-row">
-					<label>Gestor: <span>*</span></label>
-					<div id="divGestor">
-						<siga:pessoaLotaSelecao2
-							propriedadePessoa="gestorPessoaSel"
-							propriedadeLotacao="gestorLotacaoSel"/>
-					</div>
-				</div>
-				<div class="gt-form-row">
-					<input type="button" id="modalOk" value="Ok"
-						class="gt-btn-medium gt-btn-left" /> <input type="button"
-						value="Cancelar" id="modalCancel" class="gt-btn-medium gt-btn-left" />
-				</div>
-			</div>
-		</form>
-	</div>
-</div>
-
-<div id="dialogFator">
-	<div class="gt-content">
-		<form id="formFator" enctype="multipart/form-data">
-			<div class="gt-form gt-content-box">
-				<div class="gt-form-row ">
-					<label>Solicitante: <span>*</span></label>
-					<div id="divFator">
- 						<siga:pessoaLotaSelecao2
- 							propriedadePessoa="fatorPessoaSel"
- 							propriedadeLotacao="fatorLotacaoSel"/>
-					</div>
-				</div>
-				<div class="gt-form-row ">
-					<label>Fator de Multiplicação: </label>
-					<input id="numfatorMult" onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
-						   type="text" name="numfatorMult" value="1" size="43" maxlength="9"
-						   required 
+	
+		<div class="card mb-2">
+			<h5 class="card-header">Priorização</h5>
+			<div class="card-body">
+			
+				<!---------- Fator ---------------->
+				<div class="form-group">
+					<label>Fator de Multiplicação *</label>
+					<input onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true; else{ if (tecla==8 || tecla==0) return true; else return false; }"
+						   type="text" id="numFatorMultiplicacaoGeral" 
+						   name="itemConfiguracao.numFatorMultiplicacaoGeral"
+						   size="20"
+						   maxlength="9"
+						   class="form-control"
+						   required
 						   min="1"/>
-						   <span style="display: none; color: red;" id="erroNumFatorMult">Fator de multiplicação menor que 1</span>
 				</div>
-				<div class="gt-form-row">
-					<input type="button" id="modalOkFator" value="Ok"
-						class="gt-btn-medium gt-btn-left" /> <input type="button"
-						value="Cancelar" id="modalCancelFator" class="gt-btn-medium gt-btn-left" />
+					
+				<!---------- Fator por solicitante ---------------->
+				<div class="form-group">
+					<label class="inline">Fator de Multiplicação por Solicitante</label>
+					<ul id="fatoresUl" style="color: #365b6d"></ul>
+					<input type="button" value="Incluir" id="botaoIncluirFator"
+	                       class="btn btn-primary btn-sm mt-2" />
+	            </div>
+			</div>
+		</div>
+	
+		<div class="card mb-2">
+			<h5 class="card-header">Designações</h5>
+			<div class="card-body">
+				<div id="divDesignacoes" class="gt-form-row">
 				</div>
 			</div>
-		</form>
-	</div>
-</div>
+		</div>
+		
+		<p class="gt-error" style="display:none;" id="erroCamposObrigatorios">Não foi possível gravar o registro.</p>
+		
+		<input type="button" value="Gravar" class="btn btn-primary" onclick="itemConfiguracaoService.gravar()"/>
+		<a class="btn btn-secondary" style="color: #fff" onclick="itemConfiguracaoService.cancelarGravacao()">Cancelar</a>
+		<input type="button" value="Aplicar" class="btn btn-primary" onclick="itemConfiguracaoService.aplicar()"/>
+		
+	</form>
+</div>	
 
+
+<!-- ===================== -->
+<!--  Modal de Designacao  -->
+<!-- ===================== -->
 <div id="designacaoComponent">
 	<sigasr:designacao modoExibicao="item" designacoes="designacoesItem" orgaos="orgaos" locais="locais"
  		unidadesMedida="unidadesMedida" pesquisaSatisfacao="pesquisaSatisfacao" listasPrioridade="listasPrioridade" />
 </div>
 
+
+
+<!-- ========================= -->
+<!-- Modal para incluir Gestor -->
+<!-- ========================= -->
+<div id="dialog">
+	<form id="formGestor" enctype="multipart/form-data">
+		<div class="form-group">			
+			<div id="divGestor">
+				<sigasr:pessoaLotaSelecao2
+						propriedadePessoa="gestorPessoaSel"
+						propriedadeLotacao="gestorLotacaoSel"
+						labelPessoaLotacao="Gestor *"
+						/>
+			</div>
+			<input type="button" id="modalOk" value="Ok" class="btn btn-primary" /> 
+			<input type="button" value="Cancelar" id="modalCancel" class="btn btn-secondary" />
+		</div>
+	</form>
+</div>
+
+<!-- ============================================= -->
+<!-- Script referente ao modal para incluir Gestor -->
+<!-- ============================================= -->
+<script type="text/javascript">
+
+	var jDialog = $('#dialog');
+	
+	jDialog.dialog({
+	    autoOpen: false,
+	    height: 'auto',
+	    width: '80%',
+	    modal: true,
+	    resizable: false,
+	    close: function() {
+	        $("#formulario_gestorPessoaSel_sigla").val('');
+			$("#formulario_gestorLotacaoSel_sigla").val('');
+			$("#formulario_gestorPessoaSel_descricao").val('');
+			$("#formulario_gestorLotacaoSel_descricao").val('');				
+			$("#gestorPessoaSel_pessoaSelSpan").html('');  
+			$("#gestorLotacaoSel_lotacaoSelSpan").html('');
+			jDialog.data('gestorSet','');
+	
+	        validatorFormGestor.resetForm();
+	    },
+	  	open: function(){
+	      	if (jDialog.data("gestorSet"))
+	          	jDialog.dialog('option', 'title', 'Alterar Gestor');
+	      	else
+	          	jDialog.dialog('option', 'title', 'Incluir Gestor');  
+	  	}
+	});
+
+	// Click no botao "Incluir" Gestores:
+	$("#botaoIncluir").click(function(){
+	    jDialog.data('acao',gestores.incluirItem).dialog('open');
+	});
+
+	// Click no botao Ok do modal:
+	$("#modalOk").click(function(){
+		if (!jQuery("#formGestor").valid())
+		    return false;
+	    
+		var acao = jDialog.data('acao');
+		var jTipoEscolhido = jSelect.find("option:selected");
+		
+		if(jTipoEscolhido.val() == 1) {
+			acao($("#formulario_gestorPessoaSel_sigla").val(), $("#formulario_gestorPessoaSel_descricao").val(), 'pessoa', $("#formulario_gestorPessoaSel_id").val(), jDialog.data("id"));
+			} else if (jTipoEscolhido.val() == 2) {
+				acao($("#formulario_gestorLotacaoSel_sigla").val(), $("#formulario_gestorLotacaoSel_descricao").val(), 'lotacao', $("#formulario_gestorLotacaoSel_id").val(), jDialog.data("id"));
+		}
+		
+		jDialog.dialog('close');
+	});
+
+	// Click no botao Cancelar do modal:
+	$("#modalCancel").click(function(){
+		jDialog.dialog('close');
+		validatorFormGestor.resetForm();
+	});
+	
+</script>
+
+
+
+
+<!-- ==================================================== -->
+<!-- Modal Incluir Fator de Multiplicacao por Solicitante -->
+<!-- ==================================================== -->
+<div id="dialogFator">
+	<form id="formFator" enctype="multipart/form-data">
+		<div class="form-group">
+			<div id="divFator">
+				<sigasr:pessoaLotaSelecao2
+						propriedadePessoa="fatorPessoaSel"
+						propriedadeLotacao="fatorLotacaoSel"
+						labelPessoaLotacao="Solicitante *"
+						/>
+			</div>
+		</div>
+		<div class="form-group">
+			<label>Fator de Multiplicação: </label>
+			<input id="numfatorMult" 
+				onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
+				type="text" name="numfatorMult" value="1" size="43" maxlength="9"
+				required
+				class="form-control" 
+				min="1"/>
+		   <span style="display: none; color: red;" id="erroNumFatorMult">Fator de multiplicação menor que 1</span>
+		</div>
+		<input type="button" id="modalOkFator" value="Ok"
+				class="btn btn-primary" /> 
+		<input type="button"
+				value="Cancelar" id="modalCancelFator" 
+				class="btn btn-secondary" />
+	</form>
+</div>
+
+<!-- ================================================== -->
+<!-- Script referente ao modal para incluir Priorizacao -->
+<!-- ================================================== -->
+<script type="text/javascript">
+	var jDialogFator = $("#dialogFator");
+	jDialogFator.dialog({
+	    autoOpen: false,
+	    height: 'auto',
+	    width: '80%',
+	    modal: true,
+	    resizable: false,
+	    close: function() {
+	    	$("#formulario_fatorPessoaSel_sigla").val('');
+			$("#formulario_fatorLotacaoSel_sigla").val('');
+			$("#formulario_fatorPessoaSel_descricao").val('');
+			$("#formulario_fatorLotacaoSel_descricao").val('');
+			$("#numfatorMult").val('1');
+			$("#fatorPessoaSel_pessoaSelSpan").html('');  
+			$("#fatorLotacaoSel_lotacaoSelSpan").html('');
+			
+			jDialogFator.data('fatorMultiplicacaoSet','');
+	    	validatorFormFator.resetForm();
+		}, 
+		open: function(){
+	    	$('#erroNumFatorMult').hide();
+	
+	    	if (jDialogFator.data("fatorMultiplicacaoSet"))
+	        	jDialogFator.dialog('option', 'title', 'Alterar Fator de Multiplicação');
+	        else
+	          	jDialogFator.dialog('option', 'title', 'Incluir Fator de Multiplicação');  
+	       	}
+	});
+
+	// Click no botao "Incluir" Priorizacao:
+	$("#botaoIncluirFator").click(function(){
+	    jDialogFator.data('acaoFator',fatores.incluirItem).dialog('open');
+	});
+
+	// Click no botao Ok do modal:
+	$("#modalOkFator").click(function() {
+		if (!jQuery("#formFator").valid())
+		    return false;
+		
+		var acaoFator = jDialogFator.data('acaoFator');
+		var jTipoEscolhidoFator = jSelectFator.find("option:selected");
+		var numFatorMult = $('#numfatorMult');
+		
+		if(numFatorMult.val() > 0) {
+		    if(jTipoEscolhidoFator.val() == 1) {
+		        acaoFator($("#formulario_fatorPessoaSel_sigla").val(), $("#formulario_fatorPessoaSel_descricao").val(), $("#numfatorMult").val(), 'pessoa', $("#formulario_fatorPessoaSel_id").val(), jDialogFator.data("id"));
+		    } else if (jTipoEscolhidoFator.val() == 2) {
+		        acaoFator($("#formulario_fatorLotacaoSel_sigla").val(), $("#formulario_fatorLotacaoSel_descricao").val(), $("#numfatorMult").val(), 'lotacao', $("#formulario_fatorLotacaoSel_id").val(), jDialogFator.data("id"));
+		    }
+		    
+			  jDialogFator.dialog('close');
+		} else {
+		    $('#erroNumFatorMult').show();
+		}
+	});
+
+	// Click no botao Cancelar do modal:
+	$("#modalCancelFator").click(function(){
+		jDialogFator.dialog('close');
+		validatorFormFator.resetForm();
+	});	
+
+	
+</script>
+
+
+
+
 <script type="text/javascript">
 	var jGestores = null,
 		gestores = null,
-		jDialog = null,
-		dialog = null,
 		jSelect = null,
 		jFatores = null,
 		fatores = null,
-		jDialogFator = null,
 		dialogFator = null,
 		jSelectFator = null,
 		jNumFatorMult = null,
@@ -294,48 +400,18 @@
 		// POPUP PARA ADICIONAR UM GESTOR
 		jGestores = $("#gestoresUl");
 		gestores = jGestores[0];
-		jDialog = $("#dialog");
-		dialog = jDialog[0];
 		jSelect = $("#gestorPessoaSelgestorLotacaoSel");
 		
 		$( "#gestoresUl" ).sortable({placeholder: "ui-state-highlight"});
 		$( "#gestoresUl" ).disableSelection();
 		
-		$("#botaoIncluir").click(function(){
-		    jDialog.data('acao',gestores.incluirItem).dialog('open');
-		});
-			 
-		jDialog.dialog({
-		    autoOpen: false,
-		    height: 'auto',
-		    width: 'auto',
-		    modal: true,
-		    resizable: false,
-		    close: function() {
-		        $("#formulario_gestorPessoaSel_sigla").val('');
-				$("#formulario_gestorLotacaoSel_sigla").val('');
-				$("#formulario_gestorPessoaSel_descricao").val('');
-				$("#formulario_gestorLotacaoSel_descricao").val('');
-				$("#gestorPessoaSelSpan").html('');  
-				$("#gestorLotacaoSelSpan").html('');
-				jDialog.data('gestorSet','');
-		
-		        validatorFormGestor.resetForm();
-		    },
-		  	open: function(){
-		      	if (jDialog.data("gestorSet"))
-		          	jDialog.dialog('option', 'title', 'Alterar Gestor');
-		      	else
-		          	jDialog.dialog('option', 'title', 'Incluir Gestor');  
-		  	}
-		});
 			
 		gestores["index"] = 0;
 		gestores.incluirItem = function(siglaGestor, nomeGestor, tipoGestor, idDerivadoGestor, id) {
 			if (!id)
 		    	id = 'novo_' + ++gestores["index"];
 			
-		    jGestores.append("<li style=\"cursor: move\" id =\"" + id + "\"></li>");
+		    jGestores.append("<li class=\"list-group-item m-0\" style=\"cursor: move\" id =\"" + id + "\"></li>");
 		   	var jNewTr = jGestores.find("li:last-child");
 		   	jNewTr.append("<span id=\"" + tipoGestor + "\">" + siglaGestor + "</span> - <span style=\"display: inline-block\" id=\"" 
 			        + idDerivadoGestor + "\">" + nomeGestor + "</span>&nbsp;&nbsp;<img src=\"/siga/css/famfamfam/icons/cross.png\" style=\" visibility:hidden; cursor: pointer;\" />");
@@ -359,51 +435,23 @@
 			//POPUP PARA ADICIONAR UM FATOR DE MULTIPLICAÃÃO E SOLICITANTE
 		jFatores = $("#fatoresUl");
 		fatores = jFatores[0];
-		jDialogFator = $("#dialogFator");
-		dialogFator = jDialogFator[0];
+		
 		jSelectFator = $("#fatorPessoaSelfatorLotacaoSel");
 		jNumFatorMult = $("#numfatorMult");
 		
 		$( "#fatoresUl" ).sortable({placeholder: "ui-state-highlight"});
 		$( "#fatoresUl" ).disableSelection();
 		
-		$("#botaoIncluirFator").click(function(){
-		    jDialogFator.data('acaoFator',fatores.incluirItem).dialog('open');
-		});
-			 
-		jDialogFator.dialog({
-		    autoOpen: false,
-		    height: 'auto',
-		    width: 'auto',
-		    modal: true,
-		    resizable: false,
-		    close: function() {
-		    	$("#formulario_fatorPessoaSel_sigla").val('');
-				$("#formulario_fatorLotacaoSel_sigla").val('');
-				$("#formulario_fatorPessoaSel_descricao").val('');
-				$("#formulario_fatorLotacaoSel_descricao").val('');
-				$("#numfatorMult").val('1');
-				$("#fatorPessoaSelSpan").html('');  
-				$("#fatorLotacaoSelSpan").html('');
-				jDialogFator.data('fatorMultiplicacaoSet','');
-		    	validatorFormFator.resetForm();
-			}, 
-			open: function(){
-		    	$('#erroNumFatorMult').hide();
 		
-		    	if (jDialogFator.data("fatorMultiplicacaoSet"))
-		        	jDialogFator.dialog('option', 'title', 'Alterar Fator de Multiplicação');
-		        else
-		          	jDialogFator.dialog('option', 'title', 'Incluir Fator de Multiplicação');  
-		       	}
-		});
+			 
+	
 		
 		fatores["index"] = 0;
 		fatores.incluirItem = function( siglaSolicitante, nomeSolicitante, numFator, tipoFator, idDerivadoFator, idF){
 		    if (!idF)
 		        idF = 'novo_fator' + ++fatores["index"];
 		
-		    jFatores.append("<li style=\"cursor: move\" id =\"" + idF + "\"></li>");
+		    jFatores.append("<li class=\"list-group-item m-0\" style=\"cursor: move\" id =\"" + idF + "\"></li>");
 		
 		    var jNewFatorTr = jFatores.find("li:last-child");
 		    jNewFatorTr.append("<span id=\"" + tipoFator + "\">" + siglaSolicitante + " - " 
@@ -429,50 +477,7 @@
 		};
 	});
 		
-	$("#modalOk").click(function(){
-		if (!jQuery("#formGestor").valid())
-		    return false;
-	    
-		var acao = jDialog.data('acao');
-		var jTipoEscolhido = jSelect.find("option:selected");
+
 		
-		if(jTipoEscolhido.val() == 1) {
-			acao($("#formulario_gestorPessoaSel_sigla").val(), $("#formulario_gestorPessoaSel_descricao").val(), 'pessoa', $("#formulario_gestorPessoaSel_id").val(), jDialog.data("id"));
-			} else if (jTipoEscolhido.val() == 2) {
-				acao($("#formulario_gestorLotacaoSel_sigla").val(), $("#formulario_gestorLotacaoSel_descricao").val(), 'lotacao', $("#formulario_gestorLotacaoSel_id").val(), jDialog.data("id"));
-		}
-		
-		jDialog.dialog('close');
-	});
-		
-	$("#modalCancel").click(function(){
-		jDialog.dialog('close');
-		validatorFormGestor.resetForm();
-	});
-		
-	$("#modalOkFator").click(function() {
-		if (!jQuery("#formFator").valid())
-		    return false;
-		
-		var acaoFator = jDialogFator.data('acaoFator');
-		var jTipoEscolhidoFator = jSelectFator.find("option:selected");
-		var numFatorMult = $('#numfatorMult');
-		
-		if(numFatorMult.val() > 0) {
-		    if(jTipoEscolhidoFator.val() == 1) {
-		        acaoFator($("#formulario_fatorPessoaSel_sigla").val(), $("#formulario_fatorPessoaSel_descricao").val(), $("#numfatorMult").val(), 'pessoa', $("#formulario_fatorPessoaSel_id").val(), jDialogFator.data("id"));
-		    } else if (jTipoEscolhidoFator.val() == 2) {
-		        acaoFator($("#formulario_fatorLotacaoSel_sigla").val(), $("#formulario_fatorLotacaoSel_descricao").val(), $("#numfatorMult").val(), 'lotacao', $("#formulario_fatorLotacaoSel_id").val(), jDialogFator.data("id"));
-		    }
-		    
-			  jDialogFator.dialog('close');
-		} else {
-		    $('#erroNumFatorMult').show();
-		}
-	});
-		
-	$("#modalCancelFator").click(function(){
-		jDialogFator.dialog('close');
-		validatorFormFator.resetForm();
-	});	
+	
 </script>

@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.sr.vraptor;
 
 import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.ADM_ADMINISTRAR;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -64,9 +65,29 @@ public class AssociacaoController extends SrController {
 			DpLotacaoSelecao lotacaoSel, DpPessoaSelecao dpPessoaSel, DpFuncaoConfiancaSelecao funcaoConfiancaSel, DpCargoSelecao cargoSel, CpPerfilSelecao cpGrupoSel, SrPesquisa pesquisaSatisfacao) throws Exception {
 		if (associacao == null || associacao.getIdConfiguracao() == null)
 			associacao = new SrConfiguracao();
+		itemConfiguracaoSet = setupItemConfiguracao(itemConfiguracaoSet);
 		setDadosAssociacao(associacao, atributo, itemConfiguracaoSet, acoesSet, complexo, orgaoUsuario, lotacaoSel, dpPessoaSel, funcaoConfiancaSel, cargoSel, cpGrupoSel, pesquisaSatisfacao);
 		associacao.salvarComoAssociacaoAtributo();
 		result.use(Results.http()).body(associacao.toVO().toJson());
+	}
+	
+	
+	/*
+	 * Busca Item de Configuracao do banco.
+	 */
+	private List<SrItemConfiguracao> setupItemConfiguracao(List<SrItemConfiguracao> itemConfiguracaoSet) {
+		if(itemConfiguracaoSet == null) return null;
+		
+		List<SrItemConfiguracao> result = new ArrayList<>();
+		for(SrItemConfiguracao item : itemConfiguracaoSet) {
+			if(item.getIdItemConfiguracao() != null && item.getDescricao() == null) {
+				result.add(SrItemConfiguracao.AR.findById(item.getIdItemConfiguracao()));			
+			}
+			else {
+				result.add(item);
+			}			
+		}
+		return result;
 	}
 
 	@Path("/gravarComoPesquisa")

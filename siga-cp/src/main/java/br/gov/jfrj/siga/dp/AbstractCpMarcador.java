@@ -23,7 +23,6 @@
 package br.gov.jfrj.siga.dp;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.FetchType;
@@ -32,39 +31,20 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.NamedNativeQueries;
-import javax.persistence.NamedNativeQuery;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
-import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpMarcadorCorEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorIconeEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoDataEnum;
-import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoTextoEnum;
+import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.model.Historico;
-import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
 @MappedSuperclass
-@NamedNativeQueries({
-		@NamedNativeQuery(name = "quantidadeDocumentos", query = "SELECT" + "		count(1)"
-				+ "	FROM corporativo.cp_marca marca"
-				+ "	WHERE(dt_ini_marca IS NULL OR dt_ini_marca < CURRENT_TIMESTAMP)"
-				+ "		AND(dt_fim_marca IS NULL OR dt_fim_marca > CURRENT_TIMESTAMP)"
-				+ "		AND(id_pessoa_ini = :idPessoaIni)" + "		AND ("
-				+ "				select id_tipo_forma_doc from siga.ex_forma_documento where id_forma_doc = ("
-				+ "					select id_forma_doc from siga.ex_documento where id_doc = ("
-				+ "						select id_doc from siga.ex_mobil where id_mobil = marca.id_ref"
-				+ "					)" + "				)" + "			) in (1, 2)" + "	AND id_tp_marca = 1"
-				+ "	and id_marcador not in (9,8,10,11,12 ,13,16, 18, 20 , 21, 22, 24 ,26, 32, 62, 63, 64, 7, 50, 51)") })
 public abstract class AbstractCpMarcador extends HistoricoAuditavelSuporte implements Serializable, Historico {
 
 	private static final long serialVersionUID = 6436403895150961831L;

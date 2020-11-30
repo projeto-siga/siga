@@ -64,7 +64,7 @@
 	
 	<br /><br /><br />
 	
-	<sigasr:modal nome="acordo" titulo="Cadastrar Acordo">
+	<sigasr:modal nome="acordo" titulo="Cadastrar Acordo" largura="80%">
 		<div id="divEditarAcordoForm"><jsp:include page="editar.jsp"></jsp:include></div>
 	</sigasr:modal>
 	

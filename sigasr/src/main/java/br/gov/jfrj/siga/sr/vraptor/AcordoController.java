@@ -26,6 +26,7 @@ import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrOperador;
 import br.gov.jfrj.siga.sr.model.SrParametro;
+import br.gov.jfrj.siga.sr.model.SrParametroAcordo;
 import br.gov.jfrj.siga.sr.model.SrPrioridade;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.uteis.PessoaLotaFuncCargoSelecaoHelper;
@@ -81,8 +82,23 @@ public class AcordoController extends SrController {
     @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/gravar")
     public void gravarAcordo(SrAcordo acordo) throws Exception {
+    	setupParametros(acordo);    	
         acordo.salvarComHistorico();
         result.use(Results.http()).body(acordo.toJson());
+    }
+    
+    /**
+     * Carrega Unidade de Medida associada para evitar erro de null pointer no metodo getPlural.
+     * @param acordo
+     */
+    private void setupParametros(SrAcordo acordo) {
+    	if(acordo.getParametroAcordoSet() == null) return;
+    	for(SrParametroAcordo parametro : acordo.getParametroAcordoSet()) {
+    		CpUnidadeMedida unidade = parametro.getUnidadeMedida();
+    		if(unidade != null && unidade.getIdUnidadeMedida() != null && unidade.getDescricao() == null) {
+    			parametro.setUnidadeMedida(CpUnidadeMedida.AR.findById(unidade.getIdUnidadeMedida()));
+    		}
+    	}
     }
 
     private boolean isNotEmptyUnidadeMedida(List<Integer> unidadeMedida) {

@@ -52,7 +52,6 @@ import java.util.TreeSet;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.FlushModeType;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -107,7 +106,6 @@ import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Selecao;
-import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.util.ListaHierarquica;
 import br.gov.jfrj.siga.util.ListaHierarquicaItem;
@@ -844,28 +842,25 @@ public class ExDocumentoController extends ExController {
 		if (!Ex.getInstance().getComp().podeAcessarDocumento(getTitular(), getLotaTitular(), exDocumentoDTO.getMob())) {
 
 			String msgDestinoDoc = arquivamentoAutomatico(exDocumentoDTO.getMob());
-			final boolean assertAcessoSP = Prop.getBool("sigaex.assert.acessosp");
+			final boolean exibeNomeAcesso = Prop.getBool("exibe.nome.acesso");
 
 			String s = "";
 			s += exDocumentoDTO.getMob().doc().getListaDeAcessosString();
-			s = "(" + s + ")";
+			s = "(" + exDocumentoDTO.getMob().doc().getTitular().getNomePessoa() + "(" + s + ")";
 			s = " " + exDocumentoDTO.getMob().doc().getExNivelAcessoAtual().getNmNivelAcesso() + " " + s;
 
 			String ERRO_INACESSIVEL_USUARIO;
 
-			if (assertAcessoSP) {
-				if ((dpPessoa.isUsuarioExterno() == false) && prop.isGovSP()) {
+			if (exibeNomeAcesso) {
+				if (!dpPessoa.isUsuarioExterno()) {
 					ERRO_INACESSIVEL_USUARIO = "Documento " + exDocumentoDTO.getMob().getSigla()
 							+ " inacessível ao usuário " + getCadastrante().getNomePessoa() + getTitular().getSigla()
 							+ "/" + getLotaTitular().getSiglaCompleta() + "." + s + " " + msgDestinoDoc;
+				} else {
+					ERRO_INACESSIVEL_USUARIO = "Documento " + exDocumentoDTO.getMob().getSigla()
+							+ " inacessível ao usuário " + getTitular().getSigla() + "/"
+							+ getLotaTitular().getSiglaCompleta() + "." + s + " " + msgDestinoDoc;
 				}
-
-			} else if (!Ex.getInstance().getComp().ehPublicoExterno(getTitular())) {
-
-				ERRO_INACESSIVEL_USUARIO = "Documento " + exDocumentoDTO.getMob().getSigla()
-						+ " inacessível ao usuário " + getTitular().getSigla() + "/"
-						+ getLotaTitular().getSiglaCompleta() + "." + s + " " + msgDestinoDoc;
-
 			} else {
 				ERRO_INACESSIVEL_USUARIO = "Documento " + exDocumentoDTO.getMob().getSigla()
 						+ " inacessível ao usuário " + getTitular().getSigla() + "/"
@@ -894,7 +889,7 @@ public class ExDocumentoController extends ExController {
 						&& !exDocumentoDTO.getMob().doc().getSubscritor().equals(getTitular()) && !isInteressado) {
 					throw new AplicacaoException("Documento " + exDocumentoDTO.getMob().getSigla() + " cancelado ");
 				}
-			} else if (assertAcessoSP) {
+			} else if (exibeNomeAcesso) {
 				throw new AplicacaoException("Documento " + exDocumentoDTO.getMob().getSigla()
 						+ " inacessível ao usuário " + getCadastrante().getNomePessoa() + getTitular().getSigla() + "/"
 						+ getLotaTitular().getSiglaCompleta() + "." + s + " " + msgDestinoDoc);

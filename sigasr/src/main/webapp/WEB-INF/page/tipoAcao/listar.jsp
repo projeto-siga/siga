@@ -60,7 +60,7 @@
 		<a onclick="tipoAcaoService.cadastrar('Incluir Tipo de A&ccedil;&atilde;o')" class="btn btn-primary" style="color: #fff">Incluir</a>
 	</div>
 	
-	<sigasr:modal nome="tipoAcao" titulo="Cadastrar Tipo de A&ccedil;&atilde;o">
+	<sigasr:modal nome="tipoAcao" titulo="Cadastrar Tipo de A&ccedil;&atilde;o" largura="80%">
 		<div id="divEditarTipoAcaoForm"><jsp:include page="editar.jsp"></jsp:include></div>
 	</sigasr:modal>
 	

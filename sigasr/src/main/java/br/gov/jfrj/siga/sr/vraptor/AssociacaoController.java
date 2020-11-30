@@ -66,6 +66,8 @@ public class AssociacaoController extends SrController {
 		if (associacao == null)
 			associacao = new SrConfiguracao();
 		itemConfiguracaoSet = setupItemConfiguracao(itemConfiguracaoSet);
+		acoesSet = setupAcao(acoesSet);
+		
 		setDadosAssociacao(associacao, atributo, itemConfiguracaoSet, acoesSet, complexo, orgaoUsuario, lotacaoSel, dpPessoaSel, funcaoConfiancaSel, cargoSel, cpGrupoSel, pesquisaSatisfacao);
 		associacao.salvarComoAssociacaoAtributo();
 		result.use(Results.http()).body(associacao.toVO().toJson());
@@ -86,6 +88,25 @@ public class AssociacaoController extends SrController {
 			else {
 				result.add(item);
 			}			
+		}
+		return result;
+	}
+	
+	
+	/**
+	 * Busca Acoes do banco.
+	 */
+	private List<SrAcao> setupAcao(List<SrAcao> acoesSet) {
+		if(acoesSet == null) return null;
+		
+		List<SrAcao> result = new ArrayList<>();
+		for(SrAcao acao : acoesSet) {
+			if(acao.getIdAcao() != null && acao.getSigla() == null) {
+				result.add(SrAcao.AR.findById(acao.getIdAcao()));
+			}
+			else {
+				result.add(acao);
+			}
 		}
 		return result;
 	}

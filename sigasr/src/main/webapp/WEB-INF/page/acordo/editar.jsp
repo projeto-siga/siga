@@ -2,46 +2,45 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
 
-<div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
-	<div>
-		<form id="acordoForm" enctype="multipart/form-data">
-			
-			<input type="hidden" name="acordo.id" id="id" value="${idAcordo}"> 
-			<input type="hidden" name="acordo.hisIdIni" id="hisIdIni" value="${hisIdIni}">
-			
-			<div class="gt-form-row gt-width-66">
-				<label>Nome <span>*</span></label>
-				 <input type="text"	name="acordo.nomeAcordo"
-					id="nomeAcordo"	value="${nomeAcordo}" 
-					size="50" maxlength="255" required/>
-			</div>
-			<div class="gt-form-row gt-width-66">
-				<label>Descri&ccedil;&atilde;o</label>
-				<input maxlength="255" type="text"
-					name="acordo.descrAcordo" id="descrAcordo"
-					value="${descrAcordo}" style="width: 372px;" />
-			</div>
-			
-			<div class="gt-form-row">
-				<label>Par&acirc;metros</label>
-				<ul id="parametrosAcordo" style="color: #365b6d">
-				</ul>
-				<input type="button" value="Incluir" id="botaoIncluir"
-					class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
-			</div>
-
-			<div class="container">
-				<div class="title-table">
-					<h3 style="padding-top: 25px;">Abrang&ecirc;ncia</h3>
-				</div>
-			</div>
-
-			<div class="gt-content-box dataTables_div">
-                <div class="gt-form-row dataTables_length">
-                    <siga:checkbox name="mostrarAssocDesativada" value="${requestScope[mostrarAssocDesativada]}"></siga:checkbox>
-                    <b>Incluir Inativas</b>
-                </div>        
-				<table id="associacao_table" class="gt-table display">
+<div>
+	<form id="acordoForm" enctype="multipart/form-data">
+		
+		<input type="hidden" name="acordo.id" id="id" value="${idAcordo}"> 
+		<input type="hidden" name="acordo.hisIdIni" id="hisIdIni" value="${hisIdIni}">
+		
+		<div class="form-group">
+			<label>Nome <span>*</span></label>
+			 <input type="text"	name="acordo.nomeAcordo"
+				id="nomeAcordo"	value="${nomeAcordo}"
+				class="form-control" 
+				maxlength="255" required/>
+		</div>
+		<div class="form-group">
+			<label>Descri&ccedil;&atilde;o</label>
+			<input maxlength="255" type="text"
+				name="acordo.descrAcordo" id="descrAcordo"
+				class="form-control"
+				value="${descrAcordo}" />
+		</div>
+		
+		<div class="form-group">
+			<label>Par&acirc;metros</label>
+			<ul id="parametrosAcordo" style="color: #365b6d">
+			</ul>
+			<input type="button" value="Incluir" id="botaoIncluir"
+				class="btn btn-primary btn-sm" />
+		</div>
+		
+		<div class="card mb-2">
+			<h5 class="card-header">Abrang&ecirc;ncia</h5>
+			<div class="card-body">
+               	<label>
+                   <siga:checkbox name="mostrarAssocDesativada" value="${requestScope[mostrarAssocDesativada]}"></siga:checkbox>
+                   <b>Incluir Inativas</b>
+               	</label>
+               
+               <div class="table-responsive mb-2">
+	               <table id="associacao_table" class="table">
 					<thead>
 						<tr>
 							<th style="color: #333">
@@ -100,18 +99,21 @@
 						</c:forEach>
 					</tbody>
 				</table>
+	               
+               </div>    
+               
+				<!-- Botao de Incluir -->
+				<a href="javascript: inserirAssociacao()" class="btn btn-primary" style="color: #fff">Incluir</a>
+                   
 			</div>
-			<div class="gt-table-buttons">
-				<a href="javascript: inserirAssociacao()" class="gt-btn-small gt-btn-left" style="font-size: 10px;">Incluir</a>
-			</div>
+			
+		</div>
 
-			<div class="gt-form-row">
-				<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="preparaObjeto();acordoService.gravar()" />
-				<a class="gt-btn-medium gt-btn-left" onclick="acordoService.cancelarGravacao()">Cancelar</a>
-				<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="preparaObjeto();acordoService.aplicar()" />
-			</div>
-		</form>
-	</div>
+
+		<input type="button" value="Gravar" class="btn btn-primary" onclick="preparaObjeto();acordoService.gravar()" />
+		<a class="btn btn-secondary" style="color: #fff" onclick="acordoService.cancelarGravacao()">Cancelar</a>
+		<input type="button" value="Aplicar" class="btn btn-primary" onclick="preparaObjeto();acordoService.aplicar()" />
+	</form>
 </div>
 
 

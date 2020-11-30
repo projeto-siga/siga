@@ -1359,8 +1359,6 @@ public class CpBL {
 				marcador.setIdTpExibicao(idTpExibicao);
 				marcador.setIdTpTexto(idTpTexto);
 				marcador.setIdTpInteressado(idTpInteressado);
-				marcador.setHisAtivo(1);
-				marcadorAnt.setHisAtivo(0);
 				dao().gravarComHistorico(marcador, marcadorAnt, null, identidade);
 			} else {
 				throw new AplicacaoException ("Marcador não existente para esta " + msgLotacao 
@@ -1383,7 +1381,6 @@ public class CpBL {
 			marcador.setIdTpInteressado(idTpInteressado);
 			marcador.setDpLotacaoIni(lotacao);
 			marcador.setOrdem(ordem);
-			marcador.setHisAtivo(1);
 			
 			dao().gravarComHistorico(marcador, null, null, identidade);
 		}

@@ -4337,6 +4337,22 @@ public class ExBL extends CpBL {
 			iniciarAlteracao();
 
 			for (ExMobil m : set) {
+				final ExMobil geral = mob.doc().getMobilGeral();
+				
+				// Localiza a última movimentação de marcação de lotação, para cancelar ela com o recebimento
+				ExMovimentacao movAnterior = null;
+				List<ExMovimentacao> movs = mob.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true);
+				if (!mob.isGeral())
+					movs.addAll(m.doc().getMobilGeral().getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true));
+				for (ExMovimentacao mov : movs) {
+					if (mov.getMarcador() != null && mov.getMarcador().getCpTipoMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO
+							 && mov.getMarcador().getCpTipoMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO
+							 && mov.getMarcador().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.ATENDENTE) {
+						movAnterior = mov;
+						break;
+					}
+				}
+				
 				final ExMovimentacao mov = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO,
 						cadastrante, lotaCadastrante, m, dtMov, cadastrante, null, null, null, null);
 
@@ -4346,7 +4362,18 @@ public class ExBL extends CpBL {
 					mov.setLotaDestinoFinal(ultMov.getLotaDestinoFinal());
 				}
 
-				gravarMovimentacao(mov);
+				// Marcação deve ser removida só se a lotação estiver sendo alterada
+				if (movAnterior != null && movAnterior.getMarcador() != null && movAnterior.getMarcador().getDpLotacaoIni() != null 
+						&& movAnterior.getMarcador().getDpLotacaoIni().equivale(ultMov.getLotaResp())) {
+					movAnterior = null;
+				}
+
+				if (movAnterior != null) {
+					mov.setExMovimentacaoRef(movAnterior);
+					gravarMovimentacaoCancelamento(mov, movAnterior);
+				} else
+					gravarMovimentacao(mov);
+
 				// Se houver configuração para restringir acesso somente para quem recebeu,
 				// remove a lotação das permissões de acesso e inclui o recebedor
 				if (Ex.getInstance().getConf().podePorConfiguracao(mov.getResp(), mov.getLotaResp(), 
@@ -4875,7 +4902,7 @@ public class ExBL extends CpBL {
 	public void marcar(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, 
 			final DpPessoa titular, final DpLotacao lotaTitular, 
 			final ExMobil mob, final Date dtMov,  
-			final DpPessoa subscritor, DpLotacao lotaSubscritor,
+			DpPessoa subscritor, DpLotacao lotaSubscritor,
 			final String observacoes, CpMarcador marcador,
 			Date dataPlanejada, Date dataLimite) throws Exception {
 
@@ -4885,6 +4912,11 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("não foi informado o marcador");
 		
 		final ExMobil geral = mob.doc().getMobilGeral();
+		
+//		if (marcador.getDpLotacaoIni() != null) {
+//			subscritor = null;
+//			lotaSubscritor = marcador.getDpLotacaoIni().getLotacaoAtual();
+//		}
 		
 		// Localiza a última movimentação de marcação de lotação
 		ExMovimentacao movAnterior = null;

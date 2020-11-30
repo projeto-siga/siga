@@ -42,9 +42,12 @@ import br.gov.jfrj.siga.dp.CpMarca;
 		"                     ELSE 0 "+
 		"                   END) as cont_lota, "+
 		"               mard.cpTipoMarcador, "+
-		"               mard.ordem "+
+		"               mard.ordem, "+
+		"               mard.idCor, "+
+		"               mard.idIcone "+
 		"        FROM   ExMarca marca "+
-		"               JOIN marca.cpMarcador mard "+
+		"               JOIN marca.cpMarcador marcador "+
+		"               JOIN CpMarcador mard on (mard.hisIdIni = marcador.hisIdIni and mard.hisAtivo = 1)"+
 		"               JOIN marca.exMobil.exDocumento.exFormaDocumento.exTipoFormaDoc tpForma "+
 		"        WHERE  ( marca.dtIniMarca IS NULL "+
 		"                  OR marca.dtIniMarca < CURRENT_TIMESTAMP ) "+
@@ -57,7 +60,9 @@ import br.gov.jfrj.siga.dp.CpMarca;
 		"        GROUP  BY mard.idMarcador, "+
 		"                  mard.descrMarcador, "+
 		"                  mard.cpTipoMarcador, "+
-		"                  mard.ordem "+
+		"                  mard.ordem, "+
+		"                  mard.idCor, "+
+		"                  mard.idIcone "+
 		"ORDER  BY mard.cpTipoMarcador, "+
 		"          mard.ordem, "+
 		"          mard.descrMarcador") })

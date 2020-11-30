@@ -532,7 +532,9 @@ public class ExDao extends CpDao {
 		if (flt.getUltMovIdEstadoDoc() != null
 				&& flt.getUltMovIdEstadoDoc() != 0) {
 
-			query.setParameter("ultMovIdEstadoDoc", flt.getUltMovIdEstadoDoc());
+//			query.setParameter("ultMovIdEstadoDoc", flt.getUltMovIdEstadoDoc());
+			CpMarcador marcador = ExDao.getInstance().consultar(flt.getUltMovIdEstadoDoc(), CpMarcador.class, false);
+			query.setParameter("idMarcadorIni", marcador.getHisIdIni());
 
 		} else {
 			query.setParameter("id1", 3L);

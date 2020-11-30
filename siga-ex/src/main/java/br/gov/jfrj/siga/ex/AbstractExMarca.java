@@ -21,6 +21,8 @@ package br.gov.jfrj.siga.ex;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 import br.gov.jfrj.siga.dp.CpMarca;
 
@@ -29,6 +31,36 @@ import br.gov.jfrj.siga.dp.CpMarca;
  * the behavior of this class by editing the class, {@link ExDocumento()}.
  */
 @MappedSuperclass
+@NamedQueries({ @NamedQuery(name = "consultarPaginaInicial", query = "SELECT mard.idMarcador, "+
+		"               mard.descrMarcador, "+
+		"               Sum(CASE "+
+		"                     WHEN marca.dpPessoaIni.idPessoa = :idPessoaIni THEN 1 "+
+		"                     ELSE 0 "+
+		"                   END) as cont_pessoa, "+
+		"               Sum(CASE "+
+		"                     WHEN marca.dpLotacaoIni.idLotacao = :idLotacaoIni THEN 1 "+
+		"                     ELSE 0 "+
+		"                   END) as cont_lota, "+
+		"               mard.cpTipoMarcador, "+
+		"               mard.ordem "+
+		"        FROM   ExMarca marca "+
+		"               JOIN marca.cpMarcador mard "+
+		"               JOIN marca.exMobil.exDocumento.exFormaDocumento.exTipoFormaDoc tpForma "+
+		"        WHERE  ( marca.dtIniMarca IS NULL "+
+		"                  OR marca.dtIniMarca < CURRENT_TIMESTAMP ) "+
+		"               AND ( marca.dtFimMarca IS NULL "+
+		"                      OR marca.dtFimMarca > CURRENT_TIMESTAMP ) "+
+		"               AND ( ( marca.dpPessoaIni.idPessoa = :idPessoaIni ) "+
+		"                      OR ( marca.dpLotacaoIni.idLotacao = :idLotacaoIni ) ) "+
+		"               AND marca.cpTipoMarca.idTpMarca = 1 "+
+		"               AND tpForma.idTipoFormaDoc = :idTipoForma "+
+		"        GROUP  BY mard.idMarcador, "+
+		"                  mard.descrMarcador, "+
+		"                  mard.cpTipoMarcador, "+
+		"                  mard.ordem "+
+		"ORDER  BY mard.cpTipoMarcador, "+
+		"          mard.ordem, "+
+		"          mard.descrMarcador") })
 public class AbstractExMarca extends CpMarca {
 
 	@ManyToOne

@@ -888,7 +888,7 @@ public class ExDao extends CpDao {
 
 			sql.setParameter("idPessoaIni", pes.getIdPessoaIni());
 			sql.setParameter("idLotacaoIni", lot.getIdLotacaoIni());
-			sql.setParameter("idTipoForma", idTipoForma);
+			sql.setParameter("idTipoForma", Long.valueOf(idTipoForma));
 
 			List result = sql.getResultList();
 

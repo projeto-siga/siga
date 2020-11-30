@@ -34,6 +34,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedNativeQueries;
 import javax.persistence.NamedNativeQuery;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -53,22 +55,6 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
 @MappedSuperclass
 @NamedNativeQueries({
-		@NamedNativeQuery(name = "consultarPaginaInicial", query = "SELECT"
-				+ " grps.id_marcador, grps.descr_marcador, grps.cont_pessoa, grps.cont_lota from ("
-				+ "	SELECT mard.id_marcador, mard.descr_marcador, mard.ord_marcador, "
-				+ "	SUM(CASE WHEN marca.id_pessoa_ini = :idPessoaIni THEN 1 ELSE 0 END) cont_pessoa,"
-				+ "	SUM(CASE WHEN marca.id_lotacao_ini = :idLotacaoIni THEN 1 ELSE 0 END) cont_lota"
-				+ "	FROM corporativo.cp_marca marca"
-				+ "	JOIN corporativo.cp_marcador mard on marca.id_marcador = mard.id_marcador"
-				+ " WHERE(dt_ini_marca IS NULL OR dt_ini_marca < CURRENT_TIMESTAMP)"
-				+ "		AND(dt_fim_marca IS NULL OR dt_fim_marca > CURRENT_TIMESTAMP)"
-				+ "		AND((marca.id_pessoa_ini = :idPessoaIni) OR (marca.id_lotacao_ini = :idLotacaoIni))"
-				+ "		AND (select id_tipo_forma_doc from siga.ex_forma_documento where id_forma_doc = ("
-				+ "				select id_forma_doc from siga.ex_documento where id_doc = ("
-				+ "			   		select id_doc from siga.ex_mobil where id_mobil = marca.id_ref ))"
-				+ "			   			) = :idTipoForma" + "	   	AND id_tp_marca = 1"
-				+ "	GROUP BY mard.id_marcador, mard.descr_marcador, mard.ord_marcador) grps"
-				+ "	ORDER BY grps.ord_marcador"),
 		@NamedNativeQuery(name = "quantidadeDocumentos", query = "SELECT" + "		count(1)"
 				+ "	FROM corporativo.cp_marca marca"
 				+ "	WHERE(dt_ini_marca IS NULL OR dt_ini_marca < CURRENT_TIMESTAMP)"
@@ -132,28 +118,6 @@ public abstract class AbstractCpMarcador extends HistoricoAuditavelSuporte imple
 	@Column(name = "ID_TP_TEXTO")
 	private CpMarcadorTipoTextoEnum idTpTexto;
 
-	@Column(name = "HIS_ID_INI")
-	@Desconsiderar
-	private Long hisIdIni;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "HIS_DT_FIM", length = 19)
-	@Desconsiderar
-	private Date hisDtFim;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "HIS_DT_INI", length = 19)
-	@Desconsiderar
-	private Date hisDtIni;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "HIS_IDC_INI")
-	private CpIdentidade hisIdcIni;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "HIS_IDC_FIM")
-	private CpIdentidade hisIdcFim;
-
 	@Column(name = "HIS_ATIVO")
 	private Integer hisAtivo;
 
@@ -191,14 +155,6 @@ public abstract class AbstractCpMarcador extends HistoricoAuditavelSuporte imple
 
 	public Integer getOrdem() {
 		return ordem;
-	}
-
-	public Long getHisIdIni() {
-		return hisIdIni;
-	}
-
-	public void setHisIdIni(Long hisIdIni) {
-		this.hisIdIni = hisIdIni;
 	}
 
 	public void setOrdem(Integer ordem) {
@@ -285,46 +241,20 @@ public abstract class AbstractCpMarcador extends HistoricoAuditavelSuporte imple
 		this.idTpInteressado = idTpInteressado;
 	}
 
-	public Date getHisDtFim() {
-		return hisDtFim;
-	}
-
-	public void setHisDtFim(Date hisDtFim) {
-		this.hisDtFim = hisDtFim;
-	}
-
-	public Date getHisDtIni() {
-		return hisDtIni;
-	}
-
-	public void setHisDtIni(Date hisDtIni) {
-		this.hisDtIni = hisDtIni;
-	}
-
-	public CpIdentidade getHisIdcIni() {
-		return hisIdcIni;
-	}
-
-	public void setHisIdcIni(CpIdentidade hisIdcIni) {
-		this.hisIdcIni = hisIdcIni;
-	}
-
-	public CpIdentidade getHisIdcFim() {
-		return hisIdcFim;
-	}
-
-	public void setHisIdcFim(CpIdentidade hisIdcFim) {
-		this.hisIdcFim = hisIdcFim;
-	}
-
+	//
+	// Solução para não precisar criar HIS_ATIVO em todas as tabelas que herdam de
+	// HistoricoSuporte.
+	//
 	@Override
 	public Integer getHisAtivo() {
+		this.hisAtivo = super.getHisAtivo();
 		return this.hisAtivo;
 	}
-	
+
 	@Override
 	public void setHisAtivo(Integer hisAtivo) {
-		this.hisAtivo = hisAtivo;
+		super.setHisAtivo(hisAtivo);
+		this.hisAtivo = getHisAtivo();
 	}
 
 }

@@ -156,15 +156,15 @@
 	</form>
 </div>
 
-<sigasr:modal nome="associacao" titulo="Cadastrar Associa&ccedil;&atilde;o">
-	<div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
+<sigasr:modal nome="associacao" titulo="Cadastrar Associa&ccedil;&atilde;o" largura="80%">
+	<div class="gt-form gt-content-box">
 		<input id="idConfiguracao" type="hidden" name="idConfiguracao">
 		<input type="hidden" name="associacao">
 		<input id="hisIdIni" type="hidden" name="hisIdIni">
 	
-		<div id="divSolicitante" class="gt-form-row gt-width-100">
+		<div id="divSolicitante" class="form-group">
 			<label>Solicitante</label> 
-			<siga:pessoaLotaFuncCargoSelecao
+			<sigasr:pessoaLotaFuncCargoSelecao
 				nomeSelLotacao="lotacao"
 				nomeSelPessoa="dpPessoa"
 				nomeSelFuncao="funcaoConfianca"
@@ -176,9 +176,11 @@
 				valueCargo="${cargo}"
 				valueGrupo="${cpGrupo}"
 				disabled="disabled">
-			</siga:pessoaLotaFuncCargoSelecao>
+			</sigasr:pessoaLotaFuncCargoSelecao>
+			
+			
 		</div>
-		<div class="gt-form-row gt-width-100">
+		<div class="form-group">
 			<label>&Oacute;rg&atilde;o</label> 
 			<siga:select name="orgaoUsuario" list="orgaos"
 				listKey="idOrgaoUsu" id="orgaoUsuario"
@@ -186,7 +188,7 @@
 				listValue="nmOrgaoUsu"
 				value="${idOrgaoUsu}" />
 		</div>
-		<div class="gt-form-row gt-width-100">
+		<div class="form-group">
 			<label>Local</label> 
 			<siga:select name="complexo" list="locais"
 				listKey="idComplexo" id="complexo"
@@ -194,15 +196,15 @@
 				listValue="nomeComplexo" theme="simple"
 				value="${idComplexo}" />
 		</div>
-		<div class="gt-form-row gt-width-100">
+		<div class="form-group">
 			<label>Atendente</label>
 				<input type="hidden" name="atendente.id" id="atendente" class="selecao">
 				<siga:selecao propriedade="atendente" tema="simple" modulo="siga" urlAcao="buscar" inputName="atendente"/>
 		</div>
 
-		<div class="gt-form-row gt-width-100">
+		<div class="form-group">
 			<label>Prioridade</label> 
-		    <select name="prioridade" id="prioridade">
+		    <select name="prioridade" id="prioridade" class="form-control">
 				<option value=""></option>
 				<c:forEach items="${prioridades}" var="item">
 				   <option value="${item}">${item.descPrioridade}</option>
@@ -212,10 +214,8 @@
 
 		<sigasr:configuracaoItemAcao itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"></sigasr:configuracaoItemAcao>
 								 
-		<div class="gt-form-row">
-			<a href="javascript: gravarAssociacao()" class="gt-btn-medium gt-btn-left">Gravar</a>
-			<a href="javascript: associacaoModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
-		</div>
+		<a href="javascript: gravarAssociacao()" class="btn btn-primary" style="color: #fff">Gravar</a>
+		<a href="javascript: associacaoModalFechar()" class="btn btn-secondary" style="color: #fff">Cancelar</a>
 	</div>
 	<div class="gt-content-box" id="modal-associacao-error"
 		style="display: none;">

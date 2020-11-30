@@ -118,38 +118,42 @@
 
 
 <div id="dialog">
-	<div class="gt-content">
-		<div class="gt-form gt-content-box">
-			<form id="parametroForm" enctype="multipart/form-data">
-				<div class="gt-form-row">
-					<label>Par&acirc;metro</label> 
-					<select id="parametro" name="parametro">
-						<c:forEach items="${parametros}" var="parametro">
-							<option value="${parametro}">${parametro.descricao}</option>
-						</c:forEach>
-					</select>
-				</div>
-				<div class="gt-form-row">
-					<label>Valor <span>*</span></label> 
-					<select id="operador" name="operador">
+	<form id="parametroForm" enctype="multipart/form-data">
+		<div class="form-group">
+			<label>Par&acirc;metro</label> 
+			<select id="parametro" name="parametro" class="form-control">
+				<c:forEach items="${parametros}" var="parametro">
+					<option value="${parametro}">${parametro.descricao}</option>
+				</c:forEach>
+			</select>
+		</div>
+		<div class="form-group mb-2">
+			<label>Valor *</label>
+			
+			<div class="form-group row">
+				<div class="col-sm-5">
+					<select id="operador" name="operador" class="form-control">
 						<c:forEach items="${operadores}" var="ope">
 							<option value="${ope}">${ope.nome}</option>
 						</c:forEach>
 					</select>
-					<input type="text" id="valor" name="valor" value="" maxlength="4" style="width: 3em; text-align: right;" required />
-					<select id="unidadeMedida" name="unidadeMedida">
+				</div>
+				<div class="col-sm-3">
+					<input type="text" id="valor" name="valor" value="" maxlength="4" class="form-control" required />
+				</div>
+				<div class="col-sm-4">
+					<select id="unidadeMedida" name="unidadeMedida" class="form-control">
 						<c:forEach items="${unidadesMedida}" var="unidadeMedida">
 							<option value="${unidadeMedida.idUnidadeMedida}">${unidadeMedida.plural}</option>
 						</c:forEach>
 					</select>
 				</div>
-				<div class="gt-form-row">
-					<input type="button" id="modalOk" value="Ok" class="gt-btn-medium gt-btn-left" />
-					<input type="button" value="Cancelar" id="modalCancel" class="gt-btn-medium gt-btn-left" />
-				</div>
-			</form>
+			</div>
+			
 		</div>
-	</div>
+		<input type="button" id="modalOk" value="Ok" class="btn btn-primary" />
+		<input type="button" value="Cancelar" id="modalCancel" class="btn btn-secondary" />
+	</form>
 </div>
 
 <sigasr:modal nome="associacao" titulo="Cadastrar Associa&ccedil;&atilde;o">
@@ -793,50 +797,53 @@
 		return params;
 	}
 
+	var jDialog = $("#dialog");
+	var jParametro = $("#parametro");
+	var jValor = $("#valor");
+	var jUnidadeMedida = $("#unidadeMedida");
+	var jOperador = $("#operador");
+
+	jDialog.dialog({
+        autoOpen: false,
+        height: 'auto',
+        width: '80%',
+        modal: true,
+        resizable: false,
+        close: function() {
+            jValor.val('');
+            jDialog.data('valor','');
+            jDialog.data('parametro','');
+            jDialog.data('unidadeMedida','');
+            jDialog.data('operador','');
+        },
+        open: function(){
+	        limparErros();
+	        
+        	jParametro.on('change', function() {
+    			limparErros();
+    		});
+	        
+            if (jDialog.data("valor")){
+                jDialog.dialog('option', 'title', 'Alterar Parametro');
+                jValor.val(jDialog.data("valor"));
+                jParametro.find("option[value=" + jDialog.data("parametro") + "]").prop('selected', true);
+                jUnidadeMedida.find("option[value=" + jDialog.data("unidadeMedida") + "]").prop('selected', true);
+                jOperador.find("option[value=" + jDialog.data("operador") + "]").prop('selected', true);
+            } else
+                jDialog.dialog('option', 'title', 'Incluir Parametro');
+        }
+	});
+
 	$(function() {
 		var jParametrosAcordo = $("#parametrosAcordo"),
 		parametrosAcordo = jParametrosAcordo[0],
-		jDialog = $("#dialog"),
-		dialog = jDialog[0],
-		jValor = $("#valor"),
-		jParametro = $("#parametro");
-		jUnidadeMedida = $("#unidadeMedida");
-		jOperador = $("#operador");
+		dialog = jDialog[0];
 
 		$("#botaoIncluir").click(function(){
 	        jDialog.data('acao',parametrosAcordo.incluirItem).dialog('open');
 		});
 		
-		jDialog.dialog({
-		        autoOpen: false,
-		        height: 'auto',
-		        width: 'auto',
-		        modal: true,
-		        resizable: false,
-		        close: function() {
-	                jValor.val('');
-	                jDialog.data('valor','');
-	                jDialog.data('parametro','');
-	                jDialog.data('unidadeMedida','');
-	                jDialog.data('operador','');
-		        },
-		        open: function(){
-			        limparErros();
-			        
-		        	jParametro.on('change', function() {
-		    			limparErros();
-		    		});
-			        
-	                if (jDialog.data("valor")){
-		                jDialog.dialog('option', 'title', 'Alterar Parametro');
-		                jValor.val(jDialog.data("valor"));
-		                jParametro.find("option[value=" + jDialog.data("parametro") + "]").prop('selected', true);
-		                jUnidadeMedida.find("option[value=" + jDialog.data("unidadeMedida") + "]").prop('selected', true);
-		                jOperador.find("option[value=" + jDialog.data("operador") + "]").prop('selected', true);
-	                } else
-		                jDialog.dialog('option', 'title', 'Incluir Parametro');
-		        }
-		});
+		
 		$("#modalOk").click(function(){
 			if (!jQuery("#parametroForm").valid())
 				return false;
@@ -899,7 +906,7 @@
 	});
 
 	function limparErros() {
-		$("#valor").attr('class', 'valid');
+		$("#valor").addClass('valid');
 		$("#valor-error").css('display', 'none');
 	}
 

@@ -51,7 +51,7 @@
 			<c:forEach items="${itens}" var="tipoAcao">
 				<tr>
 					<td>
-						<a href='javascript:opener.retorna_${param.propriedade}${nome}("${tipoAcao.id}","${tipoAcao.sigla}","${tipoAcao.descricao}"); window.close();'>${tipoAcao.sigla}</a>
+						<a href='javascript:parent.retorna_${param.propriedade}${nome}("${tipoAcao.id}","${tipoAcao.sigla}","${tipoAcao.descricao}"); window.close();'>${tipoAcao.sigla}</a>
 					</td>
 					<td style="padding-left: ${tipoAcao.nivel*13}px;">${tipoAcao.descricao}</td>
 				</tr>

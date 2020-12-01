@@ -17,6 +17,7 @@ import br.com.caelum.vraptor.jpa.JPATransactionInterceptor;
 import br.com.caelum.vraptor.validator.Validator;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 @Intercepts(before = { 	InterceptorMethodParametersResolver.class, JPATransactionInterceptor.class })
 public class GcInterceptor  {
@@ -45,7 +46,7 @@ public class GcInterceptor  {
 	public void intercept(SimpleInterceptorStack stack)  {
 
 		ContextoPersistencia.setEntityManager(this.manager);
-		CpDao.freeInstance();
+		ModeloDao.freeInstance();
 		CpDao.getInstance();
 
 

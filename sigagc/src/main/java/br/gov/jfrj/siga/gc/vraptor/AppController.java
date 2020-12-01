@@ -327,6 +327,7 @@ public class AppController extends GcController {
 		result.include("pagina", pagina);
 	}
 
+	@Transactional
 	public void updateTag(String before, String after) {
 
 		// Edson: Atualizando tags de classificacao:

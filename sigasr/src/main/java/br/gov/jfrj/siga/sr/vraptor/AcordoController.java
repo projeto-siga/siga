@@ -144,7 +144,7 @@ public class AcordoController extends SrController {
         setupAssociacao(associacao, associacaoAcordoId, associacaoCpGrupoId);
     	
     	associacao.setItemConfiguracaoSet(setupListaItemConfiguracao(itemConfiguracaoSet));
-        associacao.setAcoesSet(acoesSet);
+        associacao.setAcoesSet(setupListaAcao(acoesSet));
 
         associacao.salvarComoAbrangenciaAcordo();
 
@@ -158,6 +158,16 @@ public class AcordoController extends SrController {
     	List<SrItemConfiguracao> result = new ArrayList<>();
     	for(SrItemConfiguracao item : lista) {
     		result.add(SrItemConfiguracao.AR.findById(item.getIdItemConfiguracao()));
+    	}
+    	return result;
+    }
+    
+    private List<SrAcao> setupListaAcao(List<SrAcao> lista) {
+    	if(lista == null || lista.size() == 0) return lista;
+    	
+    	List<SrAcao> result = new ArrayList<>();
+    	for(SrAcao item : lista) {
+    		result.add(SrAcao.AR.findById(item.getIdAcao()));
     	}
     	return result;
     }

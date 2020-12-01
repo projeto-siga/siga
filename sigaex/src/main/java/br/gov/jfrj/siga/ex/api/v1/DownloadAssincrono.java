@@ -3,7 +3,6 @@ package br.gov.jfrj.siga.ex.api.v1;
 import java.io.FileOutputStream;
 import java.util.concurrent.Callable;
 
-import com.crivano.swaggerservlet.SwaggerServlet;
 import com.crivano.swaggerservlet.SwaggerUtils;
 
 import br.gov.jfrj.itextpdf.Documento;

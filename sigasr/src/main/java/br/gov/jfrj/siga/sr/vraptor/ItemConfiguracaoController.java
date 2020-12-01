@@ -37,6 +37,7 @@ import br.gov.jfrj.siga.sr.model.vo.SelecionavelVO;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.uteis.PessoaLotaFuncCargoSelecaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
+import br.gov.jfrj.siga.vraptor.Transacional;
 
 @Controller
 @Path("/app/itemConfiguracao")
@@ -103,6 +104,7 @@ public class ItemConfiguracaoController extends SrController {
 		PessoaLotaFuncCargoSelecaoHelper.adicionarCamposSelecao(result);
 	}
 
+	@Transacional
 	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/desativar")
 	public void desativar(Long id, boolean mostrarDesativados) throws Exception {
@@ -112,6 +114,7 @@ public class ItemConfiguracaoController extends SrController {
 		result.use(Results.http()).body(item.getSrItemConfiguracaoJson());
 	}
 
+	@Transacional
 	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/reativar")
 	public void reativar(Long id, boolean mostrarDesativados) throws Exception {
@@ -121,6 +124,7 @@ public class ItemConfiguracaoController extends SrController {
 		result.use(Results.http()).body(item.getSrItemConfiguracaoJson());
 	}
 
+	@Transacional
 	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/gravar")
 	public void gravar(SrItemConfiguracao itemConfiguracao,

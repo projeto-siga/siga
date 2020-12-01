@@ -1,7 +1,5 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
-import com.crivano.swaggerservlet.SwaggerServlet;
-
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.ISugestaoPost;

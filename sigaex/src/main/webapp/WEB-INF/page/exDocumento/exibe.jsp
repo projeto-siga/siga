@@ -1438,6 +1438,13 @@
 				btnCancelar.attr('href', '#').attr('data-siga-modal-abrir', 'modalDeAvisoTornarDocumentoSemEfeito');					
 			}							
 		});	
+		
+		$(function() {
+			var btnRefazer = $('.siga-btn-refazer');				
+			if (btnRefazer) {										
+				btnRefazer.attr('href', '#').attr('data-siga-modal-abrir', 'modalDeAvisoTornarDocumentoSemEfeito');					
+			}							
+		});
 	</script>	
 </c:if>
 	

@@ -1,7 +1,6 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
 import com.crivano.swaggerservlet.IMemCache;
-import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.base.Prop;
 import redis.clients.jedis.Jedis;

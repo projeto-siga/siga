@@ -372,7 +372,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			lotacao = dao().consultar(id, DpLotacao.class, false);
 		}
 		
-		if(id == null || (id != null && lotacao != null && (!nmLotacao.equalsIgnoreCase(lotacao.getNomeLotacao()) || !siglaLotacao.equalsIgnoreCase(lotacao.getSiglaLotacao())
+		if(id == null || (id != null && lotacao != null && (!nmLotacao.equals(lotacao.getNomeLotacao()) || !siglaLotacao.equalsIgnoreCase(lotacao.getSiglaLotacao())
 										|| (lotacao.getDataFim() == null && "false".equals(situacao)) || (lotacao.getDataFim() != null && "true".equals(situacao)) 
 										|| (isExternaLotacao != null && ((lotacao.getIsExternaLotacao() == null) || lotacao.getIsExternaLotacao() == 0))
 										|| (isExternaLotacao == null && ((lotacao.getIsExternaLotacao() != null) && lotacao.getIsExternaLotacao() == 1))

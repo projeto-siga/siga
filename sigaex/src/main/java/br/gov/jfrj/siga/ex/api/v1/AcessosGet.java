@@ -1,7 +1,6 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.Collectors;
 
 import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -14,25 +13,24 @@ import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class AcessosGet implements IAcessosGet {
 
+	private AcessoItem cpAcessoToAcessoItem(CpAcesso a) {
+		AcessoItem ai = new AcessoItem();
+
+		ai.datahora = a.getDtInicio();
+		ai.ip = a.getAuditIP();
+
+		return ai;
+	}
+
 	@Override
 	public void run(AcessosGetRequest req, AcessosGetResponse resp) throws Exception {
 		SwaggerHelper.buscarEValidarUsuarioLogado();
 		SigaObjects so = SwaggerHelper.getSigaObjects();
-
-		resp.list = new ArrayList<>();
-
 		DpPessoa cadastrante = so.getCadastrante();
 
-		List<CpAcesso> l = ExDao.getInstance().consultarAcessosRecentes(cadastrante);
-
-		for (CpAcesso a : l) {
-			AcessoItem ai = new AcessoItem();
-			ai.datahora = a.getDtInicio();
-			ai.ip = a.getAuditIP();
-			resp.list.add(ai);
-		}
+		resp.list = ExDao.getInstance().consultarAcessosRecentes(cadastrante).stream().map(this::cpAcessoToAcessoItem)
+				.collect(Collectors.toList());
 	}
-
 
 	@Override
 	public String getContext() {

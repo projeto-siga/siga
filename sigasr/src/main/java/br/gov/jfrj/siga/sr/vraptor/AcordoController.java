@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.sr.vraptor;
 
 import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.ADM_ADMINISTRAR;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -142,12 +143,23 @@ public class AcordoController extends SrController {
     	
         setupAssociacao(associacao, associacaoAcordoId, associacaoCpGrupoId);
     	
-    	associacao.setItemConfiguracaoSet(itemConfiguracaoSet);
+    	associacao.setItemConfiguracaoSet(setupListaItemConfiguracao(itemConfiguracaoSet));
         associacao.setAcoesSet(acoesSet);
 
         associacao.salvarComoAbrangenciaAcordo();
 
         result.use(Results.http()).body(associacao.toJson());
+    }
+    
+    
+    private List<SrItemConfiguracao> setupListaItemConfiguracao(List<SrItemConfiguracao> lista) {
+    	if(lista == null || lista.size() == 0) return lista;
+    	
+    	List<SrItemConfiguracao> result = new ArrayList<>();
+    	for(SrItemConfiguracao item : lista) {
+    		result.add(SrItemConfiguracao.AR.findById(item.getIdItemConfiguracao()));
+    	}
+    	return result;
     }
     
     private void setupAssociacao(SrConfiguracao associacao, Long associacaoAcordoId, Long associacaoCpGrupoId) {

@@ -30,44 +30,49 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.NamedNativeQueries;
-import javax.persistence.NamedNativeQuery;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 import br.gov.jfrj.siga.model.Objeto;
 
 @MappedSuperclass
-@NamedNativeQueries({ @NamedNativeQuery(name = "consultarPaginaInicial", query = "SELECT"
-		+ " grps.id_marcador, grps.descr_marcador, grps.cont_pessoa, grps.cont_lota from ("
-		+ "	SELECT mard.id_marcador, mard.descr_marcador, mard.ord_marcador, "
-		+ "	SUM(CASE WHEN id_pessoa_ini = :idPessoaIni THEN 1 ELSE 0 END) cont_pessoa,"
-		+ "	SUM(CASE WHEN id_lotacao_ini = :idLotacaoIni THEN 1 ELSE 0 END) cont_lota"
-		+ "	FROM corporativo.cp_marca marca"
-		+ "	JOIN corporativo.cp_marcador mard on marca.id_marcador = mard.id_marcador"
-		+ " WHERE(dt_ini_marca IS NULL OR dt_ini_marca < CURRENT_TIMESTAMP)"
-		+ "		AND(dt_fim_marca IS NULL OR dt_fim_marca > CURRENT_TIMESTAMP)"
-		+ "		AND((id_pessoa_ini = :idPessoaIni) OR (id_lotacao_ini = :idLotacaoIni))"
-		+ "		AND (select id_tipo_forma_doc from siga.ex_forma_documento where id_forma_doc = ("
-		+ "				select id_forma_doc from siga.ex_documento where id_doc = ("
-		+ "			   		select id_doc from siga.ex_mobil where id_mobil = marca.id_ref ))"
-		+ "			   			) = :idTipoForma"
-		+ "	   	AND id_tp_marca = 1"
-		+ "	GROUP BY mard.id_marcador, mard.descr_marcador, mard.ord_marcador) grps"
-		+ "	ORDER BY grps.ord_marcador"),
-@NamedNativeQuery(name = "quantidadeDocumentos", query = "SELECT"
-		+ "		count(1)"
-		+ "	FROM corporativo.cp_marca marca"
-		+ "	WHERE(dt_ini_marca IS NULL OR dt_ini_marca < CURRENT_TIMESTAMP)"
-		+ "		AND(dt_fim_marca IS NULL OR dt_fim_marca > CURRENT_TIMESTAMP)"
-		+ "		AND(id_pessoa_ini = :idPessoaIni)"
-		+ "		AND ("
-		+ "				select id_tipo_forma_doc from siga.ex_forma_documento where id_forma_doc = ("
-		+ "					select id_forma_doc from siga.ex_documento where id_doc = ("
-		+ "						select id_doc from siga.ex_mobil where id_mobil = marca.id_ref"
-		+ "					)"
-		+ "				)"
-		+ "			) in (1, 2)"
-		+ "	AND id_tp_marca = 1"
-		+ "	and id_marcador not in (9,8,10,11,12 ,13,16, 18, 20 , 21, 22, 24 ,26, 32, 62, 63, 64, 7, 50, 51)")})
+@NamedQueries({ @NamedQuery(name = "consultarPaginaInicial", query = "SELECT mard.idMarcador, "+
+		"               mard.descrMarcador, "+
+		"               Sum(CASE "+
+		"                     WHEN marca.dpPessoaIni.idPessoa = :idPessoaIni THEN 1 "+
+		"                     ELSE 0 "+
+		"                   END) as cont_pessoa, "+
+		"               Sum(CASE "+
+		"                     WHEN marca.dpLotacaoIni.idLotacao = :idLotacaoIni THEN 1 "+
+		"                     ELSE 0 "+
+		"                   END) as cont_lota, "+
+		"               mard.cpTipoMarcador, "+
+		"               mard.ordem "+
+		"        FROM   ExMarca marca "+
+		"               JOIN marca.cpMarcador mard "+
+		"               JOIN marca.exMobil.exDocumento.exFormaDocumento.exTipoFormaDoc tpForma "+
+		"        WHERE  ( marca.dtIniMarca IS NULL "+
+		"                  OR marca.dtIniMarca < CURRENT_TIMESTAMP ) "+
+		"               AND ( marca.dtFimMarca IS NULL "+
+		"                      OR marca.dtFimMarca > CURRENT_TIMESTAMP ) "+
+		"               AND ( ( marca.dpPessoaIni.idPessoa = :idPessoaIni ) "+
+		"                      OR ( marca.dpLotacaoIni.idLotacao = :idLotacaoIni ) ) "+
+		"               AND marca.cpTipoMarca.idTpMarca = 1 "+
+		"               AND tpForma.idTipoFormaDoc = :idTipoForma "+
+		"        GROUP  BY mard.idMarcador, "+
+		"                  mard.descrMarcador, "+
+		"                  mard.cpTipoMarcador, "+
+		"                  mard.ordem "+
+		"ORDER  BY mard.cpTipoMarcador, "+
+		"          mard.ordem, "+
+		"          mard.descrMarcador"),
+	@NamedQuery(name = "quantidadeDocumentos", query = "SELECT count(1)"
+			+ "	FROM CpMarca marca"
+			+ "	WHERE (marca.dtIniMarca IS NULL OR marca.dtIniMarca < CURRENT_TIMESTAMP)"
+			+ "		AND (marca.dtFimMarca IS NULL OR marca.dtFimMarca > CURRENT_TIMESTAMP)"
+			+ "		AND marca.dpPessoaIni.idPessoa = :idPessoaIni"
+			+ "     AND marca.cpTipoMarca.idTpMarca = 1 "
+			+ "	    AND marca.cpMarcador.hisIdIni not in (9,8,10,11,12 ,13,16, 18, 20 , 21, 22, 24 ,26, 32, 62, 63, 64, 7, 50, 51)") })
 public abstract class AbstractCpMarcador extends Objeto implements Serializable {
 
 	private static final long serialVersionUID = 6436403895150961831L;

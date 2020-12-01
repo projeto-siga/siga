@@ -116,7 +116,9 @@
 	</form>
 </div>
 
-
+<!-- ==================== -->
+<!-- Modal de Parametros  -->
+<!-- ==================== -->
 <div id="dialog">
 	<form id="parametroForm" enctype="multipart/form-data">
 		<div class="form-group">
@@ -156,6 +158,10 @@
 	</form>
 </div>
 
+
+<!-- ================== -->
+<!-- Modal Abrangencia  -->
+<!-- ================== -->
 <sigasr:modal nome="associacao" titulo="Cadastrar Associa&ccedil;&atilde;o" largura="80%">
 	<div class="gt-form gt-content-box">
 		<input id="idConfiguracao" type="hidden" name="idConfiguracao">
@@ -570,7 +576,7 @@
 		params += getDadosSolicitante(row);
 		
 		if ($("#id").val() != undefined && $("#id").val() != '')
-		params += '&associacao.acordo.id=' + $("#id").val();
+		params += '&associacaoAcordoId=' + $("#id").val();
 
 		return params;
 	};
@@ -619,7 +625,7 @@
              	params += '&associacao.lotacao.id=';
              	params += '&associacao.funcaoConfianca.id=';
              	params += '&associacao.cargo.id=';
-             	params += '&associacao.cpGrupo.id=';
+             	params += '&associacaoCpGrupoId=';
 
 		
 		// caso seja lotaÃ§Ã£o
@@ -628,7 +634,7 @@
 			params += '&associacao.dpPessoa.id=';
              	params += '&associacao.funcaoConfianca.id=';
              	params += '&associacao.cargo.id=';
-             	params += '&associacao.cpGrupo.id=';
+             	params += '&associacaoCpGrupoId=';
 
 		
 		// caso seja funÃ§Ã£o
@@ -637,7 +643,7 @@
 			params += '&associacao.dpPessoa.id=';
              	params += '&associacao.lotacao.id=';
              	params += '&associacao.cargo.id=';
-             	params += '&associacao.cpGrupo.id=';
+             	params += '&associacaoCpGrupoId=';
 
 		
 		// caso seja cargo
@@ -646,11 +652,11 @@
 			params += '&associacao.dpPessoa.id=';
              	params += '&associacao.funcaoConfianca.id=';
              	params += '&associacao.lotacao.id=';
-             	params += '&associacao.cpGrupo.id=';
+             	params += '&associacaoCpGrupoId=';
 
 		// caso seja grupo
 		} else if (rowValues[colunasAssociacao.tipoSolicitante] == 5){
-			params += '&associacao.cpGrupo.id=' + rowValues[colunasAssociacao.idSolicitante];
+			params += '&associacaoCpGrupoId=' + rowValues[colunasAssociacao.idSolicitante];
 			params += '&associacao.dpPessoa.id=';
      			params += '&associacao.funcaoConfianca.id=';
      			params += '&associacao.lotacao.id=';

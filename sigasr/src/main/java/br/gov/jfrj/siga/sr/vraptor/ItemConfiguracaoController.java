@@ -229,8 +229,9 @@ public class ItemConfiguracaoController extends SrController {
 
 	@Path("/selecionar")
 	public void selecionar(String sigla, SrSolicitacao sol) throws Exception {
+		boolean possuiItensDisponiveis = sol != null && sol.getItensDisponiveis() != null && sol.getItensDisponiveis().size() > 0;
 		SrItemConfiguracao sel = new SrItemConfiguracao().selecionar(sigla,
-				sol != null ? sol.getItensDisponiveis() : null);
+				possuiItensDisponiveis ? sol.getItensDisponiveis() : null);
 
 		result.forwardTo(SelecaoController.class).ajaxRetorno(sel);
 	}

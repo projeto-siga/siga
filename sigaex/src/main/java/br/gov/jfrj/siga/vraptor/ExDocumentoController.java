@@ -866,7 +866,7 @@ public class ExDocumentoController extends ExController {
 				ERRO_INACESSIVEL_USUARIO = "Documento " + exDocumentoDTO.getMob().getSigla()
 						+ " inacessível ao usuário " + getTitular().getSigla() + "/"
 						+ getLotaTitular().getSiglaCompleta() + ", Publico externo exceto se for subscritor"
-						+ " , cosignatário ou tiver algum perfil associado ao documento ou ainda se documento estiver "
+						+ " , cossignatário ou tiver algum perfil associado ao documento ou ainda se documento estiver "
 						+ " passado por sua lotação. ";
 			}
 

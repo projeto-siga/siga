@@ -85,7 +85,7 @@ public class SrConfiguracaoVO {
             }
         }
 
-        if (configuracao.getAtendente() != null){
+        if (configuracao.getAtendente() != null && configuracao.getAtendente().getId() != null) {
         	//Edson: por causa do detach no ObjectInstantiator...
         	DpLotacao atendente = DpLotacao.AR.findById(configuracao.getAtendente().getId());
             setAtendente(SelecionavelVO.createFrom(atendente.getLotacaoAtual()));

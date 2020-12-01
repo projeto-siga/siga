@@ -14,6 +14,7 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpComplexo;
+import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -135,14 +136,63 @@ public class AcordoController extends SrController {
     }
 
     @AssertAcesso(ADM_ADMINISTRAR)
-    public void gravarAbrangencia(SrConfiguracao associacao, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet) throws Exception {
-        associacao.setItemConfiguracaoSet(itemConfiguracaoSet);
+    public void gravarAbrangencia(SrConfiguracao associacao, Long associacaoAcordoId, Long associacaoCpGrupoId, 
+    								List<SrItemConfiguracao> itemConfiguracaoSet, 
+    								List<SrAcao> acoesSet) throws Exception {
+    	
+        setupAssociacao(associacao, associacaoAcordoId, associacaoCpGrupoId);
+    	
+    	associacao.setItemConfiguracaoSet(itemConfiguracaoSet);
         associacao.setAcoesSet(acoesSet);
 
         associacao.salvarComoAbrangenciaAcordo();
 
         result.use(Results.http()).body(associacao.toJson());
     }
+    
+    private void setupAssociacao(SrConfiguracao associacao, Long associacaoAcordoId, Long associacaoCpGrupoId) {
+    	
+    	if(associacaoAcordoId != null) {
+    		associacao.setAcordo(SrAcordo.AR.findById(associacaoAcordoId));
+    	}
+    	
+    	if(associacaoCpGrupoId != null) {
+			EntityManager em = ContextoPersistencia.em();
+    		associacao.setCpGrupo(em.find(CpGrupo.class, associacaoCpGrupoId));
+    	}
+    	else {
+    		associacao.setCpGrupo(null);
+    	}    	
+    	
+    	if(associacao.getCargo() != null && associacao.getCargo().getIdCargo() == null) {
+    		associacao.setCargo(null);
+    	}
+    	
+    	if(associacao.getLotacao() != null && associacao.getLotacao().getIdeLotacao() == null) {
+    		associacao.setLotacao(null);
+    	}
+    	
+    	if(associacao.getFuncaoConfianca() != null && associacao.getFuncaoConfianca().getIdFuncao() == null) {
+    		associacao.setFuncaoConfianca(null);
+    	}
+    	
+    	if(associacao.getDpPessoa() != null && associacao.getDpPessoa().getIdPessoa() == null) {
+    		associacao.setDpPessoa(null);
+    	}
+    	    	
+    	if(associacao.getComplexo() != null && associacao.getComplexo().getIdComplexo() == null) {
+    		associacao.setComplexo(null);
+    	}
+    	
+    	if(associacao.getOrgaoUsuario() != null && associacao.getOrgaoUsuario().getIdOrgaoUsu() == null) {
+    		associacao.setOrgaoUsuario(null);
+    	}
+    	
+    	if(associacao.getAtendente() != null && associacao.getAtendente().getIdLotacao() == null) {
+    		associacao.setAtendente(null);
+    	}    	  
+    }
+    
 
     @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/desativarAbrangenciaEdicao")

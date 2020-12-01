@@ -846,7 +846,7 @@ public class ExDocumentoController extends ExController {
 
 			String s = "";
 			s += exDocumentoDTO.getMob().doc().getListaDeAcessosString();
-			s = "(" + exDocumentoDTO.getMob().doc().getTitular().getNomePessoa() + "(" + s + ")";
+			s = "(" + s + ")";
 			s = " " + exDocumentoDTO.getMob().doc().getExNivelAcessoAtual().getNmNivelAcesso() + " " + s;
 
 			String ERRO_INACESSIVEL_USUARIO;
@@ -854,8 +854,9 @@ public class ExDocumentoController extends ExController {
 			if (exibeNomeAcesso) {
 				if (!dpPessoa.isUsuarioExterno()) {
 					ERRO_INACESSIVEL_USUARIO = "Documento " + exDocumentoDTO.getMob().getSigla()
-							+ " inacessível ao usuário " + getCadastrante().getNomePessoa() + getTitular().getSigla()
-							+ "/" + getLotaTitular().getSiglaCompleta() + "." + s + " " + msgDestinoDoc;
+							+ " inacessível ao usuário " + getCadastrante().getNomePessoa() + " - "
+							+ getTitular().getSigla() + "/" + getLotaTitular().getSiglaCompleta() + "." + s + " "
+							+ msgDestinoDoc;
 				} else {
 					ERRO_INACESSIVEL_USUARIO = "Documento " + exDocumentoDTO.getMob().getSigla()
 							+ " inacessível ao usuário " + getTitular().getSigla() + "/"

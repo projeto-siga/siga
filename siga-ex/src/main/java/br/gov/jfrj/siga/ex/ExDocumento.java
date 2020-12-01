@@ -1787,6 +1787,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 
 <<<<<<< HEAD
 
+
 	/**
 	 * Retorna as {@link ExMovimentacao Movimentações} de
 	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA
@@ -1794,7 +1795,11 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	 * 
 	 * @return Movimentações de Autenticação com senha.
 	 */
+<<<<<<< HEAD
 =======
+>>>>>>> develop_GOVSP1556
+=======
+
 >>>>>>> develop_GOVSP1556
 	public Set<ExMovimentacao> getAutenticacoesComSenha() {
 		if (getMobilGeral() == null)

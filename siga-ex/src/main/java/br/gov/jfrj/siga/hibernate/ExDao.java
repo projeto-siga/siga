@@ -1944,11 +1944,12 @@ public class ExDao extends CpDao {
 //		long tempoIni = System.nanoTime();
 		queryString =
 					"select "
-					+ " marca, marcador, mobil, doc.dtAltDoc, doc.numExpediente "
+					+ " marca, marcador, mobil, doc.dtAltDoc, doc.numExpediente, mov.dtParam1, mov.dtParam2 "
 					+ " from ExMarca marca "
 					+ " inner join marca.exMobil mobil"
 					+ " inner join marca.cpMarcador marcador"
 					+ " inner join mobil.exDocumento doc"
+					+ " left join marca.exMovimentacao mov"
 					+ queryMarcasAIgnorar
 					+ " where (marca.dtIniMarca is null or marca.dtIniMarca < CURRENT_TIMESTAMP)"
 					+ " and (marca.dtFimMarca is null or marca.dtFimMarca > CURRENT_TIMESTAMP)"

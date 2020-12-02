@@ -277,6 +277,10 @@ public class ExMarcadorBL {
 						continue;
 			}
 			
+//			// Calcular datas de referencia
+//			Date dtRef1 = mov.getDtParam1();
+//			Date dtRef2 = mov.getDtParam2();
+//			
 			// Calcular datas de início e fim
 			Date dtIni = null;
 			Date dtFim = null;

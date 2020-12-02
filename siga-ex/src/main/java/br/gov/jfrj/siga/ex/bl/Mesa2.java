@@ -76,6 +76,8 @@ public class Mesa2 {
 		public String titulo;
 		public Date inicio;
 		public Date termino;
+		public String ref1;
+		public String ref2;
 		public Boolean daPessoa;
 		public Boolean deOutraPessoa;
 		public Boolean daLotacao;
@@ -473,6 +475,8 @@ public class Mesa2 {
 	public static class MeM {
 		ExMarca marca;
 		CpMarcador marcador;
+		Date dtRef1;
+		Date dtRef2;
 	}
 
 	private static List<MesaItem> listarReferencias(TipoDePainelEnum tipo,
@@ -595,6 +599,10 @@ public class Mesa2 {
 				
 				t.inicio = tag.marca.getDtIniMarca();
 				t.termino = tag.marca.getDtFimMarca();
+				if (tag.dtRef1 != null)
+					t.ref1 = Data.calcularTempoRelativoEmDias(tag.dtRef1);
+				if (tag.dtRef2 != null)
+					t.ref2 = Data.calcularTempoRelativoEmDias(tag.dtRef2);
 				if(tag.marca.getCpMarcador().isDemandaJudicial()) {
 					t.nome += " até " + tag.marca.getExMobil().getDoc().getMobilGeral()
 							.getExMovimentacaoSet().stream() //
@@ -730,6 +738,10 @@ public class Mesa2 {
 										MeM mm = new MeM();
 										mm.marca = marca;
 										mm.marcador = marcador;
+										if (reference[5] != null) {
+											mm.dtRef1 = (Date) reference[5];
+											mm.dtRef1 = (Date) reference[6];
+										}
 										docDados.listMeM = new ArrayList<MeM>();
 										docDados.listMeM.add(mm);
 										map.put(mobil, docDados);
@@ -742,6 +754,10 @@ public class Mesa2 {
 									MeM mm = new MeM();
 									mm.marca = marca;
 									mm.marcador = marcador;
+									if (reference[5] != null) {
+										mm.dtRef1 = (Date) reference[5];
+										mm.dtRef1 = (Date) reference[6];
+									}
 									map.get(mobil).listMeM.add(mm);
 								}
 							}

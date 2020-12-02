@@ -36,14 +36,6 @@ public interface ISigaApiV1 {
 		public FuncaoConfianca funcaoConfianca;
 	}
 
-	public class PessoaAtual implements ISwaggerModel {
-		public String idPessoa;
-		public String idPessoaIni;
-		public String sigla;
-		public String nome;
-		public String siglaLotacao;
-	}
-
 	public class Orgao implements ISwaggerModel {
 		public String idOrgao;
 		public String sigla;
@@ -93,7 +85,7 @@ public interface ISigaApiV1 {
 		public void run(AutenticarPostRequest req, AutenticarPostResponse resp) throws Exception;
 	}
 
-	public class DocumentoSiglaArquivoGetRequest implements ISwaggerRequest {
+	public class DocumentosSiglaArquivoGetRequest implements ISwaggerRequest {
 		public String contenttype;
 		public String sigla;
 		public Boolean estampa;
@@ -101,13 +93,13 @@ public interface ISigaApiV1 {
 		public Boolean volumes;
 	}
 
-	public class DocumentoSiglaArquivoGetResponse implements ISwaggerResponse {
+	public class DocumentosSiglaArquivoGetResponse implements ISwaggerResponse {
 		public String uuid;
 		public String jwt;
 	}
 
-	public interface IDocumentoSiglaArquivoGet extends ISwaggerMethod {
-		public void run(DocumentoSiglaArquivoGetRequest req, DocumentoSiglaArquivoGetResponse resp) throws Exception;
+	public interface IDocumentosSiglaArquivoGet extends ISwaggerMethod {
+		public void run(DocumentosSiglaArquivoGetRequest req, DocumentosSiglaArquivoGetResponse resp) throws Exception;
 	}
 
 	public class DownloadJwtFilenameGetRequest implements ISwaggerRequest {
@@ -176,53 +168,31 @@ public interface ISigaApiV1 {
 		public void run(StatusChaveGetRequest req, StatusChaveGetResponse resp) throws Exception;
 	}
 
-	public class PessoaGetRequest implements ISwaggerRequest {
+	public class PessoasGetRequest implements ISwaggerRequest {
+		public String idPessoaIni;
 		public String texto;
 		public String cpf;
 	}
 
-	public class PessoaGetResponse implements ISwaggerResponse {
+	public class PessoasGetResponse implements ISwaggerResponse {
 		public List<Pessoa> list;
 	}
 
-	public interface IPessoaGet extends ISwaggerMethod {
-		public void run(PessoaGetRequest req, PessoaGetResponse resp) throws Exception;
+	public interface IPessoasGet extends ISwaggerMethod {
+		public void run(PessoasGetRequest req, PessoasGetResponse resp) throws Exception;
 	}
 
-	public class PessoaIdPessoaIniPessoaAtualGetRequest implements ISwaggerRequest {
-		public String idPessoaIni;
-	}
-
-	public class PessoaIdPessoaIniPessoaAtualGetResponse implements ISwaggerResponse {
-		public PessoaAtual pessoaAtual;
-	}
-
-	public interface IPessoaIdPessoaIniPessoaAtualGet extends ISwaggerMethod {
-		public void run(PessoaIdPessoaIniPessoaAtualGetRequest req, PessoaIdPessoaIniPessoaAtualGetResponse resp) throws Exception;
-	}
-
-	public class LotacaoGetRequest implements ISwaggerRequest {
+	public class LotacoesGetRequest implements ISwaggerRequest {
 		public String texto;
-	}
-
-	public class LotacaoGetResponse implements ISwaggerResponse {
-		public List<Lotacao> list;
-	}
-
-	public interface ILotacaoGet extends ISwaggerMethod {
-		public void run(LotacaoGetRequest req, LotacaoGetResponse resp) throws Exception;
-	}
-
-	public class LotacaoIdLotacaoIniLotacaoAtualGetRequest implements ISwaggerRequest {
 		public String idLotacaoIni;
 	}
 
-	public class LotacaoIdLotacaoIniLotacaoAtualGetResponse implements ISwaggerResponse {
-		public LotacaoAtual lotacaoAtual;
+	public class LotacoesGetResponse implements ISwaggerResponse {
+		public List<Lotacao> list;
 	}
 
-	public interface ILotacaoIdLotacaoIniLotacaoAtualGet extends ISwaggerMethod {
-		public void run(LotacaoIdLotacaoIniLotacaoAtualGetRequest req, LotacaoIdLotacaoIniLotacaoAtualGetResponse resp) throws Exception;
+	public interface ILotacoesGet extends ISwaggerMethod {
+		public void run(LotacoesGetRequest req, LotacoesGetResponse resp) throws Exception;
 	}
 
 }

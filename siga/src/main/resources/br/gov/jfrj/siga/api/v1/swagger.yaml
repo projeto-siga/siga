@@ -130,15 +130,27 @@ parameters:
     type: string
   idPessoaIni:
     name: idPessoaIni
-    in: path
+    in: query
     description: Identificador da Pessoa Inicial
-    required: true
+    required: false
     type: string    
+  idPessoa:
+    name: idPessoa
+    in: query
+    description: Identificador da Pessoa (id)
+    required: false
+    type: string    
+  idLotacao:
+    name: idLotacao
+    in: query
+    description: Identificador da Lotação (id)
+    required: false
+    type: string         
   idLotacaoIni:
     name: idLotacaoIni
-    in: path
+    in: query
     description: Identificador da Lotação Inicial
-    required: true
+    required: false
     type: string            
 
 
@@ -166,7 +178,7 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
-  /documento/{sigla}/arquivo:
+  /documentos/{sigla}/arquivo:
     get:
       summary: Inicia o processo de geração do PDF completo de um documento para visualização
       tags: [download]
@@ -255,14 +267,16 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-  /pessoa:
+  /pessoas:
     get:
-      summary: "Permite a pesquisa de pessoa por texto ou CPF"
-      description: "Retornar uma lista de pessoas. A pesquisa será feita de acordo com um dos parâmetros informados:
-        <ul><li><b>texto=</b> Pesquisa as Pessoas cuja Matrícula ou nome contém uma determinada palavra.</li>
-        <li><b>cpf=</b> Pesquisa as Pessoas que contem determinado CPF</li></ul>"
+      summary: "Pesquisa de pessoas"
+      description: "Retorna uma lista de pessoas. A pesquisa será feita de acordo com os parâmetros informados: 
+        <ul><li><b>id=</b> Pesquisa a Pessoa atual da Pessoa com determinado id inicial.</li>
+        <li><b>texto=</b> Pesquisa as Pessoas cuja Matrícula ou nome contém uma determinada palavra.</li>
+        <li><b>cpf=</b> Pesquisa as Pessoas cadastradas com determinado CPF</li></ul>"
       tags: [cadastro]
       parameters:
+        - $ref: "#/parameters/idPessoaIni"
         - $ref: "#/parameters/texto"
         - $ref: "#/parameters/cpf"
       responses:
@@ -288,30 +302,16 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-  /pessoa/{idPessoaIni}/pessoaAtual:
+  /lotacoes:
     get:
-      description: Retorna o objeto da Pessoa Atual a partir da Pessoa Inicial
-      tags: [cadastro]
-      parameters:
-        - $ref: "#/parameters/idPessoaIni"
-      responses:
-        200:
-          description: Successful response
-          schema:
-            $ref: "#/definitions/PessoaAtual"
-        500:
-          description: Error ocurred
-          schema:
-            $ref: "#/definitions/Error"         
-
-  /lotacao:
-    get:
-      summary: "Pesquisa lotações por:
-        texto= cuja sigla ou nome contém uma determinada palavra."
-      description: Retornar uma lista de lotações. A pesquisa será feita sobre a Sigla e o Nome da Lotação.
+      summary: "Pesquisa de lotações"
+      description: "Retorna uma lista de lotações. A pesquisa será feita de acordo com os parâmetros informados:
+        <ul><li><b>idLotacaoIni=</b>Pesquisa a Lotação Atual da Lotação Inicial solicitada.</li>
+        <li><b>texto=</b>Pesquisa as lotacoes cuja sigla ou nome contém uma determinada palavra.</li></ul>"
       tags: [cadastro]
       parameters:
         - $ref: "#/parameters/texto"
+        - $ref: "#/parameters/idLotacaoIni"
       responses:
         200:
           description: Successful response
@@ -327,22 +327,6 @@ paths:
           schema:
             $ref: "#/definitions/Error"            
   
-  /lotacao/{idLotacaoIni}/lotacaoAtual:
-    get:
-      description: Retorna o objeto da Lotação Atual a partir da Lotação Inicial
-      tags: [cadastro]
-      parameters:
-        - $ref: "#/parameters/idLotacaoIni"
-      responses:
-        200:
-          description: Successful response
-          schema:
-            $ref: "#/definitions/LotacaoAtual" 
-        500:
-          description: Error ocurred
-          schema:
-            $ref: "#/definitions/Error"   
-
 
 ################################################################################
 #                                     Definitions                              #
@@ -405,21 +389,6 @@ definitions:
       funcaoConfianca:
         $ref: "#/definitions/FuncaoConfianca"
   
-  PessoaAtual:
-    description: Dados de uma determinada Pessoa
-    type: object
-    properties:
-      idPessoa:
-        type: string
-      idPessoaIni:
-        type: string        
-      sigla:
-        type: string
-      nome:
-        type: string        
-      siglaLotacao:
-        type: string        
-
   Orgao:
     type: object
     description: Dados do Órgão da pessoa para perfil de acesso

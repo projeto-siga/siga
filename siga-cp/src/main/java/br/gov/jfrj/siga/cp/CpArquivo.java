@@ -26,7 +26,6 @@ import java.util.UUID;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityTransaction;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
@@ -43,7 +42,14 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.LazyToOne;
+import org.hibernate.annotations.LazyToOneOption;
+import org.hibernate.engine.spi.PersistentAttributeInterceptable;
+import org.hibernate.engine.spi.PersistentAttributeInterceptor;
 
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.Texto;
@@ -58,8 +64,9 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
  */
 @Entity
 @Immutable
+@Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.READ_ONLY)
 @Table(name = "corporativo.cp_arquivo")
-public class CpArquivo implements Serializable {
+public class CpArquivo implements Serializable, PersistentAttributeInterceptable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -69,11 +76,12 @@ public class CpArquivo implements Serializable {
 	@Column(name = "ID_ARQ")
 	private java.lang.Long idArq;
 
+	@LazyToOne(LazyToOneOption.NO_PROXY)
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@PrimaryKeyJoinColumn
 	private CpArquivoBlob arquivoBlob;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ORGAO_USU")
 	private CpOrgaoUsuario orgaoUsuario;
 
@@ -92,6 +100,19 @@ public class CpArquivo implements Serializable {
 
 	@Transient
 	protected byte[] cacheArquivo;
+	
+	@Transient
+    private PersistentAttributeInterceptor persistentAttributeInterceptor;
+ 
+    @Override
+    public PersistentAttributeInterceptor $$_hibernate_getInterceptor() {
+        return persistentAttributeInterceptor;
+    }
+ 
+    @Override
+    public void $$_hibernate_setInterceptor(PersistentAttributeInterceptor persistentAttributeInterceptor) {
+        this.persistentAttributeInterceptor = persistentAttributeInterceptor;
+    }
 
 	/**
 	 * Simple constructor of AbstractExDocumento instances.
@@ -252,13 +273,22 @@ public class CpArquivo implements Serializable {
 	private void setConteudoTpArq(java.lang.String conteudoTpArq) {
 		this.conteudoTpArq = conteudoTpArq;
 	}
-
-	private CpArquivoBlob getArquivoBlob() {
-		return arquivoBlob;
+	
+	public CpArquivoBlob getArquivoBlob() {
+	    if (this.persistentAttributeInterceptor != null) {
+	        return (CpArquivoBlob) this.persistentAttributeInterceptor.readObject(
+	                  this, "arquivoBlob", this.arquivoBlob);
+	    }
+	    return this.arquivoBlob;
 	}
-
-	private void setArquivoBlob(CpArquivoBlob arquivoBlob) {
-		this.arquivoBlob = arquivoBlob;
+	 
+	public void setArquivoBlob(CpArquivoBlob contaCorrente) {
+	    if (this.persistentAttributeInterceptor != null) {
+	        this.arquivoBlob = (CpArquivoBlob) persistentAttributeInterceptor.writeObject(
+	                  this, "arquivoBlob", this.arquivoBlob, contaCorrente);
+	    } else {
+	        this.arquivoBlob = contaCorrente;
+	    }
 	}
 
 	public CpArquivoTipoArmazenamentoEnum getTipoArmazenamento() {

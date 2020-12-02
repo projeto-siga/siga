@@ -28,8 +28,6 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	public static final Long NENHUMA_LISTA = 0L;
 	private static final String AND = " AND ";
 
-	// Indica se o filtro esta vazio. Equivalente a filtro == null
-	private boolean vazio = true;
 	private boolean pesquisar = false;
 
 	private String dtIni;
@@ -477,17 +475,6 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		this.atributoSolicitacao = atributoSolicitacao;
 	}
 
-	public boolean isVazio() {
-		return vazio;
-	}
-
-	public void setVazio(boolean vazio) {
-		this.vazio = vazio;
-	}
-
-
-
-	
 	
 	
 }

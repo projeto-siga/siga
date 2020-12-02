@@ -77,12 +77,13 @@ public class Data {
 		PrettyTime p = new PrettyTime(new Date(), new Locale("pt"));
 
 		String tempo = p.format(anterior);
-		tempo = abreviarTempoRelativo(tempo);
+		tempo = abreviarTempoRelativo(tempo, true);
 		return tempo;
 	}
 
-	private static String abreviarTempoRelativo(String tempo) {
-		tempo = tempo.replace(" atrás", "");
+	private static String abreviarTempoRelativo(String tempo, boolean omitirPassado) {
+		if (omitirPassado)
+			tempo = tempo.replace(" atrás", "");
 		tempo = tempo.replace(" dias", " dias");
 		tempo = tempo.replace(" horas", "h");
 		tempo = tempo.replace(" minutos", "min");
@@ -92,14 +93,18 @@ public class Data {
 	}
 
 	public static String calcularTempoRelativoEmDias(Date anterior) {
-		Date agora = Date.from(new Date().toInstant().truncatedTo(ChronoUnit.DAYS));
+		// Date agora = Date.from(new Date().toInstant().truncatedTo(ChronoUnit.DAYS));
+		Long time = new Date().getTime();
+		Date agora = new Date(time - time % (24 * 60 * 60 * 1000));
+		Long timeAnterior = anterior.getTime();
+		anterior = new Date(timeAnterior - timeAnterior % (24 * 60 * 60 * 1000));
 //		Instant instant = anterior.toInstant();
 //		Instant truncatedTo = instant.truncatedTo(ChronoUnit.DAYS);
 //		anterior = Date.from(truncatedTo);
 		PrettyTime p = new PrettyTime(agora, new Locale("pt"));
 
 		String tempo = p.format(anterior);
-		tempo = abreviarTempoRelativo(tempo);
+		tempo = abreviarTempoRelativo(tempo, false);
 		tempo = tempo.replace("agora", "hoje");
 		return tempo;
 	}

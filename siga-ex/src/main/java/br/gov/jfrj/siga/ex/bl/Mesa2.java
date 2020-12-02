@@ -738,10 +738,8 @@ public class Mesa2 {
 										MeM mm = new MeM();
 										mm.marca = marca;
 										mm.marcador = marcador;
-										if (reference[5] != null) {
-											mm.dtRef1 = (Date) reference[5];
-											mm.dtRef1 = (Date) reference[6];
-										}
+										mm.dtRef1 = (Date) reference[5];
+										mm.dtRef2 = (Date) reference[6];
 										docDados.listMeM = new ArrayList<MeM>();
 										docDados.listMeM.add(mm);
 										map.put(mobil, docDados);
@@ -754,10 +752,8 @@ public class Mesa2 {
 									MeM mm = new MeM();
 									mm.marca = marca;
 									mm.marcador = marcador;
-									if (reference[5] != null) {
-										mm.dtRef1 = (Date) reference[5];
-										mm.dtRef1 = (Date) reference[6];
-									}
+									mm.dtRef1 = (Date) reference[5];
+									mm.dtRef2 = (Date) reference[6];
 									map.get(mobil).listMeM.add(mm);
 								}
 							}

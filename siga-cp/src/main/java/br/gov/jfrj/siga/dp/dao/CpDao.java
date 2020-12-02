@@ -2581,12 +2581,10 @@ public class CpDao extends ModeloDao {
 
 	public Integer quantidadeDocumentos(DpPessoa pes) {
 		try {
-			Query sql = (Query) em().createNamedQuery("quantidadeDocumentos");
+			Query sql = em().createNamedQuery("quantidadeDocumentos");
 
 			sql.setParameter("idPessoaIni", pes.getIdPessoaIni());
-			List result = sql.getResultList();
-			final int l = ((BigDecimal) sql.getSingleResult()).intValue();
-			return l;
+			return ((BigDecimal) sql.getSingleResult()).intValue();
 		} catch (final NullPointerException e) {
 			return null;
 		}
@@ -2594,7 +2592,7 @@ public class CpDao extends ModeloDao {
 
 	public Integer consultarQtdeDocCriadosPossePorDpLotacao(Long idLotacao) {
 		try {
-			Query sql = (Query) em().createNamedQuery("consultarQtdeDocCriadosPossePorDpLotacao");
+			Query sql = em().createNamedQuery("consultarQtdeDocCriadosPossePorDpLotacao");
 
 			sql.setParameter("idLotacao", idLotacao);
 			List result = sql.getResultList();

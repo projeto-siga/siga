@@ -520,7 +520,7 @@ public class SolicitacaoController extends SrController {
         	SrSolicitacaoListaVO solicitacaoListaVO = new SrSolicitacaoListaVO(filtro, telaDeListas, propriedade, popup, getLotaTitular(), getCadastrante());
         	result.use(Results.json()).withoutRoot().from(solicitacaoListaVO).excludeAll().include("recordsFiltered").include("data").serialize();
         } else {
-        	if (filtro == null || filtro.isVazio()){
+        	if (filtro == null || !filtro.isRazoavelmentePreenchido()){
         		filtro = novoFiltroZerado();
         	}
         	

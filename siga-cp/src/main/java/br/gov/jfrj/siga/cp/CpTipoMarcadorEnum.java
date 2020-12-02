@@ -10,13 +10,13 @@ public enum CpTipoMarcadorEnum implements IEnumWithId {
 	//
 	TIPO_MARCADOR_GERAL(2, "Geral"),
 	//
-	TIPO_MARCADOR_LOTACAO_E_SUBLOTACOES(3, "Lotação e Sublotações"),
+//	TIPO_MARCADOR_LOTACAO_E_SUBLOTACOES(3, "Lotação e Sublotações"),
 	//
-	TIPO_MARCADOR_LOTACAO(4, "Lotação"),
+	TIPO_MARCADOR_LOTACAO(4, "Lotação");
 	//
-	TIPO_MARCADOR_PESSOA(5, "Pessoa"),
+//	TIPO_MARCADOR_PESSOA(5, "Pessoa"),
 	//
-	TIPO_MARCADOR_TAXONOMIA_ADMINISTRADA(6, "Taxonomia Administrada");
+//	TIPO_MARCADOR_TAXONOMIA_ADMINISTRADA(6, "Taxonomia Administrada");
 
 	private final Integer id;
 	private final String descricao;

@@ -160,7 +160,7 @@
 					<div class="form-group">
 						<label>Atendente<span>*</span></label>
 						<input type="hidden" name="atendente" id="atendente" class="selecao">
-						<siga:selecao propriedade="atendente" tema="simple" modulo="siga" urlAcao="buscar" inputName="atendente" desativar="${requestScope[modoExibicao] == 'equipe' ? 'true' : disabled}"/>
+						<sigasr:selecao propriedade="atendente" tema="simple" modulo="siga" urlAcao="buscar" inputName="atendente" desativar="${requestScope[modoExibicao] == 'equipe' ? 'true' : disabled}"/>
 						<span style="display:none;color: red" id="designacao.atendente">Atendente n&atilde;o informado;</span>
 					</div>
 	
@@ -212,21 +212,25 @@
 	colunasDesignacao.utilizarHerdado= 				10;
 
 	var preparaObjeto = function() {
-		var solicitanteTypes = ["lotacao", "dpPessoa", "funcaoConfianca", "cargo"];
-		
+
+		// Prepara Solicitante:
+		var solicitanteTypes = ["lotacao", "dpPessoa", "funcaoConfianca", "cargo"];		
 		solicitanteTypes.forEach(function(entry) {
 			var inputName = entry + "Sel.id";
 			var inputValue = $( "input[name='" + inputName + "']" ).val();
 		    $("input[name='designacao." + entry + ".id']" ).val(inputValue);
 		});
 
+		// Prepara orgao:
 		var orgaoUsuarioValue = $('#orgaoUsuario').find(":selected").val();
 		$("input[name='designacao.orgaoUsuario.id']").val(orgaoUsuarioValue);
-			
+
+		// Prepara Local:
 		var complexoValue = $('#complexo').find(":selected").val();
 		$("input[name='designacao.complexo.id']").val(complexoValue);
 
-		var atendenteValue =$( "input[name='atendenteSel.id']" ).val();
+		// Prepara Atentende:
+		var atendenteValue =$( "input[name='atendente.id']" ).val();
 		$("input[name='designacao.atendente.id']").val(atendenteValue);
 
 		// CpGrupo sendo tratado separadamente devido ao erro no momento de instanciar CpGrupo em SrConfiguracao.

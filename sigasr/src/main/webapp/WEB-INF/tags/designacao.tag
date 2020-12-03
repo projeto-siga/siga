@@ -214,12 +214,12 @@
 	var preparaObjeto = function() {
 
 		// Prepara Solicitante:
-		var solicitanteTypes = ["lotacao", "dpPessoa", "funcaoConfianca", "cargo"];		
-		solicitanteTypes.forEach(function(entry) {
-			var inputName = entry + "Sel.id";
-			var inputValue = $( "input[name='" + inputName + "']" ).val();
-		    $("input[name='designacao." + entry + ".id']" ).val(inputValue);
-		});
+		$("input[name='designacao.lotacao.id']" ).val(get_lotacao_by("id").value);
+		$("input[name='designacao.dpPessoa.id']" ).val(get_dpPessoa_by("id").value);
+		$("input[name='designacao.funcaoConfianca.id']" ).val(get_funcaoConfianca_by("id").value);
+		$("input[name='designacao.cargo.id']" ).val(get_cargo_by("id").value);
+		$("input[name='cpGrupoId']").val(get_cpGrupo_by("id").value);
+		// CpGrupo sendo tratado separadamente devido ao erro no momento de instanciar CpGrupo em SrConfiguracao.
 
 		// Prepara orgao:
 		var orgaoUsuarioValue = $('#orgaoUsuario').find(":selected").val();
@@ -232,10 +232,6 @@
 		// Prepara Atentende:
 		var atendenteValue =$( "input[name='atendente.id']" ).val();
 		$("input[name='designacao.atendente.id']").val(atendenteValue);
-
-		// CpGrupo sendo tratado separadamente devido ao erro no momento de instanciar CpGrupo em SrConfiguracao.
-		const grupoIdVal = $("input[name='cpGrupoSel.id']").val();
-		$("input[name='cpGrupoId']").val(grupoIdVal);
 	}
 	
 	designacaoOpts = {

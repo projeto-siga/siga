@@ -47,9 +47,9 @@ import javax.persistence.NamedQuery;
 		"               JOIN marca.cpMarcador mard "+
 		"               JOIN marca.exMobil.exDocumento.exFormaDocumento.exTipoFormaDoc tpForma "+
 		"        WHERE  ( marca.dtIniMarca IS NULL "+
-		"                  OR marca.dtIniMarca < CURRENT_TIMESTAMP ) "+
+		"                  OR marca.dtIniMarca < trunc(CURRENT_TIMESTAMP) ) "+
 		"               AND ( marca.dtFimMarca IS NULL "+
-		"                      OR marca.dtFimMarca > CURRENT_TIMESTAMP ) "+
+		"                      OR marca.dtFimMarca > trunc(CURRENT_TIMESTAMP) ) "+
 		"               AND ( ( marca.dpPessoaIni.idPessoa = :idPessoaIni ) "+
 		"                      OR ( marca.dpLotacaoIni.idLotacao = :idLotacaoIni ) ) "+
 		"               AND marca.cpTipoMarca.idTpMarca = 1 "+

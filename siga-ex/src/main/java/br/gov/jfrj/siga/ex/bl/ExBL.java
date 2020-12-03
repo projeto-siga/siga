@@ -1654,7 +1654,7 @@ public class ExBL extends CpBL {
 		return s;
 	}
 
-	private ValidateResponse assertValid(BlucService bluc, ValidateRequest validatereq) throws Exception {
+	public ValidateResponse assertValid(BlucService bluc, ValidateRequest validatereq) throws Exception {
 		ValidateResponse validateresp = bluc.validate(validatereq);
 		if (validateresp.getErrormsg() != null)
 			throw new Exception("BluC não conseguiu validar a assinatura digital. " + validateresp.getErrormsg());

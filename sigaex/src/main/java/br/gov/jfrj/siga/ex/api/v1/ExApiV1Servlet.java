@@ -149,6 +149,10 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 	private void defineProperties() {
 		addPublicProperty("carimbo.sistema", "siga");
 		addPublicProperty("carimbo.url", null);
+		addPublicProperty("carimbo.public.key", null);
+
+		addPublicProperty("data.validar.assinatura.digital", "01/10/2020");
+		addPublicProperty("data.validar.assinatura.com.senha", "01/10/2020");
 
 		addRestrictedProperty("upload.dir.temp");
 

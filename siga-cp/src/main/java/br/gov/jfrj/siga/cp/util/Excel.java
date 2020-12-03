@@ -664,6 +664,19 @@ public class Excel {
 				Iterator<Cell> cellIterator = row.cellIterator();
 				Cell cell;
 				
+				/* 6 --------  CPF -----------*/
+				celula = retornaConteudo(row.getCell(6, Row.CREATE_NULL_AS_BLANK));
+				cpf = celula.replaceAll("[^0-9]", "");
+				cpf = StringUtils.leftPad(cpf, 11, "0");
+				if(!"".equals(cpf.trim())) {
+					if(!validarCPF(cpf)) {
+						problemas.append("Linha " + linha +": CPF inválido" + System.lineSeparator());
+					}
+				} else {
+					problemas.append("Linha " + linha +": CPF em branco" + System.lineSeparator());
+				}
+				/* ----------  END ---------- */
+				
 				
 				/* 0 --------  SIGLA DO ORGAO -----------*/			
 				celula = retornaConteudo(row.getCell(0, Row.CREATE_NULL_AS_BLANK));
@@ -821,20 +834,6 @@ public class Excel {
 					} else {
 						problemas.append("Linha " + linha + ": DATA DE NASCIMENTO inválida" + System.lineSeparator());
 					}
-				}
-				/* ----------  END ---------- */
-				
-
-				/* 6 --------  CPF -----------*/
-				celula = retornaConteudo(row.getCell(6, Row.CREATE_NULL_AS_BLANK));
-				cpf = celula.replaceAll("[^0-9]", "");
-				cpf = StringUtils.leftPad(cpf, 11, "0");
-				if(!"".equals(cpf.trim())) {
-					if(!validarCPF(cpf)) {
-						problemas.append("Linha " + linha +": CPF inválido" + System.lineSeparator());
-					}
-				} else {
-					problemas.append("Linha " + linha +": CPF em branco" + System.lineSeparator());
 				}
 				/* ----------  END ---------- */
 			

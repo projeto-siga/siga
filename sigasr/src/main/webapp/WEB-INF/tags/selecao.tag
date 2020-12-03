@@ -140,17 +140,17 @@ self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao) {
     } finally {
     }
 
-	document.getElementsByName('${inputNameTipoSel}.id')[0].value = id;
+	$('#formulario_${inputNameTipoSel}_id').val(id);
 	
 	<c:if test="${ocultardescricao != 'sim'}">
 		try {
-			document.getElementsByName('${inputNameTipoSel}.descricao')[0].value = descricao;
+			$('#formulario_${inputNameTipoSel}_descricao').val(descricao);
 			document.getElementById('${spanName}SelSpan').innerHTML = descricao;
 		} catch (E) {
 		}
 	</c:if>
 	
-	document.getElementsByName('${inputNameTipoSel}.sigla')[0].value = sigla;
+	$('#formulario_${inputNameTipoSel}_sigla').val(sigla);
 	
 	<c:if test="${reler == 'sim'}">
 		document.getElementsByName('req${inputNameTipoSel}')[0].value = "sim";

@@ -106,7 +106,7 @@
 		function modalAbrir(componentId) {
 			limparCampos();
 			$("#" + componentId + "_dialog").dialog('option', 'width', 580);
-			$("#" + componentId + "_dialog").dialog('open');
+			$("#" + componentId + "_dialog").dialog('open');			
 		}
 
 		function modalFechar(componentId) {
@@ -123,10 +123,16 @@
 			lotacaoDescricao.value = '';
 			lotacaoSigla.value = '';
 			$("#lotacao_lotacaoSelSpan").html('');
+			$("#atendente").hide();
 		}
 		
 		function alterarAtendente() {
 			var inputNovoAtendente = lotacaoId.value;
+			if(inputNovoAtendente === '') {
+				$("#atendente").show();
+				return;
+			}
+			
 			var spanNovoAtendente = lotacaoSigla.value + " - "
 					+ lotacaoDescricao.value;
 			modalFechar('lotacaoAtendente');

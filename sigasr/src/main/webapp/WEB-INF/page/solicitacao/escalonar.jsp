@@ -87,7 +87,8 @@
 		</form>
 	</div>
 
-	<sigasr:modal nome="lotacaoAtendente" titulo="Alterar Atendente padrão">
+	
+	<sigasr:modal nome="lotacaoAtendente" titulo="Alterar Atendente padrão" largura="70%">
 		<div class="form-group">
 			<label>Lota&ccedil;&atilde;o Atendente</label> 
 			<input type="hidden" name="lotacaoSelecao" id="lotacaoSelecao" class="selecao">
@@ -103,9 +104,9 @@
 	</sigasr:modal>
 
 	<script>
+		
 		function modalAbrir(componentId) {
 			limparCampos();
-			$("#" + componentId + "_dialog").dialog('option', 'width', 580);
 			$("#" + componentId + "_dialog").dialog('open');			
 		}
 

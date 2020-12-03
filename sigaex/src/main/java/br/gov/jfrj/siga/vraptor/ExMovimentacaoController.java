@@ -2386,7 +2386,7 @@ public class ExMovimentacaoController extends ExController {
 		ExMobil mobilGeral = mob.getDoc().getMobilGeral();
 		result.include("sigla", sigla);
 		result.include("mob", mob);
-		result.include("listaMarcadores", this.getListaMarcadoresGeraisTaxonomiaAdministrada());
+		result.include("listaMarcadores", this.getListaMarcadoresGerais());
 		result.include("listaMarcadoresAtivos", this.getListaMarcadoresAtivos(mobilGeral));
 		result.include("listaMarcadoresLotacao", dao
 				.listarCpMarcadoresPorLotacaoESublotacoes(getLotaTitular(), true));
@@ -2439,8 +2439,8 @@ public class ExMovimentacaoController extends ExController {
 	 *         {@link ExDocumento Documento} devidamente ordenados de acordo com
 	 *         {@link CpMarcador#getOrdem()}
 	 */
-	private List<CpMarcador> getListaMarcadoresGeraisTaxonomiaAdministrada() {
-		List<CpMarcador> marcadores = dao().listarCpMarcadoresGeraisTaxonomiaAdministrada();
+	private List<CpMarcador> getListaMarcadoresGerais() {
+		List<CpMarcador> marcadores = dao().listarCpMarcadoresGerais();
 		marcadores.sort(CpMarcador.ORDEM_COMPARATOR);
 
 		return marcadores;
@@ -4896,10 +4896,6 @@ public class ExMovimentacaoController extends ExController {
 		}
 	}
 	
-	private Object getListaMarcadoresTaxonomiaAdministrada() {
-		return dao().listarCpMarcadoresTaxonomiaAdministrada();
-	}
-	
 	@Get("/app/expediente/mov/publicacao_transparencia")
 	public void aPublicarTransparencia(String sigla, String descrPublicacao,
 			String mensagem) throws Exception {
@@ -4915,13 +4911,11 @@ public class ExMovimentacaoController extends ExController {
 		final ExMovimentacao movimentacao = movimentacaoBuilder
 				.construir(dao());
 
-		List<CpMarcador> marcadores = dao().listarCpMarcadoresTaxonomiaAdministrada();
+		List<CpMarcador> marcadores = dao().listarCpMarcadoresGerais();
 		Set<CpMarcador> marcadoresAtivo = (Set<CpMarcador>) this.getListaMarcadoresAtivos(documentoBuilder.getMob().getDoc().getMobilGeral());
 		if (marcadores != null) {
 			marcadores.removeAll(marcadoresAtivo);
 		}
-
-		
 
 		result.include("sigla", sigla);
 		result.include("mob", documentoBuilder.getMob());

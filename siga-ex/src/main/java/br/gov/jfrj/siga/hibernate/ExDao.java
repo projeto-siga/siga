@@ -1606,41 +1606,14 @@ public class ExDao extends CpDao {
 		}
 		
 		criteriaQuery.where(predicateAnd);
-		return em().createQuery(criteriaQuery).getResultList();
+		List<CpMarcador> resultList = em().createQuery(criteriaQuery).getResultList();
+		resultList.sort(CpMarcador.ORDEM_COMPARATOR);
+		resultList.removeIf(m -> m.getHisDtFim() != null);
+		return resultList;
 	}
 	
 	
 
-	public List<CpMarcador> listarCpMarcadoresTaxonomiaAdministrada() {
-		
-		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
-		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);
-		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
-		Predicate predicateAnd;
-		Predicate predicateEqualTipoMarcador  = criteriaBuilder.equal(cpMarcadorRoot.get("cpTipoMarcador"), CpTipoMarcadorEnum.TIPO_MARCADOR_TAXONOMIA_ADMINISTRADA);
-
-		predicateAnd = criteriaBuilder.and(predicateEqualTipoMarcador);
-	
-		criteriaQuery.where(predicateAnd);
-		return em().createQuery(criteriaQuery).getResultList();
-	}
-	
-	public List<CpMarcador> listarCpMarcadoresGeraisTaxonomiaAdministrada() {
-		List<CpMarcador> listaConcatenada = listarCpMarcadoresGerais();
-		List<CpMarcador> listaTaxonomia = listarCpMarcadoresTaxonomiaAdministrada();
-		
-		if (listaTaxonomia != null) {
-			listaConcatenada.addAll(listaTaxonomia);	
-		}
-		
-		listaConcatenada.sort(CpMarcador.ORDEM_COMPARATOR);
-		listaConcatenada.removeIf(m -> m.getHisDtFim() != null);
-
-		return listaConcatenada;
-		
-		
-	}
-	
 	public List<CpMarcador> listarCpMarcadoresDaLotacao(DpLotacao lot) {
 		DpLotacao lotIni = lot.getLotacaoInicial();
 		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
@@ -1658,12 +1631,7 @@ public class ExDao extends CpDao {
 	
 	public List<CpMarcador> listarCpMarcadoresDisponiveis(DpLotacao lot) {
 		List<CpMarcador> listaConcatenada = listarCpMarcadoresGerais();
-		List<CpMarcador> listaTaxonomia = listarCpMarcadoresTaxonomiaAdministrada();
 		List<CpMarcador> listaLotacao = listarCpMarcadoresDaLotacao(lot);
-		
-		if (listaTaxonomia != null) {
-			listaConcatenada.addAll(listaTaxonomia);	
-		}
 		
 		if (listaLotacao != null) {
 			listaConcatenada.addAll(listaLotacao);	

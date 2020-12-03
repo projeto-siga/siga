@@ -546,35 +546,50 @@
 									<c:forEach var="entry" items="${docVO.marcasPorMobil}">
 										<c:set var="outroMob" value="${entry.key}" />
 										<c:set var="mobNome" value="${outroMob.isGeral() ? 'Geral' : outroMob.terminacaoSigla}" />
-											<c:forEach var="marca" items="${entry.value}" varStatus="loop">
+										<c:forEach var="marca" items="${entry.value}" varStatus="loop">
 											<c:set var="lotacaoAtual" value="${marca.dpLotacaoIni.lotacaoAtual}"/>
 											<c:set var="pessoaAtual" value="${marca.dpPessoaIni.pessoaAtual}"/>
-										<tr class="${mov.classe} ${mov.disabled}">
-										<c:if test="${loop.first}">
-										<td rowspan="${entry.value.size()}" style="padding-left: 1.25rem"><c:choose>
-												<c:when test="${(not outroMob.geral) and outroMob.numSequencia == m.mob.numSequencia}">
-													<i><b>${mobNome}</b></i>
+											<tr class="${mov.classe} ${mov.disabled}">
+											<c:if test="${loop.first}">
+											<td rowspan="${entry.value.size()}" style="padding-left: 1.25rem"><c:choose>
+													<c:when test="${(not outroMob.geral) and outroMob.numSequencia == m.mob.numSequencia}">
+														<i><b>${mobNome}</b></i>
+													</c:when>
+													<c:otherwise>
+														<a
+															href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${outroMob.sigla}"
+															title="${outroMob.doc.descrDocumento}"
+															style="text-decoration: none">
+															${mobNome} </a>
+													</c:otherwise>
+												</c:choose></td>
+											</c:if>
+											<td>${marca.descricaoComDatas}</td>
+											<td><siga:selecionado isVraptor="true" sigla="${pessoaAtual.nomeAbreviado}"
+												descricao="${pessoaAtual.descricao} - ${pessoaAtual.sigla}"
+												pessoaParam="${pessoaAtual.siglaCompleta}" /></td>
+											<td><siga:selecionado isVraptor="true" sigla="${marca.dpLotacaoIni.lotacaoAtual.sigla}"
+												descricao="${marca.dpLotacaoIni.lotacaoAtual.descricaoAmpliada}"
+												lotacaoParam="${marca.dpLotacaoIni.lotacaoAtual.siglaCompleta}" /></td>
+											<c:choose>
+												<c:when test="${not empty marca.exMovimentacao.descrMov}">
+													<td>${marca.exMovimentacao.descrMov}</td>
 												</c:when>
 												<c:otherwise>
-													<a
-														href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${outroMob.sigla}"
-														title="${outroMob.doc.descrDocumento}"
-														style="text-decoration: none">
-														${mobNome} </a>
+													<td style="padding-left:0; padding-right: 0"></td>
 												</c:otherwise>
-											</c:choose></td>
-										</c:if>
-										<td>${marca.descricaoComDatas}</td>
-										<td><siga:selecionado isVraptor="true" sigla="${pessoaAtual.nomeAbreviado}"
-											descricao="${pessoaAtual.descricao} - ${pessoaAtual.sigla}"
-											pessoaParam="${pessoaAtual.siglaCompleta}" /></td>
-										<td><siga:selecionado isVraptor="true" sigla="${marca.dpLotacaoIni.lotacaoAtual.sigla}"
-											descricao="${marca.dpLotacaoIni.lotacaoAtual.descricaoAmpliada}"
-											lotacaoParam="${marca.dpLotacaoIni.lotacaoAtual.siglaCompleta}" /></td>
-										<td style="padding-right: 1.25rem">${marca.exMovimentacao.descrMov}
-										</td>
-										</tr>
-											</c:forEach>
+											</c:choose>
+											<c:choose>
+												<c:when test="${marca.exMovimentacao.podeCancelar(titular, lotaTitular)}">
+													<td style="padding-left:.25em; padding-right: 0"><a href="javascript:postToUrl('/sigaex/app/expediente/mov/cancelar_movimentacao_gravar?id=${marca.exMovimentacao.idMov}&sigla=${sigla}')" title="${marca.exMovimentacao.expliquePodeCancelar(titular, lotaTitular)}"><i class="far fa-trash-alt"></i></a></td>
+												</c:when>
+												<c:otherwise>
+													<td style="padding-left:0; padding-right: 0"></td>
+												</c:otherwise>
+											</c:choose>
+											<td style="padding-left:0; padding-right: 1.25rem"></td>
+											</tr>
+										</c:forEach>
 									</c:forEach>
 								</tbody>
 							</table>

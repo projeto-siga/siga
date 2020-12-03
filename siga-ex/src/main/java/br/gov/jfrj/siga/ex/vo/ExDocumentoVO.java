@@ -289,8 +289,6 @@ public class ExDocumentoVO extends ExVO {
 		List<Long> movimentacoesPermitidas = new ArrayList<Long>();
 
 		movimentacoesPermitidas
-				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO);
-		movimentacoesPermitidas
 				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA);
 		movimentacoesPermitidas
 				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_A_DOCUMENTO_EXTERNO);

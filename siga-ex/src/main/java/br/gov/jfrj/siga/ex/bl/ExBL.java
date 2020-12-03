@@ -7443,7 +7443,7 @@ public class ExBL extends CpBL {
 
 		ArrayList<HashMap<String, Object>> objectJson = new ArrayList<>();
 		try {
-			List<CpMarcador> listaMarcadores = dao().listarCpMarcadoresGeraisTaxonomiaAdministrada();
+			List<CpMarcador> listaMarcadores = dao().listarCpMarcadoresGerais();
 			
 			for (CpMarcador marcador : listaMarcadores) {
 				HashMap<String, Object> marcadorJson = new HashMap<String, Object>();

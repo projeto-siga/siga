@@ -21,6 +21,7 @@
  */
 package br.gov.jfrj.siga.ex;
 
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO;
 import static java.util.Objects.nonNull;
 
 import java.io.Serializable;
@@ -41,10 +42,15 @@ import javax.persistence.Table;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.hibernate.annotations.BatchSize;
 
+import com.crivano.jlogic.Expression;
+
 import br.gov.jfrj.itextpdf.Documento;
+import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
 import br.gov.jfrj.siga.ex.util.Compactador;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
@@ -1195,4 +1201,22 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		}
 		return "Outro";
 	}
+	
+	
+	public boolean podeCancelar(DpPessoa titular, DpLotacao lotaTitular) {
+		if (this.getIdTpMov().equals(TIPO_MOVIMENTACAO_MARCACAO)) {
+			Expression exp = new ExPodeCancelarMarcacao(this, titular, lotaTitular);
+			return exp.eval();
+		}
+		return false;
+	}
+
+	public String expliquePodeCancelar(DpPessoa titular, DpLotacao lotaTitular) {
+		if (this.getIdTpMov().equals(TIPO_MOVIMENTACAO_MARCACAO)) {
+			Expression exp = new ExPodeCancelarMarcacao(this, titular, lotaTitular);
+			return AcaoVO.Helper.formatarExplicacao(exp, exp.eval());
+		}
+		return null;
+	}
+
 }

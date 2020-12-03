@@ -62,10 +62,7 @@
 	</c:otherwise>
 </c:choose>
 
-<!-- 
 <c:set var="propriedadeTipoSel" value="${propriedade}${tipoSel}Sel" />
- -->
-<c:set var="propriedadeTipoSel" value="${propriedadeOriginal}" />
 <c:choose>
 	<c:when test="${empty inputName}">
 		<c:set var="inputNameTipoSel" value="${propriedadeTipoSel}" />
@@ -106,6 +103,7 @@
 
 <c:set var="larguraPopup" value="800" />
 <c:set var="alturaPopup" value="600" />
+
 
 <style type="text/css">
 
@@ -286,6 +284,20 @@ self.onfocus_${propriedade}${tipoSel} = function(value) {
 	lastValue_${propriedade} = value;
 }
 
+// Retorna elemento contendo valor do select (id, descricao ou sigla):
+self.get_${propriedade}_by = function(field) {
+	return document.getElementById("formulario_${inputNameTipoSel}_" + field);
+}
+
+// Limpa dados do select:
+self.limpa_${propriedade} = function() {
+	document.getElementById('formulario_${inputNameTipoSel}_id').value = '';
+	document.getElementById('formulario_${inputNameTipoSel}_sigla').value = '';
+	document.getElementById('${spanName}SelSpan').innerHTML = '';	
+}
+
+
+
 </script>
 
 <c:if test="${tema != 'simple'}">
@@ -311,17 +323,17 @@ self.onfocus_${propriedade}${tipoSel} = function(value) {
 	name="alterouSel" value="" id="alterouSel" /> 
 
 <input type="hidden"
-	name="${propriedadeTipoSel}.id"
+	name="${propriedadeOriginal}.id"
 	value="<c:out value="${f:evaluate(f:concat(propriedadeTipoSel,'.id'),requestScope)}"/>"		
 	id="formulario_${inputNameTipoSel}_id" />
 	 
 <input type="hidden"
-	name="${propriedadeTipoSel}.descricao"
+	name="${propriedadeOriginal}.descricao"
 	value="<c:out value="${f:evaluate(f:concat(propriedadeTipoSel,'.descricao'),requestScope)}"/>"
 	id="formulario_${inputNameTipoSel}_descricao" />
 	
 <input type="hidden"
-	name="${propriedadeTipoSel}.buscar"
+	name="${propriedadeOriginal}.buscar"
 	value=""
 	id="formulario_${inputNameTipoSel}_buscar" />
 		

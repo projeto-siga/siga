@@ -1050,6 +1050,7 @@ public class SolicitacaoController extends SrController {
     public void anexarArquivo(SrMovimentacao movimentacao) throws Exception {
     	if (movimentacao == null || movimentacao.getArquivo() == null)
     		throw new AplicacaoException("Não foram informados dados suficientes para a anexação");
+    	if(movimentacao.getAtendente() != null && movimentacao.getAtendente().getIdPessoa() == null) movimentacao.setAtendente(null);
         movimentacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
         result.redirectTo(this).exibir(movimentacao.getSolicitacao().getSiglaCompacta(), todoOContexto(), ocultas());
     }

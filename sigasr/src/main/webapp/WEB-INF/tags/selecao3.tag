@@ -157,37 +157,6 @@ self.popitup_${propriedadeClean} = function(sigla) {
 	modalsimulawindow${propriedadeClean}(url);
 
 	return false;
-
-/*	
-	if (!newwindow_${propriedadeClean}.closed && newwindow_${propriedadeClean}.location) {
-		newwindow_${propriedadeClean}.location.href = url;
-	} else {
-	
-		var popW;
-		var popH;
-		
-		<c:choose>
-			<c:when test="${tam eq 'grande'}">
-				 popW = screen.width*0.75;
-				 popH = screen.height*0.75;
-			</c:when>
-			<c:otherwise>
-				 popW = ${larguraPopup};
-				 popH = ${alturaPopup};	
-			</c:otherwise>
-		</c:choose>
-			var winleft = (screen.width - popW) / 2;
-			var winUp = (screen.height - popH) / 2;	
-		winProp = 'width='+popW+',height='+popH+',left='+winleft+',top='+winUp+',scrollbars=yes,resizable'
-		newwindow_${propriedadeClean}=window.open(url,'${propriedadeClean}',winProp);
-	}
-	newwindow_${propriedadeClean}.opener = self;
-	
-	if (window.focus) {
-		newwindow_${propriedadeClean}.focus()
-	}
-	return false;
-*/
 }
 
 self.resposta_ajax_${propriedadeClean} = function(response, d1, d2, d3) {
@@ -225,6 +194,19 @@ self.ajax_${propriedadeClean} = function() {
 		});	
 		//PassAjaxResponseToFunction(url, 'resposta_ajax_${propriedadeClean}', false);
 	}
+}
+
+
+// Retorna elemento contendo id do select:
+self.get_${propriedadeClean}_by_id = function() {
+	return document.getElementById("formulario_${propriedadeClean}_id");
+}
+
+// Limpa dados do select:
+self.limpa_${propriedadeClean} = function() {
+	document.getElementById('formulario_${propriedadeClean}_id').value = '';
+	document.getElementById('formulario_${propriedadeClean}_sigla').value = '';
+	document.getElementById('${propriedadeClean}Span').innerHTML = '';	
 }
 
 </script>

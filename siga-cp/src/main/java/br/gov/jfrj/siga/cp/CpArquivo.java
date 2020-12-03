@@ -48,6 +48,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.LazyToOne;
 import org.hibernate.annotations.LazyToOneOption;
+import org.jboss.logging.Logger;
 import org.hibernate.engine.spi.PersistentAttributeInterceptable;
 import org.hibernate.engine.spi.PersistentAttributeInterceptor;
 
@@ -56,6 +57,8 @@ import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoHCP;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.dp.dao.CpDao;
+
 
 /**
  * A class that represents a row in the CP_ARQUIVO table. You can customize the
@@ -69,7 +72,7 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 
 	private static final long serialVersionUID = 1L;
 	
-	private final static Logger log = Logger.getLogger(CpArquivo.class);
+	private final static org.jboss.logging.Logger log = Logger.getLogger(CpArquivo.class);
 
 	@Id
 	@SequenceGenerator(sequenceName = "CORPORATIVO.CP_ARQUIVO_SEQ", name = "CP_ARQUIVO_SEQ")

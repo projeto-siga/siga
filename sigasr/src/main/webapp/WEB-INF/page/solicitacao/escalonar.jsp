@@ -112,19 +112,23 @@
 		function modalFechar(componentId) {
 			$("#" + componentId + "_dialog").dialog('close');
 		}
+
+		var lotacaoId = $("#formulario_lotacao_id");
+		var lotacaoDescricao = $("#formulario_lotacao_descricao");
+		var lotacaoSigla = $("#formulario_lotacao_sigla");
 		
 		// limpa campos do componente de busca - tag selecao
 		function limparCampos() {
-			$("#formulario_lotacao_id").val('');
-			$("#formulario_lotacao_descricao").val('');
-			$("#formulario_lotacao_sigla").val('');
-			$("#lotacaoSpan").html('');
+			lotacaoId.val('');
+			lotacaoDescricao.val('');
+			lotacaoSigla.val('');
+			$("#lotacao_lotacaoSelSpan").html('');
 		}
 		
 		function alterarAtendente() {
-			var inputNovoAtendente = $("#formulario_lotacao_id").val();
-			var spanNovoAtendente = $("#formulario_lotacao_sigla").val() + " - "
-					+ $("#formulario_lotacao_descricao").val();
+			var inputNovoAtendente = lotacaoId.val();
+			var spanNovoAtendente = lotacaoSigla.val() + " - "
+					+ lotacaoDescricao.val();
 			modalFechar('lotacaoAtendente');
 			$("#atendenteNaoDesignado").val(inputNovoAtendente);
 			$("#atendentePadrao").html(spanNovoAtendente);

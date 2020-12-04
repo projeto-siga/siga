@@ -1985,6 +1985,17 @@ public class ExMovimentacaoController extends ExController {
 					"Destinatário não pode receber documentos");
 		}
 		
+		if((mov.getLotaResp() != null && mov.getLotaResp().getIsSuspensa() != null && mov.getLotaResp().getIsSuspensa().equals(1)) 
+				|| (mov.getResp() != null && mov.getResp().getLotacao().getIsSuspensa() != null && mov.getResp().getLotacao().getIsSuspensa().equals(1))) {
+			result.include("msgCabecClass", "alert-danger");
+    		result.include("mensagemCabec", "A " + SigaMessages.getMessage("usuario.lotacao") + " informada está Suspensa.");
+    		result.forwardTo(this).aTransferir(
+    				sigla, idTpDespacho, tipoResponsavel, postback, dtMovString, subscritorSel, 
+    				substituicao, titularSel, nmFuncaoSubscritor, idResp, tiposDespacho, descrMov, 
+    				lotaResponsavelSel, responsavelSel, cpOrgaoSel, dtDevolucaoMovString, obsOrgao, protocolo);
+			return;
+		}
+		
 		if (!Ex.getInstance().getComp()
 				.podeTramitarPara(getTitular(), getLotaTitular(), responsavelSel.getObjeto(), lotaResponsavelSel.getObjeto())) {
 			throw new AplicacaoException(
@@ -2614,6 +2625,14 @@ public class ExMovimentacaoController extends ExController {
 					return;
 				}
 			}
+		}
+		
+		if((lotaResponsavelSel != null && lotaResponsavelSel.getObjeto() != null && lotaResponsavelSel.getObjeto().getIsSuspensa() != null && lotaResponsavelSel.getObjeto().getIsSuspensa().equals(1)) 
+				|| (responsavelSel != null && responsavelSel.getObjeto() != null && responsavelSel.getObjeto().getLotacao().getIsSuspensa() != null && responsavelSel.getObjeto().getLotacao().getIsSuspensa().equals(1))) {			
+			result.include("msgCabecClass", "alert-danger");
+			result.include("mensagemCabec", "A " + SigaMessages.getMessage("usuario.lotacao") + " informada está Suspensa.");
+			result.forwardTo(this).aTransferirLote(paramoffset);
+			return;
 		}
 
 		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder.novaInstancia();

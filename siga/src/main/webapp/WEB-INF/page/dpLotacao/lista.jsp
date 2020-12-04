@@ -77,6 +77,7 @@ function sbmt(offset) {
 					<th align="left">Nome</th>
 					<th align="left">Sigla</th>
 					<th align="left">Externa</th>
+					<th align="left">Suspensa</th>
 					<th colspan="2" align="center">Op&ccedil;&otilde;es</th>					
 				</tr>
 			</thead>
@@ -88,6 +89,7 @@ function sbmt(offset) {
 						<td align="left">${lotacao.descricao}</td>
 						<td align="left">${lotacao.sigla}</td>
 						<td align="left">${lotacao.isExternaLotacao == 1 ? 'SIM' : 'NÃO'}</td>
+						<td align="left">${lotacao.isSuspensa == 1 ? 'SIM' : 'NÃO'}</td>
 						<td align="left">
 							<c:url var="url" value="/app/lotacao/editar">
 								<c:param name="id" value="${lotacao.id}"></c:param>
@@ -95,18 +97,54 @@ function sbmt(offset) {
 							<c:url var="urlAtivarInativar" value="/app/lotacao/ativarInativar">
 								<c:param name="id" value="${lotacao.id}"></c:param>
 							</c:url>
-							<a href="${url}" role="button" aria-pressed="true" class="btn btn-primary" >Alterar</a>		
-							<c:choose>
+							<c:url var="urlSuspender" value="/app/lotacao/suspender">
+								<c:param name="id" value="${lotacao.id}"></c:param>
+							</c:url>
+							
+							<div class="btn-group">								  
+							  <c:choose>
 								<c:when test="${empty lotacao.dataFimLotacao}">
-									<a href="${urlAtivarInativar}" role="button" aria-pressed="true" class="btn btn-primary" >Inativar</a>
+									<a href="${urlAtivarInativar}" onclick="javascript:atualizarUrl('${urlAtivarInativar}','Deseja inativar o cadastro selecionado?');return false;" class="btn btn-primary" role="button" 
+										aria-pressed="true" data-siga-modal-abrir="confirmacaoModal" style="min-width: 80px;">Inativar</a>
+									<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									    <span class="sr-only"></span>
+								    </button>
 								</c:when>
 								<c:otherwise>
-									<a href="${urlAtivarInativar}" role="button" aria-pressed="true" class="btn btn-primary" >Ativar</a>
+									<a href="${urlAtivarInativar}" class="btn btn-danger" role="button" aria-pressed="true" style="min-width: 80px;">Ativar</a>
+									<button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									    <span class="sr-only"></span>
+								    </button>
 								</c:otherwise>
-							</c:choose>				
+							  </c:choose>	  
+							  <div class="dropdown-menu">
+							  	
+							  <c:choose>
+								<c:when test="${empty lotacao.isSuspensa or lotacao.isSuspensa == 0}">
+									<a href="${urlSuspender}" onclick='javascript:atualizarUrl("${urlSuspender}", "Deseja tornar a <fmt:message key="usuario.lotacao"/> \"Suspensa\" para o recebimento de Documentos?");return false;'  
+										class="dropdown-item" role="button" aria-pressed="true" data-siga-modal-abrir="confirmacaoModal" style="min-width: 80px;">Suspender Tramita&ccedil;&atilde;o</a>
+								</c:when>
+								<c:otherwise>
+								<a href="${urlSuspender}" onclick='javascript:atualizarUrl("${urlSuspender}", "Deseja desfazer a \"Suspensão\" da <fmt:message key="usuario.lotacao"/>");return false;'  
+										class="dropdown-item" role="button" aria-pressed="true" data-siga-modal-abrir="confirmacaoModal" style="min-width: 80px;">Ativar Tramita&ccedil;&atilde;o</a>
+								</c:otherwise>
+							  </c:choose>
+							  
+							  	<a href="${url}" class="dropdown-item" role="button" aria-pressed="true">Alterar</a>								   
+							  </div>
+							</div>				
 						</td>						
 					</tr>
 				</siga:paginador>
+				<siga:siga-modal id="confirmacaoModal" exibirRodape="false" tituloADireita="Confirma&ccedil;&atilde;o">
+					<div id="msg" class="modal-body">
+			       		Deseja tornar a <fmt:message key="usuario.lotacao"/> "Suspensa" para o recebimento de Documentos?
+			     	</div>
+			     	<div class="modal-footer">
+			       		<button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>		        
+			       		<a href="#" class="btn btn-success btn-confirmacao" role="button" aria-pressed="true">Sim</a>
+					</div>
+				</siga:siga-modal>
 			</tbody>
 		</table>				
 		<div class="gt-table-buttons">
@@ -141,6 +179,11 @@ function sbmt(offset) {
 		frm.action = action;
 		frm.submit();
 		return;
+	}
+	
+	function atualizarUrl(url, msg){
+		$('.btn-confirmacao').attr("href", url);
+		document.getElementById("msg").innerHTML = msg;
 	}
 </script>
 </siga:pagina>

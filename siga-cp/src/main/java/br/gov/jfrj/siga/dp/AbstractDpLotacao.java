@@ -73,12 +73,12 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "     ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) "
 				+ "          or (upper(lot.siglaLotacao) like upper('%' || :nome || '%')))"
 				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ "	and lot.dataFimLotacao = null"
+				+ "	and lot.dataFimLotacao = null and (lot.isSuspensa is null or lot.isSuspensa = 0)"
 				+ "	order by lot.nomeLotacao"),
 		@NamedQuery(name = "consultarQuantidadeDpLotacao", query = "select count(lot) from DpLotacao lot "
 				+ "  where ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) or (upper(lot.siglaLotacao) like upper('%' || :nome || '%')))"
 				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ "	and lot.dataFimLotacao = null"
+				+ "	and lot.dataFimLotacao = null and (lot.isSuspensa is null or lot.isSuspensa = 0)"
 				+ "	order by lot.nomeLotacao"),
 		@NamedQuery(name = "consultarPorFiltroDpLotacaoInclusiveFechadas", query = "from DpLotacao where idLotacao in ("
 				+ "  select max(lot.idLotacao)"
@@ -183,6 +183,9 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	@ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="HIS_IDC_FIM")
 	private CpIdentidade hisIdcFim;
+	
+	@Column(name = "IS_SUSPENSA")
+	private Integer isSuspensa;
 
 	public Integer getIsExternaLotacao() {
 		return isExternaLotacao;
@@ -407,6 +410,14 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 
 	public void setHisIdcFim(CpIdentidade hisIdcFim) {
 		this.hisIdcFim = hisIdcFim;
+	}
+
+	public Integer getIsSuspensa() {
+		return isSuspensa;
+	}
+
+	public void setIsSuspensa(Integer isSuspensa) {
+		this.isSuspensa = isSuspensa;
 	}
 
 }

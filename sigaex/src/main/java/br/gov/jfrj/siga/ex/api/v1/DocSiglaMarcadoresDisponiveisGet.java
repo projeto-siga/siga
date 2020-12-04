@@ -1,9 +1,7 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -11,7 +9,6 @@ import com.crivano.swaggerservlet.PresentableUnloggedException;
 import com.crivano.swaggerservlet.SwaggerAuthorizationException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
-import br.gov.jfrj.itextpdf.Status;
 import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -20,8 +17,6 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaMarcadoresDisponiveisGetRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaMarcadoresDisponiveisGetResponse;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentoSiglaArquivoGetRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentoSiglaArquivoGetResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocSiglaMarcadoresDisponiveisGet;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.Marcador;
 import br.gov.jfrj.siga.ex.bl.Ex;
@@ -82,17 +77,6 @@ public class DocSiglaMarcadoresDisponiveisGet implements IDocSiglaMarcadoresDisp
 		} catch (Exception e) {
 			throw e;
 		}
-	}
-
-	public static void iniciarGeracaoDePdf(DocumentoSiglaArquivoGetRequest req, DocumentoSiglaArquivoGetResponse resp,
-			String u, String filename, String contextpath, String servernameport) throws IOException, Exception {
-		resp.uuid = UUID.randomUUID().toString();
-		Status.update(resp.uuid, "Aguardando na fila de tarefas", 0, 100, 0L);
-
-		resp.jwt = DownloadJwtFilenameGet.jwt(u, resp.uuid, req.sigla, req.contenttype, filename);
-		ExApiV1Servlet.submitToExecutor(new DownloadAssincrono(resp.uuid, req.contenttype, req.sigla,
-				(req.estampa != null && req.estampa), (req.volumes != null && req.volumes), contextpath, servernameport,
-				(req.exibirReordenacao != null && req.exibirReordenacao)));
 	}
 
 	@Override

@@ -6255,6 +6255,9 @@ public class ExBL extends CpBL {
 
 	public void gravarModelo(ExModelo modNovo, ExModelo modAntigo, Date dt, CpIdentidade identidadeCadastrante)
 			throws AplicacaoException {
+		if ("template-file/jsp".equals(modNovo.getConteudoTpBlob())) {
+			modNovo.setCpArquivo(null);
+		}
 		if (modNovo.getExFormaDocumento() == null)
 			throw new AplicacaoException("não é possível salvar um modelo sem informar a forma do documento.");
 		if (modNovo.getNmMod() == null || modNovo.getNmMod().trim().length() == 0)

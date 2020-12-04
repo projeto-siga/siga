@@ -553,7 +553,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
     }
 	
 	@Transacional
-    @Get("/app/lotacao/suspender")
+    @Post("/app/lotacao/suspender")
     public void suspender(final Long id) throws Exception{
 		
         DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);

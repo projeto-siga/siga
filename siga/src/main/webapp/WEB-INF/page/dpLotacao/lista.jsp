@@ -181,8 +181,14 @@ function sbmt(offset) {
 		return;
 	}
 	
+	function suspender(url) {
+		var frm = document.getElementById('listar');
+		frm.method = "POST";
+		sbmtAction('listar',url);
+	}
+	
 	function atualizarUrl(url, msg){
-		$('.btn-confirmacao').attr("href", url);
+		$('.btn-confirmacao').attr("href", "javascript:suspender('" + url + "')");
 		document.getElementById("msg").innerHTML = msg;
 	}
 </script>

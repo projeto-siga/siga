@@ -6249,7 +6249,7 @@ public class ExBL extends CpBL {
 
 	public void gravarModelo(ExModelo modNovo, ExModelo modAntigo, Date dt, CpIdentidade identidadeCadastrante)
 			throws AplicacaoException {
-		if (modNovo.getConteudoTpBlob().equals("template-file/jsp")) {
+		if ("template-file/jsp".equals(modNovo.getConteudoTpBlob())) {
 			modNovo.setCpArquivo(null);
 		}
 		if (modNovo.getExFormaDocumento() == null)

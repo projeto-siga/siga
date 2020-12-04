@@ -65,15 +65,8 @@ import br.gov.jfrj.siga.dp.CpMarca;
 		"                  mard.idIcone "+
 		"ORDER  BY mard.cpTipoMarcador, "+
 		"          mard.ordem, "+
-		"          mard.descrMarcador"),
-	@NamedQuery(name = "quantidadeDocumentos", query = "SELECT count(1)"
-			+ "	FROM CpMarca marca"
-			+ "	WHERE (marca.dtIniMarca IS NULL OR marca.dtIniMarca < CURRENT_TIMESTAMP)"
-			+ "		AND (marca.dtFimMarca IS NULL OR marca.dtFimMarca > CURRENT_TIMESTAMP)"
-			+ "		AND marca.dpPessoaIni.idPessoa = :idPessoaIni"
-			+ "     AND marca.cpTipoMarca.idTpMarca = 1 "
-			+ "	    AND marca.cpMarcador.hisIdIni not in (9,8,10,11,12 ,13,16, 18, 20 , 21, 22, 24 ,26, 32, 62, 63, 64, 7, 50, 51)") })
-
+		"          mard.descrMarcador")
+})
 public class AbstractExMarca extends CpMarca {
 
 	@ManyToOne

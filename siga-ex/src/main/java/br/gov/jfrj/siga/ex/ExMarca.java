@@ -37,37 +37,6 @@ import br.gov.jfrj.siga.base.Data;
  */
 @Entity
 @DiscriminatorValue("1")
-@NamedQueries({@NamedQuery(name = "consultarPaginaInicial", query = "SELECT mard.idMarcador, "+
-		"               mard.descrMarcador, "+
-		"               Sum(CASE "+
-		"                     WHEN marca.dpPessoaIni.idPessoa = :idPessoaIni THEN 1 "+
-		"                     ELSE 0 "+
-		"                   END) as cont_pessoa, "+
-		"               Sum(CASE "+
-		"                     WHEN marca.dpLotacaoIni.idLotacao = :idLotacaoIni THEN 1 "+
-		"                     ELSE 0 "+
-		"                   END) as cont_lota, "+
-		"               mard.cpTipoMarcador.idTpMarcador, mard.cpTipoMarcador.descrTipoMarcador, "+
-		"               mard.ordem "+
-		"        FROM   ExMarca marca "+
-		"               JOIN marca.cpMarcador mard "+
-		"               JOIN marca.exMobil.exDocumento.exFormaDocumento.exTipoFormaDoc tpForma "+
-		"        WHERE  ( marca.dtIniMarca IS NULL "+
-		"                  OR marca.dtIniMarca < CURRENT_TIMESTAMP ) "+
-		"               AND ( marca.dtFimMarca IS NULL "+
-		"                      OR marca.dtFimMarca > CURRENT_TIMESTAMP ) "+
-		"               AND ( ( marca.dpPessoaIni.idPessoa = :idPessoaIni ) "+
-		"                      OR ( marca.dpLotacaoIni.idLotacao = :idLotacaoIni ) ) "+
-		"               AND marca.cpTipoMarca.idTpMarca = 1 "+
-		"               AND tpForma.idTipoFormaDoc = :idTipoForma "+
-		"        GROUP  BY mard.idMarcador, "+
-		"                  mard.descrMarcador, "+
-		"                  mard.cpTipoMarcador.idTpMarcador, mard.cpTipoMarcador.descrTipoMarcador, "+
-		"                  mard.ordem "+ 
-		"ORDER  BY mard.cpTipoMarcador, "+
-		"          mard.ordem, "+
-		"          mard.descrMarcador")
-})
 public class ExMarca extends AbstractExMarca implements Comparable {
 
 	public int compareTo(Object o) {

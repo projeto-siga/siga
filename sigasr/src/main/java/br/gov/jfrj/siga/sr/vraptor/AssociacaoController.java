@@ -62,13 +62,13 @@ public class AssociacaoController extends SrController {
 	@Path("/gravar")
 	@AssertAcesso(ADM_ADMINISTRAR)
 	public void gravarAssociacao(SrConfiguracao associacao,SrAtributo atributo, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, CpComplexo complexo, CpOrgaoUsuario orgaoUsuario,
-			DpLotacaoSelecao lotacaoSel, DpPessoaSelecao dpPessoaSel, DpFuncaoConfiancaSelecao funcaoConfiancaSel, DpCargoSelecao cargoSel, CpPerfilSelecao cpGrupoSel, SrPesquisa pesquisaSatisfacao) throws Exception {
+			DpLotacaoSelecao lotacao, DpPessoaSelecao dpPessoa, DpFuncaoConfiancaSelecao funcaoConfianca, DpCargoSelecao cargo, CpPerfilSelecao cpGrupo, SrPesquisa pesquisaSatisfacao) throws Exception {
 		if (associacao == null || associacao.getIdConfiguracao() == null)
 			associacao = new SrConfiguracao();
 		itemConfiguracaoSet = setupItemConfiguracao(itemConfiguracaoSet);
 		acoesSet = setupAcao(acoesSet);
 		
-		setDadosAssociacao(associacao, atributo, itemConfiguracaoSet, acoesSet, complexo, orgaoUsuario, lotacaoSel, dpPessoaSel, funcaoConfiancaSel, cargoSel, cpGrupoSel, pesquisaSatisfacao);
+		setDadosAssociacao(associacao, atributo, itemConfiguracaoSet, acoesSet, complexo, orgaoUsuario, lotacao, dpPessoa, funcaoConfianca, cargo, cpGrupo, pesquisaSatisfacao);
 		associacao.salvarComoAssociacaoAtributo();
 		result.use(Results.http()).body(associacao.toVO().toJson());
 	}

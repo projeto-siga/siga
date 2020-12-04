@@ -30,29 +30,36 @@ import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 public class PessoasGet implements IPessoasGet {
 	@Override
 	public void run(PessoasGetRequest req, PessoasGetResponse resp) throws Exception {
-		CurrentRequest.set(
-				new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-		SwaggerHelper.buscarEValidarUsuarioLogado();
-
-		if (((req.cpf != null? 1:0) + (req.texto != null? 1:0) + (req.idPessoaIni != null? 1:0)) > 1) {
-			throw new AplicacaoException("Pesquisa permitida somente por um dos argumentos.");
-		}
-		if (req.cpf != null && !req.cpf.isEmpty()) {
-			resp.list = pesquisarPorCpf(req, resp);
-			return;
-		}
-		
-		if (req.texto != null && !req.texto.isEmpty()) {
-			resp.list = pesquisarPorTexto(req, resp);
-			return;
-		}
+		try (ApiContext ctx = new ApiContext(false, true)) {
+			CurrentRequest.set(
+					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 			
-		if (req.idPessoaIni != null && !req.idPessoaIni.isEmpty()) {
-			resp.list = pesquisarPessoaAtualPorIdIni(req, resp);
-			return;
+			if (((req.cpf != null? 1:0) + (req.texto != null? 1:0) + (req.idPessoaIni != null? 1:0)) > 1) {
+				throw new AplicacaoException("Pesquisa permitida somente por um dos argumentos.");
+			}
+			
+			if (req.cpf != null && !req.cpf.isEmpty()) {
+				resp.list = pesquisarPorCpf(req, resp);
+				return;
+			}
+			
+			if (req.texto != null && !req.texto.isEmpty()) {
+				resp.list = pesquisarPorTexto(req, resp);
+				return;
+			}
+				
+			if (req.idPessoaIni != null && !req.idPessoaIni.isEmpty()) {
+				resp.list = pesquisarPessoaAtualPorIdIni(req, resp);
+				return;
+			}
+			
+			throw new AplicacaoException("Não foi fornecido nenhum parâmetro.");
+		} catch (AplicacaoException | SwaggerException e) {
+			throw e;
+		} catch (Exception e) {
+			e.printStackTrace(System.out);
+			throw e;
 		}
-		
-		throw new AplicacaoException("Não foi fornecido nenhum parâmetro.");
 	}
 	
 	private List<Pessoa> pesquisarPessoaAtualPorIdIni(PessoasGetRequest req, PessoasGetResponse resp) throws SwaggerException {

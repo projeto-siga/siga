@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.ex.api.v1;
+package br.gov.jfrj.siga.api.v1;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -15,6 +15,9 @@ import com.crivano.swaggerservlet.PresentableUnloggedException;
 import com.crivano.swaggerservlet.SwaggerAuthorizationException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.ITokenCriarPost;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.TokenCriarPostRequest;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.TokenCriarPostResponse;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.Prop;
@@ -22,18 +25,12 @@ import br.gov.jfrj.siga.cp.AbstractCpAcesso;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.ITokenCriarPost;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.TokenCriarPostRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.TokenCriarPostResponse;
-import br.gov.jfrj.siga.ex.bl.CurrentRequest;
-import br.gov.jfrj.siga.ex.bl.RequestInfo;
-import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 
 public class TokenCriarPost implements ITokenCriarPost {
 	@Override
 	public void run(TokenCriarPostRequest req, TokenCriarPostResponse resp) throws Exception {
-		CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-		try {
+		try (ApiContext ctx = new ApiContext(true, false)) {
 			String usuariosRestritos = TokenCriarPost.getUsuariosRestritos();
 			if (usuariosRestritos != null) {
 				if (!ArrayUtils.contains(usuariosRestritos.split(","), req.username))
@@ -51,7 +48,7 @@ public class TokenCriarPost implements ITokenCriarPost {
 
 			final String hashAtual = GeraMessageDigest.executaHash(req.password.getBytes(), "MD5");
 
-			final CpIdentidade id = ExDao.getInstance().consultaIdentidadeCadastrante(req.username.toUpperCase(), true);
+			final CpIdentidade id = CpDao.getInstance().consultaIdentidadeCadastrante(req.username.toUpperCase(), true);
 
 			// se o usuário não existir
 			if (id == null)
@@ -73,7 +70,7 @@ public class TokenCriarPost implements ITokenCriarPost {
 					(String) decodedNewToken.get("sub"), (Integer) decodedNewToken.get("iat"),
 					(Integer) decodedNewToken.get("exp"),
 					HttpRequestUtils.getIpAudit(SwaggerServlet.getHttpServletRequest()));
-			ExDao.commitTransacao();
+			CpDao.commitTransacao();
 
 			resp.id_token = jwt;
 		} catch (PresentableUnloggedException ex) {
@@ -146,7 +143,7 @@ public class TokenCriarPost implements ITokenCriarPost {
 	}
 
 	private static String getAuthorizationHeader() throws SwaggerAuthorizationException {
-		String authorization = ExApiV1Servlet.getHttpServletRequest().getHeader("Authorization");
+		String authorization = SigaApiV1Servlet.getHttpServletRequest().getHeader("Authorization");
 		if (authorization == null)
 			throw new SwaggerAuthorizationException("Authorization header is missing");
 		if (authorization.startsWith("Bearer "))

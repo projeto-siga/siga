@@ -124,7 +124,6 @@
 	<filter-mapping>
 		<filter-name>SigaFilter</filter-name>
 		<url-pattern>/servicos/*</url-pattern>
-		<url-pattern>/api/*</url-pattern>
 	</filter-mapping>
 
 	<filter>

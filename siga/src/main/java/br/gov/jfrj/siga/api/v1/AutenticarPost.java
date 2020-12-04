@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.ex.api.v1;
+package br.gov.jfrj.siga.api.v1;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -12,15 +12,15 @@ import com.crivano.swaggerservlet.PresentableUnloggedException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.Service;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.AutenticarPostRequest;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.AutenticarPostResponse;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.IAutenticarPost;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.AbstractCpAcesso;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.AutenticarPostRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.AutenticarPostResponse;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IAutenticarPost;
 import br.gov.jfrj.siga.gi.service.GiService;
 import br.gov.jfrj.siga.idp.jwt.SigaJwtBL;
 
@@ -28,7 +28,7 @@ import br.gov.jfrj.siga.idp.jwt.SigaJwtBL;
 public class AutenticarPost implements IAutenticarPost {
 	@Override
 	public void run(AutenticarPostRequest req, AutenticarPostResponse resp) throws Exception {
-		try (ApiContext ctx = new ApiContext(true)) {
+		try (ApiContext ctx = new ApiContext(true, false)) {
 			HttpServletRequest request = SwaggerServlet.getHttpServletRequest();
 
 			final String authorization = request.getHeader("Authorization");

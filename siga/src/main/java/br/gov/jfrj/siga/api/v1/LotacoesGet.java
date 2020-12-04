@@ -2,7 +2,6 @@ package br.gov.jfrj.siga.api.v1;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.crivano.swaggerservlet.SwaggerException;
@@ -10,16 +9,11 @@ import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.ILotacoesGet;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Lotacao;
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.LotacaoAtual;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.LotacoesGetRequest;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.LotacoesGetResponse;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Orgao;
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.Pessoa;
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.PessoasGetRequest;
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.PessoasGetResponse;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
-import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -28,24 +22,31 @@ import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 public class LotacoesGet implements ILotacoesGet {
 	@Override
 	public void run(LotacoesGetRequest req, LotacoesGetResponse resp) throws Exception {
-		CurrentRequest.set(
-				new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-		SwaggerHelper.buscarEValidarUsuarioLogado();
-		if (req.texto != null && req.idLotacaoIni != null) {
-			throw new AplicacaoException("Pesquisa permitida somente por um dos argumentos.");
-		}
-
-		if (req.texto != null && !req.texto.isEmpty()) {
-			resp.list = pesquisarPorTexto(req, resp);
-			return;
-		}
+		try (ApiContext ctx = new ApiContext(false, true)) {
+			CurrentRequest.set(
+					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 			
-		if (req.idLotacaoIni != null && !req.idLotacaoIni.isEmpty()) {
-			resp.list = pesquisarLotacaoAtualPorIdIni(req, resp);
-			return;
+			if (req.texto != null && req.idLotacaoIni != null) {
+				throw new AplicacaoException("Pesquisa permitida somente por um dos argumentos.");
+			}
+	
+			if (req.texto != null && !req.texto.isEmpty()) {
+				resp.list = pesquisarPorTexto(req, resp);
+				return;
+			}
+				
+			if (req.idLotacaoIni != null && !req.idLotacaoIni.isEmpty()) {
+				resp.list = pesquisarLotacaoAtualPorIdIni(req, resp);
+				return;
+			}
+	
+			throw new AplicacaoException("Não foi fornecido nenhum parâmetro.");
+		} catch (AplicacaoException | SwaggerException e) {
+			throw e;
+		} catch (Exception e) {
+			e.printStackTrace(System.out);
+			throw e;
 		}
-
-		throw new AplicacaoException("Não foi fornecido nenhum parâmetro.");
 	}
 
 	private List<Lotacao> pesquisarPorTexto(LotacoesGetRequest req, LotacoesGetResponse resp) {

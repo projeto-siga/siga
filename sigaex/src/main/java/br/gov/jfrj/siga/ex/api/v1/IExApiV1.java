@@ -44,11 +44,6 @@ public interface IExApiV1 {
 		public List<Marca> list;
 	}
 
-	public class AcessoItem implements ISwaggerModel {
-		public Date datahora;
-		public String ip;
-	}
-
 	public class Marca implements ISwaggerModel {
 		public String pessoa;
 		public String lotacao;
@@ -91,39 +86,6 @@ public interface IExApiV1 {
 		public String destinatariocampoextra;
 		public String descricaodocumento;
 		public String nivelacesso;
-	}
-
-	public class ResultadoDePesquisa implements ISwaggerModel {
-		public String sigla;
-		public String nome;
-		public String siglaLotacao;
-	}
-
-	public class Pessoa implements ISwaggerModel {
-		public String idPessoa;
-		public String idPessoaIni;
-		public String sigla;
-		public String nome;
-		public String siglaLotacao;
-	}
-
-	public class Lotacao implements ISwaggerModel {
-		public String idLotacao;
-		public String idLotacaoIni;
-		public String sigla;
-		public String nome;
-		public String orgao;
-	}
-
-	public class AutenticarPostRequest implements ISwaggerRequest {
-	}
-
-	public class AutenticarPostResponse implements ISwaggerResponse {
-		public String token;
-	}
-
-	public interface IAutenticarPost extends ISwaggerMethod {
-		public void run(AutenticarPostRequest req, AutenticarPostResponse resp) throws Exception;
 	}
 
 	public class DocumentosSiglaArquivoGetRequest implements ISwaggerRequest {
@@ -413,77 +375,6 @@ public interface IExApiV1 {
 	public interface ISugestaoPost extends ISwaggerMethod {
 		public void run(SugestaoPostRequest req, SugestaoPostResponse resp) throws Exception;
 	}
-
-	public class TokenCriarPostRequest implements ISwaggerRequest {
-		public String username;
-		public String password;
-	}
-
-	public class TokenCriarPostResponse implements ISwaggerResponse {
-		public String id_token;
-	}
-
-	public interface ITokenCriarPost extends ISwaggerMethod {
-		public void run(TokenCriarPostRequest req, TokenCriarPostResponse resp) throws Exception;
-	}
-
-	public class AcessosGetRequest implements ISwaggerRequest {
-	}
-
-	public class AcessosGetResponse implements ISwaggerResponse {
-		public List<AcessoItem> list;
-	}
-
-	public interface IAcessosGet extends ISwaggerMethod {
-		public void run(AcessosGetRequest req, AcessosGetResponse resp) throws Exception;
-	}
-
-	public class PessoaTextoPesquisarGetRequest implements ISwaggerRequest {
-		public String texto;
-	}
-
-	public class PessoaTextoPesquisarGetResponse implements ISwaggerResponse {
-		public List<ResultadoDePesquisa> list;
-	}
-
-	public interface IPessoaTextoPesquisarGet extends ISwaggerMethod {
-		public void run(PessoaTextoPesquisarGetRequest req, PessoaTextoPesquisarGetResponse resp) throws Exception;
-	}
-
-	public class PessoaIdPessoaIniPessoaAtualGetRequest implements ISwaggerRequest {
-		public String idPessoaIni;
-	}
-
-	public class PessoaIdPessoaIniPessoaAtualGetResponse implements ISwaggerResponse {
-	}
-
-	public interface IPessoaIdPessoaIniPessoaAtualGet extends ISwaggerMethod {
-		public void run(PessoaIdPessoaIniPessoaAtualGetRequest req, PessoaIdPessoaIniPessoaAtualGetResponse resp) throws Exception;
-	}
-
-	public class LotacaoTextoPesquisarGetRequest implements ISwaggerRequest {
-		public String texto;
-	}
-
-	public class LotacaoTextoPesquisarGetResponse implements ISwaggerResponse {
-		public List<ResultadoDePesquisa> list;
-	}
-
-	public interface ILotacaoTextoPesquisarGet extends ISwaggerMethod {
-		public void run(LotacaoTextoPesquisarGetRequest req, LotacaoTextoPesquisarGetResponse resp) throws Exception;
-	}
-
-	public class LotacaoIdLotacaoIniLotacaoAtualGetRequest implements ISwaggerRequest {
-		public String idLotacaoIni;
-	}
-
-	public class LotacaoIdLotacaoIniLotacaoAtualGetResponse implements ISwaggerResponse {
-	}
-
-	public interface ILotacaoIdLotacaoIniLotacaoAtualGet extends ISwaggerMethod {
-		public void run(LotacaoIdLotacaoIniLotacaoAtualGetRequest req, LotacaoIdLotacaoIniLotacaoAtualGetResponse resp) throws Exception;
-	}
-
 
 	/* ESTE CÓDIGO DEVE SER MANTIDO POIS FOI GERADO MANUALMENTE.
 	 * 

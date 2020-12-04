@@ -11,8 +11,6 @@ consumes: [application/json,application/x-www-form-urlencoded]
 produces: [application/json]
 
 tags:
-  - name: auth
-    description: Autenticação
   - name: download
     description: Download
   - name: mesa
@@ -21,8 +19,6 @@ tags:
     description: Consulta a Documentos
   - name: acao
     description: Ações em Documentos
-  - name: cadastro
-    description: Consulta nos Cadastros
   - name: utils
     description: Utilitários
     
@@ -327,26 +323,6 @@ parameters:
 #                                           Paths                              #
 ################################################################################
 paths:
-  /autenticar:
-    post:
-      summary: Recebe login e senha e gera um token JWT para ser usado nos outros métodos da API
-      tags: [auth]
-      security:
-        - Basic: []
-      parameters: []
-      responses:
-        200:
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              token:
-                type: string
-                description: Token JWT
-        500:
-          description: Error ocurred
-          schema:
-            $ref: "#/definitions/Error"
   /documentos/{sigla}/arquivo:
     get:
       summary: Inicia o processo de geração do PDF completo de um documento para visualização
@@ -463,6 +439,8 @@ paths:
     get:
       description: Exibir um documento
       tags: [consulta]
+      security:
+        - Bearer: []      
       parameters:
         - $ref: "#/parameters/sigla"
       responses:
@@ -488,6 +466,8 @@ paths:
       deprecated: true
       description: Obter o PDF de um documento para visualização
       tags: [consulta]
+      security:
+        - Bearer: []      
       parameters:
         - $ref: "#/parameters/sigla"
       responses:
@@ -508,6 +488,8 @@ paths:
     get:
       description: Obter o HTML de um documento para visualização
       tags: [consulta]
+      security:
+        - Bearer: []      
       parameters:
         - $ref: "#/parameters/sigla"
       responses:
@@ -536,6 +518,8 @@ paths:
     get:
       description: Obter o PDF completo de um documento para visualização
       tags: [consulta]
+      security:
+        - Bearer: []      
       parameters:
         - $ref: "#/parameters/sigla"
       responses:
@@ -558,6 +542,8 @@ paths:
       deprecated: true
       description: Obter o PDF de uma movimentação para visualização
       tags: [consulta]
+      security:
+        - Bearer: []      
       parameters:
         - $ref: "#/parameters/sigla"
         - $ref: "#/parameters/id"
@@ -579,6 +565,8 @@ paths:
     post:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [acao]
+      security:
+        - Bearer: []      
       parameters:
         - $ref: "#/parameters/sigla"
       summary: Assinar documento com senha
@@ -603,6 +591,8 @@ paths:
     post:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [acao]
+      security:
+        - Bearer: []      
       parameters:
         - $ref: "#/parameters/sigla"
       summary: Autenticar documento com senha
@@ -627,6 +617,8 @@ paths:
     post:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [acao]
+      security:
+        - Bearer: []      
       parameters:
         - $ref: "#/parameters/sigla"
         - $ref: "#/parameters/lotacao"
@@ -653,6 +645,8 @@ paths:
     post:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [acao]
+      security:
+        - Bearer: []      
       parameters:
         - $ref: "#/parameters/sigla"
         - $ref: "#/parameters/siglapai"
@@ -683,6 +677,8 @@ paths:
     post:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [acao]
+      security:
+        - Bearer: []      
       parameters:
         - $ref: "#/parameters/sigla"
         - $ref: "#/parameters/anotacao"
@@ -703,7 +699,9 @@ paths:
   /documentos/{sigla}/pesquisar-sigla:
     get:
       consumes: ["application/x-www-form-urlencoded"]
-      tags: [acao]
+      tags: [consulta]
+      security:
+        - Bearer: []      
       parameters:
         - $ref: "#/parameters/sigla"
         - $ref: "#/parameters/matriculaQuery"
@@ -726,6 +724,8 @@ paths:
     post:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [utils]
+      security:
+        - Bearer: []      
       parameters:
         - $ref: "#/parameters/nome"
         - $ref: "#/parameters/email"
@@ -744,26 +744,6 @@ paths:
           schema:
             $ref: "#/definitions/Error"         
             
-  /acessos:
-    get:
-      description: Listar os últimos acessos
-      tags: [utils]
-      parameters: []
-      responses:
-        200:
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              list:
-                type: array
-                items:
-                  $ref: "#/definitions/AcessoItem"
-        500:
-          description: Error ocurred
-          schema:
-            $ref: "#/definitions/Error"
-
   /documentos:
     post:
       summary: Cria um novo documento
@@ -877,15 +857,6 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/Marca"      
-  AcessoItem:
-    description: Acessos recentes
-    type: object
-    properties:
-      datahora:
-        type: string
-        format: date-time
-      ip:
-        type: string
 
   Marca:
     description: Etiquetas relacionadas a um documento

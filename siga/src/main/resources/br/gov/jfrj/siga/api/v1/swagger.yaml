@@ -13,11 +13,10 @@ produces: [application/json]
 tags:
   - name: auth
     description: Autenticação
-  - name: download
-    description: Download
   - name: cadastro
     description: Consulta nos Cadastros
-    
+  - name: utils
+    description: Utilitários
     
 securityDefinitions:
   Basic:
@@ -34,64 +33,22 @@ parameters:
   sigla:
     name: sigla
     in: path
-    description: Sigla do mobil
+    description: Sigla da entidade
     type: string
     required: true
-  completo:
-    name: completo
-    in: query
-    description: Informar true se deseja receber todos os arquivos juntados e anexos
-    required: false
-    type: boolean
-  estampa:
-    name: estampa
-    in: query
-    description: Informar true se deseja receber o PDF sem estampas
-    required: false
-    type: boolean
-  volumes:
-    name: volumes
-    in: query
-    description: Informar true se deseja receber uma compilação com todos os volumes de um processo
-    required: false
-    type: boolean
-  pdf:
-    name: pdf
-    in: path
-    description: Referência para o PDF que foi enviado previamente para o servidor
-    type: string
-    required: true
-  jwt:
-    name: jwt
-    in: path
-    description: JWT que referencia um artefato a ser baixado
-    required: true
-    type: string
-  filename:
-    name: filename
-    in: path
-    description: Nome do arquivo de um artefato a ser baixado
-    required: true
-    type: string
-  disposition:
-    name: disposition
-    in: query
-    description: Informar attachment se desejar receber como um download
-    required: false
-    type: string
-  contenttype:
-    name: contenttype
-    in: query
-    description: Informar o tipo de arquivo desejado, pode ser application/pdf ou text/html
-    required: false
-    type: string
-  chave:
-    name: chave
-    in: path
-    description: Chave que referencia um processo assíncrono
-    required: true
-    type: string
 
+  username:
+    name: username
+    in: query
+    description: Sigla do usuário
+    required: true
+    type: string
+  password:
+    name: password
+    in: query
+    description: Password do usuário
+    required: true
+    type: string
   lotacao:
     name: lotacao
     in: formData
@@ -178,94 +135,6 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
-  /documentos/{sigla}/arquivo:
-    get:
-      summary: Inicia o processo de geração do PDF completo de um documento para visualização
-      tags: [download]
-      security:
-        - Bearer: []
-      parameters:
-        - $ref: "#/parameters/contenttype"
-        - $ref: "#/parameters/sigla"
-        - $ref: "#/parameters/estampa"
-        - $ref: "#/parameters/completo"
-        - $ref: "#/parameters/volumes"
-      responses:
-        200:
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              uuid:
-                type: string
-                description: UUID que pode ser usado como chave para obter status da geração do PDF
-              jwt:
-                type: string
-                description: JWT com as informações para download do PDF
-        500:
-          description: Error ocurred
-          schema:
-            $ref: "#/definitions/Error"
-
-  /download/{jwt}/{filename}:
-    get:
-      summary: Faz o download de um artefato qualquer, baseado nas informações contidas em um JWT
-      tags: [download]
-      parameters:
-        - $ref: "#/parameters/jwt"
-        - $ref: "#/parameters/filename"
-        - $ref: "#/parameters/disposition"
-      responses:
-        200:
-          description: Successful response
-          schema:
-            type: file
-          headers:
-            Content-Type:
-              type: string
-              description: application/pdf
-            Content-Disposition:
-              type: string
-              description: attachment
-        500:
-          description: Error ocurred
-          schema:
-            $ref: "#/definitions/Error"
-            
-  /status/{chave}:
-    get:
-      tags: [download]
-      parameters:
-        - $ref: "#/parameters/chave"
-      summary: Obtem o status de uma operação assíncrona
-      responses:
-        200:
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              mensagem:
-                type: string
-                description: Mensagem
-              indice:
-                type: number
-                description: Quantos passos já foram executados
-              contador:
-                type: number
-                description: Número total de passos a serem executados
-              bytes:
-                type: number
-                description: Tamanho total do payload até o momento
-              errormsg:
-                type: string
-                description: Mensagem de erro se houver
-              stacktrace:
-                type: string
-                description: Detalhamento do erro
-        500:
-          description: Error ocurred
-          schema:
-            $ref: "#/definitions/Error"
 
   /pessoas:
     get:
@@ -275,6 +144,8 @@ paths:
         <li><b>texto=</b> Pesquisa as Pessoas cuja Matrícula ou nome contém uma determinada palavra.</li>
         <li><b>cpf=</b> Pesquisa as Pessoas cadastradas com determinado CPF</li></ul>"
       tags: [cadastro]
+      security:
+        - Bearer: []
       parameters:
         - $ref: "#/parameters/idPessoaIni"
         - $ref: "#/parameters/texto"
@@ -309,6 +180,8 @@ paths:
         <ul><li><b>idLotacaoIni=</b>Pesquisa a Lotação Atual da Lotação Inicial solicitada.</li>
         <li><b>texto=</b>Pesquisa as lotacoes cuja sigla ou nome contém uma determinada palavra.</li></ul>"
       tags: [cadastro]
+      security:
+        - Bearer: []
       parameters:
         - $ref: "#/parameters/texto"
         - $ref: "#/parameters/idLotacaoIni"
@@ -327,6 +200,49 @@ paths:
           schema:
             $ref: "#/definitions/Error"            
   
+  /token/criar:
+    post:
+      summary: Cria token jwt a partir do user e password
+      tags: [auth]
+      parameters: 
+        - $ref: "#/parameters/username"
+        - $ref: "#/parameters/password"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              id_token:
+                type: string
+                description: Token JWT
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /acessos:
+    get:
+      description: Listar os últimos acessos
+      tags: [utils]
+      security:
+        - Bearer: []      
+      parameters: []
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/AcessoItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
 
 ################################################################################
 #                                     Definitions                              #
@@ -475,3 +391,14 @@ definitions:
       idpai:
         type: string
         description: id da função de confiança pai
+
+  AcessoItem:
+    description: Acessos recentes
+    type: object
+    properties:
+      datahora:
+        type: string
+        format: date-time
+      ip:
+        type: string
+        

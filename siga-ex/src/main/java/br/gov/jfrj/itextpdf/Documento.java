@@ -221,25 +221,23 @@ public class Documento {
 			Set<ExMovimentacao> movsAssinatura, Date dtDoc) {
 		ArrayList<String> assinantes = new ArrayList<String>();
 		for (ExMovimentacao movAssinatura : movsAssinatura) {
-			if(!Prop.isGovSP() || movAssinatura.getCadastrante().getId().equals(movAssinatura.getSubscritor().getId())) {
-				String s;
-				Date dataDeInicioDeObrigacaoExibirRodapeDeAssinatura=null;
-				if (movAssinatura.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)) {
-					s = Texto.maiusculasEMinusculas(movAssinatura.getCadastrante().getNomePessoa());
-				} else {
-					dataDeInicioDeObrigacaoExibirRodapeDeAssinatura = Prop.getData("rodape.data.assinatura.ativa");
-					s = movAssinatura.getDescrMov().trim().toUpperCase();
-					s = s.split(":")[0];
-					s = s.intern();
-					if(Prop.isGovSP()
-							|| (dataDeInicioDeObrigacaoExibirRodapeDeAssinatura != null && !dataDeInicioDeObrigacaoExibirRodapeDeAssinatura.after(dtDoc)
-									)	) {
-							s +=" - " + Data.formatDDMMYYYY_AS_HHMMSS(movAssinatura.getData());
-						}				 
-				}
-				if (!assinantes.contains(s)) {
-					assinantes.add(s);
-				}
+			String s;
+			Date dataDeInicioDeObrigacaoExibirRodapeDeAssinatura=null;
+			if (movAssinatura.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)) {
+				s = Texto.maiusculasEMinusculas(movAssinatura.getCadastrante().getNomePessoa());
+			} else {
+				dataDeInicioDeObrigacaoExibirRodapeDeAssinatura = Prop.getData("rodape.data.assinatura.ativa");
+				s = movAssinatura.getDescrMov().trim().toUpperCase();
+				s = s.split(":")[0];
+				s = s.intern();
+				if(Prop.isGovSP()
+						|| (dataDeInicioDeObrigacaoExibirRodapeDeAssinatura != null && !dataDeInicioDeObrigacaoExibirRodapeDeAssinatura.after(dtDoc)
+								)	) {
+						s +=" - " + Data.formatDDMMYYYY_AS_HHMMSS(movAssinatura.getData());
+					}				 
+			}
+			if (!assinantes.contains(s)) {
+				assinantes.add(s);
 			}
 		}
 		return assinantes;

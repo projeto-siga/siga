@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.ex.bl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -9,6 +10,9 @@ import java.util.TreeSet;
 
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -171,20 +175,7 @@ public class ExMarcadorBL {
 		if (!mob.isArquivado())
 			calcularMarcadoresTransferencia(dt);
 
-		// Acrescentar marcas manuais (Urgente, Idoso, etc)
-		if (m == CpMarcador.MARCADOR_EM_ANDAMENTO) {
-			ExMobil geral = mob.doc().getMobilGeral();
-			if (geral.getExMovimentacaoSet() != null) {
-				for (ExMovimentacao mov : geral.getExMovimentacaoSet()) {
-					if (mov.isCancelada())
-						continue;
-					Long t = mov.getIdTpMov();
-					if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO)
-						acrescentarMarca(mov.getMarcador().getIdMarcador(), dt, ultMovNaoCanc.getResp(),
-								ultMovNaoCanc.getLotaResp());
-				}
-			}
-		}
+		acrescentarMarcadoresManuais();
 
 		// Quando está na caixa de entrada, substituir por "A Receber", se for
 		// físico
@@ -249,6 +240,75 @@ public class ExMarcadorBL {
 		return;
 	}
 
+	private void acrescentarMarcadoresManuais() {
+		// Acrescentar marcas manuais (Urgente, Idoso, etc)
+		ExMobil geral = mob.doc().getMobilGeral();
+		
+		// Conteplar movimentações gerais e também as da via específica
+		List<ExMovimentacao> marcacoes = new ArrayList<>();
+		marcacoes.addAll(geral.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true));
+		if (mob.isVia()) 
+			marcacoes.addAll(mob.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true));
+
+		// Marcações gerais
+		for (ExMovimentacao mov : marcacoes) {
+			CpMarcador marcador = mov.getMarcador(); 
+			
+			// Aplicar apenas no móbil correto
+			if (marcador.isAplicacaoGeral() && !mob.isGeral())
+				continue;
+			if (marcador.isAplicacaoGeralOuViaEspecificaOuUltimoVolume() && (mob.isGeral() || mob.isVolumeEncerrado()))
+				continue;
+			if (marcador.isAplicacaoGeralOuTodasAsViasOuUltimoVolume() && ((mob.isGeral() && mob.doc().isFinalizado())
+					|| mob.isVolumeEncerrado()))
+				continue;
+			
+			// Aplicar marcas de lotação apenas se o atendente for a lotação
+			if (marcador.getCpTipoMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO
+					&& marcador.getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.ATENDENTE
+					&& marcador.getDpLotacaoIni() != null) {
+				DpLotacao lotaResp = mob.doc().getLotaCadastrante();
+				if (mob.doc().isFinalizado() && !mob.isGeral() && mob.getUltimaMovimentacaoNaoCancelada() != null) {
+					DpLotacao lot = mob.getUltimaMovimentacaoNaoCancelada().getLotaResp();
+					if (lot != null)
+						lotaResp = lot;
+				}
+				if (!lotaResp.equivale(marcador.getDpLotacaoIni()))
+						continue;
+			}
+			
+//			// Calcular datas de referencia
+//			Date dtRef1 = mov.getDtParam1();
+//			Date dtRef2 = mov.getDtParam2();
+//			
+			// Calcular datas de início e fim
+			Date dtIni = null;
+			Date dtFim = null;
+			if (dtIni == null && mov.getDtParam1() != null && mov.getDtParam2() != null && marcador.getIdTpExibicao() == CpMarcadorTipoExibicaoEnum.MENOR_DATA)
+				dtIni = mov.getDtParam1().before(mov.getDtParam2()) ? mov.getDtParam1() : mov.getDtParam2();
+			if (dtIni == null && mov.getDtParam1() != null && marcador.getIdTpExibicao() == CpMarcadorTipoExibicaoEnum.DATA_PLANEJADA)
+				dtIni = mov.getDtParam1();
+			if (dtIni == null && mov.getDtParam2() != null && marcador.getIdTpExibicao() == CpMarcadorTipoExibicaoEnum.DATA_LIMITE)
+				dtIni = mov.getDtParam2();
+			if (dtIni == null)
+				dtIni = mov.getDtIniMov();
+
+			// Calcular pessoa ou lotação
+			DpPessoa pes = null;
+			DpLotacao lot = null;
+			if (marcador.isInteressadoAtentende()) {
+				pes = ultMovNaoCanc.getResp();
+				lot = ultMovNaoCanc.getLotaResp();
+			} else if (marcador.isInteressadoPessoa() && mov.getSubscritor() != null) {
+				pes = mov.getSubscritor();
+				lot = mov.getLotaSubscritor();
+			} else if (marcador.isInteressadoLotacao() && mov.getLotaSubscritor() != null) {
+				lot = mov.getLotaSubscritor();
+			}
+			acrescentarMarcaTransferencia(marcador.getIdMarcador(), dtIni, dtFim, pes,	lot, mov);
+		}
+	}
+	
 	protected boolean acrescentarMarcadorCancelado() {
 		// Cancelado
 		if (ultMovNaoCanc == null) {
@@ -283,6 +343,7 @@ public class ExMarcadorBL {
 		acrescentarMarcadoresDoCossignatario();
 		acrescentarMarcadoresAssinaturaComSenha();
 		acrescentarMarcadorPublicacaoPortalTransparencia();
+		acrescentarMarcadoresManuais();
 	}
 
 	protected boolean acrescentarMarcadoresSemEfeito() {
@@ -524,8 +585,8 @@ public class ExMarcadorBL {
 		long m_aguardando = CpMarcador.MARCADOR_AGUARDANDO;
 		long m_aguardandoFora = CpMarcador.MARCADOR_AGUARDANDO_DEVOLUCAO_FORA_DO_PRAZO;
 
-		List<ExMovimentacao> transferencias = mob.getMovimentacoesPorTipo(3);
-		transferencias.addAll(mob.getMovimentacoesPorTipo(6));
+		List<ExMovimentacao> transferencias = mob.getMovimentacoesPorTipo(3, false);
+		transferencias.addAll(mob.getMovimentacoesPorTipo(6, false));
 		transferencias.removeAll(mob.getMovimentacoesCanceladas());
 		Set<ExMovimentacao> transferenciasComData = new TreeSet<ExMovimentacao>();
 
@@ -558,23 +619,23 @@ public class ExMarcadorBL {
 				dtMarca.setSeconds(59);
 
 				acrescentarMarcaTransferencia(m_aguardando, dt, dtMarca, transfComData.getCadastrante(),
-						transfComData.getLotaCadastrante()); // acrescenta a
+						transfComData.getLotaCadastrante(), transfComData); // acrescenta a
 				// marca
 				// "Aguardando Devolução"
 
 				acrescentarMarcaTransferencia(m_aDevolver, dt, dtMarca, transfComData.getResp(),
-						transfComData.getLotaResp());// acrescenta
+						transfComData.getLotaResp(), transfComData);// acrescenta
 				// a
 				// marca
 				// "A Devolver"
 
 				acrescentarMarcaTransferencia(m_aguardandoFora, dtMarca, null, transfComData.getCadastrante(),
-						transfComData.getLotaCadastrante()); // acrescenta a
+						transfComData.getLotaCadastrante(), transfComData); // acrescenta a
 				// marca
 				// "Aguardando Devolução (Fora do Prazo)"
 
 				acrescentarMarcaTransferencia(m_aDevolverFora, dtMarca, null, transfComData.getResp(),
-						transfComData.getLotaResp());// acrescenta
+						transfComData.getLotaResp(), transfComData);// acrescenta
 				// a
 				// marca
 				// "A Devolver (Fora do Prazo)"
@@ -690,10 +751,11 @@ public class ExMarcadorBL {
 		set.add(mar);
 	}
 
-	private void acrescentarMarcaTransferencia(Long idMarcador, Date dtIni, Date dtFim, DpPessoa pess, DpLotacao lota) {
+	private void acrescentarMarcaTransferencia(Long idMarcador, Date dtIni, Date dtFim, DpPessoa pess, DpLotacao lota, ExMovimentacao mov) {
 		ExMarca mar = new ExMarca();
 		mar.setExMobil(mob);
 		mar.setCpMarcador(ExDao.getInstance().consultar(idMarcador, CpMarcador.class, false));
+		mar.setExMovimentacao(mov);
 		if (pess != null)
 			mar.setDpPessoaIni(pess.getPessoaInicial());
 		if (lota != null) {
@@ -709,8 +771,8 @@ public class ExMarcadorBL {
 
 	public ExMovimentacao contemTransferenciaRetorno(ExMovimentacao mov, ExMobil mob) {
 		ExMovimentacao movRetorno = null;
-		List<ExMovimentacao> transferencias = mob.getMovimentacoesPorTipo(3);
-		transferencias.addAll(mob.getMovimentacoesPorTipo(6));
+		List<ExMovimentacao> transferencias = mob.getMovimentacoesPorTipo(3, false);
+		transferencias.addAll(mob.getMovimentacoesPorTipo(6, false));
 		transferencias.removeAll(mob.getMovimentacoesCanceladas());
 
 		Iterator it = transferencias.iterator();

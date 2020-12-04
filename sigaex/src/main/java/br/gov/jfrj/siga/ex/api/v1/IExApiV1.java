@@ -115,6 +115,18 @@ public interface IExApiV1 {
 		public String orgao;
 	}
 
+	public class Marcador implements ISwaggerModel {
+		public String idMarcador;
+		public String grupo;
+		public String nome;
+		public Boolean ativo;
+		public String explicacao;
+		public String interessado;
+		public String planejada;
+		public String limite;
+		public String texto;
+	}
+
 	public class AutenticarPostRequest implements ISwaggerRequest {
 	}
 
@@ -400,6 +412,18 @@ public interface IExApiV1 {
 		public void run(DocumentosSiglaPesquisarSiglaGetRequest req, DocumentosSiglaPesquisarSiglaGetResponse resp) throws Exception;
 	}
 
+	public class DocSiglaMarcadoresDisponiveisGetRequest implements ISwaggerRequest {
+		public String sigla;
+	}
+
+	public class DocSiglaMarcadoresDisponiveisGetResponse implements ISwaggerResponse {
+		public List<Marcador> list;
+	}
+
+	public interface IDocSiglaMarcadoresDisponiveisGet extends ISwaggerMethod {
+		public void run(DocSiglaMarcadoresDisponiveisGetRequest req, DocSiglaMarcadoresDisponiveisGetResponse resp) throws Exception;
+	}
+
 	public class SugestaoPostRequest implements ISwaggerRequest {
 		public String nome;
 		public String email;
@@ -412,19 +436,6 @@ public interface IExApiV1 {
 
 	public interface ISugestaoPost extends ISwaggerMethod {
 		public void run(SugestaoPostRequest req, SugestaoPostResponse resp) throws Exception;
-	}
-
-	public class TokenCriarPostRequest implements ISwaggerRequest {
-		public String username;
-		public String password;
-	}
-
-	public class TokenCriarPostResponse implements ISwaggerResponse {
-		public String id_token;
-	}
-
-	public interface ITokenCriarPost extends ISwaggerMethod {
-		public void run(TokenCriarPostRequest req, TokenCriarPostResponse resp) throws Exception;
 	}
 
 	public class AcessosGetRequest implements ISwaggerRequest {

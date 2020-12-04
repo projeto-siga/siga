@@ -479,6 +479,14 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	@JoinColumn(name = "ID_ARQ")
 	private CpArquivo cpArquivo;
 
+	@Temporal(TemporalType.DATE)
+	@Column(name = "dt_param1", length = 19)
+	private Date dtParam1;
+
+	@Temporal(TemporalType.DATE)
+	@Column(name = "dt_param2", length = 19)
+	private Date dtParam2;
+
 	public void setNumPaginasOri(Integer numPaginasOri) {
 		this.numPaginasOri = numPaginasOri;
 	}
@@ -874,6 +882,22 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 				this.conteudoBlobMov = createBlob;
 		}
 		
+	}
+
+	public Date getDtParam1() {
+		return dtParam1;
+	}
+
+	public void setDtParam1(Date dtParam1) {
+		this.dtParam1 = dtParam1;
+	}
+
+	public Date getDtParam2() {
+		return dtParam2;
+	}
+
+	public void setDtParam2(Date dtParam2) {
+		this.dtParam2 = dtParam2;
 	}
 	
 	private boolean orgaoPermiteHcp() {

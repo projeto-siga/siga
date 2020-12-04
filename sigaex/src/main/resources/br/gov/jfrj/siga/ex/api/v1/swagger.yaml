@@ -722,6 +722,28 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
+
+  /doc/{sigla}/marcadores-disponiveis:
+    get:
+      description: Obter lista de marcadores que podem ser aplicados a um móbil
+      tags: [consulta]
+      parameters:
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Marcador"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
   /sugestao:
     post:
       consumes: ["application/x-www-form-urlencoded"]
@@ -807,7 +829,6 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
-
 
 ################################################################################
 #                                     Definitions                              #
@@ -945,6 +966,7 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/Acao"
+          
   DocumentoDTO:
     description: DTO para inclusao de documentos
     type: object
@@ -987,6 +1009,31 @@ definitions:
       descricaodocumento:
         description: Descrição do documento
         type: string
+      orgao:
+        type: string        
       nivelacesso:
         description: Nome do nivel de acesso do documento. Ex. Publico, Limitado Entre Orgaos, Limitado Entre Lotacoes, Limitado Entre Pessoas, ...
+        type: string
+        
+  Marcador:
+    description: Dados de um marcador
+    type: object
+    properties:
+      idMarcador:
+        type: string
+      grupo:
+        type: string
+      nome:
+        type: string
+      ativo:
+        type: boolean
+      explicacao:
+        type: string
+      interessado:
+        type: string
+      planejada:
+        type: string
+      limite:
+        type: string
+      texto:
         type: string

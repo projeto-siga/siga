@@ -30,7 +30,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -52,7 +51,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.persistence.FlushModeType;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 
@@ -94,7 +92,6 @@ import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaMessages;
-import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.util.SetUtils;
 import br.gov.jfrj.siga.base.util.Utils;
@@ -106,6 +103,8 @@ import br.gov.jfrj.siga.bluc.service.ValidateResponse;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.TipoConteudo;
@@ -145,6 +144,8 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.bl.BIE.BoletimInternoBL;
 import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
+import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
@@ -2668,12 +2669,7 @@ public class ExBL extends CpBL {
 				throw new AplicacaoException("não é possível cancelar definição de perfil");
 
 		} else if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO) {
-			Ex.getInstance().getComp().podeCancelarVinculacaoMarca(titular, lotaTitular, mob, movCancelar)
-					.ifPresent(msg -> {
-						String msgErro = String.format("Não é possível cancelar definição da marca '%s': %s",
-								movCancelar.getMarcador().getDescrMarcador(), msg);
-						throw new AplicacaoException(msgErro);
-					});
+			ExPodeCancelarMarcacao.afirmar(movCancelar, titularForm, lotaTitular);
 		} else if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFERENCIA) {
 			if (!Ex.getInstance().getComp().podeCancelarVinculacaoDocumento(titular, lotaTitular, mob, movCancelar))
 				throw new AplicacaoException("não é possível cancelar vinculação de documento");
@@ -3524,7 +3520,7 @@ public class ExBL extends CpBL {
 		// Inclui em setAntes os papeis que já estão atribuídos de acordo com as
 		// movimentações de vínculo de papel
 		List<ExMovimentacao> movs = doc.getMobilGeral()
-				.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL);
+				.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL, false);
 		for (ExMovimentacao mov : movs) {
 			if (mov.isCancelada() || mov.getCadastrante() != null)
 				continue;
@@ -3600,7 +3596,7 @@ public class ExBL extends CpBL {
 	private void removerPapel(ExDocumento doc, long idPapel) throws Exception {
 		ExMovimentacao movCancelamento = null;
 		List<ExMovimentacao> movs = doc.getMobilGeral()
-				.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL);
+				.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL, false);
 		boolean removido = false;
 		for (ExMovimentacao mov : movs) {
 			if (mov.isCancelada() || !mov.getExPapel().getIdPapel().equals(idPapel))
@@ -4347,6 +4343,22 @@ public class ExBL extends CpBL {
 			iniciarAlteracao();
 
 			for (ExMobil m : set) {
+				final ExMobil geral = mob.doc().getMobilGeral();
+				
+				// Localiza a última movimentação de marcação de lotação, para cancelar ela com o recebimento
+				ExMovimentacao movAnterior = null;
+				List<ExMovimentacao> movs = mob.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true);
+				if (!mob.isGeral())
+					movs.addAll(m.doc().getMobilGeral().getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true));
+				for (ExMovimentacao mov : movs) {
+					if (mov.getMarcador() != null && mov.getMarcador().getCpTipoMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO
+							 && mov.getMarcador().getCpTipoMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO
+							 && mov.getMarcador().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.ATENDENTE) {
+						movAnterior = mov;
+						break;
+					}
+				}
+				
 				final ExMovimentacao mov = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO,
 						cadastrante, lotaCadastrante, m, dtMov, cadastrante, null, null, null, null);
 
@@ -4356,7 +4368,18 @@ public class ExBL extends CpBL {
 					mov.setLotaDestinoFinal(ultMov.getLotaDestinoFinal());
 				}
 
-				gravarMovimentacao(mov);
+				// Marcação deve ser removida só se a lotação estiver sendo alterada
+				if (movAnterior != null && movAnterior.getMarcador() != null && movAnterior.getMarcador().getDpLotacaoIni() != null 
+						&& movAnterior.getMarcador().getDpLotacaoIni().equivale(ultMov.getLotaResp())) {
+					movAnterior = null;
+				}
+
+				if (movAnterior != null) {
+					mov.setExMovimentacaoRef(movAnterior);
+					gravarMovimentacaoCancelamento(mov, movAnterior);
+				} else
+					gravarMovimentacao(mov);
+
 				// Se houver configuração para restringir acesso somente para quem recebeu,
 				// remove a lotação das permissões de acesso e inclui o recebedor
 				if (Ex.getInstance().getConf().podePorConfiguracao(mov.getResp(), mov.getLotaResp(), 
@@ -4882,49 +4905,66 @@ public class ExBL extends CpBL {
 
 	}
 
-	public void vincularMarcador(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
-			final Date dtMov, DpLotacao lotaResponsavel, final DpPessoa responsavel, final DpPessoa subscritor,
-			final DpPessoa titular, final String descrMov, String nmFuncaoSubscritor, CpMarcador marcador,
-			boolean ativo, Date dtFimMov) throws Exception {
+	public void marcar(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, 
+			final DpPessoa titular, final DpLotacao lotaTitular, 
+			final ExMobil mob, final Date dtMov,  
+			DpPessoa subscritor, DpLotacao lotaSubscritor,
+			final String observacoes, CpMarcador marcador,
+			Date dataPlanejada, Date dataLimite) throws Exception {
 
+		ExPodeMarcar.afirmar(mob, titular, lotaTitular);
+		
 		if (marcador == null)
 			throw new AplicacaoException("não foi informado o marcador");
-
+		
 		final ExMobil geral = mob.doc().getMobilGeral();
-
-		if (ativo) {
-			try {
-				iniciarAlteracao();
-
-				final ExMovimentacao mov = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO,
-						cadastrante, lotaCadastrante, geral, dtMov, responsavel, lotaResponsavel, titular, null, dtMov);
-
-				mov.setNmFuncaoSubscritor(nmFuncaoSubscritor);
-				mov.setDescrMov(descrMov);
-				mov.setMarcador(marcador);
-				mov.setDtFimMov(dtFimMov);
-
-				gravarMovimentacao(mov);
-				concluirAlteracao(mov);
-			} catch (final Exception e) {
-				cancelarAlteracao();
-				throw new RuntimeException("Erro ao fazer marcação.", e);
-			}
-		} else {
-			Set<CpMarcador> set = new HashSet<CpMarcador>();
-			ExMovimentacao movCancelar = null;
-			if (geral.getExMovimentacaoSet() != null) {
-				for (ExMovimentacao mov : geral.getExMovimentacaoSet()) {
-					if (mov.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO)
-							&& !mov.isCancelada()
-							&& mov.getMarcador().getIdMarcador().equals(marcador.getIdMarcador())) {
-						movCancelar = mov;
-					}
+		
+//		if (marcador.getDpLotacaoIni() != null) {
+//			subscritor = null;
+//			lotaSubscritor = marcador.getDpLotacaoIni().getLotacaoAtual();
+//		}
+		
+		// Localiza a última movimentação de marcação de lotação
+		ExMovimentacao movAnterior = null;
+		if (marcador.getCpTipoMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO
+				&& marcador.getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.ATENDENTE) {
+			List<ExMovimentacao> movs = mob.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true);
+			if (!mob.isGeral())
+				movs.addAll(geral.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true));
+			for (ExMovimentacao mov : movs) {
+				if (mov.getMarcador() != null && mov.getMarcador().getCpTipoMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO) {
+					movAnterior = mov;
+					break;
 				}
-				cancelar(cadastrante, lotaCadastrante, mob, movCancelar, dao().dt(), titular, titular, null);
 			}
 		}
 
+		try {
+			iniciarAlteracao();
+
+			final ExMovimentacao mov = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO,
+					cadastrante, lotaCadastrante, 
+					mob.isVia() && marcador.isAplicacaoGeralOuViaEspecificaOuUltimoVolume() 
+					 ? mob : geral, 
+					dtMov, null, null, titular, lotaTitular, dtMov);
+
+			mov.setDescrMov(observacoes);
+			mov.setMarcador(marcador);
+			mov.setDtParam1(dataPlanejada);
+			mov.setDtParam2(dataLimite);
+			mov.setSubscritor(subscritor);
+			mov.setLotaSubscritor(lotaSubscritor);
+
+			if (movAnterior != null) {
+				mov.setExMovimentacaoRef(movAnterior);
+				gravarMovimentacaoCancelamento(mov, movAnterior);
+			} else
+				gravarMovimentacao(mov);
+			concluirAlteracao(mov);
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new RuntimeException("Erro ao fazer marcação.", e);
+		}
 	}
 
 	public void redefinirNivelAcesso(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExDocumento doc,
@@ -7295,7 +7335,7 @@ public class ExBL extends CpBL {
 			for(String marcador: listaMarcadores) {
 			   cpMarcador = dao().consultar(Long.parseLong(marcador), CpMarcador.class, false);
 			   try {
-				vincularMarcador(cadastrante, lotaCadastrante, mob, null, lotaCadastrante, cadastrante, cadastrante, cadastrante, null, null, cpMarcador, true, null);
+				marcar(cadastrante, lotaCadastrante, cadastrante, lotaCadastrante, mob, null, cadastrante, lotaCadastrante, null, cpMarcador, null, null);
 			   } catch (Exception e) {
 					throw new RuntimeException("Ocorreu um erro ao gravar marcadores", e);
 			   }
@@ -7412,7 +7452,7 @@ public class ExBL extends CpBL {
 
 		ArrayList<HashMap<String, Object>> objectJson = new ArrayList<>();
 		try {
-			List<CpMarcador> listaMarcadores = dao().listarCpMarcadoresGeraisTaxonomiaAdministrada();
+			List<CpMarcador> listaMarcadores = dao().listarCpMarcadoresGerais();
 			
 			for (CpMarcador marcador : listaMarcadores) {
 				HashMap<String, Object> marcadorJson = new HashMap<String, Object>();
@@ -7421,8 +7461,8 @@ public class ExBL extends CpBL {
 				marcadorJson.put("id", marcador.getIdMarcador());
 				marcadorJson.put("descMarcador", marcador.getDescrMarcador());
 				
-				tipoMarcadorJson.put("idTipoMarcador", marcador.getCpTipoMarcador().getIdTpMarcador());
-				tipoMarcadorJson.put("descTipoMarcador", marcador.getCpTipoMarcador().getDescrTipoMarcador());
+				tipoMarcadorJson.put("idTipoMarcador", marcador.getCpTipoMarcador().getId());
+				tipoMarcadorJson.put("descTipoMarcador", marcador.getCpTipoMarcador().getDescricao());
 				marcadorJson.put("tipoMarcador", tipoMarcadorJson);
 				
 				objectJson.add(marcadorJson);

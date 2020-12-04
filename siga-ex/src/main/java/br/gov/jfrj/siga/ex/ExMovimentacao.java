@@ -21,6 +21,7 @@
  */
 package br.gov.jfrj.siga.ex;
 
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO;
 import static java.util.Objects.nonNull;
 
 import java.io.Serializable;
@@ -46,10 +47,12 @@ import org.apache.xerces.impl.dv.util.Base64;
 import org.hibernate.annotations.BatchSize;
 
 import com.auth0.jwt.JWTVerifier;
+import com.crivano.jlogic.Expression;
 import com.crivano.swaggerservlet.SwaggerUtils;
 
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.Service;
+import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
@@ -57,7 +60,9 @@ import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.bluc.service.ValidateRequest;
 import br.gov.jfrj.siga.bluc.service.ValidateResponse;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
 import br.gov.jfrj.siga.ex.util.Compactador;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
@@ -1208,6 +1213,15 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		}
 		return "Outro";
 	}
+	
+	
+	public boolean podeCancelar(DpPessoa titular, DpLotacao lotaTitular) {
+		if (this.getIdTpMov().equals(TIPO_MOVIMENTACAO_MARCACAO)) {
+			Expression exp = new ExPodeCancelarMarcacao(this, titular, lotaTitular);
+			return exp.eval();
+		}
+		return false;
+	}
 
 	public boolean isAssinatura() {
 		long l = getExTipoMovimentacao().getId();
@@ -1232,6 +1246,14 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 			return true;
 		}
 		return false;
+	}
+
+	public String expliquePodeCancelar(DpPessoa titular, DpLotacao lotaTitular) {
+		if (this.getIdTpMov().equals(TIPO_MOVIMENTACAO_MARCACAO)) {
+			Expression exp = new ExPodeCancelarMarcacao(this, titular, lotaTitular);
+			return AcaoVO.Helper.formatarExplicacao(exp, exp.eval());
+		}
+		return null;
 	}
 
 	public String getAssinaturaValida() {

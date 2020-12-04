@@ -25,6 +25,8 @@ import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
+import br.gov.jfrj.siga.base.Data;
+
 /**
  * A class that represents a row in the EX_DOCUMENTO table. You can customize
  * the behavior of this class by editing the class, {@link ExDocumento()}.
@@ -98,6 +100,20 @@ public class ExMarca extends AbstractExMarca implements Comparable {
 		}
 		if (i != 0)
 			return i;
+		if (getExMovimentacao() == null) {
+			if (other.getExMovimentacao() == null)
+				i = 0;
+			else
+				i = -1;
+		} else {
+			if (other.getExMovimentacao() == null)
+				i = 1;
+			else
+				i = getExMovimentacao().getIdMov().compareTo(
+						other.getExMovimentacao().getIdMov());
+		}
+		if (i != 0)
+			return i;
 		return 0;
 	}
 	
@@ -150,5 +166,46 @@ public class ExMarca extends AbstractExMarca implements Comparable {
 		}
 		return sb.toString();
 	}
+	
+	public String getDescricaoComDatas() {
+		String descricao = getCpMarcador().getDescrMarcador();
+		
+		if (getExMovimentacao() == null)
+			return descricao;
+		Date dt1 = getExMovimentacao().getDtParam1();
+		Date dt2 = getExMovimentacao().getDtParam2();
+		if (dt1 == null && dt2 == null)
+			return descricao;
+		
+		if (dt1 != null) 
+			descricao += ", planejada: " + Data.calcularTempoRelativoEmDias(dt1);
+		if (dt2 != null) 
+			descricao += ", limite: " + Data.calcularTempoRelativoEmDias(dt2);
+		return descricao;
+	}
+
+//	public static LocalDate dateMidnightToLocalDate(Date dt) {
+//		if (dt == null)
+//			return null;
+//		return LocalDate.of(DateTime(dt.getTime()));
+//	}
+//	
+//	public static LocalDate getLocalDate() {
+//		ZoneId zone = ZoneId.of("America/Sao_Paulo");
+//		return LocalDate.now(zone);
+//	}
+//	
+//	public static String numeroDeDias(LocalDate ld) {
+//		LocalDate dataAtual = getLocalDate();
+//		int dif = Days.daysBetween(dataAtual, ld).getDays();
+//		String contagem;
+//		if (dif == 0)
+//			contagem = "hoje";
+//		else if (dif > 0)
+//			contagem = (dif == 1 ? "falta " : "faltam ") + dif + (dif == 1 ? " dia" : " dias");
+//		else
+//			contagem = "há " + -dif + (dif == -1 ? " dia" : " dias");
+//		return contagem;
+//	}
 
 }

@@ -87,7 +87,8 @@
 		</form>
 	</div>
 
-	<sigasr:modal nome="lotacaoAtendente" titulo="Alterar Atendente padrão">
+	
+	<sigasr:modal nome="lotacaoAtendente" titulo="Alterar Atendente padrão" largura="70%">
 		<div class="form-group">
 			<label>Lota&ccedil;&atilde;o Atendente</label> 
 			<input type="hidden" name="lotacaoSelecao" id="lotacaoSelecao" class="selecao">
@@ -103,28 +104,38 @@
 	</sigasr:modal>
 
 	<script>
+		
 		function modalAbrir(componentId) {
 			limparCampos();
-			$("#" + componentId + "_dialog").dialog('option', 'width', 580);
-			$("#" + componentId + "_dialog").dialog('open');
+			$("#" + componentId + "_dialog").dialog('open');			
 		}
 
 		function modalFechar(componentId) {
 			$("#" + componentId + "_dialog").dialog('close');
 		}
+
+		var lotacaoId = get_lotacao_by('id');
+		var lotacaoDescricao = get_lotacao_by('descricao');
+		var lotacaoSigla = get_lotacao_by('sigla'); 
 		
 		// limpa campos do componente de busca - tag selecao
 		function limparCampos() {
-			$("#formulario_lotacao_id").val('');
-			$("#formulario_lotacao_descricao").val('');
-			$("#formulario_lotacao_sigla").val('');
-			$("#lotacaoSpan").html('');
+			lotacaoId.value = '';
+			lotacaoDescricao.value = '';
+			lotacaoSigla.value = '';
+			$("#lotacao_lotacaoSelSpan").html('');
+			$("#atendente").hide();
 		}
 		
 		function alterarAtendente() {
-			var inputNovoAtendente = $("#formulario_lotacao_id").val();
-			var spanNovoAtendente = $("#formulario_lotacao_sigla").val() + " - "
-					+ $("#formulario_lotacao_descricao").val();
+			var inputNovoAtendente = lotacaoId.value;
+			if(inputNovoAtendente === '') {
+				$("#atendente").show();
+				return;
+			}
+			
+			var spanNovoAtendente = lotacaoSigla.value + " - "
+					+ lotacaoDescricao.value;
 			modalFechar('lotacaoAtendente');
 			$("#atendenteNaoDesignado").val(inputNovoAtendente);
 			$("#atendentePadrao").html(spanNovoAtendente);

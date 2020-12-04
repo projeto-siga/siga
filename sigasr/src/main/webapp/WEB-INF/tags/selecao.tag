@@ -62,10 +62,7 @@
 	</c:otherwise>
 </c:choose>
 
-<!-- 
 <c:set var="propriedadeTipoSel" value="${propriedade}${tipoSel}Sel" />
- -->
-<c:set var="propriedadeTipoSel" value="${propriedadeOriginal}" />
 <c:choose>
 	<c:when test="${empty inputName}">
 		<c:set var="inputNameTipoSel" value="${propriedadeTipoSel}" />
@@ -107,6 +104,7 @@
 <c:set var="larguraPopup" value="800" />
 <c:set var="alturaPopup" value="600" />
 
+
 <style type="text/css">
 
 .modal-selecao .modal-dialog ,
@@ -139,18 +137,18 @@ self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao) {
     } catch (E) {
     } finally {
     }
-    
-	document.getElementsByName('${propriedadeOriginal}.id')[0].value = id;
+
+	$('#formulario_${inputNameTipoSel}_id').val(id);
 	
 	<c:if test="${ocultardescricao != 'sim'}">
 		try {
-			document.getElementsByName('${inputNameTipoSel}.descricao')[0].value = descricao;
+			$('#formulario_${inputNameTipoSel}_descricao').val(descricao);
 			document.getElementById('${spanName}SelSpan').innerHTML = descricao;
 		} catch (E) {
 		}
 	</c:if>
 	
-	document.getElementsByName('${inputNameTipoSel}.sigla')[0].value = sigla;
+	$('#formulario_${inputNameTipoSel}_sigla').val(sigla);
 	
 	<c:if test="${reler == 'sim'}">
 		document.getElementsByName('req${inputNameTipoSel}')[0].value = "sim";
@@ -286,6 +284,20 @@ self.onfocus_${propriedade}${tipoSel} = function(value) {
 	lastValue_${propriedade} = value;
 }
 
+// Retorna elemento contendo valor do select (id, descricao ou sigla):
+self.get_${propriedade}_by = function(field) {
+	return document.getElementById("formulario_${inputNameTipoSel}_" + field);
+}
+
+// Limpa dados do select:
+self.limpa_${propriedade} = function() {
+	document.getElementById('formulario_${inputNameTipoSel}_id').value = '';
+	document.getElementById('formulario_${inputNameTipoSel}_sigla').value = '';
+	document.getElementById('${spanName}SelSpan').innerHTML = '';	
+}
+
+
+
 </script>
 
 <c:if test="${tema != 'simple'}">
@@ -305,18 +317,19 @@ self.onfocus_${propriedade}${tipoSel} = function(value) {
 	<c:set var="onblur" value="${onchange}"></c:set>
 </c:if>
 
-
 <input type="hidden" name="req${inputNameTipoSel}" value=""
 	id="formulario_req${inputNameTipoSel}" /> 
 <input type="hidden"
 	name="alterouSel" value="" id="alterouSel" /> 
+
 <input type="hidden"
 	name="${propriedadeOriginal}.id"
-	value="<c:out value="${f:evaluate(f:concat(propriedadeOriginal,'.id'),requestScope)}"/>"		
-	id="formulario_${inputNameTipoSel}_id" /> 
+	value="<c:out value="${f:evaluate(f:concat(propriedadeTipoSel,'.id'),requestScope)}"/>"		
+	id="formulario_${inputNameTipoSel}_id" />
+	 
 <input type="hidden"
 	name="${propriedadeOriginal}.descricao"
-	value="<c:out value="${f:evaluate(f:concat(propriedadeOriginal,'.descricao'),requestScope)}"/>"
+	value="<c:out value="${f:evaluate(f:concat(propriedadeTipoSel,'.descricao'),requestScope)}"/>"
 	id="formulario_${inputNameTipoSel}_descricao" />
 	
 <input type="hidden"
@@ -327,7 +340,7 @@ self.onfocus_${propriedade}${tipoSel} = function(value) {
 <div class="input-group">
 	<input type="search"
 		name="${inputNameTipoSel}.sigla"
-		value="<c:out value="${f:evaluate(f:concat(propriedadeOriginal,'.sigla'),requestScope)}"/>"
+		value="<c:out value="${f:evaluate(f:concat(propriedadeTipoSel,'.sigla'),requestScope)}"/>"
 		id="formulario_${inputNameTipoSel}_sigla"
 		onkeypress="return handleEnter(this, event)" ${requiredValue}
 		onfocus="javascript: onfocus_${propriedade}${tipoSel}(this.value);"
@@ -348,7 +361,7 @@ self.onfocus_${propriedade}${tipoSel} = function(value) {
 	<c:if test="${ocultardescricao != 'sim'}">
 		<div class="input-group-append ml-2" style="width: 60%;">
 			<span class="form-control" style="overflow: hidden; white-space:nowrap; text-overflow:ellipsis;" id="${spanName}SelSpan">
-				<c:out value="${f:evaluate(f:concat(propriedadeOriginal,'.descricao'),requestScope)}" escapeXml="false" />
+				<c:out value="${f:evaluate(f:concat(propriedadeTipoSel,'.descricao'),requestScope)}" escapeXml="false" />
 			</span>
 		</div>
 	</c:if>
@@ -390,8 +403,8 @@ self.onfocus_${propriedade}${tipoSel} = function(value) {
 		console.log(${siglaSubst});
 		console.log(${descricaoSubst});
 		
-		document.getElementsByName('${propriedadeOriginal}.id')[0].value = '${idSubst}';
-		document.getElementsByName('${propriedadeOriginal}.sigla')[0].value = '${siglaSubst}';
+		document.getElementsByName('${inputNameTipoSel}.id')[0].value = '${idSubst}';
+		document.getElementsByName('${inputNameTipoSel}.sigla')[0].value = '${siglaSubst}';
 		document.getElementsByName('${inputNameTipoSel}.descricao')[0].value = "${descricaoSubst}";
 		<c:if test="${ocultardescricao != 'sim'}">
 			document.getElementById('${spanName}SelSpan').innerHTML  = "${descricaoSubst}";

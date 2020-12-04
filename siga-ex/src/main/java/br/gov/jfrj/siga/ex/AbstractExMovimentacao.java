@@ -23,6 +23,7 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -51,6 +52,7 @@ import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
@@ -841,7 +843,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 
 	public void setConteudoTpMov(final String conteudoTp) {
 	    this.conteudoTpMov = conteudoTp;
-	    if (this.conteudoBlobMov == null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
+	    if (orgaoPermiteHcp() && this.conteudoBlobMov == null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
 	    	cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, conteudoTp);
 	    }
 	}
@@ -866,9 +868,22 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 		if (this.cpArquivo==null && (this.conteudoBlobMov!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"))))) {
 			this.conteudoBlobMov = createBlob;
 		} else if(cacheConteudoBlobMov != null){
-			cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobMov);
+			if(orgaoPermiteHcp())
+				cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobMov);
+			else
+				this.conteudoBlobMov = createBlob;
 		}
 		
+	}
+	
+	private boolean orgaoPermiteHcp() {
+		if(exMobil!=null && exMobil.getDoc()!=null && exMobil.getDoc().getCadastrante()!=null && exMobil.getDoc().getCadastrante().getOrgaoUsuario()!=null) {
+			List<String> orgaos = Prop.getList("/siga.armazenamento.orgaos");
+			CpOrgaoUsuario orgaoUsuario = exMobil.getDoc().getCadastrante().getOrgaoUsuario();
+			if(orgaos == null || "*".equals(orgaos.get(0)) || orgaos.stream().anyMatch(orgao -> orgao.equals(orgaoUsuario.getSigla())) )
+				return true;
+		}
+		return false;
 	}
 	
 }

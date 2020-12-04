@@ -44,7 +44,7 @@ public class AssociacaoController extends SrController {
 	}
 	
 	@Inject
-	public AssociacaoController(HttpServletRequest request, Result result,  SigaObjects so, EntityManager em, SrValidator srValidator) throws Throwable {
+	public AssociacaoController(HttpServletRequest request, Result result,  SigaObjects so, EntityManager em, SrValidator srValidator) {
 		super(request, result, CpDao.getInstance(), so, em, srValidator);
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
@@ -62,13 +62,13 @@ public class AssociacaoController extends SrController {
 	@Path("/gravar")
 	@AssertAcesso(ADM_ADMINISTRAR)
 	public void gravarAssociacao(SrConfiguracao associacao,SrAtributo atributo, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, CpComplexo complexo, CpOrgaoUsuario orgaoUsuario,
-			DpLotacaoSelecao lotacaoSel, DpPessoaSelecao dpPessoaSel, DpFuncaoConfiancaSelecao funcaoConfiancaSel, DpCargoSelecao cargoSel, CpPerfilSelecao cpGrupoSel, SrPesquisa pesquisaSatisfacao) throws Exception {
-		if (associacao == null)
+			DpLotacaoSelecao lotacao, DpPessoaSelecao dpPessoa, DpFuncaoConfiancaSelecao funcaoConfianca, DpCargoSelecao cargo, CpPerfilSelecao cpGrupo, SrPesquisa pesquisaSatisfacao) throws Exception {
+		if (associacao == null || associacao.getIdConfiguracao() == null)
 			associacao = new SrConfiguracao();
 		itemConfiguracaoSet = setupItemConfiguracao(itemConfiguracaoSet);
 		acoesSet = setupAcao(acoesSet);
 		
-		setDadosAssociacao(associacao, atributo, itemConfiguracaoSet, acoesSet, complexo, orgaoUsuario, lotacaoSel, dpPessoaSel, funcaoConfiancaSel, cargoSel, cpGrupoSel, pesquisaSatisfacao);
+		setDadosAssociacao(associacao, atributo, itemConfiguracaoSet, acoesSet, complexo, orgaoUsuario, lotacao, dpPessoa, funcaoConfianca, cargo, cpGrupo, pesquisaSatisfacao);
 		associacao.salvarComoAssociacaoAtributo();
 		result.use(Results.http()).body(associacao.toVO().toJson());
 	}
@@ -125,10 +125,11 @@ public class AssociacaoController extends SrController {
 			DpLotacaoSelecao lotacaoSel, DpPessoaSelecao pessoaSel, DpFuncaoConfiancaSelecao funcaoSel, DpCargoSelecao cargoSel, CpPerfilSelecao perfilSel, SrPesquisa pesquisaSatisfacao) throws Exception {
 		associacao.setItemConfiguracaoSet(itemConfiguracaoSet);
 		associacao.setAcoesSet(acoesSet);
+		associacao.setAtributo(atributo == null || atributo.getId() == null ? null : SrAtributo.AR.findById(atributo.getId()));
+		associacao.setPesquisaSatisfacao(pesquisaSatisfacao == null || pesquisaSatisfacao.getId() == null ? null : SrPesquisa.AR.findById(pesquisaSatisfacao.getId()));
+		associacao.setComplexo(complexo == null || complexo.getIdComplexo() == null ? null : CpComplexo.AR.findById(complexo.getIdComplexo()));
+		associacao.setOrgaoUsuario(orgaoUsuario == null || orgaoUsuario.getIdOrgaoUsu() == null ? null : CpOrgaoUsuario.AR.findById(orgaoUsuario.getIdOrgaoUsu()));
 		associacao.setAtributo(atributo == null ? null : SrAtributo.AR.findById(atributo.getId()));
-		associacao.setPesquisaSatisfacao(pesquisaSatisfacao == null ? null : SrPesquisa.AR.findById(pesquisaSatisfacao.getId()));
-		associacao.setComplexo(complexo == null ? null : CpComplexo.AR.findById(complexo.getIdComplexo()));
-		associacao.setOrgaoUsuario(orgaoUsuario == null ? null : CpOrgaoUsuario.AR.findById(orgaoUsuario.getIdOrgaoUsu()));
 		associacao.setDpPessoa(pessoaSel.buscarObjeto());
 		associacao.setLotacao(lotacaoSel.buscarObjeto());
 		associacao.setFuncaoConfianca(funcaoSel.buscarObjeto());

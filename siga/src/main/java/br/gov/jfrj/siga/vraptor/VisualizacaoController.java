@@ -6,8 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -51,15 +49,6 @@ public class VisualizacaoController extends SigaController {
 		
 	}
 	
-
-	private Map<Integer, String> getListaTipo() {
-		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Matrícula");
-		map.put(2, "Órgão Integrado");
-		return map;
-	}	
-		
-
 	private List<DpVisualizacao> buscarVisualizacoes(DpPessoa pessoa) 
 			throws SQLException, AplicacaoException {
 		List<DpVisualizacao> todasVis = new ArrayList<DpVisualizacao>();

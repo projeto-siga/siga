@@ -20,7 +20,7 @@ import br.gov.jfrj.siga.tp.listener.RevInfoListener;
 
 @SuppressWarnings("serial")
 @Entity
-@Table(schema = "SIGATP")
+@Table(name = "revinfo", schema = "sigatp")
 @RevisionEntity(RevInfoListener.class)
 public class RevInfo implements Serializable {
 	@Id

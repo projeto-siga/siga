@@ -20,6 +20,17 @@
 <%@ attribute name="explicacao"%>
 <%@ attribute name="post"%>
 
+
+
+<c:choose>
+	<c:when test="${siga_cliente == 'GOVSP'}">
+		<c:set var="btnClass" value="btn btn-sm btn-light" />
+	</c:when>
+	<c:otherwise>
+		<c:set var="btnClass" value="btn btn-sm btn-info text-white" />
+	</c:otherwise>
+</c:choose>
+
 <c:set var="linkId">${title}</c:set>
 <c:if test="${(atalho == true) and fn:contains(title, '_')}">
 	<c:set var="ious" value="${fn:indexOf(title, '_')}" />
@@ -64,20 +75,20 @@
 		<c:choose>
 			<c:when test="${not empty modal}">
 				<a id="${linkId}"
-					class="${classe} ${linkBotoes ? 'btn btn-sm btn-info text-white link-tag' : ''}"
+					class="${classe} ${linkBotoes ? btnClass : ''} link-tag"
 					<c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
 					data-toggle="modal" data-target="#${modal}" title="${explicacao}" onclick="if (init${modal}) init${modal}()">${img}${title}</a>
 			</c:when>
 			<c:when test="${not empty popup and popup != false}">
 				<a id="${linkId}"
-					class="${classe} ${linkBotoes ? 'btn btn-sm btn-info text-white link-tag' : ''}"
+					class="${classe} ${linkBotoes ? btnClass : ''} link-tag"
 					<c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
 					href="javascript:${linkConfirm}popitup('${url}');"
 					title="${explicacao}">${img}${title}</a>
 			</c:when>
 			<c:when test="${not empty ajax and ajax != false}">
 				<span id="spanAjax_${idAjax}"> <a id="${linkId}"
-					class="${classe} ${linkBotoes ? 'btn btn-sm btn-info text-white link-tag' : ''} link-tag"
+					class="${classe} ${linkBotoes ? btnClass : ''} link-tag"
 					<c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
 					href="javascript: SetInnerHTMLFromAjaxResponse('${url}', 'spanAjax_${idAjax}');"
 					title="${explicacao}">${img}${title}</a>				</span>
@@ -86,14 +97,14 @@
 				<c:choose>
 					<c:when test="${not empty linkConfirm}">
 						<a id="${linkId}"
-							class="${classe} ${linkBotoes ? 'btn btn-sm btn-info text-white link-tag' : ''} link-tag"
+							class="${classe} ${linkBotoes ? btnClass : ''} link-tag"
 							<c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
 							href="javascript:${linkConfirm}${post ? 'postToUrl(\''.concat(url).concat('\')') : 'location.href=\''.concat(url).concat('\';')}"
 							title="${explicacao}">${img}${title}</a>
 					</c:when>
 					<c:otherwise>
 						<a id="${linkId}"
-							class="${classe} ${linkBotoes ? 'btn btn-sm btn-info text-white link-tag' : ''} link-tag"
+							class="${classe} ${linkBotoes ? btnClass : ''} link-tag"
 							<c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
 							href="${post ? 'javascript:postToUrl(\''.concat(url).concat('\')') : url}"
 							title="${explicacao}">${img}${title}</a>

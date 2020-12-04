@@ -12,6 +12,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.tagext.ValidationMessage;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.apache.commons.codec.binary.Base64;
@@ -86,6 +87,7 @@ public class CondutorController extends TpController {
 		result.include(CONDUTOR, condutor);
 	}
 
+    @Transactional
 	@RoleAdmin
 	@RoleAdminMissao
 	@RoleAdminMissaoComplexo
@@ -122,7 +124,8 @@ public class CondutorController extends TpController {
 		result.redirectTo(CondutorController.class).listar();
 	}
 
-	@RoleAdmin
+    @Transactional
+    @RoleAdmin
 	@RoleAdminMissao
 	@RoleAdminMissaoComplexo
 	@Path("/excluir/{id}")

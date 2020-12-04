@@ -36,6 +36,64 @@ public interface ISigaApiV1 {
 		public String tipoJustificativa;
 		public String tipoInteressado;
 	}
+	
+	public class Pessoa implements ISwaggerModel {
+		public String idPessoa;
+		public String idPessoaIni;
+		public String sigla;
+		public String nome;
+		public String siglaLotacao;
+		public Boolean isExternaPessoa;
+		public Lotacao lotacao;
+		public Cargo cargo;
+		public FuncaoConfianca funcaoConfianca;
+	}
+
+	public class PessoaAtual implements ISwaggerModel {
+		public String idPessoa;
+		public String idPessoaIni;
+		public String sigla;
+		public String nome;
+		public String siglaLotacao;
+	}
+
+	public class Orgao implements ISwaggerModel {
+		public String idOrgao;
+		public String sigla;
+		public String nome;
+	}
+
+	public class Lotacao implements ISwaggerModel {
+		public String idLotacao;
+		public String idLotacaoIni;
+		public String sigla;
+		public String siglaLotacao;
+		public String nome;
+		public Orgao orgao;
+	}
+
+	public class LotacaoAtual implements ISwaggerModel {
+		public String idLotacao;
+		public String idLotacaoIni;
+		public String sigla;
+		public String nome;
+		public String orgao;
+	}
+
+	public class Cargo implements ISwaggerModel {
+		public String idCargo;
+		public String idExterna;
+		public String sigla;
+		public String nome;
+	}
+
+	public class FuncaoConfianca implements ISwaggerModel {
+		public String idFuncaoConfianca;
+		public String idExterna;
+		public String sigla;
+		public String nome;
+		public String idpai;
+	}
 
 	public class AutenticarPostRequest implements ISwaggerRequest {
 	}
@@ -81,39 +139,30 @@ public interface ISigaApiV1 {
 		public String getContenttype() {
 			return contenttype;
 		}
-
 		public void setContenttype(String contenttype) {
 			this.contenttype = contenttype;
 		}
-
 		public String getContentdisposition() {
 			return contentdisposition;
 		}
-
 		public void setContentdisposition(String contentdisposition) {
 			this.contentdisposition = contentdisposition;
 		}
-
 		public Long getContentlength() {
 			return contentlength;
 		}
-
 		public void setContentlength(Long contentlength) {
 			this.contentlength = contentlength;
 		}
-
 		public InputStream getInputstream() {
 			return inputstream;
 		}
-
 		public void setInputstream(InputStream inputstream) {
 			this.inputstream = inputstream;
 		}
-
 		public Map<String, List<String>> getHeaderFields() {
 			return headerFields;
 		}
-
 		public void setHeaderFields(Map<String, List<String>> headerFields) {
 			this.headerFields = headerFields;
 		}
@@ -195,5 +244,54 @@ public interface ISigaApiV1 {
 
 	public interface IMarcadoresPost extends ISwaggerMethod {
 		public void run(MarcadoresPostRequest req, MarcadoresPostResponse resp) throws Exception;
+	}
+
+	public class PessoaGetRequest implements ISwaggerRequest {
+		public String texto;
+		public String cpf;
+	}
+
+	public class PessoaGetResponse implements ISwaggerResponse {
+		public List<Pessoa> list;
+	}
+
+	public interface IPessoaGet extends ISwaggerMethod {
+		public void run(PessoaGetRequest req, PessoaGetResponse resp) throws Exception;
+	}
+
+	public class PessoaIdPessoaIniPessoaAtualGetRequest implements ISwaggerRequest {
+		public String idPessoaIni;
+	}
+
+	public class PessoaIdPessoaIniPessoaAtualGetResponse implements ISwaggerResponse {
+		public PessoaAtual pessoaAtual;
+	}
+
+	public interface IPessoaIdPessoaIniPessoaAtualGet extends ISwaggerMethod {
+		public void run(PessoaIdPessoaIniPessoaAtualGetRequest req, PessoaIdPessoaIniPessoaAtualGetResponse resp) throws Exception;
+	}
+
+	public class LotacaoGetRequest implements ISwaggerRequest {
+		public String texto;
+	}
+
+	public class LotacaoGetResponse implements ISwaggerResponse {
+		public List<Lotacao> list;
+	}
+
+	public interface ILotacaoGet extends ISwaggerMethod {
+		public void run(LotacaoGetRequest req, LotacaoGetResponse resp) throws Exception;
+	}
+
+	public class LotacaoIdLotacaoIniLotacaoAtualGetRequest implements ISwaggerRequest {
+		public String idLotacaoIni;
+	}
+
+	public class LotacaoIdLotacaoIniLotacaoAtualGetResponse implements ISwaggerResponse {
+		public LotacaoAtual lotacaoAtual;
+	}
+
+	public interface ILotacaoIdLotacaoIniLotacaoAtualGet extends ISwaggerMethod {
+		public void run(LotacaoIdLotacaoIniLotacaoAtualGetRequest req, LotacaoIdLotacaoIniLotacaoAtualGetResponse resp) throws Exception;
 	}
 }

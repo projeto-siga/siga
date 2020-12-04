@@ -59,6 +59,7 @@ import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.TipoResponsavelEnum;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
@@ -707,12 +708,7 @@ public class ExMobilController extends
 	}
 
 	private Map<Integer, String> getListaTipoDest() {
-		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, SigaMessages.getMessage("usuario.matricula"));
-		map.put(2, "Lotação");
-		map.put(3, "Externo");
-		map.put(4, "Campo Livre");
-		return map;
+		return TipoResponsavelEnum.getLista();
 	}
 
 	private List<ExFormaDocumento> getTodasFormasDocPorTipoForma(

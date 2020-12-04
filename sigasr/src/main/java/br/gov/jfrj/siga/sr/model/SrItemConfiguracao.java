@@ -46,7 +46,7 @@ import br.gov.jfrj.siga.sr.model.vo.SrItemConfiguracaoVO;
 import com.google.gson.JsonArray;
 
 @Entity
-@Table(name = "SR_ITEM_CONFIGURACAO", schema = "SIGASR")
+@Table(name = "sr_item_configuracao", schema = "sigasr")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class SrItemConfiguracao extends HistoricoSuporte implements
 		SrSelecionavel, Selecionavel {

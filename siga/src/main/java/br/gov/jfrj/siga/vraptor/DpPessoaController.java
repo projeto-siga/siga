@@ -403,6 +403,9 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				if (pessoa.getCargo() != null) {
 					result.include("idCargo", pessoa.getCargo().getId());
 				}
+				if (pessoa.getNomeExibicao() != null) {
+					result.include("nomeExibicao", pessoa.getNomeExibicao());
+				}
 				if (pessoa.getFuncaoConfianca() != null) {
 					result.include("idFuncao", pessoa.getFuncaoConfianca().getId());
 				}
@@ -586,7 +589,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	public void editarGravar(final Long id, final Long idOrgaoUsu, final Long idCargo, final Long idFuncao,
 			final Long idLotacao, final String nmPessoa, final String dtNascimento, final String cpf,
 			final String email, final String identidade, final String orgaoIdentidade, final String ufIdentidade,
-			final String dataExpedicaoIdentidade, final String nmPessoaAbreviado) throws Exception {
+			final String dataExpedicaoIdentidade, final String nomeExibicao) throws Exception {
 		
 		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_PESSOA:Cadastrar Pessoa");
 
@@ -644,7 +647,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		pessoa.setDataInicio(data);
 		pessoa.setMatricula(0L);
 		pessoa.setSituacaoFuncionalPessoa(SituacaoFuncionalEnum.APENAS_ATIVOS.getValor()[0]);
-		pessoa.setNomeExibicao(nmPessoaAbreviado);
+		pessoa.setNomeExibicao(nomeExibicao);
 		
 		if (dtNascimento != null && !"".equals(dtNascimento)) {
 			Date dtNasc = new Date();
@@ -952,8 +955,9 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			carregarCombos(null, idOrgaoUsu, null, null, null, null, cpfPesquisa, paramoffset, Boolean.TRUE);
 		}
 	}
-
-	@Get("app/pessoa/enviar")
+	
+	@Transacional
+	@Post("app/pessoa/enviar")
 	public void enviar(Long idOrgaoUsu, String nome, String cpfPesquisa, String idLotacaoPesquisa, String idUsuarioPesquisa) throws Exception {
 		String[] senhaGerada = new String[1];
 

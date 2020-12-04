@@ -1799,13 +1799,6 @@ public class ExDocumentoController extends ExController {
 				exBL.geraMovimentacaoSubstituicao(exDocumentoDTO.getDoc(), so.getCadastrante());
 			}
 
-//			if(exDocumentoDTO.isExibirNoAcompanhamento() && exDocumentoDTO.getDoc().getExMobilPai() != null) {
-//				Ex.getInstance()
-//					.getBL()
-//					.disponibilizarAoInteressado(getCadastrante(), getLotaTitular(),
-//							exDocumentoDTO.getDoc().getMobilGeral(), getTitular());
-//
-//
 //				exBL.geraMovimentacaoSubstituicao(exDocumentoDTO.getDoc(), so.getCadastrante());
 //			}
 
@@ -2052,6 +2045,7 @@ public class ExDocumentoController extends ExController {
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
 	
+	@Transacional
 	@Get("/app/expediente/doc/gerarProtocolo")
 	public void gerarProtocolo(final String sigla) {
 		assertAcesso("");

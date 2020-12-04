@@ -198,7 +198,8 @@
 			sigaModal.enviarHTMLEAbrir('pessoasModal', titulo.concat(response));			
 		}
 	}
-</script>
+
+	</script>
 
 <siga:pagina titulo="Cadastro de Pessoa">
 	<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
@@ -283,7 +284,7 @@
 						<div class="col-md-4">
 							<div class="form-group">
 								<label for="nmPessoa">Nome Abreviado</label>
-								<input type="text" id="nmPessoaAbreviado" name="nmPessoaAbreviado" value="${nmPessoaAbreviado}" maxlength="60" class="form-control" onkeyup="validarNome(this)"/>
+								<input type="text" id="nmPessoaAbreviado" name="nomeExibicao" value="${nomeExibicao}" maxlength="60" class="form-control" data-toggle="tooltip"  data-placement="top" title="O campo nome abreviado só deverá ser preenchido caso o usuário opte por usar seu nome de registro civil com abreviação na assinatura dos documentos. Vale considerar que ainda sim no rodapé do documento será exibido seu nome completo." onkeyup="validarNome(this)"/>
 							</div>
 						</div>
 						<div class="col-md-2">
@@ -404,4 +405,12 @@ function carregarRelacionados(id) {
 		*/
 
 }
+
+
+$(document).ready(function() {									
+	 $(function () {
+			$('[data-toggle="tooltip"]').tooltip()
+	 });
+	
+});
 </script>

@@ -1447,7 +1447,7 @@
 		tituloADireita="<i class='fas fa-exclamation-circle' style='font-size: 1.5em; color: #ffc107;'></i> <label style='font-size: 1.1em;vertical-align: middle;'><b>Atenção</b></label>"
 		descricaoBotaoFechaModalDoRodape="Ok">
 		<div class="modal-body">
-       		Favor desentranhar documento antes de cancelar
+       		É necessário desentranhar o documento para realizar o seu cancelamento.
      	</div>	     	
 	</siga:siga-modal>	
 			
@@ -1458,6 +1458,13 @@
 				btnCancelar.attr('href', '#').attr('data-siga-modal-abrir', 'modalDeAvisoTornarDocumentoSemEfeito');					
 			}							
 		});	
+		
+		$(function() {
+			var btnRefazer = $('.siga-btn-refazer');				
+			if (btnRefazer) {										
+				btnRefazer.attr('href', '#').attr('data-siga-modal-abrir', 'modalDeAvisoTornarDocumentoSemEfeito');					
+			}							
+		});
 	</script>	
 </c:if>
 	

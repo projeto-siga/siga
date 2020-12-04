@@ -27,9 +27,9 @@ import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 @SuppressWarnings("serial")
 @Entity
 @Audited
-@Table(name = "FinalidadeRequisicao", schema = "SIGATP")
+@Table(name = "finalidaderequisicao", schema = "sigatp")
 @Unique(message = "{finalidadeRequisicao.descricao.unique}", field = "descricao")
-public class FinalidadeRequisicao extends TpModel implements ConvertableEntity<Long>, Comparable<FinalidadeRequisicao> {
+public class FinalidadeRequisicao extends TpModel implements ConvertableEntity, Comparable<FinalidadeRequisicao> {
 
 	private static final long _ID_DA_FINALIDADE_OUTRA = -1;
 	public static ActiveRecord<FinalidadeRequisicao> AR = new ActiveRecord<>(FinalidadeRequisicao.class);
@@ -57,7 +57,6 @@ public class FinalidadeRequisicao extends TpModel implements ConvertableEntity<L
 		return id;
 	}
 
-	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}

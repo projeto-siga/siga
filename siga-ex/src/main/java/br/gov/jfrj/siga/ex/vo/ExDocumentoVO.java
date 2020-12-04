@@ -737,7 +737,7 @@ public class ExDocumentoVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeRefazer(titular, lotaTitular, mob),
 						SigaMessages.getMessage("mensagem.cancela.documento"),
-				null, null, null, "once");
+				null, null, null, "once siga-btn-refazer");
 
 		vo.addAcao(
 				"arrow_divide",

@@ -854,7 +854,7 @@ public class ExDocumentoController extends ExController {
 			if (exibeNomeAcesso) {
 				if (!dpPessoa.isUsuarioExterno()) {
 					ERRO_INACESSIVEL_USUARIO = "Documento " + exDocumentoDTO.getMob().getSigla()
-							+ " inacessível ao usuário " + getTitular().getNomePessoa() + " - "
+							+ " inacessível ao usuário " + getTitular().getNomePessoa()+" - "
 							+ getTitular().getSigla() + "/" + getLotaTitular().getSiglaCompleta() + "." + s + " "
 							+ msgDestinoDoc;
 				} else {

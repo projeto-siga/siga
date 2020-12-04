@@ -1785,7 +1785,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 		return getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA);
 	}
 
-<<<<<<< HEAD
+
 
 
 	/**
@@ -1795,12 +1795,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	 * 
 	 * @return Movimentações de Autenticação com senha.
 	 */
-<<<<<<< HEAD
-=======
->>>>>>> develop_GOVSP1556
-=======
 
->>>>>>> develop_GOVSP1556
 	public Set<ExMovimentacao> getAutenticacoesComSenha() {
 		if (getMobilGeral() == null)
 			return new TreeSet<ExMovimentacao>();
@@ -2585,7 +2580,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 			else if (o instanceof CpOrgaoUsuario)
 				s += ((CpOrgaoUsuario) o).getSigla();
 			else if (o instanceof DpLotacao)
-				s += ((DpLotacao) o).getNomeLotacao()+ " - " + ((DpLotacao) o).getSiglaCompleta();
+				s += ((DpLotacao) o).getNomeLotacao() + " - " + ((DpLotacao) o).getSiglaCompleta();
 			else if (o instanceof DpPessoa)
 				s += ((DpPessoa) o).getNomePessoa() + " - " + ((DpPessoa) o).getSiglaCompleta();
 			else

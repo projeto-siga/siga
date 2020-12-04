@@ -46,6 +46,12 @@
 	</build>
 
 	<dependencies>
+	
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>${hibernate.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>commons-fileupload</groupId>
@@ -70,10 +76,6 @@
 		</dependency>
 
 		<!-- SIGA -->
-		<dependency>
-			<groupId>siga</groupId>
-			<artifactId>siga-base</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>siga</groupId>
 			<artifactId>siga-vraptor-module-old</artifactId>
@@ -139,12 +141,12 @@
 			<groupId>com.crivano</groupId>
 			<artifactId>swaggerservlet</artifactId>
 		</dependency>
-
+	
 		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-			<scope>test</scope>
-		</dependency>
+            <groupId>siga</groupId>
+            <artifactId>siga-jwt</artifactId>
+        </dependency>
+
 		
 		<dependency>
 			<groupId>org.apache.derby</groupId>

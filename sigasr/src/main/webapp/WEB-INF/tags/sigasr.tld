@@ -70,6 +70,11 @@
     	<name>pessoaLotaSelecao2</name>
     	<path>/WEB-INF/tags/pessoaLotaSelecao2.tag</path>
     </tag-file>
+     <tag-file>
+    	<name>pessoaLotaFuncCargoSelecao</name>
+    	<path>/WEB-INF/tags/pessoaLotaFuncCargoSelecao.tag</path>
+    </tag-file>
+    
     <function>
   		<name>replaceSiglas</name>
   		<function-class>br.gov.jfrj.siga.sr.util.SrViewUtil</function-class>

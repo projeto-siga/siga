@@ -13,6 +13,7 @@ import javax.servlet.ServletResponse;
 
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 public class TpThreadFilter implements Filter {
 	
@@ -35,14 +36,14 @@ public class TpThreadFilter implements Filter {
 			throws IOException, ServletException {
 		try {
 			ContextoPersistencia.setEntityManager(em);
-			CpDao.freeInstance();
+			ModeloDao.freeInstance();
 			CpDao.getInstance();
 			chain.doFilter(request, response);
 		} catch (Exception e) {
 
 			throw new ServletException(e);
 		} finally {
-			CpDao.freeInstance();
+			ModeloDao.freeInstance();
 			ContextoPersistencia.setEntityManager(null);
 		}
 	}

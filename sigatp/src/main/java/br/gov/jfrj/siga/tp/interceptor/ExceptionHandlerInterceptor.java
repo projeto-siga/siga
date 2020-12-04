@@ -16,9 +16,9 @@ import br.com.caelum.vraptor.InterceptionException;
 import br.com.caelum.vraptor.Intercepts;
 import br.com.caelum.vraptor.interceptor.ApplicationLogicException;
 import br.com.caelum.vraptor.interceptor.SimpleInterceptorStack;
+import br.com.caelum.vraptor.jpa.JPATransactionInterceptor;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.vraptor.JPATransactionCustomInterceptor;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 /**
@@ -28,7 +28,7 @@ import br.gov.jfrj.siga.vraptor.SigaObjects;
  *
  */
 @RequestScoped
-@Intercepts(after = JPATransactionCustomInterceptor.class)
+@Intercepts(after = JPATransactionInterceptor.class)
 public class ExceptionHandlerInterceptor  {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExceptionHandlerInterceptor.class);

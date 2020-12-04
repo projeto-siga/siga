@@ -1493,8 +1493,11 @@ public class ExBL extends CpBL {
 		try {
 			if (sNome == null)
 				throw new AplicacaoException("não foi possível acessar o nome do assinante");
-			String sMatricula = sNome.split(":")[1];
-			lMatricula = Long.valueOf(sMatricula);
+			String[] split = sNome.split(":");
+			if (split.length > 1) {
+				String sMatricula = split[1];
+				lMatricula = Long.valueOf(sMatricula);
+			}
 		} catch (final Exception e) {
 			throw new RuntimeException("não foi possível obter a matrícula do assinante", e);
 		}
@@ -1655,7 +1658,7 @@ public class ExBL extends CpBL {
 		return s;
 	}
 
-	private ValidateResponse assertValid(BlucService bluc, ValidateRequest validatereq) throws Exception {
+	public ValidateResponse assertValid(BlucService bluc, ValidateRequest validatereq) throws Exception {
 		ValidateResponse validateresp = bluc.validate(validatereq);
 		if (validateresp.getErrormsg() != null)
 			throw new Exception("BluC não conseguiu validar a assinatura digital. " + validateresp.getErrormsg());
@@ -2183,8 +2186,11 @@ public class ExBL extends CpBL {
 			try {
 				if (sNome == null)
 					throw new AplicacaoException("não foi possível acessar o nome do assinante");
-				String sMatricula = sNome.split(":")[1];
-				lMatricula = Long.valueOf(sMatricula.replace("-", ""));
+				String[] split = sNome.split(":");
+				if (split.length > 1) {
+					String sMatricula = split[1];
+					lMatricula = Long.valueOf(sMatricula.replace("-", ""));
+				}
 			} catch (final Exception e) {
 				throw new RuntimeException("não foi possível obter a matrícula do assinante", e);
 			}
@@ -6289,6 +6295,9 @@ public class ExBL extends CpBL {
 
 	public void gravarModelo(ExModelo modNovo, ExModelo modAntigo, Date dt, CpIdentidade identidadeCadastrante)
 			throws AplicacaoException {
+		if ("template-file/jsp".equals(modNovo.getConteudoTpBlob())) {
+			modNovo.setCpArquivo(null);
+		}
 		if (modNovo.getExFormaDocumento() == null)
 			throw new AplicacaoException("não é possível salvar um modelo sem informar a forma do documento.");
 		if (modNovo.getNmMod() == null || modNovo.getNmMod().trim().length() == 0)

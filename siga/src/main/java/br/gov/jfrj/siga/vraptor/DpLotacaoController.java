@@ -519,7 +519,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	}
 	
 	@Transacional
-    @Get("/app/lotacao/ativarInativar")
+    @Post("/app/lotacao/ativarInativar")
     public void ativarInativar(final Long id) throws Exception{
         DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
         

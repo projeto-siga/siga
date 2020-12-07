@@ -104,14 +104,14 @@ function sbmt(offset) {
 							<div class="btn-group">								  
 							  <c:choose>
 								<c:when test="${empty lotacao.dataFimLotacao}">
-									<a href="${urlAtivarInativar}" onclick="javascript:atualizarUrl('${urlAtivarInativar}','Deseja inativar o cadastro selecionado?');return false;" class="btn btn-primary" role="button" 
+									<a href="${urlAtivarInativar}" onclick='javascript:atualizarUrl("javascript:submitPost(\"${urlAtivarInativar}\")","Deseja inativar o cadastro selecionado?");return false;' class="btn btn-primary" role="button" 
 										aria-pressed="true" data-siga-modal-abrir="confirmacaoModal" style="min-width: 80px;">Inativar</a>
 									<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 									    <span class="sr-only"></span>
 								    </button>
 								</c:when>
 								<c:otherwise>
-									<a href="${urlAtivarInativar}" class="btn btn-danger" role="button" aria-pressed="true" style="min-width: 80px;">Ativar</a>
+									<a href="javascript:submitPost('${urlAtivarInativar}')" class="btn btn-danger" role="button" aria-pressed="true" style="min-width: 80px;">Ativar</a>
 									<button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 									    <span class="sr-only"></span>
 								    </button>
@@ -121,11 +121,11 @@ function sbmt(offset) {
 							  	
 							  <c:choose>
 								<c:when test="${empty lotacao.isSuspensa or lotacao.isSuspensa == 0}">
-									<a href="${urlSuspender}" onclick='javascript:atualizarUrl("${urlSuspender}", "Deseja tornar a <fmt:message key="usuario.lotacao"/> \"Suspensa\" para o recebimento de Documentos?");return false;'  
+									<a href="${urlSuspender}" onclick='javascript:atualizarUrl("javascript:submitPost(\"${urlSuspender}\")", "Deseja tornar a <fmt:message key="usuario.lotacao"/> \"Suspensa\" para o recebimento de Documentos?");return false;'  
 										class="dropdown-item" role="button" aria-pressed="true" data-siga-modal-abrir="confirmacaoModal" style="min-width: 80px;">Suspender Tramita&ccedil;&atilde;o</a>
 								</c:when>
 								<c:otherwise>
-								<a href="${urlSuspender}" onclick='javascript:atualizarUrl("${urlSuspender}", "Deseja desfazer a \"Suspensão\" da <fmt:message key="usuario.lotacao"/>");return false;'  
+								<a href="${urlSuspender}" onclick='javascript:atualizarUrl("javascript:submitPost(\"${urlSuspender}\")", "Deseja desfazer a \"Suspensão\" da <fmt:message key="usuario.lotacao"/>");return false;'  
 										class="dropdown-item" role="button" aria-pressed="true" data-siga-modal-abrir="confirmacaoModal" style="min-width: 80px;">Ativar Tramita&ccedil;&atilde;o</a>
 								</c:otherwise>
 							  </c:choose>
@@ -181,14 +181,14 @@ function sbmt(offset) {
 		return;
 	}
 	
-	function suspender(url) {
+	function submitPost(url) {
 		var frm = document.getElementById('listar');
 		frm.method = "POST";
 		sbmtAction('listar',url);
 	}
 	
 	function atualizarUrl(url, msg){
-		$('.btn-confirmacao').attr("href", "javascript:suspender('" + url + "')");
+		$('.btn-confirmacao').attr("href", url);
 		document.getElementById("msg").innerHTML = msg;
 	}
 </script>

@@ -32,6 +32,7 @@ import br.gov.jfrj.siga.sr.util.Util;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.uteis.PessoaLotaFuncCargoSelecaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
+import br.gov.jfrj.siga.vraptor.Transacional;
 
 @Controller
 @Path("app/atributo")
@@ -76,6 +77,7 @@ public class AtributoController extends SrController {
 		result.include("acao", new SelecionavelVO(null,null));
 	}
 
+	@Transacional
 	@Path("/gravar")
 	@AssertAcesso(ADM_ADMINISTRAR)
 	public void gravarAtributo(SrAtributo atributo, Long objetivoAtributoId) throws Exception {
@@ -93,6 +95,7 @@ public class AtributoController extends SrController {
 		}
 	}
 
+	@Transacional
 	@Path("/desativar")
 	@AssertAcesso(ADM_ADMINISTRAR)
 	public void desativarAtributo(Long id) throws Exception {
@@ -101,6 +104,7 @@ public class AtributoController extends SrController {
 		result.use(Results.http()).body(item.toJson());
 	}
 
+	@Transacional
 	@Path("/reativar")
 	@AssertAcesso(ADM_ADMINISTRAR)
 	public void reativarAtributo(Long id) throws Exception {

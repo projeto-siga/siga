@@ -21,6 +21,19 @@ public interface ISigaApiV1 {
 		public String errormsg;
 	}
 
+	public class Marcador implements ISwaggerModel {
+		public String idMarcador;
+		public String descricao;
+		public String descricaoDetalhada;
+		public Boolean ativo;
+		public String tipoAplicacao;
+		public String tipoDataPlanejada;
+		public String tipoDataLimite;
+		public String tipoExibicao;
+		public String tipoJustificativa;
+		public String tipoInteressado;
+	}
+	
 	public class Pessoa implements ISwaggerModel {
 		public String idPessoa;
 		public String idPessoaIni;
@@ -87,6 +100,51 @@ public interface ISigaApiV1 {
 		public void run(AutenticarPostRequest req, AutenticarPostResponse resp) throws Exception;
 	}
 
+	public class MarcadoresIdPostRequest implements ISwaggerRequest {
+		public String id;
+		public String descricao;
+		public String descricaoDetalhada;
+		public String idGrupoMarcador;
+		public String cor;
+		public String icone;
+		public String tipoAplicacao;
+		public String tipoDataPlanejada;
+		public String tipoDataLimite;
+		public String tipoExibicao;
+		public String tipoJustificativa;
+		public String tipoInteressado;
+	}
+
+	public class MarcadoresIdPostResponse implements ISwaggerResponse {
+		public String id;
+	}
+
+	public interface IMarcadoresIdPost extends ISwaggerMethod {
+		public void run(MarcadoresIdPostRequest req, MarcadoresIdPostResponse resp) throws Exception;
+	}
+
+	public class MarcadoresPostRequest implements ISwaggerRequest {
+		public String descricao;
+		public String descricaoDetalhada;
+		public String idGrupoMarcador;
+		public String cor;
+		public String icone;
+		public String tipoAplicacao;
+		public String tipoDataPlanejada;
+		public String tipoDataLimite;
+		public String tipoExibicao;
+		public String tipoJustificativa;
+		public String tipoInteressado;
+	}
+
+	public class MarcadoresPostResponse implements ISwaggerResponse {
+		public String id;
+	}
+
+	public interface IMarcadoresPost extends ISwaggerMethod {
+		public void run(MarcadoresPostRequest req, MarcadoresPostResponse resp) throws Exception;
+	}
+
 	public class PessoasGetRequest implements ISwaggerRequest {
 		public String idPessoaIni;
 		public String texto;
@@ -137,5 +195,4 @@ public interface ISigaApiV1 {
 	public interface IAcessosGet extends ISwaggerMethod {
 		public void run(AcessosGetRequest req, AcessosGetResponse resp) throws Exception;
 	}
-
 }

@@ -1971,7 +1971,29 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 				.getAssinantesString(getAssinaturasComSenha(),getDtDoc());
 		String assinantesPorSenha = Documento
 				.getAssinantesStringComMatricula(getAssinaturasPorComSenha(),getDtDoc());
+		
+		if(Prop.isGovSP() && assinantesPorSenha != null && !"".equals(assinantesPorSenha)) {
+			Set<ExMovimentacao> listaAssinantesSenha1 = new TreeSet<ExMovimentacao>();
+			Set<ExMovimentacao> listaAssinantesSenha2 = new TreeSet<ExMovimentacao>();
+			Set<ExMovimentacao> listaAssinantesPor = new TreeSet<ExMovimentacao>();
+			
+			listaAssinantesPor.addAll(getAssinaturasPorComSenha());
+			listaAssinantesSenha1.addAll(getAssinaturasComSenha());
 
+			String porAss = "";
+			for (ExMovimentacao por : listaAssinantesPor) {
+				porAss = por.getDescrMov() != null ? por.getDescrMov().substring(por.getDescrMov().lastIndexOf(":"), por.getDescrMov().length()) : "";
+				for (ExMovimentacao ass : listaAssinantesSenha1) {
+					if(ass.getCadastrante().getId().equals(ass.getSubscritor().getId()) || (ass.getDescrMov() != null && ass.getDescrMov().indexOf(porAss) == -1)) {
+						listaAssinantesSenha2.add(ass);
+						break;
+					}
+				}
+			}
+			 assinantesSenha = Documento
+						.getAssinantesString(listaAssinantesSenha2,getDtDoc());
+		}
+		
 		if (assinantesToken.length() > 0)
 			retorno = "Assinado digitalmente por " + assinantesToken + ".\n";
 
@@ -2676,9 +2698,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			else if (o instanceof CpOrgaoUsuario)
 				s += ((CpOrgaoUsuario) o).getSigla();
 			else if (o instanceof DpLotacao)
-				s += ((DpLotacao) o).getSiglaCompleta();
+				s += ((DpLotacao) o).getNomeLotacao()+ " - " + ((DpLotacao) o).getSiglaCompleta();
 			else if (o instanceof DpPessoa)
-				s += ((DpPessoa) o).getSiglaCompleta();
+				s += ((DpPessoa) o).getNomePessoa() + " - " + ((DpPessoa) o).getSiglaCompleta();
 			else
 				s += o.toString();
 		}
@@ -2689,10 +2711,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public List<DpResponsavel> getResponsaveisPorPapel(ExPapel papel) {
 		List<DpResponsavel> lista = new ArrayList<DpResponsavel>();
 		List<ExMovimentacao> movs = getMobilGeral().getMovimentacoesPorTipo(
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL);
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL, true);
 		for (ExMovimentacao mov : movs) {
-			if (mov.isCancelada()
-					|| !papel.getIdPapel()
+			if (!papel.getIdPapel()
 							.equals(mov.getExPapel().getIdPapel()))
 				continue;
 			if (mov.getSubscritor() != null)

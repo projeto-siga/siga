@@ -362,6 +362,18 @@ public interface IExApiV1 {
 		public void run(DocumentosSiglaPesquisarSiglaGetRequest req, DocumentosSiglaPesquisarSiglaGetResponse resp) throws Exception;
 	}
 
+	public class DocSiglaMarcadoresDisponiveisGetRequest implements ISwaggerRequest {
+		public String sigla;
+	}
+
+	public class DocSiglaMarcadoresDisponiveisGetResponse implements ISwaggerResponse {
+		public List<Marcador> list;
+	}
+
+	public interface IDocSiglaMarcadoresDisponiveisGet extends ISwaggerMethod {
+		public void run(DocSiglaMarcadoresDisponiveisGetRequest req, DocSiglaMarcadoresDisponiveisGetResponse resp) throws Exception;
+	}
+
 	public class SugestaoPostRequest implements ISwaggerRequest {
 		public String nome;
 		public String email;

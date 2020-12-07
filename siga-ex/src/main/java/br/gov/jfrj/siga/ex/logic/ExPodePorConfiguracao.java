@@ -10,19 +10,19 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 
 public class ExPodePorConfiguracao implements Expression {
 
-	private CpTipoConfiguracao tpConf;
+	private long idTpConf;
 	private DpPessoa titular;
 	private DpLotacao lotaTitular;
 
-	public ExPodePorConfiguracao(CpTipoConfiguracao tpConf, DpPessoa titular, DpLotacao lotaTitular) {
-		this.tpConf = tpConf;
+	public ExPodePorConfiguracao(long idTpConf, DpPessoa titular, DpLotacao lotaTitular) {
+		this.idTpConf = idTpConf;
 		this.titular = titular;
 		this.lotaTitular = lotaTitular;
 	}
 
 	@Override
 	public boolean eval() {
-		return Ex.getInstance().getConf().podePorConfiguracao(titular, lotaTitular, tpConf.getIdTpConfiguracao());
+		return Ex.getInstance().getConf().podePorConfiguracao(titular, lotaTitular, idTpConf);
 	}
 
 	@Override

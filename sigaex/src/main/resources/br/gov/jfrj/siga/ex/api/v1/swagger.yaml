@@ -721,7 +721,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-  /doc/{sigla}/marcadores-disponiveis:
+  /documentos/{sigla}/marcadores-disponiveis:
     get:
       description: Obter lista de marcadores que podem ser aplicados a um móbil
       tags: [consulta]

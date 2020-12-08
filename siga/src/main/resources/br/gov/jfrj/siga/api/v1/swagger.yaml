@@ -200,27 +200,6 @@ paths:
           schema:
             $ref: "#/definitions/Error"            
   
-  /token/criar:
-    post:
-      summary: Cria token jwt a partir do user e password
-      tags: [auth]
-      parameters: 
-        - $ref: "#/parameters/username"
-        - $ref: "#/parameters/password"
-      responses:
-        200:
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              id_token:
-                type: string
-                description: Token JWT
-        500:
-          description: Error ocurred
-          schema:
-            $ref: "#/definitions/Error"
-
   /acessos:
     get:
       description: Listar os últimos acessos

@@ -88,6 +88,24 @@ public interface IExApiV1 {
 		public String nivelacesso;
 	}
 
+	public class ResultadoDePesquisa implements ISwaggerModel {
+		public String sigla;
+		public String nome;
+		public String siglaLotacao;
+	}
+
+	public class Marcador implements ISwaggerModel {
+		public String idMarcador;
+		public String grupo;
+		public String nome;
+		public Boolean ativo;
+		public String explicacao;
+		public String interessado;
+		public String planejada;
+		public String limite;
+		public String texto;
+	}
+
 	public class DocumentosSiglaArquivoGetRequest implements ISwaggerRequest {
 		public String contenttype;
 		public String sigla;
@@ -362,16 +380,16 @@ public interface IExApiV1 {
 		public void run(DocumentosSiglaPesquisarSiglaGetRequest req, DocumentosSiglaPesquisarSiglaGetResponse resp) throws Exception;
 	}
 
-	public class DocSiglaMarcadoresDisponiveisGetRequest implements ISwaggerRequest {
+	public class DocumentosSiglaMarcadoresDisponiveisGetRequest implements ISwaggerRequest {
 		public String sigla;
 	}
 
-	public class DocSiglaMarcadoresDisponiveisGetResponse implements ISwaggerResponse {
+	public class DocumentosSiglaMarcadoresDisponiveisGetResponse implements ISwaggerResponse {
 		public List<Marcador> list;
 	}
 
-	public interface IDocSiglaMarcadoresDisponiveisGet extends ISwaggerMethod {
-		public void run(DocSiglaMarcadoresDisponiveisGetRequest req, DocSiglaMarcadoresDisponiveisGetResponse resp) throws Exception;
+	public interface IDocumentosSiglaMarcadoresDisponiveisGet extends ISwaggerMethod {
+		public void run(DocumentosSiglaMarcadoresDisponiveisGetRequest req, DocumentosSiglaMarcadoresDisponiveisGetResponse resp) throws Exception;
 	}
 
 	public class SugestaoPostRequest implements ISwaggerRequest {
@@ -387,6 +405,7 @@ public interface IExApiV1 {
 	public interface ISugestaoPost extends ISwaggerMethod {
 		public void run(SugestaoPostRequest req, SugestaoPostResponse resp) throws Exception;
 	}
+
 
 	/* ESTE CÓDIGO DEVE SER MANTIDO POIS FOI GERADO MANUALMENTE.
 	 * 

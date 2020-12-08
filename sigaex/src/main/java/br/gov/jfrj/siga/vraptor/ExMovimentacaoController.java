@@ -65,13 +65,16 @@ import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpToken;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
@@ -2030,6 +2033,33 @@ public class ExMovimentacaoController extends ExController {
 				.podeDespachar(getTitular(), getLotaTitular(), builder.getMob()))) {
 			throw new AplicacaoException(
 					"Não é possível tramitar");
+		}
+		
+		if(lotaResponsavelSel != null && lotaResponsavelSel.getObjeto() != null && !Cp.getInstance().getConf().podePorConfiguracao(
+				null, lotaResponsavelSel.getObjeto(), 
+				CpTipoConfiguracao.TIPO_CONFIG_TRAMITAR_PARA_LOTACAO_SEM_USUARIOS_ATIVOS)) {
+			DpPessoaDaoFiltro filtro = new DpPessoaDaoFiltro();
+			filtro.setBuscarFechadas(Boolean.FALSE);
+			filtro.setNome("");
+			filtro.setLotacao(lotaResponsavelSel.getObjeto());
+			Integer qtde = CpDao.getInstance().consultarQuantidade(filtro);
+			DpSubstituicao subst = new DpSubstituicao();
+			subst.setTitular(new DpPessoa());
+			subst.setLotaTitular(lotaResponsavelSel.getObjeto());
+			
+			qtde += CpDao.getInstance().qtdeSubstituicoesAtivasPorTitular(subst);
+			
+			if(qtde == 0) {
+				result.include("msgCabecClass", "alert-danger");
+	    		result.include("mensagemCabec", "A " + SigaMessages.getMessage("usuario.lotacao") 
+	    			+ " informada não possui Usuário cadastrado ou ativo, para prosseguir com a tramitação informe outra " + SigaMessages.getMessage("usuario.lotacao"));
+	    		result.forwardTo(this).aTransferir(
+	    				sigla, idTpDespacho, tipoResponsavel, postback, dtMovString, subscritorSel, 
+	    				substituicao, titularSel, nmFuncaoSubscritor, idResp, tiposDespacho, descrMov, 
+	    				lotaResponsavelSel, responsavelSel, cpOrgaoSel, dtDevolucaoMovString, obsOrgao, protocolo);    		
+	    			return;
+				
+			}
 		}
 
 		Ex.getInstance()

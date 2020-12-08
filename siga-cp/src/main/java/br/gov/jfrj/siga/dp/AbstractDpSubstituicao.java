@@ -54,7 +54,14 @@ import br.gov.jfrj.siga.model.Objeto;
 				+ " where ((dps.titular = null and dps.lotaTitular.idLotacao in (select lot.idLotacao from DpLotacao as lot where lot.idLotacaoIni = :idLotaTitularIni)) or "
 				+ " dps.titular.idPessoa in (select pes.idPessoa from DpPessoa as pes where pes.idPessoaIni = :idTitularIni)) "
 				+ " and dps.dtFimRegistro = null "
-				+ " order by dps.dtIniSubst, dps.dtFimSubst ") })
+				+ " order by dps.dtIniSubst, dps.dtFimSubst "),
+		@NamedQuery(name = "qtdeSubstituicoesAtivasPorTitular", query = "select count(1) from DpSubstituicao as dps "
+				+ " where (dps.dtIniSubst < CURRENT_TIMESTAMP or dps.dtIniSubst = null) " 
+				+ " and (dps.dtFimSubst > CURRENT_TIMESTAMP or dps.dtFimSubst = null)"
+				+ " and ((dps.titular = null and dps.lotaTitular.idLotacao in (select lot.idLotacao from DpLotacao as lot where lot.idLotacaoIni = :idLotaTitularIni)) or "
+				+ " dps.titular.idPessoa in (select pes.idPessoa from DpPessoa as pes where pes.idPessoaIni = :idTitularIni)) "
+				+ " and dps.dtFimRegistro = null ")
+	})
 public abstract class AbstractDpSubstituicao extends Objeto implements
 		Serializable {
 

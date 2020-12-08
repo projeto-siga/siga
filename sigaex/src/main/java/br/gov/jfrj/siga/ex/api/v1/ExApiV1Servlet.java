@@ -224,7 +224,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPublicProperty("controlar.numeracao.expediente", "false");
 		addPublicProperty("recebimento.automatico", "true");
 		
-		addPublicProperty("exibe.nome.acesso", "true");
+		addPublicProperty("exibe.nome.acesso", "false");
 				
 		addPublicProperty("modelos.cabecalho.titulo", "JUSTIÇA FEDERAL");
 		addPublicProperty("modelos.cabecalho.subtitulo", null);

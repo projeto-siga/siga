@@ -539,6 +539,8 @@ public class SolicitacaoController extends SrController {
     
     private void setupFiltros(SrSolicitacaoFiltro filtro) {
     	
+    	if(filtro == null) return;
+    	
     	if(filtro.getSituacao() != null && filtro.getSituacao().getIdMarcador() != null && filtro.getSituacao().getDescrMarcador() == null) {
     		filtro.setSituacao(CpMarcador.AR.findById(filtro.getSituacao().getIdMarcador()));
     	}

@@ -26,7 +26,7 @@ public class BoletimInternoBL {
 			if (docPubl
 					.getMobilGeral()
 					.getMovimentacoesPorTipo(
-							ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO_PUBL_BI)
+							ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO_PUBL_BI, false)
 					.size() > 0)
 
 				throw new AplicacaoException(

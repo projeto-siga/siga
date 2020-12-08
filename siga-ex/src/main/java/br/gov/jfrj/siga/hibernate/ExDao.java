@@ -51,10 +51,10 @@ import org.jboss.logging.Logger;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.dp.CpTipoMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -89,7 +89,6 @@ import br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
 import br.gov.jfrj.siga.hibernate.ext.IMontadorQuery;
-import br.gov.jfrj.siga.hibernate.ext.MontadorQuery;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.persistencia.ExClassificacaoDaoFiltro;
@@ -533,7 +532,9 @@ public class ExDao extends CpDao {
 		if (flt.getUltMovIdEstadoDoc() != null
 				&& flt.getUltMovIdEstadoDoc() != 0) {
 
-			query.setParameter("ultMovIdEstadoDoc", flt.getUltMovIdEstadoDoc());
+//			query.setParameter("ultMovIdEstadoDoc", flt.getUltMovIdEstadoDoc());
+			CpMarcador marcador = ExDao.getInstance().consultar(flt.getUltMovIdEstadoDoc(), CpMarcador.class, false);
+			query.setParameter("idMarcadorIni", marcador.getHisIdIni());
 
 		} else {
 			query.setParameter("id1", 3L);
@@ -1580,8 +1581,7 @@ public class ExDao extends CpDao {
 	}
 
 	public List<CpMarcador> listarCpMarcadoresGerais() {
-		CpTipoMarcador marcador = consultar(CpTipoMarcador.TIPO_MARCADOR_GERAL,
-				CpTipoMarcador.class, false);
+		CpTipoMarcadorEnum marcador = CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL;
 		
 		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
 		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);
@@ -1606,32 +1606,39 @@ public class ExDao extends CpDao {
 		}
 		
 		criteriaQuery.where(predicateAnd);
-		return em().createQuery(criteriaQuery).getResultList();
+		List<CpMarcador> resultList = em().createQuery(criteriaQuery).getResultList();
+		resultList.sort(CpMarcador.ORDEM_COMPARATOR);
+		resultList.removeIf(m -> m.getHisDtFim() != null);
+		return resultList;
 	}
 	
 	
 
-	public List<CpMarcador> listarCpMarcadoresTaxonomiaAdministrada() {
-		
+	public List<CpMarcador> listarCpMarcadoresDaLotacao(DpLotacao lot) {
+		DpLotacao lotIni = lot.getLotacaoInicial();
 		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
 		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);
 		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
 		Predicate predicateAnd;
-		Predicate predicateEqualTipoMarcador  = criteriaBuilder.equal(cpMarcadorRoot.get("cpTipoMarcador"), CpTipoMarcador.TIPO_MARCADOR_TAXONOMIA_ADMINISTRADA);
-
-		predicateAnd = criteriaBuilder.and(predicateEqualTipoMarcador);
-	
+		Predicate predicateEqualTipoMarcador  = criteriaBuilder.equal(cpMarcadorRoot.get("cpTipoMarcador"), CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO);
+		Predicate predicateEqualLotacaoIni  = criteriaBuilder.equal(cpMarcadorRoot.get("dpLotacaoIni"), lotIni);
+		
+		predicateAnd = criteriaBuilder.and(predicateEqualTipoMarcador, predicateEqualLotacaoIni);
+		
 		criteriaQuery.where(predicateAnd);
 		return em().createQuery(criteriaQuery).getResultList();
 	}
 	
-	public List<CpMarcador> listarCpMarcadoresGeraisTaxonomiaAdministrada() {
+	public List<CpMarcador> listarCpMarcadoresDisponiveis(DpLotacao lot) {
 		List<CpMarcador> listaConcatenada = listarCpMarcadoresGerais();
-		List<CpMarcador> listaTaxonomia = listarCpMarcadoresTaxonomiaAdministrada();
+		List<CpMarcador> listaLotacao = listarCpMarcadoresDaLotacao(lot);
 		
-		if (listaTaxonomia != null) {
-			listaConcatenada.addAll(listaTaxonomia);	
+		if (listaLotacao != null) {
+			listaConcatenada.addAll(listaLotacao);	
 		}
+		
+		listaConcatenada.sort(CpMarcador.ORDEM_COMPARATOR);
+		listaConcatenada.removeIf(m -> m.getHisDtFim() != null);
 
 		return listaConcatenada;
 		
@@ -1813,8 +1820,10 @@ public class ExDao extends CpDao {
 			// Não conta os documentos que tiverem marcas na lista marcasAIgnorar
 			String queryMarcasAIgnorar = marcasAIgnorar.toString().replaceAll("\\[|\\]", "");
 			String queryMarcasAIgnorarFinal = "";
+			int i = 0;
 			// Para cada grupo solicitado, gera a query para contagem
 			for (GrupoItem grupoItem : grupos) {
+				i++;
 				if (!grupoItem.grupoHide && grupoItem.grupoMarcadores.size() > 0) {
 					queryMarcasAIgnorarFinal = queryMarcasAIgnorar;
 					// Se for do grupo AGUARDANDO_ANDAMENTO, nao conta se tiver marca do grupo CAIXA_DE_ENTRADA
@@ -1856,7 +1865,7 @@ public class ExDao extends CpDao {
 						  + " AND marca.id_marcador <> :marcaAssinSenha "
 						  + " AND marca.id_marcador <> :marcaMovAssinSenha "
 						  + " AND marca2.id_marca IS null "
-						 + " GROUP BY marca.id_ref )"
+						 + " GROUP BY marca.id_ref ) t" + i 
 //								+ " GROUP BY tab1.grupo_marcador ORDER BY tab1.grupo_marcador asc"
 						+ " UNION ALL ";
 				}
@@ -1903,11 +1912,12 @@ public class ExDao extends CpDao {
 //		long tempoIni = System.nanoTime();
 		queryString =
 					"select "
-					+ " marca, marcador, mobil, doc.dtAltDoc, doc.numExpediente "
+					+ " marca, marcador, mobil, doc.dtAltDoc, doc.numExpediente, mov.dtParam1, mov.dtParam2 "
 					+ " from ExMarca marca "
 					+ " inner join marca.exMobil mobil"
 					+ " inner join marca.cpMarcador marcador"
 					+ " inner join mobil.exDocumento doc"
+					+ " left join marca.exMovimentacao mov"
 					+ queryMarcasAIgnorar
 					+ " where (marca.dtIniMarca is null or marca.dtIniMarca < CURRENT_TIMESTAMP)"
 					+ " and (marca.dtFimMarca is null or marca.dtFimMarca > CURRENT_TIMESTAMP)"

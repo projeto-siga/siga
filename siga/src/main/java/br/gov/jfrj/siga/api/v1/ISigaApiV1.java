@@ -24,6 +24,19 @@ public interface ISigaApiV1 {
 		public String errormsg;
 	}
 
+	public class Marcador implements ISwaggerModel {
+		public String idMarcador;
+		public String descricao;
+		public String descricaoDetalhada;
+		public Boolean ativo;
+		public String tipoAplicacao;
+		public String tipoDataPlanejada;
+		public String tipoDataLimite;
+		public String tipoExibicao;
+		public String tipoJustificativa;
+		public String tipoInteressado;
+	}
+	
 	public class Pessoa implements ISwaggerModel {
 		public String idPessoa;
 		public String idPessoaIni;
@@ -175,6 +188,63 @@ public interface ISigaApiV1 {
 	public interface IStatusChaveGet extends ISwaggerMethod {
 		public void run(StatusChaveGetRequest req, StatusChaveGetResponse resp) throws Exception;
 	}
+	
+	public class LotacoesIdLotacaoIniMarcadoresGetRequest implements ISwaggerRequest {
+		public String idLotacaoIni;
+	}
+
+	public class LotacoesIdLotacaoIniMarcadoresGetResponse implements ISwaggerResponse {
+		public List<Marcador> list;
+	}
+
+	public interface ILotacoesIdLotacaoIniMarcadoresGet extends ISwaggerMethod {
+		public void run(LotacoesIdLotacaoIniMarcadoresGetRequest req, LotacoesIdLotacaoIniMarcadoresGetResponse resp) throws Exception;
+	}
+
+	public class MarcadoresIdPostRequest implements ISwaggerRequest {
+		public String id;
+		public String descricao;
+		public String descricaoDetalhada;
+		public String idGrupoMarcador;
+		public String cor;
+		public String icone;
+		public String tipoAplicacao;
+		public String tipoDataPlanejada;
+		public String tipoDataLimite;
+		public String tipoExibicao;
+		public String tipoJustificativa;
+		public String tipoInteressado;
+	}
+
+	public class MarcadoresIdPostResponse implements ISwaggerResponse {
+		public String id;
+	}
+
+	public interface IMarcadoresIdPost extends ISwaggerMethod {
+		public void run(MarcadoresIdPostRequest req, MarcadoresIdPostResponse resp) throws Exception;
+	}
+
+	public class MarcadoresPostRequest implements ISwaggerRequest {
+		public String descricao;
+		public String descricaoDetalhada;
+		public String idGrupoMarcador;
+		public String cor;
+		public String icone;
+		public String tipoAplicacao;
+		public String tipoDataPlanejada;
+		public String tipoDataLimite;
+		public String tipoExibicao;
+		public String tipoJustificativa;
+		public String tipoInteressado;
+	}
+
+	public class MarcadoresPostResponse implements ISwaggerResponse {
+		public String id;
+	}
+
+	public interface IMarcadoresPost extends ISwaggerMethod {
+		public void run(MarcadoresPostRequest req, MarcadoresPostResponse resp) throws Exception;
+	}
 
 	public class PessoaGetRequest implements ISwaggerRequest {
 		public String texto;
@@ -224,5 +294,4 @@ public interface ISigaApiV1 {
 	public interface ILotacaoIdLotacaoIniLotacaoAtualGet extends ISwaggerMethod {
 		public void run(LotacaoIdLotacaoIniLotacaoAtualGetRequest req, LotacaoIdLotacaoIniLotacaoAtualGetResponse resp) throws Exception;
 	}
-
 }

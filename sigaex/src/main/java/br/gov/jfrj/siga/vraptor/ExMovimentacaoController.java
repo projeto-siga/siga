@@ -2,13 +2,6 @@ package br.gov.jfrj.siga.vraptor;
 
 import static br.gov.jfrj.siga.ex.ExMobil.adicionarIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso;
 import static br.gov.jfrj.siga.ex.ExMobil.removerIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso;
-import static com.google.common.base.Predicates.alwaysFalse;
-import static com.google.common.base.Predicates.in;
-import static com.google.common.base.Predicates.not;
-import static com.google.common.base.Predicates.or;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.isEmpty;
-import static com.google.common.collect.Lists.newArrayList;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -41,12 +34,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -100,6 +91,8 @@ import br.gov.jfrj.siga.ex.ItemDeProtocoloComparator;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
+import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
@@ -2385,17 +2378,20 @@ public class ExMovimentacaoController extends ExController {
 	@Get("/app/expediente/mov/marcar")
 	public void aMarcar(final String sigla) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+
 		buscarDocumento(builder);
 
 		ExMobil mob = builder.getMob();
-		if (!Ex.getInstance().getComp().podeMarcar(getTitular(), getLotaTitular(), mob)) 
-			throw new AplicacaoException("Não é possível fazer marcação");
-
+		
+		ExPodeMarcar.afirmar(mob, getTitular(), getLotaTitular());
+		
 		ExMobil mobilGeral = mob.getDoc().getMobilGeral();
 		result.include("sigla", sigla);
 		result.include("mob", mob);
-		result.include("listaMarcadores", this.getListaMarcadoresGeraisTaxonomiaAdministrada());
+		result.include("listaMarcadores", this.getListaMarcadoresGerais());
 		result.include("listaMarcadoresAtivos", this.getListaMarcadoresAtivos(mobilGeral));
+		result.include("listaMarcadoresLotacao", dao
+				.listarCpMarcadoresPorLotacaoESublotacoes(getLotaTitular(), true));
 		result.include("dataLimite", this.getDataLimiteDemanda(mobilGeral));
 	}
 	
@@ -2445,8 +2441,8 @@ public class ExMovimentacaoController extends ExController {
 	 *         {@link ExDocumento Documento} devidamente ordenados de acordo com
 	 *         {@link CpMarcador#getOrdem()}
 	 */
-	private List<CpMarcador> getListaMarcadoresGeraisTaxonomiaAdministrada() {
-		List<CpMarcador> marcadores = dao().listarCpMarcadoresGeraisTaxonomiaAdministrada();
+	private List<CpMarcador> getListaMarcadoresGerais() {
+		List<CpMarcador> marcadores = dao().listarCpMarcadoresGerais();
 		marcadores.sort(CpMarcador.ORDEM_COMPARATOR);
 
 		return marcadores;
@@ -2455,108 +2451,40 @@ public class ExMovimentacaoController extends ExController {
 	/**
 	 * 
 	 * @param sigla
-	 * @param idMarcador
+	 * @param marcador
 	 * @param ativo
 	 * @throws Exception
-	 * @deprecated remover. Funcionalidade substituída por {@link #salvarMarcas(Integer, String, List, List)}
 	 */
-	@Deprecated
 	@Transacional
 	@Post("/app/expediente/mov/marcar_gravar")
-	public void aMarcarGravar(final String sigla, final Long idMarcador,
-			final Boolean ativo) throws Exception {
+	public void aMarcarGravar(final String sigla, final Long marcador, final DpPessoaSelecao subscritor_pessoaSel, final DpLotacaoSelecao lotaSubscritor_lotacaoSel,
+			final String planejada, String limite, final String texto) throws Exception {
+		Date dtPlanejada = Data.parse(planejada);
+		Date dtLimite = Data.parse(limite);
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 		buscarDocumento(builder);
 
-		if (!Ex.getInstance().getComp()
-				.podeMarcar(getTitular(), getLotaTitular(), builder.getMob()))
-			throw new AplicacaoException("Não é possível fazer marcação");
-
-		if (idMarcador == null)
+		if (marcador == null)
 			throw new AplicacaoException("Marcador deve ser informado.");
 
-		CpMarcador m = dao().consultar(idMarcador, CpMarcador.class, false);
+		CpMarcador m = dao().consultar(marcador, CpMarcador.class, false);
 
-		Set<CpMarcador> lMarcadoresAtivos = this
-				.getListaMarcadoresAtivos(builder.getMob().getDoc().getMobilGeral());
-
-		boolean atual = lMarcadoresAtivos.contains(m);
-
-		if (ativo != atual) {
-			final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
-					.novaInstancia();
-			movimentacaoBuilder.setIdMarcador(idMarcador);
-			final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
-			Ex.getInstance()
-					.getBL()
-					.vincularMarcador(getCadastrante(), getLotaTitular(),
-							builder.getMob(), mov.getDtMov(),
-							mov.getLotaResp(), mov.getResp(),
-							mov.getSubscritor(), mov.getTitular(),
-							mov.getDescrMov(), mov.getNmFuncaoSubscritor(),
-							mov.getMarcador(), ativo, null);
-		}
-		resultOK();
-	}
-
-	private void salvarMarca(BuscaDocumentoBuilder builder, ExMovimentacaoBuilder movimentacaoBuilder, Long idMarcador,
-			boolean ativo, String strDataLimite) throws Exception {
-		movimentacaoBuilder.setIdMarcador(idMarcador);
+		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
+				.novaInstancia();
+		movimentacaoBuilder.setIdMarcador(marcador);
+		movimentacaoBuilder.setSubscritorSel(subscritor_pessoaSel);
+		movimentacaoBuilder.setLotaSubscritorSel(lotaSubscritor_lotacaoSel);
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
-
-		// A data virá da página no formato "yyyy-MM-dd"
-		Date dateLimiteDemanda = (ativo && StringUtils.isNotEmpty(strDataLimite))
-				? DateFormatUtils.ISO_DATE_FORMAT.parse(strDataLimite)
-				: null;
-
-		Ex.getInstance().getBL().vincularMarcador(getCadastrante(), getLotaTitular(), //
-				builder.getMob(), mov.getDtMov(), //
-				mov.getLotaResp(), mov.getResp(), //
-				mov.getSubscritor(), mov.getTitular(), mov.getDescrMov(), mov.getNmFuncaoSubscritor(),
-				mov.getMarcador(), ativo, dateLimiteDemanda);
-	}
-
-	@Transacional
-	@Post("/app/expediente/mov/salvar_marcas")
-	public void salvarMarcas(final Integer postback, final String sigla, List<Long> marcadoresOriginais,
-			List<Long> marcadoresSelecionados, final String dataLimite, final String dataLimiteOriginal)
-			throws Exception {
-		// Será usado para indicar um {@link CpMarcador Marcador} de demanda judicial
-		// que continua checado mas mudou de data limite.
-		Predicate<Long> mudouDataLimiteDemandaPredicate = Objects.equals(dataLimite, dataLimiteOriginal) ? alwaysFalse()
-				: in(CpMarcador.MARCADORES_DEMANDA_JUDICIAL);
-
-		//if null inicializa lista de marcadores
-		marcadoresOriginais = marcadoresOriginais == null ? Collections.emptyList() : marcadoresOriginais;
-		marcadoresSelecionados = marcadoresSelecionados == null ? Collections.emptyList() : marcadoresSelecionados;
-		
-		List<Long> idMarcasARemover = isEmpty(marcadoresOriginais) ? Collections.emptyList()
-				: newArrayList(filter(marcadoresOriginais,
-						or(not(in(marcadoresSelecionados)), mudouDataLimiteDemandaPredicate)));
-		List<Long> idMarcasAAdicionar = isEmpty(marcadoresSelecionados) ? Collections.emptyList()
-				: newArrayList(filter(marcadoresSelecionados,
-						or(not(in(marcadoresOriginais)), mudouDataLimiteDemandaPredicate)));
-
-		if (!idMarcasAAdicionar.isEmpty() || !idMarcasARemover.isEmpty()) {
-			final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
-			buscarDocumento(builder);
-
-			if (!Ex.getInstance().getComp().podeMarcar(getTitular(), getLotaTitular(), builder.getMob())) {
-				throw new AplicacaoException("Não é possível fazer marcação");
-			}
-
-			final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder.novaInstancia();
-
-			for (Long idMarcaARemover : idMarcasARemover) {
-				salvarMarca(builder, movimentacaoBuilder, idMarcaARemover, false, null);
-			}
-			for (Long idMarcaAAdicionar : idMarcasAAdicionar) {
-				salvarMarca(builder, movimentacaoBuilder, idMarcaAAdicionar, true, dataLimite);
-			}
-		}
-
-		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+		mov.setDescrMov(texto);
+		Ex.getInstance()
+				.getBL()
+				.marcar(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular(),
+						builder.getMob(), mov.getDtMov(),
+						mov.getSubscritor(), mov.getLotaSubscritor(),
+						mov.getDescrMov(), 
+						mov.getMarcador(), dtPlanejada, dtLimite);
+		ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getSigla());
 	}
 
 	@Get("app/expediente/mov/transferir_lote")
@@ -3713,6 +3641,8 @@ public class ExMovimentacaoController extends ExController {
 							getLotaTitular(), mob, mov))
 				throw new AplicacaoException(
 						"Não é possível cancelar o documento vinculado.");
+		} else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO) {
+			ExPodeCancelarMarcacao.afirmar(mov, getTitular(), getLotaTitular());
 		} else {
 			if (!Ex.getInstance().getComp()
 					.podeCancelar(getTitular(), getLotaTitular(), mob, mov))
@@ -4969,10 +4899,6 @@ public class ExMovimentacaoController extends ExController {
 		}
 	}
 	
-	private Object getListaMarcadoresTaxonomiaAdministrada() {
-		return dao().listarCpMarcadoresTaxonomiaAdministrada();
-	}
-	
 	@Get("/app/expediente/mov/publicacao_transparencia")
 	public void aPublicarTransparencia(String sigla, String descrPublicacao,
 			String mensagem) throws Exception {
@@ -4988,13 +4914,11 @@ public class ExMovimentacaoController extends ExController {
 		final ExMovimentacao movimentacao = movimentacaoBuilder
 				.construir(dao());
 
-		List<CpMarcador> marcadores = dao().listarCpMarcadoresTaxonomiaAdministrada();
+		List<CpMarcador> marcadores = dao().listarCpMarcadoresGerais();
 		Set<CpMarcador> marcadoresAtivo = (Set<CpMarcador>) this.getListaMarcadoresAtivos(documentoBuilder.getMob().getDoc().getMobilGeral());
 		if (marcadores != null) {
 			marcadores.removeAll(marcadoresAtivo);
 		}
-
-		
 
 		result.include("sigla", sigla);
 		result.include("mob", documentoBuilder.getMob());

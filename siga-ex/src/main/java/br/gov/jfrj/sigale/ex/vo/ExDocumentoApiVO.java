@@ -34,6 +34,7 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
+import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
 import br.gov.jfrj.siga.ex.util.ExGraphColaboracao;
 import br.gov.jfrj.siga.ex.util.ExGraphRelacaoDocs;
 import br.gov.jfrj.siga.ex.util.ExGraphTramitacao;
@@ -378,7 +379,7 @@ public class ExDocumentoApiVO extends ExApiVO {
 				Ex.getInstance().getComp().podeFazerVinculacaoPapel(titular, lotaTitular, mob));
 
 		vo.addAcao("folder_star", "Definir Marcador", "/app/expediente/mov", "marcar",
-				Ex.getInstance().getComp().podeMarcar(titular, lotaTitular, mob));
+				new ExPodeMarcar(mob, titular, lotaTitular).eval());
 
 		vo.addAcao("cd", "Download do Conteúdo", "/expediente/doc", "anexo",
 				Ex.getInstance().getComp().podeDownloadConteudo(titular, lotaTitular, mob));

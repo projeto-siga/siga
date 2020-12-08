@@ -14,7 +14,6 @@ import br.com.caelum.vraptor.InterceptionException;
 import br.com.caelum.vraptor.Intercepts;
 import br.com.caelum.vraptor.controller.ControllerMethod;
 import br.com.caelum.vraptor.core.InterceptorStack;
-import br.com.caelum.vraptor.interceptor.ApplicationLogicException;
 import br.com.caelum.vraptor.interceptor.ExceptionHandlerInterceptor;
 import br.com.caelum.vraptor.interceptor.Interceptor;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -45,7 +44,7 @@ public class AplicacaoExceptionInterceptor implements Interceptor {
 			Object resourceInstance) throws InterceptionException {
 		try {
 			stack.next(method, resourceInstance);
-		} catch (ApplicationLogicException e) {
+		} catch (InterceptionException e) {
 			Throwable rootCause = Throwables.getRootCause(e);
 			if (rootCause instanceof AplicacaoException) {
 				request.setAttribute("exceptionGeral", rootCause);

@@ -1,14 +1,11 @@
 package br.gov.jfrj.siga.api.v1;
 
-import java.io.InputStream;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
-
 import com.crivano.swaggerservlet.ISwaggerMethod;
 import com.crivano.swaggerservlet.ISwaggerModel;
 import com.crivano.swaggerservlet.ISwaggerRequest;
 import com.crivano.swaggerservlet.ISwaggerResponse;
-import com.crivano.swaggerservlet.ISwaggerResponseFile;
 
 public interface ISigaApiV1 {
 	public class Status implements ISwaggerModel {
@@ -49,14 +46,6 @@ public interface ISigaApiV1 {
 		public FuncaoConfianca funcaoConfianca;
 	}
 
-	public class PessoaAtual implements ISwaggerModel {
-		public String idPessoa;
-		public String idPessoaIni;
-		public String sigla;
-		public String nome;
-		public String siglaLotacao;
-	}
-
 	public class Orgao implements ISwaggerModel {
 		public String idOrgao;
 		public String sigla;
@@ -95,6 +84,11 @@ public interface ISigaApiV1 {
 		public String idpai;
 	}
 
+	public class AcessoItem implements ISwaggerModel {
+		public Date datahora;
+		public String ip;
+	}
+
 	public class AutenticarPostRequest implements ISwaggerRequest {
 	}
 
@@ -104,101 +98,6 @@ public interface ISigaApiV1 {
 
 	public interface IAutenticarPost extends ISwaggerMethod {
 		public void run(AutenticarPostRequest req, AutenticarPostResponse resp) throws Exception;
-	}
-
-	public class DocumentoSiglaArquivoGetRequest implements ISwaggerRequest {
-		public String contenttype;
-		public String sigla;
-		public Boolean estampa;
-		public Boolean completo;
-		public Boolean volumes;
-	}
-
-	public class DocumentoSiglaArquivoGetResponse implements ISwaggerResponse {
-		public String uuid;
-		public String jwt;
-	}
-
-	public interface IDocumentoSiglaArquivoGet extends ISwaggerMethod {
-		public void run(DocumentoSiglaArquivoGetRequest req, DocumentoSiglaArquivoGetResponse resp) throws Exception;
-	}
-
-	public class DownloadJwtFilenameGetRequest implements ISwaggerRequest {
-		public String jwt;
-		public String filename;
-		public String disposition;
-	}
-
-	public class DownloadJwtFilenameGetResponse implements ISwaggerResponse, ISwaggerResponseFile {
-		public String contenttype = "application/pdf";
-		public String contentdisposition = "attachment";
-		public Long contentlength;
-		public InputStream inputstream;
-		public Map<String, List<String>> headerFields;
-
-		public String getContenttype() {
-			return contenttype;
-		}
-		public void setContenttype(String contenttype) {
-			this.contenttype = contenttype;
-		}
-		public String getContentdisposition() {
-			return contentdisposition;
-		}
-		public void setContentdisposition(String contentdisposition) {
-			this.contentdisposition = contentdisposition;
-		}
-		public Long getContentlength() {
-			return contentlength;
-		}
-		public void setContentlength(Long contentlength) {
-			this.contentlength = contentlength;
-		}
-		public InputStream getInputstream() {
-			return inputstream;
-		}
-		public void setInputstream(InputStream inputstream) {
-			this.inputstream = inputstream;
-		}
-		public Map<String, List<String>> getHeaderFields() {
-			return headerFields;
-		}
-		public void setHeaderFields(Map<String, List<String>> headerFields) {
-			this.headerFields = headerFields;
-		}
-	}
-
-	public interface IDownloadJwtFilenameGet extends ISwaggerMethod {
-		public void run(DownloadJwtFilenameGetRequest req, DownloadJwtFilenameGetResponse resp) throws Exception;
-	}
-
-	public class StatusChaveGetRequest implements ISwaggerRequest {
-		public String chave;
-	}
-
-	public class StatusChaveGetResponse implements ISwaggerResponse {
-		public String mensagem;
-		public Double indice;
-		public Double contador;
-		public Double bytes;
-		public String errormsg;
-		public String stacktrace;
-	}
-
-	public interface IStatusChaveGet extends ISwaggerMethod {
-		public void run(StatusChaveGetRequest req, StatusChaveGetResponse resp) throws Exception;
-	}
-	
-	public class LotacoesIdLotacaoIniMarcadoresGetRequest implements ISwaggerRequest {
-		public String idLotacaoIni;
-	}
-
-	public class LotacoesIdLotacaoIniMarcadoresGetResponse implements ISwaggerResponse {
-		public List<Marcador> list;
-	}
-
-	public interface ILotacoesIdLotacaoIniMarcadoresGet extends ISwaggerMethod {
-		public void run(LotacoesIdLotacaoIniMarcadoresGetRequest req, LotacoesIdLotacaoIniMarcadoresGetResponse resp) throws Exception;
 	}
 
 	public class MarcadoresIdPostRequest implements ISwaggerRequest {
@@ -246,52 +145,54 @@ public interface ISigaApiV1 {
 		public void run(MarcadoresPostRequest req, MarcadoresPostResponse resp) throws Exception;
 	}
 
-	public class PessoaGetRequest implements ISwaggerRequest {
+	public class PessoasGetRequest implements ISwaggerRequest {
+		public String idPessoaIni;
 		public String texto;
 		public String cpf;
 	}
 
-	public class PessoaGetResponse implements ISwaggerResponse {
+	public class PessoasGetResponse implements ISwaggerResponse {
 		public List<Pessoa> list;
 	}
 
-	public interface IPessoaGet extends ISwaggerMethod {
-		public void run(PessoaGetRequest req, PessoaGetResponse resp) throws Exception;
+	public interface IPessoasGet extends ISwaggerMethod {
+		public void run(PessoasGetRequest req, PessoasGetResponse resp) throws Exception;
 	}
 
-	public class PessoaIdPessoaIniPessoaAtualGetRequest implements ISwaggerRequest {
-		public String idPessoaIni;
-	}
-
-	public class PessoaIdPessoaIniPessoaAtualGetResponse implements ISwaggerResponse {
-		public PessoaAtual pessoaAtual;
-	}
-
-	public interface IPessoaIdPessoaIniPessoaAtualGet extends ISwaggerMethod {
-		public void run(PessoaIdPessoaIniPessoaAtualGetRequest req, PessoaIdPessoaIniPessoaAtualGetResponse resp) throws Exception;
-	}
-
-	public class LotacaoGetRequest implements ISwaggerRequest {
+	public class LotacoesGetRequest implements ISwaggerRequest {
 		public String texto;
-	}
-
-	public class LotacaoGetResponse implements ISwaggerResponse {
-		public List<Lotacao> list;
-	}
-
-	public interface ILotacaoGet extends ISwaggerMethod {
-		public void run(LotacaoGetRequest req, LotacaoGetResponse resp) throws Exception;
-	}
-
-	public class LotacaoIdLotacaoIniLotacaoAtualGetRequest implements ISwaggerRequest {
 		public String idLotacaoIni;
 	}
 
-	public class LotacaoIdLotacaoIniLotacaoAtualGetResponse implements ISwaggerResponse {
-		public LotacaoAtual lotacaoAtual;
+	public class LotacoesGetResponse implements ISwaggerResponse {
+		public List<Lotacao> list;
 	}
 
-	public interface ILotacaoIdLotacaoIniLotacaoAtualGet extends ISwaggerMethod {
-		public void run(LotacaoIdLotacaoIniLotacaoAtualGetRequest req, LotacaoIdLotacaoIniLotacaoAtualGetResponse resp) throws Exception;
+	public interface ILotacoesGet extends ISwaggerMethod {
+		public void run(LotacoesGetRequest req, LotacoesGetResponse resp) throws Exception;
+	}
+
+	public class TokenCriarPostRequest implements ISwaggerRequest {
+		public String username;
+		public String password;
+	}
+
+	public class TokenCriarPostResponse implements ISwaggerResponse {
+		public String id_token;
+	}
+
+	public interface ITokenCriarPost extends ISwaggerMethod {
+		public void run(TokenCriarPostRequest req, TokenCriarPostResponse resp) throws Exception;
+	}
+
+	public class AcessosGetRequest implements ISwaggerRequest {
+	}
+
+	public class AcessosGetResponse implements ISwaggerResponse {
+		public List<AcessoItem> list;
+	}
+
+	public interface IAcessosGet extends ISwaggerMethod {
+		public void run(AcessosGetRequest req, AcessosGetResponse resp) throws Exception;
 	}
 }

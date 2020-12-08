@@ -171,8 +171,10 @@
 		var timeOut;
 		$(elem).popover({
 			trigger: "hover",
-			html : true,
-		})
+			placement: "auto",
+			html : true
+		});
+
 		timeOut = setTimeout(setDataContent, 700, elem);
 	}
 	
@@ -189,18 +191,23 @@
 	
 	function exibirBodyDoc(div_id, sigla, elem) {
 		$.ajax({
-		    url: "/sigaex/api/v1/doc/"+ sigla + "/html",
+		    url: "/sigaex/api/v1/documentos/"+ sigla + "/html",
 		    contentType: "application/json",
 		    headers: {"Authorization": "${jwt}"},
 		    dataType: 'json',
 		    success: function(result) {
 			    conteudoDoc = new DOMParser().parseFromString(result.html, "text/html");
-				conteudo = conteudoDoc.getElementsByTagName("BODY")[0].innerText.substring(0, 500)
-					.replace(/\s*\n+|\s*\n\r+|\s*\r+/g, '<br>')
+				strhtml = conteudoDoc.getElementsByTagName("BODY")[0].outerHTML
+					.replace(/(\r\n|\n|\r)/gm, "")
+					.replace(/<p[^>]*>/gi,'PARAGRAFOQUEBRA');
+				conteudo = new DOMParser().parseFromString(strhtml, "text/html") 
+        			.documentElement.textContent	
+					.replace(/PARAGRAFOQUEBRA?/g,'<p>').substring(0, 500)
 					+ "... <br /><br /><i>Clique no botão para ver o documento completo.</i>";
 				$('#'+div_id).removeClass("spinner-border");
-				$('#'+div_id).html(conteudo);
+ 				$('#'+div_id).html(conteudo);
 				$(elem).attr("data-content", conteudo);
+				$(elem).attr("data-container", "body");
 		    },				
 		    error: function (response, status, error) {
 	        	msgErro = "Ocorreu um erro na solicitação: " + response.responseJSON.errormsg;
@@ -211,3 +218,11 @@
 	    });
 	}
 </script>
+<style type="text/css">
+    .popover{
+        max-width:600px;
+    }
+    .popover p{
+		margin-bottom: 5px; /* between paragraphs */
+    }
+</style>

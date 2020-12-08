@@ -664,7 +664,21 @@ public class Excel {
 				Iterator<Cell> cellIterator = row.cellIterator();
 				Cell cell;
 				
-				//SIGLA DO ORGAO				
+				/* 6 --------  CPF -----------*/
+				celula = retornaConteudo(row.getCell(6, Row.CREATE_NULL_AS_BLANK));
+				cpf = celula.replaceAll("[^0-9]", "");
+				cpf = StringUtils.leftPad(cpf, 11, "0");
+				if(!"".equals(cpf.trim())) {
+					if(!validarCPF(cpf)) {
+						problemas.append("Linha " + linha +": CPF inválido" + System.lineSeparator());
+					}
+				} else {
+					problemas.append("Linha " + linha +": CPF em branco" + System.lineSeparator());
+				}
+				/* ----------  END ---------- */
+				
+				
+				/* 0 --------  SIGLA DO ORGAO -----------*/			
 				celula = retornaConteudo(row.getCell(0, Row.CREATE_NULL_AS_BLANK));
 				if("".equals(celula.trim())) {
 					problemas.append("Linha " + linha +": ÓRGÃO em branco" + System.lineSeparator());
@@ -673,8 +687,9 @@ public class Excel {
 						problemas.append("Linha " + linha +": ÓRGÃO inválido" + System.lineSeparator());
 					}
 				}
+				/* ----------  END ---------- */
 
-				//NOME DO CARGO
+				/* 1 --------  NOME DO CARGO -----------*/	
 				celula = retornaConteudo(row.getCell(1, Row.CREATE_NULL_AS_BLANK));
 				if(!"".equals(celula.trim())) {
 					cargo.setOrgaoUsuario(orgaoUsuario);
@@ -701,8 +716,9 @@ public class Excel {
 				} else {
 					problemas.append("Linha " + linha +": CARGO em branco" + System.lineSeparator());
 				}
-				
-				//NOME FUNCAO DE CONFIANCA
+				/* ----------  END ---------- */
+							
+				/* 2 --------  NOME FUNCAO DE CONFIANCA -----------*/	
 				celula = retornaConteudo(row.getCell(2, Row.CREATE_NULL_AS_BLANK));
 				if(!"".equals(celula.trim())) {
 					funcao.setOrgaoUsuario(orgaoUsuario);
@@ -731,8 +747,9 @@ public class Excel {
 				} else {
 					funcao = null;
 				}
+				/* ----------  END ---------- */
 				
-				//NOME DA LOTACAO
+				/* 3 --------  NOME DA LOTACAO -----------*/	
 				celula = retornaConteudo(row.getCell(3, Row.CREATE_NULL_AS_BLANK));
 				if(!"".equals(celula.trim())) {
 					lotacao.setOrgaoUsuario(orgaoUsuario);
@@ -761,54 +778,9 @@ public class Excel {
 				} else {
 					problemas.append("Linha " + linha +": LOTAÇÃO em branco" + System.lineSeparator());
 				}
+				/* ----------  END ---------- */
 				
-				//DATA DE NASCIMENTO
-				if(retornaConteudo(row.getCell(6, Row.CREATE_NULL_AS_BLANK)) != "") {
-					if(row.getCell(6).getCellType() == HSSFCell.CELL_TYPE_NUMERIC && HSSFDateUtil.isCellDateFormatted(row.getCell(6, Row.CREATE_NULL_AS_BLANK))){
-						date = row.getCell(6).getDateCellValue();
-						
-						if(date.compareTo(new Date()) > 0) {
-			    			problemas.append( "Linha " + linha + ": DATA DE NASCIMENTO inválida" + System.lineSeparator());
-			    		}
-					} else if(row.getCell(6).getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
-						problemas.append(validarData(String.valueOf(((Double)row.getCell(6, Row.CREATE_NULL_AS_BLANK).getNumericCellValue()).longValue()), linha));
-						if(problemas != null && problemas.toString().equals("")) {
-							dataString = String.valueOf(((Double)row.getCell(6).getNumericCellValue()).longValue()).replaceAll("[^0-9]", "");
-							date = formato.parse(dataString);	
-							
-							if(date.compareTo(new Date()) > 0) {
-				    			problemas.append( "Linha " + linha + ": DATA DE NASCIMENTO inválida" + System.lineSeparator());
-				    		}
-						}
-						
-					} else if(row.getCell(6).getCellType() == HSSFCell.CELL_TYPE_STRING) {
-						problemas.append(validarData(row.getCell(6, Row.CREATE_NULL_AS_BLANK).getStringCellValue(), linha));
-						if(problemas != null && problemas.toString().equals("")) {
-							dataString = row.getCell(6, Row.CREATE_NULL_AS_BLANK).getStringCellValue();
-							date = formato.parse(dataString.replace("-", "").replace("/", "").trim());	
-							
-							if(date.compareTo(new Date()) > 0) {
-				    			problemas.append( "Linha " + linha + ": DATA DE NASCIMENTO inválida" + System.lineSeparator());
-				    		}
-						}
-						
-					} else {
-						problemas.append("Linha " + linha + ": DATA DE NASCIMENTO inválida" + System.lineSeparator());
-					}
-				}
-				//CPF
-				celula = retornaConteudo(row.getCell(7, Row.CREATE_NULL_AS_BLANK));
-				cpf = celula.replaceAll("[^0-9]", "");
-				cpf = StringUtils.leftPad(cpf, 11, "0");
-				if(!"".equals(cpf.trim())) {
-					if(!validarCPF(cpf)) {
-						problemas.append("Linha " + linha +": CPF inválido" + System.lineSeparator());
-					}
-				} else {
-					problemas.append("Linha " + linha +": CPF em branco" + System.lineSeparator());
-				}
-				
-				//NOME DA PESSOA
+				/* 4 --------  NOME DA PESSOA -----------*/
 				celula = retornaConteudo(row.getCell(4, Row.CREATE_NULL_AS_BLANK));
 				problemas.append(validarNomePessoa(celula.trim(), linha, 60));
 				
@@ -826,15 +798,47 @@ public class Excel {
 						break;
 					}
 				}
+				/* ----------  END ---------- */
 				
-				//Nome Abreviado
 				
-				celula = retornaConteudo(row.getCell(5, Row.CREATE_NULL_AS_BLANK));
-				problemas.append(validarNomeAbreviado(celula.trim(), linha, 40));
-				nomeExibicao = celula;
-				
-				//EMAIL
-				celula = retornaConteudo(row.getCell(8, Row.CREATE_NULL_AS_BLANK)).trim().toLowerCase();
+				/* 5 --------  DATA DE NASCIMENTO -----------*/
+				if(retornaConteudo(row.getCell(5, Row.CREATE_NULL_AS_BLANK)) != "") {
+					if(row.getCell(5).getCellType() == HSSFCell.CELL_TYPE_NUMERIC && HSSFDateUtil.isCellDateFormatted(row.getCell(5, Row.CREATE_NULL_AS_BLANK))){
+						date = row.getCell(5).getDateCellValue();
+						
+						if(date.compareTo(new Date()) > 0) {
+			    			problemas.append( "Linha " + linha + ": DATA DE NASCIMENTO inválida" + System.lineSeparator());
+			    		}
+					} else if(row.getCell(5).getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
+						problemas.append(validarData(String.valueOf(((Double)row.getCell(5, Row.CREATE_NULL_AS_BLANK).getNumericCellValue()).longValue()), linha));
+						if(problemas != null && problemas.toString().equals("")) {
+							dataString = String.valueOf(((Double)row.getCell(5).getNumericCellValue()).longValue()).replaceAll("[^0-9]", "");
+							date = formato.parse(dataString);	
+							
+							if(date.compareTo(new Date()) > 0) {
+				    			problemas.append( "Linha " + linha + ": DATA DE NASCIMENTO inválida" + System.lineSeparator());
+				    		}
+						}
+						
+					} else if(row.getCell(5).getCellType() == HSSFCell.CELL_TYPE_STRING) {
+						problemas.append(validarData(row.getCell(5, Row.CREATE_NULL_AS_BLANK).getStringCellValue(), linha));
+						if(problemas != null && problemas.toString().equals("")) {
+							dataString = row.getCell(5, Row.CREATE_NULL_AS_BLANK).getStringCellValue();
+							date = formato.parse(dataString.replace("-", "").replace("/", "").trim());	
+							
+							if(date.compareTo(new Date()) > 0) {
+				    			problemas.append( "Linha " + linha + ": DATA DE NASCIMENTO inválida" + System.lineSeparator());
+				    		}
+						}
+						
+					} else {
+						problemas.append("Linha " + linha + ": DATA DE NASCIMENTO inválida" + System.lineSeparator());
+					}
+				}
+				/* ----------  END ---------- */
+			
+				/* 7 --------  EMAIL -----------*/
+				celula = retornaConteudo(row.getCell(7, Row.CREATE_NULL_AS_BLANK)).trim().toLowerCase();
 				email = celula;
 				
 				if(!"".equals(celula.trim())) {
@@ -857,40 +861,40 @@ public class Excel {
 				if(i > 0) {
 					problemas.append("Linha " + linha +": E-MAIL informado está cadastrado para outro CPF" + System.lineSeparator());
 				}
-				
-				/*
-				 * Alteracao 20/04/2020
-				 * Insercao dos campos RG, Orcao Expeditor, UF, Data Expedicao
-				 */
-				
-				//RG				
-				celula = retornaConteudo(row.getCell(9, Row.CREATE_NULL_AS_BLANK));
+				/* ----------  END ---------- */
+
+				/* 8 --------  RG -----------*/
+				celula = retornaConteudo(row.getCell(8, Row.CREATE_NULL_AS_BLANK));
 				rg = celula;
+				/* ----------  END ---------- */
 				
-				//RG Orgao Expeditor
-				celula = retornaConteudo(row.getCell(10, Row.CREATE_NULL_AS_BLANK));
+
+				/* 9 --------  RG Orgao Expeditor -----------*/
+				celula = retornaConteudo(row.getCell(9, Row.CREATE_NULL_AS_BLANK));
 				orgexp = celula;
+				/* ----------  END ---------- */
 				
-				//UF RG
-				celula = retornaConteudo(row.getCell(11, Row.CREATE_NULL_AS_BLANK));
+				/* 10 --------  UF RG -----------*/
+				celula = retornaConteudo(row.getCell(10, Row.CREATE_NULL_AS_BLANK));
 				ufexp = celula;
 				if(!"".equals(ufexp.trim())) {
 					if(CpDao.getInstance().consultaSiglaUF(ufexp)==null)
 						problemas.append( "Linha " + linha + ": UF DO RG inválido" + System.lineSeparator());
 				}
+				/* ----------  END ---------- */
 				
-				//RG Data Expedicao
-				if(retornaConteudo(row.getCell(12, Row.CREATE_NULL_AS_BLANK)) != "") {
-					if(row.getCell(12).getCellType() == HSSFCell.CELL_TYPE_NUMERIC && HSSFDateUtil.isCellDateFormatted(row.getCell(12, Row.CREATE_NULL_AS_BLANK))){
-						dateExp = row.getCell(12).getDateCellValue();
+				/* 11 --------  RG Data Expedicao -----------*/
+				if(retornaConteudo(row.getCell(11, Row.CREATE_NULL_AS_BLANK)) != "") {
+					if(row.getCell(11).getCellType() == HSSFCell.CELL_TYPE_NUMERIC && HSSFDateUtil.isCellDateFormatted(row.getCell(11, Row.CREATE_NULL_AS_BLANK))){
+						dateExp = row.getCell(11).getDateCellValue();
 						
 						if(dateExp.compareTo(new Date()) > 0) {
 			    			problemas.append( "Linha " + linha + ": DATA DE EXPEDIÇÃO DO RG inválida" + System.lineSeparator());
 			    		}
-					} else if(row.getCell(12).getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
-						problemas.append(validarData(String.valueOf(((Double)row.getCell(12, Row.CREATE_NULL_AS_BLANK).getNumericCellValue()).longValue()), linha, "expedição"));
+					} else if(row.getCell(11).getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
+						problemas.append(validarData(String.valueOf(((Double)row.getCell(11, Row.CREATE_NULL_AS_BLANK).getNumericCellValue()).longValue()), linha, "expedição"));
 						if(problemas != null && problemas.toString().equals("")) {
-							dataString = String.valueOf(((Double)row.getCell(12).getNumericCellValue()).longValue()).replaceAll("[^0-11]", "");
+							dataString = String.valueOf(((Double)row.getCell(11).getNumericCellValue()).longValue()).replaceAll("[^0-11]", "");
 							dateExp = formato.parse(dataString);	
 							
 							if(dateExp.compareTo(new Date()) > 0) {
@@ -898,10 +902,10 @@ public class Excel {
 				    		}
 						}
 						
-					} else if(row.getCell(12).getCellType() == HSSFCell.CELL_TYPE_STRING) {
-						problemas.append(validarData(row.getCell(12, Row.CREATE_NULL_AS_BLANK).getStringCellValue(), linha, "expedição"));
+					} else if(row.getCell(11).getCellType() == HSSFCell.CELL_TYPE_STRING) {
+						problemas.append(validarData(row.getCell(11, Row.CREATE_NULL_AS_BLANK).getStringCellValue(), linha, "expedição"));
 						if(problemas != null && problemas.toString().equals("")) {
-							dataString = row.getCell(12, Row.CREATE_NULL_AS_BLANK).getStringCellValue();
+							dataString = row.getCell(11, Row.CREATE_NULL_AS_BLANK).getStringCellValue();
 							dateExp = formato.parse(dataString.replace("-", "").replace("/", "").trim());	
 							
 							if(dateExp.compareTo(new Date()) > 0) {
@@ -913,10 +917,15 @@ public class Excel {
 						problemas.append("Linha " + linha + ": DATA DE EXPEDIÇÃO DO RG inválida" + System.lineSeparator());
 					}
 				}
+				/* ----------  END ---------- */
+
+				/* 12 --------  Nome Abreviado -----------*/
+				celula = retornaConteudo(row.getCell(12, Row.CREATE_NULL_AS_BLANK));
+				problemas.append(validarNomeAbreviado(celula.trim(), linha, 40));
+				nomeExibicao = celula;
+				/* ----------  END ---------- */
 				
-				/*
-				 * Fim da Alteracao 20/04/2020
-				 */
+
 				
 				if(cargo != null && lotacao != null && cpf != null && !"".equals(cpf) && !Long.valueOf(0).equals(Long.valueOf(cpf))) {
 					dpPessoaFiltro = new DpPessoaDaoFiltro();

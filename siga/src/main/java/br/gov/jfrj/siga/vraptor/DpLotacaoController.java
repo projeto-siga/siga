@@ -370,9 +370,12 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		lotacao = null;	
 		if(id != null) {
 			lotacao = dao().consultar(id, DpLotacao.class, false);
+			lotacaoNova.setIsSuspensa(lotacao.getIsSuspensa());
+		} else {
+			lotacaoNova.setIsSuspensa(0);
 		}
 		
-		if(id == null || (id != null && lotacao != null && (!nmLotacao.equalsIgnoreCase(lotacao.getNomeLotacao()) || !siglaLotacao.equalsIgnoreCase(lotacao.getSiglaLotacao())
+		if(id == null || (id != null && lotacao != null && (!nmLotacao.equals(lotacao.getNomeLotacao()) || !siglaLotacao.equalsIgnoreCase(lotacao.getSiglaLotacao())
 										|| (lotacao.getDataFim() == null && "false".equals(situacao)) || (lotacao.getDataFim() != null && "true".equals(situacao)) 
 										|| (isExternaLotacao != null && ((lotacao.getIsExternaLotacao() == null) || lotacao.getIsExternaLotacao() == 0))
 										|| (isExternaLotacao == null && ((lotacao.getIsExternaLotacao() != null) && lotacao.getIsExternaLotacao() == 1))
@@ -492,6 +495,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		lotNova.setLocalidade(lotAnt.getLocalidade());
 		lotNova.setLotacaoPai(lotAnt.getLotacaoPai() != null ? lotAnt.getLotacaoPai().getLotacaoAtual() : null);
 		lotNova.setOrgaoUsuario(lotAnt.getOrgaoUsuario());
+		lotNova.setIsSuspensa(lotAnt.getIsSuspensa());
 	}
 	
 	public void copiarPessoa(DpPessoa pesAnt, DpPessoa pesNova) {
@@ -515,7 +519,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	}
 	
 	@Transacional
-    @Get("/app/lotacao/ativarInativar")
+    @Post("/app/lotacao/ativarInativar")
     public void ativarInativar(final Long id) throws Exception{
         DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
         
@@ -545,6 +549,55 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		          }
             }
         }
+        this.result.redirectTo(this).lista(0, null, "");
+    }
+	
+	@Transacional
+    @Post("/app/lotacao/suspender")
+    public void suspender(final Long id) throws Exception{
+		
+        DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
+        DpLotacao lotacaoNova = new DpLotacao();
+        DpLotacao lotacaoFilhoNova = new DpLotacao();
+        DpLotacao lotacaoFilhoAntiga = new DpLotacao();
+		Date data = new Date(System.currentTimeMillis());
+		DpPessoa pessoaNova = null;
+        List<DpPessoa> listPessoa = CpDao.getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE);
+        
+        copiaLotacao(lotacao, lotacaoNova);
+    	
+        //ativar
+        if(lotacao.getIsSuspensa() != null && lotacao.getIsSuspensa().equals(1)) {
+        	lotacaoNova.setIsSuspensa(0);
+        } else {//suspender 
+        	lotacaoNova.setIsSuspensa(1);
+        }
+        
+    	dao().gravarComHistorico(lotacaoNova, lotacao, null, getIdentidadeCadastrante());
+        
+        //movimentar as pessoas e lotacoes filhos para nova lotacao
+		for (DpPessoa dpPessoa : listPessoa) {
+			pessoaNova = new DpPessoa();
+			if(dpPessoa.getLotacao().getIdInicial().equals(lotacaoNova.getIdLotacaoIni())) {
+				pessoaNova.setLotacao(lotacaoNova);
+			} else {
+				if(dpPessoa.getLotacao().getLotacaoPai() != null && lotacaoNova.getId().equals(dpPessoa.getLotacao().getLotacaoAtual().getLotacaoPai().getId())) {
+					pessoaNova.setLotacao(dpPessoa.getLotacao().getLotacaoAtual());
+				} else {
+					//grava nova lotacao filho e setar na pessoa
+					lotacaoFilhoNova = new DpLotacao();
+					lotacaoFilhoAntiga =  dpPessoa.getLotacao().getLotacaoAtual();
+					
+					lotacaoFilhoNova.setDataInicio(data);
+					copiaLotacao(lotacaoFilhoAntiga, lotacaoFilhoNova);
+					
+					dao().gravarComHistorico(lotacaoFilhoNova, lotacaoFilhoAntiga, data, getIdentidadeCadastrante());
+					pessoaNova.setLotacao(lotacaoFilhoNova);
+				}
+			}				
+			copiarPessoa(dpPessoa, pessoaNova);
+			dao().gravarComHistorico(pessoaNova, dpPessoa, data, getIdentidadeCadastrante());
+		}
         this.result.redirectTo(this).lista(0, null, "");
     }
     

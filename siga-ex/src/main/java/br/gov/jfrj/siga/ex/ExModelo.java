@@ -22,6 +22,7 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -88,17 +89,13 @@ public class ExModelo extends AbstractExModelo implements Sincronizavel, Selecio
 	}
 
 	public boolean isDescricaoAutomatica() {
-		try {
-			if ("template/freemarker".equals(getConteudoTpBlob())
-					&& getConteudoBlobMod2() != null
-					&& (new String(getConteudoBlobMod2(), "utf-8"))
-							.contains("@descricao"))
+		if ("template/freemarker".equals(getConteudoTpBlob())) {
+			byte[] blob = getConteudoBlobMod2();
+			if (blob == null) return false;
+			String freemarker = new String(getConteudoBlobMod2(), StandardCharsets.UTF_8);
+			if (freemarker.contains("@descricao"))
 				return true;
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-
 		return false;
 	}
 

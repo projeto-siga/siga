@@ -20,6 +20,7 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.TreeSet;
 
 import javax.persistence.Basic;
@@ -208,10 +209,10 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"),
 		@NamedQuery(name = "listarDocPendenteAssinatura", query = "select doc "
 				+ "			from ExDocumento doc where doc.idDoc in (select distinct(exDocumento.idDoc) from ExMobil mob where mob.idMobil in "
-				+ "			(select exMobil.idMobil from ExMarca label where label.cpMarcador.idMarcador = 25 and label.dpPessoaIni = :idPessoaIni)) order by doc.dtDoc desc"),
+				+ "			(select exMobil.idMobil from ExMarca label where label.cpMarcador.idMarcador = 25 and label.dpPessoaIni.idPessoa = :idPessoaIni)) order by doc.dtDoc desc"),
 		@NamedQuery(name = "listarDocPendenteAssinaturaERevisado", query = "select doc "
 				+ "			from ExDocumento doc where doc.idDoc in (select distinct(exDocumento.idDoc) from ExMobil mob where mob.idMobil in "
-				+ "			(select exMobil.idMobil from ExMarca label where label.cpMarcador.idMarcador = 71 and label.dpPessoaIni = :idPessoaIni)) order by doc.dtDoc desc"),
+				+ "			(select exMobil.idMobil from ExMarca label where label.cpMarcador.idMarcador = 71 and label.dpPessoaIni.idPessoa = :idPessoaIni)) order by doc.dtDoc desc"),
 		@NamedQuery(name = "consultarExDocumentoClassificados", query = "select doc from ExDocumento doc left join fetch doc.exClassificacao"
 				+ "		where doc.exClassificacao.codificacao like :mascara"
 				+ "		and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario"
@@ -1009,7 +1010,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setOrgaoUsuario(CpOrgaoUsuario orgaoUsuario) {
 		this.orgaoUsuario = orgaoUsuario;
-		if (conteudoBlobDoc==null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
+		if (orgaoPermiteHcp() && orgaoPermiteHcp() && conteudoBlobDoc==null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
 			cpArquivo = CpArquivo.updateOrgaoUsuario(cpArquivo, orgaoUsuario);
 		}
 	}
@@ -1095,7 +1096,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setConteudoTpDoc(final java.lang.String conteudoTp) {
 		this.conteudoTpDoc = conteudoTp;
-		if (conteudoBlobDoc==null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
+		if (orgaoPermiteHcp() && conteudoBlobDoc==null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
 			cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, this.conteudoTpDoc);
 		}
 	}
@@ -1120,8 +1121,19 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		if (this.cpArquivo==null && (conteudoBlobDoc!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"))))) {
 			conteudoBlobDoc = createBlob;
 		} else if(cacheConteudoBlobDoc != null){
-			cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobDoc);
+			if(orgaoPermiteHcp())
+				cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobDoc);
+			else
+				conteudoBlobDoc = createBlob;
 		}
+	}
+	
+	
+	private boolean orgaoPermiteHcp() {
+		List<String> orgaos = Prop.getList("/siga.armazenamento.orgaos");
+		if(orgaos == null || "*".equals(orgaos.get(0)) || orgaos.stream().anyMatch(orgao -> orgao.equals(this.orgaoUsuario.getSigla())) )
+			return true;
+		return false;
 	}
 	
 //	public void armazenar() {

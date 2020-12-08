@@ -599,9 +599,9 @@ public class ExDocumentoVO extends ExVO {
 				"vincularPapel", Ex.getInstance().getComp()
 						.podeFazerVinculacaoPapel(titular, lotaTitular, mob));
 
-		vo.addAcao("folder_star", "Definir Marcador", "/app/expediente/mov",
-				"marcar", Ex.getInstance().getComp()
-						.podeMarcar(titular, lotaTitular, mob));
+//		vo.addAcao("folder_star", "Definir Marcador", "/app/expediente/mov",
+//				"marcar", Ex.getInstance().getComp()
+//						.podeMarcar(titular, lotaTitular, mob));
 
 		vo.addAcao(
 				"cd",
@@ -737,7 +737,7 @@ public class ExDocumentoVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeRefazer(titular, lotaTitular, mob),
 						SigaMessages.getMessage("mensagem.cancela.documento"),
-				null, null, null, "once");
+				null, null, null, "once siga-btn-refazer");
 
 		vo.addAcao(
 				"arrow_divide",

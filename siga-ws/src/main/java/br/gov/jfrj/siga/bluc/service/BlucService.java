@@ -158,7 +158,7 @@ public class BlucService {
 	}
 
 	public static byte[] calcSha1(byte[] content) throws NoSuchAlgorithmException {
-		MessageDigest md = MessageDigest.getInstance("SHA1");
+		MessageDigest md = MessageDigest.getInstance("SHA-1");
 		md.reset();
 		md.update(content);
 		byte[] output = md.digest();
@@ -166,7 +166,7 @@ public class BlucService {
 	}
 
 	public static byte[] calcSha256(byte[] content) throws NoSuchAlgorithmException {
-		MessageDigest md = MessageDigest.getInstance("SHA256");
+		MessageDigest md = MessageDigest.getInstance("SHA-256");
 		md.reset();
 		md.update(content);
 		byte[] output = md.digest();

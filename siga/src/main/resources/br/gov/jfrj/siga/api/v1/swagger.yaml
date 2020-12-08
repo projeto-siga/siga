@@ -2,10 +2,10 @@ swagger: '2.0'
 
 info:
   version: "1.0.0"
-  title: ExApiV1
+  title: SigaApiV1
   description: API para o Siga-Doc
 
-basePath: /sigaex/api/v1
+basePath: /siga/api/v1
 schemes: [http,https]
 consumes: [application/json,application/x-www-form-urlencoded]
 produces: [application/json]
@@ -13,8 +13,10 @@ produces: [application/json]
 tags:
   - name: auth
     description: Autenticação
-  - name: download
-    description: Download
+  - name: cadastro
+    description: Consulta nos Cadastros
+  - name: utils
+    description: Utilitários
     
 securityDefinitions:
   Basic:
@@ -31,63 +33,82 @@ parameters:
   sigla:
     name: sigla
     in: path
-    description: Sigla do mobil
+    description: Sigla da entidade
     type: string
     required: true
-  completo:
-    name: completo
+
+  username:
+    name: username
     in: query
-    description: Informar true se deseja receber todos os arquivos juntados e anexos
-    required: false
-    type: boolean
-  estampa:
-    name: estampa
-    in: query
-    description: Informar true se deseja receber o PDF sem estampas
-    required: false
-    type: boolean
-  volumes:
-    name: volumes
-    in: query
-    description: Informar true se deseja receber uma compilação com todos os volumes de um processo
-    required: false
-    type: boolean
-  pdf:
-    name: pdf
-    in: path
-    description: Referência para o PDF que foi enviado previamente para o servidor
-    type: string
-    required: true
-  jwt:
-    name: jwt
-    in: path
-    description: JWT que referencia um artefato a ser baixado
+    description: Sigla do usuário
     required: true
     type: string
-  filename:
-    name: filename
-    in: path
-    description: Nome do arquivo de um artefato a ser baixado
+  password:
+    name: password
+    in: query
+    description: Password do usuário
     required: true
     type: string
-  disposition:
-    name: disposition
-    in: query
-    description: Informar attachment se desejar receber como um download
+  lotacao:
+    name: lotacao
+    in: formData
+    description: Sigla completa da lotação integrada ao Siga
     required: false
     type: string
-  contenttype:
-    name: contenttype
-    in: query
-    description: Informar o tipo de arquivo desejado, pode ser application/pdf ou text/html
+  matricula:
+    name: matricula
+    in: formData
+    description: Sigla completa da matrícula do usuário do Siga
     required: false
     type: string
-  chave:
-    name: chave
-    in: path
-    description: Chave que referencia um processo assíncrono
-    required: true
+  orgao:
+    name: orgao
+    in: formData
+    description: Sigla completa do órgão externo ao Siga
+    required: false
     type: string
+  matriculaQuery:
+    name: matricula
+    in: query
+    description: Sigla completa da matrícula
+    required: false
+    type: string
+  texto:
+    name: texto
+    in: query
+    description: Texto a ser pesquisado
+    required: false
+    type: string    
+  cpf:
+    name: cpf
+    in: query
+    description: CPF do usuário, somente números sem ponto ou traço
+    required: false
+    type: string
+  idPessoaIni:
+    name: idPessoaIni
+    in: query
+    description: Identificador da Pessoa Inicial
+    required: false
+    type: string    
+  idPessoa:
+    name: idPessoa
+    in: query
+    description: Identificador da Pessoa (id)
+    required: false
+    type: string    
+  idLotacao:
+    name: idLotacao
+    in: query
+    description: Identificador da Lotação (id)
+    required: false
+    type: string         
+  idLotacaoIni:
+    name: idLotacaoIni
+    in: query
+    description: Identificador da Lotação Inicial
+    required: false
+    type: string            
 
 
 ################################################################################
@@ -114,90 +135,88 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
-  /documento/{sigla}/arquivo:
+
+  /pessoas:
     get:
-      summary: Inicia o processo de geração do PDF completo de um documento para visualização
-      tags: [download]
+      summary: "Pesquisa de pessoas"
+      description: "Retorna uma lista de pessoas. A pesquisa será feita de acordo com os parâmetros informados: 
+        <ul><li><b>id=</b> Pesquisa a Pessoa atual da Pessoa com determinado id inicial.</li>
+        <li><b>texto=</b> Pesquisa as Pessoas cuja Matrícula ou nome contém uma determinada palavra.</li>
+        <li><b>cpf=</b> Pesquisa as Pessoas cadastradas com determinado CPF</li></ul>"
+      tags: [cadastro]
       security:
         - Bearer: []
       parameters:
-        - $ref: "#/parameters/contenttype"
-        - $ref: "#/parameters/sigla"
-        - $ref: "#/parameters/estampa"
-        - $ref: "#/parameters/completo"
-        - $ref: "#/parameters/volumes"
+        - $ref: "#/parameters/idPessoaIni"
+        - $ref: "#/parameters/texto"
+        - $ref: "#/parameters/cpf"
       responses:
         200:
           description: Successful response
           schema:
             type: object
             properties:
-              uuid:
-                type: string
-                description: UUID que pode ser usado como chave para obter status da geração do PDF
-              jwt:
-                type: string
-                description: JWT com as informações para download do PDF
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Pessoa"
+        403:
+          description: Acesso não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Nenhuma Pessoa foi encontrada para os parâmetros informados.
+          schema:
+            $ref: "#/definitions/Error"                
         500:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
 
-  /download/{jwt}/{filename}:
+  /lotacoes:
     get:
-      summary: Faz o download de um artefato qualquer, baseado nas informações contidas em um JWT
-      tags: [download]
+      summary: "Pesquisa de lotações"
+      description: "Retorna uma lista de lotações. A pesquisa será feita de acordo com os parâmetros informados:
+        <ul><li><b>idLotacaoIni=</b>Pesquisa a Lotação Atual da Lotação Inicial solicitada.</li>
+        <li><b>texto=</b>Pesquisa as lotacoes cuja sigla ou nome contém uma determinada palavra.</li></ul>"
+      tags: [cadastro]
+      security:
+        - Bearer: []
       parameters:
-        - $ref: "#/parameters/jwt"
-        - $ref: "#/parameters/filename"
-        - $ref: "#/parameters/disposition"
-      responses:
-        200:
-          description: Successful response
-          schema:
-            type: file
-          headers:
-            Content-Type:
-              type: string
-              description: application/pdf
-            Content-Disposition:
-              type: string
-              description: attachment
-        500:
-          description: Error ocurred
-          schema:
-            $ref: "#/definitions/Error"
-            
-  /status/{chave}:
-    get:
-      tags: [download]
-      parameters:
-        - $ref: "#/parameters/chave"
-      summary: Obtem o status de uma operação assíncrona
+        - $ref: "#/parameters/texto"
+        - $ref: "#/parameters/idLotacaoIni"
       responses:
         200:
           description: Successful response
           schema:
             type: object
             properties:
-              mensagem:
-                type: string
-                description: Mensagem
-              indice:
-                type: number
-                description: Quantos passos já foram executados
-              contador:
-                type: number
-                description: Número total de passos a serem executados
-              bytes:
-                type: number
-                description: Tamanho total do payload até o momento
-              errormsg:
-                type: string
-                description: Mensagem de erro se houver
-              stacktrace:
-                type: string
-                description: Detalhamento do erro
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Lotacao"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"            
+  
+  /acessos:
+    get:
+      description: Listar os últimos acessos
+      tags: [utils]
+      security:
+        - Bearer: []      
+      parameters: []
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/AcessoItem"
         500:
           description: Error ocurred
           schema:
@@ -235,3 +254,130 @@ definitions:
     properties:
       errormsg:
         type: string
+
+  Pessoa:
+    type: object
+    description: Dados de uma determinada Pessoa
+    properties:
+      idPessoa:
+        type: string
+        description: Id da pessoa
+      idPessoaIni:
+        type: string        
+        description: Id inicial da pessoa
+      sigla:
+        type: string
+        description: Sigla da pessoa
+      nome:
+        type: string        
+        description: Nome da pessoa
+      siglaLotacao:
+        type: string          
+        description: Sigla da lotação da pessoa
+      isExternaPessoa:
+        type: boolean
+        description: Devolve true se for pessoa externa e false se não for
+      lotacao:
+        $ref: "#/definitions/Lotacao"
+      cargo:
+        $ref: "#/definitions/Cargo"
+      funcaoConfianca:
+        $ref: "#/definitions/FuncaoConfianca"
+  
+  Orgao:
+    type: object
+    description: Dados do Órgão da pessoa para perfil de acesso
+    properties:
+      idOrgao:
+        type: string
+        description: Id do Órgão da Pessoa
+      sigla:
+        type: string
+        description: Sigla do Órgão da Pessoa
+      nome:
+        type: string
+        description: Nome do Órgão da Pessoa
+
+  Lotacao:
+    type: object
+    description: Dados de uma determinada Lotação
+    properties:
+      idLotacao:
+        type: string
+        description: Id da lotação
+      idLotacaoIni:
+        type: string
+        description: Id inicial da lotação 
+      sigla:
+        type: string
+        description: Sigla completa da Lotação (com o órgão)
+      siglaLotacao:
+        type: string
+        description: Sigla da lotação (sem o órgão)
+      nome:
+        type: string
+        description: Nome da lotação
+      orgao:
+        $ref: "#/definitions/Orgao"
+
+  LotacaoAtual:
+    type: object
+    properties:
+      idLotacao:
+        type: string
+      idLotacaoIni:
+        type: string        
+      sigla:
+        type: string
+      nome:
+        type: string
+      orgao:
+        type: string        
+
+  Cargo:
+    type: object
+    description: Dados do Cargo da Pessoa
+    properties:
+      idCargo:
+        type: string
+        description: Id do Cargo
+      idExterna:
+        type: string
+        description: id do Cargo Externo
+      sigla:
+        type: string
+        description: Sigla do Cargo
+      nome: 
+        type: string
+        description: Nome do Cargo
+
+  FuncaoConfianca:
+    type: object
+    description: Dados da Função de Confiança da Pessoa
+    properties:
+      idFuncaoConfianca:
+        type: string
+        description: Id da função de confiança
+      idExterna:
+        type: string
+        description: id da função de confiança externa
+      sigla:
+        type: string
+        description: Sigla da função de confiança
+      nome: 
+        type: string
+        description: Nome da função de confiança
+      idpai:
+        type: string
+        description: id da função de confiança pai
+
+  AcessoItem:
+    description: Acessos recentes
+    type: object
+    properties:
+      datahora:
+        type: string
+        format: date-time
+      ip:
+        type: string
+        

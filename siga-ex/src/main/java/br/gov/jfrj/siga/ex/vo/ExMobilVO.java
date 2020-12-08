@@ -40,6 +40,7 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExParte;
 import br.gov.jfrj.siga.ex.logic.ExPodeAnotar;
+import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
 
 public class ExMobilVO extends ExVO {
 
@@ -170,7 +171,7 @@ public class ExMobilVO extends ExVO {
 				movs.add(new ExMovimentacaoVO(this, mov, cadastrante, titular, lotaTitular));
 			}
 		else
-			for (ExMovimentacao mov : mob.getMovimentacoesPorTipo(tpMov)) {
+			for (ExMovimentacao mov : mob.getMovimentacoesPorTipo(tpMov, false)) {
 				if (!movAssinada) {
 					if (!mov.isAssinada() && !mov.isCancelada())
 						movs.add(new ExMovimentacaoVO(this, mov, cadastrante, titular,
@@ -407,6 +408,9 @@ public class ExMobilVO extends ExVO {
 		
 		addAcao(AcaoVO.builder().nome("_Anotar").icone("note_add").acao("/app/expediente/mov/anotar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAnotar(mob, titular, lotaTitular)).build());
+		
+		addAcao(AcaoVO.builder().nome("Definir Marca").icone("folder_star").modal("definirMarcaModal")
+				.exp(new ExPodeMarcar(mob, titular, lotaTitular)).build());
 		
 		if (mob.isVia() || mob.isVolume()) {
 			addAcao("attach",

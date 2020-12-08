@@ -111,13 +111,15 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	 *         específico de movimentação.
 	 * 
 	 */
-	public List<ExMovimentacao> getMovimentacoesPorTipo(long tpMov) {
+	public List<ExMovimentacao> getMovimentacoesPorTipo(long tpMov, boolean somenteAtivas) {
 
 		final Set<ExMovimentacao> movs = getExMovimentacaoSet();
 		List<ExMovimentacao> movsTp = new ArrayList<ExMovimentacao>();
 
 		if (movs != null)
 			for (final ExMovimentacao m : movs) {
+				if (somenteAtivas && m.isCancelada())
+					continue;
 				if (m.getExTipoMovimentacao().getIdTpMov().equals(tpMov))
 					movsTp.add(m);
 			}
@@ -2164,8 +2166,8 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	}
 
 	public Set<ExMovimentacao> getTransferenciasPendentesDeDevolucao(ExMobil mob) {
-		List<ExMovimentacao> transferencias = mob.getMovimentacoesPorTipo(3);
-		transferencias.addAll(mob.getMovimentacoesPorTipo(6));
+		List<ExMovimentacao> transferencias = mob.getMovimentacoesPorTipo(3, false);
+		transferencias.addAll(mob.getMovimentacoesPorTipo(6, false));
 		transferencias.removeAll(mob.getMovimentacoesCanceladas());
 		Set<ExMovimentacao> transferenciasComData = new TreeSet<ExMovimentacao>();
 
@@ -2179,10 +2181,35 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return transferenciasComData;
 	}
 
+	/**
+	 * Retorna as {@link ExMovimentacao Movimentações} de determinado tipo e que
+	 * <i>não {@link ExMovimentacao#getExMovimentacaoCanceladora() foram
+	 * canceladas}</i>.
+	 * 
+	 * @param idTpMov Tipo de Movimentação solicitada
+	 * @return As Movimentações do tipo Solicitado.
+	 * @see #getMovsNaoCanceladas(long, boolean)
+	 */
 	public Set<ExMovimentacao> getMovsNaoCanceladas(long idTpMov) {
 		return getMovsNaoCanceladas(idTpMov, false);
 	}
 
+	/**
+	 * Retorna as {@link ExMovimentacao Movimentações} de determinado tipo e que
+	 * <i>não {@link ExMovimentacao#getExMovimentacaoCanceladora() foram
+	 * canceladas}</i>.
+	 * 
+	 * @param idTpMov                  Tipo de Movimentação solicitada
+	 * @param apenasNaoReferenciadoras <code>true</code> se as Movimentações
+	 *                                 solicitadas <b>não</b> devem fazer
+	 *                                 {@link ExMovimentacao#getExMovimentacaoRef()
+	 *                                 referências a outras Movimentações}. Serve
+	 *                                 para, por exemplo, não retornar movimentações
+	 *                                 de autenticação de anexos, mas apenas de
+	 *                                 documento
+	 * @return As Movimentações do tipo Solicitado.
+	 * @see #getExMovimentacaoSet()
+	 */
 	public Set<ExMovimentacao> getMovsNaoCanceladas(long idTpMov, boolean apenasNaoReferenciadoras) {
 		// Edson: o apenasNaoReferenciadoras serve para, por exemplo, não
 		// retornar movimentações

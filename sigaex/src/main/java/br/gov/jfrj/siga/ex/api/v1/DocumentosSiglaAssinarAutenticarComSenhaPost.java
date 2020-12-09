@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
+import com.crivano.swaggerservlet.SwaggerException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -59,13 +60,12 @@ abstract class DocumentosSiglaAssinarAutenticarComSenhaPost {
 	protected void executar(String sigla, BiConsumer<String, String> preenchedorResposta) throws Exception {
 		// Necessário pois é chamado o método "realPath" durante a criação do
 		// PDF.
-		CurrentRequest.set(
-				new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
+		try (ApiContext ctx = new ApiContext(true, true)) {
+			CurrentRequest.set(
+					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
+			ApiContext.assertAcesso("");
+			SigaObjects so = ApiContext.getSigaObjects();		
 
-		SwaggerHelper.buscarEValidarUsuarioLogado();
-		SigaObjects so = SwaggerHelper.getSigaObjects();
-
-		try {
 			DpPessoa cadastrante = so.getCadastrante();
 			DpPessoa titular = cadastrante;
 			DpLotacao lotaTitular = cadastrante.getLotacao();
@@ -80,6 +80,8 @@ abstract class DocumentosSiglaAssinarAutenticarComSenhaPost {
 					false, false);
 
 			preenchedorResposta.accept(mob.doc().getCodigo(), Objects.toString(retornoAssinatura, "OK"));
+		} catch (AplicacaoException | SwaggerException e) {
+			throw e;
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
 			throw e;

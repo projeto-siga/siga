@@ -6,7 +6,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import com.crivano.swaggerservlet.PresentableUnloggedException;
-import com.crivano.swaggerservlet.SwaggerAuthorizationException;
+import com.crivano.swaggerservlet.SwaggerException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.base.AcaoVO;
@@ -15,29 +15,24 @@ import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaMarcadoresDisponiveisGetRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocSiglaMarcadoresDisponiveisGetResponse;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocSiglaMarcadoresDisponiveisGet;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaMarcadoresDisponiveisGetRequest;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaMarcadoresDisponiveisGetResponse;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaMarcadoresDisponiveisGet;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.Marcador;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExPodeMarcarComMarcador;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 @AcessoPublicoEPrivado
-public class DocSiglaMarcadoresDisponiveisGet implements IDocSiglaMarcadoresDisponiveisGet {
+public class DocumentosSiglaMarcadoresDisponiveisGet implements IDocumentosSiglaMarcadoresDisponiveisGet {
 
 	@Override
-	public void run(DocSiglaMarcadoresDisponiveisGetRequest req, DocSiglaMarcadoresDisponiveisGetResponse resp)
+	public void run(DocumentosSiglaMarcadoresDisponiveisGetRequest req, DocumentosSiglaMarcadoresDisponiveisGetResponse resp)
 			throws Exception {
-		try (ApiContext ctx = new ApiContext(false)) {
-			String usuario = ContextoPersistencia.getUserPrincipal();
-
-			if (usuario == null)
-				throw new SwaggerAuthorizationException("Usuário não está logado");
-
+		try (ApiContext ctx = new ApiContext(false, true)) {
+			ApiContext.assertAcesso("");
 			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
 			filter.setSigla(req.sigla);
 			ExMobil mob = (ExMobil) ExDao.getInstance().consultarPorSigla(filter);
@@ -73,8 +68,10 @@ public class DocSiglaMarcadoresDisponiveisGet implements IDocSiglaMarcadoresDisp
 					resp.list.add(mr);
 				}
 			}
-
+		} catch (AplicacaoException | SwaggerException e) {
+			throw e;
 		} catch (Exception e) {
+			e.printStackTrace(System.out);
 			throw e;
 		}
 	}

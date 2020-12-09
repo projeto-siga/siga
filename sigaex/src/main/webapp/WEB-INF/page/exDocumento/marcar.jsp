@@ -163,7 +163,7 @@
 							this.carregando = true;
 							var self = this
 							httpGet(
-									'/sigaex/api/v1/doc/${m.mob.codigoCompacto}/marcadores-disponiveis',
+									'/sigaex/api/v1/documentos/${m.mob.codigoCompacto}/marcadores-disponiveis',
 									function(text) {
 										self.carregando = false;
 										self.lista.length = 0;

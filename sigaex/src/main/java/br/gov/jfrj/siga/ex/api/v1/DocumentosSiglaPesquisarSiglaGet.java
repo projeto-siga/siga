@@ -1,7 +1,9 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
+import com.crivano.swaggerservlet.SwaggerException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaPesquisarSiglaGetRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaPesquisarSiglaGetResponse;
@@ -13,14 +15,21 @@ public class DocumentosSiglaPesquisarSiglaGet implements IDocumentosSiglaPesquis
 
 	@Override
 	public void run(DocumentosSiglaPesquisarSiglaGetRequest req, DocumentosSiglaPesquisarSiglaGetResponse resp) throws Exception {
-		CurrentRequest.set(
-				new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-		SwaggerHelper.buscarEValidarUsuarioLogado();
-
-		ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, req, resp);
-
-		resp.sigla = mob.getSigla();
-		resp.codigo = mob.getCodigoCompacto();
+		try (ApiContext ctx = new ApiContext(false, true)) {
+			CurrentRequest.set(
+					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
+			ApiContext.assertAcesso("");
+	
+			ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, req, resp);
+	
+			resp.sigla = mob.getSigla();
+			resp.codigo = mob.getCodigoCompacto();
+		} catch (AplicacaoException | SwaggerException e) {
+			throw e;
+		} catch (Exception e) {
+			e.printStackTrace(System.out);
+			throw e;
+		}
 	}
 
 	@Override

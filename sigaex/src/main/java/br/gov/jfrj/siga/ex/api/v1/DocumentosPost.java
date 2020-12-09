@@ -12,6 +12,7 @@ import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.crivano.swaggerservlet.SwaggerException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 import com.crivano.swaggerservlet.SwaggerUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,7 +42,6 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-@AcessoPublicoEPrivado
 public class DocumentosPost implements IDocumentosPost {
 	public DocumentosPost () {
 		SwaggerUtils.setUploadHandler(new ArquivoUploadHandler());
@@ -51,13 +51,13 @@ public class DocumentosPost implements IDocumentosPost {
 	@Override
 	public void run(DocumentosPostRequest req,
 			DocumentosPostResponse resp) throws Exception {
-		SwaggerHelper.buscarEValidarUsuarioLogado();
-		CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-		
-		SigaObjects so = SwaggerHelper.getSigaObjects();
-		so.assertAcesso("DOC:Módulo de Documentos;" + "");
+		try (ApiContext ctx = new ApiContext(true, true)) {
+			CurrentRequest.set(
+					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
+			ApiContext.assertAcesso("");
+			
+			SigaObjects so = ApiContext.getSigaObjects();
 
-		try {
 			final Ex ex = Ex.getInstance();
 			final ExBL exBL = ex.getBL();
 
@@ -354,11 +354,11 @@ public class DocumentosPost implements IDocumentosPost {
 
     		resp.sigladoc = doc.getSigla();
     		
-		} catch (final AplicacaoException e) {
-			throw new AplicacaoException(e.getMessage());
-		} catch (final Exception e) {
-			throw new AplicacaoException(e.getMessage(), 0, e);
-//			throw new AplicacaoException("Erro na gravação", 0, e);
+		} catch (AplicacaoException | SwaggerException e) {
+			throw e;
+		} catch (Exception e) {
+			e.printStackTrace(System.out);
+			throw e;
 		}
 	}
 	

@@ -12,6 +12,7 @@ import com.crivano.swaggerservlet.PresentableUnloggedException;
 import com.crivano.swaggerservlet.SwaggerException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -47,7 +48,7 @@ public class DocumentosSiglaTramitarPost implements IDocumentosSiglaTramitarPost
 
 	private void validarAcesso(DocumentosSiglaTramitarPostRequest req, DpPessoa titular, DpLotacao lotaTitular, ExMobil mob)
 			throws Exception, PresentableUnloggedException {
-		SwaggerHelper.assertAcesso(mob, titular, lotaTitular);
+		ApiContext.assertAcesso(mob, titular, lotaTitular);
 
 		if (!Ex.getInstance().getComp().podeTransferir(titular, lotaTitular, mob))
 			throw new PresentableUnloggedException("O documento " + req.sigla + " não pode ser tramitado por "
@@ -108,15 +109,13 @@ public class DocumentosSiglaTramitarPost implements IDocumentosSiglaTramitarPost
 
 	@Override
 	public void run(DocumentosSiglaTramitarPostRequest req, DocumentosSiglaTramitarPostResponse resp) throws Exception {
-		CurrentRequest.set(
-				new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-
-		validarPreenchimentoDestino(req, resp);
-
-		SwaggerHelper.buscarEValidarUsuarioLogado();
-
-		try {
-			SigaObjects so = SwaggerHelper.getSigaObjects();
+		try (ApiContext ctx = new ApiContext(true, true)) {
+			CurrentRequest.set(
+					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
+			ApiContext.assertAcesso("");
+			validarPreenchimentoDestino(req, resp);
+	
+			SigaObjects so = ApiContext.getSigaObjects();
 			DpPessoa cadastrante = so.getCadastrante();
 			DpLotacao lotaCadastrante = cadastrante.getLotacao();
 			DpPessoa titular = cadastrante;
@@ -158,11 +157,12 @@ public class DocumentosSiglaTramitarPost implements IDocumentosSiglaTramitarPost
 			);
 
 			resp.status = "OK";
+		} catch (AplicacaoException | SwaggerException e) {
+			throw e;
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
 			throw e;
 		}
-
 	}
 
 	@Override

@@ -1,7 +1,9 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
+import com.crivano.swaggerservlet.SwaggerException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -16,22 +18,28 @@ public class DocumentosSiglaPdfCompletoGet implements IDocumentosSiglaPdfComplet
 
 	@Override
 	public void run(DocumentosSiglaPdfCompletoGetRequest req, DocumentosSiglaPdfCompletoGetResponse resp) throws Exception {
-		CurrentRequest.set(
-				new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-
-		SwaggerHelper.buscarEValidarUsuarioLogado();
-		SigaObjects so = SwaggerHelper.getSigaObjects();
-
-		DpPessoa cadastrante = so.getCadastrante();
-		DpPessoa titular = cadastrante;
-		DpLotacao lotaTitular = cadastrante.getLotacao();
-
-		ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, req, resp);
-
-		SwaggerHelper.assertAcesso(mob, titular, lotaTitular);
-
-		resp.jwt = DownloadJwtFilenameGet.jwt(cadastrante.getSiglaCompleta(), mob.getCodigoCompacto(), null, null,
-				null);
+		try (ApiContext ctx = new ApiContext(false, true)) {
+			CurrentRequest.set(
+					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
+			ApiContext.assertAcesso("");
+			SigaObjects so = ApiContext.getSigaObjects();
+	
+			DpPessoa cadastrante = so.getCadastrante();
+			DpPessoa titular = cadastrante;
+			DpLotacao lotaTitular = cadastrante.getLotacao();
+	
+			ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, req, resp);
+	
+			ApiContext.assertAcesso(mob, titular, lotaTitular);
+	
+			resp.jwt = DownloadJwtFilenameGet.jwt(cadastrante.getSiglaCompleta(), mob.getCodigoCompacto(), null, null,
+					null);
+		} catch (AplicacaoException | SwaggerException e) {
+			throw e;
+		} catch (Exception e) {
+			e.printStackTrace(System.out);
+			throw e;
+		}
 	}
 
 	@Override

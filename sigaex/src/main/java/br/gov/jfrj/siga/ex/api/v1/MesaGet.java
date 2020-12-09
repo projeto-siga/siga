@@ -11,8 +11,9 @@ import java.util.Map;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
-import com.crivano.swaggerservlet.SwaggerServlet;
+import com.crivano.swaggerservlet.SwaggerException;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -24,10 +25,8 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.Marca;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.MesaGetRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.MesaGetResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.MesaItem;
-import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
-import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
@@ -394,13 +393,11 @@ public class MesaGet implements IMesaGet {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void run(MesaGetRequest req, MesaGetResponse resp) throws Exception {
-		CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-
-		SwaggerHelper.buscarEValidarUsuarioLogado();
-		SigaObjects so = SwaggerHelper.getSigaObjects();
-		so.assertAcesso("DOC:Módulo de Documentos;" + "");
-		
-		try {
+		try (ApiContext ctx = new ApiContext(true, true)) {
+			ApiContext.assertAcesso("");
+	
+			ApiContext.buscarEValidarUsuarioLogado();
+			SigaObjects so = ApiContext.getSigaObjects();
 			DpPessoa cadastrante = so.getCadastrante();
 			
 			List<Object[]> l = ExDao.getInstance().listarDocumentosPorPessoaOuLotacao(cadastrante, cadastrante.getLotacao());
@@ -422,11 +419,12 @@ public class MesaGet implements IMesaGet {
 
 			resp.list = listarReferencias(TipoDePainelEnum.UNIDADE, map, cadastrante, cadastrante.getLotacao(), 
 					ExDao.getInstance().consultarDataEHoraDoServidor());
-		}catch (Exception e) {
+		} catch (AplicacaoException | SwaggerException e) {
+			throw e;
+		} catch (Exception e) {
 			e.printStackTrace(System.out);
 			throw e;
 		}
-
 	}
 
 	@Override

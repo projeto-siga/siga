@@ -117,7 +117,7 @@
 									</thead>
 									<c:set var="evenorodd" value="odd" />
 									<c:forEach var="mov" items="${movs}">
-										<tr>
+										<tr class="${mov.cancelada ? 'disabled' : ''}">
 											<c:set var="dt" value="${mov.dtRegMovDDMMYYYYHHMMSS}" />
 											<c:choose>
 												<c:when test="${dt == dtUlt}">
@@ -139,6 +139,11 @@
 		    													data-content="" onmouseenter="exibeDoc(this);"
 																>Ver</a>
 	    												</c:if>
+													</span>
+												</c:if>
+												<c:if test="${mov.idTpMov == 13}">
+													<span style="font-size: .8rem;color: #9e9e9e;"
+														>| documento desentranhado ${mov.exMobil}
 													</span>
 												</c:if>
 											</td>

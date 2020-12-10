@@ -2389,6 +2389,19 @@ public class ExBL extends CpBL {
 			}
 
 			gravarMovimentacao(mov);
+
+			Set<ExMovimentacao> movs = mob.getMovsNaoCanceladas(ExTipoMovimentacao
+					.TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO);
+			if (!movs.isEmpty()) {
+				try {
+					cancelar(cadastrante, lotaCadastrante, mob,
+							movs.iterator().next(), null, null, null,
+							"Disponibilização no acompanhamento do protocolo");
+				} catch (Exception e) {
+					throw new AplicacaoException("Erro ao cancelar o acompanhamento de protocolo do documento desentranhado: " 
+								+ e.getMessage());
+				}
+			}
 			concluirAlteracaoComRecalculoAcesso(mov);
 		} catch (RegraNegocioException e) {
 			cancelarAlteracao();

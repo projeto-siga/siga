@@ -182,7 +182,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 			CpOrgaoUsuario cpOrgao = new CpOrgaoUsuario();
 			cpOrgao.setSiglaOrgaoUsu(m.group(1).toUpperCase());
 			setOrgaoUsuario(cpOrgao);
-			setSiglaLotacao(m.group(2).toUpperCase());
+			setSiglaLotacao((m.group(2).substring(0,1).equals("-")) ? m.group(2).substring(1).toUpperCase() : m.group(2).toUpperCase());
 		} else {
 			setSiglaLotacao(sigla.toUpperCase());
 		}

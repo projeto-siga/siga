@@ -37,6 +37,13 @@
 			</h2>
 		</div>
 	</div>
+		<div class="row mt-3">
+		<div class="col">
+			<h2>
+				<a class="btn btn-sm btn-light link-tag" name="auditar" href="${pageContext.request.contextPath}/app/expediente/doc/exibirAntigo?sigla=${docVO.sigla}&exibirCompleto=true&"><img src="/siga/css/famfamfam/icons/magnifier.png">Auditar<u></u></a>
+			</h2>
+		</div>
+	</div>
 	<c:set var="primeiroMobil" value="${true}" />
 	<c:forEach var="m" items="${docVO.mobs}" varStatus="loop">
 		<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;WF:Módulo de Workflow')}">

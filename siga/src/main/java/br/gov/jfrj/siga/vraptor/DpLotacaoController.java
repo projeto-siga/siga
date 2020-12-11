@@ -236,15 +236,29 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
  		if(idOrgaoUsu != null) {
 			DpLotacaoDaoFiltro dpLotacao = new DpLotacaoDaoFiltro(nome, idOrgaoUsu);																
 															
+			dpLotacao.setBuscarFechadas(Boolean.TRUE);
 			List <DpLotacao> lista = CpDao.getInstance().consultarPorFiltro(dpLotacao, 0, 0);
 			
 			if (lista.size() > 0) {				
 				InputStream inputStream = null;
 				StringBuffer texto = new StringBuffer();
-				texto.append("Unidade" + System.lineSeparator());
 				
+				texto.append(SigaMessages.getMessage("usuario.lotacao") + ";");
+				texto.append("Sigla;");
+				texto.append("Localidade;");
+				texto.append(SigaMessages.getMessage("usuario.lotacao") + " Pai;");
+				texto.append("Externa;");
+				texto.append("Suspensa;");
+				texto.append("Ativa/Inativa;");
+				texto.append(System.lineSeparator());
 				for (DpLotacao lotacao : lista) {
-					texto.append(lotacao.getNomeLotacao() + ";");										
+					texto.append(lotacao.getNomeLotacao() + ";");
+					texto.append(lotacao.getSiglaLotacao() + ";");
+					texto.append((lotacao.getLocalidade() != null ?  lotacao.getLocalidadeString() : "") + ";");
+					texto.append((lotacao.getLotacaoPai() != null ? lotacao.getLotacaoPai().getSiglaLotacao() : "") + ";");
+					texto.append((lotacao.getIsExternaLotacao() == null || ((Integer)0).equals(lotacao.getIsExternaLotacao()) ? "Não" : "Sim") + ";");
+					texto.append((lotacao.getIsSuspensa() == null || ((Integer)0).equals(lotacao.getIsSuspensa()) ? "Não" : "Sim") + ";");
+					texto.append((lotacao.getDataFim() == null ? "Ativa" : "Inativa") + ";");
 					texto.append(System.lineSeparator());
 				}
 				

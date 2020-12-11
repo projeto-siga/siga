@@ -63,7 +63,7 @@ public class SigaTransacionalInterceptor extends br.com.caelum.vraptor.jpa.JPATr
 
 	@Accepts
 	public boolean accepts(ControllerMethod method) {
-		  return method.containsAnnotation(Transacional.class);
+		  return true;
 	}
 
 	@AroundCall
@@ -71,14 +71,14 @@ public class SigaTransacionalInterceptor extends br.com.caelum.vraptor.jpa.JPATr
 		addRedirectListener();
 
 		try {
-	/*		if (this.method.containsAnnotation(Transacional.class)) {
-				
+		    if (this.method.containsAnnotation(Transacional.class)) {
+		    	EntityTransaction transaction = manager.getTransaction();
+		    	transaction.begin();
 			} else {
 				disableAutoFlush();
-			} */
+		}  
 
-			EntityTransaction transaction = manager.getTransaction();
-			transaction.begin();
+
 			
 //			 System.out.println("*** " + (manager.getTransaction() ==
 //					 null || !manager.getTransaction().isActive() ? "NÃO" : "") + " TRANSACIONAL" + this.method.toString() + " - ");
@@ -139,9 +139,9 @@ public class SigaTransacionalInterceptor extends br.com.caelum.vraptor.jpa.JPATr
 			thiz.commit(transaction);
 			// System.out.println("*** DOWNGRADE para NÃO Transacional - " +
 			// thiz.method.toString());
-			disableAutoFlush();
-			transaction = thiz.manager.getTransaction();
-			transaction.begin();
+			//disableAutoFlush();
+			//transaction = thiz.manager.getTransaction();
+			//transaction.begin();
 		}
 	}
 

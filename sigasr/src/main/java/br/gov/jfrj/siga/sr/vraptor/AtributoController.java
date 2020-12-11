@@ -18,6 +18,7 @@ import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
 import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrAtributo;
@@ -77,10 +78,18 @@ public class AtributoController extends SrController {
 
 	@Path("/gravar")
 	@AssertAcesso(ADM_ADMINISTRAR)
-	public void gravarAtributo(SrAtributo atributo) throws Exception {
+	public void gravarAtributo(SrAtributo atributo, Long objetivoAtributoId) throws Exception {
+		setupObjetivoAtributo(atributo, objetivoAtributoId);
 		if (validarFormEditarAtributo(atributo)) {
 			atributo.salvar();
 			result.use(Results.http()).body(atributo.toVO(false).toJson());
+		}
+	}
+	
+	private void setupObjetivoAtributo(SrAtributo atributo, Long objetivoAtributoId) {
+		if(objetivoAtributoId != null) {
+			EntityManager em = ContextoPersistencia.em();
+			atributo.setObjetivoAtributo(em.find(SrObjetivoAtributo.class, objetivoAtributoId));
 		}
 	}
 

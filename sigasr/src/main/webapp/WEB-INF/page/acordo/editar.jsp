@@ -2,46 +2,45 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
 
-<div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
-	<div>
-		<form id="acordoForm" enctype="multipart/form-data">
-			
-			<input type="hidden" name="acordo.id" id="id" value="${idAcordo}"> 
-			<input type="hidden" name="acordo.hisIdIni" id="hisIdIni" value="${hisIdIni}">
-			
-			<div class="gt-form-row gt-width-66">
-				<label>Nome <span>*</span></label>
-				 <input type="text"	name="acordo.nomeAcordo"
-					id="nomeAcordo"	value="${nomeAcordo}" 
-					size="50" maxlength="255" required/>
-			</div>
-			<div class="gt-form-row gt-width-66">
-				<label>Descri&ccedil;&atilde;o</label>
-				<input maxlength="255" type="text"
-					name="acordo.descrAcordo" id="descrAcordo"
-					value="${descrAcordo}" style="width: 372px;" />
-			</div>
-			
-			<div class="gt-form-row">
-				<label>Par&acirc;metros</label>
-				<ul id="parametrosAcordo" style="color: #365b6d">
-				</ul>
-				<input type="button" value="Incluir" id="botaoIncluir"
-					class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
-			</div>
-
-			<div class="container">
-				<div class="title-table">
-					<h3 style="padding-top: 25px;">Abrang&ecirc;ncia</h3>
-				</div>
-			</div>
-
-			<div class="gt-content-box dataTables_div">
-                <div class="gt-form-row dataTables_length">
-                    <siga:checkbox name="mostrarAssocDesativada" value="${requestScope[mostrarAssocDesativada]}"></siga:checkbox>
-                    <b>Incluir Inativas</b>
-                </div>        
-				<table id="associacao_table" class="gt-table display">
+<div>
+	<form id="acordoForm" enctype="multipart/form-data">
+		
+		<input type="hidden" name="acordo.id" id="id" value="${idAcordo}"> 
+		<input type="hidden" name="acordo.hisIdIni" id="hisIdIni" value="${hisIdIni}">
+		
+		<div class="form-group">
+			<label>Nome <span>*</span></label>
+			 <input type="text"	name="acordo.nomeAcordo"
+				id="nomeAcordo"	value="${nomeAcordo}"
+				class="form-control" 
+				maxlength="255" required/>
+		</div>
+		<div class="form-group">
+			<label>Descri&ccedil;&atilde;o</label>
+			<input maxlength="255" type="text"
+				name="acordo.descrAcordo" id="descrAcordo"
+				class="form-control"
+				value="${descrAcordo}" />
+		</div>
+		
+		<div class="form-group">
+			<label>Par&acirc;metros</label>
+			<ul id="parametrosAcordo" style="color: #365b6d">
+			</ul>
+			<input type="button" value="Incluir" id="botaoIncluir"
+				class="btn btn-primary btn-sm" />
+		</div>
+		
+		<div class="card mb-2">
+			<h5 class="card-header">Abrang&ecirc;ncia</h5>
+			<div class="card-body">
+               	<label>
+                   <siga:checkbox name="mostrarAssocDesativada" value="${requestScope[mostrarAssocDesativada]}"></siga:checkbox>
+                   <b>Incluir Inativas</b>
+               	</label>
+               
+               <div class="table-responsive mb-2">
+	               <table id="associacao_table" class="table">
 					<thead>
 						<tr>
 							<th style="color: #333">
@@ -100,65 +99,78 @@
 						</c:forEach>
 					</tbody>
 				</table>
+	               
+               </div>    
+               
+				<!-- Botao de Incluir -->
+				<a href="javascript: inserirAssociacao()" class="btn btn-primary" style="color: #fff">Incluir</a>
+                   
 			</div>
-			<div class="gt-table-buttons">
-				<a href="javascript: inserirAssociacao()" class="gt-btn-small gt-btn-left" style="font-size: 10px;">Incluir</a>
-			</div>
+			
+		</div>
 
-			<div class="gt-form-row">
-				<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="preparaObjeto();acordoService.gravar()" />
-				<a class="gt-btn-medium gt-btn-left" onclick="acordoService.cancelarGravacao()">Cancelar</a>
-				<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="preparaObjeto();acordoService.aplicar()" />
-			</div>
-		</form>
-	</div>
+
+		<input type="button" value="Gravar" class="btn btn-primary" onclick="preparaObjeto();acordoService.gravar()" />
+		<a class="btn btn-secondary" style="color: #fff" onclick="acordoService.cancelarGravacao()">Cancelar</a>
+		<input type="button" value="Aplicar" class="btn btn-primary" onclick="preparaObjeto();acordoService.aplicar()" />
+	</form>
 </div>
 
-
+<!-- ==================== -->
+<!-- Modal de Parametros  -->
+<!-- ==================== -->
 <div id="dialog">
-	<div class="gt-content">
-		<div class="gt-form gt-content-box">
-			<form id="parametroForm" enctype="multipart/form-data">
-				<div class="gt-form-row">
-					<label>Par&acirc;metro</label> 
-					<select id="parametro" name="parametro">
-						<c:forEach items="${parametros}" var="parametro">
-							<option value="${parametro}">${parametro.descricao}</option>
-						</c:forEach>
-					</select>
-				</div>
-				<div class="gt-form-row">
-					<label>Valor <span>*</span></label> 
-					<select id="operador" name="operador">
+	<form id="parametroForm" enctype="multipart/form-data">
+		<div class="form-group">
+			<label>Par&acirc;metro</label> 
+			<select id="parametro" name="parametro" class="form-control">
+				<c:forEach items="${parametros}" var="parametro">
+					<option value="${parametro}">${parametro.descricao}</option>
+				</c:forEach>
+			</select>
+		</div>
+		<div class="form-group mb-2">
+			<label>Valor *</label>
+			
+			<div class="form-group row">
+				<div class="col-sm-5">
+					<select id="operador" name="operador" class="form-control">
 						<c:forEach items="${operadores}" var="ope">
 							<option value="${ope}">${ope.nome}</option>
 						</c:forEach>
 					</select>
-					<input type="text" id="valor" name="valor" value="" maxlength="4" style="width: 3em; text-align: right;" required />
-					<select id="unidadeMedida" name="unidadeMedida">
+				</div>
+				<div class="col-sm-3">
+					<input type="text" id="valor" name="valor" value="" maxlength="4" class="form-control" required />
+				</div>
+				<div class="col-sm-4">
+					<select id="unidadeMedida" name="unidadeMedida" class="form-control">
 						<c:forEach items="${unidadesMedida}" var="unidadeMedida">
 							<option value="${unidadeMedida.idUnidadeMedida}">${unidadeMedida.plural}</option>
 						</c:forEach>
 					</select>
 				</div>
-				<div class="gt-form-row">
-					<input type="button" id="modalOk" value="Ok" class="gt-btn-medium gt-btn-left" />
-					<input type="button" value="Cancelar" id="modalCancel" class="gt-btn-medium gt-btn-left" />
-				</div>
-			</form>
+			</div>
+			
 		</div>
-	</div>
+		<input type="button" id="modalOk" value="Ok" class="btn btn-primary" />
+		<input type="button" value="Cancelar" id="modalCancel" class="btn btn-secondary" />
+	</form>
 </div>
 
-<sigasr:modal nome="associacao" titulo="Cadastrar Associa&ccedil;&atilde;o">
-	<div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
+
+<!-- ================== -->
+<!-- Modal Abrangencia  -->
+<!-- ================== -->
+<sigasr:modal nome="associacao" titulo="Cadastrar Associa&ccedil;&atilde;o" largura="80%">
+	<div class="gt-form gt-content-box">
 		<input id="idConfiguracao" type="hidden" name="idConfiguracao">
 		<input type="hidden" name="associacao">
 		<input id="hisIdIni" type="hidden" name="hisIdIni">
 	
-		<div id="divSolicitante" class="gt-form-row gt-width-100">
+		<div id="divSolicitante" class="form-group">
 			<label>Solicitante</label> 
-			<siga:pessoaLotaFuncCargoSelecao
+			<sigasr:pessoaLotaFuncCargoSelecao
 				nomeSelLotacao="lotacao"
 				nomeSelPessoa="dpPessoa"
 				nomeSelFuncao="funcaoConfianca"
@@ -170,9 +182,11 @@
 				valueCargo="${cargo}"
 				valueGrupo="${cpGrupo}"
 				disabled="disabled">
-			</siga:pessoaLotaFuncCargoSelecao>
+			</sigasr:pessoaLotaFuncCargoSelecao>
+			
+			
 		</div>
-		<div class="gt-form-row gt-width-100">
+		<div class="form-group">
 			<label>&Oacute;rg&atilde;o</label> 
 			<siga:select name="orgaoUsuario" list="orgaos"
 				listKey="idOrgaoUsu" id="orgaoUsuario"
@@ -180,7 +194,7 @@
 				listValue="nmOrgaoUsu"
 				value="${idOrgaoUsu}" />
 		</div>
-		<div class="gt-form-row gt-width-100">
+		<div class="form-group">
 			<label>Local</label> 
 			<siga:select name="complexo" list="locais"
 				listKey="idComplexo" id="complexo"
@@ -188,15 +202,15 @@
 				listValue="nomeComplexo" theme="simple"
 				value="${idComplexo}" />
 		</div>
-		<div class="gt-form-row gt-width-100">
+		<div class="form-group">
 			<label>Atendente</label>
 				<input type="hidden" name="atendente.id" id="atendente" class="selecao">
 				<siga:selecao propriedade="atendente" tema="simple" modulo="siga" urlAcao="buscar" inputName="atendente"/>
 		</div>
 
-		<div class="gt-form-row gt-width-100">
+		<div class="form-group">
 			<label>Prioridade</label> 
-		    <select name="prioridade" id="prioridade">
+		    <select name="prioridade" id="prioridade" class="form-control">
 				<option value=""></option>
 				<c:forEach items="${prioridades}" var="item">
 				   <option value="${item}">${item.descPrioridade}</option>
@@ -206,10 +220,8 @@
 
 		<sigasr:configuracaoItemAcao itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"></sigasr:configuracaoItemAcao>
 								 
-		<div class="gt-form-row">
-			<a href="javascript: gravarAssociacao()" class="gt-btn-medium gt-btn-left">Gravar</a>
-			<a href="javascript: associacaoModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
-		</div>
+		<a href="javascript: gravarAssociacao()" class="btn btn-primary" style="color: #fff">Gravar</a>
+		<a href="javascript: associacaoModalFechar()" class="btn btn-secondary" style="color: #fff">Cancelar</a>
 	</div>
 	<div class="gt-content-box" id="modal-associacao-error"
 		style="display: none;">
@@ -564,7 +576,7 @@
 		params += getDadosSolicitante(row);
 		
 		if ($("#id").val() != undefined && $("#id").val() != '')
-		params += '&associacao.acordo.id=' + $("#id").val();
+		params += '&associacaoAcordoId=' + $("#id").val();
 
 		return params;
 	};
@@ -613,7 +625,7 @@
              	params += '&associacao.lotacao.id=';
              	params += '&associacao.funcaoConfianca.id=';
              	params += '&associacao.cargo.id=';
-             	params += '&associacao.cpGrupo.id=';
+             	params += '&associacaoCpGrupoId=';
 
 		
 		// caso seja lotaÃ§Ã£o
@@ -622,7 +634,7 @@
 			params += '&associacao.dpPessoa.id=';
              	params += '&associacao.funcaoConfianca.id=';
              	params += '&associacao.cargo.id=';
-             	params += '&associacao.cpGrupo.id=';
+             	params += '&associacaoCpGrupoId=';
 
 		
 		// caso seja funÃ§Ã£o
@@ -631,7 +643,7 @@
 			params += '&associacao.dpPessoa.id=';
              	params += '&associacao.lotacao.id=';
              	params += '&associacao.cargo.id=';
-             	params += '&associacao.cpGrupo.id=';
+             	params += '&associacaoCpGrupoId=';
 
 		
 		// caso seja cargo
@@ -640,11 +652,11 @@
 			params += '&associacao.dpPessoa.id=';
              	params += '&associacao.funcaoConfianca.id=';
              	params += '&associacao.lotacao.id=';
-             	params += '&associacao.cpGrupo.id=';
+             	params += '&associacaoCpGrupoId=';
 
 		// caso seja grupo
 		} else if (rowValues[colunasAssociacao.tipoSolicitante] == 5){
-			params += '&associacao.cpGrupo.id=' + rowValues[colunasAssociacao.idSolicitante];
+			params += '&associacaoCpGrupoId=' + rowValues[colunasAssociacao.idSolicitante];
 			params += '&associacao.dpPessoa.id=';
      			params += '&associacao.funcaoConfianca.id=';
      			params += '&associacao.lotacao.id=';
@@ -791,50 +803,53 @@
 		return params;
 	}
 
+	var jDialog = $("#dialog");
+	var jParametro = $("#parametro");
+	var jValor = $("#valor");
+	var jUnidadeMedida = $("#unidadeMedida");
+	var jOperador = $("#operador");
+
+	jDialog.dialog({
+        autoOpen: false,
+        height: 'auto',
+        width: '80%',
+        modal: true,
+        resizable: false,
+        close: function() {
+            jValor.val('');
+            jDialog.data('valor','');
+            jDialog.data('parametro','');
+            jDialog.data('unidadeMedida','');
+            jDialog.data('operador','');
+        },
+        open: function(){
+	        limparErros();
+	        
+        	jParametro.on('change', function() {
+    			limparErros();
+    		});
+	        
+            if (jDialog.data("valor")){
+                jDialog.dialog('option', 'title', 'Alterar Parametro');
+                jValor.val(jDialog.data("valor"));
+                jParametro.find("option[value=" + jDialog.data("parametro") + "]").prop('selected', true);
+                jUnidadeMedida.find("option[value=" + jDialog.data("unidadeMedida") + "]").prop('selected', true);
+                jOperador.find("option[value=" + jDialog.data("operador") + "]").prop('selected', true);
+            } else
+                jDialog.dialog('option', 'title', 'Incluir Parametro');
+        }
+	});
+
 	$(function() {
 		var jParametrosAcordo = $("#parametrosAcordo"),
 		parametrosAcordo = jParametrosAcordo[0],
-		jDialog = $("#dialog"),
-		dialog = jDialog[0],
-		jValor = $("#valor"),
-		jParametro = $("#parametro");
-		jUnidadeMedida = $("#unidadeMedida");
-		jOperador = $("#operador");
+		dialog = jDialog[0];
 
 		$("#botaoIncluir").click(function(){
 	        jDialog.data('acao',parametrosAcordo.incluirItem).dialog('open');
 		});
 		
-		jDialog.dialog({
-		        autoOpen: false,
-		        height: 'auto',
-		        width: 'auto',
-		        modal: true,
-		        resizable: false,
-		        close: function() {
-	                jValor.val('');
-	                jDialog.data('valor','');
-	                jDialog.data('parametro','');
-	                jDialog.data('unidadeMedida','');
-	                jDialog.data('operador','');
-		        },
-		        open: function(){
-			        limparErros();
-			        
-		        	jParametro.on('change', function() {
-		    			limparErros();
-		    		});
-			        
-	                if (jDialog.data("valor")){
-		                jDialog.dialog('option', 'title', 'Alterar Parametro');
-		                jValor.val(jDialog.data("valor"));
-		                jParametro.find("option[value=" + jDialog.data("parametro") + "]").prop('selected', true);
-		                jUnidadeMedida.find("option[value=" + jDialog.data("unidadeMedida") + "]").prop('selected', true);
-		                jOperador.find("option[value=" + jDialog.data("operador") + "]").prop('selected', true);
-	                } else
-		                jDialog.dialog('option', 'title', 'Incluir Parametro');
-		        }
-		});
+		
 		$("#modalOk").click(function(){
 			if (!jQuery("#parametroForm").valid())
 				return false;
@@ -897,7 +912,7 @@
 	});
 
 	function limparErros() {
-		$("#valor").attr('class', 'valid');
+		$("#valor").addClass('valid');
 		$("#valor-error").css('display', 'none');
 	}
 

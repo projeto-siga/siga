@@ -19,18 +19,16 @@
 	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
 	<script src="/sigasr/javascripts/moment.js"></script>
 	
-	<div class="gt-bd clearfix">
-		<div class="gt-content">
-			<h2>Tipos de A&ccedil;&atilde;o</h2>
-			<!-- content bomex -->
-			<div class="gt-content-box dataTables_div">
-				<div class="gt-form-row dataTables_length">
-					<label>
-						<siga:checkbox name="mostrarDesativados" value="${mostrarDesativados}"></siga:checkbox>
-						<b>Incluir Inativas</b>
-					</label>
-				</div>
-				<table id="tiposAcao_table" class="gt-table display">
+	<div class="container-fluid mb-2">
+		<h2>Tipos de A&ccedil;&atilde;o</h2>
+		
+		<div class="card card-body mb-2">
+			<label>
+				<siga:checkbox name="mostrarDesativados" value="${mostrarDesativados}"></siga:checkbox>
+				<b>Incluir Inativas</b>
+			</label>
+			<div class="table-responsive">
+				<table id="tiposAcao_table" class="table">
 					<thead>
 						<tr>
 							<th>C&oacute;digo</th>
@@ -57,14 +55,12 @@
 					</tbody>
 				</table>
 			</div>
-			<!-- /content box -->
-			<div class="gt-table-buttons">
-				<a onclick="tipoAcaoService.cadastrar('Incluir Tipo de A&ccedil;&atilde;o')" class="gt-btn-medium gt-btn-left">Incluir</a>
-			</div>
 		</div>
+		
+		<a onclick="tipoAcaoService.cadastrar('Incluir Tipo de A&ccedil;&atilde;o')" class="btn btn-primary" style="color: #fff">Incluir</a>
 	</div>
 	
-	<sigasr:modal nome="tipoAcao" titulo="Cadastrar Tipo de A&ccedil;&atilde;o">
+	<sigasr:modal nome="tipoAcao" titulo="Cadastrar Tipo de A&ccedil;&atilde;o" largura="80%">
 		<div id="divEditarTipoAcaoForm"><jsp:include page="editar.jsp"></jsp:include></div>
 	</sigasr:modal>
 	

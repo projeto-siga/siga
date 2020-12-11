@@ -2047,7 +2047,9 @@ public class ExMovimentacaoController extends ExController {
 			subst.setTitular(new DpPessoa());
 			subst.setLotaTitular(lotaResponsavelSel.getObjeto());
 			
-			qtde += CpDao.getInstance().qtdeSubstituicoesAtivasPorTitular(subst);
+			if(qtde == 0) {
+				qtde += CpDao.getInstance().qtdeSubstituicoesAtivasPorTitular(subst);
+			}
 			
 			if(qtde == 0) {
 				result.include("msgCabecClass", "alert-danger");

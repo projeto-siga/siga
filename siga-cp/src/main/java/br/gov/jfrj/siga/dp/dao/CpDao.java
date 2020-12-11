@@ -1537,6 +1537,15 @@ public class CpDao extends ModeloDao {
 		// query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SUBSTITUICAO);
 		return query.getResultList();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public Integer qtdeSubstituicoesAtivasPorTitular(final DpSubstituicao exemplo) throws SQLException {
+		Query query = null;
+		query = em().createNamedQuery("qtdeSubstituicoesAtivasPorTitular");
+		query.setParameter("idTitularIni", exemplo.getTitular().getIdPessoaIni());
+		query.setParameter("idLotaTitularIni", exemplo.getLotaTitular().getIdLotacaoIni());
+		return ((Long)query.getSingleResult()).intValue();
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<DpVisualizacao> consultarVisualizacoesPermitidas(final DpVisualizacao exemplo) throws SQLException {

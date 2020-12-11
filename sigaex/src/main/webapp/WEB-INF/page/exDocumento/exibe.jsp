@@ -1391,6 +1391,7 @@
 		<i class="fas fa-envelope-open-text icone-receber-doc"></i>
 	</button>
 	
+	<c:if test="${!docVO.doc.mobilDefaultParaReceberJuntada.isJuntado() }">
 	<script>
 		$(function() {						
 			var modalReceberDocumento = $('#modalReceberDocumento');				
@@ -1408,7 +1409,8 @@
 				btnReceberDocumento.css({'opacity':'1', 'visibility':'visible'});								
 			});												
 		});	
-	</script>			
+	</script>	
+	</c:if>
 </c:if>
 <c:if test="${docVO.doc.isComposto()}">
 	<c:choose>

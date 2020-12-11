@@ -73,8 +73,8 @@
 ${meta}
 
 <c:set var="path" scope="request">${pageContext.request.contextPath}</c:set>
-
-<link rel="stylesheet" href="/siga/bootstrap/css/bootstrap.min.css?v=4.5.3"	type="text/css" media="screen, projection" />
+ 
+<link rel="stylesheet" href="/siga/bootstrap/css/bootstrap.min.css?v=4.1.1"	type="text/css" media="screen, projection" />
 
 <!--   <link rel="stylesheet" href="/siga/css/menuhover.css" type="text/css"/> -->
 
@@ -93,7 +93,7 @@ ${meta}
 
 <c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
 
-<c:set var="siga_version"  scope="request" value="9.0.18.0" />
+<c:set var="siga_version"  scope="request" value="9.0.19.0" />
 
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">

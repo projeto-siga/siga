@@ -2043,11 +2043,12 @@ public class ExMovimentacaoController extends ExController {
 			filtro.setNome("");
 			filtro.setLotacao(lotaResponsavelSel.getObjeto());
 			Integer qtde = CpDao.getInstance().consultarQuantidade(filtro);
-			DpSubstituicao subst = new DpSubstituicao();
-			subst.setTitular(new DpPessoa());
-			subst.setLotaTitular(lotaResponsavelSel.getObjeto());
 			
 			if(qtde == 0) {
+				DpSubstituicao subst = new DpSubstituicao();
+				subst.setTitular(new DpPessoa());
+				subst.setLotaTitular(lotaResponsavelSel.getObjeto());
+				
 				qtde += CpDao.getInstance().qtdeSubstituicoesAtivasPorTitular(subst);
 			}
 			

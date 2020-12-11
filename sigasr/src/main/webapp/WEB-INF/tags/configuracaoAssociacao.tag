@@ -14,52 +14,55 @@
 <%@ attribute name="itemConfiguracaoSet" type="java.util.List" required="false"%>
 <%@ attribute name="acoesSet" type="java.util.List" required="false"%>
 
-<div class="gt-content" style="padding-top: 10px;">
-	<h3>Associações</h3>
-	<div class="gt-content-box dataTables_div">
-        <div class="gt-form-row dataTables_length">
+<div class="card mb-2">
+	<h5 class="card-header">Associações</h5>
+	
+	<div class="card-body">
+		<div class="table-responsive">
             <label>
             	<siga:checkbox name="mostrarAssocDesativada" value="${mostrarDesativado}"></siga:checkbox>
             	<b>Incluir Inativas</b>
             </label>
-        </div>        
-		<table id="associacao_table" class="gt-table display">
-			<thead>
-				<tr>
-					<th style="color: #333">
-						<span class="bt-expandir">
-							<span id="iconeBotaoExpandirTodos">+</span>
-						</span>
-					</th>
-					<th>idAssociacao</th>
-					<th>Orgão</th>
-					<th>Local</th>
-					<th>Solicitante</th>
-					<th><i>Item &darr;</i></th>
-					<th>Ação</th>
-					<th>Obrigatório</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-			</tbody>
-		</table>
+			<table id="associacao_table" class="gt-table display">
+				<thead>
+					<tr>
+						<th style="color: #333">
+							<span class="bt-expandir">
+								<span id="iconeBotaoExpandirTodos">+</span>
+							</span>
+						</th>
+						<th>idAssociacao</th>
+						<th>Orgão</th>
+						<th>Local</th>
+						<th>Solicitante</th>
+						<th><i style="white-space: nowrap">Item &darr;</i></th>
+						<th>Ação</th>
+						<th>Obrigatório</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		
+		</div>
+		<!-- Botao incluir -->
+	    <a href="javascript: associacaoService.cadastrar('Cadastrar Associação')" class="btn btn-primary" style="color: #fff">Incluir</a>
+                
 	</div>
-	<div class="gt-table-buttons">
-           <a href="javascript: associacaoService.cadastrar('Cadastrar Associação')" class="gt-btn-small gt-btn-left">Incluir</a>
-	</div>
+	
 </div>
 
-<sigasr:modal nome="associacao" titulo="Cadastrar associação">
-	<div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
+<sigasr:modal nome="associacao" titulo="Cadastrar associação" largura="80%">
+	<div class="gt-form gt-content-box">
 	
 		<form id="associacaoForm">
 		
 			<input id="idConfiguracao" type="hidden" name="associacao.idConfiguracao">
 			
-			<div id="divSolicitante" class="gt-form-row gt-width-100">
+			<div id="divSolicitante" class="form-group">
 				<label>Solicitante</label> 
-				<siga:pessoaLotaFuncCargoSelecao
+				<sigasr:pessoaLotaFuncCargoSelecao
 						nomeSelLotacao="lotacao"
 						nomeSelPessoa="dpPessoa"
 						nomeSelFuncao="funcaoConfianca"
@@ -71,13 +74,14 @@
 						valueCargo="${cargo}"
 						valueGrupo="${cpGrupo}"
 						disabled="${desativar}">
-				</siga:pessoaLotaFuncCargoSelecao>
+				</sigasr:pessoaLotaFuncCargoSelecao>
 			</div>
 		
-			<div class="gt-form-row gt-width-100">
+			<!-- Orgao -->
+			<div class="form-group">
 				<label>Órgão</label>
 				
-				<select name="orgaoUsuario.idOrgaoUsu" id="orgaoUsuario" class="select-siga" style="width: 100%;">
+				<select name="orgaoUsuario.idOrgaoUsu" id="orgaoUsuario" class="form-control select-siga">
 					<option value="">Nenhum</option>
 					<c:forEach items="${orgaos}" var="orgao">
 						<option value="${orgao.idOrgaoUsu}">${orgao.nmOrgaoUsu}</option>
@@ -85,10 +89,11 @@
 				</select>
 			</div>
 		
-			<div class="gt-form-row gt-width-100">
+			<!-- Local -->
+			<div class="form-group">
 				<label>Local</label>
 				
-				<select name="complexo.idComplexo" id="complexo" class="select-siga" style="width: 100%;">
+				<select name="complexo.idComplexo" id="complexo" class="form-control select-siga">
 					<option value="">Nenhum</option>
 					<c:forEach items="${locais}" var="local">
 						<option value="${local.idComplexo}">${local.nomeComplexo}</option>
@@ -96,6 +101,7 @@
 				</select>
 			</div>
 
+			<!-- Itens de Configuracao e Acao -->
 			<sigasr:configuracaoItemAcao itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"></sigasr:configuracaoItemAcao>
 			
 			<c:if test="${modoExibicao == 'atributo'}">
@@ -106,10 +112,8 @@
 				</div>
 			</c:if>
 			
-			<div class="gt-form-row">
-				<a href="javascript: associacaoService.gravar()" class="gt-btn-medium gt-btn-left">Gravar</a>
-				<a href="javascript: associacaoService.cancelarGravacao()" class="gt-btn-medium gt-btn-left">Cancelar</a>
-			</div>
+			<a href="javascript: associacaoService.gravar()" class="btn btn-primary" style="color: #fff">Gravar</a>
+			<a href="javascript: associacaoService.cancelarGravacao()" class="btn btn-secondary" style="color: #fff">Cancelar</a>
 		</form>
 	</div>
 	<div class="gt-content-box" id="modal-associacao-error" style="display: none;">

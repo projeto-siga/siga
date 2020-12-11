@@ -129,12 +129,13 @@ public class AssociacaoController extends SrController {
 		associacao.setPesquisaSatisfacao(pesquisaSatisfacao == null || pesquisaSatisfacao.getId() == null ? null : SrPesquisa.AR.findById(pesquisaSatisfacao.getId()));
 		associacao.setComplexo(complexo == null || complexo.getIdComplexo() == null ? null : CpComplexo.AR.findById(complexo.getIdComplexo()));
 		associacao.setOrgaoUsuario(orgaoUsuario == null || orgaoUsuario.getIdOrgaoUsu() == null ? null : CpOrgaoUsuario.AR.findById(orgaoUsuario.getIdOrgaoUsu()));
-		associacao.setAtributo(atributo == null ? null : SrAtributo.AR.findById(atributo.getId()));
 		associacao.setDpPessoa(pessoaSel.buscarObjeto());
 		associacao.setLotacao(lotacaoSel.buscarObjeto());
 		associacao.setFuncaoConfianca(funcaoSel.buscarObjeto());
 		associacao.setCargo(cargoSel.buscarObjeto());
 		associacao.setCpGrupo(perfilSel.buscarObjeto());
 	}
+	
+	
 
 }

@@ -63,6 +63,7 @@ public class SigaTransacionalInterceptor extends br.com.caelum.vraptor.jpa.JPATr
 
 	@Accepts
 	public boolean accepts(ControllerMethod method) {
+		  this.method = method;
 		  return true;
 	}
 
@@ -76,7 +77,7 @@ public class SigaTransacionalInterceptor extends br.com.caelum.vraptor.jpa.JPATr
 		    	transaction.begin();
 			} else {
 				disableAutoFlush();
-		}  
+			}  
 
 
 			

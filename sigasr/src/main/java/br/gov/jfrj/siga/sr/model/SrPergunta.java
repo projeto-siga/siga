@@ -17,7 +17,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 @Entity
-@Table(name = "SR_PERGUNTA", schema = "SIGASR")
+@Table(name = "sr_pergunta", schema = "sigasr")
 public class SrPergunta extends HistoricoSuporte {
 
     private static final long serialVersionUID = 8405698996883999900L;

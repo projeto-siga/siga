@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import br.com.caelum.vraptor.Controller;
@@ -106,6 +107,7 @@ public class AvariaController extends TpController {
 		result.include("veiculos", veiculos);
 	}
 
+    @Transactional
 	@RoleAdmin
 	@RoleAdminFrota
 	@Path("/salvar")
@@ -160,6 +162,7 @@ public class AvariaController extends TpController {
 			result.include(MODO, LABEL_EDITAR);
 	}
 
+    @Transactional
 	@RoleAdmin
 	@RoleAdminFrota
 	@Path("/excluir/{id}/{fixarVeiculo}")

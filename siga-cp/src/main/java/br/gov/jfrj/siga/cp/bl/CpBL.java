@@ -46,16 +46,26 @@ import br.gov.jfrj.siga.cp.AbstractCpAcesso.CpTipoAcessoEnum;
 import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpMarcadorCorEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorIconeEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoDataEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoTextoEnum;
 import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
+import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpToken;
+import br.gov.jfrj.siga.cp.converter.IEnumWithId;
 import br.gov.jfrj.siga.cp.util.Excel;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.cp.util.SigaUtil;
+import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
@@ -1299,6 +1309,81 @@ public class CpBL {
 		urlPermanente +=  "/siga/public/app/sigalink/"+tipoLink+"/"+token;
 		
 		return urlPermanente;
+	}
+
+	public void gravarMarcadorDaLotacao(final Long id, final DpPessoa cadastrante, final DpLotacao lotacao, final CpIdentidade identidade, 
+			final String descricao, final String descrDetalhada, final CpMarcadorCorEnum idCor, final CpMarcadorIconeEnum idIcone, final Integer grupoId, 
+			final CpTipoMarcadorEnum idTpMarcador, final CpMarcadorTipoAplicacaoEnum idTpAplicacao, final CpMarcadorTipoDataEnum idTpDataPlanejada, 
+			final CpMarcadorTipoDataEnum idTpDataLimite, 
+			final CpMarcadorTipoExibicaoEnum idTpExibicao,	final CpMarcadorTipoTextoEnum idTpTexto, final CpMarcadorTipoInteressadoEnum idTpInteressado 
+			) throws Exception {
+		if (idTpMarcador == CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA)
+			throw new AplicacaoException ("Não é permitido o cadastro de marcadores de sistema.");
+			
+		if (descricao == null)
+			throw new AplicacaoException ("Preencha a descrição do marcador.");
+			
+		if (descricao.length() > 40) 
+			throw new AplicacaoException ("Descrição do marcador tem mais de 40 bytes.");
+		
+		String msgLotacao = SigaMessages.getMessage("usuario.lotacao");
+		List<CpMarcador> listaMarcadoresLotacao = dao().listarCpMarcadoresPorLotacaoESublotacoes(lotacao, true);
+		
+		if (listaMarcadoresLotacao.size() > 9) 
+			throw new AplicacaoException ("Atingiu o limite de 10 marcadores possíveis para " + msgLotacao);
+		
+		if (id == null && (listaMarcadoresLotacao.stream()
+				.filter(mar -> mar.getDescrMarcador()
+						.equals(descricao)).count() > 0)) 
+			throw new AplicacaoException ("Já existe um marcador com esta descrição para esta " + msgLotacao);
+
+//		Integer ordem;
+		if (id != null) {
+			CpMarcador marcadorAnt = new CpMarcador();
+			CpMarcador marcador = new CpMarcador();
+
+			marcadorAnt = dao().consultar(id, CpMarcador.class, false);
+			if (marcadorAnt != null) {
+				marcador.setHisIdIni(marcadorAnt.getHisIdIni());
+				marcador.setOrdem(marcadorAnt.getOrdem());
+				marcador.setDpLotacaoIni(marcadorAnt.getDpLotacaoIni());
+				marcador.setDescrMarcador(descricao);
+				marcador.setDescrDetalhada(descrDetalhada);
+				marcador.setGrupoMarcador(grupoId);
+				marcador.setCpTipoMarcador(idTpMarcador);
+				marcador.setIdCor(idCor);
+				marcador.setIdIcone(idIcone);
+				marcador.setIdTpAplicacao(idTpAplicacao);
+				marcador.setIdTpDataPlanejada(idTpDataPlanejada);
+				marcador.setIdTpDataLimite(idTpDataLimite);
+				marcador.setIdTpExibicao(idTpExibicao);
+				marcador.setIdTpTexto(idTpTexto);
+				marcador.setIdTpInteressado(idTpInteressado);
+				dao().gravarComHistorico(marcador, marcadorAnt, null, identidade);
+			} else {
+				throw new AplicacaoException ("Marcador não existente para esta " + msgLotacao 
+						+ " (" + id.toString() + ").");
+			}
+		} else {
+			Integer ordem = listaMarcadoresLotacao.size() + 1; 
+			CpMarcador marcador = new CpMarcador();
+			marcador.setDescrMarcador(descricao);
+			marcador.setDescrDetalhada(descrDetalhada);
+			marcador.setGrupoMarcador(grupoId);
+			marcador.setCpTipoMarcador(idTpMarcador);
+			marcador.setIdCor(idCor);
+			marcador.setIdIcone(idIcone);
+			marcador.setIdTpAplicacao(idTpAplicacao);
+			marcador.setIdTpDataPlanejada(idTpDataPlanejada);
+			marcador.setIdTpDataLimite(idTpDataLimite);
+			marcador.setIdTpExibicao(idTpExibicao);
+			marcador.setIdTpTexto(idTpTexto);
+			marcador.setIdTpInteressado(idTpInteressado);
+			marcador.setDpLotacaoIni(lotacao);
+			marcador.setOrdem(ordem);
+			
+			dao().gravarComHistorico(marcador, null, null, identidade);
+		}
 	}
 	
 }

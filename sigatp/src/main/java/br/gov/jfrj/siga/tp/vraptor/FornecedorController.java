@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import br.com.caelum.vraptor.Controller;
@@ -84,6 +85,7 @@ public class FornecedorController extends TpController {
 	@RoleAdminMissao
 	@RoleAdminGabinete
 	@RoleGabinete
+    @Transactional
 	@Path("/salvar")
 	public void salvar(@Valid Fornecedor fornecedor) throws Exception {
 		if (validator.hasErrors()) {
@@ -104,6 +106,7 @@ public class FornecedorController extends TpController {
 		}
 	}
 
+    @Transactional
 	@RoleAdmin
 	@RoleAdminFrota
 	@RoleAdminMissao

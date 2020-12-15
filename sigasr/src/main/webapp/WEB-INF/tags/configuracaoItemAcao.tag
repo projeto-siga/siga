@@ -7,13 +7,14 @@
 <%@ attribute name="itemConfiguracaoSet" type="java.util.List" required="false"%>
 <%@ attribute name="acoesSet" type="java.util.List" required="false"%>
 
-<div>
-	<hr/>
-	<div class="gt-content">
-		<label>Itens de Configuração</label>
+
+<!-- Itens de Configuracao -->
+<div class="card mb-2">
+	<div class="card-header">Itens de Configuração</div>
+	<div class="card-body">
 		<!-- content bomex -->
-		<div class="gt-content-box dataTables_div">
-			<table id="itemConfiguracao_table" class="gt-table-nowrap display">
+		<div class="table-responsive">
+			<table id="itemConfiguracao_table" class="table">
 				<thead>
 					<tr>
 						<th>ID</th>
@@ -40,16 +41,18 @@
 			</table>
 		</div>
 		<div class="gt-table-buttons">
-			<a href="javascript: configuracaoItemAcaoService.modalAbrir('itemConfiguracao')" class="gt-btn-small gt-btn-left">Incluir</a>
+			<a href="javascript: configuracaoItemAcaoService.modalAbrir('itemConfiguracao')" class="btn btn-primary" style="color: #fff">Incluir</a>
 		</div>
 	</div>
-	
-	<hr/>
-	<div class="gt-form-row">
-		<label>Ações</label>
+</div>
+
+<!-- Acoes -->
+<div class="card mb-2">
+	<div class="card-header">Ações</div>
+	<div class="card-body">
 		<!-- content bomex -->
-		<div class="gt-content-box dataTables_div">
-			<table id="acao_table" class="gt-table display">
+		<div class="table-responsive">
+			<table id="acao_table" class="table">
 				<thead>
 					<tr>
 						<th>ID</th>
@@ -71,13 +74,12 @@
 				</tbody>
 			</table>
 		</div>
-		<div class="gt-table-buttons">
-			<a href="javascript: configuracaoItemAcaoService.modalAbrir('acao')" class="gt-btn-small gt-btn-left">Incluir</a>
-		</div>
+		<a href="javascript: configuracaoItemAcaoService.modalAbrir('acao')" class="btn btn-primary" style="color: #fff">Incluir</a>
 	</div>
-</div>
+</div>	
+	
 
-<sigasr:modal nome="itemConfiguracao" titulo="Adicionar Item de Configuração">
+<sigasr:modal nome="itemConfiguracao" titulo="Adicionar Item de Configuração" largura="80%">
 	<script>
 	//Edson: esta funcao evita que o usuario de ok sem a busca por ajax ter terminado
 	function bloqueiaItemOkSeVazio(){
@@ -88,25 +90,17 @@
 	}
 	</script>
 	<div id="dialogItemConfiguracao">
-		<div class="gt-content">
-			<div class="gt-form gt-content-box">
-				<div class="gt-form-row">
-					<div class="gt-form-row">
-						<label>Item de Configuração</label>
-						<siga:selecao2 propriedade="itemConfiguracao" tipo="itemConfiguracao" tema="simple" modulo="sigasr" onchange="bloqueiaItemOkSeVazio()"/>
-						<span style="display:none;color: red" id="designacao.itemConfiguracao">Item de Configuração não informado.</span>
-					</div>
-					<div class="gt-form-row">
-						<button id="modalItemOk" onclick="javascript: configuracaoItemAcaoService.inserirItemConfiguracao()" class="gt-btn-medium gt-btn-left" disabled>Ok</button>
-						<a href="javascript: configuracaoItemAcaoService.modalFechar('itemConfiguracao')" class="gt-btn-medium gt-btn-left">Cancelar</a>
-					</div>
-				</div>
-			</div>
+		<div class="form-group">
+			<label>Item de Configuração</label>
+			<sigasr:selecao3 propriedade="itemConfiguracao" tipo="itemConfiguracao" tema="simple" modulo="sigasr" onchange="bloqueiaItemOkSeVazio()"/>
+			<span style="display:none;color: red" id="designacao.itemConfiguracao">Item de Configuração não informado.</span>
 		</div>
+		<button id="modalItemOk" onclick="javascript: configuracaoItemAcaoService.inserirItemConfiguracao()" class="btn btn-primary" disabled>Ok</button>
+		<a href="javascript: configuracaoItemAcaoService.modalFechar('itemConfiguracao')" class="btn btn-secondary" style="color: #fff">Cancelar</a>
 	</div>
 </sigasr:modal>
 
-<sigasr:modal nome="acao" titulo="Adicionar Ação">
+<sigasr:modal nome="acao" titulo="Adicionar Ação" largura="80%">
 	<script>
 	//Edson: esta funcao evita que o usuario de ok sem a busca por ajax ter terminado
 	function bloqueiaAcaoOkSeVazio() {
@@ -117,21 +111,13 @@
 	}
 	</script>
 	<div id="dialogAcao">
-		<div class="gt-content">
-			<div class="gt-form gt-content-box">
-				<div class="gt-form-row">
-					<div class="gt-form-row">
-						<label>Ação</label> 
-						<siga:selecao2 propriedade="acao" tipo="acao" tema="simple" modulo="sigasr" onchange="bloqueiaAcaoOkSeVazio()"/>
-						<span style="display:none;color: red" id="designacao.acao">Ação não informada.</span>
-					</div>
-					<div class="gt-form-row">
-						<button id="modalAcaoOk" onclick="javascript: configuracaoItemAcaoService.inserirAcao()" class="gt-btn-medium gt-btn-left" disabled>Ok</button>
-						<a href="javascript: configuracaoItemAcaoService.modalFechar('acao')" class="gt-btn-medium gt-btn-left">Cancelar</a>
-					</div>
-				</div>
-			</div>
+		<div class="form-group">
+			<label>Ação</label> 
+			<sigasr:selecao3 propriedade="acao" tipo="acao" tema="simple" modulo="sigasr" onchange="bloqueiaAcaoOkSeVazio()"/>
+			<span style="display:none;color: red" id="designacao.acao">Ação não informada.</span>
 		</div>
+		<button id="modalAcaoOk" onclick="javascript: configuracaoItemAcaoService.inserirAcao()" class="btn btn-primary" disabled>Ok</button>
+		<a href="javascript: configuracaoItemAcaoService.modalFechar('acao')" class="btn btn-primary" style="color: #fff">Cancelar</a>
 	</div>
 </sigasr:modal>
 

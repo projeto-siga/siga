@@ -196,7 +196,7 @@
 	
 	function exibirBodyDoc(div_id, sigla, elem) {
 		$.ajax({
-		    url: "/sigaex/api/v1/doc/"+ sigla + "/html",
+		    url: "/sigaex/api/v1/documentos/"+ sigla + "/html",
 		    contentType: "application/json",
 		    headers: {"Authorization": "${jwt}"},
 		    dataType: 'json',

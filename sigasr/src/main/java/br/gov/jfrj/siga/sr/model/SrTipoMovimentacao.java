@@ -21,7 +21,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "SR_TIPO_MOVIMENTACAO", schema = "SIGASR")
+@Table(name = "sr_tipo_movimentacao", schema = "sigasr")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class SrTipoMovimentacao extends Objeto {
 

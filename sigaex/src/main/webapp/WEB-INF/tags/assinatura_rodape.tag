@@ -11,7 +11,7 @@
 <input type="hidden" id="nomeUsuSubscritor" value="${doc.subscritor.nomePessoa}"/>
 <input type="hidden" id="podeAssinarPorComSenha" value="${podeAssinarPorComSenha}"/>
 
-<c:forEach items="${doc.getMobilGeral().getMovimentacoesPorTipo(24)}" var="currentItem" varStatus="stat">
+<c:forEach items="${doc.getMobilGeral().getMovimentacoesPorTipo(24, true)}" var="currentItem" varStatus="stat">
   <c:set var="cossignatarios" value="${stat.first ? '' : cossignatarios} ${currentItem.subscritor.sigla}" />
 </c:forEach>
 

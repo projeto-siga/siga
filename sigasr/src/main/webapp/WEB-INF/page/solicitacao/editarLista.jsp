@@ -236,7 +236,7 @@
 				<c:if test="${idConfiguracao}">
 					<input type="button" value="Desativar"
 						class="gt-btn-medium gt-btn-left"
-						onclick="location.href='${linkTo[SolicitacaoController].desativarPermissaoUsoListaEdicao[idConfiguracao]}'" />
+						onclick="location.href='${linkTo[SolicitacaoController].desativarPermissaoUsoListaEdicao(idConfiguracao)}'" />
 				</c:if>
 			</div>
 

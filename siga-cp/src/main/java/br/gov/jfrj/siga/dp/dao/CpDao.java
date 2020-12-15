@@ -53,6 +53,7 @@ import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
@@ -92,6 +93,7 @@ import br.gov.jfrj.siga.dp.DpUnidadeDTO;
 import br.gov.jfrj.siga.dp.DpVisualizacao;
 import br.gov.jfrj.siga.model.CarimboDeTempo;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.DaoFiltro;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
@@ -1535,6 +1537,15 @@ public class CpDao extends ModeloDao {
 		// query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SUBSTITUICAO);
 		return query.getResultList();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public Integer qtdeSubstituicoesAtivasPorTitular(final DpSubstituicao exemplo) throws SQLException {
+		Query query = null;
+		query = em().createNamedQuery("qtdeSubstituicoesAtivasPorTitular");
+		query.setParameter("idTitularIni", exemplo.getTitular().getIdPessoaIni());
+		query.setParameter("idLotaTitularIni", exemplo.getLotaTitular().getIdLotacaoIni());
+		return ((Long)query.getSingleResult()).intValue();
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<DpVisualizacao> consultarVisualizacoesPermitidas(final DpVisualizacao exemplo) throws SQLException {
@@ -1897,6 +1908,26 @@ public class CpDao extends ModeloDao {
 		if (orderBy != null) {
 			q.orderBy(cb().asc(c.get(orderBy)));
 		}
+		return em().createQuery(q).getResultList();
+	}
+
+	public <T> List<T> listarTodosPorIdInicial(Class<T> clazz, Long hisIdIni, String campoOrderBy, Boolean isDescendente) {
+		CriteriaQuery<T> q = cb().createQuery(clazz);
+		Root<T> c = q.from(clazz);
+		q.select(c);
+		q.where(
+			cb().equal(c.get("hisIdIni"), hisIdIni)
+		);
+		if (campoOrderBy != null) {
+			if (isDescendente != null) {
+				if (isDescendente) {
+					q.orderBy(cb().desc(c.get(campoOrderBy)));
+				} else {
+					q.orderBy(cb().asc(c.get(campoOrderBy)));
+				}
+			}
+		}
+
 		return em().createQuery(q).getResultList();
 	}
 
@@ -2456,6 +2487,37 @@ public class CpDao extends ModeloDao {
 		return id;
 	}
 
+	public <T extends Historico> T obterAtual(final T u) {
+//		CriteriaBuilder builder = em().getCriteriaBuilder();
+//		
+//		CriteriaQuery query = builder.createQuery(thisAntigo.getClass());
+//		
+//		Subquery<Date> sub = query.subquery(Date.class);
+//		Root subFrom = sub.from(this.getClass());
+//		sub.select(builder.greatest(subFrom.<Date>get("hisDtIni")));
+//		sub.where(builder.equal(subFrom.get("hisIdIni"), thisAntigo.getHisIdIni()));
+//		
+//		Root from = query.from(this.getClass());
+//		CriteriaQuery select = query.select(from);
+//		select.where(builder.and(builder.equal(from.get("hisIdIni"), thisAntigo.getHisIdIni()), builder.equal(from.get("hisDtIni"), sub)));
+//		
+//		TypedQuery typedQuery = em().createQuery(query);
+//		thisAntigo = (HistoricoSuporte) typedQuery.getSingleResult();
+		
+		String clazz = u.getClass().getSimpleName();
+		String sql = "from " + clazz + " u where u.hisDtIni = "
+			+ "		(select max(p.hisDtIni) from " + clazz + " p where p.hisIdIni = :idIni)"
+			+ "		 and u.hisIdIni = :idIni";		
+		javax.persistence.Query qry = ContextoPersistencia.em().createQuery(sql);
+		qry.setParameter("idIni", u.getHisIdIni());
+		qry.setFirstResult(0);
+		qry.setMaxResults(1);
+		List<CpAcesso> result = qry.getResultList();
+		if (result == null || result.size() == 0)
+			return null;
+		return (T) result.get(0);
+	}
+
 	@SuppressWarnings("unchecked")
 	public CpAcesso consultarAcessoAnterior(final DpPessoa pessoa) {
 		String sql = "from CpAcesso a where a.cpIdentidade.dpPessoa.idPessoaIni = :idPessoaIni order by a.dtInicio desc";
@@ -2581,12 +2643,10 @@ public class CpDao extends ModeloDao {
 
 	public Integer quantidadeDocumentos(DpPessoa pes) {
 		try {
-			Query sql = (Query) em().createNamedQuery("quantidadeDocumentos");
+			Query sql = em().createNamedQuery("quantidadeDocumentos");
 
 			sql.setParameter("idPessoaIni", pes.getIdPessoaIni());
-			List result = sql.getResultList();
-			final int l = ((BigDecimal) sql.getSingleResult()).intValue();
-			return l;
+			return ((BigDecimal) sql.getSingleResult()).intValue();
 		} catch (final NullPointerException e) {
 			return null;
 		}
@@ -2594,7 +2654,7 @@ public class CpDao extends ModeloDao {
 
 	public Integer consultarQtdeDocCriadosPossePorDpLotacao(Long idLotacao) {
 		try {
-			Query sql = (Query) em().createNamedQuery("consultarQtdeDocCriadosPossePorDpLotacao");
+			Query sql = em().createNamedQuery("consultarQtdeDocCriadosPossePorDpLotacao");
 
 			sql.setParameter("idLotacao", idLotacao);
 			List result = sql.getResultList();
@@ -2646,6 +2706,26 @@ public class CpDao extends ModeloDao {
 		} else {
 			return null;
 		}			
+	}
+
+	public List<CpMarcador> listarCpMarcadoresPorLotacaoESublotacoes(DpLotacao lotacao, Boolean ativos) {
+		CpTipoMarcadorEnum marcador = CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA;
+		
+		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
+		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);
+		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
+		Predicate predicateAnd;
+		Predicate predicateNotEqualTipoMarcadorSistema  = criteriaBuilder.notEqual(cpMarcadorRoot.get("cpTipoMarcador"), marcador);
+		Predicate predicateEqualLotacao  = criteriaBuilder.equal(cpMarcadorRoot.get("dpLotacaoIni"), lotacao.getLotacaoInicial());
+		if (ativos == null || ativos) {
+			Predicate predicateNullHisDtFim = criteriaBuilder.isNull(cpMarcadorRoot.get("hisDtFim"));
+			predicateAnd = criteriaBuilder.and(predicateNotEqualTipoMarcadorSistema, predicateEqualLotacao, predicateNullHisDtFim);
+		} else {
+			predicateAnd = criteriaBuilder.and(predicateNotEqualTipoMarcadorSistema, predicateEqualLotacao);
+		}
+		
+		criteriaQuery.where(predicateAnd);
+		return em().createQuery(criteriaQuery).getResultList();
 	}
 	
 	

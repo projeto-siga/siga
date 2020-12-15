@@ -55,9 +55,9 @@ var newwin = null;
                                     Intervalo?</u></span>
 						    		<mod:selecao titulo="" var="intervalo${i}${j}" opcoes="Não;Sim" reler="ajax" idAjax="Func${i}${j}" />&nbsp;&nbsp;&nbsp;&nbsp;
 						    		<mod:texto valor="00" onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;
-                                    if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"largura="2" maxcaracteres="2" titulo="Horário final" var="horaFim${i}${j}" reler="ajax" idAjax="Func${i}${j}" />h
+                                    if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }" largura="2" maxcaracteres="2" titulo="Horário final" var="horaFim${i}${j}" reler="ajax" idAjax="Func${i}${j}" />h
 						    		<mod:texto valor="00" onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;
-                                    if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"titulo="" largura="2" maxcaracteres="2" var="minutoFim${i}${j}" reler="ajax" idAjax="Func${i}${j}" />m&nbsp;&nbsp;&nbsp;&nbsp;
+                                    if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }" titulo="" largura="2" maxcaracteres="2" var="minutoFim${i}${j}" reler="ajax" idAjax="Func${i}${j}" />m&nbsp;&nbsp;&nbsp;&nbsp;
 
                             
                                  <c:set var="xintervalo" value="${requestScope[f:concat(f:concat('intervalo',i),j)]}" />

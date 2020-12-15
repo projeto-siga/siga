@@ -3,7 +3,6 @@ package br.gov.jfrj.siga.ex.api.v1;
 import java.io.FileOutputStream;
 import java.util.concurrent.Callable;
 
-import com.crivano.swaggerservlet.SwaggerServlet;
 import com.crivano.swaggerservlet.SwaggerUtils;
 
 import br.gov.jfrj.itextpdf.Documento;
@@ -39,7 +38,7 @@ public class DownloadAssincrono implements Callable<String> {
 	@Override
 	public String call() throws Exception {
 		String bufName = null;
-		try (ApiContext ctx = new ApiContext(false)) {
+		try (ApiContext ctx = new ApiContext(true, false)) {
 			ExDao dao = ExDao.getInstance();
 
 			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();

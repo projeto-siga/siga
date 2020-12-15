@@ -48,9 +48,6 @@ public class SigaDocPdfUtils {
 			final boolean fB64 = request.getHeader("Accept") != null
 					&& request.getHeader("Accept").startsWith(
 							"text/vnd.siga.b64encoded");
-			final boolean fJSON = request.getHeader("Accept") != null
-					&& request.getHeader("Accept").startsWith(
-							"application/json");
 			final boolean isPdf = arquivo.endsWith(".pdf");
 			final boolean isHtml = arquivo.endsWith(".html");
 			boolean estampar = !semmarcas;
@@ -128,8 +125,8 @@ public class SigaDocPdfUtils {
 					hashreq.setCertificate(certificadoB64);
 					hashreq.setCrl("true");
 					hashreq.setPolicy("AD-RB");
-					hashreq.setSha1(bluc.bytearray2b64(bluc.calcSha1(ab)));
-					hashreq.setSha256(bluc.bytearray2b64(bluc.calcSha256(ab)));
+					hashreq.setSha1(BlucService.bytearray2b64(BlucService.calcSha1(ab)));
+					hashreq.setSha256(BlucService.bytearray2b64(BlucService.calcSha256(ab)));
 					hashreq.setTime(dataEHoraDoServidor);
 					HashResponse hashresp = bluc.hash(hashreq);
 					if (hashresp.getErrormsg() != null)

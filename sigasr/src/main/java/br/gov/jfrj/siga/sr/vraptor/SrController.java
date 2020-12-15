@@ -2,17 +2,16 @@ package br.gov.jfrj.siga.sr.vraptor;
 
 import static br.com.caelum.vraptor.view.Results.http;
 
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.http.HttpStatus;
 
-import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.HttpResult;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil;
 import br.gov.jfrj.siga.sr.validator.SrError;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaController;
@@ -55,4 +54,5 @@ public class SrController extends SigaController {
 
 		return jsonArray;
 	}
+
 }

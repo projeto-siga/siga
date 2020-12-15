@@ -22,7 +22,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 @Entity
-@Table(name = "SR_PRIORIDADE_SOLICITACAO", schema = "SIGASR")
+@Table(name = "sr_prioridade_solicitacao", schema = "sigasr")
 public class SrPrioridadeSolicitacao extends Objeto {
 
     public static final ActiveRecord<SrPrioridadeSolicitacao> AR = new ActiveRecord<>(SrPrioridadeSolicitacao.class);

@@ -219,6 +219,7 @@ public class ExAssinadorExternoController extends ExController {
 		return pdfd;
 	}
 
+	@Transacional
 	@Post("/app/assinador-popup/doc/{id}/hash")
 	public void assinadorPopupHash(String id) throws Exception {
 		try {

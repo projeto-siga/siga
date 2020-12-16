@@ -72,7 +72,7 @@
 				<!--  -->
 				<c:if test="${not empty cls}">
 					<p>
-						<b>Classificações:</b>
+						<b>Classifica&ccedil;&otilde;es:</b>
 					<ul>
 						<c:forEach items="${cls}" var="cl">
 							<li>${cl}</li>

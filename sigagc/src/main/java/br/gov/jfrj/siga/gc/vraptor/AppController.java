@@ -782,32 +782,34 @@ public class AppController extends GcController {
 							+ ") : O usuário não tem permissão para editar o conhecimento solicitado.");
 	}
 		
+	//TODO usar SigaProp quando converter pra eap7
 	private static String getRecaptchaSiteKey() {
 		String pwd = null;
 		try {
-			pwd = Prop.get("/siga.recaptcha.key");
+			pwd = System.getProperty("siga.ex.autenticacao.recaptcha.key");
 			if (pwd == null)
 				throw new AplicacaoException(
-						"Erro obtendo propriedade siga.recaptcha.key");
+						"Erro obtendo propriedade siga.ex.autenticacao.recaptcha.key");
 			return pwd;
 		} catch (Exception e) {
 			throw new AplicacaoException(
-					"Erro obtendo propriedade siga.recaptcha.key",
+					"Erro obtendo propriedade siga.ex.autenticacao.recaptcha.key",
 					0, e);
 		}
 	}
 
+	//TODO usar SigaProp quando converter pra eap7
 	private static String getRecaptchaSitePassword() {
 		String pwd = null;
 		try {
-			pwd = Prop.get("/siga.recaptcha.pwd");
+			pwd = System.getProperty("siga.ex.autenticacao.recaptcha.pwd");
 			if (pwd == null)
 				throw new AplicacaoException(
-						"Erro obtendo propriedade siga.recaptcha.pwd");
+						"Erro obtendo propriedade siga.ex.autenticacao.recaptcha.pwd");
 			return pwd;
 		} catch (Exception e) {
 			throw new AplicacaoException(
-					"Erro obtendo propriedade siga.recaptcha.pwd",
+					"Erro obtendo propriedade siga.ex.autenticacao.recaptcha.pwd",
 					0, e);
 		}
 	}

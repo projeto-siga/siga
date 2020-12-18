@@ -764,6 +764,10 @@ public class CpDao extends ModeloDao {
 			o.setOrgaoUsuario(cpOrgaoUsu);
 		}
 		DpLotacao lotacao = consultarPorSigla(o);
+		if(lotacao == null && flt.getSigla() != null) {
+			o.setSigla(flt.getSigla().replaceFirst("-", ""));
+			lotacao = consultarPorSigla(o);
+		}
 		if (lotacao == null) {
 			o.setSiglaLotacao(flt.getSigla());
 			o.setOrgaoUsuario(null);

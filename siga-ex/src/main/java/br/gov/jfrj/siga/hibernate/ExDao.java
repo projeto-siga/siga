@@ -35,6 +35,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.TemporalType;
 import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -888,7 +889,10 @@ public class ExDao extends CpDao {
 		try {
 			Query sql = em().createNamedQuery(
 					"consultarPaginaInicial");
-
+			
+			Date dt = super.consultarDataEHoraDoServidor();
+			Date amanha = new Date(dt.getTime() + 24*60*60*1000L);
+			sql.setParameter("amanha", amanha, TemporalType.DATE);
 			sql.setParameter("idPessoaIni", pes.getIdPessoaIni());
 			sql.setParameter("idLotacaoIni", lot.getIdLotacaoIni());
 			sql.setParameter("idTipoForma", Long.valueOf(idTipoForma));

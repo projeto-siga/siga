@@ -486,37 +486,39 @@ public class Documento {
 				
 				InputStream stream = Documento.class.getClassLoader()
 						.getResourceAsStream("/br/gov/jfrj/itextpdf/logo-siga-novo-166px.png");
-				byte[] ab = IOUtils.toByteArray(stream);
-				final Image logo = Image.getInstance(ab);
+				if (stream != null) {
+					byte[] ab = IOUtils.toByteArray(stream);
+					final Image logo = Image.getInstance(ab);
 //				
-				logo.scaleToFit(image39.getHeight(), image39.getHeight());
-				logo.setAbsolutePosition(r.getWidth() - image39.getHeight()
-						+ (STAMP_BORDER_IN_CM - PAGE_BORDER_IN_CM) * CM_UNIT,
-						PAGE_BORDER_IN_CM * CM_UNIT);
+					logo.scaleToFit(image39.getHeight(), image39.getHeight());
+					logo.setAbsolutePosition(r.getWidth() - image39.getHeight()
+							+ (STAMP_BORDER_IN_CM - PAGE_BORDER_IN_CM) * CM_UNIT,
+							PAGE_BORDER_IN_CM * CM_UNIT);
+		
+					logo.setBackgroundColor(Color.green);
+					logo.setBorderColor(Color.RED);
+					logo.setBorderWidth(0.5f * CM_UNIT);
+					logo.setImageMask(mask);
 	
-				logo.setBackgroundColor(Color.green);
-				logo.setBorderColor(Color.RED);
-				logo.setBorderWidth(0.5f * CM_UNIT);
-				logo.setImageMask(mask);
-	
-				over.setRGBColorFill(255, 255, 255);
-				mask.setAbsolutePosition(r.getWidth() - image39.getHeight()
-						- (PAGE_BORDER_IN_CM) * CM_UNIT,
-						(PAGE_BORDER_IN_CM - STAMP_BORDER_IN_CM) * CM_UNIT);
-				mask.scaleAbsolute(image39.getHeight() + 2 * STAMP_BORDER_IN_CM
-						* CM_UNIT, image39.getHeight() * logo.getHeight() / logo.getWidth() + 2 * STAMP_BORDER_IN_CM
-						* CM_UNIT);
-				over.addImage(mask);
-	
-				over.setRGBColorFill(255, 255, 255);
-				logo.setAnnotation(new Annotation(0, 0, 0, 0, 
-						"https://linksiga.trf2.jus.br")); 
+					over.setRGBColorFill(255, 255, 255);
+					mask.setAbsolutePosition(r.getWidth() - image39.getHeight()
+							- (PAGE_BORDER_IN_CM) * CM_UNIT,
+							(PAGE_BORDER_IN_CM - STAMP_BORDER_IN_CM) * CM_UNIT);
+					mask.scaleAbsolute(image39.getHeight() + 2 * STAMP_BORDER_IN_CM
+							* CM_UNIT, image39.getHeight() * logo.getHeight() / logo.getWidth() + 2 * STAMP_BORDER_IN_CM
+							* CM_UNIT);
+					over.addImage(mask);
+		
+					over.setRGBColorFill(255, 255, 255);
+					logo.setAnnotation(new Annotation(0, 0, 0, 0, 
+							"https://linksiga.trf2.jus.br")); 
 
-				if (Prop.isGovSP()) {
-					if (i == 1)
+					if (Prop.isGovSP()) {
+						if (i == 1)
+							over.addImage(logo);
+					} else {
 						over.addImage(logo);
-				} else {
-					over.addImage(logo);
+					}
 				}
 				// over.addImage(mask, mask.getScaledWidth() * 8, 0, 0,
 				// mask.getScaledHeight() * 8, 100, 450);

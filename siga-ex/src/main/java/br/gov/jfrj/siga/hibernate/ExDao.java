@@ -404,22 +404,23 @@ public class ExDao extends CpDao {
 			CriteriaQuery<ExMovimentacao> query = builder.createQuery(ExMovimentacao.class);	
 			Root<ExMovimentacao> root = query.from(ExMovimentacao.class);
 			
-			Predicate predicate, predicateMobilIgnorandoMovimentacaoDeJuntada, predicateMobilRefComoMovimentacaoDeJuntada;
+			Predicate predicate, predicateMobilIgnorandoMovimentacaoDeJuntada, predicateMobilRefComoMovimentacaoDeJuntadaEDesentranhamento;
 			Expression<Long> mobil = root.get("exMobil");
 			Expression<Long> mobilRef = root.get("exMobilRef");																		
 			Join<ExMovimentacao, ExTipoMovimentacao> joinTipoMovimentacao = root.join("exTipoMovimentacao");
-			Join<ExMovimentacao, ExMovimentacao> joinMovimentacaoCanceladora = root.join("exMovimentacaoCanceladora", JoinType.LEFT);
 			
 			predicateMobilIgnorandoMovimentacaoDeJuntada = builder.and(mobil.in(mobils), 
 					builder.notEqual(joinTipoMovimentacao.get("idTpMov"), ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA),
 					builder.notEqual(joinTipoMovimentacao.get("idTpMov"), ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA),
 					builder.notEqual(joinTipoMovimentacao.get("idTpMov"), ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO));
 																
-			predicateMobilRefComoMovimentacaoDeJuntada = builder.and(mobilRef.in(mobils), 
-					builder.equal(joinTipoMovimentacao.get("idTpMov"), ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA),
-					builder.isNull(joinMovimentacaoCanceladora.get("idMov")));								
+			predicateMobilRefComoMovimentacaoDeJuntadaEDesentranhamento = builder.and(mobilRef.in(mobils),
+					builder.or(builder.equal(root.get("exTipoMovimentacao"), ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA),
+							builder.equal(root.get("exTipoMovimentacao"), ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA)),
+					builder.isNull(root.get("exMovimentacaoCanceladora"))
+					);
 			
-			predicate = builder.or(predicateMobilIgnorandoMovimentacaoDeJuntada, predicateMobilRefComoMovimentacaoDeJuntada);
+			predicate = builder.or(predicateMobilIgnorandoMovimentacaoDeJuntada, predicateMobilRefComoMovimentacaoDeJuntadaEDesentranhamento);
 			
 			query.where(predicate)
 				.orderBy(builder.desc(root.get("dtTimestamp")));

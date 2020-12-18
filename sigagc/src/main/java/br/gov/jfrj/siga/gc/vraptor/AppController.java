@@ -1045,10 +1045,15 @@ public class AppController extends GcController {
 	}
 
 	@Transactional
-	public void gravar(@LoadOptional GcInformacao informacao, String inftitulo,
+	public void gravar(GcInformacao informacao, String inftitulo,
 			String conteudo, String classificacao, String origem,
 			GcTipoInformacao tipo, GcAcesso visualizacao, GcAcesso edicao,
 			CpPerfil grupo) throws Exception {
+		
+		if (informacao.getId() != 0) {
+			informacao = em().find(GcInformacao.class, informacao.getId());
+		}
+
 		// DpPessoa pessoa = (DpPessoa) renderArgs.get("cadastrante");
 		DpPessoa pessoa = getTitular();
 		DpLotacao lotacao = getLotaTitular();

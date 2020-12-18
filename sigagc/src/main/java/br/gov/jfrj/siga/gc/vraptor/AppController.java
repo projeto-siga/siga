@@ -36,6 +36,7 @@ import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.HttpResult;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.model.CpPerfilSelecao;
@@ -567,9 +568,14 @@ public class AppController extends GcController {
 
 		// List<GcInformacao> infs = GcInformacao.all().fetch();
 		// não exibe conhecimentos cancelados
-		List<GcInformacao> infs = GcInformacao.AR.find("byHisDtFimIsNull")
-				.fetch();
-
+		// BJN: evitando o erro "Error while executing query from GcInformacao where hisDtFim is null: Unable to find br.gov.jfrj.siga.cp.CpPerfil with id 2471"
+		List<GcInformacao> infs = new ArrayList<GcInformacao>();
+		try {
+			infs = GcInformacao.AR.find("byHisDtFimIsNull")
+					.fetch();
+		} catch (Exception e) {
+		}
+				
 		for (GcInformacao inf : infs) {
 			for (GcTag tag : inf.getTags()) {
 				arvore.add(tag, inf);
@@ -585,8 +591,13 @@ public class AppController extends GcController {
 		GcArvore arvore = new GcArvore();
 		// List<GcInformacao> infs = GcInformacao.all().fetch();
 		// não exibe conhecimentos cancelados
-		List<GcInformacao> infs = GcInformacao.AR.find("byHisDtFimIsNull")
-				.fetch();
+		// BJN: evitando o erro "Error while executing query from GcInformacao where hisDtFim is null: Unable to find br.gov.jfrj.siga.cp.CpPerfil with id 2471"
+		List<GcInformacao> infs = new ArrayList<GcInformacao>();
+		try {
+			infs = GcInformacao.AR.find("byHisDtFimIsNull")
+					.fetch();
+		} catch (Exception e) {
+		}
 
 		if (texto != null && texto.trim().length() > 0) {
 			texto = texto.trim().toLowerCase();
@@ -771,6 +782,36 @@ public class AppController extends GcController {
 							+ ") : O usuário não tem permissão para editar o conhecimento solicitado.");
 	}
 		
+	private static String getRecaptchaSiteKey() {
+		String pwd = null;
+		try {
+			pwd = Prop.get("/siga.recaptcha.key");
+			if (pwd == null)
+				throw new AplicacaoException(
+						"Erro obtendo propriedade siga.recaptcha.key");
+			return pwd;
+		} catch (Exception e) {
+			throw new AplicacaoException(
+					"Erro obtendo propriedade siga.recaptcha.key",
+					0, e);
+		}
+	}
+
+	private static String getRecaptchaSitePassword() {
+		String pwd = null;
+		try {
+			pwd = Prop.get("/siga.recaptcha.pwd");
+			if (pwd == null)
+				throw new AplicacaoException(
+						"Erro obtendo propriedade siga.recaptcha.pwd");
+			return pwd;
+		} catch (Exception e) {
+			throw new AplicacaoException(
+					"Erro obtendo propriedade siga.recaptcha.pwd",
+					0, e);
+		}
+	}
+
 	public void selecaoInplace() throws Exception {
 		int a = 0;
 	}
@@ -789,7 +830,7 @@ public class AppController extends GcController {
 			;
 		
 		String conteudo = bl.marcarLinkNoConteudo(informacao, informacao.getArq()
-				.getConteudoTXT());
+				.getConteudoTXT().replace("/sigagc/app/baixar", "/sigagc/public/app/baixar"));
 		em().detach(informacao);
 		// if (conteudo != null)
 		// informacao.arq.setConteudoTXT(conteudo);

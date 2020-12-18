@@ -163,6 +163,7 @@ public class Prop {
 		provider.addPublicProperty("/siga.ws.seguranca.token.jwt", "false");
 		provider.addPublicProperty("/sigaex.autenticidade.url", base + "/sigaex/public/app/autenticar");
 		provider.addPublicProperty("/sigaex.url", base + "/sigaex");
+		provider.addPublicProperty("/sigagc.url", base + "/sigagc");		
 		provider.addPublicProperty("/sigaex.manual.url", base + "/siga/arquivos/apostila_sigaex.pdf");
 
 		provider.addPrivateProperty("/xjus.jwt.secret", null);

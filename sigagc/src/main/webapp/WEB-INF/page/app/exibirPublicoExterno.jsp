@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/page/include.jsp"%>
 
-<siga:pagina titulo="${informacao.sigla}">
+<siga:pagina titulo="${informacao.sigla}" desabilitarmenu="sim">
 	<div class="gt-bd gt-cols clearfix">
 		<div class="gt-content">
 			<h2>${informacao.sigla}</h2>

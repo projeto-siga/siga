@@ -8,6 +8,7 @@
 <script src="/sigaex/public/javascript/assinatura-digital.js"></script>
 <input type="hidden" id="siglaUsuarioCadastrante" value="${cadastrante.sigla}"/>
 <input type="hidden" id="siglaUsuSubscritor" value="${doc.subscritor.sigla}"/>
+<input type="hidden" id="siglaUsuTitular" value="${titular.sigla}"/>
 <input type="hidden" id="nomeUsuSubscritor" value="${doc.subscritor.nomePessoa}"/>
 <input type="hidden" id="podeAssinarPorComSenha" value="${podeAssinarPorComSenha}"/>
 

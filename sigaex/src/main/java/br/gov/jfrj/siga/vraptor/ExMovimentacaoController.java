@@ -3693,6 +3693,15 @@ public class ExMovimentacaoController extends ExController {
 							getLotaTitular(), mob, mov))
 				throw new AplicacaoException(
 						"Não é possível cancelar o documento vinculado.");
+			
+		} else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO) {
+			if (!Ex.getInstance()
+					.getComp()
+					.podeExcluirAnotacao(getTitular(),
+							getLotaTitular(), mob, mov))
+				throw new AplicacaoException(
+						"Não é possível excluir a anotação.");
+			
 		} else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO) {
 			ExPodeCancelarMarcacao.afirmar(mov, getTitular(), getLotaTitular());
 		} else {

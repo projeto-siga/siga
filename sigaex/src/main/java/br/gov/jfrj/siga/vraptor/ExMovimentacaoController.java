@@ -3077,7 +3077,7 @@ public class ExMovimentacaoController extends ExController {
 			httpError(e);
 		}
 		
-		result.use(Results.page()).forwardTo("/WEB-INF/page/ok.jsp");
+		httpOK();
 	}
 
 	@Transacional

@@ -92,6 +92,7 @@ public class LoginController extends SigaController {
 	}
 
 	@Post("public/app/login")
+	@Transacional
 	public void auth(String username, String password, String cont) throws IOException {
 		try {
 			GiService giService = Service.getGiService();
@@ -157,6 +158,7 @@ public class LoginController extends SigaController {
 	}
 
 	@Get("app/swapUser")
+	@Transacional
 	public void authSwap(String username, String cont) throws IOException {
 		
 		try {
@@ -316,6 +318,7 @@ public class LoginController extends SigaController {
 	 * 
 	 */
 	@Get("public/app/loginSSO")
+	@Transacional
 	public void loginSSO(String cont) throws AplicacaoException, IOException {
 		try {
 			

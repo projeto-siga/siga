@@ -24,6 +24,7 @@ import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
+import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 @AcessoPublicoEPrivado
 public class DocumentosSiglaHtmlGet implements IDocumentosSiglaHtmlGet {
@@ -34,13 +35,19 @@ public class DocumentosSiglaHtmlGet implements IDocumentosSiglaHtmlGet {
 					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 	
 	        String jwt = CurrentRequest.get().getRequest().getHeader(HttpHeaders.AUTHORIZATION);		
-			ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
+			SigaObjects so = ApiContext.getSigaObjects();
+	        ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
 			flt.setSigla(req.sigla);
 			ExMobil mob = ExDao.getInstance().consultarPorSigla(flt);
 			if (mob == null) {
 				throw new SwaggerException("Documento não encontrado: " + req.sigla, 404, null, req, resp,
 						null);
 			}
+			if (mob.getDoc().isCapturado()) {
+				throw new SwaggerException("Documento capturado, não é possivel ser visualizado em formato HTML.", 403, null, req, resp,
+						null);
+			}
+			
 			Decoder decoder = Base64.getUrlDecoder();
 		    String[] jwt_split = jwt.split("\\.");
 		    String jwtBody = new String(decoder.decode(jwt_split[1]));
@@ -51,7 +58,7 @@ public class DocumentosSiglaHtmlGet implements IDocumentosSiglaHtmlGet {
 				ExProtocolo protocolo = ExDao.getInstance().obterProtocoloPorCodigo(n);
 				ExDocumento docPai = protocolo.getExDocumento();
 				if (!(docPai.getIdDoc() == mob.getExMobilPai().getDoc().getIdDoc()
-						&& mob.getPodeExibirNoAcompanhamento())) {
+						&& mob.podeExibirNoAcompanhamento())) {
 					throw new SwaggerException("Documento não permitido para visualização: " + req.sigla, 403, null, req, resp,
 							null);
 				}

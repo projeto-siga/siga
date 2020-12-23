@@ -50,9 +50,9 @@ import br.gov.jfrj.siga.dp.CpMarca;
 		"               JOIN CpMarcador mard on (mard.hisIdIni = marcador.hisIdIni and mard.hisAtivo = 1)"+
 		"               JOIN marca.exMobil.exDocumento.exFormaDocumento.exTipoFormaDoc tpForma "+
 		"        WHERE  ( marca.dtIniMarca IS NULL "+
-		"                  OR marca.dtIniMarca < trunc(CURRENT_TIMESTAMP) ) "+
+		"                  OR marca.dtIniMarca < :amanha ) "+
 		"               AND ( marca.dtFimMarca IS NULL "+
-		"                      OR marca.dtFimMarca > trunc(CURRENT_TIMESTAMP) ) "+
+		"                      OR marca.dtFimMarca > CURRENT_DATE ) "+
 		"               AND ( ( marca.dpPessoaIni.idPessoa = :idPessoaIni ) "+
 		"                      OR ( marca.dpLotacaoIni.idLotacao = :idLotacaoIni ) ) "+
 		"               AND marca.cpTipoMarca.idTpMarca = 1 "+

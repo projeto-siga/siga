@@ -63,7 +63,8 @@ public class SigaTransacionalInterceptor extends br.com.caelum.vraptor.jpa.JPATr
 
 	@Accepts
 	public boolean accepts(ControllerMethod method) {
-		  return method.containsAnnotation(Transacional.class);
+		  this.method = method;
+		  return true;
 	}
 
 	@AroundCall
@@ -71,14 +72,10 @@ public class SigaTransacionalInterceptor extends br.com.caelum.vraptor.jpa.JPATr
 		addRedirectListener();
 
 		try {
-	/*		if (this.method.containsAnnotation(Transacional.class)) {
-				
-			} else {
-				disableAutoFlush();
-			} */
-
-			EntityTransaction transaction = manager.getTransaction();
-			transaction.begin();
+	 		if (this.method.containsAnnotation(Transacional.class)) {
+				EntityTransaction transaction = manager.getTransaction();
+				transaction.begin();
+			} 
 			
 //			 System.out.println("*** " + (manager.getTransaction() ==
 //					 null || !manager.getTransaction().isActive() ? "NÃO" : "") + " TRANSACIONAL" + this.method.toString() + " - ");
@@ -127,7 +124,6 @@ public class SigaTransacionalInterceptor extends br.com.caelum.vraptor.jpa.JPATr
 		EntityTransaction transaction = thiz.manager.getTransaction();
 		if (!transaction.isActive()) {
 			// System.out.println("*** UPGRADE para Transacional - " + thiz.method.toString());
-			enableAutoFlush();
 			transaction.begin();
 		}
 	}
@@ -139,21 +135,6 @@ public class SigaTransacionalInterceptor extends br.com.caelum.vraptor.jpa.JPATr
 			thiz.commit(transaction);
 			// System.out.println("*** DOWNGRADE para NÃO Transacional - " +
 			// thiz.method.toString());
-			disableAutoFlush();
-			transaction = thiz.manager.getTransaction();
-			transaction.begin();
 		}
-	}
-
-	public static void disableAutoFlush() {
-//		SigaTransacionalInterceptor thiz = current.get();
-//		Session session = CDIProxies.unproxifyIfPossible(thiz.manager).unwrap(org.hibernate.Session.class);
-//		session.setFlushMode(FlushMode.MANUAL);
-	}
-
-	public static void enableAutoFlush() {
-//		SigaTransacionalInterceptor thiz = current.get();
-//		Session session = CDIProxies.unproxifyIfPossible(thiz.manager).unwrap(org.hibernate.Session.class);
-//		session.setFlushMode(FlushMode.AUTO);
 	}
 }

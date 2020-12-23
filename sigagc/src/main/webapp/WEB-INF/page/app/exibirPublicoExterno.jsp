@@ -7,23 +7,6 @@
 			<c:if test="${flash.success}">
 				<p class="gt-success">${flash.success}</p>
 			</c:if>
-			<%-- <h3 style="margin-bottom: 0px;">${informacao.getMarcadoresEmHtml(titular,lotaTitular)}</h3>
-			<!-- Links para as ações de cada mobil -->
-			<c:set var="acoes"
-				value="${informacao.acoes(idc,titular,lotaTitular)}" />
-			<siga:links>
-				<c:forEach var="acao" items="${acoes}">
-					<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}"
-						pre="${acao.pre}" pos="${acao.pos}" url="${acao.url}"
-						test="${true}" popup="${acao.popup}"
-						confirm="${acao.msgConfirmacao}"
-						estilo="line-height: 160% !important" />
-				</c:forEach>
-				<span class="gt-separator"> |</span> 
-					<a class="" href="javascript:visualizaImpressao('knowledgeContent');">
-						<img src="/siga/css/famfamfam/icons/printer.png" style="margin-right:5px;" title="">Visualizar&nbsp;Impressão
-					</a>			
-			</siga:links> --%>
 
 			<!-- Dados do documento -->
 			<div id="knowledgeContent" class="gt-content-box" style="padding: 10px;">
@@ -72,7 +55,7 @@
 				<!--  -->
 				<c:if test="${not empty cls}">
 					<p>
-						<b>Classifica��es:</b>
+						<b>Classifica&ccedil;&otilde;es:</b>
 					<ul>
 						<c:forEach items="${cls}" var="cl">
 							<li>${cl}</li>
@@ -93,7 +76,7 @@
 							<p>
 								<img style="margin-bottom: -4px;"
 									src="/siga/css/famfamfam/icons/${m.arq.icon}.png" /> <a
-									target="_blank" href="${linkTo[AppController].baixarSemAutenticacao[m.arq.id]}">${m.arq.titulo}</a>
+									target="_blank" href="${linkTo[AppController].baixarSemAutenticacao(m.arq.id)}">${m.arq.titulo}</a>
 							</p>
 						</c:if>
 					</c:forEach>
@@ -163,11 +146,11 @@
 				document.getElementById('gc'));
 	</script>
 
-	<!-- Movimentações -->
+	<!-- Movimentacoes -->
 	<c:if test="${movimentacoes}">
 		<div class="gt-bd" style="padding-bottom: 0px;">
 			<div class="gt-content">
-				<h3 id="ancora_mov">Movimentações</h3>
+				<h3 id="ancora_mov">Movimenta&ccedil;&otilde;es</h3>
 			</div>
 
 			<div class="gt-content-box gt-for-table" style="margin-bottom: 25px;">
@@ -179,14 +162,14 @@
 							<th colspan="2" align="left">Cadastrante</th>
 							<th colspan="2" align="left">Titular</th>
 							<th colspan="2" align="left">Atendente</th>
-							<th colspan="2" align="left">Descrição</th>
+							<th colspan="2" align="left">Descri&ccedil;&atilde;o</th>
 						</tr>
 						<tr>
-							<th align="left">Lotação</th>
+							<th align="left">Lota&ccedil;&atilde;o</th>
 							<th align="left">Pessoa</th>
-							<th align="left">Lotação</th>
+							<th align="left">Lota&ccedil;&atilde;o</th>
 							<th align="left">Pessoa</th>
-							<th align="left">Lotação</th>
+							<th align="left">Lota&ccedil;&atilde;o</th>
 							<th align="left">Pessoa</th>
 						</tr>
 					</thead>
@@ -232,24 +215,10 @@
 							</c:choose>
 							<tr class="juntada ${classe}">
 								<td align="left">${m.hisDtIni}</td>
-								<c:choose>
-									<c:when test="${informacao.podeDesfazer(titular, lotaTitular, m)}">
-										<td>${m.tipo.nome}<img
-											style="margin-bottom: -2px; width: 11px;"
-											src="/siga/css/famfamfam/icons/cross.png" /> <span
-											class="gt-table-action-list"> <a
-												href="javascript:if (confirm('Deseja desfazer essa movimentação?')) location.href = '${linkTo[AppController].desfazer[informacao.siglaCompacta][m.id]}';">desfazer</a></span>&nbsp;
-										</td>
-									</c:when>
-									<c:otherwise>
-										<td>${m.tipo.nome}</td>
-									</c:otherwise>
-								</c:choose>
-								<td align="left"><span
-									title="${m.hisIdcIni.pessoaAtual.lotacao.descricao}">${m.hisIdcIni.pessoaAtual.lotacao.sigla}</span>
+								<td>${m.tipo.nome}</td>
+								<td align="left"><span title="${m.hisIdcIni.pessoaAtual.lotacao.descricao}">${m.hisIdcIni.pessoaAtual.lotacao.sigla}</span>
 								</td>
-								<td align="left"><span
-									title="${m.hisIdcIni.dpPessoa.descricao}">${m.hisIdcIni.dpPessoa.nomeAbreviado}</span>
+								<td align="left"><span title="${m.hisIdcIni.dpPessoa.descricao}">${m.hisIdcIni.dpPessoa.nomeAbreviado}</span>
 								</td>
 								<td align="left"><span
 									title="${m.lotacaoTitular.descricao}">${m.lotacaoTitular.sigla}</span></td>
@@ -281,7 +250,7 @@
 	<c:if test="${historico}">
 		<div class="gt-bd" style="padding-bottom: 0px;">
 			<div class="gt-content">
-				<h3 id="ancora_his">Histórico de alterações</h3>
+				<h3 id="ancora_his">Hist&oacute;rico de altera&ccedil;&otilde;es</h3>
 			</div>
 
 			<div class="gt-content-box gt-for-table" style="margin-bottom: 25px;">
@@ -290,10 +259,10 @@
 						<tr>
 							<th align="center" rowspan="2">Data</th>
 							<th colspan="2" align="left">Cadastrante</th>
-							<th rowspan="2">Descrição</th>
+							<th rowspan="2">Descri&ccedil;&atilde;o</th>
 						</tr>
 						<tr>
-							<th align="left">Lotação</th>
+							<th align="left">Lota&ccedil;&atilde;o</th>
 							<th align="left">Pessoa</th>
 						</tr>
 					</thead>
@@ -308,9 +277,9 @@
 									title="${m.hisIdcIni.pessoaAtual.descricao}">${m.hisIdcIni.pessoaAtual.nomeAbreviado}</span>
 								</td>
 								<td style="width: 80%;">
-									<!-- Título --> <c:if test="${mapTitulo.containsKey(m)}">
+									<!-- Titulo --> <c:if test="${mapTitulo.containsKey(m)}">
 										<h4>${mapTitulo.get(m)}</h4>
-									</c:if> <!-- Conteúdo --> <c:if test="${mapTxt.containsKey(m)}">${mapTxt.get(m)}</c:if>
+									</c:if> <!-- Conteudo --> <c:if test="${mapTxt.containsKey(m)}">${mapTxt.get(m)}</c:if>
 								</td>
 							</tr>
 						</c:forEach>

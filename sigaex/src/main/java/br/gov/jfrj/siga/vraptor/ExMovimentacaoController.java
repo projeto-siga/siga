@@ -3077,7 +3077,7 @@ public class ExMovimentacaoController extends ExController {
 			httpError(e);
 		}
 		
-		result.use(Results.page()).forwardTo("/WEB-INF/page/ok.jsp");
+		httpOK();
 	}
 
 	@Transacional
@@ -3795,6 +3795,7 @@ public class ExMovimentacaoController extends ExController {
 			throw new AplicacaoException("Não é possível desapensar");
 
 		if (doc.isEletronico()) {
+			SigaTransacionalInterceptor.upgradeParaTransacional();
 			aDesapensarGravar(1, sigla, dtMovString, Boolean.FALSE, null, null);
 			return;
 		}

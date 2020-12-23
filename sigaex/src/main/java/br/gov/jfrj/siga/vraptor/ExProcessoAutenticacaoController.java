@@ -187,7 +187,7 @@ public class ExProcessoAutenticacaoController extends ExController {
 				throw new AplicacaoException("Documento não encontrado: " + sigla);
 			}
 			if (!(idDocPai == mob.getExMobilPai().getDoc().getIdDoc()
-					&& mob.getPodeExibirNoAcompanhamento())) {
+					&& mob.podeExibirNoAcompanhamento())) {
 				throw new AplicacaoException("Documento não permitido para visualização: " + sigla);
 			}
 			arq = mob.doc();

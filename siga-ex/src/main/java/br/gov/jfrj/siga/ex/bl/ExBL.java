@@ -2396,6 +2396,19 @@ public class ExBL extends CpBL {
 			}
 
 			gravarMovimentacao(mov);
+
+			Set<ExMovimentacao> movs = mob.getMovsNaoCanceladas(ExTipoMovimentacao
+					.TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO);
+			if (!movs.isEmpty()) {
+				try {
+					cancelar(cadastrante, lotaCadastrante, mob,
+							movs.iterator().next(), null, null, null,
+							"Disponibilização no acompanhamento do protocolo");
+				} catch (Exception e) {
+					throw new AplicacaoException("Erro ao cancelar o acompanhamento de protocolo do documento desentranhado: " 
+								+ e.getMessage());
+				}
+			}
 			concluirAlteracaoComRecalculoAcesso(mov);
 		} catch (RegraNegocioException e) {
 			cancelarAlteracao();
@@ -7560,7 +7573,8 @@ public class ExBL extends CpBL {
 		if (mob == null)
 			throw new AplicacaoException("Não existe via para a disponibilização no acompanhamento do protocolo.");
 		
-		if (!mob.getExDocumento().getExFormaDocumento().getDescricao().contains("Despacho"))
+		if (!Ex.getInstance().getComp()
+				.podeDisponibilizarNoAcompanhamentoDoProtocolo(cadastrante, lotaCadastrante, mob.getDoc()))
 			throw new AplicacaoException("Disponibilização no acompanhamento do protocolo só é permitida para despachos.");
 		
 		Set<ExMovimentacao> movs = mob.getMovsNaoCanceladas(ExTipoMovimentacao

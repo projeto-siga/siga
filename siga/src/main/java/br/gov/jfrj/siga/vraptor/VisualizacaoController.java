@@ -108,6 +108,7 @@ public class VisualizacaoController extends SigaController {
 	}
 	
 	@Post("/app/visualizacao/gravar")
+	@Transacional
 	public void gravar(DpVisualizacao visualizacao
 			          ,DpPessoaSelecao delegadoSel
 				      ,String dtIniDeleg
@@ -197,6 +198,9 @@ public class VisualizacaoController extends SigaController {
 				+ Prop.get("/siga.mesa.versao") + "?idVisualizacao="+idVisualizacao);
 	}	
 	
+	
+	@Get("/app/visualizacao/exclui")
+	@Transacional
 	public void exclui(Long id) throws Exception {
 		
 		try{

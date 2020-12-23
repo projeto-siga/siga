@@ -364,9 +364,7 @@ public class ExMovimentacaoVO extends ExVO {
 				addAcao(null, mov.getExMobil().getSigla(), "/app/expediente/doc", "exibir", true, null,
 						"sigla=" + mov.getExMobil().getSigla(), "Documento juntado: ", mensagemPos, null);
 
-				if (mov.getExMobil().isJuntado() && mov.getExDocumento().getExModelo()
-						.getExFormaDocumento().getDescricao().equals("Despacho")) { 
-					if (mov.getExMobil().getPodeExibirNoAcompanhamento()) {
+				if (mov.getExMobil().podeExibirNoAcompanhamento(titular, lotaTitular)) {
 						Set<ExMovimentacao> movs = mov.getExMobil().getMovsNaoCanceladas(ExTipoMovimentacao
 								.TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO);
 						if (!movs.isEmpty()) {
@@ -377,7 +375,10 @@ public class ExMovimentacaoVO extends ExVO {
 									"id=" + movs.iterator().next().getIdMov().toString(), null,
 									null, null);
 						}
-					} else {
+				} else {
+					if (mov.getExMobil().isJuntado()
+							&& Ex.getInstance().getComp()
+								.podeDisponibilizarNoAcompanhamentoDoProtocolo(titular, lotaTitular, mov.getExDocumento())) {
 						addAcao(null, "Disponibilizar no Acompanhamento do Protocolo", "/app/expediente/mov", 
 								"exibir_no_acompanhamento_do_protocolo", 
 								true, "Ao clicar em OK o conteúdo deste documento ficará disponível através do número do "

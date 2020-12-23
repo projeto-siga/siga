@@ -132,7 +132,8 @@
 												<c:if test="${mov.idTpMov == 12}">
 													<span style="font-size: .8rem;color: #9e9e9e;"
 														>| documento juntado ${mov.exMobil}
-														<c:if test="${mov.exMobil.podeExibirNoAcompanhamento}">
+														<c:if test="${m.sigla == mov.exMobil.exMobilPai.sigla 
+																&& mov.exMobil.podeExibirNoAcompanhamento()}">
 															&nbsp<a class="showConteudoDoc link-btn btn btn-sm btn-light" href="#" 
 																onclick="popitup('/sigaex/public/app/processoArquivoAutenticado_stream?jwt=${jwt}&sigla=${mov.exMobil}');"
 																rel="popover" data-title="${mov.exMobil}" 
@@ -206,9 +207,10 @@
 					.replace(/(\r\n|\n|\r)/gm, "")
 					.replace(/<p[^>]*>/gi,'PARAGRAFOQUEBRA');
 				conteudo = new DOMParser().parseFromString(strhtml, "text/html") 
-        			.documentElement.textContent	
+        			.documentElement.textContent
 					.replace(/PARAGRAFOQUEBRA?/g,'<p>').substring(0, 500)
 					+ "... <br /><br /><i>Clique no botão para ver o documento completo.</i>";
+				conteudo = conteudo.split('<p>').slice(0,16).join('<p>');
 				$('#'+div_id).removeClass("spinner-border");
  				$('#'+div_id).html(conteudo);
 				$(elem).attr("data-content", conteudo);

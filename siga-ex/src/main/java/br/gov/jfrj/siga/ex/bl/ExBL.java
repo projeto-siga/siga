@@ -7573,7 +7573,8 @@ public class ExBL extends CpBL {
 		if (mob == null)
 			throw new AplicacaoException("Não existe via para a disponibilização no acompanhamento do protocolo.");
 		
-		if (!mob.getExDocumento().getExFormaDocumento().getDescricao().contains("Despacho"))
+		if (!Ex.getInstance().getComp()
+				.podeDisponibilizarNoAcompanhamentoDoProtocolo(cadastrante, lotaCadastrante, mob.getDoc()))
 			throw new AplicacaoException("Disponibilização no acompanhamento do protocolo só é permitida para despachos.");
 		
 		Set<ExMovimentacao> movs = mob.getMovsNaoCanceladas(ExTipoMovimentacao

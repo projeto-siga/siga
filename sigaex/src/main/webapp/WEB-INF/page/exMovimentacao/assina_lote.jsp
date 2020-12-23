@@ -285,7 +285,7 @@
 				$.ajax
 				  ({
 				    type: "POST",
-				    url: "/sigaex/api/v1/autenticar",
+				    url: "/siga/api/v1/autenticar",
 				    dataType: 'json',
 				    data: '',
 				    beforeSend: function (xhr){ 

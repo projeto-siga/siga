@@ -109,6 +109,63 @@
 				</c:if>
 			</c:if>
 		</div>
+		
+		<!--  Modal -->
+		<form method="post" name="enviarMatricula"
+			action="<c:url value="mesa2/"/>">
+			<div id="abrirModal" class="modal" tabindex="-1" role="dialog"
+				data-backdrop="static">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Selecione o Usuário Padrão</h5>
+							<button type="button" class="close" data-dismiss="modal"
+								aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body" style="overflow-y: scroll;">
+							<div class="list-group" style="height: 250px">
+	
+								<c:forEach var="lota" items="${cadastrante.lotacoes}">
+									<a href="/siga/app/swapUser?username=${lota[0]}" id="selecionarMatricula"
+										class="list-group-item list-group-item-action flex-column align-items-start">
+	
+										<input id="cadastrante" name="cadastrante"
+										value="${cadastrante.cpfFormatado}" type="hidden" />
+										
+										<input id="id" name="id"
+										value="${cadastrante.id}" type="hidden" />
+	
+										<div class="d-flex w-100 justify-content-between">
+											<h5 class="mb-1">${lota[1]}(${lota[0]})</h5>
+										</div>
+										<p class="mb-1">${lota[2]}</p>
+									</a>
+								</c:forEach>
+	
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary"
+								data-dismiss="modal">Cancelar</button>
+							<button value="${linkTo[ExMesa2Controller].capturaUsuarioSelecionado()}" 
+								id="btnConfirmarMatricula"								
+								name="btnConfirmarMatricula" type="submit"
+								class="btn btn-primary">Confirmar</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+
+	<script>
+		$(document).ready(function() {
+				$('#abrirModal').modal('show');
+		});
+		
+	</script>
+				
 		<div id="rowTopMesa" style="z-index: 1" class="row sticky-top px-3 pt-1 bg-white shadow-sm" 
 				v-if="!carregando || (!errormsg &amp;&amp; grupos.length >= 0)">
 			<c:if test="${siga_mesaCarregaLotacao && !ehPublicoExterno}">

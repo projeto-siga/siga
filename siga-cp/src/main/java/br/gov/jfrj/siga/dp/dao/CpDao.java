@@ -53,13 +53,13 @@ import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.cp.CpIdentidade;
-import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
+import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpTipoPapel;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
@@ -68,6 +68,7 @@ import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
+import br.gov.jfrj.siga.dp.AbstractDpPessoa;
 import br.gov.jfrj.siga.dp.CpAplicacaoFeriado;
 import br.gov.jfrj.siga.dp.CpFeriado;
 import br.gov.jfrj.siga.dp.CpLocalidade;
@@ -108,7 +109,6 @@ public class CpDao extends ModeloDao {
 	public static final String CACHE_HOURS = "hours";
 	public static final String CACHE_SECONDS = "seconds";
 	
-
 	private static Map<String, CpServico> cacheServicos = null;
 
 	public static CpDao getInstance() {
@@ -884,6 +884,44 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
+	
+	/**
+	 * Alteração cartão 1564 
+	 */
+	public DpPessoa consultaEGravaUsuarioPadrao(long id, long cpf){
+
+		final Query qry = em().createNamedQuery("consultarPessoaAtualPelaInicial");
+		qry.setParameter("idPessoaIni", id);
+		final DpPessoa pes = (DpPessoa) qry.getResultStream().findFirst().orElse(null);
+		
+		final Query query = em().createNamedQuery("consultarPorCpf");
+		query.setParameter("cpfPessoa", cpf);
+		
+		List<DpPessoa> lista  = listarUsuarioPadrao(cpf);
+		
+		while(((DpPessoa) lista).getUsuarioPadrao().equals(1)) {
+				((DpPessoa) lista).setUsuarioPadrao(0);
+				em().merge(pes);
+			}
+			
+		 if (pes.getUsuarioPadrao() == 0) {
+				pes.setUsuarioPadrao(1);
+				em().merge(pes);
+			}
+
+		return pes;
+	}
+	
+	public List<DpPessoa> listarUsuarioPadrao(final long id) {
+
+		final Query qry = em().createNamedQuery("consultaUsuarioPadrao");
+		qry.setParameter("usuarioPadrao", id);
+		final List<DpPessoa> l = qry.getResultList();
+		return l;
+	}
+	/**
+	 * Fim alteração cartão 1564 
+	 */
 
 	public DpPessoa consultarPorCpf(final long cpf) {
 

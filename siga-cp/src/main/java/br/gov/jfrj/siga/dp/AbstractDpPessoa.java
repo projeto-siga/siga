@@ -178,7 +178,8 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "   and (u.dtCancelamentoIdentidade = null)"
 				+ "   and (u.dtExpiracaoIdentidade = null or u.dtExpiracaoIdentidade > current_date())"
 				+ "   and (pes.dataFimPessoa = null)"
-				+ "   and (pes.situacaoFuncionalPessoa in ('1', '2', '4', '12', '22', '31', '36'))")
+				+ "   and (pes.situacaoFuncionalPessoa in ('1', '2', '4', '12', '22', '31', '36'))"),
+		@NamedQuery(name = "consultaUsuarioPadrao", query = "select pes from DpPessoa pes where pes.usuarioPadrao = 1")
 })
 public abstract class AbstractDpPessoa extends DpResponsavel implements
 		Serializable, HistoricoAuditavel {
@@ -320,6 +321,15 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 
 	@Column(name = "NOME_EXIBICAO")
 	private String nomeExibicao;
+	
+	/**
+	 * Alteração cartão 1564
+	 */
+	@Column(name = "USUARIO_PADRAO")
+	private Integer usuarioPadrao;
+	/**
+	 * Fim alteração cartão 1564
+	 */
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_PESSOA_INICIAL", insertable = false, updatable = false)
@@ -360,6 +370,14 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 	@ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="HIS_IDC_FIM")
 	private CpIdentidade hisIdcFim;
+	
+	public Integer getUsuarioPadrao() {
+		return usuarioPadrao;
+	}
+
+	public void setUsuarioPadrao(Integer usuarioPadrao) {
+		this.usuarioPadrao = usuarioPadrao;
+	}
 
 	public CpIdentidade getHisIdcIni() {
 		return hisIdcIni;
@@ -463,7 +481,7 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 	public void setIdePessoa(String idePessoa) {
 		this.idePessoa = idePessoa;
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -36,6 +36,7 @@ import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.AbstractCpAcesso;
+import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -93,15 +94,13 @@ public class LoginController extends SigaController {
 
 	@Post("public/app/login")
 	public void auth(String username, String password, String cont) throws IOException {
+		
 		try {
 			GiService giService = Service.getGiService();
 			String usuarioLogado = giService.login(username, password);
 
 			if (Pattern.matches("\\d+", username) && username.length() == 11) {
 				List<CpIdentidade> lista = new CpDao().consultaIdentidadesCadastrante(username, Boolean.TRUE);
-				if (lista.size() > 1) {
-					throw new RuntimeException("Pessoa com mais de um usuário, favor efetuar login com a matrícula!");
-				}
 			}
 			if (usuarioLogado == null || usuarioLogado.trim().length() == 0) {
 				StringBuffer mensagem = new StringBuffer();

@@ -47,7 +47,9 @@ import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpVisualizacao;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.Mesa2;
@@ -63,11 +65,26 @@ public class ExMesa2Controller extends ExController {
 	public ExMesa2Controller() {
 		super();
 	}
+	
 
 	@Inject
 	public ExMesa2Controller(HttpServletRequest request, HttpServletResponse response, ServletContext context,
 			Result result, SigaObjects so, EntityManager em) {
 		super(request, response, context, result, ExDao.getInstance(), so, em);
+	}
+	
+	@Transacional
+	@Post("app/mesa2/")
+	public void capturaUsuarioSelecionado(DpPessoa dpPessoa){
+		
+		String cpfFormatado =  request.getParameter("cadastrante");
+		Long cpf = Long.valueOf(cpfFormatado.replaceAll("\\D", ""));
+		
+		Long id = Long.valueOf(request.getParameter("id"));
+		CpDao.getInstance().consultaEGravaUsuarioPadrao(id, cpf);
+		
+		System.out.println("\n\n id selecionado: " + id + "\n\n");
+		System.out.println("\n\n cpf selecionado: " + cpf + "\n\n");
 	}
 
 	@Get("app/mesa2")

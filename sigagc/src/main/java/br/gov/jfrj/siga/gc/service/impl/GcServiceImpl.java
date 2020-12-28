@@ -92,7 +92,7 @@ public class GcServiceImpl implements GcService {
 						"select distinct inf from GcInformacao as inf join inf.tags tag"
 								+ " where tag.tipo.id = :tipo and tag.categoria like :categoria",
 						GcInformacao.class);
-		q.setParameter("tipo", tipoTag.id);
+		q.setParameter("tipo", tipoTag.getId());
 		q.setParameter("categoria", grupo + "-%-" + id);
 		List<GcInformacao> infs = q.getResultList();
 

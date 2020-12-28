@@ -15,13 +15,13 @@
 <siga:pagina titulo="Painel Administrativo">
 <script type="text/javascript" language="Javascript1.1">
 function sbmtDoc() {
-    $("#spinnerModal").modal('show');
+	sigaSpinner.mostrar();
     document.getElementById('btnSubmitDoc').disabled = true;
    	frm = document.getElementById('frmDoc');
     frm.action = 'exibir?documentoRefSel.sigla=${sigla}&postback=1';
     frm.submit();
     document.getElementById('btnSubmitDoc').disabled = false;
-    $("#spinnerModal").modal('show');
+    sigaSpinner.mostrar();
 }
 </script>
 <!-- main content bootstrap -->
@@ -60,6 +60,36 @@ function sbmtDoc() {
 			</form>
 		</div>
 	</div>	
+	<c:if test="${erroSemMobil}">
+		<div class="row mb-2">
+			<div class="col-12">
+				<div class="alert alert-warning" role="alert">
+					Atenção: O documento ${documentoRefSel.sigla} está corrompido (faltando mobil de via ou volume)
+					<c:if
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;FE;PAINEL;CORRIGEMOBIL:Corrige Documento sem Mobil de Via ou Volume')}">
+						<a class="btn btn-sm btn-primary float-right" title="Corrige falta de via ou volume"
+						  href="corrigeDocSemMobil?documentoRefSel.sigla=${documentoRefSel.sigla}"
+						  ${popup?'target="_blank" ':''}><i class="fas fa-file-medical mr-2"></i>Corrige Falta de Via ou Volume</a>
+					</c:if>
+				</div>
+			</div>
+		</div>
+	</c:if>
+	<c:if test="${erroSemDescricao}">
+		<div class="row mb-2">
+			<div class="col-12">
+				<div class="alert alert-warning" role="alert">
+					Atenção: O documento ${documentoRefSel.sigla} está sem a descri&ccedil;&atilde;o.
+					<c:if
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;FE;PAINEL;CORRIGEMOBIL:Corrige Documento sem Mobil de Via ou Volume')}">
+						<a class="btn btn-sm btn-primary float-right" title="Corrige falta de descricao"
+						  href="corrigeDocSemDescricao?documentoRefSel.sigla=${documentoRefSel.sigla}"
+						  ${popup?'target="_blank" ':''}><i class="fas fa-file-medical mr-2"></i>Corrige Falta de Descri&ccedil;&atilde;o</a>
+					</c:if>
+				</div>
+			</div>
+		</div>
+	</c:if>
 <c:if test="${not empty docVO}">
 	<div class="card bg-light mb-3">
 		<tags:collapse title="${docVO.nomeCompleto}" id="docDados" collapseMode="${collapse_Expanded}">

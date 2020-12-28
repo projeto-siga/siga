@@ -22,6 +22,10 @@
  */
 package br.gov.jfrj.siga.dp;
 
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -39,6 +43,8 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
 @Table(name = "CP_MARCADOR", schema = "CORPORATIVO")
 public class CpMarcador extends AbstractCpMarcador {
+
+	private static final long serialVersionUID = -909421649258750797L;
 
 	final static public long MARCADOR_EM_ELABORACAO = 1;
 
@@ -195,10 +201,30 @@ public class CpMarcador extends AbstractCpMarcador {
 	final static public long MARCADOR_COVID_19 = 1006;
 
 	final static public long MARCADOR_NOTA_EMPENHO = 1007;
+	
+	final static public long MARCADOR_DEMANDA_JUDICIAL_BAIXA = 1008;
+	
+	final static public long MARCADOR_DEMANDA_JUDICIAL_MEDIA = 1009;
+	
+	final static public long MARCADOR_DEMANDA_JUDICIAL_ALTA = 1010;
 
 	public static ActiveRecord<CpMarcador> AR = new ActiveRecord<>(CpMarcador.class);
+
+	public static final List<Long> MARCADORES_DEMANDA_JUDICIAL = Arrays.asList(MARCADOR_DEMANDA_JUDICIAL_BAIXA,
+			MARCADOR_DEMANDA_JUDICIAL_MEDIA, MARCADOR_DEMANDA_JUDICIAL_ALTA);
+
+	/**
+	 * Ordena de acordo com a {@link #getOrdem() Ordem}.
+	 */
+	public static final Comparator<CpMarcador> ORDEM_COMPARATOR = Comparator
+			.nullsFirst(Comparator.comparing(CpMarcador::getOrdem));
 
 	public CpMarcador() {
 		super();
 	}
+
+	public boolean isDemandaJudicial() {
+		return MARCADORES_DEMANDA_JUDICIAL.contains(this.getIdMarcador());
+	}
+
 }

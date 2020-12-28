@@ -25,7 +25,6 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.util.Arrays;
-import java.util.Map;
 
 import javax.crypto.Cipher;
 import javax.inject.Inject;
@@ -68,7 +67,7 @@ public class AdminController extends SigaController {
 	public void testarLDAP(String localidade) throws Exception {
 
 		IntegracaoLdap integracaoLdap = IntegracaoLdap.getInstancia();
-		IntegracaoLdapProperties prop = integracaoLdap.configurarProperties(localidade);
+		IntegracaoLdapProperties prop = new IntegracaoLdapProperties(localidade);
 		try{
 			integracaoLdap.conectarLDAP(prop);
 			result.include("status", "ok");
@@ -102,7 +101,7 @@ public class AdminController extends SigaController {
 	public void trocarSenhaLDAP(String localidade, String dn, String senha) throws Exception {
 		try{
 			IntegracaoLdap integracaoLdap = IntegracaoLdap.getInstancia();
-			IntegracaoLdapProperties prop = integracaoLdap.configurarProperties(localidade);
+			IntegracaoLdapProperties prop = new IntegracaoLdapProperties(localidade);
 			ILdapDao ldap = integracaoLdap.conectarLDAP(prop);
 			ldap.definirSenha(dn, senha);
 			result.include("status", "ok");
@@ -111,37 +110,6 @@ public class AdminController extends SigaController {
 		}
 	}
 
-	@Get("/propriedades")
-	public void listarPropriedadesLDAP(String localidade) throws Exception {
-		IntegracaoLdap integracaoLdap = IntegracaoLdap.getInstancia();
-		IntegracaoLdapProperties prop = integracaoLdap.configurarProperties(localidade);
-		
-		
-		Map<String,String> ambiente = prop.obterDefinicaoPropriedade("ambiente");
-		Map<String,String> dnUsuarios = prop.obterDefinicaoPropriedade("dnUsuarios");
-		Map<String,String> keystore = prop.obterDefinicaoPropriedade("keystore");
-		Map<String,String> sslPorta = prop.obterDefinicaoPropriedade("ssl.porta");
-		Map<String,String> senha = prop.obterDefinicaoPropriedade("senha");
-		Map<String,String> servidor = prop.obterDefinicaoPropriedade("servidor");
-		Map<String,String> usuario = prop.obterDefinicaoPropriedade("usuario");
-		
-		
-		try{
-			
-			result.include("prefixo", prop.getPrefixo()!=null?prop.getPrefixo():"não definido");			
-			result.include("localidade", localidade!=null?localidade:"não definida");
-			result.include("ambiente", ambiente!=null?ambiente:"não definida");
-			
-			result.include("dnUsuarios", dnUsuarios!=null?dnUsuarios:"não definida");
-			result.include("keystore", keystore!=null?keystore:"não definida");
-			result.include("sslPorta", sslPorta!=null?sslPorta:"não definida");
-			result.include("senha", senha!=null?"definida":"não definida");
-			result.include("servidor", servidor!=null?servidor:"não definida");
-			result.include("usuario", usuario!=null?"definido":"não definido");
-		}catch(Exception e){
-			resultErro(e);
-		}
-	}
 
 
 }

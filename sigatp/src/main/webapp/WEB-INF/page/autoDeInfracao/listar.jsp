@@ -31,10 +31,10 @@
 								<c:forEach items="${autosDeInfracao}" var="autoDeInfracao">
 									<tr>
 										<td>
-											<sigatp:formatarColuna operacao="editar" href="${linkTo[AutoDeInfracaoController].editar[autoDeInfracao.id]}" titulo="auto de Infra&ccedil;&atilde;o" />
+											<sigatp:formatarColuna operacao="editar" href="${linkTo[AutoDeInfracaoController].editar(autoDeInfracao.id)}" titulo="auto de Infra&ccedil;&atilde;o" />
 										</td>
 										<td>
-											<sigatp:formatarColuna operacao="excluir" href="${linkTo[AutoDeInfracaoController].excluir[autoDeInfracao.id]}" titulo="auto de Infra&ccedil;&atilde;o"
+											<sigatp:formatarColuna operacao="excluir" href="${linkTo[AutoDeInfracaoController].excluir(autoDeInfracao.id)}" titulo="auto de Infra&ccedil;&atilde;o"
 											 onclick="javascript:return confirm('Tem certeza de que deseja excluir este auto de infra&ccedil;&atilde;o?');" />
 										</td>
 										<td><fmt:formatDate pattern="dd/MM/yyyy HH:mm" value="${autoDeInfracao.dataHora.time}"/></td>
@@ -58,8 +58,8 @@
 			</c:choose>
 
 			<div class="gt-table-buttons">
-				<a href="${linkTo[AutoDeInfracaoController].incluir['AUTUACAO']}" class="gt-btn-medium gt-btn-left"><fmt:message key="views.botoes.incluirAutuacao"/></a>
-				<a href="${linkTo[AutoDeInfracaoController].incluir['PENALIDADE']}" class="gt-btn-medium gt-btn-left"><fmt:message key="views.botoes.incluirPenalidade"/></a>
+				<a href="${linkTo[AutoDeInfracaoController].incluir('AUTUACAO')}" class="gt-btn-medium gt-btn-left"><fmt:message key="views.botoes.incluirAutuacao"/></a>
+				<a href="${linkTo[AutoDeInfracaoController].incluir('PENALIDADE')}" class="gt-btn-medium gt-btn-left"><fmt:message key="views.botoes.incluirPenalidade"/></a>
 			</div>
 		</div>
 	</div>

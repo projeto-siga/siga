@@ -68,6 +68,17 @@
 		#btnSalvarOrdenacao:disabled {
 			cursor: not-allowed;
 		}
+		
+		.container-tabela-lista-documentos {
+			overflow: hidden;							
+		}
+		
+		@media screen and (max-width: 575px) {
+  			.container-tabela-lista-documentos {
+    			overflow: auto;
+    			max-height: 112px;
+  			}
+		}
 	</style>
 </c:if>
 
@@ -167,7 +178,7 @@
 				</c:otherwise>
 			</c:choose>
 			<siga:links inline="${true}">
-				<div class="d-inline position-fixed fixed-bottom">
+				<div class="d-inline position-fixed fixed-bottom" style="left:auto">
 					<div class="float-right mr-3 opacity-80">
 						<p>
 							<a class="btn btn-light btn-circle" href="#inicio"> 
@@ -221,7 +232,7 @@
 	<div class="row mt-3">
 		<c:set var="arqsNum" value="${mob.arquivosNumerados}" />
 		<c:set var="paginacao" value="${not empty arqsNum[0].paginaInicial}" />
-		<div class="wrapper col-sm-3" >
+		<div class="wrapper col-sm-4 col-lg-3">
 			<div id="sidebar" class="w-100">
 				<div class="card-sidebar card bg-light mb-3" id="documentosDossie">
 					<div class="text-size-6 card-header">
@@ -252,7 +263,7 @@
 							</div>	
 						</c:if>							
 					</div>
-					<div class="card-body pl-1 pr-1 pt-0 pb-0">
+					<div class="card-body pl-1 pr-1 pt-0 pb-0  container-tabela-lista-documentos">
 						<table class="text-size-6 table table-hover table-sm table-striped m-0 mov tabela-documentos">
 							<tbody id="${mob.doc.podeReordenar() ? 'sortable' : ''}">
 								<c:forEach var="arqNumerado" items="${arqsNum}">
@@ -365,7 +376,7 @@
 				</div>
 			</div>
 		</div>
-		<div id="right-col" class="col-sm-9">
+		<div id="right-col" class="col-sm-8 col-lg-9">
 			<c:if test="${siga_cliente == 'GOVSP'}">
 				<div id="linhaBtn" class="mb-2">						
 					<div class="input-group d-inline mb-2">						
@@ -378,14 +389,18 @@
 										<u>P</u>DF
 	<!-- 									</a> -->
 							</a>
+							<a class="btn btn-primary btn-sm notActive" data-toggle="formato" data-title="pdfsemmarcas" id="radioPDFSemMarcas" name="pdfsemmarcas" value="pdfsemmarcas" accesskey="p" onclick="toggleBotaoHtmlPdf($(this)); exibir(htmlAtual,pdfAtual,'semmarcas/');">
+										PDF Sem Marcas
+							</a>
 						</div>
 						<a class="btn-btn-primary btn-sm d-none" id="pdflink" accesskey="a"><u>a</u>brir PDF</a>
+						<a class="btn-btn-primary btn-sm d-none" id="pdfsemmarcaslink" accesskey="b">a<u>b</u>rir PDF</a>
 						<input type="hidden" name="formato" id="radio" value="html">
 					</div>
 					<button type="button" class="btn btn-secondary btn-sm" id="TelaCheia" data-toggle="button" aria-pressed="false" autocomplete="off"
 						onclick="javascript: telaCheia(this);">
 						<u>T</u>ela Cheia
-					</button>								
+					</button>
 				</div>
 			</c:if>
 			<div id="paipainel" style="margin: 0px; padding: 0px; border: 0px; clear: both;">
@@ -406,13 +421,38 @@
 		$(document).ready(function() {
 			//se exibindo documentos reordenados, não permite visualização PDF						
 			$('#radioPDF').attr('data-toggle', 'tooltip').attr('data-placement', 'top').attr('title', 'Indisponível enquanto documento estiver reordenado').removeAttr('onclick').css({'cursor':'not-allowed', 'color':'rgba(0, 0, 0, 0.3)', 'border':'1px solid rgba(0, 0, 0, 0.3)'});		
+			$('#radioPDFSemMarcas').attr('data-toggle', 'tooltip').attr('data-placement', 'top').attr('title', 'Indisponível enquanto documento estiver reordenado').removeAttr('onclick').css({'cursor':'not-allowed', 'color':'rgba(0, 0, 0, 0.3)', 'border':'1px solid rgba(0, 0, 0, 0.3)'});
 		});
 	</script>
 </c:if>
 <script>
-	$(function () {
-	  $('[data-toggle="tooltip"]').tooltip()
-	})
+	$(function () {	
+		analisarAlturaListaDocumentos();
+		
+		$('[data-toggle="tooltip"]').tooltip();
+	});
+	
+	function analisarAlturaListaDocumentos() {
+		var containerListaDeDocumentos = $('#documentosDossie');
+		var alturaContainerListaDeDocumentos = containerListaDeDocumentos.height();
+		var distanciaTopo = containerListaDeDocumentos.offset().top;
+		var alturaJanela = window.screen.availHeight;
+		var diferencaNecessaria = 102;		
+		var alturaLimite = alturaJanela - distanciaTopo - diferencaNecessaria;
+				
+		if (alturaContainerListaDeDocumentos > alturaLimite) {					
+			aplicarMaxHeight(containerListaDeDocumentos, alturaLimite);
+			aplicarScroll(containerListaDeDocumentos.find('.container-tabela-lista-documentos'));
+		}		
+	}
+	
+	function aplicarMaxHeight(elemento, altura) {
+		elemento.css('max-height', altura + 'px');
+	}
+	
+	function aplicarScroll (elemento) {
+		elemento.css('overflow', 'auto');
+	}	
 </script>
 <c:if test="${siga_cliente == 'GOVSP' && paginacao}">
 	<script>
@@ -442,6 +482,11 @@
 		
 		if ('${siga_cliente}' == 'GOVSP') {
 			document.getElementById('pdflink').href = path + refPDF + '&sigla=${sigla}';
+			
+			if ($('#radioPDFSemMarcas').hasClass('active')) {
+				document.getElementById('pdfsemmarcaslink').href = path + refPDF
+					+ "&semmarcas=1";
+			}
 		} else {
 			document.getElementById('pdflink').href = path + refPDF;
 		}
@@ -462,13 +507,14 @@
 		else if (ifr.attachEvent)
 			ifr.detachEvent("onload", resize); // Bug fix line
 
-		if (document.getElementById('radioPDFSemMarcas') == null) {
+			if ('${siga_cliente}' == 'GOVSP') {
 			// Para GOVSP com link buttons
 
 			var refSiglaDocPrincipal = '&sigla=${sigla}';
 			
 			if ($('#radioHTML').hasClass('active') && refHTML != '') {
 				$('#pdflink').addClass('d-none');
+				$('#pdfsemmarcaslink').addClass('d-none');
 				ifr.src = path + refHTML + refSiglaDocPrincipal;
 				ifrp.style.border = "0px solid black";
 				ifrp.style.borderBottom = "0px solid black";
@@ -477,8 +523,16 @@
 				else if (ifr.attachEvent)
 					ifr.attachEvent("onload", resize);
 			} else {
-				$('#pdflink').removeClass('d-none');
-				ifr.src = path + refPDF + refSiglaDocPrincipal;
+				if ($('#radioPDFSemMarcas').hasClass('active')) {
+					$('#pdfsemmarcaslink').removeClass('d-none');
+					$('#pdflink').addClass('d-none');
+					ifr.src = path + refPDF + "&semmarcas=1";
+				} else {
+					$('#pdflink').removeClass('d-none');
+					$('#pdfsemmarcaslink').addClass('d-none');
+					ifr.src = path + refPDF + refSiglaDocPrincipal;
+				}
+				
 				ifrp.style.border = "1px solid black";
 				ifr.height = pageHeight() - 300;
 			}

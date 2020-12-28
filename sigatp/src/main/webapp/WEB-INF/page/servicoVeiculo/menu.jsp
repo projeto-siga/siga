@@ -70,22 +70,22 @@
 			</c:if>
 			<c:if test="${menuServicosVeiculoMostrarAgendados}">
      			<img src="/sigatp/public/images/filter-icon.png"/>
-     			<a class="filtro_A" href="${linkTo[ServicoVeiculoController].listarFiltrado['AGENDADO']}">A</a>
-				<a href="${linkTo[ServicoVeiculoController].listarFiltrado['AGENDADO']}"><U>A</U>gendados</a>&nbsp;&nbsp;&nbsp;
+     			<a class="filtro_A" href="${linkTo[ServicoVeiculoController].listarFiltrado('AGENDADO')}">A</a>
+				<a href="${linkTo[ServicoVeiculoController].listarFiltrado('AGENDADO')}"><U>A</U>gendados</a>&nbsp;&nbsp;&nbsp;
 			</c:if>
 			<c:if test="${menuServicosVeiculoMostrarIniciados}">
 	   		  	<img src="/sigatp/public/images/filter-icon.png"/>
-	   		  	<a class="filtro_I" href="${linkTo[ServicoVeiculoController].listarFiltrado['INICIADO']}">I</a>
-				<a href="${linkTo[ServicoVeiculoController].listarFiltrado['INICIADO']}"><U>I</U>niciados</a>&nbsp;&nbsp;&nbsp;
+	   		  	<a class="filtro_I" href="${linkTo[ServicoVeiculoController].listarFiltrado('INICIADO')}">I</a>
+				<a href="${linkTo[ServicoVeiculoController].listarFiltrado('INICIADO')}"><U>I</U>niciados</a>&nbsp;&nbsp;&nbsp;
 			</c:if>
 			<c:if test="${menuServicosVeiculoMostrarRealizados}">
 	   		  	<img src="/sigatp/public/images/filter-icon.png"/>
-	   		  	<a class="filtro_Z" href="${linkTo[ServicoVeiculoController].listarFiltrado['REALIZADO']}">Z</a>
-				<a href="${linkTo[ServicoVeiculoController].listarFiltrado['REALIZADO']}">Reali<U>z</U>ados</a>&nbsp;&nbsp;&nbsp;
+	   		  	<a class="filtro_Z" href="${linkTo[ServicoVeiculoController].listarFiltrado('REALIZADO')}">Z</a>
+				<a href="${linkTo[ServicoVeiculoController].listarFiltrado('REALIZADO')}">Reali<U>z</U>ados</a>&nbsp;&nbsp;&nbsp;
 			</c:if>
 			<c:if test="${menuServicosVeiculoMostrarCancelados}">
 	   		  	<img src="/sigatp/public/images/filter-icon.png"/>
-	   		  	<a class="filtro_C" href="${linkTo[ServicoVeiculoController].listarFiltrado['CANCELADO']}">C</a>
-				<a href="${linkTo[ServicoVeiculoController].listarFiltrado['CANCELADO']}"><U>C</U>ancelados</a>&nbsp;&nbsp;&nbsp;
+	   		  	<a class="filtro_C" href="${linkTo[ServicoVeiculoController].listarFiltrado('CANCELADO')}">C</a>
+				<a href="${linkTo[ServicoVeiculoController].listarFiltrado('CANCELADO')}"><U>C</U>ancelados</a>&nbsp;&nbsp;&nbsp;
 			</c:if>
 		</p>

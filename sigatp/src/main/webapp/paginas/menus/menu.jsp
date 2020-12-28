@@ -17,7 +17,7 @@
 				<c:if test="${exibirMenuAdministrar || exibirMenuAdministrarMissao || exibirMenuAprovador}">
 					<li id="limenuRequisicoesAprovar"><a id="menuRequisicoesAprovar" class="" href="${linkTo[RequisicaoController].listarPAprovar}">Autorizar/Rejeitar</a></li>
 				</c:if>
-				<li id="limenuRequisicoesListar"><a id="menuRequisicoesListar" class="" href="${linkTo[RequisicaoController].listarFiltrado['AUTORIZADA']['NAOATENDIDA']}">Listar</a></li>
+				<li id="limenuRequisicoesListar"><a id="menuRequisicoesListar" class="" href="${linkTo[RequisicaoController].listarFiltrado('AUTORIZADA','NAOATENDIDA')}">Listar</a></li>
 			</c:when>
 			<c:otherwise>
 				<li><a id="menuRequisicoesListar" class="" href="${linkTo[RequisicaoController].listar}">Listar</a></li>
@@ -41,7 +41,7 @@
   	<c:choose>
 	 	 <c:when test="${exibirMenuAdministrar || exibirMenuAdministrarMissao || exibirMenuAdministrarMissaoComplexo}">
 			<li><a id="menuMissoesIncluir" class="" href="${linkTo[MissaoController].incluir}">Incluir</a></li>
-			<li><a id="menuMissoesListar" class="" href="${linkTo[MissaoController].listarFiltrado['PROGRAMADA']}">Listar</a></li>
+			<li><a id="menuMissoesListar" class="" href="${linkTo[MissaoController].listarFiltrado('PROGRAMADA')}">Listar</a></li>
 	 	 </c:when>
 		 <c:otherwise>
 		 	<li><a id="menuMissoesListar" class="" href="${linkTo[MissaoController].listarPorCondutorLogado}">Listar</a></li>

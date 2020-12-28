@@ -4,6 +4,7 @@ import java.sql.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 import br.gov.jfrj.siga.model.ActiveRecord;
@@ -11,6 +12,7 @@ import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
 @Table(name = "DADOS_RH", schema = "SIGARH")
+@IdClass(DadosRHId.class)
 public class DadosRH  extends Objeto {
     
     public static final ActiveRecord<DadosRH> AR = new ActiveRecord<>(DadosRH.class);

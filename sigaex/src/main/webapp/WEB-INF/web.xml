@@ -112,6 +112,16 @@
 		<url-pattern>/webdav/*</url-pattern>
 		<url-pattern>/servicos/*</url-pattern>
 		<url-pattern>/apis/*</url-pattern>
+		
+		<!-- Filter API -->
+		<url-pattern>/api/v1/test/*</url-pattern>
+		<url-pattern>/api/v1/documento/*</url-pattern>
+		<url-pattern>/api/v1/doc/*</url-pattern>	
+		<url-pattern>/api/v1/pessoa/*</url-pattern>
+		<url-pattern>/api/v1/lotacao/*</url-pattern>
+		<url-pattern>/api/v1/mesa/*</url-pattern>
+		<url-pattern>/api/v1/acessos/*</url-pattern>
+		<url-pattern>/api/v1/token/*</url-pattern>
 	</filter-mapping>
 
 	<filter-mapping>

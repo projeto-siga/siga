@@ -1,29 +1,38 @@
 package br.gov.jfrj.siga.tp.vraptor;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.ObjectWriter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
+import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.tp.exceptions.RestControllerException;
 import br.gov.jfrj.siga.tp.model.TpDao;
 import br.gov.jfrj.siga.tp.rest.FinalidadeRequisicaoRest;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-@Resource
+@Controller
 @Path("/app/finalidadeRequisicaoRest")
 public class FinalidadeRequisicaoRestController extends TpController {
 
     private static final String FUNCAO_NAO_IMPLEMENTADA = "Funcao nao implementada";
 
-    public FinalidadeRequisicaoRestController(HttpServletRequest request, Result result, CpDao dao, Validator validator, SigaObjects so, EntityManager em) {
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public FinalidadeRequisicaoRestController() {
+		super();
+	}
+	
+	@Inject
+    public FinalidadeRequisicaoRestController(HttpServletRequest request, Result result,   Validator validator, SigaObjects so,  EntityManager em) {
         super(request, result, TpDao.getInstance(), validator, so, em);
     }
 

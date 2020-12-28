@@ -40,11 +40,13 @@ import com.google.gson.JsonSerializer;
 
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Put;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.itextpdf.Documento;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -53,7 +55,6 @@ import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
-import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoHash;
 import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoList;
@@ -218,11 +219,19 @@ public class ExAssinadorExternoController extends ExController {
 		return pdfd;
 	}
 
-	@Get("/app/assinador-popup/doc/{id}/hash")
+	@Post("/app/assinador-popup/doc/{id}/hash")
 	public void assinadorPopupHash(String id) throws Exception {
 		try {
-			JSONObject req = getJsonReq(request);
-
+			String sigla = id2sigla(id) + ".pdf";
+			ExMobil mob = Documento.getMobil(sigla);
+			ExMovimentacao mov = Documento.getMov(mob, sigla);
+			ExDocumento doc = mob.getDoc();
+			
+			if (mov == null && !doc.isFinalizado()) {
+				DpPessoa cadastrante = obterCadastrante(null, mob, mov);
+				Ex.getInstance().getBL().finalizar(cadastrante, cadastrante.getLotacao(), doc);
+			}
+			
 			PdfData pdfd = getPdf(id);
 
 			ExAssinadorExternoHash resp = new ExAssinadorExternoHash();
@@ -303,24 +312,7 @@ public class ExAssinadorExternoController extends ExController {
 			ExMobil mob = Documento.getMobil(sigla);
 			ExMovimentacao mov = Documento.getMov(mob, sigla);
 
-			DpPessoa cadastrante = getCadastrante();
-			if (cadastrante == null) {
-				List<DpPessoa> pessoas = ExDao.getInstance().consultarPessoasAtivasPorCpf(cpf);
-				for (DpPessoa p : pessoas) {
-					if (mov != null && mov.getResp() != null) {
-						if (p.equivale(mov.getResp())) {
-							cadastrante = p;
-							break;
-						}
-					} else if (p.equivale(mob.doc().getSubscritor())) {
-						cadastrante = p;
-					}
-				}
-				if (cadastrante == null && pessoas.size() >= 1)
-					cadastrante = pessoas.get(0);
-				if (cadastrante == null && mov == null)
-					throw new Exception("Não foi possível localizar a pessoa que representa o subscritor.");
-			}
+			DpPessoa cadastrante = obterCadastrante(cpf, mob, mov);
 
 			boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(cadastrante, CpTipoConfiguracao.TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO);
 			if (apenasComSolicitacaoDeAssinatura && !mob.doc().isAssinaturaSolicitada())
@@ -358,6 +350,28 @@ public class ExAssinadorExternoController extends ExController {
 		} catch (Exception e) {
 			jsonError(e);
 		}
+	}
+
+	private DpPessoa obterCadastrante(Long cpf, ExMobil mob, ExMovimentacao mov) throws Exception {
+		DpPessoa cadastrante = getCadastrante();
+		if (cadastrante == null && cpf != null) {
+			List<DpPessoa> pessoas = ExDao.getInstance().consultarPessoasAtivasPorCpf(cpf);
+			for (DpPessoa p : pessoas) {
+				if (mov != null && mov.getResp() != null) {
+					if (p.equivale(mov.getResp())) {
+						cadastrante = p;
+						break;
+					}
+				} else if (p.equivale(mob.doc().getSubscritor())) {
+					cadastrante = p;
+				}
+			}
+			if (cadastrante == null && pessoas.size() >= 1)
+				cadastrante = pessoas.get(0);
+			if (cadastrante == null && mov == null)
+				throw new Exception("Não foi possível localizar a pessoa que representa o subscritor.");
+		}
+		return cadastrante;
 	}
 
 	private class Signature {
@@ -458,8 +472,10 @@ public class ExAssinadorExternoController extends ExController {
 	}
 
 	private void assertPassword() throws Exception {
-		String pwd = SigaExProperties.getAssinadorExternoPassword();
-		if (pwd != null && !pwd.equals(this.request.getHeader("Authorization")))
+		String pwd = Prop.get("assinador.externo.password");
+		if (pwd == null) 
+			throw new Exception("Antes de utilizar o assinador externo é necessário configurar a propriedade sigaex.assinador.externo.senha");
+		if (!pwd.equals(this.request.getHeader("Authorization")))
 			throw new Exception("Falha de autenticação.");
 	}
 

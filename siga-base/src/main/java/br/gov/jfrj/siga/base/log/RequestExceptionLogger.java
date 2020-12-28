@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 public class RequestExceptionLogger {
@@ -134,7 +135,8 @@ public class RequestExceptionLogger {
 		java.io.PrintWriter pw = new java.io.PrintWriter(sw);
 		t.printStackTrace(pw);
 		String s = sw.toString();
-		String[] lines = s.split(System.getProperty("line.separator"));
+		final String lineSeparator = System.lineSeparator();
+		String[] lines = s.split(lineSeparator);
 		for (int i = 0; i < lines.length; i++) {
 			if (lines[i].contains("br.com.caelum.vraptor.core.DefaultReflectionProvider.invoke")) {
 				for (int j = i - 1; j > 0; j--) {
@@ -142,7 +144,7 @@ public class RequestExceptionLogger {
 						StringBuilder sb = new StringBuilder();
 						for (int k = 0; k <= j; k++) {
 							sb.append(lines[k]);
-							sb.append(System.getProperty("line.separator"));
+							sb.append(lineSeparator);
 						}
 						s = sb.toString();
 						break;

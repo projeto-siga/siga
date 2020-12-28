@@ -42,19 +42,7 @@
 	<c:set var="XUACompatible" scope="request">${compatibilidade}</c:set>
 </c:if>
 
-<c:set var="logo_topo_orgao" scope="request" value="${f:resource('siga.logo.topo.orgao')}" />
-
-<c:set var="ambiente">
-	<c:if test="${f:resource('isVersionTest') or f:resource('isBaseTest')}">
-		<c:if test="${f:resource('isVersionTest')}">SISTEMA</c:if>
-		<c:if
-			test="${f:resource('isVersionTest') and f:resource('isBaseTest')}"> E </c:if>
-		<c:if test="${f:resource('isBaseTest')}">BASE</c:if> DE TESTES
-	</c:if>
-</c:set>
-<c:if test="${not empty ambiente}">
-	<c:set var="env" scope="request">${ambiente}</c:set>
-</c:if>
+<c:set var="logo_topo_orgao" scope="request" value="${f:resource('/siga.logo.topo.orgao')}" />
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -105,7 +93,7 @@ ${meta}
 
 <c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
 
-<c:set var="siga_version"  scope="request" value="9.0.0.1" />
+<c:set var="siga_version"  scope="request" value="9.0.8.8" />
 
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
@@ -119,7 +107,7 @@ ${meta}
 		<c:if test="${desabilitarmenu == 'sim'}">
 			<c:set var="body_color" value="login_body_color" scope="request" />
 		</c:if>
-		
+												
 		<c:set var="ico_siga" value="sem-papel.ico" />
 		<c:set var="menu_class" value="menusp" />
 		<c:set var="sub_menu_class" value="submenusp" />
@@ -133,6 +121,7 @@ ${meta}
 		<c:set var="collapse_ArqAuxiliares" scope="request" value="not collapsible" />
 		<c:set var="hide_only_GOVSP" scope="request"> d-none </c:set>
 		<c:set var="hide_only_TRF2" scope="request"> </c:set>
+		<c:set var="uri_logo_siga_pequeno" value="${f:resource('/siga.base.url')}/siga/imagens/logo-sem-papel-150x70.png" scope="request" />
 	</c:when>
 	<c:otherwise>
 		<meta name="theme-color" content="bg-primary">
@@ -142,7 +131,7 @@ ${meta}
 		<c:set var="sub_menu_class" value="bg-secondary text-white" />
 		
 		<c:set var="navbar_class" value="navbar-dark bg-primary" />
-		<c:if test="${f:resource('isBaseTest')}">
+		<c:if test="${f:resource('/siga.ambiente') ne 'prod'}">
 			<c:set var="navbar_class" value="navbar-dark bg-secondary" />
 		</c:if>
 		
@@ -154,6 +143,7 @@ ${meta}
 		<c:set var="collapse_ArqAuxiliares" scope="request" value="not collapsible" />
 		<c:set var="hide_only_GOVSP" scope="request"> </c:set>
 		<c:set var="hide_only_TRF2" scope="request"> d-none </c:set>
+		<c:set var="uri_logo_siga_pequeno" value="${f:resource('/siga.base.url')}/siga/imagens/logo-siga-140x40.png" scope="request" />		
 	</c:otherwise>
 </c:choose>
 
@@ -209,7 +199,7 @@ ${meta}
 									    <div class="modal-dialog modal-dialog-centered modal-lg" style="max-width: 80% !important;">
 									        <div class="modal-content" >
 									            <div class="modal-header bg-success">
-									            	<h5 class="modal-title text-white" >Tutoriais SP Sem Papel</h5>
+									            	<h5 class="modal-title text-white">Tutoriais SP Sem Papel</h5>
 									                <button type="button" class="close text-white" data-dismiss="modal" aria-hidden="true">×</button>
 									            </div>
 										        <div class="modal-body bg-light">
@@ -348,27 +338,30 @@ ${meta}
 					<div class="row">
 						<div class="col gt-company d-inline align-middle">
 							<span class="h-100">
-								<strong><span>${f:resource('siga.cabecalho.titulo')}</span> </strong>
+								<strong><span>${f:resource('/siga.cabecalho.titulo')}</span> </strong>
 								 <c:catch>
 										<c:if test="${not empty titular.orgaoUsuario.descricao}"><span style="white-space: nowrap;"> <i class="fa fa-angle-right"></i> ${titular.orgaoUsuario.descricao}</span></h6></c:if>
 								 </c:catch>
 							</span>
 						</div>
 					</div>
-					<div class="row ${hide_only_TRF2}  ${ambiente_class}">
+					<div class="row  ${ambiente_class}">
 						<div class="col">
 							<span>
 								<c:choose>
-									<c:when test="${f:resource('ambiente') eq 'desenv'}">
+									<c:when test="${f:resource('/siga.ambiente') eq 'desenv'}">
 										Ambiente de Desenvolvimento
 									</c:when>
-									<c:when test="${f:resource('ambiente') eq 'prod'}">
+									<c:when test="${f:resource('/siga.ambiente') eq 'prod'}">
 										Ambiente Oficial
 									</c:when>
-									<c:when test="${f:resource('ambiente') eq 'treinamento'}">
+									<c:when test="${f:resource('/siga.ambiente') eq 'treinamento'}">
 										Ambiente de Simulação
 									</c:when>
-									<c:when test="${f:resource('ambiente') eq 'homolog'}">
+									<c:when test="${f:resource('/siga.ambiente') eq 'configuracao'}">
+										Ambiente de Configuração
+									</c:when>
+									<c:when test="${f:resource('/siga.ambiente') eq 'homolog'}">
 										Ambiente de Homologação
 									</c:when>
 								</c:choose>
@@ -450,13 +443,7 @@ ${meta}
 	</c:if>
 
 	<div id="carregando"
-		style="position: absolute; top: 0px; right: 0px; background-color: red; font-weight: bold; padding: 4px; color: white; display: none">Carregando...</div>
-	
-	<div class="modal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" id="spinnerModal">
-        <div class="modal-dialog modal-dialog-centered text-center" role="document">
-            <span class="fa fa-spinner fa-spin fa-3x w-100 text-white"></span>
-        </div>
-    </div>
+		style="position: absolute; top: 0px; right: 0px; background-color: red; font-weight: bold; padding: 4px; color: white; display: none">Carregando...</div>	
     
 <script type="text/javascript" language="Javascript1.1">
 setTimeout(function() {

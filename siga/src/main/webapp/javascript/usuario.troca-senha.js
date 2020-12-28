@@ -1,4 +1,4 @@
-var Siga = Siga|| {};
+var Siga = Siga || {};
 
 Siga.TrocaSenhaUsuario = (function() {
 	

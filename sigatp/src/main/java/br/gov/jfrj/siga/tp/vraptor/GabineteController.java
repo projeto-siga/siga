@@ -2,17 +2,18 @@ package br.gov.jfrj.siga.tp.vraptor;
 
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
+import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdmin;
 import br.gov.jfrj.siga.tp.exceptions.GabineteControllerException;
 import br.gov.jfrj.siga.tp.model.Abastecimento;
@@ -20,10 +21,11 @@ import br.gov.jfrj.siga.tp.model.Condutor;
 import br.gov.jfrj.siga.tp.model.Fornecedor;
 import br.gov.jfrj.siga.tp.model.ItemMenu;
 import br.gov.jfrj.siga.tp.model.TipoDeCombustivel;
+import br.gov.jfrj.siga.tp.model.TpDao;
 import br.gov.jfrj.siga.tp.model.Veiculo;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-@Resource
+@Controller
 @Path("/app/gabinete")
 public class GabineteController extends TpController {
 
@@ -35,8 +37,16 @@ public class GabineteController extends TpController {
     private static final String ABASTECIMENTOS = "abastecimentos";
     private static final String ABASTECIMENTO = "abastecimento";
 
-    public GabineteController(HttpServletRequest request, Result result, CpDao dao, Validator validator, SigaObjects so, EntityManager em) {
-        super(request, result, dao, validator, so, em);
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public GabineteController() {
+		super();
+	}
+	
+	@Inject
+    public GabineteController(HttpServletRequest request, Result result,  Validator validator, SigaObjects so,  EntityManager em) {
+        super(request, result, TpDao.getInstance(), validator, so, em);
     }
 
     @Path("/listar")

@@ -2,14 +2,16 @@ package br.gov.jfrj.siga.tp.vraptor;
 
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
+import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdmin;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdminFrota;
@@ -21,7 +23,7 @@ import br.gov.jfrj.siga.tp.model.Veiculo;
 import br.gov.jfrj.siga.tp.util.PerguntaSimNao;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-@Resource
+@Controller
 @Path("/app/avaria")
 public class AvariaController extends TpController {
 	
@@ -29,7 +31,15 @@ public class AvariaController extends TpController {
 	private static final String LABEL_EDITAR = "views.label.editar";
 	private static final String LABEL_INCLUIR = "views.label.incluir";
 
-	public AvariaController(HttpServletRequest request, Result result, Validator validator, SigaObjects so, EntityManager em) throws Exception {
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public AvariaController() {
+		super();
+	}
+	
+	@Inject	
+	public AvariaController(HttpServletRequest request, Result result,  Validator validator, SigaObjects so, EntityManager em) throws Exception {
 		super(request, result, TpDao.getInstance(), validator, so, em);
 	}
 
@@ -116,7 +126,7 @@ public class AvariaController extends TpController {
 			validator.onErrorUse(Results.page()).of(AvariaController.class).editar(veiculo.getId(), avaria.getId(), true);
 		}
 
-		if (avaria.podeCircular.equals(PerguntaSimNao.NAO)) {
+		if (avaria.getPodeCircular().equals(PerguntaSimNao.NAO)) {
 			avaria.setVeiculo(Veiculo.AR.findById(avaria.getVeiculo().getId()));
 			List<Missao> missoes = Missao.retornarMissoes("veiculo.id", avaria.getVeiculo().getId(), avaria.getVeiculo().getCpOrgaoUsuario().getId(), avaria.getDataDeRegistro(), avaria.getDataDeSolucao());
 			StringBuilder listaMissoes = new StringBuilder();

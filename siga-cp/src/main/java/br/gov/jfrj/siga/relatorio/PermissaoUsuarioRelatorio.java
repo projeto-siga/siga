@@ -16,6 +16,7 @@ import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.acesso.ConfiguracaoAcesso;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -41,10 +42,10 @@ public class PermissaoUsuarioRelatorio extends RelatorioTemplate{
 		parametros.put("titulo","SIGA");
 		parametros.put("subtitulo","Sistema de Gestão Administrativa");
 		parametros.put("secaoUsuario", "");
-		if ( System.getProperty("siga.relat.brasao") == null ) {
+		if ( Prop.get("/siga.relat.brasao")  == null ) {
 			parametros.put("brasao","brasao.png");
 		} else {
-			parametros.put("brasao", System.getProperty("siga.relat.brasao"));
+			parametros.put("brasao", Prop.get("/siga.relat.brasao") );
 		}
 		//System.out.println("Brasao: " + parametros.get("brasao"));
 	}

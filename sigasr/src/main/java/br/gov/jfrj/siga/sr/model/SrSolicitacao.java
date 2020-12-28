@@ -61,7 +61,7 @@ import org.hibernate.annotations.Where;
 import org.hibernate.exception.ConstraintViolationException;
 import org.jboss.logging.Logger;
 
-import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.Texto;
@@ -2108,11 +2108,25 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
                     //Edson: por causa do detach no ObjetoObjectInstantiator
                     lotaAtendente = DpLotacao.AR.findById(lotaAtendente.getIdLotacao());
 
-                    listaSubstitutos = ContextoPersistencia.em().createQuery("from DpSubstituicao dps where dps.titular = null and dps.lotaTitular.idLotacao in "
-                                            + "     (select lot.idLotacao from DpLotacao lot where lot.idLotacaoIni = :idLotacaoIni) and "
-                                            + "(dtFimSubst = null or dtFimSubst > sysdate) and dps.substituto is not null and dtFimRegistro = null")
+                    listaSubstitutos = ContextoPersistencia.em().createQuery("from DpSubstituicao dps "
+                    						+ "where dps.titular = null and dps.lotaTitular.idLotacao in "
+                                            + "(select lot.idLotacao from DpLotacao lot where lot.idLotacaoIni = :idLotacaoIni) and "
+                                            + "(dtFimSubst = null or dtFimSubst > sysdate) and dps.substituto is not null "
+                                            + "and dtFimRegistro = null")
                                             .setParameter("idLotacaoIni", lotaAtendente.getIdInicial()).getResultList();
-
+                    
+                    // BJN - remover terminados
+                    List<DpSubstituicao> fechados = new ArrayList<DpSubstituicao>();
+                    for (Iterator<DpSubstituicao> subs = listaSubstitutos.iterator(); subs.hasNext();) {
+						DpSubstituicao substituicao = (DpSubstituicao) subs.next();
+						if(substituicao.getSubstituto().getPessoaAtual().isFechada())
+							fechados.add(substituicao);
+					}
+                    for (Iterator<DpSubstituicao> png = fechados.iterator(); png.hasNext();) {
+						DpSubstituicao remover = (DpSubstituicao) png.next();
+						listaSubstitutos.remove(remover);
+					}
+                    
                     Collections.sort(listaSubstitutos, new Comparator<DpSubstituicao>() {
                     @Override
                     public int compare(DpSubstituicao  o1, DpSubstituicao o2) {

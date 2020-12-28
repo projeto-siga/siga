@@ -26,10 +26,10 @@
 								<c:forEach items="${avarias}" var="avaria">
 								   	<tr>
 								   		<td>
-											<sigatp:formatarColuna operacao="editar" href="${linkTo[AvariaController].editar[veiculo.id][avaria.id][true]}" titulo="avaria" />
+											<sigatp:formatarColuna operacao="editar" href="${linkTo[AvariaController].editar(veiculo.id,avaria.id,true)}" titulo="avaria" />
 										</td>
 										<td>
-											<sigatp:formatarColuna operacao="excluir" href="${linkTo[AvariaController].excluir[avaria.id][true]}" titulo="avaria"
+											<sigatp:formatarColuna operacao="excluir" href="${linkTo[AvariaController].excluir(avaria.id,true)}" titulo="avaria"
 											onclick="javascript:return confirm('Tem certeza de que deseja excluir esta avaria?');" />
 										</td>
 							    		<td><fmt:formatDate pattern="dd/MM/yyyy" value="${avaria.dataDeRegistro.time}"/></td>
@@ -48,7 +48,7 @@
 				</c:otherwise>
 			</c:choose>
 			<div class="gt-table-buttons">
-				<a href="${linkTo[AvariaController].incluir[veiculo.id]}" class="gt-btn-medium gt-btn-left"><fmt:message key="views.botoes.incluir" /></a>
+				<a href="${linkTo[AvariaController].incluir(veiculo.id)}" class="gt-btn-medium gt-btn-left"><fmt:message key="views.botoes.incluir" /></a>
 			</div>
 		</div>
 	</div>

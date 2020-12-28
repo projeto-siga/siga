@@ -11,6 +11,16 @@
 	<c:if test="${not mob.doc.eletronico}">
 		<script type="text/javascript">$("html").addClass("fisico");$("body").addClass("fisico");</script>
 	</c:if>
+	<script type="text/javascript" language="Javascript1.1">
+		function sbmt() {
+			sigaSpinner.mostrar();
+		   	frm = document.getElementById('frmDoc');
+	        document.getElementById('btnSubmit').disabled = true;
+	        frm.submit();
+	        document.getElementById('btnSubmit').disabled = false;
+	        sigaSpinner.mostrar();
+	    }
+	</script>
 	
 	<!-- main content bootstrap -->
 	<div class="container-fluid">
@@ -21,7 +31,7 @@
 				</h5>
 			</div>
 			<div class="card-body">
-				<form action="apensar_gravar" enctype="multipart/form-data" class="form" method="POST">
+				<form id="frmDoc" action="apensar_gravar" enctype="multipart/form-data" class="form" method="POST">
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="sigla" value="${sigla}"/>
 					<!-- Checa se o documento é eletronico ou não. Caso seja, seu valor default para Data é o atual e o Responsável é quem fez o Login. -->
@@ -80,7 +90,7 @@
 					</div>
 					<div class="row">
 						<div class="col-sm">
-							<input type="submit" value="Ok" class="btn btn-primary" />
+							<input id="btnSubmit" type="button" value="Ok" class="btn btn-primary" onclick="sbmt();" />
 							<input type="button" value="Cancela" onclick="javascript:history.back();" class="btn btn-cancel ml-2" />
 						</div>
 					</div>

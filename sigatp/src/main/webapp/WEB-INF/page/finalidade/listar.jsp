@@ -24,10 +24,10 @@
 								<c:forEach items="${finalidades}" var="item">
 							   		<tr>
 										<td>
-											<sigatp:formatarColuna operacao="editar" href="${linkTo[FinalidadeController].editar[item.id]}" titulo="finalidade" />
+											<sigatp:formatarColuna operacao="editar" href="${linkTo[FinalidadeController].editar(item.id)}" titulo="finalidade" />
 										</td>
 										<td>
-											<sigatp:formatarColuna operacao="excluir" href="${linkTo[FinalidadeController].excluir[item.id]}" titulo="finalidade"
+											<sigatp:formatarColuna operacao="excluir" href="${linkTo[FinalidadeController].excluir(item.id)}" titulo="finalidade"
 											onclick="javascript:return confirm('Tem certeza de que deseja excluir os dados desta finalidade?');" />
 										</td>
 							   		

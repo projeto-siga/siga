@@ -2,16 +2,16 @@ package br.gov.jfrj.siga.tp.vraptor;
 
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.validator.I18nMessage;
+import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdmin;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdminMissao;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdminMissaoComplexo;
@@ -22,7 +22,7 @@ import br.gov.jfrj.siga.tp.model.Missao;
 import br.gov.jfrj.siga.tp.model.TpDao;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-@Resource
+@Controller
 @Path("/app/afastamento/")
 public class AfastamentoController extends TpController {
 	
@@ -31,7 +31,15 @@ public class AfastamentoController extends TpController {
 	private static final String LABEL_EDITAR = "views.label.editar";
 	private static final String LABEL_INCLUIR = "views.label.incluir";
 
-	public AfastamentoController(HttpServletRequest request, Result result, CpDao dao, Validator validator, SigaObjects so, EntityManager em) {
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public AfastamentoController() {
+		super();
+	}
+	
+	@Inject
+	public AfastamentoController(HttpServletRequest request, Result result,  Validator validator, SigaObjects so,  EntityManager em) {
 		super(request, result, TpDao.getInstance(), validator, so, em);
 	}
 

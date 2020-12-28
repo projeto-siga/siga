@@ -16,7 +16,7 @@
 				<c:if test="${conhecimento[5] > 0}">
 					<img src="/siga/css/famfamfam/icons/star.png" title="Como Executor" style="width: 11px; height: 11px" />
 				</c:if>
-				<b><a href="${linkTo[AppController].exibir[conhecimento[3]]}"
+				<b><a href="${linkTo[AppController].exibir(conhecimento[3])}"
 					${popup?'target="_blank" ':''}>${conhecimento[1]}</a> </b>
 			</p>
 		</c:forEach>

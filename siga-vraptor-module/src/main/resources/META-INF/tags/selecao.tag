@@ -173,13 +173,14 @@ self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao) {
 //
 var modalsimulawindow${propriedade} = 	function(url) {
 		try {
-			var urlInterna = url;
+			var urlInterna = url;			
 			var senhaDialog${propriedade}  = $(
 					'<div class="modal modal-selecao" tabindex="-1" role="dialog" id="senhaDialog${propriedade}">'
 				+	'  <div class="modal-dialog modal-lg" role="document">'
 				+	'    <div class="modal-content">'
 				+	'    <div class="modal-header">'
-				+	'	        <button type="button" id="btnsenhaDialog${propriedade}" class="close" aria-label="Close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>'				
+				+   '           <img src="${uri_logo_siga_pequeno}" class="siga-modal__logo" alt="logo siga">'
+				+	'	        <button type="button" id="btnsenhaDialog${propriedade}" class="close  p-0  m-0  siga-modal__btn-close" aria-label="Close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>'				
 				+   '    </div>'
 				+	'      <div class="modal-body">'
 				+	'	   	   <div class="embed-responsive embed-responsive-16by9">'
@@ -315,8 +316,8 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	</c:if>
 	<c:if test="${ocultardescricao != 'sim'}">
 		<div class="input-group-append ml-2" style="width: 60%;">
-						<span class="form-control" style="overflow: hidden; white-space:nowrap; text-overflow:ellipsis;" id="${spanName}SelSpan"><c:out value="${requestScope[propriedadeTipoSel].descricao}" escapeXml="false" /></span>
-		</div>
+			<span class="form-control" style="overflow: hidden; white-space:nowrap; text-overflow:ellipsis;" id="${spanName}SelSpan"><c:out value="${requestScope[propriedadeTipoSel].descricao}" escapeXml="false" /></span>
+ 		</div>
 	</c:if>
 </div>
 

@@ -5,8 +5,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <script type="text/javascript">
-	function validar() {
-		$("#spinnerModal").modal('show');
+	function validar() {		
+		sigaSpinner.mostrar();
 		document.getElementById("btnOk").disabled = true;
 		var idOrgaoUsu = document.getElementsByName('idOrgaoUsu')[0].value;
 		var nmPessoa = document.getElementsByName('nmPessoa')[0].value;	
@@ -19,57 +19,63 @@
 		var id = document.getElementsByName('id')[0].value;	
 		
 				
-		if (nmPessoa==null || nmPessoa=="") {			
-			mensagemAlerta("Preencha o nome da pessoa.");
+		if (nmPessoa==null || nmPessoa=="") {									
+			sigaModal.alerta("Preencha o nome da pessoa.");				
+			habilitarBotaoOk();	 
 			document.getElementById('nmPessoa').focus();
 			return;	
 		}
 
 		if(idOrgaoUsu==null || idOrgaoUsu == 0) {
-			mensagemAlerta("Preencha o órgão da pessoa.");
+			sigaModal.alerta("Preencha o órgão da pessoa.");				
+			habilitarBotaoOk();	 			
 			document.getElementById('idOrgaoUsu').focus();
 			return;	
 		}
 		
 		if(idCargo==null || idCargo == 0) {
-			mensagemAlerta("Preencha o cargo da pessoa.");
+			sigaModal.alerta("Preencha o cargo da pessoa.");				
+			habilitarBotaoOk();	 						
 			document.getElementById('idCargo').focus();
 			return;	
 		}
 
 		if(idLotacao==null || idLotacao == 0) {
 			var msg="<fmt:message key='usuario.lotacao'/>";
-			mensagemAlerta("Preencha a "+msg.toLowerCase()+" da pessoa.");
+			sigaModal.alerta("Preencha a "+msg.toLowerCase()+" da pessoa.");				
+			habilitarBotaoOk();	 									
 			document.getElementById('idLotacao').focus();
 			return;	
 		}
 
 		if(cpf==null || cpf == "") {
-			mensagemAlerta("Preencha o CPF da pessoa.");
+			sigaModal.alerta("Preencha o CPF da pessoa.");				
+			habilitarBotaoOk();	 														
 			document.getElementById('cpf').focus();
 			return;
 		}
 
 		if(email==null || email == "") {
-			mensagemAlerta("Preencha o e-mail da pessoa.");
+			sigaModal.alerta("Preencha o e-mail da pessoa.");				
+			habilitarBotaoOk();	 									
 			document.getElementById('email').focus();
 			return;
 		}
 
-		if(!validarEmail(document.getElementsByName('email')[0])) {
-			$("#spinnerModal").modal('hide');
+		if(!validarEmail(document.getElementsByName('email')[0])) {			
+			sigaSpinner.ocultar();
 			document.getElementById("btnOk").disabled = false;
 			return;
 		}
 
 		if(dtNascimento != null && dtNascimento != "" && !data(dtNascimento)) {
-			$("#spinnerModal").modal('hide');
+			sigaSpinner.ocultar();
 			document.getElementById("btnOk").disabled = false;
 			return;
 		}
 
 		if(!validarCPF(cpf)) {
-			$("#spinnerModal").modal('hide');
+			sigaSpinner.ocultar();
 			document.getElementById("btnOk").disabled = false;
 			return;
 		}
@@ -77,12 +83,9 @@
 		document.getElementById("email").disabled = false
 		frm.submit();
 	}
-
 			
-	function mensagemAlerta(mensagem) {
-		$('#alertaModal').find('.mensagem-Modal').text(mensagem);
-		$('#alertaModal').modal();
-		$("#spinnerModal").modal('hide');
+	function habilitarBotaoOk() {		
+		sigaSpinner.ocultar();
 		document.getElementById("btnOk").disabled = false;
 	}
 	
@@ -103,11 +106,13 @@
 			var RegExp = /\b[\w]+@[\w-]+\.[\w]+/;
 	
 			if (campo.value.search(RegExp) == -1) {					
-					mensagemAlerta("E-mail inválido!");
+					sigaModal.alerta("E-mail inválido!");
+					habilitarBotaoOk();
 					document.getElementById('email').focus();
 					return false;
 			} else if (campo.value.search(',') > 0) {
-				mensagemAlerta("E-mail inválido! Não pode conter vírgula ( , )");
+				sigaModal.alerta("E-mail inválido! Não pode conter vírgula ( , )");				
+				habilitarBotaoOk();
 				document.getElementById('email').focus();
 				return false;				
 			}
@@ -120,7 +125,8 @@
 	function data(campo) {
 		var reg = /(([0-2]{1}[0-9]{1}|3[0-1]{1})\/(0[0-9]{1}|1[0-2]{1})\/[0-9]{4})/g; //valida dd/mm/aaaa
 		if(campo.search(reg) == -1) {
-			mensagemAlerta('Data inválida!');
+			sigaModal.alerta('Data inválida!');				
+			habilitarBotaoOk();			
 			return false;
 		}
 		return true;
@@ -137,7 +143,8 @@
         if ((Resto == 10) || (Resto == 11))  Resto = 0;
         if (Resto != parseInt(strCPF.substring(9, 10)) ) {
         	
-        	mensagemAlerta('CPF Inválido!');
+        	sigaModal.alerta('CPF Inválido!');				
+			habilitarBotaoOk();	        	
             return false;
 		}
         Soma = 0;
@@ -147,8 +154,8 @@
         if ((Resto == 10) || (Resto == 11))  Resto = 0;
         if (Resto != parseInt(strCPF.substring(10, 11) ) ) {
         	
-        	mensagemAlerta('CPF Inválido!');
-        	return false;
+        	sigaModal.alerta('CPF Inválido!');				
+			habilitarBotaoOk();	 
         }
         return true;
              
@@ -184,9 +191,11 @@
 	function retornoValidaNome(response,param){
 		if(response == 0) {
 			validar();
-		} else {
-			$('#msgP').html(response);	
-			$('#pessoasModal').modal();
+		} else {		
+			var titulo = '<h4 class="siga-modal__titulo  siga-modal__titulo--conteudo">' +
+							'Foram localizados os seguintes cadastros com o mesmo CPF e nome diferente, deseja atualizar o nome de todos os registros?' +
+						 '</h4>'
+			sigaModal.enviarHTMLEAbrir('pessoasModal', titulo.concat(response));			
 		}
 	}
 </script>
@@ -202,210 +211,165 @@
 				<h5>Dados da Pessoa</h5>
 			</div>
 			<div class="card-body">
-			<form name="frm" action="${request.contextPath}/app/pessoa/gravar" method="POST">
-				<input type="hidden" name="postback" value="1" />
-				<input type="hidden" name="id" id="id" value="${id}" />
-				<div class="row">
-					<div class="col-md-4">
-						<div class="form-group">
-							<label for="idOrgaoUsu">&Oacute;rg&atilde;o</label>
-							<select name="idOrgaoUsu" value="${idOrgaoUsu}"  onchange="carregarRelacionados(this.value)" class="form-control  siga-select2">
-								<c:forEach items="${orgaosUsu}" var="item">
-									<option value="${item.idOrgaoUsu}"
-										${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
-										${item.nmOrgaoUsu}</option>
-								</c:forEach>
-							</select>
-						</div>
-					</div>
-					<div class="col-md-2">
-						<div class="form-group">
-							<label for="idCargo">Cargo</label>
-							<select name="idCargo" value="${idCargo}" class="form-control  siga-select2">
-								<c:forEach items="${listaCargo}" var="item">
-									<option value="${item.idCargo}"
-										${item.idCargo == idCargo ? 'selected' : ''}>
-										${item.descricao}</option>
-								</c:forEach>
-							</select>
-						</div>
-					</div>
-					<div class="col-md-2">
-						<div class="form-group">
-							<label for="idFuncao">Fun&ccedil;&atilde;o de Confian&ccedil;a</label>
-							<select id="idFuncao" name="idFuncao" value="${idFuncao}" class="form-control  siga-select2">
-								<c:forEach items="${listaFuncao}" var="item">
-									<option value="${item.idFuncao}"
-										${item.idFuncao == idFuncao ? 'selected' : ''}>
-										${item.descricao}</option>
-								</c:forEach>
-							</select>
-						</div>
-					</div>
-					<div class="col-md-4">
-						<div class="form-group" id="idLotacaoGroup">
-							<label for="idLotacao"><fmt:message key="usuario.lotacao"/></label>
-							<select id="idLotacao" style="width: 100%" name="idLotacao" value="${idLotacao}" class="form-control  siga-select2">
-								<c:forEach items="${listaLotacao}" var="item">
-									<option value="${item.idLotacao}" ${item.idLotacao == idLotacao ? 'selected' : ''}>
-										<c:if test="${item.descricao ne 'Selecione'}">${item.siglaLotacao} / </c:if>${item.descricao}
-									</option>
-								</c:forEach>
-							</select>
-						</div>
-					</div>
-				</div>
-				
-				<hr>
-				
-				<div class="row">
-					<div class="col-md-2">
-						<div class="form-group">
-							<label for="nmPessoa">CPF</label>
-							<input type="text" id="cpf" name="cpf" value="${cpf}" maxlength="14" onkeyup="this.value = cpf_mask(this.value)" class="form-control" />
-						</div>
-					</div>
-					<div class="col-md-4">
-						<div class="form-group">
-							<label for="nmPessoa">Nome</label>
-							<input type="text" id="nmPessoa" name="nmPessoa" value="${nmPessoa}" maxlength="60" class="form-control" onkeyup="validarNome(this)"/>
-						</div>
-					</div>
-					<div class="col-md-2">
-						<div class="form-group">
-							<label for="nmPessoa">Data de Nascimento</label>
-							<input type="text" id="dtNascimento" name="dtNascimento" value="${dtNascimento}" maxlength="10" onkeyup="this.value = mascaraData( this.value )" class="form-control" />
-						</div>
-					</div>
-					<div class="col-md-4">
-						<div class="form-group">
-							<label for="nmPessoa">E-mail</label>
-							
-							<!-- Alteracao realizada de acordo com o cartao 859 -->
-							<c:choose>
-								<c:when test="${empty id || sigla == 'ZZ'}">
-									<input type="text" id="email" name="email" value="${email}" maxlength="60" onchange="validarEmail(this)" onkeyup="this.value = this.value.toLowerCase().trim()" class="form-control" />
-								</c:when>
-	  							<c:otherwise>
-	  								<input type="text" id="email" name="email" value="${email}" maxlength="60" disabled="true" onchange="validarEmail(this)" onkeyup="this.value = this.value.toLowerCase().trim()" class="form-control" />
-	  							</c:otherwise>
-							</c:choose>
-						</div>
-					</div>
-				</div>
-				<hr>
-				<!-- Alteracao cartao 1057 -->
-				<fieldset class="form-group">					
-					<div class="row bg-">
+				<form name="frm" action="${request.contextPath}/app/pessoa/gravar" method="POST">
+					<input type="hidden" name="postback" value="1" />
+					<input type="hidden" name="id" id="id" value="${id}" />
+					<div class="row">
 						<div class="col-md-4">
 							<div class="form-group">
-								<label for="nmPessoa">RG (Incluindo dígito)</label>
-								<input type="text" id="identidade" name="identidade" value="${identidade}" maxlength="20" class="form-control"/>
-							</div>
-						</div>
-						<div class="col-md-2">
-							<div class="form-group">
-								<label for="nmPessoa">Órgão Expedidor</label>
-								<input type="text" id="orgaoIdentidade" name="orgaoIdentidade" value="${orgaoIdentidade}" maxlength="50" class="form-control" />
-							</div>
-						</div>
-						
-						<div class="col-md-2">					
-							<div class="form-group">
-								<label for="ufIdentidade">UF</label>
-								<select name="ufIdentidade" id="ufIdentidade" value="${ufIdentidade}" class="form-control  siga-select2">
-									<option value="" selected disabled hidden>Selecione uma UF</option>
-									
-									<c:forEach items="${ufList}" var="item">
-										<option value="${item.sigla}" ${item.sigla== ufIdentidade ? 'selected' : ''}>
-											${item.descricao}
-										</option>
-									</c:forEach>							
+								<label for="idOrgaoUsu">&Oacute;rg&atilde;o</label>
+								<select name="idOrgaoUsu" value="${idOrgaoUsu}"  onchange="carregarRelacionados(this.value)" class="form-control  siga-select2">
+									<c:forEach items="${orgaosUsu}" var="item">
+										<option value="${item.idOrgaoUsu}"
+											${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
+											${item.nmOrgaoUsu}</option>
+									</c:forEach>
 								</select>
 							</div>
 						</div>
 						<div class="col-md-2">
 							<div class="form-group">
-								<label for="nmPessoa">Data de Expedição</label>
-								<input type="text" id="dataExpedicaoIdentidade" name="dataExpedicaoIdentidade" value="${dataExpedicaoIdentidade}" maxlength="10" onkeyup="this.value = mascaraData( this.value )" class="form-control" />
+								<label for="idCargo">Cargo</label>
+								<select name="idCargo" value="${idCargo}" class="form-control  siga-select2">
+									<c:forEach items="${listaCargo}" var="item">
+										<option value="${item.idCargo}"
+											${item.idCargo == idCargo ? 'selected' : ''}>
+											${item.descricao}</option>
+									</c:forEach>
+								</select>
+							</div>
+						</div>
+						<div class="col-md-2">
+							<div class="form-group">
+								<label for="idFuncao">Fun&ccedil;&atilde;o de Confian&ccedil;a</label>
+								<select id="idFuncao" name="idFuncao" value="${idFuncao}" class="form-control  siga-select2">
+									<c:forEach items="${listaFuncao}" var="item">
+										<option value="${item.idFuncao}"
+											${item.idFuncao == idFuncao ? 'selected' : ''}>
+											${item.descricao}</option>
+									</c:forEach>
+								</select>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group" id="idLotacaoGroup">
+								<label for="idLotacao"><fmt:message key="usuario.lotacao"/></label>
+								<select id="idLotacao" style="width: 100%" name="idLotacao" value="${idLotacao}" class="form-control  siga-select2">
+									<c:forEach items="${listaLotacao}" var="item">
+										<option value="${item.idLotacao}" ${item.idLotacao == idLotacao ? 'selected' : ''}>
+											<c:if test="${item.descricao ne 'Selecione'}">${item.siglaLotacao} / </c:if>${item.descricao}
+										</option>
+									</c:forEach>
+								</select>
 							</div>
 						</div>
 					</div>
-				</fieldset>
-				<!-- Fim da alteracao cartao 1057 -->
-				
-				<div class="row">
-					<div class="col-sm-12">
-						<div class="form-group">
-							<button type="button" id="btnOk" onclick="javascript: validarNomeCpf();" class="btn btn-primary" >Ok</button> 
-							<button type="button" onclick="javascript:history.back();" class="btn btn-primary" >Cancelar</button>
+					
+					<hr>
+					
+					<div class="row">
+						<div class="col-md-2">
+							<div class="form-group">
+								<label for="nmPessoa">CPF</label>
+								<input type="text" id="cpf" name="cpf" value="${cpf}" maxlength="14" onkeyup="this.value = cpf_mask(this.value)" class="form-control" />
+							</div>
 						</div>
-					</div>	
-				</div>
-
-				<c:if test="${empty id}">
-					<div class="card mt-2 mb-2">
-						<div class="card-body">
-							<h5 class="card-title">Importação por Planilha</h5>
-							<div class="row">
-								<div class="col-md-4 col-sm-6">
-									<div class="form-group">
-										<span>Carregar planilha para inserir múltiplos registros</span>
-									</div>
-
-									<div class="form-group">
-										<button type="button" onclick="javascript:location.href='/siga/app/pessoa/carregarExcel';" class="btn btn-success btn-lg">
-										<i class="far fa-file-excel"></i> Carregar planilha
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="nmPessoa">Nome</label>
+								<input type="text" id="nmPessoa" name="nmPessoa" value="${nmPessoa}" maxlength="60" class="form-control" onkeyup="validarNome(this)"/>
+							</div>
+						</div>
+						<div class="col-md-2">
+							<div class="form-group">
+								<label for="nmPessoa">Data de Nascimento</label>
+								<input type="text" id="dtNascimento" name="dtNascimento" value="${dtNascimento}" maxlength="10" onkeyup="this.value = mascaraData( this.value )" class="form-control" />
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="nmPessoa">E-mail</label>
+								<input type="text" id="email" name="email" value="${email}" maxlength="60" onchange="validarEmail(this)" onkeyup="this.value = this.value.toLowerCase().trim()" class="form-control" />
+							</div>
+						</div>
+					</div>
+					<hr>
+					<!-- Alteracao cartao 1057 -->
+					<fieldset class="form-group">					
+						<div class="row bg-">
+							<div class="col-md-4">
+								<div class="form-group">
+									<label for="nmPessoa">RG (Incluindo dígito)</label>
+									<input type="text" id="identidade" name="identidade" value="${identidade}" maxlength="20" class="form-control"/>
+								</div>
+							</div>
+							<div class="col-md-2">
+								<div class="form-group">
+									<label for="nmPessoa">Órgão Expedidor</label>
+									<input type="text" id="orgaoIdentidade" name="orgaoIdentidade" value="${orgaoIdentidade}" maxlength="50" class="form-control" />
+								</div>
+							</div>
+							
+							<div class="col-md-2">					
+								<div class="form-group">
+									<label for="ufIdentidade">UF</label>
+									<select name="ufIdentidade" id="ufIdentidade" value="${ufIdentidade}" class="form-control  siga-select2">
+										<option value="" selected disabled hidden>Selecione uma UF</option>
+										
+										<c:forEach items="${ufList}" var="item">
+											<option value="${item.sigla}" ${item.sigla== ufIdentidade ? 'selected' : ''}>
+												${item.descricao}
+											</option>
+										</c:forEach>							
+									</select>
+								</div>
+							</div>
+							<div class="col-md-2">
+								<div class="form-group">
+									<label for="nmPessoa">Data de Expedição</label>
+									<input type="text" id="dataExpedicaoIdentidade" name="dataExpedicaoIdentidade" value="${dataExpedicaoIdentidade}" maxlength="10" onkeyup="this.value = mascaraData( this.value )" class="form-control" />
+								</div>
+							</div>
+						</div>
+					</fieldset>
+					<!-- Fim da alteracao cartao 1057 -->
+					
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="form-group">
+								<button type="button" id="btnOk" onclick="javascript: validarNomeCpf();" class="btn btn-primary" >Ok</button> 
+								<button type="button" onclick="javascript:history.back();" class="btn btn-primary" >Cancelar</button>
+							</div>
+						</div>	
+					</div>
+	
+					<c:if test="${empty id}">
+						<div class="card mt-2 mb-2">
+							<div class="card-body">
+								<h5 class="card-title">Importação por Planilha</h5>
+								<div class="row">
+									<div class="col-md-4 col-sm-6">
+										<div class="form-group">
+											<span>Carregar planilha para inserir múltiplos registros</span>
+										</div>
+	
+										<div class="form-group">
+											<button type="button" onclick="javascript:location.href='/siga/app/pessoa/carregarExcel';" class="btn btn-success btn-lg">
+												<i class="far fa-file-excel"></i> Carregar planilha
+											</button>
+										</div>																											
 									</div>
 								</div>
 							</div>
 						</div>
-					</div>
-				</c:if>
-			</form>
-			<!-- Modal -->
-			<div class="modal fade" id="alertaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-				<div class="modal-dialog" role="document">
-			    	<div class="modal-content">
-			      		<div class="modal-header">
-					        <h5 class="modal-title" id="alertaModalLabel">Alerta</h5>
-					        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-					          <span aria-hidden="true">&times;</span>
-					    	</button>
-					    </div>
-				      	<div class="modal-body">
-				        	<p class="mensagem-Modal"></p>
-				      	</div>
-						<div class="modal-footer">
-						  <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
-						</div>
-			    	</div>
-			  	</div>
-			</div>				
-			<!--Fim Modal -->
-			<!-- Modal -->
-			<div class="modal fade" id="pessoasModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-				<div class="modal-dialog modal-lg" role="document">
-			    	<div class="modal-content">
-			      		<div class="modal-header">
-					        <h6 class="modal-title" id="alertaModalLabel" align="center">Foram localizados os seguintes cadastros com o mesmo CPF e nome diferente, deseja atualizar o nome de todos os registros?</h6>
-					        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-					          <span aria-hidden="true">&times;</span>
-					    	</button>
-					    </div>
-				      	<div class="modal-body">
-				      		<div id="msgP" class="alert" ></div>
-				      	</div>
-						<div class="modal-footer">
-						  <button type="button" id="btnOk" class="btn btn-primary" data-dismiss="modal" onclick="validar();">Confirmar</button>
-						  <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
-						</div>
-			    	</div>
-			  	</div>
-			</div>				
-			<!--Fim Modal -->
+					</c:if>
+				</form>	
 			</div>
-		</div>
+		</div>					
+		<siga:siga-modal id="pessoasModal" tamanhoGrande="true" exibirRodape="true" descricaoBotaoFechaModalDoRodape="Cancelar"			
+			linkBotaoDeAcao="javascript:sigaModal.fechar('pessoasModal');validar();" descricaoBotaoDeAcao="Confirmar">
+			<div class="modal-body"></div>			
+		</siga:siga-modal>				
 	</div>
 </siga:pagina>
 <script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>

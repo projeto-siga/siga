@@ -2,11 +2,15 @@ package br.gov.jfrj.siga.tp.util;
 
 import java.io.IOException;
 import java.io.InputStream;
-import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+
+import javax.enterprise.event.Observes;
+
+import br.com.caelum.vraptor.observer.upload.UploadedFile;
+
 
 public class ArquivoUploadUtil {
 
-	public static byte[] toByteArray(final UploadedFile upload) throws IOException {
+	public static byte[] toByteArray(final @Observes UploadedFile upload) throws IOException {
 		final InputStream is = upload.getFile();
 
 		// Get the size of the file

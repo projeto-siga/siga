@@ -38,7 +38,7 @@
 			}
 			function corrige() {
 				if (tamanho2() < 0) {
-					alert('Descrição com mais de 500 caracteres');
+					sigaModal.alerta('Descrição com mais de 500 caracteres');
 					nota = new String();
 					nota = document.getElementById("descrMov").value;
 					document.getElementById("descrMov").value = nota.substring(
@@ -145,9 +145,8 @@
 						<div class="col-sm">
 							<div class="form-group">
 								<label for="descrMov">Nota</label>
-								<textarea class="form-control" name="descrMov" value="${descrMov}" cols="60"
-									rows="5" onkeydown="corrige();tamanho();" maxlength="500"
-									onblur="tamanho();" onclick="tamanho();"></textarea>
+								<textarea class="form-control" name="descrMov" cols="60" rows="5" onkeydown="corrige();tamanho();" maxlength="500"
+									onblur="tamanho();" onclick="tamanho();">${descrMov}</textarea>
 								<small class="form-text text-muted" id="Qtd">Restam&nbsp;500&nbsp;caracteres</small>
 							</div>
 						</div>
@@ -174,3 +173,8 @@
 		</div>
 	</div>
 </siga:pagina>
+<script>
+	$(function() {
+		$('[name=descrMov]').focus();
+	});
+</script>

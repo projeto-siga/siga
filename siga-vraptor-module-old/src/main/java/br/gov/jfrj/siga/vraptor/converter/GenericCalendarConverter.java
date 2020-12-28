@@ -3,17 +3,21 @@ package br.gov.jfrj.siga.vraptor.converter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.ResourceBundle;
+
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Specializes;
+import javax.inject.Inject;
 
 import br.com.caelum.vraptor.Convert;
-import br.com.caelum.vraptor.Converter;
-import br.com.caelum.vraptor.Validator;
-import br.com.caelum.vraptor.ioc.RequestScoped;
+import br.com.caelum.vraptor.converter.CalendarConverter;
 import br.com.caelum.vraptor.validator.I18nMessage;
+import br.com.caelum.vraptor.validator.Validator;
 
+
+@Specializes
 @RequestScoped
 @Convert(Calendar.class)
-public class GenericCalendarConverter implements Converter<Calendar> {
+public class GenericCalendarConverter extends CalendarConverter  {
 
 	private static final String DATA_INICIO = "01/01/1900 ";
 	private static final String DD_MM_YYYY_HH_MM = "dd/MM/yyyy HH:mm";
@@ -21,12 +25,20 @@ public class GenericCalendarConverter implements Converter<Calendar> {
 	private static final String PATTERN_DD_MM_YYYY = "^(([0-2]\\d|[3][0-1])\\/([0]\\d|[1][0-2])\\/[2][0]\\d{2})$";
 	private Validator validator;
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public GenericCalendarConverter() {
+		this.validator = null;
+	}
+	
+	@SuppressWarnings("deprecation")
+	@Inject
 	public GenericCalendarConverter(Validator validator) {
 		this.validator = validator;
 	}
-
-	@Override
-	public Calendar convert(String value, Class<? extends Calendar> type, ResourceBundle bundle) {
+	
+	public Calendar convert(String value, Class<? extends Calendar> type) {
 		if (dataPreenchida(value)) {
 			if (value.matches("\\d\\d:\\d\\d")) {
 				return converterQuandoApenasHorasMinutos(value);

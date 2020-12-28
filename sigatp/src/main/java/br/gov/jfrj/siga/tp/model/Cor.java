@@ -18,16 +18,16 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 @Audited
 @Immutable
 @Table(schema = "SIGATP")
-public class Cor extends TpModel implements ConvertableEntity {
+public class Cor extends TpModel implements ConvertableEntity<Long> {
 
 	private static final long serialVersionUID = 1L;
 
 	public static final ActiveRecord<Cor> AR = new ActiveRecord<>(Cor.class);
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator")
+	@GeneratedValue(generator = "hibernate_sequence_generator")
 	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "SIGATP.hibernate_sequence")
-	private long id;
+	private Long id;
 
 	@NotNull
 	private String nome;
@@ -44,7 +44,8 @@ public class Cor extends TpModel implements ConvertableEntity {
 		return nome;
 	}
 
-	public void setId(long id) {
+	@Override
+	public void setId(Long id) {
 		this.id = id;
 	}
 

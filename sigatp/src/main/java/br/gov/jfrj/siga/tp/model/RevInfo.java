@@ -24,7 +24,7 @@ import br.gov.jfrj.siga.tp.listener.RevInfoListener;
 @RevisionEntity(RevInfoListener.class)
 public class RevInfo implements Serializable {
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator") @SequenceGenerator(name = "hibernate_sequence_generator", sequenceName="SIGATP.hibernate_sequence") 
+	@GeneratedValue(generator = "hibernate_sequence_generator") @SequenceGenerator(name = "hibernate_sequence_generator", sequenceName="SIGATP.hibernate_sequence") 
 	@RevisionNumber
 	private int rev;
 

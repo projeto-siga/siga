@@ -24,7 +24,15 @@ public class GcConfiguracao extends CpConfiguracao // implements
 	//
 	@ManyToOne
 	@JoinColumn(name = "ID_TIPO_INFORMACAO")
-	public GcTipoInformacao tipoInformacao;
+	private GcTipoInformacao tipoInformacao;
+
+	public GcTipoInformacao getTipoInformacao() {
+		return tipoInformacao;
+	}
+
+	public void setTipoInformacao(GcTipoInformacao tipoInformacao) {
+		this.tipoInformacao = tipoInformacao;
+	}
 
 	public GcConfiguracao() {
 

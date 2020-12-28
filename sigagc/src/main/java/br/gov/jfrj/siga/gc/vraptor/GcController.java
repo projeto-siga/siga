@@ -9,7 +9,16 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.vraptor.SigaController;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
+
 public class GcController extends SigaController {
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public GcController() {
+		super();
+	}
+	
 
 	public GcController(HttpServletRequest request, Result result,
 			SigaObjects so, EntityManager em) {

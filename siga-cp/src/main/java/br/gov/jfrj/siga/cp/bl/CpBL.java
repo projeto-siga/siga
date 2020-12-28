@@ -38,7 +38,7 @@ import org.apache.poi.util.StringUtil;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
@@ -378,7 +378,7 @@ public class CpBL {
 
 					if (SigaMessages.isSigaSP()) {
 						String[] destinanarios = { pessoa.getEmailPessoaAtual() };
-						Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"), destinanarios,
+						Correio.enviar(null, destinanarios,
 								"Esqueci Minha Senha", "",
 								"<table>" + "<tbody>" + "<tr>"
 										+ "<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>"
@@ -497,7 +497,7 @@ public class CpBL {
 									? textoEmailNovoUsuarioExternoSP(idNova, matricula, novaSenha)
 									: textoEmailNovoUsuarioSP(idNova, matricula, novaSenha, autenticaPeloBanco);
 							
-							Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
+							Correio.enviar(null,
 									destinanarios, "Novo Usuário", "", conteudoHTML);
 						} else {
 							Correio.enviar(pessoa.getEmailPessoaAtual(), "Novo Usuário - processo.rio",
@@ -672,21 +672,19 @@ public class CpBL {
 		
 		conteudo = conteudo.replace("${nomeUsuario}", identidade.getDpPessoa().getNomePessoa())
 			.replace("${cpfUsuario}", matricula)
-			.replace("${url}", SigaBaseProperties.getString("siga.ex." + SigaBaseProperties.getString("siga.ambiente") + ".url").replace("/sigaex/app", ""))
+			.replace("${url}", Prop.get("/sigaex.url").replace("/sigaex/app", ""))
 			.replace("${senhaUsuario}", novaSenha);
 		
 		return conteudo;
 	}
 
-	private String buscarModoAutenticacao(String orgao) {
+	public String buscarModoAutenticacao(String orgao) {
 		String retorno = GiService._MODO_AUTENTICACAO_DEFAULT;
-		CpPropriedadeBL props = new CpPropriedadeBL();
-		try {
-			String modo = props.getModoAutenticacao(orgao);
-			if (modo != null)
-				retorno = modo;
-		} catch (Exception e) {
-		}
+		if (Prop.get("/siga.ldap.orgaos") == null)
+			return retorno;
+		String modo = Prop.get("/siga.ldap." + orgao.toLowerCase() + ".modo");
+		if (modo != null)
+			retorno = modo;
 		return retorno;
 	}
 
@@ -1116,14 +1114,8 @@ public class CpBL {
 	}
 
 	public InputStream uploadPessoa(File file, CpOrgaoUsuario orgaoUsuario, String extensao, CpIdentidade i) {
-		InputStream inputStream = null;
-		try {
-			Excel excel = new Excel();
-			inputStream = excel.uploadPessoa(file, orgaoUsuario, extensao, i);
-		} catch (Exception e) {
-
-		}
-		return inputStream;
+		Excel excel = new Excel();				
+		return excel.uploadPessoa(file, orgaoUsuario, extensao, i);
 	}
 
 	public String criarUsuario(String cadastranteStr, final Long id, final Long idOrgaoUsu, final Long idCargo,
@@ -1333,8 +1325,7 @@ public class CpBL {
 		
 	
 	public String obterURLPermanente(String tipoLink, String token) {
-		//String urlPermanente = System.getProperty("siga.base.url"); necessario implementar parametro
-		String urlPermanente = System.getProperty("siga.ex.enderecoAutenticidadeDocs").replace("/sigaex/public/app/autenticar", "");
+		String urlPermanente = Prop.get("/sigaex.autenticidade.url").replace("/sigaex/public/app/autenticar", "");
 		
 		urlPermanente +=  "/siga/public/app/sigalink/"+tipoLink+"/"+token;
 		

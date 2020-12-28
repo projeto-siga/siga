@@ -4,10 +4,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
@@ -25,11 +27,11 @@ import org.w3c.dom.Element;
 
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
-import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
-import br.com.caelum.vraptor.interceptor.download.Download;
+import br.com.caelum.vraptor.observer.download.ByteArrayDownload;
+import br.com.caelum.vraptor.observer.download.Download;
+import br.com.caelum.vraptor.validator.Validator;
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.model.DadosRH;
@@ -42,9 +44,17 @@ import br.gov.jfrj.siga.sr.model.DadosRH.Pessoa;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-@Resource
+@Controller
 public class CorporativoController extends SrController {
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public CorporativoController() {
+		super();
+	}
+	
+	@Inject
 	public CorporativoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em,
 			SrValidator srValidator, Validator validator) {
 		super(request, result, dao, so, em, srValidator);
@@ -70,11 +80,16 @@ public class CorporativoController extends SrController {
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
 		List<DadosRH> l = DadosRH.AR.all().fetch();
+		String situacoesParaImportar = (String) Contexto.resource("siga.sr.corporativo.dadosrh.situacoesParaImportar");
+		if(situacoesParaImportar == null)
+			throw new RuntimeException(
+					"Erro: parametro 'siga.sr.corporativo.dadosrh.situacoesParaImportar' não configurado.");
+		
+		List<String> situacoes = Arrays.asList(situacoesParaImportar.split(","));
 		for (DadosRH d : l) {
 			Pessoa p = d.getPessoa();
 			if (p != null && (!mp.containsKey(p.getPessoa_id()) || p.getLotacao_tipo_papel().equals("Principal"))
-					&& (p.getPessoa_situacao().equals(1) || p.getPessoa_situacao().equals(2)
-							|| p.getPessoa_situacao().equals(31) || p.getPessoa_situacao().equals(12)))
+					&& (situacoes.contains(p.getPessoa_situacao().toString())))
 				mp.put(p.getPessoa_id(), p);
 
 			Lotacao x = d.getLotacao();
@@ -141,6 +156,10 @@ public class CorporativoController extends SrController {
 		Element pessoas = doc.createElement("pessoas");
 		rootElement.appendChild(pessoas);
 		for (Pessoa p : mp.values()) {
+			// BJN skip aposentados sem email
+			if(p.getPessoa_situacao().equals(4) && (p.getPessoa_email() == null || p.getPessoa_email().isEmpty()))
+				continue;
+
 			Element e = doc.createElement("pessoa");
 			setAttr(e, "id", p.getPessoa_id());
 			setAttr(e, "cpf", p.getPessoa_cpf());

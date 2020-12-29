@@ -894,14 +894,11 @@ public class CpDao extends ModeloDao {
 		qry.setParameter("idPessoaIni", id);
 		final DpPessoa pes = (DpPessoa) qry.getResultStream().findFirst().orElse(null);
 		
-		final Query query = em().createNamedQuery("consultarPorCpf");
-		query.setParameter("cpfPessoa", cpf);
-		
 		List<DpPessoa> lista  = listarUsuarioPadrao(cpf);
 		
-		while(((DpPessoa) lista).getUsuarioPadrao().equals(1)) {
-				((DpPessoa) lista).setUsuarioPadrao(0);
-				em().merge(pes);
+		for(DpPessoa pessoa : lista) {
+				pessoa.setUsuarioPadrao(0);
+				em().merge(pessoa);
 			}
 			
 		 if (pes.getUsuarioPadrao() == 0) {
@@ -912,10 +909,10 @@ public class CpDao extends ModeloDao {
 		return pes;
 	}
 	
-	public List<DpPessoa> listarUsuarioPadrao(final long id) {
+	public List<DpPessoa> listarUsuarioPadrao(final long cpf) {
 
 		final Query qry = em().createNamedQuery("consultaUsuarioPadrao");
-		qry.setParameter("usuarioPadrao", id);
+		qry.setParameter("cpfPessoa", cpf);
 		final List<DpPessoa> l = qry.getResultList();
 		return l;
 	}

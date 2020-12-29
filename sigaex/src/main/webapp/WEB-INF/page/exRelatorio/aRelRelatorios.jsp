@@ -61,11 +61,13 @@ page
 			<c:set var="titulo_pagina" scope="request">Relação de Modelos</c:set>
 			<c:set var="nomeRelatorio" scope="request">relModelos.jsp</c:set>
 		</c:when>
+		
 		<c:when test='${nomeArquivoRel eq "relDocumentosSubordinados.jsp"}'>
 			<c:set var="actionName" scope="request">emiteRelDocumentosSubordinados</c:set>
 			<c:set var="titulo_pagina" scope="request">Relação de Documentos em Setores Subordinados</c:set>
 			<c:set var="nomeRelatorio" scope="request">relDocumentosSubordinados.jsp</c:set>
 		</c:when>
+		
 		<c:when
 			test='${nomeArquivoRel eq "relMovimentacaoDocSubordinados.jsp"}'>
 			<c:set var="actionName" scope="request">emiteRelMovDocsSubordinados</c:set>
@@ -117,6 +119,15 @@ page
 			<c:set var="titulo_pagina" scope="request">Relatórios Gerenciais</c:set>
 			<c:set var="nomeRelatorio" scope="request">relDocumentosPorVolume.jsp</c:set>
 		</c:when>
+
+
+<c:when test='${nomeArquivoRel eq "relTeste.jsp"}'>
+			<c:set var="actionName" scope="request">emiteRelTeste</c:set>
+			<c:set var="titulo_pagina" scope="request">Relação Teste</c:set>
+			<c:set var="nomeRelatorio" scope="request">relTeste.jsp</c:set>
+		</c:when>
+		
+
 
 		<c:otherwise>
 			<c:set var="actionName" scope="request">emiteRelExpedientes</c:set>

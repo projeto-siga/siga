@@ -151,6 +151,8 @@ public class ExRelatorioController extends ExController {
 
 		if (nomeArquivoRel.equals("relDocumentosSubordinados.jsp")) {
 			fazerResultsParaRelDocumentosSubordinados(lotacaoDestinatarioSel);
+			
+			
 		} else if (nomeArquivoRel.equals("relClassificacao.jsp")) {
 			fazerResultsParaRelClassificacao();
 		} else if (nomeArquivoRel.equals("relConsultaDocEntreDatas.jsp")) {
@@ -159,8 +161,7 @@ public class ExRelatorioController extends ExController {
 			fazerResultsParaRelCrDocSubordinados(lotacaoDestinatarioSel);
 		} else if (nomeArquivoRel.equals("relDocsClassificados.jsp")) {
 			fazerResultsParaRelDocClassificados(lotacaoDestinatarioSel);
-		} else if (nomeArquivoRel.equals("relDocumentosSubordinados.jsp")) {
-			fazerResultsParaRelDocumentosSubordinados(lotacaoDestinatarioSel);
+			
 		} else if (nomeArquivoRel.equals("relExpedientes.jsp")) {
 			fazerResultsParaRelExpedientes(lotacaoDestinatarioSel);
 		} else if (nomeArquivoRel.equals("relFormularios.jsp")) {
@@ -181,6 +182,14 @@ public class ExRelatorioController extends ExController {
 			fazerResultsParaRelOrgao(lotacaoDestinatarioSel);
 		} else if (nomeArquivoRel.equals("relTipoDoc.jsp")) {
 			fazerResultsParaRelTipoDoc(lotacaoDestinatarioSel);
+		
+		
+		
+		} else if (nomeArquivoRel.equals("relTeste.jsp")) {
+				fazerResultsParaRelTeste(lotacaoDestinatarioSel);
+			
+		
+		
 		} else {
 			throw new AplicacaoException("Modelo de relatório não definido!");
 		}
@@ -220,6 +229,16 @@ public class ExRelatorioController extends ExController {
 	}
 
 	private void fazerResultsParaRelDocumentosSubordinados(
+			final DpLotacaoSelecao lotacaoDestinatarioSel) {
+		result.include("listaTipoRel", this.getListaTipoRel());
+		result.include("lotacaoDestinatarioSel", lotacaoDestinatarioSel);
+		result.include("listaExTipoFormaDoc", this.getListaExTipoFormaDoc());
+		result.include("lotaTitular", this.getLotaTitular());
+		result.include("titular", this.getTitular());
+	}
+	
+	
+	private void fazerResultsParaRelTeste(
 			final DpLotacaoSelecao lotacaoDestinatarioSel) {
 		result.include("listaTipoRel", this.getListaTipoRel());
 		result.include("lotacaoDestinatarioSel", lotacaoDestinatarioSel);
@@ -1688,5 +1707,58 @@ public class ExRelatorioController extends ExController {
 			orgaoSelId = orgaoUsu;
 		}
 		return orgaoSelId;
+	}
+	
+	@Get("app/expediente/rel/emiteRelTeste")
+	public Download aRelTeste() throws Exception {
+		assertAcesso(ACESSO_SUBORD);
+
+		final Map<String, String> parametros = new HashMap<String, String>();
+
+		parametros.put("lotacao",
+				getRequest().getParameter("lotacaoDestinatarioSel.id"));
+		parametros.put("tipoFormaDoc", getRequest()
+				.getParameter("tipoFormaDoc"));
+		parametros.put("tipoRel", getRequest().getParameter("tipoRel"));
+		parametros.put("incluirSubordinados",
+				getRequest().getParameter("incluirSubordinados"));
+		parametros.put("lotacaoTitular",
+				getRequest().getParameter("lotacaoTitular"));
+		parametros.put("secaoUsuario", getRequest()
+				.getParameter("secaoUsuario"));
+		parametros.put("orgaoUsuario", getRequest()
+				.getParameter("orgaoUsuario"));
+		parametros.put("idTit", getRequest().getParameter("idTit"));
+		parametros.put("link_siga", linkHttp() + getRequest().getServerName()
+				+ ":" + getRequest().getServerPort()
+				+ getRequest().getContextPath()
+				+ "app/expediente/doc/exibir?sigla=");
+		//System.out.println(System.getProperty("siga.relat.titulo"));
+		if ( System.getProperty("siga.relat.titulo") == null ) {
+			parametros.put("titulo","PCRJ");
+		} else {
+			parametros.put("titulo", System.getProperty("siga.relat.titulo"));
+		}
+		//System.getProperty("siga.relat.subtitulo");
+		if ( System.getProperty("siga.relat.subtitulo") == null ) {
+			parametros.put("subtitulo","IPLANRIO");
+		} else {
+			parametros.put("subtitulo", System.getProperty("siga.relat.subtitulo"));
+		}
+		//System.out.println("Titulo: " + parametros.get("titulo"));
+		if ( System.getProperty("siga.relat.brasao") == null ) {
+			parametros.put("brasao","brasao.png");
+		} else {
+			parametros.put("brasao", System.getProperty("siga.relat.brasao"));
+		}
+		//System.out.println("Brasao: " + parametros.get("brasao"));
+		final RelatorioDocumentosSubordinados rel = new RelatorioDocumentosSubordinados(
+				parametros);
+		rel.gerar();
+
+		final InputStream inputStream = new ByteArrayInputStream(
+				rel.getRelatorioPDF());
+		return new InputStreamDownload(inputStream, APPLICATION_PDF,
+				"emiteRelDocumentosSubordinados");
 	}
 }

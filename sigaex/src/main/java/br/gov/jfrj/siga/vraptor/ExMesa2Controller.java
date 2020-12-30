@@ -83,8 +83,6 @@ public class ExMesa2Controller extends ExController {
 		Long id = Long.valueOf(request.getParameter("id"));
 		CpDao.getInstance().consultaEGravaUsuarioPadrao(id, cpf);
 		
-		System.out.println("\n\n id selecionado: " + id + "\n\n");
-		System.out.println("\n\n cpf selecionado: " + cpf + "\n\n");
 	}
 
 	@Get("app/mesa2")

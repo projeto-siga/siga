@@ -113,17 +113,19 @@
 		<!--  Modal -->
 		<form method="post" name="enviarMatricula"
 			action="<c:url value="mesa2/"/>">
-			<div id="abrirModal" class="modal" tabindex="-1" role="dialog"
+			<siga:siga-modal id="modalEscolhaUsuarioPadrao" class="modal" tabindex="-1" role="dialog"
 				data-backdrop="static">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
+							
 							<h5 class="modal-title">Selecione o Usuário Padrão</h5>
 							<button type="button" class="close" data-dismiss="modal"
-								aria-label="Close">
+								aria-label="close">
 								<span aria-hidden="true">&times;</span>
 							</button>
 						</div>
+						
 						<div class="modal-body" style="overflow-y: scroll;">
 							<div class="list-group" style="height: 250px">
 	
@@ -137,6 +139,9 @@
 										<input id="id" name="id"
 										value="${cadastrante.id}" type="hidden" />
 	
+										<input id="isUsuarioPadrao" name="isUsuarioPadrao"
+										value="${AbstractDpPessoa.usuarioPadrao}" type="hidden" />
+	
 										<div class="d-flex w-100 justify-content-between">
 											<h5 class="mb-1">${lota[1]}(${lota[0]})</h5>
 										</div>
@@ -149,20 +154,25 @@
 						<div class="modal-footer">
 							<button type="button" class="btn btn-secondary"
 								data-dismiss="modal">Cancelar</button>
-							<button value="${linkTo[ExMesa2Controller].capturaUsuarioSelecionado()}" 
+							<button 
+								value="${linkTo[ExMesa2Controller].capturaUsuarioSelecionado()}"
+								onClick="window.location.reload(); return(false);" 
 								id="btnConfirmarMatricula"								
 								name="btnConfirmarMatricula" type="submit"
 								class="btn btn-primary">Confirmar</button>
 						</div>
 					</div>
 				</div>
-			</div>
+			</siga:siga-modal>
 		</form>
 
 	<script>
-		$(document).ready(function() {
-				$('#abrirModal').modal('show');
-		});
+		$(function() {
+			var usuarioPadrao = $('#isUsuarioPadrao');				
+			if (usuarioPadrao.equals(0)) {										
+				usuarioPadrao.attr('href', '#').attr('data-siga-modal-abrir', 'modalEscolhaUsuarioPadrao');					
+			}							
+		});	
 		
 	</script>
 				

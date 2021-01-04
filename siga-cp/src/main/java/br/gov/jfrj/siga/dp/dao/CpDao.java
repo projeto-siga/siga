@@ -901,7 +901,7 @@ public class CpDao extends ModeloDao {
 				em().merge(pessoa);
 			}
 			
-		 if (pes.getUsuarioPadrao() == 0) {
+		 if (pes.getUsuarioPadrao().equals(0)) {
 				pes.setUsuarioPadrao(1);
 				em().merge(pes);
 			}

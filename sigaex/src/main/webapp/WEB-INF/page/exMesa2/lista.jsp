@@ -113,7 +113,7 @@
 		<!--  Modal -->
 		<form method="post" name="enviarMatricula"
 			action="<c:url value="mesa2/"/>">
-			<siga:siga-modal id="modalEscolhaUsuarioPadrao" class="modal" tabindex="-1" role="dialog"
+			<div id="modalEscolhaUsuarioPadrao" class="modal" tabindex="-1" role="dialog"
 				data-backdrop="static">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
@@ -139,9 +139,6 @@
 										<input id="id" name="id"
 										value="${cadastrante.id}" type="hidden" />
 	
-										<input id="isUsuarioPadrao" name="isUsuarioPadrao"
-										value="${AbstractDpPessoa.usuarioPadrao}" type="hidden" />
-	
 										<div class="d-flex w-100 justify-content-between">
 											<h5 class="mb-1">${lota[1]}(${lota[0]})</h5>
 										</div>
@@ -156,25 +153,22 @@
 								data-dismiss="modal">Cancelar</button>
 							<button 
 								value="${linkTo[ExMesa2Controller].capturaUsuarioSelecionado()}"
-								onClick="window.location.reload(); return(false);" 
 								id="btnConfirmarMatricula"								
 								name="btnConfirmarMatricula" type="submit"
 								class="btn btn-primary">Confirmar</button>
 						</div>
 					</div>
 				</div>
-			</siga:siga-modal>
+			</div>
 		</form>
 
-	<script>
-		$(function() {
-			var usuarioPadrao = $('#isUsuarioPadrao');				
-			if (usuarioPadrao.equals(0)) {										
-				usuarioPadrao.attr('href', '#').attr('data-siga-modal-abrir', 'modalEscolhaUsuarioPadrao');					
-			}							
-		});	
-		
-	</script>
+	<c:if test="${!ehUsuarioPadrao}">
+		<script>
+			$(document).ready(function() {
+				$('#modalEscolhaUsuarioPadrao').modal('show');
+			});				
+		</script>
+	</c:if>
 				
 		<div id="rowTopMesa" style="z-index: 1" class="row sticky-top px-3 pt-1 bg-white shadow-sm" 
 				v-if="!carregando || (!errormsg &amp;&amp; grupos.length >= 0)">

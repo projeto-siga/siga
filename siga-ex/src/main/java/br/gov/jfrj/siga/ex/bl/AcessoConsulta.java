@@ -113,4 +113,7 @@ public class AcessoConsulta {
 				);
 	}
 
+	public static boolean ehUsuarioPadrao(DpPessoa usuario) {
+		return (usuario.getUsuarioPadrao() != null && usuario.getUsuarioPadrao().equals(1));
+	}
 }

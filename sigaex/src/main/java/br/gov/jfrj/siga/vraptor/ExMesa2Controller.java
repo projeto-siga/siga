@@ -88,6 +88,7 @@ public class ExMesa2Controller extends ExController {
 	@Get("app/mesa2")
 	public void lista(Boolean exibirAcessoAnterior, Long idVisualizacao, String msg) throws Exception {
 		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
+		result.include("ehUsuarioPadrao", AcessoConsulta.ehUsuarioPadrao(getTitular()));
 		try {
 			result.include("podeNovoDocumento", Cp.getInstance().getConf().podePorConfiguracao(getTitular(), getTitular().getLotacao(),
 					CpTipoConfiguracao.TIPO_CONFIG_CRIAR_NOVO_EXTERNO));

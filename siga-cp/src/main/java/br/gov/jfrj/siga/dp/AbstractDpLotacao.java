@@ -73,12 +73,12 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "     ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) "
 				+ "          or (upper(lot.siglaLotacao) like upper('%' || :nome || '%')))"
 				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ "	and lot.dataFimLotacao = null and (lot.isSuspensa is null or lot.isSuspensa = 0)"
+				+ "	and lot.dataFimLotacao = null"
 				+ "	order by lot.nomeLotacao"),
 		@NamedQuery(name = "consultarQuantidadeDpLotacao", query = "select count(lot) from DpLotacao lot "
 				+ "  where ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) or (upper(lot.siglaLotacao) like upper('%' || :nome || '%')))"
 				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ "	and lot.dataFimLotacao = null and (lot.isSuspensa is null or lot.isSuspensa = 0)"
+				+ "	and lot.dataFimLotacao = null"
 				+ "	order by lot.nomeLotacao"),
 		@NamedQuery(name = "consultarPorFiltroDpLotacaoInclusiveFechadas", query = "from DpLotacao where idLotacao in ("
 				+ "  select max(lot.idLotacao)"

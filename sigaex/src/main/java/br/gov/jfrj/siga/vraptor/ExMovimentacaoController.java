@@ -1984,7 +1984,7 @@ public class ExMovimentacaoController extends ExController {
 		if((mov.getLotaResp() != null && mov.getLotaResp().getIsSuspensa() != null && mov.getLotaResp().getIsSuspensa().equals(1)) 
 				|| (mov.getResp() != null && mov.getResp().getLotacao().getIsSuspensa() != null && mov.getResp().getLotacao().getIsSuspensa().equals(1))) {
 			result.include("msgCabecClass", "alert-danger");
-    		result.include("mensagemCabec", "A " + SigaMessages.getMessage("usuario.lotacao") + " informada está Suspensa.");
+    		result.include("mensagemCabec", "A " + SigaMessages.getMessage("usuario.lotacao") + " informada está Suspensa para o recebimento de Documentos. Favor inserir outra " + SigaMessages.getMessage("usuario.lotacao"));
     		result.forwardTo(this).aTransferir(
     				sigla, idTpDespacho, tipoResponsavel, postback, dtMovString, subscritorSel, 
     				substituicao, titularSel, nmFuncaoSubscritor, idResp, tiposDespacho, descrMov, 

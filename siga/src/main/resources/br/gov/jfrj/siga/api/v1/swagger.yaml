@@ -274,6 +274,12 @@ definitions:
       siglaLotacao:
         type: string          
         description: Sigla da lotação da pessoa
+      cpf:
+        type: string          
+        description: CPF da pessoa
+      email:
+        type: string          
+        description: E-mail da pessoa
       isExternaPessoa:
         type: boolean
         description: Devolve true se for pessoa externa e false se não for

@@ -130,6 +130,8 @@ public class PessoasGet implements IPessoasGet {
 		// Pessoa
 		pessoa.sigla = p.getSiglaCompleta();
 		pessoa.nome = p.getNomePessoa();
+		pessoa.email = p.getEmailPessoa();
+		pessoa.cpf = p.getCpfPessoa().toString();
 		pessoa.isExternaPessoa = p.isUsuarioExterno();
 		
 		// Orgao Pessoa

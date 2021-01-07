@@ -249,7 +249,7 @@
 					value="A" />
 				<div class="form-group">
 					<label>Matrícula</label> <input id="nomeUsuarioSubscritor"
-						type="text" name="nomeUsuarioSubscritor" class="form-control"
+						type="text" name="nomeUsuarioSubscritor" value="${cadastrante.sesbPessoa}${cadastrante.matricula}" class="form-control"
 						onblur="javascript:converteUsuario(this)" onKeypress="return somenteLetrasNumeros(event);"/>
 				</div>
 				<div class="form-group">

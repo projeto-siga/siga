@@ -121,13 +121,12 @@ page
 		</c:when>
 
 
-<c:when test='${nomeArquivoRel eq "relTeste.jsp"}'>
+		<c:when test='${nomeArquivoRel eq "relTeste.jsp"}'>
 			<c:set var="actionName" scope="request">emiteRelTeste</c:set>
 			<c:set var="titulo_pagina" scope="request">Relação Teste</c:set>
 			<c:set var="nomeRelatorio" scope="request">relTeste.jsp</c:set>
 		</c:when>
 		
-
 
 		<c:otherwise>
 			<c:set var="actionName" scope="request">emiteRelExpedientes</c:set>

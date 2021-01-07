@@ -240,10 +240,8 @@ public class ExRelatorioController extends ExController {
 	
 	private void fazerResultsParaRelTeste(
 			final DpLotacaoSelecao lotacaoDestinatarioSel) {
-		result.include("listaTipoRel", this.getListaTipoRel());
-		result.include("lotacaoDestinatarioSel", lotacaoDestinatarioSel);
-		result.include("listaExTipoFormaDoc", this.getListaExTipoFormaDoc());
 		result.include("lotaTitular", this.getLotaTitular());
+		result.include("lotacaoDestinatarioSel", lotacaoDestinatarioSel);
 		result.include("titular", this.getTitular());
 	}
 

@@ -267,8 +267,9 @@
 						</ul></li>
 				</c:if>
 
+
 				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;SUBORD:Relatório de documentos em setores subordinados')}">
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;DOCCRD:Relação de documentos criados')}">
 					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/rel/relRelatorios?nomeArquivoRel=relTeste.jsp">
 							Relatório TESTE </a></li>

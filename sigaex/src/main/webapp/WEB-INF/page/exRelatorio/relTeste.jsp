@@ -7,52 +7,33 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <script type="text/javascript" language="Javascript1.1">
+
 function sbmt() {
-	frm.action='${url}';
-	frm.submit();
+	frmRelExpedientes.action='${url}';
+	frmRelExpedientes.submit();	
 }
 </script>
-
 <c:set var="titulo_pagina" scope="request">
-	Relatório de Criação de Documentos em Setores Subordinados
+	Documentos Criados
 </c:set>
-<c:set var="secaoUsuario" scope="request">
-	"${lotaTitular.orgaoUsuario.descricaoMaiusculas}"
-</c:set>
+<input type="hidden" name="secaoUsuario" id="secaoUsuario" value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
 <div class="row">
-	<div class="col-sm-2">
-		<label>Tipo de Relatório</label>
-		<select name="tipoRel" id="tipoRel" class="form-control">
-			<c:forEach var="item" items="${listaTipoRel}">
-				<option value="${item.key}">
-					${item.value}
-				</option>
-			</c:forEach>			
-		</select>
-	</div>
 	<div class="col-sm-6">
 		<label><fmt:message key="usuario.lotacao"/></label>
-		<siga:selecao propriedade="lotacaoDestinatario" tema="simple" modulo="siga"/>
-	</div>
-</div>
-<div class="row">
-	<div class="col-sm-2 mt-4 ml-4">
-		<input type="checkbox" name="incluirSubordinados" id="incluirSubordinados" class="form-check-input"/><label class="form-check-label" for="incluirSubordinados">Incluir setores subordinados?</label>
+			<siga:selecao propriedade="lotacaoDestinatario" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
 	</div>
 	<div class="col-sm-2">
-		<label>Tipo de Documento</label>
-		<select name="tipoFormaDoc" id="tipoFormaDoc" class="form-control">
-			<c:forEach var="item" items="${listaExTipoFormaDoc}">
-				<option value="${item.descricao}">
-					${item.descricao} 
-				</option>
-			</c:forEach>
-		</select>
+		<label>Data Inicial</label>
+		<input type="text" name="dataInicial" id="dataInicial" onblur="javascript:verifica_data(this, true);comparaData(dataInicial,dataFinal);"
+			theme="simple" maxlength="10" class="form-control" />
+	</div>
+	<div class="col-sm-2">
+		<label>Data Final</label>
+		<input type="text" name="dataFinal" id="dataFinal" onblur="javascript:verifica_data(this,true);comparaData(dataInicial,dataFinal);"
+			theme="simple" maxlength="10" class="form-control" />
 	</div>
 </div>
-<input type="hidden" name="lotacaoTitular" value="${lotaTitular.siglaLotacao}" />
-<input type="hidden" name="orgaoUsuario" value="${lotaTitular.orgaoUsuario.idOrgaoUsu}" />
-<input type="hidden" name="idTit" value="${titular.id}" />
-
-
-
+<input type="hidden" name="lotacao" id="lotacao" value="${lotacaoDestinatarioSel.id}" />
+<input type="hidden" name="siglalotacao" id="siglalotacao" value="${lotacaoDestinatarioSel.sigla}" />
+<input type="hidden" name="lotacaoTitular" id="lotacaoTitular" value="${lotaTitular.siglaLotacao}" />
+<input type="hidden" name="idTit" id="idTit" value="${titular.id}" />

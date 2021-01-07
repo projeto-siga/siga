@@ -102,7 +102,7 @@
 							name="ad_kind_0" value="${doc.descrFormaDoc}" />
 					</div>
 
-					<c:set var="exibirNoProtocoloAtivo" scope="request" value="${doc.exFormaDocumento.descrFormaDoc == 'Despacho'? false : null}" />
+					<c:set var="exibirNoProtocoloAtivo" scope="request" value="${doc.exFormaDocumento.descrFormaDoc == 'Despacho' && siga_cliente == 'GOVSP' ? false : null}" />
 
 					<tags:assinatura_botoes assinar="${assinando}" voltar="${voltarAtivo}"
 						linkVoltar="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}"

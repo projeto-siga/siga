@@ -155,7 +155,7 @@
 								value="${linkTo[ExMesa2Controller].capturaUsuarioSelecionado()}"
 								id="btnConfirmarMatricula"								
 								name="btnConfirmarMatricula" type="submit"
-								onClick="javascript:window.location.reload();return(false);"
+								onClick="ocultarModal();javascript:window.location.reload();return(false);"
 								class="btn btn-primary">Confirmar</button>
 						</div>
 					</div>
@@ -163,20 +163,28 @@
 			</div>
 		</form>
 
-	<c:choose>
-		<c:when test="${!ehUsuarioPadrao}">
-			<script>
-				$(document).ready(function() {
-					$('#modalEscolhaUsuarioPadrao').modal('show');
-				});				
-			</script>
-		</c:when>
-		<c:otherwise>
-			<script>
-					$('#modalEscolhaUsuarioPadrao').modal('hide');
-			</script>
-		</c:otherwise>
-	</c:choose>
+	<script >
+		function ocultarModal() {
+			  return $('#modalEscolhaUsuarioPadrao').modal('hide');
+		}
+		
+		$(function(){
+		    $('div div a').click(function(i){
+		        $(this).addClass('active');
+		        $('.d-flex').each(function(index) {
+		            $(this).addClass('active');
+		        });
+		    });
+		});
+	</script>
+
+	<c:if test="${!ehUsuarioPadrao}">
+		<script>
+			$(document).ready(function() {
+				$('#modalEscolhaUsuarioPadrao').modal('show');
+			});				
+		</script>
+	</c:if>
 				
 		<div id="rowTopMesa" style="z-index: 1" class="row sticky-top px-3 pt-1 bg-white shadow-sm" 
 				v-if="!carregando || (!errormsg &amp;&amp; grupos.length >= 0)">

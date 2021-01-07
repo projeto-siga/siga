@@ -44,6 +44,7 @@ import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpAcesso;
+import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -88,7 +89,12 @@ public class ExMesa2Controller extends ExController {
 	@Get("app/mesa2")
 	public void lista(Boolean exibirAcessoAnterior, Long idVisualizacao, String msg) throws Exception {
 		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
-		result.include("ehUsuarioPadrao", AcessoConsulta.ehUsuarioPadrao(getTitular()));
+		
+		List<CpIdentidade> listaUsuarioPadrao = new CpDao()
+				.consultaIdentidadesCadastranteComUsuarioPadrao(getTitular().getCpfPessoa().toString(), Boolean.TRUE);
+		
+		result.include("ehUsuarioPadrao", AcessoConsulta.ehUsuarioPadrao(getTitular())
+				 || !listaUsuarioPadrao.isEmpty());
 		try {
 			result.include("podeNovoDocumento", Cp.getInstance().getConf().podePorConfiguracao(getTitular(), getTitular().getLotacao(),
 					CpTipoConfiguracao.TIPO_CONFIG_CRIAR_NOVO_EXTERNO));

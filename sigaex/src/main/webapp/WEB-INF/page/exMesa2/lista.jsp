@@ -155,6 +155,7 @@
 								value="${linkTo[ExMesa2Controller].capturaUsuarioSelecionado()}"
 								id="btnConfirmarMatricula"								
 								name="btnConfirmarMatricula" type="submit"
+								onClick="javascript:window.location.reload();"
 								class="btn btn-primary">Confirmar</button>
 						</div>
 					</div>
@@ -162,13 +163,20 @@
 			</div>
 		</form>
 
-	<c:if test="${!ehUsuarioPadrao}">
-		<script>
-			$(document).ready(function() {
-				$('#modalEscolhaUsuarioPadrao').modal('show');
-			});				
-		</script>
-	</c:if>
+	<c:choose>
+		<c:when test="${!ehUsuarioPadrao}">
+			<script>
+				$(document).ready(function() {
+					$('#modalEscolhaUsuarioPadrao').modal('show');
+				});				
+			</script>
+		</c:when>
+		<c:otherwise>
+			<script>
+					$('#modalEscolhaUsuarioPadrao').modal('hide');
+			</script>
+		</c:otherwise>
+	</c:choose>
 				
 		<div id="rowTopMesa" style="z-index: 1" class="row sticky-top px-3 pt-1 bg-white shadow-sm" 
 				v-if="!carregando || (!errormsg &amp;&amp; grupos.length >= 0)">

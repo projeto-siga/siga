@@ -18,8 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp;
 
-import static javax.persistence.GenerationType.SEQUENCE;
-
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -67,6 +65,22 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "or pes.situacaoFuncionalPessoa = :sfp22 "
 				+ "or pes.situacaoFuncionalPessoa = :sfp31 "				
 				+ "or pes.situacaoFuncionalPessoa = :sfp36) "),
+		@NamedQuery(name = "consultarIdentidadeCadastranteAtivaComUsuarioPadrao", query = "select u from CpIdentidade u , DpPessoa pes "
+				+ "where ((u.nmLoginIdentidade = :nmUsuario and pes.sesbPessoa = :sesbPessoa and pes.sesbPessoa is not null) or "
+				+ " (pes.cpfPessoa is not null and pes.cpfPessoa <> :cpfZero and pes.cpfPessoa = :cpf)) "
+				+ "and u.dpPessoa.idPessoaIni = pes.idPessoaIni "
+				+ "and u.hisDtFim is null "
+				+ "and u.dtCancelamentoIdentidade is null "
+				+ "and (u.dtExpiracaoIdentidade is null or u.dtExpiracaoIdentidade > current_date()) "
+				+ "and pes.dataFimPessoa is null "
+				+ "and (pes.situacaoFuncionalPessoa = :sfp1 "
+				+ "or pes.situacaoFuncionalPessoa = :sfp2 "
+				+ "or pes.situacaoFuncionalPessoa = :sfp4 "
+				+ "or pes.situacaoFuncionalPessoa = :sfp12 "
+				+ "or pes.situacaoFuncionalPessoa = :sfp22 "
+				+ "or pes.situacaoFuncionalPessoa = :sfp31 "				
+				+ "or pes.situacaoFuncionalPessoa = :sfp36) "
+				+ "and pes.usuarioPadrao = 1"),
         @NamedQuery(name = "consultarIdentidadeAtualPelaInicial", query = "from CpIdentidade u "
 				+ "		where u.hisDtIni = "
 				+ "		(select max(p.hisDtIni) from CpIdentidade p where p.hisIdIni = :idIni)"

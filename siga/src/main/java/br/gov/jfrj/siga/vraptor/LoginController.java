@@ -36,7 +36,6 @@ import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.AbstractCpAcesso;
-import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -100,7 +99,7 @@ public class LoginController extends SigaController {
 			String usuarioLogado = giService.login(username, password);
 
 			if (Pattern.matches("\\d+", username) && username.length() == 11) {
-				List<CpIdentidade> lista = new CpDao().consultaIdentidadesCadastrante(username, Boolean.TRUE);
+				List<CpIdentidade> lista = new CpDao().consultaIdentidadesCadastranteComUsuarioPadrao(username, Boolean.TRUE);
 			}
 			if (usuarioLogado == null || usuarioLogado.trim().length() == 0) {
 				StringBuffer mensagem = new StringBuffer();

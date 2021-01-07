@@ -68,7 +68,6 @@ import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
-import br.gov.jfrj.siga.dp.AbstractDpPessoa;
 import br.gov.jfrj.siga.dp.CpAplicacaoFeriado;
 import br.gov.jfrj.siga.dp.CpFeriado;
 import br.gov.jfrj.siga.dp.CpLocalidade;
@@ -894,7 +893,7 @@ public class CpDao extends ModeloDao {
 		qry.setParameter("idPessoaIni", id);
 		final DpPessoa pes = (DpPessoa) qry.getResultStream().findFirst().orElse(null);
 		
-		List<DpPessoa> lista  = listarUsuarioPadrao(cpf);
+		List<DpPessoa> lista  = obterUsuarioPadrao(cpf);
 		
 		for(DpPessoa pessoa : lista) {
 				pessoa.setUsuarioPadrao(0);
@@ -909,7 +908,7 @@ public class CpDao extends ModeloDao {
 		return pes;
 	}
 	
-	public List<DpPessoa> listarUsuarioPadrao(final long cpf) {
+	public List<DpPessoa> obterUsuarioPadrao(final long cpf) {
 
 		final Query qry = em().createNamedQuery("consultaUsuarioPadrao");
 		qry.setParameter("cpfPessoa", cpf);
@@ -1612,7 +1611,7 @@ public class CpDao extends ModeloDao {
 			throws AplicacaoException {
 		try {
 			final Query qry = em()
-					.createNamedQuery(fAtiva ? "consultarIdentidadeCadastranteAtiva" : "consultarIdentidadeCadastrante");
+					.createNamedQuery(fAtiva ? "consultarIdentidadeCadastranteAtiva" : "consultarIdentidadeCadastrante" );
 			if (Pattern.matches("\\d+", nmUsuario)) {
 				qry.setParameter("cpf", Long.valueOf(nmUsuario));
 				qry.setParameter("nmUsuario", null);
@@ -1640,6 +1639,66 @@ public class CpDao extends ModeloDao {
 			final List<CpIdentidade> lista = (List<CpIdentidade>) qry.getResultList();
 			if (lista.size() == 0) {
 				throw new AplicacaoException("Nao foi possivel localizar a identidade do usuario '" + nmUsuario + "'.");
+			}
+			return lista;
+		} catch (Throwable e) {
+			throw new AplicacaoException(
+					"Ocorreu um erro tentando localizar a identidade do usuario '" + nmUsuario + "'.", 0, e);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CpIdentidade> consultaIdentidadesCadastranteComUsuarioPadrao(final String nmUsuario, boolean fAtiva)
+			throws AplicacaoException {
+		try {
+			 Query qry = em()
+					.createNamedQuery(fAtiva ? "consultarIdentidadeCadastranteAtivaComUsuarioPadrao" : "consultarIdentidadeCadastrante" );
+			if (Pattern.matches("\\d+", nmUsuario)) {
+				qry.setParameter("cpf", Long.valueOf(nmUsuario));
+				qry.setParameter("nmUsuario", null);
+				qry.setParameter("sesbPessoa", null);
+			} else {
+				qry.setParameter("nmUsuario", nmUsuario);
+				qry.setParameter("sesbPessoa", MatriculaUtils.getSiglaDoOrgaoDaMatricula(nmUsuario));
+				qry.setParameter("cpf", null);
+			}
+
+			/* Constantes para Evitar Parse Oracle */
+			qry.setParameter("cpfZero", 0L);
+			qry.setParameter("sfp1", "1");
+			qry.setParameter("sfp2", "2");
+			qry.setParameter("sfp4", "4");			
+			qry.setParameter("sfp12", "12");
+			qry.setParameter("sfp22", "22");
+			qry.setParameter("sfp31", "31");
+			qry.setParameter("sfp36", "36");
+
+			final List<CpIdentidade> lista = (List<CpIdentidade>) qry.getResultList();
+			if (lista.size() == 0) {
+				final Query query = em()
+						.createNamedQuery(fAtiva ? "consultarIdentidadeCadastranteAtiva" : "consultarIdentidadeCadastrante" );
+				if (Pattern.matches("\\d+", nmUsuario)) {
+					query.setParameter("cpf", Long.valueOf(nmUsuario));
+					query.setParameter("nmUsuario", null);
+					query.setParameter("sesbPessoa", null);
+				} else {
+					query.setParameter("nmUsuario", nmUsuario);
+					query.setParameter("sesbPessoa", MatriculaUtils.getSiglaDoOrgaoDaMatricula(nmUsuario));
+					query.setParameter("cpf", null);
+				}
+
+				/* Constantes para Evitar Parse Oracle */
+				query.setParameter("cpfZero", 0L);
+				query.setParameter("sfp1", "1");
+				query.setParameter("sfp2", "2");
+				query.setParameter("sfp4", "4");			
+				query.setParameter("sfp12", "12");
+				query.setParameter("sfp22", "22");
+				query.setParameter("sfp31", "31");
+				query.setParameter("sfp36", "36");
+				if(lista.size() == 0) {
+					throw new AplicacaoException("Nao foi possivel localizar a identidade do usuario '" + nmUsuario + "'.");
+				}
 			}
 			return lista;
 		} catch (Throwable e) {

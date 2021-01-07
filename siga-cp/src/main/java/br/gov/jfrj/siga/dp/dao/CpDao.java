@@ -1651,7 +1651,7 @@ public class CpDao extends ModeloDao {
 	public List<CpIdentidade> consultaIdentidadesCadastranteComUsuarioPadrao(final String nmUsuario, boolean fAtiva)
 			throws AplicacaoException {
 		try {
-			 Query qry = em()
+			 final Query qry = em()
 					.createNamedQuery(fAtiva ? "consultarIdentidadeCadastranteAtivaComUsuarioPadrao" : "consultarIdentidadeCadastrante" );
 			if (Pattern.matches("\\d+", nmUsuario)) {
 				qry.setParameter("cpf", Long.valueOf(nmUsuario));
@@ -1673,7 +1673,7 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("sfp31", "31");
 			qry.setParameter("sfp36", "36");
 
-			final List<CpIdentidade> lista = (List<CpIdentidade>) qry.getResultList();
+			List<CpIdentidade> lista = (List<CpIdentidade>) qry.getResultList();
 			if (lista.size() == 0) {
 				final Query query = em()
 						.createNamedQuery(fAtiva ? "consultarIdentidadeCadastranteAtiva" : "consultarIdentidadeCadastrante" );
@@ -1696,6 +1696,9 @@ public class CpDao extends ModeloDao {
 				query.setParameter("sfp22", "22");
 				query.setParameter("sfp31", "31");
 				query.setParameter("sfp36", "36");
+				
+				lista = (List<CpIdentidade>) query.getResultList();
+				
 				if(lista.size() == 0) {
 					throw new AplicacaoException("Nao foi possivel localizar a identidade do usuario '" + nmUsuario + "'.");
 				}

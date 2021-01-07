@@ -155,7 +155,7 @@
 								value="${linkTo[ExMesa2Controller].capturaUsuarioSelecionado()}"
 								id="btnConfirmarMatricula"								
 								name="btnConfirmarMatricula" type="submit"
-								onClick="javascript:window.location.reload();"
+								onClick="javascript:window.location.reload();return(false);"
 								class="btn btn-primary">Confirmar</button>
 						</div>
 					</div>

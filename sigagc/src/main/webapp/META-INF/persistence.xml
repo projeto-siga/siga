@@ -58,6 +58,8 @@
 		<class>br.gov.jfrj.siga.gc.model.GcPapel</class>
 
 		<properties>
+					<!-- Desabilita o novo gerador de IDs para manter a compatibilidade -->
+			<property name="hibernate.id.new_generator_mappings" value="false"/>
 			<property name="hibernate.current_session_context_class"
 				value="thread" />
 			<property name="hibernate.query.substitutions" value="true 1, false 0" />

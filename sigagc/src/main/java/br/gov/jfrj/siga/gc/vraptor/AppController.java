@@ -379,7 +379,7 @@ public class AppController extends GcController {
 		result.redirectTo(this).estatisticaGeral();
 	}
 
-	@Path("/estatisticaGeral")
+	@Path("/app/estatisticaGeral")
 	public void estatisticaGeral() throws Exception {
 		// List<GcInformacao> lista = GcInformacao.all().fetch();
 

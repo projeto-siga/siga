@@ -23,9 +23,9 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import net.sf.jasperreports.engine.JRException;
 
-public class RelTipoDoc extends RelatorioTemplate {
+public class RelTeste extends RelatorioTemplate {
 
-	public RelTipoDoc(Map parametros) throws DJBuilderException {
+	public RelTeste(Map parametros) throws DJBuilderException {
 		super(parametros);
 		if (parametros.get("secaoUsuario") == null) {
 			throw new DJBuilderException(
@@ -53,10 +53,9 @@ public class RelTipoDoc extends RelatorioTemplate {
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
 
-		this.setTitle("Relação de Documentos Criados");
-		this.addColuna("Tipo de Documento", 35, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Forma do Documento", 40, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Total", 25, RelatorioRapido.CENTRO, false);
+		this.setTitle("Relação Modelos - Teste ");
+		this.addColuna("descricao", 35, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("destinatario", 40, RelatorioRapido.ESQUERDA, false);
 		return this;
 
 	}
@@ -67,55 +66,28 @@ public class RelTipoDoc extends RelatorioTemplate {
 		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
 		List<String> d = new ArrayList<String>();
-
+		
 		Query query = ContextoPersistencia.em()
 				.createQuery(
-						"select doc.exFormaDocumento.exTipoFormaDoc.descTipoFormaDoc, "
-						+ "doc.exFormaDocumento.descrFormaDoc, "
-						+ "count(distinct doc.idDoc) "
-						+ "from ExMovimentacao mov inner join mov.exMobil mob "
-						+ "inner join mob.exDocumento doc "
-						+ "where mov.dtIniMov between :dtini and :dtfim "
-						+ "and mov.lotaResp.idLotacao in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :id) "
-						+ "and mov.exTipoMovimentacao.idTpMov =  1 "
-						+ "group by doc.exFormaDocumento.exTipoFormaDoc.descTipoFormaDoc, "
-						+ "doc.exFormaDocumento.descrFormaDoc");
-		
-		// Obtém a lotação com o id passado...
-		Query qrySetor = ContextoPersistencia.em().createQuery(
-				"from DpLotacao lot where lot.idLotacao = " + parametros.get("lotacao"));
-					
-		Set<DpLotacao> lotacaoSet = new HashSet<DpLotacao>();
-		DpLotacao lotacao = (DpLotacao)qrySetor.getResultList().get(0);
-		lotacaoSet.add(lotacao);
-		
-		
-		query.setParameter("id",
-				lotacao.getIdInicial());
-		/*
-		 * Long orgaoUsu = Long.valueOf((String) parametros.get("orgao"));
-		 * query.setLong("orgaoUsu", orgaoUsu);
-		 */
-		Date dtini = formatter.parse((String) parametros.get("dataInicial"));
-		query.setParameter("dtini", dtini);
-		Date dtfim = formatter.parse((String) parametros.get("dataFinal"));
-		query.setParameter("dtfim", dtfim);
+						"select   doc.descrDocumento, doc.nmDestinatario"
+						+ " from  ExDocumento doc " );
 
-		Map<String, Long> map = new TreeMap<String, Long>();
 
-		Iterator it = query.getResultList().iterator();
-		while (it.hasNext()) {
-			Object[] obj = (Object[]) it.next();
-			String tipodoc = (String) obj[0];
-			String formadoc = (String) obj[1];
-			Long total = Long.valueOf(obj[2].toString());
-			map.put(chave(tipodoc, formadoc), total);
-			d.add(tipodoc);
-			d.add(formadoc);
-			acrescentarColuna(d, map, tipodoc, formadoc);
+		List<Object[]> lista = query.getResultList();
+		
+		List<String> listaFinal = new ArrayList<String>();
+		
+		for (Object[] array : lista) {
+			String descricao = (String)array[0];
+			listaFinal.add(descricao);
+			
+			String destinatario = (String)array[1];
+			listaFinal.add(destinatario);
+			
 		}
+	 
 		
-		return d;
+		return listaFinal;
 	}
 
 	private void acrescentarColuna(List<String> d, Map<String, Long> map,

@@ -82,6 +82,8 @@ import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelVolumeTramitacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelVolumeTramitacaoPorModelo;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioDocumentosSubordinados;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioModelos;
+import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelTeste;
+
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -616,13 +618,13 @@ public class ExRelatorioController extends ExController {
 
 	private void addParametrosPersonalizadosOrgãoString(Map<String, String> parameters) {
 		if ( System.getProperty("siga.relat.titulo") == null ) {
-			parameters.put("titulo","PODER JUDICIÁRIO");
+			parameters.put("titulo","PREFEITURA DA CIDADE DO RIO DE JANEIRO");
 		} else {
 			parameters.put("titulo", System.getProperty("siga.relat.titulo"));
 		}
 		//System.getProperty("siga.relat.subtitulo");
 		if ( System.getProperty("siga.relat.subtitulo") == null ) {
-			parameters.put("subtitulo","JUSTIÇA FEDERAL");
+			parameters.put("subtitulo","Processo.Rio");
 		} else {
 			parameters.put("subtitulo", System.getProperty("siga.relat.subtitulo"));
 		}
@@ -1709,54 +1711,41 @@ public class ExRelatorioController extends ExController {
 	
 	@Get("app/expediente/rel/emiteRelTeste")
 	public Download aRelTeste() throws Exception {
-		assertAcesso(ACESSO_SUBORD);
+		assertAcesso(ACESSO_DATAS);
+
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
+		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
+		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
+			throw new Exception(
+					"O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
+		}
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 
 		parametros.put("lotacao",
 				getRequest().getParameter("lotacaoDestinatarioSel.id"));
-		parametros.put("tipoFormaDoc", getRequest()
-				.getParameter("tipoFormaDoc"));
-		parametros.put("tipoRel", getRequest().getParameter("tipoRel"));
-		parametros.put("incluirSubordinados",
-				getRequest().getParameter("incluirSubordinados"));
-		parametros.put("lotacaoTitular",
-				getRequest().getParameter("lotacaoTitular"));
 		parametros.put("secaoUsuario", getRequest()
 				.getParameter("secaoUsuario"));
-		parametros.put("orgaoUsuario", getRequest()
-				.getParameter("orgaoUsuario"));
-		parametros.put("idTit", getRequest().getParameter("idTit"));
+		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
+		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
 		parametros.put("link_siga", linkHttp() + getRequest().getServerName()
 				+ ":" + getRequest().getServerPort()
 				+ getRequest().getContextPath()
-				+ "app/expediente/doc/exibir?sigla=");
+				+ "/app/expediente/doc/exibir?sigla=");
+
+		parametros.put("lotacaoTitular",
+				getRequest().getParameter("lotacaoTitular"));
+		parametros.put("idTit", getRequest().getParameter("idTit"));
 		//System.out.println(System.getProperty("siga.relat.titulo"));
-		if ( System.getProperty("siga.relat.titulo") == null ) {
-			parametros.put("titulo","PCRJ");
-		} else {
-			parametros.put("titulo", System.getProperty("siga.relat.titulo"));
-		}
-		//System.getProperty("siga.relat.subtitulo");
-		if ( System.getProperty("siga.relat.subtitulo") == null ) {
-			parametros.put("subtitulo","IPLANRIO");
-		} else {
-			parametros.put("subtitulo", System.getProperty("siga.relat.subtitulo"));
-		}
-		//System.out.println("Titulo: " + parametros.get("titulo"));
-		if ( System.getProperty("siga.relat.brasao") == null ) {
-			parametros.put("brasao","brasao.png");
-		} else {
-			parametros.put("brasao", System.getProperty("siga.relat.brasao"));
-		}
+		addParametrosPersonalizadosOrgãoString(parametros);
 		//System.out.println("Brasao: " + parametros.get("brasao"));
-		final RelatorioDocumentosSubordinados rel = new RelatorioDocumentosSubordinados(
-				parametros);
+		final RelTeste rel = new RelTeste(parametros);
 		rel.gerar();
 
 		final InputStream inputStream = new ByteArrayInputStream(
 				rel.getRelatorioPDF());
 		return new InputStreamDownload(inputStream, APPLICATION_PDF,
-				"emiteRelDocumentosSubordinados");
+				"emiteRelTeste");
 	}
 }

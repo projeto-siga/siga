@@ -1332,7 +1332,7 @@ public class ExBL extends CpBL {
 								+ e.getMessage(),
 						e);
 
-			throw new RuntimeException("Erro ao assinar documento.", e);
+			throw new RuntimeException("Erro ao assinar documento: " + e.getLocalizedMessage(), e);
 		}
 
 	}
@@ -1596,7 +1596,7 @@ public class ExBL extends CpBL {
 
 			concluirAlteracaoDocComRecalculoAcesso(mov);
 		} catch (final Exception e) {
-			throw new RuntimeException("Erro ao assinar documento.", e);
+			throw new RuntimeException("Erro ao assinar documento: " + e.getLocalizedMessage(), e);
 		}
 
 		try {

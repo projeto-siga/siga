@@ -121,11 +121,11 @@ function sbmt(offset) {
 							  	
 							  <c:choose>
 								<c:when test="${empty lotacao.isSuspensa or lotacao.isSuspensa == 0}">
-									<a href="${urlSuspender}" onclick='javascript:atualizarUrl("javascript:submitPost(\"${urlSuspender}\")", "Deseja tornar a <fmt:message key="usuario.lotacao"/> \"Suspensa\" para o recebimento de Documentos?");return false;'  
+									<a href="${urlSuspender}" onclick='javascript:atualizarUrl("javascript:submitPost(\"${urlSuspender}\")", "Deseja tornar a <fmt:message key="usuario.lotacao"/> Suspensa para o recebimento de Documentos?");return false;'  
 										class="dropdown-item" role="button" aria-pressed="true" data-siga-modal-abrir="confirmacaoModal" style="min-width: 80px;">Suspender Tramita&ccedil;&atilde;o</a>
 								</c:when>
 								<c:otherwise>
-								<a href="${urlSuspender}" onclick='javascript:atualizarUrl("javascript:submitPost(\"${urlSuspender}\")", "Deseja desfazer a \"Suspensão\" da <fmt:message key="usuario.lotacao"/>");return false;'  
+								<a href="${urlSuspender}" onclick='javascript:atualizarUrl("javascript:submitPost(\"${urlSuspender}\")", "Deseja desfazer a Suspensão da <fmt:message key="usuario.lotacao"/>");return false;'  
 										class="dropdown-item" role="button" aria-pressed="true" data-siga-modal-abrir="confirmacaoModal" style="min-width: 80px;">Ativar Tramita&ccedil;&atilde;o</a>
 								</c:otherwise>
 							  </c:choose>

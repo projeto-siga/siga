@@ -965,8 +965,8 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar, ExibirNoProtocolo) {
 				provider.assinar(signable);
 			}
 		} else {
-			if (( ($('#podeAssinarPorComSenha').val() == "true" && $('#siglaUsuSubscritor').val() != "") && ($('#siglaUsuarioCadastrante').val() != $('#siglaUsuSubscritor').val()) )
-					&& !$('#siglaUsuCossignatarios').val().includes($('#siglaUsuarioCadastrante').val()) ) {
+			if (( ($('#podeAssinarPorComSenha').val() == "true" && $('#siglaUsuSubscritor').val() != "") && ($('#siglaUsuarioCadastrante').val() != $('#siglaUsuTitular').val()) )
+					&& !$('#siglaUsuCossignatarios').val().includes($('#siglaUsuarioCadastrante').val()) && Copia != 'true') {
 				if (!confirm("DESEJA ASSINAR O DOCUMENTO POR \""+ $('#nomeUsuSubscritor').val() + "\" - \"" + $('#siglaUsuSubscritor').val() +"\" OU POR UM DOS COSIGNATARIOS (" + $('#siglaUsuCossignatarios').val() + " )\"")) {
 					gAssinando = false;
 					$(this).dialog('destroy').remove();				

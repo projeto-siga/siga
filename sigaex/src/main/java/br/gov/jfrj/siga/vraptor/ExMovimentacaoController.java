@@ -3065,14 +3065,14 @@ public class ExMovimentacaoController extends ExController {
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
 				.novaInstancia().setMob(mob);
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
-
+		
 		try {
 			Ex.getInstance()
 					.getBL()
 					.assinarDocumentoComSenha(getCadastrante(),
 							getLotaTitular(), doc, mov.getDtMov(),
 							nomeUsuarioSubscritor, senhaUsuarioSubscritor, true,
-							mov.getTitular(), copia, juntar, tramitar, exibirNoProtocolo);
+							getTitular(), copia, juntar, tramitar, exibirNoProtocolo);
 		} catch (final Exception e) {
 			httpError(e);
 		}

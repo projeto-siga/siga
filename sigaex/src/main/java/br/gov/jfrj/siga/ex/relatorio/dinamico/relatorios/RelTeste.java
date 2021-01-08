@@ -56,6 +56,27 @@ public class RelTeste extends RelatorioTemplate {
 		this.setTitle("Relação Modelos - Teste ");
 		this.addColuna("descricao", 35, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("destinatario", 40, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("data", 40, RelatorioRapido.ESQUERDA, false);
+
+		/*
+		this.addColuna("Número", 35, RelatorioRapido.ESQUERDA, false); //NUM. PROCESSO
+		this.addColuna("Dt.Despacho", 35, RelatorioRapido.ESQUERDA, false); //DATA DESPACHO
+		this.addColuna("Dt.Recebimento", 35, RelatorioRapido.ESQUERDA, false);   //DATA RECEBIMENTO
+		this.addColuna("Dt.Saída", 35, RelatorioRapido.ESQUERDA, false);   //,DATA SAÍDA,
+		this.addColuna("Cod.Despacho", 35, RelatorioRapido.ESQUERDA, false);   //COD. DESPACHO
+		this.addColuna("Descr.Despacho", 35, RelatorioRapido.ESQUERDA, false);   //DESCR. DESPACHO
+		this.addColuna("Cod.Assunto", 35, RelatorioRapido.ESQUERDA, false);   //COD. ASSUNTO
+		this.addColuna("Descr.Assunto", 35, RelatorioRapido.ESQUERDA, false);   //DESCR. ASSUNTO,
+		this.addColuna("Órgão Origem", 35, RelatorioRapido.ESQUERDA, false);   //ORG. ORIGEM
+		this.addColuna("Descr.Órgão Origem", 35, RelatorioRapido.ESQUERDA, false);   //DESCR. ORG. ORIGEM
+		this.addColuna("Órgão Destino", 35, RelatorioRapido.ESQUERDA, false);   //ORG. DESTINO
+		this.addColuna("Descr.Órgão Destino", 35, RelatorioRapido.ESQUERDA, false);   //DESCR. ORG. DESTINO
+		this.addColuna("Matr.Digitador", 35, RelatorioRapido.ESQUERDA, false);   //MATR. DIGITADOR
+		*/
+		
+
+		
+		
 		return this;
 
 	}
@@ -69,7 +90,7 @@ public class RelTeste extends RelatorioTemplate {
 		
 		Query query = ContextoPersistencia.em()
 				.createQuery(
-						"select   doc.descrDocumento, doc.nmDestinatario"
+						"select   doc.descrDocumento, doc.nmDestinatario, doc.dtDoc"
 						+ " from  ExDocumento doc " );
 
 
@@ -78,11 +99,21 @@ public class RelTeste extends RelatorioTemplate {
 		List<String> listaFinal = new ArrayList<String>();
 		
 		for (Object[] array : lista) {
-			String descricao = (String)array[0];
-			listaFinal.add(descricao);
 			
-			String destinatario = (String)array[1];
-			listaFinal.add(destinatario);
+			//NUM. PROCESSO,DATA DESPACHO,DATA RECEBIMENTO,DATA SAÍDA,COD. DESPACHO,DESCR. DESPACHO,
+			//COD. ASSUNTO,DESCR. ASSUNTO,ORG. ORIGEM,DESCR. ORG. ORIGEM,ORG. DESTINO,DESCR. ORG. DESTINO,MATR. DIGITADOR
+
+			for (int i = 0; i < array.length; i++) {
+				
+				listaFinal.add((String)array[i]);
+			}
+			
+			
+//			String descricao = (String)array[0];
+//			listaFinal.add(descricao);
+//			
+//			String destinatario = (String)array[1];
+//			listaFinal.add(destinatario);
 			
 		}
 	 

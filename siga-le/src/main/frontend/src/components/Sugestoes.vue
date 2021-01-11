@@ -130,7 +130,7 @@ export default {
 
   methods: {
     sugerir: function() {
-      this.$http.post('sugestao', this.sugestao).then(
+      this.$http.post('sigaex/api/v1/sugestao', this.sugestao).then(
         () => {
           Bus.$emit(
             'message',

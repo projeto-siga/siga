@@ -207,7 +207,7 @@ export default {
           erros[this.lista[i].codigo] = this.lista[i].errormsg
         }
       }
-      this.$http.get('mesa', { block: true }).then(
+      this.$http.get('sigaex/api/v1/mesa', { block: true }).then(
         response => {
           this.carregando = false
           this.lista.length = 0
@@ -227,7 +227,7 @@ export default {
 
     carregarAcessos: function() {
       this.acessos.length = 0
-      this.$http.get('acessos').then(
+      this.$http.get('siga/api/v1/acessos').then(
         response => {
           var list = response.data.list
           for (var i = 0; i < list.length; i++) {

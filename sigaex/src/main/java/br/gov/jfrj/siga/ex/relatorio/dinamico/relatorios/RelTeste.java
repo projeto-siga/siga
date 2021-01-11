@@ -53,12 +53,11 @@ public class RelTeste extends RelatorioTemplate {
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
 
-		this.setTitle("Relação Modelos - Teste ");
-		this.addColuna("descricao", 35, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("destinatario", 40, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("data", 40, RelatorioRapido.ESQUERDA, false);
+//		this.setTitle("Relação Modelos - Teste ");
+//		this.addColuna("descricao", 35, RelatorioRapido.ESQUERDA, false);
+//		this.addColuna("destinatario", 40, RelatorioRapido.ESQUERDA, false);
+//		this.addColuna("data", 40, RelatorioRapido.ESQUERDA, false);
 
-		/*
 		this.addColuna("Número", 35, RelatorioRapido.ESQUERDA, false); //NUM. PROCESSO
 		this.addColuna("Dt.Despacho", 35, RelatorioRapido.ESQUERDA, false); //DATA DESPACHO
 		this.addColuna("Dt.Recebimento", 35, RelatorioRapido.ESQUERDA, false);   //DATA RECEBIMENTO
@@ -72,7 +71,6 @@ public class RelTeste extends RelatorioTemplate {
 		this.addColuna("Órgão Destino", 35, RelatorioRapido.ESQUERDA, false);   //ORG. DESTINO
 		this.addColuna("Descr.Órgão Destino", 35, RelatorioRapido.ESQUERDA, false);   //DESCR. ORG. DESTINO
 		this.addColuna("Matr.Digitador", 35, RelatorioRapido.ESQUERDA, false);   //MATR. DIGITADOR
-		*/
 		
 
 		
@@ -83,16 +81,62 @@ public class RelTeste extends RelatorioTemplate {
 
 	@Override
 	public Collection processarDados() throws Exception {
-
+/*
+		String sql = " SELECT	u.acronimo_orgao_usu || '-' ||	f.sigla_forma_doc || '-' || d.ano_emissao || '/' ||	lpad (d.num_expediente, 5, '0') ,"
+				+ "		m.dt_timestamp ,"
+				+ "		m.dt_timestamp ,"
+				+ "		m.dt_timestamp ,"
+				+ "		m.id_tp_mov ,"
+				+ "		tm.descr_tipo_movimentacao,"
+				+ "		c.codificacao ,"
+				+ "		c.descr_classificacao ,"
+				+ "		( 	SELECT	l.id_lotacao	FROM corporativo.dp_lotacao l2"
+				+ "  		WHERE l2.id_lotacao = ( SELECT"
+				+ "											m3.id_lota_resp"
+				+ "									FROM siga.ex_movimentacao m3 "
+				+ "									WHERE m3.id_mov =(	SELECT max (m2.id_mov)"
+				+ "														FROM siga.ex_movimentacao m2 "
+				+ "															INNER JOIN siga.ex_mobil mb2 on (mb2.id_mobil = m2.id_mobil)"
+				+ "														WHERE mb2.id_doc = d.id_doc AND m2.id_mov < m.id_mov	)		)"
+				+ "		), ( SELECT"
+				+ "				l.nome_lotacao"
+				+ "		  FROM corporativo.dp_lotacao l2"
+				+ " 	  WHERE l2.id_lotacao = (	SELECT		m3.id_lota_resp"
+				+ "									FROM siga.ex_movimentacao m3 "
+				+ "									WHERE m3.id_mov =(	SELECT 	max (m2.id_mov)"
+				+ "														FROM siga.ex_movimentacao m2 "
+				+ "															INNER JOIN siga.ex_mobil mb2 on (mb2.id_mobil = m2.id_mobil)"
+				+ "														WHERE mb2.id_doc = d.id_doc "
+				+ "															AND m2.id_mov < m.id_mov "
+				+ "													)								)		),"
+				+ "		l.id_lotacao ,		l.nome_lotacao ,		m.id_cadastrante"
+				+ " FROM siga.ex_documento d"
+				+ " 	INNER JOIN siga.ex_classificacao c on (c.id_classificacao = d.id_classificacao)"
+				+ "	INNER JOIN siga.ex_mobil mb on (mb.id_doc = d.id_doc)"
+				+ "	INNER JOIN siga.ex_movimentacao m on (m.id_mobil = mb.id_mobil)"
+				+ "	INNER JOIN siga.ex_tipo_movimentacao tm on (tm.id_tp_mov = m.id_tp_mov)"
+				+ "	INNER JOIN siga.ex_classificacao c on (c.id_classificacao = d.id_classificacao)"
+				+ "	INNER JOIN corporativo.dp_lotacao l on (d.id_lota_cadastrante = l.id_lotacao)"
+				+ "	INNER JOIN corporativo.cp_orgao_usuario u on (l.id_orgao_usu = u.id_orgao_usu)"
+				+ "	INNER JOIN siga.ex_forma_documento f on (f.id_forma_doc = d.id_forma_doc)"
+				+ " ORDER BY 'NUM. PROCESSO' desc;";
+	 		*/
+		
+		String sql =
+				"SELECT	u.acronimo_orgao_usu || '-' ||	f.sigla_forma_doc || '-' || d.ano_emissao || '/' ||	lpad (d.num_expediente, 5, '0') ,	 m.dt_timestamp ,		m.dt_timestamp ,		m.dt_timestamp ,		m.id_tp_mov ,		tm.descr_tipo_movimentacao,		c.codificacao ,		c.descr_classificacao ,		( 	SELECT	l.id_lotacao	FROM corporativo.dp_lotacao l2  		WHERE l2.id_lotacao = ( SELECT											m3.id_lota_resp									FROM siga.ex_movimentacao m3 									WHERE m3.id_mov =(	SELECT max (m2.id_mov)														FROM siga.ex_movimentacao m2 															INNER JOIN siga.ex_mobil mb2 on (mb2.id_mobil = m2.id_mobil)														WHERE mb2.id_doc = d.id_doc AND m2.id_mov < m.id_mov	)		)		), ( SELECT				l.nome_lotacao		  FROM corporativo.dp_lotacao l2 	  WHERE l2.id_lotacao = (	SELECT		m3.id_lota_resp									FROM siga.ex_movimentacao m3 									WHERE m3.id_mov =(	SELECT 	max (m2.id_mov)														FROM siga.ex_movimentacao m2 															INNER JOIN siga.ex_mobil mb2 on (mb2.id_mobil = m2.id_mobil)														WHERE mb2.id_doc = d.id_doc 															AND m2.id_mov < m.id_mov 													)								)		),		l.id_lotacao ,		l.nome_lotacao ,		m.id_cadastrante FROM siga.ex_documento d 	INNER JOIN siga.ex_classificacao c on (c.id_classificacao = d.id_classificacao)	INNER JOIN siga.ex_mobil mb on (mb.id_doc = d.id_doc)	INNER JOIN siga.ex_movimentacao m on (m.id_mobil = mb.id_mobil)	INNER JOIN siga.ex_tipo_movimentacao tm on (tm.id_tp_mov = m.id_tp_mov)	INNER JOIN siga.ex_classificacao c on (c.id_classificacao = d.id_classificacao)	INNER JOIN corporativo.dp_lotacao l on (d.id_lota_cadastrante = l.id_lotacao)	INNER JOIN corporativo.cp_orgao_usuario u on (l.id_orgao_usu = u.id_orgao_usu)	INNER JOIN siga.ex_forma_documento f on (f.id_forma_doc = d.id_forma_doc) ORDER BY 'NUM. PROCESSO' desc;";
+		
 		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
 		List<String> d = new ArrayList<String>();
 		
-		Query query = ContextoPersistencia.em()
-				.createQuery(
-						"select   doc.descrDocumento, doc.nmDestinatario, doc.dtDoc"
-						+ " from  ExDocumento doc " );
-
+//		Query query = ContextoPersistencia.em()
+//				.createQuery(
+//						"select   doc.descrDocumento, doc.nmDestinatario, doc.dtDoc"
+//						+ " from  ExDocumento doc " );
+		
+		 Query query = ContextoPersistencia.em().createNativeQuery( sql );
+		
+		
 
 		List<Object[]> lista = query.getResultList();
 		
@@ -105,7 +149,9 @@ public class RelTeste extends RelatorioTemplate {
 
 			for (int i = 0; i < array.length; i++) {
 				
-				listaFinal.add((String)array[i]);
+				listaFinal.add(String.valueOf( array[i] ));
+				
+			         
 			}
 			
 			

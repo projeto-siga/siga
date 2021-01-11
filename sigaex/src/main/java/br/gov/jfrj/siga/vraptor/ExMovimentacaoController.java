@@ -1984,8 +1984,12 @@ public class ExMovimentacaoController extends ExController {
 		if((mov.getLotaResp() != null && mov.getLotaResp().getIsSuspensa() != null && mov.getLotaResp().getIsSuspensa().equals(1)) 
 				|| (mov.getResp() != null && mov.getResp().getLotacao().getIsSuspensa() != null && mov.getResp().getLotacao().getIsSuspensa().equals(1))) {
 			result.include("msgCabecClass", "alert-danger");
-    		result.include("mensagemCabec", "A " + SigaMessages.getMessage("usuario.lotacao") + " informada está Suspensa.");
-    		result.forwardTo(this).aTransferir(
+			if(mov.getResp() != null) {
+				result.include("mensagemCabec", "A " + SigaMessages.getMessage("usuario.lotacao") + " do Usuário informado está Suspensa para o recebimento de Documentos. Favor inserir outro Usuário ");
+			} else {
+				result.include("mensagemCabec", "A " + SigaMessages.getMessage("usuario.lotacao") + " informada está Suspensa para o recebimento de Documentos. Favor inserir outra " + SigaMessages.getMessage("usuario.lotacao"));
+			}
+			result.forwardTo(this).aTransferir(
     				sigla, idTpDespacho, tipoResponsavel, postback, dtMovString, subscritorSel, 
     				substituicao, titularSel, nmFuncaoSubscritor, idResp, tiposDespacho, descrMov, 
     				lotaResponsavelSel, responsavelSel, cpOrgaoSel, dtDevolucaoMovString, obsOrgao, protocolo);
@@ -3065,14 +3069,14 @@ public class ExMovimentacaoController extends ExController {
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
 				.novaInstancia().setMob(mob);
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
-
+		
 		try {
 			Ex.getInstance()
 					.getBL()
 					.assinarDocumentoComSenha(getCadastrante(),
 							getLotaTitular(), doc, mov.getDtMov(),
 							nomeUsuarioSubscritor, senhaUsuarioSubscritor, true,
-							mov.getTitular(), copia, juntar, tramitar, exibirNoProtocolo);
+							getTitular(), copia, juntar, tramitar, exibirNoProtocolo);
 		} catch (final Exception e) {
 			httpError(e);
 		}

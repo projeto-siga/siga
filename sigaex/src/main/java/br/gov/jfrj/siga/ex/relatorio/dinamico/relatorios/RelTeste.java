@@ -125,7 +125,7 @@ public class RelTeste extends RelatorioTemplate {
 				 codOrgaoOrigem  = String.valueOf(m.getLotacao().getId() );
 				 descOrgaoOrigem = m.getLotacao().getDescricao();
 			}
-				String digitador = String.valueOf( m.getCadastrante().getMatricula() );
+				String digitador = m.getCadastranteString()!= null ? String.valueOf( m.getCadastrante().getMatricula() ) :"";
 			
 				
 				//NUM. PROCESSO,DATA DESPACHO,DATA RECEBIMENTO,DATA SAÍDA,COD. DESPACHO,DESCR. DESPACHO,

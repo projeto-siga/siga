@@ -40,8 +40,6 @@ public interface ISigaApiV1 {
 		public String sigla;
 		public String nome;
 		public String siglaLotacao;
-		public String cpf;
-		public String email;
 		public Boolean isExternaPessoa;
 		public Lotacao lotacao;
 		public Cargo cargo;

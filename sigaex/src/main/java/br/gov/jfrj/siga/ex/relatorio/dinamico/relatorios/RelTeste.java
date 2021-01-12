@@ -118,10 +118,13 @@ public class RelTeste extends RelatorioTemplate {
 				String descDespacho =m.getExTipoMovimentacao().getDescricao();
 				
 				
+				String codOrgaoOrigem  ="";
+				String descOrgaoOrigem ="";
 				//TODO verificar com Ivan o Origem 
-				String codOrgaoOrigem  = String.valueOf(m.getLotacao().getId() );
-				String descOrgaoOrigem = m.getLotacao().getDescricao();
-			
+			if (m.getLotacao() != null ){
+				 codOrgaoOrigem  = String.valueOf(m.getLotacao().getId() );
+				 descOrgaoOrigem = m.getLotacao().getDescricao();
+			}
 				String digitador = String.valueOf( m.getCadastrante().getMatricula() );
 			
 				

@@ -14,11 +14,15 @@ import java.util.TreeMap;
 
 import javax.persistence.Query;
 
+import org.apache.commons.lang.StringUtils;
+
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.ex.ExDocumento;
+import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import net.sf.jasperreports.engine.JRException;
@@ -53,89 +57,109 @@ public class RelTeste extends RelatorioTemplate {
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
 
-//		this.setTitle("Relação Modelos - Teste ");
-//		this.addColuna("descricao", 35, RelatorioRapido.ESQUERDA, false);
-//		this.addColuna("destinatario", 40, RelatorioRapido.ESQUERDA, false);
-//		this.addColuna("data", 40, RelatorioRapido.ESQUERDA, false);
+		this.setTitle("Relação Modelos - Teste ");
 
-		this.addColuna("Número", 35, RelatorioRapido.ESQUERDA, false); //NUM. PROCESSO
-		this.addColuna("Dt.Despacho", 35, RelatorioRapido.ESQUERDA, false); //DATA DESPACHO
+		this.addColuna("Número", 23, RelatorioRapido.ESQUERDA, false); //NUM. PROCESSO
+		this.addColuna("Dt.Despacho", 10, RelatorioRapido.ESQUERDA, false); //DATA DESPACHO
 		this.addColuna("Dt.Recebimento", 35, RelatorioRapido.ESQUERDA, false);   //DATA RECEBIMENTO
 		this.addColuna("Dt.Saída", 35, RelatorioRapido.ESQUERDA, false);   //,DATA SAÍDA,
-		this.addColuna("Cod.Despacho", 35, RelatorioRapido.ESQUERDA, false);   //COD. DESPACHO
+		this.addColuna("Cod.Despacho", 3, RelatorioRapido.ESQUERDA, false);   //COD. DESPACHO
 		this.addColuna("Descr.Despacho", 35, RelatorioRapido.ESQUERDA, false);   //DESCR. DESPACHO
-		this.addColuna("Cod.Assunto", 35, RelatorioRapido.ESQUERDA, false);   //COD. ASSUNTO
+		this.addColuna("Cod.Assunto", 3, RelatorioRapido.ESQUERDA, false);   //COD. ASSUNTO
 		this.addColuna("Descr.Assunto", 35, RelatorioRapido.ESQUERDA, false);   //DESCR. ASSUNTO,
-		this.addColuna("Órgão Origem", 35, RelatorioRapido.ESQUERDA, false);   //ORG. ORIGEM
+		this.addColuna("Órgão Origem", 8, RelatorioRapido.ESQUERDA, false);   //ORG. ORIGEM
 		this.addColuna("Descr.Órgão Origem", 35, RelatorioRapido.ESQUERDA, false);   //DESCR. ORG. ORIGEM
-		this.addColuna("Órgão Destino", 35, RelatorioRapido.ESQUERDA, false);   //ORG. DESTINO
+		this.addColuna("Órgão Destino", 8, RelatorioRapido.ESQUERDA, false);   //ORG. DESTINO
 		this.addColuna("Descr.Órgão Destino", 35, RelatorioRapido.ESQUERDA, false);   //DESCR. ORG. DESTINO
-		this.addColuna("Matr.Digitador", 35, RelatorioRapido.ESQUERDA, false);   //MATR. DIGITADOR
-		
-
-		
+		this.addColuna("Matr.Digitador", 14, RelatorioRapido.ESQUERDA, false);   //MATR. DIGITADOR
 		
 		return this;
-
 	}
 
 	@Override
 	public Collection processarDados() throws Exception {
-/*
-		String sql = " SELECT	u.acronimo_orgao_usu || '-' ||	f.sigla_forma_doc || '-' || d.ano_emissao || '/' ||	lpad (d.num_expediente, 5, '0') ,"
-				+ "		m.dt_timestamp ,"
-				+ "		m.dt_timestamp ,"
-				+ "		m.dt_timestamp ,"
-				+ "		m.id_tp_mov ,"
-				+ "		tm.descr_tipo_movimentacao,"
-				+ "		c.codificacao ,"
-				+ "		c.descr_classificacao ,"
-				+ "		( 	SELECT	l.id_lotacao	FROM corporativo.dp_lotacao l2"
-				+ "  		WHERE l2.id_lotacao = ( SELECT"
-				+ "											m3.id_lota_resp"
-				+ "									FROM siga.ex_movimentacao m3 "
-				+ "									WHERE m3.id_mov =(	SELECT max (m2.id_mov)"
-				+ "														FROM siga.ex_movimentacao m2 "
-				+ "															INNER JOIN siga.ex_mobil mb2 on (mb2.id_mobil = m2.id_mobil)"
-				+ "														WHERE mb2.id_doc = d.id_doc AND m2.id_mov < m.id_mov	)		)"
-				+ "		), ( SELECT"
-				+ "				l.nome_lotacao"
-				+ "		  FROM corporativo.dp_lotacao l2"
-				+ " 	  WHERE l2.id_lotacao = (	SELECT		m3.id_lota_resp"
-				+ "									FROM siga.ex_movimentacao m3 "
-				+ "									WHERE m3.id_mov =(	SELECT 	max (m2.id_mov)"
-				+ "														FROM siga.ex_movimentacao m2 "
-				+ "															INNER JOIN siga.ex_mobil mb2 on (mb2.id_mobil = m2.id_mobil)"
-				+ "														WHERE mb2.id_doc = d.id_doc "
-				+ "															AND m2.id_mov < m.id_mov "
-				+ "													)								)		),"
-				+ "		l.id_lotacao ,		l.nome_lotacao ,		m.id_cadastrante"
-				+ " FROM siga.ex_documento d"
-				+ " 	INNER JOIN siga.ex_classificacao c on (c.id_classificacao = d.id_classificacao)"
-				+ "	INNER JOIN siga.ex_mobil mb on (mb.id_doc = d.id_doc)"
-				+ "	INNER JOIN siga.ex_movimentacao m on (m.id_mobil = mb.id_mobil)"
-				+ "	INNER JOIN siga.ex_tipo_movimentacao tm on (tm.id_tp_mov = m.id_tp_mov)"
-				+ "	INNER JOIN siga.ex_classificacao c on (c.id_classificacao = d.id_classificacao)"
-				+ "	INNER JOIN corporativo.dp_lotacao l on (d.id_lota_cadastrante = l.id_lotacao)"
-				+ "	INNER JOIN corporativo.cp_orgao_usuario u on (l.id_orgao_usu = u.id_orgao_usu)"
-				+ "	INNER JOIN siga.ex_forma_documento f on (f.id_forma_doc = d.id_forma_doc)"
-				+ " ORDER BY 'NUM. PROCESSO' desc;";
-	 		*/
-		
-		String sql =
-				"SELECT	u.acronimo_orgao_usu || '-' ||	f.sigla_forma_doc || '-' || d.ano_emissao || '/' ||	lpad (d.num_expediente, 5, '0') ,	 m.dt_timestamp ,		m.dt_timestamp ,		m.dt_timestamp ,		m.id_tp_mov ,		tm.descr_tipo_movimentacao,		c.codificacao ,		c.descr_classificacao ,		( 	SELECT	l.id_lotacao	FROM corporativo.dp_lotacao l2  		WHERE l2.id_lotacao = ( SELECT											m3.id_lota_resp									FROM siga.ex_movimentacao m3 									WHERE m3.id_mov =(	SELECT max (m2.id_mov)														FROM siga.ex_movimentacao m2 															INNER JOIN siga.ex_mobil mb2 on (mb2.id_mobil = m2.id_mobil)														WHERE mb2.id_doc = d.id_doc AND m2.id_mov < m.id_mov	)		)		), ( SELECT				l.nome_lotacao		  FROM corporativo.dp_lotacao l2 	  WHERE l2.id_lotacao = (	SELECT		m3.id_lota_resp									FROM siga.ex_movimentacao m3 									WHERE m3.id_mov =(	SELECT 	max (m2.id_mov)														FROM siga.ex_movimentacao m2 															INNER JOIN siga.ex_mobil mb2 on (mb2.id_mobil = m2.id_mobil)														WHERE mb2.id_doc = d.id_doc 															AND m2.id_mov < m.id_mov 													)								)		),		l.id_lotacao ,		l.nome_lotacao ,		m.id_cadastrante FROM siga.ex_documento d 	INNER JOIN siga.ex_classificacao c on (c.id_classificacao = d.id_classificacao)	INNER JOIN siga.ex_mobil mb on (mb.id_doc = d.id_doc)	INNER JOIN siga.ex_movimentacao m on (m.id_mobil = mb.id_mobil)	INNER JOIN siga.ex_tipo_movimentacao tm on (tm.id_tp_mov = m.id_tp_mov)	INNER JOIN siga.ex_classificacao c on (c.id_classificacao = d.id_classificacao)	INNER JOIN corporativo.dp_lotacao l on (d.id_lota_cadastrante = l.id_lotacao)	INNER JOIN corporativo.cp_orgao_usuario u on (l.id_orgao_usu = u.id_orgao_usu)	INNER JOIN siga.ex_forma_documento f on (f.id_forma_doc = d.id_forma_doc) ORDER BY 'NUM. PROCESSO' desc;";
-		
+ 		
 		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
 		List<String> d = new ArrayList<String>();
+
+		List<String> listaFinal = new ArrayList<String>();
+
+		String sql =" select d from ExDocumento d join d.exMobilSet as mob join mob.exMovimentacaoSet as m";
+		Query query = ContextoPersistencia.em().createQuery( sql );
 		
-//		Query query = ContextoPersistencia.em()
-//				.createQuery(
-//						"select   doc.descrDocumento, doc.nmDestinatario, doc.dtDoc"
-//						+ " from  ExDocumento doc " );
+
+		List<ExDocumento> lista = query.getResultList();
 		
-		 Query query = ContextoPersistencia.em().createNativeQuery( sql );
 		
+		for (ExDocumento doc : lista) {
+			
+			
+			String numeroProcesso = doc.getCodigo();
+			
+			String codAssunto = doc.getExClassificacao().getCodificacao();
+			String descAssunto = doc.getExClassificacao().getDescrClassificacao();
+			
+			String codOrgDestino ="";
+			String descOrgaoDestino ="";
+			
+			if (doc.getLotaDestinatario() !=  null) {
+				codOrgDestino =  String.valueOf( doc.getLotaDestinatario().getIdLotacao() );
+				descOrgaoDestino = doc.getLotaDestinatario().getNomeLotacao();
+			}
+			
+			for (ExMovimentacao m : doc.getExMovimentacaoSet()){
+				
+				String dataDespacho = formatter.format(m.getDtTimestamp());
+				String dataRecebimento = formatter.format(m.getDtTimestamp());
+				String dataSaida = formatter.format(m.getDtTimestamp());
+				
+				String codDespacho = String.valueOf( m.getExTipoMovimentacao().getIdTpMov());
+				String descDespacho =m.getExTipoMovimentacao().getDescricao();
+				
+				
+				//TODO verificar com Ivan o Origem 
+				String codOrgaoOrigem  = String.valueOf(m.getLotacao().getId() );
+				String descOrgaoOrigem = m.getLotacao().getDescricao();
+			
+				String digitador = String.valueOf( m.getCadastrante().getMatricula() );
+			
+				
+				//NUM. PROCESSO,DATA DESPACHO,DATA RECEBIMENTO,DATA SAÍDA,COD. DESPACHO,DESCR. DESPACHO,
+				//COD. ASSUNTO,DESCR. ASSUNTO,ORG. ORIGEM,DESCR. ORG. ORIGEM,ORG. DESTINO,DESCR. ORG. DESTINO,MATR. DIGITADOR
+				
+				listaFinal.add( numeroProcesso);
+				listaFinal.add(dataDespacho);
+				listaFinal.add(dataRecebimento);
+				listaFinal.add(dataSaida);
+				listaFinal.add(codDespacho);
+				listaFinal.add(descDespacho);
+				listaFinal.add(codAssunto);
+				listaFinal.add(descAssunto);
+				listaFinal.add(codOrgaoOrigem);
+				listaFinal.add(descOrgaoOrigem);
+				listaFinal.add(codOrgDestino);
+				listaFinal.add(descOrgaoDestino);
+				listaFinal.add(digitador);
+			}
+		}
+			
+		
+		return listaFinal;
+	}
+/*
+	@Override
+	public Collection processarDados() throws Exception {
+ 		
+		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+
+		List<String> d = new ArrayList<String>();
+
+		String sql =
+				"SELECT	u.acronimo_orgao_usu || '-' ||	f.sigla_forma_doc || '-' || d.ano_emissao || '/' ||	lpad (d.num_expediente, 5, '0') ,	 m.dt_timestamp,		m.id_tp_mov ,		tm.descr_tipo_movimentacao,		c.codificacao ,		c.descr_classificacao ,		( 	SELECT	l.id_lotacao	FROM corporativo.dp_lotacao l2  		WHERE l2.id_lotacao = ( SELECT											m3.id_lota_resp									FROM siga.ex_movimentacao m3 									WHERE m3.id_mov =(	SELECT max (m2.id_mov)														FROM siga.ex_movimentacao m2 															INNER JOIN siga.ex_mobil mb2 on (mb2.id_mobil = m2.id_mobil)														WHERE mb2.id_doc = d.id_doc AND m2.id_mov < m.id_mov	)		)		), ( SELECT				l.nome_lotacao		  FROM corporativo.dp_lotacao l2 	  WHERE l2.id_lotacao = (	SELECT		m3.id_lota_resp									FROM siga.ex_movimentacao m3 									WHERE m3.id_mov =(	SELECT 	max (m2.id_mov)														FROM siga.ex_movimentacao m2 															INNER JOIN siga.ex_mobil mb2 on (mb2.id_mobil = m2.id_mobil)														WHERE mb2.id_doc = d.id_doc 															AND m2.id_mov < m.id_mov 													)								)		),		l.id_lotacao ,		l.nome_lotacao ,		m.id_cadastrante FROM siga.ex_documento d 	INNER JOIN siga.ex_classificacao c on (c.id_classificacao = d.id_classificacao)	INNER JOIN siga.ex_mobil mb on (mb.id_doc = d.id_doc)	INNER JOIN siga.ex_movimentacao m on (m.id_mobil = mb.id_mobil)	INNER JOIN siga.ex_tipo_movimentacao tm on (tm.id_tp_mov = m.id_tp_mov)	INNER JOIN siga.ex_classificacao c on (c.id_classificacao = d.id_classificacao)	INNER JOIN corporativo.dp_lotacao l on (d.id_lota_cadastrante = l.id_lotacao)	INNER JOIN corporativo.cp_orgao_usuario u on (l.id_orgao_usu = u.id_orgao_usu)	INNER JOIN siga.ex_forma_documento f on (f.id_forma_doc = d.id_forma_doc) ";
+
+		
+		Query query = ContextoPersistencia.em().createNativeQuery( sql );
 		
 
 		List<Object[]> lista = query.getResultList();
@@ -150,23 +174,15 @@ public class RelTeste extends RelatorioTemplate {
 			for (int i = 0; i < array.length; i++) {
 				
 				listaFinal.add(String.valueOf( array[i] ));
-				
 			         
 			}
 			
-			
-//			String descricao = (String)array[0];
-//			listaFinal.add(descricao);
-//			
-//			String destinatario = (String)array[1];
-//			listaFinal.add(destinatario);
-			
 		}
-	 
 		
 		return listaFinal;
 	}
-
+*/
+	
 	private void acrescentarColuna(List<String> d, Map<String, Long> map,
 			String s, String lis) {
 		Long l = 0L;

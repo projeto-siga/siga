@@ -66,41 +66,35 @@ public class ExMesa2Controller extends ExController {
 	public ExMesa2Controller() {
 		super();
 	}
-	
 
 	@Inject
 	public ExMesa2Controller(HttpServletRequest request, HttpServletResponse response, ServletContext context,
 			Result result, SigaObjects so, EntityManager em) {
 		super(request, response, context, result, ExDao.getInstance(), so, em);
 	}
-	
-	@Transacional
-	@Post("app/mesa2/")
-	public void capturaUsuarioSelecionado(DpPessoa dpPessoa){
-		
-		String cpfFormatado =  request.getParameter("cadastrante");
-		Long cpf = Long.valueOf(cpfFormatado.replaceAll("\\D", ""));
-		
-		Long id = Long.valueOf(request.getParameter("id"));
-		CpDao.getInstance().consultaEGravaUsuarioPadrao(id, cpf);
-		
-	}
 
 	@Get("app/mesa2")
 	public void lista(Boolean exibirAcessoAnterior, Long idVisualizacao, String msg) throws Exception {
 		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
-		
+
 		List<CpIdentidade> listaUsuarioPadrao = new CpDao()
 				.consultaIdentidadesCadastranteComUsuarioPadrao(getTitular().getCpfPessoa().toString(), Boolean.TRUE);
-		
-		result.include("ehUsuarioPadrao", AcessoConsulta.ehUsuarioPadrao(getTitular())
-				 || !listaUsuarioPadrao.isEmpty());
+
+		boolean ehUsuarioPadrao = false;
+		for (CpIdentidade ident : listaUsuarioPadrao) {
+			if (!ident.getDpPessoa().getUsuarioPadrao().equals(0)) {
+				ehUsuarioPadrao = true;
+			}
+		}
+
+		result.include("exibirModalSelecionarUsuarioPadrao",
+				AcessoConsulta.exibirModalSelecionarUsuarioPadrao(getTitular()) || ehUsuarioPadrao == false);
 		try {
-			result.include("podeNovoDocumento", Cp.getInstance().getConf().podePorConfiguracao(getTitular(), getTitular().getLotacao(),
-					CpTipoConfiguracao.TIPO_CONFIG_CRIAR_NOVO_EXTERNO));
+			result.include("podeNovoDocumento", Cp.getInstance().getConf().podePorConfiguracao(getTitular(),
+					getTitular().getLotacao(), CpTipoConfiguracao.TIPO_CONFIG_CRIAR_NOVO_EXTERNO));
 		} catch (Exception e) {
 			throw e;
-		} 
+		}
 		if (exibirAcessoAnterior != null && exibirAcessoAnterior) {
 			CpAcesso a = dao.consultarAcessoAnterior(so.getCadastrante());
 			if (a == null)
@@ -110,9 +104,9 @@ public class ExMesa2Controller extends ExController {
 			result.include("acessoAnteriorData", acessoAnteriorData);
 			result.include("acessoAnteriorMaquina", acessoAnteriorMaquina);
 		}
-		if(idVisualizacao != null) {
+		if (idVisualizacao != null) {
 			DpVisualizacao vis = dao().consultar(idVisualizacao, DpVisualizacao.class, false);
-			if(vis != null && vis.getDelegado().equals(getTitular())) {
+			if (vis != null && vis.getDelegado().equals(getTitular())) {
 				result.include("idVisualizacao", idVisualizacao);
 				result.include("visualizacao", vis);
 			} else {
@@ -128,64 +122,61 @@ public class ExMesa2Controller extends ExController {
 	}
 
 	@Post("app/mesa2.json")
-	public void json(Long idVisualizacao, boolean exibeLotacao, boolean trazerAnotacoes, boolean trazerArquivados, 
-			boolean trazerComposto, boolean trazerCancelados, boolean ordemCrescenteData, String parms) throws Exception {
-		
+	public void json(Long idVisualizacao, boolean exibeLotacao, boolean trazerAnotacoes, boolean trazerArquivados,
+			boolean trazerComposto, boolean trazerCancelados, boolean ordemCrescenteData, String parms)
+			throws Exception {
+
 		List<br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem> g = new ArrayList<br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem>();
 		Map<String, Mesa2.SelGrupo> selGrupos = null;
 		List<Mesa2.GrupoItem> gruposMesa = new ArrayList<Mesa2.GrupoItem>();
 		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
 		List<Integer> marcasAIgnorar = new ArrayList<Integer>();
 
-		if (SigaMessages.isSigaSP()) { 
+		if (SigaMessages.isSigaSP()) {
 			if (!trazerArquivados) {
-				marcasAIgnorar.add(MarcadorEnum.ARQUIVADO_CORRENTE.getId()); 
-				marcasAIgnorar.add(MarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId()); 
-				marcasAIgnorar.add(MarcadorEnum.ARQUIVADO_PERMANENTE.getId()); 
+				marcasAIgnorar.add(MarcadorEnum.ARQUIVADO_CORRENTE.getId());
+				marcasAIgnorar.add(MarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId());
+				marcasAIgnorar.add(MarcadorEnum.ARQUIVADO_PERMANENTE.getId());
 			}
-			if (!trazerCancelados) 
+			if (!trazerCancelados)
 				marcasAIgnorar.add(MarcadorEnum.CANCELADO.getId());
 		}
 		try {
 			if (parms != null) {
 				ObjectMapper mapper = new ObjectMapper();
-				selGrupos = mapper.readValue(parms, new TypeReference<Map<String, Mesa2.SelGrupo>>() {});
+				selGrupos = mapper.readValue(parms, new TypeReference<Map<String, Mesa2.SelGrupo>>() {
+				});
 			}
-			if (exibeLotacao 
-					&& (Ex.getInstance().getComp().ehPublicoExterno(
-							getTitular()) 
+			if (exibeLotacao && (Ex.getInstance().getComp().ehPublicoExterno(getTitular())
 					|| !Prop.getBool("/siga.mesa.carrega.lotacao"))) {
 				result.use(Results.http()).addHeader("Content-Type", "text/plain")
-					.body("Não é permitido exibir dados da sua " 
-							+ SigaMessages.getMessage("usuario.lotacao"))
-					.setStatusCode(200);				
+						.body("Não é permitido exibir dados da sua " + SigaMessages.getMessage("usuario.lotacao"))
+						.setStatusCode(200);
 				return;
 			}
 			DpLotacao lotaTitular = null;
-			if(idVisualizacao != null && !idVisualizacao.equals(Long.valueOf(0)) 
-					&& Cp.getInstance().getConf().podePorConfiguracao
-						(getCadastrante(), 
-						 getCadastrante().getLotacao(), 
-						 CpTipoConfiguracao.TIPO_CONFIG_DELEGAR_VISUALIZACAO)) {
+			if (idVisualizacao != null && !idVisualizacao.equals(Long.valueOf(0))
+					&& Cp.getInstance().getConf().podePorConfiguracao(getCadastrante(), getCadastrante().getLotacao(),
+							CpTipoConfiguracao.TIPO_CONFIG_DELEGAR_VISUALIZACAO)) {
 				DpVisualizacao vis = dao().consultar(idVisualizacao, DpVisualizacao.class, false);
 				lotaTitular = vis.getTitular().getLotacao();
-				gruposMesa = Mesa2.getContadores(dao(), vis.getTitular(), lotaTitular, selGrupos, 
-						exibeLotacao, marcasAIgnorar);
-				g = Mesa2.getMesa(dao(), vis.getTitular(), lotaTitular, selGrupos, 
-						gruposMesa, exibeLotacao, trazerAnotacoes, trazerComposto, ordemCrescenteData, marcasAIgnorar);
+				gruposMesa = Mesa2.getContadores(dao(), vis.getTitular(), lotaTitular, selGrupos, exibeLotacao,
+						marcasAIgnorar);
+				g = Mesa2.getMesa(dao(), vis.getTitular(), lotaTitular, selGrupos, gruposMesa, exibeLotacao,
+						trazerAnotacoes, trazerComposto, ordemCrescenteData, marcasAIgnorar);
 			} else {
 				lotaTitular = getTitular().getLotacao();
-				gruposMesa = Mesa2.getContadores(dao(), getTitular(), lotaTitular, selGrupos, 
-						exibeLotacao, marcasAIgnorar);
-				g = Mesa2.getMesa(dao(), getTitular(), lotaTitular, selGrupos, 
-						gruposMesa, exibeLotacao, trazerAnotacoes, trazerComposto, ordemCrescenteData, marcasAIgnorar);
+				gruposMesa = Mesa2.getContadores(dao(), getTitular(), lotaTitular, selGrupos, exibeLotacao,
+						marcasAIgnorar);
+				g = Mesa2.getMesa(dao(), getTitular(), lotaTitular, selGrupos, gruposMesa, exibeLotacao,
+						trazerAnotacoes, trazerComposto, ordemCrescenteData, marcasAIgnorar);
 			}
-	
+
 			String s = ExAssinadorExternoController.gson.toJson(g);
-			
+
 			result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(200);
 		} catch (Exception e) {
 			throw e;
-		} 
+		}
 	}
 }

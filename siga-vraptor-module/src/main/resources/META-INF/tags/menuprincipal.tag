@@ -247,6 +247,12 @@
 						</c:catch>
 					</c:otherwise>
 				</c:choose>
+
+				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;ADM;GER:Gerenciar Unidades')}">				
+					<li><a class="dropdown-item"
+						href="/siga/app/substituicao/unidade">Gerenciar minhas Unidades</a></li>
+				</c:if>
+				
 				<c:if test="${f:podeDelegarVisualizacao(cadastrante, cadastrante.lotacao)}">
 					<li><a class="dropdown-item"
 									href="${serverAndPort}/siga/app/visualizacao/listar">Delegar visualização</a></li>

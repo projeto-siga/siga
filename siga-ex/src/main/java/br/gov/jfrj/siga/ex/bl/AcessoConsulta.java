@@ -113,7 +113,7 @@ public class AcessoConsulta {
 				);
 	}
 
-	public static boolean ehUsuarioPadrao(DpPessoa usuario) {
-		return (usuario.getUsuarioPadrao() != null && usuario.getUsuarioPadrao().equals(1));
+	public static boolean exibirModalSelecionarUsuarioPadrao(DpPessoa usuario) {
+		return (usuario.getUsuarioPadrao() != null && usuario.getUsuarioPadrao().equals(0));
 	}
 }

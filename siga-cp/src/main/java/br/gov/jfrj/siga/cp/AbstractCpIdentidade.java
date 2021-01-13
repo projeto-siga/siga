@@ -64,8 +64,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "or pes.situacaoFuncionalPessoa = :sfp12 "
 				+ "or pes.situacaoFuncionalPessoa = :sfp22 "
 				+ "or pes.situacaoFuncionalPessoa = :sfp31 "				
-				+ "or pes.situacaoFuncionalPessoa = :sfp36) "
-				+ "and pes.usuarioPadrao = 1"),
+				+ "or pes.situacaoFuncionalPessoa = :sfp36) "),
 		@NamedQuery(name = "consultarIdentidadeCadastranteAtivaComUsuarioPadrao", query = "select u from CpIdentidade u , DpPessoa pes "
 				+ "where ((u.nmLoginIdentidade = :nmUsuario and pes.sesbPessoa = :sesbPessoa and pes.sesbPessoa is not null) or "
 				+ " (pes.cpfPessoa is not null and pes.cpfPessoa <> :cpfZero and pes.cpfPessoa = :cpf)) "

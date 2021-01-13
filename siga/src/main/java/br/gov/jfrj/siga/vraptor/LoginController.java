@@ -95,12 +95,17 @@ public class LoginController extends SigaController {
 	public void auth(String username, String password, String cont) throws IOException {
 		
 		try {
+			
+			List<CpIdentidade> lista;
+			String usernameDefault = username;
 			GiService giService = Service.getGiService();
 			String usuarioLogado = giService.login(username, password);
-
+			
 			if (Pattern.matches("\\d+", username) && username.length() == 11) {
-				List<CpIdentidade> lista = new CpDao().consultaIdentidadesCadastranteComUsuarioPadrao(username, Boolean.TRUE);
+				 lista = new CpDao().consultaIdentidadesCadastranteComUsuarioPadrao(username, Boolean.TRUE);
+				 usernameDefault = lista.get(0).getDpPessoa().getSesbPessoa() + lista.get(0).getDpPessoa().getMatricula();
 			}
+
 			if (usuarioLogado == null || usuarioLogado.trim().length() == 0) {
 				StringBuffer mensagem = new StringBuffer();
 				mensagem.append(SigaMessages.getMessage("usuario.falhaautenticacao"));
@@ -117,7 +122,7 @@ public class LoginController extends SigaController {
 				result.include("loginUsuario", username);
 				result.forwardTo(this).login(cont);				
 			} else {
-				gravaCookieComToken(username, cont);
+				gravaCookieComToken(usernameDefault, cont);
 			}
 					
 			

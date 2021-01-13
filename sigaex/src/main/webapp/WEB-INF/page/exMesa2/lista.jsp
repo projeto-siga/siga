@@ -112,7 +112,7 @@
 		
 		<!--  Modal -->
 		<form method="post" name="enviarMatricula"
-			action="<c:url value="mesa2/"/>">
+			action="<c:url value="/app/mesa2"/>">
 			<div id="modalEscolhaUsuarioPadrao" class="modal" tabindex="-1" role="dialog"
 				data-backdrop="static">
 				<div class="modal-dialog" role="document">
@@ -133,7 +133,7 @@
 									<a href="/siga/app/swapUser?username=${lota[0]}" id="selecionarMatricula"
 										class="list-group-item list-group-item-action flex-column align-items-start">
 	
-										<input id="cadastrante" name="cadastrante"
+										<input id="cpfFormatado" name="cpfFormatado"
 										value="${cadastrante.cpfFormatado}" type="hidden" />
 										
 										<input id="id" name="id"
@@ -152,10 +152,9 @@
 							<button type="button" class="btn btn-secondary"
 								data-dismiss="modal">Cancelar</button>
 							<button 
-								value="${linkTo[ExMesa2Controller].capturaUsuarioSelecionado()}"
-								id="btnConfirmarMatricula"								
-								name="btnConfirmarMatricula" type="submit"
-								onClick="ocultarModal();javascript:window.location.reload();return(false);"
+								value="${linkTo[DpPessoaController].gravarUsuarioPadraoSelecionado()}"
+								id="btnConfirmarMatricula" name="btnConfirmarMatricula" type="submit" 
+								onClick="javascript: ocultarModal();"
 								class="btn btn-primary">Confirmar</button>
 						</div>
 					</div>
@@ -178,7 +177,7 @@
 		});
 	</script>
 
-	<c:if test="${!ehUsuarioPadrao}">
+	<c:if test="${exibirModalSelecionarUsuarioPadrao}">
 		<script>
 			$(document).ready(function() {
 				$('#modalEscolhaUsuarioPadrao').modal('show');

@@ -1652,7 +1652,7 @@ public class CpDao extends ModeloDao {
 			throws AplicacaoException {
 		try {
 			 final Query qry = em()
-					.createNamedQuery(fAtiva ? "consultarIdentidadeCadastranteAtiva" : "consultarIdentidadeCadastrante" );
+					.createNamedQuery(fAtiva ? "consultarIdentidadeCadastranteAtivaComUsuarioPadrao" : "consultarIdentidadeCadastrante" );
 			if (Pattern.matches("\\d+", nmUsuario)) {
 				qry.setParameter("cpf", Long.valueOf(nmUsuario));
 				qry.setParameter("nmUsuario", null);

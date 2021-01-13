@@ -134,6 +134,21 @@ public class SubstituicaoController extends SigaController {
 		result.include("itens", buscarSubstitutos(substituicao, getCadastrante(), getCadastrante().getLotacao()));
 	}	
 	
+	@Get("/app/substituicao/unidade")
+	public void unidade() throws Exception {
+		String substituicao = "false";
+		
+		if (!getCadastrante().getId().equals(getTitular().getId())
+				|| !getCadastrante().getLotacao().getId().equals(getLotaTitular().getId())) {
+			if(podeCadastrarQualquerSubstituicao()){
+				substituicao = "true";					
+				result.include("itensTitular", buscarSubstitutos(substituicao, getTitular(), getLotaTitular()));
+			}	
+		}
+		result.include("isSubstituicao", substituicao);
+		result.include("itens", buscarSubstitutos(substituicao, getCadastrante(), getCadastrante().getLotacao()));
+	}
+	
 	@Get("/app/substituicao/editar")
 	public void edita(Long id) throws Exception {
 		//String buscarFechadas = "buscarFechadas="+podeCadastrarQualquerSubstituicao();

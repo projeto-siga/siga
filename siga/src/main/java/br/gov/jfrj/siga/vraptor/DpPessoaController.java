@@ -103,6 +103,19 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		setItemPagina(10);
 	}
 
+	@Transacional
+	@Post
+	@Path("app/mesa2")
+	public void gravarUsuarioPadraoSelecionado(DpPessoa dpPessoa) {
+
+		String cpfFormatado = request.getParameter("cpfFormatado");
+		Long cpf = Long.valueOf(cpfFormatado.replaceAll("\\D", ""));
+
+		Long id = Long.valueOf(request.getParameter("id"));
+		CpDao.getInstance().consultaEGravaUsuarioPadrao(id, cpf);
+		
+	}
+	
 	@Get
 	@Post
 	@Path({ "/app/pessoa/buscar", "/app/cosignatario/buscar", "/pessoa/buscar.action", "/cosignatario/buscar.action" })

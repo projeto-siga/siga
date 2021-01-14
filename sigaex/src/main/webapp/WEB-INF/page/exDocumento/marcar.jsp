@@ -17,7 +17,10 @@
 					<input type="hidden" name="sigla" value="${m.sigla}" />
 					<div class="form-group">
 						<div class="form-group">
-							<div class="form-group">
+							<div class="text-center" v-if="carregando">
+								<div class="spinner-grow text-info text-center" role="status"></div>
+							</div>
+							<div class="form-group"  v-if="!carregando">						
 								<label for="marcador">Marcador</label> <select
 									name="marcador" v-model="idMarcador" id="marcador"
 									class="form-control">

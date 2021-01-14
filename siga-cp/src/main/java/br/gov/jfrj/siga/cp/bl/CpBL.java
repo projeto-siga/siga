@@ -1329,7 +1329,7 @@ public class CpBL {
 		String msgLotacao = SigaMessages.getMessage("usuario.lotacao");
 		List<CpMarcador> listaMarcadoresLotacao = dao().listarCpMarcadoresPorLotacaoESublotacoes(lotacao, true);
 		
-		if (listaMarcadoresLotacao.size() > 9) 
+		if (id == null && listaMarcadoresLotacao.size() > 9) 
 			throw new AplicacaoException ("Atingiu o limite de 10 marcadores possíveis para " + msgLotacao);
 		
 		if (id == null && (listaMarcadoresLotacao.stream()
@@ -1379,7 +1379,7 @@ public class CpBL {
 			marcador.setIdTpExibicao(idTpExibicao);
 			marcador.setIdTpTexto(idTpTexto);
 			marcador.setIdTpInteressado(idTpInteressado);
-			marcador.setDpLotacaoIni(lotacao);
+			marcador.setDpLotacaoIni(lotacao.getLotacaoInicial());
 			marcador.setOrdem(ordem);
 			
 			dao().gravarComHistorico(marcador, null, null, identidade);

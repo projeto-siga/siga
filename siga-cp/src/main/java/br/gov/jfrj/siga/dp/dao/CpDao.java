@@ -43,6 +43,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -2712,6 +2713,23 @@ public class CpDao extends ModeloDao {
 		}			
 	}
 
+	public List<CpMarcador> listarCpMarcadoresGerais(Boolean ativos) {
+		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
+		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);
+		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
+		Predicate predicateEqualTipoMarcadorGeral  = criteriaBuilder
+				.equal(cpMarcadorRoot.get("cpTipoMarcador"), CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL);
+		if (ativos == null || ativos) {
+			Predicate predicateNullHisDtFim = criteriaBuilder.isNull(cpMarcadorRoot.get("hisDtFim"));
+			criteriaQuery.where(criteriaBuilder
+					.and(predicateEqualTipoMarcadorGeral, predicateNullHisDtFim));
+		} else {
+			criteriaQuery.where(predicateEqualTipoMarcadorGeral);
+		}
+		
+		return em().createQuery(criteriaQuery).getResultList();
+	}
+	
 	public List<CpMarcador> listarCpMarcadoresPorLotacaoESublotacoes(DpLotacao lotacao, Boolean ativos) {
 		CpTipoMarcadorEnum marcador = CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA;
 		
@@ -2729,6 +2747,7 @@ public class CpDao extends ModeloDao {
 		}
 		
 		criteriaQuery.where(predicateAnd);
+		criteriaQuery.orderBy(criteriaBuilder.asc(cpMarcadorRoot.get("descrMarcador")));
 		return em().createQuery(criteriaQuery).getResultList();
 	}
 	

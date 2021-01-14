@@ -79,6 +79,14 @@ public class CpMarcadorController extends SigaController {
 	@Get("/app/marcador/listar")
 	public void lista() throws Exception {
 		assertAcesso("");
+		List<CpMarcador> listMar = dao.listarCpMarcadoresPorLotacaoESublotacoes(getLotaCadastrante(), true);
+		try {
+			assertAcesso(ACESSO_CAD_MARCADOR_GERAL);
+			listMar.addAll(dao.listarCpMarcadoresGerais(true));
+		} catch (AplicacaoException e) {
+		}
+
+		result.include("listaMarcadores", listMar);
 		result.include("listaTipoMarcador", CpTipoMarcadorEnum.values());
 		result.include("listaCores", CpMarcadorCorEnum.values());
 		result.include("listaIcones", CpMarcadorIconeEnum.values());
@@ -88,7 +96,6 @@ public class CpMarcadorController extends SigaController {
 		result.include("listaTipoDataLimite", CpMarcadorTipoDataEnum.values());
 		result.include("listaTipoTexto", CpMarcadorTipoTextoEnum.values());
 		result.include("listaTipoInteressado", CpMarcadorTipoInteressadoEnum.values());
-		result.include("listaMarcadores", dao.listarCpMarcadoresPorLotacaoESublotacoes(getLotaCadastrante(), true));
 	}
 
 	@Get("/app/marcador/historico")
@@ -105,6 +112,9 @@ public class CpMarcadorController extends SigaController {
 		try {
 			if (id != null) {
 				CpMarcador mar = dao().consultar(id, CpMarcador.class, false);
+				if (mar.getCpTipoMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL)		
+					assertAcesso(ACESSO_CAD_MARCADOR_GERAL);
+
 				mar.setHisAtivo(0);
 				dao().excluirComHistorico(mar, null, getIdentidadeCadastrante());
 				result.use(Results.http()).addHeader("Content-Type", "application/text")
@@ -119,12 +129,18 @@ public class CpMarcadorController extends SigaController {
 	@Transacional
 	@Get("/app/marcador/editar")
 	public void edita(final Long id) {
-		assertAcesso(ACESSO_CAD_MARCADOR_LOTA);
-		
 		if (id != null) {
 			CpMarcador marcador = dao().consultar(id, CpMarcador.class, false);
 			marcador = dao().obterAtual(marcador);
 			result.include("marcador", marcador);
+			if (marcador == null) 
+				throw new AplicacaoException ("O marcador a ser editado não existe ou não está ativo - id: " + id.toString());
+			
+			if (marcador.getCpTipoMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL) {		
+				assertAcesso(ACESSO_CAD_MARCADOR_GERAL);
+			} else {
+				assertAcesso(ACESSO_CAD_MARCADOR_LOTA);
+			}
 		}
 		result.include("listaTipoMarcador", listarTipoMarcador());
 		result.include("listaCores", CpMarcadorCorEnum.values());

@@ -34,7 +34,7 @@ public class DocumentosSiglaTramitarPost implements IDocumentosSiglaTramitarPost
 			throw new SwaggerException("Você deve fornecer ou orgao (apenas) ou matricula ou lotacao *com* a matricula",
 					400, null, req, resp, null);
 		}
-		if (StringUtils.isEmpty(req.orgao) && !StringUtils.isEmpty(req.lotacao) && StringUtils.isEmpty(req.matricula)) {
+		if (!StringUtils.isEmpty(req.orgao) && !StringUtils.isEmpty(req.lotacao) && StringUtils.isEmpty(req.matricula)) {
 			throw new SwaggerException("Você deve fornecer a lotacao caso a matricula esteja fornecida", 400, null, req,
 					resp, null);
 		}

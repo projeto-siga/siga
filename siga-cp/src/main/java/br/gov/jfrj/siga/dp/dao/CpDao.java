@@ -108,7 +108,6 @@ public class CpDao extends ModeloDao {
 	public static final String CACHE_HOURS = "hours";
 	public static final String CACHE_SECONDS = "seconds";
 	
-
 	private static Map<String, CpServico> cacheServicos = null;
 
 	public static CpDao getInstance() {
@@ -1528,6 +1527,8 @@ public class CpDao extends ModeloDao {
 		query.setHint("org.hibernate.cacheable", true);
 		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
 //			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SUBSTITUICAO);
+		query.setParameter("dbDatetime", this.consultarDataEHoraDoServidor());
+		
 		return query.getResultList();
 	}
 
@@ -1548,6 +1549,8 @@ public class CpDao extends ModeloDao {
 		query = em().createNamedQuery("qtdeSubstituicoesAtivasPorTitular");
 		query.setParameter("idTitularIni", exemplo.getTitular().getIdPessoaIni());
 		query.setParameter("idLotaTitularIni", exemplo.getLotaTitular().getIdLotacaoIni());
+		query.setParameter("dbDatetime", this.consultarDataEHoraDoServidor());
+		
 		return ((Long)query.getSingleResult()).intValue();
 	}
 
@@ -1556,6 +1559,8 @@ public class CpDao extends ModeloDao {
 		Query query = null;
 		query = em().createNamedQuery("consultarVisualizacoesPermitidas");
 		query.setParameter("idDelegadoIni", exemplo.getDelegado().getIdPessoaIni());
+		query.setParameter("dbDatetime", this.consultarDataEHoraDoServidor());
+		
 		query.setHint("org.hibernate.cacheable", true);
 //			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SUBSTITUICAO);
 		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
@@ -2552,8 +2557,8 @@ public class CpDao extends ModeloDao {
 		try {
 			String consultarQuantidadeDocumentosPorDpLotacao = "SELECT count(1) FROM DpLotacao lotacao"
 					+ " left join CpMarca marca on lotacao.idLotacao = marca.dpLotacaoIni"
-					+ " WHERE(marca.dtIniMarca IS NULL OR marca.dtIniMarca < CURRENT_TIMESTAMP)"
-					+ " AND(marca.dtFimMarca IS NULL OR marca.dtFimMarca > CURRENT_TIMESTAMP)"
+					+ " WHERE(marca.dtIniMarca IS NULL OR marca.dtIniMarca < :dbDatetime)"
+					+ " AND(marca.dtFimMarca IS NULL OR marca.dtFimMarca > :dbDatetime)"
 					+ " AND marca.cpMarcador.idMarcador not in (1,10,32)"
 					+ " AND lotacao.idLotacaoIni = :idLotacao"
 					+ " AND marca.cpTipoMarca.idTpMarca = :idTipoMarca ";
@@ -2561,6 +2566,8 @@ public class CpDao extends ModeloDao {
 	
 			query.setParameter("idLotacao", o.getId());
 			query.setParameter("idTipoMarca", CpTipoMarca.TIPO_MARCA_SIGA_EX);
+			query.setParameter("dbDatetime", this.consultarDataEHoraDoServidor());
+			
             final int l = ((Long) query.getSingleResult()).intValue();
             return l;
         } catch (final NullPointerException e) {
@@ -2599,8 +2606,8 @@ public class CpDao extends ModeloDao {
 					+ queryLotacao
 					+ queryUsuario
 					+ "and marcador.idMarcador = :idMarcador " 
-					+ "and (dt_ini_marca is null or dt_ini_marca < CURRENT_TIMESTAMP) " 
-					+ "and (dt_fim_marca is null or dt_fim_marca > CURRENT_TIMESTAMP) " 
+					+ "and (dt_ini_marca is null or dt_ini_marca < :dbDatetime) " 
+					+ "and (dt_fim_marca is null or dt_fim_marca > :dbDatetime) " 
 				;
 
 		Query query = em().createQuery(queryTemp);
@@ -2619,7 +2626,8 @@ public class CpDao extends ModeloDao {
 		query.setParameter("dtini", dataInicial);
 		Date dtfimMaisUm = new Date(dataFinal.getTime() + 86400000L);
 		query.setParameter("dtfim", dtfimMaisUm);
-
+		query.setParameter("dbDatetime", this.consultarDataEHoraDoServidor());
+		
 		List<CpOrgaoUsuario> l = query.getResultList();
 
 		if (l.size() == 0) {
@@ -2650,7 +2658,8 @@ public class CpDao extends ModeloDao {
 			Query sql = em().createNamedQuery("quantidadeDocumentos");
 
 			sql.setParameter("idPessoaIni", pes.getIdPessoaIni());
-			return ((BigDecimal) sql.getSingleResult()).intValue();
+			sql.setParameter("dbDatetime", this.consultarDataEHoraDoServidor());
+			return ((Long) sql.getSingleResult()).intValue();
 		} catch (final NullPointerException e) {
 			return null;
 		}

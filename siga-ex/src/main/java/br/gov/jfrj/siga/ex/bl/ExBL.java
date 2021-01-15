@@ -4204,6 +4204,7 @@ public class ExBL extends CpBL {
 			final boolean refazendo) throws Exception {
 		ExDocumento novoDoc = new ExDocumento();
 
+		novoDoc.setOrgaoUsuario(cadastrante.getOrgaoUsuario());
 		novoDoc.setConteudoBlobDoc(doc.getConteudoBlobDoc());
 		novoDoc.setConteudoTpDoc(doc.getConteudoTpDoc());
 		novoDoc.setDescrDocumento(doc.getDescrDocumento());
@@ -4262,8 +4263,6 @@ public class ExBL extends CpBL {
 			novoDoc.setExMobilPai(doc.getExMobilPai());
 		else
 			novoDoc.setExMobilPai(null);
-
-		novoDoc.setOrgaoUsuario(cadastrante.getOrgaoUsuario());
 
 		if (doc.getTitular() != null && !doc.getTitular().isFechada())
 			novoDoc.setTitular(doc.getTitular().getPessoaAtual());

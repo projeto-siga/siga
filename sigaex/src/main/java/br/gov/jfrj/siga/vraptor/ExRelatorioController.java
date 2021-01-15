@@ -1373,18 +1373,18 @@ public class ExRelatorioController extends ExController {
 			String dataVencida, String totalDocsVencidos, boolean primeiraVez) throws Exception {
 
 		try {
-			assertAcesso(ACESSO_RELFORAPRAZO);
+//			assertAcesso(ACESSO_RELFORAPRAZO);
 
 			final Map<String, String> parametros = new HashMap<String, String>();
 			Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
 			Long orgaoSelId = getIdOrgaoSel(lotacaoSel, usuarioSel, orgaoUsu);
 
 			if (!primeiraVez) {
-				if (orgaoUsu != orgaoSelId) {
-					throw new AplicacaoException(
-							"Não é permitido consultas de outros órgãos.");
-				}
-				consistePeriodo(dataInicial, dataFinal);
+//				if (orgaoUsu != orgaoSelId) {
+//					throw new AplicacaoException(
+//							"Não é permitido consultas de outros órgãos.");
+//				}
+//				consistePeriodo(dataInicial, dataFinal);
 
 				final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 				final Date dtIni = df.parse(dataInicial);

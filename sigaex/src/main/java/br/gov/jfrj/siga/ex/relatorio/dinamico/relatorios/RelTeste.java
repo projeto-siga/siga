@@ -147,6 +147,85 @@ public class RelTeste extends RelatorioTemplate {
 		return listaFinal;
 	}
 */
+	
+	public String montarQueryGeraldo(){
+		
+		String sqlDescricaoOrgao ="";
+		
+		String sqlOrgaoOrigem =	
+				"SELECT  l.id_lotacao  "+
+				"FROM corporativo.dp_lotacao l2 "+
+				"WHERE l2.id_lotacao = ("+
+				"	SELECT  m3.id_lota_resp "+
+				"   FROM siga.ex_movimentacao m3  "+
+				" 	WHERE m3.id_mov = ("+
+				"		SELECT  max (m2.id_mov)   "+
+				" 		FROM siga.ex_movimentacao m2   "+
+				" 			INNER JOIN siga.ex_mobil mb2 on (mb2.id_mobil = m2.id_mobil)  "+
+				" 		WHERE mb2.id_doc = d.id_doc  AND m2.id_mov < m.id_mov )	)	)";
+		
+		String sqlOrgaoOrigemDescricao =
+				"SELECT  l.nome_lotacao "+
+				"FROM corporativo.dp_lotacao l2  "+
+				"WHERE l2.id_lotacao = ("+
+				"	SELECT  m3.id_lota_resp "+
+				"	FROM siga.ex_movimentacao m3   "+
+				" 	WHERE m3.id_mov ("+
+				"		SELECT  max (m2.id_mov) 	"+
+				"		FROM siga.ex_movimentacao m2  "+
+				" 			INNER JOIN siga.ex_mobil mb2 on (mb2.id_mobil = m2.id_mobil)  "+
+				" 		WHERE mb2.id_doc = d.id_doc AND m2.id_mov < m.id_mov )	)	 ";
+		
+		String sqlColunas =" SELECT  u.acronimo_orgao_usu || '-' ||	f.sigla_forma_doc || '-' ||	d.ano_emissao || '/' ||	lpad (d.num_expediente, 5, '0') NUM_PROCESSO, "+
+				"	m.dt_timestamp DATA_DESPACHO, "+
+				"	m.dt_timestamp DATA_RECEBIMENTO, "+
+				"	m.dt_timestamp DATA_SAÍDA, "+
+				"	m.id_tp_mov COD_DESPACHO, "+
+				"	tm.descr_tipo_movimentacao DESCR_DESPACHO, "+
+				"	c.codificacao COD_ASSUNTO, "+
+				"	c.descr_classificacao DESCR_ASSUNTO, ("+
+				sqlOrgaoOrigem + 
+				" ORG_ORIGEM, ("+
+				sqlOrgaoOrigemDescricao +
+				" ) DESCR_ORG_ORIGEM,  "+
+				" 	l.id_lotacao ORG_DESTINO,  "+
+				" 	l.nome_lotacao DESCR_ORG_DESTINO,  "+
+				" 	m.id_cadastrante MATR_DIGITADOR";
+				
+		String sql =
+				  " SELECT  X1.*   FROM (	"+
+						  sqlColunas +
+				"	FROM siga.ex_documento d  "+
+				" 		INNER JOIN siga.ex_classificacao c on (c.id_classificacao = d.id_classificacao)  "+
+				" 		INNER JOIN siga.ex_mobil mb on (mb.id_doc = d.id_doc)  "+
+				" 		INNER JOIN siga.ex_movimentacao m on (m.id_mobil = mb.id_mobil) "+
+				" 		INNER JOIN siga.ex_tipo_movimentacao tm on (tm.id_tp_mov = m.id_tp_mov) "+
+				" 		INNER JOIN siga.ex_classificacao c on (c.id_classificacao = d.id_classificacao) "+
+				" 		INNER JOIN corporativo.dp_lotacao l on (d.id_lota_cadastrante = l.id_lotacao) "+
+				" 		INNER JOIN corporativo.cp_orgao_usuario u on (l.id_orgao_usu = u.id_orgao_usu) "+
+				" 		INNER JOIN siga.ex_forma_documento f on (f.id_forma_doc = d.id_forma_doc) "+
+				" 	ORDER BY NUM_PROCESSO , DATA_DESPACHO DESC) x1 "+
+				" 		INNER JOIN  (  "+
+				" 	SELECT  u.acronimo_orgao_usu || '-' ||"+
+				"	 	f.sigla_forma_doc || '-' ||"+
+				"	 	d.ano_emissao || '/' ||"+
+				"	 	lpad (d.num_expediente, 5, '0') NUM_PROCESSO,"+
+				" 		MAX(m.dt_timestamp) DATA_DESPACHO"+
+				"	 FROM siga.ex_documento d"+
+				"		INNER JOIN siga.ex_classificacao c on (c.id_classificacao = d.id_classificacao)"+
+				"	 	INNER JOIN siga.ex_mobil mb on (mb.id_doc = d.id_doc)"+
+				"	 	INNER JOIN siga.ex_movimentacao m on (m.id_mobil = mb.id_mobil)"+
+				"	 	INNER JOIN siga.ex_tipo_movimentacao tm on (tm.id_tp_mov = m.id_tp_mov)"+
+				"	 	INNER JOIN siga.ex_classificacao c on (c.id_classificacao = d.id_classificacao)"+
+				"	 	INNER JOIN corporativo.dp_lotacao l on (d.id_lota_cadastrante = l.id_lotacao)"+
+				"	 	INNER JOIN corporativo.cp_orgao_usuario u on (l.id_orgao_usu = u.id_orgao_usu)"+
+				"	 	INNER JOIN siga.ex_forma_documento f on (f.id_forma_doc = d.id_forma_doc)"+
+				"	 GROUP BY u.acronimo_orgao_usu,f.sigla_forma_doc,d.ano_emissao,d.num_expediente"+
+				"	 ORDER BY NUM_PROCESSO desc  ) x2 on x1.NUM_PROCESSO = X2.NUM_PROCESSO AND X1.DATA_DESPACHO = X2.DATA_DESPACHO";
+		
+	
+	return sql;
+	}
 	@Override
 	public Collection processarDados() throws Exception {
  		
@@ -154,28 +233,28 @@ public class RelTeste extends RelatorioTemplate {
 
 		List<String> d = new ArrayList<String>();
 
-		String sql =
-				"SELECT	u.acronimo_orgao_usu || '-' ||	f.sigla_forma_doc || '-' || d.ano_emissao || '/' ||	lpad (d.num_expediente, 5, '0') ,	 m.dt_timestamp,	"
-				+ "	m.id_tp_mov ,		tm.descr_tipo_movimentacao,		c.codificacao ,		c.descr_classificacao ,		"
-				+ " ( SELECT	l.id_lotacao    FROM corporativo.dp_lotacao l2  WHERE l2.id_lotacao = "
-				+ " ( SELECT	m3.id_lota_resp FROM siga.ex_movimentacao m3    WHERE m3.id_mov ="
-				+ " ( SELECT max (m2.id_mov)	FROM siga.ex_movimentacao m2 	INNER JOIN siga.ex_mobil mb2 on (mb2.id_mobil = m2.id_mobil)"
-				+ "	WHERE mb2.id_doc = d.id_doc AND m2.id_mov < m.id_mov	)		)		), "
-				+ "( SELECT		l.nome_lotacao	FROM corporativo.dp_lotacao l2 	WHERE l2.id_lotacao = "
-				+ "( SELECT		m3.id_lota_resp	FROM siga.ex_movimentacao m3	WHERE m3.id_mov ="
-				+ "( SELECT 	max (m2.id_mov)	FROM siga.ex_movimentacao m2	INNER JOIN siga.ex_mobil mb2 on (mb2.id_mobil = m2.id_mobil)"
-				+ "	WHERE mb2.id_doc = d.id_doc	AND m2.id_mov < m.id_mov))), l.id_lotacao ,	l.nome_lotacao ,	m.id_cadastrante "
-				+ " FROM siga.ex_documento d 	INNER JOIN siga.ex_classificacao c on (c.id_classificacao = d.id_classificacao)	"
-				+ " INNER JOIN siga.ex_mobil mb on (mb.id_doc = d.id_doc)	"
-				+ " INNER JOIN siga.ex_movimentacao m on (m.id_mobil = mb.id_mobil)	"
-				+ " INNER JOIN siga.ex_tipo_movimentacao tm on (tm.id_tp_mov = m.id_tp_mov)	"
-				+ " INNER JOIN siga.ex_classificacao c on (c.id_classificacao = d.id_classificacao)	"
-				+ " INNER JOIN corporativo.dp_lotacao l on (d.id_lota_cadastrante = l.id_lotacao)	"
-				+ " INNER JOIN corporativo.cp_orgao_usuario u on (l.id_orgao_usu = u.id_orgao_usu)"
-				+ " INNER JOIN siga.ex_forma_documento f on (f.id_forma_doc = d.id_forma_doc) ";
-
+//		String sql =
+//				"SELECT	u.acronimo_orgao_usu || '-' ||	f.sigla_forma_doc || '-' || d.ano_emissao || '/' ||	lpad (d.num_expediente, 5, '0') ,	 m.dt_timestamp,	"
+//				+ "	m.id_tp_mov ,		tm.descr_tipo_movimentacao,		c.codificacao ,		c.descr_classificacao ,		"
+//				+ " ( SELECT	l.id_lotacao    FROM corporativo.dp_lotacao l2  WHERE l2.id_lotacao = "
+//				+ " ( SELECT	m3.id_lota_resp FROM siga.ex_movimentacao m3    WHERE m3.id_mov ="
+//				+ " ( SELECT max (m2.id_mov)	FROM siga.ex_movimentacao m2 	INNER JOIN siga.ex_mobil mb2 on (mb2.id_mobil = m2.id_mobil)"
+//				+ "	WHERE mb2.id_doc = d.id_doc AND m2.id_mov < m.id_mov	)		)		), "
+//				+ "( SELECT		l.nome_lotacao	FROM corporativo.dp_lotacao l2 	WHERE l2.id_lotacao = "
+//				+ "( SELECT		m3.id_lota_resp	FROM siga.ex_movimentacao m3	WHERE m3.id_mov ="
+//				+ "( SELECT 	max (m2.id_mov)	FROM siga.ex_movimentacao m2	INNER JOIN siga.ex_mobil mb2 on (mb2.id_mobil = m2.id_mobil)"
+//				+ "	WHERE mb2.id_doc = d.id_doc	AND m2.id_mov < m.id_mov))), l.id_lotacao ,	l.nome_lotacao ,	m.id_cadastrante "
+//				+ " FROM siga.ex_documento d 	INNER JOIN siga.ex_classificacao c on (c.id_classificacao = d.id_classificacao)	"
+//				+ " INNER JOIN siga.ex_mobil mb on (mb.id_doc = d.id_doc)	"
+//				+ " INNER JOIN siga.ex_movimentacao m on (m.id_mobil = mb.id_mobil)	"
+//				+ " INNER JOIN siga.ex_tipo_movimentacao tm on (tm.id_tp_mov = m.id_tp_mov)	"
+//				+ " INNER JOIN siga.ex_classificacao c on (c.id_classificacao = d.id_classificacao)	"
+//				+ " INNER JOIN corporativo.dp_lotacao l on (d.id_lota_cadastrante = l.id_lotacao)	"
+//				+ " INNER JOIN corporativo.cp_orgao_usuario u on (l.id_orgao_usu = u.id_orgao_usu)"
+//				+ " INNER JOIN siga.ex_forma_documento f on (f.id_forma_doc = d.id_forma_doc) ";
+//
 		
-		Query query = ContextoPersistencia.em().createNativeQuery( sql );
+		Query query = ContextoPersistencia.em().createNativeQuery( montarQueryGeraldo() );
 		
 
 		List<Object[]> lista = query.getResultList();

@@ -45,8 +45,8 @@ import br.gov.jfrj.siga.model.Objeto;
 @MappedSuperclass
 @NamedQueries({
 		@NamedQuery(name = "consultarSubstituicoesPermitidas", query = "from DpSubstituicao dps "
-				+ " where (dps.dtIniSubst < CURRENT_TIMESTAMP or dps.dtIniSubst = null) "
-				+ " and (dps.dtFimSubst > CURRENT_TIMESTAMP or dps.dtFimSubst = null) "
+				+ " where (dps.dtIniSubst < :dbDatetime or dps.dtIniSubst = null) "
+				+ " and (dps.dtFimSubst > :dbDatetime or dps.dtFimSubst = null) "
 				+ " and ((dps.substituto = null and dps.lotaSubstituto.idLotacao in (select lot.idLotacao from DpLotacao as lot where lot.idLotacaoIni = :idLotaSubstitutoIni)) or "
 				+ " dps.substituto.idPessoa in (select pes.idPessoa from DpPessoa as pes where pes.idPessoaIni = :idSubstitutoIni)) "
 				+ " and dps.dtFimRegistro = null"),
@@ -56,8 +56,8 @@ import br.gov.jfrj.siga.model.Objeto;
 				+ " and dps.dtFimRegistro = null "
 				+ " order by dps.dtIniSubst, dps.dtFimSubst "),
 		@NamedQuery(name = "qtdeSubstituicoesAtivasPorTitular", query = "select count(1) from DpSubstituicao as dps "
-				+ " where (dps.dtIniSubst < CURRENT_TIMESTAMP or dps.dtIniSubst = null) " 
-				+ " and (dps.dtFimSubst > CURRENT_TIMESTAMP or dps.dtFimSubst = null)"
+				+ " where (dps.dtIniSubst < :dbDatetime or dps.dtIniSubst = null) " 
+				+ " and (dps.dtFimSubst > :dbDatetime or dps.dtFimSubst = null)"
 				+ " and ((dps.titular = null and dps.lotaTitular.idLotacao in (select lot.idLotacao from DpLotacao as lot where lot.idLotacaoIni = :idLotaTitularIni)) or "
 				+ " dps.titular.idPessoa in (select pes.idPessoa from DpPessoa as pes where pes.idPessoaIni = :idTitularIni)) "
 				+ " and dps.dtFimRegistro = null ")

@@ -30,6 +30,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
@@ -131,8 +132,8 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 						+ "			where label.cpMarcador.idMarcador = :idMarcador "
 						+ "			and (label.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :orgaoPesqId "
 						+ "			or label.dpPessoaIni.orgaoUsuario.idOrgaoUsu = :orgaoPesqId) "
-						+ "			and (label.dtIniMarca is null or label.dtIniMarca < CURRENT_TIMESTAMP) " 
-						+ "			and (label.dtFimMarca is null or label.dtFimMarca > CURRENT_TIMESTAMP)) "
+						+ "			and (label.dtIniMarca is null or label.dtIniMarca < :dbDatetime) " 
+						+ "			and (label.dtFimMarca is null or label.dtFimMarca > :dbDatetime)) "
 						+ "		and doc.dtDoc >= :dtini and doc.dtDoc < :dtfim "
 						+ "		and doc.dtFinalizacao is not null "
 						+ queryOrgao
@@ -175,6 +176,8 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 			Date dtfim = formatter.parse((String) parametros.get("dataFinal"));
 			Date dtfimMaisUm = new Date( dtfim.getTime() + 86400000L );
 			query.setParameter("dtfim", dtfimMaisUm);
+			
+			query.setParameter("dbDatetime", ExDao.getInstance().consultarDataEHoraDoServidor());
 			
 			Iterator it = query.getResultList().iterator();
 

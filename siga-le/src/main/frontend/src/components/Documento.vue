@@ -411,7 +411,7 @@ export default {
       this.numero = this.$route.params.numero
       // Validar o número do processo
       Bus.$emit('block', 20)
-      this.$http.get('doc/' + this.numero).then(
+      this.$http.get('sigaex/api/v1/documentos/' + this.numero).then(
         (response) => {
           Bus.$emit('release')
           this.atualizarDocumento(response.data)
@@ -426,15 +426,16 @@ export default {
     atualizarDocumento: function(data) {
       this.doc = data
       this.mob = this.doc.mobs[0]
+      if (!this.mob.isGeral) this.numero = this.mob.sigla.replace(/[^a-zA-Z0-9]/gi,'');
       if (
         this.doc.dotTramitacao &&
-        this.$parent.test.properties['siga-le.graphviz.url']
+        this.$parent.test.properties['vizservice.url']
       ) {
         // console.log('dotTramitacao: ' + this.doc.dotTramitacao)
         this.$http
           .post(
-            (location.port === '9090' ? 'http://localhost:8080' : '') +
-              '/siga/public/app/graphviz/svg',
+            (location.port === '8081' ? 'http://localhost:8080/' : '') +
+              'siga/public/app/graphviz/svg',
             'digraph G { graph[tooltip="Tramitação"] ' +
               this.doc.dotTramitacao +
               '}',
@@ -484,7 +485,7 @@ export default {
     },
 
     reler: function() {
-      this.$http.get('doc/' + this.numero, { block: true }).then(
+      this.$http.get('sigaex/api/v1/documentos/' + this.numero, { block: true }).then(
         (response) => {
           this.atualizarDocumento(response.data)
         },
@@ -587,7 +588,7 @@ export default {
     },
     mostrarCompleto: function() {
       this.$http
-        .get('documento/' + this.numero + '/arquivo?estampa=true&completo=true')
+        .get('sigaex/api/v1/documentos/' + this.numero + '/arquivo?estampa=true&completo=true')
         .then(
           (response) => {
             Bus.$emit(
@@ -598,7 +599,7 @@ export default {
                 var jwt = response.data.jwt
                 window.open(
                   this.$http.options.root +
-                    '/download/' +
+                    'sigaex/api/v1//download/' +
                     jwt +
                     '/' +
                     this.numero +

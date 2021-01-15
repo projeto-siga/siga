@@ -48,7 +48,6 @@ import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
 @MappedSuperclass
-@NamedNativeQuery(name = "consultarDataEHoraDoServidor", query = "select CURRENT_TIMESTAMP from CpOrgaoUsuario", resultSetMapping = "scalar")
 @NamedQueries({
 		@NamedQuery(name = "consultarPorIdDpPessoa", query = "select pes from DpPessoa pes where pes.idPessoaIni = :idPessoa"),
 		@NamedQuery(name = "consultarPorIdInicialDpPessoa", query = "select pes from DpPessoa pes where pes.idPessoaIni = :idPessoaIni and pes.dataFimPessoa = null"),

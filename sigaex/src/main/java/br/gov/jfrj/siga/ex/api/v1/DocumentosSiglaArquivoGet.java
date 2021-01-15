@@ -52,8 +52,8 @@ public class DocumentosSiglaArquivoGet implements IDocumentosSiglaArquivoGet {
 								+ so.getTitular().getSigla() + "/" + so.getLotaTitular().getSiglaCompleta() + ")");
 
 			String filename = "text/html".equals(req.contenttype)
-					? (req.volumes ? mob.doc().getReferenciaPDF() : mob.getReferenciaPDF())
-					: (req.volumes ? mob.doc().getReferenciaHtml() : mob.getReferenciaHtml());
+					? (req.volumes != null && req.volumes ? mob.doc().getReferenciaPDF() : mob.getReferenciaPDF())
+					: (req.volumes != null && req.volumes ? mob.doc().getReferenciaHtml() : mob.getReferenciaHtml());
 			final String servernameport = request.getServerName() + ":" + request.getServerPort();
 			final String contextpath = request.getContextPath();
 
@@ -69,12 +69,19 @@ public class DocumentosSiglaArquivoGet implements IDocumentosSiglaArquivoGet {
 	public static void iniciarGeracaoDePdf(DocumentosSiglaArquivoGetRequest req, DocumentosSiglaArquivoGetResponse resp,
 			String u, String filename, String contextpath, String servernameport) throws IOException, Exception {
 		resp.uuid = UUID.randomUUID().toString();
-		Status.update(resp.uuid, "Aguardando na fila de tarefas", 0, 100, 0L);
+		String uuid = resp.uuid;
+		Status.update(uuid, "Aguardando na fila de tarefas", 0, 100, 0L);
 
-		resp.jwt = DownloadJwtFilenameGet.jwt(u, resp.uuid, req.sigla, req.contenttype, filename);
-		ExApiV1Servlet.submitToExecutor(
-				new DownloadAssincrono(resp.uuid, req.contenttype, req.sigla, req.estampa == null ? false : req.estampa,
-						req.volumes == null ? false : req.volumes, contextpath, servernameport, req.exibirReordenacao));
+		String contenttype = req.contenttype;
+		String sigla = req.sigla;
+		resp.jwt = DownloadJwtFilenameGet.jwt(u, uuid, sigla, contenttype, filename);
+		boolean estampar = req.estampa == null ? false : req.estampa;
+		boolean volumes = req.volumes == null ? false : req.volumes;
+		boolean exibirReordenacao = req.exibirReordenacao == null ? false : req.exibirReordenacao;
+		DownloadAssincrono task = new DownloadAssincrono(uuid, contenttype, sigla, estampar,
+				volumes, contextpath, servernameport, exibirReordenacao);
+		
+		ExApiV1Servlet.submitToExecutor(task);
 	}
 
 	@Override

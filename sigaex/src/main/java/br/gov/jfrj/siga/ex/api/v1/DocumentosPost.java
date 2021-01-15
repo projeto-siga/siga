@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.ex.api.v1;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -244,8 +245,10 @@ public class DocumentosPost implements IDocumentosPost {
 					    String[] keyAndValues = conteudo.split("&");
 					    for (String keyAndValue : keyAndValues) {
 					        int idx = keyAndValue.indexOf("=");
-					        camposModelo = camposModelo + keyAndValue.substring(0, idx) + "=" +
-					        		URLEncoder.encode(keyAndValue.substring(idx + 1), "iso-8859-1") + "&";
+					        String key = keyAndValue.substring(0, idx);
+							String value = URLDecoder.decode(keyAndValue.substring(idx + 1), "UTF-8");
+							camposModelo = camposModelo + key + "=" +
+					        		URLEncoder.encode(value, "iso-8859-1") + "&";
 					    }
 					}
 				} else {
@@ -377,7 +380,7 @@ public class DocumentosPost implements IDocumentosPost {
 	 * @param str String a ser convertida.
 	 * @return String convertida.
 	 */
-	private static String UTF8toISO(String str) {
+	static String UTF8toISO(String str) {
 		Charset utf8charset = Charset.forName("UTF-8");
 		Charset iso88591charset = Charset.forName("ISO-8859-1");
 		ByteBuffer inputBuffer = ByteBuffer.wrap(str.getBytes());

@@ -106,8 +106,14 @@ console.log(process.env.VUE_APP_API_URL)
 
 import MyInput from './components/MyInput.vue'
 import MySelect from './components/MySelect.vue'
+import MyPessoa from './components/MyPessoa.vue'
+import MyLotacao from './components/MyLotacao.vue'
+import MyClassificacao from './components/MyClassificacao.vue'
 Vue.component('MyInput', MyInput);
 Vue.component('MySelect', MySelect);
+Vue.component('MyPessoa', MyPessoa);
+Vue.component('MyLotacao', MyLotacao);
+Vue.component('MyClassificacao', MyClassificacao);
 
 Vue.component('ValidationProvider', ValidationProvider);
 Vue.component('ValidationObserver', ValidationObserver);

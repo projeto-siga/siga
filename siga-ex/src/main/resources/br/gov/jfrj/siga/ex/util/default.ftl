@@ -1129,9 +1129,9 @@ LINHA  VARIÁVEL / CONTEÚDO
 
 [#macro checkbox var titulo="" default="Nao" idAjax="" reler=false onclique="" obrigatorio=false id=""]
     [#if reler == true && idAjax != ""]
-            [#local jreler = " sbmt('" + idAjax + "');\""]
+            [#local jreler = " sbmt('" + idAjax + "');"]
     [#elseif reler == true]
-            [#local jreler = " sbmt();\""]
+            [#local jreler = " sbmt();"]
     [/#if]
 
     [#if .vars[var]??]
@@ -1160,11 +1160,11 @@ LINHA  VARIÁVEL / CONTEÚDO
 	    [/#if]
 	
 	    [#if !gerar_formulario!false]    	
-			<div class="custom-control custom-checkbox">
-		        <input class="custom-control-input" id="${id}" type="checkbox" name="${var}_chk" value="Sim"
+			<div class="form-check">
+		        <input class="form-check-input" id="${id}" type="checkbox" name="${var}_chk" value="Sim"
 		               [#if v=='Sim']checked[/#if] 
-		               onclick="javascript: if (this.checked) document.getElementById('${var}').value = 'Sim'; else document.getElementById('${var}').value = '{default}'; ${onclique!""}; ${jreler!""}" [#if id == ""]data-criar-id="true"[/#if]/> 
-		        <label class="custom-control-label" for="${id}" style="${negrito!""};${vermelho!""}" [#if id == ""]data-nome-ref="${var}_chk"[/#if]>${titulo!""}</label>
+		               onclick="javascript: if (this.checked) document.getElementById('${var}').value = 'Sim'; else document.getElementById('${var}').value = '${default}'; ${onclique!""}; ${jreler!""}" [#if id == ""]data-criar-id="true"[/#if]/> 
+		        <label class="form-check-label" for="${id}" style="${negrito!""};${vermelho!""}" [#if id == ""]data-nome-ref="${var}_chk"[/#if]>${titulo!""}</label>
 		        [#if obrigatorio]
 					<div class="invalid-feedback  invalid-feedback-${var}_chk">Preenchimento obrigatório</div>
 				[/#if]		       

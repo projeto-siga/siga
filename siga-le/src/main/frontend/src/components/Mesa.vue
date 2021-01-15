@@ -14,13 +14,16 @@
     <div class="row d-print-none" v-if="!carregando &amp;&amp; lista.length > 0">
       <div class="col col-12 col-md-auto">
         <div class="input-group mt-3">
-          <div class="input-group-addon">
-            <span class="fa fa-search"></span>
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1"><span class="fa fa-search"></span></span>
           </div>
           <input type="text" class="form-control" placeholder="Filtrar" v-model="filtro" ng-model-options="{ debounce: 200 }">
         </div>
       </div>
       <div class="col col-auto ml-auto">
+        <button type="button" @click="novoDocumento()" class="btn btn-primary mt-3" title="">
+          <span class="fa fa-sticky-note-o d-none d-md-inline"></span> Novo&nbsp;
+        </button>
         <button v-if="(filtradosEMarcadosEAnotaveis||[]).length" type="button" @click="anotarEmLote()" class="btn btn-primary mt-3" title="">
           <span class="fa fa-sticky-note-o d-none d-md-inline"></span> Anotar&nbsp;
           <span class="badge badge-pill badge-warning">{{filtradosEMarcadosEAnotaveis.length}}</span>
@@ -263,6 +266,10 @@ export default {
         item.datahoraFormatada = UtilsBL.formatJSDDMMYYYYHHMM(item.datahora)
       }
       return item
+    },
+
+    novoDocumento: function() {
+      this.$router.push({name: "DocumentoEditar"})
     },
 
     assinarComSenhaEmLote: function() {

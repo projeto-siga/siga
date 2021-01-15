@@ -2731,19 +2731,17 @@ public class CpDao extends ModeloDao {
 	}
 	
 	public List<CpMarcador> listarCpMarcadoresPorLotacaoESublotacoes(DpLotacao lotacao, Boolean ativos) {
-		CpTipoMarcadorEnum marcador = CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA;
-		
 		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
 		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);
 		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
 		Predicate predicateAnd;
-		Predicate predicateNotEqualTipoMarcadorSistema  = criteriaBuilder.notEqual(cpMarcadorRoot.get("cpTipoMarcador"), marcador);
+		Predicate predicateEqualTipoMarcadorLotacao  = criteriaBuilder.equal(cpMarcadorRoot.get("cpTipoMarcador"), CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO);
 		Predicate predicateEqualLotacao  = criteriaBuilder.equal(cpMarcadorRoot.get("dpLotacaoIni"), lotacao.getLotacaoInicial());
 		if (ativos == null || ativos) {
 			Predicate predicateNullHisDtFim = criteriaBuilder.isNull(cpMarcadorRoot.get("hisDtFim"));
-			predicateAnd = criteriaBuilder.and(predicateNotEqualTipoMarcadorSistema, predicateEqualLotacao, predicateNullHisDtFim);
+			predicateAnd = criteriaBuilder.and(predicateEqualTipoMarcadorLotacao, predicateEqualLotacao, predicateNullHisDtFim);
 		} else {
-			predicateAnd = criteriaBuilder.and(predicateNotEqualTipoMarcadorSistema, predicateEqualLotacao);
+			predicateAnd = criteriaBuilder.and(predicateEqualTipoMarcadorLotacao, predicateEqualLotacao);
 		}
 		
 		criteriaQuery.where(predicateAnd);

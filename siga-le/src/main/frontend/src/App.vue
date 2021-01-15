@@ -249,7 +249,7 @@ export default {
       this.$router.push({ name: 'Login' })
     }
     this.$nextTick(function() {
-      this.$http.get('test?skip=all').then(
+      this.$http.get('sigaex/api/v1/test?skip=all').then(
         (response) => {
           var re = /\[default: (.*)\]/gm
           var subst = '$1'
@@ -318,7 +318,7 @@ export default {
 
     pesquisar: function() {
       var pesq = (this.siglaParaPesquisar || '').replace(/[^a-z0-9]/gi, '')
-      this.$http.get('doc/' + pesq + '/pesquisar-sigla', { block: true }).then(
+      this.$http.get('sigaex/api/v1/documentos/' + pesq + '/pesquisar-sigla', { block: true }).then(
         (response) => {
           if (response.data.codigo) {
             this.$router.push({
@@ -338,7 +338,7 @@ export default {
 
       this.$http
         .post(
-          'doc/' + d.codigo + '/assinar-com-senha',
+          'sigaex/api/v1/documentos/' + d.codigo + '/assinar-com-senha',
           {
             username: username,
             password: password,
@@ -385,7 +385,7 @@ export default {
 
       this.$http
         .post(
-          'doc/' + d.codigo + '/tramitar',
+          'sigaex/api/v1/documentos/' + d.codigo + '/tramitar',
           {
             lotacao: lotacao,
             matricula: matricula,
@@ -438,7 +438,7 @@ export default {
 
       this.$http
         .post(
-          'doc/' + d.codigo + '/anotar',
+          'sigaex/api/v1/documentos/' + d.codigo + '/anotar',
           {
             anotacao: anotacao,
           },

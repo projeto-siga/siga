@@ -544,6 +544,7 @@ public class ExAssinadorExternoController extends ExController {
 			detail.put("context", context);
 			detail.put("service", "sigadocsigner");
 			detail.put("stacktrace", errstack);
+			arr.put(detail);
 			json.put("errordetails", arr);
 		} catch (JSONException e1) {
 			throw new RuntimeException(e1);

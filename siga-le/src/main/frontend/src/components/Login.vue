@@ -66,7 +66,7 @@ export default {
       var auth = 'Basic ' + hash
       this.$http
         .post(
-          'autenticar',
+          'siga/api/v1/autenticar',
           {},
           { headers: { Authorization: auth }, block: true }
         )

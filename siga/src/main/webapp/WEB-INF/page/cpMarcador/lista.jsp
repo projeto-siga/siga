@@ -20,10 +20,10 @@
 								<th class="text-left w-10">Tipo</th>
 								<th class="text-left w-35">Marcador</th>
 								<th class="text-left w-5">Aplica&ccedil;&atilde;o</th>
+								<th scope="text-left w-5">Exibi&ccedil;&atilde;o</th>
 								<th scope="text-left w-5">Data Planejada</th>
 								<th scope="text-left w-5">Data Limite</th>
 								<th class="text-left w-5">Exibição</th>
-								<th class="text-left w-5">Texto</th>
 								<th class="text-left w-5">Interessado</th>
 								<th colspan="2" class="text-right w-15">Op&ccedil;&otilde;es</th>
 							</tr>

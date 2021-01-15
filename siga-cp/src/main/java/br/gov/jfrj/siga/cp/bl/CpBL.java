@@ -1328,16 +1328,18 @@ public class CpBL {
 		
 		String msgLotacao = SigaMessages.getMessage("usuario.lotacao");
 		List<CpMarcador> listaMarcadoresLotacao = dao().listarCpMarcadoresPorLotacaoESublotacoes(lotacao, true);
+		List<CpMarcador> listaMarcadoresLotacaoEGerais = new ArrayList<CpMarcador> (listaMarcadoresLotacao);
+		listaMarcadoresLotacaoEGerais.addAll(dao().listarCpMarcadoresGerais(true));
 		
 		if (id == null && listaMarcadoresLotacao.size() > 9) 
 			throw new AplicacaoException ("Atingiu o limite de 10 marcadores possíveis para " + msgLotacao);
 		
-		if (id == null && (listaMarcadoresLotacao.stream()
+		if (id == null && (listaMarcadoresLotacaoEGerais.stream()
 				.filter(mar -> mar.getDescrMarcador()
 						.equals(descricao)).count() > 0)) 
-			throw new AplicacaoException ("Já existe um marcador com esta descrição para esta " + msgLotacao);
+			throw new AplicacaoException ("Já existe um marcador Geral ou da " + msgLotacao 
+					+ " com esta descrição: " + descricao);
 
-//		Integer ordem;
 		if (id != null) {
 			CpMarcador marcadorAnt = new CpMarcador();
 			CpMarcador marcador = new CpMarcador();

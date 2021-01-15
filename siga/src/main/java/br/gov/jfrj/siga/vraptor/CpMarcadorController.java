@@ -25,7 +25,9 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -86,7 +88,12 @@ public class CpMarcadorController extends SigaController {
 		} catch (AplicacaoException e) {
 		}
 
-		result.include("listaMarcadores", listMar);
+	    List<CpMarcador> listMarOrdenada = listMar.stream()
+	    		 .sorted(Comparator.comparing(CpMarcador::getCpTipoMarcador)
+	    				    .thenComparing(CpMarcador::getDescrMarcador))
+	             .collect(Collectors.toList());
+	    
+		result.include("listaMarcadores", listMarOrdenada);
 		result.include("listaTipoMarcador", CpTipoMarcadorEnum.values());
 		result.include("listaCores", CpMarcadorCorEnum.values());
 		result.include("listaIcones", CpMarcadorIconeEnum.values());

@@ -1403,6 +1403,7 @@ public class ExDocumentoController extends ExController {
 		
 		if (recebimentoAutomatico) {				
 			if (Ex.getInstance().getComp().podeReceberEletronico(getTitular(), getLotaTitular(), exDocumentoDto.getMob())) {
+				SigaTransacionalInterceptor.upgradeParaTransacional();
 				Ex.getInstance().getBL().receber(getCadastrante(), getLotaTitular(),exDocumentoDto.getMob(), new Date());
 			}														
 		} else if (Ex.getInstance().getComp().podeReceber(getTitular(), getLotaTitular(),exDocumentoDto.getMob())) {			

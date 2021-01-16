@@ -11,7 +11,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "GC_TIPO_INFORMACAO", schema = "SIGAGC")
+@Table(name = "gc_tipo_informacao", schema = "sigagc")
 public class GcTipoInformacao extends Objeto {
 	final static public long TIPO_INFORMACAO_REGISTRO_DE_CONHECIMENTO = 1;
 	final static public long TIPO_INFORMACAO_ERRO_CONHECIDO = 2;

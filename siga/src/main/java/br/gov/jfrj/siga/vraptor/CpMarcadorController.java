@@ -88,12 +88,12 @@ public class CpMarcadorController extends SigaController {
 		} catch (AplicacaoException e) {
 		}
 
-	    List<CpMarcador> listMarOrdenada = listMar.stream()
+	/*    List<CpMarcador> listMarOrdenada = listMar.stream()
 	    		 .sorted(Comparator.comparing(CpMarcador::getCpTipoMarcador)
 	    				    .thenComparing(CpMarcador::getDescrMarcador))
-	             .collect(Collectors.toList());
+	             .collect(Collectors.toList()); */
 	    
-		result.include("listaMarcadores", listMarOrdenada);
+		result.include("listaMarcadores", listMar);
 		result.include("listaTipoMarcador", CpTipoMarcadorEnum.values());
 		result.include("listaCores", CpMarcadorCorEnum.values());
 		result.include("listaIcones", CpMarcadorIconeEnum.values());

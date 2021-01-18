@@ -9,7 +9,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "GC_ACESSO", schema = "SIGAGC")
+@Table(name = "gc_acesso", schema = "sigagc")
 public class GcAcesso extends Objeto {
 	private static final long serialVersionUID = -6824464659652929435L;
 	public static final long ACESSO_EXTERNO_PUBLICO = 0;

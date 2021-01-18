@@ -24,7 +24,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "GC_MOVIMENTACAO", schema = "SIGAGC")
+@Table(name = "gc_movimentacao", schema = "sigagc")
 @NamedQueries({
 	@NamedQuery(name = "buscarInformacaoPorAnexo", query = 
 			"select info from GcMovimentacao mov "

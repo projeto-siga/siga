@@ -1311,7 +1311,7 @@ public class CpBL {
 		return urlPermanente;
 	}
 
-	public void gravarMarcadorDaLotacao(final Long id, final DpPessoa cadastrante, final DpLotacao lotacao, final CpIdentidade identidade, 
+	public void gravarMarcador(final Long id, final DpPessoa cadastrante, final DpLotacao lotacao, final CpIdentidade identidade, 
 			final String descricao, final String descrDetalhada, final CpMarcadorCorEnum idCor, final CpMarcadorIconeEnum idIcone, final Integer grupoId, 
 			final CpTipoMarcadorEnum idTpMarcador, final CpMarcadorTipoAplicacaoEnum idTpAplicacao, final CpMarcadorTipoDataEnum idTpDataPlanejada, 
 			final CpMarcadorTipoDataEnum idTpDataLimite, 
@@ -1327,11 +1327,12 @@ public class CpBL {
 			throw new AplicacaoException ("Descrição do marcador tem mais de 40 bytes.");
 		
 		String msgLotacao = SigaMessages.getMessage("usuario.lotacao");
-		List<CpMarcador> listaMarcadoresLotacao = dao().listarCpMarcadoresPorLotacaoESublotacoes(lotacao, true);
+		List<CpMarcador> listaMarcadoresLotacao = dao().listarCpMarcadoresPorLotacao(lotacao, true);
 		List<CpMarcador> listaMarcadoresLotacaoEGerais = new ArrayList<CpMarcador> (listaMarcadoresLotacao);
 		listaMarcadoresLotacaoEGerais.addAll(dao().listarCpMarcadoresGerais(true));
 		
-		if (id == null && listaMarcadoresLotacao.size() > 9) 
+		if (idTpMarcador == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO && id == null 
+				&& listaMarcadoresLotacao.size() > 9) 
 			throw new AplicacaoException ("Atingiu o limite de 10 marcadores possíveis para " + msgLotacao);
 		
 		if (id == null && (listaMarcadoresLotacaoEGerais.stream()
@@ -1351,7 +1352,7 @@ public class CpBL {
 				marcador.setDpLotacaoIni(marcadorAnt.getDpLotacaoIni());
 				marcador.setDescrMarcador(descricao);
 				marcador.setDescrDetalhada(descrDetalhada);
-				marcador.setGrupoMarcador(grupoId);
+				marcador.setGrupoMarcador(2);
 				marcador.setCpTipoMarcador(idTpMarcador);
 				marcador.setIdCor(idCor);
 				marcador.setIdIcone(idIcone);

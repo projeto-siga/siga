@@ -379,7 +379,6 @@ public class AppController extends GcController {
 		result.redirectTo(this).estatisticaGeral();
 	}
 
-	@Path("/estatisticaGeral")
 	public void estatisticaGeral() throws Exception {
 		// List<GcInformacao> lista = GcInformacao.all().fetch();
 
@@ -688,6 +687,13 @@ public class AppController extends GcController {
 	 * ); }
 	 */
 
+	@Path({ "/app/novo" })
+	public void novo() throws Exception
+	{
+		result.forwardTo(this).editar(null,null,null,null,null,null);
+	}
+	
+	
 	@Path({ "/app/editar/{sigla}", "/app/editar/" })
 	public void editar(String sigla, String classificacao, String inftitulo,
 			String origem, String conteudo, GcTipoInformacao tipo)
@@ -1045,10 +1051,15 @@ public class AppController extends GcController {
 	}
 
 	@Transactional
-	public void gravar(@LoadOptional GcInformacao informacao, String inftitulo,
+	public void gravar(GcInformacao informacao, String inftitulo,
 			String conteudo, String classificacao, String origem,
 			GcTipoInformacao tipo, GcAcesso visualizacao, GcAcesso edicao,
 			CpPerfil grupo) throws Exception {
+		
+		if (informacao.getId() != 0) {
+			informacao = em().find(GcInformacao.class, informacao.getId());
+		}
+
 		// DpPessoa pessoa = (DpPessoa) renderArgs.get("cadastrante");
 		DpPessoa pessoa = getTitular();
 		DpLotacao lotacao = getLotaTitular();

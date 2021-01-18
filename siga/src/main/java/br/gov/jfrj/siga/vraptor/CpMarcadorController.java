@@ -25,10 +25,7 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
-
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
@@ -51,11 +48,7 @@ import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoTextoEnum;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpMarcador;
-import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
-import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 @Controller
 public class CpMarcadorController extends SigaController {
@@ -81,19 +74,15 @@ public class CpMarcadorController extends SigaController {
 	@Get("/app/marcador/listar")
 	public void lista() throws Exception {
 		assertAcesso("");
-		List<CpMarcador> listMar = dao.listarCpMarcadoresPorLotacaoESublotacoes(getLotaCadastrante(), true);
+		List<CpMarcador> listMar = null;
 		try {
 			assertAcesso(ACESSO_CAD_MARCADOR_GERAL);
-			listMar.addAll(dao.listarCpMarcadoresGerais(true));
+			listMar = dao.listarCpMarcadoresPorLotacaoEGeral(getLotaCadastrante(), true);
 		} catch (AplicacaoException e) {
+			listMar = dao.listarCpMarcadoresPorLotacao(getLotaCadastrante(), true);
 		}
 
-	    List<CpMarcador> listMarOrdenada = listMar.stream()
-	    		 .sorted(Comparator.comparing(CpMarcador::getCpTipoMarcador)
-	    				    .thenComparing(CpMarcador::getDescrMarcador))
-	             .collect(Collectors.toList());
-	    
-		result.include("listaMarcadores", listMarOrdenada);
+		result.include("listaMarcadores", listMar);
 		result.include("listaTipoMarcador", CpTipoMarcadorEnum.values());
 		result.include("listaCores", CpMarcadorCorEnum.values());
 		result.include("listaIcones", CpMarcadorIconeEnum.values());
@@ -179,8 +168,8 @@ public class CpMarcadorController extends SigaController {
 			id = marcador.getId();
 		}
 		
-		Cp.getInstance().getBL().gravarMarcadorDaLotacao(id, getCadastrante(), getLotaTitular(),
-				getIdentidadeCadastrante(), descricao, descrDetalhada, idCor, idIcone, 14, idTpMarcador,
+		Cp.getInstance().getBL().gravarMarcador(id, getCadastrante(), getLotaTitular(),
+				getIdentidadeCadastrante(), descricao, descrDetalhada, idCor, idIcone, 2, idTpMarcador,
 				idTpAplicacao, idTpDataPlanejada, idTpDataLimite, idTpExibicao, idTpTexto, idTpInteressado);
 
 		result.redirectTo(this).lista();

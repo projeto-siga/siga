@@ -2739,7 +2739,7 @@ public class CpDao extends ModeloDao {
 		return em().createQuery(criteriaQuery).getResultList();
 	}
 	
-	public List<CpMarcador> listarCpMarcadoresPorLotacaoESublotacoes(DpLotacao lotacao, Boolean ativos) {
+	public List<CpMarcador> listarCpMarcadoresPorLotacao(DpLotacao lotacao, Boolean ativos) {
 		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
 		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);
 		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
@@ -2758,7 +2758,34 @@ public class CpDao extends ModeloDao {
 		return em().createQuery(criteriaQuery).getResultList();
 	}
 	
-	
+	public List<CpMarcador> listarCpMarcadoresPorLotacaoEGeral (DpLotacao lotacao, Boolean ativos) {
+		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
+		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);
+		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
+		Predicate predicateAnd;
+		
+		Predicate predicateEqualMarcadorGeral  = criteriaBuilder.equal(cpMarcadorRoot.get("cpTipoMarcador"), CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL);
+		
+		Predicate predicateEqualMarcadorLotacao  = criteriaBuilder.equal(cpMarcadorRoot.get("cpTipoMarcador"), CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO);
+		Predicate predicateEqualLotacao  = criteriaBuilder.equal(cpMarcadorRoot.get("dpLotacaoIni"), lotacao.getLotacaoInicial());
+		Predicate predicateMarcadorLotacaoAndLotacaoIni  = criteriaBuilder.and(predicateEqualMarcadorLotacao, predicateEqualLotacao);
+		
+		Predicate predicateSemifinal;
+		predicateSemifinal = criteriaBuilder.or(predicateEqualMarcadorGeral, predicateMarcadorLotacaoAndLotacaoIni);
+		 
+		if (ativos == null || ativos) {
+			Predicate predicateNullHisDtFim = criteriaBuilder.isNull(cpMarcadorRoot.get("hisDtFim"));
+			predicateAnd = criteriaBuilder.and(predicateSemifinal, predicateNullHisDtFim);
+		} else {
+			predicateAnd = predicateSemifinal;
+		}
+		
+		criteriaQuery.where(predicateAnd);
+		
+		criteriaQuery.orderBy(criteriaBuilder.asc(cpMarcadorRoot.get("cpTipoMarcador")), 
+				criteriaBuilder.asc(cpMarcadorRoot.get("descrMarcador")));
+		return em().createQuery(criteriaQuery).getResultList();	
+	}
 	
 	public <T extends Selecionavel> T carregarPorId(T o) {
 		Long id = o.getId();

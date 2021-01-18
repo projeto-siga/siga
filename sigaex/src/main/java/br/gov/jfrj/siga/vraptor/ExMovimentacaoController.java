@@ -2439,7 +2439,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("listaMarcadores", this.getListaMarcadoresGerais());
 		result.include("listaMarcadoresAtivos", this.getListaMarcadoresAtivos(mobilGeral));
 		result.include("listaMarcadoresLotacao", dao
-				.listarCpMarcadoresPorLotacaoESublotacoes(getLotaTitular(), true));
+				.listarCpMarcadoresPorLotacao(getLotaTitular(), true));
 		result.include("dataLimite", this.getDataLimiteDemanda(mobilGeral));
 	}
 	

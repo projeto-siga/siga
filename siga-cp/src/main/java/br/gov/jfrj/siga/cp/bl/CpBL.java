@@ -1352,7 +1352,7 @@ public class CpBL {
 				marcador.setDpLotacaoIni(marcadorAnt.getDpLotacaoIni());
 				marcador.setDescrMarcador(descricao);
 				marcador.setDescrDetalhada(descrDetalhada);
-				marcador.setGrupoMarcador(marcadorAnt.getGrupoMarcador());
+				marcador.setGrupoMarcador(2);
 				marcador.setCpTipoMarcador(idTpMarcador);
 				marcador.setIdCor(idCor);
 				marcador.setIdIcone(idIcone);

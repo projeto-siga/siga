@@ -169,7 +169,7 @@ public class CpMarcadorController extends SigaController {
 		}
 		
 		Cp.getInstance().getBL().gravarMarcador(id, getCadastrante(), getLotaTitular(),
-				getIdentidadeCadastrante(), descricao, descrDetalhada, idCor, idIcone, 14, idTpMarcador,
+				getIdentidadeCadastrante(), descricao, descrDetalhada, idCor, idIcone, 2, idTpMarcador,
 				idTpAplicacao, idTpDataPlanejada, idTpDataLimite, idTpExibicao, idTpTexto, idTpInteressado);
 
 		result.redirectTo(this).lista();

@@ -99,7 +99,13 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "or pes.situacaoFuncionalPessoa = :sfp12 "
 				+ "or pes.situacaoFuncionalPessoa = :sfp22 "
 				+ "or pes.situacaoFuncionalPessoa = :sfp31 "				
-				+ "or pes.situacaoFuncionalPessoa = :sfp36)")})
+				+ "or pes.situacaoFuncionalPessoa = :sfp36)"),
+		@NamedQuery(name = "listarUnidadesComUsuarioPadrao", query = "select u from CpIdentidade u "
+				+ "inner join fetch u.dpPessoa pes "
+				+ "inner join fetch pes.lotacao lot "
+				+ "inner join fetch u.cpOrgaoUsuario orgaoUsuario "
+				+ "where pes.cpfPessoa = :cpfPessoa ")
+		})
 
 public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
 	/**

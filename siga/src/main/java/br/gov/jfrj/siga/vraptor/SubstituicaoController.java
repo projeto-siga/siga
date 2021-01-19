@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
@@ -26,6 +27,7 @@ import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
+import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
@@ -135,18 +137,13 @@ public class SubstituicaoController extends SigaController {
 	}	
 	
 	@Get("/app/substituicao/unidade")
-	public void unidade() throws Exception {
-		String substituicao = "false";
+	public void unidade() {
 		
-		if (!getCadastrante().getId().equals(getTitular().getId())
-				|| !getCadastrante().getLotacao().getId().equals(getLotaTitular().getId())) {
-			if(podeCadastrarQualquerSubstituicao()){
-				substituicao = "true";					
-				result.include("itensTitular", buscarSubstitutos(substituicao, getTitular(), getLotaTitular()));
-			}	
-		}
-		result.include("isSubstituicao", substituicao);
-		result.include("itens", buscarSubstitutos(substituicao, getCadastrante(), getCadastrante().getLotacao()));
+		final Query query = em().createNamedQuery("listarUnidadesComUsuarioPadrao");
+		query.setParameter("cpfPessoa", getCadastrante().getCpfPessoa());
+		final List<CpIdentidade> lista = query.getResultList();
+		
+		result.include("itens", lista);
 	}
 	
 	@Get("/app/substituicao/editar")

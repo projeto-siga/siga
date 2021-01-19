@@ -1,128 +1,103 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<%@ page language="java" contentType="text/html; charset=UTF-8" buffer="32kb"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
-<%-- pageContext.setAttribute("sysdate", new java.util.Date()); --%>
-<siga:pagina titulo="Gerenciar Unidades">
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+
+<siga:pagina titulo="Listar Lota&ccedil;&atilde;o">
+	<link rel="stylesheet" href="/siga/javascript/select2/select2.css"
+		type="text/css" media="screen, projection" />
+	<link rel="stylesheet"
+		href="/siga/javascript/select2/select2-bootstrap.css" type="text/css"
+		media="screen, projection" />
+	<script type="text/javascript" language="Javascript1.1">
+		
+	</script>
 	<!-- main content -->
 	<div class="container-fluid">
-		<div class="card bg-light mb-3" >
-			<div class="card-header">
-				<h5>Gerenciar minhas Unidades</h5>
-			</div>
-			<div class="card-body">
-				<div class="row">
-					<div class="col-sm">
-						<h6>Unidades cadastradas</h5>
-						<table border="0" class="gt-table table table-sm table-hover">
-							<thead class="${thead_color}">
-								<tr>
-									<th align="left">Órgão</th>
-									<th align="left">Unidade</th>
-									<th align="center">Padrão</th>
-								</tr>
-							</thead>
-							<tbody class="table-bordered">
-								<c:forEach var="substituicao" items="${itens}">
-									<tr>
-										<td align="left">
-											<c:choose>
-												<c:when test="${not empty orgao.orgaoUsuario}">
-																${substTitular.orgao.orgaoUsuario}
-														</c:when>
-												<c:otherwise>
-													${substituicao.lotaTitular.nomeLotacao}
-												</c:otherwise>
-											</c:choose>
-										</td>
-										<td align="left">
-											<c:choose>
-												<c:when test="${not empty substituicao.substituto}">
-													${substituicao.substituto.nomePessoa}
-												</c:when>
-												<c:otherwise>
-													${substituicao.lotaSubstituto.nomeLotacao}
-												</c:otherwise>
-											</c:choose>
-										</td>
-										<td align="center">${substituicao.dtIniSubstDDMMYY}</td>
-											<siga:link title="Alterar" url="editar?id=${substituicao.idSubstituicao}" />
-																			
-											<siga:link title="Excluir" url="exclui?id=${substituicao.idSubstituicao}" 
-												popup="excluir" confirm="Deseja excluir substituição?" />									
-																		
-										</td>
-									</tr>
-								</c:forEach>
-							</tbody>
-						</table>
-					</div>
+		<form name="frm" action="unidade" id="unidade" class="form100"
+			method="POST">
+			<input type="hidden" name="paramoffset" value="0" /> <input
+				type="hidden" name="p.offset" value="0" />
+			<div class="card bg-light mb-3">
+				<div class="card-header">
+					<h5>
+						Gerenciar minhas
+						<fmt:message key="usuario.lotacao" />
+					</h5>
 				</div>
-				<c:choose>
-					<c:when test="${(isSubstituicao == 'true')}">			
-						<div class="row">
-							<div class="col-sm">
-								<h6>Substituições cadastradas para o Titular</h6>
-								<table border="0" class="gt-table table table-sm table-hover">
-									<thead class="${thead_color}">
 
-										<tr>
-											<th align="left">Titular</th>
-											<th align="left">Substituto</th>
-											<th align="center">Data inicial</th>
-											<th align="center">Data final</th>
-											<th align="center">Opções</th>
-										</tr>
-									</thead>
-									<tbody  class="table-bordered">
-										<c:forEach var="substTitular" items="${itensTitular}">
-											<tr>
-												<td align="left">
-													<c:choose>
-														<c:when test="${not empty substTitular.titular}">
-																${substTitular.titular.nomePessoa}
-														</c:when>
-														<c:otherwise>
-																${substTitular.lotaTitular.nomeLotacao}
-														</c:otherwise>	
-													</c:choose>
-												</td>
-												<td align="left">
-													<c:choose>
-														<c:when test="${not empty substTitular.substituto}">
-															${substTitular.substituto.nomePessoa}
-														</c:when>
-														<c:otherwise>
-															${substTitular.lotaSubstituto.nomeLotacao}
-														</c:otherwise>
-													</c:choose>
-												</td>
-												<td align="center">${substTitular.dtIniSubstDDMMYY}</td>
-												<td align="center">${substTitular.dtFimSubstDDMMYY}</td>
-												<td align="center">
-													<siga:link title="Alterar" url="editar?id=${substTitular.idSubstituicao}" />
-																					
-													<siga:link title="Excluir" url="exclui?id=${substTitular.idSubstituicao}" 
-														popup="excluir" confirm="Deseja excluir configuração?" />										
-												</td>
-											</tr>
-										</c:forEach>
-									</tbody>
-								</table>
-							</div>
-						</div>		
-					</c:when>
-					<c:otherwise>
-						<div class="row">
-							<div class="col-sm-2">
-								<button type="button"  onclick="javascript:window.location.href='editar'" class="btn btn-primary">Ok</button>
-							</div>
-								<button type="button"  onclick="javascript:window.location.href='editar'" class="btn btn-primary">Cancelar</button>
-						</div>
-					</c:otherwise>
-				</c:choose>
 			</div>
-		</div>
-	</div>	
+
+			<h3 class="gt-table-head">
+				<fmt:message key="usuario.lotacoes" />
+				cadastradas
+			</h3>
+			<table border="0" class="table table-sm table-striped">
+				<thead class="${thead_color}">
+					<tr>
+						<th align="left" style="width: 30%">Órgão</th>
+						<th align="left" style="width: 30%">Unidade</th>
+						<th align="left" style="width: 0%">Padrão</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<siga:paginador maxItens="15" maxIndices="10"
+						 itens="${itens}" var="identidade">
+						<tr>
+							<td align="left" style="width: 30%">${identidade.cpOrgaoUsuario.nmOrgaoUsu}</td>
+							<td align="left" style="width: 30%">${identidade.dpPessoa.lotacao.nomeLotacao}</td>
+							<td align="left" style="width: 30%">
+								<label> 
+									<input type="radio" name="usuario" id="usuarioPadrao" value="true" checked
+										${(identidade.dpPessoa.usuarioPadrao.equals(1)) ? 'checked' : ''}
+									/>
+								</label>
+							</td>
+						</tr>
+					</siga:paginador>
+				</tbody>
+			</table>
+			<div class="gt-table-buttons">
+				<input type="submit" value="Ok"
+					value="${linkTo[SubstituicaoController].trocarUsuarioPadrao()}" class="btn btn-primary">
+				<input type="button" value="Cancelar"
+					onclick="javascript:history.back();"
+					class="btn btn-primary">
+			</div>
+		</form>
+	</div>
+
+	<script type="text/javascript"
+		src="/siga/javascript/select2/select2.min.js"></script>
+	<script type="text/javascript"
+		src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+	<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			if ('${mensagemPesquisa}'.length > 0)
+				$('.mensagem-pesquisa').css({
+					'display' : 'block'
+				});
+		});
+
+		function csv(id, action) {
+			var frm = document.getElementById(id);
+			frm.method = "POST";
+			sbmtAction(id, action);
+
+			$('.mensagem-pesquisa').alert('close');
+
+			frm.action = 'listar';
+			frm.method = "GET";
+		}
+
+		function sbmtAction(id, action) {
+			var frm = document.getElementById(id);
+			frm.action = action;
+			frm.submit();
+			return;
+		}
+	</script>
 </siga:pagina>

@@ -915,6 +915,24 @@ public class CpDao extends ModeloDao {
 		final List<DpPessoa> l = qry.getResultList();
 		return l;
 	}
+	
+public List<DpPessoa> listarUnidadesComUsuarioPadraoAtivo(final long cpf) {
+		
+	final Query query = em().createNamedQuery("listarUnidadesComUsuarioPadrao");
+	
+//		String sql = "select pes from DpPessoa pes " 
+//				+ "join pes.cpIdentidade ide pes.idPessoa  " 
+//				+ "join pes.dpLotacao dl pes.idLotacao " 
+//				+ "where pes.cpfPessoa = :cpfPessoa ";
+//		
+//		Query query = em().createQuery(sql);
+		query.setParameter("cpfPessoa", cpf);
+		
+		final List<DpPessoa> lista = query.getResultList();
+		
+		return lista;
+	}
+	
 	/**
 	 * Fim alteração cartão 1564 
 	 */

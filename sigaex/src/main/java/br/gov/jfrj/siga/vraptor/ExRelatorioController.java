@@ -245,6 +245,10 @@ public class ExRelatorioController extends ExController {
 		result.include("lotaTitular", this.getLotaTitular());
 		result.include("lotacaoDestinatarioSel", lotacaoDestinatarioSel);
 		result.include("titular", this.getTitular());
+		
+		DpLotacao lotacao =  this.getLotaTitular();
+		result.include("listaSetoresSubordinados", lotacao.getDpLotacaoSubordinadosSet());
+		
 	}
 
 	private void fazerResultsParaRelExpedientes(

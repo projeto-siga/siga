@@ -33,6 +33,28 @@ function sbmt() {
 			theme="simple" maxlength="10" class="form-control" />
 	</div>
 </div>
+
+
+<div class="row">
+	<div class="col-sm-2 mt-4 ml-4">
+		<input type="checkbox" name="incluirSubordinados"
+			id="incluirSubordinados" class="form-check-input" /><label
+			class="form-check-label" for="incluirSubordinados">Incluir
+			setores subordinados?</label>
+	</div>
+
+</div>
+
+<div class="row">
+	<div class="col-sm-2">
+			<label>setores</label>
+				<c:forEach items="${listaSetoresSubordinados}" var="item">
+					<c:out  value="${item.nomeLotacaodescricao}" />
+					
+				</c:forEach>
+		</div>
+</div>
+
 <input type="hidden" name="lotacao" id="lotacao" value="${lotacaoDestinatarioSel.id}" />
 <input type="hidden" name="siglalotacao" id="siglalotacao" value="${lotacaoDestinatarioSel.sigla}" />
 <input type="hidden" name="lotacaoTitular" id="lotacaoTitular" value="${lotaTitular.siglaLotacao}" />

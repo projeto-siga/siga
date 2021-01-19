@@ -170,7 +170,7 @@ public class RelTeste extends RelatorioTemplate {
 				"WHERE l2.id_lotacao = ("+
 				"	SELECT  m3.id_lota_resp "+
 				"	FROM siga.ex_movimentacao m3   "+
-				" 	WHERE m3.id_mov ("+
+				" 	WHERE m3.id_mov =("+
 				"		SELECT  max (m2.id_mov) 	"+
 				"		FROM siga.ex_movimentacao m2  "+
 				" 			INNER JOIN siga.ex_mobil mb2 on (mb2.id_mobil = m2.id_mobil)  "+
@@ -220,8 +220,10 @@ public class RelTeste extends RelatorioTemplate {
 				"	 	INNER JOIN corporativo.dp_lotacao l on (d.id_lota_cadastrante = l.id_lotacao)"+
 				"	 	INNER JOIN corporativo.cp_orgao_usuario u on (l.id_orgao_usu = u.id_orgao_usu)"+
 				"	 	INNER JOIN siga.ex_forma_documento f on (f.id_forma_doc = d.id_forma_doc)"+
+				"	where (tm.id_tp_mov >77) or tm.id_tp_mov in(1,3,4,9,17,18,19,20,23,48,49,56)"+
 				"	 GROUP BY u.acronimo_orgao_usu,f.sigla_forma_doc,d.ano_emissao,d.num_expediente"+
-				"	 ORDER BY NUM_PROCESSO desc  ) x2 on x1.NUM_PROCESSO = X2.NUM_PROCESSO AND X1.DATA_DESPACHO = X2.DATA_DESPACHO";
+				"	 ORDER BY NUM_PROCESSO desc  ) x2 on x1.NUM_PROCESSO = X2.NUM_PROCESSO AND X1.DATA_DESPACHO = X2.DATA_DESPACHO"+
+				"	AND x1.COD_DESPACHO <> 48";
 		
 	
 	return sql;

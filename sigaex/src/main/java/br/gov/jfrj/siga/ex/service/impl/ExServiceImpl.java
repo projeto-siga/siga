@@ -1016,4 +1016,5 @@ public class ExServiceImpl implements ExService {
 			return "Ocorreu um problema na publicação de documento em Portal.";
 		}
 	}
+	
 }

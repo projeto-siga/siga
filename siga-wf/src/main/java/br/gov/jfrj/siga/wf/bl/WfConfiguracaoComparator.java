@@ -20,7 +20,7 @@ package br.gov.jfrj.siga.wf.bl;
 
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoComparator;
-import br.gov.jfrj.siga.wf.WfConfiguracao;
+import br.gov.jfrj.siga.wf.model.WfConfiguracao;
 
 /**
  * Classe que permite a comparação entre duas configurações de workflow.

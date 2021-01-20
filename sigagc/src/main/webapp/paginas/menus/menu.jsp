@@ -1,4 +1,4 @@
-<li><a class="" href="${linkTo[AppController].estatisticaGeral}">Conhecimentos</a>
+<li><a class="" href="app/estatisticaGeral">Conhecimentos</a>
 	<ul>
 		<li><a class="" href="${linkTo[AppController].novo}">Novo</a>
 		</li>

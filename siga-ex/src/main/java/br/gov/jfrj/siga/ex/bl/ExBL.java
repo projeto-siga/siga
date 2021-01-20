@@ -1496,7 +1496,7 @@ public class ExBL extends CpBL {
 			String[] split = sNome.split(":");
 			if (split.length > 1) {
 				String sMatricula = split[1];
-				lMatricula = Long.valueOf(sMatricula);
+				lMatricula = Long.valueOf(sMatricula.replace("-", ""));
 			}
 		} catch (final Exception e) {
 			throw new RuntimeException("não foi possível obter a matrícula do assinante", e);
@@ -2187,6 +2187,7 @@ public class ExBL extends CpBL {
 			boolean fValido = false;
 			Long lMatricula = null;
 
+			// Obtem a matricula do assinante
 			try {
 				if (sNome == null)
 					throw new AplicacaoException("não foi possível acessar o nome do assinante");

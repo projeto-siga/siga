@@ -440,6 +440,7 @@ public class AppController extends GcController {
 		result.include("listaPrincipaisTags", listaPrincipaisTags);
 		result.include("cloud", cloud);
 		result.include("evolucao", evolucao);
+		result.use(Results.page()).defaultView();
 	}
 
 	public void estatisticaLotacao() throws Exception {
@@ -504,6 +505,7 @@ public class AppController extends GcController {
 		result.include("listaPrincipaisTags", listaPrincipaisTags);
 		result.include("cloud", cloud);
 		result.include("evolucao", evolucao);
+		result.use(Results.page()).defaultView();
 	}
 
 	@Path({"/app/listar", "/app/informacao/buscar"})

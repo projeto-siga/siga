@@ -20,7 +20,6 @@
 
 <c:if
 	test="${not empty f:resource('assinador.externo.popup.url')}">
-	<script src="/siga/bootstrap/js/bootstrap.min.js"></script>
 	<script
 		src="${f:resource('assinador.externo.popup.url')}/popup-api.js"></script>
 </c:if>

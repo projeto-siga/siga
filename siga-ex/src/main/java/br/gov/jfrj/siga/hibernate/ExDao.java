@@ -1724,10 +1724,16 @@ public class ExDao extends CpDao {
 
 	public ExClassificacao obterClassificacaoAtual(
 		final ExClassificacao classificacao) {
-		final Query qry = em().createNamedQuery("consultarAtualPorId");
-		qry.setParameter("hisIdIni", classificacao.getHisIdIni());
-		final ExClassificacao c = (ExClassificacao) qry.getSingleResult();
-		return c;
+		try {
+			final Query qry = em().createNamedQuery("consultarAtualPorId");
+			qry.setParameter("hisIdIni", classificacao.getHisIdIni());
+			final ExClassificacao c = (ExClassificacao) qry.getSingleResult();
+			return c;
+		} catch (final IllegalArgumentException e) {
+			throw e;
+		} catch (final Exception e) {
+			return null;
+		}
 	}
 	
 	public List listarDocumentosPorPessoaOuLotacao(DpPessoa titular,

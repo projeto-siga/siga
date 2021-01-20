@@ -310,7 +310,6 @@ public class SigaLibsEL {
 	}
 
 	public static String getURLSistema(String nome) {
-		String ambiente = Prop.get("ambiente");
 		String url = Prop.get(nome +  ".url");
 		if (url == null || url.length() == 0) {
 			url = "#";

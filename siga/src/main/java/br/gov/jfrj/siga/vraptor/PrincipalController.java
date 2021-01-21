@@ -249,9 +249,11 @@ public class PrincipalController extends SigaController {
 	@Consumes("text/vnd.graphviz")
 	@Path("/public/app/graphviz/svg")
 	public Download graphvizProxy(String dot) throws Exception {
-		String url = (String) Prop.get("/vizservice.url");
+		String url = Prop.get("/vizservice.url");
 		if (url == null)
 			throw new Exception("Parâmetro vizservice.url precisa ser informado");
+		
+		url = url + "/svg";
 		corsHeaders(response);
 
 		String body = Unirest.post(url).header("Content-Type", "text/vnd.graphviz").body(dot).asString().getBody();

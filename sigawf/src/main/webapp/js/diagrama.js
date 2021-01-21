@@ -302,19 +302,21 @@ app
 					$scope.graphDraw = function() {
 						console.log('graphDraw')
 						$scope.dot = $scope.getDot($scope.data.workflow);
-						$http(
-								{
-									url : 'https://hml.xrp.com.br/app/graphviz?graph='
-											+ $scope.dot,
-									method : "GET"
-								})
-								.then(
-										function(response) {
-											document
-													.getElementById('graph-workflow').innerHTML = response.data;
-										}, function(response) {
-											$scope.showError(response);
-										});
+						$.ajax({
+						    url: "/siga/public/app/graphviz/svg",
+						    data: $scope.dot,
+						    type: 'POST',
+						    processData: false,
+						    contentType: 'text/vnd.graphviz',
+						    contents: window.String,
+						    success: function(data) {
+						    	document.getElementById('graph-workflow').innerHTML = data;
+						    },
+						    error: function(data) {
+						    	$scope.showError(data);
+						    }
+						});
+						
 					}
 
 					$scope.graphDrawDebounced = debounce($scope.graphDraw,

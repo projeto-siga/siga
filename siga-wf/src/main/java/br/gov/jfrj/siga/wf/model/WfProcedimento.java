@@ -546,8 +546,7 @@ public class WfProcedimento extends Objeto
 	public List<AcaoVO> getAcoes(DpPessoa titular, DpLotacao lotaTitular) {
 		List<AcaoVO> set = new ArrayList<>();
 
-		set.add(AcaoVO.builder().nome("_Anotar").icone("note_add").acao("/app/anotar").modal("anotarModal")
-				.exp(new PodeSim()).build());
+		set.add(AcaoVO.builder().nome("_Anotar").icone("note_add").modal("anotarModal").exp(new PodeSim()).build());
 
 		set.add(AcaoVO.builder().nome("_Pegar").icone("add").acao("/app/procedimento/" + getSiglaCompacta() + "/pegar")
 				.exp(new WfPodePegar(this, titular, lotaTitular)).post(true).build());

@@ -43,6 +43,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.sinc.lib.Item;
 import br.gov.jfrj.siga.sinc.lib.Sincronizador;
@@ -284,8 +285,12 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 		CriteriaQuery<T> q = criteriaBuilder.createQuery(clazz);
 		Root<T> c = q.from(clazz);
 		Join<T, CpOrgaoUsuario> joinOrgao = c.join("orgaoUsuario", JoinType.INNER);
-		q.where(cb().equal(c.get("numero"), numero), cb().equal(c.get("ano"), ano), cb().equal(c.get("hisAtivo"), 1),
-				cb().equal(joinOrgao.get("idOrgaoUsu"), orgaoUsuario.getId()));
+		if (clazz.isAssignableFrom(Historico.class))
+			q.where(cb().equal(c.get("numero"), numero), cb().equal(c.get("ano"), ano),
+					cb().equal(c.get("hisAtivo"), 1), cb().equal(joinOrgao.get("idOrgaoUsu"), orgaoUsuario.getId()));
+		else
+			q.where(cb().equal(c.get("numero"), numero), cb().equal(c.get("ano"), ano),
+					cb().equal(joinOrgao.get("idOrgaoUsu"), orgaoUsuario.getId()));
 		return em().createQuery(q).getSingleResult();
 	}
 

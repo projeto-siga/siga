@@ -5,7 +5,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title" id="anotarModalLabel">Acrescentar uma
-					Anotação</h5>
+					Anotação${piId}x</h5>
 				<button type="button" class="close" data-dismiss="modal"
 					aria-label="Close">
 					<span aria-hidden="true">&times;</span>
@@ -13,7 +13,7 @@
 			</div>
 			<div class="modal-body">
 				<form id="anotarForm" name="anotar" method="POST"
-					action="${linkTo[WfAppController].anotar}?id=${task.id}">
+					action="${linkTo[WfAppController].anotar}?id=${piId}">
 					<div class="form-group">
 						<div class="form-group">
 							<label for="descrMov">Nota</label>

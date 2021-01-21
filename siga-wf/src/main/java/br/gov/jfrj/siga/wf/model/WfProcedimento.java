@@ -626,14 +626,14 @@ public class WfProcedimento extends Objeto
 				&& getDefinicaoDeTarefaCorrente().getTipoDeTarefa() == WfTipoDeTarefa.INCLUIR_DOCUMENTO) {
 			return "Este workflow prosseguirá automaticamente quando for juntado ou incluído um documento do modelo '"
 					+ getDefinicaoDeTarefaCorrente().getRefSigla() + "' ao documento " + getPrincipal()
-					+ ". Clique <a href=\"http://localhost:8080/sigaex/app/expediente/doc/editar?mobilPaiSel.sigla="
+					+ ". Clique <a href=\"/sigaex/app/expediente/doc/editar?mobilPaiSel.sigla="
 					+ getPrincipal() + "&criandoAnexo=true&modelo=" + getDefinicaoDeTarefaCorrente().getRefId()
 					+ "\">aqui</a> para incluir.";
 		}
 		if (getDefinicaoDeTarefaCorrente() != null
 				&& getDefinicaoDeTarefaCorrente().getTipoDeTarefa() == WfTipoDeTarefa.AGUARDAR_ASSINATURA_PRINCIPAL) {
 			return "Este workflow prosseguirá automaticamente quando o documento " + getPrincipal()
-					+ " estiver assinado. Clique <a href=\"http://localhost:8080/sigaex/app/expediente/mov/assinar?sigla="
+					+ " estiver assinado. Clique <a href=\"/sigaex/app/expediente/mov/assinar?sigla="
 					+ getPrincipal() + "\">aqui</a> para assinar.";
 		}
 		return null;

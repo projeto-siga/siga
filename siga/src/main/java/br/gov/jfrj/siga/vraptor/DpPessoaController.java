@@ -102,6 +102,12 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		setSel(new DpPessoa());
 		setItemPagina(10);
 	}
+	
+	@Get
+	@Path({"/app/pessoa/buscar-json/{sigla}"})
+	public void busca(String sigla) throws Exception{
+		aBuscarJson(sigla);
+	}
 
 	@Get
 	@Post

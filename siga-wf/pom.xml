@@ -1,88 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>siga-doc</artifactId>
-        <groupId>siga</groupId>
-        <version>1.2-SNAPSHOT</version>
-    </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<artifactId>siga-doc</artifactId>
+		<groupId>siga</groupId>
+		<version>1.2-SNAPSHOT</version>
+	</parent>
 
-    <modelVersion>4.0.0</modelVersion>
+	<modelVersion>4.0.0</modelVersion>
 
-    <artifactId>siga-wf</artifactId>
+	<artifactId>siga-wf</artifactId>
 
-    <dependencies>
-        <dependency>
-            <groupId>info.bliki.wiki</groupId>
-            <artifactId>bliki-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-analyzers</artifactId>
-        </dependency>
-
-        <!-- JBPM -->
-        		<!-- JBPM -->
-			<dependency>
-				<groupId>org.jbpm.jbpm3</groupId>
-				<artifactId>jbpm-identity</artifactId>
-				<version>3.3.1.GA</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jbpm.jbpm3</groupId>
-				<artifactId>jbpm-jpdl</artifactId>
-				<version>3.2.10.SP3_seam2</version>
-				<exclusions>
-					<exclusion>
-						<groupId>bouncycastle</groupId>
-						<artifactId>bcmail-jdk14</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>bouncycastle</groupId>
-						<artifactId>bcprov-jdk14</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.hibernate</groupId>
-						<artifactId>hibernate</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-        
-        
-       	<dependency>
-			<groupId>javax.jcr</groupId>
-			<artifactId>jcr</artifactId>
-			<version>1.0.1</version>
+	<dependencies>
+		<dependency>
+			<groupId>siga</groupId>
+			<artifactId>siga-cp</artifactId>
 		</dependency>
 
-        <dependency>
-            <groupId>org.jboss.spec.javax.servlet</groupId>
-            <artifactId>jboss-servlet-api_2.5_spec</artifactId>
-            <scope>provided</scope>
-        </dependency>
+		<dependency>
+			<groupId>com.crivano</groupId>
+			<artifactId>jflow</artifactId>
+			<version>1.0.3</version>
+		</dependency>
 
-        <dependency>
-            <groupId>net.sf.kxml</groupId>
-            <artifactId>kxml2</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>com.crivano</groupId>
+			<artifactId>jlogic</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 
-        <dependency>
-            <groupId>backport-util-concurrent</groupId>
-            <artifactId>backport-util-concurrent</artifactId>
-            <version>3.1</version>
-        </dependency>
+		<dependency>
+			<groupId>com.crivano</groupId>
+			<artifactId>swaggerservlet</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>siga</groupId>
-            <artifactId>siga-cp</artifactId>
-        </dependency>
-    </dependencies>
-    
+		<!-- https://mvnrepository.com/artifact/info.bliki.wiki/bliki-core <dependency> 
+			<groupId>info.bliki.wiki</groupId> <artifactId>bliki-core</artifactId> <version>3.1.0</version> 
+			</dependency> -->
+
+		<dependency>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
+			<version>1.1</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- CDI -->
+		<dependency>
+			<groupId>org.jboss.spec.javax.ejb</groupId>
+			<artifactId>jboss-ejb-api_3.1_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
 	<profiles>
 		<profile>
 			<id>flyway</id>
-			
+
 			<properties>
 				<maven.test.skip>true</maven.test.skip>
 				<maven.main.skip>true</maven.main.skip>
@@ -104,7 +79,7 @@
 							<sqlMigrationPrefix>SIGAWF_UTF8_V</sqlMigrationPrefix>
 							<placeholderPrefix>flyway${</placeholderPrefix>
 							<locations>
-								<location>filesystem:src\main\resources</location>
+								<location>filesystem:src\main\resources\db\migration</location>
 							</locations>
 						</configuration>
 						<executions>
@@ -127,5 +102,5 @@
 				</plugins>
 			</build>
 		</profile>
-	</profiles>    
+	</profiles>
 </project>

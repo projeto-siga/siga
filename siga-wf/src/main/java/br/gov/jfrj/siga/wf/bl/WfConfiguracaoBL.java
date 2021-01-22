@@ -32,7 +32,7 @@ import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.wf.WfConfiguracao;
+import br.gov.jfrj.siga.wf.model.WfConfiguracao;
 
 /**
  * Classe que representa a configuração do sistema de workflow.
@@ -106,12 +106,6 @@ public class WfConfiguracaoBL extends CpConfiguracaoBL {
 			DpFuncaoConfianca dpFuncaoConfianca, DpPessoa dpPessoa,
 			long idTpConf, String procedimento, String raia, String tarefa)
 			throws Exception {
-
-		
-		if (isUsuarioRoot(dpPessoa)){
-			return true;
-		}
-
 		WfConfiguracao cfgFiltro = createNewConfiguracao();
 
 		cfgFiltro.setCargo(cargo);

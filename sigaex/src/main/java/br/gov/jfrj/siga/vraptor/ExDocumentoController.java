@@ -1086,7 +1086,7 @@ public class ExDocumentoController extends ExController {
 			jaArquivado = true;
 
 		if (!jaArquivado && !mob.doc().isCancelado()) {
-			if (!dest.ativaNaData(new Date())) {
+			if (dest!=null && !dest.ativaNaData(new Date())) {
 				if (getLotaTitular().equivale(lotaDest) /*
 														 * a pessoa que está
 														 * tentando acessar está

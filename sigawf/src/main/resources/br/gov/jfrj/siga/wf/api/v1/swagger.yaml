@@ -1,0 +1,106 @@
+swagger: '2.0'
+
+info:
+  version: "1.0.0"
+  title: WfApiV1
+  description: API para o Siga-Doc
+
+basePath: /sigaex/api/v1
+schemes: [http,https]
+consumes: [application/json,application/x-www-form-urlencoded]
+produces: [application/json]
+
+tags:
+  - name: utils
+    description: Utilitários
+    
+securityDefinitions:
+  Basic:
+    type: basic
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+
+################################################################################
+#                                   Parameters                                 #
+################################################################################
+parameters:
+  sigla:
+    name: sigla
+    in: path
+    description: Sigla do mobil
+    type: string
+    required: true
+   
+
+################################################################################
+#                                           Paths                              #
+################################################################################
+paths:
+  /status/{chave}:
+    get:
+      tags: [download]
+      parameters:
+        - $ref: "#/parameters/chave"
+      summary: Obtem o status de uma operação assíncrona
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              mensagem:
+                type: string
+                description: Mensagem
+              indice:
+                type: number
+                description: Quantos passos já foram executados
+              contador:
+                type: number
+                description: Número total de passos a serem executados
+              bytes:
+                type: number
+                description: Tamanho total do payload até o momento
+              errormsg:
+                type: string
+                description: Mensagem de erro se houver
+              stacktrace:
+                type: string
+                description: Detalhamento do erro
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+################################################################################
+#                                     Definitions                              #
+################################################################################
+definitions:
+  Status:
+    type: object
+    properties:
+      mensagem:
+        type: string
+        description: Mensagem
+      indice:
+        type: number
+        description: Quantos passos já foram executados
+      contador:
+        type: number
+        description: Número total de passos a serem executados
+      bytes:
+        type: number
+        description: Tamanho total do payload até o momento
+      errormsg:
+        type: string
+        description: Mensagem de erro se houver
+      stacktrace:
+        type: string
+        description: Detalhamento do erro
+
+  Error:
+    type: object
+    properties:
+      errormsg:
+        type: string

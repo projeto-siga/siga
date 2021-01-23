@@ -34,13 +34,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -85,6 +88,7 @@ import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioModelos;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelTeste;
 
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -115,6 +119,8 @@ public class ExRelatorioController extends ExController {
 	private static final String ACESSO_VOLTRAMMOD = "VOLTRAMMOD: Volume de Tramitação Por Nome do Documento";
 	private static final String ACESSO_RELTEMPOMEDIOSITUACAO = "RELTEMPOMEDIOSITUACAO:Tempo médio por Situação";
 	private static final String APPLICATION_PDF = "application/pdf";
+	
+	private static final String TESTE = "TESTE:Relatório de Teste";
 
 	/**
 	 * @deprecated CDI eyes only
@@ -246,11 +252,26 @@ public class ExRelatorioController extends ExController {
 		result.include("lotacaoDestinatarioSel", lotacaoDestinatarioSel);
 		result.include("titular", this.getTitular());
 		
-		DpLotacao lotacao =  this.getLotaTitular();
-		result.include("listaSetoresSubordinados", lotacao.getDpLotacaoSubordinadosSet());
+		DpLotacao lotacaoUsu =  this.getLotaTitular();
+		//result.include("listaSetoresSubordinados", obterSubordinados(lotacaoUsu));
 		
 	}
 
+private Set<DpLotacao> obterSubordinados(DpLotacao lotacaoUsu){
+	
+	Query qrySetor = ContextoPersistencia.em().createQuery(
+			"from DpLotacao lot where " + "lot.dataFimLotacao is null "
+					+ "and lot.siglaLotacao = '"
+					+ lotacaoUsu.getSigla() + "'");
+
+	Set<DpLotacao> lotacaoSet = new HashSet<DpLotacao>();
+	
+	for (DpLotacao lot : (List<DpLotacao>) qrySetor.getResultList()) {
+		lotacaoSet.add(lot);
+	}
+
+	return lotacaoSet;
+}
 	private void fazerResultsParaRelExpedientes(
 			final DpLotacaoSelecao lotacaoDestinatarioSel) {
 		result.include("lotaTitular", this.getLotaTitular());
@@ -1715,7 +1736,7 @@ public class ExRelatorioController extends ExController {
 	
 	@Get("app/expediente/rel/emiteRelTeste")
 	public Download aRelTeste() throws Exception {
-		assertAcesso(ACESSO_DATAS);
+		assertAcesso(TESTE);
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));

@@ -60,7 +60,7 @@ public class RelTeste extends RelatorioTemplate {
 		this.setTitle("Relação Modelos - Teste ");
 
 		this.addColuna("Número", 18, RelatorioRapido.ESQUERDA, false); //NUM. PROCESSO
-		this.addColuna("Dt.Movimentação", 15, RelatorioRapido.ESQUERDA, false); //DATA DESPACHO
+		this.addColuna("Dt.Movimento", 15, RelatorioRapido.ESQUERDA, false); //DATA DESPACHO
 //		this.addColuna("Dt.Recebimento", 10, RelatorioRapido.ESQUERDA, false);   //DATA RECEBIMENTO
 //		this.addColuna("Dt.Saída", 10, RelatorioRapido.ESQUERDA, false);   //,DATA SAÍDA,
 		this.addColuna("Despacho", 30, RelatorioRapido.ESQUERDA, false);   //COD. DESPACHO +DESCR. DESPACHO 
@@ -68,6 +68,8 @@ public class RelTeste extends RelatorioTemplate {
 		this.addColuna("Órgão Origem", 40, RelatorioRapido.ESQUERDA, false);   //ORG. ORIGEM + DESCR. ORG. ORIGEM
 		this.addColuna("Órgão Destino", 40, RelatorioRapido.ESQUERDA, true);   //ORG. DESTINO + DESCR. ORG. DESTINO
 		this.addColuna("Matr.Digitador", 15, RelatorioRapido.ESQUERDA, false);   //MATR. DIGITADOR
+		this.addColuna("Tempo", 5, RelatorioRapido.ESQUERDA, false);   //MATR. DIGITADOR
+
 		
 		return this;
 	}
@@ -142,16 +144,7 @@ public class RelTeste extends RelatorioTemplate {
 		List<Object[]> lista = query.getResultList();
 		
 		List<String> listaFinal = new ArrayList<String>();
-		/*
-		 	this.addColuna("Número", 18, RelatorioRapido.ESQUERDA, false); //NUM. PROCESSO
-			this.addColuna("Dt.Movimentação", 10, RelatorioRapido.ESQUERDA, false); //DATA DESPACHO
-			this.addColuna("Despacho", 20, RelatorioRapido.ESQUERDA, false);   //COD. DESPACHO +DESCR. DESPACHO 
-			this.addColuna("Assunto", 30, RelatorioRapido.ESQUERDA, true);   //COD. ASSUNTO+ DESCR. ASSUNTO,
-			this.addColuna("Órgão Origem", 25, RelatorioRapido.ESQUERDA, false);   //ORG. ORIGEM + DESCR. ORG. ORIGEM
-			this.addColuna("Órgão Destino", 30, RelatorioRapido.ESQUERDA, true);   //ORG. DESTINO + DESCR. ORG. DESTINO
-			this.addColuna("Matr.Digitador", 10, RelatorioRapido.ESQUERDA, false);   //MATR. DIGITADOR
-		 */
-		
+
 		for (Object[] array : lista) {
 			
 			listaFinal.add( String.valueOf( array[0] ));//NUM. PROCESSO
@@ -164,6 +157,8 @@ public class RelTeste extends RelatorioTemplate {
 			listaFinal.add(	array[8] != null ? String.valueOf( array[8] ) +" "+ String.valueOf( array[9] ) : ""		);//ORG. ORIGEM	 + DESCR. ORG. ORIGEM
 			listaFinal.add( array[10]  != null ?  String.valueOf( array[10] ) +" "+ String.valueOf( array[11]  ):"");//ORG. DESTINO 	 + DESCR. ORG. DESTINO
 			listaFinal.add( String.valueOf( array[12]));//MATR. DIGITADOR
+			
+			listaFinal.add("1");
 			
 		}
 		

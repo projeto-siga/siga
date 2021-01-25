@@ -158,8 +158,8 @@ app
 								td.tipoResponsavel = t.tipoDeResponsavel;
 								// td.definicaoDeResponsavel =
 								// t.definicaoDeResponsavel;
-								//td.depois = t.seguinteIde;
-								//td.ultimo = t.ultimo;
+								// td.depois = t.seguinteIde;
+								// td.ultimo = t.ultimo;
 								td.depois = t.ultimo ? "fim" : t.seguinteIde;
 								td.ordem = i;
 								td.variavel = [];
@@ -185,8 +185,6 @@ app
 										}
 									}
 								}
-
-								console.log("TESTE!@#", td);
 
 								pd.tarefa.push(td);
 
@@ -299,32 +297,144 @@ app
 										$scope.graphDrawDebounced();
 									}, true);
 
+					$scope.getResponsavelNome = function(s) {
+						if (!$scope.responsaveis)
+							return;
+						for (var i = 0; i < $scope.responsaveis.length; i++) {
+							if ($scope.responsaveis[i].id === s)
+								return $scope.responsaveis[i].nome;
+						}
+						return s;
+					}
+
 					$scope.graphDraw = function() {
 						console.log('graphDraw')
 						$scope.dot = $scope.getDot($scope.data.workflow);
-						$.ajax({
-						    url: "/siga/public/app/graphviz/svg",
-						    data: $scope.dot,
-						    type: 'POST',
-						    processData: false,
-						    contentType: 'text/vnd.graphviz',
-						    contents: window.String,
-						    success: function(data) {
-						    	document.getElementById('graph-workflow').innerHTML = data;
-						    },
-						    error: function(data) {
-						    	$scope.showError(data);
-						    }
-						});
-						
+						$
+								.ajax({
+									url : "/siga/public/app/graphviz/svg",
+									data : $scope.dot,
+									type : 'POST',
+									processData : false,
+									contentType : 'text/vnd.graphviz',
+									contents : window.String,
+									success : function(data) {
+										document
+												.getElementById('graph-workflow').innerHTML = data;
+									},
+									error : function(data) {
+										$scope.showError(data);
+									}
+								});
+
 					}
 
 					$scope.graphDrawDebounced = debounce($scope.graphDraw,
 							1000, false);
-
+ 
 					function graphElement(shape, n, nextn) {
-						var s = '"' + n.id + '"[shape="' + shape
-								+ '"][label=<<font>' + n.titulo + '</font>>];';
+						var resp;
+						switch (n.tipoResponsavel) {
+						case 'LOTACAO':
+							if (n.refUnidadeResponsavel
+									&& n.refUnidadeResponsavel.originalObject
+									&& n.refUnidadeResponsavel.originalObject.firstLine)
+								resp = n.refUnidadeResponsavel.originalObject.firstLine
+							else
+								resp = n.tipoResponsavel
+							break;
+						case 'PESSOA':
+							if (n.refPessoaResponsavel
+									&& n.refPessoaResponsavel.originalObject
+									&& n.refPessoaResponsavel.originalObject.firstLine)
+								resp = n.refPessoaResponsavel.originalObject.firstLine
+							else
+								resp = n.tipoResponsavel
+							break;
+						case 'RESPONSAVEL':
+							if (n.refResponsavel)
+								resp = $scope
+										.getResponsavelNome(n.refResponsavel)
+							else
+								resp = n.tipoResponsavel
+							break;
+						case 'PRINCIPAL_CADASTRANTE':
+							resp = 'Cadastrante';
+							break;
+						case 'PRINCIPAL_LOTA_CADASTRANTE':
+							resp = 'Lota. Cadastrante';
+							break;
+						case 'PRINCIPAL_TITULAR':
+							resp = 'Titular';
+							break;
+						case 'PRINCIPAL_LOTA_TITULAR':
+							resp = 'Lota. Titular';
+							break;
+						case 'PRINCIPAL_SUBSCRITOR':
+							resp = 'Subscritor';
+							break;
+						case 'PRINCIPAL_LOTA_SUBSCRITOR':
+							resp = 'Lota. Subscritor';
+							break;
+						case 'PRINCIPAL_DESTINATARIO':
+							resp = 'Destinatário';
+							break;
+						case 'PRINCIPAL_LOTA_DESTINATARIO':
+							resp = 'Lota. Destinatário';
+							break;
+						case 'PRINCIPAL_GESTOR':
+							resp = 'Gestor';
+							break;
+						case 'PRINCIPAL_LOTA_GESTOR':
+							resp = 'Lota. Gestor';
+							break;
+						case 'PRINCIPAL_FISCAL_TECNICO':
+							resp = 'Fiscal Técnico';
+							break;
+						case 'PRINCIPAL_LOTA_FISCAL_TECNICO':
+							resp = 'Lota. Fiscal Técnico';
+							break;
+						case 'PRINCIPAL_FISCAL_ADMINISTRATIVO':
+							resp = 'Fiscal Adm.';
+							break;
+						case 'PRINCIPAL_LOTA_FISCAL_ADMINISTRATIVO':
+							resp = 'Lota. Fiscal Adm.';
+							break;
+						case 'PRINCIPAL_INTERESSADO':
+							resp = 'Interessado';
+							break;
+						case 'PRINCIPAL_LOTA_INTERESSADO':
+							resp = 'Lota. Interessado';
+							break;
+						case 'PRINCIPAL_AUTORIZADOR':
+							resp = 'Autorizador';
+							break;
+						case 'PRINCIPAL_LOTA_AUTORIZADOR':
+							resp = 'Lota. Autorizador';
+							break;
+						case 'PRINCIPAL_REVISOR':
+							resp = 'Revisor';
+							break;
+						case 'PRINCIPAL_LOTA_REVISOR':
+							resp = 'Lota. Revisor';
+							break;
+						case 'PRINCIPAL_LIQUIDANTE':
+							resp = 'Liquidante';
+							break;
+						case 'PRINCIPAL_LOTA_LIQUIDANTE':
+							resp = 'Lota. Liquidante';
+							break;
+						default:
+							resp = n.tipoResponsavel
+						}
+						var s = '"'
+								+ n.id
+								+ '"[shape="'
+								+ shape
+								+ '"][label=<'
+								+ n.titulo
+								+ (resp ? "<br/><font point-size=\"10pt\">"
+										+ resp + "</font>" : "") + '>];';
 						if (n.tipo !== "FIM") {
 							if (n.desvio && n.desvio.length > 0) {
 								for ( var x in n.desvio) {

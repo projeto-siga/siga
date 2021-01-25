@@ -64,6 +64,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelClassificacao;
@@ -272,6 +273,14 @@ private Set<DpLotacao> obterSubordinados(DpLotacao lotacaoUsu){
 
 	return lotacaoSet;
 }
+
+private List<ExClassificacao> obeterAssuntos(){
+
+	Query q = em().createNamedQuery(
+			"consultarExClassificacaoComExcecao");
+	return q.getResultList();
+}
+
 	private void fazerResultsParaRelExpedientes(
 			final DpLotacaoSelecao lotacaoDestinatarioSel) {
 		result.include("lotaTitular", this.getLotaTitular());
@@ -1763,6 +1772,13 @@ private Set<DpLotacao> obterSubordinados(DpLotacao lotacaoUsu){
 				getRequest().getParameter("lotacaoTitular"));
 		parametros.put("idTit", getRequest().getParameter("idTit"));
 		//System.out.println(System.getProperty("siga.relat.titulo"));
+		
+		
+		// atribuir parametros : destinos e assuntos da tela de filtro de pesquisa
+//		parametros.put("listaAssuntos","4");
+//		parametros.put("listaSetoresSubordinados","265,409");
+//		
+		
 		addParametrosPersonalizadosOrgãoString(parametros);
 		//System.out.println("Brasao: " + parametros.get("brasao"));
 		final RelTeste rel = new RelTeste(parametros);

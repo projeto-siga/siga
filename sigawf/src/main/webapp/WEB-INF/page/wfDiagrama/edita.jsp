@@ -1,24 +1,34 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	buffer="64kb"%>
+	buffer="64kb"
+	import="br.gov.jfrj.siga.wf.model.enm.WfTipoDeVariavel, br.gov.jfrj.siga.wf.model.enm.WfTipoDeAcessoDeVariavel"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
+<%
+	pageContext.setAttribute("tipoDeVariavel", WfTipoDeVariavel.values());
+	pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
+%>
+
+
 <siga:pagina titulo="Diagrama" incluirJs="/sigawf/js/diagrama.js">
 
-	<link rel="stylesheet"	href="/siga/fontawesome/css/all.css"></link>
+	<link rel="stylesheet" href="/siga/fontawesome/css/all.css"></link>
 
 	<!-- CSS Customization -->
 	<link rel="stylesheet" href="/sigawf/css/diagrama.css"></link>
-	
-	<link rel="stylesheet"	href="/sigawf/js/angucomplete-alt/angucomplete-alt.css"></link>
 
-	<script	src="/siga/javascript/jquery/3.3.1/jquery.min.js" type="text/javascript"></script>
-	<script src="/siga/bootstrap/js/bootstrap.bundle.min.js?v=4.1.1" type="text/javascript"></script>
+	<link rel="stylesheet"
+		href="/siga/javascript/angucomplete-alt/angucomplete-alt.css"></link>
+
+	<script src="/siga/javascript/jquery/3.3.1/jquery.min.js"
+		type="text/javascript"></script>
+	<script src="/siga/bootstrap/js/bootstrap.bundle.min.js?v=4.1.1"
+		type="text/javascript"></script>
 
 
-	<script	src="/siga/javascript/angularjs/1.8.2/angular.min.js"></script>
+	<script src="/siga/javascript/angularjs/1.8.2/angular.min.js"></script>
 
 	<script src="/siga/javascript/angucomplete-alt/angucomplete-alt.js"></script>
 
@@ -195,7 +205,7 @@
 										remote-url="/siga/app/lotacao/buscar-json/" angucomplete-alt
 										name="refUnidadeResponsavel" placeholder="Pesquisar Unidade"
 										id="refUnidadeResponsavel" class="angucomplete-ctrl p-0"
-										template-url="/sigawf/js/angucomplete-alt/custom-template.html"></div>
+										template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
 								</label> </section>
 								<section
 									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL') && tarefaItem.tipoResponsavel == 'PESSOA'"
@@ -214,7 +224,7 @@
 										remote-url="/siga/app/pessoa/buscar-json/" angucomplete-alt
 										name="refPessoaResponsavel" placeholder="Pesquisar Pessoa"
 										id="refPessoaResponsavel" class="angucomplete-ctrl p-0"
-										template-url="/sigawf/js/angucomplete-alt/custom-template.html"></div>
+										template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
 								</label> </section>
 								<section
 									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL') && tarefaItem.tipoResponsavel == 'RESPONSAVEL'"
@@ -240,7 +250,7 @@
 										remote-url="/sigaex/app/modelo/buscar-json/" angucomplete-alt
 										name="ref" placeholder="Pesquisar Tipologia Documental"
 										id="ref" class="form-control angucomplete-ctrl"
-										template-url="/sigawf/js/angucomplete-alt/custom-template.html"></div>
+										template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
 								</label> </section>
 								<fieldset ng-show="tarefaItem.tipo == 'FORMULARIO'"
 									title="Variáveis" class="col col-12">
@@ -309,18 +319,21 @@
 													title="Preenchimento obrigatório"
 													class="label-clue fa fa-asterisk"></i><select
 													ng-model="variavelItem.tipo" ng-required="true"
-													class="form-control"><option value="STRING">String</option>
-														<option value="DATE">Data</option>
-														<option value="BOOLEAN">Booleana</option></select></label> <i></i> </section>
+													class="form-control">
+														<c:forEach items="${tipoDeVariavel}" var="val">
+															<option value="${val.name()}">${val.descr}</option>
+														</c:forEach>
+												</select></label> <i></i> </section>
 												<section class="col col-12 col-md-3 form-group"> <label
 													for="tipoDeEdicao" title="" class="label">Edição<i
 													title="Preenchimento obrigatório"
 													class="label-clue fa fa-asterisk"></i><select
 													ng-model="variavelItem.tipoDeEdicao" ng-required="true"
-													class="form-control"><option value="READ_WRITE">Leitura
-															e Escrita</option>
-														<option value="READ_ONLY">Apenas Leitura</option></select></label> <i></i>
-												</section>
+													class="form-control">
+														<c:forEach items="${tipoDeAcesso}" var="val">
+															<option value="${val.name()}">${val.descr}</option>
+														</c:forEach>
+												</select></label> <i></i> </section>
 											</div>
 										</div>
 									</div>

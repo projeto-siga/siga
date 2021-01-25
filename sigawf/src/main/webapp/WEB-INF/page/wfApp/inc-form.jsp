@@ -35,7 +35,7 @@
 				<c:set var="valor" value="${pi.obterValorDeVariavel(variavel)}" />
 				<div class="form-group">
 					<c:choose>
-						<c:when test="${fn:startsWith(variavel.identificador,'sel_')}">
+						<c:when test="${variavel.tipo eq 'SELECAO'}">
 							<label>${fn:substring(variavel.nome,0,fn:indexOf(variavel.nome,'('))}</label>
 						</c:when>
 						<c:otherwise>
@@ -43,81 +43,130 @@
 						</c:otherwise>
 					</c:choose>
 
-					<c:set var="editable" value="${variavel.acesso eq 'READ_WRITE'}" />
+					<c:set var="editable"
+						value="${variavel.acesso eq 'READ_WRITE_REQUIRED' or variavel.acesso eq 'READ_WRITE'}" />
 					<c:if test="${editable}">
 						<input name="campoIdentificador[${fieldIndex}]" type="hidden"
 							value="${variavel.identificador}" />
 					</c:if>
 					<c:choose>
-						<c:when test="${fn:startsWith(variavel.identificador,'doc_')}">
+						<c:when test="${variavel.tipo eq 'DOC_MOBIL'}">
 							<c:choose>
 								<c:when test="${editable}">
 									<siga:selecao propriedade="${variavel.identificador}"
 										modulo="sigaex" tipo="expediente" tema="simple"
-										ocultardescricao="sim" siglaInicial="${valor}" />
+										ocultardescricao="sim" siglaInicial="${valor}"
+										requiredValue="${variavel.acesso eq 'READ_WRITE_REQUIRED' ? 'required' : ''}" />
 								</c:when>
 								<c:otherwise>
-									<a href="/sigaex/app/expediente/doc/exibir?sigla=${valor}">${valor}</a>
+									<div class="form-control" readonly>
+										<a href="/sigaex/app/expediente/doc/exibir?sigla=${valor}">${valor}</a>&nbsp;
+									</div>
 								</c:otherwise>
 							</c:choose>
 						</c:when>
-						<c:when test="${fn:startsWith(variavel.identificador,'pes_')}">
+						<c:when test="${variavel.tipo eq 'PESSOA'}">
 							<c:choose>
 								<c:when test="${editable}">
 									<siga:selecao propriedade="${variavel.identificador}"
 										modulo="siga" tipo="pessoa" tema="simple"
-										ocultardescricao="sim" siglaInicial="${valor}" />
+										ocultardescricao="sim" siglaInicial="${valor}"
+										requiredValue="${variavel.acesso eq 'READ_WRITE_REQUIRED' ? 'required' : ''}" />
 								</c:when>
 								<c:otherwise>
-									${valor}
+									<div class="form-control" readonly>
+										<a href="/siga/app/pessoa/exibir?sigla=${valor}">${valor}</a>&nbsp;
+									</div>
 								</c:otherwise>
 							</c:choose>
 						</c:when>
-						<c:when test="${fn:startsWith(variavel.identificador,'lot_')}">
+						<c:when test="${variavel.tipo eq 'LOTACAO'}">
 							<c:choose>
 								<c:when test="${editable}">
 									<siga:selecao propriedade="${variavel.identificador}"
 										modulo="siga" tipo="lotacao" tema="simple"
-										ocultardescricao="sim" siglaInicial="${valor}" />
+										ocultardescricao="sim" siglaInicial="${valor}"
+										requiredValue="${variavel.acesso eq 'READ_WRITE_REQUIRED' ? 'required' : ''}" />
 								</c:when>
 								<c:otherwise>
-									${valor}
+									<div class="form-control" readonly>
+										<a href="/siga/app/lotacao/exibir?sigla=${valor}">${valor}</a>&nbsp;
+									</div>
 								</c:otherwise>
 							</c:choose>
 						</c:when>
-						<c:when test="${fn:startsWith(variavel.identificador,'dt_')}">
+						<c:when test="${variavel.tipo eq 'DOUBLE'}">
+							<c:choose>
+								<c:when test="${editable}">
+									<input name="campoValor[${fieldIndex}]" type="text"
+										value="<fmt:formatNumber value="${valor}" />"
+										${variavel.acesso eq 'READ_WRITE_REQUIRED' ? 'required' : ''}
+										class="form-control" />
+								</c:when>
+								<c:otherwise>
+									<div class="form-control" readonly>
+										<fmt:formatNumber value="${valor}" />
+										&nbsp;
+									</div>
+								</c:otherwise>
+							</c:choose>
+						</c:when>
+						<c:when test="${variavel.tipo eq 'DATE'}">
 							<c:choose>
 								<c:when test="${editable}">
 									<input name="campoValor[${fieldIndex}]" type="text"
 										value="<fmt:formatDate pattern="dd/MM/yyyy"	value="${valor}" />"
+										${variavel.acesso eq 'READ_WRITE_REQUIRED' ? 'required' : ''}
 										onblur="javascript:verifica_data(this, true);"
 										class="form-control" />
 								</c:when>
 								<c:otherwise>
-									<fmt:formatDate pattern="dd/MM/yyyy" value="${valor}" />
+									<div class="form-control" readonly>
+										<fmt:formatDate pattern="dd/MM/yyyy" value="${valor}" />
+										&nbsp;
+									</div>
 								</c:otherwise>
 							</c:choose>
 						</c:when>
-						<c:when test="${fn:startsWith(variavel.identificador,'sel_')}">
+						<c:when test="${variavel.tipo eq 'BOOLEAN'}">
 							<c:choose>
 								<c:when test="${editable}">
-									<select name="campoValor[${fieldIndex}]" class="form-control">
+									<select name="campoValor[${fieldIndex}]" class="form-control"
+										${variavel.acesso eq 'READ_WRITE_REQUIRED' ? 'required' : ''}>
+										<option value=""></option>
+										<option value="1"
+											${valor eq '1' or valor eq 'true' ? 'selected' : ''}>Sim</option>
+										<option value="0"
+											${valor eq '0' or valor eq 'false' ? 'selected' : ''}>Não</option>
+									</select>
+								</c:when>
+								<c:otherwise>
+									<div class="form-control" readonly>${valor eq '1' or valor eq 'true' ? 'Sim' : valor eq '0' or valor eq 'false' ? 'Não' : ''}&nbsp;</div>
+								</c:otherwise>
+							</c:choose>
+						</c:when>
+						<c:when test="${variavel.tipo eq 'SELECAO'}">
+							<c:choose>
+								<c:when test="${editable}">
+									<select name="campoValor[${fieldIndex}]" class="form-control"
+										${variavel.acesso eq 'READ_WRITE_REQUIRED' ? 'required' : ''}>
 										<c:forEach var="opcao"
 											items="${wf:listarOpcoes(variavel.nome)}">
-											<option value="${opcao}">${opcao}</option>
+											<option value="${opcao}" ${valor eq opcao ? 'selected' : ''}>${opcao}</option>
 										</c:forEach>
 									</select>
 								</c:when>
 								<c:otherwise>
-										${valor}
-									</c:otherwise>
+									<div class="form-control" readonly>${valor}&nbsp;</div>
+								</c:otherwise>
 							</c:choose>
 						</c:when>
 						<c:otherwise>
 							<c:choose>
 								<c:when test="${editable}">
 									<input name="campoValor[${fieldIndex}]" type="text"
-										value="${valor}" class="form-control" />
+										value="${valor}" class="form-control"
+										${variavel.acesso eq 'READ_WRITE_REQUIRED' ? 'required' : ''} />
 								</c:when>
 								<c:otherwise>
 									<div class="form-control" readonly>${valor}&nbsp;</div>

@@ -78,20 +78,25 @@
 											aria-haspopup="true" id="dropBtn"
 											class="btn btn-secondary dropdown-toggle">{{$index+1}}</button>
 										<div aria-labelledby="dropBtn" class="dropdown-menu pt-0 pb-0">
-											<button ng-click="data.workflow.tarefa.splice($index, 1);"
-												class="btn btn-link" ng-disabled>
-												<i class="fa fa-fa fa-trash"></i>
+											<button
+												ng-click="data.workflow.tarefa.splice($index, 0, {});"
+												class="btn btn-link p-2" ng-disabled>
+												<i class="fa fa-fa fa-plus"></i>
 											</button>
 											<button
 												ng-click="data.workflow.tarefa[$index] = data.workflow.tarefa.splice($index - 1, 1, data.workflow.tarefa[$index])[0]"
-												class="btn btn-link" ng-disabled="$index === 0">
+												class="btn btn-link p-2" ng-disabled="$index === 0">
 												<i class="fa fa-fa fa-arrow-up"></i>
 											</button>
 											<button
 												ng-click="data.workflow.tarefa[$index] = data.workflow.tarefa.splice($index + 1, 1, data.workflow.tarefa[$index])[0]"
-												class="btn btn-link"
+												class="btn btn-link p-2"
 												ng-disabled="$index === data.workflow.tarefa.length - 1">
 												<i class="fa fa-fa fa-arrow-down"></i>
+											</button>
+											<button ng-click="data.workflow.tarefa.splice($index, 1);"
+												class="btn btn-link p-2" ng-disabled>
+												<i class="fa fa-fa fa-trash"></i>
 											</button>
 										</div>
 									</div>
@@ -279,20 +284,25 @@
 															class="btn btn-secondary dropdown-toggle">{{$index+1}}</button>
 														<div aria-labelledby="dropBtn"
 															class="dropdown-menu pt-0 pb-0">
-															<button ng-click="tarefaItem.variavel.splice($index, 1);"
-																class="btn btn-link" ng-disabled>
-																<i class="fa fa-fa fa-trash"></i>
+															<button
+																ng-click="tarefaItem.variavel.splice($index, 0, {});"
+																class="btn btn-link p-2" ng-disabled>
+																<i class="fa fa-fa fa-plus"></i>
 															</button>
 															<button
 																ng-click="tarefaItem.variavel[$index] = tarefaItem.variavel.splice($index - 1, 1, tarefaItem.variavel[$index])[0]"
-																class="btn btn-link" ng-disabled="$index === 0">
+																class="btn btn-link p-2" ng-disabled="$index === 0">
 																<i class="fa fa-fa fa-arrow-up"></i>
 															</button>
 															<button
 																ng-click="tarefaItem.variavel[$index] = tarefaItem.variavel.splice($index + 1, 1, tarefaItem.variavel[$index])[0]"
-																class="btn btn-link"
+																class="btn btn-link p-2"
 																ng-disabled="$index === tarefaItem.variavel.length - 1">
 																<i class="fa fa-fa fa-arrow-down"></i>
+															</button>
+															<button ng-click="tarefaItem.variavel.splice($index, 1);"
+																class="btn btn-link p-2" ng-disabled>
+																<i class="fa fa-fa fa-trash"></i>
 															</button>
 														</div>
 													</div>
@@ -365,20 +375,25 @@
 															class="btn btn-secondary dropdown-toggle">{{$index+1}}</button>
 														<div aria-labelledby="dropBtn"
 															class="dropdown-menu pt-0 pb-0">
-															<button ng-click="tarefaItem.desvio.splice($index, 1);"
-																class="btn btn-link" ng-disabled>
-																<i class="fa fa-fa fa-trash"></i>
+															<button
+																ng-click="tarefaItem.desvio.splice($index, 0, {});"
+																class="btn btn-link p-2" ng-disabled>
+																<i class="fa fa-fa fa-plus"></i>
 															</button>
 															<button
 																ng-click="tarefaItem.desvio[$index] = tarefaItem.desvio.splice($index - 1, 1, tarefaItem.desvio[$index])[0]"
-																class="btn btn-link" ng-disabled="$index === 0">
+																class="btn btn-link p-2" ng-disabled="$index === 0">
 																<i class="fa fa-fa fa-arrow-up"></i>
 															</button>
 															<button
 																ng-click="tarefaItem.desvio[$index] = tarefaItem.desvio.splice($index + 1, 1, tarefaItem.desvio[$index])[0]"
-																class="btn btn-link"
+																class="btn btn-link p-2"
 																ng-disabled="$index === tarefaItem.desvio.length - 1">
 																<i class="fa fa-fa fa-arrow-down"></i>
+															</button>
+															<button ng-click="tarefaItem.desvio.splice($index, 1);"
+																class="btn btn-link p-2" ng-disabled>
+																<i class="fa fa-fa fa-trash"></i>
 															</button>
 														</div>
 													</div>

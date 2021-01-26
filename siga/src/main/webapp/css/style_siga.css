@@ -276,6 +276,16 @@ p.gt-table-action-list a.link-tag {
 
 /*
 ######################
+# SELECT 2
+######################
+*/
+.select2-container--bootstrap .select2-selection--single .select2-selection__placeholder {
+   	color: #555555!important;
+}
+
+
+/*
+######################
 # SIGA MODAL
 ######################
 */

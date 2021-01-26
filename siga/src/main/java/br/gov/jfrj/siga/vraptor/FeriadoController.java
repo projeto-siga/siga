@@ -79,6 +79,7 @@ public class FeriadoController extends SigaController {
 		result.include("itens", CpDao.getInstance().listarCpFeriadoPorDescricao());
 	}
 	
+	@Transacional
 	@Post("/app/feriado/salvar")
 	public void aEditarGravar(String dscFeriado, Integer id) throws Exception {
 		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
@@ -104,6 +105,7 @@ public class FeriadoController extends SigaController {
 		result.redirectTo(this).lista(null);
 	}
 	
+	@Transacional
 	@Get("/app/feriado/excluir")
 	public void excluirFeriado(Integer id) throws Exception {
 		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
@@ -125,6 +127,7 @@ public class FeriadoController extends SigaController {
 		result.redirectTo(this).lista(null);
 	}
 	
+	@Transacional
 	@Get("/app/feriado/excluir-ocorrencia")
 	public void excluirOcorrencia(Long idOcorrencia) throws Exception {
 		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
@@ -176,6 +179,7 @@ public class FeriadoController extends SigaController {
 		
 	}
 	
+	@Transacional
 	@Post("/app/feriado/gravar-ocorrencia")
 	public void gravarOcorrencia(Date dtIniFeriado, Date dtFimFeriado, Long idOcorrencia,
 			Integer id, DpLotacaoSelecao lotacao_lotacaoSel, Long idOrgaoUsu, Long idLocalidade) throws Exception {
@@ -253,6 +257,7 @@ public class FeriadoController extends SigaController {
 		result.include("listaLocalidades", localidades);
 	}
 	
+	@Transacional
 	@Get("/app/feriado/excluir-aplicacao")
 	public void excluirAplicacao(Integer idAplicacao) throws Exception {
 //		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
@@ -272,19 +277,19 @@ public class FeriadoController extends SigaController {
 		}
 	}
 
-	public CpFeriado daoFeriado(Integer id) {
+	protected CpFeriado daoFeriado(Integer id) {
 		return dao().consultar(id, CpFeriado.class, false);
 	}
 	
-	public CpOcorrenciaFeriado daoOcorrenciaFeriado(long id) {
+	protected CpOcorrenciaFeriado daoOcorrenciaFeriado(long id) {
 		return dao().consultar(id, CpOcorrenciaFeriado.class, false);
 	}
 	
-	public CpAplicacaoFeriado daoAplicacaoFeriado(long id) {
+	protected CpAplicacaoFeriado daoAplicacaoFeriado(long id) {
 		return dao().consultar(id, CpAplicacaoFeriado.class, false);
 	}
 	
-	public Date stringToDate(String data) throws Exception {   
+	protected Date stringToDate(String data) throws Exception {   
         if (data == null || data.equals(""))  
             return null;            
         Date date = null;  
@@ -298,7 +303,7 @@ public class FeriadoController extends SigaController {
     }  
 
 
-	public List<CpAplicacaoFeriado> getListaAplicacoes(Long idOcorrencia) {
+	protected List<CpAplicacaoFeriado> getListaAplicacoes(Long idOcorrencia) {
 		List<CpAplicacaoFeriado> aplicacoes = new ArrayList<CpAplicacaoFeriado>();
 		CpAplicacaoFeriado apl = new CpAplicacaoFeriado();
 		CpOcorrenciaFeriado ocorrencia = new CpOcorrenciaFeriado();

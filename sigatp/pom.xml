@@ -17,7 +17,7 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
-			<version>${hibernate.version}</version>
+						<version>${hibernate.version}</version>
 		</dependency>
 
 		<dependency>
@@ -77,20 +77,18 @@
 		<dependency>
 			<groupId>javax.enterprise</groupId>
 			<artifactId>cdi-api</artifactId>
-			<scope>provided</scope>
+			<version>1.2</version>
 		</dependency>
+		
+		      	<dependency>
+			<groupId>com.crivano</groupId>
+			<artifactId>swaggerservlet</artifactId>
+		</dependency>
+		
+	
 		
 		<!-- FIM DEPENDENCIAS PARA VRAPTORE JSP -->
 
-
-		<!-- INICIO POM-PLAY -->
-		<!-- Dependencias obrigatorias caso contrario lancar� classnotfound na 
-			aplicacao -->
-		<dependency>
-			<groupId>net.sf.oval</groupId>
-			<artifactId>oval</artifactId>
-			<version>1.84</version>
-		</dependency>
 		
 	<!-- https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-core-asl -->
 <dependency>
@@ -103,6 +101,7 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-envers</artifactId>
+			<version>${hibernate.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.hibernate</groupId>

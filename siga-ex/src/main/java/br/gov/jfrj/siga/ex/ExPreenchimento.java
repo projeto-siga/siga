@@ -36,7 +36,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
  */
 @Entity
 @BatchSize(size = 500)
-@Table(name = "EX_PREENCHIMENTO", catalog = "SIGA")
+@Table(name = "siga.ex_preenchimento")
 public class ExPreenchimento extends AbstractExPreenchimento implements
 		Serializable {
 

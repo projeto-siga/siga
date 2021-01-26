@@ -27,8 +27,8 @@ import br.gov.jfrj.siga.tp.validation.annotation.Data;
 
 @Entity
 @Audited
-@Table(schema = "SIGATP")
-public class ControleGabinete extends TpModel implements ConvertableEntity<Long> {
+@Table(name = "controlegabinete", schema = "sigatp")
+public class ControleGabinete extends TpModel implements ConvertableEntity {
 
     private static final long serialVersionUID = 5270396853989326489L;
     public static final ActiveRecord<ControleGabinete> AR = new ActiveRecord<>(ControleGabinete.class);
@@ -87,7 +87,6 @@ public class ControleGabinete extends TpModel implements ConvertableEntity<Long>
         return id;
     }
 
-    @Override
     public void setId(Long id) {
         this.id = id;
     }

@@ -6,7 +6,10 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+
+import org.ocpsoft.prettytime.PrettyTime;
 
 import com.crivano.swaggerservlet.SwaggerServlet;
 
@@ -21,12 +24,10 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.Marca;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.MesaGetRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.MesaGetResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.MesaItem;
-import br.gov.jfrj.siga.ex.api.v1.TokenCriarPost.Usuario;
 import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
 import br.gov.jfrj.siga.ex.bl.RequestInfo;
-import br.gov.jfrj.siga.ex.bl.Mesa2.GrupoDeMarcadorEnum;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
@@ -68,19 +69,12 @@ public class MesaGet implements IMesaGet {
 
 		private final Integer id;
 		private final String nome;
-		private final String icone;
-		private final boolean visible;
-		private final boolean collapsed;
-		private final boolean hide;
 
 		private GrupoDeMarcadorEnum(Integer id, String nome, String icone, boolean visible, boolean collapsed, boolean hide) {
 			this.id = id;
 			this.nome = nome;
-			this.icone = icone;
-			this.visible = visible;
-			this.collapsed = collapsed;
-			this.hide = hide;
 		}
+
 		public String getNome() {
 			return this.nome;
 		}
@@ -404,7 +398,6 @@ public class MesaGet implements IMesaGet {
 
 		SwaggerHelper.buscarEValidarUsuarioLogado();
 		SigaObjects so = SwaggerHelper.getSigaObjects();
-		Usuario u = TokenCriarPost.assertUsuario();
 		so.assertAcesso("DOC:Módulo de Documentos;" + "");
 		
 		try {
@@ -427,7 +420,7 @@ public class MesaGet implements IMesaGet {
 				map.get(mobil).add(mm);
 			}
 
-			resp.list = listarReferencias(TipoDePainelEnum.UNIDADE, map, cadastrante, cadastrante.getLotacao(), u,
+			resp.list = listarReferencias(TipoDePainelEnum.UNIDADE, map, cadastrante, cadastrante.getLotacao(), 
 					ExDao.getInstance().consultarDataEHoraDoServidor());
 		}catch (Exception e) {
 			e.printStackTrace(System.out);
@@ -441,8 +434,21 @@ public class MesaGet implements IMesaGet {
 		return "obter classe processual";
 	}
 
+	private static String calcularTempoRelativo(Date anterior) {
+		PrettyTime p = new PrettyTime(new Date(), new Locale("pt"));
+	
+		String tempo = p.format(anterior);
+		tempo = tempo.replace(" atrás", "");
+		tempo = tempo.replace(" dias", " dias");
+		tempo = tempo.replace(" horas", "h");
+		tempo = tempo.replace(" minutos", "min");
+		tempo = tempo.replace(" segundos", "s");
+		tempo = tempo.replace("agora há pouco", "agora");
+		return tempo;
+	}
+
 	public static List<MesaItem> listarReferencias(TipoDePainelEnum tipo, Map<ExMobil, List<MeM>> references,
-			DpPessoa pessoa, DpLotacao unidade, Usuario usuario, Date currentDate) {
+			DpPessoa pessoa, DpLotacao unidade, Date currentDate) {
 		List<MesaItem> l = new ArrayList<>();
 
 		for (ExMobil mobil : references.keySet()) {
@@ -455,7 +461,7 @@ public class MesaGet implements IMesaGet {
 			else
 				datahora = mobil.getDoc().getDtAltDoc();
 			r.datahora = datahora;
-			r.tempoRelativo = Utils.calcularTempoRelativo(datahora);
+			r.tempoRelativo = MesaGet.calcularTempoRelativo(datahora);
 
 			r.codigo = mobil.getCodigoCompacto();
 			r.sigla = mobil.getSigla();
@@ -490,7 +496,7 @@ public class MesaGet implements IMesaGet {
 
 				t.nome = mar.getNome();
 				t.icone = mar.getIcone();
-				t.titulo = Utils.calcularTempoRelativo(tag.marca.getDtIniMarca());
+				t.titulo = MesaGet.calcularTempoRelativo(tag.marca.getDtIniMarca());
 
 				if (tag.marca.getDpPessoaIni() != null) {
 					DpPessoa pes = tag.marca.getDpPessoaIni().getPessoaAtual();

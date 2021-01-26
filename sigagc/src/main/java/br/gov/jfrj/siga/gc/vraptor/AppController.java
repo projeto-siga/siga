@@ -36,6 +36,7 @@ import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.HttpResult;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.model.CpPerfilSelecao;
@@ -207,6 +208,14 @@ public class AppController extends GcController {
 		renderKnowledge(id, tags, "sidebar", msgvazio, urlvazio, titulo,
 				testarAcesso, popup, estiloBusca, podeCriar, pagina);
 	}
+	
+	public void knowledgeSidebarSr(Long id, String[] tags, String msgvazio,
+			String urlvazio, String titulo, boolean testarAcesso,
+			boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
+			throws Exception {
+		renderKnowledge(id, tags, "sidebar", msgvazio, urlvazio, titulo,
+				testarAcesso, popup, estiloBusca, podeCriar, pagina);
+	}
 
 	private void renderKnowledge(Long id, String[] tags, String estilo,
 			String msgvazio, String urlvazio, String titulo,
@@ -319,6 +328,7 @@ public class AppController extends GcController {
 		result.include("pagina", pagina);
 	}
 
+	@Transactional
 	public void updateTag(String before, String after) {
 
 		// Edson: Atualizando tags de classificacao:
@@ -369,7 +379,7 @@ public class AppController extends GcController {
 		result.redirectTo(this).estatisticaGeral();
 	}
 
-	@Path("/estatisticaGeral")
+	@Get("/app/estatisticaGeral")
 	public void estatisticaGeral() throws Exception {
 		// List<GcInformacao> lista = GcInformacao.all().fetch();
 
@@ -431,33 +441,32 @@ public class AppController extends GcController {
 		result.include("listaPrincipaisTags", listaPrincipaisTags);
 		result.include("cloud", cloud);
 		result.include("evolucao", evolucao);
+		result.use(Results.page()).defaultView();
 	}
 
 	public void estatisticaLotacao() throws Exception {
-		// List<GcInformacao> lista = GcInformacao.all().fetch();
 
 		DpLotacao lotacao = getLotaTitular();
 
 		Query query1 = em().createNamedQuery("maisRecentesLotacao");
-		// query1.setParameter("idLotacao", lotacao.getId());
 		query1.setParameter("idlotacaoInicial", lotacao.getIdLotacaoIni());
 		query1.setMaxResults(5);
 		List<Object[]> listaMaisRecentes = query1.getResultList();
-		if (listaMaisRecentes.size() == 0)
+		if (listaMaisRecentes.isEmpty())
 			listaMaisRecentes = null;
 
 		Query query2 = em().createNamedQuery("maisVisitadosLotacao");
 		query2.setParameter("idlotacaoInicial", lotacao.getIdLotacaoIni());
 		query2.setMaxResults(5);
 		List<Object[]> listaMaisVisitados = query2.getResultList();
-		if (listaMaisVisitados.size() == 0)
+		if (listaMaisVisitados.isEmpty())
 			listaMaisVisitados = null;
 
 		Query query3 = em().createNamedQuery("principaisAutoresLotacao");
 		query3.setParameter("idlotacaoInicial", lotacao.getIdLotacaoIni());
 		query3.setMaxResults(5);
 		List<Object[]> listaPrincipaisAutores = query3.getResultList();
-		if (listaPrincipaisAutores.size() == 0)
+		if (listaPrincipaisAutores.isEmpty())
 			listaPrincipaisAutores = null;
 
 		GcCloud cloud = new GcCloud(150.0, 60.0);
@@ -465,7 +474,7 @@ public class AppController extends GcController {
 		query4.setParameter("idlotacaoInicial", lotacao.getIdLotacaoIni());
 		query4.setMaxResults(50);
 		List<Object[]> listaPrincipaisTags = query4.getResultList();
-		if (listaPrincipaisTags.size() == 0)
+		if (listaPrincipaisTags.isEmpty())
 			listaPrincipaisTags = null;
 		else {
 			for (Object[] t : listaPrincipaisTags) {
@@ -497,6 +506,7 @@ public class AppController extends GcController {
 		result.include("listaPrincipaisTags", listaPrincipaisTags);
 		result.include("cloud", cloud);
 		result.include("evolucao", evolucao);
+		result.use(Results.page()).defaultView();
 	}
 
 	@Path({"/app/listar", "/app/informacao/buscar"})
@@ -560,9 +570,14 @@ public class AppController extends GcController {
 
 		// List<GcInformacao> infs = GcInformacao.all().fetch();
 		// não exibe conhecimentos cancelados
-		List<GcInformacao> infs = GcInformacao.AR.find("byHisDtFimIsNull")
-				.fetch();
-
+		// BJN: evitando o erro "Error while executing query from GcInformacao where hisDtFim is null: Unable to find br.gov.jfrj.siga.cp.CpPerfil with id 2471"
+		List<GcInformacao> infs = new ArrayList<GcInformacao>();
+		try {
+			infs = GcInformacao.AR.find("byHisDtFimIsNull")
+					.fetch();
+		} catch (Exception e) {
+		}
+				
 		for (GcInformacao inf : infs) {
 			for (GcTag tag : inf.getTags()) {
 				arvore.add(tag, inf);
@@ -578,8 +593,13 @@ public class AppController extends GcController {
 		GcArvore arvore = new GcArvore();
 		// List<GcInformacao> infs = GcInformacao.all().fetch();
 		// não exibe conhecimentos cancelados
-		List<GcInformacao> infs = GcInformacao.AR.find("byHisDtFimIsNull")
-				.fetch();
+		// BJN: evitando o erro "Error while executing query from GcInformacao where hisDtFim is null: Unable to find br.gov.jfrj.siga.cp.CpPerfil with id 2471"
+		List<GcInformacao> infs = new ArrayList<GcInformacao>();
+		try {
+			infs = GcInformacao.AR.find("byHisDtFimIsNull")
+					.fetch();
+		} catch (Exception e) {
+		}
 
 		if (texto != null && texto.trim().length() > 0) {
 			texto = texto.trim().toLowerCase();
@@ -764,6 +784,36 @@ public class AppController extends GcController {
 							+ ") : O usuário não tem permissão para editar o conhecimento solicitado.");
 	}
 		
+	private static String getRecaptchaSiteKey() {
+		String pwd = null;
+		try {
+			pwd = Prop.get("/siga.recaptcha.key");
+			if (pwd == null)
+				throw new AplicacaoException(
+						"Erro obtendo propriedade siga.recaptcha.key");
+			return pwd;
+		} catch (Exception e) {
+			throw new AplicacaoException(
+					"Erro obtendo propriedade siga.recaptcha.key",
+					0, e);
+		}
+	}
+
+	private static String getRecaptchaSitePassword() {
+		String pwd = null;
+		try {
+			pwd = Prop.get("/siga.recaptcha.pwd");
+			if (pwd == null)
+				throw new AplicacaoException(
+						"Erro obtendo propriedade siga.recaptcha.pwd");
+			return pwd;
+		} catch (Exception e) {
+			throw new AplicacaoException(
+					"Erro obtendo propriedade siga.recaptcha.pwd",
+					0, e);
+		}
+	}
+
 	public void selecaoInplace() throws Exception {
 		int a = 0;
 	}
@@ -782,7 +832,7 @@ public class AppController extends GcController {
 			;
 		
 		String conteudo = bl.marcarLinkNoConteudo(informacao, informacao.getArq()
-				.getConteudoTXT());
+				.getConteudoTXT().replace("/sigagc/app/baixar", "/sigagc/public/app/baixar"));
 		em().detach(informacao);
 		// if (conteudo != null)
 		// informacao.arq.setConteudoTXT(conteudo);
@@ -997,10 +1047,15 @@ public class AppController extends GcController {
 	}
 
 	@Transactional
-	public void gravar(@LoadOptional GcInformacao informacao, String inftitulo,
+	public void gravar(GcInformacao informacao, String inftitulo,
 			String conteudo, String classificacao, String origem,
 			GcTipoInformacao tipo, GcAcesso visualizacao, GcAcesso edicao,
 			CpPerfil grupo) throws Exception {
+		
+		if (informacao.getId() != 0) {
+			informacao = em().find(GcInformacao.class, informacao.getId());
+		}
+
 		// DpPessoa pessoa = (DpPessoa) renderArgs.get("cadastrante");
 		DpPessoa pessoa = getTitular();
 		DpLotacao lotacao = getLotaTitular();

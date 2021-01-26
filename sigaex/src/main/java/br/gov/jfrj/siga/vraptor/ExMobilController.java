@@ -27,6 +27,9 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
@@ -50,9 +53,13 @@ import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.TipoResponsavelEnum;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
@@ -94,6 +101,7 @@ public class ExMobilController extends
 		setItemPagina(50);
 	}
 
+	@Transacional
 	@Get("app/expediente/doc/marcar")
 	public void aMarcar() {
 		assertAcesso("");
@@ -245,112 +253,162 @@ public class ExMobilController extends
 			final String nmDestinatario, final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText,
 			final Long ultMovEstadoDoc, final Integer paramoffset) throws UnsupportedEncodingException {
 			
-		getP().setOffset(paramoffset);
-		this.setPostback(postback);
-
-		final ExMobilBuilder builder = ExMobilBuilder.novaInstancia();
-
-		builder.setPostback(postback).setUltMovTipoResp(ultMovTipoResp)
-				.setUltMovRespSel(ultMovRespSel)
-				.setUltMovLotaRespSel(ultMovLotaRespSel).setOrgaoUsu(orgaoUsu)
-				.setIdTpDoc(idTpDoc).setCpOrgaoSel(cpOrgaoSel)
-				.setSubscritorSel(subscritorSel)
-				.setTipoCadastrante(tipoCadastrante)
-				.setCadastranteSel(cadastranteSel)
-				.setLotaCadastranteSel(lotaCadastranteSel)
-				.setTipoDestinatario(tipoDestinatario)
-				.setDestinatarioSel(destinatarioSel)
-				.setLotacaoDestinatarioSel(lotacaoDestinatarioSel)
-				.setOrgaoExternoDestinatarioSel(orgaoExternoDestinatarioSel)
-				.setClassificacaoSel(classificacaoSel).setOffset(paramoffset);
-
-		builder.processar(getLotaTitular());
-
-		final ExMobilDaoFiltro flt = createDaoFiltro();
-		long tempoIni = System.currentTimeMillis();
-		setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,
-				getTitular(), getLotaTitular()));
 		
-		List lista = dao().consultarPorFiltroOtimizado(flt,
-				builder.getOffset(), getTamanho(), getTitular(),
-				getLotaTitular());
+		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		
+		try {
+			final ExMobilDaoFiltro flt = createDaoFiltro();
+			//long tempoIni = System.currentTimeMillis();
+			setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,getTitular(), getLotaTitular()));
+			
+			
+			LocalDate dtIni = null;
+			LocalDate dtFinal = null;
+			LocalDate dataAtual = LocalDate.now();
+			
+			if (getTamanho() > 50000) {		
+				if (!"".equals(param("dtDocString"))) {
+					if (Data.validaDDMMYYYY(param("dtDocString"))) {
+						dtIni = LocalDate.parse(param("dtDocString"), formatter);
+					} else {
+						throw new RegraNegocioException("Data Inicial inválida.");
+					}
+				} else {
+					throw new RegraNegocioException("Data Inicial não informada. Para grandes volumes, período para exportação não deve ser superior à 90 dias.");
+				}
+				
+				if (!"".equals(param("dtDocFinalString"))) {
+					if (Data.validaDDMMYYYY(param("dtDocFinalString"))) {
+						dtFinal = LocalDate.parse(param("dtDocFinalString"), formatter);
+						if (ChronoUnit.DAYS.between(dtIni, dtFinal) > 90) {
+							throw new RegraNegocioException("Para grandes volumes, período para exportação não deve ser superior à 90 dias.");
+						}	
+					} else {
+						throw new RegraNegocioException("Data Final inválida.");
+					}
+				} else {
+					if (ChronoUnit.DAYS.between(dtIni, dataAtual) > 90) {
+						throw new RegraNegocioException("Para grandes volumes, período para exportação não deve ser superior à 90 dias. Informe a Data Final.");
+					}	
+				}
+			
+			}
+		
+			getP().setOffset(paramoffset);
+			this.setPostback(postback);
+	
+			final ExMobilBuilder builder = ExMobilBuilder.novaInstancia();
+	
+			builder.setPostback(postback).setUltMovTipoResp(ultMovTipoResp)
+					.setUltMovRespSel(ultMovRespSel)
+					.setUltMovLotaRespSel(ultMovLotaRespSel).setOrgaoUsu(orgaoUsu)
+					.setIdTpDoc(idTpDoc).setCpOrgaoSel(cpOrgaoSel)
+					.setSubscritorSel(subscritorSel)
+					.setTipoCadastrante(tipoCadastrante)
+					.setCadastranteSel(cadastranteSel)
+					.setLotaCadastranteSel(lotaCadastranteSel)
+					.setTipoDestinatario(tipoDestinatario)
+					.setDestinatarioSel(destinatarioSel)
+					.setLotacaoDestinatarioSel(lotacaoDestinatarioSel)
+					.setOrgaoExternoDestinatarioSel(orgaoExternoDestinatarioSel)
+					.setClassificacaoSel(classificacaoSel).setOffset(paramoffset);
+	
+			builder.processar(getLotaTitular());
+			
+			if (getTamanho() > 200000) {
+				throw new RegraNegocioException("Numero máximo de registros para exportação excedido. Use os filtros para restringir resultado.");
+			}
+			
+			List lista = dao().consultarPorFiltroOtimizado(flt,
+					builder.getOffset(), getTamanho(), getTitular(),
+					getLotaTitular());
+	
+			InputStream inputStream = null;
+			StringBuffer texto = new StringBuffer();
+			texto.append(";Responsável pela Assinatura;;;Responsável pela situação atual" + System.lineSeparator());
+			texto.append("Número;Unidade;Usuário;Data;Unidade;Usuário;Data;Situação;Documento;Descrição" + System.lineSeparator());
+			
+			
+			ExDocumento e = new ExDocumento();
+			ExMobil m = new ExMobil();
+			ExMarca ma = new ExMarca();
+			String descricao = "";
+			String marcadorFormatado = "";
+			
+			for (Object object : lista) {
+				e = (ExDocumento)(((Object[])object)[0]);
+				m = (ExMobil)(((Object[])object)[1]);
+				ma = (ExMarca)(((Object[])object)[2]);
+				
+						
+				texto.append(m.getCodigo()+";");
+				if(e.getLotaSubscritor() != null && e.getLotaSubscritor().getSigla() != null) {
+					texto.append(e.getLotaSubscritor().getSigla().replaceAll(";",","));
+				}
+				texto.append(";");
+				
+				if(e.getSubscritor() != null && e.getSubscritor().getIniciais() != null) {
+					texto.append(e.getSubscritor().getIniciais().replaceAll(";",","));
+				}
+				texto.append(";");
+				
+				if(e.getDtDocDDMMYY() != null) {
+					texto.append(e.getDtDocDDMMYY());
+				}
+				texto.append(";");
+				
+				/*if(ma.getDpLotacaoIni() != null && ma.getDpLotacaoIni().getLotacaoAtual() != null && ma.getDpLotacaoIni().getLotacaoAtual().getSigla() != null) {
+					texto.append(ma.getDpLotacaoIni().getLotacaoAtual().getSigla().replaceAll(";",","));
+				}*/
+				
+				if(ma.getDpLotacaoIni() != null && ma.getDpLotacaoIni().getSigla() != null) {
+					texto.append(ma.getDpLotacaoIni().getSigla().replaceAll(";",","));
+				}
+				texto.append(";");
+				
+				if(ma.getDpPessoaIni() != null && ma.getDpPessoaIni().getIniciais() != null) {
+					texto.append(ma.getDpPessoaIni().getIniciais().replaceAll(";",","));
+				}
+				texto.append(";");
+				
+				if(ma.getDtIniMarcaDDMMYYYY() != null) {
+					texto.append(ma.getDtIniMarcaDDMMYYYY());
+				}
+				texto.append(";");
 
-		InputStream inputStream = null;
-		StringBuffer texto = new StringBuffer();
-		texto.append(";Responsável pela Assinatura;;;Responsável pela situação atual" + System.lineSeparator());
-		texto.append("Número;Unidade;Usuário;Data;Unidade;Usuário;Data;Situação;Documento;Descrição" + System.lineSeparator());
-		
-		
-		ExDocumento e = new ExDocumento();
-		ExMobil m = new ExMobil();
-		ExMarca ma = new ExMarca();
-		String descricao = "";
-		
-		for (Object object : lista) {
-			e = (ExDocumento)(((Object[])object)[0]);
-			m = (ExMobil)(((Object[])object)[1]);
-			ma = (ExMarca)(((Object[])object)[2]);
-			
-					
-			texto.append(m.getCodigo()+";");
-			if(e.getLotaSubscritor() != null && e.getLotaSubscritor().getSigla() != null) {
-				texto.append(e.getLotaSubscritor().getSigla().replaceAll(";",","));
+				if(ma != null && ma.getCpMarcador() != null && ma.getCpMarcador().getDescrMarcador() != null) {
+					marcadorFormatado = ma.getDescricaoMarcadorFormatadoComData().replaceAll(";",",");
+					texto.append(marcadorFormatado);
+				}
+				texto.append(";");
+				
+				if(e.getNmMod() != null) {
+					texto.append(e.getNmMod().replaceAll(";",","));
+				}
+				texto.append(";");
+				
+				if(Prop.isGovSP()) {
+					descricao = e.getDescrDocumento();
+				} else {
+					Ex.getInstance().getBL();
+					descricao = ExBL.descricaoSePuderAcessar(e, getTitular(), getTitular().getLotacao());
+				}
+				if(descricao != null) {
+					texto.append(descricao.replaceAll("\n", "").replaceAll("\t", "").replaceAll("\r","").replaceAll(";",","));
+				}
+				
+				texto.append(";");
+				texto.append(System.lineSeparator());
 			}
-			texto.append(";");
+			inputStream = new ByteArrayInputStream(texto.toString().getBytes("ISO-8859-1"));
 			
-			if(e.getSubscritor() != null && e.getSubscritor().getIniciais() != null) {
-				texto.append(e.getSubscritor().getIniciais().replaceAll(";",","));
-			}
-			texto.append(";");
-			
-			if(e.getDtDocDDMMYY() != null) {
-				texto.append(e.getDtDocDDMMYY());
-			}
-			texto.append(";");
-			
-			if(ma.getDpLotacaoIni() != null && ma.getDpLotacaoIni().getLotacaoAtual() != null && ma.getDpLotacaoIni().getLotacaoAtual().getSigla() != null) {
-				texto.append(ma.getDpLotacaoIni().getLotacaoAtual().getSigla().replaceAll(";",","));
-			}
-			texto.append(";");
-			
-			if(ma.getDpPessoaIni() != null && ma.getDpPessoaIni().getIniciais() != null) {
-				texto.append(ma.getDpPessoaIni().getIniciais().replaceAll(";",","));
-			}
-			texto.append(";");
-			
-			if(ma.getDtIniMarcaDDMMYYYY() != null) {
-				texto.append(ma.getDtIniMarcaDDMMYYYY());
-			}
-			texto.append(";");
-			
-			if(ma != null && ma.getCpMarcador() != null && ma.getCpMarcador().getDescrMarcador() != null) {
-				if (ma.toString().indexOf("[") >= 0 )
-					texto.append(ma.toString().substring(0, ma.toString().indexOf("[")).replaceAll(";",","));
-				else
-					texto = texto.append(ma.toString().replaceAll(";",","));
-			}
-			texto.append(";");
-			
-			if(e.getNmMod() != null) {
-				texto.append(e.getNmMod().replaceAll(";",","));
-			}
-			texto.append(";");
-			
-			if(Prop.isGovSP()) {
-				descricao = e.getDescrDocumento();
-			} else {
-				descricao = Ex.getInstance().getBL().descricaoSePuderAcessar(e, getTitular(), getTitular().getLotacao());
-			}
-			if(descricao != null) {
-				texto.append(descricao.replaceAll("\n", "").replaceAll("\t", "").replaceAll("\r","").replaceAll(";",","));
-			}
-			
-			texto.append(";");
-			texto.append(System.lineSeparator());
+			return new InputStreamDownload(inputStream, "text/csv", "documentos.csv");	
+
+		} catch (final RegraNegocioException e) {
+			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
+			result.forwardTo(this).aListar(popup, primeiraVez, propriedade, postback, apenasRefresh, ultMovIdEstadoDoc, ordem, visualizacao, ultMovTipoResp, ultMovRespSel, ultMovLotaRespSel, orgaoUsu, idTpDoc, dtDocString, dtDocFinalString, idTipoFormaDoc, idFormaDoc, idMod, anoEmissaoString, numExpediente, numExtDoc, cpOrgaoSel, numAntigoDoc, subscritorSel, nmSubscritorExt, tipoCadastrante, cadastranteSel, lotaCadastranteSel, tipoDestinatario, destinatarioSel, lotacaoDestinatarioSel, orgaoExternoDestinatarioSel, nmDestinatario, classificacaoSel, descrDocumento, fullText, ultMovEstadoDoc, paramoffset);
 		}
-		inputStream = new ByteArrayInputStream(texto.toString().getBytes("ISO-8859-1"));
-		
-		return new InputStreamDownload(inputStream, "text/csv", "documentos.csv");	
+		return null;	
 	}
 
 	@Get("app/expediente/doc/listar")
@@ -477,7 +535,7 @@ public class ExMobilController extends
 		return s;
 	}
 	
-	public ExClassificacao daoClassificacao(long id) {
+	protected ExClassificacao daoClassificacao(long id) {
 		return dao().consultar(id, ExClassificacao.class, false);
 	}
 
@@ -650,12 +708,7 @@ public class ExMobilController extends
 	}
 
 	private Map<Integer, String> getListaTipoDest() {
-		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, SigaMessages.getMessage("usuario.matricula"));
-		map.put(2, "Órgão Integrado");
-		map.put(3, "Externo");
-		map.put(4, "Campo Livre");
-		return map;
+		return TipoResponsavelEnum.getLista();
 	}
 
 	private List<ExFormaDocumento> getTodasFormasDocPorTipoForma(

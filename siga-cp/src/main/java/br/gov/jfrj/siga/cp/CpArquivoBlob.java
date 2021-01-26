@@ -22,6 +22,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
@@ -29,7 +30,14 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.LazyToOne;
+import org.hibernate.annotations.LazyToOneOption;
+
+import br.gov.jfrj.siga.dp.dao.CpDao;
 
 /**
  * A class that represents a row in the CP_ARQUIVO_BLOB table. You can customize
@@ -37,7 +45,8 @@ import org.hibernate.annotations.Immutable;
  */
 @Entity
 @Immutable
-@Table(name = "CP_ARQUIVO_BLOB", schema = "CORPORATIVO")
+@Table(name = "corporativo.cp_arquivo_blob")
+@Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.READ_ONLY)
 public class CpArquivoBlob implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -47,8 +56,8 @@ public class CpArquivoBlob implements Serializable {
 	private java.lang.Long idArqBlob;
 
 	@MapsId
-	@OneToOne(mappedBy = "arquivoBlob")
-	@JoinColumn(name = "ID_ARQ_BLOB") // same name as id @Column
+	@OneToOne(mappedBy = "arquivoBlob", fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_ARQ_BLOB", referencedColumnName = "ID_ARQ") // same name as id @Column
 	private CpArquivo arquivo;
 
 	@Lob

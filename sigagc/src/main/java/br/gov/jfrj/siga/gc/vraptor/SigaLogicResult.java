@@ -1,5 +1,8 @@
 package br.gov.jfrj.siga.gc.vraptor;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
+import java.io.IOException;
 import java.lang.reflect.Method;
 
 import javax.enterprise.inject.Specializes;
@@ -17,6 +20,7 @@ import br.com.caelum.vraptor.interceptor.TypeNameExtractor;
 import br.com.caelum.vraptor.ioc.Container;
 import br.com.caelum.vraptor.proxy.MethodInvocation;
 import br.com.caelum.vraptor.proxy.Proxifier;
+import br.com.caelum.vraptor.proxy.ProxyInvocationException;
 import br.com.caelum.vraptor.proxy.SuperMethod;
 import br.com.caelum.vraptor.view.DefaultLogicResult;
 import br.com.caelum.vraptor.view.FlashScope;
@@ -28,7 +32,7 @@ import br.gov.jfrj.siga.vraptor.PathResolver;
  *
  * @author Guilherme Silveira
  */
-@Typed(SigaLogicResult.class)
+@Specializes
 public class SigaLogicResult extends DefaultLogicResult {
 
 	private static final Logger logger = LoggerFactory.getLogger(DefaultLogicResult.class);
@@ -57,7 +61,6 @@ public class SigaLogicResult extends DefaultLogicResult {
 	}
 	
 
-
 	public <T> T getRedirectURL(final StringBuilder sb, final Class<T> type) {
 		return proxifier.proxify(type, new MethodInvocation<T>() {
 			public Object intercept(T proxy, Method method, Object[] args, SuperMethod superMethod) {
@@ -65,11 +68,10 @@ public class SigaLogicResult extends DefaultLogicResult {
 					throw new IllegalArgumentException(
 							"Your logic method must accept HTTP GET method if you want to redirect to it");
 				}
-				String path = request.getContextPath();
 				String url = router.urlFor(type, method, args);
+				String path = request.getContextPath() + url;
 				includeParametersInFlash(type, method, args);
 
-				path = path + url;
 
 				//Nato: inseri essas duas linhas para corrigir um problema de codepage no redirecionamento
 				response.setContentType("text/html; charset=UTF-8");

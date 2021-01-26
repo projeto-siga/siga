@@ -18,7 +18,7 @@
 <%@ attribute name="tamanho" required="false"%>
 <%@ attribute name="checarInput" required="false"%>
 
-<c:set var="propriedadeClean" value="${fn:replace(propriedade,'.','')}" />
+<c:set var="propriedadeClean" value="${f:slugify(propriedade, false, true)}" />
 
 <c:forEach var="parametro" items="${fn:split(paramList,';')}">
 	<c:set var="p2" value="${fn:split(parametro,'=')}" />

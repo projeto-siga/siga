@@ -25,6 +25,7 @@ import java.util.Optional;
 
 import org.jboss.logging.Logger;
 
+import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.SigaMessages;
@@ -38,6 +39,7 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExParte;
+import br.gov.jfrj.siga.ex.logic.ExPodeAnotar;
 
 public class ExMobilVO extends ExVO {
 
@@ -395,14 +397,17 @@ public class ExMobilVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeReceber(titular, lotaTitular, mob), null, null,
 				null, null, "once");
-
+		
 		addAcao("email_go",
 				"_Tramitar",
 				"/app/expediente/mov",
 				"transferir",
 				Ex.getInstance().getComp()
 						.podeTransferir(titular, lotaTitular, mob));
-
+		
+		addAcao(AcaoVO.builder().nome("_Anotar").icone("note_add").acao("/app/expediente/mov/anotar")
+				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAnotar(mob, titular, lotaTitular)).build());
+		
 		if (mob.isVia() || mob.isVolume()) {
 			addAcao("attach",
 					"Ane_xar",
@@ -410,12 +415,12 @@ public class ExMobilVO extends ExVO {
 					"anexar",
 					Ex.getInstance().getComp()
 							.podeAnexarArquivo(titular, lotaTitular, mob));
-			addAcao("note_add",
-					"_Anotar",
-					"/app/expediente/mov",
-					"anotar",
-					Ex.getInstance().getComp()
-							.podeFazerAnotacao(titular, lotaTitular, mob));
+//			addAcao("note_add",
+//					"_Anotar",
+//					"/app/expediente/mov",
+//					"anotar",
+//					Ex.getInstance().getComp()
+//							.podeFazerAnotacao(titular, lotaTitular, mob));
 			addAcao("page_white_copy",
 					"Incluir _Cópia",
 					"/app/expediente/mov",

@@ -136,6 +136,7 @@ public class AndamentoController extends TpController {
         result.forwardTo(this).atualizarEstado(id);
     }
 
+    
     @RoleAdmin
     @RoleAdminMissao
     @RoleAprovador
@@ -152,7 +153,6 @@ public class AndamentoController extends TpController {
         String acao = (String) result.included().get("acao");
         String acaoExecutada = (acao.substring(0, acao.length() - 1) + "DA").toUpperCase();
         andamento.setEstadoRequisicao(EstadoRequisicao.valueOf(acaoExecutada));
-
         MenuMontador.instance(result).recuperarMenuRequisicoes(id, false, true);
 
         result.include(ANDAMENTO, andamento);

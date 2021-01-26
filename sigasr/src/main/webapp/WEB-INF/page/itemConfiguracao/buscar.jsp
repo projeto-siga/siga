@@ -3,6 +3,7 @@
 <jsp:include page="../popupHeader.jsp"></jsp:include>
 <!-- <script src="//code.jquery.com/jquery-1.11.0.min.js"></script> -->
 <jsp:include page="../main.jsp"></jsp:include>
+<link rel="stylesheet" href="/siga/bootstrap/css/bootstrap.min.css"	type="text/css" media="screen, projection" />
 
 <script language="javascript">
 function sbmt(nivel){
@@ -13,33 +14,37 @@ function sbmt(nivel){
 
 <head><title>Pesquisa de Itens de Configuração</title></head>
 
+
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<div class="gt-content-box gt-for-table">
 			<form action="${linkTo[ItemConfiguracaoController].buscar}" id="frm" enctype="multipart/form-data">
 				<input type="hidden" name="popup" value="true" />
-				<table class="gt-form-table">
+				<table class="table gt-form-table">
 					<tr class="header">
-						<td align="center" valign="top" colspan="4">Dados do item</td>
+						<td align="center" valign="top" colspan="5">Dados do item</td>
 					</tr>
 					<tr>
-						<td>Código:</td>
-						<td><input type="text" name="siglaItemConfiguracao" value="${filtro.siglaItemConfiguracao}" />
+						<td colspan="1">Código</td>
+						<td colspan="4">
+							<input class="form-control" type="text" name="siglaItemConfiguracao" value="${filtro.siglaItemConfiguracao}" />
 						</td>
 					</tr>
 					<tr>
-						<td>Título</td>
-						<td><input type="text" name="tituloItemConfiguracao" value="${filtro.tituloItemConfiguracao}" /></td>
+						<td colspan="1">Título</td>
+						<td colspan="4">
+							<input class="form-control" type="text" name="tituloItemConfiguracao" value="${filtro.tituloItemConfiguracao}" />
+						</td>
 					</tr>
 					<tr>
-						<td><input type="hidden" name="nome" value="${nome}" />
+						<td colspan="5"><input type="hidden" name="nome" value="${nome}" />
 							<input type="hidden" name="propriedade" value="${propriedade}" />
 							<input type="hidden" name="sol.id" value="${sol.idSolicitacao}" />
 							<input type="hidden" name="sol.solicitante.id" value="${sol.solicitante.idPessoa}" />
 							<input type="hidden" name="sol.titular.id" value="${sol.titular.idPessoa}" />
 							<input type="hidden" name="sol.lotaTitular.id" value="${sol.lotaTitular.idLotacao}" />
 							<input type="hidden" name="sol.local.id" value="${sol.local.idComplexo}" />
-							<input type="submit" class="gt-btn-small gt-btn-left" value="Pesquisar" />
+							<input type="submit" class="btn btn-primary" value="Pesquisar" />
 						</td>
 					</tr>
 				</table>
@@ -47,22 +52,14 @@ function sbmt(nivel){
 		</div>
 	</div>
 
-	<br />
-	
-	<div class="gt-content-box gt-for-table">
-		<table class="gt-table gt-table-nowrap display" id="tabela">
-			<col width="40%">
-	  		<col width="10%">
-	  		<col width="25%">
-	  		<col width="25%">
+	<div class="gt-content-box gt-for-table table-responsive">
+		<table class="table gt-table gt-table-nowraps display" id="tabela">
 	  		<thead>
 				<tr id="plim">
-					<th>Título
-					</td>
-					<th>Código
-					</td>
-					<th>Descrição</th>
-					<th>Itens Similares</th>
+					<th style="width: 30%">Título</th>
+					<th style="width: 20%">Código</th>
+					<th style="width: 25%">Descrição</th>
+					<th style="width: 25%">Itens Similares</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -79,7 +76,7 @@ function sbmt(nivel){
 							</c:choose>
 							<c:choose>
 								<c:when test="${item.especifico || (empty sol.solicitante && empty sol.local) }">
-									<a href="javascript:opener.retorna_${param.propriedade}${nome}('${item.id}','${item.sigla}','${item.descricao}');window.close()">${item.tituloItemConfiguracao}</a>
+									<a href="javascript:parent.retorna_${param.propriedade}${nome}('${item.id}','${item.sigla}','${item.descricao}');window.close()">${item.tituloItemConfiguracao}</a>
 								</c:when>
 								<c:otherwise>
 									<span>${item.tituloItemConfiguracao}</span>

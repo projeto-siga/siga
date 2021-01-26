@@ -19,6 +19,7 @@ import org.kxml2.io.KXmlSerializer;
 
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.download.ByteArrayDownload;
@@ -37,6 +38,7 @@ import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
+import br.gov.jfrj.siga.persistencia.ExModeloDaoFiltro;
 
 @Controller
 public class ExModeloController extends ExSelecionavelController {
@@ -60,6 +62,12 @@ public class ExModeloController extends ExSelecionavelController {
 		super(request, result, dao, so, em);
 	}
 
+	@Get
+	@Path({"/app/modelo/buscar-json/{sigla}"})
+	public void busca(String sigla) throws Exception{
+		aBuscarJson(sigla);
+	}
+	
 	@Get("app/modelo/listar")
 	public void lista(final String script) throws Exception {
 		try {
@@ -125,6 +133,7 @@ public class ExModeloController extends ExSelecionavelController {
 		}
 	}
 
+	@Transacional
 	@Post("app/modelo/gravar")
 	public void editarGravar(final Long id, final String nome,
 			final String tipoModelo, final String conteudo,
@@ -171,6 +180,7 @@ public class ExModeloController extends ExSelecionavelController {
 		result.redirectTo(ExModeloController.class).lista(null);
 	}
 
+	@Transacional
 	@Get("app/modelo/desativar")
 	public void desativar(final Long id) throws Exception {
 		ModeloDao.iniciarTransacao();
@@ -234,6 +244,7 @@ public class ExModeloController extends ExSelecionavelController {
 					}
 					if (m.getUuid() == null) {
 						m.setUuid(UUID.randomUUID().toString());
+				        SigaTransacionalInterceptor.upgradeParaTransacional();
 						dao().gravar(m);
 					}
 					if (m.getUuid() != null) {
@@ -367,6 +378,7 @@ public class ExModeloController extends ExSelecionavelController {
 				}
 				if (m.getUuid() == null) {
 			        m.setUuid(UUID.randomUUID().toString());
+			        SigaTransacionalInterceptor.upgradeParaTransacional();
 			        dao().gravar(m);
 				}
 				if (m.getUuid() != null) {
@@ -424,8 +436,10 @@ public class ExModeloController extends ExSelecionavelController {
 	}
 
 	@Override
-	public DaoFiltroSelecionavel createDaoFiltro() {
-		return null;
+	protected DaoFiltroSelecionavel createDaoFiltro() {
+		ExModeloDaoFiltro flt = new ExModeloDaoFiltro();
+		flt.setSigla(getNome());
+		return flt;
 	}
 
 }

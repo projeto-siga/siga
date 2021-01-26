@@ -49,10 +49,8 @@ import org.hibernate.annotations.BatchSize;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.Prop;
-import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.bl.ExParte;
 import br.gov.jfrj.siga.ex.util.CronologiaComparator;
@@ -62,7 +60,7 @@ import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
 @Entity
 @BatchSize(size = 500)
-@Table(name = "EX_MOBIL", catalog = "SIGA")
+@Table(name = "siga.ex_mobil")
 public class ExMobil extends AbstractExMobil implements Serializable, Selecionavel, Comparable {
 
 	/**
@@ -277,7 +275,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		}
 
 		s = s + "', 'documento', " + winProp + ")\">" + descricaoCurta + "</a>";
-		return s;
+		return descricaoCurta;
 	}
 
 	/**
@@ -2181,10 +2179,35 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return transferenciasComData;
 	}
 
+	/**
+	 * Retorna as {@link ExMovimentacao Movimentações} de determinado tipo e que
+	 * <i>não {@link ExMovimentacao#getExMovimentacaoCanceladora() foram
+	 * canceladas}</i>.
+	 * 
+	 * @param idTpMov Tipo de Movimentação solicitada
+	 * @return As Movimentações do tipo Solicitado.
+	 * @see #getMovsNaoCanceladas(long, boolean)
+	 */
 	public Set<ExMovimentacao> getMovsNaoCanceladas(long idTpMov) {
 		return getMovsNaoCanceladas(idTpMov, false);
 	}
 
+	/**
+	 * Retorna as {@link ExMovimentacao Movimentações} de determinado tipo e que
+	 * <i>não {@link ExMovimentacao#getExMovimentacaoCanceladora() foram
+	 * canceladas}</i>.
+	 * 
+	 * @param idTpMov                  Tipo de Movimentação solicitada
+	 * @param apenasNaoReferenciadoras <code>true</code> se as Movimentações
+	 *                                 solicitadas <b>não</b> devem fazer
+	 *                                 {@link ExMovimentacao#getExMovimentacaoRef()
+	 *                                 referências a outras Movimentações}. Serve
+	 *                                 para, por exemplo, não retornar movimentações
+	 *                                 de autenticação de anexos, mas apenas de
+	 *                                 documento
+	 * @return As Movimentações do tipo Solicitado.
+	 * @see #getExMovimentacaoSet()
+	 */
 	public Set<ExMovimentacao> getMovsNaoCanceladas(long idTpMov, boolean apenasNaoReferenciadoras) {
 		// Edson: o apenasNaoReferenciadoras serve para, por exemplo, não
 		// retornar movimentações
@@ -2240,5 +2263,33 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	
 	public void indicarSeDeveExibirDocumentoCompletoReordenado(boolean exibirReordenacao) {
 		this.getDoc().setPodeExibirReordenacao(exibirReordenacao);
+	}
+	
+	public boolean isModeloIncluso(Long idModelo) {
+		ExModelo mod = ExDao.getInstance().consultar(idModelo, ExModelo.class, false);
+		
+		for (ExMovimentacao m : getExMovimentacaoReferenciaSet()) {
+			if (m.getExMovimentacaoCanceladora() != null)
+				continue;
+			if (m.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA)
+				continue;
+			if (m.getExMobilRef() == this && m.getExMobil() != null 
+					&& m.getExMobil().doc().getExModelo().getIdInicial().equals(mod.getIdInicial()))
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Verifica se exibe o conteudo do documento no histórico do acompanhamento do protocolo
+	 * 
+	 * @return
+	 */
+	public boolean getPodeExibirNoAcompanhamento() {
+		Set<ExMovimentacao> movs = getMovsNaoCanceladas(ExTipoMovimentacao
+				.TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO);
+		if (!movs.isEmpty())
+			return true;
+		return false;
 	}
 }

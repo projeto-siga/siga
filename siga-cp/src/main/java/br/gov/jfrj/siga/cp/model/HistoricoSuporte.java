@@ -22,6 +22,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -43,10 +45,12 @@ public abstract class HistoricoSuporte extends Objeto implements Historico, Asse
 	@Desconsiderar
 	private Long hisIdIni;
 
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "HIS_DT_INI")
 	@Desconsiderar
 	private Date hisDtIni;
 
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "HIS_DT_FIM")
 	@Desconsiderar
 	private Date hisDtFim;

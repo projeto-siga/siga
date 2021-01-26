@@ -18,12 +18,11 @@
 			<module name="org.apache.commons.logging" />
 			<module name="javax.wsdl4j.api" />
 			<module name="asm.asm" />
-
-			<module name="sigadoc.org.bouncycastle" export="true" />
-			<module name="sigadoc.ext" />
-
 			<module name="org.javassist" />
 			<module name="javax.api" />
+			
+			<!-- Dependencia com conversor HTML2PDF -->
+			<module name="sigadoc.ext" />
 		</dependencies>
 
 	</deployment>

@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import com.google.common.base.Optional;
 
@@ -59,6 +60,7 @@ public class VeiculoController extends TpController {
 		result.include("veiculos", Veiculo.listarTodos(cpOrgaoUsuario));
 	}
 
+	@Transactional
 	@RoleAdmin
 	@RoleAdminFrota
 	@Path("/salvar")
@@ -97,6 +99,7 @@ public class VeiculoController extends TpController {
 
 	}
 
+	@Transactional
 	@RoleAdmin
 	@RoleAdminFrota
 	@Path("/excluir/{id}")

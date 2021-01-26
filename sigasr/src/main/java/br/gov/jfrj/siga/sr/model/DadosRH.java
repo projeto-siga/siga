@@ -11,7 +11,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "DADOS_RH", schema = "SIGARH")
+@Table(name = "dados_rh", schema = "sigarh")
 @IdClass(DadosRHId.class)
 public class DadosRH  extends Objeto {
     

@@ -1555,6 +1555,22 @@ function RespostaAjax() {
 	}
 }
 
+function postToUrl(url) {
+	var f = document.createElement('form');
+	f.action=url;
+	f.method='POST';
+	//f.target='_blank';
+
+//	var i=document.createElement('input');
+//	i.type='hidden';
+//	i.name='fragment';
+//	i.value='<!DOCTYPE html>'+document.documentElement.outerHTML;
+//	f.appendChild(i);
+
+	document.body.appendChild(f);
+	f.submit();
+}
+
 var sigaModal = {
 		alerta: function(mensagem, centralizar, titulo) {
 			if (mensagem) {
@@ -1606,7 +1622,13 @@ var sigaModal = {
 			if (idModal && conteudo) {
 				$('#'.concat(idModal)).find('.siga-modal__btn-acao').attr('href', conteudo);				
 			}
-		}, 				
+		},
+		isAberto: function(idModal) {
+			if (idModal) {
+				var modal = $('#'.concat(idModal));
+				return (typeof modal.data('bs.modal') !== 'undefined' && modal.data('bs.modal')._isShown);				
+			}
+		},
 		obterCabecalhoPadrao: function(tituloADireita) {
 			if (typeof uriLogoSiga !== 'undefined') {
 				var detalheEsquerda = uriLogoSiga ? '<div class="col-6  p-0"><img src="' + uriLogoSiga + '" class="siga-modal__logo" alt="logo siga"></div>' : '<h5 class="modal-title">Siga</h5>';

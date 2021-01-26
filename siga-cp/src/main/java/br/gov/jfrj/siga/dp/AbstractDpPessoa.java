@@ -48,7 +48,7 @@ import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
 @MappedSuperclass
-@NamedNativeQuery(name = "consultarDataEHoraDoServidor", query = "SELECT sysdate dt FROM dual", resultSetMapping = "scalar")
+@NamedNativeQuery(name = "consultarDataEHoraDoServidor", query = "select CURRENT_TIMESTAMP from CpOrgaoUsuario", resultSetMapping = "scalar")
 @NamedQueries({
 		@NamedQuery(name = "consultarPorIdDpPessoa", query = "select pes from DpPessoa pes where pes.idPessoaIni = :idPessoa"),
 		@NamedQuery(name = "consultarPorIdInicialDpPessoa", query = "select pes from DpPessoa pes where pes.idPessoaIni = :idPessoaIni and pes.dataFimPessoa = null"),
@@ -319,7 +319,6 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 	private Integer idEstadoCivil;
 
 	@Column(name = "NOME_EXIBICAO")
-	@Desconsiderar
 	private String nomeExibicao;
 
 	@ManyToOne(fetch = FetchType.LAZY)

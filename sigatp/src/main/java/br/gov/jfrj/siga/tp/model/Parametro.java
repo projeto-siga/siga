@@ -34,8 +34,8 @@ import br.gov.jfrj.siga.tp.validation.annotation.Data;
 @SuppressWarnings("serial")
 @Entity
 @Audited
-@Table(schema = "SIGATP")
-public class Parametro extends TpModel implements ConvertableEntity<Long> {
+@Table(name = "parametro", schema = "sigatp")
+public class Parametro extends TpModel implements ConvertableEntity {
 
     public static final ActiveRecord<Parametro> AR = new ActiveRecord<Parametro>(Parametro.class);
     private static final Logger LOGGER = LoggerFactory.getLogger(Parametro.class);
@@ -92,7 +92,6 @@ public class Parametro extends TpModel implements ConvertableEntity<Long> {
         return id;
     }
 
-	@Override
 	public void setId(Long id) {
         this.id = id;
     }

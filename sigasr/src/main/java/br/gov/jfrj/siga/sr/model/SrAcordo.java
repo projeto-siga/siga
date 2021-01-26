@@ -28,7 +28,7 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 import edu.emory.mathcs.backport.java.util.Collections;
 
 @Entity
-@Table(name = "SR_ACORDO", schema = "SIGASR")
+@Table(name = "sr_acordo", schema = "sigasr")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class SrAcordo extends HistoricoSuporte implements Selecionavel {
 	// public class SrAcordo extends HistoricoSuporte implements

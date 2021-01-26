@@ -56,7 +56,7 @@
 
 			<div class="card-body">
 
-				<form name="frm" id="frm" action="gravar" method="POST">
+				<form name="frm" id="frm" action="gravar" method="post">
 					<input type="hidden" name="postback" value="1" /> <input
 						type="hidden" name="id" value="${id}" id="modelo_gravar_id" />
 

@@ -55,6 +55,7 @@ import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -308,9 +309,9 @@ public class ExRelatorioController extends ExController {
 
 		assertAcesso(ACESSO_FORMS);
 
-		final Map<String, Object> parametros = new HashMap<String, Object>();
+		final Map<String, String> parametros = new HashMap<>();
 		parametros.put("secaoUsuario", secaoUsuario);
-		addParametrosPersonalizadosOrgão(parametros);
+		addParametrosPersonalizadosOrgao(parametros);
 		parametros.put("orgaoUsuario", orgaoUsuario);
 		parametros.put("lotacaoTitular", lotacaoTitular);
 		parametros.put("idTit", idTit);
@@ -330,12 +331,12 @@ public class ExRelatorioController extends ExController {
 		final String dataInicio = param("dataInicio");
 		final String dataFim = param("dataFim");
 
-		final Map<String, Object> parameters = new HashMap<String, Object>();
+		final Map<String, String> parameters = new HashMap<>();
 		parameters.put("tipoRelatorio", param("tipoRelatorio"));
 		parameters.put("secaoUsuario", param("secaoUsuario"));
 		parameters.put("dataInicio", dataInicio);
 		parameters.put("dataFim", dataFim);
-		addParametrosPersonalizadosOrgão(parameters);
+		addParametrosPersonalizadosOrgao(parameters);
 		if (lotacaoDestinatarioSel != null
 				&& lotacaoDestinatarioSel.getId() != null) {
 			final DpLotacao lota = dao().consultar(
@@ -369,13 +370,13 @@ public class ExRelatorioController extends ExController {
 				"emiteRelDocumentosSubordinados");
 	}
 
-	private void addParametrosPersonalizadosOrgão(final Map<String, Object> parameters) {
+	private void addParametrosPersonalizadosOrgao(final Map<String, String> parameters) {
 			parameters.put("titulo", Prop.get("/siga.relat.titulo"));
 			parameters.put("subtitulo", Prop.get("/siga.relat.subtitulo"));
 			parameters.put("brasao", Prop.get("/siga.relat.brasao"));
 	}
 
-	private InputStream aGeraRelatorio(final Map<String, Object> parameters)
+	private InputStream aGeraRelatorio(final Map<String, String> parameters)
 			throws JRException {
 		final String cam = (String) getContext().getRealPath(
 				"/WEB-INF/page/exRelatorio/");
@@ -383,7 +384,7 @@ public class ExRelatorioController extends ExController {
 				+ (String) parameters.get("tipoRelatorio"));
 		final JasperReport jr = JasperCompileManager.compileReport(design);
 		final JasperPrint relGerado = JasperFillManager.fillReport(jr,
-				parameters);
+				(Map<String,Object>) (Map) parameters);
 		return new ByteArrayInputStream(
 				JasperExportManager.exportReportToPdf(relGerado));
 	}
@@ -437,7 +438,7 @@ public class ExRelatorioController extends ExController {
 	public Download aRelMovDocumentosSubordinados() throws Exception {
 		assertAcesso(ACESSO_MVSUB);
 
-		final Map<String, Object> parametros = new HashMap<String, Object>();
+		final Map<String, String> parametros = new HashMap<>();
 
 		parametros.put("lotacao",
 				getRequest().getParameter("lotacaoDestinatarioSel.id"));
@@ -457,7 +458,7 @@ public class ExRelatorioController extends ExController {
 				+ ":" + getRequest().getServerPort()
 				+ getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
-		addParametrosPersonalizadosOrgão(parametros);
+		addParametrosPersonalizadosOrgao(parametros);
 		final RelMovimentacaoDocSubordinados rel = new RelMovimentacaoDocSubordinados(
 				parametros);
 		rel.gerar();
@@ -472,7 +473,7 @@ public class ExRelatorioController extends ExController {
 	public Download aRelDocsSubCriados() throws Exception {
 		assertAcesso(ACESSO_CRSUB);
 
-		final Map<String, Object> parametros = new HashMap<String, Object>();
+		final Map<String, String> parametros = new HashMap<>();
 
 		parametros.put("lotacao",
 				getRequest().getParameter("lotacaoDestinatarioSel.id"));
@@ -492,7 +493,7 @@ public class ExRelatorioController extends ExController {
 				+ ":" + getRequest().getServerPort()
 				+ getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
-		addParametrosPersonalizadosOrgão(parametros);
+		addParametrosPersonalizadosOrgao(parametros);
 		final RelDocSubordinadosCriados rel = new RelDocSubordinadosCriados(
 				parametros);
 		rel.gerar();
@@ -564,8 +565,8 @@ public class ExRelatorioController extends ExController {
 		assertAcesso(ACESSO_DATAS);
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
-		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
+		final Date dtIni = parseDate("dataInicial");
+		final Date dtFim = parseDate("dataFinal");
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
 			throw new Exception(
 					"O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
@@ -604,8 +605,8 @@ public class ExRelatorioController extends ExController {
 		assertAcesso(ACESSO_MOVCAD);
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
-		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
+		final Date dtIni = parseDate("dataInicial");
+		final Date dtFim = parseDate("dataFinal");
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
 			throw new Exception(
 					"O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
@@ -644,8 +645,8 @@ public class ExRelatorioController extends ExController {
 		assertAcesso(ACESSO_DATAS);
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
-		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
+		final Date dtIni = parseDate("dataInicial");
+		final Date dtFim = parseDate("dataFinal");
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
 			throw new Exception(
 					"O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
@@ -685,8 +686,8 @@ public class ExRelatorioController extends ExController {
 		assertAcesso(ACESSO_DATAS);
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
-		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
+		final Date dtIni = parseDate("dataInicial");
+		final Date dtFim = parseDate("dataFinal");
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
 			throw new Exception(
 					"O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
@@ -723,8 +724,14 @@ public class ExRelatorioController extends ExController {
 		assertAcesso(ACESSO_RELMVP);
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
-		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
+		if (Utils.empty(getRequest().getParameter("dataInicial"))) {
+			throw new AplicacaoException("Parâmetro dataInicial não informado!");
+		}
+		if (Utils.empty(getRequest().getParameter("dataFinal"))) {
+			throw new AplicacaoException("Parâmetro dataFinal não informado!");
+		}
+		final Date dtIni = parseDate("dataInicial");
+		final Date dtFim = parseDate("dataFinal");
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
 			throw new Exception(
 					"O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
@@ -1631,5 +1638,16 @@ public class ExRelatorioController extends ExController {
 			orgaoSelId = orgaoUsu;
 		}
 		return orgaoSelId;
+	}
+	
+	private Date parseDate(String parameter) throws AplicacaoException {
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		if (Utils.empty(getRequest().getParameter(parameter)))
+			throw new AplicacaoException("Campo " + parameter + " deve ser preenchido!");
+		try {
+			return df.parse(getRequest().getParameter(parameter));
+		} catch (Exception ex) {
+			throw new AplicacaoException("Campo  \" + parameter + \" inválido!", 0, ex);
+		}
 	}
 }

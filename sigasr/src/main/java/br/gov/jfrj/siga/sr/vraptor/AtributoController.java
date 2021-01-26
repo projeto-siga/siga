@@ -18,6 +18,7 @@ import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
 import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrAtributo;
@@ -31,6 +32,7 @@ import br.gov.jfrj.siga.sr.util.Util;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.uteis.PessoaLotaFuncCargoSelecaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
+import br.gov.jfrj.siga.vraptor.Transacional;
 
 @Controller
 @Path("app/atributo")
@@ -45,7 +47,7 @@ public class AtributoController extends SrController {
 	}
 	
 	@Inject
-	public AtributoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em, SrValidator srValidator) {
+	public AtributoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em, SrValidator srValidator) throws Throwable {
 		super(request, result, CpDao.getInstance(), so, em, srValidator);
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
@@ -75,15 +77,25 @@ public class AtributoController extends SrController {
 		result.include("acao", new SelecionavelVO(null,null));
 	}
 
+	@Transacional
 	@Path("/gravar")
 	@AssertAcesso(ADM_ADMINISTRAR)
-	public void gravarAtributo(SrAtributo atributo) throws Exception {
+	public void gravarAtributo(SrAtributo atributo, Long objetivoAtributoId) throws Exception {
+		setupObjetivoAtributo(atributo, objetivoAtributoId);
 		if (validarFormEditarAtributo(atributo)) {
 			atributo.salvar();
 			result.use(Results.http()).body(atributo.toVO(false).toJson());
 		}
 	}
+	
+	private void setupObjetivoAtributo(SrAtributo atributo, Long objetivoAtributoId) {
+		if(objetivoAtributoId != null) {
+			EntityManager em = ContextoPersistencia.em();
+			atributo.setObjetivoAtributo(em.find(SrObjetivoAtributo.class, objetivoAtributoId));
+		}
+	}
 
+	@Transacional
 	@Path("/desativar")
 	@AssertAcesso(ADM_ADMINISTRAR)
 	public void desativarAtributo(Long id) throws Exception {
@@ -92,6 +104,7 @@ public class AtributoController extends SrController {
 		result.use(Results.http()).body(item.toJson());
 	}
 
+	@Transacional
 	@Path("/reativar")
 	@AssertAcesso(ADM_ADMINISTRAR)
 	public void reativarAtributo(Long id) throws Exception {

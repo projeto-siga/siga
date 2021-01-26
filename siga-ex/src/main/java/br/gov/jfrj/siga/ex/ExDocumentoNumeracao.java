@@ -13,7 +13,7 @@ import java.math.BigDecimal;
  * 
  */
 @Entity
-@Table(name="EX_DOCUMENTO_NUMERACAO")
+@Table(name = "siga.ex_documento_numeracao")
 @NamedQueries({
 	@NamedQuery(name="ExDocumentoNumeracao.findAll", query="SELECT e FROM ExDocumentoNumeracao e"),
 	@NamedQuery(name="ExDocumentoNumeracao.findById", query="SELECT e.idDocumentoNumeracao FROM ExDocumentoNumeracao e where e.idDocumentoNumeracao = :id "),

@@ -25,7 +25,7 @@ public class GcApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 	public void initialize(ServletConfig config) throws ServletException {
 		setAPI(IGcApiV1.class);
 
-		setActionPackage("br.gov.jfrj.siga.gv.api.v1");
+		setActionPackage("br.gov.jfrj.siga.gc.api.v1");
 
 		Prop.setProvider(this);
 		Prop.defineGlobalProperties();

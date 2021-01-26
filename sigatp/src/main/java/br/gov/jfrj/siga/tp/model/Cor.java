@@ -17,8 +17,8 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 @Entity
 @Audited
 @Immutable
-@Table(schema = "SIGATP")
-public class Cor extends TpModel implements ConvertableEntity<Long> {
+@Table(name = "cor", schema = "sigatp")
+public class Cor extends TpModel implements ConvertableEntity {
 
 	private static final long serialVersionUID = 1L;
 
@@ -44,7 +44,6 @@ public class Cor extends TpModel implements ConvertableEntity<Long> {
 		return nome;
 	}
 
-	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}

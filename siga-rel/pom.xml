@@ -13,6 +13,10 @@
     <artifactId>siga-rel</artifactId>
 
     <dependencies>
+   		<dependency>
+			<groupId>siga</groupId>
+			<artifactId>siga-base</artifactId>
+		</dependency>
         <dependency>
             <groupId>ar.com.fdvs</groupId>
             <artifactId>DynamicJasper</artifactId>

@@ -36,7 +36,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 @Entity
-@Table(name = "SR_CONFIGURACAO", schema = "SIGASR")
+@Table(name = "sigasr.sr_configuracao")
 @PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_SR")
 public class SrConfiguracao extends CpConfiguracao {
 

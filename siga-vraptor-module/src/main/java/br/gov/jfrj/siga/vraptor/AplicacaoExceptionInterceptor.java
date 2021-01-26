@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,13 +19,21 @@ import br.com.caelum.vraptor.interceptor.ExceptionHandlerInterceptor;
 import br.com.caelum.vraptor.interceptor.Interceptor;
 import br.gov.jfrj.siga.base.AplicacaoException;
 
-@Intercepts(before = ExceptionHandlerInterceptor.class)
 @RequestScoped
+@Intercepts(before = ExceptionHandlerInterceptor.class)
 public class AplicacaoExceptionInterceptor implements Interceptor {
 
 	private final HttpServletRequest request;
 	private final HttpServletResponse response;
 
+	/** 
+	 * @deprecated CDI eyes only
+	 */
+	public AplicacaoExceptionInterceptor() {
+		this(null,null);
+	}
+	
+	@Inject
 	public AplicacaoExceptionInterceptor(HttpServletRequest request,
 			HttpServletResponse response) {
 		this.request = request;

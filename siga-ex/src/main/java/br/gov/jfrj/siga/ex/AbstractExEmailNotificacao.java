@@ -37,8 +37,8 @@ import br.gov.jfrj.siga.model.Objeto;
 
 @MappedSuperclass
 @NamedQueries({
-		@NamedQuery(name = "consultarEmailporPessoa", query = "from ExEmailNotificacao e where e.dpPessoa = :idPessoaIni"),
-		@NamedQuery(name = "consultarEmailporLotacao", query = "from ExEmailNotificacao e where e.dpLotacao = :idLotacaoIni") })
+		@NamedQuery(name = "consultarEmailporPessoa", query = "from ExEmailNotificacao e where e.dpPessoa.idPessoa = :idPessoaIni"),
+		@NamedQuery(name = "consultarEmailporLotacao", query = "from ExEmailNotificacao e where e.dpLotacao.idLotacao = :idLotacaoIni") })
 public class AbstractExEmailNotificacao extends Objeto {
 
 	/** The composite primary key value. */

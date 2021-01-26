@@ -27,9 +27,23 @@ public class RelTeste extends RelatorioTemplate {
 		super(parametros);
 	
 		//TODO pegar o parametro : destinos e assuntos escolhidos no filtro pesquisa
-//		String assuntos =parametros.get("listaAssuntos");
-//		listaAssuntos = new ArrayList<String>(Arrays.asList((parametros.get("listaAssuntos")).split(",")));  
-//		listaSetoresSubordinados = new  parametros.get("listaSetoresSubordinados");
+
+		if (parametros.get("listaAssuntos") == null) {
+			throw new DJBuilderException("Assunto deve ser escolhido!");
+		}
+		
+		if (parametros.get("listaSetoresSubordinados") == null) {
+			throw new DJBuilderException("Setor subordinado deve ser escolhido!");
+		}
+		
+		String assuntos = String.valueOf( parametros.get("listaAssuntos") );
+		
+		String setoresSubordinados = String.valueOf( parametros.get("listaSetoresSubordinados") );
+
+		
+		listaAssuntos = new ArrayList<String>(Arrays.asList((assuntos.split(","))));  
+		
+		listaSetoresSubordinados = new ArrayList<String>(Arrays.asList((setoresSubordinados.split(","))));
 
 		
 		if (parametros.get("secaoUsuario") == null) {
@@ -40,15 +54,15 @@ public class RelTeste extends RelatorioTemplate {
 			throw new DJBuilderException("Parâmetro lotação não informado!");
 		}
 		/*
-		 * if (parametros.get("orgao") == null) { throw new
-		 * DJBuilderException("Parâmetro órgão não informado!"); }
-		 */
+		 if (parametros.get("orgao") == null) { throw new
+		 DJBuilderException("Parâmetro órgão não informado!"); }
 		if (parametros.get("dataInicial") == null) {
 			throw new DJBuilderException("Parâmetro dataInicial não informado!");
 		}
 		if (parametros.get("dataFinal") == null) {
 			throw new DJBuilderException("Parâmetro dataFinal não informado!");
 		}
+		 */
 		if (parametros.get("link_siga") == null) {
 			throw new DJBuilderException("Parâmetro link_siga não informado!");
 		}
@@ -75,8 +89,8 @@ public class RelTeste extends RelatorioTemplate {
 
 	public String montarConsulta(){
 		
-		String sql = "SELECT  X1.NUM_PROCESSO,	X1.DATA_DESPACHO,                                                                                                                                          "+       
-				"        X1.COD_DESPACHO,  X1.DESCR_DESPACHO,                                                                                                                                          "+
+		String sql = "SELECT  X1.NUM_PROCESSO,	X1.DATA_DESPACHO,                                                                                                                                      "+       
+				"        X1.COD_DESPACHO,  X1.DESCR_DESPACHO,  X1.ID_CLASSIFICACAO,                                                                                                                    "+
 				"        X1.COD_ASSUNTO,  X1.DESCR_ASSUNTO,                                                                                                                                            "+
 				"        X1.ORG_ORIGEM,                                                                                                                                                                "+
 				"        X1.DESCR_ORG_ORIGEM,                                                                                                                                                          "+
@@ -85,7 +99,7 @@ public class RelTeste extends RelatorioTemplate {
 				" FROM (	                                                                                                                                                                           "+
 				"      SELECT  u.acronimo_orgao_usu || '-' ||	f.sigla_forma_doc || '-' ||	d.ano_emissao || '/' ||	lpad (d.num_expediente, 5, '0') NUM_PROCESSO, 	m.dt_timestamp DATA_DESPACHO,      "+
 				"         m.id_tp_mov COD_DESPACHO, 	tm.descr_tipo_movimentacao DESCR_DESPACHO,                                                                                                     "+
-				"         c.codificacao COD_ASSUNTO,  c.descr_classificacao DESCR_ASSUNTO,                                                                                                             "+
+				"         c.codificacao COD_ASSUNTO,  c.descr_classificacao DESCR_ASSUNTO,  c.id_classificacao,                                                                                        "+
 				"         (SELECT  l.id_lotacao                                                                                                                                                        "+
 				"         FROM corporativo.dp_lotacao l2  WHERE l2.id_lotacao = (	SELECT  m3.id_lota_resp  FROM siga.ex_movimentacao m3   WHERE m3.id_mov = (	                                       "+
 				"         SELECT  max (m2.id_mov) FROM siga.ex_movimentacao m2  INNER JOIN siga.ex_mobil mb2 on (mb2.id_mobil = m2.id_mobil)   	                                                       "+
@@ -119,7 +133,7 @@ public class RelTeste extends RelatorioTemplate {
 				"         WHERE (tm.id_tp_mov >77) OR tm.id_tp_mov in(1,3,4,9,17,18,19,20,23,48,49,56)	                                                                                               "+
 				"         GROUP BY u.acronimo_orgao_usu,f.sigla_forma_doc,d.ano_emissao,d.num_expediente	                                                                                           "+
 				"         ORDER BY NUM_PROCESSO desc  ) x2 on x1.NUM_PROCESSO = X2.NUM_PROCESSO AND X1.DATA_DESPACHO = X2.DATA_DESPACHO	AND x1.COD_DESPACHO <> 48                                      "+
-				"         GROUP BY  X1.NUM_PROCESSO,	X1.DATA_DESPACHO,  X1.COD_DESPACHO,  X1.DESCR_DESPACHO, X1.COD_ASSUNTO,  X1.DESCR_ASSUNTO,                                                     "+
+				"         GROUP BY  X1.NUM_PROCESSO,	X1.DATA_DESPACHO,  X1.COD_DESPACHO,  X1.DESCR_DESPACHO, X1.COD_ASSUNTO,  X1.DESCR_ASSUNTO, X1.ID_CLASSIFICACAO,                                "+
 				"         X1.ORG_ORIGEM,  X1.DESCR_ORG_ORIGEM,  X1.ORG_DESTINO,  X1.DESCR_ORG_DESTINO,  X1.MATR_DIGITADOR, X1.TEMPO                                                                    "+
 				"         ORDER BY  x1.ORG_DESTINO, x1.NUM_PROCESSO                                                                                                                                    ";
 		
@@ -141,8 +155,13 @@ public class RelTeste extends RelatorioTemplate {
 
 		for (Object[] array : lista) {
 
-		//TODO validar assunto e destino	
-//			if (isValido(assunto, destino)) {
+		//TODO validar assunto e destino
+
+			String codAssunto =  array[4] != null ? String.valueOf( array[4] ) : null ;
+			
+			String codDestino =   array[9] != null ? String.valueOf( array[9] ) : null ;
+			
+			if ( isValido( codAssunto, codDestino) ) {
 				
 				listaFinal.add( String.valueOf( array[0] ));//NUM. PROCESSO
 				
@@ -150,26 +169,36 @@ public class RelTeste extends RelatorioTemplate {
 				
 				listaFinal.add( String.valueOf( array[2] ) +" "+ String.valueOf( array[3] ));//COD. DESPACHO + DESCR. DESPACHO,
 				
-				listaFinal.add( String.valueOf( array[4] ) +" "+ String.valueOf( array[5] ));//COD. ASSUNTO  + DESCR. ASSUNTO
+				listaFinal.add( String.valueOf( array[5] ) +" "+ String.valueOf( array[6] ));//COD. ASSUNTO  + DESCR. ASSUNTO
 				
-				listaFinal.add(	array[6] != null ? String.valueOf( array[6] ) +" "+ String.valueOf( array[7] ) : ""		);//ORG. ORIGEM	 + DESCR. ORG. ORIGEM
+				listaFinal.add(	array[7] != null ? String.valueOf( array[7] ) +" "+ String.valueOf( array[8] ) : ""		);//ORG. ORIGEM	 + DESCR. ORG. ORIGEM
 				
-				listaFinal.add( array[8]  != null ?  String.valueOf( array[8] ) +" "+ String.valueOf( array[9]  ):"");//ORG. DESTINO 	 + DESCR. ORG. DESTINO
+				listaFinal.add( array[9]  != null ?  String.valueOf( array[9] ) +" "+ String.valueOf( array[10]  ):"");//ORG. DESTINO 	 + DESCR. ORG. DESTINO
 				
-				listaFinal.add( String.valueOf( array[10]));//MATR. DIGITADOR
+				listaFinal.add( String.valueOf( array[11]));//MATR. DIGITADOR
 				
-				listaFinal.add(String.valueOf( array[11]));//TEMPO
+				listaFinal.add(String.valueOf( array[12]));//TEMPO
 			}
-//		}
+		}
 		
 		return listaFinal;
 	}
 	
-	private boolean isValido(String assunto, String destino){
+	private boolean isValido ( String assunto, String destino ){
+		return isAssuntoValido(assunto) && isDestinoValido(destino);
+	}
+	
+	private boolean isAssuntoValido( String assunto){
 		
-		return true;
+		return !listaAssuntos.isEmpty() &&  listaAssuntos.contains(assunto)  ;
 	}
  	
+	private boolean isDestinoValido(String destino){
+		
+		return !listaSetoresSubordinados.isEmpty() &&  listaSetoresSubordinados.contains(destino)  ;
+
+	}
+
 	private void acrescentarColuna(List<String> d, Map<String, Long> map,
 			String s, String lis) {
 		Long l = 0L;

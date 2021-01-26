@@ -1746,14 +1746,14 @@ private List<ExClassificacao> obeterAssuntos(){
 	@Get("app/expediente/rel/emiteRelTeste")
 	public Download aRelTeste() throws Exception {
 		assertAcesso(TESTE);
-
-		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
-		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
-		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
-			throw new Exception(
-					"O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
-		}
+//
+//		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+//		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
+//		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
+//		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
+//			throw new Exception(
+//					"O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
+//		}
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 
@@ -1761,8 +1761,10 @@ private List<ExClassificacao> obeterAssuntos(){
 				getRequest().getParameter("lotacaoDestinatarioSel.id"));
 		parametros.put("secaoUsuario", getRequest()
 				.getParameter("secaoUsuario"));
-		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
-		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
+
+		//		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
+		//		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
+		
 		parametros.put("link_siga", linkHttp() + getRequest().getServerName()
 				+ ":" + getRequest().getServerPort()
 				+ getRequest().getContextPath()
@@ -1775,9 +1777,9 @@ private List<ExClassificacao> obeterAssuntos(){
 		
 		
 		// atribuir parametros : destinos e assuntos da tela de filtro de pesquisa
-//		parametros.put("listaAssuntos","4");
-//		parametros.put("listaSetoresSubordinados","265,409");
-//		
+		parametros.put("listaAssuntos","2569,4");
+		parametros.put("listaSetoresSubordinados","265,409");
+		
 		
 		addParametrosPersonalizadosOrgãoString(parametros);
 		//System.out.println("Brasao: " + parametros.get("brasao"));

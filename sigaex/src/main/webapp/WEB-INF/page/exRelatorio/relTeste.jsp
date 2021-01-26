@@ -49,7 +49,7 @@ function sbmt() {
 	<div class="col-sm-2">
 			<label>setores</label>
 				<c:forEach items="${listaSetoresSubordinados}" var="item">
-					<c:out  value="${item.nomeLotacaodescricao}" />
+					<c:out  value="${item.nomeLotacao}" />
 					
 				</c:forEach>
 		</div>

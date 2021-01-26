@@ -19,8 +19,8 @@ import net.sf.jasperreports.engine.JRException;
 
 public class RelTeste extends RelatorioTemplate {
 
-	List<String> listaAssuntos =  new ArrayList<>();
-	List<String> listaSetoresSubordinados =  new ArrayList<>();
+	String assuntos =  "";
+	String setoresSubordinados =  "";
 	
 
 	public RelTeste(Map parametros) throws DJBuilderException {
@@ -36,14 +36,14 @@ public class RelTeste extends RelatorioTemplate {
 			throw new DJBuilderException("Setor subordinado deve ser escolhido!");
 		}
 		
-		String assuntos = String.valueOf( parametros.get("listaAssuntos") );
+		 assuntos = String.valueOf( parametros.get("listaAssuntos") );
 		
-		String setoresSubordinados = String.valueOf( parametros.get("listaSetoresSubordinados") );
+		 setoresSubordinados = String.valueOf( parametros.get("listaSetoresSubordinados") );
 
 		
-		listaAssuntos = new ArrayList<String>(Arrays.asList((assuntos.split(","))));  
-		
-		listaSetoresSubordinados = new ArrayList<String>(Arrays.asList((setoresSubordinados.split(","))));
+//		listaAssuntos = new ArrayList<String>(Arrays.asList((assuntos.split(","))));  
+//		
+//		listaSetoresSubordinados = new ArrayList<String>(Arrays.asList((setoresSubordinados.split(","))));
 
 		
 		if (parametros.get("secaoUsuario") == null) {
@@ -118,6 +118,13 @@ public class RelTeste extends RelatorioTemplate {
 				"         INNER JOIN corporativo.cp_orgao_usuario u on (l.id_orgao_usu = u.id_orgao_usu)  		                                                                                       "+
 				"         INNER JOIN siga.ex_forma_documento f on (f.id_forma_doc = d.id_forma_doc) 		                                                                                           "+
 				"         INNER JOIN corporativo.dp_pessoa p on m.id_cadastrante = p.id_pessoa                                                                                                         "+
+				
+		 
+
+				" where c.id_classificacao in ( :assuntos )    and  l.id_lotacao in ( :setoresSubordinados) "+
+	
+				
+				
 				"         ORDER BY NUM_PROCESSO , DATA_DESPACHO DESC) x1  		                                                                                                                       "+
 				"         INNER JOIN  (   	                                                                                                                                                           "+
 				"         SELECT  u.acronimo_orgao_usu || '-' || f.sigla_forma_doc || '-' || 	d.ano_emissao || '/' || lpad (d.num_expediente, 5, '0') NUM_PROCESSO, 	                               "+
@@ -147,8 +154,9 @@ public class RelTeste extends RelatorioTemplate {
 		List<String> d = new ArrayList<String>();
 
 		Query query = ContextoPersistencia.em().createNativeQuery( montarConsulta() );
+		query.setParameter("assuntos", assuntos);
+		query.setParameter("setoresSubordinados",setoresSubordinados);
 		
-
 		List<Object[]> lista = query.getResultList();
 		
 		List<String> listaFinal = new ArrayList<String>();
@@ -161,8 +169,6 @@ public class RelTeste extends RelatorioTemplate {
 			
 			String codDestino =   array[9] != null ? String.valueOf( array[9] ) : null ;
 			
-			if ( isValido( codAssunto, codDestino) ) {
-				
 				listaFinal.add( String.valueOf( array[0] ));//NUM. PROCESSO
 				
 				listaFinal.add( String.valueOf(formatter.format( array[1] )));//DATA DESPACHO
@@ -178,28 +184,12 @@ public class RelTeste extends RelatorioTemplate {
 				listaFinal.add( String.valueOf( array[11]));//MATR. DIGITADOR
 				
 				listaFinal.add(String.valueOf( array[12]));//TEMPO
-			}
 		}
 		
 		return listaFinal;
 	}
 	
-	private boolean isValido ( String assunto, String destino ){
-		return isAssuntoValido(assunto) && isDestinoValido(destino);
-	}
-	
-	private boolean isAssuntoValido( String assunto){
-		
-		return !listaAssuntos.isEmpty() &&  listaAssuntos.contains(assunto)  ;
-	}
- 	
-	private boolean isDestinoValido(String destino){
-		
-		return !listaSetoresSubordinados.isEmpty() &&  listaSetoresSubordinados.contains(destino)  ;
-
-	}
-
-	private void acrescentarColuna(List<String> d, Map<String, Long> map,
+	 	private void acrescentarColuna(List<String> d, Map<String, Long> map,
 			String s, String lis) {
 		Long l = 0L;
 		String key = chave(s, lis);

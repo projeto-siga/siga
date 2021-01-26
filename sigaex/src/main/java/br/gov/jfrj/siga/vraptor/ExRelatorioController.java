@@ -247,33 +247,43 @@ public class ExRelatorioController extends ExController {
 	}
 	
 	
-	private void fazerResultsParaRelTeste(
-			final DpLotacaoSelecao lotacaoDestinatarioSel) {
+	private void fazerResultsParaRelTeste(	final DpLotacaoSelecao lotacaoDestinatarioSel) {
+		
 		result.include("lotaTitular", this.getLotaTitular());
+		
 		result.include("lotacaoDestinatarioSel", lotacaoDestinatarioSel);
+		
 		result.include("titular", this.getTitular());
 		
-		DpLotacao lotacaoUsu =  this.getLotaTitular();
-		//result.include("listaSetoresSubordinados", obterSubordinados(lotacaoUsu));
+		Set <DpLotacao> listaLotacao = new HashSet<>();
+
+		listaLotacao.add(this.getLotaTitular());
+		
+		result.include("listaSetoresSubordinados", getSetoresSubordinados(listaLotacao));
 		
 	}
 
-private Set<DpLotacao> obterSubordinados(DpLotacao lotacaoUsu){
-	
-	Query qrySetor = ContextoPersistencia.em().createQuery(
-			"from DpLotacao lot where " + "lot.dataFimLotacao is null "
-					+ "and lot.siglaLotacao = '"
-					+ lotacaoUsu.getSigla() + "'");
+	private Set<DpLotacao> getSetoresSubordinados(Set<DpLotacao> listaLotacao) {
+		Set<DpLotacao> todosSubordinados = new HashSet<DpLotacao>();
+		Set<DpLotacao> subordinadosDiretos;
 
-	Set<DpLotacao> lotacaoSet = new HashSet<DpLotacao>();
-	
-	for (DpLotacao lot : (List<DpLotacao>) qrySetor.getResultList()) {
-		lotacaoSet.add(lot);
+		for (DpLotacao pai : listaLotacao) {
+			if (pai.getDpLotacaoSubordinadosSet().size() <= 0) {
+				todosSubordinados.add(pai);
+				continue;
+			} else {
+				todosSubordinados.add(pai);
+				todosSubordinados.addAll(getSetoresSubordinados(pai
+						.getDpLotacaoSubordinadosSet()));
+			}
+		}
+
+		return todosSubordinados;
+
 	}
 
-	return lotacaoSet;
-}
-
+	
+ 
 private List<ExClassificacao> obeterAssuntos(){
 
 	Query q = em().createNamedQuery(

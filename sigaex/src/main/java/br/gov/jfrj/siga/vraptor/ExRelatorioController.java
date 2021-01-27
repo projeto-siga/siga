@@ -1788,7 +1788,9 @@ private List<ExClassificacao> obeterAssuntos(){
 		
 		// atribuir parametros : destinos e assuntos da tela de filtro de pesquisa
 		parametros.put("listaAssuntos","2569,4");
-		parametros.put("listaSetoresSubordinados","265,409");
+		
+		String listaSetores ="263,653";// getRequest().getParameter("listaSetores");
+		parametros.put("listaSetoresSubordinados",listaSetores);
 		
 		
 		addParametrosPersonalizadosOrgãoString(parametros);

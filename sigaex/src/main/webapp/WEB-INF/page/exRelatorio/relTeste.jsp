@@ -17,42 +17,15 @@ function sbmt() {
 	Documentos Criados
 </c:set>
 <input type="hidden" name="secaoUsuario" id="secaoUsuario" value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
-<div class="row">
-	<div class="col-sm-6">
-		<label><fmt:message key="usuario.lotacao"/></label>
-			<siga:selecao propriedade="lotacaoDestinatario" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
-	</div>
-	<div class="col-sm-2">
-		<label>Data Inicial</label>
-		<input type="text" name="dataInicial" id="dataInicial" onblur="javascript:verifica_data(this, true);comparaData(dataInicial,dataFinal);"
-			theme="simple" maxlength="10" class="form-control" />
-	</div>
-	<div class="col-sm-2">
-		<label>Data Final</label>
-		<input type="text" name="dataFinal" id="dataFinal" onblur="javascript:verifica_data(this,true);comparaData(dataInicial,dataFinal);"
-			theme="simple" maxlength="10" class="form-control" />
-	</div>
-</div>
-
-
-<div class="row">
-	<div class="col-sm-2 mt-4 ml-4">
-		<input type="checkbox" name="incluirSubordinados"
-			id="incluirSubordinados" class="form-check-input" /><label
-			class="form-check-label" for="incluirSubordinados">Incluir
-			setores subordinados?</label>
-	</div>
-
-</div>
 
 <div class="row">
 	<div class="col-sm-2">
-			<label>setores</label>
+			<label>Setores</label>
 				<c:forEach items="${listaSetoresSubordinados}" var="item">
-					<c:out  value="${item.nomeLotacao}" />
-					
+					<input type="checkbox" name="listaSetores" 	 value="${item.idLotacao}">${item.nomeLotacao} </input>
 				</c:forEach>
-		</div>
+
+	</div>
 </div>
 
 <input type="hidden" name="lotacao" id="lotacao" value="${lotacaoDestinatarioSel.id}" />

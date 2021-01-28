@@ -33,21 +33,79 @@
 	<script src="/siga/javascript/angucomplete-alt/angucomplete-alt.js"></script>
 
 	<div class="container-fluid content" ng-app="app" ng-controller="ctrl">
-		<h2>Diagrama ${pd.sigla}</h2>
+		<h2>Editar Diagrama ${pd.sigla}</h2>
 
 		<input type="hidden" name="postback" value="1" />
 		<fieldset title="Dados Básicos">
 			<div class="row">
-				<div class="col-sm-4">
+				<div class="col col-md-4">
 					<div class="form-group">
 						<label>Nome</label> <input type="text" name="pd.nome"
 							ng-model="data.workflow.nome" size="80" class="form-control" />
 					</div>
 				</div>
-				<div class="col-sm-8">
+				<div class="col col-md-8">
 					<div class="form-group">
 						<label>Descrição</label> <input type="text" name="descricao"
 							ng-model="data.workflow.descricao" size="80" class="form-control" />
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col col-md-3">
+					<div class="form-group" id="tipoMarcador">
+						<label for="idAcessoDeEdicao">Acesso para Editar</label> <select
+							ng-model="data.workflow.acessoDeEdicao"
+							ng-options="item.id as item.descr for item in acessosDeEdicao"
+							class="form-control"></select>
+					</div>
+				</div>
+				<div class="col col-md-3">
+					<div class="form-group" id="tipoMarcador">
+						<label for="idAcessoDeEdicao">Acesso para Iniciar</label> <select
+							ng-model="data.workflow.acessoDeInicializacao"
+							ng-options="item.id as item.descr for item in acessosDeInicializacao"
+							class="form-control"></select>
+					</div>
+				</div>
+				<div class="col col-md-3">
+					<div class="form-group" id="lotaResponsavel">
+						<label for="lotaResponsavel" title="" class="label w-100">Lotação
+							Resp.
+							<div minlength="1" selected-object="selectedObject"
+								focus-first="true" text-searching="Pesquisando Unidades..."
+								initial-value="data.workflow.lotaResponsavel.originalObject"
+								title-field="firstLine" description-field="secondLine"
+								input-class="form-control form-control-small"
+								remote-url-data-field="list" pause="200"
+								text-no-results="Não encontrei nenhuma Unidade."
+								match-class="highlight"
+								selected-object-data="{context: data.workflow, variable: 'lotaResponsavel', full:false}"
+								remote-url="/siga/app/lotacao/buscar-json/" angucomplete-alt
+								name="lotaResponsavel" placeholder="Pesquisar Unidade"
+								id="lotaResponsavel" class="angucomplete-ctrl p-0"
+								template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
+						</label>
+					</div>
+				</div>
+				<div class="col col-md-3">
+					<div class="form-group" id="responsavel">
+						<label for="responsavel" title="" class="label w-100">Pessoa
+							Resp.
+							<div minlength="1" selected-object="selectedObject"
+								focus-first="true" text-searching="Pesquisando Pessoas..."
+								initial-value="data.workflow.responsavel.originalObject"
+								title-field="firstLine" description-field="secondLine"
+								input-class="form-control form-control-small"
+								remote-url-data-field="list" pause="200"
+								text-no-results="Não encontrei nenhuma Pessoa."
+								match-class="highlight"
+								selected-object-data="{context: data.workflow, variable: 'responsavel', full:false}"
+								remote-url="/siga/app/pessoa/buscar-json/" angucomplete-alt
+								name="responsavel" placeholder="Pesquisar Pessoa"
+								id="responsavel" class="angucomplete-ctrl p-0"
+								template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
+						</label>
 					</div>
 				</div>
 			</div>
@@ -197,7 +255,7 @@
 									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL') && tarefaItem.tipoResponsavel == 'LOTACAO'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
 									for="refUnidadeResponsavel" title="" class="label">Lotação
-									Resp. Resp.
+									Resp.
 									<div minlength="1" selected-object="selectedObject"
 										focus-first="true" text-searching="Pesquisando Unidades..."
 										initial-value="tarefaItem.refUnidadeResponsavel.originalObject"

@@ -43,8 +43,17 @@ app
 							hisIde : undefined,
 							nome : d.nome,
 							descr : d.descricao,
+							acessoDeEdicao : d.acessoDeEdicao,
+							acessoDeInicializacao : d.acessoDeInicializacao,
 							definicaoDeTarefa : []
 						};
+						if (d.responsavel && d.responsavel.originalObject
+								&& d.responsavel.originalObject.key)
+							pd.responsavelId = d.responsavel.originalObject.key;
+						if (d.lotaResponsavel
+								&& d.lotaResponsavel.originalObject
+								&& d.lotaResponsavel.originalObject.key)
+							pd.lotaResponsavelId = d.lotaResponsavel.originalObject.key;
 						if (d.tarefa) {
 							for (var i = 0; i < d.tarefa.length; i++) {
 								var t = d.tarefa[i];
@@ -144,8 +153,18 @@ app
 							hisIde : undefined,
 							nome : d.nome,
 							descricao : d.descr,
+							acessoDeEdicao : d.acessoDeEdicao,
+							acessoDeInicializacao : d.acessoDeInicializacao,
 							tarefa : []
 						};
+						if (d.responsavel)
+							pd.responsavel = {
+								originalObject : d.responsavel
+							}
+						if (d.lotaResponsavel)
+							pd.lotaResponsavel = {
+								originalObject : d.lotaResponsavel
+							}
 						if (d.definicaoDeTarefa) {
 							for (var i = 0; i < d.definicaoDeTarefa.length; i++) {
 								var t = d.definicaoDeTarefa[i];
@@ -231,16 +250,37 @@ app
 
 					}
 
-					$scope.carregarResponsaveis = function(cont) {
-						$http({
-							url : '/sigawf/app/responsavel/carregar',
-							method : "GET"
-						}).then(function(response) {
-							$scope.responsaveis = response.data.list;
-							if (cont)
-								cont();
-						}, function(response) {
-						});
+					$scope.carregarRecursos = function(cont) {
+						$http(
+								{
+									url : '/sigawf/app/diagrama/acesso-de-inicializacao/carregar',
+									method : "GET"
+								})
+								.then(
+										function(response) {
+											$scope.acessosDeInicializacao = response.data.list;
+											$http(
+													{
+														url : '/sigawf/app/diagrama/acesso-de-edicao/carregar',
+														method : "GET"
+													})
+													.then(
+															function(response) {
+																$scope.acessosDeEdicao = response.data.list;
+																$http(
+																		{
+																			url : '/sigawf/app/responsavel/carregar',
+																			method : "GET"
+																		})
+																		.then(
+																				function(
+																						response) {
+																					$scope.responsaveis = response.data.list;
+																					if (cont)
+																						cont();
+																				});
+															});
+										});
 					}
 
 					$scope.selectedObject = function(p1, p2) {
@@ -331,7 +371,7 @@ app
 
 					$scope.graphDrawDebounced = debounce($scope.graphDraw,
 							1000, false);
- 
+
 					function graphElement(shape, n, nextn) {
 						var resp;
 						switch (n.tipoResponsavel) {
@@ -511,7 +551,7 @@ app
 								.replace(/\+/g, ' '));
 					}
 
-					$scope.carregarResponsaveis(function() {
+					$scope.carregarRecursos(function() {
 						$scope.id = $scope.getParameterByName('id');
 						if ($scope.id) {
 							$scope.carregar($scope.id);

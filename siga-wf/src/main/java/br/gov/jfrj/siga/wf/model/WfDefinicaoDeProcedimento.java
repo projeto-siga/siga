@@ -2,12 +2,13 @@ package br.gov.jfrj.siga.wf.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -25,10 +26,14 @@ import org.hibernate.annotations.BatchSize;
 
 import com.crivano.jflow.model.ProcessDefinition;
 
+import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.util.Utils;
+import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -36,6 +41,9 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 import br.gov.jfrj.siga.wf.dao.WfDao;
+import br.gov.jfrj.siga.wf.logic.WfPodeEditarDiagrama;
+import br.gov.jfrj.siga.wf.model.enm.WfAcessoDeEdicao;
+import br.gov.jfrj.siga.wf.model.enm.WfAcessoDeInicializacao;
 import br.gov.jfrj.siga.wf.util.SiglaUtils;
 import br.gov.jfrj.siga.wf.util.SiglaUtils.SiglaDecodificada;
 
@@ -75,8 +83,34 @@ public class WfDefinicaoDeProcedimento extends HistoricoAuditavelSuporte impleme
 	@Column(name = "DEFP_NR")
 	private Integer numero;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "PESS_ID_RESP")
+	private DpPessoa responsavel;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "LOTA_ID_RESP")
+	private DpLotacao lotaResponsavel;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "DEFP_TP_EDICAO")
+	private WfAcessoDeEdicao acessoDeEdicao;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "DEFP_TP_INICIO")
+	private WfAcessoDeInicializacao acessoDeInicializacao;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "GRUP_ID_EDICAO")
+	private CpPerfil grupoDeEdicao;
+
 	@Transient
 	private java.lang.String hisIde;
+
+	@Transient
+	private Long responsavelId;
+
+	@Transient
+	private Long lotaResponsavelId;
 
 	//
 	// Solução para não precisar criar HIS_ATIVO em todas as tabelas que herdam
@@ -306,6 +340,77 @@ public class WfDefinicaoDeProcedimento extends HistoricoAuditavelSuporte impleme
 		this.ano = d.ano;
 		this.numero = d.numero;
 		this.orgaoUsuario = d.orgaoUsuario;
+	}
+
+	public WfAcessoDeEdicao getAcessoDeEdicao() {
+		return acessoDeEdicao;
+	}
+
+	public void setAcessoDeEdicao(WfAcessoDeEdicao acessoDeEdicao) {
+		this.acessoDeEdicao = acessoDeEdicao;
+	}
+
+	public CpPerfil getGrupo() {
+		return null;
+	}
+
+	public void assertAcessoDeEditar(DpPessoa titular, DpLotacao lotaTitular) {
+		if (!WfAcessoDeEdicao.acessoPermitido(this, titular, lotaTitular))
+			throw new RuntimeException("Edição do diagrama '" + nome + "' não é permitida para "
+					+ (titular != null ? titular.getSigla() : null) + "/"
+					+ (lotaTitular != null ? lotaTitular.getSigla() : null));
+	}
+
+	public List<AcaoVO> getAcoes(DpPessoa titular, DpLotacao lotaTitular) {
+		List<AcaoVO> set = new ArrayList<>();
+
+		set.add(AcaoVO.builder().nome("_Editar").icone("pencil").acao("/app/diagrama/editar?id=" + id)
+				.exp(new WfPodeEditarDiagrama(this, titular, lotaTitular)).build());
+
+		set.add(AcaoVO.builder().nome("_Iniciar").icone("add").acao("/app/iniciar/" + id)
+				.exp(new WfPodeEditarDiagrama(this, titular, lotaTitular)).build());
+
+		return set;
+	}
+
+	public Long getResponsavelId() {
+		return responsavelId;
+	}
+
+	public void setResponsavelId(Long responsavelId) {
+		this.responsavelId = responsavelId;
+	}
+
+	public Long getLotaResponsavelId() {
+		return lotaResponsavelId;
+	}
+
+	public void setLotaResponsavelId(Long lotaResponsavelId) {
+		this.lotaResponsavelId = lotaResponsavelId;
+	}
+
+	public DpPessoa getResponsavel() {
+		return responsavel;
+	}
+
+	public void setResponsavel(DpPessoa responsavel) {
+		this.responsavel = responsavel;
+	}
+
+	public DpLotacao getLotaResponsavel() {
+		return lotaResponsavel;
+	}
+
+	public void setLotaResponsavel(DpLotacao lotaResponsavel) {
+		this.lotaResponsavel = lotaResponsavel;
+	}
+
+	public WfAcessoDeInicializacao getAcessoDeInicializacao() {
+		return acessoDeInicializacao;
+	}
+
+	public void setAcessoDeInicializacao(WfAcessoDeInicializacao acessoDeInicializacao) {
+		this.acessoDeInicializacao = acessoDeInicializacao;
 	}
 
 }

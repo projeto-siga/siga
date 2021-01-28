@@ -23,7 +23,7 @@ USE `sigawf`;
 
 DROP TABLE IF EXISTS `wf_def_desvio`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `wf_def_desvio` (
   `DEFD_ID` bigint NOT NULL AUTO_INCREMENT COMMENT 'Identificador da definição de desvio',
   `DEFD_TX_CONDICAO` varchar(256) DEFAULT NULL COMMENT 'Fórmula matemática para habilitar a definição de desvio',
@@ -61,7 +61,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `wf_def_procedimento`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `wf_def_procedimento` (
   `DEFP_ID` bigint NOT NULL AUTO_INCREMENT COMMENT 'Identificador da definição de procedimento',
   `ORGU_ID` bigint DEFAULT NULL COMMENT 'Identificador do órgao usuário ao qual se vincula a definição de procedimento',
@@ -94,7 +94,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `wf_def_responsavel`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `wf_def_responsavel` (
   `DEFR_ID` bigint NOT NULL AUTO_INCREMENT COMMENT 'Identificador da definição de responsável',
   `DEFR_DS` varchar(256) DEFAULT NULL COMMENT 'Descrição da definição de responsável',
@@ -125,7 +125,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `wf_def_tarefa`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `wf_def_tarefa` (
   `DEFT_ID` bigint NOT NULL AUTO_INCREMENT COMMENT 'Identificador da definição de tarefa',
   `DEFP_ID` bigint DEFAULT NULL COMMENT 'Identificador do procedimento ao qual se liga a definição de tarefa',
@@ -174,7 +174,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `wf_def_variavel`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `wf_def_variavel` (
   `DEFV_ID` bigint NOT NULL AUTO_INCREMENT COMMENT 'Identificador da definição de variável',
   `DEFT_ID` bigint DEFAULT NULL COMMENT 'Identificador definição de tarefa a qual se relaciona a definição de variável',
@@ -210,7 +210,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `wf_movimentacao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `wf_movimentacao` (
   `MOVI_ID` bigint NOT NULL AUTO_INCREMENT COMMENT 'Identificador da movimentação',
   `MOVI_TP` varchar(31) NOT NULL COMMENT 'Tipo da movimentação',
@@ -256,7 +256,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `wf_procedimento`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `wf_procedimento` (
   `PROC_ID` bigint NOT NULL AUTO_INCREMENT COMMENT 'Identificador do procedimento',
   `ORGU_ID` bigint DEFAULT NULL COMMENT 'Identificador do órgão usuário ao qual se relaciona o procedimento',
@@ -298,7 +298,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `wf_responsavel`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `wf_responsavel` (
   `RESP_ID` bigint NOT NULL AUTO_INCREMENT COMMENT 'Identificador do responsável',
   `DEFR_ID` bigint DEFAULT NULL COMMENT 'Identificador da definição do responsável',
@@ -332,7 +332,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `wf_variavel`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `wf_variavel` (
   `VARI_ID` bigint NOT NULL AUTO_INCREMENT COMMENT 'Identificador da variável',
   `PROC_ID` bigint DEFAULT NULL COMMENT 'Identificador do procedimento relacionado a variável',

@@ -8,7 +8,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 
-public enum WfAcessoDeEdicao {
+public enum WfAcessoDeInicializacao {
 
 	ACESSO_PUBLICO("Público"),
 	//
@@ -26,7 +26,7 @@ public enum WfAcessoDeEdicao {
 
 	private final String descr;
 
-	WfAcessoDeEdicao(String descr) {
+	WfAcessoDeInicializacao(String descr) {
 		this.descr = descr;
 	}
 

@@ -19,9 +19,9 @@ import net.sf.jasperreports.engine.JRException;
 
 public class RelTeste extends RelatorioTemplate {
 
-	String assuntos =  "";
+	List<String> listaAssunto = new ArrayList<>();
 	
-	String setoresSubordinados =  "";
+	List<String> listaSetoreSubordinado = new ArrayList<>();
 
 	public RelTeste(Map parametros) throws DJBuilderException {
 		super(parametros);
@@ -36,9 +36,10 @@ public class RelTeste extends RelatorioTemplate {
 			throw new DJBuilderException("Setor subordinado deve ser escolhido!");
 		}
 		
-		 assuntos = String.valueOf( parametros.get("listaAssuntos") );
+
+		 listaAssunto =  new ArrayList<String>(Arrays.asList(String.valueOf( parametros.get("listaAssuntos") ).split(",")));
 		
-		 setoresSubordinados = String.valueOf( parametros.get("listaSetoresSubordinados") );
+		 listaSetoreSubordinado =  new ArrayList<String>(Arrays.asList(String.valueOf( parametros.get("listaSetoresSubordinados") ).split(",")));
 
 		if (parametros.get("secaoUsuario") == null) {
 			throw new DJBuilderException(
@@ -140,8 +141,8 @@ public class RelTeste extends RelatorioTemplate {
 		List<String> d = new ArrayList<String>();
 
 		Query query = ContextoPersistencia.em().createNativeQuery( montarConsulta() );
-		query.setParameter("assuntos", assuntos);
-		query.setParameter("setoresSubordinados",setoresSubordinados);
+		query.setParameter("assuntos", listaAssunto);
+		query.setParameter("setoresSubordinados",listaSetoreSubordinado);
 		
 		List<Object[]> lista = query.getResultList();
 		

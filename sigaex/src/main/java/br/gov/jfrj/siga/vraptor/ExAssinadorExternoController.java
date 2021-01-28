@@ -219,6 +219,7 @@ public class ExAssinadorExternoController extends ExController {
 		return pdfd;
 	}
 
+	@Transacional
 	@Post("/app/assinador-popup/doc/{id}/hash")
 	public void assinadorPopupHash(String id) throws Exception {
 		try {
@@ -265,6 +266,7 @@ public class ExAssinadorExternoController extends ExController {
 		}
 	}
 
+	@Transacional
 	@Put("/public/app/assinador-externo/doc/{id}/sign")
 	public void assinadorExternoSave(String id) throws Exception {
 		try {
@@ -277,6 +279,7 @@ public class ExAssinadorExternoController extends ExController {
 		assinadorPopupSave(id);
 	}
 
+	@Transacional
 	@Put("/app/assinador-popup/doc/{id}/sign")
 	public void assinadorPopupSave(String id) throws Exception {
 		try {
@@ -334,7 +337,7 @@ public class ExAssinadorExternoController extends ExController {
 				// Nato: Assinatura externa não deve produzir transferência. 
 				// Se preferir a configuração default, deveria trocar o último parâmetro por null.
 				msg = Ex.getInstance().getBL().assinarDocumento(cadastrante, getLotaTitular(), mob.doc(), dt, assinatura,
-						null, tpMov, juntar, tramitar == null ? false : tramitar);
+						null, tpMov, juntar, tramitar == null ? false : tramitar, null);
 				if (msg != null)
 					msg = "OK: " + msg;
 				else

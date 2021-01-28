@@ -93,7 +93,7 @@ ${meta}
 
 <c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
 
-<c:set var="siga_version"  scope="request" value="9.0.8.8" />
+<c:set var="siga_version"  scope="request" value="9.0.17.3" />
 
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
@@ -136,6 +136,7 @@ ${meta}
 		</c:if>
 		
 		<c:set var="navbar_logo" value="logo-siga-novo-38px.png" />
+		<c:set var="navbar_logo2" value="${f:resource('/siga.cabecalho.logo')}" />
 		<c:set var="navbar_logo_size" value="38" />
 		<c:set var="button_class_busca" value="btn-outline-light" />
 		<c:set var="collapse_Tramitacao" scope="request" value="collapsible expanded" />
@@ -168,7 +169,21 @@ ${meta}
 				src="/siga/imagens/${navbar_logo}" height="${navbar_logo_size}">
 			</a>
 			
-	
+			<c:if test="${siga_cliente != 'GOVSP'}">
+				<c:choose>
+				<c:when test="${not empty logo_topo_orgao}">
+					<img id="logo-header2"
+					 src="${logo_topo_orgao}"
+					 alt="Logo do Órgão" height="38" class="ml-2" />
+				</c:when>
+				<c:otherwise>
+					<img id="logo-header2"
+					 src="${navbar_logo2}"
+				 	 alt="${f:resource('siga.cabecalho.titulo')}" height="${navbar_logo_size}" class="ml-2" />
+				</c:otherwise>
+				</c:choose>
+			</c:if>
+			
 			<button class="navbar-toggler" type="button" data-toggle="collapse"
 				data-target="#navbarSupportedContent"
 				aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -455,5 +470,11 @@ setTimeout(function() {
 function delSession() {
 	sessionStorage.removeItem('timeout' + document.getElementById('cadastrante').title);
 	sessionStorage.removeItem('mesa' + document.getElementById('cadastrante').title);
+
+	for (var obj in sessionStorage) {
+      if (sessionStorage.hasOwnProperty(obj) && (obj.includes("pessoa.") || obj.includes("lotacao."))) {
+    	  sessionStorage.removeItem(obj);
+      }
+	}
 }
 </script>		

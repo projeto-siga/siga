@@ -28,7 +28,7 @@ import br.gov.jfrj.siga.idp.jwt.SigaJwtBL;
 public class AutenticarPost implements IAutenticarPost {
 	@Override
 	public void run(AutenticarPostRequest req, AutenticarPostResponse resp) throws Exception {
-		try {
+		try (ApiContext ctx = new ApiContext(true)) {
 			HttpServletRequest request = SwaggerServlet.getHttpServletRequest();
 
 			final String authorization = request.getHeader("Authorization");

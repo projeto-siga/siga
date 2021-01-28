@@ -123,7 +123,7 @@ public class GcInformacaoFiltro {
 				&& situacao.getIdMarcador() > 0)
 			subquery += " and situacao.cpMarcador.idMarcador = "
 					+ situacao.getIdMarcador()
-					+ " and (situacao.dtFimMarca is null or situacao.dtFimMarca > sysdate)";
+					+ " and (situacao.dtFimMarca is null or situacao.dtFimMarca > CURRENT_TIMESTAMP)";
 
 		if (responsavel != null)
 			subquery += " and situacao.dpPessoaIni.idPessoa = "

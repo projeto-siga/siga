@@ -17,7 +17,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "SR_ARQUIVO", schema = "SIGASR")
+@Table(name = "sr_arquivo", schema = "sigasr")
 public class SrArquivo extends Objeto implements Comparable<SrArquivo>{
 
     private static final long serialVersionUID = -4338358297062727340L;

@@ -55,9 +55,6 @@ public class Notificador {
 	// + SigaBaseProperties.getString(SigaBaseProperties
 	// .getString("ambiente") + ".servidor.principal");
 
-	private static String servidor = Prop.get("/sigaex.url");
-
-	
 	private static ExDao exDao() {
 		return ExDao.getInstance();	}
 	
@@ -145,8 +142,8 @@ public class Notificador {
 				else lotacao = mov.getLotaResp();
 					adicionarDestinatariosEmail(mov, destinatariosEmail, null, mov.getResp(), lotacao); /* verificar ExEmailNotificação também*/
 			} catch (Exception e) {
-				throw new AplicacaoException(
-						"Erro ao enviar email de notificação de movimentação.", 0,
+				throw new RuntimeException(
+						"Erro ao enviar email de notificação de movimentação.", 
 						e);
 			}	
 		}
@@ -452,7 +449,7 @@ public class Notificador {
 			}
 			conteudo.append("<p>Para visualizar o documento, ");
 			conteudo.append("clique <a href=\"");
-			conteudo.append(servidor
+			conteudo.append(Prop.get("/sigaex.url")
 					+ "/app/expediente/doc/exibir?sigla=");
 			conteudo.append(mov.getExDocumento().getSigla());
 			conteudo.append("\">aqui</a>.</p>");		
@@ -463,7 +460,7 @@ public class Notificador {
 			conteudo.append("' no documento ");
 			conteudo.append(mov.getExDocumento().getSigla());
 			conteudo.append(". Caso não deseje mais receber notificações desse documento, clique no link abaixo para se descadastrar:\n\n");
-			conteudo.append(servidor + "/app/expediente/mov/cancelar?id=");
+			conteudo.append(Prop.get("/sigaex.url") + "/app/expediente/mov/cancelar?id=");
 			conteudo.append(dest.idMovPapel);
 		
 		
@@ -509,7 +506,7 @@ public class Notificador {
 
 			conteudoHTML.append("<p>Para visualizar o documento, ");
 			conteudoHTML.append("clique <a href=\"");
-			conteudoHTML.append(servidor
+			conteudoHTML.append(Prop.get("/sigaex.url")
 					+ "/app/expediente/doc/exibir?sigla=");
 			conteudoHTML.append(mov.getExDocumento().getSigla());
 			conteudoHTML.append("\">aqui</a>.</p>");
@@ -522,7 +519,7 @@ public class Notificador {
 			conteudoHTML.append(mov.getExDocumento().getSigla());
 			conteudoHTML
 					.append(". <br> Caso não deseje mais receber notificações desse documento, clique <a href=\"");
-			conteudoHTML.append(servidor + "/app/expediente/mov/cancelar?id=");
+			conteudoHTML.append(Prop.get("/sigaex.url") + "/app/expediente/mov/cancelar?id=");
 			conteudoHTML.append(dest.idMovPapel);
 			conteudoHTML.append("\">aqui</a> para descadastrar.</p>");
 
@@ -548,7 +545,7 @@ public class Notificador {
 
 			conteudo.append("clique no link abaixo:\n\n");
 
-			conteudo.append(servidor + "/app/expediente/doc/exibir?sigla=");
+			conteudo.append(Prop.get("/sigaex.url") + "/app/expediente/doc/exibir?sigla=");
 
 			conteudo.append(dest.siglaMobil);
 
@@ -576,7 +573,7 @@ public class Notificador {
 			conteudoHTML.append("clique <a href=\"");
 
 			conteudoHTML
-					.append(servidor + "/app/expediente/doc/exibir?sigla=");
+					.append(Prop.get("/sigaex.url") + "/app/expediente/doc/exibir?sigla=");
 
 			conteudoHTML.append(dest.siglaMobil);
 

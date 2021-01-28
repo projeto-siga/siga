@@ -46,14 +46,16 @@ import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Selecionavel;
+import br.gov.jfrj.siga.parser.SiglaParser;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
-@Table(name = "DP_LOTACAO", schema = "CORPORATIVO")
+@Table(name = "corporativo.dp_lotacao")
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpLotacao extends AbstractDpLotacao implements Serializable,
 		Selecionavel, Historico, Sincronizavel, Comparable<Object>, DpConvertableEntity {
@@ -166,6 +168,8 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 		if (sigla == null) {
 			sigla = "";
 		}
+		if (ContextoPersistencia.getEntityManager() == null) 
+			return;
 		String siglasOrgaoUsu = "";
 		List<CpOrgaoUsuario> lou = CpDao.getInstance().listarOrgaosUsuarios();
 		for (CpOrgaoUsuario ou : lou) {
@@ -178,7 +182,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 			CpOrgaoUsuario cpOrgao = new CpOrgaoUsuario();
 			cpOrgao.setSiglaOrgaoUsu(m.group(1).toUpperCase());
 			setOrgaoUsuario(cpOrgao);
-			setSiglaLotacao(m.group(2).toUpperCase());
+			setSiglaLotacao((m.group(2).substring(0,1).equals("-")) ? m.group(2).substring(1).toUpperCase() : m.group(2).toUpperCase());
 		} else {
 			setSiglaLotacao(sigla.toUpperCase());
 		}
@@ -450,6 +454,11 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	@Override
 	public String toString() {
 		return getSiglaCompleta();
+	}
+	
+	@Override
+	public String getSiglaDePessoaEOuLotacao() {
+		return SiglaParser.makeSigla(null, this);
 	}
 
 }

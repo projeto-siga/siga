@@ -22,6 +22,8 @@ import java.util.Date;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 /**
  * A class that represents a row in the EX_DOCUMENTO table. You can customize
@@ -29,6 +31,37 @@ import javax.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue("1")
+@NamedQueries({@NamedQuery(name = "consultarPaginaInicial", query = "SELECT mard.idMarcador, "+
+		"               mard.descrMarcador, "+
+		"               Sum(CASE "+
+		"                     WHEN marca.dpPessoaIni.idPessoa = :idPessoaIni THEN 1 "+
+		"                     ELSE 0 "+
+		"                   END) as cont_pessoa, "+
+		"               Sum(CASE "+
+		"                     WHEN marca.dpLotacaoIni.idLotacao = :idLotacaoIni THEN 1 "+
+		"                     ELSE 0 "+
+		"                   END) as cont_lota, "+
+		"               mard.cpTipoMarcador.idTpMarcador, mard.cpTipoMarcador.descrTipoMarcador, "+
+		"               mard.ordem "+
+		"        FROM   ExMarca marca "+
+		"               JOIN marca.cpMarcador mard "+
+		"               JOIN marca.exMobil.exDocumento.exFormaDocumento.exTipoFormaDoc tpForma "+
+		"        WHERE  ( marca.dtIniMarca IS NULL "+
+		"                  OR marca.dtIniMarca < sysdate ) "+
+		"               AND ( marca.dtFimMarca IS NULL "+
+		"                      OR marca.dtFimMarca > sysdate ) "+
+		"               AND ( ( marca.dpPessoaIni.idPessoa = :idPessoaIni ) "+
+		"                      OR ( marca.dpLotacaoIni.idLotacao = :idLotacaoIni ) ) "+
+		"               AND marca.cpTipoMarca.idTpMarca = 1 "+
+		"               AND tpForma.idTipoFormaDoc = :idTipoForma "+
+		"        GROUP  BY mard.idMarcador, "+
+		"                  mard.descrMarcador, "+
+		"                  mard.cpTipoMarcador.idTpMarcador, mard.cpTipoMarcador.descrTipoMarcador, "+
+		"                  mard.ordem "+ 
+		"ORDER  BY mard.cpTipoMarcador, "+
+		"          mard.ordem, "+
+		"          mard.descrMarcador")
+})
 public class ExMarca extends AbstractExMarca implements Comparable {
 
 	public int compareTo(Object o) {
@@ -68,6 +101,25 @@ public class ExMarca extends AbstractExMarca implements Comparable {
 		return 0;
 	}
 	
+	public String getDescricaoMarcadorFormatadoComData() { 
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(this.getCpMarcador().getDescrMarcador());
+
+		if (getDtIniMarca() != null && getDtIniMarca().after(new Date())) {
+			sb.append(" a partir de ");
+			sb.append(getDtIniMarcaDDMMYYYY());
+		}
+
+		if (getDtFimMarca() != null) {
+			sb.append(" até ");
+			sb.append(getDtFimMarcaDDMMYYYY());
+		}
+		
+		return sb.toString();
+	}
+	
+	/* Cuidado com esse método em rotinas massivas por causa a obtenção da pessoa e lotaca Atual */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

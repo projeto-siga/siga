@@ -32,8 +32,8 @@ public abstract class AbstractExceptionHandler {
 
 	protected abstract void redirecionarParaErro(Throwable e);
 
-	@Accepts
-	public boolean accepts(ControllerMethod method) {
-		return Boolean.TRUE;
-	}
+//	@Accepts
+//	public boolean accepts(ControllerMethod method) {
+//		return Boolean.TRUE;
+//	}
 }

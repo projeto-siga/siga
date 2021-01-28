@@ -14,7 +14,7 @@
 
 <siga:pagina titulo="Novo Documento">
 	<link rel="stylesheet" href="/siga/javascript/hierarchy-select/hierarchy-select.css" type="text/css" media="screen, projection" />
-	<script type="text/javascript" src="/ckeditor/ckeditor/ckeditor.js"></script>
+	<script type="text/javascript" src="/ckeditor/ckeditor/ckeditor.js?v=4.15.0"></script>
 	<script type="text/javascript" src="../../../javascript/exDocumentoEdita.js"></script>
 	<script type="text/javascript" src="/siga/javascript/jquery.blockUI.js"></script>
 	<script type="text/javascript" src="/siga/javascript/hierarchy-select/hierarchy-select.js"></script>
@@ -53,6 +53,9 @@
 				<input type="hidden" id="idTamanhoMaximoDescricao" name="exDocumentoDTO.tamanhoMaximoDescricao" value="${exDocumentoDTO.tamanhoMaximoDescricao}" /> 
 				<input type="hidden" id="alterouModelo" name="exDocumentoDTO.alterouModelo" /> 
 				<input type="hidden" id="clickSelect" name="clickSelect" /> 
+				<input type="hidden" id="clickSelect" name="clickSelect" />
+				<input type="hidden" id="hasPai" name="hasPai" value="${hasPai}" />
+				<input type="hidden" id="isPaiEletronico" name="isPaiEletronico" value="${isPaiEletronico}" />
 				<input type="hidden" name="postback" value="1" /> 
 				<input type="hidden" id="sigla" name="exDocumentoDTO.sigla" value="${exDocumentoDTO.sigla}" /> 
 				<input type="hidden" name="exDocumentoDTO.nomePreenchimento" value="" /> 
@@ -127,7 +130,7 @@
 					</div>
 				</div>
 					<div class="row ${((exDocumentoDTO.tiposDocumento).size() != 1 or (exDocumentoDTO.tipoDocumento != 'interno_capturado' and podeEditarData) or (exDocumentoDTO.listaNivelAcesso.size() != 1) or (!exDocumentoDTO.eletronicoFixo))? '': 'd-none'}">
-						<div class="col-sm-2 ${(exDocumentoDTO.tiposDocumento).size() != 1? '': 'd-none'} ${hide_only_GOVSP}">
+						<div class="col-sm-2 ${(exDocumentoDTO.tiposDocumento).size() != 1 ? '': 'd-none'} ${hide_only_GOVSP}">
 							<div class="form-group">
 								<label for="exDocumentoDTO.idTpDoc">Origem</label>
 								<select name="exDocumentoDTO.idTpDoc" onkeypress="presskeySelect(event, this, null)" onmousedown="javascript:document.getElementById('clickSelect').value='true';"
@@ -148,7 +151,7 @@
 							</div>
 						</div>
 
-						<div class="col-sm-2 ${(exDocumentoDTO.listaNivelAcesso).size() != 1? '': 'd-none'}">
+						<div class="col-sm-2 ${(exDocumentoDTO.listaNivelAcesso).size() != 1 ? '': 'd-none'}">
 							<div class="form-group">
 								<input type="hidden" name="campos" value="nivelAcesso" /> 
 								<label for="exDocumentoDTO.dtDocString">Acesso</label>
@@ -218,7 +221,7 @@
 							<label for="exDocumentoDTO.numAntigoDoc">Nº antigo</label>
 							<input type="text" name="exDocumentoDTO.numAntigoDoc" size="16" maxLength="32" value="${exDocumentoDTO.numAntigoDoc}" class="form-control" />
 							<small class="form-text text-muted">(informar o número do documento no antigo sistema de controle de expedientes ou de
-											processos administrativos [SISAPA] ou [PROT]).</small>
+											processos administrativos).</small>
 						</div>
 					</div>
 				</div>

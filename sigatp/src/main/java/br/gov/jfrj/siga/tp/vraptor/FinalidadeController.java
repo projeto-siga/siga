@@ -121,6 +121,7 @@ public class FinalidadeController extends TpController {
 		return null != finalidade.getId() && finalidade.getId() > 0;
 	}
 	
+    @Transactional
 	@RoleAdmin
 	@RoleAdminMissao
 	@RoleAdminMissaoComplexo

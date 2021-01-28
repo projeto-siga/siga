@@ -13,7 +13,6 @@
 		<module>siga-rel</module>
 		<module>siga-cp</module>
 		<module>siga-sinc-lib</module>
-		<module>siga-cp-sinc</module>
 		<module>siga-ldap</module>
 		<module>siga-vraptor-module-old</module>
 		<module>siga-vraptor-module</module>
@@ -86,7 +85,6 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.4</version>
 				<configuration>
-					<packagingExcludes>WEB-INF/lib/siga-ext-*.jar</packagingExcludes>
 				</configuration>
 			</plugin>
             <plugin>
@@ -173,7 +171,13 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-	
+			
+			<dependency>
+	            <groupId>org.flywaydb</groupId>
+	            <artifactId>flyway-core</artifactId>
+	            <version>6.5.3</version>
+	        </dependency>
+	        	
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-cp</artifactId>
@@ -252,7 +256,6 @@
 				<groupId>siga</groupId>
 				<artifactId>siga-ext</artifactId>
 				<version>${siga.version}</version>
-				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
@@ -304,11 +307,6 @@
 				<artifactId>junit</artifactId>
 				<version>4.11</version>
 				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>siga</groupId>
-				<artifactId>siga-oidc</artifactId>
-				<version>${siga.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.jettison</groupId>
@@ -405,7 +403,7 @@
 				<groupId>net.sf.jasperreports</groupId>
 				<artifactId>jasperreports</artifactId>
 				<version>6.12.2</version>
-				<exclusions>
+				<!-- <exclusions>
 					<exclusion>
 						<groupId>org.bouncycastle</groupId>
 						<artifactId>bcmail-jdk14</artifactId>
@@ -419,10 +417,10 @@
 		               	<artifactId>*</artifactId>
 		            </exclusion>
             		<exclusion>
-						<groupId>commons-collections</groupId>
-						<artifactId>commons-collections</artifactId>
+						<groupId>com.lowagie</groupId>
++						<artifactId>itext</artifactId>
 					</exclusion>					
-				</exclusions>
+				</exclusions> -->
 			</dependency>
 
 			<dependency>
@@ -446,7 +444,7 @@
 			<dependency>
 				<groupId>org.freemarker</groupId>
 				<artifactId>freemarker</artifactId>
-				<version>2.3.20</version>
+				<version>2.3.30</version>
 			</dependency>
 			<dependency>
 				<groupId>com.opensymphony</groupId>

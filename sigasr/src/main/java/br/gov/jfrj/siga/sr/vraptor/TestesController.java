@@ -26,7 +26,7 @@ public class TestesController extends SrController {
 	
 	@Inject
 	public TestesController(HttpServletRequest request, Result result,
-			CpDao dao, SigaObjects so, EntityManager em, SrValidator srValidator) {
+			CpDao dao, SigaObjects so, EntityManager em, SrValidator srValidator) throws Throwable {
 		super(request, result, dao, so, em, srValidator);
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();

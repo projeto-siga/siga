@@ -15,6 +15,8 @@
 <%@ attribute name="juntarFixo" required="false"%>
 <%@ attribute name="tramitarAtivo" required="false"%>
 <%@ attribute name="tramitarFixo" required="false"%>
+<%@ attribute name="exibirNoProtocoloAtivo" required="false"%>
+<%@ attribute name="exibirNoProtocoloFixo" required="false"%>
 
 <div class="col pt-2 pb-2">
 	<c:if test="${not empty assinar and assinar}">
@@ -37,15 +39,7 @@
 	<c:if test="${assinarComSenha || autenticarComSenha}">
 		<div class="form-check form-check-inline mr-2">
 			<input class="form-check-input" type="checkbox" accesskey="c"
-				name="ad_password_0" id="ad_password_0" checked/> <label
-				class="form-check-label" for="ad_juntar_0"><u>C</u>om Senha</label>
-		</div>
-
-	</c:if>
-	<c:if test="${assinarComSenhaChecado || autenticarComSenhaChecado}">
-		<div class="form-check form-check-inline mr-2">
-			<input class="form-check-input" type="checkbox" accesskey="c"
-				name="ad_password_0" id="ad_password_0" checked /> <label
+ 				name="ad_password_0" id="ad_password_0" <c:if test="${assinarComSenhaChecado || autenticarComSenhaChecado}">checked</c:if> /> <label
 				class="form-check-label" for="ad_juntar_0"><u>C</u>om Senha</label>
 		</div>
 
@@ -67,5 +61,22 @@
 				<c:if test="${tramitarFixo}">disabled</c:if> /> <label
 				class="form-check-label" for="ad_tramitar_0">Tramitar</label>
 		</div>
+	</c:if>
+	<c:if test="${not empty exibirNoProtocoloAtivo}">
+		<div class="form-check form-check-inline mr-2 ">
+			<input class="form-check-input" type="checkbox" name="ad_exibirNoProtocolo_0"
+				id="ad_exibirNoProtocolo_0" onchange="confirmaExibirNoProtocolo(this)" <c:if test="${exibirNoProtocoloAtivo}">checked</c:if>
+				<c:if test="${exibirNoProtocoloFixo}">disabled</c:if> /> <label 
+				class="form-check-label" for="ad_exibirNoProtocolo_0">Disponibilizar no Acompanhamento do Protocolo</label>
+		</div>
+		<script type="text/javascript">
+			function confirmaExibirNoProtocolo(checkbox) {
+			  if (checkbox.checked) {
+			    if (!confirm("Ao clicar em OK o conteúdo deste documento ficará disponível através do número do protocolo de acompanhamento. Deseja continuar? ")) {
+				  checkbox.checked = false;
+			    }
+			  }
+			}	
+		</script>
 	</c:if>
 </div>

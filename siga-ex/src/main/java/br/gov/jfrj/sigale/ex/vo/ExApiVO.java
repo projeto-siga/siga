@@ -24,7 +24,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.TreeMap;
 
-import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.base.util.Utils;
 
 public class ExApiVO {
 	List<ExAcaoApiVO> acoes = new ArrayList<ExAcaoApiVO>();
@@ -77,9 +77,7 @@ public class ExApiVO {
 			else
 				params.clear();
 			try {
-				Ex.getInstance()
-						.getBL()
-						.mapFromUrlEncodedForm(params,
+				Utils.mapFromUrlEncodedForm(params,
 								parametros.getBytes("iso-8859-1"));
 			} catch (UnsupportedEncodingException e) {
 			}

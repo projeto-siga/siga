@@ -15,7 +15,7 @@
 				<h5>Dados da Espécie Documental</h5> 
 			</div>
 			<div class="card-body">
-				<form name="frm" action="gravar" theme="simple" method="POST">
+				<form name="frm" action="gravar" theme="simple" method="post">
 					<input type="hidden" id="id" name="id" value="${id}" />
 					<div class="row">
 						<div class="col-md-4">

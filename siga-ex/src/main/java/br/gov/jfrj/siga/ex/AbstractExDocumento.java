@@ -1127,6 +1127,12 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		}
 	}
 	
+//	public void armazenar() {
+//		if (cacheConteudoBlobDoc != null) 
+//			cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobDoc);
+//	}
+
+	
 	public ExProtocolo getExProtocolo() {
 		return exProtocolo;
 	}

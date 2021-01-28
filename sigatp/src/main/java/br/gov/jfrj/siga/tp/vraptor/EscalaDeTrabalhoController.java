@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Path;
@@ -127,6 +128,7 @@ public class EscalaDeTrabalhoController extends TpController {
         result.include(DIA_SEMANA, diaSemana);
      }
 
+    @Transactional
 	@RoleAdmin
 	@RoleAdminMissao
 	@RoleAdminMissaoComplexo
@@ -141,7 +143,8 @@ public class EscalaDeTrabalhoController extends TpController {
 		result.redirectTo(this).listarPorCondutor(escalaDeTrabalho.getCondutor().getId());
 	}
 
-	@SuppressWarnings("static-access")
+    @Transactional
+    @SuppressWarnings("static-access")
 	@RoleAdmin
 	@RoleAdminMissao
 	@RoleAdminMissaoComplexo
@@ -257,6 +260,7 @@ public class EscalaDeTrabalhoController extends TpController {
 		return diasDeTrabalhoAntigo.equals(diasDeTrabalhoNovo);
 	}
 
+    @Transactional
 	@RoleAdmin
 	@RoleAdminMissao
 	@RoleAdminMissaoComplexo

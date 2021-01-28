@@ -1,7 +1,9 @@
 package br.gov.jfrj.siga.sr.interceptor;
 
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Specializes;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Accepts;
@@ -9,14 +11,16 @@ import br.com.caelum.vraptor.AroundCall;
 import br.com.caelum.vraptor.InterceptionException;
 import br.com.caelum.vraptor.Intercepts;
 import br.com.caelum.vraptor.controller.ControllerMethod;
-import br.com.caelum.vraptor.core.InterceptorStack;
+import br.com.caelum.vraptor.interceptor.SimpleInterceptorStack;
 import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 @RequestScoped
-@Intercepts(after = ContextInterceptor.class)
-public class AssertAcessoInterceptor  {
+@Intercepts
+public class AssertAcessoInterceptor extends AbstractExceptionHandler {
 
+	private ControllerMethod method;
+	
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -53,7 +57,11 @@ public class AssertAcessoInterceptor  {
 
 	@Accepts
 	public boolean accepts(ControllerMethod method) {
-		return Boolean.TRUE;
+		if(method.containsAnnotation(AssertAcesso.class)) {
+			this.method = method;
+			return true;
+		}
+		return false;
 	}
 
 
@@ -72,7 +80,19 @@ public class AssertAcessoInterceptor  {
 		translatedException.setStackTrace(e.getStackTrace());
 		return translatedException;
 	}
+	
+	@AroundCall
+	public void intercept(SimpleInterceptorStack stack) throws InterceptionException {
+		try {
+			getSo().assertAcesso(new Perfil(method).getValor());
+		}
+		catch(Exception e) {
+			tratarExcecoes(e);
+		}
+		stack.next();
+	}
 
+	
 	class Perfil {
 
 		private String valor;
@@ -84,19 +104,6 @@ public class AssertAcessoInterceptor  {
 		public String getValor() {
 			return this.valor;
 		}
-	}
-
-
-	@AroundCall
-	public void intercept(InterceptorStack stack, ControllerMethod method, Object controllerInstance) throws InterceptionException  {
-		if (method.containsAnnotation(AssertAcesso.class))
-			try {
-				getSo().assertAcesso(new Perfil(method).getValor());
-			} catch (Exception e) {
-				tratarExcecoes(e);
-			}
-
-		stack.next(method, controllerInstance);
 	}
 
 }

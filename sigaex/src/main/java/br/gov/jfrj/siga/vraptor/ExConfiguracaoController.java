@@ -27,6 +27,7 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.base.TipoResponsavelEnum;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -123,6 +124,7 @@ public class ExConfiguracaoController extends ExController {
 	}
 
 	@SuppressWarnings("all")
+	@Transacional
 	@Get("app/expediente/configuracao/excluir")
 	public void excluir(Long id, String nmTipoRetorno, Long idMod, Long idFormaDoc) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
@@ -145,6 +147,7 @@ public class ExConfiguracaoController extends ExController {
 	}
 
 	@SuppressWarnings("all")
+	@Transacional
 	@Get("app/expediente/configuracao/editar_gravar")
 	public void editarGravar(Long id, Long idOrgaoUsu, Long idTpMov, Long idTpDoc, Long idTpFormaDoc, Long idMod,
 			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Long idSituacao, Long idTpConfiguracao, DpPessoaSelecao pessoaSel,
@@ -167,6 +170,7 @@ public class ExConfiguracaoController extends ExController {
 	}
 
 	@Post("app/expediente/configuracao/gerenciar_publicacao_boletim_gravar")
+	@Transacional
 	public void gerenciarPublicacaoBoletimGravar(Integer postback, String gerenciaPublicacao, Long idTpMov,
 			Long idTpConfiguracao, Long idFormaDoc, Long idMod, Integer tipoPublicador, Long idSituacao,
 			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel) throws Exception {
@@ -416,10 +420,7 @@ public class ExConfiguracaoController extends ExController {
 	}
 
 	private Map<Integer, String> getListaTipoPublicador() {
-		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, SigaMessages.getMessage("usuario.matricula"));
-		map.put(2, "Órgão Integrado");
-		return map;
+		return TipoResponsavelEnum.getListaMatriculaLotacao();
 	}
 
 	private Set<ExSituacaoConfiguracao> getListaSituacaoPodeNaoPode() throws Exception {

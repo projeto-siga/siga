@@ -34,7 +34,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sr.model.vo.SrAtributoVO;
 
 @Entity
-@Table(name = "SR_ATRIBUTO", schema = "SIGASR")
+@Table(name = "sr_atributo", schema = "sigasr")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class SrAtributo extends HistoricoSuporte implements SrSelecionavel, Selecionavel {
 	private static final long serialVersionUID = 1L;

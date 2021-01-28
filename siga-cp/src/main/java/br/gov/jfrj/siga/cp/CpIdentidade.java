@@ -45,7 +45,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "CP_IDENTIDADE", schema = "CORPORATIVO")
+@Table(name = "corporativo.cp_identidade")
 public class CpIdentidade extends AbstractCpIdentidade {
 
 	/**

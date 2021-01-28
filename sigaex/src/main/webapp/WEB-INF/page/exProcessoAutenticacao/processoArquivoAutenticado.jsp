@@ -130,7 +130,16 @@
 											<td align="left">${dt}</td>
 											<td align="left">${mov.descrTipoMovimentacao} 
 												<c:if test="${mov.idTpMov == 12}">
-													<span style="font-size: .8rem;color: #9e9e9e;">| documento juntado ${mov.exMobil}</span>
+													<span style="font-size: .8rem;color: #9e9e9e;"
+														>| documento juntado ${mov.exMobil}
+														<c:if test="${mov.exMobil.podeExibirNoAcompanhamento}">
+															&nbsp<a class="showConteudoDoc link-btn btn btn-sm btn-light" href="#" 
+																onclick="popitup('/sigaex/public/app/processoArquivoAutenticado_stream?jwt=${jwt}&sigla=${mov.exMobil}');"
+																rel="popover" data-title="${mov.exMobil}" 
+		    													data-content="" onmouseenter="exibeDoc(this);"
+																>Ver</a>
+	    												</c:if>
+													</span>
 												</c:if>
 											</td>
 											<td align="left">${mov.lotaCadastrante.sigla} </td>
@@ -157,3 +166,63 @@
 	</div>
 	<tags:assinatura_rodape />
 </siga:pagina>
+<script type="text/javascript">
+	function exibeDoc(elem) {
+		var timeOut;
+		$(elem).popover({
+			trigger: "hover",
+			placement: "auto",
+			html : true
+		});
+
+		timeOut = setTimeout(setDataContent, 700, elem);
+	}
+	
+	function setDataContent(elem) {
+	   	if ($(elem).attr('data-content') === "" 
+				&& ($("." + $(elem).context.className.split(' ')[0] + ":hover")).length > 0) {
+			sigladoc = $(elem).attr("data-title").replace("/", "").replace("-", "");
+			var div_id = "tmp-id-" + sigladoc;
+			$(elem).attr("data-content", '<div id="'+ div_id +'" class="spinner-border"></div>');
+			$(elem).popover('show');
+			conteudodoc = exibirBodyDoc(div_id, sigladoc, elem);
+		}
+	}
+	
+	function exibirBodyDoc(div_id, sigla, elem) {
+		$.ajax({
+		    url: "/sigaex/api/v1/documentos/"+ sigla + "/html",
+		    contentType: "application/json",
+		    headers: {"Authorization": "${jwt}"},
+		    dataType: 'json',
+		    success: function(result) {
+			    conteudoDoc = new DOMParser().parseFromString(result.html, "text/html");
+				strhtml = conteudoDoc.getElementsByTagName("BODY")[0].outerHTML
+					.replace(/(\r\n|\n|\r)/gm, "")
+					.replace(/<p[^>]*>/gi,'PARAGRAFOQUEBRA');
+				conteudo = new DOMParser().parseFromString(strhtml, "text/html") 
+        			.documentElement.textContent	
+					.replace(/PARAGRAFOQUEBRA?/g,'<p>').substring(0, 500)
+					+ "... <br /><br /><i>Clique no botão para ver o documento completo.</i>";
+				$('#'+div_id).removeClass("spinner-border");
+ 				$('#'+div_id).html(conteudo);
+				$(elem).attr("data-content", conteudo);
+				$(elem).attr("data-container", "body");
+		    },				
+		    error: function (response, status, error) {
+	        	msgErro = "Ocorreu um erro na solicitação: " + response.responseJSON.errormsg;
+				$('#'+div_id).removeClass("spinner-border");
+				$('#'+div_id).html(msgErro);
+				$(elem).attr("data-content", "");
+	    	}
+	    });
+	}
+</script>
+<style type="text/css">
+    .popover{
+        max-width:600px;
+    }
+    .popover p{
+		margin-bottom: 5px; /* between paragraphs */
+    }
+</style>

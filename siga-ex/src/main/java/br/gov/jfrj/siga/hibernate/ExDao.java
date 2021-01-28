@@ -50,7 +50,6 @@ import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
-import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -90,11 +89,13 @@ import br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
 import br.gov.jfrj.siga.hibernate.ext.IMontadorQuery;
+import br.gov.jfrj.siga.hibernate.ext.MontadorQuery;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.persistencia.ExClassificacaoDaoFiltro;
 import br.gov.jfrj.siga.persistencia.ExDocumentoDaoFiltro;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
+import br.gov.jfrj.siga.persistencia.ExModeloDaoFiltro;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class ExDao extends CpDao {
@@ -870,11 +871,11 @@ public class ExDao extends CpDao {
 
 		if (pess != null) {
 			query = em().createNamedQuery("consultarEmailporPessoa");
-			query.setParameter("idPessoaIni", pess.getPessoaInicial());
+			query.setParameter("idPessoaIni", pess.getIdInicial());
 		} else {
 			query = em().createNamedQuery("consultarEmailporLotacao");
 
-			query.setParameter("idLotacaoIni", lot.getLotacaoInicial());
+			query.setParameter("idLotacaoIni", lot.getIdInicial());
 		}
 
 		return query.getResultList();
@@ -888,7 +889,7 @@ public class ExDao extends CpDao {
 
 			sql.setParameter("idPessoaIni", pes.getIdPessoaIni());
 			sql.setParameter("idLotacaoIni", lot.getIdLotacaoIni());
-			sql.setParameter("idTipoForma", idTipoForma);
+			sql.setParameter("idTipoForma", Long.valueOf(idTipoForma));
 
 			List result = sql.getResultList();
 
@@ -947,7 +948,7 @@ public class ExDao extends CpDao {
 		StringBuffer sbf = new StringBuffer();
 
 		sbf.append("select * from siga.ex_configuracao ex inner join "
-				+ "CORPORATIVO"
+				+ "corporativo"
 				+ ".cp_configuracao cp on ex.id_configuracao_ex = cp.id_configuracao ");
 
 		sbf.append("" + "where 1 = 1");
@@ -995,21 +996,21 @@ public class ExDao extends CpDao {
 			sbf.append(" and (cp.id_orgao_usu = ");
 			sbf.append(orgao.getId());
 			sbf.append(" or cp.id_lotacao in (select id_lotacao from "
-					+ "CORPORATIVO"
+					+ "corporativo"
 					+ ".dp_lotacao lot where lot.id_orgao_usu= ");
 			sbf.append(orgao.getId());
 			sbf.append(")");
 			sbf.append(" or cp.id_pessoa in (select id_pessoa from "
-					+ "CORPORATIVO"
+					+ "corporativo"
 					+ ".dp_pessoa pes where pes.id_orgao_usu = ");
 			sbf.append(orgao.getId());
 			sbf.append(")");
 			sbf.append(" or cp.id_cargo in (select id_cargo from "
-					+ "CORPORATIVO" + ".dp_cargo cr where cr.id_orgao_usu = ");
+					+ "corporativo" + ".dp_cargo cr where cr.id_orgao_usu = ");
 			sbf.append(orgao.getId());
 			sbf.append(")");
 			sbf.append(" or cp.id_funcao_confianca in (select id_funcao_confianca from "
-					+ "CORPORATIVO"
+					+ "corporativo"
 					+ ".dp_funcao_confianca fc where fc.id_orgao_usu = ");
 			sbf.append(orgao.getId());
 			sbf.append(")");
@@ -1181,15 +1182,9 @@ public class ExDao extends CpDao {
 	}
 
 	public ExTpDocPublicacao consultarPorModelo(ExModelo mod) {
-		try {
-			final Query query = em().createNamedQuery("consultarPorModelo");
-			query.setParameter("idMod", mod.getHisIdIni());
-
-			return (ExTpDocPublicacao) query.getResultList().get(0);
-		} catch (final Throwable t) {
-			// engolindo a exceï¿½ï¿½o. Melhorar isso.
-			return null;
-		}
+		final Query query = em().createNamedQuery("consultarPorModelo");
+		query.setParameter("idMod", mod.getHisIdIni());
+		return (ExTpDocPublicacao) query.getResultList().get(0);
 	}
 
 	public List<ExDocumento> listarSolicitados(CpOrgaoUsuario orgaoUsu) {
@@ -1711,7 +1706,7 @@ public class ExDao extends CpDao {
 	}
 
 	public ExClassificacao obterClassificacaoAtual(
-			final ExClassificacao classificacao) {
+		final ExClassificacao classificacao) {
 		try {
 			final Query qry = em().createNamedQuery("consultarAtualPorId");
 			qry.setParameter("hisIdIni", classificacao.getHisIdIni());
@@ -1729,11 +1724,11 @@ public class ExDao extends CpDao {
 		String q = "select marca, marcador, mobil from ExMarca marca"
 				+ " inner join marca.cpMarcador marcador"
 				+ " inner join marca.exMobil mobil"
-				+ " where (marca.dtIniMarca is null or marca.dtIniMarca < sysdate)"
-				+ " and (marca.dtFimMarca is null or marca.dtFimMarca > sysdate)"
-				+ (titular != null ? " and (marca.dpPessoaIni.idPessoaIni = :titular)"
-						: " and (marca.dpLotacaoIni.idLotacaoIni = :lotaTitular)");
-		if("GOVSP".equals(Prop.get("/siga.local"))) {
+				+ " where (marca.dtIniMarca is null or marca.dtIniMarca < CURRENT_TIMESTAMP)"
+				+ " and (marca.dtFimMarca is null or marca.dtFimMarca > CURRENT_TIMESTAMP)"
+				+ " and (marca.dpPessoaIni.idPessoa = :titular or "
+				+ " (marca.dpPessoaIni.idPessoa = null and marca.dpLotacaoIni.idLotacao = :lotaTitular))";
+		if(Prop.isGovSP()) {
 			q += " and ((mobil.exDocumento.numExpediente is null and marcador = 1) or (mobil.exDocumento.numExpediente is not null))"
 					+ " and marcador <> 10";
 		}
@@ -1744,14 +1739,44 @@ public class ExDao extends CpDao {
 
 		if (titular != null)
 			query.setParameter("titular", titular.getIdPessoaIni());
-		else if (lotaTitular != null)
+		else
+			query.setParameter("titular", null);
+		if (lotaTitular != null)
 			query.setParameter("lotaTitular", lotaTitular.getIdLotacaoIni());
+		else
+			query.setParameter("lotaTitular", null);
 
 		List l = query.getResultList();
  		long tempoTotal = System.nanoTime() - tempoIni;
 		// System.out.println("consultarPorFiltroOtimizado: " + tempoTotal
 		// / 1000000 + " ms -> " + query + ", resultado: " + l);
 		return l;
+	}
+	
+	public List<ExModelo> consultarPorFiltro(
+			final ExModeloDaoFiltro flt) {
+		return consultarPorFiltro(flt, 0, 0);
+	}
+	
+	public List<ExModelo> consultarPorFiltro(
+			final ExModeloDaoFiltro flt, final int offset,
+			final int itemPagina) {
+		CriteriaQuery<ExModelo> q = cb().createQuery(ExModelo.class);
+		Root<ExModelo> c = q.from(ExModelo.class);
+		q.select(c);
+		List<Predicate> whereList = new LinkedList<Predicate>();
+		if(flt.getSigla() != null) {
+			whereList.add(cb().like(c.get("nmMod").as(String.class), "%" + flt.getSigla() + "%"));
+		}
+		Predicate[] whereArray = new Predicate[whereList.size()];
+		whereList.toArray(whereArray);
+		q.where(whereArray);
+			q.orderBy(cb().desc(c.get("nmMod")));
+		return em().createQuery(q).getResultList();
+	}
+
+	public int consultarQuantidade(final ExModeloDaoFiltro flt) {
+		return consultarPorFiltro(flt).size();
 	}
 
 	public List listarDocumentosCxEntradaPorPessoaOuLotacao(DpPessoa titular,
@@ -1763,8 +1788,8 @@ public class ExDao extends CpDao {
 						"select marca, marcador, mobil from ExMarca marca"
 								+ " inner join marca.cpMarcador marcador"
 								+ " inner join marca.exMobil mobil"
-								+ " where (marca.dtIniMarca is null or marca.dtIniMarca < sysdate)"
-								+ " and (marca.dtFimMarca is null or marca.dtFimMarca > sysdate)"
+								+ " where (marca.dtIniMarca is null or marca.dtIniMarca < CURRENT_TIMESTAMP)"
+								+ " and (marca.dtFimMarca is null or marca.dtFimMarca > CURRENT_TIMESTAMP)"
 								+ " and (marca.cpMarcador.idMarcador = 14L)"
 								+ (titular != null ? " and (marca.dpPessoaIni.idPessoaIni = :titular)"
 										: " and (marca.dpLotacaoIni.idLotacaoIni = :lotaTitular)"));
@@ -1826,8 +1851,8 @@ public class ExDao extends CpDao {
 						 + " INNER JOIN corporativo.cp_marcador marcador ON marca.id_marcador = marcador.id_marcador"
 						 + " LEFT OUTER JOIN corporativo.cp_marca marca2 ON "
 						  + " marca2.id_ref = marca.id_ref "
-						  + " AND (marca2.dt_ini_marca IS NULL OR marca2.dt_ini_marca < sysdate)"
-						  + " AND (marca2.dt_fim_marca IS NULL OR marca2.dt_fim_marca > sysdate)"
+						  + " AND (marca2.dt_ini_marca IS NULL OR marca2.dt_ini_marca < CURRENT_TIMESTAMP)"
+						  + " AND (marca2.dt_fim_marca IS NULL OR marca2.dt_fim_marca > CURRENT_TIMESTAMP)"
 						  + " AND ((marcador.GRUPO_MARCADOR <> " + String.valueOf(Mesa2.GrupoDeMarcadorEnum.EM_ELABORACAO.getId()) 
 						  	+ " AND MARCA2.ID_MARCADOR = " + String.valueOf(CpMarcador.MARCADOR_EM_ELABORACAO) + ") "
 						  	+ ( "".equals(queryMarcasAIgnorarFinal) ? ")" : 
@@ -1836,11 +1861,13 @@ public class ExDao extends CpDao {
 						  		+ " AND marca2.id_marcador in (" + queryMarcasAIgnorarFinal + ")))" )
 //  						  + (!grupoItem.grupoNome.equals(Mesa2.GrupoDeMarcadorEnum.EM_ELABORACAO.getNome())?
 //  								  " OR marca2.id_marcador = " + String.valueOf(CpMarcador.MARCADOR_EM_ELABORACAO) + ")" : ")")
-						 + " WHERE (marca.dt_ini_marca IS NULL OR marca.dt_ini_marca < sysdate)"
-						  + " AND (marca.dt_fim_marca IS NULL OR marca.dt_fim_marca > sysdate)"
+						 + " WHERE (marca.dt_ini_marca IS NULL OR marca.dt_ini_marca < CURRENT_TIMESTAMP)"
+						  + " AND (marca.dt_fim_marca IS NULL OR marca.dt_fim_marca > CURRENT_TIMESTAMP)"
 						  + " AND ((marca.id_pessoa_ini = :idPessoaIni) OR (marca.id_lotacao_ini = :idLotacaoIni))"
 						  + " AND marca.id_tp_marca = 1"
 						  + " AND marcador.grupo_marcador = " + grupoItem.grupoOrdem 
+						  + " AND marca.id_marcador <> :marcaAssinSenha "
+						  + " AND marca.id_marcador <> :marcaMovAssinSenha "
 						  + " AND marca2.id_marca IS null "
 						 + " GROUP BY marca.id_ref )"
 //								+ " GROUP BY tab1.grupo_marcador ORDER BY tab1.grupo_marcador asc"
@@ -1854,6 +1881,8 @@ public class ExDao extends CpDao {
 				Query sql = em().createNativeQuery(query);
 				sql.setParameter("idPessoaIni", pes.getIdPessoaIni());
 				sql.setParameter("idLotacaoIni", lot.getIdLotacaoIni());
+				sql.setParameter("marcaAssinSenha", CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA);
+				sql.setParameter("marcaMovAssinSenha", CpMarcador.MARCADOR_MOVIMENTACAO_ASSINADA_COM_SENHA);
 	
 				result = sql.getResultList();
 			}
@@ -1893,11 +1922,13 @@ public class ExDao extends CpDao {
 					+ " inner join marca.cpMarcador marcador"
 					+ " inner join mobil.exDocumento doc"
 					+ queryMarcasAIgnorar
-					+ " where (marca.dtIniMarca is null or marca.dtIniMarca < sysdate)"
-					+ " and (marca.dtFimMarca is null or marca.dtFimMarca > sysdate)"
+					+ " where (marca.dtIniMarca is null or marca.dtIniMarca < CURRENT_TIMESTAMP)"
+					+ " and (marca.dtFimMarca is null or marca.dtFimMarca > CURRENT_TIMESTAMP)"
 					+ (!exibeLotacao && titular != null ? " and (marca.dpPessoaIni.idPessoaIni = :titular)" : "") 
 					+ (exibeLotacao && lotaTitular != null ? " and (marca.dpLotacaoIni.idLotacaoIni = :lotaTitular)" : "")
 					+ queryMarcasAIgnorarWhere
+					+ " AND marca.cpMarcador.idMarcador <> :marcaAssinSenha "
+					+ " AND marca.cpMarcador.idMarcador <> :marcaMovAssinSenha "
 					+ " order by  doc.dtAltDoc " + ordem + ", marca ";
 			
 		Query query = em()
@@ -1907,6 +1938,9 @@ public class ExDao extends CpDao {
 		
 		if (exibeLotacao && lotaTitular != null)
 			query.setParameter("lotaTitular", lotaTitular.getIdLotacaoIni());
+
+		query.setParameter("marcaAssinSenha", CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA);
+		query.setParameter("marcaMovAssinSenha", CpMarcador.MARCADOR_MOVIMENTACAO_ASSINADA_COM_SENHA);
 
 		l = query.getResultList();
 //		long tempoTotal = System.nanoTime() - tempoIni;

@@ -21,7 +21,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 @Entity
-@Table(name="SR_ATRIBUTO_SOLICITACAO", schema = "SIGASR")
+@Table(name="sr_atributo_solicitacao", schema = "sigasr")
 public class SrAtributoSolicitacao extends HistoricoSuporte {
 	
 	private static final long serialVersionUID = 1L;

@@ -27,10 +27,12 @@ import br.gov.jfrj.siga.cp.CpArquivo;
 
 public class ArmazenamentoHCP {
 
-	private static final String HCP = "HCP ";
-
 	private final static Logger log = Logger.getLogger(ArmazenamentoHCP.class);
+
+	private static ArmazenamentoHCP instance;
 	
+	private static final String HCP = "HCP ";
+	private static final String ERRO_AO_INSTANCIAR_ARMAZENAMENTO_HCP = "Erro ao instanciar ArmazenamentoHCP";
 	private static final String ERRO_RECUPERAR_ARQUIVO = "Erro ao recuperar o arquivo";
 	private static final String ERRO_GRAVAR_ARQUIVO = "Erro ao gravar o arquivo";
 	private static final String ERRO_EXCLUIR_ARQUIVO = "Erro ao excluir o arquivo";
@@ -41,10 +43,26 @@ public class ArmazenamentoHCP {
 	private String usuario = Prop.get("/siga.armazenamento.arquivo.usuario");
 	private String senha = Prop.get("/siga.armazenamento.arquivo.senha");
 	private String token = null;
+	
+	private ArmazenamentoHCP() {}
+	
+	public static ArmazenamentoHCP getInstance() {
+		try {
+			if (instance == null) {
+				synchronized (ArmazenamentoHCP.class) {
+					instance = new ArmazenamentoHCP();
+					instance.configurar();
+				}
+			}
+			return instance;
+		} catch (Exception e) {
+			log.error(ERRO_AO_INSTANCIAR_ARMAZENAMENTO_HCP, e);
+			throw new AplicacaoException(e.getMessage());
+		}
+	}
 
 	private void configurar() throws Exception {
 		gerarToken();
-		
 		TrustStrategy acceptingTrustStrategy = new TrustSelfSignedStrategy();
 	    SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy).build();
 	    SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
@@ -53,15 +71,14 @@ public class ArmazenamentoHCP {
 
 	public void salvar(CpArquivo cpArquivo, byte[] conteudo) {
 		try {
-			configurar();
-			
 			HttpPut request = new HttpPut(uri+cpArquivo.getCaminho());
 			request.addHeader(AUTHORIZATION, token);
 			ByteArrayEntity requestEntity = new ByteArrayEntity(conteudo);
 			request.setEntity(requestEntity);
-			CloseableHttpResponse response = client.execute(request);
-			if(response.getStatusLine().getStatusCode()!=201)
-				throw new Exception(response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
+			try(CloseableHttpResponse response = client.execute(request)){
+				if(response.getStatusLine().getStatusCode()!=201)
+					throw new Exception(response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
+			}
 		} catch (Exception e) {
 			log.error(ERRO_GRAVAR_ARQUIVO, cpArquivo.getIdArq(), e);
 			throw new AplicacaoException(ERRO_GRAVAR_ARQUIVO);
@@ -70,12 +87,12 @@ public class ArmazenamentoHCP {
 		
 	public void apagar(CpArquivo cpArquivo) {
 		try {
-			configurar();
 			HttpDelete request = new HttpDelete(uri+cpArquivo.getCaminho());
 			request.addHeader(AUTHORIZATION, token);
-			CloseableHttpResponse response = client.execute(request);
-			if(!(response.getStatusLine().getStatusCode()==200 || response.getStatusLine().getStatusCode()==404))
-				throw new Exception(response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
+			try(CloseableHttpResponse response = client.execute(request)){
+				if(!(response.getStatusLine().getStatusCode()==200 || response.getStatusLine().getStatusCode()==404))
+					throw new Exception(response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
+			}
 		} catch (Exception e) {
 			log.error(ERRO_EXCLUIR_ARQUIVO, cpArquivo.getIdArq(), e);
 			throw new AplicacaoException(ERRO_EXCLUIR_ARQUIVO);
@@ -86,21 +103,21 @@ public class ArmazenamentoHCP {
 		if(cpArquivo.getIdArq() == null || cpArquivo.getCaminho() == null)
 			return null;
 		try {
-			configurar();
 			HttpGet httpGet = new HttpGet(uri+cpArquivo.getCaminho());
 			httpGet.addHeader(AUTHORIZATION, token);
-			CloseableHttpResponse response = client.execute(httpGet);
-			if (response.getStatusLine().getStatusCode() == 200 ) {
-				BufferedInputStream bis = new BufferedInputStream(response.getEntity().getContent());
-				ByteArrayOutputStream bao = new ByteArrayOutputStream();
-				byte[] buff = new byte[8000];
-				int bytesRead = 0;
-				while((bytesRead = bis.read(buff)) != -1) {
-					bao.write(buff, 0, bytesRead);
+			try(CloseableHttpResponse response = client.execute(httpGet)){
+				if (response.getStatusLine().getStatusCode() == 200 ) {
+					BufferedInputStream bis = new BufferedInputStream(response.getEntity().getContent());
+					ByteArrayOutputStream bao = new ByteArrayOutputStream();
+					byte[] buff = new byte[8000];
+					int bytesRead = 0;
+					while((bytesRead = bis.read(buff)) != -1) {
+						bao.write(buff, 0, bytesRead);
+					}
+					return bao.toByteArray();
+				} else {
+					throw new Exception(response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
 				}
-				return bao.toByteArray();
-			} else {
-				throw new Exception(response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
 			}
 		} catch (Exception e) {
 			log.error(ERRO_RECUPERAR_ARQUIVO, cpArquivo.getIdArq(), e);

@@ -36,10 +36,6 @@ public class UsuarioController extends SigaController {
 
 	private static final Logger LOG = Logger.getLogger(UsuarioAction.class);
 
-	private SigaObjects so;
-
-	
-
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -50,11 +46,6 @@ public class UsuarioController extends SigaController {
 	@Inject
 	public UsuarioController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
-
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
-
-		this.so = so;
 	}
 
 	@Get({ "/app/usuario/trocar_senha", "/public/app/usuario/trocar_senha" })
@@ -62,6 +53,7 @@ public class UsuarioController extends SigaController {
 		result.include("baseTeste", Prop.getBool("/siga.base.teste"));
 	}
 
+	@Transacional
 	@Post({ "/app/usuario/trocar_senha_gravar", "/public/app/usuario/trocar_senha_gravar" })
 	public void gravarTrocaSenha(UsuarioAction usuario) throws Exception {
 		String senhaAtual = usuario.getSenhaAtual();
@@ -106,6 +98,7 @@ public class UsuarioController extends SigaController {
 	/*
 	 * Alterar email do usuuário Referente ao Cartão 859
 	 */
+	@Transacional
 	@Get({ "/app/usuario/trocar_email", "/public/app/usuario/trocar_email" })
 	public void trocaEmail(UsuarioEmailAction usuario) {
 		List<DpPessoaTrocaEmailDTO> lstDto = new ArrayList<DpPessoaTrocaEmailDTO>(
@@ -120,6 +113,7 @@ public class UsuarioController extends SigaController {
 		result.include("baseTeste", Prop.getBool("/siga.base.teste"));
 	}	
 
+	@Transacional
 	@Post({ "/app/usuario/trocar_email_gravar", "/public/app/usuario/trocar_email_gravar" })
 	public void gravarTrocaEmail(UsuarioEmailAction usuario) throws Exception {		
 		String emailAtual = so.getCadastrante().getEmailPessoaAtual();
@@ -246,6 +240,7 @@ public class UsuarioController extends SigaController {
 
 	}
 
+	@Transacional
 	@Post({ "/app/usuario/incluir_usuario_gravar", "/public/app/usuario/incluir_usuario_gravar" })
 	public void gravarIncluirUsuario(UsuarioAction usuario) throws Exception {
 		String msgComplemento = "";
@@ -307,6 +302,7 @@ public class UsuarioController extends SigaController {
 		result.include("proxima_acao", "esqueci_senha_gravar");
 	}
 
+	@Transacional
 	@Post({ "/app/usuario/esqueci_senha_gravar", "/public/app/usuario/esqueci_senha_gravar" })
 	public void gravarEsqueciSenha(UsuarioAction usuario) throws Exception {
 		// caso LDAP, orientar troca pelo Windows / central

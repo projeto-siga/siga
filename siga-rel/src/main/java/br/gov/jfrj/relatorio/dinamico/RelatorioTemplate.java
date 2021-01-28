@@ -26,6 +26,7 @@ import java.util.Map;
 import ar.com.fdvs.dj.domain.builders.ColumnBuilderException;
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import ar.com.fdvs.dj.domain.constants.VerticalAlign;
+import br.gov.jfrj.siga.base.AplicacaoException;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -201,7 +202,7 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 		if (dados != null && dados.size() > 0) {
 			relatorio.setDados(dados);
 		} else {
-			throw new Exception("Não há dados para gerar o relatório!");
+			throw new AplicacaoException("Não há dados para gerar o relatório!");
 		}
 
 	}

@@ -76,6 +76,8 @@ public class Prop {
 		provider.addPublicProperty("/siga.base.url", "http://localhost:8080");
 		String base = get("/siga.base.url");
 
+		provider.addPublicProperty("/siga.hibernate.dialect");
+		
 		provider.addPublicProperty("/siga.gsa.url", null);
 
 		provider.addPublicProperty("/siga.relat.brasao", "brasao2.png");
@@ -109,6 +111,7 @@ public class Prop {
 
 		provider.addPublicProperty("/siga.omitir.metodo2", "true");
 
+		provider.addPublicProperty("/siga.cabecalho.logo", "/siga/imagens/logo-trf2-38px.png");
 		provider.addPublicProperty("/siga.cabecalho.titulo", "Justiça Federal");
 		provider.addPublicProperty("/sigawf.ativo", "true");
 
@@ -160,6 +163,7 @@ public class Prop {
 		provider.addPublicProperty("/siga.ws.seguranca.token.jwt", "false");
 		provider.addPublicProperty("/sigaex.autenticidade.url", base + "/sigaex/public/app/autenticar");
 		provider.addPublicProperty("/sigaex.url", base + "/sigaex");
+		provider.addPublicProperty("/sigagc.url", base + "/sigagc");		
 		provider.addPublicProperty("/sigaex.manual.url", base + "/siga/arquivos/apostila_sigaex.pdf");
 
 		provider.addPrivateProperty("/xjus.jwt.secret", null);
@@ -212,5 +216,11 @@ public class Prop {
 			provider.addPrivateProperty("/siga.armazenamento.arquivo.senha");
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.url");
 		}
+		
+		/* Tipos de possíveis responsáveis */
+		provider.addPublicProperty("/siga.substituto.tipos", "MATRICULA,LOTACAO");
+		
+		/* Obriga o preenchimento da descrição da ciência */
+		provider.addPublicProperty("/siga.ciencia.preenchimento.obrigatorio", "true");
 	}
 }

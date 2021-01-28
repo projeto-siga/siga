@@ -5,8 +5,8 @@ Componente.Select2 = (function() {
 	function Select2() {}	
 	
 	Select2.prototype.aplicar = function() {
-		$.each($('.siga-select2'), function() {
-			transformarEmSelect2(this);
+		$.each($('.siga-select2'), function() {					
+			transformarEmSelect2(this, null, null, $(this).data('sigaSelect2Placeholder'));					
 		});				
 	}	
 	
@@ -20,13 +20,21 @@ $(function() {
 });
 
 
-function transformarEmSelect2(select, idSelect, idDivContainer) {		
+function transformarEmSelect2(select, idSelect, idDivContainer, descricao) {		
 	if(select || (idSelect && idDivContainer)) {
 		var select = idSelect ? $(idSelect) : new jQuery(select);
 		var container = idSelect ? $(idDivContainer) : select.parent();	    
 		var theme = "bootstrap";
 		var width = "resolve";
-		var language = "pt-BR";		
+		var language = "pt-BR";	
+		var placeholder = ''; 
+			
+		if (typeof descricao !== 'undefined' && descricao != null) {
+			if (descricao.length > 0) {
+				placeholder = descricao;
+			}			
+		}
+		
 		var matcher = function(argument, selectOptionText) {
 			if ($.trim(argument.term) === '') {
 				return selectOptionText;
@@ -54,13 +62,26 @@ function transformarEmSelect2(select, idSelect, idDivContainer) {
 				return null;
 			}
 		};	    	    
-			
-		select.select2({
-			matcher: matcher,
-			theme: theme,
-			width: width,
-			language: language
-		});
+		
+		if (placeholder.length > 0) {
+			select.select2({
+				matcher: matcher,
+				theme: theme,
+				width: width,
+				language: language,
+				placeholder: placeholder,				
+				dropdownParent: container				
+			});
+		} else {
+			select.select2({
+				matcher: matcher,
+				theme: theme,
+				width: width,
+				language: language,
+				dropdownParent: container
+			});
+		}
+		
 		container.on('keyup', function(event) {
 			if (event.key == "Escape") {
 				select.val('0');

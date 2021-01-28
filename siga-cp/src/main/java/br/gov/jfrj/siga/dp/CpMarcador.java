@@ -41,7 +41,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 @Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
-@Table(name = "CP_MARCADOR", schema = "CORPORATIVO")
+@Table(name = "corporativo.cp_marcador")
 public class CpMarcador extends AbstractCpMarcador {
 
 	private static final long serialVersionUID = -909421649258750797L;

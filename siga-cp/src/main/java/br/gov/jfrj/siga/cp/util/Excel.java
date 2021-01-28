@@ -643,6 +643,7 @@ public class Excel {
 			Date dateExp = null;
 			int i = 0;
 			String email = "";
+			String nomeExibicao = null;
 			
 			DpPessoaDaoFiltro dpPessoaFiltro = new DpPessoaDaoFiltro();
 			Integer tamanho = 0;
@@ -663,7 +664,8 @@ public class Excel {
 				Iterator<Cell> cellIterator = row.cellIterator();
 				Cell cell;
 				
-				//SIGLA DO ORGAO				
+				
+				/* 0 --------  SIGLA DO ORGAO -----------*/			
 				celula = retornaConteudo(row.getCell(0, Row.CREATE_NULL_AS_BLANK));
 				if("".equals(celula.trim())) {
 					problemas.append("Linha " + linha +": ÓRGÃO em branco" + System.lineSeparator());
@@ -672,8 +674,9 @@ public class Excel {
 						problemas.append("Linha " + linha +": ÓRGÃO inválido" + System.lineSeparator());
 					}
 				}
+				/* ----------  END ---------- */
 
-				//NOME DO CARGO
+				/* 1 --------  NOME DO CARGO -----------*/	
 				celula = retornaConteudo(row.getCell(1, Row.CREATE_NULL_AS_BLANK));
 				if(!"".equals(celula.trim())) {
 					cargo.setOrgaoUsuario(orgaoUsuario);
@@ -700,8 +703,9 @@ public class Excel {
 				} else {
 					problemas.append("Linha " + linha +": CARGO em branco" + System.lineSeparator());
 				}
-				
-				//NOME FUNCAO DE CONFIANCA
+				/* ----------  END ---------- */
+							
+				/* 2 --------  NOME FUNCAO DE CONFIANCA -----------*/	
 				celula = retornaConteudo(row.getCell(2, Row.CREATE_NULL_AS_BLANK));
 				if(!"".equals(celula.trim())) {
 					funcao.setOrgaoUsuario(orgaoUsuario);
@@ -730,8 +734,9 @@ public class Excel {
 				} else {
 					funcao = null;
 				}
+				/* ----------  END ---------- */
 				
-				//NOME DA LOTACAO
+				/* 3 --------  NOME DA LOTACAO -----------*/	
 				celula = retornaConteudo(row.getCell(3, Row.CREATE_NULL_AS_BLANK));
 				if(!"".equals(celula.trim())) {
 					lotacao.setOrgaoUsuario(orgaoUsuario);
@@ -760,8 +765,30 @@ public class Excel {
 				} else {
 					problemas.append("Linha " + linha +": LOTAÇÃO em branco" + System.lineSeparator());
 				}
+				/* ----------  END ---------- */
 				
-				//DATA DE NASCIMENTO
+				/* 4 --------  NOME DA PESSOA -----------*/
+				celula = retornaConteudo(row.getCell(4, Row.CREATE_NULL_AS_BLANK));
+				problemas.append(validarNomePessoa(celula.trim(), linha, 60));
+				
+				
+				if(problemas == null || "".equals(problemas.toString())) {
+					pe.setNomePessoa(celula.trim());
+				}
+				
+				List<DpPessoa> listaP = new ArrayList<DpPessoa>();
+				listaP.addAll(CpDao.getInstance().listarCpfAtivoInativo(Long.valueOf(cpf.replace("-", "").replace(".", ""))));
+				
+				for (DpPessoa dpPessoa : listaP) {
+					if(!dpPessoa.getNomePessoa().equalsIgnoreCase(celula.trim())) {
+						problemas.append("Linha " + linha +": Nome diferente para o mesmo CPF já cadastrado.");
+						break;
+					}
+				}
+				/* ----------  END ---------- */
+				
+				
+				/* 5 --------  DATA DE NASCIMENTO -----------*/
 				if(retornaConteudo(row.getCell(5, Row.CREATE_NULL_AS_BLANK)) != "") {
 					if(row.getCell(5).getCellType() == HSSFCell.CELL_TYPE_NUMERIC && HSSFDateUtil.isCellDateFormatted(row.getCell(5, Row.CREATE_NULL_AS_BLANK))){
 						date = row.getCell(5).getDateCellValue();
@@ -795,7 +822,10 @@ public class Excel {
 						problemas.append("Linha " + linha + ": DATA DE NASCIMENTO inválida" + System.lineSeparator());
 					}
 				}
-				//CPF
+				/* ----------  END ---------- */
+				
+
+				/* 6 --------  CPF -----------*/
 				celula = retornaConteudo(row.getCell(6, Row.CREATE_NULL_AS_BLANK));
 				cpf = celula.replaceAll("[^0-9]", "");
 				cpf = StringUtils.leftPad(cpf, 11, "0");
@@ -806,27 +836,9 @@ public class Excel {
 				} else {
 					problemas.append("Linha " + linha +": CPF em branco" + System.lineSeparator());
 				}
-				
-				//NOME DA PESSOA
-				celula = retornaConteudo(row.getCell(4, Row.CREATE_NULL_AS_BLANK));
-				problemas.append(validarNomePessoa(celula.trim(), linha, 60));
-				
-				
-				if(problemas == null || "".equals(problemas.toString())) {
-					pe.setNomePessoa(celula.trim());
-				}
-				
-				List<DpPessoa> listaP = new ArrayList<DpPessoa>();
-				listaP.addAll(CpDao.getInstance().listarCpfAtivoInativo(Long.valueOf(cpf.replace("-", "").replace(".", ""))));
-				
-				for (DpPessoa dpPessoa : listaP) {
-					if(!dpPessoa.getNomePessoa().equalsIgnoreCase(celula.trim())) {
-						problemas.append("Linha " + linha +": Nome diferente para o mesmo CPF já cadastrado.");
-						break;
-					}
-				}
-				
-				//EMAIL
+				/* ----------  END ---------- */
+			
+				/* 7 --------  EMAIL -----------*/
 				celula = retornaConteudo(row.getCell(7, Row.CREATE_NULL_AS_BLANK)).trim().toLowerCase();
 				email = celula;
 				
@@ -850,29 +862,29 @@ public class Excel {
 				if(i > 0) {
 					problemas.append("Linha " + linha +": E-MAIL informado está cadastrado para outro CPF" + System.lineSeparator());
 				}
-				
-				/*
-				 * Alteracao 20/04/2020
-				 * Insercao dos campos RG, Orcao Expeditor, UF, Data Expedicao
-				 */
-				
-				//RG				
+				/* ----------  END ---------- */
+
+				/* 8 --------  RG -----------*/
 				celula = retornaConteudo(row.getCell(8, Row.CREATE_NULL_AS_BLANK));
 				rg = celula;
+				/* ----------  END ---------- */
 				
-				//RG Orgao Expeditor
+
+				/* 9 --------  RG Orgao Expeditor -----------*/
 				celula = retornaConteudo(row.getCell(9, Row.CREATE_NULL_AS_BLANK));
 				orgexp = celula;
+				/* ----------  END ---------- */
 				
-				//UF RG
+				/* 10 --------  UF RG -----------*/
 				celula = retornaConteudo(row.getCell(10, Row.CREATE_NULL_AS_BLANK));
 				ufexp = celula;
 				if(!"".equals(ufexp.trim())) {
 					if(CpDao.getInstance().consultaSiglaUF(ufexp)==null)
 						problemas.append( "Linha " + linha + ": UF DO RG inválido" + System.lineSeparator());
 				}
+				/* ----------  END ---------- */
 				
-				//RG Data Expedicao
+				/* 11 --------  RG Data Expedicao -----------*/
 				if(retornaConteudo(row.getCell(11, Row.CREATE_NULL_AS_BLANK)) != "") {
 					if(row.getCell(11).getCellType() == HSSFCell.CELL_TYPE_NUMERIC && HSSFDateUtil.isCellDateFormatted(row.getCell(11, Row.CREATE_NULL_AS_BLANK))){
 						dateExp = row.getCell(11).getDateCellValue();
@@ -906,10 +918,15 @@ public class Excel {
 						problemas.append("Linha " + linha + ": DATA DE EXPEDIÇÃO DO RG inválida" + System.lineSeparator());
 					}
 				}
+				/* ----------  END ---------- */
+
+				/* 12 --------  Nome Abreviado -----------*/
+				celula = retornaConteudo(row.getCell(12, Row.CREATE_NULL_AS_BLANK));
+				problemas.append(validarNomeAbreviado(celula.trim(), linha, 40));
+				nomeExibicao = celula;
+				/* ----------  END ---------- */
 				
-				/*
-				 * Fim da Alteracao 20/04/2020
-				 */
+
 				
 				if(cargo != null && lotacao != null && cpf != null && !"".equals(cpf) && !Long.valueOf(0).equals(Long.valueOf(cpf))) {
 					dpPessoaFiltro = new DpPessoaDaoFiltro();
@@ -945,6 +962,7 @@ public class Excel {
 				}
 				
 				if(problemas == null || "".equals(problemas.toString())) {
+					pe.setNomeExibicao(nomeExibicao);
 					pe.setDataNascimento(date);
 					pe.setCpfPessoa(Long.valueOf(cpf));
 					pe.setOrgaoUsuario(orgaoUsuario);
@@ -1069,6 +1087,18 @@ public class Excel {
 		}
 		return "";
 	}    
+    
+    public String validarNomeAbreviado(String nomeAbreviado, Integer linha, Integer tamanho) {
+    	
+    	if(nomeAbreviado.length() > tamanho){
+			return "Linha " + linha +": NOME com mais de 40 caracteres" + System.lineSeparator();
+		}
+    	
+    	if(nomeAbreviado != null && !nomeAbreviado.matches(Texto.DpPessoa.NOME_REGEX_CARACTERES_PERMITIDOS)) {
+			return "Linha " + linha +": NOME com caracteres não permitidos" + System.lineSeparator();
+		}
+    	return "";
+    }
     
     public boolean validarCPF(String CPF) {
         // considera-se erro CPF's formados por uma sequencia de numeros iguais

@@ -56,7 +56,7 @@ public abstract class AbstractCpSituacaoConfiguracao extends Objeto implements S
 	//private Set<CpTipoConfiguracao> cpTiposConfiguracaoSet;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "CP_TIPO_SERVICO_SITUACAO", schema = "CORPORATIVO", joinColumns = { @JoinColumn(name = "ID_SIT_CONFIGURACAO", nullable = false, updatable = false) }, inverseJoinColumns = { @JoinColumn(name = "ID_TP_SERVICO", nullable = false, updatable = false) })
+	@JoinTable(name = "corporativo.cp_tipo_servico_situacao", joinColumns = { @JoinColumn(name = "ID_SIT_CONFIGURACAO", nullable = false, updatable = false) }, inverseJoinColumns = { @JoinColumn(name = "ID_TP_SERVICO", nullable = false, updatable = false) })
 	private Set<CpTipoServico> cpTiposServicoSet;
 
 	public Long getIdSitConfiguracao() {

@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence version="1.0"
-	xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+
 
 	<persistence-unit name="default" transaction-type="RESOURCE_LOCAL">
-		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+				<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 		<non-jta-data-source>java:/jboss/datasources/SigaGcDS</non-jta-data-source>
 
 
@@ -59,6 +58,8 @@
 		<class>br.gov.jfrj.siga.gc.model.GcPapel</class>
 
 		<properties>
+					<!-- Desabilita o novo gerador de IDs para manter a compatibilidade -->
+			<property name="hibernate.id.new_generator_mappings" value="false"/>
 			<property name="hibernate.current_session_context_class"
 				value="thread" />
 			<property name="hibernate.query.substitutions" value="true 1, false 0" />
@@ -76,7 +77,7 @@
 				value="classpath:ehcache.xml" />
 			<property name="hibernate.cache.region.factory_class"
 				value="org.jboss.as.jpa.hibernate4.infinispan.InfinispanRegionFactory" />
-			<property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect" />
+			<property name="hibernate.dialect" value="${siga.hibernate.dialect}" />
 			<property name="hibernate.show_sql" value="false" />
 			
 						<!-- Cache Region QUERY_CACHE_SECONDS -->

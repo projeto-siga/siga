@@ -2,67 +2,90 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
 
-<div class="gt-form gt-content-box">
+<div>
 	<form id="atributoForm" action="#" enctype="multipart/form-data">
 		<input type="hidden" name="atributo.id" id="idAtributo" value="${idAtributo}">
 		<input type="hidden" name="atributo.hisIdIni" id="hisIdIni" value="${hisIdIni}">
-		<div class="gt-form-row box-wrapper">
-			<div class="box box-left gt-width-50">
-				<label>Nome <span>*</span></label> <input type="text"
+		
+		<!-- Nome -->
+		<div class="form-group">
+			<label>Nome <span>*</span></label>
+			<input type="text"
 					name="atributo.nomeAtributo"
 					id="nomeAtributo"
+					class="form-control"
 					value="${nomeAtributo}" size="50" maxlength="255" required/>
-			</div>
-			<div class="box gt-width-50">
-				<label>Descrição</label> <input maxlength="255" type="text"
+		</div>
+		
+		<!-- Descricao -->
+		<div class="form-group">
+			<label>Descrição</label>
+			<input maxlength="255" type="text"
 					name="atributo.descrAtributo"
 					id="descrAtributo"
-					value="${descrAtributo}" 
-					style="width: 372px;" />
-			</div>
+					value="${descrAtributo}"
+					class="form-control" 
+			/>
 		</div>
-		<div class="gt-form-row gt-width-66">
+		
+		<!-- Codigo -->		
+		<div class="form-group">
 			<label>C&oacute;digo</label> 
-			<input type="text" name="atributo.codigoAtributo" id="codigoAtributo"
-				value="${codigoAtributo}" size="60" maxlength="255"/>
+			<input type="text" 
+					name="atributo.codigoAtributo" 
+					id="codigoAtributo"
+					class="form-control"
+					value="${codigoAtributo}" maxlength="255"/>
 		</div>
-		<div class="gt-form-row gt-width-66">
+		
+		<!-- Objetivo -->
+		<div class="form-group">
 			<label>Objetivo do atributo<span>*</span></label>
-			<select id="objetivoAtributo" name="atributo.objetivoAtributo.id" class="select-siga" style="width:393px;" onchange="javascript:ocultaAssociacoes();">
+			<select id="objetivoAtributo" 
+					name="objetivoAtributoId" 
+					class="form-control select-siga" 					
+					onchange="javascript:ocultaAssociacoes();">
 				<c:forEach items="${objetivos}" var="objetivo">
 					<option value="${objetivo.idObjetivo}">${objetivo.descrObjetivo}</option>
 				</c:forEach>
 			</select>
 		</div>
-		<div class="gt-form-row gt-width-100">
+		
+		<!-- Tipo -->
+		<div class="form-group">
 			<label>Tipo de atributo</label>
-			<select id="tipoAtributo" name="atributo.tipoAtributo.id" class="select-siga" style="width:100%;">
+			<select id="tipoAtributo" 
+					name="atributo.tipoAtributo.id" 
+					class="form-control select-siga">
 				<c:forEach items="${tiposAtributo}" var="tipoAtt">
 					<option value="${tipoAtt}">${tipoAtt.descrTipoAtributo}</option>
 				</c:forEach>
 			</select>
 		</div>
-		<div class="gt-form-row gt-width-66" id="vlPreDefinidos" style="display: none;">
+		
+		
+		<div class="form-group" id="vlPreDefinidos" style="display: none;">
 			<label>Valores pré-definidos (Separados por ponto-e-vígula(;))</label> 
 			<input maxlength="512" type="text"
 				name="atributo.descrPreDefinido"
 				id="descrPreDefinido"
+				class="form-control"
 				value="${descrPreDefinido}" size="60" />
 		</div>
 	</form>
 	
+	<!-- Associacoes -->
 	<sigasr:configuracaoAssociacao orgaos="${orgaos}"
 								 locais="${locais}"
 								 itemConfiguracaoSet="${itemConfiguracaoSet}"
 								 acoesSet="${acoesSet}"
 								 modoExibicao='atributo'
-								 urlGravar="${linkTo[AssociacaoController].gravarAssociacao}"></sigasr:configuracaoAssociacao>
+								 urlGravar="${linkTo[AssociacaoController].gravarAssociacao}"/>
 		
-	<div class="gt-form-row" style="padding-top: 10px;">
-		<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="atributoService.gravar()"/>
-		<a class="gt-btn-medium gt-btn-left" onclick="atributoService.cancelarGravacao()">Cancelar</a>
-		<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="atributoService.aplicar()"/>
-	</div>
+	<!-- Botoes (Gravar, Cancelar, Aplicar -->
+	<input type="button" value="Gravar" class="btn btn-primary" onclick="atributoService.gravar()"/>
+	<a class="btn btn-secondary" style="color: #fff" onclick="atributoService.cancelarGravacao()">Cancelar</a>
+	<input type="button" value="Aplicar" class="btn btn-primary" onclick="atributoService.aplicar()"/>
 </div>
 
 

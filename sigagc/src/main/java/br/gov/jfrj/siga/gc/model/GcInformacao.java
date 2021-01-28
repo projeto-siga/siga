@@ -37,6 +37,7 @@ import org.hibernate.annotations.SortType;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaCalendar;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -53,7 +54,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "GC_INFORMACAO", schema = "SIGAGC")
+@Table(name = "gc_informacao", schema = "sigagc")
 @NamedQueries({
 		@NamedQuery(name = "buscarConhecimento", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*), (select count(*) from GcMarca m where m.inf=i and m.cpMarcador.idMarcador = 28 and (m.dpLotacaoIni.idLotacao = :lotacaoIni or m.dpPessoaIni.idPessoa = :pessoaIni) and m.dtFimMarca is null) as interessado, (select count(*) from GcMarca m where m.inf=i and m.cpMarcador.idMarcador = 70 and (m.dpLotacaoIni.idLotacao = :lotacaoIni or m.dpPessoaIni.idPessoa = :pessoaIni) and m.dtFimMarca is null) as executor from GcInformacao i inner join i.tags t where t in (:tags) and i.hisDtFim is null group by i.id, i.arq.titulo, i.hisDtIni  order by interessado desc, executor desc, count(*) desc, i.hisDtIni desc"),
 		@NamedQuery(name = "buscarConhecimentoTudoIgual", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*) from GcInformacao i inner join i.tags t where (select count(*) from GcTag t2 where t2 in t and t2 not in (:tags) and t2.tipo in (select tipo from GcTag where id in (:tags))) = 0 and i.hisDtFim is null group by i.id, i.arq.titulo, i.hisDtIni order by count(*) desc, i.hisDtIni desc"),
@@ -249,7 +250,7 @@ public class GcInformacao extends Objeto {
 	@PostLoad
 	private void onLoad() {
 		marcas = GcMarca.AR
-				.find("inf.id = ?1 and (dtFimMarca is null or dtFimMarca > sysdate) order by dtIniMarca, cpMarcador.descrMarcador",
+				.find("inf.id = ?1 and (dtFimMarca is null or dtFimMarca > CURRENT_TIMESTAMP) order by dtIniMarca, cpMarcador.descrMarcador",
 						this.id).fetch();
 		// marcas = GcMarca.find("id_tp_marca = 3 and inf.id = ?",
 		// this.id).fetch();
@@ -275,17 +276,10 @@ public class GcInformacao extends Objeto {
 		return getSigla() + " - " + getMarcadoresEmHtml(pess, lota);
 	}
 
-	private String completarComZeros(int valor, int casas) {
-		String s = String.valueOf(valor);
-		while (s.length() < casas)
-			s = "0" + s;
-		return s;
-	}
-
 	public String getSigla() {
 		if (this.elaboracaoFim != null) {
 			return ou.getAcronimoOrgaoUsu() + "-GC-" + ano + "/"
-					+ completarComZeros(numero, 5);
+					+ Utils.completarComZeros(numero, 5);
 		}
 		return "TMPGC-" + id;
 	}

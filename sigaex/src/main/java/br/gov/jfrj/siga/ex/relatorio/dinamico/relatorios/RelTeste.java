@@ -20,8 +20,8 @@ import net.sf.jasperreports.engine.JRException;
 public class RelTeste extends RelatorioTemplate {
 
 	String assuntos =  "";
-	String setoresSubordinados =  "";
 	
+	String setoresSubordinados =  "";
 
 	public RelTeste(Map parametros) throws DJBuilderException {
 		super(parametros);
@@ -40,29 +40,15 @@ public class RelTeste extends RelatorioTemplate {
 		
 		 setoresSubordinados = String.valueOf( parametros.get("listaSetoresSubordinados") );
 
-		
-//		listaAssuntos = new ArrayList<String>(Arrays.asList((assuntos.split(","))));  
-//		
-//		listaSetoresSubordinados = new ArrayList<String>(Arrays.asList((setoresSubordinados.split(","))));
-
-		
 		if (parametros.get("secaoUsuario") == null) {
 			throw new DJBuilderException(
 					"Parâmetro secaoUsuario não informado!");
 		}
+		
 		if (parametros.get("lotacaoTitular") == null) {
 			throw new DJBuilderException("Parâmetro lotação não informado!");
 		}
-		/*
-		 if (parametros.get("orgao") == null) { throw new
-		 DJBuilderException("Parâmetro órgão não informado!"); }
-		if (parametros.get("dataInicial") == null) {
-			throw new DJBuilderException("Parâmetro dataInicial não informado!");
-		}
-		if (parametros.get("dataFinal") == null) {
-			throw new DJBuilderException("Parâmetro dataFinal não informado!");
-		}
-		 */
+ 
 		if (parametros.get("link_siga") == null) {
 			throw new DJBuilderException("Parâmetro link_siga não informado!");
 		}
@@ -121,7 +107,7 @@ public class RelTeste extends RelatorioTemplate {
 				
 		 
 
-				" where c.id_classificacao in ( :assuntos )    and  l.id_lotacao in ( :setoresSubordinados) "+
+				"  where c.id_classificacao in ( :assuntos )    and  l.id_lotacao in ( :setoresSubordinados) "+
 	
 				
 				

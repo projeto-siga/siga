@@ -22,7 +22,7 @@ function sbmt() {
 	<div class="col-sm-2">
 			<label>Setores</label>
 				<c:forEach items="${listaSetoresSubordinados}" var="item">
-					<input type="checkbox" name="listaSetores" 	 value="${item.idLotacao}">${item.nomeLotacao} </input>
+					<input type="checkbox" name="setoresSelecionados" 	 value="${item.idLotacao}">${item.nomeLotacao} </input><br />
 				</c:forEach>
 
 	</div>

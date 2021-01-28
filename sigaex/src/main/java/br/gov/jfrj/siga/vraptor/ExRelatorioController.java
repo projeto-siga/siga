@@ -32,6 +32,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -81,15 +82,13 @@ import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovimentacaoDocSubor
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelOrgao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelTempoMedioSituacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelTempoTramitacaoPorEspecie;
+import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelTeste;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelTipoDoc;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelVolumeTramitacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelVolumeTramitacaoPorModelo;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioDocumentosSubordinados;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioModelos;
-import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelTeste;
-
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
-import br.gov.jfrj.siga.model.ContextoPersistencia;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -261,6 +260,9 @@ public class ExRelatorioController extends ExController {
 		
 		result.include("listaSetoresSubordinados", getSetoresSubordinados(listaLotacao));
 		
+		result.include("listaAssuntos", getAssuntos());
+
+		
 	}
 
 	private Set<DpLotacao> getSetoresSubordinados(Set<DpLotacao> listaLotacao) {
@@ -284,10 +286,9 @@ public class ExRelatorioController extends ExController {
 
 	
  
-private List<ExClassificacao> obeterAssuntos(){
+private List<ExClassificacao> getAssuntos(){
 
-	Query q = em().createNamedQuery(
-			"consultarExClassificacaoComExcecao");
+	Query q = em().createQuery("from ExClassificacao cl ");
 	return q.getResultList();
 }
 
@@ -1756,46 +1757,34 @@ private List<ExClassificacao> obeterAssuntos(){
 	@Get("app/expediente/rel/emiteRelTeste")
 	public Download aRelTeste() throws Exception {
 		assertAcesso(TESTE);
-//
-//		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-//		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
-//		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
-//		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
-//			throw new Exception(
-//					"O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
-//		}
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 
-		parametros.put("lotacao",
-				getRequest().getParameter("lotacaoDestinatarioSel.id"));
-		parametros.put("secaoUsuario", getRequest()
-				.getParameter("secaoUsuario"));
+		parametros.put("lotacao",getRequest().getParameter("lotacaoDestinatarioSel.id"));
+		parametros.put("secaoUsuario", getRequest().getParameter("secaoUsuario"));
 
-		//		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
-		//		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
 		
-		parametros.put("link_siga", linkHttp() + getRequest().getServerName()
-				+ ":" + getRequest().getServerPort()
-				+ getRequest().getContextPath()
+		parametros.put("link_siga", linkHttp() + getRequest().getServerName() + ":" + getRequest().getServerPort()	+ getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
 
-		parametros.put("lotacaoTitular",
-				getRequest().getParameter("lotacaoTitular"));
+		parametros.put("lotacaoTitular",getRequest().getParameter("lotacaoTitular"));
 		parametros.put("idTit", getRequest().getParameter("idTit"));
-		//System.out.println(System.getProperty("siga.relat.titulo"));
 		
 		
 		// atribuir parametros : destinos e assuntos da tela de filtro de pesquisa
 		parametros.put("listaAssuntos","2569,4");
 		
-		String listaSetores ="263,653";// getRequest().getParameter("listaSetores");
-		parametros.put("listaSetoresSubordinados",listaSetores);
-		
-		
+
+		String[] setoresSelecionados = getRequest().getParameterValues("setoresSelecionados");
+
+//		parametros.put("listaSetoresSubordinados",Arrays.toString(setoresSelecionados));
+		parametros.put("listaSetoresSubordinados","263,653");
+
+
 		addParametrosPersonalizadosOrgãoString(parametros);
-		//System.out.println("Brasao: " + parametros.get("brasao"));
+
 		final RelTeste rel = new RelTeste(parametros);
+		
 		rel.gerar();
 
 		final InputStream inputStream = new ByteArrayInputStream(

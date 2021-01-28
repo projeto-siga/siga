@@ -22,6 +22,7 @@ import javax.servlet.http.HttpSession;
 import com.auth0.jwt.JWTExpiredException;
 import com.auth0.jwt.JWTVerifyException;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
@@ -132,6 +133,10 @@ public class AuthJwtFormFilter implements Filter {
 //							(String) decodedNewToken.get("sub"), (Integer) decodedNewToken.get("iat"),
 //							(Integer) decodedNewToken.get("exp"), HttpRequestUtils.getIpAudit(req));
 				}
+				if (decodedToken.get("podeAcessoWeb") != null 
+						&& !"true".equals(decodedToken.get("podeAcessoWeb")))
+					throw new AuthJwtException("Acesso não permitido via Web Browser para o usuário " + decodedToken.get("sub"));
+					
 				ContextoPersistencia.setUserPrincipal((String) decodedToken.get("sub"));
 			}
 			chain.doFilter(request, response);
@@ -200,13 +205,16 @@ public class AuthJwtFormFilter implements Filter {
 			informarAutenticacaoInvalida(resp, e);
 			return;
 		}
-
+		String msgErro = "";
+		if (e instanceof AuthJwtException)
+			msgErro = " (" + e.getMessage() + ")";
+		
 		// Envia Mensagem para Tela de Login
 		HttpSession session = req.getSession(false);
 		if (session != null) {
 			session.setAttribute("loginMensagem",
 					(e.getClass() != SigaJwtInvalidException.class && e.getClass() != JWTExpiredException.class)
-							? SigaMessages.getMessage("login.erro.jwt")
+							? SigaMessages.getMessage("login.erro.jwt") + msgErro
 							: "");
 		}
 

@@ -262,6 +262,10 @@ public class GiServiceImpl implements GiService {
 					.getCpTipoLotacao().getIdTpLotacao() : "null");
 			lotacao.put("siglaTpLotacao", l.getCpTipoLotacao() != null ? l
 					.getCpTipoLotacao().getSiglaTpLotacao() : "null");
+			pessoa.put("podeAcessoWeb", Cp.getInstance()
+					.getConf()
+					.podeUtilizarServicoPorConfiguracao(p, l, 
+							"SIGA:Sistema Integrado de Gestão Administrativa;WEB:Acesso via Web Browser;"));
 
 			DpCargo c = p.getCargo();
 			if (c != null) {

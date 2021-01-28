@@ -2,11 +2,14 @@ package br.gov.jfrj.siga.api.v1;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONObject;
 
 import com.crivano.swaggerservlet.PresentableUnloggedException;
 import com.crivano.swaggerservlet.SwaggerServlet;
@@ -64,8 +67,11 @@ public class AutenticarPost implements IAutenticarPost {
 
 			String modulo = SigaJwtBL.extrairModulo(request);
 			SigaJwtBL jwtBL = SigaJwtBL.inicializarJwtBL(modulo);
-
-			String token = jwtBL.criarToken(username, null, null, null);
+			Map <String, Object> mapClaim = new HashMap <String, Object>();
+			mapClaim.put("podeAcessoWeb", new JSONObject(usuarioLogado)
+					.getString("podeAcessoWeb").toString());
+			
+			String token = jwtBL.criarToken(username, null, mapClaim , null);
 
 			Map<String, Object> decodedToken = jwtBL.validarToken(token);
 			Cp.getInstance().getBL().logAcesso(AbstractCpAcesso.CpTipoAcessoEnum.AUTENTICACAO,

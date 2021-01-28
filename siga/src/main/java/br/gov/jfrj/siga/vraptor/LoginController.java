@@ -38,6 +38,7 @@ import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.AbstractCpAcesso;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
 import br.gov.jfrj.siga.gi.service.GiService;
@@ -120,7 +121,8 @@ public class LoginController extends SigaController {
 				result.include("loginUsuario", username);
 				result.forwardTo(this).login(cont);				
 			} else {
-				gravaCookieComToken(username, cont);
+				gravaCookieComToken(username, cont, geraMapClaims(
+						getPodeAcessoWeb(usuarioLogado)));
 			}
 					
 			
@@ -171,9 +173,11 @@ public class LoginController extends SigaController {
 			List<CpIdentidade> idsCpf = CpDao.getInstance().consultaIdentidadesCadastrante(so.getIdentidadeCadastrante().getDpPessoa().getCpfPessoa().toString(), true);
 			
 			boolean usuarioPermitido = false;
+			DpPessoa p = null;
 			for (CpIdentidade identCpf : idsCpf) {
 				if (identCpf.getNmLoginIdentidade().equals(username)) {
 					usuarioPermitido = true;
+					p = identCpf.getPessoaAtual();
 					break;
 				}
 			}
@@ -185,7 +189,11 @@ public class LoginController extends SigaController {
 
 			this.response.addCookie(AuthJwtFormFilter.buildEraseCookie());
 
-			gravaCookieComToken(username, cont);
+			gravaCookieComToken(username, cont, geraMapClaims(
+					Cp.getInstance()
+						.getConf()
+						.podeUtilizarServicoPorConfiguracao(p, p.getLotacao(), 
+								"SIGA:Sistema Integrado de Gestão Administrativa;WEB:Acesso via Web Browser;")));
 			
 		} catch (Exception e) {
 			result.include("mensagemCabec", e.getMessage());
@@ -193,11 +201,11 @@ public class LoginController extends SigaController {
 		}
 	}
 
-	private void gravaCookieComToken(String username, String cont) throws Exception {
+	private void gravaCookieComToken(String username, String cont, Map <String, Object> mapClaim) throws Exception {
 		String modulo = SigaJwtBL.extrairModulo(request);
 		SigaJwtBL jwtBL = SigaJwtBL.inicializarJwtBL(modulo);
 
-		String token = jwtBL.criarToken(username, null, null, null);
+		String token = jwtBL.criarToken(username, null, mapClaim, null);
 
 		Map<String, Object> decodedToken = jwtBL.validarToken(token);
 		Cp.getInstance().getBL().logAcesso(AbstractCpAcesso.CpTipoAcessoEnum.AUTENTICACAO,
@@ -341,7 +349,7 @@ public class LoginController extends SigaController {
 				}
 				if (!usuarioPermitido)
 					throw new ServletException("Usuário não cadastrado ou sem permissão de acesso: " + cpf + ".");
-				gravaCookieComToken(cpf, cont);
+				gravaCookieComToken(cpf, cont, null);
 			}
 				
 			} catch(AplicacaoException a){
@@ -358,6 +366,22 @@ public class LoginController extends SigaController {
 		} catch (JSONException e) {
 			Logger.getLogger(LoginController.class).warn("Não foi possível identificar se a senha do usuário estava expirada ao efetuar login!");
 			return false;
+		}
+	}
+
+	private Map<String, Object> geraMapClaims(Boolean podeAcessoWeb) throws JSONException {
+		Map <String, Object> mapClaim = new HashMap <String, Object>();
+		mapClaim.put("podeAcessoWeb", (podeAcessoWeb? "true" : "false"));
+		return mapClaim;
+	}
+
+	private Boolean getPodeAcessoWeb(String usuarioLogado) {
+		try {
+			String podeAcessoWeb = new JSONObject(usuarioLogado)
+					.getString("podeAcessoWeb").toString();
+			return "true".equals(podeAcessoWeb);
+		} catch (Exception e) {
+			return true;
 		}
 	}
 }

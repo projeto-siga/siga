@@ -1,9 +1,6 @@
 package br.gov.jfrj.siga.wf.util;
 
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -12,14 +9,11 @@ import javax.inject.Inject;
 
 import com.crivano.jflow.GraphViz;
 
-import br.gov.jfrj.siga.Service;
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
+import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
-import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
 
 @RequestScoped
 public class WfUtil {
@@ -121,6 +115,10 @@ public class WfUtil {
 	public String getDot(WfTarefa taskInstance) throws UnsupportedEncodingException, Exception {
 		WfProcedimento pi = taskInstance.getInstanciaDeProcedimento();
 		return GraphViz.getDot(pi, "Início", "Fim");
+	}
+
+	public String getDot(WfDefinicaoDeProcedimento pd) throws UnsupportedEncodingException, Exception {
+		return GraphViz.getDot(pd, "Início", "Fim");
 	}
 
 //	private static boolean atorDeveReexecutarTarefa(DpPessoa ator, WfInstanciaDeTarefa ti) {

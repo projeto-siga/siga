@@ -15,6 +15,7 @@ import org.hibernate.annotations.BatchSize;
 
 import com.crivano.jflow.support.ProcessInstanceVariable;
 
+import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
@@ -188,6 +189,30 @@ public class WfVariavel implements ProcessInstanceVariable, Sincronizavel, Compa
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Object getValor() {
+		if (string != null)
+			return string;
+		if (date != null)
+			return date;
+		if (bool != null)
+			return bool;
+		if (number != null)
+			return number;
+		return null;
+	}
+
+	public Object getValorAsString() {
+		if (string != null)
+			return string;
+		if (date != null)
+			return Data.formatDDMMYY_AS_HHMMSS(date);
+		if (bool != null)
+			return bool ? "Sim" : "Não";
+		if (number != null)
+			return number.toString();
+		return null;
 	}
 
 }

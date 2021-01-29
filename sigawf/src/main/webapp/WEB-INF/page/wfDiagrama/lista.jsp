@@ -19,7 +19,7 @@
 			<tbody class="table-bordered">
 				<c:forEach var="item" items="${itens}">
 					<tr>
-						<td><c:url var="url" value="editar">
+						<td><c:url var="url" value="exibir">
 								<c:param name="id" value="${item.id}" />
 							</c:url> <a href="${url}">${item.sigla}</a></td>
 						<td>${item.nome}</td>

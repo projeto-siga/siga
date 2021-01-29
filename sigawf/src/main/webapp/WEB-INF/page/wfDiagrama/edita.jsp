@@ -312,7 +312,7 @@
 										selected-object-data="{context:tarefaItem, variable: 'ref', full:false}"
 										remote-url="/sigaex/app/modelo/buscar-json/" angucomplete-alt
 										name="ref" placeholder="Pesquisar Tipologia Documental"
-										id="ref" class="form-control angucomplete-ctrl"
+										id="ref" class="angucomplete-ctrl"
 										template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
 								</label> </section>
 								<fieldset ng-show="tarefaItem.tipo == 'FORMULARIO'"

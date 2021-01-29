@@ -205,8 +205,8 @@ public class WfBL extends CpBL {
 				return true;
 		}
 
-		throw new AplicacaoException("A designaï¿½ï¿½o de '" + lotAtual.getSigla() + "' para '" + lotFutura.getSigla()
-				+ "' nï¿½o ï¿½ permitida pois sï¿½ sï¿½o aceitas lotaï¿½ï¿½es ascendentes seguindo a linha do organograma ou descendentes diretas.");
+		throw new AplicacaoException("A designação de '" + lotAtual.getSigla() + "' para '" + lotFutura.getSigla()
+				+ "' não é permitida pois só são aceitas lotações ascendentes seguindo a linha do organograma ou descendentes diretas.");
 	}
 
 	public static Boolean podePegarTarefa(DpPessoa cadastrante, DpPessoa titular, DpLotacao lotaCadastrante,

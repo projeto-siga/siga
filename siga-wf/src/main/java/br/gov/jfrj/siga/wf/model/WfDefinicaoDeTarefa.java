@@ -453,4 +453,26 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 		this.refDescr = refDescr;
 	}
 
+	@Override
+	public String getResponsibleDescription() {
+		if (tipoDeResponsavel == null)
+			return null;
+
+		switch (tipoDeResponsavel) {
+		case LOTACAO:
+			if (lotacao != null)
+				return lotacao.getSigla();
+		case PESSOA:
+			if (pessoa != null)
+				return pessoa.getSigla();
+		case RESPONSAVEL:
+			if (definicaoDeResponsavel != null)
+				return definicaoDeResponsavel.getNome();
+		}
+
+		String s = tipoDeResponsavel.getDescr();
+		s = s.replace("Principal: ", "").replace("Lotação ", "Lota. ");
+		return s;
+	}
+
 }

@@ -2,7 +2,7 @@
 
 <siga:pagina titulo="Iniciar Procedimento">
 	<div class="container-fluid content">
-		<h2>Iniciar Procedimento ${pd.sigla} - ${pd.nome}</h2>
+		<h2>Iniciar Procedimento ${pd.sigla}: ${pd.nome}</h2>
 		<form method="POST" action="${linkTo[WfAppController].iniciar(pd.id)}">
 			<fieldset title="Dados Básicos">
 				<div class="row">

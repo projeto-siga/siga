@@ -1,43 +1,111 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	buffer="64kb"%>
+	buffer="64kb"
+	import="br.gov.jfrj.siga.wf.model.enm.WfTipoDeVariavel, br.gov.jfrj.siga.wf.model.enm.WfTipoDeAcessoDeVariavel"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
+<%
+	pageContext.setAttribute("tipoDeVariavel", WfTipoDeVariavel.values());
+	pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
+%>
+
+
 <siga:pagina titulo="Diagrama" incluirJs="/sigawf/js/diagrama.js">
 
-	<link rel="stylesheet"	href="/siga/fontawesome/css/all.css"></link>
+	<link rel="stylesheet" href="/siga/fontawesome/css/all.css"></link>
 
 	<!-- CSS Customization -->
 	<link rel="stylesheet" href="/sigawf/css/diagrama.css"></link>
-	
-	<link rel="stylesheet"	href="/sigawf/js/angucomplete-alt/angucomplete-alt.css"></link>
 
-	<script	src="/siga/javascript/jquery/3.3.1/jquery.min.js" type="text/javascript"></script>
-	<script src="/siga/bootstrap/js/bootstrap.bundle.min.js?v=4.1.1" type="text/javascript"></script>
+	<link rel="stylesheet"
+		href="/siga/javascript/angucomplete-alt/angucomplete-alt.css"></link>
+
+	<script src="/siga/javascript/jquery/3.3.1/jquery.min.js"
+		type="text/javascript"></script>
+	<script src="/siga/bootstrap/js/bootstrap.bundle.min.js?v=4.1.1"
+		type="text/javascript"></script>
 
 
-	<script	src="/siga/javascript/angularjs/1.8.2/angular.min.js"></script>
+	<script src="/siga/javascript/angularjs/1.8.2/angular.min.js"></script>
 
 	<script src="/siga/javascript/angucomplete-alt/angucomplete-alt.js"></script>
 
 	<div class="container-fluid content" ng-app="app" ng-controller="ctrl">
-		<h2>Diagrama ${pd.sigla}</h2>
+		<h2>Editar Diagrama ${pd.sigla}</h2>
 
 		<input type="hidden" name="postback" value="1" />
 		<fieldset title="Dados Básicos">
 			<div class="row">
-				<div class="col-sm-4">
+				<div class="col col-md-4">
 					<div class="form-group">
 						<label>Nome</label> <input type="text" name="pd.nome"
 							ng-model="data.workflow.nome" size="80" class="form-control" />
 					</div>
 				</div>
-				<div class="col-sm-8">
+				<div class="col col-md-8">
 					<div class="form-group">
 						<label>Descrição</label> <input type="text" name="descricao"
 							ng-model="data.workflow.descricao" size="80" class="form-control" />
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col col-md-3">
+					<div class="form-group" id="tipoMarcador">
+						<label for="idAcessoDeEdicao">Acesso para Editar</label> <select
+							ng-model="data.workflow.acessoDeEdicao"
+							ng-options="item.id as item.descr for item in acessosDeEdicao"
+							class="form-control"></select>
+					</div>
+				</div>
+				<div class="col col-md-3">
+					<div class="form-group" id="tipoMarcador">
+						<label for="idAcessoDeEdicao">Acesso para Iniciar</label> <select
+							ng-model="data.workflow.acessoDeInicializacao"
+							ng-options="item.id as item.descr for item in acessosDeInicializacao"
+							class="form-control"></select>
+					</div>
+				</div>
+				<div class="col col-md-3">
+					<div class="form-group" id="lotaResponsavel">
+						<label for="lotaResponsavel" title="" class="label w-100">Lotação
+							Resp.
+							<div minlength="1" selected-object="selectedObject"
+								focus-first="true" text-searching="Pesquisando Unidades..."
+								initial-value="data.workflow.lotaResponsavel.originalObject"
+								title-field="firstLine" description-field="secondLine"
+								input-class="form-control form-control-small"
+								remote-url-data-field="list" pause="200"
+								text-no-results="Não encontrei nenhuma Unidade."
+								match-class="highlight"
+								selected-object-data="{context: data.workflow, variable: 'lotaResponsavel', full:false}"
+								remote-url="/siga/app/lotacao/buscar-json/" angucomplete-alt
+								name="lotaResponsavel" placeholder="Pesquisar Unidade"
+								id="lotaResponsavel" class="angucomplete-ctrl p-0"
+								template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
+						</label>
+					</div>
+				</div>
+				<div class="col col-md-3">
+					<div class="form-group" id="responsavel">
+						<label for="responsavel" title="" class="label w-100">Pessoa
+							Resp.
+							<div minlength="1" selected-object="selectedObject"
+								focus-first="true" text-searching="Pesquisando Pessoas..."
+								initial-value="data.workflow.responsavel.originalObject"
+								title-field="firstLine" description-field="secondLine"
+								input-class="form-control form-control-small"
+								remote-url-data-field="list" pause="200"
+								text-no-results="Não encontrei nenhuma Pessoa."
+								match-class="highlight"
+								selected-object-data="{context: data.workflow, variable: 'responsavel', full:false}"
+								remote-url="/siga/app/pessoa/buscar-json/" angucomplete-alt
+								name="responsavel" placeholder="Pesquisar Pessoa"
+								id="responsavel" class="angucomplete-ctrl p-0"
+								template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
+						</label>
 					</div>
 				</div>
 			</div>
@@ -68,20 +136,25 @@
 											aria-haspopup="true" id="dropBtn"
 											class="btn btn-secondary dropdown-toggle">{{$index+1}}</button>
 										<div aria-labelledby="dropBtn" class="dropdown-menu pt-0 pb-0">
-											<button ng-click="data.workflow.tarefa.splice($index, 1);"
-												class="btn btn-link" ng-disabled>
-												<i class="fa fa-fa fa-trash"></i>
+											<button
+												ng-click="data.workflow.tarefa.splice($index, 0, {});"
+												class="btn btn-link p-2" ng-disabled>
+												<i class="fa fa-fa fa-plus"></i>
 											</button>
 											<button
 												ng-click="data.workflow.tarefa[$index] = data.workflow.tarefa.splice($index - 1, 1, data.workflow.tarefa[$index])[0]"
-												class="btn btn-link" ng-disabled="$index === 0">
+												class="btn btn-link p-2" ng-disabled="$index === 0">
 												<i class="fa fa-fa fa-arrow-up"></i>
 											</button>
 											<button
 												ng-click="data.workflow.tarefa[$index] = data.workflow.tarefa.splice($index + 1, 1, data.workflow.tarefa[$index])[0]"
-												class="btn btn-link"
+												class="btn btn-link p-2"
 												ng-disabled="$index === data.workflow.tarefa.length - 1">
 												<i class="fa fa-fa fa-arrow-down"></i>
+											</button>
+											<button ng-click="data.workflow.tarefa.splice($index, 1);"
+												class="btn btn-link p-2" ng-disabled>
+												<i class="fa fa-fa fa-trash"></i>
 											</button>
 										</div>
 									</div>
@@ -182,7 +255,7 @@
 									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL') && tarefaItem.tipoResponsavel == 'LOTACAO'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
 									for="refUnidadeResponsavel" title="" class="label">Lotação
-									Resp. Resp.
+									Resp.
 									<div minlength="1" selected-object="selectedObject"
 										focus-first="true" text-searching="Pesquisando Unidades..."
 										initial-value="tarefaItem.refUnidadeResponsavel.originalObject"
@@ -195,7 +268,7 @@
 										remote-url="/siga/app/lotacao/buscar-json/" angucomplete-alt
 										name="refUnidadeResponsavel" placeholder="Pesquisar Unidade"
 										id="refUnidadeResponsavel" class="angucomplete-ctrl p-0"
-										template-url="/sigawf/js/angucomplete-alt/custom-template.html"></div>
+										template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
 								</label> </section>
 								<section
 									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL') && tarefaItem.tipoResponsavel == 'PESSOA'"
@@ -214,7 +287,7 @@
 										remote-url="/siga/app/pessoa/buscar-json/" angucomplete-alt
 										name="refPessoaResponsavel" placeholder="Pesquisar Pessoa"
 										id="refPessoaResponsavel" class="angucomplete-ctrl p-0"
-										template-url="/sigawf/js/angucomplete-alt/custom-template.html"></div>
+										template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
 								</label> </section>
 								<section
 									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL') && tarefaItem.tipoResponsavel == 'RESPONSAVEL'"
@@ -239,8 +312,8 @@
 										selected-object-data="{context:tarefaItem, variable: 'ref', full:false}"
 										remote-url="/sigaex/app/modelo/buscar-json/" angucomplete-alt
 										name="ref" placeholder="Pesquisar Tipologia Documental"
-										id="ref" class="form-control angucomplete-ctrl"
-										template-url="/sigawf/js/angucomplete-alt/custom-template.html"></div>
+										id="ref" class="angucomplete-ctrl"
+										template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
 								</label> </section>
 								<fieldset ng-show="tarefaItem.tipo == 'FORMULARIO'"
 									title="Variáveis" class="col col-12">
@@ -269,20 +342,25 @@
 															class="btn btn-secondary dropdown-toggle">{{$index+1}}</button>
 														<div aria-labelledby="dropBtn"
 															class="dropdown-menu pt-0 pb-0">
-															<button ng-click="tarefaItem.variavel.splice($index, 1);"
-																class="btn btn-link" ng-disabled>
-																<i class="fa fa-fa fa-trash"></i>
+															<button
+																ng-click="tarefaItem.variavel.splice($index, 0, {});"
+																class="btn btn-link p-2" ng-disabled>
+																<i class="fa fa-fa fa-plus"></i>
 															</button>
 															<button
 																ng-click="tarefaItem.variavel[$index] = tarefaItem.variavel.splice($index - 1, 1, tarefaItem.variavel[$index])[0]"
-																class="btn btn-link" ng-disabled="$index === 0">
+																class="btn btn-link p-2" ng-disabled="$index === 0">
 																<i class="fa fa-fa fa-arrow-up"></i>
 															</button>
 															<button
 																ng-click="tarefaItem.variavel[$index] = tarefaItem.variavel.splice($index + 1, 1, tarefaItem.variavel[$index])[0]"
-																class="btn btn-link"
+																class="btn btn-link p-2"
 																ng-disabled="$index === tarefaItem.variavel.length - 1">
 																<i class="fa fa-fa fa-arrow-down"></i>
+															</button>
+															<button ng-click="tarefaItem.variavel.splice($index, 1);"
+																class="btn btn-link p-2" ng-disabled>
+																<i class="fa fa-fa fa-trash"></i>
 															</button>
 														</div>
 													</div>
@@ -309,18 +387,21 @@
 													title="Preenchimento obrigatório"
 													class="label-clue fa fa-asterisk"></i><select
 													ng-model="variavelItem.tipo" ng-required="true"
-													class="form-control"><option value="STRING">String</option>
-														<option value="DATE">Data</option>
-														<option value="BOOLEAN">Booleana</option></select></label> <i></i> </section>
+													class="form-control">
+														<c:forEach items="${tipoDeVariavel}" var="val">
+															<option value="${val.name()}">${val.descr}</option>
+														</c:forEach>
+												</select></label> <i></i> </section>
 												<section class="col col-12 col-md-3 form-group"> <label
 													for="tipoDeEdicao" title="" class="label">Edição<i
 													title="Preenchimento obrigatório"
 													class="label-clue fa fa-asterisk"></i><select
 													ng-model="variavelItem.tipoDeEdicao" ng-required="true"
-													class="form-control"><option value="READ_WRITE">Leitura
-															e Escrita</option>
-														<option value="READ_ONLY">Apenas Leitura</option></select></label> <i></i>
-												</section>
+													class="form-control">
+														<c:forEach items="${tipoDeAcesso}" var="val">
+															<option value="${val.name()}">${val.descr}</option>
+														</c:forEach>
+												</select></label> <i></i> </section>
 											</div>
 										</div>
 									</div>
@@ -352,20 +433,25 @@
 															class="btn btn-secondary dropdown-toggle">{{$index+1}}</button>
 														<div aria-labelledby="dropBtn"
 															class="dropdown-menu pt-0 pb-0">
-															<button ng-click="tarefaItem.desvio.splice($index, 1);"
-																class="btn btn-link" ng-disabled>
-																<i class="fa fa-fa fa-trash"></i>
+															<button
+																ng-click="tarefaItem.desvio.splice($index, 0, {});"
+																class="btn btn-link p-2" ng-disabled>
+																<i class="fa fa-fa fa-plus"></i>
 															</button>
 															<button
 																ng-click="tarefaItem.desvio[$index] = tarefaItem.desvio.splice($index - 1, 1, tarefaItem.desvio[$index])[0]"
-																class="btn btn-link" ng-disabled="$index === 0">
+																class="btn btn-link p-2" ng-disabled="$index === 0">
 																<i class="fa fa-fa fa-arrow-up"></i>
 															</button>
 															<button
 																ng-click="tarefaItem.desvio[$index] = tarefaItem.desvio.splice($index + 1, 1, tarefaItem.desvio[$index])[0]"
-																class="btn btn-link"
+																class="btn btn-link p-2"
 																ng-disabled="$index === tarefaItem.desvio.length - 1">
 																<i class="fa fa-fa fa-arrow-down"></i>
+															</button>
+															<button ng-click="tarefaItem.desvio.splice($index, 1);"
+																class="btn btn-link p-2" ng-disabled>
+																<i class="fa fa-fa fa-trash"></i>
 															</button>
 														</div>
 													</div>

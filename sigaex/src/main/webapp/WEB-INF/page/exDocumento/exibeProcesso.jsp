@@ -95,6 +95,27 @@
 	}
 </script>
 <script type="text/javascript" language="Javascript1.1">
+	window.addEventListener('resize', function () {
+	    redimensionar();
+	});
+	
+	function redimensionar() {
+	     if(window.parent.painel.document.getElementsByClassName("divDoc").length > 0) {
+	        var divs = window.parent.painel.document.getElementsByClassName("divDoc");
+	        
+	        for(var i = 0; i < divs.length; i++) {
+	        		window.parent.painel.document.getElementsByClassName("divDoc")[i].style.width=document.getElementById('painel').clientWidth - 10;
+	        		window.parent.painel.document.getElementsByClassName("divDoc")[i].style.padding = "20px";
+	        }   
+	        return;
+	    }
+	    else {
+	        setTimeout(function() {
+	        	redimensionar();
+	        }, 5000);
+	    }
+	}
+
 	function pageHeight() {
 		return window.innerHeight != null ? window.innerHeight
 				: document.documentElement
@@ -137,6 +158,8 @@
 	 		var divDocRight = document.getElementById('right-col');
 	 		divDocRight.setAttribute("class", "col-sm-9");
 		}
+
+		redimensionar();
 		resize();
 	}				
 </script>
@@ -403,8 +426,8 @@
 					</button>
 				</div>
 			</c:if>
-			<div id="paipainel" style="margin: 0px; padding: 0px; border: 0px; clear: both;">
-				<iframe style="visibility: visible; margin: 0px; padding: 0px; min-height: 20em;" name="painel" id="painel" src="" align="right" width="100%" onload="$(document).ready(function () {resize();});" frameborder="0" scrolling="auto"></iframe>
+			<div id="paipainel" style="margin: 0px; padding: 0px; border: 0px; clear: both;overflow:hidden;">
+				<iframe style="visibility: visible; margin: 0px; padding: 0px; min-height: 20em;" name="painel" id="painel" src="" align="right" width="100%" onload="$(document).ready(function () {resize();});redimensionar();" frameborder="0" scrolling="no"></iframe>
 			</div>
 		</div>
 	</div>

@@ -931,7 +931,9 @@ LINHA  VARIÁVEL / CONTEÚDO
                 </style>
             </head>
             <body>
-                [#nested]
+            	<div style="word-wrap: break-word" class="divDoc">
+                	[#nested]
+            	</div>
             </body>
         </html>
     [/#if]

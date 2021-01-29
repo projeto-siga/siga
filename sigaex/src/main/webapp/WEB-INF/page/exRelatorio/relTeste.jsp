@@ -13,6 +13,7 @@ function sbmt() {
 	frmRelExpedientes.submit();	
 }
 </script>
+
 <c:set var="titulo_pagina" scope="request">
 	Documentos Criados
 </c:set>
@@ -20,10 +21,19 @@ function sbmt() {
 
 <div class="row">
 	<div class="col-sm-2">
-			<label>Setores</label>
+			<label>Setores</label> <br />
+			<table>
 				<c:forEach items="${listaSetoresSubordinados}" var="item">
-					<input type="checkbox" name="setoresSelecionados" 	 value="${item.idLotacao}">${item.nomeLotacao} </input><br />
+				<tr>
+					<td>
+					<input type="checkbox" name="setoresSelecionados" 	 value="${item.idLotacao}"/>
+					</td>
+					<td>
+					 ${item.nomeLotacao}
+					</td>
+				</tr>
 				</c:forEach>
+			</table>
 
 	</div>
 </div>

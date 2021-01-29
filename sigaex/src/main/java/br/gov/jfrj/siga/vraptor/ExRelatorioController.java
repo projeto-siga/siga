@@ -1777,7 +1777,7 @@ private List<ExClassificacao> getAssuntos(){
 
 		String[] setoresSelecionados = getRequest().getParameterValues("setoresSelecionados");
 
-		parametros.put("listaSetoresSubordinados",Arrays.toString(setoresSelecionados));
+		parametros.put("listaSetoresSubordinados",Arrays.toString(setoresSelecionados).replace("[", "").replace("]",""));
 //		parametros.put("listaSetoresSubordinados","263,653");
 
 

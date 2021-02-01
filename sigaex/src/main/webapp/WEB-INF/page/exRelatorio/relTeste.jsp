@@ -29,13 +29,11 @@ fieldset.group legend {
 	font-size: 100%;
 	color: black;
 }
-ul {
-    columns: 3;
-    -webkit-columns: 3;
-    -moz-columns: 3;
-}
 
 ul.checkbox {
+ 	columns: 3;
+    -webkit-columns: 3;
+    -moz-columns: 3;
 	margin: 0;
 	padding: 0;
 	margin-left: 20px;

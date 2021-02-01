@@ -41,6 +41,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -49,6 +51,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import antlr.ASdebug.TokenOffsetInfo;
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -120,7 +123,7 @@ public class ExRelatorioController extends ExController {
 	private static final String ACESSO_RELTEMPOMEDIOSITUACAO = "RELTEMPOMEDIOSITUACAO:Tempo médio por Situação";
 	private static final String APPLICATION_PDF = "application/pdf";
 	
-	private static final String TESTE = "TESTE:Relatório de Teste";
+	private static final String TESTE = "TESTE:Relatório de Permanência";
 
 	/**
 	 * @deprecated CDI eyes only
@@ -260,14 +263,14 @@ public class ExRelatorioController extends ExController {
 		
 		result.include("listaSetoresSubordinados", getSetoresSubordinados(listaLotacao));
 		
-		result.include("listaAssuntos", getAssuntos());
+		result.include("listaAssuntos", getTodosOsAssuntos());
 
 		
 	}
 
-	private Set<DpLotacao> getSetoresSubordinados(Set<DpLotacao> listaLotacao) {
-		Set<DpLotacao> todosSubordinados = new HashSet<DpLotacao>();
-		Set<DpLotacao> subordinadosDiretos;
+	private List<DpLotacao> getSetoresSubordinados(Set<DpLotacao> listaLotacao) {
+		List<DpLotacao> todosSubordinados = new ArrayList<DpLotacao>();
+		List<DpLotacao> subordinadosDiretos;
 
 		for (DpLotacao pai : listaLotacao) {
 			if (pai.getDpLotacaoSubordinadosSet().size() <= 0) {
@@ -280,15 +283,12 @@ public class ExRelatorioController extends ExController {
 			}
 		}
 
-		return todosSubordinados;
-
+		return todosSubordinados.stream().sorted((p1, p2) -> p2.getNomeLotacao().compareTo(p1.getNomeLotacao())).collect(Collectors.toList());
 	}
 
-	
- 
-private List<ExClassificacao> getAssuntos(){
+private List<ExClassificacao> getTodosOsAssuntos(){
 
-	Query q = em().createQuery("from ExClassificacao cl ");
+	Query q = em().createQuery("from ExClassificacao cl where cl.hisAtivo = 1    	order by cl.descrClassificacao");
 	return q.getResultList();
 }
 
@@ -1772,13 +1772,16 @@ private List<ExClassificacao> getAssuntos(){
 		
 		
 		// atribuir parametros : destinos e assuntos da tela de filtro de pesquisa
-		parametros.put("listaAssuntos","2569,4");
+		//     **** parametros.put("listaAssuntos","2569,4");
 		
 
 		String[] setoresSelecionados = getRequest().getParameterValues("setoresSelecionados");
+		String[] assuntos = getRequest().getParameterValues("assuntos");
+
 
 		parametros.put("listaSetoresSubordinados",Arrays.toString(setoresSelecionados).replace("[", "").replace("]",""));
-//		parametros.put("listaSetoresSubordinados","263,653");
+		parametros.put("listaAssunto",Arrays.toString(assuntos).replace("[", "").replace("]",""));
+
 
 
 		addParametrosPersonalizadosOrgãoString(parametros);

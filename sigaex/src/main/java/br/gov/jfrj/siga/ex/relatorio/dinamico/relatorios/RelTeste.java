@@ -28,7 +28,7 @@ public class RelTeste extends RelatorioTemplate {
 	
 		//TODO pegar o parametro : destinos e assuntos escolhidos no filtro pesquisa
 
-		if (parametros.get("listaAssuntos") == null) {
+		if (parametros.get("listaAssunto") == null) {
 			throw new DJBuilderException("Assunto deve ser escolhido!");
 		}
 		
@@ -37,7 +37,7 @@ public class RelTeste extends RelatorioTemplate {
 		}
 		
 
-		 listaAssunto =  new ArrayList<String>(Arrays.asList(String.valueOf( parametros.get("listaAssuntos") ).split(",")));
+		 listaAssunto =  new ArrayList<String>(Arrays.asList(String.valueOf( parametros.get("listaAssunto") ).split(",")));
 		
 		 listaSetoreSubordinado =  new ArrayList<String>(Arrays.asList(String.valueOf( parametros.get("listaSetoresSubordinados") ).split(",")));
 

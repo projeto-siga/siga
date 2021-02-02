@@ -111,8 +111,7 @@
 		</div>
 		
 		<!--  Modal -->
-		<form method="post" name="enviarMatricula"
-			action="<c:url value="/app/mesa2"/>">
+		<form name="enviarMatricula" action="http://localhost:8080/siga/app/pessoa" method="POST">
 			<div id="modalEscolhaUsuarioPadrao" class="modal" tabindex="-1" role="dialog"
 				data-backdrop="static">
 				<div class="modal-dialog" role="document">
@@ -129,7 +128,7 @@
 						<div class="modal-body" style="overflow-y: scroll;">
 							<div class="list-group" style="height: 250px">
 	
-								<c:forEach var="lota" items="${cadastrante.lotacoes}">
+								<c:forEach items="${cadastrante.lotacoes}" var="lota">
 									<a href="/siga/app/swapUser?username=${lota[0]}" id="selecionarMatricula"
 										class="list-group-item list-group-item-action flex-column align-items-start">
 	
@@ -154,7 +153,6 @@
 							<button 
 								value="${linkTo[DpPessoaController].gravarUsuarioPadraoSelecionado()}"
 								id="btnConfirmarMatricula" name="btnConfirmarMatricula" type="submit" 
-								onClick="javascript: ocultarModal();"
 								class="btn btn-primary">Confirmar</button>
 						</div>
 					</div>
@@ -162,11 +160,7 @@
 			</div>
 		</form>
 
-	<script >
-		function ocultarModal() {
-			  return $('#modalEscolhaUsuarioPadrao').modal('hide');
-		}
-		
+	<script type="text/javascript">
 		$(function(){
 		    $('div div a').click(function(i){
 		        $(this).addClass('active');

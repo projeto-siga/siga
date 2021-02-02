@@ -1,11 +1,13 @@
 package br.gov.jfrj.siga.ex.bl;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
@@ -113,7 +115,20 @@ public class AcessoConsulta {
 				);
 	}
 
-	public static boolean exibirModalSelecionarUsuarioPadrao(DpPessoa usuario) {
-		return (usuario.getUsuarioPadrao() != null && usuario.getUsuarioPadrao().equals(0));
+	public static boolean exibirModalSelecionarUsuarioPadrao(DpPessoa pessoa) {
+		
+		List<DpPessoa> lista = CpDao.getInstance().listarPorCpf(pessoa.getCpfPessoa());
+		int contador = 0;
+		
+		for(DpPessoa usuario : lista) {
+			if(usuario.getUsuarioPadrao() == 0) {
+				contador++;
+			}
+		}
+		
+		if(contador == lista.size()) {
+			return true;
+		}
+		return false;
 	}
 }

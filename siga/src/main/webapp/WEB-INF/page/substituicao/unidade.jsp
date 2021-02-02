@@ -38,66 +38,52 @@
 					<tr>
 						<th align="left" style="width: 30%">Órgão</th>
 						<th align="left" style="width: 30%">Unidade</th>
-						<th align="left" style="width: 0%">Padrão</th>
+						<th align="left" style="width: 30%">Padrão</th>
 					</tr>
 				</thead>
 
 				<tbody>
-					<siga:paginador maxItens="15" maxIndices="10"
-						 itens="${itens}" var="identidade">
+					<siga:paginador maxItens="15" maxIndices="10" itens="${itens}"
+						var="identidade">
 						<tr>
 							<td align="left" style="width: 30%">${identidade.cpOrgaoUsuario.nmOrgaoUsu}</td>
 							<td align="left" style="width: 30%">${identidade.dpPessoa.lotacao.nomeLotacao}</td>
 							<td align="left" style="width: 30%">
-								<label> 
-									<input type="radio" name="usuario" id="usuarioPadrao" value="true" checked
-										${(identidade.dpPessoa.usuarioPadrao.equals(1)) ? 'checked' : ''}
-									/>
-								</label>
-							</td>
+							<label>
+								<input style="align-content: center" type="radio" name="usuario" id="usuarioPadrao" 
+									value="${identidade.dpPessoa.idPessoa}"
+										${identidade.dpPessoa.usuarioPadrao == 1 ? 'checked' : ''}/>
+							 </label></td>
 						</tr>
 					</siga:paginador>
 				</tbody>
 			</table>
 			<div class="gt-table-buttons">
-				<input type="submit" value="Ok"
-					value="${linkTo[SubstituicaoController].trocarUsuarioPadrao()}" class="btn btn-primary">
+				<input type="button" value="Ok" id="btnOk"
+					onclick="trocarUsuario()"
+					class="btn btn-primary" /> 
 				<input type="button" value="Cancelar"
-					onclick="javascript:history.back();"
-					class="btn btn-primary">
+					onclick="javascript:history.back()" class="btn btn-primary" />
 			</div>
 		</form>
 	</div>
 
-	<script type="text/javascript"
-		src="/siga/javascript/select2/select2.min.js"></script>
-	<script type="text/javascript"
-		src="/siga/javascript/select2/i18n/pt-BR.js"></script>
-	<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
 	<script type="text/javascript">
-		$(document).ready(function() {
-			if ('${mensagemPesquisa}'.length > 0)
-				$('.mensagem-pesquisa').css({
-					'display' : 'block'
-				});
-		});
 
-		function csv(id, action) {
-			var frm = document.getElementById(id);
-			frm.method = "POST";
-			sbmtAction(id, action);
-
-			$('.mensagem-pesquisa').alert('close');
-
-			frm.action = 'listar';
-			frm.method = "GET";
+		function trocarUsuario(){
+			var troca = $("input[name='usuario']:checked").val();
+			$.ajax({
+				url: '/siga/app/substituicao/unidade',
+				type: 'POST',
+				data: {id: troca}
+			})
+			.done(function (response, status, jqXHR){
+		            document.location.reload(true);
+			})
+			.fail(function (jqXHR, errorThrown){
+		            console.error("Ocorreu um erro ao trocar o usuário: " + errorThrown)
+			});
 		}
-
-		function sbmtAction(id, action) {
-			var frm = document.getElementById(id);
-			frm.action = action;
-			frm.submit();
-			return;
-		}
+			
 	</script>
 </siga:pagina>

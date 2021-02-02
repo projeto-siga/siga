@@ -146,6 +146,28 @@ public class SubstituicaoController extends SigaController {
 		result.include("itens", lista);
 	}
 	
+	@Transacional
+	@Post("/app/substituicao/unidade")
+	public void trocarUsuario(final Long id) throws Exception {
+		
+		final Query qry = em().createNamedQuery("consultarPessoaAtualPelaInicial");
+		qry.setParameter("idPessoaIni", id);
+		final DpPessoa pes = (DpPessoa) qry.getResultStream().findFirst().orElse(null);
+		
+		List<DpPessoa> lista  = CpDao.getInstance().obterUsuarioPadrao(getTitular().getCpfPessoa());
+		
+		for(DpPessoa pessoa : lista) {
+				pessoa.setUsuarioPadrao(0);
+				em().merge(pessoa);
+			}
+			
+		 if (pes.getUsuarioPadrao().equals(0)) {
+				pes.setUsuarioPadrao(1);
+				em().merge(pes);
+			}
+
+	}
+	
 	@Get("/app/substituicao/editar")
 	public void edita(Long id) throws Exception {
 		//String buscarFechadas = "buscarFechadas="+podeCadastrarQualquerSubstituicao();

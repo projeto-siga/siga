@@ -104,16 +104,16 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	}
 
 	@Transacional
-	@Post
-	@Path("app/mesa2")
-	public void gravarUsuarioPadraoSelecionado(DpPessoa dpPessoa) {
+	@Post("app/pessoa")
+	public void gravarUsuarioPadraoSelecionado() {
 
 		String cpfFormatado = request.getParameter("cpfFormatado");
 		Long cpf = Long.valueOf(cpfFormatado.replaceAll("\\D", ""));
 
 		Long id = Long.valueOf(request.getParameter("id"));
-		CpDao.getInstance().consultaEGravaUsuarioPadrao(id, cpf);
-		
+		dao.consultaEGravaUsuarioPadrao(id, cpf);
+
+		result.redirectTo("http://localhost:8080/sigaex/app/mesa2");
 	}
 	
 	@Get

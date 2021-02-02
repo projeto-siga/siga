@@ -111,7 +111,7 @@
 		</div>
 		
 		<!--  Modal -->
-		<form name="enviarMatricula" action="http://localhost:8080/siga/app/pessoa" method="POST">
+		<form name="enviarMatricula" action="/siga/app/pessoa" method="POST">
 			<div id="modalEscolhaUsuarioPadrao" class="modal" tabindex="-1" role="dialog"
 				data-backdrop="static">
 				<div class="modal-dialog" role="document">

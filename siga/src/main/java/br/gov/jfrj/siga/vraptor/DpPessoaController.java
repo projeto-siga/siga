@@ -113,7 +113,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		Long id = Long.valueOf(request.getParameter("id"));
 		dao.consultaEGravaUsuarioPadrao(id, cpf);
 
-		result.redirectTo("http://localhost:8080/sigaex/app/mesa2");
+		result.redirectTo("principal");
 	}
 	
 	@Get

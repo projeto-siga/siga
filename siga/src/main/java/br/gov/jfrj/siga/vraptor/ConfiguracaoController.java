@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.wf.vraptor;
+package br.gov.jfrj.siga.vraptor;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Controller;
@@ -15,39 +16,36 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.bl.CpConfiguracaoComparator;
 import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
-import br.gov.jfrj.siga.vraptor.SigaObjects;
-import br.gov.jfrj.siga.vraptor.Transacional;
-import br.gov.jfrj.siga.wf.bl.Wf;
-import br.gov.jfrj.siga.wf.bl.WfConfiguracaoComparator;
-import br.gov.jfrj.siga.wf.dao.WfDao;
-import br.gov.jfrj.siga.wf.model.WfConfiguracao;
-import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
-import br.gov.jfrj.siga.wf.model.enm.WfTipoDeConfiguracao;
-import br.gov.jfrj.siga.wf.util.WfUtil;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 
 @Controller
-public class WfConfiguracaoController extends WfController {
+public class ConfiguracaoController extends SigaController {
 
 	private static final String VERIFICADOR_ACESSO = "FE:Ferramentas;CFG:Cadastrar Configurações";
 
 	/**
 	 * @deprecated CDI eyes only
 	 */
-	public WfConfiguracaoController() {
+	public ConfiguracaoController() {
 		super();
 	}
 
 	@Inject
-	public WfConfiguracaoController(HttpServletRequest request, Result result, WfDao dao, SigaObjects so, WfUtil util) {
-		super(request, result, dao, so, util);
+	public ConfiguracaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so,
+			EntityManager em) {
+		super(request, result, dao, so, em);
 	}
 
 	@Get("app/configuracao/listar")
@@ -55,8 +53,8 @@ public class WfConfiguracaoController extends WfController {
 
 		assertAcesso(VERIFICADOR_ACESSO);
 		if (idTpConfiguracao == null)
-			idTpConfiguracao = WfTipoDeConfiguracao.INSTANCIAR_PROCEDIMENTO.getId();
-		WfTipoDeConfiguracao tpconf = WfTipoDeConfiguracao.getById(idTpConfiguracao);
+			idTpConfiguracao = CpTipoDeConfiguracao.INSTANCIAR_PROCEDIMENTO.getId();
+		CpTipoDeConfiguracao tpconf = CpTipoDeConfiguracao.getById(idTpConfiguracao);
 
 		result.include("tipoDeConfiguracao", tpconf);
 		result.include("listaTiposConfiguracao", getListaTiposConfiguracao());
@@ -69,7 +67,7 @@ public class WfConfiguracaoController extends WfController {
 
 		assertAcesso(VERIFICADOR_ACESSO);
 
-		WfConfiguracao config = new WfConfiguracao();
+		CpConfiguracao config = new CpConfiguracao();
 
 		if (idTpConfiguracao != null && idTpConfiguracao != 0) {
 			config.setCpTipoConfiguracao(dao().consultar(idTpConfiguracao, CpTipoConfiguracao.class, false));
@@ -86,12 +84,12 @@ public class WfConfiguracaoController extends WfController {
 		} else
 			config.setOrgaoUsuario(null);
 
-		List<WfConfiguracao> listConfig = Wf.getInstance().getConf().buscarConfiguracoesVigentes(config);
+		List<CpConfiguracao> listConfig = Cp.getInstance().getConf().buscarConfiguracoesVigentes(config);
 
-		Collections.sort(listConfig, new WfConfiguracaoComparator());
+		Collections.sort(listConfig, new CpConfiguracaoComparator());
 
 		result.include("configuracao", config);
-		WfTipoDeConfiguracao tpconf = WfTipoDeConfiguracao.getById(idTpConfiguracao);
+		CpTipoDeConfiguracao tpconf = CpTipoDeConfiguracao.getById(idTpConfiguracao);
 
 		result.include("tipoDeConfiguracao", tpconf);
 		result.include("listConfig", listConfig);
@@ -107,24 +105,24 @@ public class WfConfiguracaoController extends WfController {
 			DpCargoSelecao cargoObjetoSel, DpFuncaoConfiancaSelecao funcaoObjetoSel, Long idOrgaoObjeto,
 			Long idTpLotacao, String nmTipoRetorno, Long idDefinicaoDeProcedimento) throws Exception {
 
-		WfConfiguracao config = new WfConfiguracao();
+		CpConfiguracao config = new CpConfiguracao();
 
 		if (id != null) {
-			config = dao().consultar(id, WfConfiguracao.class, false);
+			config = dao().consultar(id, CpConfiguracao.class, false);
 		} else if (campoFixo) {
-			config = new WfConfiguracaoBuilder().setIdSituacao(idSituacao).setIdTpConfiguracao(idTpConfiguracao)
-					.setPessoaSel(pessoaSel).setLotacaoSel(lotacaoSel).setCargoSel(cargoSel).setFuncaoSel(funcaoSel)
-					.setPessoaObjetoSel(pessoaObjetoSel).setLotacaoObjetoSel(lotacaoObjetoSel)
-					.setCargoObjetoSel(cargoObjetoSel).setFuncaoObjetoSel(funcaoObjetoSel)
-					.setIdOrgaoObjeto(idOrgaoObjeto).setIdTpLotacao(idTpLotacao)
-					.setIdDefinicaoDeProcedimento(idDefinicaoDeProcedimento).construir();
+			config = new CpConfiguracaoBuilder(CpConfiguracaoBuilder.class, dao).setIdSituacao(idSituacao)
+					.setIdTpConfiguracao(idTpConfiguracao).setPessoaSel(pessoaSel).setLotacaoSel(lotacaoSel)
+					.setCargoSel(cargoSel).setFuncaoSel(funcaoSel).setPessoaObjetoSel(pessoaObjetoSel)
+					.setLotacaoObjetoSel(lotacaoObjetoSel).setCargoObjetoSel(cargoObjetoSel)
+					.setFuncaoObjetoSel(funcaoObjetoSel).setIdOrgaoObjeto(idOrgaoObjeto).setIdTpLotacao(idTpLotacao)
+					.construir();
 		}
 		escreverForm(config);
 		if (idTpConfiguracao == null && config != null && config.getCpTipoConfiguracao() != null)
 			idTpConfiguracao = config.getCpTipoConfiguracao().getIdTpConfiguracao();
 		if (idTpConfiguracao == null)
 			throw new RuntimeException("Tipo de configuração deve ser informado");
-		WfTipoDeConfiguracao tpconf = WfTipoDeConfiguracao.getById(idTpConfiguracao);
+		CpTipoDeConfiguracao tpconf = CpTipoDeConfiguracao.getById(idTpConfiguracao);
 
 		result.include("tipoDeConfiguracao", tpconf);
 		result.include("situacoes", tpconf.getSituacoes());
@@ -137,7 +135,6 @@ public class WfConfiguracaoController extends WfController {
 		result.include("config", config);
 		result.include("campoFixo", campoFixo);
 		result.include("configuracao", config);
-		result.include("definicoesDeProcedimentos", getDefinicoesDeProcedimentos());
 	}
 
 	@SuppressWarnings("all")
@@ -147,7 +144,7 @@ public class WfConfiguracaoController extends WfController {
 		assertAcesso(VERIFICADOR_ACESSO);
 
 		if (id != null) {
-			WfConfiguracao config = dao().consultar(id, WfConfiguracao.class, false);
+			CpConfiguracao config = dao().consultar(id, CpConfiguracao.class, false);
 			config.setHisDtFim(dao().consultarDataEHoraDoServidor());
 			dao().gravarComHistorico(config, getIdentidadeCadastrante());
 			result.redirectTo(this).lista(config.getCpTipoConfiguracao().getIdTpConfiguracao(), null);
@@ -165,22 +162,21 @@ public class WfConfiguracaoController extends WfController {
 			DpFuncaoConfiancaSelecao funcaoSel, DpPessoaSelecao pessoaObjeto_pessoaSel,
 			DpLotacaoSelecao lotacaoObjeto_lotacaoSel, DpCargoSelecao cargoObjeto_cargoSel,
 			DpFuncaoConfiancaSelecao funcaoObjeto_funcaoSel, Long idOrgaoObjeto, Long idTpLotacao, String nmTipoRetorno,
-			boolean campoFixo, Long idDefinicaoDeProcedimento) throws Exception {
+			boolean campoFixo) throws Exception {
 
-		final WfConfiguracao config = new WfConfiguracaoBuilder().setId(id).setIdSituacao(idSituacao)
-				.setIdTpConfiguracao(idTpConfiguracao).setPessoaSel(pessoaSel).setLotacaoSel(lotacaoSel)
-				.setCargoSel(cargoSel).setFuncaoSel(funcaoSel).setIdOrgaoObjeto(idOrgaoObjeto)
+		final CpConfiguracao config = new CpConfiguracaoBuilder(CpConfiguracaoBuilder.class, dao).setId(id)
+				.setIdSituacao(idSituacao).setIdTpConfiguracao(idTpConfiguracao).setPessoaSel(pessoaSel)
+				.setLotacaoSel(lotacaoSel).setCargoSel(cargoSel).setFuncaoSel(funcaoSel).setIdOrgaoObjeto(idOrgaoObjeto)
 				.setPessoaObjetoSel(pessoaObjeto_pessoaSel).setLotacaoObjetoSel(lotacaoObjeto_lotacaoSel)
 				.setCargoObjetoSel(cargoObjeto_cargoSel).setFuncaoObjetoSel(funcaoObjeto_funcaoSel)
-				.setIdOrgaoUsu(idOrgaoUsu).setIdTpLotacao(idTpLotacao)
-				.setIdDefinicaoDeProcedimento(idDefinicaoDeProcedimento).construir();
+				.setIdOrgaoUsu(idOrgaoUsu).setIdTpLotacao(idTpLotacao).construir();
 
 		gravarConfiguracao(idTpConfiguracao, idSituacao, config);
 		result.redirectTo(this).lista(idTpConfiguracao, null);
 	}
 
 	@SuppressWarnings("static-access")
-	private void gravarConfiguracao(Long idTpConfiguracao, Long idSituacao, final WfConfiguracao config) {
+	private void gravarConfiguracao(Long idTpConfiguracao, Long idSituacao, final CpConfiguracao config) {
 		assertAcesso(VERIFICADOR_ACESSO);
 
 		if (idTpConfiguracao == null || idTpConfiguracao == 0)
@@ -193,23 +189,14 @@ public class WfConfiguracaoController extends WfController {
 		dao().gravarComHistorico(config, getIdentidadeCadastrante());
 	}
 
-//	private TreeSet<CpConfiguracao> getListaConfiguracao() {
-//		TreeSet<CpConfiguracao> listaConfigs = Wf.getInstance().getConf()
-//				.getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
-//
-//		if (listaConfigs == null)
-//			return new TreeSet<CpConfiguracao>();
-//		return listaConfigs;
-//	}
-
 	private Set<CpSituacaoConfiguracao> getListaSituacaoPodeNaoPode() throws Exception {
 		HashSet<CpSituacaoConfiguracao> s = new HashSet<CpSituacaoConfiguracao>();
-		s.add(WfDao.getInstance().consultar(1L, CpSituacaoConfiguracao.class, false));
-		s.add(WfDao.getInstance().consultar(2L, CpSituacaoConfiguracao.class, false));
+		s.add(dao.consultar(1L, CpSituacaoConfiguracao.class, false));
+		s.add(dao.consultar(2L, CpSituacaoConfiguracao.class, false));
 		return s;
 	}
 
-	private void escreverForm(WfConfiguracao c) throws Exception {
+	private void escreverForm(CpConfiguracao c) throws Exception {
 		DpPessoaSelecao pessoaSelecao = new DpPessoaSelecao();
 		DpLotacaoSelecao lotacaoSelecao = new DpLotacaoSelecao();
 		DpFuncaoConfiancaSelecao funcaoConfiancaSelecao = new DpFuncaoConfiancaSelecao();
@@ -258,9 +245,6 @@ public class WfConfiguracaoController extends WfController {
 		if (c.getOrgaoObjeto() != null)
 			result.include("idOrgaoObjeto", c.getOrgaoObjeto().getIdOrgaoUsu());
 
-		if (c.getDefinicaoDeProcedimento() != null)
-			result.include("idDefinicaoDeProcedimento", c.getDefinicaoDeProcedimento().getId());
-
 		result.include("pessoaSel", pessoaSelecao);
 		result.include("lotacaoSel", lotacaoSelecao);
 		result.include("cargoSel", cargoSelecao);
@@ -273,8 +257,8 @@ public class WfConfiguracaoController extends WfController {
 	}
 
 	@SuppressWarnings("all")
-	private WfTipoDeConfiguracao[] getListaTiposConfiguracao() throws Exception {
-		return WfTipoDeConfiguracao.values();
+	private CpTipoDeConfiguracao[] getListaTiposConfiguracao() throws Exception {
+		return CpTipoDeConfiguracao.values();
 	}
 
 	@SuppressWarnings("all")
@@ -300,9 +284,4 @@ public class WfConfiguracaoController extends WfController {
 	protected List<CpOrgaoUsuario> getOrgaosUsu() throws AplicacaoException {
 		return dao().listarOrgaosUsuarios();
 	}
-
-	private List<WfDefinicaoDeProcedimento> getDefinicoesDeProcedimentos() {
-		return dao().listarDefinicoesDeProcedimentos();
-	}
-
 }

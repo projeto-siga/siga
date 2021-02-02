@@ -20,16 +20,14 @@ package br.gov.jfrj.siga.wf.bl;
 
 import java.lang.reflect.Method;
 
-import org.hibernate.LockMode;
-
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpCompetenciaBL;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.model.WfConfiguracao;
+import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 
 /**
  * Classe que representa as competências da lógica de negócio do sistema de
@@ -49,11 +47,11 @@ public class WfCompetenciaBL extends CpCompetenciaBL {
 	 * @return
 	 * @throws Exception
 	 */
-	public Boolean podeInstanciarProcedimento(DpPessoa titular, DpLotacao lotaTitular, final String procedimento)
-			throws Exception {
+	public Boolean podeInstanciarProcedimento(DpPessoa titular, DpLotacao lotaTitular,
+			final WfDefinicaoDeProcedimento definicaoDeProcedimento) throws Exception {
 		if (lotaTitular == null)
 			return false;
-		return podePorConfiguracao(titular, lotaTitular, procedimento,
+		return podePorConfiguracao(titular, lotaTitular, definicaoDeProcedimento,
 				CpTipoConfiguracao.TIPO_CONFIG_INSTANCIAR_PROCEDIMENTO);
 	}
 
@@ -71,7 +69,7 @@ public class WfCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	private WfConfiguracao preencherFiltroEBuscarConfiguracao(DpPessoa titularIniciador, DpLotacao lotaTitularIniciador,
-			long tipoConfig, final String procedimento, final String raia, final String tarefa) throws Exception {
+			long tipoConfig, final WfDefinicaoDeProcedimento definicaoDeProcedimento) throws Exception {
 		WfConfiguracao cfgFiltro = new WfConfiguracao();
 
 		cfgFiltro.setCargo(titularIniciador != null ? titularIniciador.getCargo() : null);
@@ -81,9 +79,7 @@ public class WfCompetenciaBL extends CpCompetenciaBL {
 		cfgFiltro.setDpPessoa(titularIniciador != null ? titularIniciador : null);
 		cfgFiltro.setCpTipoConfiguracao(CpDao.getInstance().consultar(tipoConfig, CpTipoConfiguracao.class, false));
 
-		cfgFiltro.setProcedimento(procedimento);
-		cfgFiltro.setRaia(raia);
-		cfgFiltro.setTarefa(tarefa);
+		cfgFiltro.setDefinicaoDeProcedimento(definicaoDeProcedimento);
 
 		WfConfiguracao cfg = (WfConfiguracao) getConfiguracaoBL().buscaConfiguracao(cfgFiltro, new int[] { 0 }, null);
 		return cfg;
@@ -100,11 +96,11 @@ public class WfCompetenciaBL extends CpCompetenciaBL {
 	 * @return
 	 * @throws Exception
 	 */
-	private Boolean podePorConfiguracao(DpPessoa titular, DpLotacao lotaTitular, String procedimento, long tipoConfig)
-			throws Exception {
+	private Boolean podePorConfiguracao(DpPessoa titular, DpLotacao lotaTitular,
+			final WfDefinicaoDeProcedimento definicaoDeProcedimento, long tipoConfig) throws Exception {
 		CpSituacaoConfiguracao situacao;
-		WfConfiguracao cfg = preencherFiltroEBuscarConfiguracao(titular, lotaTitular, tipoConfig, procedimento, null,
-				null);
+		WfConfiguracao cfg = preencherFiltroEBuscarConfiguracao(titular, lotaTitular, tipoConfig,
+				definicaoDeProcedimento);
 
 		if (cfg != null) {
 			situacao = cfg.getCpSituacaoConfiguracao();
@@ -131,11 +127,11 @@ public class WfCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public WfConfiguracao designar(DpPessoa titularIniciador, DpLotacao lotaTitularIniciador, DpPessoa titularAnterior,
-			DpLotacao lotaTitularAnterior, final String procedimento, final String raia, final String tarefa)
-			throws Exception {
+			DpLotacao lotaTitularAnterior, final WfDefinicaoDeProcedimento definicaoDeProcedimento, final String raia,
+			final String tarefa) throws Exception {
 
 		WfConfiguracao cfg = preencherFiltroEBuscarConfiguracao(titularIniciador, lotaTitularIniciador,
-				CpTipoConfiguracao.TIPO_CONFIG_DESIGNAR_TAREFA, procedimento, raia, tarefa);
+				CpTipoConfiguracao.TIPO_CONFIG_DESIGNAR_TAREFA, definicaoDeProcedimento);
 		if (cfg == null)
 			return null;
 

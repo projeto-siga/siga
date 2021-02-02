@@ -18,6 +18,9 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.bl;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -32,7 +35,9 @@ import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.model.WfConfiguracao;
+import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 
 /**
  * Classe que representa a configuração do sistema de workflow.
@@ -42,9 +47,7 @@ import br.gov.jfrj.siga.wf.model.WfConfiguracao;
  */
 public class WfConfiguracaoBL extends CpConfiguracaoBL {
 
-	public static int PROCEDIMENTO = 100;
-	public static int RAIA = 101;
-	public static int TAREFA = 102;
+	public static int DEFINICAO_DE_PROCEDIMENTO = 100;
 
 	/**
 	 * Cria uma nova configuração.
@@ -58,39 +61,19 @@ public class WfConfiguracaoBL extends CpConfiguracaoBL {
 	 * Verifica se a configuração é uma configuração válida.
 	 */
 	@Override
-	public boolean atendeExigencias(CpConfiguracao cfgFiltro,
-			Set<Integer> atributosDesconsiderados, CpConfiguracao cfg,
+	public boolean atendeExigencias(CpConfiguracao cfgFiltro, Set<Integer> atributosDesconsiderados, CpConfiguracao cfg,
 			SortedSet<CpPerfil> perfis) {
-		if (!super.atendeExigencias(cfgFiltro, atributosDesconsiderados, cfg,
-				perfis))
+		if (!super.atendeExigencias(cfgFiltro, atributosDesconsiderados, cfg, perfis))
 			return false;
 
-		if (cfg instanceof WfConfiguracao
-				&& cfgFiltro instanceof WfConfiguracao) {
+		if (cfg instanceof WfConfiguracao && cfgFiltro instanceof WfConfiguracao) {
 			WfConfiguracao wfCfg = (WfConfiguracao) cfg;
 			WfConfiguracao wfCfgFiltro = (WfConfiguracao) cfgFiltro;
 
-			if (wfCfg.getProcedimento() != null
-					&& ((wfCfgFiltro.getProcedimento() != null
-							&& !wfCfg.getProcedimento().equals(
-									wfCfgFiltro.getProcedimento()) || ((wfCfgFiltro
-							.getProcedimento() == null) && !atributosDesconsiderados
-							.contains(PROCEDIMENTO)))))
-				return false;
-
-			if (wfCfg.getRaia() != null
-					&& ((wfCfgFiltro.getRaia() != null
-							&& !wfCfg.getRaia().equals(wfCfgFiltro.getRaia()) || ((wfCfgFiltro
-							.getRaia() == null) && !atributosDesconsiderados
-							.contains(RAIA)))))
-				return false;
-
-			if (wfCfg.getTarefa() != null
-					&& ((wfCfgFiltro.getTarefa() != null
-							&& !wfCfg.getTarefa().equals(
-									wfCfgFiltro.getTarefa()) || ((wfCfgFiltro
-							.getTarefa() == null) && !atributosDesconsiderados
-							.contains(TAREFA)))))
+			if (wfCfg.getDefinicaoDeProcedimento() != null && ((wfCfgFiltro.getDefinicaoDeProcedimento() != null
+					&& !wfCfg.getDefinicaoDeProcedimento().equals(wfCfgFiltro.getDefinicaoDeProcedimento())
+					|| ((wfCfgFiltro.getDefinicaoDeProcedimento() == null)
+							&& !atributosDesconsiderados.contains(DEFINICAO_DE_PROCEDIMENTO)))))
 				return false;
 		}
 		return true;
@@ -101,11 +84,9 @@ public class WfConfiguracaoBL extends CpConfiguracaoBL {
 	 * Método com implementação completa, chamado pelas outras sobrecargas
 	 * 
 	 */
-	public boolean podePorConfiguracao(CpOrgaoUsuario cpOrgaoUsu,
-			DpLotacao dpLotacao, DpCargo cargo,
-			DpFuncaoConfianca dpFuncaoConfianca, DpPessoa dpPessoa,
-			long idTpConf, String procedimento, String raia, String tarefa)
-			throws Exception {
+	public boolean podePorConfiguracao(CpOrgaoUsuario cpOrgaoUsu, DpLotacao dpLotacao, DpCargo cargo,
+			DpFuncaoConfianca dpFuncaoConfianca, DpPessoa dpPessoa, long idTpConf,
+			WfDefinicaoDeProcedimento definicaoDeProcedimento) throws Exception {
 		WfConfiguracao cfgFiltro = createNewConfiguracao();
 
 		cfgFiltro.setCargo(cargo);
@@ -113,15 +94,11 @@ public class WfConfiguracaoBL extends CpConfiguracaoBL {
 		cfgFiltro.setFuncaoConfianca(dpFuncaoConfianca);
 		cfgFiltro.setLotacao(dpLotacao);
 		cfgFiltro.setDpPessoa(dpPessoa);
-		cfgFiltro.setCpTipoConfiguracao(CpDao.getInstance().consultar(idTpConf,
-				CpTipoConfiguracao.class, false));
+		cfgFiltro.setCpTipoConfiguracao(CpDao.getInstance().consultar(idTpConf, CpTipoConfiguracao.class, false));
 
-		cfgFiltro.setProcedimento(procedimento);
-		cfgFiltro.setRaia(raia);
-		cfgFiltro.setTarefa(tarefa);
+		cfgFiltro.setDefinicaoDeProcedimento(definicaoDeProcedimento);
 
-		CpConfiguracao cfg = (CpConfiguracao) buscaConfiguracao(cfgFiltro,
-				new int[] { 0 }, null);
+		CpConfiguracao cfg = (CpConfiguracao) buscaConfiguracao(cfgFiltro, new int[] { 0 }, null);
 
 		CpSituacaoConfiguracao situacao;
 		if (cfg != null)
@@ -129,9 +106,28 @@ public class WfConfiguracaoBL extends CpConfiguracaoBL {
 		else
 			situacao = cfgFiltro.getCpTipoConfiguracao().getSituacaoDefault();
 
-		if (situacao != null
-				&& situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_PODE)
+		if (situacao != null && situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_PODE)
 			return true;
 		return false;
+	}
+
+	/**
+	 * 
+	 * Retorna uma lista de (ex)configurações vigentes de acordo com um certo tipo
+	 * 
+	 * @param WfConfiguracao
+	 * 
+	 */
+	public List<WfConfiguracao> buscarConfiguracoesVigentes(final WfConfiguracao exemplo) {
+		Date hoje = new Date();
+		List<WfConfiguracao> todasConfig = WfDao.getInstance().consultar(exemplo);
+		List<WfConfiguracao> configVigentes = new ArrayList<WfConfiguracao>();
+
+		for (WfConfiguracao cfg : todasConfig) {
+			if (!cfg.ativaNaData(hoje))
+				continue;
+			configVigentes.add(cfg);
+		}
+		return (configVigentes);
 	}
 }

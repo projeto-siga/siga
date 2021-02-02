@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.BatchSize;
 
@@ -24,6 +25,8 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDeAcessoDeVariavel;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDeVariavel;
 import br.gov.jfrj.siga.wf.util.NaoSerializar;
 
 @Entity
@@ -37,24 +40,29 @@ public class WfDefinicaoDeVariavel extends HistoricoAuditavelSuporte
 	@Desconsiderar
 	private Long id;
 
+	@NotNull
 	@NaoSerializar
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DEFT_ID")
 	private WfDefinicaoDeTarefa definicaoDeTarefa;
 
+	@NotNull
 	@Column(name = "DEFV_CD", length = 32)
 	private String identificador;
 
+	@NotNull
 	@Column(name = "DEFV_NM", length = 256)
 	private String nome;
 
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "DEFV_TP")
-	VariableKind tipo;
+	WfTipoDeVariavel tipo;
 
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "DEFV_TP_ACESSO")
-	VariableEditingKind acesso;
+	WfTipoDeAcessoDeVariavel acesso;
 
 	@Column(name = "DEFV_NR_ORDEM")
 	private int ordem;
@@ -78,13 +86,13 @@ public class WfDefinicaoDeVariavel extends HistoricoAuditavelSuporte
 		this.hisAtivo = getHisAtivo();
 	}
 
-	public VariableEditingKind getAcesso() {
+	public WfTipoDeAcessoDeVariavel getAcesso() {
 		return acesso;
 	}
 
 	@Override
 	public VariableEditingKind getEditingKind() {
-		return acesso;
+		return acesso.getKind();
 	}
 
 	public Long getId() {
@@ -102,14 +110,14 @@ public class WfDefinicaoDeVariavel extends HistoricoAuditavelSuporte
 
 	@Override
 	public VariableKind getKind() {
-		return tipo;
+		return tipo.getKind();
 	}
 
 	public String getNome() {
 		return nome;
 	}
 
-	public VariableKind getTipo() {
+	public WfTipoDeVariavel getTipo() {
 		return tipo;
 	}
 
@@ -118,7 +126,7 @@ public class WfDefinicaoDeVariavel extends HistoricoAuditavelSuporte
 		return nome;
 	}
 
-	public void setAcesso(VariableEditingKind acesso) {
+	public void setAcesso(WfTipoDeAcessoDeVariavel acesso) {
 		this.acesso = acesso;
 	}
 
@@ -134,13 +142,12 @@ public class WfDefinicaoDeVariavel extends HistoricoAuditavelSuporte
 		this.nome = nome;
 	}
 
-	public void setTipo(VariableKind tipo) {
+	public void setTipo(WfTipoDeVariavel tipo) {
 		this.tipo = tipo;
 	}
 
 	public boolean isRequired() {
-		// TODO Esse método deve ser implementado
-		return false;
+		return this.getAcesso() == WfTipoDeAcessoDeVariavel.READ_WRITE_REQUIRED;
 	}
 
 	public int getOrdem() {

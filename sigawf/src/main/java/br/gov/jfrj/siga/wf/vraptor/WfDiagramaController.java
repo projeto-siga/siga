@@ -6,6 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
@@ -50,6 +51,7 @@ import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.sinc.lib.Item;
 import br.gov.jfrj.siga.sinc.lib.Sincronizador;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
+import br.gov.jfrj.siga.vraptor.SigaIdStringDescrString;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 import br.gov.jfrj.siga.vraptor.SigaSelecionavelControllerSupport;
 import br.gov.jfrj.siga.vraptor.Transacional;
@@ -59,7 +61,11 @@ import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeResponsavel;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeVariavel;
+import br.gov.jfrj.siga.wf.model.enm.WfAcessoDeEdicao;
+import br.gov.jfrj.siga.wf.model.enm.WfAcessoDeInicializacao;
 import br.gov.jfrj.siga.wf.util.NaoSerializar;
+import br.gov.jfrj.siga.wf.util.WfTarefa;
+import br.gov.jfrj.siga.wf.util.WfUtil;
 
 @Controller
 @Path("app/diagrama")
@@ -159,6 +165,7 @@ public class WfDiagramaController
 
 	private HttpServletResponse response;
 	private ServletContext context;
+	private WfUtil util;
 
 	/**
 	 * @deprecated CDI eyes only
@@ -169,10 +176,11 @@ public class WfDiagramaController
 
 	@Inject
 	public WfDiagramaController(HttpServletRequest request, Result result, WfDao dao, SigaObjects so, EntityManager em,
-			HttpServletResponse response, ServletContext context) {
+			HttpServletResponse response, ServletContext context, WfUtil util) {
 		super(request, result, dao, so, em);
 		this.response = response;
 		this.context = context;
+		this.util = util;
 	}
 
 	@Get("listar")
@@ -188,11 +196,24 @@ public class WfDiagramaController
 		}
 	}
 
+	@Get("exibir")
+	public void exibe(final Long id) throws Exception {
+		assertAcesso(VERIFICADOR_ACESSO);
+		if (id != null) {
+			WfDefinicaoDeProcedimento pd = WfDefinicaoDeProcedimento.AR.findById(id);
+			result.include("pd", pd);
+			result.include("dot", util.getDot(pd));
+		}
+	}
+
 	@Get("editar")
 	public void edita(final Long id) throws UnsupportedEncodingException {
 		assertAcesso(VERIFICADOR_ACESSO);
-		if (id != null)
-			result.include("pd", WfDefinicaoDeProcedimento.AR.findById(id));
+		if (id != null) {
+			WfDefinicaoDeProcedimento pd = WfDefinicaoDeProcedimento.AR.findById(id);
+			pd.assertAcessoDeEditar(getTitular(), getLotaTitular());
+			result.include("pd", pd);
+		}
 	}
 
 	@Get("{id}/carregar")
@@ -211,8 +232,25 @@ public class WfDiagramaController
 	public void editarGravar(Long id, WfDefinicaoDeProcedimento pd) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 
+		if (id != null) {
+			WfDefinicaoDeProcedimento pdOriginal = WfDefinicaoDeProcedimento.AR.findById(id);
+			pdOriginal.assertAcessoDeEditar(getTitular(), getLotaTitular());
+		}
+
 		if (pd.getOrgaoUsuario() == null)
 			pd.setOrgaoUsuario(getTitular().getOrgaoUsuario());
+
+		if (pd.getHisIdcIni() == null)
+			pd.setHisIdcIni(getIdentidadeCadastrante());
+
+		if (pd.getResponsavelId() != null)
+			pd.setResponsavel(dao().consultar(pd.getResponsavelId(), DpPessoa.class, false));
+		if (pd.getResponsavel() == null)
+			pd.setResponsavel(getTitular());
+		if (pd.getLotaResponsavelId() != null)
+			pd.setLotaResponsavel(dao().consultar(pd.getLotaResponsavelId(), DpLotacao.class, false));
+		if (pd.getLotaResponsavel() == null)
+			pd.setLotaResponsavel(getLotaTitular());
 
 		SortedSet<Sincronizavel> setDepois = new TreeSet<>();
 		SortedSet<Sincronizavel> setAntes = new TreeSet<>();
@@ -382,4 +420,23 @@ public class WfDiagramaController
 		throw e;
 	}
 
+	@Get("acesso-de-edicao/carregar")
+	public void carregarAcessosDeEdicao() throws Exception {
+		assertAcesso(VERIFICADOR_ACESSO);
+		List<SigaIdStringDescrString> list = new ArrayList<>();
+		for (WfAcessoDeEdicao enm : WfAcessoDeEdicao.values()) {
+			list.add(new SigaIdStringDescrString(enm.name(), enm.getDescr()));
+		}
+		result.use(Results.json()).from(list, "list").serialize();
+	}
+
+	@Get("acesso-de-inicializacao/carregar")
+	public void carregarAcessosDeInicializacao() throws Exception {
+		assertAcesso(VERIFICADOR_ACESSO);
+		List<SigaIdStringDescrString> list = new ArrayList<>();
+		for (WfAcessoDeInicializacao enm : WfAcessoDeInicializacao.values()) {
+			list.add(new SigaIdStringDescrString(enm.name(), enm.getDescr()));
+		}
+		result.use(Results.json()).from(list, "list").serialize();
+	}
 }

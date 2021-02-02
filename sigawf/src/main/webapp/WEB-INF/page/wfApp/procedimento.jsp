@@ -52,7 +52,8 @@
 							<c:if
 								test="${pi.tipoDePrincipal eq 'DOC' and not empty pi.principal}">
 								<a
-									href="/sigaex/app/expediente/doc/exibir?sigla=${pi.principal}" style="color: white; text-decoration: underline;">${pi.principal}</a> -
+									href="/sigaex/app/expediente/doc/exibir?sigla=${pi.principal}"
+									style="color: white; text-decoration: underline;">${pi.principal}</a> -
 							</c:if>
 
 							${pi.definicaoDeProcedimento.nome} -
@@ -124,13 +125,25 @@
 				<c:if test="${not empty dot}">
 					<div class="card-sidebar card bg-light mb-3">
 						<div class="card-header">Diagrama</div>
-						<a href="javascript:void(0)" href="javascript:void(0)"
-							style="text-decoration: none">
-							<div id="output" class="bg-light"
+						<div class="card-body bg-white p-2">
+							<div id="output" class="graph-svg"
 								style="border: 0px; padding: 0px; text-align: center;"></div>
-						</a>
+						</div>
 					</div>
 					<!-- Fim mapa tramitação -->
+				</c:if>
+
+				<c:if test="${not empty pi.variaveis}">
+					<div class="card-sidebar card bg-light mb-3">
+						<div class="card-header">Variáveis</div>
+						<div class="card-body">
+							<c:forEach var="v" items="${pi.variaveis}">
+								<p>
+									<b>${v.nome}:</b> ${v.valorAsString}
+								</p>
+							</c:forEach>
+						</div>
+					</div>
 				</c:if>
 
 				<div class="card-sidebar card bg-light mb-3">

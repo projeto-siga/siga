@@ -41,6 +41,7 @@ import br.gov.jfrj.siga.wf.model.WfMovAnotacao;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
 import br.gov.jfrj.siga.wf.model.enm.WfPrioridade;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDeVariavel;
 import br.gov.jfrj.siga.wf.util.WfTarefa;
 import br.gov.jfrj.siga.wf.util.WfUtil;
 
@@ -244,22 +245,30 @@ public class WfAppController extends WfController {
 					if (campoIdentificador[n] == null)
 						continue;
 					if (variable.getIdentifier().equals(campoIdentificador[n])
-							&& variable.getEditingKind() == VariableEditingKind.READ_WRITE) {
+							&& (variable.getEditingKind() == VariableEditingKind.READ_WRITE
+									|| variable.getEditingKind() == VariableEditingKind.READ_WRITE_REQUIRED)) {
 						Object value;
-						if (variable.getIdentifier().startsWith("doc_")) {
+						StringQualquer campo = campoValor[c];
+						if (variable.getTipo() == WfTipoDeVariavel.DOC_MOBIL) {
 							value = param(variable.getIdentifier() + "_expedienteSel.sigla");
-						} else if (variable.getIdentifier().startsWith("pes_")) {
+						} else if (variable.getTipo() == WfTipoDeVariavel.PESSOA) {
 							value = param(variable.getIdentifier() + "_pessoaSel.sigla");
-						} else if (variable.getIdentifier().startsWith("lot_")) {
+						} else if (variable.getTipo() == WfTipoDeVariavel.LOTACAO) {
 							value = param(variable.getIdentifier() + "_lotacaoSel.sigla");
-						} else if (variable.getIdentifier().startsWith("dt_")) {
-							value = SigaCalendar.converteStringEmData(campoValor[c].toString());
+						} else if (variable.getTipo() == WfTipoDeVariavel.DATE) {
+							value = SigaCalendar.converteStringEmData(campo.toString());
 							c++;
-						} else if (variable.getIdentifier().startsWith("sel_")) {
-							value = campoValor[c];
+						} else if (variable.getTipo() == WfTipoDeVariavel.BOOLEAN) {
+							value = converterParaBoolean(campo);
+							c++;
+						} else if (variable.getTipo() == WfTipoDeVariavel.DOUBLE) {
+							value = converterParaDouble(campo);
+							c++;
+						} else if (variable.getTipo() == WfTipoDeVariavel.SELECAO) {
+							value = campo;
 							c++;
 						} else {
-							value = campoValor[c];
+							value = campo;
 							c++;
 						}
 
@@ -318,6 +327,28 @@ public class WfAppController extends WfController {
 		}
 
 		result.redirectTo(this).procedimento(pi.getId());
+	}
+
+	private Boolean converterParaBoolean(StringQualquer campo) {
+		if (campo == null)
+			return null;
+		String s = campo.toString().trim();
+		if (s.length() == 0)
+			return null;
+		return "1".equals(s) || "true".equals(s);
+	}
+
+	private Double converterParaDouble(StringQualquer campo) {
+		if (campo == null)
+			return null;
+		String s = campo.toString().trim();
+		if (s.length() == 0)
+			return null;
+		if (s.contains("."))
+			s = s.replace(".", "");
+		if (s.contains(","))
+			s = s.replace(",", ".");
+		return Double.parseDouble(s);
 	}
 
 	@Transacional

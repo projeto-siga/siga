@@ -269,10 +269,10 @@
 
 
 				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;TESTE:Relatório de Teste')}">
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;PERMASETORASSUNTO:Relatório de Permanência por Setor e Assunto')}">
 					<li><a class="dropdown-item"
-						href="/sigaex/app/expediente/rel/relRelatorios?nomeArquivoRel=relTeste.jsp">
-							Relatório TESTE </a></li>
+						href="/sigaex/app/expediente/rel/relRelatorios?nomeArquivoRel=relPermanenciaSetorAssunto.jsp">
+							Relatório de Permanência por Setor e Assunto </a></li>
 				</c:if>
 
 

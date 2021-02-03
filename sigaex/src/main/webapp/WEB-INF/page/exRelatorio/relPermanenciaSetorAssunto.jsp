@@ -12,7 +12,7 @@
 		frmRelExpedientes.submit();
 	}
 </script>
-<
+
 <style>
 fieldset.group {
 	margin: 0;
@@ -31,9 +31,9 @@ fieldset.group legend {
 }
 
 ul.checkbox {
- 	columns: 3;
-    -webkit-columns: 3;
-    -moz-columns: 3;
+ 	columns: 2;
+    -webkit-columns: 2;
+    -moz-columns: 2;
 	margin: 0;
 	padding: 0;
 	margin-left: 20px;
@@ -62,7 +62,7 @@ ul.checkbox li:hover, ul.checkbox li.focus {
 </style>
 
 <c:set var="titulo_pagina" scope="request">
-	Tempo permanência de documentos no setor
+Relatório de Permanência por Setor e Assunto
 </c:set>
 <input type="hidden" name="secaoUsuario" id="secaoUsuario"
 	value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />

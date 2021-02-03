@@ -121,10 +121,10 @@ page
 		</c:when>
 
 
-		<c:when test='${nomeArquivoRel eq "relTeste.jsp"}'>
-			<c:set var="actionName" scope="request">emiteRelTeste</c:set>
-			<c:set var="titulo_pagina" scope="request">Relação Teste</c:set>
-			<c:set var="nomeRelatorio" scope="request">relTeste.jsp</c:set>
+		<c:when test='${nomeArquivoRel eq "relPermanenciaSetorAssunto.jsp"}'>
+			<c:set var="actionName" scope="request">emiteRelPermanenciaSetorAssunto</c:set>
+			<c:set var="titulo_pagina" scope="request">emiteRelPermanenciaSetorAssuntoRelação Teste</c:set>
+			<c:set var="nomeRelatorio" scope="request">relPermanenciaSetorAssunto.jsp</c:set>
 		</c:when>
 		
 

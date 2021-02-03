@@ -17,13 +17,13 @@ import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import net.sf.jasperreports.engine.JRException;
 
-public class RelTeste extends RelatorioTemplate {
+public class RelPermanenciaSetorAssunto extends RelatorioTemplate {
 
 	List<String> listaAssunto = new ArrayList<>();
 	
 	List<String> listaSetoreSubordinado = new ArrayList<>();
 
-	public RelTeste(Map parametros) throws DJBuilderException {
+	public RelPermanenciaSetorAssunto(Map parametros) throws DJBuilderException {
 		super(parametros);
 	
 		//TODO pegar o parametro : destinos e assuntos escolhidos no filtro pesquisa

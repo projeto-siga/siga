@@ -85,7 +85,7 @@ import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovimentacaoDocSubor
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelOrgao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelTempoMedioSituacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelTempoTramitacaoPorEspecie;
-import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelTeste;
+import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelPermanenciaSetorAssunto;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelTipoDoc;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelVolumeTramitacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelVolumeTramitacaoPorModelo;
@@ -123,7 +123,7 @@ public class ExRelatorioController extends ExController {
 	private static final String ACESSO_RELTEMPOMEDIOSITUACAO = "RELTEMPOMEDIOSITUACAO:Tempo médio por Situação";
 	private static final String APPLICATION_PDF = "application/pdf";
 	
-	private static final String TESTE = "TESTE:Relatório de Permanência";
+	private static final String ACESSO_PERMASETORASSUNTO = "PERMASETORASSUNTO:Relatório de Permanência por Setor e Assunto";
 
 	/**
 	 * @deprecated CDI eyes only
@@ -196,8 +196,8 @@ public class ExRelatorioController extends ExController {
 		
 		
 		
-		} else if (nomeArquivoRel.equals("relTeste.jsp")) {
-				fazerResultsParaRelTeste(lotacaoDestinatarioSel);
+		} else if (nomeArquivoRel.equals("relPermanenciaSetorAssunto.jsp")) {
+				fazerResultsParaRelPermanenciaSetorAssunto(lotacaoDestinatarioSel);
 			
 		
 		
@@ -249,7 +249,7 @@ public class ExRelatorioController extends ExController {
 	}
 	
 	
-	private void fazerResultsParaRelTeste(	final DpLotacaoSelecao lotacaoDestinatarioSel) {
+	private void fazerResultsPararelPermanenciaSetorAssunto(	final DpLotacaoSelecao lotacaoDestinatarioSel) {
 		
 		result.include("lotaTitular", this.getLotaTitular());
 		
@@ -270,7 +270,6 @@ public class ExRelatorioController extends ExController {
 
 	private List<DpLotacao> getSetoresSubordinados(Set<DpLotacao> listaLotacao) {
 		List<DpLotacao> todosSubordinados = new ArrayList<DpLotacao>();
-		List<DpLotacao> subordinadosDiretos;
 
 		for (DpLotacao pai : listaLotacao) {
 			if (pai.getDpLotacaoSubordinadosSet().size() <= 0) {
@@ -1754,9 +1753,10 @@ private List<ExClassificacao> getTodosOsAssuntos(){
 		return orgaoSelId;
 	}
 	
-	@Get("app/expediente/rel/emiteRelTeste")
-	public Download aRelTeste() throws Exception {
-		assertAcesso(TESTE);
+	@Get("app/expediente/rel/emiteRelPermanenciaSetorAssunto")
+	public Download aRelPermanenciaSetorAssunto() throws Exception {
+		
+		assertAcesso(ACESSO_PERMASETORASSUNTO);
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 
@@ -1786,13 +1786,13 @@ private List<ExClassificacao> getTodosOsAssuntos(){
 
 		addParametrosPersonalizadosOrgãoString(parametros);
 
-		final RelTeste rel = new RelTeste(parametros);
+		final RelPermanenciaSetorAssunto rel = new RelPermanenciaSetorAssunto(parametros);
 		
 		rel.gerar();
 
 		final InputStream inputStream = new ByteArrayInputStream(
 				rel.getRelatorioPDF());
 		return new InputStreamDownload(inputStream, APPLICATION_PDF,
-				"emiteRelTeste");
+				"emiteRelPermanenciaSetorAssunto");
 	}
 }

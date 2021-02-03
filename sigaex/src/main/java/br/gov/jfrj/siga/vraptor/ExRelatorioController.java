@@ -1758,6 +1758,7 @@ public class ExRelatorioController extends ExController {
 		final Map<String, String> parametros = new HashMap<String, String>();
 
 		parametros.put("lotacao",getRequest().getParameter("lotacaoDestinatarioSel.id"));
+		
 		parametros.put("secaoUsuario", getRequest().getParameter("secaoUsuario"));
 
 		
@@ -1765,21 +1766,27 @@ public class ExRelatorioController extends ExController {
 				+ "/app/expediente/doc/exibir?sigla=");
 
 		parametros.put("lotacaoTitular",getRequest().getParameter("lotacaoTitular"));
+
 		parametros.put("idTit", getRequest().getParameter("idTit"));
 		
-		
-		// atribuir parametros : destinos e assuntos da tela de filtro de pesquisa
-		//     **** parametros.put("listaAssuntos","2569,4");
-		
-
 		String[] setoresSelecionados = getRequest().getParameterValues("setoresSelecionados");
+		
 		String[] assuntos = getRequest().getParameterValues("assuntos");
 
+		if (setoresSelecionados == null ) {
+			
+			throw new AplicacaoException( "Selecione pelo menos um Setor.");
+		}
+		
+		if (assuntos == null ) {
+			
+			throw new AplicacaoException( "Selecione pelo menos um Assunto.");
+		}
+		
 
 		parametros.put("listaSetoresSubordinados",Arrays.toString(setoresSelecionados).replace("[", "").replace("]",""));
+		
 		parametros.put("listaAssunto",Arrays.toString(assuntos).replace("[", "").replace("]",""));
-
-
 
 		addParametrosPersonalizadosOrgãoString(parametros);
 
@@ -1787,9 +1794,8 @@ public class ExRelatorioController extends ExController {
 		
 		rel.gerar();
 
-		final InputStream inputStream = new ByteArrayInputStream(
-				rel.getRelatorioPDF());
-		return new InputStreamDownload(inputStream, APPLICATION_PDF,
-				"emiteRelPermanenciaSetorAssunto");
+		final InputStream inputStream = new ByteArrayInputStream(	rel.getRelatorioPDF());
+		
+		return new InputStreamDownload(inputStream, APPLICATION_PDF,	"emiteRelPermanenciaSetorAssunto");
 	}
 }

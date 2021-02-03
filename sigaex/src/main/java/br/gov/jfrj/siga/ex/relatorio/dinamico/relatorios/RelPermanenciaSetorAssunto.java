@@ -26,8 +26,6 @@ public class RelPermanenciaSetorAssunto extends RelatorioTemplate {
 	public RelPermanenciaSetorAssunto(Map parametros) throws DJBuilderException {
 		super(parametros);
 	
-		//TODO pegar o parametro : destinos e assuntos escolhidos no filtro pesquisa
-
 		if (parametros.get("listaAssunto") == null) {
 			throw new DJBuilderException("Assunto deve ser escolhido!");
 		}
@@ -176,7 +174,9 @@ public class RelPermanenciaSetorAssunto extends RelatorioTemplate {
 		List<String> d = new ArrayList<String>();
 
 		Query query = ContextoPersistencia.em().createNativeQuery( montarConsulta() );
+		
 		query.setParameter("assuntos", listaAssunto);
+		
 		query.setParameter("setoresSubordinados",listaSetoreSubordinado);
 		
 		List<Object[]> lista = query.getResultList();

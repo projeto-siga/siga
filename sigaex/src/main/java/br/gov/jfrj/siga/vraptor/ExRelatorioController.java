@@ -191,19 +191,14 @@ public class ExRelatorioController extends ExController {
 			fazerResultsParaRelMovProcesso(lotacaoDestinatarioSel);
 		} else if (nomeArquivoRel.equals("relOrgao.jsp")) {
 			fazerResultsParaRelOrgao(lotacaoDestinatarioSel);
-		} else if (nomeArquivoRel.equals("relTipoDoc.jsp")) {
+		}  else if (nomeArquivoRel.equals("relTipoDoc.jsp")) {
 			fazerResultsParaRelTipoDoc(lotacaoDestinatarioSel);
-		
-		
-		
 		} else if (nomeArquivoRel.equals("relPermanenciaSetorAssunto.jsp")) {
-				fazerResultsParaRelPermanenciaSetorAssunto(lotacaoDestinatarioSel);
-			
-		
-		
+			fazerResultsParaRelPermanenciaSetorAssunto(lotacaoDestinatarioSel);
 		} else {
 			throw new AplicacaoException("Modelo de relatório não definido!");
 		}
+
 	}
 
 	private void fazerResultsParaRelClassificacao() {
@@ -248,8 +243,7 @@ public class ExRelatorioController extends ExController {
 		result.include("titular", this.getTitular());
 	}
 	
-	
-	private void fazerResultsPararelPermanenciaSetorAssunto(	final DpLotacaoSelecao lotacaoDestinatarioSel) {
+	private void fazerResultsParaRelPermanenciaSetorAssunto(	final DpLotacaoSelecao lotacaoDestinatarioSel) {
 		
 		result.include("lotaTitular", this.getLotaTitular());
 		
@@ -264,7 +258,6 @@ public class ExRelatorioController extends ExController {
 		result.include("listaSetoresSubordinados", getSetoresSubordinados(listaLotacao));
 		
 		result.include("listaAssuntos", getTodosOsAssuntos());
-
 		
 	}
 
@@ -285,11 +278,15 @@ public class ExRelatorioController extends ExController {
 		return todosSubordinados.stream().sorted((p1, p2) -> p2.getNomeLotacao().compareTo(p1.getNomeLotacao())).collect(Collectors.toList());
 	}
 
-private List<ExClassificacao> getTodosOsAssuntos(){
 
-	Query q = em().createQuery("from ExClassificacao cl where cl.hisAtivo = 1    	order by cl.descrClassificacao");
-	return q.getResultList();
-}
+
+	private List<ExClassificacao> getTodosOsAssuntos(){
+
+		Query q = em().createQuery("from ExClassificacao cl where cl.hisAtivo = 1  order by cl.descrClassificacao");
+	
+		return q.getResultList();
+	}
+
 
 	private void fazerResultsParaRelExpedientes(
 			final DpLotacaoSelecao lotacaoDestinatarioSel) {

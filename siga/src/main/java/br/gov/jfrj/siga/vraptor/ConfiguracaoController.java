@@ -1,11 +1,7 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -17,7 +13,6 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoComparator;
@@ -27,7 +22,6 @@ import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
 @Controller
@@ -50,10 +44,9 @@ public class ConfiguracaoController extends SigaController {
 
 	@Get("app/configuracao/listar")
 	public void lista(Long idTpConfiguracao, Long idOrgaoUsu) throws Exception {
-
 		assertAcesso(VERIFICADOR_ACESSO);
 		if (idTpConfiguracao == null)
-			idTpConfiguracao = CpTipoDeConfiguracao.INSTANCIAR_PROCEDIMENTO.getId();
+			idTpConfiguracao = CpTipoDeConfiguracao.UTILIZAR_SERVICO.getId();
 		CpTipoDeConfiguracao tpconf = CpTipoDeConfiguracao.getById(idTpConfiguracao);
 
 		result.include("tipoDeConfiguracao", tpconf);
@@ -64,7 +57,6 @@ public class ConfiguracaoController extends SigaController {
 	@Get("app/configuracao/listar_cadastradas")
 	public void listaCadastradas(Long idTpConfiguracao, Long idOrgaoUsu, Long idTpMov, Long idFormaDoc, Long idMod,
 			String nmTipoRetorno, boolean campoFixo) throws Exception {
-
 		assertAcesso(VERIFICADOR_ACESSO);
 
 		CpConfiguracao config = new CpConfiguracao();
@@ -104,7 +96,7 @@ public class ConfiguracaoController extends SigaController {
 			DpFuncaoConfiancaSelecao funcaoSel, DpPessoaSelecao pessoaObjetoSel, DpLotacaoSelecao lotacaoObjetoSel,
 			DpCargoSelecao cargoObjetoSel, DpFuncaoConfiancaSelecao funcaoObjetoSel, Long idOrgaoObjeto,
 			Long idTpLotacao, String nmTipoRetorno, Long idDefinicaoDeProcedimento) throws Exception {
-
+		assertAcesso(VERIFICADOR_ACESSO);
 		CpConfiguracao config = new CpConfiguracao();
 
 		if (id != null) {
@@ -117,7 +109,7 @@ public class ConfiguracaoController extends SigaController {
 					.setFuncaoObjetoSel(funcaoObjetoSel).setIdOrgaoObjeto(idOrgaoObjeto).setIdTpLotacao(idTpLotacao)
 					.construir();
 		}
-		escreverForm(config);
+		CpConfiguracaoHelper.escreverForm(config, result);
 		if (idTpConfiguracao == null && config != null && config.getCpTipoConfiguracao() != null)
 			idTpConfiguracao = config.getCpTipoConfiguracao().getIdTpConfiguracao();
 		if (idTpConfiguracao == null)
@@ -128,9 +120,9 @@ public class ConfiguracaoController extends SigaController {
 		result.include("situacoes", tpconf.getSituacoes());
 		result.include("id", id);
 		result.include("listaTiposConfiguracao", getListaTiposConfiguracao());
-		result.include("listaSituacao", getListaSituacao());
+//		result.include("listaSituacao", getListaSituacao());
 		result.include("orgaosUsu", getOrgaosUsu());
-		result.include("listaTiposLotacao", getListaTiposLotacao());
+		result.include("listaTiposLotacao", CpConfiguracaoHelper.getListaTiposLotacao(dao));
 		result.include("nmTipoRetorno", nmTipoRetorno);
 		result.include("config", config);
 		result.include("campoFixo", campoFixo);
@@ -163,7 +155,7 @@ public class ConfiguracaoController extends SigaController {
 			DpLotacaoSelecao lotacaoObjeto_lotacaoSel, DpCargoSelecao cargoObjeto_cargoSel,
 			DpFuncaoConfiancaSelecao funcaoObjeto_funcaoSel, Long idOrgaoObjeto, Long idTpLotacao, String nmTipoRetorno,
 			boolean campoFixo) throws Exception {
-
+		assertAcesso(VERIFICADOR_ACESSO);
 		final CpConfiguracao config = new CpConfiguracaoBuilder(CpConfiguracaoBuilder.class, dao).setId(id)
 				.setIdSituacao(idSituacao).setIdTpConfiguracao(idTpConfiguracao).setPessoaSel(pessoaSel)
 				.setLotacaoSel(lotacaoSel).setCargoSel(cargoSel).setFuncaoSel(funcaoSel).setIdOrgaoObjeto(idOrgaoObjeto)
@@ -171,117 +163,12 @@ public class ConfiguracaoController extends SigaController {
 				.setCargoObjetoSel(cargoObjeto_cargoSel).setFuncaoObjetoSel(funcaoObjeto_funcaoSel)
 				.setIdOrgaoUsu(idOrgaoUsu).setIdTpLotacao(idTpLotacao).construir();
 
-		gravarConfiguracao(idTpConfiguracao, idSituacao, config);
+		CpConfiguracaoHelper.gravarConfiguracao(idTpConfiguracao, idSituacao, config, dao, getIdentidadeCadastrante());
 		result.redirectTo(this).lista(idTpConfiguracao, null);
-	}
-
-	@SuppressWarnings("static-access")
-	private void gravarConfiguracao(Long idTpConfiguracao, Long idSituacao, final CpConfiguracao config) {
-		assertAcesso(VERIFICADOR_ACESSO);
-
-		if (idTpConfiguracao == null || idTpConfiguracao == 0)
-			throw new AplicacaoException("Tipo de configuracao não informado");
-
-		if (idSituacao == null || idSituacao == 0)
-			throw new AplicacaoException("Situação de Configuracao não informada");
-
-		config.setHisDtIni(dao().consultarDataEHoraDoServidor());
-		dao().gravarComHistorico(config, getIdentidadeCadastrante());
-	}
-
-	private Set<CpSituacaoConfiguracao> getListaSituacaoPodeNaoPode() throws Exception {
-		HashSet<CpSituacaoConfiguracao> s = new HashSet<CpSituacaoConfiguracao>();
-		s.add(dao.consultar(1L, CpSituacaoConfiguracao.class, false));
-		s.add(dao.consultar(2L, CpSituacaoConfiguracao.class, false));
-		return s;
-	}
-
-	private void escreverForm(CpConfiguracao c) throws Exception {
-		DpPessoaSelecao pessoaSelecao = new DpPessoaSelecao();
-		DpLotacaoSelecao lotacaoSelecao = new DpLotacaoSelecao();
-		DpFuncaoConfiancaSelecao funcaoConfiancaSelecao = new DpFuncaoConfiancaSelecao();
-		DpCargoSelecao cargoSelecao = new DpCargoSelecao();
-		DpPessoaSelecao pessoaObjetoSelecao = new DpPessoaSelecao();
-		DpLotacaoSelecao lotacaoObjetoSelecao = new DpLotacaoSelecao();
-		DpFuncaoConfiancaSelecao funcaoConfiancaObjetoSelecao = new DpFuncaoConfiancaSelecao();
-		DpCargoSelecao cargoObjetoSelecao = new DpCargoSelecao();
-
-		if (c.getOrgaoUsuario() != null)
-			result.include("idOrgaoUsu", c.getOrgaoUsuario().getIdOrgaoUsu());
-
-		if (c.getCpSituacaoConfiguracao() != null)
-			result.include("idSituacao", c.getCpSituacaoConfiguracao().getIdSitConfiguracao());
-
-		if (c.getCpTipoConfiguracao() != null)
-			result.include("idTpConfiguracao", c.getCpTipoConfiguracao().getIdTpConfiguracao());
-
-		if (c.getCpTipoLotacao() != null)
-			result.include("idTpLotacao", c.getCpTipoLotacao().getIdTpLotacao());
-
-		if (c.getDpPessoa() != null)
-			pessoaSelecao.buscarPorObjeto(c.getDpPessoa());
-
-		if (c.getLotacao() != null)
-			lotacaoSelecao.buscarPorObjeto(c.getLotacao());
-
-		if (c.getCargo() != null)
-			cargoSelecao.buscarPorObjeto(c.getCargo());
-
-		if (c.getFuncaoConfianca() != null)
-			funcaoConfiancaSelecao.buscarPorObjeto(c.getFuncaoConfianca());
-
-		if (c.getPessoaObjeto() != null)
-			pessoaObjetoSelecao.buscarPorObjeto(c.getPessoaObjeto());
-
-		if (c.getLotacaoObjeto() != null)
-			lotacaoObjetoSelecao.buscarPorObjeto(c.getLotacaoObjeto());
-
-		if (c.getCargoObjeto() != null)
-			cargoObjetoSelecao.buscarPorObjeto(c.getCargoObjeto());
-
-		if (c.getFuncaoConfianca() != null)
-			funcaoConfiancaObjetoSelecao.buscarPorObjeto(c.getFuncaoConfiancaObjeto());
-
-		if (c.getOrgaoObjeto() != null)
-			result.include("idOrgaoObjeto", c.getOrgaoObjeto().getIdOrgaoUsu());
-
-		result.include("pessoaSel", pessoaSelecao);
-		result.include("lotacaoSel", lotacaoSelecao);
-		result.include("cargoSel", cargoSelecao);
-		result.include("funcaoSel", funcaoConfiancaSelecao);
-
-		result.include("pessoaObjeto_pessoaSel", pessoaObjetoSelecao);
-		result.include("lotacaoObjeto_lotacaoSel", lotacaoObjetoSelecao);
-		result.include("cargoObjeto_cargoSel", cargoObjetoSelecao);
-		result.include("funcaoObjeto_funcaoSel", funcaoConfiancaObjetoSelecao);
 	}
 
 	@SuppressWarnings("all")
 	private CpTipoDeConfiguracao[] getListaTiposConfiguracao() throws Exception {
 		return CpTipoDeConfiguracao.values();
-	}
-
-	@SuppressWarnings("all")
-	private Set<CpSituacaoConfiguracao> getListaSituacao() throws Exception {
-		TreeSet<CpSituacaoConfiguracao> s = new TreeSet<CpSituacaoConfiguracao>(new Comparator() {
-
-			public int compare(Object o1, Object o2) {
-				return ((CpSituacaoConfiguracao) o1).getDscSitConfiguracao()
-						.compareTo(((CpSituacaoConfiguracao) o2).getDscSitConfiguracao());
-			}
-
-		});
-
-		s.addAll(dao().listarSituacoesConfiguracao());
-
-		return s;
-	}
-
-	private List<CpTipoLotacao> getListaTiposLotacao() throws Exception {
-		return dao().listarTiposLotacao();
-	}
-
-	protected List<CpOrgaoUsuario> getOrgaosUsu() throws AplicacaoException {
-		return dao().listarOrgaosUsuarios();
 	}
 }

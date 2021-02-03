@@ -1,11 +1,7 @@
 package br.gov.jfrj.siga.wf.vraptor;
 
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -15,14 +11,13 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.dp.CpTipoLotacao;
+import br.gov.jfrj.siga.vraptor.CpConfiguracaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 import br.gov.jfrj.siga.vraptor.Transacional;
 import br.gov.jfrj.siga.wf.bl.Wf;
@@ -52,7 +47,6 @@ public class WfConfiguracaoController extends WfController {
 
 	@Get("app/configuracao/listar")
 	public void lista(Long idTpConfiguracao, Long idOrgaoUsu) throws Exception {
-
 		assertAcesso(VERIFICADOR_ACESSO);
 		if (idTpConfiguracao == null)
 			idTpConfiguracao = WfTipoDeConfiguracao.INSTANCIAR_PROCEDIMENTO.getId();
@@ -66,7 +60,6 @@ public class WfConfiguracaoController extends WfController {
 	@Get("app/configuracao/listar_cadastradas")
 	public void listaCadastradas(Long idTpConfiguracao, Long idOrgaoUsu, Long idTpMov, Long idFormaDoc, Long idMod,
 			String nmTipoRetorno, boolean campoFixo) throws Exception {
-
 		assertAcesso(VERIFICADOR_ACESSO);
 
 		WfConfiguracao config = new WfConfiguracao();
@@ -106,6 +99,7 @@ public class WfConfiguracaoController extends WfController {
 			DpFuncaoConfiancaSelecao funcaoSel, DpPessoaSelecao pessoaObjetoSel, DpLotacaoSelecao lotacaoObjetoSel,
 			DpCargoSelecao cargoObjetoSel, DpFuncaoConfiancaSelecao funcaoObjetoSel, Long idOrgaoObjeto,
 			Long idTpLotacao, String nmTipoRetorno, Long idDefinicaoDeProcedimento) throws Exception {
+		assertAcesso(VERIFICADOR_ACESSO);
 
 		WfConfiguracao config = new WfConfiguracao();
 
@@ -130,9 +124,8 @@ public class WfConfiguracaoController extends WfController {
 		result.include("situacoes", tpconf.getSituacoes());
 		result.include("id", id);
 		result.include("listaTiposConfiguracao", getListaTiposConfiguracao());
-		result.include("listaSituacao", getListaSituacao());
 		result.include("orgaosUsu", getOrgaosUsu());
-		result.include("listaTiposLotacao", getListaTiposLotacao());
+		result.include("listaTiposLotacao", CpConfiguracaoHelper.getListaTiposLotacao(dao));
 		result.include("nmTipoRetorno", nmTipoRetorno);
 		result.include("config", config);
 		result.include("campoFixo", campoFixo);
@@ -166,6 +159,7 @@ public class WfConfiguracaoController extends WfController {
 			DpLotacaoSelecao lotacaoObjeto_lotacaoSel, DpCargoSelecao cargoObjeto_cargoSel,
 			DpFuncaoConfiancaSelecao funcaoObjeto_funcaoSel, Long idOrgaoObjeto, Long idTpLotacao, String nmTipoRetorno,
 			boolean campoFixo, Long idDefinicaoDeProcedimento) throws Exception {
+		assertAcesso(VERIFICADOR_ACESSO);
 
 		final WfConfiguracao config = new WfConfiguracaoBuilder().setId(id).setIdSituacao(idSituacao)
 				.setIdTpConfiguracao(idTpConfiguracao).setPessoaSel(pessoaSel).setLotacaoSel(lotacaoSel)
@@ -175,130 +169,19 @@ public class WfConfiguracaoController extends WfController {
 				.setIdOrgaoUsu(idOrgaoUsu).setIdTpLotacao(idTpLotacao)
 				.setIdDefinicaoDeProcedimento(idDefinicaoDeProcedimento).construir();
 
-		gravarConfiguracao(idTpConfiguracao, idSituacao, config);
+		CpConfiguracaoHelper.gravarConfiguracao(idTpConfiguracao, idSituacao, config, dao, getIdentidadeCadastrante());
 		result.redirectTo(this).lista(idTpConfiguracao, null);
 	}
 
-	@SuppressWarnings("static-access")
-	private void gravarConfiguracao(Long idTpConfiguracao, Long idSituacao, final WfConfiguracao config) {
-		assertAcesso(VERIFICADOR_ACESSO);
-
-		if (idTpConfiguracao == null || idTpConfiguracao == 0)
-			throw new AplicacaoException("Tipo de configuracao não informado");
-
-		if (idSituacao == null || idSituacao == 0)
-			throw new AplicacaoException("Situação de Configuracao não informada");
-
-		config.setHisDtIni(dao().consultarDataEHoraDoServidor());
-		dao().gravarComHistorico(config, getIdentidadeCadastrante());
-	}
-
-//	private TreeSet<CpConfiguracao> getListaConfiguracao() {
-//		TreeSet<CpConfiguracao> listaConfigs = Wf.getInstance().getConf()
-//				.getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
-//
-//		if (listaConfigs == null)
-//			return new TreeSet<CpConfiguracao>();
-//		return listaConfigs;
-//	}
-
-	private Set<CpSituacaoConfiguracao> getListaSituacaoPodeNaoPode() throws Exception {
-		HashSet<CpSituacaoConfiguracao> s = new HashSet<CpSituacaoConfiguracao>();
-		s.add(WfDao.getInstance().consultar(1L, CpSituacaoConfiguracao.class, false));
-		s.add(WfDao.getInstance().consultar(2L, CpSituacaoConfiguracao.class, false));
-		return s;
-	}
-
-	private void escreverForm(WfConfiguracao c) throws Exception {
-		DpPessoaSelecao pessoaSelecao = new DpPessoaSelecao();
-		DpLotacaoSelecao lotacaoSelecao = new DpLotacaoSelecao();
-		DpFuncaoConfiancaSelecao funcaoConfiancaSelecao = new DpFuncaoConfiancaSelecao();
-		DpCargoSelecao cargoSelecao = new DpCargoSelecao();
-		DpPessoaSelecao pessoaObjetoSelecao = new DpPessoaSelecao();
-		DpLotacaoSelecao lotacaoObjetoSelecao = new DpLotacaoSelecao();
-		DpFuncaoConfiancaSelecao funcaoConfiancaObjetoSelecao = new DpFuncaoConfiancaSelecao();
-		DpCargoSelecao cargoObjetoSelecao = new DpCargoSelecao();
-
-		if (c.getOrgaoUsuario() != null)
-			result.include("idOrgaoUsu", c.getOrgaoUsuario().getIdOrgaoUsu());
-
-		if (c.getCpSituacaoConfiguracao() != null)
-			result.include("idSituacao", c.getCpSituacaoConfiguracao().getIdSitConfiguracao());
-
-		if (c.getCpTipoConfiguracao() != null)
-			result.include("idTpConfiguracao", c.getCpTipoConfiguracao().getIdTpConfiguracao());
-
-		if (c.getCpTipoLotacao() != null)
-			result.include("idTpLotacao", c.getCpTipoLotacao().getIdTpLotacao());
-
-		if (c.getDpPessoa() != null)
-			pessoaSelecao.buscarPorObjeto(c.getDpPessoa());
-
-		if (c.getLotacao() != null)
-			lotacaoSelecao.buscarPorObjeto(c.getLotacao());
-
-		if (c.getCargo() != null)
-			cargoSelecao.buscarPorObjeto(c.getCargo());
-
-		if (c.getFuncaoConfianca() != null)
-			funcaoConfiancaSelecao.buscarPorObjeto(c.getFuncaoConfianca());
-
-		if (c.getPessoaObjeto() != null)
-			pessoaObjetoSelecao.buscarPorObjeto(c.getPessoaObjeto());
-
-		if (c.getLotacaoObjeto() != null)
-			lotacaoObjetoSelecao.buscarPorObjeto(c.getLotacaoObjeto());
-
-		if (c.getCargoObjeto() != null)
-			cargoObjetoSelecao.buscarPorObjeto(c.getCargoObjeto());
-
-		if (c.getFuncaoConfianca() != null)
-			funcaoConfiancaObjetoSelecao.buscarPorObjeto(c.getFuncaoConfiancaObjeto());
-
-		if (c.getOrgaoObjeto() != null)
-			result.include("idOrgaoObjeto", c.getOrgaoObjeto().getIdOrgaoUsu());
-
+	protected void escreverForm(WfConfiguracao c) throws Exception {
+		CpConfiguracaoHelper.escreverForm(c, result);
 		if (c.getDefinicaoDeProcedimento() != null)
 			result.include("idDefinicaoDeProcedimento", c.getDefinicaoDeProcedimento().getId());
-
-		result.include("pessoaSel", pessoaSelecao);
-		result.include("lotacaoSel", lotacaoSelecao);
-		result.include("cargoSel", cargoSelecao);
-		result.include("funcaoSel", funcaoConfiancaSelecao);
-
-		result.include("pessoaObjeto_pessoaSel", pessoaObjetoSelecao);
-		result.include("lotacaoObjeto_lotacaoSel", lotacaoObjetoSelecao);
-		result.include("cargoObjeto_cargoSel", cargoObjetoSelecao);
-		result.include("funcaoObjeto_funcaoSel", funcaoConfiancaObjetoSelecao);
 	}
 
 	@SuppressWarnings("all")
 	private WfTipoDeConfiguracao[] getListaTiposConfiguracao() throws Exception {
 		return WfTipoDeConfiguracao.values();
-	}
-
-	@SuppressWarnings("all")
-	private Set<CpSituacaoConfiguracao> getListaSituacao() throws Exception {
-		TreeSet<CpSituacaoConfiguracao> s = new TreeSet<CpSituacaoConfiguracao>(new Comparator() {
-
-			public int compare(Object o1, Object o2) {
-				return ((CpSituacaoConfiguracao) o1).getDscSitConfiguracao()
-						.compareTo(((CpSituacaoConfiguracao) o2).getDscSitConfiguracao());
-			}
-
-		});
-
-		s.addAll(dao().listarSituacoesConfiguracao());
-
-		return s;
-	}
-
-	private List<CpTipoLotacao> getListaTiposLotacao() throws Exception {
-		return dao().listarTiposLotacao();
-	}
-
-	protected List<CpOrgaoUsuario> getOrgaosUsu() throws AplicacaoException {
-		return dao().listarOrgaosUsuarios();
 	}
 
 	private List<WfDefinicaoDeProcedimento> getDefinicoesDeProcedimentos() {

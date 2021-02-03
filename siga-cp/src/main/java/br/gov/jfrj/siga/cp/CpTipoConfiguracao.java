@@ -173,6 +173,8 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 
 	public static final long TIPO_CONFIG_DESIGNAR_TAREFA = 101;
 
+	public static final long TIPO_CONFIG_EDITAR_DEFINICAO_DE_PROCEDIMENTO = 102;
+	
 	// SIGA-GI
 
 	public static final long TIPO_CONFIG_UTILIZAR_SERVICO = 200;

@@ -47,12 +47,16 @@ public class WfCompetenciaBL extends CpCompetenciaBL {
 	 * @return
 	 * @throws Exception
 	 */
-	public Boolean podeInstanciarProcedimento(DpPessoa titular, DpLotacao lotaTitular,
-			final WfDefinicaoDeProcedimento definicaoDeProcedimento) throws Exception {
-		if (lotaTitular == null)
-			return false;
+	public boolean podeInstanciarProcedimentoPorConfiguracao(DpPessoa titular, DpLotacao lotaTitular,
+			final WfDefinicaoDeProcedimento definicaoDeProcedimento) {
 		return podePorConfiguracao(titular, lotaTitular, definicaoDeProcedimento,
 				CpTipoConfiguracao.TIPO_CONFIG_INSTANCIAR_PROCEDIMENTO);
+	}
+
+	public boolean podeEditarProcedimentoPorConfiguracao(DpPessoa titular, DpLotacao lotaTitular,
+			WfDefinicaoDeProcedimento pd) {
+		return podePorConfiguracao(titular, lotaTitular, pd,
+				CpTipoConfiguracao.TIPO_CONFIG_EDITAR_DEFINICAO_DE_PROCEDIMENTO);
 	}
 
 	/**
@@ -69,7 +73,7 @@ public class WfCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	private WfConfiguracao preencherFiltroEBuscarConfiguracao(DpPessoa titularIniciador, DpLotacao lotaTitularIniciador,
-			long tipoConfig, final WfDefinicaoDeProcedimento definicaoDeProcedimento) throws Exception {
+			long tipoConfig, final WfDefinicaoDeProcedimento definicaoDeProcedimento) {
 		WfConfiguracao cfgFiltro = new WfConfiguracao();
 
 		cfgFiltro.setCargo(titularIniciador != null ? titularIniciador.getCargo() : null);
@@ -97,7 +101,7 @@ public class WfCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	private Boolean podePorConfiguracao(DpPessoa titular, DpLotacao lotaTitular,
-			final WfDefinicaoDeProcedimento definicaoDeProcedimento, long tipoConfig) throws Exception {
+			final WfDefinicaoDeProcedimento definicaoDeProcedimento, long tipoConfig) {
 		CpSituacaoConfiguracao situacao;
 		WfConfiguracao cfg = preencherFiltroEBuscarConfiguracao(titular, lotaTitular, tipoConfig,
 				definicaoDeProcedimento);
@@ -162,4 +166,5 @@ public class WfCompetenciaBL extends CpCompetenciaBL {
 
 		return resposta.booleanValue();
 	}
+
 }

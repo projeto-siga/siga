@@ -71,7 +71,7 @@ public class WfConfiguracaoBL extends CpConfiguracaoBL {
 			WfConfiguracao wfCfgFiltro = (WfConfiguracao) cfgFiltro;
 
 			if (wfCfg.getDefinicaoDeProcedimento() != null && ((wfCfgFiltro.getDefinicaoDeProcedimento() != null
-					&& !wfCfg.getDefinicaoDeProcedimento().equals(wfCfgFiltro.getDefinicaoDeProcedimento())
+					&& !wfCfg.getDefinicaoDeProcedimento().equivale(wfCfgFiltro.getDefinicaoDeProcedimento())
 					|| ((wfCfgFiltro.getDefinicaoDeProcedimento() == null)
 							&& !atributosDesconsiderados.contains(DEFINICAO_DE_PROCEDIMENTO)))))
 				return false;
@@ -129,5 +129,22 @@ public class WfConfiguracaoBL extends CpConfiguracaoBL {
 			configVigentes.add(cfg);
 		}
 		return (configVigentes);
+	}
+
+	/**
+	 * Varre as entidades definidas na configuração para evitar que o hibernate
+	 * guarde versões lazy delas.
+	 * 
+	 * @param listaCfg - lista de configurações que podem ter objetos lazy
+	 */
+	protected void evitarLazy(List<CpConfiguracao> provResults) {
+		for (CpConfiguracao cpCfg : provResults) {
+			if (cpCfg instanceof WfConfiguracao) {
+				WfConfiguracao cfg = (WfConfiguracao) cpCfg;
+				if (cfg.getDefinicaoDeProcedimento() != null) {
+					cfg.getDefinicaoDeProcedimento().getNome();
+				}
+			}
+		}
 	}
 }

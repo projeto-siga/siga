@@ -1,10 +1,6 @@
 package br.gov.jfrj.siga.wf.model.enm;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-
-import com.auth0.jwt.internal.org.bouncycastle.util.Arrays;
 
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -16,20 +12,21 @@ import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 
 public enum WfTipoDeConfiguracao {
 
-	INSTANCIAR_PROCEDIMENTO(CpTipoConfiguracao.TIPO_CONFIG_INSTANCIAR_PROCEDIMENTO,
-			"Instanciar Procedimento de Workflow",
-			"Selecione órgão, lotação, pessoa, cargo ou função comissionada que tem permissão para iniciar um determinado diagrama, além das indicadas no próprio diagrama.",
+	INSTANCIAR_PROCEDIMENTO(CpTipoConfiguracao.TIPO_CONFIG_INSTANCIAR_PROCEDIMENTO, "Iniciar Procedimento",
+			"Selecione órgão, lotação, pessoa, cargo ou função que tem permissão para iniciar um determinado diagrama, além das indicadas no próprio diagrama.",
 			new WfParametroDeConfiguracao[] { WfParametroDeConfiguracao.PESSOA, WfParametroDeConfiguracao.LOTACAO,
 					WfParametroDeConfiguracao.CARGO, WfParametroDeConfiguracao.FUNCAO, WfParametroDeConfiguracao.ORGAO,
 					WfParametroDeConfiguracao.DEFINICAO_DE_PROCEDIMENTO, WfParametroDeConfiguracao.SITUACAO },
 			new WfParametroDeConfiguracao[] { WfParametroDeConfiguracao.DEFINICAO_DE_PROCEDIMENTO,
 					WfParametroDeConfiguracao.SITUACAO },
+			new SituacaoDeConfiguracao[] { SituacaoDeConfiguracao.PODE, SituacaoDeConfiguracao.NAO_PODE }),
+	EDITAR_DEFINICAO_DE_PROCEDIMENTO(CpTipoConfiguracao.TIPO_CONFIG_EDITAR_DEFINICAO_DE_PROCEDIMENTO, "Editar Diagrama",
+			"Selecione órgão, lotação, pessoa, cargo ou função que tem permissão para editar um determinado diagrama, além das indicadas no próprio diagrama.",
+			new WfParametroDeConfiguracao[] { WfParametroDeConfiguracao.PESSOA, WfParametroDeConfiguracao.LOTACAO,
+					WfParametroDeConfiguracao.CARGO, WfParametroDeConfiguracao.FUNCAO, WfParametroDeConfiguracao.ORGAO,
+					WfParametroDeConfiguracao.DEFINICAO_DE_PROCEDIMENTO, WfParametroDeConfiguracao.SITUACAO },
+			new WfParametroDeConfiguracao[] { WfParametroDeConfiguracao.SITUACAO },
 			new SituacaoDeConfiguracao[] { SituacaoDeConfiguracao.PODE, SituacaoDeConfiguracao.NAO_PODE });
-//
-//	DESIGNAR_TAREFA(CpTipoConfiguracao.TIPO_CONFIG_DESIGNAR_TAREFA, "Designar Tarefa de Workflow",
-//			"Esta configuração deve ser removida.",
-//			new WfParametroDeConfiguracao[] { WfParametroDeConfiguracao.PESSOA }, new WfParametroDeConfiguracao[] {},
-//			new SituacaoDeConfiguracao[] { SituacaoDeConfiguracao.PODE, SituacaoDeConfiguracao.NAO_PODE });
 
 	private final Long id;
 	private final String descr;
@@ -61,6 +58,8 @@ public enum WfTipoDeConfiguracao {
 	}
 
 	public boolean ativo(String param) {
+		if (obrigatorio(param))
+			return true;
 		if (param == null || params == null)
 			return false;
 		for (WfParametroDeConfiguracao p : params) {

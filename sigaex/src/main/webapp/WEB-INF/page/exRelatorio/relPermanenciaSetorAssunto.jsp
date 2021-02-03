@@ -73,7 +73,7 @@ Relatório de Permanência por Setor e Assunto
 		<ul class="checkbox">
 			<c:forEach items="${listaAssuntos}" var="item">
 				<li><input type="checkbox" name="assuntos"
-					value="${item.idClassificacao}"> ${item.codificacao}-${item.descrClassificacao}</input></li>
+					value="${item.idClassificacao}">${item.codificacao}-${item.descrClassificacao}</input></li>
 			</c:forEach>
 		</ul>
 	</fieldset>

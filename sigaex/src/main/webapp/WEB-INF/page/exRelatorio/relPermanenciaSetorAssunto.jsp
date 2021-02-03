@@ -11,6 +11,17 @@
 		frmRelExpedientes.action = '${url}';
 		frmRelExpedientes.submit();
 	}
+
+	function marcardesmarcar(){
+		  $('.marcar').each(
+		         function(){
+		           if ($(".marcar").prop( "checked")) 
+		           $(this).attr("checked", false);
+		           else $(this).attr("checked", true);               
+		         }
+		    );
+		}
+	
 </script>
 
 <style>
@@ -68,6 +79,15 @@ Relatório de Permanência por Setor e Assunto
 	value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
 
 <div class="row">
+<button 
+  class='btn btn-large' 
+  type='button' 
+  title='Todos' 
+  id='todos' 
+  onclick='marcardesmarcar();'>
+    <i class='icon-large icon-ok'></i>
+</button>
+
 	<fieldset class="group">
 		<legend>Assuntos</legend>
 		<ul class="checkbox">

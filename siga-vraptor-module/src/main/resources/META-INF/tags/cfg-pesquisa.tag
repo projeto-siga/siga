@@ -29,6 +29,9 @@
 				},
 				success : function(data) {
 					$('#tableCadastradas').html(data);
+				},
+				error : function(data) {
+					$('#tableCadastradas').html(data.responseText);
 				}
 			});
 		}

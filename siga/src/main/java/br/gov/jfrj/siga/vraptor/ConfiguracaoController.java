@@ -20,7 +20,9 @@ import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.cp.model.enm.CpParamCfg;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
@@ -47,7 +49,7 @@ public class ConfiguracaoController extends SigaController {
 		assertAcesso(VERIFICADOR_ACESSO);
 		if (idTpConfiguracao == null)
 			idTpConfiguracao = CpTipoDeConfiguracao.UTILIZAR_SERVICO.getId();
-		CpTipoDeConfiguracao tpconf = CpTipoDeConfiguracao.getById(idTpConfiguracao);
+		ITipoDeConfiguracao tpconf = CpTipoDeConfiguracao.getById(idTpConfiguracao);
 
 		result.include("tipoDeConfiguracao", tpconf);
 		result.include("listaTiposConfiguracao", getListaTiposConfiguracao());
@@ -77,16 +79,16 @@ public class ConfiguracaoController extends SigaController {
 			config.setOrgaoUsuario(null);
 
 		List<CpConfiguracao> listConfig = Cp.getInstance().getConf().buscarConfiguracoesVigentes(config);
-
 		Collections.sort(listConfig, new CpConfiguracaoComparator());
 
-		result.include("configuracao", config);
-		CpTipoDeConfiguracao tpconf = CpTipoDeConfiguracao.getById(idTpConfiguracao);
+		ITipoDeConfiguracao tpconf = CpTipoDeConfiguracao.getById(idTpConfiguracao);
+		for (CpConfiguracao c : listConfig)
+			CpConfiguracaoHelper.assertConfig(tpconf, c);
 
+		result.include("configuracao", config);
 		result.include("tipoDeConfiguracao", tpconf);
 		result.include("listConfig", listConfig);
 		result.include("tpConfiguracao", config.getCpTipoConfiguracao());
-
 	}
 
 	@Get("app/configuracao/editar")
@@ -114,7 +116,7 @@ public class ConfiguracaoController extends SigaController {
 			idTpConfiguracao = config.getCpTipoConfiguracao().getIdTpConfiguracao();
 		if (idTpConfiguracao == null)
 			throw new RuntimeException("Tipo de configuração deve ser informado");
-		CpTipoDeConfiguracao tpconf = CpTipoDeConfiguracao.getById(idTpConfiguracao);
+		ITipoDeConfiguracao tpconf = CpTipoDeConfiguracao.getById(idTpConfiguracao);
 
 		result.include("tipoDeConfiguracao", tpconf);
 		result.include("situacoes", tpconf.getSituacoes());
@@ -168,7 +170,7 @@ public class ConfiguracaoController extends SigaController {
 	}
 
 	@SuppressWarnings("all")
-	private CpTipoDeConfiguracao[] getListaTiposConfiguracao() throws Exception {
+	private ITipoDeConfiguracao[] getListaTiposConfiguracao() throws Exception {
 		return CpTipoDeConfiguracao.values();
 	}
 }

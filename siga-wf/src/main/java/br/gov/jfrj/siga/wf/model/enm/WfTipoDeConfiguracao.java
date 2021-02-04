@@ -5,38 +5,36 @@ import java.util.Date;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.SituacaoDeConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 
-public enum WfTipoDeConfiguracao {
+public enum WfTipoDeConfiguracao implements ITipoDeConfiguracao {
 
 	INSTANCIAR_PROCEDIMENTO(CpTipoConfiguracao.TIPO_CONFIG_INSTANCIAR_PROCEDIMENTO, "Iniciar Procedimento",
 			"Selecione órgão, lotação, pessoa, cargo ou função que tem permissão para iniciar um determinado diagrama, além das indicadas no próprio diagrama.",
-			new WfParametroDeConfiguracao[] { WfParametroDeConfiguracao.PESSOA, WfParametroDeConfiguracao.LOTACAO,
-					WfParametroDeConfiguracao.CARGO, WfParametroDeConfiguracao.FUNCAO, WfParametroDeConfiguracao.ORGAO,
-					WfParametroDeConfiguracao.DEFINICAO_DE_PROCEDIMENTO, WfParametroDeConfiguracao.SITUACAO },
-			new WfParametroDeConfiguracao[] { WfParametroDeConfiguracao.DEFINICAO_DE_PROCEDIMENTO,
-					WfParametroDeConfiguracao.SITUACAO },
+			new WfParamCfg[] { WfParamCfg.PESSOA, WfParamCfg.LOTACAO, WfParamCfg.CARGO, WfParamCfg.FUNCAO,
+					WfParamCfg.ORGAO, WfParamCfg.DEFINICAO_DE_PROCEDIMENTO, WfParamCfg.SITUACAO },
+			new WfParamCfg[] { WfParamCfg.DEFINICAO_DE_PROCEDIMENTO, WfParamCfg.SITUACAO },
 			new SituacaoDeConfiguracao[] { SituacaoDeConfiguracao.PODE, SituacaoDeConfiguracao.NAO_PODE }),
 	EDITAR_DEFINICAO_DE_PROCEDIMENTO(CpTipoConfiguracao.TIPO_CONFIG_EDITAR_DEFINICAO_DE_PROCEDIMENTO, "Editar Diagrama",
 			"Selecione órgão, lotação, pessoa, cargo ou função que tem permissão para editar um determinado diagrama, além das indicadas no próprio diagrama.",
-			new WfParametroDeConfiguracao[] { WfParametroDeConfiguracao.PESSOA, WfParametroDeConfiguracao.LOTACAO,
-					WfParametroDeConfiguracao.CARGO, WfParametroDeConfiguracao.FUNCAO, WfParametroDeConfiguracao.ORGAO,
-					WfParametroDeConfiguracao.DEFINICAO_DE_PROCEDIMENTO, WfParametroDeConfiguracao.SITUACAO },
-			new WfParametroDeConfiguracao[] { WfParametroDeConfiguracao.SITUACAO },
+			new WfParamCfg[] { WfParamCfg.PESSOA, WfParamCfg.LOTACAO, WfParamCfg.CARGO, WfParamCfg.FUNCAO,
+					WfParamCfg.ORGAO, WfParamCfg.DEFINICAO_DE_PROCEDIMENTO, WfParamCfg.SITUACAO },
+			new WfParamCfg[] { WfParamCfg.SITUACAO },
 			new SituacaoDeConfiguracao[] { SituacaoDeConfiguracao.PODE, SituacaoDeConfiguracao.NAO_PODE });
 
 	private final Long id;
 	private final String descr;
 	private final String explicacao;
-	private final WfParametroDeConfiguracao[] params;
-	private final WfParametroDeConfiguracao[] obrigatorios;
+	private final WfParamCfg[] params;
+	private final WfParamCfg[] obrigatorios;
 	private final SituacaoDeConfiguracao[] situacoes;
 
-	WfTipoDeConfiguracao(Long id, String descr, String explicacao, WfParametroDeConfiguracao[] params,
-			WfParametroDeConfiguracao[] obrigatorios, SituacaoDeConfiguracao[] situacoes) {
+	WfTipoDeConfiguracao(Long id, String descr, String explicacao, WfParamCfg[] params, WfParamCfg[] obrigatorios,
+			SituacaoDeConfiguracao[] situacoes) {
 		this.id = id;
 		this.descr = descr;
 		this.explicacao = explicacao;
@@ -55,32 +53,6 @@ public enum WfTipoDeConfiguracao {
 
 	public String getExplicacao() {
 		return this.explicacao;
-	}
-
-	public boolean ativo(String param) {
-		if (obrigatorio(param))
-			return true;
-		if (param == null || params == null)
-			return false;
-		for (WfParametroDeConfiguracao p : params) {
-			if (param.equals(p.name()))
-				return true;
-		}
-		return false;
-	}
-
-	public String style(String param) {
-		return ativo(param) ? "" : "display: none";
-	}
-
-	public boolean obrigatorio(String param) {
-		if (param == null || obrigatorios == null)
-			return false;
-		for (WfParametroDeConfiguracao p : obrigatorios) {
-			if (param.equals(p.name()))
-				return true;
-		}
-		return false;
 	}
 
 	public static boolean acessoPermitido(WfDefinicaoDeProcedimento pd, DpPessoa titular, DpLotacao lotaTitular) {
@@ -132,7 +104,13 @@ public enum WfTipoDeConfiguracao {
 		return situacoes;
 	}
 
-	public WfParametroDeConfiguracao[] getObrigatorios() {
+	public Enum[] getObrigatorios() {
 		return obrigatorios;
 	}
+
+	@Override
+	public Enum[] getParams() {
+		return params;
+	}
+
 }

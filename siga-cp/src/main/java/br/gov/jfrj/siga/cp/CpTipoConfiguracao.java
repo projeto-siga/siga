@@ -192,5 +192,4 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 	public CpTipoConfiguracaoDicionario getDicionario() {		
 		return CpTipoConfiguracaoDicionario.obterDicionario(getIdTpConfiguracao());
 	}
-
 }

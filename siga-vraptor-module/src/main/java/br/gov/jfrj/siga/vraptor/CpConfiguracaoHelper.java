@@ -10,6 +10,8 @@ import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.cp.model.enm.CpParamCfg;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -95,4 +97,26 @@ public class CpConfiguracaoHelper {
 		dao.gravarComHistorico(config, idc);
 	}
 
+	public static void assertConfig(ITipoDeConfiguracao t, CpConfiguracao c, Object o, Enum p) {
+		if (o == null || t.ativo(p.name()))
+			return;
+		throw new RuntimeException("Configuração " + c.getId() + " não poderia conter o parâmetro " + p.name());
+	}
+
+	public static void assertConfig(ITipoDeConfiguracao t, CpConfiguracao c) {
+		assertConfig(t, c, c.getDpPessoa(), CpParamCfg.PESSOA);
+		assertConfig(t, c, c.getCpTipoLotacao(), CpParamCfg.TIPO_DE_LOTACAO);
+		assertConfig(t, c, c.getLotacao(), CpParamCfg.LOTACAO);
+		assertConfig(t, c, c.getCargo(), CpParamCfg.CARGO);
+		assertConfig(t, c, c.getFuncaoConfianca(), CpParamCfg.FUNCAO);
+		assertConfig(t, c, c.getOrgaoUsuario(), CpParamCfg.ORGAO);
+		// assertConfig(t, c, c.get), CpParametroDeConfiguracao.PERFIL);
+		assertConfig(t, c, c.getCpServico(), CpParamCfg.SERVICO);
+		assertConfig(t, c, c.getPessoaObjeto(), CpParamCfg.PESSOA_OBJETO);
+		assertConfig(t, c, c.getLotacaoObjeto(), CpParamCfg.LOTACAO_OBJETO);
+		assertConfig(t, c, c.getCargoObjeto(), CpParamCfg.CARGO_OBJETO);
+		assertConfig(t, c, c.getFuncaoConfiancaObjeto(), CpParamCfg.FUNCAO_OBJETO);
+		assertConfig(t, c, c.getOrgaoObjeto(), CpParamCfg.ORGAO_OBJETO);
+		assertConfig(t, c, c.getCpSituacaoConfiguracao(), CpParamCfg.SITUACAO);
+	}
 }

@@ -1,6 +1,6 @@
 package br.gov.jfrj.siga.wf.model.enm;
 
-public enum WfParametroDeConfiguracao {
+public enum WfParamCfg {
 	PESSOA, LOTACAO, TIPO_DE_LOTACAO, CARGO, FUNCAO, ORGAO, PERFIL, SERVICO, PESSOA_OBJETO, LOTACAO_OBJETO,
 	CARGO_OBJETO, FUNCAO_OBJETO, ORGAO_OBJETO, DEFINICAO_DE_PROCEDIMENTO, SITUACAO;
 }

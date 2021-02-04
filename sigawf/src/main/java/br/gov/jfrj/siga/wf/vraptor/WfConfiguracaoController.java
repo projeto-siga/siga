@@ -11,11 +11,13 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.vraptor.CpConfiguracaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
@@ -25,6 +27,7 @@ import br.gov.jfrj.siga.wf.bl.WfConfiguracaoComparator;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.model.WfConfiguracao;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
+import br.gov.jfrj.siga.wf.model.enm.WfParamCfg;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeConfiguracao;
 import br.gov.jfrj.siga.wf.util.WfUtil;
 
@@ -83,13 +86,23 @@ public class WfConfiguracaoController extends WfController {
 
 		Collections.sort(listConfig, new WfConfiguracaoComparator());
 
-		result.include("configuracao", config);
 		WfTipoDeConfiguracao tpconf = WfTipoDeConfiguracao.getById(idTpConfiguracao);
+		for (CpConfiguracao c : listConfig)
+			assertConfig(tpconf, c);
 
+		result.include("configuracao", config);
 		result.include("tipoDeConfiguracao", tpconf);
 		result.include("listConfig", listConfig);
 		result.include("tpConfiguracao", config.getCpTipoConfiguracao());
+	}
 
+	protected void assertConfig(ITipoDeConfiguracao t, CpConfiguracao c) {
+		CpConfiguracaoHelper.assertConfig(t, c);
+		if (c instanceof WfConfiguracao) {
+			WfConfiguracao cc = (WfConfiguracao) c;
+			CpConfiguracaoHelper.assertConfig(t, c, cc.getDefinicaoDeProcedimento(),
+					WfParamCfg.DEFINICAO_DE_PROCEDIMENTO);
+		}
 	}
 
 	@Get("app/configuracao/editar")

@@ -103,6 +103,8 @@ public class FlyingSaucer implements ConversorHtml {
 
 		sHtml = corrigirEscolhaDeFonts(sHtml);
 
+		sHtml = corrigirNBSP(sHtml);
+
 		sHtml = cleanHtml(sHtml);
 
 		logger.fine(sHtml);
@@ -228,6 +230,12 @@ public class FlyingSaucer implements ConversorHtml {
 		// Remove abre e fecha <br>, pois isso causa uma duplicidade de quebras de linha
 		// no Flying Saucer
 		html = html.replace("<br></br>", "<br/>");
+		return html;
+	}
+	
+	private String corrigirNBSP(String html) {
+		// Remove &nbsp; pois isso não está sendo corretamente renderizado pelo no Flying Saucer
+		html = html.replace("&nbsp;", " ");
 		return html;
 	}
 

@@ -42,6 +42,7 @@ import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.logic.WfPodeEditarDiagrama;
+import br.gov.jfrj.siga.wf.logic.WfPodeIniciarDiagrama;
 import br.gov.jfrj.siga.wf.model.enm.WfAcessoDeEdicao;
 import br.gov.jfrj.siga.wf.model.enm.WfAcessoDeInicializacao;
 import br.gov.jfrj.siga.wf.util.SiglaUtils;
@@ -368,7 +369,7 @@ public class WfDefinicaoDeProcedimento extends HistoricoAuditavelSuporte impleme
 				.exp(new WfPodeEditarDiagrama(this, titular, lotaTitular)).build());
 
 		set.add(AcaoVO.builder().nome("_Iniciar").icone("add").acao("/app/iniciar/" + id)
-				.exp(new WfPodeEditarDiagrama(this, titular, lotaTitular)).build());
+				.exp(new WfPodeIniciarDiagrama(this, titular, lotaTitular)).build());
 
 		return set;
 	}

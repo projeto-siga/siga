@@ -1,0 +1,2 @@
+ALTER TABLE sigawf.wf_def_procedimento ADD DEFP_TP_INICIO VARCHAR(45) DEFAULT 'ACESSO_LOTACAO' NOT NULL;
+COMMENT ON COLUMN sigawf.wf_def_procedimento.DEFP_TP_INICIO IS 'Tipo de permissão para iniciar procedimentos desta definição de procedimento';

@@ -1,5 +1,5 @@
 ALTER TABLE `sigawf`.`wf_def_procedimento` 
-ADD COLUMN `DEFP_TP_EDICAO` VARCHAR(45) NULL DEFAULT 'ACESSO_LOTACAO' COMMENT 'Tipo de permissão para edição desta definição de procedimento' AFTER `DEFP_NR`;
+ADD COLUMN `DEFP_TP_EDICAO` VARCHAR(45) NOT NULL DEFAULT 'ACESSO_LOTACAO' COMMENT 'Tipo de permissão para edição desta definição de procedimento' AFTER `DEFP_NR`;
 
 ALTER TABLE `sigawf`.`wf_def_procedimento` 
 CHANGE COLUMN `ORGU_ID` `ORGU_ID` INT NULL DEFAULT NULL COMMENT 'Identificador do órgao usuário ao qual se vincula a definição de procedimento';

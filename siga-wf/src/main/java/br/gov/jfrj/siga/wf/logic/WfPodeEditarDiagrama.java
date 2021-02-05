@@ -1,14 +1,14 @@
 package br.gov.jfrj.siga.wf.logic;
 
 import com.crivano.jlogic.Expression;
-import com.crivano.jlogic.JLogic;
+import com.crivano.jlogic.Or;
+import com.crivano.jlogic.utils.CompositeExpressionSuport;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
-import br.gov.jfrj.siga.wf.model.enm.WfAcessoDeEdicao;
 
-public class WfPodeEditarDiagrama implements Expression {
+public class WfPodeEditarDiagrama extends CompositeExpressionSuport {
 
 	private WfDefinicaoDeProcedimento pd;
 	private DpPessoa titular;
@@ -21,12 +21,8 @@ public class WfPodeEditarDiagrama implements Expression {
 	}
 
 	@Override
-	public boolean eval() {
-		return WfAcessoDeEdicao.acessoPermitido(pd, titular, lotaTitular);
-	}
-
-	@Override
-	public String explain(boolean result) {
-		return JLogic.explain("tem acesso para editar", result);
+	protected Expression create() {
+		return Or.of(new WfPodeEditarDiagramaPorAcesso(pd, titular, lotaTitular),
+				new WfPodeEditarDiagramaPorConfiguracao(pd, titular, lotaTitular));
 	}
 };

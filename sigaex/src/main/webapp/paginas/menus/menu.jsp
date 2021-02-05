@@ -116,7 +116,7 @@
 				<c:if
 					test="${f:testaCompetencia('gerenciarPublicacaoBoletimPorConfiguracao',titular,lotaTitular,null)}">
 					<li><a class="dropdown-item"
-						href="/sigaex/app/expediente/configuracao/gerenciar_publicacao_boletim">Definir
+						href="/sigaex/app/configuracao/gerenciar_publicacao_boletim">Definir
 							Publicadores Boletim</a></li>
 				</c:if>
 			</c:catch>
@@ -143,11 +143,11 @@
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;CFG:Configurações')}">
 					<li><a class="dropdown-item"
-						href="/sigaex/app/expediente/configuracao/listar">Cadastro de
+						href="/sigaex/app/configuracao/listar">Cadastro de
 							configurações</a></li>
 							
 					<li>
-						<a class="dropdown-item" href="/sigaex/app/expediente/configuracao2/nova">
+						<a class="dropdown-item" href="/sigaex/app/configuracao2/nova">
 							Cadastro de configurações <span class="badge badge-pill badge-success">NOVO</span>
 						</a>
 					</li>		

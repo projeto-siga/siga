@@ -1,0 +1,19 @@
+-- -------------------------------------------------------------------------    
+--  Indices para as tabelas com FK para CpArquivo
+--  O MySQL cria automático e por isso não será necessário
+-- -------------------------------------------------------------------------
+--CREATE INDEX FK_DOC_ARQ
+--          ON SIGA.EX_DOCUMENTO 
+--             (ID_ARQ);
+--
+--CREATE INDEX FK_MOD_ARQ
+--          ON SIGA.EX_MODELO 
+--             (ID_ARQ);
+--
+--CREATE INDEX FK_MOV_ARQ
+--          ON SIGA.EX_MOVIMENTACAO 
+--             (ID_ARQ);
+--
+--CREATE INDEX FK_PRE_ARQ
+--          ON SIGA.EX_PREENCHIMENTO 
+--             (ID_ARQ);

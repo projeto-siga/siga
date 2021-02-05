@@ -28,6 +28,12 @@
 						href="${linkTo[WfResponsavelController].lista()}">Cadastro de
 							Responsáveis</a></li>
 				</c:if>
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF;FE;CFG:Cadastrar Configurações')}">
+					<li><a class="dropdown-item"
+						href="${linkTo[WfConfiguracaoController].lista()}">Cadastro de
+							Configurações</a></li>
+				</c:if>
 			</ul></li>
 	</c:if></li>
 <c:if

@@ -30,6 +30,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.enterprise.inject.Specializes;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -38,6 +39,7 @@ import javax.persistence.criteria.Root;
 
 import org.jboss.logging.Logger;
 
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -48,6 +50,7 @@ import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.sinc.lib.Item;
 import br.gov.jfrj.siga.sinc.lib.Sincronizador;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
+import br.gov.jfrj.siga.wf.model.WfConfiguracao;
 import br.gov.jfrj.siga.wf.model.WfConhecimento;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeResponsavel;
@@ -292,6 +295,60 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 			q.where(cb().equal(c.get("numero"), numero), cb().equal(c.get("ano"), ano),
 					cb().equal(joinOrgao.get("idOrgaoUsu"), orgaoUsuario.getId()));
 		return em().createQuery(q).getSingleResult();
+	}
+
+	public List<WfConfiguracao> consultar(final WfConfiguracao exemplo) {
+		CpTipoConfiguracao tpConf = exemplo.getCpTipoConfiguracao();
+		CpOrgaoUsuario orgao = exemplo.getOrgaoUsuario();
+
+		StringBuffer sbf = new StringBuffer();
+
+		sbf.append("select * from sigawf.wf_configuracao wf inner join " + "corporativo"
+				+ ".cp_configuracao cp on wf.conf_id = cp.id_configuracao ");
+
+		sbf.append("" + "where 1 = 1");
+
+		if (tpConf != null && tpConf.getIdTpConfiguracao() != null && tpConf.getIdTpConfiguracao() != 0) {
+			sbf.append(" and cp.id_tp_configuracao = ");
+			sbf.append(exemplo.getCpTipoConfiguracao().getIdTpConfiguracao());
+		}
+
+		if (orgao != null && orgao.getId() != null && orgao.getId() != 0) {
+			sbf.append(" and (cp.id_orgao_usu = ");
+			sbf.append(orgao.getId());
+			sbf.append(" or cp.id_lotacao in (select id_lotacao from " + "corporativo"
+					+ ".dp_lotacao lot where lot.id_orgao_usu= ");
+			sbf.append(orgao.getId());
+			sbf.append(")");
+			sbf.append(" or cp.id_pessoa in (select id_pessoa from " + "corporativo"
+					+ ".dp_pessoa pes where pes.id_orgao_usu = ");
+			sbf.append(orgao.getId());
+			sbf.append(")");
+			sbf.append(" or cp.id_cargo in (select id_cargo from " + "corporativo"
+					+ ".dp_cargo cr where cr.id_orgao_usu = ");
+			sbf.append(orgao.getId());
+			sbf.append(")");
+			sbf.append(" or cp.id_funcao_confianca in (select id_funcao_confianca from " + "corporativo"
+					+ ".dp_funcao_confianca fc where fc.id_orgao_usu = ");
+			sbf.append(orgao.getId());
+			sbf.append(")");
+			sbf.append(
+					" or (cp.id_orgao_usu is null and cp.id_lotacao is null and cp.id_pessoa is null and cp.id_cargo is null and cp.id_funcao_confianca is null");
+			sbf.append(")");
+			sbf.append(")");
+			sbf.append("order by wf.conf_id");
+
+		}
+
+		Query query = em().createNativeQuery(sbf.toString(), WfConfiguracao.class);
+		query.setHint("org.hibernate.cacheable", true);
+		query.setHint("org.hibernate.cacheRegion", "query.ExConfiguracao");
+		return query.getResultList();
+
+	}
+
+	public List<WfDefinicaoDeProcedimento> listarDefinicoesDeProcedimentos() {
+		return listarAtivos(WfDefinicaoDeProcedimento.class, "nome");
 	}
 
 }

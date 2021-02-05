@@ -18,118 +18,33 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.model;
 
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
+
 import br.gov.jfrj.siga.cp.CpConfiguracao;
-import br.gov.jfrj.siga.dp.DpCargo;
-import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
-import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
 
-/**
- * Classe que representa um configuração do sistema de workflow.
- * @author kpf
- *
- */
+@Entity
+@Table(name = "sigawf.wf_configuracao")
+@PrimaryKeyJoinColumn(name = "CONF_ID")
+@NamedQueries({
+		@NamedQuery(name = "consultarWfConfiguracoes", query = "from WfConfiguracao cfg where (:idTpConfiguracao is null or cfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)") })
 public class WfConfiguracao extends CpConfiguracao {
-	private String procedimento;
-	private String raia;
-	private String tarefa;
-	private String expressao;
-	private DpPessoa ator;
-	private DpLotacao lotaAtor;
 
-	/**
-	 * Retorna a lotação do ator.
-	 * @return
-	 */
-	public DpLotacao getLotaAtor() {
-		return lotaAtor;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DEFP_ID")
+	private WfDefinicaoDeProcedimento definicaoDeProcedimento;
+
+	public WfDefinicaoDeProcedimento getDefinicaoDeProcedimento() {
+		return definicaoDeProcedimento;
 	}
 
-	/**
-	 * Define a lotação do ator.
-	 * @param lotaAtor
-	 */
-	public void setLotaAtor(DpLotacao lotaAtor) {
-		this.lotaAtor = lotaAtor;
-	}
-
-	/**
-	 * Retorna o procedimento.
-	 * @return
-	 */
-	public String getProcedimento() {
-		return procedimento;
-	}
-
-	/**
-	 * Define o procedimento.
-	 * @param procedimento
-	 */
-	public void setProcedimento(String procedimento) {
-		this.procedimento = procedimento;
-	}
-
-	/**
-	 * Retorna a raia.
-	 * @return
-	 */
-	public String getRaia() {
-		return raia;
-	}
-
-	/**
-	 * Define a raia.
-	 * @param raia
-	 */
-	public void setRaia(String raia) {
-		this.raia = raia;
-	}
-
-	/**
-	 * Retorna a tarefa.
-	 * @return
-	 */
-	public String getTarefa() {
-		return tarefa;
-	}
-
-	/**
-	 * Define a tarefa.
-	 * @param tarefa
-	 */
-	public void setTarefa(String tarefa) {
-		this.tarefa = tarefa;
-	}
-
-	/**
-	 * Retorna a expressão.
-	 * @return
-	 */
-	public String getExpressao() {
-		return expressao;
-	}
-
-	/**
-	 * Define a expressão.
-	 * @param expressao
-	 */
-	public void setExpressao(String expressao) {
-		this.expressao = expressao;
-	}
-
-	/**
-	 * Retorna o ator.
-	 * @return
-	 */
-	public DpPessoa getAtor() {
-		return ator;
-	}
-
-	/**
-	 * Define o ator.
-	 * @param ator
-	 */
-	public void setAtor(DpPessoa ator) {
-		this.ator = ator;
+	public void setDefinicaoDeProcedimento(WfDefinicaoDeProcedimento definicaoDeProcedimento) {
+		this.definicaoDeProcedimento = definicaoDeProcedimento;
 	}
 }

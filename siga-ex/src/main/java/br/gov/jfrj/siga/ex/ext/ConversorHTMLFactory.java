@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.ex.ext;
 
 import br.gov.jfrj.itextpdf.ConversorHtml;
 import br.gov.jfrj.itextpdf.FOP;
+import br.gov.jfrj.itextpdf.FlyingSaucer;
 import br.gov.jfrj.itextpdf.Nheengatu;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
@@ -29,8 +30,12 @@ public class ConversorHTMLFactory extends AbstractConversorHTMLFactory {
 			} catch (Exception e) {
 				conversor = getConversorPadrao();
 			}
+		else if (strHtml.contains("<!-- FLYING SAUCER -->"))
+			conversor = new FlyingSaucer();
 		else if (strHtml.contains("<!-- FOP -->"))
 			conversor = new FOP();
+		else if (strHtml.contains("<!-- NHEENGATU -->"))
+			conversor = new Nheengatu();
 		else
 			conversor = getConversorPadrao();
 		return conversor;
@@ -40,6 +45,10 @@ public class ConversorHTMLFactory extends AbstractConversorHTMLFactory {
 	public ConversorHtml getConversor(final int conversor) throws Exception {
 		if (conversor == EXT_CONVERSOR) {
 			return getExtensaoConversorHTML();
+		}
+
+		if (conversor == CONVERSOR_FLYING_SAUCER) {
+			return new FlyingSaucer();
 		}
 
 		if (conversor == CONVERSOR_FOP) {

@@ -1128,7 +1128,7 @@ public class FuncoesEL {
 		List<ExMovimentacao> mov;
 		try {
 			if (doc.isFinalizado()) {
-				mov = doc.getMobilGeral().getMovimentacoesPorTipo(72);
+				mov = doc.getMobilGeral().getMovimentacoesPorTipo(72, false);
 				for (ExMovimentacao movAssPor : mov) {
 					retorno = "Documento assinado POR  \"" +  movAssPor.getSubscritor().getNomePessoa() + "\" - \"" + movAssPor.getSubscritor().getSigla()+ "\"";
 				}
@@ -1139,5 +1139,11 @@ public class FuncoesEL {
 		}
 		return retorno;
 	}	
+
+	public static Boolean podeDisponibilizarNoAcompanhamentoDoProtocolo(DpPessoa titular,
+			DpLotacao lotaTitular, ExDocumento doc) throws Exception {
+		return Ex.getInstance().getComp()
+				.podeDisponibilizarNoAcompanhamentoDoProtocolo(titular, lotaTitular, doc);
+	}
 
 }

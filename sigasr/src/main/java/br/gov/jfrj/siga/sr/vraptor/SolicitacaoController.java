@@ -887,9 +887,7 @@ public class SolicitacaoController extends SrController {
 
     @Path("/escalonar")
     public void escalonar(SrSolicitacao solicitacao) throws Exception {
-    	setupItemConfiguracao(solicitacao);
-		setupAcoes(solicitacao);
-		
+    	
     	carregaItemConfiguracao(solicitacao);
 
     	if (solicitacao.getCodigo() == null || solicitacao.getCodigo().trim().equals(""))

@@ -971,72 +971,71 @@ public class ExDocumentoController extends ExController {
 	}
 
 	@SuppressWarnings("static-access")
-	private void assertAcesso(final ExDocumentoDTO exDocumentoDTO)
-			throws Exception {
-		if (!Ex.getInstance()
-				.getComp()
-				.podeAcessarDocumento(getTitular(), getLotaTitular(),
-						exDocumentoDTO.getMob())) {
-			String msgDestinoDoc = arquivamentoAutomatico(exDocumentoDTO
-					.getMob());
+	private void assertAcesso(final ExDocumentoDTO exDocumentoDTO) throws Exception {
+		if (!Ex.getInstance().getComp().podeAcessarDocumento(getTitular(), getLotaTitular(), exDocumentoDTO.getMob())) {
+
+			String msgDestinoDoc = arquivamentoAutomatico(exDocumentoDTO.getMob());
+			final boolean exibeNomeAcesso = Prop.getBool("exibe.nome.acesso");
 
 			String s = "";
 			s += exDocumentoDTO.getMob().doc().getListaDeAcessosString();
-			s = "(" + s + ")";
-			s = " "
-					+ exDocumentoDTO.getMob().doc().getExNivelAcessoAtual()
-							.getNmNivelAcesso() + " " + s;
-			
+			s = " (" + s + ")";
+			s = " " + exDocumentoDTO.getMob().doc().getExNivelAcessoAtual().getNmNivelAcesso() + " " + s;
+
 			String ERRO_INACESSIVEL_USUARIO;
-			if (!Ex.getInstance()
-			.getComp().ehPublicoExterno(getTitular())) {
-				ERRO_INACESSIVEL_USUARIO = "Documento "
-						+ exDocumentoDTO.getMob().getSigla()
-						+ " inacessível ao usuário " + getTitular().getSigla()
-						+ "/" + getLotaTitular().getSiglaCompleta() + "." + s
-						+ " " + msgDestinoDoc;
+
+			if (exibeNomeAcesso) {
+				if (!getCadastrante().isUsuarioExterno()) {
+					ERRO_INACESSIVEL_USUARIO = "Documento " + exDocumentoDTO.getMob().getSigla()
+							+ " inacessível ao usuário " + " "
+							+ getTitular().getSiglaCompleta() + "/" + getLotaTitular().getLotacaoAtual()
+							+ "." + s + msgDestinoDoc;
+				} else {
+					ERRO_INACESSIVEL_USUARIO = "Documento " + exDocumentoDTO.getMob().getSigla()
+							+ " inacessível ao usuário " + getTitular().getSiglaCompleta() + "/"
+							+ getLotaTitular().getLotacaoAtual() + "." + s + " " + msgDestinoDoc;
+				}
 			} else {
-				ERRO_INACESSIVEL_USUARIO = "Documento "
-						+ exDocumentoDTO.getMob().getSigla()
-						+ " inacessível ao usuário " + getTitular().getSigla()
-						+ "/" + getLotaTitular().getSiglaCompleta() + ", Publico externo exceto se for subscritor" 
-						+ " , cosignatário ou tiver algum perfil associado ao documento ou ainda se documento estiver "
+				ERRO_INACESSIVEL_USUARIO = "Documento " + exDocumentoDTO.getMob().getSigla()
+						+ " inacessível ao usuário " + getTitular().getSiglaCompleta() + "/"
+						+ getLotaTitular().getLotacaoAtual() + ", Publico externo exceto se for subscritor"
+						+ " , cossignatário ou tiver algum perfil associado ao documento ou ainda se documento estiver "
 						+ " passado por sua lotação. ";
 			}
 
-			Map<ExPapel, List<Object>> mapa = exDocumentoDTO.getMob().doc()
-					.getPerfis();
+			Map<ExPapel, List<Object>> mapa = exDocumentoDTO.getMob().doc().getPerfis();
 			boolean isInteressado = false;
 
 			for (ExPapel exPapel : mapa.keySet()) {
 				Iterator<Object> it = mapa.get(exPapel).iterator();
 
-				if ((exPapel != null)
-						&& (exPapel.getIdPapel() == exPapel.PAPEL_INTERESSADO)) {
+				if ((exPapel != null) && (exPapel.getIdPapel() == exPapel.PAPEL_INTERESSADO)) {
 					while (it.hasNext() && !isInteressado) {
 						Object item = it.next();
-						isInteressado = item.toString().equals(
-								getTitular().getSigla()) ? true : false;
+						isInteressado = item.toString().equals(getTitular().getSigla()) ? true : false;
 					}
 				}
 
-			} 
-			
-			if (exDocumentoDTO.getMob().doc().isSemEfeito() ) {
-				if (!exDocumentoDTO.getMob().doc().getCadastrante().equals(getTitular()) &&
-				    !exDocumentoDTO.getMob().doc().getSubscritor().equals(getTitular()) && !isInteressado) {
-						throw new AplicacaoException("Documento "
-								+ exDocumentoDTO.getMob().getSigla()
-								+ " cancelado ");
-				}
-			} else  {
-				throw new AplicacaoException("Documento "
-						+ exDocumentoDTO.getMob().getSigla()
-						+ " inacessível ao usuário " + getTitular().getSigla()
-						+ "/" + getLotaTitular().getSiglaCompleta() + "." + s
-						+ " " + msgDestinoDoc);
 			}
+
+			if (exDocumentoDTO.getMob().doc().isSemEfeito()) {
+				if (!exDocumentoDTO.getMob().doc().getCadastrante().equals(getTitular())
+						&& !exDocumentoDTO.getMob().doc().getSubscritor().equals(getTitular()) && !isInteressado) {
+					throw new AplicacaoException("Documento " + exDocumentoDTO.getMob().getSigla() + " cancelado ");
+				}
+			} else if (exibeNomeAcesso) {
+				throw new AplicacaoException("Documento " + exDocumentoDTO.getMob().getSigla()
+						+ " inacessível ao usuário " + " " + getTitular().getSiglaCompleta() + "/"
+						+ getLotaTitular().getLotacaoAtual() + "." + s + " " + msgDestinoDoc);
+			} else {
+				throw new AplicacaoException("Documento " + exDocumentoDTO.getMob().getSigla()
+						+ " inacessível ao usuário " + getTitular().getSiglaCompleta() + "/"
+						+ getLotaTitular().getLotacaoAtual() + "." + s + " " + msgDestinoDoc);
+
+			}
+
 		}
+
 	}
 
 	private String arquivamentoAutomatico(ExMobil mob) throws Exception {
@@ -1181,7 +1180,8 @@ public class ExDocumentoController extends ExController {
 		assertAcesso("");
 
 		final ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO();
-
+		
+		
 		exDocumentoDTO.setSigla(sigla);
 		buscarDocumento(false, exDocumentoDTO);
 
@@ -1406,7 +1406,10 @@ public class ExDocumentoController extends ExController {
 				SigaTransacionalInterceptor.upgradeParaTransacional();
 				Ex.getInstance().getBL().receber(getCadastrante(), getLotaTitular(),exDocumentoDto.getMob(), new Date());
 			}														
-		} else if (Ex.getInstance().getComp().podeReceber(getTitular(), getLotaTitular(),exDocumentoDto.getMob())) {			
+		} else if (Ex.getInstance().getComp().podeReceber(getTitular(), getLotaTitular(),exDocumentoDto.getMob())
+				|| (exDocumentoDto.getDoc() != null && exDocumentoDto.getDoc().getMobilDefaultParaReceberJuntada() != null && exDocumentoDto.getDoc().getMobilDefaultParaReceberJuntada().getMobilPrincipal() != null 
+				&& Ex.getInstance().getComp().podeReceber(getTitular(), getLotaTitular(),exDocumentoDto.getDoc().getMobilDefaultParaReceberJuntada().getMobilPrincipal()) 
+				&& exDocumentoDto.getDoc().getMobilDefaultParaReceberJuntada().isJuntado())) {
 			recebimentoPendente = true;			
 		} 		
 
@@ -2443,6 +2446,14 @@ public class ExDocumentoController extends ExController {
 			final String[] vars) throws IOException {
 		ExDocumento doc = exDocumentoDTO.getDoc();
 
+		if (doc.getCadastrante() == null) {
+			doc.setCadastrante(getCadastrante());
+			doc.setLotaCadastrante(getLotaTitular());
+		}
+		
+		if (doc.getOrgaoUsuario() == null)
+			doc.setOrgaoUsuario(getCadastrante().getOrgaoUsuario());
+
 		if (exDocumentoDTO.getAnexar()) {
 			doc.setConteudoTpDoc(exDocumentoDTO.getConteudoTpDoc());
 			doc.setNmArqDoc(exDocumentoDTO.getNmArqDoc());
@@ -2509,11 +2520,6 @@ public class ExDocumentoController extends ExController {
 		// cadastrante, não permitindo que este,
 		// ao preencher o campo subscritor com a matrícula de outro usuário,
 		// tivesse acesso ao documento.
-
-		if (doc.getCadastrante() == null) {
-			doc.setCadastrante(getCadastrante());
-			doc.setLotaCadastrante(getLotaTitular());
-		}
 
 		if (doc.getLotaCadastrante() == null) {
 			doc.setLotaCadastrante(doc.getCadastrante().getLotacao());

@@ -3128,31 +3128,31 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @return
 	 * @throws Exception
 	 */
-	public Optional<String> podeCancelarVinculacaoMarca(final DpPessoa titular, final DpLotacao lotaTitular,
-			final ExMobil mob, final ExMovimentacao mov) {
-		if (mov.isCancelada()) {
-			return Optional.of("Marcação já cancelada.");
-		}
-
-		if ((nonNull(mov.getSubscritor()) && mov.getSubscritor().equivale(titular))
-				|| (isNull(mov.getSubscritor()) && mov.getLotaSubscritor().equivale(lotaTitular))) {
-			return Optional.empty();
-		}
-
-		if ((nonNull(mov.getCadastrante()) && mov.getCadastrante().equivale(titular))
-				|| (isNull(mov.getCadastrante()) && mov.getLotaCadastrante().equivale(lotaTitular))) {
-			return Optional.empty();
-		}
-
-		if (getConf().podePorConfiguracao(titular, lotaTitular, mov.getIdTpMov(),
-				CpTipoConfiguracao.TIPO_CONFIG_CANCELAR_MOVIMENTACAO)) {
-			return Optional.empty();
-		}
-
-		return Optional.of("Usuário deve ser ou o cadastrante ou o subscritor da movimentação "
-				+ "ou deve estar na mesma unidade desses " //
-				+ "ou deve ter autorização para cancelar marcações.");
-	}
+//	public Optional<String> podeCancelarVinculacaoMarca(final DpPessoa titular, final DpLotacao lotaTitular,
+//			final ExMobil mob, final ExMovimentacao mov) {
+//		if (mov.isCancelada()) {
+//			return Optional.of("Marcação já cancelada.");
+//		}
+//
+//		if ((nonNull(mov.getSubscritor()) && mov.getSubscritor().equivale(titular))
+//				|| (isNull(mov.getSubscritor()) && nonNull(mov.getLotaSubscritor()) && mov.getLotaSubscritor().equivale(lotaTitular))) {
+//			return Optional.empty();
+//		}
+//
+//		if ((nonNull(mov.getCadastrante()) && mov.getCadastrante().equivale(titular))
+//				|| (isNull(mov.getCadastrante()) && mov.getLotaCadastrante().equivale(lotaTitular))) {
+//			return Optional.empty();
+//		}
+//
+//		if (getConf().podePorConfiguracao(titular, lotaTitular, mov.getIdTpMov(),
+//				CpTipoConfiguracao.TIPO_CONFIG_CANCELAR_MOVIMENTACAO)) {
+//			return Optional.empty();
+//		}
+//
+//		return Optional.of("Usuário deve ser ou o cadastrante ou o subscritor da movimentação "
+//				+ "ou deve estar na mesma unidade desses " //
+//				+ "ou deve ter autorização para cancelar marcações.");
+//	}
 
 	/**
 	 * <b>(Quando é usado este método?)</b> Retorna se é possível cancelar
@@ -3317,16 +3317,16 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean podeMarcar(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) {
-		if (mob.doc().isCancelado() || mob.doc().isSemEfeito()
-				|| mob.isEliminado())
-			return false;
-
-		return getConf().podePorConfiguracao(titular, lotaTitular,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
-	}
+//	public boolean podeMarcar(final DpPessoa titular,
+//			final DpLotacao lotaTitular, final ExMobil mob) {
+//		if (mob.doc().isCancelado() || mob.doc().isSemEfeito()
+//				|| mob.isEliminado())
+//			return false;
+//
+//		return getConf().podePorConfiguracao(titular, lotaTitular,
+//				ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO,
+//				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+//	}
 
 	/**
 	 * Retorna se é possível finalizar o documento ao qual o móbil passado por
@@ -4867,7 +4867,18 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA,
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR)) ;
 	}
-	
+
+	public boolean podeDisponibilizarNoAcompanhamentoDoProtocolo(final DpPessoa titular, final DpLotacao lotaTitular,
+			final ExDocumento doc) {
+		return getConf()
+				.podePorConfiguracao(null, null, null, doc.getExTipoDocumento(), doc.getExFormaDocumento(), 
+					doc.getExModelo(), null, null, 
+					ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO,
+							ExTipoMovimentacao.class, false), 
+					null, null, null, lotaTitular, titular, null,null,
+					CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR, null, null, null, null, null, null);
+	}
+		
 	public boolean podePublicarPortalTransparencia(final DpPessoa cadastrante,
 			final DpLotacao lotacao, final ExMobil mob) {
 		

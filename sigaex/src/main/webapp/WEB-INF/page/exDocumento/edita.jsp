@@ -8,7 +8,7 @@
 
 <siga:pagina titulo="Novo Documento">
 	<link rel="stylesheet" href="/siga/javascript/hierarchy-select/hierarchy-select.css" type="text/css" media="screen, projection" />
-	<script type="text/javascript" src="/ckeditor/ckeditor/ckeditor.js?v=4.15.0"></script>
+	<script type="text/javascript" src="/ckeditor/ckeditor/ckeditor.js?v=4.15.0.L0FJ.c71958523b"></script>
 	<script type="text/javascript" src="../../../javascript/exDocumentoEdita.js"></script>
 	<script type="text/javascript" src="/siga/javascript/jquery.blockUI.js"></script>
 	<script type="text/javascript" src="/siga/javascript/hierarchy-select/hierarchy-select.js"></script>

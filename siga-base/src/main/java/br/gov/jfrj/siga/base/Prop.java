@@ -80,7 +80,7 @@ public class Prop {
 		
 		provider.addPublicProperty("/siga.gsa.url", null);
 
-		provider.addPublicProperty("/siga.relat.brasao", "brasao2.png");
+		provider.addPublicProperty("/siga.relat.brasao", "brasao.png");
 		provider.addPublicProperty("/siga.relat.titulo", "PODER JUDICIÁRIO");
 		provider.addPublicProperty("/siga.relat.subtitulo", "JUSTIÇA FEDERAL");
 
@@ -216,11 +216,14 @@ public class Prop {
 			provider.addPrivateProperty("/siga.armazenamento.arquivo.senha");
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.url");
 		}
+		/* Lista de unidades que farão o armazenamento no HCP */
+		provider.addPublicProperty("/siga.armazenamento.orgaos", "*");
 		
 		/* Tipos de possíveis responsáveis */
 		provider.addPublicProperty("/siga.substituto.tipos", "MATRICULA,LOTACAO");
 		
 		/* Obriga o preenchimento da descrição da ciência */
 		provider.addPublicProperty("/siga.ciencia.preenchimento.obrigatorio", "true");
+		
 	}
 }

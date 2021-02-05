@@ -20,6 +20,7 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.TreeSet;
 
 import javax.persistence.Basic;
@@ -1009,7 +1010,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setOrgaoUsuario(CpOrgaoUsuario orgaoUsuario) {
 		this.orgaoUsuario = orgaoUsuario;
-		if (conteudoBlobDoc==null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
+		if (orgaoPermiteHcp() && conteudoBlobDoc==null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
 			cpArquivo = CpArquivo.updateOrgaoUsuario(cpArquivo, orgaoUsuario);
 		}
 	}
@@ -1095,7 +1096,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setConteudoTpDoc(final java.lang.String conteudoTp) {
 		this.conteudoTpDoc = conteudoTp;
-		if (conteudoBlobDoc==null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
+		if (orgaoPermiteHcp() && conteudoBlobDoc==null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
 			cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, this.conteudoTpDoc);
 		}
 	}
@@ -1120,15 +1121,21 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		if (this.cpArquivo==null && (conteudoBlobDoc!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"))))) {
 			conteudoBlobDoc = createBlob;
 		} else if(cacheConteudoBlobDoc != null){
-			cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobDoc);
+			if(orgaoPermiteHcp())
+				cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobDoc);
+			else
+				conteudoBlobDoc = createBlob;
 		}
 	}
 	
-//	public void armazenar() {
-//		if (cacheConteudoBlobDoc != null) 
-//			cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobDoc);
-//	}
-
+	
+	private boolean orgaoPermiteHcp() {
+		final String sigla = this.orgaoUsuario!=null?this.orgaoUsuario.getSigla():(this.getCadastrante()!=null?this.getCadastrante().getOrgaoUsuario().getSigla():null);
+		List<String> orgaos = Prop.getList("/siga.armazenamento.orgaos");
+		if(orgaos != null && ("*".equals(orgaos.get(0)) || orgaos.stream().anyMatch(siglaFiltro -> siglaFiltro.equals(sigla))) )
+			return true;
+		return false;
+	}
 	
 	public ExProtocolo getExProtocolo() {
 		return exProtocolo;

@@ -56,7 +56,6 @@
 			class="mr-1 mb-1" title="${titleImg}">
 	</c:set>
 </c:if>
-
 <c:if test="${empty test or test}">
 	<c:if test="${!linkBotoes}">
 		<c:if test="${not empty linkSeparator}">
@@ -78,7 +77,7 @@
 				<a id="${linkId}"
 					class="${classe} ${linkBotoes ? btnClass : ''} link-tag"
 					<c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
-					data-toggle="modal" data-target="#${modal}" title="${explicacao}">${img}${title}</a>
+					data-toggle="modal" data-target="#${modal}" title="${explicacao}" onclick="if (init${modal}) init${modal}()">${img}${title}</a>
 			</c:when>
 			<c:when test="${not empty popup and popup != false}">
 				<a id="${linkId}"

@@ -342,12 +342,18 @@
 					<!-- Fim da alteracao cartao 1057 -->
 					
 					<div class="row">
-						<div class="col-sm-12">
+						<div class="col-sm-2">
 							<div class="form-group">
 								<button type="button" id="btnOk" onclick="javascript: validarNomeCpf();" class="btn btn-primary" >Ok</button> 
 								<button type="button" onclick="javascript:history.back();" class="btn btn-primary" >Cancelar</button>
+								
 							</div>
-						</div>	
+						</div>
+						<c:if test="${empty id}">
+							<div class="col-sm-5">
+								<input type="checkbox" class="form-check-input" id="enviarEmail" name="enviarEmail" value="1" checked /> Enviar automaticamente o e-mail com os dados de acesso para o Usuário.
+							</div>
+						</c:if>
 					</div>
 	
 					<c:if test="${empty id}">

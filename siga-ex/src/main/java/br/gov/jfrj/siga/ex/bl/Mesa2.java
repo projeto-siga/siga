@@ -76,9 +76,12 @@ public class Mesa2 {
 		public String titulo;
 		public Date inicio;
 		public Date termino;
+		public String ref1;
+		public String ref2;
 		public Boolean daPessoa;
 		public Boolean deOutraPessoa;
 		public Boolean daLotacao;
+		public String cor;
 	}
 
 	public enum TipoDePainelEnum {
@@ -451,11 +454,11 @@ public class Mesa2 {
 			}
 		}
 
-		private final int id;
-		private final String nome;
-		private final String icone;
-		private final String descricao;
-		private final GrupoDeMarcadorEnum grupo;
+		private int id;
+		private String nome;
+		private String icone;
+		private String descricao;
+		private GrupoDeMarcadorEnum grupo;
 
 	}
 	
@@ -472,6 +475,8 @@ public class Mesa2 {
 	public static class MeM {
 		ExMarca marca;
 		CpMarcador marcador;
+		Date dtRef1;
+		Date dtRef2;
 	}
 
 	private static List<MesaItem> listarReferencias(TipoDePainelEnum tipo,
@@ -572,10 +577,15 @@ public class Mesa2 {
 
 				Marca t = new Marca();
 				MarcadorEnum mar = MarcadorEnum.getById(tag.marcador
-						.getIdMarcador().intValue());
-
-				t.nome = mar.getNome();
-				t.icone = mar.getIcone();
+						.getIdInicial().intValue());
+				if (mar != null) {
+					t.nome = mar.getNome();
+					t.icone = mar.getIcone();
+				} else {
+					t.nome = tag.marcador.getDescrMarcador();
+					t.icone = tag.marcador.getIdIcone().getCodigoFontAwesome();
+					t.cor = tag.marcador.getIdCor().getDescricao();
+				}
 				t.titulo = Data
 						.calcularTempoRelativo(tag.marca.getDtIniMarca());
 
@@ -589,6 +599,10 @@ public class Mesa2 {
 				
 				t.inicio = tag.marca.getDtIniMarca();
 				t.termino = tag.marca.getDtFimMarca();
+				if (tag.dtRef1 != null)
+					t.ref1 = Data.calcularTempoRelativoEmDias(tag.dtRef1);
+				if (tag.dtRef2 != null)
+					t.ref2 = Data.calcularTempoRelativoEmDias(tag.dtRef2);
 				if(tag.marca.getCpMarcador().isDemandaJudicial()) {
 					t.nome += " até " + tag.marca.getExMobil().getDoc().getMobilGeral()
 							.getExMovimentacaoSet().stream() //
@@ -724,6 +738,8 @@ public class Mesa2 {
 										MeM mm = new MeM();
 										mm.marca = marca;
 										mm.marcador = marcador;
+										mm.dtRef1 = (Date) reference[5];
+										mm.dtRef2 = (Date) reference[6];
 										docDados.listMeM = new ArrayList<MeM>();
 										docDados.listMeM.add(mm);
 										map.put(mobil, docDados);
@@ -736,6 +752,8 @@ public class Mesa2 {
 									MeM mm = new MeM();
 									mm.marca = marca;
 									mm.marcador = marcador;
+									mm.dtRef1 = (Date) reference[5];
+									mm.dtRef2 = (Date) reference[6];
 									map.get(mobil).listMeM.add(mm);
 								}
 							}

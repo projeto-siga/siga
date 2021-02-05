@@ -183,6 +183,9 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	@ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="HIS_IDC_FIM")
 	private CpIdentidade hisIdcFim;
+	
+	@Column(name = "IS_SUSPENSA")
+	private Integer isSuspensa;
 
 	public Integer getIsExternaLotacao() {
 		return isExternaLotacao;
@@ -407,6 +410,14 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 
 	public void setHisIdcFim(CpIdentidade hisIdcFim) {
 		this.hisIdcFim = hisIdcFim;
+	}
+
+	public Integer getIsSuspensa() {
+		return isSuspensa;
+	}
+
+	public void setIsSuspensa(Integer isSuspensa) {
+		this.isSuspensa = isSuspensa;
 	}
 
 }

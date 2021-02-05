@@ -102,8 +102,6 @@
 							name="ad_kind_0" value="${doc.descrFormaDoc}" />
 					</div>
 
-					<c:set var="exibirNoProtocoloAtivo" scope="request" value="${doc.exFormaDocumento.descrFormaDoc == 'Despacho' && siga_cliente == 'GOVSP' ? false : null}" />
-
 					<tags:assinatura_botoes assinar="${assinando}" voltar="${voltarAtivo}"
 						linkVoltar="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}"
 						autenticar="${autenticando}"
@@ -113,7 +111,8 @@
 						autenticarComSenhaChecado="${autenticando and f:deveAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"
 						juntarAtivo="${juntarAtivo}" juntarFixo="${juntarFixo}" 
 						tramitarAtivo="${tramitarAtivo}" tramitarFixo="${tramitarFixo}" 
-						exibirNoProtocoloAtivo="${exibirNoProtocoloAtivo}" exibirNoProtocoloFixo="false"/>
+						exibirNoProtocoloAtivo="${f:podeDisponibilizarNoAcompanhamentoDoProtocolo(titular,lotaTitular,doc)? false:undefined}" 
+						exibirNoProtocoloFixo="${not f:podeDisponibilizarNoAcompanhamentoDoProtocolo(titular,lotaTitular,doc)}"/>
 
 			</div>
 		</div>

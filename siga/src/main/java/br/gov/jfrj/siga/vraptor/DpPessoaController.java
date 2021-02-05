@@ -589,7 +589,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	public void editarGravar(final Long id, final Long idOrgaoUsu, final Long idCargo, final Long idFuncao,
 			final Long idLotacao, final String nmPessoa, final String dtNascimento, final String cpf,
 			final String email, final String identidade, final String orgaoIdentidade, final String ufIdentidade,
-			final String dataExpedicaoIdentidade, final String nomeExibicao) throws Exception {
+			final String dataExpedicaoIdentidade, final String nomeExibicao, final String enviarEmail) throws Exception {
 		
 		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_PESSOA:Cadastrar Pessoa");
 
@@ -620,6 +620,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		
 		DpPessoa pessoa = new DpPessoa();
 		DpPessoa pessoaAnt = new DpPessoa();
+		List<CpIdentidade> lista = new ArrayList<CpIdentidade>();
 		
 		if(id != null) {
 			pessoaAnt = dao().consultar(id, DpPessoa.class, false).getPessoaAtual();
@@ -756,7 +757,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				pessoa.setIdePessoa(pessoa.getMatricula().toString());
 				dao().gravar(pessoa);
 
-				List<CpIdentidade> lista = CpDao.getInstance()
+				lista = CpDao.getInstance()
 						.consultaIdentidadesPorCpf(cpf.replace(".", "").replace("-", ""));
 				CpIdentidade usu = null;
 				if (lista.size() > 0) {
@@ -799,7 +800,12 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 					dao().gravarComHistorico(pessoa2, dpPessoaAnt2, data, getIdentidadeCadastrante());
 				}
 			}
-
+			
+			if(enviarEmail != null && idOrgaoUsu != null && cpf != null && lista != null && lista.size() == 0) {
+				Cp.getInstance().getBL().criarIdentidade(pessoa.getSesbPessoa() + pessoa.getMatricula(),
+						pessoa.getCpfFormatado(), getIdentidadeCadastrante(), null, new String[1], Boolean.FALSE);
+			}
+			
 		//	dao().em().getTransaction().commit();
 		} catch (final Exception e) {
 			if(e.getCause() instanceof ConstraintViolationException &&

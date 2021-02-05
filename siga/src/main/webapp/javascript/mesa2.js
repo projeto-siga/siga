@@ -579,18 +579,18 @@ function mountPopoverMarcaPessoa(_this) {
 		var cache = sessionStorage.getItem("pessoa."+$(_this).attr('data-pessoa'));
 		if (cache == null) {
 			$.ajax({
-		        url: "/siga/api/v1/pessoa/"+ $(_this).attr('data-pessoa') + "/pessoaAtual",
+		        url: "/siga/api/v1/pessoas?idPessoaIni="+ $(_this).attr('data-pessoa'),
 		        contentType: "application/json",
 		        dataType: 'json',
 		        success: function(result){
-		        	sessionStorage.setItem("pessoa."+$(_this).attr('data-pessoa'), JSON.stringify(result));
-		        	$(_this).attr('data-content', '<b>'+ result.pessoaAtual.siglaLotacao +'</b>  '+result.pessoaAtual.nome);
+		        	sessionStorage.setItem("pessoa."+$(_this).attr('data-pessoa'), JSON.stringify(result.list[0]));
+		        	$(_this).attr('data-content', '<b>'+ result.list[0].lotacao.sigla +'</b>  '+result.list[0].nome);
 		        	$(_this).popover("show");
 		        }
 		    });
 		} else {
 			var pessoaAtualParsed = JSON.parse(cache);
-        	$(_this).attr('data-content', '<b>'+ pessoaAtualParsed.pessoaAtual.siglaLotacao +'</b>  '+pessoaAtualParsed.pessoaAtual.nome);
+        	$(_this).attr('data-content', '<b>'+ pessoaAtualParsed.lotacao.sigla +'</b>  '+pessoaAtualParsed.nome);
         	$(_this).popover("show");
 		}
 	}
@@ -604,18 +604,18 @@ function mountPopoverMarcaLotacao(_this) {
 		var cache = sessionStorage.getItem("lotacao."+$(_this).attr('data-lotacao'));
 		if (cache == null) {
 			$.ajax({
-		        url: "/siga/api/v1/lotacao/"+ $(_this).attr('data-lotacao') + "/lotacaoAtual",
+		        url: "/siga/api/v1/lotacoes?idLotacaoIni="+ $(_this).attr('data-lotacao'),
 		        contentType: "application/json",
 		        dataType: 'json',
 		        success: function(result){
-		        	sessionStorage.setItem("lotacao."+$(_this).attr('data-lotacao'), JSON.stringify(result));
-		        	$(_this).attr('data-content', '<b>'+ result.lotacaoAtual.sigla +'</b>  '+result.lotacaoAtual.nome);
+		        	sessionStorage.setItem("lotacao."+$(_this).attr('data-lotacao'), JSON.stringify(result.list[0]));
+		        	$(_this).attr('data-content', '<b>'+ result.list[0].sigla +'</b>  '+result.list[0].nome);
 		        	$(_this).popover("show");
 		        }
 		    });
 		} else {
 			var lotacaoAtualParsed = JSON.parse(cache);
-        	$(_this).attr('data-content', '<b>'+ lotacaoAtualParsed.lotacaoAtual.sigla +'</b>  '+lotacaoAtualParsed.lotacaoAtual.nome);
+        	$(_this).attr('data-content', '<b>'+ lotacaoAtualParsed.sigla +'</b>  '+lotacaoAtualParsed.nome);
         	$(_this).popover("show");
 		}
 	}

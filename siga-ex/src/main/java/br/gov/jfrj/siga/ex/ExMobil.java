@@ -51,7 +51,11 @@ import org.jboss.logging.Logger;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
+import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
 import br.gov.jfrj.siga.ex.bl.ExParte;
 import br.gov.jfrj.siga.ex.util.CronologiaComparator;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -111,13 +115,15 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	 *         específico de movimentação.
 	 * 
 	 */
-	public List<ExMovimentacao> getMovimentacoesPorTipo(long tpMov) {
+	public List<ExMovimentacao> getMovimentacoesPorTipo(long tpMov, boolean somenteAtivas) {
 
 		final Set<ExMovimentacao> movs = getExMovimentacaoSet();
 		List<ExMovimentacao> movsTp = new ArrayList<ExMovimentacao>();
 
 		if (movs != null)
 			for (final ExMovimentacao m : movs) {
+				if (somenteAtivas && m.isCancelada())
+					continue;
 				if (m.getExTipoMovimentacao().getIdTpMov().equals(tpMov))
 					movsTp.add(m);
 			}
@@ -2164,8 +2170,8 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	}
 
 	public Set<ExMovimentacao> getTransferenciasPendentesDeDevolucao(ExMobil mob) {
-		List<ExMovimentacao> transferencias = mob.getMovimentacoesPorTipo(3);
-		transferencias.addAll(mob.getMovimentacoesPorTipo(6));
+		List<ExMovimentacao> transferencias = mob.getMovimentacoesPorTipo(3, false);
+		transferencias.addAll(mob.getMovimentacoesPorTipo(6, false));
 		transferencias.removeAll(mob.getMovimentacoesCanceladas());
 		Set<ExMovimentacao> transferenciasComData = new TreeSet<ExMovimentacao>();
 
@@ -2285,11 +2291,16 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	 * 
 	 * @return
 	 */
-	public boolean getPodeExibirNoAcompanhamento() {
+	public boolean podeExibirNoAcompanhamento() {
+		return podeExibirNoAcompanhamento(null, null);
+	}
+	
+	public boolean podeExibirNoAcompanhamento(DpPessoa pessoa, DpLotacao lotacao) {
 		Set<ExMovimentacao> movs = getMovsNaoCanceladas(ExTipoMovimentacao
 				.TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO);
 		if (!movs.isEmpty())
-			return true;
+			return Ex.getInstance().getComp()
+					.podeDisponibilizarNoAcompanhamentoDoProtocolo(pessoa, lotacao, this.getDoc());			
 		return false;
 	}
 }

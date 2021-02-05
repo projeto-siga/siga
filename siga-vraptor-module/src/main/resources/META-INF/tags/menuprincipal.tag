@@ -383,6 +383,12 @@
 						<li><a class="dropdown-item" href="/siga/app/feriado/listar">Cadastro
 								de Feriados</a></li>
 					</c:if>
+					<c:if
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CFG:Cadastrar Configurações')}">
+						<li><a class="dropdown-item"
+							href="${linkTo[ConfiguracaoController].lista()}">Cadastro de
+								Configurações</a></li>
+					</c:if>
 				</ul></li>
 		</c:if>
 

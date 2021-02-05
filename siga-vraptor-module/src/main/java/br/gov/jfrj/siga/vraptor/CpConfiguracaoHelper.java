@@ -1,6 +1,8 @@
 package br.gov.jfrj.siga.vraptor;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -12,6 +14,7 @@ import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.cp.model.enm.CpParamCfg;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.SituacaoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -103,6 +106,20 @@ public class CpConfiguracaoHelper {
 		throw new RuntimeException("Configuração " + c.getId() + " não poderia conter o parâmetro " + p.name());
 	}
 
+	public static void assertConfigSituacao(ITipoDeConfiguracao t, CpConfiguracao c) {
+		if (c.getCpSituacaoConfiguracao() == null)
+			return;
+		if (t.getSituacoes() != null)
+			for (SituacaoDeConfiguracao s : t.getSituacoes())
+				if (s.getId().equals(c.getCpSituacaoConfiguracao().getIdSitConfiguracao()))
+					return;
+		for (SituacaoDeConfiguracao s : SituacaoDeConfiguracao.values())
+			if (s.getId().equals(c.getCpSituacaoConfiguracao().getIdSitConfiguracao()))
+				throw new RuntimeException("Configuração " + c.getId() + " não poderia conter a situação " + s.name());
+		throw new RuntimeException("Configuração " + c.getId() + " não poderia conter a situação "
+				+ c.getCpSituacaoConfiguracao().getDscSitConfiguracao());
+	}
+
 	public static void assertConfig(ITipoDeConfiguracao t, CpConfiguracao c) {
 		assertConfig(t, c, c.getDpPessoa(), CpParamCfg.PESSOA);
 		assertConfig(t, c, c.getCpTipoLotacao(), CpParamCfg.TIPO_DE_LOTACAO);
@@ -118,5 +135,33 @@ public class CpConfiguracaoHelper {
 		assertConfig(t, c, c.getFuncaoConfiancaObjeto(), CpParamCfg.FUNCAO_OBJETO);
 		assertConfig(t, c, c.getOrgaoObjeto(), CpParamCfg.ORGAO_OBJETO);
 		assertConfig(t, c, c.getCpSituacaoConfiguracao(), CpParamCfg.SITUACAO);
+		assertConfigSituacao(t, c);
+	}
+
+	public static void incluirAtributosDeEdicao(Result result, ITipoDeConfiguracao tpconf, CpConfiguracao config) {
+		try {
+			assertConfig(tpconf, config);
+		} catch (RuntimeException ex) {
+			result.include("erroEmConfiguracao", ex.getMessage());
+		}
+		result.include("tipoDeConfiguracao", tpconf);
+		result.include("situacoes", tpconf.getSituacoes());
+		result.include("config", config);
+		result.include("configuracao", config);
+	}
+
+	public static void incluirAtributosDeListagem(Result result, ITipoDeConfiguracao tpconf,
+			List<CpConfiguracao> listConfig) {
+		Map<Long, String> erroEmConfiguracao = new HashMap<>();
+		for (CpConfiguracao c : listConfig)
+			try {
+				assertConfig(tpconf, c);
+			} catch (RuntimeException ex) {
+				erroEmConfiguracao.put(c.getId(), ex.getMessage());
+			}
+		result.include("erroEmConfiguracao", erroEmConfiguracao);
+		result.include("tipoDeConfiguracao", tpconf);
+		result.include("listConfig", listConfig);
+
 	}
 }

@@ -6,24 +6,28 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <siga:cfg-edita>
-	<div class="row"
-		style="${tipoDeConfiguracao.style('DEFINICAO_DE_PROCEDIMENTO')}">
-		<div class="col col-12">
-			<p class="alert alert-dark">Restrições Específicas do Módulo de
-				Workflow</p>
-		</div>
-		<div class="col-sm-6 col-lg-4"
-			style="${tipoDeConfiguracao.style('DEFINICAO_DE_PROCEDIMENTO')}">
-			<div class="form-group">
-				<label>Definição de Procedimento</label>
-				<siga:select name="idDefinicaoDeProcedimento"
-					list="definicoesDeProcedimentos" listKey="id" listValue="nome"
-					theme="simple" headerValue="[Indefinido]" headerKey="0"
-					value="${idDefinicaoDeProcedimento}"
-					required="${tipoDeConfiguracao.obrigatorio('DEFINICAO_DE_PROCEDIMENTO')}" />
+	<c:if
+		test="${not empty erroEmConfiguracao or tipoDeConfiguracao.ativo('DEFINICAO_DE_PROCEDIMENTO')}">
+		<div class="row">
+			<div class="col col-12">
+				<p class="alert alert-dark">Restrições Específicas do Módulo de
+					Workflow</p>
 			</div>
+			<c:if
+				test="${not empty erroEmConfiguracao or tipoDeConfiguracao.ativo('DEFINICAO_DE_PROCEDIMENTO')}">
+				<div class="col-sm-6 col-lg-4">
+					<div class="form-group">
+						<label>Definição de Procedimento</label>
+						<siga:select name="idDefinicaoDeProcedimento"
+							list="definicoesDeProcedimentos" listKey="id" listValue="nome"
+							theme="simple" headerValue="[Indefinido]" headerKey="0"
+							value="${idDefinicaoDeProcedimento}"
+							required="${tipoDeConfiguracao.obrigatorio('DEFINICAO_DE_PROCEDIMENTO')}" />
+					</div>
+				</div>
+			</c:if>
 		</div>
-	</div>
+	</c:if>
 	<script>
 		$(document).ready(function() {
 			$('[name=idDefinicaoDeProcedimento]').addClass('siga-select2');

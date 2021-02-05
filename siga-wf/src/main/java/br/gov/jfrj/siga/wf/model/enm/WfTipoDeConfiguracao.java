@@ -16,13 +16,13 @@ public enum WfTipoDeConfiguracao implements ITipoDeConfiguracao {
 	INSTANCIAR_PROCEDIMENTO(CpTipoConfiguracao.TIPO_CONFIG_INSTANCIAR_PROCEDIMENTO, "Iniciar Procedimento",
 			"Selecione órgão, lotação, pessoa, cargo ou função que tem permissão para iniciar um determinado diagrama, além das indicadas no próprio diagrama.",
 			new WfParamCfg[] { WfParamCfg.PESSOA, WfParamCfg.LOTACAO, WfParamCfg.CARGO, WfParamCfg.FUNCAO,
-					WfParamCfg.ORGAO, WfParamCfg.DEFINICAO_DE_PROCEDIMENTO, WfParamCfg.SITUACAO },
+					WfParamCfg.ORGAO, WfParamCfg.DEFINICAO_DE_PROCEDIMENTO },
 			new WfParamCfg[] { WfParamCfg.DEFINICAO_DE_PROCEDIMENTO, WfParamCfg.SITUACAO },
 			new SituacaoDeConfiguracao[] { SituacaoDeConfiguracao.PODE, SituacaoDeConfiguracao.NAO_PODE }),
 	EDITAR_DEFINICAO_DE_PROCEDIMENTO(CpTipoConfiguracao.TIPO_CONFIG_EDITAR_DEFINICAO_DE_PROCEDIMENTO, "Editar Diagrama",
 			"Selecione órgão, lotação, pessoa, cargo ou função que tem permissão para editar um determinado diagrama, além das indicadas no próprio diagrama.",
 			new WfParamCfg[] { WfParamCfg.PESSOA, WfParamCfg.LOTACAO, WfParamCfg.CARGO, WfParamCfg.FUNCAO,
-					WfParamCfg.ORGAO, WfParamCfg.DEFINICAO_DE_PROCEDIMENTO, WfParamCfg.SITUACAO },
+					WfParamCfg.ORGAO, WfParamCfg.DEFINICAO_DE_PROCEDIMENTO },
 			new WfParamCfg[] { WfParamCfg.SITUACAO },
 			new SituacaoDeConfiguracao[] { SituacaoDeConfiguracao.PODE, SituacaoDeConfiguracao.NAO_PODE });
 

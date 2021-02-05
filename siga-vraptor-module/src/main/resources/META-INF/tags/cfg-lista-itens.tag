@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
-<%@ variable name-given="config" scope="NESTED" %>
+<%@ variable name-given="config" scope="NESTED"%>
 
 <c:set var="tamanho" value="0" />
 
@@ -83,6 +83,10 @@
 
 				<siga:link icon="delete" titleImg="Excluir" url="${urlExcluir}"
 					popup="excluir" confirm="Deseja excluir configuração?" />
+
+				<c:if test="${not empty erroEmConfiguracao[config.id]}">
+					<span>${erroEmConfiguracao[config.id]}</span>
+				</c:if>
 			</siga:links></td>
 	</tr>
 	<c:set var="tamanho" value="${tamanho + 1 }" />

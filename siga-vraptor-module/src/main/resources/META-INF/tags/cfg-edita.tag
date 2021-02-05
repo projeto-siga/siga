@@ -31,6 +31,13 @@
 					<h5>Cadastro de configuração</h5>
 				</div>
 				<div class="card-body">
+					<c:if test="${not empty erroEmConfiguracao}">
+						<div class="row">
+							<div class="col-12">
+								<p class="alert alert-danger">${erroEmConfiguracao}</p>
+							</div>
+						</div>
+					</c:if>
 					<div class="row">
 						<div class="col-sm-6 col-lg-4">
 							<div class="form-group">
@@ -49,113 +56,141 @@
 								</c:choose>
 							</div>
 						</div>
-						<div class="col-sm-6 col-lg-4"
-							style="${tipoDeConfiguracao.style('SITUACAO')}">
-							<div class="form-group">
-								<label>Situação</label>
-								<siga:select name="idSituacao" list="situacoes" listKey="id"
-									listValue="descr" theme="simple" headerValue="[Indefinido]"
-									headerKey="0" value="${idSituacao}"
-									required="${tipoDeConfiguracao.obrigatorio('SITUACAO')}" />
+						<c:if
+							test="${not empty erroEmConfiguracao or tipoDeConfiguracao.ativo('SITUACAO')}">
+							<div class="col-sm-6 col-lg-4">
+								<div class="form-group">
+									<label>Situação</label>
+									<siga:select name="idSituacao" list="situacoes" listKey="id"
+										listValue="descr" theme="simple" headerValue="[Indefinido]"
+										headerKey="0" value="${idSituacao}"
+										required="${tipoDeConfiguracao.obrigatorio('SITUACAO')}" />
+								</div>
 							</div>
-						</div>
+						</c:if>
 					</div>
-					<div class="row"
-						style="${tipoDeConfiguracao.style('PESSOA,TIPO_DE_LOTACAO,LOTACAO,CARGO,FUNCAO,ORGAO,PESSOA_OBJETO,LOTACAO_OBJETO,CARGO_OBJETO,FUNCAO_OBJETO,ORGAO_OBJETO')}">
-						<div class="col col-12">
-							<p class="alert alert-dark">Restrições Gerais à Aplicação da
-								Regra</p>
-						</div>
-						<div class="col-sm-6 col-lg-4"
-							style="${tipoDeConfiguracao.style('PESSOA')}">
-							<div class="form-group">
-								<label>Pessoa</label>
-								<siga:selecao propriedade="pessoa" tema="simple" modulo="siga" />
+					<c:if
+						test="${not empty erroEmConfiguracao or tipoDeConfiguracao.ativo('PESSOA,TIPO_DE_LOTACAO,LOTACAO,CARGO,FUNCAO,ORGAO,PESSOA_OBJETO,LOTACAO_OBJETO,CARGO_OBJETO,FUNCAO_OBJETO,ORGAO_OBJETO')}">
+						<div class="row">
+							<div class="col col-12">
+								<p class="alert alert-dark">Restrições Gerais à Aplicação da
+									Regra</p>
 							</div>
+							<c:if
+								test="${not empty erroEmConfiguracao or tipoDeConfiguracao.ativo('PESSOA')}">
+								<div class="col-sm-6 col-lg-4">
+									<div class="form-group">
+										<label>Pessoa</label>
+										<siga:selecao propriedade="pessoa" tema="simple" modulo="siga" />
+									</div>
+								</div>
+							</c:if>
+							<c:if
+								test="${not empty erroEmConfiguracao or tipoDeConfiguracao.ativo('TIPO_DE_LOTACAO')}">
+								<div class="col-sm-6 col-lg-4">
+									<div class="form-group">
+										<label>Tipo lotação</label>
+										<siga:select name="idTpLotacao" list="listaTiposLotacao"
+											theme="simple" listKey="idTpLotacao" listValue="dscTpLotacao"
+											headerValue="[Indefinido]" headerKey="0"
+											value="${idTpLotacao}" />
+									</div>
+								</div>
+							</c:if>
+							<c:if
+								test="${not empty erroEmConfiguracao or tipoDeConfiguracao.ativo('LOTACAO')}">
+								<div class="col-sm-6 col-lg-4">
+									<div class="form-group">
+										<label>Lotação</label>
+										<siga:selecao propriedade="lotacao" tema="simple"
+											modulo="siga" />
+									</div>
+								</div>
+							</c:if>
+							<c:if
+								test="${not empty erroEmConfiguracao or tipoDeConfiguracao.ativo('CARGO')}">
+								<div class="col-sm-6 col-lg-4">
+									<div class="form-group">
+										<label>Cargo</label>
+										<siga:selecao propriedade="cargo" tema="simple" modulo="siga" />
+									</div>
+								</div>
+							</c:if>
+							<c:if
+								test="${not empty erroEmConfiguracao or tipoDeConfiguracao.ativo('FUNCAO')}">
+								<div class="col-sm-6 col-lg-4">
+									<div class="form-group">
+										<label>Função de Confiança</label>
+										<siga:selecao propriedade="funcao" tema="simple" modulo="siga" />
+									</div>
+								</div>
+							</c:if>
+							<c:if
+								test="${not empty erroEmConfiguracao or tipoDeConfiguracao.ativo('ORGAO')}">
+								<div class="col-sm-6 col-lg-4">
+									<div class="form-group">
+										<label>Órgão</label>
+										<siga:select name="idOrgaoUsu" list="orgaosUsu"
+											listKey="idOrgaoUsu" listValue="nmOrgaoUsu" theme="simple"
+											headerValue="[Indefinido]" headerKey="0"
+											value="${idOrgaoUsu}" />
+									</div>
+								</div>
+							</c:if>
+							<c:if
+								test="${not empty erroEmConfiguracao or tipoDeConfiguracao.ativo('PESSOA_OBJETO')}">
+								<div class="col-sm-6 col-lg-4">
+									<div class="form-group">
+										<label>Pessoa Objeto</label>
+										<siga:selecao tipo="pessoa" propriedade="pessoaObjeto"
+											tema="simple" modulo="siga" />
+									</div>
+								</div>
+							</c:if>
+							<c:if
+								test="${not empty erroEmConfiguracao or tipoDeConfiguracao.ativo('LOTACAO_OBJETO')}">
+								<div class="col-sm-6 col-lg-4">
+									<div class="form-group">
+										<label>Lotação Objeto</label>
+										<siga:selecao tipo="lotacao" propriedade="lotacaoObjeto"
+											tema="simple" modulo="siga" />
+									</div>
+								</div>
+							</c:if>
+							<c:if
+								test="${not empty erroEmConfiguracao or tipoDeConfiguracao.ativo('CARGO_OBJETO')}">
+								<div class="col-sm-6 col-lg-4">
+									<div class="form-group">
+										<label>Cargo Objeto</label>
+										<siga:selecao tipo="cargo" propriedade="cargoObjeto"
+											tema="simple" modulo="siga" />
+									</div>
+								</div>
+							</c:if>
+							<c:if
+								test="${not empty erroEmConfiguracao or tipoDeConfiguracao.ativo('FUNCAO_OBJETO')}">
+								<div class="col-sm-6 col-lg-4">
+									<div class="form-group">
+										<label>Função de Confiança Objeto</label>
+										<siga:selecao tipo="funcao" propriedade="funcaoObjeto"
+											tema="simple" modulo="siga" />
+									</div>
+								</div>
+							</c:if>
+							<c:if
+								test="${not empty erroEmConfiguracao or tipoDeConfiguracao.ativo('ORGAO_OBJETO')}">
+								<div class="col-sm-6 col-lg-4">
+									<div class="form-group">
+										<label>Órgão Objeto</label>
+										<siga:select name="idOrgaoObjeto" list="orgaosUsu"
+											listKey="idOrgaoUsu" listValue="nmOrgaoUsu" theme="simple"
+											headerValue="[Indefinido]" headerKey="0"
+											value="${idOrgaoObjeto}" />
+									</div>
+								</div>
+							</c:if>
 						</div>
-						<div class="col-sm-6 col-lg-4"
-							style="${tipoDeConfiguracao.style('TIPO_DE_LOTACAO')}">
-							<div class="form-group">
-								<label>Tipo lotação</label>
-								<siga:select name="idTpLotacao" list="listaTiposLotacao"
-									theme="simple" listKey="idTpLotacao" listValue="dscTpLotacao"
-									headerValue="[Indefinido]" headerKey="0" value="${idTpLotacao}" />
-							</div>
-						</div>
-						<div class="col-sm-6 col-lg-4"
-							style="${tipoDeConfiguracao.style('LOTACAO')}">
-							<div class="form-group">
-								<label>Lotação</label>
-								<siga:selecao propriedade="lotacao" tema="simple" modulo="siga" />
-							</div>
-						</div>
-						<div class="col-sm-6 col-lg-4"
-							style="${tipoDeConfiguracao.style('CARGO')}">
-							<div class="form-group">
-								<label>Cargo</label>
-								<siga:selecao propriedade="cargo" tema="simple" modulo="siga" />
-							</div>
-						</div>
-						<div class="col-sm-6 col-lg-4"
-							style="${tipoDeConfiguracao.style('FUNCAO')}">
-							<div class="form-group">
-								<label>Função de Confiança</label>
-								<siga:selecao propriedade="funcao" tema="simple" modulo="siga" />
-							</div>
-						</div>
-						<div class="col-sm-6 col-lg-4"
-							style="${tipoDeConfiguracao.style('ORGAO')}">
-							<div class="form-group">
-								<label>Órgão</label>
-								<siga:select name="idOrgaoUsu" list="orgaosUsu"
-									listKey="idOrgaoUsu" listValue="nmOrgaoUsu" theme="simple"
-									headerValue="[Indefinido]" headerKey="0" value="${idOrgaoUsu}" />
-							</div>
-						</div>
-						<div class="col-sm-6 col-lg-4"
-							style="${tipoDeConfiguracao.style('PESSOA_OBJETO')}">
-							<div class="form-group">
-								<label>Pessoa Objeto</label>
-								<siga:selecao tipo="pessoa" propriedade="pessoaObjeto"
-									tema="simple" modulo="siga" />
-							</div>
-						</div>
-						<div class="col-sm-6 col-lg-4"
-							style="${tipoDeConfiguracao.style('LOTACAO_OBJETO')}">
-							<div class="form-group">
-								<label>Lotação Objeto</label>
-								<siga:selecao tipo="lotacao" propriedade="lotacaoObjeto"
-									tema="simple" modulo="siga" />
-							</div>
-						</div>
-						<div class="col-sm-6 col-lg-4"
-							style="${tipoDeConfiguracao.style('CARGO_OBJETO')}">
-							<div class="form-group">
-								<label>Cargo Objeto</label>
-								<siga:selecao tipo="cargo" propriedade="cargoObjeto"
-									tema="simple" modulo="siga" />
-							</div>
-						</div>
-						<div class="col-sm-6 col-lg-4"
-							style="${tipoDeConfiguracao.style('FUNCAO_OBJETO')}">
-							<div class="form-group">
-								<label>Função de Confiança Objeto</label>
-								<siga:selecao tipo="funcao" propriedade="funcaoObjeto"
-									tema="simple" modulo="siga" />
-							</div>
-						</div>
-
-						<div class="col-sm-6 col-lg-4"
-							style="${tipoDeConfiguracao.style('ORGAO_OBJETO')}">
-							<div class="form-group">
-								<label>Órgão Objeto</label>
-								<siga:select name="idOrgaoObjeto" list="orgaosUsu"
-									listKey="idOrgaoUsu" listValue="nmOrgaoUsu" theme="simple"
-									headerValue="[Indefinido]" headerKey="0"
-									value="${idOrgaoObjeto}" />
-							</div>
-						</div>
-					</div>
+					</c:if>
 					<jsp:doBody />
 					<div class="row">
 						<div class="col-sm-12">

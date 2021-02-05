@@ -77,7 +77,7 @@ public class ExConfiguracaoController extends ExController {
 	public void lista(Long idTpConfiguracao, Long idOrgaoUsu) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 		if (idTpConfiguracao == null)
-			idTpConfiguracao = ExTipoDeConfiguracao.MOVIMENTAR.getId();
+			idTpConfiguracao = ExTipoDeConfiguracao.AUTUAVEL.getId();
 		ExTipoDeConfiguracao tpconf = ExTipoDeConfiguracao.getById(idTpConfiguracao);
 
 		result.include("tipoDeConfiguracao", tpconf);
@@ -126,17 +126,13 @@ public class ExConfiguracaoController extends ExController {
 		Collections.sort(listConfig, new ExConfiguracaoComparator());
 
 		ExTipoDeConfiguracao tpconf = ExTipoDeConfiguracao.getById(idTpConfiguracao);
-		for (CpConfiguracao c : listConfig)
-			assertConfig(tpconf, c);
+		CpConfiguracaoHelper.incluirAtributosDeListagem(result, tpconf, (List<CpConfiguracao>) (List) listConfig);
 
 		result.include("idMod", idMod);
 		result.include("nmTipoRetorno", nmTipoRetorno);
 		result.include("campoFixo", campoFixo);
 		result.include("configuracao", config);
 		result.include("idFormaDoc", idFormaDoc);
-		result.include("tipoDeConfiguracao", tpconf);
-
-		result.include("listConfig", listConfig);
 		result.include("tpConfiguracao", config.getCpTipoConfiguracao());
 	}
 
@@ -188,10 +184,10 @@ public class ExConfiguracaoController extends ExController {
 			idTpConfiguracao = config.getCpTipoConfiguracao().getIdTpConfiguracao();
 		if (idTpConfiguracao == null)
 			throw new RuntimeException("Tipo de configuração deve ser informado");
-		ExTipoDeConfiguracao tpconf = ExTipoDeConfiguracao.getById(idTpConfiguracao);
 
-		result.include("tipoDeConfiguracao", tpconf);
-		result.include("situacoes", tpconf.getSituacoes());
+		ExTipoDeConfiguracao tpconf = ExTipoDeConfiguracao.getById(idTpConfiguracao);
+		CpConfiguracaoHelper.incluirAtributosDeEdicao(result, tpconf, config);
+
 		result.include("id", id);
 		result.include("listaTiposConfiguracao", getListaTiposConfiguracao());
 		result.include("listaNivelAcesso", getListaNivelAcesso());
@@ -202,9 +198,7 @@ public class ExConfiguracaoController extends ExController {
 		result.include("listaTiposDocumento", getListaTiposDocumento());
 		result.include("listaTiposLotacao", getListaTiposLotacao());
 		result.include("nmTipoRetorno", nmTipoRetorno);
-		result.include("config", config);
 		result.include("campoFixo", campoFixo);
-		result.include("configuracao", config);
 	}
 
 	@SuppressWarnings("all")

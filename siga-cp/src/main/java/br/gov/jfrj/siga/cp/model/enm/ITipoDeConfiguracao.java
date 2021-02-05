@@ -19,9 +19,16 @@ public interface ITipoDeConfiguracao {
 			return true;
 		if (param == null || getParams() == null)
 			return false;
-		for (Enum p : getParams()) {
-			if (param.equals(p.name()))
-				return true;
+		String a[] = param.split(",");
+		if (a.length > 1) {
+			for (String s : a)
+				if (ativo(s))
+					return true;
+		} else {
+			for (Enum p : getParams()) {
+				if (param.equals(p.name()))
+					return true;
+			}
 		}
 		return false;
 	}

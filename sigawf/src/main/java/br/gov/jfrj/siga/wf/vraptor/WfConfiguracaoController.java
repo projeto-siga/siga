@@ -87,12 +87,9 @@ public class WfConfiguracaoController extends WfController {
 		Collections.sort(listConfig, new WfConfiguracaoComparator());
 
 		WfTipoDeConfiguracao tpconf = WfTipoDeConfiguracao.getById(idTpConfiguracao);
-		for (CpConfiguracao c : listConfig)
-			assertConfig(tpconf, c);
+		CpConfiguracaoHelper.incluirAtributosDeListagem(result, tpconf, (List<CpConfiguracao>) (List) listConfig);
 
 		result.include("configuracao", config);
-		result.include("tipoDeConfiguracao", tpconf);
-		result.include("listConfig", listConfig);
 		result.include("tpConfiguracao", config.getCpTipoConfiguracao());
 	}
 
@@ -132,17 +129,14 @@ public class WfConfiguracaoController extends WfController {
 		if (idTpConfiguracao == null)
 			throw new RuntimeException("Tipo de configuração deve ser informado");
 		WfTipoDeConfiguracao tpconf = WfTipoDeConfiguracao.getById(idTpConfiguracao);
+		CpConfiguracaoHelper.incluirAtributosDeEdicao(result, tpconf, config);
 
-		result.include("tipoDeConfiguracao", tpconf);
-		result.include("situacoes", tpconf.getSituacoes());
 		result.include("id", id);
 		result.include("listaTiposConfiguracao", getListaTiposConfiguracao());
 		result.include("orgaosUsu", getOrgaosUsu());
 		result.include("listaTiposLotacao", CpConfiguracaoHelper.getListaTiposLotacao(dao));
 		result.include("nmTipoRetorno", nmTipoRetorno);
-		result.include("config", config);
 		result.include("campoFixo", campoFixo);
-		result.include("configuracao", config);
 		result.include("definicoesDeProcedimentos", getDefinicoesDeProcedimentos());
 	}
 

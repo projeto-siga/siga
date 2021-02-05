@@ -48,7 +48,7 @@ public class ConfiguracaoController extends SigaController {
 	public void lista(Long idTpConfiguracao, Long idOrgaoUsu) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 		if (idTpConfiguracao == null)
-			idTpConfiguracao = CpTipoDeConfiguracao.UTILIZAR_SERVICO.getId();
+			idTpConfiguracao = CpTipoDeConfiguracao.CADASTRAR_QUALQUER_SUBST.getId();
 		ITipoDeConfiguracao tpconf = CpTipoDeConfiguracao.getById(idTpConfiguracao);
 
 		result.include("tipoDeConfiguracao", tpconf);
@@ -82,12 +82,9 @@ public class ConfiguracaoController extends SigaController {
 		Collections.sort(listConfig, new CpConfiguracaoComparator());
 
 		ITipoDeConfiguracao tpconf = CpTipoDeConfiguracao.getById(idTpConfiguracao);
-		for (CpConfiguracao c : listConfig)
-			CpConfiguracaoHelper.assertConfig(tpconf, c);
+		CpConfiguracaoHelper.incluirAtributosDeListagem(result, tpconf, listConfig);
 
 		result.include("configuracao", config);
-		result.include("tipoDeConfiguracao", tpconf);
-		result.include("listConfig", listConfig);
 		result.include("tpConfiguracao", config.getCpTipoConfiguracao());
 	}
 
@@ -117,18 +114,14 @@ public class ConfiguracaoController extends SigaController {
 		if (idTpConfiguracao == null)
 			throw new RuntimeException("Tipo de configuração deve ser informado");
 		ITipoDeConfiguracao tpconf = CpTipoDeConfiguracao.getById(idTpConfiguracao);
+		CpConfiguracaoHelper.incluirAtributosDeEdicao(result, tpconf, config);
 
-		result.include("tipoDeConfiguracao", tpconf);
-		result.include("situacoes", tpconf.getSituacoes());
 		result.include("id", id);
 		result.include("listaTiposConfiguracao", getListaTiposConfiguracao());
-//		result.include("listaSituacao", getListaSituacao());
 		result.include("orgaosUsu", getOrgaosUsu());
 		result.include("listaTiposLotacao", CpConfiguracaoHelper.getListaTiposLotacao(dao));
 		result.include("nmTipoRetorno", nmTipoRetorno);
-		result.include("config", config);
 		result.include("campoFixo", campoFixo);
-		result.include("configuracao", config);
 	}
 
 	@SuppressWarnings("all")

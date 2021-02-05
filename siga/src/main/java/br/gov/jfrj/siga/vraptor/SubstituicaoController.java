@@ -137,7 +137,7 @@ public class SubstituicaoController extends SigaController {
 	}	
 	
 	@Get("/app/substituicao/unidade")
-	public void unidade() {
+	public void listarUnidades() {
 		
 		final Query query = em().createNamedQuery("listarUnidadesComUsuarioPadrao");
 		query.setParameter("cpfPessoa", getCadastrante().getCpfPessoa());
@@ -148,24 +148,21 @@ public class SubstituicaoController extends SigaController {
 	
 	@Transacional
 	@Post("/app/substituicao/unidade")
-	public void trocarUsuario(final Long id) throws Exception {
+	public void trocarUnidade(final Long id) throws Exception {
 		
 		final Query qry = em().createNamedQuery("consultarPessoaAtualPelaInicial");
 		qry.setParameter("idPessoaIni", id);
 		final DpPessoa pes = (DpPessoa) qry.getResultStream().findFirst().orElse(null);
-		
-		List<DpPessoa> lista  = CpDao.getInstance().obterUsuarioPadrao(getTitular().getCpfPessoa());
-		
-		for(DpPessoa pessoa : lista) {
-				pessoa.setUsuarioPadrao(0);
-				em().merge(pessoa);
-			}
-			
-		 if (pes.getUsuarioPadrao().equals(0)) {
-				pes.setUsuarioPadrao(1);
-				em().merge(pes);
-			}
 
+		List<DpPessoa> lista  = CpDao.getInstance().obterListaUsuario(getTitular().getCpfPessoa());
+
+		for(DpPessoa pessoa : lista) {
+			pessoa.setUsuarioPadrao(0);
+			em().merge(pessoa);
+		}
+
+		pes.setUsuarioPadrao(1);
+		em().merge(pes);
 	}
 	
 	@Get("/app/substituicao/editar")

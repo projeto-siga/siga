@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import javax.persistence.Query;
+
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -117,16 +119,9 @@ public class AcessoConsulta {
 
 	public static boolean exibirModalSelecionarUsuarioPadrao(DpPessoa pessoa) {
 		
-		List<DpPessoa> lista = CpDao.getInstance().listarPorCpf(pessoa.getCpfPessoa());
-		int contador = 0;
-		
-		for(DpPessoa usuario : lista) {
-			if(usuario.getUsuarioPadrao() == 0) {
-				contador++;
-			}
-		}
-		
-		if(contador == lista.size()) {
+		DpPessoa usuario = CpDao.getInstance().obterUsuarioPadrao(pessoa.getCpfPessoa());
+
+		if(usuario == null) {
 			return true;
 		}
 		return false;

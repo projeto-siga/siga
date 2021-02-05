@@ -60,7 +60,7 @@
 			</table>
 			<div class="gt-table-buttons">
 				<input type="button" value="Ok" id="btnOk"
-					onclick="trocarUsuario()"
+					onclick="trocarUnidade()"
 					class="btn btn-primary" /> 
 				<input type="button" value="Cancelar"
 					onclick="javascript:history.back()" class="btn btn-primary" />
@@ -70,7 +70,7 @@
 
 	<script type="text/javascript">
 
-		function trocarUsuario(){
+		function trocarUnidade(){
 			var troca = $("input[name='usuario']:checked").val();
 			$.ajax({
 				url: '/siga/app/substituicao/unidade',

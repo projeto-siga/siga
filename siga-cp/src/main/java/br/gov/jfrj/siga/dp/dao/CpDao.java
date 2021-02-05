@@ -38,6 +38,7 @@ import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 import javax.persistence.FlushModeType;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -889,28 +890,38 @@ public class CpDao extends ModeloDao {
 		final Query qry = em().createNamedQuery("consultarPessoaAtualPelaInicial");
 		qry.setParameter("idPessoaIni", id);
 		final DpPessoa pes = (DpPessoa) qry.getResultStream().findFirst().orElse(null);
-		
-		List<DpPessoa> lista  = obterUsuarioPadrao(cpf);
-		
+
+		List<DpPessoa> lista  = obterListaUsuario(cpf);
+
 		for(DpPessoa pessoa : lista) {
-				pessoa.setUsuarioPadrao(0);
-				em().merge(pessoa);
-			}
-			
-		 if (pes.getUsuarioPadrao().equals(0)) {
-				pes.setUsuarioPadrao(1);
-				em().merge(pes);
-			}
+			pessoa.setUsuarioPadrao(0);
+			em().merge(pessoa);
+		}
+
+		pes.setUsuarioPadrao(1);
+		em().merge(pes);
 
 		return pes;
 	}
 	
-	public List<DpPessoa> obterUsuarioPadrao(final long cpf) {
+	public List<DpPessoa> obterListaUsuario(final long cpf) {
 
 		final Query qry = em().createNamedQuery("consultaUsuarioPadrao");
 		qry.setParameter("cpfPessoa", cpf);
 		final List<DpPessoa> l = qry.getResultList();
 		return l;
+	}
+	
+	public DpPessoa obterUsuarioPadrao(final long cpf) {
+
+		try {
+			final Query qry = em().createNamedQuery("consultaUsuarioPadrao");
+			qry.setParameter("cpfPessoa", cpf);
+			final DpPessoa pes = (DpPessoa) qry.getSingleResult();
+			return pes;
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
 
 	public DpPessoa consultarPorCpf(final long cpf) {

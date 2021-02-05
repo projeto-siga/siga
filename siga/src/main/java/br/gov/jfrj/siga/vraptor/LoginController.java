@@ -102,8 +102,10 @@ public class LoginController extends SigaController {
 			String usuarioLogado = giService.login(username, password);
 			
 			if (Pattern.matches("\\d+", username) && username.length() == 11) {
-				 lista = new CpDao().consultaIdentidadesCadastranteComUsuarioPadrao(username, Boolean.TRUE);
-				 usernameDefault = lista.get(0).getDpPessoa().getSesbPessoa() + lista.get(0).getDpPessoa().getMatricula();
+				lista = new CpDao().consultaIdentidadesCadastranteComUsuarioPadrao(username, Boolean.TRUE);
+				if(lista != null && lista.size() > 0) {
+					usernameDefault = lista.get(0).getDpPessoa().getSesbPessoa() + lista.get(0).getDpPessoa().getMatricula();
+				}
 			}
 
 			if (usuarioLogado == null || usuarioLogado.trim().length() == 0) {

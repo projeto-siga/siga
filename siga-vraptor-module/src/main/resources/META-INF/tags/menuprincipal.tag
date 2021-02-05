@@ -386,7 +386,7 @@
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CFG:Cadastrar Configurações')}">
 						<li><a class="dropdown-item"
-							href="${linkTo[ConfiguracaoController].lista()}">Cadastro de
+							href="/siga/app/configuracao/listar">Cadastro de
 								Configurações</a></li>
 					</c:if>
 				</ul></li>

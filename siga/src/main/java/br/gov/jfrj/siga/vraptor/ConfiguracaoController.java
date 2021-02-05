@@ -101,7 +101,7 @@ public class ConfiguracaoController extends SigaController {
 		if (id != null) {
 			config = dao().consultar(id, CpConfiguracao.class, false);
 		} else if (campoFixo) {
-			config = new CpConfiguracaoBuilder(CpConfiguracaoBuilder.class, dao).setIdSituacao(idSituacao)
+			config = new CpConfiguracaoBuilder(CpConfiguracao.class, dao).setIdSituacao(idSituacao)
 					.setIdTpConfiguracao(idTpConfiguracao).setPessoaSel(pessoaSel).setLotacaoSel(lotacaoSel)
 					.setCargoSel(cargoSel).setFuncaoSel(funcaoSel).setPessoaObjetoSel(pessoaObjetoSel)
 					.setLotacaoObjetoSel(lotacaoObjetoSel).setCargoObjetoSel(cargoObjetoSel)
@@ -151,7 +151,7 @@ public class ConfiguracaoController extends SigaController {
 			DpFuncaoConfiancaSelecao funcaoObjeto_funcaoSel, Long idOrgaoObjeto, Long idTpLotacao, String nmTipoRetorno,
 			boolean campoFixo) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
-		final CpConfiguracao config = new CpConfiguracaoBuilder(CpConfiguracaoBuilder.class, dao).setId(id)
+		final CpConfiguracao config = new CpConfiguracaoBuilder(CpConfiguracao.class, dao).setId(id)
 				.setIdSituacao(idSituacao).setIdTpConfiguracao(idTpConfiguracao).setPessoaSel(pessoaSel)
 				.setLotacaoSel(lotacaoSel).setCargoSel(cargoSel).setFuncaoSel(funcaoSel).setIdOrgaoObjeto(idOrgaoObjeto)
 				.setPessoaObjetoSel(pessoaObjeto_pessoaSel).setLotacaoObjetoSel(lotacaoObjeto_lotacaoSel)

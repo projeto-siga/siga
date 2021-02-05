@@ -5,6 +5,7 @@ import java.util.Date;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.enm.CpParamCfg;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.SituacaoDeConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -15,25 +16,25 @@ public enum WfTipoDeConfiguracao implements ITipoDeConfiguracao {
 
 	INSTANCIAR_PROCEDIMENTO(CpTipoConfiguracao.TIPO_CONFIG_INSTANCIAR_PROCEDIMENTO, "Iniciar Procedimento",
 			"Selecione órgão, lotação, pessoa, cargo ou função que tem permissão para iniciar um determinado diagrama, além das indicadas no próprio diagrama.",
-			new WfParamCfg[] { WfParamCfg.PESSOA, WfParamCfg.LOTACAO, WfParamCfg.CARGO, WfParamCfg.FUNCAO,
-					WfParamCfg.ORGAO, WfParamCfg.DEFINICAO_DE_PROCEDIMENTO },
-			new WfParamCfg[] { WfParamCfg.DEFINICAO_DE_PROCEDIMENTO, WfParamCfg.SITUACAO },
+			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.CARGO, CpParamCfg.FUNCAO, CpParamCfg.ORGAO,
+					WfParamCfg.DEFINICAO_DE_PROCEDIMENTO },
+			new Enum[] { WfParamCfg.DEFINICAO_DE_PROCEDIMENTO, CpParamCfg.SITUACAO },
 			new SituacaoDeConfiguracao[] { SituacaoDeConfiguracao.PODE, SituacaoDeConfiguracao.NAO_PODE }),
 	EDITAR_DEFINICAO_DE_PROCEDIMENTO(CpTipoConfiguracao.TIPO_CONFIG_EDITAR_DEFINICAO_DE_PROCEDIMENTO, "Editar Diagrama",
 			"Selecione órgão, lotação, pessoa, cargo ou função que tem permissão para editar um determinado diagrama, além das indicadas no próprio diagrama.",
-			new WfParamCfg[] { WfParamCfg.PESSOA, WfParamCfg.LOTACAO, WfParamCfg.CARGO, WfParamCfg.FUNCAO,
-					WfParamCfg.ORGAO, WfParamCfg.DEFINICAO_DE_PROCEDIMENTO },
-			new WfParamCfg[] { WfParamCfg.SITUACAO },
+			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.CARGO, CpParamCfg.FUNCAO, CpParamCfg.ORGAO,
+					WfParamCfg.DEFINICAO_DE_PROCEDIMENTO },
+			new Enum[] { CpParamCfg.SITUACAO },
 			new SituacaoDeConfiguracao[] { SituacaoDeConfiguracao.PODE, SituacaoDeConfiguracao.NAO_PODE });
 
 	private final Long id;
 	private final String descr;
 	private final String explicacao;
-	private final WfParamCfg[] params;
-	private final WfParamCfg[] obrigatorios;
+	private final Enum[] params;
+	private final Enum[] obrigatorios;
 	private final SituacaoDeConfiguracao[] situacoes;
 
-	WfTipoDeConfiguracao(Long id, String descr, String explicacao, WfParamCfg[] params, WfParamCfg[] obrigatorios,
+	WfTipoDeConfiguracao(Long id, String descr, String explicacao, Enum[] params, Enum[] obrigatorios,
 			SituacaoDeConfiguracao[] situacoes) {
 		this.id = id;
 		this.descr = descr;

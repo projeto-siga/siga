@@ -48,6 +48,7 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoComparator;
+import br.gov.jfrj.siga.ex.model.enm.ExParamCfg;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.builder.ExConfiguracaoBuilder;
@@ -140,17 +141,15 @@ public class ExConfiguracaoController extends ExController {
 		CpConfiguracaoHelper.assertConfig(t, c);
 		if (c instanceof ExConfiguracao) {
 			ExConfiguracao cc = (ExConfiguracao) c;
-			CpConfiguracaoHelper.assertConfig(t, c, cc.getExClassificacao(), ExTipoDeConfiguracao.P.CLASSIFICACAO);
-			CpConfiguracaoHelper.assertConfig(t, c, cc.getExTipoDocumento(), ExTipoDeConfiguracao.P.TIPO_DOCUMENTO);
-			CpConfiguracaoHelper.assertConfig(t, c, cc.getExTipoFormaDoc(),
-					ExTipoDeConfiguracao.P.TIPO_FORMA_DOCUMENTO);
-			CpConfiguracaoHelper.assertConfig(t, c, cc.getExFormaDocumento(), ExTipoDeConfiguracao.P.FORMA_DOCUMENTO);
-			CpConfiguracaoHelper.assertConfig(t, c, cc.getExModelo(), ExTipoDeConfiguracao.P.MODELO);
-			CpConfiguracaoHelper.assertConfig(t, c, cc.getExNivelAcesso(), ExTipoDeConfiguracao.P.NIVEL_DE_ACESSO);
-			CpConfiguracaoHelper.assertConfig(t, c, cc.getExPapel(), ExTipoDeConfiguracao.P.PAPEL);
-			CpConfiguracaoHelper.assertConfig(t, c, cc.getExTipoMovimentacao(),
-					ExTipoDeConfiguracao.P.TIPO_MOVIMENTACAO);
-			CpConfiguracaoHelper.assertConfig(t, c, cc.getExVia(), ExTipoDeConfiguracao.P.VIA);
+			CpConfiguracaoHelper.assertConfig(t, c, cc.getExClassificacao(), ExParamCfg.CLASSIFICACAO);
+			CpConfiguracaoHelper.assertConfig(t, c, cc.getExTipoDocumento(), ExParamCfg.TIPO_DOCUMENTO);
+			CpConfiguracaoHelper.assertConfig(t, c, cc.getExTipoFormaDoc(), ExParamCfg.TIPO_FORMA_DOCUMENTO);
+			CpConfiguracaoHelper.assertConfig(t, c, cc.getExFormaDocumento(), ExParamCfg.FORMA_DOCUMENTO);
+			CpConfiguracaoHelper.assertConfig(t, c, cc.getExModelo(), ExParamCfg.MODELO);
+			CpConfiguracaoHelper.assertConfig(t, c, cc.getExNivelAcesso(), ExParamCfg.NIVEL_DE_ACESSO);
+			CpConfiguracaoHelper.assertConfig(t, c, cc.getExPapel(), ExParamCfg.PAPEL);
+			CpConfiguracaoHelper.assertConfig(t, c, cc.getExTipoMovimentacao(), ExParamCfg.TIPO_MOVIMENTACAO);
+			CpConfiguracaoHelper.assertConfig(t, c, cc.getExVia(), ExParamCfg.VIA);
 		}
 	}
 

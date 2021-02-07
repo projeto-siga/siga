@@ -379,10 +379,7 @@ public class AppController extends GcController {
 		result.redirectTo(this).estatisticaGeral();
 	}
 
-<<<<<<< HEAD
 	@Get("/app/estatisticaGeral")
-=======
->>>>>>> origin/jlo_9.0.22.2
 	public void estatisticaGeral() throws Exception {
 		// List<GcInformacao> lista = GcInformacao.all().fetch();
 

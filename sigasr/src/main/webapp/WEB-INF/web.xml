@@ -76,6 +76,7 @@
 	</filter>
 	<filter-mapping>
 		<filter-name>SrThreadFilter</filter-name>
+				<url-pattern>/public/app/*</url-pattern>
 		<url-pattern>/app/*</url-pattern>
 		<url-pattern>/solicitacao/*</url-pattern>
 		<dispatcher>FORWARD</dispatcher>

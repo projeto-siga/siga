@@ -31,8 +31,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.jboss.logging.Logger;
@@ -138,6 +136,7 @@ public abstract class ModeloDao {
 		CriteriaQuery<T> crit = criteriaBuilder.createQuery(clazz);
 
 		Root<T> root = crit.from(clazz);
+		crit.select(root);
 		TypedQuery<T> query = em().createQuery(crit);
 		if (cacheRegion != null) {
 			query.setHint("org.hibernate.cacheable", true); 

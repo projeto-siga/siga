@@ -184,7 +184,7 @@ public class PrincipalController extends SigaController {
 				switch (modulo) {
 				case "SR": // Solicitacoes
 				case "TMPSR":
-					lurls.add(urlBase + "/sigasr/public/app/solicitacao/selecionar?sigla=" + sigla + incluirMatricula);
+					lurls.add(urlBase + "/sigasr/public/app/selecionar?sigla=" + sigla + incluirMatricula);
 					break;
 				case "GC": // Conhecimentos
 				case "TMPGC":

@@ -428,6 +428,9 @@ public class GiServiceImpl implements GiService {
 			Long idLotacaoUsu = null;
 			Long idFuncaoUsu = null;
 
+			// Obtem identidade do cadastrante
+			CpIdentidade identidadeCadastrante = CpDao.getInstance()
+					.consultaIdentidadeCadastrante(cadastranteStr, true);
 			// Obtém Id Órgão
 			CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
 			orgaoUsuario.setNmOrgaoUsu(Texto.removeAcento(orgaoUsu));
@@ -476,13 +479,14 @@ public class GiServiceImpl implements GiService {
 				}
 			}
 
-			resultado = Cp
+			DpPessoa pes = Cp
 					.getInstance()
 					.getBL()
-					.criarUsuario(cadastranteStr, null, idOrgaoUsu, idCargoUsu,
+					.criarUsuario(null, identidadeCadastrante, idOrgaoUsu, idCargoUsu,
 							idFuncaoUsu, idLotacaoUsu, nmPessoa, dtNascimento,
-							cpf, email);
+							cpf, email, null, null, null, null, null, "true");
 
+			resultado = "Usuário cadastrado com sucesso: " + pes.getSesbPessoa() + pes.getMatricula();
 		} catch (Exception e) {
 			return e.getMessage();
 		}

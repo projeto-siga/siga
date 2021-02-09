@@ -49,6 +49,7 @@ import javax.persistence.criteria.Root;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.DateUtils;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpGrupo;
@@ -2798,4 +2799,31 @@ public class CpDao extends ModeloDao {
 		return (T) em().find(objetoDetachado.getClass(), 
 				em().getEntityManagerFactory().getPersistenceUnitUtil().getIdentifier(objetoDetachado));
 	}
+	
+	/**
+	 * Consulta genérica por uma coluna long, para pesquisa por id ou idInicial
+	 * 
+	 * @param o Classe da entidade pesquisada
+	 * @param colName nome da coluna do id ou idInicial desta entidade
+	 * @param colDataFim nome da coluna de data final (opcional). Se informada, pega somente 
+	 * 		o que estiver com essa coluna nula (sem data de finalização, ou seja a válida).
+	 * @return Lista de linhas encontradas na tabela.
+	 */
+	public <T> List<T> consultarPorIdOuIdInicial(Class <T> o, String colName, String colDataFim, Long arg) {
+		CriteriaQuery<T> query = cb().createQuery(o);
+		Root<T> c = query.from(o);
+		query.select(c);
+		Predicate predicateAnd;
+		Predicate predicateEqualColName  = cb().equal(c.get(colName), arg);
+		if (colDataFim != null) {
+			Predicate predicateDataFimNula  = cb().isNull(c.get(colDataFim));
+			predicateAnd = cb().and(predicateEqualColName, predicateDataFimNula);
+		} else {
+			predicateAnd = predicateEqualColName;
+		}
+		
+		query.where(predicateAnd);
+		return em().createQuery(query).getResultList();
+	}
+	
 }

@@ -52,7 +52,6 @@ import java.util.TreeSet;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.FlushModeType;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -78,6 +77,7 @@ import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -107,7 +107,6 @@ import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Selecao;
-import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.util.ListaHierarquica;
 import br.gov.jfrj.siga.util.ListaHierarquicaItem;
@@ -1442,6 +1441,12 @@ public class ExDocumentoController extends ExController {
 		}
 		
 		exDocumentoDto.getMob().getDoc().setPodeExibirReordenacao(exibirReordenacao);
+		
+		DpPessoaSelecao subscritorSel = new DpPessoaSelecao();
+		subscritorSel.buscarPorObjeto(getTitular());
+
+		DpLotacaoSelecao lotaSubscritorSel = new DpLotacaoSelecao();
+		lotaSubscritorSel.buscarPorObjeto(getLotaTitular());
 
 		result.include("docVO", docVO);
 		result.include("sigla", Sigla);
@@ -1453,6 +1458,8 @@ public class ExDocumentoController extends ExController {
 		result.include("podeExibirReordenacao", exibirReordenacao);
 		result.include("podeExibirTodosOsVolumes", exDocumentoDto.getMob().isVolume()); //  && exDocumentoDto.getMob().getDoc().getVolumes().size() > 1
 		result.include("recebimentoPendente", recebimentoPendente);		
+		result.include("subscritorSel", subscritorSel);
+		result.include("lotaSubscritorSel", lotaSubscritorSel);
 	}
 
 	@Get("app/expediente/doc/exibirProcesso")

@@ -39,11 +39,11 @@
 							</div>
 							<div v-if="exibirLotacao" class="form-group">
 								<label for="marcador">Lotacao</label>	
-								<siga:selecao tema='simple' titulo="Lotação:" propriedade="lotaSubscritor" tipo="lotacao" modulo="siga" />
+								<siga:selecao tema='simple' titulo="Lotação:" propriedade="lotaSubscritor" modulo="siga" />
 							</div>
 							<div v-if="exibirPessoa" class="form-group">
 								<label for="marcador">Pessoa</label>
-								<siga:selecao tema='simple' titulo="Matrícula:" propriedade="subscritor" tipo="pessoa" modulo="siga" />
+								<siga:selecao tema='simple' titulo="Matrícula:" propriedade="subscritor" modulo="siga" />
 							</div>
 							<div v-if="marcador && (marcador.planejada != 'DESATIVADA' || marcador.limite !== 'DESATIVADA')" class="form-group row">
 								<div class="col col-12 col-md-6" v-if="marcador && marcador.planejada != 'DESATIVADA'">

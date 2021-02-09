@@ -1321,10 +1321,10 @@ public class CpBL {
 			throw new AplicacaoException ("Não é permitido o cadastro de marcadores de sistema.");
 			
 		if (descricao == null)
-			throw new AplicacaoException ("Preencha a descrição do marcador.");
+			throw new AplicacaoException ("Preencha o nome do marcador.");
 			
 		if (descricao.length() > 40) 
-			throw new AplicacaoException ("Descrição do marcador tem mais de 40 bytes.");
+			throw new AplicacaoException ("Nome do marcador tem mais de 40 bytes.");
 		
 		String msgLotacao = SigaMessages.getMessage("usuario.lotacao");
 		List<CpMarcador> listaMarcadoresLotacao = dao().listarCpMarcadoresPorLotacao(lotacao, true);
@@ -1339,7 +1339,7 @@ public class CpBL {
 				.filter(mar -> mar.getDescrMarcador()
 						.equals(descricao)).count() > 0)) 
 			throw new AplicacaoException ("Já existe um marcador Geral ou da " + msgLotacao 
-					+ " com esta descrição: " + descricao);
+					+ " com este nome: " + descricao);
 
 		if (id != null) {
 			CpMarcador marcadorAnt = new CpMarcador();

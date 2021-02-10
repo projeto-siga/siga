@@ -2730,9 +2730,10 @@ public class ExBL extends CpBL {
 			gravarMovimentacaoCancelamento(mov, movCancelar);
 			if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL)
 				concluirAlteracaoComRecalculoAcesso(mov);
-			else
-				concluirAlteracao(mov);
-
+			else {
+				// concluindo só com o documento para forçar o recálculo das marcas de todos os mobiles
+				concluirAlteracao(mov.mob().doc(), null, null, false);
+			}
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new RuntimeException("Erro ao cancelar movimentação.", e);
@@ -4977,7 +4978,8 @@ public class ExBL extends CpBL {
 				gravarMovimentacaoCancelamento(mov, movAnterior);
 			} else
 				gravarMovimentacao(mov);
-			concluirAlteracao(mov);
+			// concluindo só com o documento para forçar o recálculo das marcas de todos os mobiles
+			concluirAlteracao(mov.mob().doc(), null, null, false);
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new RuntimeException("Erro ao fazer marcação.", e);

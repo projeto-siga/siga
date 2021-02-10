@@ -159,4 +159,7 @@ public abstract class Selecao<T extends Selecionavel> {
 		this.buscar = buscar;
 	}
 
+	public boolean empty() {
+		return id == null;
+	}
 }

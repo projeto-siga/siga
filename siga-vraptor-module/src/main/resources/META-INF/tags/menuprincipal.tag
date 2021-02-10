@@ -360,7 +360,7 @@
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;MODVER:Visualizar modelos')}">
 						<li><a class="dropdown-item" href="/siga/app/modelo/listar">Cadastro
-								de modelos</a></li>
+								de Modelos</a></li>
 					</c:if>
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_ORGAO:Cadastrar Orgãos')}">
@@ -388,6 +388,12 @@
 						<li><a class="dropdown-item"
 							href="/siga/app/configuracao/listar">Cadastro de
 								Configurações</a></li>
+					</c:if>
+					<c:if
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;FE: Ferramentas;CAD_MARCADOR: Cadastro de Marcadores')}">
+						<li><a class="dropdown-item"
+							href="/siga/app/marcador/listar">Cadastro de 
+								Marcadores</a></li>
 					</c:if>
 				</ul></li>
 		</c:if>

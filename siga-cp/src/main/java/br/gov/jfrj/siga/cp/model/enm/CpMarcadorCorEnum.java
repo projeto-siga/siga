@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.cp;
+package br.gov.jfrj.siga.cp.model.enm;
 
 import java.io.Serializable;
 import java.util.ArrayList;

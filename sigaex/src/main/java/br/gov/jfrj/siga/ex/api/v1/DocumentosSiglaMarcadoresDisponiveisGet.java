@@ -56,15 +56,15 @@ public class DocumentosSiglaMarcadoresDisponiveisGet implements IDocumentosSigla
 				for (CpMarcador m : marcadores) {
 					Marcador mr = new Marcador();
 					mr.idMarcador = m.getIdMarcador().toString();
-					mr.grupo = m.getCpTipoMarcador().getDescricao();
+					mr.grupo = m.getIdFinalidade().getIdTpMarcador().getDescricao();
 					mr.nome = m.getDescrMarcador();
 					ExPodeMarcarComMarcador pode = new ExPodeMarcarComMarcador(mob, m, titular, lotaTitular);
 					mr.ativo = pode.eval();
 					mr.explicacao = AcaoVO.Helper.formatarExplicacao(pode, mr.ativo);
-					mr.interessado = m.getIdTpInteressado() != null ? m.getIdTpInteressado().name() : null;
-					mr.planejada = m.getIdTpDataPlanejada() != null ? m.getIdTpDataPlanejada().name() : null;
-					mr.limite = m.getIdTpDataLimite() != null ? m.getIdTpDataLimite().name() : null;
-					mr.texto = m.getIdTpTexto() != null ? m.getIdTpTexto().name() : null;
+					mr.interessado = m.getIdFinalidade().getIdTpInteressado() != null ? m.getIdFinalidade().getIdTpInteressado().name() : null;
+					mr.planejada = m.getIdFinalidade().getIdTpDataPlanejada() != null ? m.getIdFinalidade().getIdTpDataPlanejada().name() : null;
+					mr.limite = m.getIdFinalidade().getIdTpDataLimite() != null ? m.getIdFinalidade().getIdTpDataLimite().name() : null;
+					mr.texto = m.getIdFinalidade().getIdTpTexto() != null ? m.getIdFinalidade().getIdTpTexto().name() : null;
 					resp.list.add(mr);
 				}
 			}

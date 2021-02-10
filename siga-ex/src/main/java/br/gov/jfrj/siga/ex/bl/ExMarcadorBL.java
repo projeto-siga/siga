@@ -11,8 +11,8 @@ import java.util.TreeSet;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoExibicaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -264,8 +264,8 @@ public class ExMarcadorBL {
 				continue;
 			
 			// Aplicar marcas de lotação apenas se o atendente for a lotação
-			if (marcador.getCpTipoMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO
-					&& marcador.getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.ATENDENTE
+			if (marcador.getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO
+					&& marcador.getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.ATENDENTE
 					&& marcador.getDpLotacaoIni() != null) {
 				DpLotacao lotaResp = mob.doc().getLotaCadastrante();
 				if (mob.doc().isFinalizado() && !mob.isGeral() && mob.getUltimaMovimentacaoNaoCancelada() != null) {
@@ -284,11 +284,11 @@ public class ExMarcadorBL {
 			// Calcular datas de início e fim
 			Date dtIni = null;
 			Date dtFim = null;
-			if (dtIni == null && mov.getDtParam1() != null && mov.getDtParam2() != null && marcador.getIdTpExibicao() == CpMarcadorTipoExibicaoEnum.MENOR_DATA)
+			if (dtIni == null && mov.getDtParam1() != null && mov.getDtParam2() != null && marcador.getIdFinalidade().getIdTpExibicao() == CpMarcadorTipoExibicaoEnum.MENOR_DATA)
 				dtIni = mov.getDtParam1().before(mov.getDtParam2()) ? mov.getDtParam1() : mov.getDtParam2();
-			if (dtIni == null && mov.getDtParam1() != null && marcador.getIdTpExibicao() == CpMarcadorTipoExibicaoEnum.DATA_PLANEJADA)
+			if (dtIni == null && mov.getDtParam1() != null && marcador.getIdFinalidade().getIdTpExibicao() == CpMarcadorTipoExibicaoEnum.DATA_PLANEJADA)
 				dtIni = mov.getDtParam1();
-			if (dtIni == null && mov.getDtParam2() != null && marcador.getIdTpExibicao() == CpMarcadorTipoExibicaoEnum.DATA_LIMITE)
+			if (dtIni == null && mov.getDtParam2() != null && marcador.getIdFinalidade().getIdTpExibicao() == CpMarcadorTipoExibicaoEnum.DATA_LIMITE)
 				dtIni = mov.getDtParam2();
 			if (dtIni == null)
 				dtIni = mov.getDtIniMov();

@@ -32,7 +32,7 @@
 						<tbody>
 							<c:forEach items="${listaMarcadores}" var="marcador">
 								<tr>
-									<td class="text-left w-10">${marcador.cpTipoMarcador.descricao}</td>
+									<td class="text-left w-10">${marcador.idFinalidade.idTpMarcador.descricao}</td>
 									<td class="text-left w-30"><span
 										class="badge badge-pill badge-secondary tagmesa btn-xs"
 										title="${marcador.descrDetalhada}"> <i
@@ -40,12 +40,12 @@
 											${marcador.descrMarcador}
 										</span>
 									</td>
-									<td class="text-left w-5">${marcador.idTpAplicacao.descricao}</td>
-									<td class="text-left w-5">${marcador.idTpExibicao.descricao}</td>
-									<td class="text-left w-5">${marcador.idTpDataPlanejada.descricao}</td>
-									<td class="text-left w-5">${marcador.idTpDataLimite.descricao}</td>
-									<td class="text-left w-5">${marcador.idTpTexto.descricao}</td>
-									<td class="text-left w-5">${marcador.idTpInteressado.descricao}</td>
+									<td class="text-left w-5">${marcador.idFinalidade.idTpAplicacao.descricao}</td>
+									<td class="text-left w-5">${marcador.idFinalidade.idTpExibicao.descricao}</td>
+									<td class="text-left w-5">${marcador.idFinalidade.idTpDataPlanejada.descricao}</td>
+									<td class="text-left w-5">${marcador.idFinalidade.idTpDataLimite.descricao}</td>
+									<td class="text-left w-5">${marcador.idFinalidade.idTpTexto.descricao}</td>
+									<td class="text-left w-5">${marcador.idFinalidade.idTpInteressado.descricao}</td>
 									<td class="text-left w-10">
 										<div class="">
 											<button type="button" id="btn-excluir"

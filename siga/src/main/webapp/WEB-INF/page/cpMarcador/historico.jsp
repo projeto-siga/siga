@@ -36,13 +36,13 @@
 								<td title="${marcador.hisIdcIni.dpPessoa.nomePessoa}">${marcador.hisIdcIni.nmLoginIdentidade}</td>
 								<td title="${marcador.descrDetalhada}"><i class='${marcador.idIcone.codigoFontAwesome}' style='color: #${marcador.idCor.descricao}'>
 									</i> ${marcador.descrMarcador}</td>
-								<td>${marcador.cpTipoMarcador.descricao}</td>
-								<td>${marcador.idTpAplicacao.descricao}</td>
-								<td>${marcador.idTpDataPlanejada.descricao}</td>
-								<td>${marcador.idTpDataLimite.descricao}</td>
-								<td>${marcador.idTpExibicao.descricao}</td>
-								<td>${marcador.idTpTexto.descricao}</td>
-								<td>${marcador.idTpInteressado.descricao}</td>
+								<td>${marcador.idFinalidade.idTpMarcador.descricao}</td>
+								<td>${marcador.idFinalidade.idTpAplicacao.descricao}</td>
+								<td>${marcador.idFinalidade.idTpDataPlanejada.descricao}</td>
+								<td>${marcador.idFinalidade.idTpDataLimite.descricao}</td>
+								<td>${marcador.idFinalidade.idTpExibicao.descricao}</td>
+								<td>${marcador.idFinalidade.idTpTexto.descricao}</td>
+								<td>${marcador.idFinalidade.idTpInteressado.descricao}</td>
 								<td>${marcador.hisAtivo eq 1? 'Sim' : 'Não'}</td>
 							</tr>
 						</c:forEach>

@@ -85,8 +85,12 @@ public class RequestExceptionLogger {
 				if (name.toLowerCase().contains("senha") || name.toLowerCase().contains("password")
 					|| name.toLowerCase().contains("pwd"))
 					requestInfo.append("[parâmetro suprimido]");
-				else
-					requestInfo.append(httpReq.getParameter(name));
+				else {
+					String p = httpReq.getParameter(name);
+					if (p != null && p.length() > 200)
+						p = "[parâmetro encurtado] " + p.substring(0, 200) + "...";
+					requestInfo.append(p);
+				}
 				requestInfo.append("\n");
 			}
 
@@ -100,7 +104,10 @@ public class RequestExceptionLogger {
 				requestInfo.append(name);
 				requestInfo.append(" : ");
 				try {
-					requestInfo.append(httpReq.getAttribute(name));
+					String a = httpReq.getAttribute(name).toString();
+					if (a != null && a.length() > 200)
+						a = "[atributo encurtado] " + a.substring(0, 200) + "...";
+					requestInfo.append(a);
 				} catch (Exception e) {
 					requestInfo.append("não foi possível determinar: ");
 					requestInfo.append(e.getMessage());

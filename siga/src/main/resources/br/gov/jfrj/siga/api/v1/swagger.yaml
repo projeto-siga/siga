@@ -36,7 +36,6 @@ parameters:
     description: Sigla da entidade
     type: string
     required: true
-
   username:
     name: username
     in: query
@@ -47,6 +46,12 @@ parameters:
     name: password
     in: query
     description: Password do usuário
+    required: true
+    type: string
+  pin:
+    name: pin
+    in: query
+    description: Chave PIN para Segundo Fator de Autenticação e Assinatura e Autenticação com Senha
     required: true
     type: string
   lotacao:
@@ -173,6 +178,28 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /pessoas/pin:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [cadastro]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/pin"
+      summary: Criação de chave PIN para Assinatura e Autenticação de Documentos e Segundo Fator de Autenticação.
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+  
   /lotacoes:
     get:
       summary: "Pesquisa de lotações"
@@ -221,6 +248,29 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
+            
+  /notificacoes:
+    get:
+      description: Listar as notificações para determinado Usuário
+      tags: [utils]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Notificacao"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"            
 
 
 ################################################################################
@@ -380,4 +430,35 @@ definitions:
         format: date-time
       ip:
         type: string
+        
+  Notificacao:
+    type: object
+    description: Dados de Notificacao
+    properties:
+      idNotificacao:
+        type: string
+        description: Id do Cargo
+      titulo:
+        type: string
+        description: Título da Notificação
+      icone:
+        type: string
+        description: Class Font Awesome do Icone da Notificação
+      resumo:
+        type: string
+        description: Resumo da Notificação
+      conteudo: 
+        type: string
+        description: Conteúdo da Notificação     
+      dataInicio: 
+        type: string
+        format: date-time
+        description: Data de Início da Notificação    
+      dataTermino: 
+        type: string
+        format: date-time
+        description: Data de Início de Término da Notificação  
+      sempreMostrar: 
+        type: boolean
+        description: true se notificação não for dispensável. false se notificação for dispensável
         

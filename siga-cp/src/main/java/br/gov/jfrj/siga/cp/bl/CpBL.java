@@ -1389,4 +1389,38 @@ public class CpBL {
 		}
 	}
 	
+	public void definirPinIdentidade( List<CpIdentidade> listaIdentidades, String pin, CpIdentidade idCadastrante)
+			throws NoSuchAlgorithmException, AplicacaoException {
+
+
+		boolean podeTrocar = Boolean.TRUE;
+
+
+		if (podeTrocar) {
+			try {
+				Date dt = dao().consultarDataEHoraDoServidor();
+				final String pinHash = GeraMessageDigest.calcSha256(pin);
+
+				dao().iniciarTransacao();
+				CpIdentidade i = null;
+				for (CpIdentidade cpIdentidade : listaIdentidades) {
+					i = new CpIdentidade();
+					PropertyUtils.copyProperties(i, cpIdentidade);
+					i.setIdIdentidade(null);
+					i.setDtCriacaoIdentidade(dt);
+					i.setPinIdentidade(pinHash);
+					dao().gravarComHistorico(i, cpIdentidade, dt, idCadastrante);
+				}
+
+				dao().commitTransacao();
+			} catch (final Exception e) {
+				dao().rollbackTransacao();
+				throw new AplicacaoException("Ocorreu um erro durante a gravação", 0, e);
+			}
+		} else {
+			throw new AplicacaoException("Senha Atual não confere e/ou Senha nova diferente de confirmação");
+		}
+	}
+	
+	
 }

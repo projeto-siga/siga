@@ -88,6 +88,18 @@ public interface ISigaApiV1 {
 		public Date datahora;
 		public String ip;
 	}
+	
+	public class Notificacao implements ISwaggerModel {
+		public String idNotificacao;
+		public String titulo;
+		public String icone;
+		public String resumo;
+		public String conteudo;
+		public Date dataInicio;
+		public Date dataTermino;
+		public Boolean sempreMostrar;
+	}
+	
 
 	public class AutenticarPostRequest implements ISwaggerRequest {
 	}
@@ -159,6 +171,18 @@ public interface ISigaApiV1 {
 		public void run(PessoasGetRequest req, PessoasGetResponse resp) throws Exception;
 	}
 
+	public class PessoasPinPostRequest implements ISwaggerRequest {
+		public String pin;
+	}
+
+	public class PessoasPinPostResponse implements ISwaggerResponse {
+		public String mensagem;
+	}
+
+	public interface IPessoasPinPost extends ISwaggerMethod {
+		public void run(PessoasPinPostRequest req, PessoasPinPostResponse resp) throws Exception;
+	}
+	
 	public class LotacoesGetRequest implements ISwaggerRequest {
 		public String texto;
 		public String idLotacaoIni;
@@ -194,5 +218,17 @@ public interface ISigaApiV1 {
 
 	public interface IAcessosGet extends ISwaggerMethod {
 		public void run(AcessosGetRequest req, AcessosGetResponse resp) throws Exception;
+	}
+	
+	public class NotificacoesGetRequest implements ISwaggerRequest {
+		public String sigla;
+	}
+
+	public class NotificacoesGetResponse implements ISwaggerResponse {
+		public List<Notificacao> list;
+	}
+
+	public interface INotificacoesGet extends ISwaggerMethod {
+		public void run(NotificacoesGetRequest req, NotificacoesGetResponse resp) throws Exception;
 	}
 }

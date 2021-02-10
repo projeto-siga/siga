@@ -52,6 +52,8 @@ public class CpIdentidade extends AbstractCpIdentidade {
 	 * 
 	 */
 	private static final long serialVersionUID = 5911884614189757579L;
+	public static final long pinLength = 8L;
+	
 
 	public DpPessoa getPessoaAtual() {
 		return CpDao.getInstance().consultarPorIdInicial(

@@ -690,6 +690,13 @@ public class AppController extends GcController {
 	 * ); }
 	 */
 
+	@Path({ "/app/novo" })
+	public void novo() throws Exception
+	{
+		result.forwardTo(this).editar(null,null,null,null,null,null);
+	}
+	
+	
 	@Path({ "/app/editar/{sigla}", "/app/editar/" })
 	public void editar(String sigla, String classificacao, String inftitulo,
 			String origem, String conteudo, GcTipoInformacao tipo)

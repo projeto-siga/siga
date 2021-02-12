@@ -149,6 +149,10 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 	private void defineProperties() {
 		addPublicProperty("carimbo.sistema", "siga");
 		addPublicProperty("carimbo.url", null);
+		addPublicProperty("carimbo.public.key", null);
+
+		addPublicProperty("data.validar.assinatura.digital", "01/10/2020");
+		addPublicProperty("data.validar.assinatura.com.senha", "01/10/2020");
 
 		addRestrictedProperty("upload.dir.temp");
 
@@ -198,7 +202,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPublicProperty("classificacao.mascara.saida", "%1$02d.%2$02d.%3$02d.%4$02d");
 		addPublicProperty("classificacao.nivel.minimo.de.enquadramento", null);
 		addPublicProperty("codigo.acronimo.ano.inicial", "9999");
-		addPublicProperty("conversor.html.ext", "br.gov.jfrj.itextpdf.MyPD4ML");
+		addPublicProperty("conversor.html.ext", "br.gov.jfrj.itextpdf.FlyingSaucer");
 		addPublicProperty("conversor.html.factory", "br.gov.jfrj.siga.ex.ext.ConversorHTMLFactory");
 		addPublicProperty("data.obrigacao.assinar.anexo.despacho", "31/12/2099");
 		addPublicProperty("debug.modelo.padrao.arquivo", null);
@@ -219,6 +223,8 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPrivateProperty("webdav.senha", null);
 		addPublicProperty("controlar.numeracao.expediente", "false");
 		addPublicProperty("recebimento.automatico", "true");
+		
+		addPublicProperty("exibe.nome.acesso", "false");
 				
 		addPublicProperty("modelos.cabecalho.titulo", "JUSTIÇA FEDERAL");
 		addPublicProperty("modelos.cabecalho.subtitulo", null);

@@ -1,6 +1,6 @@
 <li><a class="" href="app/estatisticaGeral">Conhecimentos</a>
 	<ul>
-		<li><a class="" href="${linkTo[AppController].editar}">Novo</a>
+		<li><a class="" href="${linkTo[AppController].novo}">Novo</a>
 		</li>
 		<li><a class="" href="${linkTo[AppController].buscar}">Buscar por texto</a>
 		</li>

@@ -140,7 +140,7 @@ export default {
       // })
       if (!text || text === '') return
       this.errormsg = undefined
-      this.$http.get('pessoa/' + encodeURI(text) + '/pesquisar').then(
+      this.$http.get('siga/api/v1/pessoas?texto=' + encodeURI(text)).then(
         (response) => {
           this.pessoas = []
           var l = response.data.list
@@ -161,7 +161,7 @@ export default {
       // })
       if (!text || text === '') return
       this.errormsg = undefined
-      this.$http.get('lotacao/' + encodeURI(text) + '/pesquisar').then(
+      this.$http.get('siga/api/v1/lotacoes?texto=' + encodeURI(text)).then(
         (response) => {
           this.lotacoes = []
           var l = response.data.list

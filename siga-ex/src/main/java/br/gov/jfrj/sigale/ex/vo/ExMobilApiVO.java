@@ -161,7 +161,7 @@ public class ExMobilApiVO extends ExApiVO {
 				movs.add(new ExMovimentacaoApiVO(this, mov, cadastrante, titular, lotaTitular));
 			}
 		else
-			for (ExMovimentacao mov : mob.getMovimentacoesPorTipo(tpMov)) {
+			for (ExMovimentacao mov : mob.getMovimentacoesPorTipo(tpMov, false)) {
 				if (!movAssinada) {
 					if (!mov.isAssinada() && !mov.isCancelada())
 						movs.add(new ExMovimentacaoApiVO(this, mov, cadastrante, titular, lotaTitular));

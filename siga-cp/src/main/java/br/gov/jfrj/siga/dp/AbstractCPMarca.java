@@ -60,6 +60,14 @@ public abstract class AbstractCPMarca extends Objeto implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dtFimMarca;
 
+//	@Column(name = "DT_REF1_MARCA")
+//	@Temporal(TemporalType.TIMESTAMP)
+//	private Date dtRef1Marca;
+//
+//	@Column(name = "DT_REF2_MARCA")
+//	@Temporal(TemporalType.TIMESTAMP)
+//	private Date dtRef2Marca;
+
 	@ManyToOne
 	@JoinColumn(name = "ID_MARCADOR")
 	private CpMarcador cpMarcador;
@@ -107,6 +115,22 @@ public abstract class AbstractCPMarca extends Objeto implements Serializable {
 	public void setDtFimMarca(Date dtFimMarca) {
 		this.dtFimMarca = dtFimMarca;
 	}
+
+//	public Date getDtRef1Marca() {
+//		return dtRef1Marca;
+//	}
+//
+//	public void setDtRef1Marca(Date dtRef1Marca) {
+//		this.dtRef1Marca = dtRef1Marca;
+//	}
+//
+//	public Date getDtRef2Marca() {
+//		return dtRef2Marca;
+//	}
+//
+//	public void setDtRef2Marca(Date dtRef2Marca) {
+//		this.dtRef2Marca = dtRef2Marca;
+//	}
 
 	public CpMarcador getCpMarcador() {
 		return cpMarcador;

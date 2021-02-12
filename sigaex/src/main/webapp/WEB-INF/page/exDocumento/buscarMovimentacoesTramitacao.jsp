@@ -123,7 +123,7 @@ Então só saberei quem foi o usuário que recebeu depois que alguém da unidade
 									<div class="text-nowrap">${movimentacao.exMobilRef.sigla}</div>
 									<c:choose>
 										<c:when
-											test="${empty movimentacao.exMobilRef.getMovimentacoesPorTipo(3)}">
+											test="${empty movimentacao.exMobilRef.getMovimentacoesPorTipo(3, false)}">
 											<c:set var="link" value="javascript:void(0)" />
 											<c:set var="title" value="Não tem Histórico de Tramitação" />
 											<c:set var="classDisabled" value="disabled" />

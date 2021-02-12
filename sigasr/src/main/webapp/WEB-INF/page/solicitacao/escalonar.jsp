@@ -55,7 +55,7 @@
 					Criar Solicita&ccedil;&atilde;o filha de ${codigo}
 				</label>
 				<br/>
-				<sigasr:classificacao metodo="escalonar" exibeLotacaoNaAcao="true"/>
+				<sigasr:classificacao metodo="escalonar" exibeLotacaoNaAcao="true"/>				
 				
 				<input type="hidden" name="atendenteNaoDesignado.id" id="atendenteNaoDesignado" value="" />
 				<br/>

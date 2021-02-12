@@ -175,11 +175,16 @@ public class PrincipalController extends SigaController {
 				// Documentos
 				lurls.add(urlBase + "/sigaex/public/app/expediente/selecionar?sigla=" + sigla + incluirMatricula
 						+ ";/sigaex/app/expediente/doc/exibir?sigla=");
+				if(orgao == null) {
+					// Pessoas
+					lurls.add(urlBase + "/siga/public/app/pessoa/selecionar?sigla=" + sigla + incluirMatricula
+							+ ";/siga/app/pessoa/exibir?sigla=");
+				}
 			} else if (modulo != null) {
 				switch (modulo) {
 				case "SR": // Solicitacoes
 				case "TMPSR":
-					lurls.add(urlBase + "/sigasr/public/app/solicitacao/selecionar?sigla=" + sigla + incluirMatricula);
+					lurls.add(urlBase + "/sigasr/public/app/selecionar?sigla=" + sigla + incluirMatricula);
 					break;
 				case "GC": // Conhecimentos
 				case "TMPGC":

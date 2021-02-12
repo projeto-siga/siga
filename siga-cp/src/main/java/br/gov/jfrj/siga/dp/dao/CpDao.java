@@ -43,6 +43,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -53,6 +54,7 @@ import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
@@ -92,6 +94,7 @@ import br.gov.jfrj.siga.dp.DpUnidadeDTO;
 import br.gov.jfrj.siga.dp.DpVisualizacao;
 import br.gov.jfrj.siga.model.CarimboDeTempo;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.DaoFiltro;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
@@ -106,7 +109,6 @@ public class CpDao extends ModeloDao {
 	public static final String CACHE_HOURS = "hours";
 	public static final String CACHE_SECONDS = "seconds";
 	
-
 	private static Map<String, CpServico> cacheServicos = null;
 
 	public static CpDao getInstance() {
@@ -762,6 +764,10 @@ public class CpDao extends ModeloDao {
 			o.setOrgaoUsuario(cpOrgaoUsu);
 		}
 		DpLotacao lotacao = consultarPorSigla(o);
+		if(lotacao == null && flt.getSigla() != null) {
+			o.setSigla(flt.getSigla().replaceFirst("-", ""));
+			lotacao = consultarPorSigla(o);
+		}
 		if (lotacao == null) {
 			o.setSiglaLotacao(flt.getSigla());
 			o.setOrgaoUsuario(null);
@@ -1522,6 +1528,8 @@ public class CpDao extends ModeloDao {
 		query.setHint("org.hibernate.cacheable", true);
 		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
 //			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SUBSTITUICAO);
+		query.setParameter("dbDatetime", this.consultarDataEHoraDoServidor());
+		
 		return query.getResultList();
 	}
 
@@ -1535,12 +1543,25 @@ public class CpDao extends ModeloDao {
 		// query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SUBSTITUICAO);
 		return query.getResultList();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public Integer qtdeSubstituicoesAtivasPorTitular(final DpSubstituicao exemplo) throws SQLException {
+		Query query = null;
+		query = em().createNamedQuery("qtdeSubstituicoesAtivasPorTitular");
+		query.setParameter("idTitularIni", exemplo.getTitular().getIdPessoaIni());
+		query.setParameter("idLotaTitularIni", exemplo.getLotaTitular().getIdLotacaoIni());
+		query.setParameter("dbDatetime", this.consultarDataEHoraDoServidor());
+		
+		return ((Long)query.getSingleResult()).intValue();
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<DpVisualizacao> consultarVisualizacoesPermitidas(final DpVisualizacao exemplo) throws SQLException {
 		Query query = null;
 		query = em().createNamedQuery("consultarVisualizacoesPermitidas");
 		query.setParameter("idDelegadoIni", exemplo.getDelegado().getIdPessoaIni());
+		query.setParameter("dbDatetime", this.consultarDataEHoraDoServidor());
+		
 		query.setHint("org.hibernate.cacheable", true);
 //			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SUBSTITUICAO);
 		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
@@ -1790,8 +1811,10 @@ public class CpDao extends ModeloDao {
 	}
 
 	public Date consultarDataEHoraDoServidor() {
+
 		if (ContextoPersistencia.dt() != null)
 			return ContextoPersistencia.dt();
+
 		String sql = "SELECT sysdate from dual";
 		String dialect = System.getProperty("siga.hibernate.dialect");
 		if (dialect != null && dialect.contains("MySQL"))
@@ -1900,6 +1923,26 @@ public class CpDao extends ModeloDao {
 		return em().createQuery(q).getResultList();
 	}
 
+	public <T> List<T> listarTodosPorIdInicial(Class<T> clazz, Long hisIdIni, String campoOrderBy, Boolean isDescendente) {
+		CriteriaQuery<T> q = cb().createQuery(clazz);
+		Root<T> c = q.from(clazz);
+		q.select(c);
+		q.where(
+			cb().equal(c.get("hisIdIni"), hisIdIni)
+		);
+		if (campoOrderBy != null) {
+			if (isDescendente != null) {
+				if (isDescendente) {
+					q.orderBy(cb().desc(c.get(campoOrderBy)));
+				} else {
+					q.orderBy(cb().asc(c.get(campoOrderBy)));
+				}
+			}
+		}
+
+		return em().createQuery(q).getResultList();
+	}
+
 	public <T> T consultarAtivoPorIdInicial(Class<T> clazz, Long hisIdIni) {
 		CriteriaQuery<T> q = cb().createQuery(clazz);
 		Root<T> c = q.from(clazz);
@@ -1998,8 +2041,7 @@ public class CpDao extends ModeloDao {
 	public DpPessoa getPessoaFromSigla(String sigla) {
 		DpPessoa p = new DpPessoa();
 		p.setSigla(sigla);
-		DpPessoa ator = consultarPorSigla(p);
-		return ator;
+		return  consultarPorSigla(p);
 	}
 
 	public DpLotacao getLotacaoFromSigla(String sigla) {
@@ -2472,6 +2514,37 @@ public class CpDao extends ModeloDao {
 		return id;
 	}
 
+	public <T extends Historico> T obterAtual(final T u) {
+//		CriteriaBuilder builder = em().getCriteriaBuilder();
+//		
+//		CriteriaQuery query = builder.createQuery(thisAntigo.getClass());
+//		
+//		Subquery<Date> sub = query.subquery(Date.class);
+//		Root subFrom = sub.from(this.getClass());
+//		sub.select(builder.greatest(subFrom.<Date>get("hisDtIni")));
+//		sub.where(builder.equal(subFrom.get("hisIdIni"), thisAntigo.getHisIdIni()));
+//		
+//		Root from = query.from(this.getClass());
+//		CriteriaQuery select = query.select(from);
+//		select.where(builder.and(builder.equal(from.get("hisIdIni"), thisAntigo.getHisIdIni()), builder.equal(from.get("hisDtIni"), sub)));
+//		
+//		TypedQuery typedQuery = em().createQuery(query);
+//		thisAntigo = (HistoricoSuporte) typedQuery.getSingleResult();
+		
+		String clazz = u.getClass().getSimpleName();
+		String sql = "from " + clazz + " u where u.hisDtIni = "
+			+ "		(select max(p.hisDtIni) from " + clazz + " p where p.hisIdIni = :idIni)"
+			+ "		 and u.hisIdIni = :idIni";		
+		javax.persistence.Query qry = ContextoPersistencia.em().createQuery(sql);
+		qry.setParameter("idIni", u.getHisIdIni());
+		qry.setFirstResult(0);
+		qry.setMaxResults(1);
+		List<CpAcesso> result = qry.getResultList();
+		if (result == null || result.size() == 0)
+			return null;
+		return (T) result.get(0);
+	}
+
 	@SuppressWarnings("unchecked")
 	public CpAcesso consultarAcessoAnterior(final DpPessoa pessoa) {
 		String sql = "from CpAcesso a where a.cpIdentidade.dpPessoa.idPessoaIni = :idPessoaIni order by a.dtInicio desc";
@@ -2502,8 +2575,8 @@ public class CpDao extends ModeloDao {
 		try {
 			String consultarQuantidadeDocumentosPorDpLotacao = "SELECT count(1) FROM DpLotacao lotacao"
 					+ " left join CpMarca marca on lotacao.idLotacao = marca.dpLotacaoIni"
-					+ " WHERE(marca.dtIniMarca IS NULL OR marca.dtIniMarca < CURRENT_TIMESTAMP)"
-					+ " AND(marca.dtFimMarca IS NULL OR marca.dtFimMarca > CURRENT_TIMESTAMP)"
+					+ " WHERE(marca.dtIniMarca IS NULL OR marca.dtIniMarca < :dbDatetime)"
+					+ " AND(marca.dtFimMarca IS NULL OR marca.dtFimMarca > :dbDatetime)"
 					+ " AND marca.cpMarcador.idMarcador not in (1,10,32)"
 					+ " AND lotacao.idLotacaoIni = :idLotacao"
 					+ " AND marca.cpTipoMarca.idTpMarca = :idTipoMarca ";
@@ -2511,6 +2584,8 @@ public class CpDao extends ModeloDao {
 	
 			query.setParameter("idLotacao", o.getId());
 			query.setParameter("idTipoMarca", CpTipoMarca.TIPO_MARCA_SIGA_EX);
+			query.setParameter("dbDatetime", this.consultarDataEHoraDoServidor());
+			
             final int l = ((Long) query.getSingleResult()).intValue();
             return l;
         } catch (final NullPointerException e) {
@@ -2549,8 +2624,8 @@ public class CpDao extends ModeloDao {
 					+ queryLotacao
 					+ queryUsuario
 					+ "and marcador.idMarcador = :idMarcador " 
-					+ "and (dt_ini_marca is null or dt_ini_marca < CURRENT_TIMESTAMP) " 
-					+ "and (dt_fim_marca is null or dt_fim_marca > CURRENT_TIMESTAMP) " 
+					+ "and (dt_ini_marca is null or dt_ini_marca < :dbDatetime) " 
+					+ "and (dt_fim_marca is null or dt_fim_marca > :dbDatetime) " 
 				;
 
 		Query query = em().createQuery(queryTemp);
@@ -2569,7 +2644,8 @@ public class CpDao extends ModeloDao {
 		query.setParameter("dtini", dataInicial);
 		Date dtfimMaisUm = new Date(dataFinal.getTime() + 86400000L);
 		query.setParameter("dtfim", dtfimMaisUm);
-
+		query.setParameter("dbDatetime", this.consultarDataEHoraDoServidor());
+		
 		List<CpOrgaoUsuario> l = query.getResultList();
 
 		if (l.size() == 0) {
@@ -2600,7 +2676,8 @@ public class CpDao extends ModeloDao {
 			Query sql = em().createNamedQuery("quantidadeDocumentos");
 
 			sql.setParameter("idPessoaIni", pes.getIdPessoaIni());
-			return ((BigDecimal) sql.getSingleResult()).intValue();
+			sql.setParameter("dbDatetime", this.consultarDataEHoraDoServidor());
+			return ((Long) sql.getSingleResult()).intValue();
 		} catch (final NullPointerException e) {
 			return null;
 		}
@@ -2661,8 +2738,71 @@ public class CpDao extends ModeloDao {
 			return null;
 		}			
 	}
+
+	public List<CpMarcador> listarCpMarcadoresGerais(Boolean ativos) {
+		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
+		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);
+		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
+		Predicate predicateEqualTipoMarcadorGeral  = criteriaBuilder
+				.equal(cpMarcadorRoot.get("cpTipoMarcador"), CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL);
+		if (ativos == null || ativos) {
+			Predicate predicateNullHisDtFim = criteriaBuilder.isNull(cpMarcadorRoot.get("hisDtFim"));
+			criteriaQuery.where(criteriaBuilder
+					.and(predicateEqualTipoMarcadorGeral, predicateNullHisDtFim));
+		} else {
+			criteriaQuery.where(predicateEqualTipoMarcadorGeral);
+		}
+		
+		return em().createQuery(criteriaQuery).getResultList();
+	}
 	
+	public List<CpMarcador> listarCpMarcadoresPorLotacao(DpLotacao lotacao, Boolean ativos) {
+		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
+		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);
+		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
+		Predicate predicateAnd;
+		Predicate predicateEqualTipoMarcadorLotacao  = criteriaBuilder.equal(cpMarcadorRoot.get("cpTipoMarcador"), CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO);
+		Predicate predicateEqualLotacao  = criteriaBuilder.equal(cpMarcadorRoot.get("dpLotacaoIni"), lotacao.getLotacaoInicial());
+		if (ativos == null || ativos) {
+			Predicate predicateNullHisDtFim = criteriaBuilder.isNull(cpMarcadorRoot.get("hisDtFim"));
+			predicateAnd = criteriaBuilder.and(predicateEqualTipoMarcadorLotacao, predicateEqualLotacao, predicateNullHisDtFim);
+		} else {
+			predicateAnd = criteriaBuilder.and(predicateEqualTipoMarcadorLotacao, predicateEqualLotacao);
+		}
+		
+		criteriaQuery.where(predicateAnd);
+		criteriaQuery.orderBy(criteriaBuilder.asc(cpMarcadorRoot.get("descrMarcador")));
+		return em().createQuery(criteriaQuery).getResultList();
+	}
 	
+	public List<CpMarcador> listarCpMarcadoresPorLotacaoEGeral (DpLotacao lotacao, Boolean ativos) {
+		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
+		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);
+		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
+		Predicate predicateAnd;
+		
+		Predicate predicateEqualMarcadorGeral  = criteriaBuilder.equal(cpMarcadorRoot.get("cpTipoMarcador"), CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL);
+		
+		Predicate predicateEqualMarcadorLotacao  = criteriaBuilder.equal(cpMarcadorRoot.get("cpTipoMarcador"), CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO);
+		Predicate predicateEqualLotacao  = criteriaBuilder.equal(cpMarcadorRoot.get("dpLotacaoIni"), lotacao.getLotacaoInicial());
+		Predicate predicateMarcadorLotacaoAndLotacaoIni  = criteriaBuilder.and(predicateEqualMarcadorLotacao, predicateEqualLotacao);
+		
+		Predicate predicateSemifinal;
+		predicateSemifinal = criteriaBuilder.or(predicateEqualMarcadorGeral, predicateMarcadorLotacaoAndLotacaoIni);
+		 
+		if (ativos == null || ativos) {
+			Predicate predicateNullHisDtFim = criteriaBuilder.isNull(cpMarcadorRoot.get("hisDtFim"));
+			predicateAnd = criteriaBuilder.and(predicateSemifinal, predicateNullHisDtFim);
+		} else {
+			predicateAnd = predicateSemifinal;
+		}
+		
+		criteriaQuery.where(predicateAnd);
+		
+		criteriaQuery.orderBy(criteriaBuilder.asc(cpMarcadorRoot.get("cpTipoMarcador")), 
+				criteriaBuilder.asc(cpMarcadorRoot.get("descrMarcador")));
+		return em().createQuery(criteriaQuery).getResultList();	
+	}
 	
 	public <T extends Selecionavel> T carregarPorId(T o) {
 		Long id = o.getId();

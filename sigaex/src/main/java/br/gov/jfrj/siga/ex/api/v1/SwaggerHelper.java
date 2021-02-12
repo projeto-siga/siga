@@ -1,25 +1,13 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import com.crivano.swaggerservlet.ISwaggerRequest;
 import com.crivano.swaggerservlet.ISwaggerResponse;
-import com.crivano.swaggerservlet.SwaggerAuthorizationException;
 import com.crivano.swaggerservlet.SwaggerException;
-import com.crivano.swaggerservlet.SwaggerServlet;
-
 import static java.util.Objects.isNull;
 
-import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
@@ -27,51 +15,6 @@ import br.gov.jfrj.siga.vraptor.SigaObjects;
  * Métodos auxiliares.
  */
 class SwaggerHelper {
-
-	private static final String DOC_MÓDULO_DE_DOCUMENTOS = "DOC:Módulo de Documentos;";
-
-	/**
-	 * Verifica a presença de um usuário logado e o retorna.
-	 * 
-	 * @return O login do Usuário na sessão
-	 * @throws SwaggerAuthorizationException Se não achar nenhum usuário logado na
-	 *                                       sessão.
-	 * @see ContextoPersistencia#getUserPrincipal()
-	 */
-	static String buscarEValidarUsuarioLogado() throws SwaggerAuthorizationException {
-		String userPrincipal = ContextoPersistencia.getUserPrincipal();
-		if (isNull(userPrincipal)) {
-			throw new SwaggerAuthorizationException("Usuário não está logado");
-		}
-
-		return userPrincipal;
-	}
-
-	/**
-	 * Retorna uma instância de {@link SigaObjects} a partir do Request do
-	 * {@link SwaggerServlet}.
-	 * @throws Exception Se houver algo de errado.
-	 */
-	static SigaObjects getSigaObjects(String acesso) throws Exception {
-		SigaObjects sigaObjects = new SigaObjects(SwaggerServlet.getHttpServletRequest());
-		sigaObjects.assertAcesso(DOC_MÓDULO_DE_DOCUMENTOS + acesso);
-
-		return sigaObjects;
-	}
-
-	/**
-	 * Retorna uma instância de {@link SigaObjects} a partir do Request do
-	 * {@link SwaggerServlet}. Ainda verifica se o usuário tem aceso ao serviço
-	 * <code>{@value #DOC_MÓDULO_DE_DOCUMENTOS}<code>.
-	 * 
-	 * @param acesso Acesso solicitado.
-	 * @return Instância de {@link SigaObjects} a partir do Request do
-	 *         {@link SwaggerServlet}.
-	 * @throws Exception Se houver algo de errado.
-	 */
-	static SigaObjects getSigaObjects() throws Exception {
-		return getSigaObjects("");
-	}
 
 	/**
 	 * Retorna um {@link ExMobil Mobil} relacionado a uma certa
@@ -98,7 +41,7 @@ class SwaggerHelper {
 		ExMobil mob = ExDao.getInstance().consultarPorSigla(filter);
 
 		if (isNull(mob)) {
-			throw new SwaggerException("Número do " + descricaoDocumento + " não existe no SPSP", 404, null, req, resp,
+			throw new SwaggerException("Número do " + descricaoDocumento + " não existe", 404, null, req, resp,
 					null);
 		}
 		if (!Ex.getInstance().getComp().podeAcessarDocumento(so.getTitular(), so.getLotaTitular(), mob))
@@ -127,41 +70,7 @@ class SwaggerHelper {
 	 */
 	static ExMobil buscarEValidarMobil(final String sigla, ISwaggerRequest req, ISwaggerResponse resp)
 			throws Exception {
-		return buscarEValidarMobil(sigla, getSigaObjects(), req, resp, "Documento");
-	}
-
-	static void assertAcesso(final ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
-		if (!Ex.getInstance().getComp().podeAcessarDocumento(titular, lotaTitular, mob)) {
-			String s = "";
-			s += mob.doc().getListaDeAcessosString();
-			s = "(" + s + ")";
-			s = " " + mob.doc().getExNivelAcessoAtual().getNmNivelAcesso() + " " + s;
-	
-			Map<ExPapel, List<Object>> mapa = mob.doc().getPerfis();
-			boolean isInteressado = false;
-	
-			for (ExPapel exPapel : mapa.keySet()) {
-				Iterator<Object> it = mapa.get(exPapel).iterator();
-	
-				if ((exPapel != null) && (exPapel.getIdPapel() == ExPapel.PAPEL_INTERESSADO)) {
-					while (it.hasNext() && !isInteressado) {
-						Object item = it.next();
-						isInteressado = item.toString().equals(titular.getSigla()) ? true : false;
-					}
-				}
-	
-			}
-	
-			if (mob.doc().isSemEfeito()) {
-				if (!mob.doc().getCadastrante().equals(titular) && !mob.doc().getSubscritor().equals(titular)
-						&& !isInteressado) {
-					throw new AplicacaoException("Documento " + mob.getSigla() + " cancelado ");
-				}
-			} else {
-				throw new AplicacaoException("Documento " + mob.getSigla() + " inacessível ao usuário "
-						+ titular.getSigla() + "/" + lotaTitular.getSiglaCompleta() + "." + s);
-			}
-		}
+		return buscarEValidarMobil(sigla, ApiContext.getSigaObjects(), req, resp, "Documento");
 	}
 
 	/**

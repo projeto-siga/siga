@@ -36,6 +36,9 @@ public class CpArquivoExcluir implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
+	@Column(name = "ID_ARQ_EXC")
+	private Long idArqExc;
+
 	@Column(name = "CAMINHO")
 	private String caminho;
 
@@ -45,6 +48,14 @@ public class CpArquivoExcluir implements Serializable {
 
 	public void setCaminho(String caminho) {
 		this.caminho = caminho;
+	}
+
+	public Long getIdArqExc() {
+		return idArqExc;
+	}
+
+	public void setIdArqExc(Long idArqExc) {
+		this.idArqExc = idArqExc;
 	}
 	
 }

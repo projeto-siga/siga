@@ -4942,15 +4942,14 @@ public class ExBL extends CpBL {
 //			lotaSubscritor = marcador.getDpLotacaoIni().getLotacaoAtual();
 //		}
 		
-		// Localiza a última movimentação de marcação de lotação
+		// Localiza a última movimentação de marcação de lotação, para tratar o caso do mutuamente exclusivo
 		ExMovimentacao movAnterior = null;
-		if (marcador.getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO
-				&& marcador.getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.ATENDENTE) {
+		if (marcador.getIdFinalidade().isXor()) {
 			List<ExMovimentacao> movs = mob.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true);
 			if (!mob.isGeral())
 				movs.addAll(geral.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true));
 			for (ExMovimentacao mov : movs) {
-				if (mov.getMarcador() != null && mov.getMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO) {
+				if (mov.getMarcador() != null && mov.getMarcador().getIdFinalidade() == marcador.getIdFinalidade()) {
 					movAnterior = mov;
 					break;
 				}

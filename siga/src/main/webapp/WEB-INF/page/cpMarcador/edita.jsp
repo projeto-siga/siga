@@ -90,7 +90,7 @@
 									<c:forEach items="${listaFinalidade}" var="item">
 										<option value="${item.name()}"
 											${item eq marcador.idFinalidade ? 'selected' : ''}>
-											${item.descricao}</option>
+											${item.nome} - ${item.descricao}</option>
 									</c:forEach>
 								</select>
 							</div>

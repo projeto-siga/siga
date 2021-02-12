@@ -56,7 +56,7 @@ public class DocumentosSiglaMarcadoresDisponiveisGet implements IDocumentosSigla
 				for (CpMarcador m : marcadores) {
 					Marcador mr = new Marcador();
 					mr.idMarcador = m.getIdMarcador().toString();
-					mr.grupo = m.getIdFinalidade().getIdTpMarcador().getDescricao();
+					mr.grupo = m.getIdFinalidade().getGrupo().getNome();
 					mr.nome = m.getDescrMarcador();
 					ExPodeMarcarComMarcador pode = new ExPodeMarcarComMarcador(mob, m, titular, lotaTitular);
 					mr.ativo = pode.eval();

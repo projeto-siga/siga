@@ -79,9 +79,9 @@ public class CpMarcadorController extends SigaController {
 		List<CpMarcador> listMar = null;
 		try {
 			assertAcesso(ACESSO_CAD_MARCADOR_GERAL);
-			listMar = dao.listarCpMarcadoresPorLotacaoEGeral(getLotaCadastrante(), true);
+			listMar = dao.listarCpMarcadoresPorLotacaoEGeral(getLotaTitular(), true);
 		} catch (AplicacaoException e) {
-			listMar = dao.listarCpMarcadoresPorLotacao(getLotaCadastrante(), true);
+			listMar = dao.listarCpMarcadoresPorLotacao(getLotaTitular(), true);
 		}
 
 		result.include("listaMarcadores", listMar);

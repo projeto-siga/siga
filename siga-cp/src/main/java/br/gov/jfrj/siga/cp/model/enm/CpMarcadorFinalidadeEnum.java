@@ -7,80 +7,88 @@ import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.converter.IEnumWithId;
 
 public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
-	SISTEMA(1, "Sistema", "Marcador de Sistema", CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA, null, null, null, null, null,
-			null),
+	SISTEMA(1, CpMarcadorFinalidadeGrupoEnum.SISTEMA, "Sistema", "Marcador de Sistema",
+			CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA, null, null, null, null, null, null, false),
 	//
-	GERAL_ATENDENTE(2, "Geral - Tarja", "Marcador Geral", CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL,
-			CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME, CpMarcadorTipoDataEnum.DESATIVADA,
-			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
-			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.DESATIVADA),
+	TARJA(2, CpMarcadorFinalidadeGrupoEnum.TARJA, "Tarja",
+			"Marcador que pode ser definido por qualquer pessoa e estará visível para quem receber o documento",
+			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
+			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
+			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.OPCIONAL, false),
 	//
-	GERAL_ATENDENTE_PRAZO(3, "Geral - Alerta", "Exibir o marcador a partir de uma data especificada",
+	TARJA_AGENDADA(3, CpMarcadorFinalidadeGrupoEnum.TARJA, "Tarja Agendada",
+			"Marcador que pode ser definido por qualquer pessoa e estará visível, a partir de uma data definida, para quem receber o documento",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
 			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.OPCIONAL, CpMarcadorTipoExibicaoEnum.MENOR_DATA,
-			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.DESATIVADA),
+			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.OPCIONAL, false),
 	//
-	GERAL_ATENDENTE_PRAZOS(4, "Geral - Alerta de Prazo", "Alertar quanto a proximidade de um prazo final",
+	TARJA_PRAZOS(4, CpMarcadorFinalidadeGrupoEnum.TARJA, "Tarja com Prazos",
+			"Marcador que pode ser definido por qualquer pessoa e estará visível, a partir de uma data definida, para quem receber o documento, contendo a informação sobre a proximidade de um prazo",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
 			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.OBRIGATORIA,
 			CpMarcadorTipoExibicaoEnum.MENOR_DATA, CpMarcadorTipoInteressadoEnum.ATENDENTE,
-			CpMarcadorTipoTextoEnum.DESATIVADA),
+			CpMarcadorTipoTextoEnum.OPCIONAL, false),
 	//
-	GERAL_DIRECIONADO_PRAZO(4, "Geral - Alerta Direcionado", "Exibir o marcador para unidades ou pessoas",
+	TARJA_DIRECIONADA(5, CpMarcadorFinalidadeGrupoEnum.TARJA, "Tarja Direcionada",
+			"Marcador que pode ser definido por qualquer pessoa e estará visível para uma lotação ou pessoa  definida, independente da localização do documento",
+			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
+			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
+			CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA, CpMarcadorTipoTextoEnum.OPCIONAL, false),
+	//
+	TARJA_AGENDADA_DIRECIONADA(5, CpMarcadorFinalidadeGrupoEnum.TARJA, "Tarja Agendada Direcionada",
+			"Marcador que pode ser definido por qualquer pessoa e estará visível, a partir de uma data definida, para uma lotação ou pessoa definida, independente da localização do documento",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
 			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.OPCIONAL, CpMarcadorTipoExibicaoEnum.MENOR_DATA,
-			CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA, CpMarcadorTipoTextoEnum.DESATIVADA),
+			CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA, CpMarcadorTipoTextoEnum.OPCIONAL, false),
 	//
-	LOTACAO_PASTA(100, "Interno - Pasta", "Organizar o acervo em andamento na minha unidade",
-			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
-			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
-			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.DESATIVADA),
-	//
-	LOTACAO(101, "Interno - Etiqueta", "Marcar expediente/processo para todos",
-			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.TODAS_AS_VIAS_OU_ULTIMO_VOLUME,
-			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
-			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.DESATIVADA),
-	//
-	LOTACAO_PRAZO(102, "Interno - Etiqueta Agendada", "Marcar expediente/processo a partir de uma data",
+	TARJA_AGENDADA_XOR(6, CpMarcadorFinalidadeGrupoEnum.TARJA, "Tarja Agendada Mutuamente Exclusiva",
+			"Marcador, mutuamente exclusivo, que pode ser definido por qualquer pessoa e estará visível, a partir de uma data definida, para quem receber com o documento. Apenas um marcador desse tipo pode ser definido para um mesmo documento",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.TODAS_AS_VIAS_OU_ULTIMO_VOLUME,
 			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.OPCIONAL, CpMarcadorTipoExibicaoEnum.IMEDIATA,
-			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.DESATIVADA),
+			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.OPCIONAL, true),
 	//
-	LOTACAO_PRAZO_XOR(103, "Interno - Etiqueta Agendada Mutuamente Exclusiva",
-			"Remove o marcador atual caso seja definido um novo", CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO,
-			CpMarcadorTipoAplicacaoEnum.TODAS_AS_VIAS_OU_ULTIMO_VOLUME, CpMarcadorTipoDataEnum.OBRIGATORIA,
-			CpMarcadorTipoDataEnum.OPCIONAL, CpMarcadorTipoExibicaoEnum.IMEDIATA,
-			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.DESATIVADA),
+	ETIQUETA(100, CpMarcadorFinalidadeGrupoEnum.ETIQUETA, "Etiqueta",
+			"Marcador que pode ser definido por pessoa da minha lotação e estará visível para quem receber qualquer via do documento",
+			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.TODAS_AS_VIAS_OU_ULTIMO_VOLUME,
+			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
+			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.OPCIONAL, false),
 	//
-	LOTACAO_DIRECIONADO(104, "Interno - Etiqueta Direcionada", "Marcar expediente/processo para unidades ou pessoas",
+	ETIQUETA_AGENDADA(101, CpMarcadorFinalidadeGrupoEnum.ETIQUETA, "Etiqueta Agendada",
+			"Marcador que pode ser definido por pessoa da minha lotação e estará visível, a partir de uma data definida, para quem receber qualquer via do documento",
+			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.TODAS_AS_VIAS_OU_ULTIMO_VOLUME,
+			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.OPCIONAL, CpMarcadorTipoExibicaoEnum.IMEDIATA,
+			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.OPCIONAL, false),
+	//
+	ETIQUETA_DIRECIONADA(102, CpMarcadorFinalidadeGrupoEnum.ETIQUETA, "Etiqueta Direcionada",
+			"Marcador que pode ser definido por pessoa da minha lotação e estará visível para uma lotação ou pessoa definida, independente da localização do documento",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
 			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
-			CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA, CpMarcadorTipoTextoEnum.DESATIVADA),
+			CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA, CpMarcadorTipoTextoEnum.OPCIONAL, false),
 	//
-	LOTACAO_LISTA(105, "Interno - Lista", "Agrupar vias/processos de interesse",
+	PASTA(200, CpMarcadorFinalidadeGrupoEnum.PASTA, "Pasta", "Organizar o acervo em andamento na minha lotação",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
 			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
-			CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA, CpMarcadorTipoTextoEnum.DESATIVADA),
+			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.OPCIONAL, true),
 	//
-	LOTACAO_LISTA_PRAZO(106, "Interno - Lista Agendada", "Inserir via/processo em lista a partir de uma data",
-			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
-			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.OPCIONAL, CpMarcadorTipoExibicaoEnum.MENOR_DATA,
-			CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA, CpMarcadorTipoTextoEnum.DESATIVADA),
-//	//
-//	SINALIZAR_ATENDENTE_IMEDIATA(101, "Sinalizar",
-//			"Sinalizar, para todas as unidades que receberem o documento, no momento do recebimento",
+//	PASTA_PADRAO(201, CpMarcadorFinalidadeGrupoEnum.PASTA, "Pasta Padrão", "Pasta atribuída automaticamente ao documento tramitado para a minha lotação.",
 //			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
 //			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
-//			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.DESATIVADA),
-//	//
-//	SINALIZAR_ATENDENTE_DATAS(102, "Sinalizar com Prazo",
-//			"Sinalizar, para a unidade que estiver com o documento, a partir de uma data",
-//			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
-//			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.OPCIONAL, CpMarcadorTipoExibicaoEnum.MENOR_DATA,
-//			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.DESATIVADA)
-	;
+//			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.OPCIONAL, true),
+	//
+	LISTA(300, CpMarcadorFinalidadeGrupoEnum.LISTA, "Lista",
+			"Marcador que pode ser definido por pessoa da minha lotação para agrupar documentos de interesse de Pessoa ou Lotação definida",
+			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
+			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
+			CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA, CpMarcadorTipoTextoEnum.OPCIONAL, false),
+	//
+	LISTA_AGENDADA(301, CpMarcadorFinalidadeGrupoEnum.LISTA, "Lista Agendada",
+			"Marcador que pode ser definido por pessoa da minha lotação para agrupar documentos de interesse de Pessoa ou Lotação definida, a partir de uma data definida",
+			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
+			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.OPCIONAL, CpMarcadorTipoExibicaoEnum.MENOR_DATA,
+			CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA, CpMarcadorTipoTextoEnum.OPCIONAL, false);
 
 	private final Integer id;
+	private final CpMarcadorFinalidadeGrupoEnum grupo;
 	private final String nome;
 	private final String descricao;
 	private final CpTipoMarcadorEnum idTpMarcador;
@@ -90,12 +98,15 @@ public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
 	private CpMarcadorTipoExibicaoEnum idTpExibicao;
 	private CpMarcadorTipoInteressadoEnum idTpInteressado;
 	private CpMarcadorTipoTextoEnum idTpTexto;
+	private boolean xor;
 
-	private CpMarcadorFinalidadeEnum(Integer id, String nome, String descricao, CpTipoMarcadorEnum idTpMarcador,
-			CpMarcadorTipoAplicacaoEnum idTpAplicacao, CpMarcadorTipoDataEnum idTpDataPlanejada,
-			CpMarcadorTipoDataEnum idTpDataLimite, CpMarcadorTipoExibicaoEnum idTpExibicao,
-			CpMarcadorTipoInteressadoEnum idTpInteressado, CpMarcadorTipoTextoEnum idTpTexto) {
+	private CpMarcadorFinalidadeEnum(Integer id, CpMarcadorFinalidadeGrupoEnum grupo, String nome, String descricao,
+			CpTipoMarcadorEnum idTpMarcador, CpMarcadorTipoAplicacaoEnum idTpAplicacao,
+			CpMarcadorTipoDataEnum idTpDataPlanejada, CpMarcadorTipoDataEnum idTpDataLimite,
+			CpMarcadorTipoExibicaoEnum idTpExibicao, CpMarcadorTipoInteressadoEnum idTpInteressado,
+			CpMarcadorTipoTextoEnum idTpTexto, boolean xor) {
 		this.id = id;
+		this.grupo = grupo;
 		this.nome = nome;
 		this.descricao = descricao;
 		this.idTpMarcador = idTpMarcador;
@@ -105,6 +116,7 @@ public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
 		this.idTpExibicao = idTpExibicao;
 		this.idTpInteressado = idTpInteressado;
 		this.idTpTexto = idTpTexto;
+		this.xor = xor;
 	}
 
 	public static List<String> getList() {
@@ -117,6 +129,14 @@ public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
 
 	public Integer getId() {
 		return id;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public CpMarcadorFinalidadeGrupoEnum getGrupo() {
+		return grupo;
 	}
 
 	public String getDescricao() {
@@ -151,4 +171,14 @@ public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
 		return idTpTexto;
 	}
 
+	public static CpMarcadorFinalidadeEnum getById(Integer id) {
+		for (CpMarcadorFinalidadeEnum tp : CpMarcadorFinalidadeEnum.values())
+			if (tp.id.equals(id))
+				return tp;
+		return null;
+	}
+
+	public boolean isXor() {
+		return xor;
+	}
 }

@@ -18,6 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.vraptor;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -56,7 +58,7 @@ public abstract class ExSelecionavelController<T extends Selecionavel, DaoFiltro
 		return ExDao.getInstance();
 	}
 
-	protected List<CpMarcador> getEstados() throws AplicacaoException {
+	protected List<CpMarcador> getEstados(Long ultMovIdEstadoDoc) throws AplicacaoException {
 		Long[] ids = {
 				//Edson: favor manter ordem alfabética :-)
 				CpMarcador.MARCADOR_A_DEVOLVER,
@@ -100,6 +102,14 @@ public abstract class ExSelecionavelController<T extends Selecionavel, DaoFiltro
 				CpMarcador.MARCADOR_SOBRESTADO, 
 				CpMarcador.MARCADOR_TRANSFERIDO_A_ORGAO_EXTERNO
 		};
+		if (ultMovIdEstadoDoc != null) {
+			ArrayList<Long> a = new ArrayList<>();
+			a.addAll(Arrays.asList(ids));
+			if (!a.contains(ultMovIdEstadoDoc)) {
+				a.add(ultMovIdEstadoDoc);
+				ids = a.toArray(new Long[a.size()]);
+			}
+		}
 		return dao().listarMarcadores(ids);
 	}
 

@@ -14,6 +14,12 @@ public class ExEstaMarcadoComMarcador implements Expression {
 	private CpMarcador marcador;
 
 	public ExEstaMarcadoComMarcador(ExMobil mob, CpMarcador marcador) {
+		if (marcador == null)
+			throw new RuntimeException("marcador não pode ser nulo");
+		if (marcador.getIdInicial() == null)
+			throw new RuntimeException("marcador não pode ter id inicial nula");
+		if (mob == null)
+			throw new RuntimeException("mobil não pode ser nulo");
 		this.mob = mob;
 		this.marcador = marcador;
 	}

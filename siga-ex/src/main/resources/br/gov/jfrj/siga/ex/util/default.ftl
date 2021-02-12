@@ -2166,7 +2166,6 @@ Pede deferimento.</span><br/><br/><br/>
 [/#macro]
 
 [#macro cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho=false]
-	<!-- INICIO PRIMEIRO CABECALHO
 	<table style="float:none; clear:both;" width="100%" align="left" border="0" cellpadding="0"
 	    cellspacing="0" bgcolor="#FFFFFF">
 	    <tr bgcolor="#FFFFFF">
@@ -2203,7 +2202,6 @@ Pede deferimento.</span><br/><br/><br/>
 	        </td>
 	    </tr>
 	</table>
-	FIM PRIMEIRO CABECALHO -->
 [/#macro]
 
 [#macro cabecalhoCentralizado orgaoCabecalho=true]

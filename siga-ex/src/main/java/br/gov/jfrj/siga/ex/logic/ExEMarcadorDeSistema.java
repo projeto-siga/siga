@@ -16,7 +16,7 @@ public class ExEMarcadorDeSistema implements Expression {
 
 	@Override
 	public boolean eval() {
-		return marcador.getCpTipoMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA;
+		return marcador.getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA;
 	}
 
 	@Override

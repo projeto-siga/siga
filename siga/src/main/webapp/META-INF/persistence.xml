@@ -59,6 +59,7 @@
 
 		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorCorEnumConverter</class>
 		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorIconeEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorFinalidadeEnumConverter</class>
 		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoAplicacaoEnumConverter</class>
 		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoDataEnumConverter</class>
 		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoExibicaoEnumConverter</class>

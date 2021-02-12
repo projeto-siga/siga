@@ -1,28 +1,32 @@
-package br.gov.jfrj.siga.cp;
+package br.gov.jfrj.siga.cp.model.enm;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import br.gov.jfrj.siga.cp.converter.IEnumWithId;
 
-public enum CpMarcadorTipoAplicacaoEnum implements IEnumWithId {
-	GERAL(1, "Geral"),
+public enum CpMarcadorTipoInteressadoEnum implements IEnumWithId {
+	ATENDENTE(1, "Atendente"),
 	//
-	TODAS_AS_VIAS_OU_ULTIMO_VOLUME(2, "Em todas as vias"),
+	PESSOA(2, "Pessoa"),
 	//
-	VIA_ESPECIFICA_OU_ULTIMO_VOLUME(3, "Via específica ou último volume"),;
+	LOTACAO(3, "Lotacao"),
+	//
+	PESSOA_OU_LOTACAO(4, "Pessoa ou lotação"),
+	//
+	LOTACAO_OU_PESSOA(5, "Lotação ou pessoa");
 
 	private final Integer id;
 	private final String descricao;
 
-	private CpMarcadorTipoAplicacaoEnum(Integer id, String descricao) {
+	private CpMarcadorTipoInteressadoEnum(Integer id, String descricao) {
 		this.id = id;
 		this.descricao = descricao;
 	}
 
 	public static List<String> getList() {
 		List<String> list = new ArrayList<String>();
-		for (CpMarcadorTipoAplicacaoEnum item : values()) {
+		for (CpMarcadorTipoInteressadoEnum item : values()) {
 			list.add(item.descricao);
 		}
 		return list;
@@ -35,5 +39,4 @@ public enum CpMarcadorTipoAplicacaoEnum implements IEnumWithId {
 	public String getDescricao() {
 		return descricao;
 	}
-
 }

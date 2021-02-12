@@ -141,6 +141,7 @@ public class PessoasGet implements IPessoasGet {
 		// Lotacao Pessoa
 		DpLotacao l = p.getLotacao();
 		lotacao.idLotacao = l.getId().toString();
+		lotacao.idLotacaoIni = l.getIdLotacaoIni().toString();
 		lotacao.nome = l.getNomeLotacao();
 		lotacao.sigla = l.getSigla();
 		lotacao.orgao = orgao;
@@ -149,12 +150,14 @@ public class PessoasGet implements IPessoasGet {
 		DpCargo c = p.getCargo();
 		if (c != null) {
 			cargo.idCargo = c.getId().toString();
+			cargo.idCargoIni = c.getIdInicial().toString();
 			cargo.nome = c.getNomeCargo();
 		}
 		// Função Pessoa
 		DpFuncaoConfianca f = p.getFuncaoConfianca();
 		if (f != null) {
 			funcao.idFuncaoConfianca = f.getId().toString();
+			funcao.idFuncaoConfiancaIni = f.getIdInicial().toString();
 			funcao.nome = f.getNomeFuncao();
 		}
 

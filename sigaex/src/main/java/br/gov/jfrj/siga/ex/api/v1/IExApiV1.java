@@ -85,6 +85,7 @@ public interface IExApiV1 {
 		public String orgaoExternoDestinatario;
 		public String destinatariocampoextra;
 		public String descricaodocumento;
+		public String orgao;
 		public String nivelacesso;
 	}
 
@@ -104,6 +105,64 @@ public interface IExApiV1 {
 		public String planejada;
 		public String limite;
 		public String texto;
+	}
+
+	public class ModeloItem implements ISwaggerModel {
+		public String idModelo;
+		public String nome;
+		public String descr;
+	}
+
+	public class ClassificacaoItem implements ISwaggerModel {
+		public String idClassificacao;
+		public String sigla;
+		public String nome;
+	}
+
+	public class ModelosGetRequest implements ISwaggerRequest {
+	}
+
+	public class ModelosGetResponse implements ISwaggerResponse {
+		public List<ModeloItem> list;
+	}
+
+	public interface IModelosGet extends ISwaggerMethod {
+		public void run(ModelosGetRequest req, ModelosGetResponse resp) throws Exception;
+	}
+
+	public class ModelosIdGetRequest implements ISwaggerRequest {
+		public String id;
+	}
+
+	public class ModelosIdGetResponse implements ISwaggerResponse {
+		public String idModelo;
+		public String nome;
+		public String descr;
+		public String especie;
+		public String nivelDeAcesso;
+		public String classificacao;
+		public String classificacaoParaCriacaoDeVias;
+		public String tipoDeSubscritor;
+		public String tipoDeDestinatario;
+		public String tipoDeConteudo;
+		public String conteudo;
+	}
+
+	public interface IModelosIdGet extends ISwaggerMethod {
+		public void run(ModelosIdGetRequest req, ModelosIdGetResponse resp) throws Exception;
+	}
+
+	public class ClassificacoesGetRequest implements ISwaggerRequest {
+		public String idClassificacaoIni;
+		public String texto;
+	}
+
+	public class ClassificacoesGetResponse implements ISwaggerResponse {
+		public List<ClassificacaoItem> list;
+	}
+
+	public interface IClassificacoesGet extends ISwaggerMethod {
+		public void run(ClassificacoesGetRequest req, ClassificacoesGetResponse resp) throws Exception;
 	}
 
 	public class DocumentosSiglaArquivoGetRequest implements ISwaggerRequest {

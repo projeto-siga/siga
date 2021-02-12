@@ -19,6 +19,10 @@ tags:
     description: Consulta a Documentos
   - name: acao
     description: Ações em Documentos
+  - name: modelo
+    description: Informações sobre Modelos para a Criação de Documentos
+  - name: classificacao
+    description: Classificações Documentais
   - name: utils
     description: Utilitários
     
@@ -152,7 +156,7 @@ parameters:
   id:
     name: id
     in: path
-    description: Identificador da movimentação
+    description: Identificador da entidade
     required: true
     type: string
   lotacao:
@@ -188,9 +192,9 @@ parameters:
     type: string
   texto:
     name: texto
-    in: path
+    in: query
     description: Texto a ser pesquisado
-    required: true
+    required: false
     type: string    
   observacao:
     name: observacao
@@ -317,12 +321,125 @@ parameters:
     description: Arquivo para upload se necessário para operação.
     type: file
     required: false
+  idModeloInPath:
+    name: idModelo
+    in: path
+    description: Identificador do modelo
+    type: string
+    required: true
+  idClassificacaoIni:
+    name: idClassificacaoIni
+    in: query
+    description: Identificador da classificacao
+    type: string
+    required: false
    
 
 ################################################################################
 #                                           Paths                              #
 ################################################################################
 paths:
+  /modelos:
+    get:
+      summary: Obtem a lista de modelos que o usuário pode criar
+      tags: [modelo]
+      security:
+        - Bearer: []
+      parameters: []
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/ModeloItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /modelos/{id}:
+    get:
+      summary: Obtem informações sobre um modelo específico
+      tags: [modelo]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              idModelo:
+                type: string
+              nome:
+                type: string
+              descr:
+                type: string
+              especie:
+                type: string
+              nivelDeAcesso:
+                type: string
+              classificacao:
+                type: string
+              classificacaoParaCriacaoDeVias:
+                type: string
+              tipoDeSubscritor:
+                type: string
+              tipoDeDestinatario:
+                type: string
+              tipoDeConteudo:
+                type: string
+              conteudo:
+                type: string
+        
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /classificacoes:
+    get:
+      summary: "Pesquisa de classificação documental"
+      description: "Retorna uma lista de classificações. A pesquisa será feita de acordo com os parâmetros informados: 
+        <ul><li><b>id=</b> Pesquisa a classificação com determinado id inicial.</li>
+        <li><b>texto=</b> Pesquisa as classificações que contém no código de classificação documental o texto especificado.</li>"
+      tags: [classificacao]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/idClassificacaoIni"
+        - $ref: "#/parameters/texto"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/ClassificacaoItem"
+        403:
+          description: Acesso não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Nenhuma Pessoa foi encontrada para os parâmetros informados.
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+
+
   /documentos/{sigla}/arquivo:
     get:
       summary: Inicia o processo de geração do PDF completo de um documento para visualização
@@ -1008,3 +1125,26 @@ definitions:
         type: string
       texto:
         type: string
+
+  ModeloItem:
+    description: Lista modelos disponíveis
+    type: object
+    properties:
+      idModelo:
+        type: string
+      nome:
+        type: string
+      descr:
+        type: string
+
+  ClassificacaoItem:
+    description: Lista classificações documentais disponíveis
+    type: object
+    properties:
+      idClassificacao:
+        type: string
+      sigla:
+        type: string
+      nome:
+        type: string
+

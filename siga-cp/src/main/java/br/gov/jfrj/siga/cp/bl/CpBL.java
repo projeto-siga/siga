@@ -49,13 +49,6 @@ import br.gov.jfrj.siga.cp.AbstractCpAcesso.CpTipoAcessoEnum;
 import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
-import br.gov.jfrj.siga.cp.CpMarcadorCorEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorIconeEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoDataEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoTextoEnum;
 import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
@@ -64,7 +57,9 @@ import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpToken;
-import br.gov.jfrj.siga.cp.converter.IEnumWithId;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorCorEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorIconeEnum;
 import br.gov.jfrj.siga.cp.util.Excel;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.cp.util.SigaUtil;
@@ -1397,11 +1392,8 @@ public class CpBL {
 
 	public void gravarMarcador(final Long id, final DpPessoa cadastrante, final DpLotacao lotacao, final CpIdentidade identidade, 
 			final String descricao, final String descrDetalhada, final CpMarcadorCorEnum idCor, final CpMarcadorIconeEnum idIcone, final Integer grupoId, 
-			final CpTipoMarcadorEnum idTpMarcador, final CpMarcadorTipoAplicacaoEnum idTpAplicacao, final CpMarcadorTipoDataEnum idTpDataPlanejada, 
-			final CpMarcadorTipoDataEnum idTpDataLimite, 
-			final CpMarcadorTipoExibicaoEnum idTpExibicao,	final CpMarcadorTipoTextoEnum idTpTexto, final CpMarcadorTipoInteressadoEnum idTpInteressado 
-			) throws Exception {
-		if (idTpMarcador == CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA)
+			final CpMarcadorFinalidadeEnum idFinalidade) throws Exception {
+		if (idFinalidade == CpMarcadorFinalidadeEnum.SISTEMA)
 			throw new AplicacaoException ("Não é permitido o cadastro de marcadores de sistema.");
 			
 		if (descricao == null)
@@ -1411,12 +1403,15 @@ public class CpBL {
 			throw new AplicacaoException ("Nome do marcador tem mais de 40 bytes.");
 		
 		String msgLotacao = SigaMessages.getMessage("usuario.lotacao");
-		List<CpMarcador> listaMarcadoresLotacao = dao().listarCpMarcadoresPorLotacao(lotacao, true);
-		List<CpMarcador> listaMarcadoresLotacaoEGerais = new ArrayList<CpMarcador> (listaMarcadoresLotacao);
-		listaMarcadoresLotacaoEGerais.addAll(dao().listarCpMarcadoresGerais(true));
+		List<CpMarcador> listaMarcadoresLotacaoEGerais = dao().listarCpMarcadoresPorLotacaoEGeral(lotacao, true);
 		
-		if (idTpMarcador == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO && id == null 
-				&& listaMarcadoresLotacao.size() > 9) 
+		int c = 0;
+		for (CpMarcador m : listaMarcadoresLotacaoEGerais) 
+			if (m.getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO)
+				c++;
+		
+		if (idFinalidade.getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO && id == null 
+				&& c > 9) 
 			throw new AplicacaoException ("Atingiu o limite de 10 marcadores possíveis para " + msgLotacao);
 		
 		if (id == null && (listaMarcadoresLotacaoEGerais.stream()
@@ -1432,43 +1427,30 @@ public class CpBL {
 			marcadorAnt = dao().consultar(id, CpMarcador.class, false);
 			if (marcadorAnt != null) {
 				marcador.setHisIdIni(marcadorAnt.getHisIdIni());
+				marcador.setIdFinalidade(idFinalidade);
 				marcador.setOrdem(marcadorAnt.getOrdem());
-				marcador.setDpLotacaoIni(marcadorAnt.getDpLotacaoIni());
+				marcador.setDpLotacaoIni(idFinalidade.getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO ? marcadorAnt.getDpLotacaoIni() : null);
 				marcador.setDescrMarcador(descricao);
 				marcador.setDescrDetalhada(descrDetalhada);
 				marcador.setGrupoMarcador(2);
-				marcador.setCpTipoMarcador(idTpMarcador);
 				marcador.setIdCor(idCor);
 				marcador.setIdIcone(idIcone);
-				marcador.setIdTpAplicacao(idTpAplicacao);
-				marcador.setIdTpDataPlanejada(idTpDataPlanejada);
-				marcador.setIdTpDataLimite(idTpDataLimite);
-				marcador.setIdTpExibicao(idTpExibicao);
-				marcador.setIdTpTexto(idTpTexto);
-				marcador.setIdTpInteressado(idTpInteressado);
 				dao().gravarComHistorico(marcador, marcadorAnt, null, identidade);
 			} else {
 				throw new AplicacaoException ("Marcador não existente para esta " + msgLotacao 
 						+ " (" + id.toString() + ").");
 			}
 		} else {
-			Integer ordem = listaMarcadoresLotacao.size() + 1; 
+			Integer ordem = c + 1; 
 			CpMarcador marcador = new CpMarcador();
+			marcador.setIdFinalidade(idFinalidade);
 			marcador.setDescrMarcador(descricao);
 			marcador.setDescrDetalhada(descrDetalhada);
 			marcador.setGrupoMarcador(grupoId);
-			marcador.setCpTipoMarcador(idTpMarcador);
 			marcador.setIdCor(idCor);
 			marcador.setIdIcone(idIcone);
-			marcador.setIdTpAplicacao(idTpAplicacao);
-			marcador.setIdTpDataPlanejada(idTpDataPlanejada);
-			marcador.setIdTpDataLimite(idTpDataLimite);
-			marcador.setIdTpExibicao(idTpExibicao);
-			marcador.setIdTpTexto(idTpTexto);
-			marcador.setIdTpInteressado(idTpInteressado);
-			marcador.setDpLotacaoIni(lotacao.getLotacaoInicial());
+			marcador.setDpLotacaoIni(idFinalidade.getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO ? lotacao.getLotacaoInicial() : null);
 			marcador.setOrdem(ordem);
-			
 			dao().gravarComHistorico(marcador, null, null, identidade);
 		}
 	}

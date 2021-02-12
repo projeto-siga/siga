@@ -35,6 +35,7 @@ public class AcessoInterceptor  {
         this.so = so;
     }
     
+
     @AroundCall
     public void intercept(SimpleInterceptorStack stack) {
     	SrSigaPermissaoPerfil.setaPermissoes(so, result);

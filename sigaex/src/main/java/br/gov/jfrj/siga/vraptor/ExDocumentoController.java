@@ -22,8 +22,6 @@
  */
 package br.gov.jfrj.siga.vraptor;
 
-import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
-
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -35,6 +33,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.ParseException;
@@ -71,6 +70,7 @@ import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.GZip;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaMessages;
@@ -806,9 +806,10 @@ public class ExDocumentoController extends ExController {
 		boolean modeloEncontrado = false;
 		ListaHierarquica lh = null;
 		if (jsonHierarquiaDeModelos != null) {
+			String json = decodeHierarquiaDeModelos(jsonHierarquiaDeModelos);
 			ObjectMapper mapper = new ObjectMapper();
 			try {
-				lh = mapper.readValue(jsonHierarquiaDeModelos,
+				lh = mapper.readValue(json,
 						ListaHierarquica.class);
 				for (ListaHierarquicaItem m : lh.getList()) {
 					if (m.getValue() != null
@@ -830,7 +831,7 @@ public class ExDocumentoController extends ExController {
 
 			ObjectMapper mapper = new ObjectMapper();
 			try {
-				jsonHierarquiaDeModelos = mapper.writeValueAsString(lh);
+				jsonHierarquiaDeModelos = encodeHierarquiaDeModelos(mapper.writeValueAsString(lh));
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
@@ -862,8 +863,7 @@ public class ExDocumentoController extends ExController {
 		result.include("podeEditarData", podeEditarData);
 		result.include("podeEditarDescricao", podeEditarDescricao);
 		result.include("hierarquiaDeModelos", lh.getList());
-		result.include("jsonHierarquiaDeModelos",
-				escapeHtml(jsonHierarquiaDeModelos));
+		result.include("jsonHierarquiaDeModelos", jsonHierarquiaDeModelos);
 		result.include("podeEditarModelo", exDocumentoDTO.getDoc().isFinalizado());
 		result.include("podeTrocarPdfCapturado", podeTrocarPdfCapturado(exDocumentoDTO));
 		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
@@ -871,6 +871,29 @@ public class ExDocumentoController extends ExController {
 		// Desabilita a proteção contra injeção maldosa de html e js
 		this.response.addHeader("X-XSS-Protection", "0");
 		return exDocumentoDTO;
+	}
+
+	private String encodeHierarquiaDeModelos(String json) {
+		byte[] compressed;
+		try {
+			compressed = GZip.compress(json.getBytes(StandardCharsets.UTF_8));
+		} catch (IOException e) {
+			throw new RuntimeException("Erro codificando hierarquia de modelos", e);
+		}
+		String base64 = java.util.Base64.getEncoder().encodeToString(compressed);
+		return base64;
+	}
+
+	private String decodeHierarquiaDeModelos(String base64) {
+		byte[] compressed = java.util.Base64.getDecoder().decode(base64);
+		byte[] decompressed;
+		try {
+			decompressed = GZip.decompress(compressed);
+		} catch (IOException e) {
+			throw new RuntimeException("Erro decodificando hierarquia de modelos", e);
+		}
+		String json = new String(decompressed, StandardCharsets.UTF_8);
+		return json;
 	}
 
 	private Object podeTrocarPdfCapturado(ExDocumentoDTO exDocumentoDTO) {

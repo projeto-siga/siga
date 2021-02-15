@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "7c5a0a5caac5a5ab0914ab4fa6c7dc17",
+    "revision": "b7211b50000e242edb20824b400d2bb5",
     "url": "/siga-le/index.html"
   },
   {
@@ -8,19 +8,19 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/siga-le/manifest.json"
   },
   {
-    "revision": "718cc534a4d249f2cadc",
+    "revision": "b5519519c588fe3a401a",
     "url": "/siga-le/static/css/app.02375cb0.css"
   },
   {
-    "revision": "f211b5340acb4978a6b1",
+    "revision": "a73b02aa3b5a2c661f96",
     "url": "/siga-le/static/css/chunk-vendors.bd8198de.css"
   },
   {
-    "revision": "718cc534a4d249f2cadc",
-    "url": "/siga-le/static/js/app.da74d767.js"
+    "revision": "b5519519c588fe3a401a",
+    "url": "/siga-le/static/js/app.82a5afbe.js"
   },
   {
-    "revision": "f211b5340acb4978a6b1",
-    "url": "/siga-le/static/js/chunk-vendors.dedc9347.js"
+    "revision": "a73b02aa3b5a2c661f96",
+    "url": "/siga-le/static/js/chunk-vendors.fa15f6d4.js"
   }
 ]);

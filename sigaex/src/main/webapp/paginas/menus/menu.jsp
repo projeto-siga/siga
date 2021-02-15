@@ -133,17 +133,17 @@
 				<li><a class="dropdown-item" href="/sigaex/app/forma/listar">Cadastro
 						de Espécies</a></li>
 				<li><a class="dropdown-item" href="/sigaex/app/modelo/listar">Cadastro
-						de modelos</a></li>
+						de Modelos</a></li>
 				<c:if
 					test="${false and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;DESP:Tipos de despacho')}">
 					<li><a class="dropdown-item"
 						href="/sigaex/app/despacho/tipodespacho/listar">Cadastro de
-							tipos de despacho</a></li>
+							Tipos de Despacho</a></li>
 				</c:if>
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;CFG:Configurações')}">
 					<li><a class="dropdown-item"
-						href="/sigaex/app/configuracao/listar">Cadastro de configurações</a></li>
+						href="/sigaex/app/configuracao/listar">Cadastro de Configurações</a></li>
 								
 				</c:if>
 
@@ -151,7 +151,7 @@
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;EMAIL:Email de Notificação')}">
 					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/emailNotificacao/listar">Cadastro
-							de email de notificação</a></li>
+							de Email de Notificação</a></li>
 				</c:if>
 
 				<c:if
@@ -159,12 +159,6 @@
 					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/classificacao/listar">Classificação
 							Documental</a></li>
-				</c:if>
-				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;FE: Ferramentas;CAD_MARCADOR: Cadastro de Marcadores')}">
-					<li><a class="dropdown-item"
-						href="/siga/app/marcador/listar">Cadastro de 
-							Marcadores</a></li>
 				</c:if>
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;TT:Tabela de Temporalidade')}">

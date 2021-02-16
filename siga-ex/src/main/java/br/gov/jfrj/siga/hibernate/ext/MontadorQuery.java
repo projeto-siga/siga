@@ -28,7 +28,7 @@ public class MontadorQuery implements IMontadorQuery {
 		StringBuffer sbf = new StringBuffer();
 
 		if (apenasCount)
-			sbf.append("select count(doc) from ExMarca label inner join label.exMobil mob inner join label.exMobil.exDocumento doc");
+			sbf.append("select count(1) from ExMarca label inner join label.exMobil mob inner join mob.exDocumento doc");
 		else
 			sbf.append("select doc, mob, label from ExMarca label inner join label.exMobil mob inner join mob.exDocumento doc");
 

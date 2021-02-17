@@ -14,7 +14,7 @@
 			<div class="card-header">
 				<div class="row">
 					<div class="col-sm-9">
-						<h5 class="titulo-principal-etapa" id="tituloPrincipalEtapa">Nova chave PIN</h5>
+						<h5 class="titulo-principal-etapa" id="tituloPrincipalEtapa">Troca de chave PIN</h5>
 					</div>
 				</div>
 			</div>
@@ -23,37 +23,17 @@
 				<form name="formularioCadastro">				
 					<div id="apresentacaoPin" class="etapa  js-etapa">
 						<div class="row">
-							<div class="col-md-12 col-lg-6">
-								<div class="py-5 text-center">
-								    <img class="d-block mx-auto mb-4" src="/siga/imagens/siga-pin.png" alt="" width="72" height="72">
-								    <h2>SIGA PIN</h2>
-								    <p >Agora assinar e autenticar os documentos ficou mais <strong>prático</strong> e <strong>seguro</strong>.</p>
-								    <p>Assine e autentique documentos a partir de uma <strong>chave pessoal</strong> desassociada da sua senha de acesso ao sistema.</p>	
-								    <p class="mt-5">Vamos lá! Clique em próximo para definir sua chave PIN.</p>							    
-								 </div>
-							</div>
-							<div class="col-md-12 col-lg-6 text-left">
-								<h2 class="mt-5"><span class="badge badge-pill badge-success">1</span> Defina chave PIN</h2>
-									<ul>
-										<li>Utilize somente números</li>
-										<li>Evite números conhecidos, como data de nascimento, telefone, etc..</li>
-										<li>Não compartilhe sua chave</li>
-									</ul>
-									
-								<h2 class="mt-5"><span class="badge badge-pill badge-success">2</span> Assine e Autentique documentos</h2>
-									<ul>
-										<li>Acesse seus documentos pendente de Assinatura ou Autenticação</li>
-										<li>Selecione Assinar ou Autenticar com Senha (PIN)</li>
-										<li>Insira sua chave PIN quando solicitado</li>
-									</ul>
-							</div>
+													<h4 class="text-center p-4">
+								<label for="tipoConfiguracao">Defina uma chave numérica de 8 dígitos</label>							
+							</h4>
+			
 						</div>
 					</div>
 					
 					<div id="cadastroPinEtapa" class="etapa  js-etapa">
 						<div class="container">
 							<h4 class="text-center p-4">
-								<label for="cadastroPinEtapa">Defina uma chave numérica de 8 dígitos</label>							
+								<label for="cadastroPinEtapa">Troca de chave PIN</label>							
 							</h4>
 							
 							<form class="needs-validation" novalidate>							
@@ -75,6 +55,14 @@
 										  </div>
 										</c:if>
 										
+										<label for="pinUserCurrent">Informe sua chave PIN atual</label>
+										<div class="input-group input-group-lg">
+										  <div class="input-group-prepend">
+										    <span class="input-group-text" id="inputGroup-sizing-lg"><i class="fa fa-key"></i></span>
+										  </div>
+										  <input type="password" id="pinUserCurrent" class="form-control " style="text-align: center;" aria-describedby="passwordHelp" minlength="8" maxlength="8" size="8" autocomplete="new-password" autofocus inputmode="numeric" required  />
+										</div>
+										
 										<label for="pinUser">Nova chave PIN</label>
 										<div class="input-group input-group-lg">
 										  <div class="input-group-prepend">
@@ -82,7 +70,7 @@
 										  </div>
 										  <input type="password" id="pinUser" class="form-control " style="text-align: center;" aria-describedby="passwordHelp" minlength="8" maxlength="8" size="8" autocomplete="new-password" autofocus inputmode="numeric" required  />
 										  <div class="invalid-feedback">
-										  	Seu PIN para Assinatura de Documentos com Senha deve conter apenas números e deve ter 8 dígitos.
+										  	Sua nova chave PIN deve conter apenas números e deve ter 8 dígitos.
 										  </div>
 										</div>
 		

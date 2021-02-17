@@ -46,6 +46,20 @@ public class PinController extends SigaController {
 
 
 	}
+	
+	@Get
+	@Path("/troca")
+	public void troca() throws Exception {	
+
+
+	}
+	
+	@Get
+	@Path("/reset")
+	public void reset() throws Exception {	
+
+
+	}
 			
 
 }

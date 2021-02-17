@@ -15,6 +15,8 @@ tags:
     description: Autenticação
   - name: cadastro
     description: Consulta nos Cadastros
+  - name: PIN
+    description: API para Criação, Troca e Reset de chave PIN
   - name: utils
     description: Utilitários
     
@@ -59,6 +61,18 @@ parameters:
     name: pin
     in: query
     description: Chave PIN para Segundo Fator de Autenticação e Assinatura e Autenticação com Senha
+    required: true
+    type: string
+  pinAtual:
+    name: pinAtual
+    in: query
+    description: Chave PIN Atual para Confirmação da Troca de PIN
+    required: true
+    type: string
+  tokenPin:
+    name: tokenPin
+    in: query
+    description: Token para Reset de Chave PIN
     required: true
     type: string
   lotacao:
@@ -362,7 +376,7 @@ paths:
   /pessoas/pin:
     post:
       consumes: ["application/x-www-form-urlencoded"]
-      tags: [cadastro]
+      tags: [PIN]
       security:
         - Bearer: []      
       parameters:
@@ -380,6 +394,75 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
+            
+  /pessoas/pin/trocar:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [PIN]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/pinAtual"
+        - $ref: "#/parameters/pin"
+      summary: Troca de chave PIN para Assinatura e Autenticação de Documentos e Segundo Fator de Autenticação.
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /pessoas/pin/reset:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [PIN]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/tokenPin"
+        - $ref: "#/parameters/pin"
+      summary: Esqueceu chave PIN.
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"  
+            
+  /pessoas/pin/gerar-token-reset:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [PIN]
+      security:
+        - Bearer: []      
+      summary: Gera Token e Envia para Email cadastrado para Reset de PIN.
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              tokenPin:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"           
+            
   
   /lotacoes:
     get:
@@ -461,7 +544,7 @@ paths:
         500:
           description: Error ocurred
           schema:
-            $ref: "#/definitions/Error"            
+            $ref: "#/definitions/Error"        
   
   /orgaos/{sigla}:
     get:

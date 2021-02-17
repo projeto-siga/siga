@@ -326,20 +326,8 @@ public interface ISigaApiV1 {
 		public void run(MarcadoresPostRequest req, MarcadoresPostResponse resp) throws Exception;
 	}
 
-	public class PessoasGetRequest implements ISwaggerRequest {
-		public String idPessoaIni;
-		public String texto;
-		public String cpf;
-	}
-
-	public class PessoasGetResponse implements ISwaggerResponse {
-		public List<Pessoa> list;
-	}
-
-	public interface IPessoasGet extends ISwaggerMethod {
-		public void run(PessoasGetRequest req, PessoasGetResponse resp) throws Exception;
-	}
-
+	
+	/* ---------- PIN ----------- */ //TODO: Criar as classes
 	public class PessoasPinPostRequest implements ISwaggerRequest {
 		public String pin;
 	}
@@ -351,19 +339,48 @@ public interface ISigaApiV1 {
 	public interface IPessoasPinPost extends ISwaggerMethod {
 		public void run(PessoasPinPostRequest req, PessoasPinPostResponse resp) throws Exception;
 	}
+
+	public class PessoasPinTrocarPostRequest implements ISwaggerRequest {
+		public String pinAtual;
+		public String pin;
+	}
+
+	public class PessoasPinTrocarPostResponse implements ISwaggerResponse {
+		public String mensagem;
+	}
+
+	public interface IPessoasPinTrocarPost extends ISwaggerMethod {
+		public void run(PessoasPinTrocarPostRequest req, PessoasPinTrocarPostResponse resp) throws Exception;
+	}
+
+	public class PessoasPinResetPostRequest implements ISwaggerRequest {
+		public String tokenPin;
+		public String pin;
+	}
+
+	public class PessoasPinResetPostResponse implements ISwaggerResponse {
+		public String mensagem;
+	}
+
+	public interface IPessoasPinResetPost extends ISwaggerMethod {
+		public void run(PessoasPinResetPostRequest req, PessoasPinResetPostResponse resp) throws Exception;
+	}
+
+	public class PessoasPinGerarTokenResetPostRequest implements ISwaggerRequest {
+	}
+
+	public class PessoasPinGerarTokenResetPostResponse implements ISwaggerResponse {
+		public String mensagem;
+		public String tokenPin;
+	}
+
+	public interface IPessoasPinGerarTokenResetPost extends ISwaggerMethod {
+		public void run(PessoasPinGerarTokenResetPostRequest req, PessoasPinGerarTokenResetPostResponse resp) throws Exception;
+	}
 	
-	public class LotacoesGetRequest implements ISwaggerRequest {
-		public String texto;
-		public String idLotacaoIni;
-	}
+	/* ------- END PIN -------- */
+	
 
-	public class LotacoesGetResponse implements ISwaggerResponse {
-		public List<Lotacao> list;
-	}
-
-	public interface ILotacoesGet extends ISwaggerMethod {
-		public void run(LotacoesGetRequest req, LotacoesGetResponse resp) throws Exception;
-	}
 
 	public class TokenCriarPostRequest implements ISwaggerRequest {
 		public String username;
@@ -378,16 +395,6 @@ public interface ISigaApiV1 {
 		public void run(TokenCriarPostRequest req, TokenCriarPostResponse resp) throws Exception;
 	}
 
-	public class AcessosGetRequest implements ISwaggerRequest {
-	}
-
-	public class AcessosGetResponse implements ISwaggerResponse {
-		public List<AcessoItem> list;
-	}
-
-	public interface IAcessosGet extends ISwaggerMethod {
-		public void run(AcessosGetRequest req, AcessosGetResponse resp) throws Exception;
-	}
 	
 	public class NotificacoesGetRequest implements ISwaggerRequest {
 		public String sigla;

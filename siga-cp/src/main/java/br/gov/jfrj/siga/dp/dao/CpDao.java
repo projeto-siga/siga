@@ -44,6 +44,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -2693,12 +2694,7 @@ public class CpDao extends ModeloDao {
 		predicateAnd = criteriaBuilder.and(predicateEqualTipo,predicateEqualToken);
 		criteriaQuery.where(predicateAnd);
 		
-		List<CpToken> l = em().createQuery(criteriaQuery).getResultList(); 
-		if(l.size() > 0) {
-			return l.get(0);
-		} else {
-			return null;
-		}			
+		return em().createQuery(criteriaQuery).getResultStream().findFirst().orElse(null);		
 	}
 	
 	public CpToken obterCpTokenPorTipoIdRef(final Long idTpToken, final Long idRef) {
@@ -2707,20 +2703,19 @@ public class CpDao extends ModeloDao {
 		CriteriaQuery<CpToken> criteriaQuery = criteriaBuilder.createQuery(CpToken.class);	
 		Root<CpToken> cpTokenRoot = criteriaQuery.from(CpToken.class);
 
-		Predicate predicateAnd;
 		Predicate predicateEqualTipo = criteriaBuilder.equal(cpTokenRoot.get("idTpToken"), idTpToken);
 		Predicate predicateEqualToken = criteriaBuilder.equal(cpTokenRoot.get("idRef"), idRef);
-		Predicate predicateNullDtExp = criteriaBuilder.isNull(cpTokenRoot.get("dtExp"));
 		
-		predicateAnd = criteriaBuilder.and(predicateEqualTipo,predicateEqualToken,predicateNullDtExp);
+		Predicate predicateNullDtExp = criteriaBuilder.isNull(cpTokenRoot.get("dtExp"));
+		Predicate predicateGreaterThanDtExp = criteriaBuilder.greaterThanOrEqualTo(cpTokenRoot.get("dtExp"), this.consultarDataEHoraDoServidor());
+		Predicate predicateNullOrDtExpGreater = criteriaBuilder.or(predicateGreaterThanDtExp,predicateNullDtExp);
+			
+		Predicate predicateAnd = criteriaBuilder.and(predicateEqualTipo,predicateEqualToken,predicateNullOrDtExpGreater);
 		criteriaQuery.where(predicateAnd);
 		
-		List<CpToken> l = em().createQuery(criteriaQuery).getResultList(); 
-		if(l.size() > 0) {
-			return l.get(0);
-		} else {
-			return null;
-		}			
+		criteriaQuery.orderBy(criteriaBuilder.desc(cpTokenRoot.get("dtIat")));
+		
+		return em().createQuery(criteriaQuery).getResultStream().findFirst().orElse(null);	
 	}
 
 	public List<CpMarcador> listarCpMarcadoresGerais(Boolean ativos) {

@@ -24,6 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -1467,7 +1470,6 @@ public class CpBL {
 				Date dt = dao().consultarDataEHoraDoServidor();
 				final String pinHash = GeraMessageDigest.calcSha256(pin);
 
-				dao().iniciarTransacao();
 				CpIdentidade i = null;
 				for (CpIdentidade cpIdentidade : listaIdentidades) {
 					i = new CpIdentidade();
@@ -1478,13 +1480,142 @@ public class CpBL {
 					dao().gravarComHistorico(i, cpIdentidade, dt, idCadastrante);
 				}
 
-				dao().commitTransacao();
 			} catch (final Exception e) {
-				dao().rollbackTransacao();
 				throw new AplicacaoException("Ocorreu um erro durante a gravação", 0, e);
 			}
 		} else {
 			throw new AplicacaoException("Senha Atual não confere e/ou Senha nova diferente de confirmação");
+		}
+	}
+	
+	public Boolean consisteFormatoPin(String pin) throws RegraNegocioException {
+		boolean formatoPinIsValido = false;
+		
+		if (pin.isEmpty()) {
+			throw new RegraNegocioException("Chave PIN não informada.");
+		}
+		
+		if (!SigaUtil.isNumeric(pin)) {
+			throw new RegraNegocioException("Chave PIN deve conter apenas dígitos númericos (0-9).");
+		}
+		
+		if (pin.length() != CpIdentidade.pinLength) {
+			throw new RegraNegocioException("Chave deve ter "+String.valueOf(CpIdentidade.pinLength)+" dígitos numéricos.");
+		}	
+				
+		formatoPinIsValido = true;
+		
+		return formatoPinIsValido;
+	}
+	
+	public Boolean validaHashPin(String pin, CpIdentidade identidadeCadastrante) throws RegraNegocioException, NoSuchAlgorithmException {
+		String hashPinAValidar = null;
+		boolean hashPinIsValido = false;
+		
+		if (identidadeCadastrante == null) {
+			throw new RegraNegocioException("Não é possível validar chave PIN: Identidade não informada.");
+		}
+
+		hashPinAValidar = GeraMessageDigest.calcSha256(pin);	
+		hashPinIsValido = hashPinAValidar.equals(identidadeCadastrante.getPinIdentidade());
+		
+		return hashPinIsValido;
+	}
+	
+	public Boolean validaPinIdentidade(String pin,CpIdentidade identidadeCadastrante) throws RegraNegocioException, NoSuchAlgorithmException {
+		
+		boolean pinValido = false;
+		
+		if (identidadeCadastrante.getPinIdentidade() == null) {
+			throw new RegraNegocioException("Não é possível validar chave PIN: Não existe chave cadastrada.");
+		}
+		
+		consisteFormatoPin(pin);
+		pinValido = validaHashPin(pin,identidadeCadastrante);
+
+		if (!pinValido) {
+			throw new RegraNegocioException("Chave PIN atual informada não coincide com a cadastrada.");
+		}	
+	
+		return pinValido;
+	}
+	
+	
+	public CpToken gerarTokenResetPin(Long cpf) {
+		try {
+			CpToken tokenResetPin = new CpToken();
+			tokenResetPin = dao().obterCpTokenPorTipoIdRef(2L,cpf); //Se tem token não expirado, devolve token
+			if (tokenResetPin == null ) {
+				tokenResetPin = new CpToken();
+				
+				//Seta tipo 2 - Token para Reset PIN
+				tokenResetPin.setIdTpToken(2L);
+				tokenResetPin.setToken(SigaUtil.randomNumerico(8));
+				tokenResetPin.setIdRef(cpf);
+				
+				/* HORA ATUAL */
+				GregorianCalendar gc = new GregorianCalendar();
+				Date dt = dao().consultarDataEHoraDoServidor();
+				gc.setTime(dt);
+
+				
+				/* EXP - Expiração do Token */
+				gc.add(Calendar.HOUR, 1);
+				tokenResetPin.setDtExp(gc.getTime());	
+
+				try {
+					dao().gravar(tokenResetPin);
+				} catch (final Exception e) {
+	
+					throw new AplicacaoException("Erro na gravação", 0, e);
+				}
+			} 
+			return tokenResetPin;
+
+			
+		} catch (final Exception e) {
+			throw new AplicacaoException("Ocorreu um erro ao gerar o Token.", 0, e);
+		}
+	}
+	
+	public Boolean isTokenResetPinValido(Long cpf, String token) {
+		Boolean isTokenValido = false;
+		try {
+			CpToken tokenResetPin = new CpToken();
+			tokenResetPin = dao().obterCpTokenPorTipoToken(2L,token); 
+			if (tokenResetPin != null ) {
+				if (cpf.equals(tokenResetPin.getIdRef())) {
+					Date dt = dao().consultarDataEHoraDoServidor();
+					LocalDateTime dtNow = LocalDateTime.ofInstant(dt.toInstant(), ZoneId.systemDefault());
+					LocalDateTime dtExp = LocalDateTime.ofInstant(tokenResetPin.getDtExp().toInstant(), ZoneId.systemDefault());
+					
+					isTokenValido = dtNow.isBefore(dtExp);			
+				}
+			}
+
+			return isTokenValido;
+			
+		} catch (final Exception e) {
+			throw new AplicacaoException("Ocorreu um erro ao validar o Token.", 0, e);
+		}
+	}
+	
+	public void invalidarTokenUtilizado(Long cpf, String token) {
+		try {
+			CpToken tokenResetPin = new CpToken();
+			tokenResetPin = dao().obterCpTokenPorTipoToken(2L,token); 
+			if (tokenResetPin != null ) {
+				tokenResetPin.setDtExp(tokenResetPin.getDtIat());
+				try {
+					dao().gravar(tokenResetPin);
+				} catch (final Exception e) {
+	
+					throw new AplicacaoException("Erro na gravação", 0, e);
+				}
+			}
+			
+		} catch (final Exception e) {
+			throw new AplicacaoException("Ocorreu um erro ao validar o Token.", 0, e);
 		}
 	}
 	

@@ -8,8 +8,6 @@
 		</exclusions>
 		
 		<dependencies>
-			<module name="sigadoc.fop"/>
-		
 			<module name="org.hibernate" export="true" />
 
 			<module name="org.apache.commons.lang" />
@@ -22,7 +20,7 @@
 			<module name="javax.api" />
 			
 			<!-- Dependencia com conversor HTML2PDF -->
-			<module name="sigadoc.ext" />
+			<module name="sigadoc.ext" optional="true" />
 		</dependencies>
 
 	</deployment>

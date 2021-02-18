@@ -110,7 +110,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 
 			@Override
 			public boolean test() throws Exception {
-				try {
+				try (ApiContext ctx = new ApiContext(false, false)) {
 					return ExDao.getInstance().dt() != null;
 				} catch (Exception e) {
 					e.printStackTrace(System.out);
@@ -226,6 +226,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		
 		addPublicProperty("exibe.nome.acesso", "false");
 				
+		addPublicProperty("modelos.cabecalho.brasao", "contextpath/imagens/brasaoColoridoTRF2.png");
 		addPublicProperty("modelos.cabecalho.titulo", "JUSTIÇA FEDERAL");
 		addPublicProperty("modelos.cabecalho.subtitulo", null);
 		

@@ -1370,6 +1370,7 @@ public class ExDocumentoController extends ExController {
 		result.include("param", exDocumentoDto.getParamsEntrevista());
 	}
 	
+	@Transacional
 	@Post("/app/expediente/doc/reordenar")
 	public void reordenar(String idDocumentos, String sigla, boolean isVoltarParaOrdemOriginal) throws Exception {				
 		ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO();						

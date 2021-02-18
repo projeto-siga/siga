@@ -9,6 +9,11 @@
 	<link rel="stylesheet" href="/siga/css/siga-pin.css" type="text/css" media="screen, projection"/>
  	
  	<div class="container-fluid">
+ 		<c:if test="${baseTeste}">
+			<div class="alert alert-warning" role="alert">
+			  ATENÇÃO: Esta é uma versão de testes. Para sua segurança, não utilize a mesmo PIN do Ambiente Oficial.
+			</div>
+		</c:if>
 		<div class="card bg-light mb-3">
 				
 			<div class="card-header">
@@ -33,7 +38,7 @@
 								 		<p><span class="font-weight-bold"> ${cadastrante.emailPessoaAtualParcialmenteOculto}</span></p>
 								 	</c:if>	
 								 		
-								    <button type="button" class="btn btn-primary btn-lg mt-2">Enviar Código <i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+								    <button type="button" id="btnEnviarCodigo" class="btn btn-primary btn-lg mt-2">Enviar Código <i class="fa fa-paper-plane" aria-hidden="true"></i></button>
 								
 								</div>
 							</div>
@@ -53,10 +58,10 @@
 	
 										<label for="pinUserCurrent">Informe o código enviado</label>
 										<div class="input-group input-group-lg">
-				   						  <input type="text" id="pinUserCurrent" class="form-control " style="text-align: center;" aria-describedby="passwordHelp" minlength="8" maxlength="8" size="8" autocomplete="new-password" autofocus inputmode="numeric" required  />
+				   						  <input type="text" id="tokenPin" class="form-control " style="text-align: center;" aria-describedby="passwordHelp" minlength="8" maxlength="8" size="8" autocomplete="new-password" autofocus inputmode="numeric" required  />
 										</div>
 										<div class="input-group input-group-lg">
-										  <small class="form-text text-muted">Caso não tenha recebido o e-mail com o código, <a href="#">clique aqui</a> para reenviar.</small>
+										  <small class="form-text text-muted">Caso não tenha recebido o e-mail com o código, <button type="button" id="btnReenviarCodigo" class="btn btn-link p-0 border-0">clique aqui</button> para reenviar.</small>
 										</div>
 										<hr />
 										<label for="pinUser">Nova chave PIN</label>
@@ -117,11 +122,7 @@
 						  	<button type="button" class="btn  btn-primary btn-lg  btn-proximo  js-btn-proximo">Próximo <i class="fas fa-arrow-right"></i></button>					    					  
 					  	</div>
 					</div>									
-					
-					<div class="text-center  pt-4">
-						<span class="indicador-etapa  js-indicador-etapa"></span>
-						<span class="indicador-etapa  js-indicador-etapa"></span>
-					</div>										
+														
 				</form>
 			</div>			
 		</div>
@@ -136,5 +137,5 @@
 	</siga:siga-modal>	
 				
 	<script type="text/javascript" src="/siga/javascript/siga.multiploselect.js"></script>	
-	<script type="text/javascript" src="/siga/javascript/siga-pin.js"></script>	
+	<script type="text/javascript" src="/siga/javascript/siga-pin-reset.js"></script>	
 </siga:pagina>

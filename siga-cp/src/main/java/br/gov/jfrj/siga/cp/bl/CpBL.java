@@ -1623,7 +1623,6 @@ public class CpBL {
 				try {
 					dao().gravar(tokenResetPin);
 				} catch (final Exception e) {
-	
 					throw new AplicacaoException("Erro na gravação", 0, e);
 				}
 			}

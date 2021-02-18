@@ -9,6 +9,12 @@
 	<link rel="stylesheet" href="/siga/css/siga-pin.css" type="text/css" media="screen, projection"/>
  	
  	<div class="container-fluid">
+ 		<c:if test="${baseTeste}">
+			<div class="alert alert-warning" role="alert">
+			  ATENÇÃO: Esta é uma versão de testes. Para sua segurança, não utilize a mesmo PIN do Ambiente Oficial.
+			</div>
+		</c:if>
+		
 		<div class="card bg-light mb-3">
 				
 			<div class="card-header">
@@ -151,5 +157,5 @@
 	</siga:siga-modal>	
 				
 	<script type="text/javascript" src="/siga/javascript/siga.multiploselect.js"></script>	
-	<script type="text/javascript" src="/siga/javascript/siga-pin.js"></script>	
+	<script type="text/javascript" src="/siga/javascript/siga-pin-cadastro.js"></script>	
 </siga:pagina>

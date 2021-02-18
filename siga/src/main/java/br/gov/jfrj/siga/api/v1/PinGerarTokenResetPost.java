@@ -3,9 +3,9 @@ package br.gov.jfrj.siga.api.v1;
 import com.crivano.swaggerservlet.SwaggerException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.IPessoasPinGerarTokenResetPost;
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.PessoasPinGerarTokenResetPostRequest;
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.PessoasPinGerarTokenResetPostResponse;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.IPinGerarTokenResetPost;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.PinGerarTokenResetPostRequest;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.PinGerarTokenResetPostResponse;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpToken;
@@ -13,12 +13,12 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-public class PessoasPinGerarTokenResetPost implements IPessoasPinGerarTokenResetPost {
+public class PinGerarTokenResetPost implements IPinGerarTokenResetPost {
 
 
 
 	@Override
-	public void run(PessoasPinGerarTokenResetPostRequest req, PessoasPinGerarTokenResetPostResponse resp)
+	public void run(PinGerarTokenResetPostRequest req, PinGerarTokenResetPostResponse resp)
 			throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));

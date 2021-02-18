@@ -9,6 +9,13 @@
 	<link rel="stylesheet" href="/siga/css/siga-pin.css" type="text/css" media="screen, projection"/>
  	
  	<div class="container-fluid">
+	
+ 		<c:if test="${baseTeste}">
+			<div class="alert alert-warning" role="alert">
+			  ATENÇÃO: Esta é uma versão de testes. Para sua segurança, não utilize a mesmo PIN do Ambiente Oficial.
+			</div>
+		</c:if>
+		
 		<div class="card bg-light mb-3">
 				
 			<div class="card-header">
@@ -20,16 +27,7 @@
 			</div>
 							
 			<div class="card-body lead">
-				<form name="formularioCadastro">				
-					<div id="apresentacaoPin" class="etapa  js-etapa">
-						<div class="row">
-													<h4 class="text-center p-4">
-								<label for="tipoConfiguracao">Defina uma chave numérica de 8 dígitos</label>							
-							</h4>
-			
-						</div>
-					</div>
-					
+				<form name="formularioCadastro">								
 					<div id="cadastroPinEtapa" class="etapa  js-etapa">
 						<div class="container">
 							<h4 class="text-center p-4">
@@ -120,11 +118,7 @@
 						  	<button type="button" class="btn  btn-primary btn-lg  btn-proximo  js-btn-proximo">Próximo <i class="fas fa-arrow-right"></i></button>					    					  
 					  	</div>
 					</div>									
-					
-					<div class="text-center  pt-4">
-						<span class="indicador-etapa  js-indicador-etapa"></span>
-						<span class="indicador-etapa  js-indicador-etapa"></span>
-					</div>										
+														
 				</form>
 			</div>			
 		</div>
@@ -139,5 +133,5 @@
 	</siga:siga-modal>	
 				
 	<script type="text/javascript" src="/siga/javascript/siga.multiploselect.js"></script>	
-	<script type="text/javascript" src="/siga/javascript/siga-pin.js"></script>	
+	<script type="text/javascript" src="/siga/javascript/siga-pin-troca.js"></script>	
 </siga:pagina>

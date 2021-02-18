@@ -373,7 +373,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-  /pessoas/pin:
+  /pin:
     post:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [PIN]
@@ -395,7 +395,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
             
-  /pessoas/pin/trocar:
+  /pin/trocar:
     post:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [PIN]
@@ -418,7 +418,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-  /pessoas/pin/reset:
+  /pin/reset:
     post:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [PIN]
@@ -441,7 +441,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"  
             
-  /pessoas/pin/gerar-token-reset:
+  /pin/gerar-token-reset:
     post:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [PIN]

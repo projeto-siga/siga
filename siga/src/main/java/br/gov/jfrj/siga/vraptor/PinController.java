@@ -16,6 +16,7 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Result;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -43,22 +44,19 @@ public class PinController extends SigaController {
 	@Get
 	@Path("/cadastro")
 	public void cadastro() throws Exception {	
-
-
+		result.include("baseTeste", Prop.getBool("/siga.base.teste"));
 	}
 	
 	@Get
 	@Path("/troca")
 	public void troca() throws Exception {	
-
-
+		result.include("baseTeste", Prop.getBool("/siga.base.teste"));
 	}
 	
 	@Get
 	@Path("/reset")
 	public void reset() throws Exception {	
-
-
+		result.include("baseTeste", Prop.getBool("/siga.base.teste"));
 	}
 			
 

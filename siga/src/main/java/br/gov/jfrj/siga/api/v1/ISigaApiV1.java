@@ -328,54 +328,54 @@ public interface ISigaApiV1 {
 
 	
 	/* ---------- PIN ----------- */ //TODO: Criar as classes
-	public class PessoasPinPostRequest implements ISwaggerRequest {
+	public class PinPostRequest implements ISwaggerRequest {
 		public String pin;
 	}
 
-	public class PessoasPinPostResponse implements ISwaggerResponse {
+	public class PinPostResponse implements ISwaggerResponse {
 		public String mensagem;
 	}
 
-	public interface IPessoasPinPost extends ISwaggerMethod {
-		public void run(PessoasPinPostRequest req, PessoasPinPostResponse resp) throws Exception;
+	public interface IPinPost extends ISwaggerMethod {
+		public void run(PinPostRequest req, PinPostResponse resp) throws Exception;
 	}
 
-	public class PessoasPinTrocarPostRequest implements ISwaggerRequest {
+	public class PinTrocarPostRequest implements ISwaggerRequest {
 		public String pinAtual;
 		public String pin;
 	}
 
-	public class PessoasPinTrocarPostResponse implements ISwaggerResponse {
+	public class PinTrocarPostResponse implements ISwaggerResponse {
 		public String mensagem;
 	}
 
-	public interface IPessoasPinTrocarPost extends ISwaggerMethod {
-		public void run(PessoasPinTrocarPostRequest req, PessoasPinTrocarPostResponse resp) throws Exception;
+	public interface IPinTrocarPost extends ISwaggerMethod {
+		public void run(PinTrocarPostRequest req, PinTrocarPostResponse resp) throws Exception;
 	}
 
-	public class PessoasPinResetPostRequest implements ISwaggerRequest {
+	public class PinResetPostRequest implements ISwaggerRequest {
 		public String tokenPin;
 		public String pin;
 	}
 
-	public class PessoasPinResetPostResponse implements ISwaggerResponse {
+	public class PinResetPostResponse implements ISwaggerResponse {
 		public String mensagem;
 	}
 
-	public interface IPessoasPinResetPost extends ISwaggerMethod {
-		public void run(PessoasPinResetPostRequest req, PessoasPinResetPostResponse resp) throws Exception;
+	public interface IPinResetPost extends ISwaggerMethod {
+		public void run(PinResetPostRequest req, PinResetPostResponse resp) throws Exception;
 	}
 
-	public class PessoasPinGerarTokenResetPostRequest implements ISwaggerRequest {
+	public class PinGerarTokenResetPostRequest implements ISwaggerRequest {
 	}
 
-	public class PessoasPinGerarTokenResetPostResponse implements ISwaggerResponse {
+	public class PinGerarTokenResetPostResponse implements ISwaggerResponse {
 		public String mensagem;
 		public String tokenPin;
 	}
 
-	public interface IPessoasPinGerarTokenResetPost extends ISwaggerMethod {
-		public void run(PessoasPinGerarTokenResetPostRequest req, PessoasPinGerarTokenResetPostResponse resp) throws Exception;
+	public interface IPinGerarTokenResetPost extends ISwaggerMethod {
+		public void run(PinGerarTokenResetPostRequest req, PinGerarTokenResetPostResponse resp) throws Exception;
 	}
 	
 	/* ------- END PIN -------- */

@@ -6,9 +6,9 @@ import java.util.List;
 import com.crivano.swaggerservlet.SwaggerException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.IPessoasPinPost;
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.PessoasPinPostRequest;
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.PessoasPinPostResponse;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.IPinPost;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.PinPostRequest;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.PinPostResponse;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -16,9 +16,9 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-public class PessoasPinPost implements IPessoasPinPost {
+public class PinPost implements IPinPost {
 	@Override
-	public void run(PessoasPinPostRequest req, PessoasPinPostResponse resp) throws Exception {
+	public void run(PinPostRequest req, PinPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 			

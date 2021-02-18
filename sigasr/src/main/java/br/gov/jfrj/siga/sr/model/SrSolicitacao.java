@@ -487,7 +487,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         try{
         	return (SrSolicitacao) AR.em().createQuery(query).getSingleResult();
         } catch(NoResultException nre){
-        	throw new AplicacaoException("Não foi encontrada uma solicitação com o código " + sigla);
+        	return null;
+       // 	throw new AplicacaoException("Não foi encontrada uma solicitação com o código " + sigla);
         }
     }
 

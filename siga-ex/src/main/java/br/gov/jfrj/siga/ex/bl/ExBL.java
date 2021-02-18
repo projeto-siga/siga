@@ -104,13 +104,13 @@ import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.TipoConteudo;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -4369,9 +4369,9 @@ public class ExBL extends CpBL {
 				if (!mob.isGeral())
 					movs.addAll(m.doc().getMobilGeral().getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true));
 				for (ExMovimentacao mov : movs) {
-					if (mov.getMarcador() != null && mov.getMarcador().getCpTipoMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO
-							 && mov.getMarcador().getCpTipoMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO
-							 && mov.getMarcador().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.ATENDENTE) {
+					if (mov.getMarcador() != null && mov.getMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO
+							 && mov.getMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO
+							 && mov.getMarcador().getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.ATENDENTE) {
 						movAnterior = mov;
 						break;
 					}
@@ -4942,15 +4942,14 @@ public class ExBL extends CpBL {
 //			lotaSubscritor = marcador.getDpLotacaoIni().getLotacaoAtual();
 //		}
 		
-		// Localiza a última movimentação de marcação de lotação
+		// Localiza a última movimentação de marcação de lotação, para tratar o caso do mutuamente exclusivo
 		ExMovimentacao movAnterior = null;
-		if (marcador.getCpTipoMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO
-				&& marcador.getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.ATENDENTE) {
+		if (marcador.getIdFinalidade().isXor()) {
 			List<ExMovimentacao> movs = mob.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true);
 			if (!mob.isGeral())
 				movs.addAll(geral.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true));
 			for (ExMovimentacao mov : movs) {
-				if (mov.getMarcador() != null && mov.getMarcador().getCpTipoMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO) {
+				if (mov.getMarcador() != null && mov.getMarcador().getIdFinalidade() == marcador.getIdFinalidade()) {
 					movAnterior = mov;
 					break;
 				}
@@ -7471,7 +7470,7 @@ public class ExBL extends CpBL {
 
 		ArrayList<HashMap<String, Object>> objectJson = new ArrayList<>();
 		try {
-			List<CpMarcador> listaMarcadores = dao().listarCpMarcadoresGerais();
+			List<CpMarcador> listaMarcadores = dao().listarCpMarcadoresGerais(true);
 			
 			for (CpMarcador marcador : listaMarcadores) {
 				HashMap<String, Object> marcadorJson = new HashMap<String, Object>();
@@ -7480,8 +7479,8 @@ public class ExBL extends CpBL {
 				marcadorJson.put("id", marcador.getIdMarcador());
 				marcadorJson.put("descMarcador", marcador.getDescrMarcador());
 				
-				tipoMarcadorJson.put("idTipoMarcador", marcador.getCpTipoMarcador().getId());
-				tipoMarcadorJson.put("descTipoMarcador", marcador.getCpTipoMarcador().getDescricao());
+				tipoMarcadorJson.put("idTipoMarcador", marcador.getIdFinalidade().getIdTpMarcador().getId());
+				tipoMarcadorJson.put("descTipoMarcador", marcador.getIdFinalidade().getIdTpMarcador().getDescricao());
 				marcadorJson.put("tipoMarcador", tipoMarcadorJson);
 				
 				objectJson.add(marcadorJson);

@@ -1597,58 +1597,58 @@ public class ExDao extends CpDao {
 		return findByCriteria(ExPapel.class);
 	}
 
-	public List<CpMarcador> listarCpMarcadoresGerais() {
-		CpTipoMarcadorEnum marcador = CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL;
-		
-		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
-		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);
-		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
-		Predicate predicateAnd;
-		Predicate predicateEqualTipoMarcador  = criteriaBuilder.equal(cpMarcadorRoot.get("cpTipoMarcador"), marcador);
-		if("GOVSP".equals(Prop.get("/siga.local"))) {
-
-			Predicate predicateNotEqualTipoMarcador1  = criteriaBuilder.notEqual(cpMarcadorRoot.get("idMarcador"), CpMarcador.MARCADOR_COMO_REVISOR);
-			Predicate predicateNotEqualTipoMarcador2  = criteriaBuilder.notEqual(cpMarcadorRoot.get("idMarcador"), CpMarcador.MARCADOR_PRONTO_PARA_ASSINAR);
-			predicateAnd = criteriaBuilder.and(predicateEqualTipoMarcador,predicateNotEqualTipoMarcador1,predicateNotEqualTipoMarcador2);
-			/*			return findByCriteria(CpMarcador.class,
-					Restrictions.and(
-							Restrictions.eq("cpTipoMarcador", marcador),
-							Restrictions.ne("idMarcador", CpMarcador.MARCADOR_COMO_REVISOR), 
-							Restrictions.ne("idMarcador", CpMarcador.MARCADOR_PRONTO_PARA_ASSINAR))); */
-		} else {
-			predicateAnd = criteriaBuilder.and(predicateEqualTipoMarcador);
-
-	/*		return findByCriteria(CpMarcador.class,
-					Restrictions.eq("cpTipoMarcador", marcador)); */
-		}
-		
-		criteriaQuery.where(predicateAnd);
-		List<CpMarcador> resultList = em().createQuery(criteriaQuery).getResultList();
-		resultList.sort(CpMarcador.ORDEM_COMPARATOR);
-		resultList.removeIf(m -> m.getHisDtFim() != null);
-		return resultList;
-	}
-	
-	
-
-	public List<CpMarcador> listarCpMarcadoresDaLotacao(DpLotacao lot) {
-		DpLotacao lotIni = lot.getLotacaoInicial();
-		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
-		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);
-		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
-		Predicate predicateAnd;
-		Predicate predicateEqualTipoMarcador  = criteriaBuilder.equal(cpMarcadorRoot.get("cpTipoMarcador"), CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO);
-		Predicate predicateEqualLotacaoIni  = criteriaBuilder.equal(cpMarcadorRoot.get("dpLotacaoIni"), lotIni);
-		
-		predicateAnd = criteriaBuilder.and(predicateEqualTipoMarcador, predicateEqualLotacaoIni);
-		
-		criteriaQuery.where(predicateAnd);
-		return em().createQuery(criteriaQuery).getResultList();
-	}
+//	public List<CpMarcador> listarCpMarcadoresGerais() {
+//		CpTipoMarcadorEnum marcador = CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL;
+//		
+//		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
+//		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);
+//		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
+//		Predicate predicateAnd;
+//		Predicate predicateEqualTipoMarcador  = criteriaBuilder.equal(cpMarcadorRoot.get("cpTipoMarcador"), marcador);
+//		if("GOVSP".equals(Prop.get("/siga.local"))) {
+//
+//			Predicate predicateNotEqualTipoMarcador1  = criteriaBuilder.notEqual(cpMarcadorRoot.get("idMarcador"), CpMarcador.MARCADOR_COMO_REVISOR);
+//			Predicate predicateNotEqualTipoMarcador2  = criteriaBuilder.notEqual(cpMarcadorRoot.get("idMarcador"), CpMarcador.MARCADOR_PRONTO_PARA_ASSINAR);
+//			predicateAnd = criteriaBuilder.and(predicateEqualTipoMarcador,predicateNotEqualTipoMarcador1,predicateNotEqualTipoMarcador2);
+//			/*			return findByCriteria(CpMarcador.class,
+//					Restrictions.and(
+//							Restrictions.eq("cpTipoMarcador", marcador),
+//							Restrictions.ne("idMarcador", CpMarcador.MARCADOR_COMO_REVISOR), 
+//							Restrictions.ne("idMarcador", CpMarcador.MARCADOR_PRONTO_PARA_ASSINAR))); */
+//		} else {
+//			predicateAnd = criteriaBuilder.and(predicateEqualTipoMarcador);
+//
+//	/*		return findByCriteria(CpMarcador.class,
+//					Restrictions.eq("cpTipoMarcador", marcador)); */
+//		}
+//		
+//		criteriaQuery.where(predicateAnd);
+//		List<CpMarcador> resultList = em().createQuery(criteriaQuery).getResultList();
+//		resultList.sort(CpMarcador.ORDEM_COMPARATOR);
+//		resultList.removeIf(m -> m.getHisDtFim() != null);
+//		return resultList;
+//	}
+//	
+//	
+//
+//	public List<CpMarcador> listarCpMarcadoresDaLotacao(DpLotacao lot) {
+//		DpLotacao lotIni = lot.getLotacaoInicial();
+//		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
+//		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);
+//		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
+//		Predicate predicateAnd;
+//		Predicate predicateEqualTipoMarcador  = criteriaBuilder.equal(cpMarcadorRoot.get("cpTipoMarcador"), CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO);
+//		Predicate predicateEqualLotacaoIni  = criteriaBuilder.equal(cpMarcadorRoot.get("dpLotacaoIni"), lotIni);
+//		
+//		predicateAnd = criteriaBuilder.and(predicateEqualTipoMarcador, predicateEqualLotacaoIni);
+//		
+//		criteriaQuery.where(predicateAnd);
+//		return em().createQuery(criteriaQuery).getResultList();
+//	}
 	
 	public List<CpMarcador> listarCpMarcadoresDisponiveis(DpLotacao lot) {
-		List<CpMarcador> listaConcatenada = listarCpMarcadoresGerais();
-		List<CpMarcador> listaLotacao = listarCpMarcadoresDaLotacao(lot);
+		List<CpMarcador> listaConcatenada = listarCpMarcadoresGerais(true);
+		List<CpMarcador> listaLotacao = listarCpMarcadoresPorLotacao(lot, true);
 		
 		if (listaLotacao != null) {
 			listaConcatenada.addAll(listaLotacao);	

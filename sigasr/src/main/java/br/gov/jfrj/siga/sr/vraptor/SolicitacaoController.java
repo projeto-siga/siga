@@ -1128,7 +1128,9 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).setStatusCode(200);
     }
     
-    @Path("public//selecionar")
+
+    @Get("/public/app/solicitacao/selecionar")
+	@Post
     public void selecionarPublico(String sigla, String matricula) throws Exception {
     	try {
     		SrSolicitacao sol = new SrSolicitacao();
@@ -1140,7 +1142,7 @@ public class SolicitacaoController extends SrController {
     		sol = (SrSolicitacao) sol.selecionar(sigla);
         
 	        if (sol != null) {
-	        	result.use(Results.http()).body("1;" + sol.getId() + ";" + sol.getSigla() + ";" + "/sigasr//exibir/" + sol.getSiglaCompacta());
+	        	result.use(Results.http()).body("1;" + sol.getId() + ";" + sol.getSigla() + ";" + "/sigasr/app/solicitacao/exibir/" + sol.getSiglaCompacta());
 	        	return;
 	        }
     	} catch (Exception ex) {

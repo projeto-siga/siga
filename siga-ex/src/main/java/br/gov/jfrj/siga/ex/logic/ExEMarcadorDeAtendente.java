@@ -3,7 +3,7 @@ package br.gov.jfrj.siga.ex.logic;
 import com.crivano.jlogic.Expression;
 import com.crivano.jlogic.JLogic;
 
-import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
 
 public class ExEMarcadorDeAtendente implements Expression {
@@ -16,7 +16,7 @@ public class ExEMarcadorDeAtendente implements Expression {
 
 	@Override
 	public boolean eval() {
-		return marcador.getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.ATENDENTE;
+		return marcador.getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.ATENDENTE;
 	}
 
 	@Override

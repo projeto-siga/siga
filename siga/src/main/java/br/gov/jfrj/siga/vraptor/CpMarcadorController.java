@@ -26,6 +26,7 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
@@ -38,15 +39,16 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.cp.CpMarcadorCorEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorIconeEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoDataEnum;
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoTextoEnum;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorCorEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorIconeEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoAplicacaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoDataEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoExibicaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoInteressadoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoTextoEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
@@ -77,9 +79,9 @@ public class CpMarcadorController extends SigaController {
 		List<CpMarcador> listMar = null;
 		try {
 			assertAcesso(ACESSO_CAD_MARCADOR_GERAL);
-			listMar = dao.listarCpMarcadoresPorLotacaoEGeral(getLotaCadastrante(), true);
+			listMar = dao.listarCpMarcadoresPorLotacaoEGeral(getLotaTitular(), true);
 		} catch (AplicacaoException e) {
-			listMar = dao.listarCpMarcadoresPorLotacao(getLotaCadastrante(), true);
+			listMar = dao.listarCpMarcadoresPorLotacao(getLotaTitular(), true);
 		}
 
 		result.include("listaMarcadores", listMar);
@@ -108,7 +110,7 @@ public class CpMarcadorController extends SigaController {
 		try {
 			if (id != null) {
 				CpMarcador mar = dao().consultar(id, CpMarcador.class, false);
-				if (mar.getCpTipoMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL)		
+				if (mar.getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL)		
 					assertAcesso(ACESSO_CAD_MARCADOR_GERAL);
 
 				mar.setHisAtivo(0);
@@ -132,34 +134,26 @@ public class CpMarcadorController extends SigaController {
 			if (marcador == null) 
 				throw new AplicacaoException ("O marcador a ser editado não existe ou não está ativo - id: " + id.toString());
 			
-			if (marcador.getCpTipoMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL) {		
+			if (marcador.getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL) {		
 				assertAcesso(ACESSO_CAD_MARCADOR_GERAL);
 			} else {
 				assertAcesso(ACESSO_CAD_MARCADOR_LOTA);
 			}
 		}
-		result.include("listaTipoMarcador", listarTipoMarcador());
 		result.include("listaCores", CpMarcadorCorEnum.values());
 		result.include("listaIcones", CpMarcadorIconeEnum.values());
-		result.include("listaTipoAplicacao", CpMarcadorTipoAplicacaoEnum.values());
-		result.include("listaTipoExibicao", CpMarcadorTipoExibicaoEnum.values());
-		result.include("listaTipoDataPlanejada", CpMarcadorTipoDataEnum.values());
-		result.include("listaTipoDataLimite", CpMarcadorTipoDataEnum.values());
-		result.include("listaTipoTexto", CpMarcadorTipoTextoEnum.values());
-		result.include("listaTipoInteressado", CpMarcadorTipoInteressadoEnum.values());
+		result.include("listaFinalidade", CpMarcadorFinalidadeEnum.values());
 	}
 
 	@Transacional
 	@Post("/app/marcador/gravar")
 	public void marcadorGravar(Long id, final String sigla, final String descricao, final String descrDetalhada,
-			final CpMarcadorCorEnum idCor, final CpMarcadorIconeEnum idIcone, final Integer grupoId, final CpTipoMarcadorEnum idTpMarcador,
-			final CpMarcadorTipoAplicacaoEnum idTpAplicacao, final CpMarcadorTipoDataEnum idTpDataPlanejada, final CpMarcadorTipoDataEnum idTpDataLimite,
-			final CpMarcadorTipoExibicaoEnum idTpExibicao, final CpMarcadorTipoTextoEnum idTpTexto, final CpMarcadorTipoInteressadoEnum idTpInteressado)
+			final CpMarcadorCorEnum idCor, final CpMarcadorIconeEnum idIcone, final Integer grupoId, final CpMarcadorFinalidadeEnum idFinalidade)
 			throws Exception {
 
 		assertAcesso(ACESSO_CAD_MARCADOR_LOTA);
 		
-		if (idTpMarcador == CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL)		
+		if (idFinalidade.getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL)		
 			assertAcesso(ACESSO_CAD_MARCADOR_GERAL);
 
 		if (id != null) {
@@ -169,8 +163,7 @@ public class CpMarcadorController extends SigaController {
 		}
 		
 		Cp.getInstance().getBL().gravarMarcador(id, getCadastrante(), getLotaTitular(),
-				getIdentidadeCadastrante(), descricao, descrDetalhada, idCor, idIcone, 2, idTpMarcador,
-				idTpAplicacao, idTpDataPlanejada, idTpDataLimite, idTpExibicao, idTpTexto, idTpInteressado);
+				getIdentidadeCadastrante(), descricao, descrDetalhada, idCor, idIcone, 2, idFinalidade);
 
 		result.redirectTo(this).lista();
 	}

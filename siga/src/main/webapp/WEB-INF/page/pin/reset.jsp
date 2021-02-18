@@ -30,7 +30,7 @@
 						            <p>Não se preocupe! Um código para definir uma nova chave PIN será enviado para seu e-mail cadastrado:</p
 						            
 									<c:if test="${not empty cadastrante}">
-								 		<p><span class="font-weight-bold"> ${cadastrante.emailPessoaHide}</span></p>
+								 		<p><span class="font-weight-bold"> ${cadastrante.emailPessoaAtualParcialmenteOculto}</span></p>
 								 	</c:if>	
 								 		
 								    <button type="button" class="btn btn-primary btn-lg mt-2">Enviar Código <i class="fa fa-paper-plane" aria-hidden="true"></i></button>
@@ -54,6 +54,8 @@
 										<label for="pinUserCurrent">Informe o código enviado</label>
 										<div class="input-group input-group-lg">
 				   						  <input type="text" id="pinUserCurrent" class="form-control " style="text-align: center;" aria-describedby="passwordHelp" minlength="8" maxlength="8" size="8" autocomplete="new-password" autofocus inputmode="numeric" required  />
+										</div>
+										<div class="input-group input-group-lg">
 										  <small class="form-text text-muted">Caso não tenha recebido o e-mail com o código, <a href="#">clique aqui</a> para reenviar.</small>
 										</div>
 										<hr />

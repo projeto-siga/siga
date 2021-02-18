@@ -42,6 +42,7 @@ public class PessoasPinTrocarPost implements IPessoasPinTrocarPost {
 					listaIdentidades = CpDao.getInstance().consultaIdentidadesPorCpf(cadastrante.getCpfPessoa().toString());	
 					
 					Cp.getInstance().getBL().definirPinIdentidade(listaIdentidades, pin, identidadeCadastrante);
+					Cp.getInstance().getBL().enviarEmailDefinicaoPIN(cadastrante,"Troca de Chave PIN","Você alterou sua chave PIN.");
 					
 					resp.mensagem = "Chave PIN foi trocada.";
 					

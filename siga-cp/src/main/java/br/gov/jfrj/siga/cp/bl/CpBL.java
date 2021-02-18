@@ -1543,33 +1543,34 @@ public class CpBL {
 	
 	public CpToken gerarTokenResetPin(Long cpf) {
 		try {
+			
+			/* Invalidar se existir token ativo */
+			invalidarTokenAtivo(2L,cpf);
+
 			CpToken tokenResetPin = new CpToken();
-			tokenResetPin = dao().obterCpTokenPorTipoIdRef(2L,cpf); //Se tem token não expirado, devolve token
-			if (tokenResetPin == null ) {
-				tokenResetPin = new CpToken();
-				
-				//Seta tipo 2 - Token para Reset PIN
-				tokenResetPin.setIdTpToken(2L);
-				tokenResetPin.setToken(SigaUtil.randomNumerico(8));
-				tokenResetPin.setIdRef(cpf);
-				
-				/* HORA ATUAL */
-				GregorianCalendar gc = new GregorianCalendar();
-				Date dt = dao().consultarDataEHoraDoServidor();
-				gc.setTime(dt);
+			
+			//Seta tipo 2 - Token para Reset PIN
+			tokenResetPin.setIdTpToken(2L);
+			tokenResetPin.setToken(SigaUtil.randomNumerico(8));
+			tokenResetPin.setIdRef(cpf);
+			
+			/* HORA ATUAL */
+			GregorianCalendar gc = new GregorianCalendar();
+			Date dt = dao().consultarDataEHoraDoServidor();
+			gc.setTime(dt);
 
-				
-				/* EXP - Expiração do Token */
-				gc.add(Calendar.HOUR, 1);
-				tokenResetPin.setDtExp(gc.getTime());	
+			
+			/* EXP - Expiração do Token */
+			gc.add(Calendar.HOUR, 1);
+			tokenResetPin.setDtExp(gc.getTime());	
 
-				try {
-					dao().gravar(tokenResetPin);
-				} catch (final Exception e) {
-	
-					throw new AplicacaoException("Erro na gravação", 0, e);
-				}
-			} 
+			try {
+				dao().gravar(tokenResetPin);
+			} catch (final Exception e) {
+
+				throw new AplicacaoException("Erro na gravação", 0, e);
+			}
+		
 			return tokenResetPin;
 
 			
@@ -1600,6 +1601,18 @@ public class CpBL {
 		}
 	}
 	
+	public void invalidarTokenAtivo(Long tipo, Long idRef) {
+		CpToken tokenResetPin = dao().obterCpTokenPorTipoIdRef(tipo,idRef);
+		if (tokenResetPin != null) {
+			tokenResetPin.setDtExp(tokenResetPin.getDtIat());
+			try {
+				dao().gravar(tokenResetPin);
+			} catch (final Exception e) {
+				throw new AplicacaoException("Erro na gravação", 0, e);
+			}
+		} 
+	}
+	
 	public void invalidarTokenUtilizado(Long cpf, String token) {
 		try {
 			CpToken tokenResetPin = new CpToken();
@@ -1616,6 +1629,80 @@ public class CpBL {
 			
 		} catch (final Exception e) {
 			throw new AplicacaoException("Ocorreu um erro ao validar o Token.", 0, e);
+		}
+	}
+	
+	
+	private String textoEmailDefinicaoPin(DpPessoa destinatario, String corpo) {		
+		String conteudo = "";
+		
+		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/templates/email/novo-pin-definido.html")))) {			
+			String str;
+			
+			while((str = bfr.readLine()) != null) {
+				conteudo += str;
+			}
+			conteudo = conteudo
+					.replace("${url}", Prop.get("/siga.base.url"))
+					.replace("${logo}", Prop.get("/siga.cabecalho.logo"))
+					.replace("${titulo}", Prop.get("/siga.cabecalho.titulo"))
+					.replace("${nomeUsuario}", destinatario.getNomePessoa())
+					.replace("${corpo}", corpo);
+			
+			return conteudo;
+			
+		} catch (IOException e) {
+			throw new AplicacaoException("Erro ao montar e-mail para enviar ao usuário " + destinatario.getNomePessoa());
+		}
+			
+	}
+
+	
+	public void enviarEmailDefinicaoPIN(DpPessoa destinatario, String assunto, String corpo) {
+		String[] destinanarios = { destinatario.getEmailPessoaAtual() };
+		String conteudoHTML = textoEmailDefinicaoPin(destinatario,corpo);
+		
+		try {
+			Correio.enviar(null,destinanarios, assunto, "", conteudoHTML);
+		} catch (Exception e) {
+			throw new AplicacaoException("Ocorreu um erro durante o envio do email", 0, e);
+		}
+	}
+	
+	
+	private String textoEmailTokenResetPin(DpPessoa destinatario,  String tokenPin) {		
+		String conteudo = "";
+		
+		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/templates/email/token-pin-reset.html")))) {			
+			String str;
+			
+			while((str = bfr.readLine()) != null) {
+				conteudo += str;
+			}
+			conteudo = conteudo
+					.replace("${url}", Prop.get("/siga.base.url"))
+					.replace("${logo}", Prop.get("/siga.cabecalho.logo"))
+					.replace("${titulo}", Prop.get("/siga.cabecalho.titulo"))
+					.replace("${nomeUsuario}", destinatario.getNomePessoa())
+					.replace("${tokenPin}", tokenPin);
+			
+			return conteudo;
+			
+		} catch (IOException e) {
+			throw new AplicacaoException("Erro ao montar e-mail para enviar ao usuário " + destinatario.getNomePessoa());
+		}
+			
+	}
+
+	
+	public void enviarEmailTokenResetPIN(DpPessoa destinatario, String assunto, String tokenPin) {
+		String[] destinanarios = { destinatario.getEmailPessoaAtual() };
+		String conteudoHTML = textoEmailTokenResetPin(destinatario,tokenPin);
+		
+		try {
+			Correio.enviar(null,destinanarios, assunto, "", conteudoHTML);
+		} catch (Exception e) {
+			throw new AplicacaoException("Ocorreu um erro durante o envio do email", 0, e);
 		}
 	}
 	

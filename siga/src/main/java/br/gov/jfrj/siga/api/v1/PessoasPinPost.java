@@ -39,7 +39,7 @@ public class PessoasPinPost implements IPessoasPinPost {
 				listaIdentidades = CpDao.getInstance().consultaIdentidadesPorCpf(cadastrante.getCpfPessoa().toString());	
 				
 				Cp.getInstance().getBL().definirPinIdentidade(listaIdentidades, pin, identidadeCadastrante);
-				
+				Cp.getInstance().getBL().enviarEmailDefinicaoPIN(cadastrante,"Nova Chave PIN","Você definiu uma nova chave PIN.");
 				resp.mensagem = "Chave PIN definida.";
 			}
 		} catch (RegraNegocioException e) {

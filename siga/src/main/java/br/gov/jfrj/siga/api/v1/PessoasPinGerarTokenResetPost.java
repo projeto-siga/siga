@@ -34,7 +34,7 @@ public class PessoasPinGerarTokenResetPost implements IPessoasPinGerarTokenReset
 			Long cpf = cadastrante.getCpfPessoa();
 	
 			CpToken token =	Cp.getInstance().getBL().gerarTokenResetPin(cpf);/* TODO: Avaliar se o CPF é o melhor para se gerar o Token. Parece ser mais performático para não ter queries adicionais */
-			
+			Cp.getInstance().getBL().enviarEmailTokenResetPIN(cadastrante,"Código para redefinição de chave PIN ",token.getToken());
 			resp.mensagem = "Token gerado para reset de PIN";
 			resp.tokenPin = token.getToken();
 			

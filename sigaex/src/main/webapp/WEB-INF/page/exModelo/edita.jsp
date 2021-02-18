@@ -170,7 +170,7 @@
 					<div class="row">
 						<div class="col-sm-12">
 							<div class="form-group">
-								<input type="submit" value="Ok" class="btn btn-primary" />
+								<input type="submit" name="ok" value="Ok" class="btn btn-primary" />
 								<input type="submit" name="submit" value="Aplicar" class="btn btn-primary" />
 								<input type="button" value="Desativar" class="btn btn-primary" onclick="location.href='desativar?id=${id}'" />
 								<input type="button" value="Cancelar" onclick="javascript:history.back();" class="btn btn-primary" />

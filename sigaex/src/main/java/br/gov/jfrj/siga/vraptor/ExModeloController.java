@@ -143,7 +143,7 @@ public class ExModeloController extends ExSelecionavelController {
 			final String arquivo, final String diretorio, final String uuid, 
 			final String marcaDagua, final Integer postback) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
-		ExModelo modelo = buscarModelo(id);
+		ExModelo modelo = copiarModeloAtual(id);
 		if (postback != null) {
 			modelo.setNmMod(nome);
 			modelo.setExClassificacao(classificacaoSel.buscarObjeto());
@@ -173,11 +173,11 @@ public class ExModeloController extends ExSelecionavelController {
 				.getBL()
 				.gravarModelo(modelo, modAntigo, null,
 						getIdentidadeCadastrante());
-		if ("Aplicar".equals(param("submit"))) {
-			result.redirectTo("editar?id=" + modelo.getId());
-			return;
+		if ("Ok".equals(param("ok"))) {
+			result.redirectTo(ExModeloController.class).lista(null);
+		} else {
+			result.redirectTo("editar?id=" + (modelo.getId()!=null?modelo.getId():id));
 		}
-		result.redirectTo(ExModeloController.class).lista(null);
 	}
 
 	@Transacional
@@ -419,6 +419,16 @@ public class ExModeloController extends ExSelecionavelController {
 		return new ExModelo();
 	}
 
+	private ExModelo copiarModeloAtual(final Long id) {
+		ExModelo modelo = buscarModelo(id);
+		if(modelo.getIdInicial()!=null) {
+			return Ex.getInstance().getBL().getCopia(
+					dao().consultar(modelo.getIdInicial(), ExModelo.class, false).getModeloAtual()
+					);
+		} else 
+			return modelo;
+	}
+	
 	private ExModelo buscarModeloAntigo(final Long idInicial) {
 		if (idInicial != null) {
 			return dao().consultar(idInicial, ExModelo.class, false)
@@ -426,7 +436,7 @@ public class ExModeloController extends ExSelecionavelController {
 		}
 		return null;
 	}
-
+	
 	private List<ExNivelAcesso> getListaNivelAcesso() {
 		return dao().listarOrdemNivel();
 	}

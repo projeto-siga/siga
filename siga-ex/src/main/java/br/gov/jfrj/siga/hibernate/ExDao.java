@@ -603,14 +603,11 @@ public class ExDao extends CpDao {
 		}
 
 		if (flt.getDtDoc() != null) {
-			query.setParameter("dtDoc",
-					new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(flt
-							.getDtDoc()));
+			query.setParameter("dtDoc",flt.getDtDoc());
 		}
 
 		if (flt.getDtDocFinal() != null) {
-			query.setParameter("dtDocFinal", new SimpleDateFormat(
-					"dd/MM/yyyy HH:mm:ss").format(flt.getDtDocFinal()));
+			query.setParameter("dtDocFinal", flt.getDtDocFinal());
 		}
 
 		if (flt.getNumAntigoDoc() != null

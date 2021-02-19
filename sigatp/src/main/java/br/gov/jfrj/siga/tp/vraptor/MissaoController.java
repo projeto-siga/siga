@@ -926,21 +926,24 @@ public class MissaoController extends TpController {
 		SimpleDateFormat formatar = new SimpleDateFormat(PATTERN_DDMMYYYYHHMM);
 		String dataFormatadaFimOracle;
 		if (escala.getDataVigenciaFim() == null) {
-			dataFormatadaFimOracle = "to_date('31/12/9999 23:59', 'DD/MM/YYYY HH24:mi')";
+	//		dataFormatadaFimOracle = "to_date('31/12/9999 23:59', 'DD/MM/YYYY HH24:mi')";
+			dataFormatadaFimOracle = "31/12/9999 23:59";
 		} else {
 			String dataFim = formatar.format(escala.getDataVigenciaFim().getTime());
-			dataFormatadaFimOracle = "to_date('" + dataFim + "', 'DD/MM/YYYY HH24:mi')";
+			dataFormatadaFimOracle = dataFim;
+	//		dataFormatadaFimOracle = "to_date('" + dataFim + "', 'DD/MM/YYYY HH24:mi')";
 		}
 
 		String dataInicio = formatar.format(escala.getDataVigenciaInicio().getTime());
-		String dataFormatadaInicioOracle = "to_date('" + dataInicio + "', 'DD/MM/YYYY HH24:mi')";
+	//	String dataFormatadaInicioOracle = "to_date('" + dataInicio + "', 'DD/MM/YYYY HH24:mi')";
+		String dataFormatadaInicioOracle = dataInicio;
 		List<Missao> missoes = null;
 
 		String qrl = 	"SELECT p FROM Missao p" +
 		" WHERE  p.condutor.id = " + escala.getCondutor().getId() +
 		" AND    p.estadoMissao NOT IN ('" + EstadoMissao.CANCELADA + "','" + EstadoMissao.FINALIZADA + "')" +
-		" AND   (p.dataHoraSaida >= " + dataFormatadaInicioOracle +
-		" AND    p.dataHoraSaida <= " + dataFormatadaFimOracle + "))";
+		" AND   (p.dataHoraSaida >= '" + dataFormatadaInicioOracle +
+		"' AND    p.dataHoraSaida <= '" + dataFormatadaFimOracle + "')";
 
 		Query qry = Missao.AR.em().createQuery(qrl);
 		missoes = (List<Missao>) qry.getResultList();

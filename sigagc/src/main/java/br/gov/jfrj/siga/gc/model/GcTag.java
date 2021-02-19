@@ -23,7 +23,7 @@ import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
-@Table(name = "GC_TAG", schema = "SIGAGC")
+@Table(name = "gc_tag", schema = "sigagc")
 @NamedQueries({ @NamedQuery(name = "listarTagCategorias", query = "select t.categoria from GcTag t where t.categoria is not null group by t.categoria order by t.categoria") })
 public class GcTag extends Objeto implements Comparable<GcTag>,
 		ObjetoSelecionavel {

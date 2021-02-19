@@ -931,7 +931,9 @@ LINHA  VARIÁVEL / CONTEÚDO
                 </style>
             </head>
             <body>
-                [#nested]
+            	<div style="word-wrap: break-word" class="divDoc">
+                	[#nested]
+            	</div>
             </body>
         </html>
     [/#if]
@@ -2164,42 +2166,42 @@ Pede deferimento.</span><br/><br/><br/>
 [/#macro]
 
 [#macro cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho=false]
-<table style="float:none; clear:both;" width="100%" align="left" border="0" cellpadding="0"
-    cellspacing="0" bgcolor="#FFFFFF">
-    <tr bgcolor="#FFFFFF">
-        <td width="100%">
-        <table width="100%" border="0" cellpadding="2">
-            <tr>
-                <td width="100%" align="center" valign="bottom"><img src="${_pathBrasao}" width="65" height="65" /></td>
-            </tr>
-            <tr>
-                <td width="100%" align="center">
-                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">${_tituloGeral}</p>
-                </td>
-            </tr>
-            [#if _subtituloGeral?has_content]
-            <tr>
-                <td width="100%" align="center">
-                <p style="font-family: Arial; font-size: 10pt; font-weight: bold;">${_subtituloGeral}</p>
-                </td>
-            </tr>
-            [/#if]
-            [#if orgaoCabecalho?? && orgaoCabecalho]
+	<table style="float:none; clear:both;" width="100%" align="left" border="0" cellpadding="0"
+	    cellspacing="0" bgcolor="#FFFFFF">
+	    <tr bgcolor="#FFFFFF">
+	        <td width="100%">
+	        <table width="100%" border="0" cellpadding="2">
+	            <tr>
+	                <td width="100%" align="center" valign="bottom"><img src="${_pathBrasao}" width="65" height="65" /></td>
+	            </tr>
 	            <tr>
 	                <td width="100%" align="center">
-	                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 8pt;">
-	                [#if mov??]
-	                    ${(mov.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
-	                [#else]
-	                    ${(doc.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
-	                [/#if]</p>
+	                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">${_tituloGeral}</p>
 	                </td>
 	            </tr>
-            [/#if]
-        </table>
-        </td>
-    </tr>
-</table>
+	            [#if _subtituloGeral?has_content]
+	            <tr>
+	                <td width="100%" align="center">
+	                <p style="font-family: Arial; font-size: 10pt; font-weight: bold;">${_subtituloGeral}</p>
+	                </td>
+	            </tr>
+	            [/#if]
+	            [#if orgaoCabecalho?? && orgaoCabecalho]
+		            <tr>
+		                <td width="100%" align="center">
+		                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 8pt;">
+		                [#if mov??]
+		                    ${(mov.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
+		                [#else]
+		                    ${(doc.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
+		                [/#if]</p>
+		                </td>
+		            </tr>
+	            [/#if]
+	        </table>
+	        </td>
+	    </tr>
+	</table>
 [/#macro]
 
 [#macro cabecalhoCentralizado orgaoCabecalho=true]
@@ -2654,13 +2656,13 @@ Pede deferimento.</span><br/><br/><br/>
     [@cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho/]
     [/@primeiroCabecalho]
     [@cabecalho]
-    [@cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho/]
+    [@cabecalhoCentralizado orgaoCabecalho/]
     [/@cabecalho]
     [@letra tamanhoLetra]
         [#if !numeracaoCentralizada]
-              <table style="float:none; clear:both;" width="100%" border="0" bgcolor="#FFFFFF">
-              <tr>
-              <td align="left">
+              <table style="float:none; clear:both; margin: 0; padding: 0;border-collapse: collapse;" width="100%" border="0" bgcolor="#FFFFFF">
+              <tr style="margin: 0; padding: 0;">
+              <td align="left" style="margin: 0; padding: 0;">
               [#if !omitirCodigo]
                     <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br/>[@numeroDJE]${tipo}[#if tipo != ""] SIGA N&ordm; ${(doc.codigo)!} [/#if] [/@numeroDJE]</p>
               [/#if]

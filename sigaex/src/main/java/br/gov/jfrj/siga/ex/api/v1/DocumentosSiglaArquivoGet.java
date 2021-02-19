@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.crivano.swaggerservlet.PresentableUnloggedException;
 import com.crivano.swaggerservlet.SwaggerAuthorizationException;
+import com.crivano.swaggerservlet.SwaggerException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.itextpdf.Status;
@@ -15,7 +16,9 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaArquivoGetRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaArquivoGetResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaArquivoGet;
+import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
@@ -26,7 +29,9 @@ public class DocumentosSiglaArquivoGet implements IDocumentosSiglaArquivoGet {
 
 	@Override
 	public void run(DocumentosSiglaArquivoGetRequest req, DocumentosSiglaArquivoGetResponse resp) throws Exception {
-		try (ApiContext ctx = new ApiContext(false)) {
+		try (ApiContext ctx = new ApiContext(false, false)) {
+			CurrentRequest.set(
+					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 			String usuario = ContextoPersistencia.getUserPrincipal();
 
 			if (usuario == null)
@@ -47,24 +52,36 @@ public class DocumentosSiglaArquivoGet implements IDocumentosSiglaArquivoGet {
 								+ so.getTitular().getSigla() + "/" + so.getLotaTitular().getSiglaCompleta() + ")");
 
 			String filename = "text/html".equals(req.contenttype)
-					? (req.volumes ? mob.doc().getReferenciaPDF() : mob.getReferenciaPDF())
-					: (req.volumes ? mob.doc().getReferenciaHtml() : mob.getReferenciaHtml());
+					? (req.volumes != null && req.volumes ? mob.doc().getReferenciaPDF() : mob.getReferenciaPDF())
+					: (req.volumes != null && req.volumes ? mob.doc().getReferenciaHtml() : mob.getReferenciaHtml());
 			final String servernameport = request.getServerName() + ":" + request.getServerPort();
 			final String contextpath = request.getContextPath();
 
 			iniciarGeracaoDePdf(req, resp, usuario, filename, contextpath, servernameport);
+		} catch (AplicacaoException | SwaggerException e) {
+			throw e;
+		} catch (Exception e) {
+			e.printStackTrace(System.out);
+			throw e;
 		}
 	}
 
 	public static void iniciarGeracaoDePdf(DocumentosSiglaArquivoGetRequest req, DocumentosSiglaArquivoGetResponse resp,
 			String u, String filename, String contextpath, String servernameport) throws IOException, Exception {
 		resp.uuid = UUID.randomUUID().toString();
-		Status.update(resp.uuid, "Aguardando na fila de tarefas", 0, 100, 0L);
+		String uuid = resp.uuid;
+		Status.update(uuid, "Aguardando na fila de tarefas", 0, 100, 0L);
 
-		resp.jwt = DownloadJwtFilenameGet.jwt(u, resp.uuid, req.sigla, req.contenttype, filename);
-		ExApiV1Servlet.submitToExecutor(
-				new DownloadAssincrono(resp.uuid, req.contenttype, req.sigla, req.estampa == null ? false : req.estampa,
-						req.volumes == null ? false : req.volumes, contextpath, servernameport, req.exibirReordenacao));
+		String contenttype = req.contenttype;
+		String sigla = req.sigla;
+		resp.jwt = DownloadJwtFilenameGet.jwt(u, uuid, sigla, contenttype, filename);
+		boolean estampar = req.estampa == null ? false : req.estampa;
+		boolean volumes = req.volumes == null ? false : req.volumes;
+		boolean exibirReordenacao = req.exibirReordenacao == null ? false : req.exibirReordenacao;
+		DownloadAssincrono task = new DownloadAssincrono(uuid, contenttype, sigla, estampar,
+				volumes, contextpath, servernameport, exibirReordenacao);
+		
+		ExApiV1Servlet.submitToExecutor(task);
 	}
 
 	@Override

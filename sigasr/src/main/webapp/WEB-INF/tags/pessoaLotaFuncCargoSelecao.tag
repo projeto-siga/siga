@@ -38,7 +38,7 @@
 <c:if test="${not empty nomeSelPessoa}">
 <span id="spanPessoa${nomeSelPessoa}">
 	<input type="hidden" name="${nomeSelPessoa}" id="${nomeSelPessoa}" class="pessoaLotaFuncCargoSelecao">
-	<siga:selecao propriedade="${nomeSelPessoa}" tema="simple" modulo="siga"
+	<sigasr:selecao propriedade="${nomeSelPessoa}" tema="simple" modulo="siga"
 		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valuePessoa}"/>
 </span>
 </c:if>
@@ -46,7 +46,7 @@
 <c:if test="${not empty nomeSelLotacao}">
 <span id="spanLotacao${nomeSelLotacao}">
 	<input type="hidden" name="${nomeSelLotacao}" id="${nomeSelLotacao}" class="pessoaLotaFuncCargoSelecao">
-	<siga:selecao propriedade="${nomeSelLotacao}" tema="simple" modulo="siga"
+	<sigasr:selecao propriedade="${nomeSelLotacao}" tema="simple" modulo="siga"
 		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valueLotacao}"/>
 </span>
 </c:if>
@@ -54,7 +54,7 @@
 <c:if test="${not empty nomeSelFuncao}">
 <span id="spanFuncao${nomeSelFuncao}">
 	<input type="hidden" name="${nomeSelFuncao}" id="${nomeSelFuncao}" class="pessoaLotaFuncCargoSelecao">
-	<siga:selecao propriedade="${nomeSelFuncao}" tema="simple" modulo="siga"
+	<sigasr:selecao propriedade="${nomeSelFuncao}" tema="simple" modulo="siga"
 		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valueFuncao}"/>
 </span>
 </c:if>
@@ -62,7 +62,7 @@
 <c:if test="${not empty nomeSelCargo}">
 <span id="spanCargo${nomeSelCargo}">
 	<input type="hidden" name="${nomeSelCargo}" id="${nomeSelCargo}" class="pessoaLotaFuncCargoSelecao">
-	<siga:selecao propriedade="${nomeSelCargo}" tema="simple" modulo="siga"
+	<sigasr:selecao propriedade="${nomeSelCargo}" tema="simple" modulo="siga"
 		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valueCargo}"/>
 </span>
 </c:if>
@@ -70,7 +70,7 @@
 <c:if test="${not empty nomeSelGrupo}">
 <span id="spanGrupo${nomeSelGrupo}">
 	<input type="hidden" name="${nomeSelGrupo}" id="${nomeSelGrupo}" class="pessoaLotaFuncCargoSelecao">
-	<siga:selecao propriedade="${nomeSelGrupo}" tema="simple" modulo="siga"
+	<sigasr:selecao propriedade="${nomeSelGrupo}" tema="simple" modulo="siga"
 		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valueGrupo}"/>
 </span>
 </c:if>

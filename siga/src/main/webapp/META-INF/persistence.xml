@@ -40,7 +40,6 @@
 		<class>br.gov.jfrj.siga.cp.CpUnidadeMedida</class>
 		<class>br.gov.jfrj.siga.cp.CpComplexo</class>
 		<class>br.gov.jfrj.siga.dp.CpMarcador</class>
-		<class>br.gov.jfrj.siga.dp.CpTipoMarcador</class>
 		<class>br.gov.jfrj.siga.dp.CpMarca</class>
 		<class>br.gov.jfrj.siga.dp.CpTipoMarca</class>
 		<class>br.gov.jfrj.siga.cp.CpAcesso</class>
@@ -60,6 +59,7 @@
 
 		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorCorEnumConverter</class>
 		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorIconeEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorFinalidadeEnumConverter</class>
 		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoAplicacaoEnumConverter</class>
 		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoDataEnumConverter</class>
 		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoExibicaoEnumConverter</class>

@@ -1090,11 +1090,11 @@ public class Excel {
     public String validarNomeAbreviado(String nomeAbreviado, Integer linha, Integer tamanho) {
     	
     	if(nomeAbreviado.length() > tamanho){
-			return "Linha " + linha +": NOME com mais de 40 caracteres" + System.lineSeparator();
+			return "Linha " + linha +": NOME ABREVIADO com mais de 40 caracteres" + System.lineSeparator();
 		}
     	
-    	if(nomeAbreviado != null && !nomeAbreviado.matches(Texto.DpPessoa.NOME_REGEX_CARACTERES_PERMITIDOS)) {
-			return "Linha " + linha +": NOME com caracteres não permitidos" + System.lineSeparator();
+    	if(nomeAbreviado != null && !"".equals(nomeAbreviado.trim()) && !nomeAbreviado.matches(Texto.DpPessoa.NOME_REGEX_CARACTERES_PERMITIDOS)) {
+			return "Linha " + linha +": NOME ABREVIADO com caracteres não permitidos" + System.lineSeparator();
 		}
     	return "";
     }

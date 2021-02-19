@@ -30,7 +30,7 @@
 	    	</div>
 	    	<div class="card-body">
 	    		<form id="frm" action="${linkTo[SolicitacaoController].buscar}" method="get" onsubmit="javascript: return block();" >
-		        	<input type="hidden" name="filtro.vazio" value="${false}" />
+		        	
 		            <input type="hidden" name="propriedade" value="${propriedade}" />
 		            <input type="hidden" name="popup" value="${popup}" />
 		            <div class="row">

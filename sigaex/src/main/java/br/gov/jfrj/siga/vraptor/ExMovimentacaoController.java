@@ -63,15 +63,20 @@ import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpToken;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
@@ -1978,6 +1983,21 @@ public class ExMovimentacaoController extends ExController {
 					"Destinatário não pode receber documentos");
 		}
 		
+		if((mov.getLotaResp() != null && mov.getLotaResp().getIsSuspensa() != null && mov.getLotaResp().getIsSuspensa().equals(1)) 
+				|| (mov.getResp() != null && mov.getResp().getLotacao().getIsSuspensa() != null && mov.getResp().getLotacao().getIsSuspensa().equals(1))) {
+			result.include("msgCabecClass", "alert-danger");
+			if(mov.getResp() != null) {
+				result.include("mensagemCabec", "A " + SigaMessages.getMessage("usuario.lotacao") + " do Usuário informado está Suspensa para o recebimento de Documentos. Favor inserir outro Usuário ");
+			} else {
+				result.include("mensagemCabec", "A " + SigaMessages.getMessage("usuario.lotacao") + " informada está Suspensa para o recebimento de Documentos. Favor inserir outra " + SigaMessages.getMessage("usuario.lotacao"));
+			}
+			result.forwardTo(this).aTransferir(
+    				sigla, idTpDespacho, tipoResponsavel, postback, dtMovString, subscritorSel, 
+    				substituicao, titularSel, nmFuncaoSubscritor, idResp, tiposDespacho, descrMov, 
+    				lotaResponsavelSel, responsavelSel, cpOrgaoSel, dtDevolucaoMovString, obsOrgao, protocolo);
+			return;
+		}
+		
 		if (!Ex.getInstance().getComp()
 				.podeTramitarPara(getTitular(), getLotaTitular(), responsavelSel.getObjeto(), lotaResponsavelSel.getObjeto())) {
 			throw new AplicacaoException(
@@ -2019,6 +2039,36 @@ public class ExMovimentacaoController extends ExController {
 				.podeDespachar(getTitular(), getLotaTitular(), builder.getMob()))) {
 			throw new AplicacaoException(
 					"Não é possível tramitar");
+		}
+		
+		if(lotaResponsavelSel != null && lotaResponsavelSel.getObjeto() != null && !Cp.getInstance().getConf().podePorConfiguracao(
+				null, lotaResponsavelSel.getObjeto(), 
+				CpTipoConfiguracao.TIPO_CONFIG_TRAMITAR_PARA_LOTACAO_SEM_USUARIOS_ATIVOS)) {
+			DpPessoaDaoFiltro filtro = new DpPessoaDaoFiltro();
+			filtro.setBuscarFechadas(Boolean.FALSE);
+			filtro.setNome("");
+			filtro.setLotacao(lotaResponsavelSel.getObjeto());
+			Integer qtde = CpDao.getInstance().consultarQuantidade(filtro);
+			
+			if(qtde == 0) {
+				DpSubstituicao subst = new DpSubstituicao();
+				subst.setTitular(new DpPessoa());
+				subst.setLotaTitular(lotaResponsavelSel.getObjeto());
+				
+				qtde += CpDao.getInstance().qtdeSubstituicoesAtivasPorTitular(subst);
+			}
+			
+			if(qtde == 0) {
+				result.include("msgCabecClass", "alert-danger");
+	    		result.include("mensagemCabec", "A " + SigaMessages.getMessage("usuario.lotacao") 
+	    			+ " informada não possui Usuário cadastrado ou ativo, para prosseguir com a tramitação informe outra " + SigaMessages.getMessage("usuario.lotacao"));
+	    		result.forwardTo(this).aTransferir(
+	    				sigla, idTpDespacho, tipoResponsavel, postback, dtMovString, subscritorSel, 
+	    				substituicao, titularSel, nmFuncaoSubscritor, idResp, tiposDespacho, descrMov, 
+	    				lotaResponsavelSel, responsavelSel, cpOrgaoSel, dtDevolucaoMovString, obsOrgao, protocolo);    		
+	    			return;
+				
+			}
 		}
 
 		Ex.getInstance()
@@ -2391,7 +2441,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("listaMarcadores", this.getListaMarcadoresGerais());
 		result.include("listaMarcadoresAtivos", this.getListaMarcadoresAtivos(mobilGeral));
 		result.include("listaMarcadoresLotacao", dao
-				.listarCpMarcadoresPorLotacaoESublotacoes(getLotaTitular(), true));
+				.listarCpMarcadoresPorLotacao(getLotaTitular(), true));
 		result.include("dataLimite", this.getDataLimiteDemanda(mobilGeral));
 	}
 	
@@ -2442,7 +2492,7 @@ public class ExMovimentacaoController extends ExController {
 	 *         {@link CpMarcador#getOrdem()}
 	 */
 	private List<CpMarcador> getListaMarcadoresGerais() {
-		List<CpMarcador> marcadores = dao().listarCpMarcadoresGerais();
+		List<CpMarcador> marcadores = dao().listarCpMarcadoresGerais(true);
 		marcadores.sort(CpMarcador.ORDEM_COMPARATOR);
 
 		return marcadores;
@@ -2457,7 +2507,7 @@ public class ExMovimentacaoController extends ExController {
 	 */
 	@Transacional
 	@Post("/app/expediente/mov/marcar_gravar")
-	public void aMarcarGravar(final String sigla, final Long marcador, final DpPessoaSelecao subscritor_pessoaSel, final DpLotacaoSelecao lotaSubscritor_lotacaoSel,
+	public void aMarcarGravar(final String sigla, final Long marcador, final String interessado, final DpPessoaSelecao subscritorSel, final DpLotacaoSelecao lotaSubscritorSel,
 			final String planejada, String limite, final String texto) throws Exception {
 		Date dtPlanejada = Data.parse(planejada);
 		Date dtLimite = Data.parse(limite);
@@ -2469,12 +2519,28 @@ public class ExMovimentacaoController extends ExController {
 			throw new AplicacaoException("Marcador deve ser informado.");
 
 		CpMarcador m = dao().consultar(marcador, CpMarcador.class, false);
-
+		
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
 				.novaInstancia();
+
+		if (m.getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA || m.getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.PESSOA_OU_LOTACAO) {
+			if (Utils.empty(interessado))
+				throw new AplicacaoException("Tipo do interessado deve ser informado.");
+		} 
+		
+		if (m.getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.PESSOA || "pessoa".equals(interessado)) {
+			if (subscritorSel.empty())
+				throw new AplicacaoException("Pessoa deve ser informada.");
+			movimentacaoBuilder.setSubscritorSel(subscritorSel);
+		}
+
+		if (m.getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.LOTACAO || "lotacao".equals(interessado)) {
+			if (lotaSubscritorSel.empty())
+				throw new AplicacaoException("Lotação deve ser informada.");
+			movimentacaoBuilder.setLotaSubscritorSel(lotaSubscritorSel);
+		}
+
 		movimentacaoBuilder.setIdMarcador(marcador);
-		movimentacaoBuilder.setSubscritorSel(subscritor_pessoaSel);
-		movimentacaoBuilder.setLotaSubscritorSel(lotaSubscritor_lotacaoSel);
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
 		mov.setDescrMov(texto);
 		Ex.getInstance()
@@ -2542,6 +2608,14 @@ public class ExMovimentacaoController extends ExController {
 					return;
 				}
 			}
+		}
+		
+		if((lotaResponsavelSel != null && lotaResponsavelSel.getObjeto() != null && lotaResponsavelSel.getObjeto().getIsSuspensa() != null && lotaResponsavelSel.getObjeto().getIsSuspensa().equals(1)) 
+				|| (responsavelSel != null && responsavelSel.getObjeto() != null && responsavelSel.getObjeto().getLotacao().getIsSuspensa() != null && responsavelSel.getObjeto().getLotacao().getIsSuspensa().equals(1))) {			
+			result.include("msgCabecClass", "alert-danger");
+			result.include("mensagemCabec", "A " + SigaMessages.getMessage("usuario.lotacao") + " informada está Suspensa.");
+			result.forwardTo(this).aTransferirLote(paramoffset);
+			return;
 		}
 
 		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder.novaInstancia();
@@ -3013,19 +3087,19 @@ public class ExMovimentacaoController extends ExController {
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
 				.novaInstancia().setMob(mob);
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
-
+		
 		try {
 			Ex.getInstance()
 					.getBL()
 					.assinarDocumentoComSenha(getCadastrante(),
 							getLotaTitular(), doc, mov.getDtMov(),
 							nomeUsuarioSubscritor, senhaUsuarioSubscritor, true,
-							mov.getTitular(), copia, juntar, tramitar, exibirNoProtocolo);
+							getTitular(), copia, juntar, tramitar, exibirNoProtocolo);
 		} catch (final Exception e) {
 			httpError(e);
 		}
 		
-		result.use(Results.page()).forwardTo("/WEB-INF/page/ok.jsp");
+		httpOK();
 	}
 
 	@Transacional
@@ -3743,6 +3817,7 @@ public class ExMovimentacaoController extends ExController {
 			throw new AplicacaoException("Não é possível desapensar");
 
 		if (doc.isEletronico()) {
+			SigaTransacionalInterceptor.upgradeParaTransacional();
 			aDesapensarGravar(1, sigla, dtMovString, Boolean.FALSE, null, null);
 			return;
 		}
@@ -4914,7 +4989,7 @@ public class ExMovimentacaoController extends ExController {
 		final ExMovimentacao movimentacao = movimentacaoBuilder
 				.construir(dao());
 
-		List<CpMarcador> marcadores = dao().listarCpMarcadoresGerais();
+		List<CpMarcador> marcadores = dao().listarCpMarcadoresGerais(true);
 		Set<CpMarcador> marcadoresAtivo = (Set<CpMarcador>) this.getListaMarcadoresAtivos(documentoBuilder.getMob().getDoc().getMobilGeral());
 		if (marcadores != null) {
 			marcadores.removeAll(marcadoresAtivo);

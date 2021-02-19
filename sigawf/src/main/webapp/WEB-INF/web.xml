@@ -3,19 +3,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 	<display-name>sigawf</display-name>
-	
+
 	<!-- habilita replicacao dos dados da sessao do usuario no cluster -->
 	<!--distributable/ -->
 
 	<jsp-config>
-		<taglib>
-			<taglib-uri>http://localhost/customtag</taglib-uri>
-			<taglib-location>/WEB-INF/tags/tags.tld</taglib-location>
-		</taglib>
-		<taglib>
-			<taglib-uri>http://localhost/functiontag</taglib-uri>
-			<taglib-location>/WEB-INF/tags/func.tld</taglib-location>
-		</taglib>
 		<jsp-property-group>
 			<description>Property group for common configuration for all the JSP's</description>
 			<url-pattern>*.jsp</url-pattern>
@@ -42,7 +34,7 @@
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
-	
+
 	<filter>
 		<filter-name>RequestLoggerFilter</filter-name>
 		<filter-class>br.gov.jfrj.siga.base.log.RequestLoggerFilter</filter-class>
@@ -52,16 +44,6 @@
 		<url-pattern>*</url-pattern>
 	</filter-mapping>
 
-	<filter>
-		<filter-name>WfFilter</filter-name>
-		<filter-class>br.gov.jfrj.siga.wf.util.WfThreadFilter</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>WfFilter</filter-name>
-		<url-pattern>/servicos/*</url-pattern>
-		<url-pattern>/upload</url-pattern>
-	</filter-mapping>
-	
 	<filter>
 		<filter-name>vraptor</filter-name>
 		<filter-class>br.com.caelum.vraptor.VRaptor</filter-class>
@@ -112,13 +94,13 @@
 	</servlet-mapping>
 
 	<servlet>
-		<servlet-name>UploadServlet</servlet-name>
-		<servlet-class>br.gov.jfrj.siga.wf.servlet.UploadServlet</servlet-class>
+		<servlet-name>WfApiV1Servlet</servlet-name>
+		<servlet-class>br.gov.jfrj.siga.wf.api.v1.WfApiV1Servlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
 	</servlet>
-
 	<servlet-mapping>
-		<servlet-name>UploadServlet</servlet-name>
-		<url-pattern>/upload</url-pattern>
+		<servlet-name>WfApiV1Servlet</servlet-name>
+		<url-pattern>/api/v1/*</url-pattern>
 	</servlet-mapping>
 
 	<!-- Inicio de WebServer -->
@@ -144,7 +126,24 @@
 		<url-pattern>/servicos/WfService</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>ErrorHandler</servlet-name>
+		<servlet-class>br.gov.jfrj.siga.jee.SigaErrorHandlerServlet</servlet-class>
+	</servlet>
+
+	<!-- servlet mappings -->
+	<servlet-mapping>
+		<servlet-name>ErrorHandler</servlet-name>
+		<url-pattern>/ErrorHandler</url-pattern>
+	</servlet-mapping>
+
 	<error-page>
-		<location>/WEB-INF/page/erroGeral.jsp</location>
+		<error-code>404</error-code>
+		<location>/ErrorHandler</location>
+	</error-page>
+
+	<error-page>
+		<exception-type>java.lang.Throwable</exception-type>
+		<location>/ErrorHandler</location>
 	</error-page>
 </web-app>

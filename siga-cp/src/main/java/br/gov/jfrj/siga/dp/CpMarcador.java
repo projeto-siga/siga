@@ -33,8 +33,8 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoAplicacaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -217,9 +217,11 @@ public class CpMarcador extends AbstractCpMarcador {
 	 * Ordena de acordo com a {@link #getOrdem() Ordem}.
 	 */
 	public static final Comparator<CpMarcador> ORDEM_COMPARATOR = Comparator
-			.nullsFirst(Comparator.comparing(CpMarcador::getCpTipoMarcador, Comparator.nullsFirst(Comparator.naturalOrder())))
-				.thenComparing(Comparator.comparing(CpMarcador::getOrdem, Comparator.nullsFirst(Comparator.naturalOrder())))
-				.thenComparing(Comparator.comparing(CpMarcador::getDescrMarcador, Comparator.nullsFirst(Comparator.naturalOrder())));
+			.nullsFirst(Comparator.comparing(CpMarcador::getIdFinalidade,
+					Comparator.nullsFirst(Comparator.naturalOrder())))
+			.thenComparing(Comparator.comparing(CpMarcador::getOrdem, Comparator.nullsFirst(Comparator.naturalOrder())))
+			.thenComparing(Comparator.comparing(CpMarcador::getDescrMarcador,
+					Comparator.nullsFirst(Comparator.naturalOrder())));
 
 	public CpMarcador() {
 		super();
@@ -245,31 +247,31 @@ public class CpMarcador extends AbstractCpMarcador {
 	}
 
 	public boolean isAplicacaoGeral() {
-		return getIdTpAplicacao() == CpMarcadorTipoAplicacaoEnum.GERAL;
+		return getIdFinalidade().getIdTpAplicacao() == CpMarcadorTipoAplicacaoEnum.GERAL;
 	}
 
 	public boolean isAplicacaoGeralOuViaEspecificaOuUltimoVolume() {
-		return getIdTpAplicacao() == CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME;
+		return getIdFinalidade().getIdTpAplicacao() == CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME;
 	}
 
 	public boolean isAplicacaoGeralOuTodasAsViasOuUltimoVolume() {
-		return getIdTpAplicacao() == CpMarcadorTipoAplicacaoEnum.TODAS_AS_VIAS_OU_ULTIMO_VOLUME;
+		return getIdFinalidade().getIdTpAplicacao() == CpMarcadorTipoAplicacaoEnum.TODAS_AS_VIAS_OU_ULTIMO_VOLUME;
 	}
 
 	public boolean isInteressadoAtentende() {
-		return getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.ATENDENTE;
+		return getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.ATENDENTE;
 	}
 
 	public boolean isInteressadoPessoa() {
-		return getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.PESSOA
-				|| getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA
-				|| getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.PESSOA_OU_LOTACAO;
+		return getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.PESSOA
+				|| getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA
+				|| getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.PESSOA_OU_LOTACAO;
 	}
 
 	public boolean isInteressadoLotacao() {
-		return getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.LOTACAO
-				|| getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA
-				|| getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.PESSOA_OU_LOTACAO;
+		return getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.LOTACAO
+				|| getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA
+				|| getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.PESSOA_OU_LOTACAO;
 	}
 
 }

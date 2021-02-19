@@ -13,11 +13,10 @@ produces: [application/json]
 tags:
   - name: auth
     description: Autenticação
-  - name: download
-    description: Download
   - name: cadastro
     description: Consulta nos Cadastros
-    
+  - name: utils
+    description: Utilitários
     
 securityDefinitions:
   Basic:
@@ -34,64 +33,28 @@ parameters:
   sigla:
     name: sigla
     in: path
-    description: Sigla do mobil
+    description: Sigla da entidade
     type: string
     required: true
-  completo:
-    name: completo
-    in: query
-    description: Informar true se deseja receber todos os arquivos juntados e anexos
-    required: false
-    type: boolean
-  estampa:
-    name: estampa
-    in: query
-    description: Informar true se deseja receber o PDF sem estampas
-    required: false
-    type: boolean
-  volumes:
-    name: volumes
-    in: query
-    description: Informar true se deseja receber uma compilação com todos os volumes de um processo
-    required: false
-    type: boolean
-  pdf:
-    name: pdf
+  id:
+    name: id
     in: path
-    description: Referência para o PDF que foi enviado previamente para o servidor
+    description: id da entidade
     type: string
     required: true
-  jwt:
-    name: jwt
-    in: path
-    description: JWT que referencia um artefato a ser baixado
-    required: true
-    type: string
-  filename:
-    name: filename
-    in: path
-    description: Nome do arquivo de um artefato a ser baixado
-    required: true
-    type: string
-  disposition:
-    name: disposition
-    in: query
-    description: Informar attachment se desejar receber como um download
-    required: false
-    type: string
-  contenttype:
-    name: contenttype
-    in: query
-    description: Informar o tipo de arquivo desejado, pode ser application/pdf ou text/html
-    required: false
-    type: string
-  chave:
-    name: chave
-    in: path
-    description: Chave que referencia um processo assíncrono
-    required: true
-    type: string
 
+  username:
+    name: username
+    in: query
+    description: Sigla do usuário
+    required: true
+    type: string
+  password:
+    name: password
+    in: query
+    description: Password do usuário
+    required: true
+    type: string
   lotacao:
     name: lotacao
     in: formData
@@ -130,16 +93,126 @@ parameters:
     type: string
   idPessoaIni:
     name: idPessoaIni
-    in: path
+    in: query
     description: Identificador da Pessoa Inicial
-    required: true
+    required: false
     type: string    
+  idPessoa:
+    name: idPessoa
+    in: query
+    description: Identificador da Pessoa (id)
+    required: false
+    type: string    
+  idLotacao:
+    name: idLotacao
+    in: query
+    description: Identificador da Lotação (id)
+    required: false
+    type: string         
   idLotacaoIni:
     name: idLotacaoIni
-    in: path
+    in: query
     description: Identificador da Lotação Inicial
-    required: true
+    required: false
     type: string            
+  idOrgao:
+    name: idOrgao
+    in: query
+    description: Identificador do Órgão (id)
+    required: false
+    type: string
+  nomeCargo:
+    name: nomeCargo
+    in: query
+    description: Nome do cargo ou parte do nome
+    required: false
+    type: string
+  nomeFuncaoConfianca:
+    name: nomeFuncaoConfianca
+    in: query
+    description: Nome da função de confiança cargo ou parte do nome
+    required: false
+    type: string
+    
+  siglaOrgao:
+    name: siglaOrgao
+    in: formData
+    description: Sigla do órgão
+    required: false
+    type: string
+  idCargoIni:
+    name: idCargoIni
+    in: formData
+    description: Id inicial do cargo
+    required: false
+    type: string
+  idFuncaoConfiancaIni:
+    name: idFuncaoConfiancaIni
+    in: formData
+    description: Id inicial da função de confiança
+    required: false
+    type: string
+  formCpf:
+    name: formCpf
+    in: formData
+    description: Número do CPF, com ou sem traço e pontos
+    required: false
+    type: string
+  nome:
+    name: nome 
+    in: formData
+    description: Nome
+    required: false
+    type: string
+  nomeAbreviado:
+    name: nomeAbreviado
+    in: formData
+    description: Nome abreviado
+    required: false
+    type: string
+  dataNascimento:
+    name: dataNascimento
+    in: formData
+    description: Data de nascimento no formato dd/mm/aaaa
+    required: false
+    type: string
+  email:
+    name: email
+    in: formData
+    description: E-mail
+    required: false
+    format: email
+    type: string
+  rg:
+    name: rg 
+    in: formData
+    description: Número do RG com ou sem traços ou pontos
+    required: false
+    type: string
+  rgOrgaoExpedidor:
+    name: rgOrgaoExpedidor
+    in: formData
+    description: Órgão Expedidor do RG
+    required: false
+    type: string
+  rgUf:
+    name: rgUf 
+    in: formData
+    description: UF do RG (Estado). Sigla com dois caracteres.
+    required: false
+    type: string
+  rgDataExpedicao:
+    name: rgDataExpedicao 
+    in: formData
+    description: Data de expedição do RG no formato dd/mm/aaaa
+    required: false
+    type: string
+  enviarEmailAcesso:
+    name: enviarEmailAcesso
+    in: formData
+    description: Opção para enviar o e-mail de acesso automaticamente ao usuário
+    required: false
+    type: boolean
 
 
 ################################################################################
@@ -166,103 +239,20 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
-  /documento/{sigla}/arquivo:
+
+  /pessoas:
     get:
-      summary: Inicia o processo de geração do PDF completo de um documento para visualização
-      tags: [download]
+      summary: "Pesquisa de pessoas"
+      description: "Retorna uma lista de pessoas. A pesquisa será feita de acordo com os parâmetros informados: 
+        <ul>
+        <li><b>id=</b> Pesquisa a Pessoa atual da Pessoa com determinado id inicial.</li>
+        <li><b>texto=</b> Pesquisa as Pessoas cuja Matrícula ou nome contém uma determinada palavra.</li>
+        <li><b>cpf=</b> Pesquisa as Pessoas cadastradas com determinado CPF</li></ul>"
+      tags: [cadastro]
       security:
         - Bearer: []
       parameters:
-        - $ref: "#/parameters/contenttype"
-        - $ref: "#/parameters/sigla"
-        - $ref: "#/parameters/estampa"
-        - $ref: "#/parameters/completo"
-        - $ref: "#/parameters/volumes"
-      responses:
-        200:
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              uuid:
-                type: string
-                description: UUID que pode ser usado como chave para obter status da geração do PDF
-              jwt:
-                type: string
-                description: JWT com as informações para download do PDF
-        500:
-          description: Error ocurred
-          schema:
-            $ref: "#/definitions/Error"
-
-  /download/{jwt}/{filename}:
-    get:
-      summary: Faz o download de um artefato qualquer, baseado nas informações contidas em um JWT
-      tags: [download]
-      parameters:
-        - $ref: "#/parameters/jwt"
-        - $ref: "#/parameters/filename"
-        - $ref: "#/parameters/disposition"
-      responses:
-        200:
-          description: Successful response
-          schema:
-            type: file
-          headers:
-            Content-Type:
-              type: string
-              description: application/pdf
-            Content-Disposition:
-              type: string
-              description: attachment
-        500:
-          description: Error ocurred
-          schema:
-            $ref: "#/definitions/Error"
-            
-  /status/{chave}:
-    get:
-      tags: [download]
-      parameters:
-        - $ref: "#/parameters/chave"
-      summary: Obtem o status de uma operação assíncrona
-      responses:
-        200:
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              mensagem:
-                type: string
-                description: Mensagem
-              indice:
-                type: number
-                description: Quantos passos já foram executados
-              contador:
-                type: number
-                description: Número total de passos a serem executados
-              bytes:
-                type: number
-                description: Tamanho total do payload até o momento
-              errormsg:
-                type: string
-                description: Mensagem de erro se houver
-              stacktrace:
-                type: string
-                description: Detalhamento do erro
-        500:
-          description: Error ocurred
-          schema:
-            $ref: "#/definitions/Error"
-
-  /pessoa:
-    get:
-      summary: "Permite a pesquisa de pessoa por texto ou CPF"
-      description: "Retornar uma lista de pessoas. A pesquisa será feita de acordo com um dos parâmetros informados:
-        <ul><li><b>texto=</b> Pesquisa as Pessoas cuja Matrícula ou nome contém uma determinada palavra.</li>
-        <li><b>cpf=</b> Pesquisa as Pessoas que contem determinado CPF</li></ul>"
-      tags: [cadastro]
-      parameters:
+        - $ref: "#/parameters/idPessoaIni"
         - $ref: "#/parameters/texto"
         - $ref: "#/parameters/cpf"
       responses:
@@ -287,31 +277,95 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
-
-  /pessoa/{idPessoaIni}/pessoaAtual:
-    get:
-      description: Retorna o objeto da Pessoa Atual a partir da Pessoa Inicial
+    
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      summary: "Inclusão de pessoas"
+      description: "Inclui uma pessoa no cadastro de pessoas e cria a identidade para a mesma. 
+      	Acesso restrito para usuários autorizados."
       tags: [cadastro]
+      security:
+        - Bearer: []
       parameters:
-        - $ref: "#/parameters/idPessoaIni"
+        - $ref: "#/parameters/siglaOrgao"
+        - $ref: "#/parameters/idCargoIni"
+        - $ref: "#/parameters/idFuncaoConfiancaIni"
+        - $ref: "#/parameters/lotacao"
+        - $ref: "#/parameters/formCpf"
+        - $ref: "#/parameters/nome"
+        - $ref: "#/parameters/nomeAbreviado"
+        - $ref: "#/parameters/dataNascimento"
+        - $ref: "#/parameters/email"
+        - $ref: "#/parameters/rg"
+        - $ref: "#/parameters/rgOrgaoExpedidor"
+        - $ref: "#/parameters/rgUf"
+        - $ref: "#/parameters/rgDataExpedicao"
+        - $ref: "#/parameters/enviarEmailAcesso"
+      responses:
+        200:
+          description: Criado com sucesso
+          schema:
+            type: object
+            properties:
+              idPessoa:
+                type: string
+              siglaPessoa:
+                type: string
+        400:
+          description: Órgão, lotação, cargo ou função de confiança não existente.
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: Inclusão de pessoa não permitida
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"            
+
+  /pessoas/{sigla}:
+    get:
+      summary: "Pesquisa de pessoa por sigla"
+      description: "Retorna a pessoa correspondente a sigla pesquisada" 
+      tags: [cadastro]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/sigla"
       responses:
         200:
           description: Successful response
           schema:
-            $ref: "#/definitions/PessoaAtual"
+            properties:
+              pessoa:
+                $ref: "#/definitions/Pessoa"
+        403:
+          description: Acesso não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Nenhuma Pessoa foi encontrada para a sigla informada.
+          schema:
+            $ref: "#/definitions/Error"                
         500:
           description: Error ocurred
           schema:
-            $ref: "#/definitions/Error"         
+            $ref: "#/definitions/Error"
 
-  /lotacao:
+  /lotacoes:
     get:
-      summary: "Pesquisa lotações por:
-        texto= cuja sigla ou nome contém uma determinada palavra."
-      description: Retornar uma lista de lotações. A pesquisa será feita sobre a Sigla e o Nome da Lotação.
+      summary: "Pesquisa de lotações"
+      description: "Retorna uma lista de lotações. A pesquisa será feita de acordo com os parâmetros informados:
+        <ul>
+        <li><b>idLotacaoIni=</b>Pesquisa a Lotação Atual da Lotação Inicial solicitada.</li>
+        <li><b>texto=</b>Pesquisa as lotacoes cuja sigla ou nome contém uma determinada palavra.</li></ul>"
       tags: [cadastro]
+      security:
+        - Bearer: []
       parameters:
         - $ref: "#/parameters/texto"
+        - $ref: "#/parameters/idLotacaoIni"
       responses:
         200:
           description: Successful response
@@ -327,21 +381,237 @@ paths:
           schema:
             $ref: "#/definitions/Error"            
   
-  /lotacao/{idLotacaoIni}/lotacaoAtual:
+  /lotacoes/{sigla}:
     get:
-      description: Retorna o objeto da Lotação Atual a partir da Lotação Inicial
+      summary: "Pesquisa de lotacoes por sigla"
+      description: "Retorna a lotacao correspondente a sigla pesquisda" 
       tags: [cadastro]
+      security:
+        - Bearer: []
       parameters:
-        - $ref: "#/parameters/idLotacaoIni"
+        - $ref: "#/parameters/sigla"
       responses:
         200:
           description: Successful response
           schema:
-            $ref: "#/definitions/LotacaoAtual" 
+            properties:
+              lotacao:
+                $ref: "#/definitions/Lotacao"
+        403:
+          description: Acesso não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Nenhuma lotação foi encontrada para a sigla informada.
+          schema:
+            $ref: "#/definitions/Error"                
         500:
           description: Error ocurred
           schema:
-            $ref: "#/definitions/Error"   
+            $ref: "#/definitions/Error"
+
+  /orgaos:
+    get:
+      summary: "Pesquisa de órgãos"
+      description: "Retorna uma lista de órgãos."
+      tags: [cadastro]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/idOrgao"
+        - $ref: "#/parameters/texto"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Orgao"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"            
+  
+  /orgaos/{sigla}:
+    get:
+      summary: "Pesquisa de órgão por sigla"
+      description: "Retorna o órgão correspondente a sigla pesquisada" 
+      tags: [cadastro]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            properties:
+              orgao:
+                $ref: "#/definitions/Orgao"
+        403:
+          description: Acesso não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Nenhum Órgão foi encontrado para a sigla informada.
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /cargos/{id}:
+    get:
+      summary: "Pesquisa de cargo por id"
+      description: "Retorna o cargo correspondente ao id pesquisado" 
+      tags: [cadastro]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            properties:
+              cargo:
+                $ref: "#/definitions/Cargo"
+        403:
+          description: Acesso não permitido ou Usuário não autorizado para consultar dados deste órgão.
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Nenhum cargo foi encontrado para os parâmetros informados.
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+
+  /cargos:
+    get:
+      summary: "Pesquisa de cargos por id do órgão e nome do cargo"
+      description: "Retorna uma lista de cargos correspondente ao id do órgão e nome do cargo pesquisados. Se não for informado o nome do cargo, retorna todos do órgão.
+      	Não é permitida a consulta de cargos de outro órgão que não seja o do usuário logado." 
+      tags: [cadastro]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/idOrgao"
+        - $ref: "#/parameters/nomeCargo"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Cargo"
+        403:
+          description: Acesso não permitido ou Usuário não autorizado para consultar dados deste órgão.
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Nenhum cargo foi encontrado para os parâmetros informados.
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /funcoes/{id}:
+    get:
+      summary: "Pesquisa de função de confiança por id"
+      description: "Retorna a função de confiança correspondente ao id pesquisado" 
+      tags: [cadastro]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            properties:
+              funcaoConfianca:
+                $ref: "#/definitions/FuncaoConfianca"
+        403:
+          description: Acesso não permitido ou Usuário não autorizado para consultar dados deste órgão.
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Nenhuma função de confiança foi encontrada para os parâmetros informados.
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+
+  /funcoes:
+    get:
+      summary: "Pesquisa de funções de confiança por id do órgão e nome do cargo"
+      description: "Retorna uma lista de funções de confiança correspondentes ao id do órgão e nome pesquisados. Se não for informado o nome, retorna todos do órgão." 
+      tags: [cadastro]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/idOrgao"
+        - $ref: "#/parameters/nomeFuncaoConfianca"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/FuncaoConfianca"
+        403:
+          description: Acesso não permitido ou Usuário não autorizado para consultar dados deste órgão.
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Nenhuma função de confiança foi encontrada para os parâmetros informados.
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /acessos:
+    get:
+      description: Listar os últimos acessos
+      tags: [utils]
+      security:
+        - Bearer: []      
+      parameters: []
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/AcessoItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
 
 
 ################################################################################
@@ -405,21 +675,6 @@ definitions:
       funcaoConfianca:
         $ref: "#/definitions/FuncaoConfianca"
   
-  PessoaAtual:
-    description: Dados de uma determinada Pessoa
-    type: object
-    properties:
-      idPessoa:
-        type: string
-      idPessoaIni:
-        type: string        
-      sigla:
-        type: string
-      nome:
-        type: string        
-      siglaLotacao:
-        type: string        
-
   Orgao:
     type: object
     description: Dados do Órgão da pessoa para perfil de acesso
@@ -477,6 +732,9 @@ definitions:
       idCargo:
         type: string
         description: Id do Cargo
+      idCargoIni:
+        type: string
+        description: Id inicial do Cargo
       idExterna:
         type: string
         description: id do Cargo Externo
@@ -494,6 +752,9 @@ definitions:
       idFuncaoConfianca:
         type: string
         description: Id da função de confiança
+      idFuncaoConfiancaIni:
+        type: string
+        description: Id inicial da função de confiança
       idExterna:
         type: string
         description: id da função de confiança externa
@@ -506,3 +767,14 @@ definitions:
       idpai:
         type: string
         description: id da função de confiança pai
+
+  AcessoItem:
+    description: Acessos recentes
+    type: object
+    properties:
+      datahora:
+        type: string
+        format: date-time
+      ip:
+        type: string
+        

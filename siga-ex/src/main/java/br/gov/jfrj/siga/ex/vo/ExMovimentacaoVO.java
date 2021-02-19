@@ -187,9 +187,9 @@ public class ExMovimentacaoVO extends ExVO {
 			if (mov.getLotaSubscritor() != null) 
 				descricao += (mov.getSubscritor() == null ? ", lotação interessada: " : "/") + mov.getLotaSubscritor().getSiglaCompleta();
 			if (mov.getDtParam1() != null) 
-				descricao += ", data planejada: " + Data.formatDataETempoRelativo(mov.getDtParam1());
+				descricao += ", data de exibição: " + Data.formatDataETempoRelativo(mov.getDtParam1());
 			if (mov.getDtParam1() != null) 
-				descricao += ", data limite: " + Data.formatDataETempoRelativo(mov.getDtParam2());
+				descricao += ", prazo final: " + Data.formatDataETempoRelativo(mov.getDtParam2());
 			if (mov.getObs() != null && mov.getObs().trim().length() > 0)
 				descricao += ", obs: " + mov.getObs();
 			addAcao(AcaoVO.builder().nome("Cancelar").nameSpace("/app/expediente/mov")
@@ -364,18 +364,21 @@ public class ExMovimentacaoVO extends ExVO {
 				addAcao(null, mov.getExMobil().getSigla(), "/app/expediente/doc", "exibir", true, null,
 						"sigla=" + mov.getExMobil().getSigla(), "Documento juntado: ", mensagemPos, null);
 
-				if (mov.getExDocumento().getExModelo()
-						.getExFormaDocumento().getDescricao().equals("Despacho")) { 
-					if (mov.getExMobil().getPodeExibirNoAcompanhamento()) {
+				if (mov.getExMobil().podeExibirNoAcompanhamento(titular, lotaTitular)) {
 						Set<ExMovimentacao> movs = mov.getExMobil().getMovsNaoCanceladas(ExTipoMovimentacao
 								.TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO);
-						addAcao(null, "Desfazer Disponibilizar no Acompanhamento do Protocolo", "/app/expediente/mov", 
-								"desfazer_exibir_no_acompanhamento_do_protocolo",
-								true, "Ao clicar em OK o conteúdo deste documento deixará de ficar disponível através do número do " 
-										+ "protocolo de acompanhamento. Deseja continuar?", 
-								"id=" + movs.iterator().next().getIdMov().toString(), null,
-								null, null);
-					} else {
+						if (!movs.isEmpty()) {
+							addAcao(null, "Desfazer Disponibilizar no Acompanhamento do Protocolo", "/app/expediente/mov", 
+									"desfazer_exibir_no_acompanhamento_do_protocolo",
+									true, "Ao clicar em OK o conteúdo deste documento deixará de ficar disponível através do número do " 
+											+ "protocolo de acompanhamento. Deseja continuar?", 
+									"id=" + movs.iterator().next().getIdMov().toString(), null,
+									null, null);
+						}
+				} else {
+					if (mov.getExMobil().isJuntado()
+							&& Ex.getInstance().getComp()
+								.podeDisponibilizarNoAcompanhamentoDoProtocolo(titular, lotaTitular, mov.getExDocumento())) {
 						addAcao(null, "Disponibilizar no Acompanhamento do Protocolo", "/app/expediente/mov", 
 								"exibir_no_acompanhamento_do_protocolo", 
 								true, "Ao clicar em OK o conteúdo deste documento ficará disponível através do número do "

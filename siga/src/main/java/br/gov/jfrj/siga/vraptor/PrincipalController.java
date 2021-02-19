@@ -175,11 +175,16 @@ public class PrincipalController extends SigaController {
 				// Documentos
 				lurls.add(urlBase + "/sigaex/public/app/expediente/selecionar?sigla=" + sigla + incluirMatricula
 						+ ";/sigaex/app/expediente/doc/exibir?sigla=");
+				if(orgao == null) {
+					// Pessoas
+					lurls.add(urlBase + "/siga/public/app/pessoa/selecionar?sigla=" + sigla + incluirMatricula
+							+ ";/siga/app/pessoa/exibir?sigla=");
+				}
 			} else if (modulo != null) {
 				switch (modulo) {
 				case "SR": // Solicitacoes
 				case "TMPSR":
-					lurls.add(urlBase + "/sigasr/public/app/solicitacao/selecionar?sigla=" + sigla + incluirMatricula);
+					lurls.add(urlBase + "/sigasr/public/app/selecionar?sigla=" + sigla + incluirMatricula);
 					break;
 				case "GC": // Conhecimentos
 				case "TMPGC":
@@ -244,9 +249,11 @@ public class PrincipalController extends SigaController {
 	@Consumes("text/vnd.graphviz")
 	@Path("/public/app/graphviz/svg")
 	public Download graphvizProxy(String dot) throws Exception {
-		String url = (String) Prop.get("/vizservice.url");
+		String url = Prop.get("/vizservice.url");
 		if (url == null)
 			throw new Exception("Parâmetro vizservice.url precisa ser informado");
+		
+		url = url + "/svg";
 		corsHeaders(response);
 
 		String body = Unirest.post(url).header("Content-Type", "text/vnd.graphviz").body(dot).asString().getBody();

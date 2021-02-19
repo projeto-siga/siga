@@ -27,6 +27,7 @@ import java.net.URLDecoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -45,7 +46,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.xerces.impl.dv.util.Base64;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.DynamicUpdate;
 import org.jboss.logging.Logger;
@@ -418,7 +418,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * <b>html</b> contido no zip gravado no blob do documento.
 	 */
 	public String getConteudoBlobHtmlB64() {
-		return Base64.encode(getConteudoBlobHtml());
+		return Base64.getEncoder().encodeToString(getConteudoBlobHtml());
 	}
 
 	/**
@@ -495,7 +495,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * <b>pdf</b> contido no zip gravado no blob do documento.
 	 */
 	public String getConteudoBlobPdfB64() {
-		return Base64.encode(getConteudoBlobPdf());
+		return Base64.getEncoder().encodeToString(getConteudoBlobPdf());
 	}
 
 	/**
@@ -2698,9 +2698,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			else if (o instanceof CpOrgaoUsuario)
 				s += ((CpOrgaoUsuario) o).getSigla();
 			else if (o instanceof DpLotacao)
-				s += ((DpLotacao) o).getNomeLotacao()+ " - " + ((DpLotacao) o).getSiglaCompleta();
+				s += ((DpLotacao) o).getNomeLotacao()+ " - " +((DpLotacao) o).getSiglaCompleta() + "/" + ((DpLotacao) o).getOrgaoUsuario();
 			else if (o instanceof DpPessoa)
-				s += ((DpPessoa) o).getNomePessoa() + " - " + ((DpPessoa) o).getSiglaCompleta();
+				s += ((DpPessoa) o).getNomePessoa() + " - " + ((DpPessoa) o).getSiglaCompleta() + "/" + getTitular().getLotacao().getSigla();
 			else
 				s += o.toString();
 		}

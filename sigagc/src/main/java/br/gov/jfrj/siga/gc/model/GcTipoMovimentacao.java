@@ -9,7 +9,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "GC_TIPO_MOVIMENTACAO", schema = "SIGAGC")
+@Table(name = "gc_tipo_movimentacao", schema = "sigagc")
 public class GcTipoMovimentacao extends Objeto {
 	private static final long serialVersionUID = -4444112339088302985L;
 

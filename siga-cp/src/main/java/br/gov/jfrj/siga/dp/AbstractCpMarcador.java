@@ -35,26 +35,20 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 
-import br.gov.jfrj.siga.cp.CpMarcadorCorEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorIconeEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoDataEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
-import br.gov.jfrj.siga.cp.CpMarcadorTipoTextoEnum;
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorCorEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorIconeEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoAplicacaoEnum;
 import br.gov.jfrj.siga.model.Historico;
 
 @MappedSuperclass
-@NamedQueries({ 
-	@NamedQuery(name = "quantidadeDocumentos", query = "SELECT count(1)"
-			+ "		FROM CpMarca marca"
-			+ "	WHERE (marca.dtIniMarca IS NULL OR marca.dtIniMarca < CURRENT_TIMESTAMP)"
-			+ "		AND (marca.dtFimMarca IS NULL OR marca.dtFimMarca > CURRENT_TIMESTAMP)"
-			+ "		AND marca.dpPessoaIni.idPessoa = :idPessoaIni"
-			+ "     AND marca.cpTipoMarca.idTpMarca = 1 "
-			+ "	    AND marca.cpMarcador.idMarcador not in (9,8,10,11,12 ,13,16, 18, 20 , 21, 22, 24 ,26, 32, 62, 63, 64, 7, 50, 51)") })
+@NamedQueries({ @NamedQuery(name = "quantidadeDocumentos", query = "SELECT count(1)" + "		FROM CpMarca marca"
+		+ "	WHERE (marca.dtIniMarca IS NULL OR marca.dtIniMarca < :dbDatetime)"
+		+ "		AND (marca.dtFimMarca IS NULL OR marca.dtFimMarca > :dbDatetime)"
+		+ "		AND marca.dpPessoaIni.idPessoa = :idPessoaIni" + "     AND marca.cpTipoMarca.idTpMarca = 1 "
+		+ "	    AND marca.cpMarcador.idMarcador not in (9,8,10,11,12 ,13,16, 18, 20 , 21, 22, 24 ,26, 32, 62, 63, 64, 7, 50, 51)") })
 public abstract class AbstractCpMarcador extends HistoricoAuditavelSuporte implements Serializable, Historico {
 
 	private static final long serialVersionUID = 6436403895150961831L;
@@ -68,9 +62,9 @@ public abstract class AbstractCpMarcador extends HistoricoAuditavelSuporte imple
 	@Column(name = "DESCR_MARCADOR")
 	private String descrMarcador;
 
-	@Column(name = "ID_TP_MARCADOR", nullable = false)
-	private CpTipoMarcadorEnum cpTipoMarcador;
-
+//	@Column(name = "ID_TP_MARCADOR", nullable = false)
+//	private CpTipoMarcadorEnum cpTipoMarcador;
+//
 	@Column(name = "GRUPO_MARCADOR")
 	private Integer grupoMarcador;
 
@@ -90,24 +84,27 @@ public abstract class AbstractCpMarcador extends HistoricoAuditavelSuporte imple
 	@Column(name = "ID_ICONE")
 	private CpMarcadorIconeEnum idIcone;
 
-	@Column(name = "ID_TP_APLICACAO_MARCADOR")
-	private CpMarcadorTipoAplicacaoEnum idTpAplicacao;
+	@Column(name = "ID_FINALIDADE_MARCADOR")
+	private CpMarcadorFinalidadeEnum idFinalidade;
 
-	@Column(name = "ID_TP_DATA_LIMITE")
-	private CpMarcadorTipoDataEnum idTpDataLimite;
-
-	@Column(name = "ID_TP_DATA_PLANEJADA")
-	private CpMarcadorTipoDataEnum idTpDataPlanejada;
-
-	@Column(name = "ID_TP_OPCAO_EXIBICAO")
-	private CpMarcadorTipoExibicaoEnum idTpExibicao;
-
-	@Column(name = "ID_TP_INTERESSADO")
-	private CpMarcadorTipoInteressadoEnum idTpInteressado;
-
-	@Column(name = "ID_TP_TEXTO")
-	private CpMarcadorTipoTextoEnum idTpTexto;
-
+//	@Column(name = "ID_TP_APLICACAO_MARCADOR")
+//	private CpMarcadorTipoAplicacaoEnum idTpAplicacao;
+//
+//	@Column(name = "ID_TP_DATA_LIMITE")
+//	private CpMarcadorTipoDataEnum idTpDataLimite;
+//
+//	@Column(name = "ID_TP_DATA_PLANEJADA")
+//	private CpMarcadorTipoDataEnum idTpDataPlanejada;
+//
+//	@Column(name = "ID_TP_OPCAO_EXIBICAO")
+//	private CpMarcadorTipoExibicaoEnum idTpExibicao;
+//
+//	@Column(name = "ID_TP_INTERESSADO")
+//	private CpMarcadorTipoInteressadoEnum idTpInteressado;
+//
+//	@Column(name = "ID_TP_TEXTO")
+//	private CpMarcadorTipoTextoEnum idTpTexto;
+//
 	@Column(name = "HIS_ATIVO")
 	private Integer hisAtivo;
 
@@ -127,14 +124,14 @@ public abstract class AbstractCpMarcador extends HistoricoAuditavelSuporte imple
 		this.descrMarcador = descrMarcador;
 	}
 
-	public CpTipoMarcadorEnum getCpTipoMarcador() {
-		return cpTipoMarcador;
-	}
-
-	public void setCpTipoMarcador(CpTipoMarcadorEnum cpTipoMarcador) {
-		this.cpTipoMarcador = cpTipoMarcador;
-	}
-
+//	public CpTipoMarcadorEnum getCpTipoMarcador() {
+//		return cpTipoMarcador;
+//	}
+//
+//	public void setCpTipoMarcador(CpTipoMarcadorEnum cpTipoMarcador) {
+//		this.cpTipoMarcador = cpTipoMarcador;
+//	}
+//
 	public Integer getGrupoMarcador() {
 		return grupoMarcador;
 	}
@@ -183,53 +180,53 @@ public abstract class AbstractCpMarcador extends HistoricoAuditavelSuporte imple
 		this.idIcone = idIcone;
 	}
 
-	public CpMarcadorTipoAplicacaoEnum getIdTpAplicacao() {
-		return idTpAplicacao;
-	}
-
-	public void setIdTpAplicacao(CpMarcadorTipoAplicacaoEnum idTpAplicacaoMarcador) {
-		this.idTpAplicacao = idTpAplicacaoMarcador;
-	}
-
-	public CpMarcadorTipoDataEnum getIdTpDataLimite() {
-		return idTpDataLimite;
-	}
-
-	public void setIdTpDataLimite(CpMarcadorTipoDataEnum idTpDataLimite) {
-		this.idTpDataLimite = idTpDataLimite;
-	}
-
-	public CpMarcadorTipoDataEnum getIdTpDataPlanejada() {
-		return idTpDataPlanejada;
-	}
-
-	public void setIdTpDataPlanejada(CpMarcadorTipoDataEnum idTpDataPlanejada) {
-		this.idTpDataPlanejada = idTpDataPlanejada;
-	}
-
-	public CpMarcadorTipoExibicaoEnum getIdTpExibicao() {
-		return idTpExibicao;
-	}
-
-	public void setIdTpExibicao(CpMarcadorTipoExibicaoEnum idTpExibicao) {
-		this.idTpExibicao = idTpExibicao;
-	}
-
-	public CpMarcadorTipoTextoEnum getIdTpTexto() {
-		return idTpTexto;
-	}
-
-	public void setIdTpTexto(CpMarcadorTipoTextoEnum idTpTexto) {
-		this.idTpTexto = idTpTexto;
-	}
-
-	public CpMarcadorTipoInteressadoEnum getIdTpInteressado() {
-		return idTpInteressado;
-	}
-
-	public void setIdTpInteressado(CpMarcadorTipoInteressadoEnum idTpInteressado) {
-		this.idTpInteressado = idTpInteressado;
-	}
+//	public CpMarcadorTipoAplicacaoEnum getIdTpAplicacao() {
+//		return idTpAplicacao;
+//	}
+//
+//	public void setIdTpAplicacao(CpMarcadorTipoAplicacaoEnum idTpAplicacaoMarcador) {
+//		this.idTpAplicacao = idTpAplicacaoMarcador;
+//	}
+//
+//	public CpMarcadorTipoDataEnum getIdTpDataLimite() {
+//		return idTpDataLimite;
+//	}
+//
+//	public void setIdTpDataLimite(CpMarcadorTipoDataEnum idTpDataLimite) {
+//		this.idTpDataLimite = idTpDataLimite;
+//	}
+//
+//	public CpMarcadorTipoDataEnum getIdTpDataPlanejada() {
+//		return idTpDataPlanejada;
+//	}
+//
+//	public void setIdTpDataPlanejada(CpMarcadorTipoDataEnum idTpDataPlanejada) {
+//		this.idTpDataPlanejada = idTpDataPlanejada;
+//	}
+//
+//	public CpMarcadorTipoExibicaoEnum getIdTpExibicao() {
+//		return idTpExibicao;
+//	}
+//
+//	public void setIdTpExibicao(CpMarcadorTipoExibicaoEnum idTpExibicao) {
+//		this.idTpExibicao = idTpExibicao;
+//	}
+//
+//	public CpMarcadorTipoTextoEnum getIdTpTexto() {
+//		return idTpTexto;
+//	}
+//
+//	public void setIdTpTexto(CpMarcadorTipoTextoEnum idTpTexto) {
+//		this.idTpTexto = idTpTexto;
+//	}
+//
+//	public CpMarcadorTipoInteressadoEnum getIdTpInteressado() {
+//		return idTpInteressado;
+//	}
+//
+//	public void setIdTpInteressado(CpMarcadorTipoInteressadoEnum idTpInteressado) {
+//		this.idTpInteressado = idTpInteressado;
+//	}
 
 	//
 	// Solução para não precisar criar HIS_ATIVO em todas as tabelas que herdam de
@@ -245,6 +242,14 @@ public abstract class AbstractCpMarcador extends HistoricoAuditavelSuporte imple
 	public void setHisAtivo(Integer hisAtivo) {
 		super.setHisAtivo(hisAtivo);
 		this.hisAtivo = getHisAtivo();
+	}
+
+	public CpMarcadorFinalidadeEnum getIdFinalidade() {
+		return idFinalidade;
+	}
+
+	public void setIdFinalidade(CpMarcadorFinalidadeEnum finalidade) {
+		this.idFinalidade = finalidade;
 	}
 
 }

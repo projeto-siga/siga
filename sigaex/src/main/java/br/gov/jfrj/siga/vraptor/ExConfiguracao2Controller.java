@@ -41,7 +41,7 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.builder.ExConfiguracaoBuilder;
 
 @Controller
-@Path("app/expediente/configuracao2")
+@Path("app/configuracao2")
 public class ExConfiguracao2Controller extends ExController {
 	
 	private static final String VERIFICADOR_ACESSO = "FE:Ferramentas;CFG:Configurações";
@@ -205,9 +205,9 @@ public class ExConfiguracao2Controller extends ExController {
 	}
 	
 	private void gravarConfiguracaoOrgaos(ExConfiguracaoDTO configuracao, Long idModelo) {
-		ExConfiguracaoBuilder configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia();
+		ExConfiguracaoBuilder configuracaoBuilder = new ExConfiguracaoBuilder();
 		for (Long idOrgao : configuracao.getIdOrgaos()) {
-			configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia().setId(null)
+			configuracaoBuilder = new ExConfiguracaoBuilder().setId(null)
 					.setTipoPublicador(null)
 					.setIdTpMov(configuracao.getMovimentacao())
 					.setIdTpDoc(null)
@@ -231,14 +231,14 @@ public class ExConfiguracao2Controller extends ExController {
 					.setFuncaoObjetoSel(null)								
 					.setIdTpLotacao(null);
 			
-			gravarConfiguracao(configuracao.getTipoConfiguracao(), configuracao.getIdSituacao(), configuracaoBuilder.construir(dao()));
+			gravarConfiguracao(configuracao.getTipoConfiguracao(), configuracao.getIdSituacao(), configuracaoBuilder.construir());
 		}						
 	}
 	
 	private void gravarConfiguracaoUnidades(ExConfiguracaoDTO configuracao, Long idModelo) {
-		ExConfiguracaoBuilder configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia();		
+		ExConfiguracaoBuilder configuracaoBuilder = new ExConfiguracaoBuilder();		
 		for (Long idUnidade : configuracao.getIdUnidades()) {
-			configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia().setId(null)
+			configuracaoBuilder = new ExConfiguracaoBuilder().setId(null)
 					.setTipoPublicador(null)
 					.setIdTpMov(configuracao.getMovimentacao())
 					.setIdTpDoc(null)
@@ -262,14 +262,14 @@ public class ExConfiguracao2Controller extends ExController {
 					.setFuncaoObjetoSel(null)								
 					.setIdTpLotacao(null);	
 			
-			gravarConfiguracao(configuracao.getTipoConfiguracao(), configuracao.getIdSituacao(), configuracaoBuilder.construir(dao()));
+			gravarConfiguracao(configuracao.getTipoConfiguracao(), configuracao.getIdSituacao(), configuracaoBuilder.construir());
 		}				
 	}
 	
 	private void gravarConfiguracaoCargos(ExConfiguracaoDTO configuracao, Long idModelo) {
-		ExConfiguracaoBuilder configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia();				
+		ExConfiguracaoBuilder configuracaoBuilder = new ExConfiguracaoBuilder();				
 		for (Long idCargo : configuracao.getIdCargos()) {
-			configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia().setId(null)
+			configuracaoBuilder = new ExConfiguracaoBuilder().setId(null)
 					.setTipoPublicador(null)
 					.setIdTpMov(configuracao.getMovimentacao())
 					.setIdTpDoc(null)
@@ -293,14 +293,14 @@ public class ExConfiguracao2Controller extends ExController {
 					.setFuncaoObjetoSel(null)								
 					.setIdTpLotacao(null);		
 			
-			gravarConfiguracao(configuracao.getTipoConfiguracao(), configuracao.getIdSituacao(), configuracaoBuilder.construir(dao()));
+			gravarConfiguracao(configuracao.getTipoConfiguracao(), configuracao.getIdSituacao(), configuracaoBuilder.construir());
 		}			
 	}
 	
 	private void gravarConfiguracaoFuncoes(ExConfiguracaoDTO configuracao, Long idModelo) {
-		ExConfiguracaoBuilder configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia();				
+		ExConfiguracaoBuilder configuracaoBuilder = new ExConfiguracaoBuilder();				
 		for (Long idFuncao : configuracao.getIdFuncoes()) {
-			configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia().setId(null)
+			configuracaoBuilder = new ExConfiguracaoBuilder().setId(null)
 					.setTipoPublicador(null)
 					.setIdTpMov(configuracao.getMovimentacao())
 					.setIdTpDoc(null)
@@ -324,14 +324,14 @@ public class ExConfiguracao2Controller extends ExController {
 					.setFuncaoObjetoSel(null)								
 					.setIdTpLotacao(null);			
 			
-			gravarConfiguracao(configuracao.getTipoConfiguracao(), configuracao.getIdSituacao(), configuracaoBuilder.construir(dao()));
+			gravarConfiguracao(configuracao.getTipoConfiguracao(), configuracao.getIdSituacao(), configuracaoBuilder.construir());
 		}				
 	}
 	
 	private void gravarConfiguracaoPessoas(ExConfiguracaoDTO configuracao, Long idModelo) {
-		ExConfiguracaoBuilder configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia();				
+		ExConfiguracaoBuilder configuracaoBuilder = new ExConfiguracaoBuilder();				
 		for (Long idPessoa : configuracao.getIdPessoas()) {
-			configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia().setId(null)
+			configuracaoBuilder = new ExConfiguracaoBuilder().setId(null)
 					.setTipoPublicador(null)
 					.setIdTpMov(configuracao.getMovimentacao())
 					.setIdTpDoc(null)
@@ -355,7 +355,7 @@ public class ExConfiguracao2Controller extends ExController {
 					.setFuncaoObjetoSel(null)								
 					.setIdTpLotacao(null);	
 			
-			gravarConfiguracao(configuracao.getTipoConfiguracao(), configuracao.getIdSituacao(), configuracaoBuilder.construir(dao()));
+			gravarConfiguracao(configuracao.getTipoConfiguracao(), configuracao.getIdSituacao(), configuracaoBuilder.construir());
 		}			
 	}
 	

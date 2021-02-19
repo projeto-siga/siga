@@ -1,7 +1,9 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
+import com.crivano.swaggerservlet.SwaggerException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -17,27 +19,33 @@ public class DocumentosSiglaAnotarPost implements IDocumentosSiglaAnotarPost {
 
 	@Override
 	public void run(DocumentosSiglaAnotarPostRequest req, DocumentosSiglaAnotarPostResponse resp) throws Exception {
-		CurrentRequest.set(
-				new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-		SwaggerHelper.buscarEValidarUsuarioLogado();
-
-		SigaObjects so = SwaggerHelper.getSigaObjects();
-
-		DpPessoa cadastrante = so.getCadastrante();
-		DpLotacao lotaCadastrante = cadastrante.getLotacao();
-		DpPessoa titular = cadastrante;
-		DpLotacao lotaTitular = cadastrante.getLotacao();
-
-		ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, so, req, resp, "Documento a Anotar");
-
-		SwaggerHelper.assertAcesso(mob, titular, lotaTitular);
-
-		Ex.getInstance().getBL().anotar(cadastrante, lotaCadastrante, mob, null, null, null, null, cadastrante,
-				req.anotacao, null);
-
-		resp.status = "OK";
+		try (ApiContext ctx = new ApiContext(true, true)) {
+			CurrentRequest.set(
+					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
+			ApiContext.assertAcesso("");
+			SigaObjects so = ApiContext.getSigaObjects();
+	
+			DpPessoa cadastrante = so.getCadastrante();
+			DpLotacao lotaCadastrante = cadastrante.getLotacao();
+			DpPessoa titular = cadastrante;
+			DpLotacao lotaTitular = cadastrante.getLotacao();
+	
+			ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, so, req, resp, "Documento a Anotar");
+	
+			ApiContext.assertAcesso(mob, titular, lotaTitular);
+	
+			Ex.getInstance().getBL().anotar(cadastrante, lotaCadastrante, mob, null, null, null, null, cadastrante,
+					req.anotacao, null);
+	
+			resp.status = "OK";
+		} catch (AplicacaoException | SwaggerException e) {
+			throw e;
+		} catch (Exception e) {
+			e.printStackTrace(System.out);
+			throw e;
+		}
 	}
-
+	
 	@Override
 	public String getContext() {
 		return "Anotar documento";

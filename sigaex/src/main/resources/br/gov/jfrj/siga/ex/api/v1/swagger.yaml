@@ -11,8 +11,6 @@ consumes: [application/json,application/x-www-form-urlencoded]
 produces: [application/json]
 
 tags:
-  - name: auth
-    description: Autenticação
   - name: download
     description: Download
   - name: mesa
@@ -21,8 +19,10 @@ tags:
     description: Consulta a Documentos
   - name: acao
     description: Ações em Documentos
-  - name: cadastro
-    description: Consulta nos Cadastros
+  - name: modelo
+    description: Informações sobre Modelos para a Criação de Documentos
+  - name: classificacao
+    description: Classificações Documentais
   - name: utils
     description: Utilitários
     
@@ -156,7 +156,7 @@ parameters:
   id:
     name: id
     in: path
-    description: Identificador da movimentação
+    description: Identificador da entidade
     required: true
     type: string
   lotacao:
@@ -192,9 +192,9 @@ parameters:
     type: string
   texto:
     name: texto
-    in: path
+    in: query
     description: Texto a ser pesquisado
-    required: true
+    required: false
     type: string    
   observacao:
     name: observacao
@@ -321,18 +321,30 @@ parameters:
     description: Arquivo para upload se necessário para operação.
     type: file
     required: false
+  idModeloInPath:
+    name: idModelo
+    in: path
+    description: Identificador do modelo
+    type: string
+    required: true
+  idClassificacaoIni:
+    name: idClassificacaoIni
+    in: query
+    description: Identificador da classificacao
+    type: string
+    required: false
    
 
 ################################################################################
 #                                           Paths                              #
 ################################################################################
 paths:
-  /autenticar:
-    post:
-      summary: Recebe login e senha e gera um token JWT para ser usado nos outros métodos da API
-      tags: [auth]
+  /modelos:
+    get:
+      summary: Obtem a lista de modelos que o usuário pode criar
+      tags: [modelo]
       security:
-        - Basic: []
+        - Bearer: []
       parameters: []
       responses:
         200:
@@ -340,13 +352,94 @@ paths:
           schema:
             type: object
             properties:
-              token:
-                type: string
-                description: Token JWT
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/ModeloItem"
         500:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
+
+  /modelos/{id}:
+    get:
+      summary: Obtem informações sobre um modelo específico
+      tags: [modelo]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              idModelo:
+                type: string
+              nome:
+                type: string
+              descr:
+                type: string
+              especie:
+                type: string
+              nivelDeAcesso:
+                type: string
+              classificacao:
+                type: string
+              classificacaoParaCriacaoDeVias:
+                type: string
+              tipoDeSubscritor:
+                type: string
+              tipoDeDestinatario:
+                type: string
+              tipoDeConteudo:
+                type: string
+              conteudo:
+                type: string
+        
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /classificacoes:
+    get:
+      summary: "Pesquisa de classificação documental"
+      description: "Retorna uma lista de classificações. A pesquisa será feita de acordo com os parâmetros informados: 
+        <ul><li><b>id=</b> Pesquisa a classificação com determinado id inicial.</li>
+        <li><b>texto=</b> Pesquisa as classificações que contém no código de classificação documental o texto especificado.</li>"
+      tags: [classificacao]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/idClassificacaoIni"
+        - $ref: "#/parameters/texto"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/ClassificacaoItem"
+        403:
+          description: Acesso não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Nenhuma Pessoa foi encontrada para os parâmetros informados.
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+
+
   /documentos/{sigla}/arquivo:
     get:
       summary: Inicia o processo de geração do PDF completo de um documento para visualização
@@ -463,6 +556,8 @@ paths:
     get:
       description: Exibir um documento
       tags: [consulta]
+      security:
+        - Bearer: []      
       parameters:
         - $ref: "#/parameters/sigla"
       responses:
@@ -488,6 +583,8 @@ paths:
       deprecated: true
       description: Obter o PDF de um documento para visualização
       tags: [consulta]
+      security:
+        - Bearer: []      
       parameters:
         - $ref: "#/parameters/sigla"
       responses:
@@ -508,6 +605,8 @@ paths:
     get:
       description: Obter o HTML de um documento para visualização
       tags: [consulta]
+      security:
+        - Bearer: []      
       parameters:
         - $ref: "#/parameters/sigla"
       responses:
@@ -536,6 +635,8 @@ paths:
     get:
       description: Obter o PDF completo de um documento para visualização
       tags: [consulta]
+      security:
+        - Bearer: []      
       parameters:
         - $ref: "#/parameters/sigla"
       responses:
@@ -558,6 +659,8 @@ paths:
       deprecated: true
       description: Obter o PDF de uma movimentação para visualização
       tags: [consulta]
+      security:
+        - Bearer: []      
       parameters:
         - $ref: "#/parameters/sigla"
         - $ref: "#/parameters/id"
@@ -579,6 +682,8 @@ paths:
     post:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [acao]
+      security:
+        - Bearer: []      
       parameters:
         - $ref: "#/parameters/sigla"
       summary: Assinar documento com senha
@@ -603,6 +708,8 @@ paths:
     post:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [acao]
+      security:
+        - Bearer: []      
       parameters:
         - $ref: "#/parameters/sigla"
       summary: Autenticar documento com senha
@@ -627,6 +734,8 @@ paths:
     post:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [acao]
+      security:
+        - Bearer: []      
       parameters:
         - $ref: "#/parameters/sigla"
         - $ref: "#/parameters/lotacao"
@@ -653,6 +762,8 @@ paths:
     post:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [acao]
+      security:
+        - Bearer: []      
       parameters:
         - $ref: "#/parameters/sigla"
         - $ref: "#/parameters/siglapai"
@@ -683,6 +794,8 @@ paths:
     post:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [acao]
+      security:
+        - Bearer: []      
       parameters:
         - $ref: "#/parameters/sigla"
         - $ref: "#/parameters/anotacao"
@@ -703,7 +816,9 @@ paths:
   /documentos/{sigla}/pesquisar-sigla:
     get:
       consumes: ["application/x-www-form-urlencoded"]
-      tags: [acao]
+      tags: [consulta]
+      security:
+        - Bearer: []      
       parameters:
         - $ref: "#/parameters/sigla"
         - $ref: "#/parameters/matriculaQuery"
@@ -723,7 +838,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-  /doc/{sigla}/marcadores-disponiveis:
+  /documentos/{sigla}/marcadores-disponiveis:
     get:
       description: Obter lista de marcadores que podem ser aplicados a um móbil
       tags: [consulta]
@@ -748,6 +863,8 @@ paths:
     post:
       consumes: ["application/x-www-form-urlencoded"]
       tags: [utils]
+      security:
+        - Bearer: []      
       parameters:
         - $ref: "#/parameters/nome"
         - $ref: "#/parameters/email"
@@ -766,26 +883,6 @@ paths:
           schema:
             $ref: "#/definitions/Error"         
             
-  /acessos:
-    get:
-      description: Listar os últimos acessos
-      tags: [utils]
-      parameters: []
-      responses:
-        200:
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              list:
-                type: array
-                items:
-                  $ref: "#/definitions/AcessoItem"
-        500:
-          description: Error ocurred
-          schema:
-            $ref: "#/definitions/Error"
-
   /documentos:
     post:
       summary: Cria um novo documento
@@ -898,15 +995,6 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/Marca"      
-  AcessoItem:
-    description: Acessos recentes
-    type: object
-    properties:
-      datahora:
-        type: string
-        format: date-time
-      ip:
-        type: string
 
   Marca:
     description: Etiquetas relacionadas a um documento
@@ -1037,3 +1125,26 @@ definitions:
         type: string
       texto:
         type: string
+
+  ModeloItem:
+    description: Lista modelos disponíveis
+    type: object
+    properties:
+      idModelo:
+        type: string
+      nome:
+        type: string
+      descr:
+        type: string
+
+  ClassificacaoItem:
+    description: Lista classificações documentais disponíveis
+    type: object
+    properties:
+      idClassificacao:
+        type: string
+      sigla:
+        type: string
+      nome:
+        type: string
+

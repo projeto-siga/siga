@@ -175,7 +175,7 @@ public class ExMobilController extends
 		result.include("primeiraVez", primeiraVez);
 		result.include("popup", true);
 		result.include("apenasRefresh", apenasRefresh);
-		result.include("estados", this.getEstados());
+		result.include("estados", this.getEstados(ultMovIdEstadoDoc));
 		result.include("listaOrdem", this.getListaOrdem());
 		result.include("ordem", ordem);
 		result.include("listaVisualizacao", this.getListaVisualizacao());
@@ -460,7 +460,7 @@ public class ExMobilController extends
 		result.include("primeiraVez", primeiraVez);
 		result.include("popup", popup);
 		result.include("apenasRefresh", apenasRefresh);
-		result.include("estados", this.getEstados());
+		result.include("estados", this.getEstados(ultMovIdEstadoDoc));
 		result.include("listaOrdem", this.getListaOrdem());
 		result.include("ordem", ordem);
 		result.include("listaVisualizacao", this.getListaVisualizacao());

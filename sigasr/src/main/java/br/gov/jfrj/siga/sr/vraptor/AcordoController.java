@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.sr.vraptor;
 
 import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.ADM_ADMINISTRAR;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -14,6 +15,7 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpComplexo;
+import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -26,6 +28,7 @@ import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrOperador;
 import br.gov.jfrj.siga.sr.model.SrParametro;
+import br.gov.jfrj.siga.sr.model.SrParametroAcordo;
 import br.gov.jfrj.siga.sr.model.SrPrioridade;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.uteis.PessoaLotaFuncCargoSelecaoHelper;
@@ -81,8 +84,23 @@ public class AcordoController extends SrController {
     @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/gravar")
     public void gravarAcordo(SrAcordo acordo) throws Exception {
+    	setupParametros(acordo);    	
         acordo.salvarComHistorico();
         result.use(Results.http()).body(acordo.toJson());
+    }
+    
+    /**
+     * Carrega Unidade de Medida associada para evitar erro de null pointer no metodo getPlural.
+     * @param acordo
+     */
+    private void setupParametros(SrAcordo acordo) {
+    	if(acordo.getParametroAcordoSet() == null) return;
+    	for(SrParametroAcordo parametro : acordo.getParametroAcordoSet()) {
+    		CpUnidadeMedida unidade = parametro.getUnidadeMedida();
+    		if(unidade != null && unidade.getIdUnidadeMedida() != null && unidade.getDescricao() == null) {
+    			parametro.setUnidadeMedida(CpUnidadeMedida.AR.findById(unidade.getIdUnidadeMedida()));
+    		}
+    	}
     }
 
     private boolean isNotEmptyUnidadeMedida(List<Integer> unidadeMedida) {
@@ -119,14 +137,84 @@ public class AcordoController extends SrController {
     }
 
     @AssertAcesso(ADM_ADMINISTRAR)
-    public void gravarAbrangencia(SrConfiguracao associacao, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet) throws Exception {
-        associacao.setItemConfiguracaoSet(itemConfiguracaoSet);
-        associacao.setAcoesSet(acoesSet);
+    public void gravarAbrangencia(SrConfiguracao associacao, Long associacaoAcordoId, Long associacaoCpGrupoId, 
+    								List<SrItemConfiguracao> itemConfiguracaoSet, 
+    								List<SrAcao> acoesSet) throws Exception {
+    	
+        setupAssociacao(associacao, associacaoAcordoId, associacaoCpGrupoId);
+    	
+    	associacao.setItemConfiguracaoSet(setupListaItemConfiguracao(itemConfiguracaoSet));
+        associacao.setAcoesSet(setupListaAcao(acoesSet));
 
         associacao.salvarComoAbrangenciaAcordo();
 
         result.use(Results.http()).body(associacao.toJson());
     }
+    
+    
+    private List<SrItemConfiguracao> setupListaItemConfiguracao(List<SrItemConfiguracao> lista) {
+    	if(lista == null || lista.size() == 0) return lista;
+    	
+    	List<SrItemConfiguracao> result = new ArrayList<>();
+    	for(SrItemConfiguracao item : lista) {
+    		result.add(SrItemConfiguracao.AR.findById(item.getIdItemConfiguracao()));
+    	}
+    	return result;
+    }
+    
+    private List<SrAcao> setupListaAcao(List<SrAcao> lista) {
+    	if(lista == null || lista.size() == 0) return lista;
+    	
+    	List<SrAcao> result = new ArrayList<>();
+    	for(SrAcao item : lista) {
+    		result.add(SrAcao.AR.findById(item.getIdAcao()));
+    	}
+    	return result;
+    }
+    
+    private void setupAssociacao(SrConfiguracao associacao, Long associacaoAcordoId, Long associacaoCpGrupoId) {
+    	
+    	if(associacaoAcordoId != null) {
+    		associacao.setAcordo(SrAcordo.AR.findById(associacaoAcordoId));
+    	}
+    	
+    	if(associacaoCpGrupoId != null) {
+			EntityManager em = ContextoPersistencia.em();
+    		associacao.setCpGrupo(em.find(CpGrupo.class, associacaoCpGrupoId));
+    	}
+    	else {
+    		associacao.setCpGrupo(null);
+    	}    	
+    	
+    	if(associacao.getCargo() != null && associacao.getCargo().getIdCargo() == null) {
+    		associacao.setCargo(null);
+    	}
+    	
+    	if(associacao.getLotacao() != null && associacao.getLotacao().getIdeLotacao() == null) {
+    		associacao.setLotacao(null);
+    	}
+    	
+    	if(associacao.getFuncaoConfianca() != null && associacao.getFuncaoConfianca().getIdFuncao() == null) {
+    		associacao.setFuncaoConfianca(null);
+    	}
+    	
+    	if(associacao.getDpPessoa() != null && associacao.getDpPessoa().getIdPessoa() == null) {
+    		associacao.setDpPessoa(null);
+    	}
+    	    	
+    	if(associacao.getComplexo() != null && associacao.getComplexo().getIdComplexo() == null) {
+    		associacao.setComplexo(null);
+    	}
+    	
+    	if(associacao.getOrgaoUsuario() != null && associacao.getOrgaoUsuario().getIdOrgaoUsu() == null) {
+    		associacao.setOrgaoUsuario(null);
+    	}
+    	
+    	if(associacao.getAtendente() != null && associacao.getAtendente().getIdLotacao() == null) {
+    		associacao.setAtendente(null);
+    	}    	  
+    }
+    
 
     @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/desativarAbrangenciaEdicao")

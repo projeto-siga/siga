@@ -577,7 +577,7 @@ public class Mesa2 {
 
 				Marca t = new Marca();
 				MarcadorEnum mar = MarcadorEnum.getById(tag.marcador
-						.getIdMarcador().intValue());
+						.getIdInicial().intValue());
 				if (mar != null) {
 					t.nome = mar.getNome();
 					t.icone = mar.getIcone();

@@ -20,7 +20,7 @@
 			<module name="javax.api" />
 			
 			<!-- Dependencia com conversor HTML2PDF -->
-			<module name="sigadoc.ext" />
+			<module name="sigadoc.ext" optional="true" />
 		</dependencies>
 
 	</deployment>

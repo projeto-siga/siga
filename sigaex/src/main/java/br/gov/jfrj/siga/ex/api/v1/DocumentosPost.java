@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.ex.api.v1;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -12,6 +13,7 @@ import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.crivano.swaggerservlet.SwaggerException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 import com.crivano.swaggerservlet.SwaggerUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,7 +43,6 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-@AcessoPublicoEPrivado
 public class DocumentosPost implements IDocumentosPost {
 	public DocumentosPost () {
 		SwaggerUtils.setUploadHandler(new ArquivoUploadHandler());
@@ -51,13 +52,13 @@ public class DocumentosPost implements IDocumentosPost {
 	@Override
 	public void run(DocumentosPostRequest req,
 			DocumentosPostResponse resp) throws Exception {
-		SwaggerHelper.buscarEValidarUsuarioLogado();
-		CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-		
-		SigaObjects so = SwaggerHelper.getSigaObjects();
-		so.assertAcesso("DOC:Módulo de Documentos;" + "");
+		try (ApiContext ctx = new ApiContext(true, true)) {
+			CurrentRequest.set(
+					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
+			ApiContext.assertAcesso("");
+			
+			SigaObjects so = ApiContext.getSigaObjects();
 
-		try {
 			final Ex ex = Ex.getInstance();
 			final ExBL exBL = ex.getBL();
 
@@ -244,8 +245,10 @@ public class DocumentosPost implements IDocumentosPost {
 					    String[] keyAndValues = conteudo.split("&");
 					    for (String keyAndValue : keyAndValues) {
 					        int idx = keyAndValue.indexOf("=");
-					        camposModelo = camposModelo + keyAndValue.substring(0, idx) + "=" +
-					        		URLEncoder.encode(keyAndValue.substring(idx + 1), "iso-8859-1") + "&";
+					        String key = keyAndValue.substring(0, idx);
+							String value = URLDecoder.decode(keyAndValue.substring(idx + 1), "UTF-8");
+							camposModelo = camposModelo + key + "=" +
+					        		URLEncoder.encode(value, "iso-8859-1") + "&";
 					    }
 					}
 				} else {
@@ -354,11 +357,11 @@ public class DocumentosPost implements IDocumentosPost {
 
     		resp.sigladoc = doc.getSigla();
     		
-		} catch (final AplicacaoException e) {
-			throw new AplicacaoException(e.getMessage());
-		} catch (final Exception e) {
-			throw new AplicacaoException(e.getMessage(), 0, e);
-//			throw new AplicacaoException("Erro na gravação", 0, e);
+		} catch (AplicacaoException | SwaggerException e) {
+			throw e;
+		} catch (Exception e) {
+			e.printStackTrace(System.out);
+			throw e;
 		}
 	}
 	
@@ -377,7 +380,7 @@ public class DocumentosPost implements IDocumentosPost {
 	 * @param str String a ser convertida.
 	 * @return String convertida.
 	 */
-	private static String UTF8toISO(String str) {
+	static String UTF8toISO(String str) {
 		Charset utf8charset = Charset.forName("UTF-8");
 		Charset iso88591charset = Charset.forName("ISO-8859-1");
 		ByteBuffer inputBuffer = ByteBuffer.wrap(str.getBytes());

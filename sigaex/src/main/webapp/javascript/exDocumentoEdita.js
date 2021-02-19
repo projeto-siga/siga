@@ -177,6 +177,9 @@ function aviso(msg, silencioso, elemento) {
 
 // <c:set var="url" value="excluirpreench" />
 function removePreench() {
+	$("[name='btnAlterar']").prop( "disabled", true );
+	$("[name='btnRemover']").prop( "disabled", true );
+
 	// Dispara a função onSave() do editor, caso exista
 	if (typeof (onSave) == "function") {
 		onSave();
@@ -187,6 +190,9 @@ function removePreench() {
 
 // <c:set var="url" value="alterarpreench" />
 function alteraPreench() {
+	$("[name='btnAlterar']").prop( "disabled", true );
+	$("[name='btnRemover']").prop( "disabled", true );
+	
 	// Dispara a função onSave() do editor, caso exista
 	if (typeof (onSave) == "function") {
 		onSave();

@@ -407,6 +407,16 @@ function limpaCampos()
 <siga:pagina titulo="Lista de Expedientes" popup="${popup}">
 	<!-- main content bootstrap -->
 	<div class="container-fluid">
+		<div class="row ${mensagemCabec==null?'d-none':''}" id="mensagemCabecId" >
+			<div class="col" >
+				<div class="alert ${msgCabecClass} fade show" id="mensagemCabec" role="alert">
+					${mensagemCabec}
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>			
+			</div>
+		</div>
 		<div class="card bg-light mb-3">
 			<div class="card-header">
 				<h5>Pesquisa de Documentos</h5>
@@ -733,7 +743,7 @@ function limpaCampos()
 						<div class="form-group col-md-3">
 							<label for="dtDocFinalString">Data Final</label> <input
 								class="form-control" type="text" name="dtDocFinalString"
-								id="dtDocFinalString" value="${dtDocString}"
+								id="dtDocFinalString" value="${dtDocFinalString}"
 								onblur="javascript:verifica_data(this,0);" />
 						</div>
 					</div>
@@ -987,10 +997,14 @@ function limpaCampos()
 								</div>	
 								
 								<div class="row">
-									<div class="col-sm-4">
+									<div class="col-sm-6">
 										<div class="form-group">	
 											<label>Descrição</label>
-											<input type="text" name="descrDocumento" id="descrDocumento" value="${descrDocumento}" size="80" class="form-control" />
+											<input type="text" name="descrDocumento" id="descrDocumento" value="${descrDocumento}" size="80" class="form-control"
+												<c:if test="${!(f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição'))}">
+													readonly placeholder="Não é possível realizar a pesquisa pela descrição"
+												</c:if>
+											/>
 										</div>
 									</div>
 								</div>	

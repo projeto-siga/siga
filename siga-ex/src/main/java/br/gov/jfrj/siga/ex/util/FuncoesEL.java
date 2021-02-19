@@ -25,6 +25,8 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -1146,4 +1148,10 @@ public class FuncoesEL {
 				.podeDisponibilizarNoAcompanhamentoDoProtocolo(titular, lotaTitular, doc);
 	}
 
+	public static String calculaDiasAPartirDeHoje(Long qtdDias) {
+		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		LocalDate dt = LocalDate.now().plusDays(qtdDias);
+		return formatter.format(dt);
+	}
+	
 }

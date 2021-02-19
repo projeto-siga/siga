@@ -3,17 +3,17 @@
 --  O MySQL cria automático e por isso não será necessário
 -- -------------------------------------------------------------------------
 --CREATE INDEX FK_DOC_ARQ
---          ON SIGA.EX_DOCUMENTO 
+--          ON siga.ex_documento 
 --             (ID_ARQ);
 --
 --CREATE INDEX FK_MOD_ARQ
---          ON SIGA.EX_MODELO 
+--          ON siga.ex_modelo 
 --             (ID_ARQ);
 --
 --CREATE INDEX FK_MOV_ARQ
---          ON SIGA.EX_MOVIMENTACAO 
+--          ON siga.ex_movimentacao 
 --             (ID_ARQ);
 --
 --CREATE INDEX FK_PRE_ARQ
---          ON SIGA.EX_PREENCHIMENTO 
+--          ON siga.ex_preenchimento 
 --             (ID_ARQ);

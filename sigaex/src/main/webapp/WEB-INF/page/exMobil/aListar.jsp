@@ -406,7 +406,11 @@
 							<div class="form-group col-md-6">
 								<label for="classificacao"><fmt:message key="documento.descricao"/></label> <input
 									class="form-control" type="text" name="descrDocumento" id="descrDocumento"
-									value="${descrDocumento}" size="80" />
+									value="${descrDocumento}" size="80"
+									<c:if test="${!(f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição'))}">
+										readonly placeholder="Não é possível realizar a pesquisa pela descrição"
+									</c:if>
+									/>
 							</div>
 						</div>
 					</c:if>

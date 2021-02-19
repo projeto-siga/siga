@@ -301,7 +301,6 @@ public class ExMarcadorBL {
 				lot = ultMovNaoCanc.getLotaResp();
 			} else if (marcador.isInteressadoPessoa() && mov.getSubscritor() != null) {
 				pes = mov.getSubscritor();
-				lot = mov.getLotaSubscritor();
 			} else if (marcador.isInteressadoLotacao() && mov.getLotaSubscritor() != null) {
 				lot = mov.getLotaSubscritor();
 			}

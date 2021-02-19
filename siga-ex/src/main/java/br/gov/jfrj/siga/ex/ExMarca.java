@@ -147,9 +147,9 @@ public class ExMarca extends AbstractExMarca implements Comparable {
 			return descricao;
 		
 		if (dt1 != null) 
-			descricao += ", planejada: " + Data.calcularTempoRelativoEmDias(dt1);
+			descricao += ", exibição: " + Data.formatDDMMYYYY(dt1);
 		if (dt2 != null) 
-			descricao += ", limite: " + Data.calcularTempoRelativoEmDias(dt2);
+			descricao += ", prazo: " + Data.formatDDMMYYYY(dt2);
 		return descricao;
 	}
 

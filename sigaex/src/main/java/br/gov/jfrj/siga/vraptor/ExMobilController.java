@@ -533,13 +533,17 @@ public class ExMobilController extends
 	private String listarItensPesquisa(final String dtDocString, final String dtDocFinalString,
 			final ExMobilBuilder builder, String dtDoc) {
 		final ExMobilDaoFiltro flt = createDaoFiltro();
-		if (flt.getDescrDocumento() != null 
+		if (Prop.isGovSP() && flt.getDescrDocumento() != null 
 				&& !"".equals(flt.getDescrDocumento()) && !(Cp.getInstance().getConf()
-				.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), SIGA_DOC_PESQ_PESQDESCR)))
+				.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), SIGA_DOC_PESQ_PESQDESCR))) {
 			result.include(SigaModal.ALERTA, SigaModal.mensagem("Usuário não autorizado a pesquisar pela descrição do documento."));
+			return dtDocString;
+		}
 		
 		LocalDate dt = null;
-		if (param("dtDocString") == null) {
+		if ((param("dtDocString") == null || "".equals(param("dtDocString"))) 
+				&& Cp.getInstance().getConf()
+					.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), SIGA_DOC_PESQ_DTLIMITADA )) {
 			result.include("msgCabecClass", "alert-warning");
 			result.include("mensagemCabec", "ATENÇÃO: A pesquisa deve ser limitada com uma range de datas de no máximo "
 					+ MAXIMO_DIAS_PESQUISA.toString() + " dias. Foi assumida uma data inicial 30 dias anterior à hoje.");

@@ -16,6 +16,7 @@
 <%@ attribute name="incluirJs"%>
 <%@ attribute name="compatibilidade"%>
 <%@ attribute name="desabilitarComplementoHEAD"%>
+<%@ attribute name="incluirBS" %>
 
 <c:if test="${not empty titulo}">
 	<c:set var="titulo" scope="request" value="${titulo}" />
@@ -73,8 +74,11 @@
 ${meta}
 
 <c:set var="path" scope="request">${pageContext.request.contextPath}</c:set>
- 
-<link rel="stylesheet" href="/siga/bootstrap/css/bootstrap.min.css?v=4.1.1"	type="text/css" media="screen, projection" />
+
+<c:if test="${empty incluirBS || incluirBS}" >
+ 	<link rel="stylesheet" href="/siga/bootstrap/css/bootstrap.min.css?v=4.1.1"	type="text/css" media="screen, projection" />
+</c:if> 
+
 
 <!--   <link rel="stylesheet" href="/siga/css/menuhover.css" type="text/css"/> -->
 

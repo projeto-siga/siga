@@ -6,6 +6,7 @@
 <%@ attribute name="popup"%>
 <%@ attribute name="pagina_de_erro"%>
 <%@ attribute name="incluirJs"%>
+<%@ attribute name="incluirBS" %>
 
 <!--[if gte IE 5.5]><script language="JavaScript" src="/siga/javascript/jquery.ienav.js" type="text/javascript"></script><![endif]-->
 
@@ -33,12 +34,17 @@
 <script	src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js" type="text/javascript"></script>
 <link rel="stylesheet" href="/siga/javascript/jquery-ui-1.10.3.custom/css/ui-lightness/jquery-ui-1.10.3.custom.min.css" type="text/css" media="screen, projection">
 <script src="/siga/popper-1-14-3/popper.min.js"></script>
-<script src="/siga/bootstrap/js/bootstrap.min.js?v=4.1.1" type="text/javascript"></script>
+
+<c:if test="${empty incluirBS || incluirBS}" >
+ 	<script src="/siga/bootstrap/js/bootstrap.min.js?v=4.1.1" type="text/javascript"></script>
+</c:if> 
+
 <script src="/siga/javascript/datepicker-pt-BR.js" type="text/javascript"></script>
 
 <c:if test="${not empty incluirJs}">
 	<script src="${incluirJs}" type="text/javascript"></script>
 </c:if>
+
 
 <script type="text/javascript">
 	$(document).ready(function() {

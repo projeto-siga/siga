@@ -136,13 +136,28 @@ public class CpMarcadorController extends SigaController {
 			
 			if (marcador.getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL) {		
 				assertAcesso(ACESSO_CAD_MARCADOR_GERAL);
-			} else {
+			} else if (marcador.getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO) {
 				assertAcesso(ACESSO_CAD_MARCADOR_LOTA);
 			}
 		}
+
+		boolean geral = false;
+		try {
+			assertAcesso(ACESSO_CAD_MARCADOR_GERAL);
+			geral = true;
+		} catch (Exception e) {
+		}
+		
+		boolean lota = false;
+		try {
+			assertAcesso(ACESSO_CAD_MARCADOR_LOTA);
+			lota = true;
+		} catch (Exception e) {
+		}
+		
 		result.include("listaCores", CpMarcadorCorEnum.values());
 		result.include("listaIcones", CpMarcadorIconeEnum.values());
-		result.include("listaFinalidade", CpMarcadorFinalidadeEnum.values());
+		result.include("listaFinalidade", CpMarcadorFinalidadeEnum.disponiveis(geral, lota));
 	}
 
 	@Transacional

@@ -1663,6 +1663,25 @@ function setarFocoAposFecharSigaModal(campoAReceberFoco) {
 	}	
 }
 
+sigaModal.alerta.select = function(campoASelecionar) {
+	selectionarAposFecharSigaModal(campoASelecionar);	
+}
+
+sigaModal.alertaHTML.select = function(campoASelecionar) {
+	selectionarAposFecharSigaModal(campoASelecionar);	
+}
+
+function selectionarAposFecharSigaModal(campoAReceberFoco) {
+	var campo = $(campoAReceberFoco);
+	
+	if (campo.length > 0) {
+		$('#sigaModalAlerta').on('hidden.bs.modal', function (e) {
+			campo.focus();	
+			campo.select();			
+		});
+	}	
+}
+
 function setarFocoBotaoFechar(evento) {
 	$(evento.currentTarget).find('.siga-modal__btn-fechar-rodape').focus()	
 }
@@ -1715,3 +1734,7 @@ $(function() {
 	$('[data-siga-spinner="ocultar"]').on('click', onSpinnerOcultar);
 	$('#sigaModalAlerta').on('shown.bs.modal', setarFocoBotaoFechar.bind(this));
 });
+
+function isNumeric(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}

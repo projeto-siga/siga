@@ -26,7 +26,7 @@
 			</div>
 							
 			<div class="card-body lead">
-				<form name="formularioCadastro">				
+				<form id="formularioCadastro" name="formularioCadastro" class="needs-validation" novalidate>				
 					<div id="apresentacaoPin" class="etapa  js-etapa">
 						<div class="row">
 							<div class="col-md-12 col-lg-6">
@@ -62,54 +62,50 @@
 								<label for="cadastroPinEtapa">Defina uma chave numérica de 8 dígitos</label>							
 							</h4>
 							
-							<form class="needs-validation" novalidate>							
-								<div class="row was-validated">
-									<div class="col-0 col-lg-3 col-sm-0"></div>
-									<div class="col col-lg-6 col-sm-12"> 
-										<c:if test="${not empty cadastrante}">
-										  <div class="form-group row">
-										    <label for="staticNome" class="col-sm-2 col-form-label">Nome</label>
-										    <div class="col-sm-10">
-										      <input type="text" readonly class="form-control-plaintext" id="staticNome" value="${cadastrante.nomePessoa}">
-										    </div>
-										  </div>
-										  <div class="form-group row">
-										    <label for="staticCpf" class="col-sm-2 col-form-label">CPF</label>
-										    <div class="col-sm-10">
-										      <input type="text" readonly class="form-control-plaintext" id="staticCpf" value="${cadastrante.cpfFormatado}">
-										    </div>
-										  </div>
-										</c:if>
-										
-										<label for="pinUser">Nova chave PIN</label>
-										<div class="input-group input-group-lg">
-										  <div class="input-group-prepend">
-										    <span class="input-group-text" id="inputGroup-sizing-lg"><i class="fa fa-key"></i></span>
-										  </div>
-										  <input type="password" id="pinUser" class="form-control " style="text-align: center;" aria-describedby="passwordHelp" minlength="8" maxlength="8" size="8" autocomplete="new-password" autofocus inputmode="numeric" required  />
-										  <div class="invalid-feedback">
-										  	Seu PIN para Assinatura de Documentos com Senha deve conter apenas números e deve ter 8 dígitos.
-										  </div>
-										</div>
-		
-										<label for="pinUserConfirm">Confirme chave PIN</label> 									
-										<div class="input-group input-group-lg">
-										  <div class="input-group-prepend">
-										    <span class="input-group-text" id="inputGroup-sizing-lg"><i class="fa fa-key"></i></span>
-										  </div>
-										  <input type="password" id="pinUserConfirm" class="form-control" style="text-align: center;" aria-describedby="passwordHelp" minlength="8" maxlength="8" size="8" autocomplete="new-password" autofocus inputmode="numeric" required/>
-										  <div class="invalid-feedback">
-										  	Por favor, insira novamente a chave PIN para confirmação.
-										  </div>								
-										
-										</div>
-	
+								
+							<div class="row ">
+								<div class="col-0 col-lg-3 col-sm-0"></div>
+								<div class="col col-lg-6 col-sm-12"> 
+									<c:if test="${not empty cadastrante}">
+									  <div class="form-group row">
+									    <label for="staticNome" class="col-sm-2 col-form-label">Nome</label>
+									    <div class="col-sm-10">
+									      <input type="text" readonly class="form-control-plaintext" id="staticNome" value="${cadastrante.nomePessoa}">
+									    </div>
+									  </div>
+									  <div class="form-group row">
+									    <label for="staticCpf" class="col-sm-2 col-form-label">CPF</label>
+									    <div class="col-sm-10">
+									      <input type="text" readonly class="form-control-plaintext" id="staticCpf" value="${cadastrante.cpfFormatado}">
+									    </div>
+									  </div>
+									</c:if>
+									
+									<label for="pinUser" id="lblPinUser">Nova chave PIN</label>
+									<div class="input-group input-group-lg">
+									  <div class="input-group-prepend">
+									    <span class="input-group-text" id="inputGroup-sizing-lg"><i class="fa fa-key"></i></span>
+									  </div>
+									  <input type="password" id="pinUser" name="pinUser" class="form-control " style="text-align: center;" aria-describedby="pinUserHelp" minlength="8" maxlength="8" size="8" autocomplete="off" inputmode="numeric" required  />
 									</div>
-								</div>
-							</form>
-		
+									<small id="pinUserHelp" class="form-text text-muted" style="font-size: 70% !important;">
+										Seu PIN para Assinatura de Documentos com Senha deve conter apenas números e deve ter 8 dígitos.
+									</small>
+	
+									<label for="pinUserConfirm" id="lblPinUserConfirm" class="mt-2">Confirme chave PIN</label> 									
+									<div class="input-group input-group-lg">
+									  <div class="input-group-prepend">
+									    <span class="input-group-text" id="inputGroup-sizing-lg"><i class="fa fa-key"></i></span>
+									  </div>
+									  <input type="password" id="pinUserConfirm" name="pinUserConfirm"  class="form-control" style="text-align: center;" aria-describedby="lblPinUserConfirm" minlength="8" maxlength="8" size="8" autocomplete="off" inputmode="numeric" required/>								
+									</div>
+									<small id="pinUserHelp" class="form-text text-muted" style="font-size: 70% !important;">
+										Por favor, insira novamente a chave PIN para confirmação.
+									</small>	
 
-						
+								</div>
+							</div>
+	
 						</div>
 
 					</div>

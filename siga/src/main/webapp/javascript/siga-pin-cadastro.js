@@ -27,17 +27,45 @@ PinCadastro.Etapas = (function() {
 		this.btnProximo.on('click', onBtnProximoClicado.bind(this));
 		this.btnErroModal.on('click', onBtnErroClicado.bind(this));
 		
-		this.pinUser.on('change', onChangePassword.bind(this));
-		this.pinUserConfirm.on('keyup', onChangePassword.bind(this));
+		this.on('validarNovoPin', onValidar.bind(this));
 
 
 		exibirEtapa.call(this, this.etapaAtual);			
 	}	
 	
-	function onChangePassword(){
-		  if($('#pinUser').val() != $('#pinUserConfirm').val()) {
-			//  sigaModal.alerta('Repetição da nova senha não confere, favor redigitar.');
-		  } 
+	
+	function onValidar(evento, validacao) {			
+		if(this.pinUser.val() === "") {
+			sigaModal.alerta('Nova chave PIN não informada. Favor inserí-la.').select(this.pinUser);		
+			validacao.resultado = false;
+			return false;
+		} 
+		
+		if( !isNumeric(this.pinUser.val())) {
+			sigaModal.alerta('Chave PIN deve conter apenas dígitos númericos (0-9). Favor corrigir.').select(this.pinUser);		
+			validacao.resultado = false;
+			return false;
+		} 
+		
+		if( this.pinUser.val().length !== 8) {
+			sigaModal.alerta('Chave PIN deve ter 8 dígitos numéricos.').select(this.pinUser);		
+			validacao.resultado = false;
+			return false;
+		} 
+		
+		if(this.pinUserConfirm.val() === "") {
+			sigaModal.alerta('Confirmação da chave PIN não informada. Favor inserí-la.').select(this.pinUserConfirm);		
+			validacao.resultado = false;
+			return false;
+		} 
+			
+		if(this.pinUser.val() !== this.pinUserConfirm.val()) {
+			sigaModal.alerta('Confirmação da chave PIN não confere com a nova chave. Favor corrigir.')	.select(this.pinUserConfirm);
+			validacao.resultado = false;
+			return false;
+		} 		
+		validacao.resultado = true;
+		return true;		
 	}
 
 	function onBtnAnteriorClicado() {			
@@ -106,6 +134,7 @@ PinCadastro.Etapas = (function() {
 		if (numeroEtapa == (this.etapas.length - 1)) {
 			this.btnProximo.removeClass('btn-primary').addClass('btn-success');
 			this.btnProximo.html('Criar PIN  <i class="fas fa-check"></i>');    
+			this.pinUser.focus();
 			//desabilitarBtnProximo(this);
 		} else {
 			this.btnProximo.removeClass('btn-success').addClass('btn-primary');
@@ -125,7 +154,8 @@ PinCadastro.Etapas = (function() {
 		exibirEtapa.call(this, this.etapaAtual);
 	}		
 	function salvar() {																			
-		var form = this;						
+		var form = this;	
+		this.emitter.trigger('validarNovoPin', retorno);			
 		$.ajax({
 			url: '/siga/api/v1/pin',
 		    contentType: 'application/x-www-form-urlencoded',
@@ -177,15 +207,10 @@ PinCadastro.Etapas = (function() {
 		var retorno = { resultado: true, alertaConfirmado: false };
 		
 		switch (this.etapas[numeroEtapa].id) {
-			case 'apresentacaoPin':
-				retorno.alertaConfirmado = this.apresentacaoPinOK; 				
-				this.emitter.trigger('validarModelos', retorno);				
+			case 'apresentacaoPin':			
 				break;
-			case 'cadastroPinEtapa':
-				break;
-			case 'selecaoDestinatario':
-				break;
-			case 'selecaoDestinatarioDefinicao':
+			case 'cadastroPinEtapa':					
+				this.emitter.trigger('validarNovoPin', retorno);	
 				break;
 		}
 		
@@ -222,9 +247,7 @@ PinCadastro.Etapas = (function() {
 
 
 $(function() {
-	$('[name=idTpConfiguracao]').addClass('siga-select2');
-	$('[data-toggle="popover"]').popover();
-	
+
 	var etapas = new PinCadastro.Etapas();
 	etapas.iniciar();
 

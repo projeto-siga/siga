@@ -1411,7 +1411,7 @@ public class CpBL {
 				c++;
 		
 		if (idFinalidade.getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO && id == null 
-				&& c > 9) 
+				&& c > 10) 
 			throw new AplicacaoException ("Atingiu o limite de 10 marcadores possíveis para " + msgLotacao);
 		
 		if (id == null && (listaMarcadoresLotacaoEGerais.stream()

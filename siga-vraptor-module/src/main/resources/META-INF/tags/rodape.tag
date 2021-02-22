@@ -6,7 +6,7 @@
 <%@ attribute name="popup"%>
 <%@ attribute name="pagina_de_erro"%>
 <%@ attribute name="incluirJs"%>
-<%@ attribute name="incluirBS" %>
+<%@ attribute name="incluirBS" required="false"%>
 
 <!--[if gte IE 5.5]><script language="JavaScript" src="/siga/javascript/jquery.ienav.js" type="text/javascript"></script><![endif]-->
 
@@ -35,7 +35,7 @@
 <link rel="stylesheet" href="/siga/javascript/jquery-ui-1.10.3.custom/css/ui-lightness/jquery-ui-1.10.3.custom.min.css" type="text/css" media="screen, projection">
 <script src="/siga/popper-1-14-3/popper.min.js"></script>
 
-<c:if test="${empty incluirBS || incluirBS}" >
+<c:if test="${empty incluirBS or incluirBS}" >
  	<script src="/siga/bootstrap/js/bootstrap.min.js?v=4.1.1" type="text/javascript"></script>
 </c:if> 
 

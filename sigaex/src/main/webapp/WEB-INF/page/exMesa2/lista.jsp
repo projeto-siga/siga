@@ -7,8 +7,9 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
 
-<link rel="stylesheet" href="/siga/javascript/bootstrap/4.6.0/css/bootstrap.min.css" type="text/css" media="screen, projection">
-<siga:pagina titulo="Mesa Virtual">
+<link rel="stylesheet" href="/siga/bootstrap/4.6.0/css/bootstrap.min.css" type="text/css" media="screen, projection" />
+<siga:pagina titulo="Mesa Virtual" incluirBS="false">
+	
 	<script type="text/javascript" src="../javascript/vue.min.js"></script>
 	
 	<style>
@@ -328,7 +329,5 @@
 		});
 	</script>
 	<script type="text/javascript" src="/siga/javascript/mesa2.js"></script>
-	
-	
 </siga:pagina>
-<script src="/siga/javascript/bootstrap/4.6.0/js/bootstrap.bundle.min.js" type="text/javascript"></script>
+<script src="/siga/bootstrap/4.6.0/js/bootstrap.bundle.min.js" type="text/javascript"></script>

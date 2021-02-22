@@ -12,7 +12,7 @@
 <%@ attribute name="incluirJs"%>
 <%@ attribute name="compatibilidade"%>
 <%@ attribute name="desabilitarComplementoHEAD"%>
-<%@ attribute name="incluirBS" %>
+<%@ attribute name="incluirBS" required="false"%>
 
 <c:if test="${not empty pagina_de_erro}">
 	<c:set var="pagina_de_erro" scope="request" value="${pagina_de_erro}" />
@@ -27,8 +27,8 @@
 	desabilitarmenu="${desabilitarmenu}" incluirJs="${incluirJs}"
 	compatibilidade="${compatibilidade}"
 	desabilitarComplementoHEAD="${desabilitarComplementoHEAD}"
-	incluirBS="{$incluirBS}" />
+	incluirBS="${incluirBS}" />
 
 <jsp:doBody />
 
-<siga:rodape popup="${popup}" incluirJs="${incluirJs}" incluirBS="{$incluirBS}" />
+<siga:rodape popup="${popup}" incluirJs="${incluirJs}" incluirBS="${incluirBS}" />

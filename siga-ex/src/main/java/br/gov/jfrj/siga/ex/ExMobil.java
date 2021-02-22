@@ -2303,4 +2303,24 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 					.podeDisponibilizarNoAcompanhamentoDoProtocolo(pessoa, lotacao, this.getDoc());			
 		return false;
 	}
+	
+	public boolean isAtendente(DpPessoa pessoa, DpLotacao lotacao) {
+		DpPessoa resp = doc().getCadastrante();
+		DpLotacao lotaResp = doc().getLotaCadastrante();
+		
+		ExMovimentacao ultimaMovimentacaoNaoCancelada = getUltimaMovimentacaoNaoCancelada();
+		if (doc().isFinalizado() && !isGeral() && ultimaMovimentacaoNaoCancelada != null) {
+			DpPessoa pes = ultimaMovimentacaoNaoCancelada.getResp();
+			DpLotacao lot = ultimaMovimentacaoNaoCancelada.getLotaResp();
+			if (pes != null || lot != null) {
+				resp = pes;
+				lotaResp = lot;
+			}
+		}
+		if (resp != null && resp.equivale(pessoa))
+			return true;
+		if (lotaResp != null && lotaResp.equivale(lotacao))
+			return true;
+		return false;
+	}
 }

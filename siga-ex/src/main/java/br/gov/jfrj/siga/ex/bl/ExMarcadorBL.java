@@ -267,14 +267,8 @@ public class ExMarcadorBL {
 			if (marcador.getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO
 					&& marcador.getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.ATENDENTE
 					&& marcador.getDpLotacaoIni() != null) {
-				DpLotacao lotaResp = mob.doc().getLotaCadastrante();
-				if (mob.doc().isFinalizado() && !mob.isGeral() && mob.getUltimaMovimentacaoNaoCancelada() != null) {
-					DpLotacao lot = mob.getUltimaMovimentacaoNaoCancelada().getLotaResp();
-					if (lot != null)
-						lotaResp = lot;
-				}
-				if (!lotaResp.equivale(marcador.getDpLotacaoIni()))
-						continue;
+				if (!mob.isAtendente(null, marcador.getDpLotacaoIni()))
+					continue;
 			}
 			
 //			// Calcular datas de referencia

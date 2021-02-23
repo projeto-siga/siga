@@ -111,7 +111,10 @@ public abstract class ExSelecionavelController<T extends Selecionavel, DaoFiltro
 				ids = a.toArray(new Long[a.size()]);
 			}
 		}
-		return dao().listarMarcadores(ids);
+		List<CpMarcador> l = dao().listarMarcadores(ids);
+		l.addAll(dao().listarCpMarcadoresPorLotacaoEGeral(getLotaTitular(), true));
+		l.sort(CpMarcador.GRUPO_COMPARATOR);
+		return l;
 	}
 
 	protected Map<Integer, String> getListaTipoResp() {

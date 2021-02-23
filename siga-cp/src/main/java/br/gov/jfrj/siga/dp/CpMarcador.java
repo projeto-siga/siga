@@ -29,9 +29,10 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoAplicacaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoInteressadoEnum;
-import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
@@ -221,6 +222,12 @@ public class CpMarcador extends AbstractCpMarcador {
 			.thenComparing(Comparator.comparing(CpMarcador::getDescrMarcador,
 					Comparator.nullsFirst(Comparator.naturalOrder())));
 
+	public static final Comparator<CpMarcador> GRUPO_COMPARATOR = Comparator
+			.nullsFirst(Comparator.comparing(CpMarcador::getFinalidadeGrupo,
+					Comparator.nullsFirst(Comparator.naturalOrder())))
+			.thenComparing(Comparator.comparing(CpMarcador::getDescrMarcador,
+					Comparator.nullsFirst(Comparator.naturalOrder())));
+
 	public CpMarcador() {
 		super();
 	}
@@ -270,6 +277,10 @@ public class CpMarcador extends AbstractCpMarcador {
 		return getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.LOTACAO
 				|| getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA
 				|| getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.PESSOA_OU_LOTACAO;
+	}
+	
+	public CpMarcadorFinalidadeGrupoEnum getFinalidadeGrupo() {
+		return getIdFinalidade().getGrupo();
 	}
 
 }

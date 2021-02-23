@@ -2,65 +2,66 @@ var PinCadastro = PinCadastro || {}
 
 PinCadastro.Etapas = (function() {
 	
-	function Etapas() {
-		this.etapaAtual = 0;
-		this.etapas = $('.js-etapa');
-		this.btnAnterior = $('.js-btn-anterior');
-		this.btnProximo = $('.js-btn-proximo');			
-		this.spanIndicadorEtapa = $('.js-indicador-etapa');
-		this.btnErroModal = $('.btn-erro-modal');		
-		this.tituloPrincipalEtapa = $('#tituloPrincipalEtapa');
-		this.spinner = $('.js-spinner--salvando');
-		this.btnGoToMesa = $('#btnGoToMesa');
-		
-		this.pinUser = $('#pinUser');
-		this.pinUserConfirm = $('#pinUserConfirm');
-		
-		this.apresentacaoPinOK = false;
-		this.cadastroPinEtapaOK = false;						
-		this.emitter = $({});
-		this.on = this.emitter.on.bind(this.emitter);		
-	}
+	class Etapas {
+        constructor() {
+            this.etapaAtual = 0;
+            this.etapas = $('.js-etapa');
+            this.btnAnterior = $('.js-btn-anterior');
+            this.btnProximo = $('.js-btn-proximo');
+            this.spanIndicadorEtapa = $('.js-indicador-etapa');
+            this.btnErroModal = $('.btn-erro-modal');
+            this.tituloPrincipalEtapa = $('#tituloPrincipalEtapa');
+            this.spinner = $('.js-spinner--salvando');
+            this.btnGoToMesa = $('#btnGoToMesa');
+
+            this.pinUser = $('#pinUser');
+            this.pinUserConfirm = $('#pinUserConfirm');
+
+            this.apresentacaoPinOK = false;
+            this.cadastroPinEtapaOK = false;
+            this.emitter = $({});
+            this.on = this.emitter.on.bind(this.emitter);
+        }
+        iniciar() {
+            this.btnAnterior.on('click', onBtnAnteriorClicado.bind(this));
+            this.btnProximo.on('click', onBtnProximoClicado.bind(this));
+            this.btnErroModal.on('click', onBtnErroClicado.bind(this));
+
+            this.on('validarNovoPin', onValidar.bind(this));
+
+            exibirEtapa.call(this, this.etapaAtual);
+        }
+    }
 	
-	Etapas.prototype.iniciar = function() {
-		this.btnAnterior.on('click', onBtnAnteriorClicado.bind(this));
-		this.btnProximo.on('click', onBtnProximoClicado.bind(this));
-		this.btnErroModal.on('click', onBtnErroClicado.bind(this));
-		
-		this.on('validarNovoPin', onValidar.bind(this));
-
-
-		exibirEtapa.call(this, this.etapaAtual);			
-	}	
 	
 	
 	function onValidar(evento, validacao) {			
 		if(this.pinUser.val() === "") {
-			sigaModal.alerta('Nova chave PIN não informada. Favor inserí-la.').select(this.pinUser);		
+			sigaModal.alerta('Novo PIN não informado. Favor inserí-lo.').select(this.pinUser);		
 			validacao.resultado = false;
 			return false;
 		} 
 		
 		if( !isNumeric(this.pinUser.val())) {
-			sigaModal.alerta('Chave PIN deve conter apenas dígitos númericos (0-9). Favor corrigir.').select(this.pinUser);		
+			sigaModal.alerta('PIN deve conter apenas dígitos númericos (0-9). Favor corrigir.').select(this.pinUser);		
 			validacao.resultado = false;
 			return false;
 		} 
 		
 		if( this.pinUser.val().length !== 8) {
-			sigaModal.alerta('Chave PIN deve ter 8 dígitos numéricos.').select(this.pinUser);		
+			sigaModal.alerta('PIN deve ter 8 dígitos numéricos.').select(this.pinUser);		
 			validacao.resultado = false;
 			return false;
 		} 
 		
 		if(this.pinUserConfirm.val() === "") {
-			sigaModal.alerta('Confirmação da chave PIN não informada. Favor inserí-la.').select(this.pinUserConfirm);		
+			sigaModal.alerta('Confirmação do PIN não informado. Favor inserí-lo.').select(this.pinUserConfirm);		
 			validacao.resultado = false;
 			return false;
 		} 
 			
 		if(this.pinUser.val() !== this.pinUserConfirm.val()) {
-			sigaModal.alerta('Confirmação da chave PIN não confere com a nova chave. Favor corrigir.')	.select(this.pinUserConfirm);
+			sigaModal.alerta('Confirmação do PIN não confere com o novo. Favor corrigir.').select(this.pinUserConfirm);
 			validacao.resultado = false;
 			return false;
 		} 		
@@ -104,19 +105,6 @@ PinCadastro.Etapas = (function() {
 		} else if (this.etapaAtual + 1 >= this.etapas.length) {
 			salvar.call(this);
 		}
-	}
-	
-
-	function atualizarBtnProximo() {						
-		if (false) {
-			habilitarBtnProximo.call(this);			
-		} else {
-			desabilitarBtnProximo.call(this);
-		}				
-	}
-	
-	function desabilitarBtnProximo(obj) {
-		obj.btnProximo.attr('disabled', 'disabled');
 	}
 	
 	function habilitarBtnProximo(obj) {
@@ -197,7 +185,7 @@ PinCadastro.Etapas = (function() {
 	function finalizarRequisicao(form) {
 		
 		form.spinner.css('border-color', '#28a745');		
-		form.spinner.parent().parent().parent().find('h1').html('Pronto! Sua chave PIN foi definida!<br/><p class="lead">Agora você já pode utilizá-la para Assinar e Autenticar Documentos com Senha.</p>');
+		form.spinner.parent().parent().parent().find('h1').html('Pronto! Seu PIN foi definido!<br/><p class="lead">Agora você já pode utilizá-lo para Assinar e Autenticar Documentos com Senha.</p><p class="lead">Nunca divulgue seu PIN. Ele é de uso pessoal e intransferível.</p>');
 		form.spinner.parent().parent().parent().find('.icone-salvo-sucesso').css('opacity', '1');	
 		form.btnGoToMesa.show();
 	

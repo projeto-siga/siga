@@ -194,8 +194,7 @@
 			</c:if>
 		</c:if>
 
-		<li class="dropdown-submenu"><a href="javascript:void(0);"
-			class="dropdown-item dropdown-toggle">Administração</a>
+		<li class="dropdown-submenu"><a href="javascript:void(0);" class="dropdown-item dropdown-toggle">Administração</a>
 			<ul class="dropdown-menu">
 				<c:if test="${(!f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;ADM:Administração;TSEN:Ocultar Trocar Senha') || titular.orgaoUsuario.sigla == 'ZZ')}">
 					<li><a class="dropdown-item"
@@ -205,6 +204,22 @@
 					<li><a class="dropdown-item"
 						href="/siga/app/usuario/trocar_email">Trocar Email do Usuário</a></li>
 				</c:if>
+				
+				<li class="dropdown-submenu"><a href="javascript:void(0);" class="dropdown-item dropdown-toggle">Gerenciar PIN</a>
+					<ul class="dropdown-menu">
+					<c:choose>
+						<c:when test="${(empty identidadeCadastrante.pinIdentidade)}">
+							<li><a class="dropdown-item" href="/siga/app/pin/cadastro">Cadastrar novo PIN</a>
+						</c:when>
+						<c:otherwise>	
+							<li><a class="dropdown-item" href="/siga/app/pin/troca">Alterar PIN</a>
+							<li><a class="dropdown-item" href="/siga/app/pin/reset">Esqueci meu PIN</a>
+						</c:otherwise>	
+					</c:choose>
+					</ul>
+				</li>
+
+				
 				
 				<%--
 					<li><a href="/siga/substituicao/substituir.action">Entrar

@@ -1493,15 +1493,15 @@ public class CpBL {
 		boolean formatoPinIsValido = false;
 		
 		if (pin.isEmpty()) {
-			throw new RegraNegocioException("Chave PIN não informada.");
+			throw new RegraNegocioException("PIN não informado.");
 		}
 		
 		if (!SigaUtil.isNumeric(pin)) {
-			throw new RegraNegocioException("Chave PIN deve conter apenas dígitos númericos (0-9).");
+			throw new RegraNegocioException("PIN deve conter apenas dígitos númericos (0-9).");
 		}
 		
 		if (pin.length() != CpIdentidade.pinLength) {
-			throw new RegraNegocioException("Chave deve ter "+String.valueOf(CpIdentidade.pinLength)+" dígitos numéricos.");
+			throw new RegraNegocioException("PIN deve ter "+String.valueOf(CpIdentidade.pinLength)+" dígitos numéricos.");
 		}	
 				
 		formatoPinIsValido = true;
@@ -1514,7 +1514,7 @@ public class CpBL {
 		boolean hashPinIsValido = false;
 		
 		if (identidadeCadastrante == null) {
-			throw new RegraNegocioException("Não é possível validar chave PIN: Identidade não informada.");
+			throw new RegraNegocioException("Não é possível validar PIN: Identidade não informada.");
 		}
 
 		hashPinAValidar = GeraMessageDigest.calcSha256(pin);	
@@ -1528,14 +1528,14 @@ public class CpBL {
 		boolean pinValido = false;
 		
 		if (identidadeCadastrante.getPinIdentidade() == null) {
-			throw new RegraNegocioException("Não é possível validar chave PIN: Não existe chave cadastrada.");
+			throw new RegraNegocioException("Não é possível validar PIN: Não existe chave cadastrada.");
 		}
 		
 		consisteFormatoPin(pin);
 		pinValido = validaHashPin(pin,identidadeCadastrante);
 
 		if (!pinValido) {
-			throw new RegraNegocioException("Chave PIN atual informada não coincide com a cadastrada.");
+			throw new RegraNegocioException("PIN atual informado não coincide com o cadastrado.");
 		}	
 	
 		return pinValido;

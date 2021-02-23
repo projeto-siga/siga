@@ -32,15 +32,15 @@ public class PinPost implements IPinPost {
 				CpIdentidade identidadeCadastrante = so.getIdentidadeCadastrante();
 				
 				if (identidadeCadastrante.getPinIdentidade() != null) {
-					throw new RegraNegocioException("Não é possível cadastrar chave PIN: Já existe chave cadastrada.");
+					throw new RegraNegocioException("Não é possível cadastrar seu PIN: Já existe PIN cadastrado.");
 				}
 				
 				List<CpIdentidade> listaIdentidades = new ArrayList<CpIdentidade>();
 				listaIdentidades = CpDao.getInstance().consultaIdentidadesPorCpf(cadastrante.getCpfPessoa().toString());	
 				
 				Cp.getInstance().getBL().definirPinIdentidade(listaIdentidades, pin, identidadeCadastrante);
-				Cp.getInstance().getBL().enviarEmailDefinicaoPIN(cadastrante,"Nova Chave PIN","Você definiu uma nova chave PIN.");
-				resp.mensagem = "Chave PIN definida.";
+				Cp.getInstance().getBL().enviarEmailDefinicaoPIN(cadastrante,"Novo PIN","Você definiu um novo PIN.");
+				resp.mensagem = "PIN foi definido.";
 			}
 		} catch (RegraNegocioException e) {
 			throw new SwaggerException(e.getMessage(), 400, null, req, resp, null);
@@ -53,6 +53,6 @@ public class PinPost implements IPinPost {
 	
 	@Override
 	public String getContext() {
-		return "cadastrar pin";
+		return "cadastrar PIN";
 	}
 }

@@ -28,7 +28,7 @@ public class PinTrocarPost implements IPinTrocarPost {
 			final String pin = req.pin;
 			
 			if (pinAtual.equals(pin)) {
-				throw new RegraNegocioException("Não é possível trocar chave PIN: Chave atual idêntica à nova chave.");
+				throw new RegraNegocioException("Não é possível alterar PIN: PIN atual idêntico ao novo PIN.");
 			}
 			
 			SigaObjects so = ApiContext.getSigaObjects();
@@ -42,9 +42,9 @@ public class PinTrocarPost implements IPinTrocarPost {
 					listaIdentidades = CpDao.getInstance().consultaIdentidadesPorCpf(cadastrante.getCpfPessoa().toString());	
 					
 					Cp.getInstance().getBL().definirPinIdentidade(listaIdentidades, pin, identidadeCadastrante);
-					Cp.getInstance().getBL().enviarEmailDefinicaoPIN(cadastrante,"Troca de Chave PIN","Você alterou sua chave PIN.");
+					Cp.getInstance().getBL().enviarEmailDefinicaoPIN(cadastrante,"Alteração de PIN","Você alterou seu PIN.");
 					
-					resp.mensagem = "Chave PIN foi trocada.";
+					resp.mensagem = "PIN foi alterado.";
 					
 				}	 
 			 }
@@ -60,7 +60,7 @@ public class PinTrocarPost implements IPinTrocarPost {
 	
 	@Override
 	public String getContext() {
-		return "trocar chave PIN";
+		return "trocar PIN";
 	}
 
 

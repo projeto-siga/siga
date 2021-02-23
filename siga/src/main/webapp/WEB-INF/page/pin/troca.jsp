@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Cadastro de Chave PIN">	
+<siga:pagina titulo="Alteração do PIN">	
 
 	<link rel="stylesheet" href="/siga/css/siga.multiploselect.css" type="text/css" media="screen, projection"/>
 	<link rel="stylesheet" href="/siga/css/siga-pin.css" type="text/css" media="screen, projection"/>
@@ -21,7 +21,7 @@
 			<div class="card-header">
 				<div class="row">
 					<div class="col-sm-9">
-						<h5 class="titulo-principal-etapa" id="tituloPrincipalEtapa">Troca de chave PIN</h5>
+						<h5 class="titulo-principal-etapa" id="tituloPrincipalEtapa">Troca de PIN</h5>
 					</div>
 				</div>
 			</div>
@@ -31,7 +31,7 @@
 					<div id="cadastroPinEtapa" class="etapa  js-etapa">
 						<div class="container">
 							<h4 class="text-center p-4">
-								<label for="cadastroPinEtapa">Troca de chave PIN</label>							
+								<label for="cadastroPinEtapa">Troca de PIN</label>							
 							</h4>
 							
 							<form class="needs-validation" novalidate>							
@@ -53,7 +53,7 @@
 										  </div>
 										</c:if>
 										
-										<label for="pinUserCurrent">Informe sua chave PIN atual</label>
+										<label for="pinUserCurrent">Informe seu PIN atual</label>
 										<div class="input-group input-group-lg">
 										  <div class="input-group-prepend">
 										    <span class="input-group-text" id="inputGroup-sizing-lg"><i class="fa fa-key"></i></span>
@@ -61,25 +61,25 @@
 										  <input type="password" id="pinUserCurrent" class="form-control " style="text-align: center;" aria-describedby="passwordHelp" minlength="8" maxlength="8" size="8" autocomplete="new-password" autofocus inputmode="numeric" required  />
 										</div>
 										
-										<label for="pinUser">Nova chave PIN</label>
+										<label for="pinUser">Novo PIN</label>
 										<div class="input-group input-group-lg">
 										  <div class="input-group-prepend">
 										    <span class="input-group-text" id="inputGroup-sizing-lg"><i class="fa fa-key"></i></span>
 										  </div>
 										  <input type="password" id="pinUser" class="form-control " style="text-align: center;" aria-describedby="passwordHelp" minlength="8" maxlength="8" size="8" autocomplete="new-password" autofocus inputmode="numeric" required  />
 										  <div class="invalid-feedback">
-										  	Sua nova chave PIN deve conter apenas números e deve ter 8 dígitos.
+										  	Seu novo PIN deve conter apenas números e deve ter 8 dígitos.
 										  </div>
 										</div>
 		
-										<label for="pinUserConfirm">Confirme chave PIN</label> 									
+										<label for="pinUserConfirm">Confirme PIN</label> 									
 										<div class="input-group input-group-lg">
 										  <div class="input-group-prepend">
 										    <span class="input-group-text" id="inputGroup-sizing-lg"><i class="fa fa-key"></i></span>
 										  </div>
 										  <input type="password" id="pinUserConfirm" class="form-control" style="text-align: center;" aria-describedby="passwordHelp" minlength="8" maxlength="8" size="8" autocomplete="new-password" autofocus inputmode="numeric" required/>
 										  <div class="invalid-feedback">
-										  	Por favor, insira novamente a chave PIN para confirmação.
+										  	Por favor, insira novamente o PIN para confirmação.
 										  </div>								
 										
 										</div>
@@ -99,7 +99,7 @@
 					
 					<div id="salvando" class="etapa etapa--final  js-etapa-final">
 						<h1 class="text-center display-4">
-							Salvando sua chave PIN...													
+							Salvando seu PIN...													
 						</h1>											
 											
 						<div class="row">

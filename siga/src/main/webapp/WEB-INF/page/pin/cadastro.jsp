@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Cadastro de Chave PIN">	
+<siga:pagina titulo="Cadastro do PIN">	
 
 	<link rel="stylesheet" href="/siga/css/siga.multiploselect.css" type="text/css" media="screen, projection"/>
 	<link rel="stylesheet" href="/siga/css/siga-pin.css" type="text/css" media="screen, projection"/>
@@ -20,7 +20,7 @@
 			<div class="card-header">
 				<div class="row">
 					<div class="col-sm-9">
-						<h5 class="titulo-principal-etapa" id="tituloPrincipalEtapa">Nova chave PIN</h5>
+						<h5 class="titulo-principal-etapa" id="tituloPrincipalEtapa">Novo PIN</h5>
 					</div>
 				</div>
 			</div>
@@ -35,11 +35,11 @@
 								    <h2>SIGA PIN</h2>
 								    <p >Agora assinar e autenticar os documentos ficou mais <strong>prático</strong> e <strong>seguro</strong>.</p>
 								    <p>Assine e autentique documentos a partir de uma <strong>chave pessoal</strong> desassociada da sua senha de acesso ao sistema.</p>	
-								    <p class="mt-5">Vamos lá! Clique em próximo para definir sua chave PIN.</p>							    
+								    <p class="mt-5">Vamos lá! Clique em próximo para definir seu PIN.</p>							    
 								 </div>
 							</div>
 							<div class="col-md-12 col-lg-6 text-left">
-								<h2 class="mt-5"><span class="badge badge-pill badge-success">1</span> Defina chave PIN</h2>
+								<h2 class="mt-5"><span class="badge badge-pill badge-success">1</span> Defina PIN</h2>
 									<ul>
 										<li>Utilize somente números</li>
 										<li>Evite números conhecidos, como data de nascimento, telefone, etc..</li>
@@ -50,7 +50,7 @@
 									<ul>
 										<li>Acesse seus documentos pendente de Assinatura ou Autenticação</li>
 										<li>Selecione Assinar ou Autenticar com Senha (PIN)</li>
-										<li>Insira sua chave PIN quando solicitado</li>
+										<li>Insira seu PIN quando solicitado</li>
 									</ul>
 							</div>
 						</div>
@@ -81,7 +81,7 @@
 									  </div>
 									</c:if>
 									
-									<label for="pinUser" id="lblPinUser">Nova chave PIN</label>
+									<label for="pinUser" id="lblPinUser">Novo PIN</label>
 									<div class="input-group input-group-lg">
 									  <div class="input-group-prepend">
 									    <span class="input-group-text" id="inputGroup-sizing-lg"><i class="fa fa-key"></i></span>
@@ -92,7 +92,7 @@
 										Seu PIN para Assinatura de Documentos com Senha deve conter apenas números e deve ter 8 dígitos.
 									</small>
 	
-									<label for="pinUserConfirm" id="lblPinUserConfirm" class="mt-2">Confirme chave PIN</label> 									
+									<label for="pinUserConfirm" id="lblPinUserConfirm" class="mt-2">Confirme PIN</label> 									
 									<div class="input-group input-group-lg">
 									  <div class="input-group-prepend">
 									    <span class="input-group-text" id="inputGroup-sizing-lg"><i class="fa fa-key"></i></span>
@@ -100,7 +100,7 @@
 									  <input type="password" id="pinUserConfirm" name="pinUserConfirm"  class="form-control" style="text-align: center;" aria-describedby="lblPinUserConfirm" minlength="8" maxlength="8" size="8" autocomplete="off" inputmode="numeric" required/>								
 									</div>
 									<small id="pinUserHelp" class="form-text text-muted" style="font-size: 70% !important;">
-										Por favor, insira novamente a chave PIN para confirmação.
+										Por favor, insira novamente o PIN para confirmação.
 									</small>	
 
 								</div>
@@ -115,7 +115,7 @@
 					
 					<div id="salvando" class="etapa etapa--final  js-etapa-final">
 						<h1 class="text-center display-4">
-							Salvando sua chave PIN...													
+							Salvando seu PIN...													
 						</h1>											
 											
 						<div class="row">
@@ -148,7 +148,7 @@
 		<div class="modal-body">
 	   	</div>
 	   	<div class="modal-footer">
-	   		<button type="button" class="btn btn-danger btn-erro-modal" data-dismiss="modal">Voltar</button>		        
+	   		<button type="button" class="btn btn-secondary btn-erro-modal" data-dismiss="modal">Voltar</button>		        
 		</div>
 	</siga:siga-modal>	
 				

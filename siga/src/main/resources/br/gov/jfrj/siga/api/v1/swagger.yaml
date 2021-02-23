@@ -16,7 +16,7 @@ tags:
   - name: cadastro
     description: Consulta nos Cadastros
   - name: PIN
-    description: API para Criação, Troca e Reset de chave PIN
+    description: API para Criação, Troca e Reset de PIN
   - name: utils
     description: Utilitários
     
@@ -60,19 +60,19 @@ parameters:
   pin:
     name: pin
     in: query
-    description: Chave PIN para Segundo Fator de Autenticação e Assinatura e Autenticação com Senha
+    description: PIN para Segundo Fator de Autenticação e Assinatura e Autenticação com Senha
     required: true
     type: string
   pinAtual:
     name: pinAtual
     in: query
-    description: Chave PIN Atual para Confirmação da Troca de PIN
+    description: PIN Atual para Confirmação da Troca de PIN
     required: true
     type: string
   tokenPin:
     name: tokenPin
     in: query
-    description: Token para Reset de Chave PIN
+    description: Token para Reset de PIN
     required: true
     type: string
   lotacao:
@@ -381,7 +381,7 @@ paths:
         - Bearer: []      
       parameters:
         - $ref: "#/parameters/pin"
-      summary: Criação de chave PIN para Assinatura e Autenticação de Documentos e Segundo Fator de Autenticação.
+      summary: Criação de PIN para Assinatura e Autenticação de Documentos e Segundo Fator de Autenticação.
       responses:
         200:
           description: Successful response
@@ -404,7 +404,7 @@ paths:
       parameters:
         - $ref: "#/parameters/pinAtual"
         - $ref: "#/parameters/pin"
-      summary: Troca de chave PIN para Assinatura e Autenticação de Documentos e Segundo Fator de Autenticação.
+      summary: Troca de PIN para Assinatura e Autenticação de Documentos e Segundo Fator de Autenticação.
       responses:
         200:
           description: Successful response
@@ -427,7 +427,7 @@ paths:
       parameters:
         - $ref: "#/parameters/tokenPin"
         - $ref: "#/parameters/pin"
-      summary: Esqueceu chave PIN.
+      summary: Esqueceu PIN.
       responses:
         200:
           description: Successful response

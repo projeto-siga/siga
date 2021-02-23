@@ -41,8 +41,8 @@ public class PinResetPost implements IPinResetPost {
 					
 					Cp.getInstance().getBL().definirPinIdentidade(listaIdentidades, pin, identidadeCadastrante);
 					Cp.getInstance().getBL().invalidarTokenUtilizado(cadastrante.getCpfPessoa(),tokenPin);
-					Cp.getInstance().getBL().enviarEmailDefinicaoPIN(cadastrante,"Redefinição Chave PIN","Você redefiniu sua chave PIN.");
-					resp.mensagem = "Chave PIN foi trocada.";
+					Cp.getInstance().getBL().enviarEmailDefinicaoPIN(cadastrante,"Redefinição de PIN","Você redefiniu seu PIN.");
+					resp.mensagem = "PIN foi redefinido.";
 					
 				}	 
 			 } else {
@@ -60,7 +60,7 @@ public class PinResetPost implements IPinResetPost {
 	
 	@Override
 	public String getContext() {
-		return "reset chave PIN";
+		return "reset PIN";
 	}
 	
 }

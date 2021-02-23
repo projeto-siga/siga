@@ -27,14 +27,15 @@ public class PinGerarTokenResetPost implements IPinGerarTokenResetPost {
 			
 			CpIdentidade identidadeCadastrante = so.getIdentidadeCadastrante();
 			if (identidadeCadastrante.getPinIdentidade() == null) {
-				throw new RegraNegocioException("Não é possível gerar token para reset de chave PIN: Não existe chave cadastrada.");
+				throw new RegraNegocioException("Não é possível gerar token para redenifir seu PIN: Não existe PIN cadastrado.");
 			}
 			
 			DpPessoa cadastrante = so.getCadastrante();
 			Long cpf = cadastrante.getCpfPessoa();
-	
-			CpToken token =	Cp.getInstance().getBL().gerarTokenResetPin(cpf);/* TODO: Avaliar se o CPF é o melhor para se gerar o Token. Parece ser mais performático para não ter queries adicionais */
-			Cp.getInstance().getBL().enviarEmailTokenResetPIN(cadastrante,"Código para redefinição de chave PIN ",token.getToken());
+			
+			/* TODO: Avaliar se o CPF é o melhor para se gerar o Token. Parece ser mais performático para não ter queries adicionais */
+			CpToken token =	Cp.getInstance().getBL().gerarTokenResetPin(cpf);
+			Cp.getInstance().getBL().enviarEmailTokenResetPIN(cadastrante,"Código para redefinição de PIN ",token.getToken());
 			resp.mensagem = "Token gerado para reset de PIN";
 			resp.tokenPin = token.getToken();
 			

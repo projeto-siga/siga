@@ -191,7 +191,7 @@ PinTrocar.Etapas = (function() {
 	function finalizarRequisicao(form) {
 		
 		form.spinner.css('border-color', '#28a745');		
-		form.spinner.parent().parent().parent().find('h1').html('Pronto! Sua chave PIN foi redefinida!<br/><p class="lead">Nunca divulgue sua chave PIN. Ela é de uso pessoal e intransferível.</p>');
+		form.spinner.parent().parent().parent().find('h1').html('Pronto! Seu PIN foi redefinido!<br/><p class="lead">Nunca divulgue seu PIN. Ele é de uso pessoal e intransferível.</p>');
 		form.spinner.parent().parent().parent().find('.icone-salvo-sucesso').css('opacity', '1');	
 		form.btnGoToMesa.show();
 	

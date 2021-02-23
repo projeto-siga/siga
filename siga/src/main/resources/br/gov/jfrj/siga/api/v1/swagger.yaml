@@ -456,8 +456,6 @@ paths:
             properties:
               status:
                 type: string
-              tokenPin:
-                type: string
         500:
           description: Error ocurred
           schema:

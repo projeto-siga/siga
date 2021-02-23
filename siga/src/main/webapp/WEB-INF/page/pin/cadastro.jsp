@@ -20,7 +20,7 @@
 			<div class="card-header">
 				<div class="row">
 					<div class="col-sm-9">
-						<h5 class="titulo-principal-etapa" id="tituloPrincipalEtapa">Novo PIN</h5>
+						<h5 class="titulo-principal-etapa" id="tituloPrincipalEtapa">SIGA PIN</h5>
 					</div>
 				</div>
 			</div>
@@ -67,7 +67,7 @@
 								<div class="col-0 col-lg-3 col-sm-0"></div>
 								<div class="col col-lg-6 col-sm-12"> 
 									<c:if test="${not empty cadastrante}">
-									  <div class="form-group row">
+									  <div class="form-group row mb-0">
 									    <label for="staticNome" class="col-sm-2 col-form-label">Nome</label>
 									    <div class="col-sm-10">
 									      <input type="text" readonly class="form-control-plaintext" id="staticNome" value="${cadastrante.nomePessoa}">
@@ -92,7 +92,7 @@
 										Seu PIN para Assinatura de Documentos com Senha deve conter apenas números e deve ter 8 dígitos.
 									</small>
 	
-									<label for="pinUserConfirm" id="lblPinUserConfirm" class="mt-2">Confirme PIN</label> 									
+									<label for="pinUserConfirm" id="lblPinUserConfirm" class="mt-2">Confirme seu PIN</label> 									
 									<div class="input-group input-group-lg">
 									  <div class="input-group-prepend">
 									    <span class="input-group-text" id="inputGroup-sizing-lg"><i class="fa fa-key"></i></span>
@@ -122,7 +122,7 @@
 							<div class="col-sm-12 text-center">
 					            <span class="spinner spinner--salvando js-spinner--salvando"></span>
 					            <span class="icone-salvo-sucesso"><i class="fas fa-check-circle"></i></span>
-					            <a id="btnGoToMesa" class="btn btn-primary text-center" href="/siga/app/principal" title="Cadastrar Nova Configuração" style="margin-top:50px;">Ir para Mesa Virtual</a>
+					            <a id="btnGoToMesa" class="btn btn-primary text-center" href="/siga/app/principal" title="Ir para Mesa Virtual" style="margin-top:50px;">Ir para Mesa Virtual</a>
 					            				            					            					           
 							</div>						
 						</div>
@@ -143,14 +143,6 @@
 			</div>			
 		</div>
 	</div>
-	
-	<siga:siga-modal id="erroModal" exibirRodape="false" tituloADireita="Erro">
-		<div class="modal-body">
-	   	</div>
-	   	<div class="modal-footer">
-	   		<button type="button" class="btn btn-secondary btn-erro-modal" data-dismiss="modal">Voltar</button>		        
-		</div>
-	</siga:siga-modal>	
 				
 	<script type="text/javascript" src="/siga/javascript/siga.multiploselect.js"></script>	
 	<script type="text/javascript" src="/siga/javascript/siga-pin-cadastro.js"></script>	

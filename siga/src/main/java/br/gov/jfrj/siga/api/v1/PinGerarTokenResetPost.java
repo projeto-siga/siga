@@ -37,7 +37,6 @@ public class PinGerarTokenResetPost implements IPinGerarTokenResetPost {
 			CpToken token =	Cp.getInstance().getBL().gerarTokenResetPin(cpf);
 			Cp.getInstance().getBL().enviarEmailTokenResetPIN(cadastrante,"Código para redefinição de PIN ",token.getToken());
 			resp.mensagem = "Token gerado para reset de PIN";
-			resp.tokenPin = token.getToken();
 			
 			
 		} catch (RegraNegocioException e) {

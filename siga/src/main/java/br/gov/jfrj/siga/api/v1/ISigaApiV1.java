@@ -371,7 +371,6 @@ public interface ISigaApiV1 {
 
 	public class PinGerarTokenResetPostResponse implements ISwaggerResponse {
 		public String mensagem;
-		public String tokenPin;
 	}
 
 	public interface IPinGerarTokenResetPost extends ISwaggerMethod {

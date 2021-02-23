@@ -2,88 +2,121 @@ var PinReset = PinReset || {}
 
 PinReset.Etapas = (function() {
 	
-	function Etapas() {
-		this.etapaAtual = 0;
-		this.etapas = $('.js-etapa');
-		this.btnAnterior = $('.js-btn-anterior');
-		this.btnProximo = $('.js-btn-proximo');	
-		
-		this.btnEnviarCodigo = $('#btnEnviarCodigo');
-		this.btnReenviarCodigo = $('#btnReenviarCodigo');
-				
-		this.btnErroModal = $('.btn-erro-modal');		
-		this.tituloPrincipalEtapa = $('#tituloPrincipalEtapa');
-		this.spinner = $('.js-spinner--salvando');
-		this.btnGoToMesa = $('#btnGoToMesa');
-		
-		this.pinUser = $('#pinUser');
-		this.pinUserConfirm = $('#pinUserConfirm');
-		
-		this.apresentacaoPinOK = false;
-		this.cadastroPinEtapaOK = false;						
-		this.emitter = $({});
-		this.on = this.emitter.on.bind(this.emitter);		
-	}
+	class Etapas {
+        constructor() {
+            this.etapaAtual = 0;
+            this.etapas = $('.js-etapa');
+            this.btnCancelar = $('.js-btn-cancelar');
+            this.btnProximo = $('.js-btn-proximo');
+
+            this.btnEnviarCodigo = $('#btnEnviarCodigo');
+            this.btnReenviarCodigo = $('#btnReenviarCodigo');
+
+            this.tituloPrincipalEtapa = $('#tituloPrincipalEtapa');
+            this.spinner = $('.js-spinner--salvando');
+            this.btnGoToMesa = $('#btnGoToMesa');
+
+            this.pinUser = $('#pinUser');
+            this.pinUserConfirm = $('#pinUserConfirm');
+			this.tokenPin = $('#tokenPin');
+
+
+            this.apresentacaoPinOK = false;
+            this.cadastroPinEtapaOK = false;
+            this.emitter = $({});
+            this.on = this.emitter.on.bind(this.emitter);
+        }
+        iniciar() {
+            this.btnCancelar.on('click', onBtnCancelarClicado.bind(this));
+            this.btnProximo.on('click', onBtnProximoClicado.bind(this));
+
+            this.btnEnviarCodigo.on('click', onBtnEnviarCodigoClicado.bind(this));
+            this.btnReenviarCodigo.on('click', onBtnReenviarCodigoClicado.bind(this));
+
+
+            this.on('validarResetPin', onValidar.bind(this));
+
+
+            exibirEtapa.call(this, this.etapaAtual);
+        }
+    }
 	
-	Etapas.prototype.iniciar = function() {
-		this.btnAnterior.on('click', onBtnAnteriorClicado.bind(this));
-		this.btnProximo.on('click', onBtnProximoClicado.bind(this));
-		this.btnErroModal.on('click', onBtnErroClicado.bind(this));
-		
-		this.btnEnviarCodigo.on('click', onBtnEnviarCodigoClicado.bind(this));
-		this.btnReenviarCodigo.on('click', onBtnReenviarCodigoClicado.bind(this));
-
-		
-		this.pinUser.on('change', onChangePassword.bind(this));
-		this.pinUserConfirm.on('keyup', onChangePassword.bind(this));
-
-
-		exibirEtapa.call(this, this.etapaAtual);			
-	}	
 	
-	function onChangePassword(){
-		  if($('#pinUser').val() != $('#pinUserConfirm').val()) {
-			 // sigaModal.alerta('Repetição da nova senha não confere, favor redigitar.');
-		  } 
+	
+	function onValidar(evento, validacao) {		
+		if(this.tokenPin.val() === "") {
+			sigaModal.alerta('Código de segurança não informado. Favor inserí-lo.').select(this.tokenPin);		
+			validacao.resultado = false;
+			return false;
+		} 
+		
+		if( !isNumeric(this.tokenPin.val())) {
+			sigaModal.alerta('Código de segurança inválido. Favor corrigir.').select(this.tokenPin);		
+			validacao.resultado = false;
+			return false;
+		} 
+		
+		if( this.tokenPin.val().length !== 8) {
+			sigaModal.alerta('Código de segurança inválido. Favor corrigir.').select(this.tokenPin);		
+			validacao.resultado = false;
+			return false;
+		} 
+			
+		if(this.pinUser.val() === "") {
+			sigaModal.alerta('Novo PIN não informado. Favor inserí-lo.').select(this.pinUser);		
+			validacao.resultado = false;
+			return false;
+		} 
+		
+		if( !isNumeric(this.pinUser.val())) {
+			sigaModal.alerta('PIN deve conter apenas dígitos númericos (0-9). Favor corrigir.').select(this.pinUser);		
+			validacao.resultado = false;
+			return false;
+		} 
+		
+		if( this.pinUser.val().length !== 8) {
+			sigaModal.alerta('PIN deve ter 8 dígitos numéricos.').select(this.pinUser);		
+			validacao.resultado = false;
+			return false;
+		} 
+		
+		if(this.pinUserConfirm.val() === "") {
+			sigaModal.alerta('Confirmação do PIN não informado. Favor inserí-lo.').select(this.pinUserConfirm);		
+			validacao.resultado = false;
+			return false;
+		} 
+			
+		if(this.pinUser.val() !== this.pinUserConfirm.val()) {
+			sigaModal.alerta('Confirmação do PIN não confere com o novo. Favor corrigir.').select(this.pinUserConfirm);
+			validacao.resultado = false;
+			return false;
+		} 		
+		validacao.resultado = true;
+		return true;		
 	}
 
-	function onBtnAnteriorClicado() {			
-		switch (this.etapas[this.etapaAtual - 1].id) {
-			case 'apresentacaoPin':							
-				break;
-			case 'cadastroPinEtapa':				
-				break;
-		}
-		
-		atualizarEtapa.call(this, -1, false);	
+	function onBtnCancelarClicado() {			
+		window.location.href = "/siga/app/principal";
 	}
 	
 	function onBtnEnviarCodigoClicado() {			
-		enviarCodigo();
-		atualizarEtapa.call(this, 1);	
+		enviarCodigo.call(this);
 	}
 	
 	function onBtnReenviarCodigoClicado() {			
-		enviarCodigo();
+		enviarCodigo.call(this);
 	}
 	
-	
-	function onBtnErroClicado() {			
-		sigaModal.fechar('erroModal');	
-	}
+
 	
 	function onBtnProximoClicado(podeValidar) {
 		if (podeValidar !== false && !validarCampos.call(this, this.etapaAtual)) {
 			return false;
 		} 			
-		
-		if (sigaModal.isAberto('erroModal')) {
-			sigaModal.fechar('erroModal');
-		}
 				
 		if (typeof this.etapas[this.etapaAtual + 1] !== 'undefined') {
 			switch (this.etapas[this.etapaAtual + 1].id) {
-			case 'apresentacaoPin':											
+			case 'enviarTokenPin':											
 				break;
 			case 'cadastroPinEtapa':
 				break;
@@ -94,72 +127,51 @@ PinReset.Etapas = (function() {
 			salvar.call(this);
 		}
 	}
-	
-
-	function atualizarBtnProximo() {						
-		if (false) {
-			habilitarBtnProximo.call(this);			
-		} else {
-			desabilitarBtnProximo.call(this);
-		}				
-	}
-	
-	function desabilitarBtnProximo(obj) {
-		obj.btnProximo.attr('disabled', 'disabled');
-	}
-	
-	function habilitarBtnProximo(obj) {
-		obj.btnProximo.removeAttr('disabled');
-	}
-	
+		
 	function exibirEtapa(numeroEtapa) {		
 		this.etapas[numeroEtapa].style.display = "block";
 	  
 		if (numeroEtapa == 0) {
-			this.btnAnterior.css('display', 'none'); 
 			this.btnProximo.css('display', 'none');    
 		} else {
-			this.btnAnterior.css('display', 'inline');
 			this.btnProximo.css('display', 'inline');
 		}
+		
 		if (numeroEtapa == (this.etapas.length - 1)) {
 			this.btnProximo.removeClass('btn-primary').addClass('btn-success');
-			this.btnProximo.html('Redefinir PIN  <i class="fas fa-check"></i>');    
-			//desabilitarBtnProximo(this);
-		} else {
-			this.btnProximo.removeClass('btn-success').addClass('btn-primary');
-			this.btnProximo.html('Próximo  <i class="fas fa-long-arrow-alt-right"></i>');    
-			habilitarBtnProximo(this);
+			this.btnProximo.html('Redefinir PIN  <i class="fas fa-check"></i>');  
 		}
 		
 		atualizarTituloEtapaTopo.call(this);
 
 	}
 	
-	function atualizarEtapa(numeroEtapa) {  		
-		this.etapas[this.etapaAtual].style.display = "none";
-	  
-		this.etapaAtual += numeroEtapa;
-	  
-		exibirEtapa.call(this, this.etapaAtual);
+	function atualizarEtapa(form,numeroEtapa) {  		
+		if (form.etapaAtual == 0) {
+			form.etapas[form.etapaAtual].style.display = "none";
+			form.etapaAtual += numeroEtapa;
+			exibirEtapa.call(form, form.etapaAtual);
+		}
 	}		
 	
-	function salvar() {																			
-		var form = this;						
-		$.ajax({
-			url: '/siga/api/v1/pin/reset',
-		    contentType: 'application/x-www-form-urlencoded',
-		    type: 'POST',
-		    data: {'tokenPin':$('#tokenPin').val(),'pin':$('#pinUser').val()}, 											
-			beforeSend: iniciarRequisicao.bind(this),
-	        success: function(result){
-	        	console.log(result.mensagem);
-	        	finalizarRequisicao(form);
-	        },
-	        error: function(result){	
-	        	erroRequisicao(form,result);
-	        },
-		});									
+	function salvar() {																					
+		if (validarCampos.call(this, this.etapaAtual)){	
+			var form = this;		
+			$.ajax({
+				url: '/siga/api/v1/pin/reset',
+			    contentType: 'application/x-www-form-urlencoded',
+			    type: 'POST',
+			    data: {'tokenPin':this.tokenPin.val(),'pin':this.pinUser.val()}, 											
+				beforeSend: iniciarRequisicao.bind(this),
+		        success: function(result){
+		        	console.log(result.mensagem);
+		        	finalizarRequisicao(form);
+		        },
+		        error: function(result){	
+		        	erroRequisicao(form,result);
+		        },
+			});			
+		}						
 	}
 	
 	
@@ -168,13 +180,16 @@ PinReset.Etapas = (function() {
 		$.ajax({
 			url: '/siga/api/v1/pin/gerar-token-reset',
 		    contentType: 'application/x-www-form-urlencoded',
-		    type: 'POST',									
+		    type: 'POST',		
+			beforeSend: onSpinnerMostrar.bind(this),							
 	        success: function(result){
-				//sigaModal.enviarTextoEAbrir('erroModal', result.mensagem);	
+				atualizarEtapa(form, 1);
+				sigaModal.alerta("Código de segurança gerado e enviado para o e-mail cadastrado.").select(form.tokenPin);
 	        },
 	        error: function(result){	
 	        	erroRequisicao(form,result);
 	        },
+			complete: onSpinnerOcultar.bind(this)	
 		});									
 	}
 	
@@ -196,8 +211,8 @@ PinReset.Etapas = (function() {
 		form.btnProximo.parent().show();					
 		form.spinner.parent().parent().parent().hide();
 	
-    	sigaModal.enviarTextoEAbrir('erroModal', result.responseJSON.errormsg);	
-    	console.log("Falhou");
+    	sigaModal.alerta(result.responseJSON.errormsg,false,"Erro");	
+    	console.log(result.responseJSON.errormsg);
 	}
 	
 	function finalizarRequisicao(form) {
@@ -213,15 +228,10 @@ PinReset.Etapas = (function() {
 		var retorno = { resultado: true, alertaConfirmado: false };
 		
 		switch (this.etapas[numeroEtapa].id) {
-			case 'apresentacaoPin':
-				retorno.alertaConfirmado = this.apresentacaoPinOK; 				
-				this.emitter.trigger('validarModelos', retorno);				
+			case 'enviarTokenPin':				
 				break;
 			case 'cadastroPinEtapa':
-				break;
-			case 'selecaoDestinatario':
-				break;
-			case 'selecaoDestinatarioDefinicao':
+				this.emitter.trigger('validarResetPin', retorno);	
 				break;
 		}
 		
@@ -234,11 +244,11 @@ PinReset.Etapas = (function() {
 				
 		for (var i = 0; i <= this.etapaAtual; i++) {
 			switch (this.etapas[i].id) {				
-			case 'apresentacaoPin':					
-				this.tituloPrincipalEtapa.append('<span class="titulo-etapa-topo  js-titulo-etapa-topo">&nbsp;<i class="fa fa-angle-right" style="color: #000;font-size: 1rem;"></i>&nbsp;Apresentação</span>');				
+			case 'enviarTokenPin':					
+				this.tituloPrincipalEtapa.append('<span class="titulo-etapa-topo  js-titulo-etapa-topo">&nbsp;<i class="fa fa-angle-right" style="color: #000;font-size: 1rem;"></i>&nbsp;Enviar código para redefinir PIN</span>');				
 				break;
 			case 'cadastroPinEtapa':				
-				this.tituloPrincipalEtapa.append('<span class="titulo-etapa-topo  js-titulo-etapa-topo">&nbsp;<i class="fa fa-angle-right" style="color: #000;font-size: 1rem;"></i>&nbsp;Cadastre um Novo PIN</span>');				
+				this.tituloPrincipalEtapa.append('<span class="titulo-etapa-topo  js-titulo-etapa-topo">&nbsp;<i class="fa fa-angle-right" style="color: #000;font-size: 1rem;"></i>&nbsp;Redefina seu PIN</span>');				
 				break;
 
 			}					
@@ -253,11 +263,6 @@ PinReset.Etapas = (function() {
 
 
 $(function() {
-	$('[name=idTpConfiguracao]').addClass('siga-select2');
-	$('[data-toggle="popover"]').popover();
-	
 	var etapas = new PinReset.Etapas();
 	etapas.iniciar();
-
-
 });

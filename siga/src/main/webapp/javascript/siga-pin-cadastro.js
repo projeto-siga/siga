@@ -9,7 +9,6 @@ PinCadastro.Etapas = (function() {
             this.btnAnterior = $('.js-btn-anterior');
             this.btnProximo = $('.js-btn-proximo');
             this.spanIndicadorEtapa = $('.js-indicador-etapa');
-            this.btnErroModal = $('.btn-erro-modal');
             this.tituloPrincipalEtapa = $('#tituloPrincipalEtapa');
             this.spinner = $('.js-spinner--salvando');
             this.btnGoToMesa = $('#btnGoToMesa');
@@ -25,7 +24,6 @@ PinCadastro.Etapas = (function() {
         iniciar() {
             this.btnAnterior.on('click', onBtnAnteriorClicado.bind(this));
             this.btnProximo.on('click', onBtnProximoClicado.bind(this));
-            this.btnErroModal.on('click', onBtnErroClicado.bind(this));
 
             this.on('validarNovoPin', onValidar.bind(this));
 
@@ -80,18 +78,11 @@ PinCadastro.Etapas = (function() {
 		atualizarEtapa.call(this, -1, false);	
 	}
 	
-	function onBtnErroClicado() {			
-		sigaModal.fechar('erroModal');	
-	}
-	
+
 	function onBtnProximoClicado(podeValidar) {
 		if (podeValidar !== false && !validarCampos.call(this, this.etapaAtual)) {
 			return false;
 		} 			
-		
-		if (sigaModal.isAberto('erroModal')) {
-			sigaModal.fechar('erroModal');
-		}
 				
 		if (typeof this.etapas[this.etapaAtual + 1] !== 'undefined') {
 			switch (this.etapas[this.etapaAtual + 1].id) {
@@ -141,23 +132,24 @@ PinCadastro.Etapas = (function() {
 	  
 		exibirEtapa.call(this, this.etapaAtual);
 	}		
-	function salvar() {																			
-		var form = this;	
-		this.emitter.trigger('validarNovoPin', retorno);			
-		$.ajax({
-			url: '/siga/api/v1/pin',
-		    contentType: 'application/x-www-form-urlencoded',
-		    type: 'POST',
-		    data: {'pin':$('#pinUser').val()}, 											
-			beforeSend: iniciarRequisicao.bind(this),
-	        success: function(result){
-	        	console.log(result.mensagem);
-	        	finalizarRequisicao(form);
-	        },
-	        error: function(result){	
-	        	erroRequisicao(form,result);
-	        },
-		});									
+	function salvar() {			
+		if (validarCampos.call(this, this.etapaAtual)){																	
+			var form = this;			
+			$.ajax({
+				url: '/siga/api/v1/pin',
+			    contentType: 'application/x-www-form-urlencoded',
+			    type: 'POST',
+			    data: {'pin':$('#pinUser').val()}, 											
+				beforeSend: iniciarRequisicao.bind(this),
+		        success: function(result){
+		        	console.log(result.mensagem);
+		        	finalizarRequisicao(form);
+		        },
+		        error: function(result){	
+		        	erroRequisicao(form,result);
+		        },
+			});	
+		}								
 	}
 	
 	function iniciarRequisicao() {
@@ -178,8 +170,8 @@ PinCadastro.Etapas = (function() {
 		form.btnProximo.parent().show();					
 		form.spinner.parent().parent().parent().hide();
 	
-    	sigaModal.enviarTextoEAbrir('erroModal', result.responseJSON.errormsg);	
-    	console.log("Falhou");
+    	sigaModal.alerta(result.responseJSON.errormsg,false,"Erro");
+    	console.log(result.responseJSON.errormsg);
 	}
 	
 	function finalizarRequisicao(form) {
@@ -215,7 +207,7 @@ PinCadastro.Etapas = (function() {
 				this.tituloPrincipalEtapa.append('<span class="titulo-etapa-topo  js-titulo-etapa-topo">&nbsp;<i class="fa fa-angle-right" style="color: #000;font-size: 1rem;"></i>&nbsp;Apresentação</span>');				
 				break;
 			case 'cadastroPinEtapa':				
-				this.tituloPrincipalEtapa.append('<span class="titulo-etapa-topo  js-titulo-etapa-topo">&nbsp;<i class="fa fa-angle-right" style="color: #000;font-size: 1rem;"></i>&nbsp;Cadastre um Novo PIN</span>');				
+				this.tituloPrincipalEtapa.append('<span class="titulo-etapa-topo  js-titulo-etapa-topo">&nbsp;<i class="fa fa-angle-right" style="color: #000;font-size: 1rem;"></i>&nbsp;Cadastre um novo PIN</span>');				
 				break;
 
 			}					

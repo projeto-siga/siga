@@ -136,14 +136,6 @@ public class ApplicationController extends TpController {
         }
     }
 
-    @Path("/emDesenvolvimento")
-    public void emDesenvolvimento() {
-        /**
-         * Metodo utilizado somente para o VRaptor renderizar a view em questao.
-         */
-    }
-
-    @Transactional
     @Path("/selecionarPessoa")
     public void selecionarPessoa() {
         CondutorFiltro filtro = new CondutorFiltro();
@@ -152,7 +144,6 @@ public class ApplicationController extends TpController {
         result.include("filtro", filtro);
     }
 
-    @Transactional
     @Path({ "/selecionarPessoa/{sigla}/{tipo}/{nome}", "/selecionarPessoa" })
     public void selecionarSiga(String sigla, String tipo, String nome) throws ApplicationControllerException {
         try {
@@ -162,7 +153,6 @@ public class ApplicationController extends TpController {
         }
     }
 
-    @Transactional
     @Path({ "/buscarSiga/{sigla}/{tipo}/{nome}", "/buscarSiga" })
     public void buscarSiga(String sigla, String tipo, String nome) throws ApplicationControllerException {
         try {
@@ -172,7 +162,6 @@ public class ApplicationController extends TpController {
         }
     }
 
-    @Transactional
     @Path("/exibirManualUsuario")
     public void exibirManualUsuario() {
         /**
@@ -187,7 +176,6 @@ public class ApplicationController extends TpController {
          */
     }
 
-    @Transactional
     @Path("/gadget")
     public void gadget() {
         try {

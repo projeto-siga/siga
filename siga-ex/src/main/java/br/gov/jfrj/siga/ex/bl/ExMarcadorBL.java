@@ -15,6 +15,7 @@ import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoExibicaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeGrupoEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -242,6 +243,8 @@ public class ExMarcadorBL {
 	}
 
 	private void acrescentarMarcadoresManuais() {
+		boolean fPasta = false;
+		
 		// Acrescentar marcas manuais (Urgente, Idoso, etc)
 		ExMobil geral = mob.doc().getMobilGeral();
 		
@@ -299,7 +302,24 @@ public class ExMarcadorBL {
 			} else if (marcador.isInteressadoLotacao() && mov.getLotaSubscritor() != null) {
 				lot = mov.getLotaSubscritor();
 			}
+			
+			// Indicar se está alocado numa pasta
+			if (marcador.getIdFinalidade().getGrupo() == CpMarcadorFinalidadeGrupoEnum.PASTA) {
+				if (!mob.isAguardandoAndamento())
+					continue;
+				fPasta = true;
+			}
+			
 			acrescentarMarcaTransferencia(marcador.getIdMarcador(), dtIni, dtFim, pes,	lot, mov);
+		}
+		
+		if (!fPasta && mob.isAguardandoAndamento()) {
+			DpLotacao lotaAtendente = mob.getAtendente().getLotacao();
+			if (lotaAtendente != null) {
+				CpMarcador mpp = ExDao.getInstance().obterPastaPadraoDaLotacao(lotaAtendente);
+				if (mpp != null) 
+					acrescentarMarcaTransferencia(mpp.getId(), null, null, null, lotaAtendente, null);
+			}
 		}
 	}
 	

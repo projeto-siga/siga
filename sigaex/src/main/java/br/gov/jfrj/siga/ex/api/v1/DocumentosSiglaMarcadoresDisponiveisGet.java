@@ -57,6 +57,8 @@ public class DocumentosSiglaMarcadoresDisponiveisGet implements IDocumentosSigla
 				boolean atendente = mob.isAtendente(titular, lotaTitular);
 				resp.list = new ArrayList<>();
 				for (CpMarcador m : marcadores) {
+					if (m.getIdFinalidade() == CpMarcadorFinalidadeEnum.PASTA_PADRAO)
+						continue;
 					if (m.getIdFinalidade() == CpMarcadorFinalidadeEnum.PASTA && !atendente)
 						continue;
 					Marcador mr = new Marcador();

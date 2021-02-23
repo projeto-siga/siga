@@ -50,6 +50,7 @@ import br.gov.jfrj.siga.ex.bl.ExParte;
 import br.gov.jfrj.siga.ex.util.CronologiaComparator;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Selecionavel;
+import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
 @Entity
@@ -169,6 +170,12 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		// return getExTipoMobil().getIdTipoMobil() ==
 		// ExTipoMobil.TIPO_MOBIL_VOLUME;
 		return getExTipoMobil() != null && getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VOLUME;
+	}
+
+	public boolean isUltimoVolume() {
+		if (!isVolume())
+			return false;
+		return getNumSequencia().equals(doc().getNumUltimoVolume());
 	}
 
 	/**
@@ -857,6 +864,17 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	 */
 	public boolean isArquivado() {
 		return isArquivadoCorrente() || isArquivadoIntermediario() || isArquivadoPermanente();
+	}
+	
+	public boolean isAguardandoAndamento() {
+		return doc().isFinalizado()
+			&& (isVia() || isVolume())
+			&& !isArquivado()
+			&& !isApensadoAVolumeDoMesmoProcesso()
+			&& !isSobrestado()
+			&& !isJuntado()
+			&& !isEmTransito()
+			&& !doc().isSemEfeito();
 	}
 
 	/**
@@ -2294,7 +2312,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return false;
 	}
 	
-	public boolean isAtendente(DpPessoa pessoa, DpLotacao lotacao) {
+	public PessoaLotacaoParser getAtendente() {
 		DpPessoa resp = doc().getCadastrante();
 		DpLotacao lotaResp = doc().getLotaCadastrante();
 		
@@ -2307,9 +2325,14 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 				lotaResp = lot;
 			}
 		}
-		if (resp != null && resp.equivale(pessoa))
+		return new PessoaLotacaoParser(resp, lotaResp);
+	}
+	
+	public boolean isAtendente(DpPessoa pessoa, DpLotacao lotacao) {
+		PessoaLotacaoParser pl = getAtendente();
+		if (pl.getPessoa() != null && pl.getPessoa().equivale(pessoa))
 			return true;
-		if (lotaResp != null && lotaResp.equivale(lotacao))
+		if (pl.getLotacao() != null && pl.getLotacao().equivale(lotacao))
 			return true;
 		return false;
 	}

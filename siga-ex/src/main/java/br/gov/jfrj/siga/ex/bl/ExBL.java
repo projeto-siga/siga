@@ -4389,9 +4389,7 @@ public class ExBL extends CpBL {
 				}
 
 				// Marcação deve ser removida só se a lotação estiver sendo alterada
-				boolean emPasta = false;
 				if (movAnterior != null && movAnterior.getMarcador() != null) {
-					emPasta = true;
 					if (movAnterior.getMarcador().getDpLotacaoIni() != null	&& movAnterior.getMarcador().getDpLotacaoIni().equivale(ultMov.getLotaResp())) {
 						movAnterior = null;
 					}
@@ -4400,17 +4398,9 @@ public class ExBL extends CpBL {
 				if (movAnterior != null) {
 					mov.setExMovimentacaoRef(movAnterior);
 					gravarMovimentacaoCancelamento(mov, movAnterior);
-					emPasta = false;
 				} else
 					gravarMovimentacao(mov);
 				
-				if (!emPasta) {
-					CpMarcador mpp = dao().obterPastaPadraoDaLotacao(ultMov.getLotaResp());
-					if (mpp != null)
-						marcar(cadastrante, lotaCadastrante, cadastrante, lotaCadastrante, mob, null, null, ultMov.getLotaResp(),
-								null, mpp, null, null, false);
-				}
-
 				// Se houver configuração para restringir acesso somente para quem recebeu,
 				// remove a lotação das permissões de acesso e inclui o recebedor
 				if (Ex.getInstance().getConf().podePorConfiguracao(mov.getResp(), mov.getLotaResp(), 

@@ -108,12 +108,20 @@ public class MontadorQuery implements IMontadorQuery {
 		// }
 
 		if (flt.getDtDoc() != null) {
-			sbf.append(" and doc.dtDoc >= ");
+			if (flt.getUltMovIdEstadoDoc() == CpMarcador.MARCADOR_EM_ELABORACAO) { 
+				sbf.append(" and doc.dtRegDoc >= ");
+			} else {
+				sbf.append(" and doc.dtDoc >= ");
+			}
 			sbf.append(":dtDoc");
 		}
 
 		if (flt.getDtDocFinal() != null) {
-			sbf.append(" and doc.dtDoc <= ");
+			if (flt.getUltMovIdEstadoDoc() == CpMarcador.MARCADOR_EM_ELABORACAO) { 
+				sbf.append(" and doc.dtRegDoc <= ");
+			} else {
+				sbf.append(" and doc.dtDoc <= ");
+			}
 			sbf.append(":dtDocFinal");
 		}
 

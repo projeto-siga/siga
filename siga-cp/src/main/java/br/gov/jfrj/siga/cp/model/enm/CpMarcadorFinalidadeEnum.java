@@ -76,10 +76,10 @@ public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
 			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
 			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.OPCIONAL, true),
 	//
-//	PASTA_PADRAO(201, CpMarcadorFinalidadeGrupoEnum.PASTA, "Pasta Padrão", "Pasta atribuída automaticamente ao documento tramitado para a minha lotação.",
-//			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
-//			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
-//			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.OPCIONAL, true),
+	PASTA_PADRAO(201, CpMarcadorFinalidadeGrupoEnum.PASTA, "Pasta Padrão", "Pasta atribuída automaticamente ao documento tramitado para a minha lotação.",
+			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
+			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
+			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.OPCIONAL, true),
 	//
 	LISTA(300, CpMarcadorFinalidadeGrupoEnum.LISTA, "Lista",
 			"Marcador que pode ser definido por pessoa da minha lotação para agrupar documentos de interesse de Pessoa ou Lotação definida",

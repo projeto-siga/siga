@@ -1406,14 +1406,22 @@ public class CpBL {
 		String msgLotacao = SigaMessages.getMessage("usuario.lotacao");
 		List<CpMarcador> listaMarcadoresLotacaoEGerais = dao().listarCpMarcadoresPorLotacaoEGeral(lotacao, true);
 		
-		int c = 0;
-		for (CpMarcador m : listaMarcadoresLotacaoEGerais) 
-			if (m.getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO)
+		int c = 0, cpp = 0;
+		for (CpMarcador m : listaMarcadoresLotacaoEGerais) {
+			if (id != null && id.equals(m.getId()))
+				continue;
+			if (m.getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO) 
 				c++;
+			if (m.getIdFinalidade() == CpMarcadorFinalidadeEnum.PASTA_PADRAO) 
+				cpp++;
+		}
 		
 		if (idFinalidade.getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO && id == null 
 				&& c > 10) 
 			throw new AplicacaoException ("Atingiu o limite de 10 marcadores possíveis para " + msgLotacao);
+		
+		if (idFinalidade == CpMarcadorFinalidadeEnum.PASTA_PADRAO && id == null && c > 0) 
+			throw new AplicacaoException ("Só é permitido criar uma pasta padrão");
 		
 		if (id == null && (listaMarcadoresLotacaoEGerais.stream()
 				.filter(mar -> mar.getDescrMarcador()

@@ -59,6 +59,7 @@ import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorCorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorIconeEnum;
 import br.gov.jfrj.siga.cp.util.Excel;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
@@ -1391,7 +1392,7 @@ public class CpBL {
 	}
 
 	public void gravarMarcador(final Long id, final DpPessoa cadastrante, final DpLotacao lotacao, final CpIdentidade identidade, 
-			final String descricao, final String descrDetalhada, final CpMarcadorCorEnum idCor, final CpMarcadorIconeEnum idIcone, final Integer grupoId, 
+			final String descricao, final String descrDetalhada, final CpMarcadorCorEnum idCor, final CpMarcadorIconeEnum idIcone, final CpMarcadorGrupoEnum grupoId, 
 			final CpMarcadorFinalidadeEnum idFinalidade) throws Exception {
 		if (idFinalidade == CpMarcadorFinalidadeEnum.SISTEMA)
 			throw new AplicacaoException ("Não é permitido o cadastro de marcadores de sistema.");
@@ -1432,7 +1433,7 @@ public class CpBL {
 				marcador.setDpLotacaoIni(idFinalidade.getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO ? marcadorAnt.getDpLotacaoIni() : null);
 				marcador.setDescrMarcador(descricao);
 				marcador.setDescrDetalhada(descrDetalhada);
-				marcador.setGrupoMarcador(2);
+				marcador.setIdGrupo(grupoId);
 				marcador.setIdCor(idCor);
 				marcador.setIdIcone(idIcone);
 				dao().gravarComHistorico(marcador, marcadorAnt, null, identidade);
@@ -1446,7 +1447,7 @@ public class CpBL {
 			marcador.setIdFinalidade(idFinalidade);
 			marcador.setDescrMarcador(descricao);
 			marcador.setDescrDetalhada(descrDetalhada);
-			marcador.setGrupoMarcador(grupoId);
+			marcador.setIdGrupo(grupoId);
 			marcador.setIdCor(idCor);
 			marcador.setIdIcone(idIcone);
 			marcador.setDpLotacaoIni(idFinalidade.getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO ? lotacao.getLotacaoInicial() : null);

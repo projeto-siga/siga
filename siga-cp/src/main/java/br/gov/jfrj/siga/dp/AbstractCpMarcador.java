@@ -35,12 +35,11 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 
-import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorCorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorIconeEnum;
-import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoAplicacaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
 import br.gov.jfrj.siga.model.Historico;
 
 @MappedSuperclass
@@ -66,7 +65,7 @@ public abstract class AbstractCpMarcador extends HistoricoAuditavelSuporte imple
 //	private CpTipoMarcadorEnum cpTipoMarcador;
 //
 	@Column(name = "GRUPO_MARCADOR")
-	private Integer grupoMarcador;
+	private CpMarcadorGrupoEnum idGrupo;
 
 	@Column(name = "ORD_MARCADOR")
 	private Integer ordem;
@@ -132,12 +131,12 @@ public abstract class AbstractCpMarcador extends HistoricoAuditavelSuporte imple
 //		this.cpTipoMarcador = cpTipoMarcador;
 //	}
 //
-	public Integer getGrupoMarcador() {
-		return grupoMarcador;
+	public CpMarcadorGrupoEnum getIdGrupo() {
+		return idGrupo;
 	}
 
-	public void setGrupoMarcador(Integer grupoMarcador) {
-		this.grupoMarcador = grupoMarcador;
+	public void setIdGrupo(CpMarcadorGrupoEnum idGrupo) {
+		this.idGrupo = idGrupo;
 	}
 
 	public Integer getOrdem() {

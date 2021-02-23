@@ -18,15 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex;
 
-import static br.gov.jfrj.siga.dp.CpMarcador.MARCADOR_ARQUIVADO_CORRENTE;
-import static br.gov.jfrj.siga.dp.CpMarcador.MARCADOR_ARQUIVADO_INTERMEDIARIO;
-import static br.gov.jfrj.siga.dp.CpMarcador.MARCADOR_ARQUIVADO_PERMANENTE;
-import static br.gov.jfrj.siga.dp.CpMarcador.MARCADOR_A_ELIMINAR;
-import static br.gov.jfrj.siga.dp.CpMarcador.MARCADOR_ELIMINADO;
-import static br.gov.jfrj.siga.dp.CpMarcador.MARCADOR_EM_EDITAL_DE_ELIMINACAO;
-import static br.gov.jfrj.siga.dp.CpMarcador.MARCADOR_RECOLHER_PARA_ARQUIVO_PERMANENTE;
-import static br.gov.jfrj.siga.dp.CpMarcador.MARCADOR_TRANSFERIR_PARA_ARQUIVO_INTERMEDIARIO;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,13 +40,12 @@ import org.hibernate.annotations.BatchSize;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
-import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
 import br.gov.jfrj.siga.ex.bl.ExParte;
 import br.gov.jfrj.siga.ex.util.CronologiaComparator;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -1892,10 +1882,10 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		SortedSet<ExMarca> setFinal = new TreeSet<ExMarca>();
 		for (ExMarca m : getExMarcaSet()) {
 			long idM = m.getCpMarcador().getIdMarcador();
-			if (idM == MARCADOR_ARQUIVADO_CORRENTE || idM == MARCADOR_TRANSFERIR_PARA_ARQUIVO_INTERMEDIARIO
-					|| idM == MARCADOR_ARQUIVADO_INTERMEDIARIO || idM == MARCADOR_RECOLHER_PARA_ARQUIVO_PERMANENTE
-					|| idM == MARCADOR_ARQUIVADO_PERMANENTE || idM == MARCADOR_A_ELIMINAR
-					|| idM == MARCADOR_EM_EDITAL_DE_ELIMINACAO || idM == MARCADOR_ELIMINADO)
+			if (idM == CpMarcadorEnum.ARQUIVADO_CORRENTE.getId() || idM == CpMarcadorEnum.TRANSFERIR_PARA_ARQUIVO_INTERMEDIARIO.getId()
+					|| idM == CpMarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId() || idM == CpMarcadorEnum.RECOLHER_PARA_ARQUIVO_PERMANENTE.getId()
+					|| idM == CpMarcadorEnum.ARQUIVADO_PERMANENTE.getId() || idM == CpMarcadorEnum.A_ELIMINAR.getId()
+					|| idM == CpMarcadorEnum.EM_EDITAL_DE_ELIMINACAO.getId() || idM == CpMarcadorEnum.ELIMINADO.getId())
 				setFinal.add(m);
 		}
 		return setFinal;

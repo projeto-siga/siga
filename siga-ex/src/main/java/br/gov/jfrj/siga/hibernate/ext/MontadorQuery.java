@@ -18,8 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.hibernate.ext;
 
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
-import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class MontadorQuery implements IMontadorQuery {
 
@@ -108,7 +108,7 @@ public class MontadorQuery implements IMontadorQuery {
 		// }
 
 		if (flt.getDtDoc() != null) {
-			if (flt.getUltMovIdEstadoDoc() == CpMarcador.MARCADOR_EM_ELABORACAO) { 
+			if (((Long)CpMarcadorEnum.EM_ELABORACAO.getId()).equals(flt.getUltMovIdEstadoDoc())) { 
 				sbf.append(" and doc.dtRegDoc >= ");
 			} else {
 				sbf.append(" and doc.dtDoc >= ");
@@ -117,7 +117,7 @@ public class MontadorQuery implements IMontadorQuery {
 		}
 
 		if (flt.getDtDocFinal() != null) {
-			if (flt.getUltMovIdEstadoDoc() == CpMarcador.MARCADOR_EM_ELABORACAO) { 
+			if (((Long)CpMarcadorEnum.EM_ELABORACAO.getId()).equals(flt.getUltMovIdEstadoDoc())) { 
 				sbf.append(" and doc.dtRegDoc <= ");
 			} else {
 				sbf.append(" and doc.dtDoc <= ");

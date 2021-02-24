@@ -2762,6 +2762,13 @@ public class CpDao extends ModeloDao {
 		return em().createQuery(criteriaQuery).getResultList().stream().filter(mar -> mar.getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO).collect(Collectors.toList());
 	}
 	
+	public CpMarcador obterPastaPadraoDaLotacao(DpLotacao lotacao) {
+		for (CpMarcador m : listarCpMarcadoresPorLotacao(lotacao, false))
+			if (m.getIdFinalidade() == CpMarcadorFinalidadeEnum.PASTA_PADRAO)
+				return m;
+		return null;
+	}
+	
 	public List<CpMarcador> listarCpMarcadoresPorLotacaoEGeral (DpLotacao lotacao, Boolean ativos) {
 		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
 		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);

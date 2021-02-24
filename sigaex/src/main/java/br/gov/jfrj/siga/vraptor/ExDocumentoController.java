@@ -2907,7 +2907,7 @@ public class ExDocumentoController extends ExController {
 
 	/**
 	 * Prepara os dados das Movimentações de um {@link ExDocumento Documento}
-	 * {@link CpMarcador#MARCADOR_SEM_EFEITO Cancelado} associado a cancelado
+	 * {@link MarcadorEnum.SEM_EFEITO.getId() Cancelado} associado a cancelado
 	 * associado a uma {@link ExMobil Via} que foi
 	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO Cancelada}.
 	 * Primeiro

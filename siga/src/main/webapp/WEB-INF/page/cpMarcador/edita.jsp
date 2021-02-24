@@ -19,14 +19,14 @@
 					<input type="hidden" id="idMarcador" name="id"
 						value="${marcador.id}" />
 					<div class="form-group row">
-						<div class="col col-12 col-md-6">
+						<div class="col col-12 col-md-6 col-lg-3">
 							<div class="form-group">
 								<label for="descricao">Nome</label> <input name="descricao"
 									id="descricao" class="form-control"
 									value="${marcador.descrMarcador}" />
 							</div>
 						</div>
-						<div class="col col-12 col-md-3">
+						<div class="col col-12 col-md-6 col-lg-3">
 							<div id="idIconeGroup" class="form-group">
 								<label for="idIcone">Ícone</label> <select
 									class="form-control selectpicker border-light" id="idIcone"
@@ -41,7 +41,7 @@
 								</select>
 							</div>
 						</div>
-						<div class="col col-12 col-md-3">
+						<div class="col col-12 col-md-6 col-lg-3">
 							<div class="form-group justify-content-end">
 								<label for="idIcone">Cor</label>
 								<button id="btnEscolherCor" type="button"
@@ -73,6 +73,19 @@
 										</div>
 									</div>
 								</div>
+							</div>
+						</div>
+						<div class="col col-12 col-md-6 col-lg-3">
+							<div class="form-group" id="grupo">
+								<label for="idGrupo">Grupo</label> <select
+									class="form-control" id="idGrupo" name="idGrupo"
+									value="${idGrupo}">
+									<c:forEach items="${listaGrupos}" var="item">
+										<option value="${item.name()}"
+											${(item eq marcador.idGrupo) or (empty marcador and item eq 'OUTROS') ? 'selected' : ''}>
+											${item.nome}</option>
+									</c:forEach>
+								</select>
 							</div>
 						</div>
 						<div class="col col-12">

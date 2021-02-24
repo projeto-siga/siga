@@ -58,7 +58,7 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
-import br.gov.jfrj.siga.dp.CpMarcador;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -974,7 +974,7 @@ public class ExRelatorioController extends ExController {
 					lotacaoSel.getId(), usuarioSel.getId(),
 					formatter.parse((String) dataInicial),
 					formatter.parse((String) dataFinal),
-					CpMarcador.MARCADOR_COMO_INTERESSADO);
+					CpMarcadorEnum.COMO_INTERESSADO.getId());
 			if (listOrgaos == null) {
 				throw new AplicacaoException(
 						"Não foram encontrados documentos para a pesquisa solicitada.");

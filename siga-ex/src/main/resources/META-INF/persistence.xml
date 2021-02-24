@@ -96,6 +96,7 @@
 		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoExibicaoEnumConverter</class>
 		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoInteressadoEnumConverter</class>
 		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoTextoEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorGrupoEnumConverter</class>
 		<class>br.gov.jfrj.siga.cp.converter.CpTipoMarcadorEnumConverter</class>
 
 		<properties>

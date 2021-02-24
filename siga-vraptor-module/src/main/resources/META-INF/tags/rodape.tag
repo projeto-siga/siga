@@ -52,6 +52,12 @@
 			else
 				this.beenSubmitted = true;
 		});
+ 		$('.campoData').datepicker({
+           	onSelect: function(){
+                   ${onSelect}
+			}
+		});
+
 		//$('.autogrow').css('overflow', 'hidden').autogrow();
 	});
 </script>

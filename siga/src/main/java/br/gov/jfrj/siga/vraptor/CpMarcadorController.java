@@ -43,6 +43,7 @@ import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorCorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorIconeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoAplicacaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoDataEnum;
@@ -87,6 +88,7 @@ public class CpMarcadorController extends SigaController {
 		result.include("listaMarcadores", listMar);
 		result.include("listaTipoMarcador", CpTipoMarcadorEnum.values());
 		result.include("listaCores", CpMarcadorCorEnum.values());
+		result.include("listaGrupos", CpMarcadorGrupoEnum.disponiveis());
 		result.include("listaIcones", CpMarcadorIconeEnum.values());
 		result.include("listaTipoAplicacao", CpMarcadorTipoAplicacaoEnum.values());
 		result.include("listaTipoExibicao", CpMarcadorTipoExibicaoEnum.values());
@@ -136,19 +138,35 @@ public class CpMarcadorController extends SigaController {
 			
 			if (marcador.getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL) {		
 				assertAcesso(ACESSO_CAD_MARCADOR_GERAL);
-			} else {
+			} else if (marcador.getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO) {
 				assertAcesso(ACESSO_CAD_MARCADOR_LOTA);
 			}
 		}
+
+		boolean geral = false;
+		try {
+			assertAcesso(ACESSO_CAD_MARCADOR_GERAL);
+			geral = true;
+		} catch (Exception e) {
+		}
+		
+		boolean lota = false;
+		try {
+			assertAcesso(ACESSO_CAD_MARCADOR_LOTA);
+			lota = true;
+		} catch (Exception e) {
+		}
+		
+		result.include("listaGrupos", CpMarcadorGrupoEnum.disponiveis());
 		result.include("listaCores", CpMarcadorCorEnum.values());
 		result.include("listaIcones", CpMarcadorIconeEnum.values());
-		result.include("listaFinalidade", CpMarcadorFinalidadeEnum.values());
+		result.include("listaFinalidade", CpMarcadorFinalidadeEnum.disponiveis(geral, lota));
 	}
 
 	@Transacional
 	@Post("/app/marcador/gravar")
 	public void marcadorGravar(Long id, final String sigla, final String descricao, final String descrDetalhada,
-			final CpMarcadorCorEnum idCor, final CpMarcadorIconeEnum idIcone, final Integer grupoId, final CpMarcadorFinalidadeEnum idFinalidade)
+			final CpMarcadorCorEnum idCor, final CpMarcadorIconeEnum idIcone, final CpMarcadorGrupoEnum idGrupo, final CpMarcadorFinalidadeEnum idFinalidade)
 			throws Exception {
 
 		assertAcesso(ACESSO_CAD_MARCADOR_LOTA);
@@ -163,7 +181,7 @@ public class CpMarcadorController extends SigaController {
 		}
 		
 		Cp.getInstance().getBL().gravarMarcador(id, getCadastrante(), getLotaTitular(),
-				getIdentidadeCadastrante(), descricao, descrDetalhada, idCor, idIcone, 2, idFinalidade);
+				getIdentidadeCadastrante(), descricao, descrDetalhada, idCor, idIcone, idGrupo, idFinalidade);
 
 		result.redirectTo(this).lista();
 	}

@@ -1816,7 +1816,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     	//estado Em Elaboracao. Mesma coisa mais abaixo, ao incluir marca
     	//em Elaboracao agendada em razao de pendencia
     	if (isRascunho())
-    		acrescentarMarca(set, CpMarcador.MARCADOR_SOLICITACAO_EM_ELABORACAO, null, null, getCadastrante(), getLotaTitular());
+    		acrescentarMarca(set, MarcadorEnum.SOLICITACAO_EM_ELABORACAO.getId(), null, null, getCadastrante(), getLotaTitular());
 
     	Set<SrMovimentacao> movs = getMovimentacaoSetOrdemCrescente();
 
@@ -1832,30 +1832,30 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     			if (mov.isCancelada())
     				continue;
     			if (t == TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO) {
-    				marcador = CpMarcador.MARCADOR_SOLICITACAO_ATIVO;
+    				marcador = MarcadorEnum.SOLICITACAO_ATIVO.getId();
     				movMarca = mov;
-    				marcadorAndamento = CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO;
+    				marcadorAndamento = MarcadorEnum.SOLICITACAO_EM_ANDAMENTO.getId();
     			}
     			if (t == TIPO_MOVIMENTACAO_FECHAMENTO) {
-    				marcador = CpMarcador.MARCADOR_SOLICITACAO_FECHADO;
+    				marcador = MarcadorEnum.SOLICITACAO_FECHADO.getId();
     				movMarca = mov;
     				marcadorAndamento = null;
     			}
     			if (t == TIPO_MOVIMENTACAO_REABERTURA) {
-    				marcador = CpMarcador.MARCADOR_SOLICITACAO_ATIVO;
+    				marcador = MarcadorEnum.SOLICITACAO_ATIVO.getId();
     				movMarca = mov;
-    				marcadorAndamento = CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO;
+    				marcadorAndamento = MarcadorEnum.SOLICITACAO_EM_ANDAMENTO.getId();
     			}
     			if (t == TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO) {
-    				marcador = CpMarcador.MARCADOR_SOLICITACAO_CANCELADO;
+    				marcador = MarcadorEnum.SOLICITACAO_CANCELADO.getId();
     				movMarca = mov;
     				marcadorAndamento = null;
     			}
     			if (t == TIPO_MOVIMENTACAO_JUNTADA) {
-    				marcadorAndamento = CpMarcador.MARCADOR_JUNTADO;
+    				marcadorAndamento = MarcadorEnum.JUNTADO.getId();
     			}
     			if (t == TIPO_MOVIMENTACAO_DESENTRANHAMENTO) {
-    				marcadorAndamento = CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO;
+    				marcadorAndamento = MarcadorEnum.SOLICITACAO_EM_ANDAMENTO.getId();
     			}
     			if (t == TIPO_MOVIMENTACAO_INICIO_PENDENCIA && (mov.getDtFimMov() == null || mov.getDtFimMov().after(new Date()))) {
     				pendencias.add(mov);
@@ -1878,31 +1878,31 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     					dtFimPendenciaMaisLonge = pendencia.getDtAgenda();
     			}
     			if (isRascunho()){
-    				acrescentarMarca(set, CpMarcador.MARCADOR_SOLICITACAO_PENDENTE, ultimaPendencia.getDtIniMov(), dtFimPendenciaMaisLonge, getCadastrante(), getLotaCadastrante());
+    				acrescentarMarca(set, MarcadorEnum.SOLICITACAO_PENDENTE.getId(), ultimaPendencia.getDtIniMov(), dtFimPendenciaMaisLonge, getCadastrante(), getLotaCadastrante());
     				//Edson: se pendencia eh agendada, agenda a marca Em Elaboracao
     				if (dtFimPendenciaMaisLonge != null)
-    					acrescentarMarca(set, CpMarcador.MARCADOR_SOLICITACAO_EM_ELABORACAO, dtFimPendenciaMaisLonge, null,
+    					acrescentarMarca(set, MarcadorEnum.SOLICITACAO_EM_ELABORACAO.getId(), dtFimPendenciaMaisLonge, null,
     							cadastrante, lotaTitular);
     			} else{ 
-    				acrescentarMarca(set, CpMarcador.MARCADOR_SOLICITACAO_PENDENTE, ultimaPendencia.getDtIniMov(), dtFimPendenciaMaisLonge, ultimaPendencia.getAtendente(),
+    				acrescentarMarca(set, MarcadorEnum.SOLICITACAO_PENDENTE.getId(), ultimaPendencia.getDtIniMov(), dtFimPendenciaMaisLonge, ultimaPendencia.getAtendente(),
     						ultimaPendencia.getLotaAtendente());
     				//Edson: se pendencia eh agendada, agenda a marca Em Andamento
     				//A clausula '||marcador==ATIVO' serve para suportar solicitacoes da epoca
     				//em que era permitido fechar estando pendente
-    				if (dtFimPendenciaMaisLonge != null && marcador == CpMarcador.MARCADOR_SOLICITACAO_ATIVO)
+    				if (dtFimPendenciaMaisLonge != null && marcador == MarcadorEnum.SOLICITACAO_ATIVO.getId())
     					acrescentarMarca(set, marcadorAndamento, dtFimPendenciaMaisLonge, null,
     							movMarca.getAtendente(), movMarca.getLotaAtendente());
     			}
     		} else {
-    			if (marcador == CpMarcador.MARCADOR_SOLICITACAO_ATIVO)
+    			if (marcador == MarcadorEnum.SOLICITACAO_ATIVO.getId())
     				acrescentarMarca(set, marcadorAndamento, movMarca.getDtIniMov(), null,
     						movMarca.getAtendente(), movMarca.getLotaAtendente());
     		}
 
     		if (!isFechado() && !isCancelado()) {
-    			if (marcador == CpMarcador.MARCADOR_SOLICITACAO_ATIVO) {
-    				acrescentarMarca(set, CpMarcador.MARCADOR_SOLICITACAO_COMO_CADASTRANTE, null, null, getCadastrante(), getLotaCadastrante());
-    				acrescentarMarca(set, CpMarcador.MARCADOR_SOLICITACAO_COMO_SOLICITANTE, null, null, getSolicitante(), getLotaSolicitante());
+    			if (marcador == MarcadorEnum.SOLICITACAO_ATIVO.getId()) {
+    				acrescentarMarca(set, MarcadorEnum.SOLICITACAO_COMO_CADASTRANTE.getId(), null, null, getCadastrante(), getLotaCadastrante());
+    				acrescentarMarca(set, MarcadorEnum.SOLICITACAO_COMO_SOLICITANTE.getId(), null, null, getSolicitante(), getLotaSolicitante());
 
     				Date prazo = null;
     				SrEtapaSolicitacao atendimentoGeral = getAtendimentoGeral();
@@ -1913,24 +1913,24 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     						prazo = atendimentoAtual.getFimPrevisto();
     				}
     				if (prazo != null){
-    					acrescentarMarca(set, CpMarcador.MARCADOR_SOLICITACAO_FORA_DO_PRAZO,
+    					acrescentarMarca(set, MarcadorEnum.SOLICITACAO_FORA_DO_PRAZO.getId(),
     							prazo, null, movMarca.getAtendente(), movMarca.getLotaAtendente());
     					if (isFilha() && !movMarca.getLotaAtendente().equivale(getSolicitacaoPai().getLotaAtendente()))
-    						acrescentarMarca(set, CpMarcador.MARCADOR_SOLICITACAO_FORA_DO_PRAZO,
+    						acrescentarMarca(set, MarcadorEnum.SOLICITACAO_FORA_DO_PRAZO.getId(),
     								prazo, null, getSolicitacaoPai().getAtendente(), getSolicitacaoPai().getLotaAtendente());
     				}
 
     			}
 
-    			if (marcador == CpMarcador.MARCADOR_SOLICITACAO_FECHADO && isFilha())
+    			if (marcador == MarcadorEnum.SOLICITACAO_FECHADO.getId() && isFilha())
     				solicitacaoPai.atualizarMarcas();
 
     			if (isAbertaComTodasFilhasFechadas()){
-    				Long marcadorAFechar = CpMarcador.MARCADOR_SOLICITACAO_NECESSITA_PROVIDENCIA;
+    				Long marcadorAFechar = MarcadorEnum.SOLICITACAO_NECESSITA_PROVIDENCIA.getId();
     				SrTipoMotivoFechamento motivoFilha = getMotivoFechamentoUltimaFilha();
     				//Edson: a aceitação do motivo null é para compatibilizar com fechamentos anteriores à funcionalidade do tipo de fechamento
     				if (motivoFilha == null || motivoFilha.equals(SrTipoMotivoFechamento.ATENDIMENTO_CONCLUÍDO) || motivoFilha.equals(SrTipoMotivoFechamento.TAREFA_CONCLUÍDA))
-    					marcadorAFechar = CpMarcador.MARCADOR_SOLICITACAO_FECHADO_PARCIAL;
+    					marcadorAFechar = MarcadorEnum.SOLICITACAO_FECHADO_PARCIAL.getId();
     				acrescentarMarca(set, marcadorAFechar, movMarca.getDtIniMov(),
     						null, movMarca.getAtendente(), movMarca.getLotaAtendente());
     			} 
@@ -2007,7 +2007,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     public String getMarcadoresEmHtml(DpPessoa pess, DpLotacao lota) {
         StringBuilder sb = new StringBuilder();
-        List<Long> marcadoresDesconsiderar = Arrays.asList(new Long[] { CpMarcador.MARCADOR_SOLICITACAO_COMO_CADASTRANTE, CpMarcador.MARCADOR_SOLICITACAO_COMO_SOLICITANTE, CpMarcador.MARCADOR_SOLICITACAO_ATIVO });
+        List<Long> marcadoresDesconsiderar = Arrays.asList(new Long[] { MarcadorEnum.SOLICITACAO_COMO_CADASTRANTE.getId(), MarcadorEnum.SOLICITACAO_COMO_SOLICITANTE.getId(), MarcadorEnum.SOLICITACAO_ATIVO.getId() });
 
         Set<SrMarca> marcas = getMarcaSetAtivas();
 

@@ -103,14 +103,17 @@ import br.gov.jfrj.siga.bluc.service.ValidateResponse;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
-import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.TipoConteudo;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoInteressadoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeGrupoEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -1077,7 +1080,7 @@ public class ExBL extends CpBL {
 		try {
 			ExDao.iniciarTransacao();
 			for (ExMarca marc : mob.getExMarcaSet()) {
-				if (!marc.getCpMarcador().getIdMarcador().equals(CpMarcador.MARCADOR_ARQUIVADO_CORRENTE)) {
+				if (!marc.getCpMarcador().getIdMarcador().equals(CpMarcadorEnum.ARQUIVADO_CORRENTE.getId())) {
 					dao().excluir(marc);
 				}
 			}
@@ -4369,9 +4372,8 @@ public class ExBL extends CpBL {
 				if (!mob.isGeral())
 					movs.addAll(m.doc().getMobilGeral().getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true));
 				for (ExMovimentacao mov : movs) {
-					if (mov.getMarcador() != null && mov.getMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO
-							 && mov.getMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO
-							 && mov.getMarcador().getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.ATENDENTE) {
+					if (mov.getMarcador() != null && (mov.getMarcador().getIdFinalidade() == CpMarcadorFinalidadeEnum.PASTA 
+							 || mov.getMarcador().getIdFinalidade() == CpMarcadorFinalidadeEnum.PASTA_PADRAO)) {
 						movAnterior = mov;
 						break;
 					}
@@ -4387,9 +4389,10 @@ public class ExBL extends CpBL {
 				}
 
 				// Marcação deve ser removida só se a lotação estiver sendo alterada
-				if (movAnterior != null && movAnterior.getMarcador() != null && movAnterior.getMarcador().getDpLotacaoIni() != null 
-						&& movAnterior.getMarcador().getDpLotacaoIni().equivale(ultMov.getLotaResp())) {
-					movAnterior = null;
+				if (movAnterior != null && movAnterior.getMarcador() != null) {
+					if (movAnterior.getMarcador().getDpLotacaoIni() != null	&& movAnterior.getMarcador().getDpLotacaoIni().equivale(ultMov.getLotaResp())) {
+						movAnterior = null;
+					}
 				}
 
 				if (movAnterior != null) {
@@ -4397,7 +4400,7 @@ public class ExBL extends CpBL {
 					gravarMovimentacaoCancelamento(mov, movAnterior);
 				} else
 					gravarMovimentacao(mov);
-
+				
 				// Se houver configuração para restringir acesso somente para quem recebeu,
 				// remove a lotação das permissões de acesso e inclui o recebedor
 				if (Ex.getInstance().getConf().podePorConfiguracao(mov.getResp(), mov.getLotaResp(), 
@@ -4928,7 +4931,7 @@ public class ExBL extends CpBL {
 			final ExMobil mob, final Date dtMov,  
 			DpPessoa subscritor, DpLotacao lotaSubscritor,
 			final String observacoes, CpMarcador marcador,
-			Date dataPlanejada, Date dataLimite) throws Exception {
+			Date dataPlanejada, Date dataLimite, boolean fConcluirAlteracao) throws Exception {
 
 		ExPodeMarcar.afirmar(mob, titular, lotaTitular);
 		
@@ -4949,7 +4952,9 @@ public class ExBL extends CpBL {
 			if (!mob.isGeral())
 				movs.addAll(geral.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true));
 			for (ExMovimentacao mov : movs) {
-				if (mov.getMarcador() != null && mov.getMarcador().getIdFinalidade() == marcador.getIdFinalidade()) {
+				if (mov.getMarcador() != null && mov.getMarcador().getIdFinalidade() == marcador.getIdFinalidade()
+						|| (mov.getMarcador().getIdFinalidade().getGrupo() == CpMarcadorFinalidadeGrupoEnum.PASTA
+								&& marcador.getIdFinalidade().getGrupo() == CpMarcadorFinalidadeGrupoEnum.PASTA)) {
 					movAnterior = mov;
 					break;
 				}
@@ -4957,7 +4962,8 @@ public class ExBL extends CpBL {
 		}
 
 		try {
-			iniciarAlteracao();
+			if (fConcluirAlteracao)
+				iniciarAlteracao();
 
 			final ExMovimentacao mov = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO,
 					cadastrante, lotaCadastrante, 
@@ -4978,9 +4984,11 @@ public class ExBL extends CpBL {
 			} else
 				gravarMovimentacao(mov);
 			// concluindo só com o documento para forçar o recálculo das marcas de todos os mobiles
-			concluirAlteracao(mov.mob().doc(), null, null, false);
+			if (fConcluirAlteracao)
+				concluirAlteracao(mov.mob().doc(), null, null, false);
 		} catch (final Exception e) {
-			cancelarAlteracao();
+			if (fConcluirAlteracao)
+				cancelarAlteracao();
 			throw new RuntimeException("Erro ao fazer marcação.", e);
 		}
 	}
@@ -7353,7 +7361,7 @@ public class ExBL extends CpBL {
 			for(String marcador: listaMarcadores) {
 			   cpMarcador = dao().consultar(Long.parseLong(marcador), CpMarcador.class, false);
 			   try {
-				marcar(cadastrante, lotaCadastrante, cadastrante, lotaCadastrante, mob, null, cadastrante, lotaCadastrante, null, cpMarcador, null, null);
+				marcar(cadastrante, lotaCadastrante, cadastrante, lotaCadastrante, mob, null, cadastrante, lotaCadastrante, null, cpMarcador, null, null, true);
 			   } catch (Exception e) {
 					throw new RuntimeException("Ocorreu um erro ao gravar marcadores", e);
 			   }

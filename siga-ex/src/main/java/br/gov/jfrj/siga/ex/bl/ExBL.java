@@ -1716,6 +1716,10 @@ public class ExBL extends CpBL {
 			String hashAtual = null;
 			boolean senhaValida = false;
 			if (senhaIsPIN) { 
+				if (id.getPinIdentidade() == null) {
+					throw new AplicacaoException("Não há um PIN cadastrado para registrar assinatura. Utilize outra forma ou cadastre um PIN se disponível clicando <a href='/siga/app/pin/cadastro'>aqui</a>.");
+				}
+				
 				hashAtual = GeraMessageDigest.calcSha256(senhaSubscritor);	
 				senhaValida = id.getPinIdentidade().equals(hashAtual);
 			} else {
@@ -1831,7 +1835,7 @@ public class ExBL extends CpBL {
 					autenticando ? ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA
 							: ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA,
 					cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov, assinante, null, null, null, null);
-			mov.setDescrMov(assinante.getNomePessoa() + ":" + assinante.getSigla());
+			mov.setDescrMov(assinante.getNomePessoa() + ":" + assinante.getSigla() + " ["+formaAssinaturaSenha+"]");
 			String cpf = Long.toString(assinante.getCpfPessoa());
 			acrescentarHashDeAuditoria(mov, sha256, autenticando, assinante.getNomePessoa(), cpf, null);
 
@@ -1943,6 +1947,10 @@ public class ExBL extends CpBL {
 			String hashAtual = null;
 			boolean senhaValida = false;
 			if (senhaIsPIN) { 
+				if (id.getPinIdentidade() == null) {
+					throw new AplicacaoException("Não há um PIN cadastrado para registrar assinatura. Utilize outra forma ou cadastre um PIN se disponível clicando <a href='/siga/app/pin/cadastro'>aqui</a>.");
+				}
+				
 				hashAtual = GeraMessageDigest.calcSha256(senhaSubscritor);	
 				senhaValida = id.getPinIdentidade().equals(hashAtual);
 			} else {
@@ -2009,7 +2017,7 @@ public class ExBL extends CpBL {
 			final ExMovimentacao mov = criarNovaMovimentacao(tpMovAssinatura, cadastrante, lotaCadastrante,
 					movAlvo.getExMobil(), null, null, null, null, null, null);
 
-			mov.setDescrMov(subscritor.getNomePessoa() + ":" + subscritor.getSigla());
+			mov.setDescrMov(subscritor.getNomePessoa() + ":" + subscritor.getSigla() + " ["+formaAssinaturaSenha+"]");
 
 			mov.setExMovimentacaoRef(movAlvo);
 

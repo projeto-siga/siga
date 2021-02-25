@@ -1063,9 +1063,12 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar, ExibirNoProtocolo) {
 			process.push(function() {
 				var id = gNome ? gNome.split(':')[1] : null;
 				var DadosDoPost = "id=" + id + "&sigla=" + gNome
+						
 						+ "&nomeUsuarioSubscritor=" + gLogin
-						+ "&senhaUsuarioSubscritor=" + encodeURIComponent(gPassword) + "&copia="
-						+ gAutenticar;
+						+ "&senhaUsuarioSubscritor=" + encodeURIComponent(gPassword) 
+						+ "&senhaIsPin=" + o.usePin
+						+ "&copia="	+ gAutenticar;
+						
 				if (gTramitar !== undefined) {
 					DadosDoPost = DadosDoPost + "&tramitar=" + gTramitar;
 				}

@@ -118,7 +118,7 @@ public class Prop {
 
 		provider.addPublicProperty("/siga.omitir.metodo2", "true");
 
-		provider.addPublicProperty("/siga.cabecalho.logo", "/siga/imagens/logo-trf2-38px.png");
+		provider.addPublicProperty("/siga.cabecalho.logo", "/siga/imagens/logo-siga-novo-38px.png");
 		provider.addPublicProperty("/siga.cabecalho.titulo", "Justiça Federal");
 		provider.addPublicProperty("/sigawf.ativo", "true");
 

@@ -117,7 +117,7 @@ ${meta}
 		<c:set var="sub_menu_class" value="submenusp" />
 		<c:set var="ambiente_class" value="ambiente_class" />
 		<c:set var="navbar_class" value="navbar-light" />
-		<c:set var="navbar_logo" value="logo-sem-papel-cor.png" />
+		<c:set var="navbar_logo" value="${f:resource('/siga.cabecalho.logo')}" />
 		<c:set var="navbar_logo_size" value="50" />
 		<c:set var="button_class_busca" value="btn-primary" />
 		<c:set var="collapse_Tramitacao" scope="request" value="collapsible closed" />
@@ -140,8 +140,8 @@ ${meta}
 			<c:set var="navbar_class" value="navbar-dark bg-secondary" />
 		</c:if>
 		
-		<c:set var="navbar_logo" value="logo-siga-novo-38px.png" />
-		<c:set var="navbar_logo2" value="${f:resource('/siga.cabecalho.logo')}" />
+		<c:set var="navbar_logo" value="${f:resource('/siga.cabecalho.logo')}" />
+		<c:set var="navbar_logo2" value="/siga/imagens/logo-trf2-38px.png" />
 		<c:set var="navbar_logo_size" value="38" />
 		<c:set var="button_class_busca" value="btn-outline-light" />
 		<c:set var="collapse_Tramitacao" scope="request" value="collapsible expanded" />
@@ -171,7 +171,7 @@ ${meta}
 	<c:if test="${popup!='true'}">
    		<nav class="navbar navbar-expand-lg ${navbar_class} ${menu_class}">
 			<a class="navbar-brand pt-0 pb-0" href="/siga"> <img
-				src="/siga/imagens/${navbar_logo}" height="${navbar_logo_size}">
+				src="${navbar_logo}" height="${navbar_logo_size}">
 			</a>
 			
 			<c:if test="${siga_cliente != 'GOVSP'}">

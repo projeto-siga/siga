@@ -33,7 +33,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 		+ "		AND (dt_fim_marca IS NULL OR dt_fim_marca > CURRENT_TIMESTAMP)"
 		+ "		AND((id_pessoa_ini = :idPessoaIni) OR(id_lotacao_ini = :idLotacaoIni))"
 		+ "		AND id_tp_marca = 3" + "		AND id_marcador <> "
-		+ CpMarcador.MARCADOR_CANCELADO + "		GROUP BY id_marcador" + "	) c "
+		+ CpMarcador.ID_MARCADOR_CANCELADO + "		GROUP BY id_marcador" + "	) c "
 		+ "WHERE m.id_marcador = c.id_marcador", resultSetMapping = "colunas_contagem")
 public class GcMarca extends CpMarca implements Comparable<GcMarca> {
 	static ActiveRecord<GcMarca> AR = new ActiveRecord<GcMarca>(GcMarca.class);

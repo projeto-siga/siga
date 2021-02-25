@@ -522,8 +522,7 @@
 					</c:if>
 
 					<!-- tabela de móbiles e marcas -->
-					<c:if test="${not empty docVO.outrosMobsLabel and not empty docVO.marcasPorMobil}">
-						<jsp:useBean id="now" class="java.util.Date" />
+					<c:if test="${not empty docVO.outrosMobsLabel and not empty docVO.marcasDeSistemaPorMobil}">
 						<div class="card-sidebar card bg-light mb-3">
 							<c:set var="butRefresh"><a title="Atualizar marcas"
 								style="float: right; margin-top: 0px; padding-left: 1em; padding-right: 1em;"
@@ -545,7 +544,7 @@
 									</tr>
 								</thead> -->
 								<tbody>
-									<c:forEach var="entry" items="${docVO.marcasPorMobil}">
+									<c:forEach var="entry" items="${docVO.marcasDeSistemaPorMobil}">
 										<c:set var="outroMob" value="${entry.key}" />
 										<c:set var="mobNome" value="${outroMob.isGeral() ? 'Geral' : outroMob.terminacaoSigla}" />
 										<c:forEach var="marca" items="${entry.value}" varStatus="loop">
@@ -592,6 +591,56 @@
 											<td style="padding-left:0; padding-right: 1.25rem"></td>
 											</tr>
 										</c:forEach>
+									</c:forEach>
+								</tbody>
+							</table>
+							</div>
+							</tags:collapse>
+						</div>
+					</c:if>
+
+					<!-- tabela marcas -->
+					<c:if test="${not empty docVO.marcasDoMobil}">
+						<div class="card-sidebar card bg-light mb-3">
+							<tags:collapse title="Marcadores" id="Marcadores" collapseMode="${collapse_Expanded}" classInfo="m-0 p-0">
+								<div class="table-responsive">
+								<table class="table table-sm mb-0 w-100">
+								<tbody>
+									<c:forEach var="marca" items="${docVO.marcasDoMobil}" varStatus="loop">
+										<c:set var="lotacaoAtual" value="${marca.dpLotacaoIni.lotacaoAtual}"/>
+										<c:set var="pessoaAtual" value="${marca.dpPessoaIni.pessoaAtual}"/>
+										<c:if test="${loop.first or (marca.cpMarcador.idFinalidade.grupo != g)}">
+											<tr><td colspan="6" style="padding-left: 1.25rem; color: gray">${marca.cpMarcador.idFinalidade.grupo.nome}</td></tr>
+											<c:set var="g" value="${marca.cpMarcador.idFinalidade.grupo}"/>
+										</c:if>
+										<tr>
+										<td style="padding-left: 2.5rem">${marca.descricaoComDatas}
+										<c:if test="${empty pessoaAtual or empty lotacaoAtual or not pessoaAtual.equivale(titular) or not lotacaoAtual.equivale(lotaTitular)}">
+											- <c:if test="${not empty pessoaAtual}"><siga:selecionado isVraptor="true" sigla="${pessoaAtual.nomeAbreviado}"
+											descricao="${pessoaAtual.descricao} - ${pessoaAtual.sigla}"
+											pessoaParam="${pessoaAtual.siglaCompleta}" /></c:if><c:if test="${not empty lotacaoAtual}"><c:if test="${not empty pessoaAtual}">/</c:if><siga:selecionado isVraptor="true" sigla="${marca.dpLotacaoIni.lotacaoAtual.sigla}"
+											descricao="${marca.dpLotacaoIni.lotacaoAtual.descricaoAmpliada}"
+											lotacaoParam="${marca.dpLotacaoIni.lotacaoAtual.siglaCompleta}" /></c:if>
+										</c:if>
+										</td>
+										<c:choose>
+											<c:when test="${not empty marca.exMovimentacao.descrMov}">
+												<td>${marca.exMovimentacao.descrMov}</td>
+											</c:when>
+											<c:otherwise>
+												<td style="padding-left:0; padding-right: 0"></td>
+											</c:otherwise>
+										</c:choose>
+										<c:choose>
+											<c:when test="${marca.exMovimentacao.podeCancelar(titular, lotaTitular)}">
+												<td style="padding-left:.25em; padding-right: 0"><a href="javascript:postToUrl('/sigaex/app/expediente/mov/cancelar_movimentacao_gravar?id=${marca.exMovimentacao.idMov}&sigla=${sigla}')" title="${marca.exMovimentacao.expliquePodeCancelar(titular, lotaTitular)}"><i class="far fa-trash-alt"></i></a></td>
+											</c:when>
+											<c:otherwise>
+												<td style="padding-left:0; padding-right: 0"></td>
+											</c:otherwise>
+										</c:choose>
+										<td style="padding-left:0; padding-right: 1.25rem"></td>
+										</tr>
 									</c:forEach>
 								</tbody>
 							</table>

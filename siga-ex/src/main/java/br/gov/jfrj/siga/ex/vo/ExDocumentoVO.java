@@ -27,10 +27,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
-import br.gov.jfrj.siga.dp.CpMarcador;
+import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -55,6 +57,8 @@ public class ExDocumentoVO extends ExVO {
 	List<ExDocumentoVO> documentosPublicados = new ArrayList<ExDocumentoVO>();
 	ExDocumentoVO boletim;
 	Map<ExMobil, Set<ExMarca>> marcasPorMobil = new LinkedHashMap<ExMobil, Set<ExMarca>>();
+	private Map<ExMobil, Set<ExMarca>> marcasDeSistemaPorMobil = new LinkedHashMap<ExMobil, Set<ExMarca>>();
+	private Set<ExMarca> marcasDoMobil = new TreeSet<ExMarca>();
 	String outrosMobsLabel;
 	String nomeCompleto;
 	String dtDocDDMMYY;
@@ -328,27 +332,27 @@ public class ExDocumentoVO extends ExVO {
 				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA);		
 
 		List<Long> marcasGeralPermitidas = new ArrayList<Long>();
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_A_ELIMINAR);
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_ARQUIVADO_CORRENTE);
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_ARQUIVADO_INTERMEDIARIO);
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_ARQUIVADO_PERMANENTE);
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_EM_EDITAL_DE_ELIMINACAO);
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_PUBLICACAO_SOLICITADA);
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_PUBLICADO);
+		marcasGeralPermitidas.add(CpMarcadorEnum.A_ELIMINAR.getId());
+		marcasGeralPermitidas.add(CpMarcadorEnum.ARQUIVADO_CORRENTE.getId());
+		marcasGeralPermitidas.add(CpMarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId());
+		marcasGeralPermitidas.add(CpMarcadorEnum.ARQUIVADO_PERMANENTE.getId());
+		marcasGeralPermitidas.add(CpMarcadorEnum.EM_EDITAL_DE_ELIMINACAO.getId());
+		marcasGeralPermitidas.add(CpMarcadorEnum.PUBLICACAO_SOLICITADA.getId());
+		marcasGeralPermitidas.add(CpMarcadorEnum.PUBLICADO.getId());
 		marcasGeralPermitidas
-				.add(CpMarcador.MARCADOR_RECOLHER_PARA_ARQUIVO_PERMANENTE);
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_REMETIDO_PARA_PUBLICACAO);
+				.add(CpMarcadorEnum.RECOLHER_PARA_ARQUIVO_PERMANENTE.getId());
+		marcasGeralPermitidas.add(CpMarcadorEnum.REMETIDO_PARA_PUBLICACAO.getId());
 		marcasGeralPermitidas
-				.add(CpMarcador.MARCADOR_TRANSFERIR_PARA_ARQUIVO_INTERMEDIARIO);
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA);
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_COMO_SUBSCRITOR);
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_REVISAR);
+				.add(CpMarcadorEnum.TRANSFERIR_PARA_ARQUIVO_INTERMEDIARIO.getId());
+		marcasGeralPermitidas.add(CpMarcadorEnum.PENDENTE_DE_ASSINATURA.getId());
+		marcasGeralPermitidas.add(CpMarcadorEnum.COMO_SUBSCRITOR.getId());
+		marcasGeralPermitidas.add(CpMarcadorEnum.REVISAR.getId());
 		marcasGeralPermitidas
-				.add(CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA);
+				.add(CpMarcadorEnum.ANEXO_PENDENTE_DE_ASSINATURA.getId());
 		marcasGeralPermitidas
-				.add(CpMarcador.MARCADOR_TRANSFERIR_PARA_ARQUIVO_INTERMEDIARIO);
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_PENDENTE_DE_ANEXACAO);
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_PORTAL_TRANSPARENCIA);
+				.add(CpMarcadorEnum.TRANSFERIR_PARA_ARQUIVO_INTERMEDIARIO.getId());
+		marcasGeralPermitidas.add(CpMarcadorEnum.PENDENTE_DE_ANEXACAO.getId());
+		marcasGeralPermitidas.add(CpMarcadorEnum.PORTAL_TRANSPARENCIA.getId());
 
 		for (ExMobilVO mobVO : mobs) {
 
@@ -386,8 +390,16 @@ public class ExDocumentoVO extends ExVO {
 		}
 
 		for (ExMobil cadaMobil : doc.getExMobilSet()) {
-			// if (!cadaMobil.isGeral())
-				marcasPorMobil.put(cadaMobil, cadaMobil.getExMarcaSet());
+			SortedSet<ExMarca> setSistema = new TreeSet<>();
+			SortedSet<ExMarca> set = cadaMobil.getExMarcaSet();
+			for (ExMarca m : set) {
+				if (m.getCpMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA)
+					setSistema.add(m);
+				if (m.getCpMarcador().getIdFinalidade().getIdTpMarcador() != CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA && (cadaMobil == mob || cadaMobil.isGeral())) 
+					getMarcasDoMobil().add(m);
+			}
+			getMarcasDeSistemaPorMobil().put(cadaMobil, setSistema);
+			marcasPorMobil.put(cadaMobil, set);
 		}
 
 		if (mobilEspecifico != null && mobilGeral != null) {
@@ -1071,6 +1083,22 @@ public class ExDocumentoVO extends ExVO {
 	
 	public String getDtLimiteDemandaJudicial() {
 		return dtLimiteDemandaJudicial;
+	}
+
+	public Set<ExMarca> getMarcasDoMobil() {
+		return marcasDoMobil;
+	}
+
+	public void setMarcasDoMobil(Set<ExMarca> marcasDoMobil) {
+		this.marcasDoMobil = marcasDoMobil;
+	}
+
+	public Map<ExMobil, Set<ExMarca>> getMarcasDeSistemaPorMobil() {
+		return marcasDeSistemaPorMobil;
+	}
+
+	public void setMarcasDeSistemaPorMobil(Map<ExMobil, Set<ExMarca>> marcasDeSistemaPorMobil) {
+		this.marcasDeSistemaPorMobil = marcasDeSistemaPorMobil;
 	}
 
 }

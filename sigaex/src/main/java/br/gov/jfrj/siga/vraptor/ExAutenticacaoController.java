@@ -120,7 +120,8 @@ public class ExAutenticacaoController extends ExController {
 			String hostname = request.getServerName();
 			if (body.getObject().getBoolean("success")) {
 				String retHostname = body.getObject().getString("hostname");
-				success = retHostname.equals(hostname);
+				// Aceitando também o site-key de desenvolvimento padrão do reCaptcha
+				success = retHostname.equals(hostname) || ("6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI".equals(recaptchaSiteKey) && "testkey.google.com".equals(retHostname));
 			}
 		}
 		if (!success) {

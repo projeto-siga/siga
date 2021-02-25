@@ -2549,7 +2549,7 @@ public class ExMovimentacaoController extends ExController {
 						builder.getMob(), mov.getDtMov(),
 						mov.getSubscritor(), mov.getLotaSubscritor(),
 						mov.getDescrMov(), 
-						mov.getMarcador(), dtPlanejada, dtLimite);
+						mov.getMarcador(), dtPlanejada, dtLimite, true);
 		ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getSigla());
 	}
 

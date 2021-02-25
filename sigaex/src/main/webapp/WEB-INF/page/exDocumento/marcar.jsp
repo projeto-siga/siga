@@ -58,14 +58,14 @@
 								<div class="col col-12 col-md-6"
 									v-if="marcador && marcador.planejada != 'DESATIVADA'">
 									<label for="planejada">Data de Exibição</label> <input
-										name="planejada" id="planejada" class="form-control"
-										onblur="javascript:verifica_data(this,0);" />
+										name="planejada" id="planejada" class="form-control campoData"
+										onblur="javascript:verifica_data(this,0);" autocomplete="off" />
 								</div>
 								<div class="col col-12 col-md-6"
 									v-if="marcador && marcador.limite != 'DESATIVADA'">
 									<label for="limite">Prazo Final</label> <input name="limite"
-										id="limite" class="form-control"
-										onblur="javascript:verifica_data(this,0);" />
+										id="limite" class="form-control campoData"
+										onblur="javascript:verifica_data(this,0);" autocomplete="off" />
 								</div>
 							</div>
 							<div class="form-group"
@@ -180,6 +180,20 @@
 						if (this.marcador.interessado == 'LOTACAO')
 							return true;
 						return this.interessado == 'lotacao';
+					}
+				},
+				
+				watch : {
+					marcador : function() {
+						this.$nextTick(
+							function() {
+								$('.campoData').datepicker({
+						           	onSelect: function(){
+						                   ${onSelect}
+									}
+								})
+							}
+						)
 					}
 				},
 

@@ -110,22 +110,26 @@
 	}
 	
 	function redimensionar() {
-		 if($('#radioHTML').hasClass('active') || document.getElementById('radioHTML').checked) {
-		     if(window.parent.painel.document.getElementsByClassName("divDoc").length > 0) {
-		        var divs = window.parent.painel.document.getElementsByClassName("divDoc");
-		        
-		        for(var i = 0; i < divs.length; i++) {
-		        		window.parent.painel.document.getElementsByClassName("divDoc")[i].style.width=document.getElementById('painel').clientWidth - 10;
-		        		window.parent.painel.document.getElementsByClassName("divDoc")[i].style.padding = "20px";
-		        }   
-	    		
-		        return;
-		    }
-		    else {
-		        setTimeout(function() {
-		        	redimensionar();
-		        }, 5000);
-		    }
+		if("${f:resource('/sigaex.conversor.html.ext')}" == "br.gov.jfrj.itextpdf.MyPD4ML") {
+			document.getElementById('painel').scrolling = "auto";
+		} else {
+			 if($('#radioHTML').hasClass('active') || document.getElementById('radioHTML').checked) {
+			     if(window.parent.painel.document.getElementsByClassName("divDoc").length > 0) {
+			        var divs = window.parent.painel.document.getElementsByClassName("divDoc");
+			        
+			        for(var i = 0; i < divs.length; i++) {
+			        		window.parent.painel.document.getElementsByClassName("divDoc")[i].style.width=document.getElementById('painel').clientWidth - 10;
+			        		window.parent.painel.document.getElementsByClassName("divDoc")[i].style.padding = "20px";
+			        }   
+		    		
+			        return;
+			    }
+			    else {
+			        setTimeout(function() {
+			        	redimensionar();
+			        }, 5000);
+			    }
+			}
 		}
 	}
 

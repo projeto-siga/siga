@@ -39,10 +39,12 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.logic.WfPodePegar;
+import br.gov.jfrj.siga.wf.logic.WfPodeRedirecionar;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 import br.gov.jfrj.siga.wf.model.WfMov;
 import br.gov.jfrj.siga.wf.model.WfMovAnotacao;
 import br.gov.jfrj.siga.wf.model.WfMovDesignacao;
+import br.gov.jfrj.siga.wf.model.WfMovRedirecionamento;
 import br.gov.jfrj.siga.wf.model.WfMovTransicao;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
@@ -276,6 +278,18 @@ public class WfBL extends CpBL {
 			CpIdentidade identidade) {
 		WfMovTransicao mov = new WfMovTransicao(pi, dao().consultarDataEHoraDoServidor(), titular, lotaTitular,
 				identidade, de, para);
+
+		// Não registraremos a transição quando a movimentação anterior for um
+		// redirecionamento com a mesma origem e destino
+		WfMov last = pi.getUltimaMovimentacao();
+		if (last != null && last instanceof WfMovRedirecionamento) {
+			WfMovRedirecionamento lastr = (WfMovRedirecionamento) last;
+			if (lastr.getDefinicaoDeTarefaDe() != null && lastr.getDefinicaoDeTarefaPara() != null
+					&& lastr.getDefinicaoDeTarefaDe().equals(mov.getDefinicaoDeTarefaDe())
+					&& lastr.getDefinicaoDeTarefaPara().equals(mov.getDefinicaoDeTarefaPara()))
+				return;
+		}
+		
 		gravarMovimentacao(mov);
 	}
 
@@ -291,6 +305,17 @@ public class WfBL extends CpBL {
 			pi.setEventoLotacao(resp.getLotacao());
 			dao().gravarInstanciaDeProcedimento(pi);
 		}
+	}
+
+	public void redirecionar(WfProcedimento pi, int para, DpPessoa titular, DpLotacao lotaTitular,
+			CpIdentidade identidade) throws Exception {
+		assertLogic(new WfPodeRedirecionar(pi, titular, lotaTitular), "redirecionar");
+		WfMovRedirecionamento mov = new WfMovRedirecionamento(pi, dao().consultarDataEHoraDoServidor(), titular,
+				lotaTitular, identidade, pi.getCurrentIndex(), para);
+		gravarMovimentacao(mov);
+
+		WfEngine engine = new WfEngine(dao(), new WfHandler(titular, lotaTitular, identidade));
+		engine.execute(pi, pi.getCurrentIndex(), para);
 	}
 
 	private static void assertLogic(Expression expr, String descr) {

@@ -1274,6 +1274,7 @@ public class CpBL {
 					usu = new CpIdentidade();
 					usu.setCpTipoIdentidade(CpDao.getInstance().consultar(1, CpTipoIdentidade.class, false));
 					usu.setDscSenhaIdentidade(usuarioExiste.getDscSenhaIdentidade());
+					usu.setPinIdentidade(usuarioExiste.getPinIdentidade());
 					usu.setDtCriacaoIdentidade(data);
 					usu.setCpOrgaoUsuario(ou);
 					usu.setHisDtIni(usu.getDtCriacaoIdentidade());

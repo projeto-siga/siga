@@ -101,14 +101,32 @@
 							value="${doc.descrDocumento}" /> <input type="hidden"
 							name="ad_kind_0" value="${doc.descrFormaDoc}" />
 					</div>
-
+					
+					<c:set var="podeAssinarComSenha" value="${assinando and f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral) }" />
+					<c:set var="podeAutenticarComSenha" value="${autenticando and f:podeAutenticarComSenha(titular,lotaTitular,doc.mobilGeral) }" />
+					<c:set var="defaultAssinarComSenha" value="${f:deveAssinarComSenha(titular,lotaTitular,doc.mobilGeral) }" />
+					<c:set var="defaultAutenticarComSenha" value="${f:deveAutenticarComSenha(titular,lotaTitular,doc.mobilGeral) }" />
+					
+					<c:set var="podeUtilizarSegundoFatorPin" value="${f:podeUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao)}" />
+					<c:set var="obrigatorioUtilizarSegundoFatorPin" value="${f:deveUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao)}" />
+					<c:set var="defaultUtilizarSegundoFatorPin" value="${f:defaultUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao) }" />
+	
 					<tags:assinatura_botoes assinar="${assinando}" voltar="${voltarAtivo}"
 						linkVoltar="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}"
 						autenticar="${autenticando}"
-						assinarComSenha="${assinando and f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"
-						autenticarComSenha="${autenticando and f:podeAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"
-						assinarComSenhaChecado="${assinando and f:deveAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"
-						autenticarComSenhaChecado="${autenticando and f:deveAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"
+
+							assinarComSenha="${podeAssinarComSenha and not obrigatorioUtilizarSegundoFatorPin}"
+						    autenticarComSenha="${podeAutenticarComSenha and not obrigatorioUtilizarSegundoFatorPin}"			
+							assinarComSenhaChecado="${podeAssinarComSenha and defaultAssinarComSenha}"
+							autenticarComSenhaChecado="${podeAutenticarComSenha and defaultAutenticarComSenha}"
+
+
+							assinarComSenhaPin="${podeAssinarComSenha and podeUtilizarSegundoFatorPin}"
+							autenticarComSenhaPin="${podeAutenticarComSenha and podeUtilizarSegundoFatorPin}"
+							assinarComSenhaPinChecado="${podeAssinarComSenha and podeUtilizarSegundoFatorPin and defaultUtilizarSegundoFatorPin}"
+							autenticarComSenhaPinChecado="${podeAutenticarComSenha and podeUtilizarSegundoFatorPin and defaultUtilizarSegundoFatorPin}"
+		
+						
 						juntarAtivo="${juntarAtivo}" juntarFixo="${juntarFixo}" 
 						tramitarAtivo="${tramitarAtivo}" tramitarFixo="${tramitarFixo}" 
 						exibirNoProtocoloAtivo="${f:podeDisponibilizarNoAcompanhamentoDoProtocolo(titular,lotaTitular,doc)? false:undefined}" 

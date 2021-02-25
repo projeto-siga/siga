@@ -365,9 +365,27 @@
 		<input type="hidden" name="ad_url_base" value="" /> <input
 			type="hidden" name="ad_url_next"
 			value="/sigaex/app/expediente/doc/atualizar_marcas?sigla=${mobilVO.sigla}" />
+			
+		<c:set var="podeAssinarComSenha" value="${f:podeAssinarMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}" />
+		<c:set var="podeAutenticarComSenha" value="${f:podeAutenticarComSenha(titular,lotaTitular,mob)}" />
+		<c:set var="defaultAssinarComSenha" value="${f:deveAssinarComSenha(titular,lotaTitular,mob) }" />
+		<c:set var="defaultAutenticarComSenha" value="${f:deveAutenticarComSenha(titular,lotaTitular,mob) }" />
+		
+		<c:set var="podeUtilizarSegundoFatorPin" value="${f:podeUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao)}" />
+		<c:set var="obrigatorioUtilizarSegundoFatorPin" value="${f:deveUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao)}" />
+		<c:set var="defaultUtilizarSegundoFatorPin" value="${f:defaultUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao) }" />
+					
 		<tags:assinatura_botoes autenticar="true" assinar="true"
-			assinarComSenha="${f:podeAssinarMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}"
-			autenticarComSenha="${f:podeAutenticarComSenha(titular,lotaTitular,mob)}" />
+			assinarComSenha="${podeAssinarComSenha and not obrigatorioUtilizarSegundoFatorPin}"
+		    autenticarComSenha="${podeAutenticarComSenha and not obrigatorioUtilizarSegundoFatorPin}"			
+			assinarComSenhaChecado="${podeAssinarComSenha and defaultAssinarComSenha}"
+			autenticarComSenhaChecado="${podeAutenticarComSenha and defaultAutenticarComSenha}"
+
+
+			assinarComSenhaPin="${podeAssinarComSenha and podeUtilizarSegundoFatorPin}"
+			autenticarComSenhaPin="${podeAutenticarComSenha and podeUtilizarSegundoFatorPin}"
+			assinarComSenhaPinChecado="${podeAssinarComSenha and podeUtilizarSegundoFatorPin and defaultUtilizarSegundoFatorPin}"
+			autenticarComSenhaPinChecado="${podeAutenticarComSenha and podeUtilizarSegundoFatorPin and defaultUtilizarSegundoFatorPin}"	/>
 
 		<c:set var="botao" value="ambos" />
 		<c:set var="lote" value="true" />

@@ -309,12 +309,29 @@
 		
 							<c:set var="lote" value="false" />
 						</div>
+						<c:set var="podeAssinarComSenha" value="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}" />
+						<c:set var="podeAutenticarComSenha" value="${f:podeAutenticarMovimentacaoComSenha(titular,lotaTitular,mov)}" />
+						<c:set var="defaultAssinarComSenha" value="${f:deveAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}" />
+						<c:set var="defaultAutenticarComSenha" value="${f:deveAutenticarMovimentacaoComSenha(titular,lotaTitular,mov)}" />
+						
+						<c:set var="podeUtilizarSegundoFatorPin" value="${f:podeUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao)}" />
+						<c:set var="obrigatorioUtilizarSegundoFatorPin" value="${f:deveUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao)}" />
+						<c:set var="defaultUtilizarSegundoFatorPin" value="${f:defaultUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao) }" />
+						
 						<tags:assinatura_botoes assinar="true"
 							autenticar="${mov.exTipoMovimentacao.idTpMov==2}"
-							assinarComSenha="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}"
-							assinarComSenhaChecado="${f:deveAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}"
-							autenticarComSenha="${f:podeAutenticarMovimentacaoComSenha(titular,lotaTitular,mov)}"
-							autenticarComSenhaChecado="${f:deveAutenticarMovimentacaoComSenha(titular,lotaTitular,mov)}" 
+							
+								assinarComSenha="${podeAssinarComSenha and not obrigatorioUtilizarSegundoFatorPin}"
+							    autenticarComSenha="${podeAutenticarComSenha and not obrigatorioUtilizarSegundoFatorPin}"			
+								assinarComSenhaChecado="${podeAssinarComSenha and defaultAssinarComSenha}"
+								autenticarComSenhaChecado="${podeAutenticarComSenha and defaultAutenticarComSenha}"
+	
+	
+								assinarComSenhaPin="${podeAssinarComSenha and podeUtilizarSegundoFatorPin}"
+								autenticarComSenhaPin="${podeAutenticarComSenha and podeUtilizarSegundoFatorPin}"
+								assinarComSenhaPinChecado="${podeAssinarComSenha and podeUtilizarSegundoFatorPin and defaultUtilizarSegundoFatorPin}"
+								autenticarComSenhaPinChecado="${podeAutenticarComSenha and podeUtilizarSegundoFatorPin and defaultUtilizarSegundoFatorPin}"
+							
 							idMovimentacao="${mov.idMov}" />
 		
 					</div>

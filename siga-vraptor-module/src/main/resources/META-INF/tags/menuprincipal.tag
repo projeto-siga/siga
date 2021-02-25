@@ -204,20 +204,21 @@
 					<li><a class="dropdown-item"
 						href="/siga/app/usuario/trocar_email">Trocar Email do Usuário</a></li>
 				</c:if>
-				
-				<li class="dropdown-submenu"><a href="javascript:void(0);" class="dropdown-item dropdown-toggle">Gerenciar PIN</a>
-					<ul class="dropdown-menu">
-					<c:choose>
-						<c:when test="${(empty identidadeCadastrante.pinIdentidade)}">
-							<li><a class="dropdown-item" href="/siga/app/pin/cadastro">Cadastrar novo PIN</a>
-						</c:when>
-						<c:otherwise>	
-							<li><a class="dropdown-item" href="/siga/app/pin/troca">Alterar PIN</a>
-							<li><a class="dropdown-item" href="/siga/app/pin/reset">Esqueci meu PIN</a>
-						</c:otherwise>	
-					</c:choose>
-					</ul>
-				</li>
+				<c:if test="${f:podeUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao) }">
+					<li class="dropdown-submenu"><a href="javascript:void(0);" class="dropdown-item dropdown-toggle">Gerenciar PIN</a>
+						<ul class="dropdown-menu">
+						<c:choose>
+							<c:when test="${(empty identidadeCadastrante.pinIdentidade)}">
+								<li><a class="dropdown-item" href="/siga/app/pin/cadastro">Cadastrar novo PIN</a>
+							</c:when>
+							<c:otherwise>	
+								<li><a class="dropdown-item" href="/siga/app/pin/troca">Alterar PIN</a>
+								<li><a class="dropdown-item" href="/siga/app/pin/reset">Esqueci meu PIN</a>
+							</c:otherwise>	
+						</c:choose>
+						</ul>
+					</li>
+				</c:if>
 
 				
 				

@@ -11,6 +11,7 @@
 <input type="hidden" id="siglaUsuTitular" value="${titular.sigla}"/>
 <input type="hidden" id="nomeUsuSubscritor" value="${doc.subscritor.nomePessoa}"/>
 <input type="hidden" id="podeAssinarPorComSenha" value="${podeAssinarPorComSenha}"/>
+<input type="hidden" id="cpfUsuarioCadastrante" value="${cadastrante.cpfFormatado}"/>
 
 <c:forEach items="${doc.getMobilGeral().getMovimentacoesPorTipo(24, true)}" var="currentItem" varStatus="stat">
   <c:set var="cossignatarios" value="${stat.first ? '' : cossignatarios} ${currentItem.subscritor.sigla}" />

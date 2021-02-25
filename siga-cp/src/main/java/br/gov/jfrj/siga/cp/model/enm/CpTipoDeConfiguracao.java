@@ -66,6 +66,15 @@ public enum CpTipoDeConfiguracao implements ITipoDeConfiguracao {
 //			new CpParamCfg[] { CpParamCfg.SERVICO, CpParamCfg.SITUACAO },
 //			new SituacaoDeConfiguracao[] { SituacaoDeConfiguracao.PODE, SituacaoDeConfiguracao.NAO_PODE,
 //					SituacaoDeConfiguracao.IGNORAR_CONFIGURACAO_ANTERIOR })
+	
+	SIGA_PIN(CpTipoConfiguracao.TIPO_CONFIG_SEGUNDO_FATOR_PIN, "PIN como Segundo Fator de Autenticação",
+			"Utilizada para ativar e configurar o uso do Personal Identification Number (PIN) no SIGA como segundo fator de autenticação e seu comportamento com uso na Assinatura com Senha e outras funcionalidades que requerem uma segunda validação de autenticação.\n"
+					+"PODE: Habilita uso do PIN como Segundo Fator e combinado com o Assinar com Senha libera o uso de autenticar com PIN.\n"
+					+"NÃO PODE: Desativa uso do PIN como Segundo Fator.\n"
+					+"DEFAULT: Combinado com outras funcionalidades dita qual é o provedor de segundo fator de autenticação padrão.\n"
+					+"OBRIGATORIO: Combinado com outras funcionalidades obriga a o segundo fator de autenticação ocorrer somente via PIN.\n",
+			new CpParamCfg[] { CpParamCfg.ORGAO, CpParamCfg.PESSOA, CpParamCfg.LOTACAO }, new CpParamCfg[] { CpParamCfg.SITUACAO },
+			new SituacaoDeConfiguracao[] { SituacaoDeConfiguracao.PODE, SituacaoDeConfiguracao.NAO_PODE, SituacaoDeConfiguracao.DEFAULT, SituacaoDeConfiguracao.OBRIGATORIO }),
 	;
 
 	private final Long id;

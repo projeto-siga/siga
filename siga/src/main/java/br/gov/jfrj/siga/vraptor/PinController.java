@@ -8,17 +8,13 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.gson.Gson;
-
-import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
-import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Result;
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
-import br.gov.jfrj.siga.base.RegraNegocioException;
-import br.gov.jfrj.siga.base.SigaModal;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
 
@@ -44,18 +40,28 @@ public class PinController extends SigaController {
 	@Get
 	@Path("/cadastro")
 	public void cadastro() throws Exception {	
+		
+		if (!Cp.getInstance().getComp().podeSegundoFatorPin( getCadastrante(), getLotaCadastrante())) {
+			throw new AplicacaoException("PIN como Segundo Fator de Autenticação: Acesso não permitido a esse recurso.");
+		}
 		result.include("baseTeste", Prop.getBool("/siga.base.teste"));
 	}
 	
 	@Get
 	@Path("/troca")
 	public void troca() throws Exception {	
+		if (!Cp.getInstance().getComp().podeSegundoFatorPin( getCadastrante(), getLotaCadastrante())) {
+			throw new AplicacaoException("PIN como Segundo Fator de Autenticação: Acesso não permitido a esse recurso.");
+		}
 		result.include("baseTeste", Prop.getBool("/siga.base.teste"));
 	}
 	
 	@Get
 	@Path("/reset")
 	public void reset() throws Exception {	
+		if (!Cp.getInstance().getComp().podeSegundoFatorPin( getCadastrante(), getLotaCadastrante())) {
+			throw new AplicacaoException("PIN como Segundo Fator de Autenticação: Acesso não permitido a esse recurso.");
+		}
 		result.include("baseTeste", Prop.getBool("/siga.base.teste"));
 	}
 			

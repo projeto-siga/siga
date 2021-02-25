@@ -31,6 +31,10 @@ public class PinPost implements IPinPost {
 				DpPessoa cadastrante = so.getCadastrante();
 				CpIdentidade identidadeCadastrante = so.getIdentidadeCadastrante();
 				
+				if (!Cp.getInstance().getComp().podeSegundoFatorPin(cadastrante, cadastrante.getLotacao()) ) {
+					throw new RegraNegocioException("PIN como Segundo Fator de Autenticação: Acesso não permitido a esse recurso.");
+				}
+				
 				if (identidadeCadastrante.getPinIdentidade() != null) {
 					throw new RegraNegocioException("Não é possível cadastrar seu PIN: Já existe PIN cadastrado.");
 				}

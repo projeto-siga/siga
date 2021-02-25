@@ -24,13 +24,17 @@ public class PinGerarTokenResetPost implements IPinGerarTokenResetPost {
 			CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 			
 			SigaObjects so = ApiContext.getSigaObjects();
-			
 			CpIdentidade identidadeCadastrante = so.getIdentidadeCadastrante();
+			DpPessoa cadastrante = so.getCadastrante();
+			
+			if (!Cp.getInstance().getComp().podeSegundoFatorPin(cadastrante, cadastrante.getLotacao()) ) {
+				throw new RegraNegocioException("PIN como Segundo Fator de Autenticação: Acesso não permitido a esse recurso.");
+			}
+			
 			if (identidadeCadastrante.getPinIdentidade() == null) {
 				throw new RegraNegocioException("Não é possível gerar token para redenifir seu PIN: Não existe PIN cadastrado.");
 			}
 			
-			DpPessoa cadastrante = so.getCadastrante();
 			Long cpf = cadastrante.getCpfPessoa();
 			
 			/* TODO: Avaliar se o CPF é o melhor para se gerar o Token. Parece ser mais performático para não ter queries adicionais */

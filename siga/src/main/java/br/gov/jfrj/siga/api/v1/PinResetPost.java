@@ -32,6 +32,10 @@ public class PinResetPost implements IPinResetPost {
 			
 			DpPessoa cadastrante = so.getCadastrante();
 			
+			if (!Cp.getInstance().getComp().podeSegundoFatorPin(cadastrante, cadastrante.getLotacao()) ) {
+				throw new RegraNegocioException("PIN como Segundo Fator de Autenticação: Acesso não permitido a esse recurso.");
+			}
+			
 			
 			if (Cp.getInstance().getBL().isTokenResetPinValido(cadastrante.getCpfPessoa(),tokenPin)) {		
 				if (Cp.getInstance().getBL().consisteFormatoPin(pin)) {

@@ -485,7 +485,7 @@ public class SigaLibsEL {
 		return url.trim();
 	}
 	
-	public static boolean podeUtilizarSegundoFatorPin(final DpPessoa cadastrante,	final DpLotacao lotacaoCadastrante) throws Exception {
+	public static boolean podeUtilizarSegundoFatorPin(final DpPessoa cadastrante,final DpLotacao lotacaoCadastrante) throws Exception {
 		return Cp.getInstance().getConf().podePorConfiguracao(cadastrante, lotacaoCadastrante, CpTipoConfiguracao.TIPO_CONFIG_SEGUNDO_FATOR_PIN);
 	}
 }

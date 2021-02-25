@@ -27,16 +27,19 @@ public class PinTrocarPost implements IPinTrocarPost {
 			final String pinAtual = req.pinAtual;
 			final String pin = req.pin;
 			
+			SigaObjects so = ApiContext.getSigaObjects();
+			CpIdentidade identidadeCadastrante = so.getIdentidadeCadastrante();
+			DpPessoa cadastrante = so.getCadastrante();
+			
+			if (!Cp.getInstance().getComp().podeSegundoFatorPin(cadastrante, cadastrante.getLotacao()) ) {
+				throw new RegraNegocioException("PIN como Segundo Fator de Autenticação: Acesso não permitido a esse recurso.");
+			}
+			
 			if (pinAtual.equals(pin)) {
 				throw new RegraNegocioException("Não é possível alterar PIN: PIN atual idêntico ao novo PIN.");
 			}
-			
-			SigaObjects so = ApiContext.getSigaObjects();
-			CpIdentidade identidadeCadastrante = so.getIdentidadeCadastrante();
-			
-			 if (Cp.getInstance().getBL().validaPinIdentidade(pinAtual, identidadeCadastrante)) {
+			if (Cp.getInstance().getBL().validaPinIdentidade(pinAtual, identidadeCadastrante)) {
 				if (Cp.getInstance().getBL().consisteFormatoPin(pin)) {
-					DpPessoa cadastrante = so.getCadastrante();
 					
 					List<CpIdentidade> listaIdentidades = new ArrayList<CpIdentidade>();
 					listaIdentidades = CpDao.getInstance().consultaIdentidadesPorCpf(cadastrante.getCpfPessoa().toString());	
@@ -47,7 +50,7 @@ public class PinTrocarPost implements IPinTrocarPost {
 					resp.mensagem = "PIN foi alterado.";
 					
 				}	 
-			 }
+			}
 			
 
 		} catch (RegraNegocioException e) {

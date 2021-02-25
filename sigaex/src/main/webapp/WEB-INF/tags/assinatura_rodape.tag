@@ -5,7 +5,7 @@
 <script>
 	var uriLogoSiga = '${uri_logo_siga_pequeno}';
 </script>
-<script src="/sigaex/public/javascript/assinatura-digital.js"></script>
+<script src="/sigaex/public/javascript/assinatura-digital.js?v=1614289085"></script>
 <input type="hidden" id="siglaUsuarioCadastrante" value="${cadastrante.sigla}"/>
 <input type="hidden" id="siglaUsuSubscritor" value="${doc.subscritor.sigla}"/>
 <input type="hidden" id="siglaUsuTitular" value="${titular.sigla}"/>

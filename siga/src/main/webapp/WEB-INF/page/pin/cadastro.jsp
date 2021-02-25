@@ -145,5 +145,5 @@
 	</div>
 				
 	<script type="text/javascript" src="/siga/javascript/siga.multiploselect.js"></script>	
-	<script type="text/javascript" src="/siga/javascript/siga-pin-cadastro.js"></script>	
+	<script type="text/javascript" src="/siga/javascript/siga-pin-cadastro.js?v=1614289085"></script>	
 </siga:pagina>

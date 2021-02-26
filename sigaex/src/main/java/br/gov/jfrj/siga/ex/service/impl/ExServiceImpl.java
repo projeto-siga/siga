@@ -133,6 +133,7 @@ public class ExServiceImpl implements ExService {
 			} finally {
 				em.close();
 				ContextoPersistencia.setEntityManager(null);
+				ContextoPersistencia.setDt(null);
 			}
 		}
 	}

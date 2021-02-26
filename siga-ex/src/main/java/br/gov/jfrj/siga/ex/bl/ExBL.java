@@ -6331,6 +6331,10 @@ public class ExBL extends CpBL {
 		if ((modNovo.getDescMod() == null || modNovo.getDescMod().trim().length() == 0)
 				&& (!Prop.isGovSP()))
 			throw new AplicacaoException("não é possível salvar um modelo sem informar a descrição.");
+		
+		if ( modNovo.getDescMod().trim().length() > 256 	&&  !Prop.isGovSP() )
+			throw new AplicacaoException("A Descrição deve conter no máximo 256 caracteres");
+		
 		try {
 			ExDao.iniciarTransacao();
 			dao().gravarComHistorico(modNovo, modAntigo, dt, identidadeCadastrante);

@@ -1,26 +1,29 @@
-<!-- Anotar Modal -->
-<div class="modal fade" id="anotarModal" tabindex="-1" role="dialog"
-	aria-labelledby="anotarModalLabel" aria-hidden="true">
+<!-- Redirecionar Modal -->
+<div class="modal fade" id="redirecionarModal" tabindex="-1"
+	role="dialog" aria-labelledby="redirecionarModalLabel"
+	aria-hidden="true">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="anotarModalLabel">Acrescentar uma
-					Anotação</h5>
+				<h5 class="modal-title" id="redirecionarModalLabel">Redirecionar</h5>
 				<button type="button" class="close" data-dismiss="modal"
 					aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
 			<div class="modal-body">
-				<form id="anotarForm" name="anotar" method="POST"
-					action="${linkTo[WfAppController].anotar}?id=${piId}">
+				<form id="redirecionarForm" name="redirecionar" method="POST"
+					action="${linkTo[WfAppController].redirecionar(pi.siglaCompacta, null)}">
 					<div class="form-group">
 						<div class="form-group">
-							<label for="descrMov">Nota</label>
-							<textarea class="form-control" name="descrMov" value="" cols="60"
-								rows="5" onkeydown="corrige();tamanho();" maxlength="255"
-								onblur="tamanho();" onclick="tamanho();"></textarea>
-							<small class="form-text text-muted float-right" id="Qtd">Restam&nbsp;255&nbsp;Caracteres</small>
+							<label for="descrMov">Tarefa Destino</label> <select name="tdId"
+								class="form-control" required>
+								<c:forEach var="td"
+									items="${pi.definicaoDeProcedimento.definicaoDeTarefa}">
+									<option value="${td.id}">${td.nome}</option>
+								</c:forEach>
+							</select> <small class="form-text text-muted float-right" id="Qtd">Selecione
+								a tarefa para a qual vc deseja redirecionar o procedimento</small>
 						</div>
 					</div>
 				</form>
@@ -28,13 +31,13 @@
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
 				<button type="button" class="btn btn-primary"
-					onclick="javascript: document.getElementById('anotarForm').submit();">Gravar</button>
+					onclick="javascript: document.getElementById('redirecionarForm').submit();">Redirecionar</button>
 			</div>
 		</div>
 	</div>
 </div>
 <script>
-	function initanotarModal() {
+	function initredirecionarModal() {
 
 	}
 
@@ -50,7 +53,7 @@
 
 	function tamanho2() {
 		nota = new String();
-		nota = this.anotar.descrMov.value;
+		nota = this.redirecionar.descrMov.value;
 		var i = 255 - nota.length;
 		return i;
 	}

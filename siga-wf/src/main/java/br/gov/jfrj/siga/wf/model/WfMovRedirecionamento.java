@@ -13,6 +13,10 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 @DiscriminatorValue("R")
 public class WfMovRedirecionamento extends WfMovTransicao {
 
+	public WfMovRedirecionamento() {
+		super();
+	}
+
 	public WfMovRedirecionamento(WfProcedimento pi, Date dtIni, DpPessoa titular, DpLotacao lotaTitular,
 			CpIdentidade identidade, Integer de, Integer para) {
 		super(pi, dtIni, titular, lotaTitular, identidade, de, para);
@@ -21,11 +25,6 @@ public class WfMovRedirecionamento extends WfMovTransicao {
 	@Override
 	public String getEvento() {
 		return "Redirecionamento";
-	}
-
-	@Override
-	public String getDescricaoEvento() {
-		return null;
 	}
 
 }

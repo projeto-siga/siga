@@ -99,6 +99,7 @@ public class WfServiceImpl implements WfService {
 			} finally {
 				em.close();
 				ContextoPersistencia.setEntityManager(null);
+				ContextoPersistencia.setDt(null);
 			}
 		}
 	}

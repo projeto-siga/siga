@@ -58,7 +58,7 @@ public class ExDocumentoVO extends ExVO {
 	ExDocumentoVO boletim;
 	Map<ExMobil, Set<ExMarca>> marcasPorMobil = new LinkedHashMap<ExMobil, Set<ExMarca>>();
 	private Map<ExMobil, Set<ExMarca>> marcasDeSistemaPorMobil = new LinkedHashMap<ExMobil, Set<ExMarca>>();
-	private Set<ExMarca> marcasDoMobil = new TreeSet<ExMarca>();
+	private Set<ExMarca> marcasDoMobil = new TreeSet<ExMarca>(ExMarca.MARCADOR_DO_MOBIL_COMPARATOR);
 	String outrosMobsLabel;
 	String nomeCompleto;
 	String dtDocDDMMYY;
@@ -389,18 +389,7 @@ public class ExDocumentoVO extends ExVO {
 				mobilEspecifico = mobilVO;
 		}
 
-		for (ExMobil cadaMobil : doc.getExMobilSet()) {
-			SortedSet<ExMarca> setSistema = new TreeSet<>();
-			SortedSet<ExMarca> set = cadaMobil.getExMarcaSet();
-			for (ExMarca m : set) {
-				if (m.getCpMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA)
-					setSistema.add(m);
-				if (m.getCpMarcador().getIdFinalidade().getIdTpMarcador() != CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA && (cadaMobil == mob || cadaMobil.isGeral())) 
-					getMarcasDoMobil().add(m);
-			}
-			getMarcasDeSistemaPorMobil().put(cadaMobil, setSistema);
-			marcasPorMobil.put(cadaMobil, set);
-		}
+		calculaSetsDeMarcas();
 
 		if (mobilEspecifico != null && mobilGeral != null) {
 			mobilEspecifico.getAcoes().addAll(mobilGeral.getAcoes());
@@ -419,16 +408,30 @@ public class ExDocumentoVO extends ExVO {
 			mobs.remove(mobilGeral);
 		}
 
-		// Edson: mostra lista de vias/volumes só se número de
-		// vias/volumes além do geral for > que 1 ou se o móbil
-		// tiver informações que não aparecem no topo da tela
-		//if (doc.getExMobilSet().size() > 2 || mob.temMarcaNaoAtiva())
-			outrosMobsLabel = doc.isProcesso() ? "Volumes" : "Vias";
-
 		this.dotTramitacao = new ExGraphTramitacao(mob);
 		this.dotRelacaoDocs = new ExGraphRelacaoDocs(mob, titular);
 		this.dotColaboracao = new ExGraphColaboracao(doc);
 
+	}
+
+	public void calculaSetsDeMarcas() {
+		for (ExMobil cadaMobil : doc.getExMobilSet()) {
+			SortedSet<ExMarca> setSistema = new TreeSet<>();
+			SortedSet<ExMarca> set = cadaMobil.getExMarcaSet();
+			for (ExMarca m : set) {
+				if (m.getCpMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA)
+					setSistema.add(m);
+				if (m.getCpMarcador().getIdFinalidade().getIdTpMarcador() != CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA && (cadaMobil == mob || cadaMobil.isGeral())) 
+					getMarcasDoMobil().add(m);
+			}
+			getMarcasDeSistemaPorMobil().put(cadaMobil, setSistema);
+			marcasPorMobil.put(cadaMobil, set);
+		}
+		// Edson: mostra lista de vias/volumes só se número de
+		// vias/volumes além do geral for > que 1 ou se o móbil
+		// tiver informações que não aparecem no topo da tela
+		//if (doc.getExMobilSet().size() > 2 || mob.temMarcaNaoAtiva())
+		outrosMobsLabel = doc.isProcesso() ? "Volumes" : "Vias";
 	}
 	
 	public void addAcoesVisualizar(ExDocumentoVO docVO, Long idVisualizacao) {

@@ -21,35 +21,36 @@ public class PinGerarTokenResetPost implements IPinGerarTokenResetPost {
 	public void run(PinGerarTokenResetPostRequest req, PinGerarTokenResetPostResponse resp)
 			throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
-			CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-			
-			SigaObjects so = ApiContext.getSigaObjects();
-			CpIdentidade identidadeCadastrante = so.getIdentidadeCadastrante();
-			DpPessoa cadastrante = so.getCadastrante();
-			
-			if (!Cp.getInstance().getComp().podeSegundoFatorPin(cadastrante, cadastrante.getLotacao()) ) {
-				throw new RegraNegocioException("PIN como Segundo Fator de Autenticação: Acesso não permitido a esse recurso.");
+			try {
+				CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
+				
+				SigaObjects so = ApiContext.getSigaObjects();
+				CpIdentidade identidadeCadastrante = so.getIdentidadeCadastrante();
+				DpPessoa cadastrante = so.getCadastrante();
+				
+				if (!Cp.getInstance().getComp().podeSegundoFatorPin(cadastrante, cadastrante.getLotacao()) ) {
+					throw new RegraNegocioException("PIN como Segundo Fator de Autenticação: Acesso não permitido a esse recurso.");
+				}
+				
+				if (identidadeCadastrante.getPinIdentidade() == null) {
+					throw new RegraNegocioException("Não é possível gerar token para redenifir seu PIN: Não existe PIN cadastrado.");
+				}
+				
+				Long cpf = cadastrante.getCpfPessoa();
+				
+				CpToken token =	Cp.getInstance().getBL().gerarTokenResetPin(cpf);
+				Cp.getInstance().getBL().enviarEmailTokenResetPIN(cadastrante,"Código para redefinição de PIN ",token.getToken());
+				resp.mensagem = "Token gerado para reset de PIN";
+				
+				
+			} catch (RegraNegocioException e) {
+				ctx.rollback(e);
+				throw new SwaggerException(e.getMessage(), 400, null, req, resp, null);
+			} catch (Exception e) {
+				ctx.rollback(e);
+				throw e;
 			}
-			
-			if (identidadeCadastrante.getPinIdentidade() == null) {
-				throw new RegraNegocioException("Não é possível gerar token para redenifir seu PIN: Não existe PIN cadastrado.");
-			}
-			
-			Long cpf = cadastrante.getCpfPessoa();
-			
-			/* TODO: Avaliar se o CPF é o melhor para se gerar o Token. Parece ser mais performático para não ter queries adicionais */
-			CpToken token =	Cp.getInstance().getBL().gerarTokenResetPin(cpf);
-			Cp.getInstance().getBL().enviarEmailTokenResetPIN(cadastrante,"Código para redefinição de PIN ",token.getToken());
-			resp.mensagem = "Token gerado para reset de PIN";
-			
-			
-		} catch (RegraNegocioException e) {
-			throw new SwaggerException(e.getMessage(), 400, null, req, resp, null);
-		} catch (Exception e) {
-			e.printStackTrace(System.out);
-			throw e;
 		}
-		
 		
 	}
 	

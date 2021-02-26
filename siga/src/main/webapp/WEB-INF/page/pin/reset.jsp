@@ -55,7 +55,7 @@
 	
 										<label for="pinUserCurrent">Informe o código enviado</label>
 										<div class="input-group input-group-lg">
-				   						  <input type="text" id="tokenPin" class="form-control " style="text-align: center;" aria-describedby="passwordHelp" minlength="8" maxlength="8" size="8" autocomplete="off" autofocus inputmode="numeric" required  />
+				   						  <input type="text" id="tokenPin" class="form-control " style="text-align: center;" aria-describedby="passwordHelp" minlength="8" maxlength="8" size="8" autocomplete="off" autofocus required  />
 										</div>
 										<div class="input-group input-group-lg">
 										  <small class="form-text text-muted">Caso não tenha recebido o e-mail com o código, <button type="button" id="btnReenviarCodigo" class="btn btn-link p-0 border-0">clique aqui</button> para reenviar.</small>

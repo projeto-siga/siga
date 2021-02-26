@@ -44,11 +44,16 @@
 		
 		<div class="col-auto my-auto mr-5">
 			<h5>Formas de ${(not empty assinar and assinar)? 'assinatura': (not empty autenticar and autenticar) ? 'autenticação':''}:</h5>
+			
+			<c:set var="SenhaChecked" value="${assinarComSenhaChecado || autenticarComSenhaChecado}" /> 
+			<c:set var="PinChecked" value="${(not empty identidadeCadastrante.pinIdentidade) and (assinarComSenhaPinChecado || autenticarComSenhaPinChecado)}" /> 
+			<c:set var="CertificadoChecked" value="${not SenhaChecked and not PinChecked}" /> 
+			
 			<c:if test="${assinarComSenha || autenticarComSenha}">
 				<div class="custom-control custom-radio">
 					<input class="custom-control-input" type="radio" 
 						   accesskey="c" name="radioProviderAssinatura" id="ad_password_0" 
-						   <c:if test="${assinarComSenhaChecado || autenticarComSenhaChecado}">checked</c:if> /> 
+						   <c:if test="${SenhaChecked}">checked</c:if> /> 
 					<label class="custom-control-label" for="ad_password_0">Senha</label>
 
 				</div>
@@ -59,8 +64,13 @@
 				<div class="custom-control custom-radio">
 					<input class="custom-control-input" type="radio" 
 						accesskey="p" name="radioProviderAssinatura" id="ad_pin_0" 
-						<c:if test="${assinarComSenhaPinChecado || autenticarComSenhaPinChecado}">checked</c:if> /> 
+						<c:if test="${PinChecked}">checked</c:if>
+						<c:if test="${empty identidadeCadastrante.pinIdentidade}">disabled</c:if>
+						identidadeCadastrante /> 
 					<label class="custom-control-label" for="ad_pin_0">PIN</label>
+					<c:if test="${empty identidadeCadastrante.pinIdentidade}">
+						<small class="text-muted"> - Clique <strong><a href='/siga/app/pin/cadastro'>aqui</a></strong> saber mais e definir seu PIN.</small>
+					</c:if>
 				</div>
 			</c:if>
 			
@@ -68,7 +78,7 @@
 				<div class="custom-control custom-radio">
 					<input class="custom-control-input" type="radio" 
 						accesskey="d" name="radioProviderAssinatura" id="ad_certificado_0" 
-						<c:if test="${(not assinarComSenhaChecado and not autenticarComSenhaChecado) and (not assinarComSenhaPinChecado and not autenticarComSenhaPinChecado)}">checked</c:if> /> 
+						<c:if test="${CertificadoChecked}">checked</c:if> /> 
 					<label class="custom-control-label" for="ad_certificado_0">Certificado Digital</label>
 				</div>
 			</c:if>

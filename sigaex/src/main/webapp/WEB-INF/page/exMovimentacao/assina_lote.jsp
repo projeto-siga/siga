@@ -112,7 +112,7 @@
 									
 									<tags:assinatura_botoes assinar="true" 
 										assinarComSenha="${podeAssinarComSenha and not obrigatorioUtilizarSegundoFatorPin}"
-										assinarComSenhaChecado="${podeAssinarComSenha and defaultAssinarComSenha}"
+										assinarComSenhaChecado="${podeAssinarComSenha and defaultAssinarComSenha and not defaultUtilizarSegundoFatorPin}"
 										assinarComSenhaPin="${podeAssinarComSenha and podeUtilizarSegundoFatorPin}"
 										assinarComSenhaPinChecado="${podeAssinarComSenha and podeUtilizarSegundoFatorPin and defaultUtilizarSegundoFatorPin}"/>
 								</c:if>

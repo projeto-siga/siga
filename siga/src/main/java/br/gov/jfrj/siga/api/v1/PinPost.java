@@ -20,37 +20,40 @@ public class PinPost implements IPinPost {
 	@Override
 	public void run(PinPostRequest req, PinPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
-			CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
+			try {
+				CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
+				
+				final String pin = req.pin;
+				
+				if (Cp.getInstance().getBL().consisteFormatoPin(pin)) {	
+					ApiContext.assertAcesso("");
+					SigaObjects so = ApiContext.getSigaObjects();
 			
-			final String pin = req.pin;
-			
-			if (Cp.getInstance().getBL().consisteFormatoPin(pin)) {	
-				ApiContext.assertAcesso("");
-				SigaObjects so = ApiContext.getSigaObjects();
-		
-				DpPessoa cadastrante = so.getCadastrante();
-				CpIdentidade identidadeCadastrante = so.getIdentidadeCadastrante();
-				
-				if (!Cp.getInstance().getComp().podeSegundoFatorPin(cadastrante, cadastrante.getLotacao()) ) {
-					throw new RegraNegocioException("PIN como Segundo Fator de Autenticação: Acesso não permitido a esse recurso.");
+					DpPessoa cadastrante = so.getCadastrante();
+					CpIdentidade identidadeCadastrante = so.getIdentidadeCadastrante();
+					
+					if (!Cp.getInstance().getComp().podeSegundoFatorPin(cadastrante, cadastrante.getLotacao()) ) {
+						throw new RegraNegocioException("PIN como Segundo Fator de Autenticação: Acesso não permitido a esse recurso.");
+					}
+					
+					if (identidadeCadastrante.getPinIdentidade() != null) {
+						throw new RegraNegocioException("Não é possível cadastrar seu PIN: Já existe PIN cadastrado.");
+					}
+					
+					List<CpIdentidade> listaIdentidades = new ArrayList<CpIdentidade>();
+					listaIdentidades = CpDao.getInstance().consultaIdentidadesPorCpf(cadastrante.getCpfPessoa().toString());	
+					
+					Cp.getInstance().getBL().definirPinIdentidade(listaIdentidades, pin, identidadeCadastrante);
+					Cp.getInstance().getBL().enviarEmailDefinicaoPIN(cadastrante,"Novo PIN","Você definiu um novo PIN.");
+					resp.mensagem = "PIN foi definido.";
 				}
-				
-				if (identidadeCadastrante.getPinIdentidade() != null) {
-					throw new RegraNegocioException("Não é possível cadastrar seu PIN: Já existe PIN cadastrado.");
-				}
-				
-				List<CpIdentidade> listaIdentidades = new ArrayList<CpIdentidade>();
-				listaIdentidades = CpDao.getInstance().consultaIdentidadesPorCpf(cadastrante.getCpfPessoa().toString());	
-				
-				Cp.getInstance().getBL().definirPinIdentidade(listaIdentidades, pin, identidadeCadastrante);
-				Cp.getInstance().getBL().enviarEmailDefinicaoPIN(cadastrante,"Novo PIN","Você definiu um novo PIN.");
-				resp.mensagem = "PIN foi definido.";
+			} catch (RegraNegocioException e) {
+				ctx.rollback(e);
+				throw new SwaggerException(e.getMessage(), 400, null, req, resp, null);
+			} catch (Exception e) {
+				ctx.rollback(e);
+				throw e;
 			}
-		} catch (RegraNegocioException e) {
-			throw new SwaggerException(e.getMessage(), 400, null, req, resp, null);
-		} catch (Exception e) {
-			e.printStackTrace(System.out);
-			throw e;
 		}
 	}
 	

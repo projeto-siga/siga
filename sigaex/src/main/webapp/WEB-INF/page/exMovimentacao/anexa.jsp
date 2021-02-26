@@ -378,8 +378,8 @@
 		<tags:assinatura_botoes autenticar="true" assinar="true"
 			assinarComSenha="${podeAssinarComSenha and not obrigatorioUtilizarSegundoFatorPin}"
 		    autenticarComSenha="${podeAutenticarComSenha and not obrigatorioUtilizarSegundoFatorPin}"			
-			assinarComSenhaChecado="${podeAssinarComSenha and defaultAssinarComSenha}"
-			autenticarComSenhaChecado="${podeAutenticarComSenha and defaultAutenticarComSenha}"
+			assinarComSenhaChecado="${podeAssinarComSenha and defaultAssinarComSenha and not defaultUtilizarSegundoFatorPin}"
+			autenticarComSenhaChecado="${podeAutenticarComSenha and defaultAutenticarComSenha and not defaultUtilizarSegundoFatorPin}"
 
 
 			assinarComSenhaPin="${podeAssinarComSenha and podeUtilizarSegundoFatorPin}"

@@ -152,4 +152,8 @@ public class CpIdentidade extends AbstractCpIdentidade {
 		super.setHisAtivo(hisAtivo);
 		this.hisAtivo = getHisAtivo();
 	}
+	
+	public boolean isPinCadastrado()  {
+		return this.getPinIdentidade() != null;
+	}
 }

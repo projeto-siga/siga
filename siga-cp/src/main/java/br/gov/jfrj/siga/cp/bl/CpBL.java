@@ -1562,7 +1562,7 @@ public class CpBL {
 			
 			//Seta tipo 2 - Token para Reset PIN
 			tokenResetPin.setIdTpToken(2L);
-			tokenResetPin.setToken(SigaUtil.randomNumerico(8));
+			tokenResetPin.setToken(SigaUtil.randomAlfanumericoSeletivo(8));
 			tokenResetPin.setIdRef(cpf);
 			
 			/* HORA ATUAL */
@@ -1654,8 +1654,8 @@ public class CpBL {
 			}
 			conteudo = conteudo
 					.replace("${url}", Prop.get("/siga.base.url"))
-					.replace("${logo}", Prop.get("/siga.cabecalho.logo"))
-					.replace("${titulo}", Prop.get("/siga.cabecalho.titulo"))
+					.replace("${logo}", Prop.get("/siga.email.logo"))
+					.replace("${titulo}", Prop.get("/siga.email.titulo"))
 					.replace("${nomeUsuario}", destinatario.getNomePessoa())
 					.replace("${corpo}", corpo);
 			
@@ -1691,8 +1691,8 @@ public class CpBL {
 			}
 			conteudo = conteudo
 					.replace("${url}", Prop.get("/siga.base.url"))
-					.replace("${logo}", Prop.get("/siga.cabecalho.logo"))
-					.replace("${titulo}", Prop.get("/siga.cabecalho.titulo"))
+					.replace("${logo}", Prop.get("/siga.email.logo"))
+					.replace("${titulo}", Prop.get("/siga.email.titulo"))
 					.replace("${nomeUsuario}", destinatario.getNomePessoa())
 					.replace("${tokenPin}", tokenPin);
 			

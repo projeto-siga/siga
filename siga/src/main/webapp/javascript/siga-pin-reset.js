@@ -50,12 +50,6 @@ PinReset.Etapas = (function() {
 			return false;
 		} 
 		
-		if( !isNumeric(this.tokenPin.val())) {
-			sigaModal.alerta('Código de segurança inválido. Favor corrigir.').select(this.tokenPin);		
-			validacao.resultado = false;
-			return false;
-		} 
-		
 		if( this.tokenPin.val().length !== 8) {
 			sigaModal.alerta('Código de segurança inválido. Favor corrigir.').select(this.tokenPin);		
 			validacao.resultado = false;

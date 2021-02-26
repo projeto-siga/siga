@@ -6,6 +6,7 @@ import java.util.List;
 import br.gov.jfrj.siga.cp.converter.IEnumWithId;
 
 public enum CpMarcadorIconeEnum implements IEnumWithId {
+	ICONE_INFORMACAO(25, "Informação", "fas fa-info-circle"),
 	ICONE_ETIQUETA(1, "Etiqueta", "fas fa-tag"), 
 	ICONE_BOMBA(2, "Bomba", "fas fa-bomb"), 
 	ICONE_SEGURANCA(3, "Segurança", "fas fa-user-shield"), 
@@ -30,7 +31,6 @@ public enum CpMarcadorIconeEnum implements IEnumWithId {
 	ICONE_DATACHECK(22, "Data check", "far fa-calendar-check"),
 	ICONE_ANTENA(23, "Antena", "fas fa-broadcast-tower"),
 	ICONE_LAMPADA(24, "Lâmpada", "fas fa-lightbulb"),
-	ICONE_INFORMACAO(25, "Informação", "fas fa-info-circle"),
 	ICONE_SMILE(26, "Smile", "far fa-smile");
 
 	private final Integer id;

@@ -198,6 +198,9 @@ public abstract class WfMov extends HistoricoAuditavelSuporte implements Seriali
 
 	@Override
 	public int compareTo(WfMov o) {
-		return this.getHisDtIni().compareTo(o.getHisDtIni());
+		int i = this.getHisDtIni().compareTo(o.getHisDtIni());
+		if (i != 0)
+			return i;
+		return this.getId().compareTo(o.getId());
 	}
 }

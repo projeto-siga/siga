@@ -17,10 +17,11 @@
 					<table border="0" class="table table-sm table-striped">
 						<thead class="${thead_color}">
 							<tr>
-								<th class="text-left w-10">Grupo</th>
+								<th class="text-left w-10">Categoria</th>
 								<th class="text-left w-35">Marcador</th>
 								<th class="text-left w-10">Tipo</th>
 								<th class="text-left w-10">Finalidade</th>
+								<th class="text-left w-10">Grupo</th>
 								<th colspan="2" class="text-right w-15">Op&ccedil;&otilde;es</th>
 							</tr>
 						</thead>
@@ -38,6 +39,7 @@
 									</span></td>
 									<td class="text-left w-10">${marcador.idFinalidade.nome}</td>
 									<td class="text-left w-10">${marcador.idFinalidade.descricao}</td>
+									<td class="text-left w-10">${marcador.idGrupo.nome}</td>
 									<td class="text-left w-10">
 										<div class="">
 											<button type="button" id="btn-excluir"

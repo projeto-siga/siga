@@ -181,7 +181,7 @@ public class Correio {
 		
 		
 		if (isVersionTest) {
-			msg.setSubject(assunto + "AMBIENTE DE TESTE FAVOR DESCONSIDERAR", "utf-8");
+			msg.setSubject(assunto + " - AMBIENTE DE TESTE FAVOR DESCONSIDERAR", "utf-8");
 		}
 		else {
 			msg.setSubject(assunto, "utf-8");

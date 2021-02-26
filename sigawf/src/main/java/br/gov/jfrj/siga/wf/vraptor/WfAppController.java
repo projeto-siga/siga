@@ -366,6 +366,28 @@ public class WfAppController extends WfController {
 		result.redirectTo(this).procedimento(pi.getId());
 	}
 
+	@Transacional
+	@Post
+	@Path("/app/procedimento/{sigla}/redirecionar")
+	public void redirecionar(String sigla, String siglaPrincipal, Long tdId) throws Exception {
+		WfProcedimento pi = dao().consultarPorSigla(sigla, WfProcedimento.class);
+
+		if (tdId == null)
+			throw new RuntimeException("Identificador da definição de tarefa não pode ser nulo");
+
+		Integer idx = pi.getIndexById(Long.toString(tdId));
+		if (idx == null)
+			throw new RuntimeException("Identificador da definição de tarefa não encontrado");
+
+		Wf.getInstance().getBL().redirecionar(pi, idx, getTitular(), getLotaTitular(), getIdentidadeCadastrante());
+
+		if (siglaPrincipal != null) {
+			result.redirectTo("/../sigaex/app/expediente/doc/exibir?sigla=" + siglaPrincipal);
+			return;
+		}
+		result.redirectTo(this).procedimento(pi.getId());
+	}
+
 	// TODO Pensar se queremos ter o conceito de conhecimento dentro do WF mesmo ou
 	// se é melhor usar sempre o GC
 	/**

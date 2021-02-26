@@ -931,9 +931,13 @@ LINHA  VARIÁVEL / CONTEÚDO
                 </style>
             </head>
             <body>
-            	<div style="word-wrap: break-word" class="divDoc">
-                	[#nested]
-            	</div>
+            	[#if func.resource('conversor.html.ext') == 'br.gov.jfrj.itextpdf.MyPD4ML']
+			    	[#nested]
+	            [#else]
+					<div style="word-wrap: break-word" class="divDoc">
+				     	[#nested]
+		           	</div>
+			    [/#if]
             </body>
         </html>
     [/#if]

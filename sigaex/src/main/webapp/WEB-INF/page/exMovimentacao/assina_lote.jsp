@@ -103,7 +103,18 @@
 						<div class="col-sm">
 							<div class="form-group">
 								<c:if test="${(not empty documentosQuePodemSerAssinadosComSenha)}">
-									<tags:assinatura_botoes assinar="true" assinarComSenha="true" assinarComSenhaChecado="true"/>
+									<c:set var="podeAssinarComSenha" value="true" />
+									<c:set var="defaultAssinarComSenha" value="true" />
+									
+									<c:set var="podeUtilizarSegundoFatorPin" value="${f:podeUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao)}" />
+									<c:set var="obrigatorioUtilizarSegundoFatorPin" value="${f:deveUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao)}" />
+									<c:set var="defaultUtilizarSegundoFatorPin" value="${f:defaultUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao) }" />
+									
+									<tags:assinatura_botoes assinar="true" 
+										assinarComSenha="${podeAssinarComSenha and not obrigatorioUtilizarSegundoFatorPin}"
+										assinarComSenhaChecado="${podeAssinarComSenha and defaultAssinarComSenha and not defaultUtilizarSegundoFatorPin}"
+										assinarComSenhaPin="${podeAssinarComSenha and podeUtilizarSegundoFatorPin}"
+										assinarComSenhaPinChecado="${podeAssinarComSenha and podeUtilizarSegundoFatorPin and defaultUtilizarSegundoFatorPin}"/>
 								</c:if>
 							</div>
 						</div>

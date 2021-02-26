@@ -18,16 +18,12 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.bl;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import br.gov.jfrj.siga.base.Prop;
@@ -35,9 +31,10 @@ import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpCompetenciaBL;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.dp.CpMarca;
-import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
@@ -1283,6 +1280,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
 	
+	
 	/*
 	 * Retorna se é default assinar um documento com senha:
 	 * 
@@ -1302,9 +1300,59 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 		
-		if (situacao != null
-				&& (situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_DEFAULT ||
-						situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_OBRIGATORIO))
+		if (situacao != null && (situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_DEFAULT ||	situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_OBRIGATORIO))
+			return true;
+
+		return false; 
+	}
+	
+	/*
+	 * Retorna se é possível o uso do PIN como segundo fato de autenticação:
+	 * 
+	 * @param pessoa
+	 * @param lotacao
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeUtilizarSegundoFatorPin(final DpPessoa pessoa,
+			final DpLotacao lotacao) throws Exception {
+		return Cp.getInstance().getComp().podeSegundoFatorPin(pessoa, lotacao);
+	}
+	
+	
+	/*
+	 * Retorna se é obrigatório o uso do PIN como segundo fato de autenticação:
+	 * 
+	 * @param pessoa
+	 * @param lotacao
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean deveUtilizarSegundoFatorPin(final DpPessoa pessoa,final DpLotacao lotacao) {
+		CpSituacaoConfiguracao situacao = getConf().situacaoPorConfiguracao(null, null, null, null, null, null, null,
+				null, null, null, null, null, lotacao, pessoa, null,null,
+				CpTipoConfiguracao.TIPO_CONFIG_SEGUNDO_FATOR_PIN);
+		
+		if (situacao != null && situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_OBRIGATORIO)
+			return true;
+
+		return false; 
+	}
+	
+	/*
+	 * Retorna se é padrão o uso do PIN como segundo fato de autenticação:
+	 * 
+	 * @param pessoa
+	 * @param lotacao
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean defaultUtilizarSegundoFatorPin(final DpPessoa pessoa,final DpLotacao lotacao) {
+		CpSituacaoConfiguracao situacao = getConf().situacaoPorConfiguracao(null, null, null, null, null, null, null,
+				null, null, null, null, null, lotacao, pessoa, null,null,
+				CpTipoConfiguracao.TIPO_CONFIG_SEGUNDO_FATOR_PIN);
+		
+		if (situacao != null && (situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_DEFAULT ||	situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_OBRIGATORIO))
 			return true;
 
 		return false; 
@@ -4047,7 +4095,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		// eletrônicos
 		if (mob.doc().isEletronico()) {
 			for (CpMarca marca : mob.getExMarcaSet()) {
-				if (marca.getCpMarcador().getIdMarcador() == CpMarcador.MARCADOR_DESPACHO_PENDENTE_DE_ASSINATURA)
+				if (marca.getCpMarcador().getIdMarcador() == CpMarcadorEnum.DESPACHO_PENDENTE_DE_ASSINATURA.getId())
 					return false;
 			}
 		}
@@ -4100,7 +4148,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 		// Verifica se o despacho já está assinado
 		for (CpMarca marca : mob.getExMarcaSet()) {
-			if (marca.getCpMarcador().getIdMarcador() == CpMarcador.MARCADOR_DESPACHO_PENDENTE_DE_ASSINATURA)
+			if (marca.getCpMarcador().getIdMarcador() == CpMarcadorEnum.DESPACHO_PENDENTE_DE_ASSINATURA.getId())
 				return false;
 		}
 

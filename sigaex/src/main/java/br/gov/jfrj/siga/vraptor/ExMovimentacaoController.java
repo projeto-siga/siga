@@ -2549,7 +2549,7 @@ public class ExMovimentacaoController extends ExController {
 						builder.getMob(), mov.getDtMov(),
 						mov.getSubscritor(), mov.getLotaSubscritor(),
 						mov.getDescrMov(), 
-						mov.getMarcador(), dtPlanejada, dtLimite);
+						mov.getMarcador(), dtPlanejada, dtLimite, true);
 		ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getSigla());
 	}
 
@@ -3079,7 +3079,7 @@ public class ExMovimentacaoController extends ExController {
 	@Post("/app/expediente/mov/assinar_senha_gravar")
 	public void aAssinarSenhaGravar(String sigla, final Boolean copia, final Boolean juntar, 
 			final Boolean tramitar, final Boolean exibirNoProtocolo, String nomeUsuarioSubscritor,
-			String senhaUsuarioSubscritor) throws Exception {
+			String senhaUsuarioSubscritor,final Boolean senhaIsPin) throws Exception {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 		ExDocumento doc = buscarDocumento(builder, true);
@@ -3093,7 +3093,7 @@ public class ExMovimentacaoController extends ExController {
 					.getBL()
 					.assinarDocumentoComSenha(getCadastrante(),
 							getLotaTitular(), doc, mov.getDtMov(),
-							nomeUsuarioSubscritor, senhaUsuarioSubscritor, true,
+							nomeUsuarioSubscritor, senhaUsuarioSubscritor, senhaIsPin, true,
 							getTitular(), copia, juntar, tramitar, exibirNoProtocolo);
 		} catch (final Exception e) {
 			httpError(e);
@@ -3108,7 +3108,7 @@ public class ExMovimentacaoController extends ExController {
 	@Path("/app/expediente/mov/assinar_mov_login_senha_gravar")
 	public void aAssinarMovSenhaGravar(Long id, String sigla,
 			String tipoAssinaturaMov, String nomeUsuarioSubscritor,
-			String senhaUsuarioSubscritor, Boolean copia) throws Exception {
+			String senhaUsuarioSubscritor, final Boolean senhaIsPin, Boolean copia) throws Exception {
 		long tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA;
 		
 		try {
@@ -3129,7 +3129,7 @@ public class ExMovimentacaoController extends ExController {
 				.getBL()
 				.assinarMovimentacaoComSenha(getCadastrante(),
 						getLotaTitular(), mov, mov.getDtMov(),
-						nomeUsuarioSubscritor, senhaUsuarioSubscritor, true,
+						nomeUsuarioSubscritor, senhaUsuarioSubscritor, senhaIsPin, true,
 						tpMovAssinatura);
 		} catch (final Exception e) {
 			httpError(e);

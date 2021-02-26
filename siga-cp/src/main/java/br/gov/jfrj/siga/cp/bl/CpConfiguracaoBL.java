@@ -638,8 +638,11 @@ public class CpConfiguracaoBL {
 				situacao = cfgFiltro.getCpTipoConfiguracao().getSituacaoDefault();
 			}
 
-			if (situacao != null && situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_PODE)
+			if (situacao != null && (situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_PODE 
+										||	situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_DEFAULT 
+										||	situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_OBRIGATORIO)) {
 				return true;
+			}
 			return false;
 		} catch (Exception ex) {
 			log.error(ex);

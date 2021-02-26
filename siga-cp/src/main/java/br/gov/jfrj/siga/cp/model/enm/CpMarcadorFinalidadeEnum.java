@@ -1,7 +1,11 @@
 package br.gov.jfrj.siga.cp.model.enm;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import com.google.common.collect.Lists;
 
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.converter.IEnumWithId;
@@ -32,20 +36,20 @@ public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
 	//
 	TARJA_DIRECIONADA(5, CpMarcadorFinalidadeGrupoEnum.TARJA, "Tarja Direcionada",
 			"Marcador que pode ser definido por qualquer pessoa e estará visível para uma lotação ou pessoa  definida, independente da localização do documento",
-			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
+			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.GERAL,
 			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
 			CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA, CpMarcadorTipoTextoEnum.OPCIONAL, false),
 	//
 	TARJA_AGENDADA_DIRECIONADA(7, CpMarcadorFinalidadeGrupoEnum.TARJA, "Tarja Agendada Direcionada",
 			"Marcador que pode ser definido por qualquer pessoa e estará visível, a partir de uma data definida, para uma lotação ou pessoa definida, independente da localização do documento",
-			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
+			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.GERAL,
 			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.DESATIVADA,
 			CpMarcadorTipoExibicaoEnum.MENOR_DATA, CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA,
 			CpMarcadorTipoTextoEnum.OPCIONAL, false),
 	//
 	TARJA_AGENDADA_XOR(6, CpMarcadorFinalidadeGrupoEnum.TARJA, "Tarja Agendada Mutuamente Exclusiva",
 			"Marcador, mutuamente exclusivo, que pode ser definido por qualquer pessoa e estará visível, a partir de uma data definida, para quem receber com o documento. Apenas um marcador desse tipo pode ser definido para um mesmo documento",
-			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.TODAS_AS_VIAS_OU_ULTIMO_VOLUME,
+			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.TODAS_AS_VIAS_OU_ULTIMO_VOLUME,
 			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
 			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.OPCIONAL, true),
 	//
@@ -63,7 +67,7 @@ public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
 	//
 	ETIQUETA_DIRECIONADA(102, CpMarcadorFinalidadeGrupoEnum.ETIQUETA, "Etiqueta Direcionada",
 			"Marcador que pode ser definido por pessoa da minha lotação e estará visível para uma lotação ou pessoa definida, independente da localização do documento",
-			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
+			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.GERAL,
 			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
 			CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA, CpMarcadorTipoTextoEnum.OPCIONAL, false),
 	//
@@ -72,10 +76,10 @@ public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
 			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
 			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.OPCIONAL, true),
 	//
-//	PASTA_PADRAO(201, CpMarcadorFinalidadeGrupoEnum.PASTA, "Pasta Padrão", "Pasta atribuída automaticamente ao documento tramitado para a minha lotação.",
-//			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
-//			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
-//			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.OPCIONAL, true),
+	PASTA_PADRAO(201, CpMarcadorFinalidadeGrupoEnum.PASTA, "Pasta Padrão", "Pasta atribuída automaticamente ao documento tramitado para a minha lotação.",
+			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
+			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
+			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.OPCIONAL, true),
 	//
 	LISTA(300, CpMarcadorFinalidadeGrupoEnum.LISTA, "Lista",
 			"Marcador que pode ser definido por pessoa da minha lotação para agrupar documentos de interesse de Pessoa ou Lotação definida",
@@ -86,7 +90,7 @@ public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
 	LISTA_AGENDADA(301, CpMarcadorFinalidadeGrupoEnum.LISTA, "Lista Agendada",
 			"Marcador que pode ser definido por pessoa da minha lotação para agrupar documentos de interesse de Pessoa ou Lotação definida, a partir de uma data definida",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
-			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.OPCIONAL, CpMarcadorTipoExibicaoEnum.MENOR_DATA,
+			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.MENOR_DATA,
 			CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA, CpMarcadorTipoTextoEnum.OPCIONAL, false);
 
 	private final Integer id;
@@ -182,5 +186,12 @@ public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
 
 	public boolean isXor() {
 		return xor;
+	}
+
+	public static List<CpMarcadorFinalidadeEnum> disponiveis(boolean geral, boolean lotacao) {
+		return Arrays.asList(values()).stream()
+				.filter(f -> (geral && f.getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL)
+						|| (lotacao && f.getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO))
+				.collect(Collectors.toList());
 	}
 }

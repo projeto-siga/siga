@@ -35,10 +35,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.TemporalType;
 import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
@@ -52,8 +52,9 @@ import org.jboss.logging.Logger;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.Texto;
-import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -85,7 +86,6 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
-import br.gov.jfrj.siga.ex.bl.Mesa2;
 import br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
@@ -1604,14 +1604,14 @@ public class ExDao extends CpDao {
 //		Predicate predicateEqualTipoMarcador  = criteriaBuilder.equal(cpMarcadorRoot.get("cpTipoMarcador"), marcador);
 //		if("GOVSP".equals(Prop.get("/siga.local"))) {
 //
-//			Predicate predicateNotEqualTipoMarcador1  = criteriaBuilder.notEqual(cpMarcadorRoot.get("idMarcador"), CpMarcador.MARCADOR_COMO_REVISOR);
-//			Predicate predicateNotEqualTipoMarcador2  = criteriaBuilder.notEqual(cpMarcadorRoot.get("idMarcador"), CpMarcador.MARCADOR_PRONTO_PARA_ASSINAR);
+//			Predicate predicateNotEqualTipoMarcador1  = criteriaBuilder.notEqual(cpMarcadorRoot.get("idMarcador"), MarcadorEnum.COMO_REVISOR.getId());
+//			Predicate predicateNotEqualTipoMarcador2  = criteriaBuilder.notEqual(cpMarcadorRoot.get("idMarcador"), MarcadorEnum.PRONTO_PARA_ASSINAR.getId());
 //			predicateAnd = criteriaBuilder.and(predicateEqualTipoMarcador,predicateNotEqualTipoMarcador1,predicateNotEqualTipoMarcador2);
 //			/*			return findByCriteria(CpMarcador.class,
 //					Restrictions.and(
 //							Restrictions.eq("cpTipoMarcador", marcador),
-//							Restrictions.ne("idMarcador", CpMarcador.MARCADOR_COMO_REVISOR), 
-//							Restrictions.ne("idMarcador", CpMarcador.MARCADOR_PRONTO_PARA_ASSINAR))); */
+//							Restrictions.ne("idMarcador", MarcadorEnum.COMO_REVISOR.getId()), 
+//							Restrictions.ne("idMarcador", MarcadorEnum.PRONTO_PARA_ASSINAR.getId()))); */
 //		} else {
 //			predicateAnd = criteriaBuilder.and(predicateEqualTipoMarcador);
 //
@@ -1852,13 +1852,13 @@ public class ExDao extends CpDao {
 				if (!grupoItem.grupoHide && grupoItem.grupoMarcadores.size() > 0) {
 					queryMarcasAIgnorarFinal = queryMarcasAIgnorar;
 					// Se for do grupo AGUARDANDO_ANDAMENTO, nao conta se tiver marca do grupo CAIXA_DE_ENTRADA
-					if(grupoItem.grupoNome.equals(Mesa2.GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO.getNome())) {
+					if(grupoItem.grupoNome.equals(CpMarcadorGrupoEnum.AGUARDANDO_ANDAMENTO.getNome())) {
 						queryMarcasAIgnorarFinal = queryMarcasAIgnorarFinal 
 							+ ( "".equals(queryMarcasAIgnorarFinal) ? "" : ", ") 
-							+ String.valueOf(CpMarcador.MARCADOR_CAIXA_DE_ENTRADA)
-							+ ", " + String.valueOf(CpMarcador.MARCADOR_A_RECEBER)
-							+ ", " + String.valueOf(CpMarcador.MARCADOR_EM_TRANSITO)
-							+ ", " + String.valueOf(CpMarcador.MARCADOR_SOLICITACAO_A_RECEBER);
+							+ String.valueOf(CpMarcadorEnum.CAIXA_DE_ENTRADA.getId())
+							+ ", " + String.valueOf(CpMarcadorEnum.A_RECEBER.getId())
+							+ ", " + String.valueOf(CpMarcadorEnum.EM_TRANSITO.getId())
+							+ ", " + String.valueOf(CpMarcadorEnum.SOLICITACAO_A_RECEBER.getId());
 					}
 					query += "SELECT "
 						+ grupoItem.grupoOrdem + ", "
@@ -1874,14 +1874,14 @@ public class ExDao extends CpDao {
 						  + " marca2.id_ref = marca.id_ref "
 						  + " AND (marca2.dt_ini_marca IS NULL OR marca2.dt_ini_marca < :dbDatetime)"
 						  + " AND (marca2.dt_fim_marca IS NULL OR marca2.dt_fim_marca > :dbDatetime)"
-						  + " AND ((marcador.GRUPO_MARCADOR <> " + String.valueOf(Mesa2.GrupoDeMarcadorEnum.EM_ELABORACAO.getId()) 
-						  	+ " AND MARCA2.ID_MARCADOR = " + String.valueOf(CpMarcador.MARCADOR_EM_ELABORACAO) + ") "
+						  + " AND ((marcador.GRUPO_MARCADOR <> " + String.valueOf(CpMarcadorGrupoEnum.EM_ELABORACAO.getId()) 
+						  	+ " AND MARCA2.ID_MARCADOR = " + String.valueOf(CpMarcadorEnum.EM_ELABORACAO.getId()) + ") "
 						  	+ ( "".equals(queryMarcasAIgnorarFinal) ? ")" : 
 						  		"OR (((marca2.id_pessoa_ini = :idPessoaIni) OR (marca2.id_lotacao_ini = :idLotacaoIni))"
 						  		+ " AND marca2.id_tp_marca = 1"						 
 						  		+ " AND marca2.id_marcador in (" + queryMarcasAIgnorarFinal + ")))" )
 //  						  + (!grupoItem.grupoNome.equals(Mesa2.GrupoDeMarcadorEnum.EM_ELABORACAO.getNome())?
-//  								  " OR marca2.id_marcador = " + String.valueOf(CpMarcador.MARCADOR_EM_ELABORACAO) + ")" : ")")
+//  								  " OR marca2.id_marcador = " + String.valueOf(MarcadorEnum.EM_ELABORACAO.getId()) + ")" : ")")
 						 + " WHERE (marca.dt_ini_marca IS NULL OR marca.dt_ini_marca < :dbDatetime)"
 						  + " AND (marca.dt_fim_marca IS NULL OR marca.dt_fim_marca > :dbDatetime)"
 						  + " AND ((marca.id_pessoa_ini = :idPessoaIni) OR (marca.id_lotacao_ini = :idLotacaoIni))"
@@ -1902,8 +1902,8 @@ public class ExDao extends CpDao {
 				Query sql = em().createNativeQuery(query);
 				sql.setParameter("idPessoaIni", pes.getIdPessoaIni());
 				sql.setParameter("idLotacaoIni", lot.getIdLotacaoIni());
-				sql.setParameter("marcaAssinSenha", CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA);
-				sql.setParameter("marcaMovAssinSenha", CpMarcador.MARCADOR_MOVIMENTACAO_ASSINADA_COM_SENHA);
+				sql.setParameter("marcaAssinSenha", CpMarcadorEnum.DOCUMENTO_ASSINADO_COM_SENHA.getId());
+				sql.setParameter("marcaMovAssinSenha", CpMarcadorEnum.MOVIMENTACAO_ASSINADA_COM_SENHA.getId());
 				sql.setParameter("dbDatetime", this.consultarDataEHoraDoServidor());
 				
 				result = sql.getResultList();
@@ -1962,8 +1962,8 @@ public class ExDao extends CpDao {
 		if (exibeLotacao && lotaTitular != null)
 			query.setParameter("lotaTitular", lotaTitular.getIdLotacaoIni());
 
-		query.setParameter("marcaAssinSenha", CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA);
-		query.setParameter("marcaMovAssinSenha", CpMarcador.MARCADOR_MOVIMENTACAO_ASSINADA_COM_SENHA);
+		query.setParameter("marcaAssinSenha", CpMarcadorEnum.DOCUMENTO_ASSINADO_COM_SENHA.getId());
+		query.setParameter("marcaMovAssinSenha", CpMarcadorEnum.MOVIMENTACAO_ASSINADA_COM_SENHA.getId());
 		query.setParameter("dbDatetime", this.consultarDataEHoraDoServidor());
 		
 		l = query.getResultList();

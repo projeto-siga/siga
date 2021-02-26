@@ -11,6 +11,7 @@ import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -48,12 +49,18 @@ public class DocumentosSiglaMarcadoresDisponiveisGet implements IDocumentosSigla
 				throw new AplicacaoException(
 						"Acesso ao documento " + mob.getSigla() + " permitido somente a usuários autorizados. ("
 								+ titular.getSigla() + "/" + lotaTitular.getSiglaCompleta() + ")");
+			
 
 			List<CpMarcador> marcadores = ExDao.getInstance().listarCpMarcadoresDisponiveis(so.getLotaTitular());
 
 			if (marcadores != null) {
+				boolean atendente = mob.isAtendente(titular, lotaTitular);
 				resp.list = new ArrayList<>();
 				for (CpMarcador m : marcadores) {
+					if (m.getIdFinalidade() == CpMarcadorFinalidadeEnum.PASTA_PADRAO)
+						continue;
+					if (m.getIdFinalidade() == CpMarcadorFinalidadeEnum.PASTA && !atendente)
+						continue;
 					Marcador mr = new Marcador();
 					mr.idMarcador = m.getIdMarcador().toString();
 					mr.grupo = m.getIdFinalidade().getGrupo().getNome();

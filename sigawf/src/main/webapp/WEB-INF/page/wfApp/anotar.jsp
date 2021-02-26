@@ -5,7 +5,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title" id="anotarModalLabel">Acrescentar uma
-					Anotação${piId}x</h5>
+					Anotação</h5>
 				<button type="button" class="close" data-dismiss="modal"
 					aria-label="Close">
 					<span aria-hidden="true">&times;</span>
@@ -34,6 +34,10 @@
 	</div>
 </div>
 <script>
+	function initanotarModal() {
+
+	}
+
 	function tamanho() {
 		var i = tamanho2();
 		if (i < 0) {

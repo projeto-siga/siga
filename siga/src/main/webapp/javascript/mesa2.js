@@ -124,6 +124,10 @@ var appMesa = new Vue({
 			this.trazerCancelados = (getParmUser('trazerCancelados') == null ? false : getParmUser('trazerCancelados'));
 			this.ordemCrescenteData = (getParmUser('ordemCrescenteData') == null ? false : getParmUser('ordemCrescenteData'));
 			setValueGrupo('Aguardando Ação de Temporalidade', 'hide', !this.trazerArquivados);
+			
+
+			/* clean toast container before reload notification */
+			$('#toastContainer').empty();
 
 			var timeout = Math.abs(new Date() -
 				new Date(sessionStorage.getItem('timeout' + getUser())));
@@ -185,7 +189,7 @@ var appMesa = new Vue({
 						self.carregando = false;
 					} else {
 						if (response.status > 300) {
-							if (cType.indexOf('text/html') !== -1) {
+							if (cType != null && cType.indexOf('text/html') !== -1) {
 								document.write(response.responseText);
 							} else {
 								self.errormsg = response.responseText & " - " & response.status;
@@ -201,7 +205,22 @@ var appMesa = new Vue({
 				failure: function(response, status) {
 					self.carregando = false;
 					self.showError(response.responseText, self);
-				}
+				},
+				success: function(){		
+					$.ajax({
+				        url: "/siga/api/v1/notificacoes",
+				        contentType: "application/json",
+				        dataType: 'json',
+				        success: function(result){
+							if (result.list.length > 0) {
+								toaster(result.list);
+							}
+				        },
+						error: function(result){	
+				        	console.log(result.errormsg);
+				        },
+				   });
+			   }
 			})
 		},
 		resetaStorage: function() {
@@ -629,3 +648,90 @@ function resetCacheLotacaoPessoaAtual() {
 	      }
 	}
 }
+
+function toaster(_notificacoes) {
+	
+	var toastContainer = $('#toastContainer');
+	
+	/* clean toast container before reload notifications */
+	toastContainer.empty();
+	
+	/* Create Toast*/
+	_notificacoes.forEach(createToast);
+
+
+	function createToast(item) {
+		var id = item.idNotificacao;
+		var icone = item.icone;
+		var titulo = item.titulo;
+		var conteudo = item.conteudo;
+		
+		
+		$('<div>', {
+		    id: 'toastNotificacao_'+id,
+		    class: 'toast',
+		    role: 'alert',
+			'aria-live': 'assertive',
+			'aria-atomic': 'true',
+			'data-autohide': 'false'
+		}).appendTo(toastContainer);
+		
+		/* Create Toast Header*/
+		$('<div>', {
+		    id: 'toastNotificacaoHeader_'+id,
+		    class: 'toast-header '
+		}).appendTo('#toastNotificacao_'+id);
+		
+
+		
+		$('#toastNotificacaoHeader_'+id).html(mountToastHeader(icone,titulo));
+			
+
+		$('<button>', {
+		    id: 'toastNotificacaoHeaderButton_'+id,
+			type: 'button',
+		    class: 'ml-2 mb-1 close',
+			'data-dismiss': 'toast',
+			'aria-label':'Close'
+		}).appendTo('toastNotificacaoHeader_'+id);
+		
+		$('<div>', {
+		    id: 'toastNotificacaoBody_'+id,
+		    class: 'toast-body'
+		}).appendTo('#toastNotificacao_'+id);
+		
+		
+		$('#toastNotificacaoBody_'+id).html(conteudo);
+		
+		$('#toastNotificacao_'+id).on('shown.bs.toast', function () {
+		  /* TODO: mostrado notificação */
+		})
+		
+		$('#toastNotificacao_'+id).on('hidden.bs.toast', function () {
+		  /* TODO: dispensado notificacao */
+		})
+		
+	}
+
+	function mountToastHeader(icone,titulo) {
+		var header ="";
+		header = '<span class="mr-auto font-weight-bold">';
+		
+		if (icone != null || icone != "") { //Icone da Notificação
+			header = header +'<i class="'+icone+'"></i>&nbsp;';	
+		}
+		if (titulo != null || titulo != "") { //Título da Notificação
+			header = header + titulo;	
+		}
+		
+		header = header + '</span>';
+		header = header + '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
+		return header;	
+	}
+	
+	$(document).ready(function() {
+        $(".toast").toast('show');
+    });
+
+}
+

@@ -76,7 +76,7 @@ abstract class DocumentosSiglaAssinarAutenticarComSenhaPost {
 			assertDocumento(titular, lotaTitular, mob);
 
 			String retornoAssinatura = Ex.getInstance().getBL().assinarDocumentoComSenha(cadastrante, lotaTitular,
-					mob.doc(), null, cadastrante.getSiglaCompleta(), null, false, titular, this.autenticar, null,
+					mob.doc(), null, cadastrante.getSiglaCompleta(), null, false, false, titular, this.autenticar, null,
 					false, false);
 
 			preenchedorResposta.accept(mob.doc().getCodigo(), Objects.toString(retornoAssinatura, "OK"));

@@ -1685,7 +1685,7 @@ public class ExBL extends CpBL {
 	}
 
 	public String assinarDocumentoComSenha(final DpPessoa cadastrante, final DpLotacao lotaCadastrante,
-			final ExDocumento doc, final Date dtMov, final String matriculaSubscritor, final String senhaSubscritor,
+			final ExDocumento doc, final Date dtMov, final String matriculaSubscritor, final String senhaSubscritor, final boolean senhaIsPIN,
 			final boolean validarSenha, final DpPessoa titular, final boolean autenticando, Boolean juntar,
 			Boolean tramitar, final Boolean exibirNoProtocolo) throws Exception {
 
@@ -1694,7 +1694,8 @@ public class ExBL extends CpBL {
 		boolean fValido = false;
 		boolean fSubstituindoSubscritor = false;
 		boolean fSubstituindoCosignatario = false;
-		
+		final String formaAssinaturaSenha = senhaIsPIN ? "PIN" : "Senha";
+		final String concordanciaAssinaturaSenha = senhaIsPIN ? "o" : "a";
 
 		if (matriculaSubscritor == null || matriculaSubscritor.isEmpty())
 			throw new AplicacaoException("Matrícula do Subscritor não foi informada.");
@@ -1705,17 +1706,29 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("O usuário não está cadastrado.");
 
 		subscritor = id.getDpPessoa().getPessoaAtual();
-		
+
 		if (validarSenha) {
-			if (senhaSubscritor == null || senhaSubscritor.isEmpty())
-				throw new AplicacaoException("Senha do Subscritor não foi informada.");
-
-			final String hashAtual = GeraMessageDigest.executaHash(senhaSubscritor.getBytes(), "MD5");
-
-			boolean senhaValida = id.getDscSenhaIdentidade().equals(hashAtual);
+			
+			if (senhaSubscritor == null || senhaSubscritor.isEmpty()) {
+				throw new AplicacaoException(String.format("%s do subscritor não foi informad%s.",formaAssinaturaSenha,concordanciaAssinaturaSenha));
+			}
+				
+			String hashAtual = null;
+			boolean senhaValida = false;
+			if (senhaIsPIN) { 
+				if (id.getPinIdentidade() == null) {
+					throw new AplicacaoException("Não há um PIN cadastrado para registrar assinatura. Utilize outra forma ou cadastre um PIN se disponível clicando <a href='/siga/app/pin/cadastro'>aqui</a>.");
+				}
+				
+				hashAtual = GeraMessageDigest.calcSha256(senhaSubscritor);	
+				senhaValida = id.getPinIdentidade().equals(hashAtual);
+			} else {
+				hashAtual = GeraMessageDigest.executaHash(senhaSubscritor.getBytes(), "MD5");
+				senhaValida = id.getDscSenhaIdentidade().equals(hashAtual);
+			}
 
 			if (!senhaValida) {
-				throw new AplicacaoException("Senha do subscritor inválida.");
+				throw new AplicacaoException(String.format("%s do subscritor inválid%s.",formaAssinaturaSenha,concordanciaAssinaturaSenha));
 			}
 		}
 
@@ -1822,7 +1835,7 @@ public class ExBL extends CpBL {
 					autenticando ? ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA
 							: ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA,
 					cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov, assinante, null, null, null, null);
-			mov.setDescrMov(assinante.getNomePessoa() + ":" + assinante.getSigla());
+			mov.setDescrMov(assinante.getNomePessoa() + ":" + assinante.getSigla() + " ["+formaAssinaturaSenha+"]");
 			String cpf = Long.toString(assinante.getCpfPessoa());
 			acrescentarHashDeAuditoria(mov, sha256, autenticando, assinante.getNomePessoa(), cpf, null);
 
@@ -1907,32 +1920,46 @@ public class ExBL extends CpBL {
 	}
 
 	public void assinarMovimentacaoComSenha(DpPessoa cadastrante, DpLotacao lotaCadastrante, ExMovimentacao movAlvo,
-			final Date dtMov, final String matriculaSubscritor, final String senhaSubscritor,
+			final Date dtMov, final String matriculaSubscritor, final String senhaSubscritor, final boolean senhaIsPIN,
 			final boolean validarSenha, long tpMovAssinatura) throws Exception {
 
 		DpPessoa subscritor = null;
 		boolean fValido = false;
+		final String formaAssinaturaSenha = senhaIsPIN ? "PIN" : "Senha";
+		final String concordanciaAssinaturaSenha = senhaIsPIN ? "o" : "a";
 
 		if (matriculaSubscritor == null || matriculaSubscritor.isEmpty())
 			throw new AplicacaoException("Matrícula do Subscritor não foi informada.");
 
+		final CpIdentidade id = dao().consultaIdentidadeCadastrante(matriculaSubscritor, true);
+		// se o usuário não existir
+		if (id == null)
+			throw new AplicacaoException("O usuário não está cadastrado.");
+
+		subscritor = id.getDpPessoa().getPessoaAtual();
+		
 		if (validarSenha) {
-			if (senhaSubscritor == null || senhaSubscritor.isEmpty())
-				throw new AplicacaoException("Senha do Subscritor não foi informada.");
-
-			final String hashAtual = GeraMessageDigest.executaHash(senhaSubscritor.getBytes(), "MD5");
-
-			final CpIdentidade id = dao().consultaIdentidadeCadastrante(matriculaSubscritor, true);
-			// se o usuário não existir
-			if (id == null)
-				throw new AplicacaoException("O usuário não está cadastrado.");
-
-			subscritor = id.getDpPessoa().getPessoaAtual();
-
-			boolean senhaValida = id.getDscSenhaIdentidade().equals(hashAtual);
+			
+			if (senhaSubscritor == null || senhaSubscritor.isEmpty()) {
+				throw new AplicacaoException(String.format("%s do subscritor não foi informad%s.",formaAssinaturaSenha,concordanciaAssinaturaSenha));
+			}
+				
+			String hashAtual = null;
+			boolean senhaValida = false;
+			if (senhaIsPIN) { 
+				if (id.getPinIdentidade() == null) {
+					throw new AplicacaoException("Não há um PIN cadastrado para registrar assinatura. Utilize outra forma ou cadastre um PIN se disponível clicando <a href='/siga/app/pin/cadastro'>aqui</a>.");
+				}
+				
+				hashAtual = GeraMessageDigest.calcSha256(senhaSubscritor);	
+				senhaValida = id.getPinIdentidade().equals(hashAtual);
+			} else {
+				hashAtual = GeraMessageDigest.executaHash(senhaSubscritor.getBytes(), "MD5");
+				senhaValida = id.getDscSenhaIdentidade().equals(hashAtual);
+			}
 
 			if (!senhaValida) {
-				throw new AplicacaoException("Senha do subscritor inválida.");
+				throw new AplicacaoException(String.format("%s do subscritor inválid%s.",formaAssinaturaSenha,concordanciaAssinaturaSenha));
 			}
 		}
 
@@ -1990,7 +2017,7 @@ public class ExBL extends CpBL {
 			final ExMovimentacao mov = criarNovaMovimentacao(tpMovAssinatura, cadastrante, lotaCadastrante,
 					movAlvo.getExMobil(), null, null, null, null, null, null);
 
-			mov.setDescrMov(subscritor.getNomePessoa() + ":" + subscritor.getSigla());
+			mov.setDescrMov(subscritor.getNomePessoa() + ":" + subscritor.getSigla() + " ["+formaAssinaturaSenha+"]");
 
 			mov.setExMovimentacaoRef(movAlvo);
 

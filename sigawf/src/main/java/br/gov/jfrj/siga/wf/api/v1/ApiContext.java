@@ -54,6 +54,7 @@ public class ApiContext implements Closeable {
 		if (!RequestLoggerFilter.isAplicacaoException(e)) {
 			RequestLoggerFilter.logException(null, inicio, e);
 		}
+		ContextoPersistencia.setDt(null);
 	}
 
 	@Override
@@ -68,6 +69,7 @@ public class ApiContext implements Closeable {
 		} finally {
 			em.close();
 			ContextoPersistencia.setEntityManager(null);
+			ContextoPersistencia.setDt(null);
 		}
 	}
 

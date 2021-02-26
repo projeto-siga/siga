@@ -1154,4 +1154,19 @@ public class FuncoesEL {
 		return formatter.format(dt);
 	}
 	
+	public static Boolean podeUtilizarSegundoFatorPin(DpPessoa pessoa,DpLotacao lotacao) throws Exception {
+		return Ex.getInstance().getComp()
+				.podeUtilizarSegundoFatorPin(pessoa, lotacao);
+	}
+	
+	public static Boolean deveUtilizarSegundoFatorPin(DpPessoa pessoa,DpLotacao lotacao) throws Exception {
+		return Ex.getInstance().getComp()
+				.deveUtilizarSegundoFatorPin(pessoa, lotacao);
+	}
+	
+	public static Boolean defaultUtilizarSegundoFatorPin(DpPessoa pessoa,DpLotacao lotacao) throws Exception {
+		return Ex.getInstance().getComp()
+				.defaultUtilizarSegundoFatorPin(pessoa, lotacao);
+	}
+	
 }

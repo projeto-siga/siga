@@ -185,6 +185,10 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 
 	public static final long TIPO_CONFIG_UTILIZAR_SERVICO_OUTRA_LOTACAO = 205;
 	public static final long TIPO_CONFIG_GERENCIAR_GRUPO = 206;
+	
+	//207 - Excluir Anotação Criada
+	
+	public static final long TIPO_CONFIG_SEGUNDO_FATOR_PIN = 208;
 
 	public CpTipoConfiguracao() {
 	}

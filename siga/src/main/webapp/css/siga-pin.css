@@ -1,0 +1,75 @@
+.etapa {
+	display: none;
+}
+
+.indicador-etapa {
+  height: 15px;
+  width: 15px;
+  margin: 0 2px;
+  background-color: #007bff;
+  border: none;
+  border-radius: 50%;
+  display: inline-block;
+  opacity: 0.5;
+}
+
+.indicador-etapa.active {
+	opacity: 1;	
+}
+
+.indicador-etapa.finish {
+ 	background-color: #4CAF50;
+}
+
+.btn-proximo[disabled] {
+	cursor: not-allowed;
+}
+	
+div.dropdown-menu.show {
+	min-width: 100%!important;
+	max-width: 100%!important;
+}
+
+ul.dropdown-menu.inner.show {
+	margin-bottom: 0!important;
+}
+
+.btn.dropdown-toggle {
+	background-color: #FFF;
+}
+
+.select2-container--bootstrap {
+	width: 100%!important; 
+}
+
+.titulo-principal-etapa {		
+	margin-top: .5rem;
+}
+
+.titulo-etapa-topo {
+	color: #585858;
+	font-size: 1rem;
+	font-weight: 300;
+}
+
+.spinner--salvando {
+	display: block;
+    width: 120px;
+    height: 120px;
+    border: 15px solid rgba(0, 0, 0, .1);
+    border-left-color: #28a745;
+    position: static;
+    margin: 0 auto;
+    transition: border-color 1s;
+}
+
+.icone-salvo-sucesso {
+    color: #28a745;
+    font-size: 120px;    
+    position: absolute;
+    top: 0;    
+    left: calc(50% - 60px);    
+    opacity: 0;    
+    transition: opacity 1s;            
+}
+	

@@ -77,6 +77,18 @@ public interface ISigaApiV1 {
 		public Date datahora;
 		public String ip;
 	}
+	
+	public class Notificacao implements ISwaggerModel {
+		public String idNotificacao;
+		public String titulo;
+		public String icone;
+		public String resumo;
+		public String conteudo;
+		public Date dataInicio;
+		public Date dataTermino;
+		public Boolean sempreMostrar;
+	}
+	
 
 	public class AutenticarPostRequest implements ISwaggerRequest {
 	}
@@ -314,6 +326,61 @@ public interface ISigaApiV1 {
 		public void run(MarcadoresPostRequest req, MarcadoresPostResponse resp) throws Exception;
 	}
 
+	
+	/* ---------- PIN ----------- */ //TODO: Criar as classes
+	public class PinPostRequest implements ISwaggerRequest {
+		public String pin;
+	}
+
+	public class PinPostResponse implements ISwaggerResponse {
+		public String mensagem;
+	}
+
+	public interface IPinPost extends ISwaggerMethod {
+		public void run(PinPostRequest req, PinPostResponse resp) throws Exception;
+	}
+
+	public class PinTrocarPostRequest implements ISwaggerRequest {
+		public String pinAtual;
+		public String pin;
+	}
+
+	public class PinTrocarPostResponse implements ISwaggerResponse {
+		public String mensagem;
+	}
+
+	public interface IPinTrocarPost extends ISwaggerMethod {
+		public void run(PinTrocarPostRequest req, PinTrocarPostResponse resp) throws Exception;
+	}
+
+	public class PinResetPostRequest implements ISwaggerRequest {
+		public String tokenPin;
+		public String pin;
+	}
+
+	public class PinResetPostResponse implements ISwaggerResponse {
+		public String mensagem;
+	}
+
+	public interface IPinResetPost extends ISwaggerMethod {
+		public void run(PinResetPostRequest req, PinResetPostResponse resp) throws Exception;
+	}
+
+	public class PinGerarTokenResetPostRequest implements ISwaggerRequest {
+	}
+
+	public class PinGerarTokenResetPostResponse implements ISwaggerResponse {
+		public String mensagem;
+	}
+
+	public interface IPinGerarTokenResetPost extends ISwaggerMethod {
+		public void run(PinGerarTokenResetPostRequest req, PinGerarTokenResetPostResponse resp) throws Exception;
+	}
+	
+	/* ------- END PIN -------- */
+	
+
+
 	public class TokenCriarPostRequest implements ISwaggerRequest {
 		public String username;
 		public String password;
@@ -327,4 +394,16 @@ public interface ISigaApiV1 {
 		public void run(TokenCriarPostRequest req, TokenCriarPostResponse resp) throws Exception;
 	}
 
+	
+	public class NotificacoesGetRequest implements ISwaggerRequest {
+		public String sigla;
+	}
+
+	public class NotificacoesGetResponse implements ISwaggerResponse {
+		public List<Notificacao> list;
+	}
+
+	public interface INotificacoesGet extends ISwaggerMethod {
+		public void run(NotificacoesGetRequest req, NotificacoesGetResponse resp) throws Exception;
+	}
 }

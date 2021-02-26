@@ -6358,7 +6358,7 @@ public class ExBL extends CpBL {
 				&& (!Prop.isGovSP()))
 			throw new AplicacaoException("não é possível salvar um modelo sem informar a descrição.");
 		
-		if ( modNovo.getDescMod().trim().length() > 256 	&&  !Prop.isGovSP() )
+		if (modNovo.getDescMod() != null && modNovo.getDescMod().trim().length() > 256 )
 			throw new AplicacaoException("A Descrição deve conter no máximo 256 caracteres");
 		
 		try {

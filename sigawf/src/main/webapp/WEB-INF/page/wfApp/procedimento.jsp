@@ -253,6 +253,8 @@
 
 				<%@ include file="anotar.jsp"%>
 
+				<%@ include file="redirecionar.jsp"%>
+
 				<script>
 		if (${not empty f:resource('graphviz.url')}) {
 		} else if (window.Worker) {

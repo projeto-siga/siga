@@ -36,13 +36,13 @@ public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
 	//
 	TARJA_DIRECIONADA(5, CpMarcadorFinalidadeGrupoEnum.TARJA, "Tarja Direcionada",
 			"Marcador que pode ser definido por qualquer pessoa e estará visível para uma lotação ou pessoa  definida, independente da localização do documento",
-			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
+			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.GERAL,
 			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
 			CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA, CpMarcadorTipoTextoEnum.OPCIONAL, false),
 	//
 	TARJA_AGENDADA_DIRECIONADA(7, CpMarcadorFinalidadeGrupoEnum.TARJA, "Tarja Agendada Direcionada",
 			"Marcador que pode ser definido por qualquer pessoa e estará visível, a partir de uma data definida, para uma lotação ou pessoa definida, independente da localização do documento",
-			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
+			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.GERAL,
 			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.DESATIVADA,
 			CpMarcadorTipoExibicaoEnum.MENOR_DATA, CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA,
 			CpMarcadorTipoTextoEnum.OPCIONAL, false),
@@ -67,7 +67,7 @@ public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
 	//
 	ETIQUETA_DIRECIONADA(102, CpMarcadorFinalidadeGrupoEnum.ETIQUETA, "Etiqueta Direcionada",
 			"Marcador que pode ser definido por pessoa da minha lotação e estará visível para uma lotação ou pessoa definida, independente da localização do documento",
-			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
+			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.GERAL,
 			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
 			CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA, CpMarcadorTipoTextoEnum.OPCIONAL, false),
 	//
@@ -90,7 +90,7 @@ public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
 	LISTA_AGENDADA(301, CpMarcadorFinalidadeGrupoEnum.LISTA, "Lista Agendada",
 			"Marcador que pode ser definido por pessoa da minha lotação para agrupar documentos de interesse de Pessoa ou Lotação definida, a partir de uma data definida",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
-			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.OPCIONAL, CpMarcadorTipoExibicaoEnum.MENOR_DATA,
+			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.MENOR_DATA,
 			CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA, CpMarcadorTipoTextoEnum.OPCIONAL, false);
 
 	private final Integer id;

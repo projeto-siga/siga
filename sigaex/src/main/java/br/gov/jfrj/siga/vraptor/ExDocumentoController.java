@@ -1235,6 +1235,7 @@ public class ExDocumentoController extends ExController {
 											ExTipoMovimentacao.TIPO_MOVIMENTACAO_ELIMINACAO)
 									.getExMobilRef());
 		}
+		docVO.calculaSetsDeMarcas();
 		result.include("msg", exDocumentoDTO.getMsg());
 		result.include("docVO", docVO);
 		result.include("mob", exDocumentoDTO.getMob());

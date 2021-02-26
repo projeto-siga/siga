@@ -6,6 +6,12 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
+<style type="text/css">
+.tamanhodiv { 
+    min-width: 0px !important;
+} 
+</style> 
+
 <siga:pagina titulo="Novo Documento">
 	<link rel="stylesheet" href="/siga/javascript/hierarchy-select/hierarchy-select.css" type="text/css" media="screen, projection" />
 	<script type="text/javascript" src="/ckeditor/ckeditor/ckeditor.js?v=4.15.0.L0FJ.c71958523b"></script>
@@ -83,8 +89,8 @@
 								<div class="form-group">
 									<label for="modelos-select"><fmt:message key="documento.modelo"/></label>
 
-									<div class="btn-group hierarchy-select form-control p-0" data-resize="auto" id="modelos-select">
-										<button type="button" class="btn btn-light dropdown-toggle bg-white"  <c:if test='${podeEditarModelo}'>disabled</c:if>
+									<div class="btn-group hierarchy-select form-control p-0 tamanhodiv" data-resize="auto" id="modelos-select" style="min-width: 0px !important;">
+											<button type="button" class="btn btn-light dropdown-toggle bg-white"  <c:if test='${podeEditarModelo}'>disabled</c:if>
 											id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-disabled="true">
 											<span class="selected-label pull-left">&nbsp;</span>
 										</button>
@@ -141,7 +147,7 @@
 							<div class="form-group">
 								<input type="hidden" name="campos" value="dtDocString" />						
 								<label class=" " for="exDocumentoDTO.dtDocString">Data</label>
-								<input type="text" name="exDocumentoDTO.dtDocString" size="10" onblur="javascript:verifica_data(this, true);" value="${exDocumentoDTO.dtDocString}" class="form-control"/>
+								<input type="text" name="exDocumentoDTO.dtDocString" size="10" onblur="javascript:verifica_data(this, true);" value="${exDocumentoDTO.dtDocString}" class="form-control campoData" autocomplete="off"/>
 							</div>
 						</div>
 

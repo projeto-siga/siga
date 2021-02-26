@@ -3980,8 +3980,7 @@ public class ExBL extends CpBL {
 				throw new RegraNegocioException("Não foi selecionado um documento para a juntada");
 
 			if (mob.getExDocumento().getIdDoc().equals(mobPai.getExDocumento().getIdDoc())
-					&& mob.getNumSequencia().equals(mobPai.getNumSequencia())
-					&& mob.getExTipoMobil().getIdTipoMobil().equals(mobPai.getExTipoMobil().getIdTipoMobil()))
+					&& mob.getNumSequencia().equals(mobPai.getNumSequencia()))
 				throw new RegraNegocioException("Não é possível juntar um documento a ele mesmo");					
 			
 			if (!mobPai.getExDocumento().isFinalizado())

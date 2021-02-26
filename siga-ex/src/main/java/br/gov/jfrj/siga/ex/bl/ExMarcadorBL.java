@@ -268,12 +268,12 @@ public class ExMarcadorBL {
 				continue;
 			
 			// Aplicar marcas de lotação apenas se o atendente for a lotação
-			if (marcador.getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO
-					&& marcador.getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.ATENDENTE
-					&& marcador.getDpLotacaoIni() != null) {
-				if (!mob.isAtendente(null, marcador.getDpLotacaoIni()))
-					continue;
-			}
+//			if (marcador.getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO
+//					&& marcador.getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.ATENDENTE
+//					&& marcador.getDpLotacaoIni() != null) {
+//				if (!mob.isAtendente(null, marcador.getDpLotacaoIni()))
+//					continue;
+//			}
 			
 //			// Calcular datas de referencia
 //			Date dtRef1 = mov.getDtParam1();

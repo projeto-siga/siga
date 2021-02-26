@@ -1352,7 +1352,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				null, null, null, null, null, lotacao, pessoa, null,null,
 				CpTipoConfiguracao.TIPO_CONFIG_SEGUNDO_FATOR_PIN);
 		
-		if (situacao != null && situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_DEFAULT)
+		if (situacao != null && (situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_DEFAULT ||	situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_OBRIGATORIO))
 			return true;
 
 		return false; 

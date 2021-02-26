@@ -72,7 +72,7 @@ public enum CpTipoDeConfiguracao implements ITipoDeConfiguracao {
 					+"PODE: Habilita uso do PIN como Segundo Fator e combinado com o Assinar com Senha libera o uso de autenticar com PIN.\n"
 					+"NÃO PODE: Desativa uso do PIN como Segundo Fator.\n"
 					+"DEFAULT: Combinado com outras funcionalidades dita qual é o provedor de segundo fator de autenticação padrão.\n"
-					+"OBRIGATORIO: Combinado com outras funcionalidades obriga a o segundo fator de autenticação ocorrer somente via PIN.\n",
+					+"OBRIGATORIO: Combinado com outras funcionalidades obriga a o segundo fator de autenticação ocorrer somente via PIN e torna o DEFAULT automaticamente.\n",
 			new CpParamCfg[] { CpParamCfg.ORGAO, CpParamCfg.PESSOA, CpParamCfg.LOTACAO }, new CpParamCfg[] { CpParamCfg.SITUACAO },
 			new SituacaoDeConfiguracao[] { SituacaoDeConfiguracao.PODE, SituacaoDeConfiguracao.NAO_PODE, SituacaoDeConfiguracao.DEFAULT, SituacaoDeConfiguracao.OBRIGATORIO }),
 	;

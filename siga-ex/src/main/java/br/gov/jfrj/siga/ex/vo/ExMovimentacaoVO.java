@@ -188,7 +188,7 @@ public class ExMovimentacaoVO extends ExVO {
 				descricao += (mov.getSubscritor() == null ? ", lotação interessada: " : "/") + mov.getLotaSubscritor().getSiglaCompleta();
 			if (mov.getDtParam1() != null) 
 				descricao += ", data de exibição: " + Data.formatDataETempoRelativo(mov.getDtParam1());
-			if (mov.getDtParam1() != null) 
+			if (mov.getDtParam2() != null) 
 				descricao += ", prazo final: " + Data.formatDataETempoRelativo(mov.getDtParam2());
 			if (mov.getObs() != null && mov.getObs().trim().length() > 0)
 				descricao += ", obs: " + mov.getObs();

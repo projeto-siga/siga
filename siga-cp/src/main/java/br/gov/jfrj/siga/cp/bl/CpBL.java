@@ -1420,7 +1420,7 @@ public class CpBL {
 				&& c > 10) 
 			throw new AplicacaoException ("Atingiu o limite de 10 marcadores possíveis para " + msgLotacao);
 		
-		if (idFinalidade == CpMarcadorFinalidadeEnum.PASTA_PADRAO && id == null && c > 0) 
+		if (idFinalidade == CpMarcadorFinalidadeEnum.PASTA_PADRAO && id == null && cpp > 0) 
 			throw new AplicacaoException ("Só é permitido criar uma pasta padrão");
 		
 		if (id == null && (listaMarcadoresLotacaoEGerais.stream()

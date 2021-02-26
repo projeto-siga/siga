@@ -615,7 +615,7 @@
 										</c:if>
 										<tr>
 										<td style="padding-left: 2.5rem">${marca.descricaoComDatas}
-										<c:if test="${empty pessoaAtual or empty lotacaoAtual or not pessoaAtual.equivale(titular) or not lotacaoAtual.equivale(lotaTitular)}">
+										<c:if test="${marca.cpMarcador.idFinalidade.idTpInteressado != 'ATENDENTE'}">
 											- <c:if test="${not empty pessoaAtual}"><siga:selecionado isVraptor="true" sigla="${pessoaAtual.nomeAbreviado}"
 											descricao="${pessoaAtual.descricao} - ${pessoaAtual.sigla}"
 											pessoaParam="${pessoaAtual.siglaCompleta}" /></c:if><c:if test="${not empty lotacaoAtual}"><c:if test="${not empty pessoaAtual}">/</c:if><siga:selecionado isVraptor="true" sigla="${marca.dpLotacaoIni.lotacaoAtual.sigla}"

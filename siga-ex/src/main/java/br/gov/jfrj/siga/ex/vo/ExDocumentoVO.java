@@ -58,7 +58,7 @@ public class ExDocumentoVO extends ExVO {
 	ExDocumentoVO boletim;
 	Map<ExMobil, Set<ExMarca>> marcasPorMobil = new LinkedHashMap<ExMobil, Set<ExMarca>>();
 	private Map<ExMobil, Set<ExMarca>> marcasDeSistemaPorMobil = new LinkedHashMap<ExMobil, Set<ExMarca>>();
-	private Set<ExMarca> marcasDoMobil = new TreeSet<ExMarca>();
+	private Set<ExMarca> marcasDoMobil = new TreeSet<ExMarca>(ExMarca.MARCADOR_DO_MOBIL_COMPARATOR);
 	String outrosMobsLabel;
 	String nomeCompleto;
 	String dtDocDDMMYY;

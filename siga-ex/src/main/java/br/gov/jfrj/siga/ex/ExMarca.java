@@ -18,12 +18,11 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex;
 
+import java.util.Comparator;
 import java.util.Date;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 
 import br.gov.jfrj.siga.base.Data;
 
@@ -34,6 +33,66 @@ import br.gov.jfrj.siga.base.Data;
 @Entity
 @DiscriminatorValue("1")
 public class ExMarca extends AbstractExMarca implements Comparable {
+	
+	final public static ExMarcaDoMobilComparator MARCADOR_DO_MOBIL_COMPARATOR = new ExMarcaDoMobilComparator();
+	
+	public static class ExMarcaDoMobilComparator implements Comparator<ExMarca> {
+
+		@Override
+		public int compare(ExMarca o1, ExMarca o2) {
+			int i = o1.getCpMarcador().getIdFinalidade().getGrupo()
+					.compareTo(o2.getCpMarcador().getIdFinalidade().getGrupo());
+			if (i != 0)
+				return i;
+			i = o1.getCpMarcador().getDescrMarcador().compareTo(o2.getCpMarcador().getDescrMarcador());
+			if (i != 0)
+				return i;
+			i = o1.getCpMarcador().getIdMarcador().compareTo(o2.getCpMarcador().getIdMarcador());
+			if (i != 0)
+				return i;
+			if (o1.getDpLotacaoIni() == null) {
+				if (o2.getDpLotacaoIni() == null)
+					i = 0;
+				else
+					i = -1;
+			} else {
+				if (o2.getDpLotacaoIni() == null)
+					i = 1;
+				else
+					i = o1.getDpLotacaoIni().getIdLotacao().compareTo(o2.getDpLotacaoIni().getIdLotacao());
+			}
+			if (i != 0)
+				return i;
+			if (o1.getDpPessoaIni() == null) {
+				if (o2.getDpPessoaIni() == null)
+					i = 0;
+				else
+					i = -1;
+			} else {
+				if (o2.getDpPessoaIni() == null)
+					i = 1;
+				else
+					i = o1.getDpPessoaIni().getIdPessoa().compareTo(o2.getDpPessoaIni().getIdPessoa());
+			}
+			if (i != 0)
+				return i;
+			if (o1.getIdMarca() == null) {
+				if (o2.getIdMarca() == null)
+					i = 0;
+				else
+					i = -1;
+			} else {
+				if (o2.getIdMarca() == null)
+					i = 1;
+				else
+					i = o1.getIdMarca().compareTo(o2.getIdMarca());
+			}
+			if (i != 0)
+				return i;
+			return 0;
+		}
+
+	}
 
 	public int compareTo(Object o) {
 		ExMarca other = (ExMarca) o;

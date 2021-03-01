@@ -60,7 +60,7 @@ parameters:
   estampa:
     name: estampa
     in: query
-    description: Informar true se deseja receber o PDF sem estampas
+    description: Informar false se deseja receber o PDF sem estampas
     required: false
     default: false
     type: boolean

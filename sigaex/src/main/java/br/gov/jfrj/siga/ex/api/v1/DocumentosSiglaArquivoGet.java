@@ -51,7 +51,7 @@ public class DocumentosSiglaArquivoGet implements IDocumentosSiglaArquivoGet {
 						"Acesso ao documento " + mob.getSigla() + " permitido somente a usuários autorizados. ("
 								+ so.getTitular().getSigla() + "/" + so.getLotaTitular().getSiglaCompleta() + ")");
 
-			String filename = "text/html".equals(req.contenttype)
+			String filename = "application/pdf".equals(req.contenttype)
 					? (req.volumes != null && req.volumes ? mob.doc().getReferenciaPDF() : mob.getReferenciaPDF())
 					: (req.volumes != null && req.volumes ? mob.doc().getReferenciaHtml() : mob.getReferenciaHtml());
 			final String servernameport = request.getServerName() + ":" + request.getServerPort();

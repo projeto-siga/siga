@@ -86,6 +86,7 @@ public class ExMovimentacaoApiVO extends ExApiVO {
 	String lotaCadastranteSigla;
 	String exTipoMovimentacaoSigla;
 	String tempoRelativo;
+	boolean podeExibirNoSigale;
 
 	public ExMovimentacaoApiVO(ExMobilApiVO mobVO, ExMovimentacao mov,
 			DpPessoa cadastrante, DpPessoa titular, DpLotacao lotaTitular) {

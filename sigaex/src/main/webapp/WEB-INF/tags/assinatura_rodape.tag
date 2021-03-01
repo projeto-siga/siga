@@ -5,12 +5,13 @@
 <script>
 	var uriLogoSiga = '${uri_logo_siga_pequeno}';
 </script>
-<script src="/sigaex/public/javascript/assinatura-digital.js"></script>
+<script src="/sigaex/public/javascript/assinatura-digital.js?v=1614289085"></script>
 <input type="hidden" id="siglaUsuarioCadastrante" value="${cadastrante.sigla}"/>
 <input type="hidden" id="siglaUsuSubscritor" value="${doc.subscritor.sigla}"/>
 <input type="hidden" id="siglaUsuTitular" value="${titular.sigla}"/>
 <input type="hidden" id="nomeUsuSubscritor" value="${doc.subscritor.nomePessoa}"/>
 <input type="hidden" id="podeAssinarPorComSenha" value="${podeAssinarPorComSenha}"/>
+<input type="hidden" id="cpfUsuarioCadastrante" value="${cadastrante.cpfFormatado}"/>
 
 <c:forEach items="${doc.getMobilGeral().getMovimentacoesPorTipo(24, true)}" var="currentItem" varStatus="stat">
   <c:set var="cossignatarios" value="${stat.first ? '' : cossignatarios} ${currentItem.subscritor.sigla}" />

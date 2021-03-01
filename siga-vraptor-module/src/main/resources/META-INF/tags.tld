@@ -7,6 +7,22 @@
 	<short-name>demo</short-name>
 	<uri>http://localhost/jeetags</uri>
 	<tag-file>
+		<name>cfg-pesquisa</name>
+		<path>/META-INF/tags/cfg-pesquisa.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>cfg-lista-cabecalho</name>
+		<path>/META-INF/tags/cfg-lista-cabecalho.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>cfg-lista-itens</name>
+		<path>/META-INF/tags/cfg-lista-itens.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>cfg-edita</name>
+		<path>/META-INF/tags/cfg-edita.tag</path>
+	</tag-file>
+	<tag-file>
 		<name>cabecalho</name>
 		<path>/META-INF/tags/cabecalho.tag</path>
 	</tag-file>

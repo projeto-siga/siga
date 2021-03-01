@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.persistence.FlushModeType;
 import javax.persistence.NoResultException;
@@ -50,6 +51,7 @@ import javax.persistence.criteria.Root;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.DateUtils;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpGrupo;
@@ -69,6 +71,7 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.dp.CpAplicacaoFeriado;
 import br.gov.jfrj.siga.dp.CpFeriado;
@@ -2126,8 +2129,7 @@ public class CpDao extends ModeloDao {
 	public DpPessoa getPessoaFromSigla(String sigla) {
 		DpPessoa p = new DpPessoa();
 		p.setSigla(sigla);
-		DpPessoa ator = consultarPorSigla(p);
-		return ator;
+		return  consultarPorSigla(p);
 	}
 
 	public DpLotacao getLotacaoFromSigla(String sigla) {
@@ -2795,12 +2797,7 @@ public class CpDao extends ModeloDao {
 		predicateAnd = criteriaBuilder.and(predicateEqualTipo,predicateEqualToken);
 		criteriaQuery.where(predicateAnd);
 		
-		List<CpToken> l = em().createQuery(criteriaQuery).getResultList(); 
-		if(l.size() > 0) {
-			return l.get(0);
-		} else {
-			return null;
-		}			
+		return em().createQuery(criteriaQuery).getResultStream().findFirst().orElse(null);		
 	}
 	
 	public CpToken obterCpTokenPorTipoIdRef(final Long idTpToken, final Long idRef) {
@@ -2809,37 +2806,37 @@ public class CpDao extends ModeloDao {
 		CriteriaQuery<CpToken> criteriaQuery = criteriaBuilder.createQuery(CpToken.class);	
 		Root<CpToken> cpTokenRoot = criteriaQuery.from(CpToken.class);
 
-		Predicate predicateAnd;
 		Predicate predicateEqualTipo = criteriaBuilder.equal(cpTokenRoot.get("idTpToken"), idTpToken);
 		Predicate predicateEqualToken = criteriaBuilder.equal(cpTokenRoot.get("idRef"), idRef);
-		Predicate predicateNullDtExp = criteriaBuilder.isNull(cpTokenRoot.get("dtExp"));
 		
-		predicateAnd = criteriaBuilder.and(predicateEqualTipo,predicateEqualToken,predicateNullDtExp);
+		Predicate predicateNullDtExp = criteriaBuilder.isNull(cpTokenRoot.get("dtExp"));
+		Predicate predicateGreaterThanDtExp = criteriaBuilder.greaterThanOrEqualTo(cpTokenRoot.get("dtExp"), this.consultarDataEHoraDoServidor());
+		Predicate predicateNullOrDtExpGreater = criteriaBuilder.or(predicateGreaterThanDtExp,predicateNullDtExp);
+			
+		Predicate predicateAnd = criteriaBuilder.and(predicateEqualTipo,predicateEqualToken,predicateNullOrDtExpGreater);
 		criteriaQuery.where(predicateAnd);
 		
-		List<CpToken> l = em().createQuery(criteriaQuery).getResultList(); 
-		if(l.size() > 0) {
-			return l.get(0);
-		} else {
-			return null;
-		}			
+		criteriaQuery.orderBy(criteriaBuilder.desc(cpTokenRoot.get("dtIat")));
+		
+		return em().createQuery(criteriaQuery).getResultStream().findFirst().orElse(null);	
 	}
 
 	public List<CpMarcador> listarCpMarcadoresGerais(Boolean ativos) {
 		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
 		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);
 		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
-		Predicate predicateEqualTipoMarcadorGeral  = criteriaBuilder
-				.equal(cpMarcadorRoot.get("cpTipoMarcador"), CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL);
+		Predicate predicateNotEqualMarcadorSistema  = criteriaBuilder.notEqual(cpMarcadorRoot.get("idFinalidade"), CpMarcadorFinalidadeEnum.SISTEMA.getId());
+		Predicate predicateIsNullLotacao  = criteriaBuilder.isNull(cpMarcadorRoot.get("dpLotacaoIni"));
+		Predicate predicateAnd = criteriaBuilder.and(predicateNotEqualMarcadorSistema, predicateIsNullLotacao);
 		if (ativos == null || ativos) {
 			Predicate predicateNullHisDtFim = criteriaBuilder.isNull(cpMarcadorRoot.get("hisDtFim"));
 			criteriaQuery.where(criteriaBuilder
-					.and(predicateEqualTipoMarcadorGeral, predicateNullHisDtFim));
+					.and(predicateAnd, predicateNullHisDtFim));
 		} else {
-			criteriaQuery.where(predicateEqualTipoMarcadorGeral);
+			criteriaQuery.where(predicateAnd);
 		}
 		
-		return em().createQuery(criteriaQuery).getResultList();
+		return em().createQuery(criteriaQuery).getResultList().stream().filter(mar -> mar.getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL).collect(Collectors.toList());
 	}
 	
 	public List<CpMarcador> listarCpMarcadoresPorLotacao(DpLotacao lotacao, Boolean ativos) {
@@ -2847,18 +2844,27 @@ public class CpDao extends ModeloDao {
 		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);
 		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
 		Predicate predicateAnd;
-		Predicate predicateEqualTipoMarcadorLotacao  = criteriaBuilder.equal(cpMarcadorRoot.get("cpTipoMarcador"), CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO);
+		// Predicate predicateEqualTipoMarcadorLotacao  = criteriaBuilder.equal(cpMarcadorRoot.get("cpTipoMarcador"), CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO);
 		Predicate predicateEqualLotacao  = criteriaBuilder.equal(cpMarcadorRoot.get("dpLotacaoIni"), lotacao.getLotacaoInicial());
 		if (ativos == null || ativos) {
 			Predicate predicateNullHisDtFim = criteriaBuilder.isNull(cpMarcadorRoot.get("hisDtFim"));
-			predicateAnd = criteriaBuilder.and(predicateEqualTipoMarcadorLotacao, predicateEqualLotacao, predicateNullHisDtFim);
+			predicateAnd = criteriaBuilder.and(//predicateEqualTipoMarcadorLotacao, 
+					predicateEqualLotacao, predicateNullHisDtFim);
 		} else {
-			predicateAnd = criteriaBuilder.and(predicateEqualTipoMarcadorLotacao, predicateEqualLotacao);
+			predicateAnd = criteriaBuilder.and(//predicateEqualTipoMarcadorLotacao, 
+					predicateEqualLotacao);
 		}
 		
 		criteriaQuery.where(predicateAnd);
 		criteriaQuery.orderBy(criteriaBuilder.asc(cpMarcadorRoot.get("descrMarcador")));
-		return em().createQuery(criteriaQuery).getResultList();
+		return em().createQuery(criteriaQuery).getResultList().stream().filter(mar -> mar.getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO).collect(Collectors.toList());
+	}
+	
+	public CpMarcador obterPastaPadraoDaLotacao(DpLotacao lotacao) {
+		for (CpMarcador m : listarCpMarcadoresPorLotacao(lotacao, false))
+			if (m.getIdFinalidade() == CpMarcadorFinalidadeEnum.PASTA_PADRAO)
+				return m;
+		return null;
 	}
 	
 	public List<CpMarcador> listarCpMarcadoresPorLotacaoEGeral (DpLotacao lotacao, Boolean ativos) {
@@ -2867,27 +2873,27 @@ public class CpDao extends ModeloDao {
 		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
 		Predicate predicateAnd;
 		
-		Predicate predicateEqualMarcadorGeral  = criteriaBuilder.equal(cpMarcadorRoot.get("cpTipoMarcador"), CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL);
-		
-		Predicate predicateEqualMarcadorLotacao  = criteriaBuilder.equal(cpMarcadorRoot.get("cpTipoMarcador"), CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO);
+		Predicate predicateNotEqualMarcadorSistema  = criteriaBuilder.notEqual(cpMarcadorRoot.get("idFinalidade"), CpMarcadorFinalidadeEnum.SISTEMA.getId());
+//		Predicate predicateEqualMarcadorLotacao  = criteriaBuilder.equal(cpMarcadorRoot.get("cpTipoMarcador"), CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO);
+		Predicate predicateIsNullLotacao  = criteriaBuilder.isNull(cpMarcadorRoot.get("dpLotacaoIni"));
 		Predicate predicateEqualLotacao  = criteriaBuilder.equal(cpMarcadorRoot.get("dpLotacaoIni"), lotacao.getLotacaoInicial());
-		Predicate predicateMarcadorLotacaoAndLotacaoIni  = criteriaBuilder.and(predicateEqualMarcadorLotacao, predicateEqualLotacao);
 		
-		Predicate predicateSemifinal;
-		predicateSemifinal = criteriaBuilder.or(predicateEqualMarcadorGeral, predicateMarcadorLotacaoAndLotacaoIni);
+		Predicate predicateGeralOuLotacaoEspecifica;
+		predicateGeralOuLotacaoEspecifica = criteriaBuilder.or(predicateEqualLotacao, predicateIsNullLotacao);
+		Predicate predicateGeralOuLotacaoEspecificaENaoSistema  = criteriaBuilder.and(predicateNotEqualMarcadorSistema, predicateGeralOuLotacaoEspecifica);
 		 
 		if (ativos == null || ativos) {
 			Predicate predicateNullHisDtFim = criteriaBuilder.isNull(cpMarcadorRoot.get("hisDtFim"));
-			predicateAnd = criteriaBuilder.and(predicateSemifinal, predicateNullHisDtFim);
+			predicateAnd = criteriaBuilder.and(predicateGeralOuLotacaoEspecificaENaoSistema, predicateNullHisDtFim);
 		} else {
-			predicateAnd = predicateSemifinal;
+			predicateAnd = predicateGeralOuLotacaoEspecificaENaoSistema;
 		}
 		
 		criteriaQuery.where(predicateAnd);
 		
-		criteriaQuery.orderBy(criteriaBuilder.asc(cpMarcadorRoot.get("cpTipoMarcador")), 
+		criteriaQuery.orderBy(criteriaBuilder.asc(cpMarcadorRoot.get("idFinalidade")), 
 				criteriaBuilder.asc(cpMarcadorRoot.get("descrMarcador")));
-		return em().createQuery(criteriaQuery).getResultList();	
+		return em().createQuery(criteriaQuery).getResultList().stream().filter(mar -> mar.getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL || mar.getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO).collect(Collectors.toList());	
 	}
 	
 	public <T extends Selecionavel> T carregarPorId(T o) {
@@ -2901,4 +2907,31 @@ public class CpDao extends ModeloDao {
 		return (T) em().find(objetoDetachado.getClass(), 
 				em().getEntityManagerFactory().getPersistenceUnitUtil().getIdentifier(objetoDetachado));
 	}
+	
+	/**
+	 * Consulta genérica por uma coluna long, para pesquisa por id ou idInicial
+	 * 
+	 * @param o Classe da entidade pesquisada
+	 * @param colName nome da coluna do id ou idInicial desta entidade
+	 * @param colDataFim nome da coluna de data final (opcional). Se informada, pega somente 
+	 * 		o que estiver com essa coluna nula (sem data de finalização, ou seja a válida).
+	 * @return Lista de linhas encontradas na tabela.
+	 */
+	public <T> List<T> consultarPorIdOuIdInicial(Class <T> o, String colName, String colDataFim, Long arg) {
+		CriteriaQuery<T> query = cb().createQuery(o);
+		Root<T> c = query.from(o);
+		query.select(c);
+		Predicate predicateAnd;
+		Predicate predicateEqualColName  = cb().equal(c.get(colName), arg);
+		if (colDataFim != null) {
+			Predicate predicateDataFimNula  = cb().isNull(c.get(colDataFim));
+			predicateAnd = cb().and(predicateEqualColName, predicateDataFimNula);
+		} else {
+			predicateAnd = predicateEqualColName;
+		}
+		
+		query.where(predicateAnd);
+		return em().createQuery(query).getResultList();
+	}
+	
 }

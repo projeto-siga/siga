@@ -23,9 +23,12 @@
  */
 package br.gov.jfrj.siga.base;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
+
+import org.bouncycastle.util.encoders.Hex;
 
 public class GeraMessageDigest {
 
@@ -112,5 +115,12 @@ public class GeraMessageDigest {
 	
 	public static String geraSenha() {
 		return geraSenha(8);
+	}
+	
+	public static String calcSha256(String strPlain) throws NoSuchAlgorithmException {	
+		MessageDigest digest = MessageDigest.getInstance("SHA-256");
+		byte[] hash = digest.digest(strPlain.getBytes(StandardCharsets.UTF_8));
+		String sha256hex = new String(Hex.encode(hash));
+		return sha256hex;
 	}
 }

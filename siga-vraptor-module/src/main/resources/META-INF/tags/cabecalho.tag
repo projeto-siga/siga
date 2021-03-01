@@ -16,6 +16,7 @@
 <%@ attribute name="incluirJs"%>
 <%@ attribute name="compatibilidade"%>
 <%@ attribute name="desabilitarComplementoHEAD"%>
+<%@ attribute name="incluirBS" required="false" %>
 
 <c:if test="${not empty titulo}">
 	<c:set var="titulo" scope="request" value="${titulo}" />
@@ -73,8 +74,11 @@
 ${meta}
 
 <c:set var="path" scope="request">${pageContext.request.contextPath}</c:set>
- 
-<link rel="stylesheet" href="/siga/bootstrap/css/bootstrap.min.css?v=4.1.1"	type="text/css" media="screen, projection" />
+
+<c:if test="${empty incluirBS or incluirBS}" >
+ 	<link rel="stylesheet" href="/siga/bootstrap/css/bootstrap.min.css?v=4.1.1"	type="text/css" media="screen, projection" />
+</c:if> 
+
 
 <!--   <link rel="stylesheet" href="/siga/css/menuhover.css" type="text/css"/> -->
 
@@ -93,7 +97,7 @@ ${meta}
 
 <c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
 
-<c:set var="siga_version"  scope="request" value="9.0.24.0" />
+<c:set var="siga_version"  scope="request" value="10.0.2.0" />
 
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
@@ -113,7 +117,7 @@ ${meta}
 		<c:set var="sub_menu_class" value="submenusp" />
 		<c:set var="ambiente_class" value="ambiente_class" />
 		<c:set var="navbar_class" value="navbar-light" />
-		<c:set var="navbar_logo" value="logo-sem-papel-cor.png" />
+		<c:set var="navbar_logo" value="/siga/imagens/logo-sem-papel-cor.png" /> 
 		<c:set var="navbar_logo_size" value="50" />
 		<c:set var="button_class_busca" value="btn-primary" />
 		<c:set var="collapse_Tramitacao" scope="request" value="collapsible closed" />
@@ -136,7 +140,7 @@ ${meta}
 			<c:set var="navbar_class" value="navbar-dark bg-secondary" />
 		</c:if>
 		
-		<c:set var="navbar_logo" value="logo-siga-novo-38px.png" />
+		<c:set var="navbar_logo" value="/siga/imagens/logo-siga-novo-38px.png" />
 		<c:set var="navbar_logo2" value="${f:resource('/siga.cabecalho.logo')}" />
 		<c:set var="navbar_logo_size" value="38" />
 		<c:set var="button_class_busca" value="btn-outline-light" />
@@ -167,7 +171,7 @@ ${meta}
 	<c:if test="${popup!='true'}">
    		<nav class="navbar navbar-expand-lg ${navbar_class} ${menu_class}">
 			<a class="navbar-brand pt-0 pb-0" href="/siga"> <img
-				src="/siga/imagens/${navbar_logo}" height="${navbar_logo_size}">
+				src="${navbar_logo}" height="${navbar_logo_size}">
 			</a>
 			
 			<c:if test="${siga_cliente != 'GOVSP'}">

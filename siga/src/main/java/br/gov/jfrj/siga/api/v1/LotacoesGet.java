@@ -71,11 +71,6 @@ public class LotacoesGet implements ILotacoesGet {
 		}
 	}
 	
-	@Override
-	public String getContext() {
-		return "selecionar pessoas";
-	}
-
 	private Lotacao lotacaoToResultadoPesquisa(DpLotacao lota) {
 		Lotacao rp = new Lotacao();
 		Orgao orgao = new Orgao();
@@ -93,6 +88,11 @@ public class LotacoesGet implements ILotacoesGet {
 		
 		rp.orgao = orgao;
 		return rp;
+	}
+
+	@Override
+	public String getContext() {
+		return "selecionar lotações";
 	}
 
 }

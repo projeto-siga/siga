@@ -70,7 +70,7 @@
 						<div class="col-sm-6">
 							<div class="form-group">
 								<label>Descrição</label>
-								<input type="text" name="descricao" value="${descricao}" size="80" class="form-control"/>
+								<input type="text" name="descricao" value="${descricao}" size="80" maxlength="256" class="form-control"/>
 							</div>
 						</div>
 					</div>
@@ -170,7 +170,7 @@
 					<div class="row">
 						<div class="col-sm-12">
 							<div class="form-group">
-								<input type="submit" value="Ok" class="btn btn-primary" />
+								<input type="submit" name="ok" value="Ok" class="btn btn-primary" />
 								<input type="submit" name="submit" value="Aplicar" class="btn btn-primary" />
 								<input type="button" value="Desativar" class="btn btn-primary" onclick="location.href='desativar?id=${id}'" />
 								<input type="button" value="Cancelar" onclick="javascript:history.back();" class="btn btn-primary" />
@@ -184,49 +184,49 @@
 			<div style="clear: both; margin-bottom: 20px;">
 				<div id="tableCadastradasEletronico"></div>
 				<div>
-					<input type="button" value="Novo" class="btn btn-primary" onclick="location.href='/sigaex/app/expediente/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=4&nmTipoRetorno=modelo&campoFixo=True'" />
+					<input type="button" value="Novo" class="btn btn-primary" onclick="location.href='/sigaex/app/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=4&nmTipoRetorno=modelo&campoFixo=True'" />
 				</div>
 			</div>
 
 			<div style="clear: both; margin-bottom: 20px;">
 				<div id="tableCadastradasCriar"></div>
 				<div>
-					<input type="button" value="Novo" class="btn btn-primary" onclick="location.href='/sigaex/app/expediente/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=2&nmTipoRetorno=modelo&campoFixo=True'" />
+					<input type="button" value="Novo" class="btn btn-primary" onclick="location.href='/sigaex/app/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=2&nmTipoRetorno=modelo&campoFixo=True'" />
 				</div>
 			</div>
 
 			<div style="clear: both; margin-bottom: 20px;">
 				<div id="tableCadastradasAssinar"></div>
 				<div>
-					<input type="button" value="Novo" class="btn btn-primary" onclick="location.href='/sigaex/app/expediente/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=1&idTpMov=11&nmTipoRetorno=modelo&campoFixo=True'" />
+					<input type="button" value="Novo" class="btn btn-primary" onclick="location.href='/sigaex/app/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=1&idTpMov=11&nmTipoRetorno=modelo&campoFixo=True'" />
 				</div>
 			</div>
 
 			<div style="clear: both; margin-bottom: 20px;">
 				<div id="tableCadastradasAssinarComSenha"></div>
 				<div>
-					<input type="button" value="Novo" class="btn btn-primary" onclick="location.href='/sigaex/app/expediente/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=1&idTpMov=58&nmTipoRetorno=modelo&campoFixo=True'" />
+					<input type="button" value="Novo" class="btn btn-primary" onclick="location.href='/sigaex/app/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=1&idTpMov=58&nmTipoRetorno=modelo&campoFixo=True'" />
 				</div>
 			</div>
 
 			<div style="clear: both; margin-bottom: 20px;">
 				<div id="tableCadastradasAcessar"></div>
 				<div>
-					<input type="button" value="Novo" class="btn btn-primary" onclick="location.href='/sigaex/app/expediente/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=6&nmTipoRetorno=modelo'" />
+					<input type="button" value="Novo" class="btn btn-primary" onclick="location.href='/sigaex/app/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=6&nmTipoRetorno=modelo'" />
 				</div>
 			</div>
 
 			<div style="clear: both; margin-bottom: 20px;">
 				<div id="tableCadastradasNivelAcessoMaximo"></div>
 				<div>
-					<input type="button" value="Novo" class="btn btn-primary" onclick="location.href='/sigaex/app/expediente/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=18&nmTipoRetorno=modelo&campoFixo=True'" />
+					<input type="button" value="Novo" class="btn btn-primary" onclick="location.href='/sigaex/app/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=18&nmTipoRetorno=modelo&campoFixo=True'" />
 				</div>
 			</div>
 
 			<div style="clear: both; margin-bottom: 20px;">
 				<div id="tableCadastradasNivelAcessoMinimo"></div>
 				<div>
-					<input type="button" value="Novo" class="btn btn-primary" onclick="location.href='/sigaex/app/expediente/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=19&nmTipoRetorno=modelo&campoFixo=True'" />
+					<input type="button" value="Novo" class="btn btn-primary" onclick="location.href='/sigaex/app/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=19&nmTipoRetorno=modelo&campoFixo=True'" />
 				</div>
 			</div>
 	</div>
@@ -288,7 +288,7 @@
 			function montaTableCadastradas(tabelaAlvo, idTpConfiguracao, idTpMov, idMod){	
 				$('#' + tabelaAlvo).html('Carregando...');			
 				$.ajax({				     				  
-					  url:'/sigaex/app/expediente/configuracao/listar_cadastradas',
+					  url:'/sigaex/app/configuracao/listar_cadastradas',
 					  type: "GET",
 					  data: { idTpConfiguracao : idTpConfiguracao, idTpMov : idTpMov, idMod : idMod, nmTipoRetorno : "modelo", campoFixo : "True"},					    					   					 
 					  success: function(data) {

@@ -1,14 +1,14 @@
 package br.gov.jfrj.siga.wf.logic;
 
 import com.crivano.jlogic.Expression;
-import com.crivano.jlogic.JLogic;
+import com.crivano.jlogic.Or;
+import com.crivano.jlogic.utils.CompositeExpressionSuport;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
-import br.gov.jfrj.siga.wf.model.enm.WfAcessoDeInicializacao;
 
-public class WfPodeIniciarDiagrama implements Expression {
+public class WfPodeIniciarDiagrama extends CompositeExpressionSuport {
 
 	private WfDefinicaoDeProcedimento pd;
 	private DpPessoa titular;
@@ -21,12 +21,8 @@ public class WfPodeIniciarDiagrama implements Expression {
 	}
 
 	@Override
-	public boolean eval() {
-		return WfAcessoDeInicializacao.acessoPermitido(pd, titular, lotaTitular);
-	}
-
-	@Override
-	public String explain(boolean result) {
-		return JLogic.explain("tem acesso para iniciar", result);
+	protected Expression create() {
+		return Or.of(new WfPodeIniciarDiagramaPorAcesso(pd, titular, lotaTitular),
+				new WfPodeIniciarDiagramaPorConfiguracao(pd, titular, lotaTitular));
 	}
 };

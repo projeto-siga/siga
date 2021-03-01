@@ -236,5 +236,37 @@ public class SigaUtil {
 		}	
 		return sb.toString();
 	}
+	
+	/*
+	 * Funcao para geracao de codigos numericos randomicos
+	 * recebendo apenas a quantidade de caracteres que o codigo deve conter
+	 */
+	public static String randomNumerico(int contador) {
+		final String STRING_NUMERICA = "0123456789";
+		StringBuilder sb = new StringBuilder();
+		while (contador-- != 0) {	
+			int caracteres = (int)(Math.random()*STRING_NUMERICA.length());	
+			sb.append(STRING_NUMERICA.charAt(caracteres));	
+		}	
+		return sb.toString();
+	}
+	
+	/*
+	 * Funcao para geracao de codigos numericos randomicos
+	 * recebendo apenas a quantidade de caracteres que o codigo deve conter
+	 */
+	public static String randomAlfanumericoSeletivo(int contador) {
+		final String STRING_ALFANUMERICACUSTOM = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+		StringBuilder sb = new StringBuilder();
+		while (contador-- != 0) {	
+			int caracteres = (int)(Math.random()*STRING_ALFANUMERICACUSTOM.length());	
+			sb.append(STRING_ALFANUMERICACUSTOM.charAt(caracteres));	
+		}	
+		return sb.toString();
+	}
+	
+	public static boolean isNumeric(String str) {
+        return str != null && str.matches("[0-9]*");
+    }
 
 }

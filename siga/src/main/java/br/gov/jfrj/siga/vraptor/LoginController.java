@@ -103,10 +103,17 @@ public class LoginController extends SigaController {
 			String usuarioLogado = giService.login(username, password);
 			
 			if (Pattern.matches("\\d+", username) && username.length() == 11) {
+<<<<<<< HEAD
 				lista = new CpDao().consultaIdentidadesCadastranteComUsuarioPadrao(username, Boolean.TRUE);
 				if(lista != null && lista.size() > 0) {
 					usernameDefault = lista.get(0).getDpPessoa().getSesbPessoa() + lista.get(0).getDpPessoa().getMatricula();
 				}
+=======
+				List<CpIdentidade> lista = new CpDao().consultaIdentidadesCadastrante(username, Boolean.TRUE);
+				/* if (lista.size() > 1) {
+					throw new RuntimeException("Pessoa com mais de um usuário, favor efetuar login com a matrícula!");
+				}*/
+>>>>>>> develop
 			}
 
 			if (usuarioLogado == null || usuarioLogado.trim().length() == 0) {
@@ -125,7 +132,12 @@ public class LoginController extends SigaController {
 				result.include("loginUsuario", username);
 				result.forwardTo(this).login(cont);				
 			} else {
+<<<<<<< HEAD
 				gravaCookieComToken(usernameDefault, cont);
+=======
+				gravaCookieComToken(username, cont);
+				result.include("isPinNotDefined", true);
+>>>>>>> develop
 			}
 					
 			
@@ -353,7 +365,7 @@ public class LoginController extends SigaController {
 				result.include("loginMensagem", a.getMessage());		
 				result.forwardTo(this).login(Contexto.urlBase(request) + "/siga/public/app/login");
 			}catch(Exception e){
-				throw new AplicacaoException("Não foi possivel acessar o Login SP." );
+				throw new AplicacaoException("Não foi possivel acessar o LoginSP." );
 		}
 	}
 	

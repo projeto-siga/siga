@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -18,6 +19,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.PostLoad;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -39,8 +41,6 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpIdentidade;
-import br.gov.jfrj.siga.cp.CpPerfil;
-import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -52,6 +52,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.logic.PodeSim;
 import br.gov.jfrj.siga.wf.logic.WfPodePegar;
+import br.gov.jfrj.siga.wf.logic.WfPodeRedirecionar;
 import br.gov.jfrj.siga.wf.model.enm.WfPrioridade;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
@@ -94,7 +95,8 @@ public class WfProcedimento extends Objeto
 
 	@BatchSize(size = 1)
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "procedimento")
-	private Set<WfMov> movimentacoes = new TreeSet<>();
+	@OrderBy("HIS_DT_INI, MOVI_ID")
+	private SortedSet<WfMov> movimentacoes = new TreeSet<>();
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "PROC_ST_CORRENTE")
@@ -287,7 +289,7 @@ public class WfProcedimento extends Objeto
 			if (mov instanceof WfMovDesignacao) {
 				WfMovDesignacao m = (WfMovDesignacao) mov;
 				if ((m.getPessoaDe() != null && m.getPessoaDe().equivale(resp.getPessoa()))
-						|| (m.getPessoaDe() == null && m.getLotaDe().equivale(resp.getLotacao()))) {
+						|| (m.getLotaDe() == null && m.getLotaDe().equivale(resp.getLotacao()))) {
 					resp = new WfResp(m.getPessoaPara(), m.getLotaPara());
 				}
 			}
@@ -467,10 +469,21 @@ public class WfProcedimento extends Objeto
 	}
 
 	public Set<WfMov> getMovimentacoes() {
+//		if (movimentacoes instanceof TreeSet)
+//			return movimentacoes;
+//		TreeSet<WfMov> set = new TreeSet<>();
+//		set.addAll(movimentacoes);
+//		movimentacoes = set;
 		return movimentacoes;
 	}
+	
+	public WfMov getUltimaMovimentacao() {
+		WfMov last = null;
+	    for(WfMov e : movimentacoes) last = e;
+	    return last;
+	}
 
-	public void setMovimentacoes(Set<WfMov> movimentacoes) {
+	public void setMovimentacoes(SortedSet<WfMov> movimentacoes) {
 		this.movimentacoes = movimentacoes;
 	}
 
@@ -552,6 +565,9 @@ public class WfProcedimento extends Objeto
 
 		set.add(AcaoVO.builder().nome("_Pegar").icone("add").acao("/app/procedimento/" + getSiglaCompacta() + "/pegar")
 				.exp(new WfPodePegar(this, titular, lotaTitular)).post(true).build());
+
+		set.add(AcaoVO.builder().nome("_Redirecionar").icone("arrow_branch").modal("redirecionarModal")
+				.exp(new WfPodeRedirecionar(this, titular, lotaTitular)).build());
 
 		return set;
 	}

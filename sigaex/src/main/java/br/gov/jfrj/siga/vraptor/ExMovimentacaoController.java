@@ -63,12 +63,14 @@ import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -2490,7 +2492,7 @@ public class ExMovimentacaoController extends ExController {
 	 *         {@link CpMarcador#getOrdem()}
 	 */
 	private List<CpMarcador> getListaMarcadoresGerais() {
-		List<CpMarcador> marcadores = dao().listarCpMarcadoresGerais();
+		List<CpMarcador> marcadores = dao().listarCpMarcadoresGerais(true);
 		marcadores.sort(CpMarcador.ORDEM_COMPARATOR);
 
 		return marcadores;
@@ -2505,7 +2507,7 @@ public class ExMovimentacaoController extends ExController {
 	 */
 	@Transacional
 	@Post("/app/expediente/mov/marcar_gravar")
-	public void aMarcarGravar(final String sigla, final Long marcador, final DpPessoaSelecao subscritor_pessoaSel, final DpLotacaoSelecao lotaSubscritor_lotacaoSel,
+	public void aMarcarGravar(final String sigla, final Long marcador, final String interessado, final DpPessoaSelecao subscritorSel, final DpLotacaoSelecao lotaSubscritorSel,
 			final String planejada, String limite, final String texto) throws Exception {
 		Date dtPlanejada = Data.parse(planejada);
 		Date dtLimite = Data.parse(limite);
@@ -2517,12 +2519,28 @@ public class ExMovimentacaoController extends ExController {
 			throw new AplicacaoException("Marcador deve ser informado.");
 
 		CpMarcador m = dao().consultar(marcador, CpMarcador.class, false);
-
+		
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
 				.novaInstancia();
+
+		if (m.getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA || m.getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.PESSOA_OU_LOTACAO) {
+			if (Utils.empty(interessado))
+				throw new AplicacaoException("Tipo do interessado deve ser informado.");
+		} 
+		
+		if (m.getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.PESSOA || "pessoa".equals(interessado)) {
+			if (subscritorSel.empty())
+				throw new AplicacaoException("Pessoa deve ser informada.");
+			movimentacaoBuilder.setSubscritorSel(subscritorSel);
+		}
+
+		if (m.getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.LOTACAO || "lotacao".equals(interessado)) {
+			if (lotaSubscritorSel.empty())
+				throw new AplicacaoException("Lotação deve ser informada.");
+			movimentacaoBuilder.setLotaSubscritorSel(lotaSubscritorSel);
+		}
+
 		movimentacaoBuilder.setIdMarcador(marcador);
-		movimentacaoBuilder.setSubscritorSel(subscritor_pessoaSel);
-		movimentacaoBuilder.setLotaSubscritorSel(lotaSubscritor_lotacaoSel);
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
 		mov.setDescrMov(texto);
 		Ex.getInstance()
@@ -2531,7 +2549,7 @@ public class ExMovimentacaoController extends ExController {
 						builder.getMob(), mov.getDtMov(),
 						mov.getSubscritor(), mov.getLotaSubscritor(),
 						mov.getDescrMov(), 
-						mov.getMarcador(), dtPlanejada, dtLimite);
+						mov.getMarcador(), dtPlanejada, dtLimite, true);
 		ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getSigla());
 	}
 
@@ -3061,7 +3079,7 @@ public class ExMovimentacaoController extends ExController {
 	@Post("/app/expediente/mov/assinar_senha_gravar")
 	public void aAssinarSenhaGravar(String sigla, final Boolean copia, final Boolean juntar, 
 			final Boolean tramitar, final Boolean exibirNoProtocolo, String nomeUsuarioSubscritor,
-			String senhaUsuarioSubscritor) throws Exception {
+			String senhaUsuarioSubscritor,final Boolean senhaIsPin) throws Exception {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 		ExDocumento doc = buscarDocumento(builder, true);
@@ -3075,7 +3093,7 @@ public class ExMovimentacaoController extends ExController {
 					.getBL()
 					.assinarDocumentoComSenha(getCadastrante(),
 							getLotaTitular(), doc, mov.getDtMov(),
-							nomeUsuarioSubscritor, senhaUsuarioSubscritor, true,
+							nomeUsuarioSubscritor, senhaUsuarioSubscritor, senhaIsPin, true,
 							getTitular(), copia, juntar, tramitar, exibirNoProtocolo);
 		} catch (final Exception e) {
 			httpError(e);
@@ -3090,7 +3108,7 @@ public class ExMovimentacaoController extends ExController {
 	@Path("/app/expediente/mov/assinar_mov_login_senha_gravar")
 	public void aAssinarMovSenhaGravar(Long id, String sigla,
 			String tipoAssinaturaMov, String nomeUsuarioSubscritor,
-			String senhaUsuarioSubscritor, Boolean copia) throws Exception {
+			String senhaUsuarioSubscritor, final Boolean senhaIsPin, Boolean copia) throws Exception {
 		long tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA;
 		
 		try {
@@ -3111,7 +3129,7 @@ public class ExMovimentacaoController extends ExController {
 				.getBL()
 				.assinarMovimentacaoComSenha(getCadastrante(),
 						getLotaTitular(), mov, mov.getDtMov(),
-						nomeUsuarioSubscritor, senhaUsuarioSubscritor, true,
+						nomeUsuarioSubscritor, senhaUsuarioSubscritor, senhaIsPin, true,
 						tpMovAssinatura);
 		} catch (final Exception e) {
 			httpError(e);
@@ -4971,7 +4989,7 @@ public class ExMovimentacaoController extends ExController {
 		final ExMovimentacao movimentacao = movimentacaoBuilder
 				.construir(dao());
 
-		List<CpMarcador> marcadores = dao().listarCpMarcadoresGerais();
+		List<CpMarcador> marcadores = dao().listarCpMarcadoresGerais(true);
 		Set<CpMarcador> marcadoresAtivo = (Set<CpMarcador>) this.getListaMarcadoresAtivos(documentoBuilder.getMob().getDoc().getMobilGeral());
 		if (marcadores != null) {
 			marcadores.removeAll(marcadoresAtivo);

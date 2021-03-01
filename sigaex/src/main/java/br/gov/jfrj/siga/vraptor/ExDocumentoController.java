@@ -22,8 +22,6 @@
  */
 package br.gov.jfrj.siga.vraptor;
 
-import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
-
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -35,6 +33,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.ParseException;
@@ -52,7 +51,6 @@ import java.util.TreeSet;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.FlushModeType;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -72,12 +70,14 @@ import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.GZip;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -107,7 +107,6 @@ import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Selecao;
-import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.util.ListaHierarquica;
 import br.gov.jfrj.siga.util.ListaHierarquicaItem;
@@ -807,9 +806,10 @@ public class ExDocumentoController extends ExController {
 		boolean modeloEncontrado = false;
 		ListaHierarquica lh = null;
 		if (jsonHierarquiaDeModelos != null) {
+			String json = decodeHierarquiaDeModelos(jsonHierarquiaDeModelos);
 			ObjectMapper mapper = new ObjectMapper();
 			try {
-				lh = mapper.readValue(jsonHierarquiaDeModelos,
+				lh = mapper.readValue(json,
 						ListaHierarquica.class);
 				for (ListaHierarquicaItem m : lh.getList()) {
 					if (m.getValue() != null
@@ -831,7 +831,7 @@ public class ExDocumentoController extends ExController {
 
 			ObjectMapper mapper = new ObjectMapper();
 			try {
-				jsonHierarquiaDeModelos = mapper.writeValueAsString(lh);
+				jsonHierarquiaDeModelos = encodeHierarquiaDeModelos(mapper.writeValueAsString(lh));
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
@@ -863,8 +863,7 @@ public class ExDocumentoController extends ExController {
 		result.include("podeEditarData", podeEditarData);
 		result.include("podeEditarDescricao", podeEditarDescricao);
 		result.include("hierarquiaDeModelos", lh.getList());
-		result.include("jsonHierarquiaDeModelos",
-				escapeHtml(jsonHierarquiaDeModelos));
+		result.include("jsonHierarquiaDeModelos", jsonHierarquiaDeModelos);
 		result.include("podeEditarModelo", exDocumentoDTO.getDoc().isFinalizado());
 		result.include("podeTrocarPdfCapturado", podeTrocarPdfCapturado(exDocumentoDTO));
 		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
@@ -872,6 +871,29 @@ public class ExDocumentoController extends ExController {
 		// Desabilita a proteção contra injeção maldosa de html e js
 		this.response.addHeader("X-XSS-Protection", "0");
 		return exDocumentoDTO;
+	}
+
+	private String encodeHierarquiaDeModelos(String json) {
+		byte[] compressed;
+		try {
+			compressed = GZip.compress(json.getBytes(StandardCharsets.UTF_8));
+		} catch (IOException e) {
+			throw new RuntimeException("Erro codificando hierarquia de modelos", e);
+		}
+		String base64 = java.util.Base64.getEncoder().encodeToString(compressed);
+		return base64;
+	}
+
+	private String decodeHierarquiaDeModelos(String base64) {
+		byte[] compressed = java.util.Base64.getDecoder().decode(base64);
+		byte[] decompressed;
+		try {
+			decompressed = GZip.decompress(compressed);
+		} catch (IOException e) {
+			throw new RuntimeException("Erro decodificando hierarquia de modelos", e);
+		}
+		String json = new String(decompressed, StandardCharsets.UTF_8);
+		return json;
 	}
 
 	private Object podeTrocarPdfCapturado(ExDocumentoDTO exDocumentoDTO) {
@@ -1213,6 +1235,7 @@ public class ExDocumentoController extends ExController {
 											ExTipoMovimentacao.TIPO_MOVIMENTACAO_ELIMINACAO)
 									.getExMobilRef());
 		}
+		docVO.calculaSetsDeMarcas();
 		result.include("msg", exDocumentoDTO.getMsg());
 		result.include("docVO", docVO);
 		result.include("mob", exDocumentoDTO.getMob());
@@ -1348,6 +1371,7 @@ public class ExDocumentoController extends ExController {
 		result.include("param", exDocumentoDto.getParamsEntrevista());
 	}
 	
+	@Transacional
 	@Post("/app/expediente/doc/reordenar")
 	public void reordenar(String idDocumentos, String sigla, boolean isVoltarParaOrdemOriginal) throws Exception {				
 		ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO();						
@@ -1442,6 +1466,12 @@ public class ExDocumentoController extends ExController {
 		}
 		
 		exDocumentoDto.getMob().getDoc().setPodeExibirReordenacao(exibirReordenacao);
+		
+		DpPessoaSelecao subscritorSel = new DpPessoaSelecao();
+		subscritorSel.buscarPorObjeto(getTitular());
+
+		DpLotacaoSelecao lotaSubscritorSel = new DpLotacaoSelecao();
+		lotaSubscritorSel.buscarPorObjeto(getLotaTitular());
 
 		result.include("docVO", docVO);
 		result.include("sigla", Sigla);
@@ -1453,6 +1483,8 @@ public class ExDocumentoController extends ExController {
 		result.include("podeExibirReordenacao", exibirReordenacao);
 		result.include("podeExibirTodosOsVolumes", exDocumentoDto.getMob().isVolume()); //  && exDocumentoDto.getMob().getDoc().getVolumes().size() > 1
 		result.include("recebimentoPendente", recebimentoPendente);		
+		result.include("subscritorSel", subscritorSel);
+		result.include("lotaSubscritorSel", lotaSubscritorSel);
 	}
 
 	@Get("app/expediente/doc/exibirProcesso")
@@ -2876,7 +2908,7 @@ public class ExDocumentoController extends ExController {
 
 	/**
 	 * Prepara os dados das Movimentações de um {@link ExDocumento Documento}
-	 * {@link CpMarcador#MARCADOR_SEM_EFEITO Cancelado} associado a cancelado
+	 * {@link MarcadorEnum.SEM_EFEITO.getId() Cancelado} associado a cancelado
 	 * associado a uma {@link ExMobil Via} que foi
 	 * {@link ExTipoMovimentacao#TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO Cancelada}.
 	 * Primeiro

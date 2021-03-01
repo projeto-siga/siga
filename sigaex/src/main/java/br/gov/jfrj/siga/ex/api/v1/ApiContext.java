@@ -19,9 +19,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExPapel;
-import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.hibernate.ExStarter;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
@@ -60,6 +58,7 @@ public class ApiContext implements Closeable {
 		if (!RequestLoggerFilter.isAplicacaoException(e)) {
 			RequestLoggerFilter.logException(null, inicio, e);
 		}
+		ContextoPersistencia.setDt(null);
 	}
 
 	@Override
@@ -74,6 +73,7 @@ public class ApiContext implements Closeable {
 		} finally {
 			em.close();
 			ContextoPersistencia.setEntityManager(null);
+			ContextoPersistencia.setDt(null);
 		}
 	}
 

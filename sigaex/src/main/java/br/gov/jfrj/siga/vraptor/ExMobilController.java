@@ -28,10 +28,12 @@ import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +62,7 @@ import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
@@ -76,6 +79,7 @@ import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
+import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.GenericoSelecao;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -86,7 +90,9 @@ import br.gov.jfrj.siga.vraptor.builder.ExMobilBuilder;
 public class ExMobilController extends
 		ExSelecionavelController<ExMobil, ExMobilDaoFiltro> {
 	private static final String SIGA_DOC_FE_LD = "FE:Ferramentas;LD:Listar Documentos";
-	
+	private static final String SIGA_DOC_PESQ_PESQDESCR = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição";
+	private static final String SIGA_DOC_PESQ_DTLIMITADA = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;DTLIMITADA:Pesquisar somente com data limitada";
+	final static public Long MAXIMO_DIAS_PESQUISA = 30L;	
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -158,24 +164,24 @@ public class ExMobilController extends
 
 		builder.processar(getLotaTitular());
 
+		String dtDoc = dtDocString;
+
 		if ((SigaMessages.isSigaSP() && offset != null) || (!SigaMessages.isSigaSP() && (primeiraVez == null || !primeiraVez.equals("sim")))) {
-			final ExMobilDaoFiltro flt = createDaoFiltro();
-			final long tempoIni = System.currentTimeMillis();
-			setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,
-					getTitular(), getLotaTitular()));
-
-//			System.out.println("Consulta dos por filtro: "
-//					+ (System.currentTimeMillis() - tempoIni));
-
-			setItens(dao().consultarPorFiltroOtimizado(flt,
-					builder.getOffset(), getItemPagina(), getTitular(),
-					getLotaTitular()));
+			dtDoc = listarItensPesquisa(dtDocString, dtDocFinalString, builder, dtDoc);
+		} else {
+			if( Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
+					SIGA_DOC_PESQ_DTLIMITADA )) {
+				dtDoc = FuncoesEL.calculaDiasAPartirDeHoje(-MAXIMO_DIAS_PESQUISA);
+        		result.include("msgCabecClass", "alert-warning");
+        		result.include("mensagemCabec", "ATENÇÃO: A pesquisa deve ser limitada com uma range de datas de no máximo "
+        				+ MAXIMO_DIAS_PESQUISA.toString() + " dias. Será assumida uma data inicial 30 dias anterior à hoje no campo Data Inicial.");
+			}
 		}
 
 		result.include("primeiraVez", primeiraVez);
 		result.include("popup", true);
 		result.include("apenasRefresh", apenasRefresh);
-		result.include("estados", this.getEstados());
+		result.include("estados", this.getEstados(ultMovIdEstadoDoc));
 		result.include("listaOrdem", this.getListaOrdem());
 		result.include("ordem", ordem);
 		result.include("listaVisualizacao", this.getListaVisualizacao());
@@ -187,7 +193,7 @@ public class ExMobilController extends
 		result.include("orgaosUsu", this.getOrgaosUsu());
 		result.include("tiposDocumento", this.getTiposDocumentoParaConsulta());
 		result.include("idTpDoc", builder.getIdTpDoc());
-		result.include("dtDocString", dtDocString);
+		result.include("dtDocString", dtDoc);
 		result.include("dtDocFinalString", dtDocFinalString);
 		result.include("tiposFormaDoc", this.getTiposFormaDoc());
 		result.include("anoEmissaoString", anoEmissaoString);
@@ -422,7 +428,7 @@ public class ExMobilController extends
 			final String nmDestinatario, final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText,
 			final Long ultMovEstadoDoc, final Integer paramoffset) {
 		assertAcesso("");
-		
+
 		getP().setOffset(paramoffset);
 		this.setPostback(postback);
 
@@ -444,23 +450,24 @@ public class ExMobilController extends
 
 		builder.processar(getLotaTitular());
 
+		String dtDoc = dtDocString;
+	
 		if (primeiraVez == null || !primeiraVez.equals("sim")) {
-			final ExMobilDaoFiltro flt = createDaoFiltro();
-			long tempoIni = System.currentTimeMillis();
-			setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,
-					getTitular(), getLotaTitular()));
-
-//			System.out.println("Consulta dos por filtro: "
-//					+ (System.currentTimeMillis() - tempoIni));
-			setItens(dao().consultarPorFiltroOtimizado(flt,
-					builder.getOffset(), getItemPagina(), getTitular(),
-					getLotaTitular()));
+			dtDoc = listarItensPesquisa(dtDocString, dtDocFinalString, builder, dtDoc);
+		} else {
+			if( Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
+					SIGA_DOC_PESQ_DTLIMITADA )) {
+				dtDoc = FuncoesEL.calculaDiasAPartirDeHoje(-MAXIMO_DIAS_PESQUISA);
+        		result.include("msgCabecClass", "alert-warning");
+        		result.include("mensagemCabec", "ATENÇÃO: A pesquisa deve ser limitada com uma range de datas de no máximo "
+        				+ MAXIMO_DIAS_PESQUISA.toString() + " dias. Será assumida uma data inicial 30 dias anterior à hoje no campo Data Inicial.");
+			}
 		}
 
 		result.include("primeiraVez", primeiraVez);
 		result.include("popup", popup);
 		result.include("apenasRefresh", apenasRefresh);
-		result.include("estados", this.getEstados());
+		result.include("estados", this.getEstados(ultMovIdEstadoDoc));
 		result.include("listaOrdem", this.getListaOrdem());
 		result.include("ordem", ordem);
 		result.include("listaVisualizacao", this.getListaVisualizacao());
@@ -472,7 +479,7 @@ public class ExMobilController extends
 		result.include("orgaosUsu", this.getOrgaosUsu());
 		result.include("tiposDocumento", this.getTiposDocumentoParaConsulta());
 		result.include("idTpDoc", builder.getIdTpDoc());
-		result.include("dtDocString", dtDocString);
+		result.include("dtDocString", dtDoc);
 		result.include("dtDocFinalString", dtDocFinalString);
 		result.include("tiposFormaDoc", this.getTiposFormaDoc());
 		result.include("anoEmissaoString", anoEmissaoString);
@@ -521,6 +528,83 @@ public class ExMobilController extends
 			result.include("campos", campos);
 		}
 
+	}
+
+	private String listarItensPesquisa(final String dtDocString, final String dtDocFinalString,
+			final ExMobilBuilder builder, String dtDoc) {
+		final ExMobilDaoFiltro flt = createDaoFiltro();
+		if (Prop.isGovSP() && flt.getDescrDocumento() != null 
+				&& !"".equals(flt.getDescrDocumento()) && !(Cp.getInstance().getConf()
+				.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), SIGA_DOC_PESQ_PESQDESCR))) {
+			result.include(SigaModal.ALERTA, SigaModal.mensagem("Usuário não autorizado a pesquisar pela descrição do documento."));
+			return dtDocString;
+		}
+		
+		LocalDate dt = null;
+		if ((param("dtDocString") == null || "".equals(param("dtDocString"))) 
+				&& Cp.getInstance().getConf()
+					.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), SIGA_DOC_PESQ_DTLIMITADA )) {
+			result.include("msgCabecClass", "alert-warning");
+			result.include("mensagemCabec", "ATENÇÃO: A pesquisa deve ser limitada com uma range de datas de no máximo "
+					+ MAXIMO_DIAS_PESQUISA.toString() + " dias. Foi assumida uma data inicial 30 dias anterior à hoje.");
+			dt = LocalDate.now().plusDays(-MAXIMO_DIAS_PESQUISA);
+			flt.setDtDoc(Date.from(dt.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+			dtDoc = FuncoesEL.calculaDiasAPartirDeHoje(-MAXIMO_DIAS_PESQUISA);
+		}
+
+		try {
+			if(Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), 
+					getLotaTitular(), SIGA_DOC_PESQ_DTLIMITADA ) && dt == null) 
+				validarLimiteDeDatas(dtDocString, dtDocFinalString);
+//					long tempoIni = System.currentTimeMillis();
+			setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,
+					getTitular(), getLotaTitular()));
+
+//					System.out.println("Consulta dos por filtro: "
+//							+ (System.currentTimeMillis() - tempoIni));
+			setItens(dao().consultarPorFiltroOtimizado(flt,
+					builder.getOffset(), getItemPagina(), getTitular(),
+					getLotaTitular()));
+		} catch (RegraNegocioException e) {
+			result.include("msgCabecClass", "alert-danger");
+			result.include("mensagemCabec", e.getMessage());
+		}
+		return dtDoc;
+	}
+
+	private void validarLimiteDeDatas(final String dtDocString, final String dtDocFinalString) {
+		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		LocalDate dtIni = null;
+		LocalDate dtFinal = null;
+		LocalDate dataAtual = LocalDate.now();
+		
+		if (dtDocString != null && !"".equals(dtDocString)) {
+			if (Data.validaDDMMYYYY(dtDocString)) {
+				dtIni = LocalDate.parse(dtDocString, formatter);
+			} else {
+				throw new RegraNegocioException("Data Inicial inválida.");
+			}
+		} else {
+			throw new RegraNegocioException("Data Inicial não informada. Para grandes volumes, período para pesquisa não deve ser superior à "
+					+ MAXIMO_DIAS_PESQUISA.toString() + " dias.");
+		}
+		
+		if (dtDocFinalString != null && !"".equals(dtDocFinalString)) {
+			if (Data.validaDDMMYYYY(dtDocFinalString)) {
+				dtFinal = LocalDate.parse(dtDocFinalString, formatter);
+				if (ChronoUnit.DAYS.between(dtIni, dtFinal) > MAXIMO_DIAS_PESQUISA) {
+					throw new RegraNegocioException("Para grandes volumes, período para pesquisa não deve ser superior a "
+							+ MAXIMO_DIAS_PESQUISA.toString() + " dias. Informe a Data Inicial e/ou Final.");
+				}	
+			} else {
+				throw new RegraNegocioException("Data Final inválida.");
+			}
+		} else {
+			if (ChronoUnit.DAYS.between(dtIni, dataAtual) > MAXIMO_DIAS_PESQUISA) {
+				throw new RegraNegocioException("Para grandes volumes, período para exportação não deve ser superior a "
+						+ MAXIMO_DIAS_PESQUISA.toString() + " dias. Informe a Data Inicial e/ou Final.");
+			}	
+		}
 	}
 
 	final static Pattern preprocessadorPatternSelecao = Pattern

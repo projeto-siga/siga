@@ -2,124 +2,47 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
-<h5>${tpConfiguracao.dscTpConfiguracao}
-	<span style="float: right; font-size: 70%">(Situação default: </b>
-		${tpConfiguracao.situacaoDefault.dscSitConfiguracao})
-	</span>
-</h5>
+<siga:cfg-lista-cabecalho>
+	<th align="center"
+		style="${tipoDeConfiguracao.style('NIVEL_DE_ACESSO')}">Nível de
+		acesso</th>
+	<th align="center"
+		style="${tipoDeConfiguracao.style('TIPO_MOVIMENTACAO')}">Tipo de
+		Movimentação</th>
+	<th align="center"
+		style="${tipoDeConfiguracao.style('TIPO_DOCUMENTO')}">Origem</th>
+	<th align="center"
+		style="${tipoDeConfiguracao.style('TIPO_FORMA_DOCUMENTO')}">Tipo
+		de Espécie</th>
+	<th align="center"
+		style="${tipoDeConfiguracao.style('FORMA_DOCUMENTO')}">Espécie</th>
+	<th align="center" style="${tipoDeConfiguracao.style('MODELO')}">Modelo</th>
+	<th align="center" style="${tipoDeConfiguracao.style('VIA')}">Via</th>
+	<th align="center" style="${tipoDeConfiguracao.style('CLASSIFICACAO')}">Classificação</th>
+	<th align="center" style="${tipoDeConfiguracao.style('PAPEL')}">Vínculo</th>
+</siga:cfg-lista-cabecalho>
 
+<siga:cfg-lista-itens>
+	<td style="${tipoDeConfiguracao.style('NIVEL_DE_ACESSO')}"><c:if
+			test="${not empty config.exNivelAcesso}">${config.exNivelAcesso.nmNivelAcesso}(${config.exNivelAcesso.grauNivelAcesso})</c:if></td>
+	<td style="${tipoDeConfiguracao.style('TIPO_MOVIMENTACAO')}"><c:if
+			test="${not empty config.exTipoMovimentacao}">${config.exTipoMovimentacao.descrTipoMovimentacao}</c:if></td>
+	<td style="${tipoDeConfiguracao.style('TIPO_DOCUMENTO')}"><c:if
+			test="${not empty config.exTipoDocumento}">${config.exTipoDocumento.descrTipoDocumento}</c:if></td>
+	<td style="${tipoDeConfiguracao.style('TIPO_FORMA_DOCUMENTO')}"><c:if
+			test="${not empty config.exTipoFormaDoc}">${config.exTipoFormaDoc.descTipoFormaDoc}</c:if></td>
+	<td style="${tipoDeConfiguracao.style('FORMA_DOCUMENTO')}"><c:if
+			test="${not empty config.exFormaDocumento}">${config.exFormaDocumento.descrFormaDoc}</c:if></td>
+	<td style="${tipoDeConfiguracao.style('MODELO')}"><c:if
+			test="${not empty config.exModelo}">${config.exModelo.nmMod}</c:if></td>
+	<td style="${tipoDeConfiguracao.style('VIA')}"><c:if
+			test="${not empty config.exVia}">${config.exVia.exTipoDestinacao}(${config.exVia.codVia})</c:if></td>
+	<td style="${tipoDeConfiguracao.style('CLASSIFICACAO')}"><c:if
+			test="${not empty config.exClassificacao}">${config.exClassificacao.classificacaoAtual.codificacao}</c:if></td>
+	<td style="${tipoDeConfiguracao.style('PAPEL')}"><c:if
+			test="${not empty config.exPapel}">${config.exPapel.descPapel}</c:if></td>
+</siga:cfg-lista-itens>
 
-<table class="table table-sm table-striped" width="100%">
-	<tr class="${thead_color}">
-		<th align="center">Nível de acesso</th>
-		<th align="center">Pessoa</th>
-		<th align="center">Lotação</th>
-		<th align="center">Tipo de Lotação</th>
-		<th align="center">Função</th>
-		<th align="center">Órgão</th>
-		<th align="center">Órgão Objeto</th>
-		<th align="center">Cargo</th>
-		<th align="center">Tipo de Movimentação</th>
-		<th align="center">Origem</th>
-		<th align="center">Tipo de Espécie</th>
-		<th align="center">Espécie</th>
-		<th align="center">Modelo</th>
-		<th align="center">Via</th>
-		<th align="center">Classificação</th>
-		<th align="center">Vínculo</th>
-		<th align="center">Serviço</th>
-
-		<th align="center">Pessoa Objeto</th>
-		<th align="center">Lotação Objeto</th>
-		<th align="center">Cargo Objeto</th>
-		<th align="center">Função Objeto</th>
-
-		<th align="center">Situação</th>
-		<th align="center" style="min-width: 70px;"></th>
-	</tr>
-	<c:set var="tamanho" value="0" />
-
-	<c:forEach var="configuracao" items="${listConfig}">
-		<tr>
-			<td><c:if test="${not empty configuracao.exNivelAcesso}">${configuracao.exNivelAcesso.nmNivelAcesso}(${configuracao.exNivelAcesso.grauNivelAcesso})</c:if>
-			</td>
-			<td><c:if test="${not empty configuracao.dpPessoa}">
-					<siga:selecionado sigla="${configuracao.dpPessoa.iniciais}"
-						descricao="${configuracao.dpPessoa.descricao}" />
-				</c:if></td>
-			<td><c:if test="${not empty configuracao.lotacao}">
-					<siga:selecionado sigla="${configuracao.lotacao.sigla}"
-						descricao="${configuracao.lotacao.descricao}" />
-				</c:if></td>
-			<td><c:if test="${not empty configuracao.cpTipoLotacao}">${configuracao.cpTipoLotacao.dscTpLotacao}</c:if></td>
-			<td><c:if test="${not empty configuracao.funcaoConfianca}">${configuracao.funcaoConfianca.nomeFuncao}</c:if></td>
-			<td><c:if test="${not empty configuracao.orgaoUsuario}">${configuracao.orgaoUsuario.acronimoOrgaoUsu}</c:if></td>
-			<td><c:if test="${not empty configuracao.orgaoObjeto}">${configuracao.orgaoObjeto.acronimoOrgaoUsu}</c:if></td>
-			<td><c:if test="${not empty configuracao.cargo}">${configuracao.cargo.nomeCargo}</c:if></td>
-			<td><c:if test="${not empty configuracao.exTipoMovimentacao}">${configuracao.exTipoMovimentacao.descrTipoMovimentacao}</c:if></td>
-			<td><c:if test="${not empty configuracao.exTipoDocumento}">${configuracao.exTipoDocumento.descrTipoDocumento}</c:if></td>
-			<td><c:if test="${not empty configuracao.exTipoFormaDoc}">${configuracao.exTipoFormaDoc.descTipoFormaDoc}</c:if></td>
-			<td><c:if test="${not empty configuracao.exFormaDocumento}">${configuracao.exFormaDocumento.descrFormaDoc}</c:if></td>
-			<td><c:if test="${not empty configuracao.exModelo}">${configuracao.exModelo.nmMod}</c:if></td>
-			<td><c:if test="${not empty configuracao.exVia}">${configuracao.exVia.exTipoDestinacao}(${configuracao.exVia.codVia})</c:if></td>
-			<td><c:if test="${not empty configuracao.exClassificacao}">${configuracao.exClassificacao.classificacaoAtual.codificacao}</c:if></td>
-			<td><c:if test="${not empty configuracao.exPapel}">${configuracao.exPapel.descPapel}</c:if></td>
-			<td><c:if test="${not empty configuracao.cpServico}">${configuracao.cpServico.dscServico}</c:if></td>
-
-			<td><c:if test="${not empty configuracao.pessoaObjeto}">
-					<siga:selecionado sigla="${configuracao.pessoaObjeto.iniciais}"
-						descricao="${configuracao.pessoaObjeto.descricao}" />
-				</c:if></td>
-			<td><c:if test="${not empty configuracao.lotacaoObjeto}">
-					<siga:selecionado sigla="${configuracao.lotacaoObjeto.sigla}"
-						descricao="${configuracao.lotacaoObjeto.descricao}" />
-				</c:if></td>
-			<td><c:if test="${not empty configuracao.cargoObjeto}">${configuracao.cargoObjeto.nomeCargo}</c:if></td>
-			<td><c:if test="${not empty configuracao.funcaoConfiancaObjeto}">${configuracao.funcaoConfiancaObjeto.nomeFuncao}</c:if></td>
-
-			<td><c:if
-					test="${not empty configuracao.cpSituacaoConfiguracao}">${configuracao.cpSituacaoConfiguracao.dscSitConfiguracao}</c:if></td>
-			<td><c:if test="${not empty nmTipoRetorno}">
-					<c:url var="url" value="/app/expediente/configuracao/editar">
-						<c:param name="id" value="${configuracao.idConfiguracao}" />
-						<c:param name="idMod" value="${idMod}" />
-						<c:param name="nmTipoRetorno" value="${nmTipoRetorno}" />
-						<c:param name="campoFixo" value="${campoFixo}" />
-						<c:param name="idFormaDoc" value="${idFormaDoc}" />
-					</c:url>
-				</c:if> <c:if test="${empty nmTipoRetorno}">
-					<c:url var="url" value="/app/expediente/configuracao/editar">
-						<c:param name="id" value="${configuracao.idConfiguracao}" />
-					</c:url>
-				</c:if> <siga:links estilo="margin-bottom: 0; text-align: center;" buttons="${false}">
-					<siga:link icon="pencil" titleImg="Alterar" url="${url}"
-						estilo="margin-bottom: 0; text-align: center; padding: 2px;" />
-
-					<c:if test="${not empty nmTipoRetorno}">
-						<c:url var="urlExcluir"
-							value="/app/expediente/configuracao/excluir">
-							<c:param name="id" value="${configuracao.idConfiguracao}" />
-							<c:param name="idMod" value="${idMod}" />
-							<c:param name="nmTipoRetorno" value="${nmTipoRetorno}" />
-							<c:param name="idFormaDoc" value="${idFormaDoc}" />
-						</c:url>
-					</c:if>
-					<c:if test="${empty nmTipoRetorno}">
-						<c:url var="urlExcluir"
-							value="/app/expediente/configuracao/excluir">
-							<c:param name="id" value="${configuracao.idConfiguracao}" />
-						</c:url>
-					</c:if>
-
-					<siga:link icon="delete" titleImg="Excluir" url="${urlExcluir}"
-						popup="excluir" confirm="Deseja excluir configuração?" />
-				</siga:links></td>
-		</tr>
-		<c:set var="tamanho" value="${tamanho + 1 }" />
-	</c:forEach>
-	</tbody>
-</table>

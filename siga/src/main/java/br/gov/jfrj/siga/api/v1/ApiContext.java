@@ -48,11 +48,12 @@ public class ApiContext implements Closeable {
 		if (!RequestLoggerFilter.isAplicacaoException(e)) {
 			RequestLoggerFilter.logException(null, inicio, e);
 		}
+		ContextoPersistencia.setDt(null);
 	}
 
 	@Override
 	public void close() throws IOException {
-		try {
+		try {			
 			if (this.transacional)
 				em.getTransaction().commit();
 		} catch (Exception e) {
@@ -62,6 +63,7 @@ public class ApiContext implements Closeable {
 		} finally {
 			em.close();
 			ContextoPersistencia.setEntityManager(null);
+			ContextoPersistencia.setDt(null);
 		}
 	}
 
@@ -70,7 +72,7 @@ public class ApiContext implements Closeable {
 	 * {@link SwaggerServlet}.
 	 * @throws Exception Se houver algo de errado.
 	 */
-	static SigaObjects getSigaObjects() throws Exception {
+	public static SigaObjects getSigaObjects() throws Exception {
 		SigaObjects sigaObjects = new SigaObjects(SwaggerServlet.getHttpServletRequest());
 		return sigaObjects;
 	}
@@ -100,7 +102,7 @@ public class ApiContext implements Closeable {
 	 * 
 	 * @throws Exception Se houver algo de errado.
 	 */
-	static void assertAcesso(String acesso) throws Exception {
+	public static void assertAcesso(String acesso) throws Exception {
 		ApiContext.getSigaObjects().assertAcesso(acesso);
 	}
 

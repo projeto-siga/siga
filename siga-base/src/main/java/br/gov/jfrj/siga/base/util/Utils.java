@@ -3,6 +3,10 @@ package br.gov.jfrj.siga.base.util;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import br.gov.jfrj.siga.base.Texto;
 
 public class Utils {
 	/**
@@ -34,5 +38,13 @@ public class Utils {
 	public static boolean empty(String s) {
 		return s == null || s.trim().length() == 0;
 	}
+	
+	public static boolean isEmailValido(String email) {
+		Pattern pattern = Pattern.compile(Texto.DpPessoa.EMAIL_REGEX_PATTERN);   
+	    Matcher matcher = pattern.matcher(email);   
+	    return matcher.find();   
+	}
+	
+	
 
 }

@@ -84,7 +84,7 @@
 								</div>
 								<c:if test="${mostrarBotaoAssinarExterno}">
 									<tags:assinatura_botoes assinar="true" autenticar="false"
-										assinarComSenha="false" autenticarComSenha="false"
+										assinarComSenha="false" autenticarComSenha="false" assinarComSenhaPin="false" autenticarComSenhaPin="false"
 										idMovimentacao="${mov.idMov}" />
 								</c:if>
 							</div>

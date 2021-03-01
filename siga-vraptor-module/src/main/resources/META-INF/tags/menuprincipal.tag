@@ -194,8 +194,7 @@
 			</c:if>
 		</c:if>
 
-		<li class="dropdown-submenu"><a href="javascript:void(0);"
-			class="dropdown-item dropdown-toggle">Administração</a>
+		<li class="dropdown-submenu"><a href="javascript:void(0);" class="dropdown-item dropdown-toggle">Administração</a>
 			<ul class="dropdown-menu">
 				<c:if test="${(!f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;ADM:Administração;TSEN:Ocultar Trocar Senha') || titular.orgaoUsuario.sigla == 'ZZ')}">
 					<li><a class="dropdown-item"
@@ -205,6 +204,23 @@
 					<li><a class="dropdown-item"
 						href="/siga/app/usuario/trocar_email">Trocar Email do Usuário</a></li>
 				</c:if>
+				<c:if test="${f:podeUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao) }">
+					<li class="dropdown-submenu"><a href="javascript:void(0);" class="dropdown-item dropdown-toggle">Gerenciar PIN</a>
+						<ul class="dropdown-menu">
+						<c:choose>
+							<c:when test="${(empty identidadeCadastrante.pinIdentidade)}">
+								<li><a class="dropdown-item" href="/siga/app/pin/cadastro">Cadastrar novo PIN</a>
+							</c:when>
+							<c:otherwise>	
+								<li><a class="dropdown-item" href="/siga/app/pin/troca">Alterar PIN</a>
+								<li><a class="dropdown-item" href="/siga/app/pin/reset">Esqueci meu PIN</a>
+							</c:otherwise>	
+						</c:choose>
+						</ul>
+					</li>
+				</c:if>
+
+				
 				
 				<%--
 					<li><a href="/siga/substituicao/substituir.action">Entrar
@@ -366,7 +382,7 @@
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;MODVER:Visualizar modelos')}">
 						<li><a class="dropdown-item" href="/siga/app/modelo/listar">Cadastro
-								de modelos</a></li>
+								de Modelos</a></li>
 					</c:if>
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_ORGAO:Cadastrar Orgãos')}">
@@ -388,6 +404,18 @@
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_FERIADO:Cadastrar Feriados')}">
 						<li><a class="dropdown-item" href="/siga/app/feriado/listar">Cadastro
 								de Feriados</a></li>
+					</c:if>
+					<c:if
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CFG:Cadastrar Configurações')}">
+						<li><a class="dropdown-item"
+							href="/siga/app/configuracao/listar">Cadastro de
+								Configurações</a></li>
+					</c:if>
+					<c:if
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;FE: Ferramentas;CAD_MARCADOR: Cadastro de Marcadores')}">
+						<li><a class="dropdown-item"
+							href="/siga/app/marcador/listar">Cadastro de 
+								Marcadores</a></li>
 					</c:if>
 				</ul></li>
 		</c:if>

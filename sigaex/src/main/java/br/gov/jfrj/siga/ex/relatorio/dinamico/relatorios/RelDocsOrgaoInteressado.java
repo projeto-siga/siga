@@ -18,21 +18,17 @@ import java.util.Set;
 
 import javax.persistence.Query;
 
-import net.sf.jasperreports.engine.JRException;
-
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
-import br.gov.jfrj.siga.dp.CpMarcador;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import net.sf.jasperreports.engine.JRException;
 
 	public class RelDocsOrgaoInteressado extends RelatorioTemplate {
  
@@ -145,7 +141,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 						+ "mod.nmMod "
 						);
 
-			query.setParameter("idMarcador", CpMarcador.MARCADOR_COMO_INTERESSADO);
+			query.setParameter("idMarcador", CpMarcadorEnum.COMO_INTERESSADO.getId());
 			query.setParameter("orgaoPesqId", Long.valueOf((String) parametros.get("orgaoPesqId")));
 			
 			if (parametros.get("orgao") != null && !"".equals(parametros.get("orgao"))) {

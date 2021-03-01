@@ -156,6 +156,10 @@ public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
 
 	@Column(name = "LOGIN_IDENTIDADE", length = 20)
 	private String nmLoginIdentidade;
+	
+	@Column(name = "PIN_IDENTIDADE")
+	private String pinIdentidade;
+
 
 	/*
 	 * (non-Javadoc)
@@ -423,4 +427,12 @@ public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
 		this.nmLoginIdentidade = nmLoginIdentidade;
 	}
 
+
+	public String getPinIdentidade() {
+		return pinIdentidade;
+	}
+
+	public void setPinIdentidade(String pinIdentidade) {
+		this.pinIdentidade = pinIdentidade;
+	}
 }

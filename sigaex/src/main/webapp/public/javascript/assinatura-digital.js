@@ -90,6 +90,13 @@ function AssinarDocumentos(copia, politica, juntar, tramitar, exibirNoProtocolo)
 			}
 		});
 	}
+	
+	if (tipo == 4) {
+		provider = providerPIN;
+		provider.inicializar(function() {
+			ExecutarAssinarDocumentos(copia, juntar, tramitar);
+		});
+	}
 }
 
 //
@@ -668,6 +675,71 @@ var providerPassword = {
 	}
 }
 
+
+//Provider: Assinador com PIN
+var providerPIN = {
+	nome : 'Assinatura com PIN',
+	inicializar : function(cont) {
+		try {															
+			var senhaDialog = $(
+					'<div class="modal fade" tabindex="-1" role="dialog" id="senhaDialog"><div class="modal-dialog modal-dialog-centered" role="document"><div class="modal-content">'
+					+ sigaModal.obterCabecalhoPadrao('Identificação&nbsp;&nbsp;&nbsp;<br />CPF: ' +$('#cpfUsuarioCadastrante').val())
+					+ '<div class="modal-body"><div class="form-group text-center"><input id="nomeUsuarioSubscritor" type="hidden" value="' + $('#siglaUsuarioCadastrante').val() + '" /> '
+					+ '<label>Informe seu PIN</label><br /><div class="row"><div class="col-3"></div><div class="col-6"> <input type="password" id="pinUsuarioSubscritor" class="form-control input-lg" style="text-align: center;" aria-describedby="passwordHelp" maxlength="8" autocomplete="off" autofocus /></div></div><small id="pinHelp" class="form-text text-muted" style="color: #dc3545 !important;"></small></div></div>'
+					+ '<div class="modal-footer"><button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button><button type="button" id="senhaOk" class="btn btn-primary">Assinar <i class="fa fa-signature"/></button></div>'
+					+ '</div></div></div>')
+					.modal();										
+			
+			senhaDialog.on('shown.bs.modal', function () {
+				$(this).find('[autofocus]').focus();
+				
+				$('#pinUsuarioSubscritor').on('keypress', function(e) {
+				    if((e.which == 13 || e.key === "Enter")) {
+				    	$('#senhaOk').click();				    	
+				    }
+				});
+				
+				$('#senhaOk').click(function () {
+					$("#pinHelp").html('');
+					if($("#pinUsuarioSubscritor").val() === "") {
+						$("#pinHelp").html('PIN não informado. Favor inserí-lo.');
+						$("#pinUsuarioSubscritor").select();		
+						return false;
+					} 
+					
+					if( !isNumeric($("#pinUsuarioSubscritor").val())) {
+						$("#pinHelp").html('PIN deve conter apenas dígitos númericos (0-9). Favor corrigir.');
+						$("#pinUsuarioSubscritor").select();			
+						return false;
+					} 
+					
+					if( $("#pinUsuarioSubscritor").val().length !== 8) {
+						$("#pinHelp").html('PIN deve ter 8 dígitos numéricos.');
+						$("#pinUsuarioSubscritor").select();			
+						return false;
+					} 
+					gLogin = $("#nomeUsuarioSubscritor").val();
+					gPassword = $("#pinUsuarioSubscritor").val();
+					gAssinando = false;
+					cont();
+					senhaDialog.modal('hide');
+				});
+			});
+			
+			senhaDialog.on('hidden.bs.modal', function () {
+				gAssinando = false;
+				$('#senhaDialog').remove();
+			});
+			
+			return "AGUARDE";
+		} catch (Err) {
+			return Err.description;
+		}
+	}
+}
+
+
+
 //
 // State manager and progress bar
 //
@@ -856,7 +928,7 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar, ExibirNoProtocolo) {
 			continue;
 
 		process.push("Copia=" + Copia + ";");
-		if (!o.usePassword) {
+		if (!o.usePassword && !o.usePin) {
 			if (provider != providerAssijusPopup && provider != providerAssijus) {
 				process
 						.push("gNome='"
@@ -991,9 +1063,12 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar, ExibirNoProtocolo) {
 			process.push(function() {
 				var id = gNome ? gNome.split(':')[1] : null;
 				var DadosDoPost = "id=" + id + "&sigla=" + gNome
+						
 						+ "&nomeUsuarioSubscritor=" + gLogin
-						+ "&senhaUsuarioSubscritor=" + encodeURIComponent(gPassword) + "&copia="
-						+ gAutenticar;
+						+ "&senhaUsuarioSubscritor=" + encodeURIComponent(gPassword) 
+						+ "&senhaIsPin=" + o.usePin
+						+ "&copia="	+ gAutenticar;
+						
 				if (gTramitar !== undefined) {
 					DadosDoPost = DadosDoPost + "&tramitar=" + gTramitar;
 				}
@@ -1052,19 +1127,26 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar, ExibirNoProtocolo) {
 	process.run();
 }
 
-// 1 = digital, 2 = com senha, 3 = híbrida
+// 1 = digital, 2 = com senha, 3 = híbrida, 4 = com PIN
 function verificarTipoDeAssinatura() {
 	var usePassword = false;
 	var useToken = false;
+	var usePin = false;
 
 	for (var i = 0, len = gOperacoes.length; i < len; i++) {
 		if (gOperacoes[i].enabled) {
 			if (gOperacoes[i].usePassword)
 				usePassword = true;
+			else if (gOperacoes[i].usePin)
+				usePin = true;
 			else
 				useToken = true;
 		}
 	}
+	
+	if (usePin) 
+		return 4;
+	
 	return (useToken ? 1 : 0) + (usePassword ? 2 : 0);
 }
 
@@ -1078,33 +1160,34 @@ function identificarOperacoes() {
 			var operacao = {};
 
 			operacao.codigo = Elem.name.substr(9);
-			operacao.nome = document.getElementsByName("ad_descr_"
-					+ operacao.codigo)[0].value;
-			operacao.urlPdf = document.getElementsByName("ad_url_pdf_"
-					+ operacao.codigo)[0].value;
-			operacao.urlPost = document.getElementsByName("ad_url_post_"
-					+ operacao.codigo)[0].value;
-			operacao.urlPostPassword = document
-					.getElementsByName("ad_url_post_password_"
-							+ operacao.codigo)[0].value;
+			operacao.nome = document.getElementsByName("ad_descr_"	+ operacao.codigo)[0].value;
+			operacao.urlPdf = document.getElementsByName("ad_url_pdf_"	+ operacao.codigo)[0].value;
+			operacao.urlPost = document.getElementsByName("ad_url_post_" + operacao.codigo)[0].value;
+			operacao.urlPostPassword = document.getElementsByName("ad_url_post_password_" + operacao.codigo)[0].value;
+			
 			operacao.usePassword = false;
+			operacao.usePin = false;
 			operacao.transfer = false;
 
 			// Assijus
-			operacao.id = document
-					.getElementsByName("ad_id_" + operacao.codigo)[0].value;
-			operacao.descr = document.getElementsByName("ad_description_"
-					+ operacao.codigo)[0].value;
-			operacao.kind = document.getElementsByName("ad_kind_"
-					+ operacao.codigo)[0].value;
+			operacao.id = document.getElementsByName("ad_id_" + operacao.codigo)[0].value;
+			operacao.descr = document.getElementsByName("ad_description_" + operacao.codigo)[0].value;
+			operacao.kind = document.getElementsByName("ad_kind_" + operacao.codigo)[0].value;
 
-			var oChkPwd = document.getElementsByName("ad_password_"
-					+ operacao.codigo)[0] || document.getElementsByName("ad_password_0")[0];
-
+			/* Assinar com Senha */
+			var oChkPwd = document.getElementsByName("ad_password_" + operacao.codigo)[0] || document.getElementsByName("ad_password_0")[0] || document.getElementById("ad_password_0");
 			if (oChkPwd == null) {
 				operacao.usePassword = false;
 			} else {
 				operacao.usePassword = oChkPwd.checked;
+			}
+			
+			/* Assinar com Senha PIN */
+			var oChkPin = document.getElementsByName("ad_pin_" + operacao.codigo)[0] || document.getElementsByName("ad_pin_0")[0] || document.getElementById("ad_pin_0");
+			if (oChkPin == null) {
+				operacao.usePin = false;
+			} else {
+				operacao.usePin = oChkPin.checked;
 			}
 
 			var oChk = document.getElementsByName("ad_chk_" + operacao.codigo)[0];
@@ -1152,7 +1235,7 @@ function GravarAssinatura(url, datatosend) {
 		error : function(xhr) {
 			// result = TrataErro(xhr.responseText ? xhr.responseText : xhr,
 			// "");
-			result = "Erro na gravação da assinatura. " + xhr.responseText;
+			result = "<div class='alert alert-danger' role='alert'>Erro na gravação da assinatura. <br />" + xhr.responseText+"</div>";
 		}
 	});
 	return result;

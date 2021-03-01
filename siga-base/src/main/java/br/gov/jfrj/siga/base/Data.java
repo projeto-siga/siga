@@ -73,6 +73,14 @@ public class Data {
 		return null;
 	}
 	
+	public static String formatDDMMYYYY(Date dt) {
+		if (dt != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+			return df.format(dt);
+		}
+		return null;
+	}
+	
 	public static String calcularTempoRelativo(Date anterior) {
 		PrettyTime p = new PrettyTime(new Date(), new Locale("pt"));
 

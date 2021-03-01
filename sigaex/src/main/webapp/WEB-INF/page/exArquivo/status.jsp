@@ -102,7 +102,11 @@
 		    },
 		    
 		    end: function() {
-		    	window.location = "/sigaex/api/v1/download/${jwt}/${filename}";
+		    	if("${filename}".includes(".html")){
+		    		window.location = "/sigaex/api/v1/download/${jwt}/${filename}";
+		    	} else {
+		    		window.location = "/siga/pdfjs/web/viewer.html?file=/sigaex/api/v1/download/${jwt}/${filename}";
+		    	}
 		    },
 		    
 		    formatBytes: function(bytes, decimals = 2) {

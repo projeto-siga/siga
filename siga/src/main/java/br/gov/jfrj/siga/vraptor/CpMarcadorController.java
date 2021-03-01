@@ -26,7 +26,6 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
@@ -49,11 +48,7 @@ import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.cp.CpMarcadorTipoTextoEnum;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpMarcador;
-import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
-import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 @Controller
 public class CpMarcadorController extends SigaController {
@@ -79,6 +74,15 @@ public class CpMarcadorController extends SigaController {
 	@Get("/app/marcador/listar")
 	public void lista() throws Exception {
 		assertAcesso("");
+		List<CpMarcador> listMar = null;
+		try {
+			assertAcesso(ACESSO_CAD_MARCADOR_GERAL);
+			listMar = dao.listarCpMarcadoresPorLotacaoEGeral(getLotaCadastrante(), true);
+		} catch (AplicacaoException e) {
+			listMar = dao.listarCpMarcadoresPorLotacao(getLotaCadastrante(), true);
+		}
+
+		result.include("listaMarcadores", listMar);
 		result.include("listaTipoMarcador", CpTipoMarcadorEnum.values());
 		result.include("listaCores", CpMarcadorCorEnum.values());
 		result.include("listaIcones", CpMarcadorIconeEnum.values());
@@ -88,7 +92,6 @@ public class CpMarcadorController extends SigaController {
 		result.include("listaTipoDataLimite", CpMarcadorTipoDataEnum.values());
 		result.include("listaTipoTexto", CpMarcadorTipoTextoEnum.values());
 		result.include("listaTipoInteressado", CpMarcadorTipoInteressadoEnum.values());
-		result.include("listaMarcadores", dao.listarCpMarcadoresPorLotacaoESublotacoes(getLotaCadastrante(), true));
 	}
 
 	@Get("/app/marcador/historico")
@@ -105,6 +108,9 @@ public class CpMarcadorController extends SigaController {
 		try {
 			if (id != null) {
 				CpMarcador mar = dao().consultar(id, CpMarcador.class, false);
+				if (mar.getCpTipoMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL)		
+					assertAcesso(ACESSO_CAD_MARCADOR_GERAL);
+
 				mar.setHisAtivo(0);
 				dao().excluirComHistorico(mar, null, getIdentidadeCadastrante());
 				result.use(Results.http()).addHeader("Content-Type", "application/text")
@@ -119,12 +125,18 @@ public class CpMarcadorController extends SigaController {
 	@Transacional
 	@Get("/app/marcador/editar")
 	public void edita(final Long id) {
-		assertAcesso(ACESSO_CAD_MARCADOR_LOTA);
-		
 		if (id != null) {
 			CpMarcador marcador = dao().consultar(id, CpMarcador.class, false);
 			marcador = dao().obterAtual(marcador);
 			result.include("marcador", marcador);
+			if (marcador == null) 
+				throw new AplicacaoException ("O marcador a ser editado não existe ou não está ativo - id: " + id.toString());
+			
+			if (marcador.getCpTipoMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL) {		
+				assertAcesso(ACESSO_CAD_MARCADOR_GERAL);
+			} else {
+				assertAcesso(ACESSO_CAD_MARCADOR_LOTA);
+			}
 		}
 		result.include("listaTipoMarcador", listarTipoMarcador());
 		result.include("listaCores", CpMarcadorCorEnum.values());
@@ -156,8 +168,8 @@ public class CpMarcadorController extends SigaController {
 			id = marcador.getId();
 		}
 		
-		Cp.getInstance().getBL().gravarMarcadorDaLotacao(id, getCadastrante(), getLotaTitular(),
-				getIdentidadeCadastrante(), descricao, descrDetalhada, idCor, idIcone, 14, idTpMarcador,
+		Cp.getInstance().getBL().gravarMarcador(id, getCadastrante(), getLotaTitular(),
+				getIdentidadeCadastrante(), descricao, descrDetalhada, idCor, idIcone, 2, idTpMarcador,
 				idTpAplicacao, idTpDataPlanejada, idTpDataLimite, idTpExibicao, idTpTexto, idTpInteressado);
 
 		result.redirectTo(this).lista();

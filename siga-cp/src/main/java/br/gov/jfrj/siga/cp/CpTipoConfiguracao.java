@@ -164,7 +164,8 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 	public static final long TIPO_CONFIG_TRAMITAR_SEM_CAPTURADO = 52;
 	
 	public static final long TIPO_CONFIG_CRIAR_NOVO_EXTERNO = 53;
-
+	
+	public static final long TIPO_CONFIG_TRAMITAR_PARA_LOTACAO_SEM_USUARIOS_ATIVOS = 54;
 
 	// SIGA-WF
 

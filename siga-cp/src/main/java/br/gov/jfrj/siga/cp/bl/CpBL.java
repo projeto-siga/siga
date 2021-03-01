@@ -1311,7 +1311,7 @@ public class CpBL {
 		return urlPermanente;
 	}
 
-	public void gravarMarcadorDaLotacao(final Long id, final DpPessoa cadastrante, final DpLotacao lotacao, final CpIdentidade identidade, 
+	public void gravarMarcador(final Long id, final DpPessoa cadastrante, final DpLotacao lotacao, final CpIdentidade identidade, 
 			final String descricao, final String descrDetalhada, final CpMarcadorCorEnum idCor, final CpMarcadorIconeEnum idIcone, final Integer grupoId, 
 			final CpTipoMarcadorEnum idTpMarcador, final CpMarcadorTipoAplicacaoEnum idTpAplicacao, final CpMarcadorTipoDataEnum idTpDataPlanejada, 
 			final CpMarcadorTipoDataEnum idTpDataLimite, 
@@ -1327,17 +1327,20 @@ public class CpBL {
 			throw new AplicacaoException ("Descrição do marcador tem mais de 40 bytes.");
 		
 		String msgLotacao = SigaMessages.getMessage("usuario.lotacao");
-		List<CpMarcador> listaMarcadoresLotacao = dao().listarCpMarcadoresPorLotacaoESublotacoes(lotacao, true);
+		List<CpMarcador> listaMarcadoresLotacao = dao().listarCpMarcadoresPorLotacao(lotacao, true);
+		List<CpMarcador> listaMarcadoresLotacaoEGerais = new ArrayList<CpMarcador> (listaMarcadoresLotacao);
+		listaMarcadoresLotacaoEGerais.addAll(dao().listarCpMarcadoresGerais(true));
 		
-		if (listaMarcadoresLotacao.size() > 9) 
+		if (idTpMarcador == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO && id == null 
+				&& listaMarcadoresLotacao.size() > 9) 
 			throw new AplicacaoException ("Atingiu o limite de 10 marcadores possíveis para " + msgLotacao);
 		
-		if (id == null && (listaMarcadoresLotacao.stream()
+		if (id == null && (listaMarcadoresLotacaoEGerais.stream()
 				.filter(mar -> mar.getDescrMarcador()
 						.equals(descricao)).count() > 0)) 
-			throw new AplicacaoException ("Já existe um marcador com esta descrição para esta " + msgLotacao);
+			throw new AplicacaoException ("Já existe um marcador Geral ou da " + msgLotacao 
+					+ " com esta descrição: " + descricao);
 
-//		Integer ordem;
 		if (id != null) {
 			CpMarcador marcadorAnt = new CpMarcador();
 			CpMarcador marcador = new CpMarcador();
@@ -1349,7 +1352,7 @@ public class CpBL {
 				marcador.setDpLotacaoIni(marcadorAnt.getDpLotacaoIni());
 				marcador.setDescrMarcador(descricao);
 				marcador.setDescrDetalhada(descrDetalhada);
-				marcador.setGrupoMarcador(grupoId);
+				marcador.setGrupoMarcador(2);
 				marcador.setCpTipoMarcador(idTpMarcador);
 				marcador.setIdCor(idCor);
 				marcador.setIdIcone(idIcone);
@@ -1379,7 +1382,7 @@ public class CpBL {
 			marcador.setIdTpExibicao(idTpExibicao);
 			marcador.setIdTpTexto(idTpTexto);
 			marcador.setIdTpInteressado(idTpInteressado);
-			marcador.setDpLotacaoIni(lotacao);
+			marcador.setDpLotacaoIni(lotacao.getLotacaoInicial());
 			marcador.setOrdem(ordem);
 			
 			dao().gravarComHistorico(marcador, null, null, identidade);

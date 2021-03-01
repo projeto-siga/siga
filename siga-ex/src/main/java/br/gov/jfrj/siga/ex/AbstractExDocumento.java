@@ -1010,7 +1010,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setOrgaoUsuario(CpOrgaoUsuario orgaoUsuario) {
 		this.orgaoUsuario = orgaoUsuario;
-		if (orgaoPermiteHcp() && orgaoPermiteHcp() && conteudoBlobDoc==null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
+		if (orgaoPermiteHcp() && conteudoBlobDoc==null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
 			cpArquivo = CpArquivo.updateOrgaoUsuario(cpArquivo, orgaoUsuario);
 		}
 	}
@@ -1130,17 +1130,12 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	
 	
 	private boolean orgaoPermiteHcp() {
+		final String sigla = this.orgaoUsuario!=null?this.orgaoUsuario.getSigla():(this.getCadastrante()!=null?this.getCadastrante().getOrgaoUsuario().getSigla():null);
 		List<String> orgaos = Prop.getList("/siga.armazenamento.orgaos");
-		if(orgaos == null || "*".equals(orgaos.get(0)) || orgaos.stream().anyMatch(orgao -> orgao.equals(this.orgaoUsuario.getSigla())) )
+		if(orgaos != null && ("*".equals(orgaos.get(0)) || orgaos.stream().anyMatch(siglaFiltro -> siglaFiltro.equals(sigla))) )
 			return true;
 		return false;
 	}
-	
-//	public void armazenar() {
-//		if (cacheConteudoBlobDoc != null) 
-//			cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobDoc);
-//	}
-
 	
 	public ExProtocolo getExProtocolo() {
 		return exProtocolo;

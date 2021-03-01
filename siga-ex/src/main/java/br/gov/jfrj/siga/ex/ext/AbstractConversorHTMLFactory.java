@@ -56,6 +56,7 @@ public abstract class AbstractConversorHTMLFactory {
 
 	public static final int CONVERSOR_NHEENGATU = 0;
 	public static final int CONVERSOR_FOP = 1;
+	public static final int CONVERSOR_FLYING_SAUCER = 2;
 
 	private static AbstractConversorHTMLFactory instance;
 
@@ -121,7 +122,6 @@ public abstract class AbstractConversorHTMLFactory {
 	 * @throws AplicacaoException
 	 */
 	public ConversorHtml getExtensaoConversorHTML() throws AplicacaoException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

@@ -4867,7 +4867,18 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA,
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR)) ;
 	}
-	
+
+	public boolean podeDisponibilizarNoAcompanhamentoDoProtocolo(final DpPessoa titular, final DpLotacao lotaTitular,
+			final ExDocumento doc) {
+		return getConf()
+				.podePorConfiguracao(null, null, null, doc.getExTipoDocumento(), doc.getExFormaDocumento(), 
+					doc.getExModelo(), null, null, 
+					ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO,
+							ExTipoMovimentacao.class, false), 
+					null, null, null, lotaTitular, titular, null,null,
+					CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR, null, null, null, null, null, null);
+	}
+		
 	public boolean podePublicarPortalTransparencia(final DpPessoa cadastrante,
 			final DpLotacao lotacao, final ExMobil mob) {
 		

@@ -164,6 +164,7 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 		case HCP:
 			if (getCaminho() != null) {
 				CpArquivoExcluir excluir = new CpArquivoExcluir();
+				excluir.setIdArqExc(getIdArq());
 				excluir.setCaminho(getCaminho());
 				ContextoPersistencia.em().persist(excluir);
 			}

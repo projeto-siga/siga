@@ -1140,4 +1140,10 @@ public class FuncoesEL {
 		return retorno;
 	}	
 
+	public static Boolean podeDisponibilizarNoAcompanhamentoDoProtocolo(DpPessoa titular,
+			DpLotacao lotaTitular, ExDocumento doc) throws Exception {
+		return Ex.getInstance().getComp()
+				.podeDisponibilizarNoAcompanhamentoDoProtocolo(titular, lotaTitular, doc);
+	}
+
 }

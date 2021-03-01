@@ -326,7 +326,9 @@
 											<td class="text-left" title="${mov.dtRegMovDDMMYYHHMMSS}">${mov.tempoRelativo}</td>
 											<td class="text-left" title="${mov.mov.cadastrante.descricao} - ${mov.mov.lotaCadastrante.descricao}">${mov.mov.lotaCadastrante.sigla}</td>
 											<td class="text-left" >${mov.mov.exTipoMovimentacao.sigla}</td>
-											<td class="text-left">
+											<td class="text-left" 
+													<c:if test="${mov.idTpMov == 43}">data-toggle="tooltip"  data-placement="top" title="O sistema encerra automaticamente um volume após a inclusão de ${f:resource('volume.max.paginas')} páginas para evitar lentidão no processamento e geração de PDF."
+													</c:if>>
 												${mov.descricao}
 												<c:if test='${mov.idTpMov != 2}'> ${mov.complemento} </c:if>
 												<c:set var="assinadopor" value="${true}" />
@@ -1391,6 +1393,7 @@
 		<i class="fas fa-envelope-open-text icone-receber-doc"></i>
 	</button>
 	
+	<c:if test="${!docVO.doc.mobilDefaultParaReceberJuntada.isJuntado() }">
 	<script>
 		$(function() {						
 			var modalReceberDocumento = $('#modalReceberDocumento');				
@@ -1408,7 +1411,8 @@
 				btnReceberDocumento.css({'opacity':'1', 'visibility':'visible'});								
 			});												
 		});	
-	</script>			
+	</script>	
+	</c:if>
 </c:if>
 <c:if test="${docVO.doc.isComposto()}">
 	<c:choose>

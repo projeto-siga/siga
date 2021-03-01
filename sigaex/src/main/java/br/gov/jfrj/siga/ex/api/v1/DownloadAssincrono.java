@@ -38,7 +38,7 @@ public class DownloadAssincrono implements Callable<String> {
 	@Override
 	public String call() throws Exception {
 		String bufName = null;
-		try (ApiContext ctx = new ApiContext(false)) {
+		try (ApiContext ctx = new ApiContext(true, false)) {
 			ExDao dao = ExDao.getInstance();
 
 			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();

@@ -931,7 +931,9 @@ LINHA  VARIÁVEL / CONTEÚDO
                 </style>
             </head>
             <body>
-                [#nested]
+            	<div style="word-wrap: break-word" class="divDoc">
+                	[#nested]
+            	</div>
             </body>
         </html>
     [/#if]
@@ -2654,13 +2656,13 @@ Pede deferimento.</span><br/><br/><br/>
     [@cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho/]
     [/@primeiroCabecalho]
     [@cabecalho]
-    [@cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho/]
+    [@cabecalhoCentralizado orgaoCabecalho/]
     [/@cabecalho]
     [@letra tamanhoLetra]
         [#if !numeracaoCentralizada]
-              <table style="float:none; clear:both;" width="100%" border="0" bgcolor="#FFFFFF">
-              <tr>
-              <td align="left">
+              <table style="float:none; clear:both; margin: 0; padding: 0;border-collapse: collapse;" width="100%" border="0" bgcolor="#FFFFFF">
+              <tr style="margin: 0; padding: 0;">
+              <td align="left" style="margin: 0; padding: 0;">
               [#if !omitirCodigo]
                     <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br/>[@numeroDJE]${tipo}[#if tipo != ""] SIGA N&ordm; ${(doc.codigo)!} [/#if] [/@numeroDJE]</p>
               [/#if]

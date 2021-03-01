@@ -46,7 +46,7 @@
 		<!-- Matricula -->
 		<div id="spanPessoa${propriedadePessoaClean}" class="form-group">
 			<label>Pessoa</label> 
-			<sigasr:selecao
+			<sigasr:selecao3
 				tipo="pessoa" propriedade="${propriedadePessoa}" tema="simple"
 				modulo="siga" desativar="${desativar}" />
 		</div>
@@ -54,7 +54,7 @@
 		<!-- Lotacao -->
 		<div id="spanLotacao${propriedadeLotacaoClean}" class="form-group" style="display: none">
 			<label>Lotação</label> 
-			<sigasr:selecao
+			<sigasr:selecao3
 				tipo="lotacao" propriedade="${propriedadeLotacao}" tema="simple"
 				modulo="siga" desativar="${desativar}" />
 		</div>
@@ -75,10 +75,12 @@
 
 
 <script language="javascript">
+
 	var select = document.getElementById('${propriedadePessoaClean}${propriedadeLotacaoClean}');
 
 	// Seta opcao Pessoa se id da pessoa estiver presente. Caso contrario seta Lotacao no 'select':
-	if (document.getElementById('formulario_${propriedadePessoa}_id').value)
+	//if (document.getElementById('formulario_${propriedadePessoaClean}_id').value)
+	if(get_${propriedadePessoaClean}_by_id().value) 
 		select.value = 1;
 	else
 		select.value = 2;
@@ -158,9 +160,7 @@
 			document.getElementById(idLotacao).style.display = 'none';
 
 			// Apaga as informacoes da lotacao selecionada:
-			document.getElementById('formulario_${propriedadeLotacao}_id').value = '';
-			document.getElementById('formulario_${propriedadeLotacao}_sigla').value = '';
-			document.getElementById('${propriedadeLotacaoClean}_lotacaoSelSpan').innerHTML = '';
+			limpa_${propriedadeLotacaoClean}();
 			break;
 		case 2:
 			// Exibe as entradas para lotacao e esconde as entradas para pessoa:
@@ -168,9 +168,7 @@
 			document.getElementById(idLotacao).style.display = '';
 
 			// Apaga as informacoes da pessoa selecionada:
-			document.getElementById('formulario_${propriedadePessoa}_id').value = '';
-			document.getElementById('formulario_${propriedadePessoa}_sigla').value = '';
-			document.getElementById('${propriedadePessoaClean}_pessoaSelSpan').innerHTML = '';
+			limpa_${propriedadePessoaClean}();
 			break;
 		}
 	}

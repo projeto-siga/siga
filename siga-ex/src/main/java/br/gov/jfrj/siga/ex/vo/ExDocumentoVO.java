@@ -651,8 +651,10 @@ public class ExDocumentoVO extends ExVO {
 				"/app/expediente/mov",
 				"assinar",
 				Ex.getInstance().getComp()
-						.podeAssinar(titular, lotaTitular, mob));
-
+						.podeAssinar(titular, lotaTitular, mob),
+				null, null, null, null,
+				"once");
+		
 		vo.addAcao(
 				"script_key",
 				"A_utenticar",

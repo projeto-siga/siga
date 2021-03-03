@@ -859,6 +859,40 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /documentos/{sigla}/gerar-protocolo:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      description: Gera um número de protocolo e link para acompanhamento de um expediente ou processo
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              numeroProtocolo:
+                type: string
+              linkProtocolo:
+                type: string
+              dataHoraEmissaoProtocolo:
+                type: string
+        403:
+          description: Acesso ao documento não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Documento não encontrado
+          schema:
+            $ref: "#/definitions/Error"        
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
   /sugestao:
     post:
       consumes: ["application/x-www-form-urlencoded"]

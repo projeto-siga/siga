@@ -211,7 +211,8 @@
 	<div class="row mt-3">
 		<div class="col">
 			<form name="frm" action="exibir" theme="simple" method="POST">
-				<input type="hidden" id="id" name="id"/> <input type="hidden" id="sigla" name="sigla"/>
+				<input type="hidden" id="id" name="id"/> <input type="hidden" id="sigla" name="sigla"/>	
+				<input type="hidden" id="visualizador" value="${f:resource('/sigaex.pdf.visualizador') }"/>
 			</form>
 			<h2>
 				<c:if test="${empty ocultarCodigo}">${docVO.sigla}
@@ -288,9 +289,9 @@
 							</div>
 						</c:when>
 						<c:when test="${docVO.doc.pdf}">
+							<c:set var="url" value="/sigaex/app/arquivo/exibir?arquivo=${docVO.doc.referenciaPDF}"/>
 							<iframe style="display: block;" name="painel" id="painel"
-								src="/sigaex/app/arquivo/exibir?arquivo=${docVO.doc.referenciaPDF}"
-								width="100%" frameborder="0" scrolling="auto"></iframe>
+								width="100%" frameborder="0" scrolling="auto"></iframe>			
 							<script>
 							$(document).ready(function(){resize();$(window).resize(function(){resize();});});
 						</script>
@@ -1563,6 +1564,9 @@
 	function cancelarExclusaoArquivoAuxiliar() {
 		containerConfimarcaoArquivoAuxiliarACancelar.css({'visibility':'hidden', 'opacity':'0'});
 		containerArquivosAuxiliares.css({'visibility':'visible', 'opacity':'1'});				
-	}																	
+	}
+	window.onload = function () { 
+		document.getElementById('painel').src = montarUrlDocPDF('${url}',document.getElementById('visualizador').value); 
+	} 
 </script>
 </siga:pagina>

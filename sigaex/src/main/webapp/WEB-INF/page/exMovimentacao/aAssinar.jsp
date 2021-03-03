@@ -74,8 +74,10 @@
 			</c:if>
 			<c:if test="${doc.pdf != null && doc.conteudoBlobHtmlStringComReferencias == null}">
 				<div class="card-body bg-white">
+					<c:set var="url" value="/sigaex/app/arquivo/exibir?arquivo=${doc.referenciaPDF}"/>
+					<input type="hidden" id="visualizador" value="${f:resource('/sigaex.pdf.visualizador') }"/>
 					<iframe style="display: block;" name="painel" id="painel"
-						src="/sigaex/app/arquivo/exibir?arquivo=${doc.referenciaPDF}"
+						src=""
 						width="100%" height="400" frameborder="0" scrolling="auto"></iframe>
 					<script>
 						$(document).ready(function(){resize();$(window).resize(function(){resize();});});
@@ -137,4 +139,9 @@
 	</div>
 
 	<tags:assinatura_rodape podeAssinarPorComSenha="${f:podeAssinarPorComSenha(titular,lotaTitular,doc.mobilGeral)}"/>
+	<script>
+		window.onload = function () { 
+			document.getElementById('painel').src = montarUrlDocPDF('${url }',document.getElementById('visualizador').value);
+		} 
+	</script>
 </siga:pagina>

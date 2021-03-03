@@ -23,11 +23,12 @@
 					<div class="card-body">
 
 						<div>
+							<input type="hidden" id="visualizador" value="${f:resource('/sigaex.pdf.visualizador') }"/>
 							<c:url var='pdfAssinado'
 								value='/public/app/arquivoAutenticado_stream?jwt=${jwt}&assinado=true' />
 							<c:url var='pdf'
 								value='/public/app/arquivoAutenticado_stream?jwt=${jwt}&assinado=false' />
-							<iframe src="${pdfAssinado}" width="100%" height="600"
+							<iframe id="frameDoc" width="100%" height="600"
 								align="center" style="margin-top: 10px;"> </iframe>
 						</div>
 					</div>
@@ -43,7 +44,7 @@
 								</h5>
 							</div>
 							<div class="card-body">
-								<i class="fa fa-angle-double-right"></i> <a href="${pdf}" target="_blank">PDF do documento</a>
+								<i class="fa fa-angle-double-right"></i> <a href="" id="linkDoc" target="_blank">PDF do documento</a>
 							</div>
 						</div>
 					</div>
@@ -248,4 +249,10 @@
 		</div>
 	</div>
 	<tags:assinatura_rodape />
+	<script>
+	window.onload = function () { 
+		document.getElementById('frameDoc').src = montarUrlDocPDF('${pdfAssinado }',document.getElementById('visualizador').value); 
+		document.getElementById('linkDoc').href = montarUrlDocPDF('${pdf}', document.getElementById('visualizador').value);
+	} 
+</script>
 </siga:pagina>

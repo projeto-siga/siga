@@ -137,7 +137,7 @@ public class SubstituicaoController extends SigaController {
 	}	
 	
 	@Get("/app/substituicao/unidade")
-	public void listarUnidades() {
+	public void unidade() {
 		
 		final Query query = em().createNamedQuery("listarUnidadesComUsuarioPadrao");
 		query.setParameter("cpfPessoa", getCadastrante().getCpfPessoa());

@@ -250,7 +250,7 @@
 
 				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;ADM;GER:Gerenciar Unidades')}">				
 					<li><a class="dropdown-item"
-						href="/siga/app/substituicao/unidade">Gerenciar minhas <fmt:message key="usuario.lotacoes" /></a></li>
+						href="${serverAndPort}/siga/app/substituicao/unidade">Gerenciar minhas <fmt:message key="usuario.lotacoes" /></a></li>
 				</c:if>
 				
 				<c:if test="${f:podeDelegarVisualizacao(cadastrante, cadastrante.lotacao)}">

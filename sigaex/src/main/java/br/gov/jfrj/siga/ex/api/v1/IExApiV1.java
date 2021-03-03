@@ -451,6 +451,20 @@ public interface IExApiV1 {
 		public void run(DocumentosSiglaMarcadoresDisponiveisGetRequest req, DocumentosSiglaMarcadoresDisponiveisGetResponse resp) throws Exception;
 	}
 
+	public class DocumentosSiglaGerarProtocoloPostRequest implements ISwaggerRequest {
+		public String sigla;
+	}
+
+	public class DocumentosSiglaGerarProtocoloPostResponse implements ISwaggerResponse {
+		public String numeroProtocolo;
+		public String linkProtocolo;
+		public String dataHoraEmissaoProtocolo;
+	}
+
+	public interface IDocumentosSiglaGerarProtocoloPost extends ISwaggerMethod {
+		public void run(DocumentosSiglaGerarProtocoloPostRequest req, DocumentosSiglaGerarProtocoloPostResponse resp) throws Exception;
+	}
+
 	public class SugestaoPostRequest implements ISwaggerRequest {
 		public String nome;
 		public String email;

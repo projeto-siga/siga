@@ -269,7 +269,7 @@ public class ExDocumentoApiVO extends ExApiVO {
 
 			for (ExMovimentacaoApiVO exMovVO : mobVO.getMovs()) {
 				if (!exMovVO.isCancelada() && movimentacoesPermitidas.contains(exMovVO.getIdTpMov())) {
-
+					exMovVO.podeExibirNoSigale = true;
 					// Desabilitado temporariamente
 					// if (exMovVO.getIdTpMov() ==
 					// ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA)
@@ -283,8 +283,10 @@ public class ExDocumentoApiVO extends ExApiVO {
 					// }
 					if (!juntadasRevertidas.contains(exMovVO))
 						movimentacoesFinais.add(exMovVO);
+				} else {
+					exMovVO.podeExibirNoSigale = false;
+					movimentacoesFinais.add(exMovVO);
 				}
-
 			}
 
 			mobVO.setMovs(movimentacoesFinais);

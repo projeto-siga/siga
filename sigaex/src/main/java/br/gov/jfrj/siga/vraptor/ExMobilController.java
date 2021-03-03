@@ -557,14 +557,12 @@ public class ExMobilController extends
 					getLotaTitular(), SIGA_DOC_PESQ_DTLIMITADA ) && dt == null) 
 				validarLimiteDeDatas(dtDocString, dtDocFinalString);
 //					long tempoIni = System.currentTimeMillis();
-			setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,
-					getTitular(), getLotaTitular()));
-
 //					System.out.println("Consulta dos por filtro: "
 //							+ (System.currentTimeMillis() - tempoIni));
 			setItens(dao().consultarPorFiltroOtimizado(flt,
-					builder.getOffset(), getItemPagina(), getTitular(),
+					builder.getOffset(), getItemPagina() + 1, getTitular(),
 					getLotaTitular()));
+			setTamanho(getItens().size());
 		} catch (RegraNegocioException e) {
 			result.include("msgCabecClass", "alert-danger");
 			result.include("mensagemCabec", e.getMessage());

@@ -14,7 +14,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<c:forEach var="taskInstance" items="${taskInstances}">
+				<c:forEach var="taskInstance" items="${tarefas}">
 					<tr class="count">
 						<td>${taskInstance.instanciaDeProcedimento.definicaoDeProcedimento.nome}</td>
 						<td><a
@@ -32,7 +32,7 @@
 								</span>
 							</c:if></td>
 						<td align="center">${taskInstance.instanciaDeProcedimento.prioridade}</td>
-						<td align="right">${fn:replace(f:esperaSimples(taskInstance.instanciaDeProcedimento.dtEvento),
+						<td align="right">${fn:replace(f:esperaSimples(taskInstance.instanciaDeProcedimento.eventoData),
 						" ", "&nbsp;")}</td>
 					</tr>
 				</c:forEach>

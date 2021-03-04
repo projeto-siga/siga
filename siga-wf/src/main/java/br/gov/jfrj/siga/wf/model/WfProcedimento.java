@@ -339,6 +339,10 @@ public class WfProcedimento extends Objeto
 			case PESSOA:
 			case LOTACAO:
 				return new WfResp(tarefa.getPessoa(), tarefa.getLotacao());
+			case PROCEDIMENTO_TITULAR:
+				return new WfResp(titular, lotaTitular);
+			case PROCEDIMENTO_LOTA_TITULAR:
+				return new WfResp(null, lotaTitular);
 			default:
 				return null;
 			}

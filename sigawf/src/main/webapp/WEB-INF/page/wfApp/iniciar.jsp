@@ -20,6 +20,25 @@
 						</div>
 					</div>
 				</div>
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF;INI:Iniciar;PRIM:Especificar Primeira Tarefa')}">
+					<div class="row">
+						<div class="col col-12 col-md-6">
+							<div class="form-group">
+								<div class="form-group">
+									<label for="tdId">Primeira Tarefa</label> <select id="tdId"
+										name="tdId" class="form-control">
+										<option value="">[Início]</option>
+										<c:forEach var="td" items="${pd.definicaoDeTarefa}">
+											<option value="${td.id}">${td.nome}</option>
+										</c:forEach>
+									</select> <small class="form-text text-muted float-right" id="Qtd">Selecione
+										a tarefa na qual vc deseja que o procedimento inicie</small>
+								</div>
+							</div>
+						</div>
+					</div>
+				</c:if>
 			</fieldset>
 			<div class="row">
 				<div class="col col-12">

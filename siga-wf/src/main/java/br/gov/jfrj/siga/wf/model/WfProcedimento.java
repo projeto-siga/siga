@@ -211,15 +211,7 @@ public class WfProcedimento extends Objeto
 	// Se for "fim" retorna length + 1
 	@Override
 	public int getIndexById(String id) {
-		if ("finish".equals(id))
-			return definicaoDeProcedimento.getTaskDefinition().size();
-		int i = 0;
-		for (TaskDefinition td : definicaoDeProcedimento.getTaskDefinition()) {
-			if (td.getIdentifier().equals(id))
-				return i;
-			i++;
-		}
-		return i;
+		return definicaoDeProcedimento.getIndexById(id);
 	}
 
 	@PostLoad
@@ -476,11 +468,12 @@ public class WfProcedimento extends Objeto
 //		movimentacoes = set;
 		return movimentacoes;
 	}
-	
+
 	public WfMov getUltimaMovimentacao() {
 		WfMov last = null;
-	    for(WfMov e : movimentacoes) last = e;
-	    return last;
+		for (WfMov e : movimentacoes)
+			last = e;
+		return last;
 	}
 
 	public void setMovimentacoes(SortedSet<WfMov> movimentacoes) {

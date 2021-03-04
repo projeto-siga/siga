@@ -25,6 +25,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.BatchSize;
 
 import com.crivano.jflow.model.ProcessDefinition;
+import com.crivano.jflow.model.TaskDefinition;
 
 import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -412,6 +413,18 @@ public class WfDefinicaoDeProcedimento extends HistoricoAuditavelSuporte impleme
 
 	public void setAcessoDeInicializacao(WfAcessoDeInicializacao acessoDeInicializacao) {
 		this.acessoDeInicializacao = acessoDeInicializacao;
+	}
+
+	public int getIndexById(String id) {
+		if ("finish".equals(id))
+			return getTaskDefinition().size();
+		int i = 0;
+		for (TaskDefinition td : getTaskDefinition()) {
+			if (td.getIdentifier().equals(id))
+				return i;
+			i++;
+		}
+		return i;
 	}
 
 }

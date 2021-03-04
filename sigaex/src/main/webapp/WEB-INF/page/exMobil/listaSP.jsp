@@ -24,7 +24,7 @@ td.tramitacoes.fa-fw>a.disabled {
 	function csv(id, action) {
 		var frm = document.getElementById(id);
 		frm.method = "POST";
-		sigaSpinner.mostrar()		
+		document.getElementById("exportar").disabled = true;
 		sbmtAction(id, action);
 		frm.action = 'listar';
 		frm.method = "GET";
@@ -32,7 +32,7 @@ td.tramitacoes.fa-fw>a.disabled {
 </script>
 <div id="inicio" class="row mb-3">
 	<div class="col">		
-		<button type="button" class="btn btn-outline-success" title="Exportar para CSV"	onclick="javascript:csv('listar', '/sigaex/app/expediente/doc/exportarCsv');"><i class="fa fa-file-csv"></i> Exportar</button>	
+		<button type="button" class="btn btn-outline-success" id="exportar" title="Exportar para CSV"	onclick="javascript:csv('listar', '/sigaex/app/expediente/doc/exportarCsv');"><i class="fa fa-file-csv"></i> Exportar</button>	
 	</div>
 </div>
 <c:choose>

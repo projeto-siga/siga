@@ -90,9 +90,9 @@ public class WfBL extends CpBL {
 	 * @return
 	 * @throws Exception
 	 */
-	public WfProcedimento createProcessInstance(long pdId, DpPessoa titular, DpLotacao lotaTitular,
-			CpIdentidade identidade, WfTipoDePrincipal tipoDePrincipal, String principal, ArrayList<String> keys,
-			ArrayList<String> values, boolean fCreateStartTask) throws Exception {
+	public WfProcedimento createProcessInstance(long pdId, Integer idxPrimeiraTarefa, DpPessoa titular,
+			DpLotacao lotaTitular, CpIdentidade identidade, WfTipoDePrincipal tipoDePrincipal, String principal,
+			ArrayList<String> keys, ArrayList<String> values, boolean fCreateStartTask) throws Exception {
 
 		// Create the process definition,
 		WfDefinicaoDeProcedimento pd = WfDao.getInstance().consultar(pdId, WfDefinicaoDeProcedimento.class, false);
@@ -125,7 +125,12 @@ public class WfBL extends CpBL {
 		WfEngine engine = new WfEngine(dao(), new WfHandler(titular, lotaTitular, identidade));
 
 		// Start the process instance
-		engine.start(pi);
+		if (idxPrimeiraTarefa == null)
+			engine.start(pi);
+		else {
+			pi.start();
+			engine.execute(pi, pi.getCurrentIndex(), idxPrimeiraTarefa);
+		}
 
 		return pi;
 	}
@@ -289,7 +294,7 @@ public class WfBL extends CpBL {
 					&& lastr.getDefinicaoDeTarefaPara().equals(mov.getDefinicaoDeTarefaPara()))
 				return;
 		}
-		
+
 		gravarMovimentacao(mov);
 	}
 

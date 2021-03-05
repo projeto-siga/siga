@@ -39,7 +39,11 @@ public enum WfTipoDeResponsavel implements ResponsibleKind {
 	//
 	PESSOA("Pessoa"),
 	//
-	LOTACAO("Lotação");
+	LOTACAO("Lotação"),
+	//
+	PROCEDIMENTO_TITULAR("Procedimento: Titular"),
+	//
+	PROCEDIMENTO_LOTA_TITULAR("Procedimento: Lotação do Titular");
 
 	private final String descr;
 

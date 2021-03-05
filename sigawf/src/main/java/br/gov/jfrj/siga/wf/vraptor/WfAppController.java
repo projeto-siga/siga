@@ -133,14 +133,23 @@ public class WfAppController extends WfController {
 	@Transacional
 	@Post
 	@Path("/app/iniciar/{pdId}")
-	public void iniciar(Long pdId, WfTipoDePrincipal tipoDePrincipal, String principal, SelecaoGenerica documentoRefSel)
-			throws Exception {
+	public void iniciar(Long pdId, Long tdId, WfTipoDePrincipal tipoDePrincipal, String principal,
+			SelecaoGenerica documentoRefSel) throws Exception {
 		if (documentoRefSel != null && documentoRefSel.getSigla() != null) {
 			principal = documentoRefSel.getSigla();
 		}
 		if (pdId == null)
-			throw new RuntimeException();
-		WfProcedimento pi = Wf.getInstance().getBL().createProcessInstance(pdId, getTitular(), getLotaTitular(),
+			throw new RuntimeException("Identificador da definição de procedimento não encontrado");
+		WfDefinicaoDeProcedimento pd = dao().consultar(pdId, WfDefinicaoDeProcedimento.class, false);
+
+		Integer idx = null;
+		if (tdId != null) {
+			idx = pd.getIndexById(Long.toString(tdId));
+			if (idx == null)
+				throw new RuntimeException("Identificador da definição de tarefa não encontrado");
+		}
+
+		WfProcedimento pi = Wf.getInstance().getBL().createProcessInstance(pdId, idx, getTitular(), getLotaTitular(),
 				getIdentidadeCadastrante(), tipoDePrincipal, principal, null, null, true);
 		result.redirectTo(this).procedimento(pi.getId());
 	}

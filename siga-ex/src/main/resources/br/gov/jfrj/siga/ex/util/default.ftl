@@ -2176,7 +2176,7 @@ Pede deferimento.</span><br/><br/><br/>
 	        <td width="100%">
 	        <table width="100%" border="0" cellpadding="2">
 	            <tr>
-	                <td width="100%" align="center" valign="bottom"><img src="${_pathBrasao}" width="65" height="65" /></td>
+	                <td width="100%" align="center" valign="bottom"><img src="${_pathBrasao}" width="auto" height="65" /></td>
 	            </tr>
 	            <tr>
 	                <td width="100%" align="center">

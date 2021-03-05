@@ -18,6 +18,7 @@
 	</script>
 </c:if>
 <siga:pagina titulo="Documento" popup="${popup}" >
+<input type="hidden" id="visualizador" value="${f:resource('/sigaex.pdf.visualizador') }"/>
 <!-- main content bootstrap -->
 <div class="container-fluid content" id="page">
 	<c:if test="${not empty msg}">

@@ -464,6 +464,12 @@ app
 						case 'PRINCIPAL_LOTA_LIQUIDANTE':
 							resp = 'Lota. Liquidante';
 							break;
+						case 'PROCEDIMENTO_TITULAR':
+							resp = 'Proc. Titular';
+							break;
+						case 'PROCEDIMENTO_LOTA_TITULAR':
+							resp = 'Proc. Lota. Titular';
+							break;
 						default:
 							resp = n.tipoResponsavel
 						}

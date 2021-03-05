@@ -207,6 +207,9 @@
 										<option value="RESPONSAVEL">Tabelado</option>
 										<option value="LOTACAO">Lotação</option>
 										<option value="PESSOA">Pessoa</option>
+										<option value="PROCEDIMENTO_TITULAR">Procedimento: Titular</option>
+										<option value="PROCEDIMENTO_LOTA_TITULAR">Procedimento:
+											Lotação do Titular</option>
 										<option value="PRINCIPAL_CADASTRANTE">Principal:
 											Cadastrante</option>
 										<option value="PRINCIPAL_LOTA_CADASTRANTE">Principal:

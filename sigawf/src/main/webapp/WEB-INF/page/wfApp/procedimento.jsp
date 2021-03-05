@@ -256,7 +256,7 @@
 				<%@ include file="redirecionar.jsp"%>
 
 				<script>
-		if (${not empty f:resource('graphviz.url')}) {
+		if (${not empty f:resource('/vizservice.url')}) {
 		} else if (window.Worker) {
 			window.VizWorker = new Worker("/siga/javascript/viz.js");
 			window.VizWorker.onmessage = function(oEvent) {
@@ -273,7 +273,7 @@
 	</script>
 				<script>
 		function buildSvg(id, input, cont) {
-			if (${not empty f:resource('graphviz.url')}) {
+			if (${not empty f:resource('/vizservice.url')}) {
 			    input = input.replace(/fontsize=\d+/gm, "");
 			    $.ajax({
 				    url: "/siga/public/app/graphviz/svg",

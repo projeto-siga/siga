@@ -158,7 +158,7 @@ public class WfServiceImpl implements WfService {
 				List<CpIdentidade> l = WfDao.getInstance().consultaIdentidades(cadastranteParser.getPessoa());
 				if (l.size() > 0)
 					identidade = l.get(0);
-				WfProcedimento pi = Wf.getInstance().getBL().createProcessInstance(pd.getId(),
+				WfProcedimento pi = Wf.getInstance().getBL().createProcessInstance(pd.getId(), null,
 						titularParser.getPessoa(), titularParser.getLotacao(), identidade, null, null, keys, values,
 						false);
 

@@ -24,14 +24,15 @@ td.tramitacoes.fa-fw>a.disabled {
 	function csv(id, action) {
 		var frm = document.getElementById(id);
 		frm.method = "POST";
+		document.getElementById("exportar").disabled = true;
 		sbmtAction(id, action);
 		frm.action = 'listar';
 		frm.method = "GET";
 	}
 </script>
-<div class="row mb-3">
+<div id="inicio" class="row mb-3">
 	<div class="col">		
-		<button type="button" class="btn btn-outline-success" title="Exportar para CSV"	onclick="javascript:csv('listar', '/sigaex/app/expediente/doc/exportarCsv');"><i class="fa fa-file-csv"></i> Exportar</button>	
+		<button type="button" class="btn btn-outline-success" id="exportar" title="Exportar para CSV"	onclick="javascript:csv('listar', '/sigaex/app/expediente/doc/exportarCsv');"><i class="fa fa-file-csv"></i> Exportar</button>	
 	</div>
 </div>
 <c:choose>
@@ -165,7 +166,7 @@ td.tramitacoes.fa-fw>a.disabled {
 					</tr>
 				</thead>
 
-				<siga:paginador maxItens="${itemPagina}" maxIndices="10"
+				<siga:paginador maxItens="${itemPagina}" maxIndices="0"
 					totalItens="${tamanho}" itens="${itens}" var="documento">
 					<c:choose>
 						<c:when test="${documento[0].eletronico}">
@@ -347,8 +348,36 @@ td.tramitacoes.fa-fw>a.disabled {
 						</c:if>
 					</tr>
 				</siga:paginador>
+				<c:if test="${currentPageNumber > 1}">
+					<button type="button" class="btn btn-primary btn-sm active mr-1 mb-3" 
+						onclick="javascript:sigaSpinner.mostrar();sbmt(${(currentPageNumber - 2) * itemPagina});">Anterior</button>
+				</c:if>						
+				<c:if test="${itemPagina lt tamanho}">
+					<button type="button" class="btn btn-primary btn-sm active mr-1 mb-3"
+						onclick="javascript:sigaSpinner.mostrar();sbmt(${currentPageNumber * itemPagina});">Próxima</button>
+				</c:if>
+				<c:if test="${currentPageNumber ne 0}">
+					<button type="button" class="btn btn-primary btn-sm active mr-1 mb-3"
+						onclick="javascript:sigaSpinner.mostrar();sbmt(${0});">Voltar para o início</button>
+				</c:if>
 				</tbody>
 			</table>
 		</div>
+		<div id="final" class="col">
+			<div class="d-inline position-fixed fixed-bottom" style="left:auto">
+				<div class="float-right mr-3 opacity-80">
+					<p>
+						<a class="btn btn-light btn-circle" href="#inicio"> 
+							<i class="fas fa-chevron-up h6"></i>
+						</a>
+					</p>
+					<p>
+						<a class="btn btn-light btn-circle" href="#final"> 
+							<i class="fas fa-chevron-down h6"></i>
+						</a>
+					</p>
+				</div>
+			</div>				
+		</div>		
 	</c:otherwise>
 </c:choose>

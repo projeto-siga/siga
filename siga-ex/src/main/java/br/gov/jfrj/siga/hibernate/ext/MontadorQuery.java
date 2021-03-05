@@ -183,15 +183,15 @@ public class MontadorQuery implements IMontadorQuery {
 
 		if (!apenasCount) {
 			if (flt.getOrdem() == null || flt.getOrdem() == 0)
-				sbf.append(" order by doc.dtDoc desc, doc.idDoc desc");
+				sbf.append(" order by doc.dtDoc desc, doc.idDoc desc, label.idMarca desc");
 			else if (flt.getOrdem() == 1)
-				sbf.append(" order by label.dtIniMarca desc, doc.idDoc desc");
+				sbf.append(" order by label.dtIniMarca desc, doc.idDoc desc, label.idMarca desc");
 			else if (flt.getOrdem() == 2)
-				sbf.append(" order by doc.anoEmissao desc, doc.numExpediente desc, mob.numSequencia, doc.idDoc desc");
+				sbf.append(" order by doc.anoEmissao desc, doc.numExpediente desc, mob.numSequencia, doc.idDoc desc, label.idMarca desc");
 			else if (flt.getOrdem() == 3)
-				sbf.append(" order by doc.dtFinalizacao desc, doc.idDoc desc");
+				sbf.append(" order by doc.dtFinalizacao desc, doc.idDoc desc, label.idMarca desc");
 			else if (flt.getOrdem() == 4)
-				sbf.append(" order by doc.idDoc desc");
+				sbf.append(" order by doc.idDoc desc, label.idMarca desc");
 		}
 		
 		String s = sbf.toString();

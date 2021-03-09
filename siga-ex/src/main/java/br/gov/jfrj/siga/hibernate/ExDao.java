@@ -34,6 +34,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
@@ -53,8 +54,10 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -94,8 +97,10 @@ import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.persistencia.ExClassificacaoDaoFiltro;
 import br.gov.jfrj.siga.persistencia.ExDocumentoDaoFiltro;
+import br.gov.jfrj.siga.persistencia.ExMobilApiBuilder;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.persistencia.ExModeloDaoFiltro;
+import br.gov.jfrj.sigale.ex.vo.ExMobilApiVO;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class ExDao extends CpDao {
@@ -2115,5 +2120,104 @@ public class ExDao extends CpDao {
 				.setParameter("idAssinaturaSenha", 58L)
 				.getSingleResult();
 	}
+
+	/**
+	 * Pesquisa documentos por lista de marcadores, pessoas e lotações
+	 * @param List<Long> idMarcadores
+	 * @param List<Long> idPessoasIni, 
+	 * @param List<Long> idLotacoesIni>
+	 * @return List<Object[]>
+	 */
+	public List consultarPorFiltro(ExMobilApiBuilder flt) {
+//		long tempoIni = System.nanoTime();
+		String queryDt = "";
+		String queryOrdenacao = "";
+		if (flt.getDtDocIni() != null)
+			if ((flt.getGrupoMarcador() != null 
+					&& flt.getGrupoMarcador() == CpMarcadorGrupoEnum.EM_ELABORACAO) 
+				|| (flt.getIdMarcador() != null 
+					&& flt.getIdMarcador() == CpMarcadorEnum.EM_ELABORACAO.getId())) {
+				queryDt = " and doc.dtRegDoc >= :dtDocIni ";
+			} else {
+				queryDt = " and doc.dtDoc >= :dtDocIni ";
+			}
+
+		if (flt.getDtDocFim() != null)
+			if ((flt.getGrupoMarcador() != null 
+					&& flt.getGrupoMarcador() == CpMarcadorGrupoEnum.EM_ELABORACAO) 
+				|| (flt.getIdMarcador() != null 
+					&& flt.getIdMarcador() == CpMarcadorEnum.EM_ELABORACAO.getId())) {
+				queryDt = queryDt + " and doc.dtRegDoc <= :dtDocFim ";
+			} else {
+				queryDt = queryDt + " and doc.dtDoc <= :dtDocFim ";
+			}
+
+		switch ((int) flt.getOrdenacao().intValue()) {
+			case 1:
+				queryOrdenacao = " order by doc.dtDoc desc, doc.idDoc desc, marca.idMarca desc";
+				break;
+			case 2:
+				queryOrdenacao = " order by doc.dtDoc asc, doc.idDoc asc, marca.idMarca asc";
+				break;
+			case 3:
+				queryOrdenacao = " order by doc.dtFinalizacao desc, doc.idDoc desc, marca.idMarca desc";
+				break;
+			case 4:
+				queryOrdenacao = " order by doc.dtFinalizacao asc, doc.idDoc asc, marca.idMarca asc";
+				break;
+			case 5:
+				queryOrdenacao = " order by marca.dtIniMarca desc, doc.idDoc desc, marca.idMarca desc";
+				break;
+			case 6:
+				queryOrdenacao = " order by marca.dtIniMarca asc, doc.idDoc asc, marca.idMarca asc";
+				break;
+			case 7:
+				queryOrdenacao = " order by doc.idDoc desc, marca.idMarca desc";
+				break;
+			case 8:
+				queryOrdenacao = " order by doc.idDoc asc, marca.idMarca asc";
+				break;
+		}		
+		Query query = em().createQuery(
+			"select marca, marcador, mobil, doc from ExMarca marca"
+					+ " inner join marca.cpMarcador marcador"
+					+ " inner join marca.exMobil mobil"
+					+ " inner join mobil.exDocumento doc"
+					+ " where (marca.dtIniMarca is null or marca.dtIniMarca < :dbDatetime)"
+					+ " and (marca.dtFimMarca is null or marca.dtFimMarca > :dbDatetime)"
+					+ queryDt
+					+ (flt.getIdMarcador() != null ? " and marca.cpMarcador.idMarcador = :idMar " : "")
+					+ (flt.getGrupoMarcador() != null ? " and marca.cpMarcador.idGrupo = :idGrupo " : "")
+					+ (flt.getIdCadastrante() != null ? " and (marca.dpPessoaIni.idPessoaIni = :pesIni)" : "")
+					+ (flt.getIdLotaCadastrante() != null ? " and (marca.dpLotacaoIni.idLotacaoIni = :lotaIni)" : "")
+					+ queryOrdenacao
+		);
+		if (flt.getIdMarcador() != null)
+			query.setParameter("idMar", flt.getIdMarcador());
+		if (flt.getGrupoMarcador() != null)
+			query.setParameter("idGrupo", flt.getGrupoMarcador());
+		if (flt.getIdCadastrante() != null)
+			query.setParameter("pesIni", flt.getIdCadastrante());
+		if (flt.getIdLotaCadastrante() != null)
+			query.setParameter("lotaIni", flt.getIdLotaCadastrante());
+		if (flt.getDtDocIni() != null)
+			query.setParameter("dtDocIni", flt.getDtDocIni());
+		if (flt.getDtDocFim() != null)
+			query.setParameter("dtDocFim", flt.getDtDocFim());
+		query.setParameter("dbDatetime", this.consultarDataEHoraDoServidor());
+		
+		if (flt.getOffset() != null && flt.getOffset() > 0) {
+			query.setFirstResult(flt.getOffset().intValue());
+		}
+		if (flt.getQtdMax() != null && flt.getQtdMax() > 0) {
+			query.setMaxResults(flt.getQtdMax().intValue());
+		}
+		List l = query.getResultList();
+		// long tempoTotal = System.nanoTime() - tempoIni;
+		// System.out.println("consultarPorFiltroOtimizado: " + tempoTotal
+		// 			/ 1000000 + " ms -> " + query + ", resultado: " + l);
+		return l;
+	}
+	
 
 }

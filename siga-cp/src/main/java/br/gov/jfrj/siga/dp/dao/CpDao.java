@@ -2793,6 +2793,25 @@ public class CpDao extends ModeloDao {
 		return em().createQuery(criteriaQuery).getResultList().stream().filter(mar -> mar.getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL || mar.getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO).collect(Collectors.toList());	
 	}
 	
+	public List<CpMarcador> consultaCpMarcadorAtivoPorNome (String nome, DpLotacao lota) {
+		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
+		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);
+		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
+		Predicate predicateEqualNome = criteriaBuilder.equal(cpMarcadorRoot.get("descrMarcador"), nome);
+		Predicate predicateNullHisDtFim = criteriaBuilder.isNull(cpMarcadorRoot.get("hisDtFim"));
+
+		Predicate predicateGeralOuLotacaoEspecifica = criteriaBuilder.or(
+				criteriaBuilder.isNull(cpMarcadorRoot.get("dpLotacaoIni")),
+				criteriaBuilder.equal(cpMarcadorRoot.get("dpLotacaoIni"), lota.getLotacaoInicial()));
+		
+		Predicate predicateAnd = criteriaBuilder.and(predicateEqualNome, 
+				predicateNullHisDtFim, predicateGeralOuLotacaoEspecifica);
+		criteriaQuery.where(predicateAnd);
+		
+		criteriaQuery.orderBy(criteriaBuilder.asc(cpMarcadorRoot.get("idFinalidade"))); 
+		return em().createQuery(criteriaQuery).getResultList();	
+	}
+	
 	public <T extends Selecionavel> T carregarPorId(T o) {
 		Long id = o.getId();
 		if (id == null)

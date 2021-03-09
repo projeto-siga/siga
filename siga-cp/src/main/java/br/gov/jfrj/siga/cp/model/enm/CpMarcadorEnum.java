@@ -212,6 +212,14 @@ public enum CpMarcadorEnum {
 		return null;
 	}
 
+	public static CpMarcadorEnum getByNome(String nome) {
+		for (CpMarcadorEnum i : CpMarcadorEnum.values()) {
+			if (i.nome.equals(nome))
+				return i;
+		}
+		return null;
+	}
+
 	public static List<Integer> getListIdByGrupo(String nomegrupo) {
 		List<Integer> listMar = new ArrayList<Integer>();
 		for (CpMarcadorEnum mar : CpMarcadorEnum.values()) {

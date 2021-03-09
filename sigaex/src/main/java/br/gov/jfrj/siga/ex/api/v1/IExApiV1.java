@@ -89,10 +89,25 @@ public interface IExApiV1 {
 		public String nivelacesso;
 	}
 
-	public class ResultadoDePesquisa implements ISwaggerModel {
+	public class DocumentoPesq implements ISwaggerModel {
 		public String sigla;
-		public String nome;
-		public String siglaLotacao;
+		public String dtdoc;
+		public String dtregdoc;
+		public String dtinimarca;
+		public String descricaomarcador;
+		public String nomegrupomarcador;
+		public String descricaodocumento;
+		public String modelo;
+		public String siglamobilpai;
+		public String cadastrantesigla;
+		public String cadastrantenome;
+		public String lotacadastrantesigla;
+		public String lotacadastrantenome;
+		public String subscritorsigla;
+		public String subscritornome;
+		public String lotasubscritorsigla;
+		public String lotasubscritornome;
+		public String titular;
 	}
 
 	public class Marcador implements ISwaggerModel {
@@ -463,6 +478,26 @@ public interface IExApiV1 {
 
 	public interface ISugestaoPost extends ISwaggerMethod {
 		public void run(SugestaoPostRequest req, SugestaoPostResponse resp) throws Exception;
+	}
+
+	public class DocumentosGetRequest implements ISwaggerRequest {
+		public Long offset;
+		public Long qtdmax;
+		public Long ordenacao;
+		public String marcador;
+		public String grupomarcador;
+		public Long idpessoa;
+		public Long idlotacao;
+		public String dtinicial;
+		public String dtfinal;
+	}
+
+	public class DocumentosGetResponse implements ISwaggerResponse {
+		public List<DocumentoPesq> list;
+	}
+
+	public interface IDocumentosGet extends ISwaggerMethod {
+		public void run(DocumentosGetRequest req, DocumentosGetResponse resp) throws Exception;
 	}
 
 

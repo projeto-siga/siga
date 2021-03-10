@@ -11,6 +11,7 @@ import br.gov.jfrj.siga.api.v1.ISigaApiV1.PessoasPostRequest;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.PessoasPostResponse;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.util.Utils;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
@@ -26,7 +27,7 @@ public class PessoasPost implements IPessoasPost {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			CurrentRequest.set(
 					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-			ApiContext.assertAcesso("GI:Módulo de Gestão de Identidade;CAD_PESSOA:Cadastrar Pessoa");
+			ApiContext.assertAcesso("WS_REST: Acesso aos webservices REST;CAD_PESSOA: Cadastrar Pessoa");
 			SigaObjects so = ApiContext.getSigaObjects();
 
 			if (req.siglaOrgao == null || "".equals(req.siglaOrgao))
@@ -51,6 +52,16 @@ public class PessoasPost implements IPessoasPost {
 			if (orgaoUsu == null)
 				throw new SwaggerException(
 						"Órgão não existente.", 400, null, req, resp, null);
+			if (orgaoUsu.getId() != so.getTitular().getOrgaoUsuario().getId()
+				&& !Cp.getInstance()
+					.getConf()
+					.podeUtilizarServicoPorConfiguracao(so.getTitular(), so.getLotaTitular(), 
+						"SIGA:Sistema Integrado de Gestão Administrativa;WS_REST: Acesso aos webservices REST;"
+						+ "CAD_PES_TODOS_ORGAOS: Cadatrar pessoas em todos órgãos")) {
+				throw new SwaggerException(
+						"Usuário autorizado a incluir pessoas somente em seu próprio órgão.", 400, null, req, resp, null);
+			}
+			
 			Long idOrgaoUsu = orgaoUsu.getIdOrgaoUsu();
 
 			Long idCargo = null;

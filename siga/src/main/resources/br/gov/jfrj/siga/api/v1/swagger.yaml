@@ -153,6 +153,12 @@ parameters:
     description: Nome da função de confiança cargo ou parte do nome
     required: false
     type: string
+  idUf:
+    name: idUf
+    in: query
+    description: Identificador da UF (id)
+    required: false
+    type: string
     
   siglaOrgao:
     name: siglaOrgao
@@ -234,6 +240,25 @@ parameters:
     required: false
     type: boolean
 
+  idLotacaoPaiIni:
+    name: idLotacaoPaiIni
+    in: formData
+    description: Identificador da Lotação Pai Inicial
+    required: false
+    type: string
+  idLocalidade:
+    name: idLocalidade
+    in: formData
+    description: Identificador da Localidade
+    required: false
+    type: string
+  isAcessoExterno:
+    name: isAcessoExterno
+    in: formData
+    description: Lotação é de acesso externo? (true/false)
+    required: false
+    type: boolean
+    
 
 ################################################################################
 #                                           Paths                              #
@@ -302,7 +327,7 @@ paths:
       consumes: ["application/x-www-form-urlencoded"]
       summary: "Inclusão de pessoas"
       description: "Inclui uma pessoa no cadastro de pessoas e cria a identidade para a mesma. 
-      	Acesso restrito para usuários autorizados."
+        Acesso restrito para usuários autorizados."
       tags: [cadastro]
       security:
         - Bearer: []
@@ -388,7 +413,7 @@ paths:
           schema:
             type: object
             properties:
-              status:
+              mensagem:
                 type: string
         500:
           description: Error ocurred
@@ -411,7 +436,7 @@ paths:
           schema:
             type: object
             properties:
-              status:
+              mensagem:
                 type: string
         500:
           description: Error ocurred
@@ -434,7 +459,7 @@ paths:
           schema:
             type: object
             properties:
-              status:
+              mensagem:
                 type: string
         500:
           description: Error ocurred
@@ -454,7 +479,7 @@ paths:
           schema:
             type: object
             properties:
-              status:
+              mensagem:
                 type: string
         500:
           description: Error ocurred
@@ -490,6 +515,48 @@ paths:
           schema:
             $ref: "#/definitions/Error"            
   
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      summary: "Inclusão de lotação"
+      description: "Inclui uma lotação no cadastro de lotações. 
+        Acesso restrito à usuários autorizados."
+      tags: [cadastro]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/siglaOrgao"
+        - $ref: "#/parameters/nome"
+        - name: sigla
+          in: formData
+          description: Sigla da lotação a criar
+          type: string
+          required: true
+        - $ref: "#/parameters/idLotacaoPaiIni"
+        - $ref: "#/parameters/idLocalidade"
+        - $ref: "#/parameters/isAcessoExterno"
+      responses:
+        200:
+          description: Criado com sucesso
+          schema:
+            type: object
+            properties:
+              idLotacao:
+                type: string
+              siglaLotacao:
+                type: string
+        400:
+          description: Órgão, unidade pai ou localidade não existente.
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: Inclusão de lotação não permitida
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"            
+
   /lotacoes/{sigla}:
     get:
       summary: "Pesquisa de lotacoes por sigla"
@@ -607,7 +674,7 @@ paths:
     get:
       summary: "Pesquisa de cargos por id do órgão e nome do cargo"
       description: "Retorna uma lista de cargos correspondente ao id do órgão e nome do cargo pesquisados. Se não for informado o nome do cargo, retorna todos do órgão.
-      	Não é permitida a consulta de cargos de outro órgão que não seja o do usuário logado." 
+        Não é permitida a consulta de cargos de outro órgão que não seja o do usuário logado." 
       tags: [cadastro]
       security:
         - Bearer: []
@@ -666,7 +733,6 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-
   /funcoes:
     get:
       summary: "Pesquisa de funções de confiança por id do órgão e nome do cargo"
@@ -695,6 +761,82 @@ paths:
           description: Nenhuma função de confiança foi encontrada para os parâmetros informados.
           schema:
             $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /localidades/{id}:
+    get:
+      summary: "Pesquisa de localidade por id"
+      description: "Retorna a localidade correspondente ao id pesquisado" 
+      tags: [cadastro]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            properties:
+              localidade:
+                $ref: "#/definitions/Localidade"
+        404:
+          description: Nenhuma localidade foi encontrada para os parâmetros informados.
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /localidades:
+    get:
+      summary: "Pesquisa de localidades"
+      description: "Retorna a lista de localidades por UF ou nome." 
+      tags: [cadastro]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/idUf"
+        - $ref: "#/parameters/texto"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Localidade"
+        404:
+          description: Nenhuma localidade foi encontrada para os parâmetros informados.
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /ufs:
+    get:
+      summary: "Pesquisa de UFs"
+      description: "Retorna a lista de UFs." 
+      tags: [cadastro]
+      security:
+        - Bearer: []
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Uf"
         500:
           description: Error ocurred
           schema:
@@ -899,6 +1041,30 @@ definitions:
       idpai:
         type: string
         description: id da função de confiança pai
+
+  Localidade:
+    type: object
+    description: Dados da Localidade
+    properties:
+      idLocalidade:
+        type: string
+        description: Id da localidade
+      nome: 
+        type: string
+        description: Nome da localidade
+      uf:
+        $ref: "#/definitions/Uf"
+
+  Uf:
+    type: object
+    description: Dados das UFs
+    properties:
+      idUf:
+        type: string
+        description: Id da UF
+      nomeUf: 
+        type: string
+        description: Nome da UF
 
   AcessoItem:
     description: Acessos recentes

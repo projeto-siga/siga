@@ -321,12 +321,6 @@ parameters:
     description: Arquivo para upload se necessário para operação.
     type: file
     required: false
-  idModeloInPath:
-    name: idModelo
-    in: path
-    description: Identificador do modelo
-    type: string
-    required: true
   idClassificacaoIni:
     name: idClassificacaoIni
     in: query
@@ -551,6 +545,7 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
+            
 
   /documentos/{sigla}:
     get:
@@ -576,7 +571,7 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
-            
+
   /documentos/{sigla}/pdf:
     get:
       summary: SEM IMPLEMENTACAO PRONTA! NAO USAR!
@@ -918,6 +913,105 @@ paths:
             $ref: "#/definitions/Error"         
             
   /documentos:
+    get:
+      description: "Exibe uma lista de mobils com suas marcas, de acordo com a lista de parâmetros. 
+        Liberado somente para pesquisa de documentos da própria lotação."
+      tags: [consulta]
+      security:
+        - Bearer: []      
+      parameters:
+        - name: offset
+          in: query
+          description: Irá trazer o resultado pulando a quantidade de registros informada neste campo, para efeito de paginação
+          required: false
+          type: integer
+          format: int64
+        - name: qtdmax
+          in: query
+          description: Quantidade máxima de registros a trazer. Se não informada, assume 50 registros
+          required: false
+          type: integer          
+          format: int64
+        - name: ordenacao
+          in: query
+          description: "Ordenação da lista:<ul>
+          	<li>1 - Data descendente</li>
+          	<li>2 - Data ascendente</li>
+          	<li>3 - Data de criação do temporário descendente</li>
+          	<li>4 - Data de criação do temporário ascendente</li> 
+            <li>5 - Data da situação descendente</li>
+            <li>6 - Data da situação ascendente</li>
+          	<li>7 - Data da finalização do doc. descendente</li>
+          	<li>8 - Data da finalização do doc. ascendente</li>
+          	</ul>"
+          required: false
+          type: integer          
+          format: int64
+          default: 1
+          enum:
+            - 1 
+            - 2 
+            - 3 
+            - 4 
+            - 5
+            - 6
+            - 7
+            - 8
+        - name: marcador
+          in: query
+          description: Nome do marcador (situacao)
+          required: false
+          type: string
+        - name: grupomarcador
+          in: query
+          description: Nome do grupo de marcadores da mesa
+          required: false
+          type: string
+        - name: idpessoa
+          in: query
+          description: Identificador da Pessoa Inicial
+          required: false
+          type: integer
+          format: int64
+        - name: idlotacao
+          in: query
+          description: Identificador da Lotação Inicial. Pesquisa de outras lotações liberada somente para usuários autorizados. 
+            Se não informado, assume a lotação do usuário.
+          required: false
+          type: integer
+          format: int64
+        - name: dtinicial
+          in: query
+          description: Data inicial para pesquisa (aaaa-mm-dd)
+          required: false
+          type: string
+          pattern: ^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01])
+        - name: dtfinal
+          in: query
+          description: Data final para pesquisa (aaaa-mm-dd)
+          required: false
+          type: string
+          pattern: ^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01])
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/DocumentoPesq"
+        404:
+          description: Nenhum documento foi encontrado com os argumentos informados
+          schema:
+            $ref: "#/definitions/Error"                
+
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
     post:
       summary: Cria um novo documento
       tags: [acao]
@@ -1137,6 +1231,65 @@ definitions:
         description: Nome do nivel de acesso do documento. Ex. Publico, Limitado Entre Orgaos, Limitado Entre Lotacoes, Limitado Entre Pessoas, ...
         type: string
         
+  DocumentoPesq:
+    description: Item do resultado de pesquisa de documentos
+    type: object
+    properties:
+      sigla:
+        description: Sigla do mobil do documento
+        type: string
+      dtdoc:
+        description: Data de criação do documento
+        type: string
+      dtregdoc:
+        description: Data de finalização documento
+        type: string
+      dtinimarca:
+        description: Data de início da marca
+        type: string
+      descricaomarcador:
+        description: Descrição do marcador
+        type: string
+      nomegrupomarcador:
+        description: Nome do grupo do marcador
+        type: string
+      descricaodocumento:
+        description: Descrição do documento
+        type: string
+      modelo:
+        description: Identificacao do modelo
+        type: string
+      siglamobilpai:
+        description: Sigla da via ou volume (mobil) do documento pai
+        type: string
+      cadastrantesigla:
+        description: Sigla do subscritor do documento
+        type: string
+      cadastrantenome:
+        description: Nome do subscritor do documento
+        type: string
+      lotacadastrantesigla:
+        description: Sigla da lotção do subscritor do documento
+        type: string
+      lotacadastrantenome:
+        description: Nome da lotação do subscritor do documento
+        type: string
+      subscritorsigla:
+        description: Sigla do subscritor do documento
+        type: string
+      subscritornome:
+        description: Nome do subscritor do documento
+        type: string
+      lotasubscritorsigla:
+        description: Sigla da lotação do subscritor do documento
+        type: string
+      lotasubscritornome:
+        description: Nome da lotação do subscritor do documento
+        type: string
+      titular:
+        description: Titular do documento
+        type: string
+
   Marcador:
     description: Dados de um marcador
     type: object
@@ -1181,4 +1334,3 @@ definitions:
         type: string
       nome:
         type: string
-

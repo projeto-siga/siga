@@ -1758,7 +1758,7 @@ public class ExBL extends CpBL {
 						fValido = (subscritor.equivale(doc.getCadastrante())) && (doc.getExTipoDocumento()
 								.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO);
 					}
-					if (!fValido || cadastrante != titular)
+					if (!fValido || (cadastrante != titular && Ex.getInstance().getComp().podeAssinarPorComSenha(cadastrante, lotaCadastrante)))
 						for (ExMovimentacao m : doc.getMobilGeral().getExMovimentacaoSet()) {
 							if (m.getExTipoMovimentacao()
 									.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
@@ -1768,7 +1768,8 @@ public class ExBL extends CpBL {
 								continue;
 							} else if (m.getExTipoMovimentacao()
 									.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
-									&& m.getExMovimentacaoCanceladora() == null && cadastrante != titular) {
+									&& m.getExMovimentacaoCanceladora() == null 
+									&& (cadastrante != titular && Ex.getInstance().getComp().podeAssinarPorComSenha(cadastrante, lotaCadastrante))) {
 								// Verificar se é substituto do cosignatario do documento
 								fSubstituindoCosignatario = estaSubstituindoSubscritorOuCosignatario(cadastrante, lotaCadastrante, m.getSubscritor(),
 										subscritor);
@@ -1782,7 +1783,7 @@ public class ExBL extends CpBL {
 						}
 
 					// Verificar se é substituto do subscritor do documento
-					if(!fSubstituindoCosignatario && cadastrante != titular) {
+					if(!fSubstituindoCosignatario && (cadastrante != titular && Ex.getInstance().getComp().podeAssinarPorComSenha(cadastrante, lotaCadastrante))) {
 						fSubstituindoSubscritor = estaSubstituindoSubscritorOuCosignatario(cadastrante, lotaCadastrante, doc.getSubscritor(),
 								subscritor);
 						fValido = fSubstituindoSubscritor;

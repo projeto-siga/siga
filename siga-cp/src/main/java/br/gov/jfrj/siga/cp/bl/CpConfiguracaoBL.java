@@ -428,6 +428,24 @@ public class CpConfiguracaoBL {
 			DpPessoa pessoa, DpLotacao lotacao, Date dtEvn) {
 		if (pessoa == null && lotacao == null)
 			return null;
+
+		if (pessoa != null) {
+			Object p = pessoa;
+			if (p instanceof HibernateProxy) {
+				pessoa = (DpPessoa) ((HibernateProxy) p).getHibernateLazyInitializer()
+						.getImplementation();
+			}
+		}
+		
+		if (lotacao != null) {
+			Object l = lotacao;
+			if (l instanceof HibernateProxy) {
+				lotacao = (DpLotacao) ((HibernateProxy) l).getHibernateLazyInitializer()
+						.getImplementation();
+			}
+		}
+		
+		
 		TreeSet<CpConfiguracao> lista = getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_PERTENCER);
 
 		SortedSet<CpPerfil> perfis = new TreeSet<CpPerfil>();

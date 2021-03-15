@@ -207,7 +207,8 @@
 										<option value="RESPONSAVEL">Tabelado</option>
 										<option value="LOTACAO">Lotação</option>
 										<option value="PESSOA">Pessoa</option>
-										<option value="PROCEDIMENTO_TITULAR">Procedimento: Titular</option>
+										<option value="PROCEDIMENTO_TITULAR">Procedimento:
+											Titular</option>
 										<option value="PROCEDIMENTO_LOTA_TITULAR">Procedimento:
 											Lotação do Titular</option>
 										<option value="PRINCIPAL_CADASTRANTE">Principal:
@@ -529,4 +530,45 @@
 		</div>
 	</div>
 
+	<script>
+		$(document).ready(function() {
+			updateContainer();
+			$(window).resize(function() {
+				updateContainer();
+			});
+		});
+		
+		function updateContainer() {
+			var smallwidth = $('#graph-workflow').width();
+			var smallheight = $('#graph-workflow').height();
+			var smallsvg = $('#graph-workflow :first-child').first();
+			var smallviewbox = smallsvg.attr('viewBox');
+
+			if (smallheight > smallwidth * 120 / 100)
+				smallheight = smallwidth * 120 / 100;
+
+			if (smallsvg && smallsvg[0] && smallsvg[0].viewBox
+					&& smallsvg[0].viewBox.baseVal) {
+
+				console.log('updated')
+
+				var baseVal = smallsvg[0].viewBox.baseVal;
+				var width = smallwidth;
+				var height = smallwidth * baseVal.height / baseVal.width;
+				if (height > smallheight) {
+					width = width * smallheight / height;
+					height = smallheight;
+				}
+				smallsvg.attr('width', width);
+				smallsvg.attr('height', height);
+			} else if (typeof smallviewbox != 'undefined') {
+				var a = smallviewbox.split(' ');
+
+				// set attrs and 'resume' force 
+				smallsvg.attr('width', smallwidth);
+				smallsvg.attr('height', smallwidth * a[3] / a[2]);
+			}
+
+		}
+	</script>
 </siga:pagina>

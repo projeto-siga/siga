@@ -32,7 +32,6 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.BatchSize;
 
 import com.crivano.jflow.model.ProcessInstance;
-import com.crivano.jflow.model.TaskDefinition;
 import com.crivano.jflow.model.enm.ProcessInstanceStatus;
 
 import br.gov.jfrj.siga.Service;
@@ -47,6 +46,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
+import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.wf.dao.WfDao;
@@ -64,7 +64,7 @@ import br.gov.jfrj.siga.wf.util.WfResp;
 @BatchSize(size = 500)
 @Table(name = "sigawf.wf_procedimento")
 public class WfProcedimento extends Objeto
-		implements ProcessInstance<WfDefinicaoDeProcedimento, WfDefinicaoDeTarefa, WfResp> {
+		implements ProcessInstance<WfDefinicaoDeProcedimento, WfDefinicaoDeTarefa, WfResp>, Selecionavel {
 	public static ActiveRecord<WfProcedimento> AR = new ActiveRecord<>(WfProcedimento.class);
 
 	@Id
@@ -748,6 +748,12 @@ public class WfProcedimento extends Objeto
 	@Override
 	public String getEvent() {
 		return getEventoNome();
+	}
+
+	@Override
+	public String getDescricao() {
+		return getDefinicaoDeProcedimento().getDescricao()
+				+ (getDefinicaoDeTarefaCorrente() != null ? " - " + getDefinicaoDeTarefaCorrente().getNome() : "");
 	}
 
 }

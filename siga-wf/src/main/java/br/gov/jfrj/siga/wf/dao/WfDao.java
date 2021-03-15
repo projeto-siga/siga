@@ -59,6 +59,8 @@ import br.gov.jfrj.siga.wf.model.WfResponsavel;
 import br.gov.jfrj.siga.wf.model.WfVariavel;
 import br.gov.jfrj.siga.wf.util.SiglaUtils;
 import br.gov.jfrj.siga.wf.util.SiglaUtils.SiglaDecodificada;
+import br.gov.jfrj.siga.wf.util.WfDefinicaoDeProcedimentoDaoFiltro;
+import br.gov.jfrj.siga.wf.util.WfProcedimentoDaoFiltro;
 import br.gov.jfrj.siga.wf.util.WfTarefa;
 
 /**
@@ -270,7 +272,15 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 		return result;
 	}
 
-	public <T> T consultarPorSigla(String sigla, Class<T> clazz) {
+	public WfDefinicaoDeProcedimento consultarPorSigla(WfDefinicaoDeProcedimentoDaoFiltro flt) {
+		return consultarPorSigla(flt.getSigla(), WfDefinicaoDeProcedimento.class, flt.ouDefault);
+	}
+
+	public WfProcedimento consultarPorSigla(WfProcedimentoDaoFiltro flt) {
+		return consultarPorSigla(flt.getSigla(), WfProcedimento.class, flt.ouDefault);
+	}
+
+	public <T> T consultarPorSigla(String sigla, Class<T> clazz, CpOrgaoUsuario ouDefault) {
 		String acronimo = null;
 		if (clazz.isAssignableFrom(WfProcedimento.class)) {
 			acronimo = "WF";
@@ -279,7 +289,7 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 		} else {
 			throw new RuntimeException("Não é permitido consultar por sigla registros da classe " + clazz.getName());
 		}
-		SiglaDecodificada d = SiglaUtils.parse(sigla, acronimo, null);
+		SiglaDecodificada d = SiglaUtils.parse(sigla, acronimo, ouDefault);
 		Integer ano = d.ano;
 		Integer numero = d.numero;
 		CpOrgaoUsuario orgaoUsuario = d.orgaoUsuario;
@@ -288,7 +298,8 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 		CriteriaQuery<T> q = criteriaBuilder.createQuery(clazz);
 		Root<T> c = q.from(clazz);
 		Join<T, CpOrgaoUsuario> joinOrgao = c.join("orgaoUsuario", JoinType.INNER);
-		if (clazz.isAssignableFrom(Historico.class))
+		// if (clazz.isAssignableFrom(Historico.class))
+		if (Historico.class.isAssignableFrom(clazz))
 			q.where(cb().equal(c.get("numero"), numero), cb().equal(c.get("ano"), ano),
 					cb().equal(c.get("hisAtivo"), 1), cb().equal(joinOrgao.get("idOrgaoUsu"), orgaoUsuario.getId()));
 		else

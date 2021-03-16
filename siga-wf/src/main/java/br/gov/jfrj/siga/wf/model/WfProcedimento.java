@@ -172,8 +172,8 @@ public class WfProcedimento extends Objeto
 	@Override
 	public void pause(String eventoNome, WfResp responsavel) {
 		this.eventoNome = eventoNome;
-		this.eventoPessoa = ((WfResp) responsavel).getPessoa();
-		this.eventoLotacao = ((WfResp) responsavel).getLotacao();
+		this.eventoPessoa = responsavel != null ? responsavel.getPessoa() : null;
+		this.eventoLotacao = responsavel != null ? responsavel.getLotacao() : null;
 		this.eventoData = new Date();
 		status = ProcessInstanceStatus.PAUSED;
 	}

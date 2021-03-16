@@ -172,7 +172,8 @@ public class WfBL extends CpBL {
 		String destino = pi.getResponsible().getCodigo();
 
 		ExService service = Service.getExService();
-		service.transferir(principal, destino, siglaTitular, true);
+		if (service.podeTransferir(principal, siglaTitular, true))
+			service.transferir(principal, destino, siglaTitular, true);
 	}
 
 	public static void assertPodeTransferirDocumentosVinculados(WfTarefa ti, String siglaTitular) throws Exception {

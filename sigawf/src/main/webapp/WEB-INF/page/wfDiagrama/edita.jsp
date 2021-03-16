@@ -492,13 +492,14 @@
 									class="label-clue fa fa-asterisk"></i><input
 									ng-model="tarefaItem.assunto" name="assunto" ng-required="true"
 									id="assunto" type="text" class="form-control"></label> </section>
-								<section ng-show="tarefaItem.tipo == 'EMAIL'"
+								<section
+									ng-show="tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'EXECUTAR'"
 									class="col col-12 form-group"> <label for="texto"
-									title="" class="label">Texto<i
+									title="" class="mb-0">Texto<i
 									title="Preenchimento obrigatório"
-									class="label-clue fa fa-asterisk"></i> <textarea
-										ng-model="tarefaItem.texto" name="texto" ng-required="true"
-										id="texto" class="form-control"></textarea></label> </section>
+									class="label-clue fa fa-asterisk"></i></label> <textarea
+									ng-model="tarefaItem.conteudo" name="texto" ng-required="true"
+									id="conteudo" class="form-control"></textarea> </section>
 							</div>
 						</div>
 					</div>
@@ -537,7 +538,7 @@
 				updateContainer();
 			});
 		});
-		
+
 		function updateContainer() {
 			var smallwidth = $('#graph-workflow').width();
 			var smallheight = $('#graph-workflow').height();

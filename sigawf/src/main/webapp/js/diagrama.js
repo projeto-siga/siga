@@ -144,6 +144,7 @@ app
 								}).then(function(response) {
 							window.location = '/sigawf/app/diagrama/listar'
 						}, function(response) {
+							alert(response.data.errormsg)
 						});
 
 					}

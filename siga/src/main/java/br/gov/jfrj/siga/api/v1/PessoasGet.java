@@ -128,6 +128,7 @@ public class PessoasGet implements IPessoasGet {
 		Cargo cargo = new Cargo();
 		FuncaoConfianca funcao = new FuncaoConfianca();
 		// Pessoa
+		pessoa.idPessoaIni = p.getIdInicial().toString();
 		pessoa.sigla = p.getSiglaCompleta();
 		pessoa.nome = p.getNomePessoa();
 		pessoa.isExternaPessoa = p.isUsuarioExterno();

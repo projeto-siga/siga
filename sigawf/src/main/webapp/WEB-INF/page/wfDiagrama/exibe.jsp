@@ -134,8 +134,8 @@
 			var smallsvg = $('#output :first-child').first();
 			var smallviewbox = smallsvg.attr('viewBox');
 			
-			if (smallheight > smallwidth * 4/4)
-				smallheight = smallwidth * 4/4;
+			if (smallheight > smallwidth * 120/100)
+				smallheight = smallwidth * 120/100;
 
 			if (smallsvg && smallsvg[0] && smallsvg[0].viewBox && smallsvg[0].viewBox.baseVal){
 

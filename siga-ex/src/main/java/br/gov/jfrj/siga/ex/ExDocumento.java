@@ -1974,7 +1974,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		
 		if(Prop.isGovSP() && assinantesPorSenha != null && !"".equals(assinantesPorSenha)) {
 			Set<ExMovimentacao> listaAssinantesSenha1 = new TreeSet<ExMovimentacao>();
-			Set<ExMovimentacao> listaAssinantesSenha2 = new TreeSet<ExMovimentacao>();
 			Set<ExMovimentacao> listaAssinantesPor = new TreeSet<ExMovimentacao>();
 			
 			listaAssinantesPor.addAll(getAssinaturasPorComSenha());
@@ -1984,14 +1983,15 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			for (ExMovimentacao por : listaAssinantesPor) {
 				porAss = por.getDescrMov() != null ? por.getDescrMov().substring(por.getDescrMov().lastIndexOf(":"), por.getDescrMov().length()) : "";
 				for (ExMovimentacao ass : listaAssinantesSenha1) {
-					if(ass.getCadastrante().getId().equals(ass.getSubscritor().getId()) || (ass.getDescrMov() != null && ass.getDescrMov().indexOf(porAss) == -1)) {
-						listaAssinantesSenha2.add(ass);
+					if(!ass.getCadastrante().getId().equals(ass.getSubscritor().getId()) && (ass.getDescrMov() != null && ass.getDescrMov().indexOf(porAss) != -1)) {
+						listaAssinantesSenha1.remove(ass);
 						break;
 					}
 				}
 			}
+			
 			 assinantesSenha = Documento
-						.getAssinantesString(listaAssinantesSenha2,getDtDoc());
+						.getAssinantesString(listaAssinantesSenha1,getDtDoc());
 		}
 		
 		if (assinantesToken.length() > 0)
@@ -2913,6 +2913,32 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		}
 		
 		return this.idDocPrincipal;
+	}
+
+	/**
+	 * Verifica se o documento contém um determinado mobil 
+	 */
+	public boolean contemMobil(ExMobil mob) {
+		for (ExMobil m : getExMobilSet()) {
+			if (m.equals(mob))
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Retorna se o móbil possui acompanhamento de protocolo gerado.
+	 * 
+	 * @return
+	 */
+	public boolean temAcompanhamentoDeProtocolo() {
+		boolean b = false;
+		for (ExMovimentacao movRef : getExMovimentacaoSet()) {
+			if (!movRef.isCancelada()
+				&& movRef.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO)
+					b = true;
+		}
+		return b;
 	}
 
 

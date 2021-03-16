@@ -46,6 +46,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.model.GenericoSelecao;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.sinc.lib.Item;
@@ -64,15 +65,14 @@ import br.gov.jfrj.siga.wf.model.WfDefinicaoDeVariavel;
 import br.gov.jfrj.siga.wf.model.enm.WfAcessoDeEdicao;
 import br.gov.jfrj.siga.wf.model.enm.WfAcessoDeInicializacao;
 import br.gov.jfrj.siga.wf.util.NaoSerializar;
-import br.gov.jfrj.siga.wf.util.WfTarefa;
+import br.gov.jfrj.siga.wf.util.WfDefinicaoDeProcedimentoDaoFiltro;
 import br.gov.jfrj.siga.wf.util.WfUtil;
 
 @Controller
-@Path("app/diagrama")
 public class WfDiagramaController
-		extends SigaSelecionavelControllerSupport<WfDefinicaoDeProcedimento, DaoFiltroSelecionavel> {
+		extends WfSelecionavelController<WfDefinicaoDeProcedimento, DaoFiltroSelecionavel> {
 
-	private static final String VERIFICADOR_ACESSO = "WF;FE;DEFP:Gerenciar Diagramas";
+	private static final String VERIFICADOR_ACESSO = "FE;DEFP:Gerenciar Diagramas";
 	private static final String UTF8 = "utf-8";
 
 	public static String ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
@@ -182,8 +182,7 @@ public class WfDiagramaController
 		this.context = context;
 		this.util = util;
 	}
-
-	@Get("listar")
+	@Get("app/diagrama/listar")
 	public void lista() throws Exception {
 		try {
 			assertAcesso(VERIFICADOR_ACESSO);
@@ -196,7 +195,7 @@ public class WfDiagramaController
 		}
 	}
 
-	@Get("exibir")
+	@Get("app/diagrama/exibir")
 	public void exibe(final Long id) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 		if (id != null) {
@@ -206,7 +205,7 @@ public class WfDiagramaController
 		}
 	}
 
-	@Get("editar")
+	@Get("app/diagrama/editar")
 	public void edita(final Long id) throws UnsupportedEncodingException {
 		assertAcesso(VERIFICADOR_ACESSO);
 		if (id != null) {
@@ -216,7 +215,7 @@ public class WfDiagramaController
 		}
 	}
 
-	@Get("{id}/carregar")
+	@Get("app/diagrama/{id}/carregar")
 	public void carregar(final Long id) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 		try {
@@ -228,7 +227,7 @@ public class WfDiagramaController
 	}
 
 	@Transacional
-	@Post("gravar")
+	@Post("app/diagrama/gravar")
 	public void editarGravar(Long id, WfDefinicaoDeProcedimento pd) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 
@@ -355,7 +354,7 @@ public class WfDiagramaController
 	}
 
 	@Transacional
-	@Get("desativar")
+	@Get("app/diagrama/desativar")
 	public void desativar(final Long id) throws Exception {
 		ModeloDao.iniciarTransacao();
 		assertAcesso(VERIFICADOR_ACESSO);
@@ -380,11 +379,6 @@ public class WfDiagramaController
 		if (idInicial != null) {
 			return dao().consultarAtivoPorIdInicial(WfDefinicaoDeProcedimento.class, idInicial);
 		}
-		return null;
-	}
-
-	@Override
-	protected DaoFiltroSelecionavel createDaoFiltro() {
 		return null;
 	}
 
@@ -420,7 +414,7 @@ public class WfDiagramaController
 		throw e;
 	}
 
-	@Get("acesso-de-edicao/carregar")
+	@Get("app/diagrama/acesso-de-edicao/carregar")
 	public void carregarAcessosDeEdicao() throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 		List<SigaIdStringDescrString> list = new ArrayList<>();
@@ -430,7 +424,7 @@ public class WfDiagramaController
 		result.use(Results.json()).from(list, "list").serialize();
 	}
 
-	@Get("acesso-de-inicializacao/carregar")
+	@Get("app/diagrama/acesso-de-inicializacao/carregar")
 	public void carregarAcessosDeInicializacao() throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 		List<SigaIdStringDescrString> list = new ArrayList<>();
@@ -439,4 +433,35 @@ public class WfDiagramaController
 		}
 		result.use(Results.json()).from(list, "list").serialize();
 	}
+
+	@Override
+	protected DaoFiltroSelecionavel createDaoFiltro() {
+		WfDefinicaoDeProcedimentoDaoFiltro flt = new WfDefinicaoDeProcedimentoDaoFiltro();
+		if (flt.ouDefault == null) {
+			if (param("matricula") != null) {
+				final DpPessoa pes = daoPes(param("matricula"));
+				flt.ouDefault = pes.getOrgaoUsuario();
+			}
+		}
+		return flt;
+	}
+
+	@Get({ "public/app/diagrama/selecionar", "app/diagrama/selecionar" })
+	public void selecionar(final String sigla, final String matricula) throws Exception {
+		String resultado = super.aSelecionar(sigla);
+		if (getSel() != null && matricula != null) {
+			GenericoSelecao sel = new GenericoSelecao();
+			sel.setId(getSel().getId());
+			sel.setSigla(getSel().getSigla());
+			sel.setDescricao("/sigawf/app/diagrama/exibir?id=" + sel.getId());
+			setSel(sel);
+		}
+		if (resultado.equals("ajax_retorno")) {
+			result.use(Results.http())
+					.body("1;" + getSel().getId() + ";" + getSel().getSigla() + ";" + getSel().getDescricao());
+		} else {
+			result.use(Results.http()).body("0");
+		}
+	}
+
 }

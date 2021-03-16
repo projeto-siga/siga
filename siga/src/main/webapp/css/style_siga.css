@@ -405,3 +405,7 @@ article p em {
 	display: none;
 	color: #DDD;
 }
+
+.div-width-min0 { 
+    min-width: 0px !important;
+} 

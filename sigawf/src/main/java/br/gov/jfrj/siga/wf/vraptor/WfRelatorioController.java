@@ -56,7 +56,7 @@ public class WfRelatorioController extends WfController {
 	@Path("/app/rel/medir/{sigla}")
 	public void medir(String sigla) throws Exception {
 		assertAcesso(ACESSO_RELATORIOS);
-		WfDefinicaoDeProcedimento pd = dao().consultarPorSigla(sigla, WfDefinicaoDeProcedimento.class);
+		WfDefinicaoDeProcedimento pd = dao().consultarPorSigla(sigla, WfDefinicaoDeProcedimento.class, null);
 
 		result.include("orgao", getLotaTitular().getOrgaoUsuario().getNmOrgaoUsu());
 		result.include("procedimento", pd);

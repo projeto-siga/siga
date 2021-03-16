@@ -17,7 +17,7 @@ import br.gov.jfrj.siga.wf.util.WfUtil;
 
 public class WfController extends SigaController {
 
-	private static final String ACESSO_WF = "WF:Módulo de Workflow";
+	static final String ACESSO_WF = "WF:Módulo de Workflow";
 	protected static final String ACESSO_EXCLUIR_INSTANCIA_DE_PROCESSO = "EXCLUIR:Excluir instancia de processo";
 	protected static final String ACESSO_ENCERRAR_INSTANCIA_DE_PROCESSO = "ENCERRAR:Encerrar instancia de processo";
 	protected static final String ACESSO_MOVER_TOKEN = "MOVER_TOKEN:Mover token";

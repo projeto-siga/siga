@@ -2,10 +2,13 @@ package br.gov.jfrj.siga.base.util;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import br.gov.jfrj.siga.base.Texto;
@@ -55,5 +58,17 @@ public class Utils {
 	    return scheme + serverName + serverPort + contextPath;
 	  }
 	
-
+	/*
+	* Devolve o valor do cookie com o nome correspondente
+	*/
+	public static String getCookieValue(HttpServletRequest request, String name) {
+		final Cookie[] cookies = request.getCookies();
+		if(cookies == null) return null;
+		return Arrays.stream(cookies)
+		             .filter(e -> name.equals(e.getName()))
+		             .findAny()
+		             .map(Cookie::getValue)
+		             .orElse(null);		
+	} 
+	
 }

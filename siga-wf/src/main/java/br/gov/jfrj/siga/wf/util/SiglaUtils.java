@@ -45,9 +45,12 @@ public class SiglaUtils {
 			d.id = Long.parseLong(m2.group(1));
 			return d;
 		} else if (m1.find()) {
-			d.ano = Integer.parseInt(m1.group(3));
+			if (m1.group(3) != null)
+				d.ano = Integer.parseInt(m1.group(3));
+			if (m1.group(4) != null)
 			d.numero = Integer.parseInt(m1.group(4));
-			d.orgaoUsuario = mapAcronimo.get(m1.group(1));
+			if (m1.group(1) != null)
+				d.orgaoUsuario = mapAcronimo.get(m1.group(1));
 			if (d.orgaoUsuario == null && ouDefault != null)
 				d.orgaoUsuario = ouDefault;
 			if (d.ano == null)

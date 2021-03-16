@@ -361,6 +361,7 @@ app
 									success : function(data) {
 										document
 												.getElementById('graph-workflow').innerHTML = data;
+										window.updateContainer();
 									},
 									error : function(data) {
 										$scope.showError(data);

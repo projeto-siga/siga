@@ -2915,5 +2915,31 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return this.idDocPrincipal;
 	}
 
+	/**
+	 * Verifica se o documento contém um determinado mobil 
+	 */
+	public boolean contemMobil(ExMobil mob) {
+		for (ExMobil m : getExMobilSet()) {
+			if (m.equals(mob))
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Retorna se o móbil possui acompanhamento de protocolo gerado.
+	 * 
+	 * @return
+	 */
+	public boolean temAcompanhamentoDeProtocolo() {
+		boolean b = false;
+		for (ExMovimentacao movRef : getExMovimentacaoSet()) {
+			if (!movRef.isCancelada()
+				&& movRef.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO)
+					b = true;
+		}
+		return b;
+	}
+
 
 }

@@ -415,18 +415,13 @@ public class ExDao extends CpDao {
 			Expression<Long> mobilRef = root.get("exMobilRef");																		
 			Join<ExMovimentacao, ExTipoMovimentacao> joinTipoMovimentacao = root.join("exTipoMovimentacao");
 			
-			predicateMobilIgnorandoMovimentacaoDeJuntada = builder.and(mobil.in(mobils), 
-					builder.notEqual(joinTipoMovimentacao.get("idTpMov"), ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA),
-					builder.notEqual(joinTipoMovimentacao.get("idTpMov"), ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA),
-					builder.notEqual(joinTipoMovimentacao.get("idTpMov"), ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO));
-																
 			predicateMobilRefComoMovimentacaoDeJuntadaEDesentranhamento = builder.and(mobilRef.in(mobils),
 					builder.or(builder.equal(root.get("exTipoMovimentacao"), ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA),
 							builder.equal(root.get("exTipoMovimentacao"), ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA)),
 					builder.isNull(root.get("exMovimentacaoCanceladora"))
 					);
 			
-			predicate = builder.or(predicateMobilIgnorandoMovimentacaoDeJuntada, predicateMobilRefComoMovimentacaoDeJuntadaEDesentranhamento);
+			predicate = builder.or(mobil.in(mobils), predicateMobilRefComoMovimentacaoDeJuntadaEDesentranhamento);
 			
 			query.where(predicate)
 				.orderBy(builder.desc(root.get("dtTimestamp")));

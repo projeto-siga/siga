@@ -146,8 +146,10 @@ public class WfServiceImpl implements WfService {
 
 				if (nomeProcedimento == null)
 					throw new RuntimeException("Nome do procedimento precisa ser informado.");
-				WfDefinicaoDeProcedimento pd = WfDao.getInstance()
-						.consultarWfDefinicaoDeProcedimentoPorNome(nomeProcedimento);
+				WfDefinicaoDeProcedimento pd = WfDao.getInstance().consultarPorSigla(nomeProcedimento,
+						WfDefinicaoDeProcedimento.class, null);
+				if (pd == null)
+					pd = WfDao.getInstance().consultarWfDefinicaoDeProcedimentoPorNome(nomeProcedimento);
 				if (pd == null)
 					throw new RuntimeException(
 							"Não foi encontrado um procedimento com o nome '" + nomeProcedimento + "'");

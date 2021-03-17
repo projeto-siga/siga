@@ -85,14 +85,17 @@ import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
+import br.gov.jfrj.siga.base.CurrentRequest;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
+import br.gov.jfrj.siga.base.RequestInfo;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.UsuarioDeSistemaEnum;
 import br.gov.jfrj.siga.base.util.SetUtils;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.bluc.service.BlucService;
@@ -104,13 +107,11 @@ import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.TipoConteudo;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
-import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeGrupoEnum;
@@ -5840,7 +5841,8 @@ public class ExBL extends CpBL {
 	public void atualizarWorkFlow(ExDocumento doc) throws AplicacaoException {
 		try {
 			if (doc.getIdDoc() != null) {
-				Service.getWfService().atualizarWorkflowsDeDocumento(doc.getCodigo());
+				if (ContextoPersistencia.getUsuarioDeSistema() == null || ContextoPersistencia.getUsuarioDeSistema() != UsuarioDeSistemaEnum.SIGA_WF)
+					Service.getWfService().atualizarWorkflowsDeDocumento(doc.getCodigo());
 			}
 		} catch (Exception ex) {
 			throw new RuntimeException("Erro ao tentar atualizar estado do workflow", ex);
@@ -5850,8 +5852,9 @@ public class ExBL extends CpBL {
 	public void atualizarWorkFlow(ExMovimentacao mov) throws AplicacaoException {
 		try {
 			if (mov.mob() != null && mov.getIdMov() != null && mov.mob().getIdMobil() != null && mov.mob().doc() != null && mov.mob().doc().getIdDoc() != null) {
-				Service.getWfService().atualizarWorkflowsDeDocumento(
-						mov.getExMobil().getSigla());
+				if (ContextoPersistencia.getUsuarioDeSistema() == null || ContextoPersistencia.getUsuarioDeSistema() != UsuarioDeSistemaEnum.SIGA_WF)
+					Service.getWfService().atualizarWorkflowsDeDocumento(
+							mov.getExMobil().getSigla());
 			}
 		} catch (Exception e) {
 			throw new RuntimeException("Erro ao tentar atualizar estado do workflow", e);

@@ -5,28 +5,19 @@ import java.util.ArrayList;
 import org.apache.commons.lang3.StringUtils;
 
 import com.crivano.swaggerservlet.SwaggerException;
-import com.crivano.swaggerservlet.SwaggerServlet;
-import com.lowagie.text.List;
 
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.IFuncoesIdGet;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.FuncaoConfianca;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.FuncoesIdGetRequest;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.FuncoesIdGetResponse;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.IFuncoesIdGet;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
-import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class FuncoesIdGet implements IFuncoesIdGet {
-	private SigaObjects so;
 	@Override
 	public void run(FuncoesIdGetRequest req, FuncoesIdGetResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(false, true)) {
-			CurrentRequest.set(
-					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-			so = ApiContext.getSigaObjects();
-			
 			if (StringUtils.isEmpty(req.id))
 				throw new SwaggerException(
 						"O argumento de pesquisa id é obrigatório.", 400, null, req, resp, null);

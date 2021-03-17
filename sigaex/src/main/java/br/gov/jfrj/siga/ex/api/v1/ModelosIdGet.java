@@ -4,13 +4,13 @@ import java.nio.charset.StandardCharsets;
 
 import com.crivano.swaggerservlet.SwaggerServlet;
 
+import br.gov.jfrj.siga.base.CurrentRequest;
+import br.gov.jfrj.siga.base.RequestInfo;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IModelosIdGet;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.ModelosIdGetRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.ModelosIdGetResponse;
-import br.gov.jfrj.siga.ex.bl.CurrentRequest;
-import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class ModelosIdGet implements IModelosIdGet {
@@ -24,8 +24,6 @@ public class ModelosIdGet implements IModelosIdGet {
 		boolean isAutuando = false;
 
 		try (ApiContext ctx = new ApiContext(false, true)) {
-			CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(),
-					SwaggerServlet.getHttpServletResponse()));
 			ApiContext.assertAcesso("");
 			ExModelo mod = ExDao.getInstance().consultar(Long.parseLong(req.id), ExModelo.class, false);
 			resp.idModelo = mod.getId().toString();

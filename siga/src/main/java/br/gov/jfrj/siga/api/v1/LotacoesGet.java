@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.crivano.swaggerservlet.SwaggerException;
-import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.ILotacoesGet;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Lotacao;
@@ -23,9 +22,6 @@ public class LotacoesGet implements ILotacoesGet {
 	@Override
 	public void run(LotacoesGetRequest req, LotacoesGetResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(false, true)) {
-			CurrentRequest.set(
-					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-			
 			if (req.texto != null && req.idLotacaoIni != null) {
 				throw new AplicacaoException("Pesquisa permitida somente por um dos argumentos.");
 			}

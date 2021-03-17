@@ -6,12 +6,11 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 import com.crivano.swaggerservlet.SwaggerException;
-import com.crivano.swaggerservlet.SwaggerServlet;
 
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.IFuncoesGet;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.FuncaoConfianca;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.FuncoesGetRequest;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.FuncoesGetResponse;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.IFuncoesGet;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
@@ -22,8 +21,6 @@ public class FuncoesGet implements IFuncoesGet {
 	@Override
 	public void run(FuncoesGetRequest req, FuncoesGetResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(false, true)) {
-			CurrentRequest.set(
-					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 			if (StringUtils.isEmpty(req.idOrgao))
 				throw new SwaggerException(
 						"O id do órgão é obrigatório.", 400, null, req, resp, null);

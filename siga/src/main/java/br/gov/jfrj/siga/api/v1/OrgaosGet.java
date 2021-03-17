@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import javax.persistence.NoResultException;
 
 import com.crivano.swaggerservlet.SwaggerException;
-import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.IOrgaosGet;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Orgao;
@@ -23,9 +22,6 @@ public class OrgaosGet implements IOrgaosGet {
 	@Override
 	public void run(OrgaosGetRequest req, OrgaosGetResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(false, true)) {
-			CurrentRequest.set(
-					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-			
 			if (req.texto != null && req.idOrgao != null) {
 				throw new AplicacaoException("Pesquisa permitida somente por um dos argumentos.");
 			}

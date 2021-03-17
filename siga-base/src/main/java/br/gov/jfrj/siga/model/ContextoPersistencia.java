@@ -5,11 +5,14 @@ import java.util.Date;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
+import br.gov.jfrj.siga.base.UsuarioDeSistemaEnum;
+
 public class ContextoPersistencia {
 
 	private final static ThreadLocal<EntityManager> emByThread = new ThreadLocal<EntityManager>();
 	private final static ThreadLocal<String> userPrincipalByThread = new ThreadLocal<String>();
 	private final static ThreadLocal<Date> dataEHoraDoServidor = new ThreadLocal<Date>();
+	private final static ThreadLocal<UsuarioDeSistemaEnum> usuarioDeSistema = new ThreadLocal<UsuarioDeSistemaEnum>();
 	
 	static public void setEntityManager(EntityManager em) {
 		emByThread.set(em);
@@ -69,4 +72,26 @@ public class ContextoPersistencia {
 	static public Date dt() {
 		return dataEHoraDoServidor.get();
 	}
+	
+	static public void setUsuarioDeSistema(UsuarioDeSistemaEnum u) {
+		usuarioDeSistema.set(u);
+	}
+
+	static public UsuarioDeSistemaEnum getUsuarioDeSistema() {
+		return usuarioDeSistema.get();
+	}
+
+	static public void removeUsuarioDeSistema() {
+		usuarioDeSistema.remove();
+	}
+	
+	static public void removeAll() {
+		removeUsuarioDeSistema();
+		removeUserPrincipal();
+		setDt(null);
+	}
+	
+	
+	
+
 }

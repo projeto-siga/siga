@@ -4,26 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.crivano.swaggerservlet.SwaggerException;
-import com.crivano.swaggerservlet.SwaggerServlet;
 
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.ICargosIdGet;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Cargo;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.CargosIdGetRequest;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.CargosIdGetResponse;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.ICargosIdGet;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class CargosIdGet implements ICargosIdGet {
-	private SigaObjects so;
 	@Override
 	public void run(CargosIdGetRequest req, CargosIdGetResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(false, true)) {
-			CurrentRequest.set(
-					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-			so = ApiContext.getSigaObjects();
-			
 			if (req.id == null) {
 				throw new AplicacaoException("O argumento de pesquisa id é obrigatório.");
 			}

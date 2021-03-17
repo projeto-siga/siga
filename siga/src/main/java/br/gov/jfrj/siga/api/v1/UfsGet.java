@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.crivano.swaggerservlet.SwaggerException;
-import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.IUfsGet;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Uf;
@@ -13,15 +12,11 @@ import br.gov.jfrj.siga.api.v1.ISigaApiV1.UfsGetResponse;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.CpUF;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class UfsGet implements IUfsGet {
 	@Override
 	public void run(UfsGetRequest req, UfsGetResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(false, true)) {
-			CurrentRequest.set(
-					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-	
 			resp.list = listarUf(req, resp);
 			if (resp.list.isEmpty()) 
 				throw new SwaggerException(

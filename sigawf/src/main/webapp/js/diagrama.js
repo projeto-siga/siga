@@ -563,6 +563,16 @@ app
 						$scope.id = $scope.getParameterByName('id');
 						if ($scope.id) {
 							$scope.carregar($scope.id);
+						} else {
+							$http({
+								url : '/sigawf/app/diagrama/vazio',
+								method : "GET"
+							}).then(
+									function(response) {
+										$scope.data.workflow = $scope
+												.decode(response.data);
+									}, function(response) {
+									});
 						}
 					})
 				});

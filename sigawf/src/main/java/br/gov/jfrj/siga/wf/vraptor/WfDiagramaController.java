@@ -38,15 +38,11 @@ import com.google.gson.JsonSerializer;
 
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
-import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
-import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
-import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.GenericoSelecao;
@@ -57,7 +53,6 @@ import br.gov.jfrj.siga.sinc.lib.Sincronizador;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.vraptor.SigaIdStringDescrString;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
-import br.gov.jfrj.siga.vraptor.SigaSelecionavelControllerSupport;
 import br.gov.jfrj.siga.vraptor.Transacional;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeDesvio;
@@ -447,7 +442,20 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 		}
 		result.use(Results.json()).from(list, "list").serialize();
 	}
-
+	
+	@Get("app/diagrama/vazio")
+	public void carregarDiagramaVazio() throws Exception {
+		assertAcesso(VERIFICADOR_ACESSO);
+		WfDefinicaoDeProcedimento pd = new WfDefinicaoDeProcedimento();
+		pd.setAcessoDeEdicao(WfAcessoDeEdicao.ACESSO_LOTACAO);
+		pd.setAcessoDeInicializacao(WfAcessoDeInicializacao.ACESSO_PUBLICO);
+		pd.setResponsavel(getTitular());
+		pd.setResponsavelId(pd.getResponsavel().getId());
+		pd.setLotaResponsavel(getLotaTitular());
+		pd.setLotaResponsavelId(pd.getLotaResponsavel().getId());
+		jsonSuccess(pd);
+	}
+	
 	@Override
 	protected DaoFiltroSelecionavel createDaoFiltro() {
 		WfDefinicaoDeProcedimentoDaoFiltro flt = new WfDefinicaoDeProcedimentoDaoFiltro();

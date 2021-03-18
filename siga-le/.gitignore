@@ -21,6 +21,7 @@ hs_err_pid*
 /src/main/webapp/index.html
 /src/main/webapp/service-worker.js
 /src/main/webapp/manifest*
+/src/main/webapp/precache-manifest*
 /src/main/webapp/static/
 /target/
 /bin/

@@ -68,6 +68,8 @@ public class Mesa2 {
 		public String anotacao;
 		public String dataDevolucao;
 		public String tipoDoc;
+		public String lotaPosse;
+		public String nomePessoaPosse;
 		public List<Marca> list;
 	}
 
@@ -93,6 +95,7 @@ public class Mesa2 {
 		Date movUltimaDtFimMov;
 		String movTramiteSiglaOrgao;
 		String movTramiteSiglaLotacao;
+		String movTramiteNomePessoa;
 		String movAnotacaoDescrMov;
 		boolean isComposto;
 	}
@@ -106,7 +109,8 @@ public class Mesa2 {
 
 	private static List<MesaItem> listarReferencias(TipoDePainelEnum tipo,
 			Map<ExMobil, DocDados> references, DpPessoa pessoa,
-			DpLotacao unidade, Date currentDate, String grupoOrdem, boolean trazerAnotacoes, boolean ordemCrescenteData,
+			DpLotacao unidade, Date currentDate, String grupoOrdem, boolean trazerAnotacoes, 
+			boolean ordemCrescenteData, boolean usuarioPosse,
 			List<Integer> marcasAIgnorar) {
 		List<MesaItem> l = new ArrayList<>();
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -188,6 +192,27 @@ public class Mesa2 {
 				r.anotacao = mobil.getDnmUltimaAnotacao().replace("\r\f", "<br/>").replace("\n", "<br/>");
 			}
 
+			if (usuarioPosse) {
+				ExMovimentacao ultMov = mobil
+					.getUltimaMovimentacao(new long[] { ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA,
+							ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA,
+							ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA,
+							ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA,
+							ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO
+						}, new long[] {0L}, mobil, false, null);
+				if (ultMov != null && ultMov.getCadastrante() != null) {
+					r.nomePessoaPosse = ultMov.getCadastrante().getNomePessoa(); 
+				} else {
+					r.nomePessoaPosse = mobil.getDoc().getCadastrante().getNomePessoa();
+				}
+				if (ultMov != null && ultMov.getCadastrante() != null) {
+					r.lotaPosse = ultMov.getCadastrante().getLotacao().getSigla();
+				} else {
+					r.lotaPosse = mobil.getDoc().getCadastrante().getLotacao().getSigla();
+				}
+			}
+					
+			
 			r.list = new ArrayList<Marca>();
 
 			for (MeM tag : references.get(mobil).listMeM) {
@@ -306,7 +331,7 @@ public class Mesa2 {
 	public static List<GrupoItem> getMesa(ExDao dao, DpPessoa titular,
 			DpLotacao lotaTitular, Map<String, SelGrupo> selGrupos, List<Mesa2.GrupoItem> gruposMesa, 
 			boolean exibeLotacao, boolean trazerAnotacoes, boolean trazerComposto, boolean ordemCrescenteData,
-			List<Integer> marcasAIgnorar) throws Exception {
+			boolean usuarioPosse, List<Integer> marcasAIgnorar) throws Exception {
 //		long tempoIni = System.nanoTime();
 		Date dtNow = dao.consultarDataEHoraDoServidor();
 
@@ -400,7 +425,8 @@ public class Mesa2 {
 						iMobs = iMobsFim;
 					}
 					gItem.grupoDocs = Mesa2.listarReferencias(TipoDePainelEnum.UNIDADE, map, titular,
-							titular.getLotacao(), dtNow, gItem.grupoOrdem, trazerAnotacoes, ordemCrescenteData, marcasAIgnorar);
+							titular.getLotacao(), dtNow, gItem.grupoOrdem, trazerAnotacoes, ordemCrescenteData, 
+							usuarioPosse, marcasAIgnorar);
 					map = new HashMap<>();
 					listIdMobil = new ArrayList<Long>();
 				}

@@ -41,7 +41,8 @@ var appMesa = new Vue({
 			trazerComposto: false,
 			trazerArquivados: false,
 			trazerCancelados: false,
-			ordemCrescenteData: false
+			ordemCrescenteData: false,
+			usuarioPosse: false
 		};
 	},
 	computed: {
@@ -113,6 +114,10 @@ var appMesa = new Vue({
 		ordemCrescenteData: function() {
 			setParmUser('ordemCrescenteData', this.ordemCrescenteData);
 			this.recarregarMesa();
+		},
+		usuarioPosse: function() {
+			setParmUser('usuarioPosse', this.usuarioPosse);
+			this.recarregarMesa();
 		}
 	},
 	methods: {
@@ -123,6 +128,7 @@ var appMesa = new Vue({
 			this.trazerArquivados = (getParmUser('trazerArquivados') == null ? false : getParmUser('trazerArquivados'));
 			this.trazerCancelados = (getParmUser('trazerCancelados') == null ? false : getParmUser('trazerCancelados'));
 			this.ordemCrescenteData = (getParmUser('ordemCrescenteData') == null ? false : getParmUser('ordemCrescenteData'));
+			this.usuarioPosse = (getParmUser('usuarioPosse') == null ? false : getParmUser('usuarioPosse'));
 			setValueGrupo('Aguardando Ação de Temporalidade', 'hide', !this.trazerArquivados);
 			
 
@@ -179,6 +185,7 @@ var appMesa = new Vue({
 					trazerArquivados: this.trazerArquivados,
 					trazerCancelados: this.trazerCancelados,
 					ordemCrescenteData: this.ordemCrescenteData,
+					usuarioPosse: this.usuarioPosse,
 					idVisualizacao: ID_VISUALIZACAO
 				},
 				complete: function(response, status, request) {
@@ -234,6 +241,7 @@ var appMesa = new Vue({
 			localStorage.removeItem('trazerArquivados' + getUser());
 			localStorage.removeItem('trazerCancelados' + getUser());
 			localStorage.removeItem('ordemCrescenteData' + getUser());
+			localStorage.removeItem('usuarioPosse' + getUser());
 			this.recarregarMesa();
 			this.selQtdPag = 15;
 			
@@ -548,6 +556,7 @@ function processDescription(descr, limit = null) {
 }
 
 function initPopovers() {
+	var timeOut;
 	if (!$('.popover-dismiss').popover) { 
 		return; 
 	} 
@@ -558,18 +567,18 @@ function initPopovers() {
 		trigger: 'manual'
 	}).on("mouseenter", function() {
 		var _this = this;
-		
-		if ($(_this).attr('data-pessoa') !== undefined) {
-			mountPopoverMarcaPessoa(_this);
-		} else if ($(_this).attr('data-lotacao') !== undefined) {
-			mountPopoverMarcaLotacao(_this);
-		}
-		
-		$(_this).popover("show");
-		$(".popover").on("mouseleave", function() {
-			$(_this).popover('hide');
-		});
-
+		timeOut = setTimeout( function() {
+			if ($(_this).attr('data-pessoa') !== undefined) {
+				mountPopoverMarcaPessoa(_this);
+			} else if ($(_this).attr('data-lotacao') !== undefined) {
+				mountPopoverMarcaLotacao(_this);
+			}
+			
+			$(_this).popover("show");
+			$(".popover").on("mouseleave", function() {
+				$(_this).popover('hide');
+			});
+		}, 700);
 	}).on("click", function() {
 		var _this = this;
 		/*** Implementar function***/
@@ -584,6 +593,7 @@ function initPopovers() {
 				$(_this).popover("hide");
 			}
 		}, 100);
+		clearTimeout(timeOut);
 	})
 	
 	

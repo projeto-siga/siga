@@ -1442,8 +1442,7 @@
 	<button type="button" class="btn btn-primary siga-btn-receber-doc" data-placement="left" title="Receber" data-siga-modal-abrir="modalReceberDocumento">
 		<i class="fas fa-envelope-open-text icone-receber-doc"></i>
 	</button>
-	
-	<c:if test="${!docVO.doc.mobilDefaultParaReceberJuntada.isJuntado() }">
+	<c:if test="${!docVO.mob.isJuntado() }">
 	<script>
 		$(function() {						
 			var modalReceberDocumento = $('#modalReceberDocumento');				

@@ -354,9 +354,7 @@ function sbmtDoc() {
 					<c:set var="dtUlt" value="" />
 					<c:set var="temmov" value="${false}" />
 					<c:forEach var="mov" items="${m.movs}">
-						<c:if test="${mov.idTpMov != 14 and not mov.cancelada}">
 							<c:set var="temmov" value="${true}" />
-						</c:if>
 					</c:forEach>
 					<c:if test="${temmov}">
 						<table class="table table-sm table-hover table-striped mov mt-2 text-size-7">

@@ -49,16 +49,6 @@ public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 	
 			ApiContext.assertAcesso(mob, titular, lotaTitular);
 	
-			// Recebimento automático
-			if (Ex.getInstance().getComp().podeReceberEletronico(titular, lotaTitular, mob)) {
-				try {
-					Ex.getInstance().getBL().receber(cadastrante, lotaTitular, mob, new Date());
-				} catch (Exception e) {
-					e.printStackTrace(System.out);
-					throw e;
-				}
-			}
-	
 			ExDocumento doc = mob.doc();
 			// Mostra o último volume de um processo ou a primeira via de um
 			// expediente
@@ -68,6 +58,16 @@ public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 						mob = doc.getUltimoVolume();
 					else
 						mob = doc.getPrimeiraVia();
+				}
+			}
+			
+			// Recebimento automático
+			if (Ex.getInstance().getComp().deveReceberEletronico(titular, lotaTitular, mob)) {
+				try {
+					Ex.getInstance().getBL().receber(cadastrante, lotaTitular, mob, new Date());
+				} catch (Exception e) {
+					e.printStackTrace(System.out);
+					throw e;
 				}
 			}
 	

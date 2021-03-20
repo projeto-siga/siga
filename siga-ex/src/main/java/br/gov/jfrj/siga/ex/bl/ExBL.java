@@ -1770,7 +1770,7 @@ public class ExBL extends CpBL {
 							} 							
 						}
 				
-					if ((!fValido || fValido && doc.isAssinadoPelaPessoaComTokenOuSenha(subscritor)) && cadastrante != titular) { 
+					if ((!fValido || (fValido && doc.isAssinadoPelaPessoaComTokenOuSenha(subscritor))) && cadastrante != titular) { 
 						
 						// Verificar se é substituto do subscritor do documento						
 						if(doc.getSubscritor().equivale(titular)) {	

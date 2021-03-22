@@ -38,7 +38,6 @@ import com.google.gson.JsonSerializer;
 
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
-import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -54,7 +53,6 @@ import br.gov.jfrj.siga.sinc.lib.Sincronizador;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.vraptor.SigaIdStringDescrString;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
-import br.gov.jfrj.siga.vraptor.SigaSelecionavelControllerSupport;
 import br.gov.jfrj.siga.vraptor.Transacional;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeDesvio;
@@ -69,8 +67,7 @@ import br.gov.jfrj.siga.wf.util.WfDefinicaoDeProcedimentoDaoFiltro;
 import br.gov.jfrj.siga.wf.util.WfUtil;
 
 @Controller
-public class WfDiagramaController
-		extends WfSelecionavelController<WfDefinicaoDeProcedimento, DaoFiltroSelecionavel> {
+public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDeProcedimento, DaoFiltroSelecionavel> {
 
 	private static final String VERIFICADOR_ACESSO = "FE;DEFP:Gerenciar Diagramas";
 	private static final String UTF8 = "utf-8";
@@ -182,6 +179,7 @@ public class WfDiagramaController
 		this.context = context;
 		this.util = util;
 	}
+
 	@Get("app/diagrama/listar")
 	public void lista() throws Exception {
 		try {
@@ -229,128 +227,139 @@ public class WfDiagramaController
 	@Transacional
 	@Post("app/diagrama/gravar")
 	public void editarGravar(Long id, WfDefinicaoDeProcedimento pd) throws Exception {
-		assertAcesso(VERIFICADOR_ACESSO);
+		try {
+			assertAcesso(VERIFICADOR_ACESSO);
 
-		if (id != null) {
-			WfDefinicaoDeProcedimento pdOriginal = WfDefinicaoDeProcedimento.AR.findById(id);
-			pdOriginal.assertAcessoDeEditar(getTitular(), getLotaTitular());
-		}
+			if (id != null) {
+				WfDefinicaoDeProcedimento pdOriginal = WfDefinicaoDeProcedimento.AR.findById(id);
+				pdOriginal.assertAcessoDeEditar(getTitular(), getLotaTitular());
+			}
 
-		if (pd.getOrgaoUsuario() == null)
-			pd.setOrgaoUsuario(getTitular().getOrgaoUsuario());
+			List<WfDefinicaoDeProcedimento> pds = dao().listarDefinicoesDeProcedimentos();
+			for (WfDefinicaoDeProcedimento opd : pds) {
+				if (opd.getNome().equals(pd.getNome()) && !opd.getId().equals(id))
+					throw new AplicacaoException("Já existe um diagrama com este nome: " + pd.getNome());
+			}
 
-		if (pd.getHisIdcIni() == null)
-			pd.setHisIdcIni(getIdentidadeCadastrante());
+			if (pd.getOrgaoUsuario() == null)
+				pd.setOrgaoUsuario(getTitular().getOrgaoUsuario());
 
-		if (pd.getResponsavelId() != null)
-			pd.setResponsavel(dao().consultar(pd.getResponsavelId(), DpPessoa.class, false));
-		if (pd.getResponsavel() == null)
-			pd.setResponsavel(getTitular());
-		if (pd.getLotaResponsavelId() != null)
-			pd.setLotaResponsavel(dao().consultar(pd.getLotaResponsavelId(), DpLotacao.class, false));
-		if (pd.getLotaResponsavel() == null)
-			pd.setLotaResponsavel(getLotaTitular());
+			if (pd.getHisIdcIni() == null)
+				pd.setHisIdcIni(getIdentidadeCadastrante());
 
-		SortedSet<Sincronizavel> setDepois = new TreeSet<>();
-		SortedSet<Sincronizavel> setAntes = new TreeSet<>();
+			if (pd.getResponsavelId() != null)
+				pd.setResponsavel(dao().consultar(pd.getResponsavelId(), DpPessoa.class, false));
+			if (pd.getResponsavel() == null)
+				pd.setResponsavel(getTitular());
+			if (pd.getLotaResponsavelId() != null)
+				pd.setLotaResponsavel(dao().consultar(pd.getLotaResponsavelId(), DpLotacao.class, false));
+			if (pd.getLotaResponsavel() == null)
+				pd.setLotaResponsavel(getLotaTitular());
 
-		setDepois.add(pd);
+			SortedSet<Sincronizavel> setDepois = new TreeSet<>();
+			SortedSet<Sincronizavel> setAntes = new TreeSet<>();
 
-		// Prepara a definição para ser sincronizada
-		if (pd.getDefinicaoDeTarefa() != null) {
-			for (WfDefinicaoDeTarefa td : pd.getDefinicaoDeTarefa()) {
-				td.setDefinicaoDeProcedimento(pd);
-				setDepois.add(td);
-				if (td.getSeguinteIde() != null) {
-					for (WfDefinicaoDeTarefa td2 : pd.getDefinicaoDeTarefa()) {
-						if (td.getSeguinteIde().equals(td2.getIdExterna())) {
-							td.setSeguinte(td2);
-							break;
+			setDepois.add(pd);
+
+			// Prepara a definição para ser sincronizada
+			if (pd.getDefinicaoDeTarefa() != null) {
+				for (WfDefinicaoDeTarefa td : pd.getDefinicaoDeTarefa()) {
+					td.setDefinicaoDeProcedimento(pd);
+					setDepois.add(td);
+					if (td.getSeguinteIde() != null) {
+						for (WfDefinicaoDeTarefa td2 : pd.getDefinicaoDeTarefa()) {
+							if (td.getSeguinteIde().equals(td2.getIdExterna())) {
+								td.setSeguinte(td2);
+								break;
+							}
 						}
 					}
-				}
-				if (td.getPessoaId() != null)
-					td.setPessoa(dao().consultar(td.getPessoaId(), DpPessoa.class, false));
-				if (td.getLotacaoId() != null)
-					td.setLotacao(dao().consultar(td.getLotacaoId(), DpLotacao.class, false));
-				if (td.getDefinicaoDeResponsavelId() != null)
-					td.setDefinicaoDeResponsavel(
-							dao().consultar(td.getDefinicaoDeResponsavelId(), WfDefinicaoDeResponsavel.class, false));
+					if (td.getPessoaId() != null)
+						td.setPessoa(dao().consultar(td.getPessoaId(), DpPessoa.class, false));
+					if (td.getLotacaoId() != null)
+						td.setLotacao(dao().consultar(td.getLotacaoId(), DpLotacao.class, false));
+					if (td.getDefinicaoDeResponsavelId() != null)
+						td.setDefinicaoDeResponsavel(dao().consultar(td.getDefinicaoDeResponsavelId(),
+								WfDefinicaoDeResponsavel.class, false));
 
-				if (td.getDefinicaoDeVariavel() != null) {
-					for (WfDefinicaoDeVariavel vd : td.getDefinicaoDeVariavel()) {
-						vd.setDefinicaoDeTarefa(td);
-						setDepois.add(vd);
+					if (td.getDefinicaoDeVariavel() != null) {
+						for (WfDefinicaoDeVariavel vd : td.getDefinicaoDeVariavel()) {
+							vd.setDefinicaoDeTarefa(td);
+							setDepois.add(vd);
+						}
 					}
-				}
-				if (td.getDefinicaoDeDesvio() != null) {
-					for (WfDefinicaoDeDesvio dd : td.getDefinicaoDeDesvio()) {
-						dd.setDefinicaoDeTarefa(td);
-						setDepois.add(dd);
-						if (dd.getSeguinteIde() != null) {
-							for (WfDefinicaoDeTarefa td2 : pd.getDefinicaoDeTarefa()) {
-								if (dd.getSeguinteIde().equals(td2.getIdExterna())) {
-									dd.setSeguinte(td2);
-									break;
+					if (td.getDefinicaoDeDesvio() != null) {
+						for (WfDefinicaoDeDesvio dd : td.getDefinicaoDeDesvio()) {
+							dd.setDefinicaoDeTarefa(td);
+							setDepois.add(dd);
+							if (dd.getSeguinteIde() != null) {
+								for (WfDefinicaoDeTarefa td2 : pd.getDefinicaoDeTarefa()) {
+									if (dd.getSeguinteIde().equals(td2.getIdExterna())) {
+										dd.setSeguinte(td2);
+										break;
+									}
 								}
 							}
 						}
 					}
 				}
 			}
-		}
 
-		if (id != null) {
-			WfDefinicaoDeProcedimento opd = dao().consultar(id, WfDefinicaoDeProcedimento.class, false);
-			opd = dao().consultarAtivoPorIdInicial(WfDefinicaoDeProcedimento.class, opd.getHisIdIni());
-			setAntes.add(opd);
-			pd.setAno(opd.getAno());
-			pd.setNumero(opd.getNumero());
-			pd.setHisIdIni(opd.getHisIdIni());
-			pd.setOrgaoUsuario(opd.getOrgaoUsuario());
-			if (opd.getDefinicaoDeTarefa() != null) {
-				for (WfDefinicaoDeTarefa otd : opd.getDefinicaoDeTarefa()) {
-					setAntes.add(otd);
-					if (otd.getDefinicaoDeVariavel() != null)
-						for (WfDefinicaoDeVariavel ovd : otd.getDefinicaoDeVariavel())
-							setAntes.add(ovd);
-					if (otd.getDefinicaoDeVariavel() != null)
-						for (WfDefinicaoDeDesvio odd : otd.getDefinicaoDeDesvio())
-							setAntes.add(odd);
+			if (id != null) {
+				WfDefinicaoDeProcedimento opd = dao().consultar(id, WfDefinicaoDeProcedimento.class, false);
+				opd = dao().consultarAtivoPorIdInicial(WfDefinicaoDeProcedimento.class, opd.getHisIdIni());
+				setAntes.add(opd);
+				pd.setAno(opd.getAno());
+				pd.setNumero(opd.getNumero());
+				pd.setHisIdIni(opd.getHisIdIni());
+				pd.setOrgaoUsuario(opd.getOrgaoUsuario());
+				if (opd.getDefinicaoDeTarefa() != null) {
+					for (WfDefinicaoDeTarefa otd : opd.getDefinicaoDeTarefa()) {
+						setAntes.add(otd);
+						if (otd.getDefinicaoDeVariavel() != null)
+							for (WfDefinicaoDeVariavel ovd : otd.getDefinicaoDeVariavel())
+								setAntes.add(ovd);
+						if (otd.getDefinicaoDeVariavel() != null)
+							for (WfDefinicaoDeDesvio odd : otd.getDefinicaoDeDesvio())
+								setAntes.add(odd);
+					}
 				}
 			}
-		}
 
-		// Utilizaremos o sincronizador para perceber apenas as diferenças entre a
-		// definição que está guardada no banco de dados e a nova versão submetida..
-		Sincronizador sinc = new Sincronizador();
-		sinc.setSetNovo(setDepois);
-		sinc.setSetAntigo(setAntes);
-		List<Item> list = sinc.getEncaixe();
-		sinc.ordenarOperacoes();
+			// Utilizaremos o sincronizador para perceber apenas as diferenças entre a
+			// definição que está guardada no banco de dados e a nova versão submetida..
+			Sincronizador sinc = new Sincronizador();
+			sinc.setSetNovo(setDepois);
+			sinc.setSetAntigo(setAntes);
+			List<Item> list = sinc.getEncaixe();
+			sinc.ordenarOperacoes();
 
-		for (Item i : list) {
-			Date dt = new Date();
-			switch (i.getOperacao()) {
-			case alterar:
-				dao().gravarComHistorico((HistoricoAuditavel) i.getNovo(), (HistoricoAuditavel) i.getAntigo(), dt,
-						getIdentidadeCadastrante());
-				break;
-			case incluir:
-				dao().gravarComHistorico((HistoricoAuditavel) i.getNovo(), getIdentidadeCadastrante());
-				break;
-			case excluir:
-				((HistoricoAuditavel) i.getAntigo()).setHisDtFim(dt);
-				dao().gravarComHistorico((HistoricoAuditavel) i.getAntigo(), getIdentidadeCadastrante());
-				break;
+			for (Item i : list) {
+				Date dt = new Date();
+				switch (i.getOperacao()) {
+				case alterar:
+					dao().gravarComHistorico((HistoricoAuditavel) i.getNovo(), (HistoricoAuditavel) i.getAntigo(), dt,
+							getIdentidadeCadastrante());
+					break;
+				case incluir:
+					dao().gravarComHistorico((HistoricoAuditavel) i.getNovo(), getIdentidadeCadastrante());
+					break;
+				case excluir:
+					((HistoricoAuditavel) i.getAntigo()).setHisDtFim(dt);
+					dao().gravarComHistorico((HistoricoAuditavel) i.getAntigo(), getIdentidadeCadastrante());
+					break;
+				}
 			}
-		}
 
-		if ("Aplicar".equals(param("submit"))) {
-			result.redirectTo("editar?id=" + pd.getId());
-			return;
+			if ("Aplicar".equals(param("submit"))) {
+				result.redirectTo("editar?id=" + pd.getId());
+				return;
+			}
+//		result.use(Results.json()).from();
+			jsonSuccess("OK");
+		} catch (Exception e) {
+			jsonError(e);
 		}
-		result.use(Results.json()).from("OK");
 	}
 
 	@Transacional
@@ -433,7 +442,20 @@ public class WfDiagramaController
 		}
 		result.use(Results.json()).from(list, "list").serialize();
 	}
-
+	
+	@Get("app/diagrama/vazio")
+	public void carregarDiagramaVazio() throws Exception {
+		assertAcesso(VERIFICADOR_ACESSO);
+		WfDefinicaoDeProcedimento pd = new WfDefinicaoDeProcedimento();
+		pd.setAcessoDeEdicao(WfAcessoDeEdicao.ACESSO_LOTACAO);
+		pd.setAcessoDeInicializacao(WfAcessoDeInicializacao.ACESSO_PUBLICO);
+		pd.setResponsavel(getTitular());
+		pd.setResponsavelId(pd.getResponsavel().getId());
+		pd.setLotaResponsavel(getLotaTitular());
+		pd.setLotaResponsavelId(pd.getLotaResponsavel().getId());
+		jsonSuccess(pd);
+	}
+	
 	@Override
 	protected DaoFiltroSelecionavel createDaoFiltro() {
 		WfDefinicaoDeProcedimentoDaoFiltro flt = new WfDefinicaoDeProcedimentoDaoFiltro();

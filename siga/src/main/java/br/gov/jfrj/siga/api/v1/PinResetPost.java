@@ -23,8 +23,6 @@ public class PinResetPost implements IPinResetPost {
 	public void run(PinResetPostRequest req, PinResetPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-				
 				final String tokenPin = req.tokenPin.toUpperCase();
 				final String pin = req.pin;
 				

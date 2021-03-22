@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.crivano.swaggerservlet.SwaggerException;
-import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.ILotacoesPost;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.LotacoesPostRequest;
@@ -21,8 +20,6 @@ public class LotacoesPost implements ILotacoesPost {
 	@Override
 	public void run(LotacoesPostRequest req, LotacoesPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
-			CurrentRequest.set(
-					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 			ApiContext.assertAcesso("WS_REST: Acesso aos webservices REST;CAD_LOTACAO: Cadastrar Lotação");
 			SigaObjects so = ApiContext.getSigaObjects();
 

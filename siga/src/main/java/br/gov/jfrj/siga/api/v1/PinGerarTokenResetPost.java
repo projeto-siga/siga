@@ -1,7 +1,6 @@
 package br.gov.jfrj.siga.api.v1;
 
 import com.crivano.swaggerservlet.SwaggerException;
-import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.IPinGerarTokenResetPost;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.PinGerarTokenResetPostRequest;
@@ -15,15 +14,11 @@ import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class PinGerarTokenResetPost implements IPinGerarTokenResetPost {
 
-
-
 	@Override
 	public void run(PinGerarTokenResetPostRequest req, PinGerarTokenResetPostResponse resp)
 			throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-				
 				SigaObjects so = ApiContext.getSigaObjects();
 				CpIdentidade identidadeCadastrante = so.getIdentidadeCadastrante();
 				DpPessoa cadastrante = so.getCadastrante();

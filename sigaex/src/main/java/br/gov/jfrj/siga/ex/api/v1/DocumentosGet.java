@@ -16,9 +16,11 @@ import com.crivano.swaggerservlet.SwaggerException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.CurrentRequest;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
+import br.gov.jfrj.siga.base.RequestInfo;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
@@ -33,10 +35,8 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentoPesq;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosGetRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosGetResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosGet;
-import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
-import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilApiBuilder;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
@@ -51,8 +51,6 @@ public class DocumentosGet implements IDocumentosGet {
 	@Override
 	public void run(DocumentosGetRequest req, DocumentosGetResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(false, true)) {
-			CurrentRequest.set(
-					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 			ApiContext.assertAcesso("");
 			SigaObjects so = ApiContext.getSigaObjects();
 	

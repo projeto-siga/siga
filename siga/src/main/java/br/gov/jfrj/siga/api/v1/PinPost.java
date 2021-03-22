@@ -21,8 +21,6 @@ public class PinPost implements IPinPost {
 	public void run(PinPostRequest req, PinPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-				
 				final String pin = req.pin;
 				
 				if (Cp.getInstance().getBL().consisteFormatoPin(pin)) {	

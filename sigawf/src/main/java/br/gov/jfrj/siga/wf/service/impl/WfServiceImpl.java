@@ -18,23 +18,21 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.service.impl;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
+import javax.xml.ws.WebServiceContext;
 
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.Service;
-import br.gov.jfrj.siga.base.log.RequestLoggerFilter;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.service.ExService;
-import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.model.dao.ModeloDao;
+import br.gov.jfrj.siga.jee.SoapContext;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.bl.WfBL;
@@ -57,52 +55,29 @@ import br.gov.jfrj.siga.wf.util.WfHandler;
 @WebService(serviceName = "WfService", endpointInterface = "br.gov.jfrj.siga.wf.service.WfService", targetNamespace = "http://impl.service.wf.siga.jfrj.gov.br/")
 public class WfServiceImpl implements WfService {
 	private final static Logger log = Logger.getLogger(WfService.class);
-
-	private static class SoapContext implements Closeable {
+	
+	private class WfSoapContext extends SoapContext {
 		EntityManager em;
 		boolean transacional;
 		long inicio = System.currentTimeMillis();
 
-		public SoapContext(boolean transacional) {
-			this.transacional = transacional;
-			em = WfStarter.emf.createEntityManager();
-			ContextoPersistencia.setEntityManager(em);
-
-			ModeloDao.freeInstance();
+		public WfSoapContext(boolean transacional) {
+			super(context, WfStarter.emf, transacional);
+		}
+		
+		@Override
+		public void initDao() {
 			WfDao.getInstance();
 			try {
 				Wf.getInstance().getConf().limparCacheSeNecessario();
 			} catch (Exception e1) {
 				throw new RuntimeException("Não foi possível atualizar o cache de configurações", e1);
 			}
-			if (this.transacional)
-				em.getTransaction().begin();
-		}
-
-		public void rollback(Exception e) {
-			if (em.getTransaction().isActive())
-				em.getTransaction().rollback();
-			if (!RequestLoggerFilter.isAplicacaoException(e)) {
-				RequestLoggerFilter.logException(null, inicio, e);
-			}
-		}
-
-		@Override
-		public void close() throws IOException {
-			try {
-				if (this.transacional)
-					em.getTransaction().commit();
-			} catch (Exception e) {
-				if (em.getTransaction().isActive())
-					em.getTransaction().rollback();
-				throw new RuntimeException(e);
-			} finally {
-				em.close();
-				ContextoPersistencia.setEntityManager(null);
-				ContextoPersistencia.setDt(null);
-			}
 		}
 	}
+
+	@Resource
+	private WebServiceContext context;
 
 	/**
 	 * Atualiza o workflow de um documento. Este método pesquisa todas as variáveis
@@ -111,7 +86,8 @@ public class WfServiceImpl implements WfService {
 	 * executa a ação da tarefa.
 	 */
 	public Boolean atualizarWorkflowsDeDocumento(String siglaDoc) throws Exception {
-		try (SoapContext ctx = new SoapContext(true)) {
+		// System.out.println("*** atualizarWorkflowsDeDocumento: " + siglaDoc);
+		try (SoapContext ctx = new WfSoapContext(true)) {
 			try {
 				List<WfProcedimento> pis = WfDao.getInstance().consultarProcedimentosAtivosPorEvento(siglaDoc);
 				boolean f = false;
@@ -141,13 +117,15 @@ public class WfServiceImpl implements WfService {
 	 */
 	public Boolean criarInstanciaDeProcesso(String nomeProcedimento, String siglaCadastrante, String siglaTitular,
 			ArrayList<String> keys, ArrayList<String> values) throws Exception {
-		try (SoapContext ctx = new SoapContext(true)) {
+		try (SoapContext ctx = new WfSoapContext(true)) {
 			try {
 
 				if (nomeProcedimento == null)
 					throw new RuntimeException("Nome do procedimento precisa ser informado.");
-				WfDefinicaoDeProcedimento pd = WfDao.getInstance()
-						.consultarWfDefinicaoDeProcedimentoPorNome(nomeProcedimento);
+				WfDefinicaoDeProcedimento pd = WfDao.getInstance().consultarPorSigla(nomeProcedimento,
+						WfDefinicaoDeProcedimento.class, null);
+				if (pd == null)
+					pd = WfDao.getInstance().consultarWfDefinicaoDeProcedimentoPorNome(nomeProcedimento);
 				if (pd == null)
 					throw new RuntimeException(
 							"Não foi encontrado um procedimento com o nome '" + nomeProcedimento + "'");

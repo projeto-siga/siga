@@ -24,8 +24,8 @@
 			</span>
 		</c:if>
 	</div>
-	<c:if
-		test="${pi.isDesabilitarFormulario(titular, lotaTitular) eq false}">
+	<c:set var="msgAviso" value="${pi.getMsgAviso(titular, lotaTitular)}" />
+	<c:if test="${not pi.isDesabilitarFormulario(titular, lotaTitular) and empty msgAviso}">
 		<div class="gt-form-row gt-width-100">
 			<input type="hidden" value="${pi.id}" name="tiId" />
 
@@ -199,6 +199,5 @@
 		</c:if>
 		<%--</c:if> --%>
 	</c:if>
-	<span style="color: red; font-weight: bold;">
-		${pi.getMsgAviso(titular, lotaTitular)}</span>
+	<span style="color: red; font-weight: bold;"> ${msgAviso}</span>
 </div>

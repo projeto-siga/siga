@@ -141,6 +141,7 @@ public class SigaController {
 			result.on(AplicacaoException.class).forwardTo(this).appexception();
 			result.on(Exception.class).forwardTo(this).exception();
 		} catch (Throwable ex) {
+			ex.printStackTrace();
 		}
 		
 		result.include("cadastrante", getCadastrante());

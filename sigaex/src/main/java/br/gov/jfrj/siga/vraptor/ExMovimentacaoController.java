@@ -2103,7 +2103,7 @@ public class ExMovimentacaoController extends ExController {
 			
 			
 		} else {
-			ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getExDocumento().getSigla());
+			ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getSigla());
 		}
 	}
 

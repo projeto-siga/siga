@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 import com.crivano.swaggerservlet.SwaggerException;
-import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.ILocalidadesGet;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Localidade;
@@ -17,14 +16,11 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.CpLocalidade;
 import br.gov.jfrj.siga.dp.CpUF;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class LocalidadesGet implements ILocalidadesGet {
 	@Override
 	public void run(LocalidadesGetRequest req, LocalidadesGetResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(false, true)) {
-			CurrentRequest.set(
-					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 			if (StringUtils.isEmpty(req.idUf) && StringUtils.isEmpty(req.texto))
 				throw new SwaggerException(
 						"Não foi informado nenhum parâmetro.", 404, null, req, resp, null);

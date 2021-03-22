@@ -17,9 +17,6 @@ public class OrgaosSiglaGet implements IOrgaosSiglaGet {
 	@Override
 	public void run(OrgaosSiglaGetRequest req, OrgaosSiglaGetResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(false, true)) {
-			CurrentRequest.set(
-					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-			
 			if (StringUtils.isEmpty(req.sigla))
 				throw new SwaggerException(
 						"O parâmetro sigla é obrigatório.", 400, null, req, resp, null);

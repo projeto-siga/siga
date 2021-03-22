@@ -226,7 +226,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					ExParamCfg.MODELO, ExParamCfg.NIVEL_DE_ACESSO, ExParamCfg.PAPEL, ExParamCfg.VIA },
 			new Enum[] { ExParamCfg.TIPO_MOVIMENTACAO, CpParamCfg.SITUACAO },
 			new SituacaoDeConfiguracao[] { SituacaoDeConfiguracao.PODE, SituacaoDeConfiguracao.NAO_PODE,
-					SituacaoDeConfiguracao.NAO_DEFAULT }),
+					SituacaoDeConfiguracao.NAO_DEFAULT, SituacaoDeConfiguracao.DEFAULT }),
 	//
 	NIVEL_DE_ACESSO(CpTipoConfiguracao.TIPO_CONFIG_NIVELACESSO, "Nível de Acesso",
 			"Utilize essa configuração para indicar o nível de acesso menos restritivo de modelos ou espécies.\n" + "\n"

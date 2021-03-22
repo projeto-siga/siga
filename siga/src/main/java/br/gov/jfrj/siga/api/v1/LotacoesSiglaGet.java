@@ -3,13 +3,12 @@ package br.gov.jfrj.siga.api.v1;
 import org.apache.commons.lang3.StringUtils;
 
 import com.crivano.swaggerservlet.SwaggerException;
-import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.ILotacoesSiglaGet;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Lotacao;
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.Orgao;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.LotacoesSiglaGetRequest;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.LotacoesSiglaGetResponse;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.Orgao;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -19,9 +18,6 @@ public class LotacoesSiglaGet implements ILotacoesSiglaGet {
 	@Override
 	public void run(LotacoesSiglaGetRequest req, LotacoesSiglaGetResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(false, true)) {
-			CurrentRequest.set(
-					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-			
 			if (StringUtils.isEmpty(req.sigla))
 				throw new SwaggerException(
 						"O parâmetro sigla é obrigatório.", 400, null, req, resp, null);

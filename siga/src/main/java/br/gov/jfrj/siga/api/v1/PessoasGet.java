@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.crivano.swaggerservlet.SwaggerException;
-import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Cargo;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.FuncaoConfianca;
@@ -31,9 +30,6 @@ public class PessoasGet implements IPessoasGet {
 	@Override
 	public void run(PessoasGetRequest req, PessoasGetResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(false, true)) {
-			CurrentRequest.set(
-					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-			
 			if (((req.cpf != null? 1:0) + (req.texto != null? 1:0) + (req.idPessoaIni != null? 1:0)) > 1) {
 				throw new AplicacaoException("Pesquisa permitida somente por um dos argumentos.");
 			}

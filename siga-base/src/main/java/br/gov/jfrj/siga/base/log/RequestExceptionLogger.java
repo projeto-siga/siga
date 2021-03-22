@@ -119,6 +119,8 @@ public class RequestExceptionLogger {
 			Enumeration<String> headers = httpReq.getHeaderNames();
 			while (headers.hasMoreElements()) {
 				String name = headers.nextElement();
+				if ("authorization".equalsIgnoreCase(name))
+					continue;
 				requestInfo.append("\t");
 				requestInfo.append(name);
 				requestInfo.append(" : ");

@@ -327,7 +327,17 @@ parameters:
     description: Identificador da classificacao
     type: string
     required: false
-   
+  filtroPessoaLotacao:
+    name: filtroPessoaLotacao
+    in: query
+    description: Informa se deseja filtrar documentos por pessoa ou lotação
+    required: false
+    type: string
+    default: Pessoa e Lotacao
+    enum:
+      - Pessoa e Lotacao
+      - Pessoa
+      - Lotacao
 
 ################################################################################
 #                                           Paths                              #
@@ -530,7 +540,8 @@ paths:
       tags: [mesa]
       security:
         - Bearer: []      
-      parameters: []
+      parameters: 
+        - $ref: "#/parameters/filtroPessoaLotacao"
       responses:
         200:
           description: Successful response
@@ -784,6 +795,35 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /documentos/{sigla}/receber:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      description: Recebe um documento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        403:
+          description: Acesso ao documento não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Via ou volume não encontrado
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
 
   /documentos/{sigla}/anotar:
     post:

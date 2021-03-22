@@ -4163,6 +4163,18 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO,
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
+	
+	// Deve receber só se o usuário não acabou de fazer um trâmite para sua própria
+	// lotação
+	public boolean deveReceberEletronico(DpPessoa cadastrante, DpLotacao lotaCadastrante, final ExMobil mob) {
+		if (!podeReceberEletronico(cadastrante, lotaCadastrante, mob))
+			return false;
+		ExMovimentacao ultMov = mob.getUltimaMovimentacaoNaoCancelada();
+		if (ultMov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
+				&& ultMov.getCadastrante().equivale(cadastrante) && ultMov.getLotaResp().equivale(lotaCadastrante))
+			return false;
+		return true;
+	}
 
 	/**
 	 * Retorna se é possível vincular este móbil a outro, conforme as regras:

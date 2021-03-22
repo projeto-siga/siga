@@ -23,8 +23,6 @@ public class PinTrocarPost implements IPinTrocarPost {
 	public void run(PinTrocarPostRequest req, PinTrocarPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-				
 				final String pinAtual = req.pinAtual;
 				final String pin = req.pin;
 				

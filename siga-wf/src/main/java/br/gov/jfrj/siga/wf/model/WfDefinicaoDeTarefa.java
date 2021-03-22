@@ -248,7 +248,7 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 
 	@Override
 	public WfTipoDeTarefa getKind() {
-		return getTipoDeTarefa();
+		return getTipoDeTarefa() != null ? getTipoDeTarefa() : WfTipoDeTarefa.FORMULARIO;
 	}
 
 	@Override

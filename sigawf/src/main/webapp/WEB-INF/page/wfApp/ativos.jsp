@@ -8,6 +8,7 @@
 				<tr>
 					<th>Diagrama</th>
 					<th>Tarefa</th>
+					<th>Principal</th>
 					<th style="text-align: center">Atendente</th>
 					<th style="text-align: center">Prioridade</th>
 					<th style="text-align: right">Início</th>
@@ -19,6 +20,14 @@
 						<td>${taskInstance.instanciaDeProcedimento.definicaoDeProcedimento.nome}</td>
 						<td><a
 							href="${linkTo[WfAppController].procedimento(taskInstance.instanciaDeProcedimento.id)}">${taskInstance.definicaoDeTarefa.nome}</a></td>
+						<td><c:choose>
+								<c:when
+									test="${taskInstance.instanciaDeProcedimento.tipoDePrincipal eq 'DOC' and not empty taskInstance.instanciaDeProcedimento.principal}">
+									<a
+										href="/sigaex/app/expediente/doc/exibir?sigla=${taskInstance.instanciaDeProcedimento.principal}">${taskInstance.instanciaDeProcedimento.principal}</a>
+								</c:when>
+								<c:otherwise>${taskInstance.instanciaDeProcedimento.principal}</c:otherwise>
+							</c:choose></td>
 
 						<!-- <td>${taskInstance.instanciaDeProcedimento.definicaoDeProcedimento.nome}</td> -->
 						<td align="center"><c:set var="atendente">${taskInstance.instanciaDeProcedimento.atendente}</c:set>

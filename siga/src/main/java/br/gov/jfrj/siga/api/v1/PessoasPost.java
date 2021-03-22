@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.crivano.swaggerservlet.SwaggerException;
-import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.IPessoasPost;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.PessoasPostRequest;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.PessoasPostResponse;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -25,8 +23,6 @@ public class PessoasPost implements IPessoasPost {
 	@Override
 	public void run(PessoasPostRequest req, PessoasPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
-			CurrentRequest.set(
-					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 			ApiContext.assertAcesso("WS_REST: Acesso aos webservices REST;CAD_PESSOA: Cadastrar Pessoa");
 			SigaObjects so = ApiContext.getSigaObjects();
 

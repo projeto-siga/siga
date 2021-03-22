@@ -3,7 +3,6 @@ package br.gov.jfrj.siga.api.v1;
 import org.apache.commons.lang3.StringUtils;
 
 import com.crivano.swaggerservlet.SwaggerException;
-import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Cargo;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.FuncaoConfianca;
@@ -25,9 +24,6 @@ public class PessoasSiglaGet implements IPessoasSiglaGet {
 	@Override
 	public void run(PessoasSiglaGetRequest req, PessoasSiglaGetResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(false, true)) {
-			CurrentRequest.set(
-					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-			
 			if (StringUtils.isEmpty(req.sigla))
 				throw new SwaggerException(
 						"O parâmetro sigla é obrigatório.", 400, null, req, resp, null);

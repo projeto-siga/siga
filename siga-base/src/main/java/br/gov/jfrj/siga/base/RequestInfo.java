@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.ex.bl;
+package br.gov.jfrj.siga.base;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.crivano.swaggerservlet.SwaggerException;
-import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.ILocalidadesIdGet;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Localidade;
@@ -19,13 +18,9 @@ public class LocalidadesIdGet implements ILocalidadesIdGet {
 	@Override
 	public void run(LocalidadesIdGetRequest req, LocalidadesIdGetResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(false, true)) {
-			CurrentRequest.set(
-					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-			
 			if (req.id == null) {
 				throw new AplicacaoException("O argumento de pesquisa id é obrigatório.");
 			}
-	
 			resp.localidade = pesquisarPorId(req, resp);
 		} catch (AplicacaoException e) {
 			throw e;

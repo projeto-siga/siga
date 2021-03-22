@@ -9,6 +9,8 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import br.gov.jfrj.siga.Service;
+import br.gov.jfrj.siga.base.UsuarioDeSistemaEnum;
 import br.gov.jfrj.siga.cp.util.SigaFlyway;
 
 @Startup
@@ -19,8 +21,13 @@ public class WfStarter {
 	public static EntityManagerFactory emf;
 
 	@PostConstruct
-	public void init() throws NamingException {
-		SigaFlyway.migrate("java:/jboss/datasources/SigaWfDS", "classpath:db/mysql/sigawf");
+	public void init() {
+		try {
+			SigaFlyway.migrate("java:/jboss/datasources/SigaWfDS", "classpath:db/mysql/sigawf");
+		} catch (NamingException e) {
+			throw new RuntimeException(e);
+		}
 		emf = Persistence.createEntityManagerFactory("default");
+		Service.setUsuarioDeSistema(UsuarioDeSistemaEnum.SIGA_WF);
 	}
 }

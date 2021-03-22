@@ -4,11 +4,14 @@ import static java.util.Objects.isNull;
 
 import java.io.Closeable;
 import java.io.IOException;
+
 import javax.persistence.EntityManager;
 
 import com.crivano.swaggerservlet.SwaggerAuthorizationException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
+import br.gov.jfrj.siga.base.CurrentRequest;
+import br.gov.jfrj.siga.base.RequestInfo;
 import br.gov.jfrj.siga.base.log.RequestLoggerFilter;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -27,6 +30,9 @@ public class ApiContext implements Closeable {
 			buscarEValidarUsuarioLogado();
 		}
 		
+		CurrentRequest.set(
+				new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
+
 		this.transacional = transacional;
 		em = SigaStarter.emf.createEntityManager();
 		ContextoPersistencia.setEntityManager(em);
@@ -48,7 +54,7 @@ public class ApiContext implements Closeable {
 		if (!RequestLoggerFilter.isAplicacaoException(e)) {
 			RequestLoggerFilter.logException(null, inicio, e);
 		}
-		ContextoPersistencia.setDt(null);
+		ContextoPersistencia.removeAll();
 	}
 
 	@Override
@@ -63,7 +69,7 @@ public class ApiContext implements Closeable {
 		} finally {
 			em.close();
 			ContextoPersistencia.setEntityManager(null);
-			ContextoPersistencia.setDt(null);
+			ContextoPersistencia.removeAll();
 		}
 	}
 

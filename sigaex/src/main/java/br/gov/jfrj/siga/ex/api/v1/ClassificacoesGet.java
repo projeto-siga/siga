@@ -9,14 +9,14 @@ import com.crivano.swaggerservlet.SwaggerException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.CurrentRequest;
+import br.gov.jfrj.siga.base.RequestInfo;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.ClassificacaoItem;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.ClassificacoesGetRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.ClassificacoesGetResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IClassificacoesGet;
-import br.gov.jfrj.siga.ex.bl.CurrentRequest;
-import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.persistencia.ExClassificacaoDaoFiltro;
@@ -25,9 +25,6 @@ public class ClassificacoesGet implements IClassificacoesGet {
 	@Override
 	public void run(ClassificacoesGetRequest req, ClassificacoesGetResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(false, true)) {
-			CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(),
-					SwaggerServlet.getHttpServletResponse()));
-
 			if (((req.texto != null ? 1 : 0) + (req.idClassificacaoIni != null ? 1 : 0)) > 1) {
 				throw new AplicacaoException("Pesquisa permitida somente por um dos argumentos.");
 			}

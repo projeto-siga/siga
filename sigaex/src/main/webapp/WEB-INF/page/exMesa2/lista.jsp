@@ -71,6 +71,14 @@
 						</label>
 					</div>            
 	            </div>
+	            <div class="form-group my-1 border-bottom">
+					<div class="form-check">
+						<input type="checkbox" class="form-check-input" id="usuarioPosse" v-model="usuarioPosse" :disabled="carregando">
+						<label class="form-check-label" for="usuarioPosse">
+							<small>Exibir usuário em posse do documento</small>
+						</label>
+					</div>            
+	            </div>
 				<div class="form-group pb-2 mb-1 border-bottom">
 					<label for="selQtdPagId"><small>Qtd. de documentos a trazer</small></label>
 					<select class="form-control form-control-sm p-0" v-model="selQtdPag" :class="{disabled: carregando}">
@@ -215,9 +223,14 @@
 									<thead v-if="!carregando">
 										<tr class="table-head d-flex">
 											<th scope="col" class="col-1 d-none d-md-block">Tempo</th>
-											<th scope="col" class="col-9 col-md-2"><fmt:message key = "usuario.mesavirtual.codigo"/></th>
-											<th scope="col" class="col-4 d-none d-md-block">Descrição</th>
-											<th scope="col" class="col-3 col-md-2">Origem</th>
+											<th scope="col" class="col-md-2"
+													v-bind:class="usuarioPosse ? 'col-8' : 'col-9'">
+												<fmt:message key="usuario.mesavirtual.codigo"/></th>
+											<th scope="col" class="d-none d-md-block"
+											 	v-bind:class="usuarioPosse ? 'col-3' : 'col-4'">Descrição</th>
+											<th scope="col" class="col-md-1"
+												v-bind:class="usuarioPosse ? 'col-2' : 'col-3'">Origem</th>
+											<th v-if="usuarioPosse" scope="col" class="col-md-1 col-2">Usuário em Posse</th>
 											<th scope="col" class="col-3 d-none d-md-block"><fmt:message key = "usuario.mesavirtual.etiquetas"/></th>
 	<!-- 											<th v-show="gruposTemAlgumErro">Atenção</th> -->
 										</tr>
@@ -227,7 +240,8 @@
 											<tr class="d-flex">
 												<td class="col-1 d-none d-md-block" 
 													:title="f.datahoraDDMMYYYHHMM">{{f.tempoRelativo}}</td>
-												<td class="col-9 col-md-2">
+												<td class="col-md-2"
+														v-bind:class="usuarioPosse ? 'col-8' : 'col-9'">
 													<c:if test="${siga_cliente == 'GOVSP'}">
 														<span v-if="trazerComposto">
 															<span v-if="f.tipoDoc == 'Avulso'"><i class="far fa-file text-secondary" title="Documento Avulso"></i></span>
@@ -244,25 +258,31 @@
 													</c:choose>
 													<span class="d-inline d-md-none"> - {{f.descr}}</span>
 												</td>
-												<td class="col-4 d-none d-md-block">
+												<td class="d-none d-md-block" v-bind:class="usuarioPosse ? 'col-3' : 'col-4'">
 													<span class="text-break" :title='processDescription(f.descr)' >{{ processDescription(f.descr, 60) }}</span>
 												</td>
-												<td class="col-3 col-md-2">
-													<c:if test="${siga_cliente == 'GOVSP'}">
-														<span v-if="f.dataDevolucao == 'ocultar'"></span>
-														<span v-if="f.dataDevolucao == 'alerta'"><i class="fa fa-exclamation-triangle text-warning"></i></span>
-														<span v-if="f.dataDevolucao == 'atrasado'"><i class="fa fa-exclamation-triangle text-danger"></i></span>
-													</c:if>
-													{{f.origem}}
+												<td class="col-md-1"
+														v-bind:class="usuarioPosse ? 'col-2' : 'col-3'">
+													<small>
+														<c:if test="${siga_cliente == 'GOVSP'}">
+															<span v-if="f.dataDevolucao == 'ocultar'"></span>
+															<span v-if="f.dataDevolucao == 'alerta'"><i class="fa fa-exclamation-triangle text-warning"></i></span>
+															<span v-if="f.dataDevolucao == 'atrasado'"><i class="fa fa-exclamation-triangle text-danger"></i></span>
+														</c:if>
+														{{f.origem}}
+													</small>
 												</td>
-												<td class="col-3 d-none d-md-block" style="padding: 0;">
+												<td v-if="usuarioPosse" class="col-md-1 col-2">
+													<small>{{f.lotaPosse}} / {{f.nomePessoaPosse}}</small>
+												</td>												
+												<td class="col-3 d-none d-md-block p-1">
 													<span v-if="f.anotacao != null">
-														<a tabindex="0" class="anotacao fas fa-sticky-note text-warning popover-dismiss ml-1" role="button" 
+														<a tabindex="0" class="anotacao fas fa-sticky-note text-warning popover-dismiss ml-2" role="button" 
 																data-toggle="popover" data-trigger="hover focus" :data-content="f.anotacao"></a>
 													</span>
 													<span class="xrp-label-container">
 														<span v-for="m in f.list">
-															<a class="popover-dismiss ml-1" role="button" 
+															<a class="popover-dismiss" role="button" 
 																data-toggle="popover" data-trigger="hover focus" :title="m.titulo" data-html="true" :data-pessoa="m.pessoa" :data-lotacao="m.lotacao">
 																<span class="text-size-8 badge badge-pill badge-secondary tagmesa m-1 btn-xs" v-bind:style="{color: '#' + m.cor + ' !important'}">												
 																	<i :class="m.icone" :style="{color: m.cor}"></i> {{m.nome}}<span v-if="m.ref1">, planejada: {{m.ref1}}</span><span v-if="m.ref2">, limite: {{m.ref2}}</span>

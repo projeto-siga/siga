@@ -32,6 +32,7 @@ import com.crivano.jlogic.Expression;
 
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.UsuarioDeSistemaEnum;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -172,7 +173,8 @@ public class WfBL extends CpBL {
 		String destino = pi.getResponsible().getCodigo();
 
 		ExService service = Service.getExService();
-		service.transferir(principal, destino, siglaTitular, true);
+		if (service.podeTransferir(principal, siglaTitular, true))
+			service.transferir(principal, destino, siglaTitular, true);
 	}
 
 	public static void assertPodeTransferirDocumentosVinculados(WfTarefa ti, String siglaTitular) throws Exception {

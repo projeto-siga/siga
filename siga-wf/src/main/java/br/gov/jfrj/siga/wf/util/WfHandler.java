@@ -24,6 +24,7 @@ public class WfHandler implements Handler<WfProcedimento, WfResp> {
 	DpPessoa titular;
 	DpLotacao lotaTitular;
 	CpIdentidade identidade;
+	boolean transicionou = false;
 
 	public WfHandler(DpPessoa titular, DpLotacao lotaTitular, CpIdentidade identidade) {
 		this.titular = titular;
@@ -83,7 +84,8 @@ public class WfHandler implements Handler<WfProcedimento, WfResp> {
 		if (titular != null && lotaTitular != null)
 			siglaTitular = titular.getSigla() + "@" + lotaTitular.getSiglaCompleta();
 		try {
-			WfBL.transferirDocumentosVinculados(pi, siglaTitular);
+			if (transicionou)
+				WfBL.transferirDocumentosVinculados(pi, siglaTitular);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -92,5 +94,6 @@ public class WfHandler implements Handler<WfProcedimento, WfResp> {
 	@Override
 	public void afterTransition(WfProcedimento pi, Integer de, Integer para) {
 		Wf.getInstance().getBL().registrarTransicao(pi, de, para, titular, lotaTitular, identidade);
+		transicionou = true;
 	}
 }

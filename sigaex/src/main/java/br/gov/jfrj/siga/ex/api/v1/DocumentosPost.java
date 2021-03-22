@@ -19,6 +19,8 @@ import com.crivano.swaggerservlet.SwaggerUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.CurrentRequest;
+import br.gov.jfrj.siga.base.RequestInfo;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -35,10 +37,8 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosPostRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosPostResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosPost;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
-import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
-import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
@@ -53,8 +53,6 @@ public class DocumentosPost implements IDocumentosPost {
 	public void run(DocumentosPostRequest req,
 			DocumentosPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
-			CurrentRequest.set(
-					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 			ApiContext.assertAcesso("");
 			
 			SigaObjects so = ApiContext.getSigaObjects();

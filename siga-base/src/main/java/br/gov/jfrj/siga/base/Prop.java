@@ -164,6 +164,7 @@ public class Prop {
 		provider.addPrivateProperty("/siga.autenticacao.senha", provider.getProp("/siga.jwt.secret"));
 		provider.addPublicProperty("/siga.jwt.token.ttl", "3600");
 		provider.addPublicProperty("/siga.local", null);
+		provider.addPublicProperty("/siga.localidade.padrao", null);
 		provider.addPublicProperty("/siga.mensagens", null);
 		provider.addPublicProperty("/siga.mesa.carrega.lotacao", "true");
 		provider.addPublicProperty("/siga.mesa.nao.revisar.temporarios", "false");

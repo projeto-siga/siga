@@ -318,7 +318,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			listaLotacaoPai.remove(lotacao);
 		} else {
 			listaLotacaoPai = carregaLotacao(getTitular().getOrgaoUsuario());
-			idUf = Long.valueOf(Prop.get("localidade.padrao") != null ? Prop.get("localidade.padrao") : "0");
+			idUf = Long.valueOf(Prop.get("uf.padrao") != null ? Prop.get("uf.padrao") : "0");
 		}
 		result.include("listaLotacao", listaLotacaoPai);
 		

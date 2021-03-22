@@ -1741,7 +1741,8 @@ public class ExDao extends CpDao {
 				+ " where (marca.dtIniMarca is null or marca.dtIniMarca < :dbDatetime)"
 				+ " and (marca.dtFimMarca is null or marca.dtFimMarca > :dbDatetime)"
 				+ " and (marca.dpPessoaIni.idPessoa = :titular or "
-				+ " (marca.dpPessoaIni.idPessoa = null and marca.dpLotacaoIni.idLotacao = :lotaTitular))";
+				+ (titular != null? " (marca.dpPessoaIni.idPessoa = null and ": "(")
+				+ " marca.dpLotacaoIni.idLotacao = :lotaTitular))";
 		if(Prop.isGovSP()) {
 			q += " and ((mobil.exDocumento.numExpediente is null and marcador = 1) or (mobil.exDocumento.numExpediente is not null))"
 					+ " and marcador <> 10";

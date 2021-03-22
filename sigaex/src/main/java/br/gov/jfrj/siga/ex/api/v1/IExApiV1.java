@@ -265,6 +265,7 @@ public interface IExApiV1 {
 	}
 
 	public class MesaGetRequest implements ISwaggerRequest {
+		public String filtroPessoaLotacao;
 	}
 
 	public class MesaGetResponse implements ISwaggerResponse {

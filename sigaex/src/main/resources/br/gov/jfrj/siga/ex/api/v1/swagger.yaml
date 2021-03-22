@@ -327,7 +327,17 @@ parameters:
     description: Identificador da classificacao
     type: string
     required: false
-   
+  filtroPessoaLotacao:
+    name: filtroPessoaLotacao
+    in: query
+    description: Informa se deseja filtrar documentos por pessoa ou lotação
+    required: false
+    type: string
+    default: Pessoa e Lotacao
+    enum:
+      - Pessoa e Lotacao
+      - Pessoa
+      - Lotacao
 
 ################################################################################
 #                                           Paths                              #
@@ -530,7 +540,8 @@ paths:
       tags: [mesa]
       security:
         - Bearer: []      
-      parameters: []
+      parameters: 
+        - $ref: "#/parameters/filtroPessoaLotacao"
       responses:
         200:
           description: Successful response

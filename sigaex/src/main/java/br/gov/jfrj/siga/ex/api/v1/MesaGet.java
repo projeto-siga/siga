@@ -48,9 +48,29 @@ public class MesaGet implements IMesaGet {
 	
 			ApiContext.buscarEValidarUsuarioLogado();
 			SigaObjects so = ApiContext.getSigaObjects();
-			DpPessoa cadastrante = so.getCadastrante();
 			
-			List<Object[]> l = ExDao.getInstance().listarDocumentosPorPessoaOuLotacao(cadastrante, cadastrante.getLotacao());
+			DpPessoa pes = null;
+			DpLotacao lota = null;
+			DpPessoa cadastrante = so.getCadastrante();
+			DpLotacao lotaCadastrante = cadastrante.getLotacao();
+			if (req.filtroPessoaLotacao != null) {
+				switch(req.filtroPessoaLotacao) {
+					case "Pessoa":
+						pes = cadastrante;
+						break;
+					case "Lotacao":
+						lota = lotaCadastrante;
+						break;
+					default:
+						pes = cadastrante;
+						lota = lotaCadastrante;
+				}
+			} else {
+				pes = cadastrante;
+				lota = lotaCadastrante;
+			}
+			
+			List<Object[]> l = ExDao.getInstance().listarDocumentosPorPessoaOuLotacao(pes, lota);
 
 			HashMap<ExMobil, List<MeM>> map = new HashMap<>();
 
@@ -67,7 +87,7 @@ public class MesaGet implements IMesaGet {
 				map.get(mobil).add(mm);
 			}
 
-			resp.list = listarReferencias(TipoDePainelEnum.UNIDADE, map, cadastrante, cadastrante.getLotacao(), 
+			resp.list = listarReferencias(TipoDePainelEnum.UNIDADE, map, cadastrante, lotaCadastrante, 
 					ExDao.getInstance().consultarDataEHoraDoServidor());
 		} catch (AplicacaoException | SwaggerException e) {
 			throw e;

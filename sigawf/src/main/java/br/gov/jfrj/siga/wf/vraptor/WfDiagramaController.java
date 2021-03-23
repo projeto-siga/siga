@@ -102,7 +102,7 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 			JsonObject oo = new JsonObject();
 			o.add("originalObject", oo);
 			oo.addProperty("key", Long.toString(src.getId()));
-			oo.addProperty("firstLine", src.getSigla());
+			oo.addProperty("firstLine", src.getSiglaCompleta());
 			oo.addProperty("secondLine", src.getDescricao());
 			return oo;
 		}

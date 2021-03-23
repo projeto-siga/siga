@@ -363,18 +363,22 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 	}
 
 	@Transacional
-	@Get("app/diagrama/desativar")
+	@Post("app/diagrama/desativar")
 	public void desativar(final Long id) throws Exception {
-		ModeloDao.iniciarTransacao();
-		assertAcesso(VERIFICADOR_ACESSO);
-		if (id == null) {
-			throw new AplicacaoException("ID não informada");
+		try {
+			assertAcesso(VERIFICADOR_ACESSO);
+			if (id == null)
+				throw new AplicacaoException("ID não informada");
+			final WfDefinicaoDeProcedimento pd = dao().consultar(id, WfDefinicaoDeProcedimento.class, false);
+			if (pd == null)
+				throw new AplicacaoException("ID inválida");
+			if (!pd.isAtivo())
+				throw new AplicacaoException("Diagrama já está inativo");
+			dao().excluirComHistorico(pd, dao().consultarDataEHoraDoServidor(), getIdentidadeCadastrante());
+			jsonSuccess("OK");
+		} catch (Exception e) {
+			jsonError(e);
 		}
-		final WfDefinicaoDeProcedimento pd = dao().consultar(id, WfDefinicaoDeProcedimento.class, false);
-		dao().excluirComHistorico(pd, dao().consultarDataEHoraDoServidor(), getIdentidadeCadastrante());
-		ModeloDao.commitTransacao();
-
-		result.redirectTo(WfDiagramaController.class).lista();
 	}
 
 	private WfDefinicaoDeProcedimento buscar(final Long id) {
@@ -442,7 +446,7 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 		}
 		result.use(Results.json()).from(list, "list").serialize();
 	}
-	
+
 	@Get("app/diagrama/vazio")
 	public void carregarDiagramaVazio() throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
@@ -455,7 +459,7 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 		pd.setLotaResponsavelId(pd.getLotaResponsavel().getId());
 		jsonSuccess(pd);
 	}
-	
+
 	@Override
 	protected DaoFiltroSelecionavel createDaoFiltro() {
 		WfDefinicaoDeProcedimentoDaoFiltro flt = new WfDefinicaoDeProcedimentoDaoFiltro();

@@ -149,6 +149,24 @@ app
 
 					}
 
+					$scope.desativar = function() {
+						$http(
+								{
+									url : '/sigawf/app/diagrama/desativar?id='
+											+ $scope.id,
+									method : "POST",
+									data : {},
+									headers : {
+										'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
+									}
+								}).then(function(response) {
+							window.location = '/sigawf/app/diagrama/listar'
+						}, function(response) {
+							alert(response.data.errormsg)
+						});
+
+					}
+
 					$scope.decode = function(d) {
 						var pd = {
 							hisIde : undefined,

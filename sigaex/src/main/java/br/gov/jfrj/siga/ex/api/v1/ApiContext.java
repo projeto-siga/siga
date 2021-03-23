@@ -39,8 +39,14 @@ public class ApiContext implements Closeable {
 			buscarEValidarUsuarioLogado();
 		}
 		
-		CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(),
-				SwaggerServlet.getHttpServletResponse()));
+		try {
+			CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(),
+					SwaggerServlet.getHttpServletResponse()));
+		} catch (NullPointerException ex) {
+			// Engolindo exceção para garantir que está classe pode ser utilizada mesmo fora
+			// de uma chamada à API REST
+			CurrentRequest.set(null);
+		}
 		
 		this.transacional = transacional;
 		em = ExStarter.emf.createEntityManager();

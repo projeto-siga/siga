@@ -204,7 +204,7 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 	}
 
 	@Get("app/diagrama/editar")
-	public void edita(final Long id) throws UnsupportedEncodingException {
+	public void edita(final Long id, final boolean duplicar) throws UnsupportedEncodingException {
 		assertAcesso(VERIFICADOR_ACESSO);
 		if (id != null) {
 			WfDefinicaoDeProcedimento pd = WfDefinicaoDeProcedimento.AR.findById(id);

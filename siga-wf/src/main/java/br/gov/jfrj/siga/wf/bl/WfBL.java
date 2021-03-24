@@ -42,6 +42,7 @@ import br.gov.jfrj.siga.wf.logic.WfPodePegar;
 import br.gov.jfrj.siga.wf.logic.WfPodeRedirecionar;
 import br.gov.jfrj.siga.wf.logic.WfPodeTerminar;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
+import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
 import br.gov.jfrj.siga.wf.model.WfMov;
 import br.gov.jfrj.siga.wf.model.WfMovAnotacao;
 import br.gov.jfrj.siga.wf.model.WfMovDesignacao;
@@ -123,6 +124,21 @@ public class WfBL extends CpBL {
 		pi.setHisIdcIni(identidade);
 		pi.setOrgaoUsuario(titular.getOrgaoUsuario());
 		pi.setHisDtIni(dao().consultarDataEHoraDoServidor());
+
+		for (WfDefinicaoDeTarefa td : pi.getDefinicaoDeProcedimento().getDefinicaoDeTarefa()) {
+			if (td.getTipoDeTarefa() == null)
+				throw new AplicacaoException("Erro na inicialização de um procedimento de workflow do diagrama '"
+						+ pi.getDefinicaoDeProcedimento().getSigla()
+						+ "', não foi possível identificar o tipo da tarefa"
+						+ (td.getTitle() != null ? "'" + td.getTitle() + "'" : ""));
+			if (td.getTipoDeTarefa().isExigirResponsavel()) {
+				WfResp r = pi.calcResponsible(td);
+				if (r == null)
+					throw new AplicacaoException("Erro na inicialização de um procedimento de workflow do diagrama '"
+							+ pi.getDefinicaoDeProcedimento().getSigla()
+							+ "', não foi possível calcular o responsável pela tarefa '" + td.getTitle() + "'");
+			}
+		}
 
 		WfEngine engine = new WfEngine(dao(), new WfHandler(titular, lotaTitular, identidade));
 

@@ -604,7 +604,7 @@ public class WfProcedimento extends Objeto
 
 		if (!titular.equivale(getEventoPessoa()) && !lotaTitular.equivale(getEventoLotacao())) {
 			if (getEventoPessoa() != null && getEventoLotacao() != null)
-				return "Esta tarefa será desempenhada por " + titular.getSigla() + " na lotação "
+				return "Esta tarefa será desempenhada por " + getEventoPessoa().getSigla() + " na lotação "
 						+ getEventoLotacao().getSigla();
 			if (getEventoPessoa() != null)
 				return "Esta tarefa será desempenhada por " + getEventoPessoa().getSigla();

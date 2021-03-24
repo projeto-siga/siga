@@ -397,6 +397,21 @@ public class WfAppController extends WfController {
 		result.redirectTo(this).procedimento(pi.getId());
 	}
 
+	@Transacional
+	@Post
+	@Path("/app/procedimento/{sigla}/terminar")
+	public void terminar(String sigla, String siglaPrincipal) throws Exception {
+		WfProcedimento pi = dao().consultarPorSigla(sigla, WfProcedimento.class, null);
+
+		Wf.getInstance().getBL().terminar(pi, getTitular(), getLotaTitular(), getIdentidadeCadastrante());
+
+		if (siglaPrincipal != null) {
+			result.redirectTo("/../sigaex/app/expediente/doc/exibir?sigla=" + siglaPrincipal);
+			return;
+		}
+		result.redirectTo(this).procedimento(pi.getId());
+	}
+
 	// TODO Pensar se queremos ter o conceito de conhecimento dentro do WF mesmo ou
 	// se é melhor usar sempre o GC
 	/**

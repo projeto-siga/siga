@@ -32,7 +32,6 @@ import com.crivano.jlogic.Expression;
 
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.UsuarioDeSistemaEnum;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -41,11 +40,13 @@ import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.logic.WfPodePegar;
 import br.gov.jfrj.siga.wf.logic.WfPodeRedirecionar;
+import br.gov.jfrj.siga.wf.logic.WfPodeTerminar;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 import br.gov.jfrj.siga.wf.model.WfMov;
 import br.gov.jfrj.siga.wf.model.WfMovAnotacao;
 import br.gov.jfrj.siga.wf.model.WfMovDesignacao;
 import br.gov.jfrj.siga.wf.model.WfMovRedirecionamento;
+import br.gov.jfrj.siga.wf.model.WfMovTermino;
 import br.gov.jfrj.siga.wf.model.WfMovTransicao;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
@@ -323,6 +324,16 @@ public class WfBL extends CpBL {
 
 		WfEngine engine = new WfEngine(dao(), new WfHandler(titular, lotaTitular, identidade));
 		engine.execute(pi, pi.getCurrentIndex(), para);
+	}
+
+	public void terminar(WfProcedimento pi, DpPessoa titular, DpLotacao lotaTitular, CpIdentidade identidade)
+			throws Exception {
+		assertLogic(new WfPodeTerminar(pi, titular, lotaTitular), "terminar");
+		WfMovTermino mov = new WfMovTermino(pi, dao().consultarDataEHoraDoServidor(), titular, lotaTitular, identidade,
+				pi.getCurrentIndex());
+		gravarMovimentacao(mov);
+		pi.end();
+		dao().gravar(pi);
 	}
 
 	private static void assertLogic(Expression expr, String descr) {

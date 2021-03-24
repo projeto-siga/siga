@@ -53,6 +53,7 @@ import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.logic.PodeSim;
 import br.gov.jfrj.siga.wf.logic.WfPodePegar;
 import br.gov.jfrj.siga.wf.logic.WfPodeRedirecionar;
+import br.gov.jfrj.siga.wf.logic.WfPodeTerminar;
 import br.gov.jfrj.siga.wf.model.enm.WfPrioridade;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
@@ -189,6 +190,10 @@ public class WfProcedimento extends Objeto
 
 	@Override
 	public void end() {
+		this.eventoNome = null;
+		this.eventoPessoa = null;
+		this.eventoLotacao = null;
+		this.eventoData = null;
 		indiceCorrente = null;
 		status = ProcessInstanceStatus.FINISHED;
 		this.setHisDtFim(WfDao.getInstance().consultarDataEHoraDoServidor());
@@ -565,6 +570,11 @@ public class WfProcedimento extends Objeto
 
 		set.add(AcaoVO.builder().nome("_Redirecionar").icone("arrow_branch").modal("redirecionarModal")
 				.exp(new WfPodeRedirecionar(this, titular, lotaTitular)).build());
+
+		set.add(AcaoVO.builder().nome("_Terminar").icone("delete")
+				.msgConfirmacao("Esta operação não pode ser revertida. Tem certeza que deseja terminar o procedimento?")
+				.exp(new WfPodeTerminar(this, titular, lotaTitular))
+				.acao("/app/procedimento/" + getSiglaCompacta() + "/terminar").post(true).build());
 
 		return set;
 	}

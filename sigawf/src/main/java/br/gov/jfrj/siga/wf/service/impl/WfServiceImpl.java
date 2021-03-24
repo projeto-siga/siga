@@ -55,7 +55,7 @@ import br.gov.jfrj.siga.wf.util.WfHandler;
 @WebService(serviceName = "WfService", endpointInterface = "br.gov.jfrj.siga.wf.service.WfService", targetNamespace = "http://impl.service.wf.siga.jfrj.gov.br/")
 public class WfServiceImpl implements WfService {
 	private final static Logger log = Logger.getLogger(WfService.class);
-	
+
 	private class WfSoapContext extends SoapContext {
 		EntityManager em;
 		boolean transacional;
@@ -64,7 +64,7 @@ public class WfServiceImpl implements WfService {
 		public WfSoapContext(boolean transacional) {
 			super(context, WfStarter.emf, transacional);
 		}
-		
+
 		@Override
 		public void initDao() {
 			WfDao.getInstance();
@@ -122,8 +122,14 @@ public class WfServiceImpl implements WfService {
 
 				if (nomeProcedimento == null)
 					throw new RuntimeException("Nome do procedimento precisa ser informado.");
-				WfDefinicaoDeProcedimento pd = WfDao.getInstance().consultarPorSigla(nomeProcedimento,
-						WfDefinicaoDeProcedimento.class, null);
+				WfDefinicaoDeProcedimento pd = null;
+				try {
+					pd = WfDao.getInstance().consultarPorSigla(nomeProcedimento, WfDefinicaoDeProcedimento.class, null);
+				} catch (Exception ex) {
+					// Engolir a exceção que é gerada quando a sigla do processo é considerada
+					// inválida. Isso precisa ser feito porque também é permitido criar instância de
+					// procediemnto pelo título do diagrama.
+				}
 				if (pd == null)
 					pd = WfDao.getInstance().consultarWfDefinicaoDeProcedimentoPorNome(nomeProcedimento);
 				if (pd == null)

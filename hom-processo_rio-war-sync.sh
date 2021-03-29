@@ -1,4 +1,7 @@
 #!/bin/bash
+#RESUME
+#This scripts is part of your deployment process. First step is previously executed a rsync or scp command to copy all war's from developer #environment.  Second step is to check environment requirements and finally execute the deploy operation.
+#
 
 #verify args
 #if [ $# -eq 0 ]; then
@@ -60,7 +63,7 @@ else
         echo $graphviz
         echo "FAIL"
         echo "PLEASE INSTALL graphviz"
-        echo "eg. sudo apk add --update --no-cache graphviz ttf-freefont  or   sudo yum -y install graphviz"
+        echo "eg. sudo apk add --update --no-cache graphviz ttf-freefont or sudo yum -y install graphviz"
         echo "ABORTING..."
         exit 1
 fi

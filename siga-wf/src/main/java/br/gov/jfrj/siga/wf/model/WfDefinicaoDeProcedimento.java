@@ -42,6 +42,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 import br.gov.jfrj.siga.wf.dao.WfDao;
+import br.gov.jfrj.siga.wf.logic.PodeSim;
 import br.gov.jfrj.siga.wf.logic.WfPodeEditarDiagrama;
 import br.gov.jfrj.siga.wf.logic.WfPodeIniciarDiagrama;
 import br.gov.jfrj.siga.wf.model.enm.WfAcessoDeEdicao;
@@ -371,6 +372,9 @@ public class WfDefinicaoDeProcedimento extends HistoricoAuditavelSuporte impleme
 
 		set.add(AcaoVO.builder().nome("_Iniciar").icone("add").acao("/app/iniciar/" + id)
 				.exp(new WfPodeIniciarDiagrama(this, titular, lotaTitular)).build());
+
+		set.add(AcaoVO.builder().nome("_Duplicar").icone("arrow_divide")
+				.acao("/app/diagrama/editar?duplicar=true&id=" + id).exp(new PodeSim()).build());
 
 		return set;
 	}

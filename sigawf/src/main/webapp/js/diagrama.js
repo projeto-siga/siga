@@ -149,6 +149,24 @@ app
 
 					}
 
+					$scope.desativar = function() {
+						$http(
+								{
+									url : '/sigawf/app/diagrama/desativar?id='
+											+ $scope.id,
+									method : "POST",
+									data : {},
+									headers : {
+										'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
+									}
+								}).then(function(response) {
+							window.location = '/sigawf/app/diagrama/listar'
+						}, function(response) {
+							alert(response.data.errormsg)
+						});
+
+					}
+
 					$scope.decode = function(d) {
 						var pd = {
 							hisIde : undefined,
@@ -242,12 +260,27 @@ app
 						$http({
 							url : '/sigawf/app/diagrama/' + id + '/carregar',
 							method : "GET"
-						}).then(
-								function(response) {
-									$scope.data.workflow = $scope
-											.decode(response.data);
-								}, function(response) {
-								});
+						})
+								.then(
+										function(response) {
+											var duplicar = new URLSearchParams(
+													window.location.search)
+													.get('duplicar') == 'true';
+											if (duplicar) {
+												delete $scope.id;
+												var d = response.data;
+												delete d.id;
+												if (d.definicaoDeTarefa) {
+													for (var i = 0; i < d.definicaoDeTarefa.length; i++) {
+														delete d.definicaoDeTarefa[i].id;
+														delete d.definicaoDeTarefa[i].hisIde;
+													}
+												}
+											}
+											$scope.data.workflow = $scope
+													.decode(response.data);
+										}, function(response) {
+										});
 
 					}
 

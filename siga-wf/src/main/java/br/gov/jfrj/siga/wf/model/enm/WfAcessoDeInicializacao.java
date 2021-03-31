@@ -35,7 +35,7 @@ public enum WfAcessoDeInicializacao {
 	}
 
 	public static boolean acessoPermitido(WfDefinicaoDeProcedimento pd, DpPessoa titular, DpLotacao lotaTitular) {
-		switch (pd.getAcessoDeEdicao()) {
+		switch (pd.getAcessoDeInicializacao()) {
 		case ACESSO_PUBLICO:
 			return true;
 		case ACESSO_ORGAO_USU:

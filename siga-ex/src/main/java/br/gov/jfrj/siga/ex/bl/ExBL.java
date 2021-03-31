@@ -1873,7 +1873,7 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			log.error(e.getMessage(), e);
 			e.printStackTrace();
-			throw new RuntimeException("Erro ao registrar assinatura.", e);
+			throw new RuntimeException("Erro ao registrar assinatura: " + getRootCauseMessage(e));
 		}
 
 		if (tramitar == null)
@@ -1894,6 +1894,17 @@ public class ExBL extends CpBL {
 		}
 
 		return s;
+	}
+	
+	private String getRootCauseMessage(Exception ex) {
+		Throwable cause = ex;
+		String message = ex.getMessage();
+		while (cause.getCause() != null && cause != cause.getCause()) {
+			cause = cause.getCause();
+			if (cause.getMessage() != null)
+				message = cause.getMessage();
+		}
+		return message;
 	}
 
 	private void criarMovimentacaoAssinadorPor(final DpPessoa cadastrante, final DpLotacao lotaCadastrante,
@@ -4613,7 +4624,7 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			log.error(e.getMessage(), e);
 			e.printStackTrace();
-			throw new RuntimeException("Erro ao registrar assinatura.", e);
+			throw new RuntimeException("Erro ao registrar assinatura." + getRootCauseMessage(e));
 		}
 		return s;
 	}

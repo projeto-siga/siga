@@ -14,6 +14,7 @@
 					<th>Sigla</th>
 					<th>Nome</th>
 					<th>Descrição</th>
+					<th>Lotação Resp.</th>
 				</tr>
 			</thead>
 			<tbody class="table-bordered">
@@ -24,6 +25,9 @@
 							</c:url> <a href="${url}">${item.sigla}</a></td>
 						<td>${item.nome}</td>
 						<td>${item.descr}</td>
+						<td><siga:selecionado sigla="${item.lotaResponsavel.siglaCompleta}"
+								descricao="${item.lotaResponsavel.descricao}"
+								lotacaoParam="${item.lotaResponsavel.siglaCompleta}" /></td>
 					</tr>
 				</c:forEach>
 			</tbody>

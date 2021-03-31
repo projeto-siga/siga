@@ -39,6 +39,12 @@
 							<b>Descrição:</b> ${pd.descr}
 						</p>
 						<p>
+							<b>Acesso para Editar:</b> ${pd.acessoDeEdicao.descr}
+						</p>
+						<p>
+							<b>Acesso para Iniciar:</b> ${pd.acessoDeInicializacao.descr}
+						</p>
+						<p>
 							<b>Responsavel:</b> ${pd.responsavel}
 						</p>
 						<p>
@@ -47,6 +53,11 @@
 						<p>
 							<b>Cadastrante:</b> ${pd.hisIdcIni.dpPessoa.sigla}
 							(${pd.hisIdcIni.dpPessoa.lotacao.sigla})
+						</p>
+						<p>
+							<b>Última atualização:</b>
+							<fmt:formatDate value="${pd.hisDtIni}"
+								pattern="dd/MM/yyyy HH:mm:ss" />
 						</p>
 					</div>
 				</div>

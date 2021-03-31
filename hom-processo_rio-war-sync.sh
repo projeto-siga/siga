@@ -58,14 +58,65 @@ echo ""
 echo "###############################################################################"
 echo "                              STARTING SCP"
 echo "###############################################################################"
-scp jboss@jdevas135:/opt/java/jenkins/workspace/processo.rio/target/*.{war,jar} /tmp
-
-if list_war_jar=`ls -l /tmp/*.{war,jar}`; then
-        echo "$list_war_jar"
-        echo "OK"
-
+echo ""
+echo "COPYING DEPENDENCIES:"
+if copy_war_jar=`scp jboss@jdevas135:/opt/java/jboss-eap-7.2/standalone/deployments/blucservice.war /opt/java/jboss-eap-7.2/standalone/deployments/`; then
+        echo $copy_war_jar
+        echo "blucservice.war - OK"
 else
-        echo $list_war_jar
+        echo $copy_war_jar
+        echo "FAIL"
+        echo "ABORTING..."
+        exit 1
+fi
+
+if copy_war_jar=`scp jboss@jdevas135:/opt/java/jboss-eap-7.2/standalone/deployments/ckeditor.war /opt/java/jboss-eap-7.2/standalone/deployments/`; then
+        echo $copy_war_jar
+        echo "ckeditor.war - OK"
+else
+        echo $copy_war_jar
+        echo "FAIL"
+        echo "ABORTING..."
+        exit 1
+fi
+
+if copy_war_jar=`scp jboss@jdevas135:/opt/java/jboss-eap-7.2/standalone/deployments/vizservice.war /opt/java/jboss-eap-7.2/standalone/deployments/`; then
+        echo $copy_war_jar
+        echo "vizservice.war - OK"
+else
+        echo $copy_war_jar
+        echo "FAIL"
+        echo "ABORTING..."
+        exit 1
+fi
+
+echo "COPYING TARGETS:"
+
+if copy_war_jar=`scp jboss@jdevas135:/opt/java/jenkins/workspace/processo.rio/target/siga-ext.jar /tmp`; then
+        echo $copy_war_jar
+        echo "siga-ext.jar - OK"
+else
+        echo $copy_war_jar
+        echo "FAIL"
+        echo "ABORTING..."
+        exit 1
+fi
+
+if copy_war_jar=`scp jboss@jdevas135:/opt/java/jenkins/workspace/processo.rio/target/sigaex.war /tmp`; then
+        echo $copy_war_jar
+        echo "sigaex.war - OK"
+else
+        echo $copy_war_jar
+        echo "FAIL"
+        echo "ABORTING..."
+        exit 1
+fi
+
+if copy_war_jar=`scp jboss@jdevas135:/opt/java/jenkins/workspace/processo.rio/target/siga.war /tmp`; then
+        echo $copy_war_jar
+        echo "siga.war - OK"
+else
+        echo $copy_war_jar
         echo "FAIL"
         echo "ABORTING..."
         exit 1

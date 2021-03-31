@@ -928,6 +928,40 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /documentos/{sigla}/consultar-protocolo:
+    get:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [consulta]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      description: Obtem o número de protocolo e link para acompanhamento de um expediente ou processo
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              numeroProtocolo:
+                type: string
+              linkProtocolo:
+                type: string
+              dataHoraEmissaoProtocolo:
+                type: string
+        403:
+          description: Acesso ao documento não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Protocolo ainda não foi gerado para este documento
+          schema:
+            $ref: "#/definitions/Error"        
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
   /sugestao:
     post:
       consumes: ["application/x-www-form-urlencoded"]

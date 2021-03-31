@@ -60,7 +60,7 @@ echo "                              STARTING SCP"
 echo "###############################################################################"
 scp jboss@jdevas135:/opt/java/jenkins/workspace/processo.rio/target/*.{war,jar} /tmp
 
-if list_war_jar=`ls /tmp/*.{war,jar}`; then
+if list_war_jar=`ls -l /tmp/*.{war,jar}`; then
         echo "$list_war_jar"
         echo "OK"
 
@@ -70,3 +70,41 @@ else
         echo "ABORTING..."
         exit 1
 fi
+
+echo "###############################################################################"
+echo "                              STARTING DEPLOY"
+echo "###############################################################################"
+echo ""
+echo "SIGA:"
+if deploy_siga=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace /tmp/siga.war"`; then
+        echo "DEPLOY: siga.war - OK"
+else
+        echo $deploy_siga
+        echo "FAIL"
+        echo "ABORTING..."
+        exit 1
+fi
+echo ""
+echo "SIGAEX:"
+if deploy_sigaex=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace /tmp/sigaex.war"`; then
+        echo "DEPLOY: sigaex.war - OK"
+else
+        echo $deploy_sigaex
+        echo "FAIL"
+        echo "ABORTING..."
+        exit 1
+fi
+echo ""
+echo "SIGA-EXT"
+if deploy_siga_ext=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace /tmp/siga-ext.jar"`; then
+        echo "DEPLOY: siga-ext.war - OK"
+else
+        echo $deploy_siga_ext
+        echo "FAIL"
+        echo "ABORTING..."
+        exit 1
+fi
+echo ""
+echo "###############################################################################"
+echo "                              END"
+echo "###############################################################################"

@@ -89,7 +89,8 @@ else
         echo "ABORTING..."
         exit 1
 fi
-
+echo ""
+echo ""
 echo "COPYING TARGETS:"
 
 if copy_war_jar=`scp jboss@jdevas135:/opt/java/jenkins/workspace/processo.rio/target/siga-ext.jar /tmp`; then
@@ -121,6 +122,7 @@ else
         echo "ABORTING..."
         exit 1
 fi
+echo ""
 
 echo "###############################################################################"
 echo "                              STARTING DEPLOY"

@@ -227,7 +227,7 @@ public class DocumentosPost implements IDocumentosPost {
 			}
 			
 			String camposModelo = "";
-			String conteudo = DocumentosPost.UTF8toISO(req.entrevista);
+			String conteudo = req.entrevista;
 			Map <String, String> conteudoMap;
 			
 			try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
@@ -237,16 +237,16 @@ public class DocumentosPost implements IDocumentosPost {
 						conteudoMap = objectMapper.readValue(conteudo, Map.class);
 						for (String key : conteudoMap.keySet()){
 							camposModelo = camposModelo + key + "=" 
-								+ URLEncoder.encode(conteudoMap.get(key), "iso-8859-1") + "&";
+								+ conteudoMap.get(key) + "&";
 						}
 					} else {
 					    String[] keyAndValues = conteudo.split("&");
 					    for (String keyAndValue : keyAndValues) {
 					        int idx = keyAndValue.indexOf("=");
 					        String key = keyAndValue.substring(0, idx);
-							String value = URLDecoder.decode(keyAndValue.substring(idx + 1), "UTF-8");
+							String value = keyAndValue.substring(idx + 1);
 							camposModelo = camposModelo + key + "=" +
-					        		URLEncoder.encode(value, "iso-8859-1") + "&";
+					        		value + "&";
 					    }
 					}
 				} else {

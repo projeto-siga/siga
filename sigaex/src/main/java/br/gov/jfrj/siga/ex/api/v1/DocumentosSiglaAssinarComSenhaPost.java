@@ -1,7 +1,10 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
 import com.crivano.swaggerservlet.PresentableUnloggedException;
+import com.crivano.swaggerservlet.SwaggerException;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -29,10 +32,14 @@ public class DocumentosSiglaAssinarComSenhaPost extends DocumentosSiglaAssinarAu
 
 	@Override
 	public void run(DocumentosSiglaAssinarComSenhaPostRequest req, DocumentosSiglaAssinarComSenhaPostResponse resp) throws Exception {
-		super.executar(req.sigla, (sigla, status) -> {
-			resp.sigla = sigla;
-			resp.status = status;
-		});
+		try {
+			super.executar(req.sigla, (sigla, status) -> {
+				resp.sigla = sigla;
+				resp.status = status;
+			});
+		} catch (RegraNegocioException | AplicacaoException e) {
+			throw new SwaggerException(e.getMessage(), 400, null, req, resp, null);
+		}
 	}
 
 	@Override

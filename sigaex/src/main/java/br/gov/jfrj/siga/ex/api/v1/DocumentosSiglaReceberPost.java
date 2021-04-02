@@ -20,37 +20,41 @@ public class DocumentosSiglaReceberPost implements IDocumentosSiglaReceberPost {
 	@Override
 	public void run(DocumentosSiglaReceberPostRequest req, DocumentosSiglaReceberPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
-			ApiContext.assertAcesso("");
-			SigaObjects so = ApiContext.getSigaObjects();
+			try {
+				ApiContext.assertAcesso("");
+				SigaObjects so = ApiContext.getSigaObjects();
+		
+				DpPessoa cadastrante = so.getCadastrante();
+				DpPessoa titular = so.getTitular();
+				DpLotacao lotaTitular = cadastrante.getLotacao();
+		
+				ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, so, req, resp, 
+						"Documento");
+		
+				ApiContext.assertAcesso(mob, cadastrante, lotaTitular);
+		
+				final ExMovimentacaoBuilder movBuilder = ExMovimentacaoBuilder
+						.novaInstancia();
+				final ExMovimentacao mov = movBuilder.construir(ExDao.getInstance());
 	
-			DpPessoa cadastrante = so.getCadastrante();
-			DpPessoa titular = so.getTitular();
-			DpLotacao lotaTitular = cadastrante.getLotacao();
+				if (!Ex.getInstance().getComp()
+						.podeReceber(titular, lotaTitular, mob)) {
+					throw new AplicacaoException("Documento não pode ser recebido");
+				}
 	
-			ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, so, req, resp, 
-					"Documento");
-	
-			ApiContext.assertAcesso(mob, cadastrante, lotaTitular);
-	
-			final ExMovimentacaoBuilder movBuilder = ExMovimentacaoBuilder
-					.novaInstancia();
-			final ExMovimentacao mov = movBuilder.construir(ExDao.getInstance());
-
-			if (!Ex.getInstance().getComp()
-					.podeReceber(titular, lotaTitular, mob)) {
-				throw new AplicacaoException("Documento não pode ser recebido");
+				Ex.getInstance()
+						.getBL()
+						.receber(cadastrante, lotaTitular, mob,
+								mov.getDtMov());
+				
+				resp.status = "OK";
+			} catch (RegraNegocioException | AplicacaoException e) {
+				ctx.rollback(e);
+				throw new SwaggerException(e.getMessage(), 400, null, req, resp, null);
+			} catch (Exception e) {
+				ctx.rollback(e);
+				throw e;
 			}
-
-			Ex.getInstance()
-					.getBL()
-					.receber(cadastrante, lotaTitular, mob,
-							mov.getDtMov());
-			
-			resp.status = "OK";
-		} catch (AplicacaoException | RegraNegocioException | SwaggerException e) {
-			throw e;
-		} catch (Exception e) {
-			throw e;
 		}
 	}
 

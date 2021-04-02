@@ -213,6 +213,7 @@ public interface ISigaApiV1 {
 	}
 
 	public class LotacoesGetRequest implements ISwaggerRequest {
+		public String siglaOrgaoQuery;
 		public String texto;
 		public String idLotacaoIni;
 	}

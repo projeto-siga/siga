@@ -24,33 +24,36 @@ public class DocumentosSiglaJuntarPost implements IDocumentosSiglaJuntarPost {
 	@Override
 	public void run(DocumentosSiglaJuntarPostRequest req, DocumentosSiglaJuntarPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
-			ApiContext.assertAcesso("");
-			SigaObjects so = ApiContext.getSigaObjects();
+			try {
+				ApiContext.assertAcesso("");
+				SigaObjects so = ApiContext.getSigaObjects();
+		
+				DpPessoa cadastrante = so.getCadastrante();
+				DpLotacao lotaTitular = cadastrante.getLotacao();
+		
+				ExMobil mobFilho = SwaggerHelper.buscarEValidarMobil(req.sigla, so, req, resp, "Documento Secundário");
+				ExMobil mobPai = SwaggerHelper.buscarEValidarMobil(req.siglapai, so, req, resp, "Documento Principal");
+		
+				ApiContext.assertAcesso(mobFilho, cadastrante, lotaTitular);
+		
+				Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
 	
-			DpPessoa cadastrante = so.getCadastrante();
-			DpLotacao lotaTitular = cadastrante.getLotacao();
-	
-			ExMobil mobFilho = SwaggerHelper.buscarEValidarMobil(req.sigla, so, req, resp, "Documento Secundário");
-			ExMobil mobPai = SwaggerHelper.buscarEValidarMobil(req.siglapai, so, req, resp, "Documento Principal");
-	
-			ApiContext.assertAcesso(mobFilho, cadastrante, lotaTitular);
-	
-			Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
-
-			if (!Ex.getInstance().getComp()
-					.podeJuntar(cadastrante, lotaTitular, mobFilho)) {
-				throw new AplicacaoException("Não é possível fazer juntada");
+				if (!Ex.getInstance().getComp()
+						.podeJuntar(cadastrante, lotaTitular, mobFilho)) {
+					throw new AplicacaoException("Não é possível fazer juntada");
+				}
+		
+				Ex.getInstance().getBL().juntarDocumento(cadastrante, cadastrante, lotaTitular, null, mobFilho, mobPai, dt,
+						cadastrante, cadastrante, "1");
+		
+				resp.status = "OK";
+			} catch (RegraNegocioException | AplicacaoException e) {
+				ctx.rollback(e);
+				throw new SwaggerException(e.getMessage(), 400, null, req, resp, null);
+			} catch (Exception e) {
+				ctx.rollback(e);
+				throw e;
 			}
-	
-			Ex.getInstance().getBL().juntarDocumento(cadastrante, cadastrante, lotaTitular, null, mobFilho, mobPai, dt,
-					cadastrante, cadastrante, "1");
-	
-			resp.status = "OK";
-		} catch (AplicacaoException | RegraNegocioException | SwaggerException e) {
-			throw e;
-		} catch (Exception e) {
-			e.printStackTrace(System.out);
-			throw e;
 		}
 	}
 

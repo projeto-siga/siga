@@ -3,8 +3,28 @@ swagger: '2.0'
 info:
   version: "1.0.0"
   title: SigaApiV1
-  description: API para o Siga-Doc
-
+  description: "Esta API pertence ao módulo principal do SIGA. Cada
+    módulo possui um conjunto de APIs. Por exemplo o módulo de documentos
+    (sigaex) possui também um link do swagger contendo a documentação para
+    o conjunto de funções para manipular documentos do SIGA. Basta alterar
+    o link desta página substituindo a palavra <i>siga</i> por <i>sigaex</i>.
+    
+    <p>Todas as funções necessitam de um token, que deve ser gerado 
+    fazendo o seguinte procedimento:
+    <ul><li>Passar no header a chave: <i>'Authorization: Basic
+    xxxxxxxxx'</i> onde <i>xxxxxxxxx</i> é a informação 'usuario:password' 
+    <b>codificado em base64</b>;</li>
+    <li>O Webservice POST /autenticar irá retornar um json contendo o token de 
+    acesso JWT;</li>
+    <li>Este token deverá ser passado no header para cada request 
+    realizado, na chave Authorization.</li></ul>
+    <p>Se desejar, esta página permite fazer testes unitários via swagger: 
+    <ul><li>Clique no botão <i>Authorize</i> e insira o usuário/senha 
+    no <i>Basic Authentication</i>.</li>
+    <li>Execute o POST /autenticar e copie o token do json de
+    resultado.</li>
+    <li>Clique novamente no authorize e cole no campo do <i>Bearer</i> o token.
+    </li></ul>"
 basePath: /siga/api/v1
 schemes: [http,https]
 consumes: [application/json,application/x-www-form-urlencoded]
@@ -258,6 +278,12 @@ parameters:
     description: Lotação é de acesso externo? (true/false)
     required: false
     type: boolean
+  siglaOrgaoQuery:
+    name: siglaOrgaoQuery
+    in: query
+    description: Sigla do órgão
+    required: false
+    type: string
     
 
 ################################################################################
@@ -490,14 +516,17 @@ paths:
   /lotacoes:
     get:
       summary: "Pesquisa de lotações"
-      description: "Retorna uma lista de lotações. A pesquisa será feita de acordo com os parâmetros informados:
+      description: "Retorna uma lista de lotações. A pesquisa será feita de acordo com os parâmetros informados 
+        (informar somente um):
         <ul>
+        <li><b>siglaOrgaoQuery=</b>Pesquisa as lotações do órgão especificado.</li>
         <li><b>idLotacaoIni=</b>Pesquisa a Lotação Atual da Lotação Inicial solicitada.</li>
         <li><b>texto=</b>Pesquisa as lotacoes cuja sigla ou nome contém uma determinada palavra.</li></ul>"
       tags: [cadastro]
       security:
         - Bearer: []
       parameters:
+        - $ref: "#/parameters/siglaOrgaoQuery"
         - $ref: "#/parameters/texto"
         - $ref: "#/parameters/idLotacaoIni"
       responses:

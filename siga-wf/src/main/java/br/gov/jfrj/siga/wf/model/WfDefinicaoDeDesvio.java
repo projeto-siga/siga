@@ -266,7 +266,7 @@ public class WfDefinicaoDeDesvio extends HistoricoAuditavelSuporte
 	public static ProximaTarefa localizarProximaTarefaPausavel(WfDefinicaoDeProcedimento pd, WfDefinicaoDeTarefa td,
 			WfDefinicaoDeDesvio dd) {
 		WfDefinicaoDeTarefa tdProxima = dd != null ? dd.getSeguinte() : td;
-		boolean ultimo = dd != null ? dd.isUltimo() : td.isUltimo();
+		boolean ultimo = dd != null ? dd.isUltimo() : (td != null ? td.isUltimo() : true);
 
 		// Quando é um desvio e ele não tem tarefa seguinte, pula para a próxima tarefa
 		// da lista

@@ -118,9 +118,10 @@ PinTrocar.Etapas = (function() {
 	  
 		this.btnProximo.removeClass('btn-primary').addClass('btn-success');
 		this.btnProximo.html('Alterar PIN  <i class="fas fa-check"></i>');    
-		this.pinUserConfirm.focus();
+		
 		
 		atualizarTituloEtapaTopo.call(this);
+		this.pinAtual.focus();
 	}
 	
 	function atualizarEtapa(numeroEtapa) {  		

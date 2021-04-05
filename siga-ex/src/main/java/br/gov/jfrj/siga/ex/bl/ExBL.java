@@ -3874,7 +3874,7 @@ public class ExBL extends CpBL {
 			dao().gravar(movCancelada);
 		}
 
-		Notificador.notificarDestinariosEmail(mov, Notificador.TIPO_NOTIFICACAO_CANCELAMENTO);
+		Notificador.notificarDestinariosEmail(mov, mov.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA) ? Notificador.TIPO_NOTIFICACAO_GRAVACAO : Notificador.TIPO_NOTIFICACAO_CANCELAMENTO);
 	}
 
 	public void excluirDocumentoAutomatico(final ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular)
@@ -4850,7 +4850,15 @@ public class ExBL extends CpBL {
 					if (automatico)
 						mov.setDescrMov("Transferência automática.");
 
-					gravarMovimentacao(mov);
+					
+					// Cancelar trâmite pendente quando é para forçar para outro destino
+					ExMovimentacao movTramitePendente = m.getTramitePendente();
+					if (forcarTransferencia && movTramitePendente != null) {
+						gravarMovimentacaoCancelamento(mov, movTramitePendente);
+					} else {
+						gravarMovimentacao(mov);
+					}
+
 					concluirAlteracaoParcialComRecalculoAcesso(m);
 					
 					List<ExMovimentacao> listaMovimentacao = new ArrayList<ExMovimentacao>();

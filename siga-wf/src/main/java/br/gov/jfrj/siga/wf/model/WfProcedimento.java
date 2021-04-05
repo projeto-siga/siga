@@ -766,4 +766,8 @@ public class WfProcedimento extends Objeto
 				+ (getDefinicaoDeTarefaCorrente() != null ? " - " + getDefinicaoDeTarefaCorrente().getNome() : "");
 	}
 
+	public String obterProximoResponsavel() {
+		return WfDefinicaoDeDesvio.obterProximoResponsavel(this, null);
+	}
+
 }

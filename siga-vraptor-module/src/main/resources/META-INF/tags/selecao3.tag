@@ -18,7 +18,7 @@
 <%@ attribute name="tamanho" required="false"%>
 <%@ attribute name="checarInput" required="false"%>
 
-<c:set var="propriedadeClean" value="${f:slugify(propriedade, false, true)}" />
+<c:set var="propriedadeClean" value="${fn:replace(propriedade,'.','')}" />
 
 <c:forEach var="parametro" items="${fn:split(paramList,';')}">
 	<c:set var="p2" value="${fn:split(parametro,'=')}" />
@@ -31,8 +31,31 @@
 
 <%-- <c:set var="tam" value="${requestScope[propriedadeSel].tamanho}" /> --%>
 <c:set var="tam" value="${tamanho}" />
-<c:set var="larguraPopup" value="600" />
-<c:set var="alturaPopup" value="400" />
+<c:set var="larguraPopup" value="800" />
+<c:set var="alturaPopup" value="600" />
+
+<style type="text/css">
+
+.modal-selecao .modal-dialog ,
+
+.modal-selecao .modal-content {
+  border-radius: 0 !important;
+  height: 100%;
+}
+
+.modal-selecao .modal-body  {
+   max-height: 97%;
+   height: 97%;
+   overflow-y: auto; /*habilita o overflow no corpo da modal*/
+}
+
+.modal-selecao .embed-responsive  {
+   max-height: 100%;
+   height: 100%;
+}
+
+
+</style>
 
 <script type="text/javascript">
 $(document).ready(function($) {
@@ -49,7 +72,8 @@ self.isValorInputMudou_${propriedadeClean} = function() {
 	
 self.retorna_${propriedadeClean} = function(id, sigla, descricao) {
     try {
-		newwindow_${propriedadeClean}.close();
+		//newwindow_${propriedadeClean}.close();
+    	document.getElementById('btnsenhaDialog${propriedadeClean}').click(); 
     } catch (E) {
     } finally {
     }
@@ -78,39 +102,60 @@ self.retorna_${propriedadeClean} = function(id, sigla, descricao) {
 
 	${onchange}
 }
- 
+
+
+
+//
+//Provider: modal que simula window
+//
+var modalsimulawindow${propriedadeClean} = 	function(url) {
+		try {
+			var urlInterna = url;			
+			// tabindex="-1" removido da div class="modal" para corrigir erro de Maximum call stack size exceeded no js.
+			var senhaDialog${propriedadeClean}  = $(
+					'<div class="modal modal-selecao" role="dialog" id="senhaDialog${propriedadeClean}">'
+				+	'  <div class="modal-dialog modal-lg" role="document">'
+				+	'    <div class="modal-content">'
+				+	'    <div class="modal-header">'
+				+   '           <img src="${uri_logo_siga_pequeno}" class="siga-modal__logo" alt="logo siga">'
+				+	'	        <button type="button" id="btnsenhaDialog${propriedadeClean}" class="close  p-0  m-0  siga-modal__btn-close" aria-label="Close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>'				
+				+   '    </div>'
+				+	'      <div class="modal-body">'
+				+	'	   	   <div class="embed-responsive embed-responsive-16by9">'
+				+	'	   	      <iframe id="iframe${propriedadeClean}" class="embed-responsive-item" src="' + urlInterna + '" allowfullscreen></iframe>'
+				+	'	  	   </div>'
+				+	'	      </div>'
+				+	'	    </div>'
+				+	'	  </div>'
+				+	'	</div>').modal();
+			
+	
+			senhaDialog${propriedadeClean}.on('shown.bs.modal', function () {
+			    $(this).find('iframe${propriedadeClean}').attr('src', urlInterna);
+			});
+			
+			senhaDialog${propriedadeClean}.on('hidden.bs.modal', function () {
+				$('#senhaDialog${propriedadeClean}').remove();
+			});
+		
+			return "AGUARDE";
+		} catch (Err) {
+			return Err.description;
+		}
+	}
+
+
+
 self.newwindow_${propriedadeClean} = '';
 self.popitup_${propriedadeClean} = function(sigla) {
 
-	var url = '/${modulo}${urlBuscar}?propriedade=${propriedadeClean}&popup=true&sigla='+encodeURI($.trim(sigla)) +'${selecaoParams}';
+	var url = '/${modulo}${urlBuscar}?propriedade=${propriedadeClean}&modal=true&sigla='+encodeURI($.trim(sigla)) +'${selecaoParams}';
+
+
+	newwindow_${propriedadeClean} = modalsimulawindow${propriedadeClean};
 	
-	if (!newwindow_${propriedadeClean}.closed && newwindow_${propriedadeClean}.location) {
-		newwindow_${propriedadeClean}.location.href = url;
-	} else {
-	
-		var popW;
-		var popH;
-		
-		<c:choose>
-			<c:when test="${tam eq 'grande'}">
-				 popW = screen.width*0.75;
-				 popH = screen.height*0.75;
-			</c:when>
-			<c:otherwise>
-				 popW = ${larguraPopup};
-				 popH = ${alturaPopup};	
-			</c:otherwise>
-		</c:choose>
-			var winleft = (screen.width - popW) / 2;
-			var winUp = (screen.height - popH) / 2;	
-		winProp = 'width='+popW+',height='+popH+',left='+winleft+',top='+winUp+',scrollbars=yes,resizable'
-		newwindow_${propriedadeClean}=window.open(url,'${propriedadeClean}',winProp);
-	}
-	newwindow_${propriedadeClean}.opener = self;
-	
-	if (window.focus) {
-		newwindow_${propriedadeClean}.focus()
-	}
+	modalsimulawindow${propriedadeClean}(url);
+
 	return false;
 }
 
@@ -151,6 +196,19 @@ self.ajax_${propriedadeClean} = function() {
 	}
 }
 
+
+// Retorna elemento contendo id do select:
+self.get_${propriedadeClean}_by_id = function() {
+	return document.getElementById("formulario_${propriedadeClean}_id");
+}
+
+// Limpa dados do select:
+self.limpa_${propriedadeClean} = function() {
+	document.getElementById('formulario_${propriedadeClean}_id').value = '';
+	document.getElementById('formulario_${propriedadeClean}_sigla').value = '';
+	document.getElementById('${propriedadeClean}Span').innerHTML = '';	
+}
+
 </script>
 
 <c:if test="${tema != 'simple'}">
@@ -172,30 +230,32 @@ self.ajax_${propriedadeClean} = function() {
 <input type="hidden" name="${propriedade}.descricao"
 	value="<c:out value="${f:evaluate(f:concat(propriedade,'.descricao'),requestScope)}"/>"
 	id="formulario_${propriedadeClean}_descricao" />
+	
 <div class="input-group">	
-<input type="text" name="${propriedade}.sigla"
-	value="<c:out value="${f:evaluate(f:concat(propriedade,'.sigla'),requestScope)}"/>"
-	id="formulario_${propriedadeClean}_sigla"
-	class="form-control"
-	onkeypress="return handleEnter(this, event)"
-	onblur="javascript: ajax_${propriedadeClean}();"  style="width: 1%;"
-	 ${disabledTxt} />
+	<input type="text" name="${propriedade}.sigla"
+		value="<c:out value="${f:evaluate(f:concat(propriedade,'.sigla'),requestScope)}"/>"
+		id="formulario_${propriedadeClean}_sigla"
+		onkeypress="return handleEnter(this, event)"
+		onblur="javascript: ajax_${propriedadeClean}();"
+		class="form-control" style="width: 1%;"
+		${disabledTxt} />
 
-<c:if test="${buscar != 'nao'}">
-	<div class="input-group-append">
-		<input type="button" id="${propriedadeClean}SelButton" value="..."
-			onclick="javascript: popitup_${propriedadeClean}('');" class="btn btn-secondary"
-			${disabledBtn} theme="simple">
-	</div>
-</c:if>
-
-<c:if test="${ocultardescricao != 'sim'}">
-	<div class="input-group-append">
-		<span class="input-group-text"  id="${propriedadeClean}Span">
-		 <c:out	value="${f:evaluate(f:concat(propriedade,'.descricao'),requestScope)}" />
-		</span>
-	</div>	
-</c:if>
+	<c:if test="${buscar != 'nao'}">
+		<div class="input-group-append">
+			<input type="button" id="${propriedadeClean}SelButton" value="..."
+				onclick="javascript: popitup_${propriedadeClean}('');"
+				${disabledBtn} theme="simple" class="btn btn-secondary"
+				style="border-bottom-right-radius: 0.25em;border-top-right-radius: 0.25em;">
+		</div>
+	</c:if>
+	
+	<c:if test="${ocultardescricao != 'sim'}">
+		<div class="input-group-append ml-2" style="width: 70%;">
+			<span class="form-control" style="overflow: hidden; white-space:nowrap; text-overflow:ellipsis;" 
+				id="${propriedadeClean}Span">
+			<c:out value="${f:evaluate(f:concat(propriedade,'.descricao'),requestScope)}"/></span>
+		</div>
+	</c:if>
 </div>
 
 <c:if test="${tema != 'simple'}">

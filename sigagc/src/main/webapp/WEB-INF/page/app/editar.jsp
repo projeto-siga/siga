@@ -1,6 +1,7 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"%>
 <%@ include file="/WEB-INF/page/include.jsp"%>
-<siga:pagina titulo="Edi&ccedil;&atilde;o de T&oacute;pico de Informa&ccedil;&atilde;o">
+<siga:pagina
+	titulo="Edi&ccedil;&atilde;o de T&oacute;pico de Informa&ccedil;&atilde;o">
 
 	<script>
 		function postback() {
@@ -26,150 +27,179 @@
 		});
 	</script>
 
-	<div class="gt-bd gt-cols clearfix">
-		<div class="gt-content clearfix">
-			<h2>
-				<span id="codigoInf">${informacao.sigla}</span>
-			</h2>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-8">
+				<div class="card bg-light mb-3">
+					<div class="card-header">
+						<h2>
+							<span id="codigoInf">${informacao.sigla}</span>
+						</h2>
+					</div>
 
-			<div class="gt-form gt-content-box">
-				<form id="frm" action="${linkTo[AppController].gravar}"
-					method="POST" enctype="multipart/form-data">
-					<c:if test="${informacao.id != 0}">
-					</c:if>
-					<input type="hidden" id="infoId" name="informacao.id"
-						value="${informacao.id}" /> <input type="hidden" name="origem"
-						value="${origem}" /> <input type="hidden" id="siglaId"
-						name="sigla" value="${informacao.sigla}" />
-					<div class="gt-form-row gt-width-100">
-						<div class="gt-left-col gt-width-25" style="margin-right: 2em">
-							<siga:select label="Tipo" name="tipo.id" list="tiposInformacao" value="${tipo.id}"
-								listKey="id" listValue="nome" onchange="postback();" />
-						</div>
-						<c:if
-							test="${empty informacao.edicao.id || informacao.acessoPermitido(titular,lotaTitular, informacao.edicao.id)}">
-							<div class="gt-left-col gt-width-25" style="padding-left: 2em">
-								<siga:select label="Visualiza&ccedil;&atilde;o" name="visualizacao.id" id="informacaoVisualizacao"
-									list="acessos" listKey="id" listValue="nome" value="${informacao.visualizacao.id}"
-									onchange="javascript:ocultaGrupo();" />
+					<div class="card-body">
+						<form id="frm" action="${linkTo[AppController].gravar}"
+							method="POST" enctype="multipart/form-data">
+							<c:if test="${informacao.id != 0}">
+							</c:if>
+							<input type="hidden" id="infoId" name="informacao.id"
+								value="${informacao.id}" /> <input type="hidden" name="origem"
+								value="${origem}" /> <input type="hidden" id="siglaId"
+								name="sigla" value="${informacao.sigla}" />
+							<div class="row">
+								<div class="col-sm-3 form-group">
+									<siga:select label="Tipo" name="tipo.id" list="tiposInformacao"
+										value="${tipo.id}" listKey="id" listValue="nome"
+										onchange="postback();" />
+								</div>
+								<c:if
+									test="${empty informacao.edicao.id || informacao.acessoPermitido(titular,lotaTitular, informacao.edicao.id)}">
+									<div class="col-sm-2">
+										<siga:select label="Visualiza&ccedil;&atilde;o"
+											name="visualizacao.id" id="informacaoVisualizacao"
+											list="acessos" listKey="id" listValue="nome"
+											value="${informacao.visualizacao.id}"
+											onchange="javascript:ocultaGrupo();" />
+									</div>
+									<div class="col-sm-2">
+										<siga:select label="Edi&ccedil;&atilde;o" name="edicao.id"
+											list="acessos" id="informacaoEdicao" listKey="id"
+											listValue="nome" value="${informacao.edicao.id}"
+											onchange="javascript:ocultaGrupo();" />
+									</div>
+								</c:if>
+								<div class="col-sm-5" id="informacaoGrupo" style="display: none">
+										<div class="col-sm-1">
+											<label>Grupo</label>
+										</div>
+										<div class="col-sm-4">
+											<siga:selecao2 propriedade="grupo" modulo="siga"
+												tipo="gi/perfil" tema="simple" />
+										</div>
+								</div>
 							</div>
-							<div class="gt-left-col gt-width-25" style="padding-left: 2em">
-								<siga:select label="Edi&ccedil;&atilde;o" name="edicao.id" list="acessos" id="informacaoEdicao"
-									listKey="id" listValue="nome" value="${informacao.edicao.id}"
-									onchange="javascript:ocultaGrupo();" />
+
+
+							<div class="row">
+								<div class="col-sm-12">
+									<label>T&iacute;tulo</label>
+								</div>
 							</div>
+							<div class="row">
+								<div class="col-sm-12">
+									<input type="text" id="inftitulo" name="inftitulo"
+										value="${inftitulo}" class="form-control" />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<label>Texto</label>
+									<textarea id="conteudo" name="conteudo" rows="25"
+										class="form-control">${conteudo}</textarea>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<label>Classifica&ccedil;&atilde;o</label>
+									<c:choose>
+										<c:when test="${empty classificacao && !editarClassificacao}">
+											<p>Este conhecimento ainda n&atilde;o possui uma
+												classifica&ccedil;&atilde;o.</p>
+										</c:when>
+										<c:otherwise>
+											<textarea name="classificacao" class="form-control" rows="3"
+												${editarClassificacao ? '' : 'readonly'}>${classificacao}</textarea>
+										</c:otherwise>
+									</c:choose>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-sm-12">
+
+									<input id="btn-save" type="submit" value="Gravar"
+										class="btn btn-primary" style="cursor: pointer;" />
+
+									<p class="gt-cancel">
+										<c:choose>
+											<c:when
+												test="${not empty informacao && not empty informacao.id && informacao.id != 0}">
+										ou <a
+													href="${linkTo[AppController].editar(informacao.siglaCompacta)}">cancelar
+													altera&ccedil;&otilde;es</a>
+										ou <a
+													href="${linkTo[AppController].movimentacoes(informacao.siglaCompacta)}">exibir
+													movimenta&ccedil;&otilde;es</a>
+											</c:when>
+											<c:otherwise>
+												<a href="${linkTo[AppController].editar}">cancelar
+													altera&ccedil;&otilde;es</a>
+											</c:otherwise>
+										</c:choose>
+									</p>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-sm-4">
+				<!-- Sidebar Content -->
+				<div class="gt-sidebar-content">
+					<h3>Informa&ccedil;&otilde;es sobre o Preenchimento</h3>
+					<p>O campo "T&iacute;tulo" sempre ser&aacute; acess&iacute;vel,
+						independente do controle de acesso selecionado.</p>
+
+					<div id="ajax_arquivo">
+						<c:if test="${informacao.contemArquivos}">
+							<h3 style="padding-top: 1em">Incluir Imagens ou Arquivos no
+								Texto</h3>
+							<p>Clique em uma imagem/arquivo abaixo para incluir uma
+								refer&ecirc;ncia no texto.</p>
+							<c:forEach items="${informacao.movs}" var="m">
+								<c:if test="${m.tipo.id == 13 && m.movCanceladora == null}">
+									<p>
+										<img style="margin-bottom: -4px;"
+											src="/siga/css/famfamfam/icons/${m.arq.icon}.png" /> <a
+											style="padding-right: 5px;"
+											href="javascript: var frm = document.getElementById('frm'); <c:if test="${m.arq.image}">insertImageAtCursor(${m.arq.id},'${m.arq.titulo}');</c:if><c:if test="${not m.arq.image}">insertFileAtCursor(${m.arq.id},'${m.arq.titulo}');</c:if>">${m.arq.titulo}</a>
+										[ <img style="margin-bottom: -1px; width: 9px;"
+											src="/siga/css/famfamfam/icons/cross.png" /> <span
+											class="gt-table-action-list"> <a
+											href="javascript:if (confirm('Confirma a remocao deste anexo?')) 
+												ReplaceInnerHTMLFromAjaxResponse('../removerAnexo?sigla=${informacao.sigla}&idArq=${m.arq.id}&idMov=${m.id}',
+																	null, document.getElementById('ajax_arquivo'));">remover</a></span>
+										&nbsp;]
+									</p>
+								</c:if>
+							</c:forEach>
 						</c:if>
 					</div>
-					<div class="gt-form-row gt-width-100" id="informacaoGrupo"
-						style="display: none">
-						<label>Grupo</label>
-						<div class="gt-left-col gt-width-100">
-							<siga:selecao2 propriedade="grupo" modulo="siga"
-								tipo="gi/perfil" tema="simple" />
-						</div>
+					<h3 style="padding-top: 1em">Inserir
+						classifica&ccedil;&atilde;o no Texto</h3>
+					<p>
+						O conte&uacute;do do campo "Texto" pode receber uma
+						marca&ccedil;&atilde;o especial para classifica&ccedil;&atilde;o.
+						Clique <a id="marcadores" href="#">aqui</a> para visualizar a
+						op&ccedil;&atilde;o dispon&iacute;vel.
+					</p>
+					<div id="cheatsheet" style="display: none;">
+						<table class="side-bar-light-table">
+							<tbody>
+
+								<tr>
+									<td>#classificacao-conhecimento<br>
+									<td class="arrow">&#8594;</td>
+									<td><a href="#">#classificacao-conhecimento</a></td>
+								</tr>
+
+							</tbody>
+						</table>
+						<br />
+						<p>Nco usar caracteres especiais ou espaço</p>
 					</div>
-
-					<div class="gt-form-row gt-width-100">
-						<label>T&iacute;tulo</label> <input type="text" id="inftitulo"
-							name="inftitulo" value="${inftitulo}" class="gt-form-text" />
-					</div>
-
-					<div class="gt-form-row gt-width-100">
-						<label>Texto</label>
-						<textarea id="conteudo" name="conteudo" cols="80" rows="25"
-							class="gt-form-textarea">${conteudo}</textarea>
-					</div>
-
-					<div class="gt-form-row gt-width-100">
-						<label>Classifica&ccedil;&atilde;o</label>
-						<c:choose>
-							<c:when test="${empty classificacao && !editarClassificacao}">
-								<p>Este conhecimento ainda n&atilde;o possui uma classifica&ccedil;&atilde;o.</p>
-							</c:when>
-							<c:otherwise>
-								<textarea name="classificacao" class="gt-form-text" ${editarClassificacao ? '' : 'readonly'}>${classificacao}</textarea>
-							</c:otherwise>
-						</c:choose>
-					</div>
-
-					<div class="gt-form-row gt-width-100">
-
-						<input id="btn-save" type="submit" value="Gravar"
-							class="gt-btn-medium gt-btn-left" style="cursor: pointer;" />
-
-						<p class="gt-cancel">
-							<c:choose>
-								<c:when
-									test="${not empty informacao && not empty informacao.id && informacao.id != 0}">
-								ou <a href="${linkTo[AppController].editar(informacao.siglaCompacta)}">cancelar
-										altera&ccedil;&otilde;es</a>
-								ou <a
-										href="${linkTo[AppController].movimentacoes(informacao.siglaCompacta)}">exibir
-										movimenta&ccedil;&otilde;es</a>
-								</c:when>
-								<c:otherwise>
-									<a href="${linkTo[AppController].editar}">cancelar
-										altera&ccedil;&otilde;es</a>
-								</c:otherwise>
-							</c:choose>
-						</p>
-					</div>
-				</form>
-			</div>
-		</div>
-		<div class="gt-sidebar">
-			<!-- Sidebar Content -->
-			<div class="gt-sidebar-content">
-				<h3>Informa&ccedil;&otilde;es sobre o Preenchimento</h3>
-				<p>O campo "T&iacute;tulo" sempre ser&aacute; acess&iacute;vel, independente do
-					controle de acesso selecionado.</p>
-
-				<div id="ajax_arquivo">
-					<c:if test="${informacao.contemArquivos}">
-						<h3 style="padding-top: 1em">Incluir Imagens ou Arquivos no
-							Texto</h3>
-						<p>Clique em uma imagem/arquivo abaixo para incluir uma
-							refer&ecirc;ncia no texto.</p>
-						<c:forEach items="${informacao.movs}" var="m">
-							<c:if
-								test="${m.tipo.id == 13 && m.movCanceladora == null}">
-								<p>
-									<img style="margin-bottom: -4px;"
-										src="/siga/css/famfamfam/icons/${m.arq.icon}.png" /> <a
-										style="padding-right: 5px;"
-										href="javascript: var frm = document.getElementById('frm'); <c:if test="${m.arq.image}">insertImageAtCursor(${m.arq.id},'${m.arq.titulo}');</c:if><c:if test="${not m.arq.image}">insertFileAtCursor(${m.arq.id},'${m.arq.titulo}');</c:if>">${m.arq.titulo}</a>
-									[ <img style="margin-bottom: -1px; width: 9px;"
-										src="/siga/css/famfamfam/icons/cross.png" /> <span
-										class="gt-table-action-list"> <a
-										href="javascript:if (confirm('Confirma a remocao deste anexo?')) 
-											ReplaceInnerHTMLFromAjaxResponse('../removerAnexo?sigla=${informacao.sigla}&idArq=${m.arq.id}&idMov=${m.id}',
-																null, document.getElementById('ajax_arquivo'));">remover</a></span>
-									&nbsp;]
-								</p>
-							</c:if>
-						</c:forEach>
-					</c:if>
-				</div>
-				<h3 style="padding-top: 1em">Inserir classifica&ccedil;&atilde;o no Texto</h3>
-				<p>
-					O conte&uacute;do do campo "Texto" pode receber uma marca&ccedil;&atilde;o especial para
-					classifica&ccedil;&atilde;o. Clique <a id="marcadores" href="#">aqui</a> para
-					visualizar a op&ccedil;&atilde;o dispon&iacute;vel.
-				</p>
-				<div id="cheatsheet" style="display: none;">
-					<table class="side-bar-light-table">
-						<tbody>
-							
-							<tr>
-								<td>#classificacao-conhecimento<br>
-								<td class="arrow">&#8594;</td>
-								<td><a href="#">#classificacao-conhecimento</a></td>
-							</tr>
-							
-						</tbody>
-					</table>
-					<br />
-					<p>Nco usar caracteres especiais ou espaço</p>
 				</div>
 			</div>
 		</div>
@@ -194,7 +224,8 @@
 				.replace(
 						'conteudo',
 						{
-							filebrowserUploadUrl : '${linkTo[AppController].gravarArquivo}?origem=editar'+'&informacao='+'${informacao}',
+							filebrowserUploadUrl : '${linkTo[AppController].gravarArquivo}?origem=editar'
+									+ '&informacao=' + '${informacao}',
 							toolbar : [
 									{
 										name : 'clipboard',

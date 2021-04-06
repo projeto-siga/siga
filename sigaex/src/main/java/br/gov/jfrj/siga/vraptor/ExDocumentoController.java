@@ -75,12 +75,12 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
-import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -100,7 +100,6 @@ import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
-import br.gov.jfrj.siga.ex.api.v1.ApiContext;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
@@ -406,7 +405,7 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.getMobilPaiSel(),
 				exDocumentoDTO.isCriandoAnexo(), exDocumentoDTO.getAutuando(),
 				exDocumentoDTO.getIdMobilAutuado(),
-				exDocumentoDTO.getCriandoSubprocesso(), null, null);
+				exDocumentoDTO.getCriandoSubprocesso(), null, null, null, null, null);
 	}
 
 	@Transacional
@@ -479,7 +478,7 @@ public class ExDocumentoController extends ExController {
 						exDocumentoDTO.getAutuando(),
 						exDocumentoDTO.getIdMobilAutuado(),
 						exDocumentoDTO.getCriandoSubprocesso(),
-						null,
+						null, null, null, null,
 						jsonHierarquiaDeModelos);
 		return exDocumentoDTO;
 	}
@@ -490,7 +489,8 @@ public class ExDocumentoController extends ExController {
 			final String sigla, String[] vars,
 			final ExMobilSelecao mobilPaiSel, final Boolean criandoAnexo,
 			final Boolean autuando, final Long idMobilAutuado,
-			final Boolean criandoSubprocesso, String modelo, String jsonHierarquiaDeModelos)
+			final Boolean criandoSubprocesso, String modelo, String lotaDest, 
+			String classif, String descr, String jsonHierarquiaDeModelos)
 			throws IOException, IllegalAccessException,
 			InvocationTargetException {
 		assertAcesso("");
@@ -546,15 +546,14 @@ public class ExDocumentoController extends ExController {
 						mod = mod.getModeloAtual();
 						modelo = mod.getNmMod();
 					}
-						
 					for (ExModelo mod : exDocumentoDTO.getModelos()) {
-						if (modelo.equals(mod.getNmMod())) {
+						if (modelo.equals(mod.getNmMod()) || modelo.equals(Texto.slugify(mod.getNmMod(), true, false))) {
 							modeloDefault = mod;
 							break;
 						}
 					}
 				}
-
+				
 				if (modeloDefault == null) {
 					for (ExModelo mod : exDocumentoDTO.getModelos()) {
 						if ("Memorando".equals(mod.getNmMod())) {
@@ -688,16 +687,36 @@ public class ExDocumentoController extends ExController {
 		// O (&& classif.getCodAssunto() != null) foi adicionado para permitir
 		// que as classificações antigas, ainda não linkadas por equivalência,
 		// possam ser usadas
+		
+		if (exDocumentoDTO.getLotacaoDestinatarioSel().getId() == null && lotaDest != null) {
+			if (lotaDest.matches("\\d+")) {
+				exDocumentoDTO.getLotacaoDestinatarioSel().setId(Long.valueOf(lotaDest));
+			} else {
+				exDocumentoDTO.getLotacaoDestinatarioSel().setSigla(lotaDest);
+			}
+		}
 
-		ExClassificacao classif = exDocumentoDTO.getClassificacaoSel()
+		if (exDocumentoDTO.getClassificacaoSel().getId() == null && classif != null) {
+			if (classif.matches("\\d+")) {
+				exDocumentoDTO.getClassificacaoSel().setId(Long.valueOf(classif));
+			} else {
+				exDocumentoDTO.getClassificacaoSel().setSigla(classif);
+			}
+		}
+
+		if (exDocumentoDTO.getDescrDocumento() == null && descr != null) {
+			exDocumentoDTO.setDescrDocumento(descr);
+		}
+
+		ExClassificacao classificacao = exDocumentoDTO.getClassificacaoSel()
 				.buscarObjeto();
-		if (classif != null && classif.getHisDtFim() != null
-				&& classif.getHisDtIni() != null
-				&& classif.getCodAssunto() != null) {
-			classif = ExDao.getInstance().consultarAtual(classif);
-			if (classif != null) {
+		if (classificacao != null && classificacao.getHisDtFim() != null
+				&& classificacao.getHisDtIni() != null
+				&& classificacao.getCodAssunto() != null) {
+			classificacao = ExDao.getInstance().consultarAtual(classificacao);
+			if (classificacao != null) {
 				exDocumentoDTO.getClassificacaoSel().setId(
-						classif.getIdClassificacao());
+						classificacao.getIdClassificacao());
 			} else {
 				exDocumentoDTO.getClassificacaoSel().setId(null);
 			}
@@ -991,7 +1010,7 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.getMobilPaiSel(),
 				exDocumentoDTO.isCriandoAnexo(), exDocumentoDTO.getAutuando(),
 				exDocumentoDTO.getIdMobilAutuado(),
-				exDocumentoDTO.getCriandoSubprocesso(), null, null);
+				exDocumentoDTO.getCriandoSubprocesso(), null, null, null, null, null);
 	}
 
 	@SuppressWarnings("static-access")
@@ -1677,7 +1696,7 @@ public class ExDocumentoController extends ExController {
 						exDocumentoDTO.getAutuando(),
 						exDocumentoDTO.getIdMobilAutuado(),
 						exDocumentoDTO.getCriandoSubprocesso(),
-						null,
+						null, null, null, null,
 						jsonHierarquiaDeModelos);
 				return;
 			}

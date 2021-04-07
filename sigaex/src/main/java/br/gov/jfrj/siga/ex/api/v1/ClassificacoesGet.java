@@ -11,7 +11,7 @@ import com.crivano.swaggerservlet.SwaggerServlet;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.CurrentRequest;
 import br.gov.jfrj.siga.base.RequestInfo;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.ClassificacaoItem;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.ClassificacoesGetRequest;

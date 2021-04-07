@@ -30,7 +30,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import br.gov.jfrj.siga.base.SigaMessages;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.dp.DpLotacao;

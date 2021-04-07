@@ -157,11 +157,6 @@
 			<artifactId>siga-oidc</artifactId>
 		</dependency>
 		
-		<dependency>
-			<groupId>net.sf.ehcache</groupId>
-			<artifactId>ehcache</artifactId>
-		</dependency>
-
 		<!-- CDI -->
 		<dependency>
 			<groupId>org.jboss.spec.javax.ejb</groupId>

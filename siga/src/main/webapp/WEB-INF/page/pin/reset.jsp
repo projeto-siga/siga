@@ -32,7 +32,7 @@
 								<div class="py-5 text-center">
 								    <img class="d-block mx-auto mb-4" src="/siga/imagens/siga-pin.png" alt="" width="72" height="72">
 									<h2 class="mt-5">Esqueceu seu PIN?</h2>
-						            <p>Não se preocupe! Um código de segurança para definir um novo PIN será enviado para seu e-mail cadastrado:</p
+						            <p>Não se preocupe! Um código de segurança para definir um novo PIN será enviado para seu e-mail cadastrado:</p>
 						            
 									<c:if test="${not empty cadastrante}">
 								 		<p><span class="font-weight-bold"> ${cadastrante.emailPessoaAtualParcialmenteOculto}</span></p>

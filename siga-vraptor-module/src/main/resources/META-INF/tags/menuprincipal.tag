@@ -45,7 +45,7 @@
 				href="/siga/app/principal?redirecionar=false">Quadros
 					Quantitativos</a></li>
 		</c:if>
-		<c:if test="${f:resource('/siga.local') ne 'GOVSP'}">
+		<c:if test="${f:resource('/siga.local') != 'GOVSP'}">
 			<li><a class="dropdown-item" href="/siga/app/principal">Página
 					Inicial</a></li>
 		</c:if>
@@ -96,7 +96,7 @@
 					<li><a class="dropdown-item" href="/sigatp/">Transportes</a></li>
 				</c:if>
 
-				<c:if test="${!('ZZ'.equals(titular.orgaoUsuario.sigla))}">
+				<c:if test="${'ZZ' != titular.orgaoUsuario.sigla)}">
 
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SE:Módulo de Servicos Externos')}">

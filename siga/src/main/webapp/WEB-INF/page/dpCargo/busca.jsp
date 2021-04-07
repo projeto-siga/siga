@@ -30,7 +30,7 @@ function sbmt(offset) {
 	    <c:set var="parteFuncao" value="parent" />
 	</c:otherwise>	
 </c:choose>	
-<form name="frm" action="buscar" class="form" method="POST>
+<form name="frm" action="buscar" class="form" method="POST">
 		<input type="hidden" name="buscarFechadas" value="${param['buscarFechadas']}" />
 		<input type="hidden" name="propriedade" value="${param.propriedade}" />
 		<input type="hidden" name="postback" value="1" />

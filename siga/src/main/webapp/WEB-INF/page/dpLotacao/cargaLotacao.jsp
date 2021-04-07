@@ -12,7 +12,7 @@
 				<h5>Carga de Planilha Unidade</h5>
 			</div>
 			<div class="card-body">
-			<form action="carga" method="POST" enctype="multipart/form-data" class="form">
+			<form action="carga" method="post" enctype="multipart/form-data" class="form">
 				<input type="hidden" name="postback" value="1" /> 
 				<input type="hidden" name="sigla" value="${sigla}" />				
 				<div class="row">

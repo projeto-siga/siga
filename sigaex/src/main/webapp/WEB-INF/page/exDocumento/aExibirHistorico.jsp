@@ -111,7 +111,6 @@
 						<c:forEach var="mov" items="${m.movs}">
 								<tr class="${mov.classe} ${mov.disabled}">
 									<c:set var="dt" value="${mov.dtRegMovDDMMYYHHMMSS}" />
-									<c:set var="dt" value="${mov.dtRegMovDDMMYY}" />
 									<c:choose>
 										<c:when test="${dt == dtUlt}">
 											<c:set var="dt" value="" />

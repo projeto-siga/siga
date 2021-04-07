@@ -43,6 +43,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -1697,6 +1698,9 @@ public class ExBL extends CpBL {
 		boolean fSubstituindoCosignatario = false;
 		final String formaAssinaturaSenha = senhaIsPIN ? "PIN" : "Senha";
 		final String concordanciaAssinaturaSenha = senhaIsPIN ? "o" : "a";
+		
+		StringBuilder descricaoMovimentacaoAssinatura = new StringBuilder();
+		StringBuilder funcaoLotacaoPersonalizadaDescricaoAssinatura = new StringBuilder();
 
 		if (matriculaSubscritor == null || matriculaSubscritor.isEmpty())
 			throw new AplicacaoException("Matrícula do Subscritor não foi informada.");
@@ -1753,18 +1757,28 @@ public class ExBL extends CpBL {
 			try {
 				if (subscritor != null) {
 					if (doc.getSubscritor() != null && subscritor.equivale(doc.getSubscritor())) {
+						if (doc.getNmFuncaoSubscritor() != null) {
+							funcaoLotacaoPersonalizadaDescricaoAssinatura.append(Optional.ofNullable(doc.getNmFuncaoSubscritor().split(";")[0]).orElse(subscritor.getCargo().getDescricao()));
+							funcaoLotacaoPersonalizadaDescricaoAssinatura.append(" / ");
+							funcaoLotacaoPersonalizadaDescricaoAssinatura.append(Optional.ofNullable(doc.getNmFuncaoSubscritor().split(";")[1]).orElse(subscritor.getLotacao().getSigla()));
+							}
 						fValido = true;
 					}
 					if (!fValido) {
-						fValido = (subscritor.equivale(doc.getCadastrante())) && (doc.getExTipoDocumento()
-								.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO);
+						fValido = (subscritor.equivale(doc.getCadastrante())) && (doc.getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO);
 					}
 					if (!fValido)
+						
 						for (ExMovimentacao m : doc.getMobilGeral().getExMovimentacaoSet()) {
 							if (m.getExTipoMovimentacao()
 									.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
 									&& m.getExMovimentacaoCanceladora() == null
 									&& subscritor.equivale(m.getSubscritor())) {
+								if (m.getNmFuncaoSubscritor() != null) {
+									funcaoLotacaoPersonalizadaDescricaoAssinatura.append(Optional.ofNullable(m.getNmFuncaoSubscritor().split(";")[0]).orElse(subscritor.getCargo().getDescricao()));
+									funcaoLotacaoPersonalizadaDescricaoAssinatura.append(" / ");
+									funcaoLotacaoPersonalizadaDescricaoAssinatura.append(Optional.ofNullable(m.getNmFuncaoSubscritor().split(";")[1]).orElse(subscritor.getLotacao().getSigla()));
+													}
 								fValido = true;
 								continue;
 							} 							
@@ -1844,7 +1858,18 @@ public class ExBL extends CpBL {
 					autenticando ? ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA
 							: ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA,
 					cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov, assinante, null, null, null, null);
-			mov.setDescrMov(assinante.getNomePessoa() + ":" + assinante.getSigla() + " ["+formaAssinaturaSenha+"]");
+			
+			descricaoMovimentacaoAssinatura.append(assinante.getNomePessoa()).append(":");
+			descricaoMovimentacaoAssinatura.append(assinante.getSigla()).append(":");
+			
+			if (funcaoLotacaoPersonalizadaDescricaoAssinatura.length() > 0) {
+				descricaoMovimentacaoAssinatura.append(funcaoLotacaoPersonalizadaDescricaoAssinatura).append(":");
+			}
+			
+			descricaoMovimentacaoAssinatura.append(" ["+formaAssinaturaSenha+"]");
+
+			mov.setDescrMov(descricaoMovimentacaoAssinatura.toString());
+			
 			String cpf = Long.toString(assinante.getCpfPessoa());
 			acrescentarHashDeAuditoria(mov, sha256, autenticando, assinante.getNomePessoa(), cpf, null);
 

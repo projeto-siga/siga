@@ -222,19 +222,31 @@ public class Documento {
 		ArrayList<String> assinantes = new ArrayList<String>();
 		for (ExMovimentacao movAssinatura : movsAssinatura) {
 			String s;
+			String[] descMov;
 			Date dataDeInicioDeObrigacaoExibirRodapeDeAssinatura=null;
 			if (movAssinatura.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)) {
 				s = Texto.maiusculasEMinusculas(movAssinatura.getCadastrante().getNomePessoa());
 			} else {
 				dataDeInicioDeObrigacaoExibirRodapeDeAssinatura = Prop.getData("rodape.data.assinatura.ativa");
-				s = movAssinatura.getDescrMov().trim().toUpperCase();
-				s = s.split(":")[0];
-				s = s.intern();
-				if(Prop.isGovSP()
-						|| (dataDeInicioDeObrigacaoExibirRodapeDeAssinatura != null && !dataDeInicioDeObrigacaoExibirRodapeDeAssinatura.after(dtDoc)
-								)	) {
-						s +=" - " + Data.formatDDMMYYYY_AS_HHMMSS(movAssinatura.getData());
-					}				 
+				descMov = movAssinatura.getDescrMov().trim().toUpperCase().split(":");
+				s = descMov[0];
+				
+				if (movAssinatura.getExDocumento().isInternoCapturado()) {
+					if (descMov.length > 3) {
+						s += " - " + descMov[2];  //Função / Lotação Personalizada do Subscritor ou Cossignatário
+					} else {
+						s += " - " + movAssinatura.getCadastrante().getCargo().getNomeCargo() + " / " + movAssinatura.getCadastrante().getLotacao().getSigla();
+					}
+				} else if(movAssinatura.getExDocumento().isExternoCapturado()) {
+					s += " - " + movAssinatura.getCadastrante().getCargo().getNomeCargo() + " / " + movAssinatura.getCadastrante().getLotacao().getSigla();
+				}
+				
+				s = s.toUpperCase().intern();
+				
+				if(Prop.isGovSP() || (dataDeInicioDeObrigacaoExibirRodapeDeAssinatura != null && !dataDeInicioDeObrigacaoExibirRodapeDeAssinatura.after(dtDoc))) {
+					s += " - "  + Data.formatDDMMYYYY_AS_HHMMSS(movAssinatura.getData());
+				}	
+				
 			}
 			if (!assinantes.contains(s)) {
 				assinantes.add(s);

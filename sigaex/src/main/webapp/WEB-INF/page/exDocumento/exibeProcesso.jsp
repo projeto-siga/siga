@@ -574,7 +574,14 @@
 				}
 				
 				if(!refPDF.includes("completo=1")) {
+					var url = ifr.src;
 					ifr.src = montarUrlDocPDF(ifr.src, "${f:resource('/sigaex.pdf.visualizador')}");
+					
+					document.getElementById('painel').onload = function() {
+						if(window.parent.painel.document.getElementById('errorMessage') != null) {
+							ifr.src = url;
+						}
+					}
 				}
 				
 				ifrp.style.border = "1px solid black";
@@ -598,7 +605,14 @@
 					ifr.src = path + refPDF;
 				
 				if(!refPDF.includes("completo=1")) {
+					var url = ifr.src;
 					ifr.src = montarUrlDocPDF(ifr.src, "${f:resource('/sigaex.pdf.visualizador')}");
+					
+					document.getElementById('painel').onload = function() {
+						if(window.parent.painel.document.getElementById('errorMessage') != null) {
+							ifr.src = url;
+						}
+					}
 				}
 				ifrp.style.border = "0px solid black";
 				ifr.height = pageHeight() - 300;

@@ -507,7 +507,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			}
 
 			CpBL cpbl = new CpBL();
-			inputStream = cpbl.uploadLotacao(file, orgaoUsuario, extensao);
+			inputStream = cpbl.uploadLotacao(file, orgaoUsuario, extensao, getIdentidadeCadastrante());
 		} catch (Exception e) {
 			throw new AplicacaoException("Problemas ao salvar unidades", 0, e);
 		}

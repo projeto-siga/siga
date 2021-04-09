@@ -42,12 +42,12 @@ import br.gov.jfrj.siga.model.dao.DaoFiltro;
 
 public class Excel {
 	
-	public InputStream uploadLotacao(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
+	public InputStream uploadLotacao(File file, CpOrgaoUsuario orgaoUsuario, String extensao, CpIdentidade cadastrante) {
 		InputStream retorno = null;
 		if(".txt".equalsIgnoreCase(extensao) || ".csv".equalsIgnoreCase(extensao)) {
 			retorno = uploadCVS(file, orgaoUsuario);
 		} else if(".xlsx".equalsIgnoreCase(extensao)){
-			retorno = uploadExcelLotacao(file, orgaoUsuario);
+			retorno = uploadExcelLotacao(file, orgaoUsuario, cadastrante);
 		}
 		return retorno;
 	}
@@ -250,7 +250,7 @@ public class Excel {
 		return "";
 	}
 	
-    public InputStream uploadExcelLotacao(File file, CpOrgaoUsuario orgaoUsuario) {
+    public InputStream uploadExcelLotacao(File file, CpOrgaoUsuario orgaoUsuario, CpIdentidade cadastrante) {
     	InputStream inputStream = null;
     	String problemas = "";
         CpUF uf = null;
@@ -358,7 +358,7 @@ public class Excel {
 			if(problemas == null || "".equals(problemas.toString())) {
             	for (DpLotacao dpLotacao : lista) {
 	            	CpDao.getInstance().iniciarTransacao();
-	    			CpDao.getInstance().gravar(dpLotacao);
+	    			CpDao.getInstance().gravarComHistorico(dpLotacao, cadastrante);
 	    			
     				if(dpLotacao.getIdLotacaoIni() == null && dpLotacao.getId() != null) {
     					dpLotacao.setIdLotacaoIni(dpLotacao.getId());
@@ -1001,36 +1001,33 @@ public class Excel {
 				CpIdentidade usuarioExiste = null;
 				List<CpIdentidade> lista1 = new ArrayList<CpIdentidade>();
             	for (DpPessoa dpPessoa : lista) {
-	    			CpDao.getInstance().gravar(dpPessoa);
+	    			CpDao.getInstance().gravarComHistorico(dpPessoa, identidade);
 
-    				if(dpPessoa.getIdPessoaIni() == null && dpPessoa.getId() != null) {
-    					dpPessoa.setIdPessoaIni(dpPessoa.getId());
-    					dpPessoa.setIdePessoa(dpPessoa.getId().toString());
-    					dpPessoa.setMatricula(10000 + dpPessoa.getId());	
-        				CpDao.getInstance().gravar(dpPessoa);
-        				
-        				lista1.clear();
-        				lista1 = CpDao.getInstance().consultaIdentidadesPorCpf(dpPessoa.getCpfPessoa().toString());
-        				
-        				if(lista1.size() > 0) {
-        					usuarioExiste = lista1.get(0);
-        					usu = new CpIdentidade();
-        					usu.setCpTipoIdentidade(CpDao.getInstance().consultar(1,
-        										CpTipoIdentidade.class, false));
-        					usu.setDscSenhaIdentidade(usuarioExiste.getDscSenhaIdentidade());
-        					usu.setDtCriacaoIdentidade(CpDao.getInstance()
-        							.consultarDataEHoraDoServidor());
-        					usu.setCpOrgaoUsuario(dpPessoa.getOrgaoUsuario());
-        					usu.setHisDtIni(usu.getDtCriacaoIdentidade());
-        					usu.setHisAtivo(1);
-        					
-	        				if(usu != null) {
-	        					usu.setNmLoginIdentidade(dpPessoa.getSesbPessoa() + dpPessoa.getMatricula());
-	        					usu.setDpPessoa(dpPessoa);
-	        					CpDao.getInstance().gravarComHistorico(usu, identidade);
-	        				}
+	    			dpPessoa.setMatricula(10000 + dpPessoa.getId());
+					dpPessoa.setIdePessoa(dpPessoa.getId().toString());
+					CpDao.getInstance().gravar(dpPessoa);
+								
+    				lista1.clear();
+    				lista1 = CpDao.getInstance().consultaIdentidadesPorCpf(dpPessoa.getCpfPessoa().toString());
+    				
+    				if(lista1.size() > 0) {
+    					usuarioExiste = lista1.get(0);
+    					usu = new CpIdentidade();
+    					usu.setCpTipoIdentidade(CpDao.getInstance().consultar(1,
+    										CpTipoIdentidade.class, false));
+    					usu.setDscSenhaIdentidade(usuarioExiste.getDscSenhaIdentidade());
+    					usu.setDtCriacaoIdentidade(CpDao.getInstance()
+    							.consultarDataEHoraDoServidor());
+    					usu.setCpOrgaoUsuario(dpPessoa.getOrgaoUsuario());
+    					usu.setHisDtIni(usu.getDtCriacaoIdentidade());
+    					usu.setHisAtivo(1);
+    					
+        				if(usu != null) {
+        					usu.setNmLoginIdentidade(dpPessoa.getSesbPessoa() + dpPessoa.getMatricula());
+        					usu.setDpPessoa(dpPessoa);
+        					CpDao.getInstance().gravarComHistorico(usu, identidade);
         				}
-        			}
+    				}
 				}
             	CpDao.getInstance().em().getTransaction().commit();				    		
 			}

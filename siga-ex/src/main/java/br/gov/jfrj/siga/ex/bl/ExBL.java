@@ -6582,7 +6582,6 @@ public class ExBL extends CpBL {
 
 	public void alterarExClassificacao(ExClassificacao exClassNovo, ExClassificacao exClassAntigo, Date dt,
 			CpIdentidade identidadeCadastrante) throws AplicacaoException {
-		verificarDuplicacaoTermoCompleto(exClassNovo, exClassAntigo);
 		try {
 			dao().gravarComHistorico(exClassNovo, exClassAntigo, dt, identidadeCadastrante);
 			copiarReferencias(exClassNovo, exClassAntigo, dt, identidadeCadastrante);
@@ -6728,7 +6727,6 @@ public class ExBL extends CpBL {
 
 	public void incluirExClassificacao(ExClassificacao exClass, CpIdentidade identidadeCadastrante)
 			throws AplicacaoException {
-		verificarDuplicacaoTermoCompleto(exClass, null);
 		dao().gravarComHistorico(exClass, null, dao().consultarDataEHoraDoServidor(), identidadeCadastrante);
 
 	}

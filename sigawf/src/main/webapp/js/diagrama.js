@@ -273,7 +273,6 @@ app
 												if (d.definicaoDeTarefa) {
 													for (var i = 0; i < d.definicaoDeTarefa.length; i++) {
 														delete d.definicaoDeTarefa[i].id;
-														delete d.definicaoDeTarefa[i].hisIde;
 													}
 												}
 											}

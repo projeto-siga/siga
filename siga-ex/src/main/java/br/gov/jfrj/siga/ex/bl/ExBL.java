@@ -1759,7 +1759,7 @@ public class ExBL extends CpBL {
 						fValido = (subscritor.equivale(doc.getCadastrante())) && (doc.getExTipoDocumento()
 								.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO);
 					}
-					if (!fValido || cadastrante != titular)
+					if (!fValido)
 						for (ExMovimentacao m : doc.getMobilGeral().getExMovimentacaoSet()) {
 							if (m.getExTipoMovimentacao()
 									.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
@@ -1767,27 +1767,35 @@ public class ExBL extends CpBL {
 									&& subscritor.equivale(m.getSubscritor())) {
 								fValido = true;
 								continue;
-							} else if (m.getExTipoMovimentacao()
-									.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
-									&& m.getExMovimentacaoCanceladora() == null && cadastrante != titular) {
-								// Verificar se é substituto do cosignatario do documento
-								fSubstituindoCosignatario = estaSubstituindoSubscritorOuCosignatario(cadastrante, lotaCadastrante, m.getSubscritor(),
-										subscritor);
-								if (fSubstituindoCosignatario) {
-									cosignatario = titular;
-									fValido = true;
-									break;
-									
+							} 							
+						}
+				
+					if ((!fValido || (fValido && doc.isAssinadoPelaPessoaComTokenOuSenha(subscritor))) && cadastrante != titular) { 
+						
+						// Verificar se é substituto do subscritor do documento						
+						if(doc.getSubscritor().equivale(titular)) {	
+							fSubstituindoSubscritor = estaSubstituindoSubscritorOuCosignatario(cadastrante, lotaCadastrante, doc.getSubscritor(),
+									subscritor);
+							fValido = fSubstituindoSubscritor;
+						}
+						
+						if(!fSubstituindoSubscritor) {
+							for (ExMovimentacao m : doc.getMobilGeral().getExMovimentacaoSet()) { // Verifica se é substituto de cossignatário
+								if (m.getExTipoMovimentacao()
+										.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
+										&& m.getExMovimentacaoCanceladora() == null &&  titular.equivale(m.getSubscritor()) ) {
+									// Verificar se é substituto do cosignatario do documento
+									fSubstituindoCosignatario = estaSubstituindoSubscritorOuCosignatario(cadastrante, lotaCadastrante, m.getSubscritor(),
+											subscritor);
+									if (fSubstituindoCosignatario) {
+										cosignatario = titular;
+										fValido = true;
+										break;								
+									}
 								}
 							}
-						}
-
-					// Verificar se é substituto do subscritor do documento
-					if(!fSubstituindoCosignatario && cadastrante != titular) {
-						fSubstituindoSubscritor = estaSubstituindoSubscritorOuCosignatario(cadastrante, lotaCadastrante, doc.getSubscritor(),
-								subscritor);
-						fValido = fSubstituindoSubscritor;
-					}
+						}					
+					}	
 				}
 
 				if (fValido == false)
@@ -1865,7 +1873,7 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			log.error(e.getMessage(), e);
 			e.printStackTrace();
-			throw new RuntimeException("Erro ao registrar assinatura.", e);
+			throw new RuntimeException("Erro ao registrar assinatura: " + getRootCauseMessage(e));
 		}
 
 		if (tramitar == null)
@@ -1886,6 +1894,17 @@ public class ExBL extends CpBL {
 		}
 
 		return s;
+	}
+	
+	private String getRootCauseMessage(Exception ex) {
+		Throwable cause = ex;
+		String message = ex.getMessage();
+		while (cause.getCause() != null && cause != cause.getCause()) {
+			cause = cause.getCause();
+			if (cause.getMessage() != null)
+				message = cause.getMessage();
+		}
+		return message;
 	}
 
 	private void criarMovimentacaoAssinadorPor(final DpPessoa cadastrante, final DpLotacao lotaCadastrante,
@@ -3855,7 +3874,7 @@ public class ExBL extends CpBL {
 			dao().gravar(movCancelada);
 		}
 
-		Notificador.notificarDestinariosEmail(mov, Notificador.TIPO_NOTIFICACAO_CANCELAMENTO);
+		Notificador.notificarDestinariosEmail(mov, mov.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA) ? Notificador.TIPO_NOTIFICACAO_GRAVACAO : Notificador.TIPO_NOTIFICACAO_CANCELAMENTO);
 	}
 
 	public void excluirDocumentoAutomatico(final ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular)
@@ -4605,7 +4624,7 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			log.error(e.getMessage(), e);
 			e.printStackTrace();
-			throw new RuntimeException("Erro ao registrar assinatura.", e);
+			throw new RuntimeException("Erro ao registrar assinatura." + getRootCauseMessage(e));
 		}
 		return s;
 	}
@@ -4831,7 +4850,15 @@ public class ExBL extends CpBL {
 					if (automatico)
 						mov.setDescrMov("Transferência automática.");
 
-					gravarMovimentacao(mov);
+					
+					// Cancelar trâmite pendente quando é para forçar para outro destino
+					ExMovimentacao movTramitePendente = m.getTramitePendente();
+					if (forcarTransferencia && movTramitePendente != null) {
+						gravarMovimentacaoCancelamento(mov, movTramitePendente);
+					} else {
+						gravarMovimentacao(mov);
+					}
+
 					concluirAlteracaoParcialComRecalculoAcesso(m);
 					
 					List<ExMovimentacao> listaMovimentacao = new ArrayList<ExMovimentacao>();

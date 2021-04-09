@@ -15,21 +15,21 @@ import br.gov.jfrj.siga.wf.model.task.WfTarefaTramitar;
 public enum WfTipoDeTarefa implements TaskKind {
 
 	//
-	AGUARDAR_ASSINATURA_PRINCIPAL("Aguardar Assinatura", "rectangle", WfTarefaAguardarAssinatura.class),
+	AGUARDAR_ASSINATURA_PRINCIPAL("Aguardar Assinatura", "rectangle", WfTarefaAguardarAssinatura.class, true),
 	//
-	TRAMITAR_PRINCIPAL("Enviar", "rectangle", WfTarefaTramitar.class),
+	TRAMITAR_PRINCIPAL("Enviar", "rectangle", WfTarefaTramitar.class, true),
 	//
-	ARQUIVAR_PRINCIPAL("Arquivar", "rectangle", WfTarefaArquivar.class),
+	ARQUIVAR_PRINCIPAL("Arquivar", "rectangle", WfTarefaArquivar.class, false),
 	//
-	INCLUIR_DOCUMENTO("Incluir Documento", "rectangle", WfTarefaIncluirDocumento.class),
+	INCLUIR_DOCUMENTO("Incluir Documento", "rectangle", WfTarefaIncluirDocumento.class, true),
 	//
-	FORMULARIO("Formulário", "rectangle", WfTarefaFormulario.class),
+	FORMULARIO("Formulário", "rectangle", WfTarefaFormulario.class, true),
 	//
-	DECISAO("Decisão", "diamond", TaskDecision.class),
+	DECISAO("Decisão", "diamond", TaskDecision.class, false),
 	//
-	EXECUTAR("Executar", "rectangle", TaskEval.class),
+	EXECUTAR("Executar", "rectangle", TaskEval.class, false),
 	//
-	EMAIL("Email", "folder", TaskEmail.class);
+	EMAIL("Email", "folder", TaskEmail.class, true);
 
 	private final String descr;
 
@@ -37,10 +37,13 @@ public enum WfTipoDeTarefa implements TaskKind {
 
 	private String graphKind;
 
-	WfTipoDeTarefa(String descr, String graphKind, Class<? extends Task> clazz) {
+	private boolean exigirResponsavel;
+
+	WfTipoDeTarefa(String descr, String graphKind, Class<? extends Task> clazz, boolean exigirResponsavel) {
 		this.descr = descr;
 		this.graphKind = graphKind;
 		this.clazz = clazz;
+		this.exigirResponsavel = exigirResponsavel;
 	}
 
 	@Override
@@ -56,5 +59,9 @@ public enum WfTipoDeTarefa implements TaskKind {
 	@Override
 	public String getGraphKind() {
 		return this.graphKind;
+	}
+
+	public boolean isExigirResponsavel() {
+		return exigirResponsavel;
 	}
 }

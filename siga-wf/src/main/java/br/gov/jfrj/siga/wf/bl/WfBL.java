@@ -32,7 +32,6 @@ import com.crivano.jlogic.Expression;
 
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.UsuarioDeSistemaEnum;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -41,14 +40,18 @@ import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.logic.WfPodePegar;
 import br.gov.jfrj.siga.wf.logic.WfPodeRedirecionar;
+import br.gov.jfrj.siga.wf.logic.WfPodeTerminar;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
+import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
 import br.gov.jfrj.siga.wf.model.WfMov;
 import br.gov.jfrj.siga.wf.model.WfMovAnotacao;
 import br.gov.jfrj.siga.wf.model.WfMovDesignacao;
 import br.gov.jfrj.siga.wf.model.WfMovRedirecionamento;
+import br.gov.jfrj.siga.wf.model.WfMovTermino;
 import br.gov.jfrj.siga.wf.model.WfMovTransicao;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
 import br.gov.jfrj.siga.wf.util.WfEngine;
 import br.gov.jfrj.siga.wf.util.WfHandler;
 import br.gov.jfrj.siga.wf.util.WfResp;
@@ -123,6 +126,27 @@ public class WfBL extends CpBL {
 		pi.setOrgaoUsuario(titular.getOrgaoUsuario());
 		pi.setHisDtIni(dao().consultarDataEHoraDoServidor());
 
+		for (WfDefinicaoDeTarefa td : pi.getDefinicaoDeProcedimento().getDefinicaoDeTarefa()) {
+			if (td.getTipoDeTarefa() == null)
+				throwErroDeInicializacao(pi, td, "não foi possível identificar o tipo da tarefa");
+			if (td.getTipoDeTarefa().isExigirResponsavel()) {
+				WfResp r = pi.calcResponsible(td);
+				if (r == null)
+					throwErroDeInicializacao(pi, td, "não foi possível calcular o responsável pela tarefa");
+			}
+			if (td.getTipoDeTarefa() == WfTipoDeTarefa.INCLUIR_DOCUMENTO) {
+				if (td.getRefId() == null)
+					throwErroDeInicializacao(pi, td,
+							"não foi definido o modelo para a inclusão de documento na tarefa");
+				if (pi.getPrincipal() == null)
+					throwErroDeInicializacao(pi, td,
+							"não foi definido o principal para a inclusão de documento na tarefa");
+				if (pi.getTipoDePrincipal() != WfTipoDePrincipal.DOC)
+					throwErroDeInicializacao(pi, td,
+							"o principal não é um documento para a inclusão de documento na tarefa");
+			}
+		}
+
 		WfEngine engine = new WfEngine(dao(), new WfHandler(titular, lotaTitular, identidade));
 
 		// Start the process instance
@@ -134,6 +158,12 @@ public class WfBL extends CpBL {
 		}
 
 		return pi;
+	}
+
+	private String throwErroDeInicializacao(WfProcedimento pi, WfDefinicaoDeTarefa td, String mensagem) {
+		throw new AplicacaoException("Erro na inicialização de um procedimento de workflow do diagrama '"
+				+ pi.getDefinicaoDeProcedimento().getSigla() + "', " + mensagem
+				+ (td.getTitle() != null ? " '" + td.getTitle() + "'" : ""));
 	}
 
 	public void prosseguir(String event, Integer detourIndex, Map<String, Object> param, DpPessoa titular,
@@ -323,6 +353,16 @@ public class WfBL extends CpBL {
 
 		WfEngine engine = new WfEngine(dao(), new WfHandler(titular, lotaTitular, identidade));
 		engine.execute(pi, pi.getCurrentIndex(), para);
+	}
+
+	public void terminar(WfProcedimento pi, DpPessoa titular, DpLotacao lotaTitular, CpIdentidade identidade)
+			throws Exception {
+		assertLogic(new WfPodeTerminar(pi, titular, lotaTitular), "terminar");
+		WfMovTermino mov = new WfMovTermino(pi, dao().consultarDataEHoraDoServidor(), titular, lotaTitular, identidade,
+				pi.getCurrentIndex());
+		gravarMovimentacao(mov);
+		pi.end();
+		dao().gravar(pi);
 	}
 
 	private static void assertLogic(Expression expr, String descr) {

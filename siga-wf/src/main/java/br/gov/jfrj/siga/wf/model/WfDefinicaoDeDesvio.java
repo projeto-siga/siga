@@ -258,16 +258,24 @@ public class WfDefinicaoDeDesvio extends HistoricoAuditavelSuporte
 		return nome.equalsIgnoreCase("não") || nome.equalsIgnoreCase("nao");
 	}
 
-	private static class ProximaTarefa {
+	public static class ProximaTarefa {
 		public WfDefinicaoDeTarefa tdProxima;
 		public boolean ultimo;
 	}
 
-	public ProximaTarefa localizarProximaTarefaPausavel() {
-		WfDefinicaoDeTarefa tdProxima = getSeguinte();
-		boolean ultimo = isUltimo();
-		if (tdProxima == null && !ultimo)
-			tdProxima = obterSeguinte(getDefinicaoDeTarefa());
+	public static ProximaTarefa localizarProximaTarefaPausavel(WfDefinicaoDeProcedimento pd, WfDefinicaoDeTarefa td,
+			WfDefinicaoDeDesvio dd) {
+		WfDefinicaoDeTarefa tdProxima = dd != null ? dd.getSeguinte() : td;
+		boolean ultimo = dd != null ? dd.isUltimo() : (td != null ? td.isUltimo() : true);
+
+		// Quando é um desvio e ele não tem tarefa seguinte, pula para a próxima tarefa
+		// da lista
+		if (dd != null && tdProxima == null && !ultimo) {
+			tdProxima = obterSeguinte(pd, td);
+			if (tdProxima == null)
+				ultimo = true;
+		}
+
 		Set<WfDefinicaoDeTarefa> set = new HashSet<>();
 
 		while (tdProxima != null) {
@@ -312,7 +320,7 @@ public class WfDefinicaoDeDesvio extends HistoricoAuditavelSuporte
 
 			// Ou vai para a tarefa seguinte
 			else {
-				tdProxima = obterSeguinte(tdProxima);
+				tdProxima = obterSeguinte(pd, tdProxima);
 			}
 		}
 		ProximaTarefa p = new ProximaTarefa();
@@ -321,17 +329,29 @@ public class WfDefinicaoDeDesvio extends HistoricoAuditavelSuporte
 		return p;
 	}
 
-	private WfDefinicaoDeTarefa obterSeguinte(WfDefinicaoDeTarefa tdProxima) {
-		List<WfDefinicaoDeTarefa> definicoesDeTarefas = getDefinicaoDeTarefa().getDefinicaoDeProcedimento()
-				.getDefinicaoDeTarefa();
-		int indice = tdProxima.getOrdem();
+	private static WfDefinicaoDeTarefa obterSeguinte(WfDefinicaoDeProcedimento pd, WfDefinicaoDeTarefa td) {
+		if (td == null)
+			return null;
+		List<WfDefinicaoDeTarefa> definicoesDeTarefas = td.getDefinicaoDeProcedimento().getDefinicaoDeTarefa();
+		int indice = td.getOrdem();
 		if (definicoesDeTarefas.size() > indice + 1)
 			return definicoesDeTarefas.get(indice + 1);
 		return null;
 	}
 
 	public String obterProximoResponsavel(WfProcedimento pi) {
-		ProximaTarefa pt = localizarProximaTarefaPausavel();
+		return obterProximoResponsavel(pi, this);
+	}
+
+	public static String obterProximoResponsavel(WfProcedimento pi, WfDefinicaoDeDesvio dd) {
+		WfDefinicaoDeTarefa td = pi.getCurrentTaskDefinition();
+		if (dd == null && td != null) {
+			if (td.getSeguinte() != null)
+				td = td.getSeguinte();
+			else if (!td.isUltimo())
+				td = pi.getTaskDefinitionByIndex(pi.getCurrentIndex() + 1);
+		}
+		ProximaTarefa pt = localizarProximaTarefaPausavel(pi.getDefinicaoDeProcedimento(), td, dd);
 		if (pt.ultimo)
 			return "FIM";
 		else if (pt.tdProxima != null) {

@@ -33,7 +33,13 @@
 	<script src="/siga/javascript/angucomplete-alt/angucomplete-alt.js"></script>
 
 	<div class="container-fluid content" ng-app="app" ng-controller="ctrl">
-		<h2>Editar Diagrama ${pd.sigla}</h2>
+		<h2>
+			<c:choose>
+				<c:when test="${param.duplicar}">Duplicar</c:when>
+				<c:otherwise>Editar</c:otherwise>
+			</c:choose>
+			Diagrama ${pd.sigla}
+		</h2>
 
 		<input type="hidden" name="postback" value="1" />
 		<fieldset title="Dados Básicos">
@@ -137,7 +143,7 @@
 											class="btn btn-secondary dropdown-toggle">{{$index+1}}</button>
 										<div aria-labelledby="dropBtn" class="dropdown-menu pt-0 pb-0">
 											<button
-												ng-click="data.workflow.tarefa.splice($index, 0, {});"
+												ng-click="data.workflow.tarefa.splice($index + 1, 0, {});"
 												class="btn btn-link p-2" ng-disabled>
 												<i class="fa fa-fa fa-plus"></i>
 											</button>
@@ -347,7 +353,7 @@
 														<div aria-labelledby="dropBtn"
 															class="dropdown-menu pt-0 pb-0">
 															<button
-																ng-click="tarefaItem.variavel.splice($index, 0, {});"
+																ng-click="tarefaItem.variavel.splice($index + 1, 0, {});"
 																class="btn btn-link p-2" ng-disabled>
 																<i class="fa fa-fa fa-plus"></i>
 															</button>
@@ -438,7 +444,7 @@
 														<div aria-labelledby="dropBtn"
 															class="dropdown-menu pt-0 pb-0">
 															<button
-																ng-click="tarefaItem.desvio.splice($index, 0, {});"
+																ng-click="tarefaItem.desvio.splice($index + 1, 0, {});"
 																class="btn btn-link p-2" ng-disabled>
 																<i class="fa fa-fa fa-plus"></i>
 															</button>

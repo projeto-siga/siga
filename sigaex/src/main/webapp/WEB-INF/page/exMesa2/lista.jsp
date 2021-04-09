@@ -75,7 +75,7 @@
 					<div class="form-check">
 						<input type="checkbox" class="form-check-input" id="usuarioPosse" v-model="usuarioPosse" :disabled="carregando">
 						<label class="form-check-label" for="usuarioPosse">
-							<small>Exibir usuário em posse do documento</small>
+							<small>Exibir <fmt:message key="documento.atendente"/> do Documento</small>
 						</label>
 					</div>            
 	            </div>
@@ -230,7 +230,7 @@
 											 	v-bind:class="usuarioPosse ? 'col-3' : 'col-4'">Descrição</th>
 											<th scope="col" class="col-md-1"
 												v-bind:class="usuarioPosse ? 'col-2' : 'col-3'">Origem</th>
-											<th v-if="usuarioPosse" scope="col" class="col-md-1 col-2">Usuário em Posse</th>
+											<th v-if="usuarioPosse" scope="col" class="col-md-1 col-2"><fmt:message key="documento.atendente"/></th>
 											<th scope="col" class="col-3 d-none d-md-block"><fmt:message key = "usuario.mesavirtual.etiquetas"/></th>
 	<!-- 											<th v-show="gruposTemAlgumErro">Atenção</th> -->
 										</tr>

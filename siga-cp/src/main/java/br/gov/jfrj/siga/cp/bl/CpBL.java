@@ -1210,9 +1210,30 @@ public class CpBL {
 
 		ou.setIdOrgaoUsu(idOrgaoUsu);
 		ou = CpDao.getInstance().consultarPorId(ou);
-		cargo.setId(idCargo);
-		lotacao.setId(idLotacao);
-		funcao.setIdFuncao(idFuncao);
+		
+		if (!"ZZ".equals(identidadeCadastrante.getCpOrgaoUsuario().getSigla())){
+			if (!ou.getIdOrgaoUsu().equals(identidadeCadastrante.getCpOrgaoUsuario().getIdOrgaoUsu())) {
+				throw new AplicacaoException("Usuário não pode cadastrar nesse órgão.");
+			}
+		}
+				
+		cargo = CpDao.getInstance().consultar(idCargo, DpCargo.class, false);
+		if (!ou.getIdOrgaoUsu().equals(cargo.getOrgaoUsuario().getIdOrgaoUsu())) {
+			throw new AplicacaoException("Cargo informado não pertence ao órgão informado.");
+		}
+		
+		lotacao = CpDao.getInstance().consultar(idLotacao, DpLotacao.class, false);
+		if (!ou.getIdOrgaoUsu().equals(lotacao.getOrgaoUsuario().getIdOrgaoUsu())) {
+			throw new AplicacaoException("Lotação informada não pertence ao órgão informado.");
+		}
+		
+		if (idFuncao != null && idFuncao != 0) {
+			funcao  = CpDao.getInstance().consultar(idFuncao, DpFuncaoConfianca.class, false);
+			
+			if (!ou.getIdOrgaoUsu().equals(funcao.getOrgaoUsuario().getIdOrgaoUsu())) {
+				throw new AplicacaoException("Função de Confiança informada não pertence ao órgão informado.");
+			}
+		}
 
 		pessoa.setOrgaoUsuario(ou);
 		pessoa.setCargo(cargo);
@@ -1223,6 +1244,8 @@ public class CpBL {
 			pessoa.setFuncaoConfianca(null);
 		}
 		pessoa.setSesbPessoa(ou.getSigla());
+		
+
 
 		// ÓRGÃO / CARGO / FUNÇÃO DE CONFIANÇA / LOTAÇÃO e CPF iguais.
 		DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();

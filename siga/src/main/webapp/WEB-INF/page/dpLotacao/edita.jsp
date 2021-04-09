@@ -118,17 +118,29 @@
 						</div>
 					</div>
 					
-					<div class="col-sm-2">
+					<div class="col-sm-1">
 						<div class="form-group">
-							<label for="idLocalidade">Localidade</label>
-							<select name="idLocalidade" value="${idLocalidade}" class="form-control  siga-select2">
-								<option value="0">Selecione</option>
-								<c:forEach items="${listaLocalidades}" var="item">
-									<option value="${item.id}"
-										${item.id == idLocalidade ? 'selected' : ''}>
+							<label for="idUf">UF</label>
+							<select name="idUf" value="${idUf}" class="form-control  siga-select2" onchange="carregarLocalidades(this.value)">
+								<option value="0"></option>
+								<c:forEach items="${listaUF}" var="item">
+									<option value="${item.id}" ${item.id == idUf ? 'selected' : ''}>
 										${item.descricao}</option>
 								</c:forEach>
 							</select>
+						</div>
+					</div>
+					<div class="col-sm-2">
+						<div class="form-group">
+							<label>Localidade</label>
+							<div style="display: inline" id="localidades">
+								<select name="idLocalidade" class="form-control">
+									<option value="0">Selecione</option>
+									<c:forEach var="item" items="${listaLocalidades}">
+										<option value="${item.idLocalidade}" ${item.id == idLocalidade ? 'selected' : ''}>${item.nmLocalidade}</option>
+									</c:forEach>
+								</select>
+							</div>
 						</div>
 					</div>
 					<div class="col-sm-2">
@@ -185,6 +197,16 @@
 		frm.action = 'carregarCombos';
 		frm.submit();
 	}
+	function carregarLocalidades(idUf){
+		
+		$.ajax({
+			url: 'listaLocalidades?idUf=' + idUf,
+			success: function(data){
+				$('#localidades').html(data);	
+			} 
+		});
+	}
+
 </script>
 <script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
 <script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>

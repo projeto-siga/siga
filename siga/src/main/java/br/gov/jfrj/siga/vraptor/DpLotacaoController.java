@@ -315,9 +315,17 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 
 		return null;
 	}
-
+	
+	@Get("/app/lotacao/listaLocalidades")
+	public void listaLocalidades(Integer idUf) {
+		CpUF uf = new CpUF();
+		uf.setIdUF(Long.valueOf(idUf));
+		result.include("listaLocalidades", dao().consultarLocalidadesPorUF(uf));
+	}
+	
 	@Get("/app/lotacao/editar")
-	public void edita(final Long id) {
+	public void edita(final Long id){
+		Long idUf = null;
 
 		List<DpLotacao> listaLotacaoPai = new ArrayList<DpLotacao>();
 		if (id != null) {
@@ -330,8 +338,9 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			result.include("isExternaLotacao", lotacao.getIsExternaLotacao());
 			if (lotacao.getLotacaoPai() != null)
 				result.include("lotacaoPai", lotacao.getLotacaoPai().getIdLotacao());
-			result.include("idLocalidade",
-					lotacao.getLocalidade() != null ? lotacao.getLocalidade().getIdLocalidade() : Long.valueOf(0));
+
+			result.include("idLocalidade", lotacao.getLocalidade() != null ? lotacao.getLocalidade().getIdLocalidade() : Long.valueOf(0));
+			idUf = lotacao.getLocalidade() != null ? lotacao.getLocalidade().getUF().getId() : Long.valueOf(0);
 
 			List<DpPessoa> list = CpDao.getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE);
 			if (list.size() == 0) {
@@ -341,6 +350,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			listaLotacaoPai.remove(lotacao);
 		} else {
 			listaLotacaoPai = carregaLotacao(getTitular().getOrgaoUsuario());
+			idUf = Long.valueOf(Prop.get("uf.padrao") != null ? Prop.get("uf.padrao") : "0");
 		}
 		result.include("listaLotacao", listaLotacaoPai);
 
@@ -351,18 +361,17 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
 			list.add(ou);
 			result.include("orgaosUsu", list);
-		}
+		}		
+		
+		result.include("listaUF",dao().consultarUF());
+		result.include("idUf", idUf);
+		CpUF uf = new CpUF();
+		uf.setIdUF(Long.valueOf(idUf));
+		result.include("listaLocalidades", dao().consultarLocalidadesPorUF(uf));
+				
+		result.include("request",getRequest());
+		result.include("id",id);
 
-		if (Prop.isGovSP()) {
-			CpUF uf = new CpUF();
-			uf.setIdUF(Long.valueOf(26));
-			result.include("listaLocalidades", dao().consultarLocalidadesPorUF(uf));
-		} else {
-			result.include("listaLocalidades", dao().consultarLocalidades());
-		}
-
-		result.include("request", getRequest());
-		result.include("id", id);
 	}
 
 	@Transacional
@@ -513,21 +522,25 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	}
 
 	@Post("/app/lotacao/carregarCombos")
-	public void carregarCombos(final Long idOrgaoUsu, String nmLotacao, String siglaLotacao, Long idLocalidade) {
+	public void carregarCombos(final Long idOrgaoUsu, String nmLotacao, String siglaLotacao, Long idLocalidade, Long idUf) {
 		result.include("request", getRequest());
 		result.include("nmLotacao", nmLotacao);
 		result.include("siglaLotacao", siglaLotacao);
 
-		if (Prop.isGovSP()) {
+		
+//		if(idUf != null && !Long.valueOf("0").equals(idUf)) {
+
 			CpUF uf = new CpUF();
-			uf.setIdUF(Long.valueOf(26));
+			uf.setIdUF(Long.valueOf(idUf));
 			result.include("listaLocalidades", dao().consultarLocalidadesPorUF(uf));
-		} else {
-			result.include("listaLocalidades", dao().consultarLocalidades());
-		}
+//		}
 		result.include("idLocalidade", idLocalidade);
 
-		if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+		result.include("idUf", idUf);
+		result.include("listaUF", dao().consultarUF());
+		
+		if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+
 			result.include("orgaosUsu", dao().listarOrgaosUsuarios());
 		} else {
 			CpOrgaoUsuario ou = CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario());

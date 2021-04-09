@@ -38,6 +38,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
+import br.gov.jfrj.siga.model.dao.DaoFiltro;
 
 public class Excel {
 	
@@ -239,7 +240,7 @@ public class Excel {
 			loc.setNmLocalidade(Texto.removeAcento(Texto.removerEspacosExtra(loc.getNmLocalidade().replace("'", " ")).trim()));
 			CpLocalidade localidade = CpDao.getInstance().consultarLocalidadesPorNomeUF(loc);
 			if(localidade == null) {
-				return "Linha " + linha +": LOCALIDADE não cadastrada" + System.lineSeparator();
+				return "Linha " + linha +": UF/LOCALIDADE não cadastrada" + System.lineSeparator();
 			} else {
 				localidades.add(localidade);
 				loc = localidade;
@@ -252,8 +253,8 @@ public class Excel {
     public InputStream uploadExcelLotacao(File file, CpOrgaoUsuario orgaoUsuario) {
     	InputStream inputStream = null;
     	String problemas = "";
-        CpUF uf = new CpUF();
-        uf.setIdUF(26L);
+        CpUF uf = null;
+
     	try {
 			FileInputStream fis = new FileInputStream(file); 
 			XSSFWorkbook myWorkBook = new XSSFWorkbook (fis); 
@@ -293,19 +294,31 @@ public class Excel {
 					lot.setSiglaLotacao(celula.toUpperCase().trim());
 				}
 				
-				//LOCALIDADE DA LOTACAO
+				//ESTADO
 				celula = retornaConteudo(row.getCell(2, Row.CREATE_NULL_AS_BLANK));
-				loc.setUF(uf);
-				loc.setNmLocalidade(celula);
-				problemas += validarLocalidadeLotacao(localidades, linha, loc);
 				
+				if(uf == null || !uf.getSigla().equalsIgnoreCase(celula)) {
+					uf = CpDao.getInstance().consultaSiglaUF(celula.toUpperCase());	
+				}
+				
+				if(uf == null) {
+					problemas += "Linha " + linha +": UF não encontrada" + System.getProperty("line.separator");
+				} else {
+					//LOCALIDADE DA LOTACAO
+					celula = retornaConteudo(row.getCell(3, Row.CREATE_NULL_AS_BLANK));
+					loc.setUF(uf);
+					loc.setNmLocalidade(celula);
+					problemas += validarLocalidadeLotacao(localidades, linha, loc);		
+				}
+				
+
 				/*
 				 * Alteracao 24/04/2020
 				 */
 				//Lotacao Pai
 				//celula = retornaConteudo(row.getCell(3, Row.CREATE_NULL_AS_BLANK));
 				//String lotacaopaidescricao = celula;
-				celula = retornaConteudo(row.getCell(3, Row.CREATE_NULL_AS_BLANK));
+				celula = retornaConteudo(row.getCell(4, Row.CREATE_NULL_AS_BLANK));
 				String lotacaopaisigla = celula;
 				if(!celula.equals("")) {
 					DpLotacao lo = CpDao.getInstance().consultarLotacaoPorOrgaoEId(orgaoUsuario, lotacaopaisigla);
@@ -318,7 +331,7 @@ public class Excel {
 				}
 				
 				//LOTACAO EXTERNA
-				celula = retornaConteudo(row.getCell(4, Row.CREATE_NULL_AS_BLANK));
+				celula = retornaConteudo(row.getCell(5, Row.CREATE_NULL_AS_BLANK));
 				problemas += validarIsExternaLotacao(celula.trim(), linha);
 				
 				if(problemas == null || "".equals(problemas.toString())) {

@@ -73,9 +73,9 @@ function popitup(url) {
 	winProp = 'width=' + popW + ',height=' + popH + ',left=' + winleft
 	+ ',top=' + winUp + ',scrollbars=yes,resizable';
 	
-	if(url.includes("/exibir?")) {
-		url = montarUrlDocPDF (url, document.getElementById("visualizador").value);
-	}
+//	if(url.includes("/exibir?")) {
+//		url = montarUrlDocPDF (url, document.getElementById("visualizador").value);
+//	}
 	newwindow = window.open(url, nameWindow, winProp);
 
 	if (window.focus) {

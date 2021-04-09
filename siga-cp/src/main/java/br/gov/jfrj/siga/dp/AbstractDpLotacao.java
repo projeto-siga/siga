@@ -70,10 +70,10 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 		@NamedQuery(name = "listarPorIdInicialDpLotacao", query = "select lot from DpLotacao lot where lot.idLotacaoIni = :idLotacaoIni"),
 		@NamedQuery(name = "consultarPorFiltroDpLotacao", query = "from DpLotacao lot "
 				+ "  where "
-				+ "     (((((upper(lot.siglaLotacao) like upper('%' || :nome || '%') or upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) "
-				+ "	       and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu))))"
-				+ "          or upper(concat(lot.orgaoUsuario.acronimoOrgaoUsu, lot.siglaLotacao)) like upper(:nome || '%')"
-				+ "          or upper(concat(lot.orgaoUsuario.siglaOrgaoUsu, lot.siglaLotacao)) like upper(:nome || '%'))"
+				+ "     ( (upper(lot.siglaLotacao) like upper('%' || :nome || '%') or upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) "
+				+ "	       and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "          or ( :nome != null and (upper(concat(lot.orgaoUsuario.acronimoOrgaoUsu, lot.siglaLotacao)) like upper(:nome || '%')"
+				+ "          or upper(concat(lot.orgaoUsuario.siglaOrgaoUsu, lot.siglaLotacao)) like upper(:nome || '%'))))"
 				+ "	and lot.dataFimLotacao = null"
 				+ "	order by lot.nomeLotacao"),
 		@NamedQuery(name = "consultarQuantidadeDpLotacao", query = "select count(lot) from DpLotacao lot "

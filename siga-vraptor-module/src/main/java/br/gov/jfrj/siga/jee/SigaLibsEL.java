@@ -18,6 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.jee;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
@@ -25,6 +26,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,7 +39,8 @@ import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.ReaisPorExtenso;
 import br.gov.jfrj.siga.base.SigaCalendar;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -44,10 +48,14 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-import net.sf.ehcache.config.CacheConfiguration;
+
+//import net.sf.ehcache.Cache;
+//import net.sf.ehcache.CacheManager;
+//import net.sf.ehcache.Element;
+//import net.sf.ehcache.config.CacheConfiguration;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 public class SigaLibsEL {
 	private static String month[] = new String[] { "Jan", "Fev", "Mar", "Abr",
@@ -318,43 +326,32 @@ public class SigaLibsEL {
 			throws UnsupportedEncodingException {
 		return URLEncoder.encode(value, "UTF-8");
 	}
-
+	
+	static LoadingCache<String, String> cache = CacheBuilder.newBuilder().maximumSize(1000)
+			.expireAfterWrite(5, TimeUnit.MINUTES).build(new CacheLoader<String, String>() {
+				public String load(String source) throws Exception {
+					Long idOrgaoUsu = Long.valueOf(source.split("-")[1]);
+					ProcessadorFreemarkerSimples p = new ProcessadorFreemarkerSimples();
+					Map attrs = new HashMap();
+					attrs.put("nmMod", "macro complementoHEAD");
+					attrs.put("template", "[@complementoHEAD/]");
+					try {
+						String s = p.processarModelo(CpDao.getInstance().consultarOrgaoUsuarioPorId(idOrgaoUsu), attrs, null).trim();
+						return s;
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					return "";
+				}
+			});
+	
 	public static String getComplementoHead(CpOrgaoUsuario oragaoUsu) {
-		final String CACHE_GENERIC_HOURS = "cache.hours";
-		CacheManager manager = CacheManager.getInstance();
-		Cache cache;
-
-		if (!manager.cacheExists(CACHE_GENERIC_HOURS)) {
-			manager.addCache(CACHE_GENERIC_HOURS);
-			cache = manager.getCache(CACHE_GENERIC_HOURS);
-			CacheConfiguration config;
-			config = cache.getCacheConfiguration();
-			config.setTimeToIdleSeconds(3600);
-			config.setTimeToLiveSeconds(36000);
-			config.setMaxElementsInMemory(10000);
-			config.setMaxElementsOnDisk(1000000);
-		} else
-			cache = manager.getCache(CACHE_GENERIC_HOURS);
-
-		Element element;
 		String key = "complementoHEAD-" + oragaoUsu.getId();
-		if ((element = cache.get(key)) != null) {
-			return (String) element.getValue();
-		}
-
-		ProcessadorFreemarkerSimples p = new ProcessadorFreemarkerSimples();
-		Map attrs = new HashMap();
-		attrs.put("nmMod", "macro complementoHEAD");
-		attrs.put("template", "[@complementoHEAD/]");
 		try {
-			String s = p.processarModelo(oragaoUsu, attrs, null).trim();
-			cache.put(new Element(key, s));
-			return s;
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return cache.get(key);
+		} catch (ExecutionException e) {
+			throw new RuntimeException("Não foi possível obter o complemento: " + key, e);
 		}
-		return "";
 	}
 
 	public static Boolean podeCadastrarQqSubstituicaoPorConfiguracao(

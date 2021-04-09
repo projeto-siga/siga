@@ -11,7 +11,7 @@
 </siga:cfg-lista-cabecalho>
 
 <siga:cfg-lista-itens>
-	<td style="${tipoDeConfiguracao.style('DEFINICAO_DE_PROCEDIMENTO')}">${config.definicaoDeProcedimento.nome}<c:if
+	<td style="${tipoDeConfiguracao.style('DEFINICAO_DE_PROCEDIMENTO')}">${cfg.definicaoDeProcedimento.nome}<c:if
 			test="${not empty configuracao.definicaoDeProcedimento}">${configuracao.definicaoDeProcedimento.nome}</c:if></td>
 </siga:cfg-lista-itens>
 

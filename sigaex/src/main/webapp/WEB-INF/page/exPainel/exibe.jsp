@@ -40,7 +40,7 @@ function sbmtDoc() {
 			</div>
 		</div>
 		<div class="card-body">
-			<form id="frmDoc" action="exibir" enctype="multipart/form-data" class="form" method="GET">
+			<form id="frmDoc" action="exibir" enctype="multipart/form-data" class="form" method="get">
 				<div class="row">
 					<input type="hidden" name="postback" value="1" />
 					<div class="col-9">

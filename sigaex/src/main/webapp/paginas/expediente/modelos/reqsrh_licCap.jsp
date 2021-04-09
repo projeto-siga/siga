@@ -82,7 +82,7 @@
 				<mod:texto titulo="Cidade" var="city" largura="20" />
 				<mod:selecao titulo="UF" var="uf" opcoes="AC;AL;AM;AP;BA;CE;DF;ES;GO;MA;MG;MT;MS;PA;PB;PE;PI;PR;RJ;RN;RO;RR;RS;TO;SC;SE;SP" reler="sim" />
 				<mod:texto titulo="Telefone" var="telefone" largura="12" />
-		     </mo:grupo>
+		     </mod:grupo>
 		
 		     <mod:grupo>
 		        <mod:texto titulo="Carga Horária" var="cargahora"largura="10"/>
@@ -96,7 +96,6 @@
 		    	<mod:caixaverif titulo="Beneficiário de Bolsa de Estudo" 
 				var="bolsaestu" reler="sim" />
 		     </mod:grupo>
-	</mod:grupo>
 	          <hr style="color: #FFFFFF;" />    
 	
 	          	          

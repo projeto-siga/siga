@@ -246,6 +246,11 @@
   <function-signature>java.lang.String quebraLinhas(java.lang.String)</function-signature>
  </function>
  <function>
+  <name>stringParaMinusculaNomes</name>
+  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
+  <function-signature>java.lang.String f:stringParaMinusculaNomes(java.lang.String)</function-signature>
+ </function>
+ <function>
   <name>primeiraMaiuscula</name>
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
   <function-signature>java.lang.String primeiraMaiuscula(java.lang.String)</function-signature>

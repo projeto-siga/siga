@@ -4,7 +4,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
+
 
 <c:set var="esconderTexto" value="sim" scope="request" />
 <mod:modelo urlBase="/paginas/expediente/modelos/memorando.jsp">

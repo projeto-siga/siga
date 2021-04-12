@@ -2,6 +2,7 @@
 	buffer="128kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
@@ -124,7 +125,7 @@
 						</c:if>
 					</div>
 				</div>
-					<div class="row ${((exDocumentoDTO.tiposDocumento).size() != 1 or (exDocumentoDTO.tipoDocumento != 'interno_capturado' and podeEditarData) or (exDocumentoDTO.listaNivelAcesso.size() != 1) or (!exDocumentoDTO.eletronicoFixo))? '': 'd-none'}">
+					<div class="row ${((fn:length(exDocumentoDTO.tiposDocumento) != 1) or (exDocumentoDTO.tipoDocumento != 'interno_capturado' and podeEditarData) or (fn:length(exDocumentoDTO.listaNivelAcesso) != 1) or (!exDocumentoDTO.eletronicoFixo)) ? '' : 'd-none'}">
 						<div class="col-sm-2 ${(exDocumentoDTO.tiposDocumento).size() != 1 ? '': 'd-none'} ${hide_only_GOVSP}">
 							<div class="form-group">
 								<label for="exDocumentoDTO.idTpDoc">Origem</label>
@@ -352,7 +353,7 @@
 								<c:when test='${exDocumentoDTO.tipoDestinatario == 2}'>
 									<input type="hidden" name="campos" value="lotacaoDestinatarioSel.id" />
 									<label>&nbsp;&nbsp;&nbsp;</label>
-									<siga:selecao propriedade="lotacaoDestinatario" inputName="exDocumentoDTO.lotacaoDestinatario" tema="simple" idAjax="destinatario2" reler="ajax" modulo="siga" />
+									<siga:selecao propriedade="lotacaoDestinatario" inputName="exDocumentoDTO.lotacaoDestinatario" tema="simple" idAjax="destinatario2" reler="ajax" modulo="siga" onchangeid="updateURL()" />
 									<!--  idAjax="destinatario" -->
 								</c:when>
 								<c:when test='${exDocumentoDTO.tipoDestinatario == 3}'>
@@ -427,7 +428,7 @@
 								<siga:span id="classificacao" depende="forma;modelo">
 									<!-- OI -->
 									<siga:selecao desativar="${desativarClassif}" modulo="sigaex" propriedade="classificacao"
-										inputName="exDocumentoDTO.classificacao" urlAcao="buscar" urlSelecionar="selecionar" tema="simple" />
+										inputName="exDocumentoDTO.classificacao" urlAcao="buscar" urlSelecionar="selecionar" tema="simple" onchangeid="updateURL()" />
 									<!--  idAjax="classificacao" -->
 								</siga:span>
 							</div>
@@ -463,7 +464,7 @@
 						<div class="col-sm-8">
 							<div class="form-group">
 								<label>Descrição</label>
-								<textarea name="exDocumentoDTO.descrDocumento" cols="80" rows="2" id="descrDocumento" class="form-control">${exDocumentoDTO.descrDocumento}</textarea>
+								<textarea name="exDocumentoDTO.descrDocumento" cols="80" rows="2" id="descrDocumento" class="form-control" oninput="updateURL()">${exDocumentoDTO.descrDocumento}</textarea>
 								<small class="form-text text-muted">(preencher o campo acima com palavras-chave, sempre usando substantivos, gênero masculino e
 									singular).</small>
 							</div>

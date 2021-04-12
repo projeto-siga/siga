@@ -3,7 +3,7 @@
 <%@ taglib uri="/WEB-INF/tld/func.tld" prefix="conv"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
+
 
 <mod:modelo>
 	<mod:entrevista>

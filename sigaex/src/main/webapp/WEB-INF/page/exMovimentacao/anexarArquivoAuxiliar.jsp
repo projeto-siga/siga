@@ -25,7 +25,7 @@
 				</h5>
 			</div>
 			<div class="card-body">
-				<form action="anexar_arquivo_auxiliar_gravar" method="POST" onsubmit="sbmt.disabled=true;"
+				<form action="anexar_arquivo_auxiliar_gravar" method="post" onsubmit="sbmt.disabled=true;"
 					enctype="multipart/form-data" class="form">
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="sigla" value="${sigla}" />

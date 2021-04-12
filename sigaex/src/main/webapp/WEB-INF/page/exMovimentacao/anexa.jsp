@@ -90,7 +90,7 @@
 					<h5>Anexação de Arquivo - ${mob.siglaEDescricaoCompleta}</h5>
 				</div>
 				<div class="card-body">
-					<form action="anexar_gravar" method="POST"
+					<form action="anexar_gravar" method="post"
 						enctype="multipart/form-data" class="form">
 						<input type="hidden" name="postback" value="1" /> <input
 							type="hidden" name="sigla" value="${sigla}" />
@@ -212,7 +212,7 @@
 					</c:if>
 				</h2>
 
-				<form action="anexar_gravar" method="POST"
+				<form action="anexar_gravar" method="post"
 					enctype="multipart/form-data" class="form">
 					<input type="hidden" name="popup" value="true" /> <input
 						type="hidden" name="copia" id="copia" value="false" />

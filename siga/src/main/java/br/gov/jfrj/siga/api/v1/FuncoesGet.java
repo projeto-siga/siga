@@ -12,7 +12,7 @@ import br.gov.jfrj.siga.api.v1.ISigaApiV1.FuncoesGetRequest;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.FuncoesGetResponse;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.IFuncoesGet;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpFuncaoConfiancaDaoFiltro;

@@ -194,6 +194,10 @@
 			</c:forEach>
 		</div>
 		<c:if test="${empty pi.definicaoDeTarefaCorrente.definicaoDeDesvio}">
+				<c:set var="resp" value="${pi.obterProximoResponsavel()}" />
+				<c:if test="${not empty resp}">
+					<c:set var="resp" value=" &raquo; ${resp}" />
+				</c:if>
 			<button type="submit" name="indiceDoDesvio" value=""
 				class="btn btn-info mr-3">Prosseguir${resp}</button>
 		</c:if>

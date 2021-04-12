@@ -899,13 +899,16 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	public boolean isEmTransito() {
 		if (isApensadoAVolumeDoMesmoProcesso())
 			return false;
-		return sofreuMov(new long[] { ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA,
+		return getTramitePendente() != null;
+
+	}
+	
+	public ExMovimentacao getTramitePendente() {
+		return getUltimaMovimentacao(new long[] { ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA },
-
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO);
-
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA },new long[] { ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO },
+				this, false, null);
 	}
 
 	/**

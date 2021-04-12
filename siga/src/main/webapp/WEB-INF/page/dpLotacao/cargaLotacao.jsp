@@ -12,7 +12,7 @@
 				<h5>Carga de Planilha Unidade</h5>
 			</div>
 			<div class="card-body">
-			<form action="carga" method="POST" enctype="multipart/form-data" class="form">
+			<form action="carga" method="post" enctype="multipart/form-data" class="form">
 				<input type="hidden" name="postback" value="1" /> 
 				<input type="hidden" name="sigla" value="${sigla}" />				
 				<div class="row">
@@ -33,7 +33,8 @@
 								<dt>&#149;&#160;A planilha deve conter os seguintes campos/formatos:</dt>
 								<dd>- Nome: m&aacute;ximo de 100 caracteres alfanum&eacute;ricos, hífen , vírgula e ponto (letras, n&uacute;meros, "-", "," e ".")</dd>
 								<dd>- Sigla: m&aacute;ximo de 20 caracteres alfanum&eacute;ricos, barra e hífen (letras, n&uacute;meros, "/" e "-")</dd>
-								<dd>- Localidade: m&aacute;ximo de 256 caracteres alfanum&eacute;ricos. Somente nome de Munic&iacute;pios existentes no Estado.</dd>
+								<dd>- UF: sigla do Estado, por exemplo: SP.</dd>
+								<dd>- Localidade: m&aacute;ximo de 256 caracteres alfanum&eacute;ricos (Nome do município).</dd>
 								<dd>- Sigla Lotação PAI: m&aacute;ximo de 20 caracteres alfanum&eacute;ricos, barra e hífen (letras, n&uacute;meros, "/" e "-")</dd>
 								<dd>  (A Sigla da Lotaç&atilde;o pai define o nível de hierarquia, indicando a qual unidade tal cadastro ir&aacute; pertencer)</dd>
 								<dd>- Unidade Externa: SIM ou N&Atilde;O (caso a coluna n&atilde;o seja informada ser&aacute; considerado como N&Atilde;O)</dd>																

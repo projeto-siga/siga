@@ -137,7 +137,6 @@
 					<c:if test="${requestScope[f:concat('motivo',i)]== requestScope[f:concat('motivo',x)]}">
 						<input type="hidden"  name="marcacao${x}" value="tchau"/>
 						<tr>
-						
 				  			<td>${f:quebraLinhas(f:stringParaMinusculaNomes(requestScope[f:concat('substituto',x)]))}</td>
 				  			<td>${requestScope[f:concat('matricula',x)]}</td>
 				  			<td>${f:quebraLinhas(f:stringParaMinusculaNomes(requestScope[f:concat('titular',x)]))}</td>	

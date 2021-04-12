@@ -16,7 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package br.gov.jfrj.siga.base;
+package br.gov.jfrj.siga.base.util;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
@@ -204,7 +204,7 @@ public class Texto {
 		string = string.replaceAll("([a-z])'s([^a-z])", "$1s$2");
 		string = string.replaceAll("[^\\w]", "-").replaceAll("-{2,}", "-");
 		// Get rid of any - at the start and end.
-		string.replaceAll("-+$", "").replaceAll("^-+", "");
+		string = string.replaceAll("-+$", "").replaceAll("^-+", "");
 
 		if (underscore)
 			string = string.replaceAll("-", "_");

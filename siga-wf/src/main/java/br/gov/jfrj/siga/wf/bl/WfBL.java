@@ -51,6 +51,7 @@ import br.gov.jfrj.siga.wf.model.WfMovTermino;
 import br.gov.jfrj.siga.wf.model.WfMovTransicao;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
 import br.gov.jfrj.siga.wf.util.WfEngine;
 import br.gov.jfrj.siga.wf.util.WfHandler;
 import br.gov.jfrj.siga.wf.util.WfResp;
@@ -127,16 +128,22 @@ public class WfBL extends CpBL {
 
 		for (WfDefinicaoDeTarefa td : pi.getDefinicaoDeProcedimento().getDefinicaoDeTarefa()) {
 			if (td.getTipoDeTarefa() == null)
-				throw new AplicacaoException("Erro na inicialização de um procedimento de workflow do diagrama '"
-						+ pi.getDefinicaoDeProcedimento().getSigla()
-						+ "', não foi possível identificar o tipo da tarefa"
-						+ (td.getTitle() != null ? "'" + td.getTitle() + "'" : ""));
+				throwErroDeInicializacao(pi, td, "não foi possível identificar o tipo da tarefa");
 			if (td.getTipoDeTarefa().isExigirResponsavel()) {
 				WfResp r = pi.calcResponsible(td);
 				if (r == null)
-					throw new AplicacaoException("Erro na inicialização de um procedimento de workflow do diagrama '"
-							+ pi.getDefinicaoDeProcedimento().getSigla()
-							+ "', não foi possível calcular o responsável pela tarefa '" + td.getTitle() + "'");
+					throwErroDeInicializacao(pi, td, "não foi possível calcular o responsável pela tarefa");
+			}
+			if (td.getTipoDeTarefa() == WfTipoDeTarefa.INCLUIR_DOCUMENTO) {
+				if (td.getRefId() == null)
+					throwErroDeInicializacao(pi, td,
+							"não foi definido o modelo para a inclusão de documento na tarefa");
+				if (pi.getPrincipal() == null)
+					throwErroDeInicializacao(pi, td,
+							"não foi definido o principal para a inclusão de documento na tarefa");
+				if (pi.getTipoDePrincipal() != WfTipoDePrincipal.DOC)
+					throwErroDeInicializacao(pi, td,
+							"o principal não é um documento para a inclusão de documento na tarefa");
 			}
 		}
 
@@ -151,6 +158,12 @@ public class WfBL extends CpBL {
 		}
 
 		return pi;
+	}
+
+	private String throwErroDeInicializacao(WfProcedimento pi, WfDefinicaoDeTarefa td, String mensagem) {
+		throw new AplicacaoException("Erro na inicialização de um procedimento de workflow do diagrama '"
+				+ pi.getDefinicaoDeProcedimento().getSigla() + "', " + mensagem
+				+ (td.getTitle() != null ? " '" + td.getTitle() + "'" : ""));
 	}
 
 	public void prosseguir(String event, Integer detourIndex, Map<String, Object> param, DpPessoa titular,

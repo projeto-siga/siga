@@ -37,7 +37,7 @@ import com.crivano.jflow.model.enm.ProcessInstanceStatus;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -764,6 +764,10 @@ public class WfProcedimento extends Objeto
 	public String getDescricao() {
 		return getDefinicaoDeProcedimento().getDescricao()
 				+ (getDefinicaoDeTarefaCorrente() != null ? " - " + getDefinicaoDeTarefaCorrente().getNome() : "");
+	}
+
+	public String obterProximoResponsavel() {
+		return WfDefinicaoDeDesvio.obterProximoResponsavel(this, null);
 	}
 
 }

@@ -25,6 +25,19 @@ A lista completa de tipos de tarefas, detalhes de como cada uma delas funciona e
 Tipos de Tarefas
 ================
 
+.. csv-table:: Resumo dos Tipos de Tarefas
+   :header: "Tipo de Tarefa", "Descrição", "Forma de avançar"
+   :widths: auto
+
+   "Formulário", "Aguarda o usuário realizar uma atividade", "Após o usuário informar prosseguimento"
+   "Decisão", "Define a próxima tarefa a ser executada com base em regra pré-definida", "Automática, após aplicação da regra pelo sistema"
+   "Email", "Envia um email para o destino previamente informado", "Automática, após envio do email pelo sistema"
+   "Executar, ", "Tarefa de uso exclusivo da área de TI, visando a execução de rotinas programadas", "Automática, após execução da rotina pelo sistema"
+   "Principal: Aguardar assinatura", "Aguarda a assinatura do documento principal. Utilizada quando o fluxo é iniciado antes do documento vinculado ao mesmo estar assinado e o fluxo não deve avançar antes da assinatura.", "Após o usuário assinar o documento principal"
+   "Principal: Tramitar", "Realiza a tramitação automática do documento principal para o destino definido", "Automática, após o registro da tramitação pelo sistema"
+   "Principal: Arquivar", "Realiza o arquivamento do documento principal", "Automática, após o registro do arquivamento pelo sistema"
+   "Principal: Incluir documento", "Aguardar a inclusão de um documento no documento principal (Juntada)", "Após o usuário juntar o documento"
+
 Formulário
 ----------
 
@@ -117,3 +130,53 @@ Configure a tarefa informando o responsável peja juntada e também o modelo do 
 
 .. image:: cadastro-de-diagramas-incluir-documento.png
 
+Tipos de Destinatários
+======================
+
++------------------------------------+-----------------------------------+
+| Tipo de responsável                | Descrição                         |
++------------------------------------+-----------------------------------+
+| Pessoa                             | Para quando a tarefa deve ser     |
+|                                    | executada por uma pessoa          |
+|                                    | pré-determinada (pessoa fixa)     |
++------------------------------------+-----------------------------------+
+| Lotação                            | Para quando a tarefa deve ser     |
+|                                    | executada por uma lotação         |
+|                                    | pré-determinada (lotação fixa)    |
++------------------------------------+-----------------------------------+
+| Tabelado                           |                                   |
++------------------------------------+-----------------------------------+
+| Procedimento: Titular              | Quando a tarefa deve ser          |
+|                                    | executada pela pessoa que iniciou |
+|                                    | o fluxo                           |
++------------------------------------+-----------------------------------+
+| Procedimento: Lotação do Titular   | Quando a tarefa deve ser          |
+|                                    | executada pela lotação da pessoa  |
+|                                    | que iniciou o fluxo.              |
++------------------------------------+-----------------------------------+
+| Principal: Cadastrante,            | Define o responsável a partir das |
+| Principal: Lotação do Cadastrante, | informações e perfis que constam  |
+| Principal: Titular,                | do documento principal vinculado  |
+| Principal: Lotação do Titular,     | ao fluxo                          |
+| Principal: Subscritor,             |                                   |
+| Principal: Lotação do Subscritor,  |                                   |
+| Principal: Destinatário,           |                                   |
+| Principal: Lotação do              |                                   |
+| Destinatário,                      |                                   |
+| Principal: Gestor,                 |                                   |
+| Principal: Lotação do Gestor,      |                                   |
+| Principal: Fiscal Técnico,         |                                   |
+| Principal: Lotação do Fiscal       |                                   |
+| Técnico,                           |                                   |
+| Principal: Fiscal Administrativo,  |                                   |
+| Principal: Lotação do Fiscal,      |                                   |
+| Administrativo,                    |                                   |
+| Principal: Interessado,            |                                   |
+| Principal: Lotação do Interessado, |                                   |
+| Principal: Interessado,            |                                   |
+| Principal: Lotação do Autorizador, |                                   |
+| Principal: Interessado,            |                                   |
+| Principal: Lotação do Revisor,     |                                   |
+| Principal: Interessado,            |                                   |
+| Principal: Lotação do Liquidante,  |                                   |
++------------------------------------+-----------------------------------+

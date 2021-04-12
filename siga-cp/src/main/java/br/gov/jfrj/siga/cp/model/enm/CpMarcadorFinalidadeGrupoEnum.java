@@ -3,9 +3,9 @@ package br.gov.jfrj.siga.cp.model.enm;
 public enum CpMarcadorFinalidadeGrupoEnum {
 	SISTEMA("Sistema"),
 	//
-	TARJA("Tarja"),
+	GERAL("Geral"),
 	//
-	ETIQUETA("Etiqueta"),
+	LOCAL("Local"),
 	//
 	PASTA("Pasta"),
 	//

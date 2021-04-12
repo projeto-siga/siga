@@ -836,6 +836,13 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	 * Verifica se o mobil está arquivado corrente
 	 */
 	public boolean isArquivadoCorrente() {
+		if (isGeral() && doc().isFinalizado() && doc().getExMobilSet() != null) {
+			for (ExMobil m : doc().getExMobilSet()) {
+				if ((m.isVia() || m.isUltimoVolume()) && !m.isArquivado())
+					return false;
+			}
+			return true;
+		}
 		return sofreuMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE, getMobilParaMovimentarDestinacao());
 	}

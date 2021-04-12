@@ -444,7 +444,7 @@
 				</div>
 			</c:if>
 			<div id="paipainel" style="margin: 0px; padding: 0px; border: 0px; clear: both;overflow:hidden;">
-				<iframe style="visibility: visible; margin: 0px; padding: 0px; min-height: 20em;" name="painel" id="painel" src="" align="right" width="100%" onload="$(document).ready(function () {resize();});redimensionar();removerBotoes();" frameborder="0" scrolling="no"></iframe>
+				<iframe style="visibility: visible; margin: 0px; padding: 0px; min-height: 20em;" name="painel" id="painel" src="" align="right" width="100%" onload="$(document).ready(function () {resize();});redimensionar();removerBotoes();verificarMensagem(this.src)" frameborder="0" scrolling="no"></iframe>
 			</div>
 		</div>
 	</div>
@@ -576,12 +576,6 @@
 				if(!refPDF.includes("completo=1")) {
 					var url = ifr.src;
 					ifr.src = montarUrlDocPDF(ifr.src, "${f:resource('/sigaex.pdf.visualizador')}");
-					
-					document.getElementById('painel').onload = function() {
-						if(window.parent.painel.document.getElementById('errorMessage') != null) {
-							ifr.src = url;
-						}
-					}
 				}
 				
 				ifrp.style.border = "1px solid black";
@@ -607,12 +601,6 @@
 				if(!refPDF.includes("completo=1")) {
 					var url = ifr.src;
 					ifr.src = montarUrlDocPDF(ifr.src, "${f:resource('/sigaex.pdf.visualizador')}");
-					
-					document.getElementById('painel').onload = function() {
-						if(window.parent.painel.document.getElementById('errorMessage') != null) {
-							ifr.src = url;
-						}
-					}
 				}
 				ifrp.style.border = "0px solid black";
 				ifr.height = pageHeight() - 300;
@@ -628,6 +616,21 @@
 				resize();
 			}, 100);
 		});
+	}
+	
+	function verificarMensagem(url) {
+		if(url.includes("file=")) {
+			if((window.parent.painel.document.getElementById('errorMessage') != null &&
+					window.parent.painel.document.getElementById('errorMessage').textContent != "" )) {
+				document.getElementById('painel').src = decodeURIComponent(url.substring(url.indexOf("file=")+5));
+			} else {
+				if(window.parent.painel.document.getElementsByClassName("textLayer").length == 0) {
+					setTimeout(function() {
+						verificarMensagem(url);
+					}, 100);
+				}
+			}
+		}	
 	}
 
 	exibir(window.htmlAtual, window.pdfAtual);

@@ -83,7 +83,7 @@ public abstract class AbstractCpMarcador extends HistoricoAuditavelSuporte imple
 	@Column(name = "ID_ICONE")
 	private CpMarcadorIconeEnum idIcone;
 
-	@Column(name = "ID_FINALIDADE_MARCADOR")
+	@Column(name = "ID_TP_MARCADOR")
 	private CpMarcadorFinalidadeEnum idFinalidade;
 
 //	@Column(name = "ID_TP_APLICACAO_MARCADOR")

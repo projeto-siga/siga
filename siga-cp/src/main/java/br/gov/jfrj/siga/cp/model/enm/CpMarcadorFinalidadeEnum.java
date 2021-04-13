@@ -20,7 +20,7 @@ public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
 			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
 			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.OPCIONAL, false),
 	//
-	GERAL_AGENDADA(3, CpMarcadorFinalidadeGrupoEnum.GERAL, "Geral Agendada",
+	GERAL_AGENDADA(3, CpMarcadorFinalidadeGrupoEnum.GERAL, "Geral Agendado",
 			"Marcador que pode ser definido por qualquer pessoa e estará visível, a partir de uma data definida, para quem receber o documento",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.TODAS_AS_VIAS_OU_ULTIMO_VOLUME,
 			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.DESATIVADA,
@@ -34,20 +34,20 @@ public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
 			CpMarcadorTipoExibicaoEnum.MENOR_DATA, CpMarcadorTipoInteressadoEnum.ATENDENTE,
 			CpMarcadorTipoTextoEnum.OPCIONAL, false),
 	//
-	GERAL_DIRECIONADA(5, CpMarcadorFinalidadeGrupoEnum.GERAL, "Geral Direcionada",
+	GERAL_DIRECIONADA(5, CpMarcadorFinalidadeGrupoEnum.GERAL, "Geral Direcionado",
 			"Marcador que pode ser definido por qualquer pessoa e estará visível para uma lotação ou pessoa  definida, independente da localização do documento",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.GERAL,
 			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
 			CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA, CpMarcadorTipoTextoEnum.OPCIONAL, false),
 	//
-	GERAL_AGENDADA_DIRECIONADA(7, CpMarcadorFinalidadeGrupoEnum.GERAL, "Geral Agendada Direcionada",
+	GERAL_AGENDADA_DIRECIONADA(7, CpMarcadorFinalidadeGrupoEnum.GERAL, "Geral Agendado Direcionado",
 			"Marcador que pode ser definido por qualquer pessoa e estará visível, a partir de uma data definida, para uma lotação ou pessoa definida, independente da localização do documento",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.GERAL,
 			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.DESATIVADA,
 			CpMarcadorTipoExibicaoEnum.MENOR_DATA, CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA,
 			CpMarcadorTipoTextoEnum.OPCIONAL, false),
 	//
-	GERAL_AGENDADA_XOR(6, CpMarcadorFinalidadeGrupoEnum.GERAL, "Geral Agendada Mutuamente Exclusiva",
+	GERAL_AGENDADA_XOR(6, CpMarcadorFinalidadeGrupoEnum.GERAL, "Geral Agendado Mutuamente Exclusivo",
 			"Marcador, mutuamente exclusivo, que pode ser definido por qualquer pessoa e estará visível, a partir de uma data definida, para quem receber com o documento. Apenas um marcador desse tipo pode ser definido para um mesmo documento",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.TODAS_AS_VIAS_OU_ULTIMO_VOLUME,
 			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
@@ -59,13 +59,13 @@ public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
 			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
 			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.OPCIONAL, false),
 	//
-	LOCAL_AGENDADA(101, CpMarcadorFinalidadeGrupoEnum.LOCAL, "Local Agendada",
+	LOCAL_AGENDADA(101, CpMarcadorFinalidadeGrupoEnum.LOCAL, "Local Agendado",
 			"Marcador que pode ser definido por pessoa da minha lotação e estará visível, a partir de uma data definida, para quem receber qualquer via do documento",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.TODAS_AS_VIAS_OU_ULTIMO_VOLUME,
 			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
 			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.OPCIONAL, false),
 	//
-	LOCAL_DIRECIONADA(102, CpMarcadorFinalidadeGrupoEnum.LOCAL, "Local Direcionada",
+	LOCAL_DIRECIONADA(102, CpMarcadorFinalidadeGrupoEnum.LOCAL, "Local Direcionado",
 			"Marcador que pode ser definido por pessoa da minha lotação e estará visível para uma lotação ou pessoa definida, independente da localização do documento",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.GERAL,
 			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,

@@ -232,9 +232,10 @@ public class FlyingSaucer implements ConversorHtml {
 		html = html.replace("<br></br>", "<br/>");
 		return html;
 	}
-	
+
 	private String corrigirNBSP(String html) {
-		// Remove &nbsp; pois isso não está sendo corretamente renderizado pelo no Flying Saucer
+		// Remove &nbsp; pois isso não está sendo corretamente renderizado pelo no
+		// Flying Saucer
 		html = html.replace("&nbsp;", " ");
 		return html;
 	}
@@ -314,7 +315,7 @@ public class FlyingSaucer implements ConversorHtml {
 //		Nheengatu h2p = new Nheengatu();
 		String html = SwaggerUtils.convertStreamToString(FlyingSaucer.class.getResourceAsStream("pagina.html"));
 		byte[] ab = h2p.converter(html, (byte) 0);
-		ab = Documento.stamp(ab, "TRF2-MEM-2020/11111", false, false, false, false, true,
+		ab = Stamp.stamp(ab, "TRF2-MEM-2020/11111", false, false, false, false, true,
 				"https://siga.jfrj.jus.br/sigaex/public/app/autenticar?n=1111111-1111",
 				"Assinado digitalmente por USUARIO TESTE. Documento No: 1111111-1111 - https://siga.jfrj.jus.br/sigaex/public/app/autenticar?n=1111111-1111",
 				1, 1, 1, "Justiça Federal", "TRF2", "");

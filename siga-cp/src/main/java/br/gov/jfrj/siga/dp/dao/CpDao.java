@@ -458,7 +458,11 @@ public class CpDao extends ModeloDao {
 	@SuppressWarnings("unchecked")
 	public List<DpCargo> consultarPorFiltro(final DpCargoDaoFiltro o, final int offset, final int itemPagina) {
 		try {
-			final Query query = em().createNamedQuery("consultarPorFiltroDpCargo");
+			final Query query;
+			if (!o.isBuscarInativos())
+				query = em().createNamedQuery("consultarPorFiltroDpCargo");
+			else
+				query = em().createNamedQuery("consultarPorFiltroDpCargoInclusiveInativos");
 			if (offset > 0) {
 				query.setFirstResult(offset);
 			}
@@ -514,7 +518,11 @@ public class CpDao extends ModeloDao {
 
 	public int consultarQuantidade(final DpCargoDaoFiltro o) {
 		try {
-			final Query query = em().createNamedQuery("consultarQuantidadeDpCargo");
+			final Query query;
+			if (!o.isBuscarInativos())
+				query = em().createNamedQuery("consultarQuantidadeDpCargo");
+			else
+				query = em().createNamedQuery("consultarQuantidadeDpCargoInclusiveInativos");
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
@@ -541,7 +549,11 @@ public class CpDao extends ModeloDao {
 	public List<DpFuncaoConfianca> consultarPorFiltro(final DpFuncaoConfiancaDaoFiltro o, final int offset,
 			final int itemPagina) {
 		try {
-			final Query query = em().createNamedQuery("consultarPorFiltroDpFuncaoConfianca");
+			final Query query;
+			if (!o.isBuscarInativas())
+				query = em().createNamedQuery("consultarPorFiltroDpFuncaoConfianca");
+			else
+				query = em().createNamedQuery("consultarPorFiltroDpFuncaoConfiancaInclusiveInativas");
 			if (offset > 0) {
 				query.setFirstResult(offset);
 			}
@@ -615,7 +627,11 @@ public class CpDao extends ModeloDao {
 
 	public int consultarQuantidade(final DpFuncaoConfiancaDaoFiltro o) {
 		try {
-			final Query query = em().createNamedQuery("consultarQuantidadeDpFuncaoConfianca");
+			final Query query;
+			if (!o.isBuscarInativas())
+				query = em().createNamedQuery("consultarQuantidadeDpFuncaoConfianca");
+			else
+				query = em().createNamedQuery("consultarQuantidadeDpFuncaoConfiancaInclusiveInativas");
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');

@@ -85,8 +85,29 @@ function sbmt(offset) {
 									<c:url var="url" value="/app/funcao/editar">
 										<c:param name="id" value="${funcao.id}"></c:param>
 									</c:url>
-									<input type="button" value="Alterar"
-													class="btn btn-primary" onclick="javascript:location.href='${url}'"/>				
+									<c:url var="urlAtivarInativar" value="/app/funcao/ativarInativar">
+										<c:param name="id" value="${funcao.id}"></c:param>
+									</c:url>
+									<div class="btn-group">								  
+									  <c:choose>
+										<c:when test="${empty funcao.dataFimFuncao}">
+											<a href="${urlAtivarInativar}" onclick='javascript:atualizarUrl("javascript:submitPost(\"${urlAtivarInativar}\")","Deseja inativar o cadastro selecionado?");return false;' class="btn btn-primary" role="button" 
+												aria-pressed="true" data-siga-modal-abrir="confirmacaoModal" style="min-width: 80px;">Inativar</a>
+											<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+											    <span class="sr-only"></span>
+										    </button>
+										</c:when>
+										<c:otherwise>
+											<a href="javascript:submitPost('${urlAtivarInativar}')" class="btn btn-danger" role="button" aria-pressed="true" style="min-width: 80px;">Ativar</a>
+											<button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+											    <span class="sr-only"></span>
+										    </button>
+										</c:otherwise>
+									  </c:choose>	  
+									  <div class="dropdown-menu">						  
+									  	<a href="${url}" class="dropdown-item" role="button" aria-pressed="true">Alterar</a>								   
+									  </div>
+									</div>				
 								</td>
 							<%--	<td align="left">									
 					 					<a href="javascript:if (confirm('Deseja excluir o orgão?')) location.href='/siga/app/orgao/excluir?id=${orgao.idOrgao}';">
@@ -99,6 +120,13 @@ function sbmt(offset) {
 							 --%>							
 							</tr>
 						</siga:paginador>
+						<siga:siga-modal id="confirmacaoModal" exibirRodape="false" tituloADireita="Confirma&ccedil;&atilde;o">
+							<div id="msg" class="modal-body"></div>
+					     	<div class="modal-footer">
+					       		<button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>		        
+					       		<a href="#" class="btn btn-success btn-confirmacao" role="button" aria-pressed="true">Sim</a>
+							</div>
+						</siga:siga-modal>
 					</tbody>
 				</table>				
 				
@@ -135,6 +163,17 @@ function sbmt(offset) {
 		frm.action = action;
 		frm.submit();
 		return;
+	}
+	
+	function submitPost(url) {
+		var frm = document.getElementById('listar');
+		frm.method = "POST";
+		sbmtAction('listar',url);
+	}
+	
+	function atualizarUrl(url, msg){
+		$('.btn-confirmacao').attr("href", url);
+		document.getElementById("msg").innerHTML = msg;
 	}
 </script>
 </siga:pagina>

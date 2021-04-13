@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.io.FileUtils;
 
 import br.com.caelum.vraptor.Controller;
@@ -145,6 +146,7 @@ public class DpCargoController extends
 			}
 			dpCargo.setIdOrgaoUsu(idOrgaoUsu);
 			dpCargo.setNome(Texto.removeAcento(nome));
+			dpCargo.setBuscarInativos(Boolean.TRUE);
 			setItens(CpDao.getInstance().consultarPorFiltro(dpCargo, paramoffset, 15));
 			result.include("itens", getItens());
 			result.include("tamanho", dao().consultarQuantidade(dpCargo));
@@ -158,6 +160,30 @@ public class DpCargoController extends
 		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));		
 		result.include("temPermissaoParaExportarDados", temPermissaoParaExportarDados());
 	}	
+	
+	@Transacional
+	@Post("/app/cargo/ativarInativar")
+	public void ativarInativar(final Long id) throws Exception {
+		DpCargo cargo = dao().consultar(id, DpCargo.class, false);
+		Date dt = dao().consultarDataEHoraDoServidor();
+
+		// ativar
+		if (cargo.getDataFimCargo() != null ) {
+			DpCargo cargoNovo = new DpCargo();
+			PropertyUtils.copyProperties(cargoNovo, cargo);
+			cargoNovo.setId(null);
+			cargoNovo.setDataFim(null);
+			dao().gravarComHistorico(cargoNovo, cargo, dt, getIdentidadeCadastrante());
+		} else {// inativar
+			cargo.setDataFimCargo(dt);
+			try {
+				dao().gravarComHistorico(cargo, getIdentidadeCadastrante());
+			} catch (final Exception e) {
+				throw new AplicacaoException("Erro na gravação", 0, e);
+			}
+		}
+		this.result.redirectTo(this).lista(0, null, "");
+	}
 		
 	@Post
 	@Path("app/cargo/exportarCsv")

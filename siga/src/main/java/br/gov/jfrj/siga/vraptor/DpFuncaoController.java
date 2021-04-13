@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.io.FileUtils;
 
 import br.com.caelum.vraptor.Controller;
@@ -134,6 +135,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 			}
 			dpFuncao.setIdOrgaoUsu(idOrgaoUsu);
 			dpFuncao.setNome(Texto.removeAcento(nome));
+			dpFuncao.setBuscarInativas(Boolean.TRUE);
 			setItens(CpDao.getInstance().consultarPorFiltro(dpFuncao, paramoffset, 15));
 			result.include("itens", getItens());
 			result.include("tamanho", dao().consultarQuantidade(dpFuncao));
@@ -282,6 +284,30 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 		} catch (final Exception e) {
 			dao().rollbackTransacao();
 			throw new AplicacaoException("Erro na gravação", 0, e);
+		}
+		this.result.redirectTo(this).lista(0, null, "");
+	}
+	
+	@Transacional
+	@Post("/app/funcao/ativarInativar")
+	public void ativarInativar(final Long id) throws Exception {
+		DpFuncaoConfianca funcao = dao().consultar(id, DpFuncaoConfianca.class, false);
+		Date dt = dao().consultarDataEHoraDoServidor();
+
+		// ativar
+		if (funcao.getDataFimFuncao() != null) {
+			DpFuncaoConfianca funcaoNovo = new DpFuncaoConfianca();
+			PropertyUtils.copyProperties(funcaoNovo, funcao);
+			funcaoNovo.setId(null);
+			funcaoNovo.setDataFim(null);
+			dao().gravarComHistorico(funcaoNovo, funcao, dt, getIdentidadeCadastrante());
+		} else {// inativar
+			funcao.setDataFimFuncao(dt);
+			try {
+				dao().gravarComHistorico(funcao, getIdentidadeCadastrante());
+			} catch (final Exception e) {
+				throw new AplicacaoException("Erro na gravação", 0, e);
+			}
 		}
 		this.result.redirectTo(this).lista(0, null, "");
 	}

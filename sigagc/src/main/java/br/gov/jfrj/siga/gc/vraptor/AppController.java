@@ -1066,6 +1066,8 @@ public class AppController extends GcController {
 		DpPessoa pessoa = getTitular();
 		DpLotacao lotacao = getLotaTitular();
 
+		GcMovimentacao movAserReordenada;
+		
 		if (informacao.getAutor() == null) {
 			informacao.setAutor(pessoa);
 			informacao.setLotacao(lotacao);
@@ -1099,16 +1101,20 @@ public class AppController extends GcController {
 			informacao.setGrupo(null);
 
 		if (informacao.getId() != 0)
-			bl.movimentar(informacao,
+			movAserReordenada = bl.movimentar(informacao,
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO, null, null,
 					null, inftitulo, conteudo, classificacao, null, null, null);
 		else
-			bl.movimentar(informacao,
+			movAserReordenada = bl.movimentar(informacao,
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO, null, null,
 					null, inftitulo, conteudo, classificacao, null, null, null);
 
 		bl.gravar(informacao, getIdentidadeCadastrante(), getTitular(),
 				getLotaTitular());
+		
+		bl.atualizarListaMovimentacoes(informacao, movAserReordenada);
+		bl.atualizarInformacaoPorMovimentacoes(informacao);
+		
 		if (origem != null && origem.trim().length() != 0) {
 			if (informacao.podeFinalizar(pessoa, lotacao)) {
 				bl.movimentar(informacao,

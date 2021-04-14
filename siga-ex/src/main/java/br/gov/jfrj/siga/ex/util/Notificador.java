@@ -76,6 +76,9 @@ public class Notificador {
 		HashSet<String> emails = new HashSet<String>();
 		List<Notificacao> notificacoes = new ArrayList<Notificacao>();
 		
+		if (destinatarios == null)
+			return;
+		
 		String[] addrs = destinatarios.split(";");
 		for (String addr : addrs) {
 			addr = addr.trim();

@@ -407,9 +407,11 @@ public class Documento {
 						.isInternoProduzido(), an.getArquivo().getQRCode(), an
 						.getArquivo().getMensagem(), an.getPaginaInicial(),
 						an.getPaginaFinal(), an.getOmitirNumeracao(),
-						Prop.get("carimbo.texto.superior"), mob
-								.getExDocumento().getOrgaoUsuario()
-								.getDescricao(), mob.getExDocumento().getMarcaDagua());	
+						Prop.get("carimbo.texto.superior"), 
+						mob.getExDocumento().getOrgaoUsuario().getDescricao(), 
+						mob.getExDocumento().getMarcaDagua(), 
+						an.getMobil().getDoc().getIdsDeAssinantes());	
+				
 
 				bytes += ab.length;
 

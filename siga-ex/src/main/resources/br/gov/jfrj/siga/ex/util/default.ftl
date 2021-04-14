@@ -2428,6 +2428,7 @@ Pede deferimento.</span><br/><br/><br/>
    <!-- INICIO ASSINATURA -->
 [/#if]
 <p style="font-family: Arial; font-size: 11pt;" align="center">
+	<br/>
     [#if (doc.subscritor)??]
        [@inicioSubscritor]${(doc.subscritor.idPessoa)!}[/@inicioSubscritor]
     [/#if]

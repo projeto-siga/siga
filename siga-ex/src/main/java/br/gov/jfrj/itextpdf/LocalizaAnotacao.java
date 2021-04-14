@@ -16,7 +16,7 @@ import org.apache.pdfbox.text.PDFTextStripperByArea;
 
 public class LocalizaAnotacao {
 
-	public static List<LocalizaAnotacaoResultado> localizar(PDDocument doc, String[] seek) {
+	public static List<LocalizaAnotacaoResultado> localizar(PDDocument doc, List<String> seek) {
 		List<LocalizaAnotacaoResultado> l = new ArrayList<>();
 		int pageNum = 0;
 		try {
@@ -43,10 +43,10 @@ public class LocalizaAnotacao {
 							// do nothing
 						}
 						PDAction action = link.getAction();
-						if (action instanceof PDActionURI) {
+						if (action instanceof PDActionURI && rect.getWidth() > 0f) {
 							String uri = ((PDActionURI) action).getURI();
 							for (String s : seek) {
-								if (uri.contains(s)) {
+								if (uri.endsWith(s)) {
 									LocalizaAnotacaoResultado r = new LocalizaAnotacaoResultado();
 									r.uri = uri;
 									r.seek = s;

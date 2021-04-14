@@ -2941,5 +2941,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return b;
 	}
 
+	public List<Long> getIdsDeAssinantes() {
+		List<Long> l = new ArrayList<>();
+		for (DpPessoa subscritor : getSubscritorECosignatarios()) {
+			if (isAssinadoPelaPessoaComTokenOuSenha(subscritor)) 
+				l.add(subscritor.getId());
+		}
+		return l;
+	}
 
 }

@@ -7,6 +7,7 @@ import java.awt.image.WritableRaster;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,6 +46,7 @@ import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.base.SigaMessages;
 
 public class Stamp {
+	private static final String VALIDAR_ASSINATURA_URL = "/sigaex/app/validar-assinatura/";
 	private static float QRCODE_LEFT_MARGIN_IN_CM = 3.0f;
 	private static float QRCODE_SIZE_IN_CM = 1.5f;
 	private static float BARCODE_HEIGHT_IN_CM = 2.0f;
@@ -67,10 +69,11 @@ public class Stamp {
 
 	public static byte[] stamp(byte[] abPdf, String sigla, boolean rascunho, boolean copia, boolean cancelado,
 			boolean semEfeito, boolean internoProduzido, String qrCode, String mensagem, Integer paginaInicial,
-			Integer paginaFinal, Integer cOmitirNumeracao, String instancia, String orgaoUsu, String marcaDaguaDoModelo)
-			throws DocumentException, IOException {
+			Integer paginaFinal, Integer cOmitirNumeracao, String instancia, String orgaoUsu, String marcaDaguaDoModelo,
+			List<Long> idsAssinantes) throws DocumentException, IOException {
 
-		abPdf = estamparAssinaturas(abPdf);
+		if (idsAssinantes != null && idsAssinantes.size() > 0)
+			abPdf = estamparAssinaturas(abPdf, idsAssinantes);
 
 		PdfReader pdfIn = new PdfReader(abPdf);
 		Document doc = new Document(PageSize.A4, 0, 0, 0, 0);
@@ -426,13 +429,16 @@ public class Stamp {
 		}
 	}
 
-	private static byte[] estamparAssinaturas(byte[] pdf) {
+	private static byte[] estamparAssinaturas(byte[] pdf, List<Long> idsAssinantes) {
 		try {
 			PDDocument doc;
 			doc = PDDocument.load(pdf);
 
-			List<LocalizaAnotacaoResultado> l = LocalizaAnotacao.localizar(doc,
-					new String[] { "/sigaex/app/validar-assinatura/" });
+			List<String> seek = new ArrayList<>();
+			for (Long id : idsAssinantes)
+				seek.add(VALIDAR_ASSINATURA_URL + id);
+
+			List<LocalizaAnotacaoResultado> l = LocalizaAnotacao.localizar(doc, seek);
 			if (l == null)
 				return pdf;
 
@@ -452,7 +458,7 @@ public class Stamp {
 				PDPage page = doc.getPage(i.page - 1);
 
 				PDPageContentStream contents = new PDPageContentStream(doc, page, true, true);
-				float height = i.height;
+				float height = i.height * 1.2f;
 				float width = pdImage.getWidth() * (height / pdImage.getHeight());
 				float lowerLeftX = (i.lowerLeftX + i.width / 2) - width / 2;
 				float upperRightY = i.upperRightY;

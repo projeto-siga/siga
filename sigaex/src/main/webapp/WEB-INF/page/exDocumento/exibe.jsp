@@ -289,7 +289,7 @@
 							</div>
 						</c:when>
 						<c:when test="${docVO.doc.pdf}">
-							<c:set var="url" value="/sigaex/app/arquivo/exibir?arquivo=${docVO.doc.referenciaPDF}"/>
+							<c:set var="urlCapturado" value="/sigaex/app/arquivo/exibir?arquivo=${docVO.doc.referenciaPDF}"/>
 							<iframe style="display: block;" name="painel" id="painel"
 								width="100%" frameborder="0" scrolling="auto"></iframe>			
 							<script>
@@ -1565,7 +1565,7 @@
 		containerArquivosAuxiliares.css({'visibility':'visible', 'opacity':'1'});				
 	}
 	window.onload = function () { 
-		document.getElementById('painel').src = montarUrlDocPDF('${url}',document.getElementById('visualizador').value); 
+		document.getElementById('painel').src = montarUrlDocPDF('${urlCapturado}',document.getElementById('visualizador').value); 
 	} 
 </script>
 </siga:pagina>

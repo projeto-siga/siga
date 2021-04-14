@@ -280,12 +280,23 @@ public class GcBL {
 
 	public void atualizarInformacaoPorMovimentacoes(GcInformacao inf)
 			throws AplicacaoException {
+		
 		if (inf.getMovs() == null)
 			return;
 
+		SortedSet set = new TreeSet<GcMovimentacao>();
+		
+		for(GcMovimentacao m: inf.getMovs()) {
+			set.add(m);
+		}  
+	
+		inf.setMovs(set);
+		
 		ArrayList<GcMovimentacao> movs = new ArrayList<GcMovimentacao>(
 				inf.getMovs().size());
+		
 		movs.addAll(inf.getMovs());
+
 		Collections.reverse(movs);
 
 		for (GcMovimentacao mov : movs) {

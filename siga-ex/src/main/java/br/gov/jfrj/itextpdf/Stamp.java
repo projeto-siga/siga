@@ -7,8 +7,15 @@ import java.awt.image.WritableRaster;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 import com.lowagie.text.Annotation;
 import com.lowagie.text.Document;
@@ -32,7 +39,9 @@ import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.PdfWriter;
 import com.swetake.util.Qrcode;
 
+import br.gov.jfrj.itextpdf.LocalizaAnotacao.LocalizaAnotacaoResultado;
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.base.SigaMessages;
 
 public class Stamp {
@@ -60,6 +69,8 @@ public class Stamp {
 			boolean semEfeito, boolean internoProduzido, String qrCode, String mensagem, Integer paginaInicial,
 			Integer paginaFinal, Integer cOmitirNumeracao, String instancia, String orgaoUsu, String marcaDaguaDoModelo)
 			throws DocumentException, IOException {
+
+		abPdf = estamparAssinaturas(abPdf);
 
 		PdfReader pdfIn = new PdfReader(abPdf);
 		Document doc = new Document(PageSize.A4, 0, 0, 0, 0);
@@ -410,8 +421,54 @@ public class Stamp {
 
 			}
 			stamp.close();
-			return bo2.toByteArray();
+			byte[] pdf = bo2.toByteArray();
+			return pdf;
 		}
+	}
+
+	private static byte[] estamparAssinaturas(byte[] pdf) {
+		try {
+			PDDocument doc;
+			doc = PDDocument.load(pdf);
+
+			List<LocalizaAnotacaoResultado> l = LocalizaAnotacao.localizar(doc,
+					new String[] { "/sigaex/app/validar-assinatura/" });
+			if (l == null)
+				return pdf;
+
+			byte[] abStamp = SigaHTTP
+					.convertStreamToByteArray(Stamp.class.getResourceAsStream("assinado-digitalmente.png"), 4096);
+			PDImageXObject pdImage = PDImageXObject.createFromByteArray(doc, abStamp, "assinado digitalmente");
+
+			Set<String> set = new HashSet<>();
+
+			for (LocalizaAnotacaoResultado i : l) {
+				System.out.println("achei: " + i.page + ", (" + i.lowerLeftX + ", " + i.upperRightY + ")");
+				if (set.contains(i.uri))
+					continue;
+				set.add(i.uri);
+				System.out.println("processando: " + i.page + ", (" + i.lowerLeftX + ", " + i.upperRightY + ")");
+
+				PDPage page = doc.getPage(i.page - 1);
+
+				PDPageContentStream contents = new PDPageContentStream(doc, page, true, true);
+				float height = i.height;
+				float width = pdImage.getWidth() * (height / pdImage.getHeight());
+				float lowerLeftX = (i.lowerLeftX + i.width / 2) - width / 2;
+				float upperRightY = i.upperRightY;
+				contents.drawImage(pdImage, lowerLeftX, upperRightY, width, height);
+				System.out.println("Image inserted");
+				contents.close();
+			}
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			doc.save(baos);
+			doc.close();
+			baos.close();
+			return baos.toByteArray();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
 	}
 
 	public static java.awt.Image createQRCodeImage(String url) {

@@ -2162,11 +2162,13 @@ Pede deferimento.</span><br/><br/><br/>
 
 [#macro inicioSubscritor]
     <!-- INICIO SUBSCRITOR [#nested/] -->
+    <a href="https://siga.jfrj.jus.br/sigaex/app/validar-assinatura/[#nested/]">
 [/#macro]
 
 
 [#macro fimSubscritor]
     <!-- FIM SUBSCRITOR [#nested/] -->
+    </a>
 [/#macro]
 
 [#macro cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho=false]

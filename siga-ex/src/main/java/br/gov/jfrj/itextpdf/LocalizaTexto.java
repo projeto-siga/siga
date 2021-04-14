@@ -12,22 +12,26 @@ import org.apache.pdfbox.text.TextPosition;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 
-public class LocalizaNoPdf extends PDFTextStripper {
+public class LocalizaTexto extends PDFTextStripper {
 	public String[] seekA;
 	private byte[] pdf;
-	private List<LocalizaResultado> l = new ArrayList<>();
+	private List<LocalizaTextoResultado> l = new ArrayList<>();
 
-	public LocalizaNoPdf(byte[] pdf, String[] seekA) throws IOException {
+	public LocalizaTexto(byte[] pdf, String[] seekA) throws IOException {
 		super.setSortByPosition(true);
 		this.pdf = pdf;
 		this.seekA = seekA;
 	}
 
-	public static List<LocalizaResultado> localizar(byte[] pdf, String[] seekA) throws Exception {
-		return new LocalizaNoPdf(pdf, seekA).localizar();
+	public static List<LocalizaTextoResultado> localizar(byte[] pdf, String[] seekA) {
+		try {
+			return new LocalizaTexto(pdf, seekA).localizar();
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
-	public List<LocalizaResultado> localizar() throws Exception {
+	public List<LocalizaTextoResultado> localizar() throws Exception {
 		l.clear();
 		PDDocument document = null;
 		try {
@@ -50,17 +54,18 @@ public class LocalizaNoPdf extends PDFTextStripper {
 	protected void writeString(String string, List<TextPosition> textPositions) throws IOException {
 		for (String s : seekA) {
 			if (string.contains(s)) {
-				LocalizaResultado r = new LocalizaResultado();
+				LocalizaTextoResultado r = new LocalizaTextoResultado();
 				TextPosition text = textPositions.get(0);
 				r.text = string;
 				r.seek = s;
 				r.x = text.getXDirAdj();
 				r.y = text.getYDirAdj();
+				l.add(r);
 			}
 		}
 	}
 
-	public static class LocalizaResultado {
+	public static class LocalizaTextoResultado {
 		public String text;
 		String seek;
 		int page;

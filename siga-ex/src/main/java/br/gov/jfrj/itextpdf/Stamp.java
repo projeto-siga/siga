@@ -72,7 +72,7 @@ public class Stamp {
 			Integer paginaFinal, Integer cOmitirNumeracao, String instancia, String orgaoUsu, String marcaDaguaDoModelo,
 			List<Long> idsAssinantes) throws DocumentException, IOException {
 
-		if (idsAssinantes != null && idsAssinantes.size() > 0)
+		if (idsAssinantes != null && idsAssinantes.size() > 0 && Prop.getBool("assinatura.estampar"))
 			abPdf = estamparAssinaturas(abPdf, idsAssinantes);
 
 		PdfReader pdfIn = new PdfReader(abPdf);

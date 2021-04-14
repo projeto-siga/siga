@@ -76,9 +76,6 @@ public class Notificador {
 		HashSet<String> emails = new HashSet<String>();
 		List<Notificacao> notificacoes = new ArrayList<Notificacao>();
 		
-		if (destinatarios == null)
-			return;
-		
 		String[] addrs = destinatarios.split(";");
 		for (String addr : addrs) {
 			addr = addr.trim();
@@ -171,7 +168,7 @@ public class Notificador {
 					&& !m.getExPapel().getIdPapel().equals(ExPapel.PAPEL_REVISOR)) {
 				
 				try {
-					if (m.getSubscritor() != null && !m.getSubscritor().isFechada()) {
+					if (m.getSubscritor() != null) {
 						/*
 						 * Se a movimentação é um cancelamento de uma
 						 * movimentação que pode ser notificada, adiciona o
@@ -267,54 +264,46 @@ public class Notificador {
 						&& emailNot.getLotacaoEmail() == null
 						&& emailNot.getEmail() == null) {
 					if (emailNot.getDpPessoa() != null){
-						if (!emailNot.getDpPessoa().isFechada()) {
-							if (m != null){ /* perfil */
-								if (temPermissao(mov.getExDocumento().getExFormaDocumento().getExTipoFormaDoc(),
-										papel, emailNot.getDpPessoa(), mov.getExTipoMovimentacao()))								
-									emailsTemp.add(emailNot.getDpPessoa().getEmailPessoaAtual());
-							} else {  /* transferência */ 
-								if (temPermissao(emailNot.getDpPessoa(), emailNot.getDpPessoa().getLotacao(), mov.getExDocumento().getExModelo(),mov.getIdTpMov() ))						
-									emailsTemp.add(emailNot.getDpPessoa().getEmailPessoaAtual());
-							}	
-						}
+						if (m != null){ /* perfil */
+							if (temPermissao(mov.getExDocumento().getExFormaDocumento().getExTipoFormaDoc(),
+									papel, emailNot.getDpPessoa(), mov.getExTipoMovimentacao()))								
+								emailsTemp.add(emailNot.getDpPessoa().getEmailPessoaAtual());
+						} else {  /* transferência */ 
+							if (temPermissao(emailNot.getDpPessoa(), emailNot.getDpPessoa().getLotacao(), mov.getExDocumento().getExModelo(),mov.getIdTpMov() ))						
+								emailsTemp.add(emailNot.getDpPessoa().getEmailPessoaAtual());
+						}	
 					} else {
 						for (DpPessoa pes : emailNot.getDpLotacao().getLotacaoAtual().getDpPessoaLotadosSet()) {
-							if (!pess.isFechada()) {
-								if (m != null) { /* perfil */ 
-									if (temPermissao(mov.getExDocumento().getExFormaDocumento().getExTipoFormaDoc(),
-											papel, pes, mov.getExTipoMovimentacao()))							
-										emailsTemp.add(pes.getEmailPessoaAtual());	
-								} else { /* transferência */
-									if (temPermissao(pes, pes.getLotacao(), mov.getExDocumento().getExModelo(),mov.getIdTpMov() ))						
-										emailsTemp.add(pes.getEmailPessoaAtual());
-								}
-							}
+							if (m != null) { /* perfil */ 
+								if (temPermissao(mov.getExDocumento().getExFormaDocumento().getExTipoFormaDoc(),
+									papel, pes, mov.getExTipoMovimentacao()))							
+								emailsTemp.add(pes.getEmailPessoaAtual());	
+							} else { /* transferência */
+								if (temPermissao(pes, pes.getLotacao(), mov.getExDocumento().getExModelo(),mov.getIdTpMov() ))						
+									emailsTemp.add(pes.getEmailPessoaAtual());
+							}	
 						}	
 					}					
 				} else {				
-						if(emailNot.getPessoaEmail() != null){ /* Mandar para pessoa */
-							if (!emailNot.getPessoaEmail().isFechada()) {
-								if (m != null) {/* perfil */ 
-									if (temPermissao(mov.getExDocumento().getExFormaDocumento().getExTipoFormaDoc(),
-											papel, emailNot.getPessoaEmail(), mov.getExTipoMovimentacao()))							
-										emailsTemp.add(emailNot.getPessoaEmail().getEmailPessoaAtual());	
-								}else { /* transferência */
-									if (temPermissao(emailNot.getPessoaEmail(), emailNot.getPessoaEmail().getLotacao(), mov.getExDocumento().getExModelo(),mov.getIdTpMov()))						
-										emailsTemp.add(emailNot.getPessoaEmail().getEmailPessoaAtual());
-								}
-							}
+						if(emailNot.getPessoaEmail() != null){ // Mandar para pessoa
+							if (m != null) {/* perfil */ 
+								if (temPermissao(mov.getExDocumento().getExFormaDocumento().getExTipoFormaDoc(),
+									papel, emailNot.getPessoaEmail(), mov.getExTipoMovimentacao()))							
+								emailsTemp.add(emailNot.getPessoaEmail().getEmailPessoaAtual());	
+							}else { /* transferência */
+								if (temPermissao(emailNot.getPessoaEmail(), emailNot.getPessoaEmail().getLotacao(), mov.getExDocumento().getExModelo(),mov.getIdTpMov()))						
+									emailsTemp.add(emailNot.getPessoaEmail().getEmailPessoaAtual());
+							}	
 						} else {
 							if (emailNot.getLotacaoEmail() != null) {
 								for (DpPessoa pes : emailNot.getLotacaoEmail().getLotacaoAtual().getDpPessoaLotadosSet()) {
-									if (!pes.isFechada()) {
-										if (m != null) {/* perfil */ 
-											if (temPermissao(mov.getExDocumento().getExFormaDocumento().getExTipoFormaDoc(),
-													papel, pes, mov.getExTipoMovimentacao()))							
-												emailsTemp.add(pes.getEmailPessoaAtual());	
-										} else /* transferência */
-											if (temPermissao(pes, pes.getLotacao(), mov.getExDocumento().getExModelo(),mov.getIdTpMov() ))						
-												emailsTemp.add(pes.getEmailPessoaAtual());	
-									}
+									if (m != null) {/* perfil */ 
+										if (temPermissao(mov.getExDocumento().getExFormaDocumento().getExTipoFormaDoc(),
+											papel, pes, mov.getExTipoMovimentacao()))							
+											emailsTemp.add(pes.getEmailPessoaAtual());	
+									} else /* transferência */
+										if (temPermissao(pes, pes.getLotacao(), mov.getExDocumento().getExModelo(),mov.getIdTpMov() ))						
+											emailsTemp.add(pes.getEmailPessoaAtual());								
 								}
 							} else {
 								emailsTemp.add(emailNot.getEmail());								
@@ -324,28 +313,24 @@ public class Notificador {
 				}	
 		} else { /* não há ocorrencias em Ex_email_notificacao */
 			if (pess != null){
-				if (!pess.isFechada()) {
-					if (m != null) { /* perfil */ 
-						if (temPermissao(mov.getExDocumento().getExFormaDocumento().getExTipoFormaDoc(),
-								papel, pess, mov.getExTipoMovimentacao()))							
-							emailsTemp.add(pess.getEmailPessoaAtual());	
-					} else {/* transferência */
-						if (temPermissao(pess, pess.getLotacao(), mov.getExDocumento().getExModelo(),mov.getIdTpMov() ))						
-							emailsTemp.add(pess.getEmailPessoaAtual());
-					}
-				}
+				if (m != null) { /* perfil */ 
+					if (temPermissao(mov.getExDocumento().getExFormaDocumento().getExTipoFormaDoc(),
+						papel, pess, mov.getExTipoMovimentacao()))							
+						emailsTemp.add(pess.getEmailPessoaAtual());	
+				} else {/* transferência */
+					if (temPermissao(pess, pess.getLotacao(), mov.getExDocumento().getExModelo(),mov.getIdTpMov() ))						
+						emailsTemp.add(pess.getEmailPessoaAtual());
+				}	
 			} else {
 				for (DpPessoa pes : lot.getLotacaoAtual().getDpPessoaLotadosSet()) {
-					if (!pes.isFechada()) {
-						if (m != null) { /* perfil */ 
-							if (temPermissao(mov.getExDocumento().getExFormaDocumento().getExTipoFormaDoc(),
-									papel, pes, mov.getExTipoMovimentacao()))							
-								emailsTemp.add(pes.getEmailPessoaAtual());	
-						} else  {/* transferência */
-							if (temPermissao(pes, pes.getLotacao(), mov.getExDocumento().getExModelo(),mov.getIdTpMov() ))						
-								emailsTemp.add(pes.getEmailPessoaAtual());				
-						}
-					}
+					if (m != null) { /* perfil */ 
+						if (temPermissao(mov.getExDocumento().getExFormaDocumento().getExTipoFormaDoc(),
+							papel, pes, mov.getExTipoMovimentacao()))							
+						emailsTemp.add(pes.getEmailPessoaAtual());	
+					} else  {/* transferência */
+						if (temPermissao(pes, pes.getLotacao(), mov.getExDocumento().getExModelo(),mov.getIdTpMov() ))						
+							emailsTemp.add(pes.getEmailPessoaAtual());				
+					}	
 				}			
 			}
 		}

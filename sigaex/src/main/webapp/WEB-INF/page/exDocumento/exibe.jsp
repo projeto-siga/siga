@@ -1565,7 +1565,8 @@
 		containerArquivosAuxiliares.css({'visibility':'visible', 'opacity':'1'});				
 	}
 	window.onload = function () { 
-		document.getElementById('painel').src = montarUrlDocPDF('${urlCapturado}',document.getElementById('visualizador').value); 
+		if (document.getElementById('painel'))
+			document.getElementById('painel').src = montarUrlDocPDF('${urlCapturado}',document.getElementById('visualizador').value); 
 	} 
 </script>
 </siga:pagina>

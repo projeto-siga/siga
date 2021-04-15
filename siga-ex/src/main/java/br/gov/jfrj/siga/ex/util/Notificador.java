@@ -279,7 +279,7 @@ public class Notificador {
 						}
 					} else {
 						for (DpPessoa pes : emailNot.getDpLotacao().getLotacaoAtual().getDpPessoaLotadosSet()) {
-							if (!pess.isFechada()) {
+							if (!pes.isFechada()) {
 								if (m != null) { /* perfil */ 
 									if (temPermissao(mov.getExDocumento().getExFormaDocumento().getExTipoFormaDoc(),
 											papel, pes, mov.getExTipoMovimentacao()))							

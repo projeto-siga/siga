@@ -282,6 +282,19 @@ public class Notificador {
 								if (temPermissao(pes, pes.getLotacao(), mov.getExDocumento().getExModelo(),mov.getIdTpMov() ))						
 									emailsTemp.add(pes.getEmailPessoaAtual());
 							}	
+						}
+					} else {
+						for (DpPessoa pes : emailNot.getDpLotacao().getLotacaoAtual().getDpPessoaLotadosSet()) {
+							if (!pes.isFechada()) {
+								if (m != null) { /* perfil */ 
+									if (temPermissao(mov.getExDocumento().getExFormaDocumento().getExTipoFormaDoc(),
+											papel, pes, mov.getExTipoMovimentacao()))							
+										emailsTemp.add(pes.getEmailPessoaAtual());	
+								} else { /* transferência */
+									if (temPermissao(pes, pes.getLotacao(), mov.getExDocumento().getExModelo(),mov.getIdTpMov() ))						
+										emailsTemp.add(pes.getEmailPessoaAtual());
+								}
+							}
 						}	
 					}					
 				} else {				

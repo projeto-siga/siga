@@ -51,8 +51,8 @@
 							<b>Lotação Responsável:</b> ${pd.lotaResponsavel}
 						</p>
 						<p>
-							<b>Cadastrante:</b> ${pd.hisIdcIni.dpPessoa.sigla}
-							(${pd.hisIdcIni.dpPessoa.lotacao.sigla})
+							<b>Cadastrante:</b> ${pd.hisIdcIni.dpPessoa.pessoaAtual.sigla}
+							(${pd.hisIdcIni.dpPessoa.pessoaAtual.lotacao.sigla})
 						</p>
 						<p>
 							<b>Última atualização:</b>

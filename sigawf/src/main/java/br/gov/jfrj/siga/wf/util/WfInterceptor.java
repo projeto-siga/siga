@@ -18,6 +18,7 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
+import br.gov.jfrj.siga.wf.vraptor.WfAppController;
 
 @RequestScoped
 @Intercepts(before = JPATransactionInterceptor.class)
@@ -52,7 +53,7 @@ public class WfInterceptor {
 	}
 
 	@AroundCall
-	public void intercept(SimpleInterceptorStack stack) {
+	public void intercept(SimpleInterceptorStack stack) throws Throwable {
 
 		// EntityManager em = ExStarter.emf.createEntityManager();
 
@@ -71,6 +72,8 @@ public class WfInterceptor {
 		}
 
 		try {
+			validator.onErrorForwardTo(WfAppController.class).exception();
+
 			stack.next();
 		} catch (Exception e) {
 			throw new InterceptionException(e);

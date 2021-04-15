@@ -154,12 +154,12 @@ public class SigaController {
 	}
 
 	@Inject
-	private void setValidator(Validator validator) {
+	private void setValidator(Validator validator) throws Throwable {
 		this.validator = validator;
-		try {
-			this.validator.onErrorUse(Results.page()).of(SigaController.class).exception();
-		} catch (Throwable ex) {
-		}
+	}
+	
+	protected Validator getValidator() {
+		return validator;
 	}
 	
 	protected List<DpSubstituicao> getMeusTitulares() {
@@ -241,23 +241,26 @@ public class SigaController {
 		// new RequestExceptionLogger(request, (Exception) result.included().get("exception"), 0L, this.getClass().getName()).logar();
  	}	
 
-	private void configurarHttpResult(int statusCode) {
+	private void configurarHttpResult(int statusCode) throws Exception {
 		HttpResult res = this.result.use(http());
 		res.setStatusCode(statusCode);
 		definirPaginaDeErro();
 	}
     
-	private void definirPaginaDeErro() {
+	private void definirPaginaDeErro() throws Exception {
 		if (!response.isCommitted()) {
-			if (requisicaoEhAjax())
-				result.forwardTo("/WEB-INF/page/erroGeralAjax.jsp");
-			else
+			if (requisicaoEhAjax()) {
+				Exception t = (Exception) request.getAttribute("exception");
+				if (t == null && validator.hasErrors())
+					t = new Exception(validator.getErrors().get(0).toString());
+				jsonError(t);
+			} else
 				result.forwardTo("/WEB-INF/page/erroGeral.jsp");
 		}
 	}
-
+	
 	private boolean requisicaoEhAjax() {
-		return request.getHeader("X-Requested-With") != null;
+		return request.getHeader("X-Requested-With") != null || (request.getHeader("Accept") != null && request.getHeader("Accept").contains("application/json"));
 	}
     
 	protected DpLotacao getLotaTitular() {
@@ -480,7 +483,7 @@ public class SigaController {
 		String s = gson.toJson(resp);
 		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(200);
 	}
-
+	
 	protected void jsonError(final Exception e) throws Exception {
 		String errstack = RequestExceptionLogger.simplificarStackTrace(e);
 
@@ -502,6 +505,7 @@ public class SigaController {
 
 		String s = json.toString(4);
 		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(500);
+		request.setAttribute("jsonError", s);
 		response.flushBuffer();
 		throw e;
 	}

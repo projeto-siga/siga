@@ -84,6 +84,7 @@
 	</script>
 
 	<div class="container-fluid">
+		<input type="hidden" id="visualizador" value="${f:resource('/sigaex.pdf.visualizador') }"/>
 		<c:if test="${!assinandoAnexosGeral}">
 			<div class="card bg-light mb-3">
 				<div class="card-header">

@@ -450,5 +450,9 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 			result.use(Results.http()).body("0");
 		}
 	}
-
+	
+	protected void jsonSuccess(final Object resp) {
+		String s = gson.toJson(resp);
+		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(200);
+	}
 }

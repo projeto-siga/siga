@@ -35,6 +35,18 @@ public enum WfTipoDeResponsavel implements ResponsibleKind {
 	//
 	PRINCIPAL_LOTA_INTERESSADO("Principal: Lotação do Interessado"),
 	//
+	PRINCIPAL_AUTORIZADOR("Principal: Autorizador"),
+	//
+	PRINCIPAL_LOTA_AUTORIZADOR("Principal: Lotação do Autorizador"),
+	//
+	PRINCIPAL_REVISOR("Principal: Revisor"),
+	//
+	PRINCIPAL_LOTA_REVISOR("Principal: Lotação do Revisor"),
+	//
+	PRINCIPAL_LIQUIDANTE("Principal: Liquidante"),
+	//
+	PRINCIPAL_LOTA_LIQUIDANTE("Principal: Lotação do Liquidante"),
+	//
 	RESPONSAVEL("Cadastrado"),
 	//
 	PESSOA("Pessoa"),

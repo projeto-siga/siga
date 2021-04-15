@@ -63,12 +63,12 @@ public class CorporativoController extends SrController {
 	@Get
 	@Path("public/app/corporativo/dadosrh")
 	public Download dadosrh() throws ParserConfigurationException, IOException {
-		String pwd = (String) Contexto.resource("siga.sr.corporativo.dadosrh.password");
+		String pwd = (String) Contexto.resource("corporativo.dadosrh.password");
 		if (pwd == null)
-			throw new RuntimeException("Para acessar este serviço, é necessário informar o parâmetro 'siga.sr.corporativo.dadosrh.password'.");
+			throw new RuntimeException("Para acessar este serviço, é necessário informar o parâmetro 'sigasr.corporativo.dadosrh.password'.");
 		if (!pwd.equals(this.request.getHeader("Authorization")))
 			throw new RuntimeException(
-					"Falha de autenticação: serviço requer authorization header igual ao parâmero 'siga.sr.corporativo.dadosrh.password'.");
+					"Falha de autenticação: serviço requer authorization header igual ao parâmero 'sigasr.corporativo.dadosrh.password'.");
 
 		Map<Long, Cargo> mc = new TreeMap<Long, Cargo>();
 		Map<Long, Lotacao> ml = new TreeMap<Long, Lotacao>();
@@ -80,10 +80,10 @@ public class CorporativoController extends SrController {
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
 		List<DadosRH> l = DadosRH.AR.all().fetch();
-		String situacoesParaImportar = (String) Contexto.resource("siga.sr.corporativo.dadosrh.situacoesParaImportar");
+		String situacoesParaImportar = (String) Contexto.resource("corporativo.dadosrh.situacoesParaImportar");
 		if(situacoesParaImportar == null)
 			throw new RuntimeException(
-					"Erro: parametro 'siga.sr.corporativo.dadosrh.situacoesParaImportar' não configurado.");
+					"Erro: parametro 'sigasr.corporativo.dadosrh.situacoesParaImportar' não configurado.");
 		
 		List<String> situacoes = Arrays.asList(situacoesParaImportar.split(","));
 		for (DadosRH d : l) {

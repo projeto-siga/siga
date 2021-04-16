@@ -1923,17 +1923,30 @@ public class ExDocumentoController extends ExController {
 		exPreenchimento.setDpLotacao(provLota);
 		exPreenchimento.setExModelo(provMod);
 		exPreenchimento.setNomePreenchimento(exDocumentoDTO
-				.getNomePreenchimento());
+				.getNomePreenchimento().trim());
 
 		exPreenchimento.setPreenchimentoBA(getByteArrayFormPreenchimento(vars,
 				campos));
 		
-		dao().gravar(exPreenchimento);
-		SigaTransacionalInterceptor.downgradeParaNaoTransacional();
+		int qtde = dao().consultarQtdeLotacaoModeloNomeExPreenchimento(exPreenchimento);
 		
-		exDocumentoDTO.setPreenchimento(exPreenchimento.getIdPreenchimento());
+		if(qtde > 0) {
+			result.include(SigaModal.ALERTA, SigaModal.mensagem(SigaMessages.getMessage("documento.preenchimento.automatico1") +  " já existente no sistema"));
+			result.forwardTo(this).edita(exDocumentoDTO, null, vars,
+					exDocumentoDTO.getMobilPaiSel(),
+					exDocumentoDTO.isCriandoAnexo(), exDocumentoDTO.getAutuando(),
+					exDocumentoDTO.getIdMobilAutuado(),
+					exDocumentoDTO.getCriandoSubprocesso(), null, null, null, null, null);
+		} else {
+			dao().gravar(exPreenchimento);
+			SigaTransacionalInterceptor.downgradeParaNaoTransacional();
+			
+			exDocumentoDTO.setPreenchimento(exPreenchimento.getIdPreenchimento());
 
-		result.forwardTo(this).aCarregarPreenchimento(exDocumentoDTO, vars);
+			result.forwardTo(this).aCarregarPreenchimento(exDocumentoDTO, vars);
+	
+		}
+		
 	}
 
 	@Post("app/expediente/doc/prever")

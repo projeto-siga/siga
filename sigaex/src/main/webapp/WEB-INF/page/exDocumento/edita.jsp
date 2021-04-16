@@ -14,6 +14,9 @@
 	<script type="text/javascript" src="/siga/javascript/jquery.blockUI.js"></script>
 	<script type="text/javascript" src="/siga/javascript/hierarchy-select/hierarchy-select.js"></script>
 
+	<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
+	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />	
+	
 	<div class="container-fluid">
 	<c:if test="${not empty mensagem}">
 			<div class="row">
@@ -381,40 +384,42 @@
 				</div>
 				</c:if>	
 				<c:if test='${ exDocumentoDTO.tipoDocumento == "interno"  && !ehPublicoExterno}'>
-				<div class="row">
-					<input type="hidden" name="campos" value="preenchimento" />
+				<div class="row inline">					
 					<div class="col-sm-12">
-						<div class="form-group">
-							<label><fmt:message key="documento.preenchimento.automatico"/></label>							
-							<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-								<div class="input-group">
-									<select id="preenchimento" name="exDocumentoDTO.preenchimento" onchange="javascript:carregaPreench()" class="form-control">
+				  		<div class="form-group">
+				    		<label><fmt:message key="documento.preenchimento.automatico"/></label>
+				    		<div class="row">
+				      			<div class="col col-xl-4 col-lg-12">
+							        <select id="preenchimento" name="exDocumentoDTO.preenchimento" onchange="javascript:carregaPreench()" class="form-control siga-select2">
 										<c:forEach items="${exDocumentoDTO.preenchimentos}" var="item">
 											<option value="${item.idPreenchimento}"
 												${item.idPreenchimento == exDocumentoDTO.preenchimento ? 'selected' : ''}>
 												${item.nomePreenchimento}</option>
 										</c:forEach>
 									</select>
-								</div>
-								<c:if test="${empty exDocumentoDTO.preenchimento or exDocumentoDTO.preenchimento==0}">
-									<c:set var="desabilitaBtn"> disabled </c:set>
-								</c:if> 
-								<button type="button" name="btnAlterar" onclick="javascript:alteraPreench()" class="btn btn-sm btn-secondary ml-2" ${desabilitaBtn}>
-									<i class="far fa-edit"></i>
-									<span class="${hide_only_GOVSP}">Alterar</span>
-								</button>
-								<button type="button" name="btnRemover" onclick="javascript:removePreench()" class="btn btn-sm btn-secondary ml-2" ${desabilitaBtn}>
-									<i class="far fa-trash-alt"></i>
-									<span class="${hide_only_GOVSP}">Remover</span>
-								</button>
-								<button type="button"  name="btnAdicionar" onclick="javascript:adicionaPreench()" class="btn btn-sm btn-secondary ml-2">
-									<i class="fas fa-plus"></i>
-									<span class="${hide_only_GOVSP}">Adicionar</span>
-								</button>
-							</div>
-						</div>
-					</div>
+				      			</div>
+				      			<div class="col col-xl-8 col-lg-12">
+							        <c:if test="${empty exDocumentoDTO.preenchimento or exDocumentoDTO.preenchimento==0}">
+										<c:set var="desabilitaBtn"> disabled </c:set>
+									</c:if> 
+									<button type="button" name="btnAlterar" onclick="javascript:alteraPreench()" class="btn btn-sm btn-secondary ml-2 p-2" ${desabilitaBtn}>
+										<i class="far fa-edit"></i>
+										<span class="${hide_only_GOVSP}">Alterar</span>
+									</button>
+									<button type="button" name="btnRemover" onclick="javascript:removePreench()" class="btn btn-sm btn-secondary ml-2 p-2" ${desabilitaBtn}>
+										<i class="far fa-trash-alt"></i>
+										<span class="${hide_only_GOVSP}">Remover</span>
+									</button>
+									<button type="button"  name="btnAdicionar" onclick="javascript:adicionaPreench()" class="btn btn-sm btn-secondary ml-2 p-2">
+										<i class="fas fa-plus"></i>
+										<span class="${hide_only_GOVSP}">Adicionar</span>
+									</button>
+				      			</div>
+				    		</div>
+				  		</div>
+				  </div>
 				</div>
+				
 			</c:if>
 				<div id="tr_personalizacao" style="display: ${exDocumentoDTO.modelo.exClassificacao!=null? 'none': ''};">
 					<div class="row  ${hide_only_GOVSP}">
@@ -644,4 +649,11 @@
 	    trigger: 'click'
 	});
 
+</script>
+
+<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
+<script type="text/javascript">
+	$(document.getElementById('preenchimento')).select2({theme: "bootstrap"});	
 </script>

@@ -46,7 +46,7 @@ import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.base.SigaMessages;
 
 public class Stamp {
-	private static final String VALIDAR_ASSINATURA_URL = "/sigaex/app/validar-assinatura/";
+	private static final String VALIDAR_ASSINATURA_URL = "/sigaex/app/validar-assinatura?pessoa=";
 	private static float QRCODE_LEFT_MARGIN_IN_CM = 3.0f;
 	private static float QRCODE_SIZE_IN_CM = 1.5f;
 	private static float BARCODE_HEIGHT_IN_CM = 2.0f;
@@ -436,7 +436,7 @@ public class Stamp {
 
 			List<String> seek = new ArrayList<>();
 			for (Long id : idsAssinantes)
-				seek.add(VALIDAR_ASSINATURA_URL + id);
+				seek.add(VALIDAR_ASSINATURA_URL + id + "&");
 
 			List<LocalizaAnotacaoResultado> l = LocalizaAnotacao.localizar(doc, seek);
 			if (l == null)

@@ -46,7 +46,7 @@ public class LocalizaAnotacao {
 						if (action instanceof PDActionURI && rect.getWidth() > 0f) {
 							String uri = ((PDActionURI) action).getURI();
 							for (String s : seek) {
-								if (uri.endsWith(s)) {
+								if (uri.contains(s)) {
 									LocalizaAnotacaoResultado r = new LocalizaAnotacaoResultado();
 									r.uri = uri;
 									r.seek = s;

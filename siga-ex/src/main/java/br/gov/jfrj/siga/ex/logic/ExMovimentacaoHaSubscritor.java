@@ -14,7 +14,7 @@ public class ExMovimentacaoHaSubscritor implements Expression {
 
 	@Override
 	public boolean eval() {
-		return mov.getSubscritor() == null;
+		return mov.getSubscritor() != null;
 	}
 
 	@Override

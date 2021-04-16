@@ -3015,5 +3015,10 @@ public class ExDocumentoController extends ExController {
 
 		result.include("docCancelado", docCancelado);
 	}
+	
+	@Get("app/validar-assinatura")
+	public void aDesfazerCancelamentoDocumento(final Long pessoa, final String sigla) {
+		result.redirectTo(Prop.get("/siga.base.url") + "/siga/permalink/" + sigla);
+	}
 
 }

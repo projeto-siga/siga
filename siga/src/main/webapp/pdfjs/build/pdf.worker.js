@@ -31049,6 +31049,9 @@ var AnnotationFactory = /*#__PURE__*/function () {
             case "Btn":
               return new ButtonWidgetAnnotation(parameters);
 
+            case "Sig":
+              return new SquareAnnotation(parameters);  
+              
             case "Ch":
               return new ChoiceWidgetAnnotation(parameters);
           }
@@ -31687,7 +31690,6 @@ var WidgetAnnotation = /*#__PURE__*/function (_Annotation2) {
     if (data.fieldType === "Sig") {
       data.fieldValue = null;
 
-      _this3.setFlags(_util.AnnotationFlag.HIDDEN);
     }
 
     return _this3;

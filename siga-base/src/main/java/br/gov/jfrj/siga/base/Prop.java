@@ -212,7 +212,7 @@ public class Prop {
 		provider.addPublicProperty("/siga.sgp.dcn.url", "/sigarhaq2");
 		provider.addPublicProperty("/siga.sgp.cst.url", "/sigarhdadoscadastrais");
 		provider.addPublicProperty("/siga.sgp.lot.url", "/sigarhlotacao");
-		provider.addPublicProperty("/siga.sgp.trn.url", "/sigatr");
+		provider.addPublicProperty("/siga.sgp.trn.url", "/sigptreinamento");
 		provider.addPublicProperty("/siga.sgp.terc.url", "/sigarhterceirizados");
 
 		/* Parâmetros para configuração do armazenamento de documento */

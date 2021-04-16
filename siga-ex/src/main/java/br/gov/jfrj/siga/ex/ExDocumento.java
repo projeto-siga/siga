@@ -2700,7 +2700,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			else if (o instanceof DpLotacao)
 				s += ((DpLotacao) o).getNomeLotacao()+ " - " +((DpLotacao) o).getSiglaCompleta() + "/" + ((DpLotacao) o).getOrgaoUsuario();
 			else if (o instanceof DpPessoa)
-				s += ((DpPessoa) o).getNomePessoa() + " - " + ((DpPessoa) o).getSiglaCompleta() + "/" + getTitular().getLotacao().getSigla();
+				s += ((DpPessoa) o).getNomePessoa() + " - " + ((DpPessoa) o).getSiglaCompleta() + "/" + ((DpPessoa) o).getLotacao().getSigla();
 			else
 				s += o.toString();
 		}

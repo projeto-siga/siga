@@ -226,90 +226,27 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 							 final String nmFuncao, 
 							 final Long idOrgaoUsu) throws Exception{
 		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_FUNCAO:Cadastrar Função de Confiança");
-		
-		if(nmFuncao == null)
-			throw new AplicacaoException("Nome da função não informado");
-		
-		if(idOrgaoUsu == null)
-			throw new AplicacaoException("Órgão não informado");
-		
-		if(nmFuncao != null && !nmFuncao.matches(Texto.FuncaoConfianca.REGEX_CARACTERES_PERMITIDOS)) 
-			throw new AplicacaoException("Nome com caracteres não permitidos");
-		
-		DpFuncaoConfianca funcao = new DpFuncaoConfianca();
-		
-		funcao.setNomeFuncao(Texto.removeAcento(Texto.removerEspacosExtra(nmFuncao).trim()));
-		CpOrgaoUsuario ou = new CpOrgaoUsuario();
-		ou.setIdOrgaoUsu(idOrgaoUsu);
-		funcao.setOrgaoUsuario(ou);
-		
-		funcao = CpDao.getInstance().consultarPorNomeOrgao(funcao);
-		
-		if(funcao != null && !funcao.getId().equals(id)) {
-			throw new AplicacaoException("Nome da função já cadastrado!");
-		}
-		
-		funcao = new DpFuncaoConfianca();
-		
-		List<DpPessoa> listPessoa = null;
-		
-		funcao = new DpFuncaoConfianca();	
-		if (id == null) {
-			funcao = new DpFuncaoConfianca();
-			Date data = new Date(System.currentTimeMillis());
-			funcao.setDataInicio(data);
-			
-		} else {
-			funcao = dao().consultar(id, DpFuncaoConfianca.class, false);
-			listPessoa = CpDao.getInstance().consultarPessoasComFuncaoConfianca(id);
-			
-		}
-		funcao.setNomeFuncao(Texto.removerEspacosExtra(nmFuncao).trim());
-		
-		if (idOrgaoUsu != null && idOrgaoUsu != 0 && (listPessoa == null || listPessoa.size() == 0)) {
-			CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
-			orgaoUsuario = dao().consultar(idOrgaoUsu, CpOrgaoUsuario.class, false);	
-			funcao.setOrgaoUsuario(orgaoUsuario);
-		}
-		
-		try {
-			dao().iniciarTransacao();
-			dao().gravar(funcao);
-			if(funcao.getIdFuncaoIni() == null && funcao.getId() != null) {
-				funcao.setIdFuncaoIni(funcao.getId());
-				funcao.setIdeFuncao(funcao.getId().toString());
-				dao().gravar(funcao);
-			}
-			dao().commitTransacao();			
-		} catch (final Exception e) {
-			dao().rollbackTransacao();
-			throw new AplicacaoException("Erro na gravação", 0, e);
-		}
+		Cp.getInstance().getBL().gravarFuncaoConfianca(getIdentidadeCadastrante(), id, nmFuncao, idOrgaoUsu,Boolean.TRUE);
 		this.result.redirectTo(this).lista(0, null, "");
 	}
 	
 	@Transacional
 	@Post("/app/funcao/ativarInativar")
 	public void ativarInativar(final Long id) throws Exception {
-		DpFuncaoConfianca funcao = dao().consultar(id, DpFuncaoConfianca.class, false);
+		DpFuncaoConfianca funcaoConfianca = dao().consultar(id, DpFuncaoConfianca.class, false);
 		Date dt = dao().consultarDataEHoraDoServidor();
 
 		// ativar
-		if (funcao.getDataFimFuncao() != null) {
-			DpFuncaoConfianca funcaoNovo = new DpFuncaoConfianca();
-			PropertyUtils.copyProperties(funcaoNovo, funcao);
-			funcaoNovo.setId(null);
-			funcaoNovo.setDataFim(null);
-			dao().gravarComHistorico(funcaoNovo, funcao, dt, getIdentidadeCadastrante());
+		if (funcaoConfianca.getDataFimFuncao() != null ) {		
+			Cp.getInstance().getBL().gravarFuncaoConfianca(getIdentidadeCadastrante(), id, null, null, Boolean.TRUE);
 		} else {// inativar
-			funcao.setDataFimFuncao(dt);
-			try {
-				dao().gravarComHistorico(funcao, getIdentidadeCadastrante());
-			} catch (final Exception e) {
-				throw new AplicacaoException("Erro na gravação", 0, e);
-			}
+			Cp.getInstance().getBL().gravarFuncaoConfianca(getIdentidadeCadastrante(), id, null, null, Boolean.FALSE);
 		}
-		this.result.redirectTo(this).lista(0, null, "");
+		
+		if (funcaoConfianca.getOrgaoUsuario() != null)
+			this.result.redirectTo(this).lista(0,funcaoConfianca.getOrgaoUsuario().getIdOrgaoUsu(), "");
+		else
+			this.result.redirectTo(this).lista(0,null, "");
 	}
 	
 	@Get("/app/funcao/carregarExcel")
@@ -344,7 +281,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 			}
 			
 			CpBL cpbl = new CpBL();
-			inputStream = cpbl.uploadFuncao(file, orgaoUsuario, extensao);
+			inputStream = cpbl.uploadFuncao(file, orgaoUsuario, extensao, getIdentidadeCadastrante());
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}

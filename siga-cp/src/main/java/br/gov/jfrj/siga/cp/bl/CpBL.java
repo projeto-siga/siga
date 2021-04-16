@@ -1077,11 +1077,11 @@ public class CpBL {
 		return excel.uploadLotacao(file, orgaoUsuario, extensao, cadastrante);
 	}
 
-	public InputStream uploadFuncao(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
+	public InputStream uploadFuncao(File file, CpOrgaoUsuario orgaoUsuario, String extensao, final CpIdentidade identidadeCadastrante) {
 		InputStream inputStream = null;
 		try {
 			Excel excel = new Excel();
-			inputStream = excel.uploadFuncao(file, orgaoUsuario, extensao);
+			inputStream = excel.uploadFuncao(file, orgaoUsuario, extensao, identidadeCadastrante);
 		} catch (Exception e) {
 
 		}
@@ -1968,7 +1968,7 @@ public class CpBL {
 					List<DpPessoa> listaPessoasNoCargo = null;
 					listaPessoasNoCargo = CpDao.getInstance().consultarPessoasComCargo(id);
 					
-					if (!listaPessoasNoCargo.isEmpty()) {
+					if (listaPessoasNoCargo != null && !listaPessoasNoCargo.isEmpty()) {
 						throw new AplicacaoException("Não é possível alterar o Órgão do Cargo após o vínculo com Pessoas.");
 					}
 				}
@@ -1985,7 +1985,7 @@ public class CpBL {
 				if (!nmCargo.matches("[a-zA-ZàáâãéêíóôõúçÀÁÂÃÉÊÍÓÔÕÚÇ 0-9-/.]+")) 
 					throw new AplicacaoException("Nome com caracteres não permitidos");
 
-				cargoNovo.setNomeCargo(Texto.removeAcento(Texto.removerEspacosExtra(nmCargo).trim()));
+				cargoNovo.setNomeCargo(Texto.removerEspacosExtra(nmCargo).trim());
 				
 				DpCargo cargoNomeOrgao = new DpCargo();
 				cargoNomeOrgao = CpDao.getInstance().consultarPorNomeOrgao(cargoNovo);
@@ -1997,14 +1997,17 @@ public class CpBL {
 			}
 		}
 		
-		//Consulta pessoas ativas para o cargo. 
-		//Se for Inativação. Não permite inativar com pessoas ativas
-		//Se for alteração. Aplica a troca do cargo para as pessoas ativas.
-		final DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
-		flt.setCargo(cargo);
-		flt.setIdOrgaoUsu(cargoNovo.getOrgaoUsuario().getIdOrgaoUsu());
-		flt.setNome("");
-		List<DpPessoa> pessoasAtivasCargo = CpDao.getInstance().consultarPorFiltro(flt);
+		List<DpPessoa> pessoasAtivasCargo = null;
+		if (cargo != null) {
+			//Consulta pessoas ativas para o cargo. 
+			//Se for Inativação. Não permite inativar com pessoas ativas
+			//Se for alteração. Aplica a troca do cargo para as pessoas ativas.
+			final DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
+			flt.setCargo(cargo);
+			flt.setIdOrgaoUsu(cargoNovo.getOrgaoUsuario().getIdOrgaoUsu());
+			flt.setNome("");
+			pessoasAtivasCargo = CpDao.getInstance().consultarPorFiltro(flt);
+		}
 		
 		if (isAtivo != null) {
 			if (isAtivo) {
@@ -2045,6 +2048,124 @@ public class CpBL {
 		
 		return cargoNovo;
 		
+	}
+	
+	public DpFuncaoConfianca gravarFuncaoConfianca(final CpIdentidade identidadeCadastrante, final Long id, final String nmFuncaoConfianca, final Long idOrgaoUsu, final Boolean isAtivo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException  {
+		if (identidadeCadastrante == null) {
+			throw new AplicacaoException("Não é possível cadastrar ou alterar o cargo sem que seja informado o cadastrante.");
+		}
+		
+		DpFuncaoConfianca funcaoConfianca = null;
+		DpFuncaoConfianca funcaoConfiancaNovo = new DpFuncaoConfianca();
+		Date dt = dao().consultarDataEHoraDoServidor();
+		
+		if (id != null && id > 0) {
+			funcaoConfianca = dao().consultar(id, DpFuncaoConfianca.class, false);
+			if (funcaoConfianca == null) {
+				throw new AplicacaoException("Função de Confiança informada não localizada.");
+			}
+			PropertyUtils.copyProperties(funcaoConfiancaNovo, funcaoConfianca); //Copia Funcao de Confianca existente para novo registro
+			funcaoConfiancaNovo.setId(null);
+		} else {
+			funcaoConfiancaNovo.setDataInicio(dt);
+		}
+		
+		
+		CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
+		if(idOrgaoUsu == null && funcaoConfiancaNovo.getOrgaoUsuario() == null)
+			throw new AplicacaoException("Órgão não informado.");
+		else {
+			if (idOrgaoUsu != null && idOrgaoUsu != 0) {
+				
+				orgaoUsuario = dao().consultar(idOrgaoUsu, CpOrgaoUsuario.class, false);			
+				if (orgaoUsuario == null) {
+					throw new AplicacaoException("Órgão informado não localizado.");
+				} 
+
+				if (funcaoConfiancaNovo.getOrgaoUsuario() != null && !orgaoUsuario.getIdOrgaoUsu().equals(funcaoConfiancaNovo.getOrgaoUsuario().getIdOrgaoUsu())) {
+
+					List<DpPessoa> listaPessoasNaFuncaoConfianca = null;
+					listaPessoasNaFuncaoConfianca= CpDao.getInstance().consultarPessoasComFuncaoConfianca(id);
+					
+					if (listaPessoasNaFuncaoConfianca != null && !listaPessoasNaFuncaoConfianca.isEmpty()) {
+						throw new AplicacaoException("Não é possível alterar o Órgão da Função de Confiança após o vínculo com Pessoas.");
+					}
+				}
+				funcaoConfiancaNovo.setOrgaoUsuario(orgaoUsuario);
+			}
+			
+		}
+		
+		if(nmFuncaoConfianca == null && funcaoConfiancaNovo.getNomeFuncao() == null)
+			throw new AplicacaoException("Nome da Função de Confiança não informado.");
+		else {
+			if(nmFuncaoConfianca != null) {
+				if (!nmFuncaoConfianca.matches(Texto.FuncaoConfianca.REGEX_CARACTERES_PERMITIDOS)) 
+					throw new AplicacaoException("Nome com caracteres não permitidos.");
+
+				funcaoConfiancaNovo.setNomeFuncao(Texto.removerEspacosExtra(nmFuncaoConfianca).trim());
+				
+				DpFuncaoConfianca funcaoConfiancaNomeOrgao = new DpFuncaoConfianca();
+				funcaoConfiancaNomeOrgao = CpDao.getInstance().consultarPorNomeOrgao(funcaoConfiancaNovo);
+				if(funcaoConfiancaNomeOrgao != null && !funcaoConfiancaNomeOrgao.equals(funcaoConfianca)) {
+					throw new AplicacaoException("Nome do cargo já cadastrado neste órgão!");
+				}
+				funcaoConfiancaNomeOrgao = null;
+				
+			}
+		}
+		
+		List<DpPessoa> pessoasAtivasFuncaoConfianca = null;
+		
+		if (funcaoConfianca != null) {
+			//Consulta pessoas ativas para a Função de Confiança. 
+			//Se for Inativação. Não permite inativar com pessoas ativas
+			//Se for alteração. Aplica a troca da Função de Confiança para as pessoas ativas.
+			final DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
+			flt.setFuncaoConfianca(funcaoConfianca);
+			flt.setIdOrgaoUsu(funcaoConfiancaNovo.getOrgaoUsuario().getIdOrgaoUsu());
+			flt.setNome("");
+			pessoasAtivasFuncaoConfianca = CpDao.getInstance().consultarPorFiltro(flt);
+		}
+		
+		if (isAtivo != null) {
+			if (isAtivo) {
+				funcaoConfiancaNovo.setDataFimFuncao(null);
+				funcaoConfiancaNovo.setHisIdcFim(null);
+			} else {
+
+				if (pessoasAtivasFuncaoConfianca != null && !pessoasAtivasFuncaoConfianca.isEmpty()) {
+					throw new AplicacaoException(String.format("Não é possível realizar a operação, pois existe %s vinculado ao cadastro.",SigaMessages.getMessage("usuario.matricula")),0);
+				}
+				funcaoConfiancaNovo.setDataFimFuncao(dt);
+			}
+		}	
+		
+		//Persistindo as alterações
+		try {
+			dao().gravarComHistorico(funcaoConfiancaNovo, funcaoConfianca, dt, identidadeCadastrante);
+			
+			//Aplica cargo alterado nas pessoas ativas do cargo anterior.
+			if (pessoasAtivasFuncaoConfianca != null && !pessoasAtivasFuncaoConfianca.isEmpty()) {
+				DpPessoa pessoaNovo = new DpPessoa();
+				for (DpPessoa pessoaAtual : pessoasAtivasFuncaoConfianca) {
+					copiarPessoa(pessoaAtual,pessoaNovo); //copyProperty não funciona, pois DpPessoa é um Bean despadronizado
+
+					if (pessoaNovo != null) {
+						pessoaNovo.setFuncaoConfianca(funcaoConfiancaNovo);
+						pessoaNovo.setLotacao(pessoaAtual.getLotacao());
+						dao().gravarComHistorico(pessoaNovo, pessoaAtual, dt, identidadeCadastrante);
+					}
+					
+				}
+			}
+
+			
+		} catch (final Exception e) {
+			throw e;
+		}
+		
+		return funcaoConfiancaNovo;
 	}
 	
 	

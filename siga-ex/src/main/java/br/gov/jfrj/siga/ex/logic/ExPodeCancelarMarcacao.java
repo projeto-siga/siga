@@ -6,6 +6,7 @@ import com.crivano.jlogic.Expression;
 import com.crivano.jlogic.Not;
 import com.crivano.jlogic.Or;
 
+import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -62,7 +63,7 @@ public class ExPodeCancelarMarcacao extends CompositeExpressionSuport {
 	public static void afirmar(ExMovimentacao mov, DpPessoa titular, DpLotacao lotaTitular) {
 		ExPodeCancelarMarcacao teste = new ExPodeCancelarMarcacao(mov, titular, lotaTitular);
 		if (!teste.eval())
-			throw new AplicacaoException("Não é possível cancelar marcação porque " + teste.explain(false));
+			throw new AplicacaoException("Não é possível cancelar marcação porque " + AcaoVO.Helper.produzirExplicacao(teste, false));
 	}
 
 };

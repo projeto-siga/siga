@@ -52,7 +52,7 @@ public enum WfAcessoDeEdicao {
 					return true;
 			return false;
 		case ACESSO_LOTACAO:
-			return pd.getLotaResponsavel().equivale(lotaTitular);
+			return pd.getLotaResponsavel().equivale(lotaTitular) || pd.getResponsavel().equivale(titular);
 		case ACESSO_PESSOAL:
 			return pd.getResponsavel().equivale(titular);
 		case ACESSO_LOTACAO_E_GRUPO:

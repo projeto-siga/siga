@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
@@ -33,8 +34,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.exception.ConstraintViolationException;
@@ -1085,11 +1088,11 @@ public class CpBL {
 		return inputStream;
 	}
 
-	public InputStream uploadCargo(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
+	public InputStream uploadCargo(File file, CpOrgaoUsuario orgaoUsuario, String extensao,final CpIdentidade identidadeCadastrante) {
 		InputStream inputStream = null;
 		try {
 			Excel excel = new Excel();
-			inputStream = excel.uploadCargo(file, orgaoUsuario, extensao);
+			inputStream = excel.uploadCargo(file, orgaoUsuario, extensao,identidadeCadastrante);
 		} catch (Exception e) {
 
 		}
@@ -1926,5 +1929,123 @@ public class CpBL {
 		pesNova.setIdPessoaIni(pesAnt.getIdPessoaIni());
 		pesNova.setIdePessoa(pesAnt.getIdePessoa());
 	}
+	
+	
+	public DpCargo gravarCargo(final CpIdentidade identidadeCadastrante, final Long id, final String nmCargo, final Long idOrgaoUsu, final Boolean isAtivo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		
+		if (identidadeCadastrante == null) {
+			throw new AplicacaoException("Não é possível cadastrar ou alterar o cargo sem que seja informado o cadastrante.");
+		}
+		
+		DpCargo cargo = null;
+		DpCargo cargoNovo = new DpCargo();
+		Date dt = dao().consultarDataEHoraDoServidor();
+		
+		if (id != null && id > 0) {
+			cargo = dao().consultar(id, DpCargo.class, false);
+			if (cargo == null) {
+				throw new AplicacaoException("Cargo informado não localizado.");
+			}
+			PropertyUtils.copyProperties(cargoNovo, cargo); //Copia cargo existente para novo registro
+			cargoNovo.setId(null);
+		} else {
+			cargoNovo.setDataInicio(dt);
+		}
+		
+		CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
+		if(idOrgaoUsu == null && cargoNovo.getOrgaoUsuario() == null)
+			throw new AplicacaoException("Órgão não informado.");
+		else {
+			if (idOrgaoUsu != null && idOrgaoUsu != 0) {
+				
+				orgaoUsuario = dao().consultar(idOrgaoUsu, CpOrgaoUsuario.class, false);			
+				if (orgaoUsuario == null) {
+					throw new AplicacaoException("Órgão informado não localizado.");
+				} 
+
+				if (cargoNovo.getOrgaoUsuario() != null && !orgaoUsuario.getIdOrgaoUsu().equals(cargoNovo.getOrgaoUsuario().getIdOrgaoUsu())) {
+					
+					List<DpPessoa> listaPessoasNoCargo = null;
+					listaPessoasNoCargo = CpDao.getInstance().consultarPessoasComCargo(id);
+					
+					if (!listaPessoasNoCargo.isEmpty()) {
+						throw new AplicacaoException("Não é possível alterar o Órgão do Cargo após o vínculo com Pessoas.");
+					}
+				}
+				cargoNovo.setOrgaoUsuario(orgaoUsuario);
+			}
+			
+		}
+		
+		
+		if(nmCargo == null && cargoNovo.getNomeCargo() == null)
+			throw new AplicacaoException("Nome do cargo não informado");
+		else {
+			if(nmCargo != null) {
+				if (!nmCargo.matches("[a-zA-ZàáâãéêíóôõúçÀÁÂÃÉÊÍÓÔÕÚÇ 0-9-/.]+")) 
+					throw new AplicacaoException("Nome com caracteres não permitidos");
+
+				cargoNovo.setNomeCargo(Texto.removeAcento(Texto.removerEspacosExtra(nmCargo).trim()));
+				
+				DpCargo cargoNomeOrgao = new DpCargo();
+				cargoNomeOrgao = CpDao.getInstance().consultarPorNomeOrgao(cargoNovo);
+				if(cargoNomeOrgao != null && !cargoNomeOrgao.equals(cargo)) {
+					throw new AplicacaoException("Nome do cargo já cadastrado neste órgão!");
+				}
+				cargoNomeOrgao = null;
+				
+			}
+		}
+		
+		//Consulta pessoas ativas para o cargo. 
+		//Se for Inativação. Não permite inativar com pessoas ativas
+		//Se for alteração. Aplica a troca do cargo para as pessoas ativas.
+		final DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
+		flt.setCargo(cargo);
+		flt.setIdOrgaoUsu(cargoNovo.getOrgaoUsuario().getIdOrgaoUsu());
+		flt.setNome("");
+		List<DpPessoa> pessoasAtivasCargo = CpDao.getInstance().consultarPorFiltro(flt);
+		
+		if (isAtivo != null) {
+			if (isAtivo) {
+				cargoNovo.setDataFimCargo(null);
+				cargoNovo.setHisIdcFim(null);
+			} else {
+
+				if (pessoasAtivasCargo != null && !pessoasAtivasCargo.isEmpty()) {
+					throw new AplicacaoException(String.format("Não é possível realizar a operação, pois existe %s vinculado ao cadastro.",SigaMessages.getMessage("usuario.matricula")),0);
+				}
+				cargoNovo.setDataFimCargo(dt);
+			}
+		}	
+		
+		//Persistindo as alterações
+		try {
+			dao().gravarComHistorico(cargoNovo, cargo, dt, identidadeCadastrante);
+			
+			//Aplica cargo alterado nas pessoas ativas do cargo anterior.
+			if (pessoasAtivasCargo != null && !pessoasAtivasCargo.isEmpty()) {
+				DpPessoa pessoaNovo = new DpPessoa();
+				for (DpPessoa pessoaAtual : pessoasAtivasCargo) {
+					copiarPessoa(pessoaAtual,pessoaNovo); //copyProperty não funciona, pois DpPessoa é um Bean despadronizado
+
+					if (pessoaNovo != null) {
+						pessoaNovo.setCargo(cargoNovo);
+						pessoaNovo.setLotacao(pessoaAtual.getLotacao());
+						dao().gravarComHistorico(pessoaNovo, pessoaAtual, dt, identidadeCadastrante);
+					}
+					
+				}
+			}
+
+			
+		} catch (final Exception e) {
+			throw e;
+		}
+		
+		return cargoNovo;
+		
+	}
+	
 	
 }

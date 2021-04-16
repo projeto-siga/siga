@@ -71,7 +71,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "  where upper(cargo.nomeCargoAI) like upper('%' || :nome || '%')"
 				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or cargo.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu) group by cargo.idCargoIni)"),
 		@NamedQuery(name = "consultarPorNomeDpCargoOrgao", query = "select cargo from DpCargo cargo "
-				+ " where upper(REMOVE_ACENTO(cargo.nomeCargo)) = upper(REMOVE_ACENTO(:nome)) and cargo.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario")})
+				+ " where upper(REMOVE_ACENTO(cargo.nomeCargo)) = upper(REMOVE_ACENTO(:nome)) and cargo.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario and cargo.dataFimCargo = null")})
 public abstract class AbstractDpCargo extends Objeto implements Serializable, HistoricoAuditavel {
 
 	@Id

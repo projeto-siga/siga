@@ -250,7 +250,7 @@ public class GcInformacao extends Objeto {
 	@PostLoad
 	private void onLoad() {
 		marcas = GcMarca.AR
-				.find("inf.id = ?1 and (dtFimMarca is null or dtFimMarca > CURRENT_TIMESTAMP) order by dtIniMarca, cpMarcador.descrMarcador",
+				.find("inf.id = ?1 and (dtFimMarca is null or dtFimMarca > 	:dbDatetime) order by dtIniMarca, cpMarcador.descrMarcador",
 						this.id).fetch();
 		// marcas = GcMarca.find("id_tp_marca = 3 and inf.id = ?",
 		// this.id).fetch();

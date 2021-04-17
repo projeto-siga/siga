@@ -46,6 +46,7 @@ import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.gc.model.GcAcesso;
 import br.gov.jfrj.siga.gc.model.GcArquivo;
 import br.gov.jfrj.siga.gc.model.GcInformacao;
@@ -102,6 +103,7 @@ public class AppController extends GcController {
 		Query query = em().createNamedQuery("contarGcMarcas");
 		query.setParameter("idPessoaIni", getCadastrante().getIdInicial());
 		query.setParameter("idLotacaoIni", getLotaTitular().getIdInicial());
+		query.setParameter("dbDatetime", CpDao.getInstance().consultarDataEHoraDoServidor());
 		List contagens = query.getResultList();
 		result.include("contagens", contagens);
 	}

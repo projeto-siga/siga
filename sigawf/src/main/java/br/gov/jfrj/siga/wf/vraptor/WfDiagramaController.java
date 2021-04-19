@@ -1,7 +1,5 @@
 package br.gov.jfrj.siga.wf.vraptor;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.text.ParseException;
@@ -19,9 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.axis.encoding.Base64;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
@@ -47,7 +42,6 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.GenericoSelecao;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
-import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.sinc.lib.Item;
 import br.gov.jfrj.siga.sinc.lib.Sincronizador;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
@@ -355,7 +349,6 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 				result.redirectTo("editar?id=" + pd.getId());
 				return;
 			}
-//		result.use(Results.json()).from();
 			jsonSuccess("OK");
 		} catch (Exception e) {
 			jsonError(e);
@@ -393,38 +386,6 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 			return dao().consultarAtivoPorIdInicial(WfDefinicaoDeProcedimento.class, idInicial);
 		}
 		return null;
-	}
-
-	protected void jsonSuccess(final Object resp) {
-		String s = gson.toJson(resp);
-		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(200);
-	}
-
-	protected void jsonError(final Exception e) throws Exception {
-		StringWriter sw = new StringWriter();
-		PrintWriter pw = new PrintWriter(sw);
-		e.printStackTrace(pw);
-		String errstack = sw.toString(); // stack trace as a string
-
-		JSONObject json = new JSONObject();
-		try {
-			json.put("errormsg", e.getMessage());
-
-			// Error Details
-			JSONArray arr = new JSONArray();
-			JSONObject detail = new JSONObject();
-			detail.put("context", context);
-			detail.put("service", "sigadocsigner");
-			detail.put("stacktrace", errstack);
-			json.put("errordetails", arr);
-		} catch (JSONException e1) {
-			throw new RuntimeException(e1);
-		}
-
-		String s = json.toString();
-		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(500);
-		response.flushBuffer();
-		throw e;
 	}
 
 	@Get("app/diagrama/acesso-de-edicao/carregar")
@@ -489,5 +450,9 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 			result.use(Results.http()).body("0");
 		}
 	}
-
+	
+	protected void jsonSuccess(final Object resp) {
+		String s = gson.toJson(resp);
+		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(200);
+	}
 }

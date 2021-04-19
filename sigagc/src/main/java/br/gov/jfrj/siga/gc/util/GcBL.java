@@ -168,6 +168,11 @@ public class GcBL {
 		return mov;
 	}
 
+	public void atualizarListaMovimentacoes(GcInformacao inf, GcMovimentacao mov) {
+		inf.getMovs().remove(mov);
+		inf.getMovs().add(mov);
+	}
+	
 	public Date dt() {
 		if (this.dt == null)
 			this.dt = so.dao().dt();
@@ -211,7 +216,7 @@ public class GcBL {
 				mov.save();
 			}
 		}
-		atualizarInformacaoPorMovimentacoes(inf);
+		//atualizarInformacaoPorMovimentacoes(inf);
 		atualizarTags(inf);
 		inf.save();
 		atualizarMarcas(inf);
@@ -280,12 +285,15 @@ public class GcBL {
 
 	public void atualizarInformacaoPorMovimentacoes(GcInformacao inf)
 			throws AplicacaoException {
+		
 		if (inf.getMovs() == null)
 			return;
 
 		ArrayList<GcMovimentacao> movs = new ArrayList<GcMovimentacao>(
 				inf.getMovs().size());
+		
 		movs.addAll(inf.getMovs());
+
 		Collections.reverse(movs);
 
 		for (GcMovimentacao mov : movs) {

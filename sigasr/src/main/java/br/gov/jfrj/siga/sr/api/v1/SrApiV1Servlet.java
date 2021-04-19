@@ -139,11 +139,13 @@ public class SrApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 	private void defineProperties() {
 		addPublicProperty("datasource.name", "java:/jboss/datasources/SigaCpDS");
 		addPublicProperty("senha.usuario.expiracao.dias", null);
+		addPublicProperty("corporativo.dadosrh.password", "3600");
+		addPublicProperty("corporativo.dadosrh.situacoesParaImportar", "1,2,31,12,36");
 	}
 
 	@Override
 	public String getService() {
-		return "siga";
+		return "sigasr";
 	}
 
 	@Override

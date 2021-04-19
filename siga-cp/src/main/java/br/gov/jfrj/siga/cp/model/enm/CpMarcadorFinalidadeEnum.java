@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.converter.IEnumWithId;
+import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.SigaMessages;
 
 public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
 	SISTEMA(1, CpMarcadorFinalidadeGrupoEnum.SISTEMA, "Sistema", "Marcador de Sistema",
@@ -48,7 +50,7 @@ public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
 	GERAL_AGENDADA_XOR(6, CpMarcadorFinalidadeGrupoEnum.GERAL, "Geral Agendada Mutuamente Exclusiva",
 			"Marcador, mutuamente exclusivo, que pode ser definido por qualquer pessoa e estará visível, a partir de uma data definida, para quem receber com o documento. Apenas um marcador desse tipo pode ser definido para um mesmo documento",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.TODAS_AS_VIAS_OU_ULTIMO_VOLUME,
-			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
+			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoExibicaoEnum.IMEDIATA,			
 			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.OPCIONAL, true),
 	//
 	LOCAL(100, CpMarcadorFinalidadeGrupoEnum.LOCAL, "Local",
@@ -187,9 +189,11 @@ public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
 	}
 
 	public static List<CpMarcadorFinalidadeEnum> disponiveis(boolean geral, boolean lotacao) {
+		List<String> listaFinalidadesLotaValidas = Arrays.asList(Prop.get("marcadores.lota.finalidades").split(","));
 		return Arrays.asList(values()).stream()
 				.filter(f -> (geral && f.getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL)
-						|| (lotacao && f.getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO))
+						|| (lotacao && f.getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO
+								&& listaFinalidadesLotaValidas.contains(f.getNome())))
 				.collect(Collectors.toList());
 	}
 }

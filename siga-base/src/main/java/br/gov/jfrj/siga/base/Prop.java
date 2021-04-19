@@ -235,6 +235,15 @@ public class Prop {
 		
 		/* Obriga o preenchimento da descrição da ciência */
 		provider.addPublicProperty("/siga.ciencia.preenchimento.obrigatorio", "true");
-		
+
+		/* Cadastro de marcadores: Define um grupo da mesa default onde irá aparecer o marcador
+		 * */
+		provider.addPublicProperty("/siga.marcadores.grupo.default", "");
+
+		/* Cadastro de marcadores: Lista de finalidades que a lotação poderá cadastrar. Default - todos
+		 * Para selecionar apenas alguns, separar os nomes com vírgulas,
+		 * por ex: "Etiqueta,Etiqueta Direcionada,Lista"
+		 * */
+		provider.addPublicProperty("/siga.marcadores.lota.finalidades", "");
 	}
 }

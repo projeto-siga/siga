@@ -2,12 +2,16 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://localhost/libstag" prefix="f"%>
+<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
+<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />	
 <link rel="stylesheet"
 	href="/siga/css/selectpicker/bootstrap-select.min.css" type="text/css"
 	media="screen, projection" />
 
 <siga:pagina titulo="Editar Marcador">
 	<!-- main content -->
+	<c:set var="grupoDefault" scope="session" value="${f:resource('/siga.marcadores.grupo.default')}" />
 	<div class="container-fluid">
 		<div class="card bg-light mb-3">
 			<div class="card-header">
@@ -75,14 +79,16 @@
 								</div>
 							</div>
 						</div>
-						<div class="col col-12 col-md-6 col-lg-3">
+						<div class="col col-12 col-md-6 col-lg-3 ${not empty grupoDefault ? 'd-none' : '' }">
 							<div class="form-group" id="grupo">
 								<label for="idGrupo">Grupo</label> <select
 									class="form-control" id="idGrupo" name="idGrupo"
 									value="${idGrupo}">
 									<c:forEach items="${listaGrupos}" var="item">
-										<option value="${item.name()}"
-											${(item eq marcador.idGrupo) or (empty marcador and item eq 'OUTROS') ? 'selected' : ''}>
+										<option value="${item.name()}" 
+											${(not empty grupoDefault and item.name() eq grupoDefault)
+												or (empty grupoDefault and ((item eq marcador.idGrupo)
+													or (empty marcador and item eq 'OUTROS'))) ? 'selected' : ''}>
 											${item.nome}</option>
 									</c:forEach>
 								</select>
@@ -98,17 +104,27 @@
 						<div class="col col-12">
 							<div class="form-group" id="finalidade">
 								<label for="idFinalidade">Finalidade do Marcador</label> <select
-									class="form-control" id="idFinalidade" name="idFinalidade"
+									class="form-control siga-select2" id="idFinalidade" name="idFinalidade"
 									value="${idFinalidade}">
 									<c:forEach items="${listaFinalidade}" var="item">
-										<option value="${item.name()}"
+										<option class="small" value="${item.name()}"
 											${item eq marcador.idFinalidade ? 'selected' : ''}>
-											${item.nome} - ${item.descricao}</option>
+											<div></div><h4><b>${item.nome}</b> </h4><p><small> - ${item.descricao}</small></p></div></option>
 									</c:forEach>
 								</select>
 							</div>
 						</div>
 					</div>
+					<div class="form-group row">
+						<div class="col-6 col-md-3">
+							<label for="dataAtivacao">Data de Ativação</label> <input
+								name="dataAtivacao" id="dataAtivacao" class="form-control campoData"
+								onblur="javascript:verifica_data(this,0);" autocomplete="off" />
+							<small>Opcional. Data em que o marcador deve aparecer na lista de marcadores do usuário. 
+								Se não informado, aparece imediatamente.</small>
+						</div>
+					</div>						
+					
 					<div class="form-group">
 						<input type="submit" type="button"
 							class="btn btn-primary  btn-salvar" value="OK"> <a
@@ -121,6 +137,9 @@
 </siga:pagina>
 <script type="text/javascript"
 	src="/siga/javascript/selectpicker/bootstrap-select.min.js"></script>
+<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
 <script>
 	function mudaCorAmostra(cor) {
 		$("#idCorAmostra").css("color", cor);

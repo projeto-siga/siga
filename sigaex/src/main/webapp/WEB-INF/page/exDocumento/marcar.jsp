@@ -1,4 +1,5 @@
 <!-- Marcar Modal -->
+<%@ page contentType="text/html; charset=UTF-8"%>
 <div class="modal fade" id="definirMarcaModal" tabindex="-1"
 	role="dialog" aria-labelledby="anotarModalLabel" aria-hidden="true">
 	<div class="modal-dialog" role="document">
@@ -27,8 +28,11 @@
 									v-model="idMarcador" id="marcador" class="form-control">
 									<optgroup v-for="grupo in listaAgrupada"
 										v-bind:label="grupo.grupo">
-										<option v-for="option in grupo.lista" v-if="option.ativo"
-											v-bind:value="option.idMarcador">{{ option.nome }}</option>
+										<option :disabled="!option.ativo" 
+											:style="!option.ativo ? 'color: LightGray;' : ''" 
+											v-for="option in grupo.lista" 
+											v-bind:value="option.idMarcador"
+											>{{ option.nome }}{{!option.ativo? ' (Já marcado no documento)' : ''}}</option>
 									</optgroup>
 								</select>
 							</div>

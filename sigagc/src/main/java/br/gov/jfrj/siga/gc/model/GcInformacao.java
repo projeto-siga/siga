@@ -27,6 +27,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
+import javax.persistence.Query;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -250,9 +251,11 @@ public class GcInformacao extends Objeto {
 
 	@PostLoad
 	private void onLoad() {
-		marcas = GcMarca.AR
-				.find("inf.id = ?1 and (dtFimMarca is null or dtFimMarca > 	:dbDatetime) order by dtIniMarca, cpMarcador.descrMarcador",
-						this.id).fetch();
+		
+		Query query = em().createQuery("SELECT m FROM GcMarca m where m.inf.id = :idInf and (m.dtFimMarca is null or m.dtFimMarca > 	:dbDatetime) order by dtIniMarca, cpMarcador.descrMarcador");
+		query.setParameter("idInf", this.id);
+		query.setParameter("dbDatetime", CpDao.getInstance().consultarDataEHoraDoServidor());
+		marcas = query.getResultList();
 		// marcas = GcMarca.find("id_tp_marca = 3 and inf.id = ?",
 		// this.id).fetch();
 	}

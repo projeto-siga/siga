@@ -989,6 +989,7 @@ public class AppController extends GcController {
 		if (inf.acessoPermitido(getTitular(), getLotaTitular(), inf.getEdicao().getId())) {
 			bl.movimentar(inf, GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO,
 					null, null, null, null, null, null, null, null, null);
+			bl.atualizarInformacaoPorMovimentacoes(inf);
 			bl.gravar(inf, getIdentidadeCadastrante(), getTitular(),
 					getLotaTitular());
 			result.redirectTo(this).exibir(inf.getSiglaCompacta(), null, false,

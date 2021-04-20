@@ -227,16 +227,8 @@
 								<th rowspan="2">Descrição</th>
 							</tr>
 							<tr>
-								<c:choose>
-									<c:when
-										test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-										<th style="text-align: center"><input type="checkbox" name="checkall"
-											onclick="checkUncheckAll(this)" /></th>
-									</c:when>
-									<c:otherwise>
-										<td></td>
-									</c:otherwise>
-								</c:choose>
+								<th style="text-align: center"><input type="checkbox" name="checkall"
+									onclick="checkUncheckAll(this)" checked /></th>
 								<th align="left">Lotação</th>
 								<th align="left">Pessoa</th>
 								<th align="left">Lotação</th>
@@ -262,7 +254,7 @@
 										<c:set var="x_checked" scope="request">checked</c:set>
 									</c:if>
 									<td style="text-align: center"><input type="checkbox" name="${x}"
-										value="true" ${x_checked} /></td>
+										value="true" checked ${x_checked} /></td>
 									<td align="center">${dt}</td>
 									<td align="left"><siga:selecionado
 											sigla="${mov.parte.lotaCadastrante.sigla}"

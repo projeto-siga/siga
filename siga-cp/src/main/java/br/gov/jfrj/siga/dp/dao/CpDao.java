@@ -568,7 +568,7 @@ public class CpDao extends ModeloDao {
 	@SuppressWarnings("unchecked")
 	public List<CpAplicacaoFeriado> listarAplicacoesFeriado(final CpAplicacaoFeriado apl) {
 		final Query query = em().createNamedQuery("listarAplicacoesFeriado");
-		query.setParameter("cpOcorrenciaFeriado", apl.getCpOcorrenciaFeriado());
+		query.setParameter("cpOcorrenciaFeriado", apl.getCpOcorrenciaFeriado().getId());
 
 		query.setHint("org.hibernate.cacheable", true);
 		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);

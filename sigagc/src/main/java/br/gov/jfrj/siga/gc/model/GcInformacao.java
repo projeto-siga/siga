@@ -15,7 +15,6 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,6 +31,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 
@@ -135,7 +135,8 @@ public class GcInformacao extends Objeto {
 	private CpPerfil grupo;
 
 	@Sort(type = SortType.NATURAL)
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@ManyToMany
+	@org.hibernate.annotations.Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
 	@JoinTable(name = "GC_TAG_X_INFORMACAO", schema = "SIGAGC", joinColumns = @JoinColumn(name = "id_informacao"), inverseJoinColumns = @JoinColumn(name = "id_tag"))
 	private SortedSet<GcTag> tags;
 

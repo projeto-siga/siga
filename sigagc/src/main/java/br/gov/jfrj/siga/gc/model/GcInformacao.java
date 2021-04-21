@@ -137,7 +137,7 @@ public class GcInformacao extends Objeto {
 
 	@Sort(type = SortType.NATURAL)
 	@ManyToMany
-	@org.hibernate.annotations.Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+	@org.hibernate.annotations.Cascade({org.hibernate.annotations.CascadeType.PERSIST})
 	@JoinTable(name = "GC_TAG_X_INFORMACAO", schema = "SIGAGC", joinColumns = @JoinColumn(name = "id_informacao"), inverseJoinColumns = @JoinColumn(name = "id_tag"))
 	private SortedSet<GcTag> tags;
 

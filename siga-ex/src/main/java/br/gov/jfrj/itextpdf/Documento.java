@@ -18,6 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.itextpdf;
 
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO;
 import static br.gov.jfrj.siga.ex.util.ProcessadorHtml.novoHtmlPersonalizado;
 
 import java.awt.Color;
@@ -212,7 +214,9 @@ public class Documento {
 
 				/*** Exibe para Documentos Capturados a Funcao / Unidade ***/
 				if (movAssinatura.getExDocumento().isInternoCapturado()) { /* Interno Exibe Personalização se realizada */
-					s.append(Ex.getInstance().getBL().extraiPersonalizacaoAssinatura(movAssinatura));
+					if (movAssinatura.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA) || movAssinatura.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO)) {
+						s.append(Ex.getInstance().getBL().extraiPersonalizacaoAssinatura(movAssinatura));
+					}
 				} else if(movAssinatura.getExDocumento().isExternoCapturado()) { 
 					s.append(" - ");
 					s.append(movAssinatura.getCadastrante().getFuncaoString());

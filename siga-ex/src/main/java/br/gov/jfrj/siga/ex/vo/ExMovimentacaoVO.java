@@ -138,7 +138,7 @@ public class ExMovimentacaoVO extends ExVO {
 
 		descricao = mov.getObs();
 
-		if (mov.getNmFuncaoSubscritor() != null && mov.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA)) {
+		if (mov.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA) || mov.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO)) {
 			descricao += Ex.getInstance().getBL().extraiPersonalizacaoAssinatura(mov);
 		}
 

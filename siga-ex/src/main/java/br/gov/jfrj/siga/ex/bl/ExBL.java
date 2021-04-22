@@ -20,6 +20,7 @@ package br.gov.jfrj.siga.ex.bl;
 
 import static br.gov.jfrj.siga.ex.ExMobil.isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -7675,10 +7676,9 @@ public class ExBL extends CpBL {
 		 *getNmFuncaoSubscritor = [0] - personalizarFuncao [1] - personalizarUnidade [2] - personalizarLocalidade [3] - personalizarNome
 		 */
 		
-		if (!movimentacao.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA)) {
-			return null;
+		if (!movimentacao.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA) && !movimentacao.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO) ) {
+			throw new RuntimeException("Não é possível extrair personalização de movimentações que não são de assinatura.");
 		}
-		
 		
 		SortedSet<ExMovimentacao> listaMovimentacoes = movimentacao.mob().getExMovimentacaoSet();
 		ExMovimentacao movimentacaoOrigem = null; 

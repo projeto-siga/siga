@@ -86,6 +86,9 @@ function sbmt(offset) {
 							<c:url var="urlAtivarInativar" value="/app/cargo/ativarInativar">
 								<c:param name="id" value="${cargo.id}"></c:param>
 							</c:url>
+							<c:url var="urlExcluir" value="/app/cargo/excluir">
+								<c:param name="id" value="${cargo.id}"></c:param>
+							</c:url>
 							<div class="btn-group">								  
 							  <c:choose>
 								<c:when test="${empty cargo.dataFimCargo}">
@@ -103,7 +106,10 @@ function sbmt(offset) {
 								</c:otherwise>
 							  </c:choose>	  
 							  <div class="dropdown-menu">						  
-							  	<a href="${url}" class="dropdown-item" role="button" aria-pressed="true">Alterar</a>								   
+							  	<a href="${url}" class="dropdown-item" role="button" aria-pressed="true">Alterar</a>	
+							  	<div class="dropdown-divider"></div>	
+							  	<a href="${urlExcluir}" class="dropdown-item" onclick='javascript:atualizarUrl("javascript:submitPost(\"${urlExcluir}\")","Deseja excluir o cadastro selecionado?");return false;' role="button" 
+										aria-pressed="true" data-siga-modal-abrir="confirmacaoModal" style="min-width: 80px;">Excluir</a>						   
 							  </div>
 							</div>						
 						</td>

@@ -233,8 +233,9 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 	@Transacional
 	@Post("/app/funcao/ativarInativar")
 	public void ativarInativar(final Long id) throws Exception {
+		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_FUNCAO:Cadastrar Função de Confiança");
+		
 		DpFuncaoConfianca funcaoConfianca = dao().consultar(id, DpFuncaoConfianca.class, false);
-		Date dt = dao().consultarDataEHoraDoServidor();
 
 		// ativar
 		if (funcaoConfianca.getDataFimFuncao() != null ) {		
@@ -247,6 +248,30 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 			this.result.redirectTo(this).lista(0,funcaoConfianca.getOrgaoUsuario().getIdOrgaoUsu(), "");
 		else
 			this.result.redirectTo(this).lista(0,null, "");
+	}
+	
+	@Transacional
+	@Post("/app/funcao/excluir")
+	public void excluir(final Long id) throws Exception {
+		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_FUNCAO:Cadastrar Função de Confiança");
+		
+		if (id != null) {
+			try {
+				DpFuncaoConfianca funcaoConfianca = dao().consultar(id, DpFuncaoConfianca.class, false);;	
+				Cp.getInstance().getBL().excluirFuncaoConfianca(funcaoConfianca);	
+				
+				if (funcaoConfianca.getOrgaoUsuario() != null)
+					this.result.redirectTo(this).lista(0,funcaoConfianca.getOrgaoUsuario().getIdOrgaoUsu(), "");
+				else
+					this.result.redirectTo(this).lista(0,null, "");
+			} catch (final AplicacaoException e) {
+				throw new AplicacaoException("<b>Não é possível efetuar a exclusão:</b> " + e.getMessage(),0);
+			} catch (final Exception e) {
+				throw new AplicacaoException("Não é possível efetuar a exclusão. Favor tentar inativar a Função de Confiança.");
+			}
+		} else {
+			throw new AplicacaoException("ID não informado.");
+		}
 	}
 	
 	@Get("/app/funcao/carregarExcel")

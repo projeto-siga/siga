@@ -189,6 +189,31 @@ public class DpCargoController extends
 		else
 			this.result.redirectTo(this).lista(0,null, "");
 	}
+	
+	
+	@Transacional
+	@Post("/app/cargo/excluir")
+	public void excluir(final Long id) throws Exception {
+		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_CARGO: Cadastrar Cargo");
+		
+		if (id != null) {
+			try {
+				DpCargo cargo = dao().consultar(id, DpCargo.class, false);	
+				Cp.getInstance().getBL().excluirCargo(cargo);	
+				
+				if (cargo.getOrgaoUsuario() != null)
+					this.result.redirectTo(this).lista(0,cargo.getOrgaoUsuario().getIdOrgaoUsu(), "");
+				else
+					this.result.redirectTo(this).lista(0,null, "");
+			} catch (final AplicacaoException e) {
+				throw new AplicacaoException("<b>Não é possível efetuar a exclusão:</b> " + e.getMessage(),0);
+			} catch (final Exception e) {
+				throw new AplicacaoException("Não é possível efetuar a exclusão. Favor tentar inativar o cargo.");
+			}
+		} else {
+			throw new AplicacaoException("ID não informado.");
+		}
+	}
 		
 	@Post
 	@Path("app/cargo/exportarCsv")

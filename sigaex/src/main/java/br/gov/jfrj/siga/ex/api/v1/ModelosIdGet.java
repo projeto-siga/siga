@@ -2,10 +2,6 @@ package br.gov.jfrj.siga.ex.api.v1;
 
 import java.nio.charset.StandardCharsets;
 
-import com.crivano.swaggerservlet.SwaggerServlet;
-
-import br.gov.jfrj.siga.base.CurrentRequest;
-import br.gov.jfrj.siga.base.RequestInfo;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IModelosIdGet;

@@ -6,11 +6,8 @@ import java.util.stream.Collectors;
 
 import com.crivano.swaggerservlet.PresentableUnloggedException;
 import com.crivano.swaggerservlet.SwaggerException;
-import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.CurrentRequest;
-import br.gov.jfrj.siga.base.RequestInfo;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.ClassificacaoItem;
@@ -18,8 +15,6 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.ClassificacoesGetRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.ClassificacoesGetResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IClassificacoesGet;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.model.Selecionavel;
-import br.gov.jfrj.siga.persistencia.ExClassificacaoDaoFiltro;
 
 public class ClassificacoesGet implements IClassificacoesGet {
 	@Override

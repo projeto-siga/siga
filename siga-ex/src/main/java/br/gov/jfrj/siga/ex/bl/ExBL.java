@@ -19,6 +19,8 @@
 package br.gov.jfrj.siga.ex.bl;
 
 import static br.gov.jfrj.siga.ex.ExMobil.isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -43,6 +45,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -1696,7 +1699,7 @@ public class ExBL extends CpBL {
 		boolean fSubstituindoCosignatario = false;
 		final String formaAssinaturaSenha = senhaIsPIN ? "PIN" : "Senha";
 		final String concordanciaAssinaturaSenha = senhaIsPIN ? "o" : "a";
-
+		
 		if (matriculaSubscritor == null || matriculaSubscritor.isEmpty())
 			throw new AplicacaoException("Matrícula do Subscritor não foi informada.");
 
@@ -7666,6 +7669,69 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao permitir a disponibilização do documento no acompanhamento do protocolo.", 0, e);
 		}
+	}
+	
+	public String extraiPersonalizacaoAssinatura(final ExMovimentacao movimentacao) {
+		/*
+		 *getNmFuncaoSubscritor = [0] - personalizarFuncao [1] - personalizarUnidade [2] - personalizarLocalidade [3] - personalizarNome
+		 */
+		
+		if (!movimentacao.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA) && !movimentacao.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO) ) {
+			throw new RuntimeException("Não é possível extrair personalização de movimentações que não são de assinatura.");
+		}
+		
+		SortedSet<ExMovimentacao> listaMovimentacoes = movimentacao.mob().getExMovimentacaoSet();
+		ExMovimentacao movimentacaoOrigem = null; 
+		String[] personalizacaoAssinatura = new String[4];	
+		
+		if (movimentacao.getExDocumento().getSubscritor().equivale(movimentacao.getSubscritor())) {
+			if (movimentacao.getExDocumento().getNmFuncaoSubscritor() != null ) {
+				personalizacaoAssinatura = movimentacao.getExDocumento().getNmFuncaoSubscritor().split(";");
+			} else {
+				return "";
+			}
+			
+		} else {
+		
+			for (ExMovimentacao mov : listaMovimentacoes) {
+				if (!mov.equals(mov)) {
+					if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO) {
+						if (mov.getExMovimentacaoCanceladora() == null) {
+							if (mov.getSubscritor().equivale(movimentacao.getSubscritor())) {
+								movimentacaoOrigem = mov;
+								break;
+							}
+						}
+					}
+				}
+			}
+			if (movimentacaoOrigem.getNmFuncaoSubscritor() != null ) {
+				personalizacaoAssinatura = movimentacaoOrigem.getNmFuncaoSubscritor().split(";");
+			} else {
+				return "";
+			}
+			
+		}
+		
+
+		StringBuilder funcaoCargoPersonalizadoAssinatura = new StringBuilder();
+		
+		funcaoCargoPersonalizadoAssinatura.append(" - ");
+		if (!"".equals(personalizacaoAssinatura[0])) {
+			funcaoCargoPersonalizadoAssinatura.append(personalizacaoAssinatura[0]);
+		} else {
+			funcaoCargoPersonalizadoAssinatura.append(movimentacao.getCadastrante().getFuncaoString());
+		}
+		funcaoCargoPersonalizadoAssinatura.append(" / ");
+		if (personalizacaoAssinatura.length > 1) {
+			if (!"".equals(personalizacaoAssinatura[1])) {
+			 funcaoCargoPersonalizadoAssinatura.append(personalizacaoAssinatura[1]);
+			}
+		} else {
+			funcaoCargoPersonalizadoAssinatura.append(movimentacao.getCadastrante().getLotacao().getSigla());
+		}
+		return funcaoCargoPersonalizadoAssinatura.toString();
+
 	}
 
 	

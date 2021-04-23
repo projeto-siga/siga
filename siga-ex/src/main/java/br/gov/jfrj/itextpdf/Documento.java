@@ -18,6 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.itextpdf;
 
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO;
 import static br.gov.jfrj.siga.ex.util.ProcessadorHtml.novoHtmlPersonalizado;
 
 import java.awt.Color;
@@ -201,23 +203,35 @@ public class Documento {
 			Set<ExMovimentacao> movsAssinatura, Date dtDoc) {
 		ArrayList<String> assinantes = new ArrayList<String>();
 		for (ExMovimentacao movAssinatura : movsAssinatura) {
-			String s;
+			StringBuilder s = new StringBuilder();
 			Date dataDeInicioDeObrigacaoExibirRodapeDeAssinatura=null;
 			if (movAssinatura.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)) {
-				s = Texto.maiusculasEMinusculas(movAssinatura.getCadastrante().getNomePessoa());
+				s.append(Texto.maiusculasEMinusculas(movAssinatura.getCadastrante().getNomePessoa()));
 			} else {
 				dataDeInicioDeObrigacaoExibirRodapeDeAssinatura = Prop.getData("rodape.data.assinatura.ativa");
-				s = movAssinatura.getDescrMov().trim().toUpperCase();
-				s = s.split(":")[0];
-				s = s.intern();
-				if(Prop.isGovSP()
-						|| (dataDeInicioDeObrigacaoExibirRodapeDeAssinatura != null && !dataDeInicioDeObrigacaoExibirRodapeDeAssinatura.after(dtDoc)
-								)	) {
-						s +=" - " + Data.formatDDMMYYYY_AS_HHMMSS(movAssinatura.getData());
-					}				 
+				s.append(movAssinatura.getDescrMov().trim().toUpperCase().split(":")[0]);
+				
+
+				/*** Exibe para Documentos Capturados a Funcao / Unidade ***/
+				if (movAssinatura.getExDocumento().isInternoCapturado()) { /* Interno Exibe Personalização se realizada */
+					if (movAssinatura.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA) || movAssinatura.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO)) {
+						s.append(Ex.getInstance().getBL().extraiPersonalizacaoAssinatura(movAssinatura));
+					}
+				} else if(movAssinatura.getExDocumento().isExternoCapturado()) { 
+					s.append(" - ");
+					s.append(movAssinatura.getCadastrante().getFuncaoString());
+					s.append(" / ");
+					s.append(movAssinatura.getCadastrante().getLotacao().getSigla());
+				}
+				/**** ****/
+				
+				if(Prop.isGovSP() || (dataDeInicioDeObrigacaoExibirRodapeDeAssinatura != null && !dataDeInicioDeObrigacaoExibirRodapeDeAssinatura.after(dtDoc))) {
+					s.append(" - ");
+					s.append(Data.formatDDMMYYYY_AS_HHMMSS(movAssinatura.getData()));
+				}				 
 			}
-			if (!assinantes.contains(s)) {
-				assinantes.add(s);
+			if (!assinantes.contains(s.toString())) {
+				assinantes.add(s.toString());
 			}
 		}
 		return assinantes;

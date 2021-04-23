@@ -104,12 +104,11 @@
 		<br />
 		<br />
 		<p align="left" style="TEXT-INDENT: 2cm">Certifico que, nesta
-		data, desentranhei <c:if test="${folhaInicial != folhaFinal}">
+		data, desentranhei deste documento ${mob.exMobilPai.sigla}<c:if test="${folhaInicial != folhaFinal}">
 		 as folhas ${folhaInicial} a ${folhaFinal}
 		</c:if> <c:if test="${folhaInicial == folhaFinal}">
 		 a folha ${folhaInicial}
-		</c:if> do ${mobil.descricaoCompleta} do
-		documento em epígrafe.</p>
+		</c:if> correspondente ao documento ${mob.sigla}.</p>
 		
 		<c:if test="${textoMotivo.isEmpty() == false}">
 			<p align="left" style="TEXT-INDENT: 2cm">

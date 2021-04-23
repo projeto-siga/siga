@@ -16,7 +16,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaMessages;
@@ -52,7 +54,7 @@ public class ExDocumentoDTO {
 
 	private File arquivo;
 
-	private LinkedHashSet<ExPreenchimento> preenchSet = null;
+	private SortedSet<ExPreenchimento> preenchSet = null;
 
 	private String preenchParamRedirect;
 
@@ -993,11 +995,11 @@ public class ExDocumentoDTO {
 		this.formasDoc = formasDoc;
 	}
     
-    public void setPreenchSet(LinkedHashSet<ExPreenchimento> preenchSet) {
+    public void setPreenchSet(SortedSet<ExPreenchimento> preenchSet) {
 		this.preenchSet = preenchSet;
 	}
     
-    public LinkedHashSet<ExPreenchimento> getPreenchimentos() {
+    public SortedSet<ExPreenchimento> getPreenchimentos() {
 		return preenchSet;
 	}
     

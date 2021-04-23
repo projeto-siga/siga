@@ -1433,7 +1433,7 @@
 	      <div class="modal-footer text-center">
 	      	<div class="row" style="margin: 0 auto;">
 		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>		        	       
-	        	<a href="${linkTo[ExMovimentacaoController].aReceber()}?sigla=${sigla}" class="btn btn-primary btn-acao" role="button" aria-pressed="true" style="margin-left: .5rem;">Sim</a>		        
+	        	<a href="${linkTo[ExMovimentacaoController].aReceber()}?sigla=${docVO.mob.sigla}" class="btn btn-primary btn-acao" role="button" aria-pressed="true" style="margin-left: .5rem;">Sim</a>		        
 		    </div>    
 	      </div>
 	    </div>

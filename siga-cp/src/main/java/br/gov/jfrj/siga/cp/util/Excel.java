@@ -28,6 +28,7 @@ import br.gov.jfrj.siga.base.SigaConstraintViolationException;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.dp.CpLocalidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -420,14 +421,14 @@ public class Excel {
     	return retorno;
     }
     
-    public InputStream uploadFuncao(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
+    public InputStream uploadFuncao(File file, CpOrgaoUsuario orgaoUsuario, String extensao, final CpIdentidade identidadeCadastrante) {
 		InputStream retorno = null;
-		retorno = uploadExcelFuncao(file, orgaoUsuario);
+		retorno = uploadExcelFuncao(file, orgaoUsuario,identidadeCadastrante);
 
 		return retorno;
 	}
     
-    public InputStream uploadExcelFuncao(File file, CpOrgaoUsuario orgaoUsuario) {
+    public InputStream uploadExcelFuncao(File file, CpOrgaoUsuario orgaoUsuario,final CpIdentidade identidadeCadastrante) {
     	InputStream inputStream = null;
     	StringBuffer problemas = new StringBuffer();
 
@@ -465,21 +466,22 @@ public class Excel {
 					lista.add(func);
 				}
 			}
+			
 			if(problemas == null || "".equals(problemas.toString())) {
 				try {
 	            	for (DpFuncaoConfianca dpFuncaoConfianca : lista) {
-		            	CpDao.getInstance().iniciarTransacao();
-		    			CpDao.getInstance().gravar(dpFuncaoConfianca);
-		    			
-	    				if(dpFuncaoConfianca.getIdFuncaoIni() == null && dpFuncaoConfianca.getId() != null) {
-	    					dpFuncaoConfianca.setIdFuncaoIni(dpFuncaoConfianca.getId());
-	    					dpFuncaoConfianca.setIdeFuncao(dpFuncaoConfianca.getId().toString());
-	    					CpDao.getInstance().gravar(dpFuncaoConfianca);
-	        			}
-					}
-	    			CpDao.getInstance().commitTransacao();			
+	            		Cp.getInstance().getBL().gravarFuncaoConfianca(identidadeCadastrante, null, dpFuncaoConfianca.getNomeFuncao(), dpFuncaoConfianca.getOrgaoUsuario().getIdOrgaoUsu(),Boolean.TRUE);
+					}		
 	    		} catch (final Exception e) {
-	    			CpDao.getInstance().rollbackTransacao();
+	    			throw new AplicacaoException("Erro na gravação", 0, e);
+	    		}
+			}
+			if(problemas == null || "".equals(problemas.toString())) {
+				try {
+	            	for (DpFuncaoConfianca dpFuncaoConfianca : lista) {
+	            		Cp.getInstance().getBL().gravarFuncaoConfianca(identidadeCadastrante, null, dpFuncaoConfianca.getNomeFuncao(), dpFuncaoConfianca.getOrgaoUsuario().getIdOrgaoUsu(),Boolean.TRUE);
+					}		
+	    		} catch (final Exception e) {
 	    			throw new AplicacaoException("Erro na gravação", 0, e);
 	    		}
 			}
@@ -521,14 +523,14 @@ public class Excel {
 		return "";
 	}
     
-    public InputStream uploadCargo(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
+    public InputStream uploadCargo(File file, CpOrgaoUsuario orgaoUsuario, String extensao,final CpIdentidade identidadeCadastrante) {
 		InputStream retorno = null;
-		retorno = uploadExcelCargo(file, orgaoUsuario);
+		retorno = uploadExcelCargo(file, orgaoUsuario,identidadeCadastrante);
 
 		return retorno;
 	}
     
-    public InputStream uploadExcelCargo(File file, CpOrgaoUsuario orgaoUsuario) {
+    public InputStream uploadExcelCargo(File file, CpOrgaoUsuario orgaoUsuario, final CpIdentidade identidadeCadastrante) {
     	InputStream inputStream = null;
     	StringBuffer problemas = new StringBuffer();
 
@@ -569,18 +571,9 @@ public class Excel {
 			if(problemas == null || "".equals(problemas.toString())) {
 				try {
 	            	for (DpCargo dpCargo : lista) {
-		            	CpDao.getInstance().iniciarTransacao();
-		    			CpDao.getInstance().gravar(dpCargo);
-		    			
-	    				if(dpCargo.getIdCargoIni() == null && dpCargo.getId() != null) {
-	    					dpCargo.setIdCargoIni(dpCargo.getId());
-	    					dpCargo.setIdeCargo(dpCargo.getId().toString());
-	        				CpDao.getInstance().gravar(dpCargo);
-	        			}
-					}
-	    			CpDao.getInstance().commitTransacao();			
+	            		Cp.getInstance().getBL().gravarCargo(identidadeCadastrante, null, dpCargo.getNomeCargo(), dpCargo.getOrgaoUsuario().getIdOrgaoUsu(),Boolean.TRUE);
+					}		
 	    		} catch (final Exception e) {
-	    			CpDao.getInstance().rollbackTransacao();
 	    			throw new AplicacaoException("Erro na gravação", 0, e);
 	    		}
 			}

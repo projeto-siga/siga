@@ -6,8 +6,12 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
+
+import javax.persistence.NoResultException;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -230,28 +234,42 @@ public class DocumentosPost implements IDocumentosPost {
 				}
 				
 				if (req.nivelacesso != null) {
-					doc.setExNivelAcesso(dao()
-							.consultarExNidelAcesso(req.nivelacesso));
+					ExNivelAcesso nivel;
+					try {
+						nivel = dao().consultarExNidelAcesso(req.nivelacesso);
+					} catch (NoResultException e) {
+	    				throw new AplicacaoException("Nível de acesso não encontrado.");
+					}
+					if (!isNivelAcessoValido(so.getTitular(), so.getTitular().getLotacao(), doc, nivel))
+	    				throw new AplicacaoException("Nível de acesso não permitido.");
+					doc.setExNivelAcesso(nivel);
 				} else {
-					final ExNivelAcesso nivelDefault =  ExNivelAcesso
-							.getNivelAcessoDefault(doc.getExTipoDocumento(), doc.getExFormaDocumento(),
-									doc.getExModelo(), doc.getExClassificacao(), 
-									so.getTitular(), so.getLotaTitular());
-					
-					if (nivelDefault != null) {
-						doc.setExNivelAcesso(dao().consultar(nivelDefault, 
-								ExNivelAcesso.class, false));
+					if (doc.getExModelo() != null
+							&& doc.getExModelo().getExNivelAcesso() != null) {
+						doc.setExNivelAcesso(doc.getExModelo().getExNivelAcesso());
 					} else {
-						doc.setExNivelAcesso(dao().consultar(ExNivelAcesso.ID_PUBLICO, 
-								ExNivelAcesso.class, false));
+					
+						final ExNivelAcesso nivelDefault =  ExNivelAcesso
+								.getNivelAcessoDefault(doc.getExTipoDocumento(), doc.getExFormaDocumento(),
+										doc.getExModelo(), doc.getExClassificacao(), 
+										so.getTitular(), so.getLotaTitular());
+						
+						if (nivelDefault != null) {
+							doc.setExNivelAcesso(dao().consultar(nivelDefault, 
+									ExNivelAcesso.class, false));
+						} else {
+							if ( Boolean.valueOf(System.getProperty("siga.doc.acesso.limitado"))) {
+								doc.setExNivelAcesso(dao().consultar(ExNivelAcesso.ID_LIMITADO_AO_ORGAO, 
+										ExNivelAcesso.class, false));
+							} else {
+								doc.setExNivelAcesso(dao().consultar(ExNivelAcesso.ID_PUBLICO, 
+										ExNivelAcesso.class, false));
+							}
+							
+						}
 					}
 				}
 	
-				if (doc.getExModelo() != null
-						&& doc.getExModelo().getExNivelAcesso() != null) {
-					doc.setExNivelAcesso(doc.getExModelo().getExNivelAcesso());
-				}
-				
 				String camposModelo = "";
 				String conteudo = req.entrevista;
 				Map <String, String> conteudoMap;
@@ -389,6 +407,17 @@ public class DocumentosPost implements IDocumentosPost {
 				throw e;
 			}
 		}
+	}
+
+	private boolean isNivelAcessoValido(DpPessoa titular, DpLotacao lotaTitular, ExDocumento doc, ExNivelAcesso nivel) {
+		List<ExNivelAcesso> lst = Ex.getInstance().getBL().getListaNivelAcesso(doc.getExTipoDocumento(), doc.getExFormaDocumento(),
+				doc.getExModelo(), doc.getExClassificacao(), titular, lotaTitular);
+		for (ExNivelAcesso nv : lst) {
+			if (nv.equals(nivel)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	protected  ExDao dao() {

@@ -947,8 +947,7 @@ public class ExDao extends CpDao {
 					"consultarQtdeLotacaoModeloNomeExPreenchimento");
 			
 			if (exPreenchimento.getDpLotacao() != null)
-				query.setParameter("lotacao", exPreenchimento.getDpLotacao()
-						.getIdLotacao());
+				query.setParameter("lotacao", exPreenchimento.getDpLotacao().getIdLotacaoIni());
 			else
 				query.setParameter("lotacao", 0);
 			if (exPreenchimento.getExModelo() != null)

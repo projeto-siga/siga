@@ -2178,7 +2178,7 @@ Pede deferimento.</span><br/><br/><br/>
 	        <td width="100%">
 	        <table width="100%" border="0" cellpadding="2">
 	            <tr>
-	                <td width="100%" align="center" valign="bottom"><img src="${_pathBrasao}" width="auto" height="65" /></td>
+	                <td width="100%" align="center" valign="bottom"><img src="${_pathBrasao}" width="${_widthBrasao}" height="${_heightBrasao}" /></td>
 	            </tr>
 	            <tr>
 	                <td width="100%" align="center">
@@ -4585,5 +4585,7 @@ ${texto}
 
 [#assign _pathBrasao = "contextpath/imagens/brasaoColoridoTRF2.png" /]
 [#assign _pathBrasaoSecundario = "contextpath/imagens/Logotipo_Prodesp_Governo_SP.png" /]
+[#assign _widthBrasao = "auto" /]
+[#assign _heightBrasao = "65" /]
 [#assign _tituloGeral = "PODER JUDICIÁRIO" /]
 [#assign _subtituloGeral = "JUSTIÇA FEDERAL" /]

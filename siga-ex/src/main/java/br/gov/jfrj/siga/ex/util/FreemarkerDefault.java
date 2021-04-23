@@ -27,6 +27,16 @@ public class FreemarkerDefault {
 			if (pathBrasao != null)
 				template = template.replaceAll("\\[#assign _pathBrasao = \"([^\"]+)\" /\\]",
 						"[#assign _pathBrasao = \"" + pathBrasao + "\" /]");
+			
+			String widthBrasao = Prop.get("modelos.cabecalho.brasao") + "";
+			if (widthBrasao != null)
+				template = template.replaceAll("\\[#assign _widthBrasao = \"([^\"]+)\" /\\]",
+						"[#assign _widthBrasao = \"" + widthBrasao + "\" /]");
+			
+			String heightBrasao = Prop.get("modelos.cabecalho.brasao") + "";
+			if (heightBrasao != null)
+				template = template.replaceAll("\\[#assign _heightBrasao = \"([^\"]+)\" /\\]",
+						"[#assign _heightBrasao = \"" + heightBrasao + "\" /]");
 
 			String tituloGeral = Prop.get("modelos.cabecalho.titulo");
 			if (tituloGeral != null)

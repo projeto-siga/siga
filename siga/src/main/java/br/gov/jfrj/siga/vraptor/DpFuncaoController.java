@@ -226,7 +226,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 							 final String nmFuncao, 
 							 final Long idOrgaoUsu) throws Exception{
 		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_FUNCAO:Cadastrar Função de Confiança");
-		Cp.getInstance().getBL().gravarFuncaoConfianca(getIdentidadeCadastrante(), id, nmFuncao, idOrgaoUsu,Boolean.TRUE);
+		Cp.getInstance().getBL().gravarFuncaoConfianca(getIdentidadeCadastrante(), id, nmFuncao, idOrgaoUsu,null);
 		this.result.redirectTo(this).lista(0, null, "");
 	}
 	

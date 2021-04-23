@@ -167,7 +167,7 @@ public class DpCargoController extends
 							 final String nmCargo, 
 							 final Long idOrgaoUsu) throws Exception{
 		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_CARGO: Cadastrar Cargo");
-		Cp.getInstance().getBL().gravarCargo(getIdentidadeCadastrante(), id, nmCargo, idOrgaoUsu,Boolean.TRUE);
+		Cp.getInstance().getBL().gravarCargo(getIdentidadeCadastrante(), id, nmCargo, idOrgaoUsu,null);
 		this.result.redirectTo(this).lista(0, null, "");
 	}
 	

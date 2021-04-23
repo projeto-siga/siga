@@ -496,6 +496,15 @@ public class CpDao extends ModeloDao {
 			return null;
 		return l.get(0);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public DpCargo consultarPorIdInicialDpCargoAtual(final Long idCargoIni) {
+		CriteriaQuery<DpCargo> q = cb().createQuery(DpCargo.class);
+		Root<DpCargo> c = q.from(DpCargo.class);
+		q.where(cb().equal(c.get("idCargoIni"), idCargoIni),cb().isNull(c.get("dataFimCargo")));
+		q.select(c);
+		return em().createQuery(q).getResultStream().findFirst().orElse(null);		
+	}
 
 	@SuppressWarnings("unchecked")
 	public DpCargo consultarPorNomeOrgao(final DpCargo o) {
@@ -602,6 +611,15 @@ public class CpDao extends ModeloDao {
 		if (l.size() != 1)
 			return null;
 		return l.get(0);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public DpFuncaoConfianca consultarPorIdInicialDpFuncaoConfiancaAtual(final Long idFuncaoIni) {
+		CriteriaQuery<DpFuncaoConfianca> q = cb().createQuery(DpFuncaoConfianca.class);
+		Root<DpFuncaoConfianca> c = q.from(DpFuncaoConfianca.class);
+		q.where(cb().equal(c.get("idFuncaoIni"), idFuncaoIni),cb().isNull(c.get("dataFimFuncao")));
+		q.select(c);
+		return em().createQuery(q).getResultStream().findFirst().orElse(null);		
 	}
 
 	@SuppressWarnings("unchecked")

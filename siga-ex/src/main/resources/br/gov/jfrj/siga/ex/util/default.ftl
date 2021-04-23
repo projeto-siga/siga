@@ -4585,5 +4585,7 @@ ${texto}
 
 [#assign _pathBrasao = "contextpath/imagens/brasaoColoridoTRF2.png" /]
 [#assign _pathBrasaoSecundario = "contextpath/imagens/Logotipo_Prodesp_Governo_SP.png" /]
+[#assign _widthBrasao = "auto" /]
+[#assign _heightBrasao = "65" /]
 [#assign _tituloGeral = "PODER JUDICIÁRIO" /]
 [#assign _subtituloGeral = "JUSTIÇA FEDERAL" /]

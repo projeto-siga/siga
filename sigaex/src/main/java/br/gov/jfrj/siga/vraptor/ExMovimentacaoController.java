@@ -2107,7 +2107,8 @@ public class ExMovimentacaoController extends ExController {
 			
 			
 		} else {
-			ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getSigla());
+			result.include("origemRedirectTransferirGravar", true);
+			ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getSigla()); 
 		}
 	}
 

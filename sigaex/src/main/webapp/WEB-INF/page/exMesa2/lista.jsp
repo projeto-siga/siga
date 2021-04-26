@@ -79,6 +79,14 @@
 						</label>
 					</div>            
 	            </div>
+	            <div class="form-group my-1 border-bottom">
+					<div class="form-check">
+						<input type="checkbox" class="form-check-input" id="dtDMA" v-model="dtDMA" :disabled="carregando">
+						<label class="form-check-label" for="dtDMA">
+							<small>Exibir datas em dia, mês e ano</small>
+						</label>
+					</div>            
+	            </div>
 				<div class="form-group pb-2 mb-1 border-bottom">
 					<label for="selQtdPagId"><small>Qtd. de documentos a trazer</small></label>
 					<select class="form-control form-control-sm p-0" v-model="selQtdPag" :class="{disabled: carregando}">
@@ -239,7 +247,8 @@
 										<template v-for="f in g.grupoDocs">
 											<tr class="d-flex">
 												<td class="col-1 d-none d-md-block" 
-													:title="f.datahoraDDMMYYYHHMM">{{f.tempoRelativo}}</td>
+													:title="f.datahoraDDMMYYYHHMM"><small>{{dtDMA? formatJSDDMMYYYY(f.datahoraDDMMYYYHHMM) 
+														: f.tempoRelativo}}</small></td>
 												<td class="col-md-2"
 														v-bind:class="usuarioPosse ? 'col-8' : 'col-9'">
 													<c:if test="${siga_cliente == 'GOVSP'}">
@@ -285,7 +294,7 @@
 															<a class="popover-dismiss" role="button" 
 																data-toggle="popover" data-trigger="hover focus" :title="m.titulo" data-html="true" :data-pessoa="m.pessoa" :data-lotacao="m.lotacao">
 																<span class="text-size-8 badge badge-pill badge-secondary tagmesa m-1 btn-xs" v-bind:style="{color: '#' + m.cor + ' !important'}">												
-																	<i :class="m.icone" :style="{color: m.cor}"></i> {{m.nome}}<span v-if="m.ref1">, planejada: {{m.ref1}}</span><span v-if="m.ref2">, limite: {{m.ref2}}</span>
+																	<i :class="m.icone" :style="{color: m.cor}"></i> {{m.nome}}<span v-if="m.ref1">, planejada: {{dtDMA? m.ref1DDMMYYYY : m.ref1}}</span><span v-if="m.ref2">, limite: {{dtDMA? m.ref2DDMMYYYY : m.ref2}}</span>
 																</span>
 															</a>
 														</span>

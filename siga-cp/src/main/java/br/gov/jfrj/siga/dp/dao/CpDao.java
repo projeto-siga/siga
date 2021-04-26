@@ -45,6 +45,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
+import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -2761,8 +2762,11 @@ public class CpDao extends ModeloDao {
 		Predicate predicateAnd = criteriaBuilder.and(predicateNotEqualMarcadorSistema, predicateIsNullLotacao);
 		if (ativos == null || ativos) {
 			Predicate predicateNullHisDtFim = criteriaBuilder.isNull(cpMarcadorRoot.get("hisDtFim"));
+			Predicate predicateNullHisDtIni = criteriaBuilder.isNull(cpMarcadorRoot.get("hisDtIni"));
+			Predicate predicateHisDtIniLeToday = criteriaBuilder.lessThan(cpMarcadorRoot.<Date>get("hisDtIni"), criteriaBuilder.currentDate());
 			criteriaQuery.where(criteriaBuilder
-					.and(predicateAnd, predicateNullHisDtFim));
+					.and(predicateAnd, predicateNullHisDtFim, 
+							criteriaBuilder.or(predicateNullHisDtIni, predicateHisDtIniLeToday)));
 		} else {
 			criteriaQuery.where(predicateAnd);
 		}
@@ -2771,6 +2775,10 @@ public class CpDao extends ModeloDao {
 	}
 	
 	public List<CpMarcador> listarCpMarcadoresPorLotacao(DpLotacao lotacao, Boolean ativos) {
+		return listarCpMarcadoresPorLotacao(lotacao, ativos, false);
+	}
+	
+	public List<CpMarcador> listarCpMarcadoresPorLotacao(DpLotacao lotacao, Boolean ativos, Boolean futuras) {
 		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
 		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);
 		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
@@ -2786,9 +2794,20 @@ public class CpDao extends ModeloDao {
 					predicateEqualLotacao);
 		}
 		
+		if (futuras != null && !futuras) {
+			predicateAnd = criteriaBuilder.and(predicateAnd,  
+					criaPredicateDataFutura(criteriaBuilder, cpMarcadorRoot));
+		}
 		criteriaQuery.where(predicateAnd);
 		criteriaQuery.orderBy(criteriaBuilder.asc(cpMarcadorRoot.get("descrMarcador")));
 		return em().createQuery(criteriaQuery).getResultList().stream().filter(mar -> mar.getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO).collect(Collectors.toList());
+	}
+
+	private Predicate criaPredicateDataFutura(CriteriaBuilder criteriaBuilder, Root<CpMarcador> cpMarcadorRoot) {
+		// Cria predicate para mostrar os marcadores a serem ativados futuramente (com data de inicio futura) 
+		Predicate predicateNullHisDtIni = criteriaBuilder.isNull(cpMarcadorRoot.get("hisDtIni"));
+		Predicate predicateHisDtIniLeToday = criteriaBuilder.lessThan(cpMarcadorRoot.<Date>get("hisDtIni"), criteriaBuilder.currentDate());
+		return criteriaBuilder.or(predicateNullHisDtIni, predicateHisDtIniLeToday);
 	}
 	
 	public CpMarcador obterPastaPadraoDaLotacao(DpLotacao lotacao) {
@@ -2799,6 +2818,10 @@ public class CpDao extends ModeloDao {
 	}
 	
 	public List<CpMarcador> listarCpMarcadoresPorLotacaoEGeral (DpLotacao lotacao, Boolean ativos) {
+		return listarCpMarcadoresPorLotacaoEGeral (lotacao, ativos, false);
+
+	}
+	public List<CpMarcador> listarCpMarcadoresPorLotacaoEGeral (DpLotacao lotacao, Boolean ativos, Boolean futuras) {
 		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
 		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);
 		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
@@ -2818,6 +2841,11 @@ public class CpDao extends ModeloDao {
 			predicateAnd = criteriaBuilder.and(predicateGeralOuLotacaoEspecificaENaoSistema, predicateNullHisDtFim);
 		} else {
 			predicateAnd = predicateGeralOuLotacaoEspecificaENaoSistema;
+		}
+
+		if (futuras != null && !futuras) {
+			predicateAnd = criteriaBuilder.and(predicateAnd,  
+					criaPredicateDataFutura(criteriaBuilder, cpMarcadorRoot));
 		}
 		
 		criteriaQuery.where(predicateAnd);

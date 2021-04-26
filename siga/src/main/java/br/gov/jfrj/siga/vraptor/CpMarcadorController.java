@@ -80,9 +80,9 @@ public class CpMarcadorController extends SigaController {
 		List<CpMarcador> listMar = null;
 		try {
 			assertAcesso(ACESSO_CAD_MARCADOR_GERAL);
-			listMar = dao.listarCpMarcadoresPorLotacaoEGeral(getLotaTitular(), true);
+			listMar = dao.listarCpMarcadoresPorLotacaoEGeral(getLotaTitular(), true, true);
 		} catch (AplicacaoException e) {
-			listMar = dao.listarCpMarcadoresPorLotacao(getLotaTitular(), true);
+			listMar = dao.listarCpMarcadoresPorLotacao(getLotaTitular(), true, true);
 		}
 
 		result.include("listaMarcadores", listMar);
@@ -166,7 +166,8 @@ public class CpMarcadorController extends SigaController {
 	@Transacional
 	@Post("/app/marcador/gravar")
 	public void marcadorGravar(Long id, final String sigla, final String descricao, final String descrDetalhada,
-			final CpMarcadorCorEnum idCor, final CpMarcadorIconeEnum idIcone, final CpMarcadorGrupoEnum idGrupo, final CpMarcadorFinalidadeEnum idFinalidade)
+			final CpMarcadorCorEnum idCor, final CpMarcadorIconeEnum idIcone, final CpMarcadorGrupoEnum idGrupo, 
+			final CpMarcadorFinalidadeEnum idFinalidade, final String dataAtivacao)
 			throws Exception {
 
 		assertAcesso(ACESSO_CAD_MARCADOR_LOTA);
@@ -181,7 +182,7 @@ public class CpMarcadorController extends SigaController {
 		}
 		
 		Cp.getInstance().getBL().gravarMarcador(id, getCadastrante(), getLotaTitular(),
-				getIdentidadeCadastrante(), descricao, descrDetalhada, idCor, idIcone, idGrupo, idFinalidade);
+				getIdentidadeCadastrante(), descricao, descrDetalhada, idCor, idIcone, idGrupo, idFinalidade, dataAtivacao);
 
 		result.redirectTo(this).lista();
 	}

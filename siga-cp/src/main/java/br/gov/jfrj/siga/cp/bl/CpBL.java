@@ -44,6 +44,7 @@ import org.hibernate.exception.ConstraintViolationException;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
+import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
@@ -1425,7 +1426,7 @@ public class CpBL {
 
 	public void gravarMarcador(final Long id, final DpPessoa cadastrante, final DpLotacao lotacao, final CpIdentidade identidade, 
 			final String descricao, final String descrDetalhada, final CpMarcadorCorEnum idCor, final CpMarcadorIconeEnum idIcone, final CpMarcadorGrupoEnum grupoId, 
-			final CpMarcadorFinalidadeEnum idFinalidade) throws Exception {
+			final CpMarcadorFinalidadeEnum idFinalidade, final String dataAtivacao) throws Exception {
 		if (idFinalidade == CpMarcadorFinalidadeEnum.SISTEMA)
 			throw new AplicacaoException ("Não é permitido o cadastro de marcadores de sistema.");
 			
@@ -1455,6 +1456,10 @@ public class CpBL {
 		if (idFinalidade == CpMarcadorFinalidadeEnum.PASTA_PADRAO && id == null && cpp > 0) 
 			throw new AplicacaoException ("Só é permitido criar uma pasta padrão");
 		
+		Date dtAtivacao = null;
+		if (dataAtivacao != null)
+			dtAtivacao = Data.parse(dataAtivacao);
+
 		if (id == null && (listaMarcadoresLotacaoEGerais.stream()
 				.filter(mar -> mar.getDescrMarcador()
 						.equals(descricao)).count() > 0)) 
@@ -1467,16 +1472,20 @@ public class CpBL {
 
 			marcadorAnt = dao().consultar(id, CpMarcador.class, false);
 			if (marcadorAnt != null) {
+				if (marcadorAnt.getDpLotacaoIni() != null &&
+						marcadorAnt.getDpLotacaoIni().getIdInicial() != cadastrante.getLotacao().getIdInicial())
+					throw new AplicacaoException ("Não é permitida a alteração de marcador de outra " + msgLotacao);
+
 				marcador.setHisIdIni(marcadorAnt.getHisIdIni());
 				marcador.setIdFinalidade(idFinalidade);
 				marcador.setOrdem(marcadorAnt.getOrdem());
-				marcador.setDpLotacaoIni(idFinalidade.getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO ? marcadorAnt.getDpLotacaoIni() : null);
+				marcador.setDpLotacaoIni(idFinalidade.getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO ? lotacao.getLotacaoInicial() : null);
 				marcador.setDescrMarcador(descricao);
 				marcador.setDescrDetalhada(descrDetalhada);
 				marcador.setIdGrupo(grupoId);
 				marcador.setIdCor(idCor);
 				marcador.setIdIcone(idIcone);
-				dao().gravarComHistorico(marcador, marcadorAnt, null, identidade);
+				dao().gravarComHistorico(marcador, marcadorAnt, dtAtivacao, identidade);
 			} else {
 				throw new AplicacaoException ("Marcador não existente para esta " + msgLotacao 
 						+ " (" + id.toString() + ").");
@@ -1492,7 +1501,7 @@ public class CpBL {
 			marcador.setIdIcone(idIcone);
 			marcador.setDpLotacaoIni(idFinalidade.getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO ? lotacao.getLotacaoInicial() : null);
 			marcador.setOrdem(ordem);
-			dao().gravarComHistorico(marcador, null, null, identidade);
+			dao().gravarComHistorico(marcador, null, dtAtivacao, identidade);
 		}
 	}
 	

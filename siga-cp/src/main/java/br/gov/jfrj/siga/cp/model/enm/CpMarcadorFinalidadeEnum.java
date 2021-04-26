@@ -47,8 +47,8 @@ public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
 			CpMarcadorTipoExibicaoEnum.MENOR_DATA, CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA,
 			CpMarcadorTipoTextoEnum.OPCIONAL, false),
 	//
-	GERAL_AGENDADA_XOR(6, CpMarcadorFinalidadeGrupoEnum.GERAL, "Geral Agendada Mutuamente Exclusiva",
-			"Marcador, mutuamente exclusivo, que pode ser definido por qualquer pessoa e estará visível, a partir de uma data definida, para quem receber com o documento. Apenas um marcador desse tipo pode ser definido para um mesmo documento",
+	GERAL_LIMITE_XOR(6, CpMarcadorFinalidadeGrupoEnum.GERAL, "Geral Com Data Limite e Mutuamente Exclusiva",
+			"Marcador, mutuamente exclusivo, que pode ser definido por qualquer pessoa e estará visível, com data limite, para quem receber com o documento. Apenas um marcador desse tipo pode ser definido para um mesmo documento",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.TODAS_AS_VIAS_OU_ULTIMO_VOLUME,
 			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoExibicaoEnum.IMEDIATA,			
 			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.OPCIONAL, true),
@@ -193,7 +193,8 @@ public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
 		return Arrays.asList(values()).stream()
 				.filter(f -> (geral && f.getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL)
 						|| (lotacao && f.getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO
-								&& listaFinalidadesLotaValidas.contains(f.getNome())))
+								&& (listaFinalidadesLotaValidas.contains(f.toString())
+										|| listaFinalidadesLotaValidas.get(0).equals(""))))
 				.collect(Collectors.toList());
 	}
 }

@@ -12,6 +12,7 @@
 <siga:pagina titulo="Editar Marcador">
 	<!-- main content -->
 	<c:set var="grupoDefault" scope="session" value="${f:resource('/siga.marcadores.grupo.default')}" />
+	<c:set var="exibeDtAtivacao" scope="session" value="${f:resource('/siga.marcadores.exibe.dataativacao')}" />
 	<div class="container-fluid">
 		<div class="card bg-light mb-3">
 			<div class="card-header">
@@ -115,7 +116,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="form-group row">
+					<div class="form-group row ${exibeDtAtivacao? '' : 'd-none'}">
 						<div class="col-6 col-md-3">
 							<label for="dataAtivacao">Data de Ativação</label> <input
 								name="dataAtivacao" id="dataAtivacao" class="form-control campoData"

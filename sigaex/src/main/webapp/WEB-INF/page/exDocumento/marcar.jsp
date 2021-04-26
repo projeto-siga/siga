@@ -32,7 +32,8 @@
 											:style="!option.ativo ? 'color: LightGray;' : ''" 
 											v-for="option in grupo.lista" 
 											v-bind:value="option.idMarcador"
-											>{{ option.nome }}{{!option.ativo? ' (Já marcado no documento)' : ''}}</option>
+											v-if="option.ativo || !(option.explicacao).includes('não está marcado ')"
+											>{{ option.nome }}{{option.ativo || (option.explicacao).includes('não está marcado')? '' : ' (Já marcado no documento)'}}</option>
 									</optgroup>
 								</select>
 							</div>

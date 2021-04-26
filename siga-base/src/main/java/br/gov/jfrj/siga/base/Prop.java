@@ -245,5 +245,9 @@ public class Prop {
 		 * por ex: "Etiqueta,Etiqueta Direcionada,Lista"
 		 * */
 		provider.addPublicProperty("/siga.marcadores.lota.finalidades", "");
+		/* Cadastro de marcadores: Se true, exibe campo de data de ativação no cadastro de 
+		 * marcadores. Se false não exibe.
+		 * */
+		provider.addPublicProperty("/siga.marcadores.exibe.dataativacao", "false");
 	}
 }

@@ -47,7 +47,7 @@ function sbmt(id) {
 	if (id && !IsRunningAjaxRequest()) {
 		ReplaceInnerHTMLFromAjaxResponse('recarregar', frm, id);
 	} else {
-		frm.action = id ? 'recarregar' : 'editar?modelo=' + document.getElementsByName('exDocumentoDTO.idMod')[0].value;
+		frm.action = id !== 'undefined' ? 'recarregar' : 'editar?modelo=' + document.getElementsByName('exDocumentoDTO.idMod')[0].value;
 		frm.submit();
 	}
 	return;

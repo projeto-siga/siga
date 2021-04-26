@@ -58,6 +58,12 @@ function AssinarDocumentos(copia, politica, juntar, tramitar, exibirNoProtocolo)
 	identificarOperacoes();
 
 	var tipo = verificarTipoDeAssinatura();
+	
+	if (tipo == 0) {
+		window.alert("Antes de assinar ou autenticar, é necessário selecionar pelo menos um documento.");
+		gAssinando = false;
+		return;
+	}
 
 	if (tipo == 1 || tipo == 3) {
 		if (!TestarAssinaturaDigital()) {

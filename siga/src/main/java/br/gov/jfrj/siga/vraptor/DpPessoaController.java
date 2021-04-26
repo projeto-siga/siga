@@ -338,12 +338,30 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 					throw new AplicacaoException(
 							"Já existe outro usuário ativo com estes dados: Órgão, Cargo, Função, Unidade e CPF");
 				}
+				
+				DpCargo cargoAtual= new DpCargo();				
+				cargoAtual = CpDao.getInstance().consultarPorIdInicialDpCargoAtual(pessoaAnt.getCargo().getIdCargoIni());
+				if ((cargoAtual == null) || (cargoAtual != null && cargoAtual.getDataFim() != null)) {
+					throw new AplicacaoException(
+							"Não é possível ativar pessoa. Cargo inexistente ou inativado.");
+				}
+				pessoa.setCargo(cargoAtual);
+				
+				DpFuncaoConfianca funcaoConfiancaAtual = null;
+				if (pessoaAnt.getFuncaoConfianca() != null) {
+					funcaoConfiancaAtual = CpDao.getInstance().consultarPorIdInicialDpFuncaoConfiancaAtual(pessoaAnt.getFuncaoConfianca().getIdFuncaoIni());
+					if ((funcaoConfiancaAtual == null) || (funcaoConfiancaAtual != null && funcaoConfiancaAtual.getDataFim() != null)) {
+						throw new AplicacaoException(
+								"Não é possível ativar pessoa. Função de Confiança encontra-se inativada.");
+						
+					}
+				}
+				pessoa.setFuncaoConfianca(funcaoConfiancaAtual);
+				
 				pessoa.setNomePessoa(pessoaAnt.getNomePessoa());
 				pessoa.setCpfPessoa(pessoaAnt.getCpfPessoa());
-				pessoa.setCargo(pessoaAnt.getCargo());
 				pessoa.setLotacao(pessoaAnt.getLotacao());
 				pessoa.setOrgaoUsuario(pessoaAnt.getOrgaoUsuario());
-				pessoa.setFuncaoConfianca(pessoaAnt.getFuncaoConfianca());
 				pessoa.setDataNascimento(pessoaAnt.getDataNascimento());
 				pessoa.setMatricula(pessoaAnt.getMatricula());
 				pessoa.setIdePessoa(pessoaAnt.getIdePessoa());

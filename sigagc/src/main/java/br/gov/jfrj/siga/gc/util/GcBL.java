@@ -168,6 +168,11 @@ public class GcBL {
 		return mov;
 	}
 
+	public void atualizarListaMovimentacoes(GcInformacao inf, GcMovimentacao mov) {
+		inf.getMovs().remove(mov);
+		inf.getMovs().add(mov);
+	}
+	
 	public Date dt() {
 		if (this.dt == null)
 			this.dt = so.dao().dt();
@@ -206,12 +211,15 @@ public class GcBL {
 				if (inf.getId() == 0)
 					inf.save();
 				mov.setInf(inf);
-				if (mov.getMovCanceladora() != null)
+				if (mov.getMovCanceladora() != null) {
+					if (mov.getMovCanceladora().getHisIdcIni() == null)
+						mov.getMovCanceladora().setHisIdcIni(idc);
 					mov.getMovCanceladora().save();
+				}
 				mov.save();
 			}
 		}
-		atualizarInformacaoPorMovimentacoes(inf);
+		//atualizarInformacaoPorMovimentacoes(inf);
 		atualizarTags(inf);
 		inf.save();
 		atualizarMarcas(inf);
@@ -284,14 +292,6 @@ public class GcBL {
 		if (inf.getMovs() == null)
 			return;
 
-		SortedSet set = new TreeSet<GcMovimentacao>();
-		
-		for(GcMovimentacao m: inf.getMovs()) {
-			set.add(m);
-		}  
-	
-		inf.setMovs(set);
-		
 		ArrayList<GcMovimentacao> movs = new ArrayList<GcMovimentacao>(
 				inf.getMovs().size());
 		

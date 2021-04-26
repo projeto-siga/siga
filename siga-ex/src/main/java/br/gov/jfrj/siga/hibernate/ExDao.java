@@ -938,6 +938,37 @@ public class ExDao extends CpDao {
 			return null;
 		}
 	}
+	
+	public int consultarQtdeLotacaoModeloNomeExPreenchimento(ExPreenchimento exPreenchimento) {
+		try {
+			final Query query;
+			
+			query = em().createNamedQuery(
+					"consultarQtdeLotacaoModeloNomeExPreenchimento");
+			
+			if (exPreenchimento.getDpLotacao() != null)
+				query.setParameter("lotacao", exPreenchimento.getDpLotacao().getIdLotacaoIni());
+			else
+				query.setParameter("lotacao", 0);
+			if (exPreenchimento.getExModelo() != null)
+				query.setParameter("modelo", exPreenchimento.getExModelo()
+						.getHisIdIni());
+			else
+				query.setParameter("modelo", 0);
+			
+			if(exPreenchimento.getNomePreenchimento() != null && !"".equals(exPreenchimento.getNomePreenchimento())) {
+				query.setParameter("nomePreenchimento", exPreenchimento.getNomePreenchimento());
+			} else {
+				query.setParameter("nomePreenchimento", exPreenchimento.getNomePreenchimento());
+			}
+			
+			final int l = ((Long) query.getSingleResult()).intValue();
+			
+			return l;
+		} catch (final NullPointerException e) {
+			return 0;
+		}
+	}
 
 	public List consultarAtivos() {
 		final Query query = em().createNamedQuery("consultarAtivos");

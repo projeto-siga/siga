@@ -6,6 +6,7 @@ import com.crivano.jlogic.Expression;
 import com.crivano.jlogic.Not;
 import com.crivano.jlogic.Or;
 
+import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -38,7 +39,7 @@ public class ExPodeMarcarComMarcador extends CompositeExpressionSuport {
 		ExPodeMarcarComMarcador teste = new ExPodeMarcarComMarcador(mob, marcador, titular, lotaTitular);
 		if (!teste.eval())
 			throw new AplicacaoException(
-					"Não é possível marcar com " + marcador.getDescrMarcador() + " porque " + teste.explain(false));
+					"Não é possível marcar com " + marcador.getDescrMarcador() + " porque " + AcaoVO.Helper.produzirExplicacao(teste, false));
 	}
 
 };

@@ -14,7 +14,7 @@ public class ExMovimentacaoHaCadastrante implements Expression {
 
 	@Override
 	public boolean eval() {
-		return mov.getCadastrante() == null;
+		return mov.getCadastrante() != null;
 	}
 
 	@Override

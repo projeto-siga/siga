@@ -27,6 +27,7 @@ import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
 import br.gov.jfrj.itextpdf.Documento;
+import br.gov.jfrj.itextpdf.Stamp;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.model.Objeto;
@@ -73,9 +74,9 @@ public abstract class ExArquivo extends Objeto {
 
 			// Verifica se é possível estampar o documento
 			try {
-				byte[] documentoComStamp = Documento.stamp(abPdf, "", true,
+				byte[] documentoComStamp = Stamp.stamp(abPdf, "", true,
 						false, false, false, false, null, null, null, null, null,
-						null, null, "");
+						null, null, "", null);
 
 				return documentoComStamp;
 

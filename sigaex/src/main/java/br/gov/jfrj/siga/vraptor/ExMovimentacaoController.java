@@ -354,6 +354,10 @@ public class ExMovimentacaoController extends ExController {
 		if (mob != null && !mob.isGeral())
 			mob = mob.doc().getMobilGeral();
 
+		if (mob.isArquivado()) {
+			throw new AplicacaoException("Inclusão de arquivo auxiliar não é permitida em documentos arquivados");
+		}
+
 		if(!Ex.getInstance().getComp()
 				.podeAnexarArquivoAuxiliar(getTitular(), getLotaTitular(), mob)) {
 			throw new AplicacaoException("Arquivo Auxiliar não pode ser anexado");
@@ -399,7 +403,7 @@ public class ExMovimentacaoController extends ExController {
 		
 		String fileExtension = arquivo.getFileName().substring(arquivo.getFileName().lastIndexOf("."));
 		
-		if (fileExtension.equals(".bat") || fileExtension.equals(".exe") || fileExtension.equals(".sh") || fileExtension.equals(".dll") ) {
+		if (fileExtension.equals(".bat") || fileExtension.equals(".exe") || fileExtension.equals(".sh") || fileExtension.equals(".dll") || fileExtension.equals(".pdf") ) {
 			throw new AplicacaoException(
 					"Extensão " + fileExtension + " inválida para inclusão do arquivo.");
 		}
@@ -2103,7 +2107,8 @@ public class ExMovimentacaoController extends ExController {
 			
 			
 		} else {
-			ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getSigla());
+			result.include("origemRedirectTransferirGravar", true);
+			ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getSigla()); 
 		}
 	}
 

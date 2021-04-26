@@ -56,6 +56,7 @@ import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_REORDENAC
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.hasDespacho;
 
 import java.util.HashMap;
@@ -73,6 +74,7 @@ import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
@@ -135,6 +137,10 @@ public class ExMovimentacaoVO extends ExVO {
 			parte.put("resp", new ExParteVO(mov.getResp()));
 
 		descricao = mov.getObs();
+
+		if (mov.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA) || mov.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO)) {
+			descricao += Ex.getInstance().getBL().extraiPersonalizacaoAssinatura(mov);
+		}
 
 		addAcoes(mov, cadastrante, titular, lotaTitular);
 

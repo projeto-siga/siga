@@ -46,6 +46,7 @@ import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.gc.model.GcAcesso;
 import br.gov.jfrj.siga.gc.model.GcArquivo;
 import br.gov.jfrj.siga.gc.model.GcInformacao;
@@ -102,6 +103,7 @@ public class AppController extends GcController {
 		Query query = em().createNamedQuery("contarGcMarcas");
 		query.setParameter("idPessoaIni", getCadastrante().getIdInicial());
 		query.setParameter("idLotacaoIni", getLotaTitular().getIdInicial());
+		query.setParameter("dbDatetime", CpDao.getInstance().consultarDataEHoraDoServidor());
 		List contagens = query.getResultList();
 		result.include("contagens", contagens);
 	}
@@ -987,6 +989,7 @@ public class AppController extends GcController {
 		if (inf.acessoPermitido(getTitular(), getLotaTitular(), inf.getEdicao().getId())) {
 			bl.movimentar(inf, GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO,
 					null, null, null, null, null, null, null, null, null);
+			bl.atualizarInformacaoPorMovimentacoes(inf);
 			bl.gravar(inf, getIdentidadeCadastrante(), getTitular(),
 					getLotaTitular());
 			result.redirectTo(this).exibir(inf.getSiglaCompacta(), null, false,
@@ -1066,6 +1069,8 @@ public class AppController extends GcController {
 		DpPessoa pessoa = getTitular();
 		DpLotacao lotacao = getLotaTitular();
 
+		GcMovimentacao movAserReordenada;
+		
 		if (informacao.getAutor() == null) {
 			informacao.setAutor(pessoa);
 			informacao.setLotacao(lotacao);
@@ -1099,16 +1104,20 @@ public class AppController extends GcController {
 			informacao.setGrupo(null);
 
 		if (informacao.getId() != 0)
-			bl.movimentar(informacao,
+			movAserReordenada = bl.movimentar(informacao,
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO, null, null,
 					null, inftitulo, conteudo, classificacao, null, null, null);
 		else
-			bl.movimentar(informacao,
+			movAserReordenada = bl.movimentar(informacao,
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO, null, null,
 					null, inftitulo, conteudo, classificacao, null, null, null);
 
 		bl.gravar(informacao, getIdentidadeCadastrante(), getTitular(),
 				getLotaTitular());
+		
+		bl.atualizarListaMovimentacoes(informacao, movAserReordenada);
+		bl.atualizarInformacaoPorMovimentacoes(informacao);
+		
 		if (origem != null && origem.trim().length() != 0) {
 			if (informacao.podeFinalizar(pessoa, lotacao)) {
 				bl.movimentar(informacao,

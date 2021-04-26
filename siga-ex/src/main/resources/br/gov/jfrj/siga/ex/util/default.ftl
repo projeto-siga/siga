@@ -2160,13 +2160,15 @@ Pede deferimento.</span><br/><br/><br/>
     FIM TITULO -->
 [/#macro]
 
-[#macro inicioSubscritor]
+[#macro inicioSubscritor sigla]
     <!-- INICIO SUBSCRITOR [#nested/] -->
+    <a href="/sigaex/app/validar-assinatura?pessoa=[#nested/]&sigla=${sigla}">
 [/#macro]
 
 
 [#macro fimSubscritor]
     <!-- FIM SUBSCRITOR [#nested/] -->
+    </a>
 [/#macro]
 
 [#macro cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho=false]
@@ -2176,7 +2178,7 @@ Pede deferimento.</span><br/><br/><br/>
 	        <td width="100%">
 	        <table width="100%" border="0" cellpadding="2">
 	            <tr>
-	                <td width="100%" align="center" valign="bottom"><img src="${_pathBrasao}" width="auto" height="65" /></td>
+	                <td width="100%" align="center" valign="bottom"><img src="${_pathBrasao}" width="${_widthBrasao}" height="${_heightBrasao}" /></td>
 	            </tr>
 	            <tr>
 	                <td width="100%" align="center">
@@ -2426,8 +2428,9 @@ Pede deferimento.</span><br/><br/><br/>
    <!-- INICIO ASSINATURA -->
 [/#if]
 <p style="font-family: Arial; font-size: 11pt;" align="center">
+	<br/>
     [#if (doc.subscritor)??]
-       [@inicioSubscritor]${(doc.subscritor.idPessoa)!}[/@inicioSubscritor]
+       [@inicioSubscritor sigla=doc.codigoCompacto]${(doc.subscritor.idPessoa)!}[/@inicioSubscritor]
     [/#if]
     [#if (doc.nmSubscritor)??]
         ${doc.nmSubscritor}
@@ -2470,7 +2473,7 @@ Pede deferimento.</span><br/><br/><br/>
                 [#if (doc.mobilGeral.exMovimentacaoSet)??]
         [#list doc.mobilGeral.exMovimentacaoSet as mov]
                     [#if (mov.exTipoMovimentacao.idTpMov)! == 24]
-                        [@inicioSubscritor]${(mov.subscritor.idPessoa)}[/@inicioSubscritor]
+                        [@inicioSubscritor sigla=doc.codigoCompacto]${(mov.subscritor.idPessoa)}[/@inicioSubscritor]
                         <br/><br/><br/>
                         [#if mov.nmSubscritor??]
                             ${mov.nmSubscritor}
@@ -4582,5 +4585,7 @@ ${texto}
 
 [#assign _pathBrasao = "contextpath/imagens/brasaoColoridoTRF2.png" /]
 [#assign _pathBrasaoSecundario = "contextpath/imagens/Logotipo_Prodesp_Governo_SP.png" /]
+[#assign _widthBrasao = "auto" /]
+[#assign _heightBrasao = "65" /]
 [#assign _tituloGeral = "PODER JUDICIÁRIO" /]
 [#assign _subtituloGeral = "JUSTIÇA FEDERAL" /]

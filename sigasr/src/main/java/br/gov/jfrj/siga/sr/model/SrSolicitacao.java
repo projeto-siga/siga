@@ -74,6 +74,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
@@ -2116,8 +2117,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
                     listaSubstitutos = ContextoPersistencia.em().createQuery("from DpSubstituicao dps "
                     						+ "where dps.titular = null and dps.lotaTitular.idLotacao in "
                                             + "(select lot.idLotacao from DpLotacao lot where lot.idLotacaoIni = :idLotacaoIni) and "
-                                            + "(dtFimSubst = null or dtFimSubst > CURRENT_TIMESTAMP) and dps.substituto is not null "
+                                            + "(dtFimSubst = null or dtFimSubst > 	:dbDatetime) and dps.substituto is not null "
                                             + "and dtFimRegistro = null")
+                    						.setParameter("dbDatetime", CpDao.getInstance().consultarDataEHoraDoServidor())
                                             .setParameter("idLotacaoIni", lotaAtendente.getIdInicial()).getResultList();
                     
                     // BJN - remover terminados

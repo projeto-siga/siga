@@ -12,10 +12,14 @@ hs_err_pid*
 /target/
 
 # eclipse project
-.project
 .classpath
 .tern-project
-.settings
+!.settings
+!org.eclipse.wst.validation.prefs
+.settings/org.eclipse.core.resources.prefs
+.settings/org.eclipse.jdt.core.prefs
+.settings/org.eclipse.wst.common.*
+.settings/org.eclipse.wst.common.*
 
 #compiled frontend
 /src/main/webapp/index.html

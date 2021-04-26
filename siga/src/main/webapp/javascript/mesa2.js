@@ -42,7 +42,8 @@ var appMesa = new Vue({
 			trazerArquivados: false,
 			trazerCancelados: false,
 			ordemCrescenteData: false,
-			usuarioPosse: false
+			usuarioPosse: false,
+			dtDMA: false
 		};
 	},
 	computed: {
@@ -72,7 +73,6 @@ var appMesa = new Vue({
 
 			return grps;
 		},
-
 		filtradosTemAlgumErro: function() {
 			if (!this.filtrados || this.filtrados.length === 0) return false;
 			for (var i = 0; i < this.filtrados.length; i++) {
@@ -118,7 +118,12 @@ var appMesa = new Vue({
 		usuarioPosse: function() {
 			setParmUser('usuarioPosse', this.usuarioPosse);
 			this.recarregarMesa();
+		},
+		dtDMA: function() {
+			setParmUser('dtDMA', this.dtDMA);
+			this.recarregarMesa();
 		}
+		
 	},
 	methods: {
 		carregarMesa: function(grpNome, qtdPagina) {
@@ -129,6 +134,7 @@ var appMesa = new Vue({
 			this.trazerCancelados = (getParmUser('trazerCancelados') == null ? false : getParmUser('trazerCancelados'));
 			this.ordemCrescenteData = (getParmUser('ordemCrescenteData') == null ? false : getParmUser('ordemCrescenteData'));
 			this.usuarioPosse = (getParmUser('usuarioPosse') == null ? false : getParmUser('usuarioPosse'));
+			this.dtDMA = (getParmUser('dtDMA') == null ? false : getParmUser('dtDMA'));
 			setValueGrupo('Aguardando Ação de Temporalidade', 'hide', !this.trazerArquivados);
 			
 
@@ -186,6 +192,7 @@ var appMesa = new Vue({
 					trazerCancelados: this.trazerCancelados,
 					ordemCrescenteData: this.ordemCrescenteData,
 					usuarioPosse: this.usuarioPosse,
+					dtDMA: this.dtDMA,
 					idVisualizacao: ID_VISUALIZACAO
 				},
 				complete: function(response, status, request) {
@@ -242,6 +249,7 @@ var appMesa = new Vue({
 			localStorage.removeItem('trazerCancelados' + getUser());
 			localStorage.removeItem('ordemCrescenteData' + getUser());
 			localStorage.removeItem('usuarioPosse' + getUser());
+			localStorage.removeItem('dtDMA' + getUser());
 			this.recarregarMesa();
 			this.selQtdPag = 15;
 			
@@ -412,6 +420,14 @@ var appMesa = new Vue({
 			r = r.replace('&nbsp;', ' às ')
 			return r
 		},
+		formatJSDDMMYYYY: function(s) {
+			/* A partir da data em string formato DD/MM/YYYY HH:MM ou DD-MM-YYYYTHH:MM:SS...,
+			 * devolve somente a data em formato DD/MM/YYYY
+			 */
+			if (s === undefined) return;
+
+			return s.substring(0,10).replace('-', '/');
+		}
 	}
 });
 

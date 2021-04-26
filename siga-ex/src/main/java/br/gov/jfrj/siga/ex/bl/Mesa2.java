@@ -83,6 +83,8 @@ public class Mesa2 {
 		public Date termino;
 		public String ref1;
 		public String ref2;
+		public String ref1DDMMYYYY;
+		public String ref2DDMMYYYY;
 		public Boolean daPessoa;
 		public Boolean deOutraPessoa;
 		public Boolean daLotacao;
@@ -236,8 +238,8 @@ public class Mesa2 {
 					t.icone = tag.marcador.getIdIcone().getCodigoFontAwesome();
 					t.cor = tag.marcador.getIdCor().getDescricao();
 				}
-				t.titulo = Data
-						.calcularTempoRelativo(tag.marca.getDtIniMarca());
+				t.titulo = Data.formatDDMMYY(tag.marca.getDtIniMarca()) + " (" 
+							+ Data.calcularTempoRelativo(tag.marca.getDtIniMarca()) + ")";
 
 				if (tag.marca.getDpPessoaIni() != null) {
 					t.pessoa = tag.marca.getDpPessoaIni().getIdInicial().toString();
@@ -251,8 +253,10 @@ public class Mesa2 {
 				t.termino = tag.marca.getDtFimMarca();
 				if (tag.dtRef1 != null)
 					t.ref1 = Data.calcularTempoRelativoEmDias(tag.dtRef1);
+					t.ref1DDMMYYYY = Data.formatDDMMYY(tag.dtRef1);
 				if (tag.dtRef2 != null)
 					t.ref2 = Data.calcularTempoRelativoEmDias(tag.dtRef2);
+					t.ref2DDMMYYYY = Data.formatDDMMYY(tag.dtRef2);
 				if(tag.marca.getCpMarcador().isDemandaJudicial()) {
 					t.nome += " até " + tag.marca.getExMobil().getDoc().getMobilGeral()
 							.getExMovimentacaoSet().stream() //

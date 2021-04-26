@@ -55,30 +55,13 @@
 				</c:if>
 			</div>
 
-			<c:if test="${doc.conteudoBlobHtmlStringComReferencias != null}">
-				<div id="divClassificacao" class="card-body bg-white border">
-					<div class="gt-content-box" style="padding: 10px;">
-						<table class="message" width="100%">
-							<tr>
-								<td colspan="2">
-									<div id="conteudo" style="padding-top: 10px;">
-										<tags:fixdocumenthtml>
-											${doc.conteudoBlobHtmlStringComReferencias}
-										</tags:fixdocumenthtml>
-									</div>
-								</td>
-							</tr>
-						</table>
-					</div>
-				</div>
-			</c:if>
-			<c:if test="${doc.pdf != null && doc.conteudoBlobHtmlStringComReferencias == null}">
+			<c:if test="${doc.pdf != null}">
 				<div class="card-body bg-white">
 					<c:set var="url" value="/sigaex/app/arquivo/exibir?arquivo=${doc.referenciaPDF}"/>
 					<input type="hidden" id="visualizador" value="${f:resource('/sigaex.pdf.visualizador') }"/>
 					<iframe style="display: block;" name="painel" id="painel"
 						src=""
-						width="100%" height="400" frameborder="0" scrolling="auto"></iframe>
+						width="100%" height="500" frameborder="0" scrolling="auto"></iframe>
 					<script>
 						$(document).ready(function(){resize();$(window).resize(function(){resize();});});
 					</script>
@@ -138,7 +121,9 @@
 		</div>
 	</div>
 
-	<tags:assinatura_rodape podeAssinarPorComSenha="${f:podeAssinarPorComSenha(titular,lotaTitular,doc.mobilGeral)}"/>
+	<c:if test="${doc.pdf != null}">
+		<tags:assinatura_rodape podeAssinarPorComSenha="${f:podeAssinarPorComSenha(titular,lotaTitular,doc.mobilGeral)}"/>
+	</c:if>
 	<script>
 		window.onload = function () { 
 			document.getElementById('painel').src = montarUrlDocPDF('${url }',document.getElementById('visualizador').value);

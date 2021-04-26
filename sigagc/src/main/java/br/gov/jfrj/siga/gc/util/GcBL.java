@@ -211,8 +211,11 @@ public class GcBL {
 				if (inf.getId() == 0)
 					inf.save();
 				mov.setInf(inf);
-				if (mov.getMovCanceladora() != null)
+				if (mov.getMovCanceladora() != null) {
+					if (mov.getMovCanceladora().getHisIdcIni() == null)
+						mov.getMovCanceladora().setHisIdcIni(idc);
 					mov.getMovCanceladora().save();
+				}
 				mov.save();
 			}
 		}

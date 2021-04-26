@@ -59,7 +59,7 @@ import br.gov.jfrj.siga.model.Objeto;
 				+ "order by nomePreenchimento"),
 	
 		@NamedQuery(name = "consultarQtdeLotacaoModeloNomeExPreenchimento", query = "select count(1) from ExPreenchimento pre "
-				+ "	      where (:lotacao = null or :lotacao = 0L or pre.dpLotacao = :lotacao)"
+				+ "	      where (:lotacao = null or :lotacao = 0L or pre.dpLotacao.idLotacaoIni = :lotacao)"
 				+ "			and (:modelo=null or :modelo = 0L or pre.exModelo.hisIdIni = :modelo) "
 				+ " and (nomePreenchimento=null or :nomePreenchimento = '' or upper(nomePreenchimento) = upper(:nomePreenchimento))"
 				+ "order by nomePreenchimento"),

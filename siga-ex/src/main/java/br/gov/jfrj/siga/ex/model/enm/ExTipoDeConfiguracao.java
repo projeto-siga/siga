@@ -52,7 +52,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 			"Normalmente todos os modelos de documentos podem ser criados por qualquer usuário, mas restrições podem ser impostas através dessa configuração. Modelos ou espécies específicas podem ser restritas de modo que apenas algumas pessoas ou lotações tenham permissão para criá-las.",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO, ExParamCfg.TIPO_FORMA_DOCUMENTO,
-					ExParamCfg.FORMA_DOCUMENTO, ExParamCfg.MODELO },
+					ExParamCfg.FORMA_DOCUMENTO, ExParamCfg.MODELO, ExParamCfg.CLASSIFICACAO },
 			new Enum[] { CpParamCfg.SITUACAO },
 			new SituacaoDeConfiguracao[] { SituacaoDeConfiguracao.PODE, SituacaoDeConfiguracao.NAO_PODE }),
 	//

@@ -1369,7 +1369,7 @@
 </div>
 </div>
 
-<c:if test="${recebimentoPendente}">				
+<c:if test="${recebimentoPendente  and !origemRedirectTransferirGravar}">				
 	<style>
 		.gt-sidebar, .siga-menu-acoes {
 			filter: blur(2px);
@@ -1433,7 +1433,7 @@
 	      <div class="modal-footer text-center">
 	      	<div class="row" style="margin: 0 auto;">
 		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>		        	       
-	        	<a href="${linkTo[ExMovimentacaoController].aReceber()}?sigla=${sigla}" class="btn btn-primary btn-acao" role="button" aria-pressed="true" style="margin-left: .5rem;">Sim</a>		        
+	        	<a href="${linkTo[ExMovimentacaoController].aReceber()}?sigla=${docVO.mob.sigla}" class="btn btn-primary btn-acao" role="button" aria-pressed="true" style="margin-left: .5rem;">Sim</a>		        
 		    </div>    
 	      </div>
 	    </div>
@@ -1442,7 +1442,7 @@
 	<button type="button" class="btn btn-primary siga-btn-receber-doc" data-placement="left" title="Receber" data-siga-modal-abrir="modalReceberDocumento">
 		<i class="fas fa-envelope-open-text icone-receber-doc"></i>
 	</button>
-	<c:if test="${!docVO.mob.isJuntado() }">
+	<c:if test="${!docVO.mob.isJuntado() and !origemRedirectTransferirGravar}">
 	<script>
 		$(function() {						
 			var modalReceberDocumento = $('#modalReceberDocumento');				

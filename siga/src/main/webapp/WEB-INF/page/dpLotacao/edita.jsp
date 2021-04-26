@@ -108,7 +108,7 @@
 						<div class="form-group">
 							<label for="lotacaoPai"><fmt:message key="usuario.lotacao" /> Pai</label>
 							<select name="lotacaoPai" id="lotacaoPai" value="${lotacaoPai}" class="form-control  siga-select2">
-								<option value="" selected disabled hidden>Selecione uma <fmt:message key="usuario.lotacao" /></option>
+								<option value="">Selecione uma <fmt:message key="usuario.lotacao" /></option>
 								<c:forEach items="${listaLotacao}" var="item">
 									<option value="${item.idLotacao}" ${item.idLotacao== lotacaoPai ? 'selected' : ''}>
 										${item.nomeLotacao}

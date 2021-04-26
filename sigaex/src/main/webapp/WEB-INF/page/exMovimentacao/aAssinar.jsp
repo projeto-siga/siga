@@ -62,7 +62,7 @@
 
 	<div class="container-fluid">
 		<div class="row">
-			<div class="col col-6">
+			<div class="col col-12 col-lg-6 mb-1">
 				<c:if test="${doc.pdf != null}">
 					<div class="card-body bg-white">
 						<c:set var="url" value="/sigaex/app/arquivo/exibir?arquivo=${doc.referenciaPDF}"/>
@@ -76,7 +76,7 @@
 					</div>
 				</c:if>
 			</div>
-			<div class="col col-6">
+			<div class="col col-12 col-lg-6">
 				<div class="card bg-light mb-3">
 					<div class="card-header">
 						<h5>Confirme os dados do documento</h5>

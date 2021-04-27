@@ -107,6 +107,9 @@
         <progressModal ref="progressModal"></progressModal>
         <progressModalAsync ref="progressModalAsync"></progressModalAsync>
         <messageBox ref="messageBox"></messageBox>
+        <messageBoxConfirmacao
+          ref="messageBoxConfirmacao"
+        ></messageBoxConfirmacao>
 
         <top-progress ref="topProgress" :height="5" color="#000"></top-progress>
         <router-view></router-view>
@@ -122,168 +125,176 @@
 </template>
 
 <script>
-import Assinatura from './components/Assinatura'
-import Tramite from './components/Tramite'
-import Anotacao from './components/Anotacao'
-import AuthBL from './bl/auth.js'
-import UtilsBL from './bl/utils.js'
-import topProgress from './components/TopProgress'
-import { Bus } from './bl/bus.js'
-import ProgressModal from './components/ProgressModal'
-import ProgressModalAsync from './components/ProgressModalAsync'
-import MessageBox from './components/MessageBox'
+import Assinatura from "./components/Assinatura";
+import Tramite from "./components/Tramite";
+import Anotacao from "./components/Anotacao";
+import AuthBL from "./bl/auth.js";
+import UtilsBL from "./bl/utils.js";
+import topProgress from "./components/TopProgress";
+import { Bus } from "./bl/bus.js";
+import ProgressModal from "./components/ProgressModal";
+import ProgressModalAsync from "./components/ProgressModalAsync";
+import MessageBox from "./components/MessageBox";
+import MessageBoxConfirmacao from "./components/MessageBoxConfirmacao";
+import AcaoBL from "./bl/acao.js";
 
 export default {
-  name: 'app',
+  name: "app",
   mounted() {
     UtilsBL.overrideProperties(
       this.settings,
-      JSON.parse(localStorage.getItem('bv-settings')) || {}
-    )
+      JSON.parse(localStorage.getItem("bv-settings")) || {}
+    );
     this.$router.beforeEach((to, from, next) => {
-      next()
+      next();
       if (to.meta && to.meta.title) {
-        document.title = to.meta.title(to)
+        document.title = to.meta.title(to);
       } else {
-        document.title = 'SIGA-Le - ' + to.name
+        document.title = "SIGA-Le - " + to.name;
       }
-    })
+    });
 
-    Bus.$on('block', (min, max) => {
+    AcaoBL.registrar();
+
+    Bus.$on("block", (min, max) => {
       if (this.blockCounter === 0) {
         this.$nextTick(function() {
           if (this.blockCounter > 0 && this.$refs.topProgress) {
-            this.$refs.topProgress.start(min, max)
+            this.$refs.topProgress.start(min, max);
           }
-        }, 200)
-        this.loading = true
+        }, 200);
+        this.loading = true;
       }
-      this.blockCounter++
-    })
+      this.blockCounter++;
+    });
 
-    Bus.$on('release', () => {
-      this.blockCounter--
+    Bus.$on("release", () => {
+      this.blockCounter--;
       if (this.blockCounter === 0) {
-        this.loading = false
+        this.loading = false;
         this.$nextTick(function() {
           if (this.blockCounter === 0 && this.$refs.topProgress) {
-            this.$refs.topProgress.done()
+            this.$refs.topProgress.done();
           }
-        }, 200)
+        }, 200);
       }
-    })
+    });
 
-    this.$on('updateLogged', (token) => {
+    this.$on("updateLogged", (token) => {
       if (token) {
-        AuthBL.setIdToken(token)
-        this.jwt = AuthBL.decodeToken(token)
+        AuthBL.setIdToken(token);
+        this.jwt = AuthBL.decodeToken(token);
         // $rootScope.updateLogged();
         // $state.go('consulta-processual');
         this.$router.push({
-          name: 'Mesa',
+          name: "Mesa",
           params: { exibirAcessoAnterior: true },
-        })
+        });
       }
-    })
+    });
 
-    this.$on('setting', (key, value) => {
-      this.settings[key] = value
-      var json = JSON.stringify(this.settings)
-      localStorage.setItem('bv-settings', json)
-    })
+    this.$on("setting", (key, value) => {
+      this.settings[key] = value;
+      var json = JSON.stringify(this.settings);
+      localStorage.setItem("bv-settings", json);
+    });
 
-    var prg = this.$refs.progressModal
+    var prg = this.$refs.progressModal;
 
-    Bus.$on('prgStart', (title, total, callbackNext, callbackEnd) => {
-      prg.start(title, total, callbackNext, callbackEnd)
-    })
+    Bus.$on("prgStart", (title, total, callbackNext, callbackEnd) => {
+      prg.start(title, total, callbackNext, callbackEnd);
+    });
 
-    Bus.$on('prgCaption', (caption) => {
-      prg.caption = caption
-    })
+    Bus.$on("prgCaption", (caption) => {
+      prg.caption = caption;
+    });
 
-    Bus.$on('prgNext', () => {
-      prg.next()
-    })
+    Bus.$on("prgNext", () => {
+      prg.next();
+    });
 
-    Bus.$on('message', (title, message) => {
-      this.$refs.messageBox.show(title, message)
-    })
+    Bus.$on("message", (title, message) => {
+      this.$refs.messageBox.show(title, message);
+    });
 
-    Bus.$on('iniciarAssinaturaComSenha', (documentos, cont) => {
-      this.$refs.assinatura.show(documentos, cont)
-    })
+    Bus.$on("confirmar", (title, message, callback) => {
+      this.$refs.messageBoxConfirmacao.show(title, message, callback);
+    });
 
-    Bus.$on('assinarComSenha', (documentos, username, password, cont) => {
-      this.assinarComSenhaEmLote(documentos, username, password, cont)
-    })
+    Bus.$on("iniciarAssinaturaComSenha", (documentos, cont) => {
+      this.$refs.assinatura.show(documentos, cont);
+    });
 
-    Bus.$on('iniciarTramite', (documentos, cont) => {
-      this.$refs.tramite.show(documentos, cont)
-    })
+    Bus.$on("assinarComSenha", (documentos, username, password, cont) => {
+      this.assinarComSenhaEmLote(documentos, username, password, cont);
+    });
 
-    Bus.$on('iniciarAnotacao', (documentos, cont) => {
-      this.$refs.anotacao.show(documentos, cont)
-    })
+    Bus.$on("iniciarTramite", (documentos, cont) => {
+      this.$refs.tramite.show(documentos, cont);
+    });
 
-    Bus.$on('tramitar', (documentos, lotacao, matricula, cont) => {
-      this.tramitarEmLote(documentos, lotacao, matricula, cont)
-    })
+    Bus.$on("iniciarAnotacao", (documentos, cont) => {
+      this.$refs.anotacao.show(documentos, cont);
+    });
 
-    Bus.$on('anotar', (documentos, anotacao, cont) => {
-      this.anotarEmLote(documentos, anotacao, cont)
-    })
+    Bus.$on("tramitar", (documentos, lotacao, matricula, cont) => {
+      this.tramitarEmLote(documentos, lotacao, matricula, cont);
+    });
 
-    var prgAsync = this.$refs.progressModalAsync
+    Bus.$on("anotar", (documentos, anotacao, cont) => {
+      this.anotarEmLote(documentos, anotacao, cont);
+    });
 
-    Bus.$on('prgAsyncStart', (title, key, callbackEnd) => {
-      prgAsync.start(title, key, callbackEnd)
-    })
+    var prgAsync = this.$refs.progressModalAsync;
 
-    this.token = AuthBL.getIdToken()
-    if (this.token && AuthBL.isTokenExpired(this.token)) this.token = undefined
+    Bus.$on("prgAsyncStart", (title, key, callbackEnd) => {
+      prgAsync.start(title, key, callbackEnd);
+    });
+
+    this.token = AuthBL.getIdToken();
+    if (this.token && AuthBL.isTokenExpired(this.token)) this.token = undefined;
     if (this.token) {
-      AuthBL.setIdToken(this.token)
-      this.jwt = AuthBL.decodeToken(this.token)
+      AuthBL.setIdToken(this.token);
+      this.jwt = AuthBL.decodeToken(this.token);
     } else {
-      this.$router.push({ name: 'Login' })
+      this.$router.push({ name: "Login" });
     }
     this.$nextTick(function() {
-      this.$http.get('sigaex/api/v1/test?skip=all').then(
+      this.$http.get("sigaex/api/v1/test?skip=all").then(
         (response) => {
-          var re = /\[default: (.*)\]/gm
-          var subst = '$1'
-          this.test = response.data
+          var re = /\[default: (.*)\]/gm;
+          var subst = "$1";
+          this.test = response.data;
           if (this.test.properties) {
             for (var k in this.test.properties) {
               if (k in this.test.properties)
-                if (this.test.properties[k] == '[undefined]')
-                  this.test.properties[k] = undefined
+                if (this.test.properties[k] == "[undefined]")
+                  this.test.properties[k] = undefined;
                 else
                   this.test.properties[k] = this.test.properties[k].replace(
                     re,
                     subst
-                  )
+                  );
             }
           }
 
           if (
-            this.test.properties['siga-le.wootric.token'] &&
-            this.test.properties['siga-le.wootric.token'] !== '[undefined]' &&
+            this.test.properties["siga-le.wootric.token"] &&
+            this.test.properties["siga-le.wootric.token"] !== "[undefined]" &&
             this.jwt
           ) {
             // This loads the Wootric survey
             // window.wootric_survey_immediately = true
             window.wootricSettings = {
               email: this.jwt.sub,
-              account_token: this.test.properties['siga-le.wootric.token'],
-            }
-            window.wootric('run')
+              account_token: this.test.properties["siga-le.wootric.token"],
+            };
+            window.wootric("run");
           }
         },
         (error) => UtilsBL.errormsg(error, this)
-      )
-    })
+      );
+    });
   },
   data() {
     return {
@@ -303,42 +314,46 @@ export default {
       },
       token: undefined,
       jwt: {},
-    }
+    };
   },
   methods: {
     isTokenValid: function() {
-      return this.token && !AuthBL.isTokenExpired(this.token)
+      return this.token && !AuthBL.isTokenExpired(this.token);
     },
 
     logout: function() {
-      AuthBL.logout()
-      this.jwt = {}
-      this.$router.push({ name: 'Login' })
+      AuthBL.logout();
+      this.jwt = {};
+      this.$router.push({ name: "Login" });
     },
 
     pesquisar: function() {
-      var pesq = (this.siglaParaPesquisar || '').replace(/[^a-z0-9]/gi, '')
-      this.$http.get('sigaex/api/v1/documentos/' + pesq + '/pesquisar-sigla', { block: true }).then(
-        (response) => {
-          if (response.data.codigo) {
-            this.$router.push({
-              name: 'Documento',
-              params: { numero: response.data.codigo },
-            })
-          }
-        },
-        (error) => UtilsBL.errormsg(error, this)
-      )
-      this.siglaParaPesquisar = undefined
+      var pesq = (this.siglaParaPesquisar || "").replace(/[^a-z0-9]/gi, "");
+      this.$http
+        .get("sigaex/api/v1/documentos/" + pesq + "/pesquisar-sigla", {
+          block: true,
+        })
+        .then(
+          (response) => {
+            if (response.data.codigo) {
+              this.$router.push({
+                name: "Documento",
+                params: { numero: response.data.codigo },
+              });
+            }
+          },
+          (error) => UtilsBL.errormsg(error, this)
+        );
+      this.siglaParaPesquisar = undefined;
     },
 
     assinarComSenha: function(d, username, password, lote) {
-      this.errormsg = undefined
-      Bus.$emit('prgCaption', 'Assinando ' + d.sigla)
+      this.errormsg = undefined;
+      Bus.$emit("prgCaption", "Assinando " + d.sigla);
 
       this.$http
         .post(
-          'sigaex/api/v1/documentos/' + d.codigo + '/assinar-com-senha',
+          "sigaex/api/v1/documentos/" + d.codigo + "/assinar-com-senha",
           {
             username: username,
             password: password,
@@ -347,26 +362,26 @@ export default {
         )
         .then(
           () => {
-            d.errormsg = undefined
+            d.errormsg = undefined;
             UtilsBL.logEvento(
-              'assinatura em lote',
-              'assinado',
-              'assinado com senha'
-            )
-            Bus.$emit('prgNext')
+              "assinatura em lote",
+              "assinado",
+              "assinado com senha"
+            );
+            Bus.$emit("prgNext");
           },
           (error) => {
-            if (lote) d.errormsg = error.data.errormsg
-            else Bus.$emit('message', 'Erro', error.data.errormsg)
-            Bus.$emit('prgNext')
+            if (lote) d.errormsg = error.data.errormsg;
+            else Bus.$emit("message", "Erro", error.data.errormsg);
+            Bus.$emit("prgNext");
           }
-        )
+        );
     },
 
     assinarComSenhaEmLote: function(documentos, username, password, cont) {
       Bus.$emit(
-        'prgStart',
-        'Assinando Com Senha',
+        "prgStart",
+        "Assinando Com Senha",
         documentos.length,
         (i) =>
           this.assinarComSenha(
@@ -376,16 +391,16 @@ export default {
             documentos.length !== 1
           ),
         cont
-      )
+      );
     },
 
     tramitar: function(d, lotacao, matricula, lote) {
-      this.errormsg = undefined
-      Bus.$emit('prgCaption', 'Tramitando ' + d.sigla)
+      this.errormsg = undefined;
+      Bus.$emit("prgCaption", "Tramitando " + d.sigla);
 
       this.$http
         .post(
-          'sigaex/api/v1/documentos/' + d.codigo + '/tramitar',
+          "sigaex/api/v1/documentos/" + d.codigo + "/tramitar",
           {
             lotacao: lotacao,
             matricula: matricula,
@@ -394,22 +409,22 @@ export default {
         )
         .then(
           () => {
-            d.errormsg = undefined
-            UtilsBL.logEvento('tramite em lote', 'tramitado')
-            Bus.$emit('prgNext')
+            d.errormsg = undefined;
+            UtilsBL.logEvento("tramite em lote", "tramitado");
+            Bus.$emit("prgNext");
           },
           (error) => {
-            if (lote) d.errormsg = error.data.errormsg
-            else Bus.$emit('message', 'Erro', error.data.errormsg)
-            Bus.$emit('prgNext')
+            if (lote) d.errormsg = error.data.errormsg;
+            else Bus.$emit("message", "Erro", error.data.errormsg);
+            Bus.$emit("prgNext");
           }
-        )
+        );
     },
 
     tramitarEmLote: function(documentos, lotacao, matricula, cont) {
       Bus.$emit(
-        'prgStart',
-        'Tramitando',
+        "prgStart",
+        "Tramitando",
         documentos.length,
         (i) =>
           this.tramitar(
@@ -419,26 +434,26 @@ export default {
             documentos.length !== 1
           ),
         cont
-      )
+      );
     },
 
     anotarEmLote: function(documentos, anotacao, cont) {
       Bus.$emit(
-        'prgStart',
-        'Anotando',
+        "prgStart",
+        "Anotando",
         documentos.length,
         (i) => this.anotar(documentos[i], anotacao, documentos.length !== 1),
         cont
-      )
+      );
     },
 
     anotar: function(d, anotacao, lote) {
-      this.errormsg = undefined
-      Bus.$emit('prgCaption', 'Anotando ' + d.sigla)
+      this.errormsg = undefined;
+      Bus.$emit("prgCaption", "Anotando " + d.sigla);
 
       this.$http
         .post(
-          'sigaex/api/v1/documentos/' + d.codigo + '/anotar',
+          "sigaex/api/v1/documentos/" + d.codigo + "/anotar",
           {
             anotacao: anotacao,
           },
@@ -446,28 +461,29 @@ export default {
         )
         .then(
           () => {
-            d.errormsg = undefined
-            UtilsBL.logEvento('anotacao em lote', 'anotado')
-            Bus.$emit('prgNext')
+            d.errormsg = undefined;
+            UtilsBL.logEvento("anotacao em lote", "anotado");
+            Bus.$emit("prgNext");
           },
           (error) => {
-            if (lote) d.errormsg = error.data.errormsg
-            else Bus.$emit('message', 'Erro', error.data.errormsg)
-            Bus.$emit('prgNext')
+            if (lote) d.errormsg = error.data.errormsg;
+            else Bus.$emit("message", "Erro", error.data.errormsg);
+            Bus.$emit("prgNext");
           }
-        )
+        );
     },
   },
   components: {
     topProgress,
     progressModal: ProgressModal,
     messageBox: MessageBox,
+    messageBoxConfirmacao: MessageBoxConfirmacao,
     assinatura: Assinatura,
     tramite: Tramite,
     anotacao: Anotacao,
     progressModalAsync: ProgressModalAsync,
   },
-}
+};
 </script>
 
 <style>
@@ -489,7 +505,7 @@ export default {
 }
 
 .dimmed:before {
-  content: ' ';
+  content: " ";
   z-index: 10;
   display: block;
   position: absolute;
@@ -639,7 +655,7 @@ h6::first-letter {
 
 .dropdown-submenu > a:after {
   display: block;
-  content: ' ';
+  content: " ";
   float: right;
   width: 0;
   height: 0;
@@ -724,13 +740,13 @@ body1 {
   z-index: 2;
 }
 
-.form-signin input[type='email'] {
+.form-signin input[type="email"] {
   margin-bottom: -1px;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
 }
 
-.form-signin input[type='password'] {
+.form-signin input[type="password"] {
   margin-bottom: 10px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;

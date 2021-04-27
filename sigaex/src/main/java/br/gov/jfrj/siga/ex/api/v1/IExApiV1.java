@@ -591,6 +591,63 @@ public interface IExApiV1 {
 		public void run(DocumentosSiglaAutenticarComSenhaPostRequest req,
 				DocumentosSiglaAutenticarComSenhaPostResponse resp) throws Exception;
 	}
+	
+	public class DocumentosSiglaArquivarCorrentePostRequest implements ISwaggerRequest {
+		public String sigla;
+	}
+
+	public class DocumentosSiglaArquivarCorrentePostResponse implements ISwaggerResponse {
+		public String sigla;
+		public String status;
+	}
+
+	public interface IDocumentosSiglaArquivarCorrentePost extends ISwaggerMethod {
+		public void run(DocumentosSiglaArquivarCorrentePostRequest req, DocumentosSiglaArquivarCorrentePostResponse resp)
+				throws Exception;
+	}
+
+	public class DocumentosSiglaSobrestarPostRequest implements ISwaggerRequest {
+		public String sigla;
+	}
+
+	public class DocumentosSiglaSobrestarPostResponse implements ISwaggerResponse {
+		public String sigla;
+		public String status;
+	}
+
+	public interface IDocumentosSiglaSobrestarPost extends ISwaggerMethod {
+		public void run(DocumentosSiglaSobrestarPostRequest req, DocumentosSiglaSobrestarPostResponse resp)
+				throws Exception;
+	}
+
+	public class DocumentosSiglaDessobrestarPostRequest implements ISwaggerRequest {
+		public String sigla;
+	}
+
+	public class DocumentosSiglaDessobrestarPostResponse implements ISwaggerResponse {
+		public String sigla;
+		public String status;
+	}
+
+	public interface IDocumentosSiglaDessobrestarPost extends ISwaggerMethod {
+		public void run(DocumentosSiglaDessobrestarPostRequest req, DocumentosSiglaDessobrestarPostResponse resp)
+				throws Exception;
+	}
+
+	public class DocumentosSiglaDesarquivarCorrentePostRequest implements ISwaggerRequest {
+		public String sigla;
+	}
+
+	public class DocumentosSiglaDesarquivarCorrentePostResponse implements ISwaggerResponse {
+		public String sigla;
+		public String status;
+	}
+
+	public interface IDocumentosSiglaDesarquivarCorrentePost extends ISwaggerMethod {
+		public void run(DocumentosSiglaDesarquivarCorrentePostRequest req, DocumentosSiglaDesarquivarCorrentePostResponse resp)
+				throws Exception;
+	}
+
 
 	public class DocumentosSiglaTramitarPostRequest implements ISwaggerRequest {
 		public String sigla;

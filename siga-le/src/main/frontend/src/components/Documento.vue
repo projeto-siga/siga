@@ -44,69 +44,10 @@
                       </button>
                     </div>
                     -->
-          <div class="col col-auto mr-auto mb-3">
-            <button
-              type="button"
-              @click="mostrarCompleto()"
-              id="download"
-              class="btn btn-info d-print-none"
-            >
-              <span class="fa fa-download"></span>
-              PDF
-            </button>
-          </div>
-          <div class="col col-auto mr-1 mb-3" v-if="mob.podeAnotar">
-            <button
-              type="button"
-              @click="anotar()"
-              class="btn btn-primary d-print-none"
-            >
-              <span class="fa fa-sticky-note-o"></span>
-              Anotar
-            </button>
-          </div>
-          <div class="col col-auto ml-1 mb-3" v-if="doc.podeAssinar">
-            <button
-              type="button"
-              @click="assinarComSenha()"
-              class="btn btn-primary d-print-none"
-            >
-              <span class="fa fa-shield"></span>
-              Assinar
-            </button>
-          </div>
-          <div class="col col-auto ml-1 mb-3" v-if="mob.podeTramitar">
-            <button
-              type="button"
-              @click="tramitar()"
-              class="btn btn-primary d-print-none"
-            >
-              <span class="fa fa-paper-plane-o"></span>
-              Tramitar
-            </button>
-          </div>
           <div
             class="col col-auto ml-1 mb-3"
             v-if="$parent.test.properties['siga-le.ws.documental.url'] &amp;&amp; $parent.test.properties['siga-le.env'] !== 'prod' || (perfil === 'procurador' &amp;&amp; $parent.jwt.company === 'pgfn.gov.br')"
-          >
-            <button
-              type="button"
-              @click="cotar()"
-              id="cotar"
-              class="btn btn-info d-print-none"
-            >
-              <span class="fa fa-comment"></span>
-              Enviar Cota
-            </button>
-          </div>
-
-          <div
-            class="col col-auto ml-1 mb-3"
-            v-for="acao in filteredAcoes"
-            :key="acao.nome"
-          >
-            <acao :acao="acao" />
-          </div>
+          ></div>
         </div>
         <template v-if="doc">
           <div class="row">
@@ -166,6 +107,11 @@
               </table>
             </div>
             <div class="col col-sm-12 col-lg-4">
+              <h4>Ações</h4>
+              <span v-for="acao in filteredAcoes" :key="acao.nome">
+                <acao :acao="acao" />
+              </span>
+
               <!-- PENDENCIAS -->
               <div class="card text-white bg-danger mb-3" v-if="mob.pendencias">
                 <div class="card-header">Pendências</div>
@@ -408,7 +354,9 @@ export default {
       if (!this.mob || !this.mob.movs || this.mob.movs.length == 0)
         return undefined;
       var acoes = this.mob.acoes.concat(this.doc.mobs[1].acoes);
-      acoes = acoes.sort((a,b) => (a.nome > b.nome) ? 1 : ((b.nome > a.nome) ? -1 : 0))
+      acoes = acoes.sort((a, b) =>
+        a.nome > b.nome ? 1 : b.nome > a.nome ? -1 : 0
+      );
       return acoes.filter((m) => m.pode);
     },
   },
@@ -474,34 +422,8 @@ export default {
       }
     },
 
-    assinarComSenha: function() {
-      // Bus.$emit('iniciarAssinaturaComSenha', [{codigo: this.numero, sigla: this.doc.sigla}], this.reler)
-      Bus.$emit(
-        "assinarComSenha",
-        [{ codigo: this.numero, sigla: this.doc.sigla }],
-        undefined,
-        undefined,
-        this.reler
-      );
-    },
-
-    tramitar: function() {
-      Bus.$emit(
-        "iniciarTramite",
-        [{ codigo: this.numero, sigla: this.doc.sigla }],
-        this.reler
-      );
-    },
-
-    anotar: function() {
-      Bus.$emit(
-        "iniciarAnotacao",
-        [{ codigo: this.numero, sigla: this.doc.sigla }],
-        this.reler
-      );
-    },
-
     reler: function() {
+      console.log("relendo")
       this.$http
         .get("sigaex/api/v1/documentos/" + this.numero, { block: true })
         .then(

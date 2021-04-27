@@ -26,6 +26,7 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.hibernate.ExStarter;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
+import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class ApiContext implements Closeable {
@@ -160,6 +161,13 @@ public class ApiContext implements Closeable {
 						+ titular.getSigla() + "/" + lotaTitular.getSiglaCompleta() + "." + s);
 			}
 		}
+	}
+
+	public static ExMobil getMob(String sigla) {
+		ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
+		flt.setSigla(sigla);
+
+		return ExDao.getInstance().consultarPorSigla(flt);
 	}
 	
 }

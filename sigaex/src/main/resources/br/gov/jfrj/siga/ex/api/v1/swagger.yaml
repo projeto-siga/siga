@@ -358,7 +358,6 @@ parameters:
       - Pessoa e Lotacao
       - Pessoa
       - Lotacao
-    required: true
 
 ################################################################################
 #                                           Paths                              #
@@ -857,6 +856,114 @@ paths:
             properties:
               sigla:
                 description: Sigla do documento autenticado
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/arquivar-corrente:
+    post:
+      description: "Utilize este método para arquivar o documento."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      summary: Arquivar documento no arquivo corrente
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/desarquivar-corrente:
+    post:
+      description: "Utilize este método para desarquivar o documento."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      summary: Desarquivar documento do arquivo corrente
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/sobrestar:
+    post:
+      description: "Utilize este método para sobrestar o documento."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      summary: Sobrestar documento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/dessobrestar:
+    post:
+      description: "Utilize este método para dessobrestar o documento."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      summary: Dessobrestar documento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento
                 type: string
               status:
                 type: string

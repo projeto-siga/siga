@@ -38,7 +38,7 @@
 		<module>siga-jwt</module>
 		<!-- <module>siga-relarmaz</module> -->
 		<module>siga-oidc</module>
-		<module>siga-le</module>
+		<!-- Desativado do Deploy por Enquanto <module>siga-le</module> !-->
 		
 		
 	</modules>

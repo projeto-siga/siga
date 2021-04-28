@@ -12,15 +12,15 @@ import com.crivano.swaggerservlet.SwaggerException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.CurrentRequest;
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.RequestInfo;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExProtocolo;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaHtmlGetRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaHtmlGetResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaHtmlGet;
-import br.gov.jfrj.siga.ex.bl.CurrentRequest;
-import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
@@ -31,9 +31,6 @@ public class DocumentosSiglaHtmlGet implements IDocumentosSiglaHtmlGet {
 	@Override
 	public void run(DocumentosSiglaHtmlGetRequest req, DocumentosSiglaHtmlGetResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(false, false)) {
-			CurrentRequest.set(
-					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-	
 	        String jwt = CurrentRequest.get().getRequest().getHeader(HttpHeaders.AUTHORIZATION);		
 			SigaObjects so = ApiContext.getSigaObjects();
 	        ExMobilDaoFiltro flt = new ExMobilDaoFiltro();

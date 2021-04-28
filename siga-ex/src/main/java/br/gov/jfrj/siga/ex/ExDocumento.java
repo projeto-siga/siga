@@ -27,6 +27,7 @@ import java.net.URLDecoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -45,7 +46,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.xerces.impl.dv.util.Base64;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.DynamicUpdate;
 import org.jboss.logging.Logger;
@@ -418,7 +418,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * <b>html</b> contido no zip gravado no blob do documento.
 	 */
 	public String getConteudoBlobHtmlB64() {
-		return Base64.encode(getConteudoBlobHtml());
+		return Base64.getEncoder().encodeToString(getConteudoBlobHtml());
 	}
 
 	/**
@@ -495,7 +495,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * <b>pdf</b> contido no zip gravado no blob do documento.
 	 */
 	public String getConteudoBlobPdfB64() {
-		return Base64.encode(getConteudoBlobPdf());
+		return Base64.getEncoder().encodeToString(getConteudoBlobPdf());
 	}
 
 	/**
@@ -1974,7 +1974,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		
 		if(Prop.isGovSP() && assinantesPorSenha != null && !"".equals(assinantesPorSenha)) {
 			Set<ExMovimentacao> listaAssinantesSenha1 = new TreeSet<ExMovimentacao>();
-			Set<ExMovimentacao> listaAssinantesSenha2 = new TreeSet<ExMovimentacao>();
 			Set<ExMovimentacao> listaAssinantesPor = new TreeSet<ExMovimentacao>();
 			
 			listaAssinantesPor.addAll(getAssinaturasPorComSenha());
@@ -1984,14 +1983,15 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			for (ExMovimentacao por : listaAssinantesPor) {
 				porAss = por.getDescrMov() != null ? por.getDescrMov().substring(por.getDescrMov().lastIndexOf(":"), por.getDescrMov().length()) : "";
 				for (ExMovimentacao ass : listaAssinantesSenha1) {
-					if(ass.getCadastrante().getId().equals(ass.getSubscritor().getId()) || (ass.getDescrMov() != null && ass.getDescrMov().indexOf(porAss) == -1)) {
-						listaAssinantesSenha2.add(ass);
+					if(!ass.getCadastrante().getId().equals(ass.getSubscritor().getId()) && (ass.getDescrMov() != null && ass.getDescrMov().indexOf(porAss) != -1)) {
+						listaAssinantesSenha1.remove(ass);
 						break;
 					}
 				}
 			}
+			
 			 assinantesSenha = Documento
-						.getAssinantesString(listaAssinantesSenha2,getDtDoc());
+						.getAssinantesString(listaAssinantesSenha1,getDtDoc());
 		}
 		
 		if (assinantesToken.length() > 0)
@@ -2913,6 +2913,32 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		}
 		
 		return this.idDocPrincipal;
+	}
+
+	/**
+	 * Verifica se o documento contém um determinado mobil 
+	 */
+	public boolean contemMobil(ExMobil mob) {
+		for (ExMobil m : getExMobilSet()) {
+			if (m.equals(mob))
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Retorna se o móbil possui acompanhamento de protocolo gerado.
+	 * 
+	 * @return
+	 */
+	public boolean temAcompanhamentoDeProtocolo() {
+		boolean b = false;
+		for (ExMovimentacao movRef : getExMovimentacaoSet()) {
+			if (!movRef.isCancelada()
+				&& movRef.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO)
+					b = true;
+		}
+		return b;
 	}
 
 

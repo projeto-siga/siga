@@ -468,8 +468,7 @@ public class SigaLibsEL {
 	}
 
 	public static Boolean podeCriarNovoExterno(DpPessoa cadastrante, DpLotacao lotacaoCadastrante) throws Exception {
-		return Cp.getInstance().getConf()
-				.podePorConfiguracao(cadastrante, lotacaoCadastrante, CpTipoConfiguracao.TIPO_CONFIG_CRIAR_NOVO_EXTERNO);
+		return Cp.getInstance().getConf().podePorConfiguracao(cadastrante, lotacaoCadastrante, CpTipoConfiguracao.TIPO_CONFIG_CRIAR_NOVO_EXTERNO);
 	}
 
 	public static Boolean ehPublicoExterno(DpPessoa titular) {
@@ -484,5 +483,9 @@ public class SigaLibsEL {
 			url = "#";
 		}
 		return url.trim();
+	}
+	
+	public static boolean podeUtilizarSegundoFatorPin(final DpPessoa cadastrante,final DpLotacao lotacaoCadastrante) throws Exception {
+		return Cp.getInstance().getConf().podePorConfiguracao(cadastrante, lotacaoCadastrante, CpTipoConfiguracao.TIPO_CONFIG_SEGUNDO_FATOR_PIN);
 	}
 }

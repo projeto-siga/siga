@@ -46,7 +46,7 @@
 					<div class="col-sm">
 						<div class="form-group">
 							<label for="idAbrangencia">Abrangência</label>
-							<siga:escolha id='idAbrangencia' var='idAbrangencia' classSelect="form-control">
+							<siga:escolha id='idAbrangencia' var='idAbrangencia' classSelect="form-control" singleLine="${true}">
 								<siga:opcao id='4' texto="Perfil">
 									<siga:selecao tema='simple' titulo="Perfil:" propriedade="perfil" modulo="siga"/>
 								</siga:opcao>

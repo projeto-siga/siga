@@ -353,9 +353,14 @@ public class AcaoVO {
 		}
 
 		public static String formatarExplicacao(Expression exp, boolean f) {
+			String s = produzirExplicacao(exp, f);
+			s = (f ? "Permitido" : "Proibido") + " porque " + s;
+			return s;
+		};
+		
+		public static String produzirExplicacao(Expression exp, boolean f) {
 			String s = exp.explain(f).replace("_not_", "não");
 			s = s.replace("_and_", "e").replace("_or_", "ou");
-			s = "Está " + (f ? "h" : "des") + "abilitado porque " + s;
 			return s;
 		};
 

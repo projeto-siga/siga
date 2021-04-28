@@ -187,9 +187,9 @@ public class ExMovimentacaoVO extends ExVO {
 			if (mov.getLotaSubscritor() != null) 
 				descricao += (mov.getSubscritor() == null ? ", lotação interessada: " : "/") + mov.getLotaSubscritor().getSiglaCompleta();
 			if (mov.getDtParam1() != null) 
-				descricao += ", data planejada: " + Data.formatDataETempoRelativo(mov.getDtParam1());
-			if (mov.getDtParam1() != null) 
-				descricao += ", data limite: " + Data.formatDataETempoRelativo(mov.getDtParam2());
+				descricao += ", data de exibição: " + Data.formatDataETempoRelativo(mov.getDtParam1());
+			if (mov.getDtParam2() != null) 
+				descricao += ", prazo final: " + Data.formatDataETempoRelativo(mov.getDtParam2());
 			if (mov.getObs() != null && mov.getObs().trim().length() > 0)
 				descricao += ", obs: " + mov.getObs();
 			addAcao(AcaoVO.builder().nome("Cancelar").nameSpace("/app/expediente/mov")

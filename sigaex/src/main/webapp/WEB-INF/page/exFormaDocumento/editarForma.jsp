@@ -108,7 +108,7 @@
 							<div id="tableCadastradasEletronico"></div>
 							<div>
 								<a
-									href="/sigaex/app/expediente/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=4&nmTipoRetorno=forma&campoFixo=True"
+									href="/sigaex/app/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=4&nmTipoRetorno=forma&campoFixo=True"
 									style="margin-top: 10px;" class="btn btn-primary">Novo</a>
 							</div>
 						</div>
@@ -117,7 +117,7 @@
 							<div id="tableCadastradasCriar"></div>
 							<div>
 								<a
-									href="/sigaex/app/expediente/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=2&nmTipoRetorno=forma&campoFixo=True"
+									href="/sigaex/app/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=2&nmTipoRetorno=forma&campoFixo=True"
 									style="margin-top: 10px;" class="btn btn-primary">Novo</a>
 							</div>
 						</div>
@@ -126,7 +126,7 @@
 							<div id="tableCadastradasAssinar"></div>
 							<div>
 								<a
-									href="/sigaex/app/expediente/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=1&idTpMov=11&nmTipoRetorno=forma&campoFixo=True"
+									href="/sigaex/app/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=1&idTpMov=11&nmTipoRetorno=forma&campoFixo=True"
 									style="margin-top: 10px;" class="btn btn-primary">Novo</a>
 							</div>
 						</div>
@@ -135,7 +135,7 @@
 							<div id="tableCadastradasAcessar"></div>
 							<div>
 								<a
-									href="/sigaex/app/expediente/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=6&nmTipoRetorno=forma&campoFixo=True"
+									href="/sigaex/app/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=6&nmTipoRetorno=forma&campoFixo=True"
 									style="margin-top: 10px;" class="btn btn-primary">Novo</a>
 							</div>
 						</div>
@@ -144,7 +144,7 @@
 							<div id="tableCadastradasNivelAcessoMaximo"></div>
 							<div>
 								<a
-									href="/sigaex/app/expediente/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=18&nmTipoRetorno=forma&campoFixo=True"
+									href="/sigaex/app/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=18&nmTipoRetorno=forma&campoFixo=True"
 									style="margin-top: 10px;" class="btn btn-primary">Novo</a>
 							</div>
 						</div>
@@ -153,7 +153,7 @@
 							<div id="tableCadastradasNivelAcessoMinimo"></div>
 							<div>
 								<a
-									href="/sigaex/app/expediente/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=19&nmTipoRetorno=forma&campoFixo=True"
+									href="/sigaex/app/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=19&nmTipoRetorno=forma&campoFixo=True"
 									style="margin-top: 10px;" class="btn btn-primary">Novo</a>
 							</div>
 						</div>
@@ -186,7 +186,7 @@ $("#gravar_sigla").change(function () {
 	function montaTableCadastradas(tabelaAlvo, idTpConfiguracao, idTpMov, idFormaDoc){	
 		$('#' + tabelaAlvo).html('Carregando...');			
 		$.ajax({				     				  
-			  url:'/sigaex/app/expediente/configuracao/listar_cadastradas',
+			  url:'/sigaex/app/configuracao/listar_cadastradas',
 			  type: "GET",
 			  data: { idTpConfiguracao : idTpConfiguracao, idTpMov : idTpMov, idFormaDoc : idFormaDoc, nmTipoRetorno : "forma", campoFixo : "True"},					    					   					 
 			  success: function(data) {

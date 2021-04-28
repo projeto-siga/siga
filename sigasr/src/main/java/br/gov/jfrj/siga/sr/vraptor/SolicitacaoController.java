@@ -55,6 +55,7 @@ import br.gov.jfrj.siga.sr.model.SrEtapaSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrFormaAcompanhamento;
 import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrLista;
+import br.gov.jfrj.siga.sr.model.SrMarca;
 import br.gov.jfrj.siga.sr.model.SrMeioComunicacao;
 import br.gov.jfrj.siga.sr.model.SrMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrOperacao;
@@ -527,7 +528,12 @@ public class SolicitacaoController extends SrController {
         	
         	result.include("solicitacaoListaVO", new SrSolicitacaoListaVO(filtro, false, propriedade, popup, getLotaTitular(), getCadastrante()));
         	result.include("tipos", new String[] { "Pessoa", "Lota\u00e7\u00e3o" });
-        	result.include("marcadores", ContextoPersistencia.em().createQuery("select distinct cpMarcador from SrMarca").getResultList());
+        	
+        	
+        	List<SrMarca> marcadores = ContextoPersistencia.em().createQuery("select distinct cpMarcador from SrMarca marca where marca.cpMarcador.idMarcador <> 9").getResultList();
+        	result.include("marcadores", marcadores );
+        	
+        	
         	result.include("filtro", filtro);
         	result.include("propriedade", propriedade);
         	result.include("popup", popup);
@@ -1173,6 +1179,7 @@ public class SolicitacaoController extends SrController {
         Query query = ContextoPersistencia.em().createNamedQuery("contarSrMarcas");
         query.setParameter("idPessoaIni", getTitular().getIdInicial());
         query.setParameter("idLotacaoIni", getLotaTitular().getIdInicial());
+        query.setParameter("dbDatetime", CpDao.getInstance().consultarDataEHoraDoServidor());
         List contagens = query.getResultList();
         result.include("contagens", contagens);
     }

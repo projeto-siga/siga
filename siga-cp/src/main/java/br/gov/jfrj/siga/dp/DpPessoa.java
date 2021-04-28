@@ -579,6 +579,10 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		}
 
 	}
+	
+	public String getEmailPessoaAtualParcialmenteOculto() {
+		return getEmailPessoaAtual().substring(0,4) + "*********@***" + getEmailPessoaAtual().substring(getEmailPessoaAtual().length()-5,getEmailPessoaAtual().length());
+	}
 
 	/**
 	 * Retorna a data de inicio da pessoa no formato dd/mm/aa HH:MI:SS, por

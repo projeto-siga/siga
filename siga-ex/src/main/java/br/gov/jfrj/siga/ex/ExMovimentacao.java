@@ -32,6 +32,7 @@ import java.security.spec.EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +44,6 @@ import java.util.TreeSet;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.apache.xerces.impl.dv.util.Base64;
 import org.hibernate.annotations.BatchSize;
 
 import com.auth0.jwt.JWTVerifier;
@@ -110,7 +110,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	}
 
 	public String getConteudoBlobPdfB64() {
-		return Base64.encode(getConteudoBlobpdf());
+		return Base64.getEncoder().encodeToString(getConteudoBlobpdf());
 	}
 
 	/* Add customized code below */
@@ -406,14 +406,14 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		return String.valueOf(getNumVia2());
 	}
 
-	private Integer tpMovDesempatePosicao(Long idTpMov) {
+	public static Integer tpMovDesempatePosicao(Long idTpMov) {
 		final List<Long> tpMovDesempate = Arrays.asList(new Long[] {ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA});
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA, ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO});
 
 		if (idTpMov == null)
 			return Integer.MAX_VALUE;
@@ -427,8 +427,12 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	public int compareTo(final ExMovimentacao mov) {
 		try {
 			int i = 0;
-			if (getDtIniMov() != null)
-				i = getDtIniMov().compareTo(mov.getDtIniMov());
+			if (this.getDtTimestamp() != null) {
+				i = this.getDtTimestamp().compareTo(mov.getDtTimestamp());
+			} else if(this.getDtIniMov() != null) {
+				i = this.getDtIniMov().compareTo(mov.getDtIniMov());
+			}	
+			
 			if (i != 0)
 				return i;
 			
@@ -509,7 +513,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	}
 
 	public String getConteudoBlobHtmlB64() {
-		return Base64.encode(getConteudoBlobHtml());
+		return Base64.getEncoder().encodeToString(getConteudoBlobHtml());
 	}
 
 	public void setConteudoBlobHtml(final byte[] conteudo) {

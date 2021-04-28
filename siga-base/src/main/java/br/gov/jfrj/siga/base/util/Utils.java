@@ -2,7 +2,16 @@ package br.gov.jfrj.siga.base.util;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+
+import br.gov.jfrj.siga.base.Texto;
 
 public class Utils {
 	/**
@@ -34,5 +43,32 @@ public class Utils {
 	public static boolean empty(String s) {
 		return s == null || s.trim().length() == 0;
 	}
-
+	
+	public static boolean isEmailValido(String email) {
+		Pattern pattern = Pattern.compile(Texto.DpPessoa.EMAIL_REGEX_PATTERN);   
+	    Matcher matcher = pattern.matcher(email);   
+	    return matcher.find();   
+	}
+	
+	public static String getBaseUrl(HttpServletRequest request) {
+	    String scheme = request.getScheme() + "://";
+	    String serverName = request.getServerName();
+	    String serverPort = (request.getServerPort() == 80) ? "" : ":" + request.getServerPort();
+	    String contextPath = request.getContextPath();
+	    return scheme + serverName + serverPort + contextPath;
+	  }
+	
+	/*
+	* Devolve o valor do cookie com o nome correspondente
+	*/
+	public static String getCookieValue(HttpServletRequest request, String name) {
+		final Cookie[] cookies = request.getCookies();
+		if(cookies == null) return null;
+		return Arrays.stream(cookies)
+		             .filter(e -> name.equals(e.getName()))
+		             .findAny()
+		             .map(Cookie::getValue)
+		             .orElse(null);		
+	} 
+	
 }

@@ -74,8 +74,10 @@
 			</c:if>
 			<c:if test="${doc.pdf != null && doc.conteudoBlobHtmlStringComReferencias == null}">
 				<div class="card-body bg-white">
+					<c:set var="url" value="/sigaex/app/arquivo/exibir?arquivo=${doc.referenciaPDF}"/>
+					<input type="hidden" id="visualizador" value="${f:resource('/sigaex.pdf.visualizador') }"/>
 					<iframe style="display: block;" name="painel" id="painel"
-						src="/sigaex/app/arquivo/exibir?arquivo=${doc.referenciaPDF}"
+						src=""
 						width="100%" height="400" frameborder="0" scrolling="auto"></iframe>
 					<script>
 						$(document).ready(function(){resize();$(window).resize(function(){resize();});});
@@ -101,14 +103,32 @@
 							value="${doc.descrDocumento}" /> <input type="hidden"
 							name="ad_kind_0" value="${doc.descrFormaDoc}" />
 					</div>
-
+					
+					<c:set var="podeAssinarComSenha" value="${assinando and f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral) }" />
+					<c:set var="podeAutenticarComSenha" value="${autenticando and f:podeAutenticarComSenha(titular,lotaTitular,doc.mobilGeral) }" />
+					<c:set var="defaultAssinarComSenha" value="${f:deveAssinarComSenha(titular,lotaTitular,doc.mobilGeral) }" />
+					<c:set var="defaultAutenticarComSenha" value="${f:deveAutenticarComSenha(titular,lotaTitular,doc.mobilGeral) }" />
+					
+					<c:set var="podeUtilizarSegundoFatorPin" value="${f:podeUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao)}" />
+					<c:set var="obrigatorioUtilizarSegundoFatorPin" value="${f:deveUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao)}" />
+					<c:set var="defaultUtilizarSegundoFatorPin" value="${f:defaultUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao) }" />
+	
 					<tags:assinatura_botoes assinar="${assinando}" voltar="${voltarAtivo}"
 						linkVoltar="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}"
 						autenticar="${autenticando}"
-						assinarComSenha="${assinando and f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"
-						autenticarComSenha="${autenticando and f:podeAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"
-						assinarComSenhaChecado="${assinando and f:deveAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"
-						autenticarComSenhaChecado="${autenticando and f:deveAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"
+
+							assinarComSenha="${podeAssinarComSenha and not obrigatorioUtilizarSegundoFatorPin}"
+						    autenticarComSenha="${podeAutenticarComSenha and not obrigatorioUtilizarSegundoFatorPin}"			
+							assinarComSenhaChecado="${podeAssinarComSenha and defaultAssinarComSenha and not defaultUtilizarSegundoFatorPin}"
+							autenticarComSenhaChecado="${podeAutenticarComSenha and defaultAutenticarComSenha and not defaultUtilizarSegundoFatorPin}"
+
+
+							assinarComSenhaPin="${podeAssinarComSenha and podeUtilizarSegundoFatorPin}"
+							autenticarComSenhaPin="${podeAutenticarComSenha and podeUtilizarSegundoFatorPin}"
+							assinarComSenhaPinChecado="${podeAssinarComSenha and podeUtilizarSegundoFatorPin and defaultUtilizarSegundoFatorPin}"
+							autenticarComSenhaPinChecado="${podeAutenticarComSenha and podeUtilizarSegundoFatorPin and defaultUtilizarSegundoFatorPin}"
+		
+						
 						juntarAtivo="${juntarAtivo}" juntarFixo="${juntarFixo}" 
 						tramitarAtivo="${tramitarAtivo}" tramitarFixo="${tramitarFixo}" 
 						exibirNoProtocoloAtivo="${f:podeDisponibilizarNoAcompanhamentoDoProtocolo(titular,lotaTitular,doc)? false:undefined}" 
@@ -119,4 +139,9 @@
 	</div>
 
 	<tags:assinatura_rodape podeAssinarPorComSenha="${f:podeAssinarPorComSenha(titular,lotaTitular,doc.mobilGeral)}"/>
+	<script>
+		window.onload = function () { 
+			document.getElementById('painel').src = montarUrlDocPDF('${url }',document.getElementById('visualizador').value);
+		} 
+	</script>
 </siga:pagina>

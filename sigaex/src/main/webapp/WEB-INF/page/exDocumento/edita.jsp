@@ -63,6 +63,7 @@
 				<input type="hidden" name="exDocumentoDTO.idMod.original" value="${exDocumentoDTO.modelo.idMod}" /> 
 				<input type="hidden" name="jsonHierarquiaDeModelos" value="${jsonHierarquiaDeModelos}" />
 				<input type="hidden" name="cliente" id="cliente" value="${siga_cliente}">
+				<input type="hidden" id="visualizador" value="${f:resource('/sigaex.pdf.visualizador') }"/>
 				<c:choose>
 					<c:when	test="${(exDocumentoDTO.doc.eletronico) && (exDocumentoDTO.doc.numExpediente != null)}">
 						<c:set var="estiloTipo" value="display: none" />
@@ -83,8 +84,8 @@
 								<div class="form-group">
 									<label for="modelos-select"><fmt:message key="documento.modelo"/></label>
 
-									<div class="btn-group hierarchy-select form-control p-0" data-resize="auto" id="modelos-select">
-										<button type="button" class="btn btn-light dropdown-toggle bg-white"  <c:if test='${podeEditarModelo}'>disabled</c:if>
+									<div class="btn-group hierarchy-select form-control p-0 div-width-min0" data-resize="auto" id="modelos-select" style="min-width: 0px !important;">
+											<button type="button" class="btn btn-light dropdown-toggle bg-white"  <c:if test='${podeEditarModelo}'>disabled</c:if>
 											id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-disabled="true">
 											<span class="selected-label pull-left">&nbsp;</span>
 										</button>
@@ -141,7 +142,7 @@
 							<div class="form-group">
 								<input type="hidden" name="campos" value="dtDocString" />						
 								<label class=" " for="exDocumentoDTO.dtDocString">Data</label>
-								<input type="text" name="exDocumentoDTO.dtDocString" size="10" onblur="javascript:verifica_data(this, true);" value="${exDocumentoDTO.dtDocString}" class="form-control"/>
+								<input type="text" name="exDocumentoDTO.dtDocString" size="10" onblur="javascript:verifica_data(this, true);" value="${exDocumentoDTO.dtDocString}" class="form-control campoData" autocomplete="off"/>
 							</div>
 						</div>
 

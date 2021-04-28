@@ -20,6 +20,8 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.CurrentRequest;
+import br.gov.jfrj.siga.base.RequestInfo;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -27,9 +29,7 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaGetRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaGetResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaGet;
-import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 import br.gov.jfrj.sigale.ex.vo.ExDocumentoApiVO;
 
@@ -38,8 +38,6 @@ public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 	@Override
 	public void run(DocumentosSiglaGetRequest req, DocumentosSiglaGetResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(false, true)) {
-			CurrentRequest.set(
-					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
 			ApiContext.assertAcesso("");
 			SigaObjects so = ApiContext.getSigaObjects();
 	
@@ -51,16 +49,6 @@ public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 	
 			ApiContext.assertAcesso(mob, titular, lotaTitular);
 	
-			// Recebimento automático
-			if (Ex.getInstance().getComp().podeReceberEletronico(titular, lotaTitular, mob)) {
-				try {
-					Ex.getInstance().getBL().receber(cadastrante, lotaTitular, mob, new Date());
-				} catch (Exception e) {
-					e.printStackTrace(System.out);
-					throw e;
-				}
-			}
-	
 			ExDocumento doc = mob.doc();
 			// Mostra o último volume de um processo ou a primeira via de um
 			// expediente
@@ -70,6 +58,16 @@ public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 						mob = doc.getUltimoVolume();
 					else
 						mob = doc.getPrimeiraVia();
+				}
+			}
+			
+			// Recebimento automático
+			if (Ex.getInstance().getComp().deveReceberEletronico(titular, lotaTitular, mob)) {
+				try {
+					Ex.getInstance().getBL().receber(cadastrante, lotaTitular, mob, new Date());
+				} catch (Exception e) {
+					e.printStackTrace(System.out);
+					throw e;
 				}
 			}
 	

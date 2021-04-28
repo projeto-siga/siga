@@ -24,10 +24,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.jboss.logging.Logger;
-
 import br.gov.jfrj.siga.base.SigaCalendar;
-import br.gov.jfrj.siga.dp.CpMarcador;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -438,11 +436,11 @@ public class ExMobilApiVO extends ExApiVO {
 			// informacao de pessoa
 			//
 			for (ExMarca mar : marcasAtivas) {
-				if (mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO
-						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO_ELETRONICO
-						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA
-						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_MOVIMENTACAO_ASSINADA_COM_SENHA
-						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_MOVIMENTACAO_CONFERIDA_COM_SENHA
+				if (mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.EM_TRANSITO.getId()
+						&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.EM_TRANSITO_ELETRONICO.getId()
+						&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.DOCUMENTO_ASSINADO_COM_SENHA.getId()
+						&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.MOVIMENTACAO_ASSINADA_COM_SENHA.getId()
+						&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.MOVIMENTACAO_CONFERIDA_COM_SENHA.getId()
 						&& ((mar.getDpLotacaoIni() != null
 								&& lota.getIdInicial().equals(mar.getDpLotacaoIni().getIdInicial()))
 								|| mar.getDpLotacaoIni() == null)
@@ -458,13 +456,13 @@ public class ExMobilApiVO extends ExApiVO {
 			//
 			if (sb.length() == 0) {
 				for (ExMarca mar : marcasAtivas) {
-					if (mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO
-							&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO_ELETRONICO
-							&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA
+					if (mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.EM_TRANSITO.getId()
+							&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.EM_TRANSITO_ELETRONICO.getId()
+							&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.DOCUMENTO_ASSINADO_COM_SENHA.getId()
 							&& mar.getCpMarcador()
-									.getIdMarcador() != CpMarcador.MARCADOR_MOVIMENTACAO_ASSINADA_COM_SENHA
+									.getIdMarcador() != CpMarcadorEnum.MOVIMENTACAO_ASSINADA_COM_SENHA.getId()
 							&& mar.getCpMarcador()
-									.getIdMarcador() != CpMarcador.MARCADOR_MOVIMENTACAO_CONFERIDA_COM_SENHA) {
+									.getIdMarcador() != CpMarcadorEnum.MOVIMENTACAO_CONFERIDA_COM_SENHA.getId()) {
 						if (sb.length() > 0)
 							sb.append(", ");
 						if ((mar.getDpLotacaoIni() != null
@@ -487,12 +485,12 @@ public class ExMobilApiVO extends ExApiVO {
 		//
 		if (sb.length() == 0) {
 			for (ExMarca mar : marcasAtivas) {
-				if (mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO
-						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO_ELETRONICO
-						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA
-						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_MOVIMENTACAO_ASSINADA_COM_SENHA
+				if (mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.EM_TRANSITO.getId()
+						&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.EM_TRANSITO_ELETRONICO.getId()
+						&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.DOCUMENTO_ASSINADO_COM_SENHA.getId()
+						&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.MOVIMENTACAO_ASSINADA_COM_SENHA.getId()
 						&& mar.getCpMarcador()
-								.getIdMarcador() != CpMarcador.MARCADOR_MOVIMENTACAO_CONFERIDA_COM_SENHA) {
+								.getIdMarcador() != CpMarcadorEnum.MOVIMENTACAO_CONFERIDA_COM_SENHA.getId()) {
 					if (sb.length() > 0)
 						sb.append(", ");
 					sb.append(mar.getCpMarcador().getDescrMarcador());

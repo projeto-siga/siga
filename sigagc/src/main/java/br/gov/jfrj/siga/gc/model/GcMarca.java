@@ -29,11 +29,11 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 		+ "		SUM(CASE WHEN id_pessoa_ini = :idPessoaIni THEN 1 ELSE 0 END) cont_pessoa,"
 		+ "		SUM(CASE WHEN id_lotacao_ini = :idLotacaoIni THEN 1 ELSE 0 END) cont_lota "
 		+ "		FROM corporativo.cp_marca marca"
-		+ "		WHERE(dt_ini_marca IS NULL OR dt_ini_marca < CURRENT_TIMESTAMP)"
-		+ "		AND (dt_fim_marca IS NULL OR dt_fim_marca > CURRENT_TIMESTAMP)"
+		+ "		WHERE(dt_ini_marca IS NULL OR dt_ini_marca < 	:dbDatetime)"
+		+ "		AND (dt_fim_marca IS NULL OR dt_fim_marca > 	:dbDatetime)"
 		+ "		AND((id_pessoa_ini = :idPessoaIni) OR(id_lotacao_ini = :idLotacaoIni))"
 		+ "		AND id_tp_marca = 3" + "		AND id_marcador <> "
-		+ CpMarcador.MARCADOR_CANCELADO + "		GROUP BY id_marcador" + "	) c "
+		+ CpMarcador.ID_MARCADOR_CANCELADO + "		GROUP BY id_marcador" + "	) c "
 		+ "WHERE m.id_marcador = c.id_marcador", resultSetMapping = "colunas_contagem")
 public class GcMarca extends CpMarca implements Comparable<GcMarca> {
 	static ActiveRecord<GcMarca> AR = new ActiveRecord<GcMarca>(GcMarca.class);

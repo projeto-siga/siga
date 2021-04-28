@@ -19,6 +19,10 @@ tags:
     description: Consulta a Documentos
   - name: acao
     description: Ações em Documentos
+  - name: modelo
+    description: Informações sobre Modelos para a Criação de Documentos
+  - name: classificacao
+    description: Classificações Documentais
   - name: utils
     description: Utilitários
     
@@ -56,7 +60,7 @@ parameters:
   estampa:
     name: estampa
     in: query
-    description: Informar true se deseja receber o PDF sem estampas
+    description: Informar false se deseja receber o PDF sem estampas
     required: false
     default: false
     type: boolean
@@ -152,7 +156,7 @@ parameters:
   id:
     name: id
     in: path
-    description: Identificador da movimentação
+    description: Identificador da entidade
     required: true
     type: string
   lotacao:
@@ -188,9 +192,9 @@ parameters:
     type: string
   texto:
     name: texto
-    in: path
+    in: query
     description: Texto a ser pesquisado
-    required: true
+    required: false
     type: string    
   observacao:
     name: observacao
@@ -317,12 +321,129 @@ parameters:
     description: Arquivo para upload se necessário para operação.
     type: file
     required: false
-   
+  idClassificacaoIni:
+    name: idClassificacaoIni
+    in: query
+    description: Identificador da classificacao
+    type: string
+    required: false
+  filtroPessoaLotacao:
+    name: filtroPessoaLotacao
+    in: query
+    description: Informa se deseja filtrar documentos por pessoa ou lotação
+    required: false
+    type: string
+    default: Pessoa e Lotacao
+    enum:
+      - Pessoa e Lotacao
+      - Pessoa
+      - Lotacao
 
 ################################################################################
 #                                           Paths                              #
 ################################################################################
 paths:
+  /modelos:
+    get:
+      summary: Obtem a lista de modelos que o usuário pode criar
+      tags: [modelo]
+      security:
+        - Bearer: []
+      parameters: []
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/ModeloItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /modelos/{id}:
+    get:
+      summary: Obtem informações sobre um modelo específico
+      tags: [modelo]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              idModelo:
+                type: string
+              nome:
+                type: string
+              descr:
+                type: string
+              especie:
+                type: string
+              nivelDeAcesso:
+                type: string
+              classificacao:
+                type: string
+              classificacaoParaCriacaoDeVias:
+                type: string
+              tipoDeSubscritor:
+                type: string
+              tipoDeDestinatario:
+                type: string
+              tipoDeConteudo:
+                type: string
+              conteudo:
+                type: string
+        
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /classificacoes:
+    get:
+      summary: "Pesquisa de classificação documental"
+      description: "Retorna uma lista de classificações. A pesquisa será feita de acordo com os parâmetros informados: 
+        <ul><li><b>id=</b> Pesquisa a classificação com determinado id inicial.</li>
+        <li><b>texto=</b> Pesquisa as classificações que contém no código de classificação documental o texto especificado.</li>"
+      tags: [classificacao]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/idClassificacaoIni"
+        - $ref: "#/parameters/texto"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/ClassificacaoItem"
+        403:
+          description: Acesso não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Nenhuma Pessoa foi encontrada para os parâmetros informados.
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+
+
   /documentos/{sigla}/arquivo:
     get:
       summary: Inicia o processo de geração do PDF completo de um documento para visualização
@@ -419,7 +540,8 @@ paths:
       tags: [mesa]
       security:
         - Bearer: []      
-      parameters: []
+      parameters: 
+        - $ref: "#/parameters/filtroPessoaLotacao"
       responses:
         200:
           description: Successful response
@@ -434,6 +556,7 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
+            
 
   /documentos/{sigla}:
     get:
@@ -459,7 +582,7 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
-            
+
   /documentos/{sigla}/pdf:
     get:
       summary: SEM IMPLEMENTACAO PRONTA! NAO USAR!
@@ -672,6 +795,35 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /documentos/{sigla}/receber:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      description: Recebe um documento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        403:
+          description: Acesso ao documento não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Via ou volume não encontrado
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
 
   /documentos/{sigla}/anotar:
     post:
@@ -742,6 +894,74 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /documentos/{sigla}/gerar-protocolo:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      description: Gera um número de protocolo e link para acompanhamento de um expediente ou processo
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              numeroProtocolo:
+                type: string
+              linkProtocolo:
+                type: string
+              dataHoraEmissaoProtocolo:
+                type: string
+        403:
+          description: Acesso ao documento não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Documento não encontrado
+          schema:
+            $ref: "#/definitions/Error"        
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/consultar-protocolo:
+    get:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [consulta]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      description: Obtem o número de protocolo e link para acompanhamento de um expediente ou processo
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              numeroProtocolo:
+                type: string
+              linkProtocolo:
+                type: string
+              dataHoraEmissaoProtocolo:
+                type: string
+        403:
+          description: Acesso ao documento não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Protocolo ainda não foi gerado para este documento
+          schema:
+            $ref: "#/definitions/Error"        
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
   /sugestao:
     post:
       consumes: ["application/x-www-form-urlencoded"]
@@ -767,6 +987,105 @@ paths:
             $ref: "#/definitions/Error"         
             
   /documentos:
+    get:
+      description: "Exibe uma lista de mobils com suas marcas, de acordo com a lista de parâmetros. 
+        Liberado somente para pesquisa de documentos da própria lotação."
+      tags: [consulta]
+      security:
+        - Bearer: []      
+      parameters:
+        - name: offset
+          in: query
+          description: Irá trazer o resultado pulando a quantidade de registros informada neste campo, para efeito de paginação
+          required: false
+          type: integer
+          format: int64
+        - name: qtdmax
+          in: query
+          description: Quantidade máxima de registros a trazer. Se não informada, assume 50 registros
+          required: false
+          type: integer          
+          format: int64
+        - name: ordenacao
+          in: query
+          description: "Ordenação da lista:<ul>
+          	<li>1 - Data descendente</li>
+          	<li>2 - Data ascendente</li>
+          	<li>3 - Data de criação do temporário descendente</li>
+          	<li>4 - Data de criação do temporário ascendente</li> 
+            <li>5 - Data da situação descendente</li>
+            <li>6 - Data da situação ascendente</li>
+          	<li>7 - Data da finalização do doc. descendente</li>
+          	<li>8 - Data da finalização do doc. ascendente</li>
+          	</ul>"
+          required: false
+          type: integer          
+          format: int64
+          default: 1
+          enum:
+            - 1 
+            - 2 
+            - 3 
+            - 4 
+            - 5
+            - 6
+            - 7
+            - 8
+        - name: marcador
+          in: query
+          description: Nome do marcador (situacao)
+          required: false
+          type: string
+        - name: grupomarcador
+          in: query
+          description: Nome do grupo de marcadores da mesa
+          required: false
+          type: string
+        - name: idpessoa
+          in: query
+          description: Identificador da Pessoa Inicial
+          required: false
+          type: integer
+          format: int64
+        - name: idlotacao
+          in: query
+          description: Identificador da Lotação Inicial. Pesquisa de outras lotações liberada somente para usuários autorizados. 
+            Se não informado, assume a lotação do usuário.
+          required: false
+          type: integer
+          format: int64
+        - name: dtinicial
+          in: query
+          description: Data inicial para pesquisa (aaaa-mm-dd)
+          required: false
+          type: string
+          pattern: ^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01])
+        - name: dtfinal
+          in: query
+          description: Data final para pesquisa (aaaa-mm-dd)
+          required: false
+          type: string
+          pattern: ^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01])
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/DocumentoPesq"
+        404:
+          description: Nenhum documento foi encontrado com os argumentos informados
+          schema:
+            $ref: "#/definitions/Error"                
+
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
     post:
       summary: Cria um novo documento
       tags: [acao]
@@ -986,6 +1305,65 @@ definitions:
         description: Nome do nivel de acesso do documento. Ex. Publico, Limitado Entre Orgaos, Limitado Entre Lotacoes, Limitado Entre Pessoas, ...
         type: string
         
+  DocumentoPesq:
+    description: Item do resultado de pesquisa de documentos
+    type: object
+    properties:
+      sigla:
+        description: Sigla do mobil do documento
+        type: string
+      dtdoc:
+        description: Data de criação do documento
+        type: string
+      dtregdoc:
+        description: Data de finalização documento
+        type: string
+      dtinimarca:
+        description: Data de início da marca
+        type: string
+      descricaomarcador:
+        description: Descrição do marcador
+        type: string
+      nomegrupomarcador:
+        description: Nome do grupo do marcador
+        type: string
+      descricaodocumento:
+        description: Descrição do documento
+        type: string
+      modelo:
+        description: Identificacao do modelo
+        type: string
+      siglamobilpai:
+        description: Sigla da via ou volume (mobil) do documento pai
+        type: string
+      cadastrantesigla:
+        description: Sigla do subscritor do documento
+        type: string
+      cadastrantenome:
+        description: Nome do subscritor do documento
+        type: string
+      lotacadastrantesigla:
+        description: Sigla da lotção do subscritor do documento
+        type: string
+      lotacadastrantenome:
+        description: Nome da lotação do subscritor do documento
+        type: string
+      subscritorsigla:
+        description: Sigla do subscritor do documento
+        type: string
+      subscritornome:
+        description: Nome do subscritor do documento
+        type: string
+      lotasubscritorsigla:
+        description: Sigla da lotação do subscritor do documento
+        type: string
+      lotasubscritornome:
+        description: Nome da lotação do subscritor do documento
+        type: string
+      titular:
+        description: Titular do documento
+        type: string
+
   Marcador:
     description: Dados de um marcador
     type: object
@@ -1007,4 +1385,26 @@ definitions:
       limite:
         type: string
       texto:
+        type: string
+
+  ModeloItem:
+    description: Lista modelos disponíveis
+    type: object
+    properties:
+      idModelo:
+        type: string
+      nome:
+        type: string
+      descr:
+        type: string
+
+  ClassificacaoItem:
+    description: Lista classificações documentais disponíveis
+    type: object
+    properties:
+      idClassificacao:
+        type: string
+      sigla:
+        type: string
+      nome:
         type: string

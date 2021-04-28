@@ -37,6 +37,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
+import javax.validation.constraints.Size;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
@@ -77,6 +78,7 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	private java.lang.String conteudoTpBlob;
 
 	/** The value of the simple descMod property. */
+	@Size(min=0, max=256, message="A Descrição deve conter no máximo 256 caracteres")
 	@Column(name = "DESC_MOD", length = 256)
 	private java.lang.String descMod;
 

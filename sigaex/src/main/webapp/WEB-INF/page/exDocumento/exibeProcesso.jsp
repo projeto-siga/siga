@@ -95,6 +95,44 @@
 	}
 </script>
 <script type="text/javascript" language="Javascript1.1">
+	window.addEventListener('resize', function () {
+	    redimensionar();
+	});
+	
+	function removerBotoes() {
+		if($('#radioPDFSemMarcas').hasClass('active') && '${siga_cliente}' == 'GOVSP' && window.parent.painel.document.getElementById("print") != null) {
+			window.parent.painel.document.getElementById("print").remove();
+			window.parent.painel.document.getElementById("download").remove();
+		}
+		if(window.parent.painel.document.getElementById("openFile") != null) {
+			window.parent.painel.document.getElementById("openFile").remove();
+		}
+	}
+	
+	function redimensionar() {
+		if("${f:resource('/sigaex.conversor.html.ext')}" == "br.gov.jfrj.itextpdf.MyPD4ML") {
+			document.getElementById('painel').scrolling = "auto";
+		} else {
+			 if($('#radioHTML').hasClass('active') || document.getElementById('radioHTML').checked) {
+			     if(window.parent.painel.document.getElementsByClassName("divDoc").length > 0) {
+			        var divs = window.parent.painel.document.getElementsByClassName("divDoc");
+			        
+			        for(var i = 0; i < divs.length; i++) {
+			        		window.parent.painel.document.getElementsByClassName("divDoc")[i].style.width=document.getElementById('painel').clientWidth - 10;
+			        		window.parent.painel.document.getElementsByClassName("divDoc")[i].style.padding = "20px";
+			        }   
+		    		
+			        return;
+			    }
+			    else {
+			        setTimeout(function() {
+			        	redimensionar();
+			        }, 5000);
+			    }
+			}
+		}
+	}
+
 	function pageHeight() {
 		return window.innerHeight != null ? window.innerHeight
 				: document.documentElement
@@ -137,6 +175,8 @@
 	 		var divDocRight = document.getElementById('right-col');
 	 		divDocRight.setAttribute("class", "col-sm-9");
 		}
+
+		redimensionar();
 		resize();
 	}				
 </script>
@@ -403,8 +443,8 @@
 					</button>
 				</div>
 			</c:if>
-			<div id="paipainel" style="margin: 0px; padding: 0px; border: 0px; clear: both;">
-				<iframe style="visibility: visible; margin: 0px; padding: 0px; min-height: 20em;" name="painel" id="painel" src="" align="right" width="100%" onload="$(document).ready(function () {resize();});" frameborder="0" scrolling="auto"></iframe>
+			<div id="paipainel" style="margin: 0px; padding: 0px; border: 0px; clear: both;overflow:hidden;">
+				<iframe style="visibility: visible; margin: 0px; padding: 0px; min-height: 20em;" name="painel" id="painel" src="" align="right" width="100%" onload="$(document).ready(function () {resize();});redimensionar();removerBotoes();" frameborder="0" scrolling="no"></iframe>
 			</div>
 		</div>
 	</div>
@@ -533,9 +573,14 @@
 					ifr.src = path + refPDF + refSiglaDocPrincipal;
 				}
 				
+				if(!refPDF.includes("completo=1")) {
+					ifr.src = montarUrlDocPDF(ifr.src, "${f:resource('/sigaex.pdf.visualizador')}");
+				}
+				
 				ifrp.style.border = "1px solid black";
 				ifr.height = pageHeight() - 300;
 			}
+			
 		} else {
 			// Para TRF2 com radio buttons
 			if (document.getElementById('radioHTML').checked && refHTML != '') {
@@ -551,6 +596,10 @@
 					ifr.src = path + refPDF + "&semmarcas=1"
 				else
 					ifr.src = path + refPDF;
+				
+				if(!refPDF.includes("completo=1")) {
+					ifr.src = montarUrlDocPDF(ifr.src, "${f:resource('/sigaex.pdf.visualizador')}");
+				}
 				ifrp.style.border = "0px solid black";
 				ifr.height = pageHeight() - 300;
 			}

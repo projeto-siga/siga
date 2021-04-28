@@ -27,6 +27,7 @@ import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoMarca;
@@ -167,6 +168,11 @@ public class GcBL {
 		return mov;
 	}
 
+	public void atualizarListaMovimentacoes(GcInformacao inf, GcMovimentacao mov) {
+		inf.getMovs().remove(mov);
+		inf.getMovs().add(mov);
+	}
+	
 	public Date dt() {
 		if (this.dt == null)
 			this.dt = so.dao().dt();
@@ -210,7 +216,7 @@ public class GcBL {
 				mov.save();
 			}
 		}
-		atualizarInformacaoPorMovimentacoes(inf);
+		//atualizarInformacaoPorMovimentacoes(inf);
 		atualizarTags(inf);
 		inf.save();
 		atualizarMarcas(inf);
@@ -279,12 +285,15 @@ public class GcBL {
 
 	public void atualizarInformacaoPorMovimentacoes(GcInformacao inf)
 			throws AplicacaoException {
+		
 		if (inf.getMovs() == null)
 			return;
 
 		ArrayList<GcMovimentacao> movs = new ArrayList<GcMovimentacao>(
 				inf.getMovs().size());
+		
 		movs.addAll(inf.getMovs());
+
 		Collections.reverse(movs);
 
 		for (GcMovimentacao mov : movs) {
@@ -463,16 +472,16 @@ public class GcBL {
 		SortedSet<GcMarca> set = new TreeSet<GcMarca>();
 
 		if (inf.getHisDtFim() != null) {
-			acrescentarMarca(set, inf, CpMarcador.MARCADOR_CANCELADO,
+			acrescentarMarca(set, inf, CpMarcadorEnum.CANCELADO.getId(),
 					inf.getHisDtFim(), null, inf.getAutor(), inf.getLotacao());
 		} else {
 			if (inf.getElaboracaoFim() == null) {
-				acrescentarMarca(set, inf, CpMarcador.MARCADOR_EM_ELABORACAO,
+				acrescentarMarca(set, inf, CpMarcadorEnum.EM_ELABORACAO.getId(),
 						inf.getHisDtIni(), null, inf.getAutor(), inf.getLotacao());
 			} else {
-				acrescentarMarca(set, inf, CpMarcador.MARCADOR_ATIVO,
+				acrescentarMarca(set, inf, CpMarcadorEnum.ATIVO.getId(),
 						inf.getElaboracaoFim(), null, inf.getAutor(), inf.getLotacao());
-				acrescentarMarca(set, inf, CpMarcador.MARCADOR_NOVO,
+				acrescentarMarca(set, inf, CpMarcadorEnum.NOVO.getId(),
 						inf.getElaboracaoFim(), new Date(inf.getHisDtIni().getTime()
 								+ TEMPO_NOVIDADE), inf.getAutor(), inf.getLotacao());
 			}
@@ -484,7 +493,7 @@ public class GcBL {
 						continue;
 
 					if (t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO)
-						acrescentarMarca(set, inf, CpMarcador.MARCADOR_REVISAR,
+						acrescentarMarca(set, inf, CpMarcadorEnum.REVISAR.getId(),
 								mov.getHisDtIni(), null, mov.getPessoaAtendente(),
 								mov.getLotacaoAtendente());
 
@@ -492,7 +501,7 @@ public class GcBL {
 							&& (mov.getPessoaAtendente() != null || mov.getLotacaoAtendente() != null)) {
 						 
 						acrescentarMarca(set, inf,
-								CpMarcador.MARCADOR_TOMAR_CIENCIA,
+								CpMarcadorEnum.TOMAR_CIENCIA.getId(),
 								mov.getHisDtIni(), null, mov.getPessoaAtendente(),
 								mov.getLotacaoAtendente());
 					}
@@ -520,8 +529,8 @@ public class GcBL {
 					if (t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULAR_PAPEL){
 						Long marcador = 0L;
 						switch (mov.getPapel().getId().intValue()){
-							case (int)GcPapel.PAPEL_INTERESSADO : marcador = CpMarcador.MARCADOR_COMO_INTERESSADO; break;
-							case (int)GcPapel.PAPEL_EXECUTOR: marcador = CpMarcador.MARCADOR_COMO_EXECUTOR; break;
+							case (int)GcPapel.PAPEL_INTERESSADO : marcador = CpMarcadorEnum.COMO_INTERESSADO.getId(); break;
+							case (int)GcPapel.PAPEL_EXECUTOR: marcador = CpMarcadorEnum.COMO_EXECUTOR.getId(); break;
 						}
 						if (mov.getLotacaoAtendente() != null)
 							pessoasELotasDoGrupo.add(new Par<DpPessoa, DpLotacao>(mov.getPessoaAtendente(), mov.getLotacaoAtendente()));

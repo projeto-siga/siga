@@ -12,6 +12,7 @@ import javax.persistence.Query;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.SrAcordo;
 import br.gov.jfrj.siga.sr.model.SrAtributo;
@@ -80,6 +81,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		incluirJoinsEWheres(query, buscador);
 		try {
 			return (Long) ContextoPersistencia.em().createQuery(query.toString())
+					.setParameter("dbDatetime", CpDao.getInstance().consultarDataEHoraDoServidor())
 					.getSingleResult();
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -140,6 +142,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		
 		query.append(sentidoOrdenacao.name());
 		Query jq = ContextoPersistencia.em().createQuery(query.toString());
+		jq.setParameter("dbDatetime", CpDao.getInstance().consultarDataEHoraDoServidor());
 		jq.setFirstResult(getStart().intValue());
 		if (getLength() > 0)
 			jq.setMaxResults(getLength().intValue());
@@ -180,18 +183,18 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			query.append(" and situacao.cpMarcador.idMarcador = " + getSituacao().getIdMarcador()); 
 		
 		query.append(" and (situacao.dtIniMarca is null or "
-					+ "situacao.dtIniMarca < CURRENT_TIMESTAMP) ");
+					+ "situacao.dtIniMarca < :dbDatetime) ");
 		query.append(" and (situacao.dtFimMarca is null or "
-					+ "situacao.dtFimMarca > CURRENT_TIMESTAMP) ");
+					+ "situacao.dtFimMarca > :dbDatetime) ");
 		
 		if (situacaoFiltro.equals("situacaoAux")) {
 			if (getSituacao() != null)
 				query.append(" and situacaoAux.cpMarcador.idMarcador = "
 					+ getSituacao().getIdMarcador());
 			query.append(" and (situacaoAux.dtIniMarca is null or "
-					+ "situacaoAux.dtIniMarca < CURRENT_TIMESTAMP) ");
+					+ "situacaoAux.dtIniMarca < :dbDatetime) ");
 			query.append(" and (situacaoAux.dtFimMarca is null or "
-					+ "situacaoAux.dtFimMarca > CURRENT_TIMESTAMP) ");
+					+ "situacaoAux.dtFimMarca > :dbDatetime) ");
 		}
 		
 		if (Filtros.deveAdicionar(getAtendente())){

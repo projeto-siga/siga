@@ -163,8 +163,8 @@ p.gt-table-action-list a.link-tag {
 }
 .mesa-config {
     position: fixed;
-    right: -220px;
-    width: 250px;
+    right: -320px;
+    width: 350px;
     top: 180px;
     z-index: 100;	
 }
@@ -181,17 +181,17 @@ p.gt-table-action-list a.link-tag {
     position: absolute;
     right: 0;
     top: 0;	
-	width: 220px;
+	width: 320px;
 	background-color: #f1f2f2 ;
 	color: #333;
 }
 .show-config {
-    transition: 1s;
+    transition: 0.3s;
     right: 0;
 }
 .hide-config {
-    transition: 1s;
-    right: -220px;
+    transition: 0.3s;
+    right: -320px;
 }
 .badge-mesa {
 	font-size: 0.8em;
@@ -405,3 +405,7 @@ article p em {
 	display: none;
 	color: #DDD;
 }
+
+.div-width-min0 { 
+    min-width: 0px !important;
+} 

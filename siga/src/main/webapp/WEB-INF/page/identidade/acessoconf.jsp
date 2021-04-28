@@ -49,7 +49,7 @@
 
 						<tr>
 							<td>Abrangência:</td>
-							<td><siga:escolha id='idAbrangencia' var='idAbrangencia'>
+							<td><siga:escolha id='idAbrangencia' var='idAbrangencia' singleLine="${true}">
 									<siga:opcao id='4' texto="Perfil">
 										<siga:selecao tema='simple' titulo="Perfil:"
 											propriedade="perfil" modulo="siga"/>

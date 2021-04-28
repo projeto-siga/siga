@@ -41,7 +41,8 @@ var appMesa = new Vue({
 			trazerComposto: false,
 			trazerArquivados: false,
 			trazerCancelados: false,
-			ordemCrescenteData: false
+			ordemCrescenteData: false,
+			usuarioPosse: false
 		};
 	},
 	computed: {
@@ -113,6 +114,10 @@ var appMesa = new Vue({
 		ordemCrescenteData: function() {
 			setParmUser('ordemCrescenteData', this.ordemCrescenteData);
 			this.recarregarMesa();
+		},
+		usuarioPosse: function() {
+			setParmUser('usuarioPosse', this.usuarioPosse);
+			this.recarregarMesa();
 		}
 	},
 	methods: {
@@ -123,7 +128,12 @@ var appMesa = new Vue({
 			this.trazerArquivados = (getParmUser('trazerArquivados') == null ? false : getParmUser('trazerArquivados'));
 			this.trazerCancelados = (getParmUser('trazerCancelados') == null ? false : getParmUser('trazerCancelados'));
 			this.ordemCrescenteData = (getParmUser('ordemCrescenteData') == null ? false : getParmUser('ordemCrescenteData'));
+			this.usuarioPosse = (getParmUser('usuarioPosse') == null ? false : getParmUser('usuarioPosse'));
 			setValueGrupo('Aguardando Ação de Temporalidade', 'hide', !this.trazerArquivados);
+			
+
+			/* clean toast container before reload notification */
+			$('#toastContainer').empty();
 
 			var timeout = Math.abs(new Date() -
 				new Date(sessionStorage.getItem('timeout' + getUser())));
@@ -175,6 +185,7 @@ var appMesa = new Vue({
 					trazerArquivados: this.trazerArquivados,
 					trazerCancelados: this.trazerCancelados,
 					ordemCrescenteData: this.ordemCrescenteData,
+					usuarioPosse: this.usuarioPosse,
 					idVisualizacao: ID_VISUALIZACAO
 				},
 				complete: function(response, status, request) {
@@ -185,7 +196,7 @@ var appMesa = new Vue({
 						self.carregando = false;
 					} else {
 						if (response.status > 300) {
-							if (cType.indexOf('text/html') !== -1) {
+							if (cType != null && cType.indexOf('text/html') !== -1) {
 								document.write(response.responseText);
 							} else {
 								self.errormsg = response.responseText & " - " & response.status;
@@ -201,7 +212,22 @@ var appMesa = new Vue({
 				failure: function(response, status) {
 					self.carregando = false;
 					self.showError(response.responseText, self);
-				}
+				},
+				success: function(){		
+					$.ajax({
+				        url: "/siga/api/v1/notificacoes",
+				        contentType: "application/json",
+				        dataType: 'json',
+				        success: function(result){
+							if (result.list.length > 0) {
+								toaster(result.list);
+							}
+				        },
+						error: function(result){	
+				        	console.log(result.errormsg);
+				        },
+				   });
+			   }
 			})
 		},
 		resetaStorage: function() {
@@ -215,6 +241,7 @@ var appMesa = new Vue({
 			localStorage.removeItem('trazerArquivados' + getUser());
 			localStorage.removeItem('trazerCancelados' + getUser());
 			localStorage.removeItem('ordemCrescenteData' + getUser());
+			localStorage.removeItem('usuarioPosse' + getUser());
 			this.recarregarMesa();
 			this.selQtdPag = 15;
 			
@@ -529,6 +556,7 @@ function processDescription(descr, limit = null) {
 }
 
 function initPopovers() {
+	var timeOut;
 	if (!$('.popover-dismiss').popover) { 
 		return; 
 	} 
@@ -539,18 +567,18 @@ function initPopovers() {
 		trigger: 'manual'
 	}).on("mouseenter", function() {
 		var _this = this;
-		
-		if ($(_this).attr('data-pessoa') !== undefined) {
-			mountPopoverMarcaPessoa(_this);
-		} else if ($(_this).attr('data-lotacao') !== undefined) {
-			mountPopoverMarcaLotacao(_this);
-		}
-		
-		$(_this).popover("show");
-		$(".popover").on("mouseleave", function() {
-			$(_this).popover('hide');
-		});
-
+		timeOut = setTimeout( function() {
+			if ($(_this).attr('data-pessoa') !== undefined) {
+				mountPopoverMarcaPessoa(_this);
+			} else if ($(_this).attr('data-lotacao') !== undefined) {
+				mountPopoverMarcaLotacao(_this);
+			}
+			
+			$(_this).popover("show");
+			$(".popover").on("mouseleave", function() {
+				$(_this).popover('hide');
+			});
+		}, 700);
 	}).on("click", function() {
 		var _this = this;
 		/*** Implementar function***/
@@ -565,6 +593,7 @@ function initPopovers() {
 				$(_this).popover("hide");
 			}
 		}, 100);
+		clearTimeout(timeOut);
 	})
 	
 	
@@ -629,3 +658,90 @@ function resetCacheLotacaoPessoaAtual() {
 	      }
 	}
 }
+
+function toaster(_notificacoes) {
+	
+	var toastContainer = $('#toastContainer');
+	
+	/* clean toast container before reload notifications */
+	toastContainer.empty();
+	
+	/* Create Toast*/
+	_notificacoes.forEach(createToast);
+
+
+	function createToast(item) {
+		var id = item.idNotificacao;
+		var icone = item.icone;
+		var titulo = item.titulo;
+		var conteudo = item.conteudo;
+		
+		
+		$('<div>', {
+		    id: 'toastNotificacao_'+id,
+		    class: 'toast',
+		    role: 'alert',
+			'aria-live': 'assertive',
+			'aria-atomic': 'true',
+			'data-autohide': 'false'
+		}).appendTo(toastContainer);
+		
+		/* Create Toast Header*/
+		$('<div>', {
+		    id: 'toastNotificacaoHeader_'+id,
+		    class: 'toast-header '
+		}).appendTo('#toastNotificacao_'+id);
+		
+
+		
+		$('#toastNotificacaoHeader_'+id).html(mountToastHeader(icone,titulo));
+			
+
+		$('<button>', {
+		    id: 'toastNotificacaoHeaderButton_'+id,
+			type: 'button',
+		    class: 'ml-2 mb-1 close',
+			'data-dismiss': 'toast',
+			'aria-label':'Close'
+		}).appendTo('toastNotificacaoHeader_'+id);
+		
+		$('<div>', {
+		    id: 'toastNotificacaoBody_'+id,
+		    class: 'toast-body'
+		}).appendTo('#toastNotificacao_'+id);
+		
+		
+		$('#toastNotificacaoBody_'+id).html(conteudo);
+		
+		$('#toastNotificacao_'+id).on('shown.bs.toast', function () {
+		  /* TODO: mostrado notificação */
+		})
+		
+		$('#toastNotificacao_'+id).on('hidden.bs.toast', function () {
+		  /* TODO: dispensado notificacao */
+		})
+		
+	}
+
+	function mountToastHeader(icone,titulo) {
+		var header ="";
+		header = '<span class="mr-auto font-weight-bold">';
+		
+		if (icone != null || icone != "") { //Icone da Notificação
+			header = header +'<i class="'+icone+'"></i>&nbsp;';	
+		}
+		if (titulo != null || titulo != "") { //Título da Notificação
+			header = header + titulo;	
+		}
+		
+		header = header + '</span>';
+		header = header + '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
+		return header;	
+	}
+	
+	$(document).ready(function() {
+        $(".toast").toast('show');
+    });
+
+}
+

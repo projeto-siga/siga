@@ -14,14 +14,14 @@ import com.crivano.swaggerservlet.SwaggerAuthorizationException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.CurrentRequest;
+import br.gov.jfrj.siga.base.RequestInfo;
 import br.gov.jfrj.siga.base.log.RequestLoggerFilter;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExPapel;
-import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.hibernate.ExStarter;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
@@ -37,6 +37,15 @@ public class ApiContext implements Closeable {
 	public ApiContext(boolean transacional, boolean validaUser) throws SwaggerAuthorizationException {
 		if (validaUser) {
 			buscarEValidarUsuarioLogado();
+		}
+		
+		try {
+			CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(),
+					SwaggerServlet.getHttpServletResponse()));
+		} catch (NullPointerException ex) {
+			// Engolindo exceção para garantir que está classe pode ser utilizada mesmo fora
+			// de uma chamada à API REST
+			CurrentRequest.set(null);
 		}
 		
 		this.transacional = transacional;
@@ -60,6 +69,7 @@ public class ApiContext implements Closeable {
 		if (!RequestLoggerFilter.isAplicacaoException(e)) {
 			RequestLoggerFilter.logException(null, inicio, e);
 		}
+		ContextoPersistencia.removeAll();
 	}
 
 	@Override
@@ -74,6 +84,7 @@ public class ApiContext implements Closeable {
 		} finally {
 			em.close();
 			ContextoPersistencia.setEntityManager(null);
+			ContextoPersistencia.removeAll();
 		}
 	}
 

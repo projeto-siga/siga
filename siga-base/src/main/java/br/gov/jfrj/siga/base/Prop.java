@@ -47,6 +47,13 @@ public class Prop {
 		return Integer.valueOf(p.trim());
 	}
 
+	public static Double getDouble(String nome) {
+		String p = Prop.get(nome);
+		if (p == null)
+			return null;
+		return Double.valueOf(p.trim());
+	}
+
 	public static List<String> getList(String nome) {
 		String p = Prop.get(nome);
 		if (p == null)
@@ -111,8 +118,12 @@ public class Prop {
 
 		provider.addPublicProperty("/siga.omitir.metodo2", "true");
 
-		provider.addPublicProperty("/siga.cabecalho.logo", "/siga/imagens/logo-trf2-38px.png");
+		provider.addPublicProperty("/siga.cabecalho.logo", "/siga/imagens/logo-trf2-38px.png"); 
 		provider.addPublicProperty("/siga.cabecalho.titulo", "Justiça Federal");
+		
+		provider.addPublicProperty("/siga.email.logo", "/siga/imagens/logo-siga-novo-38px.png"); 
+		provider.addPublicProperty("/siga.email.titulo", provider.getProp("/siga.cabecalho.titulo"));
+		
 		provider.addPublicProperty("/sigawf.ativo", "true");
 
 		provider.addPublicProperty("/siga.ldap.ambiente", null);
@@ -201,7 +212,7 @@ public class Prop {
 		provider.addPublicProperty("/siga.sgp.dcn.url", "/sigarhaq2");
 		provider.addPublicProperty("/siga.sgp.cst.url", "/sigarhdadoscadastrais");
 		provider.addPublicProperty("/siga.sgp.lot.url", "/sigarhlotacao");
-		provider.addPublicProperty("/siga.sgp.trn.url", "/sigatr");
+		provider.addPublicProperty("/siga.sgp.trn.url", "/sigptreinamento");
 		provider.addPublicProperty("/siga.sgp.terc.url", "/sigarhterceirizados");
 
 		/* Parâmetros para configuração do armazenamento de documento */

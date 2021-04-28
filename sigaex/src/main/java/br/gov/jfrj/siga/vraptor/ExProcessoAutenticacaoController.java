@@ -15,6 +15,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -37,6 +38,8 @@ import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.bluc.service.HashRequest;
 import br.gov.jfrj.siga.bluc.service.HashResponse;
@@ -151,13 +154,13 @@ public class ExProcessoAutenticacaoController extends ExController {
 		result.include("assinaturaB64", assinaturaB64);
 		result.include("certificadoB64", certificadoB64);
 		result.include("atributoAssinavelDataHora", atributoAssinavelDataHora);
-		result.forwardTo(this).processoArquivoAutenticado(buildJwtToken(n));
+		result.forwardTo(this).processoArquivoAutenticado(buildJwtToken(n), null);
 	}
 
 	@Get("/public/app/processoArquivoAutenticado_stream")
-	public Download processoArquivoAutenticado_stream(final String jwt, final boolean assinado, final Long idMov,
+	public Download processoArquivoAutenticado_stream(final boolean assinado, final Long idMov,
 			final String certificadoB64, final String sigla) throws Exception {
-
+		String jwt = Utils.getCookieValue(request, "jwt-prot");
 		if (jwt == null) {
 			setDefaultResults();
 			result.redirectTo(URL_EXIBIR);
@@ -251,16 +254,33 @@ public class ExProcessoAutenticacaoController extends ExController {
 
 	// antigo metodo arquivo();
 	@Get("/public/app/processoArquivoAutenticado")
-	public void processoArquivoAutenticado(final String jwt) throws Exception {
+	public void processoArquivoAutenticado(final String tokenJwt, final Long idMovJuntada) throws Exception {
+		String jwt = tokenJwt;
 		if (jwt == null) {
-			setDefaultResults();
-			result.redirectTo(URL_EXIBIR);
-			return;
+			jwt = Utils.getCookieValue(request, "jwt-prot");
+			if (jwt == null) {
+				setDefaultResults();
+				result.redirectTo(URL_EXIBIR);
+				return;
+			}
 		}
 		String n = verifyJwtToken(jwt).get("n").toString();
 
 		ExArquivo arq = Ex.getInstance().getBL().buscarPorProtocolo(n);
+		if (idMovJuntada != null) {
+			// Se veio o id da mov de juntada do filho, mostra o documento pai
+			final ExMovimentacao movJuntada = dao().consultar(idMovJuntada, ExMovimentacao.class, false);
+			// Confirma que é realmente o documento pai
+			if (movJuntada != null && movJuntada.getExMobilRef() != null
+					&& !movJuntada.isCancelada()
+					&& (((ExDocumento) arq).contemMobil(movJuntada.getExMobil()))) {
+				arq = movJuntada.getExMobilRef().getDoc();
 
+			} else {
+				throw new AplicacaoException("Documento não autorizado para visualização "
+						+ "no acompanhamento do protocolo.");
+			}
+		}
 		Set<ExMovimentacao> assinaturas = arq.getAssinaturasDigitais();
 
 		/*
@@ -315,6 +335,9 @@ public class ExProcessoAutenticacaoController extends ExController {
 
 			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getCadastrante(), p, l, true, true);
 			docVO.exibe();
+			Cookie cookie = new Cookie("jwt-prot", buildJwtToken(n));
+			cookie.setMaxAge(1 * 60 * 60);
+			this.response.addCookie(cookie);
 			result.include("movs", lista);
 			result.include("sigla",exDocumentoDTO.getDoc().getSigla());
 			result.include("msg", exDocumentoDTO.getMsg());

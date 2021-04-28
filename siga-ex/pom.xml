@@ -130,7 +130,8 @@
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>fop</artifactId>
 			<scope>provided</scope>
-		</dependency>
+    	</dependency>
+
 		<dependency>
     <groupId>javax.xml.bind</groupId>
     <artifactId>jaxb-api</artifactId>

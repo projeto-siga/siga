@@ -824,7 +824,7 @@ public class Excel {
 						problemas.append(validarData(row.getCell(5, Row.CREATE_NULL_AS_BLANK).getStringCellValue(), linha));
 						if(problemas != null && problemas.toString().equals("")) {
 							dataString = row.getCell(5, Row.CREATE_NULL_AS_BLANK).getStringCellValue();
-							date = formato.parse(dataString.replace("-", "").replace("/", "").trim());	
+							date = formato.parse(dataString.replaceAll("[^0-9]", ""));	
 							
 							if(date.compareTo(new Date()) > 0) {
 				    			problemas.append( "Linha " + linha + ": DATA DE NASCIMENTO inválida" + System.lineSeparator());

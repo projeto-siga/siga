@@ -8,6 +8,7 @@
 		</exclusions>
 		
 		<dependencies>
+			<module name="sigadoc.fop"/>
 			<module name="org.hibernate" export="true" />
 
 			<module name="org.apache.commons.lang" />

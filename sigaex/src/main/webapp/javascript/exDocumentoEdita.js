@@ -32,6 +32,15 @@ function personalizacaoJuntar() {
 	document.getElementById('frm_nmFuncaoSubscritor').value = j;
 }
 
+function getQueryParameterByName(name, url = window.location.href) {
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
 // <c:set var="url" value="editar" />
 function sbmt(id) {
 	var frm = document.getElementById('frm');
@@ -47,7 +56,11 @@ function sbmt(id) {
 	if (id && !IsRunningAjaxRequest()) {
 		ReplaceInnerHTMLFromAjaxResponse('recarregar', frm, id);
 	} else {
-		frm.action = id !== 'undefined' ? 'recarregar' : 'editar?modelo=' + document.getElementsByName('exDocumentoDTO.idMod')[0].value;
+		var paiSigla = getQueryParameterByName('mobilPaiSel.sigla');
+		var criandoAnexo = getQueryParameterByName('criandoAnexo');
+		
+		frm.action = id ? 'recarregar' : 'editar?modelo=' + document.getElementsByName('exDocumentoDTO.idMod')[0].value
+				+ (paiSigla ? '&mobilPaiSel.sigla=' + paiSigla : '') + (criandoAnexo ? '&criandoAnexo=' + criandoAnexo : '');
 		frm.submit();
 	}
 	return;

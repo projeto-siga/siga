@@ -635,6 +635,9 @@ public class WfProcedimento extends Objeto
 							+ " for transferido para " + (lotWF == null ? "Nula" : lotWF.getSigla()) + ".";
 				}
 			}
+			if (lotEX == null && lotWF != null)
+				return "Esta tarefa só poderá prosseguir quando o documento " + getPrincipal()
+						+ ", que estiver em andamento com " + lotWF.getSigla() + ".";
 			if (!podeMovimentar && estaComTarefa) {
 				return "Esta tarefa só poderá prosseguir quando o documento " + getPrincipal() + ", que está com "
 						+ lotEX.getSigla() + ", for devolvido.";

@@ -131,7 +131,7 @@
 	<mod:assinatura>
 		<c:if test="${doc.orgaoUsuario.idOrgaoUsu == '1'}">
 			{SEC Assinada! Iniciando procedimento "Contratação: fase de análise".}
-			[#assign criado = func.criarWorkflow('JFRJ-DP-2021/00002',doc,cadastrante,titular,lotaCadastrante,lotaTitular) /]
+			<c:set var="f" value="${f:criarWorkflow('JFRJ-DP-2021/00002', doc, cadastrante, titular, lotaCadastrante, lotaTitular)}" />
 	    </c:if>
 	</mod:assinatura>
 </mod:modelo>

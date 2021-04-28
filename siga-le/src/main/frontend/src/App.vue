@@ -121,6 +121,7 @@
     <assinatura ref="assinatura" title="Assinatura"></assinatura>
     <tramite ref="tramite" title="Trâmite"></tramite>
     <anotacao ref="anotacao" title="Anotação"></anotacao>
+    <modal-mob ref="modalMob"></modal-mob>
   </div>
 </template>
 
@@ -137,9 +138,21 @@ import ProgressModalAsync from "./components/ProgressModalAsync";
 import MessageBox from "./components/MessageBox";
 import MessageBoxConfirmacao from "./components/MessageBoxConfirmacao";
 import AcaoBL from "./bl/acao.js";
+import ModalMob from "./modal/ModalMob.vue";
 
 export default {
   name: "app",
+  components: {
+    topProgress,
+    progressModal: ProgressModal,
+    messageBox: MessageBox,
+    messageBoxConfirmacao: MessageBoxConfirmacao,
+    assinatura: Assinatura,
+    tramite: Tramite,
+    anotacao: Anotacao,
+    modalMob: ModalMob,
+    progressModalAsync: ProgressModalAsync,
+  },
   mounted() {
     UtilsBL.overrideProperties(
       this.settings,
@@ -154,7 +167,7 @@ export default {
       }
     });
 
-    AcaoBL.registrar();
+    AcaoBL.registrar(this.$refs);
 
     Bus.$on("block", (min, max) => {
       if (this.blockCounter === 0) {
@@ -472,16 +485,6 @@ export default {
           }
         );
     },
-  },
-  components: {
-    topProgress,
-    progressModal: ProgressModal,
-    messageBox: MessageBox,
-    messageBoxConfirmacao: MessageBoxConfirmacao,
-    assinatura: Assinatura,
-    tramite: Tramite,
-    anotacao: Anotacao,
-    progressModalAsync: ProgressModalAsync,
   },
 };
 </script>

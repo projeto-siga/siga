@@ -3,19 +3,28 @@ import UtilsBL from "./utils.js";
 import {
     Bus
 } from "./bus.js";
+
 import ArquivarCorrente from "./acao/arquivarCorrente";
 import DesarquivarCorrente from "./acao/desarquivarCorrente";
 import Sobrestar from "./acao/sobrestar";
 import Dessobrestar from "./acao/dessobrestar";
+import Juntar from "./acao/juntar";
+import Vincular from "./acao/vincular";
+import Apensar from "./acao/apensar";
+
 
 export default {
     bus: Bus,
 
-    registrar() {
+    registrar(modais) {
+        this.modais = modais;
         ArquivarCorrente.registrar();
         DesarquivarCorrente.registrar();
         Sobrestar.registrar();
         Dessobrestar.registrar();
+        Juntar.registrar();
+        Vincular.registrar();
+        Apensar.registrar();
     },
 
     lotePadrao: function (gerundio, evento1, evento2, evento3, url, documentos, cont) {

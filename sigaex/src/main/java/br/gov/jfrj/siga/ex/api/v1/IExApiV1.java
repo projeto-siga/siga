@@ -680,6 +680,32 @@ public interface IExApiV1 {
 		public void run(DocumentosSiglaJuntarPostRequest req, DocumentosSiglaJuntarPostResponse resp) throws Exception;
 	}
 
+	public class DocumentosSiglaVincularPostRequest implements ISwaggerRequest {
+		public String sigla;
+		public String siglavertambem;
+	}
+
+	public class DocumentosSiglaVincularPostResponse implements ISwaggerResponse {
+		public String status;
+	}
+
+	public interface IDocumentosSiglaVincularPost extends ISwaggerMethod {
+		public void run(DocumentosSiglaVincularPostRequest req, DocumentosSiglaVincularPostResponse resp) throws Exception;
+	}
+
+	public class DocumentosSiglaApensarPostRequest implements ISwaggerRequest {
+		public String sigla;
+		public String siglamestre;
+	}
+
+	public class DocumentosSiglaApensarPostResponse implements ISwaggerResponse {
+		public String status;
+	}
+
+	public interface IDocumentosSiglaApensarPost extends ISwaggerMethod {
+		public void run(DocumentosSiglaApensarPostRequest req, DocumentosSiglaApensarPostResponse resp) throws Exception;
+	}
+
 	public class DocumentosSiglaReceberPostRequest implements ISwaggerRequest {
 		public String sigla;
 	}

@@ -1039,6 +1039,68 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /documentos/{sigla}/vincular:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/siglavertambem"
+      description: "Vincula a <b>via ou volume</b> de um documento com <b>outra via ou volume</b> informada em siglapai (ambos devem ter por exemplo a letra 'A' - no caso de expedientes ou 'V01' - no caso de processos no final da sigla)."
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        403:
+          description: Acesso ao documento não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Via ou volume não encontrado
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/apensar:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/siglamestre"
+      description: "Apensa a <b>via ou volume</b> de um documento com <b>outra via ou volume</b> informada em siglapai (ambos devem ter por exemplo a letra 'A' - no caso de expedientes ou 'V01' - no caso de processos no final da sigla)."
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        403:
+          description: Acesso ao documento não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Via ou volume não encontrado
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
   /documentos/{sigla}/receber:
     post:
       consumes: ["application/x-www-form-urlencoded"]

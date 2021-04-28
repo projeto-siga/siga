@@ -92,6 +92,18 @@ export default {
     ver_impressao: function() {
       this.$parent.$parent.mostrarCompleto();
     },
+
+    juntar: function() {
+      this.emitir("juntarModal");
+    },
+
+    vincular: function() {
+      this.emitir("vincularModal");
+    },
+
+    apensar: function() {
+      this.emitir("apensarModal");
+    },
   },
 };
 </script>

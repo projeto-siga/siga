@@ -2551,6 +2551,14 @@ public class ExMovimentacaoController extends ExController {
 			movimentacaoBuilder.setLotaSubscritorSel(lotaSubscritorSel);
 		}
 
+		if (!Prop.getBool("/siga.marcadores.permite.data.retroativa")) {
+			if (!Utils.empty(planejada) && !DateUtils.isSameDay(new Date(), dtPlanejada) && dtPlanejada.before(new Date())) 
+				throw new AplicacaoException("Data Planejada não pode ser anterior à hoje.");
+			
+			if (!Utils.empty(limite) && !DateUtils.isSameDay(new Date(), dtLimite) && dtLimite.before(new Date())) 
+				throw new AplicacaoException("Data Limite não pode ser anterior à hoje.");
+		} 
+			
 		movimentacaoBuilder.setIdMarcador(marcador);
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
 		mov.setDescrMov(texto);

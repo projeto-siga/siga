@@ -147,7 +147,7 @@
 												<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}" pos="${acao.pos}" 
 													url="${pageContext.request.contextPath}${acao.url}" test="${true}" popup="${acao.popup}" 
 													confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}" 
-													idAjax="${mov.idMov}" classe="${acao.classe}" />
+													idAjax="${mov.idMov}" classe="${acao.classe}" post="${acao.post}"/>
 												<c:if test='${assinadopor and mov.idTpMov == 2}'>
 													${mov.complemento}
 													<c:set var="assinadopor" value="${false}" />

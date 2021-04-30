@@ -4085,6 +4085,10 @@ public class ExBL extends CpBL {
 
 			if (!getComp().podeMovimentar(docTitular, lotaCadastrante, mobPai))
 				throw new RegraNegocioException("A via não pode ser juntada ao documento porque ele não pode ser movimentado.");
+			
+			if(mob.getDoc().isComposto() && !mobPai.getDoc().isComposto())
+				throw new RegraNegocioException("Não é possível juntar um documento composto (pai) num simples (filho)");
+			
 		}
 
 		final ExMovimentacao mov;

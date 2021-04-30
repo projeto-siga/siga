@@ -268,6 +268,17 @@ public class Mesa2 {
 							.findFirst().orElse("[indeterminado]");
 				}
 
+				if(tag.marca.getCpMarcador().isADevolverForaDoPrazo()) {
+					t.nome += ", atribuído pela unidade " + tag.marca.getExMobil().getDoc().getMobilGeral()
+							.getExMovimentacaoSet().stream() //
+							.filter(mov -> mov.getExTipoMovimentacao().getId()
+									.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO))
+							.filter(mov -> !mov.isCancelada()) //
+							.filter(mov -> tag.marca.getCpMarcador().equals(mov.getMarcador())) //
+							.map(ExMovimentacao::getCadastranteString) //
+							.findFirst().orElse(r.origem);
+				}
+
 				r.list.add(t);
 				if (pessoa != null && tag.marca.getDpPessoaIni() != null) {
 					if (pessoa.getIdInicial().equals(

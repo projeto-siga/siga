@@ -148,19 +148,14 @@ $(function(){
 						</div>
 					</div>
 				</div>				
-				<div class="row">
-					<div class="col col-3">
-						<div class="form-group mb-0">
-							<label>Data da devolução</label> 
-							<input type="text" name="dtDevolucaoMovString" onblur="javascript:verifica_data(this,0);" value="${dtDevolucaoMovString}" class="form-control campoData" autocomplete="off"/>					 
+			    <div class="row">
+						<div class="col col-3">
+							<div class="form-group mb-0">
+								<label>Data da devolução</label>
+								<input type="text" name="dtDevolucaoMovString" onClick="alert('ATENÇÃO!! Só preencha o campo data de devolução se o documento tiver que retornar para a sua unidade, caso contrário após o vencimento o mesmo ficará marcado com o status Aguardando devolução fora do prazo, até que retorne para sua unidade')" onblur="javascript:verifica_data(this,0);" value="${dtDevolucaoMovString}" class="form-control campoData" autocomplete="off" />
+							</div>
 						</div>
 					</div>
-				</div>				
-				<div class="row">
-					<div class="col col-12">
-							<small class="form-text text-muted">Atenção: somente preencher a data de devolução se a intenção for, realmente, que o documento seja devolvido até esta data.</small>
-					</div>				
-				</div>				
 				<div class="row">
 					<div class="col col-9">
 						<div class="form-check form-check-inline mt-3 mb-3">

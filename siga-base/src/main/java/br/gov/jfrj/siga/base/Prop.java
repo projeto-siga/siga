@@ -249,5 +249,9 @@ public class Prop {
 		 * marcadores. Se false não exibe.
 		 * */
 		provider.addPublicProperty("/siga.marcadores.exibe.dataativacao", "false");
+		/* Cadastro de marcadores: Se true, permite data anterior a hoje nas datas de exibição e limite. 
+		 * Se false, não permite.
+		 * */
+		provider.addPublicProperty("/siga.marcadores.permite.data.retroativa", "true");
 	}
 }

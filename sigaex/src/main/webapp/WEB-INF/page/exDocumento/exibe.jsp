@@ -1502,7 +1502,25 @@
 		<div class="modal-body">
        		É necessário desentranhar o documento para realizar o seu cancelamento.
      	</div>	     	
-	</siga:siga-modal>	
+	</siga:siga-modal>
+	
+	<c:if test="${mob.mobilPrincipal.isSobrestado() && mob.mobilPrincipal.doc.isComposto()}">
+		<siga:siga-modal id="modalDeAvisoDesentranhar" exibirRodape="true" 
+			tituloADireita="<i class='fas fa-exclamation-circle' style='font-size: 1.5em; color: #ffc107;'></i> <label style='font-size: 1.1em;vertical-align: middle;'><b>Atenção</b></label>"
+			descricaoBotaoFechaModalDoRodape="Ok">
+			<div class="modal-body">
+	       		Não é possível fazer o desentranhamento porque o documento ao qual este está juntado encontra-se sobrestado.
+	     	</div>	     	
+		</siga:siga-modal>
+		<script>
+			$(function() {
+				var btnDesentranhar = $('.siga-btn-desentranhar');
+				if (btnDesentranhar) {
+					btnDesentranhar.attr('href', '#').attr('data-siga-modal-abrir', 'modalDeAvisoDesentranhar');					
+				}							
+			});
+		</script>
+	</c:if>	
 			
 	<script>
 		$(function() {

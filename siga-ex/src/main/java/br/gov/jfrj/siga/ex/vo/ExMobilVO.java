@@ -380,7 +380,7 @@ public class ExMobilVO extends ExVO {
 		addAcao("page_white_error", "Desentranhar", "/app/expediente/mov",
 				"cancelar_juntada", Ex.getInstance().getComp()
 						.podeCancelarJuntada(titular, lotaTitular, mob), null,
-				null, null, null, "once");
+				null, null, null, "once siga-btn-desentranhar");
 
 		addAcao("link_delete",
 				"Desapensar",

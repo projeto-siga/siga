@@ -10,45 +10,52 @@ import Sobre from '@/components/Sobre'
 Vue.use(Router)
 
 const router = new Router({
-  routes: [
-    {
-      path: '/login',
-      name: 'Login',
-      component: Login
-    }, {
-      path: '/documento/novo',
-      name: 'DocumentoEditar',
-      component: DocumentoEditar,
-      meta: {
-        title: () => {
-          return 'Novo Documento'
-        }
+  routes: [{
+    path: '/login',
+    name: 'Login',
+    component: Login
+  }, {
+    path: '/documento/novo',
+    name: 'DocumentoEditar',
+    component: DocumentoEditar,
+    meta: {
+      title: () => {
+        return 'Novo Documento'
       }
-    }, {
-      path: '/documento/:numero',
-      name: 'Documento',
-      component: Documento,
-      meta: {
-        title: route => {
-          return 'Documento ' + route.params.numero + '..'
-        }
-      }
-    }, {
-      path: '/sugestoes',
-      name: 'Sugestões',
-      component: Sugestoes
-    }, {
-      path: '/sobre',
-      name: 'Sobre',
-      component: Sobre
-    }, {
-      path: '/',
-      name: 'Mesa',
-      component: Mesa
-    }, {
-      path: '*',
-      redirect: '/'
     }
-  ]
+  }, {
+    path: '/documento/:numero/editar',
+    name: 'DocumentoEditar',
+    component: DocumentoEditar,
+    meta: {
+      title: route => {
+        return 'Editando Documento ' + route.params.numero + '..'
+      }
+    }
+  }, {
+    path: '/documento/:numero',
+    name: 'Documento',
+    component: Documento,
+    meta: {
+      title: route => {
+        return 'Documento ' + route.params.numero + '..'
+      }
+    }
+  }, {
+    path: '/sugestoes',
+    name: 'Sugestões',
+    component: Sugestoes
+  }, {
+    path: '/sobre',
+    name: 'Sobre',
+    component: Sobre
+  }, {
+    path: '/',
+    name: 'Mesa',
+    component: Mesa
+  }, {
+    path: '*',
+    redirect: '/'
+  }]
 })
 export default router

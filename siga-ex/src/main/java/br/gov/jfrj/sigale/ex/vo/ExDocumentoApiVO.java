@@ -18,6 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.sigale.ex.vo;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,7 @@ import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
@@ -50,12 +52,20 @@ public class ExDocumentoApiVO extends ExApiVO {
 	String nomeCompleto;
 	String dtDocDDMMYY;
 	String subscritorString;
+	String subscritorSigla;
+	String subscritorNome;
+	String subscritorTipo;
 	String originalNumero;
 	String originalData;
 	String originalOrgao;
 	String classificacaoDescricaoCompleta;
+	String classificacaoSigla;
+	String classificacaoNome;
 	List<String> tags;
 	String destinatarioString;
+	String destinatarioSigla;
+	String destinatarioNome;
+	String destinatarioTipo;
 	String descrDocumento;
 	String nmNivelAcesso;
 	String paiSigla;
@@ -64,6 +74,7 @@ public class ExDocumentoApiVO extends ExApiVO {
 	String dtFinalizacao;
 	String nmArqMod;
 	String conteudoBlobHtmlString;
+	String conteudoBlobFormString;
 	String sigla;
 	String fisicoOuEletronico;
 	boolean fDigital;
@@ -71,6 +82,7 @@ public class ExDocumentoApiVO extends ExApiVO {
 	String dadosComplementares;
 	String forma;
 	String modelo;
+	String idModelo;
 	String tipoFormaDocumento;
 	String cadastranteString;
 	String lotaCadastranteString;
@@ -96,15 +108,35 @@ public class ExDocumentoApiVO extends ExApiVO {
 		this.nomeCompleto = doc.getNomeCompleto();
 		this.dtDocDDMMYY = doc.getDtDocDDMMYY();
 		this.subscritorString = doc.getSubscritorString();
+		if (doc.getSubscritor() != null) {
+			this.subscritorSigla = doc.getSubscritor().getSigla();
+			this.subscritorNome = doc.getSubscritor().getNomePessoa();
+			this.subscritorTipo = "PESSOA";
+		}
 		this.cadastranteString = doc.getCadastranteString();
 		if (doc.getLotaCadastrante() != null)
 			this.lotaCadastranteString = "(" + doc.getLotaCadastrante().getSigla() + ")";
 		else
 			this.lotaCadastranteString = "";
 
-		if (doc.getExClassificacaoAtual() != null)
-			this.classificacaoDescricaoCompleta = doc.getExClassificacaoAtual().getAtual().getDescricaoCompleta();
 		this.destinatarioString = doc.getDestinatarioString();
+		if (doc.getDestinatario() != null) {
+			this.destinatarioSigla = doc.getDestinatario().getSigla();
+			this.destinatarioNome = doc.getDestinatario().getNomePessoa();
+			this.destinatarioTipo = "PESSOA";
+		} else if (doc.getLotaDestinatario() != null) {
+			this.destinatarioSigla = doc.getLotaDestinatario().getSigla();
+			this.destinatarioNome = doc.getLotaDestinatario().getNomeLotacao();
+			this.destinatarioTipo = "LOTACAO";
+		}
+
+		ExClassificacao classif = doc.getExClassificacaoAtual();
+		if (classif != null) {
+			this.classificacaoDescricaoCompleta = classif.getAtual().getDescricaoCompleta();
+			this.classificacaoSigla = classif.getSigla();
+			this.classificacaoNome = classif.getNome();
+		}
+		
 		if (doc.getExNivelAcessoAtual() != null)
 			this.nmNivelAcesso = doc.getExNivelAcessoAtual().getNmNivelAcesso();
 		// Desabilitado temporariamente
@@ -138,6 +170,10 @@ public class ExDocumentoApiVO extends ExApiVO {
 			this.nmArqMod = doc.getExModelo().getNmArqMod();
 
 		this.conteudoBlobHtmlString = doc.getConteudoBlobHtmlStringComReferencias();
+		
+		byte[] form = doc.getConteudoBlobForm();
+		if (form != null)
+			this.conteudoBlobFormString = new String(form, StandardCharsets.ISO_8859_1);
 
 		if (doc.isEletronico()) {
 			this.classe = "header_eletronico";
@@ -157,6 +193,7 @@ public class ExDocumentoApiVO extends ExApiVO {
 		}
 		this.forma = doc.getExFormaDocumento() != null ? doc.getExFormaDocumento().getDescricao() : "";
 		this.modelo = doc.getExModelo() != null ? doc.getExModelo().getNmMod() : "";
+		this.idModelo = doc.getExModelo() != null && doc.getExModelo().getId() != null ? doc.getExModelo().getId().toString() : null;
 
 		if (mob != null) {
 			SortedSet<ExMobil> mobsDoc;
@@ -380,8 +417,8 @@ public class ExDocumentoApiVO extends ExApiVO {
 		vo.addAcao("folder_user", "Definir Perfil", "/app/expediente/mov", "vincularPapel",
 				Ex.getInstance().getComp().podeFazerVinculacaoPapel(titular, lotaTitular, mob));
 
-		vo.addAcao("folder_star", "Definir Marcador", "/app/expediente/mov", "marcar",
-				new ExPodeMarcar(mob, titular, lotaTitular).eval());
+//		vo.addAcao("folder_star", "Definir Marcador", "/app/expediente/mov", "marcar",
+//				new ExPodeMarcar(mob, titular, lotaTitular).eval());
 
 		vo.addAcao("cd", "Download do Conteúdo", "/expediente/doc", "anexo",
 				Ex.getInstance().getComp().podeDownloadConteudo(titular, lotaTitular, mob));

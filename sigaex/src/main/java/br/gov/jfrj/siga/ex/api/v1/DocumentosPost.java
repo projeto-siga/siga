@@ -2,10 +2,12 @@ package br.gov.jfrj.siga.ex.api.v1;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.TreeSet;
@@ -63,7 +65,27 @@ public class DocumentosPost implements IDocumentosPost {
 				ExClassificacao classificacao = null;
 				CpOrgao destinatarioOrgaoExterno = null;
 				cadastrante = so.getCadastrante();
-				ExDocumento doc = new ExDocumento();
+				
+				ExDocumento doc;
+				if (req.sigla != null) {
+					ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, ctx.getSigaObjects(), req, resp,
+							"Documento a Salvar");
+					if (!Ex.getInstance().getComp().podeEditar(ctx.getTitular(), ctx.getLotaTitular(), mob))
+						throw new SwaggerException("Edição do documento " + mob.getSigla() + " não é permitida. ("
+								+ so.getTitular().getSigla() + "/" + so.getLotaTitular().getSiglaCompleta() + ")", 403,
+								null, req, resp, null);
+					doc = mob.doc();
+				} else {
+					doc = new ExDocumento();
+					ExMobil mob = new ExMobil();
+					mob.setExTipoMobil(dao().consultar(ExTipoMobil.TIPO_MOBIL_GERAL, ExTipoMobil.class, false));
+					mob.setNumSequencia(1);
+					mob.setExMovimentacaoSet(new TreeSet<ExMovimentacao>());
+					mob.setExDocumento(doc);
+					doc.setExMobilSet(new TreeSet<ExMobil>());
+					doc.getExMobilSet().add(mob);
+				}
+				
 				if (req.descricaodocumento != null)
 					doc.setDescrDocumento(req.descricaodocumento);
 
@@ -202,7 +224,8 @@ public class DocumentosPost implements IDocumentosPost {
 						}
 					}
 				}
-				doc.setDtRegDoc(dao().dt());
+				if (doc.getDtRegDoc() == null)
+					doc.setDtRegDoc(dao().dt());
 
 				if (req.siglamobilpai != null) {
 					ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
@@ -262,6 +285,7 @@ public class DocumentosPost implements IDocumentosPost {
 								int idx = keyAndValue.indexOf("=");
 								String key = keyAndValue.substring(0, idx);
 								String value = keyAndValue.substring(idx + 1);
+								value = URLDecoder.decode(value, StandardCharsets.UTF_8.name());
 								camposModelo = camposModelo + key + "=" + URLEncoder.encode(value, "iso-8859-1") + "&";
 							}
 						}
@@ -321,14 +345,6 @@ public class DocumentosPost implements IDocumentosPost {
 								req.content));
 					}
 				}
-
-				ExMobil mob = new ExMobil();
-				mob.setExTipoMobil(dao().consultar(ExTipoMobil.TIPO_MOBIL_GERAL, ExTipoMobil.class, false));
-				mob.setNumSequencia(1);
-				mob.setExMovimentacaoSet(new TreeSet<ExMovimentacao>());
-				mob.setExDocumento(doc);
-				doc.setExMobilSet(new TreeSet<ExMobil>());
-				doc.getExMobilSet().add(mob);
 
 				exBL.gravar(cadastrante, so.getTitular(), so.getLotaTitular(), doc);
 

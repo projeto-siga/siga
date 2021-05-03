@@ -70,10 +70,26 @@ export default {
       });
     },
 
+    editar() {
+      this.$router.push({
+        name: "DocumentoEditar",
+        params: { numero: this.$parent.numero.replace(/[^a-z0-9]/gi, "") },
+      });
+    },
+
     finalizar() {
       this.emitir("finalizar", undefined, (result) => {
         this.$router.push({
           name: "Documento",
+          params: { numero: result.data.sigla.replace(/[^a-z0-9]/gi, "") },
+        });
+      });
+    },
+
+    duplicar() {
+      this.emitir("duplicar", undefined, (result) => {
+        this.$router.push({
+          name: "DocumentoEditar",
           params: { numero: result.data.sigla.replace(/[^a-z0-9]/gi, "") },
         });
       });

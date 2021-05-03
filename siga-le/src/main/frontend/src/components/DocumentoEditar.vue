@@ -2,7 +2,8 @@
   <div class="container-fluid content">
     <div class="row">
       <div class="col-md-12">
-        <h4 class="text-center mt-3 mb-0">Criar Documento</h4>
+        <h4 v-if="sigla" class="text-center mt-3 mb-0">Editar {{ sigla }}</h4>
+        <h4 v-else class="text-center mt-3 mb-0">Criar Documento</h4>
       </div>
       <div class="col col-sm-12" v-if="errormsg">
         <p class="alert alert-danger"><strong>Erro!</strong> {{ errormsg }}</p>
@@ -30,7 +31,7 @@
               :edit="true"
               chave="idModelo"
               descr="nome"
-              @change="carregarModelo()"
+              @change="carregarModeloEProcessarEntrevista()"
             ></my-select>
           </div>
         </div>
@@ -124,6 +125,7 @@
       </form>
       <div style="display: none;" ref="divEntrevista" />
       <b-button
+        :disabled="invalid"
         class="mt-4"
         variant="primary"
         @click.prevent="salvar()"
@@ -148,8 +150,10 @@ export default {
     this.$on("filtrar", (texto) => {
       this.filtrarMovimentos(texto);
     });
-    this.$nextTick(function() {
-      this.carregarModelos();
+
+    this.$nextTick(async function() {
+      await this.carregarModelos();
+      await this.carregarDocumento(this.$route.params.numero);
     });
 
     window.sbmt = function() {
@@ -170,6 +174,8 @@ export default {
       classificacao: undefined,
       descricao: undefined,
       nivelacesso: "PUBLICO",
+      numero: undefined,
+      sigla: undefined,
     };
   },
   watch: {
@@ -198,6 +204,46 @@ export default {
     },
   },
   methods: {
+    carregarDocumento: async function() {
+      this.errormsg = undefined;
+      this.numero = this.$route.params.numero;
+      if (!this.numero) return;
+      // Validar o número do processo
+      Bus.$emit("block", 20);
+      await this.$http.get("sigaex/api/v1/documentos/" + this.numero).then(
+        async (response) => {
+          Bus.$emit("release");
+          var doc = response.data;
+          this.sigla = doc.sigla;
+          this.idModelo = doc.idModelo;
+          this.descricao = doc.descrDocumento;
+          this.subscritor =
+            (doc.subscritorSigla ? doc.subscritorSigla + " - " : "") +
+            doc.subscritorNome;
+          if (doc.destinatarioTipo === "PESSOA")
+            this.destinatario =
+              (doc.destinatarioSigla ? doc.destinatarioSigla + " - " : "") +
+              doc.destinatarioNome;
+          else if (doc.destinatarioTipo === "LOTACAO")
+            this.lotaDestinatario =
+              (doc.destinatarioSigla ? doc.destinatarioSigla + " - " : "") +
+              doc.destinatarioNome;
+
+          this.classificacao =
+            (doc.classificacaoSigla ? doc.classificacaoSigla + " - " : "") +
+            doc.classificacaoNome;
+          await this.carregarModelo();
+
+          if (response.data.conteudoBlobFormString)
+            this.processarEntrevista(response.data.conteudoBlobFormString);
+        },
+        (error) => {
+          Bus.$emit("release");
+          UtilsBL.errormsg(error, this);
+        }
+      );
+    },
+
     executar: function(mov, acao) {
       if (acao.acao === "exibir") {
         this.$router.push({
@@ -207,10 +253,10 @@ export default {
       }
     },
 
-    carregarModelos: function() {
+    carregarModelos: async function() {
       this.errormsg = undefined;
       Bus.$emit("block", 20);
-      this.$http.get("sigaex/api/v1/modelos").then(
+      await this.$http.get("sigaex/api/v1/modelos").then(
         (response) => {
           Bus.$emit("release");
           this.modelos = response.data.list;
@@ -222,10 +268,10 @@ export default {
       );
     },
 
-    carregarModelo: function() {
+    carregarModelo: async function() {
       this.errormsg = undefined;
       Bus.$emit("block", 20);
-      this.$http.get("sigaex/api/v1/modelos/" + this.idModelo).then(
+      await this.$http.get("sigaex/api/v1/modelos/" + this.idModelo).then(
         (response) => {
           Bus.$emit("release");
           this.modelo = response.data;
@@ -235,10 +281,14 @@ export default {
           UtilsBL.errormsg(error, this);
         }
       );
+    },
+
+    carregarModeloEProcessarEntrevista: async function() {
+      this.carregarModelo();
       this.processarEntrevista();
     },
 
-    processarEntrevista: function() {
+    processarEntrevista: function(params) {
       this.errormsg = undefined;
       var formParams = EntrevistaBL.encodeFormParams(
         EntrevistaBL.getFormResults(this.$refs.form)
@@ -248,7 +298,7 @@ export default {
       this.$http
         .post(
           "sigaex/api/v1/modelos/" + this.idModelo + "/processar-entrevista",
-          { entrevista: formParams },
+          { entrevista: params ? params : formParams },
           { block: true }
         )
         .then(
@@ -274,6 +324,7 @@ export default {
         .post(
           "sigaex/api/v1/documentos",
           {
+            sigla: this.sigla,
             modelo: this.idModelo,
             subscritor: this.siglaSubscritor,
             eletronico: true,

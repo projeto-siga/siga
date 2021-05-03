@@ -17,7 +17,8 @@ public class DocumentosSiglaFinalizarPost implements IDocumentosSiglaFinalizarPo
 			try {
 				ApiContext.assertAcesso("");
 
-				ExMobil mob = ApiContext.getMob(req.sigla);
+				ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, ctx.getSigaObjects(), req, resp,
+						"Documento a Finalizar");
 
 				if (!Ex.getInstance().getComp().podeFinalizar(ctx.getTitular(), ctx.getLotaTitular(), mob)) {
 					throw new PresentableUnloggedException("A elaboração do documento " + mob.getSigla()

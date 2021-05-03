@@ -20,6 +20,7 @@ import AssinarComSenha from "./acao/assinarComSenha";
 import AutenticarComSenha from "./acao/autenticarComSenha";
 import CriarVia from "./acao/criarVia";
 import Finalizar from "./acao/finalizar";
+import Duplicar from "./acao/duplicar";
 import DefinirPerfil from "./acao/definirPerfil";
 import DefinirAcesso from "./acao/definirAcesso";
 
@@ -44,6 +45,7 @@ export default {
         AutenticarComSenha.registrar();
         CriarVia.registrar();
         Finalizar.registrar();
+        Duplicar.registrar();
         DefinirPerfil.registrar();
         DefinirAcesso.registrar();
     },

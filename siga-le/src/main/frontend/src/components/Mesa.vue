@@ -363,7 +363,7 @@ export default {
     },
 
     novoDocumento: function() {
-      this.$router.push({ name: "DocumentoEditar" });
+      this.$router.push({ name: "DocumentoNovo" });
     },
 
     assinarComSenhaEmLote: function() {

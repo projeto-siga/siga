@@ -644,6 +644,20 @@ public interface IExApiV1 {
 				throws Exception;
 	}
 
+	public class DocumentosSiglaDuplicarPostRequest implements ISwaggerRequest {
+		public String sigla;
+	}
+
+	public class DocumentosSiglaDuplicarPostResponse implements ISwaggerResponse {
+		public String sigla;
+		public String status;
+	}
+
+	public interface IDocumentosSiglaDuplicarPost extends ISwaggerMethod {
+		public void run(DocumentosSiglaDuplicarPostRequest req, DocumentosSiglaDuplicarPostResponse resp)
+				throws Exception;
+	}
+
 	public class DocumentosSiglaMovimentacaoIdCancelarPostRequest implements ISwaggerRequest {
 		public String sigla;
 		public String id;
@@ -999,6 +1013,7 @@ public interface IExApiV1 {
 	 * arquivos.
 	 */
 	public class DocumentosPostRequest implements ISwaggerRequest, ISwaggerRequestFile {
+		public String sigla;
 		public String modelo;
 		public String siglamobilpai;
 		public String subscritor;

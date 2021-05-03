@@ -16,7 +16,7 @@ const router = new Router({
     component: Login
   }, {
     path: '/documento/novo',
-    name: 'DocumentoEditar',
+    name: 'DocumentoNovo',
     component: DocumentoEditar,
     meta: {
       title: () => {

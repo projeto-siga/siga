@@ -58,6 +58,12 @@ parameters:
     description: Sigla do mobil
     type: string
     required: true
+  siglaForm:
+    name: sigla
+    in: formData
+    description: Sigla do documento
+    type: string
+    required: false
   siglapai:
     name: siglapai
     in: query
@@ -1057,6 +1063,33 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /documentos/{sigla}/duplicar:
+    post:
+      description: "Utilize este método para duplicar o documento."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      summary: Duplicar documento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
   /documentos/{sigla}/tramitar:
     post:
       description: "<p>O trâmite é feito em uma <b>via ou volume</b> do documento, portanto necessita ser informada no final da sigla (Ex.: letra 
@@ -1754,6 +1787,7 @@ paths:
       consumes:
         - multipart/form-data
       parameters:
+        - $ref: "#/parameters/siglaForm"
         - $ref: "#/parameters/modelo"
         - $ref: "#/parameters/siglamobilpai"
         - $ref: "#/parameters/subscritor"

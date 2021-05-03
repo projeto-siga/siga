@@ -358,7 +358,7 @@ public class WfDefinicaoDeProcedimento extends HistoricoAuditavelSuporte impleme
 	}
 
 	public void assertAcessoDeEditar(DpPessoa titular, DpLotacao lotaTitular) {
-		if (!WfAcessoDeEdicao.acessoPermitido(this, titular, lotaTitular))
+		if (!new WfPodeEditarDiagrama(this, titular, lotaTitular).eval())
 			throw new RuntimeException("Edição do diagrama '" + nome + "' não é permitida para "
 					+ (titular != null ? titular.getSigla() : null) + "/"
 					+ (lotaTitular != null ? lotaTitular.getSigla() : null));

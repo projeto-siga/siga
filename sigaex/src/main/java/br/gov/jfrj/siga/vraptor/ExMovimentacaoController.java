@@ -4342,23 +4342,33 @@ public class ExMovimentacaoController extends ExController {
 		Long idOrgaoUsuario = doc.getOrgaoUsuario().getId();
 		Long idOrgaoUsuarioCadastrante = getCadastrante().getOrgaoUsuario()
 				.getId();
+		Long idLotDefault = null;
 
 		siglaSubscritor = PublicacaoDJEBL.obterUnidadeDocumento(doc);
 		siglaCadastrante = getCadastrante().getLotacao().getSigla();
 		siglaTitular = getLotaTitular().getSigla();
 		lotFiltro = new DpLotacao();
 
-		lotFiltro.setOrgaoUsuario(doc.getOrgaoUsuario());
+		lotFiltro.setOrgaoUsuario(doc.getOrgaoUsuario());		
 		lotFiltro.setSigla(siglaSubscritor);
+	    if (lotFiltro.getSigla().startsWith("-"))
+	    	lotFiltro.setSigla(lotFiltro.getSigla().substring(1));
 		lotSubscritor = dao().consultarPorSigla(lotFiltro);
 
-		lotacoes.add(lotSubscritor);
+		if (lotSubscritor != null) {
+			lotacoes.add(lotSubscritor);
+			idLotDefault = lotSubscritor.getId();
+		}
 
 		if (!siglaSubscritor.equals(siglaCadastrante)
 				&& idOrgaoUsuarioCadastrante.equals(idOrgaoUsuario)) {
 			lotFiltro.setSigla(siglaCadastrante);
 			lotCadastrante = dao().consultarPorSigla(lotFiltro);
-			lotacoes.add(lotCadastrante);
+			if (lotCadastrante != null) {
+				lotacoes.add(lotCadastrante);
+				if (idLotDefault == null)
+					idLotDefault = lotCadastrante.getId();
+			}	
 		}
 
 		if (!siglaSubscritor.equals(siglaTitular)
@@ -4368,11 +4378,16 @@ public class ExMovimentacaoController extends ExController {
 						.getOrgaoUsuario().getId().equals(idOrgaoUsuario))) {
 			lotFiltro.setSigla(siglaTitular);
 			lotTitular = dao().consultarPorSigla(lotFiltro);
-			lotacoes.add(lotTitular);
+			if (lotTitular != null) {
+				lotacoes.add(lotTitular);
+			  	 if (idLotDefault == null)
+					idLotDefault = lotTitular.getId();
+			}	
 		}
-		return new ListaLotPubl(lotacoes, lotSubscritor.getId());
+		
+		return new ListaLotPubl(lotacoes, idLotDefault);
 	}
-
+	
 	private void validarExisteLotacao(ExDocumento doc) {
 		if (doc.getTitular() != null) {
 			if (doc.getLotaTitular() == null) {

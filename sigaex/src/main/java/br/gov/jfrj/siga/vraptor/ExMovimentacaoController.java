@@ -862,25 +862,8 @@ public class ExMovimentacaoController extends ExController {
 		buscarDocumento(documentoBuilder);
 		final ExMobil mob = documentoBuilder.getMob();
 
-		final ExMovimentacao exUltMovNaoCanc = mob
-				.getUltimaMovimentacaoNaoCancelada();
-		final ExMovimentacao exUltMov = mob.getUltimaMovimentacao();
-
-		if (exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO
-				&& exUltMovNaoCanc.getIdMov() == exUltMov.getIdMov()) {
-			if (!Ex.getInstance().getComp()
-					.podeCancelarVia(getTitular(), getLotaTitular(), mob)) {
-				throw new AplicacaoException("Não é possível cancelar via");
-			}
-		} else {
-			if (!Ex.getInstance()
-					.getComp()
-					.podeCancelarMovimentacao(getTitular(), getLotaTitular(),
-							mob)) {
-				throw new AplicacaoException(
-						"Não é possível cancelar movimentação");
-			}
-		}
+		Ex.getInstance().getBL()
+				.validarCancelamentoDeUltimaMovimentacao(getTitular(), getLotaTitular(), mob);
 
 		Ex.getInstance().getBL()
 				.cancelarMovimentacao(getCadastrante(), getLotaTitular(), mob);

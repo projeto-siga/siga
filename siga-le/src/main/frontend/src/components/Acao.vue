@@ -23,7 +23,12 @@ export default {
       return this.acao.nome.replace("_", "");
     },
     slug() {
-      return UtilsBL.slugify(this.acao.nome.replace("_", "")).replace("-", "_");
+      var s = UtilsBL.slugify(this.acao.nome.replace("_", "")).replace(
+        "-",
+        "_"
+      );
+      if (s.startsWith("desfazer_")) s = "desfazer";
+      return s;
     },
     metodo() {
       return this[this.slug];
@@ -47,22 +52,39 @@ export default {
         );
     },
 
-    emitir(operacao) {
+    emitir(operacao, params, callback) {
       Bus.$emit(
         operacao,
         [{ codigo: this.$parent.numero, sigla: this.$parent.doc.sigla }],
-        this.$parent.reler
+        callback ? callback : this.$parent.reler,
+        params
       );
     },
 
+    criar_via() {
+      this.emitir("criarVia", undefined, (result) => {
+        this.$router.push({
+          name: "Documento",
+          params: { numero: result.data.sigla.replace(/[^a-z0-9]/gi, "") },
+        });
+      });
+    },
+
+    finalizar() {
+      this.emitir("finalizar", undefined, (result) => {
+        this.$router.push({
+          name: "Documento",
+          params: { numero: result.data.sigla.replace(/[^a-z0-9]/gi, "") },
+        });
+      });
+    },
+
     assinar() {
-      Bus.$emit(
-        "assinarComSenha",
-        [{ codigo: this.$parent.numero, sigla: this.$parent.doc.sigla }],
-        undefined,
-        undefined,
-        this.$parent.reler
-      );
+      this.emitir("assinarComSenha");
+    },
+
+    autenticar() {
+      this.emitir("autenticarComSenha");
     },
 
     anotar: function() {
@@ -90,7 +112,7 @@ export default {
     },
 
     ver_impressao: function() {
-      this.$parent.$parent.mostrarCompleto();
+      this.$parent.mostrarCompleto();
     },
 
     juntar: function() {
@@ -103,6 +125,36 @@ export default {
 
     apensar: function() {
       this.emitir("apensarModal");
+    },
+
+    desapensar: function() {
+      this.emitir("desapensar");
+    },
+
+    cancelar: function() {
+      if (this.acao.acao === "tornarDocumentoSemEfeito") {
+        this.emitir("tornarSemEfeitoModal");
+      }
+    },
+
+    incluir_copia: function() {
+      this.emitir("incluirCopiaModal");
+    },
+
+    desfazer: function() {
+      this.emitir("cancelarMovimentacao", { idMov: "-" });
+    },
+
+    definir_marcador: function() {
+      this.emitir("definirMarcadorModal");
+    },
+
+    definir_perfil: function() {
+      this.emitir("definirPerfilModal");
+    },
+
+    redefinir_acesso: function() {
+      this.emitir("definirAcessoModal");
     },
   },
 };

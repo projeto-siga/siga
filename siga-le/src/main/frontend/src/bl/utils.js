@@ -159,6 +159,7 @@ export default {
       if (k in obj) continue
       obj[k] = defaults[k]
     }
+    return obj
   },
 
   overrideProperties: function (obj, source) {

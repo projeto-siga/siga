@@ -2,16 +2,16 @@ import AcaoBL from "../acao"
 
 export default {
     registrar() {
-        AcaoBL.bus.$on("arquivarCorrente", (documentos, cont) => {
+        AcaoBL.bus.$on("desarquivarCorrente", (documentos, cont) => {
             this.lote(documentos, cont);
         });
     },
 
     lote: function (documentos, cont) {
-        AcaoBL.lotePadrao("Arquivando no Corrente",
+        AcaoBL.lotePadrao("Desarquivando no Corrente",
             "arquivamento",
-            "arquivado",
-            "arquivado corrente", "sigaex/api/v1/documentos/{sigla}/arquivar-corrente",
+            "desarquivado",
+            "desarquivado corrente", "sigaex/api/v1/documentos/{siglamob}/desarquivar-corrente",
             documentos, cont
         );
     },

@@ -19,7 +19,7 @@ export default {
         AcaoBL.lotePadrao("Juntando",
             "juntada",
             "juntada",
-            undefined, "sigaex/api/v1/documentos/{sigla}/juntar?siglapai=" + params.mob,
+            undefined, "sigaex/api/v1/documentos/{siglamob}/juntar?siglapai=" + params.mob,
             documentos, cont
         );
     },

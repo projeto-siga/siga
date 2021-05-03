@@ -122,6 +122,10 @@
     <tramite ref="tramite" title="Trâmite"></tramite>
     <anotacao ref="anotacao" title="Anotação"></anotacao>
     <modal-mob ref="modalMob"></modal-mob>
+    <modal-texto ref="modalTexto"></modal-texto>
+    <modal-marcador ref="modalMarcador"></modal-marcador>
+    <modal-perfil ref="modalPerfil"></modal-perfil>
+    <modal-acesso ref="modalAcesso"></modal-acesso>
   </div>
 </template>
 
@@ -139,6 +143,10 @@ import MessageBox from "./components/MessageBox";
 import MessageBoxConfirmacao from "./components/MessageBoxConfirmacao";
 import AcaoBL from "./bl/acao.js";
 import ModalMob from "./modal/ModalMob.vue";
+import ModalTexto from "./modal/ModalTexto.vue";
+import ModalMarcador from "./modal/ModalMarcador.vue";
+import ModalPerfil from "./modal/ModalPerfil.vue";
+import ModalAcesso from "./modal/ModalAcesso.vue";
 
 export default {
   name: "app",
@@ -151,6 +159,10 @@ export default {
     tramite: Tramite,
     anotacao: Anotacao,
     modalMob: ModalMob,
+    modalTexto: ModalTexto,
+    modalMarcador: ModalMarcador,
+    modalPerfil: ModalPerfil,
+    modalAcesso: ModalAcesso,
     progressModalAsync: ProgressModalAsync,
   },
   mounted() {
@@ -222,8 +234,8 @@ export default {
       prg.caption = caption;
     });
 
-    Bus.$on("prgNext", () => {
-      prg.next();
+    Bus.$on("prgNext", (result) => {
+      prg.next(result);
     });
 
     Bus.$on("message", (title, message) => {
@@ -236,10 +248,6 @@ export default {
 
     Bus.$on("iniciarAssinaturaComSenha", (documentos, cont) => {
       this.$refs.assinatura.show(documentos, cont);
-    });
-
-    Bus.$on("assinarComSenha", (documentos, username, password, cont) => {
-      this.assinarComSenhaEmLote(documentos, username, password, cont);
     });
 
     Bus.$on("iniciarTramite", (documentos, cont) => {
@@ -335,6 +343,7 @@ export default {
     },
 
     logout: function() {
+      delete window.listaDaMesa;
       AuthBL.logout();
       this.jwt = {};
       this.$router.push({ name: "Login" });
@@ -358,53 +367,6 @@ export default {
           (error) => UtilsBL.errormsg(error, this)
         );
       this.siglaParaPesquisar = undefined;
-    },
-
-    assinarComSenha: function(d, username, password, lote) {
-      this.errormsg = undefined;
-      Bus.$emit("prgCaption", "Assinando " + d.sigla);
-
-      this.$http
-        .post(
-          "sigaex/api/v1/documentos/" + d.codigo + "/assinar-com-senha",
-          {
-            username: username,
-            password: password,
-          },
-          { block: !lote }
-        )
-        .then(
-          () => {
-            d.errormsg = undefined;
-            UtilsBL.logEvento(
-              "assinatura em lote",
-              "assinado",
-              "assinado com senha"
-            );
-            Bus.$emit("prgNext");
-          },
-          (error) => {
-            if (lote) d.errormsg = error.data.errormsg;
-            else Bus.$emit("message", "Erro", error.data.errormsg);
-            Bus.$emit("prgNext");
-          }
-        );
-    },
-
-    assinarComSenhaEmLote: function(documentos, username, password, cont) {
-      Bus.$emit(
-        "prgStart",
-        "Assinando Com Senha",
-        documentos.length,
-        (i) =>
-          this.assinarComSenha(
-            documentos[i],
-            username,
-            password,
-            documentos.length !== 1
-          ),
-        cont
-      );
     },
 
     tramitar: function(d, lotacao, matricula, lote) {

@@ -24,7 +24,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.SigaCalendar;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -35,6 +37,7 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExParte;
+import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
 
 public class ExMobilApiVO extends ExApiVO {
 	String sigla;
@@ -347,7 +350,11 @@ public class ExMobilApiVO extends ExApiVO {
 			addAcao("page_white_copy", "Incluir _Cópia", "/app/expediente/mov", "copiar",
 					Ex.getInstance().getComp().podeCopiar(titular, lotaTitular, mob));
 		}
-
+		
+		addAcao("folder_star", "Definir " + SigaMessages.getMessage("documento.marca"), null, null,
+				new ExPodeMarcar(mob, titular, lotaTitular).eval(), null, null, null, null,
+				"once");
+		
 		addAcao("box_add", "Ar_q. Corrente", "/app/expediente/mov", "arquivar_corrente_gravar",
 				Ex.getInstance().getComp().podeArquivarCorrente(titular, lotaTitular, mob), null, null, null, null,
 				"once");

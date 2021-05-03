@@ -134,6 +134,16 @@ public interface IExApiV1 {
 		public String nome;
 	}
 
+	public class PerfilItem implements ISwaggerModel {
+		public String idPerfil;
+		public String nome;
+	}
+	
+	public class AcessoItem implements ISwaggerModel {
+		public String idAcesso;
+		public String nome;
+	}
+
 	public class ModelosGetRequest implements ISwaggerRequest {
 	}
 
@@ -591,7 +601,7 @@ public interface IExApiV1 {
 		public void run(DocumentosSiglaAutenticarComSenhaPostRequest req,
 				DocumentosSiglaAutenticarComSenhaPostResponse resp) throws Exception;
 	}
-	
+
 	public class DocumentosSiglaArquivarCorrentePostRequest implements ISwaggerRequest {
 		public String sigla;
 	}
@@ -602,8 +612,8 @@ public interface IExApiV1 {
 	}
 
 	public interface IDocumentosSiglaArquivarCorrentePost extends ISwaggerMethod {
-		public void run(DocumentosSiglaArquivarCorrentePostRequest req, DocumentosSiglaArquivarCorrentePostResponse resp)
-				throws Exception;
+		public void run(DocumentosSiglaArquivarCorrentePostRequest req,
+				DocumentosSiglaArquivarCorrentePostResponse resp) throws Exception;
 	}
 
 	public class DocumentosSiglaSobrestarPostRequest implements ISwaggerRequest {
@@ -617,6 +627,64 @@ public interface IExApiV1 {
 
 	public interface IDocumentosSiglaSobrestarPost extends ISwaggerMethod {
 		public void run(DocumentosSiglaSobrestarPostRequest req, DocumentosSiglaSobrestarPostResponse resp)
+				throws Exception;
+	}
+
+	public class DocumentosSiglaFinalizarPostRequest implements ISwaggerRequest {
+		public String sigla;
+	}
+
+	public class DocumentosSiglaFinalizarPostResponse implements ISwaggerResponse {
+		public String sigla;
+		public String status;
+	}
+
+	public interface IDocumentosSiglaFinalizarPost extends ISwaggerMethod {
+		public void run(DocumentosSiglaFinalizarPostRequest req, DocumentosSiglaFinalizarPostResponse resp)
+				throws Exception;
+	}
+
+	public class DocumentosSiglaMovimentacaoIdCancelarPostRequest implements ISwaggerRequest {
+		public String sigla;
+		public String id;
+	}
+
+	public class DocumentosSiglaMovimentacaoIdCancelarPostResponse implements ISwaggerResponse {
+		public String sigla;
+		public String status;
+	}
+
+	public interface IDocumentosSiglaMovimentacaoIdCancelarPost extends ISwaggerMethod {
+		public void run(DocumentosSiglaMovimentacaoIdCancelarPostRequest req,
+				DocumentosSiglaMovimentacaoIdCancelarPostResponse resp) throws Exception;
+	}
+
+	public class DocumentosSiglaTornarSemEfeitoPostRequest implements ISwaggerRequest {
+		public String sigla;
+		public String motivo;
+	}
+
+	public class DocumentosSiglaTornarSemEfeitoPostResponse implements ISwaggerResponse {
+		public String sigla;
+		public String status;
+	}
+
+	public interface IDocumentosSiglaTornarSemEfeitoPost extends ISwaggerMethod {
+		public void run(DocumentosSiglaTornarSemEfeitoPostRequest req, DocumentosSiglaTornarSemEfeitoPostResponse resp)
+				throws Exception;
+	}
+
+	public class DocumentosSiglaDesapensarPostRequest implements ISwaggerRequest {
+		public String sigla;
+	}
+
+	public class DocumentosSiglaDesapensarPostResponse implements ISwaggerResponse {
+		public String sigla;
+		public String status;
+	}
+
+	public interface IDocumentosSiglaDesapensarPost extends ISwaggerMethod {
+		public void run(DocumentosSiglaDesapensarPostRequest req, DocumentosSiglaDesapensarPostResponse resp)
 				throws Exception;
 	}
 
@@ -644,10 +712,9 @@ public interface IExApiV1 {
 	}
 
 	public interface IDocumentosSiglaDesarquivarCorrentePost extends ISwaggerMethod {
-		public void run(DocumentosSiglaDesarquivarCorrentePostRequest req, DocumentosSiglaDesarquivarCorrentePostResponse resp)
-				throws Exception;
+		public void run(DocumentosSiglaDesarquivarCorrentePostRequest req,
+				DocumentosSiglaDesarquivarCorrentePostResponse resp) throws Exception;
 	}
-
 
 	public class DocumentosSiglaTramitarPostRequest implements ISwaggerRequest {
 		public String sigla;
@@ -665,6 +732,34 @@ public interface IExApiV1 {
 	public interface IDocumentosSiglaTramitarPost extends ISwaggerMethod {
 		public void run(DocumentosSiglaTramitarPostRequest req, DocumentosSiglaTramitarPostResponse resp)
 				throws Exception;
+	}
+
+	public class DocumentosSiglaDefinirPerfilPostRequest implements ISwaggerRequest {
+		public String sigla;
+		public String idPerfil;
+		public String lotacao;
+		public String matricula;
+	}
+
+	public class DocumentosSiglaDefinirPerfilPostResponse implements ISwaggerResponse {
+		public String status;
+	}
+
+	public interface IDocumentosSiglaDefinirPerfilPost extends ISwaggerMethod {
+		public void run(DocumentosSiglaDefinirPerfilPostRequest req, DocumentosSiglaDefinirPerfilPostResponse resp) throws Exception;
+	}
+	
+	public class DocumentosSiglaDefinirAcessoPostRequest implements ISwaggerRequest {
+		public String sigla;
+		public String idAcesso;
+	}
+
+	public class DocumentosSiglaDefinirAcessoPostResponse implements ISwaggerResponse {
+		public String status;
+	}
+
+	public interface IDocumentosSiglaDefinirAcessoPost extends ISwaggerMethod {
+		public void run(DocumentosSiglaDefinirAcessoPostRequest req, DocumentosSiglaDefinirAcessoPostResponse resp) throws Exception;
 	}
 
 	public class DocumentosSiglaJuntarPostRequest implements ISwaggerRequest {
@@ -690,7 +785,8 @@ public interface IExApiV1 {
 	}
 
 	public interface IDocumentosSiglaVincularPost extends ISwaggerMethod {
-		public void run(DocumentosSiglaVincularPostRequest req, DocumentosSiglaVincularPostResponse resp) throws Exception;
+		public void run(DocumentosSiglaVincularPostRequest req, DocumentosSiglaVincularPostResponse resp)
+				throws Exception;
 	}
 
 	public class DocumentosSiglaApensarPostRequest implements ISwaggerRequest {
@@ -703,7 +799,22 @@ public interface IExApiV1 {
 	}
 
 	public interface IDocumentosSiglaApensarPost extends ISwaggerMethod {
-		public void run(DocumentosSiglaApensarPostRequest req, DocumentosSiglaApensarPostResponse resp) throws Exception;
+		public void run(DocumentosSiglaApensarPostRequest req, DocumentosSiglaApensarPostResponse resp)
+				throws Exception;
+	}
+
+	public class DocumentosSiglaIncluirCopiaPostRequest implements ISwaggerRequest {
+		public String sigla;
+		public String siglacopia;
+	}
+
+	public class DocumentosSiglaIncluirCopiaPostResponse implements ISwaggerResponse {
+		public String status;
+	}
+
+	public interface IDocumentosSiglaIncluirCopiaPost extends ISwaggerMethod {
+		public void run(DocumentosSiglaIncluirCopiaPostRequest req, DocumentosSiglaIncluirCopiaPostResponse resp)
+				throws Exception;
 	}
 
 	public class DocumentosSiglaReceberPostRequest implements ISwaggerRequest {
@@ -715,7 +826,8 @@ public interface IExApiV1 {
 	}
 
 	public interface IDocumentosSiglaReceberPost extends ISwaggerMethod {
-		public void run(DocumentosSiglaReceberPostRequest req, DocumentosSiglaReceberPostResponse resp) throws Exception;
+		public void run(DocumentosSiglaReceberPostRequest req, DocumentosSiglaReceberPostResponse resp)
+				throws Exception;
 	}
 
 	public class DocumentosSiglaAnotarPostRequest implements ISwaggerRequest {
@@ -729,6 +841,38 @@ public interface IExApiV1 {
 
 	public interface IDocumentosSiglaAnotarPost extends ISwaggerMethod {
 		public void run(DocumentosSiglaAnotarPostRequest req, DocumentosSiglaAnotarPostResponse resp) throws Exception;
+	}
+
+	public class DocumentosSiglaMarcarPostRequest implements ISwaggerRequest {
+		public String sigla;
+		public String idMarcador;
+		public String lotacao;
+		public String matricula;
+		public String data1;
+		public String data2;
+		public String texto;
+	}
+
+	public class DocumentosSiglaMarcarPostResponse implements ISwaggerResponse {
+		public String status;
+	}
+
+	public interface IDocumentosSiglaMarcarPost extends ISwaggerMethod {
+		public void run(DocumentosSiglaMarcarPostRequest req, DocumentosSiglaMarcarPostResponse resp) throws Exception;
+	}
+
+	public class DocumentosSiglaCriarViaPostRequest implements ISwaggerRequest {
+		public String sigla;
+	}
+
+	public class DocumentosSiglaCriarViaPostResponse implements ISwaggerResponse {
+		public String sigla;
+		public String status;
+	}
+
+	public interface IDocumentosSiglaCriarViaPost extends ISwaggerMethod {
+		public void run(DocumentosSiglaCriarViaPostRequest req, DocumentosSiglaCriarViaPostResponse resp)
+				throws Exception;
 	}
 
 	public class DocumentosSiglaPesquisarSiglaGetRequest implements ISwaggerRequest {
@@ -759,6 +903,31 @@ public interface IExApiV1 {
 				DocumentosSiglaMarcadoresDisponiveisGetResponse resp) throws Exception;
 	}
 
+	public class DocumentosSiglaPerfisDisponiveisGetRequest implements ISwaggerRequest {
+		public String sigla;
+	}
+
+	public class DocumentosSiglaPerfisDisponiveisGetResponse implements ISwaggerResponse {
+		public List<PerfilItem> list;
+	}
+
+	public interface IDocumentosSiglaPerfisDisponiveisGet extends ISwaggerMethod {
+		public void run(DocumentosSiglaPerfisDisponiveisGetRequest req,
+				DocumentosSiglaPerfisDisponiveisGetResponse resp) throws Exception;
+	}
+	
+	public class DocumentosSiglaAcessosDisponiveisGetRequest implements ISwaggerRequest {
+		public String sigla;
+	}
+
+	public class DocumentosSiglaAcessosDisponiveisGetResponse implements ISwaggerResponse {
+		public List<AcessoItem> list;
+	}
+
+	public interface IDocumentosSiglaAcessosDisponiveisGet extends ISwaggerMethod {
+		public void run(DocumentosSiglaAcessosDisponiveisGetRequest req, DocumentosSiglaAcessosDisponiveisGetResponse resp) throws Exception;
+	}
+
 	public class DocumentosSiglaGerarProtocoloPostRequest implements ISwaggerRequest {
 		public String sigla;
 	}
@@ -770,7 +939,8 @@ public interface IExApiV1 {
 	}
 
 	public interface IDocumentosSiglaGerarProtocoloPost extends ISwaggerMethod {
-		public void run(DocumentosSiglaGerarProtocoloPostRequest req, DocumentosSiglaGerarProtocoloPostResponse resp) throws Exception;
+		public void run(DocumentosSiglaGerarProtocoloPostRequest req, DocumentosSiglaGerarProtocoloPostResponse resp)
+				throws Exception;
 	}
 
 	public class DocumentosSiglaConsultarProtocoloGetRequest implements ISwaggerRequest {
@@ -784,7 +954,8 @@ public interface IExApiV1 {
 	}
 
 	public interface IDocumentosSiglaConsultarProtocoloGet extends ISwaggerMethod {
-		public void run(DocumentosSiglaConsultarProtocoloGetRequest req, DocumentosSiglaConsultarProtocoloGetResponse resp) throws Exception;
+		public void run(DocumentosSiglaConsultarProtocoloGetRequest req,
+				DocumentosSiglaConsultarProtocoloGetResponse resp) throws Exception;
 	}
 
 	public class SugestaoPostRequest implements ISwaggerRequest {
@@ -820,7 +991,6 @@ public interface IExApiV1 {
 	public interface IDocumentosGet extends ISwaggerMethod {
 		public void run(DocumentosGetRequest req, DocumentosGetResponse resp) throws Exception;
 	}
-
 
 	/*
 	 * ESTE CÓDIGO DEVE SER MANTIDO POIS FOI GERADO MANUALMENTE.

@@ -309,7 +309,7 @@ import { Bus } from "../bl/bus.js";
 import Acao from "./Acao";
 
 export default {
-  name: "processo",
+  name: "documento",
   mounted() {
     this.$on("filtrar", (texto) => {
       this.filtrarMovimentos(texto);
@@ -351,9 +351,12 @@ export default {
       return this.mob.movs.filter((m) => m.idTpMov != 14 && !m.cancelada);
     },
     filteredAcoes() {
-      if (!this.mob || !this.mob.movs || this.mob.movs.length == 0)
+      if (!this.mob)
         return undefined;
-      var acoes = this.mob.acoes.concat(this.doc.mobs[1].acoes);
+      var acoes =
+        this.doc.mobs.length > 1
+          ? this.mob.acoes.concat(this.doc.mobs[1].acoes)
+          : this.mob.acoes;
       acoes = acoes.sort((a, b) =>
         a.nome > b.nome ? 1 : b.nome > a.nome ? -1 : 0
       );
@@ -423,7 +426,7 @@ export default {
     },
 
     reler: function() {
-      console.log("relendo")
+      console.log("relendo");
       this.$http
         .get("sigaex/api/v1/documentos/" + this.numero, { block: true })
         .then(

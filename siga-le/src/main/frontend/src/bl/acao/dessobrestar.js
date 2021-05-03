@@ -11,7 +11,7 @@ export default {
         AcaoBL.lotePadrao("Dessobrestando",
             "sobrestamento",
             "dessobrestado",
-            undefined, "sigaex/api/v1/documentos/{sigla}/dessobrestar",
+            undefined, "sigaex/api/v1/documentos/{siglamob}/dessobrestar",
             documentos, cont
         );
     },

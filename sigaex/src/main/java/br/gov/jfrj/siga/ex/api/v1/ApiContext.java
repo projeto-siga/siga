@@ -20,6 +20,7 @@ import br.gov.jfrj.siga.base.log.RequestLoggerFilter;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -169,6 +170,11 @@ public class ApiContext implements Closeable {
 		flt.setSigla(sigla);
 
 		return ExDao.getInstance().consultarPorSigla(flt);
+	}
+
+	public static ExMovimentacao getMov(String id) {
+		Long movId = Long.parseLong(id);
+		return ExDao.getInstance().consultar(movId, ExMovimentacao.class, false);
 	}
 
 	public DpPessoa getCadastrante() throws Exception {

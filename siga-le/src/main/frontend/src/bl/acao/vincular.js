@@ -19,7 +19,7 @@ export default {
         AcaoBL.lotePadrao("Vinculando",
             "vínculo",
             "vínculo",
-            undefined, "sigaex/api/v1/documentos/{sigla}/vincular?siglavertambem=" + params.mob,
+            undefined, "sigaex/api/v1/documentos/{siglamob}/vincular?siglavertambem=" + params.mob,
             documentos, cont
         );
     },

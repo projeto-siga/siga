@@ -840,7 +840,8 @@ public class AppController extends GcController {
 			;
 		
 		String conteudo = bl.marcarLinkNoConteudo(informacao, informacao.getArq()
-				.getConteudoTXT().replace("/sigagc/app/baixar", "/sigagc/public/app/baixar"));
+				.getConteudoTXT().replace("/sigagc/app/baixar?id=", "/sigagc/public/app/baixar/"+informacao.getId()+"/").replace("/sigagc/app/exibir", "/sigagc/public/app/exibir"));
+		
 		em().detach(informacao);
 		// if (conteudo != null)
 		// informacao.arq.setConteudoTXT(conteudo);
@@ -1337,15 +1338,15 @@ public class AppController extends GcController {
 		result.include("informacao", informacao);
 	}
 
-	@Path({ "/public/app/baixar/{id}", "/public/app/baixar" })
-	public Download baixarSemAutenticacao(Long id) throws Exception {
+	@Path({ "/public/app/baixar/{idInformacao}/{id}", "/public/app/baixar" })
+	public Download baixarSemAutenticacao(Long id, Long idInformacao) throws Exception {
 		GcArquivo arq = GcArquivo.AR.findById(id);
 		
 		if (arq == null)
 			throw new Exception("Arquivo não encontrado.");
 		
 		//TODO verificar se o conhecimento pai eh sem autenticacao
-		GcInformacao infoMae = GcMovimentacao.buscarInformacaoPorAnexo(arq);
+		GcInformacao infoMae = GcMovimentacao.buscarInformacaoPorAnexo(arq,idInformacao);
 		if (infoMae == null || !(infoMae.acessoExternoPublicoPermitido()))
 			throw new Exception("Arquivo não pode ser acessado sem autenticação.");
 		

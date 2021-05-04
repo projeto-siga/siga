@@ -30,7 +30,7 @@ import br.gov.jfrj.siga.model.Objeto;
 			"select info from GcMovimentacao mov "
 						+ "join mov.inf info "
 						+ "where mov.tipo.id = :idTipoMovAnexarArquivo "
-						+ "and mov.movCanceladora is null and mov.arq.id = :idArqMov"),
+						+ "and mov.movCanceladora is null and mov.arq.id = :idArqMov and info.id = :idInformacao"),
 	@NamedQuery(name = "numeroEquipeLotacao", query = "select count(distinct p.idPessoaIni) from DpPessoa p join p.lotacao l where l.idLotacao = :idLotacao"),
 	@NamedQuery(name = "numeroEquipeCiente", query = "select count(*) from GcMovimentacao m where m.tipo.id= 7 and m.inf.id = :idInfo and m.lotacaoAtendente.idLotacao = :idLotacao and m.movRef = :movRef") 
 })
@@ -191,13 +191,14 @@ public class GcMovimentacao extends Objeto implements
 		return 0;
 	}
 	
-	public static GcInformacao buscarInformacaoPorAnexo(GcArquivo anexo) {
+	public static GcInformacao buscarInformacaoPorAnexo(GcArquivo anexo, Long idInformacao) {
 		Query query = AR.em().createNamedQuery("buscarInformacaoPorAnexo");
 		
 		// BJN workaround pro erro na hora de usar a constante dentro do HQL direto
 		query.setParameter("idTipoMovAnexarArquivo", GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO);
 		
 		query.setParameter("idArqMov", anexo.getId());
+		query.setParameter("idInformacao",idInformacao);
 		GcInformacao retorno = null;
 		try {
 			retorno = (GcInformacao) query.getSingleResult();

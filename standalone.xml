@@ -37,50 +37,51 @@
         <extension module="org.wildfly.extension.undertow"/>
     </extensions>
     <system-properties>
-        <property name="siga.jwt.secret" value="***REPLACE-WITH-RANDOM-GUID***"/>
-        <property name="siga.sinc.password" value="***REPLACE-WITH-RANDOM-GUID***"/>
-        <property name="sigaex.webdav.senha" value="***REPLACE-WITH-RANDOM-GUID***"/>
+	
+        <property name="siga.local" value="PCRJ"/>	
+        <property name="siga.jwt.secret" value="@@@siga.jwt.secret@@@"/>
+        <property name="siga.sinc.password" value="@@@siga.sinc.password@@@"/>
+        <property name="sigaex.webdav.senha" value="@@@sigaex.webdav.senha@@@"/>
 
-        <property name="siga.recaptcha.key" value="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"/>
-        <property name="siga.recaptcha.pwd" value="6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"/>
+        <property name="siga.recaptcha.key" value="@@@siga.recaptcha.key@@@"/>
+        <property name="siga.recaptcha.pwd" value="@@@siga.recaptcha.pwd@@@"/>
 
-        <property name="siga.cabecalho.titulo" value="Justiça Federal"/>
-        <property name="siga.cabecalho.logo" value="/siga/imagens/logo-trf2-38px.png"/>
+        <property name="siga.cabecalho.titulo" value="Prefeitura da Cidade do Rio de Janeiro"/>
+        <property name="siga.cabecalho.logo" value="/sigaex/imagens/BrasaoPCRJ.png"/>
 
-        <property name="sigaex.modelos.cabecalho.brasao" value="contextpath/imagens/brasaoColoridoTRF2.png"/>
-        <property name="sigaex.modelos.cabecalho.titulo" value="PODER JUDICIÁRIO"/>
-        <property name="sigaex.modelos.cabecalho.subtitulo" value="JUSTIÇA FEDERAL"/>
+        <property name="sigaex.modelos.cabecalho.brasao" value="contextpath/imagens/BrasaoPCRJ.png""/>
+        <property name="sigaex.modelos.cabecalho.titulo" value="PREFEITURA DA CIDADE DO RIO DE JANEIRO"/>
+        <property name="sigaex.modelos.cabecalho.subtitulo" value="Comitê Técnico do Processo.rio"/>
 
-        <property name="siga.relat.brasao" value="brasao.png"/>
-        <property name="siga.relat.titulo" value="PODER JUDICIÁRIO"/>
-        <property name="siga.relat.subtitulo" value="JUSTIÇA FEDERAL"/>
+        <property name="siga.relat.brasao" value="BrasaoPCRJ.png"/>
+        <property name="siga.relat.titulo" value="PREFEITURA DA CIDADE DO RIO DE JANEIRO"/>
+        <property name="siga.relat.subtitulo" value="Comitê Técnico do Processo.rio"/>
 
-        <property name="sigaex.carimbo.texto.superior" value="Justiça Federal"/>
+        <property name="sigaex.carimbo.texto.superior" value="processo.rio"/>
 
         <property name="sigaex.redis.database" value="1"/>
-        <property name="sigaex.redis.master.host" value="redisserver"/>
+        <property name="sigaex.redis.master.host" value="localhost"/>
         <property name="sigaex.redis.master.port" value="6379"/>
-        <property name="sigaex.redis.password" value="***REPLACE-WITH-RANDOM-GUID***"/>
-        <property name="sigaex.redis.slave.host" value="redisserver"/>
-        <property name="sigaex.redis.slave.port" value="6379"/>
 
-        <property name="siga.smtp" value="emailserver"/>
-        <property name="siga.smtp.porta" value="1025"/>
-        <property name="siga.smtp.auth" value="true"/>
+
+
+        <property name="siga.smtp" value="localhost"/>
+        <property name="siga.smtp.porta" value="25"/>
+        <property name="siga.smtp.auth" value="false"/>
         <property name="siga.smtp.auth.usuario" value="siga"/>
         <property name="siga.smtp.auth.senha" value="siga"/>
         <property name="siga.smtp.debug" value="false"/>
-        <property name="siga.smtp.usuario.remetente" value="Administrador do Siga&lt;siga@exemplo.com.br>"/>
+        <property name="siga.smtp.usuario.remetente" value="Processo.Rio&lt;processorio@rio.rj.gov.br&gt;"/>
 
         <property name="siga.armazenamento.arquivo.tipo" value="TABELA"/>
         <property name="sigaex.upload.dir.temp" value="/tmp"/>
 
-        <property name="siga.flyway.mysql.migrate" value="true"/>
-        <property name="siga.hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
+        <property name="siga.hibernate.dialect" value="org.hibernate.dialect.Oracle12cDialect"/>
+
 
         <property name="sigaex.assinador.externo.popup.url" value="https://ittrufusion.appspot.com"/>
 
-        <property name="sigaex.carimbo.sistema" value="siga-docker"/>
+        <property name="sigaex.carimbo.sistema" value="processo.rio"/>
         <property name="sigaex.carimbo.url" value="https://ittrufusion.appspot.com/api/v1"/>
         <property name="sigaex.carimbo.public.key" value="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAllav1+eJ3w5Idge/vQ1zZSziGiuOUBviZhcw0JZ9Bg90zG7Uz3wFGQeKnG0DNTBKwjC3MHI7AZy4G+ji35J+gp+0aZLDkuwx17JDuJfuJe6gHRlfcm50McuLL0vaU5gQ2InAo7FssjuOuLp9c3FGBGmiDFK1vUhKwdvY14inYzrZaHSVsppSYX9zjnhQiQxRnLzFzkZsZkl/Orz2O9rvmJx048lcmnOiLvm3ge7Jq2KZHIYzdsw5F3VGtlhLFBZ49g6Rmp4ClgPtpwDOGj78oyJVxLW3XXN1VP1JnActFkNlmBNi+8cUZ8IX15j+FDOL9+tQR+FMC7wtHypshR5zVQIDAQAB"/>
     </system-properties>
@@ -200,45 +201,45 @@
         <subsystem xmlns="urn:jboss:domain:datasources:5.0">
             <datasources>
                 <datasource jndi-name="java:/jboss/datasources/SigaCpDS" pool-name="SigaCpDS" enabled="true" spy="true">
-                    <connection-url>jdbc:mysql://mysqlserver:3306/corporativo?noAccessToProcedureBodies=true</connection-url>
-                    <driver>mysql.jar</driver>
+                    <connection-url>@@@string_db_corporativo@@@</connection-url>
+                    <driver>ojdbc8.jar</driver>
                     <pool>
                         <min-pool-size>1</min-pool-size>
                         <max-pool-size>10</max-pool-size>
                     </pool>
                     <security>
-                        <user-name>root</user-name>
-                        <password>siga</password>
+                        <user-name>@@@db_username_corporativo@@@</user-name>
+                        <password>@@@db_pwd_corporativo@@@</password>
                     </security>
                     <timeout>
                         <idle-timeout-minutes>5</idle-timeout-minutes>
                     </timeout>
                 </datasource>
                 <datasource jndi-name="java:/jboss/datasources/SigaExDS" pool-name="SigaExDS" enabled="true" spy="true">
-                    <connection-url>jdbc:mysql://mysqlserver:3306/siga?noAccessToProcedureBodies=true</connection-url>
-                    <driver>mysql.jar</driver>
+                    <connection-url>@@@string_db_siga@@@</connection-url>
+                    <driver>ojdbc8.jar</driver>
                     <pool>
                         <min-pool-size>1</min-pool-size>
                         <max-pool-size>10</max-pool-size>
                     </pool>
                     <security>
-                        <user-name>root</user-name>
-                        <password>siga</password>
+                        <user-name>@@@db_username_siga@@@</user-name>
+                        <password>@@@db_pwd_siga@@@</password>
                     </security>
                     <timeout>
                         <idle-timeout-minutes>5</idle-timeout-minutes>
                     </timeout>
                 </datasource>
                 <datasource jndi-name="java:/jboss/datasources/SigaWfDS" pool-name="SigaWfDS" enabled="true" spy="true">
-                    <connection-url>jdbc:mysql://mysqlserver:3306/sigawf?noAccessToProcedureBodies=true</connection-url>
-                    <driver>mysql.jar</driver>
+                    <connection-url>@@@string_db_sigawf@@@</connection-url>
+                    <driver>ojdbc8.jar</driver>
                     <pool>
                         <min-pool-size>1</min-pool-size>
                         <max-pool-size>10</max-pool-size>
                     </pool>
                     <security>
-                        <user-name>root</user-name>
-                        <password>siga</password>
+                        <user-name>@@@db_username_sigawf@@@</user-name>
+                        <password>@@@db_pwd_sigawf@@@</password>
                     </security>
                     <timeout>
                         <idle-timeout-minutes>5</idle-timeout-minutes>
@@ -248,8 +249,11 @@
                     <driver name="h2" module="com.h2database.h2">
                         <xa-datasource-class>org.h2.jdbcx.JdbcDataSource</xa-datasource-class>
                     </driver>
-                    <driver name="mysql.jar" module="com.mysql">
-                        <xa-datasource-class>com.mysql.jdbc.jdbc2.optional.MysqlXADataSource</xa-datasource-class>
+                    <driver name="ojdbc6.jar" module="com.oracle.ojdbc6">
+                        <xa-datasource-class>oracle.jdbc.xa.client.OracleXADataSource</xa-datasource-class>
+                    </driver>
+                    <driver name="ojdbc8.jar" module="com.oracle.ojdbc8">
+                        <xa-datasource-class>oracle.jdbc.xa.client.OracleXADataSource</xa-datasource-class>
                     </driver>
                 </drivers>
             </datasources>

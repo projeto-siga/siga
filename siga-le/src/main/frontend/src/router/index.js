@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Documento from '@/components/Documento'
 import DocumentoEditar from '@/components/DocumentoEditar'
+import DocumentoDossie from '@/components/DocumentoDossie'
 import Mesa from '@/components/Mesa'
 import Login from '@/components/Login'
 import Sugestoes from '@/components/Sugestoes'
@@ -21,6 +22,15 @@ const router = new Router({
     meta: {
       title: () => {
         return 'Novo Documento'
+      }
+    }
+  }, {
+    path: '/documento/:numero/dossie',
+    name: 'DocumentoDossie',
+    component: DocumentoDossie,
+    meta: {
+      title: route => {
+        return 'Dossiê ' + route.params.numero + '..'
       }
     }
   }, {

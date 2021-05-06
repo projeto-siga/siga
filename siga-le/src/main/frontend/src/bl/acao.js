@@ -23,6 +23,8 @@ import Finalizar from "./acao/finalizar";
 import Duplicar from "./acao/duplicar";
 import DefinirPerfil from "./acao/definirPerfil";
 import DefinirAcesso from "./acao/definirAcesso";
+import Excluir from "./acao/excluir";
+import IncluirCossignatario from "./acao/incluirCossignatario";
 
 export default {
     bus: Bus,
@@ -48,6 +50,8 @@ export default {
         Duplicar.registrar();
         DefinirPerfil.registrar();
         DefinirAcesso.registrar();
+        Excluir.registrar();
+        IncluirCossignatario.registrar();
     },
 
     lotePadrao: function (gerundio, evento1, evento2, evento3, url, documentos, cont, params) {

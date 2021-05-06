@@ -256,5 +256,9 @@ export default {
       .replace(/-+$/, ""); // trim - from end of text
 
     return str;
+  },
+
+  onlyLettersAndNumbers(s) {
+    return s.replace(/[^a-z0-9]/gi, "")
   }
 }

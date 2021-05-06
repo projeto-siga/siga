@@ -71,7 +71,7 @@
                 :immediate="true"
                 v-slot="{ errors }"
               >
-                <my-pessoa v-model="matricula" label="Sigla da Lotação" />
+                <my-pessoa v-model="matricula" label="Sigla da Pessoa" />
                 <span
                   v-if="false"
                   v-show="errors.length > 0"

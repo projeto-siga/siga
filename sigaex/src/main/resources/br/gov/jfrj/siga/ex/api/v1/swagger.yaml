@@ -221,6 +221,18 @@ parameters:
     description: Sigla completa da matrícula
     required: false
     type: string
+  funcao:
+    name: funcao
+    in: formData
+    description: Função do cossignatário
+    required: false
+    type: string
+  localidade:
+    name: localidade
+    in: formData
+    description: Localidade do cossignatário
+    required: false
+    type: string
   anotacao:
     name: anotacao
     in: formData
@@ -317,6 +329,12 @@ parameters:
     name: siglamobilpai
     in: formData
     description: Sigla da via ou volume (mobil) do documento pai
+    type: string
+    required: false
+  siglamobilfilho:
+    name: siglamobilfilho
+    in: formData
+    description: Sigla da via ou volume (mobil) do documento filho
     type: string
     required: false
   subscritor:
@@ -448,6 +466,52 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /documentos/{sigla}/modelos-para-incluir:
+    get:
+      summary: Obtem a lista de modelos que o usuário pode incluir em determinado documento
+      tags: [modelo]
+      security:
+        - Bearer: []
+      parameters: 
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/ModeloItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+    
+  /documentos/{sigla}/modelos-para-autuar:
+    get:
+      summary: Obtem a lista de modelos em que o usuário pode autuar determinado documento
+      tags: [modelo]
+      security:
+        - Bearer: []
+      parameters: 
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/ModeloItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+    
   /modelos/{id}:
     get:
       summary: Obtem informações sobre um modelo específico
@@ -1150,6 +1214,32 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /documentos/{sigla}/incluir-cossignatario:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/matricula"
+        - $ref: "#/parameters/funcao"
+        - $ref: "#/parameters/lotacao"
+        - $ref: "#/parameters/localidade"
+      summary: Acrescenta um cossignatário ao documento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
   /documentos/{sigla}/definir-acesso:
     post:
       consumes: ["application/x-www-form-urlencoded"]
@@ -1462,6 +1552,28 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /documentos/{sigla}/excluir:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      description: Excluir documento temporário
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
   /documentos/{sigla}/marcar:
     post:
       consumes: ["application/x-www-form-urlencoded"]
@@ -1655,6 +1767,37 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /documentos/{sigla}/dossie:
+    get:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [consulta]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      description: Obtem a lista de documentos que compoem o dossiê
+      responses:
+        200:
+          description: Successful response
+          schema:
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/DossieItem"
+        403:
+          description: Acesso ao documento não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Protocolo ainda não foi gerado para este documento
+          schema:
+            $ref: "#/definitions/Error"        
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
   /sugestao:
     post:
       consumes: ["application/x-www-form-urlencoded"]
@@ -1790,6 +1933,7 @@ paths:
         - $ref: "#/parameters/siglaForm"
         - $ref: "#/parameters/modelo"
         - $ref: "#/parameters/siglamobilpai"
+        - $ref: "#/parameters/siglamobilfilho"
         - $ref: "#/parameters/subscritor"
         - $ref: "#/parameters/titular"
         - $ref: "#/parameters/eletronico"
@@ -1963,6 +2107,9 @@ definitions:
       siglamobilpai:
         description: Sigla da via ou volume (mobil) do documento pai
         type: string
+      siglamobilfilho:
+        description: Sigla da via ou volume (mobil) do documento filho
+        type: string
       subscritor:
         description: Subscritor do documento
         type: string
@@ -2121,3 +2268,28 @@ definitions:
       nome:
         type: string
         
+  DossieItem:
+    description: Lista os arquivos que compoem um dossiê
+    type: object
+    properties:
+      paginaInicial:
+        type: string
+      paginaFinal:
+        type: string
+      mobil:
+        type: string
+      descr:
+        type: string
+      origem:
+        type: string
+      data:
+        type: string
+        format: date-time
+      nivel:
+        type: string
+      copia:
+        type: boolean
+      referenciaHtmlCompletoDocPrincipal:
+        type: string
+      referenciaPDFCompletoDocPrincipal:
+        type: string

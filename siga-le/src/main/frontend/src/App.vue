@@ -126,6 +126,7 @@
     <modal-marcador ref="modalMarcador"></modal-marcador>
     <modal-perfil ref="modalPerfil"></modal-perfil>
     <modal-acesso ref="modalAcesso"></modal-acesso>
+    <modal-cossignatario ref="modalCossignatario"></modal-cossignatario>
   </div>
 </template>
 
@@ -147,6 +148,7 @@ import ModalTexto from "./modal/ModalTexto.vue";
 import ModalMarcador from "./modal/ModalMarcador.vue";
 import ModalPerfil from "./modal/ModalPerfil.vue";
 import ModalAcesso from "./modal/ModalAcesso.vue";
+import ModalCossignatario from "./modal/ModalCossignatario.vue";
 
 export default {
   name: "app",
@@ -163,6 +165,7 @@ export default {
     modalMarcador: ModalMarcador,
     modalPerfil: ModalPerfil,
     modalAcesso: ModalAcesso,
+    modalCossignatario: ModalCossignatario,
     progressModalAsync: ProgressModalAsync,
   },
   mounted() {

@@ -65,7 +65,7 @@ public class DocumentosPost implements IDocumentosPost {
 				ExClassificacao classificacao = null;
 				CpOrgao destinatarioOrgaoExterno = null;
 				cadastrante = so.getCadastrante();
-				
+
 				ExDocumento doc;
 				if (req.sigla != null) {
 					ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, ctx.getSigaObjects(), req, resp,
@@ -77,6 +77,27 @@ public class DocumentosPost implements IDocumentosPost {
 					doc = mob.doc();
 				} else {
 					doc = new ExDocumento();
+
+					if (req.siglamobilpai != null) {
+						ExMobil mobPai = SwaggerHelper.buscarEValidarMobil(req.siglamobilpai, so, req, resp, "Documento Pai");
+						ExDocumento docPai = mobPai.getExDocumento();
+						if (docPai.getExMobilPai() != null)
+							throw new AplicacaoException("Não foi possível criar o documento pois o documento pai ("
+									+ docPai.getSigla() + ") já é documento filho.");
+
+						if (docPai.isPendenteDeAssinatura())
+							throw new AplicacaoException("Não foi possível criar o documento pois o documento pai ("
+									+ docPai.getSigla() + ") ainda não foi assinado.");
+
+						doc.setExMobilPai(mobPai);
+					}
+
+					if (req.siglamobilfilho != null) {
+						ExMobil mobFilho = SwaggerHelper.buscarEValidarMobil(req.siglamobilfilho, so, req, resp,
+								"Documento Filho");
+						doc.setExMobilAutuado(mobFilho);
+					}
+
 					ExMobil mob = new ExMobil();
 					mob.setExTipoMobil(dao().consultar(ExTipoMobil.TIPO_MOBIL_GERAL, ExTipoMobil.class, false));
 					mob.setNumSequencia(1);
@@ -85,7 +106,7 @@ public class DocumentosPost implements IDocumentosPost {
 					doc.setExMobilSet(new TreeSet<ExMobil>());
 					doc.getExMobilSet().add(mob);
 				}
-				
+
 				if (req.descricaodocumento != null)
 					doc.setDescrDocumento(req.descricaodocumento);
 
@@ -227,28 +248,6 @@ public class DocumentosPost implements IDocumentosPost {
 				if (doc.getDtRegDoc() == null)
 					doc.setDtRegDoc(dao().dt());
 
-				if (req.siglamobilpai != null) {
-					ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
-					flt.setSigla(req.siglamobilpai);
-					ExMobil mobPai = (ExMobil) dao().consultarPorSigla(flt);
-					if (mobPai != null) {
-						ExDocumento docPai = mobPai.getExDocumento();
-						if (docPai.getExMobilPai() != null)
-							throw new AplicacaoException("Não foi possível criar o documento pois o documento pai ("
-									+ docPai.getSigla() + ") já é documento filho.");
-
-						if (docPai.isPendenteDeAssinatura())
-							throw new AplicacaoException("Não foi possível criar o documento pois o documento pai ("
-									+ docPai.getSigla() + ") ainda não foi assinado.");
-
-						doc.setExMobilPai(mobPai);
-					} else {
-						throw new AplicacaoException("Mobil pai não encontrado.");
-					}
-				} else {
-					doc.setExMobilPai(null);
-				}
-
 				if (req.nivelacesso != null) {
 					doc.setExNivelAcesso(dao().consultarExNidelAcesso(req.nivelacesso));
 				} else {
@@ -282,6 +281,8 @@ public class DocumentosPost implements IDocumentosPost {
 						} else {
 							String[] keyAndValues = conteudo.split("&");
 							for (String keyAndValue : keyAndValues) {
+								if (keyAndValue == null || keyAndValue.trim().isEmpty())
+									continue;
 								int idx = keyAndValue.indexOf("=");
 								String key = keyAndValue.substring(0, idx);
 								String value = keyAndValue.substring(idx + 1);

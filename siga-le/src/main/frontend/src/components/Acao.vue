@@ -5,7 +5,15 @@
     class="btn btn-sm d-print-none mr-2 mb-2"
     :class="{ 'btn-primary': !!metodo, 'btn-light': !metodo }"
   >
-    <span class="fa fa-paper-plane-o"></span>
+    <img
+      :src="
+        $http.options.root + '/siga/css/famfamfam/icons/' + acao.icone + '.png'
+      "
+      width="16px"
+      height="16px"
+      class="mr-1 mb-1"
+      title=""
+    />
     {{ nome }}
   </button>
 </template>
@@ -33,6 +41,10 @@ export default {
     metodo() {
       return this[this.slug];
     },
+
+    numero() {
+      return UtilsBL.onlyLettersAndNumbers(this.$parent.numero);
+    },
   },
   methods: {
     clique() {
@@ -48,7 +60,7 @@ export default {
         Bus.$emit(
           "message",
           "Erro",
-          "Não existe suporte para a ação " + this.slug
+          "Não existe suporte para a ação '" + this.slug + "'"
         );
     },
 
@@ -65,7 +77,7 @@ export default {
       this.emitir("criarVia", undefined, (result) => {
         this.$router.push({
           name: "Documento",
-          params: { numero: result.data.sigla.replace(/[^a-z0-9]/gi, "") },
+          params: { numero: UtilsBL.onlyLettersAndNumbers(result.data.sigla) },
         });
       });
     },
@@ -73,7 +85,39 @@ export default {
     editar() {
       this.$router.push({
         name: "DocumentoEditar",
-        params: { numero: this.$parent.numero.replace(/[^a-z0-9]/gi, "") },
+        params: { numero: this.numero },
+      });
+    },
+
+    incluir_documento() {
+      this.$router.push({
+        name: "DocumentoNovo",
+        params: { siglaMobilPai: this.$parent.mob.sigla },
+      });
+    },
+
+    autuar() {
+      this.$router.push({
+        name: "DocumentoNovo",
+        params: { siglaMobilFilho: this.$parent.mob.sigla },
+      });
+    },
+
+    ver_dossie() {
+      this.$router.push({
+        name: "DocumentoDossie",
+        params: {
+          numero: UtilsBL.onlyLettersAndNumbers(this.$parent.mob.sigla),
+          sigla: this.$parent.mob.sigla,
+        },
+      });
+    },
+
+    excluir() {
+      this.emitir("excluir", undefined, () => {
+        this.$router.push({
+          name: "Home",
+        });
       });
     },
 
@@ -81,7 +125,7 @@ export default {
       this.emitir("finalizar", undefined, (result) => {
         this.$router.push({
           name: "Documento",
-          params: { numero: result.data.sigla.replace(/[^a-z0-9]/gi, "") },
+          params: { numero: UtilsBL.onlyLettersAndNumbers(result.data.sigla) },
         });
       });
     },
@@ -90,7 +134,7 @@ export default {
       this.emitir("duplicar", undefined, (result) => {
         this.$router.push({
           name: "DocumentoEditar",
-          params: { numero: result.data.sigla.replace(/[^a-z0-9]/gi, "") },
+          params: { numero: UtilsBL.onlyLettersAndNumbers(result.data.sigla) },
         });
       });
     },
@@ -133,6 +177,10 @@ export default {
 
     juntar: function() {
       this.emitir("juntarModal");
+    },
+
+    incluir_cossignatario: function() {
+      this.emitir("incluirCossignatarioModal");
     },
 
     vincular: function() {

@@ -3,17 +3,11 @@
     <div class="row">
       <div class="col-md-12">
         <h4 v-if="sigla" class="text-center mt-3 mb-0">Editar {{ sigla }}</h4>
-        <h4 v-else class="text-center mt-3 mb-0">Criar Documento</h4>
-      </div>
-      <div class="col col-sm-12" v-if="errormsg">
-        <p class="alert alert-danger"><strong>Erro!</strong> {{ errormsg }}</p>
-      </div>
-    </div>
-    <div class="row pt-5" v-if="warningmsg">
-      <div class="col col-sm-12">
-        <p class="alert alert-warning">
-          <strong>Atenção!</strong> {{ warningmsg }}
-        </p>
+        <h4 v-else class="text-center mt-3 mb-0">
+          {{
+            siglaMobilPai ? "Incluir em " + siglaMobilPai : siglaMobilFilho ? "Autuando " + siglaMobilFilho : "Criar Documento"
+          }}
+        </h4>
       </div>
     </div>
     <validation-observer v-slot="{ invalid }">
@@ -90,12 +84,6 @@
               label="Matrícula do Destinatário"
             />
           </div>
-          <em
-            v-if="errormsg &amp;&amp; errormsg !== ''"
-            for="processos"
-            class="invalid"
-            >{{ errormsg }}</em
-          >
         </div>
         <div class="form-group">
           <my-classificacao
@@ -176,6 +164,8 @@ export default {
       nivelacesso: "PUBLICO",
       numero: undefined,
       sigla: undefined,
+      siglaMobilPai: this.$route.params.siglaMobilPai,
+      siglaMobilFilho: this.$route.params.siglaMobilFilho,
     };
   },
   watch: {
@@ -256,7 +246,19 @@ export default {
     carregarModelos: async function() {
       this.errormsg = undefined;
       Bus.$emit("block", 20);
-      await this.$http.get("sigaex/api/v1/modelos").then(
+      var url = "sigaex/api/v1/modelos";
+      if (this.siglaMobilPai)
+        url =
+          "sigaex/api/v1/documentos/" +
+          UtilsBL.onlyLettersAndNumbers(this.siglaMobilPai) +
+          "/modelos-para-incluir";
+      else if (this.siglaMobilFilho)
+        url =
+          "sigaex/api/v1/documentos/" +
+          UtilsBL.onlyLettersAndNumbers(this.siglaMobilFilho) +
+          "/modelos-para-autuar";
+
+      await this.$http.get(url).then(
         (response) => {
           Bus.$emit("release");
           this.modelos = response.data.list;
@@ -335,6 +337,8 @@ export default {
             descricaodocumento: this.descricao,
             nivelacesso: this.nivelacesso,
             entrevista: formParams,
+            siglamobilpai: this.siglaMobilPai,
+            siglamobilfilho: this.siglaMobilFilho,
           },
           { block: true }
         )

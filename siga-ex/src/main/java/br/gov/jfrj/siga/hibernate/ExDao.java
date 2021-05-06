@@ -30,12 +30,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
-
 import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -54,10 +54,8 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
-import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -72,6 +70,7 @@ import br.gov.jfrj.siga.ex.ExEmailNotificacao;
 import br.gov.jfrj.siga.ex.ExEstadoDoc;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExItemDestinacao;
+import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
@@ -100,7 +99,6 @@ import br.gov.jfrj.siga.persistencia.ExDocumentoDaoFiltro;
 import br.gov.jfrj.siga.persistencia.ExMobilApiBuilder;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.persistencia.ExModeloDaoFiltro;
-import br.gov.jfrj.sigale.ex.vo.ExMobilApiVO;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class ExDao extends CpDao {
@@ -695,10 +693,21 @@ public class ExDao extends CpDao {
 			query.setMaxResults(itemPagina);
 		}
 		List l = query.getResultList();
+		List<Object[]> l2 = new ArrayList<Object[]>(); 
+		if (l != null && l.size() > 0) {
+			query = em().createQuery("select doc, mob, label from ExMarca label"
+					+ " inner join label.exMobil mob inner join mob.exDocumento doc"
+					+ " where label.idMarca in (:listIdMarca)");
+			query.setParameter("listIdMarca", l);
+			l2 = query.getResultList();
+			Collections.sort(l2, Comparator.comparing( item -> l.indexOf(
+				    		Long.valueOf (((ExMarca) (item[2])).getIdMarca()))));
+		}
+		
 		long tempoTotal = System.nanoTime() - tempoIni;
 		// System.out.println("consultarPorFiltroOtimizado: " +
 		// tempoTotal/1000000 + " ms -> " + query + ", resultado: " + l);
-		return l;
+		return l2;
 	}
 
 	private IMontadorQuery carregarPlugin() {

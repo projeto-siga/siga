@@ -30,7 +30,7 @@ public class MontadorQuery implements IMontadorQuery {
 		if (apenasCount)
 			sbf.append("select count(1) from ExMarca label inner join label.exMobil mob inner join mob.exDocumento doc");
 		else
-			sbf.append("select doc, mob, label from ExMarca label inner join label.exMobil mob inner join mob.exDocumento doc");
+			sbf.append("select label.idMarca from ExMarca label inner join label.exMobil mob inner join mob.exDocumento doc");
 
 		//Nato: desabilitei este where pois causava muito impacto na velocidade da consulta. Precisamos criar uma variavel denormalizada mais a frente para resolver esse problema.
 		//sbf.append(" where not exists (from ExMovimentacao where exTipoMovimentacao.idTpMov = 10 and (exMobil.idMobil = mob.idMobil ");
@@ -183,15 +183,15 @@ public class MontadorQuery implements IMontadorQuery {
 
 		if (!apenasCount) {
 			if (flt.getOrdem() == null || flt.getOrdem() == 0)
-				sbf.append(" order by doc.dtDoc desc, doc.idDoc desc, label.idMarca desc");
+				sbf.append(" order by doc.dtDoc desc, doc.idDoc desc");
 			else if (flt.getOrdem() == 1)
-				sbf.append(" order by label.dtIniMarca desc, doc.idDoc desc, label.idMarca desc");
+				sbf.append(" order by label.dtIniMarca desc, doc.idDoc desc");
 			else if (flt.getOrdem() == 2)
-				sbf.append(" order by doc.anoEmissao desc, doc.numExpediente desc, mob.numSequencia, doc.idDoc desc, label.idMarca desc");
+				sbf.append(" order by doc.anoEmissao desc, doc.numExpediente desc, mob.numSequencia, doc.idDoc desc");
 			else if (flt.getOrdem() == 3)
-				sbf.append(" order by doc.dtFinalizacao desc, doc.idDoc desc, label.idMarca desc");
+				sbf.append(" order by doc.dtFinalizacao desc, doc.idDoc desc");
 			else if (flt.getOrdem() == 4)
-				sbf.append(" order by doc.idDoc desc, label.idMarca desc");
+				sbf.append(" order by doc.idDoc desc");
 		}
 		
 		String s = sbf.toString();

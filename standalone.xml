@@ -49,7 +49,7 @@
         <property name="siga.cabecalho.titulo" value="Prefeitura da Cidade do Rio de Janeiro"/>
         <property name="siga.cabecalho.logo" value="/sigaex/imagens/BrasaoPCRJ.png"/>
 
-        <property name="sigaex.modelos.cabecalho.brasao" value="contextpath/imagens/BrasaoPCRJ.png""/>
+        <property name="sigaex.modelos.cabecalho.brasao" value="contextpath/imagens/BrasaoPCRJ.png"/>
         <property name="sigaex.modelos.cabecalho.titulo" value="PREFEITURA DA CIDADE DO RIO DE JANEIRO"/>
         <property name="sigaex.modelos.cabecalho.subtitulo" value="Comitê Técnico do Processo.rio"/>
 

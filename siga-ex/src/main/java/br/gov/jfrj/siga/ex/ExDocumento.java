@@ -54,7 +54,7 @@ import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -2700,7 +2700,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			else if (o instanceof DpLotacao)
 				s += ((DpLotacao) o).getNomeLotacao()+ " - " +((DpLotacao) o).getSiglaCompleta() + "/" + ((DpLotacao) o).getOrgaoUsuario();
 			else if (o instanceof DpPessoa)
-				s += ((DpPessoa) o).getNomePessoa() + " - " + ((DpPessoa) o).getSiglaCompleta() + "/" + getTitular().getLotacao().getSigla();
+				s += ((DpPessoa) o).getNomePessoa() + " - " + ((DpPessoa) o).getSiglaCompleta() + "/" + ((DpPessoa) o).getLotacao().getSigla();
 			else
 				s += o.toString();
 		}
@@ -2941,5 +2941,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return b;
 	}
 
+	public List<Long> getIdsDeAssinantes() {
+		List<Long> l = new ArrayList<>();
+		for (DpPessoa subscritor : getSubscritorECosignatarios()) {
+			if (isAssinadoPelaPessoaComTokenOuSenha(subscritor)) 
+				l.add(subscritor.getId());
+		}
+		return l;
+	}
 
 }

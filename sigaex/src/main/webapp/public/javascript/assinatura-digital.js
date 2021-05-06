@@ -58,6 +58,12 @@ function AssinarDocumentos(copia, politica, juntar, tramitar, exibirNoProtocolo)
 	identificarOperacoes();
 
 	var tipo = verificarTipoDeAssinatura();
+	
+	if (tipo == 0) {
+		window.alert("Antes de assinar ou autenticar, é necessário selecionar pelo menos um documento.");
+		gAssinando = false;
+		return;
+	}
 
 	if (tipo == 1 || tipo == 3) {
 		if (!TestarAssinaturaDigital()) {
@@ -174,8 +180,8 @@ var providerAssijusPopup = {
 						cont({sha1: xhr.sha1, sha256: xhr.sha256});
 					},
 					error : function(xhr) {
-						errormsg.push("Erro calculando hash de documento. " + xhr.responseJSON.errormsg);
-						cont();
+						errormsg.push(id + " - Erro calculando hash de documento: " + xhr.responseJSON.errormsg);
+						cont({});
 					}
 				});
 			},
@@ -196,21 +202,21 @@ var providerAssijusPopup = {
 					},
 					error : function(xhr) {
 						console.log(xhr);
-						errormsg.push("Erro na gravação da assinatura. " + xhr.responseJSON.errormsg);
-						cont();
+						errormsg.push(id + " - Erro na gravação da assinatura: " + xhr.responseJSON.errormsg);
+						cont({});
 					}
 				});
 			},
 			
 			errorCallback: function(id, err, cont) {
-				result = "Erro na gravação da assinatura. " + err;
+				errormsg.push(id + " - Erro na gravação da assinatura. " + err);
 				cont();
 			},
 			
 			endCallback: function() {
 				gAssinando = false;
 				if (this.errormsg.length > 0)
-					window.alert(this.errormsg);
+					window.alert(this.errormsg.join(', '));
 				else
 					window.location.href = urlRedirect;
 			}

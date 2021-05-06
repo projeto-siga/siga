@@ -16,7 +16,7 @@ import br.gov.jfrj.siga.api.v1.ISigaApiV1.Pessoa;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.PessoasGetRequest;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.PessoasGetResponse;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;

@@ -97,7 +97,7 @@ ${meta}
 
 <c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
 
-<c:set var="siga_version"  scope="request" value="10.0.6.7" />
+<c:set var="siga_version"  scope="request" value="10.0.8.3" />
 
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
@@ -136,7 +136,7 @@ ${meta}
 		<c:set var="sub_menu_class" value="bg-secondary text-white" />
 		
 		<c:set var="navbar_class" value="navbar-dark bg-primary" />
-		<c:if test="${f:resource('/siga.ambiente') ne 'prod'}">
+		<c:if test="${f:resource('/siga.ambiente') != 'prod'}">
 			<c:set var="navbar_class" value="navbar-dark bg-secondary" />
 		</c:if>
 		

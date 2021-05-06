@@ -177,7 +177,7 @@
 				</div>
 			</c:if>
 			<c:if
-				test="${not empty erroEmConfiguracao or tipoDeConfiguracao.ativo('CLASSIFICACAO')}">
+				test="${not empty erroEmConfiguracao or tipoDeConfiguracao.ativo('NIVEL_DE_ACESSO')}">
 				<div class="col-sm-6 col-lg-4">
 					<div class="form-group">
 						<label>Nível de acesso</label>

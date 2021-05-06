@@ -25,10 +25,11 @@
 				</h5>
 			</div>
 			<div class="card-body">
-				<form action="anexar_arquivo_auxiliar_gravar" method="POST" onsubmit="sbmt.disabled=true;"
+				<form action="anexar_arquivo_auxiliar_gravar" method="post" onsubmit="sbmt.disabled=true;"
 					enctype="multipart/form-data" class="form">
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="sigla" value="${sigla}" />
+					<p class="alert alert-warning"><strong>Atenção!</strong> O arquivo auxiliar serve apenas para consulta e edição. Não fará parte do expediente ou processo. Para esse fim, deve ser utilizada a opção "anexar" ou "incluir documento​".</p>
 					<div class="row">
 						<div class="col-sm-6">
 							<div class="form-control custom-file">

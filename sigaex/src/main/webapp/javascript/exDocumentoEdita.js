@@ -47,7 +47,7 @@ function sbmt(id) {
 	if (id && !IsRunningAjaxRequest()) {
 		ReplaceInnerHTMLFromAjaxResponse('recarregar', frm, id);
 	} else {
-		frm.action = 'recarregar';
+		frm.action = id !== 'undefined' ? 'recarregar' : 'editar?modelo=' + document.getElementsByName('exDocumentoDTO.idMod')[0].value;
 		frm.submit();
 	}
 	return;
@@ -589,3 +589,22 @@ $(window).load(function() {
 	var observadorDeAlteracoesNoDocumento = new SigaSP.Documento();
 	observadorDeAlteracoesNoDocumento.observar();	
 });
+
+updateURL = function() {
+	if (!history || !history.replaceState)
+		return;
+	
+	var id = document.getElementsByName('exDocumentoDTO.id')[0].value;
+	if (id)
+		return;
+	
+	var modelo = document.getElementsByName('exDocumentoDTO.idMod')[0].value;
+	var lotaDestFields = document.getElementsByName('exDocumentoDTO.lotacaoDestinatarioSel.id');
+	var lotaDest = lotaDestFields && lotaDestFields[0].value ? '&lotaDest=' + lotaDestFields[0].value : '';
+	var classifFields = document.getElementsByName('exDocumentoDTO.classificacaoSel.id');
+	var classif = classifFields && classifFields[0].value ? '&classif=' + classifFields[0].value : '';
+	var descrFields = document.getElementsByName('exDocumentoDTO.descrDocumento');
+	var descr = descrFields && descrFields[0].value ? '&descr=' + descrFields[0].value : '';
+	
+	history.replaceState(null, null, 'editar?modelo=' + modelo + lotaDest + classif + descr);
+}

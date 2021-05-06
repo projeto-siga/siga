@@ -1849,8 +1849,10 @@ public class CpDao extends ModeloDao {
 	}
 
 	public Date consultarDataEHoraDoServidor() {
+
 		if (ContextoPersistencia.dt() != null)
 			return ContextoPersistencia.dt();
+
 		String sql = "SELECT sysdate from dual";
 		String dialect = System.getProperty("siga.hibernate.dialect");
 		if (dialect != null && dialect.contains("MySQL"))
@@ -1860,6 +1862,7 @@ public class CpDao extends ModeloDao {
 		Date dt = (Date) query.getSingleResult();
 		ContextoPersistencia.setDt(dt);
 		return dt; 
+
 	}
 
 	public List<CpConfiguracao> consultarConfiguracoesDesde(Date desde) {

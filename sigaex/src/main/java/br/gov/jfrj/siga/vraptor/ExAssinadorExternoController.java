@@ -551,7 +551,8 @@ public class ExAssinadorExternoController extends ExController {
 		}
 
 		String s = json.toString();
-		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(500);
+		response.setStatus(500);
+		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s);
 		response.flushBuffer();
 		throw e;
 	}

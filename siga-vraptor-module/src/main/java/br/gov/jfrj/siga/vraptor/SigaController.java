@@ -504,7 +504,8 @@ public class SigaController {
 		}
 
 		String s = json.toString(4);
-		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(500);
+		response.setStatus(500);
+		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s);
 		request.setAttribute("jsonError", s);
 		response.flushBuffer();
 		throw e;

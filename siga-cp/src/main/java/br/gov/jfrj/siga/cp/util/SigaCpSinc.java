@@ -290,6 +290,7 @@ public class SigaCpSinc {
 	}
 
 	public String importxml(String sigla, int maxSinc, boolean modoLog, InputStream st) throws Exception {
+
 		dt = new Date();
 		log("--- Processando " + dt + " ---");
 

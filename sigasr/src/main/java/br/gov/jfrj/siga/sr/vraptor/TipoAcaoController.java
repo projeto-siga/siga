@@ -18,6 +18,7 @@ import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
 import br.gov.jfrj.siga.sr.model.SrTipoAcao;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
+import br.gov.jfrj.siga.vraptor.Transacional;
 
 @Controller
 @Path("app/tipoAcao")
@@ -54,6 +55,7 @@ public class TipoAcaoController extends SrController {
 		result.include("tipoAcao", tipoAcao);
 	}
 
+	@Transacional
 	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/gravar")
 	public void gravar(SrTipoAcao tipoAcao) throws Exception {
@@ -64,6 +66,7 @@ public class TipoAcaoController extends SrController {
 		result.use(Results.http()).body(tipoAcao.toJson());
 	}
 
+	@Transacional
 	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/desativar")
 	public void desativar(Long id, boolean mostrarDesativados) throws Exception {
@@ -73,6 +76,7 @@ public class TipoAcaoController extends SrController {
 		result.use(Results.http()).body(tipoAcao.toJson());
 	}
 
+	@Transacional
 	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/reativar")
 	public void reativar(Long id, boolean mostrarDesativados) throws Exception {

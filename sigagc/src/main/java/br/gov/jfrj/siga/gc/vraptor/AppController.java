@@ -381,6 +381,7 @@ public class AppController extends GcController {
 		result.redirectTo(this).estatisticaGeral();
 	}
 
+	@Get("/app/estatisticaGeral")
 	public void estatisticaGeral() throws Exception {
 		// List<GcInformacao> lista = GcInformacao.all().fetch();
 

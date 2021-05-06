@@ -33,6 +33,7 @@ import br.gov.jfrj.siga.sr.model.SrPrioridade;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.uteis.PessoaLotaFuncCargoSelecaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
+import br.gov.jfrj.siga.vraptor.Transacional;
 import edu.emory.mathcs.backport.java.util.Arrays;
 
 @Controller
@@ -81,6 +82,7 @@ public class AcordoController extends SrController {
         PessoaLotaFuncCargoSelecaoHelper.adicionarCamposSelecao(result);
     }
 
+	@Transacional
     @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/gravar")
     public void gravarAcordo(SrAcordo acordo) throws Exception {
@@ -107,6 +109,7 @@ public class AcordoController extends SrController {
         return unidadeMedida != null && !unidadeMedida.isEmpty();
     }
 
+	@Transacional
     @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/desativar")
     public void desativar(Long id) throws Exception {
@@ -116,7 +119,8 @@ public class AcordoController extends SrController {
         result.use(Results.http()).body(acordo.toJson());
     }
 
-    @AssertAcesso(ADM_ADMINISTRAR)
+	@Transacional
+	@AssertAcesso(ADM_ADMINISTRAR)
     @Path("/reativar")
     public void reativar(Long id) throws Exception {
         SrAcordo acordo = SrAcordo.AR.findById(id);
@@ -136,6 +140,7 @@ public class AcordoController extends SrController {
         result.use(Results.http()).body(SrConfiguracao.convertToJSon(abrangencias));
     }
 
+	@Transacional
     @AssertAcesso(ADM_ADMINISTRAR)
     public void gravarAbrangencia(SrConfiguracao associacao, Long associacaoAcordoId, Long associacaoCpGrupoId, 
     								List<SrItemConfiguracao> itemConfiguracaoSet, 
@@ -216,6 +221,7 @@ public class AcordoController extends SrController {
     }
     
 
+	@Transacional
     @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/desativarAbrangenciaEdicao")
     public void desativarAbrangenciaEdicao(Long idAcordo, Long idAssociacao) throws Exception {

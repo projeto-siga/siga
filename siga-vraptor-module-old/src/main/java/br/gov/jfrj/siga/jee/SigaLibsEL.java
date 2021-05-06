@@ -316,6 +316,7 @@ public class SigaLibsEL {
 		}
 		return url.trim();
 	}
+	
 
 	public static String urlEncode(String value)
 			throws UnsupportedEncodingException {

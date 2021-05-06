@@ -3398,7 +3398,6 @@ public class ExBL extends CpBL {
 			// Nato: para obter o numero do TMP na primeira gravação
 			boolean primeiraGravacao = false;
 			if (doc.getIdDoc() == null) {
-				// doc = ExDao.getInstance().gravar(doc);
 				doc = salvarDocSemSalvarArq(doc);
 				primeiraGravacao = true;
 			}
@@ -3735,7 +3734,6 @@ public class ExBL extends CpBL {
 			nivel = doc.getExNivelAcesso();
 		doc.setDnmExNivelAcesso(nivel);
 		doc = salvarDocSemSalvarArq(doc);
-		// doc = ExDao.getInstance().gravar(doc);
 		return nivel;
 	}
 
@@ -4113,6 +4111,7 @@ public class ExBL extends CpBL {
 					null, null);
 
 			mov.setExMobilRef(mobPai);
+
 
 			if (idDocEscolha.equals("1")) {
 				mov.setDescrMov("Juntado ao documento " + mov.getExMobilRef().getCodigo().toString());

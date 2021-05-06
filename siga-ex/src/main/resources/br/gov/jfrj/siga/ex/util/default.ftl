@@ -2162,7 +2162,7 @@ Pede deferimento.</span><br/><br/><br/>
 
 [#macro inicioSubscritor sigla]
     <!-- INICIO SUBSCRITOR [#nested/] -->
-    <a href="/sigaex/app/validar-assinatura?pessoa=[#nested/]&sigla=${sigla}">
+    <a class="doc-sign" href="/sigaex/app/validar-assinatura?pessoa=[#nested/]&sigla=${sigla}">
 [/#macro]
 
 

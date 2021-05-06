@@ -553,7 +553,7 @@ public class Documento {
 		// transparent.
 		// sb.append("<html class=\"fisico\"><body style=\"margin:2px; padding:0pt; background-color: #E2EAEE;overflow:visible;\">");
 		try (PrintWriter sb = new PrintWriter(new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8)))) {
-			sb.append("<html><head><base target=\"_parent\"/></head><body style=\"margin:2px; padding:0pt; background-color: "
+			sb.append("<html><head><base target=\"_parent\"/><link rel=\"stylesheet\" href=\"/siga/css/style_siga.css\" type=\"text/css\" media=\"screen, projection\"></head><body style=\"margin:2px; padding:0pt; background-color: "
 					+ (mob.getDoc().isEletronico() ? "#E2EAEE" : "#f1e9c6")
 					+ ";overflow:visible;\">");
 			int f = 0;

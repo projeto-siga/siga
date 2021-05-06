@@ -111,7 +111,12 @@ p.gt-table-action-list a.link-tag {
   color: #fff;
 }
 
-div.divDoc a {
+div.doc-body a {
+	color: inherit;
+	text-decoration: none;
+}
+
+div.documento a {
 	color: inherit;
 	text-decoration: none;
 }

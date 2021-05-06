@@ -536,10 +536,6 @@ public class ExDao extends CpDao {
 			query.setParameter("idMarcadorIni", marcador.getHisIdIni());
 			query.setParameter("dbDatetime", this.consultarDataEHoraDoServidor());
 
-		} else {
-			query.setParameter("id1", 3L);
-			query.setParameter("id2", 14L);
-			query.setParameter("id3", 25L);
 		}
 
 		if (flt.getUltMovRespSelId() != null && flt.getUltMovRespSelId() != 0) {

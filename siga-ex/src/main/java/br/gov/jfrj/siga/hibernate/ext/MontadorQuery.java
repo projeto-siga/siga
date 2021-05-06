@@ -42,7 +42,7 @@ public class MontadorQuery implements IMontadorQuery {
 			sbf.append(" and (dt_ini_marca is null or dt_ini_marca < :dbDatetime)");
 			sbf.append(" and (dt_fim_marca is null or dt_fim_marca > :dbDatetime)");
 		} else {
-			sbf.append(" and not (label.cpMarcador.idMarcador = :id1 or label.cpMarcador.idMarcador = :id2 or label.cpMarcador.idMarcador = :id3)");
+			sbf.append(" and label.cpMarcador.isListavelPesquisa = 1");
 		}
 
 		if (flt.getUltMovRespSelId() != null && flt.getUltMovRespSelId() != 0) {

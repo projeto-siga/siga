@@ -1485,7 +1485,7 @@ public class CpBL {
 				marcador.setIdGrupo(grupoId);
 				marcador.setIdCor(idCor);
 				marcador.setIdIcone(idIcone);
-				marcador.setIsListavelPesquisa(true);
+				marcador.setListavelPesquisaDefault(true);
 				dao().gravarComHistorico(marcador, marcadorAnt, dtAtivacao, identidade);
 			} else {
 				throw new AplicacaoException ("Marcador não existente para esta " + msgLotacao 
@@ -1502,7 +1502,7 @@ public class CpBL {
 			marcador.setIdIcone(idIcone);
 			marcador.setDpLotacaoIni(idFinalidade.getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO ? lotacao.getLotacaoInicial() : null);
 			marcador.setOrdem(ordem);
-			marcador.setIsListavelPesquisa(true);
+			marcador.setListavelPesquisaDefault(true);
 			dao().gravarComHistorico(marcador, null, dtAtivacao, identidade);
 		}
 	}

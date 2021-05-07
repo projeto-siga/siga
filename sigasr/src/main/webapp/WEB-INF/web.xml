@@ -31,7 +31,7 @@
 	
 		<context-param>
     	<param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
-    	<param-value>messages_TRF2</param-value>
+    	<param-value>messages_PCRJ</param-value>
   	</context-param>
 
 	<context-param>

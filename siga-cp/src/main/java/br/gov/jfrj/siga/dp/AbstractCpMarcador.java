@@ -107,6 +107,9 @@ public abstract class AbstractCpMarcador extends HistoricoAuditavelSuporte imple
 	@Column(name = "HIS_ATIVO")
 	private Integer hisAtivo;
 
+	@Column(name = "LISTAVEL_PESQUISA_DEFAULT")
+	private Integer listavelPesquisaDefault;
+
 	public Long getIdMarcador() {
 		return idMarcador;
 	}
@@ -249,6 +252,14 @@ public abstract class AbstractCpMarcador extends HistoricoAuditavelSuporte imple
 
 	public void setIdFinalidade(CpMarcadorFinalidadeEnum finalidade) {
 		this.idFinalidade = finalidade;
+	}
+
+	public boolean isListavelPesquisaDefault() {
+		return (listavelPesquisaDefault != null && listavelPesquisaDefault == 1? true : false);
+	}
+
+	public void setListavelPesquisaDefault(boolean listavelPesquisaDefault) {
+		this.listavelPesquisaDefault = (listavelPesquisaDefault? 1 : 0);
 	}
 
 }

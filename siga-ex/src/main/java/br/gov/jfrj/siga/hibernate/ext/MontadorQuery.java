@@ -30,7 +30,7 @@ public class MontadorQuery implements IMontadorQuery {
 		if (apenasCount)
 			sbf.append("select count(1) from ExMarca label inner join label.exMobil mob inner join mob.exDocumento doc");
 		else
-			sbf.append("select doc, mob, label from ExMarca label inner join label.exMobil mob inner join mob.exDocumento doc");
+			sbf.append("select label.idMarca from ExMarca label inner join label.exMobil mob inner join mob.exDocumento doc");
 
 		//Nato: desabilitei este where pois causava muito impacto na velocidade da consulta. Precisamos criar uma variavel denormalizada mais a frente para resolver esse problema.
 		//sbf.append(" where not exists (from ExMovimentacao where exTipoMovimentacao.idTpMov = 10 and (exMobil.idMobil = mob.idMobil ");
@@ -42,7 +42,7 @@ public class MontadorQuery implements IMontadorQuery {
 			sbf.append(" and (dt_ini_marca is null or dt_ini_marca < :dbDatetime)");
 			sbf.append(" and (dt_fim_marca is null or dt_fim_marca > :dbDatetime)");
 		} else {
-			sbf.append(" and not (label.cpMarcador.idMarcador = :id1 or label.cpMarcador.idMarcador = :id2 or label.cpMarcador.idMarcador = :id3)");
+			sbf.append(" and label.cpMarcador.listavelPesquisaDefault = 1");
 		}
 
 		if (flt.getUltMovRespSelId() != null && flt.getUltMovRespSelId() != 0) {

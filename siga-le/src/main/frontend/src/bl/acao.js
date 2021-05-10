@@ -25,6 +25,9 @@ import DefinirPerfil from "./acao/definirPerfil";
 import DefinirAcesso from "./acao/definirAcesso";
 import Excluir from "./acao/excluir";
 import IncluirCossignatario from "./acao/incluirCossignatario";
+import Receber from "./acao/receber";
+import Refazer from "./acao/refazer";
+import Desentranhar from "./acao/desentranhar";
 
 export default {
     bus: Bus,
@@ -52,6 +55,9 @@ export default {
         DefinirAcesso.registrar();
         Excluir.registrar();
         IncluirCossignatario.registrar();
+        Receber.registrar();
+        Refazer.registrar();
+        Desentranhar.registrar();
     },
 
     lotePadrao: function (gerundio, evento1, evento2, evento3, url, documentos, cont, params) {
@@ -99,4 +105,5 @@ export default {
                 }
             );
     },
+
 }

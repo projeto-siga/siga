@@ -1,96 +1,37 @@
 <template>
   <div class="container-fluid content profile">
     <div class="row xd-print-block mt-3 mb-3">
-      <div class="col-md-12">
+      <div class="col-12">
         <h4 class="text-center mb-0">Dossiê {{ sigla }}</h4>
       </div>
     </div>
-    <div class="mt-3 mb-3">
-      <a
-        id="visualizar-movimentacoes"
-        class="once btn btn-sm btn-info text-white link-tag"
-        accesskey="m"
-        href="/sigaex/app/expediente/doc/exibir?sigla=TRF2-PES-201901238-V01"
-        title=""
-        ><img
-          src="/siga/css/famfamfam/icons/application_view_list.png"
-          class="mr-1 mb-1"
-          title=""
-        />Visualizar&nbsp;<u>M</u>ovimentações</a
-      >
-
-      <span class="pl-2"></span>
-      <button
-        type="button"
-        class="link-btn btn btn-secondary btn-sm align-center"
-        id="TelaCheia"
-        data-toggle="button"
-        aria-pressed="false"
-        autocomplete="off"
-        accesskey="t"
-        onclick="javascript: telaCheia(this);"
-      >
-        <u>T</u>ela Cheia
-      </button>
-      <span class="pl-2"></span>
-      <div class="d-inline-block align-center mb-2 mt-2">
-        <img
-          src="/siga/css/famfamfam/icons/wrench.png"
-          class="mr-1 mb-1"
-          title=""
-        />Preferência:
-
-        <span class="pl-2"></span>
-        <span style="white-space: nowrap;">
-          <input
-            type="radio"
-            id="radioHTML"
-            name="formato"
-            value="html"
-            accesskey="h"
-            checked="checked"
-            onclick="exibir(htmlAtual,pdfAtual,'');"
-          />
-          <u>H</u>TML&nbsp;
-        </span>
-        <span class="pl-2"></span>
-        <span style="white-space: nowrap;">
-          <input
-            type="radio"
-            id="radioPDF"
-            name="formato"
-            value="pdf"
-            accesskey="p"
-            onclick="exibir(htmlAtual,pdfAtual,'');"
-          />
-          <u>P</u>DF -
-          <a
-            id="pdflink"
-            accesskey="a"
-            href="/sigaex/app/arquivo/exibir?idVisualizacao=&amp;arquivo=TRF2PES201901238V01.pdf&amp;completo=1"
+    <div class="row justify-content-center mt-3 mb-3">
+      <div class="col-12">
+        <b-form-radio-group
+          class="text-center"
+          id="radio-group-2"
+          v-model="tipo"
+          name="radio-sub-component"
+        >
+          <b-form-radio value="html">HTML</b-form-radio>
+          <b-form-radio value="pdf"
+            >PDF -
+            <a id="pdflink" accesskey="a" :href="urlAbrirPdf" target="_blank">
+              <u>a</u>brir</a
+            ></b-form-radio
           >
-            <u>a</u>brir</a
+          <b-form-radio value="pdfSemMarcas"
+            >PDF sem Marcas -
+            <a
+              id="pdflink"
+              accesskey="r"
+              :href="urlAbrirPdfSemMarcas"
+              target="_blank"
+            >
+              abri<u>r</u></a
+            ></b-form-radio
           >
-        </span>
-        <span class="pl-2"></span>
-        <span style="white-space: nowrap;">
-          <input
-            type="radio"
-            id="radioPDFSemMarcas"
-            name="formato"
-            accesskey="s"
-            value="pdfsemmarcas"
-            onclick="exibir(htmlAtual,pdfAtual,'semmarcas/');"
-          />
-          PDF <u>s</u>em marcas -
-          <a
-            id="pdfsemmarcaslink"
-            accesskey="b"
-            href="/sigaex/app/arquivo/exibir?idVisualizacao=&amp;arquivo=TRF2PES201901238V01.pdf&amp;completo=1&amp;semmarcas=1"
-          >
-            a<u>b</u>rir</a
-          >
-        </span>
+        </b-form-radio-group>
       </div>
     </div>
     <div class="row">
@@ -115,6 +56,21 @@
             </tr>
           </tbody>
         </table>
+        <router-link
+          class="btn btn-secondary mb-4"
+          :to="{ name: 'Documento', params: { numero: numero } }"
+          >Voltar</router-link
+        >
+      </div>
+
+      <div id="right-col" class="col col-12 col-md-8">
+        <div
+          id="paipainel"
+          style="margin: 0px; padding: 0px; border: 0px solid black; clear: both; overflow: hidden;"
+        >
+          <div ref="html" v-html="html"></div>
+          <my-iframe v-if="src" :src="src"></my-iframe>
+        </div>
       </div>
     </div>
   </div>
@@ -140,34 +96,49 @@ export default {
       fixed: undefined,
       modified: undefined,
       numero: undefined,
+      numeroAtivo: undefined,
+      completo: undefined,
       sigla: undefined,
       lista: undefined,
-      orgao: undefined,
-      perfil: undefined,
-      gui: {},
-      filtro: undefined,
-      errormsg: undefined,
-      warningmsg: undefined,
-      partes: false,
-      dadosComplementares: false,
-      doc: undefined,
-      mob: undefined,
-      marcadores: [],
-      marcasativas: true,
-      notas: false,
-      tramitacao: undefined,
+      tipo: "html",
+      html: undefined,
+      src: undefined,
     };
   },
   watch: {
     "$route.params.numero": function() {
       this.carregarDossie(this.$route.params.numero);
     },
+    tipo: function() {
+      this.mostrar();
+    },
   },
-  computed: {},
+  computed: {
+    urlAbrirPdf() {
+      return (
+        this.$http.options.root +
+        "sigaex/app/arquivo/exibir?idVisualizacao=&arquivo=" +
+        this.numeroAtivo +
+        ".pdf" +
+        (this.completo ? "&completo=1" : "")
+      );
+    },
+    urlAbrirPdfSemMarcas() {
+      return (
+        this.$http.options.root +
+        "sigaex/app/arquivo/exibir?idVisualizacao=&arquivo=" +
+        this.numeroAtivo +
+        ".pdf&semmarcas=1" +
+        (this.completo ? "&completo=1" : "")
+      );
+    },
+  },
   methods: {
     carregarDossie: function() {
       this.errormsg = undefined;
       this.numero = this.$route.params.numero;
+      this.numeroAtivo = this.numero;
+      this.html = undefined;
       this.sigla = this.$route.params.sigla
         ? this.$route.params.sigla
         : this.numero;
@@ -183,6 +154,19 @@ export default {
           (response) => {
             Bus.$emit("release");
             this.lista = response.data.list;
+            this.lista.push({
+              descr: "COMPLETO",
+              mobil: this.numero,
+              completo: true,
+            });
+            if (/\dV\d/gm.exec(this.numero) !== null)
+              this.lista.push({
+                descr: "VOLUMES",
+                mobil: this.numero,
+                completo: true,
+                volumes: true,
+              });
+            this.show(this.lista[this.lista.length - 1]);
           },
           (error) => {
             Bus.$emit("release");
@@ -191,9 +175,99 @@ export default {
         );
     },
 
-    // show(i) {
-    //   "http://localhost:8080/sigaex/app/arquivo/exibir?idVisualizacao=&arquivo=ZZRHU202100001V01.html&completo=1";
-    // },
+    mostrar() {
+      if (this.completo) this.mostrarCompleto();
+      else this.mostrarSimples();
+    },
+
+    mostrarSimples: function() {
+      var url =
+        this.$http.options.root +
+        "sigaex/api/v1/documentos/" +
+        this.numeroAtivo +
+        "/arquivo/produzir?estampa=" +
+        (this.tipo !== "pdfSemMarcas") +
+        (this.completo ? "&completo=true" : "") +
+        "&contenttype=" +
+        (this.tipo === "html" ? "text/html" : "application/pdf");
+
+      if (this.tipo === "html") {
+        this.src = undefined;
+        this.$http.get(url).then(
+          (response) => {
+            this.html = response.body;
+          },
+          (error) => {
+            Bus.$emit("message", "Erro", error.data.errormsg);
+          }
+        );
+      } else {
+        this.src = url;
+        this.html = undefined;
+      }
+    },
+
+    mostrarCompleto: function() {
+      this.$http
+        .get(
+          "sigaex/api/v1/documentos/" +
+            this.numeroAtivo +
+            "/arquivo?estampa=" +
+            (this.tipo !== "pdfSemMarcas") +
+            (this.completo ? "&completo=true" : "") +
+            (this.volumes ? "&volumes=true" : "") +
+            "&contenttype=" +
+            (this.tipo === "html" ? "text/html" : "application/pdf")
+        )
+        .then(
+          (response) => {
+            Bus.$emit(
+              "prgAsyncStart",
+              "PDF Completo",
+              response.data.uuid,
+              () => {
+                var jwt = response.data.jwt;
+                var url =
+                  this.$http.options.root +
+                  "sigaex/api/v1/download/" +
+                  jwt +
+                  "/" +
+                  this.numero +
+                  (this.tipo === "html"
+                    ? ".html"
+                    : this.tipo === "pdf"
+                    ? ".pdf"
+                    : ".pdf");
+
+                if (this.tipo === "html") {
+                  this.src = undefined;
+                  this.$http.get(url).then(
+                    (response) => {
+                      this.html = response.body;
+                    },
+                    (error) => {
+                      Bus.$emit("message", "Erro", error.data.errormsg);
+                    }
+                  );
+                } else {
+                  this.src = url;
+                  this.html = undefined;
+                }
+              }
+            );
+          },
+          (error) => {
+            Bus.$emit("message", "Erro", error.data.errormsg);
+          }
+        );
+    },
+
+    show(i) {
+      this.numeroAtivo = i.mobil;
+      this.completo = !!i.completo;
+      this.volumes = !!i.volumes;
+      this.mostrar();
+    },
   },
 
   components: {
@@ -201,116 +275,3 @@ export default {
   },
 };
 </script>
-
-<!-- Add 'scoped' attribute to limit CSS to this component only -->
-<style scoped>
-.marca-ref:hover,
-.marca-ref:link,
-.marca-ref:visited,
-.marca-ref:active {
-  color: black;
-}
-
-.inquebravel {
-  white-space: nowrap;
-}
-
-.marca {
-  padding-left: 0rem;
-  padding-right: 0rem;
-  margin-right: 0.5rem;
-  margin-bottom: 0;
-  margin-top: 0rem;
-}
-
-.marca-yellow {
-  background-color: yellow;
-}
-
-.marca-blue {
-  background-color: #41f1f4;
-}
-
-.marca-green {
-  background-color: #00ff00;
-}
-
-.marca-pink {
-  background-color: #faf;
-}
-
-.red {
-  color: red;
-}
-
-.protocolado {
-  color: green;
-}
-
-.odd {
-  background-color: rgba(0, 0, 0, 0.05);
-}
-
-.card-consulta-processual div p b {
-  color: #fff;
-}
-
-.card-consulta-processual div p {
-  margin-bottom: 0.5rem;
-}
-
-.card-consulta-processual div i {
-  line-height: 3rem;
-  height: 3rem;
-  color: #fff;
-  float: right;
-  font-size: 4rem;
-  margin: 0rem -0.5rem 0rem 0rem;
-}
-
-.card-text-descr {
-  margin-bottom: 0;
-}
-
-textarea {
-  border: none;
-  background: none;
-  width: 100%;
-  resize: none;
-  overflow: hidden;
-  min-height: 50px;
-}
-
-table.mov tr.despachox {
-  background-color: rgb(240, 255, 240);
-}
-
-table.mov tr.juntadax,
-tr.desentranhamentox {
-  background-color: rgb(229, 240, 255);
-}
-
-table.mov tr.anotacaox {
-  background-color: rgb(255, 255, 255);
-}
-
-table.mov tr.anexacaox {
-  background-color: rgb(255, 255, 215);
-}
-
-table.mov tr.encerramento_volumex {
-  background-color: rgb(255, 218, 218);
-}
-
-.card-body p {
-  margin-bottom: 0.2em;
-}
-
-.card-body div {
-  margin-top: 1em;
-}
-
-.card-body div h6 {
-  margin-bottom: 0.2em;
-}
-</style>

@@ -139,6 +139,19 @@ export default {
       });
     },
 
+    refazer() {
+      this.emitir("refazer", undefined, (result) => {
+        this.$router.push({
+          name: "DocumentoEditar",
+          params: { numero: UtilsBL.onlyLettersAndNumbers(result.data.sigla) },
+        });
+      });
+    },
+
+    receber() {
+      this.emitir("receber");
+    },
+
     assinar() {
       this.emitir("assinarComSenha");
     },
@@ -177,6 +190,10 @@ export default {
 
     juntar: function() {
       this.emitir("juntarModal");
+    },
+
+    desentranhar: function() {
+      this.emitir("desentranharModal");
     },
 
     incluir_cossignatario: function() {

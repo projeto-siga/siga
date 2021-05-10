@@ -27,8 +27,10 @@ public class DocumentosSiglaDossieGet implements IDocumentosSiglaDossieGet {
 			resp.list = new ArrayList<>();
 			for (ExArquivoNumerado an : ans) {
 				DossieItem di = new DossieItem();
-				di.paginaInicial = an.getPaginaInicial().toString();
-				di.paginaFinal = an.getPaginaFinal().toString();
+				if (an.getPaginaInicial() != null)
+					di.paginaInicial = an.getPaginaInicial().toString();
+				if (an.getPaginaFinal() != null)
+					di.paginaFinal = an.getPaginaFinal().toString();
 				di.mobil = an.getReferencia();
 				di.descr = an.getNomeOuDescricao();
 				di.origem = an.getArquivo().getLotacao().getSigla();

@@ -546,6 +546,8 @@ paths:
                 type: string
               tipoDeConteudo:
                 type: string
+              tipoDeDocumento:
+                type: string
               conteudo:
                 type: string
         
@@ -666,6 +668,36 @@ paths:
             $ref: "#/definitions/Error"
 
 
+
+  /documentos/{sigla}/arquivo/produzir:
+    get:
+      description: "<p>Solicita uma execução síncrona de geração de PDF completo contendo ou não os documentos filhos e as estampas (marca d'água, assinatura, etc)."
+      tags: [download]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/contenttype"
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/estampa"
+        - $ref: "#/parameters/completo"
+        - $ref: "#/parameters/volumes"
+        - $ref: "#/parameters/exibirReordenacao"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: file
+          headers:
+            Content-Type:
+              type: string
+              description: text/html
+            Content-Disposition:
+              type: string
+              description: attachment
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
 
   /documentos/{sigla}/arquivo:
     get:
@@ -1154,6 +1186,33 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /documentos/{sigla}/refazer:
+    post:
+      description: "Utilize este método para refazer o documento."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      summary: Duplicar documento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
   /documentos/{sigla}/tramitar:
     post:
       description: "<p>O trâmite é feito em uma <b>via ou volume</b> do documento, portanto necessita ser informada no final da sigla (Ex.: letra 
@@ -1289,6 +1348,34 @@ paths:
           description: Via ou volume não encontrado
           schema:
             $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/desentranhar:
+    post:
+      description: "Utilize este método para desentranhar o documento."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/motivo"
+      summary: Desentranhar documento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento
+                type: string
+              status:
+                type: string
+                default: "OK"
         500:
           description: Error ocurred
           schema:

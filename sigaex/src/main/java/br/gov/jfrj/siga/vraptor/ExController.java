@@ -223,12 +223,16 @@ public class ExController extends SigaController {
 	}
 	
 	protected Boolean podeVisualizarDocumento(final ExMobil mob, DpPessoa titular, Long idVisualizacao) throws Exception {
-		Boolean retorno = Boolean.FALSE;
+		return podeVisualizarDocumento(getCadastrante(), titular, idVisualizacao, mob);
+	}
+
+	public static boolean podeVisualizarDocumento(DpPessoa cadastrante, DpPessoa titular, Long idVisualizacao, final ExMobil mob) throws Exception {
+		boolean retorno = Boolean.FALSE;
 		
 		if(Cp.getInstance().getConf()
-				.podePorConfiguracao(getCadastrante(), getCadastrante().getLotacao(), CpTipoConfiguracao.TIPO_CONFIG_DELEGAR_VISUALIZACAO)) {
+				.podePorConfiguracao(cadastrante, cadastrante.getLotacao(), CpTipoConfiguracao.TIPO_CONFIG_DELEGAR_VISUALIZACAO)) {
 			if(idVisualizacao != null && !idVisualizacao.equals(Long.valueOf(0))) {
-				DpVisualizacao vis = dao().consultar(idVisualizacao, DpVisualizacao.class, false);
+				DpVisualizacao vis = ExDao.getInstance().consultar(idVisualizacao, DpVisualizacao.class, false);
 				
 				if(vis.getDelegado().equals(titular)) {
 					if(Ex.getInstance()

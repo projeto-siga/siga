@@ -2,8 +2,8 @@ package br.gov.jfrj.siga.ex.api.v1;
 
 import java.nio.charset.StandardCharsets;
 
-import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
+import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IModelosIdGet;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.ModelosIdGetRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.ModelosIdGetResponse;
@@ -13,12 +13,6 @@ public class ModelosIdGet implements IModelosIdGet {
 
 	@Override
 	public void run(ModelosIdGetRequest req, ModelosIdGetResponse resp) throws Exception {
-		boolean isEditandoAnexo = false;
-		boolean isCriandoSubprocesso = false;
-		ExMobil mobPai = null;
-		String headerValue = null;
-		boolean isAutuando = false;
-
 		try (ApiContext ctx = new ApiContext(false, true)) {
 			ApiContext.assertAcesso("");
 			ExModelo mod = ExDao.getInstance().consultar(Long.parseLong(req.id), ExModelo.class, false);
@@ -34,6 +28,9 @@ public class ModelosIdGet implements IModelosIdGet {
 //			resp.tipoDeSubscritor;
 //			resp.tipoDeDestinatario;
 			resp.tipoDeConteudo = mod.getConteudoTpBlob();
+			for (ExTipoDocumento tipo : mod.getExFormaDocumento().getExTipoDocumentoSet())
+				resp.tipoDeDocumento = tipo.getDescricaoSimples();
+			
 			byte[] conteudo = mod.getConteudoBlobMod2();
 			resp.conteudo = conteudo != null ? new String(conteudo, StandardCharsets.UTF_8) : null;
 		}

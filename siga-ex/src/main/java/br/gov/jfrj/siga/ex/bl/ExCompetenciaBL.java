@@ -4986,5 +4986,22 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				exTpMov, null, null, null, lotaTitular, titular, null, null, 
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR, null, null, null, null, null, null);
 	}
+	
+	public boolean podeCapturarPDF(final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob) {
+		ExDocumento doc = mob.doc();
+		boolean capturado = doc.getExTipoDocumento().getId() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO
+				|| doc.getExTipoDocumento().getId() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO;
+		if (!capturado)
+			return false;
+		if (!doc.isFinalizado())
+			return true;
+		if (!doc.jaTransferido() && !doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha() && !mob.isJuntado()
+				&& !mob.isJuntadoExterno() && !mob.isCancelada() && doc.getAutenticacoesComTokenOuSenha().isEmpty()
+				&& capturado && (Ex.getInstance().getConf().podePorConfiguracao(titular, lotaTitular,
+						CpTipoConfiguracao.TIPO_CONFIG_TROCAR_PDF_CAPTURADOS))) {
+			return true;
+		}
+		return false;
+	}
 
 }

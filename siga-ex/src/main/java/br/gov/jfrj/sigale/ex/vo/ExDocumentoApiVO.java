@@ -90,6 +90,7 @@ public class ExDocumentoApiVO extends ExApiVO {
 	String dotRelacaoDocs;
 	String dotColaboracao;
 	boolean podeAssinar;
+	boolean podeCapturarPDF;
 	String exTipoDocumentoDescricao;
 
 	// Desabilitado temporariamente
@@ -211,6 +212,7 @@ public class ExDocumentoApiVO extends ExApiVO {
 
 			this.podeAssinar = comp.podeAssinar(titular, lotaTitular, mob) 
 					&& comp.podeAssinarComSenha(titular, lotaTitular, mob);
+			this.podeCapturarPDF = comp.podeCapturarPDF(titular, lotaTitular, mob);
 			
 			ExGraphTramitacao exGraphTramitacao = new ExGraphTramitacao(mob);
 			if (exGraphTramitacao.getNumNodos() > 1)

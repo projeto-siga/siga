@@ -67,7 +67,7 @@ public class DocumentosPost implements IDocumentosPost {
 				cadastrante = so.getCadastrante();
 
 				ExDocumento doc;
-				if (req.sigla != null) {
+				if (req.sigla != null && !req.sigla.trim().isEmpty()) {
 					ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, ctx.getSigaObjects(), req, resp,
 							"Documento a Salvar");
 					if (!Ex.getInstance().getComp().podeEditar(ctx.getTitular(), ctx.getLotaTitular(), mob))

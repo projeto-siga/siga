@@ -44,14 +44,10 @@
                       </button>
                     </div>
                     -->
-          <div
-            class="col col-auto ml-1 mb-3"
-            v-if="$parent.test.properties['siga-le.ws.documental.url'] &amp;&amp; $parent.test.properties['siga-le.env'] !== 'prod' || (perfil === 'procurador' &amp;&amp; $parent.jwt.company === 'pgfn.gov.br')"
-          ></div>
         </div>
         <template v-if="doc">
           <div class="row">
-            <div class="col col-sm-12 col-lg-8">
+            <div class="col col-12 col-lg-8">
               <div
                 class="d-print-none"
                 v-if="errormsg === undefined &amp;&amp; doc.conteudoBlobHtmlString"
@@ -66,6 +62,10 @@
                   </div>
                 </div>
               </div>
+              <my-iframe
+                v-if="!doc.conteudoBlobHtmlString"
+                :src="pdfSource"
+              ></my-iframe>
               <table v-if="filteredMovs" class="table table-sm table-striped">
                 <thead>
                   <tr>
@@ -106,7 +106,7 @@
                 </tbody>
               </table>
             </div>
-            <div class="col col-sm-12 col-lg-4">
+            <div class="col col-12 col-lg-4">
               <h4>Ações</h4>
               <span v-for="acao in filteredAcoes" :key="acao.nome">
                 <acao :acao="acao" />
@@ -351,8 +351,7 @@ export default {
       return this.mob.movs.filter((m) => m.idTpMov != 14 && !m.cancelada);
     },
     filteredAcoes() {
-      if (!this.mob)
-        return undefined;
+      if (!this.mob) return undefined;
       var acoes =
         this.doc.mobs.length > 1
           ? this.mob.acoes.concat(this.doc.mobs[1].acoes)
@@ -361,6 +360,15 @@ export default {
         a.nome > b.nome ? 1 : b.nome > a.nome ? -1 : 0
       );
       return acoes.filter((m) => m.pode);
+    },
+    pdfSource() {
+      if (!this.doc || this.doc.conteudoBlobHtmlString) return undefined;
+      return (
+        this.$http.options.root +
+        "sigaex/api/v1/documentos/" +
+        this.numero +
+        "/arquivo/produzir?contenttype=application/pdf"
+      );
     },
   },
   methods: {

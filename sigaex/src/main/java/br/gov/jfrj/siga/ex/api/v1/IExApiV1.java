@@ -209,6 +209,7 @@ public interface IExApiV1 {
 		public String tipoDeSubscritor;
 		public String tipoDeDestinatario;
 		public String tipoDeConteudo;
+		public String tipoDeDocumento;
 		public String conteudo;
 	}
 
@@ -417,6 +418,68 @@ public interface IExApiV1 {
 
 	public interface IDocumentosSiglaArquivoGet extends ISwaggerMethod {
 		public void run(DocumentosSiglaArquivoGetRequest req, DocumentosSiglaArquivoGetResponse resp) throws Exception;
+	}
+
+	public class DocumentosSiglaArquivoProduzirGetRequest implements ISwaggerRequest {
+		public String contenttype;
+		public String sigla;
+		public Boolean estampa;
+		public Boolean completo;
+		public Boolean volumes;
+		public Boolean exibirReordenacao;
+	}
+
+	public class DocumentosSiglaArquivoProduzirGetResponse implements ISwaggerResponse, ISwaggerResponseFile {
+		public String contenttype = "text/html";
+		public String contentdisposition = "attachment";
+		public Long contentlength;
+		public InputStream inputstream;
+		public Map<String, List<String>> headerFields;
+
+		public String getContenttype() {
+			return contenttype;
+		}
+
+		public void setContenttype(String contenttype) {
+			this.contenttype = contenttype;
+		}
+
+		public String getContentdisposition() {
+			return contentdisposition;
+		}
+
+		public void setContentdisposition(String contentdisposition) {
+			this.contentdisposition = contentdisposition;
+		}
+
+		public Long getContentlength() {
+			return contentlength;
+		}
+
+		public void setContentlength(Long contentlength) {
+			this.contentlength = contentlength;
+		}
+
+		public InputStream getInputstream() {
+			return inputstream;
+		}
+
+		public void setInputstream(InputStream inputstream) {
+			this.inputstream = inputstream;
+		}
+
+		public Map<String, List<String>> getHeaderFields() {
+			return headerFields;
+		}
+
+		public void setHeaderFields(Map<String, List<String>> headerFields) {
+			this.headerFields = headerFields;
+		}
+	}
+
+	public interface IDocumentosSiglaArquivoProduzirGet extends ISwaggerMethod {
+		public void run(DocumentosSiglaArquivoProduzirGetRequest req, DocumentosSiglaArquivoProduzirGetResponse resp)
+				throws Exception;
 	}
 
 	public class DownloadJwtFilenameGetRequest implements ISwaggerRequest {
@@ -697,6 +760,20 @@ public interface IExApiV1 {
 				throws Exception;
 	}
 
+	public class DocumentosSiglaRefazerPostRequest implements ISwaggerRequest {
+		public String sigla;
+	}
+
+	public class DocumentosSiglaRefazerPostResponse implements ISwaggerResponse {
+		public String sigla;
+		public String status;
+	}
+
+	public interface IDocumentosSiglaRefazerPost extends ISwaggerMethod {
+		public void run(DocumentosSiglaRefazerPostRequest req, DocumentosSiglaRefazerPostResponse resp)
+				throws Exception;
+	}
+
 	public class DocumentosSiglaMovimentacaoIdCancelarPostRequest implements ISwaggerRequest {
 		public String sigla;
 		public String id;
@@ -724,6 +801,20 @@ public interface IExApiV1 {
 
 	public interface IDocumentosSiglaTornarSemEfeitoPost extends ISwaggerMethod {
 		public void run(DocumentosSiglaTornarSemEfeitoPostRequest req, DocumentosSiglaTornarSemEfeitoPostResponse resp)
+				throws Exception;
+	}
+
+	public class DocumentosSiglaDesentranharPostRequest implements ISwaggerRequest {
+		public String sigla;
+		public String motivo;
+	}
+
+	public class DocumentosSiglaDesentranharPostResponse implements ISwaggerResponse {
+		public String status;
+	}
+
+	public interface IDocumentosSiglaDesentranharPost extends ISwaggerMethod {
+		public void run(DocumentosSiglaDesentranharPostRequest req, DocumentosSiglaDesentranharPostResponse resp)
 				throws Exception;
 	}
 

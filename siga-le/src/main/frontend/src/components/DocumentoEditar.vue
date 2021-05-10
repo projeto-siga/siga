@@ -5,7 +5,11 @@
         <h4 v-if="sigla" class="text-center mt-3 mb-0">Editar {{ sigla }}</h4>
         <h4 v-else class="text-center mt-3 mb-0">
           {{
-            siglaMobilPai ? "Incluir em " + siglaMobilPai : siglaMobilFilho ? "Autuando " + siglaMobilFilho : "Criar Documento"
+            siglaMobilPai
+              ? "Incluir em " + siglaMobilPai
+              : siglaMobilFilho
+              ? "Autuando " + siglaMobilFilho
+              : "Criar Documento"
           }}
         </h4>
       </div>
@@ -107,6 +111,16 @@
             substantivos, gênero masculino e singular.</small
           >
         </div>
+        <div class="form-group" v-if="capturarPDF">
+          <label>Arquivo PDF (limite de 10MB)</label>
+          <b-form-file
+            v-model="arquivo"
+            :state="Boolean(arquivo)"
+            accept="application/pdf"
+            placeholder="Selecione o arquivo ou solte ele aqui..."
+            drop-placeholder="Solte aqui..."
+          ></b-form-file>
+        </div>
       </form>
       <form ref="form">
         <documento-entrevista :entrevista="entrevistaTemplate" />
@@ -166,6 +180,8 @@ export default {
       sigla: undefined,
       siglaMobilPai: this.$route.params.siglaMobilPai,
       siglaMobilFilho: this.$route.params.siglaMobilFilho,
+      podeCapturarPDF: false,
+      arquivo: undefined,
     };
   },
   watch: {
@@ -192,6 +208,13 @@ export default {
       if (!this.classificacao) return undefined;
       return this.classificacao.split(" - ")[0];
     },
+    capturarPDF() {
+      return (
+        this.modelo &&
+        this.modelo.tipoDeDocumento.includes("Capturado") &&
+        (!this.numero || this.podeCapturarPDF)
+      );
+    },
   },
   methods: {
     carregarDocumento: async function() {
@@ -204,6 +227,7 @@ export default {
         async (response) => {
           Bus.$emit("release");
           var doc = response.data;
+          this.podeCapturarPDF = doc.podeCapturarPDF;
           this.sigla = doc.sigla;
           this.idModelo = doc.idModelo;
           this.descricao = doc.descrDocumento;
@@ -232,15 +256,6 @@ export default {
           UtilsBL.errormsg(error, this);
         }
       );
-    },
-
-    executar: function(mov, acao) {
-      if (acao.acao === "exibir") {
-        this.$router.push({
-          name: "Documento",
-          params: { numero: acao.params.sigla.replace(/[^a-z0-9]/gi, "") },
-        });
-      }
     },
 
     carregarModelos: async function() {
@@ -322,24 +337,45 @@ export default {
       );
       // console.log(formParams);
       // console.log(s);
+
+      let data = new FormData();
+      if (this.modelo) data.append("modelo", this.idModelo);
+      if (this.siglaSubscritor) data.append("subscritor", this.siglaSubscritor);
+      data.append("eletronico", true);
+      data.append("descricaotipodoc", "Interno Produzido");
+      if (this.classificacao) data.append("classificacao", this.classificacao);
+      if (this.siglaDestinatario)
+        data.append("pessoadestinatario", this.siglaDestinatario);
+      if (this.siglaLotaDestinatario)
+        data.append("lotadestinatario", this.siglaLotaDestinatario);
+      if (this.descricao) data.append("descricaodocumento", this.descricao);
+      if (this.nivelacesso) data.append("nivelacesso", this.nivelacesso);
+      if (formParams) data.append("entrevista", formParams);
+      if (this.sigla) data.append("sigla", this.sigla);
+      if (this.siglaMobilPai) data.append("siglamobilpai", this.siglaMobilPai);
+      if (this.siglaMobilFilho)
+        data.append("siglamobilfilho", this.siglaMobilFilho);
+      if (this.arquivo) data.append("arquivo", this.arquivo);
+
       this.$http
         .post(
           "sigaex/api/v1/documentos",
-          {
-            sigla: this.sigla,
-            modelo: this.idModelo,
-            subscritor: this.siglaSubscritor,
-            eletronico: true,
-            descricaotipodoc: "Interno Produzido",
-            classificacao: this.classificacao,
-            pessoadestinatario: this.siglaDestinatario,
-            lotadestinatario: this.siglaLotaDestinatario,
-            descricaodocumento: this.descricao,
-            nivelacesso: this.nivelacesso,
-            entrevista: formParams,
-            siglamobilpai: this.siglaMobilPai,
-            siglamobilfilho: this.siglaMobilFilho,
-          },
+          data,
+          // {
+          //   sigla: this.sigla,
+          //   modelo: this.idModelo,
+          //   subscritor: this.siglaSubscritor,
+          //   eletronico: true,
+          //   descricaotipodoc: "Interno Produzido",
+          //   classificacao: this.classificacao,
+          //   pessoadestinatario: this.siglaDestinatario,
+          //   lotadestinatario: this.siglaLotaDestinatario,
+          //   descricaodocumento: this.descricao,
+          //   nivelacesso: this.nivelacesso,
+          //   entrevista: formParams,
+          //   siglamobilpai: this.siglaMobilPai,
+          //   siglamobilfilho: this.siglaMobilFilho,
+          // },
           { block: true }
         )
         .then(

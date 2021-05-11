@@ -827,7 +827,7 @@ public class AppController extends GcController {
 		int a = 0;
 	}
 	
-	@Path("/public/app/exibir/{sigla}")
+	@Path({"/public/app/exibir/{sigla}","/public/app/exibir"})
 	public void exibirPublicoExterno(String sigla) throws Exception {
 		
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
@@ -841,7 +841,9 @@ public class AppController extends GcController {
 			;
 		
 		String conteudo = bl.marcarLinkNoConteudo(informacao, informacao.getArq()
-				.getConteudoTXT().replace("/sigagc/app/baixar?id=", "/sigagc/public/app/baixar/"+informacao.getId()+"/").replace("/sigagc/app/exibir", "/sigagc/public/app/exibir"));
+				.getConteudoTXT().replace("/sigagc/app/baixar?id=", "/sigagc/public/app/baixar/"+informacao.getId()+"/"));
+		
+		conteudo = conteudo.replace("/sigagc/app/exibir", "/sigagc/public/app/exibir");
 		
 		em().detach(informacao);
 		// if (conteudo != null)

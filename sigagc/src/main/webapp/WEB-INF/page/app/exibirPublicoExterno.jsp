@@ -76,7 +76,7 @@
 							<p>
 								<img style="margin-bottom: -4px;"
 									src="/siga/css/famfamfam/icons/${m.arq.icon}.png" /> <a
-									target="_blank" href="${linkTo[AppController].baixarSemAutenticacao(informacao.id,m.arq.id)}">${m.arq.titulo}</a>
+									target="_blank" href="${linkTo[AppController].baixarSemAutenticacao(m.arq.id,informacao.id)}">${m.arq.titulo}</a>
 							</p>
 						</c:if>
 					</c:forEach>

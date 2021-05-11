@@ -2161,14 +2161,11 @@ Pede deferimento.</span><br/><br/><br/>
 [/#macro]
 
 [#macro inicioSubscritor sigla]
-    <!-- INICIO SUBSCRITOR [#nested/] -->
-    <a class="doc-sign" href="/sigaex/app/validar-assinatura?pessoa=[#nested/]&sigla=${sigla}">
+    <!-- INICIO SUBSCRITOR [#nested/] --><!-- SIGLA ${sigla!} -->
 [/#macro]
-
 
 [#macro fimSubscritor]
     <!-- FIM SUBSCRITOR [#nested/] -->
-    </a>
 [/#macro]
 
 [#macro cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho=false]

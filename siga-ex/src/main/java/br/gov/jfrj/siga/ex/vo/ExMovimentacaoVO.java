@@ -56,6 +56,7 @@ import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_REORDENAC
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.hasDespacho;
 
 import java.util.HashMap;
@@ -72,7 +73,8 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
@@ -136,6 +138,10 @@ public class ExMovimentacaoVO extends ExVO {
 
 		descricao = mov.getObs();
 
+		if (mov.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA) || mov.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO)) {
+			descricao += Ex.getInstance().getBL().extraiPersonalizacaoAssinatura(mov);
+		}
+
 		addAcoes(mov, cadastrante, titular, lotaTitular);
 
 		calcularClasse(mov);
@@ -187,9 +193,9 @@ public class ExMovimentacaoVO extends ExVO {
 			if (mov.getLotaSubscritor() != null) 
 				descricao += (mov.getSubscritor() == null ? ", lotação interessada: " : "/") + mov.getLotaSubscritor().getSiglaCompleta();
 			if (mov.getDtParam1() != null) 
-				descricao += ", data planejada: " + Data.formatDataETempoRelativo(mov.getDtParam1());
-			if (mov.getDtParam1() != null) 
-				descricao += ", data limite: " + Data.formatDataETempoRelativo(mov.getDtParam2());
+				descricao += ", data de exibição: " + Data.formatDataETempoRelativo(mov.getDtParam1());
+			if (mov.getDtParam2() != null) 
+				descricao += ", prazo final: " + Data.formatDataETempoRelativo(mov.getDtParam2());
 			if (mov.getObs() != null && mov.getObs().trim().length() > 0)
 				descricao += ", obs: " + mov.getObs();
 			addAcao(AcaoVO.builder().nome("Cancelar").nameSpace("/app/expediente/mov")

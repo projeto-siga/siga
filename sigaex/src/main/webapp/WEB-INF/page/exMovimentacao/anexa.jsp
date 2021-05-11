@@ -84,13 +84,14 @@
 	</script>
 
 	<div class="container-fluid">
+		<input type="hidden" id="visualizador" value="${f:resource('/sigaex.pdf.visualizador') }"/>
 		<c:if test="${!assinandoAnexosGeral}">
 			<div class="card bg-light mb-3">
 				<div class="card-header">
 					<h5>Anexação de Arquivo - ${mob.siglaEDescricaoCompleta}</h5>
 				</div>
 				<div class="card-body">
-					<form action="anexar_gravar" method="POST"
+					<form action="anexar_gravar" method="post"
 						enctype="multipart/form-data" class="form">
 						<input type="hidden" name="postback" value="1" /> <input
 							type="hidden" name="sigla" value="${sigla}" />
@@ -212,7 +213,7 @@
 					</c:if>
 				</h2>
 
-				<form action="anexar_gravar" method="POST"
+				<form action="anexar_gravar" method="post"
 					enctype="multipart/form-data" class="form">
 					<input type="hidden" name="popup" value="true" /> <input
 						type="hidden" name="copia" id="copia" value="false" />
@@ -227,16 +228,8 @@
 								<th rowspan="2">Descrição</th>
 							</tr>
 							<tr>
-								<c:choose>
-									<c:when
-										test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-										<th style="text-align: center"><input type="checkbox" name="checkall"
-											onclick="checkUncheckAll(this)" /></th>
-									</c:when>
-									<c:otherwise>
-										<td></td>
-									</c:otherwise>
-								</c:choose>
+								<th style="text-align: center"><input type="checkbox" name="checkall"
+									onclick="checkUncheckAll(this)" checked /></th>
 								<th align="left">Lotação</th>
 								<th align="left">Pessoa</th>
 								<th align="left">Lotação</th>
@@ -262,7 +255,7 @@
 										<c:set var="x_checked" scope="request">checked</c:set>
 									</c:if>
 									<td style="text-align: center"><input type="checkbox" name="${x}"
-										value="true" ${x_checked} /></td>
+										value="true" checked ${x_checked} /></td>
 									<td align="center">${dt}</td>
 									<td align="left"><siga:selecionado
 											sigla="${mov.parte.lotaCadastrante.sigla}"
@@ -365,9 +358,27 @@
 		<input type="hidden" name="ad_url_base" value="" /> <input
 			type="hidden" name="ad_url_next"
 			value="/sigaex/app/expediente/doc/atualizar_marcas?sigla=${mobilVO.sigla}" />
+			
+		<c:set var="podeAssinarComSenha" value="${f:podeAssinarMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}" />
+		<c:set var="podeAutenticarComSenha" value="${f:podeAutenticarComSenha(titular,lotaTitular,mob)}" />
+		<c:set var="defaultAssinarComSenha" value="${f:deveAssinarComSenha(titular,lotaTitular,mob) }" />
+		<c:set var="defaultAutenticarComSenha" value="${f:deveAutenticarComSenha(titular,lotaTitular,mob) }" />
+		
+		<c:set var="podeUtilizarSegundoFatorPin" value="${f:podeUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao)}" />
+		<c:set var="obrigatorioUtilizarSegundoFatorPin" value="${f:deveUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao)}" />
+		<c:set var="defaultUtilizarSegundoFatorPin" value="${f:defaultUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao) }" />
+					
 		<tags:assinatura_botoes autenticar="true" assinar="true"
-			assinarComSenha="${f:podeAssinarMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}"
-			autenticarComSenha="${f:podeAutenticarComSenha(titular,lotaTitular,mob)}" />
+			assinarComSenha="${podeAssinarComSenha and not obrigatorioUtilizarSegundoFatorPin}"
+		    autenticarComSenha="${podeAutenticarComSenha and not obrigatorioUtilizarSegundoFatorPin}"			
+			assinarComSenhaChecado="${podeAssinarComSenha and defaultAssinarComSenha and not defaultUtilizarSegundoFatorPin}"
+			autenticarComSenhaChecado="${podeAutenticarComSenha and defaultAutenticarComSenha and not defaultUtilizarSegundoFatorPin}"
+
+
+			assinarComSenhaPin="${podeAssinarComSenha and podeUtilizarSegundoFatorPin}"
+			autenticarComSenhaPin="${podeAutenticarComSenha and podeUtilizarSegundoFatorPin}"
+			assinarComSenhaPinChecado="${podeAssinarComSenha and podeUtilizarSegundoFatorPin and defaultUtilizarSegundoFatorPin}"
+			autenticarComSenhaPinChecado="${podeAutenticarComSenha and podeUtilizarSegundoFatorPin and defaultUtilizarSegundoFatorPin}"	/>
 
 		<c:set var="botao" value="ambos" />
 		<c:set var="lote" value="true" />

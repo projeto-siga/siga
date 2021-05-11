@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 
-import br.gov.jfrj.siga.base.Texto;
-import br.gov.jfrj.siga.dp.CpMarcador;
+import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -244,22 +244,22 @@ public class ExDocumentoApiVO extends ExApiVO {
 		movimentacoesPermitidas.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA);
 
 		List<Long> marcasGeralPermitidas = new ArrayList<Long>();
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_A_ELIMINAR);
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_ARQUIVADO_CORRENTE);
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_ARQUIVADO_INTERMEDIARIO);
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_ARQUIVADO_PERMANENTE);
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_EM_EDITAL_DE_ELIMINACAO);
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_PUBLICACAO_SOLICITADA);
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_PUBLICADO);
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_RECOLHER_PARA_ARQUIVO_PERMANENTE);
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_REMETIDO_PARA_PUBLICACAO);
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_TRANSFERIR_PARA_ARQUIVO_INTERMEDIARIO);
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA);
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_COMO_SUBSCRITOR);
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_REVISAR);
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA);
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_TRANSFERIR_PARA_ARQUIVO_INTERMEDIARIO);
-		marcasGeralPermitidas.add(CpMarcador.MARCADOR_PENDENTE_DE_ANEXACAO);
+		marcasGeralPermitidas.add(CpMarcadorEnum.A_ELIMINAR.getId());
+		marcasGeralPermitidas.add(CpMarcadorEnum.ARQUIVADO_CORRENTE.getId());
+		marcasGeralPermitidas.add(CpMarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId());
+		marcasGeralPermitidas.add(CpMarcadorEnum.ARQUIVADO_PERMANENTE.getId());
+		marcasGeralPermitidas.add(CpMarcadorEnum.EM_EDITAL_DE_ELIMINACAO.getId());
+		marcasGeralPermitidas.add(CpMarcadorEnum.PUBLICACAO_SOLICITADA.getId());
+		marcasGeralPermitidas.add(CpMarcadorEnum.PUBLICADO.getId());
+		marcasGeralPermitidas.add(CpMarcadorEnum.RECOLHER_PARA_ARQUIVO_PERMANENTE.getId());
+		marcasGeralPermitidas.add(CpMarcadorEnum.REMETIDO_PARA_PUBLICACAO.getId());
+		marcasGeralPermitidas.add(CpMarcadorEnum.TRANSFERIR_PARA_ARQUIVO_INTERMEDIARIO.getId());
+		marcasGeralPermitidas.add(CpMarcadorEnum.PENDENTE_DE_ASSINATURA.getId());
+		marcasGeralPermitidas.add(CpMarcadorEnum.COMO_SUBSCRITOR.getId());
+		marcasGeralPermitidas.add(CpMarcadorEnum.REVISAR.getId());
+		marcasGeralPermitidas.add(CpMarcadorEnum.ANEXO_PENDENTE_DE_ASSINATURA.getId());
+		marcasGeralPermitidas.add(CpMarcadorEnum.TRANSFERIR_PARA_ARQUIVO_INTERMEDIARIO.getId());
+		marcasGeralPermitidas.add(CpMarcadorEnum.PENDENTE_DE_ANEXACAO.getId());
 
 		for (ExMobilApiVO mobVO : mobs) {
 
@@ -269,7 +269,7 @@ public class ExDocumentoApiVO extends ExApiVO {
 
 			for (ExMovimentacaoApiVO exMovVO : mobVO.getMovs()) {
 				if (!exMovVO.isCancelada() && movimentacoesPermitidas.contains(exMovVO.getIdTpMov())) {
-
+					exMovVO.podeExibirNoSigale = true;
 					// Desabilitado temporariamente
 					// if (exMovVO.getIdTpMov() ==
 					// ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA)
@@ -283,8 +283,10 @@ public class ExDocumentoApiVO extends ExApiVO {
 					// }
 					if (!juntadasRevertidas.contains(exMovVO))
 						movimentacoesFinais.add(exMovVO);
+				} else {
+					exMovVO.podeExibirNoSigale = false;
+					movimentacoesFinais.add(exMovVO);
 				}
-
 			}
 
 			mobVO.setMovs(movimentacoesFinais);

@@ -15,7 +15,6 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,10 +27,12 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
+import javax.persistence.Query;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 
@@ -135,7 +136,8 @@ public class GcInformacao extends Objeto {
 	private CpPerfil grupo;
 
 	@Sort(type = SortType.NATURAL)
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@ManyToMany
+	@org.hibernate.annotations.Cascade({org.hibernate.annotations.CascadeType.PERSIST})
 	@JoinTable(name = "GC_TAG_X_INFORMACAO", schema = "SIGAGC", joinColumns = @JoinColumn(name = "id_informacao"), inverseJoinColumns = @JoinColumn(name = "id_tag"))
 	private SortedSet<GcTag> tags;
 
@@ -249,11 +251,10 @@ public class GcInformacao extends Objeto {
 
 	@PostLoad
 	private void onLoad() {
-		marcas = GcMarca.AR
-				.find("inf.id = ?1 and (dtFimMarca is null or dtFimMarca > CURRENT_TIMESTAMP) order by dtIniMarca, cpMarcador.descrMarcador",
-						this.id).fetch();
-		// marcas = GcMarca.find("id_tp_marca = 3 and inf.id = ?",
-		// this.id).fetch();
+		Query query = em().createQuery("SELECT m FROM GcMarca m where m.inf.id = :idInf and (m.dtFimMarca is null or m.dtFimMarca > 	:dbDatetime) order by dtIniMarca, cpMarcador.descrMarcador");
+		query.setParameter("idInf", this.id);
+		query.setParameter("dbDatetime", CpDao.getInstance().consultarDataEHoraDoServidor());
+		marcas = query.getResultList();
 	}
 
 	public String getDtIniString() {

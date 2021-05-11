@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.crivano.swaggerservlet.SwaggerException;
-import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Cargo;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.FuncaoConfianca;
@@ -17,7 +16,7 @@ import br.gov.jfrj.siga.api.v1.ISigaApiV1.Pessoa;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.PessoasGetRequest;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.PessoasGetResponse;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
@@ -31,9 +30,6 @@ public class PessoasGet implements IPessoasGet {
 	@Override
 	public void run(PessoasGetRequest req, PessoasGetResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(false, true)) {
-			CurrentRequest.set(
-					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-			
 			if (((req.cpf != null? 1:0) + (req.texto != null? 1:0) + (req.idPessoaIni != null? 1:0)) > 1) {
 				throw new AplicacaoException("Pesquisa permitida somente por um dos argumentos.");
 			}
@@ -128,6 +124,7 @@ public class PessoasGet implements IPessoasGet {
 		Cargo cargo = new Cargo();
 		FuncaoConfianca funcao = new FuncaoConfianca();
 		// Pessoa
+		pessoa.idPessoaIni = p.getIdInicial().toString();
 		pessoa.sigla = p.getSiglaCompleta();
 		pessoa.nome = p.getNomePessoa();
 		pessoa.isExternaPessoa = p.isUsuarioExterno();
@@ -141,6 +138,7 @@ public class PessoasGet implements IPessoasGet {
 		// Lotacao Pessoa
 		DpLotacao l = p.getLotacao();
 		lotacao.idLotacao = l.getId().toString();
+		lotacao.idLotacaoIni = l.getIdLotacaoIni().toString();
 		lotacao.nome = l.getNomeLotacao();
 		lotacao.sigla = l.getSigla();
 		lotacao.orgao = orgao;
@@ -149,12 +147,14 @@ public class PessoasGet implements IPessoasGet {
 		DpCargo c = p.getCargo();
 		if (c != null) {
 			cargo.idCargo = c.getId().toString();
+			cargo.idCargoIni = c.getIdInicial().toString();
 			cargo.nome = c.getNomeCargo();
 		}
 		// Função Pessoa
 		DpFuncaoConfianca f = p.getFuncaoConfianca();
 		if (f != null) {
 			funcao.idFuncaoConfianca = f.getId().toString();
+			funcao.idFuncaoConfiancaIni = f.getIdInicial().toString();
 			funcao.nome = f.getNomeFuncao();
 		}
 

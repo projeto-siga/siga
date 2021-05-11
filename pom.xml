@@ -38,7 +38,7 @@
 		<module>siga-jwt</module>
 		<!-- <module>siga-relarmaz</module> -->
 		<module>siga-oidc</module>
-		<module>siga-le</module>
+		<!-- Desativado do Deploy por Enquanto <module>siga-le</module> !-->
 		
 		
 	</modules>
@@ -499,10 +499,12 @@
 				<artifactId>lucene-analyzers</artifactId>
 				<version>3.6.2</version>
 			</dependency>
+			
+			<!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox -->
 			<dependency>
-				<groupId>pdfbox</groupId>
-				<artifactId>pdfbox</artifactId>
-				<version>0.7.3</version>
+			    <groupId>org.apache.pdfbox</groupId>
+			    <artifactId>pdfbox</artifactId>
+			    <version>2.0.23</version>
 			</dependency>
 
 			<!-- <dependency> <groupId>org.zefer.pd4ml</groupId> <artifactId>pd4ml</artifactId> 

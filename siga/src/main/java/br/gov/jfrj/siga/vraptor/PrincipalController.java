@@ -155,7 +155,7 @@ public class PrincipalController extends SigaController {
 		}
 
 		final Pattern p1 = Pattern.compile("^(?<orgao>" + acronimos.toString()
-				+ ")?-?(?:(?<especie>[A-Za-z]{3})|(?<modulo>SR|TMPSR|GC|TMPGC|TP))-?([0-9][0-9A-Za-z\\.\\-\\/]*)$");
+				+ ")?-?(?:(?<especie>[A-Za-z]{3})|(?<modulo>SR|TMPSR|GC|TMPGC|DP|WF|TP))-?([0-9][0-9A-Za-z\\.\\-\\/]*)$");
 		final Matcher m1 = p1.matcher(sigla);
 
 		final GenericoSelecao sel = new GenericoSelecao();
@@ -189,6 +189,12 @@ public class PrincipalController extends SigaController {
 				case "GC": // Conhecimentos
 				case "TMPGC":
 					lurls.add(urlBase + "/sigagc/public/app/selecionar?sigla=" + sigla + incluirMatricula);
+					break;
+				case "DP": // Diagramas
+					lurls.add(urlBase + "/sigawf/public/app/diagrama/selecionar?sigla=" + sigla + incluirMatricula);
+					break;
+				case "WF": // Procedimentos
+					lurls.add(urlBase + "/sigawf/public/app/procedimento/selecionar?sigla=" + sigla + incluirMatricula);
 					break;
 				case "TP": // Transportes
 					lurls.add(urlBase + "/sigatp" + "/app/documento/selecionar?sigla=" + sigla + incluirMatricula
@@ -249,9 +255,11 @@ public class PrincipalController extends SigaController {
 	@Consumes("text/vnd.graphviz")
 	@Path("/public/app/graphviz/svg")
 	public Download graphvizProxy(String dot) throws Exception {
-		String url = (String) Prop.get("/vizservice.url");
+		String url = Prop.get("/vizservice.url");
 		if (url == null)
 			throw new Exception("Parâmetro vizservice.url precisa ser informado");
+		
+		url = url + "/svg";
 		corsHeaders(response);
 
 		String body = Unirest.post(url).header("Content-Type", "text/vnd.graphviz").body(dot).asString().getBody();

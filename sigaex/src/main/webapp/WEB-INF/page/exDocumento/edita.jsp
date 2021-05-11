@@ -2,6 +2,7 @@
 	buffer="128kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
@@ -13,6 +14,9 @@
 	<script type="text/javascript" src="/siga/javascript/jquery.blockUI.js"></script>
 	<script type="text/javascript" src="/siga/javascript/hierarchy-select/hierarchy-select.js"></script>
 
+	<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
+	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />	
+	
 	<div class="container-fluid">
 	<c:if test="${not empty mensagem}">
 			<div class="row">
@@ -63,6 +67,7 @@
 				<input type="hidden" name="exDocumentoDTO.idMod.original" value="${exDocumentoDTO.modelo.idMod}" /> 
 				<input type="hidden" name="jsonHierarquiaDeModelos" value="${jsonHierarquiaDeModelos}" />
 				<input type="hidden" name="cliente" id="cliente" value="${siga_cliente}">
+				<input type="hidden" id="visualizador" value="${f:resource('/sigaex.pdf.visualizador') }"/>
 				<c:choose>
 					<c:when	test="${(exDocumentoDTO.doc.eletronico) && (exDocumentoDTO.doc.numExpediente != null)}">
 						<c:set var="estiloTipo" value="display: none" />
@@ -83,8 +88,8 @@
 								<div class="form-group">
 									<label for="modelos-select"><fmt:message key="documento.modelo"/></label>
 
-									<div class="btn-group hierarchy-select form-control p-0" data-resize="auto" id="modelos-select">
-										<button type="button" class="btn btn-light dropdown-toggle bg-white"  <c:if test='${podeEditarModelo}'>disabled</c:if>
+									<div class="btn-group hierarchy-select form-control p-0 div-width-min0" data-resize="auto" id="modelos-select" style="min-width: 0px !important;">
+											<button type="button" class="btn btn-light dropdown-toggle bg-white"  <c:if test='${podeEditarModelo}'>disabled</c:if>
 											id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-disabled="true">
 											<span class="selected-label pull-left">&nbsp;</span>
 										</button>
@@ -123,7 +128,7 @@
 						</c:if>
 					</div>
 				</div>
-					<div class="row ${((exDocumentoDTO.tiposDocumento).size() != 1 or (exDocumentoDTO.tipoDocumento != 'interno_capturado' and podeEditarData) or (exDocumentoDTO.listaNivelAcesso.size() != 1) or (!exDocumentoDTO.eletronicoFixo))? '': 'd-none'}">
+					<div class="row ${((fn:length(exDocumentoDTO.tiposDocumento) != 1) or (exDocumentoDTO.tipoDocumento != 'interno_capturado' and podeEditarData) or (fn:length(exDocumentoDTO.listaNivelAcesso) != 1) or (!exDocumentoDTO.eletronicoFixo)) ? '' : 'd-none'}">
 						<div class="col-sm-2 ${(exDocumentoDTO.tiposDocumento).size() != 1 ? '': 'd-none'} ${hide_only_GOVSP}">
 							<div class="form-group">
 								<label for="exDocumentoDTO.idTpDoc">Origem</label>
@@ -141,7 +146,7 @@
 							<div class="form-group">
 								<input type="hidden" name="campos" value="dtDocString" />						
 								<label class=" " for="exDocumentoDTO.dtDocString">Data</label>
-								<input type="text" name="exDocumentoDTO.dtDocString" size="10" onblur="javascript:verifica_data(this, true);" value="${exDocumentoDTO.dtDocString}" class="form-control"/>
+								<input type="text" name="exDocumentoDTO.dtDocString" size="10" onblur="javascript:verifica_data(this, true);" value="${exDocumentoDTO.dtDocString}" class="form-control campoData" autocomplete="off"/>
 							</div>
 						</div>
 
@@ -351,7 +356,7 @@
 								<c:when test='${exDocumentoDTO.tipoDestinatario == 2}'>
 									<input type="hidden" name="campos" value="lotacaoDestinatarioSel.id" />
 									<label>&nbsp;&nbsp;&nbsp;</label>
-									<siga:selecao propriedade="lotacaoDestinatario" inputName="exDocumentoDTO.lotacaoDestinatario" tema="simple" idAjax="destinatario2" reler="ajax" modulo="siga" />
+									<siga:selecao propriedade="lotacaoDestinatario" inputName="exDocumentoDTO.lotacaoDestinatario" tema="simple" idAjax="destinatario2" reler="ajax" modulo="siga" onchangeid="updateURL()" />
 									<!--  idAjax="destinatario" -->
 								</c:when>
 								<c:when test='${exDocumentoDTO.tipoDestinatario == 3}'>
@@ -379,40 +384,42 @@
 				</div>
 				</c:if>	
 				<c:if test='${ exDocumentoDTO.tipoDocumento == "interno"  && !ehPublicoExterno}'>
-				<div class="row">
-					<input type="hidden" name="campos" value="preenchimento" />
+				<div class="row inline">					
 					<div class="col-sm-12">
-						<div class="form-group">
-							<label><fmt:message key="documento.preenchimento.automatico"/></label>							
-							<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-								<div class="input-group">
-									<select id="preenchimento" name="exDocumentoDTO.preenchimento" onchange="javascript:carregaPreench()" class="form-control">
+				  		<div class="form-group">
+				    		<label><fmt:message key="documento.preenchimento.automatico"/></label>
+				    		<div class="row">
+				      			<div class="col col-xl-4 col-lg-12">
+							        <select id="preenchimento" name="exDocumentoDTO.preenchimento" onchange="javascript:carregaPreench()" class="form-control siga-select2">
 										<c:forEach items="${exDocumentoDTO.preenchimentos}" var="item">
 											<option value="${item.idPreenchimento}"
 												${item.idPreenchimento == exDocumentoDTO.preenchimento ? 'selected' : ''}>
 												${item.nomePreenchimento}</option>
 										</c:forEach>
 									</select>
-								</div>
-								<c:if test="${empty exDocumentoDTO.preenchimento or exDocumentoDTO.preenchimento==0}">
-									<c:set var="desabilitaBtn"> disabled </c:set>
-								</c:if> 
-								<button type="button" name="btnAlterar" onclick="javascript:alteraPreench()" class="btn btn-sm btn-secondary ml-2" ${desabilitaBtn}>
-									<i class="far fa-edit"></i>
-									<span class="${hide_only_GOVSP}">Alterar</span>
-								</button>
-								<button type="button" name="btnRemover" onclick="javascript:removePreench()" class="btn btn-sm btn-secondary ml-2" ${desabilitaBtn}>
-									<i class="far fa-trash-alt"></i>
-									<span class="${hide_only_GOVSP}">Remover</span>
-								</button>
-								<button type="button"  name="btnAdicionar" onclick="javascript:adicionaPreench()" class="btn btn-sm btn-secondary ml-2">
-									<i class="fas fa-plus"></i>
-									<span class="${hide_only_GOVSP}">Adicionar</span>
-								</button>
-							</div>
-						</div>
-					</div>
+				      			</div>
+				      			<div class="col col-xl-8 col-lg-12">
+							        <c:if test="${empty exDocumentoDTO.preenchimento or exDocumentoDTO.preenchimento==0}">
+										<c:set var="desabilitaBtn"> disabled </c:set>
+									</c:if> 
+									<button type="button" name="btnAlterar" onclick="javascript:alteraPreench()" class="btn btn-sm btn-secondary ml-2 p-2" ${desabilitaBtn}>
+										<i class="far fa-edit"></i>
+										<span class="${hide_only_GOVSP}">Alterar</span>
+									</button>
+									<button type="button" name="btnRemover" onclick="javascript:removePreench()" class="btn btn-sm btn-secondary ml-2 p-2" ${desabilitaBtn}>
+										<i class="far fa-trash-alt"></i>
+										<span class="${hide_only_GOVSP}">Remover</span>
+									</button>
+									<button type="button"  name="btnAdicionar" onclick="javascript:adicionaPreench()" class="btn btn-sm btn-secondary ml-2 p-2">
+										<i class="fas fa-plus"></i>
+										<span class="${hide_only_GOVSP}">Adicionar</span>
+									</button>
+				      			</div>
+				    		</div>
+				  		</div>
+				  </div>
 				</div>
+				
 			</c:if>
 				<div id="tr_personalizacao" style="display: ${exDocumentoDTO.modelo.exClassificacao!=null? 'none': ''};">
 					<div class="row  ${hide_only_GOVSP}">
@@ -426,7 +433,7 @@
 								<siga:span id="classificacao" depende="forma;modelo">
 									<!-- OI -->
 									<siga:selecao desativar="${desativarClassif}" modulo="sigaex" propriedade="classificacao"
-										inputName="exDocumentoDTO.classificacao" urlAcao="buscar" urlSelecionar="selecionar" tema="simple" />
+										inputName="exDocumentoDTO.classificacao" urlAcao="buscar" urlSelecionar="selecionar" tema="simple" onchangeid="updateURL()" />
 									<!--  idAjax="classificacao" -->
 								</siga:span>
 							</div>
@@ -462,7 +469,7 @@
 						<div class="col-sm-8">
 							<div class="form-group">
 								<label>Descrição</label>
-								<textarea name="exDocumentoDTO.descrDocumento" cols="80" rows="2" id="descrDocumento" class="form-control">${exDocumentoDTO.descrDocumento}</textarea>
+								<textarea name="exDocumentoDTO.descrDocumento" cols="80" rows="2" id="descrDocumento" class="form-control" oninput="updateURL()">${exDocumentoDTO.descrDocumento}</textarea>
 								<small class="form-text text-muted">(preencher o campo acima com palavras-chave, sempre usando substantivos, gênero masculino e
 									singular).</small>
 							</div>
@@ -642,4 +649,11 @@
 	    trigger: 'click'
 	});
 
+</script>
+
+<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
+<script type="text/javascript">
+	$(document.getElementById('preenchimento')).select2({theme: "bootstrap"});	
 </script>

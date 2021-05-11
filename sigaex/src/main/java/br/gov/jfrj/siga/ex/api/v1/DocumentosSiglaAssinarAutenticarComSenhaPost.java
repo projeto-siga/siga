@@ -10,14 +10,15 @@ import com.crivano.swaggerservlet.SwaggerException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.CurrentRequest;
+import br.gov.jfrj.siga.base.RegraNegocioException;
+import br.gov.jfrj.siga.base.RequestInfo;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExPapel;
-import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
@@ -61,30 +62,28 @@ abstract class DocumentosSiglaAssinarAutenticarComSenhaPost {
 		// Necessário pois é chamado o método "realPath" durante a criação do
 		// PDF.
 		try (ApiContext ctx = new ApiContext(true, true)) {
-			CurrentRequest.set(
-					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-			ApiContext.assertAcesso("");
-			SigaObjects so = ApiContext.getSigaObjects();		
-
-			DpPessoa cadastrante = so.getCadastrante();
-			DpPessoa titular = cadastrante;
-			DpLotacao lotaTitular = cadastrante.getLotacao();
-
-			ExMobil mob = getMob(sigla);
-
-			assertAcesso(titular, lotaTitular, mob);
-			assertDocumento(titular, lotaTitular, mob);
-
-			String retornoAssinatura = Ex.getInstance().getBL().assinarDocumentoComSenha(cadastrante, lotaTitular,
-					mob.doc(), null, cadastrante.getSiglaCompleta(), null, false, titular, this.autenticar, null,
-					false, false);
-
-			preenchedorResposta.accept(mob.doc().getCodigo(), Objects.toString(retornoAssinatura, "OK"));
-		} catch (AplicacaoException | SwaggerException e) {
-			throw e;
-		} catch (Exception e) {
-			e.printStackTrace(System.out);
-			throw e;
+			try {
+				ApiContext.assertAcesso("");
+				SigaObjects so = ApiContext.getSigaObjects();		
+	
+				DpPessoa cadastrante = so.getCadastrante();
+				DpPessoa titular = cadastrante;
+				DpLotacao lotaTitular = cadastrante.getLotacao();
+	
+				ExMobil mob = getMob(sigla);
+	
+				assertAcesso(titular, lotaTitular, mob);
+				assertDocumento(titular, lotaTitular, mob);
+	
+				String retornoAssinatura = Ex.getInstance().getBL().assinarDocumentoComSenha(cadastrante, lotaTitular,
+						mob.doc(), null, cadastrante.getSiglaCompleta(), null, false, false, titular, this.autenticar, null,
+						false, false);
+	
+				preenchedorResposta.accept(mob.doc().getCodigo(), Objects.toString(retornoAssinatura, "OK"));
+			} catch (Exception e) {
+				ctx.rollback(e);
+				throw e;
+			}
 		}
 	}
 

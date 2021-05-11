@@ -15,7 +15,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.gc.ObjetoSelecionavel;
 import br.gov.jfrj.siga.gc.util.GcBL;
 import br.gov.jfrj.siga.model.ActiveRecord;

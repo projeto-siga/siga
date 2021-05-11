@@ -56,9 +56,11 @@ import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
+import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.SigaModal;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -101,6 +103,12 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		super(request, result, dao, so, em);
 		setSel(new DpPessoa());
 		setItemPagina(10);
+	}
+	
+	@Get
+	@Path({"/app/pessoa/buscar-json/{sigla}"})
+	public void busca(String sigla) throws Exception{
+		aBuscarJson(sigla);
 	}
 
 	@Get
@@ -330,12 +338,30 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 					throw new AplicacaoException(
 							"Já existe outro usuário ativo com estes dados: Órgão, Cargo, Função, Unidade e CPF");
 				}
+				
+				DpCargo cargoAtual= new DpCargo();				
+				cargoAtual = CpDao.getInstance().consultarPorIdInicialDpCargoAtual(pessoaAnt.getCargo().getIdCargoIni());
+				if ((cargoAtual == null) || (cargoAtual != null && cargoAtual.getDataFim() != null)) {
+					throw new AplicacaoException(
+							"Não é possível ativar pessoa. Cargo inexistente ou inativado.");
+				}
+				pessoa.setCargo(cargoAtual);
+				
+				DpFuncaoConfianca funcaoConfiancaAtual = null;
+				if (pessoaAnt.getFuncaoConfianca() != null) {
+					funcaoConfiancaAtual = CpDao.getInstance().consultarPorIdInicialDpFuncaoConfiancaAtual(pessoaAnt.getFuncaoConfianca().getIdFuncaoIni());
+					if ((funcaoConfiancaAtual == null) || (funcaoConfiancaAtual != null && funcaoConfiancaAtual.getDataFim() != null)) {
+						throw new AplicacaoException(
+								"Não é possível ativar pessoa. Função de Confiança encontra-se inativada.");
+						
+					}
+				}
+				pessoa.setFuncaoConfianca(funcaoConfiancaAtual);
+				
 				pessoa.setNomePessoa(pessoaAnt.getNomePessoa());
 				pessoa.setCpfPessoa(pessoaAnt.getCpfPessoa());
-				pessoa.setCargo(pessoaAnt.getCargo());
 				pessoa.setLotacao(pessoaAnt.getLotacao());
 				pessoa.setOrgaoUsuario(pessoaAnt.getOrgaoUsuario());
-				pessoa.setFuncaoConfianca(pessoaAnt.getFuncaoConfianca());
 				pessoa.setDataNascimento(pessoaAnt.getDataNascimento());
 				pessoa.setMatricula(pessoaAnt.getMatricula());
 				pessoa.setIdePessoa(pessoaAnt.getIdePessoa());
@@ -592,232 +618,17 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			final String dataExpedicaoIdentidade, final String nomeExibicao, final String enviarEmail) throws Exception {
 		
 		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_PESSOA:Cadastrar Pessoa");
-
-		if (idOrgaoUsu == null || idOrgaoUsu == 0)
-			throw new AplicacaoException("Órgão não informado");
-		if (idCargo == null || idCargo == 0)
-			throw new AplicacaoException("Cargo não informado");
-
-		if (idLotacao == null || idLotacao == 0)
-			throw new AplicacaoException("Lotação não informado");
-
-		if (nmPessoa == null || nmPessoa.trim() == "")
-			throw new AplicacaoException("Nome não informado");
-
-		if (cpf == null || cpf.trim() == "")
-			throw new AplicacaoException("CPF não informado");
-
-		if (email == null || email.trim() == "")
-			throw new AplicacaoException("E-mail não informado");
-		
-		if (!isEmailValido(email)) {			
-			throw new AplicacaoException("E-mail inválido");
-		}
-
-		if (nmPessoa != null && !nmPessoa.matches(Texto.DpPessoa.NOME_REGEX_CARACTERES_PERMITIDOS))
-			throw new AplicacaoException("Nome com caracteres não permitidos");
-
-		
-		DpPessoa pessoa = new DpPessoa();
-		DpPessoa pessoaAnt = new DpPessoa();
-		List<CpIdentidade> lista = new ArrayList<CpIdentidade>();
-		
-		if(id != null) {
-			pessoaAnt = dao().consultar(id, DpPessoa.class, false).getPessoaAtual();
-			
-			if(pessoaAnt != null) {
-				Integer qtde = dao().quantidadeDocumentos(pessoaAnt);
-				if (qtde > 0 && !idLotacao.equals(pessoaAnt.getLotacao().getId())) {
-					throw new AplicacaoException(
-							"A unidade da pessoa não pode ser alterada, pois existem documentos pendentes");
-				}
-				pessoa.setIdInicial(pessoaAnt.getIdInicial());
-				pessoa.setMatricula(pessoaAnt.getMatricula());
-				
-			}
-		}
-		
-		int i = dao().consultarQtdePorEmailIgualCpfDiferente(Texto.removerEspacosExtra(email).trim().replace(" ", ""),
-				Long.valueOf(cpf.replace("-", "").replace(".", "").trim()), pessoaAnt.getIdPessoaIni() != null ? pessoaAnt.getIdPessoaIni() : 0);
-		if (i > 0) {
-			throw new AplicacaoException("E-mail informado está cadastrado para outro CPF");
-		}
-
-		
-		Date data = new Date(System.currentTimeMillis());
-		pessoa.setDataInicio(data);
-		pessoa.setMatricula(0L);
-		pessoa.setSituacaoFuncionalPessoa(SituacaoFuncionalEnum.APENAS_ATIVOS.getValor()[0]);
-		pessoa.setNomeExibicao(nomeExibicao);
-		
-		if (dtNascimento != null && !"".equals(dtNascimento)) {
-			Date dtNasc = new Date();
-			dtNasc = SigaCalendar.converteStringEmData(dtNascimento);
-
-			Calendar hj = Calendar.getInstance();
-			Calendar dtNasci = new GregorianCalendar();
-			dtNasci.setTime(dtNasc);
-
-			if (hj.before(dtNasci)) {
-				throw new AplicacaoException("Data de nascimento inválida");
-			}
-			pessoa.setDataNascimento(dtNasc);
-		} else {
-			pessoa.setDataNascimento(null);
-		}
-		
-		if (dataExpedicaoIdentidade != null && !"".equals(dataExpedicaoIdentidade)) {
-			Date dtExp = new Date();
-			dtExp = SigaCalendar.converteStringEmData(dataExpedicaoIdentidade);
-
-			Calendar hj = Calendar.getInstance();
-			Calendar dtExpId = new GregorianCalendar();
-			dtExpId.setTime(dtExp);
-
-			if (hj.before(dtExpId)) {
-				throw new AplicacaoException("Data de expedição inválida");
-			}
-			pessoa.setDataExpedicaoIdentidade(dtExp);
-		} else {
-			pessoa.setDataExpedicaoIdentidade(null);
-		}
-		
-		
-		pessoa.setIdentidade(identidade);
-		pessoa.setOrgaoIdentidade(orgaoIdentidade);
-		pessoa.setUfIdentidade(ufIdentidade);		
-		
-
-		pessoa.setNomePessoa(Texto.removerEspacosExtra(nmPessoa).trim());
-		pessoa.setCpfPessoa(Long.valueOf(cpf.replace("-", "").replace(".", "")));
-		pessoa.setEmailPessoa(Texto.removerEspacosExtra(email).trim().replace(" ", "").toLowerCase());
-		
-		CpOrgaoUsuario ou = new CpOrgaoUsuario();
-		DpCargo cargo = new DpCargo();
-		DpFuncaoConfianca funcao = new DpFuncaoConfianca();
-		DpLotacao lotacao = new DpLotacao();
-
-		ou.setIdOrgaoUsu(idOrgaoUsu);
-		ou = CpDao.getInstance().consultarPorId(ou);
-		cargo.setId(idCargo);
-		lotacao.setId(idLotacao);
-		funcao.setIdFuncao(idFuncao);
-
-		pessoa.setOrgaoUsuario(ou);
-		pessoa.setCargo(cargo);
-		pessoa.setLotacao(lotacao);
-		if (idFuncao != null && idFuncao != 0) {
-			pessoa.setFuncaoConfianca(funcao);
-		} else {
-			pessoa.setFuncaoConfianca(null);
-		}
-		pessoa.setSesbPessoa(ou.getSigla());
-
-		// ÓRGÃO / CARGO / FUNÇÃO DE CONFIANÇA / LOTAÇÃO e CPF iguais.
-		DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();
-		dpPessoa.setIdOrgaoUsu(pessoa.getOrgaoUsuario().getId());
-		dpPessoa.setCargo(pessoa.getCargo());
-		dpPessoa.setFuncaoConfianca(pessoa.getFuncaoConfianca());
-		dpPessoa.setLotacao(pessoa.getLotacao());
-		dpPessoa.setCpf(pessoa.getCpfPessoa());
-		dpPessoa.setNome("");
-		dpPessoa.setId(id);
-
-		dpPessoa.setBuscarFechadas(Boolean.FALSE);
-		Integer tamanho = dao().consultarQuantidade(dpPessoa);
-
-		if (tamanho > 0) {
-			throw new AplicacaoException("Usuário já cadastrado com estes dados: Órgão, Cargo, Função, Unidade e CPF");
-		}
-		
-		List<DpPessoa> listaPessoasMesmoCPF = new ArrayList<DpPessoa>();
-		DpPessoa pessoa2 = new DpPessoa();
-		
-	
-		listaPessoasMesmoCPF.addAll(dao().listarCpfAtivoInativo(pessoa.getCpfPessoa()));
-		
 		
 		try {
-	//		dao().em().getTransaction().begin();
-
-			if(pessoaAnt != null && pessoaAnt.getId() != null) {
-				pessoa.setMatricula(pessoaAnt.getMatricula());
-				pessoa.setIdePessoa(pessoaAnt.getIdePessoa());
-				if(pessoaAnt.getDataFimPessoa() != null) {
-					pessoa.setDataFimPessoa(pessoaAnt.getDataFimPessoa());
-				}
-				dao().gravarComHistorico(pessoa, pessoaAnt, data , getIdentidadeCadastrante());
-			} else {
-				pessoa.setHisIdcIni(getIdentidadeCadastrante());
-				dao().gravar(pessoa);
-				
-				pessoa.setIdPessoaIni(pessoa.getId());
-				pessoa.setIdePessoa(pessoa.getId().toString());
-				pessoa.setMatricula(10000 + pessoa.getId());
-				pessoa.setIdePessoa(pessoa.getMatricula().toString());
-				dao().gravar(pessoa);
-
-				lista = CpDao.getInstance()
-						.consultaIdentidadesPorCpf(cpf.replace(".", "").replace("-", ""));
-				CpIdentidade usu = null;
-				if (lista.size() > 0) {
-					CpIdentidade usuarioExiste = lista.get(0);
-					usu = new CpIdentidade();
-					usu.setCpTipoIdentidade(dao().consultar(1, CpTipoIdentidade.class, false));
-					usu.setDscSenhaIdentidade(usuarioExiste.getDscSenhaIdentidade());
-					usu.setDtCriacaoIdentidade(data);
-					usu.setCpOrgaoUsuario(ou);
-					usu.setHisDtIni(usu.getDtCriacaoIdentidade());
-					usu.setHisAtivo(1);
-				}
-
-				if (usu != null) {
-					usu.setNmLoginIdentidade(pessoa.getSesbPessoa() + pessoa.getMatricula());
-					usu.setDpPessoa(pessoa);
-					dao().gravarComHistorico(usu, getIdentidadeCadastrante());
-				}
-			}
-			
-			for (DpPessoa dpPessoaAnt2 : listaPessoasMesmoCPF) {
-				if (dpPessoaAnt2.getNomePessoa().equalsIgnoreCase(pessoa.getNomePessoa())) continue;
-				if(!dpPessoaAnt2.getId().equals(id)) {
-					pessoa2 = new DpPessoa();
-					pessoa2.setNomePessoa(pessoa.getNomePessoa());
-					pessoa2.setOrgaoUsuario(dpPessoaAnt2.getOrgaoUsuario());
-					pessoa2.setLotacao(dpPessoaAnt2.getLotacao());
-					pessoa2.setFuncaoConfianca(dpPessoaAnt2.getFuncaoConfianca());
-					pessoa2.setMatricula(dpPessoaAnt2.getMatricula());
-					pessoa2.setCpfPessoa(dpPessoaAnt2.getCpfPessoa());
-					pessoa2.setCargo(dpPessoaAnt2.getCargo());
-					pessoa2.setIdePessoa(dpPessoaAnt2.getIdePessoa());
-					pessoa2.setEmailPessoa(dpPessoaAnt2.getEmailPessoa());
-					pessoa2.setDataFimPessoa(data);
-					pessoa2.setSituacaoFuncionalPessoa(dpPessoaAnt2.getSituacaoFuncionalPessoa());
-					pessoa2.setSesbPessoa(dpPessoaAnt2.getSesbPessoa());
-					pessoa2.setDataFimPessoa(dpPessoaAnt2.getDataFimPessoa());
-					pessoa2.setDataNascimento(dpPessoaAnt2.getDataNascimento());
-					pessoa2.setIdPessoaIni(dpPessoaAnt2.getIdPessoaIni());
-					dao().gravarComHistorico(pessoa2, dpPessoaAnt2, data, getIdentidadeCadastrante());
-				}
-			}
-			
-			if(enviarEmail != null && idOrgaoUsu != null && cpf != null && lista != null && lista.size() == 0) {
-				Cp.getInstance().getBL().criarIdentidade(pessoa.getSesbPessoa() + pessoa.getMatricula(),
-						pessoa.getCpfFormatado(), getIdentidadeCadastrante(), null, new String[1], Boolean.FALSE);
-			}
-			
-		//	dao().em().getTransaction().commit();
-		} catch (final Exception e) {
-			if(e.getCause() instanceof ConstraintViolationException &&
-					("CORPORATIVO.DP_PESSOA_UNIQUE_PESSOA_ATIVA".equalsIgnoreCase(((ConstraintViolationException)e.getCause()).getConstraintName()))) {
-				result.include(SigaModal.ALERTA, SigaModal.mensagem("Ocorreu um problema no cadastro da pessoa"));
-			} else {
-		//	dao().em().getTransaction().rollback();
-				throw new AplicacaoException("Erro na gravação", 0, e);
-			}
+			DpPessoa pes = new CpBL().criarUsuario(id, getIdentidadeCadastrante(), idOrgaoUsu, idCargo, idFuncao, idLotacao, nmPessoa, dtNascimento, cpf, email, identidade,
+					orgaoIdentidade, ufIdentidade, dataExpedicaoIdentidade, nomeExibicao, enviarEmail);
+		} catch (RegraNegocioException e) {
+			result.include(SigaModal.ALERTA, e.getMessage());
 		}
+		
 		lista(0, null, "", "", null, null, null, "", null);
 	}
+
 	
 	@Get({"/app/pessoa/check_nome_por_cpf"})
 	public void checkNome(String nome, String cpf, String id) throws AplicacaoException {
@@ -1086,12 +897,6 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		}
 
 		return null;
-	}
-	
-	protected static boolean isEmailValido(String email) {
-		Pattern pattern = Pattern.compile(Texto.DpPessoa.EMAIL_REGEX_PATTERN);   
-	    Matcher matcher = pattern.matcher(email);   
-	    return matcher.find();   
 	}
 	
 	/*

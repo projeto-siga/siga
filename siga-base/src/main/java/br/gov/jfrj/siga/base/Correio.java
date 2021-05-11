@@ -74,9 +74,15 @@ public class Correio {
 		List<String> listaServidoresEmail = new ArrayList<>();
 
 		// lista indisponivel. Tenta ler apenas 1 servidor definido.
+		String servidor = Prop.get("/siga.smtp");
+		
+		// Se não for definido um servidor, simplesmente não enviar nenhum email
+		if (servidor == null)
+			return;
+		
 		if (listaServidoresEmail == null || listaServidoresEmail.size() == 0) {
 			listaServidoresEmail = new ArrayList<String>();
-			listaServidoresEmail.add(Prop.get("/siga.smtp"));
+			listaServidoresEmail.add(servidor);
 		}
 
 		boolean servidorDisponivel = false;
@@ -181,7 +187,7 @@ public class Correio {
 		
 		
 		if (isVersionTest) {
-			msg.setSubject(assunto + "AMBIENTE DE TESTE FAVOR DESCONSIDERAR", "utf-8");
+			msg.setSubject(assunto + " - AMBIENTE DE TESTE FAVOR DESCONSIDERAR", "utf-8");
 		}
 		else {
 			msg.setSubject(assunto, "utf-8");

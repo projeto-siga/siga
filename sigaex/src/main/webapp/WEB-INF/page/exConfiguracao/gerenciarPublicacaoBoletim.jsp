@@ -25,7 +25,7 @@
 		
 		function sbmt(id) {
 			var frm = document.getElementById('frm');
-			frm.action='${request.contextPath}/app/expediente/configuracao/gerenciar_publicacao_boletim?id=${doc.idDoc}';
+			frm.action='${request.contextPath}/app/configuracao/gerenciar_publicacao_boletim?id=${doc.idDoc}';
 			frm.submit();
 		}
 	</script>
@@ -34,7 +34,7 @@
 			<div class="card-header"><h5>
 				Gerenciamento de permiss&otilde;es para solicita&ccedil;&atilde;o de publica&ccedil;&atilde;o no BI
 			</h5></div>	
-			<form id="frm" name="frm" action="${request.contextPath}/app/expediente/configuracao/gerenciar_publicacao_boletim_gravar" method="post">
+			<form id="frm" name="frm" action="${request.contextPath}/app/configuracao/gerenciar_publicacao_boletim_gravar" method="post">
 				<input type="hidden" name="postback" value="1" />
 				<input type="hidden" name="gerenciaPublicacao" value="sim" />
 				<input type="hidden" name="idTpMov" value="36" />
@@ -173,7 +173,7 @@
 					<td>${configuracao.hisDtFimDDMMYY_HHMMSS}<td>
 					<td>
 						<c:if test="${configuracao.hisDtFim != null}">
-							<c:url var="url" value="/app/expediente/configuracao/excluir_configuracao_publicacao_boletim">
+							<c:url var="url" value="/app/configuracao/excluir_configuracao_publicacao_boletim">
 								<c:param name="id">${configuracao.idConfiguracao}</c:param>
 							</c:url>
 							 <a href="${url}">Excluir</a>

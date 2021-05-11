@@ -931,7 +931,13 @@ LINHA  VARIÁVEL / CONTEÚDO
                 </style>
             </head>
             <body>
-                [#nested]
+            	[#if func.resource('conversor.html.ext') == 'br.gov.jfrj.itextpdf.MyPD4ML']
+			    	[#nested]
+	            [#else]
+					<div style="word-wrap: break-word" class="divDoc">
+				     	[#nested]
+		           	</div>
+			    [/#if]
             </body>
         </html>
     [/#if]
@@ -2154,52 +2160,54 @@ Pede deferimento.</span><br/><br/><br/>
     FIM TITULO -->
 [/#macro]
 
-[#macro inicioSubscritor]
+[#macro inicioSubscritor sigla]
     <!-- INICIO SUBSCRITOR [#nested/] -->
+    <a class="doc-sign" href="/sigaex/app/validar-assinatura?pessoa=[#nested/]&sigla=${sigla}">
 [/#macro]
 
 
 [#macro fimSubscritor]
     <!-- FIM SUBSCRITOR [#nested/] -->
+    </a>
 [/#macro]
 
 [#macro cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho=false]
-<table style="float:none; clear:both;" width="100%" align="left" border="0" cellpadding="0"
-    cellspacing="0" bgcolor="#FFFFFF">
-    <tr bgcolor="#FFFFFF">
-        <td width="100%">
-        <table width="100%" border="0" cellpadding="2">
-            <tr>
-                <td width="100%" align="center" valign="bottom"><img src="${_pathBrasao}" width="65" height="65" /></td>
-            </tr>
-            <tr>
-                <td width="100%" align="center">
-                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">${_tituloGeral}</p>
-                </td>
-            </tr>
-            [#if _subtituloGeral?has_content]
-            <tr>
-                <td width="100%" align="center">
-                <p style="font-family: Arial; font-size: 10pt; font-weight: bold;">${_subtituloGeral}</p>
-                </td>
-            </tr>
-            [/#if]
-            [#if orgaoCabecalho?? && orgaoCabecalho]
+	<table style="float:none; clear:both;" width="100%" align="left" border="0" cellpadding="0"
+	    cellspacing="0" bgcolor="#FFFFFF">
+	    <tr bgcolor="#FFFFFF">
+	        <td width="100%">
+	        <table width="100%" border="0" cellpadding="2">
+	            <tr>
+	                <td width="100%" align="center" valign="bottom"><img src="${_pathBrasao}" width="${_widthBrasao}" height="${_heightBrasao}" /></td>
+	            </tr>
 	            <tr>
 	                <td width="100%" align="center">
-	                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 8pt;">
-	                [#if mov??]
-	                    ${(mov.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
-	                [#else]
-	                    ${(doc.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
-	                [/#if]</p>
+	                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">${_tituloGeral}</p>
 	                </td>
 	            </tr>
-            [/#if]
-        </table>
-        </td>
-    </tr>
-</table>
+	            [#if _subtituloGeral?has_content]
+	            <tr>
+	                <td width="100%" align="center">
+	                <p style="font-family: Arial; font-size: 10pt; font-weight: bold;">${_subtituloGeral}</p>
+	                </td>
+	            </tr>
+	            [/#if]
+	            [#if orgaoCabecalho?? && orgaoCabecalho]
+		            <tr>
+		                <td width="100%" align="center">
+		                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 8pt;">
+		                [#if mov??]
+		                    ${(mov.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
+		                [#else]
+		                    ${(doc.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
+		                [/#if]</p>
+		                </td>
+		            </tr>
+	            [/#if]
+	        </table>
+	        </td>
+	    </tr>
+	</table>
 [/#macro]
 
 [#macro cabecalhoCentralizado orgaoCabecalho=true]
@@ -2420,8 +2428,9 @@ Pede deferimento.</span><br/><br/><br/>
    <!-- INICIO ASSINATURA -->
 [/#if]
 <p style="font-family: Arial; font-size: 11pt;" align="center">
+	<br/>
     [#if (doc.subscritor)??]
-       [@inicioSubscritor]${(doc.subscritor.idPessoa)!}[/@inicioSubscritor]
+       [@inicioSubscritor sigla=doc.codigoCompacto]${(doc.subscritor.idPessoa)!}[/@inicioSubscritor]
     [/#if]
     [#if (doc.nmSubscritor)??]
         ${doc.nmSubscritor}
@@ -2464,7 +2473,7 @@ Pede deferimento.</span><br/><br/><br/>
                 [#if (doc.mobilGeral.exMovimentacaoSet)??]
         [#list doc.mobilGeral.exMovimentacaoSet as mov]
                     [#if (mov.exTipoMovimentacao.idTpMov)! == 24]
-                        [@inicioSubscritor]${(mov.subscritor.idPessoa)}[/@inicioSubscritor]
+                        [@inicioSubscritor sigla=doc.codigoCompacto]${(mov.subscritor.idPessoa)}[/@inicioSubscritor]
                         <br/><br/><br/>
                         [#if mov.nmSubscritor??]
                             ${mov.nmSubscritor}
@@ -4576,5 +4585,7 @@ ${texto}
 
 [#assign _pathBrasao = "contextpath/imagens/brasaoColoridoTRF2.png" /]
 [#assign _pathBrasaoSecundario = "contextpath/imagens/Logotipo_Prodesp_Governo_SP.png" /]
+[#assign _widthBrasao = "auto" /]
+[#assign _heightBrasao = "65" /]
 [#assign _tituloGeral = "PODER JUDICIÁRIO" /]
 [#assign _subtituloGeral = "JUSTIÇA FEDERAL" /]

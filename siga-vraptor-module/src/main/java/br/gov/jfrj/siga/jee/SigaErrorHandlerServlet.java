@@ -28,6 +28,12 @@ public class SigaErrorHandlerServlet extends HttpServlet {
 			requestUri = "Unknown";
 		}
 
+		if (request.getAttribute("jsonError") != null) {
+			response.setContentType("application/json");
+			response.getWriter().print(request.getAttribute("jsonError"));
+			return;
+		}
+
 		if (response.isCommitted())
 			return;
 

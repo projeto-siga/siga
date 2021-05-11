@@ -18,15 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex;
 
-import static br.gov.jfrj.siga.dp.CpMarcador.MARCADOR_ARQUIVADO_CORRENTE;
-import static br.gov.jfrj.siga.dp.CpMarcador.MARCADOR_ARQUIVADO_INTERMEDIARIO;
-import static br.gov.jfrj.siga.dp.CpMarcador.MARCADOR_ARQUIVADO_PERMANENTE;
-import static br.gov.jfrj.siga.dp.CpMarcador.MARCADOR_A_ELIMINAR;
-import static br.gov.jfrj.siga.dp.CpMarcador.MARCADOR_ELIMINADO;
-import static br.gov.jfrj.siga.dp.CpMarcador.MARCADOR_EM_EDITAL_DE_ELIMINACAO;
-import static br.gov.jfrj.siga.dp.CpMarcador.MARCADOR_RECOLHER_PARA_ARQUIVO_PERMANENTE;
-import static br.gov.jfrj.siga.dp.CpMarcador.MARCADOR_TRANSFERIR_PARA_ARQUIVO_INTERMEDIARIO;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,17 +40,17 @@ import org.hibernate.annotations.BatchSize;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
-import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
 import br.gov.jfrj.siga.ex.bl.ExParte;
 import br.gov.jfrj.siga.ex.util.CronologiaComparator;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Selecionavel;
+import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
 @Entity
@@ -179,6 +170,12 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		// return getExTipoMobil().getIdTipoMobil() ==
 		// ExTipoMobil.TIPO_MOBIL_VOLUME;
 		return getExTipoMobil() != null && getExTipoMobil().getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_VOLUME;
+	}
+
+	public boolean isUltimoVolume() {
+		if (!isVolume())
+			return false;
+		return getNumSequencia().equals(doc().getNumUltimoVolume());
 	}
 
 	/**
@@ -839,6 +836,13 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	 * Verifica se o mobil está arquivado corrente
 	 */
 	public boolean isArquivadoCorrente() {
+		if (isGeral() && doc().isFinalizado() && doc().getExMobilSet() != null) {
+			for (ExMobil m : doc().getExMobilSet()) {
+				if ((m.isVia() || m.isUltimoVolume()) && !m.isArquivado())
+					return false;
+			}
+			return true;
+		}
 		return sofreuMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE, getMobilParaMovimentarDestinacao());
 	}
@@ -868,6 +872,17 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	public boolean isArquivado() {
 		return isArquivadoCorrente() || isArquivadoIntermediario() || isArquivadoPermanente();
 	}
+	
+	public boolean isAguardandoAndamento() {
+		return doc().isFinalizado()
+			&& (isVia() || isVolume())
+			&& !isArquivado()
+			&& !isApensadoAVolumeDoMesmoProcesso()
+			&& !isSobrestado()
+			&& !isJuntado()
+			&& !isEmTransito()
+			&& !doc().isSemEfeito();
+	}
 
 	/**
 	 * Verifica se o mobil está sobrestado
@@ -891,13 +906,16 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	public boolean isEmTransito() {
 		if (isApensadoAVolumeDoMesmoProcesso())
 			return false;
-		return sofreuMov(new long[] { ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA,
+		return getTramitePendente() != null;
+
+	}
+	
+	public ExMovimentacao getTramitePendente() {
+		return getUltimaMovimentacao(new long[] { ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA },
-
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO);
-
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA },new long[] { ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO },
+				this, false, null);
 	}
 
 	/**
@@ -1892,10 +1910,10 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		SortedSet<ExMarca> setFinal = new TreeSet<ExMarca>();
 		for (ExMarca m : getExMarcaSet()) {
 			long idM = m.getCpMarcador().getIdMarcador();
-			if (idM == MARCADOR_ARQUIVADO_CORRENTE || idM == MARCADOR_TRANSFERIR_PARA_ARQUIVO_INTERMEDIARIO
-					|| idM == MARCADOR_ARQUIVADO_INTERMEDIARIO || idM == MARCADOR_RECOLHER_PARA_ARQUIVO_PERMANENTE
-					|| idM == MARCADOR_ARQUIVADO_PERMANENTE || idM == MARCADOR_A_ELIMINAR
-					|| idM == MARCADOR_EM_EDITAL_DE_ELIMINACAO || idM == MARCADOR_ELIMINADO)
+			if (idM == CpMarcadorEnum.ARQUIVADO_CORRENTE.getId() || idM == CpMarcadorEnum.TRANSFERIR_PARA_ARQUIVO_INTERMEDIARIO.getId()
+					|| idM == CpMarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId() || idM == CpMarcadorEnum.RECOLHER_PARA_ARQUIVO_PERMANENTE.getId()
+					|| idM == CpMarcadorEnum.ARQUIVADO_PERMANENTE.getId() || idM == CpMarcadorEnum.A_ELIMINAR.getId()
+					|| idM == CpMarcadorEnum.EM_EDITAL_DE_ELIMINACAO.getId() || idM == CpMarcadorEnum.ELIMINADO.getId())
 				setFinal.add(m);
 		}
 		return setFinal;
@@ -2301,6 +2319,31 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		if (!movs.isEmpty())
 			return Ex.getInstance().getComp()
 					.podeDisponibilizarNoAcompanhamentoDoProtocolo(pessoa, lotacao, this.getDoc());			
+		return false;
+	}
+	
+	public PessoaLotacaoParser getAtendente() {
+		DpPessoa resp = doc().getCadastrante();
+		DpLotacao lotaResp = doc().getLotaCadastrante();
+		
+		ExMovimentacao ultimaMovimentacaoNaoCancelada = getUltimaMovimentacaoNaoCancelada();
+		if (doc().isFinalizado() && !isGeral() && ultimaMovimentacaoNaoCancelada != null) {
+			DpPessoa pes = ultimaMovimentacaoNaoCancelada.getResp();
+			DpLotacao lot = ultimaMovimentacaoNaoCancelada.getLotaResp();
+			if (pes != null || lot != null) {
+				resp = pes;
+				lotaResp = lot;
+			}
+		}
+		return new PessoaLotacaoParser(resp, lotaResp);
+	}
+	
+	public boolean isAtendente(DpPessoa pessoa, DpLotacao lotacao) {
+		PessoaLotacaoParser pl = getAtendente();
+		if (pl.getPessoa() != null && pl.getPessoa().equivale(pessoa))
+			return true;
+		if (pl.getLotacao() != null && pl.getLotacao().equivale(lotacao))
+			return true;
 		return false;
 	}
 }

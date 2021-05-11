@@ -5,12 +5,13 @@ import java.util.stream.Collectors;
 import com.crivano.swaggerservlet.SwaggerException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
-import br.gov.jfrj.siga.api.v1.ApiContext;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.AcessoItem;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.AcessosGetRequest;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.AcessosGetResponse;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.IAcessosGet;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.CurrentRequest;
+import br.gov.jfrj.siga.base.RequestInfo;
 import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;

@@ -52,7 +52,7 @@ import org.hibernate.engine.spi.PersistentAttributeInterceptor;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.Prop;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoHCP;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;

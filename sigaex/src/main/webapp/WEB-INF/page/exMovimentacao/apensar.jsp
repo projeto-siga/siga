@@ -101,7 +101,7 @@
 			<div class="row">
 				<div class="col-sm">
 					<div class="form-group">
-						<label>Documento Mestre</label>
+						<label><fmt:message key="documento.mestre"/></label> 
 						<siga:selecao tema='simple' titulo="Documento Mestre:"
 							propriedade="documentoRef" urlAcao="expediente/buscar"
 							urlSelecionar="expediente/selecionar" modulo="sigaex" />

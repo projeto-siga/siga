@@ -73,10 +73,21 @@ function popitup(url) {
 	winProp = 'width=' + popW + ',height=' + popH + ',left=' + winleft
 	+ ',top=' + winUp + ',scrollbars=yes,resizable';
 	
+	if(url.includes("/exibir?")) {
+		url = montarUrlDocPDF (url, document.getElementById("visualizador").value);
+	}
 	newwindow = window.open(url, nameWindow, winProp);
 
 	if (window.focus) {
 		newwindow.focus()
+	}
+}
+
+function montarUrlDocPDF(url, visualizador) {
+	if(visualizador == "pdf.js") {
+		return "/siga/pdfjs/web/viewer.html?file="+encodeURIComponent(url);
+	} else {
+		return url;
 	}
 }
 
@@ -172,7 +183,7 @@ function descarrega() {
 	carregando = false;
 }
 
-function verifica_data(data, naoObriga, retornarMensagem) {
+function verifica_data(data, naoObriga, retornarMensagem, podeRetroativa = true) {
 	mydata = new String(data.value);
 	var mySplit;
 	var msg = "";
@@ -191,28 +202,37 @@ function verifica_data(data, naoObriga, retornarMensagem) {
 		if ((dia == null) || (mes == null) || (ano == null) || (dia == "")
 				|| (mes == "") || (ano == "")) {
 			msg = msg
-			+ "A data deve estar num dos seguintes formatos: DD/MM/AAAA ou DDMMAAAA\n";						
+			+ "A data deve estar num dos seguintes formatos: DD/MM/AAAA ou DDMMAAAA. \n";						
 		}
 
 		if (isNaN(dia) || isNaN(mes) || isNaN(ano)) {
-			msg = msg + "A data só pode conter caracteres numéricos\n";			
+			msg = msg + "A data só pode conter caracteres numéricos. \n";			
 		}
 
 		// verifica o dia valido para cada mes
 		if (((dia < 1 || dia > 31) || (dia > 30)
 				&& (mes == 4 || mes == 6 || mes == 9 || mes == 11))
 				|| (mes == 2 && (dia > 29 || (dia > 28 && (parseInt(ano / 4) != ano / 4))))) {
-			msg = msg + "Dia inválido\n";
+			msg = msg + "Dia inválido. \n";
 		}
 
 		// verifica se o mes e valido
 		if (mes < 1 || mes > 12) {
-			msg = msg + "Mês inválido\n";
+			msg = msg + "Mês inválido. \n";
 		}
 
 		// verifica se o ano é maior que 9999
-		if (ano.length > 4 || ano.length == 3) {
-			msg = msg + "Ano deve ser no máximo 9999\n";
+		if (isNaN(ano) || ano.length > 4 || ano.length == 3) {
+			msg = msg + "Ano deve ser no máximo 9999. \n";
+		}			
+		
+		// Verifica se não pode data retroativa (anterior a hoje)
+		var dt = new Date(mes + "-" + dia + "-" + ano); 
+		var today = new Date();
+		today.setHours(0, 0, 0, 0);
+		
+		if (!podeRetroativa && dt < today) {
+			msg = msg + "Data não pode ser anterior à hoje. \n";
 		}			
 		
 		if (msg.length > 0) {
@@ -1663,6 +1683,25 @@ function setarFocoAposFecharSigaModal(campoAReceberFoco) {
 	}	
 }
 
+sigaModal.alerta.select = function(campoASelecionar) {
+	selectionarAposFecharSigaModal(campoASelecionar);	
+}
+
+sigaModal.alertaHTML.select = function(campoASelecionar) {
+	selectionarAposFecharSigaModal(campoASelecionar);	
+}
+
+function selectionarAposFecharSigaModal(campoAReceberFoco) {
+	var campo = $(campoAReceberFoco);
+	
+	if (campo.length > 0) {
+		$('#sigaModalAlerta').on('hidden.bs.modal', function (e) {
+			campo.focus();	
+			campo.select();			
+		});
+	}	
+}
+
 function setarFocoBotaoFechar(evento) {
 	$(evento.currentTarget).find('.siga-modal__btn-fechar-rodape').focus()	
 }
@@ -1715,3 +1754,7 @@ $(function() {
 	$('[data-siga-spinner="ocultar"]').on('click', onSpinnerOcultar);
 	$('#sigaModalAlerta').on('shown.bs.modal', setarFocoBotaoFechar.bind(this));
 });
+
+function isNumeric(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}

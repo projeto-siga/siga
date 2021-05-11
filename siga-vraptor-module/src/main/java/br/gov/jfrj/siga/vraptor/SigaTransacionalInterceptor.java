@@ -84,7 +84,7 @@ public class SigaTransacionalInterceptor extends br.com.caelum.vraptor.jpa.JPATr
 
 			commit(manager.getTransaction());
 		} finally {
-			ContextoPersistencia.setDt(null);
+			ContextoPersistencia.removeAll();
 			EntityTransaction transaction = manager.getTransaction();
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();

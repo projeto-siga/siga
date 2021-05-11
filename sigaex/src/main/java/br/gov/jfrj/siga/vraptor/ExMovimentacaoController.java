@@ -61,14 +61,16 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
-import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
+import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -352,6 +354,10 @@ public class ExMovimentacaoController extends ExController {
 		if (mob != null && !mob.isGeral())
 			mob = mob.doc().getMobilGeral();
 
+		if (mob.isArquivado()) {
+			throw new AplicacaoException("Inclusão de arquivo auxiliar não é permitida em documentos arquivados");
+		}
+
 		if(!Ex.getInstance().getComp()
 				.podeAnexarArquivoAuxiliar(getTitular(), getLotaTitular(), mob)) {
 			throw new AplicacaoException("Arquivo Auxiliar não pode ser anexado");
@@ -397,7 +403,7 @@ public class ExMovimentacaoController extends ExController {
 		
 		String fileExtension = arquivo.getFileName().substring(arquivo.getFileName().lastIndexOf("."));
 		
-		if (fileExtension.equals(".bat") || fileExtension.equals(".exe") || fileExtension.equals(".sh") || fileExtension.equals(".dll") ) {
+		if (fileExtension.equals(".bat") || fileExtension.equals(".exe") || fileExtension.equals(".sh") || fileExtension.equals(".dll")) {
 			throw new AplicacaoException(
 					"Extensão " + fileExtension + " inválida para inclusão do arquivo.");
 		}
@@ -1121,6 +1127,12 @@ public class ExMovimentacaoController extends ExController {
 		result.include("doc", doc);
 		result.include("subscritorSel", new DpPessoaSelecao());
 		result.include("documentoRefSel", documentoRefSel);
+		if (doc.temAcompanhamentoDeProtocolo()) {
+    		result.include("msgCabecClass", "alert-warning");
+			result.include("mensagemCabec", "Este documento possui acompanhamento do protocolo, portanto "
+					+ "o histórico do documento juntado também será visível no acompanhamento do protocolo.");
+		}
+		
 	}
 
 	@Transacional
@@ -2095,7 +2107,8 @@ public class ExMovimentacaoController extends ExController {
 			
 			
 		} else {
-			ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getExDocumento().getSigla());
+			result.include("origemRedirectTransferirGravar", true);
+			ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getSigla()); 
 		}
 	}
 
@@ -2490,7 +2503,7 @@ public class ExMovimentacaoController extends ExController {
 	 *         {@link CpMarcador#getOrdem()}
 	 */
 	private List<CpMarcador> getListaMarcadoresGerais() {
-		List<CpMarcador> marcadores = dao().listarCpMarcadoresGerais();
+		List<CpMarcador> marcadores = dao().listarCpMarcadoresGerais(true);
 		marcadores.sort(CpMarcador.ORDEM_COMPARATOR);
 
 		return marcadores;
@@ -2505,7 +2518,7 @@ public class ExMovimentacaoController extends ExController {
 	 */
 	@Transacional
 	@Post("/app/expediente/mov/marcar_gravar")
-	public void aMarcarGravar(final String sigla, final Long marcador, final DpPessoaSelecao subscritor_pessoaSel, final DpLotacaoSelecao lotaSubscritor_lotacaoSel,
+	public void aMarcarGravar(final String sigla, final Long marcador, final String interessado, final DpPessoaSelecao subscritorSel, final DpLotacaoSelecao lotaSubscritorSel,
 			final String planejada, String limite, final String texto) throws Exception {
 		Date dtPlanejada = Data.parse(planejada);
 		Date dtLimite = Data.parse(limite);
@@ -2517,12 +2530,36 @@ public class ExMovimentacaoController extends ExController {
 			throw new AplicacaoException("Marcador deve ser informado.");
 
 		CpMarcador m = dao().consultar(marcador, CpMarcador.class, false);
-
+		
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
 				.novaInstancia();
+
+		if (m.getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA || m.getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.PESSOA_OU_LOTACAO) {
+			if (Utils.empty(interessado))
+				throw new AplicacaoException("Tipo do interessado deve ser informado.");
+		} 
+		
+		if (m.getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.PESSOA || "pessoa".equals(interessado)) {
+			if (subscritorSel.empty())
+				throw new AplicacaoException("Pessoa deve ser informada.");
+			movimentacaoBuilder.setSubscritorSel(subscritorSel);
+		}
+
+		if (m.getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.LOTACAO || "lotacao".equals(interessado)) {
+			if (lotaSubscritorSel.empty())
+				throw new AplicacaoException("Lotação deve ser informada.");
+			movimentacaoBuilder.setLotaSubscritorSel(lotaSubscritorSel);
+		}
+
+		if (!Prop.getBool("/siga.marcadores.permite.data.retroativa")) {
+			if (!Utils.empty(planejada) && !DateUtils.isSameDay(new Date(), dtPlanejada) && dtPlanejada.before(new Date())) 
+				throw new AplicacaoException("Data Planejada não pode ser anterior à hoje.");
+			
+			if (!Utils.empty(limite) && !DateUtils.isSameDay(new Date(), dtLimite) && dtLimite.before(new Date())) 
+				throw new AplicacaoException("Data Limite não pode ser anterior à hoje.");
+		} 
+			
 		movimentacaoBuilder.setIdMarcador(marcador);
-		movimentacaoBuilder.setSubscritorSel(subscritor_pessoaSel);
-		movimentacaoBuilder.setLotaSubscritorSel(lotaSubscritor_lotacaoSel);
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
 		mov.setDescrMov(texto);
 		Ex.getInstance()
@@ -2531,7 +2568,7 @@ public class ExMovimentacaoController extends ExController {
 						builder.getMob(), mov.getDtMov(),
 						mov.getSubscritor(), mov.getLotaSubscritor(),
 						mov.getDescrMov(), 
-						mov.getMarcador(), dtPlanejada, dtLimite);
+						mov.getMarcador(), dtPlanejada, dtLimite, true);
 		ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getSigla());
 	}
 
@@ -3061,7 +3098,7 @@ public class ExMovimentacaoController extends ExController {
 	@Post("/app/expediente/mov/assinar_senha_gravar")
 	public void aAssinarSenhaGravar(String sigla, final Boolean copia, final Boolean juntar, 
 			final Boolean tramitar, final Boolean exibirNoProtocolo, String nomeUsuarioSubscritor,
-			String senhaUsuarioSubscritor) throws Exception {
+			String senhaUsuarioSubscritor,final Boolean senhaIsPin) throws Exception {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 		ExDocumento doc = buscarDocumento(builder, true);
@@ -3075,7 +3112,7 @@ public class ExMovimentacaoController extends ExController {
 					.getBL()
 					.assinarDocumentoComSenha(getCadastrante(),
 							getLotaTitular(), doc, mov.getDtMov(),
-							nomeUsuarioSubscritor, senhaUsuarioSubscritor, true,
+							nomeUsuarioSubscritor, senhaUsuarioSubscritor, senhaIsPin, true,
 							getTitular(), copia, juntar, tramitar, exibirNoProtocolo);
 		} catch (final Exception e) {
 			httpError(e);
@@ -3090,7 +3127,7 @@ public class ExMovimentacaoController extends ExController {
 	@Path("/app/expediente/mov/assinar_mov_login_senha_gravar")
 	public void aAssinarMovSenhaGravar(Long id, String sigla,
 			String tipoAssinaturaMov, String nomeUsuarioSubscritor,
-			String senhaUsuarioSubscritor, Boolean copia) throws Exception {
+			String senhaUsuarioSubscritor, final Boolean senhaIsPin, Boolean copia) throws Exception {
 		long tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA;
 		
 		try {
@@ -3111,7 +3148,7 @@ public class ExMovimentacaoController extends ExController {
 				.getBL()
 				.assinarMovimentacaoComSenha(getCadastrante(),
 						getLotaTitular(), mov, mov.getDtMov(),
-						nomeUsuarioSubscritor, senhaUsuarioSubscritor, true,
+						nomeUsuarioSubscritor, senhaUsuarioSubscritor, senhaIsPin, true,
 						tpMovAssinatura);
 		} catch (final Exception e) {
 			httpError(e);
@@ -4314,23 +4351,33 @@ public class ExMovimentacaoController extends ExController {
 		Long idOrgaoUsuario = doc.getOrgaoUsuario().getId();
 		Long idOrgaoUsuarioCadastrante = getCadastrante().getOrgaoUsuario()
 				.getId();
+		Long idLotDefault = null;
 
 		siglaSubscritor = PublicacaoDJEBL.obterUnidadeDocumento(doc);
 		siglaCadastrante = getCadastrante().getLotacao().getSigla();
 		siglaTitular = getLotaTitular().getSigla();
 		lotFiltro = new DpLotacao();
 
-		lotFiltro.setOrgaoUsuario(doc.getOrgaoUsuario());
+		lotFiltro.setOrgaoUsuario(doc.getOrgaoUsuario());		
 		lotFiltro.setSigla(siglaSubscritor);
+	    if (lotFiltro.getSigla().startsWith("-"))
+	    	lotFiltro.setSigla(lotFiltro.getSigla().substring(1));
 		lotSubscritor = dao().consultarPorSigla(lotFiltro);
 
-		lotacoes.add(lotSubscritor);
+		if (lotSubscritor != null) {
+			lotacoes.add(lotSubscritor);
+			idLotDefault = lotSubscritor.getId();
+		}
 
 		if (!siglaSubscritor.equals(siglaCadastrante)
 				&& idOrgaoUsuarioCadastrante.equals(idOrgaoUsuario)) {
 			lotFiltro.setSigla(siglaCadastrante);
 			lotCadastrante = dao().consultarPorSigla(lotFiltro);
-			lotacoes.add(lotCadastrante);
+			if (lotCadastrante != null) {
+				lotacoes.add(lotCadastrante);
+				if (idLotDefault == null)
+					idLotDefault = lotCadastrante.getId();
+			}	
 		}
 
 		if (!siglaSubscritor.equals(siglaTitular)
@@ -4340,11 +4387,16 @@ public class ExMovimentacaoController extends ExController {
 						.getOrgaoUsuario().getId().equals(idOrgaoUsuario))) {
 			lotFiltro.setSigla(siglaTitular);
 			lotTitular = dao().consultarPorSigla(lotFiltro);
-			lotacoes.add(lotTitular);
+			if (lotTitular != null) {
+				lotacoes.add(lotTitular);
+			  	 if (idLotDefault == null)
+					idLotDefault = lotTitular.getId();
+			}	
 		}
-		return new ListaLotPubl(lotacoes, lotSubscritor.getId());
+		
+		return new ListaLotPubl(lotacoes, idLotDefault);
 	}
-
+	
 	private void validarExisteLotacao(ExDocumento doc) {
 		if (doc.getTitular() != null) {
 			if (doc.getLotaTitular() == null) {
@@ -4971,7 +5023,7 @@ public class ExMovimentacaoController extends ExController {
 		final ExMovimentacao movimentacao = movimentacaoBuilder
 				.construir(dao());
 
-		List<CpMarcador> marcadores = dao().listarCpMarcadoresGerais();
+		List<CpMarcador> marcadores = dao().listarCpMarcadoresGerais(true);
 		Set<CpMarcador> marcadoresAtivo = (Set<CpMarcador>) this.getListaMarcadoresAtivos(documentoBuilder.getMob().getDoc().getMobilGeral());
 		if (marcadores != null) {
 			marcadores.removeAll(marcadoresAtivo);

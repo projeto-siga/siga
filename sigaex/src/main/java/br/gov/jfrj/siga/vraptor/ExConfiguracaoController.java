@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.inject.Inject;
@@ -26,7 +25,6 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
@@ -35,6 +33,7 @@ import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
@@ -49,6 +48,8 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoComparator;
+import br.gov.jfrj.siga.ex.model.enm.ExParamCfg;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.builder.ExConfiguracaoBuilder;
 
@@ -59,7 +60,7 @@ public class ExConfiguracaoController extends ExController {
 	private static final String FORMA = "forma";
 	private static final String MODELO = "modelo";
 	private static final String VERIFICADOR_ACESSO = "FE:Ferramentas;CFG:Configurações";
-	
+
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -73,120 +74,19 @@ public class ExConfiguracaoController extends ExController {
 		super(request, response, context, result, ExDao.getInstance(), so, em);
 	}
 
-	@Get("app/expediente/configuracao/listar")
-	public void lista() throws Exception {
+	@Get("app/configuracao/listar")
+	public void lista(Long idTpConfiguracao, Long idOrgaoUsu) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
+		if (idTpConfiguracao == null)
+			idTpConfiguracao = ExTipoDeConfiguracao.AUTUAVEL.getId();
+		ExTipoDeConfiguracao tpconf = ExTipoDeConfiguracao.getById(idTpConfiguracao);
+
+		result.include("tipoDeConfiguracao", tpconf);
 		result.include("listaTiposConfiguracao", getListaTiposConfiguracao());
 		result.include("orgaosUsu", getOrgaosUsu());
 	}
-	
-	
-	@Get("app/expediente/configuracao/editar")
-	public void edita(Long id, boolean campoFixo, Long idOrgaoUsu, Long idTpMov, Long idTpDoc, Long idMod,
-			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Long idSituacao, Long idTpConfiguracao, DpPessoaSelecao pessoaSel,
-			DpLotacaoSelecao lotacaoSel, DpCargoSelecao cargoSel, DpFuncaoConfiancaSelecao funcaoSel,
-			ExClassificacaoSelecao classificacaoSel, DpPessoaSelecao pessoaObjetoSel,
-			DpLotacaoSelecao lotacaoObjetoSel, DpCargoSelecao cargoObjetoSel, DpFuncaoConfiancaSelecao funcaoObjetoSel, Long idOrgaoObjeto, Long idTpLotacao, String nmTipoRetorno)
-			throws Exception {
 
-		ExConfiguracao config = new ExConfiguracao();
-
-		if (id != null) {
-			config = daoCon(id);
-		} else if (campoFixo) {
-			final ExConfiguracaoBuilder configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia()
-					.setIdNivelAcesso(idNivelAcesso).setIdPapel(idPapel).setIdTpMov(idTpMov).setIdTpDoc(idTpDoc).setIdMod(idMod)
-					.setIdFormaDoc(idFormaDoc).setIdSituacao(idSituacao)
-					.setIdTpConfiguracao(idTpConfiguracao).setPessoaSel(pessoaSel).setLotacaoSel(lotacaoSel)
-					.setCargoSel(cargoSel).setFuncaoSel(funcaoSel).setClassificacaoSel(classificacaoSel)
-					.setPessoaObjetoSel(pessoaObjetoSel).setLotacaoObjetoSel(lotacaoObjetoSel)
-					.setCargoObjetoSel(cargoObjetoSel).setFuncaoObjetoSel(funcaoObjetoSel)
-					.setIdOrgaoObjeto(idOrgaoObjeto).setIdTpLotacao(idTpLotacao);
-
-			config = configuracaoBuilder.construir(dao());
-		}
-		escreverForm(config);
-
-		result.include("id", id);
-		result.include("listaTiposConfiguracao", getListaTiposConfiguracao());
-		result.include("listaSituacao", getListaSituacao());
-		result.include("listaNivelAcesso", getListaNivelAcesso());
-		result.include("listaPapel", getListaPapel());
-		result.include("orgaosUsu", getOrgaosUsu());
-		result.include("listaTiposMovimentacao", getListaTiposMovimentacao());
-		result.include("tiposFormaDoc", getTiposFormaDoc());
-		result.include("listaTiposDocumento", getListaTiposDocumento());
-		result.include("listaTiposLotacao", getListaTiposLotacao());
-		result.include("nmTipoRetorno", nmTipoRetorno);
-		result.include("config", config);
-		result.include("campoFixo", campoFixo);
-		result.include("configuracao", config);
-	}
-
-	@SuppressWarnings("all")
-	@Transacional
-	@Get("app/expediente/configuracao/excluir")
-	public void excluir(Long id, String nmTipoRetorno, Long idMod, Long idFormaDoc) throws Exception {
-		assertAcesso(VERIFICADOR_ACESSO);
-
-		if (id != null) {
-			try {
-				dao().iniciarTransacao();
-				ExConfiguracao config = daoCon(id);
-				config.setHisDtFim(dao().consultarDataEHoraDoServidor());
-				dao().gravarComHistorico(config, getIdentidadeCadastrante());
-				dao().commitTransacao();
-			} catch (final Exception e) {
-				dao().rollbackTransacao();
-				throw new AplicacaoException("Erro na gravação", 0, e);
-			}
-		} else
-			throw new AplicacaoException("ID não informada");
-
-		escreveFormRetornoExclusao(nmTipoRetorno, idMod, idFormaDoc);
-	}
-
-	@SuppressWarnings("all")
-	@Transacional
-	@Get("app/expediente/configuracao/editar_gravar")
-	public void editarGravar(Long id, Long idOrgaoUsu, Long idTpMov, Long idTpDoc, Long idTpFormaDoc, Long idMod,
-			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Long idSituacao, Long idTpConfiguracao, DpPessoaSelecao pessoaSel,
-			DpLotacaoSelecao lotacaoSel, DpCargoSelecao cargoSel, DpFuncaoConfiancaSelecao funcaoSel,
-			ExClassificacaoSelecao classificacaoSel, DpPessoaSelecao pessoaObjeto_pessoaSel,
-			DpLotacaoSelecao lotacaoObjeto_lotacaoSel, DpCargoSelecao cargoObjeto_cargoSel, DpFuncaoConfiancaSelecao funcaoObjeto_funcaoSel, Long idOrgaoObjeto, Long idTpLotacao, String nmTipoRetorno,
-			boolean campoFixo) throws Exception {
-
-		final ExConfiguracaoBuilder configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia().setId(id)
-				.setTipoPublicador(null).setIdTpMov(idTpMov).setIdTpDoc(idTpDoc).setIdMod(idMod)
-				.setIdFormaDoc(idFormaDoc).setIdTpFormaDoc(idTpFormaDoc).setIdNivelAcesso(idNivelAcesso).setIdPapel(idPapel)
-				.setIdSituacao(idSituacao).setIdTpConfiguracao(idTpConfiguracao).setPessoaSel(pessoaSel)
-				.setLotacaoSel(lotacaoSel).setCargoSel(cargoSel).setFuncaoSel(funcaoSel)
-				.setClassificacaoSel(classificacaoSel).setIdOrgaoObjeto(idOrgaoObjeto).setPessoaObjetoSel(pessoaObjeto_pessoaSel).setLotacaoObjetoSel(lotacaoObjeto_lotacaoSel)
-				.setCargoObjetoSel(cargoObjeto_cargoSel).setFuncaoObjetoSel(funcaoObjeto_funcaoSel).setIdOrgaoUsu(idOrgaoUsu)
-				.setIdTpLotacao(idTpLotacao);
-
-		gravarConfiguracao(idTpConfiguracao, idSituacao, configuracaoBuilder.construir(dao()));
-		escreveFormRetorno(nmTipoRetorno, campoFixo, configuracaoBuilder);
-	}
-
-	@Post("app/expediente/configuracao/gerenciar_publicacao_boletim_gravar")
-	@Transacional
-	public void gerenciarPublicacaoBoletimGravar(Integer postback, String gerenciaPublicacao, Long idTpMov,
-			Long idTpConfiguracao, Long idFormaDoc, Long idMod, Integer tipoPublicador, Long idSituacao,
-			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel) throws Exception {
-
-		final ExConfiguracaoBuilder configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia().setIdTpMov(idTpMov)
-				.setIdMod(idMod).setIdFormaDoc(idFormaDoc).setIdSituacao(idSituacao)
-				.setIdTpConfiguracao(idTpConfiguracao).setTipoPublicador(tipoPublicador).setPessoaSel(pessoaSel)
-				.setLotacaoSel(lotacaoSel);
-
-		ExConfiguracao exConfiguracao = configuracaoBuilder.construir(dao());
-		gravarConfiguracao(idTpConfiguracao, idSituacao, exConfiguracao);
-		result.redirectTo(MessageFormat.format("/app/expediente/configuracao/gerenciar_publicacao_boletim?{0}",
-				getUrlEncodedParameters()));
-	}
-
-	@Get("app/expediente/configuracao/listar_cadastradas")
+	@Get("app/configuracao/listar_cadastradas")
 	public void listaCadastradas(Long idTpConfiguracao, Long idOrgaoUsu, Long idTpMov, Long idFormaDoc, Long idMod,
 			String nmTipoRetorno, boolean campoFixo) throws Exception {
 
@@ -226,19 +126,148 @@ public class ExConfiguracaoController extends ExController {
 
 		Collections.sort(listConfig, new ExConfiguracaoComparator());
 
+		ExTipoDeConfiguracao tpconf = ExTipoDeConfiguracao.getById(idTpConfiguracao);
+		CpConfiguracaoHelper.incluirAtributosDeListagem(result, tpconf, (List<CpConfiguracao>) (List) listConfig);
+
 		result.include("idMod", idMod);
 		result.include("nmTipoRetorno", nmTipoRetorno);
 		result.include("campoFixo", campoFixo);
 		result.include("configuracao", config);
 		result.include("idFormaDoc", idFormaDoc);
+		result.include("tpConfiguracao", config.getCpTipoConfiguracao());
+	}
 
-		this.getRequest().setAttribute("listConfig", listConfig);
-		this.getRequest().setAttribute("tpConfiguracao", config.getCpTipoConfiguracao());
+	protected void assertConfig(ITipoDeConfiguracao t, CpConfiguracao c) {
+		CpConfiguracaoHelper.assertConfig(t, c);
+		if (c instanceof ExConfiguracao) {
+			ExConfiguracao cc = (ExConfiguracao) c;
+			CpConfiguracaoHelper.assertConfig(t, c, cc.getExClassificacao(), ExParamCfg.CLASSIFICACAO);
+			CpConfiguracaoHelper.assertConfig(t, c, cc.getExTipoDocumento(), ExParamCfg.TIPO_DOCUMENTO);
+			CpConfiguracaoHelper.assertConfig(t, c, cc.getExTipoFormaDoc(), ExParamCfg.TIPO_FORMA_DOCUMENTO);
+			CpConfiguracaoHelper.assertConfig(t, c, cc.getExFormaDocumento(), ExParamCfg.FORMA_DOCUMENTO);
+			CpConfiguracaoHelper.assertConfig(t, c, cc.getExModelo(), ExParamCfg.MODELO);
+			CpConfiguracaoHelper.assertConfig(t, c, cc.getExNivelAcesso(), ExParamCfg.NIVEL_DE_ACESSO);
+			CpConfiguracaoHelper.assertConfig(t, c, cc.getExPapel(), ExParamCfg.PAPEL);
+			CpConfiguracaoHelper.assertConfig(t, c, cc.getExTipoMovimentacao(), ExParamCfg.TIPO_MOVIMENTACAO);
+			CpConfiguracaoHelper.assertConfig(t, c, cc.getExVia(), ExParamCfg.VIA);
+		}
+	}
+
+	@Get("app/configuracao/editar")
+	public void edita(Long id, boolean campoFixo, Long idOrgaoUsu, Long idTpMov, Long idTpDoc, Long idMod,
+			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Long idSituacao, Long idTpConfiguracao,
+			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel, DpCargoSelecao cargoSel,
+			DpFuncaoConfiancaSelecao funcaoSel, ExClassificacaoSelecao classificacaoSel,
+			DpPessoaSelecao pessoaObjetoSel, DpLotacaoSelecao lotacaoObjetoSel, DpCargoSelecao cargoObjetoSel,
+			DpFuncaoConfiancaSelecao funcaoObjetoSel, Long idOrgaoObjeto, Long idTpLotacao, String nmTipoRetorno)
+			throws Exception {
+
+		ExConfiguracao config = new ExConfiguracao();
+
+		if (id != null) {
+			config = daoCon(id);
+		} else if (campoFixo) {
+			final ExConfiguracaoBuilder configuracaoBuilder = new ExConfiguracaoBuilder()
+					.setIdNivelAcesso(idNivelAcesso).setIdPapel(idPapel).setIdTpMov(idTpMov).setIdTpDoc(idTpDoc)
+					.setIdMod(idMod).setIdFormaDoc(idFormaDoc).setIdSituacao(idSituacao)
+					.setIdTpConfiguracao(idTpConfiguracao).setPessoaSel(pessoaSel).setLotacaoSel(lotacaoSel)
+					.setCargoSel(cargoSel).setFuncaoSel(funcaoSel).setClassificacaoSel(classificacaoSel)
+					.setPessoaObjetoSel(pessoaObjetoSel).setLotacaoObjetoSel(lotacaoObjetoSel)
+					.setCargoObjetoSel(cargoObjetoSel).setFuncaoObjetoSel(funcaoObjetoSel)
+					.setIdOrgaoObjeto(idOrgaoObjeto).setIdTpLotacao(idTpLotacao);
+
+			config = configuracaoBuilder.construir();
+		}
+		escreverForm(config);
+		if (idTpConfiguracao == null && config != null && config.getCpTipoConfiguracao() != null)
+			idTpConfiguracao = config.getCpTipoConfiguracao().getIdTpConfiguracao();
+		if (idTpConfiguracao == null)
+			throw new RuntimeException("Tipo de configuração deve ser informado");
+
+		ExTipoDeConfiguracao tpconf = ExTipoDeConfiguracao.getById(idTpConfiguracao);
+		CpConfiguracaoHelper.incluirAtributosDeEdicao(result, tpconf, config);
+
+		result.include("id", id);
+		result.include("listaTiposConfiguracao", getListaTiposConfiguracao());
+		result.include("listaNivelAcesso", getListaNivelAcesso());
+		result.include("listaPapel", getListaPapel());
+		result.include("orgaosUsu", getOrgaosUsu());
+		result.include("listaTiposMovimentacao", getListaTiposMovimentacao());
+		result.include("tiposFormaDoc", getTiposFormaDoc());
+		result.include("listaTiposDocumento", getListaTiposDocumento());
+		result.include("listaTiposLotacao", getListaTiposLotacao());
+		result.include("nmTipoRetorno", nmTipoRetorno);
+		result.include("campoFixo", campoFixo);
+	}
+
+	@SuppressWarnings("all")
+	@Transacional
+	@Get("app/configuracao/excluir")
+	public void excluir(Long id, String nmTipoRetorno, Long idMod, Long idFormaDoc) throws Exception {
+		assertAcesso(VERIFICADOR_ACESSO);
+
+		if (id != null) {
+			try {
+				dao().iniciarTransacao();
+				ExConfiguracao config = daoCon(id);
+				config.setHisDtFim(dao().consultarDataEHoraDoServidor());
+				dao().gravarComHistorico(config, getIdentidadeCadastrante());
+				dao().commitTransacao();
+			} catch (final Exception e) {
+				dao().rollbackTransacao();
+				throw new AplicacaoException("Erro na gravação", 0, e);
+			}
+		} else
+			throw new AplicacaoException("ID não informada");
+
+		escreveFormRetornoExclusao(nmTipoRetorno, idMod, idFormaDoc);
+	}
+
+	@SuppressWarnings("all")
+	@Transacional
+	@Get("app/configuracao/editar_gravar")
+	public void editarGravar(Long id, Long idOrgaoUsu, Long idTpMov, Long idTpDoc, Long idTpFormaDoc, Long idMod,
+			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Long idSituacao, Long idTpConfiguracao,
+			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel, DpCargoSelecao cargoSel,
+			DpFuncaoConfiancaSelecao funcaoSel, ExClassificacaoSelecao classificacaoSel,
+			DpPessoaSelecao pessoaObjeto_pessoaSel, DpLotacaoSelecao lotacaoObjeto_lotacaoSel,
+			DpCargoSelecao cargoObjeto_cargoSel, DpFuncaoConfiancaSelecao funcaoObjeto_funcaoSel, Long idOrgaoObjeto,
+			Long idTpLotacao, String nmTipoRetorno, boolean campoFixo) throws Exception {
+
+		final ExConfiguracaoBuilder configuracaoBuilder = new ExConfiguracaoBuilder().setId(id).setTipoPublicador(null)
+				.setIdTpMov(idTpMov).setIdTpDoc(idTpDoc).setIdMod(idMod).setIdFormaDoc(idFormaDoc)
+				.setIdTpFormaDoc(idTpFormaDoc).setIdNivelAcesso(idNivelAcesso).setIdPapel(idPapel)
+				.setIdSituacao(idSituacao).setIdTpConfiguracao(idTpConfiguracao).setPessoaSel(pessoaSel)
+				.setLotacaoSel(lotacaoSel).setCargoSel(cargoSel).setFuncaoSel(funcaoSel)
+				.setClassificacaoSel(classificacaoSel).setIdOrgaoObjeto(idOrgaoObjeto)
+				.setPessoaObjetoSel(pessoaObjeto_pessoaSel).setLotacaoObjetoSel(lotacaoObjeto_lotacaoSel)
+				.setCargoObjetoSel(cargoObjeto_cargoSel).setFuncaoObjetoSel(funcaoObjeto_funcaoSel)
+				.setIdOrgaoUsu(idOrgaoUsu).setIdTpLotacao(idTpLotacao);
+
+		gravarConfiguracao(idTpConfiguracao, idSituacao, configuracaoBuilder.construir());
+		escreveFormRetorno(nmTipoRetorno, campoFixo, configuracaoBuilder);
+	}
+
+	@Post("app/configuracao/gerenciar_publicacao_boletim_gravar")
+	@Transacional
+	public void gerenciarPublicacaoBoletimGravar(Integer postback, String gerenciaPublicacao, Long idTpMov,
+			Long idTpConfiguracao, Long idFormaDoc, Long idMod, Integer tipoPublicador, Long idSituacao,
+			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel) throws Exception {
+
+		final ExConfiguracaoBuilder configuracaoBuilder = new ExConfiguracaoBuilder().setIdTpMov(idTpMov)
+				.setIdMod(idMod).setIdFormaDoc(idFormaDoc).setIdSituacao(idSituacao)
+				.setIdTpConfiguracao(idTpConfiguracao).setTipoPublicador(tipoPublicador).setPessoaSel(pessoaSel)
+				.setLotacaoSel(lotacaoSel);
+
+		ExConfiguracao exConfiguracao = configuracaoBuilder.construir();
+		gravarConfiguracao(idTpConfiguracao, idSituacao, exConfiguracao);
+		result.redirectTo(
+				MessageFormat.format("/app/configuracao/gerenciar_publicacao_boletim?{0}", getUrlEncodedParameters()));
 	}
 
 	@SuppressWarnings("unchecked")
-	@Post("app/expediente/configuracao/gerenciar_publicacao_boletim")
-	@Get("app/expediente/configuracao/gerenciar_publicacao_boletim")
+	@Post("app/configuracao/gerenciar_publicacao_boletim")
+	@Get("app/configuracao/gerenciar_publicacao_boletim")
 	public void gerenciarPublicacaoBoletim(Long idMod, Integer idFormaDoc, Long idTpMov, Long idSituacao,
 			DpLotacaoSelecao lotacaoSel, Integer postback, DpPessoaSelecao pessoaSel, String gerenciaPublicacao,
 			Long idTpConfiguracao, boolean alterouSel, Integer tipoPublicador) throws Exception {
@@ -312,7 +341,7 @@ public class ExConfiguracaoController extends ExController {
 		} else if (FORMA.equals(nmTipoRetorno)) {
 			redirectToForma(idFormaDoc);
 		} else {
-			result.redirectTo(this).lista();
+			result.redirectTo(this).lista(null, null);
 		}
 	}
 
@@ -330,7 +359,7 @@ public class ExConfiguracaoController extends ExController {
 		} else if (FORMA.equals(nmTipoRetorno)) {
 			redirectToForma(builder.getIdFormaDoc());
 		} else {
-			result.redirectTo(this).lista();
+			result.redirectTo(this).lista(builder.getIdTpConfiguracao(), null);
 		}
 	}
 
@@ -394,7 +423,8 @@ public class ExConfiguracaoController extends ExController {
 
 	private Set<ExFormaDocumento> getListaFormas() throws Exception {
 		ExBL bl = Ex.getInstance().getBL();
-		return bl.obterFormasDocumento(bl.obterListaModelos(null, null, false, false, null, null, false, null, null, false), null, null);
+		return bl.obterFormasDocumento(
+				bl.obterListaModelos(null, null, false, false, null, null, false, null, null, false), null, null);
 	}
 
 	private Set<ExModelo> getListaModelosPorForma(Integer idFormaDoc) throws Exception {
@@ -434,19 +464,8 @@ public class ExConfiguracaoController extends ExController {
 		return dao().consultar(id, ExConfiguracao.class, false);
 	}
 
-	private void escreverForm(ExConfiguracao c) throws Exception {
-		DpPessoaSelecao pessoaSelecao = new DpPessoaSelecao();
-		DpLotacaoSelecao lotacaoSelecao = new DpLotacaoSelecao();
-		DpFuncaoConfiancaSelecao funcaoConfiancaSelecao = new DpFuncaoConfiancaSelecao();
-		DpCargoSelecao cargoSelecao = new DpCargoSelecao();
-		ExClassificacaoSelecao classificacaoSelecao = new ExClassificacaoSelecao();
-		DpPessoaSelecao pessoaObjetoSelecao = new DpPessoaSelecao();
-		DpLotacaoSelecao lotacaoObjetoSelecao = new DpLotacaoSelecao();
-		DpFuncaoConfiancaSelecao funcaoConfiancaObjetoSelecao = new DpFuncaoConfiancaSelecao();
-		DpCargoSelecao cargoObjetoSelecao = new DpCargoSelecao();
-
-		if (c.getOrgaoUsuario() != null)
-			result.include("idOrgaoUsu", c.getOrgaoUsuario().getIdOrgaoUsu());
+	protected void escreverForm(ExConfiguracao c) throws Exception {
+		CpConfiguracaoHelper.escreverForm(c, result);
 
 		if (c.getExTipoMovimentacao() != null)
 			result.include("idTpMov", c.getExTipoMovimentacao().getIdTpMov());
@@ -478,70 +497,15 @@ public class ExConfiguracaoController extends ExController {
 		if (c.getExPapel() != null)
 			result.include("idPapel", c.getExPapel().getIdPapel());
 
-		if (c.getCpSituacaoConfiguracao() != null)
-			result.include("idSituacao", c.getCpSituacaoConfiguracao().getIdSitConfiguracao());
-
-		if (c.getCpTipoConfiguracao() != null)
-			result.include("idTpConfiguracao", c.getCpTipoConfiguracao().getIdTpConfiguracao());
-
-		if (c.getCpTipoLotacao() != null)
-			result.include("idTpLotacao", c.getCpTipoLotacao().getIdTpLotacao());
-
-		if (c.getDpPessoa() != null)
-			pessoaSelecao.buscarPorObjeto(c.getDpPessoa());
-
-		if (c.getLotacao() != null)
-			lotacaoSelecao.buscarPorObjeto(c.getLotacao());
-
-		if (c.getCargo() != null)
-			cargoSelecao.buscarPorObjeto(c.getCargo());
-
-		if (c.getFuncaoConfianca() != null)
-			funcaoConfiancaSelecao.buscarPorObjeto(c.getFuncaoConfianca());
-
+		ExClassificacaoSelecao classificacaoSelecao = new ExClassificacaoSelecao();
 		if (c.getExClassificacao() != null)
 			classificacaoSelecao.buscarPorObjeto(c.getExClassificacao());
-
-		if (c.getPessoaObjeto() != null)
-			pessoaObjetoSelecao.buscarPorObjeto(c.getPessoaObjeto());
-
-		if (c.getLotacaoObjeto() != null)
-			lotacaoObjetoSelecao.buscarPorObjeto(c.getLotacaoObjeto());
-
-		if (c.getCargoObjeto() != null)
-			cargoObjetoSelecao.buscarPorObjeto(c.getCargoObjeto());
-
-		if (c.getFuncaoConfianca() != null)
-			funcaoConfiancaObjetoSelecao.buscarPorObjeto(c.getFuncaoConfiancaObjeto());
-
-		if (c.getOrgaoObjeto() != null)
-			result.include("idOrgaoObjeto", c.getOrgaoObjeto().getIdOrgaoUsu());
-
-		result.include("pessoaSel", pessoaSelecao);
-		result.include("lotacaoSel", lotacaoSelecao);
-		result.include("cargoSel", cargoSelecao);
-		result.include("funcaoSel", funcaoConfiancaSelecao);
 		result.include("classificacaoSel", classificacaoSelecao);
-
-		result.include("pessoaObjeto_pessoaSel", pessoaObjetoSelecao);
-		result.include("lotacaoObjeto_lotacaoSel", lotacaoObjetoSelecao);
-		result.include("cargoObjeto_cargoSel", cargoObjetoSelecao);
-		result.include("funcaoObjeto_funcaoSel", funcaoConfiancaObjetoSelecao);
 	}
 
 	@SuppressWarnings("all")
-	private Set<CpTipoConfiguracao> getListaTiposConfiguracao() throws Exception {
-		TreeSet<CpTipoConfiguracao> s = new TreeSet<CpTipoConfiguracao>(new Comparator() {
-
-			public int compare(Object o1, Object o2) {
-				return ((CpTipoConfiguracao) o1).getDscTpConfiguracao()
-						.compareTo(((CpTipoConfiguracao) o2).getDscTpConfiguracao());
-			}
-		});
-
-		s.addAll(dao().listarTiposConfiguracao());
-
-		return s;
+	private ExTipoDeConfiguracao[] getListaTiposConfiguracao() throws Exception {
+		return ExTipoDeConfiguracao.values();
 	}
 
 	@SuppressWarnings("all")

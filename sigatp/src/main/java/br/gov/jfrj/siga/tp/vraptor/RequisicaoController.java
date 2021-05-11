@@ -543,7 +543,7 @@ public class RequisicaoController extends TpController {
         throw new AplicacaoException(e.getMessage());
     }
     
-    public List<RequisicaoTransporte> podeCancelar(Missao missaoAExcluirNaVerificacao) throws Exception {
+    protected List<RequisicaoTransporte> podeCancelar(Missao missaoAExcluirNaVerificacao) throws Exception {
 		List<RequisicaoTransporte> requisicoesParaCancelar = new ArrayList<RequisicaoTransporte>();
 		
 		List<RequisicaoTransporte> requisicoesDaMissao = missaoAExcluirNaVerificacao.getRequisicoesTransporte();

@@ -3,7 +3,7 @@ package br.gov.jfrj.siga.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 
 public class ListaHierarquica {
 

@@ -406,7 +406,11 @@
 							<div class="form-group col-md-6">
 								<label for="classificacao"><fmt:message key="documento.descricao"/></label> <input
 									class="form-control" type="text" name="descrDocumento" id="descrDocumento"
-									value="${descrDocumento}" size="80" />
+									value="${descrDocumento}" size="80"
+									<c:if test="${!(f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição'))}">
+										readonly placeholder="Não é possível realizar a pesquisa pela descrição"
+									</c:if>
+									/>
 							</div>
 						</div>
 					</c:if>
@@ -417,11 +421,19 @@
 								class="form-control" id="ultMovIdEstadoDoc"
 								name="ultMovIdEstadoDoc">
 								<option value="0">[Todos]</option>
-								<c:forEach items="${estados}" var="item">
+								<c:forEach items="${estados}" var="item" varStatus="sts">
+									<c:if test="${sts.first or (item.idFinalidade.grupo != g)}">
+										<c:if test="${not sts.first}">
+											</optgroup>
+										</c:if>
+										<optgroup label="${item.idFinalidade.grupo.nome}">
+										<c:set var="g" value="${item.idFinalidade.grupo}"/>
+									</c:if>
 									<option value="${item.idMarcador}"
 										${item.idMarcador == ultMovIdEstadoDoc ? 'selected' : ''}>
 										${item.descrMarcador}</option>
 								</c:forEach>
+								</optgroup>
 							</select>
 						</div>
 

@@ -110,7 +110,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 
 			@Override
 			public boolean test() throws Exception {
-				try {
+				try (ApiContext ctx = new ApiContext(false, false)) {
 					return ExDao.getInstance().dt() != null;
 				} catch (Exception e) {
 					e.printStackTrace(System.out);
@@ -192,6 +192,8 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPublicProperty("assinatura.code.base.path", null);
 		addPublicProperty("assinatura.messages.url.path", null);
 		addPublicProperty("assinatura.policy.url.path", null);
+		addPublicProperty("assinatura.estampar", "false");
+
 		addRestrictedProperty("bie.lista.destinatario.publicacao", null);
 		addPublicProperty("carimbo.texto.superior", "SIGA-DOC");
 		addPublicProperty("classificacao.mascara.entrada",
@@ -203,6 +205,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPublicProperty("classificacao.nivel.minimo.de.enquadramento", null);
 		addPublicProperty("codigo.acronimo.ano.inicial", "9999");
 		addPublicProperty("conversor.html.ext", "br.gov.jfrj.itextpdf.FlyingSaucer");
+		addPublicProperty("pdf.visualizador", "pdf.js");
 		addPublicProperty("conversor.html.factory", "br.gov.jfrj.siga.ex.ext.ConversorHTMLFactory");
 		addPublicProperty("data.obrigacao.assinar.anexo.despacho", "31/12/2099");
 		addPublicProperty("debug.modelo.padrao.arquivo", null);
@@ -226,9 +229,13 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		
 		addPublicProperty("exibe.nome.acesso", "false");
 				
-		addPublicProperty("modelos.cabecalho.titulo", "JUSTIÇA FEDERAL");
-		addPublicProperty("modelos.cabecalho.subtitulo", null);
+		addPublicProperty("modelos.cabecalho.brasao", "contextpath/imagens/brasaoColoridoTRF2.png");
+		addPublicProperty("modelos.cabecalho.brasao.width", "auto");
+		addPublicProperty("modelos.cabecalho.brasao.height", "65");
 		
+		addPublicProperty("modelos.cabecalho.titulo", "PODER JUDICIÁRIO");
+		addPublicProperty("modelos.cabecalho.subtitulo", null);
+
 		//Siga-Le
 		addPublicProperty("smtp.sugestao.destinatario", getProp("/siga.smtp.usuario.remetente"));
 		addPublicProperty("smtp.sugestao.assunto", "Siga-Le: Sugestão");

@@ -23,7 +23,7 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
         + "	(" + "		SELECT id_marcador," + "		SUM(CASE WHEN id_pessoa_ini = :idPessoaIni THEN 1 ELSE 0 END) cont_pessoa,"
         + "		SUM(CASE WHEN id_lotacao_ini = :idLotacaoIni THEN 1 ELSE 0 END) cont_lota, "
         + "		SUM(CASE WHEN id_lotacao_ini = :idLotacaoIni and id_pessoa_ini is null THEN 1 ELSE 0 END) cont_unassigned " + "		FROM " + "CORPORATIVO" + ".cp_marca marca"
-        + "		WHERE(dt_ini_marca IS NULL OR dt_ini_marca < CURRENT_TIMESTAMP)" + "		AND (dt_fim_marca IS NULL OR dt_fim_marca > CURRENT_TIMESTAMP)"
+        + "		WHERE(dt_ini_marca IS NULL OR dt_ini_marca < 	:dbDatetime)" + "		AND (dt_fim_marca IS NULL OR dt_fim_marca > 	:dbDatetime)"
         + "		AND((id_pessoa_ini = :idPessoaIni) OR(id_lotacao_ini = :idLotacaoIni))" + "		AND id_tp_marca = 2" + "		GROUP BY id_marcador" + "	) c " + "WHERE m.id_marcador = c.id_marcador "
         + "AND m.id_marcador not in (43, 45)" + "order by m.descr_marcador", resultSetMapping = "colunas_contagem")
 public class SrMarca extends CpMarca implements Comparable<SrMarca> {

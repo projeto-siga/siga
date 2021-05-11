@@ -25,6 +25,8 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -44,7 +46,7 @@ import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.ReaisPorExtenso;
 import br.gov.jfrj.siga.base.SigaHTTP;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpLocalidade;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -1146,4 +1148,25 @@ public class FuncoesEL {
 				.podeDisponibilizarNoAcompanhamentoDoProtocolo(titular, lotaTitular, doc);
 	}
 
+	public static String calculaDiasAPartirDeHoje(Long qtdDias) {
+		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		LocalDate dt = LocalDate.now().plusDays(qtdDias);
+		return formatter.format(dt);
+	}
+	
+	public static Boolean podeUtilizarSegundoFatorPin(DpPessoa pessoa,DpLotacao lotacao) throws Exception {
+		return Ex.getInstance().getComp()
+				.podeUtilizarSegundoFatorPin(pessoa, lotacao);
+	}
+	
+	public static Boolean deveUtilizarSegundoFatorPin(DpPessoa pessoa,DpLotacao lotacao) throws Exception {
+		return Ex.getInstance().getComp()
+				.deveUtilizarSegundoFatorPin(pessoa, lotacao);
+	}
+	
+	public static Boolean defaultUtilizarSegundoFatorPin(DpPessoa pessoa,DpLotacao lotacao) throws Exception {
+		return Ex.getInstance().getComp()
+				.defaultUtilizarSegundoFatorPin(pessoa, lotacao);
+	}
+	
 }

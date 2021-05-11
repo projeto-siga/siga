@@ -130,16 +130,25 @@
 											<td align="left">${dt}</td>
 											<td align="left">${mov.descrTipoMovimentacao} 
 												<c:if test="${mov.idTpMov == 12}">
-													<span style="font-size: .8rem;color: #9e9e9e;"
-														>| documento juntado ${mov.exMobil}
-														<c:if test="${m.sigla == mov.exMobil.exMobilPai.sigla 
-																&& mov.exMobil.podeExibirNoAcompanhamento()}">
-															&nbsp<a class="showConteudoDoc link-btn btn btn-sm btn-light" href="#" 
-																onclick="popitup('/sigaex/public/app/processoArquivoAutenticado_stream?jwt=${jwt}&sigla=${mov.exMobil}');"
-																rel="popover" data-title="${mov.exMobil}" 
-		    													data-content="" onmouseenter="exibeDoc(this);"
-																>Ver</a>
-	    												</c:if>
+													<span style="font-size: .8rem;color: #9e9e9e;">| documento juntado&nbsp
+														<c:choose>
+															<c:when test="${m.sigla ne mov.exMobil.sigla}">
+																${mov.exMobil}
+																<c:if test="${m.sigla == mov.exMobil.exMobilPai.sigla 
+																				&& mov.exMobil.podeExibirNoAcompanhamento()}">
+																	&nbsp<a class="showConteudoDoc link-btn btn btn-sm btn-light" href="#" 
+																		onclick="popitup('/sigaex/public/app/processoArquivoAutenticado_stream?sigla=${mov.exMobil}');"
+																		rel="popover" data-title="${mov.exMobil}" 
+				    													data-content="" onmouseenter="exibeDoc(this);"
+																		>Ver</a>
+			    												</c:if>
+															</c:when>
+															<c:otherwise>
+																<a class="link-btn btn btn-sm btn-light"  
+																	href="/sigaex/public/app/processoArquivoAutenticado?idMovJuntada=${mov.idMov}"
+																	>${mov.exMobilRef.sigla}</a>
+															</c:otherwise>
+														</c:choose>
 													</span>
 												</c:if>
 												<c:if test="${mov.idTpMov == 13}">

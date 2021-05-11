@@ -85,13 +85,29 @@ public interface IExApiV1 {
 		public String orgaoExternoDestinatario;
 		public String destinatariocampoextra;
 		public String descricaodocumento;
+		public String orgao;
 		public String nivelacesso;
 	}
 
-	public class ResultadoDePesquisa implements ISwaggerModel {
+	public class DocumentoPesq implements ISwaggerModel {
 		public String sigla;
-		public String nome;
-		public String siglaLotacao;
+		public String dtdoc;
+		public String dtregdoc;
+		public String dtinimarca;
+		public String descricaomarcador;
+		public String nomegrupomarcador;
+		public String descricaodocumento;
+		public String modelo;
+		public String siglamobilpai;
+		public String cadastrantesigla;
+		public String cadastrantenome;
+		public String lotacadastrantesigla;
+		public String lotacadastrantenome;
+		public String subscritorsigla;
+		public String subscritornome;
+		public String lotasubscritorsigla;
+		public String lotasubscritornome;
+		public String titular;
 	}
 
 	public class Marcador implements ISwaggerModel {
@@ -104,6 +120,64 @@ public interface IExApiV1 {
 		public String planejada;
 		public String limite;
 		public String texto;
+	}
+
+	public class ModeloItem implements ISwaggerModel {
+		public String idModelo;
+		public String nome;
+		public String descr;
+	}
+
+	public class ClassificacaoItem implements ISwaggerModel {
+		public String idClassificacao;
+		public String sigla;
+		public String nome;
+	}
+
+	public class ModelosGetRequest implements ISwaggerRequest {
+	}
+
+	public class ModelosGetResponse implements ISwaggerResponse {
+		public List<ModeloItem> list;
+	}
+
+	public interface IModelosGet extends ISwaggerMethod {
+		public void run(ModelosGetRequest req, ModelosGetResponse resp) throws Exception;
+	}
+
+	public class ModelosIdGetRequest implements ISwaggerRequest {
+		public String id;
+	}
+
+	public class ModelosIdGetResponse implements ISwaggerResponse {
+		public String idModelo;
+		public String nome;
+		public String descr;
+		public String especie;
+		public String nivelDeAcesso;
+		public String classificacao;
+		public String classificacaoParaCriacaoDeVias;
+		public String tipoDeSubscritor;
+		public String tipoDeDestinatario;
+		public String tipoDeConteudo;
+		public String conteudo;
+	}
+
+	public interface IModelosIdGet extends ISwaggerMethod {
+		public void run(ModelosIdGetRequest req, ModelosIdGetResponse resp) throws Exception;
+	}
+
+	public class ClassificacoesGetRequest implements ISwaggerRequest {
+		public String idClassificacaoIni;
+		public String texto;
+	}
+
+	public class ClassificacoesGetResponse implements ISwaggerResponse {
+		public List<ClassificacaoItem> list;
+	}
+
+	public interface IClassificacoesGet extends ISwaggerMethod {
+		public void run(ClassificacoesGetRequest req, ClassificacoesGetResponse resp) throws Exception;
 	}
 
 	public class DocumentosSiglaArquivoGetRequest implements ISwaggerRequest {
@@ -191,6 +265,7 @@ public interface IExApiV1 {
 	}
 
 	public class MesaGetRequest implements ISwaggerRequest {
+		public String filtroPessoaLotacao;
 	}
 
 	public class MesaGetResponse implements ISwaggerResponse {
@@ -353,6 +428,18 @@ public interface IExApiV1 {
 		public void run(DocumentosSiglaJuntarPostRequest req, DocumentosSiglaJuntarPostResponse resp) throws Exception;
 	}
 
+	public class DocumentosSiglaReceberPostRequest implements ISwaggerRequest {
+		public String sigla;
+	}
+
+	public class DocumentosSiglaReceberPostResponse implements ISwaggerResponse {
+		public String status;
+	}
+
+	public interface IDocumentosSiglaReceberPost extends ISwaggerMethod {
+		public void run(DocumentosSiglaReceberPostRequest req, DocumentosSiglaReceberPostResponse resp) throws Exception;
+	}
+
 	public class DocumentosSiglaAnotarPostRequest implements ISwaggerRequest {
 		public String sigla;
 		public String anotacao;
@@ -392,6 +479,34 @@ public interface IExApiV1 {
 		public void run(DocumentosSiglaMarcadoresDisponiveisGetRequest req, DocumentosSiglaMarcadoresDisponiveisGetResponse resp) throws Exception;
 	}
 
+	public class DocumentosSiglaGerarProtocoloPostRequest implements ISwaggerRequest {
+		public String sigla;
+	}
+
+	public class DocumentosSiglaGerarProtocoloPostResponse implements ISwaggerResponse {
+		public String numeroProtocolo;
+		public String linkProtocolo;
+		public String dataHoraEmissaoProtocolo;
+	}
+
+	public interface IDocumentosSiglaGerarProtocoloPost extends ISwaggerMethod {
+		public void run(DocumentosSiglaGerarProtocoloPostRequest req, DocumentosSiglaGerarProtocoloPostResponse resp) throws Exception;
+	}
+
+	public class DocumentosSiglaConsultarProtocoloGetRequest implements ISwaggerRequest {
+		public String sigla;
+	}
+
+	public class DocumentosSiglaConsultarProtocoloGetResponse implements ISwaggerResponse {
+		public String numeroProtocolo;
+		public String linkProtocolo;
+		public String dataHoraEmissaoProtocolo;
+	}
+
+	public interface IDocumentosSiglaConsultarProtocoloGet extends ISwaggerMethod {
+		public void run(DocumentosSiglaConsultarProtocoloGetRequest req, DocumentosSiglaConsultarProtocoloGetResponse resp) throws Exception;
+	}
+
 	public class SugestaoPostRequest implements ISwaggerRequest {
 		public String nome;
 		public String email;
@@ -404,6 +519,26 @@ public interface IExApiV1 {
 
 	public interface ISugestaoPost extends ISwaggerMethod {
 		public void run(SugestaoPostRequest req, SugestaoPostResponse resp) throws Exception;
+	}
+
+	public class DocumentosGetRequest implements ISwaggerRequest {
+		public Long offset;
+		public Long qtdmax;
+		public Long ordenacao;
+		public String marcador;
+		public String grupomarcador;
+		public Long idpessoa;
+		public Long idlotacao;
+		public String dtinicial;
+		public String dtfinal;
+	}
+
+	public class DocumentosGetResponse implements ISwaggerResponse {
+		public List<DocumentoPesq> list;
+	}
+
+	public interface IDocumentosGet extends ISwaggerMethod {
+		public void run(DocumentosGetRequest req, DocumentosGetResponse resp) throws Exception;
 	}
 
 

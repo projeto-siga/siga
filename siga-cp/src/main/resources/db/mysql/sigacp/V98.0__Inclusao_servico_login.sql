@@ -1,0 +1,6 @@
+-- CADASTRO DE SERVICO (SIGA-WEB)
+Insert into corporativo.cp_servico (SIGLA_SERVICO, DESC_SERVICO, ID_SERVICO_PAI, ID_TP_SERVICO) 
+	values ('SIGA-WEB', 'Acesso via Web Browser', (SELECT t.ID_SERVICO FROM (SELECT ID_SERVICO FROM corporativo.cp_servico WHERE SIGLA_SERVICO = 'SIGA') t), '2');
+-- PERMISSAO DEFAULT DE ACESSO A TODOS PARA O SERVICO SIGA-WEB
+Insert into corporativo.cp_configuracao (HIS_DT_INI, ID_SIT_CONFIGURACAO, ID_TP_CONFIGURACAO, ID_SERVICO, HIS_IDC_INI) 
+	values (current_timestamp, '1', '200', (SELECT t.ID_SERVICO FROM (SELECT ID_SERVICO FROM corporativo.cp_servico WHERE SIGLA_SERVICO = 'SIGA-WEB') t), '1');

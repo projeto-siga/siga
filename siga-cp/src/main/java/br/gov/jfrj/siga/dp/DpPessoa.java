@@ -49,7 +49,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -578,6 +578,10 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 			return getEmailPessoa();
 		}
 
+	}
+	
+	public String getEmailPessoaAtualParcialmenteOculto() {
+		return getEmailPessoaAtual().substring(0,4) + "*********@***" + getEmailPessoaAtual().substring(getEmailPessoaAtual().length()-5,getEmailPessoaAtual().length());
 	}
 
 	/**

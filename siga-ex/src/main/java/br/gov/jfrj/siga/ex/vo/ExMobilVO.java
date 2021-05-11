@@ -26,10 +26,9 @@ import java.util.Optional;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AcaoVO;
-import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.SigaMessages;
-import br.gov.jfrj.siga.dp.CpMarcador;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -381,7 +380,7 @@ public class ExMobilVO extends ExVO {
 		addAcao("page_white_error", "Desentranhar", "/app/expediente/mov",
 				"cancelar_juntada", Ex.getInstance().getComp()
 						.podeCancelarJuntada(titular, lotaTitular, mob), null,
-				null, null, null, "once");
+				null, null, null, "once siga-btn-desentranhar");
 
 		addAcao("link_delete",
 				"Desapensar",
@@ -409,7 +408,7 @@ public class ExMobilVO extends ExVO {
 		addAcao(AcaoVO.builder().nome("_Anotar").icone("note_add").acao("/app/expediente/mov/anotar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAnotar(mob, titular, lotaTitular)).build());
 		
-		addAcao(AcaoVO.builder().nome("Definir Marca").icone("folder_star").modal("definirMarcaModal")
+		addAcao(AcaoVO.builder().nome("Definir " + SigaMessages.getMessage("documento.marca")).icone("folder_star").modal("definirMarcaModal")
 				.exp(new ExPodeMarcar(mob, titular, lotaTitular)).build());
 		
 		if (mob.isVia() || mob.isVolume()) {
@@ -600,11 +599,11 @@ public class ExMobilVO extends ExVO {
 			// informacao de pessoa
 			//
 		  for (ExMarca mar : getMarcasAtivas()) {
-			  if (mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO
-				    	&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO_ELETRONICO
-					    && mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA
-					    && mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_MOVIMENTACAO_ASSINADA_COM_SENHA
-					    && mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_MOVIMENTACAO_CONFERIDA_COM_SENHA
+			  if (mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.EM_TRANSITO.getId()
+				    	&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.EM_TRANSITO_ELETRONICO.getId()
+					    && mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.DOCUMENTO_ASSINADO_COM_SENHA.getId()
+					    && mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.MOVIMENTACAO_ASSINADA_COM_SENHA.getId()
+					    && mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.MOVIMENTACAO_CONFERIDA_COM_SENHA.getId()
 					    && ((mar.getDpLotacaoIni() != null && lota.getIdInicial()
 					    		.equals(mar.getDpLotacaoIni().getIdInicial())) || mar
 								.getDpLotacaoIni() == null)
@@ -620,11 +619,11 @@ public class ExMobilVO extends ExVO {
 		  //
 	      if (sb.length() == 0) {
 		    for (ExMarca mar : getMarcasAtivas()) {
-			    if (mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO
-						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO_ELETRONICO
-						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA
-						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_MOVIMENTACAO_ASSINADA_COM_SENHA
-						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_MOVIMENTACAO_CONFERIDA_COM_SENHA) {
+			    if (mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.EM_TRANSITO.getId()
+						&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.EM_TRANSITO_ELETRONICO.getId()
+						&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.DOCUMENTO_ASSINADO_COM_SENHA.getId()
+						&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.MOVIMENTACAO_ASSINADA_COM_SENHA.getId()
+						&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.MOVIMENTACAO_CONFERIDA_COM_SENHA.getId()) {
 					if (sb.length() > 0)
 						sb.append(", ");
 					if ((mar.getDpLotacaoIni() != null && lota.getIdInicial()
@@ -648,11 +647,11 @@ public class ExMobilVO extends ExVO {
 		//
 		if (sb.length() == 0) {
 			for (ExMarca mar : getMarcasAtivas()) {
-				if (mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO
-						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO_ELETRONICO
-						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA
-						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_MOVIMENTACAO_ASSINADA_COM_SENHA
-						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_MOVIMENTACAO_CONFERIDA_COM_SENHA) {
+				if (mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.EM_TRANSITO.getId()
+						&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.EM_TRANSITO_ELETRONICO.getId()
+						&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.DOCUMENTO_ASSINADO_COM_SENHA.getId()
+						&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.MOVIMENTACAO_ASSINADA_COM_SENHA.getId()
+						&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.MOVIMENTACAO_CONFERIDA_COM_SENHA.getId()) {
 					if (sb.length() > 0)
 						sb.append(", ");
 					sb.append(mar.getCpMarcador().getDescrMarcador());

@@ -31,8 +31,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.directwebremoting.util.SwallowingHttpServletResponse;
 
+import br.gov.jfrj.siga.base.CurrentRequest;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.util.ProcessadorModelo;
 
 public class ExProcessadorModelo implements ProcessadorModelo {

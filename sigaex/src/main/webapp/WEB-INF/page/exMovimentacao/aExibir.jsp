@@ -62,7 +62,7 @@
 	<script type="text/javascript" language="Javascript1.1">
 		function visualizarImpressao() {
 			window.open(
-					"/sigaex/app/arquivo/exibir?arquivo=${mov.referencia}.pdf",
+					"/sigaex/app/arquivo/exibir?arquivo=${doc.referenciaPDF}",
 					"_blank");
 		}
 	</script>

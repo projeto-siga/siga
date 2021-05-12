@@ -35,6 +35,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 
+import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorCorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
@@ -60,9 +61,6 @@ public abstract class AbstractCpMarcador extends HistoricoAuditavelSuporte imple
 
 	@Column(name = "DESCR_MARCADOR")
 	private String descrMarcador;
-
-	@Column(name = "ID_FINALIDADE_MARCADOR", nullable = false)
-	private CpTipoMarcadorEnum cpTipoMarcador;
 
 	@Column(name = "GRUPO_MARCADOR")
 	private CpMarcadorGrupoEnum idGrupo;

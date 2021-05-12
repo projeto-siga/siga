@@ -235,13 +235,18 @@
 						</div>
 
 						<div class="row">
-							<div class="col-sm-1 form-group">
-								<label>Classificação:</label>
+												<div class="col-sm-6">
+							<div class="form-group">
+								<label>Classificação</label>
+								<siga:selecao3 tamanho="grande" 
+											propriedade="filtro.tag" 
+											ocultardescricao="sim" 
+											tipo="tag" 
+											tema="simple" 
+											modulo="sigagc" 
+											paramList="popup=true;"/>
 							</div>
-							<div class="col-sm-2">
-								<siga:selecao3 propriedade="filtro.tag" modulo="sigagc"
-									tipo="tag" />
-							</div>
+						</div>
 						</div>
 
 

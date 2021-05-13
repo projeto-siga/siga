@@ -1,3 +1,6 @@
+<%@ taglib uri="http://localhost/libstag" prefix="f"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
 <!-- Marcar Modal -->
 <%@ page contentType="text/html; charset=UTF-8"%>
 <c:set var="podeRetroativa" scope="session" value="${f:resource('/siga.marcadores.permite.data.retroativa')}" />

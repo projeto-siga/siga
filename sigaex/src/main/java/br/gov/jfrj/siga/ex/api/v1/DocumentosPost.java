@@ -55,8 +55,6 @@ public class DocumentosPost implements IDocumentosPost {
 			try {
 				ApiContext.assertAcesso("");
 
-				SigaObjects so = ApiContext.getSigaObjects();
-
 				final Ex ex = Ex.getInstance();
 				final ExBL exBL = ex.getBL();
 
@@ -64,22 +62,20 @@ public class DocumentosPost implements IDocumentosPost {
 				ExModelo modelo = null;
 				ExClassificacao classificacao = null;
 				CpOrgao destinatarioOrgaoExterno = null;
-				cadastrante = so.getCadastrante();
 
 				ExDocumento doc;
 				if (req.sigla != null && !req.sigla.trim().isEmpty()) {
-					ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, ctx.getSigaObjects(), req, resp,
-							"Documento a Salvar");
+					ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp,	"Documento a Salvar");
 					if (!Ex.getInstance().getComp().podeEditar(ctx.getTitular(), ctx.getLotaTitular(), mob))
 						throw new SwaggerException("Edição do documento " + mob.getSigla() + " não é permitida. ("
-								+ so.getTitular().getSigla() + "/" + so.getLotaTitular().getSiglaCompleta() + ")", 403,
+								+ ctx.getTitular().getSigla() + "/" + ctx.getLotaTitular().getSiglaCompleta() + ")", 403,
 								null, req, resp, null);
 					doc = mob.doc();
 				} else {
 					doc = new ExDocumento();
 
 					if (req.siglamobilpai != null) {
-						ExMobil mobPai = SwaggerHelper.buscarEValidarMobil(req.siglamobilpai, so, req, resp, "Documento Pai");
+						ExMobil mobPai = ctx.buscarEValidarMobil(req.siglamobilpai, req, resp, "Documento Pai");
 						ExDocumento docPai = mobPai.getExDocumento();
 						if (docPai.getExMobilPai() != null)
 							throw new AplicacaoException("Não foi possível criar o documento pois o documento pai ("
@@ -93,7 +89,7 @@ public class DocumentosPost implements IDocumentosPost {
 					}
 
 					if (req.siglamobilfilho != null) {
-						ExMobil mobFilho = SwaggerHelper.buscarEValidarMobil(req.siglamobilfilho, so, req, resp,
+						ExMobil mobFilho = ctx.buscarEValidarMobil(req.siglamobilfilho, req, resp,
 								"Documento Filho");
 						doc.setExMobilAutuado(mobFilho);
 					}
@@ -172,8 +168,8 @@ public class DocumentosPost implements IDocumentosPost {
 				doc.setOrgaoExterno(null);
 
 				if (doc.getCadastrante() == null) {
-					doc.setCadastrante(so.getCadastrante());
-					doc.setLotaCadastrante(so.getLotaTitular());
+					doc.setCadastrante(ctx.getCadastrante());
+					doc.setLotaCadastrante(ctx.getLotaTitular());
 				}
 
 				if (doc.getLotaCadastrante() == null) {
@@ -189,10 +185,10 @@ public class DocumentosPost implements IDocumentosPost {
 					}
 					doc.setLotaSubscritor(doc.getSubscritor().getLotacao());
 				} else {
-					if (SigaMessages.isSigaSP() && AcessoConsulta.ehPublicoExterno(so.getTitular())
+					if (SigaMessages.isSigaSP() && AcessoConsulta.ehPublicoExterno(ctx.getTitular())
 							&& !doc.isCapturado()) {
-						doc.setSubscritor(so.getTitular());
-						doc.setLotaSubscritor(so.getTitular().getLotacao());
+						doc.setSubscritor(ctx.getTitular());
+						doc.setLotaSubscritor(ctx.getTitular().getLotacao());
 					} else {
 						doc.setSubscritor(null);
 					}
@@ -252,8 +248,8 @@ public class DocumentosPost implements IDocumentosPost {
 					doc.setExNivelAcesso(dao().consultarExNidelAcesso(req.nivelacesso));
 				} else {
 					final ExNivelAcesso nivelDefault = ExNivelAcesso.getNivelAcessoDefault(doc.getExTipoDocumento(),
-							doc.getExFormaDocumento(), doc.getExModelo(), doc.getExClassificacao(), so.getTitular(),
-							so.getLotaTitular());
+							doc.getExFormaDocumento(), doc.getExModelo(), doc.getExClassificacao(), ctx.getTitular(),
+							ctx.getLotaTitular());
 
 					if (nivelDefault != null) {
 						doc.setExNivelAcesso(dao().consultar(nivelDefault, ExNivelAcesso.class, false));
@@ -306,11 +302,11 @@ public class DocumentosPost implements IDocumentosPost {
 					throw new AplicacaoException(
 							"Documento capturado não pode ser gravado sem que seja informado o arquivo PDF.");
 
-				if (!ex.getConf().podePorConfiguracao(so.getTitular(), so.getLotaTitular(), doc.getExTipoDocumento(),
+				if (!ex.getConf().podePorConfiguracao(ctx.getTitular(), ctx.getLotaTitular(), doc.getExTipoDocumento(),
 						doc.getExFormaDocumento(), doc.getExModelo(), doc.getExClassificacaoAtual(),
 						doc.getExNivelAcessoAtual(), CpTipoConfiguracao.TIPO_CONFIG_CRIAR)) {
 
-					if (!ex.getConf().podePorConfiguracao(so.getTitular(), so.getLotaTitular(), null, null, null,
+					if (!ex.getConf().podePorConfiguracao(ctx.getTitular(), ctx.getLotaTitular(), null, null, null,
 							doc.getExClassificacao(), null, CpTipoConfiguracao.TIPO_CONFIG_CRIAR)) {
 						throw new AplicacaoException("Usuário não possui permissão de criar documento da classificação "
 								+ doc.getExClassificacao().getCodificacao());
@@ -318,7 +314,7 @@ public class DocumentosPost implements IDocumentosPost {
 
 					throw new AplicacaoException("Operação não permitida");
 				}
-				doc.setOrgaoUsuario(so.getLotaTitular().getOrgaoUsuario());
+				doc.setOrgaoUsuario(ctx.getLotaTitular().getOrgaoUsuario());
 
 				// Insere PDF de documento capturado
 				//
@@ -347,28 +343,28 @@ public class DocumentosPost implements IDocumentosPost {
 					}
 				}
 
-				exBL.gravar(cadastrante, so.getTitular(), so.getLotaTitular(), doc);
+				exBL.gravar(cadastrante, ctx.getTitular(), ctx.getLotaTitular(), doc);
 
 				if (req.titular != null && doc.getTitular() != doc.getSubscritor()) {
-					exBL.geraMovimentacaoSubstituicao(doc, so.getCadastrante());
+					exBL.geraMovimentacaoSubstituicao(doc, ctx.getCadastrante());
 				}
 
 				if (doc.getExMobilPai() != null && Ex.getInstance().getComp().podeRestrigirAcesso(cadastrante,
 						cadastrante.getLotacao(), doc.getExMobilPai())) {
 					exBL.copiarRestringir(doc.getMobilGeral(), doc.getExMobilPai().getDoc().getMobilGeral(),
-							cadastrante, so.getTitular(), doc.getData());
+							cadastrante, ctx.getTitular(), doc.getData());
 				}
 
 				if (!doc.isFinalizado()
 						&& (doc.getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO
 								|| doc.getExTipoDocumento()
 										.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO)
-						&& (exBL.getConf().podePorConfiguracao(so.getTitular(), so.getLotaTitular(),
+						&& (exBL.getConf().podePorConfiguracao(ctx.getTitular(), ctx.getLotaTitular(),
 								CpTipoConfiguracao.TIPO_CONFIG_FINALIZAR_AUTOMATICAMENTE_CAPTURADOS)))
-					exBL.finalizar(cadastrante, so.getLotaTitular(), doc);
+					exBL.finalizar(cadastrante, ctx.getLotaTitular(), doc);
 
 				try {
-					exBL.incluirCosignatariosAutomaticamente(cadastrante, so.getLotaTitular(), doc);
+					exBL.incluirCosignatariosAutomaticamente(cadastrante, ctx.getLotaTitular(), doc);
 				} catch (Exception e) {
 					throw new AplicacaoException("Erro ao tentar incluir os cosignatários deste documento", 0, e);
 				}

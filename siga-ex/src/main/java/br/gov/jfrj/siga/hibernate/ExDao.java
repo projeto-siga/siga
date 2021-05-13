@@ -30,6 +30,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -69,6 +71,7 @@ import br.gov.jfrj.siga.ex.ExEmailNotificacao;
 import br.gov.jfrj.siga.ex.ExEstadoDoc;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExItemDestinacao;
+import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
@@ -534,10 +537,6 @@ public class ExDao extends CpDao {
 			query.setParameter("idMarcadorIni", marcador.getHisIdIni());
 			query.setParameter("dbDatetime", this.consultarDataEHoraDoServidor());
 
-		} else {
-			query.setParameter("id1", 3L);
-			query.setParameter("id2", 14L);
-			query.setParameter("id3", 25L);
 		}
 
 		if (flt.getUltMovRespSelId() != null && flt.getUltMovRespSelId() != 0) {
@@ -691,10 +690,21 @@ public class ExDao extends CpDao {
 			query.setMaxResults(itemPagina);
 		}
 		List l = query.getResultList();
+		List<Object[]> l2 = new ArrayList<Object[]>(); 
+		if (l != null && l.size() > 0) {
+			query = em().createQuery("select doc, mob, label from ExMarca label"
+					+ " inner join label.exMobil mob inner join mob.exDocumento doc"
+					+ " where label.idMarca in (:listIdMarca)");
+			query.setParameter("listIdMarca", l);
+			l2 = query.getResultList();
+			Collections.sort(l2, Comparator.comparing( item -> l.indexOf(
+				    		Long.valueOf (((ExMarca) (item[2])).getIdMarca()))));
+		}
+		
 		long tempoTotal = System.nanoTime() - tempoIni;
 		// System.out.println("consultarPorFiltroOtimizado: " +
 		// tempoTotal/1000000 + " ms -> " + query + ", resultado: " + l);
-		return l;
+		return l2;
 	}
 
 	private IMontadorQuery carregarPlugin() {
@@ -943,8 +953,7 @@ public class ExDao extends CpDao {
 					"consultarQtdeLotacaoModeloNomeExPreenchimento");
 			
 			if (exPreenchimento.getDpLotacao() != null)
-				query.setParameter("lotacao", exPreenchimento.getDpLotacao()
-						.getIdLotacao());
+				query.setParameter("lotacao", exPreenchimento.getDpLotacao().getIdLotacaoIni());
 			else
 				query.setParameter("lotacao", 0);
 			if (exPreenchimento.getExModelo() != null)

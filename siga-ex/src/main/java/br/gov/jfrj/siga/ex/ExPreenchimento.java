@@ -39,7 +39,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 @BatchSize(size = 500)
 @Table(name = "siga.ex_preenchimento")
 public class ExPreenchimento extends AbstractExPreenchimento implements
-		Serializable {
+		Serializable, Comparable<ExPreenchimento> {
 
 	/**
 	 * Simple constructor of ExTipoDespacho instances.
@@ -79,6 +79,18 @@ public class ExPreenchimento extends AbstractExPreenchimento implements
 	 */
 	public ExPreenchimento(final java.lang.Long idPreenchimento) {
 		super(idPreenchimento);
+	}
+	
+	@Override
+	public int compareTo(ExPreenchimento o) {
+		int i = 0;
+		
+		if (this.getNomePreenchimento() != null) {
+			i = this.getNomePreenchimento().compareTo(o.getNomePreenchimento());
+			if (i != 0)
+				return i;
+		}
+		return this.getIdPreenchimento().compareTo(o.getIdPreenchimento());
 	}
 
 }

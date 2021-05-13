@@ -111,7 +111,12 @@ p.gt-table-action-list a.link-tag {
   color: #fff;
 }
 
-div.divDoc a {
+a.doc-sign {
+	color: inherit;
+	text-decoration: none;
+}
+
+a.doc-sign:hover {
 	color: inherit;
 	text-decoration: none;
 }

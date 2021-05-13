@@ -966,7 +966,7 @@ public class GcBL {
 		return sb.toString();
 	}
 
-	private String getSiglaSRCompacta(String sigla){
+	private String getSiglaSRouGCCompacta(String sigla){
 		return sigla.replace("-", "").replace("/", "");
 	}
 	
@@ -993,15 +993,15 @@ public class GcBL {
 				if (matcherSigla.group(1).toUpperCase().equals("GC")) {
 					infoReferenciada = GcInformacao.findBySigla(sigla);
 					matcherSigla.appendReplacement(sb, "<a href=\""
-							+ URL_SIGA_GC + URLEncoder.encode(sigla, "UTF-8")
+							+ URL_SIGA_GC + URLEncoder.encode(getSiglaSRouGCCompacta(sigla), "UTF-8")
 							+ "\">" + sigla + " - "
 							+ infoReferenciada.getArq().getTitulo() + "</a>");
 				}
 				// serviço
 				else if (matcherSigla.group(1).toUpperCase().equals("SR")) {
 					matcherSigla.appendReplacement(sb, "<a href=\""
-							+ URL_SIGA_SR + URLEncoder.encode(getSiglaSRCompacta(sigla), "UTF-8")
-							+ "\">" + getSiglaSRCompacta(sigla) + "</a>");
+							+ URL_SIGA_SR + URLEncoder.encode(getSiglaSRouGCCompacta(sigla), "UTF-8")
+							+ "\">" + getSiglaSRouGCCompacta(sigla) + "</a>");
 				}
 				// documento
 				else {

@@ -97,7 +97,8 @@ public class ExController extends SigaController {
 	}
 
 	protected  List<ExNivelAcesso> getListaNivelAcesso(ExTipoDocumento exTpDoc, ExFormaDocumento forma, ExModelo exMod, ExClassificacao classif) {
-		return NivelDeAcessoUtil.getListaNivelAcesso(exTpDoc, forma, exMod, classif, getTitular(), getLotaTitular());
+		return Ex.getInstance().getBL().getListaNivelAcesso(exTpDoc, forma, exMod,
+				classif, getTitular(), getLotaTitular());
 	}
 
 	protected  ExNivelAcesso getNivelAcessoDefault(final ExTipoDocumento exTpDoc, final ExFormaDocumento forma, final ExModelo exMod, final ExClassificacao classif) {

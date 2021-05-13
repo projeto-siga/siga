@@ -40,6 +40,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -47,6 +48,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.inject.Inject;
@@ -1660,6 +1662,7 @@ public class ExDocumentoController extends ExController {
 	public void gravar(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars, final String[] campos,
 			final UploadedFile arquivo, String jsonHierarquiaDeModelos) {
+		
 		final Ex ex = Ex.getInstance();
 		final ExBL exBL = ex.getBL();		
 		try {
@@ -2738,7 +2741,7 @@ public class ExDocumentoController extends ExController {
 			return exDocumentoDTO.getPreenchSet();
 		}
 
-		exDocumentoDTO.setPreenchSet(new LinkedHashSet<ExPreenchimento>());
+		exDocumentoDTO.setPreenchSet(new TreeSet<ExPreenchimento>());
 
 		ExPreenchimento preench = new ExPreenchimento();
 		if (exDocumentoDTO.getIdMod() != null

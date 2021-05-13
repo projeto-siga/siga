@@ -1369,7 +1369,7 @@
 </div>
 </div>
 
-<c:if test="${recebimentoPendente}">				
+<c:if test="${recebimentoPendente  and !origemRedirectTransferirGravar}">				
 	<style>
 		.gt-sidebar, .siga-menu-acoes {
 			filter: blur(2px);
@@ -1433,7 +1433,7 @@
 	      <div class="modal-footer text-center">
 	      	<div class="row" style="margin: 0 auto;">
 		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>		        	       
-	        	<a href="${linkTo[ExMovimentacaoController].aReceber()}?sigla=${sigla}" class="btn btn-primary btn-acao" role="button" aria-pressed="true" style="margin-left: .5rem;">Sim</a>		        
+	        	<a href="${linkTo[ExMovimentacaoController].aReceber()}?sigla=${docVO.mob.sigla}" class="btn btn-primary btn-acao" role="button" aria-pressed="true" style="margin-left: .5rem;">Sim</a>		        
 		    </div>    
 	      </div>
 	    </div>
@@ -1442,7 +1442,7 @@
 	<button type="button" class="btn btn-primary siga-btn-receber-doc" data-placement="left" title="Receber" data-siga-modal-abrir="modalReceberDocumento">
 		<i class="fas fa-envelope-open-text icone-receber-doc"></i>
 	</button>
-	<c:if test="${!docVO.mob.isJuntado() }">
+	<c:if test="${!docVO.mob.isJuntado() and !origemRedirectTransferirGravar}">
 	<script>
 		$(function() {						
 			var modalReceberDocumento = $('#modalReceberDocumento');				
@@ -1502,7 +1502,25 @@
 		<div class="modal-body">
        		É necessário desentranhar o documento para realizar o seu cancelamento.
      	</div>	     	
-	</siga:siga-modal>	
+	</siga:siga-modal>
+	
+	<c:if test="${mob.mobilPrincipal.isSobrestado() && mob.mobilPrincipal.doc.isComposto()}">
+		<siga:siga-modal id="modalDeAvisoDesentranhar" exibirRodape="true" 
+			tituloADireita="<i class='fas fa-exclamation-circle' style='font-size: 1.5em; color: #ffc107;'></i> <label style='font-size: 1.1em;vertical-align: middle;'><b>Atenção</b></label>"
+			descricaoBotaoFechaModalDoRodape="Ok">
+			<div class="modal-body">
+	       		Não é possível fazer o desentranhamento porque o documento ao qual este está juntado encontra-se sobrestado.
+	     	</div>	     	
+		</siga:siga-modal>
+		<script>
+			$(function() {
+				var btnDesentranhar = $('.siga-btn-desentranhar');
+				if (btnDesentranhar) {
+					btnDesentranhar.attr('href', '#').attr('data-siga-modal-abrir', 'modalDeAvisoDesentranhar');					
+				}							
+			});
+		</script>
+	</c:if>	
 			
 	<script>
 		$(function() {

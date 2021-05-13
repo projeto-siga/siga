@@ -45,6 +45,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
+import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -458,7 +459,11 @@ public class CpDao extends ModeloDao {
 	@SuppressWarnings("unchecked")
 	public List<DpCargo> consultarPorFiltro(final DpCargoDaoFiltro o, final int offset, final int itemPagina) {
 		try {
-			final Query query = em().createNamedQuery("consultarPorFiltroDpCargo");
+			final Query query;
+			if (!o.isBuscarInativos())
+				query = em().createNamedQuery("consultarPorFiltroDpCargo");
+			else
+				query = em().createNamedQuery("consultarPorFiltroDpCargoInclusiveInativos");
 			if (offset > 0) {
 				query.setFirstResult(offset);
 			}
@@ -492,6 +497,15 @@ public class CpDao extends ModeloDao {
 			return null;
 		return l.get(0);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public DpCargo consultarPorIdInicialDpCargoAtual(final Long idCargoIni) {
+		CriteriaQuery<DpCargo> q = cb().createQuery(DpCargo.class);
+		Root<DpCargo> c = q.from(DpCargo.class);
+		q.where(cb().equal(c.get("idCargoIni"), idCargoIni),cb().isNull(c.get("dataFimCargo")));
+		q.select(c);
+		return em().createQuery(q).getResultStream().findFirst().orElse(null);		
+	}
 
 	@SuppressWarnings("unchecked")
 	public DpCargo consultarPorNomeOrgao(final DpCargo o) {
@@ -514,7 +528,11 @@ public class CpDao extends ModeloDao {
 
 	public int consultarQuantidade(final DpCargoDaoFiltro o) {
 		try {
-			final Query query = em().createNamedQuery("consultarQuantidadeDpCargo");
+			final Query query;
+			if (!o.isBuscarInativos())
+				query = em().createNamedQuery("consultarQuantidadeDpCargo");
+			else
+				query = em().createNamedQuery("consultarQuantidadeDpCargoInclusiveInativos");
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
@@ -541,7 +559,11 @@ public class CpDao extends ModeloDao {
 	public List<DpFuncaoConfianca> consultarPorFiltro(final DpFuncaoConfiancaDaoFiltro o, final int offset,
 			final int itemPagina) {
 		try {
-			final Query query = em().createNamedQuery("consultarPorFiltroDpFuncaoConfianca");
+			final Query query;
+			if (!o.isBuscarInativas())
+				query = em().createNamedQuery("consultarPorFiltroDpFuncaoConfianca");
+			else
+				query = em().createNamedQuery("consultarPorFiltroDpFuncaoConfiancaInclusiveInativas");
 			if (offset > 0) {
 				query.setFirstResult(offset);
 			}
@@ -591,6 +613,15 @@ public class CpDao extends ModeloDao {
 			return null;
 		return l.get(0);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public DpFuncaoConfianca consultarPorIdInicialDpFuncaoConfiancaAtual(final Long idFuncaoIni) {
+		CriteriaQuery<DpFuncaoConfianca> q = cb().createQuery(DpFuncaoConfianca.class);
+		Root<DpFuncaoConfianca> c = q.from(DpFuncaoConfianca.class);
+		q.where(cb().equal(c.get("idFuncaoIni"), idFuncaoIni),cb().isNull(c.get("dataFimFuncao")));
+		q.select(c);
+		return em().createQuery(q).getResultStream().findFirst().orElse(null);		
+	}
 
 	@SuppressWarnings("unchecked")
 	public DpFuncaoConfianca consultarPorNomeOrgao(final DpFuncaoConfianca o) {
@@ -615,7 +646,11 @@ public class CpDao extends ModeloDao {
 
 	public int consultarQuantidade(final DpFuncaoConfiancaDaoFiltro o) {
 		try {
-			final Query query = em().createNamedQuery("consultarQuantidadeDpFuncaoConfianca");
+			final Query query;
+			if (!o.isBuscarInativas())
+				query = em().createNamedQuery("consultarQuantidadeDpFuncaoConfianca");
+			else
+				query = em().createNamedQuery("consultarQuantidadeDpFuncaoConfiancaInclusiveInativas");
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
@@ -1814,8 +1849,10 @@ public class CpDao extends ModeloDao {
 	}
 
 	public Date consultarDataEHoraDoServidor() {
+
 		if (ContextoPersistencia.dt() != null)
 			return ContextoPersistencia.dt();
+
 		String sql = "SELECT sysdate from dual";
 		String dialect = System.getProperty("siga.hibernate.dialect");
 		if (dialect != null && dialect.contains("MySQL"))
@@ -1825,6 +1862,7 @@ public class CpDao extends ModeloDao {
 		Date dt = (Date) query.getSingleResult();
 		ContextoPersistencia.setDt(dt);
 		return dt; 
+
 	}
 
 	public List<CpConfiguracao> consultarConfiguracoesDesde(Date desde) {
@@ -2727,8 +2765,11 @@ public class CpDao extends ModeloDao {
 		Predicate predicateAnd = criteriaBuilder.and(predicateNotEqualMarcadorSistema, predicateIsNullLotacao);
 		if (ativos == null || ativos) {
 			Predicate predicateNullHisDtFim = criteriaBuilder.isNull(cpMarcadorRoot.get("hisDtFim"));
+			Predicate predicateNullHisDtIni = criteriaBuilder.isNull(cpMarcadorRoot.get("hisDtIni"));
+			Predicate predicateHisDtIniLeToday = criteriaBuilder.lessThan(cpMarcadorRoot.<Date>get("hisDtIni"), criteriaBuilder.currentDate());
 			criteriaQuery.where(criteriaBuilder
-					.and(predicateAnd, predicateNullHisDtFim));
+					.and(predicateAnd, predicateNullHisDtFim, 
+							criteriaBuilder.or(predicateNullHisDtIni, predicateHisDtIniLeToday)));
 		} else {
 			criteriaQuery.where(predicateAnd);
 		}
@@ -2737,6 +2778,10 @@ public class CpDao extends ModeloDao {
 	}
 	
 	public List<CpMarcador> listarCpMarcadoresPorLotacao(DpLotacao lotacao, Boolean ativos) {
+		return listarCpMarcadoresPorLotacao(lotacao, ativos, false);
+	}
+	
+	public List<CpMarcador> listarCpMarcadoresPorLotacao(DpLotacao lotacao, Boolean ativos, Boolean futuras) {
 		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
 		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);
 		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
@@ -2752,9 +2797,20 @@ public class CpDao extends ModeloDao {
 					predicateEqualLotacao);
 		}
 		
+		if (futuras != null && !futuras) {
+			predicateAnd = criteriaBuilder.and(predicateAnd,  
+					criaPredicateDataFutura(criteriaBuilder, cpMarcadorRoot));
+		}
 		criteriaQuery.where(predicateAnd);
 		criteriaQuery.orderBy(criteriaBuilder.asc(cpMarcadorRoot.get("descrMarcador")));
 		return em().createQuery(criteriaQuery).getResultList().stream().filter(mar -> mar.getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO).collect(Collectors.toList());
+	}
+
+	private Predicate criaPredicateDataFutura(CriteriaBuilder criteriaBuilder, Root<CpMarcador> cpMarcadorRoot) {
+		// Cria predicate para mostrar os marcadores a serem ativados futuramente (com data de inicio futura) 
+		Predicate predicateNullHisDtIni = criteriaBuilder.isNull(cpMarcadorRoot.get("hisDtIni"));
+		Predicate predicateHisDtIniLeToday = criteriaBuilder.lessThan(cpMarcadorRoot.<Date>get("hisDtIni"), criteriaBuilder.currentDate());
+		return criteriaBuilder.or(predicateNullHisDtIni, predicateHisDtIniLeToday);
 	}
 	
 	public CpMarcador obterPastaPadraoDaLotacao(DpLotacao lotacao) {
@@ -2765,6 +2821,10 @@ public class CpDao extends ModeloDao {
 	}
 	
 	public List<CpMarcador> listarCpMarcadoresPorLotacaoEGeral (DpLotacao lotacao, Boolean ativos) {
+		return listarCpMarcadoresPorLotacaoEGeral (lotacao, ativos, false);
+
+	}
+	public List<CpMarcador> listarCpMarcadoresPorLotacaoEGeral (DpLotacao lotacao, Boolean ativos, Boolean futuras) {
 		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
 		CriteriaQuery<CpMarcador> criteriaQuery = criteriaBuilder.createQuery(CpMarcador.class);
 		Root<CpMarcador> cpMarcadorRoot = criteriaQuery.from(CpMarcador.class);
@@ -2784,6 +2844,11 @@ public class CpDao extends ModeloDao {
 			predicateAnd = criteriaBuilder.and(predicateGeralOuLotacaoEspecificaENaoSistema, predicateNullHisDtFim);
 		} else {
 			predicateAnd = predicateGeralOuLotacaoEspecificaENaoSistema;
+		}
+
+		if (futuras != null && !futuras) {
+			predicateAnd = criteriaBuilder.and(predicateAnd,  
+					criaPredicateDataFutura(criteriaBuilder, cpMarcadorRoot));
 		}
 		
 		criteriaQuery.where(predicateAnd);

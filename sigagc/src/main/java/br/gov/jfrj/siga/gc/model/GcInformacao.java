@@ -251,13 +251,10 @@ public class GcInformacao extends Objeto {
 
 	@PostLoad
 	private void onLoad() {
-		
 		Query query = em().createQuery("SELECT m FROM GcMarca m where m.inf.id = :idInf and (m.dtFimMarca is null or m.dtFimMarca > 	:dbDatetime) order by dtIniMarca, cpMarcador.descrMarcador");
 		query.setParameter("idInf", this.id);
 		query.setParameter("dbDatetime", CpDao.getInstance().consultarDataEHoraDoServidor());
 		marcas = query.getResultList();
-		// marcas = GcMarca.find("id_tp_marca = 3 and inf.id = ?",
-		// this.id).fetch();
 	}
 
 	public String getDtIniString() {

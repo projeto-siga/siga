@@ -1,4 +1,6 @@
 <!-- Marcar Modal -->
+<%@ page contentType="text/html; charset=UTF-8"%>
+<c:set var="podeRetroativa" scope="session" value="${f:resource('/siga.marcadores.permite.data.retroativa')}" />
 <div class="modal fade" id="definirMarcaModal" tabindex="-1"
 	role="dialog" aria-labelledby="anotarModalLabel" aria-hidden="true">
 	<div class="modal-dialog" role="document">
@@ -14,7 +16,7 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<form id="anotarForm" name="marcar_gravar" method="POST"
+				<form id="marcarForm" name="marcar_gravar" method="POST"
 					action="${linkTo[ExMovimentacaoController].aMarcarGravar()}">
 					<input type="hidden" name="sigla" value="${m.sigla}" />
 					<div class="form-group">
@@ -27,8 +29,12 @@
 									v-model="idMarcador" id="marcador" class="form-control">
 									<optgroup v-for="grupo in listaAgrupada"
 										v-bind:label="grupo.grupo">
-										<option v-for="option in grupo.lista" v-if="option.ativo"
-											v-bind:value="option.idMarcador">{{ option.nome }}</option>
+										<option :disabled="!option.ativo" 
+											:style="!option.ativo ? 'color: LightGray;' : ''" 
+											v-for="option in grupo.lista" 
+											v-bind:value="option.idMarcador"
+											v-if="option.ativo || !(option.explicacao).includes('não está marcado ')"
+											>{{ option.nome }}{{option.ativo || (option.explicacao).includes('não está marcado')? '' : ' (Já marcado no documento)'}}</option>
 									</optgroup>
 								</select>
 							</div>
@@ -59,13 +65,13 @@
 									v-if="marcador && marcador.planejada != 'DESATIVADA'">
 									<label for="planejada">Data de Exibição</label> <input
 										name="planejada" id="planejada" class="form-control campoData"
-										onblur="javascript:verifica_data(this,0);" autocomplete="off" />
+										autocomplete="off" />
 								</div>
 								<div class="col col-12 col-md-6"
 									v-if="marcador && marcador.limite != 'DESATIVADA'">
 									<label for="limite">Prazo Final</label> <input name="limite"
 										id="limite" class="form-control campoData"
-										onblur="javascript:verifica_data(this,0);" autocomplete="off" />
+										autocomplete="off" />
 								</div>
 							</div>
 							<div class="form-group"
@@ -81,7 +87,7 @@
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
 				<button type="button" class="btn btn-primary"
-					onclick="javascript: document.getElementById('anotarForm').submit();">Gravar</button>
+					onclick="javascript: sbmt();">Gravar</button>
 			</div>
 		</div>
 	</div>
@@ -251,10 +257,26 @@
 						if (component.errormsg === undefined) {
 							component.errormsg = "Erro desconhecido!";
 						}
-					},
+					}
 				}
 			});
 
 	window.initdefinirMarcaModal = function() {
 	}
+
+	function sbmt() {
+		var dtPlanejada = document.getElementById('planejada');
+		var dtLimite = document.getElementById('limite');
+		
+		if (!${podeRetroativa} && dtPlanejada != null)
+			if (!verifica_data(dtPlanejada,0,false,false))
+				return;
+
+		if (!${podeRetroativa} && dtLimite != null)
+			if (!verifica_data(dtLimite,0,false,false))
+				return;
+		
+		document.getElementById('marcarForm').submit();
+	}
+	
 </script>

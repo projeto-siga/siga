@@ -18,16 +18,13 @@
  ******************************************************************************/
 package br.gov.jfrj.itextpdf;
 
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO;
 import static br.gov.jfrj.siga.ex.util.ProcessadorHtml.novoHtmlPersonalizado;
 
-import java.awt.Color;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -45,36 +42,19 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.lowagie.text.Annotation;
 import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.FontFactory;
-import com.lowagie.text.Image;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.Barcode39;
-import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PRAcroForm;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfCopy;
 import com.lowagie.text.pdf.PdfDestination;
-import com.lowagie.text.pdf.PdfGState;
 import com.lowagie.text.pdf.PdfImportedPage;
 import com.lowagie.text.pdf.PdfOutline;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfPageEventHelper;
 import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.PdfWriter;
-import com.swetake.util.Qrcode;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
@@ -82,7 +62,6 @@ import br.gov.jfrj.siga.base.CurrentRequest;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RequestInfo;
-import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -201,23 +180,35 @@ public class Documento {
 			Set<ExMovimentacao> movsAssinatura, Date dtDoc) {
 		ArrayList<String> assinantes = new ArrayList<String>();
 		for (ExMovimentacao movAssinatura : movsAssinatura) {
-			String s;
+			StringBuilder s = new StringBuilder();
 			Date dataDeInicioDeObrigacaoExibirRodapeDeAssinatura=null;
 			if (movAssinatura.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)) {
-				s = Texto.maiusculasEMinusculas(movAssinatura.getCadastrante().getNomePessoa());
+				s.append(Texto.maiusculasEMinusculas(movAssinatura.getCadastrante().getNomePessoa()));
 			} else {
 				dataDeInicioDeObrigacaoExibirRodapeDeAssinatura = Prop.getData("rodape.data.assinatura.ativa");
-				s = movAssinatura.getDescrMov().trim().toUpperCase();
-				s = s.split(":")[0];
-				s = s.intern();
-				if(Prop.isGovSP()
-						|| (dataDeInicioDeObrigacaoExibirRodapeDeAssinatura != null && !dataDeInicioDeObrigacaoExibirRodapeDeAssinatura.after(dtDoc)
-								)	) {
-						s +=" - " + Data.formatDDMMYYYY_AS_HHMMSS(movAssinatura.getData());
-					}				 
+				s.append(movAssinatura.getDescrMov().trim().toUpperCase().split(":")[0]);
+				
+
+				/*** Exibe para Documentos Capturados a Funcao / Unidade ***/
+				if (movAssinatura.getExDocumento().isInternoCapturado()) { /* Interno Exibe Personalização se realizada */
+					if (movAssinatura.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA) || movAssinatura.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO)) {
+						s.append(Ex.getInstance().getBL().extraiPersonalizacaoAssinatura(movAssinatura));
+					}
+				} else if(movAssinatura.getExDocumento().isExternoCapturado()) { 
+					s.append(" - ");
+					s.append(movAssinatura.getCadastrante().getFuncaoString());
+					s.append(" / ");
+					s.append(movAssinatura.getCadastrante().getLotacao().getSigla());
+				}
+				/**** ****/
+				
+				if(Prop.isGovSP() || (dataDeInicioDeObrigacaoExibirRodapeDeAssinatura != null && !dataDeInicioDeObrigacaoExibirRodapeDeAssinatura.after(dtDoc))) {
+					s.append(" - ");
+					s.append(Data.formatDDMMYYYY_AS_HHMMSS(movAssinatura.getData()));
+				}				 
 			}
-			if (!assinantes.contains(s)) {
-				assinantes.add(s);
+			if (!assinantes.contains(s.toString())) {
+				assinantes.add(s.toString());
 			}
 		}
 		return assinantes;
@@ -533,11 +524,19 @@ public class Documento {
 			throws Exception {
 		sHtml = (new ProcessadorHtml()).canonicalizarHtml(sHtml, true, false,
 				true, false, true);
+		
+		sHtml = incluirLinkNasAssinaturas(sHtml);
 
 		sHtml = sHtml.replace("contextpath", realPath());
-
+		
 		return parser.converter(sHtml, ConversorHtml.PDF);
 
+	}
+	
+	private static String incluirLinkNasAssinaturas(String sHtml) {
+		sHtml = sHtml.replaceAll("<!-- INICIO SUBSCRITOR (\\d+) -->(<!-- SIGLA (\\S+) -->)?", "<a href=\"contextpath/sigaex/app/validar-assinatura?pessoa=$1&sigla=$3\">");
+		sHtml = sHtml.replaceAll("<!-- FIM SUBSCRITOR (\\d+) -->", "</a>");
+		return sHtml;
 	}
 
 	public static void getDocumentoHTML(OutputStream os, String uuid, ExMobil mob, ExMovimentacao mov,
@@ -553,7 +552,7 @@ public class Documento {
 		// transparent.
 		// sb.append("<html class=\"fisico\"><body style=\"margin:2px; padding:0pt; background-color: #E2EAEE;overflow:visible;\">");
 		try (PrintWriter sb = new PrintWriter(new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8)))) {
-			sb.append("<html><head><base target=\"_parent\"/></head><body style=\"margin:2px; padding:0pt; background-color: "
+			sb.append("<html><head><base target=\"_parent\"/><link rel=\"stylesheet\" href=\"/siga/css/style_siga.css\" type=\"text/css\" media=\"screen, projection\"></head><body style=\"margin:2px; padding:0pt; background-color: "
 					+ (mob.getDoc().isEletronico() ? "#E2EAEE" : "#f1e9c6")
 					+ ";overflow:visible;\">");
 			int f = 0;

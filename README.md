@@ -18,9 +18,11 @@ Conteúdo destinado a Órgãos que tenham interesse em conhecer o sistema: http
 
 Conteúdo destinado a usuários do sistema: https://colabore.trf2.jus.br/course/view.php?id=2
 
-Veja também a documentação para o desenvolvedor: [Javadoc](http://projeto-siga.github.io/artifacts/javadoc/).
+Curso de Ensino à Distância: https://colabore.trf2.jus.br/enrol/index.php?id=4
 
-Para instalar uma versão de testes do Siga-Doc, utilizando o Docker, clique [aqui](https://github.com/projeto-siga/docker).
+Para instalar uma versão de testes do Siga-Doc, utilizando o Docker, clique [aqui](https://github.com/projeto-siga/siga-docker).
 
 Para tirar dúvidas, entre em contato através do [forum](https://groups.google.com/forum/#!forum/siga-doc).
+
+Veja também a documentação para o desenvolvedor: [Javadoc](http://projeto-siga.github.io/artifacts/javadoc/).
 

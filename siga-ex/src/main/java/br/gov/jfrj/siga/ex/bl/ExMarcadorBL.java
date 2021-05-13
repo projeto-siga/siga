@@ -310,6 +310,10 @@ public class ExMarcadorBL {
 				fPasta = true;
 			}
 			
+			// Se a finalidade especificar que não é para incluir a marca quando está arquivado
+			if (marcador.getIdFinalidade().isArquivarOcultaAMarca() && mob.isArquivado())
+				continue;
+			
 			acrescentarMarcaTransferencia(marcador.getIdMarcador(), dtIni, dtFim, pes,	lot, mov);
 		}
 		

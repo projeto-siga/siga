@@ -147,7 +147,7 @@ public class ProcessadorHtml {
 			add(myTags, "section", "class", null, true);
 			add(myTags, "header", "class", null, true);
 			add(myTags, "sup", "data-footnote-id", null, true);
-			add(myTags, "a", "href;id;rel", null, true);
+			add(myTags, "a", "href;id;rel;class", null, true);
 			add(myTags, "cite", null, null, true);
 			
 			String styleP = "background-color;width;font-family=arial,avantgarde bk bt\\, arial;font-size=6pt,7pt,8pt,9pt,10pt,11pt,12pt,13pt,14pt;font-weight=bold"

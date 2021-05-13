@@ -403,7 +403,7 @@ public class ExMovimentacaoController extends ExController {
 		
 		String fileExtension = arquivo.getFileName().substring(arquivo.getFileName().lastIndexOf("."));
 		
-		if (fileExtension.equals(".bat") || fileExtension.equals(".exe") || fileExtension.equals(".sh") || fileExtension.equals(".dll") || fileExtension.equals(".pdf") ) {
+		if (fileExtension.equals(".bat") || fileExtension.equals(".exe") || fileExtension.equals(".sh") || fileExtension.equals(".dll")) {
 			throw new AplicacaoException(
 					"Extensão " + fileExtension + " inválida para inclusão do arquivo.");
 		}
@@ -2090,7 +2090,8 @@ public class ExMovimentacaoController extends ExController {
 			
 			
 		} else {
-			ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getSigla());
+			result.include("origemRedirectTransferirGravar", true);
+			ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getSigla()); 
 		}
 	}
 
@@ -2533,6 +2534,14 @@ public class ExMovimentacaoController extends ExController {
 			movimentacaoBuilder.setLotaSubscritorSel(lotaSubscritorSel);
 		}
 
+		if (!Prop.getBool("/siga.marcadores.permite.data.retroativa")) {
+			if (!Utils.empty(planejada) && !DateUtils.isSameDay(new Date(), dtPlanejada) && dtPlanejada.before(new Date())) 
+				throw new AplicacaoException("Data Planejada não pode ser anterior à hoje.");
+			
+			if (!Utils.empty(limite) && !DateUtils.isSameDay(new Date(), dtLimite) && dtLimite.before(new Date())) 
+				throw new AplicacaoException("Data Limite não pode ser anterior à hoje.");
+		} 
+			
 		movimentacaoBuilder.setIdMarcador(marcador);
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
 		mov.setDescrMov(texto);
@@ -4325,23 +4334,33 @@ public class ExMovimentacaoController extends ExController {
 		Long idOrgaoUsuario = doc.getOrgaoUsuario().getId();
 		Long idOrgaoUsuarioCadastrante = getCadastrante().getOrgaoUsuario()
 				.getId();
+		Long idLotDefault = null;
 
 		siglaSubscritor = PublicacaoDJEBL.obterUnidadeDocumento(doc);
 		siglaCadastrante = getCadastrante().getLotacao().getSigla();
 		siglaTitular = getLotaTitular().getSigla();
 		lotFiltro = new DpLotacao();
 
-		lotFiltro.setOrgaoUsuario(doc.getOrgaoUsuario());
+		lotFiltro.setOrgaoUsuario(doc.getOrgaoUsuario());		
 		lotFiltro.setSigla(siglaSubscritor);
+	    if (lotFiltro.getSigla().startsWith("-"))
+	    	lotFiltro.setSigla(lotFiltro.getSigla().substring(1));
 		lotSubscritor = dao().consultarPorSigla(lotFiltro);
 
-		lotacoes.add(lotSubscritor);
+		if (lotSubscritor != null) {
+			lotacoes.add(lotSubscritor);
+			idLotDefault = lotSubscritor.getId();
+		}
 
 		if (!siglaSubscritor.equals(siglaCadastrante)
 				&& idOrgaoUsuarioCadastrante.equals(idOrgaoUsuario)) {
 			lotFiltro.setSigla(siglaCadastrante);
 			lotCadastrante = dao().consultarPorSigla(lotFiltro);
-			lotacoes.add(lotCadastrante);
+			if (lotCadastrante != null) {
+				lotacoes.add(lotCadastrante);
+				if (idLotDefault == null)
+					idLotDefault = lotCadastrante.getId();
+			}	
 		}
 
 		if (!siglaSubscritor.equals(siglaTitular)
@@ -4351,11 +4370,16 @@ public class ExMovimentacaoController extends ExController {
 						.getOrgaoUsuario().getId().equals(idOrgaoUsuario))) {
 			lotFiltro.setSigla(siglaTitular);
 			lotTitular = dao().consultarPorSigla(lotFiltro);
-			lotacoes.add(lotTitular);
+			if (lotTitular != null) {
+				lotacoes.add(lotTitular);
+			  	 if (idLotDefault == null)
+					idLotDefault = lotTitular.getId();
+			}	
 		}
-		return new ListaLotPubl(lotacoes, lotSubscritor.getId());
+		
+		return new ListaLotPubl(lotacoes, idLotDefault);
 	}
-
+	
 	private void validarExisteLotacao(ExDocumento doc) {
 		if (doc.getTitular() != null) {
 			if (doc.getLotaTitular() == null) {

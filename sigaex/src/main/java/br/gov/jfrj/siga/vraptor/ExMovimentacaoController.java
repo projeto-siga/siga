@@ -166,9 +166,9 @@ public class ExMovimentacaoController extends ExController {
 
 		final ExMobilVO mobilVO = new ExMobilVO(mob, getCadastrante(), getTitular(),
 				getLotaTitular(), true,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, false);
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, false, false);
 		final ExMobilVO mobilCompletoVO = new ExMobilVO(mob, getCadastrante(), getTitular(),
-				getLotaTitular(), true, null, false);
+				getLotaTitular(), true, null, false, false);
 
 		result.include("mobilCompletoVO", mobilCompletoVO);
 		result.include("mobilVO", mobilVO);
@@ -193,9 +193,9 @@ public class ExMovimentacaoController extends ExController {
 
 		final ExMobilVO mobilVO = new ExMobilVO(mob, getCadastrante(), getTitular(),
 				getLotaTitular(), true,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, false);
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, false, false);
 		final ExMobilVO mobilCompletoVO = new ExMobilVO(mob, getCadastrante(), getTitular(),
-				getLotaTitular(), true, null, false);
+				getLotaTitular(), true, null, false, false);
 
 		result.include("mobilCompletoVO", mobilCompletoVO);
 		result.include("mobilVO", mobilVO);
@@ -339,7 +339,7 @@ public class ExMovimentacaoController extends ExController {
 
 		final ExMobilVO mobilVO = new ExMobilVO(builder.getMob(), getCadastrante(), getTitular(),
 				getLotaTitular(), true,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, true);
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, true, false);
 
 		result.include("mobilVO", mobilVO);
 	}
@@ -464,9 +464,9 @@ public class ExMovimentacaoController extends ExController {
 
 		final ExMobilVO mobilVO = new ExMobilVO(mob, getCadastrante(), getTitular(),
 				getLotaTitular(), true,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA, false);
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA, false, false);
 		final ExMobilVO mobilCompletoVO = new ExMobilVO(mob, getCadastrante(), getTitular(),
-				getLotaTitular(), true, null, false);
+				getLotaTitular(), true, null, false, false);
 
 		result.include("sigla", sigla);
 		result.include("doc", mob.doc());

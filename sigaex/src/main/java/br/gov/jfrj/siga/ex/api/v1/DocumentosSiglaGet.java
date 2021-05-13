@@ -10,7 +10,6 @@ import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 
 import com.crivano.swaggerservlet.SwaggerException;
-import com.crivano.swaggerservlet.SwaggerServlet;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
@@ -20,8 +19,6 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.CurrentRequest;
-import br.gov.jfrj.siga.base.RequestInfo;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -30,8 +27,8 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaGetRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaGetResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaGet;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
-import br.gov.jfrj.sigale.ex.vo.ExDocumentoApiVO;
 
 public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 
@@ -70,12 +67,13 @@ public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 					throw e;
 				}
 			}
-	
-			final ExDocumentoApiVO docVO = new ExDocumentoApiVO(doc, mob, cadastrante, titular, lotaTitular, true, false);
-	//TODO: Resolver o problema declares multiple JSON fields named serialVersionUID
+
+			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, cadastrante, titular, lotaTitular, true, false, true);
+			//TODO: Resolver o problema declares multiple JSON fields named serialVersionUID
 			// Usado o Expose temporariamente
 			Gson gson = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY)
 					.excludeFieldsWithModifiers(Modifier.TRANSIENT).create();
+
 			String json = gson.toJson(docVO);
 	
 			resp.inputstream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));

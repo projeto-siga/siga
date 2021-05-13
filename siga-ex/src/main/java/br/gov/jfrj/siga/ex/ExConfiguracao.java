@@ -79,11 +79,6 @@ public class ExConfiguracao extends CpConfiguracao {
 	@JoinColumn(name = "ID_PAPEL")
 	private ExPapel exPapel;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3624557793773660738L;
-
 	public ExConfiguracao() {
 	}
 
@@ -190,10 +185,6 @@ public class ExConfiguracao extends CpConfiguracao {
 
 	public void setExPapel(ExPapel exPapel) {
 		this.exPapel = exPapel;
-	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
 	}
 
 	public boolean isAgendamentoPublicacaoBoletim() {

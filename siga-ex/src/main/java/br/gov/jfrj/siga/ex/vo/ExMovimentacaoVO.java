@@ -58,6 +58,7 @@ import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERE
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.hasDespacho;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -65,7 +66,6 @@ import java.util.TreeMap;
 
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.internal.org.bouncycastle.jcajce.provider.symmetric.util.PBE.Util;
 
 import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -79,13 +79,15 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
-import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
 import br.gov.jfrj.siga.ex.util.ProcessadorReferencias;
 
 public class ExMovimentacaoVO extends ExVO {
-	private static final String JWT_FIXED_HEADER = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.";
-	private static final String JWT_FIXED_HEADER_REPLACEMENT = "!";
-	ExMovimentacao mov;
+	private static final transient String JWT_FIXED_HEADER = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.";
+	private static final transient String JWT_FIXED_HEADER_REPLACEMENT = "!";
+	
+	transient ExMovimentacao mov;
+	
+	transient ExMobilVO mobVO;
 	String classe;
 	boolean originadaAqui;
 	boolean desabilitada;
@@ -94,32 +96,43 @@ public class ExMovimentacaoVO extends ExVO {
 	long idTpMov;
 	String complemento;
 	Map<String, ExParteVO> parte = new TreeMap<String, ExParteVO>();
+	Date dtIniMov;
 	String dtRegMovDDMMYYHHMMSS;
-	private String tempoRelativo;
 	String dtFimMovDDMMYYHHMMSS;
 	String descrTipoMovimentacao;
 	long idMov;
-	ExMobilVO mobVO;
 	int duracaoSpan;
 	int duracaoSpanExibirCompleto;
 	String duracao;
+	String mimeType;
+	String lotaCadastranteSigla;
+	String exTipoMovimentacaoSigla;
+	String tempoRelativo;
+	boolean podeExibirNoSigale;
 
 	public ExMobilVO getMobVO() {
 		return mobVO;
 	}
 
 	public ExMovimentacaoVO(ExMobilVO mobVO, ExMovimentacao mov, DpPessoa cadastrante, DpPessoa titular,
-			DpLotacao lotaTitular) {
+			DpLotacao lotaTitular, boolean serializavel) {
+		originadaAqui = (mov.getExMobil().getId().equals(mobVO.id));
 		this.mov = mov;
 		this.mobVO = mobVO;
-		originadaAqui = (this.mov.getExMobil().getId().equals(getMobVO().mob.getId()));
+		originadaAqui = (mov.getExMobil().getId().equals(getMobVO().id));
 		idTpMov = mov.getExTipoMovimentacao().getIdTpMov();
+		dtIniMov = mov.getDtIniMov();
+
+		mimeType = (mov.getConteudoTpMov() == null) ? "" : mov.getConteudoTpMov();
+
 
 		this.idMov = mov.getIdMov();
 		this.dtRegMovDDMMYYHHMMSS = mov.getDtRegMovDDMMYYHHMMSS();
 		this.tempoRelativo = Data.calcularTempoRelativo(mov.getDtIniMov());
 		this.descrTipoMovimentacao = mov.getDescrTipoMovimentacao();
 		this.cancelada = mov.getExMovimentacaoCanceladora() != null;
+		this.lotaCadastranteSigla = mov.getLotaCadastrante().getSigla();
+		this.exTipoMovimentacaoSigla = mov.getExTipoMovimentacao().getSigla();
 
 		if (mov.getLotaCadastrante() != null)
 			parte.put("lotaCadastrante", new ExParteVO(mov.getLotaCadastrante()));
@@ -136,6 +149,9 @@ public class ExMovimentacaoVO extends ExVO {
 
 		descricao = mov.getObs();
 
+		if (mov.getIdTpMov().equals(TIPO_MOVIMENTACAO_ANEXACAO))
+			descricao = mov.getNmArqMov();
+
 		addAcoes(mov, cadastrante, titular, lotaTitular);
 
 		calcularClasse(mov);
@@ -146,7 +162,10 @@ public class ExMovimentacaoVO extends ExVO {
 		
 		if (mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL))
 			complemento = (mov.getSubscritor() != null ? mov.getSubscritor().getDescricao() : mov.getLotaSubscritor() != null ? mov.getLotaSubscritor().getDescricao() : null) + " - " + mov.getExPapel().getDescPapel() + ". ";
-	}
+		
+		if (serializavel) {
+			this.mov = null;
+		}}
 
 	/**
 	 * @param mov

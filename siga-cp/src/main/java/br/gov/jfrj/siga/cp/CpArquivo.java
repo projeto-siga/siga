@@ -63,13 +63,12 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
  * A class that represents a row in the CP_ARQUIVO table. You can customize the
  * behavior of this class by editing the class, {@link CpArquivo()}.
  */
+@SuppressWarnings("serial")
 @Entity
 @Immutable
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.READ_ONLY)
 @Table(name = "corporativo.cp_arquivo")
 public class CpArquivo implements Serializable, PersistentAttributeInterceptable {
-
-	private static final long serialVersionUID = 1L;
 	
 	private final static org.jboss.logging.Logger log = Logger.getLogger(CpArquivo.class);
 

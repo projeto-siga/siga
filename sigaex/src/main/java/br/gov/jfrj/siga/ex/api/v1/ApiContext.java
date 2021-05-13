@@ -10,7 +10,10 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 
+import com.crivano.swaggerservlet.ISwaggerRequest;
+import com.crivano.swaggerservlet.ISwaggerResponse;
 import com.crivano.swaggerservlet.SwaggerAuthorizationException;
+import com.crivano.swaggerservlet.SwaggerException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -194,6 +197,63 @@ public class ApiContext implements Closeable {
 
 	public DpLotacao getLotaTitular() throws Exception {
 		return getSigaObjects().getLotaTitular();
+	}
+	
+	/**
+	 * Retorna um {@link ExMobil Mobil} relacionado a uma certa
+	 * {@link ExMobil#getSigla() sigla} contanto que esse exista e que o usuário
+	 * tenha autorização para acessá-lo.
+	 * 
+	 * @param sigla              Sigla do documeto solicitado
+	 * @param so                 SigaObjects previamente carregado via
+	 *                           {@link #getSigaObjects()} . Será usado na
+	 *                           validação.
+	 * @param req                Requisição do Swagger. Usado no disparo da exceção.
+	 * @param resp               Resposta do Swagger. Usado no disparo da exceção.
+	 * @param descricaoDocumento Descrição do documento a ser usada em caso de erro.
+	 * @return Mobil relacionado a sigla soliciatada.
+	 * @throws SwaggerException Se não achar um Mobil com a sigla solicitada (
+	 *                          {@link SwaggerException#getStatus() Status} 404) ou
+	 *                          se o usário não tiver autorização para tratá-lo
+	 *                          ({@link SwaggerException#getStatus() Status} 403)
+	 */
+	ExMobil buscarEValidarMobil(final String sigla, ISwaggerRequest req, ISwaggerResponse resp,
+			String descricaoDocumento) throws Exception {
+		final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
+		filter.setSigla(sigla);
+		ExMobil mob = ExDao.getInstance().consultarPorSigla(filter);
+
+		if (isNull(mob)) {
+			throw new SwaggerException("Número do " + descricaoDocumento + " não existe", 404, null, req, resp,
+					null);
+		}
+		if (!Ex.getInstance().getComp().podeAcessarDocumento(getTitular(), getLotaTitular(), mob))
+			throw new SwaggerException("Acesso ao " + descricaoDocumento + " " + mob.getSigla()
+					+ " permitido somente a usuários autorizados. (" + getTitular().getSigla() + "/"
+					+ getLotaTitular().getSiglaCompleta() + ")", 403, null, req, resp, null);
+
+		return mob;
+	}
+
+	/**
+	 * Retorna um {@link ExMobil Mobil} relacionado a uma certa
+	 * {@link ExMobil#getSigla() sigla} contanto que esse exista e que o usuário
+	 * tenha autorização para acessá-lo.
+	 * 
+	 * @param sigla Sigla do documeto solicitado
+	 * @param req   Requisição do Swagger. Usado no disparo da exceção.
+	 * @param resp  Resposta do Swagger. Usado no disparo da exceção.
+	 * @return Mobil relacionado a sigla soliciatada.
+	 * @throws SwaggerException Se não achar um Mobil com a sigla solicitada (
+	 *                          {@link SwaggerException#getStatus() Status} 404) ou
+	 *                          se o usário não tiver autorização para tratá-lo
+	 *                          ({@link SwaggerException#getStatus() Status} 403).
+	 * @see #buscarEValidarMobil(String, SigaObjects, ISwaggerRequest,
+	 *      ISwaggerResponse, String)
+	 */
+	ExMobil buscarEValidarMobil(final String sigla, ISwaggerRequest req, ISwaggerResponse resp)
+			throws Exception {
+		return buscarEValidarMobil(sigla, req, resp, "Documento");
 	}
 
 }

@@ -12,6 +12,7 @@ import java.math.BigDecimal;
  * The persistent class for the EX_DOCUMENTO_NUMERACAO database table.
  * 
  */
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "siga.ex_documento_numeracao")
 @NamedQueries({
@@ -41,7 +42,6 @@ import java.math.BigDecimal;
 })
 
 public class ExDocumentoNumeracao implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@SequenceGenerator(name="EX_DOCUMENTO_NUMERACAO_IDDOCUMENTONUMERACAO_GENERATOR", sequenceName="EX_DOCUMENTO_NUMERACAO_SEQ")

@@ -42,16 +42,12 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "corporativo.dp_cargo")
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpCargo extends AbstractDpCargo implements Serializable,
 		Selecionavel, Sincronizavel, DpConvertableEntity {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1727725732071861392L;
 
 	@Formula(value = "REMOVE_ACENTO(NOME_CARGO)")
 	@Desconsiderar

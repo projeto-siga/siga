@@ -38,14 +38,11 @@ import br.gov.jfrj.siga.model.Assemelhavel;
  * A class that represents a row in the 'EX_TEMPORALIDADE' table. This class may
  * be customized as it is never re-generated after being created.
  */
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "siga.ex_temporalidade")
 public class ExTemporalidade extends AbstractExTemporalidade implements
 		Comparable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3977296637930846257L;
 
 	/**
 	 * Simple constructor of ExTemporalidade instances.

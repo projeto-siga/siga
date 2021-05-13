@@ -1227,7 +1227,7 @@ public class ExDocumentoController extends ExController {
 
 		final ExDocumentoVO docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
 				exDocumentoDTO.getMob(), getCadastrante(), getTitular(),
-				getLotaTitular(), true, true);
+				getLotaTitular(), true, true, false);
 
 		if (exDocumentoDTO.getMob().isEliminado()) {
 			throw new AplicacaoException(
@@ -1275,7 +1275,7 @@ public class ExDocumentoController extends ExController {
 
 		final ExDocumentoVO docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
 				exDocumentoDTO.getMob(), getCadastrante(), getTitular(),
-				getLotaTitular(), true, true);
+				getLotaTitular(), true, true, false);
 
 		if (exDocumentoDTO.getMob().isEliminado()) {
 			throw new AplicacaoException(
@@ -1356,7 +1356,7 @@ public class ExDocumentoController extends ExController {
 
 		final ExDocumentoVO docVO = new ExDocumentoVO(exDocumentoDto.getDoc(),
 				exDocumentoDto.getMob(), getCadastrante(), getTitular(),
-				getLotaTitular(), true, false);
+				getLotaTitular(), true, false, false);
 
 		docVO.exibe();
 
@@ -1457,7 +1457,7 @@ public class ExDocumentoController extends ExController {
 
 		final ExDocumentoVO docVO = new ExDocumentoVO(exDocumentoDto.getDoc(),
 				exDocumentoDto.getMob(), getCadastrante(), getTitular(),
-				getLotaTitular(), true, false);
+				getLotaTitular(), true, false, false);
 
 		if(docVO != null && docVO.getDoc() != null && docVO.getDoc().getNumPaginas() == null) {
 			docVO.getDoc().setNumPaginas(docVO.getDoc().getContarNumeroDePaginas());

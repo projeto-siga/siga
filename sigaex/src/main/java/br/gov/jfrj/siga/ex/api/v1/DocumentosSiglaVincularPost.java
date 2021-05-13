@@ -23,8 +23,8 @@ public class DocumentosSiglaVincularPost implements IDocumentosSiglaVincularPost
 				ApiContext.assertAcesso("");
 				SigaObjects so = ApiContext.getSigaObjects();
 
-				ExMobil mobFilho = SwaggerHelper.buscarEValidarMobil(req.sigla, so, req, resp, "Documento Secundário");
-				ExMobil mobPai = SwaggerHelper.buscarEValidarMobil(req.siglavertambem, so, req, resp,
+				ExMobil mobFilho = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento Secundário");
+				ExMobil mobPai = ctx.buscarEValidarMobil(req.siglavertambem, req, resp,
 						"Documento Ver Também");
 
 				ApiContext.assertAcesso(mobFilho, ctx.getCadastrante(), ctx.getLotaTitular());

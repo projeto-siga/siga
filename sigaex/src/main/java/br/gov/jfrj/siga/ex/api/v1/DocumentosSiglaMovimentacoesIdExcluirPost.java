@@ -17,7 +17,7 @@ public class DocumentosSiglaMovimentacoesIdExcluirPost implements IDocumentosSig
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
 				ApiContext.assertAcesso("");
-				ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, ctx.getSigaObjects(), req, resp,
+				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp,
 						"Documento cuja movimentação será excluída");
 				ExMovimentacao mov = ApiContext.getMov(mob, req.id);
 

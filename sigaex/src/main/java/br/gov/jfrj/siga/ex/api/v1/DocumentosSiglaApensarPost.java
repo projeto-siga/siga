@@ -25,8 +25,8 @@ public class DocumentosSiglaApensarPost implements IDocumentosSiglaApensarPost {
 				ApiContext.assertAcesso("");
 				SigaObjects so = ApiContext.getSigaObjects();
 
-				ExMobil mobFilho = SwaggerHelper.buscarEValidarMobil(req.sigla, so, req, resp, "Documento Secundário");
-				ExMobil mobPai = SwaggerHelper.buscarEValidarMobil(req.siglamestre, so, req, resp, "Documento Mestre");
+				ExMobil mobFilho = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento Secundário");
+				ExMobil mobPai = ctx.buscarEValidarMobil(req.siglamestre, req, resp, "Documento Mestre");
 
 				ApiContext.assertAcesso(mobFilho, ctx.getCadastrante(), ctx.getLotaTitular());
 

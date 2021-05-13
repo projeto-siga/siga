@@ -30,7 +30,7 @@ public class DocumentosSiglaAnotarPost implements IDocumentosSiglaAnotarPost {
 				DpPessoa titular = cadastrante;
 				DpLotacao lotaTitular = cadastrante.getLotacao();
 		
-				ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, so, req, resp, "Documento a Anotar");
+				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento a Anotar");
 		
 				ApiContext.assertAcesso(mob, titular, lotaTitular);
 		

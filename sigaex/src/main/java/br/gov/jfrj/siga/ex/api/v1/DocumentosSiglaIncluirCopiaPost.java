@@ -24,8 +24,8 @@ public class DocumentosSiglaIncluirCopiaPost implements IDocumentosSiglaIncluirC
 				ApiContext.assertAcesso("");
 				SigaObjects so = ApiContext.getSigaObjects();
 
-				ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, so, req, resp, "Documento Principal");
-				ExMobil mobCopia = SwaggerHelper.buscarEValidarMobil(req.siglacopia, so, req, resp, "Documento Cópia");
+				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento Principal");
+				ExMobil mobCopia = ctx.buscarEValidarMobil(req.siglacopia, req, resp, "Documento Cópia");
 
 				ApiContext.assertAcesso(mob, ctx.getCadastrante(), ctx.getLotaTitular());
 

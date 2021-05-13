@@ -17,7 +17,7 @@ public class DocumentosSiglaDuplicarPost implements IDocumentosSiglaDuplicarPost
 			try {
 				ApiContext.assertAcesso("");
 
-				ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, ctx.getSigaObjects(), req, resp,
+				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp,
 						"Documento a Duplicar");
 
 				if (!Ex.getInstance().getComp().podeDuplicar(ctx.getTitular(), ctx.getLotaTitular(), mob)) {

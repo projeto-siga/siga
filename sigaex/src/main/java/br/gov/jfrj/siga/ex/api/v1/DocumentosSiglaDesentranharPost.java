@@ -18,7 +18,7 @@ public class DocumentosSiglaDesentranharPost implements IDocumentosSiglaDesentra
 			try {
 				ApiContext.assertAcesso("");
 
-				ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, ctx.getSigaObjects(), req, resp,
+				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp,
 						"Documento a Desentranhar");
 
 				if (!Ex.getInstance().getComp().podeCancelarJuntada(ctx.getTitular(), ctx.getLotaTitular(), mob)) {

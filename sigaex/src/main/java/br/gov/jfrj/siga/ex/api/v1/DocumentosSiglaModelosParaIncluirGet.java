@@ -31,7 +31,7 @@ public class DocumentosSiglaModelosParaIncluirGet implements IDocumentosSiglaMod
 
 		try (ApiContext ctx = new ApiContext(false, true)) {
 			ApiContext.assertAcesso("");
-			ExMobil mobPai = SwaggerHelper.buscarEValidarMobil(req.sigla, ctx.getSigaObjects(), req, resp,
+			ExMobil mobPai = ctx.buscarEValidarMobil(req.sigla, req, resp,
 					"Documento Principal");
 
 			List<ExModelo> modelos = Ex.getInstance().getBL().obterListaModelos(null, null, isEditandoAnexo,

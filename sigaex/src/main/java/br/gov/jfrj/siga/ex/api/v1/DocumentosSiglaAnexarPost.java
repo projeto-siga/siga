@@ -22,7 +22,7 @@ public class DocumentosSiglaAnexarPost implements IDocumentosSiglaAnexarPost {
 	public void run(DocumentosSiglaAnexarPostRequest req, DocumentosSiglaAnexarPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, ctx.getSigaObjects(), req, resp,
+				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp,
 						"Documento que Receberá o Anexo");
 				if (!Ex.getInstance().getComp().podeAnexarArquivo(ctx.getTitular(), ctx.getLotaTitular(), mob))
 					throw new SwaggerException(

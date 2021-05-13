@@ -18,7 +18,7 @@ public class DocumentosSiglaPesquisarSiglaGet implements IDocumentosSiglaPesquis
 		try (ApiContext ctx = new ApiContext(false, true)) {
 			ApiContext.assertAcesso("");
 	
-			ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, req, resp);
+			ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp);
 	
 			resp.sigla = mob.getSigla();
 			resp.codigo = mob.getCodigoCompacto();

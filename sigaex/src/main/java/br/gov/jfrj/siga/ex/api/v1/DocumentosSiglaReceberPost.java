@@ -28,7 +28,7 @@ public class DocumentosSiglaReceberPost implements IDocumentosSiglaReceberPost {
 				DpPessoa titular = so.getTitular();
 				DpLotacao lotaTitular = cadastrante.getLotacao();
 		
-				ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, so, req, resp, 
+				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, 
 						"Documento");
 		
 				ApiContext.assertAcesso(mob, cadastrante, lotaTitular);

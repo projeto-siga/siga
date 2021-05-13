@@ -19,7 +19,7 @@ public class DocumentosSiglaDossieGet implements IDocumentosSiglaDossieGet {
 			ApiContext.assertAcesso("");
 			SigaObjects so = ApiContext.getSigaObjects();
 
-			ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, so, req, resp, "Documento");
+			ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento");
 
 			ApiContext.assertAcesso(mob, ctx.getCadastrante(), ctx.getLotaTitular());
 

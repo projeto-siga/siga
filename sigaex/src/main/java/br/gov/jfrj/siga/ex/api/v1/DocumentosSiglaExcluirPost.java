@@ -16,7 +16,7 @@ public class DocumentosSiglaExcluirPost implements IDocumentosSiglaExcluirPost {
 			try {
 				ApiContext.assertAcesso("");
 
-				ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, ctx.getSigaObjects(), req, resp,
+				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp,
 						"Documento a Excluir");
 
 				if (!Ex.getInstance().getComp().podeExcluir(ctx.getTitular(), ctx.getLotaTitular(), mob)) {

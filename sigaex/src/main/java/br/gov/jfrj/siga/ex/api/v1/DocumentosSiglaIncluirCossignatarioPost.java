@@ -49,7 +49,7 @@ public class DocumentosSiglaIncluirCossignatarioPost implements IDocumentosSigla
 			try {
 				ApiContext.assertAcesso("");
 
-				ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, ctx.getSigaObjects(), req, resp,
+				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp,
 						"Documento a Incluir Cossignatário");
 
 				validarAcesso(req, ctx.getTitular(), ctx.getLotaTitular(), mob);

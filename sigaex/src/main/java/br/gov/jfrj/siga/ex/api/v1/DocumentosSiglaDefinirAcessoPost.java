@@ -25,7 +25,7 @@ public class DocumentosSiglaDefinirAcessoPost implements IDocumentosSiglaDefinir
 			try {
 				ApiContext.assertAcesso("");
 
-				ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, ctx.getSigaObjects(), req, resp,
+				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp,
 						"Documento a Marcar");
 
 				ApiContext.assertAcesso(mob, ctx.getTitular(), ctx.getLotaTitular());

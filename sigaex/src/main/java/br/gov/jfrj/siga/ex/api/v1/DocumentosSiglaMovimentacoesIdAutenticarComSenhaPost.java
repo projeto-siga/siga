@@ -16,7 +16,7 @@ public class DocumentosSiglaMovimentacoesIdAutenticarComSenhaPost
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
 				ApiContext.assertAcesso("");
-				ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, ctx.getSigaObjects(), req, resp,
+				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp,
 						"Documento cujo anexo receberá a autenticação");
 				ExMovimentacao mov = ApiContext.getMov(mob, req.id);
 

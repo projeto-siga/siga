@@ -18,7 +18,7 @@ public class DocumentosSiglaAcessosDisponiveisGet implements IDocumentosSiglaAce
 	public void run(DocumentosSiglaAcessosDisponiveisGetRequest req, DocumentosSiglaAcessosDisponiveisGetResponse resp)
 			throws Exception {
 		try (ApiContext ctx = new ApiContext(false, false)) {
-			ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, ctx.getSigaObjects(), req, resp,
+			ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp,
 					"Documento a Redefinir Acesso");
 
 			ExDocumento doc = mob.doc();

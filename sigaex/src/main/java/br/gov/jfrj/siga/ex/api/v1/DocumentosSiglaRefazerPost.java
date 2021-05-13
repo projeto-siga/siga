@@ -17,7 +17,7 @@ public class DocumentosSiglaRefazerPost implements IDocumentosSiglaRefazerPost {
 			try {
 				ApiContext.assertAcesso("");
 
-				ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, ctx.getSigaObjects(), req, resp,
+				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp,
 						"Documento a Finalizar");
 
 				if (!Ex.getInstance().getComp().podeRefazer(ctx.getTitular(), ctx.getLotaTitular(), mob)) {

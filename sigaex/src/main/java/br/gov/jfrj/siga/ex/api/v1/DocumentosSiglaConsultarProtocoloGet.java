@@ -34,7 +34,7 @@ public class DocumentosSiglaConsultarProtocoloGet implements IDocumentosSiglaCon
 			DpPessoa titular = cadastrante;
 			DpLotacao lotaTitular = cadastrante.getLotacao();
 	
-			ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, so, req, resp, "Documento a consultar protocolo");
+			ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento a consultar protocolo");
 	
 			ApiContext.assertAcesso(mob, titular, lotaTitular);
 

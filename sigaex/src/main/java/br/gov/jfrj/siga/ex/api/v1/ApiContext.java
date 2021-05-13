@@ -172,9 +172,12 @@ public class ApiContext implements Closeable {
 		return ExDao.getInstance().consultarPorSigla(flt);
 	}
 
-	public static ExMovimentacao getMov(String id) {
+	public static ExMovimentacao getMov(ExMobil mob, String id) {
 		Long movId = Long.parseLong(id);
-		return ExDao.getInstance().consultar(movId, ExMovimentacao.class, false);
+		ExMovimentacao mov = ExDao.getInstance().consultar(movId, ExMovimentacao.class, false);
+		if (!mov.getExMobil().equals(mob)) 
+			throw new AplicacaoException("Movimentação não se refere ao mobil informado");
+		return mov;
 	}
 
 	public DpPessoa getCadastrante() throws Exception {

@@ -373,7 +373,15 @@ export default {
   },
   methods: {
     executar: function(mov, acao) {
-      if (acao.acao === "exibir") {
+      if (
+        mov.descrTipoMovimentacao === "Anexação" &&
+        (acao.nome === "Assinar/Autenticar" || acao.nome === "Excluir")
+      ) {
+        this.$router.push({
+          name: "Anexo",
+          params: { numero: this.numero, id: mov.idMov },
+        });
+      } else if (acao.acao === "exibir") {
         this.$router.push({
           name: "Documento",
           params: { numero: acao.params.sigla.replace(/[^a-z0-9]/gi, "") },

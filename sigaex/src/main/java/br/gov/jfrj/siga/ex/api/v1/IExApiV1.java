@@ -774,6 +774,104 @@ public interface IExApiV1 {
 				throws Exception;
 	}
 
+	public class DocumentosSiglaAnexarPostRequest implements ISwaggerRequest, ISwaggerRequestFile {
+		public String sigla;
+		public String descricaodocumento;
+		public String arquivo;
+
+		public String filename;
+		public String contenttype = "application/pdf";
+		public Object content;
+		public Map<String, List<String>> headerFields;
+
+		public String getFilename() {
+			return filename;
+		}
+
+		public void setFilename(String filename) {
+			this.filename = filename;
+		}
+
+		public String getContenttype() {
+			return contenttype;
+		}
+
+		public void setContenttype(String contenttype) {
+			this.contenttype = contenttype;
+		}
+
+		public Object getContent() {
+			return content;
+		}
+
+		public void setContent(Object content) {
+			this.content = content;
+		}
+
+		@Override
+		public Map<String, List<String>> getHeaderFields() {
+			return headerFields;
+		}
+
+		@Override
+		public void setHeaderFields(Map<String, List<String>> headerFields) {
+			this.headerFields = headerFields;
+		}
+	}
+
+	public class DocumentosSiglaAnexarPostResponse implements ISwaggerResponse {
+		public String id;
+	}
+
+	public interface IDocumentosSiglaAnexarPost extends ISwaggerMethod {
+		public void run(DocumentosSiglaAnexarPostRequest req, DocumentosSiglaAnexarPostResponse resp) throws Exception;
+	}
+
+	public class DocumentosSiglaMovimentacoesIdAssinarComSenhaPostRequest implements ISwaggerRequest {
+		public String sigla;
+		public String id;
+	}
+
+	public class DocumentosSiglaMovimentacoesIdAssinarComSenhaPostResponse implements ISwaggerResponse {
+		public String sigla;
+		public String status;
+	}
+
+	public interface IDocumentosSiglaMovimentacoesIdAssinarComSenhaPost extends ISwaggerMethod {
+		public void run(DocumentosSiglaMovimentacoesIdAssinarComSenhaPostRequest req,
+				DocumentosSiglaMovimentacoesIdAssinarComSenhaPostResponse resp) throws Exception;
+	}
+
+	public class DocumentosSiglaMovimentacoesIdAutenticarComSenhaPostRequest implements ISwaggerRequest {
+		public String sigla;
+		public String id;
+	}
+
+	public class DocumentosSiglaMovimentacoesIdAutenticarComSenhaPostResponse implements ISwaggerResponse {
+		public String sigla;
+		public String status;
+	}
+
+	public interface IDocumentosSiglaMovimentacoesIdAutenticarComSenhaPost extends ISwaggerMethod {
+		public void run(DocumentosSiglaMovimentacoesIdAutenticarComSenhaPostRequest req,
+				DocumentosSiglaMovimentacoesIdAutenticarComSenhaPostResponse resp) throws Exception;
+	}
+
+	public class DocumentosSiglaMovimentacoesIdExcluirPostRequest implements ISwaggerRequest {
+		public String sigla;
+		public String id;
+	}
+
+	public class DocumentosSiglaMovimentacoesIdExcluirPostResponse implements ISwaggerResponse {
+		public String sigla;
+		public String status;
+	}
+
+	public interface IDocumentosSiglaMovimentacoesIdExcluirPost extends ISwaggerMethod {
+		public void run(DocumentosSiglaMovimentacoesIdExcluirPostRequest req,
+				DocumentosSiglaMovimentacoesIdExcluirPostResponse resp) throws Exception;
+	}
+
 	public class DocumentosSiglaMovimentacaoIdCancelarPostRequest implements ISwaggerRequest {
 		public String sigla;
 		public String id;

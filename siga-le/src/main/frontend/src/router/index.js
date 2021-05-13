@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import Anexo from '@/components/Anexo'
 import Documento from '@/components/Documento'
 import DocumentoEditar from '@/components/DocumentoEditar'
 import DocumentoDossie from '@/components/DocumentoDossie'
@@ -46,6 +47,15 @@ const router = new Router({
     path: '/documento/:numero',
     name: 'Documento',
     component: Documento,
+    meta: {
+      title: route => {
+        return 'Documento ' + route.params.numero + '..'
+      }
+    }
+  }, {
+    path: '/documento/:numero/anexo/:id',
+    name: 'Anexo',
+    component: Anexo,
     meta: {
       title: route => {
         return 'Documento ' + route.params.numero + '..'

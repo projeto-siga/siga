@@ -26,7 +26,7 @@ public class DocumentosSiglaMovimentacaoIdCancelarPost implements IDocumentosSig
 					return;
 				}
 
-				ExMovimentacao mov = ApiContext.getMov(req.id);
+				ExMovimentacao mov = ApiContext.getMov(mob, req.id);
 
 				ApiContext.assertAcesso(mob, ctx.getTitular(), ctx.getLotaTitular());
 

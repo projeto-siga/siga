@@ -11,7 +11,7 @@ export default {
         AcaoBL.lotePadrao("Desfazendo Movimentação",
             "cancelamento",
             "movimentacao",
-            undefined, "sigaex/api/v1/documentos/{siglamob}/movimentacao/" + params.idMov + "/cancelar",
+            undefined, "sigaex/api/v1/documentos/{siglamob}/movimentacoes/" + params.idMov + "/cancelar",
             documentos, cont
         );
     },

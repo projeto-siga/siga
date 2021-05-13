@@ -73,13 +73,64 @@ export default {
       );
     },
 
-    criar_via() {
-      this.emitir("criarVia", undefined, (result) => {
-        this.$router.push({
-          name: "Documento",
-          params: { numero: UtilsBL.onlyLettersAndNumbers(result.data.sigla) },
-        });
+    voltarParaDocumento() {
+      this.$router.push({
+        name: "Documento",
+        params: {
+          numero: UtilsBL.onlyLettersAndNumbers(this.$parent.mob.sigla),
+        },
       });
+    },
+
+    irParaDocumento(result) {
+      this.$router.push({
+        name: "Documento",
+        params: { numero: UtilsBL.onlyLettersAndNumbers(result.data.sigla) },
+      });
+    },
+
+    assinar_anexo() {
+      this.emitir(
+        "assinarComSenhaMovimentacao",
+        {
+          idMov: this.$parent.mov.idMov,
+        },
+        this.voltarParaDocumento
+      );
+    },
+
+    autenticar_anexo() {
+      this.emitir(
+        "autenticarComSenhaMovimentacao",
+        {
+          idMov: this.$parent.mov.idMov,
+        },
+        this.voltarParaDocumento
+      );
+    },
+
+    excluir_anexo() {
+      this.emitir(
+        "excluirMovimentacao",
+        {
+          idMov: this.$parent.mov.idMov,
+        },
+        this.voltarParaDocumento
+      );
+    },
+
+    cancelar_anexo() {
+      this.emitir(
+        "cancelarMovimentacao",
+        {
+          idMov: this.$parent.mov.idMov,
+        },
+        this.voltarParaDocumento
+      );
+    },
+
+    criar_via() {
+      this.emitir("criarVia", undefined, this.irParaDocumento);
     },
 
     editar() {
@@ -122,30 +173,15 @@ export default {
     },
 
     finalizar() {
-      this.emitir("finalizar", undefined, (result) => {
-        this.$router.push({
-          name: "Documento",
-          params: { numero: UtilsBL.onlyLettersAndNumbers(result.data.sigla) },
-        });
-      });
+      this.emitir("finalizar", undefined, this.irParaDocumento);
     },
 
     duplicar() {
-      this.emitir("duplicar", undefined, (result) => {
-        this.$router.push({
-          name: "DocumentoEditar",
-          params: { numero: UtilsBL.onlyLettersAndNumbers(result.data.sigla) },
-        });
-      });
+      this.emitir("duplicar", undefined, this.irParaDocumento);
     },
 
     refazer() {
-      this.emitir("refazer", undefined, (result) => {
-        this.$router.push({
-          name: "DocumentoEditar",
-          params: { numero: UtilsBL.onlyLettersAndNumbers(result.data.sigla) },
-        });
-      });
+      this.emitir("refazer", undefined, this.irParaDocumento);
     },
 
     receber() {
@@ -194,6 +230,10 @@ export default {
 
     desentranhar: function() {
       this.emitir("desentranharModal");
+    },
+
+    anexar: function() {
+      this.emitir("anexarModal");
     },
 
     incluir_cossignatario: function() {

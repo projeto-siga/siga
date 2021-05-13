@@ -28,6 +28,10 @@ import IncluirCossignatario from "./acao/incluirCossignatario";
 import Receber from "./acao/receber";
 import Refazer from "./acao/refazer";
 import Desentranhar from "./acao/desentranhar";
+import Anexar from "./acao/anexar";
+import AssinarComSenhaMovimentacao from "./acao/assinarComSenhaMovimentacao";
+import AutenticarComSenhaMovimentacao from "./acao/autenticarComSenhaMovimentacao";
+import ExcluirMovimentacao from "./acao/excluirMovimentacao";
 
 export default {
     bus: Bus,
@@ -58,6 +62,11 @@ export default {
         Receber.registrar();
         Refazer.registrar();
         Desentranhar.registrar();
+
+        Anexar.registrar();
+        AssinarComSenhaMovimentacao.registrar();
+        AutenticarComSenhaMovimentacao.registrar();
+        ExcluirMovimentacao.registrar();
     },
 
     lotePadrao: function (gerundio, evento1, evento2, evento3, url, documentos, cont, params) {

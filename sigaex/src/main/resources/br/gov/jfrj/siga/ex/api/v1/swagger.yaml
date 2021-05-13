@@ -1556,34 +1556,6 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-  /documentos/{sigla}/movimentacao/{id}/cancelar:
-    post:
-      description: "Utilize este método para cancelar uma movimentação do documento."
-      consumes: ["application/x-www-form-urlencoded"]
-      tags: [acao]
-      security:
-        - Bearer: []      
-      parameters:
-        - $ref: "#/parameters/sigla"
-        - $ref: "#/parameters/id"
-      summary: Cancelar movimentação
-      responses:
-        200:
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              sigla:
-                description: Sigla do documento
-                type: string
-              status:
-                type: string
-                default: "OK"
-        500:
-          description: Error ocurred
-          schema:
-            $ref: "#/definitions/Error"
-
   /documentos/{sigla}/receber:
     post:
       consumes: ["application/x-www-form-urlencoded"]
@@ -1884,6 +1856,149 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
+            
+  /documentos/{sigla}/anexar:
+    post:
+      summary: Acrescenta um anexo num documento
+      tags: [acao]
+      security:
+        - Bearer: []
+      consumes:
+        - multipart/form-data
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/descricaodocumento"
+        - $ref: "#/parameters/arquivo"
+      description: Anexação de pdf que deve ser enviado no campo arquivo. 
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+        403:
+          description: Anexação não permitida
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/movimentacoes/{id}/assinar-com-senha:
+    post:
+      description: "Não é necessário informar novamente a senha."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/id"
+      summary: Assinar documento com senha
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento assinado
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/movimentacoes/{id}/autenticar-com-senha:
+    post:
+      description: "Não é necessário informar novamente a senha."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/id"
+      summary: Assinar documento com senha
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento assinado
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/movimentacoes/{id}/excluir:
+    post:
+      description: "Utilize este método para excluir uma movimentação do documento."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/id"
+      summary: Excluir movimentação
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/movimentacoes/{id}/cancelar:
+    post:
+      description: "Utilize este método para cancelar uma movimentação do documento."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/id"
+      summary: Cancelar movimentação
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
 
   /sugestao:
     post:

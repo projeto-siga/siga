@@ -12,6 +12,7 @@ import com.crivano.swaggerservlet.SwaggerServlet;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaArquivoProduzirGetRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaArquivoProduzirGetResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaArquivoProduzirGet;
@@ -37,12 +38,27 @@ public class DocumentosSiglaArquivoProduzirGet implements IDocumentosSiglaArquiv
 			if (usuario == null)
 				throw new SwaggerAuthorizationException("Usuário não está logado");
 
+			String sigla = req.sigla;
+			String idMov = null;
+			if (sigla.contains(":")) {
+				String[] split = sigla.split(":");
+				sigla = split[0];
+				idMov = split[1];
+			}
+
 			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
-			filter.setSigla(req.sigla);
+			filter.setSigla(sigla);
 			ExMobil mob = (ExMobil) ExDao.getInstance().consultarPorSigla(filter);
 			if (mob == null)
 				throw new PresentableUnloggedException(
 						"Não foi possível encontrar um documento a partir da sigla fornecida");
+
+			ExMovimentacao mov = null;
+			if (idMov != null) {
+				mov = ExDao.getInstance().consultar(Long.parseLong(idMov), ExMovimentacao.class, false);
+				if (!mov.mob().doc().equals(mob.doc()))
+					throw new PresentableUnloggedException("Movimentação não é referente ao documento informado");
+			}
 
 			HttpServletRequest request = SwaggerServlet.getHttpServletRequest();
 			SigaObjects so = new SigaObjects(request);
@@ -56,9 +72,9 @@ public class DocumentosSiglaArquivoProduzirGet implements IDocumentosSiglaArquiv
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			if ("application/pdf".equals(req.contenttype)) {
 				resp.contenttype = "application/pdf";
-				Documento.getDocumento(baos, null, mob, null, req.completo, req.estampa, req.volumes, null, null);
+				Documento.getDocumento(baos, null, mob, mov, req.completo, req.estampa, req.volumes, null, null);
 			} else {
-				Documento.getDocumentoHTML(baos, null, mob, null, req.completo, req.volumes, contextpath,
+				Documento.getDocumentoHTML(baos, null, mob, mov, req.completo, req.volumes, contextpath,
 						servernameport);
 			}
 			byte[] ab;

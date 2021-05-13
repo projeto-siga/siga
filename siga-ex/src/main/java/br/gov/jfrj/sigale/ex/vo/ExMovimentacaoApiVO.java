@@ -61,6 +61,8 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.vo.ExParteVO;
 
 public class ExMovimentacaoApiVO extends ExApiVO {
 	private static final String JWT_FIXED_HEADER = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.";
@@ -72,7 +74,7 @@ public class ExMovimentacaoApiVO extends ExApiVO {
 	String descricao;
 	long idTpMov;
 	String complemento;
-	Map<String, ExParteApiVO> parte = new TreeMap<String, ExParteApiVO>();
+	Map<String, ExParteVO> parte = new TreeMap<String, ExParteVO>();
 	Date dtIniMov;
 	String dtRegMovDDMMYYHHMMSS;
 	String dtFimMovDDMMYYHHMMSS;
@@ -107,20 +109,23 @@ public class ExMovimentacaoApiVO extends ExApiVO {
 
 		if (mov.getLotaCadastrante() != null)
 			parte.put("lotaCadastrante",
-					new ExParteApiVO(mov.getLotaCadastrante()));
+					new ExParteVO(mov.getLotaCadastrante()));
 		if (mov.getCadastrante() != null)
-			parte.put("cadastrante", new ExParteApiVO(mov.getCadastrante()));
+			parte.put("cadastrante", new ExParteVO(mov.getCadastrante()));
 		if (mov.getLotaSubscritor() != null)
-			parte.put("lotaSubscritor", new ExParteApiVO(mov.getLotaSubscritor()));
+			parte.put("lotaSubscritor", new ExParteVO(mov.getLotaSubscritor()));
 		if (mov.getSubscritor() != null)
-			parte.put("subscritor", new ExParteApiVO(mov.getSubscritor()));
+			parte.put("subscritor", new ExParteVO(mov.getSubscritor()));
 		if (mov.getLotaResp() != null)
-			parte.put("lotaResp", new ExParteApiVO(mov.getLotaResp()));
+			parte.put("lotaResp", new ExParteVO(mov.getLotaResp()));
 		if (mov.getResp() != null)
-			parte.put("resp", new ExParteApiVO(mov.getResp()));
-
+			parte.put("resp", new ExParteVO(mov.getResp()));
+		
 		descricao = mov.getObs();
 
+		if (mov.getIdTpMov().equals(TIPO_MOVIMENTACAO_ANEXACAO))
+			descricao = mov.getNmArqMov();
+		
 		addAcoes(mov, cadastrante, titular, lotaTitular);
 
 		calcularClasse(mov);
@@ -143,6 +148,21 @@ public class ExMovimentacaoApiVO extends ExApiVO {
 			DpPessoa titular, DpLotacao lotaTitular) {
 		if (complemento == null)
 			complemento = "";
+		
+		if (idTpMov == TIPO_MOVIMENTACAO_ANEXACAO) {
+			if (!mov.isCancelada() && !mov.mob().doc().isSemEfeito() && !mov.mob().isEmTransito()) {
+				addAcao(null, "Excluir", "/app/expediente/mov", "excluir",
+						Ex.getInstance().getComp().podeExcluirAnexo(titular, lotaTitular, mov.mob(), mov));
+				addAcao(null, "Cancelar", "/app/expediente/mov", "cancelar",
+						Ex.getInstance().getComp().podeCancelarAnexo(titular, lotaTitular, mov.mob(), mov));
+				addAcao(null, "Assinar/Autenticar", "/app/expediente/mov", "exibir", true, null, "&popup=true",
+						null, null, null);
+
+				addAcao("script_key", "Autenticar", "/app/expediente/mov", "autenticar_mov",
+						Ex.getInstance().getComp().podeAutenticarMovimentacao(titular, lotaTitular, mov), null,
+						"&popup=true&autenticando=true", null, null, null);
+			}
+		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_COPIA) {
 			descricao = null;
@@ -433,7 +453,7 @@ public class ExMovimentacaoApiVO extends ExApiVO {
 		return idTpMov;
 	}
 
-	public Map<String, ExParteApiVO> getParte() {
+	public Map<String, ExParteVO> getParte() {
 		return parte;
 	}
 

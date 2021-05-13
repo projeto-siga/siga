@@ -2,16 +2,16 @@ import AcaoBL from "../acao"
 
 export default {
     registrar() {
-        AcaoBL.bus.$on("autenticarComSenha", (documentos, cont) => {
+        AcaoBL.bus.$on("assinarComSenha", (documentos, cont) => {
             this.lote(documentos, cont);
         });
     },
 
     lote: function (documentos, cont) {
-        AcaoBL.lotePadrao("Autenticando",
+        AcaoBL.lotePadrao("Assinando",
             "assinatura em lote",
-            "autenticando",
-            "autenticando com senha", "sigaex/api/v1/documentos/{siglamob}/autenticar-com-senha",
+            "assinado",
+            "assinado com senha", "sigaex/api/v1/documentos/{siglamob}/assinar-com-senha",
             documentos, cont
         );
     },

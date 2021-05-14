@@ -352,8 +352,11 @@ public class WfProcedimento extends Objeto
 				return null;
 			}
 		} catch (Exception e) {
-			throw new RuntimeException("Não foi possível calcular o responsável pela tarefa " + tarefa.getNome()
-					+ " do procedimento " + this.getSigla(), e);
+			String sigla = this.getSigla();
+			throw new RuntimeException(
+					"Não foi possível calcular o responsável pela tarefa " + (tarefa != null ? tarefa.getNome() : "")
+							+ " do procedimento" + (sigla != null ? " " + sigla : ""),
+					e);
 		}
 	};
 
@@ -522,7 +525,9 @@ public class WfProcedimento extends Objeto
 	}
 
 	public String getSigla() {
-		return orgaoUsuario.getAcronimoOrgaoUsu() + "-WF-" + ano + "/" + Utils.completarComZeros(numero, 5);
+		if (orgaoUsuario != null && ano != null && numero != null)
+			return orgaoUsuario.getAcronimoOrgaoUsu() + "-WF-" + ano + "/" + Utils.completarComZeros(numero, 5);
+		return null;
 	}
 
 	public String getSiglaCompacta() {
@@ -632,20 +637,23 @@ public class WfProcedimento extends Objeto
 			if (podeMovimentar && !estaComTarefa) {
 				if (lotWF == null || !lotWF.equivale(lotEX)) {
 					return "Esta tarefa só poderá prosseguir quando o documento " + getPrincipal()
-							+ " for transferido para " + (lotWF == null ? "Nula" : lotWF.getSigla()) + ".";
+							+ " for transferido para " + (lotWF == null ? "[Ninguém]" : lotWF.getSigla()) + ".";
 				}
 			}
 			if (lotEX == null && lotWF != null)
 				return "Esta tarefa só poderá prosseguir quando o documento " + getPrincipal()
 						+ ", que estiver em andamento com " + lotWF.getSigla() + ".";
 			if (!podeMovimentar && estaComTarefa) {
-				return "Esta tarefa só poderá prosseguir quando o documento " + getPrincipal() + ", que está com "
-						+ lotEX.getSigla() + ", for devolvido.";
+				return "Esta tarefa só poderá prosseguir quando o documento " + getPrincipal()
+						+ (lotEX == null
+								? " for tramitado para " + (lotWF == null ? "[Ninguém]" : lotWF.getSigla()) + "."
+								: ", que está com " + lotEX.getSigla() + ", for devolvido.");
 			}
 			if (!podeMovimentar && !estaComTarefa) {
 				if (lotWF != null && !lotWF.equivale(lotEX)) {
 					return "Esta tarefa só poderá prosseguir quando o documento " + getPrincipal() + ", que está com "
-							+ lotEX.getSigla() + ", for transferido para " + lotWF.getSigla() + ".";
+							+ (lotEX == null ? "[Ninguém]" : lotEX.getSigla()) + ", for tramitado para "
+							+ (lotWF == null ? "[Ninguém]" : lotWF.getSigla()) + ".";
 				}
 			}
 		}

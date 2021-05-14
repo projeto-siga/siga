@@ -632,17 +632,20 @@ public class WfProcedimento extends Objeto
 			if (podeMovimentar && !estaComTarefa) {
 				if (lotWF == null || !lotWF.equivale(lotEX)) {
 					return "Esta tarefa só poderá prosseguir quando o documento " + getPrincipal()
-							+ " for transferido para " + (lotWF == null ? "Nula" : lotWF.getSigla()) + ".";
+							+ " for transferido para " + (lotWF == null ? "[Ninguém]" : lotWF.getSigla()) + ".";
 				}
 			}
 			if (!podeMovimentar && estaComTarefa) {
-				return "Esta tarefa só poderá prosseguir quando o documento " + getPrincipal() + ", que está com "
-						+ lotEX.getSigla() + ", for devolvido.";
+				return "Esta tarefa só poderá prosseguir quando o documento " + getPrincipal()
+						+ (lotEX == null
+								? " for tramitado para " + (lotWF == null ? "[Ninguém]" : lotWF.getSigla()) + "."
+								: ", que está com " + lotEX.getSigla() + ", for devolvido.");
 			}
 			if (!podeMovimentar && !estaComTarefa) {
 				if (lotWF != null && !lotWF.equivale(lotEX)) {
 					return "Esta tarefa só poderá prosseguir quando o documento " + getPrincipal() + ", que está com "
-							+ lotEX.getSigla() + ", for transferido para " + lotWF.getSigla() + ".";
+							+ (lotEX == null ? "[Ninguém]" : lotEX.getSigla()) + ", for tramitado para "
+							+ (lotWF == null ? "[Ninguém]" : lotWF.getSigla()) + ".";
 				}
 			}
 		}

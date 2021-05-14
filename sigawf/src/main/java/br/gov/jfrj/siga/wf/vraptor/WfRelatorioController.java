@@ -96,6 +96,8 @@ public class WfRelatorioController extends WfController {
 		parametrosRelatorio.put("fimGrupo",
 				(grpFim == null || grpFim < 0) ? null : pd.getDefinicaoDeTarefa().get(grpFim).getNome());
 
+		addParametrosPersonalizadosOrgao(parametrosRelatorio);
+
 		byte[] buff = null;
 		if (getRelatorioEscolhido().equals(REL_ESTATISTICAS_GERAIS)) {
 			buff = gerarRelEstGeral(parametrosRelatorio);
@@ -108,6 +110,12 @@ public class WfRelatorioController extends WfController {
 		}
 
 		return new ByteArrayDownload(buff, "application/pdf", "relatorio.pdf", false);
+	}
+
+	private void addParametrosPersonalizadosOrgao(final Map<String, Object> parameters) {
+		parameters.put("titulo", Prop.get("/siga.relat.titulo"));
+		parameters.put("subtitulo", Prop.get("/siga.relat.subtitulo"));
+		parameters.put("brasao", Prop.get("/siga.relat.brasao"));
 	}
 
 	private Long getRelatorioEscolhido() {

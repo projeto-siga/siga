@@ -37,10 +37,9 @@ import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
+@SuppressWarnings("serial")
 @MappedSuperclass
 public abstract class HistoricoSuporte extends Objeto implements Historico, Assemelhavel {
-
-	private static final long serialVersionUID = 992555792295390723L;
 
 	@Column(name = "HIS_ID_INI")
 	@Desconsiderar

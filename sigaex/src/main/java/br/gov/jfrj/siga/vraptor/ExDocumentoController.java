@@ -921,24 +921,7 @@ public class ExDocumentoController extends ExController {
 	}
 
 	private Object podeTrocarPdfCapturado(ExDocumentoDTO exDocumentoDTO) {
-		// TODO Auto-generated method stub
-		if ((exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO || exDocumentoDTO
-						.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO)
-				&& !exDocumentoDTO.getDoc().isFinalizado()) 
-		{
-			return true;
-		} else {
-			if (!exDocumentoDTO.getDoc().jaTransferido() && !exDocumentoDTO.getDoc().isAssinadoPorTodosOsSignatariosComTokenOuSenha() 
-					&&  !exDocumentoDTO.getMob().isJuntado() &&  !exDocumentoDTO.getMob().isJuntadoExterno()
-					&&  !exDocumentoDTO.getMob().isCancelada() && exDocumentoDTO.getDoc().getAutenticacoesComTokenOuSenha().isEmpty() 
-					&& ((exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO
-					|| exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO) && (Ex.getInstance().getConf().podePorConfiguracao(so.getTitular(), so.getLotaTitular(), CpTipoConfiguracao.TIPO_CONFIG_TROCAR_PDF_CAPTURADOS))))
-					{
-						return true;
-					}
-		}
-				
-		return false;
+		return Ex.getInstance().getComp().podeCapturarPDF(so.getTitular(), so.getLotaTitular(), exDocumentoDTO.getMob());
 	}
 
 	private List<ExTipoDocumento> getTiposDocumentoParaCriacao() {
@@ -1246,7 +1229,7 @@ public class ExDocumentoController extends ExController {
 
 		final ExDocumentoVO docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
 				exDocumentoDTO.getMob(), getCadastrante(), getTitular(),
-				getLotaTitular(), true, true);
+				getLotaTitular(), true, true, false);
 
 		if (exDocumentoDTO.getMob().isEliminado()) {
 			throw new AplicacaoException(
@@ -1294,7 +1277,7 @@ public class ExDocumentoController extends ExController {
 
 		final ExDocumentoVO docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
 				exDocumentoDTO.getMob(), getCadastrante(), getTitular(),
-				getLotaTitular(), true, true);
+				getLotaTitular(), true, true, false);
 
 		if (exDocumentoDTO.getMob().isEliminado()) {
 			throw new AplicacaoException(
@@ -1375,7 +1358,7 @@ public class ExDocumentoController extends ExController {
 
 		final ExDocumentoVO docVO = new ExDocumentoVO(exDocumentoDto.getDoc(),
 				exDocumentoDto.getMob(), getCadastrante(), getTitular(),
-				getLotaTitular(), true, false);
+				getLotaTitular(), true, false, false);
 
 		docVO.exibe();
 
@@ -1476,7 +1459,7 @@ public class ExDocumentoController extends ExController {
 
 		final ExDocumentoVO docVO = new ExDocumentoVO(exDocumentoDto.getDoc(),
 				exDocumentoDto.getMob(), getCadastrante(), getTitular(),
-				getLotaTitular(), true, false);
+				getLotaTitular(), true, false, false);
 
 		if(docVO != null && docVO.getDoc() != null && docVO.getDoc().getNumPaginas() == null) {
 			docVO.getDoc().setNumPaginas(docVO.getDoc().getContarNumeroDePaginas());

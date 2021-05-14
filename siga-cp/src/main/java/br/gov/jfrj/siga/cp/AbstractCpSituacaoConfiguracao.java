@@ -36,13 +36,9 @@ import javax.persistence.MappedSuperclass;
 
 import br.gov.jfrj.siga.model.Objeto;
 
+@SuppressWarnings("serial")
 @MappedSuperclass
 public abstract class AbstractCpSituacaoConfiguracao extends Objeto implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@Column(name = "ID_SIT_CONFIGURACAO", unique = true, nullable = false)

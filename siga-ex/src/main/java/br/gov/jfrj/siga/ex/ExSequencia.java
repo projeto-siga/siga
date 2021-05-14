@@ -17,6 +17,7 @@ import javax.persistence.Table;
  * The persistent class for the EX_SEQUENCIA database table.
  * 
  */
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "siga.ex_sequencia")
 @NamedQueries({
@@ -59,8 +60,6 @@ public class ExSequencia implements Serializable {
 	    }
 	}
 	
-	private static final long serialVersionUID = 1L;
-
 	@Id
 	@SequenceGenerator(name="EX_SEQUENCIA_NUMERACAO_GENERATOR", sequenceName="EX_SEQUENCIA_SEQ")
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="EX_SEQUENCIA_NUMERACAO_GENERATOR")

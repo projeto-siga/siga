@@ -54,6 +54,7 @@ import org.hibernate.type.Type;
 
 
 //@MappedSuperclass
+@SuppressWarnings("serial")
 public class Objeto extends ObjetoBase{
 
 //	@Override
@@ -95,8 +96,6 @@ public class Objeto extends ObjetoBase{
 		return isInstance(clazz) ? this : null;
 	}
 	
-	private static final long serialVersionUID = -7830448334427331897L;
-
 	protected static EntityManager em() {
 		return ContextoPersistencia.em();
 	}

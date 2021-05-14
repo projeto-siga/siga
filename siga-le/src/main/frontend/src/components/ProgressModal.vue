@@ -32,7 +32,7 @@
 // import bModal from 'bootstrap-vue/es/components/modal/modal'
 
 export default {
-  name: 'progressBar',
+  name: "progressBar",
   // props: [
   //   'title',
   //   'caption',
@@ -52,54 +52,54 @@ export default {
       callbackEnd: function() {},
       progressbarWidth: 0,
       progressbarCaption: undefined,
-    }
+    };
   },
 
   mounted() {
-    this.i = 0
-    this.proximo()
+    this.i = 0;
+    this.proximo();
   },
 
   methods: {
     start: function(title, total, callbackNext, callbackEnd) {
-      this.title = title
-      this.total = total
-      this.callbackNext = callbackNext
-      this.callbackEnd = callbackEnd
+      this.title = title;
+      this.total = total;
+      this.callbackNext = callbackNext;
+      this.callbackEnd = callbackEnd;
 
       if (this.total === 0) {
-        this.cancel()
-        return
+        this.cancel();
+        return;
       }
 
-      this.showModal = this.total > 1
-      this.running = true
-      this.i = 0
-      this.proximo()
+      this.showModal = this.total > 1;
+      this.running = true;
+      this.i = 0;
+      this.proximo();
     },
 
     cancel: function() {
-      this.showModal = false
-      this.running = false
+      this.showModal = false;
+      this.running = false;
     },
 
-    next: function() {
-      if (!this.running) return
-      this.i++
+    next: function(result) {
+      if (!this.running) return;
+      this.i++;
       if (this.i >= this.total) {
-        this.cancel()
-        if (this.callbackEnd) this.callbackEnd()
-        return
+        this.cancel();
+        if (this.callbackEnd) this.callbackEnd(result);
+        return;
       }
-      this.$nextTick(this.proximo)
+      this.$nextTick(this.proximo);
     },
 
     proximo: function() {
-      this.callbackNext(this.i)
-      this.progressbarWidth = 100 * (this.i / this.total)
+      this.callbackNext(this.i);
+      this.progressbarWidth = 100 * (this.i / this.total);
       this.progressbarCaption =
-        this.caption + ' (' + (this.i + 1) + '/' + this.total + ')'
+        this.caption + " (" + (this.i + 1) + "/" + this.total + ")";
     },
   },
-}
+};
 </script>

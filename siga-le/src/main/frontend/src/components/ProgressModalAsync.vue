@@ -79,7 +79,7 @@ export default {
           } else {
             setTimeout(() => {
               this.refresh();
-            }, 2000);
+            }, 500);
           }
         },
         error => {

@@ -53,15 +53,11 @@ import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
+@SuppressWarnings("serial")
 @Entity
 @BatchSize(size = 500)
 @Table(name = "siga.ex_mobil")
 public class ExMobil extends AbstractExMobil implements Serializable, Selecionavel, Comparable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 
 	private static final Logger log = Logger.getLogger(ExMobil.class);
 	

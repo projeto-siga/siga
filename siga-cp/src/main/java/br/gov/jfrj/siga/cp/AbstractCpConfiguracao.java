@@ -58,6 +58,7 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
  * customize the behavior of this class by editing the class, {@link
  * CpClassificacao()}.
  */
+@SuppressWarnings("serial")
 @MappedSuperclass
 @NamedQueries({
 		@NamedQuery(name = "consultarDataUltimaAtualizacao", query = ""
@@ -87,11 +88,6 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 				+ "CpConfiguracao cpcfg where hisDtFim is null") })
 public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 		implements Serializable, CpConvertableEntity {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 4514355304185987860L;
 
 	@Id
 	@SequenceGenerator(name = "CP_CONFIGURACAO_SEQ", sequenceName = "CORPORATIVO.CP_CONFIGURACAO_SEQ")

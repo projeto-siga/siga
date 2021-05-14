@@ -808,9 +808,13 @@ public class ExMobilController extends
 		}
 
 		final List<ExFormaDocumento> formasDoc = new ArrayList<ExFormaDocumento>();
-		formasDoc.addAll(bl.obterFormasDocumento(bl.obterListaModelos(null, null,
-				false, false, null, null, false, getTitular(), getLotaTitular(), false),
-				null, tipoForma));
+		if (Prop.get("/siga.pesquisa.confere.modelos").equals("true")) {
+			formasDoc.addAll(bl.obterFormasDocumento(bl.obterListaModelos(null, null,
+					false, false, null, null, false, getTitular(), getLotaTitular(), false),
+					null, tipoForma));
+		} else {
+			formasDoc.addAll(dao().listarTodosOrdenarPorSigla());
+		}
 		return formasDoc;
 	}
 

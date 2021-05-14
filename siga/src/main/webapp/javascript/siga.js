@@ -1311,8 +1311,10 @@ to get the response data.</param>
 <param name="obj_id">The object or the id of 
 the object to set the innerHTML for.</param>
 */
-function SetInnerHTMLFromAjaxResponse(url, obj_id)
+function SetInnerHTMLFromAjaxResponse(url, obj_id, funcaoAntes = null, funcaoDepois = null)
 {
+  if (funcaoAntes != null)
+	funcaoAntes();
   mostraCarregando();
   active++;
   
@@ -1340,6 +1342,9 @@ function SetInnerHTMLFromAjaxResponse(url, obj_id)
   })
   .always(function() {
 		ocultaCarregando();
+	    if (funcaoDepois != null)
+		  funcaoDepois();
+
   });
   
   return;

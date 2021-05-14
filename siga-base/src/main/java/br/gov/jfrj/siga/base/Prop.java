@@ -254,5 +254,10 @@ public class Prop {
 		 * Se false, não permite.
 		 * */
 		provider.addPublicProperty("/siga.marcadores.permite.data.retroativa", "true");
+		/* Tela de Pesquisa, combos de espécies e modelos: 
+		 * - True: Confere se a espécie tem modelos no combo da tela de pesquisa.  
+		 * - False ou inexistente: Não confere, evitando leitura dos modelos.
+		 * */
+		provider.addPublicProperty("/siga.pesquisa.confere.modelos", "true");
 	}
 }

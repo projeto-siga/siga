@@ -35,14 +35,11 @@ import br.gov.jfrj.siga.model.Assemelhavel;
  * A class that represents a row in the 'EX_VIA' table. This class may be
  * customized as it is never re-generated after being created.
  */
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "siga.ex_via")
 @Cache(region = ExDao.CACHE_EX, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class ExVia extends AbstractExVia {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8108242933119138639L;
 
 	/**
 	 * Simple constructor of ExVia instances.

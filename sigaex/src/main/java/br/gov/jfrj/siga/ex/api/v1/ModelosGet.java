@@ -3,10 +3,6 @@ package br.gov.jfrj.siga.ex.api.v1;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.crivano.swaggerservlet.SwaggerServlet;
-
-import br.gov.jfrj.siga.base.CurrentRequest;
-import br.gov.jfrj.siga.base.RequestInfo;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;

@@ -35,9 +35,9 @@ import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
+@SuppressWarnings("serial")
 @MappedSuperclass
 public abstract class AbstractCpModelo extends HistoricoAuditavelSuporte {
-	private static final long serialVersionUID = -3468035660039727667L;
 
 	/** The primary key value. */
 

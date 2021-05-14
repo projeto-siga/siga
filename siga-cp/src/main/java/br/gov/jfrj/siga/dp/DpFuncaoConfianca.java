@@ -43,16 +43,12 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "corporativo.dp_funcao_confianca")
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpFuncaoConfianca extends AbstractDpFuncaoConfianca implements
 		Serializable, Historico, Selecionavel, Sincronizavel, DpConvertableEntity {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2997532579401295172L;
 
 	@Formula(value = "REMOVE_ACENTO(NOME_FUNCAO_CONFIANCA)")
 	@Desconsiderar

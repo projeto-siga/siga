@@ -39,6 +39,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
  * A class that represents a row in the 'EX_ESTADO_DOC' table. This class may be
  * customized as it is never re-generated after being created.
  */
+@SuppressWarnings("serial")
 @Entity
 @BatchSize(size = 500)
 @Immutable
@@ -47,11 +48,6 @@ import br.gov.jfrj.siga.model.Selecionavel;
 @Table(name = "siga.ex_estado_doc")
 public class ExEstadoDoc extends AbstractExEstadoDoc implements Serializable,
 		Selecionavel {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 4750343917027470158L;
 
 	final static public long ESTADO_DOC_EM_ELABORACAO = 1;
 

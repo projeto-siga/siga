@@ -61,6 +61,7 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
  * A class that represents a row in the EX_DOCUMENTO table. You can customize
  * the behavior of this class by editing the class, {@link ExDocumento()}.
  */
+@SuppressWarnings("serial")
 @MappedSuperclass
 @NamedQueries({
 		@NamedQuery(name = "obterProximoNumeroSub", query = "select max(doc.numExpediente)+1"
@@ -230,8 +231,6 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "				order by  doc.dtFinalizacao") })
 public abstract class AbstractExDocumento extends ExArquivo implements
 		Serializable {
-
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@SequenceGenerator(sequenceName = "EX_DOCUMENTO_SEQ", name = "EX_DOCUMENTO_SEQ")
@@ -1151,10 +1150,6 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setDtPrimeiraAssinatura(Date dtPrimeiraAssinatura) {
 		this.dtPrimeiraAssinatura = dtPrimeiraAssinatura;
-	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
 	}
 
 	public java.lang.String getDescrDocumentoAI() {

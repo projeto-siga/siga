@@ -40,6 +40,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
+@SuppressWarnings("serial")
 @MappedSuperclass
 // Ver um lugar melhor para queries assim ficarem quando não se estiver usando
 // XML
@@ -88,10 +89,6 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "or pes.situacaoFuncionalPessoa = :sfp36)")})
 
 public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 6096621825604901831L;
 
 	@Id
 	@SequenceGenerator(name = "CP_IDENTIDADE_SEQ", sequenceName = "CORPORATIVO.CP_IDENTIDADE_SEQ")

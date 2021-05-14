@@ -60,6 +60,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
  * A class that represents a row in the EX_MOVIMENTACAO table. You can customize
  * the behavior of this class by editing the class, {@link ExMovimentacao()}.
  */
+@SuppressWarnings("serial")
 @MappedSuperclass
 @NamedQueries({ @NamedQuery(name = "consultarPorSigla", query = "select mob from ExMobil mob"
 		+ "                inner join fetch mob.exDocumento doc" + "                where ("
@@ -177,8 +178,6 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 		@NamedQuery(name = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_NAMED_QUERY, query = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_QUERY),
 })
 public abstract class AbstractExMovimentacao extends ExArquivo implements Serializable {
-
-	private static final long serialVersionUID = -1521008574855565618L;
 
 	private static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_BEGIN = "SELECT mov FROM ExMovimentacao mov WHERE ";
 

@@ -38,11 +38,10 @@ import br.gov.jfrj.siga.model.Objeto;
  * customize the behavior of this class by editing the class, {@link
  * ExTipoDocumento()}.
  */
+@SuppressWarnings("serial")
 @MappedSuperclass
 public abstract class AbstractExTipoDocumento extends Objeto implements
 		Serializable {
-	private static final long serialVersionUID = 6112205776631788563L;
-
 	/** The composite primary key value. */
 	@Id
 	@SequenceGenerator(sequenceName = "EX_TIPO_DOCUMENTO_SEQ", name = "EX_TIPO_DOCUMENTO_SEQ")

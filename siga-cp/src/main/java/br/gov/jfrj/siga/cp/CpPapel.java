@@ -31,15 +31,11 @@ import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "corporativo.cp_papel")
 public class CpPapel extends AbstractCpPapel implements Serializable,
 		Selecionavel, Historico, Sincronizavel {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 
 	public String getDescricao() {
 		return (((getDpPessoa() == null) ? new String() : getDpPessoa()

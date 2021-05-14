@@ -18,6 +18,8 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 
+import com.auth0.jwt.JWTExpiredException;
+import com.crivano.swaggerservlet.SwaggerAuthorizationException;
 import com.crivano.swaggerservlet.SwaggerContext;
 import com.crivano.swaggerservlet.SwaggerServlet;
 import com.crivano.swaggerservlet.SwaggerUtils;
@@ -272,6 +274,8 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 						context.getResponse().addCookie(cookie);
 					}
 					ContextoPersistencia.setUserPrincipal((String) decodedToken.get("sub"));
+				} catch (JWTExpiredException e) {
+					throw new SwaggerAuthorizationException("token jwt expirado");
 				} catch (Exception e) {
 					if (!context.getAction().getClass().isAnnotationPresent(AcessoPublicoEPrivado.class))
 						throw e;

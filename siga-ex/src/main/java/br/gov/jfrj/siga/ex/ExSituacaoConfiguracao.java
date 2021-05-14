@@ -29,6 +29,7 @@ import org.hibernate.annotations.Immutable;
 
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
+@SuppressWarnings("serial")
 @Entity
 @BatchSize(size = 500)
 @Immutable
@@ -36,11 +37,6 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
 @Table(name = "siga.ex_situacao_configuracao")
 public class ExSituacaoConfiguracao extends AbstractExSituacaoConfiguracao {
-
-	/**
-	 * 
-	 */
-	public static final long serialVersionUID = 3624557793773660738L;
 
 	public static final long SITUACAO_PODE = 1;
 

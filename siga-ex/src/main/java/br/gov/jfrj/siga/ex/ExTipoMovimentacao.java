@@ -39,6 +39,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
  * A class that represents a row in the 'EX_TIPO_MOVIMENTACAO' table. This class
  * may be customized as it is never re-generated after being created.
  */
+@SuppressWarnings("serial")
 @Entity
 @BatchSize(size = 500)
 @Immutable
@@ -46,10 +47,6 @@ import br.gov.jfrj.siga.model.Selecionavel;
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
 @Table(name = "siga.ex_tipo_movimentacao")
 public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements Serializable, Selecionavel {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3690757276252517939L;
 
 	final static public long TIPO_MOVIMENTACAO_CRIACAO = 1;
 

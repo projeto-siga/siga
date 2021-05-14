@@ -352,8 +352,11 @@ public class WfProcedimento extends Objeto
 				return null;
 			}
 		} catch (Exception e) {
-			throw new RuntimeException("Não foi possível calcular o responsável pela tarefa " + tarefa.getNome()
-					+ " do procedimento " + this.getSigla(), e);
+			String sigla = this.getSigla();
+			throw new RuntimeException(
+					"Não foi possível calcular o responsável pela tarefa " + (tarefa != null ? tarefa.getNome() : "")
+							+ " do procedimento" + (sigla != null ? " " + sigla : ""),
+					e);
 		}
 	};
 
@@ -522,7 +525,9 @@ public class WfProcedimento extends Objeto
 	}
 
 	public String getSigla() {
-		return orgaoUsuario.getAcronimoOrgaoUsu() + "-WF-" + ano + "/" + Utils.completarComZeros(numero, 5);
+		if (orgaoUsuario != null && ano != null && numero != null)
+			return orgaoUsuario.getAcronimoOrgaoUsu() + "-WF-" + ano + "/" + Utils.completarComZeros(numero, 5);
+		return null;
 	}
 
 	public String getSiglaCompacta() {

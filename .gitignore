@@ -92,3 +92,5 @@ sigasr/.tern-project
 # Sphinx documentation
 docs/_build/
 resultado.txt
+
+**/.factorypath

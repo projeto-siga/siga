@@ -29,11 +29,10 @@ import javax.persistence.Table;
  * A class that represents a row in the CP_ARQUIVO_EXCLUIR table. You can customize the
  * behavior of this class by editing the class, {@link CpArquivoExcluir()}.
  */
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "corporativo.cp_arquivo_excluir")
 public class CpArquivoExcluir implements Serializable {
-
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@Column(name = "ID_ARQ_EXC")

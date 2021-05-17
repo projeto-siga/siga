@@ -940,7 +940,7 @@ public class ExBL extends CpBL {
 		}
 	}
 
-	public void anexarArquivo(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
+	public ExMovimentacao anexarArquivo(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, final DpPessoa subscritor, final String nmArqMov, final DpPessoa titular,
 			final DpLotacao lotaTitular, final byte[] conteudo, final String tipoConteudo, String motivo,
 			Set<ExMovimentacao> pendenciasResolvidas) throws AplicacaoException {
@@ -971,7 +971,8 @@ public class ExBL extends CpBL {
 			encerrarVolumeAutomatico(cadastrante, lotaCadastrante, mob, dtMov);
 
 			concluirAlteracao(mov);
-
+			
+			return mov;
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new RuntimeException("Erro ao anexar documento.", e);
@@ -2556,6 +2557,28 @@ public class ExBL extends CpBL {
 			return baForm;
 		}
 	}
+	
+	public void validarCancelamentoDeUltimaMovimentacao(final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob) {
+		final ExMovimentacao exUltMovNaoCanc = mob
+				.getUltimaMovimentacaoNaoCancelada();
+		final ExMovimentacao exUltMov = mob.getUltimaMovimentacao();
+
+		if (exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO
+				&& exUltMovNaoCanc.getIdMov() == exUltMov.getIdMov()) {
+			if (!Ex.getInstance().getComp()
+					.podeCancelarVia(titular, lotaTitular, mob)) {
+				throw new AplicacaoException("Não é possível cancelar via");
+			}
+		} else {
+			if (!Ex.getInstance()
+					.getComp()
+					.podeCancelarMovimentacao(titular, lotaTitular,
+							mob)) {
+				throw new AplicacaoException(
+						"Não é possível cancelar movimentação");
+			}
+		}
+	}
 
 	public void cancelarMovimentacao(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob) {
 		try {
@@ -2724,7 +2747,9 @@ public class ExBL extends CpBL {
 			final ExMovimentacao movCancelar, final Date dtMovForm, final DpPessoa subscritorForm,
 			final DpPessoa titularForm, String textoMotivo) throws Exception {
 
-		if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO) {
+		if (movCancelar.mob() != mob) {
+			throw new AplicacaoException("movimentação não é relativa ao mobil informado");
+		} else if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO) {
 			if (!getComp().podeCancelarAnexo(titular, lotaTitular, mob, movCancelar))
 				throw new AplicacaoException("não é possível cancelar anexo");
 		} else if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO) {

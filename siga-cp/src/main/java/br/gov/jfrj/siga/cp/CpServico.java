@@ -29,17 +29,13 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Selecionavel;
 
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "corporativo.cp_servico")
 @Immutable
 //@Cacheable
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class CpServico extends AbstractCpServico implements Selecionavel {
-
-	/**
-	 * 
-	 */
-	public static final long serialVersionUID = 3624557793773660739L;
 
 	public static ActiveRecord<CpServico> AR = new ActiveRecord<>(
 			CpServico.class);

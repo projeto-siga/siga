@@ -30,6 +30,7 @@ import org.hibernate.annotations.Immutable;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
+@SuppressWarnings("serial")
 @Entity
 @BatchSize(size = 500)
 @Immutable
@@ -37,8 +38,6 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
 @Table(name = "siga.ex_papel")
 public class ExPapel extends AbstractExPapel {
-	
-	private static final long serialVersionUID = 2096492527289909346L;
 
 	final static public long PAPEL_GESTOR = 1;
 

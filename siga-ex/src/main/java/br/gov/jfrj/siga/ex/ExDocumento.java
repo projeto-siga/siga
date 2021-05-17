@@ -76,17 +76,13 @@ import br.gov.jfrj.siga.model.CarimboDeTempo;
  * A class that represents a row in the 'EX_DOCUMENTO' table. This class may be
  * customized as it is never re-generated after being created.
  */
+@SuppressWarnings("serial")
 @Entity
 @BatchSize(size = 500)
 @Table(name = "siga.ex_documento")
 @DynamicUpdate
 public class ExDocumento extends AbstractExDocumento implements Serializable,
 		CarimboDeTempo {
-
-	/**
-         * 
-         */
-	private static final long serialVersionUID = -1462217739890785344L;
 
 	private static final Logger log = Logger.getLogger(ExDocumento.class);
 

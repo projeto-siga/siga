@@ -9,6 +9,22 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 
+<script type="text/javascript" language="Javascript1.1">
+	function csv(id, action) {
+		var frm = document.getElementById(id);
+		frm.method = "POST";
+		document.getElementById("exportar").disabled = true;
+		sbmtAction(id, action);
+		frm.action = 'listar';
+		frm.method = "GET";
+	}
+</script>
+<div id="inicio" class="row mb-3">
+	<div class="col">		
+		<button type="button" class="btn btn-outline-success" id="exportar" title="Exportar para CSV"	onclick="javascript:csv('listar', '/sigaex/app/expediente/doc/exportarCsv');"><i class="fa fa-file-csv"></i> Exportar</button>	
+	</div>
+</div>
+
 <c:choose>
 	<c:when test="${visualizacao == 2 or visualizacao == 4}">
 		<div id="pivot" style="margin: 30px;"></div>

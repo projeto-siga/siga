@@ -29,17 +29,13 @@ import org.hibernate.annotations.Immutable;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "corporativo.cp_tipo_configuracao")
 @Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
 public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
-
-	/**
-	 * 
-	 */
-	public static final long serialVersionUID = 3624557793773660738L;
 	public static final ActiveRecord<CpTipoConfiguracao> AR = new ActiveRecord<CpTipoConfiguracao>(
 			CpTipoConfiguracao.class);
 

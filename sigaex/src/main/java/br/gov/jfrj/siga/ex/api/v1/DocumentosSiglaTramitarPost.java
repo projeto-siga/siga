@@ -117,7 +117,7 @@ public class DocumentosSiglaTramitarPost implements IDocumentosSiglaTramitarPost
 				DpPessoa titular = cadastrante;
 				DpLotacao lotaTitular = cadastrante.getLotacao();
 	
-				ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, so, req, resp, "Documento a Tramitar");
+				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento a Tramitar");
 	
 				validarAcesso(req, titular, lotaTitular, mob);
 	

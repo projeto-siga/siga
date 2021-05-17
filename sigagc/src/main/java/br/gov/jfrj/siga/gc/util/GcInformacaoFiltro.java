@@ -163,13 +163,13 @@ public class GcInformacaoFiltro {
 		List listaRetorno = null;
 		if (parametro) {
 		    listaRetorno = GcInformacao.AR.em()
-				.createQuery(query + subquery + "order by inf.hisDtIni desc")
+				.createQuery(query + subquery + " order by inf.hisDtIni desc")
 				.setParameter("dbDatetime", CpDao.getInstance().consultarDataEHoraDoServidor())
 				.getResultList();
 		}
 		else {
 			listaRetorno = GcInformacao.AR.em()
-					.createQuery(query + subquery + "order by inf.hisDtIni desc")
+					.createQuery(query + subquery + " order by inf.hisDtIni desc")
 					.getResultList();
 		
 		}

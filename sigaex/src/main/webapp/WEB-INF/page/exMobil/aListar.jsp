@@ -14,26 +14,39 @@
 
 		$(document).ready(function() {
 			alteraOrigem();
-			alteraTipoDaForma();
-			alteraForma();				
+			var frmsel = document.getElementById('idFormaDoc')
+			var modsel = document.getElementById('idMod')
+			${idFormaDoc != null && idFormaDoc != 0? 'alteraTipoDaForma(false);' : ''}
+			${idMod != null && idMod != 0? 'alteraForma(false);' : ''}
 		});
 		
-		function alteraTipoDaForma() {
-			SetInnerHTMLFromAjaxResponse(
-					'/sigaex/app/expediente/doc/carregar_lista_formas?tipoForma='
-							+ document.getElementById('tipoForma').value
-							+ '&idFormaDoc=' + '${idFormaDoc}', document
-							.getElementById('comboFormaDiv'));
-			
+		function alteraTipoDaForma(abrir) {
+			if ($('#idFormaDoc-spinner').hasClass('d-none')) {
+				$('#idFormaDoc-spinner').removeClass('d-none');
+				$('#idFormaDoc').prop('disabled', 'disabled');
+				SetInnerHTMLFromAjaxResponse(
+						'/sigaex/app/expediente/doc/carregar_lista_formas?tipoForma='
+								+ document.getElementById('tipoForma').value
+								+ '&idFormaDoc=' + '${idFormaDoc}', document
+								.getElementById('comboFormaDiv'), null, 
+								(abrir? function(){	$('#idFormaDoc').select2('open'); } : null)							
+								);
+			}
 		}
 	
-		function alteraForma() {
-			var idFormaDoc = document.getElementById('idFormaDoc');
-			SetInnerHTMLFromAjaxResponse(
-					'/sigaex/app/expediente/doc/carregar_lista_modelos?forma='
-							+ (idFormaDoc != null ? idFormaDoc.value : '${idFormaDoc}' )
-							+ '&idMod='	+ '${idMod}', document
-							.getElementById('comboModeloDiv'));
+		function alteraForma(abrir) {
+			if ($('#idMod-spinner').hasClass('d-none')) {
+				$('#idMod-spinner').removeClass('d-none');
+				$('#idMod').prop('disabled', 'disabled');
+				var idFormaDoc = document.getElementById('idFormaDoc');
+				SetInnerHTMLFromAjaxResponse(
+						'/sigaex/app/expediente/doc/carregar_lista_modelos?forma='
+								+ (idFormaDoc != null ? idFormaDoc.value : '${idFormaDoc}' )
+								+ '&idMod='	+ '${idMod}', document
+								.getElementById('comboModeloDiv'), null, 
+								(abrir? function(){	$('#idMod').select2('open'); } : null)							
+								);
+			}
 		}
 		
 		function sbmtAction(id, action) {
@@ -526,7 +539,7 @@
 							<label for="tipoForma">Tipo da Espécie</label> 
 							<select
 								class="form-control" id="tipoForma" name="idTipoFormaDoc"
-								onchange="javascript:alteraTipoDaForma();">
+								onchange="javascript:alteraTipoDaForma(false);">
 								<option value="0">[Todos]</option>
 								<c:forEach items="${tiposFormaDoc}" var="item">
 									<option value="${item.idTipoFormaDoc}"
@@ -537,11 +550,25 @@
 						</div>
 
 						<div class="form-group col-md-3">
-							<div style="display: inline" id="comboFormaDiv"></div>
+							<div style="display: inline" id="comboFormaDiv">
+								<div class="form-group" id="idFormaDocGroup" onclick="javascript:alteraTipoDaForma(true);">
+									<label><fmt:message key="documento.label.especie"/> <span id="idFormaDoc-spinner" class="spinner-border text-secondary d-none"></span></label> 
+									<select class="form-control siga-select2" id="idFormaDoc" name="idFormaDoc">
+										<option value="0">[Todos]</option>
+									</select>
+								</div>
+							</div>
 						</div>
 
 						<div class="form-group col-md-6">
-							<div style="display: inline" id="comboModeloDiv"></div>
+							<div style="display: inline" id="comboModeloDiv">
+								<div class="form-group" id="idModGroup" onclick="javascript:alteraForma(true);">
+									<label><fmt:message key="documento.modelo2"/> <span id="idMod-spinner" class="spinner-border text-secondary d-none"></span></label> 
+									<select class="form-control siga-select2" id="idMod" name="idMod">
+										<option value="0" >[Todos]</option>
+									</select>
+								</div>
+							</div>
 						</div>
 					</div>
 

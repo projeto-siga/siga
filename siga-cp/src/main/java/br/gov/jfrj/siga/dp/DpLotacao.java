@@ -54,12 +54,13 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "corporativo.dp_lotacao")
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpLotacao extends AbstractDpLotacao implements Serializable,
 		Selecionavel, Historico, Sincronizavel, Comparable<Object>, DpConvertableEntity {
-	private static final long serialVersionUID = 5628179687234082413L;
+	
 	public static ActiveRecord<DpLotacao> AR = new ActiveRecord<>(
 			DpLotacao.class);
 

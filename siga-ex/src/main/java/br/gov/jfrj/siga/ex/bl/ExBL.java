@@ -4075,7 +4075,7 @@ public class ExBL extends CpBL {
 			atualizarMarcas(false, mob);
 
 			if (idDocEscolha.equals("1")) {
-				encerrarVolumeAutomatico(cadastrante, lotaCadastrante, mov.getExMobilRef(), dtMov);
+				encerrarVolumeAutomaticoPCRJ(cadastrante, lotaCadastrante, mob , dtMov);
 			}
 
 			Set<ExMovimentacao> movs = mob.getTransferenciasPendentesDeDevolucao(mob);
@@ -6196,12 +6196,41 @@ public class ExBL extends CpBL {
 		}
 
 	}
+	
+	/* NAO ATUALIZAR O GITHUB
+	  		
+		 Esse metodo  dá erro no dao().em().refresh(mob)
+		 	reflesh - Atualiza o estado da instância a partir do banco de dados, substituindo alterações feitas na entidade, se houver.
+ 			EntityNotFoundException - se a entidade não existir mais no banco de dados
+ 
+ 			merge - > Mesclar o estado da entidade dada no contexto atual de persistência.
+ 			
+			*/
+	public void encerrarVolumeAutomaticoPCRJ(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
+			final Date dtMov) throws AplicacaoException, Exception {
 
+		if (mob.doc().isEletronico()) {
+			
+			//	dao().em().refresh(mob);
+			dao().em().merge(mob);
+			
+			// Verifica se é Processo e conta o número de páginas para verificar
+			// se tem que encerrar o volume
+			if (mob.doc().isProcesso()) {
+				if (mob.getTotalDePaginasSemAnexosDoMobilGeral() >= Prop.getInt("volume.max.paginas")) {
+					encerrarVolume(cadastrante, lotaCadastrante, mob, dtMov, null, null, null, true);
+				}
+			}
+		}
+	}
+	
 	public void encerrarVolumeAutomatico(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov) throws AplicacaoException, Exception {
 
 		if (mob.doc().isEletronico()) {
+			
 			dao().em().refresh(mob);
+						
 			// Verifica se é Processo e conta o número de páginas para verificar
 			// se tem que encerrar o volume
 			if (mob.doc().isProcesso()) {

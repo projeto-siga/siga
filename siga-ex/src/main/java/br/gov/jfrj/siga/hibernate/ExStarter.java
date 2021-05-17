@@ -20,7 +20,8 @@ public class ExStarter {
 
 	@PostConstruct
 	public void init() throws NamingException {
-		SigaFlyway.migrate("java:/jboss/datasources/SigaExDS", "classpath:db/mysql/sigaex");
+		SigaFlyway.migrate("java:/jboss/datasources/SigaExDS", "sigaex");
 		emf = Persistence.createEntityManagerFactory("default");
 	}
+
 }

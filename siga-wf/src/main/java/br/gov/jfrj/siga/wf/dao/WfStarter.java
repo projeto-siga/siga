@@ -20,7 +20,8 @@ public class WfStarter {
 
 	@PostConstruct
 	public void init() throws NamingException {
-		SigaFlyway.migrate("java:/jboss/datasources/SigaWfDS", "classpath:db/mysql/sigawf");
+		SigaFlyway.migrate("java:/jboss/datasources/SigaWfDS", "sigawf");
 		emf = Persistence.createEntityManagerFactory("default");
 	}
+
 }

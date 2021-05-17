@@ -25,7 +25,8 @@ public class SigaStarter {
 
 	@PostConstruct
 	public void init() throws NamingException {
-		SigaFlyway.migrate("java:/jboss/datasources/SigaCpDS", "classpath:db/mysql/sigacp");
+		SigaFlyway.migrate("java:/jboss/datasources/SigaCpDS", "sigacp");
 		emf = Persistence.createEntityManagerFactory("default");
 	}
+
 }

@@ -33,7 +33,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -74,15 +73,15 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 		@NamedQuery(name = "consultarPorOrgaoUsuDpPessoaInclusiveFechadas", query = "from DpPessoa pes where pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"),
 		@NamedQuery(name = "consultarPorFiltroDpPessoa", query = "from DpPessoa pes "
 				+ "  where ((pes.nomePessoaAI like upper('%' || :nome || '%')) or ((pes.sesbPessoa || pes.matricula) like upper('%' || :nome || '%')))"
-				+ " and (:cpf = null or :cpf = 0L or pes.cpfPessoa = :cpf) "
+				+ " and (:cpf is null or :cpf = 0L or pes.cpfPessoa = :cpf) "
 				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ "	and (:lotacao = null or :lotacao = 0L or pes.lotacao.idLotacao = :lotacao)"
+				+ "	and (:lotacao is null or :lotacao = 0L or pes.lotacao.idLotacao = :lotacao)"
 				+ " and (pes.id <> :id or :id = 0)"
-				+ " and (:cargo = null or :cargo = 0L or pes.cargo.idCargo = :cargo) "
-		      	+ " and (:funcao = null or :funcao = 0L or pes.funcaoConfianca.idFuncao = :funcao) "
-		      	+ " and (:email = null or (upper(pes.emailPessoa) like upper('%' || :email || '%')) ) "
-		      	+ " and (:identidade = null or (upper(pes.identidade) like upper('%' || :identidade || '%')) ) "
-				+ "	and (:situacaoFuncionalPessoa = null or pes.situacaoFuncionalPessoa = :situacaoFuncionalPessoa)"
+				+ " and (:cargo is null or :cargo = 0L or pes.cargo.idCargo = :cargo) "
+		      	+ " and (:funcao is null or :funcao = 0L or pes.funcaoConfianca.idFuncao = :funcao) "
+		      	+ " and (:email = '' or (upper(pes.emailPessoa) like upper('%' || :email || '%')) ) "
+		      	+ " and (:identidade = '' or (upper(pes.identidade) like upper('%' || :identidade || '%')) ) "
+				+ "	and (:situacaoFuncionalPessoa is null or pes.situacaoFuncionalPessoa = :situacaoFuncionalPessoa)"
 				+ "   	and pes.dataFimPessoa = null"
 				+ "   	order by pes.nomePessoa"),
 		@NamedQuery(name = "consultarUsuariosComEnvioDeEmailPendenteFiltrandoPorLotacao", query = "select new br.gov.jfrj.siga.dp.DpPessoaUsuarioDTO(pes.idPessoa, pes.nomePessoa, pes.lotacao.nomeLotacao) from DpPessoa pes "
@@ -107,16 +106,15 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 		@NamedQuery(name = "consultarQuantidadeDpPessoa", query = "select count(pes) from DpPessoa pes "
 				+ "  where ((pes.nomePessoaAI like upper('%' || :nome || '%')) or ((pes.sesbPessoa || pes.matricula) like upper('%' || :nome || '%'))) "
 				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ " and (:cpf = null or :cpf = 0L or pes.cpfPessoa = :cpf) "
-				+ " and (:email = null or (upper(pes.emailPessoa) like upper('%' || :email || '%')) ) "
-				+ " and (:identidade = null or (upper(pes.identidade) like upper('%' || :identidade || '%')) ) "
-				+ "	and (:lotacao = null or :lotacao = 0L or pes.lotacao.idLotacao = :lotacao)"
-				+ " and (:cargo = null or :cargo = 0L or pes.cargo.idCargo = :cargo) "
-		      	+ " and (:funcao = null or :funcao = 0L or pes.funcaoConfianca.idFuncao = :funcao) "
+				+ " and (:cpf is null or :cpf = 0L or pes.cpfPessoa = :cpf) "
+				+ " and (:email = '' or (upper(pes.emailPessoa) like upper('%' || :email || '%')) ) "
+				+ " and (:identidade = '' or (upper(pes.identidade) like upper('%' || :identidade || '%')) ) "
+				+ "	and (:lotacao is null or :lotacao = 0L or pes.lotacao.idLotacao = :lotacao)"
+				+ " and (:cargo is null or :cargo = 0L or pes.cargo.idCargo = :cargo) "
+		      	+ " and (:funcao is null or :funcao = 0L or pes.funcaoConfianca.idFuncao = :funcao) "
 				+ " and (pes.id <> :id or :id = 0)"
-				+ "	and (:situacaoFuncionalPessoa = null or :situacaoFuncionalPessoa = '' or pes.situacaoFuncionalPessoa = :situacaoFuncionalPessoa)"
-				+ "   	and pes.dataFimPessoa = null"
-				+ "   	order by pes.nomePessoa"),
+				+ "	and (:situacaoFuncionalPessoa is null or :situacaoFuncionalPessoa = '' or pes.situacaoFuncionalPessoa = :situacaoFuncionalPessoa)"
+				+ "   	and pes.dataFimPessoa = null"),
 		@NamedQuery(name = "consultarPorFiltroDpPessoaInclusiveFechadas", query = "from DpPessoa pes where idPessoa in ("
 				+ "	select max(pes.idPessoa)"
 				+ "	from DpPessoa pes"
@@ -183,7 +181,7 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 		Serializable, HistoricoAuditavel {
 
 	@Id
-	@SequenceGenerator(name = "DP_PESSOA_SEQ", sequenceName = "CORPORATIVO.DP_PESSOA_SEQ")
+	@SequenceGenerator(name = "DP_PESSOA_SEQ", sequenceName = "corporativo.dp_pessoa_id_pessoa_seq")
 	@GeneratedValue(generator = "DP_PESSOA_SEQ")
 	@Column(name = "ID_PESSOA", unique = true, nullable = false)
 	@Desconsiderar

@@ -98,7 +98,7 @@ public abstract class AbstractExClassificacao extends HistoricoAuditavelSuporte
 		implements Serializable {
 
 	@Id
-	@SequenceGenerator(sequenceName = "EX_CLASSIFICACAO_SEQ", name = "EX_CLASSIFICACAO_SEQ")
+	@SequenceGenerator(name = "EX_CLASSIFICACAO_SEQ", sequenceName = "siga.ex_classificacao_id_classificacao_seq")
 	@GeneratedValue(generator = "EX_CLASSIFICACAO_SEQ")
 	@Column(name = "ID_CLASSIFICACAO", unique = true, nullable = false)
 	private Long idClassificacao;

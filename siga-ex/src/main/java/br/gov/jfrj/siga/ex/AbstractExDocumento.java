@@ -234,7 +234,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(sequenceName = "EX_DOCUMENTO_SEQ", name = "EX_DOCUMENTO_SEQ")
+	@SequenceGenerator(name = "EX_DOCUMENTO_SEQ", sequenceName = "siga.ex_documento_id_doc_seq")
 	@GeneratedValue(generator = "EX_DOCUMENTO_SEQ")
 	@Column(name = "ID_DOC")
 	private java.lang.Long idDoc;

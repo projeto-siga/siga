@@ -108,7 +108,7 @@ import br.gov.jfrj.siga.model.Objeto;
 				+ "		and m3.id_lota_resp = l2.id_lotacao" + ")") })
 public abstract class AbstractExMobil extends Objeto implements Serializable {
 	@Id
-	@SequenceGenerator(sequenceName = "EX_MOBIL_SEQ", name = "EX_MOBIL_SEQ")
+	@SequenceGenerator(name = "EX_MOBIL_SEQ", sequenceName = "siga.ex_mobil_id_mobil_seq")
 	@GeneratedValue(generator = "EX_MOBIL_SEQ")
 	@Column(name = "ID_MOBIL", unique = true, nullable = false)
 	private java.lang.Long idMobil;

@@ -45,7 +45,7 @@ public abstract class AbstractExTipoMovimentacao extends Objeto implements
 		Serializable {
 	/** The composite primary key value. */
 	@Id
-	@SequenceGenerator(sequenceName = "EX_TIPO_MOVIMENTACAO_SEQ", name = "EX_TIPO_MOVIMENTACAO_SEQ")
+	@SequenceGenerator(name = "EX_TIPO_MOVIMENTACAO_SEQ", sequenceName = "siga.ex_tipo_movimentacao_id_tp_mov_seq")
 	@GeneratedValue(generator = "EX_TIPO_MOVIMENTACAO_SEQ")
 	@Column(name = "ID_TP_MOV", unique = true, nullable = false)
 	private java.lang.Long idTpMov;

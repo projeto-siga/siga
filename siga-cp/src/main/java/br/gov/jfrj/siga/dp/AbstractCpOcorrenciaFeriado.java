@@ -48,8 +48,8 @@ public abstract class AbstractCpOcorrenciaFeriado extends Objeto implements
 		Serializable {
 
 	@Id
-	@SequenceGenerator(sequenceName = "CORPORATIVO.CP_OCORRENCIA_FERIADO_SEQ", name = "CORPORATIVO.CP_OCORRENCIA_FERIADO_SEQ")
-	@GeneratedValue(generator = "CORPORATIVO.CP_OCORRENCIA_FERIADO_SEQ")
+	@SequenceGenerator(name = "CP_OCORRENCIA_FERIADO_SEQ", sequenceName = "corporativo.cp_ocorrencia_feriado_id_ocorrencia_seq")
+	@GeneratedValue(generator = "CP_OCORRENCIA_FERIADO_SEQ")
 	@Column(name = "ID_OCORRENCIA", unique = true, nullable = false)
 	private Long idOcorrencia;
 

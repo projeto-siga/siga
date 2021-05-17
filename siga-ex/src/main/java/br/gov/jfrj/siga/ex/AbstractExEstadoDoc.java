@@ -88,7 +88,7 @@ public abstract class AbstractExEstadoDoc extends Objeto implements
 		Serializable {
 	/** The composite primary key value. */
 	@Id
-	@SequenceGenerator(sequenceName = "EX_ESTADO_DOC_SEQ", name = "EX_ESTADO_DOC_SEQ")
+	@SequenceGenerator(name = "EX_ESTADO_DOC_SEQ", sequenceName = "siga.ex_estado_doc_id_estado_doc_seq")
 	@GeneratedValue(generator = "EX_ESTADO_DOC_SEQ")
 	@Column(name = "ID_ESTADO_DOC", unique = true, nullable = false)
 	private java.lang.Long idEstadoDoc;

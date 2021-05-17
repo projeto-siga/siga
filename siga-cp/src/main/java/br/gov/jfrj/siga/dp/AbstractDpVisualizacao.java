@@ -57,7 +57,7 @@ public abstract class AbstractDpVisualizacao extends Objeto implements
 		Serializable {
 
 	@Id
-	@SequenceGenerator(name = "DP_VISUALIZACAO_SEQ", sequenceName = "CORPORATIVO.DP_VISUALIZACAO_SEQ")
+	@SequenceGenerator(name = "DP_VISUALIZACAO_SEQ", sequenceName = "corporativo.dp_visualizacao_id_visualizacao_seq")
 	@GeneratedValue(generator = "DP_VISUALIZACAO_SEQ")
 	@Column(name = "ID_VISUALIZACAO", unique = true, nullable = false)
 	private Long idVisualizacao;

@@ -58,7 +58,7 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 
 	/** The composite primary key value. */
 	@Id
-	@SequenceGenerator(sequenceName = "EX_MODELO_SEQ", name = "EX_MODELO_SEQ")
+	@SequenceGenerator(name = "EX_MODELO_SEQ", sequenceName = "siga.ex_modelo_id_mod_seq")
 	@GeneratedValue(generator = "EX_MODELO_SEQ")
 	@Column(name = "ID_MOD", unique = true, nullable = false)
 	private java.lang.Long idMod;

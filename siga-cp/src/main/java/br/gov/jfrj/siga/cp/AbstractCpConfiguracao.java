@@ -94,7 +94,7 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	private static final long serialVersionUID = 4514355304185987860L;
 
 	@Id
-	@SequenceGenerator(name = "CP_CONFIGURACAO_SEQ", sequenceName = "CORPORATIVO.CP_CONFIGURACAO_SEQ")
+	@SequenceGenerator(name = "CP_CONFIGURACAO_SEQ", sequenceName = "corporativo.cp_configuracao_id_configuracao_seq")
 	@GeneratedValue(generator = "CP_CONFIGURACAO_SEQ")
 	@Column(name = "ID_CONFIGURACAO", unique = true, nullable = false)
 	@Desconsiderar

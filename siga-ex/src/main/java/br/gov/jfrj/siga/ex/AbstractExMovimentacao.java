@@ -297,7 +297,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 					+ CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_END;
 
 	@Id
-	@SequenceGenerator(sequenceName = "EX_MOVIMENTACAO_SEQ", name = "EX_MOVIMENTACAO_SEQ")
+	@SequenceGenerator(name = "EX_MOVIMENTACAO_SEQ", sequenceName = "siga.ex_movimentacao_id_mov_seq")
 	@GeneratedValue(generator = "EX_MOVIMENTACAO_SEQ")
 	@Column(name = "ID_MOV", unique = true, nullable = false)
 	private Long idMov;

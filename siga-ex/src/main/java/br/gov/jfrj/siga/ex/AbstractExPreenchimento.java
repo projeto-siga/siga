@@ -68,7 +68,7 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 
 	/** The composite primary key value. */
 	@Id
-	@SequenceGenerator(sequenceName = "EX_PREENCHIMENTO_SEQ", name = "EX_PREENCHIMENTO_SEQ")
+	@SequenceGenerator(name = "EX_PREENCHIMENTO_SEQ", sequenceName = "siga.ex_preenchimento_id_preenchimento_seq")
 	@GeneratedValue(generator = "EX_PREENCHIMENTO_SEQ")
 	@Column(name = "ID_PREENCHIMENTO", unique = true, nullable = false)
 	private java.lang.Long idPreenchimento;

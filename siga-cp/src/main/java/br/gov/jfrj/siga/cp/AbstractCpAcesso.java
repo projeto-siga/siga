@@ -44,7 +44,7 @@ public abstract class AbstractCpAcesso implements Serializable {
 	}
 
 	@Id
-	@SequenceGenerator(name = "CP_ACESSO_SEQ", sequenceName = "CORPORATIVO.CP_ACESSO_SEQ")
+	@SequenceGenerator(name = "CP_ACESSO_SEQ", sequenceName = "corporativo.cp_acesso_id_acesso_seq")
 	@GeneratedValue(generator = "CP_ACESSO_SEQ")
 	@Column(name = "ID_ACESSO", unique = true, nullable = false)
 	@Desconsiderar

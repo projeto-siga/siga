@@ -74,7 +74,7 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 	private final static org.jboss.logging.Logger log = Logger.getLogger(CpArquivo.class);
 
 	@Id
-	@SequenceGenerator(sequenceName = "CORPORATIVO.CP_ARQUIVO_SEQ", name = "CP_ARQUIVO_SEQ")
+	@SequenceGenerator(name = "CP_ARQUIVO_SEQ", sequenceName = "corporativo.cp_arquivo_id_arq_seq")
 	@GeneratedValue(generator = "CP_ARQUIVO_SEQ")
 	@Column(name = "ID_ARQ")
 	private java.lang.Long idArq;

@@ -46,9 +46,8 @@ import br.gov.jfrj.siga.model.Objeto;
 public abstract class AbstractCPMarca extends Objeto implements Serializable {
 
 	@Id
-	@SequenceGenerator(name = "my_seq", sequenceName = "CORPORATIVO"
-			+ ".CP_MARCA_SEQ")
-	@GeneratedValue(generator = "my_seq")
+	@SequenceGenerator(name = "cp_marca_seq", sequenceName = "corporativo.cp_marca_id_marca_seq")
+	@GeneratedValue(generator = "cp_marca_seq")
 	@Column(name = "ID_MARCA")
 	private java.lang.Long idMarca;
 

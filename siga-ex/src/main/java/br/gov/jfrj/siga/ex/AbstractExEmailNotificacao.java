@@ -43,7 +43,7 @@ public class AbstractExEmailNotificacao extends Objeto {
 
 	/** The composite primary key value. */
 	@Id
-	@SequenceGenerator(sequenceName = "EX_EMAIL_NOTIFICACAO_SEQ", name = "EX_EMAIL_NOTIFICACAO_SEQ")
+	@SequenceGenerator(name = "EX_EMAIL_NOTIFICACAO_SEQ", sequenceName = "siga.ex_email_notificacao_id_email_notificacao_seq")
 	@GeneratedValue(generator = "EX_EMAIL_NOTIFICACAO_SEQ")
 	@Column(name = "ID_EMAIL_NOTIFICACAO", unique = true, nullable = false)
 	private java.lang.Long idEmailNotificacao;

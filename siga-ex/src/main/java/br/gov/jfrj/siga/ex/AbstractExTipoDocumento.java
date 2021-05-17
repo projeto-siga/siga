@@ -45,7 +45,7 @@ public abstract class AbstractExTipoDocumento extends Objeto implements
 
 	/** The composite primary key value. */
 	@Id
-	@SequenceGenerator(sequenceName = "EX_TIPO_DOCUMENTO_SEQ", name = "EX_TIPO_DOCUMENTO_SEQ")
+	@SequenceGenerator(name = "EX_TIPO_DOCUMENTO_SEQ", sequenceName = "siga.ex_tipo_documento_id_tp_doc_seq")
 	@GeneratedValue(generator = "EX_TIPO_DOCUMENTO_SEQ")
 	@Column(name = "ID_TP_DOC", unique = true, nullable = false)
 	private java.lang.Long idTpDoc;

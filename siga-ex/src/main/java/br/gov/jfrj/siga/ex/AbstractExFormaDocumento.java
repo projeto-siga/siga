@@ -51,7 +51,7 @@ public abstract class AbstractExFormaDocumento extends Objeto implements
 		Serializable {
 	/** The composite primary key value. */
 	@Id
-	@SequenceGenerator(sequenceName = "EX_FORMA_DOCUMENTO_SEQ", name = "EX_FORMA_DOCUMENTO_SEQ")
+	@SequenceGenerator(name = "EX_FORMA_DOCUMENTO_SEQ", sequenceName = "siga.ex_forma_documento_id_forma_doc_seq")
 	@GeneratedValue(generator = "EX_FORMA_DOCUMENTO_SEQ")
 	@Column(name = "ID_FORMA_DOC", unique = true, nullable = false)
 	private Long idFormaDoc;

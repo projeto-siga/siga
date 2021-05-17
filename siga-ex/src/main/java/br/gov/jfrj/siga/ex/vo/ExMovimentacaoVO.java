@@ -133,7 +133,7 @@ public class ExMovimentacaoVO extends ExVO {
 		this.tempoRelativo = Data.calcularTempoRelativo(mov.getDtIniMov());
 		this.descrTipoMovimentacao = mov.getDescrTipoMovimentacao();
 		this.cancelada = mov.getExMovimentacaoCanceladora() != null;
-		this.lotaCadastranteSigla = mov.getLotaCadastrante().getSigla();
+		this.lotaCadastranteSigla = mov.getLotaCadastrante() != null ? mov.getLotaCadastrante().getSigla() : null;
 		this.exTipoMovimentacaoSigla = mov.getExTipoMovimentacao().getSigla();
 
 		if (mov.getLotaCadastrante() != null)

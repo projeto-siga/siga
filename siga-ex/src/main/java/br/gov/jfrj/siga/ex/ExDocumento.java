@@ -1728,7 +1728,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 				movimentacao.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA &&
 						movimentacao.getExMobil().getId().equals(mobil.getId())) {
 
-			return this.getIdDocPrincipal() == this.getIdDoc();
+			return this.getIdDocAnterior() == this.getIdDoc();
 			
 		}	
 		

@@ -219,6 +219,7 @@
 		CKEDITOR.config.removePlugins = 'elementspath';
 		CKEDITOR.config.image_previewText = ' ';
 		CKEDITOR.config.height = 270;
+		CKEDITOR.config.filebrowserUploadMethod = 'form';
 //		CKEDITOR.config.removeButtons = 'Image';
 		CKEDITOR.config.removeDialogTabs = 'link:advanced;link:upload;image:advanced;image:Link';
 		CKEDITOR

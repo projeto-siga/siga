@@ -928,6 +928,11 @@ LINHA  VARIÁVEL / CONTEÚDO
 					   text-align: left !important;
 					   margin-left: 0 !important;
                     }
+                    a.doc-sign {
+						color: #000;
+						text-decoration: none;
+					}
+					                    
                 </style>
             </head>
             <body>

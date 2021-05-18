@@ -1,8 +1,8 @@
-<%@ taglib uri="http://localhost/libstag" prefix="f"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-
 <!-- Marcar Modal -->
 <%@ page contentType="text/html; charset=UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <c:set var="podeRetroativa" scope="session" value="${f:resource('/siga.marcadores.permite.data.retroativa')}" />
 <div class="modal fade" id="definirMarcaModal" tabindex="-1"
 	role="dialog" aria-labelledby="anotarModalLabel" aria-hidden="true">

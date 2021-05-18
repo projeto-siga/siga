@@ -26,6 +26,7 @@ import javax.persistence.Transient;
  * The persistent class for the EX_SEQUENCIA database table.
  * 
  */
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "siga.ex_protocolo")
 @NamedQueries({
@@ -35,8 +36,6 @@ import javax.persistence.Transient;
 
 public class ExProtocolo implements Serializable {
 	
-	private static final long serialVersionUID = 1L;
-
 	@Id
 	@SequenceGenerator(name="EX_PROTOCOLO_GENERATOR", sequenceName="EX_PROTOCOLO_SEQ")
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="EX_PROTOCOLO_GENERATOR")

@@ -46,6 +46,7 @@ import br.gov.jfrj.siga.hibernate.ExDao;
  * A class that represents a row in the 'EX_TIPO_DESPACHO' table. This class may
  * be customized as it is never re-generated after being created.
  */
+@SuppressWarnings("serial")
 @Entity
 @BatchSize(size = 500)
 @Immutable
@@ -54,8 +55,6 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 @Table(name = "siga.ex_nivel_acesso")
 public class ExNivelAcesso extends AbstractExNivelAcesso implements
 		Serializable {
-
-	private static final long serialVersionUID = 3256722875116761397L;
 
 	public static final long NIVEL_ACESSO_PUBLICO = 10;
 

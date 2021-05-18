@@ -35,6 +35,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 
+import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorCorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
@@ -42,6 +43,7 @@ import br.gov.jfrj.siga.cp.model.enm.CpMarcadorIconeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
 import br.gov.jfrj.siga.model.Historico;
 
+@SuppressWarnings("serial")
 @MappedSuperclass
 @NamedQueries({ @NamedQuery(name = "quantidadeDocumentos", query = "SELECT count(1)" + "		FROM CpMarca marca"
 		+ "	WHERE (marca.dtIniMarca IS NULL OR marca.dtIniMarca < :dbDatetime)"
@@ -49,8 +51,6 @@ import br.gov.jfrj.siga.model.Historico;
 		+ "		AND marca.dpPessoaIni.idPessoa = :idPessoaIni" + "     AND marca.cpTipoMarca.idTpMarca = 1 "
 		+ "	    AND marca.cpMarcador.idMarcador not in (9,8,10,11,12 ,13,16, 18, 20 , 21, 22, 24 ,26, 32, 62, 63, 64, 7, 50, 51)") })
 public abstract class AbstractCpMarcador extends HistoricoAuditavelSuporte implements Serializable, Historico {
-
-	private static final long serialVersionUID = 6436403895150961831L;
 
 	@Id
 	@SequenceGenerator(name = "CP_MARCADOR_LOTACAO_SEQ", sequenceName = "CORPORATIVO.CP_MARCADOR_LOTACAO_SEQ")
@@ -61,9 +61,6 @@ public abstract class AbstractCpMarcador extends HistoricoAuditavelSuporte imple
 	@Column(name = "DESCR_MARCADOR")
 	private String descrMarcador;
 
-//	@Column(name = "ID_TP_MARCADOR", nullable = false)
-//	private CpTipoMarcadorEnum cpTipoMarcador;
-//
 	@Column(name = "GRUPO_MARCADOR")
 	private CpMarcadorGrupoEnum idGrupo;
 

@@ -51,6 +51,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "corporativo.cp_orgao_usuario")
 @Immutable
@@ -60,11 +61,6 @@ public class CpOrgaoUsuario extends AbstractCpOrgaoUsuario implements
 		Serializable, Selecionavel, Assemelhavel, CpConvertableEntity {
 	public static ActiveRecord<CpOrgaoUsuario> AR = new ActiveRecord<>(
 			CpOrgaoUsuario.class);
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5119023571728936131L;
 
 	@Formula(value = "REMOVE_ACENTO(NM_ORGAO_USU)")
 	private String nmOrgaoAI;

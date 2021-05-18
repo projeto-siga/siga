@@ -21,10 +21,10 @@ package br.gov.jfrj.siga.cp;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "corporativo.cp_acesso")
 public class CpAcesso extends AbstractCpAcesso {
-	private static final long serialVersionUID = 1L;
 
 	public Long getId() {
 		return getIdCpAcesso();

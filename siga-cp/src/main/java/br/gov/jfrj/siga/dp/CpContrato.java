@@ -30,11 +30,11 @@ import java.text.SimpleDateFormat;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "corporativo.cp_contrato")
 public class CpContrato extends AbstractCpContrato implements
 		Serializable {
-	private static final long serialVersionUID = 1L;
 
 	public Long getIdOrgaoUsu() {
 		return getIdOrgaoUsu();

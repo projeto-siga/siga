@@ -18,13 +18,11 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.vraptor;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
@@ -33,9 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.CurrentRequest;
-import br.gov.jfrj.siga.base.RequestInfo;
-import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
@@ -56,6 +51,7 @@ import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
+import br.gov.jfrj.siga.ex.util.NivelDeAcessoUtil;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.util.ExProcessadorModelo;
 
@@ -228,12 +224,16 @@ public class ExController extends SigaController {
 	}
 	
 	protected Boolean podeVisualizarDocumento(final ExMobil mob, DpPessoa titular, Long idVisualizacao) throws Exception {
-		Boolean retorno = Boolean.FALSE;
+		return podeVisualizarDocumento(getCadastrante(), titular, idVisualizacao, mob);
+	}
+
+	public static boolean podeVisualizarDocumento(DpPessoa cadastrante, DpPessoa titular, Long idVisualizacao, final ExMobil mob) throws Exception {
+		boolean retorno = Boolean.FALSE;
 		
 		if(Cp.getInstance().getConf()
-				.podePorConfiguracao(getCadastrante(), getCadastrante().getLotacao(), CpTipoConfiguracao.TIPO_CONFIG_DELEGAR_VISUALIZACAO)) {
+				.podePorConfiguracao(cadastrante, cadastrante.getLotacao(), CpTipoConfiguracao.TIPO_CONFIG_DELEGAR_VISUALIZACAO)) {
 			if(idVisualizacao != null && !idVisualizacao.equals(Long.valueOf(0))) {
-				DpVisualizacao vis = dao().consultar(idVisualizacao, DpVisualizacao.class, false);
+				DpVisualizacao vis = ExDao.getInstance().consultar(idVisualizacao, DpVisualizacao.class, false);
 				
 				if(vis.getDelegado().equals(titular)) {
 					if(Ex.getInstance()

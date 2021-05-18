@@ -1,15 +1,17 @@
-<%@ include file="/WEB-INF/page/include.jsp"%>
+﻿<%@ include file="/WEB-INF/page/include.jsp"%>
 
 <siga:pagina titulo="Informações">
 
+	<script src="/sigagc/public/javascripts/jquery.maskedinput.min.js"></script>
+
 	<c:set var="count" value="${0}" />
-	<div class="gt-bd clearfix">
+	<div class="container-fluid">
 		<div class="gt-content clearfix">
 			<h2>Pesquisa de Conhecimentos</h2>
 			<c:choose>
 				<c:when test="${lista.size() != 0}">
-					<div class="gt-content-box gt-for-table">
-						<table class="gt-table">
+					<div class="table-responsive">
+						<table class="table">
 							<thead>
 								<tr>
 									<th style="width: 12% !important;" rowspan="2">Número</th>
@@ -57,16 +59,15 @@
 								<c:set var="k" value="${1}" />
 								<c:forEach items="${lista}" var="i">
 									<tr class="even">
-										<td style="width: 12% !important;">
-											<c:choose>
+										<td style="width: 12% !important;"><c:choose>
 												<c:when test="${popup}">
-													<a href="javascript:opener.retorna_${propriedade}('${i.id}', '${i.sigla}', '${i.arq.titulo}');window.close();">${i.sigla}</a>
+													<a
+														href="javascript:opener.retorna_${propriedade}('${i.id}', '${i.sigla}', '${i.arq.titulo}');window.close();">${i.sigla}</a>
 												</c:when>
 												<c:otherwise>
 													<a href="${linkTo[AppController].exibir(i.siglaCompacta)}">${i.sigla}</a>
 												</c:otherwise>
-											</c:choose>
-										</td>
+											</c:choose></td>
 										<td style="width: 10% !important;">${i.dtIniString}</td>
 										<td style="width: 6% !important;"><span
 											title="${i.lotacao.descricao}">${i.lotacao.sigla}</span></td>
@@ -96,7 +97,8 @@
 											</table>
 										</td>
 										<td style="width: 11% !important;">${i.tipo.nome}</td>
-										<td><a href="${linkTo[AppController].exibir(i.siglaCompacta)}">${i.arq.titulo}</a>
+										<td><a
+											href="${linkTo[AppController].exibir(i.siglaCompacta)}">${i.arq.titulo}</a>
 										</td>
 										<td width="2%"><c:if test="${cont > 1}">
 												<img style="width: 13px;" id="imgPlus-${k}"
@@ -128,110 +130,154 @@
 			<c:set var="count" value="${0}" />
 			<!-- </table></div> -->
 			<br>
-			<div class="gt-content-box gt-for-table">
+			<div class="card mb-2">
 
-				<form id="listar" name="listar" method="GET"
-					class="form100">
-					<input type="hidden" name="filtro.pesquisa" value="true" />
-					<input type="hidden" name="popup" value="${popup}" />
-					<input type="hidden" name="propriedade" value="${propriedade}" />
-					<table class="gt-form-table">
-						<colgroup>
-							<col style="width: 11em;">
-							<col>
-						</colgroup>
+				<form id="listar" name="listar" method="GET" class="form100">
+					<input type="hidden" name="filtro.pesquisa" value="true" /> <input
+						type="hidden" name="popup" value="${popup}" /> <input
+						type="hidden" name="propriedade" value="${propriedade}" />
+					<div class="card-header">
+						<h5>Dados do Conhecimento</h5>
+					</div>
+					<div class="card-body">
 						<input type="hidden" name="postback" value="1" id="postback">
 						<input type="hidden" name="apenasRefresh" value="0"
-							id="apenasRefresh">
-						<input type="hidden" name="p.offset" value="0" id="p_offset">
-						<tbody>
-							<tr class="header">
-								<td align="center" valign="top" colspan="4">Dados do
-									Conhecimento</td>
-							</tr>
-							<tr>
-								<siga:select label="Situação" name="filtro.situacao.idMarcador" value="${filtro.situacao.idMarcador}"
-									list="marcadores" listKey="idMarcador" headerValue="Todas"
+							id="apenasRefresh"> <input type="hidden" name="p.offset"
+							value="0" id="p_offset">
+						<div class="row">
+							<div class="col-sm-12">
+								<siga:select label="Situação"
+									name="filtro.situacao.idMarcador"
+									value="${filtro.situacao.idMarcador}" list="marcadores"
+									listKey="idMarcador" headerValue="Todas"
 									listValue="descrMarcador" />
-							</tr>
-							<tr>
-								<siga:select label="Órgão" name="filtro.orgaoUsu.idOrgaoUsu" value="${filtro.orgaoUsu.idOrgaoUsu}"
-									list="orgaosusuarios" listKey="id" listValue="descricao"
-									headerValue="Todos" />
-							</tr>
-							<tr id="trTipo" style="display:">
-								<siga:select label="Tipo" name="filtro.tipo.id" value="${filtro.tipo.id}"
-									list="tiposinformacao" listKey="id" listValue="nome"
-									headerValue="Todos" />
-							</tr>
-							<tr>
-								<td>Ano de Emissão</td>
-								<td><siga:select label="Ano de Emissão" name="filtro.ano" value="${filtro.ano}"
-										list="anos" listKey="id" listValue="descr" headerValue="Todos"
-										theme="simple" /> &nbsp;&nbsp;&nbsp;&nbsp;Número: <input
-									type="text" name="filtro.numero" size="7" maxlength="6"
-									value="${filtro.numero}" id="filtronumero"> <span
-									id="dicaNumero" style="font-size: smaller;">Ex:
-										JFRJ-GC-2013/<b style="background: #cccccc;">00152</b>
-								</span></td>
-							</tr>
-							<tr>
-								<td>Data de Criação:</td>
-								<td>de&nbsp;&nbsp; <input type="text"
-									name="filtro.dtCriacaoIni" value="${filtro.dtCriacaoIni}"
-									id="dtIniString" onblur="javascript:verifica_data(this,0);">
-									&nbsp;&nbsp;até &nbsp;&nbsp;<input type="text"
-									name="filtro.dtCriacaoFim" value="${filtro.dtCriacaoFim}"
-									id="dtFimString" onblur="javascript:verifica_data(this,0);"></td>
-							</tr>
-							<tr>
-								<td>Autor:</td>
-								<td><siga:pessoaLotaSelecao2 propriedadePessoa="filtro.autor"
-										propriedadeLotacao="filtro.lotacao" /></td>
-							</tr>
-							<tr>
-								<td>Data da Situação:</td>
-								<td>de&nbsp;&nbsp; <input type="text" name="filtro.dtIni"
-									value="${filtro.dtIni}" id="dtSituacaoIniString"
-									onblur="javascript:verifica_data(this,0);">
-									&nbsp;&nbsp;até &nbsp;&nbsp;<input type="text"
-									name="filtro.dtFim" value="${filtro.dtFim}"
-									id="dtSituacaoFimString"
-									onblur="javascript:verifica_data(this,0);"></td>
-							</tr>
-							<tr>
-								<td>Responsável:</td>
-								<td><siga:pessoaLotaSelecao2 propriedadePessoa="filtro.responsavel"
-										propriedadeLotacao="filtro.lotaResponsavel" /></td>
-							</tr>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
+								<siga:select label="Órgão" name="filtro.orgaoUsu.idOrgaoUsu"
+									value="${filtro.orgaoUsu.idOrgaoUsu}" list="orgaosusuarios"
+									listKey="id" listValue="descricao" headerValue="Todos" />
+							</div>
+						</div>
+						<div class="row" id="trTipo">
+							<div class="col-sm-12">
+								<siga:select label="Tipo" name="filtro.tipo.id"
+									value="${filtro.tipo.id}" list="tiposinformacao" listKey="id"
+									listValue="nome" headerValue="Todos" />
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
+								<siga:select label="Ano de Emissão" name="filtro.ano"
+									value="${filtro.ano}" list="anos" listKey="id"
+									listValue="descr" headerValue="Todos" />
+							</div>
+						</div>
+						<div class="row">
+							<label></label>
+						</div>
 
-							<!-- A lista de par -->
-							<tr>
-								<td>Classificação:</td>
-								<td><siga:selecao2 propriedade="filtro.tag" modulo="sigagc"
-										tipo="tag" tema="simple" /></td>
-							</tr>
-							<tr>
-								<td>Título:</td>
-								<td><input type="text" name="filtro.titulo" size="80"
-									value="${filtro.titulo}" id="titulo"></td>
-							</tr>
-							<tr>
-								<td>Conteúdo:</td>
-								<td><input type="text" id="conteudo"
-									value="${filtro.conteudo}" size="80" name="filtro.conteudo"></td>
-							</tr>
-							<tr>
-								<td><input type="submit"
-									onclick="javascript:  if (isCarregando()) return false; carrega();"
-									class="gt-btn-medium gt-btn-left" style="cursor: pointer;"
-									value="Buscar"></td>
-								<td><input type="button" id="btn-clear"
-									class="gt-btn-medium" style="cursor: pointer;" value="Limpar">
-								</td>
-							</tr>
-						</tbody>
-					</table>
+						<div class="row">
+							<div class="col-sm-1 form-group">
+								<label>Número:</label>
+							</div>
+							<div class="col-sm-1" style="z-index: 2">
+								<input type="text" name="filtro.numero" maxlength="6"
+									value="${filtro.numero}" id="filtronumero" class="form-control">
+							</div>
+							<div class="col-sm-10" style="z-index: 2">
+								<label id="dicaNumero" style="font-size: smaller;">Ex:
+									JFRJ-GC-2013/<b style="background: #cccccc;">00152</b>
+								</label>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-1 form-group">
+								<label>Data de cria&ccedil;&atilde;o:</label>
+							</div>
+							<div class="col-sm-2">
+								<siga:dataCalendar  nome="filtro.dtCriacaoIni" 	value="${filtro.dtCriacaoIni}" />
+							</div>
+          					<span class="col-sm">a</span>	
+							<div class="col-sm-2">
+								<siga:dataCalendar nome="filtro.dtCriacaoFim" 	value="${filtro.dtCriacaoFim}" />
+							</div>
+							<div class="col-sm-1">
+								<label>Data da Situação:</label>
+							</div>
+							<div class="col-sm-2">
+								<siga:dataCalendar  nome="filtro.dtIni"
+									value="${filtro.dtIni}" />
+							</div>
+          					<span class="col-sm">a</span>	
+							<div class="col-sm-2">
+								<siga:dataCalendar  nome="filtro.dtFim"
+									value="${filtro.dtFim}" />
+							</div>
+
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
+								<siga:pessoaLotaSelecao2 propriedadePessoa="filtro.autor"
+									propriedadeLotacao="filtro.lotacao"
+									labelPessoaLotacao="Author:" />
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-sm-12">
+								<siga:pessoaLotaSelecao2 propriedadePessoa="filtro.responsavel"
+									propriedadeLotacao="filtro.lotaResponsavel"
+									labelPessoaLotacao="Responsável:" />
+							</div>
+						</div>
+
+						<div class="row">
+												<div class="col-sm-6">
+							<div class="form-group">
+								<label>Classificação</label>
+								<siga:selecao3 tamanho="grande" 
+											propriedade="filtro.tag" 
+											ocultardescricao="sim" 
+											tipo="tag" 
+											tema="simple" 
+											modulo="sigagc" 
+											paramList="popup=true;"/>
+							</div>
+						</div>
+						</div>
+
+
+						<div class="row">
+							<div class="col-sm-1 form-group">
+								<label>Título:</label>
+							</div>
+							<div class="col-sm-5">
+								<input type="text" name="filtro.titulo" value="${filtro.titulo}"
+									id="titulo" maxlength="80" class="form-control">
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-sm-1 form-group">
+								<label>Conteúdo:</label>
+							</div>
+							<div class="col-sm-5">
+								<input type="text" id="conteudo" value="${filtro.conteudo}"
+									name="filtro.conteudo" maxlength="80" class="form-control">
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group">
+									<input type="submit" value="Buscar"
+										onclick="javascript:  if (isCarregando()) return false; carrega();"
+										class="btn btn-primary" /> <input type="button"
+										value="Limpar" id="btn-clear" class="btn btn-primary" />
+								</div>
+							</div>
+						</div>
 				</form>
 			</div>
 		</div>

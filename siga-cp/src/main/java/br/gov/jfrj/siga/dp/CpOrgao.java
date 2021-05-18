@@ -43,16 +43,13 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "corporativo.cp_orgao")
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class CpOrgao extends AbstractCpOrgao implements Serializable,
 		Selecionavel, Historico, Sincronizavel {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5119023571728936131L;
 	@Formula(value = "REMOVE_ACENTO(NM_ORGAO)")
 	@Desconsiderar
 	private String nmOrgaoAI;

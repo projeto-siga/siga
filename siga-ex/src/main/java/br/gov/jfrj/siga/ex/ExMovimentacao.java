@@ -74,16 +74,12 @@ import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
  * be customized as it is never re-generated after being created.
  */
 
+@SuppressWarnings("serial")
 @Entity
 @BatchSize(size = 500)
 @Table(name = "siga.ex_movimentacao")
 public class ExMovimentacao extends AbstractExMovimentacao implements
 		Serializable, Comparable<ExMovimentacao> {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2559924666592487436L;
 
 	/**
 	 * Simple constructor of ExMovimentacao instances.

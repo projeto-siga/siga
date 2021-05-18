@@ -26,7 +26,7 @@ public class DocumentosSiglaPdfCompletoGet implements IDocumentosSiglaPdfComplet
 			DpPessoa titular = cadastrante;
 			DpLotacao lotaTitular = cadastrante.getLotacao();
 	
-			ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, req, resp);
+			ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp);
 	
 			ApiContext.assertAcesso(mob, titular, lotaTitular);
 	

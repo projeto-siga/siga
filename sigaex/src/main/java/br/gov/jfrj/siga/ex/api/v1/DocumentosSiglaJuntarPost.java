@@ -31,8 +31,8 @@ public class DocumentosSiglaJuntarPost implements IDocumentosSiglaJuntarPost {
 				DpPessoa cadastrante = so.getCadastrante();
 				DpLotacao lotaTitular = cadastrante.getLotacao();
 		
-				ExMobil mobFilho = SwaggerHelper.buscarEValidarMobil(req.sigla, so, req, resp, "Documento Secundário");
-				ExMobil mobPai = SwaggerHelper.buscarEValidarMobil(req.siglapai, so, req, resp, "Documento Principal");
+				ExMobil mobFilho = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento Secundário");
+				ExMobil mobPai = ctx.buscarEValidarMobil(req.siglapai, req, resp, "Documento Principal");
 		
 				ApiContext.assertAcesso(mobFilho, cadastrante, lotaTitular);
 		

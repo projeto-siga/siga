@@ -14,7 +14,7 @@ public class DocumentosSiglaExcluirPost implements IDocumentosSiglaExcluirPost {
 	public void run(DocumentosSiglaExcluirPostRequest req, DocumentosSiglaExcluirPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				ApiContext.assertAcesso("");
+				ctx.assertAcesso("");
 
 				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp,
 						"Documento a Excluir");
@@ -25,7 +25,7 @@ public class DocumentosSiglaExcluirPost implements IDocumentosSiglaExcluirPost {
 							+ ctx.getLotaTitular().getSiglaCompleta());
 				}
 
-				ApiContext.assertAcesso(mob, ctx.getTitular(), ctx.getLotaTitular());
+				ctx.assertAcesso(mob, ctx.getTitular(), ctx.getLotaTitular());
 
 				Ex.getInstance().getBL().excluirDocumento(mob.doc(), ctx.getCadastrante(), ctx.getLotaCadastrante(),
 						false);

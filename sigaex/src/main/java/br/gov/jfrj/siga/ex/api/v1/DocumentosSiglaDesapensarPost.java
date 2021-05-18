@@ -18,9 +18,9 @@ public class DocumentosSiglaDesapensarPost implements IDocumentosSiglaDesapensar
 			throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				ApiContext.assertAcesso("");
+				ctx.assertAcesso("");
 
-				ExMobil mob = ApiContext.getMob(req.sigla);
+				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento a Desapensar");
 
 				if (!Ex.getInstance().getComp().podeDesapensar(ctx.getTitular(), ctx.getLotaTitular(), mob)) {
 					throw new PresentableUnloggedException("O documento " + mob.getSigla()
@@ -28,7 +28,7 @@ public class DocumentosSiglaDesapensarPost implements IDocumentosSiglaDesapensar
 							+ ctx.getLotaTitular().getSiglaCompleta());
 				}
 
-				ApiContext.assertAcesso(mob, ctx.getTitular(), ctx.getLotaTitular());
+				ctx.assertAcesso(mob, ctx.getTitular(), ctx.getLotaTitular());
 
 				Ex.getInstance().getBL().desapensarDocumento(ctx.getCadastrante(), ctx.getLotaCadastrante(), mob, null,
 						null, ctx.getTitular());

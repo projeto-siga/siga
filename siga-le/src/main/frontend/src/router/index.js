@@ -5,9 +5,11 @@ import Documento from '@/components/Documento'
 import DocumentoEditar from '@/components/DocumentoEditar'
 import DocumentoDossie from '@/components/DocumentoDossie'
 import Mesa from '@/components/Mesa'
+import Quadro from '@/components/Quadro'
 import Login from '@/components/Login'
 import Sugestoes from '@/components/Sugestoes'
 import Sobre from '@/components/Sobre'
+import Lista from '@/components/Lista'
 
 Vue.use(Router)
 
@@ -70,12 +72,20 @@ const router = new Router({
     name: 'Sobre',
     component: Sobre
   }, {
-    path: '/',
+    path: '/mesa',
     name: 'Mesa',
     component: Mesa
   }, {
+    path: '/quadro',
+    name: 'Quadro',
+    component: Quadro
+  }, {
+    path: '/lista/:idMarcador/:filtroPessoaLotacao/:filtroExpedienteProcesso',
+    name: 'Lista',
+    component: Lista
+  }, {
     path: '*',
-    redirect: '/'
+    redirect: '/mesa'
   }]
 })
 export default router

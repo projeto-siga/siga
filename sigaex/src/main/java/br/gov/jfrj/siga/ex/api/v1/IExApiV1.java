@@ -44,12 +44,43 @@ public interface IExApiV1 {
 		public List<Marca> list;
 	}
 
+	public class QuadroItem implements ISwaggerModel {
+		public String grupoId;
+		public String grupoNome;
+		public String finalidadeId;
+		public String marcadorId;
+		public String marcadorNome;
+		public String marcadorIcone;
+		public String marcadorCor;
+		public String qtdAtendente;
+		public String qtdLotaAtendente;
+	}
+
+	public class ListaItem implements ISwaggerModel {
+		public String sigla;
+		public Date documentoData;
+		public String documentoSubscritor;
+		public String documentoLotaSubscritor;
+		public String documentoEspecie;
+		public String documentoModelo;
+		public String documentoDescricao;
+		public String mobilUltimaAnotacao;
+		public String marcadorId;
+		public String marcadorNome;
+		public String marcadorIcone;
+		public String marcadorCor;
+		public Date marcaData;
+		public String marcaResponsavel;
+		public String marcaLotaResponsavel;
+	}
+
 	public class Marca implements ISwaggerModel {
 		public String pessoa;
 		public String lotacao;
 		public String nome;
 		public String icone;
 		public String titulo;
+		public String marcaId;
 		public Date inicio;
 		public Date termino;
 		public Boolean daPessoa;
@@ -567,6 +598,32 @@ public interface IExApiV1 {
 
 	public interface IMesaGet extends ISwaggerMethod {
 		public void run(MesaGetRequest req, MesaGetResponse resp) throws Exception;
+	}
+
+	public class QuadroGetRequest implements ISwaggerRequest {
+		public String filtroExpedienteProcesso;
+	}
+
+	public class QuadroGetResponse implements ISwaggerResponse {
+		public List<QuadroItem> list;
+	}
+
+	public interface IQuadroGet extends ISwaggerMethod {
+		public void run(QuadroGetRequest req, QuadroGetResponse resp) throws Exception;
+	}
+
+	public class ListaGetRequest implements ISwaggerRequest {
+		public String idMarcador;
+		public String filtroPessoaLotacao;
+		public String filtroExpedienteProcesso;
+	}
+
+	public class ListaGetResponse implements ISwaggerResponse {
+		public List<ListaItem> list;
+	}
+
+	public interface IListaGet extends ISwaggerMethod {
+		public void run(ListaGetRequest req, ListaGetResponse resp) throws Exception;
 	}
 
 	public class DocumentosSiglaGetRequest implements ISwaggerRequest {

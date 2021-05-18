@@ -16,7 +16,7 @@ public class DocumentosSiglaPesquisarSiglaGet implements IDocumentosSiglaPesquis
 	@Override
 	public void run(DocumentosSiglaPesquisarSiglaGetRequest req, DocumentosSiglaPesquisarSiglaGetResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(false, true)) {
-			ApiContext.assertAcesso("");
+			ctx.assertAcesso("");
 	
 			ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp);
 	

@@ -9,19 +9,17 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaDossieGetRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaDossieGetResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DossieItem;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaDossieGet;
-import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class DocumentosSiglaDossieGet implements IDocumentosSiglaDossieGet {
 
 	@Override
 	public void run(DocumentosSiglaDossieGetRequest req, DocumentosSiglaDossieGetResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(false, true)) {
-			ApiContext.assertAcesso("");
-			SigaObjects so = ApiContext.getSigaObjects();
+			ctx.assertAcesso("");
 
 			ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento");
 
-			ApiContext.assertAcesso(mob, ctx.getCadastrante(), ctx.getLotaTitular());
+			ctx.assertAcesso(mob, ctx.getCadastrante(), ctx.getLotaTitular());
 
 			List<ExArquivoNumerado> ans = mob.getArquivosNumerados();
 			resp.list = new ArrayList<>();

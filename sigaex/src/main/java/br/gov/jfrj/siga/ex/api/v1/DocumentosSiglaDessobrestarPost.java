@@ -9,7 +9,6 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaDessobrestarPostReques
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaDessobrestarPostResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaDessobrestarPost;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class DocumentosSiglaDessobrestarPost implements IDocumentosSiglaDessobrestarPost {
 
@@ -18,15 +17,14 @@ public class DocumentosSiglaDessobrestarPost implements IDocumentosSiglaDessobre
 			throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				ApiContext.assertAcesso("");
-				SigaObjects so = ApiContext.getSigaObjects();
+				ctx.assertAcesso("");
 
-				DpPessoa cadastrante = so.getCadastrante();
+				DpPessoa cadastrante = ctx.getCadastrante();
 				DpPessoa titular = cadastrante;
 				DpLotacao lotaCadastrante = cadastrante.getLotacao();
-				DpLotacao lotaTitular = so.getLotaTitular();
+				DpLotacao lotaTitular = ctx.getLotaTitular();
 
-				ExMobil mob = ApiContext.getMob(req.sigla);
+				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento a Dessobrestar");
 
 				if (!Ex.getInstance().getComp().podeDesobrestar(titular, lotaTitular, mob)) {
 					throw new PresentableUnloggedException(
@@ -34,7 +32,7 @@ public class DocumentosSiglaDessobrestarPost implements IDocumentosSiglaDessobre
 									+ titular.getSiglaCompleta() + "/" + lotaTitular.getSiglaCompleta());
 				}
 
-				ApiContext.assertAcesso(mob, titular, lotaTitular);
+				ctx.assertAcesso(mob, titular, lotaTitular);
 
 				Ex.getInstance().getBL().desobrestar(cadastrante, lotaCadastrante, mob, null, titular);
 

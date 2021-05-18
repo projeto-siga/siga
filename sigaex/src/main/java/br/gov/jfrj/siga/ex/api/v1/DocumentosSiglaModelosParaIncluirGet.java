@@ -30,7 +30,7 @@ public class DocumentosSiglaModelosParaIncluirGet implements IDocumentosSiglaMod
 		boolean isAutuando = false;
 
 		try (ApiContext ctx = new ApiContext(false, true)) {
-			ApiContext.assertAcesso("");
+			ctx.assertAcesso("");
 			ExMobil mobPai = ctx.buscarEValidarMobil(req.sigla, req, resp,
 					"Documento Principal");
 

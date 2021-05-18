@@ -16,7 +16,7 @@ public class DocumentosSiglaDesentranharPost implements IDocumentosSiglaDesentra
 			throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				ApiContext.assertAcesso("");
+				ctx.assertAcesso("");
 
 				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp,
 						"Documento a Desentranhar");
@@ -27,7 +27,7 @@ public class DocumentosSiglaDesentranharPost implements IDocumentosSiglaDesentra
 							+ ctx.getLotaTitular().getSiglaCompleta());
 				}
 
-				ApiContext.assertAcesso(mob, ctx.getTitular(), ctx.getLotaTitular());
+				ctx.assertAcesso(mob, ctx.getTitular(), ctx.getLotaTitular());
 
 				Ex.getInstance().getBL().cancelarJuntada(ctx.getCadastrante(), ctx.getLotaCadastrante(), mob,
 						ExDao.getInstance().getServerDateTime(), ctx.getTitular(), ctx.getTitular(), req.motivo);

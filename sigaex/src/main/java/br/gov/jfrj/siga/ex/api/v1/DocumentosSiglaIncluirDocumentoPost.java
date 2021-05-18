@@ -6,15 +6,12 @@ import com.crivano.swaggerservlet.SwaggerException;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.RegraNegocioException;
-import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaApensarPostRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaApensarPostResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaApensarPost;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class DocumentosSiglaIncluirDocumentoPost implements IDocumentosSiglaApensarPost {
 
@@ -22,13 +19,12 @@ public class DocumentosSiglaIncluirDocumentoPost implements IDocumentosSiglaApen
 	public void run(DocumentosSiglaApensarPostRequest req, DocumentosSiglaApensarPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				ApiContext.assertAcesso("");
-				SigaObjects so = ApiContext.getSigaObjects();
+				ctx.assertAcesso("");
 
 				ExMobil mobFilho = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento Secundário");
 				ExMobil mobPai = ctx.buscarEValidarMobil(req.siglamestre, req, resp, "Documento Mestre");
 
-				ApiContext.assertAcesso(mobFilho, ctx.getCadastrante(), ctx.getLotaTitular());
+				ctx.assertAcesso(mobFilho, ctx.getCadastrante(), ctx.getLotaTitular());
 
 				Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
 

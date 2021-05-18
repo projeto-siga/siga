@@ -15,7 +15,7 @@ public class DocumentosSiglaFinalizarPost implements IDocumentosSiglaFinalizarPo
 			throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				ApiContext.assertAcesso("");
+				ctx.assertAcesso("");
 
 				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp,
 						"Documento a Finalizar");
@@ -26,7 +26,7 @@ public class DocumentosSiglaFinalizarPost implements IDocumentosSiglaFinalizarPo
 							+ ctx.getLotaTitular().getSiglaCompleta());
 				}
 
-				ApiContext.assertAcesso(mob, ctx.getTitular(), ctx.getLotaTitular());
+				ctx.assertAcesso(mob, ctx.getTitular(), ctx.getLotaTitular());
 
 				Ex.getInstance().getBL().finalizar(ctx.getCadastrante(), ctx.getLotaCadastrante(), mob.doc());
 

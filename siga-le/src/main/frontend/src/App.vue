@@ -53,6 +53,15 @@
                     >Mesa</router-link
                   >
                 </b-nav-item>
+                <b-nav-item v-if="jwt &amp;&amp; jwt.sub">
+                  <router-link
+                    class="nav-link"
+                    active-class="active"
+                    :to="{ name: 'Quadro' }"
+                    tag="a"
+                    >Quadro</router-link
+                  >
+                </b-nav-item>
                 <b-nav-item>
                   <router-link
                     class="nav-link"

@@ -22,17 +22,16 @@ public class DocumentosSiglaAnotarPost implements IDocumentosSiglaAnotarPost {
 	public void run(DocumentosSiglaAnotarPostRequest req, DocumentosSiglaAnotarPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				ApiContext.assertAcesso("");
-				SigaObjects so = ApiContext.getSigaObjects();
+				ctx.assertAcesso("");
 		
-				DpPessoa cadastrante = so.getCadastrante();
+				DpPessoa cadastrante = ctx.getCadastrante();
 				DpLotacao lotaCadastrante = cadastrante.getLotacao();
 				DpPessoa titular = cadastrante;
 				DpLotacao lotaTitular = cadastrante.getLotacao();
 		
 				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento a Anotar");
 		
-				ApiContext.assertAcesso(mob, titular, lotaTitular);
+				ctx.assertAcesso(mob, titular, lotaTitular);
 		
 				Ex.getInstance().getBL().anotar(cadastrante, lotaCadastrante, mob, null, null, null, null, cadastrante,
 						req.anotacao, null);

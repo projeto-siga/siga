@@ -10,12 +10,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.crivano.swaggerservlet.PresentableUnloggedException;
 import com.crivano.swaggerservlet.SwaggerException;
-import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.CurrentRequest;
 import br.gov.jfrj.siga.base.RegraNegocioException;
-import br.gov.jfrj.siga.base.RequestInfo;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -25,7 +22,6 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaTramitarPostResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaTramitarPost;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class DocumentosSiglaTramitarPost implements IDocumentosSiglaTramitarPost {
 
@@ -44,9 +40,9 @@ public class DocumentosSiglaTramitarPost implements IDocumentosSiglaTramitarPost
 		}
 	}
 
-	private void validarAcesso(DocumentosSiglaTramitarPostRequest req, DpPessoa titular, DpLotacao lotaTitular, ExMobil mob)
+	private void validarAcesso(ApiContext ctx, DocumentosSiglaTramitarPostRequest req, DpPessoa titular, DpLotacao lotaTitular, ExMobil mob)
 			throws Exception, PresentableUnloggedException {
-		ApiContext.assertAcesso(mob, titular, lotaTitular);
+		ctx.assertAcesso(mob, titular, lotaTitular);
 
 		if (!Ex.getInstance().getComp().podeTransferir(titular, lotaTitular, mob))
 			throw new PresentableUnloggedException("O documento " + req.sigla + " não pode ser tramitado por "
@@ -108,18 +104,17 @@ public class DocumentosSiglaTramitarPost implements IDocumentosSiglaTramitarPost
 	public void run(DocumentosSiglaTramitarPostRequest req, DocumentosSiglaTramitarPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				ApiContext.assertAcesso("");
+				ctx.assertAcesso("");
 				validarPreenchimentoDestino(req, resp);
 		
-				SigaObjects so = ApiContext.getSigaObjects();
-				DpPessoa cadastrante = so.getCadastrante();
+				DpPessoa cadastrante = ctx.getCadastrante();
 				DpLotacao lotaCadastrante = cadastrante.getLotacao();
 				DpPessoa titular = cadastrante;
 				DpLotacao lotaTitular = cadastrante.getLotacao();
 	
 				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento a Tramitar");
 	
-				validarAcesso(req, titular, lotaTitular, mob);
+				validarAcesso(ctx, req, titular, lotaTitular, mob);
 	
 				CpOrgao orgaoExterno = this.getOrgaoExterno(req, resp);
 				DpLotacao lot = getLotacao(req, orgaoExterno);

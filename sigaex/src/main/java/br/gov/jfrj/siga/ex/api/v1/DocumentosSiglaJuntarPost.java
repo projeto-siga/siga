@@ -3,12 +3,9 @@ package br.gov.jfrj.siga.ex.api.v1;
 import java.util.Date;
 
 import com.crivano.swaggerservlet.SwaggerException;
-import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.CurrentRequest;
 import br.gov.jfrj.siga.base.RegraNegocioException;
-import br.gov.jfrj.siga.base.RequestInfo;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -17,7 +14,6 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaJuntarPostResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaJuntarPost;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class DocumentosSiglaJuntarPost implements IDocumentosSiglaJuntarPost {
 
@@ -25,16 +21,15 @@ public class DocumentosSiglaJuntarPost implements IDocumentosSiglaJuntarPost {
 	public void run(DocumentosSiglaJuntarPostRequest req, DocumentosSiglaJuntarPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				ApiContext.assertAcesso("");
-				SigaObjects so = ApiContext.getSigaObjects();
+				ctx.assertAcesso("");
 		
-				DpPessoa cadastrante = so.getCadastrante();
+				DpPessoa cadastrante = ctx.getCadastrante();
 				DpLotacao lotaTitular = cadastrante.getLotacao();
 		
 				ExMobil mobFilho = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento Secundário");
 				ExMobil mobPai = ctx.buscarEValidarMobil(req.siglapai, req, resp, "Documento Principal");
 		
-				ApiContext.assertAcesso(mobFilho, cadastrante, lotaTitular);
+				ctx.assertAcesso(mobFilho, cadastrante, lotaTitular);
 		
 				Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
 	

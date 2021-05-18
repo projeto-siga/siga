@@ -15,7 +15,7 @@ public class DocumentosSiglaMovimentacoesIdAssinarComSenhaPost
 			DocumentosSiglaMovimentacoesIdAssinarComSenhaPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				ApiContext.assertAcesso("");
+				ctx.assertAcesso("");
 				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp,
 						"Documento cujo anexo receberá a assinatura");
 				ExMovimentacao mov = ApiContext.getMov(mob, req.id);

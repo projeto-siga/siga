@@ -33,7 +33,7 @@ public class DocumentosSiglaMarcadoresDisponiveisGet implements IDocumentosSigla
 	public void run(DocumentosSiglaMarcadoresDisponiveisGetRequest req, DocumentosSiglaMarcadoresDisponiveisGetResponse resp)
 			throws Exception {
 		try (ApiContext ctx = new ApiContext(false, true)) {
-			ApiContext.assertAcesso("");
+			ctx.assertAcesso("");
 			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
 			filter.setSigla(req.sigla);
 			ExMobil mob = (ExMobil) ExDao.getInstance().consultarPorSigla(filter);

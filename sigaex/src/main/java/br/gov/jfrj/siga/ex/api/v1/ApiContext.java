@@ -99,7 +99,7 @@ public class ApiContext implements Closeable {
 	 * 
 	 * @throws Exception Se houver algo de errado.
 	 */
-	static SigaObjects getSigaObjects() throws Exception {
+	private SigaObjects getSigaObjects() throws Exception {
 		SigaObjects sigaObjects = new SigaObjects(SwaggerServlet.getHttpServletRequest());
 		return sigaObjects;
 	}
@@ -130,8 +130,8 @@ public class ApiContext implements Closeable {
 	 * 
 	 * @throws Exception Se houver algo de errado.
 	 */
-	static void assertAcesso(String acesso) throws Exception {
-		ApiContext.getSigaObjects().assertAcesso(DOC_MÓDULO_DE_DOCUMENTOS + acesso);
+	public void assertAcesso(String acesso) throws Exception {
+		getSigaObjects().assertAcesso(DOC_MÓDULO_DE_DOCUMENTOS + acesso);
 	}
 
 	static void assertAcesso(final ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
@@ -166,13 +166,6 @@ public class ApiContext implements Closeable {
 						+ titular.getSigla() + "/" + lotaTitular.getSiglaCompleta() + "." + s);
 			}
 		}
-	}
-
-	public static ExMobil getMob(String sigla) {
-		ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
-		flt.setSigla(sigla);
-
-		return ExDao.getInstance().consultarPorSigla(flt);
 	}
 
 	public static ExMovimentacao getMov(ExMobil mob, String id) {

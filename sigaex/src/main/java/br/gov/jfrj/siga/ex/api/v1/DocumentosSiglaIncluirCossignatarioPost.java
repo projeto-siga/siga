@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.ex.api.v1;
+ package br.gov.jfrj.siga.ex.api.v1;
 
 import java.util.Date;
 
@@ -23,15 +23,6 @@ import br.gov.jfrj.siga.vraptor.builder.ExMovimentacaoBuilder;
 
 public class DocumentosSiglaIncluirCossignatarioPost implements IDocumentosSiglaIncluirCossignatarioPost {
 
-	private void validarAcesso(DocumentosSiglaIncluirCossignatarioPostRequest req, DpPessoa titular,
-			DpLotacao lotaTitular, ExMobil mob) throws Exception, PresentableUnloggedException {
-		ApiContext.assertAcesso(mob, titular, lotaTitular);
-
-//		if (!Ex.getInstance().getComp().podeMarcar(titular, lotaTitular, mob))
-//			throw new PresentableUnloggedException("O documento " + req.sigla + " não pode ser marcado por "
-//					+ titular.getSiglaCompleta() + "/" + lotaTitular.getSiglaCompleta());
-	}
-
 	private DpPessoa getPessoa(DocumentosSiglaIncluirCossignatarioPostRequest req) {
 		DpPessoa pes = null;
 		if (StringUtils.isNotEmpty(req.matricula)) {
@@ -47,12 +38,12 @@ public class DocumentosSiglaIncluirCossignatarioPost implements IDocumentosSigla
 			DocumentosSiglaIncluirCossignatarioPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				ApiContext.assertAcesso("");
+				ctx.assertAcesso("");
 
 				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp,
 						"Documento a Incluir Cossignatário");
 
-				validarAcesso(req, ctx.getTitular(), ctx.getLotaTitular(), mob);
+				ctx.assertAcesso(mob, ctx.getTitular(), ctx.getLotaTitular());
 
 				DpPessoa pes = getPessoa(req);
 				Date dt = dao().consultarDataEHoraDoServidor();

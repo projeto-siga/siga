@@ -213,6 +213,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				.getOrgaoUsuario().getId(), lotaTitular == null ? 0L
 				: lotaTitular.getOrgaoUsuario().getId());
 		return ac.podeAcessar(doc,titular,lotaTitular);
+//		return true;
 	}
 
 

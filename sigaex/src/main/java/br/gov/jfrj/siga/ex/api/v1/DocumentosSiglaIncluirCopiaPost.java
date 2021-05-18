@@ -12,7 +12,6 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaIncluirCopiaPostRespon
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaIncluirCopiaPost;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class DocumentosSiglaIncluirCopiaPost implements IDocumentosSiglaIncluirCopiaPost {
 
@@ -21,13 +20,12 @@ public class DocumentosSiglaIncluirCopiaPost implements IDocumentosSiglaIncluirC
 			throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				ApiContext.assertAcesso("");
-				SigaObjects so = ApiContext.getSigaObjects();
+				ctx.assertAcesso("");
 
 				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento Principal");
 				ExMobil mobCopia = ctx.buscarEValidarMobil(req.siglacopia, req, resp, "Documento Cópia");
 
-				ApiContext.assertAcesso(mob, ctx.getCadastrante(), ctx.getLotaTitular());
+				ctx.assertAcesso(mob, ctx.getCadastrante(), ctx.getLotaTitular());
 
 				Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
 

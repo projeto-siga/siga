@@ -25,7 +25,7 @@ public class PessoasPost implements IPessoasPost {
 	public void run(PessoasPostRequest req, PessoasPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				ApiContext.assertAcesso("WS_REST: Acesso aos webservices REST;CAD_PESSOA: Cadastrar Pessoa");
+				ctx.assertAcesso("WS_REST: Acesso aos webservices REST;CAD_PESSOA: Cadastrar Pessoa");
 				SigaObjects so = ApiContext.getSigaObjects();
 	
 				if (req.siglaOrgao == null || "".equals(req.siglaOrgao))

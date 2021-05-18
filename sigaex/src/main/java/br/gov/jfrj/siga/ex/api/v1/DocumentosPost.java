@@ -57,7 +57,7 @@ public class DocumentosPost implements IDocumentosPost {
 	public void run(DocumentosPostRequest req, DocumentosPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				ApiContext.assertAcesso("");
+				ctx.assertAcesso("");
 
 				final Ex ex = Ex.getInstance();
 				final ExBL exBL = ex.getBL();

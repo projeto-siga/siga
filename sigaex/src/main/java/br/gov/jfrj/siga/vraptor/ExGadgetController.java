@@ -84,16 +84,7 @@ public class ExGadgetController extends ExController {
 			listEstados = listEstadosReduzida;
 		}
 
-		listEstados.sort(new Comparator() {
-
-			@Override
-			public int compare(Object o1, Object o2) {
-				CpMarcadorFinalidadeEnum f1 = (CpMarcadorFinalidadeEnum) ((Object[]) o1)[4];
-				CpMarcadorFinalidadeEnum f2 = (CpMarcadorFinalidadeEnum) ((Object[]) o2)[4];
-				return f1.getGrupo().compareTo(f2.getGrupo());
-			}
-
-		});
+		
 
 		if (super.getTitular() == null) {
 			throw new AplicacaoException("Titular nulo, verificar se usuário está ativo no RH");

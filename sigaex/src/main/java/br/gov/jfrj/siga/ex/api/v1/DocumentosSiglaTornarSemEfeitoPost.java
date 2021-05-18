@@ -15,9 +15,10 @@ public class DocumentosSiglaTornarSemEfeitoPost implements IDocumentosSiglaTorna
 			throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				ApiContext.assertAcesso("");
+				ctx.assertAcesso("");
 
-				ExMobil mob = ApiContext.getMob(req.sigla);
+				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp,
+						"Documento a Tornar Sem Efeito");
 
 				if (!Ex.getInstance().getComp().podeTornarDocumentoSemEfeito(ctx.getTitular(), ctx.getLotaTitular(),
 						mob)) {
@@ -29,7 +30,7 @@ public class DocumentosSiglaTornarSemEfeitoPost implements IDocumentosSiglaTorna
 				if (req.motivo == null || req.motivo.isEmpty())
 					throw new PresentableUnloggedException("Favor informar o motivo");
 
-				ApiContext.assertAcesso(mob, ctx.getTitular(), ctx.getLotaTitular());
+				ctx.assertAcesso(mob, ctx.getTitular(), ctx.getLotaTitular());
 
 				Ex.getInstance().getBL().tornarDocumentoSemEfeito(ctx.getCadastrante(), ctx.getLotaCadastrante(),
 						mob.doc(), req.motivo);

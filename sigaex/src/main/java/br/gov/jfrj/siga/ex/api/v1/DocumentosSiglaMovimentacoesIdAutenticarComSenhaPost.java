@@ -15,7 +15,7 @@ public class DocumentosSiglaMovimentacoesIdAutenticarComSenhaPost
 			DocumentosSiglaMovimentacoesIdAutenticarComSenhaPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				ApiContext.assertAcesso("");
+				ctx.assertAcesso("");
 				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp,
 						"Documento cujo anexo receberá a autenticação");
 				ExMovimentacao mov = ApiContext.getMov(mob, req.id);

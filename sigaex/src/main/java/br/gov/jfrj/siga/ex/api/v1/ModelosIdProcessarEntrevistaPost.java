@@ -27,14 +27,14 @@ public class ModelosIdProcessarEntrevistaPost implements IModelosIdProcessarEntr
 	public void run(ModelosIdProcessarEntrevistaPostRequest req, ModelosIdProcessarEntrevistaPostResponse resp)
 			throws Exception {
 		try (ApiContext ctx = new ApiContext(false, true)) {
-			ApiContext.assertAcesso("");
+			ctx.assertAcesso("");
 			ExModelo mod = ExDao.getInstance().consultar(Long.parseLong(req.id), ExModelo.class, false);
 			ExDocumento doc = new ExDocumento();
 			doc.setExModelo(mod);
 
 			Map<String, String> formParams = obterFormParams(req.entrevista);
 
-			CpOrgaoUsuario orgaoUsuario = ApiContext.getSigaObjects().getCadastrante().getOrgaoUsuario();
+			CpOrgaoUsuario orgaoUsuario = ctx.getCadastrante().getOrgaoUsuario();
 			String html = Ex.getInstance().getBL().processarModelo(doc, "entrevista", formParams, orgaoUsuario);
 			resp.setContenttype("text/html");
 			byte[] bytes = html.getBytes(StandardCharsets.UTF_8);

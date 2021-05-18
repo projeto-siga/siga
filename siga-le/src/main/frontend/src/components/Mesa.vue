@@ -155,7 +155,7 @@
                     <!-- class="list-unstyled blog-tags" -->
                     <span
                       v-for="m in f.list"
-                      :key="f.sigla + ':tag:' + m.nome"
+                      :key="f.sigla + ':tag:' + m.marcaId"
                       :title="m.titulo"
                       ><button class="btn btn-default btn-sm xrp-label">
                         <i :class="'fa fa-' + m.icone"></i> {{ m.nome

@@ -25,6 +25,14 @@ import br.gov.jfrj.siga.model.Selecao;
 
 public class DpPessoaSelecao extends Selecao<DpPessoa> {
 
+	public DpPessoaSelecao() {
+		super();
+	}
+
+	public DpPessoaSelecao(DpPessoa titular) {
+		super(titular);
+	}
+
 	@Override
 	public DpPessoa buscarObjeto() throws AplicacaoException {
 		if (getId() == null)

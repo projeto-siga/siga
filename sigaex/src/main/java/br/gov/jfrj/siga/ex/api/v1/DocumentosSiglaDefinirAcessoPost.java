@@ -23,12 +23,12 @@ public class DocumentosSiglaDefinirAcessoPost implements IDocumentosSiglaDefinir
 			throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				ApiContext.assertAcesso("");
+				ctx.assertAcesso("");
 
 				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp,
 						"Documento a Marcar");
 
-				ApiContext.assertAcesso(mob, ctx.getTitular(), ctx.getLotaTitular());
+				ctx.assertAcesso(mob, ctx.getTitular(), ctx.getLotaTitular());
 
 				if (!Ex.getInstance().getComp().podeRedefinirNivelAcesso(ctx.getTitular(), ctx.getLotaTitular(), mob)) {
 					throw new AplicacaoException("Não é possível redefinir o nível de acesso");

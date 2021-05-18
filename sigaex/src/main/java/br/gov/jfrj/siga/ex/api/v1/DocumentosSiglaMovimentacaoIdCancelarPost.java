@@ -15,10 +15,10 @@ public class DocumentosSiglaMovimentacaoIdCancelarPost implements IDocumentosSig
 			DocumentosSiglaMovimentacaoIdCancelarPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				ApiContext.assertAcesso("");
+				ctx.assertAcesso("");
 				ExBL bl = Ex.getInstance().getBL();
 
-				ExMobil mob = ApiContext.getMob(req.sigla);
+				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento a Cancelar Movimentação");
 
 				if (req.id == null || req.id.length() == 0 || "-".equals(req.id)) {
 					bl.validarCancelamentoDeUltimaMovimentacao(ctx.getTitular(), ctx.getLotaTitular(), mob);
@@ -28,7 +28,7 @@ public class DocumentosSiglaMovimentacaoIdCancelarPost implements IDocumentosSig
 
 				ExMovimentacao mov = ApiContext.getMov(mob, req.id);
 
-				ApiContext.assertAcesso(mob, ctx.getTitular(), ctx.getLotaTitular());
+				ctx.assertAcesso(mob, ctx.getTitular(), ctx.getLotaTitular());
 
 				bl.cancelar(ctx.getTitular(), ctx.getLotaTitular(), mob, mov, null, null, null, null);
 

@@ -1083,7 +1083,7 @@
 							<tags:collapse title="Cossignatários" id="Cossignatários" collapseMode="${collapse_Expanded}">
 								<ul>
 									<c:forEach var="cossig" items="${docVO.cossignatarios}">
-										<li>${cossig.key.subscritor.nomePessoa}
+										<li>${cossig.key.subscritor}
 										<c:if test="${cossig.value}">&nbsp;
 											<a class="btn btn-sm btn-light mb-2" href="/sigaex/app/expediente/mov/excluir?id=${cossig.key.idMov}">Excluir</a>
 										</c:if>

@@ -111,6 +111,7 @@ public class ExMovimentacaoVO extends ExVO {
 	String exTipoMovimentacaoSigla;
 	String tempoRelativo;
 	boolean podeExibirNoSigale;
+	private String subscritor;
 
 	public ExMobilVO getMobVO() {
 		return mobVO;
@@ -169,9 +170,14 @@ public class ExMovimentacaoVO extends ExVO {
 		if (mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL))
 			complemento = (mov.getSubscritor() != null ? mov.getSubscritor().getDescricao() : mov.getLotaSubscritor() != null ? mov.getLotaSubscritor().getDescricao() : null) + " - " + mov.getExPapel().getDescPapel() + ". ";
 		
+		if (mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO))
+			subscritor = mov.getSubscritor().getNomePessoa();
+				
 		if (serializavel) {
 			this.mov = null;
-		}}
+		}
+		
+	}
 
 	/**
 	 * @param mov
@@ -885,5 +891,13 @@ public class ExMovimentacaoVO extends ExVO {
 
 	public String getTempoRelativo() {
 		return tempoRelativo;
+	}
+
+	public String getSubscritor() {
+		return subscritor;
+	}
+
+	public void setSubscritor(String subscritor) {
+		this.subscritor = subscritor;
 	}
 }

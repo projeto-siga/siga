@@ -921,7 +921,8 @@ public class ExDocumentoController extends ExController {
 	}
 
 	private Object podeTrocarPdfCapturado(ExDocumentoDTO exDocumentoDTO) {
-		return Ex.getInstance().getComp().podeCapturarPDF(so.getTitular(), so.getLotaTitular(), exDocumentoDTO.getMob());
+		return Ex.getInstance().getComp().podeCapturarPDF(so.getTitular(), so.getLotaTitular(),
+				exDocumentoDTO.getMob(), exDocumentoDTO.getIdTpDoc());
 	}
 
 	private List<ExTipoDocumento> getTiposDocumentoParaCriacao() {

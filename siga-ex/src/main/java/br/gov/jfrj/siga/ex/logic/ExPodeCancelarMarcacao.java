@@ -55,7 +55,9 @@ public class ExPodeCancelarMarcacao extends CompositeExpressionSuport {
 						And.of(Not.of(new ExMovimentacaoHaSubscritor(mov)),
 								new ExMovimentacaoELotaSubscritor(mov, lotaTitular)),
 						And.of(Not.of(new ExMovimentacaoHaCadastrante(mov)),
-								new ExMovimentacaoELotaCadastrante(mov, lotaTitular))),
+								new ExMovimentacaoELotaCadastrante(mov, lotaTitular)),
+						And.of(new ExEMarcadorDeAtendente(mov.getMarcador()),
+								new ExEstaResponsavel(mov.mob(), titular, lotaTitular))),
 				new ExPodeCancelarMovimentacaoPorConfiguracao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, titular,
 						lotaTitular));
 	}
@@ -63,7 +65,8 @@ public class ExPodeCancelarMarcacao extends CompositeExpressionSuport {
 	public static void afirmar(ExMovimentacao mov, DpPessoa titular, DpLotacao lotaTitular) {
 		ExPodeCancelarMarcacao teste = new ExPodeCancelarMarcacao(mov, titular, lotaTitular);
 		if (!teste.eval())
-			throw new AplicacaoException("Não é possível cancelar marcação porque " + AcaoVO.Helper.produzirExplicacao(teste, false));
+			throw new AplicacaoException(
+					"Não é possível cancelar marcação porque " + AcaoVO.Helper.produzirExplicacao(teste, false));
 	}
 
 };

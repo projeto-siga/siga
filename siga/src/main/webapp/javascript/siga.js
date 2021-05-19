@@ -73,7 +73,7 @@ function popitup(url) {
 	winProp = 'width=' + popW + ',height=' + popH + ',left=' + winleft
 	+ ',top=' + winUp + ',scrollbars=yes,resizable';
 	
-	if(url.includes("/exibir?")) {
+	if(url.includes("/sigaex/app/arquivo/exibir?")) {
 		url = montarUrlDocPDF (url, document.getElementById("visualizador").value);
 	}
 	newwindow = window.open(url, nameWindow, winProp);

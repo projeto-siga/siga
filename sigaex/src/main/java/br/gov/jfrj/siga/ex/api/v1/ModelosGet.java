@@ -12,7 +12,6 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.ModeloItem;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.ModelosGetRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.ModelosGetResponse;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class ModelosGet implements IModelosGet {
 
@@ -30,11 +29,10 @@ public class ModelosGet implements IModelosGet {
 		boolean isAutuando = false;
 
 		try (ApiContext ctx = new ApiContext(false, true)) {
-			ApiContext.assertAcesso("");
-			SigaObjects so = ApiContext.getSigaObjects();
+			ctx.assertAcesso("");
 
-			DpPessoa titular = so.getTitular();
-			DpLotacao lotaTitular = so.getLotaTitular();
+			DpPessoa titular = ctx.getTitular();
+			DpLotacao lotaTitular = ctx.getLotaTitular();
 			List<ExModelo> modelos = Ex.getInstance().getBL().obterListaModelos(null, null, isEditandoAnexo,
 					isCriandoSubprocesso, mobPai, headerValue, true, titular, lotaTitular, isAutuando);
 

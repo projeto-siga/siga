@@ -56,6 +56,7 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -901,6 +902,17 @@ public class ExDao extends CpDao {
 			sql.setParameter("idTipoForma", Long.valueOf(idTipoForma));
 
 			List result = sql.getResultList();
+			
+			result.sort(new Comparator() {
+
+				@Override
+				public int compare(Object o1, Object o2) {
+					CpMarcadorFinalidadeEnum f1 = (CpMarcadorFinalidadeEnum) ((Object[]) o1)[4];
+					CpMarcadorFinalidadeEnum f2 = (CpMarcadorFinalidadeEnum) ((Object[]) o2)[4];
+					return f1.getGrupo().compareTo(f2.getGrupo());
+				}
+
+			});
 
 			return result;
 

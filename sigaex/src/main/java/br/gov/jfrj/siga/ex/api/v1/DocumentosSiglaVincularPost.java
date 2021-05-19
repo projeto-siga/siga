@@ -12,7 +12,6 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaVincularPostResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaVincularPost;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class DocumentosSiglaVincularPost implements IDocumentosSiglaVincularPost {
 
@@ -20,14 +19,13 @@ public class DocumentosSiglaVincularPost implements IDocumentosSiglaVincularPost
 	public void run(DocumentosSiglaVincularPostRequest req, DocumentosSiglaVincularPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				ApiContext.assertAcesso("");
-				SigaObjects so = ApiContext.getSigaObjects();
+				ctx.assertAcesso("");
 
 				ExMobil mobFilho = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento Secundário");
 				ExMobil mobPai = ctx.buscarEValidarMobil(req.siglavertambem, req, resp,
 						"Documento Ver Também");
 
-				ApiContext.assertAcesso(mobFilho, ctx.getCadastrante(), ctx.getLotaTitular());
+				ctx.assertAcesso(mobFilho, ctx.getCadastrante(), ctx.getLotaTitular());
 
 				Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
 

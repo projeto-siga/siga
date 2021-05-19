@@ -1,6 +1,7 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
 import com.crivano.swaggerservlet.SwaggerException;
+
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -12,7 +13,6 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaReceberPostResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaReceberPost;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.vraptor.SigaObjects;
 import br.gov.jfrj.siga.vraptor.builder.ExMovimentacaoBuilder;
 
 public class DocumentosSiglaReceberPost implements IDocumentosSiglaReceberPost {
@@ -21,17 +21,16 @@ public class DocumentosSiglaReceberPost implements IDocumentosSiglaReceberPost {
 	public void run(DocumentosSiglaReceberPostRequest req, DocumentosSiglaReceberPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				ApiContext.assertAcesso("");
-				SigaObjects so = ApiContext.getSigaObjects();
+				ctx.assertAcesso("");
 		
-				DpPessoa cadastrante = so.getCadastrante();
-				DpPessoa titular = so.getTitular();
+				DpPessoa cadastrante = ctx.getCadastrante();
+				DpPessoa titular = ctx.getTitular();
 				DpLotacao lotaTitular = cadastrante.getLotacao();
 		
 				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, 
 						"Documento");
 		
-				ApiContext.assertAcesso(mob, cadastrante, lotaTitular);
+				ctx.assertAcesso(mob, cadastrante, lotaTitular);
 		
 				final ExMovimentacaoBuilder movBuilder = ExMovimentacaoBuilder
 						.novaInstancia();

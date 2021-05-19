@@ -4,7 +4,6 @@ import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.crivano.swaggerservlet.PresentableUnloggedException;
 import com.crivano.swaggerservlet.SwaggerException;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -22,15 +21,6 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.builder.ExMovimentacaoBuilder;
 
 public class DocumentosSiglaDefinirPerfilPost implements IDocumentosSiglaDefinirPerfilPost {
-
-	private void validarAcesso(DocumentosSiglaDefinirPerfilPostRequest req, DpPessoa titular, DpLotacao lotaTitular,
-			ExMobil mob) throws Exception, PresentableUnloggedException {
-		ApiContext.assertAcesso(mob, titular, lotaTitular);
-
-//		if (!Ex.getInstance().getComp().podeMarcar(titular, lotaTitular, mob))
-//			throw new PresentableUnloggedException("O documento " + req.sigla + " não pode ser marcado por "
-//					+ titular.getSiglaCompleta() + "/" + lotaTitular.getSiglaCompleta());
-	}
 
 	private DpPessoa getPessoa(DocumentosSiglaDefinirPerfilPostRequest req) {
 		DpPessoa pes = null;
@@ -57,12 +47,12 @@ public class DocumentosSiglaDefinirPerfilPost implements IDocumentosSiglaDefinir
 			throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				ApiContext.assertAcesso("");
+				ctx.assertAcesso("");
 
 				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp,
 						"Documento a Marcar");
-
-				validarAcesso(req, ctx.getTitular(), ctx.getLotaTitular(), mob);
+				
+				ctx.assertAcesso(mob, ctx.getTitular(), ctx.getLotaTitular());
 
 				ExPapel m = dao().consultar(Long.parseLong(req.idPerfil), ExPapel.class, false);
 				DpLotacao lot = getLotacao(req);

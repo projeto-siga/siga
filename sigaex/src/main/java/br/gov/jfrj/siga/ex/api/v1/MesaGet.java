@@ -15,8 +15,8 @@ import com.crivano.swaggerservlet.SwaggerException;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.TipoDePainelEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -31,7 +31,6 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.MesaItem;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class MesaGet implements IMesaGet {
 
@@ -44,14 +43,13 @@ public class MesaGet implements IMesaGet {
 	@Override
 	public void run(MesaGetRequest req, MesaGetResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
-			ApiContext.assertAcesso("");
+			ctx.assertAcesso("");
 	
 			ApiContext.buscarEValidarUsuarioLogado();
-			SigaObjects so = ApiContext.getSigaObjects();
 			
 			DpPessoa pes = null;
 			DpLotacao lota = null;
-			DpPessoa cadastrante = so.getCadastrante();
+			DpPessoa cadastrante = ctx.getCadastrante();
 			DpLotacao lotaCadastrante = cadastrante.getLotacao();
 			if (req.filtroPessoaLotacao != null) {
 				switch(req.filtroPessoaLotacao) {
@@ -160,6 +158,7 @@ public class MesaGet implements IMesaGet {
 					continue;
 
 				Marca t = new Marca();
+				t.marcaId = tag.marca.getIdMarca().toString();
 				CpMarcadorEnum mar = CpMarcadorEnum.getById(tag.marcador.getIdMarcador().intValue());
 				
 

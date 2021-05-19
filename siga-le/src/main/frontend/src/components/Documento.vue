@@ -381,6 +381,19 @@ export default {
           name: "Anexo",
           params: { numero: this.numero, id: mov.idMov },
         });
+      } else if (
+        mov.descrTipoMovimentacao.includes("Inclusão de Cossignatário") &&
+        acao.nome === "Excluir"
+      ) {
+        Bus.$emit(
+          "excluirMovimentacao",
+          [{ codigo: this.numero, sigla: this.doc.sigla }],
+          this.carregarDocumento,
+          {
+            idMov: mov.idMov,
+          }
+        );
+        this.emitir();
       } else if (acao.acao === "exibir") {
         this.$router.push({
           name: "Documento",

@@ -27,8 +27,8 @@ produces: [application/json]
 tags:
   - name: download
     description: Download
-  - name: mesa
-    description: Mesa Virtual
+  - name: lista
+    description: Listagem de Documentos
   - name: consulta
     description: Consulta a Documentos
   - name: acao
@@ -286,6 +286,12 @@ parameters:
     description: Identificador do Marcador
     required: true
     type: string            
+  idMarcadorQuery:
+    name: idMarcador
+    in: query
+    description: Identificador do Marcador
+    required: true
+    type: string            
   idPerfil:
     name: idPerfil
     in: formData
@@ -439,6 +445,17 @@ parameters:
       - Pessoa e Lotacao
       - Pessoa
       - Lotacao
+  filtroExpedienteProcesso:
+    name: filtroExpedienteProcesso
+    in: query
+    description: Informa se deseja filtrar documentos por expediente ou processo
+    required: false
+    type: string
+    default: Expediente e Processo
+    enum:
+      - Expediente e Processo
+      - Expediente
+      - Processo
 
 ################################################################################
 #                                           Paths                              #
@@ -794,8 +811,8 @@ paths:
 
   /mesa:
     get:
-      description: Listar as mesas virtuais disponíveis
-      tags: [mesa]
+      summary: Listar as mesas virtuais disponíveis
+      tags: [lista]
       security:
         - Bearer: []      
       parameters: 
@@ -815,6 +832,53 @@ paths:
           schema:
             $ref: "#/definitions/Error"
             
+  /quadro:
+    get:
+      summary: Listar a quantidade de documentos
+      tags: [lista]
+      security:
+        - Bearer: []      
+      parameters: 
+        - $ref: "#/parameters/filtroExpedienteProcesso"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/QuadroItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /lista:
+    get:
+      summary: Listar móbiles por filtro
+      tags: [lista]
+      security:
+        - Bearer: []      
+      parameters: 
+        - $ref: "#/parameters/idMarcadorQuery"
+        - $ref: "#/parameters/filtroPessoaLotacao"
+        - $ref: "#/parameters/filtroExpedienteProcesso"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/ListaItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
 
   /documentos/{sigla}:
     get:
@@ -2238,6 +2302,66 @@ definitions:
         items:
           $ref: "#/definitions/Marca"      
 
+  QuadroItem:
+    description: Lista quantidade de documentos na mesa
+    type: object
+    properties:
+      grupoId:
+        type: string
+      grupoNome:
+        type: string
+      finalidadeId:
+        type: string
+      marcadorId:
+        type: string
+      marcadorNome:
+        type: string
+      marcadorIcone:
+        type: string
+      marcadorCor:
+        type: string
+      qtdAtendente:
+        type: string
+      qtdLotaAtendente:
+        type: string
+
+  ListaItem:
+    description: Lista quantidade de documentos na mesa
+    type: object
+    properties:
+      sigla:
+        type: string
+      documentoData:
+        type: string
+        format: date-time
+      documentoSubscritor:
+        type: string
+      documentoLotaSubscritor:
+        type: string
+      documentoEspecie:
+        type: string
+      documentoModelo:
+        type: string
+      documentoDescricao:
+        type: string
+      mobilUltimaAnotacao:
+        type: string
+      marcadorId:
+        type: string
+      marcadorNome:
+        type: string
+      marcadorIcone:
+        type: string
+      marcadorCor:
+        type: string
+      marcaData:
+        type: string
+        format: date-time
+      marcaResponsavel:
+        type: string
+      marcaLotaResponsavel:
+        type: string
+
   Marca:
     description: Etiquetas relacionadas a um documento
     type: object
@@ -2251,6 +2375,8 @@ definitions:
       icone:
         type: string
       titulo:
+        type: string
+      marcaId:
         type: string
       inicio:
         type: string

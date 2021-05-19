@@ -33,7 +33,7 @@ public class AcessosGet implements IAcessosGet {
 		try (ApiContext ctx = new ApiContext(false, true)) {
 			CurrentRequest.set(
 					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-			ApiContext.assertAcesso("");
+			ctx.assertAcesso("");
 			SigaObjects so = ApiContext.getSigaObjects();
 			DpPessoa cadastrante = so.getCadastrante();
 	

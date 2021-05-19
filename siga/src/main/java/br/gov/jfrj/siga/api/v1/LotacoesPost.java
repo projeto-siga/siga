@@ -22,7 +22,7 @@ public class LotacoesPost implements ILotacoesPost {
 	public void run(LotacoesPostRequest req, LotacoesPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				ApiContext.assertAcesso("WS_REST: Acesso aos webservices REST;CAD_LOTACAO: Cadastrar Lotação");
+				ctx.assertAcesso("WS_REST: Acesso aos webservices REST;CAD_LOTACAO: Cadastrar Lotação");
 				SigaObjects so = ApiContext.getSigaObjects();
 	
 				if (req.siglaOrgao == null || "".equals(req.siglaOrgao))

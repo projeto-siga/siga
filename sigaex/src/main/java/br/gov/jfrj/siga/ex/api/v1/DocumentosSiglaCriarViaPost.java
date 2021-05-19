@@ -7,7 +7,6 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaCriarViaPostRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaCriarViaPostResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaCriarViaPost;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class DocumentosSiglaCriarViaPost implements IDocumentosSiglaCriarViaPost {
 
@@ -15,10 +14,10 @@ public class DocumentosSiglaCriarViaPost implements IDocumentosSiglaCriarViaPost
 	public void run(DocumentosSiglaCriarViaPostRequest req, DocumentosSiglaCriarViaPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				ApiContext.assertAcesso("");
-				SigaObjects so = ApiContext.getSigaObjects();
+				ctx.assertAcesso("");
 
-				ExMobil mob = ApiContext.getMob(req.sigla);
+				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp,
+						"Documento a Criar Via");
 
 				if (!Ex.getInstance().getComp().podeCriarVia(ctx.getTitular(), ctx.getLotaTitular(), mob)) {
 					throw new PresentableUnloggedException("O documento " + mob.getSigla()
@@ -26,7 +25,7 @@ public class DocumentosSiglaCriarViaPost implements IDocumentosSiglaCriarViaPost
 							+ ctx.getLotaTitular().getSiglaCompleta());
 				}
 
-				ApiContext.assertAcesso(mob, ctx.getTitular(), ctx.getLotaTitular());
+				ctx.assertAcesso(mob, ctx.getTitular(), ctx.getLotaTitular());
 
 				Ex.getInstance().getBL().criarVia(ctx.getTitular(), ctx.getLotaTitular(), mob.doc());
 

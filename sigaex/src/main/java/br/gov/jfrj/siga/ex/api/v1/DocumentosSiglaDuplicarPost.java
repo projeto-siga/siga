@@ -15,7 +15,7 @@ public class DocumentosSiglaDuplicarPost implements IDocumentosSiglaDuplicarPost
 	public void run(DocumentosSiglaDuplicarPostRequest req, DocumentosSiglaDuplicarPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				ApiContext.assertAcesso("");
+				ctx.assertAcesso("");
 
 				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp,
 						"Documento a Duplicar");
@@ -26,7 +26,7 @@ public class DocumentosSiglaDuplicarPost implements IDocumentosSiglaDuplicarPost
 							+ ctx.getLotaTitular().getSiglaCompleta());
 				}
 
-				ApiContext.assertAcesso(mob, ctx.getTitular(), ctx.getLotaTitular());
+				ctx.assertAcesso(mob, ctx.getTitular(), ctx.getLotaTitular());
 
 				ExDocumento doc = Ex.getInstance().getBL().duplicar(ctx.getCadastrante(), ctx.getLotaCadastrante(),
 						mob.doc());

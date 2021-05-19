@@ -22,13 +22,12 @@ public class DocumentosSiglaApensarPost implements IDocumentosSiglaApensarPost {
 	public void run(DocumentosSiglaApensarPostRequest req, DocumentosSiglaApensarPostResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				ApiContext.assertAcesso("");
-				SigaObjects so = ApiContext.getSigaObjects();
+				ctx.assertAcesso("");
 
 				ExMobil mobFilho = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento Secundário");
 				ExMobil mobPai = ctx.buscarEValidarMobil(req.siglamestre, req, resp, "Documento Mestre");
 
-				ApiContext.assertAcesso(mobFilho, ctx.getCadastrante(), ctx.getLotaTitular());
+				ctx.assertAcesso(mobFilho, ctx.getCadastrante(), ctx.getLotaTitular());
 
 				Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
 

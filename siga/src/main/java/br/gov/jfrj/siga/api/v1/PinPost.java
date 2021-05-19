@@ -24,7 +24,7 @@ public class PinPost implements IPinPost {
 				final String pin = req.pin;
 				
 				if (Cp.getInstance().getBL().consisteFormatoPin(pin)) {	
-					ApiContext.assertAcesso("");
+					ctx.assertAcesso("");
 					SigaObjects so = ApiContext.getSigaObjects();
 			
 					DpPessoa cadastrante = so.getCadastrante();

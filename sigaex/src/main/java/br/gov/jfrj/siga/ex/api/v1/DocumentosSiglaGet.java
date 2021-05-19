@@ -28,23 +28,21 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaGetResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaGet;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
-import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 
 	@Override
 	public void run(DocumentosSiglaGetRequest req, DocumentosSiglaGetResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(false, true)) {
-			ApiContext.assertAcesso("");
-			SigaObjects so = ApiContext.getSigaObjects();
+			ctx.assertAcesso("");
 	
-			DpPessoa cadastrante = so.getCadastrante();
+			DpPessoa cadastrante = ctx.getCadastrante();
 			DpPessoa titular = cadastrante;
 			DpLotacao lotaTitular = cadastrante.getLotacao();
 	
 			ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp);
 	
-			ApiContext.assertAcesso(mob, titular, lotaTitular);
+			ctx.assertAcesso(mob, titular, lotaTitular);
 	
 			ExDocumento doc = mob.doc();
 			// Mostra o último volume de um processo ou a primeira via de um

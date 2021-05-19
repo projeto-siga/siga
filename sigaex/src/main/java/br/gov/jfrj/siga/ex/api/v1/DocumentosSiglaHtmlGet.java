@@ -9,12 +9,10 @@ import org.codehaus.jettison.json.JSONObject;
 
 import com.auth0.jwt.JWTVerifier;
 import com.crivano.swaggerservlet.SwaggerException;
-import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.CurrentRequest;
 import br.gov.jfrj.siga.base.Prop;
-import br.gov.jfrj.siga.base.RequestInfo;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExProtocolo;
@@ -24,7 +22,6 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaHtmlGet;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
-import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 @AcessoPublicoEPrivado
 public class DocumentosSiglaHtmlGet implements IDocumentosSiglaHtmlGet {
@@ -32,7 +29,6 @@ public class DocumentosSiglaHtmlGet implements IDocumentosSiglaHtmlGet {
 	public void run(DocumentosSiglaHtmlGetRequest req, DocumentosSiglaHtmlGetResponse resp) throws Exception {
 		try (ApiContext ctx = new ApiContext(false, false)) {
 	        String jwt = CurrentRequest.get().getRequest().getHeader(HttpHeaders.AUTHORIZATION);		
-			SigaObjects so = ApiContext.getSigaObjects();
 	        ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
 			flt.setSigla(req.sigla);
 			ExMobil mob = ExDao.getInstance().consultarPorSigla(flt);
@@ -61,7 +57,7 @@ public class DocumentosSiglaHtmlGet implements IDocumentosSiglaHtmlGet {
 				}
 			} else {
 				ApiContext.buscarEValidarUsuarioLogado();
-				ApiContext.assertAcesso("");
+				ctx.assertAcesso("");
 			}
 			ExDocumento doc = mob.doc();
 

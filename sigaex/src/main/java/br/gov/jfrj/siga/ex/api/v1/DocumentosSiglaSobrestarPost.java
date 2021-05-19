@@ -9,7 +9,6 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaSobrestarPostRequest;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaSobrestarPostResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaSobrestarPost;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class DocumentosSiglaSobrestarPost implements IDocumentosSiglaSobrestarPost {
 
@@ -18,15 +17,15 @@ public class DocumentosSiglaSobrestarPost implements IDocumentosSiglaSobrestarPo
 			throws Exception {
 		try (ApiContext ctx = new ApiContext(true, true)) {
 			try {
-				ApiContext.assertAcesso("");
-				SigaObjects so = ApiContext.getSigaObjects();
+				ctx.assertAcesso("");
 
-				DpPessoa cadastrante = so.getCadastrante();
+				DpPessoa cadastrante = ctx.getCadastrante();
 				DpPessoa titular = cadastrante;
 				DpLotacao lotaCadastrante = cadastrante.getLotacao();
-				DpLotacao lotaTitular = so.getLotaTitular();
+				DpLotacao lotaTitular = ctx.getLotaTitular();
 
-				ExMobil mob = ApiContext.getMob(req.sigla);
+				ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp,
+						"Documento a Sobrestar");
 
 				if (!Ex.getInstance().getComp().podeSobrestar(titular, lotaTitular, mob)) {
 					throw new PresentableUnloggedException(
@@ -34,7 +33,7 @@ public class DocumentosSiglaSobrestarPost implements IDocumentosSiglaSobrestarPo
 									+ titular.getSiglaCompleta() + "/" + lotaTitular.getSiglaCompleta());
 				}
 
-				ApiContext.assertAcesso(mob, titular, lotaTitular);
+				ctx.assertAcesso(mob, titular, lotaTitular);
 
 				Ex.getInstance().getBL().sobrestar(cadastrante, lotaCadastrante, mob, null, null, titular);
 

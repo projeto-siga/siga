@@ -599,11 +599,7 @@ public class ExMobilVO extends ExVO {
 			// informacao de pessoa
 			//
 		  for (ExMarca mar : getMarcasAtivas()) {
-			  if (mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.EM_TRANSITO.getId()
-				    	&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.EM_TRANSITO_ELETRONICO.getId()
-					    && mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.DOCUMENTO_ASSINADO_COM_SENHA.getId()
-					    && mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.MOVIMENTACAO_ASSINADA_COM_SENHA.getId()
-					    && mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.MOVIMENTACAO_CONFERIDA_COM_SENHA.getId()
+			  if (incluirMarcaEmHtml(mar)
 					    && ((mar.getDpLotacaoIni() != null && lota.getIdInicial()
 					    		.equals(mar.getDpLotacaoIni().getIdInicial())) || mar
 								.getDpLotacaoIni() == null)
@@ -619,11 +615,7 @@ public class ExMobilVO extends ExVO {
 		  //
 	      if (sb.length() == 0) {
 		    for (ExMarca mar : getMarcasAtivas()) {
-			    if (mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.EM_TRANSITO.getId()
-						&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.EM_TRANSITO_ELETRONICO.getId()
-						&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.DOCUMENTO_ASSINADO_COM_SENHA.getId()
-						&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.MOVIMENTACAO_ASSINADA_COM_SENHA.getId()
-						&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.MOVIMENTACAO_CONFERIDA_COM_SENHA.getId()) {
+			    if (incluirMarcaEmHtml(mar)) {
 					if (sb.length() > 0)
 						sb.append(", ");
 					if ((mar.getDpLotacaoIni() != null && lota.getIdInicial()
@@ -645,41 +637,52 @@ public class ExMobilVO extends ExVO {
 
 		// Marcacoes para qualquer outra pessoa ou lotacao
 		//
-		if (sb.length() == 0) {
-			for (ExMarca mar : getMarcasAtivas()) {
-				if (mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.EM_TRANSITO.getId()
-						&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.EM_TRANSITO_ELETRONICO.getId()
-						&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.DOCUMENTO_ASSINADO_COM_SENHA.getId()
-						&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.MOVIMENTACAO_ASSINADA_COM_SENHA.getId()
-						&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.MOVIMENTACAO_CONFERIDA_COM_SENHA.getId()) {
-					if (sb.length() > 0)
-						sb.append(", ");
-					sb.append(mar.getCpMarcador().getDescrMarcador());
-					if (mar.getDpLotacaoIni() != null
-							|| mar.getDpPessoaIni() != null) {
-						sb.append(" [");
-						if (mar.getDpLotacaoIni() != null) {
-							sb.append(mar.getDpLotacaoIni().getLotacaoAtual()
-									.getSigla());
-						}
-						if (mar.getDpPessoaIni() != null) {
-							if (mar.getDpLotacaoIni() != null) {
-								sb.append(", ");
-							}
-							sb.append(" [<span title=\"");
-							sb.append(mar.getDpPessoaIni().getNomePessoa());
-							sb.append("\">");
-							sb.append(mar.getDpPessoaIni().getSigla());
-							sb.append("</span>]");
-						}
-						sb.append("]");
+		for (ExMarca mar : getMarcasAtivas()) {
+			if ((sb.length() == 0 && incluirMarcaEmHtml(mar))
+					|| (sb.length() > 0 && incluirMarcaEmHtmlDeOutraPessoaELotacao(mar)
+							&& !((mar.getDpLotacaoIni() != null
+									&& lota.getIdInicial().equals(mar.getDpLotacaoIni().getIdInicial()))
+									|| mar.getDpLotacaoIni() == null)
+							&& !(mar.getDpPessoaIni() == null
+									|| pess.getIdInicial().equals(mar.getDpPessoaIni().getIdInicial())))) {
+				if (sb.length() > 0)
+					sb.append(", ");
+				sb.append(mar.getCpMarcador().getDescrMarcador());
+				if (mar.getDpLotacaoIni() != null || mar.getDpPessoaIni() != null) {
+					sb.append(" [");
+					if (mar.getDpLotacaoIni() != null) {
+						sb.append(mar.getDpLotacaoIni().getLotacaoAtual().getSigla());
 					}
+					if (mar.getDpPessoaIni() != null) {
+						if (mar.getDpLotacaoIni() != null) {
+							sb.append(", ");
+						}
+						sb.append(" [<span title=\"");
+						sb.append(mar.getDpPessoaIni().getNomePessoa());
+						sb.append("\">");
+						sb.append(mar.getDpPessoaIni().getSigla());
+						sb.append("</span>]");
+					}
+					sb.append("]");
 				}
 			}
 		}
 		if (sb.length() == 0)
 			return null;
 		return sb.toString();
+	}
+
+	public boolean incluirMarcaEmHtml(ExMarca mar) {
+		return mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.EM_TRANSITO.getId()
+			    	&& mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.EM_TRANSITO_ELETRONICO.getId()
+				    && mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.DOCUMENTO_ASSINADO_COM_SENHA.getId()
+				    && mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.MOVIMENTACAO_ASSINADA_COM_SENHA.getId()
+				    && mar.getCpMarcador().getIdMarcador() != CpMarcadorEnum.MOVIMENTACAO_CONFERIDA_COM_SENHA.getId();
+	}
+
+	public boolean incluirMarcaEmHtmlDeOutraPessoaELotacao(ExMarca mar) {
+		return mar.getCpMarcador().getIdMarcador() == CpMarcadorEnum.EM_ANDAMENTO.getId()
+			    	|| mar.getCpMarcador().getIdMarcador() == CpMarcadorEnum.CAIXA_DE_ENTRADA.getId();
 	}
 
 	public String getDescricaoCompletaEMarcadoresEmHtml(DpPessoa pess,

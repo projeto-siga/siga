@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import br.com.caelum.vraptor.observer.download.Download;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpModelo;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
@@ -48,6 +50,7 @@ public class ExModeloController extends ExSelecionavelController {
 	private static final String UTF8 = "utf-8";
 	private static final Logger LOGGER = Logger
 			.getLogger(ExModeloController.class);
+	private boolean paraIncluir;
 
 	/**
 	 * @deprecated CDI eyes only
@@ -65,6 +68,13 @@ public class ExModeloController extends ExSelecionavelController {
 	@Get
 	@Path({"/app/modelo/buscar-json/{sigla}"})
 	public void busca(String sigla) throws Exception{
+		aBuscarJson(sigla);
+	}
+	
+	@Get
+	@Path({"/app/modelo/buscar-json-para-incluir/{sigla}"})
+	public void buscaParaIncluir(String sigla) throws Exception{
+		this.paraIncluir  = true;
 		aBuscarJson(sigla);
 	}
 	
@@ -449,7 +459,25 @@ public class ExModeloController extends ExSelecionavelController {
 	protected DaoFiltroSelecionavel createDaoFiltro() {
 		ExModeloDaoFiltro flt = new ExModeloDaoFiltro();
 		flt.setSigla(getNome());
+		flt.setParaIncluir(this.paraIncluir);
 		return flt;
 	}
-
+	
+	@Override
+	protected String aBuscar(String sigla, String postback) throws Exception {
+		String s = super.aBuscar(sigla, postback);
+		
+		if (paraIncluir) {
+			List<ExModelo> lExcluir = new ArrayList<>();
+			for (ExModelo mod : (List<ExModelo>)getItens()) {
+				if (!Ex.getInstance().getConf().podePorConfiguracao(getTitular(), getLotaTitular(), mod,
+				CpTipoConfiguracao.TIPO_CONFIG_DESPACHAVEL)) {
+					lExcluir.add(mod);
+				}
+			}
+			getItens().removeAll(lExcluir);
+		}
+		
+		return s;
+	}
 }

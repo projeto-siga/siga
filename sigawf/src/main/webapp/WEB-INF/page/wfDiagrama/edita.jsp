@@ -320,7 +320,7 @@
 										text-no-results="Não encontrei nenhuma Tipologia Documental."
 										match-class="highlight"
 										selected-object-data="{context:tarefaItem, variable: 'ref', full:false}"
-										remote-url="/sigaex/app/modelo/buscar-json/" angucomplete-alt
+										remote-url="/sigaex/app/modelo/buscar-json-para-incluir/" angucomplete-alt
 										name="ref" placeholder="Pesquisar Tipologia Documental"
 										id="ref" class="angucomplete-ctrl"
 										template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>

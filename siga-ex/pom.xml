@@ -74,6 +74,8 @@
                    <execution>
                     <configuration>
                         <enableLazyInitialization>true</enableLazyInitialization>
+                        <!-- Entender porquê este plugin está dando problema no Eclipse -->
+                        <failOnError>false</failOnError>
                     </configuration>
                        <goals>
                            <goal>enhance</goal>

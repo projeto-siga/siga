@@ -4988,12 +4988,13 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR, null, null, null, null, null, null);
 	}
 	
-	public boolean podeCapturarPDF(final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob) {
-		ExDocumento doc = mob.doc();
-		boolean capturado = doc.getExTipoDocumento().getId() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO
-				|| doc.getExTipoDocumento().getId() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO;
+	public boolean podeCapturarPDF(final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob, final Long idTipoDoc) {
+		Long idTpDoc = (idTipoDoc != null ? idTipoDoc : mob.getDoc().getExTipoDocumento().getId());
+		boolean capturado = idTpDoc == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO
+				|| idTpDoc == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO;
 		if (!capturado)
 			return false;
+		ExDocumento doc = mob.doc();
 		if (!doc.isFinalizado())
 			return true;
 		if (!doc.jaTransferido() && !doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha() && !mob.isJuntado()
@@ -5005,4 +5006,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return false;
 	}
 
+	public boolean podeCapturarPDF(final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob) {
+		return podeCapturarPDF(titular, lotaTitular, mob, null);
+	}
 }

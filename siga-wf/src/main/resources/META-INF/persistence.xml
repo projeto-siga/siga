@@ -78,7 +78,7 @@
 				value="true" />
 			<property name="hibernate.cache.use_second_level_cache"
 				value="true" />
-
+			<property name="hibernate.enable_lazy_load_no_trans" value="true"/>
 			<property name="hibernate.current_session_context_class"
 				value="thread" />
 

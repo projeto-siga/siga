@@ -228,6 +228,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPrivateProperty("webdav.senha", null);
 		addPublicProperty("controlar.numeracao.expediente", "false");
 		addPublicProperty("recebimento.automatico", "true");
+		addPublicProperty("descricao.documento.ai.length", "4000");
 		
 		addPublicProperty("exibe.nome.acesso", "false");
 				

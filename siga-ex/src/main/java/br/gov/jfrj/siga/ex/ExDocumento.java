@@ -1493,7 +1493,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		anDoc.setNivel(nivel);			
 		listaInicial.add(anDoc);					
 				
-		getAnexosNumerados(mob, listaInicial, nivel + 1, false);						
+		getAnexosNumerados(mob, listaInicial, nivel + 1, false, false);						
 		
 		if (podeReordenar() && podeExibirReordenacao() && temOrdenacao()) {
 			boolean houveAlteracaoNaOrdenacao = false;
@@ -1684,7 +1684,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * @param nivel
 	 */
 	private void getAnexosNumerados(ExMobil mob, List<ExArquivoNumerado> list,
-			int nivel, boolean copia) {
+			int nivel, boolean copia, boolean exibeDocumentoCompleto) {
 
 		SortedSet<ExMovimentacao> set = new TreeSet<ExMovimentacao>(
 				new AnexoNumeradoComparator());
@@ -1703,7 +1703,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 				an.setData(m.getData());
 				list.add(an);
 				m.getExDocumento().getAnexosNumerados(m.getExMobil(), list,
-						nivel + 1, copia);
+						nivel + 1, copia, false);
 			} else if (m.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA) {
 				an.setArquivo(m.getExMobilRef().doc());
 				an.setMobil(m.getExMobilRef());
@@ -1711,9 +1711,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 				an.setCopia(true);
 				list.add(an);
 				m.getExDocumento().getAnexosNumerados(m.getExMobilRef(), list,
-						nivel + 1, true);
-			} else if (isDesentranhamentoSP(mob, m)) {				
-				continue;				
+						nivel + 1, true, false);
+			} else if (exibeDocumentoCompleto && isDesentranhamentoSP(mob, m)) {
+				continue;
 			} else {			
 				an.setArquivo(m);
 				an.setMobil(m.getExMobil());

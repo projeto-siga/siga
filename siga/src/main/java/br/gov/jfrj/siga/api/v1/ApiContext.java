@@ -30,8 +30,12 @@ public class ApiContext implements Closeable {
 			buscarEValidarUsuarioLogado();
 		}
 		
+		try {
 		CurrentRequest.set(
 				new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
+		} catch (NullPointerException e) {
+			// Acontece quando estamos apenas rodando um /api/v1/test
+		}
 
 		this.transacional = transacional;
 		em = SigaStarter.emf.createEntityManager();

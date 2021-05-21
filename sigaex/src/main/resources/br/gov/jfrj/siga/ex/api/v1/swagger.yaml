@@ -457,17 +457,48 @@ parameters:
       - Expediente
       - Processo
 
+  isEditandoAnexo:
+    name: isEditandoAnexo
+    in: query
+    description: Informa true se está editando anexo
+    required: false
+    default: false
+    type: boolean
+    
+  isCriandoSubprocesso:
+    name: isCriandoSubprocesso
+    in: query
+    description: Informa true se está criando subprocesso
+    required: false
+    default: false
+    type: boolean
+    
+  siglaMobPai:
+    name: siglaMobPai
+    in: query
+    description: Id do mobil pai
+    required: false
+    type: string
+    
+  isAutuando:
+    name: isAutuando
+    in: query
+    description: Informa true se está autuando
+    required: false
+    default: false
+    type: boolean
+    
 ################################################################################
 #                                           Paths                              #
 ################################################################################
 paths:
   /modelos:
     get:
-      summary: Obtem a lista de modelos que o usuário pode criar
+      summary: Obtem a lista de modelos que o usuário pode criar.
       tags: [modelo]
       security:
         - Bearer: []
-      parameters: []
+      parameters: [] 
       responses:
         200:
           description: Successful response
@@ -483,6 +514,32 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /modelos/lista-hierarquica:
+    get:
+      summary: "Obtem a lista hierárquica de modelos que o usuário pode criar. Os nomes dos modelos devem estar cadastrados no formato Grupo: Nome do Modelo (separado por dois pontos)"
+      tags: [modelo]
+      security:
+        - Bearer: []
+      parameters: 
+        - $ref: "#/parameters/isEditandoAnexo"
+        - $ref: "#/parameters/isCriandoSubprocesso"
+        - $ref: "#/parameters/siglaMobPai"
+        - $ref: "#/parameters/isAutuando"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/ModeloListaHierarquicaItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
   /documentos/{sigla}/modelos-para-incluir:
     get:
       summary: Obtem a lista de modelos que o usuário pode incluir em determinado documento
@@ -2557,7 +2614,7 @@ definitions:
         type: string
 
   ModeloItem:
-    description: Lista modelos disponíveis
+    description: Lista modelos disponíveis.
     type: object
     properties:
       idModelo:
@@ -2566,6 +2623,26 @@ definitions:
         type: string
       descr:
         type: string
+
+  ModeloListaHierarquicaItem:
+    description: Lista hierárquica de modelos disponíveis.
+    type: object
+    properties:        
+      idModelo:
+        type: string
+      nome:
+        type: string
+      descr:
+        type: string
+      level:
+        type: integer
+        format: int64
+      keywords:
+        type: string
+      group:
+        type: boolean
+      selected:
+        type: boolean
 
   ClassificacaoItem:
     description: Lista classificações documentais disponíveis

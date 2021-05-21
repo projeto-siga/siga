@@ -17,6 +17,7 @@
 	<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
 	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />	
 	
+	<c:set var="timeoutMod" scope="session" value="${f:resource('/siga.session.modelos.tempo.expiracao')}" />
 	<div class="container-fluid">
 	<c:if test="${not empty mensagem}">
 			<div class="row">
@@ -65,7 +66,6 @@
 				<input type="hidden" name="exDocumentoDTO.idMobilAutuado" value="${exDocumentoDTO.idMobilAutuado}" /> 
 				<input type="hidden" name="exDocumentoDTO.id" value="${exDocumentoDTO.doc.idDoc}" /> 
 				<input type="hidden" name="exDocumentoDTO.idMod.original" value="${exDocumentoDTO.modelo.idMod}" /> 
-				<input type="hidden" name="jsonHierarquiaDeModelos" value="${jsonHierarquiaDeModelos}" />
 				<input type="hidden" name="cliente" id="cliente" value="${siga_cliente}">
 				<input type="hidden" id="visualizador" value="${f:resource('/sigaex.pdf.visualizador') }"/>
 				<c:choose>
@@ -83,46 +83,25 @@
 				<!-- Modelo -->
 				<div class="row">
 					<div class="col-sm-12">
-						<c:choose>
-							<c:when test="${possuiMaisQueUmModelo}">
-								<div class="form-group">
-									<label for="modelos-select"><fmt:message key="documento.modelo"/></label>
+						<div class="form-group">
+							<label for="modelos-select"><fmt:message key="documento.modelo"/></label>
 
-									<div class="btn-group hierarchy-select form-control p-0 div-width-min0" data-resize="auto" id="modelos-select" style="min-width: 0px !important;">
-											<button type="button" class="btn btn-light dropdown-toggle bg-white"  <c:if test='${podeEditarModelo}'>disabled</c:if>
-											id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-disabled="true">
-											<span class="selected-label pull-left">&nbsp;</span>
-										</button>
-										<div class="dropdown-menu form-control" aria-labelledby="dropdownMenuButton">
-											<div class="hs-searchbox">
-												<input type="text" class="form-control" autocomplete="off" placeholder="Pesquisar modelo...">
-											</div>
-											<ul class="dropdown-menu show inner" role="menu">
-												<c:forEach items="${hierarquiaDeModelos}" var="item">
-													<li class="dropdown-item" data-value="${item.value}"
-														data-level="${item.level}" data-search="${item.searchText}"
-														${item.group ? 'data-group' : ''}
-														${item.selected ? 'data-default-selected' : ''}>
-														<c:if test="${item.group}">
-															<a href="#">${item.text}</a>
-														</c:if>
-														<c:if test="${!item.group}">
-															<a href="#" class="d-inline">${item.text}<small class="pl-2 text-muted">${item.keywords}</small></a>
-														</c:if>
-													</li>
-												</c:forEach>
-											</ul>
-										</div>
-										<input class="hidden hidden-field" name="exDocumentoDTO.idMod" readonly="readonly" onchange="alterouModeloSelect()"
-											aria-hidden="true" type="text" value="${exDocumentoDTO.idMod}" />
+							<div class="btn-group hierarchy-select form-control p-0 div-width-min0" data-resize="auto" id="modelos-select" style="min-width: 0px !important;">
+									<button type="button" class="btn btn-light dropdown-toggle bg-white"  <c:if test='${podeEditarModelo}'>disabled</c:if>
+									id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-disabled="true">
+									<span class="selected-label pull-left">&nbsp;</span>
+								</button>
+								<div class="dropdown-menu form-control" aria-labelledby="dropdownMenuButton">
+									<div class="hs-searchbox">
+										<input type="text" class="form-control" autocomplete="off" placeholder="Pesquisar modelo...">
 									</div>
-									<small class="form-text text-muted"><fmt:message key="documento.help.modelo"/></small>
+									<ul id="ulmod" class="dropdown-menu show inner" role="menu"></ul>
 								</div>
-							</c:when>
-							<c:otherwise>
-								<input type="hidden" name="exDocumentoDTO.idMod" value="${exDocumentoDTO.modelo.idMod}" />
-							</c:otherwise>
-						</c:choose>
+								<input class="hidden hidden-field" name="exDocumentoDTO.idMod" readonly="readonly" onchange="alterouModeloSelect()"
+									aria-hidden="true" type="text" value="${exDocumentoDTO.idMod}" />
+							</div>
+							<small class="form-text text-muted"><fmt:message key="documento.help.modelo"/></small>
+						</div>
 						<c:if test='${exDocumentoDTO.tipoDocumento == "externo" }'>
 							<input type="hidden" name="exDocumentoDTO.idMod" value="${exDocumentoDTO.idMod}" />
 						</c:if>
@@ -609,6 +588,7 @@
 				.val();
 		if (valor !== '' && valor !== valorOriginal) {
 			document.getElementById('alterouModelo').value = 'true';
+			setModeloSelecionado (valor, valorOriginal);
 			sbmt();
 		}
 	}
@@ -628,12 +608,94 @@
 			}
 		}
 	}
+	function getListaModelos () {
+		this.carregando = true; 
+		sigaSpinner.mostrar();
+		$('.selected-label').append('<span id="select-spinner" class="spinner-border text-secondary" role="status"></span><span class="disabled"> Carregando...</span>');
+		const urlParams = new URLSearchParams(window.location.search);
+		const isEditandoAnexo = urlParams.get('criandoAnexo');
+		const isCriandoSubprocesso = urlParams.get('criandoSubprocesso');
+		const isAutuando = urlParams.get('autuando');
+		const siglaMobPai = urlParams.get('mobilPaiSel.sigla');
+		var qry = (isEditandoAnexo? 'isEditandoAnexo=true&' : '')
+			+ (isCriandoSubprocesso? 'isCriandoSubprocesso=true&' : '')
+			+ (isAutuando? 'isAutuando=true&' : '')
+			+ (siglaMobPai != undefined ? 'siglaMobPai=' + siglaMobPai : '');
+		var timeoutModelos = Math.abs(new Date() -
+				new Date(getUserSessionStorage('timeoutModelos' )));
+		var ulMod = $('#ulmod');
+		var listMod = getUserSessionStorage('modelos');
+		var expire = parseInt('${timeoutMod}') * 60000;
+		var lastQry = getUserSessionStorage('lastQry');
 
-	$(document).ready(function() {
+		if (timeoutModelos < expire && qry === lastQry) {
+			// Não expirou o timeout e a query será a mesma da 
+			// ultima vez: carrega da session storage se tiver
+			if (listMod != undefined) {
+				carregaModelos(ulMod, JSON.parse(listMod));
+				return;
+			}
+		}
+		
+		$.ajax({
+	        url: "/sigaex/api/v1/modelos/lista-hierarquica?" + qry,
+	        contentType: "application/json",
+	        dataType: 'json',
+	        success: function(result){
+				if (result.list.length > 0) {
+					setUserSessionStorage('lastQry', qry); 
+					setUserSessionStorage('modelos', JSON.stringify(result.list));
+					var idModSelected = $('input[name="exDocumentoDTO.idMod"]').val();
+					setModeloSelecionado(idModSelected, 0);
+					setUserSessionStorage('timeoutModelos', new Date());
+					carregaModelos(ulMod, JSON.parse(getUserSessionStorage('modelos')));
+				}
+	        },
+			error: function(result){
+				sigaSpinner.ocultar();
+	        	console.log(result.errormsg);
+	        },
+	   });
+	}
+
+	function setModeloSelecionado (idModSelecionado, idModAnterior) {
+		var listMod = JSON.parse(getUserSessionStorage('modelos'));
+		for (var i = 0; i < listMod.length; i++) {
+			var item = listMod[i];
+			if (idModAnterior === item.idModelo)  
+				item.selected = false;
+			if (idModSelecionado === item.idModelo)  
+				item.selected = true;
+		}
+		setUserSessionStorage('modelos', JSON.stringify(listMod));
+		
+	}
+	
+	function carregaModelos (ulMod, listMod) {
+		var idModSelected = $('input[name="exDocumentoDTO.idMod"]').val();
+		for (var i = 0; i < listMod.length; i++) {
+			var item = listMod[i];
+			var liMod = "<li class='dropdown-item' data-value='" + item.idModelo
+				+ "' data-level='" + item.level + "' data-search='" + item.descr + "' "
+				+ (item.group ? 'data-group ' : '')
+				+ (item.selected ? 'data-default-selected ' : '') + ">";
+			if (item.group) {
+				liMod = liMod + "<a href='#'>" + item.nome + "</a></li>";
+			} else {
+				liMod = liMod + "<a href='#' class='d-inline'>" + item.nome 
+					+ "<small class='pl-2 text-muted'>" + (item.keywords != undefined ? item.keywords : '') + "</small></a></li>"
+			}
+			ulMod.append(liMod);
+		}
+		sigaSpinner.ocultar();
 		$('#modelos-select').hierarchySelect({
 			width : 'auto',
 			height : 'auto'
 		});
+	}
+	
+	$(document).ready(function() {
+		getListaModelos();
 
 		personalizacaoSeparar();
 	});

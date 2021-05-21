@@ -407,7 +407,7 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.getMobilPaiSel(),
 				exDocumentoDTO.isCriandoAnexo(), exDocumentoDTO.getAutuando(),
 				exDocumentoDTO.getIdMobilAutuado(),
-				exDocumentoDTO.getCriandoSubprocesso(), null, null, null, null, null);
+				exDocumentoDTO.getCriandoSubprocesso(), null, null, null, null);
 	}
 
 	@Transacional
@@ -460,7 +460,7 @@ public class ExDocumentoController extends ExController {
 
 	@Post("app/expediente/doc/recarregar")
 	public ExDocumentoDTO recarregar(final ExDocumentoDTO exDocumentoDTO,
-			final String[] vars, String jsonHierarquiaDeModelos)
+			final String[] vars)
 			throws IllegalAccessException, InvocationTargetException,
 			IOException {
 		
@@ -480,8 +480,7 @@ public class ExDocumentoController extends ExController {
 						exDocumentoDTO.getAutuando(),
 						exDocumentoDTO.getIdMobilAutuado(),
 						exDocumentoDTO.getCriandoSubprocesso(),
-						null, null, null, null,
-						jsonHierarquiaDeModelos);
+						null, null, null, null);
 		return exDocumentoDTO;
 	}
 
@@ -492,7 +491,7 @@ public class ExDocumentoController extends ExController {
 			final ExMobilSelecao mobilPaiSel, final Boolean criandoAnexo,
 			final Boolean autuando, final Long idMobilAutuado,
 			final Boolean criandoSubprocesso, String modelo, String lotaDest, 
-			String classif, String descr, String jsonHierarquiaDeModelos)
+			String classif, String descr)
 			throws IOException, IllegalAccessException,
 			InvocationTargetException {
 		assertAcesso("");
@@ -825,49 +824,8 @@ public class ExDocumentoController extends ExController {
 			// System.out.println("*** " + p + ", "
 			// + exDocumentoDTO.getParamsEntrevista().get(p));
 		}
-
-		boolean modeloEncontrado = false;
-		ListaHierarquica lh = null;
-		if (jsonHierarquiaDeModelos != null) {
-			String json = decodeHierarquiaDeModelos(jsonHierarquiaDeModelos);
-			ObjectMapper mapper = new ObjectMapper();
-			try {
-				lh = mapper.readValue(json,
-						ListaHierarquica.class);
-				for (ListaHierarquicaItem m : lh.getList()) {
-					if (m.getValue() != null
-							&& m.getValue().equals(exDocumentoDTO.getIdMod())) {
-						m.selected = true;
-						modeloEncontrado = true;
-					}
-				}
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		}
-		if (jsonHierarquiaDeModelos == null || !modeloEncontrado) {
-			lh = new ListaHierarquica();
-			for (ExModelo m : getModelos(exDocumentoDTO)) {
-				lh.add(m.getNmMod(),m.getDescMod(), m.getId(),
-						m.getId().equals(exDocumentoDTO.getIdMod()));
-			}
-
-			ObjectMapper mapper = new ObjectMapper();
-			try {
-				jsonHierarquiaDeModelos = encodeHierarquiaDeModelos(mapper.writeValueAsString(lh));
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		}
-
-		int cModelos = 0;
-		for (ListaHierarquicaItem i : lh.getList())
-			if (!i.group)
-				cModelos++;
-
 		result.include("vars", l);
 
-		result.include("possuiMaisQueUmModelo", cModelos > 1);
 		result.include("par", parFreeMarker);
 		result.include("hasPai", hasPai);
 		result.include("isPaiEletronico", isPaiEletronico);
@@ -885,8 +843,6 @@ public class ExDocumentoController extends ExController {
 		result.include("tipoEmitente", exDocumentoDTO.getTipoEmitente());
 		result.include("podeEditarData", podeEditarData);
 		result.include("podeEditarDescricao", podeEditarDescricao);
-		result.include("hierarquiaDeModelos", lh.getList());
-		result.include("jsonHierarquiaDeModelos", jsonHierarquiaDeModelos);
 		result.include("podeEditarModelo", exDocumentoDTO.getDoc().isFinalizado());
 		result.include("podeTrocarPdfCapturado", podeTrocarPdfCapturado(exDocumentoDTO));
 		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
@@ -895,29 +851,6 @@ public class ExDocumentoController extends ExController {
 		// Desabilita a proteção contra injeção maldosa de html e js
 		this.response.addHeader("X-XSS-Protection", "0");
 		return exDocumentoDTO;
-	}
-
-	private String encodeHierarquiaDeModelos(String json) {
-		byte[] compressed;
-		try {
-			compressed = GZip.compress(json.getBytes(StandardCharsets.UTF_8));
-		} catch (IOException e) {
-			throw new RuntimeException("Erro codificando hierarquia de modelos", e);
-		}
-		String base64 = java.util.Base64.getEncoder().encodeToString(compressed);
-		return base64;
-	}
-
-	private String decodeHierarquiaDeModelos(String base64) {
-		byte[] compressed = java.util.Base64.getDecoder().decode(base64);
-		byte[] decompressed;
-		try {
-			decompressed = GZip.decompress(compressed);
-		} catch (IOException e) {
-			throw new RuntimeException("Erro decodificando hierarquia de modelos", e);
-		}
-		String json = new String(decompressed, StandardCharsets.UTF_8);
-		return json;
 	}
 
 	private Object podeTrocarPdfCapturado(ExDocumentoDTO exDocumentoDTO) {
@@ -997,7 +930,7 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.getMobilPaiSel(),
 				exDocumentoDTO.isCriandoAnexo(), exDocumentoDTO.getAutuando(),
 				exDocumentoDTO.getIdMobilAutuado(),
-				exDocumentoDTO.getCriandoSubprocesso(), null, null, null, null, null);
+				exDocumentoDTO.getCriandoSubprocesso(), null, null, null, null);
 	}
 
 	@SuppressWarnings("static-access")
@@ -1662,7 +1595,7 @@ public class ExDocumentoController extends ExController {
 	@Post("/app/expediente/doc/gravar")
 	public void gravar(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars, final String[] campos,
-			final UploadedFile arquivo, String jsonHierarquiaDeModelos) {
+			final UploadedFile arquivo) {
 		
 		final Ex ex = Ex.getInstance();
 		final ExBL exBL = ex.getBL();		
@@ -1684,8 +1617,7 @@ public class ExDocumentoController extends ExController {
 						exDocumentoDTO.getAutuando(),
 						exDocumentoDTO.getIdMobilAutuado(),
 						exDocumentoDTO.getCriandoSubprocesso(),
-						null, null, null, null,
-						jsonHierarquiaDeModelos);
+						null, null, null, null);
 				return;
 			}
 
@@ -1924,7 +1856,7 @@ public class ExDocumentoController extends ExController {
 					exDocumentoDTO.getMobilPaiSel(),
 					exDocumentoDTO.isCriandoAnexo(), exDocumentoDTO.getAutuando(),
 					exDocumentoDTO.getIdMobilAutuado(),
-					exDocumentoDTO.getCriandoSubprocesso(), null, null, null, null, null);
+					exDocumentoDTO.getCriandoSubprocesso(), null, null, null, null);
 		} else {
 			dao().gravar(exPreenchimento);
 			SigaTransacionalInterceptor.downgradeParaNaoTransacional();

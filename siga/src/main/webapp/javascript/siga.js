@@ -1763,3 +1763,33 @@ $(function() {
 function isNumeric(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 }
+
+function getUser() {
+	return document.getElementById('cadastrante').title;
+}
+
+function setUserSessionStorage(nomeParm, value) {
+	window.sessionStorage.setItem(nomeParm + getUser(), value)
+}
+
+function getUserSessionStorage(nomeParm) {
+	let val = window.sessionStorage.getItem(nomeParm + getUser())
+	if (val === 'true')
+		val = true;
+	if (val === 'false')
+		val = false;
+	return val
+}
+
+function setUserLocalStorage(nomeParm, value) {
+	window.localStorage.setItem(nomeParm + getUser(), value)
+}
+
+function getUserLocalStorage(nomeParm) {
+	let val = window.localStorage.getItem(nomeParm + getUser())
+	if (val === 'true')
+		val = true;
+	if (val === 'false')
+		val = false;
+	return val
+}

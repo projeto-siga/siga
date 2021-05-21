@@ -5,6 +5,7 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
 
 <script type="text/javascript">
 	submitOk = function() {
@@ -17,6 +18,10 @@
 	}
 </script>
 
+<c:set var="descr" value="${listEstado[4].descricao}" />
+
+<c:set var="situacao"><fmt:message key="quadro.situacao" /></c:set>
+
 <c:if test="${idTpFormaDoc == 1}">
 	<div id="sigaex"></div>
 </c:if>
@@ -28,7 +33,24 @@
 		<c:if test="${listEstado[4].descricao != descr}">
 			<thead>
 				<tr>
-					<th width="50%" style="text-align: left; <c:if test="${not empty descr}">padding-top: 0.5em;</c:if>">${listEstado[4].descricao}</th>
+					<th width="50%" style="text-align: left; padding-top: 0.5em;">
+					
+									    
+					    <c:choose>
+
+    <c:when test="${!fn:startsWith(situacao,'???')}">
+        ${situacao}
+    </c:when>    
+
+    <c:otherwise>
+         	 ${listEstado[4].descricao}
+    </c:otherwise>
+
+</c:choose>
+					 
+ 
+					</th>
+
 					<th width="25%" style="text-align: right"><c:if
 							test="${empty descr}">
 							<fmt:message key="quadro.atendente" />

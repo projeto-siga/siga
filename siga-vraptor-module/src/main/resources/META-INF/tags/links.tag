@@ -17,7 +17,7 @@
 </c:if>
 
 <c:if test="${empty linkInline}">
-	<a class="gt-table-action-list" style="${estilo}">
+	<p class="gt-table-action-list" style="${estilo}">
 </c:if>
 
 <jsp:doBody/>

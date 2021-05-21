@@ -159,6 +159,16 @@ public interface IExApiV1 {
 		public String descr;
 	}
 
+	public class ModeloListaHierarquicaItem implements ISwaggerModel {
+		public String idModelo;
+		public String nome;
+		public String descr;
+		public int level;
+		public String keywords;
+		public boolean group;
+		public boolean selected;
+	}
+
 	public class ClassificacaoItem implements ISwaggerModel {
 		public String idClassificacao;
 		public String sigla;
@@ -197,6 +207,21 @@ public interface IExApiV1 {
 
 	public interface IModelosGet extends ISwaggerMethod {
 		public void run(ModelosGetRequest req, ModelosGetResponse resp) throws Exception;
+	}
+
+	public class ModelosListaHierarquicaGetRequest implements ISwaggerRequest {
+		public Boolean isEditandoAnexo;
+		public Boolean isCriandoSubprocesso;
+		public String siglaMobPai;
+		public Boolean isAutuando;
+	}
+
+	public class ModelosListaHierarquicaGetResponse implements ISwaggerResponse {
+		public List<ModeloListaHierarquicaItem> list;
+	}
+
+	public interface IModelosListaHierarquicaGet extends ISwaggerMethod {
+		public void run(ModelosListaHierarquicaGetRequest req, ModelosListaHierarquicaGetResponse resp) throws Exception;
 	}
 
 	public class DocumentosSiglaModelosParaIncluirGetRequest implements ISwaggerRequest {

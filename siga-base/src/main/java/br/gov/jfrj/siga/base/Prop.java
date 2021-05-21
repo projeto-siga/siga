@@ -259,5 +259,9 @@ public class Prop {
 		 * - False ou inexistente: Não confere, evitando leitura dos modelos.
 		 * */
 		provider.addPublicProperty("/siga.pesquisa.confere.modelos", "true");
+		/* Tela de Criar/Editar Documentos: Qtde de minutos para recarregar o combo de modelos que fica 
+		 * armazenado em session storage no browser do usuário.
+		 * */
+		provider.addPublicProperty("/siga.session.modelos.tempo.expiracao", "60");
 	}
 }

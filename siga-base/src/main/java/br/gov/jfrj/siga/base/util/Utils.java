@@ -1,7 +1,9 @@
 package br.gov.jfrj.siga.base.util;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -9,6 +11,8 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+
+import br.gov.jfrj.siga.base.GZip;
 
 public class Utils {
 	/**
@@ -67,5 +71,28 @@ public class Utils {
 		             .map(Cookie::getValue)
 		             .orElse(null);		
 	} 
+
+	public static String encodeAndZip(String json) {
+		byte[] compressed;
+		try {
+			compressed = GZip.compress(json.getBytes(StandardCharsets.UTF_8));
+		} catch (IOException e) {
+			throw new RuntimeException("Erro codificando JSON", e);
+		}
+		String base64 = java.util.Base64.getEncoder().encodeToString(compressed);
+		return base64;
+	}
+
+	public static String unzipAndDecode(String base64) {
+		byte[] compressed = java.util.Base64.getDecoder().decode(base64);
+		byte[] decompressed;
+		try {
+			decompressed = GZip.decompress(compressed);
+		} catch (IOException e) {
+			throw new RuntimeException("Erro decodificando JSON", e);
+		}
+		String json = new String(decompressed, StandardCharsets.UTF_8);
+		return json;
+	}
 	
 }

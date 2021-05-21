@@ -1,0 +1,1 @@
+update corporativo.cp_marcador set his_id_ini = id_marcador where his_id_ini is null;

@@ -231,6 +231,9 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "				order by  doc.dtFinalizacao") })
 public abstract class AbstractExDocumento extends ExArquivo implements
 		Serializable {
+	
+	/* Limitador para indexação do campo pesquisável da descrição do documento. Length Default 4000. Length indexável: 3150*/
+	private static final int LENGTH_DESCR_DOCUMENTO_AI = System.getProperty("sigaex.descricao.documento.ai.length") != null ? Integer.parseInt(System.getProperty("sigaex.descricao.documento.ai.length")) : 4000;
 
 	@Id
 	@SequenceGenerator(sequenceName = "EX_DOCUMENTO_SEQ", name = "EX_DOCUMENTO_SEQ")
@@ -816,7 +819,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 */
 	public void setDescrDocumento(final java.lang.String descrDocumento) {
 		this.descrDocumento = descrDocumento;
-		this.descrDocumentoAI = Texto.removeAcentoMaiusculas(this.descrDocumento);
+		setDescrDocumentoAI(descrDocumento);
 	}
 
 	/**
@@ -1157,7 +1160,10 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	public void setDescrDocumentoAI(java.lang.String descrDocumentoAI) {
-		this.descrDocumentoAI = descrDocumentoAI;
+		if(descrDocumentoAI != null)
+			this.descrDocumentoAI = Texto.removeAcentoMaiusculas(descrDocumentoAI).substring(0, descrDocumentoAI.length() < LENGTH_DESCR_DOCUMENTO_AI ? descrDocumentoAI.length() : LENGTH_DESCR_DOCUMENTO_AI );
+		else
+			this.descrDocumentoAI = descrDocumentoAI;
 	}
 	
 }

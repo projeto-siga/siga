@@ -69,6 +69,7 @@ public class Mesa2 {
 		public String dataDevolucao;
 		public String tipoDoc;
 		public String lotaPosse;
+		public String lotaCadastrante;
 		public String nomePessoaPosse;
 		public List<Marca> list;
 	}
@@ -156,7 +157,22 @@ public class Mesa2 {
 					r.origem = mobil.doc().getSubscritor().getLotacao()
 							.getSigla();
 				}
+			
+			r.dataDevolucao = "ocultar";
+			
+			if (mobil.doc().getSubscritor() != null
+					&& mobil.doc().getLotacao() != null)
 
+				if (SigaMessages.isSigaSP()) {
+					if (references.get(mobil).movTramiteSiglaLotacao != null) {
+						r.lotaCadastrante = references.get(mobil).movTramiteSiglaOrgao;
+					} else {
+						r.lotaCadastrante = mobil.doc().getLotacao().getSigla();
+					}
+				} else {
+					r.lotaCadastrante = mobil.doc().getLotacao().getSigla();
+				}
+			
 			r.dataDevolucao = "ocultar";
 
 			if (references.get(mobil).movUltimaDtFimMov != null
@@ -266,6 +282,17 @@ public class Mesa2 {
 							.filter(mov -> tag.marca.getCpMarcador().equals(mov.getMarcador())) //
 							.map(ExMovimentacao::getDtFimMovDDMMYY) //
 							.findFirst().orElse("[indeterminado]");
+				}
+
+				if(tag.marca.getCpMarcador().isADevolverForaDoPrazo()) {
+					t.nome += ", atribuído pela unidade " + tag.marca.getExMobil()
+							.getExMovimentacaoSet().stream() //
+							.filter(mov -> mov.getExTipoMovimentacao().getId()
+									.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO))
+							.filter(mov -> !mov.isCancelada()) //
+							.filter(mov -> tag.marca.getCpMarcador().equals(mov.getMarcador())) //
+							.map(ExMovimentacao::getCadastranteString) //
+							.findFirst().orElse(r.lotaCadastrante);
 				}
 
 				r.list.add(t);

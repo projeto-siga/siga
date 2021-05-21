@@ -65,7 +65,7 @@ public class ConversorHTMLFactory extends AbstractConversorHTMLFactory {
 
 	@Override
 	public ConversorHtml getConversorPadrao() throws Exception {
-		return new Nheengatu();
+		return new FlyingSaucer();
 	}
 
 	@Override

@@ -23,7 +23,7 @@
 								<div class="col">
 									<div class="form-group">
 										<label>Número do Processo</label> 
-										<input type="text" id="id_number" name="n" placeholder="Informe o número do Protocolo" class="form-control" value="${n}"/>
+										<input type="text" id="id_number" name="n" placeholder="Informe o número do Processo" class="form-control" value="${n}"/>
 									</div>
 								</div>
 							</div>

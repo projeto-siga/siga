@@ -24,6 +24,7 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 public class SigaApiV1Servlet extends SwaggerServlet implements IPropertyProvider {
 	private static final long serialVersionUID = 1756711359239182178L;
+	public static boolean migrationComplete = false;
 
 //	public static ExecutorService executor = null;
 
@@ -103,7 +104,7 @@ public class SigaApiV1Servlet extends SwaggerServlet implements IPropertyProvide
 
 			@Override
 			public boolean test() throws Exception {
-				try (ApiContext ctx = new ApiContext(true, true)) {
+				try (ApiContext ctx = new ApiContext(false, false)) {
 					return CpDao.getInstance().dt() != null;
 				}
 			}
@@ -111,6 +112,24 @@ public class SigaApiV1Servlet extends SwaggerServlet implements IPropertyProvide
 			@Override
 			public boolean isPartial() {
 				return false;
+			}
+		});
+
+		addDependency(new TestableDependency("database", "sigaexds-migration", false, 0, 10000) {
+
+			@Override
+			public String getUrl() {
+				return getProperty("datasource.name") + "-migration";
+			}
+
+			@Override
+			public boolean test() throws Exception {
+				return migrationComplete;
+			}
+
+			@Override
+			public boolean isPartial() {
+				return true;
 			}
 		});
 
@@ -140,7 +159,7 @@ public class SigaApiV1Servlet extends SwaggerServlet implements IPropertyProvide
 		addPublicProperty("datasource.name", "java:/jboss/datasources/SigaCpDS");
 		addPublicProperty("senha.usuario.expiracao.dias", null);
 		addPrivateProperty("sinc.password", null);
-		
+
 	}
 
 	@Override

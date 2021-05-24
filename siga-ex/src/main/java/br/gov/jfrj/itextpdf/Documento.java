@@ -190,11 +190,13 @@ public class Documento {
 				
 
 				/*** Exibe para Documentos Capturados a Funcao / Unidade ***/
-				if (movAssinatura.getExDocumento().isInternoCapturado()) { /* Interno Exibe Personalização se realizada */
-					if (movAssinatura.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA) || movAssinatura.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO)) {
-						s.append(Ex.getInstance().getBL().extraiPersonalizacaoAssinatura(movAssinatura));
-					}
-				} else if(movAssinatura.getExDocumento().isExternoCapturado()) { 
+				if (movAssinatura.getExDocumento().isInternoCapturado()
+						&& (movAssinatura.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA)
+								|| movAssinatura.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO))) {
+					/* Interno Exibe Personalização se realizada */
+					s.append(Ex.getInstance().getBL().extraiPersonalizacaoAssinatura(movAssinatura));
+				} else if (movAssinatura.getExDocumento().isExternoCapturado()
+						|| movAssinatura.getExDocumento().isInternoCapturado()) {
 					s.append(" - ");
 					s.append(movAssinatura.getCadastrante().getFuncaoString());
 					s.append(" / ");

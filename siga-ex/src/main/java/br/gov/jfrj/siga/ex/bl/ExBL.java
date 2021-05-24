@@ -7721,7 +7721,7 @@ public class ExBL extends CpBL {
 		} else {
 		
 			for (ExMovimentacao mov : listaMovimentacoes) {
-				if (!mov.equals(mov)) {
+				if (!mov.equals(movimentacao)) {
 					if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO) {
 						if (mov.getExMovimentacaoCanceladora() == null) {
 							if (mov.getSubscritor().equivale(movimentacao.getSubscritor())) {
@@ -7732,7 +7732,7 @@ public class ExBL extends CpBL {
 					}
 				}
 			}
-			if (movimentacaoOrigem.getNmFuncaoSubscritor() != null ) {
+			if (movimentacaoOrigem != null && movimentacaoOrigem.getNmFuncaoSubscritor() != null ) {
 				personalizacaoAssinatura = movimentacaoOrigem.getNmFuncaoSubscritor().split(";");	
 			} else if (!exibeFuncaoLotacaoSemPersonalizacao) {
 				return "";

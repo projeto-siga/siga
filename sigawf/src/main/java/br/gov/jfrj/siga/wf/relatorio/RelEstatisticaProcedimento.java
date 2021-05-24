@@ -33,6 +33,7 @@ import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaCalendar;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 import br.gov.jfrj.siga.wf.model.WfMov;
@@ -139,9 +140,17 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 		String procedimento = (String) parametros.get("nomeProcedimento");
 
 		Long pdId = Long.parseLong((String) parametros.get("pdId"));
+		if (Utils.empty(parametros.get("dataInicialDe")))
+			throw new AplicacaoException("Parâmetro 'Iniciado De' não informado!");
 		Date dataInicialDe = getDataDe("dataInicialDe");
+		if (Utils.empty(parametros.get("dataInicialAte")))
+			throw new AplicacaoException("Parâmetro 'Iniciado Até' não informado!");
 		Date dataInicialAte = getDataAte("dataInicialAte");
+		if (Utils.empty(parametros.get("dataFinalDe")))
+			throw new AplicacaoException("Parâmetro 'Finalizado De' não informado!");
 		Date dataFinalDe = getDataDe("dataFinalDe");
+		if (Utils.empty(parametros.get("dataFinalAte")))
+			throw new AplicacaoException("Parâmetro 'Finalizado Até' não informado!");
 		Date dataFinalAte = getDataAte("dataFinalAte");
 
 		GregorianCalendar calendario = new GregorianCalendar();
@@ -342,6 +351,8 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 	 */
 	private Date getDataDe(String data) {
 		String pDT = (String) parametros.get(data);
+		if (pDT == null || pDT.trim().isEmpty())
+			return null;
 		GregorianCalendar dt = new GregorianCalendar();
 
 		dt.set(new Integer(pDT.substring(6)), new Integer(pDT.substring(3, 5)) - 1, new Integer(pDT.substring(0, 2)), 0,
@@ -360,6 +371,8 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 	 */
 	private Date getDataAte(String data) {
 		String pDT = (String) parametros.get(data);
+		if (pDT == null || pDT.trim().isEmpty())
+			return null;
 		GregorianCalendar dt = new GregorianCalendar();
 
 		dt.set(new Integer(pDT.substring(6)), new Integer(pDT.substring(3, 5)) - 1, new Integer(pDT.substring(0, 2)),

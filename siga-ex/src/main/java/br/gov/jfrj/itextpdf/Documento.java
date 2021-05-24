@@ -194,7 +194,7 @@ public class Documento {
 						&& (movAssinatura.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA)
 								|| movAssinatura.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO))) {
 					/* Interno Exibe Personalização se realizada */
-					s.append(Ex.getInstance().getBL().extraiPersonalizacaoAssinatura(movAssinatura));
+					s.append(Ex.getInstance().getBL().extraiPersonalizacaoAssinatura(movAssinatura,true));
 				} else if (movAssinatura.getExDocumento().isExternoCapturado()
 						|| movAssinatura.getExDocumento().isInternoCapturado()) {
 					s.append(" - ");

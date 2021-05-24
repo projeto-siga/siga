@@ -7699,7 +7699,7 @@ public class ExBL extends CpBL {
 		}
 	}
 	
-	public String extraiPersonalizacaoAssinatura(final ExMovimentacao movimentacao) {
+	public String extraiPersonalizacaoAssinatura(final ExMovimentacao movimentacao, boolean exibeFuncaoLotacaoSemPersonalizacao) {
 		/*
 		 *getNmFuncaoSubscritor = [0] - personalizarFuncao [1] - personalizarUnidade [2] - personalizarLocalidade [3] - personalizarNome
 		 */
@@ -7715,10 +7715,9 @@ public class ExBL extends CpBL {
 		if (movimentacao.getExDocumento().getSubscritor().equivale(movimentacao.getSubscritor())) {
 			if (movimentacao.getExDocumento().getNmFuncaoSubscritor() != null ) {
 				personalizacaoAssinatura = movimentacao.getExDocumento().getNmFuncaoSubscritor().split(";");
-			} else {
+			} else if (!exibeFuncaoLotacaoSemPersonalizacao) {
 				return "";
 			}
-			
 		} else {
 		
 			for (ExMovimentacao mov : listaMovimentacoes) {
@@ -7734,26 +7733,27 @@ public class ExBL extends CpBL {
 				}
 			}
 			if (movimentacaoOrigem.getNmFuncaoSubscritor() != null ) {
-				personalizacaoAssinatura = movimentacaoOrigem.getNmFuncaoSubscritor().split(";");
-			} else {
+				personalizacaoAssinatura = movimentacaoOrigem.getNmFuncaoSubscritor().split(";");	
+			} else if (!exibeFuncaoLotacaoSemPersonalizacao) {
 				return "";
 			}
-			
 		}
 		
 
 		StringBuilder funcaoCargoPersonalizadoAssinatura = new StringBuilder();
 		
 		funcaoCargoPersonalizadoAssinatura.append(" - ");
-		if (!"".equals(personalizacaoAssinatura[0])) {
+		if (personalizacaoAssinatura[0] != null && !"".equals(personalizacaoAssinatura[0])) {
 			funcaoCargoPersonalizadoAssinatura.append(personalizacaoAssinatura[0]);
 		} else {
 			funcaoCargoPersonalizadoAssinatura.append(movimentacao.getCadastrante().getFuncaoString());
 		}
 		funcaoCargoPersonalizadoAssinatura.append(" / ");
 		if (personalizacaoAssinatura.length > 1) {
-			if (!"".equals(personalizacaoAssinatura[1])) {
+			if (personalizacaoAssinatura[1] != null && !"".equals(personalizacaoAssinatura[1])) {
 			 funcaoCargoPersonalizadoAssinatura.append(personalizacaoAssinatura[1]);
+			} else {
+				funcaoCargoPersonalizadoAssinatura.append(movimentacao.getCadastrante().getLotacao().getSigla());
 			}
 		} else {
 			funcaoCargoPersonalizadoAssinatura.append(movimentacao.getCadastrante().getLotacao().getSigla());

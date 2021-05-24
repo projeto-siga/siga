@@ -27,7 +27,7 @@
 
 <script src="/siga/javascript/jquery/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
 
-<script src="/siga/javascript/siga.js?v=1614289085" type="text/javascript" charset="utf-8"></script>
+<script src="/siga/javascript/siga.js?v=1621865676" type="text/javascript" charset="utf-8"></script>
 
 <script src="/siga/javascript/picketlink.js" type="text/javascript" charset="utf-8"></script>
 

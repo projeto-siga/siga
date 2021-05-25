@@ -14,18 +14,17 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.JWTVerifyException;
 
 import br.gov.jfrj.siga.base.Prop;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DownloadJwtFilenameGetRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DownloadJwtFilenameGetResponse;
+import br.gov.jfrj.siga.context.AcessoPublico;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDownloadJwtFilenameGet;
 
 @AcessoPublico
 public class DownloadJwtFilenameGet implements IDownloadJwtFilenameGet {
 
 	@Override
-	public void run(DownloadJwtFilenameGetRequest req, DownloadJwtFilenameGetResponse resp) throws Exception {
+	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
 		Map<String, Object> map = verify(req.jwt);
 
-		//String principal = (String) map.get("principal");
+		// String principal = (String) map.get("principal");
 		String uuid = (String) map.get("uuid");
 		String doc = (String) map.get("doc");
 		String filename = (String) map.get("fname");

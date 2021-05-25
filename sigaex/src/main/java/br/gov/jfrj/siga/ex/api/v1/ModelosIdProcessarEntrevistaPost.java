@@ -16,31 +16,25 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IModelosIdProcessarEntrevistaPost;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.ModelosIdProcessarEntrevistaPostRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.ModelosIdProcessarEntrevistaPostResponse;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class ModelosIdProcessarEntrevistaPost implements IModelosIdProcessarEntrevistaPost {
 
 	@Override
-	public void run(ModelosIdProcessarEntrevistaPostRequest req, ModelosIdProcessarEntrevistaPostResponse resp)
-			throws Exception {
-		try (ApiContext ctx = new ApiContext(false, true)) {
-			ctx.assertAcesso("");
-			ExModelo mod = ExDao.getInstance().consultar(Long.parseLong(req.id), ExModelo.class, false);
-			ExDocumento doc = new ExDocumento();
-			doc.setExModelo(mod);
+	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
+		ExModelo mod = ExDao.getInstance().consultar(Long.parseLong(req.id), ExModelo.class, false);
+		ExDocumento doc = new ExDocumento();
+		doc.setExModelo(mod);
 
-			Map<String, String> formParams = obterFormParams(req.entrevista);
+		Map<String, String> formParams = obterFormParams(req.entrevista);
 
-			CpOrgaoUsuario orgaoUsuario = ctx.getCadastrante().getOrgaoUsuario();
-			String html = Ex.getInstance().getBL().processarModelo(doc, "entrevista", formParams, orgaoUsuario);
-			resp.setContenttype("text/html");
-			byte[] bytes = html.getBytes(StandardCharsets.UTF_8);
-			resp.setContentlength((long) bytes.length);
-			resp.setInputstream(new ByteArrayInputStream(bytes));
-		}
+		CpOrgaoUsuario orgaoUsuario = ctx.getCadastrante().getOrgaoUsuario();
+		String html = Ex.getInstance().getBL().processarModelo(doc, "entrevista", formParams, orgaoUsuario);
+		resp.setContenttype("text/html");
+		byte[] bytes = html.getBytes(StandardCharsets.UTF_8);
+		resp.setContentlength((long) bytes.length);
+		resp.setInputstream(new ByteArrayInputStream(bytes));
 	}
 
 	private Map<String, String> obterFormParams(String entrevista)

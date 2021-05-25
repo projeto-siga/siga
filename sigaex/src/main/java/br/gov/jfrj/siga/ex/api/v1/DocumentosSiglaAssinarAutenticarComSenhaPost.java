@@ -49,34 +49,27 @@ abstract class DocumentosSiglaAssinarAutenticarComSenhaPost {
 	 *                            {@link ExDocumento#getSigla() Sigla do Documento}
 	 *                            assinada e com o retorno da Assinatura (ou
 	 *                            <code>OK</code> se esse retorno estiver vazio).
+	 * @param ctx2
 	 * @throws Exception Se houver algo de errado.
 	 */
-	protected void executar(String sigla, BiConsumer<String, String> preenchedorResposta) throws Exception {
+	protected void executar(String sigla, BiConsumer<String, String> preenchedorResposta, ExApiV1Context ctx)
+			throws Exception {
 		// Necessário pois é chamado o método "realPath" durante a criação do
 		// PDF.
-		try (ApiContext ctx = new ApiContext(true, true)) {
-			try {
-				ctx.assertAcesso("");
-	
-				DpPessoa cadastrante = ctx.getCadastrante();
-				DpPessoa titular = cadastrante;
-				DpLotacao lotaTitular = cadastrante.getLotacao();
-	
-				ExMobil mob = getMob(sigla);
-	
-				assertAcesso(titular, lotaTitular, mob);
-				assertDocumento(titular, lotaTitular, mob);
-	
-				String retornoAssinatura = Ex.getInstance().getBL().assinarDocumentoComSenha(cadastrante, lotaTitular,
-						mob.doc(), null, cadastrante.getSiglaCompleta(), null, false, false, titular, this.autenticar, null,
-						false, false);
-	
-				preenchedorResposta.accept(mob.doc().getCodigo(), Objects.toString(retornoAssinatura, "OK"));
-			} catch (Exception e) {
-				ctx.rollback(e);
-				throw e;
-			}
-		}
+		DpPessoa cadastrante = ctx.getCadastrante();
+		DpPessoa titular = cadastrante;
+		DpLotacao lotaTitular = cadastrante.getLotacao();
+
+		ExMobil mob = getMob(sigla);
+
+		assertAcesso(titular, lotaTitular, mob);
+		assertDocumento(titular, lotaTitular, mob);
+
+		String retornoAssinatura = Ex.getInstance().getBL().assinarDocumentoComSenha(cadastrante, lotaTitular,
+				mob.doc(), null, cadastrante.getSiglaCompleta(), null, false, false, titular, this.autenticar, null,
+				false, false);
+
+		preenchedorResposta.accept(mob.doc().getCodigo(), Objects.toString(retornoAssinatura, "OK"));
 	}
 
 	private ExMobil getMob(String sigla) {

@@ -9,7 +9,6 @@ import java.util.Date;
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 
-import com.crivano.swaggerservlet.SwaggerException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
@@ -18,13 +17,10 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaGetRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaGetResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaGet;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
@@ -32,56 +28,48 @@ import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 
 	@Override
-	public void run(DocumentosSiglaGetRequest req, DocumentosSiglaGetResponse resp) throws Exception {
-		try (ApiContext ctx = new ApiContext(false, true)) {
-			ctx.assertAcesso("");
-	
-			DpPessoa cadastrante = ctx.getCadastrante();
-			DpPessoa titular = cadastrante;
-			DpLotacao lotaTitular = cadastrante.getLotacao();
-	
-			ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp);
-	
-			ctx.assertAcesso(mob, titular, lotaTitular);
-	
-			ExDocumento doc = mob.doc();
-			// Mostra o último volume de um processo ou a primeira via de um
-			// expediente
-			if (mob == null || mob.isGeral()) {
-				if (mob.getDoc().isFinalizado()) {
-					if (doc.isProcesso())
-						mob = doc.getUltimoVolume();
-					else
-						mob = doc.getPrimeiraVia();
-				}
-			}
-			
-			// Recebimento automático
-			if (Ex.getInstance().getComp().deveReceberEletronico(titular, lotaTitular, mob)) {
-				try {
-					Ex.getInstance().getBL().receber(cadastrante, lotaTitular, mob, new Date());
-				} catch (Exception e) {
-					e.printStackTrace(System.out);
-					throw e;
-				}
-			}
+	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
+		DpPessoa cadastrante = ctx.getCadastrante();
+		DpPessoa titular = cadastrante;
+		DpLotacao lotaTitular = cadastrante.getLotacao();
 
-			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, cadastrante, titular, lotaTitular, true, false, true);
-			//TODO: Resolver o problema declares multiple JSON fields named serialVersionUID
-			// Usado o Expose temporariamente
-			Gson gson = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY)
-					.excludeFieldsWithModifiers(Modifier.TRANSIENT).create();
+		ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp);
 
-			String json = gson.toJson(docVO);
-	
-			resp.inputstream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
-			resp.contenttype = "application/json";
-		} catch (AplicacaoException | SwaggerException e) {
-			throw e;
-		} catch (Exception e) {
-			e.printStackTrace(System.out);
-			throw e;
+		ctx.assertAcesso(mob, titular, lotaTitular);
+
+		ExDocumento doc = mob.doc();
+		// Mostra o último volume de um processo ou a primeira via de um
+		// expediente
+		if (mob == null || mob.isGeral()) {
+			if (mob.getDoc().isFinalizado()) {
+				if (doc.isProcesso())
+					mob = doc.getUltimoVolume();
+				else
+					mob = doc.getPrimeiraVia();
+			}
 		}
+
+		// Recebimento automático
+		if (Ex.getInstance().getComp().deveReceberEletronico(titular, lotaTitular, mob)) {
+			try {
+				Ex.getInstance().getBL().receber(cadastrante, lotaTitular, mob, new Date());
+			} catch (Exception e) {
+				e.printStackTrace(System.out);
+				throw e;
+			}
+		}
+
+		final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, cadastrante, titular, lotaTitular, true, false, true);
+		// TODO: Resolver o problema declares multiple JSON fields named
+		// serialVersionUID
+		// Usado o Expose temporariamente
+		Gson gson = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY)
+				.excludeFieldsWithModifiers(Modifier.TRANSIENT).create();
+
+		String json = gson.toJson(docVO);
+
+		resp.inputstream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
+		resp.contenttype = "application/json";
 	}
 
 	@Override

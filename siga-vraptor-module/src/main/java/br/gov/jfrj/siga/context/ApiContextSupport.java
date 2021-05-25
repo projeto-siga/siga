@@ -89,7 +89,7 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 	 *                                       sessão.
 	 * @see ContextoPersistencia#getUserPrincipal()
 	 */
-	static String buscarEValidarUsuarioLogado() throws SwaggerAuthorizationException {
+	public static String buscarEValidarUsuarioLogado() throws SwaggerAuthorizationException {
 		String userPrincipal = ContextoPersistencia.getUserPrincipal();
 		if (isNull(userPrincipal)) {
 			throw new SwaggerAuthorizationException("Usuário não está logado");

@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.api.v1;
+package br.gov.jfrj.siga.context;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Target({ ElementType.METHOD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AcessoPublico {
+public @interface AcessoPublicoEPrivado {
 
 }

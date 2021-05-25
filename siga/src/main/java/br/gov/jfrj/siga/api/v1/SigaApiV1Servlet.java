@@ -14,6 +14,8 @@ import com.crivano.swaggerservlet.dependency.TestableDependency;
 
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.Prop.IPropertyProvider;
+import br.gov.jfrj.siga.context.AcessoPublico;
+import br.gov.jfrj.siga.context.AcessoPublicoEPrivado;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
 import br.gov.jfrj.siga.model.ContextoPersistencia;

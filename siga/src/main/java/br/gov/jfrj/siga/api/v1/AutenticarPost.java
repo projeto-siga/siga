@@ -14,6 +14,7 @@ import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.IAutenticarPost;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.context.AcessoPublico;
 import br.gov.jfrj.siga.cp.AbstractCpAcesso;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;

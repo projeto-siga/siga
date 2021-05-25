@@ -55,8 +55,7 @@
 				  </div>
 				  <div class="card-body">
 				    <p>Para utilizar a Confirmação da Autenticidade do Documento é
-					obrigatório informar o número do documento que se encontra no rodapé
-					do documento a ser consultado.</p>
+					obrigatório informar o número do documento que se encontra no rodapé.</p>
 					<p>
 						<u>Preenchimento do campo Número do Documento</u>
 					</p>

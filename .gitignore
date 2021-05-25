@@ -92,3 +92,6 @@ sigasr/.tern-project
 # Sphinx documentation
 docs/_build/
 resultado.txt
+siga-ex-sinc/.factorypath
+siga/.factorypath
+siga-ex-gsa/.factorypath

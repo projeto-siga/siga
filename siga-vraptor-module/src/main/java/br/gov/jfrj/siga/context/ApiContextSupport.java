@@ -46,7 +46,7 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 			// Acontece quando estamos apenas rodando um /api/v1/test
 		}
 
-		if (!getCtx().getAction().getClass().isAnnotationPresent(Transacional.class))
+		if (ctx != null && getCtx().getAction().getClass().isAnnotationPresent(Transacional.class))
 			this.transacional = true;
 
 		em = criarEntityManager();
@@ -55,7 +55,9 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 		ModeloDao.freeInstance();
 		inicializarDao();
 		try {
-			atualizarCacheDeConfiguracoes();
+			if (ctx != null
+					&& !getCtx().getAction().getClass().isAnnotationPresent(NaoAtualizarCacheDeConfiguracoes.class))
+				atualizarCacheDeConfiguracoes();
 		} catch (Exception e1) {
 			throw new RuntimeException("Não foi possível atualizar o cache de configurações", e1);
 		}
@@ -131,7 +133,8 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 			}
 		}
 
-		assertAcesso("");
+		if (ContextoPersistencia.getUserPrincipal() != null)
+			assertAcesso("");
 	}
 
 	@Override

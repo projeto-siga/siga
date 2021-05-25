@@ -2,9 +2,11 @@ package br.gov.jfrj.siga.ex.api.v1;
 
 import br.gov.jfrj.itextpdf.Status;
 import br.gov.jfrj.siga.context.AcessoPublico;
+import br.gov.jfrj.siga.context.NaoAtualizarCacheDeConfiguracoes;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IStatusChaveGet;
 
 @AcessoPublico
+@NaoAtualizarCacheDeConfiguracoes
 public class StatusChaveGet implements IStatusChaveGet {
 
 	@Override

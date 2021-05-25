@@ -103,6 +103,7 @@ public class SigaApiV1Servlet extends SwaggerServlet implements IPropertyProvide
 			@Override
 			public boolean test() throws Exception {
 				try (SigaApiV1Context ctx = new SigaApiV1Context()) {
+					ctx.init(null);
 					return CpDao.getInstance().dt() != null;
 				}
 			}

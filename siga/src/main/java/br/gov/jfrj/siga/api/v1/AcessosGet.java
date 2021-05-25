@@ -2,20 +2,14 @@ package br.gov.jfrj.siga.api.v1;
 
 import java.util.stream.Collectors;
 
-import com.crivano.swaggerservlet.SwaggerException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.AcessoItem;
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.AcessosGetRequest;
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.AcessosGetResponse;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.IAcessosGet;
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.CurrentRequest;
 import br.gov.jfrj.siga.base.RequestInfo;
 import br.gov.jfrj.siga.cp.CpAcesso;
-import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class AcessosGet implements IAcessosGet {
 
@@ -29,22 +23,11 @@ public class AcessosGet implements IAcessosGet {
 	}
 
 	@Override
-	public void run(AcessosGetRequest req, AcessosGetResponse resp) throws Exception {
-		try (ApiContext ctx = new ApiContext(false, true)) {
-			CurrentRequest.set(
-					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-			ctx.assertAcesso("");
-			SigaObjects so = ApiContext.getSigaObjects();
-			DpPessoa cadastrante = so.getCadastrante();
-	
-			resp.list = CpDao.getInstance().consultarAcessosRecentes(cadastrante).stream().map(this::cpAcessoToAcessoItem)
-					.collect(Collectors.toList());
-		} catch (AplicacaoException | SwaggerException e) {
-			throw e;
-		} catch (Exception e) {
-			e.printStackTrace(System.out);
-			throw e;
-		}
+	public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception {
+		CurrentRequest.set(
+				new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
+		resp.list = CpDao.getInstance().consultarAcessosRecentes(ctx.getCadastrante()).stream()
+				.map(this::cpAcessoToAcessoItem).collect(Collectors.toList());
 	}
 
 	@Override

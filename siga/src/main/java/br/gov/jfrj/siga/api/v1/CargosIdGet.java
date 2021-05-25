@@ -6,37 +6,27 @@ import java.util.List;
 import com.crivano.swaggerservlet.SwaggerException;
 
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Cargo;
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.CargosIdGetRequest;
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.CargosIdGetResponse;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.ICargosIdGet;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class CargosIdGet implements ICargosIdGet {
 	@Override
-	public void run(CargosIdGetRequest req, CargosIdGetResponse resp) throws Exception {
-		try (ApiContext ctx = new ApiContext(false, true)) {
-			if (req.id == null) {
-				throw new AplicacaoException("O argumento de pesquisa id é obrigatório.");
-			}
-	
-			resp.cargo = pesquisarPorId(req, resp);
-		} catch (AplicacaoException e) {
-			throw e;
-		} catch (Exception e) {
-			e.printStackTrace(System.out);
-			throw e;
+	public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception {
+		if (req.id == null) {
+			throw new AplicacaoException("O argumento de pesquisa id é obrigatório.");
 		}
+
+		resp.cargo = pesquisarPorId(req, resp);
 	}
 
-	private Cargo pesquisarPorId(CargosIdGetRequest req, CargosIdGetResponse resp) throws SwaggerException {
-		List<DpCargo> l = (ArrayList<DpCargo>) CpDao.getInstance()
-				.consultarPorIdOuIdInicial(DpCargo.class, "idCargoIni", "dataFimCargo", Long.valueOf(req.id));
+	private Cargo pesquisarPorId(Request req, Response resp) throws SwaggerException {
+		List<DpCargo> l = (ArrayList<DpCargo>) CpDao.getInstance().consultarPorIdOuIdInicial(DpCargo.class,
+				"idCargoIni", "dataFimCargo", Long.valueOf(req.id));
 		if (l.size() == 0)
-			throw new SwaggerException(
-					"Nenhum cargo foi encontrado para os parâmetros informados.", 404, null, req, resp, null);
+			throw new SwaggerException("Nenhum cargo foi encontrado para os parâmetros informados.", 404, null, req,
+					resp, null);
 
 //		if (Long.valueOf(cargo.getOrgaoUsuario().getIdOrgaoUsu()) != so.getTitular().getOrgaoUsuario().getIdOrgaoUsu()) 
 //			throw new SwaggerException(

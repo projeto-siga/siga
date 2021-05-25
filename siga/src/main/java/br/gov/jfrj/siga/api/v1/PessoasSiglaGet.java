@@ -10,9 +10,6 @@ import br.gov.jfrj.siga.api.v1.ISigaApiV1.IPessoasSiglaGet;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Lotacao;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Orgao;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Pessoa;
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.PessoasSiglaGetRequest;
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.PessoasSiglaGetResponse;
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
@@ -22,29 +19,20 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 
 public class PessoasSiglaGet implements IPessoasSiglaGet {
 	@Override
-	public void run(PessoasSiglaGetRequest req, PessoasSiglaGetResponse resp) throws Exception {
-		try (ApiContext ctx = new ApiContext(false, true)) {
-			if (StringUtils.isEmpty(req.sigla))
-				throw new SwaggerException(
-						"O parâmetro sigla é obrigatório.", 400, null, req, resp, null);
+	public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception {
+		if (StringUtils.isEmpty(req.sigla))
+			throw new SwaggerException("O parâmetro sigla é obrigatório.", 400, null, req, resp, null);
 
-			final DpPessoa flt = new DpPessoa();
-			flt.setSigla(req.sigla.toUpperCase());
-			DpPessoa pes = CpDao.getInstance().consultarPorSigla(flt);
-			if (pes == null)
-				throw new SwaggerException("Nenhuma pessoa foi encontrada contendo a sigla informada.",
-						404, null, req, resp, null);
+		final DpPessoa flt = new DpPessoa();
+		flt.setSigla(req.sigla.toUpperCase());
+		DpPessoa pes = CpDao.getInstance().consultarPorSigla(flt);
+		if (pes == null)
+			throw new SwaggerException("Nenhuma pessoa foi encontrada contendo a sigla informada.", 404, null, req,
+					resp, null);
 
-			resp.pessoa = pessoaToResultadoPesquisa(pes);
-			
-		} catch (AplicacaoException | SwaggerException e) {
-			throw e;
-		} catch (Exception e) {
-			e.printStackTrace(System.out);
-			throw e;
-		}
+		resp.pessoa = pessoaToResultadoPesquisa(pes);
 	}
-	
+
 	private Pessoa pessoaToResultadoPesquisa(DpPessoa p) {
 		Pessoa pessoa = new Pessoa();
 		Orgao orgao = new Orgao();
@@ -56,7 +44,7 @@ public class PessoasSiglaGet implements IPessoasSiglaGet {
 		pessoa.sigla = p.getSiglaCompleta();
 		pessoa.nome = p.getNomePessoa();
 		pessoa.isExternaPessoa = p.isUsuarioExterno();
-		
+
 		// Orgao Pessoa
 		CpOrgaoUsuario o = p.getOrgaoUsuario();
 		orgao.idOrgao = o.getId().toString();
@@ -88,7 +76,7 @@ public class PessoasSiglaGet implements IPessoasSiglaGet {
 		pessoa.funcaoConfianca = funcao;
 		return pessoa;
 	}
-	
+
 	@Override
 	public String getContext() {
 		return "selecionar pessoas";

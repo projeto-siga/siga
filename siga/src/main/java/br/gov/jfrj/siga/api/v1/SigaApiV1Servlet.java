@@ -3,10 +3,6 @@ package br.gov.jfrj.siga.api.v1;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -104,7 +100,7 @@ public class SigaApiV1Servlet extends SwaggerServlet implements IPropertyProvide
 
 			@Override
 			public boolean test() throws Exception {
-				try (ApiContext ctx = new ApiContext(false, false)) {
+				try (SigaApiV1Context ctx = new SigaApiV1Context()) {
 					return CpDao.getInstance().dt() != null;
 				}
 			}

@@ -7,39 +7,27 @@ import org.apache.commons.lang3.StringUtils;
 import com.crivano.swaggerservlet.SwaggerException;
 
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.FuncaoConfianca;
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.FuncoesIdGetRequest;
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.FuncoesIdGetResponse;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.IFuncoesIdGet;
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
 public class FuncoesIdGet implements IFuncoesIdGet {
 	@Override
-	public void run(FuncoesIdGetRequest req, FuncoesIdGetResponse resp) throws Exception {
-		try (ApiContext ctx = new ApiContext(false, true)) {
-			if (StringUtils.isEmpty(req.id))
-				throw new SwaggerException(
-						"O argumento de pesquisa id é obrigatório.", 400, null, req, resp, null);
+	public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception {
+		if (StringUtils.isEmpty(req.id))
+			throw new SwaggerException("O argumento de pesquisa id é obrigatório.", 400, null, req, resp, null);
 
-			resp.funcaoConfianca = pesquisarPorId(req, resp);
-	
-		} catch (AplicacaoException e) {
-			throw e;
-		} catch (Exception e) {
-			e.printStackTrace(System.out);
-			throw e;
-		}
+		resp.funcaoConfianca = pesquisarPorId(req, resp);
 	}
 
-	private FuncaoConfianca pesquisarPorId(FuncoesIdGetRequest req, FuncoesIdGetResponse resp) throws SwaggerException {
+	private FuncaoConfianca pesquisarPorId(Request req, Response resp) throws SwaggerException {
 		ArrayList<DpFuncaoConfianca> la = (ArrayList<DpFuncaoConfianca>) CpDao.getInstance()
 				.consultarPorIdOuIdInicial(DpFuncaoConfianca.class, "idFuncaoIni", null, Long.valueOf(req.id));
-		ArrayList<DpFuncaoConfianca> l = (ArrayList<DpFuncaoConfianca>) CpDao.getInstance()
-				.consultarPorIdOuIdInicial(DpFuncaoConfianca.class, "idFuncaoIni", "dataFimFuncao", Long.valueOf(req.id));
+		ArrayList<DpFuncaoConfianca> l = (ArrayList<DpFuncaoConfianca>) CpDao.getInstance().consultarPorIdOuIdInicial(
+				DpFuncaoConfianca.class, "idFuncaoIni", "dataFimFuncao", Long.valueOf(req.id));
 		if (l.size() == 0)
-			throw new SwaggerException(
-					"Nenhuma função de confiança foi encontrada para os parâmetros informados.", 404, null, req, resp, null);
+			throw new SwaggerException("Nenhuma função de confiança foi encontrada para os parâmetros informados.", 404,
+					null, req, resp, null);
 
 //		if (Long.valueOf(funcao.getOrgaoUsuario().getIdOrgaoUsu()) != so.getTitular().getOrgaoUsuario().getIdOrgaoUsu()) 
 //			throw new SwaggerException(

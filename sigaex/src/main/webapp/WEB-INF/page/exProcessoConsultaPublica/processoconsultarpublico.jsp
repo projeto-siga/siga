@@ -64,10 +64,8 @@
 				  
 				    <c:if test="${!fn:startsWith(texto1,'???')}">	<p>    ${texto1} </p></c:if>
 					<c:if test="${!fn:startsWith(texto2,'???')}">	<p><u> ${texto2} </u></p></c:if> 
-					<ul>
-						<c:if test="${!fn:startsWith(texto3,'???')}"><li> ${texto3} </li></c:if>
-						<c:if test="${!fn:startsWith(texto4,'???')}"><li> ${texto4}</li></c:if>
-					</ul>
+					
+					 
 				  </div>
 				</div>
 			</div>

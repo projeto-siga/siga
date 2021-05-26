@@ -71,6 +71,7 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 			CpOrgaoUsuario orgaoUsuario = daoOrgaoUsuario(id);
 			result.include("nmOrgaoUsuario",orgaoUsuario.getDescricao());
 			result.include("siglaOrgaoUsuario",orgaoUsuario.getSigla());
+			result.include("siglaOrgaoUsuarioCompleta", orgaoUsuario.getSiglaOrgaoUsuarioCompleta());
 			result.include("isExternoOrgaoUsu",orgaoUsuario.getIsExternoOrgaoUsu());
 			try {
 				result.include("dtContrato",contrato.getDtContratoDDMMYYYY());
@@ -113,20 +114,32 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 	public void editarGravar(final Long id, 
 							 final String nmOrgaoUsuario,
 							 final String siglaOrgaoUsuario,
+							 final String siglaOrgaoUsuarioCompleta,
 							 final String dtContrato,
 							 final String acao,
 							 final Boolean isExternoOrgaoUsu
 						) throws Exception{
 		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_ORGAO_USUARIO: Cadastrar Orgãos Usuário");
 		
-		if(nmOrgaoUsuario == null)
+		if(nmOrgaoUsuario == null) {
 			throw new AplicacaoException("Nome do órgão usuário não informado");
+		}
 		
-		if(siglaOrgaoUsuario == null)
-			throw new AplicacaoException("Sigla do órgão usuário não informada");
+		if(siglaOrgaoUsuario == null) {
+			throw new AplicacaoException("Sigla abreviada do órgão usuário não informada");
+		}
 		
-		if(!siglaOrgaoUsuario.matches("[a-zA-Z]{1,10}"))
+		if(!siglaOrgaoUsuario.matches("[a-zA-Z]{1,10}")) {
 			throw new AplicacaoException("Sigla do órgão inválida");
+		}
+		
+		if(siglaOrgaoUsuarioCompleta == null) {
+			throw new AplicacaoException("Sigla Oficial do órgão usuário não informada");
+		}
+		
+		if(!siglaOrgaoUsuarioCompleta.matches("[a-zA-Z]{1,10}")) {
+			throw new AplicacaoException("Sigla Oficial do órgão inválida");
+		}
 
 		if(dtContrato != null && !dtContrato.matches("(0[1-9]|[12][0-9]|3[01])\\/(0[1-9]|1[012])\\/(19|20)\\d{2,2}"))
 			throw new AplicacaoException("Data do contrato inválida");
@@ -179,15 +192,13 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 		if(orgaoUsuario == null || orgaoUsuario.getIdOrgaoUsu() == null) {
 			orgaoUsuario = new CpOrgaoUsuario();
 			orgaoUsuario.setIdOrgaoUsu(id);
-			orgaoUsuario.setNmOrgaoUsu(Texto.removerEspacosExtra(nmOrgaoUsuario.trim()));
-			orgaoUsuario.setSigla(Texto.removerEspacosExtra(siglaOrgaoUsuario.toUpperCase()).trim());
-			orgaoUsuario.setAcronimoOrgaoUsu(Texto.removerEspacosExtra(siglaOrgaoUsuario.toUpperCase()).trim());
 		} else {
 			orgaoUsuario = daoOrgaoUsuario(id);
-			orgaoUsuario.setNmOrgaoUsu(Texto.removerEspacosExtra(nmOrgaoUsuario.trim()));
-			orgaoUsuario.setSigla(Texto.removerEspacosExtra(siglaOrgaoUsuario.toUpperCase()).trim());
-			orgaoUsuario.setAcronimoOrgaoUsu(Texto.removerEspacosExtra(siglaOrgaoUsuario.toUpperCase()).trim());
 		}
+		orgaoUsuario.setNmOrgaoUsu(Texto.removerEspacosExtra(nmOrgaoUsuario.trim()));
+		orgaoUsuario.setSigla(Texto.removerEspacosExtra(siglaOrgaoUsuario.toUpperCase()).trim());
+		orgaoUsuario.setSiglaOrgaoUsuarioCompleta(Texto.removerEspacosExtra(siglaOrgaoUsuarioCompleta.toUpperCase()).trim());
+		orgaoUsuario.setAcronimoOrgaoUsu(Texto.removerEspacosExtra(siglaOrgaoUsuario.toUpperCase()).trim());
 		
 		if (isExternoOrgaoUsu != null) {
 			orgaoUsuario.setIsExternoOrgaoUsu(1);

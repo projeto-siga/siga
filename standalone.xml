@@ -37,50 +37,49 @@
         <extension module="org.wildfly.extension.undertow"/>
     </extensions>
     <system-properties>
-	
-        <property name="siga.local" value="PCRJ"/>	
+        <property name="controlar.numeracao.expediente" value="true"/>
+        <property name="sigawf.ativo" value="false"/>
+        <property name="modelo.processo.administrativo" value="980"/>
+        <property name="modelo.interno.importado" value="2214"/>
+        <property name="siga.base.url" value="https://acessodes.processo.rio"/>
+        <property name="vizservice.url" value="https://acessodes.processo.rio/vizservice/svg"/>
+        <property name="siga.local" value="PCRJ"/>
+
         <property name="siga.jwt.secret" value="@@@siga.jwt.secret@@@"/>
         <property name="siga.sinc.password" value="@@@siga.sinc.password@@@"/>
         <property name="sigaex.webdav.senha" value="@@@sigaex.webdav.senha@@@"/>
 
         <property name="siga.recaptcha.key" value="@@@siga.recaptcha.key@@@"/>
-        <property name="siga.recaptcha.pwd" value="@@@siga.recaptcha.pwd@@@"/>
-
+        <property name="siga.recaptcha.pwd" value="@@@siga.recaptcha.pwd@@@"/
+		
         <property name="siga.cabecalho.titulo" value="Prefeitura da Cidade do Rio de Janeiro"/>
-        <property name="siga.cabecalho.logo" value="/sigaex/imagens/BrasaoPCRJ.png"/>
-
+        <property name="siga.cabecalho.logo" value="/siga/imagens/imgBrasao@2x.png"/>
         <property name="sigaex.modelos.cabecalho.brasao" value="contextpath/imagens/BrasaoPCRJ.png"/>
         <property name="sigaex.modelos.cabecalho.titulo" value="PREFEITURA DA CIDADE DO RIO DE JANEIRO"/>
         <property name="sigaex.modelos.cabecalho.subtitulo" value="Comitê Técnico do Processo.rio"/>
-
         <property name="siga.relat.brasao" value="BrasaoPCRJ.png"/>
         <property name="siga.relat.titulo" value="PREFEITURA DA CIDADE DO RIO DE JANEIRO"/>
         <property name="siga.relat.subtitulo" value="Comitê Técnico do Processo.rio"/>
-
         <property name="sigaex.carimbo.texto.superior" value="processo.rio"/>
-
         <property name="sigaex.redis.database" value="1"/>
         <property name="sigaex.redis.master.host" value="localhost"/>
         <property name="sigaex.redis.master.port" value="6379"/>
-
-
-
         <property name="siga.smtp" value="localhost"/>
         <property name="siga.smtp.porta" value="25"/>
         <property name="siga.smtp.auth" value="false"/>
         <property name="siga.smtp.auth.usuario" value="siga"/>
         <property name="siga.smtp.auth.senha" value="siga"/>
         <property name="siga.smtp.debug" value="false"/>
-        <property name="siga.smtp.usuario.remetente" value="Processo.Rio&lt;processorio@rio.rj.gov.br&gt;"/>
-
-        <property name="siga.armazenamento.arquivo.tipo" value="TABELA"/>
+        <property name="siga.smtp.usuario.remetente" value="Processo.Rio&lt;processorio@rio.rj.gov.br>"/>
+        <property name="siga.armazenamento.arquivo.tipo" value="BLOB"/>
+        <property name="http.proxyHost" value="proxy.rio.rj.gov.br"/>
+        <property name="http.proxyPort" value="8080"/>
+        <property name="https.proxyPort" value="8080"/>
+        <property name="https.proxyHost" value="proxy.rio.rj.gov.br"/>
+        <property name="http.nonProxyHosts" value="localhost|127.0.0.1|187.111.98.248|acessodes.processo.rio"/>
         <property name="sigaex.upload.dir.temp" value="/tmp"/>
-
         <property name="siga.hibernate.dialect" value="org.hibernate.dialect.Oracle12cDialect"/>
-
-
         <property name="sigaex.assinador.externo.popup.url" value="https://ittrufusion.appspot.com"/>
-
         <property name="sigaex.carimbo.sistema" value="processo.rio"/>
         <property name="sigaex.carimbo.url" value="https://ittrufusion.appspot.com/api/v1"/>
         <property name="sigaex.carimbo.public.key" value="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAllav1+eJ3w5Idge/vQ1zZSziGiuOUBviZhcw0JZ9Bg90zG7Uz3wFGQeKnG0DNTBKwjC3MHI7AZy4G+ji35J+gp+0aZLDkuwx17JDuJfuJe6gHRlfcm50McuLL0vaU5gQ2InAo7FssjuOuLp9c3FGBGmiDFK1vUhKwdvY14inYzrZaHSVsppSYX9zjnhQiQxRnLzFzkZsZkl/Orz2O9rvmJx048lcmnOiLvm3ge7Jq2KZHIYzdsw5F3VGtlhLFBZ49g6Rmp4ClgPtpwDOGj78oyJVxLW3XXN1VP1JnActFkNlmBNi+8cUZ8IX15j+FDOL9+tQR+FMC7wtHypshR5zVQIDAQAB"/>
@@ -156,9 +155,6 @@
                 <suffix value=".yyyy-MM-dd"/>
                 <append value="true"/>
             </periodic-rotating-file-handler>
-            <logger category="io.undertow.request">
-                <level name="OFF"/>
-            </logger>
             <logger category="com.arjuna">
                 <level name="WARN"/>
             </logger>
@@ -563,16 +559,16 @@
                 <http-listener name="default" socket-binding="http" redirect-socket="https" enable-http2="true"/>
                 <https-listener name="https" socket-binding="https" security-realm="ApplicationRealm" enable-http2="true"/>
                 <host name="default-host" alias="localhost">
-                    <location name="/" handler="welcome-content"/>
+                    <location name="/" handler="welcome-redirect"/>
                     <http-invoker security-realm="ApplicationRealm"/>
                 </host>
             </server>
             <servlet-container name="default">
-                <jsp-config development="true"/>
+                <jsp-config/>
                 <websockets/>
             </servlet-container>
             <handlers>
-                <file name="welcome-content" path="${jboss.home.dir}/welcome-content"/>
+                <file name="welcome-redirect" path="${jboss.home.dir}/welcome-redirect"/>
             </handlers>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:webservices:2.0">

@@ -1764,16 +1764,16 @@ function isNumeric(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
-function getUser() {
-	return document.getElementById('cadastrante').title;
+function getCadastrante() {
+	return document.getElementById('cadastrante').dataset.cadastrante;
 }
 
 function setUserSessionStorage(nomeParm, value) {
-	window.sessionStorage.setItem(nomeParm + getUser(), value)
+	window.sessionStorage.setItem(nomeParm + getCadastrante(), value)
 }
 
 function getUserSessionStorage(nomeParm) {
-	let val = window.sessionStorage.getItem(nomeParm + getUser())
+	let val = window.sessionStorage.getItem(nomeParm + getCadastrante())
 	if (val === 'true')
 		val = true;
 	if (val === 'false')
@@ -1782,11 +1782,11 @@ function getUserSessionStorage(nomeParm) {
 }
 
 function setUserLocalStorage(nomeParm, value) {
-	window.localStorage.setItem(nomeParm + getUser(), value)
+	window.localStorage.setItem(nomeParm + getCadastrante(), value)
 }
 
 function getUserLocalStorage(nomeParm) {
-	let val = window.localStorage.getItem(nomeParm + getUser())
+	let val = window.localStorage.getItem(nomeParm + getCadastrante())
 	if (val === 'true')
 		val = true;
 	if (val === 'false')

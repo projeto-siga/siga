@@ -399,7 +399,7 @@ ${meta}
 						<div class="dropdown d-inline">
 							<span class="align-middle">Olá, <i class="fa fa-user"></i> 
 								<c:catch>
-									<strong id="cadastrante" data-toggle="tooltip" data-placement="top" title="${cadastrante.sigla}">																		
+									<strong id="cadastrante" data-toggle="tooltip" data-placement="top" data-cadastrante="${cadastrante.sigla}" title="${cadastrante.sigla}">																		
 											<c:out default="Convidado" value="${f:maiusculasEMinusculas(cadastrante.nomePessoa)}" />
 									</strong>
 									<c:if test="${not empty cadastrante.lotacao}">

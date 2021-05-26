@@ -24,10 +24,10 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,11 +46,13 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.codec.binary.Base64;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.DynamicUpdate;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.itextpdf.Documento;
+import br.gov.jfrj.siga.armazenamento.zip.ZipItem;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
@@ -110,7 +112,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 
 	@Override
 	public Long getIdDoc() {
-		// TODO Auto-generated method stub
 		return super.getIdDoc();
 	}
 
@@ -224,7 +225,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		}
 		if (getIdDoc() == null)
 			return "NOVO";
-		return "TMP-" + getIdDoc();
+		return PREFIXO_DOC_NAO_FINALIZADO + getIdDoc();
 	}
 
 	/**
@@ -326,7 +327,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		if (idDoc == null)
 			return "NOVO";
 
-		return "TMP-" + idDoc;
+		return PREFIXO_DOC_NAO_FINALIZADO + idDoc;
 	}
 
 	/**
@@ -374,9 +375,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public byte[] getConteudoBlob(final String nome) {
 		final byte[] conteudoZip = getConteudoBlobDoc2();
 		byte[] conteudo = null;
-		final Compactador zip = new Compactador();
 		if (conteudoZip != null) {
-			conteudo = zip.descompactarStream(conteudoZip, nome);
+			conteudo = Compactador.descompactarStream(conteudoZip, nome);
 		}
 		return conteudo;
 	}
@@ -394,7 +394,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * <b>formulário</b> contido no zip gravado no blob do documento.
 	 */
 	public byte[] getConteudoBlobForm() {
-		return getConteudoBlob("doc.form");
+		return getConteudoBlob(ZipItem.Tipo.FORM);
 	}
 
 	/**
@@ -402,7 +402,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * <b>resumo</b> contido no zip gravado no blob do documento.
 	 */
 	public byte[] getConteudoBlobResumo() {
-		return getConteudoBlob("doc.resumo");
+		return getConteudoBlob(ZipItem.Tipo.RESUMO);
 	}
 
 	/**
@@ -410,7 +410,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * contido no zip gravado no blob do documento.
 	 */
 	public byte[] getConteudoBlobHtml() {
-		return getConteudoBlob("doc.htm");
+		return getConteudoBlob(ZipItem.Tipo.HTM);
 	}
 
 	/**
@@ -418,22 +418,19 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * <b>html</b> contido no zip gravado no blob do documento.
 	 */
 	public String getConteudoBlobHtmlB64() {
-		return Base64.getEncoder().encodeToString(getConteudoBlobHtml());
+		return Base64.encodeBase64String(getConteudoBlobHtml());
 	}
 
 	/**
-	 * Retorna, <b>em formato ISO-8859-1 (String)</b>, o conteúdo do arquivo
+	 * Retorna, <b>em formato {@link StandardCharsets#ISO_8859_1} (String)</b>, o conteúdo do arquivo
 	 * <b>html</b> contido no zip gravado no blob do documento.
 	 */
 	public String getConteudoBlobHtmlString() {
 		byte[] ab = getConteudoBlobHtml();
-		if (ab == null)
+		if (ab == null) {
 			return null;
-		try {
-			return new String(ab, "ISO-8859-1");
-		} catch (UnsupportedEncodingException e) {
-			return new String(ab);
 		}
+		return new String(ab, StandardCharsets.ISO_8859_1);
 	}
 
 	/**
@@ -452,15 +449,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		// Verifica se todos os subscritores assinaram o documento
 		try {
 			for (DpPessoa subscritor : getSubscritorECosignatarios()) {
-				if (isEletronico() && isFinalizado()
-						&& !isAssinadoPelaPessoaComTokenOuSenha(subscritor)) {
+				if (isEletronico() && !isAssinadoPelaPessoaComTokenOuSenha(subscritor)) {
 					String comentarioInicio = "<!-- INICIO SUBSCRITOR "
 							+ subscritor.getId() + " -->";
 					String comentarioFim = "<!-- FIM SUBSCRITOR "
 							+ subscritor.getId() + " -->";
 
-					if (sHtml.contains(comentarioInicio)
-							&& sHtml.contains(comentarioFim)) {
+					if (sHtml.contains(comentarioInicio) && sHtml.contains(comentarioFim)) {
 						String blocoSubscritor = sHtml.substring(
 								sHtml.indexOf(comentarioInicio)
 										+ comentarioInicio.length(),
@@ -476,7 +471,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 				}
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			// FIXME handle exception
+			e.printStackTrace();
 		}
 
 		return sHtml;
@@ -487,7 +483,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * contido no zip gravado no blob do documento.
 	 */
 	public byte[] getConteudoBlobPdf() {
-		return getConteudoBlob("doc.pdf");
+		return getConteudoBlob(ZipItem.Tipo.PDF);
 	}
 
 	/**
@@ -495,7 +491,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * <b>pdf</b> contido no zip gravado no blob do documento.
 	 */
 	public String getConteudoBlobPdfB64() {
-		return Base64.getEncoder().encodeToString(getConteudoBlobPdf());
+		return Base64.encodeBase64String(getConteudoBlobPdf());
 	}
 
 	/**
@@ -572,11 +568,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		else if (getNmDestinatario() != null)
 			return getNmDestinatario();
 		else if (getLotaDestinatario() != null)
-			return getLotaDestinatario().getDescricao();
+			return getLotaDestinatario().getDescricao() + " (" + getLotaDestinatario().getOrgaoUsuario().getSiglaOrgaoUsuarioCompleta() + ")";
 		else if (getOrgaoExternoDestinatario() != null)
 			if (getNmOrgaoExterno() != null && !getNmOrgaoExterno().equals(""))
-				return getOrgaoExternoDestinatario().getDescricao() + ";"
-						+ getNmOrgaoExterno();
+				return getOrgaoExternoDestinatario().getDescricao() + ";" + getNmOrgaoExterno();
 			else
 				return getOrgaoExternoDestinatario().getDescricao();
 		else if (getNmOrgaoExterno() != null && !getNmOrgaoExterno().equals(""))
@@ -1351,16 +1346,17 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 */
 	public Map<String, String> getForm() {
 		Hashtable<String, String> m = new Hashtable<String, String>();
-		final byte[] form = getConteudoBlob("doc.form");
+		final byte[] form = getConteudoBlob(ZipItem.Tipo.FORM);
 		if (form != null) {
 			final String as[] = new String(form).split("&");
 			for (final String s : as) {
 				final String param[] = s.split("=");
 				try {
-					if (param.length == 2)
-						m.put(param[0],
-								URLDecoder.decode(param[1], "iso-8859-1"));
+					if (param.length == 2) {
+						m.put(param[0], URLDecoder.decode(param[1], StandardCharsets.ISO_8859_1.name()));
+					}
 				} catch (final UnsupportedEncodingException e) {
+					log.error("Encoding error", e);
 				}
 			}
 		}
@@ -1383,16 +1379,17 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 */
 	public Map<String, String> getResumo() {
 		LinkedHashMap<String, String> m = new LinkedHashMap<String, String>();
-		final byte[] resumo = getConteudoBlob("doc.resumo");
+		final byte[] resumo = getConteudoBlob(ZipItem.Tipo.RESUMO);
 		if (resumo != null) {
 			final String as[] = new String(resumo).split("&");
 			for (final String s : as) {
 				final String param[] = s.split("=");
 				try {
 					if (param.length == 2)
-						m.put(URLDecoder.decode(param[0], "iso-8859-1"),
-								URLDecoder.decode(param[1], "iso-8859-1"));
+						m.put(URLDecoder.decode(param[0], StandardCharsets.ISO_8859_1.name()),
+								URLDecoder.decode(param[1], StandardCharsets.ISO_8859_1.name()));
 				} catch (final UnsupportedEncodingException e) {
+					log.error("Encoding error", e);
 				}
 			}
 		}
@@ -1572,7 +1569,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	
 	private void encontrarArquivoNumerado(Long id, List<ExArquivoNumerado> listaInicial, List<ExArquivoNumerado> listaFinal, String referenciaHtmlCompletoDocPrincipal, String referenciaPDFCompletoDocPrincipal) {
 		for (ExArquivoNumerado arquivo : listaInicial) {					
-			if (id.equals(arquivo.getArquivo().getIdDoc())) {
+			if (id.equals(arquivo.getArquivo().getId())) {
 				arquivo.setReferenciaHtmlCompletoDocPrincipal(referenciaHtmlCompletoDocPrincipal);
 				arquivo.setReferenciaPDFCompletoDocPrincipal(referenciaPDFCompletoDocPrincipal);
 				listaFinal.add(arquivo);					
@@ -1592,7 +1589,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		String ordenacao = "";
 		for (ExArquivoNumerado arquivoNumerado : listaArquivoNumerado) {				
 			if (ordenacao.length() > 0) ordenacao += ";";
-			ordenacao += arquivoNumerado.getArquivo().getIdDoc();				
+			ordenacao += arquivoNumerado.getArquivo().getId();				
 		}
 		this.setOrdenacaoDoc(ordenacao);
 	}
@@ -1749,7 +1746,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		// Incluir os documentos anexos
 		if (mob.getExMovimentacaoSet() != null) {
 			for (ExMovimentacao m : mob.getExMovimentacaoSet()) {
-				if (!m.isCancelada() && m.isPdf() && m.getExTipoMovimentacao().getId() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR) {
+				if (!m.isCancelada() && !m.isCanceladora() && m.isPdf() && m.getExTipoMovimentacao().getId() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR) {
 					set.add(m);
 				}
 			}
@@ -2540,20 +2537,19 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	}
 
 	public void setConteudoBlob(final String nome, final byte[] conteudo) {
-		final Compactador zip = new Compactador();
 		final byte[] arqZip = getConteudoBlobDoc2();
 		byte[] conteudoZip = null;
-		if (arqZip == null || (zip.listarStream(arqZip) == null)) {
+		if (arqZip == null || (Compactador.listarStream(arqZip) == null)) {
 			if (conteudo != null) {
-				conteudoZip = zip.compactarStream(nome, conteudo);
+				conteudoZip = Compactador.compactarStream(nome, conteudo);
 			} else {
 				conteudoZip = null;
 			}
 		} else {
 			if (conteudo != null) {
-				conteudoZip = zip.adicionarStream(nome, conteudo, arqZip);
+				conteudoZip = Compactador.adicionarStream(nome, conteudo, arqZip);
 			} else {
-				conteudoZip = zip.removerStream(nome, arqZip);
+				conteudoZip = Compactador.removerStream(nome, arqZip);
 			}
 		}
 		setConteudoBlobDoc2(conteudoZip);
@@ -2566,34 +2562,35 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	}
 
 	public void setConteudoBlobForm(final byte[] conteudo) {
-		setConteudoBlob("doc.form", conteudo);
+		setConteudoBlob(ZipItem.Tipo.FORM, conteudo);
 	}
 
 	public void setConteudoBlobResumo(final byte[] conteudo) {
-		setConteudoBlob("doc.resumo", conteudo);
+		setConteudoBlob(ZipItem.Tipo.RESUMO, conteudo);
 	}
 
 	public void setConteudoBlobHtml(final byte[] conteudo) {
-		setConteudoBlob("doc.htm", conteudo);
+		setConteudoBlob(ZipItem.Tipo.HTM, conteudo);
 	}
 
 	public void setConteudoBlobHtmlString(final String s) throws Exception {
 		final String sHtml = (new ProcessadorHtml()).canonicalizarHtml(s,
 				false, true, false, false, false);
-		if (sHtml != null)
-			setConteudoBlob("doc.htm", sHtml.getBytes("ISO-8859-1"));
-		else
-			setConteudoBlob("doc.htm", null);
+		if (sHtml != null) {
+			setConteudoBlob(ZipItem.Tipo.HTM, sHtml.getBytes(StandardCharsets.ISO_8859_1));
+		} else {
+			setConteudoBlob(ZipItem.Tipo.HTM, null);
+		}
 	}
 
 	public void setConteudoBlobPdf(final byte[] conteudo) throws Exception {
 
 		// Atenção, não retirar esse teste nunca, pois ele é quem garante que o
 		// pdf não será refeito.
-		if (!getAssinaturasComTokenOuSenhaERegistros().isEmpty())
-			throw new AplicacaoException(
-					"O conteúdo não pode ser alterado pois o documento já está assinado");
-		setConteudoBlob("doc.pdf", conteudo);
+		if (!getAssinaturasComTokenOuSenhaERegistros().isEmpty()) {
+			throw new AplicacaoException("O conteúdo não pode ser alterado pois o documento já está assinado");
+		}
+		setConteudoBlob(ZipItem.Tipo.PDF, conteudo);
 	}
 
 	public void setEletronico(boolean eletronico) {
@@ -2914,6 +2911,5 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		
 		return this.idDocPrincipal;
 	}
-
 
 }

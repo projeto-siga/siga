@@ -22,8 +22,10 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
+import java.nio.file.Path;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -179,6 +181,8 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 public abstract class AbstractExMovimentacao extends ExArquivo implements Serializable {
 
 	private static final long serialVersionUID = -1521008574855565618L;
+
+	public static final String NOME_TIPO_DIRETORIO = "ANEXOS";
 
 	private static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_BEGIN = "SELECT mov FROM ExMovimentacao mov WHERE ";
 
@@ -514,6 +518,10 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 		return cadastrante;
 	}
 
+	public String getMimeType() {
+		return this.getConteudoTpMov();
+	}
+
 	public String getDescrMov() {
 		return descrMov;
 	}
@@ -528,6 +536,15 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 
 	public Date getDtIniMov() {
 		return dtIniMov;
+	}
+
+	@Override
+	public Date getData() {
+		return this.getDtMov();
+	}
+
+	public void setData(Date data) {
+		this.setDtMov(data);
 	}
 
 	public Date getDtMov() {
@@ -548,6 +565,11 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 
 	public ExTipoMovimentacao getExTipoMovimentacao() {
 		return exTipoMovimentacao;
+	}
+
+	@Override
+	public Long getId() {
+		return this.getIdMov();
 	}
 
 	public Long getIdMov() {
@@ -580,6 +602,10 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 
 	public void setCadastrante(final DpPessoa cadastrante) {
 		this.cadastrante = cadastrante;
+	}
+
+	public void setMimeType(final String mimeType) {
+		this.setConteudoTpMov(mimeType);
 	}
 
 	public void setDescrMov(final String descrMov) {		
@@ -909,5 +935,14 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 		}
 		return false;
 	}
-	
+
+	@Override
+	public Path getPathConteudo(Path base) {
+		final ExDocumento documento = Optional.ofNullable(this.getExMobil())
+				.map(ExMobil::getDoc)
+				.orElseThrow(() -> new IllegalArgumentException(String.format(ERRO_CAMINHO_ARQUIVO, NOME_TIPO_DIRETORIO, this.getId(), "MOVIMENTAÇÃO DOCUMENTO")));
+
+		return this.getPathConteudo(documento, NOME_TIPO_DIRETORIO, base);
+	}
+
 }

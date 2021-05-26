@@ -25,7 +25,7 @@ import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO;
 import static java.util.Objects.nonNull;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.EncodedKeySpec;
@@ -105,8 +105,8 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		return super.getIdMov();
 	}
 
-	public String getConteudoBlobString() throws UnsupportedEncodingException {
-		return new String(getConteudoBlobMov2(), "ISO-8859-1");
+	public String getConteudoBlobString() {
+		return new String(getConteudoBlobMov2(), StandardCharsets.ISO_8859_1);
 	}
 
 	public String getConteudoBlobPdfB64() {
@@ -533,20 +533,19 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	}
 
 	public void setConteudoBlob(final String nome, final byte[] conteudo) {
-		final Compactador zip = new Compactador();
 		final byte[] arqZip = getConteudoBlobMov2();
 		byte[] conteudoZip = null;
-		if (arqZip == null || (zip.listarStream(arqZip) == null)) {
+		if (arqZip == null || (Compactador.listarStream(arqZip) == null)) {
 			if (conteudo != null) {
-				conteudoZip = zip.compactarStream(nome, conteudo);
+				conteudoZip = Compactador.compactarStream(nome, conteudo);
 			} else {
 				conteudoZip = null;
 			}
 		} else {
 			if (conteudo != null) {
-				conteudoZip = zip.adicionarStream(nome, conteudo, arqZip);
+				conteudoZip = Compactador.adicionarStream(nome, conteudo, arqZip);
 			} else {
-				conteudoZip = zip.removerStream(nome, arqZip);
+				conteudoZip = Compactador.removerStream(nome, arqZip);
 			}
 		}
 		setConteudoBlobMov2(conteudoZip);
@@ -560,11 +559,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		if (getConteudoBlobHtml() == null) {
 			return null;
 		}
-		try {
-			return new String(getConteudoBlobHtml(), "ISO-8859-1");
-		} catch (UnsupportedEncodingException e) {
-			return new String(getConteudoBlobHtml());
-		}
+		return new String(getConteudoBlobHtml(), StandardCharsets.ISO_8859_1);
 	}
 
 	public byte[] getConteudoBlobPdfNecessario() {
@@ -608,12 +603,12 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		return getConteudoBlob(nome);
 	}
 
-	public String getConteudoXmlString(String nome)
-			throws UnsupportedEncodingException {
+	public String getConteudoXmlString(String nome) {
 
 		byte[] xmlByte = this.getConteudoBlobXML(nome);
-		if (xmlByte != null)
-			return new String(xmlByte, "ISO-8859-1");
+		if (xmlByte != null) {
+			return new String(xmlByte, StandardCharsets.ISO_8859_1);
+		}
 
 		return null;
 	}
@@ -625,9 +620,8 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	public byte[] getConteudoBlob(final String nome) {
 		final byte[] conteudoZip = getConteudoBlobMov2();
 		byte[] conteudo = null;
-		final Compactador zip = new Compactador();
 		if (conteudoZip != null) {
-			conteudo = zip.descompactarStream(conteudoZip, nome);
+			conteudo = Compactador.descompactarStream(conteudoZip, nome);
 		}
 		return conteudo;
 	}
@@ -635,7 +629,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	public void setConteudoBlobHtmlString(final String s) throws Exception {
 		final String sHtml = (new ProcessadorHtml()).canonicalizarHtml(s,
 				false, true, false, false, false);
-		setConteudoBlob("doc.htm", sHtml.getBytes("ISO-8859-1"));
+		setConteudoBlob("doc.htm", sHtml.getBytes(StandardCharsets.ISO_8859_1));
 	}
 
 	/**

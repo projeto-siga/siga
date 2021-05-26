@@ -19,6 +19,7 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
+import java.nio.file.Path;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeSet;
@@ -232,6 +233,9 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		Serializable {
 
 	private static final long serialVersionUID = 1L;
+
+	public static final String PREFIXO_DOC_NAO_FINALIZADO = "TMP-";
+	public static final String NOME_TIPO_DIRETORIO = "DOCUMENTOS";
 
 	@Id
 	@SequenceGenerator(name = "EX_DOCUMENTO_SEQ", sequenceName = "siga.ex_documento_id_doc_seq")
@@ -614,6 +618,11 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 */
 	public String getFgEletronico() {
 		return fgEletronico;
+	}
+
+	@Override
+	public Long getId() {
+		return this.getIdDoc();
 	}
 
 	/**
@@ -1164,5 +1173,19 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	public void setDescrDocumentoAI(java.lang.String descrDocumentoAI) {
 		this.descrDocumentoAI = descrDocumentoAI;
 	}
-	
+
+	public String getMimeType() {
+		return this.getConteudoTpDoc();
+	}
+
+	@Override
+	public void setMimeType(String mimeType) {
+		this.setMimeType(mimeType);
+	}
+
+	@Override
+	public Path getPathConteudo(Path base) {
+		return this.getPathConteudo(this, NOME_TIPO_DIRETORIO, base);
+	}
+
 }

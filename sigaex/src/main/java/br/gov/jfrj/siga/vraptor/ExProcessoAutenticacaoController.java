@@ -179,7 +179,7 @@ public class ExProcessoAutenticacaoController extends ExController {
 		String fileName;
 		String contentType;
 		if (sigla != null) {
-			Long idDocPai = arq.getIdDoc();
+			Long idDocPai = arq.getId();
 			ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
 			flt.setSigla(sigla);
 			ExMobil mob = ExDao.getInstance().consultarPorSigla(flt);

@@ -26,11 +26,25 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-public class Compactador {
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import br.gov.jfrj.siga.armazenamento.zip.ZipItem;
+
+/**
+ * Esta classe não guarda estado, portanto pode ter métodos estáticos
+ */
+public abstract class Compactador {
+
+	public static final Log log = LogFactory.getLog(Compactador.class);
+
+	private Compactador() {}
+
 	/**
 	 * Deleta o diretório informado e todos os arquivos e diretórios abaixo
 	 * deste.
@@ -75,8 +89,8 @@ public class Compactador {
 	 * @param zipSaida -
 	 *            path do arquivo compactado já existente
 	 */
-	public void adicionar(final String arqEntrada, final String zipSaida) {
-		final ArrayList<String> arqEntradas = new ArrayList<String>();
+	public static void adicionar(final String arqEntrada, final String zipSaida) {
+		final List<String> arqEntradas = new ArrayList<String>();
 		arqEntradas.add(arqEntrada);
 		adicionar(arqEntradas, zipSaida);
 	}
@@ -91,8 +105,8 @@ public class Compactador {
 	 * @param zipSaida -
 	 *            path do arquivo compactado já existente
 	 */
-	public void adicionar(final ArrayList<String> arqEntrada, final String zipSaida) {
-		final ArrayList<String> arqExist = new ArrayList<String>();
+	public static void adicionar(final List<String> arqEntrada, final String zipSaida) {
+		final List<String> arqExist = new ArrayList<String>();
 		final String dirtemp = "ziptemp\\";
 		for (int i = 0; i < arqEntrada.size(); i++) {
 			arqEntrada.set(i, arqEntrada.get(i).replace("/", "\\"));
@@ -136,6 +150,7 @@ public class Compactador {
 			// Close the streams
 			in.close();
 		} catch (final IOException e) {
+			log.error("Não foi possível adicionar item ao arquivo ZIP", e);
 		}
 		// Create a buffer for reading the files
 		final byte[] buf = new byte[1024];
@@ -187,6 +202,7 @@ public class Compactador {
 			// Complete the ZIP file
 			out.close();
 		} catch (final IOException e) {
+			log.error("Não foi possível adicionar item ao arquivo ZIP", e);
 		}
 		Compactador.deleteDir(dirtemp);
 	}
@@ -200,8 +216,8 @@ public class Compactador {
 	 * @param zipSaida -
 	 *            path do arquivo compactado já existente
 	 */
-	public void remover(final String arqRemover, final String zipSaida) {
-		final ArrayList<String> arqRemover2 = new ArrayList<String>();
+	public static void remover(final String arqRemover, final String zipSaida) {
+		final List<String> arqRemover2 = new ArrayList<String>();
 		arqRemover2.add(arqRemover);
 		remover(arqRemover2, zipSaida);
 	}
@@ -216,10 +232,10 @@ public class Compactador {
 	 * @param zipSaida -
 	 *            path do arquivo compactado já existente
 	 */
-	public void remover(final ArrayList<String> arqRemover, final String zipSaida) {
+	public static void remover(final List<String> arqRemover, final String zipSaida) {
 
 		final String dirtemp = "ziptemp\\";
-		final ArrayList<String> arqExist = new ArrayList<String>();
+		final List<String> arqExist = new ArrayList<String>();
 		for (int i = 0; i < arqRemover.size(); i++) {
 			arqRemover.set(i, arqRemover.get(i).replace("/", "\\"));
 		}
@@ -264,6 +280,7 @@ public class Compactador {
 			// Close the streams
 			in.close();
 		} catch (final IOException e) {
+			log.error("Não foi possível remover item ao arquivo ZIP", e);
 		}
 		// Create a buffer for reading the files
 		final byte[] buf = new byte[1024];
@@ -293,6 +310,7 @@ public class Compactador {
 			// Complete the ZIP file
 			out.close();
 		} catch (final IOException e) {
+			log.error("Não foi possível remover item ao arquivo ZIP", e);
 		}
 		Compactador.deleteDir(dirtemp);
 	}
@@ -306,8 +324,8 @@ public class Compactador {
 	 * @param zipSaida -
 	 *            path do arquivo compactado a ser criado
 	 */
-	public void compactar(final String arqEntrada, final String zipSaida) {
-		final ArrayList<String> arqEntradas = new ArrayList<String>();
+	public static void compactar(final String arqEntrada, final String zipSaida) {
+		final List<String> arqEntradas = new ArrayList<String>();
 		arqEntradas.add(arqEntrada);
 		compactar(arqEntradas, zipSaida);
 	}
@@ -322,7 +340,7 @@ public class Compactador {
 	 * @param zipSaida -
 	 *            path do arquivo compactado a ser criado
 	 */
-	public void compactar(final ArrayList<String> arqEntrada, final String zipSaida) {
+	public static void compactar(final List<String> arqEntrada, final String zipSaida) {
 
 		// Create a buffer for reading the files
 		final byte[] buf = new byte[1024];
@@ -359,6 +377,7 @@ public class Compactador {
 			// Complete the ZIP file
 			out.close();
 		} catch (final IOException e) {
+			log.error("Não foi possível adicionar item ao arquivo ZIP", e);
 		}
 	}
 
@@ -368,7 +387,7 @@ public class Compactador {
 	 * @param zipSaida -
 	 *            path do arquivo compactado já existente
 	 */
-	public void descompactarTudo(final String zipEntrada) {
+	public static void descompactarTudo(final String zipEntrada) {
 		try {
 			// Open the ZIP file
 			final ZipInputStream in = new ZipInputStream(new FileInputStream(zipEntrada));
@@ -402,6 +421,7 @@ public class Compactador {
 			// Close the streams
 			in.close();
 		} catch (final IOException e) {
+			log.error("Não foi possível descompactar arquivo ZIP", e);
 		}
 	}
 
@@ -412,9 +432,9 @@ public class Compactador {
 	 *            path do arquivo compactado já existente
 	 * @return ArrayList com os nomes dos arquivos dentro do zip
 	 */
-	public ArrayList<String> Listar(final String zipEntrada) {
+	public static List<String> listar(final String zipEntrada) {
 		try {
-			final ArrayList<String> lista = new ArrayList<String>();
+			final List<String> lista = new ArrayList<String>();
 			// Open the ZIP file
 			final ZipInputStream in = new ZipInputStream(new FileInputStream(zipEntrada));
 
@@ -433,6 +453,7 @@ public class Compactador {
 			else
 				return null;
 		} catch (final Exception e) {
+			log.error("Não foi possível listar itens no arquivo ZIP", e);
 			return null;
 		}
 	}
@@ -445,7 +466,7 @@ public class Compactador {
 	 * @param zipEntrada -
 	 *            path do arquivo compactado já existente
 	 */
-	public void descompactar(final String zipEntrada, String arquivo) {
+	public static void descompactar(final String zipEntrada, String arquivo) {
 
 		arquivo = arquivo.replace("/", "\\");
 
@@ -489,7 +510,12 @@ public class Compactador {
 				in.close();
 			}
 		} catch (final IOException e) {
+			log.error("Não foi possível descompactar item do arquivo ZIP", e);
 		}
+	}
+
+	public static byte[] adicionarStream(final ZipItem item, final byte[] arqEntrada, final byte[] zipEntrada) {
+		return adicionarStream(item.getNome(), arqEntrada, zipEntrada);
 	}
 
 	/**
@@ -504,9 +530,9 @@ public class Compactador {
 	 *            Array de bytes compactado já existente.
 	 * @return byte[] - array de bytes compactado resultante
 	 */
-	public byte[] adicionarStream(final String arqNome, final byte[] arqEntrada, final byte[] zipEntrada) {
-		final ArrayList<String> arqNomes = new ArrayList<String>();
-		final ArrayList<byte[]> arqEntradas = new ArrayList<byte[]>();
+	public static byte[] adicionarStream(final String arqNome, final byte[] arqEntrada, final byte[] zipEntrada) {
+		final List<String> arqNomes = new ArrayList<String>();
+		final List<byte[]> arqEntradas = new ArrayList<byte[]>();
 		arqNomes.add(arqNome);
 		arqEntradas.add(arqEntrada);
 		return adicionarStream(arqNomes, arqEntradas, zipEntrada);
@@ -524,9 +550,9 @@ public class Compactador {
 	 *            Array de bytes compactado já existente.
 	 * @return byte[] - array de bytes compactado resultante
 	 */
-	public byte[] adicionarStream(final ArrayList<String> arqNome, final ArrayList<byte[]> arqEntrada, final byte[] zipEntrada) {
-		final ArrayList<String> arqNomeExist = new ArrayList<String>();
-		final ArrayList<byte[]> arqEntradaExist = new ArrayList<byte[]>();
+	public static byte[] adicionarStream(final List<String> arqNome, final List<byte[]> arqEntrada, final byte[] zipEntrada) {
+		final List<String> arqNomeExist = new ArrayList<String>();
+		final List<byte[]> arqEntradaExist = new ArrayList<byte[]>();
 
 		try {
 			// Open the ZIP file
@@ -561,7 +587,7 @@ public class Compactador {
 			in.close();
 
 		} catch (final IOException e) {
-
+			log.error("Não foi possível adicionar bytes de item", e);
 		}
 
 		// Create a buffer for reading the files
@@ -615,8 +641,13 @@ public class Compactador {
 			out.close();
 			return outByte.toByteArray();
 		} catch (final IOException e) {
+			log.error("Não foi possível adicionar bytes de item", e);
 			return null;
 		}
+	}
+
+	public static byte[] removerStream(final ZipItem item, final byte[] zipEntrada) {
+		return removerStream(item.getNome(), zipEntrada);
 	}
 
 	/**
@@ -629,8 +660,8 @@ public class Compactador {
 	 *            Array de bytes compactado que contém o array a ser removidos.
 	 * @return byte[] - array de bytes compactado resultante
 	 */
-	public byte[] removerStream(final String arqNome, final byte[] zipEntrada) {
-		final ArrayList<String> arqNomes = new ArrayList<String>();
+	public static byte[] removerStream(final String arqNome, final byte[] zipEntrada) {
+		final List<String> arqNomes = new ArrayList<String>();
 		arqNomes.add(arqNome);
 		return removerStream(arqNomes, zipEntrada);
 	}
@@ -646,9 +677,9 @@ public class Compactador {
 	 *            removidos.
 	 * @return byte[] - array de bytes compactado resultante
 	 */
-	public byte[] removerStream(final ArrayList<String> arqNome, final byte[] zipEntrada) {
-		final ArrayList<String> arqNomeExist = new ArrayList<String>();
-		final ArrayList<byte[]> arqEntradaExist = new ArrayList<byte[]>();
+	public static byte[] removerStream(final List<String> arqNome, final byte[] zipEntrada) {
+		final List<String> arqNomeExist = new ArrayList<String>();
+		final List<byte[]> arqEntradaExist = new ArrayList<byte[]>();
 
 		try {
 			// Open the ZIP file
@@ -683,7 +714,7 @@ public class Compactador {
 			in.close();
 
 		} catch (final IOException e) {
-
+			log.error("Não foi possível remover bytes de item", e);
 		}
 
 		// Create a buffer for reading the files
@@ -718,8 +749,13 @@ public class Compactador {
 			out.close();
 			return outByte.toByteArray();
 		} catch (final IOException e) {
+			log.error("Não foi possível remover bytes de item", e);
 			return null;
 		}
+	}
+
+	public static byte[] compactarStream(final ZipItem item, final byte[] arqEntrada) {
+		return compactarStream(item.getNome(), arqEntrada);
 	}
 
 	/**
@@ -732,9 +768,9 @@ public class Compactador {
 	 *            byte[] - array de bytes a ser compactado.
 	 * @return byte[] - array de bytes compactado resultante
 	 */
-	public byte[] compactarStream(final String arqNome, final byte[] arqEntrada) {
-		final ArrayList<String> arqNomes = new ArrayList<String>();
-		final ArrayList<byte[]> arqEntradas = new ArrayList<byte[]>();
+	public static byte[] compactarStream(final String arqNome, final byte[] arqEntrada) {
+		final List<String> arqNomes = new ArrayList<String>();
+		final List<byte[]> arqEntradas = new ArrayList<byte[]>();
 		arqNomes.add(arqNome);
 		arqEntradas.add(arqEntrada);
 		return compactarStream(arqNomes, arqEntradas);
@@ -750,7 +786,7 @@ public class Compactador {
 	 *            ArrayList com os arrays de bytes a ser adicionados.
 	 * @return byte[] - array de bytes compactado resultante
 	 */
-	public byte[] compactarStream(final ArrayList<String> arqNome, final ArrayList<byte[]> arqEntrada) {
+	public static byte[] compactarStream(final List<String> arqNome, final List<byte[]> arqEntrada) {
 
 		// Create a buffer for reading the files
 		final byte[] buf = new byte[1024];
@@ -784,6 +820,7 @@ public class Compactador {
 			out.close();
 			return outByte.toByteArray();
 		} catch (final IOException e) {
+			log.error("Não foi possível compactar bytes de item", e);
 			return null;
 		}
 	}
@@ -799,7 +836,7 @@ public class Compactador {
 	 * @aparam aList - ArrayList com os arrays de bytes descompactados.
 	 * 
 	 */
-	public void descompactarTudoStream(final byte[] zipEntrada, ArrayList<String> nomes, ArrayList<byte[]> aList) {
+	public static void descompactarTudoStream(final byte[] zipEntrada, List<String> nomes, List<byte[]> aList) {
 		try {
 			// Open the ZIP file
 			final ZipInputStream in = new ZipInputStream(new ByteArrayInputStream(zipEntrada));
@@ -832,7 +869,7 @@ public class Compactador {
 			in.close();
 
 		} catch (final IOException e) {
-
+			log.error("Não foi possível descompactar bytes", e);
 		}
 	}
 
@@ -845,11 +882,11 @@ public class Compactador {
 	 * @return ArrayList com os nomes internos de referência.
 	 * 
 	 */
-	public ArrayList<String> listarStream(final byte[] zipEntrada) {
+	public static List<String> listarStream(final byte[] zipEntrada) {
 		try {
 			// Open the ZIP file
 			final ZipInputStream in = new ZipInputStream(new ByteArrayInputStream(zipEntrada));
-			final ArrayList<String> nomes = new ArrayList<String>();
+			final List<String> nomes = new ArrayList<String>();
 			// Get the first entry
 			ZipEntry entry = in.getNextEntry();
 
@@ -865,8 +902,13 @@ public class Compactador {
 			else
 				return null;
 		} catch (final Exception e) {
+			log.error("Não foi possível listar itens no arquivo ZIP", e);
 			return null;
 		}
+	}
+
+	public static byte[] descompactarStream(final byte[] zipEntrada, final ZipItem item) {
+		return descompactarStream(zipEntrada, item.getNome());
 	}
 
 	/**
@@ -882,7 +924,7 @@ public class Compactador {
 	 *            Array de bytes descompactado.
 	 * @return byte[] - array de bytes compactado resultante
 	 */
-	public byte[] descompactarStream(final byte[] zipEntrada, final String arquivo) {
+	public static byte[] descompactarStream(final byte[] zipEntrada, final String arquivo) {
 		try {
 			// Open the ZIP file
 			final ZipInputStream in = new ZipInputStream(new ByteArrayInputStream(zipEntrada));
@@ -916,6 +958,7 @@ public class Compactador {
 			}
 			return null;
 		} catch (final IOException e) {
+			log.error("Não foi possível descompactar bytes de item", e);
 			return null;
 		}
 	}

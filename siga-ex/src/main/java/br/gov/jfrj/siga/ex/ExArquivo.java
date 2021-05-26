@@ -19,21 +19,34 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.PostPersist;
+import javax.persistence.PostRemove;
+import javax.persistence.PostUpdate;
+import javax.persistence.Transient;
 
 import br.gov.jfrj.itextpdf.Documento;
+import br.gov.jfrj.siga.armazenamento.zip.ZipItem;
+import br.gov.jfrj.siga.armazenamento.zip.ZipServico;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.model.Objeto;
+
 @MappedSuperclass
-public abstract class ExArquivo extends Objeto {
+public abstract class ExArquivo extends Objeto implements ExArquivoFilesystem {
+
+	private static final long serialVersionUID = -7483037836759972415L;
+
 	@Column(name = "NUM_PAGINAS")
 	private Integer numPaginas;
+
+	@Transient
+	protected Map<ZipItem, byte[]> cacheConteudo;
 
 	public abstract String getAssinantesCompleto();
 
@@ -104,42 +117,10 @@ public abstract class ExArquivo extends Objeto {
 			return 0;
 		}
 	}
-	
-	//public abstract Date getData();
 
 	public abstract String getHtml();
 
 	public abstract String getHtmlComReferencias() throws Exception;
-
-	public Long getIdDoc() {
-		if (this instanceof ExDocumento) {
-			ExDocumento doc = (ExDocumento) this;
-			return doc.getIdDoc();
-		}
-		;
-
-		if (this instanceof ExMovimentacao) {
-			ExMovimentacao mov = (ExMovimentacao) this;
-			return mov.getIdMov();
-		}
-
-		return null;
-	}
-	
-	public Date getData() {
-		if (this instanceof ExDocumento) {
-			ExDocumento doc = (ExDocumento) this;
-			return doc.getData();
-		}
-		;
-
-		if (this instanceof ExMovimentacao) {
-			ExMovimentacao mov = (ExMovimentacao) this;
-			return mov.getData();
-		}
-
-		return null;
-	}
 
 	public abstract DpLotacao getLotacao();
 
@@ -325,5 +306,42 @@ public abstract class ExArquivo extends Objeto {
 	public abstract boolean isCodigoParaAssinaturaExterna(String num);
 	
 	public abstract String getTipoDescr();
+
+	@PostPersist
+	private void postPersist() {
+		this.efetuarDespejoArquivosZip();
+	}
+
+	@PostUpdate
+	private void postUpdate() {
+		this.efetuarDespejoArquivosZip();
+	}
+
+	@PostRemove
+	private void postRemove() {
+		this.removerArquivosZip();
+	}
+
+	private void efetuarDespejoArquivosZip() {
+		if (this.getCacheConteudo() != null && !this.getCacheConteudo().isEmpty()) {
+			for (Entry<ZipItem, byte[]> entry : this.getCacheConteudo().entrySet()) {
+				ZipServico.gravarItem(this, entry.getValue(), entry.getKey());
+			}
+		}
+	}
+
+	private void removerArquivosZip() {
+		ZipServico.apagar(this);
+	}
+
+	@Override
+	public Map<ZipItem, byte[]> getCacheConteudo() {
+		return this.cacheConteudo;
+	}
+
+	@Override
+	public void setCacheConteudo(Map<ZipItem, byte[]> cacheConteudo) {
+		this.cacheConteudo = cacheConteudo;
+	}
 
 }

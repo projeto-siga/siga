@@ -17,6 +17,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -50,7 +51,8 @@ public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 		}
 
 		// Recebimento automático
-		if (Ex.getInstance().getComp().deveReceberEletronico(titular, lotaTitular, mob)) {
+		if (Prop.getBool("recebimento.automatico") 
+				&& Ex.getInstance().getComp().deveReceberEletronico(titular, lotaTitular, mob)) {
 			try {
 				Ex.getInstance().getBL().receber(cadastrante, lotaTitular, mob, new Date());
 			} catch (Exception e) {

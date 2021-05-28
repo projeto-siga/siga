@@ -44,7 +44,7 @@ public class SrRelAtendimento extends RelatorioTemplate {
 			throw new DJBuilderException("Parâmetro data final não informado!");
 		}
 }
-
+    
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, ColumnBuilderException {
 		

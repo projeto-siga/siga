@@ -63,7 +63,7 @@ public abstract class AbstractRelatorioBaseBuilder extends DynamicReportBuilder 
 	protected Style estiloColuna;
 	protected Style estiloTituloGrupo;
 
-	protected Map<String, String> parametros;
+	protected Map parametros;
 
 	public AbstractRelatorioBaseBuilder(Map parametros) throws DJBuilderException {
 

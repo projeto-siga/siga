@@ -45,6 +45,13 @@ public class Utils {
 		return s == null || s.trim().length() == 0;
 	}
 	
+	public static boolean empty(Object s) {
+		if (s instanceof String) return Utils.empty((String) s);
+		return s == null;
+	}
+	
+	
+	
 	public static boolean isEmailValido(String email) {
 		Pattern pattern = Pattern.compile(Texto.DpPessoa.EMAIL_REGEX_PATTERN);   
 	    Matcher matcher = pattern.matcher(email);   

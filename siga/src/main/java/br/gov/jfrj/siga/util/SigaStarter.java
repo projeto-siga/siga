@@ -5,7 +5,6 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
-import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
@@ -24,8 +23,8 @@ public class SigaStarter {
 	public static EntityManagerFactory emf;
 
 	@PostConstruct
-	public void init() throws NamingException {
-		SigaFlyway.migrate("java:/jboss/datasources/SigaCpDS", "sigacp");
+	public void init() {
+		SigaFlyway.migrate("java:/jboss/datasources/SigaCpDS", "sigacp", "corporativo");
 		emf = Persistence.createEntityManagerFactory("default");
 	}
 

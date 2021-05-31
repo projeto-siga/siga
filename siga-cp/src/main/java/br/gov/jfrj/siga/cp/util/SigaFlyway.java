@@ -15,22 +15,29 @@ public class SigaFlyway {
 	private static final String PROP_FLYWAY_MIGRATE = "siga.flyway.migrate";
 	private static final String PROP_FLYWAY_MIGRATE_DEFAULT = "false";
 
-	public static void migrate(String dataSource, String module) throws NamingException {
+	public static void migrate(String dataSourceJndi, String module, String schema) {
 		if (!isFlywayAtivo()) {
 			return;
 		}
 
 		final String location = getDatabaseMigrationsLocation(module);
-		final Context initContext = new InitialContext();
-		final Context envContext = (Context) initContext.lookup("java:");
-		final DataSource ds = (DataSource) envContext.lookup(dataSource);
+		try {
+			final Context initContext = new InitialContext();
+			final Context envContext = (Context) initContext.lookup("java:");
+			final DataSource dataSource = (DataSource) envContext.lookup(dataSourceJndi);
 
-		Flyway.configure()
-				.dataSource(ds)
-				.locations(location)
-				.placeholderReplacement(false)
-				.load()
-				.migrate();
+			Flyway flyway = Flyway.configure()
+					.schemas(schema)
+					.createSchemas(false)
+					.dataSource(dataSource)
+					.locations(location)
+					.placeholderReplacement(false)
+					.load();
+
+			flyway.migrate();
+		} catch (NamingException e) {
+			throw new IllegalStateException("Flyway DataSource not available for module " + module, e);
+		}
 	}
 
 	private static String getDatabaseMigrationsLocation(String modulo) {

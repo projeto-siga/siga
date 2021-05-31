@@ -1,0 +1,446 @@
+INSERT INTO siga.ex_classificacao VALUES (1, '00.00.00.00', 'ORGANIZAÇÃO E FUNCIONAMENTO', NULL, NULL, NULL, 1, 1, '2009-03-13 00:00:00-03', NULL);
+INSERT INTO siga.ex_classificacao VALUES (2, '00.01.00.00', 'REGULAMENTAÇÃO', NULL, NULL, NULL, 1, 2, '2009-03-13 00:00:00-03', NULL);
+INSERT INTO siga.ex_classificacao VALUES (3, '00.01.01.00', 'ORGANIZAÇÃO ADMINISTRATIVA', NULL, NULL, NULL, 1, 3, '2009-03-13 00:00:00-03', NULL);
+INSERT INTO siga.ex_classificacao VALUES (4, '00.01.01.01', 'Modernização Administrativa', NULL, NULL, NULL, 1, 4, '2009-03-13 00:00:00-03', NULL);
+INSERT INTO siga.ex_classificacao VALUES (5, '00.06.00.00', 'FISCALIZAÇÃO CONTÁBIL, FINANCEIRA, ORÇAMENTÁRIA', NULL, NULL, NULL, 1, 5, '2009-03-13 00:00:00-03', NULL);
+INSERT INTO siga.ex_classificacao VALUES (6, '00.06.01.00', 'AUDITORIA', NULL, NULL, NULL, 1, 6, '2009-03-13 00:00:00-03', NULL);
+INSERT INTO siga.ex_classificacao VALUES (7, '00.06.01.01', 'Auditoria externa', NULL, NULL, NULL, 1, 7, '2009-03-13 00:00:00-03', NULL);
+INSERT INTO siga.ex_classificacao VALUES (8, '00.06.01.02', 'Auditoria  interna', NULL, NULL, NULL, 1, 8, '2009-03-13 00:00:00-03', NULL);
+INSERT INTO siga.ex_classificacao VALUES (10, '00.06.02.00', 'APRESTAÇÃO DE CONTAS', NULL, NULL, NULL, 1, 10, '2009-03-13 00:00:00-03', NULL);
+INSERT INTO siga.ex_classificacao VALUES (11, '00.06.02.01', 'Tomada de contas especial', NULL, NULL, NULL, 1, 11, '2009-03-13 00:00:00-03', NULL);
+INSERT INTO siga.ex_classificacao VALUES (12, '00.06.02.03', 'Decisão do TCU sobre as contas', NULL, NULL, NULL, 1, 12, '2009-03-13 00:00:00-03', NULL);
+
+INSERT INTO siga.ex_configuracao VALUES (27, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, NULL);
+INSERT INTO siga.ex_configuracao VALUES (28, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO siga.ex_configuracao VALUES (29, NULL, NULL, NULL, NULL, 78, NULL, NULL, NULL, NULL);
+INSERT INTO siga.ex_configuracao VALUES (30, NULL, NULL, NULL, NULL, 519, NULL, NULL, NULL, NULL);
+INSERT INTO siga.ex_configuracao VALUES (31, NULL, NULL, NULL, NULL, 529, NULL, NULL, NULL, NULL);
+INSERT INTO siga.ex_configuracao VALUES (32, NULL, NULL, NULL, 57, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO siga.ex_configuracao VALUES (33, 60, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO siga.ex_configuracao VALUES (34, 58, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO siga.ex_configuracao VALUES (35, 59, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO siga.ex_configuracao VALUES (38, NULL, NULL, NULL, NULL, 545, NULL, NULL, NULL, NULL);
+INSERT INTO siga.ex_configuracao VALUES (39, NULL, NULL, NULL, NULL, 665, NULL, NULL, NULL, NULL);
+INSERT INTO siga.ex_configuracao VALUES (40, 32, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO siga.ex_configuracao VALUES (41, 36, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO siga.ex_configuracao VALUES (42, 37, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO siga.ex_configuracao VALUES (43, 38, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO siga.ex_configuracao VALUES (44, 52, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO siga.ex_configuracao VALUES (45, 51, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO siga.ex_configuracao VALUES (46, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO siga.ex_configuracao VALUES (47, 49, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO siga.ex_configuracao VALUES (48, NULL, NULL, NULL, NULL, 533, NULL, NULL, NULL, NULL);
+INSERT INTO siga.ex_configuracao VALUES (54, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO siga.ex_configuracao VALUES (55, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO siga.ex_configuracao VALUES (56, 62, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+INSERT INTO siga.ex_forma_documento VALUES (1, 'Ofício', 'OFI', 1, NULL);
+INSERT INTO siga.ex_forma_documento VALUES (2, 'Memorando', 'MEM', 1, NULL);
+INSERT INTO siga.ex_forma_documento VALUES (3, 'Formulário', 'FOR', 1, NULL);
+INSERT INTO siga.ex_forma_documento VALUES (4, 'Informação', 'INF', 1, NULL);
+INSERT INTO siga.ex_forma_documento VALUES (5, 'Externo', 'EXT', 1, NULL);
+INSERT INTO siga.ex_forma_documento VALUES (8, 'Despacho', 'DES', 1, NULL);
+INSERT INTO siga.ex_forma_documento VALUES (9, 'Contrato', 'CON', 1, NULL);
+INSERT INTO siga.ex_forma_documento VALUES (12, 'Requerimento', 'REQ', 1, NULL);
+INSERT INTO siga.ex_forma_documento VALUES (13, 'Solicitação', 'SOL', 1, NULL);
+INSERT INTO siga.ex_forma_documento VALUES (14, 'Parecer', 'PAR', 1, NULL);
+INSERT INTO siga.ex_forma_documento VALUES (15, 'Certidão', 'CER', 1, NULL);
+INSERT INTO siga.ex_forma_documento VALUES (54, 'Boletim Interno', 'BIE', 1, NULL);
+INSERT INTO siga.ex_forma_documento VALUES (55, 'Processo Administrativo', 'ADM', 2, NULL);
+INSERT INTO siga.ex_forma_documento VALUES (56, 'Processo de Pessoal', 'RHU', 2, NULL);
+INSERT INTO siga.ex_forma_documento VALUES (57, 'Processo de Execução Orçamentária e Financeira', 'EOF', 2, NULL);
+INSERT INTO siga.ex_forma_documento VALUES (97, 'Memória de Reunião', 'MRU', 1, NULL);
+INSERT INTO siga.ex_forma_documento VALUES (98, 'Relatório', 'REL', 1, NULL);
+INSERT INTO siga.ex_forma_documento VALUES (99, 'Documento Capturado', 'CAP', 1, NULL);
+
+INSERT INTO siga.ex_modelo VALUES (2, 'Ofício', 'Ofício', 1, NULL, 'template/freemarker', 'oficio.jsp', NULL, 1, NULL, NULL, 2, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL);
+INSERT INTO siga.ex_modelo VALUES (26, 'Memorando', 'Memorando', 2, NULL, 'template/freemarker', 'memorando.jsp', NULL, 2, NULL, NULL, 26, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL);
+INSERT INTO siga.ex_modelo VALUES (27, 'Informação', 'Informação', 3, NULL, 'template/freemarker', NULL, NULL, 4, NULL, NULL, 27, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL);
+INSERT INTO siga.ex_modelo VALUES (28, 'Documento Externo', NULL, NULL, NULL, NULL, 'externo.jsp', NULL, 5, NULL, NULL, 28, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL);
+INSERT INTO siga.ex_modelo VALUES (29, 'Interno Importado', NULL, NULL, NULL, NULL, 'interno_antigo.jsp', NULL, NULL, NULL, NULL, 29, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL);
+INSERT INTO siga.ex_modelo VALUES (78, 'Despacho', 'Despacho', 4, NULL, 'template/freemarker', NULL, NULL, 8, NULL, NULL, 78, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL);
+INSERT INTO siga.ex_modelo VALUES (181, 'Contrato', 'Contrato', NULL, NULL, 'template-file/jsp', 'contrato.jsp', NULL, 9, NULL, NULL, 181, NULL, '2020-02-12 14:52:59-03', NULL, NULL, 0, NULL, NULL, NULL);
+INSERT INTO siga.ex_modelo VALUES (241, 'Boletim Interno', NULL, 5, NULL, 'template/freemarker', 'boletimInterno.jsp', NULL, 54, NULL, NULL, 241, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL);
+INSERT INTO siga.ex_modelo VALUES (519, 'Parecer', 'Parecer', 6, NULL, 'template/freemarker', NULL, NULL, 14, NULL, NULL, 519, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL);
+INSERT INTO siga.ex_modelo VALUES (529, 'Certidão de desentranhamento', NULL, 7, NULL, 'template/freemarker', 'certidaoDesentranhamento.jsp', NULL, 15, NULL, NULL, 529, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL);
+INSERT INTO siga.ex_modelo VALUES (533, 'Processo de Pessoal', NULL, NULL, NULL, NULL, 'processoAdministrativo.jsp', NULL, 56, NULL, NULL, 533, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL);
+INSERT INTO siga.ex_modelo VALUES (534, 'Processo de Execução Orçamentária e Financeira', 'Processo de Execução Orçamentária e Financeira', NULL, NULL, 'template-file/jsp', 'processoAdministrativo.jsp', NULL, 57, NULL, NULL, 534, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL);
+INSERT INTO siga.ex_modelo VALUES (545, 'Certidão de encerramendo de volume', NULL, NULL, NULL, NULL, 'certidaoEncerramentoVolume.jsp', NULL, 15, NULL, NULL, 545, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL);
+INSERT INTO siga.ex_modelo VALUES (546, 'Folha inicial de volume - EOF', NULL, NULL, NULL, NULL, 'folhaInicialVolume.jsp', NULL, 3, NULL, NULL, 546, NULL, '2020-02-12 14:52:59-03', NULL, NULL, 0, NULL, NULL, NULL);
+INSERT INTO siga.ex_modelo VALUES (663, 'Memória de Reunião', 'Memória de Reunião', 8, NULL, 'template/freemarker', NULL, NULL, 97, NULL, NULL, 663, NULL, '2020-02-12 14:52:59-03', NULL, NULL, 0, NULL, NULL, NULL);
+INSERT INTO siga.ex_modelo VALUES (665, 'Despacho Automático', 'Despacho gerado automaticamente pela transferência', 9, NULL, 'template/freemarker', NULL, NULL, 8, NULL, NULL, 665, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL);
+INSERT INTO siga.ex_modelo VALUES (666, 'Planta', 'Planta', 10, NULL, 'template/freemarker', NULL, NULL, 99, NULL, NULL, 0, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL);
+
+INSERT INTO siga.ex_nivel_acesso VALUES (1, 'Limitado ao órgão', 'Dá acesso a todos do órgão ao qual o documento pertence, bem como a toda a lotação de qualquer órgão para onde for enviado', 20);
+INSERT INTO siga.ex_nivel_acesso VALUES (2, 'Limitado de divisão para pessoa', 'Dá acesso a toda a divisão onde o documento foi criado e também a qualquer lotação (ou apenas pessoa específica) para onde for enviado', 40);
+INSERT INTO siga.ex_nivel_acesso VALUES (3, 'Limitado entre lotações', 'Dá acesso a toda a lotação do cadastrante do documento e à lotação (nunca somente à pessoa) para onde for enviado', 60);
+INSERT INTO siga.ex_nivel_acesso VALUES (5, 'Limitado entre pessoas', 'Dá acesso somente ao cadastrante do documento e à lotação (ou apenas pessoa específica) para onde for enviado', 100);
+INSERT INTO siga.ex_nivel_acesso VALUES (6, 'Público', 'Dá acesso a todos, independentemente do órgão', 10);
+INSERT INTO siga.ex_nivel_acesso VALUES (7, 'Limitado de pessoa para divisão', 'Dá acesso somente ao cadastrante do documento e a toda a divisão para onde for enviado', 30);
+
+INSERT INTO siga.ex_papel VALUES (1, 'Gestor');
+INSERT INTO siga.ex_papel VALUES (2, 'Interessado');
+INSERT INTO siga.ex_papel VALUES (5, 'Liquidante');
+INSERT INTO siga.ex_papel VALUES (6, 'Autorizador');
+INSERT INTO siga.ex_papel VALUES (7, 'Revisor');
+
+INSERT INTO siga.ex_situacao_configuracao VALUES (1, 'Pode');
+INSERT INTO siga.ex_situacao_configuracao VALUES (2, 'Não Pode');
+INSERT INTO siga.ex_situacao_configuracao VALUES (3, 'Obrigatório');
+INSERT INTO siga.ex_situacao_configuracao VALUES (4, 'Opcional');
+INSERT INTO siga.ex_situacao_configuracao VALUES (5, 'Default');
+INSERT INTO siga.ex_situacao_configuracao VALUES (6, 'Não default');
+INSERT INTO siga.ex_situacao_configuracao VALUES (7, 'Proibido');
+
+INSERT INTO siga.ex_temporalidade VALUES (81, '1 ano', 1, 1, 81, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (82, '1 ano após a atualização', 1, 1, 82, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (83, '10 anos', 10, 1, 83, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (84, '15 anos', 15, 1, 84, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (85, '2 anos', 2, 1, 85, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (86, '2 anos após a devolução do documento / processo', 2, 1, 86, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (87, '2 anos após o encerramento', 2, 1, 87, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (88, '2 anos após o encerramento com devolução', 2, 1, 88, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (89, '20 anos', 20, 1, 89, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (90, '3 anos', 3, 1, 90, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (92, '3 anos após o encerramento', 3, 1, 92, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (93, '30 dias', 30, 3, 93, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (94, '35 anos', 35, 1, 94, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (95, '4 anos', 4, 1, 95, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (96, '5 anos', 5, 1, 96, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (97, '5 anos após o encerramento', 5, 1, 97, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (98, '50 anos', 50, 1, 98, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (99, '51 anos', 51, 1, 99, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (100, '6 anos', 6, 1, 100, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (101, '7 anos', 7, 1, 101, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (102, '71 anos', 71, 1, 102, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (103, '90 dias', 90, 3, 103, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (104, '95 anos', 95, 1, 104, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (105, 'Até a alienação', NULL, NULL, 105, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (106, 'Até a aposentadoria ou o desligamento', NULL, NULL, 106, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (107, 'Até a atualização', NULL, NULL, 107, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (108, 'Até a conclusão da apuração', NULL, NULL, 108, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (109, 'Até a devolução', NULL, NULL, 109, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (110, 'Até a inclusão', NULL, NULL, 110, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (111, 'Até a informatização ou alienação', NULL, NULL, 111, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (112, 'Até a prestação de contas', NULL, NULL, 112, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (113, 'Até a quitação da dívida', NULL, NULL, 113, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (114, 'Até a restauração da obra', NULL, NULL, 114, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (115, 'Até alienação do bem', NULL, NULL, 115, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (116, 'Até o emplacamento', NULL, NULL, 116, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (117, 'Até o encerramento', NULL, NULL, 117, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (118, 'Até o pagamento', NULL, NULL, 118, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (119, 'Até o trânsito em julgado', NULL, NULL, 119, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (120, 'Até vigência', NULL, NULL, 120, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (121, 'Até vigência + 6 anos', 6, 1, 121, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (122, 'Duração obra', NULL, NULL, 122, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (123, 'Durante vigência', NULL, NULL, 123, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (124, 'Enquanto permanece a ocupação', NULL, NULL, 124, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (125, 'Enquanto vigora', NULL, NULL, 125, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (126, 'Guarda Permanente', NULL, NULL, 126, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (127, 'Indeterminado', NULL, NULL, 127, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (128, 'Julg. TCU', NULL, NULL, 128, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (129, 'No momento do recolhimento', NULL, NULL, 129, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (130, 'Para utilização', NULL, NULL, 130, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (131, 'Prazo da pasta', NULL, NULL, 131, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (132, 'Prazo do assent.', NULL, NULL, 132, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (133, 'Prazo do dossiê', NULL, NULL, 133, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (134, 'Prazo do precatório', NULL, NULL, 134, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (135, 'Prazo do processo', NULL, NULL, 135, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (136, 'Prazo do prontuário', NULL, NULL, 136, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (137, 'Transitado em julgado', NULL, NULL, 137, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (138, 'Validade Concurso', NULL, NULL, 138, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (139, 'Validade contrato', NULL, NULL, 139, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (140, 'Validade credenciamento', NULL, NULL, 140, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (141, 'Validade Projeto', NULL, NULL, 141, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (142, 'Vigência', NULL, NULL, 142, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (143, 'Vigência cadastro', NULL, NULL, 143, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (144, 'Vigência da pensão', NULL, NULL, 144, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (161, 'Até a devolução do bem', NULL, NULL, 161, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (162, 'Até a posse', NULL, NULL, 162, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (163, 'Até a próxima atualização', NULL, NULL, 163, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (164, 'Até a publicação ', NULL, NULL, 164, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (165, 'Até o desfazimento do bem', NULL, NULL, 165, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (166, 'Até o encerramento do processo de execução penal', NULL, NULL, 166, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (167, 'Até o vitaliciamento', NULL, NULL, 167, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (168, 'Até revogação', NULL, NULL, 168, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (169, 'Até vigência do contrato ou Julg. TCU', NULL, NULL, 169, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (170, 'Eliminação no momento do recebimento', NULL, NULL, 170, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (171, 'Enquanto durar a ocupação', NULL, NULL, 171, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (172, 'Enquanto durar a pesquisa', NULL, NULL, 172, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (173, 'Enquanto o bem estiver alienado', NULL, NULL, 173, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (174, 'Enquanto vigente', NULL, NULL, 174, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (175, 'Imediatamente após a produção', NULL, NULL, 175, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (176, 'Prazo da licença', NULL, NULL, 176, NULL, NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_temporalidade VALUES (177, 'Validade do concurso', NULL, NULL, 177, NULL, NULL, NULL, NULL, 1);
+
+INSERT INTO siga.ex_tipo_despacho VALUES (1, 'De acordo.', 'S');
+INSERT INTO siga.ex_tipo_despacho VALUES (2, 'Para ciência.', 'S');
+INSERT INTO siga.ex_tipo_despacho VALUES (3, 'Para as providências cabíveis', 'S');
+INSERT INTO siga.ex_tipo_despacho VALUES (4, 'Intime-se.', 'S');
+INSERT INTO siga.ex_tipo_despacho VALUES (5, 'Autorizo.', 'S');
+INSERT INTO siga.ex_tipo_despacho VALUES (6, 'Para atendimento.', 'S');
+INSERT INTO siga.ex_tipo_despacho VALUES (7, 'Para verificar a possibilidade de atendimento.', 'S');
+INSERT INTO siga.ex_tipo_despacho VALUES (8, 'Oficie-se.', 'S');
+INSERT INTO siga.ex_tipo_despacho VALUES (9, 'Expeça-se ofício-circular.', 'S');
+INSERT INTO siga.ex_tipo_despacho VALUES (10, 'Expeça-se memorando.', 'S');
+INSERT INTO siga.ex_tipo_despacho VALUES (11, 'Expeça-se memorando-circular.', 'S');
+INSERT INTO siga.ex_tipo_despacho VALUES (12, 'Arquive-se.', 'S');
+INSERT INTO siga.ex_tipo_despacho VALUES (13, 'Junte-se ao dossiê.', 'S');
+INSERT INTO siga.ex_tipo_despacho VALUES (14, 'Junte-se ao processo.', 'S');
+INSERT INTO siga.ex_tipo_despacho VALUES (15, 'Ciente. Arquive-se.', 'S');
+INSERT INTO siga.ex_tipo_despacho VALUES (16, 'Para atendimento e encaminhamento direto', 'S');
+INSERT INTO siga.ex_tipo_despacho VALUES (17, 'A pedido', 'S');
+
+INSERT INTO siga.ex_tipo_destinacao VALUES (1, 'Eliminação', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (2, 'Guarda Permanente', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (21, '5 anos', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (22, 'Agência', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (23, 'Arquivo', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (24, 'Arquivo Intermediário', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (26, 'Arquivo Permanente', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (27, 'Assentamento Funcional', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (28, 'Banco', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (29, 'Biblioteca', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (30, 'Candidato', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (31, 'Clínica', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (32, 'Correios', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (33, 'Devolvida', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (34, 'Doador', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (35, 'Dossiê', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (36, 'Dossiê do curso', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (37, 'Dossiê do Evento', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (38, 'Empresa', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (39, 'Estagiário', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (40, 'Executor', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (41, 'Imprensa', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (42, 'Interessado', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (43, 'Julg. TCU', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (44, 'Magistrado', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (45, 'Participante', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (46, 'Participante / Instrutor', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (47, 'Pasta do Evento', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (48, 'Pasta do projeto', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (49, 'Precatório', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (50, 'Processo', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (51, 'Processo de origem', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (52, 'Prontuário Médico', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (53, 'Receita Federal', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (54, 'Remetido', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (55, 'Servidor', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (57, 'Setor', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (58, 'Setor Competente', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (59, 'Setores ', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (60, 'Setores / Interessados', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (61, 'TCU', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (62, 'Unidade Geradora', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (81, 'Magistrado / Servidor', NULL);
+INSERT INTO siga.ex_tipo_destinacao VALUES (82, 'Processo Judicial', NULL);
+
+INSERT INTO siga.ex_tipo_documento VALUES (1, 'Interno Produzido');
+INSERT INTO siga.ex_tipo_documento VALUES (2, 'Interno Folha de Rosto');
+INSERT INTO siga.ex_tipo_documento VALUES (3, 'Externo Folha de Rosto');
+INSERT INTO siga.ex_tipo_documento VALUES (4, 'Externo Capturado');
+INSERT INTO siga.ex_tipo_documento VALUES (5, 'Interno Capturado');
+
+INSERT INTO siga.ex_tipo_forma_documento VALUES (1, 'Expediente', 0);
+INSERT INTO siga.ex_tipo_forma_documento VALUES (2, 'Processo Administrativo', 1);
+
+INSERT INTO siga.ex_tipo_mobil VALUES (1, 'Geral');
+INSERT INTO siga.ex_tipo_mobil VALUES (2, 'Via');
+INSERT INTO siga.ex_tipo_mobil VALUES (3, 'Cópia');
+INSERT INTO siga.ex_tipo_mobil VALUES (4, 'Volume');
+
+INSERT INTO siga.ex_tipo_movimentacao VALUES (1, 'Criação');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (2, 'Anexação');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (3, 'Transferência');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (4, 'Recebimento');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (5, 'Despacho');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (6, 'Despacho com Transferência');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (7, 'Despacho Interno');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (8, 'Despacho Interno com Transferência');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (9, 'Arquivamento Corrente');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (10, 'Eliminação');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (11, 'Assinatura');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (12, 'Juntada');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (13, 'Desentranhamento');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (14, 'Cancelamento de Movimentação');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (15, 'Extravio');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (16, 'Vinculação');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (17, 'Transferência Externa');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (18, 'Despacho com Transferência Externa');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (19, 'Recolhimento ao Arq. Permanente');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (20, 'Arquivamento Intermediário');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (21, 'Desarquivamento');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (22, 'Assinatura de Movimentação');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (23, 'Recebimento Transitório');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (24, 'Inclusão de Cossignatário');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (25, 'Registro de Assinatura');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (26, 'Registro de Assinatura de Movimentação');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (27, 'Atualização');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (28, 'Anotação');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (29, 'Redefinição de Sigilo');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (30, 'Registro de Acesso Alheio');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (31, 'Juntada a Documento Externo');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (32, 'Agendamento de Publicação no DJE');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (33, 'Remessa para Publicação');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (34, 'Confirmação de Remessa Manual');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (35, 'Disponibilização');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (36, 'Solicitação de Publicação no Boletim');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (37, 'Publicação do Boletim');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (38, 'Pedido de Publicação no DJE');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (39, 'Revolvimento Unidirecional');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (40, 'Notificação de Publicação no Boletim');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (41, 'Apensação');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (42, 'Desapensação');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (43, 'Encerramento de Volume');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (44, 'Definição de Perfil');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (45, 'Autenticação de Documento');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (46, 'Sobrestar');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (47, 'Desobrestar');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (48, 'Tornar sem Efeito');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (49, 'Indicação para Guarda Permanente');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (50, 'Reversão de Ind. para Guarda Permanente');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (51, 'Reclassificação');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (52, 'Avaliação');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (53, 'Avaliação com Reclassificação');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (54, 'Inclusão em Edital de Eliminação');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (55, 'Retirada de Edital de Eliminação');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (56, 'Desarquivamento Intermediário');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (57, 'Pendência de Anexação');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (58, 'Assinatura com senha');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (59, 'Assinatura de movimentação com senha');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (60, 'Autenticação de Documento com senha');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (61, 'Controle de Coloboração');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (62, 'Marcação');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (63, 'Inclusão de Cópia');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (64, 'Anexação de Arquivo Auxiliar');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (67, 'Autuar');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (70, 'Restringir Acesso');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (71, 'Refazer Documento');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (72, 'Assinatura por com senha');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (73, 'Gerar Protocolo');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (74, 'Substitução de Responsável');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (75, 'Reordenar');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (76, 'Ordenar');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (77, 'Publicação Portal da Trasparência');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (79, 'Disponibilizar no Acompanhamento do Protocolo');
+
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (1, 'Ato Ordinatório', 'J');
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (2, 'Decisão', 'J');
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (3, 'Despacho', 'J');
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (4, 'Sentença', 'J');
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (5, 'Edital (Teor Judicial)', 'J');
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (6, 'Informação de Secretaria', NULL);
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (7, 'Ordem de Serviço', NULL);
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (8, 'Portaria', NULL);
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (9, 'Acórdão', 'J');
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (18, 'Outros', 'A');
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (25, 'Aviso', 'A');
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (26, 'Aviso de Aditamento', 'A');
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (40, 'Aviso de Licitação', 'A');
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (73, 'Errata', NULL);
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (83, 'Extrato de convênio', 'A');
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (85, 'Extratos de Contratos', 'A');
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (86, 'Extrato de dispensa de licitação', 'A');
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (90, 'Extrato de inexigibilidade de licitação', 'A');
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (104, 'Extrato de Registro de Preços', 'A');
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (106, 'Extrato de Rescisão', 'A');
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (107, 'Extrato de rescisão contratual', 'A');
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (108, 'Extrato de termo aditivo', 'A');
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (147, 'Aviso de Pregão', 'A');
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (158, 'Ato da Presidência', NULL);
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (159, 'Edital da Presidência', NULL);
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (160, 'Portaria da Presidência', NULL);
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (161, 'Ordem de Serviço da presidência', NULL);
+INSERT INTO siga.ex_tp_doc_publicacao VALUES (162, 'Resolução da Presidência', NULL);
+
+INSERT INTO siga.ex_tp_forma_doc VALUES (1, 1);
+INSERT INTO siga.ex_tp_forma_doc VALUES (2, 1);
+INSERT INTO siga.ex_tp_forma_doc VALUES (3, 1);
+INSERT INTO siga.ex_tp_forma_doc VALUES (4, 1);
+INSERT INTO siga.ex_tp_forma_doc VALUES (5, 3);
+INSERT INTO siga.ex_tp_forma_doc VALUES (8, 1);
+INSERT INTO siga.ex_tp_forma_doc VALUES (9, 1);
+INSERT INTO siga.ex_tp_forma_doc VALUES (12, 1);
+INSERT INTO siga.ex_tp_forma_doc VALUES (13, 1);
+INSERT INTO siga.ex_tp_forma_doc VALUES (14, 1);
+INSERT INTO siga.ex_tp_forma_doc VALUES (54, 1);
+INSERT INTO siga.ex_tp_forma_doc VALUES (55, 1);
+INSERT INTO siga.ex_tp_forma_doc VALUES (56, 1);
+INSERT INTO siga.ex_tp_forma_doc VALUES (57, 1);
+INSERT INTO siga.ex_tp_forma_doc VALUES (97, 1);
+INSERT INTO siga.ex_tp_forma_doc VALUES (98, 1);
+INSERT INTO siga.ex_tp_forma_doc VALUES (99, 4);
+
+INSERT INTO siga.ex_tp_mov_estado VALUES (1, 1);
+INSERT INTO siga.ex_tp_mov_estado VALUES (3, 3);
+INSERT INTO siga.ex_tp_mov_estado VALUES (4, 2);
+INSERT INTO siga.ex_tp_mov_estado VALUES (5, 2);
+INSERT INTO siga.ex_tp_mov_estado VALUES (6, 3);
+INSERT INTO siga.ex_tp_mov_estado VALUES (7, 2);
+INSERT INTO siga.ex_tp_mov_estado VALUES (8, 3);
+INSERT INTO siga.ex_tp_mov_estado VALUES (9, 6);
+INSERT INTO siga.ex_tp_mov_estado VALUES (10, 8);
+INSERT INTO siga.ex_tp_mov_estado VALUES (12, 9);
+INSERT INTO siga.ex_tp_mov_estado VALUES (13, 2);
+INSERT INTO siga.ex_tp_mov_estado VALUES (15, 4);
+INSERT INTO siga.ex_tp_mov_estado VALUES (17, 11);
+INSERT INTO siga.ex_tp_mov_estado VALUES (18, 11);
+
+INSERT INTO siga.ex_via VALUES (1, 4, 58, '1', 85, NULL, '-', 1, 1, '2019-03-13 00:00:00-03', NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_via VALUES (2, 7, 58, '1', 85, NULL, '-', 1, 2, '2009-03-13 00:00:00-03', NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_via VALUES (3, 8, 58, '1', 85, NULL, '-', 1, 3, '2009-03-13 00:00:00-03', NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_via VALUES (4, 11, 58, '1', 85, NULL, '-', 1, 4, '2009-03-13 00:00:00-03', NULL, NULL, NULL, 1);
+INSERT INTO siga.ex_via VALUES (5, 12, 58, '1', 85, NULL, '-', 1, 5, '2009-03-13 00:00:00-03', NULL, NULL, NULL, 1);
+
+SELECT pg_catalog.setval('siga.ex_boletim_doc_id_boletim_doc_seq', 1, false);
+
+SELECT pg_catalog.setval('siga.ex_classificacao_id_classificacao_seq', 1, false);
+
+SELECT pg_catalog.setval('siga.ex_configuracao_id_configuracao_ex_seq', 1, false);
+
+SELECT pg_catalog.setval('siga.ex_documento_id_doc_seq', 1, false);
+
+SELECT pg_catalog.setval('siga.ex_documento_numeracao_id_documento_numeracao_seq', 1, false);
+
+SELECT pg_catalog.setval('siga.ex_email_notificacao_id_email_notificacao_seq', 1, false);
+
+SELECT pg_catalog.setval('siga.ex_estado_doc_id_estado_doc_seq', 1, false);
+
+SELECT pg_catalog.setval('siga.ex_forma_documento_id_forma_doc_seq', 1, false);
+
+SELECT pg_catalog.setval('siga.ex_mobil_id_mobil_seq', 1, false);
+
+SELECT pg_catalog.setval('siga.ex_modelo_id_mod_seq', 1, false);
+
+SELECT pg_catalog.setval('siga.ex_movimentacao_id_mov_seq', 1, false);
+
+SELECT pg_catalog.setval('siga.ex_nivel_acesso_id_nivel_acesso_seq', 1, false);
+
+SELECT pg_catalog.setval('siga.ex_papel_id_papel_seq', 1, false);
+
+SELECT pg_catalog.setval('siga.ex_preenchimento_id_preenchimento_seq', 1, false);
+
+SELECT pg_catalog.setval('siga.ex_protocolo_id_protocolo_seq', 1, false);
+
+SELECT pg_catalog.setval('siga.ex_sequencia_id_seq_seq', 1, false);
+
+SELECT pg_catalog.setval('siga.ex_situacao_configuracao_id_sit_configuracao_seq', 1, false);
+
+SELECT pg_catalog.setval('siga.ex_temporalidade_id_temporalidade_seq', 1, false);
+
+SELECT pg_catalog.setval('siga.ex_tipo_despacho_id_tp_despacho_seq', 1, false);
+
+SELECT pg_catalog.setval('siga.ex_tipo_destinacao_id_tp_destinacao_seq', 1, false);
+
+SELECT pg_catalog.setval('siga.ex_tipo_documento_id_tp_doc_seq', 1, false);
+
+SELECT pg_catalog.setval('siga.ex_tipo_forma_documento_id_tipo_forma_doc_seq', 1, false);
+
+SELECT pg_catalog.setval('siga.ex_tipo_mobil_id_tipo_mobil_seq', 1, false);
+
+SELECT pg_catalog.setval('siga.ex_tipo_movimentacao_id_tp_mov_seq', 1, false);
+
+SELECT pg_catalog.setval('siga.ex_tp_doc_publicacao_id_doc_publicacao_seq', 1, false);
+
+SELECT pg_catalog.setval('siga.ex_via_id_via_seq', 1, false);

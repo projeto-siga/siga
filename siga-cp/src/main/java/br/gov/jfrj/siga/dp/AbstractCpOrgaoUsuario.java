@@ -79,7 +79,7 @@ public abstract class AbstractCpOrgaoUsuario extends Objeto implements
 	@Column(name = "SIGLA_ORGAO_USU", length = 15)
 	private String siglaOrgaoUsu;
 
-	@Column(name = "SIGLA_ORGAO_USU_COMPLETA", length = 15)
+	@Column(name = "SIGLA_ORGAO_USU_COMPLETA", length = 32)
 	private String siglaOrgaoUsuCompleta;
 
 	@Column(name = "MUNICIPIO_ORGAO_USU", length = 50)

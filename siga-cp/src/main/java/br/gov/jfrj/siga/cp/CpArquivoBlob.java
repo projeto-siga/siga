@@ -20,22 +20,19 @@ package br.gov.jfrj.siga.cp;
 
 import java.io.Serializable;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Immutable;
-import org.hibernate.annotations.LazyToOne;
-import org.hibernate.annotations.LazyToOneOption;
 
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
@@ -60,7 +57,7 @@ public class CpArquivoBlob implements Serializable {
 	@JoinColumn(name = "ID_ARQ_BLOB", referencedColumnName = "ID_ARQ") // same name as id @Column
 	private CpArquivo arquivo;
 
-	@Lob
+	@Basic(fetch = FetchType.LAZY)
 	@Column(name = "CONTEUDO_ARQ_BLOB")
 	private byte[] conteudoBlobArq;
 

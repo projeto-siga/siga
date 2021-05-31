@@ -30,7 +30,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
@@ -87,7 +86,6 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 	@Column(name = "EX_NOME_PREENCHIMENTO", nullable = false, length = 256)
 	private String nomePreenchimento;
 
-	@Lob
 	@Column(name = "PREENCHIMENTO_BLOB")
 	@Basic(fetch = FetchType.LAZY)
 	private byte[] preenchimentoBlob;

@@ -30,7 +30,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
@@ -67,7 +66,6 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	protected byte[] cacheConteudoBlobMod;
 	
 	/** The value of the simple conteudoBlobMod property. */
-	@Lob
 	@Column(name = "CONTEUDO_BLOB_MOD")
 	@Basic(fetch = FetchType.LAZY)
 	private byte[] conteudoBlobMod;

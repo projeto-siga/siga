@@ -31,6 +31,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -2482,7 +2483,7 @@ public class ExBL extends CpBL {
 	/**
 	 * Retorna o conteúdo de um Map<String,String> na forma de um array de bytes
 	 * formatado de acordo com os padrões de Url Encoded Form e utilizando
-	 * iso-8859-1 como charset.
+	 * {@link StandardCharsets#ISO_8859_1} como charset.
 	 * 
 	 * @param map
 	 * @return
@@ -2493,12 +2494,13 @@ public class ExBL extends CpBL {
 			throws IOException, UnsupportedEncodingException {
 		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 			for (String sKey : map.keySet()) {
-				if (baos.size() != 0)
-					baos.write("&".getBytes("iso-8859-1"));
-				baos.write(sKey.getBytes("iso-8859-1"));
+				if (baos.size() != 0) {
+					baos.write("&".getBytes(StandardCharsets.ISO_8859_1));
+				}
+				baos.write(sKey.getBytes(StandardCharsets.ISO_8859_1));
 				baos.write('=');
 				String s = map.get(sKey);
-				baos.write(URLEncoder.encode(s == null ? "" : s, "iso-8859-1").getBytes());
+				baos.write(URLEncoder.encode(s == null ? "" : s, StandardCharsets.ISO_8859_1.name()).getBytes());
 			}
 			byte[] baForm = baos.toByteArray();
 			return baForm;
@@ -3652,7 +3654,7 @@ public class ExBL extends CpBL {
 								topicos[i].indexOf("\" value="));
 						String valor = topicos[i].substring(topicos[i].indexOf(" value=\"") + " value=\"".length(),
 								topicos[i].indexOf("\"/>"));
-						topico = URLEncoder.encode(descr, "iso-8859-1") + "=" + URLEncoder.encode(valor, "iso-8859-1")
+						topico = URLEncoder.encode(descr, StandardCharsets.ISO_8859_1.name()) + "=" + URLEncoder.encode(valor, StandardCharsets.ISO_8859_1.name())
 								+ "&";
 						if (resumo == null) {
 							resumo = topico;
@@ -4782,9 +4784,9 @@ public class ExBL extends CpBL {
 							cont = tpDespacho.getDescTpDespacho();
 						}
 						try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-							baos.write("conteudo".getBytes("iso-8859-1"));
+							baos.write("conteudo".getBytes(StandardCharsets.ISO_8859_1));
 							baos.write('=');
-							baos.write(URLEncoder.encode(cont, "iso-8859-1").getBytes());
+							baos.write(URLEncoder.encode(cont, StandardCharsets.ISO_8859_1.name()).getBytes());
 							mov.setConteudoBlobForm(baos.toByteArray());
 						}
 
@@ -5296,8 +5298,9 @@ public class ExBL extends CpBL {
 				if ("template/freemarker".equals(doc.getExModelo().getConteudoTpBlob())) {
 					attrs.put("nmMod", doc.getExModelo().getNmMod());
 					byte[] fm = doc.getExModelo().getConteudoBlobMod2();
-					if (fm != null)
-						attrs.put("template", new String(fm, "utf-8"));
+					if (fm != null) {
+						attrs.put("template", new String(fm, StandardCharsets.UTF_8));
+					}
 					p = processadorModeloFreemarker;
 				}
 			}
@@ -5339,7 +5342,7 @@ public class ExBL extends CpBL {
 				// attrs.put("nmArqMod", "despacho_mov.jsp");
 				ExModelo m = dao().consultarExModelo(null, MODELO_DESPACHO_AUTOMATICO);
 				attrs.put("nmMod", m.getNmMod());
-				attrs.put("template", new String(m.getConteudoBlobMod2(), "utf-8"));
+				attrs.put("template", new String(m.getConteudoBlobMod2(), StandardCharsets.UTF_8));
 
 				p = processadorModeloFreemarker;
 			}

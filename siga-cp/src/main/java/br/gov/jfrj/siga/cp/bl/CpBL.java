@@ -2184,7 +2184,7 @@ public class CpBL {
 			if (cargo == null ) 
 				throw new AplicacaoException("Cargo não informado.");
 			if (!cargo.getId().equals(cargo.getIdCargoIni())) 
-				throw new AplicacaoException("Não é possível excluir um cargo que já foi alterado. Favor tentar inativar o cargo.");
+				throw new AplicacaoException("Não é possível excluir um cargo que já foi alterado.");
 			dao().excluir(cargo);
 		} catch (final Exception e) {
 			throw e;
@@ -2197,7 +2197,7 @@ public class CpBL {
 			if (funcaoConfianca == null ) 
 				throw new AplicacaoException("Função de Confiança não informada.");
 			if (!funcaoConfianca.getId().equals(funcaoConfianca.getIdFuncaoIni())) 
-				throw new AplicacaoException("Não é possível excluir uma função de confiança que já foi alterada. Favor tentar inativar a função de confiança.");
+				throw new AplicacaoException("Não é possível excluir uma função de confiança que já foi alterada.");
 			dao().excluir(funcaoConfianca);
 		} catch (final Exception e) {
 			throw e;

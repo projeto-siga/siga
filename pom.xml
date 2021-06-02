@@ -7,40 +7,23 @@
 	<packaging>pom</packaging>
 	<version>1.2-SNAPSHOT</version>
 
-	<modules>		
+	<modules>
 		<module>siga-base</module>
 		<module>siga-ws</module>
 		<module>siga-rel</module>
 		<module>siga-cp</module>
 		<module>siga-sinc-lib</module>
 		<module>siga-ldap</module>
-		<module>siga-vraptor-module-old</module>
 		<module>siga-vraptor-module</module>
-		<module>siga-dump</module>
 		<module>siga</module>
 		<module>sigawf</module>
 		<module>siga-wf</module>
 		<module>sigaex</module>
 		<module>siga-ext</module>
 		<module>siga-ex</module>
-		<module>siga-ex-gsa</module>
-		<module>siga-ex-sinc</module>
-		<module>siga-gc-gsa</module>
-		<module>sigagc</module>
-		<module>sigasr</module>
- 		<module>sigapp</module>
- 		<module>sigatp</module>
-		<!--<module>sigari</module>
- 		<module>siga-cp-sinc</module> 
- 		<module>siga-dump</module>
- 		<module>siga-integration-test</module> -->
-    	<module>siga-ldap-cli</module>
 		<module>siga-jwt</module>
-		<!-- <module>siga-relarmaz</module> -->
 		<module>siga-oidc</module>
 		<module>siga-le</module>
-		
-		
 	</modules>
 
 

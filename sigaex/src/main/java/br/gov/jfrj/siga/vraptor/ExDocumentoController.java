@@ -119,8 +119,32 @@ public class ExDocumentoController extends ExController {
 	private static final String ERRO_GRAVAR_ARQUIVO = "Erro ao gravar o arquivo";
 	private static final String URL_EXIBIR = "/app/expediente/doc/exibir?sigla={0}";
 	private static final String URL_EDITAR = "/app/expediente/doc/editar?sigla={0}";
+
+	private static final String[] MARCACOES_TEMPLATE_DOCUMENTOS = {
+			"<!-- INICIO NUMERO -->",
+			"<!-- FIM NUMERO -->",
+			"<!-- INICIO NUMERO",
+			"FIM NUMERO -->",
+			"<!-- INICIO TITULO",
+			"FIM TITULO -->",
+			"<!-- INICIO MIOLO -->",
+			"<!-- FIM MIOLO -->",
+			"<!-- INICIO CORPO -->",
+			"<!-- FIM CORPO -->",
+			"<!-- INICIO CORPO",
+			"FIM CORPO -->",
+			"<!-- INICIO ASSINATURA -->",
+			"<!-- FIM ASSINATURA -->",
+			"<!-- INICIO ABERTURA -->",
+			"<!-- FIM ABERTURA -->",
+			"<!-- INICIO ABERTURA",
+			"FIM ABERTURA -->",
+			"<!-- INICIO FECHO -->",
+			"<!-- FIM FECHO -->"
+	};
+
 	private String url = null;
-	
+
 	private final static Logger log = Logger.getLogger(ExDocumentoController.class);
 
 	/**
@@ -2638,17 +2662,6 @@ public class ExDocumentoController extends ExController {
 		}
 
 		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-			final String marcacoes[] = { "<!-- INICIO NUMERO -->",
-					"<!-- FIM NUMERO -->", "<!-- INICIO NUMERO",
-					"FIM NUMERO -->", "<!-- INICIO TITULO", "FIM TITULO -->",
-					"<!-- INICIO MIOLO -->", "<!-- FIM MIOLO -->",
-					"<!-- INICIO CORPO -->", "<!-- FIM CORPO -->",
-					"<!-- INICIO CORPO", "FIM CORPO -->",
-					"<!-- INICIO ASSINATURA -->", "<!-- FIM ASSINATURA -->",
-					"<!-- INICIO ABERTURA -->", "<!-- FIM ABERTURA -->",
-					"<!-- INICIO ABERTURA", "FIM ABERTURA -->",
-					"<!-- INICIO FECHO -->", "<!-- FIM FECHO -->" };
-
 			final String as[] = vars;
 			if (as != null && as.length > 0) {
 				for (final String s : as) {
@@ -2658,7 +2671,7 @@ public class ExDocumentoController extends ExController {
 					baos.write('=');
 					if (param(s) != null) {
 						String parametro = param(s);
-						for (final String m : marcacoes) {
+						for (final String m : MARCACOES_TEMPLATE_DOCUMENTOS) {
 							if (parametro.contains(m))
 								parametro = parametro.replaceAll(m, "");
 						}

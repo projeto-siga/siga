@@ -60,12 +60,12 @@
 
 
 	<script type="text/javascript" language="Javascript1.1">
-		function visualizarImpressao() {
-			window.open(
-					"/sigaex/app/arquivo/exibir?arquivo=${mov.referencia}.pdf",
-					"_blank");
-		}
-	</script>
+        function visualizarImpressao() {
+            window.open(
+                    "/sigaex/app/arquivo/exibir?${mov.idTpMov == 13? 'sigla='.concat(doc.pai.sigla).concat('&'):''}arquivo=${mov.referencia}.pdf",
+                    "_blank");
+        }
+    </script>
 
 	<div class="container-fluid">
 		<div class="card bg-light mb-3">

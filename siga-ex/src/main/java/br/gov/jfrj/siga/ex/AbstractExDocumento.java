@@ -1180,7 +1180,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	@Override
 	public void setMimeType(String mimeType) {
-		this.setMimeType(mimeType);
+		this.setConteudoTpDoc(mimeType);
 	}
 
 	@Override

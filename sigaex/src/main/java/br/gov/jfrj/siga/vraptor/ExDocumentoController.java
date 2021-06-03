@@ -2655,6 +2655,7 @@ public class ExDocumentoController extends ExController {
 			if(mobPai == null) {
 	            mobPai = exDocumentoDTO.getDoc().getExMobilPai();   
 	        }
+			exDocumentoDTO.setCriandoAnexo(true);
 		}
         
 		exDocumentoDTO.setModelos(Ex

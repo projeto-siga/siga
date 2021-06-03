@@ -82,13 +82,9 @@ import br.gov.jfrj.siga.model.CarimboDeTempo;
 @BatchSize(size = 500)
 @Table(name = "siga.ex_documento")
 @DynamicUpdate
-public class ExDocumento extends AbstractExDocumento implements Serializable,
-		CarimboDeTempo {
+public class ExDocumento extends AbstractExDocumento implements Serializable, CarimboDeTempo {
 
-	/**
-         * 
-         */
-	private static final long serialVersionUID = -1462217739890785344L;
+	private static final long serialVersionUID = 1L;
 
 	private static final Logger log = Logger.getLogger(ExDocumento.class);
 
@@ -497,7 +493,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	/**
 	 * Retorna um descrição do documento com no máximo 40 caracteres.
 	 */
-	public java.lang.String getDescrCurta() {
+	public String getDescrCurta() {
 		if (getDescrDocumento() == null)
 			return "[sem descrição]";
 		if (getDescrDocumento().length() > 40)
@@ -509,7 +505,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	/**
 	 * Retorna um descrição do documento com um máximo de caracteres.
 	 */
-	public java.lang.String getDescrCurta(long qtdCaracteres) {
+	public String getDescrCurta(long qtdCaracteres) {
 		if (getDescrDocumento() == null)
 			return "[sem descrição]";
 		if (getDescrDocumento().length() > qtdCaracteres)
@@ -840,7 +836,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * Retorna o valor digitado para a <b>função</b> no campo
 	 * Função;Lotação;Localidade.
 	 */
-	public java.lang.String getNmFuncao() {
+	public String getNmFuncao() {
 		if (getNmFuncaoSubscritor() == null)
 			return null;
 		String a[] = getNmFuncaoSubscritor().split(";");
@@ -857,7 +853,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * Retorna valor digitado para a <b>lotação</b> no campo
 	 * Função;Lotação;Localidade.
 	 */
-	public java.lang.String getNmLotacao() {
+	public String getNmLotacao() {
 		if (getNmFuncaoSubscritor() == null)
 			return null;
 		String a[] = getNmFuncaoSubscritor().split(";");
@@ -874,7 +870,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * Retorna valor digitado para a <b>localidade</b> no campo
 	 * Função;Lotação;Localidade.
 	 */
-	public java.lang.String getNmLocalidade() {
+	public String getNmLocalidade() {
 		if (getNmFuncaoSubscritor() == null)
 			return null;
 		String a[] = getNmFuncaoSubscritor().split(";");
@@ -924,7 +920,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * Retorna o valor digitado para o <b>nome do subscritor</b> no campo
 	 * Função;Lotação;Localidade.
 	 */
-	public java.lang.String getNmSubscritor() {
+	public String getNmSubscritor() {
 		if (getNmFuncaoSubscritor() == null)
 			return null;
 		String a[] = getNmFuncaoSubscritor().split(";");
@@ -2154,7 +2150,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * Retorna uma lista de documentos filhos [de cada móbil] do documento
 	 * atual.
 	 */
-	public java.util.Set<ExDocumento> getExDocumentoFilhoSet() {
+	public Set<ExDocumento> getExDocumentoFilhoSet() {
 		Set<ExDocumento> set = new TreeSet<ExDocumento>(
 				new DocumentoFilhoComparator());
 		for (ExMobil m : getExMobilSet())
@@ -2340,7 +2336,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * Retorna uma lista de Mobils do documento, ordenados de forma decrescente
 	 * pelo número de sequência do móbil.
 	 */
-	public java.util.SortedSet<ExMobil> getExMobilSetInvertido() {
+	public SortedSet<ExMobil> getExMobilSetInvertido() {
 		final TreeSet<ExMobil> mobilInvertido = new TreeSet<ExMobil>(
 				new TipoMobilComparatorInverso());
 		mobilInvertido.addAll(getExMobilSet());

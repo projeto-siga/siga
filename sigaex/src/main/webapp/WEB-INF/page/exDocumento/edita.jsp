@@ -613,14 +613,14 @@
 		sigaSpinner.mostrar();
 		$('.selected-label').append('<span id="select-spinner" class="spinner-border text-secondary" role="status"></span><span class="disabled"> Carregando...</span>');
 		const urlParams = new URLSearchParams(window.location.search);
-		const isEditandoAnexo = urlParams.get('criandoAnexo');
+		const isEditandoAnexo = document.getElementsByName('exDocumentoDTO.criandoAnexo')[0].value === "true";
 		const isCriandoSubprocesso = urlParams.get('criandoSubprocesso');
-		const isAutuando = urlParams.get('autuando');
-		const siglaMobPai = urlParams.get('mobilPaiSel.sigla');
+		const isAutuando = document.getElementsByName('exDocumentoDTO.autuando')[0].value === "true";
+		const siglaMobPai = document.getElementsByName('exDocumentoDTO.mobilPaiSel.sigla')[0].value;
 		var qry = (isEditandoAnexo? 'isEditandoAnexo=true&' : '')
 			+ (isCriandoSubprocesso? 'isCriandoSubprocesso=true&' : '')
 			+ (isAutuando? 'isAutuando=true&' : '')
-			+ (siglaMobPai != undefined ? 'siglaMobPai=' + siglaMobPai : '');
+			+ (siglaMobPai != undefined && siglaMobPai != "" ? 'siglaMobPai=' + siglaMobPai : '');
 		var timeoutModelos = Math.abs(new Date() -
 				new Date(getUserSessionStorage('timeoutModelos' )));
 		var ulMod = $('#ulmod');
@@ -696,9 +696,11 @@
 	
 	$(document).ready(function() {
 		getListaModelos();
-
 		personalizacaoSeparar();
 	});
+	window.onbeforeunload = function(){
+		sigaSpinner.mostrar();
+	};
 	// window.customOnsubmit = function() {return true;};
 	// {
 	//	var frm = document.getElementById('frm');

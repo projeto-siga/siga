@@ -1446,7 +1446,7 @@ public class ExDao extends CpDao {
 		} else {
 			q = em()
 					.createQuery(
-							"select m from ExModelo m left join m.exFormaDocumento as f where m.hisAtivo = 1"
+							"select m from ExModelo m where m.hisAtivo = 1"
 									+ "order by m.nmMod");
 		}
 		List<ExModelo> l = new ArrayList<ExModelo>();

@@ -5,6 +5,7 @@ import static br.gov.jfrj.siga.ex.util.Compactador.compactarStream;
 import static br.gov.jfrj.siga.ex.util.Compactador.descompactarStream;
 import static br.gov.jfrj.siga.ex.util.Compactador.listarStream;
 import static br.gov.jfrj.siga.ex.util.Compactador.removerStream;
+import static java.util.Objects.nonNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -17,7 +18,9 @@ import java.util.zip.ZipInputStream;
 
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -142,22 +145,13 @@ public abstract class ZipServico {
 			byte[] zipItemBytes,
 			@NotNull ZipItem tipo) {
 
-		String nome = tipo.getNome();
-		byte[] novoZipBytes = null;
-		if (originalZipBytes == null || listarStream(originalZipBytes) == null) {
-			if (zipItemBytes != null) {
-				novoZipBytes = compactarStream(nome, zipItemBytes);
-			} else {
-				novoZipBytes = null;
-			}
-		} else {
-			if (zipItemBytes != null) {
-				novoZipBytes = adicionarStream(nome, zipItemBytes, originalZipBytes);
-			} else {
-				novoZipBytes = removerStream(nome, originalZipBytes);
-			}
+		final String nome = tipo.getNome();
+		if (ArrayUtils.isEmpty(originalZipBytes) || CollectionUtils.isEmpty(listarStream(originalZipBytes))) {
+			return nonNull(zipItemBytes) ? compactarStream(nome, zipItemBytes) : null;
 		}
-		return novoZipBytes;
+		return nonNull(zipItemBytes)
+				? adicionarStream(nome, zipItemBytes, originalZipBytes)
+				: removerStream(nome, originalZipBytes);
 	}
 
 }

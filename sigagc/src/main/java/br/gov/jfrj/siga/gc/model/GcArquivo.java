@@ -158,9 +158,10 @@ public class GcArquivo extends Objeto implements Serializable {
 		String extensao = titulo.split("\\.")[1];
 
 		if (extensao != null) {
-			if (extensao.contentEquals("gif") || extensao.contentEquals("jpg")
-					|| extensao.contentEquals("png")
-					|| extensao.contentEquals("tiff"))
+				if (extensao != null) {
+					if (extensao.equalsIgnoreCase("gif") || extensao.equalsIgnoreCase("jpg")
+							|| extensao.equalsIgnoreCase("png")
+							|| extensao.equalsIgnoreCase("tiff"))
 				return "image/" + extensao;
 			if (extensao.contains("pdf"))
 				return "application/pdf";

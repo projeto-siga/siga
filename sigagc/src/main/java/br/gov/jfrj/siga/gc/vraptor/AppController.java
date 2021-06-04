@@ -14,6 +14,7 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
@@ -22,22 +23,23 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
-import br.com.caelum.vraptor.interceptor.download.Download;
-import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+import br.com.caelum.vraptor.observer.download.ByteArrayDownload;
+import br.com.caelum.vraptor.observer.download.Download;
+import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.HttpResult;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.cp.CpGrupo;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.model.CpPerfilSelecao;
-import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
-import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -66,16 +68,24 @@ import br.gov.jfrj.siga.model.DadosRI;
 import br.gov.jfrj.siga.vraptor.LoadOptional;
 import br.gov.jfrj.siga.vraptor.SigaIdDescr;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
+import javax.transaction.Transactional;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-@Resource
+@Controller
 public class AppController extends GcController {
 
 	private GcBL bl;
 	private Correio correio;
-
+	
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public AppController() {
+		super();
+		this.bl = null;
+		this.correio = null;
+	}
+	
+	@Inject
 	public AppController(HttpServletRequest request, Result result, GcBL bl,
 			SigaObjects so, EntityManager em, Correio correio) {
 		super(request, result, so, em);
@@ -87,6 +97,7 @@ public class AppController extends GcController {
 	private static final String HTTP_LOCALHOST_8080 = "http://localhost:8080";
 	private static final int CONTROLE_HASH_TAG = 1;
 
+	@Path("/app/gadget")
 	public void gadget() {
 		Query query = em().createNamedQuery("contarGcMarcas");
 		query.setParameter("idPessoaIni", getCadastrante().getIdInicial());
@@ -156,7 +167,7 @@ public class AppController extends GcController {
 					for (Object[] ao : lista) {
 						GcInformacao i = (GcInformacao) ao[0];
 						GcArquivo a = (GcArquivo) ao[1];
-						lCachePontoDeEntrada.add(new GcLabelValue(a.titulo, i
+						lCachePontoDeEntrada.add(new GcLabelValue(a.getTitulo(), i
 								.getSigla()));
 					}
 					dtCachePontoDeEntrada = new Date(
@@ -191,6 +202,14 @@ public class AppController extends GcController {
 	}
 
 	public void knowledgeSidebar(Long id, String[] tags, String msgvazio,
+			String urlvazio, String titulo, boolean testarAcesso,
+			boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
+			throws Exception {
+		renderKnowledge(id, tags, "sidebar", msgvazio, urlvazio, titulo,
+				testarAcesso, popup, estiloBusca, podeCriar, pagina);
+	}
+	
+	public void knowledgeSidebarSr(Long id, String[] tags, String msgvazio,
 			String urlvazio, String titulo, boolean testarAcesso,
 			boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
 			throws Exception {
@@ -247,7 +266,7 @@ public class AppController extends GcController {
 
 			if (testarAcesso
 					&& !info.acessoPermitido(getTitular(), getLotaTitular(),
-							info.visualizacao.id))
+							info.getVisualizacao().getId()))
 				continue;
 
 			// o[3] = URLEncoder.encode(info.getSigla(), "UTF-8");
@@ -263,7 +282,7 @@ public class AppController extends GcController {
 		if (conhecimentos.size() == 1 && "inplace".equals(estilo)) {
 			GcInformacao inf = GcInformacao.AR
 					.findById(conhecimentos.get(0)[0]);
-			conhecimentos.get(0)[1] = inf.arq.titulo;
+			conhecimentos.get(0)[1] = inf.getArq().getTitulo();
 			conhecimentos.get(0)[2] = inf.getConteudoHTML();
 		}
 
@@ -309,6 +328,7 @@ public class AppController extends GcController {
 		result.include("pagina", pagina);
 	}
 
+	@Transactional
 	public void updateTag(String before, String after) {
 
 		// Edson: Atualizando tags de classificacao:
@@ -340,14 +360,14 @@ public class AppController extends GcController {
 								+ " where inf.hisDtFim is null and arq.classificacao like '%"
 								+ before + "%'").getResultList();
 		for (GcArquivo arq : arqs) {
-			if (arq.classificacao.startsWith("^")) {
-				arq.classificacao = arq.classificacao.replace(":" + before, ":"
-						+ after);
-				arq.classificacao = arq.classificacao.replaceAll("-" + before
-						+ "$", "-" + after);
+			if (arq.getClassificacao().startsWith("^")) {
+				arq.setClassificacao(arq.getClassificacao().replace(":" + before, ":"
+						+ after));
+				arq.setClassificacao(arq.getClassificacao().replaceAll("-" + before
+						+ "$", "-" + after));
 			} else {
-				arq.classificacao = arq.classificacao.replaceAll("(@" + before
-						+ ")(,|$)", "@" + after + "$2");
+				arq.setClassificacao(arq.getClassificacao().replaceAll("(@" + before
+						+ ")(,|$)", "@" + after + "$2"));
 			}
 			arq.save();
 		}
@@ -359,9 +379,11 @@ public class AppController extends GcController {
 		result.redirectTo(this).estatisticaGeral();
 	}
 
+	@Get("/app/estatisticaGeral")
 	public void estatisticaGeral() throws Exception {
 		// List<GcInformacao> lista = GcInformacao.all().fetch();
 
+	
 		Query query1 = em().createNamedQuery("maisRecentes");
 		query1.setMaxResults(5);
 		List<Object[]> listaMaisRecentes = query1.getResultList();
@@ -419,33 +441,32 @@ public class AppController extends GcController {
 		result.include("listaPrincipaisTags", listaPrincipaisTags);
 		result.include("cloud", cloud);
 		result.include("evolucao", evolucao);
+		result.use(Results.page()).defaultView();
 	}
 
 	public void estatisticaLotacao() throws Exception {
-		// List<GcInformacao> lista = GcInformacao.all().fetch();
 
 		DpLotacao lotacao = getLotaTitular();
 
 		Query query1 = em().createNamedQuery("maisRecentesLotacao");
-		// query1.setParameter("idLotacao", lotacao.getId());
 		query1.setParameter("idlotacaoInicial", lotacao.getIdLotacaoIni());
 		query1.setMaxResults(5);
 		List<Object[]> listaMaisRecentes = query1.getResultList();
-		if (listaMaisRecentes.size() == 0)
+		if (listaMaisRecentes.isEmpty())
 			listaMaisRecentes = null;
 
 		Query query2 = em().createNamedQuery("maisVisitadosLotacao");
 		query2.setParameter("idlotacaoInicial", lotacao.getIdLotacaoIni());
 		query2.setMaxResults(5);
 		List<Object[]> listaMaisVisitados = query2.getResultList();
-		if (listaMaisVisitados.size() == 0)
+		if (listaMaisVisitados.isEmpty())
 			listaMaisVisitados = null;
 
 		Query query3 = em().createNamedQuery("principaisAutoresLotacao");
 		query3.setParameter("idlotacaoInicial", lotacao.getIdLotacaoIni());
 		query3.setMaxResults(5);
 		List<Object[]> listaPrincipaisAutores = query3.getResultList();
-		if (listaPrincipaisAutores.size() == 0)
+		if (listaPrincipaisAutores.isEmpty())
 			listaPrincipaisAutores = null;
 
 		GcCloud cloud = new GcCloud(150.0, 60.0);
@@ -453,7 +474,7 @@ public class AppController extends GcController {
 		query4.setParameter("idlotacaoInicial", lotacao.getIdLotacaoIni());
 		query4.setMaxResults(50);
 		List<Object[]> listaPrincipaisTags = query4.getResultList();
-		if (listaPrincipaisTags.size() == 0)
+		if (listaPrincipaisTags.isEmpty())
 			listaPrincipaisTags = null;
 		else {
 			for (Object[] t : listaPrincipaisTags) {
@@ -485,6 +506,7 @@ public class AppController extends GcController {
 		result.include("listaPrincipaisTags", listaPrincipaisTags);
 		result.include("cloud", cloud);
 		result.include("evolucao", evolucao);
+		result.use(Results.page()).defaultView();
 	}
 
 	@Path({"/app/listar", "/app/informacao/buscar"})
@@ -548,11 +570,16 @@ public class AppController extends GcController {
 
 		// List<GcInformacao> infs = GcInformacao.all().fetch();
 		// não exibe conhecimentos cancelados
-		List<GcInformacao> infs = GcInformacao.AR.find("byHisDtFimIsNull")
-				.fetch();
-
+		// BJN: evitando o erro "Error while executing query from GcInformacao where hisDtFim is null: Unable to find br.gov.jfrj.siga.cp.CpPerfil with id 2471"
+		List<GcInformacao> infs = new ArrayList<GcInformacao>();
+		try {
+			infs = GcInformacao.AR.find("byHisDtFimIsNull")
+					.fetch();
+		} catch (Exception e) {
+		}
+				
 		for (GcInformacao inf : infs) {
-			for (GcTag tag : inf.tags) {
+			for (GcTag tag : inf.getTags()) {
 				arvore.add(tag, inf);
 			}
 		}
@@ -566,8 +593,13 @@ public class AppController extends GcController {
 		GcArvore arvore = new GcArvore();
 		// List<GcInformacao> infs = GcInformacao.all().fetch();
 		// não exibe conhecimentos cancelados
-		List<GcInformacao> infs = GcInformacao.AR.find("byHisDtFimIsNull")
-				.fetch();
+		// BJN: evitando o erro "Error while executing query from GcInformacao where hisDtFim is null: Unable to find br.gov.jfrj.siga.cp.CpPerfil with id 2471"
+		List<GcInformacao> infs = new ArrayList<GcInformacao>();
+		try {
+			infs = GcInformacao.AR.find("byHisDtFimIsNull")
+					.fetch();
+		} catch (Exception e) {
+		}
 
 		if (texto != null && texto.trim().length() > 0) {
 			texto = texto.trim().toLowerCase();
@@ -586,7 +618,7 @@ public class AppController extends GcController {
 
 		for (GcInformacao inf : infs) {
 			if (!inf.getTags().isEmpty()) {
-				for (GcTag tag : inf.tags) {
+				for (GcTag tag : inf.getTags()) {
 					arvore.add(tag, inf);
 				}
 			} else {
@@ -658,6 +690,13 @@ public class AppController extends GcController {
 	 * ); }
 	 */
 
+	@Path({ "/app/novo" })
+	public void novo() throws Exception
+	{
+		result.forwardTo(this).editar(null,null,null,null,null,null);
+	}
+	
+	
 	@Path({ "/app/editar/{sigla}", "/app/editar/" })
 	public void editar(String sigla, String classificacao, String inftitulo,
 			String origem, String conteudo, GcTipoInformacao tipo)
@@ -672,33 +711,33 @@ public class AppController extends GcController {
 		else
 			informacao = new GcInformacao();
 
-		if (informacao.autor == null
+		if (informacao.getAutor() == null
 				|| informacao.podeRevisar(titular, lotaTitular) != null
 				|| informacao.acessoPermitido(titular, lotaTitular,
-						informacao.edicao.id)) {
+						informacao.getEdicao().getId())) {
 			List<GcTipoInformacao> tiposInformacao = GcTipoInformacao.AR.find(
 					"order by id").fetch();
 			List<GcAcesso> acessos = GcAcesso.AR.find("order by id").fetch();
 			if (inftitulo == null)
-				inftitulo = (informacao.arq != null) ? informacao.arq.titulo
+				inftitulo = (informacao.getArq() != null) ? informacao.getArq().getTitulo()
 						: null;
 
 			if (conteudo == null)
-				conteudo = (informacao.arq != null) ? informacao.arq
+				conteudo = (informacao.getArq() != null) ? informacao.getArq()
 						.getConteudoTXT() : null;
 
-			if (tipo == null || tipo.id == 0)
-				tipo = (informacao.tipo != null) ? informacao.tipo
+			if (tipo == null || tipo.getId() == 0)
+				tipo = (informacao.getTipo() != null) ? informacao.getTipo()
 						: tiposInformacao.get(0);
 
-			if (informacao.arq == null)
-				conteudo = (tipo.arq != null) ? tipo.arq.getConteudoTXT()
+			if (informacao.getArq() == null)
+				conteudo = (tipo.getArq() != null) ? tipo.getArq().getConteudoTXT()
 						: null;
 
 			if (conteudo != null && !conteudo.trim().startsWith("<")) {
 				conteudo = bl.escapeHashTag(conteudo);
-				if (informacao.arq != null) {
-					informacao.arq.setConteudoTXT(conteudo);
+				if (informacao.getArq() != null) {
+					informacao.getArq().setConteudoTXT(conteudo);
 					conteudo = informacao.getConteudoHTML();
 				}
 
@@ -708,7 +747,7 @@ public class AppController extends GcController {
 				inftitulo = inftitulo.replaceAll("\"", "&quot;");
 			
 			if (classificacao == null || classificacao.isEmpty())
-				classificacao = (informacao.arq != null) ? informacao.arq.classificacao
+				classificacao = (informacao.getArq() != null) ? informacao.getArq().getClassificacao()
 						: null;
 			// inserir hashTag no conteudo quando um conhecimento for
 			// relacionado
@@ -720,11 +759,11 @@ public class AppController extends GcController {
 						conteudo += somenteHashTag.trim() + " ";
 				}
 			}
-			if (informacao.autor == null) {
-				informacao.autor = titular;
+			if (informacao.getAutor() == null) {
+				informacao.setAutor(titular);
 			}
-			if (informacao.lotacao == null) {
-				informacao.lotacao = lotaTitular;
+			if (informacao.getLotacao() == null) {
+				informacao.setLotacao(lotaTitular);
 			}
 
 			boolean editarClassificacao = false;
@@ -748,14 +787,68 @@ public class AppController extends GcController {
 		} else
 			throw new AplicacaoException(
 					"Restrição de Acesso ("
-							+ informacao.edicao.nome
+							+ informacao.getEdicao().getNome()
 							+ ") : O usuário não tem permissão para editar o conhecimento solicitado.");
 	}
 		
+	private static String getRecaptchaSiteKey() {
+		String pwd = null;
+		try {
+			pwd = Prop.get("/siga.recaptcha.key");
+			if (pwd == null)
+				throw new AplicacaoException(
+						"Erro obtendo propriedade siga.recaptcha.key");
+			return pwd;
+		} catch (Exception e) {
+			throw new AplicacaoException(
+					"Erro obtendo propriedade siga.recaptcha.key",
+					0, e);
+		}
+	}
+
+	private static String getRecaptchaSitePassword() {
+		String pwd = null;
+		try {
+			pwd = Prop.get("/siga.recaptcha.pwd");
+			if (pwd == null)
+				throw new AplicacaoException(
+						"Erro obtendo propriedade siga.recaptcha.pwd");
+			return pwd;
+		} catch (Exception e) {
+			throw new AplicacaoException(
+					"Erro obtendo propriedade siga.recaptcha.pwd",
+					0, e);
+		}
+	}
+
 	public void selecaoInplace() throws Exception {
 		int a = 0;
 	}
+	
+	@Path("/public/app/exibir/{sigla}")
+	public void exibirPublicoExterno(String sigla) throws Exception {
+		
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
+		if(!informacao.acessoExternoPublicoPermitido())
+			throw new AplicacaoException("Restrição de Acesso: O conhecimento solicitado não é acessível pelo público externo.");
+		
+		// 2 lazies abaixo...
+		for (GcTag t : informacao.getTags())
+			;
+		for (GcMovimentacao m : informacao.getMovs())
+			;
+		
+		String conteudo = bl.marcarLinkNoConteudo(informacao, informacao.getArq()
+				.getConteudoTXT().replace("/sigagc/app/baixar", "/sigagc/public/app/baixar"));
+		em().detach(informacao);
+		// if (conteudo != null)
+		// informacao.arq.setConteudoTXT(conteudo);
 
+		result.include("informacao", informacao);
+		result.include("conteudo", conteudo);
+	}
+
+	@Transactional
 	@Path({ "/app/exibir/{sigla}", "/app/exibir" })
 	public void exibir(String sigla, String mensagem, boolean historico,
 			boolean movimentacoes) throws Exception {
@@ -767,14 +860,14 @@ public class AppController extends GcController {
 				lotaTitular);
 
 		if (!informacao.acessoPermitido(titular, lotaTitular,
-				informacao.visualizacao.id)
+				informacao.getVisualizacao().getId())
 				&& (informacao.podeRevisar(titular, lotaTitular) == null)
 				&& (!jaRevisou(sigla))
 				&& movNotificacao == null
 				&& (!jaFoiNotificado(sigla)))
 			throw new AplicacaoException(
 					"Restrição de Acesso ("
-							+ informacao.visualizacao.nome
+							+ informacao.getVisualizacao().getNome()
 							+ ") : O usuário não tem permissão para visualizar o conhecimento solicitado.");
 
 		if (movNotificacao != null)
@@ -790,12 +883,12 @@ public class AppController extends GcController {
 			SortedSet<GcMovimentacao> list = new TreeSet<GcMovimentacao>();
 			HashMap<GcMovimentacao, String> mapTitulo = new HashMap<GcMovimentacao, String>();
 			HashMap<GcMovimentacao, String> mapTxt = new HashMap<GcMovimentacao, String>();
-			if (informacao.movs != null) {
-				GcMovimentacao[] array = informacao.movs
-						.toArray(new GcMovimentacao[informacao.movs.size()]);
+			if (informacao.getMovs() != null) {
+				GcMovimentacao[] array = informacao.getMovs()
+						.toArray(new GcMovimentacao[informacao.getMovs().size()]);
 				ArrayUtils.reverse(array);
 				for (GcMovimentacao mov : array) {
-					Long t = mov.tipo.id;
+					Long t = mov.getTipo().getId();
 
 					if (mov.isCancelada())
 						continue;
@@ -803,7 +896,7 @@ public class AppController extends GcController {
 					if (t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO
 							|| t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO) {
 						// Titulo
-						String titulo = mov.arq.titulo;
+						String titulo = mov.getArq().getTitulo();
 						LinkedList<Diff> tituloDiffs = diff.diff_main(
 								tituloAnterior, titulo, true);
 						String tituloDiffHtml = diff
@@ -814,7 +907,7 @@ public class AppController extends GcController {
 								&& tituloDiffs.get(0).operation != Operation.EQUAL;
 
 						// Texto
-						String txt = mov.arq.getConteudoTXT();
+						String txt = mov.getArq().getConteudoTXT();
 						LinkedList<Diff> txtDiffs = diff.diff_main(txtAnterior,
 								txt, true);
 						String txtDiffHtml = diff.diff_prettyHtml(txtDiffs);
@@ -842,7 +935,7 @@ public class AppController extends GcController {
 		for (GcTag t : informacao.getTags())
 			;
 		
-		String conteudo = bl.marcarLinkNoConteudo(informacao, informacao.arq
+		String conteudo = bl.marcarLinkNoConteudo(informacao, informacao.getArq()
 				.getConteudoTXT());
 		em().detach(informacao);
 		// if (conteudo != null)
@@ -863,8 +956,8 @@ public class AppController extends GcController {
 		CpIdentidade idc = getIdentidadeCadastrante();
 
 		if (informacao.acessoPermitido(titular, lotaTitular,
-				informacao.visualizacao.id)) {
-			String conteudo = bl.marcarLinkNoConteudo(informacao, informacao.arq
+				informacao.getVisualizacao().getId())) {
+			String conteudo = bl.marcarLinkNoConteudo(informacao, informacao.getArq()
 					.getConteudoTXT());
 			// if (conteudo != null)
 			// informacao.arq.setConteudoTXT(conteudo);
@@ -874,7 +967,7 @@ public class AppController extends GcController {
 		} else
 			throw new AplicacaoException(
 					"Restrição de Acesso ("
-							+ informacao.visualizacao.nome
+							+ informacao.getVisualizacao().getNome()
 							+ ") : O usuário não tem permissão para visualizar o conhecimento solicitado.");
 	}
 
@@ -888,10 +981,11 @@ public class AppController extends GcController {
 		result.forwardTo(this).exibir(sigla, null, false, true);
 	}
 
+	@Transactional
 	@Path("/app/fechar/{sigla}")
 	public void fechar(String sigla) throws Exception {
 		GcInformacao inf = GcInformacao.findBySigla(sigla);
-		if (inf.acessoPermitido(getTitular(), getLotaTitular(), inf.edicao.id)) {
+		if (inf.acessoPermitido(getTitular(), getLotaTitular(), inf.getEdicao().getId())) {
 			bl.movimentar(inf, GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO,
 					null, null, null, null, null, null, null, null, null);
 			bl.gravar(inf, getIdentidadeCadastrante(), getTitular(),
@@ -901,10 +995,11 @@ public class AppController extends GcController {
 		} else
 			throw new AplicacaoException(
 					"Restrição de Acesso ("
-							+ inf.edicao.nome
+							+ inf.getEdicao().getNome()
 							+ ") : O usuário não tem permissão para finalizar o conhecimento solicitado.");
 	}
 
+	@Transactional
 	@Path("/app/duplicar/{sigla}")
 	public void duplicar(String sigla) throws Exception {
 		GcInformacao infDuplicada = GcInformacao.findBySigla(sigla);
@@ -918,37 +1013,37 @@ public class AppController extends GcController {
 		GcInformacao inf = new GcInformacao();
 		GcArquivo arq = new GcArquivo();
 
-		arq = infDuplicada.arq.duplicarConteudoInfo();
-		inf.autor = getTitular();
-		inf.lotacao = getLotaTitular();
-		inf.ou = inf.autor.getOrgaoUsuario();
-		inf.tipo = GcTipoInformacao.AR.findById(infDuplicada.tipo.id);
-		inf.visualizacao = GcAcesso.AR.findById(infDuplicada.visualizacao.id);
-		inf.edicao = GcAcesso.AR.findById(infDuplicada.edicao.id);
+		arq = infDuplicada.getArq().duplicarConteudoInfo();
+		inf.setAutor(getTitular());
+		inf.setLotacao(getLotaTitular());
+		inf.setOu(inf.getAutor().getOrgaoUsuario());
+		inf.setTipo(GcTipoInformacao.AR.findById(infDuplicada.getTipo().getId()));
+		inf.setVisualizacao(GcAcesso.AR.findById(infDuplicada.getVisualizacao().getId()));
+		inf.setEdicao(GcAcesso.AR.findById(infDuplicada.getEdicao().getId()));
 
 		GcMovimentacao movCriada = bl.movimentar(inf,
 				GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO, null, null, null,
-				arq.titulo, arq.getConteudoTXT(), arq.classificacao,
+				arq.getTitulo(), arq.getConteudoTXT(), arq.getClassificacao(),
 				movLocalizada, null, null);
 		bl.gravar(inf, getIdentidadeCadastrante(), getTitular(),
 				getLotaTitular());
 
-		movLocalizada.movRef = movCriada;
+		movLocalizada.setMovRef(movCriada);
 		bl.gravar(infDuplicada, getIdentidadeCadastrante(), getTitular(),
 				getLotaTitular());
 
 		if (infDuplicada.isContemArquivos()) {
-			for (GcMovimentacao movDuplicado : infDuplicada.movs) {
+			for (GcMovimentacao movDuplicado : infDuplicada.getMovs()) {
 				if (movDuplicado.isCancelada())
 					continue;
-				if (movDuplicado.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO
-						&& movDuplicado.movCanceladora == null) {
+				if (movDuplicado.getTipo().getId() == GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO
+						&& movDuplicado.getMovCanceladora() == null) {
 					GcMovimentacao m = bl
 							.movimentar(
 									inf,
-									movDuplicado.arq,
+									movDuplicado.getArq(),
 									GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO);
-					m.movRef = movLocalizada;
+					m.setMovRef(movLocalizada);
 					bl.gravar(inf, getIdentidadeCadastrante(), getTitular(),
 							getLotaTitular());
 				}
@@ -958,30 +1053,36 @@ public class AppController extends GcController {
 				false);
 	}
 
-	public void gravar(@LoadOptional GcInformacao informacao, String inftitulo,
+	@Transactional
+	public void gravar(GcInformacao informacao, String inftitulo,
 			String conteudo, String classificacao, String origem,
 			GcTipoInformacao tipo, GcAcesso visualizacao, GcAcesso edicao,
 			CpPerfil grupo) throws Exception {
+		
+		if (informacao.getId() != 0) {
+			informacao = em().find(GcInformacao.class, informacao.getId());
+		}
+
 		// DpPessoa pessoa = (DpPessoa) renderArgs.get("cadastrante");
 		DpPessoa pessoa = getTitular();
 		DpLotacao lotacao = getLotaTitular();
 
-		if (informacao.autor == null) {
-			informacao.autor = pessoa;
-			informacao.lotacao = lotacao;
+		if (informacao.getAutor() == null) {
+			informacao.setAutor(pessoa);
+			informacao.setLotacao(lotacao);
 		}
-		if (informacao.ou == null) {
-			if (informacao.autor != null)
-				informacao.ou = informacao.autor.getOrgaoUsuario();
-			else if (informacao.lotacao != null)
-				informacao.ou = informacao.lotacao.getOrgaoUsuario();
+		if (informacao.getOu() == null) {
+			if (informacao.getAutor() != null)
+				informacao.setOu(informacao.getAutor().getOrgaoUsuario());
+			else if (informacao.getLotacao() != null)
+				informacao.setOu(informacao.getLotacao().getOrgaoUsuario());
 			else if (pessoa != null)
-				informacao.ou = pessoa.getOrgaoUsuario();
+				informacao.setOu(pessoa.getOrgaoUsuario());
 		}
 
-		informacao.tipo = tipo;
-		informacao.edicao = edicao;
-		informacao.visualizacao = visualizacao;
+		informacao.setTipo(tipo);
+		informacao.setEdicao(edicao);
+		informacao.setVisualizacao(visualizacao);
 
 		// Atualiza a classificação com as hashTags encontradas
 		if (conteudo != null){
@@ -989,8 +1090,8 @@ public class AppController extends GcController {
 					CONTROLE_HASH_TAG);
 		}
 
-		if (informacao.edicao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO
-				|| informacao.visualizacao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO) {
+		if (informacao.getEdicao().getId() == GcAcesso.ACESSO_LOTACAO_E_GRUPO
+				|| informacao.getVisualizacao().getId() == GcAcesso.ACESSO_LOTACAO_E_GRUPO) {
 			if (grupo == null || grupo.getId() == null)
 				throw new Exception(
 						"Para acesso do tipo 'Grupo', e necessário informar um grupo para restrição.");
@@ -998,7 +1099,7 @@ public class AppController extends GcController {
 		} else
 			informacao.setGrupo(null);
 
-		if (informacao.id != 0)
+		if (informacao.getId() != 0)
 			bl.movimentar(informacao,
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO, null, null,
 					null, inftitulo, conteudo, classificacao, null, null, null);
@@ -1027,13 +1128,13 @@ public class AppController extends GcController {
 	public void remover(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 
-		if (informacao.elaboracaoFim != null)
+		if (informacao.getElaboracaoFim() != null)
 			throw new AplicacaoException(
 					"Não é permitido remover informações que já foram finalizadas.");
 		em().createQuery("delete from GcMarca where inf.id = :id")
-				.setParameter("id", informacao.id).executeUpdate();
+				.setParameter("id", informacao.getId()).executeUpdate();
 		em().createQuery("delete from GcMovimentacao where inf.id = :id")
-				.setParameter("id", informacao.id).executeUpdate();
+				.setParameter("id", informacao.getId()).executeUpdate();
 		informacao.delete();
 		redirectToHome();
 	}
@@ -1044,11 +1145,12 @@ public class AppController extends GcController {
 		result.include("informacao", informacao);
 	}
 
+	@Transactional
 	public void notificarGravar(GcInformacao informacao, DpPessoa pessoa,
 			DpLotacao lotacao, String email) throws Exception {
 		// Nato: precisei fazer isso pq não vem attached e depois será feito um
 		// lazy-load. Precisamos melhorar depois.
-		informacao = GcInformacao.AR.findById(informacao.id);
+		informacao = GcInformacao.AR.findById(informacao.getId());
 
 		// Nato: precisei fazer isso pq o vraptor injeta a entidade vazia. O
 		// ideal seria injetar null se nenhum parâmetro for especificado.
@@ -1099,9 +1201,10 @@ public class AppController extends GcController {
 	    result.include("grupoSel", new CpPerfilSelecao());
 	}
 	
+	@Transactional
 	public void vincularPapelGravar(GcInformacao informacao, DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel, CpPerfilSelecao grupoSel,
 			GcPapel papel) throws Exception {
-		informacao = GcInformacao.AR.findById(informacao.id);
+		informacao = GcInformacao.AR.findById(informacao.getId());
 		
 		bl.vincularPapel(informacao, getIdentidadeCadastrante(), getTitular(), getLotaTitular(), 
 				pessoaSel.buscarObjeto(), lotacaoSel.buscarObjeto(), grupoSel.buscarObjeto(), papel, correio);
@@ -1117,12 +1220,13 @@ public class AppController extends GcController {
 		result.include("informacao", informacao);
 	}
 
+	@Transactional
 	public void solicitarRevisaoGravar(GcInformacao informacao,
 			DpPessoa pessoa, DpLotacao lotacao) throws Exception {
 
 		// Nato: precisei fazer isso pq não vem attached e depois será feito um
 		// lazy-load. Precisamos melhorar depois.
-		informacao = GcInformacao.AR.findById(informacao.id);
+		informacao = GcInformacao.AR.findById(informacao.getId());
 
 		// Nato: precisei fazer isso pq o vraptor injeta a entidade vazia. O
 		// ideal seria injetar null se nenhum parâmetro for especificado.
@@ -1158,12 +1262,13 @@ public class AppController extends GcController {
 		result.include("informacao", informacao);
 	}
 
+	@Transactional
 	public void gravarArquivo(GcInformacao informacao, String titulo,
 			UploadedFile upload, UploadedFile file, String CKEditorFuncNum,
 			String origem) throws Exception {
 		// Nato: precisei fazer isso pq não vem attached e depois será feito um
 		// lazy-load. Precisamos melhorar depois.
-		informacao = GcInformacao.AR.findById(informacao.id);
+		informacao = GcInformacao.AR.findById(informacao.getId());
 
 		if (file != null) {
 			upload = file;
@@ -1200,13 +1305,14 @@ public class AppController extends GcController {
 		}
 	}
 
+	@Transactional
 	@Path("/app/removerAnexo")
 	public void removerAnexo(String sigla, long idArq, long idMov)
 			throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		GcMovimentacao mov = GcMovimentacao.AR.findById(idMov);
 
-		if (mov.arq.id == idArq)
+		if (mov.getArq().getId() == idArq)
 			bl.cancelarMovimentacao(informacao, mov,
 					getIdentidadeCadastrante(), getTitular(), getLotaTitular());
 		/*
@@ -1223,29 +1329,47 @@ public class AppController extends GcController {
 		result.include("informacao", informacao);
 	}
 
+	@Path({ "/public/app/baixar/{id}", "/public/app/baixar" })
+	public Download baixarSemAutenticacao(Long id) throws Exception {
+		GcArquivo arq = GcArquivo.AR.findById(id);
+		
+		if (arq == null)
+			throw new Exception("Arquivo não encontrado.");
+		
+		//TODO verificar se o conhecimento pai eh sem autenticacao
+		GcInformacao infoMae = GcMovimentacao.buscarInformacaoPorAnexo(arq);
+		if (infoMae == null || !(infoMae.acessoExternoPublicoPermitido()))
+			throw new Exception("Arquivo não pode ser acessado sem autenticação.");
+		
+		return new ByteArrayDownload(arq.getConteudo(), arq.getMimeType(),
+					arq.getTitulo(), false);
+		
+	}
+
 	@Path({ "/app/baixar/{id}", "/app/baixar" })
 	public Download baixar(Long id) throws Exception {
 		GcArquivo arq = GcArquivo.AR.findById(id);
 		if (arq != null)
-			return new ByteArrayDownload(arq.conteudo, arq.mimeType,
-					arq.titulo, false);
+			return new ByteArrayDownload(arq.getConteudo(), arq.getMimeType(),
+					arq.getTitulo(), false);
 		throw new Exception("Arquivo não encontrado.");
 	}
 
+	@Transactional
 	@Path("/app/revisado/{sigla}")
 	public void revisado(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		boolean temPedidoDeRevisao = false;
-		if (informacao.movs != null) {
+		if (informacao.getMovs() != null) {
 			DpPessoa titular = getTitular();
 			DpLotacao lotaTitular = getLotaTitular();
 
-			for (GcMovimentacao mov : informacao.movs) {
+			for (GcMovimentacao mov : informacao.getMovs()) {
 				if (mov.isCancelada())
 					continue;
-				if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO
-						&& (titular.equivale(mov.pessoaAtendente) || lotaTitular
-								.equivale(mov.lotacaoAtendente))) {
+				if (mov.getTipo().getId() == GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO
+						&& (titular.equivale(mov.getPessoaAtendente()) || lotaTitular
+								.equivale(mov.getLotacaoAtendente()))) {
 					temPedidoDeRevisao = true;
 				
 					bl.cancelarMovimentacao(informacao, mov,
@@ -1280,17 +1404,17 @@ public class AppController extends GcController {
 	public boolean jaRevisou(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		boolean jaRevisou = false;
-		if (informacao.movs != null) {
+		if (informacao.getMovs() != null) {
 			DpPessoa titular = getTitular();
 			DpLotacao lotaTitular = getLotaTitular();
 			SortedSet<GcMovimentacao> movsCopy = new TreeSet<GcMovimentacao>();
-			movsCopy.addAll(informacao.movs);
+			movsCopy.addAll(informacao.getMovs());
 			for (GcMovimentacao mov : movsCopy) {
 				if (mov.isCancelada())
 					continue;
-				if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_REVISADO 
-					&& (titular.equivale(mov.pessoaTitular) || lotaTitular
-							.equivale(mov.lotacaoTitular)))
+				if (mov.getTipo().getId() == GcTipoMovimentacao.TIPO_MOVIMENTACAO_REVISADO 
+					&& (titular.equivale(mov.getPessoaTitular()) || lotaTitular
+							.equivale(mov.getLotacaoTitular())))
 					jaRevisou = true;								
 			}
 		}
@@ -1301,17 +1425,17 @@ public class AppController extends GcController {
 	public boolean jaFoiNotificado(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		boolean jaFoiNotificado = false;
-		if (informacao.movs != null) {
+		if (informacao.getMovs() != null) {
 			DpPessoa titular = getTitular();
 			DpLotacao lotaTitular = getLotaTitular();
 			SortedSet<GcMovimentacao> movsCopy = new TreeSet<GcMovimentacao>();
-			movsCopy.addAll(informacao.movs);
+			movsCopy.addAll(informacao.getMovs());
 			for (GcMovimentacao mov : movsCopy) {
 				if (mov.isCancelada())
 					continue;
-				if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE
-					&& (titular.equivale(mov.pessoaTitular) || lotaTitular
-							.equivale(mov.lotacaoTitular)))
+				if (mov.getTipo().getId() == GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE
+					&& (titular.equivale(mov.getPessoaTitular()) || lotaTitular
+							.equivale(mov.getLotacaoTitular())))
 					jaFoiNotificado = true;								
 			}
 		}
@@ -1458,12 +1582,12 @@ public class AppController extends GcController {
 			DadosRI dri = new DadosRI();
 			dri.uri = "/sigagc/app/exibir?sigla=" + i.getSigla();
 			dri.sigla = i.getSigla();
-			dri.titulo = a.titulo;
+			dri.titulo = a.getTitulo();
 			dri.ultimaAtualizacao = dt;
 			dri.idDesempate = idMov;
 			dri.ativo = ativo;
 			if (ativo) {
-				dri.conteudo = new String(a.conteudo, "utf-8");
+				dri.conteudo = new String(a.getConteudo(), "utf-8");
 			}
 			resultado.add(dri);
 		}

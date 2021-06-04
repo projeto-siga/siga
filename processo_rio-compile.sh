@@ -147,7 +147,11 @@ echo "                              STARTING DEPLOY"
 echo "###############################################################################"
 echo ""
 echo "SIGA:"
-if deploy_siga=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace /opt/java/jenkins/workspace/processo.rio-ramiris/target/siga.war"`; then
+#<<<<<<< HEAD
+#if deploy_siga=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace /opt/java/jenkins/workspace/processo.rio-ramiris/target/siga.war"`; then
+#=======
+if deploy_siga=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace /opt/java/jenkins/workspace/processo.rio/target/siga.war"`; then
+#>>>>>>> atualizadoComProdTRF2
         echo "DEPLOY: siga.war - OK"
 else
         echo $deploy_siga
@@ -157,7 +161,11 @@ else
 fi
 echo ""
 echo "SIGAEX:"
-if deploy_sigaex=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace /opt/java/jenkins/workspace/processo.rio-ramiris/target/sigaex.war"`; then
+#<<<<<<< HEAD
+#if deploy_sigaex=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace /opt/java/jenkins/workspace/processo.rio-ramiris/target/sigaex.war"`; then
+#=======
+if deploy_sigaex=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace /opt/java/jenkins/workspace/processo.rio/target/sigaex.war"`; then
+#>>>>>>> atualizadoComProdTRF2
         echo "DEPLOY: sigaex.war - OK"
 else
         echo $deploy_sigaex
@@ -167,7 +175,11 @@ else
 fi
 echo ""
 echo "SIGA-EXT"
-if deploy_siga_ext=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace /opt/java/jenkins/workspace/processo.rio-ramiris/target/siga-ext.jar"`; then
+#<<<<<<< HEAD
+#if deploy_siga_ext=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace /opt/java/jenkins/workspace/processo.rio-ramiris/target/siga-ext.jar"`; then
+#=======
+if deploy_siga_ext=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace /opt/java/jenkins/workspace/processo.rio/target/siga-ext.jar"`; then
+#>>>>>>> atualizadoComProdTRF2
         echo "DEPLOY: siga-ext.war - OK"
 else
         echo $deploy_siga_ext

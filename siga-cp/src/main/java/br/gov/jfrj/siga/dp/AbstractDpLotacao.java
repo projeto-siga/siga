@@ -45,6 +45,8 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Where;
 
+import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
 @MappedSuperclass
@@ -91,11 +93,9 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"),
 		@NamedQuery(name = "consultarPorNomeOrgaoDpLotacao", query = "select lot from DpLotacao lot where upper(REMOVE_ACENTO(lot.nomeLotacao)) = upper(REMOVE_ACENTO(:nome)) and lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu")})
 		@NamedNativeQueries({
-			@NamedNativeQuery(name = "consultarQuantidadeDocumentosPorDpLotacao", query = "SELECT count(1) FROM corporativo.dp_lotacao lotacao"
-				+ " left join corporativo.cp_marca marca on lotacao.ID_LOTACAO = marca.ID_LOTACAO_INI"
-				+ " WHERE(dt_ini_marca IS NULL OR dt_ini_marca < sysdate)"
-				+ " AND(dt_fim_marca IS NULL OR dt_fim_marca > sysdate)"
-				+ " AND id_marcador not in (1,10,32)"
+			@NamedNativeQuery(name = "consultarQuantidadeDocumentosPorDpLotacao", query = "SELECT count(1) FROM corporativo.cp_marca marca "
+				+ " left join corporativo.dp_lotacao lotacao on lotacao.ID_LOTACAO = marca.ID_LOTACAO_INI"
+				+ " WHERE id_marcador not in (1,10,32)"
 				+ " AND lotacao.id_lotacao_ini = :idLotacao"
 				+ " AND id_tp_marca = :idTipoMarca "),
 			@NamedNativeQuery(name = "consultarQtdeDocCriadosPossePorDpLotacao", query = "SELECT count(1) FROM siga.ex_documento doc "
@@ -105,7 +105,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ " where lot.id_lotacao_ini = :idLotacao or marca.ID_LOTACAO_INI = :idLotacao")})
 
 public abstract class AbstractDpLotacao extends DpResponsavel implements
-		Serializable {
+		Serializable, HistoricoAuditavel {
 
 	@Id
 	@SequenceGenerator(name = "DP_LOTACAO_SEQ", sequenceName = "CORPORATIVO.DP_LOTACAO_SEQ")
@@ -175,6 +175,17 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	
 	@Column(name = "IS_EXTERNA_LOTACAO")
 	private Integer isExternaLotacao;
+	
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="HIS_IDC_INI")
+	private CpIdentidade hisIdcIni;
+
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="HIS_IDC_FIM")
+	private CpIdentidade hisIdcFim;
+	
+	@Column(name = "IS_SUSPENSA")
+	private Integer isSuspensa;
 
 	public Integer getIsExternaLotacao() {
 		return isExternaLotacao;
@@ -383,6 +394,30 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 
 	public void setLocalidade(CpLocalidade localidade) {
 		this.localidade = localidade;
+	}
+
+	public CpIdentidade getHisIdcIni() {
+		return hisIdcIni;
+	}
+
+	public void setHisIdcIni(CpIdentidade hisIdcIni) {
+		this.hisIdcIni = hisIdcIni;
+	}
+
+	public CpIdentidade getHisIdcFim() {
+		return hisIdcFim;
+	}
+
+	public void setHisIdcFim(CpIdentidade hisIdcFim) {
+		this.hisIdcFim = hisIdcFim;
+	}
+
+	public Integer getIsSuspensa() {
+		return isSuspensa;
+	}
+
+	public void setIsSuspensa(Integer isSuspensa) {
+		this.isSuspensa = isSuspensa;
 	}
 
 }

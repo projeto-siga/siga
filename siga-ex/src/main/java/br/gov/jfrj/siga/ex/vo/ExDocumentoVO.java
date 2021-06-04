@@ -89,6 +89,7 @@ public class ExDocumentoVO extends ExVO {
 	ExGraphColaboracao dotColaboracao;
 	private List<Object> listaDeAcessos;
 	boolean podeAnexarArquivoAuxiliar;
+	private String dtLimiteDemandaJudicial;
 
 	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa cadastrante, DpPessoa titular,
 			DpLotacao lotaTitular, boolean completo, boolean exibirAntigo) {
@@ -242,6 +243,15 @@ public class ExDocumentoVO extends ExVO {
 		this.originalOrgao = doc.getOrgaoExterno() != null ? doc.getOrgaoExterno().getDescricao() : null;
 		
 		this.podeAnexarArquivoAuxiliar = Ex.getInstance().getComp().podeAnexarArquivoAuxiliar(titular, lotaTitular, mob);
+
+		this.dtLimiteDemandaJudicial = doc.getMobilGeral().getExMovimentacaoSet().stream() //
+				.filter(mov -> mov.getExTipoMovimentacao().getId()
+						.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO))
+				.filter(mov -> !mov.isCancelada()) //
+				.filter(mov -> mov.getMarcador().isDemandaJudicial()) //
+				.map(ExMovimentacao::getDtFimMovDDMMYY) //
+				.findFirst().orElse(null);
+
 	}
 	
 	/*
@@ -589,9 +599,9 @@ public class ExDocumentoVO extends ExVO {
 				"vincularPapel", Ex.getInstance().getComp()
 						.podeFazerVinculacaoPapel(titular, lotaTitular, mob));
 
-		vo.addAcao("folder_star", "Definir Marcador", "/app/expediente/mov",
-				"marcar", Ex.getInstance().getComp()
-						.podeMarcar(titular, lotaTitular, mob));
+//		vo.addAcao("folder_star", "Definir Marcador", "/app/expediente/mov",
+//				"marcar", Ex.getInstance().getComp()
+//						.podeMarcar(titular, lotaTitular, mob));
 
 		vo.addAcao(
 				"cd",
@@ -726,8 +736,8 @@ public class ExDocumentoVO extends ExVO {
 				"refazer",
 				Ex.getInstance().getComp()
 						.podeRefazer(titular, lotaTitular, mob),
-				"Esse documento será cancelado e seus dados serão copiados para um novo expediente em elaboração. Prosseguir?",
-				null, null, null, "once");
+						SigaMessages.getMessage("mensagem.cancela.documento"),
+				null, null, null, "once siga-btn-refazer");
 
 		vo.addAcao(
 				"arrow_divide",
@@ -803,8 +813,8 @@ public class ExDocumentoVO extends ExVO {
 				Ex.getInstance()
 						.getComp()
 						.podeTornarDocumentoSemEfeito(titular, lotaTitular, mob),
-				"Esta operação tornará esse documento sem efeito. Prosseguir?",
-				null, null, null, "once");
+				(SigaMessages.getMessage("mensagem.semEfeito.documento")),
+				null, null, null, "once  siga-btn-tornar-documento-sem-efeito");
 		
 		vo.addAcao(
 				"cancel",
@@ -1056,4 +1066,9 @@ public class ExDocumentoVO extends ExVO {
 	public void setPodeAnexarArquivoAuxiliar(boolean podeAnexar) {
 		this.podeAnexarArquivoAuxiliar = podeAnexar;
 	}
+	
+	public String getDtLimiteDemandaJudicial() {
+		return dtLimiteDemandaJudicial;
+	}
+
 }

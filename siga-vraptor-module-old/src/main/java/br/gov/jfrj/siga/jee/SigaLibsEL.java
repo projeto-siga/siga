@@ -38,8 +38,9 @@ import org.mvel2.templates.TemplateCompiler;
 import org.mvel2.templates.TemplateRuntime;
 
 import br.gov.jfrj.siga.base.Contexto;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.ReaisPorExtenso;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpServico;
@@ -309,13 +310,13 @@ public class SigaLibsEL {
 	}
 
 	public static String getURLSistema(String nome) {
-		String ambiente = SigaBaseProperties.getString("ambiente");
-		String url = System.getProperty(nome + "." + ambiente + ".url");
+		String url = Prop.get(nome +  ".url");
 		if (url == null || url.length() == 0) {
 			url = "#";
 		}
 		return url.trim();
 	}
+	
 
 	public static String urlEncode(String value)
 			throws UnsupportedEncodingException {

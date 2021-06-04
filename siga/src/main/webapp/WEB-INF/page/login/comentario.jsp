@@ -8,7 +8,7 @@
 		<b>Bem-vindo ao SIGA.</b>
 	</h2>
 
-	<c:if test="${f:resource('siga.base.url') == 'http://siga.jfrj.jus.br' or f:resource('siga.base.url') == 'https://siga.jfrj.jus.br' }">
+	<c:if test="${f:resource('/siga.base.url') == 'http://siga.jfrj.jus.br' or f:resource('/siga.base.url') == 'https://siga.jfrj.jus.br' }">
 		<hr/>
 	
 		<p style="font-size: 150%">Agora o Siga oferece a possibilidade de assinar documento com senha (sem token). Para isto, basta clicar na opção "Com Senha" na página de assinatura, e entrar com sua matrícula e a senha do Siga.</p>
@@ -16,7 +16,7 @@
 		<hr/>
 		
 		<p style="font-size: 150%">Experimente a nova aplicação para acesso ao Siga via celular:
-		<a href="https://siga.jfrj.jus.br/siga-le">${f:resource('siga.base.url')}/siga-le</a>
+		<a href="https://siga.jfrj.jus.br/siga-le">${f:resource('/siga.base.url')}/siga-le</a>
 		</p>
 		
 		<p align="center"><img width="15%" src="/siga/imagens/qr-code-http-siga-jfrj-jus-br-siga-le.png"></img></p>

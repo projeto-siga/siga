@@ -5,25 +5,35 @@ import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.ADM_ADMINISTRAR;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
-import br.gov.jfrj.siga.sr.dao.SrDao;
 import br.gov.jfrj.siga.sr.model.SrTipoAcao;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
+import br.gov.jfrj.siga.vraptor.Transacional;
 
-@Resource
+@Controller
 @Path("app/tipoAcao")
 public class TipoAcaoController extends SrController {
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public TipoAcaoController() {
+		super();
+	}
+	
+	@Inject
 	public TipoAcaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em, SrValidator srValidator) {
-		super(request, result, SrDao.getInstance(), so, em, srValidator);
+		super(request, result, CpDao.getInstance(), so, em, srValidator);
 	}
 
 	@AssertAcesso(ADM_ADMINISTRAR)
@@ -45,6 +55,7 @@ public class TipoAcaoController extends SrController {
 		result.include("tipoAcao", tipoAcao);
 	}
 
+	@Transacional
 	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/gravar")
 	public void gravar(SrTipoAcao tipoAcao) throws Exception {
@@ -55,6 +66,7 @@ public class TipoAcaoController extends SrController {
 		result.use(Results.http()).body(tipoAcao.toJson());
 	}
 
+	@Transacional
 	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/desativar")
 	public void desativar(Long id, boolean mostrarDesativados) throws Exception {
@@ -64,6 +76,7 @@ public class TipoAcaoController extends SrController {
 		result.use(Results.http()).body(tipoAcao.toJson());
 	}
 
+	@Transacional
 	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/reativar")
 	public void reativar(Long id, boolean mostrarDesativados) throws Exception {

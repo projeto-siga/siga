@@ -3,10 +3,10 @@ package br.gov.jfrj.siga.ex.api.v1;
 import java.io.FileOutputStream;
 import java.util.concurrent.Callable;
 
-import com.crivano.swaggerservlet.SwaggerServlet;
 import com.crivano.swaggerservlet.SwaggerUtils;
 
 import br.gov.jfrj.itextpdf.Documento;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.log.RequestExceptionLogger;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -18,11 +18,12 @@ public class DownloadAssincrono implements Callable<String> {
 	private String contenttype;
 	private String sigla;
 	private boolean estampar;
-	private boolean volumes;
+	private boolean volumes;	
 	private String contextpath;
 	String servernameport;
+	private boolean exibirReordenacao;
 
-	public DownloadAssincrono(String uuid, String contenttype, String sigla, boolean estampar, boolean volumes, String contextpath, String servernameport) {
+	public DownloadAssincrono(String uuid, String contenttype, String sigla, boolean estampar, boolean volumes, String contextpath, String servernameport, boolean exibirReordenacao) {
 		super();
 		this.uuid = uuid;
 		this.contenttype = contenttype;
@@ -31,17 +32,19 @@ public class DownloadAssincrono implements Callable<String> {
 		this.volumes = volumes;
 		this.contextpath = contextpath;
 		this.servernameport = servernameport;
+		this.exibirReordenacao = exibirReordenacao;
 	}
 
 	@Override
 	public String call() throws Exception {
 		String bufName = null;
-		try (ApiContext ctx = new ApiContext(false)) {
+		try (ApiContext ctx = new ApiContext(true, false)) {
 			ExDao dao = ExDao.getInstance();
 
 			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
 			filter.setSigla(sigla);
-			ExMobil mob = (ExMobil) dao.consultarPorSigla(filter);
+			ExMobil mob = (ExMobil) dao.consultarPorSigla(filter);			
+			mob.getMobilPrincipal().indicarSeDeveExibirDocumentoCompletoReordenado(exibirReordenacao);
 
 			// Consulta o processo para saber quais são os documentos a serem
 			// concatenados
@@ -61,7 +64,7 @@ public class DownloadAssincrono implements Callable<String> {
 	}
 
 	public static String getBufName(String uuid, String contenttype, String sigla) {
-		String dirTemp = SwaggerServlet.getProperty("upload.dir.temp");
+		String dirTemp = Prop.get("upload.dir.temp");
 		return dirTemp + "/" + Texto.slugify(sigla, true, false) + "-completo-" + uuid
 				+ ("text/html".equals(contenttype) ? ".html" : ".pdf");
 	}

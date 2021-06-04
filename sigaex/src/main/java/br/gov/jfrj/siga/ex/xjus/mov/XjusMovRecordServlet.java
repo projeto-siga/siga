@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.crivano.swaggerservlet.SwaggerServlet;
 
-import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.base.Prop;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
 
 public class XjusMovRecordServlet extends SwaggerServlet {
@@ -24,7 +24,7 @@ public class XjusMovRecordServlet extends SwaggerServlet {
 
 		String xjusPassword = null;
 		try {
-			xjusPassword = Cp.getInstance().getProp().xjusPassword();
+			xjusPassword = Prop.get("/xjus.password");
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
@@ -34,8 +34,7 @@ public class XjusMovRecordServlet extends SwaggerServlet {
 	}
 
 	@Override
-	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		super.doPost(req, resp);
 	}
 

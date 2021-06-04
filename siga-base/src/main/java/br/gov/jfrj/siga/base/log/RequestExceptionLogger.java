@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 public class RequestExceptionLogger {
@@ -81,7 +82,11 @@ public class RequestExceptionLogger {
 				requestInfo.append("\t");
 				requestInfo.append(name);
 				requestInfo.append(" : ");
-				requestInfo.append(httpReq.getParameter(name));
+				if (name.toLowerCase().contains("senha") || name.toLowerCase().contains("password")
+					|| name.toLowerCase().contains("pwd"))
+					requestInfo.append("[parâmetro suprimido]");
+				else
+					requestInfo.append(httpReq.getParameter(name));
 				requestInfo.append("\n");
 			}
 
@@ -89,6 +94,8 @@ public class RequestExceptionLogger {
 			Enumeration<String> attrs = httpReq.getAttributeNames();
 			while (attrs.hasMoreElements()) {
 				String name = attrs.nextElement();
+				if (name.startsWith("org.jboss.weld"))
+					continue;
 				requestInfo.append("\t");
 				requestInfo.append(name);
 				requestInfo.append(" : ");
@@ -121,35 +128,45 @@ public class RequestExceptionLogger {
 		}
 
 	}
+	
+	private static String[] packages = { "br.gov.jfrj.siga", "com.crivano" };
 
 	public static String simplificarStackTrace(Throwable t) {
 		if (t == null)
 			return null;
-		while (t.getCause() != null && t != t.getCause()) {
-			if (t.getClass().getSimpleName().equals("AplicacaoException"))
-				break;
-			t = t.getCause();
-		}
+		while ((t.getClass().getSimpleName().equals("ServletException") || t.getClass().getSimpleName().equals("InterceptionException") || t.getClass().getSimpleName().equals("InvocationTargetException") || t.getClass().getSimpleName().equals("ProxyInvocationException")) && t.getCause() != null && t != t.getCause()) {
+ 			t = t.getCause();
+ 		}
+		String s = simplifyStackTrace(t, packages);
+		return s;
+	}
+		
+	public static String simplifyStackTrace(Throwable t, String[] pkgs) {
+		if (t == null)
+			return null;
 		java.io.StringWriter sw = new java.io.StringWriter();
 		java.io.PrintWriter pw = new java.io.PrintWriter(sw);
 		t.printStackTrace(pw);
 		String s = sw.toString();
-		String[] lines = s.split(System.getProperty("line.separator"));
-		for (int i = 0; i < lines.length; i++) {
-			if (lines[i].contains("br.com.caelum.vraptor.core.DefaultReflectionProvider.invoke")) {
-				for (int j = i - 1; j > 0; j--) {
-					if (lines[j].trim().startsWith("at br.") && !lines[j].contains("$Proxy$_$$_WeldClientProxy")) {
-						StringBuilder sb = new StringBuilder();
-						for (int k = 0; k <= j; k++) {
-							sb.append(lines[k]);
-							sb.append(System.getProperty("line.separator"));
-						}
-						s = sb.toString();
-						break;
+		final String lineSeparator = System.lineSeparator();
+		if (true) {
+			StringBuilder sb = new StringBuilder();
+			String[] lines = s.split(System.getProperty("line.separator"));
+			for (int i = 0; i < lines.length; i++) {
+				String l = lines[i];
+				boolean isInPackages = false;
+				if (pkgs != null) {
+					for (String pkg : pkgs) {
+						isInPackages |= l.contains(pkg);
 					}
 				}
-				break;
+				if (!l.startsWith("\t") || (isInPackages && !l.contains("$$_Weld") && !l.contains(".invoke(")
+						&& !l.contains(".doFilter("))) {
+					sb.append(l);
+					sb.append(System.getProperty("line.separator"));
+				}
 			}
+			s = sb.toString();
 		}
 		return s;
 	}

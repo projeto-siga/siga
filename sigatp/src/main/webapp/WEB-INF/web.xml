@@ -1,9 +1,8 @@
-<?xml version="1.0" ?>
-<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
-	<display-name>Siga Transportes</display-name>
+<display-name>Siga Transportes</display-name>
 
 	<context-param>
 		<param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
@@ -41,6 +40,17 @@
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
 
+    <filter>
+		<filter-name>TpThreadFilter</filter-name>
+		<filter-class>br.gov.jfrj.siga.tp.util.TpThreadFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>TpThreadFilter</filter-name>
+		<url-pattern>/app/*</url-pattern>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>
+
 	<filter>
 		<filter-name>vraptor</filter-name>
 		<filter-class>br.com.caelum.vraptor.VRaptor</filter-class>
@@ -52,6 +62,16 @@
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
+	
+		<servlet>
+		<servlet-name>TpApiV1Servlet</servlet-name>
+		<servlet-class>br.gov.jfrj.siga.tp.api.v1.TpApiV1Servlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>TpApiV1Servlet</servlet-name>
+		<url-pattern>/api/v1/*</url-pattern>
+	</servlet-mapping>
 
 	<error-page>
 		<error-code>500</error-code>

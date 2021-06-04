@@ -72,4 +72,8 @@ public enum EstadoRequisicao {
 		return this.toString().substring(0, 1);
 	}
 	
+	public EstadoRequisicao[] getValues() {
+		return EstadoRequisicao.values();
+	}
+	
 }

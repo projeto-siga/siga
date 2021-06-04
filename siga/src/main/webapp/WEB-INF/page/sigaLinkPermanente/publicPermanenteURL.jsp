@@ -12,7 +12,7 @@
 		<div class="row justify-content-center">
 			<div class="col col-sm-12 col-md-5">
 					<div class="jumbotron">
-						<form action="${request.contextPath}/public/app/sigalink/${tipoLink}/${token}" method="get" class="form" onsubmit="$('#spinnerModal').modal('show');">
+						<form action="${request.contextPath}/public/app/sigalink/${tipoLink}/${token}" method="get" class="form" onsubmit="sigaSpinner.mostrar();">
 				
 							<input type="hidden" id="tipoLink" name="tipoLink" class="form-control" value="${tipoLink}"/>
 							<input type="hidden" id="token" name="token" class="form-control" value="${token}"/>

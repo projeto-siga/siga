@@ -48,7 +48,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
 @Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
-@Table(name = "EX_TIPO_DOCUMENTO", catalog = "siga")
+@Table(name = "siga.ex_tipo_documento")
 public class ExTipoDocumento extends AbstractExTipoDocumento implements
 		Serializable, Selecionavel {
 
@@ -56,8 +56,8 @@ public class ExTipoDocumento extends AbstractExTipoDocumento implements
 	final static public long TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO = 2;
 	final static public long TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO = 3;
 	final static public long TIPO_DOCUMENTO_EXTERNO_CAPTURADO = 4;
-	final static public long TIPO_DOCUMENTO_INTERNO_CAPTURADO = 5;
-
+	final static public long TIPO_DOCUMENTO_INTERNO_CAPTURADO = 5;	
+	
 	/**
 	 * 
 	 */
@@ -93,8 +93,29 @@ public class ExTipoDocumento extends AbstractExTipoDocumento implements
 	public String getDescricao() {
 		return getDescrTipoDocumento();
 	}
-
-
-	/* Add customized code below */
+	
+	public String getDescricaoSimples() {
+		String descricao = "";
+		
+		switch (getIdTpDoc().intValue()) {
+		case 1:		
+			descricao = "Interno Produzido";
+			break;
+		case 2:
+			descricao = "Interno Importado";
+			break;
+		case 3:
+			descricao = "Externo";
+			break;
+		case 4:
+			descricao =  "Externo Capturado";
+			break;
+		case 5:
+			descricao = "Interno Capturado";
+			break;
+		}
+		
+		return descricao;
+	}
 
 }

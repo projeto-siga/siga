@@ -4,15 +4,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -44,7 +45,7 @@ import br.gov.jfrj.siga.validation.Email;
 @SuppressWarnings({"serial", "unchecked"})
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "condutor", schema = "sigatp")
 @Unique(message="{condutor.dppessoa.unique}" ,field = "dpPessoa", uniqueColumn="DPPESSOA_ID_PESSOA")
 public class Condutor extends TpModel implements ConvertableEntity, Comparable<Condutor> {
 
@@ -52,7 +53,7 @@ public class Condutor extends TpModel implements ConvertableEntity, Comparable<C
 
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "SIGATP.hibernate_sequence")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator")
+	@GeneratedValue(generator = "hibernate_sequence_generator")
 	private Long id;
 
 	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
@@ -255,17 +256,20 @@ public class Condutor extends TpModel implements ConvertableEntity, Comparable<C
 
 	public Boolean estaEscalado(String dataMissao) throws Exception {
 		Condutor condutor = this;
+        
+		Map<String, Object> parametros = new HashMap<String,Object>();
+		parametros.put("condutor",condutor);
 		EscalaDeTrabalho escalaVigente;
 		String dataFormatadaOracle = "to_date('" + dataMissao + "', 'DD/MM/YYYY HH24:mi')";
 		StringBuffer hqlVigentes = new StringBuffer();
-		hqlVigentes.append("condutor = ? and ");
+		hqlVigentes.append("condutor = :condutor and ");
 		hqlVigentes.append("dataVigenciaInicio < ");
 		hqlVigentes.append(dataFormatadaOracle);
 		hqlVigentes.append(" and ((dataVigenciaFim is null) or (dataVigenciaFim > ");
 		hqlVigentes.append(dataFormatadaOracle);
 		hqlVigentes.append(")) ");
 		hqlVigentes.append("order by dataVigenciaInicio desc ");
-		List<EscalaDeTrabalho> escalasDeTrabalho = EscalaDeTrabalho.AR.find(hqlVigentes.toString(), condutor).fetch();
+		List<EscalaDeTrabalho> escalasDeTrabalho = EscalaDeTrabalho.AR.find(hqlVigentes.toString(), parametros).fetch();
 		if (escalasDeTrabalho.isEmpty()) {
 			return false;
 		}
@@ -328,13 +332,19 @@ public class Condutor extends TpModel implements ConvertableEntity, Comparable<C
 	}
 
 	public static List<Condutor> listarFiltradoPor(CpOrgaoUsuario orgaoUsuario, DpLotacao lotacao) throws Exception {
-		List<Condutor> condutores = Condutor.AR.find("cpOrgaoUsuario=? and dpPessoa.lotacao.idLotacaoIni = ?", orgaoUsuario, lotacao.getIdInicial()).fetch();
+		Map<String, Object> parametros = new HashMap<String,Object>();
+		parametros.put("cpOrgaoUsuario",orgaoUsuario);
+		parametros.put("idLotacaoIni",lotacao.getIdInicial());
+		List<Condutor> condutores = Condutor.AR.find("cpOrgaoUsuario=:cpOrgaoUsuario and dpPessoa.lotacao.idLotacaoIni = :idLotacaoIni", parametros).fetch();
 		Collections.sort(condutores);
 		return condutores;
 	}
 
 	public static Condutor recuperarLogado(DpPessoa titular, CpOrgaoUsuario orgaoUsuario) {
-		return Condutor.AR.find("dpPessoa.idPessoaIni=? and cpOrgaoUsuario=?", titular.getIdInicial(), orgaoUsuario).first();
+		Map<String, Object> parametros = new HashMap<String,Object>();
+		parametros.put("cpOrgaoUsuario",orgaoUsuario);
+		parametros.put("idLotacaoIni",titular.getIdInicial());
+		return Condutor.AR.find("dpPessoa.idPessoaIni=:idPessoaIni and cpOrgaoUsuario=:cpOrgaoUsuario", parametros).first();
 	}
 
 	public CategoriaCNH[] getCategorias() {

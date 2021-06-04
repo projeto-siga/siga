@@ -29,8 +29,8 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 		+ "		SUM(CASE WHEN id_pessoa_ini = :idPessoaIni THEN 1 ELSE 0 END) cont_pessoa,"
 		+ "		SUM(CASE WHEN id_lotacao_ini = :idLotacaoIni THEN 1 ELSE 0 END) cont_lota "
 		+ "		FROM corporativo.cp_marca marca"
-		+ "		WHERE(dt_ini_marca IS NULL OR dt_ini_marca < sysdate)"
-		+ "		AND (dt_fim_marca IS NULL OR dt_fim_marca > sysdate)"
+		+ "		WHERE(dt_ini_marca IS NULL OR dt_ini_marca < CURRENT_TIMESTAMP)"
+		+ "		AND (dt_fim_marca IS NULL OR dt_fim_marca > CURRENT_TIMESTAMP)"
 		+ "		AND((id_pessoa_ini = :idPessoaIni) OR(id_lotacao_ini = :idLotacaoIni))"
 		+ "		AND id_tp_marca = 3" + "		AND id_marcador <> "
 		+ CpMarcador.MARCADOR_CANCELADO + "		GROUP BY id_marcador" + "	) c "
@@ -40,7 +40,15 @@ public class GcMarca extends CpMarca implements Comparable<GcMarca> {
 
 	@ManyToOne
 	@JoinColumn(name = "ID_REF")
-	public GcInformacao inf;
+	private GcInformacao inf;
+
+	public GcInformacao getInf() {
+		return inf;
+	}
+
+	public void setInf(GcInformacao inf) {
+		this.inf = inf;
+	}
 
 	public GcMarca() {
 

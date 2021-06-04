@@ -30,7 +30,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 
 @Entity
-@Table(name = "CP_TIPO_CONFIGURACAO", schema = "CORPORATIVO")
+@Table(name = "corporativo.cp_tipo_configuracao")
 @Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
@@ -159,12 +159,13 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 
 	public static final long TIPO_CONFIG_RESTRINGIR_ACESSO_APOS_RECEBER = 50;
   
-  public static final long TIPO_CONFIG_AUTORIZAR_MOVIMENTACAO_POR_WS = 51;
+	public static final long TIPO_CONFIG_AUTORIZAR_MOVIMENTACAO_POR_WS = 51;
 
 	public static final long TIPO_CONFIG_TRAMITAR_SEM_CAPTURADO = 52;
 	
 	public static final long TIPO_CONFIG_CRIAR_NOVO_EXTERNO = 53;
-
+	
+	public static final long TIPO_CONFIG_TRAMITAR_PARA_LOTACAO_SEM_USUARIOS_ATIVOS = 54;
 
 	// SIGA-WF
 
@@ -184,6 +185,10 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 	public static final long TIPO_CONFIG_GERENCIAR_GRUPO = 206;
 
 	public CpTipoConfiguracao() {
+	}
+	
+	public CpTipoConfiguracaoDicionario getDicionario() {		
+		return CpTipoConfiguracaoDicionario.obterDicionario(getIdTpConfiguracao());
 	}
 
 }

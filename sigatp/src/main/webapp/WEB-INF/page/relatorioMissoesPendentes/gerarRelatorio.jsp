@@ -37,7 +37,7 @@
 									<c:forEach items="${missoesPendentes}" var="item">
 										<tr>
 											<td>${item.condutor.dadosParaExibicao}</td>
-											<td align="right"><a href="${linkTo[MissaoController].listarMissoesPendentesPorCondutor[item.condutor.id]}">${item.totalMissoes}</a></td>
+											<td align="right"><a href="${linkTo[MissaoController].listarMissoesPendentesPorCondutor(item.condutor.id)}">${item.totalMissoes}</a></td>
 										</tr>
 									</c:forEach>
 								</c:if>

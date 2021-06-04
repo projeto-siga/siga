@@ -2,15 +2,13 @@ package br.gov.jfrj.siga.ex.xjus;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.beanutils.BeanUtils;
+import com.crivano.swaggerservlet.SwaggerAsyncResponse;
+import com.crivano.swaggerservlet.SwaggerCall;
 
-import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.base.Prop;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.RecordIdGetRequest;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.RecordIdGetResponse;
-
-import com.crivano.swaggerservlet.SwaggerAsyncResponse;
-import com.crivano.swaggerservlet.SwaggerCall;
 
 public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 
@@ -26,7 +24,7 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 
 		SwaggerAsyncResponse<RecordIdGetResponse> o = SwaggerCall.callAsync(
 				service.name().toLowerCase() + "-record-id",
-				Cp.getInstance().getProp().xjusPassword(), "GET", url, null,
+				Prop.get("/xjus.password"), "GET", url, null,
 				RecordIdGetResponse.class).get(
 				AllReferencesGet.TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS);
 		if (o.getException() != null)

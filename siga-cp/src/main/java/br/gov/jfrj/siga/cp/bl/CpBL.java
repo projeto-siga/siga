@@ -38,7 +38,7 @@ import org.apache.poi.util.StringUtil;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
@@ -47,16 +47,26 @@ import br.gov.jfrj.siga.cp.AbstractCpAcesso.CpTipoAcessoEnum;
 import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpMarcadorCorEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorIconeEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoDataEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum;
+import br.gov.jfrj.siga.cp.CpMarcadorTipoTextoEnum;
 import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
+import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpToken;
+import br.gov.jfrj.siga.cp.converter.IEnumWithId;
 import br.gov.jfrj.siga.cp.util.Excel;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.cp.util.SigaUtil;
+import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
@@ -250,6 +260,8 @@ public class CpBL {
 			confOld = comp.getConfiguracaoBL().buscaConfiguracao(confFiltro, new int[] { 0 }, null);
 			if (confOld != null && !confOld.isEspecifica(confFiltro))
 				confOld = null;
+			if (confOld != null) 
+				confOld = dao().consultar(confOld.getIdConfiguracao(), CpConfiguracao.class, false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -378,7 +390,7 @@ public class CpBL {
 
 					if (SigaMessages.isSigaSP()) {
 						String[] destinanarios = { pessoa.getEmailPessoaAtual() };
-						Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"), destinanarios,
+						Correio.enviar(null, destinanarios,
 								"Esqueci Minha Senha", "",
 								"<table>" + "<tbody>" + "<tr>"
 										+ "<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>"
@@ -497,7 +509,7 @@ public class CpBL {
 									? textoEmailNovoUsuarioExternoSP(idNova, matricula, novaSenha)
 									: textoEmailNovoUsuarioSP(idNova, matricula, novaSenha, autenticaPeloBanco);
 							
-							Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
+							Correio.enviar(null,
 									destinanarios, "Novo Usuário", "", conteudoHTML);
 						} else {
 							Correio.enviar(pessoa.getEmailPessoaAtual(), "Novo Usuário - processo.rio",
@@ -672,21 +684,19 @@ public class CpBL {
 		
 		conteudo = conteudo.replace("${nomeUsuario}", identidade.getDpPessoa().getNomePessoa())
 			.replace("${cpfUsuario}", matricula)
-			.replace("${url}", SigaBaseProperties.getString("siga.ex." + SigaBaseProperties.getString("siga.ambiente") + ".url").replace("/sigaex/app", ""))
+			.replace("${url}", Prop.get("/sigaex.url").replace("/sigaex/app", ""))
 			.replace("${senhaUsuario}", novaSenha);
 		
 		return conteudo;
 	}
 
-	private String buscarModoAutenticacao(String orgao) {
+	public String buscarModoAutenticacao(String orgao) {
 		String retorno = GiService._MODO_AUTENTICACAO_DEFAULT;
-		CpPropriedadeBL props = new CpPropriedadeBL();
-		try {
-			String modo = props.getModoAutenticacao(orgao);
-			if (modo != null)
-				retorno = modo;
-		} catch (Exception e) {
-		}
+		if (Prop.get("/siga.ldap.orgaos") == null)
+			return retorno;
+		String modo = Prop.get("/siga.ldap." + orgao.toLowerCase() + ".modo");
+		if (modo != null)
+			retorno = modo;
 		return retorno;
 	}
 
@@ -1116,14 +1126,8 @@ public class CpBL {
 	}
 
 	public InputStream uploadPessoa(File file, CpOrgaoUsuario orgaoUsuario, String extensao, CpIdentidade i) {
-		InputStream inputStream = null;
-		try {
-			Excel excel = new Excel();
-			inputStream = excel.uploadPessoa(file, orgaoUsuario, extensao, i);
-		} catch (Exception e) {
-
-		}
-		return inputStream;
+		Excel excel = new Excel();				
+		return excel.uploadPessoa(file, orgaoUsuario, extensao, i);
 	}
 
 	public String criarUsuario(String cadastranteStr, final Long id, final Long idOrgaoUsu, final Long idCargo,
@@ -1333,12 +1337,89 @@ public class CpBL {
 		
 	
 	public String obterURLPermanente(String tipoLink, String token) {
-		//String urlPermanente = System.getProperty("siga.base.url"); necessario implementar parametro
-		String urlPermanente = System.getProperty("siga.ex.enderecoAutenticidadeDocs").replace("/sigaex/public/app/autenticar", "");
+		String urlPermanente = Prop.get("/sigaex.autenticidade.url").replace("/sigaex/public/app/autenticar", "");
 		
 		urlPermanente +=  "/siga/public/app/sigalink/"+tipoLink+"/"+token;
 		
 		return urlPermanente;
+	}
+
+	public void gravarMarcador(final Long id, final DpPessoa cadastrante, final DpLotacao lotacao, final CpIdentidade identidade, 
+			final String descricao, final String descrDetalhada, final CpMarcadorCorEnum idCor, final CpMarcadorIconeEnum idIcone, final Integer grupoId, 
+			final CpTipoMarcadorEnum idTpMarcador, final CpMarcadorTipoAplicacaoEnum idTpAplicacao, final CpMarcadorTipoDataEnum idTpDataPlanejada, 
+			final CpMarcadorTipoDataEnum idTpDataLimite, 
+			final CpMarcadorTipoExibicaoEnum idTpExibicao,	final CpMarcadorTipoTextoEnum idTpTexto, final CpMarcadorTipoInteressadoEnum idTpInteressado 
+			) throws Exception {
+		if (idTpMarcador == CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA)
+			throw new AplicacaoException ("Não é permitido o cadastro de marcadores de sistema.");
+			
+		if (descricao == null)
+			throw new AplicacaoException ("Preencha a descrição do marcador.");
+			
+		if (descricao.length() > 40) 
+			throw new AplicacaoException ("Descrição do marcador tem mais de 40 bytes.");
+		
+		String msgLotacao = SigaMessages.getMessage("usuario.lotacao");
+		List<CpMarcador> listaMarcadoresLotacao = dao().listarCpMarcadoresPorLotacao(lotacao, true);
+		List<CpMarcador> listaMarcadoresLotacaoEGerais = new ArrayList<CpMarcador> (listaMarcadoresLotacao);
+		listaMarcadoresLotacaoEGerais.addAll(dao().listarCpMarcadoresGerais(true));
+		
+		if (idTpMarcador == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO && id == null 
+				&& listaMarcadoresLotacao.size() > 9) 
+			throw new AplicacaoException ("Atingiu o limite de 10 marcadores possíveis para " + msgLotacao);
+		
+		if (id == null && (listaMarcadoresLotacaoEGerais.stream()
+				.filter(mar -> mar.getDescrMarcador()
+						.equals(descricao)).count() > 0)) 
+			throw new AplicacaoException ("Já existe um marcador Geral ou da " + msgLotacao 
+					+ " com esta descrição: " + descricao);
+
+		if (id != null) {
+			CpMarcador marcadorAnt = new CpMarcador();
+			CpMarcador marcador = new CpMarcador();
+
+			marcadorAnt = dao().consultar(id, CpMarcador.class, false);
+			if (marcadorAnt != null) {
+				marcador.setHisIdIni(marcadorAnt.getHisIdIni());
+				marcador.setOrdem(marcadorAnt.getOrdem());
+				marcador.setDpLotacaoIni(marcadorAnt.getDpLotacaoIni());
+				marcador.setDescrMarcador(descricao);
+				marcador.setDescrDetalhada(descrDetalhada);
+				marcador.setGrupoMarcador(2);
+				marcador.setCpTipoMarcador(idTpMarcador);
+				marcador.setIdCor(idCor);
+				marcador.setIdIcone(idIcone);
+				marcador.setIdTpAplicacao(idTpAplicacao);
+				marcador.setIdTpDataPlanejada(idTpDataPlanejada);
+				marcador.setIdTpDataLimite(idTpDataLimite);
+				marcador.setIdTpExibicao(idTpExibicao);
+				marcador.setIdTpTexto(idTpTexto);
+				marcador.setIdTpInteressado(idTpInteressado);
+				dao().gravarComHistorico(marcador, marcadorAnt, null, identidade);
+			} else {
+				throw new AplicacaoException ("Marcador não existente para esta " + msgLotacao 
+						+ " (" + id.toString() + ").");
+			}
+		} else {
+			Integer ordem = listaMarcadoresLotacao.size() + 1; 
+			CpMarcador marcador = new CpMarcador();
+			marcador.setDescrMarcador(descricao);
+			marcador.setDescrDetalhada(descrDetalhada);
+			marcador.setGrupoMarcador(grupoId);
+			marcador.setCpTipoMarcador(idTpMarcador);
+			marcador.setIdCor(idCor);
+			marcador.setIdIcone(idIcone);
+			marcador.setIdTpAplicacao(idTpAplicacao);
+			marcador.setIdTpDataPlanejada(idTpDataPlanejada);
+			marcador.setIdTpDataLimite(idTpDataLimite);
+			marcador.setIdTpExibicao(idTpExibicao);
+			marcador.setIdTpTexto(idTpTexto);
+			marcador.setIdTpInteressado(idTpInteressado);
+			marcador.setDpLotacaoIni(lotacao.getLotacaoInicial());
+			marcador.setOrdem(ordem);
+			
+			dao().gravarComHistorico(marcador, null, null, identidade);
+		}
 	}
 	
 }

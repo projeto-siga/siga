@@ -1,18 +1,19 @@
 package br.gov.jfrj.siga.tp.vraptor;
 
 import java.util.List;
+import java.util.Locale;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
-import br.com.caelum.vraptor.core.Localization;
+import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdmin;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdminMissao;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdminMissaoComplexo;
@@ -24,14 +25,23 @@ import br.gov.jfrj.siga.tp.model.TipoDeNotificacao;
 import br.gov.jfrj.siga.tp.model.TpDao;
 import br.gov.jfrj.siga.tp.model.Veiculo;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
+import javax.transaction.Transactional;
 
-@Resource
+@Controller
 @Path("/app/autoDeInfracao")
 public class AutoDeInfracaoController extends TpController{
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public AutoDeInfracaoController() {
+		super();
+	}
+	
+	@Inject	
 	public AutoDeInfracaoController(HttpServletRequest request, Result result,
-			CpDao dao, Localization localization, Validator validator, SigaObjects so, EntityManager em) {
-		super(request, result, TpDao.getInstance(), validator, so, em);
+			 Locale localization,  Validator validator, SigaObjects so,  EntityManager em) {
+		super(request, result, TpDao.getInstance(),  validator, so, em);
 	}
 
 	@Path("/listarPorVeiculo/{idVeiculo}")
@@ -92,6 +102,7 @@ public class AutoDeInfracaoController extends TpController{
 		result.include("tipoNotificacao", tipoNotificacao);
 	}
 
+	@Transactional
 	@RoleAdmin
 	@RoleAdminMissao
 	@RoleAdminMissaoComplexo
@@ -119,6 +130,7 @@ public class AutoDeInfracaoController extends TpController{
 		}
 	}
 
+	@Transactional
 	@RoleAdmin
 	@RoleAdminMissao
 	@RoleAdminMissaoComplexo

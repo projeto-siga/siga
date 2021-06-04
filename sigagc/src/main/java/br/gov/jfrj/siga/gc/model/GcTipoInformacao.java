@@ -11,7 +11,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "GC_TIPO_INFORMACAO", schema = "SIGAGC")
+@Table(name = "gc_tipo_informacao", schema = "sigagc")
 public class GcTipoInformacao extends Objeto {
 	final static public long TIPO_INFORMACAO_REGISTRO_DE_CONHECIMENTO = 1;
 	final static public long TIPO_INFORMACAO_ERRO_CONHECIDO = 2;
@@ -23,14 +23,26 @@ public class GcTipoInformacao extends Objeto {
 	
 	@Id
 	@Column(name = "ID_TIPO_INFORMACAO")
-	public long id;
+	private long id;
 
 	@Column(name = "NOME_TIPO_INFORMACAO", nullable = false)
-	public String nome;
+	private String nome;
 	
 	@ManyToOne()
 	@JoinColumn(name = "ARQUIVO")
-	public GcArquivo arq;
+	private GcArquivo arq;
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public void setArq(GcArquivo arq) {
+		this.arq = arq;
+	}
 
 	public GcTipoInformacao(long id, String nome) {
 		super();

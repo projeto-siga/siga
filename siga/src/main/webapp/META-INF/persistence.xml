@@ -40,7 +40,6 @@
 		<class>br.gov.jfrj.siga.cp.CpUnidadeMedida</class>
 		<class>br.gov.jfrj.siga.cp.CpComplexo</class>
 		<class>br.gov.jfrj.siga.dp.CpMarcador</class>
-		<class>br.gov.jfrj.siga.dp.CpTipoMarcador</class>
 		<class>br.gov.jfrj.siga.dp.CpMarca</class>
 		<class>br.gov.jfrj.siga.dp.CpTipoMarca</class>
 		<class>br.gov.jfrj.siga.cp.CpAcesso</class>
@@ -48,6 +47,24 @@
 		<class>br.gov.jfrj.siga.dp.DpVisualizacaoAcesso</class>
 		<class>br.gov.jfrj.siga.dp.CpContrato</class>
 		<class>br.gov.jfrj.siga.cp.CpToken</class>
+
+		<class>br.gov.jfrj.siga.cp.CpMarcadorCorEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpMarcadorIconeEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpMarcadorTipoDataEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpMarcadorTipoTextoEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpTipoMarcadorEnum</class>
+
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorCorEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorIconeEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoAplicacaoEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoDataEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoExibicaoEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoInteressadoEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoTextoEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpTipoMarcadorEnumConverter</class>
 
 		<properties>
 			<property name="hibernate.cache.use_query_cache" value="true" />
@@ -64,9 +81,10 @@
 			
 			<property name="hibernate.max_fetch_depth" value="3" />
 			<property name="hibernate.default_batch_fetch_size" value="1000" />
-			<property name="hibernate.dialect" value="org.hibernate.dialect.Oracle12cDialect" />
+			<property name="hibernate.dialect" value="${siga.hibernate.dialect}" />
 			<property name="hibernate.hbm2ddl.auto" value="none" />
 			<property name="hibernate.show_sql" value="false" />
+			<property name="hibernate.enable_lazy_load_no_trans" value="true"/> 
 
 			<!-- Cache Region QUERY_CACHE_SECONDS -->
 			<property name="hibernate.cache.infinispan.querySeconds.eviction.strategy"

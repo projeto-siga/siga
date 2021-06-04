@@ -3,20 +3,20 @@ package br.gov.jfrj.siga.vraptor;
 import java.io.IOException;
 import java.util.Arrays;
 
+import javax.enterprise.context.RequestScoped;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.base.Throwables;
+
 import br.com.caelum.vraptor.InterceptionException;
 import br.com.caelum.vraptor.Intercepts;
+import br.com.caelum.vraptor.controller.ControllerMethod;
 import br.com.caelum.vraptor.core.InterceptorStack;
 import br.com.caelum.vraptor.interceptor.ApplicationLogicException;
 import br.com.caelum.vraptor.interceptor.ExceptionHandlerInterceptor;
 import br.com.caelum.vraptor.interceptor.Interceptor;
-import br.com.caelum.vraptor.ioc.RequestScoped;
-import br.com.caelum.vraptor.resource.ResourceMethod;
 import br.gov.jfrj.siga.base.AplicacaoException;
-
-import com.google.common.base.Throwables;
 
 @Intercepts(before = ExceptionHandlerInterceptor.class)
 @RequestScoped
@@ -32,7 +32,7 @@ public class AplicacaoExceptionInterceptor implements Interceptor {
 	}
 
 	@Override
-	public void intercept(InterceptorStack stack, ResourceMethod method,
+	public void intercept(InterceptorStack stack, ControllerMethod method,
 			Object resourceInstance) throws InterceptionException {
 		try {
 			stack.next(method, resourceInstance);
@@ -55,7 +55,7 @@ public class AplicacaoExceptionInterceptor implements Interceptor {
 	}
 
 	@Override
-	public boolean accepts(ResourceMethod method) {
+	public boolean accepts(ControllerMethod method) {
 		return true;
 	}
 

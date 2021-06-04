@@ -41,31 +41,36 @@ import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ELIMINACAO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENCERRAMENTO_DE_VOLUME;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_EM_EDITAL_DE_ELIMINACAO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO_PUBL_BI;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ORDENACAO_ORIGINAL_DOCUMENTO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO_TRANSITORIO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFERENCIA;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_REORDENACAO_DOCUMENTO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL;
-import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO;
-import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_REORDENACAO_DOCUMENTO;
-import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ORDENACAO_ORIGINAL_DOCUMENTO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.hasDespacho;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.internal.org.bouncycastle.jcajce.provider.symmetric.util.PBE.Util;
 
+import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -73,6 +78,8 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
+import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
 import br.gov.jfrj.siga.ex.util.ProcessadorReferencias;
 
 public class ExMovimentacaoVO extends ExVO {
@@ -133,7 +140,7 @@ public class ExMovimentacaoVO extends ExVO {
 
 		calcularClasse(mov);
 
-		desabilitada = mov.getExMovimentacaoRef() != null && mov.getExMovimentacaoRef().isCancelada()
+		desabilitada = (mov.getExMovimentacaoRef() != null && mov.getExMovimentacaoRef().isCancelada() && !mov.getIdTpMov().equals(TIPO_MOVIMENTACAO_MARCACAO) && !mov.getIdTpMov().equals(TIPO_MOVIMENTACAO_RECEBIMENTO))
 				|| mov.getExMovimentacaoCanceladora() != null
 				|| mov.getIdTpMov().equals(TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO);
 		
@@ -171,6 +178,24 @@ public class ExMovimentacaoVO extends ExVO {
 		if (idTpMov == TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
 			addAcao(null, "Cancelar", "/app/expediente/mov", "cancelar",
 					Ex.getInstance().getComp().podeCancelarVinculacaoPapel(titular, lotaTitular, mov.mob(), mov));
+		}
+
+		if (idTpMov == TIPO_MOVIMENTACAO_MARCACAO) {
+			descricao = mov.getMarcador().getDescrMarcador();
+			if (mov.getSubscritor() != null) 
+				descricao += ", interessado: " + mov.getSubscritor().getPrimeiroNomeEIniciais();
+			if (mov.getLotaSubscritor() != null) 
+				descricao += (mov.getSubscritor() == null ? ", lotação interessada: " : "/") + mov.getLotaSubscritor().getSiglaCompleta();
+			if (mov.getDtParam1() != null) 
+				descricao += ", data planejada: " + Data.formatDataETempoRelativo(mov.getDtParam1());
+			if (mov.getDtParam1() != null) 
+				descricao += ", data limite: " + Data.formatDataETempoRelativo(mov.getDtParam2());
+			if (mov.getObs() != null && mov.getObs().trim().length() > 0)
+				descricao += ", obs: " + mov.getObs();
+			addAcao(AcaoVO.builder().nome("Cancelar").nameSpace("/app/expediente/mov")
+					.acao("cancelar_movimentacao_gravar").params("sigla", mov.mob().getCodigoCompacto())
+					.params("id", mov.getIdMov().toString()).post(true)
+					.exp(new ExPodeCancelarMarcacao(mov, titular, lotaTitular)).build());
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_REFERENCIA) {
@@ -338,6 +363,30 @@ public class ExMovimentacaoVO extends ExVO {
 
 				addAcao(null, mov.getExMobil().getSigla(), "/app/expediente/doc", "exibir", true, null,
 						"sigla=" + mov.getExMobil().getSigla(), "Documento juntado: ", mensagemPos, null);
+
+				if (mov.getExMobil().podeExibirNoAcompanhamento(titular, lotaTitular)) {
+						Set<ExMovimentacao> movs = mov.getExMobil().getMovsNaoCanceladas(ExTipoMovimentacao
+								.TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO);
+						if (!movs.isEmpty()) {
+							addAcao(null, "Desfazer Disponibilizar no Acompanhamento do Protocolo", "/app/expediente/mov", 
+									"desfazer_exibir_no_acompanhamento_do_protocolo",
+									true, "Ao clicar em OK o conteúdo deste documento deixará de ficar disponível através do número do " 
+											+ "protocolo de acompanhamento. Deseja continuar?", 
+									"id=" + movs.iterator().next().getIdMov().toString(), null,
+									null, null);
+						}
+				} else {
+					if (mov.getExMobil().isJuntado()
+							&& Ex.getInstance().getComp()
+								.podeDisponibilizarNoAcompanhamentoDoProtocolo(titular, lotaTitular, mov.getExDocumento())) {
+						addAcao(null, "Disponibilizar no Acompanhamento do Protocolo", "/app/expediente/mov", 
+								"exibir_no_acompanhamento_do_protocolo", 
+								true, "Ao clicar em OK o conteúdo deste documento ficará disponível através do número do "
+										+ "protocolo de acompanhamento. Deseja continuar? ",
+								"sigla=" + mov.getExMobil().getSigla(), null,
+								null, null);
+					}
+				}
 			}
 		}
 
@@ -734,7 +783,7 @@ public class ExMovimentacaoVO extends ExVO {
 	public static String getWebdavPassword() {
 		String pwd = null;
 		try {
-			pwd = System.getProperty("siga.ex.webdav.pwd");
+			pwd = Prop.get("webdav.senha");
 		} catch (Exception e) {
 			throw new AplicacaoException("Erro obtendo propriedade siga.ex.webdav.pwd", 0, e);
 		}

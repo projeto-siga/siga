@@ -11,7 +11,6 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.gc.model.GcInformacao;
 import br.gov.jfrj.siga.gc.model.GcTag;
 import br.gov.jfrj.siga.gc.model.GcTipoInformacao;
-import br.gov.jfrj.siga.model.Selecionavel;
 
 public class GcInformacaoFiltro {
 	public GcTipoInformacao tipo;
@@ -74,8 +73,8 @@ public class GcInformacaoFiltro {
 			query += " and inf.lotacao.idLotacaoIni = "
 					+ lotacao.getIdInicial();
 
-		if (tipo != null && tipo.id != 0L)
-			query += " and inf.tipo = " + tipo.id;
+		if (tipo != null && tipo.getId() != 0L)
+			query += " and inf.tipo = " + tipo.getId();
 
 		if (ano != null)
 			query += " and inf.ano = " + Integer.parseInt(ano.toString());
@@ -124,7 +123,7 @@ public class GcInformacaoFiltro {
 				&& situacao.getIdMarcador() > 0)
 			subquery += " and situacao.cpMarcador.idMarcador = "
 					+ situacao.getIdMarcador()
-					+ " and (situacao.dtFimMarca is null or situacao.dtFimMarca > sysdate)";
+					+ " and (situacao.dtFimMarca is null or situacao.dtFimMarca > CURRENT_TIMESTAMP)";
 
 		if (responsavel != null)
 			subquery += " and situacao.dpPessoaIni.idPessoa = "

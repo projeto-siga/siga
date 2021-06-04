@@ -24,6 +24,8 @@
  */
 package br.gov.jfrj.siga.dp;
 
+import static java.util.Objects.nonNull;
+
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -33,10 +35,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.persistence.Query;
 import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -47,17 +46,19 @@ import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Selecionavel;
+import br.gov.jfrj.siga.parser.SiglaParser;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
-@Table(name = "DP_LOTACAO", schema = "CORPORATIVO")
+@Table(name = "corporativo.dp_lotacao")
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpLotacao extends AbstractDpLotacao implements Serializable,
-		Selecionavel, Historico, Sincronizavel, Comparable, DpConvertableEntity {
+		Selecionavel, Historico, Sincronizavel, Comparable<Object>, DpConvertableEntity {
 	private static final long serialVersionUID = 5628179687234082413L;
 	public static ActiveRecord<DpLotacao> AR = new ActiveRecord<>(
 			DpLotacao.class);
@@ -83,12 +84,22 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 		return true;
 	}
 
+	/**
+	 * Retorna o nome da Localidade da {@link DpLotacao Lotação}.
+	 * 
+	 * @return O {@link CpLocalidade#getNmLocalidade() nome} da {@link CpLocalidade
+	 *         Localidade} ou o {@link CpOrgaoUsuario#getMunicipioOrgaoUsu()
+	 *         município} do {@link CpOrgaoUsuario Órgão} ou
+	 *         "{@literal Indeterminado}".
+	 */
 	public String getLocalidadeString() {
-		for (String municipio : CpLocalidade.getMunicipios())
-			if (getNomeLotacao().toLowerCase()
-					.contains(municipio.toLowerCase()))
-				return municipio;
-		return getOrgaoUsuario().getMunicipioOrgaoUsu();
+		if (nonNull(getLocalidade())) {
+			return getLocalidade().getNmLocalidade();
+		}
+		if (nonNull(getOrgaoUsuario())) {
+			return getOrgaoUsuario().getMunicipioOrgaoUsu();
+		}
+		return "Indeterminado";
 	}
 
 	public String iniciais(String s) {
@@ -149,10 +160,16 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 		return s;
 	}
 
+	public String getSiglaCompletaFormatada() {
+		return getOrgaoUsuario().getSiglaOrgaoUsu() + "-" + getSiglaLotacao();
+	}
+
 	public void setSigla(String sigla) {
 		if (sigla == null) {
 			sigla = "";
 		}
+		if (ContextoPersistencia.getEntityManager() == null) 
+			return;
 		String siglasOrgaoUsu = "";
 		List<CpOrgaoUsuario> lou = CpDao.getInstance().listarOrgaosUsuarios();
 		for (CpOrgaoUsuario ou : lou) {
@@ -165,7 +182,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 			CpOrgaoUsuario cpOrgao = new CpOrgaoUsuario();
 			cpOrgao.setSiglaOrgaoUsu(m.group(1).toUpperCase());
 			setOrgaoUsuario(cpOrgao);
-			setSiglaLotacao(m.group(2).toUpperCase());
+			setSiglaLotacao((m.group(2).substring(0,1).equals("-")) ? m.group(2).substring(1).toUpperCase() : m.group(2).toUpperCase());
 		} else {
 			setSiglaLotacao(sigla.toUpperCase());
 		}
@@ -437,6 +454,11 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	@Override
 	public String toString() {
 		return getSiglaCompleta();
+	}
+	
+	@Override
+	public String getSiglaDePessoaEOuLotacao() {
+		return SiglaParser.makeSigla(null, this);
 	}
 
 }

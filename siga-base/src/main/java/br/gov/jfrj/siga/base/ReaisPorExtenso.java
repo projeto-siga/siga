@@ -43,7 +43,7 @@ public class ReaisPorExtenso {
 	private String Numeros[][] = {
 			{ "zero", "um", "dois", "três", "quatro", "cinco", "seis", "sete",
 					"oito", "nove", "dez", "onze", "doze", "treze", "quatorze",
-					"quinze", "desesseis", "desessete", "dezoito", "desenove" },
+					"quinze", "dezesseis", "dezessete", "dezoito", "dezenove" },
 			{ "vinte", "trinta", "quarenta", "cinquenta", "sessenta",
 					"setenta", "oitenta", "noventa" },
 			{ "cem", "cento", "duzentos", "trezentos", "quatrocentos",

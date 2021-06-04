@@ -49,6 +49,15 @@
 					: 'none';
 			document.getElementById(el).focus();
 		}
+		
+		function somenteLetrasNumeros(){
+			tecla = event.keyCode;
+			if ((tecla >= 48 && tecla <= 57) || (tecla >= 65 && tecla <= 90) || (tecla >= 97 && tecla <= 122)){
+			    return true;
+			}else{
+			   return false;
+			}
+		}
 	</script>
 	<script
 		src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"
@@ -240,8 +249,8 @@
 					value="A" />
 				<div class="form-group">
 					<label>Matrícula</label> <input id="nomeUsuarioSubscritor"
-						type="text" name="nomeUsuarioSubscritor" class="form-control"
-						onblur="javascript:converteUsuario(this)" />
+						type="text" name="nomeUsuarioSubscritor" value="${cadastrante.sesbPessoa}${cadastrante.matricula}" class="form-control"
+						onblur="javascript:converteUsuario(this)" onKeypress="return somenteLetrasNumeros(event);"/>
 				</div>
 				<div class="form-group">
 					<label>Senha</label> <input type="password"
@@ -273,7 +282,29 @@
 			});
 
 			function assinarGravar() {
-				AssinarDocumentosSenha('false', this);
+				$.ajax
+				  ({
+				    type: "POST",
+				    url: "/siga/api/v1/autenticar",
+				    dataType: 'json',
+				    data: '',
+				    beforeSend: function (xhr){ 
+				        xhr.setRequestHeader('Authorization', make_base_auth(encodeURIComponent($('#nomeUsuarioSubscritor').val()), encodeURIComponent($('#senhaUsuarioSubscritor').val()))); 
+				    },
+				    success: function (){
+				    	AssinarDocumentosSenha('false', this);
+				    	sessionStorage.removeItem('timeout' + document.getElementById('cadastrante').title);
+				    },
+				    error: function() {
+				    	sigaModal.alerta('Usuário ou senha inválido(s)');
+				    }
+				});
+			}
+			
+			function make_base_auth(user, password) {
+			  var tok = user + ':' + password;
+			  var hash = btoa(tok);
+			  return "Basic " + hash;
 			}
 
 			dialogM = $("#dialog-message").dialog({

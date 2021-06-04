@@ -6,16 +6,18 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.validator.I18nMessage;
+import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdmin;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdminMissao;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdminMissaoComplexo;
@@ -28,7 +30,7 @@ import br.gov.jfrj.siga.tp.model.Missao;
 import br.gov.jfrj.siga.tp.model.TpDao;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-@Resource
+@Controller
 @Path("/app/escalaDeTrabalho")
 public class EscalaDeTrabalhoController extends TpController {
 
@@ -42,7 +44,15 @@ public class EscalaDeTrabalhoController extends TpController {
 
 	private MissaoController missaoController;
 
-	public EscalaDeTrabalhoController(HttpServletRequest request, Result result, CpDao dao, Validator validator, SigaObjects so, EntityManager em, MissaoController missaoController) {
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public EscalaDeTrabalhoController() {
+		super();
+	}
+	
+	@Inject
+	public EscalaDeTrabalhoController(HttpServletRequest request, Result result,   Validator validator, SigaObjects so,  EntityManager em, MissaoController missaoController) {
 		super(request, result, TpDao.getInstance(), validator, so, em);
 
 		this.missaoController = missaoController;
@@ -118,6 +128,7 @@ public class EscalaDeTrabalhoController extends TpController {
         result.include(DIA_SEMANA, diaSemana);
      }
 
+    @Transactional
 	@RoleAdmin
 	@RoleAdminMissao
 	@RoleAdminMissaoComplexo
@@ -132,7 +143,8 @@ public class EscalaDeTrabalhoController extends TpController {
 		result.redirectTo(this).listarPorCondutor(escalaDeTrabalho.getCondutor().getId());
 	}
 
-	@SuppressWarnings("static-access")
+    @Transactional
+    @SuppressWarnings("static-access")
 	@RoleAdmin
 	@RoleAdminMissao
 	@RoleAdminMissaoComplexo
@@ -248,6 +260,7 @@ public class EscalaDeTrabalhoController extends TpController {
 		return diasDeTrabalhoAntigo.equals(diasDeTrabalhoNovo);
 	}
 
+    @Transactional
 	@RoleAdmin
 	@RoleAdminMissao
 	@RoleAdminMissaoComplexo

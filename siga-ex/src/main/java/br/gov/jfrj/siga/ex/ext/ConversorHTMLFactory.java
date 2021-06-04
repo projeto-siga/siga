@@ -2,11 +2,12 @@ package br.gov.jfrj.siga.ex.ext;
 
 import br.gov.jfrj.itextpdf.ConversorHtml;
 import br.gov.jfrj.itextpdf.FOP;
+import br.gov.jfrj.itextpdf.FlyingSaucer;
 import br.gov.jfrj.itextpdf.Nheengatu;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
 
 public class ConversorHTMLFactory extends AbstractConversorHTMLFactory {
@@ -29,8 +30,12 @@ public class ConversorHTMLFactory extends AbstractConversorHTMLFactory {
 			} catch (Exception e) {
 				conversor = getConversorPadrao();
 			}
+		else if (strHtml.contains("<!-- FLYING SAUCER -->"))
+			conversor = new FlyingSaucer();
 		else if (strHtml.contains("<!-- FOP -->"))
 			conversor = new FOP();
+		else if (strHtml.contains("<!-- NHEENGATU -->"))
+			conversor = new Nheengatu();
 		else
 			conversor = getConversorPadrao();
 		return conversor;
@@ -40,6 +45,10 @@ public class ConversorHTMLFactory extends AbstractConversorHTMLFactory {
 	public ConversorHtml getConversor(final int conversor) throws Exception {
 		if (conversor == EXT_CONVERSOR) {
 			return getExtensaoConversorHTML();
+		}
+
+		if (conversor == CONVERSOR_FLYING_SAUCER) {
+			return new FlyingSaucer();
 		}
 
 		if (conversor == CONVERSOR_FOP) {
@@ -63,7 +72,7 @@ public class ConversorHTMLFactory extends AbstractConversorHTMLFactory {
 	public ConversorHtml getExtensaoConversorHTML() throws AplicacaoException {
 		try {
 			return (ConversorHtml) Class.forName(
-					SigaExProperties.getExtensaoConversorHTML()).newInstance();
+					Prop.get("conversor.html.ext")).newInstance();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new AplicacaoException("Não foi possível carregar a extensão do conversor HTML para PDF: " + e.getMessage());

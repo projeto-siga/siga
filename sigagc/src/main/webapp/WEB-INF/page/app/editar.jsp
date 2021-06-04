@@ -1,5 +1,6 @@
+<%@ page contentType="text/html; charset=UTF-8" %>
 <%@ include file="/WEB-INF/page/include.jsp"%>
-<siga:pagina titulo="Edição de Tópico de Informação">
+<siga:pagina titulo="Edi&ccedil;&atilde;o de T&oacute;pico de Informa&ccedil;&atilde;o">
 
 	<script>
 		function postback() {
@@ -48,12 +49,12 @@
 						<c:if
 							test="${empty informacao.edicao.id || informacao.acessoPermitido(titular,lotaTitular, informacao.edicao.id)}">
 							<div class="gt-left-col gt-width-25" style="padding-left: 2em">
-								<siga:select label="Visualizacão" name="visualizacao.id" id="informacaoVisualizacao"
+								<siga:select label="Visualiza&ccedil;&atilde;o" name="visualizacao.id" id="informacaoVisualizacao"
 									list="acessos" listKey="id" listValue="nome" value="${informacao.visualizacao.id}"
 									onchange="javascript:ocultaGrupo();" />
 							</div>
 							<div class="gt-left-col gt-width-25" style="padding-left: 2em">
-								<siga:select label="Edicão" name="edicao.id" list="acessos" id="informacaoEdicao"
+								<siga:select label="Edi&ccedil;&atilde;o" name="edicao.id" list="acessos" id="informacaoEdicao"
 									listKey="id" listValue="nome" value="${informacao.edicao.id}"
 									onchange="javascript:ocultaGrupo();" />
 							</div>
@@ -69,7 +70,7 @@
 					</div>
 
 					<div class="gt-form-row gt-width-100">
-						<label>Título</label> <input type="text" id="inftitulo"
+						<label>T&iacute;tulo</label> <input type="text" id="inftitulo"
 							name="inftitulo" value="${inftitulo}" class="gt-form-text" />
 					</div>
 
@@ -80,10 +81,10 @@
 					</div>
 
 					<div class="gt-form-row gt-width-100">
-						<label>Classificação</label>
+						<label>Classifica&ccedil;&atilde;o</label>
 						<c:choose>
 							<c:when test="${empty classificacao && !editarClassificacao}">
-								<p>Esse conhecimento ainda não possui uma classificação</p>
+								<p>Este conhecimento ainda n&atilde;o possui uma classifica&ccedil;&atilde;o.</p>
 							</c:when>
 							<c:otherwise>
 								<textarea name="classificacao" class="gt-form-text" ${editarClassificacao ? '' : 'readonly'}>${classificacao}</textarea>
@@ -100,15 +101,15 @@
 							<c:choose>
 								<c:when
 									test="${not empty informacao && not empty informacao.id && informacao.id != 0}">
-								ou <a href="${linkTo[AppController].editar[informacao.siglaCompacta]}">cancelar
-										alterações</a>
+								ou <a href="${linkTo[AppController].editar(informacao.siglaCompacta)}">cancelar
+										altera&ccedil;&otilde;es</a>
 								ou <a
-										href="${linkTo[AppController].movimentacoes[informacao.siglaCompacta]}">exibir
-										movimentações</a>
+										href="${linkTo[AppController].movimentacoes(informacao.siglaCompacta)}">exibir
+										movimenta&ccedil;&otilde;es</a>
 								</c:when>
 								<c:otherwise>
 									<a href="${linkTo[AppController].editar}">cancelar
-										alterações</a>
+										altera&ccedil;&otilde;es</a>
 								</c:otherwise>
 							</c:choose>
 						</p>
@@ -119,8 +120,8 @@
 		<div class="gt-sidebar">
 			<!-- Sidebar Content -->
 			<div class="gt-sidebar-content">
-				<h3>Informações sobre o Preenchimento</h3>
-				<p>O campo "Título" sempre será acessível, independente do
+				<h3>Informa&ccedil;&otilde;es sobre o Preenchimento</h3>
+				<p>O campo "T&iacute;tulo" sempre ser&aacute; acess&iacute;vel, independente do
 					controle de acesso selecionado.</p>
 
 				<div id="ajax_arquivo">
@@ -128,7 +129,7 @@
 						<h3 style="padding-top: 1em">Incluir Imagens ou Arquivos no
 							Texto</h3>
 						<p>Clique em uma imagem/arquivo abaixo para incluir uma
-							referência no texto.</p>
+							refer&ecirc;ncia no texto.</p>
 						<c:forEach items="${informacao.movs}" var="m">
 							<c:if
 								test="${m.tipo.id == 13 && m.movCanceladora == null}">
@@ -140,7 +141,7 @@
 									[ <img style="margin-bottom: -1px; width: 9px;"
 										src="/siga/css/famfamfam/icons/cross.png" /> <span
 										class="gt-table-action-list"> <a
-										href="javascript:if (confirm('Confirma a remoção deste anexo?')) 
+										href="javascript:if (confirm('Confirma a remocao deste anexo?')) 
 											ReplaceInnerHTMLFromAjaxResponse('../removerAnexo?sigla=${informacao.sigla}&idArq=${m.arq.id}&idMov=${m.id}',
 																null, document.getElementById('ajax_arquivo'));">remover</a></span>
 									&nbsp;]
@@ -149,115 +150,26 @@
 						</c:forEach>
 					</c:if>
 				</div>
-				<h3 style="padding-top: 1em">Inserir classificação no Texto</h3>
+				<h3 style="padding-top: 1em">Inserir classifica&ccedil;&atilde;o no Texto</h3>
 				<p>
-					O conteúdo do campo "Texto" pode receber uma marcação especial para
-					classificação. Clique <a id="marcadores" href="#">aqui</a> para
-					visualizar a opção disponível.
+					O conte&uacute;do do campo "Texto" pode receber uma marca&ccedil;&atilde;o especial para
+					classifica&ccedil;&atilde;o. Clique <a id="marcadores" href="#">aqui</a> para
+					visualizar a op&ccedil;&atilde;o dispon&iacute;vel.
 				</p>
 				<div id="cheatsheet" style="display: none;">
 					<table class="side-bar-light-table">
 						<tbody>
-							<!-- <tr>
-							<td>//itálico//</td>
-							<td class="arrow">→</td>
-							<td><em>itálico</em></td>
-						</tr>
-						<tr>
-							<td>**negrito**</td>
-							<td class="arrow">→</td>
-							<td><strong>negrito</strong></td>
-						</tr>
-						<tr>
-							<td>&&highlight&&</td>
-							<td class="arrow">→</td>
-							<td><mark>highlight</mark></td>
-						</tr>
-						<tr>
-							<td>* Lista não numerada<br>* Segundo item<br>**
-								Sub item</td>
-							<td class="arrow">→</td>
-							<td>• Lista não numerada<br>• Segundo item<br>..•
-								Sub item</td>
-						</tr>
-						<tr>
-							<td># Lista numerada<br># Segundo item<br>## Sub
-								item</td>
-							<td class="arrow">→</td>
-							<td>1. Lista numerada<br>2. Segundo item<br>2.1
-								Sub item</td>
-						</tr> -->
+							
 							<tr>
 								<td>#classificacao-conhecimento<br>
-								<td class="arrow">→</td>
+								<td class="arrow">&#8594;</td>
 								<td><a href="#">#classificacao-conhecimento</a></td>
 							</tr>
-							<!-- 
-					<tr>
-						<td>Link para [[outro conhecimento]]</td>
-						<td class="arrow">→</td>
-						<td>Link to <a
-							href="http://www.wikicreole.org/attach/CheatSheet/URL">wiki
-								page</a>
-						</td>
-					</tr>
- -->
-							<!-- 	<tr>
-							<td>[[URL|nome do link]]</td>
-							<td class="arrow">→</td>
-							<td><a
-								href="http://www.wikicreole.org/attach/CheatSheet/URL">nome
-									do link</a></td>
-						</tr>
-
-						<tr>
-							<td>== Título grande<br>=== Título médio<br>====
-								Título pequeno</td>
-							<td class="arrow">→</td>
-							<td><span style="font-size: 120%; font-weight: bold;">
-									Título grande</span><br> <span
-								style="font-size: 110%; font-weight: bold;">Título médio</span><br>
-								<span style="font-size: 100%; font-weight: bold;">Título
-									pequeno</span></td>
-						</tr>
-
-						<tr>
-							<td>Não<br> quebrar a linha!<br> <br>Use uma
-								linha vazia</td>
-							<td class="arrow">→</td>
-							<td>Não quebrar a linha!<br> <br>Use uma linha
-								vazia</td>
-						</tr>
-						<tr>
-							<td>Quebra de linha\\forçada<br></td>
-							<td class="arrow">→</td>
-							<td>Quebra de linha<br>forçada</td>
-						</tr>
-						<tr>
-							<td>Linha horizontal:<br>----</td>
-							<td class="arrow">→</td>
-							<td>Linha horizontal:
-								<hr></td>
-						</tr>
-						<tr>
-							<td>{{imagem.jpg|título}}</td>
-							<td class="arrow">→</td>
-							<td>Imagem com título</td>
-						</tr>
-						<tr>
-							<td>|cabeçalho|cabeçalho|<br>|coluna|coluna|<br>|coluna|coluna|</td>
-							<td class="arrow">→</td>
-							<td>Tabela</td>
-						</tr>
-						<tr>
-							<td>{{{<br>== [[não|formatar]]<br />}}}</td>
-							<td class="arrow">→</td>
-							<td>== [[não|formatar]]:</td>
-						</tr> -->
+							
 						</tbody>
 					</table>
 					<br />
-					<p>Não usar caracteres especiais ou espaço</p>
+					<p>Nco usar caracteres especiais ou espaço</p>
 				</div>
 			</div>
 		</div>

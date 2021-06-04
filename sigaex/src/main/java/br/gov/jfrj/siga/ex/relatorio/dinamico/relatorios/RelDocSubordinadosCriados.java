@@ -21,7 +21,6 @@ package br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +32,8 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -43,29 +44,27 @@ import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import net.sf.jasperreports.engine.JRException;
 
 public class RelDocSubordinadosCriados extends RelatorioTemplate {
 
-	public RelDocSubordinadosCriados(Map parametros)
-			throws DJBuilderException {
+	public RelDocSubordinadosCriados(Map<String, String> parametros) throws Exception {
 		super(parametros);
-		if (parametros.get("secaoUsuario") == null) {
-			throw new DJBuilderException(
-					"Parâmetro secaoUsuario não informado!");
+		if (Utils.empty(parametros.get("secaoUsuario"))) {
+			throw new AplicacaoException("Parâmetro secaoUsuario não informado!");
 		}
-		if (parametros.get("link_siga") == null) {
-			throw new DJBuilderException("Parâmetro link_siga não informado!");
+		if (Utils.empty(parametros.get("lotacao"))) {
+			throw new AplicacaoException("Parâmetro lotacao não informado!");
 		}
-
+		if (Utils.empty(parametros.get("link_siga"))) {
+			throw new AplicacaoException("Parâmetro link_siga não informado!");
+		}
 	}
 
 	@Override
-	public AbstractRelatorioBaseBuilder configurarRelatorio()
-			throws DJBuilderException, JRException {
+	public AbstractRelatorioBaseBuilder configurarRelatorio() throws DJBuilderException, JRException {
 
-		this.setTitle("Relatório de Movimentação de Documentos em Setores Subordinados");
+		this.setTitle("Relatório de Criação de Documentos em Setores Subordinados");
 		this.addColuna("Setor", 0, RelatorioRapido.ESQUERDA, true);
 		this.addColuna("Documento", 25, RelatorioRapido.CENTRO, false);
 		this.addColuna("Criação", 15, RelatorioRapido.CENTRO, false);
@@ -83,8 +82,7 @@ public class RelDocSubordinadosCriados extends RelatorioTemplate {
 		// Obtém uma formaDoc a partir da sigla passada e monta trecho da query
 		// para a forma
 		Query qryTipoForma = ContextoPersistencia.em().createQuery(
-				"from ExTipoFormaDoc tf where " + "tf.descTipoFormaDoc = '"
-						+ parametros.get("tipoFormaDoc") + "'");
+				"from ExTipoFormaDoc tf where " + "tf.descTipoFormaDoc = '" + parametros.get("tipoFormaDoc") + "'");
 		
 		ExTipoFormaDoc tipoFormaDoc = null;
 		try {
@@ -93,13 +91,13 @@ public class RelDocSubordinadosCriados extends RelatorioTemplate {
 		}
 
 		String trechoQryTipoForma = tipoFormaDoc == null ? ""
-				: " and tipoForma.idTipoFormaDoc = "
-						+ tipoFormaDoc.getIdTipoFormaDoc();
+				: " and tipoForma.idTipoFormaDoc = " + tipoFormaDoc.getIdTipoFormaDoc();
 
 			
 		// Obtém a lotação com o id passado...
-		DpLotacao lotacao = ContextoPersistencia.em().find(DpLotacao.class, Long.parseLong((String) parametros.get("lotacao")));
-			
+		DpLotacao lotacao = ContextoPersistencia.em().find(DpLotacao.class,
+			Long.parseLong((String) parametros.get("lotacao")));
+		
 		Set<DpLotacao> lotacaoSet = new HashSet<DpLotacao>();
 		lotacaoSet.add(lotacao);
 		
@@ -120,10 +118,8 @@ public class RelDocSubordinadosCriados extends RelatorioTemplate {
 
 		// Monta trecho da query para ocultar seletivamente a descrição do
 		// documento
-		String trechoQryDescrDocumento = "(case when ("
-				+ "	nivel.idNivelAcesso <> 1 "
-				+ "	and nivel.idNivelAcesso <> 6"
-				+ ") then 'CONFIDENCIAL' else doc.descrDocumento end)";
+		String trechoQryDescrDocumento = "(case when (" + "	nivel.idNivelAcesso <> 1 "
+				+ "	and nivel.idNivelAcesso <> 6" + ") then 'CONFIDENCIAL' else doc.descrDocumento end)";
 
 		// Monta trecho da query para retornar o código do documento
 		/*String trechoQryCodigoDoc = " orgao.siglaOrgaoUsu "
@@ -142,50 +138,25 @@ public class RelDocSubordinadosCriados extends RelatorioTemplate {
 			listaMarcadoresRelevantes = "28"; // Como interessado
 		}
 		
-		// bruno.lacerda@avantiprima.com.br
-		// int timeout = 1;
-		Query qryMarcas = ContextoPersistencia.em()
-				.createQuery(
-						"select doc.idDoc, marca.dpLotacaoIni.nomeLotacao, "
-								+ "mov, mob, " 
-								+ "orgao.siglaOrgaoUsu, orgao.acronimoOrgaoUsu, forma.siglaFormaDoc, doc.anoEmissao, doc.numExpediente, doc.numSequencia, tipoMob.idTipoMobil, mob.numSequencia,  "
-								+ "docPai.idDoc, orgaoDocPai.siglaOrgaoUsu, orgaoDocPai.acronimoOrgaoUsu, formaDocPai.siglaFormaDoc, docPai.anoEmissao, docPai.numExpediente, docPai.numSequencia, tipoMobPai.idTipoMobil, mobPai.numSequencia, "
-								+ " '"
-								+ parametros.get("link_siga")
-								+ " '"
-								+ ","
-								+ trechoQryDescrDocumento
-								+ ","
-								+ "	pes.nomePessoa,"
-								+ "	marca.cpMarcador.descrMarcador "
-								+ "from ExMarca marca "
-								+ "inner join marca.exMobil as mob "
-								+ "inner join mob.exTipoMobil as tipoMob "
-								+ "inner join mob.exDocumento as doc "
-								+ "inner join mob.exMovimentacaoSet as mov "
-								+ "inner join mov.lotaResp as dplot "
-								+ "inner join doc.exNivelAcesso as nivel "
-								+ "inner join doc.orgaoUsuario as orgao "
-								+ "inner join doc.exFormaDocumento as forma "
-								+ "inner join forma.exTipoFormaDoc as tipoForma "
-								+ "inner join marca.dpLotacaoIni as lot "
-								+ "inner join marca.cpMarcador as marcador "
-								+ "left outer join marca.dpPessoaIni as pes "
-								+ "left outer join doc.exMobilPai as mobPai "
-								+ "left outer join mobPai.exDocumento docPai "
-								+ "left outer join docPai.orgaoUsuario orgaoDocPai "
-								+ "left outer join docPai.exFormaDocumento formaDocPai "
-								+ "left outer join mobPai.exTipoMobil tipoMobPai "
-								+ "where lot.idLotacao in ("
-								+ listaLotacoes
-								+ ") "
-								+ "and marcador.idMarcador in ("
-								+ listaMarcadoresRelevantes
-								+ ")"
-								+ trechoQryTipoForma
-								+ " and mov.dtMov = (select min(movim.dtMov) from ExMovimentacao movim where movim.exMobil = mov.exMobil) "
-								+ " order by lot.siglaLotacao, doc.idDoc, mov.dtMov"/*, timeout*/);
-
+		Query qryMarcas = ContextoPersistencia.em().createQuery("select doc.idDoc, marca.dpLotacaoIni.nomeLotacao, "
+				+ "mov, mob, "
+				+ "orgao.siglaOrgaoUsu, orgao.acronimoOrgaoUsu, forma.siglaFormaDoc, doc.anoEmissao, doc.numExpediente, doc.numSequencia, tipoMob.idTipoMobil, mob.numSequencia,  "
+				+ "docPai.idDoc, orgaoDocPai.siglaOrgaoUsu, orgaoDocPai.acronimoOrgaoUsu, formaDocPai.siglaFormaDoc, docPai.anoEmissao, docPai.numExpediente, docPai.numSequencia, tipoMobPai.idTipoMobil, mobPai.numSequencia, "
+				+ " '" + parametros.get("link_siga") + " '" + "," + trechoQryDescrDocumento + "," + "	pes.nomePessoa,"
+				+ "	marca.cpMarcador.descrMarcador " + "from ExMarca marca " + "inner join marca.exMobil as mob "
+				+ "inner join mob.exTipoMobil as tipoMob " + "inner join mob.exDocumento as doc "
+				+ "inner join mob.exMovimentacaoSet as mov " + "inner join mov.lotaResp as dplot "
+				+ "inner join doc.exNivelAcesso as nivel " + "inner join doc.orgaoUsuario as orgao "
+				+ "inner join doc.exFormaDocumento as forma " + "inner join forma.exTipoFormaDoc as tipoForma "
+				+ "inner join marca.dpLotacaoIni as lot " + "inner join marca.cpMarcador as marcador "
+				+ "left outer join marca.dpPessoaIni as pes " + "left outer join doc.exMobilPai as mobPai "
+				+ "left outer join mobPai.exDocumento docPai " + "left outer join docPai.orgaoUsuario orgaoDocPai "
+				+ "left outer join docPai.exFormaDocumento formaDocPai "
+				+ "left outer join mobPai.exTipoMobil tipoMobPai " + "where lot.idLotacao in (" + listaLotacoes + ") "
+				+ "and marcador.idMarcador in (" + listaMarcadoresRelevantes + ")" + trechoQryTipoForma
+				+ " and mov.dtMov = (select min(movim.dtMov) from ExMovimentacao movim where movim.exMobil = mov.exMobil) "
+				+ " order by lot.siglaLotacao, doc.idDoc, mov.dtMov"/* , timeout */);
+		
 		// Retorna
 		List<Object[]> lista = qryMarcas.getResultList();
 		long datatual = 0;
@@ -194,30 +165,33 @@ public class RelDocSubordinadosCriados extends RelatorioTemplate {
 		List<String> listaFinal = new ArrayList<String>();
 		
 		for (Object[] array : lista) {
-			Long idDoc = (Long)array[0];
-			String nomeLotacao = (String)array[1]; 
+			Long idDoc = (Long) array[0];
+			String nomeLotacao = (String) array[1];
 			ExMovimentacao mov = (ExMovimentacao) array[2];
-			ExMobil mob = (ExMobil)array[3];
-			String siglaOrgaoUsu = (String)array[4];
-			String acronimoOrgaoUsu = (String)array[5];
-			String siglaFormaDoc = (String)array[6];
-			Long anoEmissao = (Long)array[7];
-			Long numExpediente = (Long)array[8];
-			Integer docNumSequencia = (Integer)array[9];
-			Long idTipoMobil = (Long)array[10];
-			Integer mobilNumSequencia = (Integer)array[11];
-			Long pai_idDoc = (Long)array[12];
-			String pai_siglaOrgaoUsu = (String)array[13];
-			String pai_acronimoOrgaoUsu = (String)array[14];
-			String pai_siglaFormaDoc = (String)array[15];
-			Long pai_anoEmissao = (Long)array[16];
-			Long pai_numExpediente = (Long)array[17];
-			Integer pai_numSequencia = (Integer)array[18];
-			Long pai_idTipoMobil = (Long)array[19];
-			Integer pai_mobilNumSequencia = (Integer)array[20];
 			
-			String codigoDocumento = ExDocumento.getCodigo(idDoc, siglaOrgaoUsu, acronimoOrgaoUsu, siglaFormaDoc, anoEmissao, numExpediente, docNumSequencia, idTipoMobil, mobilNumSequencia, 
-					pai_idDoc, pai_siglaOrgaoUsu, pai_acronimoOrgaoUsu, pai_siglaFormaDoc, pai_anoEmissao, pai_numExpediente, pai_numSequencia, pai_idTipoMobil, pai_mobilNumSequencia);
+			ExMobil mob = (ExMobil) array[3];
+			String siglaOrgaoUsu = (String) array[4];
+			String acronimoOrgaoUsu = (String) array[5];
+			String siglaFormaDoc = (String) array[6];
+			Long anoEmissao = (Long) array[7];
+			Long numExpediente = (Long) array[8];
+			Integer docNumSequencia = (Integer) array[9];
+			Long idTipoMobil = (Long) array[10];
+			Integer mobilNumSequencia = (Integer) array[11];
+			Long pai_idDoc = (Long) array[12];
+			String pai_siglaOrgaoUsu = (String) array[13];
+			String pai_acronimoOrgaoUsu = (String) array[14];
+			String pai_siglaFormaDoc = (String) array[15];
+			Long pai_anoEmissao = (Long) array[16];
+			Long pai_numExpediente = (Long) array[17];
+			Integer pai_numSequencia = (Integer) array[18];
+			Long pai_idTipoMobil = (Long) array[19];
+			Integer pai_mobilNumSequencia = (Integer) array[20];
+
+			String codigoDocumento = ExDocumento.getCodigo(idDoc, siglaOrgaoUsu, acronimoOrgaoUsu, siglaFormaDoc,
+					anoEmissao, numExpediente, docNumSequencia, idTipoMobil, mobilNumSequencia, pai_idDoc,
+					pai_siglaOrgaoUsu, pai_acronimoOrgaoUsu, pai_siglaFormaDoc, pai_anoEmissao, pai_numExpediente,
+					pai_numSequencia, pai_idTipoMobil, pai_mobilNumSequencia);
 			
 			String codigoMobil = ExMobil.getSigla(codigoDocumento, mobilNumSequencia, idTipoMobil);
 			

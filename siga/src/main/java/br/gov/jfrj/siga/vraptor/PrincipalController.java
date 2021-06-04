@@ -26,6 +26,7 @@ import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -56,7 +57,7 @@ public class PrincipalController extends SigaController {
 	@Get("app/principal")
 	public void principal(Boolean exibirAcessoAnterior, Boolean redirecionar) {
 		if (redirecionar == null || redirecionar) {
-			String paginaInicialUrl = System.getProperty("siga.pagina.inicial.url");
+			String paginaInicialUrl = Prop.get("/siga.pagina.inicial.url");
 			if (paginaInicialUrl != null) {
 				result.redirectTo(paginaInicialUrl + ((exibirAcessoAnterior != null && exibirAcessoAnterior) ? "?exibirAcessoAnterior=true" : ""));
 				return;
@@ -115,11 +116,11 @@ public class PrincipalController extends SigaController {
 			final GenericoSelecao sel = buscarGenericoPorSigla(sigla, pes, lot, incluirMatricula);
 
 			if (sel.getId() == null) {
-				if (Cp.getInstance().getProp().xjusUrl() != null) {
+				if (Prop.getBool("/xjus.url") != null) {
 					sel.setId(-1L);
 					sel.setSigla(sigla);
-					sel.setDescricao("/siga/app/xjus?q=" + sigla);
-				} else if (Cp.getInstance().getProp().gsaUrl() != null) {
+					sel.setDescricao("/siga/app/xjus#!?filter=" + sigla);
+				} else if (Prop.get("/siga.gsa.url") != null) {
 					sel.setId(-1L);
 					sel.setSigla(sigla);
 					sel.setDescricao("/siga/app/busca?q=" + sigla);
@@ -174,11 +175,16 @@ public class PrincipalController extends SigaController {
 				// Documentos
 				lurls.add(urlBase + "/sigaex/public/app/expediente/selecionar?sigla=" + sigla + incluirMatricula
 						+ ";/sigaex/app/expediente/doc/exibir?sigla=");
+				if(orgao == null) {
+					// Pessoas
+					lurls.add(urlBase + "/siga/public/app/pessoa/selecionar?sigla=" + sigla + incluirMatricula
+							+ ";/siga/app/pessoa/exibir?sigla=");
+				}
 			} else if (modulo != null) {
 				switch (modulo) {
 				case "SR": // Solicitacoes
 				case "TMPSR":
-					lurls.add(urlBase + "/sigasr/public/app/solicitacao/selecionar?sigla=" + sigla + incluirMatricula);
+					lurls.add(urlBase + "/sigasr/public/app/selecionar?sigla=" + sigla + incluirMatricula);
 					break;
 				case "GC": // Conhecimentos
 				case "TMPGC":
@@ -243,9 +249,9 @@ public class PrincipalController extends SigaController {
 	@Consumes("text/vnd.graphviz")
 	@Path("/public/app/graphviz/svg")
 	public Download graphvizProxy(String dot) throws Exception {
-		String url = (String) Contexto.resource("graphviz.url");
+		String url = (String) Prop.get("/vizservice.url");
 		if (url == null)
-			throw new Exception("Parâmetro graphviz.url precisa ser informado");
+			throw new Exception("Parâmetro vizservice.url precisa ser informado");
 		corsHeaders(response);
 
 		String body = Unirest.post(url).header("Content-Type", "text/vnd.graphviz").body(dot).asString().getBody();

@@ -17,7 +17,7 @@
 	<c:set var="pagina_de_erro" scope="request" value="${pagina_de_erro}" />
 </c:if>
 
-<c:set var="siga_cliente" scope="request" value="${f:resource('siga.local')}" />
+<c:set var="siga_cliente" scope="request" value="${f:resource('/siga.local')}" />
 
 <c:set var="titulo_pagina" scope="request">${titulo}</c:set>
 

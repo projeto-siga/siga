@@ -23,6 +23,7 @@ import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
@@ -52,7 +53,7 @@ public class DpCargoController extends
 		super(request, result, dao, so, em);
 	}
 	
-	public boolean temPermissaoParaExportarDados() {
+	protected boolean temPermissaoParaExportarDados() {
 		return Boolean.valueOf(Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getTitular().getLotacao(),"SIGA;GI;CAD_CARGO;EXP_DADOS"));
 	}
 	
@@ -84,7 +85,7 @@ public class DpCargoController extends
 	}
 
 	@Override
-	public DpCargoDaoFiltro createDaoFiltro() {
+	protected DpCargoDaoFiltro createDaoFiltro() {
 		final DpCargoDaoFiltro flt = new DpCargoDaoFiltro();
 		flt.setNome(Texto.removeAcentoMaiusculas(getNome()));
 		flt.setIdOrgaoUsu(orgaoUsu);
@@ -99,7 +100,7 @@ public class DpCargoController extends
 	}
 	
 	@Override
-	public Selecionavel selecionarPorNome(final DpCargoDaoFiltro flt)
+	protected Selecionavel selecionarPorNome(final DpCargoDaoFiltro flt)
 			throws AplicacaoException {
 		// Procura por nome
 		flt.setNome(Texto.removeAcentoMaiusculas(flt.getSigla()));
@@ -170,11 +171,11 @@ public class DpCargoController extends
 			if (lista.size() > 0) {				
 				InputStream inputStream = null;
 				StringBuffer texto = new StringBuffer();
-				texto.append("Cargo" + System.getProperty("line.separator"));
+				texto.append("Cargo" + System.lineSeparator());
 				
 				for (DpCargo cargo : lista) {
 					texto.append(cargo.getNomeCargo() + ";");										
-					texto.append(System.getProperty("line.separator"));
+					texto.append(System.lineSeparator());
 				}
 				
 				inputStream = new ByteArrayInputStream(texto.toString().getBytes("ISO-8859-1"));									
@@ -227,7 +228,8 @@ public class DpCargoController extends
 		result.include("request",getRequest());
 		result.include("id",id);
 	}
-	
+
+	@Transacional
 	@Post("/app/cargo/gravar")
 	public void editarGravar(final Long id, 
 							 final String nmCargo, 
@@ -303,6 +305,7 @@ public class DpCargoController extends
 		result.use(Results.page()).forwardTo("/WEB-INF/page/dpCargo/cargaCargo.jsp");
 	}
 	
+	@Transacional
 	@Post("/app/cargo/carga")
 	public Download carga( final UploadedFile arquivo, Long idOrgaoUsu) throws Exception {
 		InputStream inputStream = null;
@@ -329,10 +332,9 @@ public class DpCargoController extends
 		}
 			
 		if(inputStream == null) {
-			result.include("msg", "Arquivo processado com sucesso!");
+			result.include(SigaModal.ALERTA, SigaModal.mensagem("Arquivo processado com sucesso!").titulo("Sucesso"));
 			carregarExcel();
-		} else {
-			result.include("msg", "");
+		} else {			
 			return new InputStreamDownload(inputStream, "application/text", "inconsistencias.txt");	
 		}
 		return null;

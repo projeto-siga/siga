@@ -47,7 +47,7 @@ function TestarAssinaturaDigital() {
 // Inicia a operação de assinatura para todos os documentos referenciados na
 // pagina
 //
-function AssinarDocumentos(copia, politica, juntar, tramitar) {
+function AssinarDocumentos(copia, politica, juntar, tramitar, exibirNoProtocolo) {
 	if (gAssinando)
 		return;
 	gAssinando = true;
@@ -68,25 +68,25 @@ function AssinarDocumentos(copia, politica, juntar, tramitar) {
 
 	if (tipo == 1) {
 		if ("OK" == provider.inicializar(function() {
-			ExecutarAssinarDocumentos(copia, juntar, tramitar);
+			ExecutarAssinarDocumentos(copia, juntar, tramitar, exibirNoProtocolo);
 		})) {
-			ExecutarAssinarDocumentos(copia, juntar, tramitar);
+			ExecutarAssinarDocumentos(copia, juntar, tramitar, exibirNoProtocolo);
 		}
 	}
 
 	if (tipo == 2) {
 		provider = providerPassword;
 		providerPassword.inicializar(function() {
-			ExecutarAssinarDocumentos(copia, juntar, tramitar);
+			ExecutarAssinarDocumentos(copia, juntar, tramitar, exibirNoProtocolo);
 		});
 	}
 
 	if (tipo == 3) {
 		providerPassword.inicializar(function() {
 			if ("OK" == provider.inicializar(function() {
-				ExecutarAssinarDocumentos(copia, juntar, tramitar);
+				ExecutarAssinarDocumentos(copia, juntar, tramitar, exibirNoProtocolo);
 			})) {
-				ExecutarAssinarDocumentos(copia, juntar, tramitar);
+				ExecutarAssinarDocumentos(copia, juntar, tramitar, exibirNoProtocolo);
 			}
 		});
 	}
@@ -160,7 +160,7 @@ var providerAssijusPopup = {
 				var errormsg = this.errormsg;
 				$.ajax({
 					url : "/sigaex/app/assinador-popup/doc/" + id + "/hash",
-					type : "GET",
+					type : "POST",
 					async : false,
 					success : function(xhr) {
 						console.log(xhr)
@@ -610,17 +610,25 @@ var providerIttruP11 = {
 var providerPassword = {
 	nome : 'Assinatura com Senha',
 	inicializar : function(cont) {
-		try {
+		try {															
 			var senhaDialog = $(
 					'<div class="modal fade" tabindex="-1" role="dialog" id="senhaDialog"><div class="modal-dialog modal-dialog-centered" role="document"><div class="modal-content">'
-					+ '<div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Identificação</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+					+ sigaModal.obterCabecalhoPadrao('Identificação')
 					+ '<div class="modal-body"><fieldset><label>Matrícula</label> <br /> <input id="nomeUsuarioSubscritor" type="text" value="' + $('#siglaUsuarioCadastrante').val() + '" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)" /> <label>(modifique caso necessário)</label><br /> <br /> <label>Senha</label><br /> <input type="password" id="senhaUsuarioSubscritor" class="text ui-widget-content ui-corner-all" autocomplete="off" autofocus /></fieldset></div>'
 					+ '<div class="modal-footer"><button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button><button type="button" id="senhaOk" class="btn btn-primary">OK</button></div>'
 					+ '</div></div></div>')
-					.modal();
+					.modal();										
 			
 			senhaDialog.on('shown.bs.modal', function () {
 				$(this).find('[autofocus]').focus();
+				
+				$('#nomeUsuarioSubscritor, #senhaUsuarioSubscritor').on('keypress', function(e) {
+					// se pressionado enter
+				    if(e.which == 13) {
+				    	$('#senhaOk').click();				    	
+				    }
+				});
+				
 				$('#senhaOk').click(function () {
 					gLogin = $("#nomeUsuarioSubscritor").val();
 					gPassword = $("#senhaUsuarioSubscritor").val();
@@ -739,9 +747,8 @@ var process = {
 		
 		var progressDialog = $(
 				'<div class="modal fade" tabindex="-1" role="dialog" id="progressDialog"><div class="modal-dialog" role="document"><div class="modal-content">'
-				+ '<div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Assinatura Digital (' + provider.nome
-				+ ')</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
-				+ '<div class="modal-body"><p id="vbslog">Iniciando...</p><div id="progressbar-ad"></div></div>'
+				+ sigaModal.obterCabecalhoPadrao()				
+				+ '<div class="modal-body"><h1 class="siga-modal__titulo  siga-modal__titulo--conteudo">Assinatura Digital (' + provider.nome + ')</h1><p id="vbslog">Iniciando...</p><div id="progressbar-ad"></div></div>'
 				+ '<div class="modal-footer"><button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button><button type="button" id="senhaOk" class="btn btn-primary">OK</button></div>'
 				+ '</div></div></div>')
 				.modal();
@@ -754,8 +761,14 @@ var process = {
 		
 		progressDialog.on('hidden.bs.modal', function () {
 			gAssinando = false;
-			// progressDialog.modal('dispose');
-			$('#progressDialog').remove();
+			try {
+				progressDialog.modal('dispose');
+			} catch (e) {
+			}
+			try {
+				$('#progressDialog').remove();
+			} catch (e) {
+			}
 		});
 	},
 	finalize : function() {
@@ -791,9 +804,8 @@ var process = {
 function ModalAlert(err, title) {
 	var alertDialog = $(
 			'<div class="modal fade" tabindex="-1" role="dialog" id="alertDialog"><div class="modal-dialog" role="document"><div class="modal-content">'
-			+ '<div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">' + title
-			+ '</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
-			+ '<div class="modal-body"><p>' + err + '</p></div>'
+			+ sigaModal.obterCabecalhoPadrao()
+			+ '<div class="modal-body"><h1 class="siga-modal__titulo  siga-modal__titulo--conteudo">' + title + '</h1><p>' + err + '</p></div>'
 			+ '<div class="modal-footer"><button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button></div>'
 			+ '</div></div></div>')
 			.modal();
@@ -809,7 +821,7 @@ function Erro(err) {
 	return "Ocorreu um erro durante o processo de assinatura: " + err.message;
 }
 
-function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar) {
+function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar, ExibirNoProtocolo) {
 	process.reset();
 
 	if (Copia || Copia == "true") {
@@ -858,6 +870,9 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar) {
 								+ "; gJuntar = "
 								+ (o.hasOwnProperty('juntar') ? o.juntar
 										: Juntar)
+								+ "; gExibirNoProtocolo = "
+								+ (o.hasOwnProperty('exibirNoProtocolo') ? o.exibirNoProtocolo
+										: ExibirNoProtocolo)
 								+ "; gUrlPost = '"
 								+ oUrlBase.value
 								+ o.urlPost
@@ -897,6 +912,9 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar) {
 					}
 					if (gTramitar !== undefined) {
 						DadosDoPost = DadosDoPost + "&tramitar=" + gTramitar;
+					}
+					if (gExibirNoProtocolo !== undefined) {
+						DadosDoPost = DadosDoPost + "&exibirNoProtocolo=" + gExibirNoProtocolo;
 					}
 					if (gPolitica) {
 						DadosDoPost = DadosDoPost + "&certificadoB64="
@@ -941,11 +959,14 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar) {
 				if (o.hasOwnProperty('tramitar') || Tramitar || Tramitar == false)
 					signable.extra += (signable.extra.length > 0 ? "," : "") + ((o.tramitar || Tramitar == "true" || Tramitar == true) ? "tramitar" : "nao_tramitar");
 				
+				if (o.hasOwnProperty('exibirNoProtocolo') || ExibirNoProtocolo || ExibirNoProtocolo == false)
+					signable.extra += (signable.extra.length > 0 ? "," : "") + ((o.exibirNoProtocolo || ExibirNoProtocolo == "true" || ExibirNoProtocolo == true) ? "exibirNoProtocolo" : "nao_exibirNoProtocolo");
+				
 				provider.assinar(signable);
 			}
 		} else {
-			if (( ($('#podeAssinarPorComSenha').val() == "true" && $('#siglaUsuSubscritor').val() != "") && ($('#siglaUsuarioCadastrante').val() != $('#siglaUsuSubscritor').val()) )
-					&& !$('#siglaUsuCossignatarios').val().includes($('#siglaUsuarioCadastrante').val()) ) {
+			if (( ($('#podeAssinarPorComSenha').val() == "true" && $('#siglaUsuSubscritor').val() != "") && ($('#siglaUsuarioCadastrante').val() != $('#siglaUsuTitular').val()) )
+					&& !$('#siglaUsuCossignatarios').val().includes($('#siglaUsuarioCadastrante').val()) && Copia != 'true') {
 				if (!confirm("DESEJA ASSINAR O DOCUMENTO POR \""+ $('#nomeUsuSubscritor').val() + "\" - \"" + $('#siglaUsuSubscritor').val() +"\" OU POR UM DOS COSIGNATARIOS (" + $('#siglaUsuCossignatarios').val() + " )\"")) {
 					gAssinando = false;
 					$(this).dialog('destroy').remove();				
@@ -958,6 +979,8 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar) {
 					+ (o.hasOwnProperty('tramitar') ? o.tramitar : Tramitar)
 					 + "; gJuntar = "
 					+ (o.hasOwnProperty('juntar') ? o.juntar : Juntar)
+					 + "; gExibirNoProtocolo = "
+					+ (o.hasOwnProperty('exibirNoProtocolo') ? o.exibirNoProtocolo : ExibirNoProtocolo)
 					+ "; gUrlPostPassword = '" + oUrlBase.value
 					+ o.urlPostPassword + "';");
 
@@ -976,6 +999,9 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar) {
 				}
 				if (gJuntar !== undefined) {
 					DadosDoPost = DadosDoPost + "&juntar=" + gJuntar;
+				}
+				if (gExibirNoProtocolo !== undefined) {
+					DadosDoPost = DadosDoPost + "&exibirNoProtocolo=" + gExibirNoProtocolo;
 				}
 				Status = GravarAssinatura(gUrlPostPassword, DadosDoPost);
 				gRet = Status;
@@ -1105,6 +1131,11 @@ function identificarOperacoes() {
 					+ operacao.codigo)[0];
 			if (oChkJuntar != null) 
 				operacao.juntar = oChkJuntar.checked;
+
+			var oChkExibirNoProtocolo = document.getElementsByName("ad_exibirNoProtocolo_"
+					+ operacao.codigo)[0];
+			if (oChkExibirNoProtocolo != null) 
+				operacao.exibirNoProtocolo = oChkExibirNoProtocolo.checked;
 
 			gOperacoes.push(operacao);
 		}

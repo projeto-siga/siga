@@ -17,97 +17,39 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
+						<version>${hibernate.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 			<version>2.3</version>
 		</dependency>
-		<!-- Demais dependencias -->
-		<dependency>
-			<groupId>ar.com.fdvs</groupId>
-			<artifactId>DynamicJasper</artifactId>
+		
+		<!-- https://mvnrepository.com/artifact/javax.validation/validation-api -->
+<dependency>
+    <groupId>javax.validation</groupId>
+    <artifactId>validation-api</artifactId>
+</dependency>
+		
+		
+				<dependency>
+			<groupId>br.com.caelum.vraptor</groupId>
+			<artifactId>vraptor-jpa</artifactId>
+			<version>4.0.5</version>
 			<exclusions>
-				<!--<exclusion> <groupId>bouncycastle</groupId> <artifactId>bcmail-jdk14</artifactId> 
-					</exclusion> <exclusion> <groupId>bouncycastle</groupId> <artifactId>bcprov-jdk14</artifactId> 
-					</exclusion> -->
-				<exclusion>
-					<groupId>xml-apis</groupId>
-					<artifactId>xml-apis</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>eclipse</groupId>
-					<artifactId>jdtcore</artifactId>
+				<exclusion>  <!-- declare the exclusion here -->
+					<groupId>org.eclipse.persistence</groupId>
+					<artifactId>javax.persistence</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>siga-rel</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
+		
+		<!-- Demais dependencias -->
+			<dependency>
 			<groupId>siga</groupId>
 			<artifactId>siga-vraptor-module-old</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>net.objectlab.kit</groupId>
-			<artifactId>datecalc-joda</artifactId>
-			<version>1.2.0</version>
-		</dependency>
-		<dependency>
-			<groupId>de.jollyday</groupId>
-			<artifactId>jollyday</artifactId>
-			<version>0.4.7</version>
-		</dependency>
-		<dependency>
-			<groupId>org.freemarker</groupId>
-			<artifactId>freemarker</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.zeroturnaround</groupId>
-			<artifactId>javarebel-sdk</artifactId>
-			<version>2.0.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.beanshell</groupId>
-			<artifactId>bsh</artifactId>
-			<version>2.0b5</version>	
-		</dependency>
-		<dependency>
-			<groupId>backport-util-concurrent</groupId>
-			<artifactId>backport-util-concurrent</artifactId>
-			<version>3.1</version>			
-		</dependency>
-		<!-- fim demais Dependencias -->
-
-		<dependency>
-			<groupId>org.apache.ant</groupId>
-			<artifactId>ant-junit</artifactId>
-			<version>1.9.4</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-java</artifactId>
-			<version>2.42.2</version>
-			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>com.google.guava</groupId>
-					<artifactId>guava</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<version>6.8.8</version>
-			<scope>test</scope>
-		</dependency>
-
-
 
 		<!-- DEPENDENCIAS PARA VRAPTORE JSP -->
 		<dependency>
@@ -131,88 +73,39 @@
 			<artifactId>jstl</artifactId>
 			<version>1.1.2</version>
 		</dependency>
+
 		<dependency>
-			<groupId>br.com.caelum.vraptor</groupId>
-			<artifactId>vraptor-jpa</artifactId>
-			<version>1.0.2</version>
-			<exclusions>
-				<exclusion>  <!-- declare the exclusion here -->
-					<groupId>org.eclipse.persistence</groupId>
-					<artifactId>javax.persistence</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
+			<version>1.2</version>
 		</dependency>
+		
+		      	<dependency>
+			<groupId>com.crivano</groupId>
+			<artifactId>swaggerservlet</artifactId>
+		</dependency>
+		
+	
+		
 		<!-- FIM DEPENDENCIAS PARA VRAPTORE JSP -->
 
-
-		<!-- INICIO POM-PLAY -->
-		<!-- Dependencias obrigatorias caso contrario lancar� classnotfound na 
-			aplicacao -->
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.jamonapi</groupId>
-			<artifactId>jamon</artifactId>
-			<version>2.75</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.oval</groupId>
-			<artifactId>oval</artifactId>
-			<version>1.84</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code.maven-play-plugin.org.apache.commons</groupId>
-			<artifactId>commons-javaflow</artifactId>
-			<version>1590792</version>
-		</dependency>
-		<dependency>
-			<groupId>com.thoughtworks.xstream</groupId>
-			<artifactId>xstream</artifactId>
-			<version>1.4.7</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-fileupload</groupId>
-			<artifactId>commons-fileupload</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-email</artifactId>
-			<version>1.3.1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>br.com.caelum.vraptor</groupId>
-			<artifactId>vraptor-freemarker</artifactId>
-			<version>1.1.3</version>
-		</dependency>
 		
-	<dependency>
-   		 <groupId>org.codehaus.jackson</groupId>
-    	 <artifactId>jackson-mrbean</artifactId>
-   	     <version>1.9.13</version>
-	</dependency>
-		
+	<!-- https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-core-asl -->
+<dependency>
+    <groupId>org.codehaus.jackson</groupId>
+    <artifactId>jackson-core-asl</artifactId>
+    <version>1.9.13</version>
+</dependency>
+
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-envers</artifactId>
-			<!-- <version>4.2.15.Final</version> -->
-			<version>4.2.7.SP1</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<!-- Dependencia Jobs -->
-		<dependency>
-			<groupId>br.com.prixma</groupId>
-			<artifactId>vraptor-tasks</artifactId>
-			<version>1.1.0</version>
+			<version>${hibernate.version}</version>
 			<exclusions>
 				<exclusion>
-					<groupId>br.com.caelum</groupId>
-					<artifactId>3.5.4</artifactId>
+					<groupId>org.hibernate</groupId>
+					<artifactId>hibernate-core</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -232,7 +125,7 @@
 					</dependency>
 					<dependency>
 						<groupId>siga</groupId>
-						<artifactId>siga-vraptor-module</artifactId>
+						<artifactId>siga-vraptor-module-old</artifactId>
 						<version>1.2-SNAPSHOT</version>
 					</dependency>
 				</dependencies>
@@ -299,4 +192,53 @@
 			</plugin>
 		</plugins>
 	</build>
+		<profiles>
+		<profile>
+			<id>flyway</id>
+			<properties>
+				<maven.test.skip>true</maven.test.skip>
+				<maven.main.skip>true</maven.main.skip>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.googlecode.flyway</groupId>
+						<artifactId>flyway-maven-plugin</artifactId>
+						<version>2.3.1</version>
+						<configuration>
+							<driver>oracle.jdbc.driver.OracleDriver</driver>
+							<url>jdbc:oracle:thin:@${server.ip}:49161:xe</url>
+							<user>system</user>
+							<password>oracle</password>
+							<schemas>
+								<schema>SIGATP</schema>
+							</schemas>
+							<sqlMigrationPrefix>SIGATPV</sqlMigrationPrefix>
+							<placeholderPrefix>flyway${</placeholderPrefix>
+							<locations>
+								<location>filesystem:src\main\resources</location>
+							</locations>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>integration-test</phase>
+								<goals>
+									<goal>repair</goal>
+									<goal>migrate</goal>
+								</goals>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>com.oracle</groupId>
+								<artifactId>ojdbc6</artifactId>
+								<version>11.2.0.3.0</version>
+								<scope>runtime</scope>
+							</dependency>
+						</dependencies>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

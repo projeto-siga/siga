@@ -38,7 +38,7 @@
 						<siga:select id="comboorgao" name="comboorgao" list="cpOrgaoUsuarios" listKey="idOrgaoUsu" listValue="nmOrgaoUsu" value="${orgaoUsuario.idOrgaoUsu}" headerKey="0" headerValue="Nenhum"/>
 					</div>
 					<div class="coluna gt-table-buttons">
-						<a class="invisivel" id="btnPesqOrgao" href="${linkTo[ConfiguracaoGIController].pesquisar[cpOrgaoUsuario.idOrgaoUsu]}" class="gt-btn-medium gt-btn-left"><fmt:message key="views.botoes.buscar"/></a>
+						<a class="invisivel" id="btnPesqOrgao" href="${linkTo[ConfiguracaoGIController].pesquisar(cpOrgaoUsuario.idOrgaoUsu)}" class="gt-btn-medium gt-btn-left"><fmt:message key="views.botoes.buscar"/></a>
 					</div>
 				</div>
 		
@@ -61,7 +61,7 @@
 								<c:forEach items="${cpConfiguracoes}" var="cpConfiguracao">
 									<tr>
 										<td>
-											<sigatp:formatarColuna operacao="editar" href="${linkTo[ConfiguracaoGIController].editar[cpConfiguracao.idConfiguracao]}" titulo="cpConfiguracao"/>
+											<sigatp:formatarColuna operacao="editar" href="${linkTo[ConfiguracaoGIController].editar(cpConfiguracao.idConfiguracao)}" titulo="cpConfiguracao"/>
 										</td>
 										<td>${cpConfiguracao.lotacao != null ? cpConfiguracao.lotacao.nomeLotacao : ""}</td>
 										<td>${cpConfiguracao.dpPessoa != null ? cpConfiguracao.dpPessoa.nomePessoa : "" }</td>	
@@ -83,7 +83,7 @@
 				</c:choose>
 	
 				<div class="gt-table-buttons">
-					<a href="${linkTo[ConfiguracaoGIController].incluir[cpOrgaoUsuario.idOrgaoUsu]}" class="gt-btn-medium gt-btn-left"><fmt:message key="views.botoes.incluir"/></a>
+					<a href="${linkTo[ConfiguracaoGIController].incluir(cpOrgaoUsuario.idOrgaoUsu)}" class="gt-btn-medium gt-btn-left"><fmt:message key="views.botoes.incluir"/></a>
 				</div>
 			</div>
 		</div>	

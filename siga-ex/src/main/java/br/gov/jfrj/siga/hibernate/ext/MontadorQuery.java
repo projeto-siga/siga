@@ -18,7 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.hibernate.ext;
 
-import br.gov.jfrj.siga.ex.ExModelo;
+import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class MontadorQuery implements IMontadorQuery {
@@ -37,11 +37,10 @@ public class MontadorQuery implements IMontadorQuery {
 		//sbf.append("    or exMobil.idMobil = (from ExMobil where exTipoMobil.idTipoMobil = 1 and exDocumento.idDoc = mob.exDocumento.idDoc)))");
 		sbf.append(" where");
 
-		if (flt.getUltMovIdEstadoDoc() != null
-				&& flt.getUltMovIdEstadoDoc() != 0) {
-			sbf.append(" and label.cpMarcador.idMarcador = :ultMovIdEstadoDoc");
-			sbf.append(" and (dt_ini_marca is null or dt_ini_marca < sysdate)");
-			sbf.append(" and (dt_fim_marca is null or dt_fim_marca > sysdate)");
+		if (flt.getUltMovIdEstadoDoc() != null	&& flt.getUltMovIdEstadoDoc() != 0) {
+			sbf.append(" and label.cpMarcador.hisIdIni = :idMarcadorIni");
+			sbf.append(" and (dt_ini_marca is null or dt_ini_marca < :dbDatetime)");
+			sbf.append(" and (dt_fim_marca is null or dt_fim_marca > :dbDatetime)");
 		} else {
 			sbf.append(" and not (label.cpMarcador.idMarcador = :id1 or label.cpMarcador.idMarcador = :id2 or label.cpMarcador.idMarcador = :id3)");
 		}

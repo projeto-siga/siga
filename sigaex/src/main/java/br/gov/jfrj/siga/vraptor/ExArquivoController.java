@@ -25,7 +25,6 @@ package br.gov.jfrj.siga.vraptor;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.URLEncoder;
-
 import java.security.MessageDigest;
 import java.util.Date;
 import java.util.Map;
@@ -47,6 +46,7 @@ import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.bluc.service.HashRequest;
 import br.gov.jfrj.siga.bluc.service.HashResponse;
@@ -56,9 +56,9 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
-import br.gov.jfrj.siga.ex.api.v1.DocumentoSiglaArquivoGet;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentoSiglaArquivoGetRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentoSiglaArquivoGetResponse;
+import br.gov.jfrj.siga.ex.api.v1.DocumentosSiglaArquivoGet;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaArquivoGetRequest;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaArquivoGetResponse;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
@@ -125,7 +125,7 @@ public class ExArquivoController extends ExController {
 			}
 			final ExMobil mob = Documento.getMobil(arquivo);
 			if (mob != null) {
-				mob.getMobilPrincipal().getDoc().setPodeExibirReordenacao(exibirReordenacao);
+				mob.getMobilPrincipal().indicarSeDeveExibirDocumentoCompletoReordenado(exibirReordenacao);
 
 				if (sigla != null && !sigla.isEmpty()) {
 					ExMobil mobilDoDocumentoPrincipal = Documento.getMobil(sigla);
@@ -161,17 +161,18 @@ public class ExArquivoController extends ExController {
 			}
 
 			if ((isPdf || isHtml) && completo && mob != null && mov == null) {
-				DocumentoSiglaArquivoGet act = new DocumentoSiglaArquivoGet();
-				DocumentoSiglaArquivoGetRequest req = new DocumentoSiglaArquivoGetRequest();
-				DocumentoSiglaArquivoGetResponse resp = new DocumentoSiglaArquivoGetResponse();
+				DocumentosSiglaArquivoGet act = new DocumentosSiglaArquivoGet();
+				DocumentosSiglaArquivoGetRequest req = new DocumentosSiglaArquivoGetRequest();
+				DocumentosSiglaArquivoGetResponse resp = new DocumentosSiglaArquivoGetResponse();
 				req.sigla = mob.getSigla();
 				req.contenttype = isPdf ? "application/pdf" : "text/html";
 				req.estampa = estampar;
 				req.completo = completo;
 				req.volumes = volumes;
+				req.exibirReordenacao = exibirReordenacao;
 				String filename = isPdf ? (volumes ? mob.doc().getReferenciaPDF() : mob.getReferenciaPDF())
 						: (volumes ? mob.doc().getReferenciaHtml() : mob.getReferenciaHtml());
-				DocumentoSiglaArquivoGet.iniciarGeracaoDePdf(req, resp, ContextoPersistencia.getUserPrincipal(),
+				DocumentosSiglaArquivoGet.iniciarGeracaoDePdf(req, resp, ContextoPersistencia.getUserPrincipal(),
 						filename, contextpath, servernameport);
 				result.redirectTo("/app/arquivo/status/" + mob.getCodigoCompacto() + "/" + resp.uuid + "/"
 						+ resp.jwt + "/" + filename);
@@ -299,17 +300,18 @@ public class ExArquivoController extends ExController {
 			
 			/*TODO: Implementar bloco para escrita em disco e controle do status 
 			if ((isPdf || isHtml) && completo && mob != null) {
-				DocumentoSiglaArquivoGet act = new DocumentoSiglaArquivoGet();
-				DocumentoSiglaArquivoGetRequest req = new DocumentoSiglaArquivoGetRequest();
-				DocumentoSiglaArquivoGetResponse resp = new DocumentoSiglaArquivoGetResponse();
+				DocumentosSiglaArquivoGet act = new DocumentosSiglaArquivoGet();
+				DocumentosSiglaArquivoGetRequest req = new DocumentosSiglaArquivoGetRequest();
+				DocumentosSiglaArquivoGetResponse resp = new DocumentosSiglaArquivoGetResponse();
 				req.sigla = mob.getSigla();
 				req.contenttype = isPdf ? "application/pdf" : "text/html";
 				req.estampa = semmarcas;
 				req.completo = completo;
 				req.volumes = volumes;
+				req.exibirReordenacao = exibirReordenacao;
 				String filename = isPdf ? (volumes ? mob.doc().getReferenciaPDF() : mob.getReferenciaPDF())
 						: (volumes ? mob.doc().getReferenciaHtml() : mob.getReferenciaHtml());
-				DocumentoSiglaArquivoGet.iniciarGeracaoDePdf(req, resp, ContextoPersistencia.getUserPrincipal(),
+				DocumentosSiglaArquivoGet.iniciarGeracaoDePdf(req, resp, ContextoPersistencia.getUserPrincipal(),
 						filename, contextpath, servernameport);
 				result.redirectTo("/app/arquivo/status/" + URLEncoder.encode(req.sigla, "utf-8") + "/" + resp.uuid + "/"
 						+ resp.jwt + "/" + filename);
@@ -491,7 +493,7 @@ public class ExArquivoController extends ExController {
 	private static String getJwtPassword() {
 		String pwd = null;
 		try {
-			pwd = System.getProperty("siga.ex.autenticacao.pwd");
+			pwd = Prop.get("/siga.autenticacao.senha");
 			if (pwd == null)
 				throw new AplicacaoException(
 						"Erro obtendo propriedade siga.ex.autenticacao.pwd");

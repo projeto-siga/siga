@@ -73,7 +73,7 @@
 			   	    			<td>
 			   	    				<tptags:link texto="${requisicaoTransporte.descricaoCompleta}"
 			   	    							 parteTextoLink="${requisicaoTransporte.buscarSequence()}"
-			   	    							 comando="${linkTo[RequisicaoController].buscarPelaSequence[true][requisicaoTransporte.buscarSequence()]}">
+			   	    							 comando="${linkTo[RequisicaoController].buscarPelaSequence(true,requisicaoTransporte.buscarSequence())}">
 			   	    				</tptags:link>
 								</td>
 			   	    			<td width="8%" >
@@ -283,6 +283,6 @@
 
 	<div id="btnAcoes" class="gt-table-buttons">
 		<input type="button" id="btnFinalizar" value="<fmt:message key='views.botoes.finalizar' />" onClick="submitForm('${linkTo[MissaoController].finalizarMissao}')" class="gt-btn-medium gt-btn-left" />
-		<input type="button" id="btnVoltar"  value="<fmt:message key='views.botoes.voltar' />" onClick="javascript:location.href='${linkTo[MissaoController].buscarPelaSequence[false][missao.sequence]}'" class="gt-btn-medium gt-btn-left" />
+		<input type="button" id="btnVoltar"  value="<fmt:message key='views.botoes.voltar' />" onClick="javascript:location.href='${linkTo[MissaoController].buscarPelaSequence(false,missao.sequence)}'" class="gt-btn-medium gt-btn-left" />
 	</div>
 </form>

@@ -1,9 +1,7 @@
 package br.gov.jfrj.siga.tp.auth.annotation;
 
-import br.com.caelum.vraptor.ioc.Component;
-import br.com.caelum.vraptor.ioc.RequestScoped;
+import javax.enterprise.context.RequestScoped;
 
-@Component
 @RequestScoped
 public class DadosAuditoria {
 	private String matricula;

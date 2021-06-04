@@ -10,18 +10,28 @@
 		<td width="100%">
 		<table width="100%" border="0" cellpadding="2">
 			<tr>
-				<td width="100%" align="center" valign="bottom"><img
-					src="contextpath/imagens/brasao2.png" width="65" height="65" /></td>
+			<c:choose>
+				<c:when test="${not empty f:resource('/siga.relat.brasao')}">
+					<td width="100%" align="center" valign="bottom">
+						<img src="contextpath/imagens/${f:resource('/siga.relat.brasao')}" width="65" height="65" />
+					</td>
+				</c:when>
+				<c:otherwise>
+					<td width="100%" align="center" valign="bottom">
+						<img src="contextpath/imagens/brasao2.png" width="65" height="65" />
+					</td>
+				</c:otherwise>
+			</c:choose>
 			</tr>
 			<tr>
 				<td width="100%" align="center">
-				<p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">${f:resource('siga.ex.modelos.cabecalho.titulo')}</p>
+				<p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">${f:resource('modelos.cabecalho.titulo')}</p>
 				</td>
 			</tr>
-			<c:if test="${not empty f:resource('siga.ex.modelos.cabecalho.subtitulo')}">
+			<c:if test="${not empty f:resource('modelos.cabecalho.subtitulo')}">
 				<tr>
 					<td width="100%" align="center">
-					<p style="font-family: Arial; font-size: 10pt; font-weight: bold;">${f:resource('siga.ex.modelos.cabecalho.subtitulo')}</p>
+					<p style="font-family: Arial; font-size: 10pt; font-weight: bold;">${f:resource('modelos.cabecalho.subtitulo')}</p>
 					</td>
 				</tr>
 			</c:if>

@@ -37,6 +37,7 @@ import org.hibernate.annotations.SortType;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaCalendar;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -45,15 +46,15 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.gc.ContextInterceptor;
 import br.gov.jfrj.siga.gc.util.WikiParser;
 import br.gov.jfrj.siga.gc.vraptor.AppController;
+import br.gov.jfrj.siga.gc.vraptor.GcInterceptor;
+import br.gov.jfrj.siga.gc.vraptor.SigaLogicResult;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
-import br.gov.jfrj.siga.vraptor.SigaLogicResult;
 
 @Entity
-@Table(name = "GC_INFORMACAO", schema = "SIGAGC")
+@Table(name = "gc_informacao", schema = "sigagc")
 @NamedQueries({
 		@NamedQuery(name = "buscarConhecimento", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*), (select count(*) from GcMarca m where m.inf=i and m.cpMarcador.idMarcador = 28 and (m.dpLotacaoIni.idLotacao = :lotacaoIni or m.dpPessoaIni.idPessoa = :pessoaIni) and m.dtFimMarca is null) as interessado, (select count(*) from GcMarca m where m.inf=i and m.cpMarcador.idMarcador = 70 and (m.dpLotacaoIni.idLotacao = :lotacaoIni or m.dpPessoaIni.idPessoa = :pessoaIni) and m.dtFimMarca is null) as executor from GcInformacao i inner join i.tags t where t in (:tags) and i.hisDtFim is null group by i.id, i.arq.titulo, i.hisDtIni  order by interessado desc, executor desc, count(*) desc, i.hisDtIni desc"),
 		@NamedQuery(name = "buscarConhecimentoTudoIgual", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*) from GcInformacao i inner join i.tags t where (select count(*) from GcTag t2 where t2 in t and t2 not in (:tags) and t2.tipo in (select tipo from GcTag where id in (:tags))) = 0 and i.hisDtFim is null group by i.id, i.arq.titulo, i.hisDtIni order by count(*) desc, i.hisDtIni desc"),
@@ -99,35 +100,35 @@ public class GcInformacao extends Objeto {
 	@SequenceGenerator(sequenceName = "SIGAGC.hibernate_sequence", name = "gcInformacaoSeq")
 	@GeneratedValue(generator = "gcInformacaoSeq")
 	@Column(name = "ID_INFORMACAO")
-	public long id;
+	private long id;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_TIPO_INFORMACAO")
-	public GcTipoInformacao tipo;
+	private GcTipoInformacao tipo;
 
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_INFORMACAO_PAI")
-	public GcArquivo informacaoPai;
+	private GcArquivo informacaoPai;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_ORGAO_USUARIO")
-	public CpOrgaoUsuario ou;
+	private CpOrgaoUsuario ou;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_ACESSO")
-	public GcAcesso visualizacao;
+	private GcAcesso visualizacao;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_ACESSO_EDICAO")
-	public GcAcesso edicao;
+	private GcAcesso edicao;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_PESSOA_TITULAR")
-	public DpPessoa autor;
+	private DpPessoa autor;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_LOTACAO_TITULAR")
-	public DpLotacao lotacao;
+	private DpLotacao lotacao;
 
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_GRUPO")
@@ -136,20 +137,20 @@ public class GcInformacao extends Objeto {
 	@Sort(type = SortType.NATURAL)
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinTable(name = "GC_TAG_X_INFORMACAO", schema = "SIGAGC", joinColumns = @JoinColumn(name = "id_informacao"), inverseJoinColumns = @JoinColumn(name = "id_tag"))
-	public SortedSet<GcTag> tags;
+	private SortedSet<GcTag> tags;
 
 	@Column(name = "DT_ELABORACAO_FIM")
-	public Date elaboracaoFim;
+	private Date elaboracaoFim;
 
 	@Column(name = "ANO")
-	public Integer ano;
+	private Integer ano;
 
 	@Column(name = "NUMERO")
-	public Integer numero;
+	private Integer numero;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_ARQUIVO")
-	public GcArquivo arq;
+	private GcArquivo arq;
 
 	// @Sort(type = SortType.NATURAL)
 	// @OneToMany(mappedBy = "inf")
@@ -157,27 +158,99 @@ public class GcInformacao extends Objeto {
 	// @Where(clause = "id_tp_marca = 3")
 	// public java.util.SortedSet<GcMarca> marcas;
 	@Transient
-	public java.util.List<GcMarca> marcas;
+	private java.util.List<GcMarca> marcas;
 	// public java.util.Set<GcMarca> marcas;
 
 	@Sort(type = SortType.NATURAL)
 	@OneToMany(mappedBy = "inf")
-	public SortedSet<GcMovimentacao> movs;
+	private SortedSet<GcMovimentacao> movs;
 
 	@Column(name = "HIS_DT_INI")
-	public Date hisDtIni;
+	private Date hisDtIni;
 
 	@Column(name = "HIS_DT_FIM")
-	public Date hisDtFim;
+	private Date hisDtFim;
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public void setTipo(GcTipoInformacao tipo) {
+		this.tipo = tipo;
+	}
+
+	public void setInformacaoPai(GcArquivo informacaoPai) {
+		this.informacaoPai = informacaoPai;
+	}
+
+	public void setOu(CpOrgaoUsuario ou) {
+		this.ou = ou;
+	}
+
+	public void setVisualizacao(GcAcesso visualizacao) {
+		this.visualizacao = visualizacao;
+	}
+
+	public void setEdicao(GcAcesso edicao) {
+		this.edicao = edicao;
+	}
+
+	public void setAutor(DpPessoa autor) {
+		this.autor = autor;
+	}
+
+	public void setLotacao(DpLotacao lotacao) {
+		this.lotacao = lotacao;
+	}
+
+	public void setTags(SortedSet<GcTag> tags) {
+		this.tags = tags;
+	}
+
+	public void setElaboracaoFim(Date elaboracaoFim) {
+		this.elaboracaoFim = elaboracaoFim;
+	}
+
+	public void setAno(Integer ano) {
+		this.ano = ano;
+	}
+
+	public void setNumero(Integer numero) {
+		this.numero = numero;
+	}
+
+	public void setArq(GcArquivo arq) {
+		this.arq = arq;
+	}
+
+	public void setMarcas(java.util.List<GcMarca> marcas) {
+		this.marcas = marcas;
+	}
+
+	public void setMovs(SortedSet<GcMovimentacao> movs) {
+		this.movs = movs;
+	}
+
+	public void setHisDtIni(Date hisDtIni) {
+		this.hisDtIni = hisDtIni;
+	}
+
+	public void setHisDtFim(Date hisDtFim) {
+		this.hisDtFim = hisDtFim;
+	}
+
+	public void setHisIdcIni(CpIdentidade hisIdcIni) {
+		this.hisIdcIni = hisIdcIni;
+	}
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "HIS_IDC_INI")
-	public CpIdentidade hisIdcIni;
+	private CpIdentidade hisIdcIni;
 
 	@PostLoad
 	private void onLoad() {
 		marcas = GcMarca.AR
-				.find("inf.id = ?1 and (dtFimMarca is null or dtFimMarca > sysdate) order by dtIniMarca, cpMarcador.descrMarcador",
+				.find("inf.id = ?1 and (dtFimMarca is null or dtFimMarca > CURRENT_TIMESTAMP) order by dtIniMarca, cpMarcador.descrMarcador",
 						this.id).fetch();
 		// marcas = GcMarca.find("id_tp_marca = 3 and inf.id = ?",
 		// this.id).fetch();
@@ -203,17 +276,10 @@ public class GcInformacao extends Objeto {
 		return getSigla() + " - " + getMarcadoresEmHtml(pess, lota);
 	}
 
-	private String completarComZeros(int valor, int casas) {
-		String s = String.valueOf(valor);
-		while (s.length() < casas)
-			s = "0" + s;
-		return s;
-	}
-
 	public String getSigla() {
 		if (this.elaboracaoFim != null) {
 			return ou.getAcronimoOrgaoUsu() + "-GC-" + ano + "/"
-					+ completarComZeros(numero, 5);
+					+ Utils.completarComZeros(numero, 5);
 		}
 		return "TMPGC-" + id;
 	}
@@ -233,13 +299,13 @@ public class GcInformacao extends Objeto {
 	public boolean podeDesfazer(DpPessoa titular, DpLotacao lotaTitular, GcMovimentacao mov) {
 		if (isCancelado())
 			return false;
-		if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULAR_PAPEL || mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO 
-				|| mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR){
-				if (mov.movCanceladora != null)
+		if (mov.getTipo().getId() == GcTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULAR_PAPEL || mov.getTipo().getId() == GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO 
+				|| mov.getTipo().getId() == GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR){
+				if (mov.getMovCanceladora() != null)
 					return false;
-				if ((mov.pessoaAtendente == null && lotaTitular.equivale(mov.lotacaoAtendente)) || titular.equivale(mov.pessoaAtendente))
+				if ((mov.getPessoaAtendente() == null && lotaTitular.equivale(mov.getLotacaoAtendente())) || titular.equivale(mov.getPessoaAtendente()))
 					return true;
-				if ((mov.pessoaTitular == null && lotaTitular.equivale(mov.lotacaoTitular)) || titular.equivale(mov.pessoaTitular))
+				if ((mov.getPessoaTitular() == null && lotaTitular.equivale(mov.getLotacaoTitular())) || titular.equivale(mov.getPessoaTitular()))
 					return true;
 		}
 		return false;
@@ -257,14 +323,14 @@ public class GcInformacao extends Objeto {
 		if (isCancelado())
 			return null;
 		for (GcMovimentacao mov : movs) {
-			if (mov.isCancelada() || mov.tipo.id != GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR)
+			if (mov.isCancelada() || mov.getTipo().getId() != GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR)
 				continue;
 			if (titular != null){
-				if (titular.equivale(mov.pessoaAtendente)) 
+				if (titular.equivale(mov.getPessoaAtendente())) 
 					return mov;
-				if (mov.pessoaAtendente == null && lotaTitular.equivale(mov.lotacaoAtendente)) 
+				if (mov.getPessoaAtendente() == null && lotaTitular.equivale(mov.getLotacaoAtendente())) 
 					return mov;
-			} else if (lotaTitular.equivale(mov.lotacaoAtendente))
+			} else if (lotaTitular.equivale(mov.getLotacaoAtendente()))
 					return mov;
 		}
 		return null;
@@ -276,14 +342,14 @@ public class GcInformacao extends Objeto {
 		if (isCancelado())
 			return null;
 		for (GcMovimentacao mov : movs) {
-			if (mov.isCancelada() || mov.tipo.id != GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO)
+			if (mov.isCancelada() || mov.getTipo().getId() != GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO)
 				continue;
 			if (titular != null){
-				if (titular.equivale(mov.pessoaAtendente)) 
+				if (titular.equivale(mov.getPessoaAtendente())) 
 					return mov;
-				if (mov.pessoaAtendente == null && lotaTitular.equivale(mov.lotacaoAtendente)) 
+				if (mov.getPessoaAtendente() == null && lotaTitular.equivale(mov.getLotacaoAtendente())) 
 					return mov;
-			} else if (lotaTitular.equivale(mov.lotacaoAtendente))
+			} else if (lotaTitular.equivale(mov.getLotacaoAtendente()))
 					return mov;
 		}
 		return null;
@@ -309,7 +375,7 @@ public class GcInformacao extends Objeto {
 		if (isCancelado())
 			return false;
 		for (GcMovimentacao mov : movs) {
-			if (!mov.isCancelada() && mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULAR_PAPEL
+			if (!mov.isCancelada() && mov.getTipo().getId() == GcTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULAR_PAPEL
 					&& titular.equivale(mov.getPessoaAtendente())) {
 				return false;
 			}
@@ -329,7 +395,7 @@ public class GcInformacao extends Objeto {
 		for (GcMovimentacao mov : movs) {
 			if (mov.isCancelada())
 				continue;
-			if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO) {
+			if (mov.getTipo().getId() == GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO) {
 				return false;
 			}
 		}
@@ -339,46 +405,53 @@ public class GcInformacao extends Objeto {
 
 	public boolean podeEditar(DpPessoa titular, DpLotacao lotaTitular) {
 		return (!isCancelado() && (podeRevisar(titular, lotaTitular) != null || acessoPermitido(
-				titular, lotaTitular, edicao.id)));
+				titular, lotaTitular, edicao.getId())));
 	}
 
 	public boolean podeExcluir(DpPessoa titular, DpLotacao lotaTitular) {
 		return (!isFinalizado() && acessoPermitido(titular, lotaTitular,
-				edicao.id));
+				edicao.getId()));
 	}
 
 	public boolean podeNotificar(DpPessoa titular, DpLotacao lotaTitular) {
-		return (!isCancelado() && acessoPermitido(titular, lotaTitular,
-				visualizacao.id));
+		return (!isCancelado() && acessoPermitido(titular, lotaTitular, visualizacao.getId()));
 	}
 
 	public boolean podeFinalizar(DpPessoa titular, DpLotacao lotaTitular) {
 		return !isCancelado() && !isFinalizado()
-				&& acessoPermitido(titular, lotaTitular, edicao.id);
+				&& acessoPermitido(titular, lotaTitular, edicao.getId());
 	}
 
 	public boolean podeSolicitarRevisao(DpPessoa titular, DpLotacao lotaTitular) {
 		return !isCancelado()
-				&& acessoPermitido(titular, lotaTitular, edicao.id);
+				&& acessoPermitido(titular, lotaTitular, edicao.getId());
 	}
 
 	public boolean podeAnexar(DpPessoa titular, DpLotacao lotaTitular) {
 		return (!isCancelado() && (podeRevisar(titular, lotaTitular) != null || acessoPermitido(
-				titular, lotaTitular, edicao.id)));
+				titular, lotaTitular, edicao.getId())));
 	}
 
 	public boolean podeDuplicar() {
 		// return !isCancelado();
 		return true;
 	}
-
+	
 	public SortedSet<GcAcaoVO> acoes(CpIdentidade idc, DpPessoa titular,
 			DpLotacao lotaTitular) throws Exception {
 		SortedSet<GcAcaoVO> acoes = new TreeSet<GcAcaoVO>();
 
 		StringBuilder sb = new StringBuilder();
-		SigaLogicResult router = ContextInterceptor.result().use(
+		SigaLogicResult router = GcInterceptor.result().use(
 				SigaLogicResult.class);
+
+		boolean podeExibirLinkSemAutenticacao = 
+				this.isFinalizado() && this.acessoExternoPublicoPermitido();
+		
+		router.getRedirectURL(sb, AppController.class).exibirPublicoExterno(
+				this.getSiglaCompacta());
+		addAcao(acoes, "eye", "Link externo", null, sb.toString(),
+				podeExibirLinkSemAutenticacao);
 
 		router.getRedirectURL(sb, AppController.class).editar(
 				this.getSiglaCompacta(), null, null, null, null, null);
@@ -551,7 +624,7 @@ public class GcInformacao extends Objeto {
 	}
 
 	public String getConteudoHTML() throws Exception {
-		if (this.arq == null || this.arq.conteudo == null)
+		if (this.arq == null || this.arq.getConteudo() == null)
 			return null;
 
 		String s = this.arq.getConteudoTXT();
@@ -571,10 +644,17 @@ public class GcInformacao extends Objeto {
 				"\"/>");
 		return fragment;
 	}
+	
+	public boolean acessoExternoPublicoPermitido() {
+		if(this.visualizacao.getId() == (int) GcAcesso.ACESSO_EXTERNO_PUBLICO)
+			return true;
+		return false;
+	}
 
 	public boolean acessoPermitido(DpPessoa titular, DpLotacao lotaTitular,
 			long id) {
 		switch ((int) id) {
+		case (int) GcAcesso.ACESSO_EXTERNO_PUBLICO:
 		case (int) GcAcesso.ACESSO_PUBLICO:
 			return true;
 		case (int) GcAcesso.ACESSO_ORGAO_USU:
@@ -622,15 +702,15 @@ public class GcInformacao extends Objeto {
 		if (movs == null)
 			return false;
 		for (GcMovimentacao m : movs)
-			if (m.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO
-					&& m.movCanceladora == null)
+			if (m.getTipo().getId() == GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO
+					&& m.getMovCanceladora() == null)
 				return true;
 		return false;
 	}
 
 	public boolean fts(String[] palavras) {
-		String s = arq.titulo + " " + arq.classificacao + " "
-				+ new String(arq.conteudo, Charset.forName("utf-8"));
+		String s = arq.getTitulo() + " " + arq.getClassificacao() + " "
+				+ new String(arq.getConteudo(), Charset.forName("utf-8"));
 		s = s.toLowerCase();
 
 		for (String palavra : palavras) {
@@ -644,7 +724,7 @@ public class GcInformacao extends Objeto {
 
 	public String getGcTags() throws Exception {
 		StringBuilder s = new StringBuilder();
-		for (GcTag tag : tags) {
+		for (GcTag tag : getTags()) {
 			s.append("&tags=" + URLEncoder.encode(tag.toString(), "UTF-8"));
 		}
 		return s.toString();
@@ -813,8 +893,8 @@ public class GcInformacao extends Objeto {
 			return;
 
 		if (arq == null) {
-			if (arq.classificacao != null)
-				arq.classificacao = null;
+			if (arq.getClassificacao() != null)
+				arq.setClassificacao(null);
 			return;
 		}
 
@@ -824,6 +904,6 @@ public class GcInformacao extends Objeto {
 				s.append(", ");
 			s.append(tag.toString());
 		}
-		arq.classificacao = s.toString();
+		arq.setClassificacao(s.toString());
 	}
 }

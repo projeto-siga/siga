@@ -10,17 +10,15 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import br.gov.jfrj.siga.cp.bl.Cp;
+import com.crivano.swaggerservlet.SwaggerAsyncResponse;
+import com.crivano.swaggerservlet.SwaggerCall;
+import com.crivano.swaggerservlet.SwaggerException;
+
+import br.gov.jfrj.siga.base.Prop;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.ChangedReferencesGetRequest;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.ChangedReferencesGetResponse;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Reference;
-
-import com.crivano.swaggerservlet.SwaggerAsyncResponse;
-import com.crivano.swaggerservlet.SwaggerCall;
-import com.crivano.swaggerservlet.SwaggerException;
-import com.crivano.swaggerservlet.SwaggerServlet;
-import com.crivano.swaggerservlet.SwaggerUtils;
 
 public class ChangedReferencesGet implements
 		IXjusRecordAPI.IChangedReferencesGet {
@@ -53,8 +51,7 @@ public class ChangedReferencesGet implements
 			q.lastid = lastid;
 			Future<SwaggerAsyncResponse<ChangedReferencesGetResponse>> future = SwaggerCall
 					.callAsync(service.name().toLowerCase()
-							+ "-changed-references", Cp.getInstance().getProp()
-							.xjusPassword(), "GET", url, q,
+							+ "-changed-references", Prop.get("/xjus.password"), "GET", url, q,
 							ChangedReferencesGetResponse.class);
 			map.put(service, future);
 		}

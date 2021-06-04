@@ -7,10 +7,6 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
-<style type="text/css" media="screen">
-	.custom-file-label::after{content: 'Escolher arquivo' !important;}
-</style>
-
 <siga:pagina titulo="Anexação de Arquivo Auxiliar">
 
 	<c:if test="${not mob.doc.eletronico}">

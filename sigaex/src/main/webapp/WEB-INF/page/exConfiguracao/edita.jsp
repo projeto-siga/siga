@@ -64,7 +64,7 @@
 					<div class="card-header"><h5>Cadastro de configuração</h5></div>
 						<div class="card-body">
 							<div class="row">
-								<div class="col-sm-4">
+								<div class="col-sm-3">
 									<div class="form-group">
 										<label>Tipo de Configuração</label>
 										<c:choose>
@@ -84,7 +84,7 @@
 										</c:choose>
 									</div>
 								</div>
-								<div class="col-sm-4">
+								<div class="col-sm-3">
 									<div class="form-group">
 										<label>Situação</label>
 										<siga:select name="idSituacao"
@@ -93,13 +93,22 @@
 											headerValue="[Indefinido]" headerKey="0" value="${idSituacao}" />
 									</div>
 								</div>
-								<div class="col-sm-4">
+								<div class="col-sm-3">
 									<div class="form-group">
 										<label>Nível de acesso</label>
 										<siga:select name="idNivelAcesso"
 											list="listaNivelAcesso" theme="simple" listKey="idNivelAcesso"
 											listValue="nmNivelAcesso" headerValue="[Indefinido]"
 											headerKey="0" value="${idNivelAcesso}" />
+									</div>
+								</div>
+								<div class="col-sm-3">
+									<div class="form-group">
+										<label>Perfil</label>
+										<siga:select name="idPapel"
+											list="listaPapel" theme="simple" listKey="idPapel"
+											listValue="descPapel" headerValue="[Indefinido]"
+											headerKey="0" value="${idPapel}" /></td>
 									</div>
 								</div>
 							</div>
@@ -181,9 +190,9 @@
 								</div>
 							</div>
 							<div class="row">
-								<div class="col-sm-6">
+								<div class="col-sm-12">
 									<div class="form-group">
-										<label>Espécie</label>
+										<label>Tipo da Espécie</label>
 									
 										<c:choose>
 												<c:when test="${campoFixo && not empty config.exModelo}">
@@ -210,9 +219,8 @@
       		 precisa ser executado o request ajax referente Ã  FormaDocumento, da qual a lista 
 		     de modelos depende. Talvez seria bom tornar síncronos esses dois requests ajax    -->
 							<div class="row">
-								<div class="col-sm-6">
+								<div class="col-sm-12">
 									<div class="form-group">
-										<label>Modelo</label>
 										<c:choose>
 											<c:when test="${campoFixo && not empty config.exModelo}">
 												<input type="hidden" name="idMod"

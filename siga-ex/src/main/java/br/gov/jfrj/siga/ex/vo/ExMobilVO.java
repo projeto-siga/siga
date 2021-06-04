@@ -21,10 +21,12 @@ package br.gov.jfrj.siga.ex.vo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.jboss.logging.Logger;
 
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.AcaoVO;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -37,12 +39,15 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExParte;
+import br.gov.jfrj.siga.ex.logic.ExPodeAnotar;
+import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
 
 public class ExMobilVO extends ExVO {
 
 	Logger log = Logger.getLogger(ExMobilVO.class.getCanonicalName());
 	ExMobil mob;
 	String sigla;
+	boolean isGeral;
 	List<ExMobilVO> apensos = new ArrayList<ExMobilVO>();
 	// List<ExDocumentoVO> filhos = new ArrayList<ExDocumentoVO>();
 	List<ExDocumentoVO> expedientesFilhosNaoCancelados = new ArrayList<ExDocumentoVO>();
@@ -98,6 +103,7 @@ public class ExMobilVO extends ExVO {
 			boolean completo, Long tpMov, boolean movAssinada) {
 		this.mob = mob;
 		this.sigla = mob.getSigla();
+		this.isGeral = mob.isGeral();
 
 		if (!completo || mob.isEliminado())
 			return;
@@ -165,7 +171,7 @@ public class ExMobilVO extends ExVO {
 				movs.add(new ExMovimentacaoVO(this, mov, cadastrante, titular, lotaTitular));
 			}
 		else
-			for (ExMovimentacao mov : mob.getMovimentacoesPorTipo(tpMov)) {
+			for (ExMovimentacao mov : mob.getMovimentacoesPorTipo(tpMov, false)) {
 				if (!movAssinada) {
 					if (!mov.isAssinada() && !mov.isCancelada())
 						movs.add(new ExMovimentacaoVO(this, mov, cadastrante, titular,
@@ -392,14 +398,20 @@ public class ExMobilVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeReceber(titular, lotaTitular, mob), null, null,
 				null, null, "once");
-
+		
 		addAcao("email_go",
 				"_Tramitar",
 				"/app/expediente/mov",
 				"transferir",
 				Ex.getInstance().getComp()
 						.podeTransferir(titular, lotaTitular, mob));
-
+		
+		addAcao(AcaoVO.builder().nome("_Anotar").icone("note_add").acao("/app/expediente/mov/anotar")
+				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAnotar(mob, titular, lotaTitular)).build());
+		
+		addAcao(AcaoVO.builder().nome("Definir Marca").icone("folder_star").modal("definirMarcaModal")
+				.exp(new ExPodeMarcar(mob, titular, lotaTitular)).build());
+		
 		if (mob.isVia() || mob.isVolume()) {
 			addAcao("attach",
 					"Ane_xar",
@@ -407,12 +419,12 @@ public class ExMobilVO extends ExVO {
 					"anexar",
 					Ex.getInstance().getComp()
 							.podeAnexarArquivo(titular, lotaTitular, mob));
-			addAcao("note_add",
-					"_Anotar",
-					"/app/expediente/mov",
-					"anotar",
-					Ex.getInstance().getComp()
-							.podeFazerAnotacao(titular, lotaTitular, mob));
+//			addAcao("note_add",
+//					"_Anotar",
+//					"/app/expediente/mov",
+//					"anotar",
+//					Ex.getInstance().getComp()
+//							.podeFazerAnotacao(titular, lotaTitular, mob));
 			addAcao("page_white_copy",
 					"Incluir _Cópia",
 					"/app/expediente/mov",
@@ -424,7 +436,7 @@ public class ExMobilVO extends ExVO {
 		addAcao("box_add", "Ar_q. Corrente", "/app/expediente/mov",
 				"arquivar_corrente_gravar", Ex.getInstance().getComp()
 						.podeArquivarCorrente(titular, lotaTitular, mob), null,
-				null, null, null, "once" + (SigaMessages.isSigaSP() ? " arq-corrente-requer-confirmacao" : ""));
+				null, null, null, "once  siga-btn-arq-corrente");
 
 		addAcao("building_go",
 				"Indicar para Guarda Permanente",
@@ -521,40 +533,38 @@ public class ExMobilVO extends ExVO {
 
 		// Não aparece a opção de Cancelar Movimentação para documentos
 		// temporários
-		if (mob.getExDocumento().isFinalizado()
-				&& mob.getUltimaMovimentacaoNaoCancelada() != null
-				&& mob.getUltimaMovimentacaoNaoCancelada()
-					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA
-				&& mob.getUltimaMovimentacaoNaoCancelada()
-					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
-				&& mob.getUltimaMovimentacaoNaoCancelada()
-					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO	
-				&& mob.getUltimaMovimentacaoNaoCancelada()
-					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO
-				&& mob.getUltimaMovimentacaoNaoCancelada()
-					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFAZER
-				&& mob.getUltimaMovimentacaoNaoCancelada()
-					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA 
-				&& mob.getUltimaMovimentacaoNaoCancelada()
-					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO 
-				&& mob.getUltimaMovimentacaoNaoCancelada()
-				.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA
-				&& (((SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local")))
-				&&  mob.getUltimaMovimentacaoNaoCancelada().getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
-				&& 	mob.getUltimaMovimentacaoNaoCancelada().getCadastrante().equals(titular))
-				|| 	(SigaBaseProperties.getString("siga.local") != null && !("GOVSP".equals(SigaBaseProperties.getString("siga.local")))))
-			)
-			addAcao("arrow_undo",
-					"Desfa_zer "
-							+ mob.getDescricaoUltimaMovimentacaoNaoCancelada(),
-					"/app/expediente/mov",
-					"cancelarMovimentacao",
-					Ex.getInstance()
-							.getComp()
-							.podeCancelarMovimentacao(titular, lotaTitular, mob),
-					SigaMessages.getMessage("documento.confirma.cancelamento") + "("
-							+ mob.getDescricaoUltimaMovimentacaoNaoCancelada()
-							+ ")?", null, null, null, "once"); // popup,
+		
+		Optional<ExMovimentacao> ultimaMovNaoCancelada = Optional.ofNullable(mob.getUltimaMovimentacaoNaoCancelada());
+		if (mob.getExDocumento().isFinalizado()	&& ultimaMovNaoCancelada.isPresent()) {
+			
+			//Cria lista de Movimentações que não podem ser canceladas
+			List<Long> listaMovimentacoesNaoCancelavel = new ArrayList<Long>();
+			listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA);
+			listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO);
+			listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO);
+			listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO);
+			listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFAZER);
+			listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA);
+			listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO);
+			listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA);
+			
+			
+			if (!listaMovimentacoesNaoCancelavel.contains(ultimaMovNaoCancelada.get().getIdTpMov())) {
+				addAcao("arrow_undo",
+						"Desfa_zer "
+								+ mob.getDescricaoUltimaMovimentacaoNaoCancelada(),
+						"/app/expediente/mov",
+						"cancelarMovimentacao",
+						Ex.getInstance()
+								.getComp()
+								.podeCancelarMovimentacao(titular, lotaTitular, mob),
+						SigaMessages.getMessage("documento.confirma.cancelamento") + "("
+								+ mob.getDescricaoUltimaMovimentacaoNaoCancelada()
+								+ ")?", null, null, null, "once"); // popup,
+			}
+			listaMovimentacoesNaoCancelavel = null;
+		}
+		ultimaMovNaoCancelada = null;
 		
 		// exibir+completo,
 		// confirmacao

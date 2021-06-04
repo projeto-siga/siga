@@ -18,20 +18,26 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.util;
 
-import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Correio;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.ex.*;
-import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.hibernate.ExDao;
-import org.jboss.logging.Logger;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+
+import org.jboss.logging.Logger;
+
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Correio;
+import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.ex.ExEmailNotificacao;
+import br.gov.jfrj.siga.ex.ExModelo;
+import br.gov.jfrj.siga.ex.ExMovimentacao;
+import br.gov.jfrj.siga.ex.ExPapel;
+import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
+import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class Notificador {
 
@@ -49,10 +55,6 @@ public class Notificador {
 	// + SigaBaseProperties.getString(SigaBaseProperties
 	// .getString("ambiente") + ".servidor.principal");
 
-	private static String servidor = SigaBaseProperties.getString("siga.ex."
-					+ SigaBaseProperties.getString("siga.ambiente") + ".url");
-
-	
 	private static ExDao exDao() {
 		return ExDao.getInstance();	}
 	
@@ -140,8 +142,8 @@ public class Notificador {
 				else lotacao = mov.getLotaResp();
 					adicionarDestinatariosEmail(mov, destinatariosEmail, null, mov.getResp(), lotacao); /* verificar ExEmailNotificação também*/
 			} catch (Exception e) {
-				throw new AplicacaoException(
-						"Erro ao enviar email de notificação de movimentação.", 0,
+				throw new RuntimeException(
+						"Erro ao enviar email de notificação de movimentação.", 
 						e);
 			}	
 		}
@@ -447,7 +449,7 @@ public class Notificador {
 			}
 			conteudo.append("<p>Para visualizar o documento, ");
 			conteudo.append("clique <a href=\"");
-			conteudo.append(servidor
+			conteudo.append(Prop.get("/sigaex.url")
 					+ "/app/expediente/doc/exibir?sigla=");
 			conteudo.append(mov.getExDocumento().getSigla());
 			conteudo.append("\">aqui</a>.</p>");		
@@ -458,7 +460,7 @@ public class Notificador {
 			conteudo.append("' no documento ");
 			conteudo.append(mov.getExDocumento().getSigla());
 			conteudo.append(". Caso não deseje mais receber notificações desse documento, clique no link abaixo para se descadastrar:\n\n");
-			conteudo.append(servidor + "/app/expediente/mov/cancelar?id=");
+			conteudo.append(Prop.get("/sigaex.url") + "/app/expediente/mov/cancelar?id=");
 			conteudo.append(dest.idMovPapel);
 		
 		
@@ -504,7 +506,7 @@ public class Notificador {
 
 			conteudoHTML.append("<p>Para visualizar o documento, ");
 			conteudoHTML.append("clique <a href=\"");
-			conteudoHTML.append(servidor
+			conteudoHTML.append(Prop.get("/sigaex.url")
 					+ "/app/expediente/doc/exibir?sigla=");
 			conteudoHTML.append(mov.getExDocumento().getSigla());
 			conteudoHTML.append("\">aqui</a>.</p>");
@@ -517,15 +519,13 @@ public class Notificador {
 			conteudoHTML.append(mov.getExDocumento().getSigla());
 			conteudoHTML
 					.append(". <br> Caso não deseje mais receber notificações desse documento, clique <a href=\"");
-			conteudoHTML.append(servidor + "/app/expediente/mov/cancelar?id=");
+			conteudoHTML.append(Prop.get("/sigaex.url") + "/app/expediente/mov/cancelar?id=");
 			conteudoHTML.append(dest.idMovPapel);
 			conteudoHTML.append("\">aqui</a> para descadastrar.</p>");
 
 			conteudoHTML.append("</body></html>");
 		} else {
-			String mensagemTeste = null;
-			if (!SigaExProperties.isAmbienteProducao())
-				mensagemTeste = SigaExProperties.getString("email.baseTeste");
+			String mensagemTeste = Ex.getInstance().getBL().mensagemDeTeste();
 
 			conteudo.append("O documento ");
 
@@ -545,7 +545,7 @@ public class Notificador {
 
 			conteudo.append("clique no link abaixo:\n\n");
 
-			conteudo.append(servidor + "/app/expediente/doc/exibir?sigla=");
+			conteudo.append(Prop.get("/sigaex.url") + "/app/expediente/doc/exibir?sigla=");
 
 			conteudo.append(dest.siglaMobil);
 
@@ -573,7 +573,7 @@ public class Notificador {
 			conteudoHTML.append("clique <a href=\"");
 
 			conteudoHTML
-					.append(servidor + "/app/expediente/doc/exibir?sigla=");
+					.append(Prop.get("/sigaex.url") + "/app/expediente/doc/exibir?sigla=");
 
 			conteudoHTML.append(dest.siglaMobil);
 
@@ -613,8 +613,7 @@ public class Notificador {
 				for (Notificacao not : notificacoes){
 					txt = not.txt;
 					html = not.html;				
-					Correio.enviar(SigaBaseProperties
-								.getString("servidor.smtp.usuario.remetente"),
+					Correio.enviar(null,
 								not.dest.emails.toArray(new String[not.dest.emails.size()]),		
 								not.assunto, txt, html);					
 				}

@@ -18,17 +18,15 @@
 	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
 	<script src="/sigasr/javascripts/moment.js"></script>
     
-	<div class="gt-bd clearfix">
-		<div class="gt-content">
-			<h2>Acordos</h2>
-			<!-- content bomex -->
-			<div class="gt-content-box dataTables_div">
-				<div class="gt-form-row dataTables_length">
-					<label>
-						<siga:checkbox name="mostrarDesativados" value="${mostrarDesativados}"></siga:checkbox>
-						<b>Incluir Inativas</b>
-					</label>
-				</div>				
+	<div class="container-fluid mb-2">
+		<h2>Acordos</h2>
+		
+		<div class="card card-body mb-2">
+			<label>
+				<siga:checkbox name="mostrarDesativados" value="${mostrarDesativados}"></siga:checkbox>
+				<b>Incluir Inativas</b>
+			</label>
+			<div class="table-responsive">
 				<table id="acordo_table" class="gt-table display">
 					<thead>
 						<tr>
@@ -59,19 +57,17 @@
 					</tbody>
 				</table>
 			</div>
-			<!-- /content box -->
-			<div class="gt-table-buttons">
-				<a onclick="acordoService.cadastrar('Incluir Acordo')" class="gt-btn-medium gt-btn-left">Incluir</a>
-			</div>
-	
 		</div>
+		
+		<a onclick="acordoService.cadastrar('Incluir Acordo')" class="btn btn-primary" style="color: #fff">Incluir</a>
 	</div>
 	
 	<br /><br /><br />
 	
-	<sigasr:modal nome="acordo" titulo="Cadastrar Acordo">
+	<sigasr:modal nome="acordo" titulo="Cadastrar Acordo" largura="80%">
 		<div id="divEditarAcordoForm"><jsp:include page="editar.jsp"></jsp:include></div>
 	</sigasr:modal>
+	
 </siga:pagina>
 
 <script>

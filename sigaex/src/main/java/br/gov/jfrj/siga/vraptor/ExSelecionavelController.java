@@ -106,7 +106,7 @@ public abstract class ExSelecionavelController<T extends Selecionavel, DaoFiltro
 	protected Map<Integer, String> getListaTipoResp() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(1, SigaMessages.getMessage("usuario.matricula"));
-		map.put(2, "Órgão Integrado");
+		map.put(2, "Lotação");
 		return map;
 	}
 

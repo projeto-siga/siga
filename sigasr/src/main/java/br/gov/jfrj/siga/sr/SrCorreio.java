@@ -1,22 +1,12 @@
 package br.gov.jfrj.siga.sr;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import br.com.caelum.vraptor.ioc.Component;
-import br.gov.jfrj.siga.base.Correio;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
-import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.sr.model.SrGestorItem;
 import br.gov.jfrj.siga.sr.model.SrMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 
-@Component
+
 public class SrCorreio {
 	
-	private static String remetente = SigaBaseProperties
-			.getString("servidor.smtp.usuario.remetente");
+	private static String remetente = System.getProperty("servidor.smtp.usuario.remetente");
 
 	public static void notificarAbertura(SrSolicitacao sol) throws Exception{
 		/*if (sol.solicitante.getEmailPessoa() == null)

@@ -102,24 +102,18 @@
 							name="ad_kind_0" value="${doc.descrFormaDoc}" />
 					</div>
 
-					<c:if test="${siga_cliente != 'GOVSP'}">
-						<tags:assinatura_botoes assinar="${assinando}"
-							autenticar="${autenticando}"
-							assinarComSenha="${assinando and f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"
-							autenticarComSenha="${autenticando and f:podeAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"
-							juntarAtivo="${juntarAtivo}" juntarFixo="${juntarFixo}"
-							tramitarAtivo="${tramitarAtivo}" tramitarFixo="${tramitarFixo}" />
-					</c:if>
+					<tags:assinatura_botoes assinar="${assinando}" voltar="${voltarAtivo}"
+						linkVoltar="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}"
+						autenticar="${autenticando}"
+						assinarComSenha="${assinando and f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"
+						autenticarComSenha="${autenticando and f:podeAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"
+						assinarComSenhaChecado="${assinando and f:deveAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"
+						autenticarComSenhaChecado="${autenticando and f:deveAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"
+						juntarAtivo="${juntarAtivo}" juntarFixo="${juntarFixo}" 
+						tramitarAtivo="${tramitarAtivo}" tramitarFixo="${tramitarFixo}" 
+						exibirNoProtocoloAtivo="${f:podeDisponibilizarNoAcompanhamentoDoProtocolo(titular,lotaTitular,doc)? false:undefined}" 
+						exibirNoProtocoloFixo="${not f:podeDisponibilizarNoAcompanhamentoDoProtocolo(titular,lotaTitular,doc)}"/>
 
-					<c:if test="${siga_cliente == 'GOVSP'}">
-						<tags:assinatura_botoes assinar="${assinando}" voltar="true"
-							linkVoltar="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}"
-							autenticar="${autenticando}"
-							assinarComSenhaChecado="${assinando and f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"
-							autenticarComSenhaChecado="${autenticando and f:podeAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"
-							juntarAtivo="${juntarAtivo}" juntarFixo="${juntarFixo}" 
-							tramitarAtivo="" />
-					</c:if>
 			</div>
 		</div>
 	</div>

@@ -2,8 +2,10 @@ package br.gov.jfrj.siga.tp.model;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,13 +28,13 @@ import br.gov.jfrj.siga.tp.validation.annotation.Data;
 @SuppressWarnings("serial")
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "plantao", schema = "sigatp")
 public class Plantao extends TpModel implements ConvertableEntity, Comparable<Plantao> {
 
     public static final ActiveRecord<Plantao> AR = new ActiveRecord<>(Plantao.class);
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator")
+    @GeneratedValue(generator = "hibernate_sequence_generator")
     @SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "SIGATP.hibernate_sequence")
     private Long id;
 
@@ -112,11 +114,16 @@ public class Plantao extends TpModel implements ConvertableEntity, Comparable<Pl
     }
 
     public static List<Plantao> buscarTodosPorCondutor(Condutor condutor) {
-        return Plantao.AR.find("CONDUTOR_ID = ? ORDER BY DATAHORAINICIO DESC", condutor.getId()).fetch();
+		Map<String, Object> parametros = new HashMap<String,Object>();
+		parametros.put("idCondutor",condutor.getId());
+        return Plantao.AR.find("condutor.id = :idCondutor ORDER BY DATAHORAINICIO DESC", parametros).fetch();
     }
 
     public static List<Plantao> buscarPorCondutor(Long idCondutor, Calendar dataHoraInicio) {
-        return Plantao.AR.find("condutor.id = ? AND dataHoraInicio <= ? AND (dataHoraFim is null OR dataHoraFim >= ?) order by dataHoraInicio", idCondutor, dataHoraInicio, dataHoraInicio).fetch();
+		Map<String, Object> parametros = new HashMap<String,Object>();
+		parametros.put("idCondutor",idCondutor);
+		parametros.put("dataHoraInicio",dataHoraInicio);
+        return Plantao.AR.find("condutor.id = :idCondutor AND dataHoraInicio <= :dataHoraInicio AND (dataHoraFim is null OR dataHoraFim >= :dataHoraInicio) order by dataHoraInicio", parametros).fetch();
     }
 
     public boolean ordemDeDatasCorreta() {

@@ -3,6 +3,7 @@ package br.gov.jfrj.siga.tp.model;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -40,12 +41,15 @@ import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 import br.gov.jfrj.siga.uteis.SequenceMethods;
 import br.gov.jfrj.siga.uteis.SiglaDocumentoType;
 
-@SuppressWarnings({ "serial", "deprecation" })
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "missao", schema = "sigatp")
 public class Missao extends TpModel implements ConvertableEntity, Comparable<Missao>, SequenceMethods {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static final String MISSAO_BUSCAR_SEQUENCE_EXCEPTION = "missao.buscar.sequence.exception";
     private static final String END_23_59_59 = "23:59:59";
     private static final String START_00_00_00 = "00:00:00";
@@ -53,7 +57,7 @@ public class Missao extends TpModel implements ConvertableEntity, Comparable<Mis
 
 	@Id
 	@Sequence(propertieOrgao="cpOrgaoUsuario",siglaDocumento=SiglaDocumentoType.MTP)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator")
+	@GeneratedValue(generator = "hibernate_sequence_generator")
 	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "SIGATP.hibernate_sequence")
 	private Long id;
 
@@ -237,7 +241,7 @@ public class Missao extends TpModel implements ConvertableEntity, Comparable<Mis
 	}
 
 	public static List<Missao> buscarEmAndamento() {
-		return Missao.AR.find("trunc(dataHoraSaida) = trunc(sysdate)").fetch();
+		return Missao.AR.find("trunc(dataHoraSaida) = trunc(CURRENT_TIMESTAMP)").fetch();
 	}
 
 	public static Missao buscar(String sequence) throws Exception {
@@ -249,14 +253,20 @@ public class Missao extends TpModel implements ConvertableEntity, Comparable<Mis
 			throw new Exception(MessagesBundle.getMessage(MISSAO_BUSCAR_SEQUENCE_EXCEPTION, sequence));
 		}
 
-		CpOrgaoUsuario cpOrgaoUsuario = CpOrgaoUsuario.AR.find("acronimoOrgaoUsu",partesDoCodigo[0]).first();
+		HashMap<String, Object> parametros = new HashMap<String,Object>();
+		parametros.put("acronimoOrgaoUsu", partesDoCodigo[0]);
+		CpOrgaoUsuario cpOrgaoUsuario = CpOrgaoUsuario.AR.find("acronimoOrgaoUsu = :acronimoOrgaoUsu",parametros).first();
 		Integer ano = Integer.valueOf(partesDoCodigo[2]);
 		Long numero = Long.valueOf(partesDoCodigo[3]);
 		String siglaDocumento = partesDoCodigo[4] + partesDoCodigo[1];
 		if (! Reflexao.recuperaAnotacaoField(missao).equals(siglaDocumento)) {
 			throw new Exception(MessagesBundle.getMessage("missao.buscar.siglaDocumento.exception", sequence));
 		}
-		List<Missao> missoes = Missao.AR.find("cpOrgaoUsuario = ? and numero = ? and YEAR(dataHora) = ?", cpOrgaoUsuario, numero, ano).fetch();
+		parametros.clear();
+		parametros.put("cpOrgaoUsuario", cpOrgaoUsuario);
+		parametros.put("numero", numero);
+		parametros.put("ano", ano);
+		List<Missao> missoes = Missao.AR.find("cpOrgaoUsuario = :cpOrgaoUsuario and numero = :numero and YEAR(dataHora) = :ano", parametros).fetch();
 		if (missoes.size() > 1)
 			throw new Exception(MessagesBundle.getMessage("missao.buscar.codigoDuplicado.exception"));
 		if (missoes.isEmpty())
@@ -265,12 +275,20 @@ public class Missao extends TpModel implements ConvertableEntity, Comparable<Mis
 	}
 
 	public static List<Missao> buscarPorCondutor(Long idCondutor, Calendar dataHoraInicio) {
-		return Missao.AR.find("condutor.id = ? AND dataHoraSaida <= ? AND (dataHoraRetorno is null OR dataHoraRetorno >= ?) AND estadoMissao NOT IN (?,?) order by dataHoraSaida", idCondutor,
-				dataHoraInicio, dataHoraInicio, EstadoMissao.CANCELADA, EstadoMissao.FINALIZADA).fetch();
+		HashMap<String, Object> parametros = new HashMap<String,Object>();
+		parametros.put("idCondutor", idCondutor);
+		parametros.put("dataHoraInicio", dataHoraInicio);
+		parametros.put("estadoMissao1", EstadoMissao.CANCELADA);
+		parametros.put("estadoMissao2", EstadoMissao.FINALIZADA);
+		return Missao.AR.find("condutor.id = :idCondutor AND dataHoraSaida <= :dataHoraInicio AND (dataHoraRetorno is null OR dataHoraRetorno >= :dataHoraInicio) AND estadoMissao NOT IN (:estadoMissao1,:estadoMissao2) order by dataHoraSaida", parametros ).fetch();
 	}
 
 	public static List<Missao> buscarMissoesEmAbertoPorCondutor(Condutor condutor) {
-		return Missao.AR.find("condutor.id = ? AND estadoMissao NOT IN (?,?) order by dataHoraSaida", condutor.getId(), EstadoMissao.CANCELADA, EstadoMissao.FINALIZADA).fetch();
+		HashMap<String, Object> parametros = new HashMap<String,Object>();
+		parametros.put("idCondutor", condutor.getId());
+		parametros.put("estadoMissao1", EstadoMissao.CANCELADA);
+		parametros.put("estadoMissao2", EstadoMissao.FINALIZADA);		
+		return Missao.AR.find("condutor.id = :idCondutor AND estadoMissao NOT IN (:estadoMissao1,:estadoMissao2) order by dataHoraSaida", parametros).fetch();
 	}
 
 	public static List<Missao> buscarTodasAsMissoesAvancado(Condutor condutor, EstadoMissao estadoMissao, Calendar dataInicio, Calendar dataFim) throws Exception {
@@ -297,11 +315,16 @@ public class Missao extends TpModel implements ConvertableEntity, Comparable<Mis
 		if (condutor == null) {
 			return new ArrayList<Missao>();
 		}
-		return Missao.AR.find("condutor.id = ? order by dataHoraSaida desc", condutor.getId()).fetch();
+		HashMap<String, Object> parametros = new HashMap<String,Object>();
+		parametros.put("idCondutor", condutor.getId());
+		return Missao.AR.find("condutor.id = :idCondutor order by dataHoraSaida desc", parametros).fetch();
 	}
 	
 	public static List<Missao> buscarMissoesProgramadasPorCondutor(Long idCondutor) {
-		return Missao.AR.find("condutor.id = ? AND estadoMissao = ? order by id", idCondutor, EstadoMissao.PROGRAMADA).fetch();
+		HashMap<String, Object> parametros = new HashMap<String,Object>();
+		parametros.put("idCondutor", idCondutor);
+		parametros.put("estadoMissao", EstadoMissao.PROGRAMADA);
+		return Missao.AR.find("condutor.id = :idCondutor AND estadoMissao = :estadoMissao order by id", parametros).fetch();
 	}
 
 	public static List<Missao> buscarPorVeiculos(Long idVeiculo, String dataHoraInicio) {

@@ -32,7 +32,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 @Entity
-@Table(name = "SR_TIPO_ACAO", schema = "SIGASR")
+@Table(name = "sr_tipo_acao", schema = "sigasr")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class SrTipoAcao extends HistoricoSuporte implements SrSelecionavel, Comparable<SrTipoAcao>, Selecionavel {
 

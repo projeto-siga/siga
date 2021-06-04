@@ -1,7 +1,11 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.JWTVerifyException;
 import com.lowagie.text.pdf.codec.Base64;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
@@ -28,8 +33,10 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
+import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.bluc.service.HashRequest;
 import br.gov.jfrj.siga.bluc.service.HashResponse;
@@ -149,36 +156,64 @@ public class ExProcessoAutenticacaoController extends ExController {
 
 	@Get("/public/app/processoArquivoAutenticado_stream")
 	public Download processoArquivoAutenticado_stream(final String jwt, final boolean assinado, final Long idMov,
-			final String certificadoB64) throws Exception {
+			final String certificadoB64, final String sigla) throws Exception {
 
 		if (jwt == null) {
 			setDefaultResults();
 			result.redirectTo(URL_EXIBIR);
 			return null;
 		}
-		String n = verifyJwtToken(jwt).get("n").toString();
-
+		
+		String n = "";
+		try {
+			n = verifyJwtToken(jwt).get("n").toString();
+		} catch (InvalidKeyException | NoSuchAlgorithmException | IllegalStateException 
+				| SignatureException | IOException | JWTVerifyException e) {
+			throw new AplicacaoException("Token inválido ou expirado. Por favor, entre novamente no link do protocolo.");
+		}
+		
 		ExArquivo arq = Ex.getInstance().getBL().buscarPorProtocolo(n);
 
 		byte[] bytes;
+
 		String fileName;
 		String contentType;
-		if (idMov != null && idMov != 0) {
-			ExMovimentacao mov = dao().consultar(idMov, ExMovimentacao.class, false);
-
-			fileName = arq.getReferencia() + "_" + mov.getIdMov() + ".p7s";
-			contentType = mov.getConteudoTpMov();
-
-			bytes = mov.getConteudoBlobMov2();
-
-		} else {
+		if (sigla != null) {
+			Long idDocPai = arq.getIdDoc();
+			ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
+			flt.setSigla(sigla);
+			ExMobil mob = ExDao.getInstance().consultarPorSigla(flt);
+			if (mob == null) {
+				throw new AplicacaoException("Documento não encontrado: " + sigla);
+			}
+			if (!(idDocPai == mob.getExMobilPai().getDoc().getIdDoc()
+					&& mob.podeExibirNoAcompanhamento())) {
+				throw new AplicacaoException("Documento não permitido para visualização: " + sigla);
+			}
+			arq = mob.doc();
 			fileName = arq.getReferenciaPDF();
 			contentType = "application/pdf";
-
-			if (assinado)
-				bytes = Ex.getInstance().getBL().obterPdfPorProtocolo(n);
-			else
-				bytes = arq.getPdf();
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			Documento.getDocumento(baos, null, mob, null, false, true, false, null, null);
+			bytes = baos.toByteArray();
+		} else {			
+			if (idMov != null && idMov != 0) {
+				ExMovimentacao mov = dao().consultar(idMov, ExMovimentacao.class, false);
+	
+				fileName = arq.getReferencia() + "_" + mov.getIdMov() + ".p7s";
+				contentType = mov.getConteudoTpMov();
+	
+				bytes = mov.getConteudoBlobMov2();
+	
+			} else {
+				fileName = arq.getReferenciaPDF();
+				contentType = "application/pdf";
+	
+				if (assinado)
+					bytes = Ex.getInstance().getBL().obterPdfPorProtocolo(n);
+				else
+					bytes = arq.getPdf();
+			}
 		}
 		if (bytes == null) {
 			throw new AplicacaoException("Arquivo não encontrado para Download.");
@@ -290,39 +325,15 @@ public class ExProcessoAutenticacaoController extends ExController {
 	}
 
 	private static String getRecaptchaSiteKey() {
-		String pwd = null;
-		try {
-			pwd = System.getProperty("siga.ex.autenticacao.recaptcha.key");
-			if (pwd == null)
-				throw new AplicacaoException("Erro obtendo propriedade siga.ex.autenticacao.recaptcha.key");
-			return pwd;
-		} catch (Exception e) {
-			throw new AplicacaoException("Erro obtendo propriedade siga.ex.autenticacao.recaptcha.key", 0, e);
-		}
+		return Prop.get("/siga.recaptcha.key");
 	}
 
 	private static String getRecaptchaSitePassword() {
-		String pwd = null;
-		try {
-			pwd = System.getProperty("siga.ex.autenticacao.recaptcha.pwd");
-			if (pwd == null)
-				throw new AplicacaoException("Erro obtendo propriedade siga.ex.autenticacao.recaptcha.pwd");
-			return pwd;
-		} catch (Exception e) {
-			throw new AplicacaoException("Erro obtendo propriedade siga.ex.autenticacao.recaptcha.pwd", 0, e);
-		}
+		return Prop.get("/siga.recaptcha.pwd");
 	}
 
 	private static String getJwtPassword() {
-		String pwd = null;
-		try {
-			pwd = System.getProperty("siga.ex.autenticacao.pwd");
-			if (pwd == null)
-				throw new AplicacaoException("Erro obtendo propriedade siga.ex.autenticacao.pwd");
-			return pwd;
-		} catch (Exception e) {
-			throw new AplicacaoException("Erro obtendo propriedade siga.ex.autenticacao.pwd", 0, e);
-		}
+		return Prop.get("/siga.autenticacao.senha");
 	}
 
 	private static String buildJwtToken(String n) {
@@ -342,14 +353,10 @@ public class ExProcessoAutenticacaoController extends ExController {
 		return token;
 	}
 
-	private static Map<String, Object> verifyJwtToken(String token) {
+	private static Map<String, Object> verifyJwtToken(String token) throws Exception {
 		final JWTVerifier verifier = new JWTVerifier(getJwtPassword());
-		try {
-			Map<String, Object> map = verifier.verify(token);
-			return map;
-		} catch (Exception e) {
-			throw new AplicacaoException("Erro ao verificar token JWT", 0, e);
-		}
+		Map<String, Object> map = verifier.verify(token);
+		return map;
 	}
 
 	/*

@@ -1,5 +1,9 @@
 /*Identidade Visual do SIGA.doc para todos locais */
 
+.text-size-5 {
+	font-size: 16px;
+	font-weight: 400;
+}
 .text-size-6 {
 	font-size: 14px;
 	font-weight: 400;
@@ -11,6 +15,13 @@
 .text-size-8 {
 	font-size: 10px;
 	font-weight: 400;
+}
+.border-light, .bootstrap-select .btn-outline-secondary {
+	border-color: #bbb !important;
+}
+.btn-light {
+	border-color: #dee2e6 !important;
+	background-color: #eee !important;
 }
 /* Elementos para collapse de cards */  
 
@@ -92,8 +103,8 @@ p.gt-table-action-list a.link-tag {
 .badge.tagmesa {
 	background-color: transparent;
 	border: solid 1px;
-	border-color: #959faa!important;
-	color: #959faa  !important;
+	border-color: #bbb!important;
+	color: #666  !important;	
 }
 .anotacao.tooltip-inner {
   background-color: #ffc107 ;
@@ -264,3 +275,133 @@ p.gt-table-action-list a.link-tag {
 	border-top: 1px solid #d2d3d4;
 }
 
+.custom-file-input.is-invalid:focus~.custom-file-label, .was-validated .custom-file-input:invalid:focus~.custom-file-label {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220,53,69,.25);
+}
+
+.custom-file-label::after {
+	content: 'Escolher arquivo' !important;
+}
+
+
+/*
+######################
+# SELECT 2
+######################
+*/
+.select2-container--bootstrap .select2-selection--single .select2-selection__placeholder {
+   	color: #555555!important;
+}
+
+
+/*
+######################
+# SIGA MODAL
+######################
+*/
+
+.siga-modal__titulo {
+ 	font-size: 1em;     
+ 	margin-top: 8px;   						 	  	  				
+ }
+ 
+.siga-modal__titulo--direita { 	
+  	text-align: right; 						
+ }
+ 
+ .siga-modal__titulo--conteudo {
+ 	margin-top: 0;   	
+ 	margin-bottom: 20px;	
+ }
+ 
+ .siga-modal__logo {
+ 	width: 60px;
+    height: 40px;
+    object-fit: contain;
+ }				
+ 	
+ .siga-modal__btn-close { 	
+   	position: absolute;
+   	top: 4px;
+   	right: 10px;
+   	font-size: 1.4em;
+ }
+ 
+ .siga-modal__btn-close:focus {
+ 	outline: none; 	
+ }			
+ 
+ .loader {
+  border: 2px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 2px solid #3498db;
+  width: 1em;
+  height: 1em;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+article p em {
+	font-weight: bold;
+	font-style: normal;
+}
+
+/* RADIO BUTTONS COM CORES OU IMAGENS */
+.radio-image {
+	position: relative;
+	margin: 5px;
+	padding: 12px;
+	cursor: pointer;
+	font-size: 22px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.radio-image input {
+	position: absolute;
+	opacity: 0;
+	cursor: pointer;
+}
+
+.checkmark {
+	position: absolute;
+	height: 35px;
+	width: 35px;
+	float: right;
+	border-radius: 50%;
+}
+
+.radio-image:hover input ~ .checkmark {
+	opacity: 0.5;
+}
+
+.radio-image input:checked ~ .checkmark:after {
+	display: block;
+}
+
+.radio-image .checkmark:after {
+	top: -6px;
+	left: 12px;
+	width: 8px;
+	height: 8px;
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;  
+	content: "\f00c"; 
+	position: absolute;
+	display: none;
+	color: #DDD;
+}

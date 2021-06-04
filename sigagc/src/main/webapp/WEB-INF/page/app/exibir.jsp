@@ -93,7 +93,7 @@
 							<p>
 								<img style="margin-bottom: -4px;"
 									src="/siga/css/famfamfam/icons/${m.arq.icon}.png" /> <a
-									target="_blank" href="${linkTo[AppController].baixar[m.arq.id]}">${m.arq.titulo}</a>
+									target="_blank" href="${linkTo[AppController].baixar(m.arq.id)}">${m.arq.titulo}</a>
 							</p>
 						</c:if>
 					</c:forEach>
@@ -238,7 +238,7 @@
 											style="margin-bottom: -2px; width: 11px;"
 											src="/siga/css/famfamfam/icons/cross.png" /> <span
 											class="gt-table-action-list"> <a
-												href="javascript:if (confirm('Deseja desfazer essa movimentação?')) location.href = '${linkTo[AppController].desfazer[informacao.siglaCompacta][m.id]}';">desfazer</a></span>&nbsp;
+												href="javascript:if (confirm('Deseja desfazer essa movimentação?')) location.href = '${linkTo[AppController].desfazer(informacao.siglaCompacta,m.id)}';">desfazer</a></span>&nbsp;
 										</td>
 									</c:when>
 									<c:otherwise>

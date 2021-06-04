@@ -61,7 +61,7 @@
 	   	    		<td>
 	   	    			<tptags:link texto="${requisicaoTransporte.descricaoCompleta}"
 	   	    						 parteTextoLink="${requisicaoTransporte.buscarSequence()}"
-	   	    						 comando="${linkTo[RequisicaoController].buscarPelaSequence[true][requisicaoTransporte.buscarSequence()]}">
+	   	    						 comando="${linkTo[RequisicaoController].buscarPelaSequence(true,requisicaoTransporte.buscarSequence())}">
 	   	    			</tptags:link>
 					</td>
 	   	    		<td width="12%" >

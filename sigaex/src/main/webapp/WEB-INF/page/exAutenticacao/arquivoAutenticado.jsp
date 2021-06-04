@@ -60,7 +60,7 @@
 								<c:forEach var="assinatura" items="${assinaturas}" varStatus="loop">
 									<c:url var='arqAssinatura'
 										value='/public/app/arquivoAutenticado_stream?jwt=${jwt}&idMov=${assinatura.idMov}' />
-									<p class="p-0 m-0"><i class="fa fa-angle-double-right"></i> <a href="${arqAssinatura}" target="_blank">${assinatura.descrMov}</a></p>
+									<p class="p-0 m-0"><i class="fa fa-angle-double-right"></i> <a href="${arqAssinatura}" target="_blank">${assinatura.descrMov}, ${assinatura.getAssinaturaValida()}</a></p>
 								</c:forEach>
 								<div id="dados-assinatura" style="visible: hidden">
 									<input type="hidden" name="ad_url_base" value="" /> <input
@@ -105,7 +105,7 @@
 						<div class="card-body">
 						
 						<c:forEach var="m" items="${docVO.mobs}" varStatus="loop">
-								<c:if test="${f:resource('isWorkflowEnabled')}">
+								<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;WF:Módulo de Workflow')}">
 									<script type="text/javascript">
 										var url = "/sigawf/app/doc?sigla=${m.sigla}&ts=1${currentTimeMillis}";
 		

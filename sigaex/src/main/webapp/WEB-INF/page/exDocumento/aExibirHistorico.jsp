@@ -39,7 +39,7 @@
 	</div>
 	<c:set var="primeiroMobil" value="${true}" />
 	<c:forEach var="m" items="${docVO.mobs}" varStatus="loop">
-		<c:if test="${f:resource('isWorkflowEnabled')}">
+		<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;WF:Módulo de Workflow')}">
 			<script type="text/javascript">
 				var url = "/sigawf/app/doc?sigla=${m.sigla}&ts=1${currentTimeMillis}";
 	            $.ajax({
@@ -65,7 +65,7 @@
 			</h4>
 			<c:set var="ocultarCodigo" value="${true}" />
 
-			<c:if test="${f:resource('isWorkflowEnabled')}">
+			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;WF:Módulo de Workflow')}">
 				<c:if test="${(not m.mob.geral)}">
 					<div id="${m.sigla}" depende=";wf;" class="wf_div${m.mob.codigoCompacto}" >
 					</div>
@@ -82,7 +82,7 @@
 				</c:if>
 			</c:forEach>
 			<c:if test="${temmov}">
-					<table class="table table-sm table-hover table-striped mov mt-2">
+					<table class="table table-sm table-hover table-striped  table-responsive mov mt-2">
 						<thead class="${thead_color} align-middle text-center">
 							<tr>
 								<th style="width: 5%" class="text-left" rowspan="2">
@@ -111,7 +111,6 @@
 							</tr>
 						</thead>
 						<c:forEach var="mov" items="${m.movs}">
-							<c:if test="${mov.idTpMov != 14 and not mov.cancelada}">
 								<tr class="${mov.classe} ${mov.disabled}">
 									<c:set var="dt" value="${mov.dtRegMovDDMMYYHHMMSS}" />
 									<c:set var="dt" value="${mov.dtRegMovDDMMYY}" />
@@ -170,7 +169,6 @@
 										</td>
 									</c:if>
 								</tr>
-							</c:if>
 						</c:forEach>
 					</table>
 			</c:if>

@@ -50,7 +50,7 @@
 	        	<td>
 				<tptags:link texto="${servico.veiculo.dadosParaExibicao}"
   				             parteTextoLink="${servico.veiculo.dadosParaExibicao}"
-  			                 comando="${linkTo[VeiculoController].buscarPeloId[servico.veiculo.id]}">
+  			                 comando="${linkTo[VeiculoController].buscarPeloId(servico.veiculo.id)}">
   				</tptags:link>
     			</td>
 	        </tr>
@@ -61,7 +61,7 @@
 					<td>
 					<tptags:link texto="${servico.requisicaoTransporte.buscarSequence()}"
   	 					         parteTextoLink="${servico.requisicaoTransporte.buscarSequence()}"
-  						         comando="${linkTo[RequisicaoController].buscarPelaSequence[false][servico.requisicaoTransporte.buscarSequence()]}">
+  						         comando="${linkTo[RequisicaoController].buscarPelaSequence(false,servico.requisicaoTransporte.buscarSequence())}">
   					</tptags:link>
 					</td>
 				</tr>

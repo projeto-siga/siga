@@ -264,12 +264,12 @@ public class ExProcessoConsultaPublicaController extends ExController {
 	private static String getRecaptchaSiteKey() {
 		String pwd = null;
 		try {
-			pwd = System.getProperty("siga.ex.autenticacao.recaptcha.key");
+			pwd = System.getProperty("siga.recaptcha.key");
 			if (pwd == null)
-				throw new AplicacaoException("Erro obtendo propriedade siga.ex.autenticacao.recaptcha.key");
+				throw new AplicacaoException("Erro obtendo propriedade siga.recaptcha.key");
 			return pwd;
 		} catch (Exception e) {
-			throw new AplicacaoException("Erro obtendo propriedade siga.ex.autenticacao.recaptcha.key", 0, e);
+			throw new AplicacaoException("Erro obtendo propriedade siga.recaptcha.key", 0, e);
 		}
 	}
 
@@ -277,12 +277,12 @@ public class ExProcessoConsultaPublicaController extends ExController {
 	private static String getRecaptchaSitePassword() {
 		String pwd = null;
 		try {
-			pwd = System.getProperty("siga.ex.autenticacao.recaptcha.pwd");
+			pwd = System.getProperty("siga.recaptcha.pwd");
 			if (pwd == null)
-				throw new AplicacaoException("Erro obtendo propriedade siga.ex.autenticacao.recaptcha.pwd");
+				throw new AplicacaoException("Erro obtendo propriedade siga.recaptcha.pwd");
 			return pwd;
 		} catch (Exception e) {
-			throw new AplicacaoException("Erro obtendo propriedade siga.ex.autenticacao.recaptcha.pwd", 0, e);
+			throw new AplicacaoException("Erro obtendo propriedade siga.recaptcha.pwd", 0, e);
 		}
 	}
 }

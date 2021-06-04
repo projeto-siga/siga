@@ -63,7 +63,7 @@
 													<a href="javascript:opener.retorna_${propriedade}('${i.id}', '${i.sigla}', '${i.arq.titulo}');window.close();">${i.sigla}</a>
 												</c:when>
 												<c:otherwise>
-													<a href="${linkTo[AppController].exibir[i.siglaCompacta]}">${i.sigla}</a>
+													<a href="${linkTo[AppController].exibir(i.siglaCompacta)}">${i.sigla}</a>
 												</c:otherwise>
 											</c:choose>
 										</td>
@@ -96,7 +96,7 @@
 											</table>
 										</td>
 										<td style="width: 11% !important;">${i.tipo.nome}</td>
-										<td><a href="${linkTo[AppController].exibir[i.siglaCompacta]}">${i.arq.titulo}</a>
+										<td><a href="${linkTo[AppController].exibir(i.siglaCompacta)}">${i.arq.titulo}</a>
 										</td>
 										<td width="2%"><c:if test="${cont > 1}">
 												<img style="width: 13px;" id="imgPlus-${k}"

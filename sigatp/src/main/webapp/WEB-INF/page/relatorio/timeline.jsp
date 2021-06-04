@@ -14,10 +14,10 @@
 	   $('#inputDataPesquisa').change( function() {	
 		   dataalterada = $('#inputDataPesquisa').val();
 		   if("${entidade}" == "Condutor") {
-		      controller = "${linkTo[RelatorioController].listarAgendaPorCondutor[idCondutor]['dataatrocar']}";
+		      controller = "${linkTo[RelatorioController].listarAgendaPorCondutor(idCondutor,'dataatrocar')}";
 		      controller = controller.replace("dataatrocar", dataalterada);
 		   } else {
- 			  controller = "${linkTo[RelatorioController].listarAgendaPorVeiculo[idVeiculo]['dataatrocar']}";
+ 			  controller = "${linkTo[RelatorioController].listarAgendaPorVeiculo(idVeiculo,'dataatrocar')}";
 		      controller = controller.replace("dataatrocar", dataalterada);
 		   }
  		   $(location).attr('href',controller);	
@@ -66,14 +66,14 @@
 	<h2>Relat&oacute;rio de Agendamentos por ${entidade} no dia 
 	<c:choose>
 		<c:when test="${entidade == 'Condutor'}">
-			<a class="" href="${linkTo[RelatorioController].listarAgendaPorCondutorNoDiaAnterior[idCondutor][dataPesquisa]}"><img src="/sigatp/public/images/esquerda.png" alt="Retornar" title="Retornar"></a>
+			<a class="" href="${linkTo[RelatorioController].listarAgendaPorCondutorNoDiaAnterior(idCondutor,dataPesquisa)}"><img src="/sigatp/public/images/esquerda.png" alt="Retornar" title="Retornar"></a>
 			<input type="text" id="inputDataPesquisa" size="10" readonly="readonly" class="datePicker" value="${dataPesquisa}" />
-			<a class="" href="${linkTo[RelatorioController].listarAgendaPorCondutorNoProximoDia[idCondutor][dataPesquisa]}"><img src="/sigatp/public/images/direita.png" alt="Avancar" title="Avancar"></a>
+			<a class="" href="${linkTo[RelatorioController].listarAgendaPorCondutorNoProximoDia(idCondutor,dataPesquisa)}"><img src="/sigatp/public/images/direita.png" alt="Avancar" title="Avancar"></a>
 		</c:when>
 		<c:otherwise>
-			<a class="" href="${linkTo[RelatorioController].listarAgendaPorVeiculoNoDiaAnterior[idVeiculo][dataPesquisa]}"><img src="/sigatp/public/images/esquerda.png" alt="Retornar" title="Retornar"></a>
+			<a class="" href="${linkTo[RelatorioController].listarAgendaPorVeiculoNoDiaAnterior(idVeiculo,dataPesquisa)}"><img src="/sigatp/public/images/esquerda.png" alt="Retornar" title="Retornar"></a>
 			<input type="text" id="inputDataPesquisa" size="10" readonly="readonly" class="datePicker" value="${dataPesquisa}" />
-			<a class="" href="${linkTo[RelatorioController].listarAgendaPorVeiculoNoProximoDia[idVeiculo][dataPesquisa]}"><img src="/sigatp/public/images/direita.png" alt="Avancar" title="Avancar"></a>
+			<a class="" href="${linkTo[RelatorioController].listarAgendaPorVeiculoNoProximoDia(idVeiculo,dataPesquisa)}"><img src="/sigatp/public/images/direita.png" alt="Avancar" title="Avancar"></a>
 		</c:otherwise>
 	</c:choose>
 	</h2>

@@ -8,15 +8,96 @@
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
-
+<script src="/siga/public/javascript/jquery/jquery-1.11.2.min.js" type="text/javascript"></script>
+<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
+<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
+<c:set var="podePesquisarDescricao" scope="session" 
+	value="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição')}" />
+<c:set var="podePesquisarDescricaoLimitada" scope="session" 
+	value="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição;LIMITADA:Pesquisar descrição só se informar outros filtros')}" />
 <script type="text/javascript" language="Javascript1.1">
+$(document).ready(function() {
+// 	console.log('ready1 idforma: ${idforma}');
+// 	console.log('ready2 idforma hidden:' + $("#idforma").val());
+// 	alteraOrigem();
+	var frmsel = document.getElementById('idFormaDoc');
+	var modsel = document.getElementById('idMod');
+	${idFormaDoc != null && idFormaDoc != 0? 'alteraTipoDaForma(false);' : ''}
+	${idMod != null && idMod != 0? 'alteraForma(false);' : ''}
+	podeDescricao(false);
+	$(document.body).on("change","#idFormaDoc",function(){ podeDescricao(false);});	
+	$(document.body).on("change","#idMod",function(){ podeDescricao(false);});
+});
 
-function alteraTipoDaForma(){
+
+function podeDescricao(limpaDescricao) {
+	if ("${podePesquisarDescricao}" != "true") { 
+		desabilitaDescricao();
+		return;
+	}
+
+	if ("${podePesquisarDescricaoLimitada}" === "true") {
+		if ($('#orgaoUsu').val() != 0 && $('#idFormaDoc').find(':selected').val() != "0" 
+				&& $('#idMod').find(':selected').val() != "0"  
+				&& $('#anoEmissaoString').val() != 0) {
+			habilitaDescricao();
+		} else {
+			desabilitaDescricao();
+			if (limpaDescricao)
+				$('#descrDocumento').val("");
+		}
+	} else {
+		habilitaDescricao();
+	}
+}
+
+function habilitaDescricao() {
+	$('#descrDocumento').attr('placeholder', "Clique aqui para pesquisar pela descrição");
+	$('#descrDocumento').removeAttr('readonly');
+}
+
+function desabilitaDescricao() {
+	$('#descrDocumento').attr('placeholder', "Não é possível realizar a pesquisa pela descrição");
+	$('#descrDocumento').attr('readonly', true);
+}
+
+function alteraTipoDaFormaAntigo(){
 	ReplaceInnerHTMLFromAjaxResponse('${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_formas?tipoForma='+document.getElementById('tipoForma').value+'&idFormaDoc='+'${idFormaDoc}', null, document.getElementById('comboFormaDiv'))
 }
 
-function alteraForma(){
-	ReplaceInnerHTMLFromAjaxResponse('${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_modelos?forma='+document.getElementById('forma').value+'&idMod='+'${idMod}', null, document.getElementById('comboModeloDiv'))
+function alteraFormaAntigo(){
+	ReplaceInnerHTMLFromAjaxResponse('${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_modelos?forma='+document.getElementById('idFormaDoc').value+'&idMod='+'${idMod}', null, document.getElementById('comboModeloDiv'))
+}
+
+function alteraTipoDaForma(abrir) {
+	if ($('#idFormaDoc-spinner').hasClass('d-none')) {
+		$('#idFormaDoc-spinner').removeClass('d-none');
+		$('#idFormaDoc').prop('disabled', 'disabled');
+		SetInnerHTMLFromAjaxResponse(
+				'/sigaex/app/expediente/doc/carregar_lista_formas?tipoForma='
+						+ document.getElementById('tipoForma').value
+						+ '&idFormaDoc=' + '${idFormaDoc}', document
+						.getElementById('comboFormaDiv'), null, 
+						(abrir? function(){	$('#idFormaDoc').select2('open'); } : null)							
+						);
+	}
+}
+
+function alteraForma(abrir) {
+	if ($('#idMod-spinner').hasClass('d-none')) {
+		$('#idMod-spinner').removeClass('d-none');
+		$('#idMod').prop('disabled', 'disabled');
+		var idFormaDoc = document.getElementById('idFormaDoc');
+		SetInnerHTMLFromAjaxResponse(
+				'/sigaex/app/expediente/doc/carregar_lista_modelos?forma='
+						+ (idFormaDoc != null ? idFormaDoc.value : '${idFormaDoc}' )
+						+ '&idMod='	+ '${idMod}', document
+						.getElementById('comboModeloDiv'), null, 
+						(abrir? function(){	$('#idMod').select2('open'); 
+											podeDescricao(true);} : 
+								function(){	podeDescricao(true);})							
+						);
+	}
 }
 
 function sbmt(offset) {
@@ -406,7 +487,7 @@ function limpaCampos()
 
 <siga:pagina titulo="Lista de Expedientes" popup="${popup}">
 	<!-- main content bootstrap -->
-	<div class="container-fluid">
+	<div class="container-fluid" id="content-busca" onload="carregado();">
 		<div class="row ${mensagemCabec==null?'d-none':''}" id="mensagemCabecId" >
 			<div class="col" >
 				<div class="alert ${msgCabecClass} fade show" id="mensagemCabec" role="alert">
@@ -706,10 +787,10 @@ function limpaCampos()
 										</div>
 									</div>	
 								</div>
-				<div class="form-row">
+					<div class="form-row">
 						<div class="form-group col-md-3">
 							<label for="orgaoUsu">Órgão</label> <select class="form-control"
-								id="orgaoUsu" name="orgaoUsu">
+								id="orgaoUsu" name="orgaoUsu" onchange="podeDescricao(true)">
 								<c:if test="${siga_cliente != 'GOVSP'}">
 									<option value="0">[Todos]</option>
 								</c:if>
@@ -734,6 +815,8 @@ function limpaCampos()
 								</select>
 							</div>
 						</c:if>
+					</div>
+					<div class="form-row">
 						<div class="form-group col-md-3">
 							<label for="dtDocString">Data Inicial</label> <input
 								class="form-control" type="text" name="dtDocString"
@@ -759,7 +842,7 @@ function limpaCampos()
 									<div class="col-sm-4">
 										<div class="form-group">
 											<label>Tipo</label>
-											<select id="tipoForma" name="idTipoFormaDoc" onchange="javascript:alteraTipoDaForma();" class="form-control">
+											<select id="tipoForma" name="idTipoFormaDoc" onchange="javascript:alteraTipoDaForma(false);" class="form-control">
 												<option value="0">
 													[Todos]
 												</option>
@@ -771,28 +854,36 @@ function limpaCampos()
 											</select>
 										</div>
 									</div>
-									<div class="col-sm-4">
-										<div id="comboFormaDiv">
-											<script type="text/javascript">
-												setTimeout("alteraTipoDaForma()",500);
-											</script>
+
+									<div class="form-group col-md-3">
+										<div style="display: inline" id="comboFormaDiv">
+											<div class="form-group" id="idFormaDocGroup" onclick="javascript:alteraTipoDaForma(true);"
+											 		onfocus="javascript:alteraTipoDaForma(true);">
+												<label><fmt:message key="documento.label.especie"/> <span id="idFormaDoc-spinner" class="spinner-border text-secondary d-none"></span></label> 
+												<select class="form-control siga-select2" id="idFormaDoc" name="idFormaDoc">
+													<option value="0">[Todos]</option>
+												</select>
+											</div>
 										</div>
 									</div>
-								</div>
-								<div class="row">
-									<div class="col-sm-4">		
-										<div id="comboModeloDiv">
-											<script type="text/javascript">
-												setTimeout("alteraForma()",500);
-											</script>
-										</div>										
+			
+									<div class="form-group col-md-6">
+										<div style="display: inline" id="comboModeloDiv">
+											<div class="form-group" id="idModGroup" onclick="javascript:alteraForma(true);"
+													onfocus="javascript:alteraForma(true);">
+												<label><fmt:message key="documento.modelo2"/> <span id="idMod-spinner" class="spinner-border text-secondary d-none"></span></label> 
+												<select class="form-control siga-select2" id="idMod" name="idMod">
+													<option value="0" >[Todos]</option>
+												</select>
+											</div>
+										</div>
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-sm-4">
 										<div class="form-group">
 											<label>Ano de Emissão</label>
-											<select  name="anoEmissaoString" class="form-control">
+											<select id="anoEmissaoString" name="anoEmissaoString" class="form-control" onchange="podeDescricao(true)">
 												<option value="0">
 													[Todos]
 												</option>
@@ -997,14 +1088,17 @@ function limpaCampos()
 								</div>	
 								
 								<div class="row">
-									<div class="col-sm-6">
+									<div class="col-sm-12">
 										<div class="form-group">	
 											<label>Descrição</label>
 											<input type="text" name="descrDocumento" id="descrDocumento" value="${descrDocumento}" size="80" class="form-control"
-												<c:if test="${!(f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição'))}">
+												<c:if test="${!podePesquisarDescricao}">
 													readonly placeholder="Não é possível realizar a pesquisa pela descrição"
 												</c:if>
-											/>
+												/>
+											<c:if test="${podePesquisarDescricao && podePesquisarDescricaoLimitada}">
+												<small>Campo "Descrição" habilitado para pesquisa após o preenchimento dos campos "Órgão", "Espécie", "Documento" e "Ano de Emissão"</small>
+											</c:if>
 										</div>
 									</div>
 								</div>	
@@ -1028,4 +1122,7 @@ function limpaCampos()
 						</div>
 					</div>
 				</div>
+	<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+	<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+	<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
 </siga:pagina>

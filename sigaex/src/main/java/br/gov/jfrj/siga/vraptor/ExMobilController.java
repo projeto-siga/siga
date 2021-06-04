@@ -91,6 +91,7 @@ public class ExMobilController extends
 		ExSelecionavelController<ExMobil, ExMobilDaoFiltro> {
 	private static final String SIGA_DOC_FE_LD = "FE:Ferramentas;LD:Listar Documentos";
 	private static final String SIGA_DOC_PESQ_PESQDESCR = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição";
+	private static final String SIGA_DOC_PESQ_PESQDESCR_LIMITADA = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição;LIMITADA:Pesquisar descrição só se informar outros filtros";
 	private static final String SIGA_DOC_PESQ_DTLIMITADA = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;DTLIMITADA:Pesquisar somente com data limitada";
 	final static public Long MAXIMO_DIAS_PESQUISA = 30L;	
 	/**
@@ -133,12 +134,12 @@ public class ExMobilController extends
 	public void aBuscar(final String sigla, final String popup, final String primeiraVez, final String propriedade, final Integer postback,
 			final int apenasRefresh, final Long ultMovIdEstadoDoc, final int ordem, final int visualizacao, final Integer ultMovTipoResp,
 			final DpPessoaSelecao ultMovRespSel, final DpLotacaoSelecao ultMovLotaRespSel, final Long orgaoUsu, final Long idTpDoc, final String dtDocString,
-			final String dtDocFinalString, final Long idTipoFormaDoc, final Integer forma, final Long idMod, final String anoEmissaoString,
+			final String dtDocFinalString, final Long idTipoFormaDoc, final Long idFormaDoc, final Long idMod, final String anoEmissaoString,
 			final String numExpediente, final String numExtDoc, final CpOrgaoSelecao cpOrgaoSel, final String numAntigoDoc,
 			final DpPessoaSelecao subscritorSel, String nmSubscritorExt, final Integer tipoCadastrante, final DpPessoaSelecao cadastranteSel,
 			final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario, final DpPessoaSelecao destinatarioSel,
 			final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel, final String nmDestinatario,
-			final ExClassificacaoSelecao classificacaoSel, final String descrDocument, final String fullText, final Long ultMovEstadoDoc,
+			final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText, final Long ultMovEstadoDoc,
 			final Integer offset) {
 		assertAcesso("");
 		
@@ -216,7 +217,7 @@ public class ExMobilController extends
 		result.include("lotacaoDestinatarioSel",
 				builder.getLotacaoDestinatarioSel());
 		result.include("nmDestinatario", nmDestinatario);
-		result.include("descrDocumento", descrDocument);
+		result.include("descrDocumento", descrDocumento);
 		result.include("visualizacao", visualizacao);
 		result.include("itemPagina", this.getItemPagina());
 		result.include("tamanho", this.getTamanho());
@@ -229,7 +230,7 @@ public class ExMobilController extends
 		result.include("propriedade", propriedade);
 		result.include("currentPageNumber", calculaPaginaAtual(offset));
 		result.include("idTipoFormaDoc", idTipoFormaDoc);
-		result.include("idFormaDoc", forma);
+		result.include("idFormaDoc", idFormaDoc);
 		result.include("idMod", idMod);		
 	}
 
@@ -534,10 +535,21 @@ public class ExMobilController extends
 			final ExMobilBuilder builder, String dtDoc) {
 		final ExMobilDaoFiltro flt = createDaoFiltro();
 		if (Prop.isGovSP() && flt.getDescrDocumento() != null 
-				&& !"".equals(flt.getDescrDocumento()) && !(Cp.getInstance().getConf()
+				&& !"".equals(flt.getDescrDocumento())) {
+			if (!(Cp.getInstance().getConf() 
 				.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), SIGA_DOC_PESQ_PESQDESCR))) {
-			result.include(SigaModal.ALERTA, SigaModal.mensagem("Usuário não autorizado a pesquisar pela descrição do documento."));
-			return dtDocString;
+				result.include(SigaModal.ALERTA, SigaModal.mensagem("Usuário não autorizado a pesquisar pela descrição do documento."));
+				return dtDocString;
+			}
+			if ((Cp.getInstance().getConf() 
+					.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), SIGA_DOC_PESQ_PESQDESCR_LIMITADA))
+					&& !(flt.getIdOrgaoUsu() != null && flt.getIdOrgaoUsu() != 0
+					&& flt.getAnoEmissao() != null && flt.getAnoEmissao() != 0
+					&& flt.getIdFormaDoc() != null && flt.getIdFormaDoc() != 0
+					&& flt.getIdMod() != null && flt.getIdMod() != 0) ) {
+					result.include(SigaModal.ALERTA, SigaModal.mensagem("Usuário autorizado a pesquisar pela Descrição somente após o preenchimento dos campos Órgão, Espécie, Documento e Ano de Emissão."));
+					return dtDocString;
+				}
 		}
 		
 		LocalDate dt = null;
@@ -813,7 +825,7 @@ public class ExMobilController extends
 					false, false, null, null, false, getTitular(), getLotaTitular(), false),
 					null, tipoForma));
 		} else {
-			formasDoc.addAll(dao().listarTodosOrdenarPorSigla());
+			formasDoc.addAll(dao().listarPorEspecieOrdenarPorSigla(tipoForma));
 		}
 		return formasDoc;
 	}

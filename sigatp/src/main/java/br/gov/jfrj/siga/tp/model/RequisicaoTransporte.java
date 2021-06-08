@@ -91,7 +91,7 @@ public class RequisicaoTransporte extends TpModel implements Comparable<Requisic
     private TipoRequisicao tipoRequisicao;
 
     @ElementCollection(targetClass = TipoDePassageiro.class)
-    @JoinTable(name = "requisicao_tipopassageiro", joinColumns = @JoinColumn(name = "requisicaoTransporte_Id"))
+    @JoinTable(name = "sigatp.requisicao_tipopassageiro", joinColumns = @JoinColumn(name = "requisicaoTransporte_Id"))
     @Column(name = "tipoPassageiro", nullable = false)
     @Enumerated(EnumType.STRING)
     private List<TipoDePassageiro> tiposDePassageiro;
@@ -122,7 +122,7 @@ public class RequisicaoTransporte extends TpModel implements Comparable<Requisic
     private EstadoRequisicao ultimoEstado;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "missao_requisTransporte", joinColumns = @JoinColumn(name = "requisicaoTransporte_Id"), inverseJoinColumns = @JoinColumn(name = "missao_Id"))
+    @JoinTable(name = "sigatp.missao_requisTransporte", joinColumns = @JoinColumn(name = "requisicaoTransporte_Id"), inverseJoinColumns = @JoinColumn(name = "missao_Id"))
     private List<Missao> missoes;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)

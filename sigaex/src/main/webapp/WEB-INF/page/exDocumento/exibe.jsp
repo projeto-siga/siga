@@ -1234,7 +1234,7 @@
 															</c:when>
 															<c:when test="${acao.nomeNbsp eq 'Cancelar' and siga_cliente eq 'GOVSP'}">
 																<button type="button" class="btn btn-sm btn-outline-danger btn-cancel"																	
-																	onclick="confirmarExclusaoArquivoAuxiliar(${mov.idMov}, '${sigla}', this)">																
+																	onclick="confirmarExclusaoArquivoAuxiliar(${mov.idMov}, '${mov.mov.exMobil.sigla}', this)">																
 																	Cancelar
 																</button>																													
 															</c:when>															

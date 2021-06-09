@@ -853,6 +853,16 @@ public class ExDao extends CpDao {
 		return em().createQuery(q).getResultList();
 	}
 
+	public List<ExFormaDocumento> listarPorEspecieOrdenarPorSigla(ExTipoFormaDoc tpFormaDoc) {
+		CriteriaQuery<ExFormaDocumento> q = cb().createQuery(ExFormaDocumento.class);
+		Root<ExFormaDocumento> c = q.from(ExFormaDocumento.class);
+		q.select(c);
+		if (tpFormaDoc != null)
+			q.where(cb().equal(c.get("exTipoFormaDoc"), tpFormaDoc));
+		q.orderBy(cb().asc(c.get("siglaFormaDoc")));
+		return em().createQuery(q).getResultList();
+	}
+
 	public List<ExDocumento> consultarPorModeloEAssinatura(
 			CpOrgaoUsuario orgaoUsu, ExModelo mod, Date dtAssinaturaIni,
 			Date dtAssinaturaFim) {

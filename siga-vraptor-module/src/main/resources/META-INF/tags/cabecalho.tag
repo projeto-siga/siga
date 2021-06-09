@@ -128,17 +128,17 @@ ${meta}
 				<c:set var="thead_color" value="thead-light" scope="request" />
 									
 		<c:set var="ico_siga" value="siga.ico" />
-		<c:set var="menu_class" value="bg-primary" /> 
-		<c:set var="sub_menu_class" value="bg-secondary text-white" />
+		<c:set var="menu_class" value="bg-danger" /> 
+		<c:set var="sub_menu_class" value="bg-dark text-white" />
 		
-		<c:set var="navbar_class" value="navbar-dark bg-primary" />
+		<c:set var="navbar_class" value="navbar-dark bg-danger" />
 		<c:if test="${f:resource('/siga.ambiente') ne 'prod'}">
 			<c:set var="navbar_class" value="navbar-dark bg-secondary" />
 		</c:if>
 		
-		<c:set var="navbar_logo" value="logo-siga-novo-38px.png" />
-		<c:set var="navbar_logo2" value="${f:resource('/siga.cabecalho.logo')}" />
-		<c:set var="navbar_logo_size" value="38" />
+		<c:set var="navbar_logo" value="${f:resource('/siga.cabecalho.logo')}" />
+		<c:set var="navbar_logo2" value="${f:resource('/siga.cabecalho.logo2')}" />
+		<c:set var="navbar_logo_size" value="32" />
 		<c:set var="button_class_busca" value="btn-outline-light" />
 		<c:set var="collapse_Tramitacao" scope="request" value="collapsible expanded" />
 		<c:set var="collapse_NivelAcesso" scope="request" value="collapsible expanded" />
@@ -166,8 +166,8 @@ ${meta}
 <body onload="${onLoad}" class="${body_color}">
 	<c:if test="${popup!='true'}">
    		<nav class="navbar navbar-expand-lg ${navbar_class} ${menu_class}">
-			<a class="navbar-brand pt-0 pb-0" href="/siga"> <img
-				src="/siga/imagens/${navbar_logo}" height="${navbar_logo_size}">
+			<a class="navbar-brand pt-0 pb-0" href="/siga">
+				<img src="/siga/imagens/${navbar_logo}" alt="${f:resource('/siga.cabecalho.titulo')}" title="${f:resource('/siga.cabecalho.titulo')}" height="${navbar_logo_size}">
 			</a>
 			
 			<c:if test="${siga_cliente != 'GOVSP'}">
@@ -178,9 +178,13 @@ ${meta}
 					 alt="Logo do Órgão" height="38" class="ml-2" />
 				</c:when>
 				<c:otherwise>
-					<img id="logo-header2"
-					 src="${navbar_logo2}"
-				 	 alt="${f:resource('siga.cabecalho.titulo')}" height="${navbar_logo_size}" class="ml-2" />
+					<c:if test="${not empty navbar_logo2}">
+					    <img id="logo-header2"
+					         src="${navbar_logo2}"
+				 	         alt="${f:resource('siga.cabecalho.titulo')}"
+				 	         height="${navbar_logo_size}"
+				 	         class="ml-2" />
+				 	</c:if>
 				</c:otherwise>
 				</c:choose>
 			</c:if>
@@ -350,50 +354,44 @@ ${meta}
 		<div class="container-fluid content">
 			<div class="row pt-2 pb-2 mb-3 ${sub_menu_class}" >
 				<!-- usuário -->
-				<div class="col col-12 col-md-6">
-					<div class="row">
-						<div class="col gt-company d-inline align-middle">
-							<span class="h-100">
-								<strong><span>${f:resource('/siga.cabecalho.titulo')}</span> </strong>
-								 <c:catch>
-										<c:if test="${not empty titular.orgaoUsuario.descricao}"><span style="white-space: nowrap;"> <i class="fa fa-angle-right"></i> ${titular.orgaoUsuario.descricao}</span></h6></c:if>
-								 </c:catch>
-							</span>
-						</div>
+				<div class="col col-12 col-md-6 d-flex align-items-center min-vh-100">
+					<div class="gt-company">
+						<c:catch>
+							<c:if test="${not empty titular.orgaoUsuario.descricao}"><span style="white-space: nowrap;"> <i class="fa fa-angle-double-right"></i> ${titular.orgaoUsuario.descricao} |</span></h6></c:if>
+						</c:catch>
+						<span>
+							<strong>${f:resource('/siga.cabecalho.titulo')} v${siga_version}</strong>
+						</span>
+						<span class="badge bg-danger">
+							<c:choose>
+								<c:when test="${f:resource('/siga.ambiente') eq 'desenv'}">
+									DESENVOLVIMENTO
+								</c:when>
+								<c:when test="${f:resource('/siga.ambiente') eq 'treinamento'}">
+									TREINAMENTO
+								</c:when>
+								<c:when test="${f:resource('/siga.ambiente') eq 'configuracao'}">
+									CONFIGURACAÇÃO
+								</c:when>
+								<c:when test="${f:resource('/siga.ambiente') eq 'homolog'}">
+									HOMOLOGAÇÃO
+								</c:when>
+								<c:when test="${f:resource('/siga.ambiente') eq 'suporte'}">
+									SUPORTE
+								</c:when>
+								<c:when test="${f:resource('/siga.ambiente') eq 'prod'}"></c:when>
+								<c:otherwise>
+									Ambiente N/A
+								</c:otherwise>
+							</c:choose>
+						</span>
 					</div>
-					<div class="row  ${ambiente_class}">
-						<div class="col">
-							<span>
-								<c:choose>
-									<c:when test="${f:resource('/siga.ambiente') eq 'desenv'}">
-										Ambiente de Desenvolvimento
-									</c:when>
-									<c:when test="${f:resource('/siga.ambiente') eq 'prod'}">
-										Ambiente Oficial
-									</c:when>
-									<c:when test="${f:resource('/siga.ambiente') eq 'treinamento'}">
-										Ambiente de Simulação
-									</c:when>
-									<c:when test="${f:resource('/siga.ambiente') eq 'configuracao'}">
-										Ambiente de Configuração
-									</c:when>
-									<c:when test="${f:resource('/siga.ambiente') eq 'homolog'}">
-										Ambiente de Homologação
-									</c:when>
-								</c:choose>
-							</span>
-							<span >- v.${siga_version}</span>
-						</div>
-					</div>
-
-					
-
 				</div>
 				
 				<c:if test="${not empty cadastrante}">
 					<div class="col col-12 col-md-6 text-right">
 						<div class="dropdown d-inline">
-							<span class="align-middle">Olá, <i class="fa fa-user"></i> 
+							<span class="align-middle"><i class="fa fa-user"></i> 
 								<c:catch>
 									<strong id="cadastrante" data-toggle="tooltip" data-placement="top" title="${cadastrante.sigla}">																		
 											<c:out default="Convidado" value="${f:maiusculasEMinusculas(cadastrante.nomePessoa)}" />
@@ -422,7 +420,7 @@ ${meta}
 								</c:catch> 
 							</span>
 						</div>
-						<button class="btn btn-danger btn-sm ml-3 mt-1 align-bottom" type="button" onclick="delSession();javascript:location.href='/siga/public/app/logout'"><i class="fas fa-sign-out-alt"></i> Sair</button>
+						<button class="btn btn-danger btn-xs ml-3 mt-1 align-bottom" type="button" onclick="delSession();javascript:location.href='/siga/public/app/logout'"><i class="fas fa-sign-out-alt"></i> Sair</button>
 						<div class="pt-1">
 							<c:catch>
 								<c:choose>

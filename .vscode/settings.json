@@ -1,3 +1,8 @@
 {
-    "java.configuration.updateBuildConfiguration": "automatic"
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "java.debug.settings.hotCodeReplace": "auto",
+  "[Log]": {
+    "editor.wordWrap": "off" // "on", "bounded", "wordWrapColumn"
+  },
+  "maven.view": "hierarchical"
 }

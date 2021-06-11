@@ -189,7 +189,8 @@ public class ExProcessoAutenticacaoController extends ExController {
 			if (mob == null) {
 				throw new AplicacaoException("Documento não encontrado: " + sigla);
 			}
-			if (!(idDocPai == mob.getExMobilPai().getDoc().getIdDoc()
+			if (!((idDocPai == mob.getExMobilPai().getDoc().getIdDoc()
+						|| mob.deveExibirDespachoNoAcompanhamento())
 					&& mob.podeExibirNoAcompanhamento())) {
 				throw new AplicacaoException("Documento não permitido para visualização: " + sigla);
 			}
@@ -343,6 +344,7 @@ public class ExProcessoAutenticacaoController extends ExController {
 			result.include("msg", exDocumentoDTO.getMsg());
 			result.include("docVO", docVO);
 			result.include("mob", exDocumentoDTO.getMob());
+			result.include("isProtocoloFilho", (idMovJuntada != null ? true : false));
 
 		}
 	}

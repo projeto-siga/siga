@@ -263,5 +263,10 @@ public class Prop {
 		 * armazenado em session storage no browser do usuário.
 		 * */
 		provider.addPublicProperty("/siga.session.modelos.tempo.expiracao", "60");
+		/* Tela de Acompanhamento de Protocolo: Se true, mostra conteúdo de um despacho no acompanhamento de protocolo 
+		 * mesmo que seja no caso de protocolo gerado no documento filho. Deve estar disponibilizado pela função 
+		 * "Disponibilizar no acompanhamento de protocolo".
+		 * */
+		provider.addPublicProperty("/sigaex.protocolo.exibe.despacho", "false");
 	}
 }

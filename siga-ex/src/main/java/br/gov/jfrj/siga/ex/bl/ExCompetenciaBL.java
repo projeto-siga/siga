@@ -4943,6 +4943,11 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 					CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR, null, null, null, null, null, null);
 	}
 		
+	public boolean deveExibirDespachoNoAcompanhamentoDoProtocolo(final ExDocumento doc) {
+		return Prop.getBool("/sigaex.protocolo.exibe.despacho")
+				&& doc.getExFormaDocumento().getDescricao().contains("Despacho");
+	}
+		
 	public boolean podePublicarPortalTransparencia(final DpPessoa cadastrante,
 			final DpLotacao lotacao, final ExMobil mob) {
 		

@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.SortedSet;
 
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -37,6 +38,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.model.WfConfiguracao;
+import br.gov.jfrj.siga.wf.model.WfConfiguracaoCache;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 
 /**
@@ -61,19 +63,21 @@ public class WfConfiguracaoBL extends CpConfiguracaoBL {
 	 * Verifica se a configuração é uma configuração válida.
 	 */
 	@Override
-	public boolean atendeExigencias(CpConfiguracao cfgFiltro, Set<Integer> atributosDesconsiderados, CpConfiguracao cfg,
-			SortedSet<CpPerfil> perfis) {
-		if (!super.atendeExigencias(cfgFiltro, atributosDesconsiderados, cfg, perfis))
+	public boolean atendeExigencias(CpConfiguracao filtro, Set<Integer> atributosDesconsiderados,
+			CpConfiguracaoCache cfg, SortedSet<CpPerfil> perfis) {
+		if (!super.atendeExigencias(filtro, atributosDesconsiderados, cfg, perfis))
 			return false;
 
-		if (cfg instanceof WfConfiguracao && cfgFiltro instanceof WfConfiguracao) {
-			WfConfiguracao wfCfg = (WfConfiguracao) cfg;
-			WfConfiguracao wfCfgFiltro = (WfConfiguracao) cfgFiltro;
+		if (cfg instanceof WfConfiguracaoCache && filtro instanceof WfConfiguracao) {
+			WfConfiguracaoCache wfCfg = (WfConfiguracaoCache) cfg;
 
-			if (wfCfg.getDefinicaoDeProcedimento() != null && ((wfCfgFiltro.getDefinicaoDeProcedimento() != null
-					&& !wfCfg.getDefinicaoDeProcedimento().equivale(wfCfgFiltro.getDefinicaoDeProcedimento())
-					|| ((wfCfgFiltro.getDefinicaoDeProcedimento() == null)
-							&& !atributosDesconsiderados.contains(DEFINICAO_DE_PROCEDIMENTO)))))
+			WfConfiguracaoCache cfgFiltro = null;
+			if (filtro != null)
+				cfgFiltro = new WfConfiguracaoCache((WfConfiguracao) filtro);
+			else
+				cfgFiltro = new WfConfiguracaoCache();
+
+			if (desigual(wfCfg.definicaoDeProcedimento, cfgFiltro.definicaoDeProcedimento, atributosDesconsiderados, DEFINICAO_DE_PROCEDIMENTO))
 				return false;
 		}
 		return true;
@@ -98,17 +102,26 @@ public class WfConfiguracaoBL extends CpConfiguracaoBL {
 
 		cfgFiltro.setDefinicaoDeProcedimento(definicaoDeProcedimento);
 
-		CpConfiguracao cfg = (CpConfiguracao) buscaConfiguracao(cfgFiltro, new int[] { 0 }, null);
+		CpConfiguracaoCache cfg = buscaConfiguracao(cfgFiltro, new int[] { 0 }, null);
 
-		CpSituacaoConfiguracao situacao;
-		if (cfg != null)
-			situacao = cfg.getCpSituacaoConfiguracao();
-		else
-			situacao = cfgFiltro.getCpTipoConfiguracao().getSituacaoDefault();
+		long situacao;
 
-		if (situacao != null && situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_PODE)
+		if (cfg != null) {
+			situacao = cfg.cpSituacaoConfiguracao;
+		} else {
+			situacao = cfgFiltro.getCpTipoConfiguracao().getSituacaoDefault().getIdSitConfiguracao();
+		}
+
+		if (situacao != 0 && (situacao == CpSituacaoConfiguracao.SITUACAO_PODE
+				|| situacao == CpSituacaoConfiguracao.SITUACAO_DEFAULT
+				|| situacao == CpSituacaoConfiguracao.SITUACAO_OBRIGATORIO)) {
 			return true;
+		}
 		return false;
+	}
+	
+	public CpConfiguracaoCache instanciarCache(Object[] a) {
+		return new WfConfiguracaoCache(a);
 	}
 
 	/**

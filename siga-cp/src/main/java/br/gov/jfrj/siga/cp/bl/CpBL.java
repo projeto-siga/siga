@@ -56,6 +56,7 @@ import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.AbstractCpAcesso.CpTipoAcessoEnum;
 import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.cp.CpPerfil;
@@ -183,7 +184,9 @@ public class CpBL {
 			CpConfiguracao confFiltro = new CpConfiguracao();
 			confFiltro.setCpIdentidade(ident);
 			confFiltro.setCpTipoConfiguracao(tpConf);
-			confOld = comp.getConfiguracaoBL().buscaConfiguracao(confFiltro, new int[] { 0 }, null);
+			CpConfiguracaoCache confCacheOld = comp.getConfiguracaoBL().buscaConfiguracao(confFiltro, new int[] { 0 }, null);
+			if (confCacheOld != null) 
+				confOld = dao().consultar(confCacheOld.idConfiguracao, CpConfiguracao.class, false);
 			if (confOld.getCpIdentidade() == null)
 				confOld = null;
 		} catch (Exception e) {
@@ -220,7 +223,9 @@ public class CpBL {
 				CpConfiguracao confFiltro = new CpConfiguracao();
 				confFiltro.setDpPessoa(pes);
 				confFiltro.setCpTipoConfiguracao(tpConf);
-				confOld = comp.getConfiguracaoBL().buscaConfiguracao(confFiltro, new int[] { 0 }, null);
+				CpConfiguracaoCache confCacheOld = comp.getConfiguracaoBL().buscaConfiguracao(confFiltro, new int[] { 0 }, null);
+				if (confCacheOld != null) 
+					confOld = dao().consultar(confCacheOld.idConfiguracao, CpConfiguracao.class, false);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -263,7 +268,9 @@ public class CpBL {
 			confFiltro.setOrgaoUsuario(orgao);
 			confFiltro.setCpServico(servico);
 			confFiltro.setCpTipoConfiguracao(tpConf);
-			confOld = comp.getConfiguracaoBL().buscaConfiguracao(confFiltro, new int[] { 0 }, null);
+			CpConfiguracaoCache confCacheOld = comp.getConfiguracaoBL().buscaConfiguracao(confFiltro, new int[] { 0 }, null);
+			if (confCacheOld != null) 
+				confOld = dao().consultar(confCacheOld.idConfiguracao, CpConfiguracao.class, false);
 			if (confOld != null && !confOld.isEspecifica(confFiltro))
 				confOld = null;
 			if (confOld != null) 

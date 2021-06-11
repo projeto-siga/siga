@@ -79,6 +79,10 @@ public class ConfiguracaoController extends SigaController {
 			config.setOrgaoUsuario(null);
 
 		List<CpConfiguracao> listConfig = Cp.getInstance().getConf().buscarConfiguracoesVigentes(config);
+
+		for (CpConfiguracao cfg : listConfig) 
+			cfg.atualizarObjeto();
+
 		Collections.sort(listConfig, new CpConfiguracaoComparator());
 
 		ITipoDeConfiguracao tpconf = CpTipoDeConfiguracao.getById(idTpConfiguracao);

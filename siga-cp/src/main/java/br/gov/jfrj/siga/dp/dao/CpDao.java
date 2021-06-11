@@ -1914,7 +1914,13 @@ public class CpDao extends ModeloDao {
 
 		return query.getResultList();
 	}
+	
+	public List<Object[]> consultarCacheDeConfiguracoes() {
+		Query query = em().createNamedQuery("consultarCacheDeConfiguracoes");
 
+		return query.getResultList();
+	}
+	
 	public List<CpConfiguracao> porLotacaoPessoaServicoTipo(final CpConfiguracao exemplo) {
 		Query query = em().createNamedQuery("consultarCpConfiguracoesPorLotacaoPessoaServicoTipo");
 		query.setParameter("idPessoa", exemplo.getDpPessoa().getIdPessoa());
@@ -2538,6 +2544,8 @@ public class CpDao extends ModeloDao {
 	}
 
 	public <T extends Historico> T obterAtual(final T u) {
+		if (u.getHisDtFim() == null)
+			return u;
 //		CriteriaBuilder builder = em().getCriteriaBuilder();
 //		
 //		CriteriaQuery query = builder.createQuery(thisAntigo.getClass());
@@ -2555,6 +2563,7 @@ public class CpDao extends ModeloDao {
 //		thisAntigo = (HistoricoSuporte) typedQuery.getSingleResult();
 		
 		String clazz = u.getClass().getSimpleName();
+		clazz = clazz.split("\\$HibernateProxy\\$")[0];
 		String sql = "from " + clazz + " u where u.hisDtIni = "
 			+ "		(select max(p.hisDtIni) from " + clazz + " p where p.hisIdIni = :idIni)"
 			+ "		 and u.hisIdIni = :idIni";		

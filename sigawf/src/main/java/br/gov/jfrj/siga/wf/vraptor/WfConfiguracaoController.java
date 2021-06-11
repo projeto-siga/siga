@@ -17,13 +17,14 @@ import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.vraptor.CpConfiguracaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 import br.gov.jfrj.siga.vraptor.Transacional;
 import br.gov.jfrj.siga.wf.bl.Wf;
-import br.gov.jfrj.siga.wf.bl.WfConfiguracaoComparator;
+import br.gov.jfrj.siga.wf.bl.WfConfiguracaoCacheComparator;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.model.WfConfiguracao;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
@@ -84,7 +85,10 @@ public class WfConfiguracaoController extends WfController {
 
 		List<WfConfiguracao> listConfig = Wf.getInstance().getConf().buscarConfiguracoesVigentes(config);
 
-		Collections.sort(listConfig, new WfConfiguracaoComparator());
+		for (CpConfiguracao cfg : listConfig) 
+			cfg.atualizarObjeto();
+
+		Collections.sort(listConfig, new WfConfiguracaoCacheComparator());
 
 		WfTipoDeConfiguracao tpconf = WfTipoDeConfiguracao.getById(idTpConfiguracao);
 		CpConfiguracaoHelper.incluirAtributosDeListagem(result, tpconf, (List<CpConfiguracao>) (List) listConfig);

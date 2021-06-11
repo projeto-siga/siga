@@ -85,9 +85,22 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 				+ "CpConfiguracao cpcfg where (cpcfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)"
 				+ "and hisDtFim is null"),
 		@NamedQuery(name = "consultarCpConfiguracoesAtivas", query = " from "
-				+ "CpConfiguracao cpcfg where hisDtFim is null") })
+				+ "CpConfiguracao cpcfg where hisDtFim is null"),
+		@NamedQuery(name = "consultarCacheDeConfiguracoes", query = AbstractCpConfiguracao.CFG_CACHE_SELECT
+				+ AbstractCpConfiguracao.CFG_CACHE_FROM + AbstractCpConfiguracao.CFG_CACHE_WHERE)})
 public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 		implements Serializable, CpConvertableEntity {
+
+	public static final String CFG_CACHE_SELECT = "select c.idConfiguracao, c.nmEmail, c.dscFormula, c.hisDtIni, c.hisDtFim, c.dtIniVigConfiguracao, c.dtFimVigConfiguracao, ci.idConfiguracao, " 
+					+ "c.orgaoUsuario.idOrgaoUsu, c.lotacao.idLotacao, c.complexo.idComplexo, c.cargo.idCargo, c.funcaoConfianca.idFuncao, c.dpPessoa.idPessoa, c.cpTipoConfiguracao.idTpConfiguracao, "
+					+ "c.cpServico.idServico, c.cpIdentidade.idIdentidade, c.cpTipoLotacao.idTpLotacao, c.orgaoObjeto.idOrgaoUsu, c.lotacaoObjeto.idLotacao, "
+					+ "c.complexoObjeto.idComplexo, c.cargoObjeto.idCargo, c.funcaoConfiancaObjeto.idFuncao, c.pessoaObjeto.idPessoa, "
+	//				+ "c.cpGrupo.idGrupo, c.cpSituacaoConfiguracao.idSitConfiguracao "
+					+ "g, s ";
+
+	public static final String CFG_CACHE_FROM = " from CpConfiguracao c left join c.configuracaoInicial ci left join c.cpGrupo g left join c.cpSituacaoConfiguracao s ";
+
+	public static final String CFG_CACHE_WHERE = " where c.hisDtFim is null";
 
 	@Id
 	@SequenceGenerator(name = "CP_CONFIGURACAO_SEQ", sequenceName = "CORPORATIVO.CP_CONFIGURACAO_SEQ")

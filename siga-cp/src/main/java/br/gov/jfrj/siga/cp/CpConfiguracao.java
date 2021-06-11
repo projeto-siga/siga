@@ -31,16 +31,16 @@ import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @SuppressWarnings("serial")
@@ -48,12 +48,12 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @Table(name = "corporativo.cp_configuracao")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class CpConfiguracao extends AbstractCpConfiguracao implements CpConvertableEntity {
-	
+
 	public static final ActiveRecord<CpConfiguracao> AR = new ActiveRecord<>(CpConfiguracao.class);
 
 	public CpConfiguracao() {
 	}
-	
+
 	@Transient
 	private boolean buscarPorPerfis = false;
 
@@ -73,8 +73,7 @@ public class CpConfiguracao extends AbstractCpConfiguracao implements CpConverta
 		if (filtro.getOrgaoUsuario() != null)
 			return getOrgaoUsuario() != null;
 		if (filtro.getCpGrupo() != null)
-			return getCpGrupo() != null
-					&& getCpGrupo().getId().equals(filtro.getCpGrupo().getId());
+			return getCpGrupo() != null && getCpGrupo().getId().equals(filtro.getCpGrupo().getId());
 		return false;
 	}
 
@@ -152,13 +151,12 @@ public class CpConfiguracao extends AbstractCpConfiguracao implements CpConverta
 	}
 
 	/**
-	 * Retorna a data de fim de vigência no formato dd/mm/aa HH:MM:SS, por
-	 * exemplo, 01/02/10 17:52:23.
+	 * Retorna a data de fim de vigência no formato dd/mm/aa HH:MM:SS, por exemplo,
+	 * 01/02/10 17:52:23.
 	 */
 	public String getHisDtFimDDMMYY_HHMMSS() {
 		if (getHisDtFim() != null) {
-			final SimpleDateFormat df = new SimpleDateFormat(
-					"dd/MM/yy HH:mm:ss");
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
 			return df.format(getHisDtFim());
 		}
 		return "";
@@ -171,7 +169,7 @@ public class CpConfiguracao extends AbstractCpConfiguracao implements CpConverta
 		}
 		return "";
 	}
-	
+
 	/**
 	 * Retorna a configuração atual no histórico desta configuraçõo
 	 * 
@@ -186,14 +184,32 @@ public class CpConfiguracao extends AbstractCpConfiguracao implements CpConverta
 
 		return this;
 	}
-	
+
 	@Override
 	public String toString() {
-		return  "id: " + getId()
-				+ " ,pessoa: " + (getDpPessoa()!=null?getDpPessoa().getNomePessoa():"")
-				+ " ,lotacao: " + (getLotacao()!=null?getLotacao().getSigla():"")
-				+ " ,situação: " + (getCpSituacaoConfiguracao()!=null?getCpSituacaoConfiguracao().getDscSitConfiguracao():"")
+		return "id: " + getId() + " ,pessoa: " + (getDpPessoa() != null ? getDpPessoa().getNomePessoa() : "")
+				+ " ,lotacao: " + (getLotacao() != null ? getLotacao().getSigla() : "") + " ,situação: "
+				+ (getCpSituacaoConfiguracao() != null ? getCpSituacaoConfiguracao().getDscSitConfiguracao() : "")
 				+ " ,tipo conf: " + (getCpTipoConfiguracao().getDscTpConfiguracao());
+	}
+
+	public void atualizarObjeto() {
+		setLotacao(atual(getLotacao()));
+		setCargo(atual(getCargo()));
+		setFuncaoConfianca(atual(getFuncaoConfianca()));
+		setDpPessoa(atual(getDpPessoa()));
+		setCpIdentidade(atual(getCpIdentidade()));
+		setLotacaoObjeto(atual(getLotacaoObjeto()));
+		setCargoObjeto(atual(getCargoObjeto()));
+		setFuncaoConfiancaObjeto(atual(getFuncaoConfiancaObjeto()));
+		setPessoaObjeto(atual(getPessoaObjeto()));
+		setCpGrupo(atual(getCpGrupo()));
+	}
+
+	public <T extends Historico> T atual(final T antigo) {
+		if (antigo == null)
+			return null;
+		return CpDao.getInstance().obterAtual(antigo);
 	}
 
 }

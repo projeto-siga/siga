@@ -25,6 +25,7 @@ import java.util.TreeSet;
 import org.hibernate.proxy.HibernateProxy;
 
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
@@ -78,13 +79,14 @@ public class ConfiguracaoAcesso implements Comparable {
 				CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO,
 				CpTipoConfiguracao.class, false);
 		cfgFiltro.setCpTipoConfiguracao(tipo);
-		CpConfiguracao cfg = Cp.getInstance().getConf().buscaConfiguracao(
+		CpConfiguracaoCache cache = Cp.getInstance().getConf().buscaConfiguracao(
 				cfgFiltro, new int[0], dtEvn);
 		ConfiguracaoAcesso ac = new ConfiguracaoAcesso();
-		if (cfg == null) {
+		if (cache == null) {
 			ac.setSituacao(tipo.getSituacaoDefault());
 			ac.setDefault(true);
 		} else {
+			CpConfiguracao cfg = CpDao.getInstance().consultar(cache.idConfiguracao, CpConfiguracao.class, false);
 			ac.setSituacao(cfg.getCpSituacaoConfiguracao());
 			ac.setDefault(!cfg.isEspecifica(cfgFiltro));
 			if (cfg.getCpGrupo() != null) {

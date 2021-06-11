@@ -39,6 +39,7 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -203,8 +204,9 @@ public class ServicoController 	extends SigaController {
 		
 		CpConfiguracao cpConf = null;
 		try {
-			cpConf = Cp.getInstance().getConf().buscaConfiguracao(t_cfgConfigExemplo,
-					new int[] { 0 }, null);
+			CpConfiguracaoCache cache = Cp.getInstance().getConf().buscaConfiguracao(
+					t_cfgConfigExemplo, new int[0], null);
+			cpConf = CpDao.getInstance().consultar(cache.idConfiguracao, CpConfiguracao.class, false);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -27,13 +27,18 @@ import javax.persistence.NamedQuery;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.cp.AbstractCpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 
 @Entity
 @Table(name = "sigawf.wf_configuracao")
 @PrimaryKeyJoinColumn(name = "CONF_ID")
 @NamedQueries({
-		@NamedQuery(name = "consultarWfConfiguracoes", query = "from WfConfiguracao cfg where (:idTpConfiguracao is null or cfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)") })
+		@NamedQuery(name = "consultarWfConfiguracoes", query = "from WfConfiguracao cfg where (:idTpConfiguracao is null or cfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)"),
+		@NamedQuery(name = "consultarCacheDeConfiguracoesWF", query = AbstractCpConfiguracao.CFG_CACHE_SELECT
+				+ ", wf.definicaoDeProcedimento.id " + AbstractCpConfiguracao.CFG_CACHE_FROM
+				+ " left join WfConfiguracao wf on c.idConfiguracao = wf.idConfiguracao "
+				+ AbstractCpConfiguracao.CFG_CACHE_WHERE) })
 public class WfConfiguracao extends CpConfiguracao {
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -46,5 +51,11 @@ public class WfConfiguracao extends CpConfiguracao {
 
 	public void setDefinicaoDeProcedimento(WfDefinicaoDeProcedimento definicaoDeProcedimento) {
 		this.definicaoDeProcedimento = definicaoDeProcedimento;
+	}
+
+	@Override
+	public void atualizarObjeto() {
+		super.atualizarObjeto();
+		setDefinicaoDeProcedimento(atual(getDefinicaoDeProcedimento()));
 	}
 }

@@ -48,8 +48,8 @@ public class DocumentosSiglaHtmlGet implements IDocumentosSiglaHtmlGet {
 			ExProtocolo protocolo = ExDao.getInstance().obterProtocoloPorCodigo(n);
 			ExDocumento docPai = protocolo.getExDocumento();
 			if (!((docPai.getIdDoc() == mob.getExMobilPai().getDoc().getIdDoc() 
-						|| mob.deveExibirDespachoNoAcompanhamento())
-					&& mob.podeExibirNoAcompanhamento())) {
+						|| mob.getDoc().isDescricaoEspecieDespacho())
+					&& mob.isExibirNoAcompanhamento())) {
 				throw new SwaggerException("Documento não permitido para visualização: " + req.sigla, 403, null, req,
 						resp, null);
 			}

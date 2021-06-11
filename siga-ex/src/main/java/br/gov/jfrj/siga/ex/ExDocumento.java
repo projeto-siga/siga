@@ -2951,4 +2951,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return l;
 	}
 
+	public boolean isDescricaoEspecieDespacho() {
+		return this.getExFormaDocumento()
+				.getDescricao().contains("Despacho");
+	}
+	
 }

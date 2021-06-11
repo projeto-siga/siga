@@ -2302,10 +2302,9 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 
 	/**
 	 * Verifica se exibe o conteudo do documento no histórico do acompanhamento do protocolo
-	 * 
 	 * @return
 	 */
-	public boolean podeExibirNoAcompanhamento() {
+	public boolean isExibirNoAcompanhamento() {
 		return podeExibirNoAcompanhamento(null, null);
 	}
 	
@@ -2316,16 +2315,6 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 			return Ex.getInstance().getComp()
 					.podeDisponibilizarNoAcompanhamentoDoProtocolo(pessoa, lotacao, this.getDoc());			
 		return false;
-	}
-	
-	/**
-	 * Verifica se sempre deve exibir o conteudo do despacho no histórico do acompanhamento do protocolo,
-	 * independente de ser um acompanhamento de protocolo gerado no documento filho de um processo
-	 * @return
-	 */
-	public boolean deveExibirDespachoNoAcompanhamento() {
-		return Ex.getInstance().getComp()
-				.deveExibirDespachoNoAcompanhamentoDoProtocolo(this.getDoc());
 	}
 	
 	public PessoaLotacaoParser getAtendente() {

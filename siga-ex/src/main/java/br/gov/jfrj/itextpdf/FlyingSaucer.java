@@ -26,13 +26,10 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
+import org.jsoup.Jsoup;
+import org.jsoup.helper.W3CDom;
 import org.w3c.tidy.Configuration;
 import org.w3c.tidy.Tidy;
 import org.xml.sax.EntityResolver;
@@ -130,12 +127,15 @@ public class FlyingSaucer implements ConversorHtml {
 
 		logger.fine(sHtml);
 
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		factory.setNamespaceAware(true);
-		DocumentBuilder docBuilder = factory.newDocumentBuilder();
-		docBuilder.setEntityResolver(new DummyEntityResolver());
-		Document dom = docBuilder.parse(new ByteArrayInputStream(sHtml.getBytes(StandardCharsets.UTF_8)));
-
+//		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+//		factory.setNamespaceAware(true);
+//		DocumentBuilder docBuilder = factory.newDocumentBuilder();
+//		docBuilder.setEntityResolver(new DummyEntityResolver());
+//		Document dom = docBuilder.parse(new ByteArrayInputStream(sHtml.getBytes(StandardCharsets.UTF_8)));
+		
+		org.jsoup.nodes.Document jsoupDoc = Jsoup.parse(sHtml);
+		org.w3c.dom.Document dom = new W3CDom().fromJsoup(jsoupDoc);
+		
 		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
 			logger.fine("comecei a gerar o pdf");
 			PdfRendererBuilder builder = new PdfRendererBuilder();

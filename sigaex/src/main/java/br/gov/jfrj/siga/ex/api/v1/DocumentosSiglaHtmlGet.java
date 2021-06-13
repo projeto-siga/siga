@@ -47,13 +47,15 @@ public class DocumentosSiglaHtmlGet implements IDocumentosSiglaHtmlGet {
 			String n = verifyJwtToken(jwt).get("n").toString();
 			ExProtocolo protocolo = ExDao.getInstance().obterProtocoloPorCodigo(n);
 			ExDocumento docPai = protocolo.getExDocumento();
-			if (!(docPai.getIdDoc() == mob.getExMobilPai().getDoc().getIdDoc() && mob.podeExibirNoAcompanhamento())) {
+			if (!((docPai.getIdDoc() == mob.getExMobilPai().getDoc().getIdDoc() 
+						|| mob.getDoc().isDescricaoEspecieDespacho())
+					&& mob.isExibirNoAcompanhamento())) {
 				throw new SwaggerException("Documento não permitido para visualização: " + req.sigla, 403, null, req,
 						resp, null);
 			}
 		} else {
 			ctx.buscarEValidarUsuarioLogado();
-			ctx.assertAcesso("");
+			ctx.assertAcesso(mob, ctx.getCadastrante(), ctx.getCadastrante().getLotacao());
 		}
 		ExDocumento doc = mob.doc();
 

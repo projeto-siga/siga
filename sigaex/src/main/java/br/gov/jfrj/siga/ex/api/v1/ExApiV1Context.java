@@ -2,8 +2,6 @@ package br.gov.jfrj.siga.ex.api.v1;
 
 import static java.util.Objects.isNull;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -12,113 +10,35 @@ import javax.persistence.EntityManager;
 
 import com.crivano.swaggerservlet.ISwaggerRequest;
 import com.crivano.swaggerservlet.ISwaggerResponse;
-import com.crivano.swaggerservlet.SwaggerAuthorizationException;
 import com.crivano.swaggerservlet.SwaggerException;
-import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.CurrentRequest;
-import br.gov.jfrj.siga.base.RequestInfo;
-import br.gov.jfrj.siga.base.log.RequestLoggerFilter;
+import br.gov.jfrj.siga.context.ApiContextSupport;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.hibernate.ExStarter;
-import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-public class ApiContext implements Closeable {
-	EntityManager em;
-	boolean transacional;
-	long inicio = System.currentTimeMillis();
+public class ExApiV1Context extends ApiContextSupport {
 	private static final String DOC_MÓDULO_DE_DOCUMENTOS = "DOC:Módulo de Documentos;";
 
-	public ApiContext(boolean transacional, boolean validaUser) throws SwaggerAuthorizationException {
-		if (validaUser) {
-			buscarEValidarUsuarioLogado();
-		}
-
-		try {
-			CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(),
-					SwaggerServlet.getHttpServletResponse()));
-		} catch (NullPointerException ex) {
-			// Engolindo exceção para garantir que está classe pode ser utilizada mesmo fora
-			// de uma chamada à API REST
-			CurrentRequest.set(null);
-		}
-
-		this.transacional = transacional;
-		em = ExStarter.emf.createEntityManager();
-		ContextoPersistencia.setEntityManager(em);
-
-		ModeloDao.freeInstance();
-		ExDao.getInstance();
-		try {
-			Ex.getInstance().getConf().limparCacheSeNecessario();
-		} catch (Exception e1) {
-			throw new RuntimeException("Não foi possível atualizar o cache de configurações", e1);
-		}
-		if (this.transacional)
-			em.getTransaction().begin();
+	public void atualizarCacheDeConfiguracoes() throws Exception {
+		Ex.getInstance().getConf().limparCacheSeNecessario();
 	}
 
-	public void rollback(Exception e) {
-		if (em.getTransaction().isActive())
-			em.getTransaction().rollback();
-		if (!RequestLoggerFilter.isAplicacaoException(e)) {
-			RequestLoggerFilter.logException(null, inicio, e);
-		}
-		ContextoPersistencia.removeAll();
+	public CpDao inicializarDao() {
+		return ExDao.getInstance();
 	}
 
-	@Override
-	public void close() throws IOException {
-		try {
-			if (this.transacional)
-				em.getTransaction().commit();
-		} catch (Exception e) {
-			if (em.getTransaction().isActive())
-				em.getTransaction().rollback();
-			throw new RuntimeException(e);
-		} finally {
-			em.close();
-			ContextoPersistencia.setEntityManager(null);
-			ContextoPersistencia.removeAll();
-		}
-	}
-
-	/**
-	 * Retorna uma instância de {@link SigaObjects} a partir do Request do
-	 * {@link SwaggerServlet}.
-	 * 
-	 * @throws Exception Se houver algo de errado.
-	 */
-	private SigaObjects getSigaObjects() throws Exception {
-		SigaObjects sigaObjects = new SigaObjects(SwaggerServlet.getHttpServletRequest());
-		return sigaObjects;
-	}
-
-	/**
-	 * Verifica a presença de um usuário logado e o retorna.
-	 * 
-	 * @return O login do Usuário na sessão
-	 * @throws SwaggerAuthorizationException Se não achar nenhum usuário logado na
-	 *                                       sessão.
-	 * @see ContextoPersistencia#getUserPrincipal()
-	 */
-	static String buscarEValidarUsuarioLogado() throws SwaggerAuthorizationException {
-		String userPrincipal = ContextoPersistencia.getUserPrincipal();
-		if (isNull(userPrincipal)) {
-			throw new SwaggerAuthorizationException("Usuário não está logado");
-		}
-
-		return userPrincipal;
+	public EntityManager criarEntityManager() {
+		return ExStarter.emf.createEntityManager();
 	}
 
 	/**
@@ -171,27 +91,11 @@ public class ApiContext implements Closeable {
 	public static ExMovimentacao getMov(ExMobil mob, String id) {
 		Long movId = Long.parseLong(id);
 		ExMovimentacao mov = ExDao.getInstance().consultar(movId, ExMovimentacao.class, false);
-		if (!mov.getExMobil().equals(mob)) 
+		if (!mov.getExMobil().equals(mob))
 			throw new AplicacaoException("Movimentação não se refere ao mobil informado");
 		return mov;
 	}
 
-	public DpPessoa getCadastrante() throws Exception {
-		return getSigaObjects().getCadastrante();
-	}
-
-	public DpLotacao getLotaCadastrante() throws Exception {
-		return getSigaObjects().getCadastrante().getLotacao();
-	}
-
-	public DpPessoa getTitular() throws Exception {
-		return getSigaObjects().getTitular();
-	}
-
-	public DpLotacao getLotaTitular() throws Exception {
-		return getSigaObjects().getLotaTitular();
-	}
-	
 	/**
 	 * Retorna um {@link ExMobil Mobil} relacionado a uma certa
 	 * {@link ExMobil#getSigla() sigla} contanto que esse exista e que o usuário
@@ -217,8 +121,7 @@ public class ApiContext implements Closeable {
 		ExMobil mob = ExDao.getInstance().consultarPorSigla(filter);
 
 		if (isNull(mob)) {
-			throw new SwaggerException("Número do " + descricaoDocumento + " não existe", 404, null, req, resp,
-					null);
+			throw new SwaggerException("Número do " + descricaoDocumento + " não existe", 404, null, req, resp, null);
 		}
 		if (!Ex.getInstance().getComp().podeAcessarDocumento(getTitular(), getLotaTitular(), mob))
 			throw new SwaggerException("Acesso ao " + descricaoDocumento + " " + mob.getSigla()
@@ -244,8 +147,7 @@ public class ApiContext implements Closeable {
 	 * @see #buscarEValidarMobil(String, SigaObjects, ISwaggerRequest,
 	 *      ISwaggerResponse, String)
 	 */
-	ExMobil buscarEValidarMobil(final String sigla, ISwaggerRequest req, ISwaggerResponse resp)
-			throws Exception {
+	ExMobil buscarEValidarMobil(final String sigla, ISwaggerRequest req, ISwaggerResponse resp) throws Exception {
 		return buscarEValidarMobil(sigla, req, resp, "Documento");
 	}
 

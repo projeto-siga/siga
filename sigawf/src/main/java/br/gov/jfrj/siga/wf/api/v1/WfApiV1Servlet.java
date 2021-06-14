@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -16,16 +15,13 @@ import java.util.concurrent.Future;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 
-import com.crivano.swaggerservlet.SwaggerContext;
 import com.crivano.swaggerservlet.SwaggerServlet;
 import com.crivano.swaggerservlet.SwaggerUtils;
 import com.crivano.swaggerservlet.dependency.TestableDependency;
 
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.Prop.IPropertyProvider;
-import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 
@@ -104,11 +100,9 @@ public class WfApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 
 			@Override
 			public boolean test() throws Exception {
-				try {
+				try (WfApiV1Context ctx = new WfApiV1Context()) {
+					ctx.init(null);
 					return WfDao.getInstance().dt() != null;
-				} catch (Exception e) {
-					e.printStackTrace(System.out);
-					throw e;
 				}
 			}
 
@@ -181,34 +175,6 @@ public class WfApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 
 	public static <T> Future<T> submitToExecutor(Callable<T> task) {
 		return executor.submit(task);
-	}
-
-	@Override
-	public void invoke(SwaggerContext context) throws Exception {
-		try {
-			if (!context.getAction().getClass().isAnnotationPresent(AcessoPublico.class)) {
-				try {
-					String token = AuthJwtFormFilter.extrairAuthorization(context.getRequest());
-					Map<String, Object> decodedToken = AuthJwtFormFilter.validarToken(token);
-					final long now = System.currentTimeMillis() / 1000L;
-					if ((Integer) decodedToken.get("exp") < now + AuthJwtFormFilter.TIME_TO_RENEW_IN_S) {
-						// Seria bom incluir o attributo HttpOnly
-						String tokenNew = AuthJwtFormFilter.renovarToken(token);
-						@SuppressWarnings("unused")
-						Map<String, Object> decodedNewToken = AuthJwtFormFilter.validarToken(token);
-						Cookie cookie = AuthJwtFormFilter.buildCookie(tokenNew);
-						context.getResponse().addCookie(cookie);
-					}
-					ContextoPersistencia.setUserPrincipal((String) decodedToken.get("sub"));
-				} catch (Exception e) {
-					if (!context.getAction().getClass().isAnnotationPresent(AcessoPublicoEPrivado.class))
-						throw e;
-				}
-			}
-			super.invoke(context);
-		} finally {
-			ContextoPersistencia.removeUserPrincipal();
-		}
 	}
 
 	@Override

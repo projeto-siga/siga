@@ -9,35 +9,24 @@ import com.crivano.swaggerservlet.SwaggerException;
 
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.ILocalidadesGet;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Localidade;
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.LocalidadesGetRequest;
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.LocalidadesGetResponse;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Uf;
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.CpLocalidade;
 import br.gov.jfrj.siga.dp.CpUF;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
 public class LocalidadesGet implements ILocalidadesGet {
 	@Override
-	public void run(LocalidadesGetRequest req, LocalidadesGetResponse resp) throws Exception {
-		try (ApiContext ctx = new ApiContext(false, true)) {
-			if (StringUtils.isEmpty(req.idUf) && StringUtils.isEmpty(req.texto))
-				throw new SwaggerException(
-						"Não foi informado nenhum parâmetro.", 404, null, req, resp, null);
+	public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception {
+		if (StringUtils.isEmpty(req.idUf) && StringUtils.isEmpty(req.texto))
+			throw new SwaggerException("Não foi informado nenhum parâmetro.", 404, null, req, resp, null);
 
-			resp.list = pesquisarPorUfOuTexto(req, resp);
-			if (resp.list == null || resp.list.isEmpty()) 
-				throw new SwaggerException(
-						"Nenhum localidade foi encontrada para os parâmetros informados.", 404, null, req, resp, null);
-			
-		} catch (AplicacaoException e) {
-			throw e;
-		} catch (Exception e) {
-			throw e;
-		}
+		resp.list = pesquisarPorUfOuTexto(req, resp);
+		if (resp.list == null || resp.list.isEmpty())
+			throw new SwaggerException("Nenhum localidade foi encontrada para os parâmetros informados.", 404, null,
+					req, resp, null);
 	}
 
-	private List<Localidade> pesquisarPorUfOuTexto(LocalidadesGetRequest req, LocalidadesGetResponse resp) {
+	private List<Localidade> pesquisarPorUfOuTexto(Request req, Response resp) {
 		CpUF uf = new CpUF();
 		List<CpLocalidade> l;
 		if (StringUtils.isEmpty(req.idUf)) {
@@ -46,16 +35,11 @@ public class LocalidadesGet implements ILocalidadesGet {
 			uf.setIdUF(Long.valueOf(req.idUf));
 			l = CpDao.getInstance().consultarLocalidadesPorUF(uf);
 		}
-		List<Localidade> listFull = l.stream()
-				.map(this::localidadeToResultadoPesquisa)
-				.collect(Collectors.toList());
-		if (StringUtils.isEmpty(req.texto)) 
+		List<Localidade> listFull = l.stream().map(this::localidadeToResultadoPesquisa).collect(Collectors.toList());
+		if (StringUtils.isEmpty(req.texto))
 			return listFull;
-		
-		return listFull.stream()
-					.filter(loc -> loc.nome
-							.contains(req.texto))
-					.collect(Collectors.toList());
+
+		return listFull.stream().filter(loc -> loc.nome.contains(req.texto)).collect(Collectors.toList());
 	}
 
 	@Override

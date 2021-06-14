@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.api.v1;
+package br.gov.jfrj.siga.context;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

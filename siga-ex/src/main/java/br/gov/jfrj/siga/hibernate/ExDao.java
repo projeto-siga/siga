@@ -1929,7 +1929,7 @@ public class ExDao extends CpDao {
 						  + " AND ((marcador.GRUPO_MARCADOR <> " + String.valueOf(CpMarcadorGrupoEnum.EM_ELABORACAO.getId()) 
 						  	+ " AND marca2.ID_MARCADOR = " + String.valueOf(CpMarcadorEnum.EM_ELABORACAO.getId()) + ") "
 						  	+ ( "".equals(queryMarcasAIgnorarFinal) ? ")" : 
-						  		"OR ( marca2.id_marcador in (" + queryMarcasAIgnorarFinal + ")))" )
+						  		"OR (marca.id_marcador <> " + String.valueOf(CpMarcadorEnum.EM_TRANSITO_ELETRONICO.getId()) + " and  marca2.id_marcador in (" + queryMarcasAIgnorarFinal + ")))" )
 //  						  + (!grupoItem.grupoNome.equals(Mesa2.GrupoDeMarcadorEnum.EM_ELABORACAO.getNome())?
 //  								  " OR marca2.id_marcador = " + String.valueOf(MarcadorEnum.EM_ELABORACAO.getId()) + ")" : ")")
 						 + " WHERE (marca.dt_ini_marca IS NULL OR marca.dt_ini_marca < :dbDatetime)"

@@ -403,7 +403,7 @@ public class ExMovimentacaoController extends ExController {
 		
 		String fileExtension = arquivo.getFileName().substring(arquivo.getFileName().lastIndexOf("."));
 		
-		if (fileExtension.equals(".bat") || fileExtension.equals(".exe") || fileExtension.equals(".sh") || fileExtension.equals(".dll")) {
+		if (fileExtension.equals(".bat") || fileExtension.equals(".exe") || fileExtension.equals(".sh") || fileExtension.equals(".dll") || fileExtension.equals(".pdf") ) {
 			throw new AplicacaoException(
 					"Extensão " + fileExtension + " inválida para inclusão do arquivo.");
 		}

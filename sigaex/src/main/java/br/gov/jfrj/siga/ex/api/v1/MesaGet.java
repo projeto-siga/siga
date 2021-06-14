@@ -11,9 +11,6 @@ import java.util.Map;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
-import com.crivano.swaggerservlet.SwaggerException;
-
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
@@ -25,13 +22,13 @@ import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IMesaGet;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.Marca;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.MesaGetRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.MesaGetResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.MesaItem;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.vraptor.Transacional;
 
+@Transacional
 public class MesaGet implements IMesaGet {
 
 	private static class MeM {
@@ -41,58 +38,47 @@ public class MesaGet implements IMesaGet {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void run(MesaGetRequest req, MesaGetResponse resp) throws Exception {
-		try (ApiContext ctx = new ApiContext(true, true)) {
-			ctx.assertAcesso("");
-	
-			ApiContext.buscarEValidarUsuarioLogado();
-			
-			DpPessoa pes = null;
-			DpLotacao lota = null;
-			DpPessoa cadastrante = ctx.getCadastrante();
-			DpLotacao lotaCadastrante = cadastrante.getLotacao();
-			if (req.filtroPessoaLotacao != null) {
-				switch(req.filtroPessoaLotacao) {
-					case "Pessoa":
-						pes = cadastrante;
-						break;
-					case "Lotacao":
-						lota = lotaCadastrante;
-						break;
-					default:
-						pes = cadastrante;
-						lota = lotaCadastrante;
-				}
-			} else {
+	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
+		DpPessoa pes = null;
+		DpLotacao lota = null;
+		DpPessoa cadastrante = ctx.getCadastrante();
+		DpLotacao lotaCadastrante = cadastrante.getLotacao();
+		if (req.filtroPessoaLotacao != null) {
+			switch (req.filtroPessoaLotacao) {
+			case "Pessoa":
+				pes = cadastrante;
+				break;
+			case "Lotacao":
+				lota = lotaCadastrante;
+				break;
+			default:
 				pes = cadastrante;
 				lota = lotaCadastrante;
 			}
-			
-			List<Object[]> l = ExDao.getInstance().listarDocumentosPorPessoaOuLotacao(pes, lota);
-
-			HashMap<ExMobil, List<MeM>> map = new HashMap<>();
-
-			for (Object[] reference : l) {
-				ExMarca marca = (ExMarca) reference[0];
-				CpMarcador marcador = (CpMarcador) reference[1];
-				ExMobil mobil = (ExMobil) reference[2];
-
-				if (!map.containsKey(mobil))
-					map.put(mobil, new ArrayList<MeM>());
-				MeM mm = new MeM();
-				mm.marca = marca;
-				mm.marcador = marcador;
-				map.get(mobil).add(mm);
-			}
-
-			resp.list = listarReferencias(TipoDePainelEnum.UNIDADE, map, cadastrante, lotaCadastrante, 
-					ExDao.getInstance().consultarDataEHoraDoServidor());
-		} catch (AplicacaoException | SwaggerException e) {
-			throw e;
-		} catch (Exception e) {
-			e.printStackTrace(System.out);
-			throw e;
+		} else {
+			pes = cadastrante;
+			lota = lotaCadastrante;
 		}
+
+		List<Object[]> l = ExDao.getInstance().listarDocumentosPorPessoaOuLotacao(pes, lota);
+
+		HashMap<ExMobil, List<MeM>> map = new HashMap<>();
+
+		for (Object[] reference : l) {
+			ExMarca marca = (ExMarca) reference[0];
+			CpMarcador marcador = (CpMarcador) reference[1];
+			ExMobil mobil = (ExMobil) reference[2];
+
+			if (!map.containsKey(mobil))
+				map.put(mobil, new ArrayList<MeM>());
+			MeM mm = new MeM();
+			mm.marca = marca;
+			mm.marcador = marcador;
+			map.get(mobil).add(mm);
+		}
+
+		resp.list = listarReferencias(TipoDePainelEnum.UNIDADE, map, cadastrante, lotaCadastrante,
+				ExDao.getInstance().consultarDataEHoraDoServidor());
 	}
 
 	@Override
@@ -102,7 +88,7 @@ public class MesaGet implements IMesaGet {
 
 	private static String calcularTempoRelativo(Date anterior) {
 		PrettyTime p = new PrettyTime(new Date(), new Locale("pt"));
-	
+
 		String tempo = p.format(anterior);
 		tempo = tempo.replace(" atrás", "");
 		tempo = tempo.replace(" dias", " dias");
@@ -139,14 +125,17 @@ public class MesaGet implements IMesaGet {
 			r.grupo = CpMarcadorGrupoEnum.NENHUM.name();
 			r.grupoOrdem = Integer.toString(CpMarcadorGrupoEnum.valueOf(r.grupo).ordinal());
 			r.grupoNome = CpMarcadorGrupoEnum.valueOf(r.grupo).getNome();
-			
+
 			ExCompetenciaBL comp = Ex.getInstance().getComp();
 			r.podeAnotar = comp.podeFazerAnotacao(pessoa, unidade, mobil);
 			r.podeAssinar = comp.podeAssinar(pessoa, unidade, mobil);
-			
-			boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(pessoa, CpTipoConfiguracao.TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO);
-			
-			r.podeAssinarEmLote = apenasComSolicitacaoDeAssinatura ? r.podeAssinar && mobil.doc().isAssinaturaSolicitada() : r.podeAssinar;
+
+			boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(pessoa,
+					CpTipoConfiguracao.TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO);
+
+			r.podeAssinarEmLote = apenasComSolicitacaoDeAssinatura
+					? r.podeAssinar && mobil.doc().isAssinaturaSolicitada()
+					: r.podeAssinar;
 			r.podeTramitar = comp.podeTransferir(pessoa, unidade, mobil);
 
 			r.list = new ArrayList<IExApiV1.Marca>();
@@ -160,7 +149,6 @@ public class MesaGet implements IMesaGet {
 				Marca t = new Marca();
 				t.marcaId = tag.marca.getIdMarca().toString();
 				CpMarcadorEnum mar = CpMarcadorEnum.getById(tag.marcador.getIdMarcador().intValue());
-				
 
 				CpMarcadorGrupoEnum grupo = null;
 				if (mar != null) {
@@ -174,7 +162,7 @@ public class MesaGet implements IMesaGet {
 				}
 				if (grupo == null)
 					grupo = CpMarcadorGrupoEnum.NENHUM;
-				
+
 				t.titulo = MesaGet.calcularTempoRelativo(tag.marca.getDtIniMarca());
 
 				if (tag.marca.getDpPessoaIni() != null) {
@@ -187,7 +175,6 @@ public class MesaGet implements IMesaGet {
 				t.inicio = tag.marca.getDtIniMarca();
 				t.termino = tag.marca.getDtFimMarca();
 
-				
 				if (CpMarcadorGrupoEnum.valueOf(r.grupo).ordinal() > grupo.ordinal()) {
 					r.grupo = grupo.name();
 					r.grupoOrdem = Integer.toString(grupo.ordinal());

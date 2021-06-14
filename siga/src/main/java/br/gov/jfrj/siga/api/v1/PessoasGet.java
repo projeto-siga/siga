@@ -13,8 +13,6 @@ import br.gov.jfrj.siga.api.v1.ISigaApiV1.IPessoasGet;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Lotacao;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Orgao;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Pessoa;
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.PessoasGetRequest;
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.PessoasGetResponse;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpIdentidade;
@@ -28,66 +26,59 @@ import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 
 public class PessoasGet implements IPessoasGet {
 	@Override
-	public void run(PessoasGetRequest req, PessoasGetResponse resp) throws Exception {
-		try (ApiContext ctx = new ApiContext(false, true)) {
-			if (((req.cpf != null? 1:0) + (req.texto != null? 1:0) + (req.idPessoaIni != null? 1:0)) > 1) {
-				throw new AplicacaoException("Pesquisa permitida somente por um dos argumentos.");
-			}
-			
-			if (req.cpf != null && !req.cpf.isEmpty()) {
-				resp.list = pesquisarPorCpf(req, resp);
-				return;
-			}
-			
-			if (req.texto != null && !req.texto.isEmpty()) {
-				resp.list = pesquisarPorTexto(req, resp);
-				return;
-			}
-				
-			if (req.idPessoaIni != null && !req.idPessoaIni.isEmpty()) {
-				resp.list = pesquisarPessoaAtualPorIdIni(req, resp);
-				return;
-			}
-			
-			throw new AplicacaoException("Não foi fornecido nenhum parâmetro.");
-		} catch (AplicacaoException | SwaggerException e) {
-			throw e;
-		} catch (Exception e) {
-			e.printStackTrace(System.out);
-			throw e;
+	public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception {
+		if (((req.cpf != null ? 1 : 0) + (req.texto != null ? 1 : 0) + (req.idPessoaIni != null ? 1 : 0)) > 1) {
+			throw new AplicacaoException("Pesquisa permitida somente por um dos argumentos.");
 		}
+
+		if (req.cpf != null && !req.cpf.isEmpty()) {
+			resp.list = pesquisarPorCpf(req, resp);
+			return;
+		}
+
+		if (req.texto != null && !req.texto.isEmpty()) {
+			resp.list = pesquisarPorTexto(req, resp);
+			return;
+		}
+
+		if (req.idPessoaIni != null && !req.idPessoaIni.isEmpty()) {
+			resp.list = pesquisarPessoaAtualPorIdIni(req, resp);
+			return;
+		}
+
+		throw new AplicacaoException("Não foi fornecido nenhum parâmetro.");
 	}
-	
-	private List<Pessoa> pesquisarPessoaAtualPorIdIni(PessoasGetRequest req, PessoasGetResponse resp) throws SwaggerException {
+
+	private List<Pessoa> pesquisarPessoaAtualPorIdIni(Request req, Response resp) throws SwaggerException {
 		try {
-			//TODO: ver se precisa de outros parametros listarPessoa
+			// TODO: ver se precisa de outros parametros listarPessoa
 			List<Pessoa> resultado = new ArrayList<>();
 			DpPessoa pessoa = new DpPessoa();
 			pessoa.setIdPessoaIni(Long.valueOf(req.idPessoaIni));
-			
+
 			DpPessoa pes = CpDao.getInstance().obterPessoaAtual(pessoa);
-			
+
 			resultado.add(pessoaToResultadoPesquisa(pes));
 			return resultado;
-			
+
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
 			throw e;
 		}
 	}
-	
-	private List<Pessoa> pesquisarPorTexto(PessoasGetRequest req, PessoasGetResponse resp) throws SwaggerException {
+
+	private List<Pessoa> pesquisarPorTexto(Request req, Response resp) throws SwaggerException {
 		final DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
 		flt.setNome(Texto.removeAcentoMaiusculas(req.texto));
 		List<DpPessoa> l = CpDao.getInstance().consultarPorFiltro(flt);
 		if (l.isEmpty())
-			throw new SwaggerException("Nenhuma pessoa foi encontrada contendo o texto informado.",
-					404, null, req, resp, null);
+			throw new SwaggerException("Nenhuma pessoa foi encontrada contendo o texto informado.", 404, null, req,
+					resp, null);
 
 		return l.stream().map(this::pessoaToResultadoPesquisa).collect(Collectors.toList());
 	}
 
-	private List<Pessoa> pesquisarPorCpf(PessoasGetRequest req, PessoasGetResponse resp) throws Exception {
+	private List<Pessoa> pesquisarPorCpf(Request req, Response resp) throws Exception {
 		String cpf = req.cpf;
 		List<Pessoa> resultado = new ArrayList<>();
 		try {
@@ -98,12 +89,11 @@ public class PessoasGet implements IPessoasGet {
 						resultado.add(identidadeToResultadoPesquisa(ident));
 					}
 				} else {
-					throw new SwaggerException("Nenhuma pessoa foi encontrada para o CPF informado.",
-							404, null, req, resp, null);
+					throw new SwaggerException("Nenhuma pessoa foi encontrada para o CPF informado.", 404, null, req,
+							resp, null);
 				}
 			} else {
-				throw new SwaggerException("CPF inválido.",
-						400, null, req, resp, null);
+				throw new SwaggerException("CPF inválido.", 400, null, req, resp, null);
 			}
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
@@ -116,7 +106,7 @@ public class PessoasGet implements IPessoasGet {
 		DpPessoa p = identidade.getPessoaAtual();
 		return pessoaToResultadoPesquisa(p);
 	}
-	
+
 	private Pessoa pessoaToResultadoPesquisa(DpPessoa p) {
 		Pessoa pessoa = new Pessoa();
 		Orgao orgao = new Orgao();
@@ -128,7 +118,7 @@ public class PessoasGet implements IPessoasGet {
 		pessoa.sigla = p.getSiglaCompleta();
 		pessoa.nome = p.getNomePessoa();
 		pessoa.isExternaPessoa = p.isUsuarioExterno();
-		
+
 		// Orgao Pessoa
 		CpOrgaoUsuario o = p.getOrgaoUsuario();
 		orgao.idOrgao = o.getId().toString();
@@ -163,7 +153,7 @@ public class PessoasGet implements IPessoasGet {
 		pessoa.funcaoConfianca = funcao;
 		return pessoa;
 	}
-	
+
 	@Override
 	public String getContext() {
 		return "selecionar pessoas";

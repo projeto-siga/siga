@@ -33,6 +33,7 @@ public interface ZipItem {
 		JPEG,
 		PNG,
 		BMP,
+		FTL,
 		;
 
 		@Override

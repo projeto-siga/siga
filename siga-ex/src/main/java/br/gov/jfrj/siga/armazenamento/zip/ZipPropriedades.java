@@ -11,18 +11,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.model.prop.ext.ModeloPropriedade;
 
-public class ZipPropriedades extends ModeloPropriedade {
+public class ZipPropriedades {
 
 	private static final Log log = LogFactory.getLog(ZipPropriedades.class);
 	private static final ZipPropriedades INSTANCE = new ZipPropriedades();
-	private static final String ERRO_CAPTURA_CAMINHO_BASE = "Não foi possível obter caminho base para armazenamento a partir da propriedade ";
-	private static final String MODULO = "sigaex";
-	private static final String USER_HOME_MODULE_SUBDIR = "." + MODULO;
-	private static final String ARMAZENAMENTO_PROPRIEDADE = "diretorio.armazenamento.arquivos";
+	private static final String USER_HOME_MODULE_SUBDIR = ".sigaex";
+	private static final String ARMAZENAMENTO_PROPRIEDADE = "sigaex.diretorio.armazenamento.arquivos";
 
-	private Path base;
+	private Path diretorioBase;
 
 	private ZipPropriedades() {}
 
@@ -31,25 +28,22 @@ public class ZipPropriedades extends ModeloPropriedade {
 	}
 
 	public Path obterCaminhoBase() {
-		if (this.base != null) {
-			return this.base;
+		if (this.diretorioBase != null) {
+			return this.diretorioBase;
 		}
 
 		try {
-			final String propertyDiretorioBaseArmazenamento = this.obterPropriedade(ARMAZENAMENTO_PROPRIEDADE);
-			this.base = isEmpty(propertyDiretorioBaseArmazenamento) ? this.obterCaminhoBasePadrao() : Paths.get(propertyDiretorioBaseArmazenamento);;
-			FileUtils.forceMkdir(this.base.toFile());
+			final String propertyDiretorioBaseArmazenamento = System.getProperty(ARMAZENAMENTO_PROPRIEDADE);
+			this.diretorioBase = isEmpty(propertyDiretorioBaseArmazenamento)
+					? this.obterCaminhoBasePadrao()
+					: Paths.get(propertyDiretorioBaseArmazenamento);
 
+			FileUtils.forceMkdir(this.diretorioBase.toFile());
 			log.debug("Caminho base para armazenamento de arquivos: " + propertyDiretorioBaseArmazenamento);
-			return this.base;
+			return this.diretorioBase;
 		} catch (Exception e) {
-			throw new AplicacaoException(ERRO_CAPTURA_CAMINHO_BASE + getPrefixoModulo() + ARMAZENAMENTO_PROPRIEDADE, 0, e);
+			throw new AplicacaoException("Não foi possível obter caminho base para armazenamento a partir da propriedade " + ARMAZENAMENTO_PROPRIEDADE, 0, e);
 		}
-	}
-
-	@Override
-	public String getPrefixoModulo() {
-		return MODULO;
 	}
 
 	private Path obterCaminhoBasePadrao() {

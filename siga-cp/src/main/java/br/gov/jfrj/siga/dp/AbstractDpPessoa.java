@@ -53,23 +53,22 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 		@NamedQuery(name = "consultarPorSiglaDpPessoa", query = "select pes from DpPessoa pes where pes.matricula = :matricula and pes.sesbPessoa = :sesb and pes.dataFimPessoa = null"),
 		@NamedQuery(name = "consultarPessoaAtualPelaInicial", query = "from DpPessoa pes "
 				+ "		where pes.idPessoaIni = :idPessoaIni "
-				+ "		and pes.dataInicioPessoa = (select max(p.dataInicioPessoa) from DpPessoa p where p.idPessoaIni = :idPessoaIni)"
+				+ "		and exists (select 1 from DpPessoa pAux where pAux.idPessoaIni = :idPessoaIni"
+				+ "				group by pAux.idPessoaIni having max(pAux.dataInicioPessoa) = pes.dataInicioPessoa)"
 				+ "		order by idPessoa desc"),
 		@NamedQuery(name = "consultarPorIdInicialDpPessoaInclusiveFechadas", query = "select pes from DpPessoa pes where pes.idPessoaIni = :idPessoaIni"),
 		@NamedQuery(name = "consultarPorCpf", query = "from DpPessoa pes where pes.cpfPessoa = :cpfPessoa and pes.dataFimPessoa = null"),	
-		@NamedQuery(name = "consultarPorCpfAtivoInativo", query = "from DpPessoa pes where pes.cpfPessoa = :cpfPessoa and pes.idPessoa in"
-				+ " (select max(p.idPessoa) from DpPessoa p group by p.idPessoaIni)"),
-		@NamedQuery(name = "consultarPorCpfAtivoInativoNomeDiferente", query = "from DpPessoa pes where pes.idPessoa in"
-				+ " (select max(p.idPessoa) from DpPessoa p where p.cpfPessoa = :cpfPessoa and upper(pes.nomePessoa) <> upper(:nomePessoa) group by p.idPessoaIni)"),
+		@NamedQuery(name = "consultarPorCpfAtivoInativo", query = "from DpPessoa pes where pes.cpfPessoa = :cpfPessoa"
+				+ "  and exists (select 1 from DpPessoa pAux where pAux.idPessoaIni = pes.idPessoaIni "
+				+ "		group by pAux.idPessoaIni having max(pAux.dataInicioPessoa) = pes.dataInicioPessoa)"),
 		@NamedQuery(name = "consultarPorEmail", query = "from DpPessoa pes where pes.emailPessoa = :emailPessoa and pes.dataFimPessoa = null"),
-		@NamedQuery(name = "consultarPorEmailIgualCpfDiferente", query = "select count(idPessoa) " 
-				+ " from DpPessoa a " 
-				+ " where     a.emailPessoa          = :emailPessoa     and " 
-				+ "        a.cpfPessoa         <> :cpf        and "  
-				+ "        a.idPessoaIni <> :idPessoaIni"
-				+ " and idPessoa in (select max(idPessoa) " 
-				+ "  from DpPessoa dpp  "  
-				+ " group by idPessoaIni)"),	
+		@NamedQuery(name = "consultarPorEmailIgualCpfDiferente", query = "select count(1) " 
+				+ " from DpPessoa pes " 
+				+ " where  pes.emailPessoa = :emailPessoa     " 
+				+ "        and pes.cpfPessoa         <> :cpf  "  
+				+ "        and pes.idPessoaIni <> :idPessoaIni "
+				+ " and exists (select 1 from DpPessoa pAux where pAux.idPessoaIni = pes.idPessoaIni  "  
+				+ "	 	group by pAux.idPessoaIni having max(pAux.dataInicioPessoa) = pes.dataInicioPessoa)"),	
 		@NamedQuery(name = "consultarPorOrgaoUsuDpPessoaInclusiveFechadas", query = "from DpPessoa pes where pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"),
 		@NamedQuery(name = "consultarPorFiltroDpPessoa", query = "from DpPessoa pes "
 				+ "  where ((pes.nomePessoaAI like upper('%' || :nome || '%')) or ((pes.sesbPessoa || pes.matricula) like upper('%' || :nome || '%')))"
@@ -117,7 +116,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "   	and pes.dataFimPessoa = null"
 				+ "   	order by pes.nomePessoa"),
 		@NamedQuery(name = "consultarPorFiltroDpPessoaInclusiveFechadas", query = "from DpPessoa pes where idPessoa in ("
-				+ "	select max(pes.idPessoa)"
+				+ "	select pes.idPessoa"
 				+ "	from DpPessoa pes"
 				+ "	where ((pes.nomePessoaAI like upper('%' || :nome || '%')) or ((pes.sesbPessoa || pes.matricula) like upper('%' || :nome || '%')))"
 				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
@@ -127,8 +126,8 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ " and (:funcao = null or :funcao = 0L or pes.funcaoConfianca.idFuncao = :funcao) "
 				+ " and (:email = null or (upper(pes.emailPessoa) like upper('%' || :email || '%')) ) " 
 				+ " and (:identidade = null or (upper(pes.identidade) like upper('%' || :identidade || '%')) ) "
-				+ "	group by pes.idPessoaIni"
-				+ ", pes.idPessoa having pes.idPessoa = (select max(a.idPessoa) from DpPessoa a where a.idPessoaIni = pes.idPessoaIni)"
+				+ "	group by pes.idPessoaIni,pes.dataInicioPessoa"
+				+ ", pes.idPessoa having pes.dataInicioPessoa = (select max(a.dataInicioPessoa) from DpPessoa a where a.idPessoaIni = pes.idPessoaIni)"
 				+ ") order by pes.nomePessoaAI"),
 		@NamedQuery(name = "consultarPessoaComOrgaoFuncaoCargo", query = "from DpPessoa pes"
 				+ " left join fetch pes.cargo car "

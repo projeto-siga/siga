@@ -7,8 +7,6 @@ import com.crivano.swaggerservlet.SwaggerException;
 
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.ILocalidadesIdGet;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Localidade;
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.LocalidadesIdGetRequest;
-import br.gov.jfrj.siga.api.v1.ISigaApiV1.LocalidadesIdGetResponse;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Uf;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.CpLocalidade;
@@ -16,25 +14,19 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 
 public class LocalidadesIdGet implements ILocalidadesIdGet {
 	@Override
-	public void run(LocalidadesIdGetRequest req, LocalidadesIdGetResponse resp) throws Exception {
-		try (ApiContext ctx = new ApiContext(false, true)) {
-			if (req.id == null) {
-				throw new AplicacaoException("O argumento de pesquisa id é obrigatório.");
-			}
-			resp.localidade = pesquisarPorId(req, resp);
-		} catch (AplicacaoException e) {
-			throw e;
-		} catch (Exception e) {
-			throw e;
+	public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception {
+		if (req.id == null) {
+			throw new AplicacaoException("O argumento de pesquisa id é obrigatório.");
 		}
+		resp.localidade = pesquisarPorId(req, resp);
 	}
 
-	private Localidade pesquisarPorId(LocalidadesIdGetRequest req, LocalidadesIdGetResponse resp) throws SwaggerException {
+	private Localidade pesquisarPorId(Request req, Response resp) throws SwaggerException {
 		List<CpLocalidade> l = (ArrayList<CpLocalidade>) CpDao.getInstance()
 				.consultarPorIdOuIdInicial(CpLocalidade.class, "idLocalidade", null, Long.valueOf(req.id));
 		if (l.size() == 0)
-			throw new SwaggerException(
-					"Nenhuma localidade foi encontrada para os parâmetros informados.", 404, null, req, resp, null);
+			throw new SwaggerException("Nenhuma localidade foi encontrada para os parâmetros informados.", 404, null,
+					req, resp, null);
 
 		return localidadeToResultadoPesquisa(l.get(0));
 	}

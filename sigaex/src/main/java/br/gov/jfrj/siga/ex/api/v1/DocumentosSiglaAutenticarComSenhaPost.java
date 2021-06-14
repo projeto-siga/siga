@@ -3,20 +3,18 @@ package br.gov.jfrj.siga.ex.api.v1;
 import com.crivano.swaggerservlet.PresentableUnloggedException;
 import com.crivano.swaggerservlet.SwaggerException;
 
-import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaAutenticarComSenhaPostRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaAutenticarComSenhaPostResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaAutenticarComSenhaPost;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.vraptor.Transacional;
 
+@Transacional
 public class DocumentosSiglaAutenticarComSenhaPost extends DocumentosSiglaAssinarAutenticarComSenhaPost
 		implements IDocumentosSiglaAutenticarComSenhaPost {
-	
+
 	public DocumentosSiglaAutenticarComSenhaPost() {
 		super(true);
 	}
@@ -44,16 +42,11 @@ public class DocumentosSiglaAutenticarComSenhaPost extends DocumentosSiglaAssina
 	}
 
 	@Override
-	public void run(DocumentosSiglaAutenticarComSenhaPostRequest req, DocumentosSiglaAutenticarComSenhaPostResponse resp)
-			throws Exception {
-		try {
-			super.executar(req.sigla, (sigla, status) -> {
-				resp.sigla = sigla;
-				resp.status = status;
-			});
-		} catch (RegraNegocioException | AplicacaoException e) {
-			throw new SwaggerException(e.getMessage(), 400, null, req, resp, null);
-		}
+	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
+		super.executar(req.sigla, (sigla, status) -> {
+			resp.sigla = sigla;
+			resp.status = status;
+		}, ctx);
 	}
 
 	@Override

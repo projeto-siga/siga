@@ -11,6 +11,7 @@ import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.auth0.jwt.JWTVerifyException;
@@ -71,7 +72,7 @@ public class SigaJwtBL {
 		return new SigaJwtBL(modulo);
 	}
 
-	public String login(String matricula, String senha) {
+	public String login(String matricula, String senha) throws JSONException {
 		return login(matricula, null, senha, null, null, null);
 	}
 
@@ -87,9 +88,10 @@ public class SigaJwtBL {
 	 *                     SIGA-DOC-ASS|SIGA-WF-.*
 	 * @param ttl          - Tempo de vida do token
 	 * @return
+	 * @throws JSONException 
 	 */
 	public String login(String matricula, String lotacao, String senha, String configuracao, String permissoes,
-			Integer ttl) {
+			Integer ttl) throws JSONException {
 		String token = null;
 
 		GiService giService = Service.getGiService();
@@ -112,8 +114,7 @@ public class SigaJwtBL {
 
 			}
 
-			String[] claims = new String[jsonPermissoes.keySet().size()];
-			jsonPermissoes.keySet().toArray(claims);
+			String[] claims = JSONObject.getNames(jsonPermissoes);
 			mapClaims.put("perm", claims);
 
 			String subject = matricula + (lotacao != null ? ("@" + lotacao) : "");
@@ -127,7 +128,7 @@ public class SigaJwtBL {
 		return provider.criarToken(subject, config, claimsMap, ttl);
 	}
 
-	private boolean naoTemPermissao(JSONObject jsonPermissoes, String item) {
+	private boolean naoTemPermissao(JSONObject jsonPermissoes, String item) throws JSONException {
 		return !jsonPermissoes.get(item).toString().equalsIgnoreCase("pode");
 	}
 
@@ -173,7 +174,7 @@ public class SigaJwtBL {
 		return jwtBL;
 	}
 
-	public static String extrairModulo(HttpServletRequest request) throws IOException, ServletException {
+	public static String extrairModulo(HttpServletRequest request) throws IOException, ServletException, JSONException {
 		String opcoes = request.getHeader("Jwt-Options");
 		if (opcoes != null) {
 			String modulo = new JSONObject(opcoes).optString("mod");

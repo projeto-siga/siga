@@ -2,54 +2,38 @@ package br.gov.jfrj.siga.ex.api.v1;
 
 import java.util.Date;
 
-import com.crivano.swaggerservlet.SwaggerException;
-
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaJuntarPostRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaJuntarPostResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaJuntarPost;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.vraptor.Transacional;
 
+@Transacional
 public class DocumentosSiglaJuntarPost implements IDocumentosSiglaJuntarPost {
 
 	@Override
-	public void run(DocumentosSiglaJuntarPostRequest req, DocumentosSiglaJuntarPostResponse resp) throws Exception {
-		try (ApiContext ctx = new ApiContext(true, true)) {
-			try {
-				ctx.assertAcesso("");
-		
-				DpPessoa cadastrante = ctx.getCadastrante();
-				DpLotacao lotaTitular = cadastrante.getLotacao();
-		
-				ExMobil mobFilho = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento Secundário");
-				ExMobil mobPai = ctx.buscarEValidarMobil(req.siglapai, req, resp, "Documento Principal");
-		
-				ctx.assertAcesso(mobFilho, cadastrante, lotaTitular);
-		
-				Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
-	
-				if (!Ex.getInstance().getComp()
-						.podeJuntar(cadastrante, lotaTitular, mobFilho)) {
-					throw new AplicacaoException("Não é possível fazer juntada");
-				}
-		
-				Ex.getInstance().getBL().juntarDocumento(cadastrante, cadastrante, lotaTitular, null, mobFilho, mobPai, dt,
-						cadastrante, cadastrante, "1");
-		
-				resp.status = "OK";
-			} catch (RegraNegocioException | AplicacaoException e) {
-				ctx.rollback(e);
-				throw new SwaggerException(e.getMessage(), 400, null, req, resp, null);
-			} catch (Exception e) {
-				ctx.rollback(e);
-				throw e;
-			}
+	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
+		DpPessoa cadastrante = ctx.getCadastrante();
+		DpLotacao lotaTitular = cadastrante.getLotacao();
+
+		ExMobil mobFilho = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento Secundário");
+		ExMobil mobPai = ctx.buscarEValidarMobil(req.siglapai, req, resp, "Documento Principal");
+
+		ctx.assertAcesso(mobFilho, cadastrante, lotaTitular);
+
+		Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
+
+		if (!Ex.getInstance().getComp().podeJuntar(cadastrante, lotaTitular, mobFilho)) {
+			throw new AplicacaoException("Não é possível fazer juntada");
 		}
+
+		Ex.getInstance().getBL().juntarDocumento(cadastrante, cadastrante, lotaTitular, null, mobFilho, mobPai, dt,
+				cadastrante, cadastrante, "1");
+
+		resp.status = "OK";
 	}
 
 	@Override

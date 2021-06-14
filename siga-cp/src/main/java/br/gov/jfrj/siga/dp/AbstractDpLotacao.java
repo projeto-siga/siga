@@ -72,7 +72,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "  where "
 				+ "     ( (upper(lot.siglaLotacao) like upper('%' || :nome || '%') or upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) "
 				+ "	       and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ "          or ( :nome != null and (upper(concat(lot.orgaoUsuario.acronimoOrgaoUsu, lot.siglaLotacao)) like upper(:nome || '%')"
+				+ "          or ( :nome != null and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu) and (upper(concat(lot.orgaoUsuario.acronimoOrgaoUsu, lot.siglaLotacao)) like upper(:nome || '%')"
 				+ "          or upper(concat(lot.orgaoUsuario.siglaOrgaoUsu, lot.siglaLotacao)) like upper(:nome || '%'))))"
 				+ "	and lot.dataFimLotacao = null"
 				+ "	order by lot.nomeLotacao"),

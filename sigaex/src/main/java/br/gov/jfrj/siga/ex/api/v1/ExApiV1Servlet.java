@@ -27,6 +27,8 @@ import com.crivano.swaggerservlet.dependency.TestableDependency;
 
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.Prop.IPropertyProvider;
+import br.gov.jfrj.siga.context.AcessoPublico;
+import br.gov.jfrj.siga.context.AcessoPublicoEPrivado;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
@@ -97,8 +99,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 			}
 		}
 
-		addDependency(
-				new FileSystemWriteDependency("upload.dir.temp", Prop.get("upload.dir.temp"), false, 0, 10000));
+		addDependency(new FileSystemWriteDependency("upload.dir.temp", Prop.get("upload.dir.temp"), false, 0, 10000));
 
 		addDependency(new HttpGetDependency("rest", "www.google.com/recaptcha",
 				"https://www.google.com/recaptcha/api/siteverify", false, 0, 10000));
@@ -112,11 +113,9 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 
 			@Override
 			public boolean test() throws Exception {
-				try (ApiContext ctx = new ApiContext(false, false)) {
+				try (ExApiV1Context ctx = new ExApiV1Context()) {
+					ctx.init(null);
 					return ExDao.getInstance().dt() != null;
-				} catch (Exception e) {
-					e.printStackTrace(System.out);
-					throw e;
 				}
 			}
 
@@ -229,17 +228,17 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPublicProperty("controlar.numeracao.expediente", "false");
 		addPublicProperty("recebimento.automatico", "true");
 		addPublicProperty("descricao.documento.ai.length", "4000");
-		
+
 		addPublicProperty("exibe.nome.acesso", "false");
-				
+
 		addPublicProperty("modelos.cabecalho.brasao", "contextpath/imagens/brasaoColoridoTRF2.png");
 		addPublicProperty("modelos.cabecalho.brasao.width", "auto");
 		addPublicProperty("modelos.cabecalho.brasao.height", "65");
-		
+
 		addPublicProperty("modelos.cabecalho.titulo", "PODER JUDICIÁRIO");
 		addPublicProperty("modelos.cabecalho.subtitulo", null);
 
-		//Siga-Le
+		// Siga-Le
 		addPublicProperty("smtp.sugestao.destinatario", getProp("/siga.smtp.usuario.remetente"));
 		addPublicProperty("smtp.sugestao.assunto", "Siga-Le: Sugestão");
 	}
@@ -292,6 +291,5 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 	public String getProp(String nome) {
 		return getProperty(nome);
 	}
-
 
 }

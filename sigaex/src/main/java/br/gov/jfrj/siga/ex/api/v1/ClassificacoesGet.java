@@ -11,35 +11,31 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.ClassificacaoItem;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.ClassificacoesGetRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.ClassificacoesGetResponse;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IClassificacoesGet;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class ClassificacoesGet implements IClassificacoesGet {
 	@Override
-	public void run(ClassificacoesGetRequest req, ClassificacoesGetResponse resp) throws Exception {
-		try (ApiContext ctx = new ApiContext(false, true)) {
-			if (((req.texto != null ? 1 : 0) + (req.idClassificacaoIni != null ? 1 : 0)) > 1) {
-				throw new AplicacaoException("Pesquisa permitida somente por um dos argumentos.");
-			}
-
-			if (req.texto != null && !req.texto.isEmpty()) {
-				resp.list = pesquisarPorTexto(req, resp);
-				return;
-			}
-
-			if (req.idClassificacaoIni != null && !req.idClassificacaoIni.isEmpty()) {
-				resp.list = pesquisarClassificacaoAtualPorIdIni(req, resp);
-				return;
-			}
-
-			throw new AplicacaoException("Não foi fornecido nenhum parâmetro.");
+	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
+		if (((req.texto != null ? 1 : 0) + (req.idClassificacaoIni != null ? 1 : 0)) > 1) {
+			throw new AplicacaoException("Pesquisa permitida somente por um dos argumentos.");
 		}
+
+		if (req.texto != null && !req.texto.isEmpty()) {
+			resp.list = pesquisarPorTexto(req, resp);
+			return;
+		}
+
+		if (req.idClassificacaoIni != null && !req.idClassificacaoIni.isEmpty()) {
+			resp.list = pesquisarClassificacaoAtualPorIdIni(req, resp);
+			return;
+		}
+
+		throw new AplicacaoException("Não foi fornecido nenhum parâmetro.");
 	}
 
-	private List<ClassificacaoItem> pesquisarClassificacaoAtualPorIdIni(ClassificacoesGetRequest req,
-			ClassificacoesGetResponse resp) throws SwaggerException {
+	private List<ClassificacaoItem> pesquisarClassificacaoAtualPorIdIni(Request req, Response resp)
+			throws SwaggerException {
 		List<ClassificacaoItem> resultado = new ArrayList<>();
 
 		ExDao dao = ExDao.getInstance();
@@ -50,8 +46,7 @@ public class ClassificacoesGet implements IClassificacoesGet {
 		return resultado;
 	}
 
-	private List<ClassificacaoItem> pesquisarPorTexto(ClassificacoesGetRequest req, ClassificacoesGetResponse resp)
-			throws PresentableUnloggedException {
+	private List<ClassificacaoItem> pesquisarPorTexto(Request req, Response resp) throws PresentableUnloggedException {
 		String texto = Texto.removeAcentoMaiusculas(req.texto);
 		ExClassificacao c = (ExClassificacao) ExDao.getInstance().consultarExClassificacao(texto);
 		List<ExClassificacao> l = new ArrayList<>();

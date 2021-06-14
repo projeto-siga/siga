@@ -68,6 +68,7 @@ import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.siga.armazenamento.zip.ZipItem;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.GZip;
@@ -349,10 +350,8 @@ public class ExDocumentoController extends ExController {
 			final String[] paramNameAndValue = ((String) elem).split("=");
 			final String paramName = paramNameAndValue[0];
 			String paramValue = paramNameAndValue[1];
-			final String paramValueDecoded = URLDecoder.decode(paramValue,
-					"ISO-8859-1");
-			final String paramValueEncodedUTF8 = URLEncoder.encode(
-					paramValueDecoded, "UTF-8");
+			final String paramValueDecoded = URLDecoder.decode(paramValue, StandardCharsets.ISO_8859_1.name());
+			final String paramValueEncodedUTF8 = URLEncoder.encode(paramValueDecoded, StandardCharsets.UTF_8.name());
 			final String dtoParamName = "exDocumentoDTO.".concat(paramName);
 
 			try {
@@ -2331,9 +2330,9 @@ public class ExDocumentoController extends ExController {
 		// ambiente.
 		setCadastrante(backupCadastrante);
 
-		if (doc.getConteudoBlob("doc.htm") != null) {
+		if (doc.getConteudoBlob(ZipItem.Tipo.HTM) != null) {
 			exDocumentoDTO.setConteudo(new String(doc
-					.getConteudoBlob("doc.htm")));
+					.getConteudoBlob(ZipItem.Tipo.HTM)));
 		}
 
 		exDocumentoDTO.setIdTpDoc(doc.getExTipoDocumento().getIdTpDoc());
@@ -2465,8 +2464,7 @@ public class ExDocumentoController extends ExController {
 						baos.write('=');
 
 						// Deveria estar gravando como UTF-8
-						baos.write(URLEncoder.encode(param(s), "iso-8859-1")
-								.getBytes());
+						baos.write(URLEncoder.encode(param(s), StandardCharsets.ISO_8859_1.name()).getBytes());
 					}
 				}
 			}
@@ -2476,16 +2474,14 @@ public class ExDocumentoController extends ExController {
 
 	private void lerEntrevista(final ExDocumentoDTO exDocumentoDTO) {
 		if (exDocumentoDTO.getDoc().getExModelo() != null) {
-			final byte[] form = exDocumentoDTO.getDoc().getConteudoBlob(
-					"doc.form");
+			final byte[] form = exDocumentoDTO.getDoc().getConteudoBlob(ZipItem.Tipo.FORM);
 			if (form != null) {
 				final String as[] = new String(form).split("&");
 				for (final String s : as) {
 					final String param[] = s.split("=");
 					try {
 						if (param.length == 2) {
-							exDocumentoDTO.getParamsEntrevista().put(param[0],
-									URLDecoder.decode(param[1], "iso-8859-1"));
+							exDocumentoDTO.getParamsEntrevista().put(param[0], URLDecoder.decode(param[1], StandardCharsets.ISO_8859_1.name()));
 						}
 					} catch (final UnsupportedEncodingException e) {
 					}
@@ -2681,9 +2677,7 @@ public class ExDocumentoController extends ExController {
 								setParam(s, parametro);
 							}
 						}
-
-						baos.write(URLEncoder.encode(parametro, "iso-8859-1")
-								.getBytes());
+						baos.write(URLEncoder.encode(parametro, StandardCharsets.ISO_8859_1.name()).getBytes());
 					}
 				}
 				doc.setConteudoTpDoc("application/zip");

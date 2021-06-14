@@ -207,7 +207,7 @@ public class ExAssinadorExternoController extends ExController {
 		ExMovimentacao mov = Documento.getMov(mob, sigla);
 
 		if (mov != null) {
-			pdfd.pdf = mov.getConteudoBlobpdf();
+			pdfd.pdf = mov.getConteudoBlobPdf();
 			pdfd.secret = movSecret(mov);
 		} else if (mob != null) {
 			pdfd.pdf = mob.doc().getConteudoBlobPdf();
@@ -466,7 +466,7 @@ public class ExAssinadorExternoController extends ExController {
 				throw new Exception("Não é assinatura digital");
 			}
 			SignRefGetResponse resp = new SignRefGetResponse();
-			resp.envelope = mov.getConteudoBlobMov2();
+			resp.envelope = mov.getConteudoBlobInicializarOuAtualizarCache();
 			resp.time = mov.getDtMov();
 			jsonSuccess(resp);
 		} catch (Exception e) {

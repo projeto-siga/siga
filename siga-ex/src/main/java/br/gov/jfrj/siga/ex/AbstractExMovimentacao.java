@@ -24,17 +24,13 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
@@ -43,18 +39,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.BatchSize;
 
-import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Prop;
-import br.gov.jfrj.siga.cp.CpArquivo;
-import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
-import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
@@ -180,7 +170,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 })
 public abstract class AbstractExMovimentacao extends ExArquivo implements Serializable {
 
-	private static final long serialVersionUID = -1521008574855565618L;
+	private static final long serialVersionUID = 1L;
 
 	public static final String NOME_TIPO_DIRETORIO = "ANEXOS";
 
@@ -305,18 +295,10 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	@GeneratedValue(generator = "EX_MOVIMENTACAO_SEQ")
 	@Column(name = "ID_MOV", unique = true, nullable = false)
 	private Long idMov;
-	
-	@Transient
-	protected byte[] cacheConteudoBlobMov;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_cadastrante")
 	private DpPessoa cadastrante;
-
-	@Lob
-	@Column(name = "conteudo_blob_mov")
-	@Basic(fetch = FetchType.LAZY)
-	private byte[] conteudoBlobMov;
 
 	@Column(name = "conteudo_tp_mov", length = 128)
 	private String conteudoTpMov;
@@ -478,10 +460,6 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "dt_timestamp", insertable=false, updatable=false)
 	private Date dtTimestamp;
-
-	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
-	@JoinColumn(name = "ID_ARQ")
-	private CpArquivo cpArquivo;
 
 	@Temporal(TemporalType.DATE)
 	@Column(name = "dt_param1", length = 19)
@@ -860,54 +838,13 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	public void setDtTimestamp(Date dtTimestamp) {
 		this.dtTimestamp = dtTimestamp;
 	}
-	
-	public CpArquivo getCpArquivo() {
-		return cpArquivo;
-	}
-
-	public void setCpArquivo(CpArquivo cpArquivo) {
-		this.cpArquivo = cpArquivo;
-	}
 
 	public String getConteudoTpMov() {
-		if (getCpArquivo() == null || getCpArquivo().getConteudoTpArq() == null)
-			return conteudoTpMov;
-		return getCpArquivo().getConteudoTpArq();
+		return conteudoTpMov;
 	}
 
 	public void setConteudoTpMov(final String conteudoTp) {
 	    this.conteudoTpMov = conteudoTp;
-	    if (orgaoPermiteHcp() && this.conteudoBlobMov == null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
-	    	cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, conteudoTp);
-	    }
-	}
-
-	public byte[] getConteudoBlobMov() {
-		if(cacheConteudoBlobMov != null) {
-			return cacheConteudoBlobMov;
-		} else if (getCpArquivo() == null) {
-			cacheConteudoBlobMov = conteudoBlobMov;
-		} else {
-			try {
-				cacheConteudoBlobMov = getCpArquivo().getConteudo();
-			} catch (Exception e) {
-				throw new AplicacaoException(e.getMessage());
-			}
-		}
-		return cacheConteudoBlobMov;
-	}
-
-	public void setConteudoBlobMov(byte[] createBlob) {
-		cacheConteudoBlobMov = createBlob;
-		if (this.cpArquivo==null && (this.conteudoBlobMov!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"))))) {
-			this.conteudoBlobMov = createBlob;
-		} else if(cacheConteudoBlobMov != null){
-			if(orgaoPermiteHcp())
-				cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobMov);
-			else
-				this.conteudoBlobMov = createBlob;
-		}
-		
 	}
 
 	public Date getDtParam1() {
@@ -924,16 +861,6 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 
 	public void setDtParam2(Date dtParam2) {
 		this.dtParam2 = dtParam2;
-	}
-	
-	private boolean orgaoPermiteHcp() {
-		if(exMobil!=null && exMobil.getDoc()!=null && exMobil.getDoc().getCadastrante()!=null && exMobil.getDoc().getCadastrante().getOrgaoUsuario()!=null) {
-			List<String> orgaos = Prop.getList("/siga.armazenamento.orgaos");
-			CpOrgaoUsuario orgaoUsuario = exMobil.getDoc().getCadastrante().getOrgaoUsuario();
-			if(orgaos != null && orgaoUsuario!=null && ("*".equals(orgaos.get(0)) || orgaos.stream().anyMatch(orgao -> orgao.equals(orgaoUsuario.getSigla()))) )
-				return true;
-		}
-		return false;
 	}
 
 	@Override

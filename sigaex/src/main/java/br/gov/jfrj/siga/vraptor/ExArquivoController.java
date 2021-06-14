@@ -155,7 +155,7 @@ public class ExArquivoController extends ExController {
 			}
 			byte ab[] = null;
 			if (isArquivoAuxiliar) {
-				ab = mov.getConteudoBlobMov2();
+				ab = mov.getConteudoBlobInicializarOuAtualizarCache();
 				return new InputStreamDownload(makeByteArrayInputStream(ab, fB64), APPLICATION_OCTET_STREAM,
 						mov.getNmArqMov().replaceAll(",", "").replaceAll(";", ""));
 			}
@@ -181,7 +181,7 @@ public class ExArquivoController extends ExController {
 
 			if (isPdf) {
 				if (mov != null && !completo && !estampar && hash == null) {
-					ab = mov.getConteudoBlobpdf();
+					ab = mov.getConteudoBlobPdf();
 				} else {
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
 					Documento.getDocumento(baos, null, mob, mov, completo, estampar, volumes, hash, null);

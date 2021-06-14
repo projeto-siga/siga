@@ -10,13 +10,13 @@ public class ExDownloadZip extends ExInputStreamDownload {
 	private String hash;
 
 	public ExDownloadZip(ExMovimentacao mov, String hash) {
-		super(MEDIA_TYPE_OCTET_STREAM, mov.getConteudoBlobMov2());
+		super(MEDIA_TYPE_OCTET_STREAM, mov.getConteudoBlobInicializarOuAtualizarCache());
 		this.mov = mov;
 		this.hash = hash;
 	}
 
 	public ExDownloadZip(ExMovimentacao mov, String hash, String contentType) {
-		super(contentType, mov.getConteudoBlobMov2());
+		super(contentType, mov.getConteudoBlobInicializarOuAtualizarCache());
 		this.mov = mov;
 		this.hash = hash;
 	}

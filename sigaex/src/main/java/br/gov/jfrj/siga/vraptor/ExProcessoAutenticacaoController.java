@@ -202,8 +202,7 @@ public class ExProcessoAutenticacaoController extends ExController {
 	
 				fileName = arq.getReferencia() + "_" + mov.getIdMov() + ".p7s";
 				contentType = mov.getConteudoTpMov();
-	
-				bytes = mov.getConteudoBlobMov2();
+				bytes = mov.getConteudoBlobInicializarOuAtualizarCache();
 	
 			} else {
 				fileName = arq.getReferenciaPDF();

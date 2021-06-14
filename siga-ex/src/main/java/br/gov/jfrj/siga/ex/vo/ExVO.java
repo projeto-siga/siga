@@ -36,8 +36,11 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.vo;
 
-import java.io.UnsupportedEncodingException;
-import java.util.TreeMap;
+import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 
 import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.VO;
@@ -45,40 +48,64 @@ import br.gov.jfrj.siga.base.util.Utils;
 
 public class ExVO extends VO {
 
-	public void addAcao(String icone, String nome, String nameSpace, String action, boolean pode, String msgConfirmacao,
-			String parametros, String pre, String pos, String classe) {
+	private static final String ID = "id";
+	private static final String SIGLA = "sigla";
+
+	public void addAcao(
+			String icone,
+			String nome,
+			String nameSpace,
+			String action,
+			boolean pode,
+			String msgConfirmacao,
+			String parametros,
+			String pre,
+			String pos,
+			String classe) {
 		addAcao(icone, nome, nameSpace, action, pode, null, msgConfirmacao, parametros, pre, pos, classe, null);
 	}
 
 	@Override
-	public void addAcao(String icone, String nome, String nameSpace, String action, boolean pode, String tooltip,
-			String msgConfirmacao, String parametros, String pre, String pos, String classe, String modal) {
-		TreeMap<String, String> params = new TreeMap<String, String>();
+	public void addAcao(
+			String icone,
+			String nome,
+			String nameSpace,
+			String action,
+			boolean pode,
+			String tooltip,
+			String msgConfirmacao,
+			String parametros,
+			String pre,
+			String pos,
+			String classe,
+			String modal) {
+
+		Map<String, Object> params = new LinkedHashMap<>();
 
 		if (this instanceof ExMovimentacaoVO) {
-			params.put("id", Long.toString(((ExMovimentacaoVO) this).getIdMov()));
-			params.put("sigla", ((ExMovimentacaoVO) this).getMobilVO().getSigla());
+			params.put(ID, Long.toString(((ExMovimentacaoVO) this).getIdMov()));
+			params.put(SIGLA, ((ExMovimentacaoVO) this).getMobilVO().getSigla());
 		} else if (this instanceof ExMobilVO) {
-			params.put("sigla", ((ExMobilVO) this).getSigla());
+			params.put(SIGLA, ((ExMobilVO) this).getSigla());
 		} else if (this instanceof ExDocumentoVO) {
-			params.put("sigla", ((ExDocumentoVO) this).getSigla());
+			params.put(SIGLA, ((ExDocumentoVO) this).getSigla());
 		}
 
 		if (parametros != null) {
-			if (parametros.startsWith("&"))
+			if (parametros.startsWith("&")) {
 				parametros = parametros.substring(1);
-			else
-				params.clear();
-			try {
-				Utils.mapFromUrlEncodedForm(params, parametros.getBytes("iso-8859-1"));
-			} catch (UnsupportedEncodingException e) {
 			}
+			else {
+				params.clear();
+			}
+			Utils.mapFromUrlEncodedForm(params, parametros.getBytes(StandardCharsets.ISO_8859_1));
 		}
 
 		if (pode) {
-			AcaoVO acao = new AcaoVO(icone, nome, nameSpace, action, pode, msgConfirmacao, params, pre, pos, classe,
-					modal);
+			String hintEscapado = StringUtils.replace(nome, "_", "");
+			AcaoVO acao = new AcaoVO(icone, nome, nameSpace, action, pode, msgConfirmacao, params, pre, pos, classe, modal, hintEscapado);
 			getAcoes().add(acao);
 		}
 	}
+
 }

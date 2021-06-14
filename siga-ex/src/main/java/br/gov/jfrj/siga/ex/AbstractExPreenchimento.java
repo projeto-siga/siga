@@ -63,15 +63,16 @@ import br.gov.jfrj.siga.model.Objeto;
 				+ " 		and upper(pre.nomePreenchimento) like upper('%' || :nomePreenchimento || '%')"),
 
 		@NamedQuery(name = "excluirPorIdExPreenchimento", query = "delete from ExPreenchimento where idPreenchimento = :id") })
-public abstract class AbstractExPreenchimento extends Objeto implements
-		Serializable {
+public abstract class AbstractExPreenchimento extends Objeto implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	/** The composite primary key value. */
 	@Id
 	@SequenceGenerator(name = "EX_PREENCHIMENTO_SEQ", sequenceName = "siga.ex_preenchimento_id_preenchimento_seq")
 	@GeneratedValue(generator = "EX_PREENCHIMENTO_SEQ")
 	@Column(name = "ID_PREENCHIMENTO", unique = true, nullable = false)
-	private java.lang.Long idPreenchimento;
+	private Long idPreenchimento;
 	
 	@Transient
 	protected byte[] cacheConteudoBlobPre;
@@ -102,7 +103,7 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 	public AbstractExPreenchimento() {
 	}
 
-	public AbstractExPreenchimento(final java.lang.Long idPreenchimento) {
+	public AbstractExPreenchimento(final Long idPreenchimento) {
 		this.setIdPreenchimento(idPreenchimento);
 	}
 
@@ -122,11 +123,11 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 		this.exModelo = exModelo;
 	}
 
-	public java.lang.Long getIdPreenchimento() {
+	public Long getIdPreenchimento() {
 		return idPreenchimento;
 	}
 
-	public void setIdPreenchimento(java.lang.Long idPreenchimento) {
+	public void setIdPreenchimento(Long idPreenchimento) {
 		this.idPreenchimento = idPreenchimento;
 	}
 

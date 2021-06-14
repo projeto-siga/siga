@@ -16,37 +16,32 @@ public class ExGraphTramitacao extends ExGraph {
 		DpLotacao atendenteInicial = null;
 		int numTransicao = 0;
 		
-		List<ExMovimentacao> listMov = new ArrayList<ExMovimentacao>();
+		List<ExMovimentacao> listMov = new ArrayList<>();
 		listMov.addAll(mob.getExMovimentacaoSet());
 		Collections.sort(listMov);
 		
 		for (ExMovimentacao mov : listMov) {
-			if (!mov.isCancelada() && !mov.isCanceladora()
-					&& mov.getLotaResp() != null && !mov.getLotaResp().equivale(atendenteAnterior)) {
+			if (!mov.isCancelada() && !mov.isCanceladora() && mov.getLotaResp() != null && !mov.getLotaResp().equivale(atendenteAnterior)) {
 
 				if (atendenteAnterior != null) {
 					numTransicao++;
-					adicionar(new Transicao(atendenteAnterior.getSiglaCompleta(), mov
-							.getLotaResp().getSiglaCompleta())
+					adicionar(new Transicao(atendenteAnterior.getSiglaCompleta(), mov.getLotaResp().getSiglaCompleta())
 							.setDirected(true)
 							.setLabel(String.valueOf(numTransicao))
-							.setTooltip(
-									"Transferido em " + mov.getDtRegMovDDMMYY()));
-				} else 
+							.setTooltip("Transferido em " + mov.getDtRegMovDDMMYY()));
+				} else {
 					atendenteInicial = mov.getLotaResp();
-					if (ultMovNaoCanc != null) {
-						adicionar(new Nodo(mov.getLotaResp().getSiglaCompleta())
-								.setLabel(mov.getLotaResp().getSigla())
-								.setShape(
-										mov.getLotaResp().equals(atendenteInicial) ? "oval"
-												: "rectangle")
-								.setDestacar(
-										mov.getLotaResp().equals(
-												ultMovNaoCanc.getLotaResp()))
-								.setTooltip(mov.getLotaResp().getNomeLotacao()));
-						atendenteAnterior = mov.getLotaResp();
-					}			
+				}
+
+				Nodo nodo = new Nodo(mov.getLotaResp().getSiglaCompleta())
+						.setLabel(mov.getLotaResp().getSigla() + "/" + mov.getLotaResp().getOrgaoUsuario().getSiglaOrgaoUsuarioCompleta())
+						.setShape(mov.getLotaResp().equals(atendenteInicial) ? "oval" : "rectangle")
+						.setDestacar(mov.getLotaResp().equals(ultMovNaoCanc.getLotaResp()))
+						.setTooltip(mov.getLotaResp().getNomeLotacao());
+				adicionar(nodo);
+				atendenteAnterior = mov.getLotaResp();
 			}
 		}
 	}
+
 }

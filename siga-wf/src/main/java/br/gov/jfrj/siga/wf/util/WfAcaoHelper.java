@@ -1,6 +1,6 @@
 package br.gov.jfrj.siga.wf.util;
 
-import java.util.TreeMap;
+import java.util.Map;
 
 import com.crivano.jlogic.Expression;
 
@@ -15,11 +15,10 @@ public class WfAcaoHelper {
 	}
 
 	public static AcaoVO criarAcao(String icone, String nome, String nameSpace, String acao, Expression pode,
-			String msgConfirmacao, TreeMap<String, String> params, String pre, String pos, String classe,
+			String msgConfirmacao, Map<String, Object> params, String pre, String pos, String classe,
 			String modal) {
 		boolean f = pode.eval();
-		return new AcaoVO(icone, nome, nameSpace, acao, f, formatarExplicacao(pode, f), msgConfirmacao, params, pre,
-				pos, classe, modal);
+		return new AcaoVO(icone, nome, nameSpace, acao, f, formatarExplicacao(pode, f), msgConfirmacao, params, pre, pos, classe, modal, null);
 	}
 
 	public static String formatarExplicacao(Expression exp, boolean f) {

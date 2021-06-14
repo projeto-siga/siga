@@ -1,5 +1,7 @@
 package br.gov.jfrj.siga.util;
 
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -145,7 +147,7 @@ public class ExWebdavStore implements IWebdavStore {
 			return null;
 		}
 		Date dt = new Date(10, 1, 1);
-		if ("".equals(uri) || "/".equals(uri) || uri.endsWith("/") || uri.split("/").length == 2) {
+		if (isEmpty(uri) || "/".equals(uri) || uri.endsWith("/") || uri.split("/").length == 2) {
 			StoredObject o = new StoredObject();
 			if (ret != null)
 				dt = ret.mob.doc().getDtRegDoc();
@@ -167,7 +169,7 @@ public class ExWebdavStore implements IWebdavStore {
 		// o.setResourceTypes(new ArrayList<String>());
 
 		byte ab[] = null;
-		ab = ret.mov.getConteudoBlobMov2();
+		ab = ret.mov.getConteudoBlobInicializarOuAtualizarCache();
 
 		o.setResourceLength(ab != null ? ab.length : 0);
 		log.info(" - resource" + ReflectionToStringBuilder.toString(o));
@@ -218,8 +220,7 @@ public class ExWebdavStore implements IWebdavStore {
 			DpPessoa cadastrante = dao.getPessoaFromSigla(ctx.cadastranteSigla);
 			DpPessoa titular = dao.getPessoaFromSigla(ctx.titularSigla);
 			DpLotacao lotaTitular = dao.getLotacaoFromSigla(ctx.unidadeSigla);
-			Ex.getInstance().getBL().anexarArquivoAuxiliar(cadastrante, cadastrante.getLotacao(), mob, null, titular,
-					ctx.nmArq, titular, lotaTitular, ab, contentType);
+			Ex.getInstance().getBL().anexarArquivoAuxiliar(cadastrante, cadastrante.getLotacao(), mob, null, titular,ctx.nmArq, titular, lotaTitular, ab);
 		} catch (Exception e) {
 			throwException("Não foi possível gravar o arquivo auxiliar.", e);
 		}
@@ -230,7 +231,7 @@ public class ExWebdavStore implements IWebdavStore {
 		ExMovimentacao mov = getMovs(new Context(uri)).mov;
 
 		byte ab[] = null;
-		ab = mov.getConteudoBlobMov2();
+		ab = mov.getConteudoBlobInicializarOuAtualizarCache();
 		return ab;
 	}
 

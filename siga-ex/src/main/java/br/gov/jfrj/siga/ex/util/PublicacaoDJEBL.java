@@ -171,7 +171,7 @@ public class PublicacaoDJEBL {
 		try {
 			AxisClientAlternativo cliente = new AxisClientAlternativo(Prop.get("dje.servidor.url"), "RecebeDocumentos", true);
 
-			cliente.setParam(new Object[] { mov.getConteudoBlobMov2() });
+			cliente.setParam(new Object[] { mov.getConteudoBlobInicializarOuAtualizarCache() });
 			Object o = cliente.call();
 			return new String((byte[]) o);
 		} catch (Throwable t) {

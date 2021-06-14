@@ -139,16 +139,16 @@
                 <![CDATA[select mob, mar from ExMobil mob join mob.exMarcaSet mar
                 where mar.cpMarcador.idMarcador=51              
                 and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu
-                and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)
-                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)
+                and (mar.dtIniMarca is null or mar.dtIniMarca < CURRENT_TIMESTAMP)
+                and (mar.dtFimMarca is null or mar.dtFimMarca > CURRENT_TIMESTAMP)
                 order by mob.exDocumento.dtDoc asc]]>
         </query>
         <query name="consultarQuantidadeParaArquivarIntermediarioEmLote">
                 <![CDATA[select count(*) from ExMobil mob join mob.exMarcaSet mar
                 where mar.cpMarcador.idMarcador=51              
                 and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu
-                and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)
-                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)
+                and (mar.dtIniMarca is null or mar.dtIniMarca < CURRENT_TIMESTAMP)
+                and (mar.dtFimMarca is null or mar.dtFimMarca > CURRENT_TIMESTAMP)
                 )]]>
         </query>
        
@@ -157,16 +157,16 @@
                 <![CDATA[select mob, mar from ExMobil mob join mob.exMarcaSet mar
                 where mar.cpMarcador.idMarcador=50      
                 and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu
-                and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)
-                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)
+                and (mar.dtIniMarca is null or mar.dtIniMarca < CURRENT_TIMESTAMP)
+                and (mar.dtFimMarca is null or mar.dtFimMarca > CURRENT_TIMESTAMP)
                 order by mob.exDocumento.dtDoc asc]]>
         </query>
         <query name="consultarQuantidadeParaArquivarPermanenteEmLote">
                 <![CDATA[select count(*) from ExMobil mob join mob.exMarcaSet mar
                 where mar.cpMarcador.idMarcador=50              
                 and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu
-                and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)
-                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)
+                and (mar.dtIniMarca is null or mar.dtIniMarca < CURRENT_TIMESTAMP)
+                and (mar.dtFimMarca is null or mar.dtFimMarca > CURRENT_TIMESTAMP)
                 )]]>
         </query>
        
@@ -177,8 +177,8 @@
                 and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu
                 and (:dtIni is null or mob.exDocumento.dtDoc >= :dtIni)
                 and (:dtFim is null or mob.exDocumento.dtDoc <= :dtFim)
-                and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)
-                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)]]>
+                and (mar.dtIniMarca is null or mar.dtIniMarca < CURRENT_TIMESTAMP)
+                and (mar.dtFimMarca is null or mar.dtFimMarca > CURRENT_TIMESTAMP)]]>
         </query>
        
         <query name="consultarQuantidadeAEliminar">
@@ -187,8 +187,8 @@
                 and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu
                 and (:dtIni is null or mob.exDocumento.dtDoc >= :dtIni)
                 and (:dtFim is null or mob.exDocumento.dtDoc <= :dtFim)
-                and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)
-                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)
+                and (mar.dtIniMarca is null or mar.dtIniMarca < CURRENT_TIMESTAMP)
+                and (mar.dtFimMarca is null or mar.dtFimMarca > CURRENT_TIMESTAMP)
                 )]]>
         </query>
        

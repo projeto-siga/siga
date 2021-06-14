@@ -49,6 +49,7 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,6 +57,7 @@ import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.proxy.HibernateProxy;
 import org.jboss.logging.Logger;
@@ -84,6 +86,8 @@ import com.google.gson.JsonSerializer;
 import br.gov.jfrj.itextpdf.ConversorHtml;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.Service;
+import br.gov.jfrj.siga.armazenamento.zip.ZipItem;
+import br.gov.jfrj.siga.armazenamento.zip.ZipServico;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
@@ -101,13 +105,11 @@ import br.gov.jfrj.siga.bluc.service.EnvelopeRequest;
 import br.gov.jfrj.siga.bluc.service.EnvelopeResponse;
 import br.gov.jfrj.siga.bluc.service.ValidateRequest;
 import br.gov.jfrj.siga.bluc.service.ValidateResponse;
-import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
-import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpToken;
-import br.gov.jfrj.siga.cp.TipoConteudo;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
@@ -172,6 +174,9 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 import br.gov.jfrj.siga.wf.service.WfService;
 
 public class ExBL extends CpBL {
+
+	public static final Predicate<ExDocumento> PREDICADO_DOCUMENTO_ASSINADO = doc -> doc != null && (!doc.isPendenteDeAssinatura() || doc.isAssinadoDigitalmente());
+
 	private static final String ERRO_EXCLUIR_ARQUIVO = "Erro ao excluir o arquivo";
 	private static final String ERRO_GRAVAR_ARQUIVO = "Erro ao gravar o arquivo";
 	private static final String MODELO_DESPACHO_AUTOMATICO = "Despacho Automático";
@@ -937,7 +942,7 @@ public class ExBL extends CpBL {
 
 	public void anexarArquivo(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, final DpPessoa subscritor, final String nmArqMov, final DpPessoa titular,
-			final DpLotacao lotaTitular, final byte[] conteudo, final String tipoConteudo, String motivo,
+			final DpLotacao lotaTitular, final byte[] conteudo, String motivo,
 			Set<ExMovimentacao> pendenciasResolvidas) throws AplicacaoException {
 
 		final ExMovimentacao mov;
@@ -949,9 +954,7 @@ public class ExBL extends CpBL {
 					mob, dtMov, subscritor, null, titular, lotaTitular, null);
 
 			mov.setNmArqMov(nmArqMov);
-			mov.setConteudoTpMov(tipoConteudo);
-			mov.setConteudoBlobMov2(conteudo);
-			mov.setDescrMov(motivo);
+			mov.setConteudoBlob(ZipItem.Tipo.porNomeItem(nmArqMov), conteudo);
 
 			gravarMovimentacao(mov);
 
@@ -975,7 +978,7 @@ public class ExBL extends CpBL {
 
 	public void anexarArquivoAuxiliar(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, final DpPessoa subscritor, String nmArqMov, final DpPessoa titular,
-			final DpLotacao lotaTitular, final byte[] conteudo, final String tipoConteudo) throws AplicacaoException {
+			final DpLotacao lotaTitular, final byte[] conteudo) throws AplicacaoException {
 
 		final ExMovimentacao mov;
 
@@ -998,8 +1001,7 @@ public class ExBL extends CpBL {
 					lotaCadastrante, mob, dtMov, subscritor, null, titular, lotaTitular, null);
 
 			mov.setNmArqMov(nmArqMov);
-			mov.setConteudoTpMov(tipoConteudo);
-			mov.setConteudoBlobMov2(conteudo);
+			mov.setConteudoBlob(ZipItem.Tipo.porNomeItem(nmArqMov), conteudo);
 
 			gravarMovimentacao(mov);
 			for (ExMovimentacao m : cancelar) {
@@ -1583,16 +1585,9 @@ public class ExBL extends CpBL {
 			mov = criarNovaMovimentacao(tpMovAssinatura, cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
 					usuarioDoToken, null, null, null, null);
 
-			// if (BUSCAR_CARIMBO_DE_TEMPO) {
-			// mov.setConteudoTpMov(CdService.MIME_TYPE_CMS);
-			mov.setConteudoBlobMov2(cms);
-			// } else {
+			ZipServico.gravar(mov, cms);
 			mov.setConteudoTpMov(MIME_TYPE_PKCS7);
-			// mov.setConteudoBlobMov2(pkcs7);
-			// }
-
 			mov.setDescrMov(sNome);
-
 			gravarMovimentacao(mov);
 
 			concluirAlteracaoDocComRecalculoAcesso(mov);
@@ -1994,7 +1989,7 @@ public class ExBL extends CpBL {
 
 			// Hash de auditoria
 			//
-			final byte[] pdf = movAlvo.getConteudoBlobpdf();
+			final byte[] pdf = movAlvo.getConteudoBlobPdf();
 			byte[] sha256 = BlucService.calcSha256(pdf);
 			String cpf = Long.toString(subscritor.getCpfPessoa());
 			acrescentarHashDeAuditoria(mov, sha256,
@@ -2137,7 +2132,7 @@ public class ExBL extends CpBL {
 
 		final byte[] cms;
 		try {
-			final byte[] data = movAlvo.getConteudoBlobpdf();
+			final byte[] data = movAlvo.getConteudoBlobPdf();
 
 			String s;
 
@@ -2260,14 +2255,8 @@ public class ExBL extends CpBL {
 
 			mov.setExMovimentacaoRef(movAlvo);
 
-			// if (BUSCAR_CARIMBO_DE_TEMPO) {
-			// mov.setConteudoTpMov(CdService.MIME_TYPE_CMS);
-			mov.setConteudoBlobMov2(cms);
-			// } else {
+			ZipServico.gravar(mov, cms);
 			mov.setConteudoTpMov(MIME_TYPE_PKCS7);
-			// mov.setConteudoBlobMov2(pkcs7);
-			// }
-
 			mov.setDescrMov(sNome);
 
 			gravarMovimentacao(mov);
@@ -3398,9 +3387,6 @@ public class ExBL extends CpBL {
 			// + (System.currentTimeMillis() - tempoIni));
 			tempoIni = System.currentTimeMillis();
 
-			if (doc.getConteudoBlobDoc() != null)
-				doc.setConteudoTpDoc(TipoConteudo.ZIP.getMimeType());
-
 			processarResumo(doc);
 
 			doc.setNumPaginas(doc.getContarNumeroDePaginas());
@@ -3481,19 +3467,9 @@ public class ExBL extends CpBL {
 	}
 
 	private ExDocumento salvarDocSemSalvarArq(ExDocumento doc) {
-		CpArquivo arqTemp = null;
-		// Nato: remover o cpArquivo para que ele não seja salvo automaticamente pelo
-		// JPA, pois isso acarreta em gravação desnecessária na tabela CpArquivo.
-		if (doc.getCpArquivo() != null && doc.getCpArquivo().getIdArq() == null) {
-			arqTemp = doc.getCpArquivo();
-			doc.setCpArquivo(null);
-		}
-		doc = ExDao.getInstance().gravar(doc);
-		if (arqTemp != null) 
-			doc.setCpArquivo(arqTemp);
-		return doc;
+		return ExDao.getInstance().gravar(doc);
 	}
-	
+
 	public void geraMovimentacaoSubstituicao(ExDocumento doc, DpPessoa cadastrante) throws AplicacaoException, SQLException {
 		final ExMovimentacao mov_substituto = criarNovaMovimentacao(
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_SUBSTITUICAO_RESPONSAVEL, cadastrante,
@@ -4207,10 +4183,7 @@ public class ExBL extends CpBL {
 	private ExDocumento duplicarDocumento(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExDocumento doc,
 			final boolean refazendo) throws Exception {
 		ExDocumento novoDoc = new ExDocumento();
-
 		novoDoc.setOrgaoUsuario(cadastrante.getOrgaoUsuario());
-		novoDoc.setConteudoBlobDoc(doc.getConteudoBlobDoc());
-		novoDoc.setConteudoTpDoc(doc.getConteudoTpDoc());
 		novoDoc.setDescrDocumento(doc.getDescrDocumento());
 
 		if (doc.getDestinatario() != null && !doc.getDestinatario().isFechada())
@@ -4282,10 +4255,11 @@ public class ExBL extends CpBL {
 		mob.setExTipoMobil(dao().consultar(ExTipoMobil.TIPO_MOBIL_GERAL, ExTipoMobil.class, false));
 		mob.setNumSequencia(1);
 		mob.setExDocumento(novoDoc);
-		mob.setExMovimentacaoSet(new TreeSet<ExMovimentacao>());
-		novoDoc.setExMobilSet(new TreeSet<ExMobil>());
-		novoDoc.getExMobilSet().add(mob);
+		mob.setExMovimentacaoSet(new TreeSet<>());
 
+		novoDoc.setExMobilSet(new TreeSet<>());
+		novoDoc.getExMobilSet().add(mob);
+		novoDoc.clonarConteudo(doc);
 		novoDoc = gravar(cadastrante, cadastrante, lotaCadastrante, novoDoc);
 
 		// mob = dao().gravar(mob);
@@ -4329,7 +4303,7 @@ public class ExBL extends CpBL {
 			throws AplicacaoException {
 		ExMovimentacao novaMov = new ExMovimentacao();
 		novaMov.setCadastrante(cadastrante);
-		novaMov.setConteudoBlobMov(mov.getConteudoBlobMov());
+		novaMov.clonarConteudo(mov);
 		novaMov.setConteudoTpMov(mov.getConteudoTpMov());
 		novaMov.setDescrMov(mov.getDescrMov());
 		novaMov.setDtIniMov(dao().dt());
@@ -5170,8 +5144,9 @@ public class ExBL extends CpBL {
 			return;
 
 		try {
-			if (doc != null && (!doc.isPendenteDeAssinatura() || doc.isAssinadoDigitalmente()))
+			if (PREDICADO_DOCUMENTO_ASSINADO.test(doc)) {
 				throw new AplicacaoException("O documento não pode ser reprocessado, pois já está assinado");
+			}
 
 			if ((doc.getExModelo() != null && ("template/freemarker".equals(doc
 					.getExModelo().getConteudoTpBlob()) || doc.getExModelo()
@@ -5282,9 +5257,9 @@ public class ExBL extends CpBL {
 			if (doc.getExModelo() != null) {
 				final byte[] form;
 				if (mov == null)
-					form = doc.getConteudoBlob("doc.form");
+					form = doc.getConteudoBlob(ZipItem.Tipo.FORM);
 				else
-					form = mov.getConteudoBlob("doc.form");
+					form = mov.getConteudoBlob(ZipItem.Tipo.FORM);
 				Utils.mapFromUrlEncodedForm(attrs, form);
 			}
 		}
@@ -7523,7 +7498,7 @@ public class ExBL extends CpBL {
 		if (doc.getExFormaDocumento().getExTipoFormaDoc().isExpediente()) {
 			for (final ExVia via : setVias) {
 				Integer numVia = null;
-				if (via.getCodVia() != null)
+				if (StringUtils.isNotBlank(via.getCodVia()))
 					numVia = Integer.parseInt(via.getCodVia());
 				if (numVia == null) {
 					numVia = 1;

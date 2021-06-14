@@ -39,6 +39,7 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.util.ExGraphColaboracao;
 import br.gov.jfrj.siga.ex.util.ExGraphRelacaoDocs;
 import br.gov.jfrj.siga.ex.util.ExGraphTramitacao;
@@ -113,11 +114,10 @@ public class ExDocumentoVO extends ExVO {
 		
 		
 		/*this.dataPrimeiraAssinatura = this.obterDataPrimeiraAssinatura(doc);*/
-		this.subscritorString = doc.getSubscritorString();
+		this.subscritorString = doc.getSubscritorString() + " (" + doc.getSubscritor().getLotacao().getSiglaLotacao() + "/" + doc.getSubscritor().getOrgaoUsuario().getSiglaOrgaoUsuarioCompleta() +")";
 		this.cadastranteString = doc.getCadastranteString();
 		if (doc.getLotaCadastrante() != null)
-			this.lotaCadastranteString = "("
-					+ doc.getLotaCadastrante().getSigla() + ")";
+			this.lotaCadastranteString = "(" + doc.getLotaCadastrante().getSigla() + " / " + doc.getOrgaoUsuario().getSiglaOrgaoUsuarioCompleta() + ")";
 		else
 			this.lotaCadastranteString = "";
 
@@ -363,7 +363,7 @@ public class ExDocumentoVO extends ExVO {
 								.getExMovimentacaoRef());
 						// Edson: se não gerou peça, nem mostra o
 						// desentranhamento
-						if (exMovVO.getMov().getConteudoBlobMov() == null)
+						if (exMovVO.getMov().getConteudoBlobInicializarOuAtualizarCache() == null)
 							continue;
 					}
 					if (!juntadasRevertidas.contains(exMovVO.getMov()))
@@ -537,15 +537,15 @@ public class ExDocumentoVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeVisualizarImpressao(titular, lotaTitular, mob));
 
-		vo.addAcao(
-				SigaMessages.getMessage("icon.ver.impressao"),
-				SigaMessages.getMessage("documento.ver.impressao"),
-				"/app/arquivo",
-				"exibir",
-				Ex.getInstance().getComp()
-						.podeVisualizarImpressao(titular, lotaTitular, mob),
-				null, "&popup=true&arquivo=" + doc.getReferenciaPDF(), null,
-				null, null);
+//		vo.addAcao(
+//				SigaMessages.getMessage("icon.ver.impressao"),
+//				SigaMessages.getMessage("documento.ver.impressao"),
+//				"/app/arquivo",
+//				"exibir",
+//				Ex.getInstance().getComp()
+//						.podeVisualizarImpressao(titular, lotaTitular, mob),
+//				null, "&popup=true&arquivo=" + doc.getReferenciaPDF(), null,
+//				null, null);
 			
 		vo.addAcao(
 				"lock",
@@ -645,15 +645,15 @@ public class ExDocumentoVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeRegistrarAssinatura(titular, lotaTitular, mob));
 
-		vo.addAcao(
-				"script_key",
-				"A_ssinar",
-				"/app/expediente/mov",
-				"assinar",
-				Ex.getInstance().getComp()
-						.podeAssinar(titular, lotaTitular, mob),
-				null, null, null, null,
-				"once");
+//		vo.addAcao(
+//				"script_key",
+//				"A_ssinar",
+//				"/app/expediente/mov",
+//				"assinar",
+//				Ex.getInstance().getComp()
+//						.podeAssinar(titular, lotaTitular, mob),
+//				null, null, null, null,
+//				"once");
 		
 		vo.addAcao(
 				"script_key",
@@ -828,6 +828,14 @@ public class ExDocumentoVO extends ExVO {
 						.podeCancelarDocumento(titular, lotaTitular, mob),
 				"Esta operação cancelará o documento pendente de assinatura. Prosseguir?",
 				null, null, null, "once");
+		
+		boolean documentoAssinado = ExBL.PREDICADO_DOCUMENTO_ASSINADO.test(doc);
+		vo.addAcao(
+				"arrow_refresh",
+				"Reprocessar PDF",
+				"/app/expediente/doc",
+				"corrigirPDF",
+				!documentoAssinado, null, null, null, null, null);
 		
 		vo.addAcao(
 				"report_link",

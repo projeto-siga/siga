@@ -344,14 +344,14 @@ public class ExMobilVO extends ExVO {
 							.podeVisualizarImpressao(titular, lotaTitular, mob),
 					null, null, null, null, "once");
 
-			addAcao(SigaMessages.getMessage("icon.ver.impressao"),
-					SigaMessages.getMessage("documento.ver.impressao"),
-					"/app/arquivo",
-					"exibir",
-					Ex.getInstance().getComp()
-							.podeVisualizarImpressao(titular, lotaTitular, mob),
-					null, "&popup=true&arquivo=" + mob.getReferenciaPDF(),
-					null, null, null);
+//			addAcao(SigaMessages.getMessage("icon.ver.impressao"),
+//					SigaMessages.getMessage("documento.ver.impressao"),
+//					"/app/arquivo",
+//					"exibir",
+//					Ex.getInstance().getComp()
+//							.podeVisualizarImpressao(titular, lotaTitular, mob),
+//					null, "&popup=true&arquivo=" + mob.getReferenciaPDF(),
+//					null, null, null);
 
 			addAcao("page_white_add",
 					"Incluir _Documento",

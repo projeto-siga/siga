@@ -21,7 +21,7 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -61,7 +61,7 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	@SequenceGenerator(name = "EX_MODELO_SEQ", sequenceName = "siga.ex_modelo_id_mod_seq")
 	@GeneratedValue(generator = "EX_MODELO_SEQ")
 	@Column(name = "ID_MOD", unique = true, nullable = false)
-	private java.lang.Long idMod;
+	private Long idMod;
 
 	@Transient
 	protected byte[] cacheConteudoBlobMod;
@@ -74,11 +74,11 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 
 	/** The value of the simple conteudoTpBlob property. */
 	@Column(name = "CONTEUDO_TP_BLOB", length = 128)
-	private java.lang.String conteudoTpBlob;
+	private String conteudoTpBlob;
 
 	/** The value of the simple descMod property. */
 	@Column(name = "DESC_MOD", length = 256)
-	private java.lang.String descMod;
+	private String descMod;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_CLASS_CRIACAO_VIA")
@@ -103,17 +103,17 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	/** The value of the exModeloTipologiaSet one-to-many association. */
 
 	@Column(name = "NM_ARQ_MOD", length = 256)
-	private java.lang.String nmArqMod;
+	private String nmArqMod;
 
 	/** The value of the simple nomeModelo property. */
 	@Column(name = "NM_MOD", nullable = false, length = 128)
-	private java.lang.String nmMod;
+	private String nmMod;
 
 	@Column(name = "NM_DIRETORIO", length = 128)
-	private java.lang.String nmDiretorio;
+	private String nmDiretorio;
 
 	@Column(name = "HIS_IDE", length = 128)
-	private java.lang.String uuid;
+	private String uuid;
 	
 	//
 	// Solução para não precisar criar HIS_ATIVO em todas as tabelas que herdam de HistoricoSuporte.
@@ -134,7 +134,7 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	}
 
 	@Column(name = "MARCA_DAGUA", length = 13)
-	private java.lang.String marcaDagua;
+	private String marcaDagua;
 
 	// private Set classificacaoSet;
 
@@ -149,7 +149,7 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	 * 
 	 * @param idMod
 	 */
-	public AbstractExModelo(final java.lang.Long idMod) {
+	public AbstractExModelo(final Long idMod) {
 		this.setIdMod(idMod);
 	}
 
@@ -178,9 +178,9 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	/**
 	 * Return the value of the DESC_MOD column.
 	 * 
-	 * @return java.lang.String
+	 * @return String
 	 */
-	public java.lang.String getDescMod() {
+	public String getDescMod() {
 		return this.descMod;
 	}
 
@@ -206,9 +206,9 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	/**
 	 * Return the simple primary key value that identifies this object.
 	 * 
-	 * @return java.lang.Long
+	 * @return Long
 	 */
-	public java.lang.Long getIdMod() {
+	public Long getIdMod() {
 		return idMod;
 	}
 
@@ -221,16 +221,16 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	 * this.classificacaoSet = classificacaoSet; }
 	 */
 
-	public java.lang.String getNmArqMod() {
+	public String getNmArqMod() {
 		return nmArqMod;
 	}
 
 	/**
 	 * Return the value of the NM_MOD column.
 	 * 
-	 * @return java.lang.String
+	 * @return String
 	 */
-	public java.lang.String getNmMod() {
+	public String getNmMod() {
 		return this.nmMod;
 	}
 
@@ -255,7 +255,7 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	 * 
 	 * @param descMod
 	 */
-	public void setDescMod(final java.lang.String descMod) {
+	public void setDescMod(final String descMod) {
 		this.descMod = descMod;
 	}
 
@@ -276,11 +276,11 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	 * 
 	 * @param idMod
 	 */
-	public void setIdMod(final java.lang.Long idMod) {
+	public void setIdMod(final Long idMod) {
 		this.idMod = idMod;
 	}
 
-	public void setNmArqMod(final java.lang.String nmArqMod) {
+	public void setNmArqMod(final String nmArqMod) {
 		this.nmArqMod = nmArqMod;
 	}
 
@@ -289,15 +289,15 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	 * 
 	 * @param nmMod
 	 */
-	public void setNmMod(final java.lang.String nmMod) {
+	public void setNmMod(final String nmMod) {
 		this.nmMod = nmMod.replaceAll("/", "&#47;");
 	}
 
-	public java.lang.String getMarcaDagua() {
+	public String getMarcaDagua() {
 		return marcaDagua;
 	}
 	
-	public void setMarcaDagua(java.lang.String marcaDagua) {
+	public void setMarcaDagua(String marcaDagua) {
 		this.marcaDagua = marcaDagua;
 	}
 
@@ -309,98 +309,115 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 		this.exNivelAcesso = exNivelAcesso;
 	}
 
-	public java.lang.String getNmDiretorio() {
+	public String getNmDiretorio() {
 		return nmDiretorio;
 	}
 
-	public void setNmDiretorio(java.lang.String nmDiretorio) {
+	public void setNmDiretorio(String nmDiretorio) {
 		this.nmDiretorio = nmDiretorio;
 	}
 
-	public java.lang.String getUuid() {
+	public String getUuid() {
 		return uuid;
 	}
 
-	public void setUuid(java.lang.String uuid) {
+	public void setUuid(String uuid) {
 		this.uuid = uuid;
-	}	
+	}
 
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		AbstractExModelo other = (AbstractExModelo) obj;
 		if (getConteudoBlobMod() == null) {
-			if (other.getConteudoBlobMod() != null)
+			if (other.getConteudoBlobMod() != null) {
 				return false;
+			}
 		} else {
-			if (other.getConteudoBlobMod() == null)
+			if (other.getConteudoBlobMod() == null) {
 				return false;
+			}
+
 			byte[] abthis = getConteudoBlobMod();
-			byte[] abother = other
-					.getConteudoBlobMod();
-			try {
-				String sthis = new String(abthis, "UTF-8");
-				String sother = new String(abother, "UTF-8");
+			byte[] abother = other.getConteudoBlobMod();
 
-				sthis = sthis.replace("\r\n", "\n");
-				sother = sother.replace("\r\n", "\n");
+			String sthis = new String(abthis, StandardCharsets.UTF_8);
+			String sother = new String(abother, StandardCharsets.UTF_8);
 
-				if (!sthis.equals(sother)) {
-					// System.out.println(Hex.encodeHexString(abthis));
-					// System.out.println(Hex.encodeHexString(abother));
-					return false;
-				}
-			} catch (UnsupportedEncodingException e) {
-				throw new RuntimeException(e);
+			sthis = sthis.replace("\r\n", "\n");
+			sother = sother.replace("\r\n", "\n");
+
+			if (!sthis.equals(sother)) {
+				return false;
 			}
 		}
 		if (getConteudoTpBlob() == null) {
-			if (other.getConteudoTpBlob() != null)
+			if (other.getConteudoTpBlob() != null) {
 				return false;
-		} else if (!getConteudoTpBlob().equals(other.getConteudoTpBlob()))
+			}
+		} else if (!getConteudoTpBlob().equals(other.getConteudoTpBlob())) {
 			return false;
+		}
 		if (descMod == null) {
-			if (other.descMod != null)
+			if (other.descMod != null) {
 				return false;
-		} else if (!descMod.equals(other.descMod))
+			}
+		} else if (!descMod.equals(other.descMod)) {
 			return false;
-		if (exClassCriacaoVia == null) {
-			if (other.exClassCriacaoVia != null)
+		}
+		if (exClassCriacaoVia == null) { 
+			if (other.exClassCriacaoVia != null) {
 				return false;
-		} else if (!exClassCriacaoVia.equals(other.exClassCriacaoVia))
+			}
+		} else if (!exClassCriacaoVia.equals(other.exClassCriacaoVia)) {
 			return false;
+		}
 		if (exClassificacao == null) {
-			if (other.exClassificacao != null)
+			if (other.exClassificacao != null) {
 				return false;
-		} else if (!exClassificacao.equals(other.exClassificacao))
+			}
+		} else if (!exClassificacao.equals(other.exClassificacao)) {
 			return false;
+		}
 		if (exFormaDocumento == null) {
-			if (other.exFormaDocumento != null)
+			if (other.exFormaDocumento != null) {
 				return false;
-		} else if (!exFormaDocumento.equals(other.exFormaDocumento))
+			}
+		} else if (!exFormaDocumento.equals(other.exFormaDocumento)) {
 			return false;
+		}
 		if (exNivelAcesso == null) {
-			if (other.exNivelAcesso != null)
+			if (other.exNivelAcesso != null) {
 				return false;
-		} else if (!exNivelAcesso.equals(other.exNivelAcesso))
+			}
+		} else if (!exNivelAcesso.equals(other.exNivelAcesso)) {
 			return false;
+		}
 		if (nmArqMod == null) {
-			if (other.nmArqMod != null)
+			if (other.nmArqMod != null) {
 				return false;
-		} else if (!nmArqMod.equals(other.nmArqMod))
+			}
+		} else if (!nmArqMod.equals(other.nmArqMod)) {
 			return false;
+		}
 		if (nmDiretorio == null) {
-			if (other.nmDiretorio != null)
+			if (other.nmDiretorio != null) {
 				return false;
-		} else if (!nmDiretorio.equals(other.nmDiretorio))
+			}
+		} else if (!nmDiretorio.equals(other.nmDiretorio)) {
 			return false;
+		}
 		if (nmMod == null) {
-			if (other.nmMod != null)
+			if (other.nmMod != null) {
 				return false;
-		} else if (!nmMod.equals(other.nmMod))
+			}
+		} else if (!nmMod.equals(other.nmMod)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -412,13 +429,13 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 		this.cpArquivo = cpArquivo;
 	}
 
-	public java.lang.String getConteudoTpBlob() {
+	public String getConteudoTpBlob() {
 		if (getCpArquivo() == null || getCpArquivo().getConteudoTpArq() == null)
 			return conteudoTpBlob;
 		return getCpArquivo().getConteudoTpArq();
 	}
 
-	public void setConteudoTpBlob(final java.lang.String conteudoTpMod) {
+	public void setConteudoTpBlob(final String conteudoTpMod) {
 		this.conteudoTpBlob = conteudoTpMod;
 		if (conteudoBlobMod==null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
 			cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, conteudoTpMod);

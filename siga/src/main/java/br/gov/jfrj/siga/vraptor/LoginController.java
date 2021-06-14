@@ -47,7 +47,10 @@ import br.gov.sp.prodesp.siga.servlet.CallBackServlet;
 
 @Controller
 public class LoginController extends SigaController {
-	HttpServletResponse response;
+
+	private static final Logger log = Logger.getLogger(LoginController.class);
+
+	private HttpServletResponse response;
 	private ServletContext context;
 
 	/**
@@ -125,6 +128,7 @@ public class LoginController extends SigaController {
 					
 			
 		} catch (Exception e) {
+			log.debug("Não foi possível efetuar o login: usuário será redirecionado novamente para a tela de login.");
 			result.include("loginMensagem", e.getMessage()); // aqui adicionar tente com a senha de rede windows 
 			result.forwardTo(this).login(cont);
 		}

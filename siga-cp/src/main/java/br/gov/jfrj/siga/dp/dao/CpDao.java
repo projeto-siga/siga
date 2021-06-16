@@ -763,19 +763,6 @@ public class CpDao extends ModeloDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public DpLotacao consultarPorIdInicialInclusiveLotacaoFechada(Class<DpLotacao> clazz, final Long idInicial) {
-		final Query query = em().createNamedQuery("consultarPorIdInicialDpLotacaoInclusiveFechada");
-		query.setParameter("idLotacaoIni", idInicial);
-
-		query.setHint("org.hibernate.cacheable", true);
-		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
-		final List<DpLotacao> l = query.getResultList();
-		if (l.size() != 1)
-			return null;
-		return l.get(0);
-	}
-
-	@SuppressWarnings("unchecked")
 	public List<DpLotacao> listarPorIdInicialDpLotacao(final Long idInicial) {
 		final Query query = em().createNamedQuery(
 				"listarPorIdInicialDpLotacao");
@@ -1056,21 +1043,6 @@ public class CpDao extends ModeloDao {
 			query.setParameter("idPessoaIni", idInicial);
 
 			return query.getResultList();
-		} catch (final NullPointerException e) {
-			return null;
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public DpPessoa consultarPorIdInicialInclusiveLotacaoFechada(final Long idInicial) {
-		try {
-			final Query query = em().createNamedQuery("consultarPorIdInicialDpLotacaoInclusiveFechada");
-			query.setParameter("idPessoaIni", idInicial);
-
-			final List<DpPessoa> l = query.getResultList();
-			if (l.size() != 1)
-				return null;
-			return l.get(0);
 		} catch (final NullPointerException e) {
 			return null;
 		}

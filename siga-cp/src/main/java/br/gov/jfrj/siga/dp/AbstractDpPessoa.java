@@ -144,7 +144,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ " and ((pes.nomePessoaAI like upper('%' || :nome || '%')) or ((pes.sesbPessoa || pes.matricula) like upper('%' || :nome || '%')))"
 				+ " and exists (select 1 from DpPessoa pAux where pAux.idPessoaIni = pes.idPessoaIni"
 				+ "		group by pAux.idPessoaIni having max(pAux.dataInicioPessoa) = pes.dataInicioPessoa) order by pes.nomePessoaAI"),
-		@NamedQuery(name = "consultarQuantidadeDpPessoaInclusiveFechadas", query = "select count(1)"
+		@NamedQuery(name = "consultarQuantidadeDpPessoaInclusiveFechadas", query = "select count(distinct pes.idPessoaIni)"
 				+ "		from DpPessoa pes"
 				+ "		where (:idOrgaoUsu = null or :idOrgaoUsu = 0L or pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ " 		and (:cpf = null or :cpf = 0L or pes.cpfPessoa like '%' || :cpf || '%') "
@@ -154,9 +154,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ " 		and (:cargo = null or :cargo = 0L or pes.cargo.idCargo = :cargo) "
 	      		+ " 		and (:funcao = null or :funcao = 0L or pes.funcaoConfianca.idFuncao = :funcao) "
 	      		+ " 		and ((pes.nomePessoaAI like upper('%' || :nome || '%')) or ((pes.sesbPessoa || pes.matricula) like upper('%' || :nome || '%')))"
-	      		+ " 		and (:identidade = null or (upper(pes.identidade) like upper('%' || :identidade || '%')) ) "
-	      		+ " 		and exists (select 1 from DpPessoa pAux where pAux.idPessoaIni = pes.idPessoaIni "
-				+ "				group by pAux.idPessoaIni having max(pAux.dataInicioPessoa) = pes.dataInicioPessoa)"), 
+	      		+ " 		and (:identidade = null or (upper(pes.identidade) like upper('%' || :identidade || '%')) ) "), 
 		@NamedQuery(name = "consultarPorCpfMatricula", query = "from DpPessoa pes "
 				+ "  where pes.cpfPessoa = :cpfPessoa"
 				+ "    and pes.matricula = :matricula"

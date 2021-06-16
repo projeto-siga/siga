@@ -66,11 +66,9 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "  where upper(o.nomeCargoAI) like upper('%' || :nome || '%')"
 				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or o.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "   	and o.dataFimCargo = null"),
-		@NamedQuery(name = "consultarQuantidadeDpCargoInclusiveInativos", query = "select count(1) from DpCargo cargo "
+		@NamedQuery(name = "consultarQuantidadeDpCargoInclusiveInativos", query = "select count(distinct cargo.idCargoIni) from DpCargo cargo "
 				+ "     where (:idOrgaoUsu = null or :idOrgaoUsu = 0L or cargo.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ "  	and upper(cargo.nomeCargoAI) like upper('%' || :nome || '%')"
-				+ "		and exists (select 1 from DpCargo cAux where cAux.idCargoIni = cargo.idCargoIni"
-				+ "			group by cAux.idCargoIni having max(cAux.dataInicioCargo) = cargo.dataInicioCargo)"),
+				+ "  	and upper(cargo.nomeCargoAI) like upper('%' || :nome || '%')"),
 		@NamedQuery(name = "consultarPorNomeDpCargoOrgao", query = "select cargo from DpCargo cargo "
 				+ " where upper(REMOVE_ACENTO(cargo.nomeCargo)) = upper(REMOVE_ACENTO(:nome)) and cargo.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario and cargo.dataFimCargo = null")})
 public abstract class AbstractDpCargo extends Objeto implements Serializable, HistoricoAuditavel {

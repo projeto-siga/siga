@@ -68,11 +68,9 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "  where upper(fun.nmFuncaoConfiancaAI) like upper('%' || :nome || '%')"
 				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or fun.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "   	and fun.dataFimFuncao = null"),
-		@NamedQuery(name = "consultarQuantidadeDpFuncaoConfiancaInclusiveInativas", query = "select count(1) from DpFuncaoConfianca funcao "
+		@NamedQuery(name = "consultarQuantidadeDpFuncaoConfiancaInclusiveInativas", query = "select count(distinct funcao.idFuncaoIni) from DpFuncaoConfianca funcao "
 				+ "  	where  (:idOrgaoUsu = null or :idOrgaoUsu = 0L or funcao.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ "  		and upper(funcao.nmFuncaoConfiancaAI) like upper('%' || :nome || '%')"
-				+ "			and exists (select 1 from DpFuncaoConfianca fAux where fAux.idFuncaoIni = funcao.idFuncaoIni"
-				+ "				group by fAux.idFuncaoIni having max(fAux.dataInicioFuncao) = funcao.dataInicioFuncao)"),
+				+ "  		and upper(funcao.nmFuncaoConfiancaAI) like upper('%' || :nome || '%')"),
 		@NamedQuery(name = "consultarPorNomeOrgaoDpFuncaoConfianca", query = "select fun from DpFuncaoConfianca fun where upper(REMOVE_ACENTO(fun.nomeFuncao)) = upper(REMOVE_ACENTO(:nome)) and fun.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario")})
 
 public abstract class AbstractDpFuncaoConfianca extends Objeto implements

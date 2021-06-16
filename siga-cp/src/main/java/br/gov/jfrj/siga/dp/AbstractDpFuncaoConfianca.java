@@ -58,19 +58,21 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or fun.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "   	and fun.dataFimFuncao = null"
 				+ "   	order by upper(fun.nomeFuncao)"),
-		@NamedQuery(name = "consultarPorFiltroDpFuncaoConfiancaInclusiveInativas", query = "from DpFuncaoConfianca fun "
-				+ "  where idFuncao in (select max(funcao.idFuncao) from DpFuncaoConfianca funcao"
-				+ "  	where upper(funcao.nmFuncaoConfiancaAI) like upper('%' || :nome || '%')"
-				+ "  		and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or funcao.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu) group by funcao.idFuncaoIni)"
-				+ "   	order by upper(fun.nomeFuncao)"),
+		@NamedQuery(name = "consultarPorFiltroDpFuncaoConfiancaInclusiveInativas", query = "from DpFuncaoConfianca funcao "
+				+ "  	where  (:idOrgaoUsu = null or :idOrgaoUsu = 0L or funcao.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "  		and upper(funcao.nmFuncaoConfiancaAI) like upper('%' || :nome || '%')"
+				+ "			and exists (select 1 from DpFuncaoConfianca fAux where fAux.idFuncaoIni = funcao.idFuncaoIni"
+				+ "				group by fAux.idFuncaoIni having max(fAux.dataInicioFuncao) = funcao.dataInicioFuncao)"
+				+ "   	order by upper(funcao.nomeFuncao)"),
 		@NamedQuery(name = "consultarQuantidadeDpFuncaoConfianca", query = "select count(fun) from DpFuncaoConfianca fun "
 				+ "  where upper(fun.nmFuncaoConfiancaAI) like upper('%' || :nome || '%')"
 				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or fun.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "   	and fun.dataFimFuncao = null"),
-		@NamedQuery(name = "consultarQuantidadeDpFuncaoConfiancaInclusiveInativas", query = "select count(fun) from DpFuncaoConfianca fun "
-				+ "  where idFuncao in (select max(funcao.idFuncao) from DpFuncaoConfianca funcao"
-				+ "  	where upper(funcao.nmFuncaoConfiancaAI) like upper('%' || :nome || '%')"
-				+ "  		and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or funcao.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu) group by funcao.idFuncaoIni)"),
+		@NamedQuery(name = "consultarQuantidadeDpFuncaoConfiancaInclusiveInativas", query = "select count(1) from DpFuncaoConfianca funcao "
+				+ "  	where  (:idOrgaoUsu = null or :idOrgaoUsu = 0L or funcao.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "  		and upper(funcao.nmFuncaoConfiancaAI) like upper('%' || :nome || '%')"
+				+ "			and exists (select 1 from DpFuncaoConfianca fAux where fAux.idFuncaoIni = funcao.idFuncaoIni"
+				+ "				group by fAux.idFuncaoIni having max(fAux.dataInicioFuncao) = funcao.dataInicioFuncao)"),
 		@NamedQuery(name = "consultarPorNomeOrgaoDpFuncaoConfianca", query = "select fun from DpFuncaoConfianca fun where upper(REMOVE_ACENTO(fun.nomeFuncao)) = upper(REMOVE_ACENTO(:nome)) and fun.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario")})
 
 public abstract class AbstractDpFuncaoConfianca extends Objeto implements

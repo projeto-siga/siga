@@ -1145,6 +1145,7 @@ public class AppController extends GcController {
 					false, false);
 	}
 
+	@Transacional
 	@Path("/app/remover/{sigla}")
 	public void remover(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);

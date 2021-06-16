@@ -964,7 +964,7 @@ ALTER TABLE ONLY corporativo.dp_visualizacao ALTER COLUMN id_visualizacao SET DE
 
 ALTER TABLE ONLY corporativo.dp_visualizacao_acesso ALTER COLUMN id_visualizacao_acesso SET DEFAULT nextval('corporativo.dp_visualizacao_acesso_id_visualizacao_acesso_seq'::regclass);
 
-CREATE OR REPLACE FUNCTION corporativo.remove_acento(
+CREATE OR REPLACE FUNCTION public.remove_acento(
 	acentuado character varying)
     RETURNS character varying
     LANGUAGE 'plpgsql'
@@ -979,5 +979,91 @@ DECLARE
  EXCEPTION
 	WHEN OTHERS THEN
 		null;		
+ END;
+$BODY$;
+
+CREATE OR REPLACE FUNCTION public.fun_numeracao_documento(
+	pid_orgao_usu bigint,
+	pid_forma_doc bigint,
+	pano_emissao bigint)
+    RETURNS bigint
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+DECLARE
+	  v_numero_documento bigint := 1; 
+	  v_id_doc_num bigint; 
+	BEGIN 
+	    SELECT id_documento_numeracao 
+	    INTO   v_id_doc_num 
+	    FROM   ex_documento_numeracao 
+	    WHERE  id_orgao_usu = pId_orgao_usu 
+	           AND id_forma_doc = pId_forma_doc 
+	           AND ano_emissao = pAno_emissao
+	           AND fl_ativo = 1
+	    FOR UPDATE;  /* Lock Registro para MUTEX */ 
+	
+	    UPDATE ex_documento_numeracao 
+	    SET    nr_documento = nr_documento + 1
+	    WHERE  id_documento_numeracao = v_id_doc_num
+	    RETURNING nr_documento
+	    INTO v_numero_documento; 
+	
+	    RETURN v_numero_documento; 
+	
+	    EXCEPTION  WHEN NO_DATA_FOUND THEN
+	    	--TODO: Criar rotina para verificar se número reseta todo ano. Se não, número incial igual ao numero final do ano anterior
+	        INSERT INTO ex_documento_numeracao 
+	                       (id_orgao_usu, id_forma_doc, ano_emissao, nr_documento) 
+	               VALUES  (pid_orgao_usu, pid_forma_doc, pano_emissao, v_numero_documento); 
+	        RETURN v_numero_documento;       
+	
+	END;
+$BODY$;
+
+CREATE OR REPLACE FUNCTION public.num_expediente_fun(
+	pid_orgao_usu bigint,
+	pid_forma_doc bigint,
+	pano_emissao bigint)
+    RETURNS bigint
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+DECLARE
+ NR_EXPEDIENTE bigint := 0 ;
+ --PID_NUMERACAO bigint := PID_FORMA_DOC ;
+ BEGIN
+     SELECT COUNT(NUM_EXPEDIENTE) into NR_EXPEDIENTE
+     FROM   EX_NUMERACAO
+     WHERE  ID_ORGAO_USU = pID_ORGAO_USU
+     AND    ID_FORMA_DOC = pID_FORMA_DOC
+     AND    ANO_EMISSAO = pANO_EMISSAO;
+
+     IF NR_EXPEDIENTE = 0 then
+        NR_EXPEDIENTE := 1;
+        INSERT INTO EX_NUMERACAO(ID_ORGAO_USU,ID_FORMA_DOC,ANO_EMISSAO,NUM_EXPEDIENTE)
+        VALUES(pID_ORGAO_USU,pID_FORMA_DOC,pANO_EMISSAO,NR_EXPEDIENTE);
+
+     ELSE
+
+        SELECT NUM_EXPEDIENTE into NR_EXPEDIENTE
+        FROM   EX_NUMERACAO
+        WHERE  ID_ORGAO_USU = pID_ORGAO_USU
+        AND    ID_FORMA_DOC = pID_FORMA_DOC
+        AND    ANO_EMISSAO = pANO_EMISSAO;
+
+        NR_EXPEDIENTE := NR_EXPEDIENTE + 1;
+
+        Update EX_NUMERACAO
+        SET NUM_EXPEDIENTE = NR_EXPEDIENTE
+        WHERE ID_ORGAO_USU = pID_ORGAO_USU
+        AND   ID_FORMA_DOC = pID_FORMA_DOC
+        AND   ANO_EMISSAO  = pANO_EMISSAO;
+     END IF;
+     COMMIT ;
+     RETURN NR_EXPEDIENTE;
+
  END;
 $BODY$;

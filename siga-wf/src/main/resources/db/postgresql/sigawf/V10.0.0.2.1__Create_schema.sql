@@ -522,21 +522,3 @@ ALTER TABLE ONLY sigawf.wf_procedimento ALTER COLUMN proc_id SET DEFAULT nextval
 ALTER TABLE ONLY sigawf.wf_responsavel ALTER COLUMN resp_id SET DEFAULT nextval('sigawf.wf_responsavel_resp_id_seq'::regclass);
 
 ALTER TABLE ONLY sigawf.wf_variavel ALTER COLUMN vari_id SET DEFAULT nextval('sigawf.wf_variavel_vari_id_seq'::regclass);
-
-CREATE OR REPLACE FUNCTION sigawf.remove_acento(
-	acentuado character varying)
-    RETURNS character varying
-    LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE PARALLEL UNSAFE
-AS $BODY$
-DECLARE
- sem_acento VARCHAR(4000);
- BEGIN
-    sem_acento := translate($1, 'áéíóúàèìòùãõâêîôôäëïöüçÁÉÍÓÚÀÈÌÒÙÃÕÂÊÎÔÛÄËÏÖÜÇ', 'aeiouaeiouaoaeiooaeioucAEIOUAEIOUAOAEIOOAEIOUC');
-	RETURN	sem_acento;
- EXCEPTION
-	WHEN OTHERS THEN
-		null;		
- END;
-$BODY$;

@@ -90,7 +90,6 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
-import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
@@ -1854,7 +1853,19 @@ public class ExDao extends CpDao {
 		q.select(c);
 		List<Predicate> whereList = new LinkedList<Predicate>();
 		if(flt.getSigla() != null) {
-			whereList.add(cb().like(c.get("nmMod").as(String.class), "%" + flt.getSigla() + "%"));
+			String modo = Prop.get("/siga.modelo.modo.pesquisa");
+			switch (modo) {
+			case "SIGLA":
+				whereList.add(cb().like(c.get("nmMod").as(String.class), "%" + flt.getSigla() + "%"));
+				break;
+			case "QUALQUER_PARTE":
+				Expression<String> path = c.get("nmMod");
+				path = cb().lower(path);
+				whereList.add(cb().like(path, "%" + flt.getSigla().toLowerCase() + "%"));
+				break;
+			default:
+				break;
+			}
 			whereList.add(cb().equal(c.get("hisAtivo"), 1));
 		}
 		Predicate[] whereArray = new Predicate[whereList.size()];

@@ -1487,6 +1487,8 @@ public class AppController extends GcController {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		bl.cancelar(informacao, getIdentidadeCadastrante(), getTitular(),
 				getLotaTitular());
+		bl.atualizarInformacaoPorMovimentacoes(informacao);
+		bl.atualizarMarcas(informacao);
 		result.redirectTo(this).exibir(informacao.getSiglaCompacta(), null,
 				false, false);
 	}

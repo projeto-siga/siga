@@ -6,6 +6,7 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <siga:pagina titulo="Anexação de Arquivo Auxiliar">
 
@@ -29,7 +30,7 @@
 					enctype="multipart/form-data" class="form">
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="sigla" value="${sigla}" />
-					<p class="alert alert-warning"><strong>Atenção!</strong> Esta funcionalidade destina-se à inserção de documento no formato original, equivalente ao que foi inserido em PDF, possibilitando, assim, a edição do arquivo original pelo destinatário e a inserção de nova versão, em PDF, no dossiê do documento ou para fins de consulta posterior, referência, exemplos. O arquivo auxiliar não faz, entretanto, parte do expediente ou processo. Para esse fim, deve ser utilizada a opção "anexar" ou "incluir documento".</p>
+					<p class="alert alert-warning"><strong>Atenção!</strong> <fmt:message key="documento.arquivoAuxiliar.texto"/></p>
 					<div class="row">
 						<div class="col-sm-6">
 							<div class="form-control custom-file">

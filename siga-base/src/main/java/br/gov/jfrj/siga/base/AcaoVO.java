@@ -23,8 +23,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
-import java.util.TreeMap;
 
 import com.crivano.jlogic.Expression;
 
@@ -38,12 +38,13 @@ public class AcaoVO {
 	private String pre;
 	private String pos;
 	private String classe;
+	private String hint;
 	private String modal;
-	private Map<String, String> params;
+	private Map<String, Object> params;
 	private String explicacao;
 	private boolean post;
 
-	public Map<String, String> getParams() {
+	public Map<String, Object> getParams() {
 		return params;
 	}
 
@@ -103,8 +104,27 @@ public class AcaoVO {
 		this.classe = classe;
 	}
 
-	public AcaoVO(String icone, String nome, String nameSpace, String acao, boolean pode, String msgConfirmacao,
-			TreeMap<String, String> params, String pre, String pos, String classe, String modal) {
+	public String getHint() {
+		return hint;
+	}
+
+	public void setHint(String hint) {
+		this.hint = hint;
+	}
+
+	public AcaoVO(
+			String icone,
+			String nome,
+			String nameSpace,
+			String acao,
+			boolean pode,
+			String msgConfirmacao,
+			Map<String, Object> params,
+			String pre,
+			String pos,
+			String classe,
+			String modal,
+			String hint) {
 		super();
 		this.icone = icone;
 		this.nome = nome;
@@ -117,17 +137,28 @@ public class AcaoVO {
 		this.pos = pos;
 		this.classe = classe;
 		this.modal = modal;
+		this.hint = hint;
 	}
 
-	public AcaoVO(String icone, String nome, String nameSpace, String acao, boolean pode, String explicacao,
-			String msgConfirmacao, TreeMap<String, String> params, String pre, String pos, String classe,
-			String modal) {
-		this(icone, nome, nameSpace, acao, pode, msgConfirmacao, params, pre, pos, classe, modal);
+	public AcaoVO(
+			String icone,
+			String nome,
+			String nameSpace,
+			String acao,
+			boolean pode,
+			String explicacao,
+			String msgConfirmacao,
+			Map<String, Object> params,
+			String pre,
+			String pos,
+			String classe,
+			String modal,
+			String hint) {
+		this(icone, nome, nameSpace, acao, pode, msgConfirmacao, params, pre, pos, classe, modal, hint);
 		this.explicacao = explicacao;
 	}
 
 	public AcaoVO() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -146,10 +177,13 @@ public class AcaoVO {
 		String resultUrl = "";
 		if (this.params != null) {
 			String valueOfParameterToAdd;
-			Map<String, String> parameters = this.params;
+			Map<String, Object> parameters = this.params;
 			Set<String> parametersNames = this.params.keySet();
 			for (String nameOfParameterToAdd : parametersNames) {
-				valueOfParameterToAdd = parameters.get(nameOfParameterToAdd);
+				valueOfParameterToAdd = Optional.ofNullable(parameters.get(nameOfParameterToAdd))
+						.map(String::valueOf)
+						.orElse(null);
+
 				resultUrl = (nameOfParameterToAdd + "=" + valueOfParameterToAdd + "&").concat(resultUrl);
 			}
 			if (!parametersNames.isEmpty())
@@ -215,7 +249,7 @@ public class AcaoVO {
 		this.pos = pos;
 	}
 
-	public void setParams(Map<String, String> params) {
+	public void setParams(Map<String, Object> params) {
 		this.params = params;
 	}
 
@@ -234,7 +268,7 @@ public class AcaoVO {
 		private String pos;
 		private String classe;
 		private String modal;
-		private Map<String, String> params;
+		private Map<String, Object> params;
 		private String explicacao;
 		private boolean post;
 
@@ -288,7 +322,7 @@ public class AcaoVO {
 			return this;
 		}
 
-		public Builder params(Map<String, String> params) {
+		public Builder params(Map<String, Object> params) {
 			this.params = params;
 			return this;
 		}
@@ -345,11 +379,10 @@ public class AcaoVO {
 		}
 
 		public static AcaoVO criarAcao(String icone, String nome, String nameSpace, String acao, Expression pode,
-				String msgConfirmacao, TreeMap<String, String> params, String pre, String pos, String classe,
+				String msgConfirmacao, Map<String, Object> params, String pre, String pos, String classe,
 				String modal) {
 			boolean f = pode.eval();
-			return new AcaoVO(icone, nome, nameSpace, acao, f, formatarExplicacao(pode, f), msgConfirmacao, params, pre,
-					pos, classe, modal);
+			return new AcaoVO(icone, nome, nameSpace, acao, f, formatarExplicacao(pode, f), msgConfirmacao, params, pre, pos, classe, modal, null);
 		}
 
 		public static String formatarExplicacao(Expression exp, boolean f) {

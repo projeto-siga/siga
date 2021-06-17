@@ -50,7 +50,7 @@ import br.gov.jfrj.siga.model.Objeto;
 public abstract class AbstractCpServico extends Objeto implements Serializable {
 
 	@Id
-	@SequenceGenerator(name = "CP_SERVICO_SEQ", sequenceName = "CORPORATIVO.CP_SERVICO_SEQ")
+	@SequenceGenerator(name = "CP_SERVICO_SEQ", sequenceName = "corporativo.cp_servico_id_servico_seq")
 	@GeneratedValue(generator = "CP_SERVICO_SEQ")
 	@Column(name = "ID_SERVICO", unique = true, nullable = false)
 	private Long idServico;

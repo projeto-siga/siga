@@ -68,6 +68,7 @@ import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.siga.armazenamento.zip.ZipItem;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.GZip;
@@ -120,8 +121,32 @@ public class ExDocumentoController extends ExController {
 	private static final String ERRO_GRAVAR_ARQUIVO = "Erro ao gravar o arquivo";
 	private static final String URL_EXIBIR = "/app/expediente/doc/exibir?sigla={0}";
 	private static final String URL_EDITAR = "/app/expediente/doc/editar?sigla={0}";
+
+	private static final String[] MARCACOES_TEMPLATE_DOCUMENTOS = {
+			"<!-- INICIO NUMERO -->",
+			"<!-- FIM NUMERO -->",
+			"<!-- INICIO NUMERO",
+			"FIM NUMERO -->",
+			"<!-- INICIO TITULO",
+			"FIM TITULO -->",
+			"<!-- INICIO MIOLO -->",
+			"<!-- FIM MIOLO -->",
+			"<!-- INICIO CORPO -->",
+			"<!-- FIM CORPO -->",
+			"<!-- INICIO CORPO",
+			"FIM CORPO -->",
+			"<!-- INICIO ASSINATURA -->",
+			"<!-- FIM ASSINATURA -->",
+			"<!-- INICIO ABERTURA -->",
+			"<!-- FIM ABERTURA -->",
+			"<!-- INICIO ABERTURA",
+			"FIM ABERTURA -->",
+			"<!-- INICIO FECHO -->",
+			"<!-- FIM FECHO -->"
+	};
+
 	private String url = null;
-	
+
 	private final static Logger log = Logger.getLogger(ExDocumentoController.class);
 
 	/**
@@ -326,10 +351,8 @@ public class ExDocumentoController extends ExController {
 			final String[] paramNameAndValue = ((String) elem).split("=");
 			final String paramName = paramNameAndValue[0];
 			String paramValue = paramNameAndValue[1];
-			final String paramValueDecoded = URLDecoder.decode(paramValue,
-					"ISO-8859-1");
-			final String paramValueEncodedUTF8 = URLEncoder.encode(
-					paramValueDecoded, "UTF-8");
+			final String paramValueDecoded = URLDecoder.decode(paramValue, StandardCharsets.ISO_8859_1.name());
+			final String paramValueEncodedUTF8 = URLEncoder.encode(paramValueDecoded, StandardCharsets.UTF_8.name());
 			final String dtoParamName = "exDocumentoDTO.".concat(paramName);
 
 			try {
@@ -2337,9 +2360,9 @@ public class ExDocumentoController extends ExController {
 		// ambiente.
 		setCadastrante(backupCadastrante);
 
-		if (doc.getConteudoBlob("doc.htm") != null) {
+		if (doc.getConteudoBlob(ZipItem.Tipo.HTM) != null) {
 			exDocumentoDTO.setConteudo(new String(doc
-					.getConteudoBlob("doc.htm")));
+					.getConteudoBlob(ZipItem.Tipo.HTM)));
 		}
 
 		exDocumentoDTO.setIdTpDoc(doc.getExTipoDocumento().getIdTpDoc());
@@ -2471,8 +2494,7 @@ public class ExDocumentoController extends ExController {
 						baos.write('=');
 
 						// Deveria estar gravando como UTF-8
-						baos.write(URLEncoder.encode(param(s), "iso-8859-1")
-								.getBytes());
+						baos.write(URLEncoder.encode(param(s), StandardCharsets.ISO_8859_1.name()).getBytes());
 					}
 				}
 			}
@@ -2482,16 +2504,14 @@ public class ExDocumentoController extends ExController {
 
 	private void lerEntrevista(final ExDocumentoDTO exDocumentoDTO) {
 		if (exDocumentoDTO.getDoc().getExModelo() != null) {
-			final byte[] form = exDocumentoDTO.getDoc().getConteudoBlob(
-					"doc.form");
+			final byte[] form = exDocumentoDTO.getDoc().getConteudoBlob(ZipItem.Tipo.FORM);
 			if (form != null) {
 				final String as[] = new String(form).split("&");
 				for (final String s : as) {
 					final String param[] = s.split("=");
 					try {
 						if (param.length == 2) {
-							exDocumentoDTO.getParamsEntrevista().put(param[0],
-									URLDecoder.decode(param[1], "iso-8859-1"));
+							exDocumentoDTO.getParamsEntrevista().put(param[0], URLDecoder.decode(param[1], StandardCharsets.ISO_8859_1.name()));
 						}
 					} catch (final UnsupportedEncodingException e) {
 					}
@@ -2668,17 +2688,6 @@ public class ExDocumentoController extends ExController {
 		}
 
 		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-			final String marcacoes[] = { "<!-- INICIO NUMERO -->",
-					"<!-- FIM NUMERO -->", "<!-- INICIO NUMERO",
-					"FIM NUMERO -->", "<!-- INICIO TITULO", "FIM TITULO -->",
-					"<!-- INICIO MIOLO -->", "<!-- FIM MIOLO -->",
-					"<!-- INICIO CORPO -->", "<!-- FIM CORPO -->",
-					"<!-- INICIO CORPO", "FIM CORPO -->",
-					"<!-- INICIO ASSINATURA -->", "<!-- FIM ASSINATURA -->",
-					"<!-- INICIO ABERTURA -->", "<!-- FIM ABERTURA -->",
-					"<!-- INICIO ABERTURA", "FIM ABERTURA -->",
-					"<!-- INICIO FECHO -->", "<!-- FIM FECHO -->" };
-
 			final String as[] = vars;
 			if (as != null && as.length > 0) {
 				for (final String s : as) {
@@ -2688,7 +2697,7 @@ public class ExDocumentoController extends ExController {
 					baos.write('=');
 					if (param(s) != null) {
 						String parametro = param(s);
-						for (final String m : marcacoes) {
+						for (final String m : MARCACOES_TEMPLATE_DOCUMENTOS) {
 							if (parametro.contains(m))
 								parametro = parametro.replaceAll(m, "");
 						}
@@ -2698,9 +2707,7 @@ public class ExDocumentoController extends ExController {
 								setParam(s, parametro);
 							}
 						}
-
-						baos.write(URLEncoder.encode(parametro, "iso-8859-1")
-								.getBytes());
+						baos.write(URLEncoder.encode(parametro, StandardCharsets.ISO_8859_1.name()).getBytes());
 					}
 				}
 				doc.setConteudoTpDoc("application/zip");

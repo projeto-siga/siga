@@ -182,7 +182,7 @@ public class ExProcessoAutenticacaoController extends ExController {
 		String fileName;
 		String contentType;
 		if (sigla != null) {
-			Long idDocPai = arq.getIdDoc();
+			Long idDocPai = arq.getId();
 			ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
 			flt.setSigla(sigla);
 			ExMobil mob = ExDao.getInstance().consultarPorSigla(flt);
@@ -205,8 +205,7 @@ public class ExProcessoAutenticacaoController extends ExController {
 	
 				fileName = arq.getReferencia() + "_" + mov.getIdMov() + ".p7s";
 				contentType = mov.getConteudoTpMov();
-	
-				bytes = mov.getConteudoBlobMov2();
+				bytes = mov.getConteudoBlobInicializarOuAtualizarCache();
 	
 			} else {
 				fileName = arq.getReferenciaPDF();

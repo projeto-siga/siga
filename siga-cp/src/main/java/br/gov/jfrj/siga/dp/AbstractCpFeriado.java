@@ -43,8 +43,7 @@ import br.gov.jfrj.siga.model.Objeto;
 public abstract class AbstractCpFeriado extends Objeto implements Serializable {
 
 	@Id
-	@SequenceGenerator(name = "CP_FERIADO_SEQ", sequenceName = "CORPORATIVO"
-			+ ".CP_FERIADO_SEQ")
+	@SequenceGenerator(name = "CP_FERIADO_SEQ", sequenceName = "corporativo.cp_feriado_id_feriado_seq")
 	@GeneratedValue(generator = "CP_FERIADO_SEQ")
 	@Column(name = "ID_FERIADO", unique = true, nullable = false)
 	private Integer idFeriado;

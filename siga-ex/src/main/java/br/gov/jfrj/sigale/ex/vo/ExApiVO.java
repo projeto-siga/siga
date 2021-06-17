@@ -18,10 +18,11 @@
  ******************************************************************************/
 package br.gov.jfrj.sigale.ex.vo;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import br.gov.jfrj.siga.base.util.Utils;
@@ -58,7 +59,8 @@ public class ExApiVO {
 	protected void addAcao(String icone, String nome, String nameSpace,
 			String action, boolean pode, String msgConfirmacao,
 			String parametros, String pre, String pos, String classe) {
-		TreeMap<String, String> params = new TreeMap<String, String>();
+
+		Map<String, Object> params = new TreeMap<>();
 
 		if (this instanceof ExMovimentacaoApiVO) {
 			params.put("id",
@@ -72,20 +74,17 @@ public class ExApiVO {
 		}
 
 		if (parametros != null) {
-			if (parametros.startsWith("&"))
+			if (parametros.startsWith("&")) {
 				parametros = parametros.substring(1);
-			else
-				params.clear();
-			try {
-				Utils.mapFromUrlEncodedForm(params,
-								parametros.getBytes("iso-8859-1"));
-			} catch (UnsupportedEncodingException e) {
 			}
+			else {
+				params.clear();
+			}
+			Utils.mapFromUrlEncodedForm(params, parametros.getBytes(StandardCharsets.ISO_8859_1));
 		}
 
 		if (pode) {
-			ExAcaoApiVO acao = new ExAcaoApiVO(icone, nome, nameSpace, action, pode,
-					msgConfirmacao, params, pre, pos, classe);
+			ExAcaoApiVO acao = new ExAcaoApiVO(icone, nome, nameSpace, action, pode, msgConfirmacao, params, pre, pos, classe, null);
 			acoes.add(acao);
 		}
 	}

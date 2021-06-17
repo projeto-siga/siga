@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.jboss.logging.Logger;
+
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
@@ -23,6 +25,8 @@ import br.gov.jfrj.siga.vraptor.ExClassificacaoSelecao;
 import br.gov.jfrj.siga.vraptor.ExMobilSelecao;
 
 public final class ExMovimentacaoBuilder {
+
+	private static final Logger log = Logger.getLogger(ExMovimentacaoBuilder.class);
 
 	private DpLotacao lotaTitular;
 	private DpPessoa cadastrante;
@@ -49,7 +53,6 @@ public final class ExMovimentacaoBuilder {
 	private DpLotacaoSelecao lotaSubscritorSel;
 	private Long idPapel;
 	private Long idMarcador;
-	private String contentType;
 	private String fileName;
 
 	private ExMovimentacaoBuilder() {
@@ -180,12 +183,14 @@ public final class ExMovimentacaoBuilder {
 			mov.setDtMov(df.parse(dtMovString));
 			if (mov.getDtMov() != null && !Data.dataDentroSeculo21(mov.getDtMov()))
 				throw new AplicacaoException("Data inválida, deve estar entre o ano 2000 e ano 2100");
-		} catch (final Exception e) {
+		} catch (final ParseException e) {
+			log.warn("Não foi possível ler a data de movimentação", e);
 		}
 
 		try {
 			mov.setDtFimMov(df.parse(dtDevolucaoMovString));
-		} catch (final Exception e) {
+		} catch (final ParseException e) {
+			log.warn("Não foi possível ler a data de devolução de movimentação", e);
 		}
 
 		if (getDtPubl() != null) {
@@ -200,10 +205,10 @@ public final class ExMovimentacaoBuilder {
 
 		try {
 			mov.setDtDispPublicacao(df.parse(dtDispon));
-		} catch (final Exception e) {
+		} catch (final ParseException e) {
+			log.warn("Não foi possível ler a data de disponibilização de movimentação", e);
 		}
 
-		mov.setConteudoTpMov(contentType);
 		mov.setNmArqMov(fileName);
 
 		if ((mov.getTitular() != null && mov.getSubscritor() == null) || (mov.getLotaTitular() != null && mov.getLotaSubscritor() == null)) {
@@ -313,10 +318,6 @@ public final class ExMovimentacaoBuilder {
 
 	public Long getIdMarcador() {
 		return idMarcador;
-	}
-
-	public String getContentType() {
-		return contentType;
 	}
 
 	public String getFileName() {
@@ -445,11 +446,6 @@ public final class ExMovimentacaoBuilder {
 
 	public ExMovimentacaoBuilder setIdMarcador(Long idMarcador) {
 		this.idMarcador = idMarcador;
-		return this;
-	}
-
-	public ExMovimentacaoBuilder setContentType(String contentType) {
-		this.contentType = contentType;
 		return this;
 	}
 

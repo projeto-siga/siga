@@ -20,14 +20,9 @@ package br.gov.jfrj.itextpdf;
 
 import static br.gov.jfrj.siga.ex.util.ProcessadorHtml.novoHtmlPersonalizado;
 
-import java.awt.Color;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -35,46 +30,31 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import com.lowagie.text.Annotation;
 import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.FontFactory;
-import com.lowagie.text.Image;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.Barcode39;
-import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PRAcroForm;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfCopy;
 import com.lowagie.text.pdf.PdfDestination;
-import com.lowagie.text.pdf.PdfGState;
 import com.lowagie.text.pdf.PdfImportedPage;
 import com.lowagie.text.pdf.PdfOutline;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfPageEventHelper;
 import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.PdfWriter;
-import com.swetake.util.Qrcode;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
@@ -82,7 +62,6 @@ import br.gov.jfrj.siga.base.CurrentRequest;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RequestInfo;
-import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -178,7 +157,7 @@ public class Documento {
 			doc = mob.getExDocumento();
 			pdf = doc.getConteudoBlobPdf();
 		} else {
-			pdf = mov.getConteudoBlobpdf();
+			pdf = mov.getConteudoBlobPdf();
 		}
 		if (pdf != null)
 			return pdf;
@@ -288,6 +267,46 @@ public class Documento {
 		return retorno;
 	}
 
+	public static List<String> getAssinantesDataHoraStringLista(Set<ExMovimentacao> movsAssinatura) {
+		final List<String> assinantes = new ArrayList<>();
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy - HH:mm");
+
+		for (ExMovimentacao movAssinatura : movsAssinatura) {
+			String s;
+			if (movAssinatura.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)) {
+				s = Texto.maiusculasEMinusculas(movAssinatura.getCadastrante().getNomePessoa());
+			} else {
+				s = movAssinatura.getDescrMov().trim().toUpperCase();
+				s = s.split(":")[0];
+				s = s.intern();
+				s = s + " em " + df.format(movAssinatura.getData());
+			}
+			if (!assinantes.contains(s)) {
+				assinantes.add(s);
+			}
+		}
+		return assinantes;
+	}
+
+	public static String getAssinaturaComSenhaDataHoraString(Set<ExMovimentacao> movsAssinatura) {
+		final List<String> als = getAssinantesDataHoraStringLista(movsAssinatura);
+		String retorno = "";
+		if (als.size() > 0) {
+			for (int i = 0; i < als.size(); i++) {
+				String nome = als.get(i) + "hs";
+				if (i > 0) {
+					// retorno += " em " + "" + "hs ";
+					if (i == als.size() - 1) {
+						retorno += " e ";
+					} else {
+						retorno += ", ";
+					}
+				}
+				retorno += nome;
+			}
+		}
+		return retorno;
+	}
 	
 	// private byte[] getPdfOld(byte[] pdf, ExDocumentoVia docvia,
 	// ExMovimentacao mov, Integer paginaInicial, Integer paginaFinal,
@@ -407,11 +426,10 @@ public class Documento {
 						.isInternoProduzido(), an.getArquivo().getQRCode(), an
 						.getArquivo().getMensagem(), an.getPaginaInicial(),
 						an.getPaginaFinal(), an.getOmitirNumeracao(),
-						Prop.get("carimbo.texto.superior"), 
-						mob.getExDocumento().getOrgaoUsuario().getDescricao(), 
-						mob.getExDocumento().getMarcaDagua(), 
-						an.getMobil().getDoc().getIdsDeAssinantes());	
-				
+						Prop.get("carimbo.texto.superior"),
+						mob.getExDocumento().getOrgaoUsuario().getSiglaOrgaoUsuarioCompleta(),
+						mob.getExDocumento().getMarcaDagua(),
+						an.getMobil().getDoc().getIdsDeAssinantes());
 
 				bytes += ab.length;
 
@@ -462,13 +480,13 @@ public class Documento {
 						// PdfOutline oline1 = new PdfOutline(root,
 						// PdfAction.gotoLocalPage("1", false),"Chapter 1");
 
-						HashMap map = new HashMap();
+						Map<String, Object> map = new HashMap<>();
 						map.put("Title", an.getNome());
 						map.put("Action", "GoTo");
 						map.put("Page", j + pageOffset + "");
-						map.put("Kids", new ArrayList());
+						map.put("Kids", new ArrayList<>());
 
-						ArrayList mapPai = master;
+						List<Object> mapPai = master;
 						for (int i = 0; i < an.getNivel() - nivelInicial; i++) {
 							mapPai = ((ArrayList) ((HashMap) mapPai.get(mapPai
 									.size() - 1)).get("Kids"));
@@ -651,7 +669,7 @@ public class Documento {
 	public static String realPath() {
 		
 		RequestInfo ri = CurrentRequest.get();		
-		String realPath = Contexto.urlBase(ri.getRequest()) + ri.getRequest().getContextPath();
+		String realPath = Contexto.urlBase(ri.getRequest(), false) + ri.getRequest().getContextPath();
 		
 		if (realPath.endsWith("/siga-le"))
 			realPath = realPath.replace("/siga-le", "/sigaex");

@@ -18,16 +18,19 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.base;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.TreeMap;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
 
 import br.gov.jfrj.siga.base.util.Utils;
 
 public class VO {
-	List<AcaoVO> acoes = new ArrayList<AcaoVO>();
+	List<AcaoVO> acoes = new ArrayList<>();
 
 	private class NomeAcaoVOComparator implements Comparator<AcaoVO> {
 
@@ -52,26 +55,43 @@ public class VO {
 		acoes.add(acao);
 	}
 
-	public void addAcao(String icone, String nome, String nameSpace, String action, boolean pode) {
+	public void addAcao(
+			String icone,
+			String nome,
+			String nameSpace,
+			String action,
+			boolean pode) {
 		addAcao(icone, nome, nameSpace, action, pode, null, null, null, null, null, null, null);
 	}
 
-	public void addAcao(String icone, String nome, String nameSpace, String action, boolean pode, String tooltip, 
-			String msgConfirmacao, String parametros, String pre, String pos, String classe, String modal) {
-		TreeMap<String, String> params = new TreeMap<String, String>();
+	public void addAcao(
+			String icone,
+			String nome,
+			String nameSpace,
+			String action,
+			boolean pode,
+			String tooltip, 
+			String msgConfirmacao,
+			String parametros,
+			String pre,
+			String pos,
+			String classe,
+			String modal) {
+
+		Map<String, Object> params = new LinkedHashMap<>();
 		if (parametros != null) {
-			if (parametros.startsWith("&"))
+			if (parametros.startsWith("&")) {
 				parametros = parametros.substring(1);
-			else
-				params.clear();
-			try {
-				Utils.mapFromUrlEncodedForm(params, parametros.getBytes("iso-8859-1"));
-			} catch (UnsupportedEncodingException e) {
 			}
+			else {
+				params.clear();
+			}
+			Utils.mapFromUrlEncodedForm(params, parametros.getBytes(StandardCharsets.ISO_8859_1));
 		}
 
 		if (pode) {
-			AcaoVO acao = new AcaoVO(icone, nome, nameSpace, action, pode, msgConfirmacao, params, pre, pos, classe, modal);
+			String hintEscapado = StringUtils.replace(nome, "_", "");
+			AcaoVO acao = new AcaoVO(icone, nome, nameSpace, action, pode, msgConfirmacao, params, pre, pos, classe, modal, hintEscapado);
 			acoes.add(acao);
 		}
 	}

@@ -44,7 +44,7 @@ public abstract class AbstractExVia extends HistoricoAuditavelSuporte implements
 		Serializable {
 	/** The composite primary key value. */
 	@Id
-	@SequenceGenerator(sequenceName = "EX_VIA_SEQ", name = "EX_VIA_SEQ")
+	@SequenceGenerator(name = "EX_VIA_SEQ", sequenceName = "siga.ex_via_id_via_seq")
 	@GeneratedValue(generator = "EX_VIA_SEQ")
 	@Column(name = "ID_VIA", unique = true, nullable = false)
 	private java.lang.Long idVia;

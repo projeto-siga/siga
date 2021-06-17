@@ -38,8 +38,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
 import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
+import org.hibernate.annotations.SortNatural;
 
 import br.gov.jfrj.siga.model.Objeto;
 
@@ -107,8 +106,11 @@ import br.gov.jfrj.siga.model.Objeto;
 				+ "			group by m2.id_mobil" + "		) max_mov" + "	where" + "		m3.id_mov = max_mov.id_mov"
 				+ "		and m3.id_lota_resp = l2.id_lotacao" + ")") })
 public abstract class AbstractExMobil extends Objeto implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
 	@Id
-	@SequenceGenerator(sequenceName = "EX_MOBIL_SEQ", name = "EX_MOBIL_SEQ")
+	@SequenceGenerator(name = "EX_MOBIL_SEQ", sequenceName = "siga.ex_mobil_id_mobil_seq")
 	@GeneratedValue(generator = "EX_MOBIL_SEQ")
 	@Column(name = "ID_MOBIL", unique = true, nullable = false)
 	private java.lang.Long idMobil;
@@ -132,12 +134,12 @@ public abstract class AbstractExMobil extends Objeto implements Serializable {
 
 	@BatchSize(size=1)
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exMobil")
-	@Sort(type = SortType.NATURAL)
+	@SortNatural
 	private SortedSet<ExMovimentacao> exMovimentacaoSet = new TreeSet<>();
 
 	@BatchSize(size=1)
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exMobilRef")
-	@Sort(type = SortType.NATURAL)
+	@SortNatural
 	private SortedSet<ExMovimentacao> exMovimentacaoReferenciaSet;
 
 	@BatchSize(size=1)
@@ -145,7 +147,7 @@ public abstract class AbstractExMobil extends Objeto implements Serializable {
 	private java.util.Set<ExDocumento> exDocumentoFilhoSet;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exMobil")
-	@Sort(type = SortType.NATURAL)
+	@SortNatural
 	private SortedSet<ExMarca> exMarcaSet;
 
 	public java.lang.Long getIdMobil() {
@@ -153,7 +155,7 @@ public abstract class AbstractExMobil extends Objeto implements Serializable {
 	}
 
 	public void setIdMobil(java.lang.Long idMobil) {
-		idMobil = idMobil;
+		this.idMobil = idMobil;
 	}
 
 	public ExDocumento getExDocumento() {

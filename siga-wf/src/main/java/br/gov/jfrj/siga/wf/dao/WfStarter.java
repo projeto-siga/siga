@@ -5,7 +5,6 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
-import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
@@ -22,12 +21,9 @@ public class WfStarter {
 
 	@PostConstruct
 	public void init() {
-		try {
-			SigaFlyway.migrate("java:/jboss/datasources/SigaWfDS", "classpath:db/mysql/sigawf");
-		} catch (NamingException e) {
-			throw new RuntimeException(e);
-		}
+		SigaFlyway.migrate("java:/jboss/datasources/SigaWfDS", "sigawf", "sigawf");
 		emf = Persistence.createEntityManagerFactory("default");
 		Service.setUsuarioDeSistema(UsuarioDeSistemaEnum.SIGA_WF);
 	}
+
 }

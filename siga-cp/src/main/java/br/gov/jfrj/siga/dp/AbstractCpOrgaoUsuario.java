@@ -79,6 +79,9 @@ public abstract class AbstractCpOrgaoUsuario extends Objeto implements
 	@Column(name = "SIGLA_ORGAO_USU", length = 15)
 	private String siglaOrgaoUsu;
 
+	@Column(name = "SIGLA_ORGAO_USU_COMPLETA", length = 32)
+	private String siglaOrgaoUsuCompleta;
+
 	@Column(name = "MUNICIPIO_ORGAO_USU", length = 50)
 	private String municipioOrgaoUsu;
 
@@ -140,6 +143,10 @@ public abstract class AbstractCpOrgaoUsuario extends Objeto implements
 
 	public Long getIdOrgaoUsu() {
 		return idOrgaoUsu;
+	}
+
+	public String getSiglaOrgaoUsuarioCompleta() {
+		return siglaOrgaoUsuCompleta;
 	}
 
 	public String getMunicipioOrgaoUsu() {
@@ -206,6 +213,10 @@ public abstract class AbstractCpOrgaoUsuario extends Objeto implements
 
 	public void setIdOrgaoUsu(Long idOrgaoUsu) {
 		this.idOrgaoUsu = idOrgaoUsu;
+	}
+
+	public void setSiglaOrgaoUsuarioCompleta(String siglaOrgaoUsuCompleta) {
+		this.siglaOrgaoUsuCompleta = siglaOrgaoUsuCompleta;
 	}
 
 	public void setMunicipioOrgaoUsu(String municipioOrgaoUsu) {

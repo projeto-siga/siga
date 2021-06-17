@@ -23,6 +23,8 @@
  */
 package br.gov.jfrj.siga.dp.dao;
 
+import static org.apache.commons.lang3.StringUtils.stripToEmpty;
+
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -50,7 +52,6 @@ import javax.persistence.criteria.Root;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.DateUtils;
-import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpGrupo;
@@ -101,6 +102,7 @@ import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.DaoFiltro;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
+import br.gov.jfrj.siga.model.dao.SigaDialect;
 
 public class CpDao extends ModeloDao {
 
@@ -111,6 +113,8 @@ public class CpDao extends ModeloDao {
 	public static final String CACHE_CORPORATIVO = "corporativo";
 	public static final String CACHE_HOURS = "hours";
 	public static final String CACHE_SECONDS = "seconds";
+	
+	protected final SigaDialect dialeto = SigaDialect.fromSystemProperty();
 	
 	private static Map<String, CpServico> cacheServicos = null;
 
@@ -1344,13 +1348,8 @@ public class CpDao extends ModeloDao {
 			}
 
 			query.setParameter("nome", flt.getNome().toUpperCase().replace(' ', '%'));
-			query.setParameter("identidade", flt.getIdentidade());
-
-			if(flt.getEmail() != null) {
-				query.setParameter("email", flt.getEmail().toUpperCase().replace(' ', '%'));
-			} else {
-				query.setParameter("email", null);
-			}						
+			query.setParameter("identidade", stripToEmpty(flt.getIdentidade()));
+			query.setParameter("email", stripToEmpty(flt.getEmail()));
 
 			if (!flt.isBuscarFechadas()) {
 				String situacaoFuncionalPessoa = flt.getSituacaoFuncionalPessoa();
@@ -1404,8 +1403,6 @@ public class CpDao extends ModeloDao {
 
 			if (pes.getEmailPessoa() != null) {
 				query.setParameter("email", pes.getEmailPessoa().toUpperCase().replace(' ', '%'));
-			} else {
-				query.setParameter("email", null);
 			}
 
 			if (pes.getCpfPessoa() != null && !"".equals(pes.getCpfPessoa())) {
@@ -1469,7 +1466,7 @@ public class CpDao extends ModeloDao {
 				query = em().createNamedQuery("consultarQuantidadeDpPessoaInclusiveFechadas");
 
 			query.setParameter("nome", flt.getNome().toUpperCase().replace(' ', '%'));
-			query.setParameter("identidade", flt.getIdentidade());
+			query.setParameter("identidade", stripToEmpty(flt.getIdentidade()));
 
 			if (!flt.isBuscarFechadas())
 				query.setParameter("situacaoFuncionalPessoa", flt.getSituacaoFuncionalPessoa());
@@ -1479,10 +1476,7 @@ public class CpDao extends ModeloDao {
 			else
 				query.setParameter("cpf", 0L);
 
-			if (flt.getEmail() != null)
-				query.setParameter("email", flt.getEmail());
-			else
-				query.setParameter("email", null);
+			query.setParameter("email", stripToEmpty(flt.getEmail()));
 
 			if (flt.getIdOrgaoUsu() != null)
 				query.setParameter("idOrgaoUsu", flt.getIdOrgaoUsu());
@@ -1814,20 +1808,27 @@ public class CpDao extends ModeloDao {
 	}
 
 	public Date consultarDataEHoraDoServidor() {
-
-		if (ContextoPersistencia.dt() != null)
+		if (ContextoPersistencia.dt() != null) {
 			return ContextoPersistencia.dt();
-
-		String sql = "SELECT sysdate from dual";
-		String dialect = System.getProperty("siga.hibernate.dialect");
-		if (dialect != null && dialect.contains("MySQL"))
-			sql = "SELECT CURRENT_TIMESTAMP";
-		Query query = em().createNativeQuery(sql);
+		}
+		final String currentTimestampQuery = getDatabaseCurrentTimestampQuery();
+		Query query = em().createNativeQuery(currentTimestampQuery);
 		query.setFlushMode(FlushModeType.COMMIT);
 		Date dt = (Date) query.getSingleResult();
 		ContextoPersistencia.setDt(dt);
 		return dt; 
 
+	}
+
+	private String getDatabaseCurrentTimestampQuery() {
+		switch (this.dialeto) {
+		case ORACLE:
+			return "SELECT sysdate from dual";
+		case MYSQL:
+		case POSTGRESQL:
+		default:
+			return "SELECT CURRENT_TIMESTAMP";
+		}
 	}
 
 	public List<CpConfiguracao> consultarConfiguracoesDesde(Date desde) {

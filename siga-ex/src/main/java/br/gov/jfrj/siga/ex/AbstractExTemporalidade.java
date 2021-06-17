@@ -48,7 +48,7 @@ import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 public abstract class AbstractExTemporalidade extends HistoricoAuditavelSuporte {
 	/** The composite primary key value. */
 	@Id
-	@SequenceGenerator(sequenceName = "EX_TEMPORALIDADE_SEQ", name = "EX_TEMPORALIDADE_SEQ")
+	@SequenceGenerator(name = "EX_TEMPORALIDADE_SEQ", sequenceName = "siga.ex_temporalidade_id_temporalidade_seq")
 	@GeneratedValue(generator = "EX_TEMPORALIDADE_SEQ")
 	@Column(name = "ID_TEMPORALIDADE", unique = true, nullable = false)
 	private Long idTemporalidade;

@@ -25,3 +25,4 @@ hs_err_pid*
 /src/main/webapp/static/
 /target/
 /bin/
+/src/main/webapp/precache-manifest.**.js

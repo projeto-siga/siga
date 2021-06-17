@@ -50,7 +50,7 @@ public abstract class AbstractCpOrgao extends HistoricoSuporte implements
 		Serializable {
 
 	@Id
-	@SequenceGenerator(name = "CP_ORGAO_SEQ", sequenceName = "CORPORATIVO.CP_ORGAO_SEQ")
+	@SequenceGenerator(name = "CP_ORGAO_SEQ", sequenceName = "corporativo.cp_orgao_id_orgao_seq")
 	@GeneratedValue(generator = "CP_ORGAO_SEQ")
 	@Column(name = "ID_ORGAO", unique = true, nullable = false)
 	@Desconsiderar

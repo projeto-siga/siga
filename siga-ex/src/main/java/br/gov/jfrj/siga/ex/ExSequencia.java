@@ -62,7 +62,7 @@ public class ExSequencia implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="EX_SEQUENCIA_NUMERACAO_GENERATOR", sequenceName="EX_SEQUENCIA_SEQ")
+	@SequenceGenerator(name="EX_SEQUENCIA_NUMERACAO_GENERATOR", sequenceName="siga.ex_sequencia_id_seq_seq")
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="EX_SEQUENCIA_NUMERACAO_GENERATOR")
 	@Column(name="ID_SEQ")
 	private long idSequencia;

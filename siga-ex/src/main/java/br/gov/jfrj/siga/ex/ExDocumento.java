@@ -24,10 +24,10 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,11 +46,13 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.codec.binary.Base64;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.DynamicUpdate;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.itextpdf.Documento;
+import br.gov.jfrj.siga.armazenamento.zip.ZipItem;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
@@ -63,7 +65,6 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAcesso;
 import br.gov.jfrj.siga.ex.util.AnexoNumeradoComparator;
-import br.gov.jfrj.siga.ex.util.Compactador;
 import br.gov.jfrj.siga.ex.util.DocumentoFilhoComparator;
 import br.gov.jfrj.siga.ex.util.DocumentoUtil;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
@@ -80,13 +81,9 @@ import br.gov.jfrj.siga.model.CarimboDeTempo;
 @BatchSize(size = 500)
 @Table(name = "siga.ex_documento")
 @DynamicUpdate
-public class ExDocumento extends AbstractExDocumento implements Serializable,
-		CarimboDeTempo {
+public class ExDocumento extends AbstractExDocumento implements Serializable, CarimboDeTempo {
 
-	/**
-         * 
-         */
-	private static final long serialVersionUID = -1462217739890785344L;
+	private static final long serialVersionUID = 1L;
 
 	private static final Logger log = Logger.getLogger(ExDocumento.class);
 
@@ -106,12 +103,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * Simple constructor of ExDocumento instances.
 	 */
 	public ExDocumento() {
-	}
-
-	@Override
-	public Long getIdDoc() {
-		// TODO Auto-generated method stub
-		return super.getIdDoc();
 	}
 
 	/**
@@ -196,35 +187,34 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public String getCodigo() {
 		if (getExMobilPai() != null && getNumSequencia() != null) {
 			String s = getNumSequencia().toString();
-			while (s.length() < 2)
+			while (s.length() < 2) {
 				s = "0" + s;
+			}
 
 			return getExMobilPai().getSigla() + "." + s;
 		}
 		if (getAnoEmissao() != null && getNumExpediente() != null) {
 			String s = getNumExpediente().toString();
-			while (s.length() < 5)
+			while (s.length() < 5) {
 				s = "0" + s;
+			}
 
 			if (getOrgaoUsuario() != null) {
-				try {
-					if (getAnoEmissao() >= Prop.getInt("codigo.acronimo.ano.inicial")) {
-						return getOrgaoUsuario().getAcronimoOrgaoUsu() + "-"
-								+ getExFormaDocumento().getSiglaFormaDoc()
-								+ "-" + getAnoEmissao() + "/" + s;
-					} else {
-						return getOrgaoUsuario().getSiglaOrgaoUsu() + "-"
-								+ getExFormaDocumento().getSiglaFormaDoc()
-								+ "-" + getAnoEmissao() + "/" + s;
-					}
-				} catch (Exception ex) {
-					throw new Error(ex);
+				if (getAnoEmissao() >= Prop.getInt("codigo.acronimo.ano.inicial")) {
+					return getOrgaoUsuario().getAcronimoOrgaoUsu() + "-"
+							+ getExFormaDocumento().getSiglaFormaDoc()
+							+ "-" + getAnoEmissao() + "/" + s;
+				} else {
+					return getOrgaoUsuario().getSiglaOrgaoUsu() + "-"
+							+ getExFormaDocumento().getSiglaFormaDoc()
+							+ "-" + getAnoEmissao() + "/" + s;
 				}
 			}
 		}
-		if (getIdDoc() == null)
-			return "NOVO";
-		return "TMP-" + getIdDoc();
+		if (getIdDoc() == null) {
+			return CODIGO_NOVO;
+		}
+		return PREFIXO_DOC_NAO_FINALIZADO + getIdDoc();
 	}
 
 	/**
@@ -288,8 +278,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 				&& pai_siglaFormaDoc != null && pai_anoEmissao != null
 				&& pai_numExpediente != null && docNumSequencia != null) {
 			String s = docNumSequencia.toString();
-			while (s.length() < 2)
+			while (s.length() < 2) {
 				s = "0" + s;
+			}
 
 			return ExMobil.getSigla(
 					getCodigo(pai_idDoc, pai_siglaOrgaoUsu,
@@ -303,30 +294,26 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		}
 		if (anoEmissao != null && numExpediente != null) {
 			String s = numExpediente.toString();
-			while (s.length() < 5)
+			while (s.length() < 5) {
 				s = "0" + s;
-
-			if (siglaOrgaoUsu != null) {
-				try {
-					Long l_anoEmissao = Long.valueOf(anoEmissao);
-					if (l_anoEmissao >= Prop.getInt("codigo.acronimo.ano.inicial")) {
-						return acronimoOrgaoUsu + "-" + siglaFormaDoc + "-"
-								+ anoEmissao + "/" + s;
-					} else {
-						return siglaOrgaoUsu + "-" + siglaFormaDoc + "-"
-								+ anoEmissao + "/" + s;
-					}
-				} catch (Exception ex) {
-					throw new Error(ex);
-				}
 			}
 
+			if (siglaOrgaoUsu != null) {
+				Long l_anoEmissao = Long.valueOf(anoEmissao);
+				if (l_anoEmissao >= Prop.getInt("codigo.acronimo.ano.inicial")) {
+					return acronimoOrgaoUsu + "-" + siglaFormaDoc + "-"
+							+ anoEmissao + "/" + s;
+				} else {
+					return siglaOrgaoUsu + "-" + siglaFormaDoc + "-"
+							+ anoEmissao + "/" + s;
+				}
+			}
 		}
 
-		if (idDoc == null)
-			return "NOVO";
-
-		return "TMP-" + idDoc;
+		if (idDoc == null) {
+			return CODIGO_NOVO;
+		}
+		return PREFIXO_DOC_NAO_FINALIZADO + idDoc;
 	}
 
 	/**
@@ -355,46 +342,11 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	}
 
 	/**
-	 * Retorna o conteúdo (blob) do documento em formato String. Este método
-	 * <b>parece</b> estar em desuso.
-	 */
-	public String getConteudo() {
-		if (getConteudoBlobDoc() != null)
-			return new String(getConteudoBlobDoc2());
-		return "";
-	}
-
-	/**
-	 * Retorna, em formato array de bytes, o conteúdo de um arquivo contido no
-	 * zip gravado no blob do documento.
-	 * 
-	 * @param nome
-	 *            Nome do arquivo compactado cujo conteúdo será retornado
-	 */
-	public byte[] getConteudoBlob(final String nome) {
-		final byte[] conteudoZip = getConteudoBlobDoc2();
-		byte[] conteudo = null;
-		final Compactador zip = new Compactador();
-		if (conteudoZip != null) {
-			conteudo = zip.descompactarStream(conteudoZip, nome);
-		}
-		return conteudo;
-	}
-
-	/**
-	 * Retorna, em formato array de bytes, todo o conteúdo do zip gravado no
-	 * blob do documento.
-	 */
-	public byte[] getConteudoBlobDoc2() {
-		return getConteudoBlobDoc();
-	}
-
-	/**
 	 * Retorna, em formato array de bytes, o conteúdo do arquivo de
 	 * <b>formulário</b> contido no zip gravado no blob do documento.
 	 */
 	public byte[] getConteudoBlobForm() {
-		return getConteudoBlob("doc.form");
+		return getConteudoBlob(ZipItem.Tipo.FORM);
 	}
 
 	/**
@@ -402,7 +354,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * <b>resumo</b> contido no zip gravado no blob do documento.
 	 */
 	public byte[] getConteudoBlobResumo() {
-		return getConteudoBlob("doc.resumo");
+		return getConteudoBlob(ZipItem.Tipo.RESUMO);
 	}
 
 	/**
@@ -410,7 +362,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * contido no zip gravado no blob do documento.
 	 */
 	public byte[] getConteudoBlobHtml() {
-		return getConteudoBlob("doc.htm");
+		return getConteudoBlob(ZipItem.Tipo.HTM);
 	}
 
 	/**
@@ -418,22 +370,19 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * <b>html</b> contido no zip gravado no blob do documento.
 	 */
 	public String getConteudoBlobHtmlB64() {
-		return Base64.getEncoder().encodeToString(getConteudoBlobHtml());
+		return Base64.encodeBase64String(getConteudoBlobHtml());
 	}
 
 	/**
-	 * Retorna, <b>em formato ISO-8859-1 (String)</b>, o conteúdo do arquivo
+	 * Retorna, <b>em formato {@link StandardCharsets#ISO_8859_1} (String)</b>, o conteúdo do arquivo
 	 * <b>html</b> contido no zip gravado no blob do documento.
 	 */
 	public String getConteudoBlobHtmlString() {
 		byte[] ab = getConteudoBlobHtml();
-		if (ab == null)
+		if (ab == null) {
 			return null;
-		try {
-			return new String(ab, "ISO-8859-1");
-		} catch (UnsupportedEncodingException e) {
-			return new String(ab);
 		}
+		return new String(ab, StandardCharsets.ISO_8859_1);
 	}
 
 	/**
@@ -452,15 +401,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		// Verifica se todos os subscritores assinaram o documento
 		try {
 			for (DpPessoa subscritor : getSubscritorECosignatarios()) {
-				if (isEletronico() && isFinalizado()
-						&& !isAssinadoPelaPessoaComTokenOuSenha(subscritor)) {
+				if (isEletronico() && !isAssinadoPelaPessoaComTokenOuSenha(subscritor)) {
 					String comentarioInicio = "<!-- INICIO SUBSCRITOR "
 							+ subscritor.getId() + " -->";
 					String comentarioFim = "<!-- FIM SUBSCRITOR "
 							+ subscritor.getId() + " -->";
 
-					if (sHtml.contains(comentarioInicio)
-							&& sHtml.contains(comentarioFim)) {
+					if (sHtml.contains(comentarioInicio) && sHtml.contains(comentarioFim)) {
 						String blocoSubscritor = sHtml.substring(
 								sHtml.indexOf(comentarioInicio)
 										+ comentarioInicio.length(),
@@ -476,9 +423,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 				}
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			// FIXME handle exception
+			log.error("Não foi possível verificar se todos os subscritores assinaram o documento", e);
 		}
-
 		return sHtml;
 	}
 
@@ -487,7 +434,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * contido no zip gravado no blob do documento.
 	 */
 	public byte[] getConteudoBlobPdf() {
-		return getConteudoBlob("doc.pdf");
+		return getConteudoBlob(ZipItem.Tipo.PDF);
 	}
 
 	/**
@@ -495,13 +442,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * <b>pdf</b> contido no zip gravado no blob do documento.
 	 */
 	public String getConteudoBlobPdfB64() {
-		return Base64.getEncoder().encodeToString(getConteudoBlobPdf());
+		return Base64.encodeBase64String(getConteudoBlobPdf());
 	}
 
 	/**
 	 * Retorna um descrição do documento com no máximo 40 caracteres.
 	 */
-	public java.lang.String getDescrCurta() {
+	public String getDescrCurta() {
 		if (getDescrDocumento() == null)
 			return "[sem descrição]";
 		if (getDescrDocumento().length() > 40)
@@ -513,7 +460,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	/**
 	 * Retorna um descrição do documento com um máximo de caracteres.
 	 */
-	public java.lang.String getDescrCurta(long qtdCaracteres) {
+	public String getDescrCurta(long qtdCaracteres) {
 		if (getDescrDocumento() == null)
 			return "[sem descrição]";
 		if (getDescrDocumento().length() > qtdCaracteres)
@@ -572,11 +519,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		else if (getNmDestinatario() != null)
 			return getNmDestinatario();
 		else if (getLotaDestinatario() != null)
-			return getLotaDestinatario().getDescricao();
+			return getLotaDestinatario().getDescricao() + " (" + getLotaDestinatario().getOrgaoUsuario().getSiglaOrgaoUsuarioCompleta() + ")";
 		else if (getOrgaoExternoDestinatario() != null)
 			if (getNmOrgaoExterno() != null && !getNmOrgaoExterno().equals(""))
-				return getOrgaoExternoDestinatario().getDescricao() + ";"
-						+ getNmOrgaoExterno();
+				return getOrgaoExternoDestinatario().getDescricao() + ";" + getNmOrgaoExterno();
 			else
 				return getOrgaoExternoDestinatario().getDescricao();
 		else if (getNmOrgaoExterno() != null && !getNmOrgaoExterno().equals(""))
@@ -845,7 +791,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * Retorna o valor digitado para a <b>função</b> no campo
 	 * Função;Lotação;Localidade.
 	 */
-	public java.lang.String getNmFuncao() {
+	public String getNmFuncao() {
 		if (getNmFuncaoSubscritor() == null)
 			return null;
 		String a[] = getNmFuncaoSubscritor().split(";");
@@ -862,7 +808,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * Retorna valor digitado para a <b>lotação</b> no campo
 	 * Função;Lotação;Localidade.
 	 */
-	public java.lang.String getNmLotacao() {
+	public String getNmLotacao() {
 		if (getNmFuncaoSubscritor() == null)
 			return null;
 		String a[] = getNmFuncaoSubscritor().split(";");
@@ -879,7 +825,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * Retorna valor digitado para a <b>localidade</b> no campo
 	 * Função;Lotação;Localidade.
 	 */
-	public java.lang.String getNmLocalidade() {
+	public String getNmLocalidade() {
 		if (getNmFuncaoSubscritor() == null)
 			return null;
 		String a[] = getNmFuncaoSubscritor().split(";");
@@ -929,7 +875,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * Retorna o valor digitado para o <b>nome do subscritor</b> no campo
 	 * Função;Lotação;Localidade.
 	 */
-	public java.lang.String getNmSubscritor() {
+	public String getNmSubscritor() {
 		if (getNmFuncaoSubscritor() == null)
 			return null;
 		String a[] = getNmFuncaoSubscritor().split(";");
@@ -958,11 +904,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	/**
 	 * Retorna o número da primeira via do documento.
 	 */
-	@SuppressWarnings("static-access")
 	public int getNumPrimeiraVia() {
-
 		int minNumVia = 1;
-
 		for (final ExMobil mob : getExMobilSet()) {
 			if (mob.isVia()) {
 				ExVia via = mob.getViaPCTT();
@@ -973,7 +916,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 					minNumVia = mob.getNumSequencia();
 			}
 		}
-
 		return minNumVia;
 	}
 
@@ -1350,17 +1292,18 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * @return
 	 */
 	public Map<String, String> getForm() {
-		Hashtable<String, String> m = new Hashtable<String, String>();
-		final byte[] form = getConteudoBlob("doc.form");
+		Map<String, String> m = new HashMap<>();
+		final byte[] form = getConteudoBlob(ZipItem.Tipo.FORM);
 		if (form != null) {
 			final String as[] = new String(form).split("&");
 			for (final String s : as) {
 				final String param[] = s.split("=");
 				try {
-					if (param.length == 2)
-						m.put(param[0],
-								URLDecoder.decode(param[1], "iso-8859-1"));
+					if (param.length == 2) {
+						m.put(param[0], URLDecoder.decode(param[1], StandardCharsets.ISO_8859_1.name()));
+					}
 				} catch (final UnsupportedEncodingException e) {
+					log.error("Encoding error", e);
 				}
 			}
 		}
@@ -1383,16 +1326,18 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 */
 	public Map<String, String> getResumo() {
 		LinkedHashMap<String, String> m = new LinkedHashMap<String, String>();
-		final byte[] resumo = getConteudoBlob("doc.resumo");
+		final byte[] resumo = getConteudoBlob(ZipItem.Tipo.RESUMO);
 		if (resumo != null) {
 			final String as[] = new String(resumo).split("&");
 			for (final String s : as) {
 				final String param[] = s.split("=");
 				try {
-					if (param.length == 2)
-						m.put(URLDecoder.decode(param[0], "iso-8859-1"),
-								URLDecoder.decode(param[1], "iso-8859-1"));
+					if (param.length == 2) {
+						m.put(URLDecoder.decode(param[0], StandardCharsets.ISO_8859_1.name()),
+								URLDecoder.decode(param[1], StandardCharsets.ISO_8859_1.name()));
+					}
 				} catch (final UnsupportedEncodingException e) {
+					log.error("Encoding error", e);
 				}
 			}
 		}
@@ -1572,7 +1517,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	
 	private void encontrarArquivoNumerado(Long id, List<ExArquivoNumerado> listaInicial, List<ExArquivoNumerado> listaFinal, String referenciaHtmlCompletoDocPrincipal, String referenciaPDFCompletoDocPrincipal) {
 		for (ExArquivoNumerado arquivo : listaInicial) {					
-			if (id.equals(arquivo.getArquivo().getIdDoc())) {
+			if (id.equals(arquivo.getArquivo().getId())) {
 				arquivo.setReferenciaHtmlCompletoDocPrincipal(referenciaHtmlCompletoDocPrincipal);
 				arquivo.setReferenciaPDFCompletoDocPrincipal(referenciaPDFCompletoDocPrincipal);
 				listaFinal.add(arquivo);					
@@ -1592,7 +1537,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		String ordenacao = "";
 		for (ExArquivoNumerado arquivoNumerado : listaArquivoNumerado) {				
 			if (ordenacao.length() > 0) ordenacao += ";";
-			ordenacao += arquivoNumerado.getArquivo().getIdDoc();				
+			ordenacao += arquivoNumerado.getArquivo().getId();				
 		}
 		this.setOrdenacaoDoc(ordenacao);
 	}
@@ -1749,7 +1694,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		// Incluir os documentos anexos
 		if (mob.getExMovimentacaoSet() != null) {
 			for (ExMovimentacao m : mob.getExMovimentacaoSet()) {
-				if (!m.isCancelada() && m.isPdf() && m.getExTipoMovimentacao().getId() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR) {
+				if (!m.isCancelada() && !m.isCanceladora() && m.isPdf() && m.getExTipoMovimentacao().getId() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR) {
 					set.add(m);
 				}
 			}
@@ -1960,18 +1905,17 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	}
 
 	public String getAssinantesCompleto() {
+
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy - HH:mm");
+
 		String retorno = "";
-		String conferentes = Documento
-				.getAssinantesString(getAutenticacoesComToken(),getDtDoc());
-		String conferentesSenha = Documento
-				.getAssinantesString(getAutenticacoesComSenha(),getDtDoc());
-		String assinantesToken = Documento
-				.getAssinantesString(getAssinaturasComToken(),getDtDoc());
-		String assinantesSenha = Documento
-				.getAssinantesString(getAssinaturasComSenha(),getDtDoc());
-		String assinantesPorSenha = Documento
-				.getAssinantesStringComMatricula(getAssinaturasPorComSenha(),getDtDoc());
-		
+		String conferentes = Documento.getAssinantesString(getAutenticacoesComToken(),getDtDoc());
+		String conferentesSenha = Documento.getAssinantesString(getAutenticacoesComSenha(),getDtDoc());
+		String assinantesToken = Documento.getAssinantesString(getAssinaturasComToken(),getDtDoc());
+		String assinantesSenha = Documento.getAssinantesString(getAssinaturasComSenha(),getDtDoc());
+		String assinantesPorSenha = Documento.getAssinantesStringComMatricula(getAssinaturasPorComSenha(),getDtDoc());
+		String dataAssinatura = df.format(getDtAssinatura());
+
 		if(Prop.isGovSP() && assinantesPorSenha != null && !"".equals(assinantesPorSenha)) {
 			Set<ExMovimentacao> listaAssinantesSenha1 = new TreeSet<ExMovimentacao>();
 			Set<ExMovimentacao> listaAssinantesPor = new TreeSet<ExMovimentacao>();
@@ -1995,15 +1939,14 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		}
 		
 		if (assinantesToken.length() > 0)
-			retorno = "Assinado digitalmente por " + assinantesToken + ".\n";
+			retorno = "Assinado digitalmente por " + assinantesToken + " em " + dataAssinatura+ "hs.\n";
 
 		if (assinantesPorSenha.length() > 0) {
-			retorno = retorno + "Assinado com senha por " + assinantesPorSenha +".\n" ;
+			retorno = retorno + "Assinado com senha por " + assinantesPorSenha + " em " + dataAssinatura+ "hs.\n";
 		}
 		
 		if (assinantesSenha.length() > 0)
-			retorno = retorno + "Assinado com senha por " + assinantesSenha
-					+ ".\n";
+			retorno = retorno + "Assinado com senha por " + assinantesSenha + " em " + dataAssinatura+ "hs.\n";
 
 		if (conferentes.length() > 0)
 			retorno += conferentes.length() > 0 ? "Autenticado digitalmente por "
@@ -2157,7 +2100,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * Retorna uma lista de documentos filhos [de cada móbil] do documento
 	 * atual.
 	 */
-	public java.util.Set<ExDocumento> getExDocumentoFilhoSet() {
+	public Set<ExDocumento> getExDocumentoFilhoSet() {
 		Set<ExDocumento> set = new TreeSet<ExDocumento>(
 				new DocumentoFilhoComparator());
 		for (ExMobil m : getExMobilSet())
@@ -2257,8 +2200,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			return getExModelo().getExFormaDocumento().getExTipoFormaDoc()
 					.isExpediente();
 		} catch (RuntimeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Não foi possível verificar se documento é do tipo Expediente", e);
 			return false;
 		}
 	}
@@ -2275,8 +2217,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			return getExModelo().getExFormaDocumento().getExTipoFormaDoc()
 					.isProcesso();
 		} catch (RuntimeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Não foi possível verificar se documento é do tipo Processo", e);
 			return false;
 		}
 	}
@@ -2343,7 +2284,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * Retorna uma lista de Mobils do documento, ordenados de forma decrescente
 	 * pelo número de sequência do móbil.
 	 */
-	public java.util.SortedSet<ExMobil> getExMobilSetInvertido() {
+	public SortedSet<ExMobil> getExMobilSetInvertido() {
 		final TreeSet<ExMobil> mobilInvertido = new TreeSet<ExMobil>(
 				new TipoMobilComparatorInverso());
 		mobilInvertido.addAll(getExMobilSet());
@@ -2539,61 +2480,36 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return false;
 	}
 
-	public void setConteudoBlob(final String nome, final byte[] conteudo) {
-		final Compactador zip = new Compactador();
-		final byte[] arqZip = getConteudoBlobDoc2();
-		byte[] conteudoZip = null;
-		if (arqZip == null || (zip.listarStream(arqZip) == null)) {
-			if (conteudo != null) {
-				conteudoZip = zip.compactarStream(nome, conteudo);
-			} else {
-				conteudoZip = null;
-			}
-		} else {
-			if (conteudo != null) {
-				conteudoZip = zip.adicionarStream(nome, conteudo, arqZip);
-			} else {
-				conteudoZip = zip.removerStream(nome, arqZip);
-			}
-		}
-		setConteudoBlobDoc2(conteudoZip);
-	}
-
-	public void setConteudoBlobDoc2(byte[] blob) {
-		if (blob != null) {
-			setConteudoBlobDoc(blob);
-		}
-	}
-
 	public void setConteudoBlobForm(final byte[] conteudo) {
-		setConteudoBlob("doc.form", conteudo);
+		setConteudoBlob(ZipItem.Tipo.FORM, conteudo);
 	}
 
 	public void setConteudoBlobResumo(final byte[] conteudo) {
-		setConteudoBlob("doc.resumo", conteudo);
+		setConteudoBlob(ZipItem.Tipo.RESUMO, conteudo);
 	}
 
 	public void setConteudoBlobHtml(final byte[] conteudo) {
-		setConteudoBlob("doc.htm", conteudo);
+		setConteudoBlob(ZipItem.Tipo.HTM, conteudo);
 	}
 
 	public void setConteudoBlobHtmlString(final String s) throws Exception {
 		final String sHtml = (new ProcessadorHtml()).canonicalizarHtml(s,
 				false, true, false, false, false);
-		if (sHtml != null)
-			setConteudoBlob("doc.htm", sHtml.getBytes("ISO-8859-1"));
-		else
-			setConteudoBlob("doc.htm", null);
+		if (sHtml != null) {
+			setConteudoBlob(ZipItem.Tipo.HTM, sHtml.getBytes(StandardCharsets.ISO_8859_1));
+		} else {
+			setConteudoBlob(ZipItem.Tipo.HTM, null);
+		}
 	}
 
 	public void setConteudoBlobPdf(final byte[] conteudo) throws Exception {
 
 		// Atenção, não retirar esse teste nunca, pois ele é quem garante que o
 		// pdf não será refeito.
-		if (!getAssinaturasComTokenOuSenhaERegistros().isEmpty())
-			throw new AplicacaoException(
-					"O conteúdo não pode ser alterado pois o documento já está assinado");
-		setConteudoBlob("doc.pdf", conteudo);
+		if (!getAssinaturasComTokenOuSenhaERegistros().isEmpty()) {
+			throw new AplicacaoException("O conteúdo não pode ser alterado pois o documento já está assinado");
+		}
+		setConteudoBlob(ZipItem.Tipo.PDF, conteudo);
 	}
 
 	public void setEletronico(boolean eletronico) {
@@ -2765,13 +2681,11 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 
 	@Override
 	public boolean isCodigoParaAssinaturaExterna(String num) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public String getSiglaAssinaturaExterna() {
-		// TODO Auto-generated method stub
 		return "";
 	}
 

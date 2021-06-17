@@ -215,7 +215,7 @@ public class ExAutenticacaoController extends ExController {
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO:
 				fileName = arq.getReferencia() + "_" + mov.getIdMov() + ".p7s";
 				contentType = mov.getConteudoTpMov();
-				bytes = mov.getConteudoBlobMov2();
+				bytes = mov.getConteudoBlobInicializarOuAtualizarCache();
 				break;
 			}
 		} else {

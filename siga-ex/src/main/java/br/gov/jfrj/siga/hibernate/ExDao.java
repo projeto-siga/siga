@@ -1894,9 +1894,9 @@ public class ExDao extends CpDao {
 							+ ", " + String.valueOf(CpMarcadorEnum.SOLICITACAO_A_RECEBER.getId());
 					}
 					query += "SELECT "
-						+ grupoItem.grupoOrdem + ", "
-						+ " SUM(CASE WHEN cont_pessoa > 0 THEN 1 ELSE 0 END), " 
-						+ " SUM(CASE WHEN cont_lota > 0 THEN 1 ELSE 0 END) "
+						+ grupoItem.grupoOrdem + " AS grupo_ordem, "
+						+ " SUM(CASE WHEN cont_pessoa > 0 THEN 1 ELSE 0 END) AS sum_count_pessoa, "
+						+ " SUM(CASE WHEN cont_lota > 0 THEN 1 ELSE 0 END) AS sum_cont_lota "
 						+ " FROM (SELECT distinct marca.id_ref, "
 						 + " SUM(CASE WHEN marca.id_pessoa_ini = :idPessoaIni THEN 1 ELSE 0 END) cont_pessoa,"
 						 + " SUM(CASE WHEN marca.id_lotacao_ini = :idLotacaoIni THEN 1 ELSE 0 END) cont_lota"

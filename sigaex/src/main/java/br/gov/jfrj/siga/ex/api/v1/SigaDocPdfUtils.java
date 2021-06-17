@@ -98,14 +98,14 @@ public class SigaDocPdfUtils {
 			}
 			byte ab[] = null;
 			if (isArquivoAuxiliar) {
-				ab = mov.getConteudoBlobMov2();
+				ab = mov.getConteudoBlobInicializarOuAtualizarCache();
 				return new InputStreamDownload(makeByteArrayInputStream(ab,
 						fB64), APPLICATION_OCTET_STREAM, mov.getNmArqMov(),
 						(!fB64) ? ab.length : null);
 			}
 			if (isPdf) {
 				if (mov != null && !completo && !estampar && hash == null) {
-					ab = mov.getConteudoBlobpdf();
+					ab = mov.getConteudoBlobPdf();
 				} else {
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
 					Documento.getDocumento(baos, null, mob, null, completo, semmarcas, false, null, null);

@@ -33,7 +33,7 @@ public abstract class AbstractExTipoMobil extends Objeto implements
 		Serializable {
 
 	@Id
-	@SequenceGenerator(sequenceName = "EX_TIPO_MOBIL_SEQ", name = "EX_TIPO_MOBIL_SEQ")
+	@SequenceGenerator(name = "EX_TIPO_MOBIL_SEQ", sequenceName = "siga.ex_tipo_mobil_id_tipo_mobil_seq")
 	@GeneratedValue(generator = "EX_TIPO_MOBIL_SEQ")
 	@Column(name = "ID_TIPO_MOBIL", unique = true, nullable = false)
 	private java.lang.Long idTipoMobil;

@@ -61,7 +61,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ " and cpgrp.hisDtFim = null " + " order by cpgrp.siglaGrupo") })
 public abstract class AbstractCpGrupo extends HistoricoAuditavelSuporte {
 	@Id
-	@SequenceGenerator(name = "CP_GRUPO_SEQ", sequenceName = "CORPORATIVO.CP_GRUPO_SEQ")
+	@SequenceGenerator(name = "CP_GRUPO_SEQ", sequenceName = "corporativo.cp_grupo_id_grupo_seq")
 	@GeneratedValue(generator = "CP_GRUPO_SEQ")
 	@Column(name = "ID_GRUPO", unique = true, nullable = false)
 	@Desconsiderar

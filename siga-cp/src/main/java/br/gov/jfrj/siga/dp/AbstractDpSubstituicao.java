@@ -66,7 +66,7 @@ public abstract class AbstractDpSubstituicao extends Objeto implements
 		Serializable {
 
 	@Id
-	@SequenceGenerator(name = "DP_SUBSTITUICAO_SEQ", sequenceName = "CORPORATIVO.DP_SUBSTITUICAO_SEQ")
+	@SequenceGenerator(name = "DP_SUBSTITUICAO_SEQ", sequenceName = "corporativo.dp_substituicao_id_substituicao_seq")
 	@GeneratedValue(generator = "DP_SUBSTITUICAO_SEQ")
 	@Column(name = "ID_SUBSTITUICAO", unique = true, nullable = false)
 	private Long idSubstituicao;

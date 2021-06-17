@@ -19,18 +19,17 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
+import java.nio.file.Path;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
@@ -40,17 +39,11 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
+import org.hibernate.annotations.SortNatural;
 
-import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.util.Texto;
-import br.gov.jfrj.siga.cp.CpArquivo;
-import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -228,54 +221,53 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "					and doc.dtFinalizacao is not null"
 				+ "					and doc.dtFinalizacao between :dataInicial and :dataFinal"
 				+ "				order by  doc.dtFinalizacao") })
-public abstract class AbstractExDocumento extends ExArquivo implements
-		Serializable {
+public abstract class AbstractExDocumento extends ExArquivo implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	public static final String CODIGO_NOVO = "NOVO";
+	public static final String PREFIXO_DOC_NAO_FINALIZADO = "TMP-";
+	public static final String NOME_TIPO_DIRETORIO = "DOCUMENTOS";
+
 	@Id
-	@SequenceGenerator(sequenceName = "EX_DOCUMENTO_SEQ", name = "EX_DOCUMENTO_SEQ")
+	@SequenceGenerator(name = "EX_DOCUMENTO_SEQ", sequenceName = "siga.ex_documento_id_doc_seq")
 	@GeneratedValue(generator = "EX_DOCUMENTO_SEQ")
 	@Column(name = "ID_DOC")
-	private java.lang.Long idDoc;
-	
-	@Transient
-	protected byte[] cacheConteudoBlobDoc;
+	private Long idDoc;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_MOB_PAI")
 	private ExMobil exMobilPai;
 
 	@Column(name = "ANO_EMISSAO")
-	private java.lang.Long anoEmissao;
+	private Long anoEmissao;
 
 	@Column(name = "NUM_EXPEDIENTE")
-	private java.lang.Long numExpediente;
+	private Long numExpediente;
 
 	@Column(name = "CONTEUDO_TP_DOC", length = 128)
-	private java.lang.String conteudoTpDoc;
+	private String conteudoTpDoc;
 
 	@Column(name = "DESCR_DOCUMENTO", length = 4000)
-	private java.lang.String descrDocumento;
+	private String descrDocumento;
 	
 	@Column(name = "DESCR_DOCUMENTO_AI", length = 4000)
-	private java.lang.String descrDocumentoAI;
+	private String descrDocumentoAI;
 
 	@Column(name = "DSC_CLASS_DOC", length = 4000)
-	private java.lang.String descrClassifNovo;
+	private String descrClassifNovo;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DT_DOC", length = 19)
-	private java.util.Date dtDoc;
+	private Date dtDoc;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DT_DOC_ORIGINAL", length = 19)
-	private java.util.Date dtDocOriginal;
+	private Date dtDocOriginal;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DT_FINALIZACAO", length = 19)
 	private Date dtFinalizacao;
-	
 	
 	/*
 	 * 16/01/2020 - Data da primeira assinatura
@@ -288,14 +280,14 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DT_REG_DOC", nullable = false, length = 19)
-	private java.util.Date dtRegDoc;
+	private Date dtRegDoc;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "HIS_DT_ALT", nullable = false, length = 19)
-	private java.util.Date dtAltDoc;
+	private Date dtAltDoc;
 
 	@Column(name = "NM_ARQ_DOC", length = 256)
-	private java.lang.String nmArqDoc;
+	private String nmArqDoc;
 
 	@Column(name = "NM_DESTINATARIO", length = 256)
 	private String nmDestinatario;
@@ -304,27 +296,22 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	private String nmOrgaoExterno;
 
 	@Column(name = "NM_SUBSCRITOR_EXT", length = 256)
-	private java.lang.String nmSubscritorExt;
+	private String nmSubscritorExt;
 
 	@Column(name = "NM_FUNCAO_SUBSCRITOR", length = 128)
-	private java.lang.String nmFuncaoSubscritor;
+	private String nmFuncaoSubscritor;
 
 	@Column(name = "NUM_EXT_DOC", length = 32)
-	private java.lang.String numExtDoc;
+	private String numExtDoc;
 
 	@Column(name = "NUM_ANTIGO_DOC", length = 32)
-	private java.lang.String numAntigoDoc;
+	private String numAntigoDoc;
 
 	@Column(name = "OBS_ORGAO_DOC", length = 256)
 	private String obsOrgao;
 
 	@Column(name = "FG_ELETRONICO", nullable = false, length = 1)
 	private String fgEletronico;
-
-	@Lob
-	@Column(name = "CONTEUDO_BLOB_DOC")
-	@Basic(fetch = FetchType.LAZY)
-	private byte[] conteudoBlobDoc;
 
 	@Column(name = "NUM_SEQUENCIA")
 	private Integer numSequencia;
@@ -409,15 +396,15 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	@BatchSize(size=1)
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exDocumento")
-	@Sort(type = SortType.NATURAL)
-	private java.util.SortedSet<ExMobil> exMobilSet = new TreeSet<ExMobil>();
+	@SortNatural
+	private SortedSet<ExMobil> exMobilSet = new TreeSet<ExMobil>();
 
 	@BatchSize(size=1)
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exDocumento")
-	private java.util.Set<ExBoletimDoc> exBoletimDocSet;
+	private Set<ExBoletimDoc> exBoletimDocSet;
 
 	@Column(name = "ID_DOC_ANTERIOR")
-	private java.lang.Long idDocAnterior;
+	private Long idDocAnterior;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_MOB_AUTUADO")
@@ -426,11 +413,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_PROTOCOLO")
     private ExProtocolo exProtocolo;
-	
-	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
-	@JoinColumn(name = "ID_ARQ")
-	private CpArquivo cpArquivo;
-	
+
 	/**
 	 * Simple constructor of AbstractExDocumento instances.
 	 */
@@ -442,7 +425,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 * 
 	 * @param idDoc
 	 */
-	public AbstractExDocumento(final java.lang.Long idDoc) {
+	public AbstractExDocumento(final Long idDoc) {
 		this.setIdDoc(idDoc);
 	}
 
@@ -465,7 +448,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	/**
 	 * Retornao ano de emissão do documento, que compõe o código
 	 */
-	public java.lang.Long getAnoEmissao() {
+	public Long getAnoEmissao() {
 		return this.anoEmissao;
 	}
 
@@ -481,14 +464,14 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 * 
 	 * @return
 	 */
-	public java.lang.String getDescrClassifNovo() {
+	public String getDescrClassifNovo() {
 		return descrClassifNovo;
 	}
 
 	/**
 	 * Retorna a descrição do documento
 	 */
-	public java.lang.String getDescrDocumento() {
+	public String getDescrDocumento() {
 		return this.descrDocumento;
 	}
 
@@ -502,11 +485,11 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	/**
 	 * Retorna a data do documento
 	 */
-	public java.util.Date getDtDoc() {
+	public Date getDtDoc() {
 		return this.dtDoc;
 	}
 
-	public java.util.Date getDtDocOriginal() {
+	public Date getDtDocOriginal() {
 		return dtDocOriginal;
 	}
 
@@ -522,7 +505,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	/**
 	 * Retorna a data de registro do documento
 	 */
-	public java.util.Date getDtRegDoc() {
+	public Date getDtRegDoc() {
 		return this.dtRegDoc;
 	}
 
@@ -532,7 +515,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 * 
 	 * @return
 	 */
-	public java.util.Set<ExBoletimDoc> getExBoletimDocSet() {
+	public Set<ExBoletimDoc> getExBoletimDocSet() {
 		return exBoletimDocSet;
 	}
 
@@ -551,7 +534,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 * 
 	 * @return
 	 */
-	public java.lang.Long getIdDocAnterior() {
+	public Long getIdDocAnterior() {
 		return idDocAnterior;
 	}
 
@@ -578,7 +561,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 * 
 	 * @return
 	 */
-	public java.util.SortedSet<ExMobil> getExMobilSet() {
+	public SortedSet<ExMobil> getExMobilSet() {
 		return exMobilSet;
 	}
 
@@ -616,10 +599,15 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		return fgEletronico;
 	}
 
+	@Override
+	public Long getId() {
+		return this.getIdDoc();
+	}
+
 	/**
 	 * Retorna o id do documento
 	 */
-	public java.lang.Long getIdDoc() {
+	public Long getIdDoc() {
 		return idDoc;
 	}
 
@@ -656,7 +644,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	/**
 	 * COMPLETAR Retorna o nome do arquivo do documento
 	 */
-	public java.lang.String getNmArqDoc() {
+	public String getNmArqDoc() {
 		return this.nmArqDoc;
 	}
 
@@ -672,7 +660,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 * 
 	 * @return
 	 */
-	public java.lang.String getNmFuncaoSubscritor() {
+	public String getNmFuncaoSubscritor() {
 		return nmFuncaoSubscritor;
 	}
 
@@ -688,7 +676,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	/**
 	 * Retorna o nome do subscritor externo digitado
 	 */
-	public java.lang.String getNmSubscritorExt() {
+	public String getNmSubscritorExt() {
 		return this.nmSubscritorExt;
 	}
 
@@ -697,21 +685,21 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 * 
 	 * @return
 	 */
-	public java.lang.String getNumAntigoDoc() {
+	public String getNumAntigoDoc() {
 		return numAntigoDoc;
 	}
 
 	/**
 	 * Retorna o número do expediente (não o código completo)
 	 */
-	public java.lang.Long getNumExpediente() {
+	public Long getNumExpediente() {
 		return this.numExpediente;
 	}
 
 	/**
 	 * Retorna o número externo digitado.
 	 */
-	public java.lang.String getNumExtDoc() {
+	public String getNumExtDoc() {
 		return this.numExtDoc;
 	}
 
@@ -794,7 +782,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 * 
 	 * @param anoEmissao
 	 */
-	public void setAnoEmissao(final java.lang.Long anoEmissao) {
+	public void setAnoEmissao(final Long anoEmissao) {
 		this.anoEmissao = anoEmissao;
 	}
 
@@ -806,7 +794,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		this.cadastrante = cadastrante;
 	}
 
-	public void setDescrClassifNovo(java.lang.String descrClassifNovo) {
+	public void setDescrClassifNovo(String descrClassifNovo) {
 		this.descrClassifNovo = descrClassifNovo;
 	}
 
@@ -815,7 +803,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 * 
 	 * @param descrDocumento
 	 */
-	public void setDescrDocumento(final java.lang.String descrDocumento) {
+	public void setDescrDocumento(final String descrDocumento) {
 		this.descrDocumento = descrDocumento;
 		this.descrDocumentoAI = Texto.removeAcentoMaiusculas(this.descrDocumento);
 	}
@@ -833,11 +821,11 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 * 
 	 * @param dtDoc
 	 */
-	public void setDtDoc(final java.util.Date dtDoc) {
+	public void setDtDoc(final Date dtDoc) {
 		this.dtDoc = dtDoc;
 	}
 
-	public void setDtDocOriginal(java.util.Date dtDocOriginal) {
+	public void setDtDocOriginal(Date dtDocOriginal) {
 		this.dtDocOriginal = dtDocOriginal;
 	}
 
@@ -850,11 +838,11 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 * 
 	 * @param dtRegDoc
 	 */
-	public void setDtRegDoc(final java.util.Date dtRegDoc) {
+	public void setDtRegDoc(final Date dtRegDoc) {
 		this.dtRegDoc = dtRegDoc;
 	}
 
-	public void setExBoletimDocSet(java.util.Set<ExBoletimDoc> exBoletimDocSet) {
+	public void setExBoletimDocSet(Set<ExBoletimDoc> exBoletimDocSet) {
 		this.exBoletimDocSet = exBoletimDocSet;
 	}
 
@@ -862,7 +850,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		this.exClassificacao = exClassificacao;
 	}
 
-	public void setIdDocAnterior(java.lang.Long idDocAnterior) {
+	public void setIdDocAnterior(Long idDocAnterior) {
 		this.idDocAnterior = idDocAnterior;
 	}
 
@@ -874,7 +862,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		this.exMobilPai = exMobilPai;
 	}
 
-	public void setExMobilSet(java.util.SortedSet<ExMobil> exMobilSet) {
+	public void setExMobilSet(SortedSet<ExMobil> exMobilSet) {
 		this.exMobilSet = exMobilSet;
 	}
 
@@ -904,7 +892,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 * 
 	 * @param idDoc
 	 */
-	public void setIdDoc(final java.lang.Long idDoc) {
+	public void setIdDoc(final Long idDoc) {
 		this.idDoc = idDoc;
 	}
 
@@ -941,7 +929,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 * 
 	 * @param nmArqDoc
 	 */
-	public void setNmArqDoc(final java.lang.String nmArqDoc) {
+	public void setNmArqDoc(final String nmArqDoc) {
 		this.nmArqDoc = nmArqDoc;
 	}
 
@@ -953,7 +941,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		this.nmDestinatario = nomeDestinatario;
 	}
 
-	public void setNmFuncaoSubscritor(java.lang.String nmSubscritorFuncao) {
+	public void setNmFuncaoSubscritor(String nmSubscritorFuncao) {
 		this.nmFuncaoSubscritor = nmSubscritorFuncao;
 	}
 
@@ -966,11 +954,11 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 * 
 	 * @param nmSubscritorExt
 	 */
-	public void setNmSubscritorExt(final java.lang.String nmSubscritorExt) {
+	public void setNmSubscritorExt(final String nmSubscritorExt) {
 		this.nmSubscritorExt = nmSubscritorExt;
 	}
 
-	public void setNumAntigoDoc(java.lang.String numAntigoDoc) {
+	public void setNumAntigoDoc(String numAntigoDoc) {
 		this.numAntigoDoc = numAntigoDoc;
 	}
 
@@ -979,7 +967,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 * 
 	 * @param numExpediente
 	 */
-	public void setNumExpediente(final java.lang.Long numExpediente) {
+	public void setNumExpediente(final Long numExpediente) {
 		this.numExpediente = numExpediente;
 	}
 
@@ -988,7 +976,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 * 
 	 * @param numExtDoc
 	 */
-	public void setNumExtDoc(final java.lang.String numExtDoc) {
+	public void setNumExtDoc(final String numExtDoc) {
 		this.numExtDoc = numExtDoc;
 	}
 
@@ -1010,9 +998,6 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setOrgaoUsuario(CpOrgaoUsuario orgaoUsuario) {
 		this.orgaoUsuario = orgaoUsuario;
-		if (orgaoPermiteHcp() && conteudoBlobDoc==null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
-			cpArquivo = CpArquivo.updateOrgaoUsuario(cpArquivo, orgaoUsuario);
-		}
 	}
 
 	/**
@@ -1071,72 +1056,22 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		this.dnmExNivelAcesso = dnmExNivelAcesso;
 	}
 
-	public java.util.Date getDtAltDoc() {
+	public Date getDtAltDoc() {
 		return dtAltDoc;
 	}
 
-	public void setDtAltDoc(java.util.Date dtAltDoc) {
+	public void setDtAltDoc(Date dtAltDoc) {
 		this.dtAltDoc = dtAltDoc;
 	}
-
-	public CpArquivo getCpArquivo() {
-		return cpArquivo;
-	}
-
-	public void setCpArquivo(CpArquivo cpArquivo) {
-		this.cpArquivo = cpArquivo;
-	}
 	
-	public java.lang.String getConteudoTpDoc() {
-		if (getCpArquivo() == null)
-			return conteudoTpDoc;
-		else
-			return getCpArquivo().getConteudoTpArq();
+	public String getConteudoTpDoc() {
+		return conteudoTpDoc;
 	}
 
-	public void setConteudoTpDoc(final java.lang.String conteudoTp) {
+	public void setConteudoTpDoc(final String conteudoTp) {
 		this.conteudoTpDoc = conteudoTp;
-		if (orgaoPermiteHcp() && conteudoBlobDoc==null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
-			cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, this.conteudoTpDoc);
-		}
-	}
-	
-	public byte[] getConteudoBlobDoc() {
-		if(cacheConteudoBlobDoc != null) {
-			return cacheConteudoBlobDoc;
-		} else if (getCpArquivo() == null) { 
-			cacheConteudoBlobDoc = conteudoBlobDoc;
-		} else {
-			try {
-				cacheConteudoBlobDoc = getCpArquivo().getConteudo();
-			} catch (Exception e) {
-				throw new AplicacaoException(e.getMessage());
-			}
-		}
-		return cacheConteudoBlobDoc;
 	}
 
-	public void setConteudoBlobDoc(byte[] createBlob) {
-		cacheConteudoBlobDoc = createBlob;
-		if (this.cpArquivo==null && (conteudoBlobDoc!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"))))) {
-			conteudoBlobDoc = createBlob;
-		} else if(cacheConteudoBlobDoc != null){
-			if(orgaoPermiteHcp())
-				cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobDoc);
-			else
-				conteudoBlobDoc = createBlob;
-		}
-	}
-	
-	
-	private boolean orgaoPermiteHcp() {
-		final String sigla = this.orgaoUsuario!=null?this.orgaoUsuario.getSigla():(this.getCadastrante()!=null?this.getCadastrante().getOrgaoUsuario().getSigla():null);
-		List<String> orgaos = Prop.getList("/siga.armazenamento.orgaos");
-		if(orgaos != null && ("*".equals(orgaos.get(0)) || orgaos.stream().anyMatch(siglaFiltro -> siglaFiltro.equals(sigla))) )
-			return true;
-		return false;
-	}
-	
 	public ExProtocolo getExProtocolo() {
 		return exProtocolo;
 	}
@@ -1157,12 +1092,26 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		return serialVersionUID;
 	}
 
-	public java.lang.String getDescrDocumentoAI() {
+	public String getDescrDocumentoAI() {
 		return descrDocumentoAI;
 	}
 
-	public void setDescrDocumentoAI(java.lang.String descrDocumentoAI) {
+	public void setDescrDocumentoAI(String descrDocumentoAI) {
 		this.descrDocumentoAI = descrDocumentoAI;
 	}
-	
+
+	public String getMimeType() {
+		return this.getConteudoTpDoc();
+	}
+
+	@Override
+	public void setMimeType(String mimeType) {
+		this.setConteudoTpDoc(mimeType);
+	}
+
+	@Override
+	public Path getPathConteudo(Path base) {
+		return this.getPathConteudo(this, NOME_TIPO_DIRETORIO, base);
+	}
+
 }

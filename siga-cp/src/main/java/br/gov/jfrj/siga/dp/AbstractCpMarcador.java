@@ -53,7 +53,7 @@ public abstract class AbstractCpMarcador extends HistoricoAuditavelSuporte imple
 	private static final long serialVersionUID = 6436403895150961831L;
 
 	@Id
-	@SequenceGenerator(name = "CP_MARCADOR_LOTACAO_SEQ", sequenceName = "CORPORATIVO.CP_MARCADOR_LOTACAO_SEQ")
+	@SequenceGenerator(name = "CP_MARCADOR_LOTACAO_SEQ", sequenceName = "corporativo.cp_marcador_id_marcador_seq")
 	@GeneratedValue(generator = "CP_MARCADOR_LOTACAO_SEQ")
 	@Column(name = "ID_MARCADOR", unique = true, nullable = false)
 	private Long idMarcador;

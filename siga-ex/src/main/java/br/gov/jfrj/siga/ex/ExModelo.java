@@ -21,7 +21,6 @@
  */
 package br.gov.jfrj.siga.ex;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
@@ -61,8 +60,9 @@ public class ExModelo extends AbstractExModelo implements Sincronizavel, Selecio
 
 	/* Add customized code below */
 	public void setConteudoBlobMod2(final byte[] blob) {
-		if (blob != null)
+		if (blob != null) {
 			setConteudoBlobMod(blob);
+		}
 	}
 
 	public byte[] getConteudoBlobMod2() {

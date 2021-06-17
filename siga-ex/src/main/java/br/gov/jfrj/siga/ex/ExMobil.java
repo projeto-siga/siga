@@ -1808,7 +1808,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		} else {
 			if (mobPrincipal == this && teveReordenacao) {
 				for (ExArquivoNumerado arquivo : arquivosNumerados) {
-					if (mobPrincipal.getDoc().getIdDoc().equals(arquivo.getArquivo().getIdDoc())) {						
+					if (mobPrincipal.getDoc().getIdDoc().equals(arquivo.getArquivo().getId())) {						
 						ans.add(arquivo);
 						break;
 					}

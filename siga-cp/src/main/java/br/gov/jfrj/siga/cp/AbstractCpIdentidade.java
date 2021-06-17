@@ -94,7 +94,7 @@ public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
 	private static final long serialVersionUID = 6096621825604901831L;
 
 	@Id
-	@SequenceGenerator(name = "CP_IDENTIDADE_SEQ", sequenceName = "CORPORATIVO.CP_IDENTIDADE_SEQ")
+	@SequenceGenerator(name = "CP_IDENTIDADE_SEQ", sequenceName = "corporativo.cp_identidade_id_identidade_seq")
 	@GeneratedValue(generator = "CP_IDENTIDADE_SEQ")
 	@Column(name = "ID_IDENTIDADE", unique = true, nullable = false)
 	@Desconsiderar

@@ -36,6 +36,7 @@ public class Mesa {
 		public String sigla;
 		public String descr;
 		public String origem;
+		public String destino;
 		public String grupo;
 		public String grupoNome;
 		public String grupoIcone;
@@ -83,19 +84,20 @@ public class Mesa {
 			r.sigla = mobil.getSigla();
 			r.descr = mobil.doc().getDescrCurta(80);
 
-			if (mobil.doc().getSubscritor() != null
-					&& mobil.doc().getSubscritor().getLotacao() != null)
-
+			if (mobil.doc().getSubscritor() != null && mobil.doc().getSubscritor().getLotacao() != null) {
 				if (SigaMessages.isSigaSP()) {
-					r.origem = mobil.doc().getSubscritor().getLotacao()
-							.getOrgaoUsuario()
-							+ "/"
-							+ mobil.doc().getSubscritor().getLotacao()
-									.getSigla();
+					r.origem = mobil.doc().getSubscritor().getLotacao().getOrgaoUsuario() + "/"
+							 + mobil.doc().getSubscritor().getLotacao().getSigla();
 				} else {
-					r.origem = mobil.doc().getSubscritor().getLotacao()
-							.getSigla();
+					r.origem = mobil.doc().getSubscritor().getLotacao().getSigla();
 				}
+			}
+
+			if (mobil.doc().getLotaDestinatario().getSiglaLotacao() != null) {
+				r.destino = mobil.doc().getLotaDestinatario().getSiglaLotacao();
+			} else {
+				r.destino = null;
+			}
 
 			r.dataDevolucao = "ocultar";
 
@@ -183,6 +185,11 @@ public class Mesa {
 					r.grupoOrdem = Integer.toString(mar.getGrupo().ordinal());
 					r.grupoNome = mar.getGrupo().getNome();
 					r.grupoIcone = mar.getGrupo().getIcone();
+				}
+
+				if("Em Trâmite".equals(t.nome)) {
+					ExMarca parcial = mobil.getExMarcaSet().first();
+					t.nome = t.nome + " - " + parcial;
 				}
 
 				r.list.add(t);

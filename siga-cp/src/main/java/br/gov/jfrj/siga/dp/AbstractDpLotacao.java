@@ -79,8 +79,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 		@NamedQuery(name = "consultarQuantidadeDpLotacao", query = "select count(lot) from DpLotacao lot "
 				+ "  where ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) or (upper(lot.siglaLotacao) like upper('%' || :nome || '%')))"
 				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ "	and lot.dataFimLotacao = null"
-				+ "	order by lot.nomeLotacao"),
+				+ "	and lot.dataFimLotacao = null"),
 		@NamedQuery(name = "consultarPorFiltroDpLotacaoInclusiveFechadas", query = "from DpLotacao where idLotacao in ("
 				+ "  select max(lot.idLotacao)"
 				+ "  from DpLotacao lot"
@@ -109,7 +108,7 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 		Serializable, HistoricoAuditavel {
 
 	@Id
-	@SequenceGenerator(name = "DP_LOTACAO_SEQ", sequenceName = "CORPORATIVO.DP_LOTACAO_SEQ")
+	@SequenceGenerator(name = "DP_LOTACAO_SEQ", sequenceName = "corporativo.dp_lotacao_id_lotacao_seq")
 	@GeneratedValue(generator = "DP_LOTACAO_SEQ")
 	@Column(name = "ID_LOTACAO", unique = true, nullable = false)
 	@Desconsiderar

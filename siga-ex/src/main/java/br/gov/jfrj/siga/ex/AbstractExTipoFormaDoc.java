@@ -41,7 +41,7 @@ public abstract class AbstractExTipoFormaDoc extends Objeto implements
 		Serializable {
 
 	@Id
-	@SequenceGenerator(sequenceName = "EX_TIPO_FORMA_DOCUMENTO_SEQ", name = "EX_TIPO_FORMA_DOCUMENTO_SEQ")
+	@SequenceGenerator(name = "EX_TIPO_FORMA_DOCUMENTO_SEQ", sequenceName = "siga.ex_tipo_forma_documento_id_tipo_forma_doc_seq")
 	@GeneratedValue(generator = "EX_TIPO_FORMA_DOCUMENTO_SEQ")
 	@Column(name = "ID_TIPO_FORMA_DOC", unique = true, nullable = false)
 	private Long idTipoFormaDoc;

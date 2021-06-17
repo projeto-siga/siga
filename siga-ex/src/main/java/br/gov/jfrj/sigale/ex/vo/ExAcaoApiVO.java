@@ -23,7 +23,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 public class ExAcaoApiVO {
 	String icone;
@@ -35,9 +34,10 @@ public class ExAcaoApiVO {
 	String pre;
 	String pos;
 	String classe;
-	Map<String, String> params;
+	String hint;
+	Map<String, Object> params;
 	
-	public Map<String, String> getParams() {
+	public Map<String, Object> getParams() {
 		return params;
 	}
 	
@@ -93,8 +93,16 @@ public class ExAcaoApiVO {
 		this.classe = classe;
 	}
 	
+	public String getHint() {
+		return hint;
+	}
+	
+	public void setHint(String hint) {
+		this.hint = hint;
+	}
+	
 	public ExAcaoApiVO(String icone, String nome, String nameSpace, String acao, boolean pode, String msgConfirmacao,
-			TreeMap<String, String> params, String pre, String pos, String classe) {
+			Map<String, Object> params, String pre, String pos, String classe, String hint) {
 		super();
 		this.icone = icone;
 		this.nome = nome;
@@ -106,6 +114,7 @@ public class ExAcaoApiVO {
 		this.pre = pre;
 		this.pos = pos;
 		this.classe = classe;
+		this.hint = hint;
 	}
 	
 	@Override
@@ -123,14 +132,15 @@ public class ExAcaoApiVO {
 	public String getUrl() {
 		String resultUrl = "";
 		String valueOfParameterToAdd;
-		Map<String, String> parameters = this.params;
+		Map<String, Object> parameters = this.params;
 		Set<String> parametersNames = this.params.keySet();
 		for (String nameOfParameterToAdd : parametersNames) {
-			valueOfParameterToAdd = parameters.get(nameOfParameterToAdd);
+			valueOfParameterToAdd = String.valueOf(parameters.get(nameOfParameterToAdd));
 			resultUrl = (nameOfParameterToAdd + "=" + valueOfParameterToAdd + "&").concat(resultUrl);
 		}
-		if (!parametersNames.isEmpty())
+		if (!parametersNames.isEmpty()) {
 			resultUrl = ("?").concat(resultUrl);
+		}
 		resultUrl = (this.nameSpace + "/" + this.acao).concat(resultUrl);
 		return resultUrl;
 	}

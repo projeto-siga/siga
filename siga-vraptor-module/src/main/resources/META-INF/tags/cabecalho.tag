@@ -358,7 +358,7 @@ ${meta}
 		<div class="container-fluid content">
 			<div class="row pt-2 pb-2 mb-3 ${sub_menu_class}" >
 				<!-- usuário -->
-				<div class="col col-12 col-md-6 d-flex align-items-center min-vh-100">
+				<div class="col col-12 col-md-6 d-flex align-items-center">
 					<div class="gt-company">
 						<c:catch>
 							<c:if test="${not empty titular.orgaoUsuario.descricao}"><span style="white-space: nowrap;"> <i class="fa fa-angle-double-right"></i> ${titular.orgaoUsuario.descricao} |</span></h6></c:if>

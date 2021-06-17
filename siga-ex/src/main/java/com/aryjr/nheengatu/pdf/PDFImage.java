@@ -25,10 +25,13 @@ package com.aryjr.nheengatu.pdf;
 import java.io.IOException;
 import java.net.URL;
 
+import org.apache.commons.lang3.math.NumberUtils;
+
 import com.aryjr.nheengatu.html.Tag;
 import com.aryjr.nheengatu.util.TagsManager;
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.Image;
+import com.openhtmltopdf.css.parser.property.PrimitivePropertyBuilders.Height;
 
 /**
  * 
@@ -53,10 +56,16 @@ public class PDFImage {
 									// will be the same of the cell
 		img.setAlignment(gm.getAlign());
 		if (htmlImage.getPropertyValue("width") != null) {
-			img.scaleAbsoluteWidth(Integer.parseInt(htmlImage.getPropertyValue("width")));
+			final String width = htmlImage.getPropertyValue("width");
+			if (NumberUtils.isParsable(width)) {
+				img.scaleAbsoluteWidth(Integer.parseInt(width));
+			}
 		}
 		if (htmlImage.getPropertyValue("height") != null) {
-			img.scaleAbsoluteHeight(Integer.parseInt(htmlImage.getPropertyValue("height")));
+			final String height = htmlImage.getPropertyValue("height");
+			if (NumberUtils.isParsable(height)) {
+				img.scaleAbsoluteHeight(Integer.parseInt(height));
+			}
 		}
 		return img;
 	}

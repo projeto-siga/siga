@@ -127,7 +127,13 @@ public class GcInformacaoFiltro {
 			parametro = true;
 			subquery += " and situacao.cpMarcador.idMarcador = "
 					+ situacao.getIdMarcador()
-					+ " and (situacao.dtFimMarca is null or situacao.dtFimMarca > 	:dbDatetime)";
+					+ " and (situacao.dtFimMarca is null or situacao.dtFimMarca > :dbDatetime)";
+		} 
+		
+		else if (situacao.getIdMarcador() == null) {
+			parametro = true;
+			subquery += " and situacao.cpMarcador.idMarcador <> 10 "
+					+ " and (situacao.dtFimMarca is null or situacao.dtFimMarca > :dbDatetime)";
 		}
 
 		if (responsavel != null)

@@ -327,7 +327,7 @@ public class ExMobilController extends
 			}
 			
 			List lista = dao().consultarPorFiltroOtimizado(flt,
-					builder.getOffset(), getTamanho(), getTitular(),
+					builder.getOffset(), -1, getTitular(),
 					getLotaTitular());
 	
 			InputStream inputStream = null;

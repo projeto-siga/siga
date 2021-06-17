@@ -198,9 +198,9 @@ public class Documento {
 				} else if (movAssinatura.getExDocumento().isExternoCapturado()
 						|| movAssinatura.getExDocumento().isInternoCapturado()) {
 					s.append(" - ");
-					s.append(movAssinatura.getCadastrante().getFuncaoString());
+					s.append(movAssinatura.getTitular().getFuncaoString());
 					s.append(" / ");
-					s.append(movAssinatura.getCadastrante().getLotacao().getSigla());
+					s.append(movAssinatura.getTitular().getLotacao().getSigla());
 				}
 				/**** ****/
 				

@@ -18,7 +18,7 @@
 	<div class="container-fluid">
 		<div class="card bg-light mb-3">
 			<div class="card-header">
-				<h5>Protocolo de Transferência</h5>
+				<h5><fmt:message key='protocolo.transferencia' /></h5>
 			</div>
 
 			<div class="card-body">

@@ -314,6 +314,7 @@ INSERT INTO siga.ex_tipo_movimentacao VALUES (61, 'Controle de Coloboração');
 INSERT INTO siga.ex_tipo_movimentacao VALUES (62, 'Marcação');
 INSERT INTO siga.ex_tipo_movimentacao VALUES (63, 'Inclusão de Cópia');
 INSERT INTO siga.ex_tipo_movimentacao VALUES (64, 'Anexação de Arquivo Auxiliar');
+INSERT INTO siga.ex_tipo_movimentacao VALUES (65, 'Solicitação de Assinatura');
 INSERT INTO siga.ex_tipo_movimentacao VALUES (67, 'Autuar');
 INSERT INTO siga.ex_tipo_movimentacao VALUES (70, 'Restringir Acesso');
 INSERT INTO siga.ex_tipo_movimentacao VALUES (71, 'Refazer Documento');

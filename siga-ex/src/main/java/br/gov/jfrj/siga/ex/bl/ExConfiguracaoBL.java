@@ -26,6 +26,7 @@ import java.util.SortedSet;
 
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
@@ -40,6 +41,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
+import br.gov.jfrj.siga.ex.ExConfiguracaoCache;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
@@ -76,150 +78,58 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	 * Verifica se a configuração é uma configuração válida.
 	 */
 	@Override
-	public boolean atendeExigencias(CpConfiguracao cfgFiltro,
-			Set<Integer> atributosDesconsiderados, CpConfiguracao cfg,
+	public boolean atendeExigencias(CpConfiguracao filtro,
+			Set<Integer> atributosDesconsiderados, CpConfiguracaoCache cfg,
 			SortedSet<CpPerfil> perfis) {
-		if (!super.atendeExigencias(cfgFiltro, atributosDesconsiderados, cfg,
+		if (!super.atendeExigencias(filtro, atributosDesconsiderados, cfg,
 				perfis))
 			return false;
 
-		if (cfg instanceof ExConfiguracao
-				&& cfgFiltro instanceof ExConfiguracao) {
-			ExConfiguracao exCfg = (ExConfiguracao) cfg;
-			ExConfiguracao exCfgFiltro = (ExConfiguracao) cfgFiltro;
+		if (cfg instanceof ExConfiguracaoCache
+				&& filtro instanceof ExConfiguracao) {
+			ExConfiguracaoCache exCfg = (ExConfiguracaoCache) cfg;
+			ExConfiguracaoCache cfgFiltro = null;
+			if (filtro != null)
+				cfgFiltro = new ExConfiguracaoCache((ExConfiguracao) filtro);
+			else
+				cfgFiltro = new ExConfiguracaoCache();
 
-			if (exCfg.getExNivelAcesso() != null
-					&& ((exCfgFiltro.getExNivelAcesso() != null && !exCfg
-							.getExNivelAcesso().getGrauNivelAcesso().equals(
-									exCfgFiltro.getExNivelAcesso()
-											.getGrauNivelAcesso())) || ((exCfgFiltro
-							.getExNivelAcesso() == null) && !atributosDesconsiderados
-							.contains(NIVEL_ACESSO))))
+			if (desigual(exCfg.exNivelAcesso, cfgFiltro.exNivelAcesso, atributosDesconsiderados, NIVEL_ACESSO))
 				return false;
 
-			if (exCfg.getDpPessoa() != null
-					&& ((exCfgFiltro.getDpPessoa() != null
-							&& !exCfg.getDpPessoa().equivale(
-									exCfgFiltro.getDpPessoa()) || ((exCfgFiltro
-							.getDpPessoa() == null) && !atributosDesconsiderados
-							.contains(PESSOA)))))
+			if (desigual(exCfg.exTipoMovimentacao, cfgFiltro.exTipoMovimentacao, atributosDesconsiderados, TIPO_MOVIMENTACAO))
 				return false;
 
-			if (exCfg.getLotacao() != null
-					&& ((exCfgFiltro.getLotacao() != null
-							&& !exCfg.getLotacao().equivale(
-									exCfgFiltro.getLotacao()) || ((exCfgFiltro
-							.getLotacao() == null) && !atributosDesconsiderados
-							.contains(LOTACAO)))))
+			if (desigual(exCfg.exVia, cfgFiltro.exVia, atributosDesconsiderados, VIA))
 				return false;
 
-			if (exCfg.getFuncaoConfianca() != null
-					&& ((exCfgFiltro.getFuncaoConfianca() != null && !exCfg
-							.getFuncaoConfianca().getIdFuncao().equals(
-									exCfgFiltro.getFuncaoConfianca()
-											.getIdFuncao())) || ((exCfgFiltro
-							.getFuncaoConfianca() == null) && !atributosDesconsiderados
-							.contains(FUNCAO))))
+			if (desigual(exCfg.exClassificacao, cfgFiltro.exClassificacao, atributosDesconsiderados, CLASSIFICACAO))
 				return false;
 
-			if (exCfg.getOrgaoUsuario() != null
-					&& ((exCfgFiltro.getOrgaoUsuario() != null && !exCfg
-							.getOrgaoUsuario().getIdOrgaoUsu().equals(
-									exCfgFiltro.getOrgaoUsuario()
-											.getIdOrgaoUsu())) || ((exCfgFiltro
-							.getOrgaoUsuario() == null) && !atributosDesconsiderados
-							.contains(ORGAO))))
+			if (desigual(exCfg.exModelo, cfgFiltro.exModelo, atributosDesconsiderados, MODELO))
 				return false;
 
-			if (exCfg.getCargo() != null
-					&& ((exCfgFiltro.getCargo() != null && !exCfg.getCargo()
-							.getIdCargo().equals(
-									exCfgFiltro.getCargo().getIdCargo())) || ((exCfgFiltro
-							.getCargo() == null) && !atributosDesconsiderados
-							.contains(CARGO))))
+			if (desigual(exCfg.exFormaDocumento, cfgFiltro.exFormaDocumento, atributosDesconsiderados, FORMA))
 				return false;
 
-			if (exCfg.getExTipoMovimentacao() != null
-					&& ((exCfgFiltro.getExTipoMovimentacao() != null && !exCfg
-							.getExTipoMovimentacao().getIdTpMov().equals(
-									exCfgFiltro.getExTipoMovimentacao()
-											.getIdTpMov())) || ((exCfgFiltro
-							.getExTipoMovimentacao() == null) && !atributosDesconsiderados
-							.contains(TIPO_MOVIMENTACAO))))
+			if (desigual(exCfg.exTipoDocumento, cfgFiltro.exTipoDocumento, atributosDesconsiderados, TIPO))
 				return false;
 
-			if (exCfg.getExVia() != null
-					&& ((exCfgFiltro.getExVia() != null && !exCfg.getExVia()
-							.equivale(exCfgFiltro.getExVia())) || ((exCfgFiltro
-							.getExVia() == null) && !atributosDesconsiderados
-							.contains(VIA))))
+			if (desigual(exCfg.exPapel, cfgFiltro.exPapel, atributosDesconsiderados, PAPEL))
 				return false;
 
-			if (exCfg.getExClassificacao() != null
-					&& ((exCfgFiltro.getExClassificacao() != null && !exCfg
-							.getExClassificacao().equivale(exCfgFiltro.getExClassificacao())) || ((exCfgFiltro
-							.getExClassificacao() == null) && !atributosDesconsiderados
-							.contains(CLASSIFICACAO))))
-				return false;
-
-			if (exCfg.getExModelo() != null
-					&& ((exCfgFiltro.getExModelo() != null && !exCfg
-							.getExModelo().equivale(
-									exCfgFiltro.getExModelo())) || ((exCfgFiltro
-							.getExModelo() == null) && !atributosDesconsiderados
-							.contains(MODELO))))
-				return false;
-
-			if (exCfg.getExFormaDocumento() != null
-					&& ((exCfgFiltro.getExFormaDocumento() != null && !exCfg
-							.getExFormaDocumento().getIdFormaDoc().equals(
-									exCfgFiltro.getExFormaDocumento()
-											.getIdFormaDoc())) || ((exCfgFiltro
-							.getExFormaDocumento() == null) && !atributosDesconsiderados
-							.contains(FORMA))))
-				return false;
-
-			if (exCfg.getExTipoDocumento() != null
-					&& ((exCfgFiltro.getExTipoDocumento() != null && !exCfg
-							.getExTipoDocumento().getIdTpDoc().equals(
-									exCfgFiltro.getExTipoDocumento().getId())) || ((exCfgFiltro
-							.getExTipoDocumento() == null) && !atributosDesconsiderados
-							.contains(TIPO))))
-				return false;
-
-			if (exCfg.getExPapel() != null
-					&& ((exCfgFiltro.getExPapel() != null && !exCfg
-							.getExPapel().getIdPapel().equals(
-									exCfgFiltro.getExPapel().getIdPapel())) || ((exCfgFiltro
-							.getExPapel() == null) && !atributosDesconsiderados
-							.contains(PAPEL))))
-				return false;
-
-			if (exCfg.getExTipoFormaDoc() != null
-					&& ((exCfgFiltro.getExTipoFormaDoc() != null && !exCfg
-							.getExTipoFormaDoc().getId().equals(
-									exCfgFiltro.getExTipoFormaDoc().getId())) || ((exCfgFiltro
-							.getExTipoFormaDoc() == null) && !atributosDesconsiderados
-							.contains(TIPO_FORMA_DOC))))
-				return false;
-
-			if (exCfg.getCpServico() != null
-					&& ((exCfgFiltro.getCpServico() != null && !exCfg
-							.getCpServico().getIdServico().equals(
-									exCfgFiltro.getCpServico().getIdServico())) || ((exCfgFiltro
-							.getCpServico() == null) && !atributosDesconsiderados
-							.contains(SERVICO))))
+			if (desigual(exCfg.exTipoFormaDoc, cfgFiltro.exTipoFormaDoc, atributosDesconsiderados, TIPO_FORMA_DOC))
 				return false;
 		}
 		return true;
 	}
 
 	public CpSituacaoConfiguracao buscaSituacao(final ExConfiguracao exConfiguracao) {
-		final CpConfiguracao cpConfiguracaoResult = buscaConfiguracao(exConfiguracao,
+		final CpConfiguracaoCache cpConfiguracaoResult = buscaConfiguracao(exConfiguracao,
 				new int[] { 0 }, ExDao.getInstance()
 						.consultarDataEHoraDoServidor());
 		if (cpConfiguracaoResult != null) {
-			return cpConfiguracaoResult.getCpSituacaoConfiguracao();
+			return dao().consultar(cpConfiguracaoResult.cpSituacaoConfiguracao, CpSituacaoConfiguracao.class, false);
 		} else {
 			return exConfiguracao.getCpTipoConfiguracao().getSituacaoDefault();
 		}
@@ -329,12 +239,12 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 		config.setFuncaoConfiancaObjeto(funcaoConfiancaObjeto);
 		config.setOrgaoObjeto(orgaoObjeto);
 
-		CpConfiguracao cfg = (CpConfiguracao) buscaConfiguracao(config,
+		CpConfiguracaoCache cfg = (CpConfiguracaoCache) buscaConfiguracao(config,
 				new int[] { 0 }, null);
 
 		CpSituacaoConfiguracao situacao = null;
 		if (cfg != null)
-			situacao = cfg.getCpSituacaoConfiguracao();
+			situacao = dao().consultar(cfg.cpSituacaoConfiguracao, CpSituacaoConfiguracao.class, false);
 		else
 			if (config.getCpTipoConfiguracao() != null)
 				situacao = config.getCpTipoConfiguracao().getSituacaoDefault();
@@ -752,7 +662,12 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 
 			}
 		}
-
 	}
+
+	@Override
+	public CpConfiguracaoCache instanciarCache(Object[] a) {
+		return new ExConfiguracaoCache(a);
+	}
+
 
 }

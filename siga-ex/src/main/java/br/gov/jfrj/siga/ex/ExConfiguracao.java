@@ -33,6 +33,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.cp.AbstractCpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -40,7 +41,15 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 @Entity
 @Table(name = "siga.ex_configuracao")
 @PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_EX")
-@NamedQueries({ @NamedQuery(name = "consultarExConfiguracoes", query = "from ExConfiguracao excfg where (:idTpConfiguracao is null or excfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)") })
+@NamedQueries({
+		@NamedQuery(name = "consultarExConfiguracoes", query = "from ExConfiguracao excfg where (:idTpConfiguracao is null or excfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)"),
+		@NamedQuery(name = "consultarCacheDeConfiguracoesEX", query = AbstractCpConfiguracao.CFG_CACHE_SELECT
+				+ ", cc.exTipoMovimentacao.idTpMov, cc.exTipoDocumento.idTpDoc, cc.exTipoFormaDoc.idTipoFormaDoc "
+				+ ", cc.exFormaDocumento.idFormaDoc, cc.exModelo.idMod, cc.exClassificacao.idClassificacao "
+				+ ", cc.exVia.idVia, cc.exNivelAcesso.idNivelAcesso, cc.exPapel.idPapel "
+				+ AbstractCpConfiguracao.CFG_CACHE_FROM
+				+ " left join ExConfiguracao cc on c.idConfiguracao = cc.idConfiguracao "
+				+ AbstractCpConfiguracao.CFG_CACHE_WHERE) })
 public class ExConfiguracao extends CpConfiguracao {
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -201,5 +210,20 @@ public class ExConfiguracao extends CpConfiguracao {
 						.getOrgaoUsuario().getId()
 						.equals(lotacaoTitular.getOrgaoUsuario().getId()));
 	}
-	
+
+	@Override
+	public void atualizarObjeto() {
+		super.atualizarObjeto();
+		setExModelo(atual(getExModelo()));
+		setExClassificacao(atual(getExClassificacao()));
+		setExVia(atual(getExVia()));
+	}
+
+	public void substituirPorObjetoInicial() {
+		super.substituirPorObjetoInicial();
+		setExModelo(inicial(getExModelo()));
+		setExClassificacao(inicial(getExClassificacao()));
+		setExVia(inicial(getExVia()));
+	}
+
 }

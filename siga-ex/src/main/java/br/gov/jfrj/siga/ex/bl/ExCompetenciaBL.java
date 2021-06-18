@@ -44,6 +44,7 @@ import br.gov.jfrj.siga.dp.DpResponsavel;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
+import br.gov.jfrj.siga.ex.ExConfiguracaoCache;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -646,7 +647,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @return
 	 * @throws Exception
 	 */
-	private ExConfiguracao preencherFiltroEBuscarConfiguracao(
+	private ExConfiguracaoCache preencherFiltroEBuscarConfiguracao(
 			DpPessoa titularIniciador, DpLotacao lotaTitularIniciador,
 			long tipoConfig, long tipoMov, ExTipoDocumento exTipoDocumento,
 			ExTipoFormaDoc exTipoFormaDoc, ExFormaDocumento exFormaDocumento,
@@ -683,7 +684,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		cfgFiltro.setCargoObjeto(cargoObjeto);
 		cfgFiltro.setOrgaoObjeto(orgaoObjeto);
 
-		ExConfiguracao cfg = (ExConfiguracao) getConfiguracaoBL()
+		ExConfiguracaoCache cfg = (ExConfiguracaoCache) getConfiguracaoBL()
 				.buscaConfiguracao(cfgFiltro, new int[] { 0 }, null);
 
 		// Essa linha é necessária porque quando recuperamos um objeto da classe
@@ -716,23 +717,20 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			DpLotacao lotaTitular, long tipoMov, long tipoConfig, DpPessoa pessoaObjeto, 
 			DpLotacao lotacaoObjeto, CpComplexo complexoObjeto, DpCargo cargoObjeto, 
 			DpFuncaoConfianca funcaoConfiancaObjeto, CpOrgaoUsuario orgaoObjeto) {
-		CpSituacaoConfiguracao situacao;
-		
-		ExConfiguracao cfg = preencherFiltroEBuscarConfiguracao(titular,
+		ExConfiguracaoCache cfg = preencherFiltroEBuscarConfiguracao(titular,
 				lotaTitular, tipoConfig, tipoMov, null, null, null, null, null, null, null, null, pessoaObjeto, 
 				lotacaoObjeto, complexoObjeto, cargoObjeto, 
 				funcaoConfiancaObjeto, orgaoObjeto);
 
+		long situacao;
 		if (cfg != null) {
-			situacao = cfg.getCpSituacaoConfiguracao();
+			situacao = cfg.cpSituacaoConfiguracao;
 		} else {
-			situacao = CpDao.getInstance().consultar(tipoConfig,
-					CpTipoConfiguracao.class, false).getSituacaoDefault();
-
+			situacao = CpDao.getInstance().consultar(tipoConfig, CpTipoConfiguracao.class, false).getSituacaoDefault()
+					.getIdSitConfiguracao();
 		}
 
-		if (situacao != null
-				&& situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_PODE)
+		if (situacao != 0 && situacao == CpSituacaoConfiguracao.SITUACAO_PODE)
 			return true;
 		return false;
 	}

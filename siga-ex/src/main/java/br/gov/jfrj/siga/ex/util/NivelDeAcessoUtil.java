@@ -9,6 +9,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
+import br.gov.jfrj.siga.ex.ExConfiguracaoCache;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
@@ -33,30 +34,36 @@ public class NivelDeAcessoUtil {
 		config.setExModelo(exMod);
 		config.setExClassificacao(classif);
 
-		ExConfiguracao exConfiguracaoMin;
+		ExConfiguracaoCache exConfiguracaoMin;
 		exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MINIMO);
 		config.setCpTipoConfiguracao(exTpConfig);
 		try {
-			exConfiguracaoMin = (ExConfiguracao) Ex.getInstance().getConf().buscaConfiguracao(config,
+			exConfiguracaoMin = (ExConfiguracaoCache) Ex.getInstance().getConf().buscaConfiguracao(config,
 					new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt);
 		} catch (Exception e) {
 			exConfiguracaoMin = null;
 		}
 
-		ExConfiguracao exConfiguracaoMax;
+		ExConfiguracaoCache exConfiguracaoMax;
 		exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MAXIMO);
 		config.setCpTipoConfiguracao(exTpConfig);
 		try {
-			exConfiguracaoMax = (ExConfiguracao) Ex.getInstance().getConf().buscaConfiguracao(config,
+			exConfiguracaoMax = (ExConfiguracaoCache) Ex.getInstance().getConf().buscaConfiguracao(config,
 					new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt);
 		} catch (Exception e) {
 			exConfiguracaoMax = null;
 		}
 
-		if (exConfiguracaoMin != null && exConfiguracaoMax != null && exConfiguracaoMin.getExNivelAcesso() != null
-				&& exConfiguracaoMax.getExNivelAcesso() != null) {
-			int nivelMinimo = exConfiguracaoMin.getExNivelAcesso().getGrauNivelAcesso();
-			int nivelMaximo = exConfiguracaoMax.getExNivelAcesso().getGrauNivelAcesso();
+		if (exConfiguracaoMin != null && exConfiguracaoMax != null && exConfiguracaoMin.exNivelAcesso != 0
+				&& exConfiguracaoMax.exNivelAcesso != 0) {
+			int nivelMinimo = 0;
+			int nivelMaximo = 0;
+			for (ExNivelAcesso nivelAcesso : listaNiveis) {
+				if (nivelAcesso.getIdNivelAcesso().equals(exConfiguracaoMin.exNivelAcesso))
+					nivelMinimo = nivelAcesso.getGrauNivelAcesso();
+				if (nivelAcesso.getIdNivelAcesso().equals(exConfiguracaoMax.exNivelAcesso))
+					nivelMaximo = nivelAcesso.getGrauNivelAcesso();
+			}
 
 			for (ExNivelAcesso nivelAcesso : listaNiveis) {
 				if (nivelAcesso.getGrauNivelAcesso() >= nivelMinimo

@@ -1,6 +1,7 @@
 package br.gov.jfrj.siga.cp.model.enm;
 
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
+import br.gov.jfrj.siga.cp.converter.IEnumWithId;
 
 public enum SituacaoDeConfiguracao {
 	PODE(CpSituacaoConfiguracao.SITUACAO_PODE, "Pode"),

@@ -50,6 +50,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpResponsavel;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
+import br.gov.jfrj.siga.ex.ExConfiguracaoCache;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExDocumentoNumeracao;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
@@ -66,6 +67,7 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
 import br.gov.jfrj.siga.ex.service.ExService;
+import br.gov.jfrj.siga.ex.util.NivelDeAcessoUtil;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.hibernate.ExStarter;
 import br.gov.jfrj.siga.jee.SoapContext;
@@ -517,11 +519,11 @@ public class ExServiceImpl implements ExService {
 					exStConfig.setIdSitConfiguracao(CpSituacaoConfiguracao.SITUACAO_DEFAULT);
 					config.setCpSituacaoConfiguracao(exStConfig);
 
-					ExConfiguracao exConfig = ((ExConfiguracao) Ex.getInstance().getConf().buscaConfiguracao(config,
+					ExConfiguracaoCache exConfig = ((ExConfiguracaoCache) Ex.getInstance().getConf().buscaConfiguracao(config,
 							new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt));
 
 					if (exConfig != null)
-						nivelDeAcesso = exConfig.getExNivelAcesso();
+						nivelDeAcesso = dao().consultar(exConfig.exNivelAcesso, ExNivelAcesso.class, false);
 				} else {
 					nivelDeAcesso = dao().consultarExNidelAcesso(nomeNivelDeAcesso);
 				}
@@ -529,35 +531,11 @@ public class ExServiceImpl implements ExService {
 				if (nivelDeAcesso == null)
 					nivelDeAcesso = dao().consultar(6L, ExNivelAcesso.class, false);
 
-				List<ExNivelAcesso> listaNiveis = ExDao.getInstance().listarOrdemNivel();
-				ArrayList<ExNivelAcesso> niveisFinal = new ArrayList<ExNivelAcesso>();
-				Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
+			
+		List<ExNivelAcesso> niveisFinal = NivelDeAcessoUtil.getListaNivelAcesso(tipoDocumento, forma, modelo, classificacao, cadastrante, cadastrante.getLotacao());
 
-				ExConfiguracao config = new ExConfiguracao();
-				CpTipoConfiguracao exTpConfig = new CpTipoConfiguracao();
-				config.setDpPessoa(cadastrante);
-				config.setLotacao(cadastrante.getLotacao());
-				config.setExTipoDocumento(tipoDocumento);
-				config.setExFormaDocumento(forma);
-				config.setExModelo(modelo);
-				config.setExClassificacao(classificacao);
-				exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MINIMO);
-				config.setCpTipoConfiguracao(exTpConfig);
-				int nivelMinimo = ((ExConfiguracao) Ex.getInstance().getConf().buscaConfiguracao(config,
-						new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt)).getExNivelAcesso().getGrauNivelAcesso();
-				exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MAXIMO);
-				config.setCpTipoConfiguracao(exTpConfig);
-				int nivelMaximo = ((ExConfiguracao) Ex.getInstance().getConf().buscaConfiguracao(config,
-						new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt)).getExNivelAcesso().getGrauNivelAcesso();
-
-				for (ExNivelAcesso nivelAcesso : listaNiveis) {
-					if (nivelAcesso.getGrauNivelAcesso() >= nivelMinimo
-							&& nivelAcesso.getGrauNivelAcesso() <= nivelMaximo)
-						niveisFinal.add(nivelAcesso);
-				}
-
-				if (niveisFinal != null && !niveisFinal.isEmpty() & !niveisFinal.contains(nivelDeAcesso))
-					nivelDeAcesso = niveisFinal.get(0);
+		if (niveisFinal != null && !niveisFinal.isEmpty() & !niveisFinal.contains(nivelDeAcesso))
+			nivelDeAcesso = niveisFinal.get(0);
 
 				doc.setCadastrante(cadastrante);
 				doc.setLotaCadastrante(cadastrante.getLotacao());

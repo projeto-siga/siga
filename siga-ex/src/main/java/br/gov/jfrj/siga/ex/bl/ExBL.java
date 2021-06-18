@@ -45,7 +45,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -107,6 +106,7 @@ import br.gov.jfrj.siga.bluc.service.ValidateRequest;
 import br.gov.jfrj.siga.bluc.service.ValidateResponse;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpToken;
@@ -129,6 +129,7 @@ import br.gov.jfrj.siga.ex.ExArquivo;
 import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
+import br.gov.jfrj.siga.ex.ExConfiguracaoCache;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExEditalEliminacao;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
@@ -786,25 +787,26 @@ public class ExBL extends CpBL {
 
 			sbHtml.append("</body></html>");
 
-			TreeSet<CpConfiguracao> atendentes = getConf()
+			TreeSet<CpConfiguracaoCache> atendentes = getConf()
 					.getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_ATENDER_PEDIDO_PUBLICACAO);
 
 			ArrayList<String> emailsAtendentes = new ArrayList<String>();
 			Date hoje = new Date();
-			for (CpConfiguracao cpConf : atendentes) {
+			for (CpConfiguracaoCache cpConf : atendentes) {
 				if (!cpConf.ativaNaData(hoje))
 					continue;
-				if (!(cpConf instanceof ExConfiguracao))
+				if (!(cpConf instanceof ExConfiguracaoCache))
 					continue;
-				ExConfiguracao conf = (ExConfiguracao) cpConf;
-				if (conf.getCpSituacaoConfiguracao().getIdSitConfiguracao() == ExSituacaoConfiguracao.SITUACAO_PODE) {
-					if (conf.getDpPessoa() != null) {
-						if (!emailsAtendentes.contains(conf.getDpPessoa().getEmailPessoaAtual())) {
-							emailsAtendentes.add(conf.getDpPessoa().getEmailPessoaAtual());
+				ExConfiguracaoCache conf = (ExConfiguracaoCache) cpConf;
+				if (conf.cpSituacaoConfiguracao == ExSituacaoConfiguracao.SITUACAO_PODE) {
+					if (conf.dpPessoa != 0) {
+						DpPessoa pes = dao().consultar(conf.dpPessoa, DpPessoa.class, false);
+						if (!emailsAtendentes.contains(pes.getEmailPessoaAtual())) {
+							emailsAtendentes.add(pes.getEmailPessoaAtual());
 						}
-					} else if (conf.getLotacao() != null) {
+					} else if (conf.lotacao != 0) {
 						List<DpPessoa> pessoasLotacao = CpDao.getInstance()
-								.pessoasPorLotacao(conf.getLotacao().getIdLotacao(), false, true);
+								.pessoasPorLotacao(conf.lotacao, false, true);
 						for (DpPessoa pessoa : pessoasLotacao) {
 							if (!emailsAtendentes.contains(pessoa.getEmailPessoaAtual()))
 								emailsAtendentes.add(pessoa.getEmailPessoaAtual());
@@ -3644,7 +3646,7 @@ public class ExBL extends CpBL {
 			for (ExConfiguracao conf : lista) {
 				if (// (!conf.ativaNaData(dt)) ||
 				conf.getExPapel() == null || (conf.getPessoaObjeto() == null && conf.getLotacaoObjeto() == null)
-						|| !confBL.atendeExigencias(confFiltro, atributosDesconsiderados, conf, null))
+						|| !confBL.atendeExigencias(confFiltro, atributosDesconsiderados, new ExConfiguracaoCache(conf), null))
 					continue;
 				DpPessoa po = null;
 				DpLotacao lo = null;
@@ -7761,57 +7763,5 @@ public class ExBL extends CpBL {
 		return funcaoCargoPersonalizadoAssinatura.toString();
 
 	}
-
-	public List<ExNivelAcesso> getListaNivelAcesso(ExTipoDocumento exTpDoc, ExFormaDocumento forma, ExModelo exMod, 
-			ExClassificacao classif, DpPessoa titular, DpLotacao lotaTitular) {
-		List<ExNivelAcesso> listaNiveis = ExDao.getInstance().listarOrdemNivel();
-		ArrayList<ExNivelAcesso> niveisFinal = new ArrayList<ExNivelAcesso>();
-		Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
-
-		ExConfiguracao config = new ExConfiguracao();
-		CpTipoConfiguracao exTpConfig = new CpTipoConfiguracao();
-		config.setDpPessoa(titular);
-		config.setLotacao(lotaTitular);
-		config.setExTipoDocumento(exTpDoc);
-		config.setExFormaDocumento(forma);
-		config.setExModelo(exMod);
-		config.setExClassificacao(classif);
-
-		ExConfiguracao exConfiguracaoMin;
-		exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MINIMO);
-		config.setCpTipoConfiguracao(exTpConfig);
-		try {
-			exConfiguracaoMin = (ExConfiguracao) Ex.getInstance().getConf().buscaConfiguracao(config, new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt);
-		} catch (Exception e) {
-			exConfiguracaoMin = null;
-		}
-
-		ExConfiguracao exConfiguracaoMax;
-		exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MAXIMO);
-		config.setCpTipoConfiguracao(exTpConfig);
-		try {
-			exConfiguracaoMax = (ExConfiguracao) Ex.getInstance().getConf().buscaConfiguracao(config, new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt);
-		} catch (Exception e) {
-			exConfiguracaoMax = null;
-		}
-
-		if (exConfiguracaoMin != null && exConfiguracaoMax != null && exConfiguracaoMin.getExNivelAcesso() != null
-				&& exConfiguracaoMax.getExNivelAcesso() != null) {
-			int nivelMinimo = exConfiguracaoMin.getExNivelAcesso().getGrauNivelAcesso();
-			int nivelMaximo = exConfiguracaoMax.getExNivelAcesso().getGrauNivelAcesso();
-
-			for (ExNivelAcesso nivelAcesso : listaNiveis) {
-				if (nivelAcesso.getGrauNivelAcesso() >= nivelMinimo && nivelAcesso.getGrauNivelAcesso() <= nivelMaximo) {
-					niveisFinal.add(nivelAcesso);
-				}
-			}
-		} else {
-			niveisFinal.addAll(listaNiveis);
- 		}
-
-		return niveisFinal;
-	}
-	
-	
 }
 

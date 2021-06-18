@@ -137,10 +137,7 @@ public class CpConfiguracaoBL {
 	public synchronized void inicializarCacheSeNecessario() {
 		if (cacheInicializado)
 			return;
-		List<Object[]> results2 = dao().consultarCacheDeConfiguracoes();
-		
 		long inicio = System.currentTimeMillis();
-
 		List<Object[]> results = dao().consultarCacheDeConfiguracoes();
 
 		long inicioLazy = System.currentTimeMillis();
@@ -665,25 +662,29 @@ public class CpConfiguracaoBL {
 
 			CpConfiguracaoCache cfg = (CpConfiguracaoCache) buscaConfiguracao(cfgFiltro, new int[] { 0 }, null);
 
-			long situacao;
-
-			if (cfg != null) {
-				situacao = cfg.cpSituacaoConfiguracao;
-			} else {
-				situacao = cfgFiltro.getCpTipoConfiguracao().getSituacaoDefault().getIdSitConfiguracao();
-			}
-
-			if (situacao != 0 && (situacao == CpSituacaoConfiguracao.SITUACAO_PODE
-					|| situacao == CpSituacaoConfiguracao.SITUACAO_DEFAULT
-					|| situacao == CpSituacaoConfiguracao.SITUACAO_OBRIGATORIO)) {
-				return true;
-			}
-			return false;
+			return situacaoPermissiva(cfgFiltro, cfg);
 		} catch (Exception ex) {
 			log.error(ex);
 			ex.printStackTrace();
 			throw ex;
 		}
+	}
+
+	public static boolean situacaoPermissiva(CpConfiguracao cfgFiltro, CpConfiguracaoCache cfg) {
+		long situacao;
+
+		if (cfg != null) {
+			situacao = cfg.cpSituacaoConfiguracao;
+		} else {
+			situacao = cfgFiltro.getCpTipoConfiguracao().getSituacaoDefault().getIdSitConfiguracao();
+		}
+
+		if (situacao != 0 && (situacao == CpSituacaoConfiguracao.SITUACAO_PODE
+				|| situacao == CpSituacaoConfiguracao.SITUACAO_DEFAULT
+				|| situacao == CpSituacaoConfiguracao.SITUACAO_OBRIGATORIO)) {
+			return true;
+		}
+		return false;
 	}
 
 	/**

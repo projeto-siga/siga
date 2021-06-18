@@ -27,6 +27,7 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
@@ -37,6 +38,7 @@ import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
+import br.gov.jfrj.siga.ex.ExConfiguracaoCache;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
@@ -391,28 +393,23 @@ public class ExConfiguracaoController extends ExController {
 
 	private Set<ExConfiguracao> gerarPublicadores() {
 		Set<ExConfiguracao> publicadores = new HashSet<ExConfiguracao>();
-		TreeSet<CpConfiguracao> listaConfigs = getListaConfiguracao();
+		TreeSet<CpConfiguracaoCache> listaConfigs = Ex.getInstance().getConf()
+					.getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+		if (listaConfigs == null)
+			return new TreeSet<ExConfiguracao>();
 
-		for (CpConfiguracao cfg : listaConfigs) {
-			if (cfg instanceof ExConfiguracao) {
-				ExConfiguracao config = (ExConfiguracao) cfg;
+		for (CpConfiguracaoCache cfg : listaConfigs) {
+			if (cfg instanceof ExConfiguracaoCache) {
+				ExConfiguracaoCache config = (ExConfiguracaoCache) cfg;
 
-				if (config.isAgendamentoPublicacaoBoletim()
+				if (config.exTipoMovimentacao != 0
+						&& config.exTipoMovimentacao == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM
 						&& config.podeAdicionarComoPublicador(getTitular(), getLotaTitular())) {
-					publicadores.add(config);
+					publicadores.add(dao.consultar(config.idConfiguracao, ExConfiguracao.class, false));
 				}
 			}
 		}
 		return publicadores;
-	}
-
-	private TreeSet<CpConfiguracao> getListaConfiguracao() {
-		TreeSet<CpConfiguracao> listaConfigs = Ex.getInstance().getConf()
-				.getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
-
-		if (listaConfigs == null)
-			return new TreeSet<CpConfiguracao>();
-		return listaConfigs;
 	}
 
 	private void validarPodeGerenciarBoletim() {

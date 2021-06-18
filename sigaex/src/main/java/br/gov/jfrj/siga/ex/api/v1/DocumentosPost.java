@@ -39,6 +39,7 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosPost;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
+import br.gov.jfrj.siga.ex.util.NivelDeAcessoUtil;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.Transacional;
 
@@ -380,7 +381,7 @@ public class DocumentosPost implements IDocumentosPost {
 	}
 
 	private boolean isNivelAcessoValido(DpPessoa titular, DpLotacao lotaTitular, ExDocumento doc, ExNivelAcesso nivel) {
-		List<ExNivelAcesso> lst = Ex.getInstance().getBL().getListaNivelAcesso(doc.getExTipoDocumento(),
+		List<ExNivelAcesso> lst = NivelDeAcessoUtil.getListaNivelAcesso(doc.getExTipoDocumento(),
 				doc.getExFormaDocumento(), doc.getExModelo(), doc.getExClassificacao(), titular, lotaTitular);
 		for (ExNivelAcesso nv : lst) {
 			if (nv.equals(nivel)) {

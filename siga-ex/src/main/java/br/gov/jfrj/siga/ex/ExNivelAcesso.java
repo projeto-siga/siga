@@ -85,30 +85,25 @@ public class ExNivelAcesso extends AbstractExNivelAcesso implements
 			final ExModelo exMod, final ExClassificacao classif, final DpPessoa titular, final DpLotacao lotaTitular) {
 		final Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
 
-		final ExConfiguracao config = new ExConfiguracao();
+		final ExConfiguracao filtro = new ExConfiguracao();
 		final CpTipoConfiguracao exTpConfig = new CpTipoConfiguracao();
 		final CpSituacaoConfiguracao exStConfig = new CpSituacaoConfiguracao();
-		config.setDpPessoa(titular);
-		config.setLotacao(lotaTitular);
-		config.setExTipoDocumento(exTpDoc);
-		config.setExFormaDocumento(forma);
-		config.setExModelo(exMod);
-		config.setExClassificacao(classif);
+		filtro.setDpPessoa(titular);
+		filtro.setLotacao(lotaTitular);
+		filtro.setExTipoDocumento(exTpDoc);
+		filtro.setExFormaDocumento(forma);
+		filtro.setExModelo(exMod);
+		filtro.setExClassificacao(classif);
 		exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVELACESSO);
-		config.setCpTipoConfiguracao(exTpConfig);
+		filtro.setCpTipoConfiguracao(exTpConfig);
 		exStConfig.setIdSitConfiguracao(CpSituacaoConfiguracao.SITUACAO_DEFAULT);
-		config.setCpSituacaoConfiguracao(exStConfig);
-		ExConfiguracao exConfig;
-
-		try {
-			exConfig = new ExConfiguracao(Ex.getInstance().getConf()
-					.buscaConfiguracao(config, new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt));
-		} catch (Exception e) {
-			exConfig = null;
-		}
-
+		filtro.setCpSituacaoConfiguracao(exStConfig);
+		
+		ExConfiguracaoCache exConfig = null;
+		exConfig = (ExConfiguracaoCache) Ex.getInstance().getConf()
+				.buscaConfiguracao(filtro, new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt);
 		if (exConfig != null) {
-			return exConfig.getExNivelAcesso();
+			ExDao.getInstance().consultar(exConfig.exNivelAcesso, ExNivelAcesso.class, false);
 		}
 
 		return null;

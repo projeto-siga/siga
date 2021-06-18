@@ -104,22 +104,10 @@ public class WfConfiguracaoBL extends CpConfiguracaoBL {
 
 		CpConfiguracaoCache cfg = buscaConfiguracao(cfgFiltro, new int[] { 0 }, null);
 
-		long situacao;
-
-		if (cfg != null) {
-			situacao = cfg.cpSituacaoConfiguracao;
-		} else {
-			situacao = cfgFiltro.getCpTipoConfiguracao().getSituacaoDefault().getIdSitConfiguracao();
-		}
-
-		if (situacao != 0 && (situacao == CpSituacaoConfiguracao.SITUACAO_PODE
-				|| situacao == CpSituacaoConfiguracao.SITUACAO_DEFAULT
-				|| situacao == CpSituacaoConfiguracao.SITUACAO_OBRIGATORIO)) {
-			return true;
-		}
-		return false;
+		return situacaoPermissiva(cfgFiltro, cfg);
 	}
 	
+	@Override
 	public CpConfiguracaoCache instanciarCache(Object[] a) {
 		return new WfConfiguracaoCache(a);
 	}

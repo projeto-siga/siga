@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletResponse;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
-import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -41,6 +40,7 @@ import br.gov.jfrj.siga.dp.DpVisualizacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
+import br.gov.jfrj.siga.ex.ExConfiguracaoCache;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExEstadoDoc;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
@@ -97,7 +97,7 @@ public class ExController extends SigaController {
 	}
 
 	protected  List<ExNivelAcesso> getListaNivelAcesso(ExTipoDocumento exTpDoc, ExFormaDocumento forma, ExModelo exMod, ExClassificacao classif) {
-		return Ex.getInstance().getBL().getListaNivelAcesso(exTpDoc, forma, exMod,
+		return NivelDeAcessoUtil.getListaNivelAcesso(exTpDoc, forma, exMod,
 				classif, getTitular(), getLotaTitular());
 	}
 
@@ -117,56 +117,20 @@ public class ExController extends SigaController {
 		config.setCpTipoConfiguracao(exTpConfig);
 		exStConfig.setIdSitConfiguracao(CpSituacaoConfiguracao.SITUACAO_DEFAULT);
 		config.setCpSituacaoConfiguracao(exStConfig);
-		ExConfiguracao exConfig;
+		ExConfiguracaoCache exConfig;
 
 		try {
-			exConfig = criarExConfiguracaoPorCpConfiguracao(Ex.getInstance().getConf()
-					.buscaConfiguracao(config, new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt));
+			exConfig = (ExConfiguracaoCache) Ex.getInstance().getConf()
+					.buscaConfiguracao(config, new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt);
 		} catch (Exception e) {
 			exConfig = null;
 		}
 
 		if (exConfig != null) {
-			return exConfig.getExNivelAcesso();
+			return dao.consultar(exConfig.exNivelAcesso, ExNivelAcesso.class, false);
 		}
 
 		return null;
-	}
-
-	protected ExConfiguracao criarExConfiguracaoPorCpConfiguracao(CpConfiguracao configuracaoBaseParaExConfiguracao) {
-		ExConfiguracao exConfiguracao = new ExConfiguracao();
-
-		if (configuracaoBaseParaExConfiguracao.isAtivo())
-			exConfiguracao.updateAtivo();
-		exConfiguracao.setCargo(configuracaoBaseParaExConfiguracao.getCargo());
-		exConfiguracao.setComplexo(configuracaoBaseParaExConfiguracao.getComplexo());
-		exConfiguracao.setConfiguracaoInicial(configuracaoBaseParaExConfiguracao.getConfiguracaoInicial());
-		exConfiguracao.setConfiguracoesPosteriores(configuracaoBaseParaExConfiguracao.getConfiguracoesPosteriores());
-		exConfiguracao.setCpGrupo(configuracaoBaseParaExConfiguracao.getCpGrupo());
-		exConfiguracao.setCpIdentidade(configuracaoBaseParaExConfiguracao.getCpIdentidade());
-		exConfiguracao.setCpServico(configuracaoBaseParaExConfiguracao.getCpServico());
-		exConfiguracao.setCpSituacaoConfiguracao(configuracaoBaseParaExConfiguracao.getCpSituacaoConfiguracao());
-		exConfiguracao.setCpTipoConfiguracao(configuracaoBaseParaExConfiguracao.getCpTipoConfiguracao());
-		exConfiguracao.setCpTipoLotacao(configuracaoBaseParaExConfiguracao.getCpTipoLotacao());
-		exConfiguracao.setDpPessoa(configuracaoBaseParaExConfiguracao.getDpPessoa());
-		exConfiguracao.setDscFormula(configuracaoBaseParaExConfiguracao.getDscFormula());
-		exConfiguracao.setDtFimVigConfiguracao(configuracaoBaseParaExConfiguracao.getDtFimVigConfiguracao());
-		exConfiguracao.setDtIniVigConfiguracao(configuracaoBaseParaExConfiguracao.getDtIniVigConfiguracao());
-		exConfiguracao.setFuncaoConfianca(configuracaoBaseParaExConfiguracao.getFuncaoConfianca());
-		exConfiguracao.setHisAtivo(configuracaoBaseParaExConfiguracao.getHisAtivo());
-		exConfiguracao.setHisDtFim(configuracaoBaseParaExConfiguracao.getHisDtFim());
-		exConfiguracao.setHisDtIni(configuracaoBaseParaExConfiguracao.getHisDtIni());
-		exConfiguracao.setHisIdcFim(configuracaoBaseParaExConfiguracao.getHisIdcFim());
-		exConfiguracao.setHisIdcIni(configuracaoBaseParaExConfiguracao.getHisIdcIni());
-		exConfiguracao.setHisIdIni(configuracaoBaseParaExConfiguracao.getHisIdIni());
-		exConfiguracao.setId(configuracaoBaseParaExConfiguracao.getId());
-		exConfiguracao.setIdConfiguracao(configuracaoBaseParaExConfiguracao.getIdConfiguracao());
-		exConfiguracao.setLotacao(configuracaoBaseParaExConfiguracao.getLotacao());
-		exConfiguracao.setNmEmail(configuracaoBaseParaExConfiguracao.getNmEmail());
-		exConfiguracao.setOrgaoObjeto(configuracaoBaseParaExConfiguracao.getOrgaoObjeto());
-		exConfiguracao.setOrgaoUsuario(configuracaoBaseParaExConfiguracao.getOrgaoUsuario());
-		return exConfiguracao;
-
 	}
 
 	@SuppressWarnings("static-access")

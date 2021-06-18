@@ -167,8 +167,15 @@ public class ExMobilController extends
 
 		String dtDoc = dtDocString;
 
+		boolean podePesquisarModelo = podePesquisarPeloModelo(idMod, subscritorSel);
+		
 		if ((SigaMessages.isSigaSP() && offset != null) || (!SigaMessages.isSigaSP() && (primeiraVez == null || !primeiraVez.equals("sim")))) {
-			dtDoc = listarItensPesquisa(dtDocString, dtDocFinalString, builder, dtDoc);
+			if (podePesquisarModelo) {
+				dtDoc = listarItensPesquisa(dtDocString, dtDocFinalString, builder, dtDoc);				
+			} else {
+	       		result.include("msgCabecClass", "alert-warning");
+        		result.include("mensagemCabec", "Modelo restrito para pesquisa.");
+			}
 		} else {
 			if( Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
 					SIGA_DOC_PESQ_DTLIMITADA )) {
@@ -350,12 +357,20 @@ public class ExMobilController extends
 						
 				texto.append(m.getCodigo()+";");
 				if(e.getLotaSubscritor() != null && e.getLotaSubscritor().getSigla() != null) {
-					texto.append(e.getLotaSubscritor().getSigla().replaceAll(";",","));
+					if(ExBL.exibirQuemTemAcessoDocumentosLimitados(e, getTitular(), getLotaTitular())) {
+						texto.append(e.getLotaSubscritor().getSigla().replaceAll(";",","));
+					} else {
+						texto.append("CONFIDENCIAL");
+					}					
 				}
 				texto.append(";");
 				
 				if(e.getSubscritor() != null && e.getSubscritor().getIniciais() != null) {
-					texto.append(e.getSubscritor().getIniciais().replaceAll(";",","));
+					if(ExBL.exibirQuemTemAcessoDocumentosLimitados(e, getTitular(), getLotaTitular())) {
+						texto.append(e.getSubscritor().getIniciais().replaceAll(";",","));
+					} else {
+						texto.append("CONFIDENCIAL");
+					}
 				}
 				texto.append(";");
 				
@@ -368,13 +383,22 @@ public class ExMobilController extends
 					texto.append(ma.getDpLotacaoIni().getLotacaoAtual().getSigla().replaceAll(";",","));
 				}*/
 				
+						
 				if(ma.getDpLotacaoIni() != null && ma.getDpLotacaoIni().getSigla() != null) {
-					texto.append(ma.getDpLotacaoIni().getSigla().replaceAll(";",","));
+					if(ExBL.exibirQuemTemAcessoDocumentosLimitados(e, getTitular(), getLotaTitular())) {
+						texto.append(ma.getDpLotacaoIni().getSigla().replaceAll(";",","));
+					} else {
+						texto.append("CONFIDENCIAL");
+					}
 				}
 				texto.append(";");
 				
 				if(ma.getDpPessoaIni() != null && ma.getDpPessoaIni().getIniciais() != null) {
-					texto.append(ma.getDpPessoaIni().getIniciais().replaceAll(";",","));
+					if(ExBL.exibirQuemTemAcessoDocumentosLimitados(e, getTitular(), getLotaTitular())) {
+						texto.append(ma.getDpPessoaIni().getIniciais().replaceAll(";",","));
+					} else {
+						texto.append("CONFIDENCIAL");
+					}
 				}
 				texto.append(";");
 				
@@ -390,7 +414,11 @@ public class ExMobilController extends
 				texto.append(";");
 				
 				if(e.getNmMod() != null) {
-					texto.append(e.getNmMod().replaceAll(";",","));
+					if(ExBL.exibirQuemTemAcessoDocumentosLimitados(e, getTitular(), getLotaTitular())) {
+						texto.append(e.getNmMod().replaceAll(";",","));
+					} else {
+						texto.append("CONFIDENCIAL");
+					}
 				}
 				texto.append(";");
 				
@@ -419,7 +447,7 @@ public class ExMobilController extends
 	}
 
 	@Get("app/expediente/doc/listar")
-	public void aListar(final String popup, final String primeiraVez, final String propriedade, final Integer postback, final int apenasRefresh,
+	public void aListar(final String popup,  final String primeiraVez, final String propriedade, final Integer postback, final int apenasRefresh,
 			final Long ultMovIdEstadoDoc, final int ordem, final int visualizacao, final Integer ultMovTipoResp, final DpPessoaSelecao ultMovRespSel,
 			final DpLotacaoSelecao ultMovLotaRespSel, final Long orgaoUsu, final Long idTpDoc, final String dtDocString, final String dtDocFinalString,
 			final Long idTipoFormaDoc, final Long idFormaDoc, final Long idMod, final String anoEmissaoString, final String numExpediente,
@@ -453,8 +481,16 @@ public class ExMobilController extends
 
 		String dtDoc = dtDocString;
 	
+		boolean podePesquisarModelo = podePesquisarPeloModelo(idMod, subscritorSel);
+	
 		if (primeiraVez == null || !primeiraVez.equals("sim")) {
-			dtDoc = listarItensPesquisa(dtDocString, dtDocFinalString, builder, dtDoc);
+			if (podePesquisarModelo) {
+				dtDoc = listarItensPesquisa(dtDocString, dtDocFinalString, builder, dtDoc);				
+			} else {
+	       		result.include("msgCabecClass", "alert-warning");
+        		result.include("mensagemCabec", "Modelo restrito para pesquisa.");
+			}
+
 		} else {
 			if( Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
 					SIGA_DOC_PESQ_DTLIMITADA )) {
@@ -529,6 +565,18 @@ public class ExMobilController extends
 			result.include("campos", campos);
 		}
 
+	}
+
+	private boolean podePesquisarPeloModelo(final Long idMod, final DpPessoaSelecao subscritorSel) {
+		if (idMod != null && idMod != 0) {
+			if ((subscritorSel.getObjeto() == null ) || (! subscritorSel.getObjeto().equals(getCadastrante()))) {
+				ExModelo modeloPesquisado = new ExModelo(idMod).getModeloPeloId().getModeloAtual();
+				if (! Ex.getInstance().getComp().podeExibirQuemTemAcessoAoDocumento(getTitular(), getLotaTitular(), modeloPesquisado)) {
+		       		return false;
+	        	}
+			}
+		}
+		return true;
 	}
 
 	private String listarItensPesquisa(final String dtDocString, final String dtDocFinalString,

@@ -87,6 +87,10 @@ public class ExModelo extends AbstractExModelo implements Sincronizavel, Selecio
 	public ExModelo getModeloAtual() {
 		return ExDao.getInstance().consultarModeloAtual(this);
 	}
+	
+	public ExModelo getModeloPeloId() {
+		return ExDao.getInstance().consultarModeloPeloId(this);
+	}
 
 	public boolean isDescricaoAutomatica() {
 		if ("template/freemarker".equals(getConteudoTpBlob())) {

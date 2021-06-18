@@ -941,8 +941,12 @@ public class ExDocumentoController extends ExController {
 			final boolean exibeNomeAcesso = Prop.getBool("exibe.nome.acesso");
 
 			String s = "";
-			s += exDocumentoDTO.getMob().doc().getListaDeAcessosString();
-			s = " (" + s + ")";
+			if (Ex.getInstance().getComp().podeExibirQuemTemAcessoAoDocumento(getTitular(), getLotaTitular(), exDocumentoDTO.getDoc().getExModelo())) {
+				s += exDocumentoDTO.getMob().doc().getListaDeAcessosString();
+				s = " (" + s + ")";				
+			} else {
+				s = ".";
+			}
 			s = " " + exDocumentoDTO.getMob().doc().getExNivelAcessoAtual().getNmNivelAcesso() + " " + s;
 
 			String ERRO_INACESSIVEL_USUARIO;

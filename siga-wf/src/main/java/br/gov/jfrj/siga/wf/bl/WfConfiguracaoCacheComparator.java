@@ -18,9 +18,9 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.bl;
 
-import br.gov.jfrj.siga.cp.CpConfiguracao;
-import br.gov.jfrj.siga.cp.bl.CpConfiguracaoComparator;
-import br.gov.jfrj.siga.wf.model.WfConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
+import br.gov.jfrj.siga.cp.bl.CpConfiguracaoCacheComparator;
+import br.gov.jfrj.siga.wf.model.WfConfiguracaoCache;
 
 /**
  * Classe que permite a comparação entre duas configurações de workflow.
@@ -28,25 +28,25 @@ import br.gov.jfrj.siga.wf.model.WfConfiguracao;
  * @author kpf
  * 
  */
-public class WfConfiguracaoCacheComparator extends CpConfiguracaoComparator {
+public class WfConfiguracaoCacheComparator extends CpConfiguracaoCacheComparator {
 
 	/**
 	 * Compara duas configurações.
 	 * 
 	 */
-	public int compare(CpConfiguracao c1, CpConfiguracao c2) {
+	public int compare(CpConfiguracaoCache c1, CpConfiguracaoCache c2) {
 
 		int i = super.compareSelectedFields(c1, c2);
 		if (i != 0)
 			return i;
 
-		if (c1 instanceof WfConfiguracao && c2 instanceof WfConfiguracao) {
-			WfConfiguracao wfC1 = (WfConfiguracao) c1;
-			WfConfiguracao wfC2 = (WfConfiguracao) c2;
+		if (c1 instanceof WfConfiguracaoCache && c2 instanceof WfConfiguracaoCache) {
+			WfConfiguracaoCache wfC1 = (WfConfiguracaoCache) c1;
+			WfConfiguracaoCache wfC2 = (WfConfiguracaoCache) c2;
 
-			if (wfC1.getDefinicaoDeProcedimento() == null && wfC2.getDefinicaoDeProcedimento() != null)
+			if (wfC1.definicaoDeProcedimento == 0 && wfC2.definicaoDeProcedimento != 0)
 				return 1;
-			else if (wfC1.getDefinicaoDeProcedimento() != null && wfC2.getDefinicaoDeProcedimento() == null)
+			else if (wfC1.definicaoDeProcedimento != 0 && wfC2.definicaoDeProcedimento == 0)
 				return -1;
 		}
 
@@ -54,6 +54,6 @@ public class WfConfiguracaoCacheComparator extends CpConfiguracaoComparator {
 		if (i != 0)
 			return i;
 
-		return c1.getIdConfiguracao().compareTo(c2.getIdConfiguracao());
+		return Long.compare(c1.idConfiguracao, c2.idConfiguracao);
 	}
 }

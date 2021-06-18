@@ -569,7 +569,7 @@ public class ExMobilController extends
 
 	private boolean podePesquisarPeloModelo(final Long idMod, final DpPessoaSelecao subscritorSel) {
 		if (idMod != null && idMod != 0) {
-			if ((subscritorSel.getObjeto() == null ) || (! subscritorSel.getObjeto().equals(getCadastrante()))) {
+			if ((subscritorSel.getObjeto() == null ) || (! subscritorSel.getObjeto().equals(getTitular()))) {
 				ExModelo modeloPesquisado = new ExModelo(idMod).getModeloPeloId().getModeloAtual();
 				if (! Ex.getInstance().getComp().podeExibirQuemTemAcessoAoDocumento(getTitular(), getLotaTitular(), modeloPesquisado)) {
 		       		return false;

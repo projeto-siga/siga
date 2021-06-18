@@ -104,6 +104,7 @@ public class ConfiguracaoController extends SigaController {
 
 		if (id != null) {
 			config = dao().consultar(id, CpConfiguracao.class, false);
+			config.atualizarObjeto();
 		} else if (campoFixo) {
 			config = new CpConfiguracaoBuilder(CpConfiguracao.class, dao).setIdSituacao(idSituacao)
 					.setIdTpConfiguracao(idTpConfiguracao).setPessoaSel(pessoaSel).setLotacaoSel(lotacaoSel)

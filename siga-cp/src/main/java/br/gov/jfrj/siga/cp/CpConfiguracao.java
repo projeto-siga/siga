@@ -206,7 +206,26 @@ public class CpConfiguracao extends AbstractCpConfiguracao implements CpConverta
 		setCpGrupo(atual(getCpGrupo()));
 	}
 
+	public void substituirPorObjetoInicial() {
+		setLotacao(inicial(getLotacao()));
+		setCargo(inicial(getCargo()));
+		setFuncaoConfianca(inicial(getFuncaoConfianca()));
+		setDpPessoa(inicial(getDpPessoa()));
+		setCpIdentidade(inicial(getCpIdentidade()));
+		setLotacaoObjeto(inicial(getLotacaoObjeto()));
+		setCargoObjeto(inicial(getCargoObjeto()));
+		setFuncaoConfiancaObjeto(inicial(getFuncaoConfiancaObjeto()));
+		setPessoaObjeto(inicial(getPessoaObjeto()));
+		setCpGrupo(inicial(getCpGrupo()));
+	}
+
 	public <T extends Historico> T atual(final T antigo) {
+		if (antigo == null)
+			return null;
+		return CpDao.getInstance().obterAtual(antigo);
+	}
+
+	public <T extends Historico> T inicial(final T antigo) {
 		if (antigo == null)
 			return null;
 		return CpDao.getInstance().obterAtual(antigo);

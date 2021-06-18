@@ -2577,6 +2577,22 @@ public class CpDao extends ModeloDao {
 		return (T) result.get(0);
 	}
 
+	public <T extends Historico> T obterInicial(final T u) {
+		if (u.getId() == u.getHisIdIni())
+			return u;
+		String clazz = u.getClass().getSimpleName();
+		clazz = clazz.split("\\$HibernateProxy\\$")[0];
+		String sql = "from " + clazz + " u where u.hisIdIni = :idIni";		
+		javax.persistence.Query qry = ContextoPersistencia.em().createQuery(sql);
+		qry.setParameter("idIni", u.getHisIdIni());
+		qry.setFirstResult(0);
+		qry.setMaxResults(1);
+		List<CpAcesso> result = qry.getResultList();
+		if (result == null || result.size() == 0)
+			return null;
+		return (T) result.get(0);
+	}
+
 	@SuppressWarnings("unchecked")
 	public CpAcesso consultarAcessoAnterior(final DpPessoa pessoa) {
 		String sql = "from CpAcesso a where a.cpIdentidade.dpPessoa.idPessoaIni = :idPessoaIni order by a.dtInicio desc";

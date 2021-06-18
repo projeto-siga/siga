@@ -264,10 +264,5 @@ public class Prop {
 		 * */
 		provider.addPublicProperty("/siga.session.modelos.tempo.expiracao", "60");
 		
-		/* Modo de pesquisa de modelo em CpDao.consultarPorFiltro 
-		 * SIGLA - Aplica uppercase no filtro para pesquisar por sigla - padrão
-		 * QUALQUER_PARTE - Aplica lowercase na frase para pesquisar em qualquer parte
-		 * */
-		provider.addPublicProperty("/siga.modelo.modo.pesquisa", "SIGLA");
 	}
 }

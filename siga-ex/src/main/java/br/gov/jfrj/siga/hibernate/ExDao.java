@@ -1853,19 +1853,9 @@ public class ExDao extends CpDao {
 		q.select(c);
 		List<Predicate> whereList = new LinkedList<Predicate>();
 		if(flt.getSigla() != null) {
-			String modo = Prop.get("/siga.modelo.modo.pesquisa");
-			switch (modo) {
-			case "SIGLA":
-				whereList.add(cb().like(c.get("nmMod").as(String.class), "%" + flt.getSigla() + "%"));
-				break;
-			case "QUALQUER_PARTE":
-				Expression<String> path = c.get("nmMod");
-				path = cb().lower(path);
-				whereList.add(cb().like(path, "%" + flt.getSigla().toLowerCase() + "%"));
-				break;
-			default:
-				break;
-			}
+			Expression<String> path = c.get("nmMod");
+			path = cb().upper(path);
+			whereList.add(cb().like(path, "%" + flt.getSigla() + "%"));
 			whereList.add(cb().equal(c.get("hisAtivo"), 1));
 		}
 		Predicate[] whereArray = new Predicate[whereList.size()];

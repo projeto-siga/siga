@@ -43,7 +43,6 @@ import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
-import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
@@ -450,10 +449,10 @@ public class ExConfiguracaoController extends ExController {
 		return TipoResponsavelEnum.getListaMatriculaLotacao();
 	}
 
-	private Set<ExSituacaoConfiguracao> getListaSituacaoPodeNaoPode() throws Exception {
-		HashSet<ExSituacaoConfiguracao> s = new HashSet<ExSituacaoConfiguracao>();
-		s.add(ExDao.getInstance().consultar(1L, ExSituacaoConfiguracao.class, false));
-		s.add(ExDao.getInstance().consultar(2L, ExSituacaoConfiguracao.class, false));
+	private Set<CpSituacaoConfiguracao> getListaSituacaoPodeNaoPode() throws Exception {
+		HashSet<CpSituacaoConfiguracao> s = new HashSet<CpSituacaoConfiguracao>();
+		s.add(ExDao.getInstance().consultar(1L, CpSituacaoConfiguracao.class, false));
+		s.add(ExDao.getInstance().consultar(2L, CpSituacaoConfiguracao.class, false));
 		return s;
 	}
 

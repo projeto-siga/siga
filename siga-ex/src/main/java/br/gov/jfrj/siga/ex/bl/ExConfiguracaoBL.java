@@ -32,6 +32,8 @@ import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
+import br.gov.jfrj.siga.cp.converter.IEnumWithId;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.DpCargo;
@@ -122,18 +124,19 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 		return true;
 	}
 
-	public CpSituacaoConfiguracao buscaSituacao(final ExConfiguracao exConfiguracao) {
+	public CpSituacaoDeConfiguracaoEnum buscaSituacao(final ExConfiguracao exConfiguracao) {
 		final CpConfiguracaoCache cpConfiguracaoResult = buscaConfiguracao(exConfiguracao,
 				new int[] { 0 }, ExDao.getInstance()
 						.consultarDataEHoraDoServidor());
 		if (cpConfiguracaoResult != null) {
-			return dao().consultar(cpConfiguracaoResult.cpSituacaoConfiguracao, CpSituacaoConfiguracao.class, false);
+			return cpConfiguracaoResult.situacao;
 		} else {
-			return exConfiguracao.getCpTipoConfiguracao().getSituacaoDefault();
+			return CpSituacaoDeConfiguracaoEnum.getById(exConfiguracao.getCpTipoConfiguracao().getSituacaoDefault().getIdSitConfiguracao().intValue());
+
 		}
 	}
 
-	public CpSituacaoConfiguracao buscaSituacao(ExModelo mod, DpPessoa pess,
+	public CpSituacaoDeConfiguracaoEnum buscaSituacao(ExModelo mod, DpPessoa pess,
 			DpLotacao lota, long idTpConfig) {
 		ExConfiguracao exConfig = new ExConfiguracao();
 		exConfig.setDpPessoa(pess);
@@ -144,7 +147,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 		return buscaSituacao(exConfig);
 
 	}
-	public CpSituacaoConfiguracao buscaSituacao(final ExModelo mod, final ExTipoDocumento tipo, final DpPessoa pess,
+	public CpSituacaoDeConfiguracaoEnum buscaSituacao(final ExModelo mod, final ExTipoDocumento tipo, final DpPessoa pess,
 			final DpLotacao lota, final long idTpConfig) {
 		final ExConfiguracao exConfig = new ExConfiguracao();
 		exConfig.setDpPessoa(pess);
@@ -186,19 +189,16 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 			DpLotacao lotacaoObjeto, CpComplexo complexoObjeto, DpCargo cargoObjeto, 
 			DpFuncaoConfianca funcaoConfiancaObjeto, CpOrgaoUsuario orgaoObjeto) {
 
-			CpSituacaoConfiguracao situacao = situacaoPorConfiguracao(cpServico, exTipoFormaDoc, exPapel, exTpDoc,
+			CpSituacaoDeConfiguracaoEnum situacao = situacaoPorConfiguracao(cpServico, exTipoFormaDoc, exPapel, exTpDoc,
 							exFormaDoc, exMod, exClassificacao, exVia, exTpMov, cargo, cpOrgaoUsu, dpFuncaoConfianca, dpLotacao,
 							dpPessoa, nivelAcesso, cpTpLotacao, idTpConf, pessoaObjeto, lotacaoObjeto, complexoObjeto, cargoObjeto,
 							funcaoConfiancaObjeto, orgaoObjeto);
-			if (situacao != null
-					&& (situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_PODE ||
-							situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_DEFAULT ||
-							situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_OBRIGATORIO))			
+			if (situacao != null && situacao.isPermissiva())			
 				return true;
 		return false;
 	}
 	
-	public CpSituacaoConfiguracao situacaoPorConfiguracao(CpServico cpServico,
+	public CpSituacaoDeConfiguracaoEnum situacaoPorConfiguracao(CpServico cpServico,
 			ExTipoFormaDoc exTipoFormaDoc, ExPapel exPapel,
 			ExTipoDocumento exTpDoc, ExFormaDocumento exFormaDoc,
 			ExModelo exMod, ExClassificacao exClassificacao, ExVia exVia,
@@ -240,17 +240,17 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 		CpConfiguracaoCache cfg = (CpConfiguracaoCache) buscaConfiguracao(config,
 				new int[] { 0 }, null);
 
-		CpSituacaoConfiguracao situacao = null;
+		CpSituacaoDeConfiguracaoEnum situacao = null;
 		if (cfg != null)
-			situacao = dao().consultar(cfg.cpSituacaoConfiguracao, CpSituacaoConfiguracao.class, false);
+			situacao = cfg.situacao;
 		else
 			if (config.getCpTipoConfiguracao() != null)
-				situacao = config.getCpTipoConfiguracao().getSituacaoDefault();
+				situacao = CpSituacaoDeConfiguracaoEnum.getById(config.getCpTipoConfiguracao().getSituacaoDefault().getIdSitConfiguracao().intValue());
 		
 		return situacao;
 	}
 	
-	public CpSituacaoConfiguracao situacaoPorConfiguracao(CpServico cpServico,
+	public CpSituacaoDeConfiguracaoEnum situacaoPorConfiguracao(CpServico cpServico,
 			ExTipoFormaDoc exTipoFormaDoc, ExPapel exPapel,
 			ExTipoDocumento exTpDoc, ExFormaDocumento exFormaDoc,
 			ExModelo exMod, ExClassificacao exClassificacao, ExVia exVia,
@@ -661,11 +661,4 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 			}
 		}
 	}
-
-	@Override
-	public CpConfiguracaoCache instanciarCache(Object[] a) {
-		return new ExConfiguracaoCache(a);
-	}
-
-
 }

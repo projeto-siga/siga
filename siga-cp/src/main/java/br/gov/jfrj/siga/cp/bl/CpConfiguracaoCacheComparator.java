@@ -90,9 +90,9 @@ public class CpConfiguracaoCacheComparator implements Comparator<CpConfiguracaoC
 
 		// A configuração mais restritiva deve ser priorizada.
 		//
-		if (c1.cpSituacaoConfiguracao != 0 && c2.cpSituacaoConfiguracao != 0) {
-			long i1 = c1.restritividadeSitConfiguracao;
-			long i2 = c2.restritividadeSitConfiguracao;
+		if (c1.situacao != null && c2.situacao != null) {
+			long i1 = c1.situacao.getRestritividade();
+			long i2 = c2.situacao.getRestritividade();
 			if (i1 > i2)
 				return -1;
 			if (i1 < i2)

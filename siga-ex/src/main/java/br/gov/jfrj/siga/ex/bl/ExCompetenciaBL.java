@@ -34,6 +34,7 @@ import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpCompetenciaBL;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
@@ -722,15 +723,15 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				lotacaoObjeto, complexoObjeto, cargoObjeto, 
 				funcaoConfiancaObjeto, orgaoObjeto);
 
-		long situacao;
+		CpSituacaoDeConfiguracaoEnum situacao;
 		if (cfg != null) {
-			situacao = cfg.cpSituacaoConfiguracao;
+			situacao = cfg.situacao;
 		} else {
-			situacao = CpDao.getInstance().consultar(tipoConfig, CpTipoConfiguracao.class, false).getSituacaoDefault()
-					.getIdSitConfiguracao();
+			situacao = CpSituacaoDeConfiguracaoEnum.getById(CpDao.getInstance().consultar(tipoConfig, CpTipoConfiguracao.class, false).getSituacaoDefault()
+					.getIdSitConfiguracao().intValue());
 		}
 
-		if (situacao != 0 && situacao == CpSituacaoConfiguracao.SITUACAO_PODE)
+		if (situacao != null && situacao == CpSituacaoDeConfiguracaoEnum.PODE)
 			return true;
 		return false;
 	}
@@ -1295,14 +1296,11 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA,
 				ExTipoMovimentacao.class, false);
 		
-		CpSituacaoConfiguracao situacao = getConf().situacaoPorConfiguracao(null, null, null, null, mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), null,
+		CpSituacaoDeConfiguracaoEnum situacao = getConf().situacaoPorConfiguracao(null, null, null, null, mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), null,
 				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 		
-		if (situacao != null && (situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_DEFAULT ||	situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_OBRIGATORIO))
-			return true;
-
-		return false; 
+		return situacao != null && situacao.isDefaultOuObrigatoria();
 	}
 	
 	/*
@@ -1328,14 +1326,11 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean deveUtilizarSegundoFatorPin(final DpPessoa pessoa,final DpLotacao lotacao) {
-		CpSituacaoConfiguracao situacao = getConf().situacaoPorConfiguracao(null, null, null, null, null, null, null,
+		CpSituacaoDeConfiguracaoEnum situacao = getConf().situacaoPorConfiguracao(null, null, null, null, null, null, null,
 				null, null, null, null, null, lotacao, pessoa, null,null,
 				CpTipoConfiguracao.TIPO_CONFIG_SEGUNDO_FATOR_PIN);
 		
-		if (situacao != null && situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_OBRIGATORIO)
-			return true;
-
-		return false; 
+		return situacao != null && situacao == CpSituacaoDeConfiguracaoEnum.OBRIGATORIO; 
 	}
 	
 	/*
@@ -1347,14 +1342,11 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean defaultUtilizarSegundoFatorPin(final DpPessoa pessoa,final DpLotacao lotacao) {
-		CpSituacaoConfiguracao situacao = getConf().situacaoPorConfiguracao(null, null, null, null, null, null, null,
+		CpSituacaoDeConfiguracaoEnum situacao = getConf().situacaoPorConfiguracao(null, null, null, null, null, null, null,
 				null, null, null, null, null, lotacao, pessoa, null,null,
 				CpTipoConfiguracao.TIPO_CONFIG_SEGUNDO_FATOR_PIN);
 		
-		if (situacao != null && (situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_DEFAULT ||	situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_OBRIGATORIO))
-			return true;
-
-		return false; 
+		return situacao != null && situacao.isDefaultOuObrigatoria();
 	}
 
 	public boolean podeAssinarPorComSenha(final DpPessoa titular,
@@ -1499,16 +1491,11 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA,
 				ExTipoMovimentacao.class, false);
 
-		CpSituacaoConfiguracao situacao = getConf().situacaoPorConfiguracao(null, null, null, null, mov.getExMobil().getExDocumento().getExFormaDocumento(), mov.getExMobil().getExDocumento().getExModelo(), null,
+		CpSituacaoDeConfiguracaoEnum situacao = getConf().situacaoPorConfiguracao(null, null, null, null, mov.getExMobil().getExDocumento().getExFormaDocumento(), mov.getExMobil().getExDocumento().getExModelo(), null,
 				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 		
-		if (situacao != null
-				&& (situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_DEFAULT ||
-						situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_OBRIGATORIO))
-			return true;
-
-		return false; 
+		return situacao != null && situacao.isDefaultOuObrigatoria();
 	}
 	
 	/*
@@ -1549,16 +1536,11 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA,
 				ExTipoMovimentacao.class, false);
 		
-		CpSituacaoConfiguracao situacao = getConf().situacaoPorConfiguracao(null, null, null, null, mov.getExMobil().getExDocumento().getExFormaDocumento(), mov.getExMobil().getExDocumento().getExModelo(), null,
+		CpSituacaoDeConfiguracaoEnum situacao = getConf().situacaoPorConfiguracao(null, null, null, null, mov.getExMobil().getExDocumento().getExFormaDocumento(), mov.getExMobil().getExDocumento().getExModelo(), null,
 				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 		
-		if (situacao != null
-				&& (situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_DEFAULT ||
-						situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_OBRIGATORIO))
-			return true;
-
-		return false; 
+		return situacao != null && situacao.isDefaultOuObrigatoria();
 	}	
 		/*
 	 * Retorna se é possível cópia de um movimentações do mobil com senha:
@@ -1593,17 +1575,11 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA,
 				ExTipoMovimentacao.class, false);
 
-		CpSituacaoConfiguracao situacao = getConf().situacaoPorConfiguracao(null, null, null, null, mob.getExDocumento().getExFormaDocumento(), mob.getExDocumento().getExModelo(), null,
+		CpSituacaoDeConfiguracaoEnum situacao = getConf().situacaoPorConfiguracao(null, null, null, null, mob.getExDocumento().getExFormaDocumento(), mob.getExDocumento().getExModelo(), null,
 				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 		
-		if (situacao != null
-				&& (situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_DEFAULT ||
-						situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_OBRIGATORIO))
-			return true;
-
-		return false; 
-
+		return situacao != null && situacao.isDefaultOuObrigatoria();
 	}	
 	
 	public boolean podeSerSubscritor(final ExDocumento doc) {

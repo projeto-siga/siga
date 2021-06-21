@@ -14,7 +14,7 @@ import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.cp.model.enm.CpParamCfg;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
-import br.gov.jfrj.siga.cp.model.enm.SituacaoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -110,10 +110,10 @@ public class CpConfiguracaoHelper {
 		if (c.getCpSituacaoConfiguracao() == null)
 			return;
 		if (t.getSituacoes() != null)
-			for (SituacaoDeConfiguracao s : t.getSituacoes())
+			for (CpSituacaoDeConfiguracaoEnum s : t.getSituacoes())
 				if (s.getId().equals(c.getCpSituacaoConfiguracao().getIdSitConfiguracao()))
 					return;
-		for (SituacaoDeConfiguracao s : SituacaoDeConfiguracao.values())
+		for (CpSituacaoDeConfiguracaoEnum s : CpSituacaoDeConfiguracaoEnum.values())
 			if (s.getId().equals(c.getCpSituacaoConfiguracao().getIdSitConfiguracao()))
 				throw new RuntimeException("Configuração " + c.getId() + " não poderia conter a situação " + s.name());
 		throw new RuntimeException("Configuração " + c.getId() + " não poderia conter a situação "

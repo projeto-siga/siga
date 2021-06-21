@@ -24,6 +24,7 @@ import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpCompetenciaBL;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -106,17 +107,15 @@ public class WfCompetenciaBL extends CpCompetenciaBL {
 		CpConfiguracaoCache cfg = preencherFiltroEBuscarConfiguracao(titular, lotaTitular, tipoConfig,
 				definicaoDeProcedimento);
 
-		long situacao;
+		CpSituacaoDeConfiguracaoEnum situacao;
 		if (cfg != null) {
-			situacao = cfg.cpSituacaoConfiguracao;
+			situacao = cfg.situacao;
 		} else {
-			situacao = CpDao.getInstance().consultar(tipoConfig, CpTipoConfiguracao.class, false).getSituacaoDefault()
-					.getIdSitConfiguracao();
+			situacao = CpSituacaoDeConfiguracaoEnum.getById(CpDao.getInstance().consultar(tipoConfig, CpTipoConfiguracao.class, false).getSituacaoDefault()
+					.getIdSitConfiguracao().intValue());
 		}
 
-		if (situacao != 0 && situacao == CpSituacaoConfiguracao.SITUACAO_PODE)
-			return true;
-		return false;
+		return situacao != null && situacao == CpSituacaoDeConfiguracaoEnum.PODE;
 	}
 
 	/**

@@ -8,7 +8,7 @@ public interface ITipoDeConfiguracao {
 
 	String getExplicacao();
 
-	SituacaoDeConfiguracao[] getSituacoes();
+	CpSituacaoDeConfiguracaoEnum[] getSituacoes();
 
 	Enum[] getParams();
 

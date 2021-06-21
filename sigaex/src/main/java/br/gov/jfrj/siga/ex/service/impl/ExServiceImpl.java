@@ -22,7 +22,6 @@ package br.gov.jfrj.siga.ex.service.impl;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeSet;
@@ -42,6 +41,7 @@ import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpToken;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.util.SigaUtil;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -60,7 +60,6 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExSequencia;
-import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.bl.Ex;
@@ -490,14 +489,13 @@ public class ExServiceImpl implements ExService {
 				if (eletronico == null)
 					eletronico = true;
 
-				Long idSit = Ex
+				CpSituacaoDeConfiguracaoEnum idSit = Ex
 						.getInstance().getConf().buscaSituacao(modelo, tipoDocumento, cadastrante,
-								cadastrante.getLotacao(), CpTipoConfiguracao.TIPO_CONFIG_ELETRONICO)
-						.getIdSitConfiguracao();
+								cadastrante.getLotacao(), CpTipoConfiguracao.TIPO_CONFIG_ELETRONICO);
 
-				if (idSit == ExSituacaoConfiguracao.SITUACAO_OBRIGATORIO) {
+				if (idSit == CpSituacaoDeConfiguracaoEnum.OBRIGATORIO) {
 					eletronico = true;
-				} else if (idSit == ExSituacaoConfiguracao.SITUACAO_PROIBIDO) {
+				} else if (idSit == CpSituacaoDeConfiguracaoEnum.PROIBIDO) {
 					eletronico = false;
 				}
 

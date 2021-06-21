@@ -45,8 +45,10 @@ import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoServico;
+import br.gov.jfrj.siga.cp.converter.IEnumWithId;
 import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupo;
 import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupoFabrica;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.DpCargo;
@@ -171,10 +173,6 @@ public class CpConfiguracaoBL {
 
 	}
 
-	public CpConfiguracaoCache instanciarCache(Object[] a) {
-		return new CpConfiguracaoCache(a);
-	}
-	
 	public HashMap<Long, TreeSet<CpConfiguracaoCache>> getHashListas() {
 		if (!cacheInicializado) {
 			inicializarCacheSeNecessario();
@@ -406,8 +404,8 @@ public class CpConfiguracaoBL {
 			return null;
 
 		for (CpConfiguracaoCache cpConfiguracao : lista) {
-			if ((!cpConfiguracao.ativaNaData(dtEvn)) || (cpConfiguracao.cpSituacaoConfiguracao != 0
-					&& cpConfiguracao.cpSituacaoConfiguracao == CpSituacaoConfiguracao.SITUACAO_IGNORAR_CONFIGURACAO_ANTERIOR)
+			if ((!cpConfiguracao.ativaNaData(dtEvn)) || (cpConfiguracao.situacao != null
+					&& cpConfiguracao.situacao == CpSituacaoDeConfiguracaoEnum.IGNORAR_CONFIGURACAO_ANTERIOR)
 					|| !atendeExigencias(cpConfiguracaoFiltro.converterParaCache(), atributosDesconsiderados, cpConfiguracao, perfis))
 				continue;
 			return cpConfiguracao;
@@ -493,13 +491,14 @@ public class CpConfiguracaoBL {
 	 * @return
 	 * @throws Exception
 	 */
-	public long buscaSituacao(CpConfiguracao cpConfiguracaoFiltro, int atributoDesconsideradoFiltro[],
+	public CpSituacaoDeConfiguracaoEnum buscaSituacao(CpConfiguracao cpConfiguracaoFiltro, int atributoDesconsideradoFiltro[],
 			TreeSet<CpConfiguracao> lista) throws Exception {
 		CpConfiguracaoCache cfg = buscaConfiguracao(cpConfiguracaoFiltro, atributoDesconsideradoFiltro, null);
 		if (cfg != null) {
-			return cfg.cpSituacaoConfiguracao;
+			return cfg.situacao;
 		}
-		return cpConfiguracaoFiltro.getCpTipoConfiguracao().getSituacaoDefault().getIdSitConfiguracao();
+		
+		return CpSituacaoDeConfiguracaoEnum.getById(cpConfiguracaoFiltro.getCpTipoConfiguracao().getSituacaoDefault().getIdSitConfiguracao().intValue());
 	}
 
 	/**
@@ -639,17 +638,17 @@ public class CpConfiguracaoBL {
 	}
 
 	public static boolean situacaoPermissiva(CpConfiguracao cfgFiltro, CpConfiguracaoCache cfg) {
-		long situacao;
+		CpSituacaoDeConfiguracaoEnum situacao;
 
 		if (cfg != null) {
-			situacao = cfg.cpSituacaoConfiguracao;
+			situacao = cfg.situacao;
 		} else {
-			situacao = cfgFiltro.getCpTipoConfiguracao().getSituacaoDefault().getIdSitConfiguracao();
+			situacao = CpSituacaoDeConfiguracaoEnum.getById(cfgFiltro.getCpTipoConfiguracao().getSituacaoDefault().getIdSitConfiguracao().intValue());
 		}
 
-		if (situacao != 0 && (situacao == CpSituacaoConfiguracao.SITUACAO_PODE
-				|| situacao == CpSituacaoConfiguracao.SITUACAO_DEFAULT
-				|| situacao == CpSituacaoConfiguracao.SITUACAO_OBRIGATORIO)) {
+		if (situacao != null && (situacao == CpSituacaoDeConfiguracaoEnum.PODE
+				|| situacao == CpSituacaoDeConfiguracaoEnum.DEFAULT
+				|| situacao == CpSituacaoDeConfiguracaoEnum.OBRIGATORIO)) {
 			return true;
 		}
 		return false;

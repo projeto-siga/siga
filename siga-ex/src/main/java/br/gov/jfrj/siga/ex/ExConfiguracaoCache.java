@@ -93,19 +93,6 @@ public class ExConfiguracaoCache extends CpConfiguracaoCache {
 		this.exPapel = longOrZero(cfg.getExPapel() != null ? cfg.getExPapel().getIdPapel() : null);
 	}
 
-	public ExConfiguracaoCache(Object[] a) {
-		super(a);
-		this.exTipoMovimentacao = longOrZero((Long) a[26]);
-		this.exTipoDocumento = longOrZero((Long) a[27]);
-		this.exTipoFormaDoc = longOrZero((Long) a[28]);
-		this.exFormaDocumento = longOrZero((Long) a[29]);
-		this.exModelo = longOrZero((Long) a[30]);
-		this.exClassificacao = longOrZero((Long) a[31]);
-		this.exVia = longOrZero((Long) a[32]);
-		this.exNivelAcesso = longOrZero((Long) a[33]);
-		this.exPapel = longOrZero((Long) a[34]);
-	}
-	
 	public boolean podeAdicionarComoPublicador(DpPessoa titular,
 			DpLotacao lotacaoTitular) {
 		return (dpPessoa != 0 && titular != null && ExDao.getInstance().consultar(dpPessoa, DpPessoa.class, false)

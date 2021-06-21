@@ -105,11 +105,6 @@ public class WfConfiguracaoBL extends CpConfiguracaoBL {
 		return situacaoPermissiva(cfgFiltro, cfg);
 	}
 	
-	@Override
-	public CpConfiguracaoCache instanciarCache(Object[] a) {
-		return new WfConfiguracaoCache(a);
-	}
-
 	/**
 	 * 
 	 * Retorna uma lista de (ex)configurações vigentes de acordo com um certo tipo

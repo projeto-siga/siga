@@ -73,6 +73,28 @@
 		<class>br.gov.jfrj.siga.wf.model.WfConfiguracao</class>
 		<class>br.gov.jfrj.siga.wf.model.WfConfiguracaoCache</class>
 
+		<class>br.gov.jfrj.siga.cp.CpMarcadorCorEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpMarcadorIconeEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpMarcadorTipoDataEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpMarcadorTipoTextoEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpTipoMarcadorEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpSituacaoDeConfiguracaoEnum</class>
+
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorCorEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorIconeEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorFinalidadeEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoAplicacaoEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoDataEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoExibicaoEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoInteressadoEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoTextoEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorGrupoEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpTipoMarcadorEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpSituacaoDeConfiguracaoEnumConverter</class>
+
 		<properties>
 			<property
 				name="hibernate.jpa.compliance.global_id_generators" value="false" />

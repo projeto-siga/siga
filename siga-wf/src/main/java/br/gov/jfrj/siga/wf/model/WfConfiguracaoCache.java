@@ -49,10 +49,4 @@ public class WfConfiguracaoCache extends CpConfiguracaoCache {
 		this.definicaoDeProcedimento = longOrZero(
 				cfg.getDefinicaoDeProcedimento() != null ? cfg.getDefinicaoDeProcedimento().getIdInicial() : null);
 	}
-
-	public WfConfiguracaoCache(Object[] a) {
-		super(a);
-		if (a[26] != null)
-			this.definicaoDeProcedimento = longOrZero((Long) a[26]);
-	}
 }

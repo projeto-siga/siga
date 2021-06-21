@@ -42,7 +42,9 @@ import javax.persistence.Transient;
 
 import org.hibernate.proxy.HibernateProxy;
 
+import br.gov.jfrj.siga.cp.converter.IEnumWithId;
 import br.gov.jfrj.siga.cp.converter.LongNonNullConverter;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 
 @Entity
 @Table(name = "corporativo.cp_configuracao")
@@ -153,13 +155,8 @@ public class CpConfiguracaoCache {
 	@Transient
 	public CpPerfil cpPerfil;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_SIT_CONFIGURACAO")
-	private CpSituacaoConfiguracao situacao;
-	@Transient
-	public long cpSituacaoConfiguracao;
-	@Transient
-	public Long restritividadeSitConfiguracao;
+	@Column(name = "ID_SIT_CONFIGURACAO")
+	public CpSituacaoDeConfiguracaoEnum situacao;
 
 	@PostLoad
 	private void postLoad() {
@@ -170,11 +167,6 @@ public class CpConfiguracaoCache {
 				grupo = (CpGrupo) ((HibernateProxy) grupo).getHibernateLazyInitializer().getImplementation();
 			if (grupo instanceof CpPerfil)
 				this.cpPerfil = (CpPerfil) grupo;
-		}
-		if (situacao != null) {
-			this.cpSituacaoConfiguracao = longOrZero(situacao.getIdSitConfiguracao());
-			this.restritividadeSitConfiguracao = situacao.getRestritividadeSitConfiguracao();
-
 		}
 	}
 
@@ -228,56 +220,7 @@ public class CpConfiguracaoCache {
 		}
 
 		if (cfg.getCpSituacaoConfiguracao() != null) {
-			this.cpSituacaoConfiguracao = longOrZero(cfg.getCpSituacaoConfiguracao().getIdSitConfiguracao());
-			this.restritividadeSitConfiguracao = cfg.getCpSituacaoConfiguracao().getRestritividadeSitConfiguracao();
-		}
-	}
-
-	public CpConfiguracaoCache(Object[] a) {
-		if (a[0] != null)
-			this.idConfiguracao = (Long) a[0];
-		// public String descrConfiguracao;
-		this.nmEmail = (String) a[1];
-		this.dscFormula = (String) a[2];
-		this.hisDtIni = (Date) a[3];
-		this.hisDtFim = (Date) a[4];
-		this.dtIniVigConfiguracao = (Date) a[5];
-		this.dtFimVigConfiguracao = (Date) a[6];
-
-		if (a[7] != null)
-			this.configuracaoInicial = longOrZero((Long) a[7]);
-
-		this.orgaoUsuario = longOrZero((Long) a[8]);
-		this.lotacao = longOrZero((Long) a[9]);
-		this.complexo = longOrZero((Long) a[10]);
-		this.cargo = longOrZero((Long) a[11]);
-		this.funcaoConfianca = longOrZero((Long) a[12]);
-		this.dpPessoa = longOrZero((Long) a[13]);
-		this.cpTipoConfiguracao = longOrZero((Long) a[14]);
-		this.cpServico = longOrZero((Long) a[15]);
-		this.cpIdentidade = longOrZero((Long) a[16]);
-		this.cpTipoLotacao = longOrZero((Long) a[17]);
-		this.orgaoObjeto = longOrZero((Long) a[18]);
-		this.lotacaoObjeto = longOrZero((Long) a[19]);
-		this.complexoObjeto = longOrZero((Long) a[20]);
-		this.cargoObjeto = longOrZero((Long) a[21]);
-		this.funcaoConfiancaObjeto = longOrZero((Long) a[22]);
-		this.pessoaObjeto = longOrZero((Long) a[23]);
-
-		if (a[24] != null) {
-			CpGrupo grp = (CpGrupo) a[24];
-			this.cpGrupo = longOrZero(grp.getIdInicial());
-			this.cpGrupoNivel = grp.getNivel();
-			if (grp instanceof HibernateProxy)
-				grp = (CpGrupo) ((HibernateProxy) grp).getHibernateLazyInitializer().getImplementation();
-			if (grp instanceof CpPerfil)
-				this.cpPerfil = (CpPerfil) grp;
-		}
-
-		if (a[25] != null) {
-			CpSituacaoConfiguracao sit = (CpSituacaoConfiguracao) a[25];
-			this.cpSituacaoConfiguracao = longOrZero(sit.getIdSitConfiguracao());
-			this.restritividadeSitConfiguracao = sit.getRestritividadeSitConfiguracao();
+			this.situacao = CpSituacaoDeConfiguracaoEnum.getById(cfg.getCpSituacaoConfiguracao().getIdSitConfiguracao().intValue());
 		}
 	}
 

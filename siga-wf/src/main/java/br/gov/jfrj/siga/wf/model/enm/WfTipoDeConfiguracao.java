@@ -7,7 +7,7 @@ import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.enm.CpParamCfg;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
-import br.gov.jfrj.siga.cp.model.enm.SituacaoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
@@ -19,23 +19,23 @@ public enum WfTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.CARGO, CpParamCfg.FUNCAO, CpParamCfg.ORGAO,
 					WfParamCfg.DEFINICAO_DE_PROCEDIMENTO },
 			new Enum[] { WfParamCfg.DEFINICAO_DE_PROCEDIMENTO, CpParamCfg.SITUACAO },
-			new SituacaoDeConfiguracao[] { SituacaoDeConfiguracao.PODE, SituacaoDeConfiguracao.NAO_PODE }),
+			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE, CpSituacaoDeConfiguracaoEnum.NAO_PODE }),
 	EDITAR_DEFINICAO_DE_PROCEDIMENTO(CpTipoConfiguracao.TIPO_CONFIG_EDITAR_DEFINICAO_DE_PROCEDIMENTO, "Editar Diagrama",
 			"Selecione órgão, lotação, pessoa, cargo ou função que tem permissão para editar um determinado diagrama, além das indicadas no próprio diagrama.",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.CARGO, CpParamCfg.FUNCAO, CpParamCfg.ORGAO,
 					WfParamCfg.DEFINICAO_DE_PROCEDIMENTO },
 			new Enum[] { CpParamCfg.SITUACAO },
-			new SituacaoDeConfiguracao[] { SituacaoDeConfiguracao.PODE, SituacaoDeConfiguracao.NAO_PODE });
+			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE, CpSituacaoDeConfiguracaoEnum.NAO_PODE });
 
 	private final Long id;
 	private final String descr;
 	private final String explicacao;
 	private final Enum[] params;
 	private final Enum[] obrigatorios;
-	private final SituacaoDeConfiguracao[] situacoes;
+	private final CpSituacaoDeConfiguracaoEnum[] situacoes;
 
 	WfTipoDeConfiguracao(Long id, String descr, String explicacao, Enum[] params, Enum[] obrigatorios,
-			SituacaoDeConfiguracao[] situacoes) {
+			CpSituacaoDeConfiguracaoEnum[] situacoes) {
 		this.id = id;
 		this.descr = descr;
 		this.explicacao = explicacao;
@@ -101,7 +101,7 @@ public enum WfTipoDeConfiguracao implements ITipoDeConfiguracao {
 		return null;
 	}
 
-	public SituacaoDeConfiguracao[] getSituacoes() {
+	public CpSituacaoDeConfiguracaoEnum[] getSituacoes() {
 		return situacoes;
 	}
 

@@ -7,7 +7,7 @@ public enum CpTipoDeConfiguracao implements ITipoDeConfiguracao {
 	CADASTRAR_QUALQUER_SUBST(CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST, "Cadastrar Qualquer Subst",
 			"Utilizada para configurar quais são as pessoas que tem permissão de cadastrar qualquer substituição. Nomalmente, a regra de negócio diz que uma pessoa só pode cadastrar substitutos para si mesma ou para sua lotação, ou outras regras envolvendo hierarquias. No entanto, uma pessoa indicada para \"Cadastrar Qualquer Substituição\" poderá cadastrar em nome de outras. Esta configuração normalmente é atribuída aos administradores do sistema ou a equipe de suporte.",
 			new CpParamCfg[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO }, new CpParamCfg[] { CpParamCfg.SITUACAO },
-			new SituacaoDeConfiguracao[] { SituacaoDeConfiguracao.PODE, SituacaoDeConfiguracao.NAO_PODE }),
+			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE, CpSituacaoDeConfiguracaoEnum.NAO_PODE }),
 	//
 //	UTILIZAR_SERVICO(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO, "Utilizar Serviço",
 //			"Selecione órgão, lotação, pessoa, cargo ou função comissionada que tem permissão para utilizar determinado serviço.",
@@ -74,7 +74,7 @@ public enum CpTipoDeConfiguracao implements ITipoDeConfiguracao {
 					+"DEFAULT: Combinado com outras funcionalidades dita qual é o provedor de segundo fator de autenticação padrão.\n"
 					+"OBRIGATORIO: Combinado com outras funcionalidades obriga a o segundo fator de autenticação ocorrer somente via PIN e torna o DEFAULT automaticamente.\n",
 			new CpParamCfg[] { CpParamCfg.ORGAO, CpParamCfg.PESSOA, CpParamCfg.LOTACAO }, new CpParamCfg[] { CpParamCfg.SITUACAO },
-			new SituacaoDeConfiguracao[] { SituacaoDeConfiguracao.PODE, SituacaoDeConfiguracao.NAO_PODE, SituacaoDeConfiguracao.DEFAULT, SituacaoDeConfiguracao.OBRIGATORIO }),
+			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE, CpSituacaoDeConfiguracaoEnum.NAO_PODE, CpSituacaoDeConfiguracaoEnum.DEFAULT, CpSituacaoDeConfiguracaoEnum.OBRIGATORIO }),
 	;
 
 	private final Long id;
@@ -82,10 +82,10 @@ public enum CpTipoDeConfiguracao implements ITipoDeConfiguracao {
 	private final String explicacao;
 	private final CpParamCfg[] params;
 	private final CpParamCfg[] obrigatorios;
-	private final SituacaoDeConfiguracao[] situacoes;
+	private final CpSituacaoDeConfiguracaoEnum[] situacoes;
 
 	CpTipoDeConfiguracao(Long id, String descr, String explicacao, CpParamCfg[] params, CpParamCfg[] obrigatorios,
-			SituacaoDeConfiguracao[] situacoes) {
+			CpSituacaoDeConfiguracaoEnum[] situacoes) {
 		this.id = id;
 		this.descr = descr;
 		this.explicacao = explicacao;
@@ -117,7 +117,7 @@ public enum CpTipoDeConfiguracao implements ITipoDeConfiguracao {
 	}
 
 	@Override
-	public SituacaoDeConfiguracao[] getSituacoes() {
+	public CpSituacaoDeConfiguracaoEnum[] getSituacoes() {
 		return situacoes;
 	}
 

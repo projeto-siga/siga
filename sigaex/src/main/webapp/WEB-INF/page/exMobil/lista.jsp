@@ -195,48 +195,31 @@
 										${documento[1].codigo} </a>
 								</c:otherwise>
 							</c:choose></td>
-						<c:set var="estilo" value="" />
-						<c:if
-							test="${f:exibirQuemTemAcessoDocumentosLimitados(documento[0], titular, lotaTitular) eq false}">
-							<c:set var="estilo" value="confidencial" />
-						</c:if>	
 						<c:if test="${documento[1].numSequencia != 0}">
 							<td width="5%" align="center">
 								${documento[0].dtDocDDMMYY}</td>
-							
-							<c:choose>
-							<c:when test="${estilo eq 'confidencial'}">
-								<td width="4%" align="center" class="${estilo}">CONFIDENCIAL</td>
-								<td width="4%" align="center" class="${estilo}">CONFIDENCIAL</td>
-								<td width="5%" align="center">
-									${documento[2].dtIniMarcaDDMMYYYY}</td>								
-								<td width="5%" align="center" class="${estilo}">CONFIDENCIAL</td>
-								<td width="4%" align="center" class="${estilo}">CONFIDENCIAL</td>
-							</c:when>
-							<c:otherwise>
-								<td width="4%" align="center"><siga:selecionado
-										sigla="${documento[0].lotaSubscritor.sigla}"
-										descricao="${documento[0].lotaSubscritor.descricao}"
-										lotacaoParam="${documento[0].lotaSubscritor.orgaoUsuario.siglaOrgaoUsu}${documento[0].lotaSubscritor.sigla}" />
-								</td>
-								<td width="4%" align="center"><siga:selecionado
-										sigla="${documento[0].subscritor.iniciais}"
-										descricao="${documento[0].subscritor.descricao}"
-										pessoaParam="${documento[0].subscritor.sigla}" /></td>
-								<td width="5%" align="center">
-									${documento[2].dtIniMarcaDDMMYYYY}</td>
-								<td width="4%" align="center"><siga:selecionado
-										sigla="${documento[2].dpLotacaoIni.lotacaoAtual.sigla}"
-										descricao="${documento[2].dpLotacaoIni.lotacaoAtual.descricao}"
-										lotacaoParam="${documento[2].dpLotacaoIni.orgaoUsuario.siglaOrgaoUsu}${documento[2].dpLotacaoIni.sigla}" />
-								</td>
-								<td width="4%" align="center"><siga:selecionado
-										sigla="${documento[2].dpPessoaIni.iniciais}"
-										descricao="${documento[2].dpPessoaIni.descricao}"
-										pessoaParam="${documento[2].dpPessoaIni.sigla}" />
-								</td>
-							</c:otherwise>
-						</c:choose>
+							<td width="4%" align="center"><siga:selecionado
+									sigla="${documento[0].lotaSubscritor.sigla}"
+									descricao="${documento[0].lotaSubscritor.descricao}"
+									lotacaoParam="${documento[0].lotaSubscritor.orgaoUsuario.siglaOrgaoUsu}${documento[0].lotaSubscritor.sigla}" />
+							</td>
+							<td width="4%" align="center"><siga:selecionado
+									sigla="${documento[0].subscritor.iniciais}"
+									descricao="${documento[0].subscritor.descricao}"
+									pessoaParam="${documento[0].subscritor.sigla}" /></td>
+							<td width="5%" align="center">
+								${documento[2].dtIniMarcaDDMMYYYY}</td>
+							<td width="4%" align="center"><siga:selecionado
+									sigla="${documento[2].dpLotacaoIni.lotacaoAtual.sigla}"
+									descricao="${documento[2].dpLotacaoIni.lotacaoAtual.descricao}"
+									lotacaoParam="${documento[2].dpLotacaoIni.orgaoUsuario.siglaOrgaoUsu}${documento[2].dpLotacaoIni.sigla}" />
+							</td>
+							<td width="4%" align="center"><siga:selecionado
+									sigla="${documento[2].dpPessoaIni.iniciais}"
+									descricao="${documento[2].dpPessoaIni.descricao}"
+									pessoaParam="${documento[2].dpPessoaIni.sigla}" />
+							</td>
+
 
 							<td width="10.5%" align="center">
 								${documento[2].cpMarcador.descrMarcador}</td>
@@ -244,21 +227,17 @@
 						<c:if test="${documento[1].numSequencia == 0}">
 							<td width="5%" align="center">
 								${documento[0].dtDocDDMMYY}</td>
-							<c:when test="${estilo eq 'confidencial'}">
-								<td width="4%" align="center" class="${estilo}">CONFIDENCIAL</td>
-								<td width="4%" align="center" class="${estilo}">CONFIDENCIAL</td>
-							</c:when>
-							<c:otherwise>
-								<td width="4%" align="center"><siga:selecionado
-										sigla="${documento[0].lotaSubscritor.sigla}"
-										descricao="${documento[0].lotaSubscritor.descricao}"
-										lotacaoParam="${documento[0].lotaSubscritor.orgaoUsuario.siglaOrgao}${documento[0].lotaSubscritor.sigla}" />
-								</td>
-								<td width="4%" align="center"><siga:selecionado
-										sigla="${documento[0].subscritor.iniciais}"
-										descricao="${documento[0].subscritor.descricao}"
-										pessoaParam="${documento[0].subscritor.sigla}" /></td>
-							</c:otherwise>
+
+							<td width="4%" align="center"><siga:selecionado
+									sigla="${documento[0].lotaSubscritor.sigla}"
+									descricao="${documento[0].lotaSubscritor.descricao}"
+									lotacaoParam="${documento[0].lotaSubscritor.orgaoUsuario.siglaOrgao}${documento[0].lotaSubscritor.sigla}" />
+							</td>
+							<td width="4%" align="center"><siga:selecionado
+									sigla="${documento[0].subscritor.iniciais}"
+									descricao="${documento[0].subscritor.descricao}"
+									pessoaParam="${documento[0].subscritor.sigla}" /></td>
+
 
 							<td width="5%" align="center">tag1</td>
 							<td width="4%" align="center"></td>
@@ -266,15 +245,9 @@
 							<td width="10.5%" align="center">tag4</td>
 						</c:if>
 						<td width="6%">${documento[0].descrFormaDoc}</td>
-						<c:choose>
-						<c:when test="${estilo eq 'confidencial'}">
-							<td width="6%" class="${estilo}">CONFIDENCIAL</td>
-						</c:when>
-						<c:otherwise>
-							<td width="6%">${documento[0].nmMod}</td>
-						</c:otherwise>	
-						</c:choose>
-						<c:set var="estilo" value="" />
+
+						<td width="6%">${documento[0].nmMod}</td>
+
 						<c:set var="acessivel" value="" />
 						<c:set var="acessivel"
 							value="${f:testaCompetencia('acessarDocumento',titular,lotaTitular,documento[1])}" />

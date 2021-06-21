@@ -167,15 +167,8 @@ public class ExMobilController extends
 
 		String dtDoc = dtDocString;
 
-		boolean podePesquisarModelo = podePesquisarPeloModelo(idMod, subscritorSel);
-		
 		if ((SigaMessages.isSigaSP() && offset != null) || (!SigaMessages.isSigaSP() && (primeiraVez == null || !primeiraVez.equals("sim")))) {
-			if (podePesquisarModelo) {
-				dtDoc = listarItensPesquisa(dtDocString, dtDocFinalString, builder, dtDoc);				
-			} else {
-	       		result.include("msgCabecClass", "alert-warning");
-        		result.include("mensagemCabec", "Modelo restrito para pesquisa.");
-			}
+			dtDoc = listarItensPesquisa(dtDocString, dtDocFinalString, builder, dtDoc);				
 		} else {
 			if( Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
 					SIGA_DOC_PESQ_DTLIMITADA )) {
@@ -357,20 +350,12 @@ public class ExMobilController extends
 						
 				texto.append(m.getCodigo()+";");
 				if(e.getLotaSubscritor() != null && e.getLotaSubscritor().getSigla() != null) {
-					if(ExBL.exibirQuemTemAcessoDocumentosLimitados(e, getTitular(), getLotaTitular())) {
-						texto.append(e.getLotaSubscritor().getSigla().replaceAll(";",","));
-					} else {
-						texto.append("CONFIDENCIAL");
-					}					
+					texto.append(e.getLotaSubscritor().getSigla().replaceAll(";",","));
 				}
 				texto.append(";");
 				
 				if(e.getSubscritor() != null && e.getSubscritor().getIniciais() != null) {
-					if(ExBL.exibirQuemTemAcessoDocumentosLimitados(e, getTitular(), getLotaTitular())) {
-						texto.append(e.getSubscritor().getIniciais().replaceAll(";",","));
-					} else {
-						texto.append("CONFIDENCIAL");
-					}
+					texto.append(e.getSubscritor().getIniciais().replaceAll(";",","));
 				}
 				texto.append(";");
 				
@@ -385,20 +370,12 @@ public class ExMobilController extends
 				
 						
 				if(ma.getDpLotacaoIni() != null && ma.getDpLotacaoIni().getSigla() != null) {
-					if(ExBL.exibirQuemTemAcessoDocumentosLimitados(e, getTitular(), getLotaTitular())) {
-						texto.append(ma.getDpLotacaoIni().getSigla().replaceAll(";",","));
-					} else {
-						texto.append("CONFIDENCIAL");
-					}
+					texto.append(ma.getDpLotacaoIni().getSigla().replaceAll(";",","));
 				}
 				texto.append(";");
 				
 				if(ma.getDpPessoaIni() != null && ma.getDpPessoaIni().getIniciais() != null) {
-					if(ExBL.exibirQuemTemAcessoDocumentosLimitados(e, getTitular(), getLotaTitular())) {
-						texto.append(ma.getDpPessoaIni().getIniciais().replaceAll(";",","));
-					} else {
-						texto.append("CONFIDENCIAL");
-					}
+					texto.append(ma.getDpPessoaIni().getIniciais().replaceAll(";",","));
 				}
 				texto.append(";");
 				
@@ -414,11 +391,7 @@ public class ExMobilController extends
 				texto.append(";");
 				
 				if(e.getNmMod() != null) {
-					if(ExBL.exibirQuemTemAcessoDocumentosLimitados(e, getTitular(), getLotaTitular())) {
-						texto.append(e.getNmMod().replaceAll(";",","));
-					} else {
-						texto.append("CONFIDENCIAL");
-					}
+					texto.append(e.getNmMod().replaceAll(";",","));
 				}
 				texto.append(";");
 				
@@ -481,16 +454,8 @@ public class ExMobilController extends
 
 		String dtDoc = dtDocString;
 	
-		boolean podePesquisarModelo = podePesquisarPeloModelo(idMod, subscritorSel);
-	
 		if (primeiraVez == null || !primeiraVez.equals("sim")) {
-			if (podePesquisarModelo) {
 				dtDoc = listarItensPesquisa(dtDocString, dtDocFinalString, builder, dtDoc);				
-			} else {
-	       		result.include("msgCabecClass", "alert-warning");
-        		result.include("mensagemCabec", "Modelo restrito para pesquisa.");
-			}
-
 		} else {
 			if( Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
 					SIGA_DOC_PESQ_DTLIMITADA )) {
@@ -565,18 +530,6 @@ public class ExMobilController extends
 			result.include("campos", campos);
 		}
 
-	}
-
-	private boolean podePesquisarPeloModelo(final Long idMod, final DpPessoaSelecao subscritorSel) {
-		if (idMod != null && idMod != 0) {
-			if ((subscritorSel.getObjeto() == null ) || (! subscritorSel.getObjeto().equals(getTitular()))) {
-				ExModelo modeloPesquisado = new ExModelo(idMod).getModeloPeloId().getModeloAtual();
-				if (! Ex.getInstance().getComp().podeExibirQuemTemAcessoAoDocumento(getTitular(), getLotaTitular(), modeloPesquisado)) {
-		       		return false;
-	        	}
-			}
-		}
-		return true;
 	}
 
 	private String listarItensPesquisa(final String dtDocString, final String dtDocFinalString,

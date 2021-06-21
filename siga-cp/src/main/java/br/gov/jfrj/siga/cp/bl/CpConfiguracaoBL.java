@@ -146,6 +146,7 @@ public class CpConfiguracaoBL {
 
 		hashListas.clear();
 		for (CpConfiguracaoCache a : results) {
+			atualizarDataDeAtualizacaoDoCache(a);
 			// Verifica se existe o tipo da configuracao
 			if (a.cpTipoConfiguracao == 0)
 				continue;
@@ -204,14 +205,15 @@ public class CpConfiguracaoBL {
 
 		// sfCpDao.evict(CpConfiguracao.class);
 
-		List<CpConfiguracao> alteracoes = dao().consultarConfiguracoesDesde(dtUltimaAtualizacaoCache);
+		List<CpConfiguracaoCache> alteracoes = dao().consultarConfiguracoesDesde(dtUltimaAtualizacaoCache);
 
 		Logger.getLogger("siga.conf.cache").fine("Numero de alteracoes no cache: " + alteracoes.size());
 		if (alteracoes.size() > 0) {
 			// evitarLazy(alteracoes);
 
-			for (CpConfiguracao cpConfiguracao : alteracoes) {
-				Long idTpConf = cpConfiguracao.getCpTipoConfiguracao().getIdTpConfiguracao();
+			for (CpConfiguracaoCache cpConfiguracao : alteracoes) {
+				atualizarDataDeAtualizacaoDoCache(cpConfiguracao);
+				Long idTpConf = cpConfiguracao.cpTipoConfiguracao;
 				TreeSet<CpConfiguracaoCache> tree = hashListas.get(idTpConf);
 				if (tree == null) {
 					tree = new TreeSet<CpConfiguracaoCache>(comparator);
@@ -219,8 +221,8 @@ public class CpConfiguracaoBL {
 				}
 				if (cpConfiguracao.ativaNaData(dt)) {
 					int i = tree.size();
-					removeById(tree, cpConfiguracao.getId());
-					tree.add(new CpConfiguracaoCache(cpConfiguracao));
+					removeById(tree, cpConfiguracao.idConfiguracao);
+					tree.add(cpConfiguracao);
 					if (tree.size() != i + 1)
 						Logger.getLogger("siga.conf.cache")
 								.fine("Configuração atualizada: " + cpConfiguracao.toString());
@@ -229,7 +231,7 @@ public class CpConfiguracaoBL {
 								.fine("Configuração adicionada: " + cpConfiguracao.toString());
 				} else {
 					int i = tree.size();
-					removeById(tree, cpConfiguracao.getId());
+					removeById(tree, cpConfiguracao.idConfiguracao);
 					if (tree.size() != i - 1)
 						Logger.getLogger("siga.conf.cache")
 								.fine("Configuração previamente removida: " + cpConfiguracao.toString());
@@ -240,6 +242,13 @@ public class CpConfiguracaoBL {
 		}
 
 		dtUltimaAtualizacaoCache = dt;
+	}
+
+	public void atualizarDataDeAtualizacaoDoCache(CpConfiguracaoCache cpConfiguracao) {
+		if (cpConfiguracao.hisDtIni != null && (dtUltimaAtualizacaoCache == null || cpConfiguracao.hisDtIni.after(dtUltimaAtualizacaoCache)))
+			dtUltimaAtualizacaoCache = cpConfiguracao.hisDtIni;
+		if (cpConfiguracao.hisDtFim != null && cpConfiguracao.hisDtFim.after(dtUltimaAtualizacaoCache))
+			dtUltimaAtualizacaoCache = cpConfiguracao.hisDtFim;
 	}
 
 	private void removeById(TreeSet<CpConfiguracaoCache> tree, long id) {

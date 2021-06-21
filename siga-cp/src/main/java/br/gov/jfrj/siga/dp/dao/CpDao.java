@@ -1863,13 +1863,13 @@ public class CpDao extends ModeloDao {
 
 	}
 
-	public List<CpConfiguracao> consultarConfiguracoesDesde(Date desde) {
-		CriteriaQuery<CpConfiguracao> q = cb().createQuery(CpConfiguracao.class);
-		Root<CpConfiguracao> c = q.from(CpConfiguracao.class);
+	public List<CpConfiguracaoCache> consultarConfiguracoesDesde(Date desde) {
+		CriteriaQuery<CpConfiguracaoCache> q = cb().createQuery(CpConfiguracaoCache.class);
+		Root<CpConfiguracaoCache> c = q.from(CpConfiguracaoCache.class);
 		q.select(c);
 		if (desde != null) {
 			Predicate confsAtivas = cb().greaterThan(c.<Date>get("hisDtIni"), desde);
-			Predicate confsInativas = cb().greaterThanOrEqualTo(c.<Date>get("hisDtFim"), desde);
+			Predicate confsInativas = cb().greaterThan(c.<Date>get("hisDtFim"), desde);
 			q.where(cb().or(confsAtivas, confsInativas));
 		}
 		return em().createQuery(q).getResultList();

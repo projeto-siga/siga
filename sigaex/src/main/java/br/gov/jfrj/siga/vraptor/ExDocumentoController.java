@@ -2020,11 +2020,14 @@ public class ExDocumentoController extends ExController {
 		exDocumentoDto.setSigla(sigla);
 		buscarDocumento(false, exDocumentoDto);
 		
-		Ex.getInstance()
-		.getBL()
-		.cancelarDocumento(exDocumentoDto.getMob().doc().getTitular(),
-				exDocumentoDto.getMob().doc().getLotaTitular(), exDocumentoDto.getMob().doc());		
-		
+		try {
+			Ex.getInstance()
+			.getBL()
+			.cancelarDocumento(exDocumentoDto.getMob().doc().getTitular(),
+					exDocumentoDto.getMob().doc().getLotaTitular(), exDocumentoDto.getMob().doc());		
+		} catch (RegraNegocioException re) {
+			result.include(SigaModal.ALERTA, SigaModal.mensagem(re.getMessage()));
+		}
 		result.include("sigla", sigla);
 		result.include("id", exDocumentoDto.getId());
 		result.include("mob", exDocumentoDto.getMob());

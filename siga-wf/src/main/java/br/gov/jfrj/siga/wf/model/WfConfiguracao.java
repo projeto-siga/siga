@@ -35,11 +35,7 @@ import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 @Table(name = "sigawf.wf_configuracao")
 @PrimaryKeyJoinColumn(name = "CONF_ID")
 @NamedQueries({
-		@NamedQuery(name = "consultarWfConfiguracoes", query = "from WfConfiguracao cfg where (:idTpConfiguracao is null or cfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)"),
-		@NamedQuery(name = "consultarCacheDeConfiguracoesWF", query = AbstractCpConfiguracao.CFG_CACHE_SELECT
-				+ ", wf.definicaoDeProcedimento.id " + AbstractCpConfiguracao.CFG_CACHE_FROM
-				+ " left join WfConfiguracao wf on c.idConfiguracao = wf.idConfiguracao "
-				+ AbstractCpConfiguracao.CFG_CACHE_WHERE) })
+		@NamedQuery(name = "consultarWfConfiguracoes", query = "from WfConfiguracao cfg where (:idTpConfiguracao is null or cfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)")})
 public class WfConfiguracao extends CpConfiguracao {
 
 	@ManyToOne(fetch = FetchType.LAZY)

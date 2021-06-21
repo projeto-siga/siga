@@ -44,16 +44,14 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.DateUtils;
-import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.cp.CpIdentidade;
@@ -1915,9 +1913,8 @@ public class CpDao extends ModeloDao {
 		return query.getResultList();
 	}
 	
-	public List<Object[]> consultarCacheDeConfiguracoes() {
-		Query query = em().createNamedQuery("consultarCacheDeConfiguracoes");
-
+	public List<CpConfiguracaoCache> consultarCacheDeConfiguracoesAtivas() {
+		Query query = em().createNamedQuery("consultarCacheDeConfiguracoesAtivas");
 		return query.getResultList();
 	}
 	

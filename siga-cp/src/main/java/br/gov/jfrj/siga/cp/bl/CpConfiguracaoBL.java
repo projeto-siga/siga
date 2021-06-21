@@ -138,25 +138,24 @@ public class CpConfiguracaoBL {
 		if (cacheInicializado)
 			return;
 		long inicio = System.currentTimeMillis();
-		List<Object[]> results = dao().consultarCacheDeConfiguracoes();
+		List<CpConfiguracaoCache> results = dao().consultarCacheDeConfiguracoesAtivas();
 
 		long inicioLazy = System.currentTimeMillis();
 //		evitarLazy(results);
 		long fimLazy = System.currentTimeMillis();
 
 		hashListas.clear();
-		for (Object[] a : results) {
+		for (CpConfiguracaoCache a : results) {
 			// Verifica se existe o tipo da configuracao
-			if (a[14] == null)
+			if (a.cpTipoConfiguracao == 0)
 				continue;
-			Long idTpConfiguracao = (Long) a[14];
+			Long idTpConfiguracao = (Long) a.cpTipoConfiguracao;
 			TreeSet<CpConfiguracaoCache> tree = hashListas.get(idTpConfiguracao);
 			if (tree == null) {
 				tree = new TreeSet<CpConfiguracaoCache>(comparator);
 				hashListas.put(idTpConfiguracao, tree);
 			}
-			CpConfiguracaoCache c = instanciarCache(a);
-			tree.add(c);
+			tree.add(a);
 		}
 		if (hashListas.size() == 0 && results.size() > 0)
 			throw new RuntimeException("Ocorreu um erro na inicialização do cache.");
@@ -174,44 +173,7 @@ public class CpConfiguracaoBL {
 	public CpConfiguracaoCache instanciarCache(Object[] a) {
 		return new CpConfiguracaoCache(a);
 	}
-
-	public synchronized void inicializarCacheSeNecessarioOld() {
-		if (cacheInicializado)
-			return;
-		long inicio = System.currentTimeMillis();
-
-		List<CpConfiguracao> results = (List<CpConfiguracao>) dao().consultarConfiguracoesAtivas();
-
-		long inicioLazy = System.currentTimeMillis();
-//		evitarLazy(results);
-		long fimLazy = System.currentTimeMillis();
-
-		hashListas.clear();
-		for (CpConfiguracao cfg : results) {
-			if (cfg.getCpTipoConfiguracao() == null)
-				continue;
-			Long idTpConfiguracao = cfg.getCpTipoConfiguracao().getIdTpConfiguracao();
-			TreeSet<CpConfiguracaoCache> tree = hashListas.get(idTpConfiguracao);
-			if (tree == null) {
-				tree = new TreeSet<CpConfiguracaoCache>(comparator);
-				hashListas.put(idTpConfiguracao, tree);
-			}
-			CpConfiguracaoCache c = new CpConfiguracaoCache(cfg);
-			tree.add(c);
-		}
-		if (hashListas.size() == 0 && results.size() > 0)
-			throw new RuntimeException("Ocorreu um erro na inicialização do cache.");
-		cacheInicializado = true;
-
-		long fim = System.currentTimeMillis();
-
-		Logger.getLogger("siga.conf.cache")
-				.info("Cache de configurações inicializado via " + this.getClass().getSimpleName() + " em "
-						+ (fim - inicio) + "ms, select: " + (inicioLazy - inicio) + "ms, lazy: "
-						+ (fimLazy - inicioLazy) + "ms, tree: " + (fim - fimLazy) + "ms");
-
-	}
-
+	
 	public HashMap<Long, TreeSet<CpConfiguracaoCache>> getHashListas() {
 		if (!cacheInicializado) {
 			inicializarCacheSeNecessario();

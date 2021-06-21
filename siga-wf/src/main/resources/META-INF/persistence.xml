@@ -23,6 +23,7 @@
 		<class>br.gov.jfrj.siga.dp.CpPersonalizacao</class>
 		<class>br.gov.jfrj.siga.dp.CpTipoPessoa</class>
 		<class>br.gov.jfrj.siga.cp.CpConfiguracao</class>
+		<class>br.gov.jfrj.siga.cp.CpConfiguracaoCache</class>
 		<class>br.gov.jfrj.siga.cp.CpSituacaoConfiguracao</class>
 		<class>br.gov.jfrj.siga.cp.CpTipoConfiguracao</class>
 		<class>br.gov.jfrj.siga.cp.CpServico</class>
@@ -70,6 +71,7 @@
 		<class>br.gov.jfrj.siga.wf.model.WfVariavel</class>
 
 		<class>br.gov.jfrj.siga.wf.model.WfConfiguracao</class>
+		<class>br.gov.jfrj.siga.wf.model.WfConfiguracaoCache</class>
 
 		<properties>
 			<property

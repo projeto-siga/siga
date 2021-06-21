@@ -2274,12 +2274,4 @@ public class ExDao extends CpDao {
 		return l;
 	}
 	
-	@Override
-	public List<Object[]> consultarCacheDeConfiguracoes() {
-		Query query = em().createNamedQuery("consultarCacheDeConfiguracoesEX");
-
-		return query.getResultList();
-	}
-	
-
 }

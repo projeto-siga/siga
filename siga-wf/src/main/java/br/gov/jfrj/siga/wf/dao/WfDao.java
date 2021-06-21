@@ -362,12 +362,4 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 		return listarAtivos(WfDefinicaoDeProcedimento.class, "nome");
 	}
 
-	@Override
-	public List<Object[]> consultarCacheDeConfiguracoes() {
-		Query query = em().createNamedQuery("consultarCacheDeConfiguracoesWF");
-
-		return query.getResultList();
-	}
-	
-
 }

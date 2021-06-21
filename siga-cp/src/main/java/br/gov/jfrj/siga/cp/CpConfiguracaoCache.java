@@ -25,42 +25,158 @@ package br.gov.jfrj.siga.cp;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.PostLoad;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
 import org.hibernate.proxy.HibernateProxy;
 
+import br.gov.jfrj.siga.cp.converter.LongNonNullConverter;
+
+@Entity
+@Table(name = "corporativo.cp_configuracao")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class CpConfiguracaoCache {
 
+	@Id
+	@Column(name = "ID_CONFIGURACAO")
 	public long idConfiguracao;
+//	@Column(name = "DESCR_CONFIGURACAO")
 //	public String descrConfiguracao;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "HIS_DT_INI")
 	public Date hisDtIni;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "HIS_DT_FIM")
 	public Date hisDtFim;
 
-	public long orgaoUsuario;
-	public long lotacao;
-	public long complexo;
-	public long cargo;
-	public long funcaoConfianca;
-	public long dpPessoa;
-	public long cpTipoConfiguracao;
-	public long cpServico;
-	public long cpIdentidade;
-	public String nmEmail;
-	public String dscFormula;
-	public long cpTipoLotacao;
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DT_INI_VIG_CONFIGURACAO", length = 19)
 	public Date dtIniVigConfiguracao;
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DT_FIM_VIG_CONFIGURACAO", length = 19)
 	public Date dtFimVigConfiguracao;
+
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "ID_ORGAO_USU")
+	public long orgaoUsuario;
+
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "ID_LOTACAO")
+	public long lotacao;
+
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "ID_COMPLEXO")
+	public long complexo;
+
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "ID_CARGO")
+	public long cargo;
+
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "ID_FUNCAO_CONFIANCA")
+	public long funcaoConfianca;
+
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "ID_PESSOA")
+	public long dpPessoa;
+
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "ID_TP_CONFIGURACAO")
+	public long cpTipoConfiguracao;
+
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "ID_SERVICO")
+	public long cpServico;
+
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "ID_IDENTIDADE")
+	public long cpIdentidade;
+
+	@Column(name = "NM_EMAIL", length = 50)
+	public String nmEmail;
+
+	@Column(name = "DESC_FORMULA", length = 1024)
+	public String dscFormula;
+
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "ID_TP_LOTACAO")
+	public long cpTipoLotacao;
+
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "HIS_ID_INI")
 	public long configuracaoInicial;
+
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "ID_ORGAO_OBJETO")
 	public long orgaoObjeto;
+
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "ID_LOTACAO_OBJETO")
 	public long lotacaoObjeto;
+
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "ID_COMPLEXO_OBJETO")
 	public long complexoObjeto;
+
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "ID_CARGO_OBJETO")
 	public long cargoObjeto;
+
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "ID_FUNCAO_CONFIANCA_OBJETO")
 	public long funcaoConfiancaObjeto;
+
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "ID_PESSOA_OBJETO")
 	public long pessoaObjeto;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_GRUPO")
+	private CpGrupo grupo;
+	@Transient
 	public long cpGrupo;
+	@Transient
 	public int cpGrupoNivel;
+	@Transient
 	public CpPerfil cpPerfil;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_SIT_CONFIGURACAO")
+	private CpSituacaoConfiguracao situacao;
+	@Transient
 	public long cpSituacaoConfiguracao;
+	@Transient
 	public Long restritividadeSitConfiguracao;
+
+	@PostLoad
+	private void postLoad() {
+		if (grupo != null) {
+			this.cpGrupo = longOrZero(grupo.getIdInicial());
+			this.cpGrupoNivel = grupo.getNivel();
+			if (grupo instanceof HibernateProxy)
+				grupo = (CpGrupo) ((HibernateProxy) grupo).getHibernateLazyInitializer().getImplementation();
+			if (grupo instanceof CpPerfil)
+				this.cpPerfil = (CpPerfil) grupo;
+		}
+		if (situacao != null) {
+			this.cpSituacaoConfiguracao = longOrZero(situacao.getIdSitConfiguracao());
+			this.restritividadeSitConfiguracao = situacao.getRestritividadeSitConfiguracao();
+
+		}
+	}
 
 	public CpConfiguracaoCache() {
 	}

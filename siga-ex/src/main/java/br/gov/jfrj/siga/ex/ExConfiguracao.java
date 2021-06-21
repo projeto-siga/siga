@@ -43,14 +43,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 @Table(name = "siga.ex_configuracao")
 @PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_EX")
 @NamedQueries({
-		@NamedQuery(name = "consultarExConfiguracoes", query = "from ExConfiguracao excfg where (:idTpConfiguracao is null or excfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)"),
-		@NamedQuery(name = "consultarCacheDeConfiguracoesEX", query = AbstractCpConfiguracao.CFG_CACHE_SELECT
-				+ ", cc.exTipoMovimentacao.idTpMov, cc.exTipoDocumento.idTpDoc, cc.exTipoFormaDoc.idTipoFormaDoc "
-				+ ", cc.exFormaDocumento.idFormaDoc, cc.exModelo.idMod, cc.exClassificacao.idClassificacao "
-				+ ", cc.exVia.idVia, cc.exNivelAcesso.idNivelAcesso, cc.exPapel.idPapel "
-				+ AbstractCpConfiguracao.CFG_CACHE_FROM
-				+ " left join ExConfiguracao cc on c.idConfiguracao = cc.idConfiguracao "
-				+ AbstractCpConfiguracao.CFG_CACHE_WHERE) })
+		@NamedQuery(name = "consultarExConfiguracoes", query = "from ExConfiguracao excfg where (:idTpConfiguracao is null or excfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)")})
 public class ExConfiguracao extends CpConfiguracao {
 
 	@ManyToOne(fetch = FetchType.LAZY)

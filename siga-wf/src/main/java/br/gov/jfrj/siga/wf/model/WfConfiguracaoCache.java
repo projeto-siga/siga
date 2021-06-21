@@ -23,10 +23,22 @@
  */
 package br.gov.jfrj.siga.wf.model;
 
-import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
 
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
+import br.gov.jfrj.siga.cp.converter.LongNonNullConverter;
+
+@Entity
+@Table(name = "sigawf.wf_configuracao")
+@PrimaryKeyJoinColumn(name = "CONF_ID")
 public class WfConfiguracaoCache extends CpConfiguracaoCache {
 
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "DEFP_ID")
 	public long definicaoDeProcedimento;
 
 	public WfConfiguracaoCache() {

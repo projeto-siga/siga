@@ -23,26 +23,57 @@
  */
 package br.gov.jfrj.siga.ex;
 
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
 
 import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
+import br.gov.jfrj.siga.cp.converter.LongNonNullConverter;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.model.dao.DaoFiltro;
 
+@Entity
+@Table(name = "siga.ex_configuracao")
+@PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_EX")
 public class ExConfiguracaoCache extends CpConfiguracaoCache {
-
+	
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "ID_TP_MOV")
 	public long exTipoMovimentacao;
+
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "ID_TP_DOC")
 	public long exTipoDocumento;
+
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "ID_TP_FORMA_DOC")
 	public long exTipoFormaDoc;
+
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "ID_FORMA_DOC")
 	public long exFormaDocumento;
+
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "ID_MOD")
 	public long exModelo;
+
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "ID_CLASSIFICACAO")
 	public long exClassificacao;
+
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "ID_VIA")
 	public long exVia;
+
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "ID_NIVEL_ACESSO")
 	public long exNivelAcesso;
+
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "ID_PAPEL")
 	public long exPapel;
 
 	public ExConfiguracaoCache() {

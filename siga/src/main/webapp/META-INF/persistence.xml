@@ -22,6 +22,7 @@
 		<class>br.gov.jfrj.siga.dp.CpPersonalizacao</class>
 		<class>br.gov.jfrj.siga.dp.CpTipoPessoa</class>
 		<class>br.gov.jfrj.siga.cp.CpConfiguracao</class>
+		<class>br.gov.jfrj.siga.cp.CpConfiguracaoCache</class>
 		<class>br.gov.jfrj.siga.cp.CpSituacaoConfiguracao</class>
 		<class>br.gov.jfrj.siga.cp.CpTipoConfiguracao</class>
 		<class>br.gov.jfrj.siga.cp.CpServico</class>

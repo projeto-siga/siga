@@ -35,6 +35,7 @@ import javax.persistence.Table;
 
 import br.gov.jfrj.siga.cp.AbstractCpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
@@ -224,6 +225,11 @@ public class ExConfiguracao extends CpConfiguracao {
 		setExModelo(inicial(getExModelo()));
 		setExClassificacao(inicial(getExClassificacao()));
 		setExVia(inicial(getExVia()));
+	}
+
+	@Override
+	public CpConfiguracaoCache converterParaCache() {
+		return new ExConfiguracaoCache(this);
 	}
 
 }

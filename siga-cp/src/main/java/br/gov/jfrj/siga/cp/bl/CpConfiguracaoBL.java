@@ -437,7 +437,7 @@ public class CpConfiguracaoBL {
 		for (CpConfiguracaoCache cpConfiguracao : lista) {
 			if ((!cpConfiguracao.ativaNaData(dtEvn)) || (cpConfiguracao.cpSituacaoConfiguracao != 0
 					&& cpConfiguracao.cpSituacaoConfiguracao == CpSituacaoConfiguracao.SITUACAO_IGNORAR_CONFIGURACAO_ANTERIOR)
-					|| !atendeExigencias(cpConfiguracaoFiltro, atributosDesconsiderados, cpConfiguracao, perfis))
+					|| !atendeExigencias(cpConfiguracaoFiltro.converterParaCache(), atributosDesconsiderados, cpConfiguracao, perfis))
 				continue;
 			return cpConfiguracao;
 		}
@@ -537,12 +537,9 @@ public class CpConfiguracaoBL {
 	 * @param cfg
 	 * @param perfis
 	 */
-	public boolean atendeExigencias(CpConfiguracao filtro, Set<Integer> atributosDesconsiderados,
+	public boolean atendeExigencias(CpConfiguracaoCache cfgFiltro, Set<Integer> atributosDesconsiderados,
 			CpConfiguracaoCache cfg, SortedSet<CpPerfil> perfis) {
-		CpConfiguracaoCache cfgFiltro = null;
-		if (filtro != null)
-			cfgFiltro = new CpConfiguracaoCache(filtro);
-		else
+		if (cfgFiltro == null)
 			cfgFiltro = new CpConfiguracaoCache();
 
 		if (desigual(cfg.cpServico, cfgFiltro.cpServico, atributosDesconsiderados, SERVICO))

@@ -78,7 +78,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	 * Verifica se a configuração é uma configuração válida.
 	 */
 	@Override
-	public boolean atendeExigencias(CpConfiguracao filtro,
+	public boolean atendeExigencias(CpConfiguracaoCache filtro,
 			Set<Integer> atributosDesconsiderados, CpConfiguracaoCache cfg,
 			SortedSet<CpPerfil> perfis) {
 		if (!super.atendeExigencias(filtro, atributosDesconsiderados, cfg,
@@ -86,39 +86,37 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 			return false;
 
 		if (cfg instanceof ExConfiguracaoCache
-				&& filtro instanceof ExConfiguracao) {
+				&& filtro instanceof ExConfiguracaoCache) {
 			ExConfiguracaoCache exCfg = (ExConfiguracaoCache) cfg;
-			ExConfiguracaoCache cfgFiltro = null;
-			if (filtro != null)
-				cfgFiltro = new ExConfiguracaoCache((ExConfiguracao) filtro);
-			else
-				cfgFiltro = new ExConfiguracaoCache();
+			ExConfiguracaoCache exFiltro = (ExConfiguracaoCache) filtro;
+			if (filtro == null)
+				exFiltro = new ExConfiguracaoCache();
 
-			if (desigual(exCfg.exNivelAcesso, cfgFiltro.exNivelAcesso, atributosDesconsiderados, NIVEL_ACESSO))
+			if (desigual(exCfg.exNivelAcesso, exFiltro.exNivelAcesso, atributosDesconsiderados, NIVEL_ACESSO))
 				return false;
 
-			if (desigual(exCfg.exTipoMovimentacao, cfgFiltro.exTipoMovimentacao, atributosDesconsiderados, TIPO_MOVIMENTACAO))
+			if (desigual(exCfg.exTipoMovimentacao, exFiltro.exTipoMovimentacao, atributosDesconsiderados, TIPO_MOVIMENTACAO))
 				return false;
 
-			if (desigual(exCfg.exVia, cfgFiltro.exVia, atributosDesconsiderados, VIA))
+			if (desigual(exCfg.exVia, exFiltro.exVia, atributosDesconsiderados, VIA))
 				return false;
 
-			if (desigual(exCfg.exClassificacao, cfgFiltro.exClassificacao, atributosDesconsiderados, CLASSIFICACAO))
+			if (desigual(exCfg.exClassificacao, exFiltro.exClassificacao, atributosDesconsiderados, CLASSIFICACAO))
 				return false;
 
-			if (desigual(exCfg.exModelo, cfgFiltro.exModelo, atributosDesconsiderados, MODELO))
+			if (desigual(exCfg.exModelo, exFiltro.exModelo, atributosDesconsiderados, MODELO))
 				return false;
 
-			if (desigual(exCfg.exFormaDocumento, cfgFiltro.exFormaDocumento, atributosDesconsiderados, FORMA))
+			if (desigual(exCfg.exFormaDocumento, exFiltro.exFormaDocumento, atributosDesconsiderados, FORMA))
 				return false;
 
-			if (desigual(exCfg.exTipoDocumento, cfgFiltro.exTipoDocumento, atributosDesconsiderados, TIPO))
+			if (desigual(exCfg.exTipoDocumento, exFiltro.exTipoDocumento, atributosDesconsiderados, TIPO))
 				return false;
 
-			if (desigual(exCfg.exPapel, cfgFiltro.exPapel, atributosDesconsiderados, PAPEL))
+			if (desigual(exCfg.exPapel, exFiltro.exPapel, atributosDesconsiderados, PAPEL))
 				return false;
 
-			if (desigual(exCfg.exTipoFormaDoc, cfgFiltro.exTipoFormaDoc, atributosDesconsiderados, TIPO_FORMA_DOC))
+			if (desigual(exCfg.exTipoFormaDoc, exFiltro.exTipoFormaDoc, atributosDesconsiderados, TIPO_FORMA_DOC))
 				return false;
 		}
 		return true;

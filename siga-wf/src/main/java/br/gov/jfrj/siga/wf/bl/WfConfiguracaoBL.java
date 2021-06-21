@@ -63,21 +63,19 @@ public class WfConfiguracaoBL extends CpConfiguracaoBL {
 	 * Verifica se a configuração é uma configuração válida.
 	 */
 	@Override
-	public boolean atendeExigencias(CpConfiguracao filtro, Set<Integer> atributosDesconsiderados,
+	public boolean atendeExigencias(CpConfiguracaoCache filtro, Set<Integer> atributosDesconsiderados,
 			CpConfiguracaoCache cfg, SortedSet<CpPerfil> perfis) {
 		if (!super.atendeExigencias(filtro, atributosDesconsiderados, cfg, perfis))
 			return false;
 
-		if (cfg instanceof WfConfiguracaoCache && filtro instanceof WfConfiguracao) {
+		if (cfg instanceof WfConfiguracaoCache && filtro instanceof WfConfiguracaoCache) {
 			WfConfiguracaoCache wfCfg = (WfConfiguracaoCache) cfg;
 
-			WfConfiguracaoCache cfgFiltro = null;
-			if (filtro != null)
-				cfgFiltro = new WfConfiguracaoCache((WfConfiguracao) filtro);
-			else
-				cfgFiltro = new WfConfiguracaoCache();
+			WfConfiguracaoCache wfFiltro = (WfConfiguracaoCache) filtro;
+			if (filtro == null)
+				wfFiltro = new WfConfiguracaoCache();
 
-			if (desigual(wfCfg.definicaoDeProcedimento, cfgFiltro.definicaoDeProcedimento, atributosDesconsiderados, DEFINICAO_DE_PROCEDIMENTO))
+			if (desigual(wfCfg.definicaoDeProcedimento, wfFiltro.definicaoDeProcedimento, atributosDesconsiderados, DEFINICAO_DE_PROCEDIMENTO))
 				return false;
 		}
 		return true;

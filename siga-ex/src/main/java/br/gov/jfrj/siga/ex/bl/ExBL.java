@@ -3646,7 +3646,7 @@ public class ExBL extends CpBL {
 			for (ExConfiguracao conf : lista) {
 				if (// (!conf.ativaNaData(dt)) ||
 				conf.getExPapel() == null || (conf.getPessoaObjeto() == null && conf.getLotacaoObjeto() == null)
-						|| !confBL.atendeExigencias(confFiltro, atributosDesconsiderados, new ExConfiguracaoCache(conf), null))
+						|| !confBL.atendeExigencias(confFiltro.converterParaCache(), atributosDesconsiderados, new ExConfiguracaoCache(conf), null))
 					continue;
 				DpPessoa po = null;
 				DpLotacao lo = null;

@@ -230,5 +230,9 @@ public class CpConfiguracao extends AbstractCpConfiguracao implements CpConverta
 			return null;
 		return CpDao.getInstance().obterAtual(antigo);
 	}
+	
+	public CpConfiguracaoCache converterParaCache() {
+		return new CpConfiguracaoCache(this);
+	}
 
 }

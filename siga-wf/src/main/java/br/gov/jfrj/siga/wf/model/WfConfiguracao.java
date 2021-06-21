@@ -29,6 +29,7 @@ import javax.persistence.Table;
 
 import br.gov.jfrj.siga.cp.AbstractCpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 
 @Entity
 @Table(name = "sigawf.wf_configuracao")
@@ -62,6 +63,11 @@ public class WfConfiguracao extends CpConfiguracao {
 	public void substituirPorObjetoInicial() {
 		super.substituirPorObjetoInicial();
 		setDefinicaoDeProcedimento(inicial(getDefinicaoDeProcedimento()));
+	}
+
+	@Override
+	public CpConfiguracaoCache converterParaCache() {
+		return new WfConfiguracaoCache(this);
 	}
 
 }

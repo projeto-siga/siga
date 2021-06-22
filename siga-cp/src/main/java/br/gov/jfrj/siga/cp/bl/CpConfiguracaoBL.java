@@ -42,13 +42,13 @@ import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoServico;
-import br.gov.jfrj.siga.cp.converter.IEnumWithId;
 import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupo;
 import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupoFabrica;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.DpCargo;
@@ -79,7 +79,7 @@ public class CpConfiguracaoBL {
 
 	protected Comparator<CpConfiguracaoCache> comparator = null;
 
-	protected HashMap<Long, TreeSet<CpConfiguracaoCache>> hashListas = new HashMap<Long, TreeSet<CpConfiguracaoCache>>();
+	protected HashMap<ITipoDeConfiguracao, TreeSet<CpConfiguracaoCache>> hashListas = new HashMap<>();
 
 	public static int PESSOA = 1;
 
@@ -150,9 +150,9 @@ public class CpConfiguracaoBL {
 		for (CpConfiguracaoCache a : results) {
 			atualizarDataDeAtualizacaoDoCache(a);
 			// Verifica se existe o tipo da configuracao
-			if (a.cpTipoConfiguracao == 0)
+			if (a.cpTipoConfiguracao == null)
 				continue;
-			Long idTpConfiguracao = (Long) a.cpTipoConfiguracao;
+			ITipoDeConfiguracao idTpConfiguracao = a.cpTipoConfiguracao;
 			TreeSet<CpConfiguracaoCache> tree = hashListas.get(idTpConfiguracao);
 			if (tree == null) {
 				tree = new TreeSet<CpConfiguracaoCache>(comparator);
@@ -173,7 +173,7 @@ public class CpConfiguracaoBL {
 
 	}
 
-	public HashMap<Long, TreeSet<CpConfiguracaoCache>> getHashListas() {
+	public HashMap<ITipoDeConfiguracao, TreeSet<CpConfiguracaoCache>> getHashListas() {
 		if (!cacheInicializado) {
 			inicializarCacheSeNecessario();
 		}
@@ -181,7 +181,7 @@ public class CpConfiguracaoBL {
 		return hashListas;
 	}
 
-	public TreeSet<CpConfiguracaoCache> getListaPorTipo(Long idTipoConfig) {
+	public TreeSet<CpConfiguracaoCache> getListaPorTipo(ITipoDeConfiguracao idTipoConfig) {
 		return getHashListas().get(idTipoConfig);
 	}
 
@@ -211,7 +211,7 @@ public class CpConfiguracaoBL {
 
 			for (CpConfiguracaoCache cpConfiguracao : alteracoes) {
 				atualizarDataDeAtualizacaoDoCache(cpConfiguracao);
-				Long idTpConf = cpConfiguracao.cpTipoConfiguracao;
+				ITipoDeConfiguracao idTpConf = cpConfiguracao.cpTipoConfiguracao;
 				TreeSet<CpConfiguracaoCache> tree = hashListas.get(idTpConf);
 				if (tree == null) {
 					tree = new TreeSet<CpConfiguracaoCache>(comparator);
@@ -399,7 +399,7 @@ public class CpConfiguracaoBL {
 
 		TreeSet<CpConfiguracaoCache> lista = null;
 		if (cpConfiguracaoFiltro.getCpTipoConfiguracao() != null)
-			lista = getListaPorTipo(cpConfiguracaoFiltro.getCpTipoConfiguracao().getIdTpConfiguracao());
+			lista = getListaPorTipo(CpTipoDeConfiguracao.getById(cpConfiguracaoFiltro.getCpTipoConfiguracao().getIdTpConfiguracao()));
 		if (lista == null)
 			return null;
 
@@ -431,7 +431,7 @@ public class CpConfiguracaoBL {
 			}
 		}
 
-		TreeSet<CpConfiguracaoCache> lista = getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_PERTENCER);
+		TreeSet<CpConfiguracaoCache> lista = getListaPorTipo(CpTipoDeConfiguracao.PERTENCER);
 
 		SortedSet<CpPerfil> perfis = new TreeSet<CpPerfil>();
 		if (lista != null && pessoa != null) {
@@ -799,7 +799,7 @@ public class CpConfiguracaoBL {
 		ConfiguracaoGrupoFabrica fabrica = new ConfiguracaoGrupoFabrica();
 		try {
 			TreeSet<CpConfiguracaoCache> l = Cp.getInstance().getConf()
-					.getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_PERTENCER);
+					.getListaPorTipo(CpTipoDeConfiguracao.PERTENCER);
 			if (l != null) {
 				for (CpConfiguracaoCache cfg : l) {
 					if (cfg.cpGrupo == 0 || cfg.cpGrupo != grp.getIdInicial() || cfg.hisDtFim != null)
@@ -827,7 +827,7 @@ public class CpConfiguracaoBL {
 		try {
 			limparCacheSeNecessario();
 			Set<CpConfiguracaoCache> configs = Cp.getInstance().getConf()
-					.getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO_OUTRA_LOTACAO);
+					.getListaPorTipo(CpTipoDeConfiguracao.UTILIZAR_SERVICO_OUTRA_LOTACAO);
 			for (CpConfiguracaoCache c : configs) {
 				DpPessoa pesAtual = CpDao.getInstance().consultarPorIdInicial(c.dpPessoa);
 				if (c.dpPessoa == pesAtual.getIdInicial()) {
@@ -850,7 +850,7 @@ public class CpConfiguracaoBL {
 		try {
 			limparCacheSeNecessario();
 			Set<CpConfiguracaoCache> configs = Cp.getInstance().getConf()
-					.getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO_OUTRA_LOTACAO);
+					.getListaPorTipo(CpTipoDeConfiguracao.UTILIZAR_SERVICO_OUTRA_LOTACAO);
 			for (CpConfiguracaoCache c : configs) {
 				DpLotacao lotacaoAtual = CpDao.getInstance().consultarPorIdInicial(DpLotacao.class, c.lotacao);
 				if (c.hisDtFim == null && lotacaoAtual.getDataFim() == null && c.dpPessoa == pes.getIdInicial()) {
@@ -869,7 +869,7 @@ public class CpConfiguracaoBL {
 			CpIdentidade identidadeCadastrante) {
 		ModeloDao.iniciarTransacao();
 		try {
-			Set<CpConfiguracaoCache> configs = getListaPorTipo(tpConf.getIdTpConfiguracao());
+			Set<CpConfiguracaoCache> configs = getListaPorTipo(CpTipoDeConfiguracao.getById(tpConf.getIdTpConfiguracao()));
 			for (CpConfiguracaoCache c : configs) {
 				if (c.hisDtFim == null && c.dpPessoa == pes.getIdInicial() && c.lotacao == lot.getIdInicial()) {
 					CpConfiguracao cfg = dao().consultar(c.idConfiguracao, CpConfiguracao.class, false);

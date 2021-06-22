@@ -42,9 +42,11 @@ import javax.persistence.Transient;
 
 import org.hibernate.proxy.HibernateProxy;
 
-import br.gov.jfrj.siga.cp.converter.IEnumWithId;
+import br.gov.jfrj.siga.cp.converter.ITipoDeConfiguracaoConverter;
 import br.gov.jfrj.siga.cp.converter.LongNonNullConverter;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 
 @Entity
 @Table(name = "corporativo.cp_configuracao")
@@ -95,9 +97,9 @@ public class CpConfiguracaoCache {
 	@Column(name = "ID_PESSOA")
 	public long dpPessoa;
 
-	@Convert(converter = LongNonNullConverter.class)
+	@Convert(converter = ITipoDeConfiguracaoConverter.class)
 	@Column(name = "ID_TP_CONFIGURACAO")
-	public long cpTipoConfiguracao;
+	public ITipoDeConfiguracao cpTipoConfiguracao;
 
 	@Convert(converter = LongNonNullConverter.class)
 	@Column(name = "ID_SERVICO")
@@ -194,8 +196,7 @@ public class CpConfiguracaoCache {
 		this.funcaoConfianca = longOrZero(
 				cfg.getFuncaoConfianca() != null ? cfg.getFuncaoConfianca().getIdInicial() : null);
 		this.dpPessoa = longOrZero(cfg.getDpPessoa() != null ? cfg.getDpPessoa().getIdInicial() : null);
-		this.cpTipoConfiguracao = longOrZero(
-				cfg.getCpTipoConfiguracao() != null ? cfg.getCpTipoConfiguracao().getIdTpConfiguracao() : null);
+		this.cpTipoConfiguracao = cfg.getCpTipoConfiguracao() != null ? CpTipoDeConfiguracao.getById(cfg.getCpTipoConfiguracao().getIdTpConfiguracao()) : null;
 		this.cpServico = longOrZero(cfg.getCpServico() != null ? cfg.getCpServico().getId() : null);
 		this.cpIdentidade = longOrZero(cfg.getCpIdentidade() != null ? cfg.getCpIdentidade().getIdInicial() : null);
 		this.cpTipoLotacao = longOrZero(cfg.getCpGrupo() != null ? cfg.getCpGrupo().getIdInicial() : null);

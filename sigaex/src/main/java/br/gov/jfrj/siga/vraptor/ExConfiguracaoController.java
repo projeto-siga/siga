@@ -34,6 +34,7 @@ import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
@@ -80,7 +81,7 @@ public class ExConfiguracaoController extends ExController {
 		assertAcesso(VERIFICADOR_ACESSO);
 		if (idTpConfiguracao == null)
 			idTpConfiguracao = ExTipoDeConfiguracao.AUTUAVEL.getId();
-		ExTipoDeConfiguracao tpconf = ExTipoDeConfiguracao.getById(idTpConfiguracao);
+		ITipoDeConfiguracao tpconf = ExTipoDeConfiguracao.getById(idTpConfiguracao);
 
 		result.include("tipoDeConfiguracao", tpconf);
 		result.include("listaTiposConfiguracao", getListaTiposConfiguracao());
@@ -127,7 +128,7 @@ public class ExConfiguracaoController extends ExController {
 
 		Collections.sort(listConfig, new ExConfiguracaoComparator());
 
-		ExTipoDeConfiguracao tpconf = ExTipoDeConfiguracao.getById(idTpConfiguracao);
+		ITipoDeConfiguracao tpconf = ExTipoDeConfiguracao.getById(idTpConfiguracao);
 		CpConfiguracaoHelper.incluirAtributosDeListagem(result, tpconf, (List<CpConfiguracao>) (List) listConfig);
 
 		result.include("idMod", idMod);
@@ -185,7 +186,7 @@ public class ExConfiguracaoController extends ExController {
 		if (idTpConfiguracao == null)
 			throw new RuntimeException("Tipo de configuração deve ser informado");
 
-		ExTipoDeConfiguracao tpconf = ExTipoDeConfiguracao.getById(idTpConfiguracao);
+		ITipoDeConfiguracao tpconf = ExTipoDeConfiguracao.getById(idTpConfiguracao);
 		CpConfiguracaoHelper.incluirAtributosDeEdicao(result, tpconf, config);
 
 		result.include("id", id);
@@ -393,7 +394,7 @@ public class ExConfiguracaoController extends ExController {
 	private Set<ExConfiguracao> gerarPublicadores() {
 		Set<ExConfiguracao> publicadores = new HashSet<ExConfiguracao>();
 		TreeSet<CpConfiguracaoCache> listaConfigs = Ex.getInstance().getConf()
-					.getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+					.getListaPorTipo(ExTipoDeConfiguracao.MOVIMENTAR);
 		if (listaConfigs == null)
 			return new TreeSet<ExConfiguracao>();
 

@@ -6,8 +6,9 @@ import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.enm.CpParamCfg;
-import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
@@ -19,13 +20,13 @@ public enum WfTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.CARGO, CpParamCfg.FUNCAO, CpParamCfg.ORGAO,
 					WfParamCfg.DEFINICAO_DE_PROCEDIMENTO },
 			new Enum[] { WfParamCfg.DEFINICAO_DE_PROCEDIMENTO, CpParamCfg.SITUACAO },
-			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE, CpSituacaoDeConfiguracaoEnum.NAO_PODE }),
+			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE, CpSituacaoDeConfiguracaoEnum.NAO_PODE }, CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 	EDITAR_DEFINICAO_DE_PROCEDIMENTO(CpTipoConfiguracao.TIPO_CONFIG_EDITAR_DEFINICAO_DE_PROCEDIMENTO, "Editar Diagrama",
 			"Selecione órgão, lotação, pessoa, cargo ou função que tem permissão para editar um determinado diagrama, além das indicadas no próprio diagrama.",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.CARGO, CpParamCfg.FUNCAO, CpParamCfg.ORGAO,
 					WfParamCfg.DEFINICAO_DE_PROCEDIMENTO },
 			new Enum[] { CpParamCfg.SITUACAO },
-			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE, CpSituacaoDeConfiguracaoEnum.NAO_PODE });
+			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE, CpSituacaoDeConfiguracaoEnum.NAO_PODE }, CpSituacaoDeConfiguracaoEnum.NAO_PODE, true);
 
 	private final Long id;
 	private final String descr;
@@ -33,15 +34,19 @@ public enum WfTipoDeConfiguracao implements ITipoDeConfiguracao {
 	private final Enum[] params;
 	private final Enum[] obrigatorios;
 	private final CpSituacaoDeConfiguracaoEnum[] situacoes;
+	private final CpSituacaoDeConfiguracaoEnum situacaoDefault;
+	private final boolean editavel;
 
 	WfTipoDeConfiguracao(Long id, String descr, String explicacao, Enum[] params, Enum[] obrigatorios,
-			CpSituacaoDeConfiguracaoEnum[] situacoes) {
+			CpSituacaoDeConfiguracaoEnum[] situacoes, CpSituacaoDeConfiguracaoEnum situacaoDefault, boolean editavel) {
 		this.id = id;
 		this.descr = descr;
 		this.explicacao = explicacao;
 		this.params = params;
 		this.obrigatorios = obrigatorios;
 		this.situacoes = situacoes;
+		this.situacaoDefault = situacaoDefault;
+		this.editavel = editavel;
 	}
 
 	public Long getId() {
@@ -94,11 +99,10 @@ public enum WfTipoDeConfiguracao implements ITipoDeConfiguracao {
 		return false;
 	}
 
-	public static WfTipoDeConfiguracao getById(Long id) {
-		for (WfTipoDeConfiguracao tp : WfTipoDeConfiguracao.values())
-			if (tp.id.equals(id))
-				return tp;
-		return null;
+	public static ITipoDeConfiguracao getById(Long id) {
+		if (id == null)
+			return null;
+		return CpTipoDeConfiguracao.getById(id);
 	}
 
 	public CpSituacaoDeConfiguracaoEnum[] getSituacoes() {
@@ -114,4 +118,13 @@ public enum WfTipoDeConfiguracao implements ITipoDeConfiguracao {
 		return params;
 	}
 
+	@Override
+	public CpSituacaoDeConfiguracaoEnum getSituacaoDefault() {
+		return situacaoDefault;
+	}
+
+	@Override
+	public boolean isEditavel() {
+		return editavel;
+	}
 }

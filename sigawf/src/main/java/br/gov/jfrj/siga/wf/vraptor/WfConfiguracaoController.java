@@ -53,7 +53,7 @@ public class WfConfiguracaoController extends WfController {
 		assertAcesso(VERIFICADOR_ACESSO);
 		if (idTpConfiguracao == null)
 			idTpConfiguracao = WfTipoDeConfiguracao.INSTANCIAR_PROCEDIMENTO.getId();
-		WfTipoDeConfiguracao tpconf = WfTipoDeConfiguracao.getById(idTpConfiguracao);
+		ITipoDeConfiguracao tpconf = WfTipoDeConfiguracao.getById(idTpConfiguracao);
 
 		result.include("tipoDeConfiguracao", tpconf);
 		result.include("listaTiposConfiguracao", getListaTiposConfiguracao());
@@ -89,7 +89,7 @@ public class WfConfiguracaoController extends WfController {
 
 		Collections.sort(listConfig, new WfConfiguracaoComparator());
 
-		WfTipoDeConfiguracao tpconf = WfTipoDeConfiguracao.getById(idTpConfiguracao);
+		ITipoDeConfiguracao tpconf = WfTipoDeConfiguracao.getById(idTpConfiguracao);
 		CpConfiguracaoHelper.incluirAtributosDeListagem(result, tpconf, (List<CpConfiguracao>) (List) listConfig);
 
 		result.include("configuracao", config);
@@ -131,7 +131,7 @@ public class WfConfiguracaoController extends WfController {
 			idTpConfiguracao = config.getCpTipoConfiguracao().getIdTpConfiguracao();
 		if (idTpConfiguracao == null)
 			throw new RuntimeException("Tipo de configuração deve ser informado");
-		WfTipoDeConfiguracao tpconf = WfTipoDeConfiguracao.getById(idTpConfiguracao);
+		ITipoDeConfiguracao tpconf = WfTipoDeConfiguracao.getById(idTpConfiguracao);
 		CpConfiguracaoHelper.incluirAtributosDeEdicao(result, tpconf, config);
 
 		result.include("id", id);

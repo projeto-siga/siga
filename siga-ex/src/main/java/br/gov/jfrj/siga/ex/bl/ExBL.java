@@ -153,6 +153,7 @@ import br.gov.jfrj.siga.ex.bl.BIE.BoletimInternoBL;
 import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
@@ -788,7 +789,7 @@ public class ExBL extends CpBL {
 			sbHtml.append("</body></html>");
 
 			TreeSet<CpConfiguracaoCache> atendentes = getConf()
-					.getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_ATENDER_PEDIDO_PUBLICACAO);
+					.getListaPorTipo(ExTipoDeConfiguracao.ATENDER_PEDIDO_PUBLICACAO);
 
 			ArrayList<String> emailsAtendentes = new ArrayList<String>();
 			Date hoje = new Date();
@@ -3628,7 +3629,7 @@ public class ExBL extends CpBL {
 		Date dt = dao().consultarDataEHoraDoServidor();
 		TreeSet<ExConfiguracao> lista = null;
 		ExConfiguracaoBL confBL = Ex.getInstance().getConf();
-		lista = (TreeSet) confBL.getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_DEFINICAO_AUTOMATICA_DE_PAPEL);
+		lista = (TreeSet) confBL.getListaPorTipo(ExTipoDeConfiguracao.DEFINICAO_AUTOMATICA_DE_PAPEL);
 		if (lista != null) {
 			CpConfiguracao confFiltro = new CpConfiguracao();
 			confFiltro.setDpPessoa(doc.getTitular());

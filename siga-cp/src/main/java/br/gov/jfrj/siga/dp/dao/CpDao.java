@@ -70,6 +70,7 @@ import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.dp.CpAplicacaoFeriado;
 import br.gov.jfrj.siga.dp.CpFeriado;
@@ -1870,7 +1871,8 @@ public class CpDao extends ModeloDao {
 		if (desde != null) {
 			Predicate confsAtivas = cb().greaterThan(c.<Date>get("hisDtIni"), desde);
 			Predicate confsInativas = cb().greaterThan(c.<Date>get("hisDtFim"), desde);
-			q.where(cb().or(confsAtivas, confsInativas));
+			Predicate tipos = cb().in(c.get("cpTipoConfiguracao")).in(CpTipoDeConfiguracao.getValoresMapeados());
+			q.where(cb().and(tipos, cb().or(confsAtivas, confsInativas)));
 		}
 		return em().createQuery(q).getResultList();
 	}
@@ -1915,6 +1917,7 @@ public class CpDao extends ModeloDao {
 	
 	public List<CpConfiguracaoCache> consultarCacheDeConfiguracoesAtivas() {
 		Query query = em().createNamedQuery("consultarCacheDeConfiguracoesAtivas");
+		query.setParameter("tipos", CpTipoDeConfiguracao.getValoresMapeados());
 		return query.getResultList();
 	}
 	

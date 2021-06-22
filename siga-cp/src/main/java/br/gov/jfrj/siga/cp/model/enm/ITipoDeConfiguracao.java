@@ -8,12 +8,17 @@ public interface ITipoDeConfiguracao {
 
 	String getExplicacao();
 
+	boolean isEditavel();
+	
+	CpSituacaoDeConfiguracaoEnum getSituacaoDefault();
+	
 	CpSituacaoDeConfiguracaoEnum[] getSituacoes();
 
 	Enum[] getParams();
 
 	Enum[] getObrigatorios();
 
+	
 	default public boolean ativo(String param) {
 		if (obrigatorio(param))
 			return true;

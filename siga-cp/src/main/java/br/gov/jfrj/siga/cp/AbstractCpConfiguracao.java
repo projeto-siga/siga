@@ -86,7 +86,7 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 		@NamedQuery(name = "consultarCpConfiguracoesAtivas", query = " from "
 				+ "CpConfiguracao cpcfg where hisDtFim is null"),
 		@NamedQuery(name = "consultarCacheDeConfiguracoesAtivas", query = " from "
-				+ "CpConfiguracaoCache cpcfg where hisDtFim is null")})
+				+ "CpConfiguracaoCache cpcfg where cpTipoConfiguracao in :tipos and hisDtFim is null")})
 public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 		implements Serializable, CpConvertableEntity {
 

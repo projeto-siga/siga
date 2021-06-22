@@ -1870,7 +1870,9 @@ public class ExDao extends CpDao {
 		q.select(c);
 		List<Predicate> whereList = new LinkedList<Predicate>();
 		if(flt.getSigla() != null) {
-			whereList.add(cb().like(c.get("nmMod").as(String.class), "%" + flt.getSigla() + "%"));
+			Expression<String> path = c.get("nmMod");
+			path = cb().upper(path);
+			whereList.add(cb().like(path, "%" + flt.getSigla() + "%"));
 			whereList.add(cb().equal(c.get("hisAtivo"), 1));
 		}
 		Predicate[] whereArray = new Predicate[whereList.size()];
@@ -2069,13 +2071,13 @@ public class ExDao extends CpDao {
 						+ "mob, "
 						+ (trazerComposto ? " frm.isComposto, " : "0, ")
 						+ "(select movUltima from ExMovimentacao movUltima "
-						+ " where movUltima.idMov in ("
-						+ " 	select max(movUltima1.idMov) from ExMovimentacao movUltima1"
+						+ " where movUltima.dtTimestamp = ("
+						+ " 	select max(movUltima1.dtTimestamp) from ExMovimentacao movUltima1"
 						+ " 		where movUltima1.exMobil.idMobil = mob.idMobil " 
 						+ " 		and movUltima1.exMovimentacaoCanceladora.idMov = null ) ), "
 						+ "(select movTramite from ExMovimentacao movTramite"
-						+ " where movTramite.idMov in ("
-						+ " 	select max(movTramite1.idMov) from ExMovimentacao movTramite1"
+						+ " where movTramite.dtTimestamp = ("
+						+ " 	select max(movTramite1.dtTimestamp) from ExMovimentacao movTramite1"
 						+ " 		where movTramite1.exTipoMovimentacao.idTpMov = 3 "
 						+ "			and movTramite1.exMobil.idMobil = mob.idMobil " 
 						+ " 		and movTramite1.exMovimentacaoCanceladora.idMov = null ) ), "

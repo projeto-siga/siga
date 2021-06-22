@@ -1,5 +1,5 @@
 <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" data-toggle="dropdown" href="${linkTo[AppController].estatisticaGeral}">Conhecimentos</a>
-	<<ul class="dropdown-menu">
+	<ul class="dropdown-menu">
 		<li><a class="dropdown-item" href="${linkTo[AppController].novo}">Novo</a>
 		</li>
 		<li><a class="dropdown-item" href="${linkTo[AppController].buscar}">Buscar por texto</a>

@@ -2360,7 +2360,9 @@ public class ExBL extends CpBL {
 
 	public void cancelarDocumento(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExDocumento doc)
 			throws Exception {
-
+		if (Prop.isGovSP() && doc.getMobilDefaultParaReceberJuntada().temDocumentosJuntados()) {
+			throw new RegraNegocioException("Não é possível efetuar o cancelamento, pois o documento possui documento(s) juntado(s)");
+		}
 		try {
 			iniciarAlteracao();
 			cancelarMovimentacoes(cadastrante, lotaCadastrante, doc);

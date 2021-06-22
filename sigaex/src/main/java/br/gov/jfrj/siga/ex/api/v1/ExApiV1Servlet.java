@@ -238,6 +238,8 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 
 		addPublicProperty("modelos.cabecalho.titulo", "PODER JUDICIÁRIO");
 		addPublicProperty("modelos.cabecalho.subtitulo", null);
+		
+		addPublicProperty("arquivosAuxiliares.extensoes.excecao", ".bat,.exe,.sh,.dll,.pdf");
 
 		// Siga-Le
 		addPublicProperty("smtp.sugestao.destinatario", getProp("/siga.smtp.usuario.remetente"));

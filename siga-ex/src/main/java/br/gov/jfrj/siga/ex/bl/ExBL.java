@@ -3305,6 +3305,15 @@ public class ExBL extends CpBL {
 			return true;
 		}
 	}
+	
+	public static boolean exibirQuemTemAcessoDocumentosLimitados(ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular) {
+		try {
+			if (Ex.getInstance().getComp().podeAcessarDocumento(titular, lotaTitular, doc.getMobilGeral())) { return true; }
+			return Ex.getInstance().getComp().podeExibirQuemTemAcessoAoDocumento(titular, lotaTitular, doc.getExModelo());
+		} catch (Exception e) {
+			return true;
+		}
+	}
 
 	public boolean mostraDescricaoConfidencialDoDocumento(ExDocumento doc, DpLotacao lotaTitular) {
 		if (doc == null)

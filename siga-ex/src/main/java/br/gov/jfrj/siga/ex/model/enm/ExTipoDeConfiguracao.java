@@ -421,6 +421,13 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new Enum[] { CpParamCfg.SITUACAO },
 			new SituacaoDeConfiguracao[] { SituacaoDeConfiguracao.PODE, SituacaoDeConfiguracao.NAO_PODE }),
 	//
+	EXIBIR_QUEM_TEM_ACESSO_DOCUMENTO_LIMITADO(CpTipoConfiguracao.TIPO_CONFIG_EXIBIR_QUEM_TEM_ACESSO_DOCUMENTO,
+			"Exibir quem tem acesso a documentos limitados?", "Tem como objetivo não exibir as informações das pessoas e lotações que tem acesso a um documento limitado",
+			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO,
+					ExParamCfg.TIPO_FORMA_DOCUMENTO, ExParamCfg.FORMA_DOCUMENTO, ExParamCfg.MODELO },
+			new Enum[] { CpParamCfg.SITUACAO },
+			new SituacaoDeConfiguracao[] { SituacaoDeConfiguracao.PODE, SituacaoDeConfiguracao.NAO_PODE }),
+	//
 	TRAMITAR_PARA_LOTACAO_SEM_USUARIOS_ATIVOS(CpTipoConfiguracao.TIPO_CONFIG_TRAMITAR_PARA_LOTACAO_SEM_USUARIOS_ATIVOS,
 			"Tramitar para Lotação sem Usuários Ativos?", "",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,

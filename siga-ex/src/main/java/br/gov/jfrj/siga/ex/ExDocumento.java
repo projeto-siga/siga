@@ -448,8 +448,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		// Verifica se todos os subscritores assinaram o documento
 		try {
 			for (DpPessoa subscritor : getSubscritorECosignatarios()) {
-				if (isEletronico() && isFinalizado()
-						&& !isAssinadoPelaPessoaComTokenOuSenha(subscritor)) {
+				if (isEletronico() && isFinalizado()) {
 					String comentarioInicio = "<!-- INICIO SUBSCRITOR "
 							+ subscritor.getId() + " -->";
 					String comentarioFim = "<!-- FIM SUBSCRITOR "
@@ -463,10 +462,16 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 								sHtml.indexOf(comentarioFim));
 
 						StringBuilder sb = new StringBuilder();
-						sb.append("<span style=\"color:#CD3700;\">");
-						sb.append(blocoSubscritor);
-						sb.append("</span>");
-
+						
+						if (!isAssinadoPelaPessoaComTokenOuSenha(subscritor)) {
+							sb.append("<span style=\"color:#CD3700;\">");
+							sb.append(blocoSubscritor);
+							sb.append("</span>");
+						} else {
+							sb.append("<span>- assinado eletronicamente -<br/>");
+							sb.append(blocoSubscritor);
+							sb.append("</span>");
+						}
 						sHtml = sHtml.replace(blocoSubscritor, sb).toString();
 					}
 				}
@@ -2946,4 +2951,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return l;
 	}
 
+	public boolean isDescricaoEspecieDespacho() {
+		return this.getExFormaDocumento()
+				.getDescricao().contains("Despacho");
+	}
+	
 }

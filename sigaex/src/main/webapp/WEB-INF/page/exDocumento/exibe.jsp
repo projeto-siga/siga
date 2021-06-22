@@ -1479,7 +1479,7 @@
 			<siga:siga-modal id="modalDeConfirmacaoArqCorrente" exibirRodape="true" 
 					tituloADireita="<i class='fas fa-exclamation-circle' style='font-size: 1.5em; color: #ffc107;'></i> <label style='font-size: 1.1em;vertical-align: middle;'><b>Atenção</b></label>"
 					descricaoBotaoFechaModalDoRodape="Não" descricaoBotaoDeAcao="Sim" 
-					linkBotaoDeAcao="${linkTo[ExMovimentacaoController].aArquivarCorrenteGravar()}?sigla=${sigla}">
+					linkBotaoDeAcao="${linkTo[ExMovimentacaoController].aArquivarCorrenteGravar()}?sigla=${mob.sigla}">
 				<div class="modal-body">
 		       		 Verifique se há necessidade de incluir o Termo de Encerramento para este documento. Deseja continuar com o arquivamento?
 		     	</div>	     	

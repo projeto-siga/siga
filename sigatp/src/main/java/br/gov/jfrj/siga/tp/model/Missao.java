@@ -11,7 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -147,7 +146,7 @@ public class Missao extends TpModel implements ConvertableEntity, Comparable<Mis
 
 	@NotNull
 	@ManyToMany
-	@JoinTable(name = "missao_requisTransporte", joinColumns = @JoinColumn(name = "missao_Id"), inverseJoinColumns = @JoinColumn(name = "requisicaoTransporte_Id"))
+	@JoinTable(name = "sigatp.missao_requisTransporte", joinColumns = @JoinColumn(name = "missao_Id"), inverseJoinColumns = @JoinColumn(name = "requisicaoTransporte_Id"))
 	private List<RequisicaoTransporte> requisicoesTransporte;
 
 	@NotNull

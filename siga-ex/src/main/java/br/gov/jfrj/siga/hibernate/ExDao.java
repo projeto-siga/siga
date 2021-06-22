@@ -719,13 +719,16 @@ public class ExDao extends CpDao {
 		}
 		long tempoTotal = System.nanoTime() - tempoIni;
 		
-	
-		Iterator<Object[]> listaObjetos = l2.iterator();
-		while (listaObjetos.hasNext()) {
-			   Object[] objeto = listaObjetos.next(); // must be called before you can call i.remove()
-			   ExDocumento doc = ((ExDocumento) objeto[0]);
-			   if (! ExBL.exibirQuemTemAcessoDocumentosLimitados(doc, titular, lotaTitular))
-			   		listaObjetos.remove();
+		if (Prop.getBool("limita.acesso.documentos.por.configuracao")) {
+		
+			Iterator<Object[]> listaObjetos = l2.iterator();
+			while (listaObjetos.hasNext()) {
+				   Object[] objeto = listaObjetos.next(); // must be called before you can call i.remove()
+				   ExDocumento doc = ((ExDocumento) objeto[0]);
+				   if (! ExBL.exibirQuemTemAcessoDocumentosLimitados(doc, titular, lotaTitular))
+				   		listaObjetos.remove();
+			}
+		
 		}
 
 		// System.out.println("consultarPorFiltroOtimizado: " +

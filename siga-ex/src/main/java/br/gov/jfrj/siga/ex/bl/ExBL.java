@@ -3306,7 +3306,7 @@ public class ExBL extends CpBL {
 	
 	public static boolean exibirQuemTemAcessoDocumentosLimitados(ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular) {
 		try {
-			if (titular.equals(doc.getSubscritor())) { return true; }
+			if (Ex.getInstance().getComp().podeAcessarDocumento(titular, lotaTitular, doc.getMobilGeral())) { return true; }
 			return Ex.getInstance().getComp().podeExibirQuemTemAcessoAoDocumento(titular, lotaTitular, doc.getExModelo());
 		} catch (Exception e) {
 			return true;

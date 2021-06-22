@@ -148,6 +148,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 	}
 
 	private void defineProperties() {
+		addPublicProperty("limita.acesso.documentos.por.configuracao", "true");
 		addPublicProperty("carimbo.sistema", "siga");
 		addPublicProperty("carimbo.url", null);
 		addPublicProperty("carimbo.public.key", null);

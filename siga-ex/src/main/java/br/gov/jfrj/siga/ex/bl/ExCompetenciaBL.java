@@ -215,6 +215,23 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return ac.podeAcessar(doc,titular,lotaTitular);
 //		return true;
 	}
+	
+	/**
+	 * Retorna se é possível exibir quem tem acesso a um documento limitado.
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mod
+	 * @return
+	 */
+	public boolean podeExibirQuemTemAcessoAoDocumento(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExModelo mod) {
+
+		return getConf().podePorConfiguracao(null, null, null, null, mod.getExFormaDocumento(),
+				mod, null, null, null, titular.getCargo(), titular.getOrgaoUsuario(),
+				titular.getFuncaoConfianca(), lotaTitular, titular, null, null, 
+				CpTipoConfiguracao.TIPO_CONFIG_EXIBIR_QUEM_TEM_ACESSO_DOCUMENTO,null,lotaTitular,null,null,null,null);
+	}
 
 
 	/**

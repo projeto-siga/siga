@@ -33,6 +33,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -90,6 +91,9 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.ExBL;
+import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
 import br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
@@ -714,8 +718,21 @@ public class ExDao extends CpDao {
 			l2 = query.getResultList();
 		}
 		long tempoTotal = System.nanoTime() - tempoIni;
+		
+		if (Prop.getBool("limita.acesso.documentos.por.configuracao")) {
+		
+			Iterator<Object[]> listaObjetos = l2.iterator();
+			while (listaObjetos.hasNext()) {
+				   Object[] objeto = listaObjetos.next(); // must be called before you can call i.remove()
+				   ExDocumento doc = ((ExDocumento) objeto[0]);
+				   if (! ExBL.exibirQuemTemAcessoDocumentosLimitados(doc, titular, lotaTitular))
+				   		listaObjetos.remove();
+			}
+		
+		}
+
 		// System.out.println("consultarPorFiltroOtimizado: " +
-		// tempoTotal/1000000 + " ms -> " + query + ", resultado: " + l);
+		// tempoTotal/1000000 + " ms -> " + query + ", resultado: " + l)RExRR;
 		return l2;
 	}
 
@@ -2284,6 +2301,17 @@ public class ExDao extends CpDao {
 		// System.out.println("consultarPorFiltroOtimizado: " + tempoTotal
 		// 			/ 1000000 + " ms -> " + query + ", resultado: " + l);
 		return l;
+	}
+
+	public ExModelo consultarModeloPeloId(ExModelo exModelo) {
+		final Query query = em().createNamedQuery("consultarModeloPeloId");
+
+		query.setParameter("idMod", exModelo.getIdMod());
+		try {
+			return (ExModelo) query.getSingleResult();
+		} catch (NoResultException ne) {
+			return null;
+		}
 	}
 	
 

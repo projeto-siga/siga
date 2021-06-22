@@ -2360,7 +2360,9 @@ public class ExBL extends CpBL {
 
 	public void cancelarDocumento(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExDocumento doc)
 			throws Exception {
-
+		if (Prop.isGovSP() && doc.getMobilDefaultParaReceberJuntada().temDocumentosJuntados()) {
+			throw new RegraNegocioException("Não é possível efetuar o cancelamento, pois o documento possui documento(s) juntado(s)");
+		}
 		try {
 			iniciarAlteracao();
 			cancelarMovimentacoes(cadastrante, lotaCadastrante, doc);
@@ -7746,17 +7748,17 @@ public class ExBL extends CpBL {
 		if (personalizacaoAssinatura[0] != null && !"".equals(personalizacaoAssinatura[0])) {
 			funcaoCargoPersonalizadoAssinatura.append(personalizacaoAssinatura[0]);
 		} else {
-			funcaoCargoPersonalizadoAssinatura.append(movimentacao.getCadastrante().getFuncaoString());
+			funcaoCargoPersonalizadoAssinatura.append(movimentacao.getTitular().getFuncaoString());
 		}
 		funcaoCargoPersonalizadoAssinatura.append(" / ");
 		if (personalizacaoAssinatura.length > 1) {
 			if (personalizacaoAssinatura[1] != null && !"".equals(personalizacaoAssinatura[1])) {
 			 funcaoCargoPersonalizadoAssinatura.append(personalizacaoAssinatura[1]);
 			} else {
-				funcaoCargoPersonalizadoAssinatura.append(movimentacao.getCadastrante().getLotacao().getSigla());
+				funcaoCargoPersonalizadoAssinatura.append(movimentacao.getTitular().getLotacao().getSigla());
 			}
 		} else {
-			funcaoCargoPersonalizadoAssinatura.append(movimentacao.getCadastrante().getLotacao().getSigla());
+			funcaoCargoPersonalizadoAssinatura.append(movimentacao.getTitular().getLotacao().getSigla());
 		}
 		return funcaoCargoPersonalizadoAssinatura.toString();
 

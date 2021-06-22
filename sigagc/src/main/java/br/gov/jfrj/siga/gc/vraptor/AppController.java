@@ -1145,6 +1145,7 @@ public class AppController extends GcController {
 					false, false);
 	}
 
+	@Transacional
 	@Path("/app/remover/{sigla}")
 	public void remover(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
@@ -1481,11 +1482,14 @@ public class AppController extends GcController {
 				false, false);
 	}
 
+	@Transacional
 	@Path("/app/cancelar/{sigla}")
 	public void cancelar(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		bl.cancelar(informacao, getIdentidadeCadastrante(), getTitular(),
 				getLotaTitular());
+		bl.atualizarInformacaoPorMovimentacoes(informacao);
+		bl.atualizarMarcas(informacao);
 		result.redirectTo(this).exibir(informacao.getSiglaCompacta(), null,
 				false, false);
 	}

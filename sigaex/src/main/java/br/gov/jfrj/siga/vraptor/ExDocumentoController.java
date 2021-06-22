@@ -2020,11 +2020,14 @@ public class ExDocumentoController extends ExController {
 		exDocumentoDto.setSigla(sigla);
 		buscarDocumento(false, exDocumentoDto);
 		
-		Ex.getInstance()
-		.getBL()
-		.cancelarDocumento(exDocumentoDto.getMob().doc().getTitular(),
-				exDocumentoDto.getMob().doc().getLotaTitular(), exDocumentoDto.getMob().doc());		
-		
+		try {
+			Ex.getInstance()
+			.getBL()
+			.cancelarDocumento(exDocumentoDto.getMob().doc().getTitular(),
+					exDocumentoDto.getMob().doc().getLotaTitular(), exDocumentoDto.getMob().doc());		
+		} catch (RegraNegocioException re) {
+			result.include(SigaModal.ALERTA, SigaModal.mensagem(re.getMessage()));
+		}
 		result.include("sigla", sigla);
 		result.include("id", exDocumentoDto.getId());
 		result.include("mob", exDocumentoDto.getMob());
@@ -2648,21 +2651,28 @@ public class ExDocumentoController extends ExController {
 		if (exDocumentoDTO.getMobilPaiSel().buscarPorSigla())
 			mobPai = exDocumentoDTO.getMobilPaiSel().buscarObjeto();
 		
-		boolean isEditandoAnexo = false;
-		if (exDocumentoDTO.getMob().getExDocumento().getExMobilPai() != null 
-				|| exDocumentoDTO.isCriandoAnexo()) {
-			isEditandoAnexo = true;
-			if(mobPai == null) {
+		boolean isEditandoAnexo = exDocumentoDTO.isCriandoAnexo();
+		boolean isCriandoSubprocesso = exDocumentoDTO.getCriandoSubprocesso();
+		
+		if (exDocumentoDTO.getDoc().getExMobilPai() != null) {
+				if (exDocumentoDTO.getDoc().getExMobilPai().isGeral()) {
+					isCriandoSubprocesso = true;
+					exDocumentoDTO.setCriandoSubprocesso(true);
+				} else {
+					isEditandoAnexo = true;
+					exDocumentoDTO.setCriandoAnexo(true);
+				}	
+		}	
+		if(mobPai == null) {
 	            mobPai = exDocumentoDTO.getDoc().getExMobilPai();   
-	        }
-			exDocumentoDTO.setCriandoAnexo(true);
-		}
+
+	    }
         
 		exDocumentoDTO.setModelos(Ex
 				.getInstance()
 				.getBL()
 				.obterListaModelos(tipo, null, isEditandoAnexo,
-						exDocumentoDTO.getCriandoSubprocesso(), mobPai,
+						isCriandoSubprocesso, mobPai,
 						headerValue, true, getTitular(), getLotaTitular(),
 						exDocumentoDTO.getAutuando()));
 

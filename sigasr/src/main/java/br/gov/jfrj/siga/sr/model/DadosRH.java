@@ -12,7 +12,6 @@ import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
 @Table(name = "dados_rh", schema = "sigarh")
-@IdClass(DadosRHId.class)
 public class DadosRH  extends Objeto {
     
     public static final ActiveRecord<DadosRH> AR = new ActiveRecord<>(DadosRH.class);

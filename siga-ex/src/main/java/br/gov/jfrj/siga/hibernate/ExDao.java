@@ -681,28 +681,39 @@ public class ExDao extends CpDao {
 		IMontadorQuery montadorQuery = carregarPlugin();
 
 		long tempoIni = System.nanoTime();
-		Query query = em().createQuery(
-				montadorQuery.montaQueryConsultaporFiltro(flt, false));
-		preencherParametros(flt, query);
-
-		if (offset > 0) {
-			query.setFirstResult(offset);
-		}
-		if (itemPagina > 0) {
-			query.setMaxResults(itemPagina);
-		}
-		List l = query.getResultList();
-		List<Object[]> l2 = new ArrayList<Object[]>(); 
-		if (l != null && l.size() > 0) {
+		List<Object[]> l2 = new ArrayList<Object[]>();
+		Query query = null;
+		
+		if(itemPagina > 0) {
+			query = em().createQuery(
+					montadorQuery.montaQueryConsultaporFiltro(flt, false));
+			preencherParametros(flt, query);
+	
+			if (offset > 0) {
+				query.setFirstResult(offset);
+			}
+			if (itemPagina > 0) {
+				query.setMaxResults(itemPagina);
+			}
+			List l = query.getResultList();
+			 
+			if (l != null && l.size() > 0) {
+				query = em().createQuery("select doc, mob, label from ExMarca label"
+						+ " inner join label.exMobil mob inner join mob.exDocumento doc"
+						+ " where label.idMarca in (:listIdMarca)");
+				query.setParameter("listIdMarca", l);
+				l2 = query.getResultList();
+				Collections.sort(l2, Comparator.comparing( item -> l.indexOf(
+					    		Long.valueOf (((ExMarca) (item[2])).getIdMarca()))));
+			}
+		} else { //exportar excel
+			flt.setOrdem(-1);
 			query = em().createQuery("select doc, mob, label from ExMarca label"
 					+ " inner join label.exMobil mob inner join mob.exDocumento doc"
-					+ " where label.idMarca in (:listIdMarca)");
-			query.setParameter("listIdMarca", l);
+					+ " where label.idMarca in ("+montadorQuery.montaQueryConsultaporFiltro(flt, false)+")");
+			preencherParametros(flt, query);
 			l2 = query.getResultList();
-			Collections.sort(l2, Comparator.comparing( item -> l.indexOf(
-				    		Long.valueOf (((ExMarca) (item[2])).getIdMarca()))));
 		}
-		
 		long tempoTotal = System.nanoTime() - tempoIni;
 		// System.out.println("consultarPorFiltroOtimizado: " +
 		// tempoTotal/1000000 + " ms -> " + query + ", resultado: " + l);
@@ -849,6 +860,16 @@ public class ExDao extends CpDao {
 		CriteriaQuery<ExFormaDocumento> q = cb().createQuery(ExFormaDocumento.class);
 		Root<ExFormaDocumento> c = q.from(ExFormaDocumento.class);
 		q.select(c);
+		q.orderBy(cb().asc(c.get("siglaFormaDoc")));
+		return em().createQuery(q).getResultList();
+	}
+
+	public List<ExFormaDocumento> listarPorEspecieOrdenarPorSigla(ExTipoFormaDoc tpFormaDoc) {
+		CriteriaQuery<ExFormaDocumento> q = cb().createQuery(ExFormaDocumento.class);
+		Root<ExFormaDocumento> c = q.from(ExFormaDocumento.class);
+		q.select(c);
+		if (tpFormaDoc != null)
+			q.where(cb().equal(c.get("exTipoFormaDoc"), tpFormaDoc));
 		q.orderBy(cb().asc(c.get("siglaFormaDoc")));
 		return em().createQuery(q).getResultList();
 	}

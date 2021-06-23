@@ -18,16 +18,22 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp;
 
+import java.io.Serializable;
+
 import javax.persistence.Cacheable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Immutable;
 
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.model.Objeto;
 
 @SuppressWarnings("serial")
 @Entity
@@ -35,7 +41,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 @Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
-public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
+public class CpTipoConfiguracao extends Objeto implements Serializable {
 	public static final ActiveRecord<CpTipoConfiguracao> AR = new ActiveRecord<CpTipoConfiguracao>(
 			CpTipoConfiguracao.class);
 
@@ -134,33 +140,33 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 	public static final long TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO = 39;
 
 	public static final long TIPO_CONFIG_DEFINICAO_AUTOMATICA_DE_PAPEL = 40;
-	
+
 	public static final long TIPO_CONFIG_INCLUIR_DOCUMENTO = 41;
 
 	public static final long TIPO_CONFIG_CRIAR_COMO_NOVO = 42;
 
 	public static final long TIPO_CONFIG_JUNTADA_AUTOMATICA = 43;
-		
+
 	public static final long TIPO_CONFIG_DELEGAR_VISUALIZACAO = 44;
 
 	public static final long TIPO_CONFIG_INCLUIR_EM_AVULSO = 45;
-	
+
 	public static final long TIPO_CONFIG_COSIGNATARIO_ASSINAR_ANTES_SUBSCRITOR = 46;
 
 	public static final long TIPO_CONFIG_FINALIZAR_AUTOMATICAMENTE_CAPTURADOS = 47;
-	
+
 	public static final long TIPO_CONFIG_TROCAR_PDF_CAPTURADOS = 48;
 
 	public static final long TIPO_CONFIG_TMP_PARA_LOTACAO = 49;
 
 	public static final long TIPO_CONFIG_RESTRINGIR_ACESSO_APOS_RECEBER = 50;
-  
+
 	public static final long TIPO_CONFIG_AUTORIZAR_MOVIMENTACAO_POR_WS = 51;
 
 	public static final long TIPO_CONFIG_TRAMITAR_SEM_CAPTURADO = 52;
-	
+
 	public static final long TIPO_CONFIG_CRIAR_NOVO_EXTERNO = 53;
-	
+
 	public static final long TIPO_CONFIG_TRAMITAR_PARA_LOTACAO_SEM_USUARIOS_ATIVOS = 54;
 
 	// SIGA-WF
@@ -170,7 +176,7 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 	public static final long TIPO_CONFIG_DESIGNAR_TAREFA = 101;
 
 	public static final long TIPO_CONFIG_EDITAR_DEFINICAO_DE_PROCEDIMENTO = 102;
-	
+
 	// SIGA-GI
 
 	public static final long TIPO_CONFIG_UTILIZAR_SERVICO = 200;
@@ -181,15 +187,75 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 
 	public static final long TIPO_CONFIG_UTILIZAR_SERVICO_OUTRA_LOTACAO = 205;
 	public static final long TIPO_CONFIG_GERENCIAR_GRUPO = 206;
-	
-	//207 - Excluir Anotação Criada
-	
+
+	// 207 - Excluir Anotação Criada
+
 	public static final long TIPO_CONFIG_SEGUNDO_FATOR_PIN = 208;
+
+	@Id
+	@Column(name = "ID_TP_CONFIGURACAO", unique = true, nullable = false)
+	private Long idTpConfiguracao;
+
+	@Column(name = "DSC_TP_CONFIGURACAO")
+	private String dscTpConfiguracao;
+
+	@Column(name = "ID_SIT_CONFIGURACAO")
+	private CpSituacaoDeConfiguracaoEnum situacaoDefault;
+
+//	@OneToMany(fetch = FetchType.LAZY, mappedBy = "cpTipoConfiguracao")
+	// private Set<CpSituacaoConfiguracao> cpSituacoesConfiguracaoSet;
+
+	/**
+	 * @return the cpSituacoesConfiguracaoSet
+	 */
+	/*
+	 * public Set<CpSituacaoConfiguracao> getCpSituacoesConfiguracaoSet() { return
+	 * cpSituacoesConfiguracaoSet; }
+	 * 
+	 * /**
+	 * 
+	 * @param cpSituacoesConfiguracaoSet the cpSituacoesConfiguracaoSet to set
+	 */
+	/*
+	 * public void setCpSituacoesConfiguracaoSet( Set<CpSituacaoConfiguracao>
+	 * cpSituacoesConfiguracaoSet) { this.cpSituacoesConfiguracaoSet =
+	 * cpSituacoesConfiguracaoSet; }
+	 */
+
+	public Long getIdTpConfiguracao() {
+		return idTpConfiguracao;
+	}
+
+	public void setIdTpConfiguracao(Long idTipoConfiguracao) {
+		this.idTpConfiguracao = idTipoConfiguracao;
+	}
+
+	public String getDscTpConfiguracao() {
+		return dscTpConfiguracao;
+	}
+
+	public void setDscTpConfiguracao(String dscTipoConfiguracao) {
+		this.dscTpConfiguracao = dscTipoConfiguracao;
+	}
+
+	/**
+	 * @return the situacaoDefault
+	 */
+	public CpSituacaoDeConfiguracaoEnum getSituacaoDefault() {
+		return situacaoDefault;
+	}
+
+	/**
+	 * @param situacaoDefault the situacaoDefault to set
+	 */
+	public void setSituacaoDefault(CpSituacaoDeConfiguracaoEnum situacaoDefault) {
+		this.situacaoDefault = situacaoDefault;
+	}
 
 	public CpTipoConfiguracao() {
 	}
-	
-	public CpTipoConfiguracaoDicionario getDicionario() {		
+
+	public CpTipoConfiguracaoDicionario getDicionario() {
 		return CpTipoConfiguracaoDicionario.obterDicionario(getIdTpConfiguracao());
 	}
 }

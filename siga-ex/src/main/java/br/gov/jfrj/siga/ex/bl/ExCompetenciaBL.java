@@ -29,12 +29,12 @@ import java.util.Set;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpComplexo;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpCompetenciaBL;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
@@ -727,8 +727,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (cfg != null) {
 			situacao = cfg.situacao;
 		} else {
-			situacao = CpSituacaoDeConfiguracaoEnum.getById(CpDao.getInstance().consultar(tipoConfig, CpTipoConfiguracao.class, false).getSituacaoDefault()
-					.getIdSitConfiguracao().intValue());
+			situacao = CpTipoDeConfiguracao.getById(tipoConfig).getSituacaoDefault();
 		}
 
 		if (situacao != null && situacao == CpSituacaoDeConfiguracaoEnum.PODE)

@@ -267,7 +267,7 @@ public class CpConfiguracaoBL {
 	protected void evitarLazy(List<CpConfiguracao> provResults) {
 		for (CpConfiguracao cfg : provResults) {
 			if (cfg.getCpSituacaoConfiguracao() != null) {
-				cfg.getCpSituacaoConfiguracao().getDscSitConfiguracao();
+				cfg.getCpSituacaoConfiguracao().getDescr();
 			}
 			if (cfg.getOrgaoUsuario() != null)
 				cfg.getOrgaoUsuario().getDescricao();
@@ -498,7 +498,7 @@ public class CpConfiguracaoBL {
 			return cfg.situacao;
 		}
 		
-		return CpSituacaoDeConfiguracaoEnum.getById(cpConfiguracaoFiltro.getCpTipoConfiguracao().getSituacaoDefault().getIdSitConfiguracao().intValue());
+		return cpConfiguracaoFiltro.getCpTipoConfiguracao().getSituacaoDefault();
 	}
 
 	/**
@@ -643,7 +643,7 @@ public class CpConfiguracaoBL {
 		if (cfg != null) {
 			situacao = cfg.situacao;
 		} else {
-			situacao = CpSituacaoDeConfiguracaoEnum.getById(cfgFiltro.getCpTipoConfiguracao().getSituacaoDefault().getIdSitConfiguracao().intValue());
+			situacao = cfgFiltro.getCpTipoConfiguracao().getSituacaoDefault();
 		}
 
 		if (situacao != null && (situacao == CpSituacaoDeConfiguracaoEnum.PODE

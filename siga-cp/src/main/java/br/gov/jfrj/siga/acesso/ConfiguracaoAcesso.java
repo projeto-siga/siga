@@ -28,9 +28,9 @@ import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -50,7 +50,7 @@ public class ConfiguracaoAcesso implements Comparable {
 	private CpPerfil perfil;
 	private DpPessoa pessoa;
 	private CpServico servico;
-	private CpSituacaoConfiguracao situacao;
+	private CpSituacaoDeConfiguracaoEnum situacao;
 	private Date inicio;
 	private DpPessoa cadastrante;
 	private SortedSet<ConfiguracaoAcesso> subitens = new TreeSet<ConfiguracaoAcesso>();
@@ -132,7 +132,7 @@ public class ConfiguracaoAcesso implements Comparable {
 		return servico;
 	}
 
-	public CpSituacaoConfiguracao getSituacao() {
+	public CpSituacaoDeConfiguracaoEnum getSituacao() {
 		return situacao;
 	}
 
@@ -168,7 +168,7 @@ public class ConfiguracaoAcesso implements Comparable {
 		this.servico = servico;
 	}
 
-	public void setSituacao(CpSituacaoConfiguracao situacao) {
+	public void setSituacao(CpSituacaoDeConfiguracaoEnum situacao) {
 		this.situacao = situacao;
 	}
 

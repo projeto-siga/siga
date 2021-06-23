@@ -221,7 +221,7 @@ public class CpConfiguracaoCache {
 		}
 
 		if (cfg.getCpSituacaoConfiguracao() != null) {
-			this.situacao = CpSituacaoDeConfiguracaoEnum.getById(cfg.getCpSituacaoConfiguracao().getIdSitConfiguracao().intValue());
+			this.situacao = cfg.getCpSituacaoConfiguracao();
 		}
 	}
 

@@ -26,7 +26,6 @@ import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -34,10 +33,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.exception.ConstraintViolationException;
@@ -61,7 +58,6 @@ import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
@@ -70,6 +66,7 @@ import br.gov.jfrj.siga.cp.model.enm.CpMarcadorCorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorIconeEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.util.Excel;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.cp.util.SigaUtil;
@@ -195,10 +192,8 @@ public class CpBL {
 
 		CpConfiguracao conf = new CpConfiguracao();
 		conf.setCpIdentidade(ident);
-		conf.setCpSituacaoConfiguracao(dao().consultar(
-				fBloquear ? CpSituacaoConfiguracao.SITUACAO_NAO_PODE
-						: CpSituacaoConfiguracao.SITUACAO_IGNORAR_CONFIGURACAO_ANTERIOR,
-				CpSituacaoConfiguracao.class, false));
+		conf.setCpSituacaoConfiguracao(fBloquear ? CpSituacaoDeConfiguracaoEnum.NAO_PODE
+						: CpSituacaoDeConfiguracaoEnum.IGNORAR_CONFIGURACAO_ANTERIOR);
 		conf.setCpTipoConfiguracao(tpConf);
 		conf.setHisDtIni(dt);
 
@@ -232,10 +227,8 @@ public class CpBL {
 
 			CpConfiguracao conf = new CpConfiguracao();
 			conf.setDpPessoa(pes);
-			conf.setCpSituacaoConfiguracao(dao().consultar(
-					fBloquear ? CpSituacaoConfiguracao.SITUACAO_NAO_PODE
-							: CpSituacaoConfiguracao.SITUACAO_IGNORAR_CONFIGURACAO_ANTERIOR,
-					CpSituacaoConfiguracao.class, false));
+			conf.setCpSituacaoConfiguracao(fBloquear ? CpSituacaoDeConfiguracaoEnum.NAO_PODE
+							: CpSituacaoDeConfiguracaoEnum.IGNORAR_CONFIGURACAO_ANTERIOR);
 			conf.setCpTipoConfiguracao(tpConf);
 			conf.setHisDtIni(dt);
 
@@ -255,7 +248,7 @@ public class CpBL {
 	}
 
 	public CpConfiguracao configurarAcesso(CpPerfil perfil, CpOrgaoUsuario orgao, DpLotacao lotacao, DpPessoa pes,
-			CpServico servico, CpSituacaoConfiguracao situacao, CpTipoConfiguracao tpConf,
+			CpServico servico, CpSituacaoDeConfiguracaoEnum situacao, CpTipoConfiguracao tpConf,
 			CpIdentidade identidadeCadastrante) throws Exception {
 		Date dt = dao().consultarDataEHoraDoServidor();
 

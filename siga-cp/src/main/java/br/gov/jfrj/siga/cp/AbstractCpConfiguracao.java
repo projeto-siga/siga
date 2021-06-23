@@ -43,6 +43,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.DpCargo;
@@ -70,7 +71,7 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 				+ "	where (cpcfg.dpPessoa.idPessoa = :idPessoa) "
 				+ "	and (cpcfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao) "
 				+ "	and (cpcfg.cpServico.siglaServico = :siglaServico)"
-				+ "	and (cpcfg.cpSituacaoConfiguracao.idSitConfiguracao = :idSitConfiguracao)"
+				+ "	and (cpcfg.cpSituacaoConfiguracao = :idSitConfiguracao)"
 				+ "	and hisDtFim is null"),
 		@NamedQuery(name = "consultarCpConfiguracoesPorServico", query = "from CpConfiguracao cpcfg where  (cpcfg.cpServico.idServico = :idServico) and hisDtFim is null"),
 		@NamedQuery(name = "consultarCpConfiguracoesPorPessoa", query = "from CpConfiguracao cpcfg where (cpcfg.dpPessoa.idPessoa = :idPessoa) and hisDtFim is null"),
@@ -130,10 +131,9 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	@NaoRecursivo
 	private DpPessoa dpPessoa;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_SIT_CONFIGURACAO")
+	@Column(name = "ID_SIT_CONFIGURACAO")
 	@NaoRecursivo
-	private CpSituacaoConfiguracao cpSituacaoConfiguracao;
+	private CpSituacaoDeConfiguracaoEnum cpSituacaoConfiguracao;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_TP_CONFIGURACAO")
@@ -335,12 +335,12 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 		this.dpPessoa = dpPessoa;
 	}
 
-	public CpSituacaoConfiguracao getCpSituacaoConfiguracao() {
+	public CpSituacaoDeConfiguracaoEnum getCpSituacaoConfiguracao() {
 		return cpSituacaoConfiguracao;
 	}
 
 	public void setCpSituacaoConfiguracao(
-			CpSituacaoConfiguracao cpSituacaoConfiguracao) {
+			CpSituacaoDeConfiguracaoEnum cpSituacaoConfiguracao) {
 		this.cpSituacaoConfiguracao = cpSituacaoConfiguracao;
 	}
 

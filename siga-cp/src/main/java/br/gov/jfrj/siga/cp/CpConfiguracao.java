@@ -189,7 +189,7 @@ public class CpConfiguracao extends AbstractCpConfiguracao implements CpConverta
 	public String toString() {
 		return "id: " + getId() + " ,pessoa: " + (getDpPessoa() != null ? getDpPessoa().getNomePessoa() : "")
 				+ " ,lotacao: " + (getLotacao() != null ? getLotacao().getSigla() : "") + " ,situação: "
-				+ (getCpSituacaoConfiguracao() != null ? getCpSituacaoConfiguracao().getDscSitConfiguracao() : "")
+				+ (getCpSituacaoConfiguracao() != null ? getCpSituacaoConfiguracao().getDescr() : "")
 				+ " ,tipo conf: " + (getCpTipoConfiguracao().getDscTpConfiguracao());
 	}
 

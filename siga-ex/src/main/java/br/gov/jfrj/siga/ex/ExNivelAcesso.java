@@ -33,8 +33,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Immutable;
 
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -87,7 +87,6 @@ public class ExNivelAcesso extends AbstractExNivelAcesso implements
 
 		final ExConfiguracao filtro = new ExConfiguracao();
 		final CpTipoConfiguracao exTpConfig = new CpTipoConfiguracao();
-		final CpSituacaoConfiguracao exStConfig = new CpSituacaoConfiguracao();
 		filtro.setDpPessoa(titular);
 		filtro.setLotacao(lotaTitular);
 		filtro.setExTipoDocumento(exTpDoc);
@@ -96,8 +95,7 @@ public class ExNivelAcesso extends AbstractExNivelAcesso implements
 		filtro.setExClassificacao(classif);
 		exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVELACESSO);
 		filtro.setCpTipoConfiguracao(exTpConfig);
-		exStConfig.setIdSitConfiguracao(CpSituacaoConfiguracao.SITUACAO_DEFAULT);
-		filtro.setCpSituacaoConfiguracao(exStConfig);
+		filtro.setCpSituacaoConfiguracao(CpSituacaoDeConfiguracaoEnum.DEFAULT);
 		
 		ExConfiguracaoCache exConfig = null;
 		exConfig = (ExConfiguracaoCache) Ex.getInstance().getConf()

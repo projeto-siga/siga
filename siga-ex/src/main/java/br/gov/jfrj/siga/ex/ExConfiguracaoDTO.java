@@ -140,7 +140,7 @@ public class ExConfiguracaoDTO {
 		return idPessoas;		
 	}
 	
-	public long getIdSituacao() {
+	public int getIdSituacao() {
 		return visibilidade.obterIdSituacao();
 	}
 	

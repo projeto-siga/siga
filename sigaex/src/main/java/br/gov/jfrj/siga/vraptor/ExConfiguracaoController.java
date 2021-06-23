@@ -28,13 +28,12 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
-import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
@@ -157,7 +156,7 @@ public class ExConfiguracaoController extends ExController {
 
 	@Get("app/configuracao/editar")
 	public void edita(Long id, boolean campoFixo, Long idOrgaoUsu, Long idTpMov, Long idTpDoc, Long idMod,
-			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Long idSituacao, Long idTpConfiguracao,
+			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Integer idSituacao, Long idTpConfiguracao,
 			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel, DpCargoSelecao cargoSel,
 			DpFuncaoConfiancaSelecao funcaoSel, ExClassificacaoSelecao classificacaoSel,
 			DpPessoaSelecao pessoaObjetoSel, DpLotacaoSelecao lotacaoObjetoSel, DpCargoSelecao cargoObjetoSel,
@@ -229,7 +228,7 @@ public class ExConfiguracaoController extends ExController {
 	@Transacional
 	@Get("app/configuracao/editar_gravar")
 	public void editarGravar(Long id, Long idOrgaoUsu, Long idTpMov, Long idTpDoc, Long idTpFormaDoc, Long idMod,
-			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Long idSituacao, Long idTpConfiguracao,
+			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Integer idSituacao, Long idTpConfiguracao,
 			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel, DpCargoSelecao cargoSel,
 			DpFuncaoConfiancaSelecao funcaoSel, ExClassificacaoSelecao classificacaoSel,
 			DpPessoaSelecao pessoaObjeto_pessoaSel, DpLotacaoSelecao lotacaoObjeto_lotacaoSel,
@@ -253,7 +252,7 @@ public class ExConfiguracaoController extends ExController {
 	@Post("app/configuracao/gerenciar_publicacao_boletim_gravar")
 	@Transacional
 	public void gerenciarPublicacaoBoletimGravar(Integer postback, String gerenciaPublicacao, Long idTpMov,
-			Long idTpConfiguracao, Long idFormaDoc, Long idMod, Integer tipoPublicador, Long idSituacao,
+			Long idTpConfiguracao, Long idFormaDoc, Long idMod, Integer tipoPublicador, Integer idSituacao,
 			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel) throws Exception {
 
 		final ExConfiguracaoBuilder configuracaoBuilder = new ExConfiguracaoBuilder().setIdTpMov(idTpMov)
@@ -317,7 +316,7 @@ public class ExConfiguracaoController extends ExController {
 	}
 
 	@SuppressWarnings("static-access")
-	private void gravarConfiguracao(Long idTpConfiguracao, Long idSituacao, final ExConfiguracao config) {
+	private void gravarConfiguracao(Long idTpConfiguracao, Integer idSituacao, final ExConfiguracao config) {
 		assertAcesso(VERIFICADOR_ACESSO);
 
 		if (idTpConfiguracao == null || idTpConfiguracao == 0)
@@ -450,10 +449,10 @@ public class ExConfiguracaoController extends ExController {
 		return TipoResponsavelEnum.getListaMatriculaLotacao();
 	}
 
-	private Set<CpSituacaoConfiguracao> getListaSituacaoPodeNaoPode() throws Exception {
-		HashSet<CpSituacaoConfiguracao> s = new HashSet<CpSituacaoConfiguracao>();
-		s.add(ExDao.getInstance().consultar(1L, CpSituacaoConfiguracao.class, false));
-		s.add(ExDao.getInstance().consultar(2L, CpSituacaoConfiguracao.class, false));
+	private Set<CpSituacaoDeConfiguracaoEnum> getListaSituacaoPodeNaoPode() throws Exception {
+		HashSet<CpSituacaoDeConfiguracaoEnum> s = new HashSet<>();
+		s.add(CpSituacaoDeConfiguracaoEnum.PODE);
+		s.add(CpSituacaoDeConfiguracaoEnum.NAO_PODE);
 		return s;
 	}
 
@@ -506,17 +505,17 @@ public class ExConfiguracaoController extends ExController {
 	}
 
 	@SuppressWarnings("all")
-	private Set<CpSituacaoConfiguracao> getListaSituacao() throws Exception {
-		TreeSet<CpSituacaoConfiguracao> s = new TreeSet<CpSituacaoConfiguracao>(new Comparator() {
+	private Set<CpSituacaoDeConfiguracaoEnum> getListaSituacao() throws Exception {
+		TreeSet<CpSituacaoDeConfiguracaoEnum> s = new TreeSet<>(new Comparator<CpSituacaoDeConfiguracaoEnum>() {
 
-			public int compare(Object o1, Object o2) {
-				return ((CpSituacaoConfiguracao) o1).getDscSitConfiguracao()
-						.compareTo(((CpSituacaoConfiguracao) o2).getDscSitConfiguracao());
+			public int compare(CpSituacaoDeConfiguracaoEnum o1, CpSituacaoDeConfiguracaoEnum o2) {
+				return o1.getDescr().compareTo(o2.getDescr());
 			}
 
 		});
 
-		s.addAll(dao().listarSituacoesConfiguracao());
+		for (CpSituacaoDeConfiguracaoEnum sit : CpSituacaoDeConfiguracaoEnum.values())
+			s.add(sit);
 
 		return s;
 	}

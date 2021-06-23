@@ -58,7 +58,6 @@ import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
@@ -70,6 +69,7 @@ import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.dp.CpAplicacaoFeriado;
@@ -1928,7 +1928,7 @@ public class CpDao extends ModeloDao {
 		query.setParameter("idTpConfiguracao", exemplo.getCpTipoConfiguracao().getIdTpConfiguracao());
 		//removido eap72: query.setParameter("idServico", exemplo.getCpServico().getIdServico());
 		query.setParameter("siglaServico", exemplo.getCpServico().getSiglaServico());
-		query.setParameter("idSitConfiguracao", CpSituacaoConfiguracao.SITUACAO_PODE);
+		query.setParameter("idSitConfiguracao", CpSituacaoDeConfiguracaoEnum.PODE);
 		// kpf: com o cache true, as configuracoes sao exibidas de forma forma
 		// errada apos a primeira
 
@@ -2348,10 +2348,10 @@ public class CpDao extends ModeloDao {
 		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpFeriado.class);
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<CpSituacaoConfiguracao> listarSituacoesConfiguracao() {
-		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpSituacaoConfiguracao.class);
-	}
+//	@SuppressWarnings("unchecked")
+//	public CpSituacaoDeConfiguracaoEnum[] listarSituacoesConfiguracao() {
+//		return CpSituacaoDeConfiguracaoEnum.values();
+//	}
 
 	public List<CpTipoConfiguracao> listarTiposConfiguracao() {
 		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpTipoConfiguracao.class);

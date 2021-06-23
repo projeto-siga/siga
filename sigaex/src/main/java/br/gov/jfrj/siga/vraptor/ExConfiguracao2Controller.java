@@ -360,7 +360,7 @@ public class ExConfiguracao2Controller extends ExController {
 	}
 	
 	@SuppressWarnings("static-access")
-	private void gravarConfiguracao(Long idTpConfiguracao, Long idSituacao, final ExConfiguracao config) {
+	private void gravarConfiguracao(Long idTpConfiguracao, Integer idSituacao, final ExConfiguracao config) {
 
 		if (idTpConfiguracao == null || idTpConfiguracao == 0)
 			throw new RegraNegocioException("Tipo de configuracao não informado");

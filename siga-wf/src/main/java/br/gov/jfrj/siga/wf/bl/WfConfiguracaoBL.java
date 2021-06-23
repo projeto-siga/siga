@@ -27,7 +27,6 @@ import java.util.SortedSet;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpPerfil;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;

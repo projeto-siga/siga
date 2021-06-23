@@ -4,12 +4,12 @@
 package br.gov.jfrj.siga.vraptor;
 
 import br.gov.jfrj.siga.cp.CpConfiguracao;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.DpCargo;
@@ -23,7 +23,7 @@ public class CpConfiguracaoBuilder<B extends CpConfiguracaoBuilder, T extends Cp
 	public static final Integer ORGAO_INTEGRADO = 2;
 	public static final Integer MATRICULA = 1;
 	private Long idOrgaoUsu;
-	private Long idSituacao;
+	private Integer idSituacao;
 	private Long idTpConfiguracao;
 	private DpPessoaSelecao pessoaSel;
 	private DpLotacaoSelecao lotacaoSel;
@@ -65,7 +65,7 @@ public class CpConfiguracaoBuilder<B extends CpConfiguracaoBuilder, T extends Cp
 			config.setOrgaoUsuario(null);
 
 		if (idSituacao != null && idSituacao != 0) {
-			config.setCpSituacaoConfiguracao(dao.consultar(idSituacao, CpSituacaoConfiguracao.class, false));
+			config.setCpSituacaoConfiguracao(CpSituacaoDeConfiguracaoEnum.getById(idSituacao));
 		} else
 			config.setCpSituacaoConfiguracao(null);
 
@@ -146,11 +146,11 @@ public class CpConfiguracaoBuilder<B extends CpConfiguracaoBuilder, T extends Cp
 		return (B) this;
 	}
 
-	public Long getIdSituacao() {
+	public Integer getIdSituacao() {
 		return idSituacao;
 	}
 
-	public B setIdSituacao(Long idSituacao) {
+	public B setIdSituacao(Integer idSituacao) {
 		this.idSituacao = idSituacao;
 		return (B) this;
 	}

@@ -40,6 +40,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
+import com.google.common.base.Optional;
+
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.util.Texto;
@@ -48,7 +50,6 @@ import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpPerfilJEE;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -60,14 +61,13 @@ import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupoFormula;
 import br.gov.jfrj.siga.cp.grupo.TipoConfiguracaoGrupoEnum;
 import br.gov.jfrj.siga.cp.model.CpGrupoDeEmailSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.CpGrupoDaoFiltro;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
-
-import com.google.common.base.Optional;
 
 public abstract class GrupoController<T extends CpGrupo> extends
 		GiSelecionavelControllerSupport<T, CpGrupoDaoFiltro> {
@@ -457,9 +457,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 			CpTipoConfiguracao tpConf = dao().consultar(
 					CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_GRUPO,
 					CpTipoConfiguracao.class, false);
-			CpSituacaoConfiguracao situacao = dao().consultar(
-					CpSituacaoConfiguracao.SITUACAO_PODE,
-					CpSituacaoConfiguracao.class, false);
+			CpSituacaoDeConfiguracaoEnum situacao = CpSituacaoDeConfiguracaoEnum.PODE;
 
 			CpConfiguracao conf = new CpConfiguracao();
 			conf.setLotacao(lot);
@@ -489,9 +487,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 		CpTipoConfiguracao tpConf = dao().consultar(
 				CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_GRUPO,
 				CpTipoConfiguracao.class, false);
-		CpSituacaoConfiguracao situacao = dao().consultar(
-				CpSituacaoConfiguracao.SITUACAO_PODE,
-				CpSituacaoConfiguracao.class, false);
+		CpSituacaoDeConfiguracaoEnum situacao = CpSituacaoDeConfiguracaoEnum.PODE;
 		CpGrupo grp = daoGrupo(idCpGrupo);
 		if (grp == null) {
 			return null;

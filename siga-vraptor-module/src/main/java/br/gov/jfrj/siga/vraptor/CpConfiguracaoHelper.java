@@ -34,7 +34,7 @@ public class CpConfiguracaoHelper {
 			result.include("idOrgaoUsu", c.getOrgaoUsuario().getIdOrgaoUsu());
 
 		if (c.getCpSituacaoConfiguracao() != null)
-			result.include("idSituacao", c.getCpSituacaoConfiguracao().getIdSitConfiguracao());
+			result.include("idSituacao", c.getCpSituacaoConfiguracao().getId());
 
 		if (c.getCpTipoConfiguracao() != null)
 			result.include("idTpConfiguracao", c.getCpTipoConfiguracao().getIdTpConfiguracao());
@@ -88,7 +88,7 @@ public class CpConfiguracaoHelper {
 		return dao.listarOrgaosUsuarios();
 	}
 
-	public static void gravarConfiguracao(Long idTpConfiguracao, Long idSituacao, final CpConfiguracao config,
+	public static void gravarConfiguracao(Long idTpConfiguracao, Integer idSituacao, final CpConfiguracao config,
 			CpDao dao, CpIdentidade idc) {
 		if (idTpConfiguracao == null || idTpConfiguracao == 0)
 			throw new AplicacaoException("Tipo de configuracao não informado");
@@ -111,13 +111,13 @@ public class CpConfiguracaoHelper {
 			return;
 		if (t.getSituacoes() != null)
 			for (CpSituacaoDeConfiguracaoEnum s : t.getSituacoes())
-				if (s.getId().equals(c.getCpSituacaoConfiguracao().getIdSitConfiguracao()))
+				if (s == c.getCpSituacaoConfiguracao())
 					return;
 		for (CpSituacaoDeConfiguracaoEnum s : CpSituacaoDeConfiguracaoEnum.values())
-			if (s.getId().equals(c.getCpSituacaoConfiguracao().getIdSitConfiguracao()))
+			if (s == c.getCpSituacaoConfiguracao())
 				throw new RuntimeException("Configuração " + c.getId() + " não poderia conter a situação " + s.name());
 		throw new RuntimeException("Configuração " + c.getId() + " não poderia conter a situação "
-				+ c.getCpSituacaoConfiguracao().getDscSitConfiguracao());
+				+ c.getCpSituacaoConfiguracao().getDescr());
 	}
 
 	public static void assertConfig(ITipoDeConfiguracao t, CpConfiguracao c) {

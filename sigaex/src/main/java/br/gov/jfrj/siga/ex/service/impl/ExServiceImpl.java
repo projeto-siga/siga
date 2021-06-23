@@ -38,7 +38,6 @@ import org.jboss.logging.Logger;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
@@ -505,7 +504,6 @@ public class ExServiceImpl implements ExService {
 
 					ExConfiguracao config = new ExConfiguracao();
 					CpTipoConfiguracao exTpConfig = new CpTipoConfiguracao();
-					CpSituacaoConfiguracao exStConfig = new CpSituacaoConfiguracao();
 					config.setDpPessoa(cadastrante);
 					config.setLotacao(cadastrante.getLotacao());
 					config.setExTipoDocumento(tipoDocumento);
@@ -514,8 +512,7 @@ public class ExServiceImpl implements ExService {
 					config.setExClassificacao(classificacao);
 					exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVELACESSO);
 					config.setCpTipoConfiguracao(exTpConfig);
-					exStConfig.setIdSitConfiguracao(CpSituacaoConfiguracao.SITUACAO_DEFAULT);
-					config.setCpSituacaoConfiguracao(exStConfig);
+					config.setCpSituacaoConfiguracao(CpSituacaoDeConfiguracaoEnum.DEFAULT);
 
 					ExConfiguracaoCache exConfig = ((ExConfiguracaoCache) Ex.getInstance().getConf().buscaConfiguracao(config,
 							new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt));

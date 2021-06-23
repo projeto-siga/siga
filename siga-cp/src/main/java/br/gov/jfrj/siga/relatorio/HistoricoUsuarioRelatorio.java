@@ -180,7 +180,7 @@ public class HistoricoUsuarioRelatorio extends RelatorioTemplate {
 			dados.add("");
 		}
 		try {
-			dados.add(novo.getSituacao().getDscSitConfiguracao());
+			dados.add(novo.getSituacao().getDescr());
 		} catch (Exception e) {
 			dados.add("");
 		}

@@ -29,10 +29,8 @@ import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
-import br.gov.jfrj.siga.cp.converter.IEnumWithId;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
@@ -131,7 +129,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 		if (cpConfiguracaoResult != null) {
 			return cpConfiguracaoResult.situacao;
 		} else {
-			return CpSituacaoDeConfiguracaoEnum.getById(exConfiguracao.getCpTipoConfiguracao().getSituacaoDefault().getIdSitConfiguracao().intValue());
+			return exConfiguracao.getCpTipoConfiguracao().getSituacaoDefault();
 
 		}
 	}
@@ -245,7 +243,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 			situacao = cfg.situacao;
 		else
 			if (config.getCpTipoConfiguracao() != null)
-				situacao = CpSituacaoDeConfiguracaoEnum.getById(config.getCpTipoConfiguracao().getSituacaoDefault().getIdSitConfiguracao().intValue());
+				situacao = config.getCpTipoConfiguracao().getSituacaoDefault();
 		
 		return situacao;
 	}

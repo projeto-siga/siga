@@ -21,10 +21,10 @@ package br.gov.jfrj.siga.wf.bl;
 import java.lang.reflect.Method;
 
 import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpCompetenciaBL;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -111,8 +111,7 @@ public class WfCompetenciaBL extends CpCompetenciaBL {
 		if (cfg != null) {
 			situacao = cfg.situacao;
 		} else {
-			situacao = CpSituacaoDeConfiguracaoEnum.getById(CpDao.getInstance().consultar(tipoConfig, CpTipoConfiguracao.class, false).getSituacaoDefault()
-					.getIdSitConfiguracao().intValue());
+			situacao = CpTipoDeConfiguracao.getById(tipoConfig).getSituacaoDefault();
 		}
 
 		return situacao != null && situacao == CpSituacaoDeConfiguracaoEnum.PODE;

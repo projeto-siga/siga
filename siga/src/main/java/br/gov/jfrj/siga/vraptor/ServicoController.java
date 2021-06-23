@@ -41,10 +41,10 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -74,7 +74,7 @@ public class ServicoController 	extends SigaController {
 	// gravação - parametros
 	private String idPessoaConfiguracao;
 	private String idServicoConfiguracao;
-	private String idSituacaoConfiguracao;
+	private Integer idSituacaoConfiguracao;
 	private Long idTipoConfiguracao;
 	
 	// gravação - retorno
@@ -172,7 +172,7 @@ public class ServicoController 	extends SigaController {
 	 *  Retorna a situacao padrão para um dado servico
 	 * 
 	 */
-	private CpSituacaoConfiguracao obterSituacaoPadrao(CpServico p_cpsServico) {
+	private CpSituacaoDeConfiguracaoEnum obterSituacaoPadrao(CpServico p_cpsServico) {
 		return p_cpsServico.getCpTipoServico().getSituacaoDefault();
 	}
 	
@@ -372,7 +372,7 @@ public class ServicoController 	extends SigaController {
 	@Get("/app/gi/servico/gravar")
 	public void gravar(String idPessoaConfiguracao, 
 					String idServicoConfiguracao, 
-					String idSituacaoConfiguracao, 
+					Integer idSituacaoConfiguracao, 
 					Long idTipoConfiguracao,
 					HttpServletResponse response) throws Exception {
 		this.idPessoaConfiguracao = idPessoaConfiguracao;
@@ -387,8 +387,7 @@ public class ServicoController 	extends SigaController {
 				DpPessoa t_dppPessoa = dao().consultar(t_lngIdPessoa,DpPessoa.class,false);
 				Long t_lngIdServico = Long.parseLong(idServicoConfiguracao);
                 CpServico t_cpsServico = dao().consultar(t_lngIdServico, CpServico.class, false);
-                Long t_lngIdSituacao = Long.parseLong(idSituacaoConfiguracao);
-                CpSituacaoConfiguracao t_cstSituacao = dao().consultar(t_lngIdSituacao,CpSituacaoConfiguracao.class, false);
+                CpSituacaoDeConfiguracaoEnum t_cstSituacao = CpSituacaoDeConfiguracaoEnum.getById(idSituacaoConfiguracao);
                 CpConfiguracao t_cfgConfigGravada = Cp.getInstance().getBL().configurarAcesso(null,t_dplLotacao.getOrgaoUsuario()
                 											  ,t_dplLotacao
                 											  ,t_dppPessoa
@@ -399,7 +398,7 @@ public class ServicoController 	extends SigaController {
 				HashMap<String, String> t_hmpRetorno = new HashMap<String, String>();
 				t_hmpRetorno.put("idpessoa", /*idPessoaConfiguracao*/ String.valueOf(t_cfgConfigGravada.getDpPessoa().getIdPessoa()));
 				t_hmpRetorno.put("idservico", /*idServicoConfiguracao*/String.valueOf(t_cfgConfigGravada.getCpServico().getIdServico()));
-				t_hmpRetorno.put("idsituacao", /*idSituacaoConfiguracao*/String.valueOf(t_cfgConfigGravada.getCpSituacaoConfiguracao().getIdSitConfiguracao()) );
+				t_hmpRetorno.put("idsituacao", /*idSituacaoConfiguracao*/String.valueOf(t_cfgConfigGravada.getCpSituacaoConfiguracao().getId()) );
 				SimpleMethodResponseRPC t_smrResposta = new SimpleMethodResponseRPC();
 				t_smrResposta.setMembersFrom(t_hmpRetorno);
 				setRespostaXMLStringRPC(t_smrResposta.toXMLString());	

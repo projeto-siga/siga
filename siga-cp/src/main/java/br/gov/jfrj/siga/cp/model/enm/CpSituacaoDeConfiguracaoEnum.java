@@ -1,27 +1,25 @@
 package br.gov.jfrj.siga.cp.model.enm;
 
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.converter.IEnumWithId;
 
 public enum CpSituacaoDeConfiguracaoEnum implements IEnumWithId {
-	PODE((int) CpSituacaoConfiguracao.SITUACAO_PODE, "Pode", 0),
+	PODE(1, "Pode", 0),
 	//
-	NAO_PODE((int) CpSituacaoConfiguracao.SITUACAO_NAO_PODE, "Não Pode", 9),
+	NAO_PODE(2, "Não Pode", 9),
 	//
-	OBRIGATORIO((int) CpSituacaoConfiguracao.SITUACAO_OBRIGATORIO, "Obrigatório", 7),
+	OBRIGATORIO(3, "Obrigatório", 7),
 	//
-	OPCIONAL((int) CpSituacaoConfiguracao.SITUACAO_OPCIONAL, "Opcional", 4),
+	OPCIONAL(4, "Opcional", 4),
 	//
-	DEFAULT((int) CpSituacaoConfiguracao.SITUACAO_DEFAULT, "Default", 5),
+	DEFAULT(5, "Default", 5),
 	//
-	NAO_DEFAULT((int) CpSituacaoConfiguracao.SITUACAO_NAO_DEFAULT, "Não Default", 6),
+	NAO_DEFAULT(6, "Não Default", 6),
 	//
-	PROIBIDO((int) CpSituacaoConfiguracao.SITUACAO_PROIBIDO, "Proibido", 10),
+	PROIBIDO(7, "Proibido", 10),
 	//
-	SO_LEITURA((int) CpSituacaoConfiguracao.SITUACAO_SO_LEITURA, "Só Leitura", 8),
+	SO_LEITURA(8, "Só Leitura", 8),
 	//
-	IGNORAR_CONFIGURACAO_ANTERIOR((int) CpSituacaoConfiguracao.SITUACAO_IGNORAR_CONFIGURACAO_ANTERIOR,
-			"Ignorar a configuração anterior", 1);
+	IGNORAR_CONFIGURACAO_ANTERIOR(9, "Ignorar a configuração anterior", 1);
 
 	private int id;
 	private String descr;

@@ -121,7 +121,7 @@ public class PermissaoUsuarioRelatorio extends RelatorioTemplate{
 	 */
 	private void processarConfiguracaoAcesso(ConfiguracaoAcesso cfga, List<String> dados ) {
 		try {dados.add(printSeparadorNivel(cfga.getServico().getNivelHierarquico() ) + printServico(cfga.getServico()));}  catch (Exception e) { dados.add("");}
-		try {dados.add(cfga.getSituacao().getDscSitConfiguracao());}  catch (Exception e) { dados.add("");}
+		try {dados.add(cfga.getSituacao().getDescr());}  catch (Exception e) { dados.add("");}
 		try {dados.add(printOrigem(cfga));}  catch (Exception e) { dados.add("");}
 		try {dados.add(printDate(cfga.getInicio()));}  catch (Exception e) { dados.add("");}
 		try {dados.add(String.valueOf(cfga.getCadastrante().getSesbPessoa() + cfga.getCadastrante().getMatricula()));}  catch (Exception e) { dados.add("");}

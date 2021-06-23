@@ -191,13 +191,13 @@ public class AlteracaoDireitosRelatorio extends RelatorioTemplate {
 		}
 		try {
 			dados.add((antigo != null) ? antigo.getSituacao()
-					.getDscSitConfiguracao() : "-");
+					.getDescr() : "-");
 		} catch (Exception e) {
 			dados.add("");
 		}
 		try {
 			dados.add((novo != null) ? novo.getSituacao()
-					.getDscSitConfiguracao() : " - ");
+					.getDescr() : " - ");
 		} catch (Exception e) {
 			dados.add("");
 		}

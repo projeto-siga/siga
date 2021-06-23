@@ -94,7 +94,7 @@ public class ConfiguracaoController extends SigaController {
 
 	@Get("app/configuracao/editar")
 	public void edita(Long id, boolean campoFixo, Long idOrgaoUsu, Long idTpMov, Long idTpDoc, Long idMod,
-			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Long idSituacao, Long idTpConfiguracao,
+			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Integer idSituacao, Long idTpConfiguracao,
 			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel, DpCargoSelecao cargoSel,
 			DpFuncaoConfiancaSelecao funcaoSel, DpPessoaSelecao pessoaObjetoSel, DpLotacaoSelecao lotacaoObjetoSel,
 			DpCargoSelecao cargoObjetoSel, DpFuncaoConfiancaSelecao funcaoObjetoSel, Long idOrgaoObjeto,
@@ -149,7 +149,7 @@ public class ConfiguracaoController extends SigaController {
 	@Transacional
 	@Get("app/configuracao/editar_gravar")
 	public void editarGravar(Long id, Long idOrgaoUsu, Long idTpMov, Long idTpDoc, Long idTpFormaDoc, Long idMod,
-			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Long idSituacao, Long idTpConfiguracao,
+			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Integer idSituacao, Long idTpConfiguracao,
 			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel, DpCargoSelecao cargoSel,
 			DpFuncaoConfiancaSelecao funcaoSel, DpPessoaSelecao pessoaObjeto_pessoaSel,
 			DpLotacaoSelecao lotacaoObjeto_lotacaoSel, DpCargoSelecao cargoObjeto_cargoSel,

@@ -32,9 +32,9 @@ import javax.servlet.http.HttpServletResponse;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpVisualizacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -106,7 +106,6 @@ public class ExController extends SigaController {
 
 		final ExConfiguracao config = new ExConfiguracao();
 		final CpTipoConfiguracao exTpConfig = new CpTipoConfiguracao();
-		final CpSituacaoConfiguracao exStConfig = new CpSituacaoConfiguracao();
 		config.setDpPessoa(getTitular());
 		config.setLotacao(getLotaTitular());
 		config.setExTipoDocumento(exTpDoc);
@@ -115,8 +114,7 @@ public class ExController extends SigaController {
 		config.setExClassificacao(classif);
 		exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVELACESSO);
 		config.setCpTipoConfiguracao(exTpConfig);
-		exStConfig.setIdSitConfiguracao(CpSituacaoConfiguracao.SITUACAO_DEFAULT);
-		config.setCpSituacaoConfiguracao(exStConfig);
+		config.setCpSituacaoConfiguracao(CpSituacaoDeConfiguracaoEnum.DEFAULT);
 		ExConfiguracaoCache exConfig;
 
 		try {

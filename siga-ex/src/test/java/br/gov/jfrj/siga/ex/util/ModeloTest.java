@@ -133,7 +133,6 @@ public class ModeloTest extends TestCase {
 		d.addClass(br.gov.jfrj.siga.dp.CpUF.class, fI);
 		d.addClass(br.gov.jfrj.siga.dp.CpPersonalizacao.class, fI);
 		d.addClass(br.gov.jfrj.siga.cp.CpConfiguracao.class, fI);
-		d.addClass(br.gov.jfrj.siga.cp.CpSituacaoConfiguracao.class, fI);
 		d.addClass(br.gov.jfrj.siga.cp.CpTipoConfiguracao.class, fI);
 		d.addClass(br.gov.jfrj.siga.cp.CpServico.class, fI);
 		d.addClass(br.gov.jfrj.siga.cp.CpTipoGrupo.class, fI);
@@ -168,7 +167,6 @@ public class ModeloTest extends TestCase {
 		d.addClass(br.gov.jfrj.siga.dp.CpUF.class, fI);
 		d.addClass(br.gov.jfrj.siga.dp.CpPersonalizacao.class, fI);
 		d.addClass(br.gov.jfrj.siga.cp.CpConfiguracao.class, fI);
-		d.addClass(br.gov.jfrj.siga.cp.CpSituacaoConfiguracao.class, fI);
 		d.addClass(br.gov.jfrj.siga.cp.CpTipoConfiguracao.class, fI);
 		d.addClass(br.gov.jfrj.siga.cp.CpServico.class, fI);
 		d.addClass(br.gov.jfrj.siga.cp.CpTipoGrupo.class, fI);

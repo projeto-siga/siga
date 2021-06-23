@@ -3,6 +3,7 @@
 <%@ attribute name="inline"%>
 <%@ attribute name="separator"%>
 <%@ attribute name="buttons"%>
+<%@ attribute name="classeCss" %>
 <%@ attribute name="estilo"%>
 
 <c:remove var="linkSeparator" scope="request" />
@@ -17,13 +18,13 @@
 </c:if>
 
 <c:if test="${empty linkInline}">
-	<p class="gt-table-action-list" style="${estilo}">
+	<div class="gt-table-action-list ${classeCss}" style="${estilo}">
 </c:if>
 
 <jsp:doBody/>
 
 <c:if test="${empty linkInline}">
-	</p>
+	</div>
 </c:if>
 <c:remove var="linkSeparator" scope="request" />
 

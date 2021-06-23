@@ -82,16 +82,16 @@ html body, .table-group-separator {
 
 
 .table-group-separator, .table-group-title {
-	background-color: #dae9ec !important;
-	border: 1px solid #dae9ec !important;
-	background-color: #dae9ec !important;
+	border: 1px solid #343a40 !important;
+	background-color: #343a40 !important;
+	color: #ffffff;
 }
 table.table {
 	background-color: white;
 }
 
-p.gt-table-action-list a.link-tag {
-	margin-top: 0.4em;
+.gt-table-action-list a.link-tag {
+	margin-top: 0;
 }
 .disabled {
 	opacity: 0.6;

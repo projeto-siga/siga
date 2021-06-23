@@ -234,13 +234,13 @@
 				<c:set var="ocultarCodigo" value="${true}" />
 				<c:if test='${param.popup!="true"}'>
 					<c:set var="acoes" value="${m.acoesOrdenadasPorNome}" />
-					<siga:links>
+					<siga:links classeCss="btn-group btn-group-xs">
 						<c:forEach var="acao" items="${acoes}">
 							<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}"
 								pre="${acao.pre}" pos="${acao.pos}"
 								url="${pageContext.request.contextPath}${acao.url}"
 								popup="${acao.popup}" confirm="${acao.msgConfirmacao}"
-								classe="${acao.classe}" estilo="line-height: 160% !important"
+								classe="${acao.classe}"
 								atalho="${true}" modal="${acao.modal}"
 								explicacao="${acao.explicacao}" post="${acao.post}"
 								test="${acao.pode}" />

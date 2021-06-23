@@ -27,7 +27,7 @@
 		<c:set var="btnClass" value="btn btn-sm btn-light" />
 	</c:when>
 	<c:otherwise>
-		<c:set var="btnClass" value="btn btn-sm btn-info text-white" />
+		<c:set var="btnClass" value="btn btn-sm btn-dark text-white" />
 	</c:otherwise>
 </c:choose>
 

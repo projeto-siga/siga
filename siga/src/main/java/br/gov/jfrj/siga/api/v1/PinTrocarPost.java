@@ -9,7 +9,9 @@ import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.vraptor.Transacional;
 
+@Transacional
 public class PinTrocarPost implements IPinTrocarPost {
 
 	@Override

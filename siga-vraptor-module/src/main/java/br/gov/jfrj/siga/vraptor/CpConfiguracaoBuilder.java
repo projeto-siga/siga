@@ -4,12 +4,12 @@
 package br.gov.jfrj.siga.vraptor;
 
 import br.gov.jfrj.siga.cp.CpConfiguracao;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.DpCargo;
@@ -24,7 +24,7 @@ public class CpConfiguracaoBuilder<B extends CpConfiguracaoBuilder, T extends Cp
 	public static final Integer MATRICULA = 1;
 	private Long idOrgaoUsu;
 	private Integer idSituacao;
-	private Long idTpConfiguracao;
+	private Integer idTpConfiguracao;
 	private DpPessoaSelecao pessoaSel;
 	private DpLotacaoSelecao lotacaoSel;
 	private DpCargoSelecao cargoSel;
@@ -70,7 +70,7 @@ public class CpConfiguracaoBuilder<B extends CpConfiguracaoBuilder, T extends Cp
 			config.setCpSituacaoConfiguracao(null);
 
 		if (idTpConfiguracao != null && idTpConfiguracao != 0) {
-			config.setCpTipoConfiguracao(dao.consultar(idTpConfiguracao, CpTipoConfiguracao.class, false));
+			config.setCpTipoConfiguracao(CpTipoDeConfiguracao.getById(idTpConfiguracao));
 		} else
 			config.setCpTipoConfiguracao(null);
 
@@ -155,11 +155,11 @@ public class CpConfiguracaoBuilder<B extends CpConfiguracaoBuilder, T extends Cp
 		return (B) this;
 	}
 
-	public Long getIdTpConfiguracao() {
+	public Integer getIdTpConfiguracao() {
 		return idTpConfiguracao;
 	}
 
-	public B setIdTpConfiguracao(Long idTpConfiguracao) {
+	public B setIdTpConfiguracao(Integer idTpConfiguracao) {
 		this.idTpConfiguracao = idTpConfiguracao;
 		return (B) this;
 	}

@@ -274,7 +274,7 @@ public class SigaLibsEL {
 						lotaTitular,
 						dao().consultar(idServico.longValue(), CpServico.class,
 								false),
-						CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO);
+						CpTipoDeConfiguracao.UTILIZAR_SERVICO);
 		return b;
 	}
 
@@ -291,7 +291,7 @@ public class SigaLibsEL {
 	// srv.setSiglaServico(siglaServico);
 	// return Cp.getInstance().getConf().podePorConfiguracao(titular,
 	// lotaTitular, dao().consultarPorSigla(srv),
-	// CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO);
+	// CpTipoDeConfiguracao.UTILIZAR_SERVICO);
 	// }
 
 	public static Boolean podeUtilizarServicoPorConfiguracao(DpPessoa titular,
@@ -368,12 +368,12 @@ public class SigaLibsEL {
 				.getInstance()
 				.getConf()
 				.podePorConfiguracao(pessoa,
-						CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST)
+						CpTipoDeConfiguracao.CADASTRAR_QUALQUER_SUBST)
 				|| Cp.getInstance()
 						.getConf()
 						.podePorConfiguracao(
 								lotacao,
-								CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST);
+								CpTipoDeConfiguracao.CADASTRAR_QUALQUER_SUBST);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

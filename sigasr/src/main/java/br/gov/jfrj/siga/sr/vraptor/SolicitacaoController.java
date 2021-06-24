@@ -925,7 +925,7 @@ public class SolicitacaoController extends SrController {
         filtro.setDpPessoa(getTitular());
         filtro.setLotacao(getLotaTitular());
         filtro.setBuscarPorPerfis(true);
-        filtro.setCpTipoConfiguracao((CpTipoConfiguracao)CpTipoConfiguracao.AR.findById(CpTipoConfiguracao.TIPO_CONFIG_SR_ESCALONAMENTO_SOL_FILHA));
+        filtro.setCpTipoConfiguracao((CpTipoConfiguracao)CpTipoConfiguracao.AR.findById(CpTipoDeConfiguracao.SR_ESCALONAMENTO_SOL_FILHA));
         CpSituacaoConfiguracao situacao = SrConfiguracaoBL.get().buscaSituacao(filtro,
                         new int[] { 0 }, null);
         boolean criarFilhaDefault = false;

@@ -41,10 +41,11 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -60,8 +61,8 @@ public class ServicoController 	extends SigaController {
 	
 	
 	// preparação do ambiente
-	private CpTipoConfiguracao cpTipoConfiguracaoUtilizador;
-	private CpTipoConfiguracao cpTipoConfiguracaoAConfigurar;
+	private CpTipoDeConfiguracao cpTipoConfiguracaoUtilizador;
+	private CpTipoDeConfiguracao cpTipoConfiguracaoAConfigurar;
 	private List<CpServico> cpServicosDisponiveis;
 	/*private CpSituacaoConfiguracao cpSituacaoPadrao;
 	
@@ -75,7 +76,7 @@ public class ServicoController 	extends SigaController {
 	private String idPessoaConfiguracao;
 	private String idServicoConfiguracao;
 	private Integer idSituacaoConfiguracao;
-	private Long idTipoConfiguracao;
+	private Integer idTipoConfiguracao;
 	
 	// gravação - retorno
 	private String respostaXMLStringRPC;
@@ -113,7 +114,7 @@ public class ServicoController 	extends SigaController {
 		setDpPessoasDaLotacao(new ArrayList<DpPessoa>());
 		setCpConfiguracoesAdotadas(new ArrayList<CpConfiguracao>());
 		setCpTipoConfiguracaoUtilizador(obterCpTipoConfiguracaoUtilizador());
-		setCpTipoConfiguracaoAConfigurar(obterCpTipoConfiguracaoAConfigurar(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO));
+		setCpTipoConfiguracaoAConfigurar(CpTipoDeConfiguracao.UTILIZAR_SERVICO);
 		setCpServicosDisponiveis(  obterServicosDaLotacaoEfetiva());
 
 		if (seUsuarioPodeExecutar()) {
@@ -131,12 +132,12 @@ public class ServicoController 	extends SigaController {
 		
 		result.include("configuracaoConfManual", configuracaoConfManual);
 		result.include("cpServicosDisponiveis", cpServicosDisponiveis);
-		result.include("idTpConfUtilizarSvc", CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO);
-		result.include("idTpConfUtilizarSvcOutraLot", CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO_OUTRA_LOTACAO);
+		result.include("idTpConfUtilizarSvc", CpTipoDeConfiguracao.UTILIZAR_SERVICO);
+		result.include("idTpConfUtilizarSvcOutraLot", CpTipoDeConfiguracao.UTILIZAR_SERVICO_OUTRA_LOTACAO);
 		result.include("dpPessoasDaLotacao", dpPessoasDaLotacao);
 		result.include("cpConfiguracoesAdotadas", cpConfiguracoesAdotadas);
 		result.include("cpTipoConfiguracaoAConfigurar", cpTipoConfiguracaoAConfigurar);
-		result.include("dscTpConfiguracao", cpTipoConfiguracaoAConfigurar.getDscTpConfiguracao());
+		result.include("dscTpConfiguracao", cpTipoConfiguracaoAConfigurar.getDescr());
 		result.include("pessoasGrupoSegManual", Cp.getInstance().getConf().getPessoasGrupoSegManual(obterLotacaoEfetiva()));
 	}
 	
@@ -193,7 +194,7 @@ public class ServicoController 	extends SigaController {
 	 */
 	private CpConfiguracao obterConfiguracao(DpLotacao p_dltLotacao,
 											 DpPessoa p_dpsPessoa,
-											 CpTipoConfiguracao p_ctcTipoConfig,
+											 CpTipoDeConfiguracao p_ctcTipoConfig,
 											 CpServico p_cpsServico
 											 ) {
 		CpConfiguracao t_cfgConfigExemplo  = new CpConfiguracao();
@@ -236,11 +237,11 @@ public class ServicoController 	extends SigaController {
 	 *  Retorna o tipo de configuração que o utilizador da interface  
 	 *  tem permissão
 	 */
-	private CpTipoConfiguracao obterCpTipoConfiguracaoUtilizador() {
-		CpTipoConfiguracao t_tcfTipo = dao.consultar(
-				CpTipoConfiguracao.TIPO_CONFIG_HABILITAR_SERVICO_DE_DIRETORIO
-				//CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO
-				, CpTipoConfiguracao.class
+	private CpTipoDeConfiguracao obterCpTipoConfiguracaoUtilizador() {
+		CpTipoDeConfiguracao t_tcfTipo = dao.consultar(
+				CpTipoDeConfiguracao.HABILITAR_SERVICO_DE_DIRETORIO
+				//CpTipoDeConfiguracao.UTILIZAR_SERVICO
+				, CpTipoDeConfiguracao.class
 				, false);
 		
 		return t_tcfTipo;
@@ -250,27 +251,15 @@ public class ServicoController 	extends SigaController {
 	* @param cpTipoConfiguracaoUtilizador the cpTipoConfiguracaoUtilizador to set
 	*/
 	private void setCpTipoConfiguracaoUtilizador(
-			CpTipoConfiguracao cpTipoConfiguracaoUtilizador) {
+			CpTipoDeConfiguracao cpTipoConfiguracaoUtilizador) {
 		this.cpTipoConfiguracaoUtilizador = cpTipoConfiguracaoUtilizador;
-	}
-	
-	/**
-	*  Retorna o tipo de configuração a Configurar  
-	*  
-	*/
-	private CpTipoConfiguracao obterCpTipoConfiguracaoAConfigurar(Long idTipoConfiguracao) {
-		CpTipoConfiguracao t_tcfTipo = dao.consultar(
-				idTipoConfiguracao
-				, CpTipoConfiguracao.class
-				, false);
-		return t_tcfTipo;
 	}
 	
 	/**
 	* @param cpTipoConfiguracaoAConfigurar the cpTipoConfiguracaoAConfigurar to set
 	*/
 	private void setCpTipoConfiguracaoAConfigurar(
-			CpTipoConfiguracao cpTipoConfiguracaoAConfigurar) {
+			CpTipoDeConfiguracao cpTipoConfiguracaoAConfigurar) {
 		this.cpTipoConfiguracaoAConfigurar = cpTipoConfiguracaoAConfigurar;
 	}
 	
@@ -351,8 +340,7 @@ public class ServicoController 	extends SigaController {
 		}
 		
 		
-		CpTipoConfiguracao tpConf =  obterCpTipoConfiguracaoAConfigurar(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO_OUTRA_LOTACAO);
-		Cp.getInstance().getBL().configurarAcesso(null, pes.getOrgaoUsuario(), obterLotacaoEfetiva(), pes, null, null, tpConf, getIdentidadeCadastrante());
+		Cp.getInstance().getBL().configurarAcesso(null, pes.getOrgaoUsuario(), obterLotacaoEfetiva(), pes, null, null, CpTipoDeConfiguracao.UTILIZAR_SERVICO_OUTRA_LOTACAO, getIdentidadeCadastrante());
 		result.redirectTo(this).edita();
 	}
 	
@@ -362,8 +350,7 @@ public class ServicoController 	extends SigaController {
 	@Get("/app/gi/servico/excluir-pessoa-extra/{id}")
 	public void excluirPessoaExtra(Long id) throws Exception{
 		DpPessoa pes = dao().consultar(id, DpPessoa.class,false);
-		CpTipoConfiguracao tpConf =  obterCpTipoConfiguracaoAConfigurar(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO_OUTRA_LOTACAO);
-		Cp.getInstance().getConf().excluirPessoaExtra(pes, obterLotacaoEfetiva(), tpConf, getIdentidadeCadastrante());
+		Cp.getInstance().getConf().excluirPessoaExtra(pes, obterLotacaoEfetiva(), CpTipoDeConfiguracao.UTILIZAR_SERVICO_OUTRA_LOTACAO, getIdentidadeCadastrante());
 		
 		result.redirectTo(this).edita();
 	}
@@ -373,7 +360,7 @@ public class ServicoController 	extends SigaController {
 	public void gravar(String idPessoaConfiguracao, 
 					String idServicoConfiguracao, 
 					Integer idSituacaoConfiguracao, 
-					Long idTipoConfiguracao,
+					Integer idTipoConfiguracao,
 					HttpServletResponse response) throws Exception {
 		this.idPessoaConfiguracao = idPessoaConfiguracao;
 		this.idServicoConfiguracao = idServicoConfiguracao;
@@ -385,7 +372,7 @@ public class ServicoController 	extends SigaController {
 				DpLotacao t_dplLotacao = obterLotacaoEfetiva();
 				Long t_lngIdPessoa = Long.parseLong(idPessoaConfiguracao);
 				DpPessoa t_dppPessoa = dao().consultar(t_lngIdPessoa,DpPessoa.class,false);
-				Long t_lngIdServico = Long.parseLong(idServicoConfiguracao);
+				Integer t_lngIdServico = Integer.parseInt(idServicoConfiguracao);
                 CpServico t_cpsServico = dao().consultar(t_lngIdServico, CpServico.class, false);
                 CpSituacaoDeConfiguracaoEnum t_cstSituacao = CpSituacaoDeConfiguracaoEnum.getById(idSituacaoConfiguracao);
                 CpConfiguracao t_cfgConfigGravada = Cp.getInstance().getBL().configurarAcesso(null,t_dplLotacao.getOrgaoUsuario()
@@ -393,7 +380,7 @@ public class ServicoController 	extends SigaController {
                 											  ,t_dppPessoa
                 											  ,t_cpsServico
                 											  ,t_cstSituacao
-                											  ,obterCpTipoConfiguracaoAConfigurar(idTipoConfiguracao)
+                											  ,CpTipoDeConfiguracao.getById(t_lngIdServico)
                 											  ,getIdentidadeCadastrante());
 				HashMap<String, String> t_hmpRetorno = new HashMap<String, String>();
 				t_hmpRetorno.put("idpessoa", /*idPessoaConfiguracao*/ String.valueOf(t_cfgConfigGravada.getDpPessoa().getIdPessoa()));

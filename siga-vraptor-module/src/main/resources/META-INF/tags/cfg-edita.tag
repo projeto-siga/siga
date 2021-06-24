@@ -45,8 +45,8 @@
 								<c:choose>
 									<c:when test="${not empty config.cpTipoConfiguracao}">
 										<input type="hidden" name="idTpConfiguracao"
-											value="${config.cpTipoConfiguracao.idTpConfiguracao}" />
-										<label class="form-control">${config.cpTipoConfiguracao.dscTpConfiguracao}</label>
+											value="${config.cpTipoConfiguracao.id}" />
+										<label class="form-control">${config.cpTipoConfiguracao.descr}</label>
 									</c:when>
 									<c:otherwise>
 										<input type="hidden" name="idTpConfiguracao"

@@ -190,7 +190,7 @@ public class CpConfiguracao extends AbstractCpConfiguracao implements CpConverta
 		return "id: " + getId() + " ,pessoa: " + (getDpPessoa() != null ? getDpPessoa().getNomePessoa() : "")
 				+ " ,lotacao: " + (getLotacao() != null ? getLotacao().getSigla() : "") + " ,situação: "
 				+ (getCpSituacaoConfiguracao() != null ? getCpSituacaoConfiguracao().getDescr() : "")
-				+ " ,tipo conf: " + (getCpTipoConfiguracao().getDscTpConfiguracao());
+				+ " ,tipo conf: " + (getCpTipoConfiguracao().getDescr());
 	}
 
 	public void atualizarObjeto() {

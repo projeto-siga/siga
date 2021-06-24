@@ -28,9 +28,9 @@ import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -75,15 +75,12 @@ public class ConfiguracaoAcesso implements Comparable {
 		cfgFiltro.setLotacao(lotacao);
 		cfgFiltro.setOrgaoUsuario(orgao);
 		cfgFiltro.setCpServico(servico);
-		CpTipoConfiguracao tipo = CpDao.getInstance().consultar(
-				CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO,
-				CpTipoConfiguracao.class, false);
-		cfgFiltro.setCpTipoConfiguracao(tipo);
+		cfgFiltro.setCpTipoConfiguracao(CpTipoDeConfiguracao.UTILIZAR_SERVICO);
 		CpConfiguracaoCache cache = Cp.getInstance().getConf().buscaConfiguracao(
 				cfgFiltro, new int[0], dtEvn);
 		ConfiguracaoAcesso ac = new ConfiguracaoAcesso();
 		if (cache == null) {
-			ac.setSituacao(tipo.getSituacaoDefault());
+			ac.setSituacao(CpTipoDeConfiguracao.UTILIZAR_SERVICO.getSituacaoDefault());
 			ac.setDefault(true);
 		} else {
 			CpConfiguracao cfg = CpDao.getInstance().consultar(cache.idConfiguracao, CpConfiguracao.class, false);

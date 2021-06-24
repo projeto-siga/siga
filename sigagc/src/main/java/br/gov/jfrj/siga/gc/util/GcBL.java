@@ -512,7 +512,7 @@ public class GcBL {
 					List<Par<DpPessoa, DpLotacao>> pessoasELotasDoGrupo = new ArrayList<Par<DpPessoa, DpLotacao>>();
 					if (mov.getGrupo() != null){
 						for (CpConfiguracao cfg : Cp.getInstance().getConf()
-								.getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_PERTENCER)) {
+								.getListaPorTipo(CpTipoDeConfiguracao.PERTENCER)) {
 							if (cfg.getCpGrupo() != null && cfg.getCpGrupo().equivale(mov.getGrupo())
 									&& cfg.getHisDtFim() == null){
 								DpPessoa pess = cfg.getDpPessoa();

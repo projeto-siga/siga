@@ -28,12 +28,12 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
@@ -76,7 +76,7 @@ public class ExConfiguracaoController extends ExController {
 	}
 
 	@Get("app/configuracao/listar")
-	public void lista(Long idTpConfiguracao, Long idOrgaoUsu) throws Exception {
+	public void lista(Integer idTpConfiguracao, Long idOrgaoUsu) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 		if (idTpConfiguracao == null)
 			idTpConfiguracao = ExTipoDeConfiguracao.AUTUAVEL.getId();
@@ -88,7 +88,7 @@ public class ExConfiguracaoController extends ExController {
 	}
 
 	@Get("app/configuracao/listar_cadastradas")
-	public void listaCadastradas(Long idTpConfiguracao, Long idOrgaoUsu, Long idTpMov, Long idFormaDoc, Long idMod,
+	public void listaCadastradas(Integer idTpConfiguracao, Long idOrgaoUsu, Long idTpMov, Long idFormaDoc, Long idMod,
 			String nmTipoRetorno, boolean campoFixo) throws Exception {
 
 		assertAcesso(VERIFICADOR_ACESSO);
@@ -96,7 +96,7 @@ public class ExConfiguracaoController extends ExController {
 		ExConfiguracao config = new ExConfiguracao();
 
 		if (idTpConfiguracao != null && idTpConfiguracao != 0) {
-			config.setCpTipoConfiguracao(dao().consultar(idTpConfiguracao, CpTipoConfiguracao.class, false));
+			config.setCpTipoConfiguracao(CpTipoDeConfiguracao.getById(idTpConfiguracao));
 		} else {
 			result.include("err", "Tipo de configuração não informado");
 			result.use(Results.page()).forwardTo("/WEB-INF/page/erro.jsp");
@@ -156,7 +156,7 @@ public class ExConfiguracaoController extends ExController {
 
 	@Get("app/configuracao/editar")
 	public void edita(Long id, boolean campoFixo, Long idOrgaoUsu, Long idTpMov, Long idTpDoc, Long idMod,
-			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Integer idSituacao, Long idTpConfiguracao,
+			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Integer idSituacao, Integer idTpConfiguracao,
 			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel, DpCargoSelecao cargoSel,
 			DpFuncaoConfiancaSelecao funcaoSel, ExClassificacaoSelecao classificacaoSel,
 			DpPessoaSelecao pessoaObjetoSel, DpLotacaoSelecao lotacaoObjetoSel, DpCargoSelecao cargoObjetoSel,
@@ -181,7 +181,7 @@ public class ExConfiguracaoController extends ExController {
 		}
 		escreverForm(config);
 		if (idTpConfiguracao == null && config != null && config.getCpTipoConfiguracao() != null)
-			idTpConfiguracao = config.getCpTipoConfiguracao().getIdTpConfiguracao();
+			idTpConfiguracao = config.getCpTipoConfiguracao().getId();
 		if (idTpConfiguracao == null)
 			throw new RuntimeException("Tipo de configuração deve ser informado");
 
@@ -228,7 +228,7 @@ public class ExConfiguracaoController extends ExController {
 	@Transacional
 	@Get("app/configuracao/editar_gravar")
 	public void editarGravar(Long id, Long idOrgaoUsu, Long idTpMov, Long idTpDoc, Long idTpFormaDoc, Long idMod,
-			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Integer idSituacao, Long idTpConfiguracao,
+			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Integer idSituacao, Integer idTpConfiguracao,
 			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel, DpCargoSelecao cargoSel,
 			DpFuncaoConfiancaSelecao funcaoSel, ExClassificacaoSelecao classificacaoSel,
 			DpPessoaSelecao pessoaObjeto_pessoaSel, DpLotacaoSelecao lotacaoObjeto_lotacaoSel,
@@ -252,7 +252,7 @@ public class ExConfiguracaoController extends ExController {
 	@Post("app/configuracao/gerenciar_publicacao_boletim_gravar")
 	@Transacional
 	public void gerenciarPublicacaoBoletimGravar(Integer postback, String gerenciaPublicacao, Long idTpMov,
-			Long idTpConfiguracao, Long idFormaDoc, Long idMod, Integer tipoPublicador, Integer idSituacao,
+			Integer idTpConfiguracao, Long idFormaDoc, Long idMod, Integer tipoPublicador, Integer idSituacao,
 			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel) throws Exception {
 
 		final ExConfiguracaoBuilder configuracaoBuilder = new ExConfiguracaoBuilder().setIdTpMov(idTpMov)
@@ -316,7 +316,7 @@ public class ExConfiguracaoController extends ExController {
 	}
 
 	@SuppressWarnings("static-access")
-	private void gravarConfiguracao(Long idTpConfiguracao, Integer idSituacao, final ExConfiguracao config) {
+	private void gravarConfiguracao(Integer idTpConfiguracao, Integer idSituacao, final ExConfiguracao config) {
 		assertAcesso(VERIFICADOR_ACESSO);
 
 		if (idTpConfiguracao == null || idTpConfiguracao == 0)
@@ -413,7 +413,7 @@ public class ExConfiguracaoController extends ExController {
 
 	private void validarPodeGerenciarBoletim() {
 		if (!Ex.getInstance().getConf().podePorConfiguracao(getTitular(), getLotaTitular(),
-				CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_PUBLICACAO_BOLETIM))
+				ExTipoDeConfiguracao.GERENCIAR_PUBLICACAO_BOLETIM))
 			throw new AplicacaoException("Operação restrita");
 	}
 

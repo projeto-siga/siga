@@ -1,15 +1,14 @@
 package br.gov.jfrj.siga.ex.model.enm;
 
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.CpParamCfg;
-import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 
 //	Ainda ficou faltando: TIPO_CONFIG_VISUALIZAR_IMPRESSAO, TIPO_CONFIG_SIMULAR_USUARIO, TIPO_CONFIG_CORRIGIR_ERRO,  
 public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 
-	ACESSAR(CpTipoConfiguracao.TIPO_CONFIG_ACESSAR, "Acessar",
+	ACESSAR(6, "Acessar",
 			"Esta é uma configuração bastante delicada. A função dela é permitir que determinadas pessoas tenham acesso a documentos sigilosos mesmo sem estarem na lista de permissões.\n"
 					+ "\n"
 					+ "O ideal é que essa configuração nunca seja utilizada. Melhor ainda seria apagar esse registro da tabela CP_TIPO_CONFIGURACAO para garantir que não será acidentalmente atribuída a ninguém.",
@@ -22,14 +21,14 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 	//
-	ATENDER_PEDIDO_PUBLICACAO(CpTipoConfiguracao.TIPO_CONFIG_ATENDER_PEDIDO_PUBLICACAO, "Atender Pedido de Publicação",
+	ATENDER_PEDIDO_PUBLICACAO(22, "Atender Pedido de Publicação",
 			"Indica se é possível utilizar a rotina de atendimento de pedidos indiretos de publicação no Diário Eletrônico. Esta configuração deve ser aplicada apenas aos gestores do diário.",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO }, new Enum[] { CpParamCfg.SITUACAO },
 			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 	//
-	AUTUAVEL(CpTipoConfiguracao.TIPO_CONFIG_AUTUAVEL, "Autuável",
+	AUTUAVEL(35, "Autuável",
 			"Indica se determinado modelo ou espécie pode ser alvo te autação. Por exemplo, se queremos autuar um memorando, qual a lista de modelos que deve ser apresentada para o usuário escolher. Normalmente, os modelos e espécies configurados devem ser aqueles de Processos Administrativos.",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, CpParamCfg.PERFIL, CpParamCfg.SERVICO,
@@ -40,7 +39,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 	//
-	CANCELAR_MOVIMENTACAO(CpTipoConfiguracao.TIPO_CONFIG_CANCELAR_MOVIMENTACAO, "Cancelar Movimentação",
+	CANCELAR_MOVIMENTACAO(29, "Cancelar Movimentação",
 			"Por padão as movimentações não podem ser canceladas. Utilizando essa configuração, é possível habilitar o cancelamento de movimentações de determinado tipo, dependendo ainda de regras de negócios específicas. Por exemplo, para que seja possível excluir \"Arquivos Auxiliares\" é necessário criar uma configuração habilitando o cancelamento de \"Anexação de Arquivo Auxiliar\".",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO },
@@ -49,8 +48,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 	//
-	CANCELAR_VIA(CpTipoConfiguracao.TIPO_CONFIG_CANCELAR_VIA, "Cancelar Via",
-			"Indica situações nas quais uma via pode ser cancelada.",
+	CANCELAR_VIA(16, "Cancelar Via", "Indica situações nas quais uma via pode ser cancelada.",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO, ExParamCfg.TIPO_FORMA_DOCUMENTO,
 					ExParamCfg.FORMA_DOCUMENTO, ExParamCfg.MODELO },
@@ -59,7 +57,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	//
-	CRIAR(CpTipoConfiguracao.TIPO_CONFIG_CRIAR, "Criar",
+	CRIAR(2, "Criar",
 			"Normalmente todos os modelos de documentos podem ser criados por qualquer usuário, mas restrições podem ser impostas através dessa configuração. Modelos ou espécies específicas podem ser restritas de modo que apenas algumas pessoas ou lotações tenham permissão para criá-las.",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO, ExParamCfg.TIPO_FORMA_DOCUMENTO,
@@ -69,7 +67,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	//
-	CRIAR_COMO_NOVO(CpTipoConfiguracao.TIPO_CONFIG_CRIAR_COMO_NOVO, "Criar como Novo",
+	CRIAR_COMO_NOVO(42, "Criar como Novo",
 			"Normalmente todos os modelos de documentos podem ser criados por qualquer usuário, mas restrições podem ser impostas através dessa configuração. Modelos ou espécies específicas podem ser restritas de modo que apenas algumas pessoas ou lotações tenham permissão para criá-las quando clica no botão \"Criar Documento\". Veja também a configuração \"Despachável\".",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO, ExParamCfg.TIPO_FORMA_DOCUMENTO,
@@ -79,7 +77,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	//
-	CRIAR_VIA(CpTipoConfiguracao.TIPO_CONFIG_CRIAR_VIA, "Criar Via",
+	CRIAR_VIA(17, "Criar Via",
 			"Utilize essa configuração para desabilitar o botão \"Criar Via\" em alguns ou todos os modelos de expedientes.",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO, ExParamCfg.TIPO_FORMA_DOCUMENTO,
@@ -89,15 +87,14 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	//
-	DEFINIR_PUBLICADORES(CpTipoConfiguracao.TIPO_CONFIG_DEFINIR_PUBLICADORES, "Definir Publicadores",
+	DEFINIR_PUBLICADORES(21, "Definir Publicadores",
 			"Serve para dar permissão de utilizar rotina para redefinição de permissões de publicação no Diário Eletrônico. Esta configuração deve ser aplicada apenas aos gestores do diário.",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO }, new Enum[] { CpParamCfg.SITUACAO },
 			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 	//
-	DEFINICAO_AUTOMATICA_DE_PAPEL(CpTipoConfiguracao.TIPO_CONFIG_DEFINICAO_AUTOMATICA_DE_PAPEL,
-			"Definição Automática de Perfil",
+	DEFINICAO_AUTOMATICA_DE_PAPEL(40, "Definição Automática de Perfil",
 			"Esta configuração permite que sejam definidos perfis automaticamente quando um documento é criado para determinado subscritor. Normalmente ela é utilizada para que seja atribuído o perfil de revisor para documentos que serão assinados por presidentes e diretores. Veja maiores explicações na configuração \"Pode Assinar Sem Solicitação\".\n"
 					+ "\n"
 					+ "Para realizar a configuração, informe a matrícula do diretor em \"Pessoa\" e a matrícula do revisor em \"Pessoa Objeto\". Além disso, escolha no \"Perfil\" a opção \"Revisor\".\n"
@@ -110,7 +107,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	//
-	DESPACHAVEL(CpTipoConfiguracao.TIPO_CONFIG_DESPACHAVEL, "Despachável",
+	DESPACHAVEL(30, "Despachável",
 			"Indica se determinada espécie ou modelo podem ser escolhidos quando o usuário pede para \"Incluir Documento\".",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO, ExParamCfg.TIPO_FORMA_DOCUMENTO,
@@ -120,7 +117,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	//
-	DESTINATARIO(CpTipoConfiguracao.TIPO_CONFIG_DESTINATARIO, "Destinatário",
+	DESTINATARIO(31, "Destinatário",
 			"Indica se determinada espécie ou modelo requerem a especificação de um destinatário, ou não. Para fazer com que o destinatário seja exigido, preencher o campo situação com o valor \"Obrigatório\".",
 			new Enum[] { ExParamCfg.TIPO_DOCUMENTO, ExParamCfg.TIPO_FORMA_DOCUMENTO, ExParamCfg.FORMA_DOCUMENTO,
 					ExParamCfg.MODELO },
@@ -129,7 +126,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.OPCIONAL, true),
 	//
-	DUPLICAR(CpTipoConfiguracao.TIPO_CONFIG_DUPLICAR, "Duplicar",
+	DUPLICAR(9, "Duplicar",
 			"Configura quem e quais modelos podem ser duplicados. Por padrão, qualquer documento poderá ser duplicado por qualquer pessoa.",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO, ExParamCfg.TIPO_FORMA_DOCUMENTO,
@@ -139,7 +136,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	//
-	EDITAR(CpTipoConfiguracao.TIPO_CONFIG_EDITAR, "Editar",
+	EDITAR(10, "Editar",
 			"Desabilita a edição de determinados modelos de documentos por determinadas pessoas. Por padrão, a edição é sempre permitida, exceto quando viola regras de negócio.",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, ExParamCfg.CLASSIFICACAO, ExParamCfg.TIPO_DOCUMENTO,
@@ -150,7 +147,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	//
-	EDITAR_DATA(CpTipoConfiguracao.TIPO_CONFIG_EDITAR_DATA, "Editar Data",
+	EDITAR_DATA(36, "Editar Data",
 			"Define se a data do documento será editável ou se ela será gerada automaticamente pelo sistema em função da data em que o documento foi finalizado ou assinado.\n"
 					+ "\n"
 					+ "O ideal é que ninguém tenha permissão de editar a data, considerando que não é boa prática criar documentos com datas futuras ou retroativas.",
@@ -162,7 +159,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 	//
-	EDITAR_DESCRICAO(CpTipoConfiguracao.TIPO_CONFIG_EDITAR_DESCRICAO, "Editar Descrição",
+	EDITAR_DESCRICAO(37, "Editar Descrição",
 			"Define se a descrição será editável ou se será gerada automaticamente pelo sistema.",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO, ExParamCfg.TIPO_FORMA_DOCUMENTO,
@@ -172,7 +169,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	//
-	ELETRONICO(CpTipoConfiguracao.TIPO_CONFIG_ELETRONICO, "Eletrônico",
+	ELETRONICO(4, "Eletrônico",
 			"Identifica os modelos documentos que são exclusivamente digitais, fisícos ou os que podem assumir as duas formas. Para forçar um modelo de documento a ser digital, utilize a situação \"Obrigatório\".",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO, ExParamCfg.TIPO_FORMA_DOCUMENTO,
@@ -183,7 +180,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.OBRIGATORIO, true),
 	//
-	EXCLUIR(CpTipoConfiguracao.TIPO_CONFIG_EXCLUIR, "Excluir",
+	EXCLUIR(11, "Excluir",
 			"Indica se é possível excluir o documento. Além dessa configuração, as regras para a exclusão de documento incluem: não pode estar finalizado e lotação do usuário tem de ser a do cadastrante do documento.\n"
 					+ "\n" + "Também é utilizado para verificar se pode ser realizada a exclusão de um cossignatário.",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
@@ -194,7 +191,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	//
-	EXCLUIR_ANEXO(CpTipoConfiguracao.TIPO_CONFIG_EXCLUIR_ANEXO, "Excluir Anexo",
+	EXCLUIR_ANEXO(12, "Excluir Anexo",
 			"Indica se é permitido excluir uma movimentação de anexação. Além dessa configuração, as regras para a exclusão de anexo incluem: a anexação não pode estar cancelada, o anexo não pode estar assinado, se o documento for físico, não pode estar finalizado, se o documento for eletrônico, não pode estar assinado, a lotação do usuário tem de ser a lotação cadastrante da movimentação.\n"
 					+ "\n"
 					+ "Atualmente não é recomendado o uso de movimentações de anexação. Em substituição, sugerimos a utilização de documentos capturados.",
@@ -206,34 +203,30 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	//
-	EXCLUIR_ANOTACAO(CpTipoConfiguracao.TIPO_CONFIG_EXCLUIR_ANOTACAO, "Excluir Anotação",
-			"Indica se é permitido excluir anotação.",
-			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
-					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO, ExParamCfg.TIPO_FORMA_DOCUMENTO,
-					ExParamCfg.FORMA_DOCUMENTO, ExParamCfg.MODELO },
+	EXCLUIR_ANOTACAO(14, "Excluir Anotação", "Indica se é permitido excluir anotação.", new Enum[] { CpParamCfg.PESSOA,
+			CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO, CpParamCfg.FUNCAO, CpParamCfg.ORGAO,
+			ExParamCfg.TIPO_DOCUMENTO, ExParamCfg.TIPO_FORMA_DOCUMENTO, ExParamCfg.FORMA_DOCUMENTO, ExParamCfg.MODELO },
 			new Enum[] { CpParamCfg.SITUACAO },
 			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	//
-	FINALIZAR(CpTipoConfiguracao.TIPO_CONFIG_FINALIZAR, "Finalizar", "Indica se é permitido finalizar um documento.",
-			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
-					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO, ExParamCfg.TIPO_FORMA_DOCUMENTO,
-					ExParamCfg.FORMA_DOCUMENTO, ExParamCfg.MODELO },
+	FINALIZAR(3, "Finalizar", "Indica se é permitido finalizar um documento.", new Enum[] { CpParamCfg.PESSOA,
+			CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO, CpParamCfg.FUNCAO, CpParamCfg.ORGAO,
+			ExParamCfg.TIPO_DOCUMENTO, ExParamCfg.TIPO_FORMA_DOCUMENTO, ExParamCfg.FORMA_DOCUMENTO, ExParamCfg.MODELO },
 			new Enum[] { CpParamCfg.SITUACAO },
 			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	//
-	GERENCIAR_PUBLICACAO_BOLETIM(CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_PUBLICACAO_BOLETIM,
-			"Gerenciar Publicação Boletim",
+	GERENCIAR_PUBLICACAO_BOLETIM(25, "Gerenciar Publicação Boletim",
 			"Indica se determinado usuário pode, utilizar rotina para redefinição de permissões de publicação do Boletim Interno.",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO }, new Enum[] { CpParamCfg.SITUACAO },
 			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 	//
-	CRIAR_DOC_FILHO(CpTipoConfiguracao.TIPO_CONFIG_CRIAR_DOC_FILHO, "Incluir como Filho",
+	CRIAR_DOC_FILHO(24, "Incluir como Filho",
 			"Quando é utilizada a ação \"Incluir Documento\", essa propriedade configura quais os modelos que devem ser apresentados na lista para que o usuário faça a seleção. Normalmente, serão permitidos apenas modelos de despachos, pareceres, capturados, etc. Não faz sentido, por exemplo, se seja permitido \"Incluir\" um Processo Administrativo num Expediente.",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO, ExParamCfg.TIPO_FORMA_DOCUMENTO,
@@ -243,7 +236,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 	//
-	INCLUIR_DOCUMENTO(CpTipoConfiguracao.TIPO_CONFIG_INCLUIR_DOCUMENTO, "Incluir Documento",
+	INCLUIR_DOCUMENTO(41, "Incluir Documento",
 			"Esta configuração indica se o usuário poderá executar a ação de \"Incluir Documento\".",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO, ExParamCfg.TIPO_FORMA_DOCUMENTO,
@@ -253,7 +246,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	//
-	JUNTADA_AUTOMATICA(CpTipoConfiguracao.TIPO_CONFIG_JUNTADA_AUTOMATICA, "Juntada Automática",
+	JUNTADA_AUTOMATICA(43, "Juntada Automática",
 			"Esta configuração indica se haverá a opção de \"Juntar\" automaticamente no momento da assinatura do documento.",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO, ExParamCfg.TIPO_FORMA_DOCUMENTO,
@@ -263,7 +256,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	//
-	MOVIMENTAR(CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR, "Movimentar",
+	MOVIMENTAR(1, "Movimentar",
 			"Muitas das operações realizadas pelo Siga-Doc se enquadram na categoria \"Movimentação\". As movimentações são ações que são registradas em relação à determinado documento. Trâmites, juntadas, arquivamentos, e definições de perfil são exemplos de movimentações.\n"
 					+ "\n"
 					+ "Esta configuração indica se é permitido a determinado usuário ou lotação realizar certo tipo de movimentação em algum modelo ou espécie.\n"
@@ -281,7 +274,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.DEFAULT },
 			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	//
-	NIVEL_DE_ACESSO(CpTipoConfiguracao.TIPO_CONFIG_NIVELACESSO, "Nível de Acesso",
+	NIVEL_DE_ACESSO(5, "Nível de Acesso",
 			"Utilize essa configuração para indicar o nível de acesso menos restritivo de modelos ou espécies.\n" + "\n"
 					+ "Por exemplo, pode ser utilizado para indicar que determinado modelo pode ir até \"Público\".\n"
 					+ "\n"
@@ -293,7 +286,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.OPCIONAL, true),
 	//
-	NIVEL_ACESSO_MAXIMO(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MAXIMO, "Nível de Acesso Máximo",
+	NIVEL_ACESSO_MAXIMO(18, "Nível de Acesso Máximo",
 			"Utilize essa configuração para indicar o nível de acesso mais restritivo de modelos ou espécies.\n" + "\n"
 					+ "Por exemplo, pode ser utilizado para indicar que determinado modelo pode ir até \"Limitado entre Pessoas\".",
 			new Enum[] { ExParamCfg.TIPO_DOCUMENTO, ExParamCfg.TIPO_FORMA_DOCUMENTO, ExParamCfg.FORMA_DOCUMENTO,
@@ -303,7 +296,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.OPCIONAL, true),
 	//
-	NIVEL_ACESSO_MINIMO(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MINIMO, "Nível de Acesso Mínimo",
+	NIVEL_ACESSO_MINIMO(19, "Nível de Acesso Mínimo",
 			"Utilize essa configuração para indicar o nível de acesso menos restritivo de modelos ou espécies.\n" + "\n"
 					+ "Por exemplo, pode ser utilizado para indicar que determinado modelo pode ir até \"Público\".\n"
 					+ "\n"
@@ -315,7 +308,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.OPCIONAL, true),
 	//
-	NOTIFICAR_POR_EMAIL(CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL, "Notificar Por E-mail",
+	NOTIFICAR_POR_EMAIL(27, "Notificar Por E-mail",
 			"Configuração utilizada para desativar o envio de notificações por e-mail que o Siga-Doc faz, por exemplo, quando um documento é tramitado para determinada pessoa.\n"
 					+ "\n" + "Normalmente a notificação é desabilitada para determinado usuário ou lotação.",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
@@ -327,8 +320,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	//
-	PODE_ASSINAR_SEM_SOLICITACAO(CpTipoConfiguracao.TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO,
-			"Pode Assinar sem Solicitação",
+	PODE_ASSINAR_SEM_SOLICITACAO(39, "Pode Assinar sem Solicitação",
 			"Esta configuração é utilizada para obter um efeito muito interessante no Siga-Doc. Algumas pessoas, geralmente de alto escalão, assinam grande quantidade de documentos por dia. Diremos que uma dessas pessoas é uma \"autoridade\". Devido a dificuldade de validar todos esses documentos, a autoridade pode precisar identificar pessoas de confiança para realizarem a revisão dos documentos antes que estes apareçam na lista para assinatura em lote.\n"
 					+ "\n"
 					+ "Ou seja, para que o Siga produza o comportamento esperado, é necessário fazer 3 configurações simultâneas: 1. Definir automaticamente revisores para documentos que serão assinados por determinada autoridade; 2. Indicar que a autoridade não verá na lista de assinatura em lote documentos cuja assinatura não tenha sido solicitada por um revisor; 3. Garantir que apenas os revisores de confiança da autoridade terão a permissão de \"Solicitar a Assinatura\".\n"
@@ -339,8 +331,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	//
-	RECEBER_DOC_NAO_ASSINADO(CpTipoConfiguracao.TIPO_CONFIG_RECEBER_DOC_NAO_ASSINADO,
-			"Pode receber documento sem assinatura",
+	RECEBER_DOC_NAO_ASSINADO(23, "Pode receber documento sem assinatura",
 			"Normalmente é impedido o trâmite de documentos que não foram assinados. Utilizando essa configuração é possível indicar que determinada lotação pode receber documentos que ainda não estão assinados.",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, ExParamCfg.CLASSIFICACAO, ExParamCfg.TIPO_DOCUMENTO,
@@ -351,7 +342,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 	//
-	REFAZER(CpTipoConfiguracao.TIPO_CONFIG_REFAZER, "Refazer",
+	REFAZER(8, "Refazer",
 			"Indica se é permitido refazer um documento. Também têm de ser satisfeitas as seguintes condições:o documento tem de estar finalizado, o usuário tem de ser o subscritor ou o titular do documento ou ser da lotação cadastrante do documento, o documento não pode estar assinado, a não ser que seja dos tipos externo ou interno importado, que são naturalmente considerados assinados. Porém, se for documento de um desses tipos, não pode haver pdf anexado. O documento tem de possuir via não cancelada ou volume não cancelado.",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, ExParamCfg.CLASSIFICACAO, ExParamCfg.TIPO_DOCUMENTO,
@@ -362,8 +353,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	//
-	REINICIAR_NUMERACAO_TODO_ANO(CpTipoConfiguracao.TIPO_CONFIG_REINICIAR_NUMERACAO_TODO_ANO,
-			"Reiniciar Numeração Todo Ano",
+	REINICIAR_NUMERACAO_TODO_ANO(34, "Reiniciar Numeração Todo Ano",
 			"Configuração utilizada para configurar modelos ou espécies que não têm sua contagem reiniciada todo ano.",
 			new Enum[] { ExParamCfg.TIPO_DOCUMENTO, ExParamCfg.TIPO_FORMA_DOCUMENTO, ExParamCfg.FORMA_DOCUMENTO,
 					ExParamCfg.MODELO },
@@ -372,7 +362,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	//
-	TRAMITE_AUTOMATICO(CpTipoConfiguracao.TIPO_CONFIG_TRAMITE_AUTOMATICO, "Trâmite Automático",
+	TRAMITE_AUTOMATICO(38, "Trâmite Automático",
 			"Esta configuração indica se haverá a opção de \"Tramitar\" automaticamente no momento da assinatura do documento. Também configura o trâmite automático no caso da assinatura em lote.",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, ExParamCfg.CLASSIFICACAO, ExParamCfg.TIPO_DOCUMENTO,
@@ -383,8 +373,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE, CpSituacaoDeConfiguracaoEnum.DEFAULT },
 			CpSituacaoDeConfiguracaoEnum.DEFAULT, true),
 	//
-	UTILIZAR_EXTENSAO_CONVERSOR_HTML(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_EXTENSAO_CONVERSOR_HTML,
-			"Utilizar Extensão de Conversor HTML",
+	UTILIZAR_EXTENSAO_CONVERSOR_HTML(33, "Utilizar Extensão de Conversor HTML",
 			"Certa feita foi acrescentada ao Siga-Doc a possibilidade de utilizar um conversor chamado PD4ML para transformar HTML em PDF. Esta configuração servia para configurar quais os modelos que utilizariam o PD4ML. Seu uso não é mais recomendado pois esse componente está desatualizado.",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO,
 					ExParamCfg.TIPO_FORMA_DOCUMENTO, ExParamCfg.FORMA_DOCUMENTO, ExParamCfg.MODELO },
@@ -393,7 +382,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 	//
-	INCLUIR_EM_AVULSO(CpTipoConfiguracao.TIPO_CONFIG_INCLUIR_EM_AVULSO, "Incluir em Avulso?", "",
+	INCLUIR_EM_AVULSO(45, "Incluir em Avulso?", "",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, CpParamCfg.PERFIL, CpParamCfg.SERVICO,
 					CpParamCfg.PESSOA_OBJETO, CpParamCfg.LOTACAO_OBJETO, CpParamCfg.CARGO_OBJETO,
@@ -405,8 +394,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	//
-	COSIGNATARIO_ASSINAR_ANTES_SUBSCRITOR(CpTipoConfiguracao.TIPO_CONFIG_COSIGNATARIO_ASSINAR_ANTES_SUBSCRITOR,
-			"Cossignatário Assinar Antes do Subscritor?", "",
+	COSIGNATARIO_ASSINAR_ANTES_SUBSCRITOR(46, "Cossignatário Assinar Antes do Subscritor?", "",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, CpParamCfg.PERFIL, CpParamCfg.SERVICO,
 					CpParamCfg.PESSOA_OBJETO, CpParamCfg.LOTACAO_OBJETO, CpParamCfg.CARGO_OBJETO,
@@ -418,8 +406,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 	//
-	FINALIZAR_AUTOMATICAMENTE_CAPTURADOS(CpTipoConfiguracao.TIPO_CONFIG_FINALIZAR_AUTOMATICAMENTE_CAPTURADOS,
-			"Finalizar Automaticamente Capturados?", "",
+	FINALIZAR_AUTOMATICAMENTE_CAPTURADOS(47, "Finalizar Automaticamente Capturados?", "",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, CpParamCfg.PERFIL, CpParamCfg.SERVICO,
 					CpParamCfg.PESSOA_OBJETO, CpParamCfg.LOTACAO_OBJETO, CpParamCfg.CARGO_OBJETO,
@@ -431,7 +418,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 	//
-	TROCAR_PDF_CAPTURADOS(CpTipoConfiguracao.TIPO_CONFIG_TROCAR_PDF_CAPTURADOS, "Trocar PDFs Capturados?", "",
+	TROCAR_PDF_CAPTURADOS(48, "Trocar PDFs Capturados?", "",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, CpParamCfg.PERFIL, CpParamCfg.SERVICO,
 					CpParamCfg.PESSOA_OBJETO, CpParamCfg.LOTACAO_OBJETO, CpParamCfg.CARGO_OBJETO,
@@ -443,7 +430,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	//
-	TMP_PARA_LOTACAO(CpTipoConfiguracao.TIPO_CONFIG_TMP_PARA_LOTACAO, "Mostrar temporários para Lotação", "",
+	TMP_PARA_LOTACAO(49, "Mostrar temporários para Lotação", "",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, CpParamCfg.PERFIL, CpParamCfg.SERVICO,
 					CpParamCfg.PESSOA_OBJETO, CpParamCfg.LOTACAO_OBJETO, CpParamCfg.CARGO_OBJETO,
@@ -455,8 +442,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	//
-	RESTRINGIR_ACESSO_APOS_RECEBER(CpTipoConfiguracao.TIPO_CONFIG_RESTRINGIR_ACESSO_APOS_RECEBER,
-			"Restringir Acesso Após Receber?", "",
+	RESTRINGIR_ACESSO_APOS_RECEBER(50, "Restringir Acesso Após Receber?", "",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, CpParamCfg.PERFIL, CpParamCfg.SERVICO,
 					CpParamCfg.PESSOA_OBJETO, CpParamCfg.LOTACAO_OBJETO, CpParamCfg.CARGO_OBJETO,
@@ -468,8 +454,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 	//
-	AUTORIZAR_MOVIMENTACAO_POR_WS(CpTipoConfiguracao.TIPO_CONFIG_AUTORIZAR_MOVIMENTACAO_POR_WS,
-			"Autorizar Movimentação por WS?", "",
+	AUTORIZAR_MOVIMENTACAO_POR_WS(51, "Autorizar Movimentação por WS?", "",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, CpParamCfg.PERFIL, CpParamCfg.SERVICO,
 					CpParamCfg.PESSOA_OBJETO, CpParamCfg.LOTACAO_OBJETO, CpParamCfg.CARGO_OBJETO,
@@ -481,7 +466,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 	//
-	DELEGAR_VISUALIZACAO(CpTipoConfiguracao.TIPO_CONFIG_DELEGAR_VISUALIZACAO, "Delegar Visualização?", "",
+	DELEGAR_VISUALIZACAO(44, "Delegar Visualização?", "",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, CpParamCfg.PERFIL, CpParamCfg.SERVICO,
 					CpParamCfg.PESSOA_OBJETO, CpParamCfg.LOTACAO_OBJETO, CpParamCfg.CARGO_OBJETO,
@@ -493,7 +478,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 	//
-	TRAMITAR_SEM_CAPTURADO(CpTipoConfiguracao.TIPO_CONFIG_TRAMITAR_SEM_CAPTURADO, "Tramitar sem Capturado?", "",
+	TRAMITAR_SEM_CAPTURADO(52, "Tramitar sem Capturado?", "",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, CpParamCfg.PERFIL, CpParamCfg.SERVICO,
 					CpParamCfg.PESSOA_OBJETO, CpParamCfg.LOTACAO_OBJETO, CpParamCfg.CARGO_OBJETO,
@@ -505,7 +490,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	//
-	CRIAR_NOVO_EXTERNO(CpTipoConfiguracao.TIPO_CONFIG_CRIAR_NOVO_EXTERNO, "Criar Novo Externo", "",
+	CRIAR_NOVO_EXTERNO(53, "Criar Novo Externo", "",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, CpParamCfg.PERFIL, CpParamCfg.SERVICO,
 					CpParamCfg.PESSOA_OBJETO, CpParamCfg.LOTACAO_OBJETO, CpParamCfg.CARGO_OBJETO,
@@ -517,8 +502,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 	//
-	TRAMITAR_PARA_LOTACAO_SEM_USUARIOS_ATIVOS(CpTipoConfiguracao.TIPO_CONFIG_TRAMITAR_PARA_LOTACAO_SEM_USUARIOS_ATIVOS,
-			"Tramitar para Lotação sem Usuários Ativos?", "",
+	TRAMITAR_PARA_LOTACAO_SEM_USUARIOS_ATIVOS(54, "Tramitar para Lotação sem Usuários Ativos?", "",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, CpParamCfg.PERFIL, CpParamCfg.SERVICO,
 					CpParamCfg.PESSOA_OBJETO, CpParamCfg.LOTACAO_OBJETO, CpParamCfg.CARGO_OBJETO,
@@ -527,9 +511,16 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					ExParamCfg.MODELO, ExParamCfg.NIVEL_DE_ACESSO, ExParamCfg.PAPEL, ExParamCfg.VIA },
 			new Enum[] { CpParamCfg.SITUACAO }, new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
+			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true), 
+	//
+	UTILIZAR_EXTENSAO_EDITOR(32, "Utilizar Extensão de Editor", "",
+			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO,
+					ExParamCfg.TIPO_FORMA_DOCUMENTO, ExParamCfg.FORMA_DOCUMENTO, ExParamCfg.MODELO },
+			new Enum[] { CpParamCfg.SITUACAO }, new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
+					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true);
 
-	private final Long id;
+	private final int id;
 	private final String descr;
 	private final String explicacao;
 	private final Enum[] params;
@@ -538,7 +529,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 	private final CpSituacaoDeConfiguracaoEnum situacaoDefault;
 	private final boolean editavel;
 
-	ExTipoDeConfiguracao(Long id, String descr, String explicacao, Enum[] params, Enum[] obrigatorios,
+	ExTipoDeConfiguracao(int id, String descr, String explicacao, Enum[] params, Enum[] obrigatorios,
 			CpSituacaoDeConfiguracaoEnum[] situacoes, CpSituacaoDeConfiguracaoEnum situacaoDefault, boolean editavel) {
 		this.id = id;
 		this.descr = descr;
@@ -550,7 +541,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 		this.editavel = editavel;
 	}
 
-	public Long getId() {
+	public int getId() {
 		return id;
 	}
 
@@ -562,7 +553,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 		return this.explicacao;
 	}
 
-	public static ITipoDeConfiguracao getById(Long id) {
+	public static ITipoDeConfiguracao getById(Integer id) {
 		if (id == null)
 			return null;
 		return CpTipoDeConfiguracao.getById(id);

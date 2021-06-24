@@ -476,7 +476,7 @@ public class SrMovimentacao extends Objeto {
         c.setAcaoFiltro(getAcao());
         c.setPrioridade(getPrioridade());
         c.setAtendente(getLotaAtendente());
-        c.setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
+        c.setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoDeConfiguracao.SR_ABRANGENCIA_ACORDO));
         
         List<SrConfiguracao> confs = SrConfiguracao.listar(c);
         for (SrConfiguracao conf : confs) {

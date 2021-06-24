@@ -150,7 +150,7 @@ public class SrAtributo extends HistoricoSuporte implements SrSelecionavel, Sele
 			SrConfiguracao confFiltro = new SrConfiguracao();
 			confFiltro.setLotacao(lotaTitular);
 			confFiltro.setDpPessoa(pess);
-			confFiltro.setCpTipoConfiguracao(ContextoPersistencia.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
+			confFiltro.setCpTipoConfiguracao(ContextoPersistencia.em().find(CpTipoConfiguracao.class, CpTipoDeConfiguracao.SR_ASSOCIACAO_TIPO_ATRIBUTO));
 			return SrConfiguracao.listar(confFiltro, new int[] { SrConfiguracaoBL.TIPO_ATRIBUTO });
 		} catch (Exception e) {
 			throw new RuntimeException(e);

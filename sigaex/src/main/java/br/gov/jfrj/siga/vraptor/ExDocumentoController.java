@@ -72,11 +72,11 @@ import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -98,6 +98,7 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -655,7 +656,7 @@ public class ExDocumentoController extends ExController {
 				.buscaSituacao(exDocumentoDTO.getModelo(),
 						exDocumentoDTO.getDoc().getExTipoDocumento(),
 						getTitular(), getLotaTitular(),
-						CpTipoConfiguracao.TIPO_CONFIG_ELETRONICO);
+						ExTipoDeConfiguracao.ELETRONICO);
 
 		if (idSit == CpSituacaoDeConfiguracaoEnum.OBRIGATORIO) {
 			exDocumentoDTO.setEletronico(1);
@@ -1240,7 +1241,7 @@ public class ExDocumentoController extends ExController {
 		buscarDocumento(false, exDocumentoDto);
 
 		if(!podeVisualizarDocumento(exDocumentoDTO.getMob(), getTitular(), idVisualizacao) || !Cp.getInstance().getConf()
-				.podePorConfiguracao(getCadastrante(), getCadastrante().getLotacao(), CpTipoConfiguracao.TIPO_CONFIG_DELEGAR_VISUALIZACAO)) {
+				.podePorConfiguracao(getCadastrante(), getCadastrante().getLotacao(), ExTipoDeConfiguracao.DELEGAR_VISUALIZACAO)) {
 			assertAcesso(exDocumentoDto);
 		}
 		
@@ -1452,7 +1453,7 @@ public class ExDocumentoController extends ExController {
 					.getConf()
 					.buscaSituacao(doc.getExModelo(), getTitular(),
 							getLotaTitular(),
-							CpTipoConfiguracao.TIPO_CONFIG_DESTINATARIO);
+							ExTipoDeConfiguracao.DESTINATARIO);
 			if (idSit == CpSituacaoDeConfiguracaoEnum.OBRIGATORIO) {
 				throw new AplicacaoException("Para documentos do modelo "
 						+ doc.getExModelo().getNmMod()
@@ -1626,12 +1627,12 @@ public class ExDocumentoController extends ExController {
 					exDocumentoDTO.getDoc().getExModelo(),
 					exDocumentoDTO.getDoc().getExClassificacaoAtual(),
 					exDocumentoDTO.getDoc().getExNivelAcessoAtual(),
-					CpTipoConfiguracao.TIPO_CONFIG_CRIAR)) {
+					ExTipoDeConfiguracao.CRIAR)) {
 
 				if (!ex.getConf().podePorConfiguracao(getTitular(),
 						getLotaTitular(), null, null, null,
 						exDocumentoDTO.getDoc().getExClassificacao(), null,
-						CpTipoConfiguracao.TIPO_CONFIG_CRIAR)) {
+						ExTipoDeConfiguracao.CRIAR)) {
 					throw new AplicacaoException(
 							"Usuário não possui permissão de criar documento da classificação "
 									+ exDocumentoDTO.getDoc()
@@ -1777,7 +1778,7 @@ public class ExDocumentoController extends ExController {
 
 			if (!exDocumentoDTO.getDoc().isFinalizado()
 					&& (exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO || exDocumentoDTO
-							.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO) && (exBL.getConf().podePorConfiguracao(so.getTitular(), so.getLotaTitular(), CpTipoConfiguracao.TIPO_CONFIG_FINALIZAR_AUTOMATICAMENTE_CAPTURADOS)))
+							.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO) && (exBL.getConf().podePorConfiguracao(so.getTitular(), so.getLotaTitular(), ExTipoDeConfiguracao.FINALIZAR_AUTOMATICAMENTE_CAPTURADOS)))
 				exBL.finalizar(getCadastrante(), getLotaTitular(),
 						exDocumentoDTO.getDoc());
 

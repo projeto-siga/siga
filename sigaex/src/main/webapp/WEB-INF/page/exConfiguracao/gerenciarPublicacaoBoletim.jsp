@@ -116,7 +116,7 @@
 								<label>Permiss&atilde;o</label>
 								<select name="idSituacao" class="form-control">
 									<c:forEach var="situacao" items="${listaSituacaoPodeNaoPode}">
-										<option value="${situacao.idSitConfiguracao}">${situacao.dscSitConfiguracao}</option>
+										<option value="${situacao.idSitConfiguracao}">${situacao.descr}</option>
 									</c:forEach>
 								</select>
 							</div>
@@ -169,7 +169,7 @@
 						</c:otherwise>
 					</c:choose>
 
-					<td>${configuracao.cpSituacaoConfiguracao.dscSitConfiguracao}</td>
+					<td>${configuracao.cpSituacaoConfiguracao.descr}</td>
 					<td>${configuracao.hisDtFimDDMMYY_HHMMSS}<td>
 					<td>
 						<c:if test="${configuracao.hisDtFim != null}">

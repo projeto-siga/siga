@@ -2,7 +2,7 @@ package br.gov.jfrj.siga.cp.model.enm;
 
 public interface ITipoDeConfiguracao {
 
-	Long getId();
+	int getId();
 
 	String getDescr();
 

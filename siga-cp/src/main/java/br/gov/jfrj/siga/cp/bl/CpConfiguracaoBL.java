@@ -42,7 +42,6 @@ import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoServico;
 import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupo;
 import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupoFabrica;
@@ -289,7 +288,7 @@ public class CpConfiguracaoBL {
 				// cfg.getDpPessoa().getPessoaAtual().getDescricao();
 			}
 			if (cfg.getCpTipoConfiguracao() != null)
-				cfg.getCpTipoConfiguracao().getDscTpConfiguracao();
+				cfg.getCpTipoConfiguracao().getDescr();
 			if (cfg.getCpServico() != null)
 				cfg.getCpServico().getDescricao();
 			if (cfg.getCpIdentidade() != null)
@@ -338,7 +337,7 @@ public class CpConfiguracaoBL {
 	// public void limparCache(CpTipoConfiguracao cpTipoConfig) throws Exception
 	// {
 	//
-	// atualizarCache(cpTipoConfig!=null?cpTipoConfig.getIdTpConfiguracao():null);
+	// atualizarCache(cpTipoConfig!=null?cpTipoConfig.getId():null);
 	//
 	// }
 
@@ -369,8 +368,7 @@ public class CpConfiguracaoBL {
 
 		SortedSet<CpPerfil> perfis = null;
 		if (cpConfiguracaoFiltro.isBuscarPorPerfis()
-				|| (cpConfiguracaoFiltro.getCpTipoConfiguracao() != null && cpConfiguracaoFiltro.getCpTipoConfiguracao()
-						.getIdTpConfiguracao().equals(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO))) {
+				|| (cpConfiguracaoFiltro.getCpTipoConfiguracao() == CpTipoDeConfiguracao.UTILIZAR_SERVICO)) {
 			perfis = consultarPerfisPorPessoaELotacao(cpConfiguracaoFiltro.getDpPessoa(),
 					cpConfiguracaoFiltro.getLotacao(), dtEvn);
 
@@ -399,7 +397,7 @@ public class CpConfiguracaoBL {
 
 		TreeSet<CpConfiguracaoCache> lista = null;
 		if (cpConfiguracaoFiltro.getCpTipoConfiguracao() != null)
-			lista = getListaPorTipo(CpTipoDeConfiguracao.getById(cpConfiguracaoFiltro.getCpTipoConfiguracao().getIdTpConfiguracao()));
+			lista = getListaPorTipo(cpConfiguracaoFiltro.getCpTipoConfiguracao());
 		if (lista == null)
 			return null;
 
@@ -610,7 +608,7 @@ public class CpConfiguracaoBL {
 	 */
 	public boolean podePorConfiguracao(CpOrgaoUsuario cpOrgaoUsu, DpLotacao dpLotacao, DpCargo cargo,
 			DpFuncaoConfianca dpFuncaoConfianca, DpPessoa dpPessoa, CpServico cpServico, CpIdentidade cpIdentidade,
-			CpGrupo cpGrupo, CpTipoLotacao cpTpLotacao, long idTpConf) throws Exception {
+			CpGrupo cpGrupo, CpTipoLotacao cpTpLotacao, ITipoDeConfiguracao idTpConf) throws Exception {
 		try {
 			CpConfiguracao cfgFiltro = createNewConfiguracao();
 
@@ -625,7 +623,7 @@ public class CpConfiguracaoBL {
 			cfgFiltro.setCpGrupo(cpGrupo);
 			cfgFiltro.setCpTipoLotacao(cpTpLotacao);
 
-			cfgFiltro.setCpTipoConfiguracao(CpDao.getInstance().consultar(idTpConf, CpTipoConfiguracao.class, false));
+			cfgFiltro.setCpTipoConfiguracao(idTpConf);
 
 			CpConfiguracaoCache cfg = (CpConfiguracaoCache) buscaConfiguracao(cfgFiltro, new int[] { 0 }, null);
 
@@ -664,30 +662,30 @@ public class CpConfiguracaoBL {
 	 * @param idTpConf
 	 * @throws Exception
 	 */
-	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao, long idTpConf) throws Exception {
+	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao, ITipoDeConfiguracao idTpConf) throws Exception {
 		return podePorConfiguracao(null, dpLotacao, null, null, dpPessoa, null, null, null, null, idTpConf);
 
 	}
 
-	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao, CpServico cpServico, long idTpConf)
+	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao, CpServico cpServico, ITipoDeConfiguracao idTpConf)
 			throws Exception {
 		return podePorConfiguracao(null, dpLotacao, null, null, dpPessoa, cpServico, null, null, null, idTpConf);
 
 	}
 
-	public boolean podePorConfiguracao(DpPessoa dpPessoa, long idTpConf) throws Exception {
+	public boolean podePorConfiguracao(DpPessoa dpPessoa, ITipoDeConfiguracao idTpConf) throws Exception {
 		return podePorConfiguracao(null, null, null, null, dpPessoa, null, null, null, null, idTpConf);
 	}
 
-	public boolean podePorConfiguracao(DpLotacao dpLotacao, long idTpConf) throws Exception {
+	public boolean podePorConfiguracao(DpLotacao dpLotacao, ITipoDeConfiguracao idTpConf) throws Exception {
 		return podePorConfiguracao(null, dpLotacao, null, null, null, null, null, null, null, idTpConf);
 	}
 
-	public boolean podePorConfiguracao(CpIdentidade cpIdentidade, long idTpConf) throws Exception {
+	public boolean podePorConfiguracao(CpIdentidade cpIdentidade, ITipoDeConfiguracao idTpConf) throws Exception {
 		return podePorConfiguracao(null, null, null, null, null, null, cpIdentidade, null, null, idTpConf);
 	}
 
-	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao, CpGrupo cpGrupo, long idTpConf)
+	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao, CpGrupo cpGrupo, ITipoDeConfiguracao idTpConf)
 			throws Exception {
 		return podePorConfiguracao(null, dpLotacao, null, null, dpPessoa, null, null, cpGrupo, null, idTpConf);
 	}
@@ -780,7 +778,7 @@ public class CpConfiguracaoBL {
 				}
 			}
 			return Cp.getInstance().getConf().podePorConfiguracao(titular, lotaTitular, srvRecuperado,
-					CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO);
+					CpTipoDeConfiguracao.UTILIZAR_SERVICO);
 		} catch (Exception e) {
 			throw new RuntimeException("Não foi possível calcular acesso ao serviço " + servicoPath, e);
 		}
@@ -865,11 +863,11 @@ public class CpConfiguracaoBL {
 
 	}
 
-	public void excluirPessoaExtra(DpPessoa pes, DpLotacao lot, CpTipoConfiguracao tpConf,
+	public void excluirPessoaExtra(DpPessoa pes, DpLotacao lot, ITipoDeConfiguracao tpConf,
 			CpIdentidade identidadeCadastrante) {
 		ModeloDao.iniciarTransacao();
 		try {
-			Set<CpConfiguracaoCache> configs = getListaPorTipo(CpTipoDeConfiguracao.getById(tpConf.getIdTpConfiguracao()));
+			Set<CpConfiguracaoCache> configs = getListaPorTipo(tpConf);
 			for (CpConfiguracaoCache c : configs) {
 				if (c.hisDtFim == null && c.dpPessoa == pes.getIdInicial() && c.lotacao == lot.getIdInicial()) {
 					CpConfiguracao cfg = dao().consultar(c.idConfiguracao, CpConfiguracao.class, false);
@@ -897,7 +895,7 @@ public class CpConfiguracaoBL {
 			flt.setIdTpGrupo(idCpTipoGrupo.intValue());
 			CpConfiguracaoBL bl = Cp.getInstance().getConf();
 
-			return bl.podePorConfiguracao(titular, lotaTitular, cpGrp, CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_GRUPO);
+			return bl.podePorConfiguracao(titular, lotaTitular, cpGrp, CpTipoDeConfiguracao.GERENCIAR_GRUPO);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

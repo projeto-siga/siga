@@ -120,7 +120,7 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
         
         try {
         	 if (confFiltro.getCpTipoConfiguracao() != null) {
-                 TreeSet<CpConfiguracao> lista = getListaPorTipo(confFiltro.getCpTipoConfiguracao().getIdTpConfiguracao());
+                 TreeSet<CpConfiguracao> lista = getListaPorTipo(confFiltro.getCpTipoConfiguracao().getId());
 
                  if (lista != null) {
                      for (CpConfiguracao cpConfiguracao : lista) {
@@ -201,9 +201,9 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
     public void atualizarConfiguracoesDoCache(List<SrConfiguracao> configs) throws Exception {
         List<SrConfiguracao> evitarLazy = new ArrayList<SrConfiguracao>();
         for (SrConfiguracao conf : configs) {
-            hashListas.get(conf.getCpTipoConfiguracao().getIdTpConfiguracao()).remove(conf);
+            hashListas.get(conf.getCpTipoConfiguracao().getId()).remove(conf);
             SrConfiguracao newConf = SrConfiguracao.AR.findById(conf.getIdConfiguracao());
-            hashListas.get(newConf.getCpTipoConfiguracao().getIdTpConfiguracao()).add(newConf);
+            hashListas.get(newConf.getCpTipoConfiguracao().getId()).add(newConf);
             evitarLazy.add(newConf);
         }
         evitarLazy((List<CpConfiguracao>) (List<?>) evitarLazy);

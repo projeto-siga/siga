@@ -534,7 +534,7 @@ public class TestUtil {
 				.get()
 				.limparCache(
 						(CpTipoConfiguracao) CpTipoConfiguracao
-								.findById(CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
+								.findById(CpTipoDeConfiguracao.SR_ASSOCIACAO_TIPO_ATRIBUTO));
 	}*/
 	
 	public static String removeAcento(String acentuado){

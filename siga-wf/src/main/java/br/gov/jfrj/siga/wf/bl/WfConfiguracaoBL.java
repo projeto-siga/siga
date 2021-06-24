@@ -27,14 +27,13 @@ import java.util.SortedSet;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpPerfil;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.model.WfConfiguracao;
 import br.gov.jfrj.siga.wf.model.WfConfiguracaoCache;
@@ -86,7 +85,7 @@ public class WfConfiguracaoBL extends CpConfiguracaoBL {
 	 * 
 	 */
 	public boolean podePorConfiguracao(CpOrgaoUsuario cpOrgaoUsu, DpLotacao dpLotacao, DpCargo cargo,
-			DpFuncaoConfianca dpFuncaoConfianca, DpPessoa dpPessoa, long idTpConf,
+			DpFuncaoConfianca dpFuncaoConfianca, DpPessoa dpPessoa, ITipoDeConfiguracao idTpConf,
 			WfDefinicaoDeProcedimento definicaoDeProcedimento) throws Exception {
 		WfConfiguracao cfgFiltro = createNewConfiguracao();
 
@@ -95,7 +94,7 @@ public class WfConfiguracaoBL extends CpConfiguracaoBL {
 		cfgFiltro.setFuncaoConfianca(dpFuncaoConfianca);
 		cfgFiltro.setLotacao(dpLotacao);
 		cfgFiltro.setDpPessoa(dpPessoa);
-		cfgFiltro.setCpTipoConfiguracao(CpDao.getInstance().consultar(idTpConf, CpTipoConfiguracao.class, false));
+		cfgFiltro.setCpTipoConfiguracao(idTpConf);
 
 		cfgFiltro.setDefinicaoDeProcedimento(definicaoDeProcedimento);
 

@@ -38,9 +38,9 @@ import org.jboss.logging.Logger;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.util.SigaUtil;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -64,6 +64,7 @@ import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.ex.util.NivelDeAcessoUtil;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -490,7 +491,7 @@ public class ExServiceImpl implements ExService {
 
 				CpSituacaoDeConfiguracaoEnum idSit = Ex
 						.getInstance().getConf().buscaSituacao(modelo, tipoDocumento, cadastrante,
-								cadastrante.getLotacao(), CpTipoConfiguracao.TIPO_CONFIG_ELETRONICO);
+								cadastrante.getLotacao(), ExTipoDeConfiguracao.ELETRONICO);
 
 				if (idSit == CpSituacaoDeConfiguracaoEnum.OBRIGATORIO) {
 					eletronico = true;
@@ -503,15 +504,13 @@ public class ExServiceImpl implements ExService {
 					Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
 
 					ExConfiguracao config = new ExConfiguracao();
-					CpTipoConfiguracao exTpConfig = new CpTipoConfiguracao();
 					config.setDpPessoa(cadastrante);
 					config.setLotacao(cadastrante.getLotacao());
 					config.setExTipoDocumento(tipoDocumento);
 					config.setExFormaDocumento(forma);
 					config.setExModelo(modelo);
 					config.setExClassificacao(classificacao);
-					exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVELACESSO);
-					config.setCpTipoConfiguracao(exTpConfig);
+					config.setCpTipoConfiguracao(ExTipoDeConfiguracao.NIVEL_DE_ACESSO);
 					config.setCpSituacaoConfiguracao(CpSituacaoDeConfiguracaoEnum.DEFAULT);
 
 					ExConfiguracaoCache exConfig = ((ExConfiguracaoCache) Ex.getInstance().getConf().buscaConfiguracao(config,

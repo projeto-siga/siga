@@ -22,7 +22,7 @@ import java.lang.reflect.Method;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpIdentidade;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
@@ -61,12 +61,6 @@ public class CpCompetenciaBL {
 		return lota;
 	}
 
-	public boolean podeSimularUsuario(final DpPessoa titular,
-			final DpLotacao lotaTitular) throws Exception {
-		return configuracaoBL.podePorConfiguracao(titular, lotaTitular,
-				CpTipoConfiguracao.TIPO_CONFIG_SIMULAR_USUARIO);
-	}
-
 	public boolean testaCompetencia(final String funcao,
 			final DpPessoa titular, final DpLotacao lotaTitular) {
 		final Class[] classes = new Class[] { DpPessoa.class, DpLotacao.class };
@@ -87,7 +81,7 @@ public class CpCompetenciaBL {
 	public boolean isIdentidadeBloqueada(CpIdentidade cpIdentidade)
 			throws AplicacaoException {
 		try {
-			return !configuracaoBL.podePorConfiguracao(cpIdentidade, CpTipoConfiguracao.TIPO_CONFIG_FAZER_LOGIN);
+			return !configuracaoBL.podePorConfiguracao(cpIdentidade, CpTipoDeConfiguracao.FAZER_LOGIN);
 		} catch (final Exception e) {
 			throw new AplicacaoException(
 					"Não foi possível verificar se a identidade está bloqueada.",
@@ -98,7 +92,7 @@ public class CpCompetenciaBL {
 	public boolean isPessoaBloqueada(DpPessoa pes) throws AplicacaoException {
 		try {
 			return !configuracaoBL.podePorConfiguracao(pes,
-					CpTipoConfiguracao.TIPO_CONFIG_FAZER_LOGIN);
+					CpTipoDeConfiguracao.FAZER_LOGIN);
 		} catch (final Exception e) {
 			throw new AplicacaoException(
 					"Não foi possível verificar se a pessoa está bloqueada.",
@@ -106,15 +100,15 @@ public class CpCompetenciaBL {
 		}
 	}
 	
-	public boolean podeMovimentarViaWS(final DpPessoa titular,
-			final DpLotacao lotaTitular) throws Exception {
-		return configuracaoBL.podePorConfiguracao(titular, lotaTitular,
-				CpTipoConfiguracao.TIPO_CONFIG_AUTORIZAR_MOVIMENTACAO_POR_WS);
-	}
+//	public boolean podeMovimentarViaWS(final DpPessoa titular,
+//			final DpLotacao lotaTitular) throws Exception {
+//		return configuracaoBL.podePorConfiguracao(titular, lotaTitular,
+//				CpTipoDeConfiguracao.AUTORIZAR_MOVIMENTACAO_POR_WS);
+//	}
 	
 	public boolean podeSegundoFatorPin(final DpPessoa titular,
 			final DpLotacao lotaTitular) throws Exception {
-		return configuracaoBL.podePorConfiguracao(titular, lotaTitular,	CpTipoConfiguracao.TIPO_CONFIG_SEGUNDO_FATOR_PIN);
+		return configuracaoBL.podePorConfiguracao(titular, lotaTitular,	CpTipoDeConfiguracao.SEGUNDO_FATOR_PIN);
 	}
 	
 }

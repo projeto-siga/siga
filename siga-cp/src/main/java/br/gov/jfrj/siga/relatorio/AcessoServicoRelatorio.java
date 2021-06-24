@@ -36,9 +36,10 @@ import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -141,9 +142,7 @@ public class AcessoServicoRelatorio extends RelatorioTemplate {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Collection processarDados() {
-		CpTipoConfiguracao tipo = CpDao.getInstance().consultar(
-				CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO,
-				CpTipoConfiguracao.class, false);
+		CpTipoDeConfiguracao tipo = CpTipoDeConfiguracao.UTILIZAR_SERVICO;
 		ArrayList<AlteracaoDireitosItem> aldis = new ArrayList<AlteracaoDireitosItem>();
 		ArrayList<String> dados = new ArrayList<String>();
 		try {
@@ -166,7 +165,7 @@ public class AcessoServicoRelatorio extends RelatorioTemplate {
 		return dados;
 	}
 
-	private AlteracaoDireitosItem gerar(CpTipoConfiguracao tipo,
+	private AlteracaoDireitosItem gerar(CpTipoDeConfiguracao tipo,
 			CpPerfil perfil, DpPessoa pessoa, DpLotacao lotacao,
 			CpOrgaoUsuario orgao, CpServico servico, Date dtEvn)
 			throws Exception {
@@ -315,17 +314,17 @@ public class AcessoServicoRelatorio extends RelatorioTemplate {
 		return cfga.printOrigemCurta();
 	}
 
-	private Long getIdTipoConfiguracao() {
-		return CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO;
+	private Integer getIdTipoConfiguracao() {
+		return CpTipoDeConfiguracao.UTILIZAR_SERVICO.getId();
 	}
 
-	private CpTipoConfiguracao getTipoConfiguracao() {
+	private CpTipoDeConfiguracao getTipoConfiguracao() {
 		return dao().consultar(getIdTipoConfiguracao(),
-				CpTipoConfiguracao.class, false);
+				CpTipoDeConfiguracao.class, false);
 	}
 
 	private String getDescricaoTipoConfiguracao() {
-		return getTipoConfiguracao().getDscTpConfiguracao();
+		return getTipoConfiguracao().getDescr();
 	}
 
 	private CpDao dao() {

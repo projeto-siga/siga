@@ -37,7 +37,7 @@ public class CpConfiguracaoHelper {
 			result.include("idSituacao", c.getCpSituacaoConfiguracao().getId());
 
 		if (c.getCpTipoConfiguracao() != null)
-			result.include("idTpConfiguracao", c.getCpTipoConfiguracao().getIdTpConfiguracao());
+			result.include("idTpConfiguracao", c.getCpTipoConfiguracao().getId());
 
 		if (c.getCpTipoLotacao() != null)
 			result.include("idTpLotacao", c.getCpTipoLotacao().getIdTpLotacao());
@@ -88,7 +88,7 @@ public class CpConfiguracaoHelper {
 		return dao.listarOrgaosUsuarios();
 	}
 
-	public static void gravarConfiguracao(Long idTpConfiguracao, Integer idSituacao, final CpConfiguracao config,
+	public static void gravarConfiguracao(Integer idTpConfiguracao, Integer idSituacao, final CpConfiguracao config,
 			CpDao dao, CpIdentidade idc) {
 		if (idTpConfiguracao == null || idTpConfiguracao == 0)
 			throw new AplicacaoException("Tipo de configuracao não informado");

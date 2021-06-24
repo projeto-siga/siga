@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletResponse;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -51,6 +50,7 @@ import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.util.NivelDeAcessoUtil;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.util.ExProcessadorModelo;
@@ -105,15 +105,13 @@ public class ExController extends SigaController {
 		final Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
 
 		final ExConfiguracao config = new ExConfiguracao();
-		final CpTipoConfiguracao exTpConfig = new CpTipoConfiguracao();
 		config.setDpPessoa(getTitular());
 		config.setLotacao(getLotaTitular());
 		config.setExTipoDocumento(exTpDoc);
 		config.setExFormaDocumento(forma);
 		config.setExModelo(exMod);
 		config.setExClassificacao(classif);
-		exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVELACESSO);
-		config.setCpTipoConfiguracao(exTpConfig);
+		config.setCpTipoConfiguracao(ExTipoDeConfiguracao.NIVEL_DE_ACESSO);
 		config.setCpSituacaoConfiguracao(CpSituacaoDeConfiguracaoEnum.DEFAULT);
 		ExConfiguracaoCache exConfig;
 
@@ -193,7 +191,7 @@ public class ExController extends SigaController {
 		boolean retorno = Boolean.FALSE;
 		
 		if(Cp.getInstance().getConf()
-				.podePorConfiguracao(cadastrante, cadastrante.getLotacao(), CpTipoConfiguracao.TIPO_CONFIG_DELEGAR_VISUALIZACAO)) {
+				.podePorConfiguracao(cadastrante, cadastrante.getLotacao(), ExTipoDeConfiguracao.DELEGAR_VISUALIZACAO)) {
 			if(idVisualizacao != null && !idVisualizacao.equals(Long.valueOf(0))) {
 				DpVisualizacao vis = ExDao.getInstance().consultar(idVisualizacao, DpVisualizacao.class, false);
 				

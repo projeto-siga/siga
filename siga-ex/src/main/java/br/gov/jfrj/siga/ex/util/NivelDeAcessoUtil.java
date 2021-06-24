@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExClassificacao;
@@ -16,6 +16,7 @@ import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class NivelDeAcessoUtil {
@@ -26,7 +27,6 @@ public class NivelDeAcessoUtil {
 		Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
 
 		ExConfiguracao config = new ExConfiguracao();
-		CpTipoConfiguracao exTpConfig = new CpTipoConfiguracao();
 		config.setDpPessoa(titular);
 		config.setLotacao(lotaTitular);
 		config.setExTipoDocumento(exTpDoc);
@@ -35,8 +35,7 @@ public class NivelDeAcessoUtil {
 		config.setExClassificacao(classif);
 
 		ExConfiguracaoCache exConfiguracaoMin;
-		exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MINIMO);
-		config.setCpTipoConfiguracao(exTpConfig);
+		config.setCpTipoConfiguracao(ExTipoDeConfiguracao.NIVEL_ACESSO_MINIMO);
 		try {
 			exConfiguracaoMin = (ExConfiguracaoCache) Ex.getInstance().getConf().buscaConfiguracao(config,
 					new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt);
@@ -45,8 +44,7 @@ public class NivelDeAcessoUtil {
 		}
 
 		ExConfiguracaoCache exConfiguracaoMax;
-		exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MAXIMO);
-		config.setCpTipoConfiguracao(exTpConfig);
+		config.setCpTipoConfiguracao(ExTipoDeConfiguracao.NIVEL_ACESSO_MAXIMO);
 		try {
 			exConfiguracaoMax = (ExConfiguracaoCache) Ex.getInstance().getConf().buscaConfiguracao(config,
 					new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt);

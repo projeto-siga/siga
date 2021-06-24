@@ -244,26 +244,26 @@ public class SrConfiguracao extends CpConfiguracao {
     }
 
     public void salvarComoDesignacao() throws Exception {
-        setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+        setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoDeConfiguracao.SR_DESIGNACAO));
         salvarComHistorico();
     }
 
     public boolean isDesignacao() {
-        if (this.getCpTipoConfiguracao() != null && this.getCpTipoConfiguracao().getIdTpConfiguracao() != null)
-            return this.getCpTipoConfiguracao().getIdTpConfiguracao().equals(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
+        if (this.getCpTipoConfiguracao() != null && this.getCpTipoConfiguracao().getId() != null)
+            return this.getCpTipoConfiguracao().getId().equals(CpTipoDeConfiguracao.SR_DESIGNACAO);
         else
             return false;
     }
 
     public void salvarComoInclusaoAutomaticaLista(SrLista srLista) throws Exception {
-        setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA));
+        setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoDeConfiguracao.SR_DEFINICAO_INCLUSAO_AUTOMATICA));
         salvarComHistorico();
     }
 
     @SuppressWarnings("unchecked")
     public static List<SrConfiguracao> listarDesignacoes(boolean mostrarDesativados, DpLotacao atendente) {
         StringBuilder sb = new StringBuilder("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
-        sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
+        sb.append(CpTipoDeConfiguracao.SR_DESIGNACAO);
 
         if (atendente != null) {
             sb.append(" and conf.atendente.idLotacaoIni = ");
@@ -284,7 +284,7 @@ public class SrConfiguracao extends CpConfiguracao {
     @SuppressWarnings("unchecked")
     public static List<SrConfiguracao> listarDesignacoes(SrEquipe equipe) {
         StringBuilder sb = new StringBuilder("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
-        sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
+        sb.append(CpTipoDeConfiguracao.SR_DESIGNACAO);
 
         if (equipe != null && equipe.getLotacao() != null && equipe.getLotacao().getIdLotacaoIni() != null) {
             sb.append(" and conf.atendente.idLotacaoIni = ");
@@ -297,14 +297,14 @@ public class SrConfiguracao extends CpConfiguracao {
     }
 
     public static List<SrConfiguracao> listarDesignacoes(SrConfiguracao conf, int[] atributosDesconsideradosFiltro) throws Exception {
-        conf.setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+        conf.setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoDeConfiguracao.SR_DESIGNACAO));
         return listar(conf, ArrayUtils.addAll(atributosDesconsideradosFiltro, new int[] {}));
     }
 
     @SuppressWarnings("unchecked")
     public static List<SrConfiguracao> listarAbrangenciasAcordo(boolean mostrarDesativados, SrAcordo acordo) {
         StringBuilder sb = new StringBuilder("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
-        sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO);
+        sb.append(CpTipoDeConfiguracao.SR_ABRANGENCIA_ACORDO);
 
         if (acordo != null) {
             sb.append(" and conf.acordo.hisIdIni = ");
@@ -325,27 +325,27 @@ public class SrConfiguracao extends CpConfiguracao {
     @SuppressWarnings("unchecked")
     public static List<SrConfiguracao> listarAbrangenciasAcordo() {
         StringBuilder sb = new StringBuilder("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
-        sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO);
+        sb.append(CpTipoDeConfiguracao.SR_ABRANGENCIA_ACORDO);
         sb.append(" and conf.hisDtFim is null");
 
         return AR.em().createQuery(sb.toString()).getResultList();
     }
 
     public void salvarComoAbrangenciaAcordo() throws Exception {
-        setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
+        setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoDeConfiguracao.SR_ABRANGENCIA_ACORDO));
         salvarComHistorico();
 
     }
 
     public void salvarComoPermissaoUsoLista() throws Exception {
-        setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
+        setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoDeConfiguracao.SR_PERMISSAO_USO_LISTA));
         salvarComHistorico();
     }
 
     @SuppressWarnings("unchecked")
     public static List<SrConfiguracao> listarPermissoesUsoLista(SrLista lista, boolean mostrarDesativado) {
         StringBuilder sb = new StringBuilder("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
-        sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA);
+        sb.append(CpTipoDeConfiguracao.SR_PERMISSAO_USO_LISTA);
         sb.append(" and conf.listaPrioridade.hisIdIni = ");
         sb.append(lista.getHisIdIni());
 
@@ -365,7 +365,7 @@ public class SrConfiguracao extends CpConfiguracao {
     @SuppressWarnings("unchecked")
     public static List<SrConfiguracao> listarInclusaoAutomatica(SrLista lista, boolean mostrarDesativado) {
         StringBuilder sb = new StringBuilder("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
-        sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA);
+        sb.append(CpTipoDeConfiguracao.SR_DEFINICAO_INCLUSAO_AUTOMATICA);
         sb.append(" and conf.listaPrioridade.hisIdIni = ");
         sb.append(lista.getHisIdIni());
 
@@ -383,12 +383,12 @@ public class SrConfiguracao extends CpConfiguracao {
     }
 
     public void salvarComoAssociacaoAtributo() throws Exception {
-        setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
+        setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoDeConfiguracao.SR_ASSOCIACAO_TIPO_ATRIBUTO));
         salvarComHistorico();
     }
 
     public void salvarComoAssociacaoPesquisa() throws Exception {
-        setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_PESQUISA));
+        setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoDeConfiguracao.SR_ASSOCIACAO_PESQUISA));
         salvarComHistorico();
     }
 
@@ -396,7 +396,7 @@ public class SrConfiguracao extends CpConfiguracao {
     public static List<SrConfiguracao> listarAssociacoesAtributo(SrAtributo atributo, Boolean mostrarDesativados) {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
-        queryBuilder.append(CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO);
+        queryBuilder.append(CpTipoDeConfiguracao.SR_ASSOCIACAO_TIPO_ATRIBUTO);
         queryBuilder.append(" and conf.atributo.hisIdIni = ");
         queryBuilder.append(atributo.getHisIdIni());
 
@@ -416,7 +416,7 @@ public class SrConfiguracao extends CpConfiguracao {
     public static List<SrConfiguracao> listarAssociacoesPesquisa(SrPesquisa pesquisa, Boolean mostrarDesativados) {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
-        queryBuilder.append(CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_PESQUISA);
+        queryBuilder.append(CpTipoDeConfiguracao.SR_ASSOCIACAO_PESQUISA);
         queryBuilder.append(" and conf.pesquisaSatisfacao.hisIdIni = ");
         queryBuilder.append(pesquisa.getHisIdIni());
 
@@ -436,7 +436,7 @@ public class SrConfiguracao extends CpConfiguracao {
     public static List<SrConfiguracao> listarAssociacoesAtributo(Boolean mostrarDesativados) {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
-        queryBuilder.append(CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO);
+        queryBuilder.append(CpTipoDeConfiguracao.SR_ASSOCIACAO_TIPO_ATRIBUTO);
 
         if (!mostrarDesativados) {
             queryBuilder.append(" and conf.hisDtFim is null ");
@@ -455,22 +455,22 @@ public class SrConfiguracao extends CpConfiguracao {
     }
 
     public static SrConfiguracao buscarDesignacao(SrConfiguracao conf) throws Exception {
-        conf.setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+        conf.setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoDeConfiguracao.SR_DESIGNACAO));
         return buscar(conf, new int[] { SrConfiguracaoBL.ATENDENTE });
     }
 
     public static SrConfiguracao buscarDesignacao(SrConfiguracao conf, int[] atributosDesconsideradosFiltro) throws Exception {
-        conf.setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+        conf.setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoDeConfiguracao.SR_DESIGNACAO));
         return buscar(conf, ArrayUtils.addAll(atributosDesconsideradosFiltro, new int[] { SrConfiguracaoBL.ATENDENTE }));
     }
 
     public static SrConfiguracao buscarAssociacao(SrConfiguracao conf) throws Exception {
-        conf.setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
+        conf.setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoDeConfiguracao.SR_ASSOCIACAO_TIPO_ATRIBUTO));
         return buscar(conf, new int[] {});
     }
 
     public static SrConfiguracao buscarAbrangenciaAcordo(SrConfiguracao conf) throws Exception {
-        conf.setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
+        conf.setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoDeConfiguracao.SR_ABRANGENCIA_ACORDO));
         return buscar(conf, new int[] {});
     }
 
@@ -648,7 +648,7 @@ public class SrConfiguracao extends CpConfiguracao {
             sb.append(" SELECT max(idConfiguracao) as idConfiguracao FROM ");
             sb.append(" SrConfiguracao GROUP BY hisIdIni) ");
         }
-        return em().createQuery(sb.toString()).setParameter("tipoConfiguracao", CpTipoConfiguracao.TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA).setParameter("idIniLista", lista.getIdInicial())
+        return em().createQuery(sb.toString()).setParameter("tipoConfiguracao", CpTipoDeConfiguracao.SR_DEFINICAO_INCLUSAO_AUTOMATICA).setParameter("idIniLista", lista.getIdInicial())
                 .getResultList();
     }
 

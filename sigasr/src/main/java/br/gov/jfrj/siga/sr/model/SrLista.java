@@ -177,7 +177,7 @@ public class SrLista extends HistoricoSuporte implements Comparable<SrLista> {
             confFiltro.setLotacao(lotaTitular);
             confFiltro.setDpPessoa(pess);
             confFiltro.setListaPrioridade(this);
-            confFiltro.setCpTipoConfiguracao(ContextoPersistencia.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
+            confFiltro.setCpTipoConfiguracao(ContextoPersistencia.em().find(CpTipoConfiguracao.class, CpTipoDeConfiguracao.SR_PERMISSAO_USO_LISTA));
             return SrConfiguracao.listar(confFiltro);
         } catch (Exception e) {
             throw new RuntimeException(e);

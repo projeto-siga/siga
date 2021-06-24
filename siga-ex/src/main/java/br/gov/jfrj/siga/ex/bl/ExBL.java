@@ -108,7 +108,6 @@ import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpIdentidade;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.TipoConteudo;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -118,6 +117,7 @@ import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -1400,13 +1400,13 @@ public class ExBL extends CpBL {
 
 	public boolean deveTramitarAutomaticamente(DpPessoa titular, DpLotacao lotaTitular, ExDocumento doc) {
 		final CpSituacaoDeConfiguracaoEnum idSit = Ex.getInstance().getConf().buscaSituacao(doc.getExModelo(), doc.getExTipoDocumento(),
-				titular, lotaTitular, CpTipoConfiguracao.TIPO_CONFIG_TRAMITE_AUTOMATICO);
+				titular, lotaTitular, ExTipoDeConfiguracao.TRAMITE_AUTOMATICO);
 		return idSit != null && idSit.isDefaultOuObrigatoria();
 	}
 
 	public boolean deveJuntarAutomaticamente(DpPessoa titular, DpLotacao lotaTitular, ExDocumento doc) {
 		final CpSituacaoDeConfiguracaoEnum idSit = Ex.getInstance().getConf().buscaSituacao(doc.getExModelo(), doc.getExTipoDocumento(),
-				titular, lotaTitular, CpTipoConfiguracao.TIPO_CONFIG_JUNTADA_AUTOMATICA);
+				titular, lotaTitular, ExTipoDeConfiguracao.JUNTADA_AUTOMATICA);
 		return idSit != null && idSit.isDefaultOuObrigatoria();
 	}
 
@@ -4291,7 +4291,7 @@ public class ExBL extends CpBL {
 			novoDoc.setDestinatario(doc.getDestinatario().getPessoaAtual());
 
 		final CpSituacaoDeConfiguracaoEnum idSit = Ex.getInstance().getConf().buscaSituacao(doc.getExModelo(), doc.getExTipoDocumento(),
-				cadastrante, lotaCadastrante, CpTipoConfiguracao.TIPO_CONFIG_ELETRONICO);
+				cadastrante, lotaCadastrante, ExTipoDeConfiguracao.ELETRONICO);
 
 		if (idSit == CpSituacaoDeConfiguracaoEnum.OBRIGATORIO) {
 			novoDoc.setFgEletronico("S");
@@ -4478,7 +4478,7 @@ public class ExBL extends CpBL {
 				// remove a lotação das permissões de acesso e inclui o recebedor
 				if (Ex.getInstance().getConf().podePorConfiguracao(mov.getResp(), mov.getLotaResp(), 
 						null, mob.doc().getExModelo().getExFormaDocumento(), mob.doc().getExModelo(), 
-						CpTipoConfiguracao.TIPO_CONFIG_RESTRINGIR_ACESSO_APOS_RECEBER)) {
+						ExTipoDeConfiguracao.RESTRINGIR_ACESSO_APOS_RECEBER)) {
 					concluirAlteracaoParcial(m, true, mov.getResp(), mov.getLotaResp());
 				} else {
 					concluirAlteracaoParcial(m);
@@ -5976,10 +5976,10 @@ public class ExBL extends CpBL {
 			provSet = new ArrayList<ExModelo>();
 			for (ExModelo mod : modeloSetFinal) {
 				if (getConf().podePorConfiguracao(titular, lotaTitular, mod,
-						CpTipoConfiguracao.TIPO_CONFIG_DESPACHAVEL)) {
+						ExTipoDeConfiguracao.DESPACHAVEL)) {
 					if (!isComposto) {
 						if (getConf().podePorConfiguracao(titular, lotaTitular, null, mod.getExFormaDocumento(), mod,
-								CpTipoConfiguracao.TIPO_CONFIG_INCLUIR_EM_AVULSO)) {
+								ExTipoDeConfiguracao.INCLUIR_EM_AVULSO)) {
 							provSet.add(mod);
 						}
 					} else {
@@ -5992,7 +5992,7 @@ public class ExBL extends CpBL {
 			provSet = new ArrayList<ExModelo>();
 			for (ExModelo mod : modeloSetFinal)
 				if (getConf().podePorConfiguracao(titular, lotaTitular, mod,
-						CpTipoConfiguracao.TIPO_CONFIG_CRIAR_COMO_NOVO))
+						ExTipoDeConfiguracao.CRIAR_COMO_NOVO))
 					provSet.add(mod);
 			modeloSetFinal = provSet;
 		}
@@ -6000,14 +6000,14 @@ public class ExBL extends CpBL {
 		if (autuando) {
 			provSet = new ArrayList<ExModelo>();
 			for (ExModelo mod : modeloSetFinal)
-				if (getConf().podePorConfiguracao(titular, lotaTitular, mod, CpTipoConfiguracao.TIPO_CONFIG_AUTUAVEL))
+				if (getConf().podePorConfiguracao(titular, lotaTitular, mod, ExTipoDeConfiguracao.AUTUAVEL))
 					provSet.add(mod);
 			modeloSetFinal = provSet;
 		}
 		if (protegido) {
 			provSet = new ArrayList<ExModelo>();
 			for (ExModelo mod : modeloSetFinal) {
-				if (getConf().podePorConfiguracao(titular, lotaTitular, mod, CpTipoConfiguracao.TIPO_CONFIG_CRIAR))
+				if (getConf().podePorConfiguracao(titular, lotaTitular, mod, ExTipoDeConfiguracao.CRIAR))
 					provSet.add(mod);
 			}
 			modeloSetFinal = provSet;

@@ -29,12 +29,12 @@ import java.util.Set;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpComplexo;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpCompetenciaBL;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
@@ -57,6 +57,7 @@ import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExVia;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class ExCompetenciaBL extends CpCompetenciaBL {
@@ -171,7 +172,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		if(mob.doc().getOrgaoUsuario() != null  
 				&& mob.doc().getOrgaoUsuario().getIdOrgaoUsu() != null) {
-			if(podePorConfiguracao(titular, lotaTitular, CpTipoConfiguracao.TIPO_CONFIG_ACESSAR, null, null, null, null, null, mob.doc().getOrgaoUsuario())) {
+			if(podePorConfiguracao(titular, lotaTitular, ExTipoDeConfiguracao.ACESSAR, null, null, null, null, null, mob.doc().getOrgaoUsuario())) {
 				return true;	
 			}
 		}		
@@ -201,7 +202,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		if(doc.getOrgaoUsuario() != null  
 				&& doc.getOrgaoUsuario().getIdOrgaoUsu() != null) {
-			if(podePorConfiguracao(titular, lotaTitular, CpTipoConfiguracao.TIPO_CONFIG_ACESSAR, null, null, null, null, null, doc.getOrgaoUsuario())) {
+			if(podePorConfiguracao(titular, lotaTitular, ExTipoDeConfiguracao.ACESSAR, null, null, null, null, null, doc.getOrgaoUsuario())) {
 				return true;	
 			}
 		}		
@@ -576,7 +577,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			final DpLotacao lotaTitular, final ExMobil mob) {
 		Boolean podePorConf = podePorConfiguracao(titular, lotaTitular,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR, null, null, null, null, null, null);
+				ExTipoDeConfiguracao.MOVIMENTAR, null, null, null, null, null, null);
 	
 		if (mob.doc().isFinalizado()) {
 			return !mob.isEmTransito()
@@ -619,9 +620,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			final DpLotacao lotaTitular, final ExMobil mob) {
 		Boolean podePorConf = podePorConfiguracao(titular, lotaTitular,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR, null, null, null, null, null, null);
+				ExTipoDeConfiguracao.MOVIMENTAR, null, null, null, null, null, null);
 	
-		Boolean podePorConfModelo = getConf().podePorConfiguracao(titular, lotaTitular, titular.getCargo(), titular.getFuncaoConfianca(), mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA, CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+		Boolean podePorConfModelo = getConf().podePorConfiguracao(titular, lotaTitular, titular.getCargo(), titular.getFuncaoConfianca(), mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA, ExTipoDeConfiguracao.MOVIMENTAR);
 		
 		return mob.doc().isFinalizado() && !mob.isEmTransito()
 				&& (!mob.isGeral() || mob.doc().isExterno())
@@ -650,7 +651,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	private ExConfiguracaoCache preencherFiltroEBuscarConfiguracao(
 			DpPessoa titularIniciador, DpLotacao lotaTitularIniciador,
-			long tipoConfig, long tipoMov, ExTipoDocumento exTipoDocumento,
+			ITipoDeConfiguracao tipoConfig, long tipoMov, ExTipoDocumento exTipoDocumento,
 			ExTipoFormaDoc exTipoFormaDoc, ExFormaDocumento exFormaDocumento,
 			ExModelo exModelo, ExClassificacao exClassificacao, ExVia exVia,
 			ExNivelAcesso exNivelAcesso, ExPapel exPapel, DpPessoa pessoaObjeto, 
@@ -663,8 +664,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		cfgFiltro.setFuncaoConfianca(titularIniciador.getFuncaoConfianca());
 		cfgFiltro.setLotacao(lotaTitularIniciador);
 		cfgFiltro.setDpPessoa(titularIniciador);
-		cfgFiltro.setCpTipoConfiguracao(CpDao.getInstance().consultar(
-				tipoConfig, CpTipoConfiguracao.class, false));
+		cfgFiltro.setCpTipoConfiguracao(tipoConfig);
 		if (cfgFiltro.getCpTipoConfiguracao() == null)
 			throw new RuntimeException(
 					"Não é permitido buscar uma configuração sem definir seu tipo.");
@@ -715,7 +715,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	private Boolean podePorConfiguracao(DpPessoa titular,
-			DpLotacao lotaTitular, long tipoMov, long tipoConfig, DpPessoa pessoaObjeto, 
+			DpLotacao lotaTitular, long tipoMov, ITipoDeConfiguracao tipoConfig, DpPessoa pessoaObjeto, 
 			DpLotacao lotacaoObjeto, CpComplexo complexoObjeto, DpCargo cargoObjeto, 
 			DpFuncaoConfianca funcaoConfiancaObjeto, CpOrgaoUsuario orgaoObjeto) {
 		ExConfiguracaoCache cfg = preencherFiltroEBuscarConfiguracao(titular,
@@ -727,7 +727,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (cfg != null) {
 			situacao = cfg.situacao;
 		} else {
-			situacao = CpTipoDeConfiguracao.getById(tipoConfig).getSituacaoDefault();
+			situacao = tipoConfig.getSituacaoDefault();
 		}
 
 		if (situacao != null && situacao == CpSituacaoDeConfiguracaoEnum.PODE)
@@ -736,12 +736,12 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	private Boolean podePorConfiguracao(DpPessoa titular,
-			DpLotacao lotaTitular, long tipoConfig) {
+			DpLotacao lotaTitular, ITipoDeConfiguracao tipoConfig) {
 		return podePorConfiguracao(titular, lotaTitular, 0L, tipoConfig, null, null, null, null, null, null);
 	}
 	
 	private Boolean podePorConfiguracao(DpPessoa titular,
-			DpLotacao lotaTitular, long tipoConfig, DpPessoa pessoaObjeto, 
+			DpLotacao lotaTitular, ITipoDeConfiguracao tipoConfig, DpPessoa pessoaObjeto, 
 			DpLotacao lotacaoObjeto, CpComplexo complexoObjeto, DpCargo cargoObjeto, 
 			DpFuncaoConfianca funcaoConfiancaObjeto, CpOrgaoUsuario orgaoObjeto) {
 		return podePorConfiguracao(titular, lotaTitular, 0L, tipoConfig, pessoaObjeto, lotacaoObjeto, complexoObjeto, cargoObjeto, funcaoConfiancaObjeto, orgaoObjeto);
@@ -792,7 +792,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isEmTransito()
 				&& getConf().podePorConfiguracao(titular, lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+						ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 	
 	/**
@@ -839,7 +839,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								titular,
 								lotaTitular,
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOBRESTAR,
-								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+								ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 		
 	/**
@@ -883,7 +883,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 					ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO,
 							ExTipoMovimentacao.class, false), 
 					null, null, null, lotaTitular, titular, null,null,
-					CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR, null, null, null, null, null, null))
+					ExTipoDeConfiguracao.MOVIMENTAR, null, null, null, null, null, null))
 				return false;				
 		} else {
 			if(mob.doc().getSubscritor() == null || !mob.doc().getSubscritor().equivale(titular))
@@ -903,7 +903,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								titular,
 								lotaTitular,
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO,
-								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+								ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 	
 	
@@ -961,7 +961,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						titular,
 						lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR) &&
+						ExTipoDeConfiguracao.MOVIMENTAR) &&
 				!mob.getDoc().isCancelado() && 
 				!mob.getDoc().isArquivado();
 		return retorno;
@@ -1003,7 +1003,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.doc().isPendenteDeAssinatura()
 				&& podeAcessarDocumento(titular, lotaTitular, mob)
 				&& podePorConfiguracao(titular, lotaTitular,
-						CpTipoConfiguracao.TIPO_CONFIG_CRIAR_DOC_FILHO);
+						ExTipoDeConfiguracao.CRIAR_DOC_FILHO);
 	}
 
 	/**
@@ -1033,7 +1033,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isArquivado()
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& podePorConfiguracao(titular, lotaTitular,
-						CpTipoConfiguracao.TIPO_CONFIG_CRIAR_DOC_FILHO);
+						ExTipoDeConfiguracao.CRIAR_DOC_FILHO);
 	}
 
 	/**
@@ -1045,11 +1045,11 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean podeSimularUsuario(final DpPessoa titular,
-			final DpLotacao lotaTitular) throws Exception {
-		return getConf().podePorConfiguracao(titular, lotaTitular,
-				CpTipoConfiguracao.TIPO_CONFIG_SIMULAR_USUARIO);
-	}
+//	public boolean podeSimularUsuario(final DpPessoa titular,
+//			final DpLotacao lotaTitular) throws Exception {
+//		return getConf().podePorConfiguracao(titular, lotaTitular,
+//				ExTipoDeConfiguracao.SIMULAR_USUARIO);
+//	}
 
 	/**
 	 * Retorna se é possível mostrar o link para arquivamento intermediário de
@@ -1092,7 +1092,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								titular,
 								lotaTitular,
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO,
-								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+								ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 
 	/**
@@ -1156,7 +1156,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								titular,
 								lotaTitular,
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE,
-								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+								ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 
 	/**
@@ -1235,10 +1235,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		// Se o subscritor ou algum cossignatário requer solicitação de assinatura, não deve permitir assinar sem ela
 /*		if (!mob.doc().isAssinaturaSolicitada()) {
-			if (!getConf().podePorConfiguracao(mob.doc().getSubscritor(), CpTipoConfiguracao.TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO))
+			if (!getConf().podePorConfiguracao(mob.doc().getSubscritor(), CpTipoDeConfiguracao.PODE_ASSINAR_SEM_SOLICITACAO))
 				return false;
 			for (DpPessoa cossig : mob.doc().getCosignatarios()) { 
-				if (!getConf().podePorConfiguracao(mob.doc().getSubscritor(), CpTipoConfiguracao.TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO))
+				if (!getConf().podePorConfiguracao(mob.doc().getSubscritor(), CpTipoDeConfiguracao.PODE_ASSINAR_SEM_SOLICITACAO))
 					return false;
 			}
 		}
@@ -1246,7 +1246,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		return (mob.doc().getSubscritor().equivale(titular)
 				|| (mob.doc().isExterno() && mob.doc().getCadastrante().equivale(titular))
-				|| (mob.doc().isCossignatario(titular) && mob.doc().isPendenteDeAssinatura() && (mob.doc().isAssinadoPeloSubscritorComTokenOuSenha() || Ex.getInstance().getConf().podePorConfiguracao(titular, titular.getLotacao(), CpTipoConfiguracao.TIPO_CONFIG_COSIGNATARIO_ASSINAR_ANTES_SUBSCRITOR)))
+				|| (mob.doc().isCossignatario(titular) && mob.doc().isPendenteDeAssinatura() && (mob.doc().isAssinadoPeloSubscritorComTokenOuSenha() || Ex.getInstance().getConf().podePorConfiguracao(titular, titular.getLotacao(), ExTipoDeConfiguracao.COSIGNATARIO_ASSINAR_ANTES_SUBSCRITOR)))
 				|| podeMovimentar(titular, lotaTitular, mob))
 				&& (mob.doc().isFinalizado() || podeFinalizar(titular, lotaTitular, mob))
 				&& !mob.doc().isCancelado()
@@ -1256,7 +1256,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								titular,
 								lotaTitular,
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO,
-								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+								ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 	
 	/*
@@ -1276,7 +1276,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return getConf().podePorConfiguracao(null, null, null, null, mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), null,
 				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+				ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 	
 	
@@ -1297,7 +1297,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		CpSituacaoDeConfiguracaoEnum situacao = getConf().situacaoPorConfiguracao(null, null, null, null, mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), null,
 				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+				ExTipoDeConfiguracao.MOVIMENTAR);
 		
 		return situacao != null && situacao.isDefaultOuObrigatoria();
 	}
@@ -1327,7 +1327,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean deveUtilizarSegundoFatorPin(final DpPessoa pessoa,final DpLotacao lotacao) {
 		CpSituacaoDeConfiguracaoEnum situacao = getConf().situacaoPorConfiguracao(null, null, null, null, null, null, null,
 				null, null, null, null, null, lotacao, pessoa, null,null,
-				CpTipoConfiguracao.TIPO_CONFIG_SEGUNDO_FATOR_PIN);
+				CpTipoDeConfiguracao.SEGUNDO_FATOR_PIN);
 		
 		return situacao != null && situacao == CpSituacaoDeConfiguracaoEnum.OBRIGATORIO; 
 	}
@@ -1343,7 +1343,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean defaultUtilizarSegundoFatorPin(final DpPessoa pessoa,final DpLotacao lotacao) {
 		CpSituacaoDeConfiguracaoEnum situacao = getConf().situacaoPorConfiguracao(null, null, null, null, null, null, null,
 				null, null, null, null, null, lotacao, pessoa, null,null,
-				CpTipoConfiguracao.TIPO_CONFIG_SEGUNDO_FATOR_PIN);
+				CpTipoDeConfiguracao.SEGUNDO_FATOR_PIN);
 		
 		return situacao != null && situacao.isDefaultOuObrigatoria();
 	}
@@ -1356,7 +1356,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return getConf().podePorConfiguracao(null, null, null, null, mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), null,
 				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+				ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 
 	/*
@@ -1379,7 +1379,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				
 		 if (!getConf().podePorConfiguracao(null, null, null, null, doc.getExFormaDocumento(), doc.getExModelo(), null,
 					null, exTpMov, null, null, null, lotaTitular, titular, null,null,
-					CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR, doc.getSubscritor(), null, null, null, null, null))
+					ExTipoDeConfiguracao.MOVIMENTAR, doc.getSubscritor(), null, null, null, null, null))
 			 return false;
 							
 		if("GOVSP".equals(Prop.get("/siga.local")) &&
@@ -1418,7 +1418,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		return getConf().podePorConfiguracao(null, null, null, null, doc.getExFormaDocumento(), doc.getExModelo(), null,
 				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR, doc.getSubscritor(), null, null, null, null, null);
+				ExTipoDeConfiguracao.MOVIMENTAR, doc.getSubscritor(), null, null, null, null, null);
 	}
 	
 	/*
@@ -1461,7 +1461,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return getConf().podePorConfiguracao(null, null, null, null, mov.getExMobil().getExDocumento().getExFormaDocumento(), mov.getExMobil().getExDocumento().getExModelo(), null,
 				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+				ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 	
 	/*
@@ -1481,7 +1481,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return getConf().podePorConfiguracao(null, null, null, null, mob.getExDocumento().getExFormaDocumento(), mob.getExDocumento().getExModelo(), null,
 				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+				ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 	
 	public boolean deveAssinarMovimentacaoComSenha(final DpPessoa titular,
@@ -1492,7 +1492,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		CpSituacaoDeConfiguracaoEnum situacao = getConf().situacaoPorConfiguracao(null, null, null, null, mov.getExMobil().getExDocumento().getExFormaDocumento(), mov.getExMobil().getExDocumento().getExModelo(), null,
 				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+				ExTipoDeConfiguracao.MOVIMENTAR);
 		
 		return situacao != null && situacao.isDefaultOuObrigatoria();
 	}
@@ -1520,7 +1520,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return getConf().podePorConfiguracao(null, null, null, null, mov.getExMobil().getExDocumento().getExFormaDocumento(), mov.getExMobil().getExDocumento().getExModelo(), null,
 				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+				ExTipoDeConfiguracao.MOVIMENTAR);
 	}	
 	
 	public boolean deveAutenticarMovimentacaoComSenha(final DpPessoa titular,
@@ -1537,7 +1537,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		CpSituacaoDeConfiguracaoEnum situacao = getConf().situacaoPorConfiguracao(null, null, null, null, mov.getExMobil().getExDocumento().getExFormaDocumento(), mov.getExMobil().getExDocumento().getExModelo(), null,
 				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+				ExTipoDeConfiguracao.MOVIMENTAR);
 		
 		return situacao != null && situacao.isDefaultOuObrigatoria();
 	}	
@@ -1561,7 +1561,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return getConf().podePorConfiguracao(null, null, null, null, mob.getExDocumento().getExFormaDocumento(), mob.getExDocumento().getExModelo(), null,
 				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+				ExTipoDeConfiguracao.MOVIMENTAR);
 	}	
 	
 	
@@ -1576,7 +1576,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		CpSituacaoDeConfiguracaoEnum situacao = getConf().situacaoPorConfiguracao(null, null, null, null, mob.getExDocumento().getExFormaDocumento(), mob.getExDocumento().getExModelo(), null,
 				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+				ExTipoDeConfiguracao.MOVIMENTAR);
 		
 		return situacao != null && situacao.isDefaultOuObrigatoria();
 	}	
@@ -1613,7 +1613,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						mod.getExFormaDocumento(),
 						mod,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+						ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 
 	/**
@@ -1649,7 +1649,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								lotaTitular,
 								mob.doc().getExModelo(),
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_BOLETIM,
-								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+								ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 
 	/**
@@ -1828,7 +1828,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+				ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 
 	/**
@@ -2059,7 +2059,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						titular,
 						lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+						ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 
 	/**
@@ -2094,7 +2094,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				mov.getIdTpMov(),
-				CpTipoConfiguracao.TIPO_CONFIG_CANCELAR_MOVIMENTACAO);
+				ExTipoDeConfiguracao.CANCELAR_MOVIMENTACAO);
 	}
 
 	/**
@@ -2158,7 +2158,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						titular,
 						lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR));
+						ExTipoDeConfiguracao.MOVIMENTAR));
 	}
 
 	/**
@@ -2231,7 +2231,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
-				CpTipoConfiguracao.TIPO_CONFIG_CANCELAR_VIA);
+				ExTipoDeConfiguracao.CANCELAR_VIA);
 	}
 
 	/**
@@ -2285,7 +2285,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				   || mob.doc().getLotaCadastrante().equivale(lotaTitular)				        
 				   || (mob.doc().getLotaSubscritor() != null && mob.doc().getLotaSubscritor().equivale(lotaTitular))
 			       || (mob.doc().getSubscritor() != null &&  mob.doc().getSubscritor().equivale(titular))) // subscritor é null para documentos externos
-		       && getConf().podePorConfiguracao(mob.doc().getExModelo(), CpTipoConfiguracao.TIPO_CONFIG_CRIAR_VIA);
+		       && getConf().podePorConfiguracao(mob.doc().getExModelo(), ExTipoDeConfiguracao.CRIAR_VIA);
 	}
 
 	/**
@@ -2380,7 +2380,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								titular,
 								lotaTitular,
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENCERRAMENTO_DE_VOLUME,
-								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+								ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 
 	/**
@@ -2417,7 +2417,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isEmTransito()
 				&& getConf().podePorConfiguracao(titular, lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+						ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 
 	/**
@@ -2455,7 +2455,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								titular,
 								lotaTitular,
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO,
-								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+								ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 
 	/**
@@ -2506,7 +2506,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isApensadoAVolumeDoMesmoProcesso()
 				&& getConf().podePorConfiguracao(titular, lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESOBRESTAR,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+						ExTipoDeConfiguracao.MOVIMENTAR);
 	}	
 	
 	/**
@@ -2549,7 +2549,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				// && mob.doc().isAssinadoPorTodosOsSignatarios()
 				&& getConf().podePorConfiguracao(titular, lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+						ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 
 	/**
@@ -2583,7 +2583,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return !mob.isEliminado()
 				&& podeAcessarDocumento(titular, lotaTitular, mob)
 				&& getConf().podePorConfiguracao(titular, lotaTitular, mob.getDoc().getExTipoDocumento(), mob.getDoc().getExFormaDocumento(), 
-						mob.getDoc().getExModelo(), CpTipoConfiguracao.TIPO_CONFIG_DUPLICAR);
+						mob.getDoc().getExModelo(), ExTipoDeConfiguracao.DUPLICAR);
 	}
 	
 	/**
@@ -2641,13 +2641,13 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				return false;
 		
 		if (!getConf().podePorConfiguracao(titular, lotaTitular, mob.doc().getExFormaDocumento(),
-						CpTipoConfiguracao.TIPO_CONFIG_CRIAR) &&
+						ExTipoDeConfiguracao.CRIAR) &&
 						!getConf().podePorConfiguracao(titular, lotaTitular, mob.doc().getExModelo(),
-								CpTipoConfiguracao.TIPO_CONFIG_CRIAR))
+								ExTipoDeConfiguracao.CRIAR))
 			return false;
 		
 		return getConf().podePorConfiguracao(titular, lotaTitular,
-				CpTipoConfiguracao.TIPO_CONFIG_EDITAR);
+				ExTipoDeConfiguracao.EDITAR);
 				
 	}
 
@@ -2665,7 +2665,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return getConf().podePorConfiguracao(null, null, null, null, mod.getExFormaDocumento(),
 				mod, null, null, null, titular.getCargo(), titular.getOrgaoUsuario(),
 				titular.getFuncaoConfianca(), lotaTitular, titular, null, null, 
-				CpTipoConfiguracao.TIPO_CONFIG_EDITAR_DATA);
+				ExTipoDeConfiguracao.EDITAR_DATA);
 	}
 
 	/**
@@ -2682,7 +2682,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return getConf().podePorConfiguracao(null, null, null, null, mod.getExFormaDocumento(),
 				mod, null, null, null, titular.getCargo(), titular.getOrgaoUsuario(),
 				titular.getFuncaoConfianca(), lotaTitular, titular, null, null, 
-				CpTipoConfiguracao.TIPO_CONFIG_EDITAR_DESCRICAO);
+				ExTipoDeConfiguracao.EDITAR_DESCRICAO);
 	}
 
 	/**
@@ -2729,7 +2729,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						lotaTitular,
 						mob.doc().getExModelo(),
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR));		
+						ExTipoDeConfiguracao.MOVIMENTAR));		
 		
 	
 
@@ -2804,7 +2804,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 									lotaTitular,
 									mob.doc().getExModelo(),
 									ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO,
-									CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+									ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 
 	/**
@@ -2851,7 +2851,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isEmTransito()
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& getConf().podePorConfiguracao(titular, lotaTitular, mob.getDoc().getExTipoDocumento(), mob.getDoc().getExFormaDocumento(), 
-						mob.getDoc().getExModelo(), CpTipoConfiguracao.TIPO_CONFIG_INCLUIR_DOCUMENTO);
+						mob.getDoc().getExModelo(), ExTipoDeConfiguracao.INCLUIR_DOCUMENTO);
 		
 	}
 	
@@ -2869,7 +2869,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeAtenderPedidoPublicacao(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
 		return getConf().podePorConfiguracao(titular, lotaTitular,
-				CpTipoConfiguracao.TIPO_CONFIG_ATENDER_PEDIDO_PUBLICACAO);
+				ExTipoDeConfiguracao.ATENDER_PEDIDO_PUBLICACAO);
 	}
 
 	/**
@@ -2898,7 +2898,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
-				CpTipoConfiguracao.TIPO_CONFIG_EXCLUIR);
+				ExTipoDeConfiguracao.EXCLUIR);
 	}
 
 	/**
@@ -2939,7 +2939,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
-				CpTipoConfiguracao.TIPO_CONFIG_EXCLUIR_ANEXO);
+				ExTipoDeConfiguracao.EXCLUIR_ANEXO);
 	}
 	
 	/**
@@ -2982,7 +2982,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
-				CpTipoConfiguracao.TIPO_CONFIG_EXCLUIR);
+				ExTipoDeConfiguracao.EXCLUIR);
 	}	
 
 	/**
@@ -3040,7 +3040,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO,
-				CpTipoConfiguracao.TIPO_CONFIG_CANCELAR_MOVIMENTACAO);
+				ExTipoDeConfiguracao.CANCELAR_MOVIMENTACAO);
 	}
 
 	/**
@@ -3074,7 +3074,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR,
-				CpTipoConfiguracao.TIPO_CONFIG_CANCELAR_MOVIMENTACAO);
+				ExTipoDeConfiguracao.CANCELAR_MOVIMENTACAO);
 	}
 
 	/**
@@ -3095,7 +3095,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+				ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 
 	/**
@@ -3130,7 +3130,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				mov.getIdTpMov(),
-				CpTipoConfiguracao.TIPO_CONFIG_CANCELAR_MOVIMENTACAO);
+				ExTipoDeConfiguracao.CANCELAR_MOVIMENTACAO);
 	}
 
 	/**
@@ -3167,7 +3167,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 //		}
 //
 //		if (getConf().podePorConfiguracao(titular, lotaTitular, mov.getIdTpMov(),
-//				CpTipoConfiguracao.TIPO_CONFIG_CANCELAR_MOVIMENTACAO)) {
+//				ExTipoDeConfiguracao.CANCELAR_MOVIMENTACAO)) {
 //			return Optional.empty();
 //		}
 //
@@ -3220,7 +3220,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				mov.getIdTpMov(),
-				CpTipoConfiguracao.TIPO_CONFIG_CANCELAR_MOVIMENTACAO);
+				ExTipoDeConfiguracao.CANCELAR_MOVIMENTACAO);
 	}
 
 	/**
@@ -3259,7 +3259,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
-				CpTipoConfiguracao.TIPO_CONFIG_EXCLUIR_ANOTACAO);
+				ExTipoDeConfiguracao.EXCLUIR_ANOTACAO);
 	}
 
 	/**
@@ -3296,7 +3296,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				.isGeral())
 				&& getConf().podePorConfiguracao(titular, lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+						ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 
 	/**
@@ -3324,7 +3324,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+				ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 
 	/**
@@ -3347,7 +3347,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 //
 //		return getConf().podePorConfiguracao(titular, lotaTitular,
 //				ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO,
-//				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+//				ExTipoDeConfiguracao.MOVIMENTAR);
 //	}
 
 	/**
@@ -3390,7 +3390,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 					&& !mob.getExDocumento().temPerfil(titular, lotaTitular, ExPapel.PAPEL_REVISOR))
 				return false;
 		return getConf().podePorConfiguracao(titular, lotaTitular,
-				CpTipoConfiguracao.TIPO_CONFIG_FINALIZAR);
+				ExTipoDeConfiguracao.FINALIZAR);
 	}
 
 	/**
@@ -3450,7 +3450,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+				ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 
 	/**
@@ -3498,7 +3498,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								titular,
 								lotaTitular,
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_EM_EDITAL_DE_ELIMINACAO,
-								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+								ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 
 	/**
@@ -3582,7 +3582,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isSobrestado()
 				&& getConf().podePorConfiguracao(titular, lotaTitular, titular.getCargo(), titular.getFuncaoConfianca(), mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), 
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_APENSACAO,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+						ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 
 	/**
@@ -3634,7 +3634,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+				ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 
 	/**
@@ -3690,7 +3690,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		}
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+				ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 
 	public boolean podeSerMovimentado(final ExMobil mob) {
@@ -3831,7 +3831,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						.getUltimoVolume() != null && !mob.doc()
 						.getUltimoVolume().isCancelada())))
 				&& getConf().podePorConfiguracao(titular, lotaTitular,
-						CpTipoConfiguracao.TIPO_CONFIG_REFAZER);
+						ExTipoDeConfiguracao.REFAZER);
 	}
 
 	/**
@@ -3870,7 +3870,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						titular,
 						lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_INDICACAO_GUARDA_PERMANENTE,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR));
+						ExTipoDeConfiguracao.MOVIMENTAR));
 	}
 
 	/**
@@ -3896,7 +3896,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isEliminado() && getConf().podePorConfiguracao(titular,
 				lotaTitular,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECLASSIFICACAO,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR));
+				ExTipoDeConfiguracao.MOVIMENTAR));
 	}
 
 	/**
@@ -3921,7 +3921,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return (!mob.doc().isPendenteDeAssinatura() && mob.isGeral() && !mob.isCancelada()
 				&& !mob.isEliminado() && getConf().podePorConfiguracao(titular,
 				lotaTitular, ExTipoMovimentacao.TIPO_MOVIMENTACAO_AVALIACAO,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR));
+				ExTipoDeConfiguracao.MOVIMENTAR));
 	}
 
 	/**
@@ -3953,7 +3953,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						titular,
 						lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_REVERSAO_INDICACAO_GUARDA_PERMANENTE,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR));
+						ExTipoDeConfiguracao.MOVIMENTAR));
 	}
 
 	/**
@@ -4013,7 +4013,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		return getConf().podePorConfiguracao(pessoa, lotacao,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+				ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 	
 	public boolean podeTramitarPara(final DpPessoa pessoa,
@@ -4023,7 +4023,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				ExTipoMovimentacao.class, false);
 		
 		return getConf().podePorConfiguracao(null, null, null, null, null, null, null, null,
-				exTpMov, null, null, null, lotacao, pessoa, null, null, CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR, pesDest,
+				exTpMov, null, null, null, lotacao, pessoa, null, null, ExTipoDeConfiguracao.MOVIMENTAR, pesDest,
 				lotaDest, null, null, null, null);
 	}
 	
@@ -4076,7 +4076,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+				ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 
 	/**
@@ -4135,7 +4135,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 		return getConf().podePorConfiguracao(cadastrante, lotaCadastrante,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+				ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 	
 	// Deve receber só se o usuário não acabou de fazer um trâmite para sua própria
@@ -4182,7 +4182,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.doc().isSemEfeito()
 				&& getConf().podePorConfiguracao(titular, lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFERENCIA,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+						ExTipoDeConfiguracao.MOVIMENTAR);
 
 		// return true;
 	}
@@ -4241,7 +4241,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								titular,
 								lotaTitular,
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_REGISTRO_ASSINATURA_DOCUMENTO,
-								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+								ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 
 	/**
@@ -4278,12 +4278,12 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						cadastrante,
 						lotaCadastrante,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR)) &&
+						ExTipoDeConfiguracao.MOVIMENTAR)) &&
 				(!getConf().podePorConfiguracao(
 							cadastrante,
 							lotaCadastrante,
 							mob.doc().getExModelo(),
-							CpTipoConfiguracao.TIPO_CONFIG_INCLUIR_DOCUMENTO) || mob.getDoc().getPai()==null) && listMovJuntada.size() == 0;
+							ExTipoDeConfiguracao.INCLUIR_DOCUMENTO) || mob.getDoc().getPai()==null) && listMovJuntada.size() == 0;
 	}
 	
 	public boolean podeDesfazerRestricaoAcesso(final DpPessoa cadastrante,
@@ -4300,12 +4300,12 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						cadastrante,
 						lotaCadastrante,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR)) &&
+						ExTipoDeConfiguracao.MOVIMENTAR)) &&
 				(!getConf().podePorConfiguracao(
 							cadastrante,
 							lotaCadastrante,
 							mob.doc().getExModelo(),
-							CpTipoConfiguracao.TIPO_CONFIG_INCLUIR_DOCUMENTO) || mob.getDoc().getPai()==null) && listMovJuntada.size() == 0;
+							ExTipoDeConfiguracao.INCLUIR_DOCUMENTO) || mob.getDoc().getPai()==null) && listMovJuntada.size() == 0;
 	}
 
 
@@ -4360,7 +4360,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								lotaTitular,
 								mob.doc().getExModelo(),
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM,
-								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR) || gerente);
+								ExTipoDeConfiguracao.MOVIMENTAR) || gerente);
 	}
 
 	/**
@@ -4398,7 +4398,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								titular,
 								lotaTitular,
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_REDEFINICAO_NIVEL_ACESSO,
-								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+								ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 
 	/**
@@ -4442,7 +4442,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeReceberDocumentoSemAssinatura(final DpPessoa pessoa,
 			final DpLotacao lotacao, final ExMobil mob) {
 		return getConf().podePorConfiguracao(pessoa, lotacao,
-				CpTipoConfiguracao.TIPO_CONFIG_RECEBER_DOC_NAO_ASSINADO);
+				ExTipoDeConfiguracao.RECEBER_DOC_NAO_ASSINADO);
 	}
 
 	/**
@@ -4471,7 +4471,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return podeMovimentar(titular, lotaTitular, mob)
 				&& getConf().podePorConfiguracao(titular, lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+						ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 	
 	public boolean podeSerTransferido(final ExMobil mob) {
@@ -4521,7 +4521,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		if (!getConf().podePorConfiguracao(titular, lotaTitular,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR))
+				ExTipoDeConfiguracao.MOVIMENTAR))
 			return false;
 
 		if(!mob.doc().isFinalizado()) { /* documento temporário e não sofreu movimentação. A lotação onde se encontra é a do cadastrante */
@@ -4596,7 +4596,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				mov.getIdTpMov(),
-				CpTipoConfiguracao.TIPO_CONFIG_CANCELAR_MOVIMENTACAO);
+				ExTipoDeConfiguracao.CANCELAR_MOVIMENTACAO);
 	}
 
 	/**
@@ -4646,7 +4646,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * titular, DpLotacao lotaTitular, final ExMobil mob) throws Exception { if
 	 * (lotaTitular == null) return false; return
 	 * getConf().podePorConfiguracao(titular, lotaTitular,
-	 * CpTipoConfiguracao.TIPO_CONFIG_ATENDER_PEDIDO_PUBLICACAO); }
+	 * ExTipoDeConfiguracao.ATENDER_PEDIDO_PUBLICACAO); }
 	 */
 
 	/**
@@ -4665,7 +4665,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (lotaTitular == null)
 			return false;
 		return getConf().podePorConfiguracao(titular, lotaTitular,
-				CpTipoConfiguracao.TIPO_CONFIG_DEFINIR_PUBLICADORES);
+				ExTipoDeConfiguracao.DEFINIR_PUBLICADORES);
 
 	}
 
@@ -4685,7 +4685,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (lotaTitular == null)
 			return false;
 		return getConf().podePorConfiguracao(titular, lotaTitular,
-				CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_PUBLICACAO_BOLETIM);
+				ExTipoDeConfiguracao.GERENCIAR_PUBLICACAO_BOLETIM);
 	}
 
 	/**
@@ -4757,7 +4757,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 									mob.getDoc().getExFormaDocumento(), 
 									mob.getDoc().getExModelo(), 
 									ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA,
-									CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR));
+									ExTipoDeConfiguracao.MOVIMENTAR));
 	}
 	
 	/**
@@ -4830,14 +4830,14 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return getConf().podePorConfiguracao(doc.getOrgaoUsuario(),
 				doc.getExFormaDocumento(),
-				CpTipoConfiguracao.TIPO_CONFIG_REINICIAR_NUMERACAO_TODO_ANO);
+				ExTipoDeConfiguracao.REINICIAR_NUMERACAO_TODO_ANO);
 	}
 	
 	
 	public boolean podeReiniciarNumeracao(CpOrgaoUsuario orgaoUsuario, ExFormaDocumento formaDocumento) throws Exception {
 		return getConf().podePorConfiguracao(orgaoUsuario,
 				formaDocumento,
-				CpTipoConfiguracao.TIPO_CONFIG_REINICIAR_NUMERACAO_TODO_ANO);
+				ExTipoDeConfiguracao.REINICIAR_NUMERACAO_TODO_ANO);
 	}
 	
 
@@ -4892,7 +4892,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		final boolean podeMovimentar = podeMovimentar(titular, lotaTitular, mob);
 
 		return (!mob.isGeral() && mob.doc().isExpediente()
-				&& !mob.doc().isPendenteDeAssinatura() && !mob.isEmTransito() && podeMovimentar && getConf().podePorConfiguracao(titular, lotaTitular, ExTipoMovimentacao.TIPO_MOVIMENTACAO_AUTUAR, CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR) && getConf().podePorConfiguracao(titular, lotaTitular, titular.getCargo(), titular.getFuncaoConfianca(), mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), ExTipoMovimentacao.TIPO_MOVIMENTACAO_AUTUAR, CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR));
+				&& !mob.doc().isPendenteDeAssinatura() && !mob.isEmTransito() && podeMovimentar && getConf().podePorConfiguracao(titular, lotaTitular, ExTipoMovimentacao.TIPO_MOVIMENTACAO_AUTUAR, ExTipoDeConfiguracao.MOVIMENTAR) && getConf().podePorConfiguracao(titular, lotaTitular, titular.getCargo(), titular.getFuncaoConfianca(), mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), ExTipoMovimentacao.TIPO_MOVIMENTACAO_AUTUAR, ExTipoDeConfiguracao.MOVIMENTAR));
 	}
 	
 	public boolean podeAssinarPorComSenha(final DpPessoa cadastrante,
@@ -4902,7 +4902,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						cadastrante,
 						lotaCadastrante,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR)) ;
+						ExTipoDeConfiguracao.MOVIMENTAR)) ;
 	}
 
 	public boolean podeDisponibilizarNoAcompanhamentoDoProtocolo(final DpPessoa titular, final DpLotacao lotaTitular,
@@ -4913,7 +4913,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 					ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO,
 							ExTipoMovimentacao.class, false), 
 					null, null, null, lotaTitular, titular, null,null,
-					CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR, null, null, null, null, null, null);
+					ExTipoDeConfiguracao.MOVIMENTAR, null, null, null, null, null, null);
 	}
 		
 	public boolean podePublicarPortalTransparencia(final DpPessoa cadastrante,
@@ -4931,7 +4931,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								cadastrante,
 								lotacao,
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA,
-								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR)) ;
+								ExTipoDeConfiguracao.MOVIMENTAR)) ;
 	}
 	
 	public boolean podePublicarPortalTransparenciaWS(final DpPessoa cadastrante,
@@ -4944,7 +4944,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.doc().isPendenteDeAssinatura()
 				&& (mob.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA).size() == 0)
 				&& getConf().podePorConfiguracao(cadastrante, lotacao,
-						CpTipoConfiguracao.TIPO_CONFIG_AUTORIZAR_MOVIMENTACAO_POR_WS));
+						ExTipoDeConfiguracao.AUTORIZAR_MOVIMENTACAO_POR_WS));
 	}
 
 	public boolean ehPublicoExterno(DpPessoa titular) {
@@ -4958,7 +4958,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return getConf().podePorConfiguracao(null, mob.getDoc().getExFormaDocumento().getExTipoFormaDoc(), null, mob.getDoc().getExTipoDocumento(), 
 				mob.getDoc().getExFormaDocumento(), mob.getDoc().getExModelo(), null, null, 
 				exTpMov, null, null, null, lotaTitular, titular, null, null, 
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR, null, null, null, null, null, null);
+				ExTipoDeConfiguracao.MOVIMENTAR, null, null, null, null, null, null);
 	}
 	
 	public boolean podeCapturarPDF(final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob, final Long idTipoDoc) {
@@ -4973,7 +4973,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (!doc.jaTransferido() && !doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha() && !mob.isJuntado()
 				&& !mob.isJuntadoExterno() && !mob.isCancelada() && doc.getAutenticacoesComTokenOuSenha().isEmpty()
 				&& capturado && (Ex.getInstance().getConf().podePorConfiguracao(titular, lotaTitular,
-						CpTipoConfiguracao.TIPO_CONFIG_TROCAR_PDF_CAPTURADOS))) {
+						ExTipoDeConfiguracao.TROCAR_PDF_CAPTURADOS))) {
 			return true;
 		}
 		return false;

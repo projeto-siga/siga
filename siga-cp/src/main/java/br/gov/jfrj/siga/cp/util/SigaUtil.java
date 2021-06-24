@@ -19,7 +19,7 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
@@ -73,9 +73,7 @@ public class SigaUtil {
 		p_cpsServico.setSiglaServico(CpServico.ACESSO_WEBSERVICE);
 		t_cfgConfigExemplo.setCpServico(p_cpsServico);
 
-		CpTipoConfiguracao cpT = new CpTipoConfiguracao();
-		cpT.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO);
-		t_cfgConfigExemplo.setCpTipoConfiguracao(cpT);
+		t_cfgConfigExemplo.setCpTipoConfiguracao(CpTipoDeConfiguracao.UTILIZAR_SERVICO);
 
 		try {
 			List<CpConfiguracao> ll = CpDao.getInstance().porLotacaoPessoaServicoTipo(t_cfgConfigExemplo);

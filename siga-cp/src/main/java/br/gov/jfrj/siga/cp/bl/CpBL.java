@@ -58,7 +58,6 @@ import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpToken;
@@ -67,6 +66,8 @@ import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorIconeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.util.Excel;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.cp.util.SigaUtil;
@@ -172,8 +173,7 @@ public class CpBL {
 
 	public void bloquearIdentidade(CpIdentidade ident, CpIdentidade identidadeCadastrante, boolean fBloquear)
 			throws Exception {
-		CpTipoConfiguracao tpConf = dao().consultar(CpTipoConfiguracao.TIPO_CONFIG_FAZER_LOGIN,
-				CpTipoConfiguracao.class, false);
+		CpTipoDeConfiguracao tpConf = CpTipoDeConfiguracao.FAZER_LOGIN;
 		Date dt = dao().consultarDataEHoraDoServidor();
 
 		CpConfiguracao confOld = null;
@@ -209,8 +209,7 @@ public class CpBL {
 		try {
 			dao().iniciarTransacao();
 
-			CpTipoConfiguracao tpConf = dao().consultar(CpTipoConfiguracao.TIPO_CONFIG_FAZER_LOGIN,
-					CpTipoConfiguracao.class, false);
+			CpTipoDeConfiguracao tpConf = CpTipoDeConfiguracao.FAZER_LOGIN;
 			Date dt = dao().consultarDataEHoraDoServidor();
 
 			CpConfiguracao confOld = null;
@@ -248,7 +247,7 @@ public class CpBL {
 	}
 
 	public CpConfiguracao configurarAcesso(CpPerfil perfil, CpOrgaoUsuario orgao, DpLotacao lotacao, DpPessoa pes,
-			CpServico servico, CpSituacaoDeConfiguracaoEnum situacao, CpTipoConfiguracao tpConf,
+			CpServico servico, CpSituacaoDeConfiguracaoEnum situacao, ITipoDeConfiguracao tpConf,
 			CpIdentidade identidadeCadastrante) throws Exception {
 		Date dt = dao().consultarDataEHoraDoServidor();
 

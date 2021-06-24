@@ -21,7 +21,7 @@ public class ExPodeMarcar extends CompositeExpressionSuport {
 //
 //	return getConf().podePorConfiguracao(titular, lotaTitular,
 //			ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO,
-//			CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+//			CpTipoDeConfiguracao.MOVIMENTAR);
 
 	private ExMobil mob;
 	private DpPessoa titular;

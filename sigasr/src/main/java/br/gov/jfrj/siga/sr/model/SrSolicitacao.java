@@ -1384,7 +1384,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             for (SrConfiguracao c : listaPessoasAConsiderar) {
                 c.setItemConfiguracaoFiltro(getItemConfiguracao());
                 c.setAcaoFiltro(a);
-                c.setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+                c.setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoDeConfiguracao.SR_DESIGNACAO));
 
                 List<SrConfiguracao> confs = SrConfiguracao.listar(c, new int[] { SrConfiguracaoBL.ATENDENTE });
                 if (!confs.isEmpty())
@@ -1657,7 +1657,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         c.setAtendente(getLotaTitular());
         c.setComplexo(getLocal());
         c.setBuscarPorPerfis(true);
-        c.setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
+        c.setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoDeConfiguracao.SR_ABRANGENCIA_ACORDO));
         
         List<SrConfiguracao> confs = SrConfiguracao.listar(c);
         for (SrConfiguracao conf : confs) {
@@ -2067,7 +2067,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         filtro.setPrioridade(getPrioridade());
         filtro.setItemConfiguracaoFiltro(getItemConfiguracao());
         filtro.setAcaoFiltro(getAcaoAtual());
-        filtro.setCpTipoConfiguracao(ContextoPersistencia.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA));
+        filtro.setCpTipoConfiguracao(ContextoPersistencia.em().find(CpTipoConfiguracao.class, CpTipoDeConfiguracao.SR_DEFINICAO_INCLUSAO_AUTOMATICA));
 
         List<ListaInclusaoAutomatica> listaFinal = new ArrayList<ListaInclusaoAutomatica>();
         for (SrConfiguracao conf : SrConfiguracao.listar(filtro, new int[] { SrConfiguracaoBL.ATENDENTE, SrConfiguracaoBL.LISTA_PRIORIDADE })) {

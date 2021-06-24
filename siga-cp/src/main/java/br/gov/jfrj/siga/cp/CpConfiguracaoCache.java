@@ -196,7 +196,7 @@ public class CpConfiguracaoCache {
 		this.funcaoConfianca = longOrZero(
 				cfg.getFuncaoConfianca() != null ? cfg.getFuncaoConfianca().getIdInicial() : null);
 		this.dpPessoa = longOrZero(cfg.getDpPessoa() != null ? cfg.getDpPessoa().getIdInicial() : null);
-		this.cpTipoConfiguracao = cfg.getCpTipoConfiguracao() != null ? CpTipoDeConfiguracao.getById(cfg.getCpTipoConfiguracao().getIdTpConfiguracao()) : null;
+		this.cpTipoConfiguracao = cfg.getCpTipoConfiguracao();
 		this.cpServico = longOrZero(cfg.getCpServico() != null ? cfg.getCpServico().getId() : null);
 		this.cpIdentidade = longOrZero(cfg.getCpIdentidade() != null ? cfg.getCpIdentidade().getIdInicial() : null);
 		this.cpTipoLotacao = longOrZero(cfg.getCpGrupo() != null ? cfg.getCpGrupo().getIdInicial() : null);

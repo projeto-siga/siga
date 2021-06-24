@@ -22,12 +22,12 @@ import javax.persistence.Query;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Par;
-import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpIdentidade;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoMarca;
@@ -511,17 +511,17 @@ public class GcBL {
 					
 					List<Par<DpPessoa, DpLotacao>> pessoasELotasDoGrupo = new ArrayList<Par<DpPessoa, DpLotacao>>();
 					if (mov.getGrupo() != null){
-						for (CpConfiguracao cfg : Cp.getInstance().getConf()
+						for (CpConfiguracaoCache cfg : Cp.getInstance().getConf()
 								.getListaPorTipo(CpTipoDeConfiguracao.PERTENCER)) {
-							if (cfg.getCpGrupo() != null && cfg.getCpGrupo().equivale(mov.getGrupo())
-									&& cfg.getHisDtFim() == null){
-								DpPessoa pess = cfg.getDpPessoa();
+							if (cfg.cpGrupo == mov.getGrupo().getIdInicial()
+									&& cfg.hisDtFim == null){
+								DpPessoa pess = null;
 								//Edson: evitar LazyException:
-								if (pess != null)
-									pess = CpDao.getInstance().consultar(pess.getId(), DpPessoa.class, false);
-								DpLotacao lota = cfg.getLotacao();
-								if (lota != null)
-									lota = CpDao.getInstance().consultar(lota.getId(), DpLotacao.class, false);
+								if (cfg.dpPessoa != 0)
+									pess = CpDao.getInstance().consultar(cfg.dpPessoa, DpPessoa.class, false);
+								DpLotacao lota = null;
+								if (cfg.lotacao != 0)
+									lota = CpDao.getInstance().consultar(cfg.lotacao, DpLotacao.class, false);
 								else if (pess != null)
 									lota = pess.getLotacao();
 								pessoasELotasDoGrupo.add(new Par<DpPessoa, DpLotacao>(pess, lota));

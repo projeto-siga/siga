@@ -264,5 +264,9 @@ public class Prop {
 		 * */
 		provider.addPublicProperty("/siga.session.modelos.tempo.expiracao", "60");
 		
+<<<<<<< HEAD
+		
+=======
+>>>>>>> develop_SigaParaConstrucao
 	}
 }

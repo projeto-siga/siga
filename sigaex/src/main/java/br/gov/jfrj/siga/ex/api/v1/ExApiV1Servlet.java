@@ -224,6 +224,8 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPublicProperty("reordenacao.ativo", null);
 		addPublicProperty("rodape.data.assinatura.ativa", "31/12/2099");
 		addPrivateProperty("util.webservice.password", null);
+		
+//		addPublicProperty("volume.max.paginas",  getProp("/volume.max.paginas"));
 		addPublicProperty("volume.max.paginas", "200");
 		addPrivateProperty("webdav.senha", null);
 		addPublicProperty("controlar.numeracao.expediente", "false");
@@ -244,6 +246,9 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		// Siga-Le
 		addPublicProperty("smtp.sugestao.destinatario", getProp("/siga.smtp.usuario.remetente"));
 		addPublicProperty("smtp.sugestao.assunto", "Siga-Le: Sugestão");
+		
+		// anexação de pdf: quantidade de arq. a serem anexados por upload
+		addPublicProperty("qtd.max.arquivo.anexado.upload", "1");
 	}
 
 	@Override

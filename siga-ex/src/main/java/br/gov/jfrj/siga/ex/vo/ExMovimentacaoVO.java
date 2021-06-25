@@ -65,6 +65,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 
@@ -153,7 +155,8 @@ public class ExMovimentacaoVO extends ExVO {
 		descricao = mov.getObs();
 
 		if (mov.getIdTpMov().equals(TIPO_MOVIMENTACAO_ANEXACAO))
-			descricao = mov.getNmArqMov();
+			descricao = StringUtils.isNotBlank(mov.getDescrMov()) ? mov.getDescrMov() : mov.getNmArqMov();
+			//descricao = mov.getNmArqMov();
 
 		if (mov.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA) || mov.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO)) {
 			descricao += Ex.getInstance().getBL().extraiPersonalizacaoAssinatura(mov,false);

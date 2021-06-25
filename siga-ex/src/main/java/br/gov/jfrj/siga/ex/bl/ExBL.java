@@ -6310,7 +6310,11 @@ public class ExBL extends CpBL {
 			// Verifica se é Processo e conta o número de páginas para verificar
 			// se tem que encerrar o volume
 			if (mob.doc().isProcesso()) {
-				if (mob.getTotalDePaginasSemAnexosDoMobilGeral() >= Prop.getInt("volume.max.paginas")) {
+				
+				int totalDePaginasSemAnexosDoMobilGeral = mob.getTotalDePaginasSemAnexosDoMobilGeral();
+				int volumeMaxPaginas = Prop.getInt("volume.max.paginas");
+
+				if ( totalDePaginasSemAnexosDoMobilGeral >= volumeMaxPaginas) {
 					encerrarVolume(cadastrante, lotaCadastrante, mob, dtMov, null, null, null, true);
 				}
 			}

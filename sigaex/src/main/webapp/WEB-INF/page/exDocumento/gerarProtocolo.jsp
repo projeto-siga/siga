@@ -22,14 +22,8 @@
 
 			<div class="col-sm-12">
 				<div class="text-center">
-					<c:choose>
-					<c:when test="${f:resource('/siga.local') == 'GOVSP'}">
-						<img src="${pageContext.request.contextPath}/imagens/brasao_sp.png" class="rounded float-left" width="80px"/>
-					</c:when>
-					<c:otherwise>
-						<img src="${pageContext.request.contextPath}/imagens/brasaoColoridoTRF2.png" class="rounded float-left" width="80px"/>
-					</c:otherwise>
-					</c:choose>
+					<img src="${pageContext.request.contextPath}/imagens/${f:resource('/siga.relat.brasao')}" class="rounded float-left" width="80px"/>
+					<h4><b>${f:resource('/siga.relat.titulo')}</b></h4>
 					<h4><b>${f:resource('/siga.cabecalho.titulo')}</b></h4>
 					<h5>${doc.orgaoUsuario.descricao}</h5>
 					<h5>${doc.lotacao.descricao }</h5>

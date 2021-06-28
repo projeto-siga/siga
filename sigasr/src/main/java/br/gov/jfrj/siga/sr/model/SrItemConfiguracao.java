@@ -545,16 +545,16 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	/**
 	 * Marca os itens como herdados.
 	 */
-	public static List<SrConfiguracao> marcarComoHerdadas(
-			List<SrConfiguracao> listasDesignacoesPai, SrItemConfiguracao item) {
-		Iterator<SrConfiguracao> i = listasDesignacoesPai.iterator();
+	public static List<SrConfiguracaoCache> marcarComoHerdadas(
+			List<SrConfiguracaoCache> listasDesignacoesPai, SrItemConfiguracao item) {
+		Iterator<SrConfiguracaoCache> i = listasDesignacoesPai.iterator();
 
 		while (i.hasNext()) {
-			SrConfiguracao conf = i.next();
+			SrConfiguracaoCache conf = i.next();
 			boolean encontrou = false;
 
-			conf.setHerdado(true);
-			conf.setUtilizarItemHerdado(true);
+			conf.herdado = true;
+			conf.utilizarItemHerdado = true;
 
 			List<SrConfiguracaoIgnorada> itensIgnorados = SrConfiguracaoIgnorada
 					.findByConfiguracao(conf);
@@ -562,7 +562,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 			for (SrConfiguracaoIgnorada igItem : itensIgnorados) {
 				// Se a configuraÃ§Ã£o for do Item, vai como desmarcado
 				if (item.getId().equals(igItem.getItemConfiguracao().getId())) {
-					conf.setUtilizarItemHerdado(false);
+					conf.utilizarItemHerdado = false;
 				}
 
 				// se a configuraÃ§Ã£o for do Item (histÃ³rico), vai como
@@ -573,7 +573,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 							.getHistoricoItemConfiguracao()) {
 						if (itemHist.getId().equals(
 								igItem.getItemConfiguracao().getId())) {
-							conf.setUtilizarItemHerdado(false);
+							conf.utilizarItemHerdado = false;
 							encontrou = true;
 							break;
 						}

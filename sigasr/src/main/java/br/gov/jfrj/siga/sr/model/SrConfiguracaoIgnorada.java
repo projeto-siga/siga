@@ -64,9 +64,9 @@ public class SrConfiguracaoIgnorada extends Objeto {
     }
 
     @SuppressWarnings("unchecked")
-    public static List<SrConfiguracaoIgnorada> findByConfiguracao(SrConfiguracao configuracao) {
-        StringBuffer sb = new StringBuffer("select ig from SrConfiguracaoIgnorada as ig where ig.configuracao.id = ");
-        sb.append(configuracao.getId());
+    public static List<SrConfiguracaoIgnorada> findByConfiguracao(SrConfiguracaoCache configuracao) {
+        StringBuffer sb = new StringBuffer("select ig from SrConfiguracaoIgnorada as ig where ig.configuracao.idConfiguracao = ");
+        sb.append(configuracao.idConfiguracao);
 
         List<SrConfiguracaoIgnorada> list = AR.em().createQuery(sb.toString()).getResultList();
 

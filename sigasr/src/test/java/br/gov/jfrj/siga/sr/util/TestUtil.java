@@ -6,11 +6,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoServico;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoMarca;
@@ -49,7 +48,6 @@ public class TestUtil {
 		ContextoPersistencia.em().createNativeQuery("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.locks.deadlockTrace', 'true')").executeUpdate();*/
 			
 		tiposMov();
-		tiposConfig();
 		marcadores();
 		servicos();
 		
@@ -362,30 +360,12 @@ public class TestUtil {
 		new SrTipoMovimentacao(14L, "Cancelamento de Movimentação").save();
 	}
 	
-	private static void tiposConfig(){
-		
-		CpTipoConfiguracao design = new CpTipoConfiguracao();
-		design.setIdTpConfiguracao(300L);
-		design.setDscTpConfiguracao("Designação");
-		design.save();
-		
-		CpTipoConfiguracao assoc = new CpTipoConfiguracao();
-		assoc.setIdTpConfiguracao(304L);
-		assoc.setDscTpConfiguracao("Abrangência de Acordo");
-		assoc.save();
-	}
-	
 	private static void servicos() {
-		
-		CpSituacaoConfiguracao naoPode = new CpSituacaoConfiguracao();
-		naoPode.setIdSitConfiguracao(2L);
-		naoPode.setDscSitConfiguracao("Não Pode");
-		naoPode.save();
 		
 		CpTipoServico ts = new CpTipoServico();
 		ts.setIdCpTpServico(2);
 		ts.setDscTpServico("Sistema");
-		ts.setSituacaoDefault(naoPode);
+		ts.setSituacaoDefault(CpSituacaoDeConfiguracaoEnum.NAO_PODE);
 		ts.save();
 
 		CpServico siga = new CpServico();

@@ -2,21 +2,16 @@ package br.gov.jfrj.siga.sr.model;
 
 import static org.junit.Assert.assertEquals;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
-import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.sr.util.TestUtil;
+import junit.framework.TestCase;
 
 public class SrSolicitacaoTest {
 

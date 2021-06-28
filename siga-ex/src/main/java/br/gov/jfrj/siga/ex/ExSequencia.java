@@ -5,7 +5,6 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -62,7 +61,7 @@ public class ExSequencia implements Serializable {
 	
 	@Id
 	@SequenceGenerator(name="EX_SEQUENCIA_NUMERACAO_GENERATOR", sequenceName="EX_SEQUENCIA_SEQ")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="EX_SEQUENCIA_NUMERACAO_GENERATOR")
+	@GeneratedValue(generator="EX_SEQUENCIA_NUMERACAO_GENERATOR")
 	@Column(name="ID_SEQ")
 	private long idSequencia;
 

@@ -33,12 +33,11 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -51,6 +50,7 @@ import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacaoMap;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrConfiguracaoBL;
+import br.gov.jfrj.siga.sr.model.SrConfiguracaoCache;
 import br.gov.jfrj.siga.sr.model.SrEtapaSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrFormaAcompanhamento;
 import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
@@ -58,7 +58,6 @@ import br.gov.jfrj.siga.sr.model.SrLista;
 import br.gov.jfrj.siga.sr.model.SrMarca;
 import br.gov.jfrj.siga.sr.model.SrMeioComunicacao;
 import br.gov.jfrj.siga.sr.model.SrMovimentacao;
-import br.gov.jfrj.siga.sr.model.SrOperacao;
 import br.gov.jfrj.siga.sr.model.SrPendencia;
 import br.gov.jfrj.siga.sr.model.SrPrioridade;
 import br.gov.jfrj.siga.sr.model.SrPrioridadeSolicitacao;
@@ -69,6 +68,7 @@ import br.gov.jfrj.siga.sr.model.SrTipoMotivoFechamento;
 import br.gov.jfrj.siga.sr.model.SrTipoMotivoPendencia;
 import br.gov.jfrj.siga.sr.model.SrTipoMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrTipoPermissaoLista;
+import br.gov.jfrj.siga.sr.model.enm.SrTipoDeConfiguracao;
 import br.gov.jfrj.siga.sr.model.vo.SrListaVO;
 import br.gov.jfrj.siga.sr.model.vo.SrSolicitacaoListaVO;
 import br.gov.jfrj.siga.sr.util.SrSolicitacaoFiltro;
@@ -209,7 +209,7 @@ public class SolicitacaoController extends SrController {
 
         if (idLista != null) {
             SrLista lista = SrLista.AR.findById(idLista);
-            permissoes = new ArrayList<SrConfiguracao>(lista.getPermissoes(getTitular().getLotacao(), getCadastrante()));
+            permissoes = new ArrayList<>(lista.getPermissoes(getTitular().getLotacao(), getCadastrante()));
             permissoes = SrConfiguracao.listarPermissoesUsoLista(lista, false);
         } else
             permissoes = new ArrayList<SrConfiguracao>();
@@ -925,13 +925,13 @@ public class SolicitacaoController extends SrController {
         filtro.setDpPessoa(getTitular());
         filtro.setLotacao(getLotaTitular());
         filtro.setBuscarPorPerfis(true);
-        filtro.setCpTipoConfiguracao((CpTipoConfiguracao)CpTipoConfiguracao.AR.findById(CpTipoDeConfiguracao.SR_ESCALONAMENTO_SOL_FILHA));
-        CpSituacaoConfiguracao situacao = SrConfiguracaoBL.get().buscaSituacao(filtro,
+        filtro.setCpTipoConfiguracao(SrTipoDeConfiguracao.ESCALONAMENTO_SOL_FILHA);
+        CpSituacaoDeConfiguracaoEnum situacao = SrConfiguracaoBL.get().buscaSituacao(filtro,
                         new int[] { 0 }, null);
         boolean criarFilhaDefault = false;
         if (situacao != null
-                        && (situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_PODE
-                        || situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_DEFAULT))
+                        && (situacao == CpSituacaoDeConfiguracaoEnum.PODE
+                        || situacao == CpSituacaoDeConfiguracaoEnum.DEFAULT))
                 criarFilhaDefault = true;
         
         incluirListasReclassificacao(solicitacaoEntity);

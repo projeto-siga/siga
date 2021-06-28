@@ -233,7 +233,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return getConf().podePorConfiguracao(null, null, null, null, mod.getExFormaDocumento(),
 				mod, null, null, null, titular.getCargo(), titular.getOrgaoUsuario(),
 				titular.getFuncaoConfianca(), lotaTitular, titular, null, null, 
-				CpTipoConfiguracao.TIPO_CONFIG_EXIBIR_QUEM_TEM_ACESSO_DOCUMENTO,null,lotaTitular,null,null,null,null);
+				ExTipoDeConfiguracao.EXIBIR_QUEM_TEM_ACESSO_DOCUMENTO_LIMITADO,null,lotaTitular,null,null,null,null);
 	}
 
 

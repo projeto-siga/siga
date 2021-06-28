@@ -33,6 +33,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -90,6 +91,9 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.ExBL;
+import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
 import br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
@@ -680,31 +684,55 @@ public class ExDao extends CpDao {
 		IMontadorQuery montadorQuery = carregarPlugin();
 
 		long tempoIni = System.nanoTime();
-		Query query = em().createQuery(
-				montadorQuery.montaQueryConsultaporFiltro(flt, false));
-		preencherParametros(flt, query);
-
-		if (offset > 0) {
-			query.setFirstResult(offset);
-		}
-		if (itemPagina > 0) {
-			query.setMaxResults(itemPagina);
-		}
-		List l = query.getResultList();
-		List<Object[]> l2 = new ArrayList<Object[]>(); 
-		if (l != null && l.size() > 0) {
+		List<Object[]> l2 = new ArrayList<Object[]>();
+		Query query = null;
+		
+		if(itemPagina > 0) {
+			query = em().createQuery(
+					montadorQuery.montaQueryConsultaporFiltro(flt, false));
+			preencherParametros(flt, query);
+	
+			if (offset > 0) {
+				query.setFirstResult(offset);
+			}
+			if (itemPagina > 0) {
+				query.setMaxResults(itemPagina);
+			}
+			List l = query.getResultList();
+			 
+			if (l != null && l.size() > 0) {
+				query = em().createQuery("select doc, mob, label from ExMarca label"
+						+ " inner join label.exMobil mob inner join mob.exDocumento doc"
+						+ " where label.idMarca in (:listIdMarca)");
+				query.setParameter("listIdMarca", l);
+				l2 = query.getResultList();
+				Collections.sort(l2, Comparator.comparing( item -> l.indexOf(
+					    		Long.valueOf (((ExMarca) (item[2])).getIdMarca()))));
+			}
+		} else { //exportar excel
+			flt.setOrdem(-1);
 			query = em().createQuery("select doc, mob, label from ExMarca label"
 					+ " inner join label.exMobil mob inner join mob.exDocumento doc"
-					+ " where label.idMarca in (:listIdMarca)");
-			query.setParameter("listIdMarca", l);
+					+ " where label.idMarca in ("+montadorQuery.montaQueryConsultaporFiltro(flt, false)+")");
+			preencherParametros(flt, query);
 			l2 = query.getResultList();
-			Collections.sort(l2, Comparator.comparing( item -> l.indexOf(
-				    		Long.valueOf (((ExMarca) (item[2])).getIdMarca()))));
 		}
-		
 		long tempoTotal = System.nanoTime() - tempoIni;
+		
+		if (Prop.getBool("limita.acesso.documentos.por.configuracao")) {
+		
+			Iterator<Object[]> listaObjetos = l2.iterator();
+			while (listaObjetos.hasNext()) {
+				   Object[] objeto = listaObjetos.next(); // must be called before you can call i.remove()
+				   ExDocumento doc = ((ExDocumento) objeto[0]);
+				   if (! ExBL.exibirQuemTemAcessoDocumentosLimitados(doc, titular, lotaTitular))
+				   		listaObjetos.remove();
+			}
+		
+		}
+
 		// System.out.println("consultarPorFiltroOtimizado: " +
-		// tempoTotal/1000000 + " ms -> " + query + ", resultado: " + l);
+		// tempoTotal/1000000 + " ms -> " + query + ", resultado: " + l)RExRR;
 		return l2;
 	}
 
@@ -1841,7 +1869,9 @@ public class ExDao extends CpDao {
 		q.select(c);
 		List<Predicate> whereList = new LinkedList<Predicate>();
 		if(flt.getSigla() != null) {
-			whereList.add(cb().like(c.get("nmMod").as(String.class), "%" + flt.getSigla() + "%"));
+			Expression<String> path = c.get("nmMod");
+			path = cb().upper(path);
+			whereList.add(cb().like(path, "%" + flt.getSigla() + "%"));
 			whereList.add(cb().equal(c.get("hisAtivo"), 1));
 		}
 		Predicate[] whereArray = new Predicate[whereList.size()];
@@ -1937,7 +1967,7 @@ public class ExDao extends CpDao {
 						  + " AND ((marcador.GRUPO_MARCADOR <> " + String.valueOf(CpMarcadorGrupoEnum.EM_ELABORACAO.getId()) 
 						  	+ " AND marca2.ID_MARCADOR = " + String.valueOf(CpMarcadorEnum.EM_ELABORACAO.getId()) + ") "
 						  	+ ( "".equals(queryMarcasAIgnorarFinal) ? ")" : 
-						  		"OR ( marca2.id_marcador in (" + queryMarcasAIgnorarFinal + ")))" )
+						  		"OR (marca.id_marcador <> " + String.valueOf(CpMarcadorEnum.EM_TRANSITO_ELETRONICO.getId()) + " and  marca2.id_marcador in (" + queryMarcasAIgnorarFinal + ")))" )
 //  						  + (!grupoItem.grupoNome.equals(Mesa2.GrupoDeMarcadorEnum.EM_ELABORACAO.getNome())?
 //  								  " OR marca2.id_marcador = " + String.valueOf(MarcadorEnum.EM_ELABORACAO.getId()) + ")" : ")")
 						 + " WHERE (marca.dt_ini_marca IS NULL OR marca.dt_ini_marca < :dbDatetime)"
@@ -2040,13 +2070,13 @@ public class ExDao extends CpDao {
 						+ "mob, "
 						+ (trazerComposto ? " frm.isComposto, " : "0, ")
 						+ "(select movUltima from ExMovimentacao movUltima "
-						+ " where movUltima.idMov in ("
-						+ " 	select max(movUltima1.idMov) from ExMovimentacao movUltima1"
+						+ " where movUltima.dtTimestamp = ("
+						+ " 	select max(movUltima1.dtTimestamp) from ExMovimentacao movUltima1"
 						+ " 		where movUltima1.exMobil.idMobil = mob.idMobil " 
 						+ " 		and movUltima1.exMovimentacaoCanceladora.idMov = null ) ), "
 						+ "(select movTramite from ExMovimentacao movTramite"
-						+ " where movTramite.idMov in ("
-						+ " 	select max(movTramite1.idMov) from ExMovimentacao movTramite1"
+						+ " where movTramite.dtTimestamp = ("
+						+ " 	select max(movTramite1.dtTimestamp) from ExMovimentacao movTramite1"
 						+ " 		where movTramite1.exTipoMovimentacao.idTpMov = 3 "
 						+ "			and movTramite1.exMobil.idMobil = mob.idMobil " 
 						+ " 		and movTramite1.exMovimentacaoCanceladora.idMov = null ) ), "
@@ -2270,6 +2300,17 @@ public class ExDao extends CpDao {
 		// System.out.println("consultarPorFiltroOtimizado: " + tempoTotal
 		// 			/ 1000000 + " ms -> " + query + ", resultado: " + l);
 		return l;
+	}
+
+	public ExModelo consultarModeloPeloId(ExModelo exModelo) {
+		final Query query = em().createNamedQuery("consultarModeloPeloId");
+
+		query.setParameter("idMod", exModelo.getIdMod());
+		try {
+			return (ExModelo) query.getSingleResult();
+		} catch (NoResultException ne) {
+			return null;
+		}
 	}
 	
 }

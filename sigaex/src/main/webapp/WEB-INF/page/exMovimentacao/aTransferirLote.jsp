@@ -233,7 +233,16 @@
 												<td class="text-center"></td>
 												<td class="text-center"></td>
 											</c:if>
-											<td>${f:descricaoConfidencial(documento.doc, lotaTitular)}</td>
+											<td>
+												<c:choose>
+													<c:when test="${siga_cliente == 'GOVSP'}">
+														${documento.doc.descrDocumento}
+													</c:when>
+													<c:otherwise>
+														${f:descricaoConfidencial(documento.doc, lotaTitular)}
+													</c:otherwise>
+												</c:choose>
+											</td>
 										</tr>
 									</siga:paginador>
 								</tbody>

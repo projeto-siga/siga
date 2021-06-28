@@ -502,6 +502,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 	//
+
 	TRAMITAR_PARA_LOTACAO_SEM_USUARIOS_ATIVOS(54, "Tramitar para Lotação sem Usuários Ativos?", "",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, CpParamCfg.PERFIL, CpParamCfg.SERVICO,
@@ -509,6 +510,13 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpParamCfg.FUNCAO_OBJETO, CpParamCfg.ORGAO_OBJETO, ExParamCfg.CLASSIFICACAO,
 					ExParamCfg.TIPO_DOCUMENTO, ExParamCfg.TIPO_FORMA_DOCUMENTO, ExParamCfg.FORMA_DOCUMENTO,
 					ExParamCfg.MODELO, ExParamCfg.NIVEL_DE_ACESSO, ExParamCfg.PAPEL, ExParamCfg.VIA },
+			new Enum[] { CpParamCfg.SITUACAO }, new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
+					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
+			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true), 
+	
+	EXIBIR_QUEM_TEM_ACESSO_DOCUMENTO_LIMITADO(55,"Exibir quem tem acesso a documentos limitados?", "Tem como objetivo não exibir as informações das pessoas e lotações que tem acesso a um documento limitado",
+			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO,
+					ExParamCfg.TIPO_FORMA_DOCUMENTO, ExParamCfg.FORMA_DOCUMENTO, ExParamCfg.MODELO },
 			new Enum[] { CpParamCfg.SITUACAO }, new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true), 

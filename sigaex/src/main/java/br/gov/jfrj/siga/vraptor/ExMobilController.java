@@ -168,7 +168,7 @@ public class ExMobilController extends
 		String dtDoc = dtDocString;
 
 		if ((SigaMessages.isSigaSP() && offset != null) || (!SigaMessages.isSigaSP() && (primeiraVez == null || !primeiraVez.equals("sim")))) {
-			dtDoc = listarItensPesquisa(dtDocString, dtDocFinalString, builder, dtDoc);
+			dtDoc = listarItensPesquisa(dtDocString, dtDocFinalString, builder, dtDoc);				
 		} else {
 			if( Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
 					SIGA_DOC_PESQ_DTLIMITADA )) {
@@ -327,7 +327,7 @@ public class ExMobilController extends
 			}
 			
 			List lista = dao().consultarPorFiltroOtimizado(flt,
-					builder.getOffset(), getTamanho(), getTitular(),
+					builder.getOffset(), -1, getTitular(),
 					getLotaTitular());
 	
 			InputStream inputStream = null;
@@ -368,6 +368,7 @@ public class ExMobilController extends
 					texto.append(ma.getDpLotacaoIni().getLotacaoAtual().getSigla().replaceAll(";",","));
 				}*/
 				
+						
 				if(ma.getDpLotacaoIni() != null && ma.getDpLotacaoIni().getSigla() != null) {
 					texto.append(ma.getDpLotacaoIni().getSigla().replaceAll(";",","));
 				}
@@ -419,7 +420,7 @@ public class ExMobilController extends
 	}
 
 	@Get("app/expediente/doc/listar")
-	public void aListar(final String popup, final String primeiraVez, final String propriedade, final Integer postback, final int apenasRefresh,
+	public void aListar(final String popup,  final String primeiraVez, final String propriedade, final Integer postback, final int apenasRefresh,
 			final Long ultMovIdEstadoDoc, final int ordem, final int visualizacao, final Integer ultMovTipoResp, final DpPessoaSelecao ultMovRespSel,
 			final DpLotacaoSelecao ultMovLotaRespSel, final Long orgaoUsu, final Long idTpDoc, final String dtDocString, final String dtDocFinalString,
 			final Long idTipoFormaDoc, final Long idFormaDoc, final Long idMod, final String anoEmissaoString, final String numExpediente,
@@ -454,7 +455,7 @@ public class ExMobilController extends
 		String dtDoc = dtDocString;
 	
 		if (primeiraVez == null || !primeiraVez.equals("sim")) {
-			dtDoc = listarItensPesquisa(dtDocString, dtDocFinalString, builder, dtDoc);
+				dtDoc = listarItensPesquisa(dtDocString, dtDocFinalString, builder, dtDoc);				
 		} else {
 			if( Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
 					SIGA_DOC_PESQ_DTLIMITADA )) {

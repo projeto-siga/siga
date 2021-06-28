@@ -1,4 +1,4 @@
-﻿<%@ include file="/WEB-INF/page/include.jsp"%>
+<%@ include file="/WEB-INF/page/include.jsp"%>
 
 <siga:pagina titulo="Informações">
 
@@ -149,7 +149,7 @@
 								<siga:select label="Situação"
 									name="filtro.situacao.idMarcador"
 									value="${filtro.situacao.idMarcador}" list="marcadores"
-									listKey="idMarcador" headerValue="Todas"
+									listKey="idMarcador" headerValue="Todas exceto Cancelados"
 									listValue="descrMarcador" />
 							</div>
 						</div>

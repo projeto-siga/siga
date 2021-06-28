@@ -78,7 +78,7 @@ function alteraTipoDaForma(abrir) {
 						+ document.getElementById('tipoForma').value
 						+ '&idFormaDoc=' + '${idFormaDoc}', document
 						.getElementById('comboFormaDiv'), null, 
-						(abrir? function(){	$('#idFormaDoc').select2('open'); } : null)							
+						(abrir? function(){	$('#idFormaDoc').select2('open'); buscar.appendChild(document.getElementById("idFormaDoc")); } : null)							
 						);
 	}
 }
@@ -94,8 +94,8 @@ function alteraForma(abrir) {
 						+ '&idMod='	+ '${idMod}', document
 						.getElementById('comboModeloDiv'), null, 
 						(abrir? function(){	$('#idMod').select2('open'); 
-											podeDescricao(true);} : 
-								function(){	podeDescricao(true);})							
+											podeDescricao(true);buscar.appendChild(document.getElementById("idMod"));} : 
+								function(){	podeDescricao(true);buscar.appendChild(document.getElementById("idMod"));})							
 						);
 	}
 }
@@ -601,61 +601,56 @@ function limpaCampos()
 									</td>
 									<c:if test="${documento[1].numSequencia != 0}">
 										<td width="5%" align="center">
-											${documento[0].dtDocDDMMYY}
+											${documento[0].dtDocDDMMYY}</td>
+										<td width="4%" align="center"><siga:selecionado
+											sigla="${documento[0].lotaSubscritor.sigla}"
+											descricao="${documento[0].lotaSubscritor.descricao}"
+											lotacaoParam="${documento[0].lotaSubscritor.orgaoUsuario.siglaOrgaoUsu}${documento[0].lotaSubscritor.sigla}" />
 										</td>
-										<td width="4%" align="center">
-											<siga:selecionado sigla="${documento[0].lotaSubscritor.sigla}" descricao="${documento[0].lotaSubscritor.descricao}" 
-												lotacaoParam="${documento[0].lotaSubscritor.orgaoUsuario.siglaOrgaoUsu}${documento[0].lotaSubscritor.sigla}" />
-										</td>
-										<td width="4%" align="center">
-											<siga:selecionado sigla="${documento[0].subscritor.iniciais}" descricao="${documento[0].subscritor.descricao}"
-												pessoaParam="${documento[0].subscritor.sigla}" />
-										</td>
+										<td width="4%" align="center"><siga:selecionado
+												sigla="${documento[0].subscritor.iniciais}"
+												descricao="${documento[0].subscritor.descricao}"
+												pessoaParam="${documento[0].subscritor.sigla}" /></td>
 										<td width="5%" align="center">
-											${documento[2].dtIniMarcaDDMMYYYY}
-										</td>
-										<td width="4%" align="center">
-											<siga:selecionado sigla="${documento[2].dpLotacaoIni.lotacaoAtual.sigla}" descricao="${documento[2].dpLotacaoIni.lotacaoAtual.descricao}"
+											${documento[2].dtIniMarcaDDMMYYYY}</td>
+										<td width="4%" align="center"><siga:selecionado
+												sigla="${documento[2].dpLotacaoIni.lotacaoAtual.sigla}"
+												descricao="${documento[2].dpLotacaoIni.lotacaoAtual.descricao}"
 												lotacaoParam="${documento[2].dpLotacaoIni.orgaoUsuario.siglaOrgaoUsu}${documento[2].dpLotacaoIni.sigla}" />
 										</td>
-										<td width="4%" align="center">
-											<siga:selecionado sigla="${documento[2].dpPessoaIni.iniciais}" descricao="${documento[2].dpPessoaIni.descricao}"
+										<td width="4%" align="center"><siga:selecionado
+												sigla="${documento[2].dpPessoaIni.iniciais}"
+												descricao="${documento[2].dpPessoaIni.descricao}"
 												pessoaParam="${documento[2].dpPessoaIni.sigla}" />
 										</td>
+			
 										<td width="10.5%" align="center">
-											${documento[2].cpMarcador.descrMarcador}
-										</td>
+											${documento[2].cpMarcador.descrMarcador}</td>
 									</c:if>
 									<c:if test="${documento[1].numSequencia == 0}">
 										<td width="5%" align="center">
-											${documento[0].dtDocDDMMYY}
+											${documento[0].dtDocDDMMYY}</td>
+										<td width="4%" align="center"><siga:selecionado
+											sigla="${documento[0].lotaSubscritor.sigla}"
+											descricao="${documento[0].lotaSubscritor.descricao}"
+											lotacaoParam="${documento[0].lotaSubscritor.orgaoUsuario.siglaOrgao}${documento[0].lotaSubscritor.sigla}" />
 										</td>
-										<td width="4%" align="center">
-											<siga:selecionado sigla="${documento[0].lotaSubscritor.sigla}" descricao="${documento[0].lotaSubscritor.descricao}"
-												lotacaoParam="${documento[0].lotaSubscritor.orgaoUsuario.siglaOrgao}${documento[0].lotaSubscritor.sigla}" />
-										</td>
-										<td width="4%" align="center">
-											<siga:selecionado sigla="${documento[0].subscritor.iniciais}" descricao="${documento[0].subscritor.descricao}"
-												pessoaParam="${documento[0].subscritor.sigla}" />
-										</td>
-										<td width="5%" align="center">
-											tag1
-										</td>
-										<td width="4%" align="center">
-										</td>
-										<td width="4%" align="center">
-										</td>
-										<td width="10.5%" align="center">
-											tag4
-										</td>
+										<td width="4%" align="center"><siga:selecionado
+											sigla="${documento[0].subscritor.iniciais}"
+											descricao="${documento[0].subscritor.descricao}"
+											pessoaParam="${documento[0].subscritor.sigla}" /></td>
+			
+										<td width="5%" align="center">tag1</td>
+										<td width="4%" align="center"></td>
+										<td width="4%" align="center"></td>
+										<td width="10.5%" align="center">tag4</td>
 									</c:if>
 
 									<td width="6%">
 										${documento[0].descrFormaDoc}
 									</td>
-									<td width="6%">
-										${documento[0].nmMod}
-									</td>
+
+									<td width="6%">${documento[0].nmMod}</td>
 
 									<c:set var="acessivel" value="" />
 									<c:set var="acessivel" value="${f:testaCompetencia('acessarDocumento',titular,lotaTitular,documento[1])}" />
@@ -676,11 +671,11 @@ function limpaCampos()
 										</c:when>
 										<c:otherwise>
 											<td>
-												[Descrição Inacessível]
+												CONFIDENCIAL
 											</td>
 											<c:if test="${visualizacao == 1}"> 
 												<td>
-													[Anotação Inacessível]
+													CONFIDENCIAL
 												</td>
 											</c:if>
 										</c:otherwise>

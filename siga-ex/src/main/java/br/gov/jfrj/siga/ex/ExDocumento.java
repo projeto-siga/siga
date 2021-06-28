@@ -468,9 +468,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 							sb.append(blocoSubscritor);
 							sb.append("</span>");
 						} else {
-							sb.append("<span>- assinado eletronicamente -<br/>");
+							if (Prop.getBool("assinatura.estampar")) {
+								sb.append("<span>- assinado eletronicamente -<br/>");
+							} else {
+								sb.append("<span>");
+							}
 							sb.append(blocoSubscritor);
-							sb.append("</span>");
+							sb.append("</span>");	
 						}
 						sHtml = sHtml.replace(blocoSubscritor, sb).toString();
 					}
@@ -2951,4 +2955,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return l;
 	}
 
+	public boolean isDescricaoEspecieDespacho() {
+		return this.getExFormaDocumento()
+				.getDescricao().contains("Despacho");
+	}
+	
 }

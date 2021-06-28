@@ -58,10 +58,12 @@
 				<input type="hidden" name="postback" value="1" /> 
 				<input type="hidden" id="sigla" name="exDocumentoDTO.sigla" value="${exDocumentoDTO.sigla}" /> 
 				<input type="hidden" name="exDocumentoDTO.nomePreenchimento" value="" /> 
-				<input type="hidden" name="campos" value="criandoAnexo" />  
+				<input type="hidden" name="campos" value="criandoAnexo" />
+				<input type="hidden" name="campos" value="criandoSubprocesso" />  
 				<input type="hidden" name="campos" value="autuando" /> 
 				<input type="hidden" name="exDocumentoDTO.autuando" value="${exDocumentoDTO.autuando}" /> 
 				<input type="hidden" name="exDocumentoDTO.criandoAnexo" value="${exDocumentoDTO.criandoAnexo}" /> 
+				<input type="hidden" name="exDocumentoDTO.criandoSubprocesso" value="${exDocumentoDTO.criandoSubprocesso}" /> 
 				<input type="hidden" name="campos" value="idMobilAutuado" /> 
 				<input type="hidden" name="exDocumentoDTO.idMobilAutuado" value="${exDocumentoDTO.idMobilAutuado}" /> 
 				<input type="hidden" name="exDocumentoDTO.id" value="${exDocumentoDTO.doc.idDoc}" /> 
@@ -613,8 +615,9 @@
 		sigaSpinner.mostrar();
 		$('.selected-label').append('<span id="select-spinner" class="spinner-border text-secondary" role="status"></span><span class="disabled"> Carregando...</span>');
 		const urlParams = new URLSearchParams(window.location.search);
+		const idMod = document.getElementsByName('exDocumentoDTO.idMod')[0].value;
 		const isEditandoAnexo = document.getElementsByName('exDocumentoDTO.criandoAnexo')[0].value === "true";
-		const isCriandoSubprocesso = urlParams.get('criandoSubprocesso');
+		const isCriandoSubprocesso = document.getElementsByName('exDocumentoDTO.criandoSubprocesso')[0].value === "true";
 		const isAutuando = document.getElementsByName('exDocumentoDTO.autuando')[0].value === "true";
 		const siglaMobPai = document.getElementsByName('exDocumentoDTO.mobilPaiSel.sigla')[0].value;
 		var qry = (isEditandoAnexo? 'isEditandoAnexo=true&' : '')
@@ -632,9 +635,14 @@
 			// Não expirou o timeout e a query será a mesma da 
 			// ultima vez: carrega da session storage se tiver
 			if (listMod != undefined) {
-				carregaModelos(ulMod, JSON.parse(listMod));
-				return;
-			}
+				var listaDeModelos = JSON.parse(listMod);
+				for (var i = 0; i<listaDeModelos.length; i++) {
+					if (listaDeModelos[i].idModelo == idMod) {
+		 				carregaModelos(ulMod, listaDeModelos);
+						return;
+					}
+				}
+ 			}
 		}
 		
 		$.ajax({

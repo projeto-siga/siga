@@ -2357,7 +2357,9 @@ public class ExBL extends CpBL {
 
 	public void cancelarDocumento(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExDocumento doc)
 			throws Exception {
-
+		if (Prop.isGovSP() && doc.getMobilDefaultParaReceberJuntada().temDocumentosJuntados()) {
+			throw new RegraNegocioException("Não é possível efetuar o cancelamento, pois o documento possui documento(s) juntado(s)");
+		}
 		try {
 			iniciarAlteracao();
 			cancelarMovimentacoes(cadastrante, lotaCadastrante, doc);
@@ -3296,6 +3298,15 @@ public class ExBL extends CpBL {
 	public static boolean mostraDescricaoConfidencial(ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular) {
 		try {
 			return !Ex.getInstance().getComp().podeAcessarDocumento(titular, lotaTitular, doc.getMobilGeral());
+		} catch (Exception e) {
+			return true;
+		}
+	}
+	
+	public static boolean exibirQuemTemAcessoDocumentosLimitados(ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular) {
+		try {
+			if (Ex.getInstance().getComp().podeAcessarDocumento(titular, lotaTitular, doc.getMobilGeral())) { return true; }
+			return Ex.getInstance().getComp().podeExibirQuemTemAcessoAoDocumento(titular, lotaTitular, doc.getExModelo());
 		} catch (Exception e) {
 			return true;
 		}
@@ -5989,12 +6000,14 @@ public class ExBL extends CpBL {
 			}
 			modeloSetFinal = provSet;
 		} else {
-			provSet = new ArrayList<ExModelo>();
-			for (ExModelo mod : modeloSetFinal)
-				if (getConf().podePorConfiguracao(titular, lotaTitular, mod,
-						ExTipoDeConfiguracao.CRIAR_COMO_NOVO))
-					provSet.add(mod);
-			modeloSetFinal = provSet;
+			if (protegido) {
+				provSet = new ArrayList<ExModelo>();
+				for (ExModelo mod : modeloSetFinal)
+					if (getConf().podePorConfiguracao(titular, lotaTitular, mod,
+							CpTipoConfiguracao.TIPO_CONFIG_CRIAR_COMO_NOVO))
+						provSet.add(mod);
+				modeloSetFinal = provSet;
+			}
 		}
 
 		if (autuando) {
@@ -7743,17 +7756,17 @@ public class ExBL extends CpBL {
 		if (personalizacaoAssinatura[0] != null && !"".equals(personalizacaoAssinatura[0])) {
 			funcaoCargoPersonalizadoAssinatura.append(personalizacaoAssinatura[0]);
 		} else {
-			funcaoCargoPersonalizadoAssinatura.append(movimentacao.getCadastrante().getFuncaoString());
+			funcaoCargoPersonalizadoAssinatura.append(movimentacao.getTitular().getFuncaoString());
 		}
 		funcaoCargoPersonalizadoAssinatura.append(" / ");
 		if (personalizacaoAssinatura.length > 1) {
 			if (personalizacaoAssinatura[1] != null && !"".equals(personalizacaoAssinatura[1])) {
 			 funcaoCargoPersonalizadoAssinatura.append(personalizacaoAssinatura[1]);
 			} else {
-				funcaoCargoPersonalizadoAssinatura.append(movimentacao.getCadastrante().getLotacao().getSigla());
+				funcaoCargoPersonalizadoAssinatura.append(movimentacao.getTitular().getLotacao().getSigla());
 			}
 		} else {
-			funcaoCargoPersonalizadoAssinatura.append(movimentacao.getCadastrante().getLotacao().getSigla());
+			funcaoCargoPersonalizadoAssinatura.append(movimentacao.getTitular().getLotacao().getSigla());
 		}
 		return funcaoCargoPersonalizadoAssinatura.toString();
 

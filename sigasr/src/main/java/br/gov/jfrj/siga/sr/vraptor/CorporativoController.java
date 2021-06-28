@@ -22,6 +22,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.jfree.util.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -79,7 +80,7 @@ public class CorporativoController extends SrController {
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
-		List<DadosRH> l = DadosRH.AR.all().fetch();
+		List<DadosRH> l = DadosRH.AR.em().createQuery("from DadosRH dr").getResultList();
 		String situacoesParaImportar = (String) Contexto.resource("corporativo.dadosrh.situacoesParaImportar");
 		if(situacoesParaImportar == null)
 			throw new RuntimeException(
@@ -87,31 +88,31 @@ public class CorporativoController extends SrController {
 		
 		List<String> situacoes = Arrays.asList(situacoesParaImportar.split(","));
 		for (DadosRH d : l) {
-			Pessoa p = d.getPessoa();
-			if (p != null && (!mp.containsKey(p.getPessoa_id()) || p.getLotacao_tipo_papel().equals("Principal"))
-					&& (situacoes.contains(p.getPessoa_situacao().toString())))
-				mp.put(p.getPessoa_id(), p);
+				Pessoa p = d.getPessoa();
+				if (p != null && (!mp.containsKey(p.getPessoa_id()) || p.getLotacao_tipo_papel().equals("Principal"))
+						&& (situacoes.contains(p.getPessoa_situacao().toString())))
+					mp.put(p.getPessoa_id(), p);
 
-			Lotacao x = d.getLotacao();
-			if (x != null && !ml.containsKey(x.getLotacao_id()))
-				ml.put(x.getLotacao_id(), x);
+				Lotacao x = d.getLotacao();
+				if (x != null && !ml.containsKey(x.getLotacao_id()))
+					ml.put(x.getLotacao_id(), x);
 
-			Cargo c = d.getCargo();
-			if (c != null && !mc.containsKey(c.getCargo_id()))
-				mc.put(c.getCargo_id(), c);
+				Cargo c = d.getCargo();
+				if (c != null && !mc.containsKey(c.getCargo_id()))
+					mc.put(c.getCargo_id(), c);
 
-			Funcao f = d.getFuncao();
-			if (f != null && !mf.containsKey(f.getFuncao_id()))
-				mf.put(f.getFuncao_id(), f);
+				Funcao f = d.getFuncao();
+				if (f != null && !mf.containsKey(f.getFuncao_id()))
+					mf.put(f.getFuncao_id(), f);
 
-			Papel pp = d.getPapel();
-			if (pp != null && !mpp.containsKey(pp.getPapel_pessoa_id()))
-				mpp.put(pp.getPapel_pessoa_id(), new ArrayList<Papel>());
-			if (pp != null)
-				mpp.get(pp.getPapel_pessoa_id()).add(pp);
+				Papel pp = d.getPapel();
+				if (pp != null && !mpp.containsKey(pp.getPapel_pessoa_id()))
+					mpp.put(pp.getPapel_pessoa_id(), new ArrayList<Papel>());
+				if (pp != null)
+					mpp.get(pp.getPapel_pessoa_id()).add(pp);
 
-			Orgao org = d.getOrgao();
-
+				Orgao org = d.getOrgao();
+				
 		}
 
 		// root elements

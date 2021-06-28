@@ -21,8 +21,10 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.gi.service.GiService;
 import br.gov.jfrj.siga.idp.jwt.SigaJwtBL;
+import br.gov.jfrj.siga.vraptor.Transacional;
 
 @AcessoPublico
+@Transacional
 public class AutenticarPost implements IAutenticarPost {
 	@Override
 	public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception {

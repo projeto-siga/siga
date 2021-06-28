@@ -121,9 +121,14 @@
   <function-signature>java.lang.String selDescricaoConfidencial(br.gov.jfrj.siga.model.Selecionavel, br.gov.jfrj.siga.dp.DpLotacao, br.gov.jfrj.siga.dp.DpPessoa)</function-signature>
  </function>
  <function>
-  <name>mostraDescricaoConfidencial</name>
+   <name>mostraDescricaoConfidencial</name>
   <function-class>br.gov.jfrj.siga.ex.bl.ExBL</function-class>
   <function-signature>java.lang.Boolean mostraDescricaoConfidencial( br.gov.jfrj.siga.ex.ExDocumento, br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
+ </function>
+  <function>
+   <name>exibirQuemTemAcessoDocumentosLimitados</name>
+  <function-class>br.gov.jfrj.siga.ex.bl.ExBL</function-class>
+  <function-signature>java.lang.Boolean exibirQuemTemAcessoDocumentosLimitados( br.gov.jfrj.siga.ex.ExDocumento, br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
  </function>
  <function>
   <name>anotacaoConfidencial</name>

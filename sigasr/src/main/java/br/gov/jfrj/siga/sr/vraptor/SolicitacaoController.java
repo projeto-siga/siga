@@ -1112,7 +1112,7 @@ public class SolicitacaoController extends SrController {
     @Path("/darAndamento")
     public void darAndamento(SrMovimentacao movimentacao) throws Exception {
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO));
-        movimentacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
+        movimentacao.salvar(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular());
         result.redirectTo(this).exibir(movimentacao.getSolicitacao().getSiglaCompacta(), todoOContexto(), ocultas());
     }
 

@@ -2302,10 +2302,9 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 
 	/**
 	 * Verifica se exibe o conteudo do documento no histórico do acompanhamento do protocolo
-	 * 
 	 * @return
 	 */
-	public boolean podeExibirNoAcompanhamento() {
+	public boolean isExibirNoAcompanhamento() {
 		return podeExibirNoAcompanhamento(null, null);
 	}
 	
